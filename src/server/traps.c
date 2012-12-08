@@ -281,6 +281,7 @@ static bool do_player_trap_call_out(int Ind)
                 if (!cave_valid_bold(zcave, cy, cx)) continue; /* This wasn't really enough.. */
 		if (!cave_empty_bold(zcave, cy, cx)) continue; /* better added this one;) -C. Blue */
                 if (zcave[cy][cx].feat == FEAT_GLYPH) continue;
+		if (zcave[cy][cx].feat == FEAT_RUNE) continue;
                 if ((cx==p_ptr->px) && (cy==p_ptr->py)) continue;
                 sn++;
                 /* Randomize choice */
@@ -3219,7 +3220,7 @@ static bool item_tester_hook_potion(object_type *o_ptr)
 static bool item_tester_hook_scroll_rune(object_type *o_ptr)
 {
         if ((o_ptr->tval == TV_SCROLL) ||
-            (o_ptr->tval == TV_RUNE2)) return (TRUE);
+            (o_ptr->tval == TV_RUNE)) return (TRUE);
 
 	/* Assume not */
 	return (FALSE);
@@ -3452,107 +3453,6 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	/* Actually set the trap */
 	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
 }
-
-#ifdef ENABLE_RCRAFT
-/* Check if setting a rune trap is possible in general - C. Blue */
-bool set_rune_trap_okay(int Ind) {
-	player_type *p_ptr = Players[Ind];
-
-	cave_type *c_ptr;
-	cave_type **zcave;
-
-	zcave = getcave(&p_ptr->wpos);
-	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-
-	/* Check some conditions */
-	if (p_ptr->blind) {
-		msg_print(Ind, "You can't see anything.");
-		return FALSE;
-	}
-	if (no_lite(Ind)) {
-		msg_print(Ind, "You can't set a trap in the darkness.");
-		return FALSE;
-	}
-	if (p_ptr->confused) {
-		msg_print(Ind, "You are too confused!");
-		return FALSE;
-	}
-
-	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
-	    (c_ptr->info & CAVE_PROT)) {
-		msg_print(Ind, "You cannot set rune traps on this special floor.");
-		return FALSE;
-	}
-
-	/* Only set traps on clean floor grids */
-	/* TODO: allow to set traps on poisoned floor */
-	if (!cave_clean_bold(zcave, p_ptr->py, p_ptr->px) ||
-	    c_ptr->special || c_ptr->feat == FEAT_GLYPH) {
-		msg_print(Ind, "You cannot set a trap on this.");
-		return FALSE;
-	}
-
-	/* Can we sustain one more rune trap? */
-	if (p_ptr->rcraft_upkeep + (100 / UPKEEP_TRAP) > 100) {
-		msg_print(Ind, "\377oYou cannot sustain another rune trap!");
-		return FALSE;
-	}
-
-	/* looks ok */
-	return TRUE;
-}
-
-/*
- * Set a rune trap (runecraft) - C. Blue
- */
-void set_rune_trap_aux(int Ind, int typ, int mod, int lev)
-{
-	player_type *p_ptr = Players[Ind];
-	int py = p_ptr->py, px = p_ptr->px;
-
-	cave_type *c_ptr;
-	cave_type **zcave;
-	struct c_special *cs_ptr;
-
-	zcave = getcave(&p_ptr->wpos);
-	c_ptr = &zcave[py][px];
-
-	/* S(he) is no longer afk */
-	un_afk_idle(Ind);
-
-	/* Take a turn */
-	//p_ptr->energy -= level_speed(&p_ptr->wpos); 
-	//Already consumed in casting a rune-spell. - Kurzel
-
-	/* Check interference */
-	/* Basically it's not so good idea to set traps next to the enemy */
-	//if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_TRAPPING, 30))) /* setting-trap interference chance */
-	//	return;
-	//Rune-trapping is a spell effect, not subject to interference. - Kurzel
-
-	/* Set it here */
-	if (!(cs_ptr = AddCS(c_ptr, CS_RUNE_TRAP))) return;
-
-	/* Calculate mana upkeep for the trap */
-	p_ptr->runetrap_x[p_ptr->runetraps] = px;
-	p_ptr->runetrap_y[p_ptr->runetraps] = py;
-	p_ptr->runetraps++;
-	p_ptr->rcraft_upkeep += (100 / UPKEEP_TRAP); //Kurzel
-	calc_mana(Ind);
-
-	cs_ptr->sc.runetrap.typ = typ;
-	cs_ptr->sc.runetrap.mod = mod;
-	cs_ptr->sc.runetrap.lev = lev;
-	cs_ptr->sc.runetrap.id = p_ptr->id;
-
-	/* Preserve former feat */
-	cs_ptr->sc.runetrap.feat = c_ptr->feat;
-
-	/* Actually set the trap */
-	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_RUNE_TRAP);
-}
-
-#endif
 
 /*
  * Disamrs the monster traps(no failure)
@@ -4546,121 +4446,118 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
 	worldpos wpos = m_ptr->wpos;
-	int dam = 0, typ = 0, rad = 0, cloud = 0, cloudi = 0;
+	int dam = 0, typ = 0, rad = 0;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	cave_type **zcave;
 	zcave = getcave(&wpos);
 
-	/* Depend on scroll type */
 	switch (o_ptr->sval) {
-	case SV_RUNE2_FIRE:
-//unclear: what happens if player leaves game before his trap goes off?
-//		if (!rand_int(3) && who < 0 && who > PROJECTOR_UNUSUAL) lite_room(-who, &wpos, y, x);
-		typ = GF_FIRE;
+	case SV_R_LITE:
+		typ = GF_LITE;
 		dam = damroll(10, 30);
-		rad = 3;
-		break;
-	case SV_RUNE2_COLD:
-		typ = GF_COLD;
+		rad = 2;
+	break;
+	case SV_R_DARK:
+		typ = GF_DARK;
 		dam = damroll(10, 30);
-		rad = 3;
-		break;
-	case SV_RUNE2_ACID:
-		typ = GF_ACID;
-		dam = damroll(10, 30);
-		rad = 3;
-		break;
-	case SV_RUNE2_WATER:
-		typ = GF_WATER;
-		dam = damroll(10, 30);
-		rad = 3;
-		break;
-
-	case SV_RUNE2_ELEC:
-		typ = GF_ELEC;
-		dam = damroll(10, 30);
-		rad = 3;
-		break;
-	case SV_RUNE2_EARTH:
-		if (!rand_int(4)) earthquake(&wpos, y, x, 5);
-		else {
-			typ = GF_SHARDS;
-			dam = damroll(10, 30);
-			rad = 3;
-		}
-		break;
-	case SV_RUNE2_POISON:
-		if (!rand_int(3)) {
-			cloud = 3;
-			cloudi = 5;
-			dam = rand_int(50) + 10;
-		} else dam = damroll(10, 30);
-		if (!rand_int(4)) typ = GF_WATERPOISON;
-		else typ = GF_POIS;
-		rad = 3;
-		break;
-#if 0 /* Rune reduction */
-	case SV_RUNE2_WIND:
-//		if (!rand_int(2)) {
-			typ = GF_AWAY_ALL;
-			dam = 100;
-/*		} else {
-			typ = GF_FORCE;
-			dam = damroll(10, 30);
-		}
-*/		rad = 3;
-		break;
-	case SV_RUNE2_MANA:
-		typ = GF_MANA;
-		dam = damroll(10, 30);
-		rad = 3;
-		break;
-#endif
-	case SV_RUNE2_CHAOS:
-		typ = GF_CHAOS;
-		dam = damroll(10, 30);
-		rad = 3;
-		break;
-	case SV_RUNE2_FORCE:
-		typ = GF_FORCE;
-		dam = damroll(10, 30);
-		rad = 3;
-		break;
-#if 0 /* Rune reduction */
-	case SV_RUNE2_GRAVITY:
-		typ = GF_GRAVITY;
-		dam = damroll(10, 30);
-		rad = 3;
-		break;
-#endif
-	case SV_RUNE2_NETHER:
-		typ = GF_GRAVITY;
-		dam = damroll(10, 30);
-		rad = 3;
-		break;
-	case SV_RUNE2_TIME:
-		if (!rand_int(2)) {
-			typ = GF_TIME;
-			dam = damroll(10, 30);
-		} else {
-			typ = GF_OLD_SLOW;
-			dam = damroll(4, 6);
-		}
-		rad = 3;
-		break;
-#if 0 /* Rune reduction */
-	case SV_RUNE2_MIND:
-		typ = GF_PSI;
-		dam = damroll(10, 30);
-		rad = 3;
-		break;
-#endif
-	case SV_RUNE2_NEXUS:
+		rad = 2;
+	break;
+	case SV_R_NEXU:
 		typ = GF_NEXUS;
 		dam = damroll(10, 30);
-		rad = 3;
-		break;
+		rad = 2;
+	break;
+	case SV_R_NETH:
+		typ = GF_NETHER;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_CHAO:
+		typ = GF_CHAOS;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_MANA:
+		typ = GF_MANA;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_CONF:
+		typ = GF_CONFUSION;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_INER:
+		typ = GF_INERTIA;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_ELEC:
+		typ = GF_ELEC;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_FIRE:
+		typ = GF_FIRE;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_WATE:
+		typ = GF_WAVE;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_GRAV:
+		typ = GF_GRAVITY;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_COLD:
+		typ = GF_COLD;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_ACID:
+		typ = GF_ACID;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_POIS:
+		typ = GF_POIS;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_TIME:
+		typ = GF_TIME;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_SOUN:
+		typ = GF_SOUND;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_SHAR:
+		typ = GF_SHARDS;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_DISE:
+		typ = GF_DISENCHANT;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_FORC:
+		typ = GF_FORCE;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
+	case SV_R_PLAS:
+		typ = GF_PLASMA;
+		dam = damroll(10, 30);
+		rad = 2;
+	break;
 	default:
 		return (FALSE);
 	}
@@ -5227,170 +5124,6 @@ bool mon_hit_trap(int m_idx)
 	/* did it die? */
 	return (dead);
 }
-
-#ifdef ENABLE_RCRAFT
-bool mon_hit_rune_trap(int m_idx)
-{
-	player_type *p_ptr=(player_type*)NULL;
-	monster_type *m_ptr = &m_list[m_idx];
-	//	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-	monster_race    *r_ptr = race_inf(m_ptr);
-
-	struct c_special *cs_ptr;
-
-	int mx = m_ptr->fx;
-	int my = m_ptr->fy;
-
-	int difficulty = 0;
-	int smartness;
-
-	char m_name[MNAME_LEN];
-
-	bool notice = FALSE;
-	bool disarm = FALSE;
-
-	int dam = 0, trapping;
-
-	int i, who = PROJECTOR_MON_TRAP, skill;
-	int typ = GF_FIRE, rad = 1;
-	cave_type *c_ptr;
-	cave_type **zcave;
-	worldpos *wpos = &m_ptr->wpos;
-
-	zcave = getcave(wpos);
-	if (!zcave) return(FALSE);
-
-	c_ptr = &zcave[my][mx];
-
-	cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP);
-	if(!cs_ptr) return(FALSE);
-
-	/* XXX Hack -- is the trapper online? */
-	for (i = 1; i <= NumPlayers; i++) {
-		p_ptr = Players[i];
-		if (p_ptr->conn == NOT_CONNECTED) continue;
-		if (!inarea(&p_ptr->wpos, wpos)) continue;
-
-		/* Check if they are in here */
-		if (cs_ptr->sc.runetrap.id == p_ptr->id) {
-			who = i;
-			break;
-		}
-	}
-
-	/* Get detection difficulty */
-	trapping = cs_ptr->sc.runetrap.lev;
-	difficulty = (trapping * 3) / 2;
-
-	/* Darkness helps */
-	if (!(c_ptr->info & (CAVE_LITE | CAVE_GLOW)) &&
-	    !(r_ptr->flags9 & RF9_HAS_LITE) &&
-	    !(r_ptr->flags4 & RF4_BR_DARK) &&
-	    !(r_ptr->flags6 & RF6_DARKNESS))
-		difficulty += 20;
-
-	/* Get monster smartness for trap detection */
-	/* Higher level monsters are smarter */
-	smartness = m_ptr->level;
-
-	/* Smart monsters are better at detecting traps */
-	if (r_ptr->flags2 & RF2_SMART) smartness += 10;
-
-	/* Stupid monsters are no good at detecting traps */
-	if (r_ptr->flags2 & (RF2_STUPID | RF2_EMPTY_MIND)) smartness = -150;
-
-	/* Check if the monster notices the trap */
-	if (randint(300) > (difficulty - smartness + 150)) notice = TRUE;
-
-	/* Disarm check */
-	if (notice) {
-		/* Get trap disarming difficulty */
-		difficulty = cs_ptr->sc.runetrap.lev;
-
-		/* Get monster disarming ability */
-		/* Higher level monsters are better */
-		smartness = m_ptr->level / 5;
-
-		/* Smart monsters are better at disarming */
-		if (r_ptr->flags2 & RF2_SMART) smartness *= 2;
-
-		/* Stupid monsters never disarm traps */
-		if (r_ptr->flags2 & RF2_STUPID) smartness = -150;
-
-		/* Nonsmart animals never disarm traps */
-		if ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags2 & RF2_SMART)) smartness = -150;
-
-		/* Check if the monster disarms the trap */
-		if (randint(120) > (difficulty - smartness + 80)) disarm = TRUE;
-	}
-
-	/* If disarmed, remove the trap and print a message */
-	if (disarm) {
-		/* Next time disarming will be easier */
-		msg_print_near_monster(m_idx, "disarms a trap!");
-#ifdef USE_SOUND_2010
-		sound_near_monster(m_idx, "disarm", NULL, SFX_TYPE_MISC);
-#endif
-
-		/* trap is gone */
-		if (who > 0) remove_rune_trap_upkeep(who, 0, mx, my);
-		i = cs_ptr->sc.runetrap.feat;
-		cs_erase(c_ptr, cs_ptr);
-		cave_set_feat_live(wpos, my, mx, i);
-		return FALSE;
-	}
-
-	/* otherwise activate the trap! */
-
-	if (who > 0) {
-		/* Message for visible monster */
-		if (p_ptr->mon_vis[m_idx]) {
-			/* Get the name */
-			monster_desc(who, m_name, m_idx, 0);
-			/* Print a message */
-			msg_format(who, "%^s sets off a trap!", m_name);
-		} else {
-			/* No message if monster isn't visible ? */
-		}
-
-#ifdef USE_SOUND_2010
-		/* sound only if we can see the trap detonate */
-		if (los(&m_ptr->wpos, p_ptr->py, p_ptr->px, my, mx)) {
-			if (r_projections[cs_ptr->sc.runetrap.typ].gf_type != GF_DETONATION)
-				sound(who, "ball", NULL, SFX_TYPE_MISC, FALSE);
-			else
-				sound(who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
-		}
-#endif
-
-		remove_rune_trap_upkeep(who, 0, mx, my);
-	}
-
-	/* Actually activate the trap */
-	skill = cs_ptr->sc.runetrap.lev; //Use 'skill' for the rget_level() macro. - Kurzel
-	
-	typ = r_projections[cs_ptr->sc.runetrap.typ].gf_type;
-	rad = 2 + r_imperatives[cs_ptr->sc.runetrap.mod].radius;
-	//Hacky quick 'ball' damage calc - Kurzel
-	dam = r_projections[cs_ptr->sc.runetrap.typ].weight * rget_level(25) * rget_level(25) / W_MAX_DIR;
-	dam = dam * r_imperatives[cs_ptr->sc.runetrap.mod].damage / 10;
-	if (dam < 1) dam = 1;
-
-	/* trap is gone */
-	i = cs_ptr->sc.runetrap.feat;
-	cs_erase(c_ptr, cs_ptr);
-	cave_set_feat_live(wpos, my, mx, i);
-
-	/* Actually hit the monster */
-	/* WRAITHFORM reduces damage/effect! */
-	if (who > 0 && p_ptr->tim_wraith) dam /= 2;
-	(void) project(-who, rad, &m_ptr->wpos, my, mx, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL), "");
-	//s_printf("radius: %d\n",rad);
-
-	/* did it die? */
-	return (zcave[my][mx].m_idx == 0 ? TRUE : FALSE);
-}
-#endif
 
 static void destroy_chest(object_type *o_ptr) {
 	/* Hack to destroy chests */

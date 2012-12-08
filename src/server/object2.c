@@ -5873,8 +5873,7 @@ static int kind_is_theme(int k_idx)
 		case TV_POTION:         p = match_theme.magic; break;
 		case TV_POTION2:        p = match_theme.magic; break;
 
-		case TV_RUNE1:          p = match_theme.magic; break;
-		case TV_RUNE2:          p = match_theme.magic; break;
+		case TV_RUNE:           p = match_theme.magic; break;
 #if 0
 		case TV_BATERIE:        p = match_theme.magic; break;
 		case TV_RANDART:        p = match_theme.magic; break;
@@ -6518,15 +6517,6 @@ static int reward_spell_check(player_type *p_ptr, long int treshold) {
 	compute_skills(p_ptr, &value, &mod, SKILL_MAGIC);
 	/* check whether player increased magic skill above its base value */
 	if (p_ptr->s_info[SKILL_MAGIC].value > value) selection = 1;
-
-#if 0 /* players won't increase this during tourney maybe, and only runemasters can actually have this skill atm */
-	/* get base value of RUNEMASTERY skill (doesn't increase magic skill atm) */
-	compute_skills(p_ptr, &value, &mod, SKILL_RUNEMASTERY);
-	/* check whether player increased magic skill above its base value */
-	if (p_ptr->s_info[SKILL_RUNEMASTERY].value > value) selection = 1;
-#else
-	if (get_skill(p_ptr, SKILL_RUNEMASTERY)) selection = 1;
-#endif
 
 	return (selection);
 }

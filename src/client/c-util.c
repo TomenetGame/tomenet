@@ -1,3 +1,7 @@
+/* $Id$ */
+/* File: c-util.c */
+/* Client-side utility stuff */
+
 #include "angband.h"
 
 #include <sys/time.h>
@@ -3780,11 +3784,7 @@ void interact_macros(void)
 						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '1'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 						bptr++;	break;
 					case 'R': /* draw a rune */
-#ifndef ENABLE_RCRAFT
 						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '2'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
-#else
-						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '8'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
-#endif
 						bptr++;	break;
 					case 's': /* change stance */
 						*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
@@ -4095,29 +4095,29 @@ void interact_macros(void)
 //						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
 						Term_putstr(1, 17, -1, TERM_L_GREEN, "Enter exact monster name/code or leave blank:");
 						break;
-					case mw_rune:
+					case mw_rune: //Kurzel - hardcoded, so must be maintained...
 						strcpy(buf2, "");
 						strcpy(buf, "");
 						u16b e_flags = 0;
 						u16b m_flags = 0;
 
-						/* ---------- Draw up to three runes ---------- */ //Kurzel
+						/* ---------- Draw runes ---------- */
 
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the runes you want to draw, up to a maximum of three.");
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the runes you want to draw, up to the maximum of two.");
 						Term_putstr(10, 11, -1, TERM_GREEN, "If you want to draw less runes, press \377sENTER\377g key when done.");
 
 						i = 0;
-						for (j = 0; j < 3; j++) {
-							if (i == -1 || i == -2) continue; //invalid action -OR- drawing less than 3 runes
+						for (j = 0; j < 2; j++) {
+							if (i == -1 || i == -2) continue; //invalid action -OR- drawing less than the maximum number of runes
 
 							clear_from(14);
 							Term_putstr(10, 13, -1, TERM_GREEN, format("Runes chosen so far: \377s%s", buf2));
 							for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
 								/* Don't draw a rune twice */
 								if (e_flags & r_elements[i].flag) continue;
-								Term_putstr(15 + (i / 6) * 15, 15 + i % 6, -1,
+								Term_putstr(10, 15 + i % 6, -1,
 								    TERM_L_GREEN,
-								    format("%c) \377%c%s", 'a' + i, rcraft_threat_color(e_flags | r_elements[i].flag, (I_MODE | T_SELF)), r_elements[i].name));
+								    format("%c) \377%c%s", 'a' + i, 'G', r_elements[i].name));
 							}
 
 							switch (choice = inkey()) {
@@ -4134,7 +4134,8 @@ void interact_macros(void)
 								j--;
 								continue;
 							default:
-                                                                /* invalid action -> exit wizard */
+							
+                                /* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'a' + RCRAFT_MAX_ELEMENTS - 1) {
 									j--;
 //									i = -1;
@@ -4164,30 +4165,39 @@ void interact_macros(void)
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the rune imperative,");
 						Term_putstr(10, 11, -1, TERM_GREEN, "ie how powerful you want to try and make the spell.");
 
-						Term_putstr(15, 13, -1, TERM_L_GREEN, "Imperative    (Level, Damage, Cost, Fail, Duration)");
+						/* Print the header */
+						Term_putstr(10, 13, -1, TERM_L_GREEN, "   Imperative Level Cost Fail Damage Radius Duration Energy");
 
+						/* Analyze parameters */
+						byte element[RCRAFT_MAX_ELEMENTS];
+						byte elements = flags_to_elements(element, e_flags);
+						byte skill = rspell_skill(element, elements);
+						
+						/* Fill the list */
+						int color;
 						char tmpbuf[80];
 						for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
-							if (r_imperatives[i].flag == I_CHAO) { //Hack -- Chaotic displays ??? - Kurzel (duplicate code here from c-spell.c)
-								sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d,   ???%%, ???%%, ???%%,     ???%%)",
-									'a' + i,
-									rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag | T_SELF),
-									r_imperatives[i].name,
-									r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level);
-							}
-							else {
-								sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d,   %s%d%%, %s%d%%, %s%d%%,     %s%d%%)",
-									'a' + i,
-									rcraft_threat_color(e_flags, m_flags | r_imperatives[i].flag | T_SELF),
-									r_imperatives[i].name,
-									r_imperatives[i].level >= 0 ? "+" : "", r_imperatives[i].level,
-									r_imperatives[i].damage >= 10 ? "" : " ", r_imperatives[i].damage * 10,
-									r_imperatives[i].cost >= 10 ? "" : " ", r_imperatives[i].cost * 10,
-									ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail,
-									r_imperatives[i].duration >= 10 ? "" : " ", r_imperatives[i].duration * 10);
-							}
-
-							Term_putstr(15, 14 + i, -1, TERM_L_GREEN, tmpbuf);
+						
+							/* Get the line color */
+							if (r_imperatives[i].level < skill) color = 'G';
+							else color = 'D';
+						
+							/* Fill a line */
+							sprintf(tmpbuf, "\377%c%c) %-10s %5d %3d%% %s%d%% %5d%% %5s%d %7d%% %5d%%",
+							color,
+							'a' + i,
+							r_imperatives[i].name,
+							r_imperatives[i].level,
+							r_imperatives[i].cost * 10,
+							ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail,
+							r_imperatives[i].damage * 10,
+							r_imperatives[i].radius >= 0 ? "+" : "-", ABS(r_imperatives[i].radius),
+							r_imperatives[i].duration * 10,
+							r_imperatives[i].energy * 10
+							);
+							
+							/* Print the line */
+							Term_putstr(10, 14 + i, -1, TERM_L_GREEN, tmpbuf);
 						}
 
 						while (TRUE) {
@@ -4203,8 +4213,8 @@ void interact_macros(void)
 								continue;
 							default:
 								/* invalid action -> exit wizard */
-								if (choice < 'a' || choice > 'h') {
-//									i = -1;
+								if (choice < 'a' || choice > 'g') { //Kurzel -- Revert to 'h' later, k? ^.~ (And fix hardcoding! ._.)
+									i = -1;
 									continue;
 								}
 							}
@@ -4213,30 +4223,280 @@ void interact_macros(void)
 						/* exit? */
 						if (i == -1) continue;
 
-						/* Store the imperative - Kurzel */
+						/* Store the imperative */
 						m_flags |= r_imperatives[choice - 'a'].flag;
 
 						/* build macro part: 'a'..'h' */
 						strcat(buf, format("%c", choice));
 
-						/* ---------- Select method ---------- */
+						/* ---------- Select form ---------- */
 
 						clear_from(10);
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the rune method,");
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the rune form,");
 						Term_putstr(10, 11, -1, TERM_GREEN, "ie the shape you want to manifest the spell in.");
 
-						Term_putstr(15, 13, -1, TERM_L_GREEN, "Type          (Level, Cost)");
+						/* Print the header */
+						Term_putstr(10, 13, -1, TERM_L_GREEN, "   Form    Level Cost Fail Info");
 
+						/* Check for a penalty due to status */
+						u16b penalty = 0;
+						if (p_ptr->blind) penalty += 10;
+						//if (p_ptr->confused) penalty += 10; //#ifdef ENABLE_CONFUSED_CASTING
+						if (p_ptr->stun > 50) penalty += 25;
+						else if (p_ptr->stun) penalty += 15;
+
+						/* Analyze parameters */
+						//byte element[RCRAFT_MAX_ELEMENTS];
+						//byte elements = flags_to_elements(element, e_flags);
+						//byte skill = rspell_skill(element, elements);
+						byte projection = flags_to_projection(e_flags);
+						byte imperative = flags_to_imperative(m_flags);
+						byte level, cost, fail;
+						s16b diff, sdiff;
+						
+						/* Print the list */
+						//int color;
 						//char tmpbuf[80];
 						for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
-							sprintf(tmpbuf, "%c) \377%c%-10s\377G (   %s%d, %s%d%%)",
-								'a' + i,
-								rcraft_threat_color(e_flags, m_flags | r_types[i].flag),
-								r_types[i].name,
-								r_types[i].level >= 0 ? "+" : "", r_types[i].level,
-								r_types[i].cost >= 10 ? "" : " ", r_types[i].cost * 10);
+						
+						/* Analyze parameters */
+						level = rspell_level(imperative, i);
+						diff = rspell_diff(skill, level);
+						cost = rspell_cost(imperative, i, skill);
+						fail = rspell_fail(imperative, i, diff, penalty);
+						u32b dx, dy;
+						u16b damage = rspell_damage(&dx, &dy, imperative, i, skill, projection);
+						byte radius = rspell_radius(imperative, i, skill, projection);
+						byte duration = rspell_duration(imperative, i, skill);
+						
+						/* Extra parameters */
+						sdiff = skill - level + 1; //For a real 'level difference' display.
 
-							Term_putstr(15, 14 + i, -1, TERM_L_GREEN, tmpbuf);
+						/* Get the line color */
+						if (diff > 0) {
+							color = 'G';
+							if (penalty) color = 'y';
+							if (p_ptr->csp < cost) color = 'o';
+							if (p_ptr->anti_magic) color = 'r';
+						}
+						else color = 'D';
+						
+						/* Fill a line */
+						switch (r_types[i].flag) {
+							case T_BOLT:
+							if (r_imperatives[imperative].flag == I_ENHA) {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								dx,
+								dy
+								);
+							} else {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								dx,
+								dy
+								);
+							}
+							break;
+							case T_BEAM:
+							if (r_imperatives[imperative].flag == I_ENHA) {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d / dam %d dur %d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								dx,
+								dy,
+								damage,
+								duration
+								);
+							} else {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								dx,
+								dy
+								);
+							}
+							break;
+							case T_CLOU:
+							if (r_imperatives[imperative].flag == I_ENHA) {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d / dam %d rad 1",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								damage,
+								radius,
+								duration,
+								damage
+								);
+							} else {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								damage,
+								radius,
+								duration
+								);
+							}
+							break;
+							case T_WAVE:
+							if (r_imperatives[imperative].flag == I_ENHA) {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d / dam %d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								damage,
+								duration,
+								damage
+								);
+							} else {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								damage,
+								duration
+								);
+							}
+							break;
+							case T_BALL:
+							if (r_imperatives[imperative].flag == I_ENHA) {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d / dam %dd%d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								damage,
+								radius,
+								dx,
+								dy
+								);
+							} else {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								damage,
+								radius
+								);
+							}
+							break;
+							case T_RUNE:
+							if (r_imperatives[imperative].flag == I_ENHA) {
+								damage /= 3; //Hack - see warding_rune_break() in runecraft.c for info.
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								damage,
+								radius,
+								duration
+								);
+							} else {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								damage,
+								radius
+								);
+							}
+							break;
+							case T_STOR:
+							if (r_imperatives[imperative].flag == I_ENHA) {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d / dam %dd%d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								damage,
+								radius,
+								duration,
+								dx,
+								dy
+								);
+							} else {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail,
+								damage,
+								radius,
+								duration
+								);
+							}
+							break;
+							case T_ENCH:
+							if (r_imperatives[imperative].flag == I_ENHA) {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%%",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail
+								);
+							} else {
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%%",
+								color,
+								'a' + i,
+								r_types[i].name,
+								sdiff,
+								cost,
+								fail
+								);
+							}
+							break;
+							default:
+							break;
+						}
+							Term_putstr(10, 14 + i, -1, TERM_L_GREEN, tmpbuf);
 						}
 
 						while (TRUE) {
@@ -4252,7 +4512,7 @@ void interact_macros(void)
 								continue;
 							default:
 								/* invalid action -> exit wizard */
-								if (choice < 'a' || choice > 'h') {
+								if (choice < 'a' || choice > 'g') { //Kurzel -- Revert to 'h' later, k? ^.~ (And fix hardcoding! ._.)
 //									i = -1;
 									continue;
 								}
@@ -4262,7 +4522,7 @@ void interact_macros(void)
 						/* exit? */
 						if (i == -1) continue;
 
-						/* Store the type - Kurzel */
+						/* Store the type */
 						m_flags |= r_types[choice - 'a'].flag;
 
 						/* build macro part: 'a'..'h' */
@@ -4270,9 +4530,10 @@ void interact_macros(void)
 
 						/* ---------- Determine if a direction is needed (hard-coded) ---------- */
 
-						if (((m_flags & T_SELF) != T_SELF)
-						 && ((m_flags & T_WAVE) != T_WAVE)
-						 && ((m_flags & T_STOR) != T_STOR))
+						if (((m_flags & T_BOLT) == T_BOLT)
+						 || ((m_flags & T_BEAM) == T_BEAM)
+						 || ((m_flags & T_CLOU) == T_CLOU)
+						 || ((m_flags & T_BALL) == T_BALL))
 							strcat(buf, "*t");
 
 						/* hack before we exit: remember menu choice 'runespell' */
@@ -4540,7 +4801,7 @@ void interact_macros(void)
 						buf2[3] = 'm';
 						buf2[4] = '@';
 						buf2[5] = '1';
-						buf2[6] = '8';
+						buf2[6] = '2';
 						buf2[7] = '\\';
 						buf2[8] = 'r';
 						strcpy(buf2 + 9, buf);

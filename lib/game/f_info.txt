@@ -480,10 +480,9 @@ M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 
-N:64:explosive rune
-G:*:R
-F:FLOOR | CAN_LEVITATE | CAN_FLY | NOTICE | SUPPORT_LIGHT
-D:0:This rune seems instable.
+N:64:rune of warding
+G:;:B
+F:FLOOR | NOTICE | SUPPORT_LIGHT | CAN_RUN | REMEMBER
 
 N:65:Straight Road startpoint
 G:*:w
@@ -1101,14 +1100,6 @@ $ARCADE_SERVER$G:*:y
 $ARCADE_SERVER$F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
 $ARCADE_SERVER$F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the moving powerup.
-
-N:230:rune trap
-G:;:B
-F:FLOOR
-
-N:231:rune portal
-G:+:B
-F:FLOOR
 
 # generic scheme (all lines are unique except
 # where it's mentioned otherwise) - C. Blue

@@ -35,9 +35,6 @@
          'censor_swearing' lua variable.*/
 #define CENSOR_SWEARING
 
-#define ENABLE_RUNEMASTER	/* enable runemaster class */
-#define ENABLE_RCRAFT		/* New runecraft class - relsiet (toggles new alternative code for ENABLE_RUNEMASTER) */
-
 #define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
 #define DUAL_WIELD		/* rogues (and others too now) may dual-wield 1-hand weapons */
 #define ENABLE_STANCES		/* combat stances for warriors */
@@ -149,13 +146,8 @@
 /* ------------------------ Client-side only features -----------------------*/
 
 #ifdef CLIENT_SIDE
- /* compile hybrid clients that can do both, old and new runemastery */
- #ifndef ENABLE_RCRAFT
-  #define ENABLE_RCRAFT		/* New runecraft class - relsiet (toggles new alternative code for ENABLE_RUNEMASTER) */
- #endif
+//Originally for hybrid clients to do both old and new runemastery, now unused.
 #endif
-
-
 
 /* ----------------- Misc flags induced by above definitions ----------------*/
 

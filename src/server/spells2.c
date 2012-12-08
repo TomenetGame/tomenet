@@ -716,8 +716,6 @@ void warding_glyph(int Ind)
 }
 
 
-
-
 /*
  * Array of stat "descriptions"
  */
@@ -1381,10 +1379,7 @@ void self_knowledge(int Ind) {
 #if 1
 	if (p_ptr->reflect) fprintf(fff, "You reflect arrows and bolts.\n");
 	if (p_ptr->no_cut) fprintf(fff, "You cannot be cut.\n");
-	
-	//Kurzel!! - Self knowledge all the extra rune spell buffs here??
-	if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CO) fprintf(fff, "You cannot be confused.\n"); //Runemaster status-seals (only one needed?) - Kurzel!!
-	
+
 	if (p_ptr->reduce_insanity > 0) {
 		fprintf(fff, "Your mind is somewhat resistant against insanity.\n");
 	}
@@ -1397,13 +1392,10 @@ void self_knowledge(int Ind) {
 	if (p_ptr->suscep_good) fprintf(fff, "You are susceptible to evil-vanquishing effects.\n");
 	if (p_ptr->suscep_evil) fprintf(fff, "You are susceptible to good-vanquishing effects.\n");
 	if (p_ptr->suscep_life) fprintf(fff, "You are susceptible to undead-vanquishing effects.\n");
-	//Runemaster auras - Kurzel
-	if (p_ptr->sh_fire || p_ptr->tim_aura_fire) fprintf(fff, "You are surrounded with a fiery aura.\n");
-	if (p_ptr->sh_elec || p_ptr->tim_aura_elec) fprintf(fff, "You are surrounded with electricity.\n");
-	if (p_ptr->sh_cold || p_ptr->tim_aura_cold) fprintf(fff, "You are surrounded with a freezing aura.\n");
-#if 0
-	if (p_ptr->tim_aura_acid) fprintf(fff, "You are surrounded with acid.\n"); 
-#endif
+	
+	if (p_ptr->sh_fire) fprintf(fff, "You are surrounded with a fiery aura.\n");
+	if (p_ptr->sh_elec) fprintf(fff, "You are surrounded with electricity.\n");
+	if (p_ptr->sh_cold) fprintf(fff, "You are surrounded with a freezing aura.\n");
 
 	if (p_ptr->resist_continuum) fprintf(fff, "The space-time continuum cannot be disrupted near you.\n");
 	if (p_ptr->anti_tele) fprintf(fff, "You are surrounded by an anti-teleportation field.\n");
@@ -5092,7 +5084,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 #endif
 
 			/* Skip the epicenter */
-			if ((!dx && !dy) && r) continue; //Runemaster / GF_EARTHQUAKE hack, allow a per-tile 'quake' - Kurzel
+			if ((!dx && !dy) && r) continue;
 
 			/* Skip most grids */
 			if (rand_int(100) < 85) continue;
@@ -5311,6 +5303,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 
 							/* Hack -- no safety on glyph of warding */
 							if (zcave[y][x].feat == FEAT_GLYPH) continue;
+							if (zcave[y][x].feat == FEAT_RUNE) continue;
 
 							/* Important -- Skip "quake" grids */
 							if (map[16+y-cy][16+x-cx]) continue;
@@ -5842,8 +5835,8 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 
 	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
-	/* WRAITHFORM reduces damage/effect! when not hacking runecraft combination spells - Kurzel */
-	if (p_ptr->tim_wraith && !p_ptr->rcraft_project) {
+	/* WRAITHFORM reduces damage/effect */
+	if (p_ptr->tim_wraith) {
 		if (typ == GF_HEAL_PLAYER && dam >= 1000) {
 			dam = dam - (dam % 1000) + (dam % 1000) / 2;
 		} else dam /= 2;
@@ -5887,7 +5880,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
-		    (typ != GF_OLD_POLY) && (typ != GF_RCRAFT_PLAYER)) /* Non-hostile players may polymorph each other */
+		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
 			sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
 	}
 #endif
@@ -5913,6 +5906,64 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	int tx, ty;
 
 	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
+
+	char pattacker[80];
+
+	/* WRAITHFORM reduces damage/effect!  - sorry, 9999 is the priest spell hack :P */
+	if (p_ptr->tim_wraith && dam != 9999) dam /= 2;
+
+	/* Use the given direction */
+	tx = p_ptr->px + 99 * ddx[dir];
+	ty = p_ptr->py + 99 * ddy[dir];
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay(Ind))
+	{
+		flg &= ~(PROJECT_STOP);
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+	project_interval = interval;
+	project_time = time;
+
+	if (snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker) < 0) return (FALSE);
+
+	/* Analyze the "dir" and the "target".  Hurt items on floor. */
+
+#ifdef USE_SOUND_2010
+	/* paranoia, aka this won't exist as "clouds".. */
+	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
+	else if (typ == GF_DETONATION) sound(Ind, "detonation", NULL, SFX_TYPE_COMMAND, FALSE);
+	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_COMMAND, FALSE);
+	/* only this one needed really */
+	else sound(Ind, "cast_cloud", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+	/* Hack: Make HEALINGCLOUD affect the caster too! */
+#if 0
+	/* Note: 'Ind' < 0 (eg PROJECTOR_EFFECT) disables projection on monsters,
+	   so HEALINGCLOUD wouldn't damage undeads - well, maybe it shouldn't. */
+	if (typ == GF_HEALINGCLOUD)
+		return (project(PROJECTOR_EFFECT, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+	else
+		return (project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+#else /* affect self + players + monsters AND give credit on kill */
+	if (typ == GF_HEALINGCLOUD) flg |= PROJECT_PLAY;
+	return (project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+#endif
+}
+
+/*
+ * Cast a cloud spell that may additionally hit targets with rad 1 balls.
+ * Added for runecraft's 'enhanced' cloud spell.
+ * (Note: PROJECT_CRIT should be kept separate from instantaneous type spells, to prevent overload.)
+ */
+bool fire_crit_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker)
+{
+	player_type *p_ptr = Players[Ind];
+	int tx, ty;
+
+	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_CRIT;
 
 	char pattacker[80];
 
@@ -6260,6 +6311,42 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
 }
 
 /*
+ * Cast a cloud spell in the shape of a beam.
+ * Added for runecraft's 'enhanced' beam spell.
+ */
+bool fire_beam_cloud(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker)
+{
+	player_type *p_ptr = Players[Ind];
+	int tx, ty;
+
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
+
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) dam /= 2;
+
+	/* Use the given direction */
+	tx = p_ptr->px + ddx[dir];
+	ty = p_ptr->py + ddy[dir];
+
+	/* Hacked hack -- Use the original "target" */
+	if ((dir == 5) && target_okay(Ind)) {
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+
+	project_interval = interval;
+	project_time = time;
+	project_time_effect = EFF_WALL; //Kurzel -- Rewrite effect code for this new flag!
+	
+#ifdef USE_SOUND_2010
+	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+	/* Analyze the "dir" and the "target", do NOT explode */
+	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
+}
+
+/*
  * Cast a cloud spell
  * Stop if we hit a monster, act as a "ball"
  * Allow "target" mode to pass over monsters
@@ -6570,13 +6657,32 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 	if (f2 & TR2_RES_NEXUS) r_ptr->flags3 |= RF3_RES_NEXU;
 	if (f2 & TR2_RES_DISEN) r_ptr->flags3 |= RF3_RES_DISE;
 
-	/* Allow use of runes */
-	if (o_ptr->tval == TV_RUNE2) switch(o_ptr->sval) {
-	case SV_RUNE2_FIRE: r_ptr->flags3 |= RF3_IM_FIRE; break;
-	case SV_RUNE2_ACID: r_ptr->flags3 |= RF3_IM_ACID; break;
-	case SV_RUNE2_NETHER: r_ptr->flags3 |= RF3_RES_NETH; break;
-	case SV_RUNE2_NEXUS: r_ptr->flags3 |= RF3_RES_NEXU; break;
-//	case SV_RUNE2_MANA: r_ptr->flags9 |= RF9_RES_MANA; break;
+	/* Allow use of runes - some are redundant (for completeness) */
+	if (o_ptr->tval == TV_RUNE) switch(o_ptr->sval) {
+	case SV_R_LITE: r_ptr->flags9 |= RF9_RES_LITE; break;
+	case SV_R_DARK: r_ptr->flags9 |= RF9_RES_DARK; break;
+	case SV_R_NEXU: r_ptr->flags3 |= RF3_RES_NEXU; break;
+	case SV_R_NETH: r_ptr->flags3 |= RF3_RES_NETH; break;
+	case SV_R_CHAO: r_ptr->flags9 |= RF9_RES_CHAOS; break;
+	case SV_R_MANA: r_ptr->flags9 |= RF9_RES_MANA; break;
+	
+	case SV_R_CONF: r_ptr->flags3 |= RF3_NO_CONF; break;
+//	case SV_R_INER: r_ptr->flags4 |= RF4_BR_INER; break; //Inertia has no resist; alt: RF3_NO_TELE!
+	case SV_R_ELEC: r_ptr->flags3 |= RF3_IM_ELEC; break;
+	case SV_R_FIRE: r_ptr->flags3 |= RF3_IM_FIRE; break;
+	case SV_R_WATE: r_ptr->flags3 |= RF3_RES_WATE; break;
+//	case SV_R_GRAV: r_ptr->flags4 |= RF4_BR_GRAV; break; //Gravity has no resist (for mobs)!
+	case SV_R_COLD: r_ptr->flags3 |= RF3_IM_COLD; break;
+	case SV_R_ACID: r_ptr->flags3 |= RF3_IM_ACID; break;
+	case SV_R_POIS: r_ptr->flags3 |= RF3_IM_POIS; break;
+	case SV_R_TIME: r_ptr->flags9 |= RF9_RES_TIME; break;
+	case SV_R_SOUN: r_ptr->flags9 |= RF9_RES_SOUND; break;
+	case SV_R_SHAR: r_ptr->flags9 |= RF9_RES_SHARDS; break;
+	case SV_R_DISE: r_ptr->flags3 |= RF3_RES_DISE; break;
+//	case SV_R_FORC: r_ptr->flags4 |= RF4_BR_WALL; break; //Force has no resist (for mobs); alt: RF3_NO_SLEEP!
+	case SV_R_PLAS: r_ptr->flags3 |= RF3_RES_PLAS; break;
+	
+	default: break;
 	}
 }
 
@@ -7010,7 +7116,8 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 	if (!cave_empty_bold(zcave, y, x)) return (0);
 	/* Hack -- no creation on glyph of warding */
 	if (zcave[y][x].feat == FEAT_GLYPH) return (0);
-
+	if (zcave[y][x].feat == FEAT_RUNE) return (0);
+	
 	/* Paranoia */
 	if (!r_idx) return (0);
 
@@ -7208,6 +7315,7 @@ void golem_creation(int Ind, int max)
 
 			/* Hack -- no creation on glyph of warding */
 			if (zcave[y][x].feat == FEAT_GLYPH) continue;
+			if (zcave[y][x].feat == FEAT_RUNE) continue;
 
 			if ((p_ptr->px == x) && (p_ptr->py == y)) continue;
 
@@ -7571,6 +7679,105 @@ bool do_vermin_control(int Ind) {
                 return TRUE;
         }
         return FALSE;
+}
+
+/* see rune_aux() below */
+void rune_combine(int Ind) {
+  player_type *p_ptr = Players[Ind];
+
+  clear_current(Ind);
+
+  p_ptr->current_rune = TRUE;
+  get_item(Ind);
+
+  return;
+}
+
+void rune_combine_aux(int Ind, int item) {
+	player_type *p_ptr = Players[Ind];
+
+	if (item == p_ptr->current_activation) return; //don't combine the same rune
+	
+	/* Recall the first rune */
+	object_type *o_ptr = &p_ptr->inventory[p_ptr->current_activation];
+			
+	/* Store the combining flag */
+	s16b e_flags = r_elements[o_ptr->sval].flag;
+	
+	/* Remember the original info */
+	s32b owner = o_ptr->owner;
+	byte mode = o_ptr->mode;
+	s16b level = o_ptr->level;
+	byte discount = o_ptr->discount;
+	byte number = o_ptr->number;
+			
+	/* Recall the second rune */
+	o_ptr = &p_ptr->inventory[item];
+#ifdef RCRAFT_DEBUG
+s_printf("RCRAFT_DEBUG: 1 \n");
+#endif
+	/* Sanity check */
+#ifdef RCRAFT_DEBUG
+s_printf("RCRAFT_DEBUG: 2 \n");
+#endif
+	if (o_ptr->tval != TV_RUNE) return; //not a rune
+#ifdef RCRAFT_DEBUG
+s_printf("RCRAFT_DEBUG: 3 \n");
+#endif
+	if (o_ptr->sval >= RCRAFT_MAX_ELEMENTS) return; //not a basic rune
+#ifdef RCRAFT_DEBUG
+s_printf("RCRAFT_DEBUG: 4 \n");
+#endif
+	if (!(o_ptr->level) && !(o_ptr->owner == p_ptr->id)) return; //not owned
+#ifdef RCRAFT_DEBUG
+s_printf("RCRAFT_DEBUG: 5 \n");
+#endif
+
+	/* Store the combining flag */
+	e_flags |= r_elements[o_ptr->sval].flag;
+
+	/* Lookup resulting rune -- (flags_to_projection) - Kurzel */
+	byte i;
+	for (i = 0; i < RCRAFT_MAX_PROJECTIONS; i++) {
+		if (e_flags == r_projections[i].flags)
+			break;
+	}
+			
+	/* Store combined item values -- use worst case! */
+	level = (o_ptr->level > level) ? o_ptr->level : level;
+	discount = (o_ptr->discount > discount) ? o_ptr->discount : discount;
+	number = (o_ptr->number < number) ? o_ptr->number : number;
+			
+	/* Destroy the rune stacks in the pack */
+	msg_format(Ind, "There is a coupling of magic.");
+	inven_item_increase(Ind, p_ptr->current_activation, -number);
+	inven_item_increase(Ind, item, -number);
+	if (p_ptr->current_activation > item) { //higher value (lower in inventory) first; to preserve indexes
+		inven_item_optimize(Ind, p_ptr->current_activation);
+		inven_item_optimize(Ind, item);
+	} else {
+		inven_item_optimize(Ind, item);
+		inven_item_optimize(Ind, p_ptr->current_activation);
+	}
+
+	/* Make new stack */
+	object_type *q_ptr, forge;
+
+	/* Default rune template */
+	q_ptr = &forge;
+	object_wipe(q_ptr);
+	invcopy(q_ptr, lookup_kind(TV_RUNE, i));
+
+	/* Recall original parameters */
+	q_ptr->owner = owner;
+	q_ptr->mode = mode;
+	q_ptr->level = level;
+	q_ptr->discount = discount;
+	q_ptr->number = number;
+
+	/* Create the rune stack */
+	inven_carry(Ind, q_ptr);
+
 }
 
 /* see create_custom_tome_aux() below */

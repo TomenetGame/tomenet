@@ -655,6 +655,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
 
 		/* Hack: no summon on glyph of warding */
 		if (zcave[y][x].feat == FEAT_GLYPH) continue;
+		if (zcave[y][x].feat == FEAT_RUNE) continue;
 #if 0
 		if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
 
@@ -689,6 +690,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
 			
 			/* Hack: no summon on glyph of warding */
 			if (zcave[y][x].feat == FEAT_GLYPH) continue;
+			if (zcave[y][x].feat == FEAT_RUNE) continue;
 #if 0
 			if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
 
@@ -4492,33 +4494,9 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 		case GF_DISP_DEMON:
 //		case GF_HAND_DOOM:
 		case GF_STASIS:
-		case GF_ACID_ELEC: /* Runemasters - Kurzel */
-		case GF_ACID_FIRE:
-		case GF_ACID_COLD:
-		case GF_ACID_POISON:
-		case GF_ELEC_FIRE:
-		case GF_ELEC_COLD:
-		case GF_ELEC_POISON:
-		case GF_FIRE_COLD:
-		case GF_FIRE_POISON:
-		case GF_COLD_POISON:
-		case GF_ACID_DISARM:
-		case GF_ELEC_DISARM:
-		case GF_FIRE_DISARM:
-		case GF_COLD_DISARM:
-		case GF_HI_ACID:
-		case GF_HI_ELEC:
-		case GF_HI_FIRE:
-		case GF_HI_COLD:
-		case GF_HI_POISON:
+		/* To remove some hacks? */
 		case GF_THUNDER:
-		case GF_DIG_FIRE:
-		case GF_GENOCIDE:
-		case GF_WONDER:
 		case GF_ANNIHILATION:
-		case GF_AFFLICT:
-		case GF_LIFE_FIRE:
-		case GF_BLIGHT:
 			break;
 
 		default: /* no need to avoid healing cloud or similar effects - C. Blue */
@@ -7370,7 +7348,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			}
 		}
 		/* Floor is trapped? */
-		else if (c_ptr->feat == FEAT_MON_TRAP || c_ptr->feat == FEAT_RUNE_TRAP)
+		else if (c_ptr->feat == FEAT_MON_TRAP)
 		{
 			/* Go ahead and move */
 			do_move = TRUE;
@@ -7394,6 +7372,41 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				/* Break the rune */
 				cave_set_feat_live(wpos, ny, nx, FEAT_FLOOR);
 
+				/* Allow movement */
+				do_move = TRUE;
+			}
+#ifdef SAURON_ANTI_GLYPH
+			/* Special power boost for Sauron if he gets hindered by glyphs */
+			else if (m_ptr->r_idx == 860 && base_r_ptr->freq_innate != 75) {
+				base_r_ptr->freq_spell = base_r_ptr->freq_innate = 75;
+				s_printf("SAURON: boost (glyph move).\n");
+			}
+		} else if (do_move && m_ptr->r_idx == 860 &&
+		    !m_ptr->extra && /* avoid oscillating too quickly from glyphs-prevent-summoning boost */
+		    base_r_ptr->freq_innate != 50) {
+			base_r_ptr->freq_spell = base_r_ptr->freq_innate = 50; /* hardcoded :| */
+			s_printf("SAURON: normal.\n");
+		}
+#else
+		}
+#endif
+
+		/* Hack -- check for Rune of Warding (Runecraft) */
+		if (do_move && (c_ptr->feat == FEAT_RUNE) &&
+		    !((r_ptr->flags1 & RF1_NEVER_MOVE) && (r_ptr->flags1 & RF1_NEVER_BLOW))) {
+			/* Assume no move allowed */
+			do_move = FALSE;
+
+			/* Break the ward - Michael (because he embodies the Glyph power sort of),
+			   Morgoth and certain Nether Realm monsters may insta-break them. */
+			if (randint(BREAK_GLYPH) < r_ptr->level || r_ptr->level >= 98) { // || r_ptr->level == 98 || r_ptr->level >= 100) {
+				/* Describe observable breakage */
+				/* Prolly FIXME */
+				msg_print_near_site(ny, nx, wpos, 0, TRUE, "The rune of warding is broken!");
+
+				/* Do this after the monster moves */
+				//if (warding_rune_break(m_idx)) return;
+				
 				/* Allow movement */
 				do_move = TRUE;
 			}
@@ -8021,7 +8034,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 			/* Check for monster trap */
 			if (c_ptr->feat == FEAT_MON_TRAP && mon_hit_trap(m_idx)) return;
-			if (c_ptr->feat == FEAT_RUNE_TRAP && mon_hit_rune_trap(m_idx)) return;
+			
+			/* Explosive glyph? */
+			if (c_ptr->feat == FEAT_RUNE && warding_rune_break(m_idx)) return;
 		}
 
 		/* Stop when done */

@@ -1398,11 +1398,6 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "NEW_TOMES") && negation) invalid = TRUE;
 #endif
-#ifndef ENABLE_RCRAFT
-		if (streq(m, "ENABLE_RCRAFT") && !negation) invalid = TRUE;
-#else
-		if (streq(m, "ENABLE_RCRAFT") && negation) invalid = TRUE;
-#endif
 //#ifndef PRECIOUS_STONES
 //		if (streq(m, "PRECIOUS_STONES") && !negation) invalid = TRUE;
 //#else
@@ -1423,7 +1418,6 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_STANCES") &&
 		    strcmp(m, "ENABLE_MCRAFT") &&
 		    strcmp(m, "NEW_TOMES") &&
-		    strcmp(m, "ENABLE_RCRAFT") &&
 //		    strcmp(m, "PRECIOUS_STONES") &&
 			TRUE)
 			invalid = TRUE;

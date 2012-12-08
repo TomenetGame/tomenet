@@ -1537,7 +1537,7 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 /*		case TV_BOTTLE: item = "potion"; break;
 		case TV_POTION: case TV_POTION2: case TV_FLASK:
 			item = "potion"; break;*/
-		case TV_RUNE1: case TV_RUNE2:
+		case TV_RUNE:
 			item = "rune"; break;
 //		case TV_SKELETON: item = ""; break;
 		case TV_FIRESTONE: item = "firestone"; break;

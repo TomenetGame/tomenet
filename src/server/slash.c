@@ -1046,7 +1046,6 @@ void do_slash_cmd(int Ind, char *message)
 					- (extract_energy[p_ptr->pspeed] / 10) * 10);
 			
 			if (get_skill(p_ptr, SKILL_DODGE)) use_ability_blade(Ind);
-			//if (get_skill(p_ptr, SKILL_DODGE) || p_ptr->tim_dodge) use_ability_blade(Ind); //Kurzel!!
 
 #if 0 /* this is already displayed to the left */
 			/* Insanity warning (better message needed!) */
@@ -1209,55 +1208,8 @@ void do_slash_cmd(int Ind, char *message)
 			
 			if (p_ptr->prace == RACE_VAMPIRE) {
 				if (lev >= 20) msg_print(Ind, "\377GYou are able to turn into a vampire bat (#391).");
-			}
-#ifndef ENABLE_RCRAFT
-			if (p_ptr->pclass == CLASS_RUNEMASTER) {
-				msg_format(Ind, "\377BYour rune mastery rating is %d.", RUNE_DMG);
-#ifdef ALTERNATE_DMG
-				if (get_skill_scale(p_ptr, SKILL_RUNEMASTERY, 50) < 25) {
-					msg_print(Ind, "\377yYou do not use the full SP mentioned here.");
-					msg_print(Ind, "\377yYou do not do the full damage mentioned here.");
-				}
-#endif
-				msg_print(Ind,  "\377B|  Type  |   Damage   | Cost (base, medium, adv)");
-				msg_format(Ind, "\377B|  Bolt  | %2dd%2.0d + 3  | %4.0f, %4.0f, %4.0f", 
-					(int)(1 + RUNE_DMG), (int)(1 + RUNE_DMG/2),
-					(RUNE_DMG*RBASIC_COST*RBOLT_BASE),
-					(RUNE_DMG*RMEDIUM_COST*RBOLT_BASE),
-					(RUNE_DMG*RADVANCE_COST*RBOLT_BASE));
-				msg_format(Ind, "\377B|  Beam  | %2dd%2.0d + 3  | %4.0f, %4.0f, %4.0f", 
-					(int)(1 + RUNE_DMG), (int)(1 + RUNE_DMG/3),
-					(RUNE_DMG*RBASIC_COST*RBEAM_BASE),
-					(RUNE_DMG*RMEDIUM_COST*RBEAM_BASE),
-					(RUNE_DMG*RADVANCE_COST*RBEAM_BASE));
-				msg_format(Ind, "\377B|  Ball  | %2dd%2.0d + 3  | %4.0f, %4.0f, %4.0f", 
-					(int)(1 + RUNE_DMG), (int)(1 + RUNE_DMG/3),
-					(RUNE_DMG*RBASIC_COST*RBALL_BASE),
-					(RUNE_DMG*RMEDIUM_COST*RBALL_BASE),
-					(RUNE_DMG*RADVANCE_COST*RBALL_BASE)); 
-				msg_format(Ind, "\377B|  Cloud | %2d dur:%2d  | %4.0f, %4.0f, %4.0f", 
-					(int)(rcloud_dmg(RUNE_DMG)), (int)(RCLOUD_DURATION),
-					(RUNE_DMG*RBASIC_COST*RCLOUD_BASE),
-					(RUNE_DMG*RMEDIUM_COST*RCLOUD_BASE),
-					(RUNE_DMG*RADVANCE_COST*RCLOUD_BASE));
-
-				lev = get_skill(p_ptr, SKILL_RUNEMASTERY);
-#ifdef ALTERNATE_DMG
-				if (lev >= RBARRIER) msg_print(Ind, "\377BYou are able to cast with your full potential");
-#endif
-
-#ifdef ALLOW_PERFECT_RUNE_CASTING
-				if (lev >= 15) msg_print(Ind, "\377BYou have perfect bolt casting.");
-				if (lev >= 25) msg_print(Ind, "\377BYou have perfect beam casting.");
-				if (lev >= 35) msg_print(Ind, "\377BYou have perfect ball casting.");
-				if (lev >= 50) msg_print(Ind, "\377BYou have perfect cloud casting."); //omg wtf woot ^_^"
-#else
-				msg_print(Ind, "\377BFailure rate: 0.1%");
-#endif
-				lev = p_ptr->lev; //restore ^^"
 			}		
-#else //New Runemastery - Kurzel
-				/* New Runemaster /ex info */
+
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
 				if (!p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1) {
 					if (EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up)
@@ -1266,54 +1218,6 @@ void do_slash_cmd(int Ind, char *message)
 					else msg_print(Ind, "You may not collect \377yany more gold\377w or you will gain 1 experience point.");
 				}
 #endif
-				if (p_ptr->rcraft_empower) msg_print(Ind, "\377WYour flux projections are empowered to \377Rplasma\377W.");
-				if (p_ptr->rcraft_upkeep) {
-					msg_format(Ind, "\377WYour total upkeep is: \377o%d%%", p_ptr->rcraft_upkeep);
-					if (p_ptr->runetraps) msg_format(Ind, "\377WYou are sustaining \377o%d \377Wrune traps.", p_ptr->runetraps);
-					if (p_ptr->rcraft_dig) msg_print(Ind, "\377WYour ability to \377stunnel \377Wis enhanced.");
-					if (p_ptr->rcraft_regen) msg_print(Ind, "\377WYour \377Gregeneration \377Wis enhanced.");
-					if (p_ptr->rcraft_brand) { 
-						msg_print(Ind, "\377WYou are branded with:");
-						if (p_ptr->rcraft_brand == BRAND_CONF) msg_print(Ind, "\377UConfusion");
-						if (p_ptr->rcraft_brand == BRAND_VORP) msg_print(Ind, "\377DAnnihilation");
-					}
-					if (p_ptr->rcraft_attune) { 
-						msg_print(Ind, "\377WYour armament is attuned with:");
-						if ((p_ptr->rcraft_attune & R_ACID) == R_ACID) msg_print(Ind, "\377sAcid");
-						if ((p_ptr->rcraft_attune & R_ELEC) == R_ELEC) msg_print(Ind, "\377bElectricity");
-						if ((p_ptr->rcraft_attune & R_FIRE) == R_FIRE) msg_print(Ind, "\377rFire");
-						if ((p_ptr->rcraft_attune & R_COLD) == R_COLD) msg_print(Ind, "\377wCold");
-						if ((p_ptr->rcraft_attune & R_POIS) == R_POIS) msg_print(Ind, "\377gPoison");
-					}
-					if (p_ptr->rcraft_repel) { 
-						msg_print(Ind, "\377WYour raiment is imbued with:");
-						if ((p_ptr->rcraft_repel & R_ACID) == R_ACID) msg_print(Ind, "\377sAcid");
-						if ((p_ptr->rcraft_repel & R_ELEC) == R_ELEC) msg_print(Ind, "\377bElectricity");
-						if ((p_ptr->rcraft_repel & R_FIRE) == R_FIRE) msg_print(Ind, "\377rFire");
-						if ((p_ptr->rcraft_repel & R_COLD) == R_COLD) msg_print(Ind, "\377wCold");
-						if ((p_ptr->rcraft_repel & R_POIS) == R_POIS) msg_print(Ind, "\377gPoison");
-					}
-					if (p_ptr->rcraft_upkeep_flags) {
-						if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_DO) msg_print(Ind, "\377WYou are floating in a bubble of pressure."); //Feather Fall
-						if ((p_ptr->rcraft_upkeep_flags & RUPK_MIN_FA) || (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CU) 
-						|| (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CO) || (p_ptr->rcraft_upkeep_flags & RUPK_MIN_HL))
-							msg_print(Ind, "\377WYou are sealing:");
-						if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_FA) msg_print(Ind, "\377rParalysis");
-						if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CU) msg_print(Ind, "\377uCuts");
-						if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CO) msg_print(Ind, "\377UConfusion");
-						if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_HL) msg_print(Ind, "\377DLife-Draining Attacks");
-						if ((p_ptr->rcraft_upkeep_flags & RUPK_MAJ_NE) || (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_TR) 
-						//|| (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_DO) || (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_ST))
-						|| (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_ST))
-							msg_print(Ind, "\377WYou are boosting:");
-						if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_NE) msg_print(Ind, "\377RNecromancy");
-						if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_TR) msg_print(Ind, "\377BTraumaturgy");
-						if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_ST) msg_print(Ind, "\377DStealth");
-						//if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_DO) msg_print(Ind, "\377bDodging");
-						
-					}
-				}
-#endif //ENABLE_RCRAFT
 
 			/* display PvP kills */
 			if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills);

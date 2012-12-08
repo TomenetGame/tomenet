@@ -597,7 +597,7 @@ typedef struct c_special c_special;
 
 struct c_special{
 	unsigned char type;
-	union	/* 32bits -> 64bits (runetrap) */
+	union	/* 32bits -> 64bits (rune) */
 	{
 		void *ptr;		/* lazy - refer to other arrays or sth */
 		s32b omni;		/* needless of other arrays? k, add here! */
@@ -606,7 +606,7 @@ struct c_special{
 		struct { byte wx, wy; s16b wz; } wpos;	/* XXX */
 		struct { byte type, rest; bool known; } fountain;
 		struct { u16b trap_kit; byte difficulty, feat; } montrap;
-		struct { byte typ, mod, lev, feat; s32b id; } runetrap;
+		struct { byte typ, mod, lev, feat; s32b id; } rune;
 	} sc;
 	struct c_special *next;
 };
@@ -668,15 +668,16 @@ struct effect_type
 	s16b	interval;	/* How quickly does it tick (10 = normal, once per 10 frames at 0 ft depth) */
 	s16b    time;           /* For how long */
 	s16b    dam;            /* How much damage */
-	u32b    type;            /* Hack -- Store extra runespell info - Kurzel */
-	//s16b    type;           /* Of which type */ /* GF_XXX, for now */
-	s16b    cy;             /* Center of the cast*/
-	s16b    cx;             /* Center of the cast*/
-	s16b    rad;            /* Radius -- if needed *//* Not used? */
+	u32b    type;           /* Of which type */ /* GF_XXX, for now */
+	s16b	sy;		/* Start of the cast (beam shapes) */
+	s16b	sx;		/* Start of the cast (beam shapes) */
+	s16b    cy;             /* Center of the cast */
+	s16b    cx;             /* Center of the cast */
+	s16b    rad;            /* Radius */
 	u32b    flags;          /* Flags */
 
-	s32b	who;			/* Who caused this effect (0-id if player) */
-	worldpos wpos;			/* Where in the world */
+	s32b	who;		/* Who caused this effect (0-id if player) */
+	worldpos wpos;		/* Where in the world */
 };
 
 /*
@@ -723,7 +724,7 @@ struct object_type
 	s32b pval2;			/* Item extra-parameter for some special items */
 	s32b pval3;			/* Item extra-parameter for some special items */
 #endif
-#if 1 /* don't exist in the code at all, except load/save */
+#if 1 /* don't exist in the code at all, except load/save - Shall be used for temporarily augmented items, such as for Runecraft. - Kurzel */
 	s32b pval4;			/* Item extra-parameter for some special items */
 	s32b pval5;			/* Item extra-parameter for some special items */
 #endif
@@ -2004,77 +2005,6 @@ struct player_type
 
 	struct worldpos wpos;
 
-	/* New Runecraft Feature Variables - Kurzel */
-	s16b rcraft_augment;	/* Toggle -- Augment */
-	byte rcraft_project;	/* XOR Toggle (with istari project) */
-	s16b rcraft_xtra_a;	/* Charge -- First Rune */
-	s16b rcraft_xtra_b;	/* Charge -- Second Rune */
-	u16b tim_rcraft_xtra;	/* Timed -- Rune charges */
-
-	u16b tim_rcraft_help;	/* Timed -- Helper Timer */
-	byte tim_rcraft_help_type;
-	byte tim_rcraft_help_projection;
-	u32b tim_rcraft_help_damage;
-
-	byte rcraft_upkeep;	/* SP% Upkeep */
-	u16b rcraft_attune;
-	u16b rcraft_repel;
-	byte rcraft_brand;
-
-	u16b tim_brand_acid;
-	u16b tim_brand_elec;
-	u16b tim_brand_fire;
-	u16b tim_brand_cold;
-	u16b tim_brand_pois;
-	u16b tim_brand_vorp;
-	u16b tim_brand_conf;
-
-//	u16b tim_aura_acid;
-	u16b tim_aura_elec;
-	u16b tim_aura_fire;
-	u16b tim_aura_cold;
-
-	byte rcraft_dig;		/* PVAL+ */
-	byte rcraft_upkeep_flags;	/* 8 Flags */
-
-	u16b tim_necro;		/* Timed -- Necromancy */
-	u16b tim_necro_pow;
-	u16b tim_dodge;		/* Timed -- Dodging */
-	u16b tim_dodge_pow;
-	u16b tim_stealth;	/* Timed -- Stealth */
-	u16b tim_stealth_pow;
-
-#if 1
-	u16b tim_brand_ex;		/* Timed -- Explosive Brand/Aura */
-	byte tim_brand_ex_projection;
-	u32b tim_brand_ex_damage;
-	u16b tim_aura_ex;
-	byte tim_aura_ex_projection;
-	u32b tim_aura_ex_damage;
-#endif
-
-	u16b rcraft_empower;
-	u16b rcraft_regen;
-
-#if 0
-	u16b protacid;	/* Timed -- Protection */
-	u16b protelec;
-	u16b protfire;
-	u16b protcold;
-	u16b protpois;
-#endif
-
-	u16b tim_elemshield;	/* Timed -- Elemental Disruption Shield */
-	byte tim_elemshield_type;
-
-	struct worldspot memory_port[5];	/* Runemaster Memory Portal Locations */
-	byte memory_feat[5];			/* Byte to restore the original feat */
-
-	struct worldspot memory; /* Runemaster's remembered teleportation spot */
-	u16b tim_deflect;	/* Timed -- Deflection */
-	u16b tim_trauma;	/* Timed -- Traumaturgy */
-	u16b tim_trauma_pow;	/* Timed -- Traumaturgy */
-
 	s16b cur_hgt;		/* Height and width of their dungeon level */
 	s16b cur_wid;
 
@@ -2278,13 +2208,11 @@ struct player_type
 	s16b current_identify;	/* Are we identifying something? */
 	s16b current_star_identify;
 	s16b current_recharge;
-	s16b current_rune_dir; /* Current rune spell direction */
-	s16b current_rune1; /* Current rune1 index in bag */
-	s16b current_rune2; /* Current rune2 index in bag */
 	s16b current_artifact;
 	object_type *current_telekinesis;
 	s16b current_curse;
 	s16b current_tome_creation; /* adding a spell scroll to a custom tome - C. Blue */
+	s16b current_rune;
 	s16b current_force_stack; /* which level 0 item we're planning to stack */
 	s16b current_wand;
 	s16b current_item;
@@ -2292,12 +2220,9 @@ struct player_type
 	s16b current_fire;
 	s16b current_throw;
 	s16b current_book;
-#ifdef ENABLE_RCRAFT // Kurzel
 	s16b current_rcraft;
-	u16b current_rcraft_e_flags1;
-	u16b current_rcraft_e_flags2;
+	u16b current_rcraft_e_flags;
 	u16b current_rcraft_m_flags;
-#endif
 	s16b current_selling;
 	s16b current_sell_amt;
 	int current_sell_price;
@@ -2757,16 +2682,6 @@ struct player_type
 	u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
 	u32b global_event_temp; /* not saved. see defines.h for details */
 
-	/* Add more here... These are "toggle" buffs. They will add to the num_of_buffs
-	 * and that number will affect mana usage */
-	int rune_num_of_buffs;
-#ifdef ENABLE_RUNEMASTER
-	int rune_speed;
-	int rune_stealth;
-	int rune_IV;
-	int rune_vamp;
-#endif //runemaster
-
 #ifdef ENABLE_MAIA
 	int voidx; int voidy; //for the void jumpgate creation spell; reset on every recall/levelchange/relogins
 
@@ -2802,24 +2717,21 @@ struct player_type
 	bool shadow_running;
 	bool dual_mode; /* for dual-wield: TRUE = dual-mode, FALSE = main-hand-mode */
 
-#ifdef ENABLE_RCRAFT //Kurzel
-	/* Last attack spell cast for ftk mode */
+	/* Runecraft Info */
+	/* FTK */
 	bool shoot_till_kill_rcraft;
-	u16b FTK_e_flags1;
-	u16b FTK_e_flags2;
+	u16b FTK_e_flags;
 	u16b FTK_m_flags;
 	u16b FTK_energy;
+	/* Timed Buff (NOT saved!) For enhanced storm spell.*/
+	u16b tim_rcraft_help;
+	byte tim_rcraft_help_type;
+	byte tim_rcraft_help_projection;
+	byte tim_rcraft_help_dx;
+	byte tim_rcraft_help_dy;
+	
 
-	/* New variables to keep track of new temporary debuffs on players */
-	int temporary_speed_dur, temporary_speed;
-	int temporary_am;
-	int temporary_to_l_dur, temporary_to_l;
-
-	/* Runecraft traps, draining MP as (uncontrollable!) upkeep each */
-	s16b runetraps, runetrap_x[UPKEEP_TRAP], runetrap_y[UPKEEP_TRAP];
-	s16b msp_freely, msp_normal, runetrap_drain_life;
-#endif
-#if (defined(ENABLE_RCRAFT) || defined(DUNGEON_VISIT_BONUS))
+#if defined(DUNGEON_VISIT_BONUS)
 	struct worldpos wpos_old;
 #endif
 
@@ -3371,21 +3283,12 @@ struct global_event_type
 };
 
 
-#ifdef ENABLE_RCRAFT
-
 typedef struct r_element r_element;
 struct r_element
 {
 	u16b flag;
 	char * name;
 	u16b skill;
-	s16b level;
-	s16b energy;
-	s16b cost;
-	s16b fail;
-	s16b damage;
-	s16b radius;
-	s16b duration;
 };
 
 typedef struct r_imperative r_imperative;
@@ -3393,13 +3296,13 @@ struct r_imperative
 {
 	u16b flag;
 	char * name;
-	s16b level;
-	s16b energy;
-	s16b cost;
+	byte level;
+	byte cost;
 	s16b fail;
-	s16b damage;
+	byte damage;
 	s16b radius;
-	s16b duration;
+	byte duration;
+	byte energy;
 };
 
 typedef struct r_type r_type;
@@ -3407,13 +3310,19 @@ struct r_type
 {
 	u16b flag;
 	char * name;
-	s16b level;
-	s16b energy;
-	s16b cost;
-	s16b fail;
-	s16b damage;
-	s16b radius;
-	s16b duration;
+	byte level;
+	byte c_min;
+	byte c_max;
+	byte d1min;
+	byte d2min;
+	byte d1max;
+	byte d2max;
+	byte dbmin;
+	u16b dbmax;
+	byte r_min;
+	byte r_max;
+	byte d_min;
+	byte d_max;
 };
 
 typedef struct r_projection r_projection;
@@ -3421,13 +3330,9 @@ struct r_projection
 {
 	u16b flags;
 	int gf_type;
-	int gf_class;
 	int weight;
-	char * adj;
 	char * name;
 };
-
-#endif /* ENABLE_RCRAFT */
 
 
 /* Auction system - mikaelh */

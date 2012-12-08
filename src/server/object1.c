@@ -464,8 +464,7 @@ static bool object_easy_know(int i)
                 case TV_FIRESTONE:
                 case TV_CORPSE:
                 case TV_HYPNOS:
-		case TV_RUNE1:
-		case TV_RUNE2:
+		case TV_RUNE:
 		{
 			return (TRUE);
 		}
@@ -1610,25 +1609,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 				else modstr = "Unknown spell";
 			}
 			break;
-		case TV_RUNE1:
-		    append_name = TRUE;
-		    basenm = "& Basic Rune~#";
-		    break;
 
-#ifndef ENABLE_RCRAFT
-		case TV_RUNE2:
-		    append_name = TRUE;
-		    basenm = "& Modifiying Rune~#";
-		    break;
-#else
-		case TV_RUNE2: //Kurzel
+		case TV_RUNE:
 			append_name = TRUE;
-			//if (o_ptr->sval >= 0 && o_ptr->sval < RCRAFT_MAX_ELEMENTS)
-			//	modstr = r_elements[o_ptr->sval].e_syl;
-			//else	modstr = "";
 			basenm = "& Rune~";
 			break;
-#endif
 
 		/* Used in the "inventory" routine */
 		default:
@@ -1699,10 +1684,6 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 		/* A single one, with a vowel in the modifier */
 		else if ((*s == '#') && is_a_vowel(modstr[0])) {
-			t = object_desc_str(t, "an ");
-		}
-		/* for runes, which have a quotation mark before the mod string */
-		else if ((*(s+1) == '#') && is_a_vowel(modstr[0])) {
 			t = object_desc_str(t, "an ");
 		}
 
@@ -4633,9 +4614,6 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "It produces an electric sheath.\n");
 	if (f3 & (TR3_NO_MAGIC))
 		fprintf(fff, "It produces an anti-magic shell.\n");
-	/* Mega Hack^3 -- describe the Anchor of Space-time */
-	if (o_ptr->name1 == ART_ANCHOR)
-		fprintf(fff, "It prevents the space-time continuum from being disrupted.\n");
 
 	if (f3 & (TR3_BLESSED))
 		fprintf(fff, "It has been blessed by the gods.\n");
@@ -4942,14 +4920,7 @@ s16b wield_slot(int Ind, object_type *o_ptr)
 		case TV_DIGGING:
 		case TV_TOOL:
 			return (INVEN_TOOL);
-#ifndef ENABLE_RCRAFT
-		case TV_RUNE1:
-		{
-			if (o_ptr->sval == SV_RUNE1_SELF && o_ptr->name2) 
-				return (INVEN_TOOL);
-			return (-1);
-		}
-#endif
+
 		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:

@@ -53,6 +53,25 @@ extern errr init_gtk(int, char **);
  * Not-so-Automatically generated "variable" declarations
  */
 
+ /* client/c-spell.c */
+extern byte flags_to_elements(byte element[], u16b e_flags);
+extern byte flags_to_imperative(u16b m_flags);
+extern byte flags_to_projection(u16b e_flags);
+extern byte rspell_skill(byte element[], byte elements);
+extern byte rspell_level(byte imperative, byte type);
+extern s16b rspell_diff(byte skill, byte level);
+extern byte rspell_cost(byte imperative, byte type, byte skill);
+extern byte rspell_fail(byte imperative, byte type, s16b diff, u16b penalty);
+extern u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, byte projection);
+extern byte rspell_radius(byte imperative, byte type, byte skill, byte projection);
+extern byte rspell_duration(byte imperative, byte type, byte skill);
+extern void do_runespell();
+/* common/tables.c */
+extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
+extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES+1];
+extern r_type r_types[RCRAFT_MAX_TYPES+1];
+extern r_projection r_projections[RCRAFT_MAX_PROJECTIONS];
+ 
 /* tables.c */
 extern byte adj_mag_stat[];
 extern byte adj_mag_fail[];
@@ -514,9 +533,7 @@ extern void do_stance(void);
 extern void do_melee_technique(void);
 extern void do_ranged_technique(void);
 extern bool get_item_hook_find_spell(int *item, bool inven_first);
-#ifdef ENABLE_RCRAFT
-extern char rcraft_threat_color(u16b e_flags, u16b m_flags);
-#endif
+
 /* c-store.c */
 extern bool leave_store;
 extern void display_inventory(void);
@@ -793,15 +810,6 @@ extern int stricmp(cptr a, cptr b);
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 extern void change_font(int s);
 extern void resize_main_window(int cols, int rows);
-#endif
-
-#ifdef ENABLE_RCRAFT //Kurzel
-/* c-spell.c */
-extern void do_runespell();
-/* tables.c */
-extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
-extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES];
-extern r_type r_types[RCRAFT_MAX_TYPES];
 #endif
 
 extern const cptr angband_sound_name[SOUND_MAX];

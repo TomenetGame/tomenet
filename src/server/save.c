@@ -849,17 +849,6 @@ static void wr_extra(int Ind)
         wr_s16b(p_ptr->kills_equal);
         wr_s16b(p_ptr->free_mimic);
 
-	/* Runecraft */
-	wr_s16b(p_ptr->memory.wpos.wx);
-	wr_s16b(p_ptr->memory.wpos.wy);
-	wr_s16b(p_ptr->memory.wpos.wz);
-	wr_s16b(p_ptr->memory.x);
-	wr_s16b(p_ptr->memory.y);
-
-	wr_u16b(p_ptr->tim_deflect);
-	wr_u16b(p_ptr->tim_trauma);
-	wr_u16b(p_ptr->tim_trauma_pow);
-
 	if (p_ptr->aura[0]) tmp8u |= 0x1;
 	if (p_ptr->aura[1]) tmp8u |= 0x2;
 	if (p_ptr->aura[2]) tmp8u |= 0x4;
@@ -883,72 +872,6 @@ static void wr_extra(int Ind)
 	/* For things like 'Officer' status to add others etc */
 	wr_u32b(p_ptr->party_flags);
 	wr_u32b(p_ptr->guild_flags);
-
-	/* New Runecraft Feature Variables - Kurzel */
-	wr_s16b(p_ptr->rcraft_augment);
-
-	wr_byte(p_ptr->rcraft_project);
-	wr_s16b(p_ptr->rcraft_xtra_a);
-	wr_s16b(p_ptr->rcraft_xtra_b);
-	wr_u16b(p_ptr->tim_rcraft_xtra);
-
-	wr_u16b(p_ptr->tim_rcraft_help);
-	wr_byte(p_ptr->tim_rcraft_help_type);
-	wr_byte(p_ptr->tim_rcraft_help_projection);
-	wr_u32b(p_ptr->tim_rcraft_help_damage);
-
-	wr_byte(p_ptr->rcraft_upkeep);
-	wr_u16b(p_ptr->rcraft_attune);
-	wr_u16b(p_ptr->rcraft_repel);
-	wr_byte(p_ptr->rcraft_brand);
-
-	wr_u16b(p_ptr->tim_brand_acid);
-	wr_u16b(p_ptr->tim_brand_elec);
-	wr_u16b(p_ptr->tim_brand_fire);
-	wr_u16b(p_ptr->tim_brand_cold);
-	wr_u16b(p_ptr->tim_brand_pois);
-	wr_u16b(p_ptr->tim_brand_vorp);
-	wr_u16b(p_ptr->tim_brand_conf);
-
-#if 0
-	wr_u16b(p_ptr->tim_aura_acid);
-#endif
-	wr_u16b(p_ptr->tim_aura_elec);
-	wr_u16b(p_ptr->tim_aura_fire);
-	wr_u16b(p_ptr->tim_aura_cold);
-
-	wr_byte(p_ptr->rcraft_dig);
-	wr_byte(p_ptr->rcraft_upkeep_flags);
-
-	wr_u16b(p_ptr->tim_necro);
-	wr_u16b(p_ptr->tim_necro_pow);
-	//wr_u16b(p_ptr->tim_dodge);
-	//wr_u16b(p_ptr->tim_dodge_pow);
-	wr_u16b(p_ptr->tim_stealth);
-	wr_u16b(p_ptr->tim_stealth_pow);
-
-#if 1
-	wr_u16b(p_ptr->tim_brand_ex);
-	wr_byte(p_ptr->tim_brand_ex_projection);
-	wr_u32b(p_ptr->tim_brand_ex_damage);
-	wr_u16b(p_ptr->tim_aura_ex);
-	wr_byte(p_ptr->tim_aura_ex_projection);
-	wr_u32b(p_ptr->tim_aura_ex_damage);
-#endif
-
-	wr_u16b(p_ptr->rcraft_empower);
-	wr_u16b(p_ptr->rcraft_regen);
-
-#if 0
-	wr_u16b(p_ptr->protacid);
-	wr_u16b(p_ptr->protelec);
-	wr_u16b(p_ptr->protfire);
-	wr_u16b(p_ptr->protcold);
-	wr_u16b(p_ptr->protpois);
-#endif
-
-	wr_u16b(p_ptr->tim_elemshield);
-	wr_byte(p_ptr->tim_elemshield_type);
 }
 
 /*

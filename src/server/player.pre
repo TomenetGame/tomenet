@@ -126,9 +126,6 @@ typedef unsigned int u32b;
 #define SKILL_DRUID_ARCANE	74
 #define SKILL_DRUID_PHYSICAL	75
 
-/* Runemasters */
-#define SKILL_RUNEMASTERY	76
-
 /* Divine race */
 #ifdef ENABLE_MAIA
 #define SKILL_ASTRAL		77
@@ -154,15 +151,15 @@ typedef unsigned int u32b;
 #define SKILL_FREEACT           92
 #define SKILL_RESCONF           93
 
-#ifdef ENABLE_RCRAFT
-#define SKILL_SCHOOL_RUNECRAFT	95	//was 87..
-#define SKILL_R_ACIDWATE	96
-#define SKILL_R_ELECEART	97
-#define SKILL_R_FIRECHAO	98	//was 94..
-#define SKILL_R_COLDNETH	99
-#define SKILL_R_POISNEXU	100
-#define SKILL_R_FORCTIME	101
-#endif
+/* Runecraft */
+#define SKILL_SCHOOL_RUNECRAFT	95
+#define SKILL_R_LITE		96
+#define SKILL_R_DARK		97
+#define SKILL_R_NEXU		98
+#define SKILL_R_NETH		99
+#define SKILL_R_CHAO		100
+#define SKILL_R_MANA		101
+
 
 /* Ugly but needed */
 #define MAX_SKILLS              128
@@ -898,7 +895,6 @@ struct player_type
 	s16b csane;                   /* Cur sanity */
 	u16b csane_frac;              /* Cur sanity frac */
 
-	byte rcraft_project;            /* Runecraft version - Kurzel */
 	byte spell_project;             /* Do the spells(some) affect nearby party members ? */
 	s16b dodge_level;
 	s32b tim_blacklist;
@@ -980,15 +976,6 @@ struct player_type
 	int mcharming;
 	u32b turns_on_floor;
 	bool dual_mode;
-
-#ifdef ENABLE_RCRAFT
-	/* New variables to keep track of new temporary debuffs on players */
-	int temporary_speed_dur; int temporary_speed;
-	int temporary_am;
-	int temporary_to_l_dur; int temporary_to_l;
-	s16b msp_freely;
-	s16b msp_normal;
-#endif
 
 	bool panel_changed;
 

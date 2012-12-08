@@ -2207,17 +2207,6 @@ static byte player_color(int Ind)
 //	if ((p_ptr->invuln > 5)) return p_ptr->cp_ptr->color + TERM_SHIELDI;
 	if (p_ptr->tim_manashield > 10) return TERM_SHIELDM;
 	
-	//Runemaster elemental shields - Kurzel
-	if (p_ptr->tim_elemshield > 10) {
-		switch (p_ptr->tim_elemshield_type) {
-		case 0: return TERM_ACID;
-		case 1: return TERM_ELEC;
-		case 2: return TERM_FIRE;
-		case 3: return TERM_COLD;
-		case 4: return TERM_POIS;
-		}
-	}
-	
 #if 0 /* shouldn't be necessary - mikaelh */
 //the_sandman: some redudant stuff, mebbe needs to be added here as the last colour possible
 	if (p_ptr->body_monster) {
@@ -2343,13 +2332,8 @@ byte get_monster_trap_color(int Ind, int o_idx, int feat) {
 	return a;
 }
 
-byte get_runecraft_trap_color(int Ind, int typ, int feat) { //Kurzel
+byte get_rune_color(int Ind, int typ) {
 	byte a = spell_color(r_projections[typ].gf_type);
-
-	/* Hack -- always l.blue if underwater */
-	if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
-		a = TERM_L_BLUE;
-
 	return a;
 }
 
@@ -2773,36 +2757,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 			}
 
-			/* Hack to display runecraft traps - Kurzel */
-			if ((cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) {
-
-				/* Hack -- random hallucination */
-				if (p_ptr->image) {
-/*					image_random(ap, cp); */
-					image_object(ap, cp);
-					a = randint(15);
-				} else {
-					/* If trap isn't on door display it */
-					/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
-//					(*cp) = ';';
-					a = get_runecraft_trap_color(Ind, 
-					    cs_ptr->sc.runetrap.typ,
-					    feat);
-				}
-			}
-			
-			/* Hack to display runecraft portals - //Kurzel!! */
-			if (feat == FEAT_RUNE_PORT) {
-
-				/* Hack -- random hallucination */
-				if (p_ptr->image) {
-/*					image_random(ap, cp); */
-					image_object(ap, cp);
-					a = randint(15);
-				} else {
-					a = TERM_SHIELDM; //terrible - no color distiction (how to access the type while not modifying cs?) - Kurzel
-				}
-			}
+			/* Hack to display "runes of warding" which are coloured by GF_TYPE */
+			if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) a = get_rune_color(Ind, cs_ptr->sc.rune.typ);
 
 			/* Hack to display detected traps */
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)))
@@ -3058,16 +3014,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		if (c_ptr->effect) {
 #if 0
 			(*ap) = spell_color(effects[c_ptr->effect].type);
-#else /* allow 'transparent' spells */
-			/* Hack -- Decode gf_type (for color). - Kurzel */
-			u32b typ_original = effects[c_ptr->effect].type;
-			effects[c_ptr->effect].type = effects[c_ptr->effect].type % HACK_GF_FACTOR;
-					
+#else /* allow 'transparent' spells */					
 			a = spell_color(effects[c_ptr->effect].type);
 			if (a != 127) (*ap) = a;
-						
-			/* Hack -- Restore runespell info. - Kurzel */
-			effects[c_ptr->effect].type = typ_original;	
 #endif
 		}
 
@@ -7258,7 +7207,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 	player_type *p_ptr;
 	cave_type **zcave;
 	cave_type *c_ptr;
-        struct c_special *cs_ptr;
+    struct c_special *cs_ptr;
 	int i;
 //	struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
 
@@ -7285,8 +7234,8 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 		case FEAT_DEEP_WATER:
 			if (TOWN_TERRAFORM_WATER == 0) return;
 			break;
-		case FEAT_RUNE_TRAP:
 		case FEAT_GLYPH:
+		case FEAT_RUNE:
 			if (TOWN_TERRAFORM_GLYPHS == 0) return;
 			break;
 		}
@@ -7305,14 +7254,14 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 		case FEAT_DEEP_WATER:
 			if (TOWN_TERRAFORM_WATER == 0) return;
 			break;
-		case FEAT_RUNE_TRAP:
 		case FEAT_GLYPH:
+		case FEAT_RUNE:
 			if (TOWN_TERRAFORM_GLYPHS == 0) return;
 			break;
 		}
 #else
 		/* hack: only allow around store entrances */
-		if (feat == FEAT_GLYPH) {
+		if (feat == FEAT_GLYPH || feat == FEAT_RUNE) {
 			return; //disallow glyphs
 		
 			for (i = 0; i < 9; i++)
@@ -7324,7 +7273,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 	}
 
 	/* No runes of protection / glyphs of warding on non-empty grids - C. Blue */
-	if ((feat == FEAT_GLYPH) && !(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
+	if ((feat == FEAT_GLYPH || feat == FEAT_RUNE) && !(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
 	    ((c_ptr->feat == FEAT_NONE) ||
 	    (c_ptr->feat == FEAT_FLOOR) ||
 	    (c_ptr->feat == FEAT_DIRT) ||
@@ -7389,15 +7338,6 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 	{
 		cs_erase(c_ptr, cs_ptr);
 	}
-
-#ifdef ENABLE_RCRAFT
-	/* If we're killing a rune trap (eg by *destruction*), clear the caster's upkeep - C. Blue */
-	if (c_ptr->feat == FEAT_RUNE_TRAP && (cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) {
-		remove_rune_trap_upkeep(0, cs_ptr->sc.runetrap.id, x, y);
-		cs_erase(c_ptr, cs_ptr);
-	}
-	//Kurzel!! *DESTRUCTION* shouldn't harm rune portals, like void gates? Also unsure of where the client displays TERM_SHIELDM for flickering shields, perhaps could display gate colors in a similar fashion?
-#endif
 
 	/* Change the feature */
 	if (c_ptr->feat != feat) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
@@ -8132,6 +8072,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 		break;
 
 	case FEAT_GLYPH:
+	case FEAT_RUNE:
 		/* generally allow in town, restrictions are applied in cave_set_feat_live().) */
 		if (sector00 || valinor || netherrealm_bottom) return(FALSE);
 		break;

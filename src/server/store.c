@@ -842,12 +842,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 		case STORE_RUNE_DUN:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
-#ifndef ENABLE_RUNEMASTER /* Are we using this space...? */
-				case TV_EGG:
-#else
-				case TV_RUNE1:
-				case TV_RUNE2: 
-#endif
+				case TV_RUNE: 
 					break;
 				default:
 					return (FALSE);
@@ -1238,7 +1233,7 @@ static bool black_market_crap(object_type *o_ptr)
 	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) return (TRUE);
 
 	/* No runes at all, actually... */
-	if ((o_ptr->tval == TV_RUNE1 || o_ptr->tval == TV_RUNE2))
+	if (o_ptr->tval == TV_RUNE)
 		return (TRUE);
 
 	/* No "Handbook"s in the BM (can only be found) - C. Blue */

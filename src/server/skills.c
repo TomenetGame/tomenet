@@ -574,29 +574,6 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYour shooting speed has become faster due to your training!");
 		}
 		break; 
-#ifdef ENABLE_RUNEMASTER
-	case SKILL_RUNEMASTERY:
- #if 0
-		if (old_value < RSAFE_BOLT * 10 && new_value >= RSAFE_BOLT * 10) {
-		    msg_print(Ind, "\374\377GYou are able to cast bolt rune spells without breaking the runes!");
-		} else if (old_value < RSAFE_BEAM * 10 && new_value >= RSAFE_BEAM * 10) {
-		    msg_print(Ind, "\374\377GYou are able to cast beam rune spells without breaking the runes!");
-		} else if (old_value < RSAFE_BALL * 10 && new_value >= RSAFE_BALL * 10) {
-		    msg_print(Ind, "\374\377GYou are able to cast ball rune spells without breaking the runes!");
-		} else if (old_value < RSAFE_CLOUD * 10 && new_value >= RSAFE_CLOUD * 10) {
-		    msg_print(Ind, "\374\377GYou are able to cast cloud rune spells without breaking the runes!");
-		}
- #ifdef ALTERNATE_DMG
-		if (old_value < RBARRIER * 10 && new_value >= RBARRIER * 10) {
-		    msg_print(Ind, "\374\377GYou feel your potential unleashed.");
-		}
- #endif /*ALTERNATE_DMG*/
- #else	/* Messages for "Rune Alacrity" Skill - New Runemastery - Kurzel */
-		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\374\377GYour casting speed has become faster due to your training!");
-		}
- #endif
-#endif
 	case SKILL_AURA_FEAR: if (old_value == 0 && new_value > 0) p_ptr->aura[0] = TRUE; break; /* MAX_AURAS */
 	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0) p_ptr->aura[1] = TRUE; break;
 	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0) p_ptr->aura[2] = TRUE; break;

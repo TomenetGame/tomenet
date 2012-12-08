@@ -1177,22 +1177,11 @@ static byte player_init[2][MAX_CLASS][5][3] =
 	},
 	{
 		/* Runemaster */
-#ifndef ENABLE_RCRAFT
-		{ TV_RUNE1, SV_RUNE1_BOLT, 0 },
-		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
-		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
 		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
-#else
-		{ TV_SWORD, SV_DAGGER, 0 },
-		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
-		{ TV_RUNE2, SV_RUNE2_ACID, 0 },
-//		{ TV_RUNE2, SV_RUNE2_ELEC, 0 },
-//		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
-//		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
 		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 30 },
 		{ TV_DIGGING, SV_PICK, 0 },
-#endif
+		{ TV_BOOMERANG, SV_BOOM_S_METAL, 0 },
 	},
 	{
 		/* Mindcrafter */
@@ -1308,19 +1297,11 @@ static byte player_init[2][MAX_CLASS][5][3] =
 	},
 	{
 		/* Runemaster */
-#ifndef ENABLE_RCRAFT
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_RUNE1, SV_RUNE1_BOLT, 0 },
-		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
-		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
-#else
-		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
-		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_RUNE2, 0, 0 }, /* place holder */
 		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 30 },
-//		{ TV_POTION2, SV_POTION2_CURE_LIGHT_SANITY, 0 },
-#endif
+		{ 255, 255, 0 },
+		{ 255, 255, 0 },
 	},
 	{
 		/* Mindcrafter */
@@ -1553,7 +1534,7 @@ static void player_outfit(int Ind)
 	}
 
 	/* Hack -- Give the player some torches */
-	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->pclass != CLASS_ARCHER) {
+	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RUNEMASTER) {
 		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
 		o_ptr->number = rand_range(3, 7);
 		o_ptr->timeout = rand_range(3, 7) * 500;
@@ -1681,36 +1662,6 @@ static void player_outfit(int Ind)
 		if (tv == 255 && sv == 255) {
 			/* nothing */
 		} else {
-#ifdef ENABLE_RCRAFT
-			/* Multiply runes */
-			if (tv == TV_RUNE2) {
-				sv = SV_RUNE2_ACID;
-				k_idx = lookup_kind(tv, sv);
-				invcopy(o_ptr, k_idx);
-				o_ptr->number = 5;
-				do_player_outfit();
-
-				sv = SV_RUNE2_FIRE;
-				k_idx = lookup_kind(tv, sv);
-				invcopy(o_ptr, k_idx);
-				o_ptr->number = 5;
-				do_player_outfit();
-
-				sv = SV_RUNE2_COLD;
-				k_idx = lookup_kind(tv, sv);
-				invcopy(o_ptr, k_idx);
-				o_ptr->number = 5;
-				do_player_outfit();
-
-				sv = SV_RUNE2_ELEC;
-				k_idx = lookup_kind(tv, sv);
-				invcopy(o_ptr, k_idx);
-				o_ptr->number = 5;
-				do_player_outfit();
-
-				continue;
-			}
-#endif
 
 			k_idx = lookup_kind(tv, sv);
 			if (k_idx < 2) { /* '1' is 'something' */
@@ -1749,6 +1700,19 @@ static void player_outfit(int Ind)
 		o_ptr->number = 5;
 		do_player_outfit();
 	}
+	
+	/* Normal Lantern for Runemasters */
+	if (p_ptr->pclass == CLASS_RUNEMASTER) {
+		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
+		o_ptr->number = 1;
+		o_ptr->timeout = rand_range(3, 7) * 500;
+		do_player_outfit();
+
+		invcopy(o_ptr, lookup_kind(TV_FLASK, SV_FLASK_OIL));
+		o_ptr->number = rand_range(3, 7);
+		do_player_outfit();
+	}
+	
 	/* hack for mimics: pick a type of poly ring - C. Blue */
 #if 0 /* disabled for now */
 	if (p_ptr->pclass == CLASS_MIMIC) {
@@ -2200,18 +2164,9 @@ static void player_setup(int Ind, bool new)
 	/* Set his "current activities" variables */
 	p_ptr->current_char = 0;
 	p_ptr->current_spell = p_ptr->current_rod = p_ptr->current_wand = p_ptr->current_activation = -1;
-	p_ptr->current_rune_dir = -1;
 	p_ptr->current_mind = -1;
 	p_ptr->current_selling = -1;
-	p_ptr->current_rune1 = -1;
-	p_ptr->current_rune2 = -1;
-	p_ptr->rune_speed = 0;
-	p_ptr->rune_num_of_buffs = 0;
-	p_ptr->rune_IV = 0;
-	p_ptr->rune_stealth = 0;
-#ifdef ENABLE_RCRAFT
 	p_ptr->current_rcraft = -1;
-#endif
 #ifdef AUCTION_SYSTEM
 	p_ptr->current_auction = 0;
 #endif
@@ -2220,81 +2175,13 @@ static void player_setup(int Ind, bool new)
 	p_ptr->ps_mcheque_x = p_ptr->ps_mcheque_y = -1;
 #endif
 
-	/* New Runecraft Feature Variables - Kurzel */
+	/* Runecraft */
 	p_ptr->shoot_till_kill_rcraft = 0;
-	p_ptr->rcraft_augment = -1;
-	
-	p_ptr->rcraft_project = 0;
-	p_ptr->rcraft_xtra_a = -1;
-	p_ptr->rcraft_xtra_b = -1;
-	p_ptr->tim_rcraft_xtra = 0;
-	
 	p_ptr->tim_rcraft_help = 0;
 	p_ptr->tim_rcraft_help_type = 0;
 	p_ptr->tim_rcraft_help_projection = 0;
-	p_ptr->tim_rcraft_help_damage = 0;
-	
-	p_ptr->rcraft_upkeep = 0;
-	p_ptr->rcraft_attune = 0;
-	p_ptr->rcraft_repel = 0;
-	p_ptr->rcraft_brand = 0;
-	
-	p_ptr->tim_brand_acid = 0;
-	p_ptr->tim_brand_elec = 0;
-	p_ptr->tim_brand_fire = 0;
-	p_ptr->tim_brand_cold = 0;
-	p_ptr->tim_brand_pois = 0;
-	p_ptr->tim_brand_vorp = 0;
-	p_ptr->tim_brand_conf = 0;
-
-#if 0
-	p_ptr->tim_aura_acid = 0;
-#endif
-	p_ptr->tim_aura_elec = 0;
-	p_ptr->tim_aura_fire = 0;
-	p_ptr->tim_aura_cold = 0;
-	
-	p_ptr->rcraft_dig = 0;
-	p_ptr->rcraft_upkeep_flags = 0;
-	
-	p_ptr->tim_necro = 0;
-	p_ptr->tim_necro_pow = 0;
-	//p_ptr->tim_dodge = 0;
-	//p_ptr->tim_dodge_pow = 0;
-	p_ptr->tim_stealth = 0;
-	p_ptr->tim_stealth_pow = 0;
-
-#if 1
-	p_ptr->tim_brand_ex = 0;
-	p_ptr->tim_brand_ex_projection = 0;
-	p_ptr->tim_brand_ex_damage = 0;
-	p_ptr->tim_aura_ex = 0;
-	p_ptr->tim_aura_ex_projection = 0;
-	p_ptr->tim_aura_ex_damage = 0;
-#endif
-
-	p_ptr->rcraft_empower = 0;
-	p_ptr->rcraft_regen = 0;
-
-#if 0
-	p_ptr->protacid = 0;
-	p_ptr->protelec = 0;
-	p_ptr->protfire = 0;
-	p_ptr->protcold = 0;
-	p_ptr->protpois = 0;
-#endif
-
-	p_ptr->tim_elemshield = 0;
-	p_ptr->tim_elemshield_type = 0;
-
-	p_ptr->memory.x = 0;
-	p_ptr->memory.y = 0;
-	p_ptr->memory.wpos.wx = 0;
-	p_ptr->memory.wpos.wy = 0;
-	p_ptr->memory.wpos.wz = 0;
-	p_ptr->tim_deflect = 0;
-	p_ptr->tim_trauma = 0;
-	p_ptr->tim_trauma_pow = 0;
+	p_ptr->tim_rcraft_help_dx = 0;
+	p_ptr->tim_rcraft_help_dy = 0;
 
 	/* No item being used up */
 	p_ptr->using_up_item = -1;

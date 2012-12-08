@@ -702,8 +702,6 @@ static void prt_extra_status(int Ind)
 	/* add project-spells indicator */
 	if (p_ptr->spell_project)
 		strcat(status, "\377sPj ");
-	else if (p_ptr->rcraft_project) //Kurzel
-		strcat(status, "\377BPj ");
 	else
 		strcat(status, "   ");
 
@@ -1104,7 +1102,7 @@ void calc_mana(int Ind)
 	int Ind2;
 
 	int levels, cur_wgt, max_wgt;
-	s32b new_mana = 0, free_mana = 0, free_mana_tmp;
+	s32b new_mana = 0;
 
 	object_type *o_ptr;
 	u32b f1, f2, f3, f4, f5, esp;
@@ -1171,25 +1169,12 @@ void calc_mana(int Ind)
 			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 100 * levels / (400)));
 #endif
 		break; 
-#ifndef ENABLE_RCRAFT
-	/* Need a lot of SP for the spells. Reducing bonus to 1 tho. 2 seems excessive */
-#define RUNEMASTER_SP_CALC_BONUS	1 /* 2 */
-	case CLASS_RUNEMASTER:
-		//2 SP per 1 point in SKILL_MAGIC
-		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 100) + 
-		//Their spells are abit on the expensive side... Allow more max than mages.
-		//A different system, really ... See runes.c
-		  (RUNEMASTER_SP_CALC_BONUS + adj_mag_mana[p_ptr->stat_ind[A_INT]]) * levels / (2) +
-		  (RUNEMASTER_SP_CALC_BONUS + adj_mag_mana[p_ptr->stat_ind[A_DEX]]) * levels / (2) ;
-		break;
-#else
 	case CLASS_RUNEMASTER:
 		//Spells are now much closer in cost to mage spells. Returning to a similar mode
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 		    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 65 * levels / (300)) +
 		    (adj_mag_mana[p_ptr->stat_ind[A_DEX]] * 35 * levels / (300));
 		break;
-#endif
 	case CLASS_MINDCRAFTER:
 		/* much Int, some Chr (yeah!), little Wis */
 #if 0 /* too much CHR drastically reduced the amount of viable races, basically only humans and elves remained */
@@ -1218,9 +1203,6 @@ void calc_mana(int Ind)
 
 	/* Hack -- usually add one mana */
 	if (new_mana) new_mana++;
-
-	/* Keep track of unencumbered mana reservoir (for runecraft) */
-	free_mana = new_mana;
 
 	/* Get the gloves */
 	o_ptr = &p_ptr->inventory[INVEN_HANDS];
@@ -1296,8 +1278,6 @@ void calc_mana(int Ind)
         }
 #endif
 
-	free_mana_tmp = new_mana;
-
 	/* adjustment so paladins won't become OoD sentry guns and
 	   rangers won't become invulnerable manashield tanks, and
 	   priests won't become OoD wizards.. (C. Blue)
@@ -1329,9 +1309,6 @@ void calc_mana(int Ind)
 
 	/* Meditation increase mana at the cost of hp */
 	if (p_ptr->tim_meditation) new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 100;
-
-	/* Keep track of unencumbered mana reservoir (for runecraft) */
-	free_mana = (free_mana * new_mana) / free_mana_tmp;
 
 	/* Disruption Shield now increases hp at the cost of mana */
 	if (p_ptr->tim_manashield) {
@@ -1399,105 +1376,11 @@ void calc_mana(int Ind)
 	/* Some classes dont use mana */
 	if ((p_ptr->pclass == CLASS_WARRIOR) ||
 	    (p_ptr->pclass == CLASS_ARCHER))
-		new_mana = free_mana = 0;
+		new_mana = 0;
 
 #ifdef ARCADE_SERVER
         new_mana = 100;
 #endif
-
-	/* Keep track of unencumbered mana and original max mana (for runecraft) */
-	p_ptr->msp_freely = free_mana;
-	p_ptr->msp_normal = new_mana;
-	
-	/* Apply upkeep penalty for runecraft ongoing effects - Kurzel!! */
-	new_mana -= free_mana * p_ptr->rcraft_upkeep / 100;
-	
-	if (new_mana < 0) {
-		/* reset upkeep */
-		msg_print(Ind, "\377oYou cannot sustain your runespells!");
-		p_ptr->rcraft_upkeep = 0;
-		
-		/* dispel attune */
-		if (p_ptr->rcraft_attune) {
-			msg_format(Ind, "\377WYour armament is no longer attuned.");
-			p_ptr->rcraft_attune = 0;
-		}
-		/* dispel repel */
-		if (p_ptr->rcraft_repel) {
-			msg_format(Ind, "\377WYour raiment is no longer imbued.");
-			p_ptr->rcraft_repel = 0;
-		}
-		/* dispel brand */
-		if (p_ptr->rcraft_brand) {
-			if (p_ptr->rcraft_brand == BRAND_CONF) msg_format(Ind, "\377WYou are no longer branded with \377Uconfusion\377W.");
-			if (p_ptr->rcraft_brand == BRAND_VORP) msg_format(Ind, "\377WYou are no longer branded with \377Dannihilation\377W.");
-			p_ptr->rcraft_brand = 0;
-		}
-		/* dispel dig */
-		if (p_ptr->rcraft_dig) {
-			msg_format(Ind, "\377WYour ability to tunnel returns to normal.");
-			p_ptr->rcraft_dig = 0;
-		}
-		/* dispel regen */
-		if (p_ptr->rcraft_regen) {
-			msg_format(Ind, "\377WYour ability to regenerate returns to normal.");
-			p_ptr->rcraft_dig = 0;
-		}
-		
-		/* dispel flags */
-		if (p_ptr->rcraft_upkeep_flags) {
-			if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_FA) msg_format(Ind, "\377WYou stop sealing the effects of paralysis.");
-			if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CU) msg_format(Ind, "\377WYou stop sealing the effects of cuts.");
-			if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CO) msg_format(Ind, "\377WYou stop sealing the effects of confusion.");
-			if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_HL) msg_format(Ind, "\377WYou stop sealing the effects of life-draining attacks.");
-			if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_NE) msg_format(Ind, "\377WYou no longer attract souls of the dying.");
-			if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_TR) msg_format(Ind, "\377WYou no longer revel in the anguish of your foes.");
-			if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_ST) msg_format(Ind, "\377WYou release your presence.");
-			//if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_DO) msg_format(Ind, "\377WYou release your focus.");
-			if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_DO) msg_format(Ind, "\377WYou release the pressure around you.");
-			p_ptr->rcraft_upkeep_flags = 0;
-		}
-		
-		/* remove all terrain modifications */
-		cave_type *c_ptr;
-		/* remove all rune traps of this player */
-		cave_type **zcave;
-		int d, j;
-		if (p_ptr->runetraps) {
-			struct c_special *cs_ptr;
-			if ((zcave = getcave(&p_ptr->wpos_old))) {
-				for (j = 0; j < p_ptr->runetraps; j++) {
-					c_ptr = &zcave[p_ptr->runetrap_y[j]][p_ptr->runetrap_x[j]];
-					if (c_ptr->feat != FEAT_RUNE_TRAP) continue; /* paranoia */
-					if (!(cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) continue; /* paranoia */
-
-					d = cs_ptr->sc.runetrap.feat;
-					cs_erase(c_ptr, cs_ptr);
-					cave_set_feat_live(&p_ptr->wpos_old, p_ptr->runetrap_y[j], p_ptr->runetrap_x[j], d);
-				}
-			}
-			remove_rune_trap_upkeep(Ind, 0, -1, -1);
-		}
-		/* remove all rune portals of this player */
-		for (j = 0; j < 5; j++) {
-			if (p_ptr->memory_feat[j]) {
-				if ((zcave = getcave(&p_ptr->wpos_old))) {
-					c_ptr = &zcave[p_ptr->memory_port[j].y][p_ptr->memory_port[j].x];
-					if (c_ptr->feat != FEAT_RUNE_PORT) continue; /* paranoia */
-				}
-				cave_set_feat_live(&p_ptr->wpos_old, p_ptr->memory_port[j].y, p_ptr->memory_port[j].x, p_ptr->memory_feat[j]);
-				p_ptr->memory_feat[j] = 0;
-				p_ptr->memory_port[j].wpos.wx = 0;
-				p_ptr->memory_port[j].wpos.wy = 0;
-				p_ptr->memory_port[j].wpos.wz = 0;
-				p_ptr->memory_port[j].x = 0;
-				p_ptr->memory_port[j].y = 0;
-				p_ptr->rcraft_upkeep -= UPKEEP_PORT;
-			}
-		}
-		calc_boni(Ind);
-		new_mana = p_ptr->msp_normal;
-	}
 
 	/* Maximum mana has changed */
 	if (p_ptr->msp != new_mana) {
@@ -1816,13 +1699,6 @@ void calc_hitpoints(int Ind)
 	if (p_ptr->divine_hp > 0) {
 		/* count as if from item? */
 		to_life += p_ptr->divine_hp_mod;
-	}
-#endif
-
-#ifdef ENABLE_RCRAFT
-	/* New overall LIFE bonus handler */
-	if (p_ptr->temporary_to_l_dur) {
-		to_life += p_ptr->temporary_to_l;
 	}
 #endif
 
@@ -3475,20 +3351,6 @@ void calc_boni(int Ind)
 		p_ptr->resist_pois = TRUE;
 #endif
 
-#ifdef ENABLE_RCRAFT
-	//Runemaster upkeep boni spells - Kurzel
-	if (p_ptr->rcraft_upkeep_flags & RUPK_MAJ_DO) p_ptr->feather_fall = TRUE;
-	if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_FA) p_ptr->free_act = TRUE;
-	if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_CU) p_ptr->no_cut = TRUE;
-	if (p_ptr->rcraft_upkeep_flags & RUPK_MIN_HL) p_ptr->hold_life = TRUE;
-	if (p_ptr->rcraft_attune) {
-		if (p_ptr->rcraft_attune & R_ACID) p_ptr->resist_acid = TRUE;
-		if (p_ptr->rcraft_attune & R_ELEC) p_ptr->resist_elec = TRUE;
-		if (p_ptr->rcraft_attune & R_FIRE) p_ptr->resist_fire = TRUE;
-		if (p_ptr->rcraft_attune & R_COLD) p_ptr->resist_cold = TRUE;
-		if (p_ptr->rcraft_attune & R_POIS) p_ptr->resist_pois = TRUE;
-	}
-#endif
 	/* Apply boni from racial special traits */
 	switch (p_ptr->ptrait) {
 	case TRAIT_NONE: /* N/A */
@@ -3570,18 +3432,6 @@ void calc_boni(int Ind)
 		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 10); /* was /11, but let's reward max skill! */
 #endif
 	}
-
-#ifdef ENABLE_RCRAFT
-	/* Do we have temporary AM (de)buff? */
-	if (p_ptr->temporary_am) {
-		p_ptr->anti_magic = TRUE;
-	}
-
-	/* Do we have any temporary speed (de)buff? */
-	if (p_ptr->temporary_speed_dur) {
-		p_ptr->pspeed += p_ptr->temporary_speed;
-	}
-#endif
 
 	/* Ghost */
 	if (p_ptr->ghost) {
@@ -3934,7 +3784,6 @@ void calc_boni(int Ind)
 
 		/* Affect digging (factor of 20) */
 		if (f1 & TR1_TUNNEL) p_ptr->skill_dig += (pval * 20);
-		if (p_ptr->rcraft_dig) p_ptr->skill_dig += (p_ptr->rcraft_dig * 20); //Is this the best place to include this? - Kurzel!!
 
 		/* Affect speed */
 		if (f1 & TR1_SPEED) p_ptr->pspeed += pval;
@@ -4428,9 +4277,6 @@ void calc_boni(int Ind)
 		p_ptr->dis_to_a += p_ptr->shield_power;
 	}
 	
-	/* Temporary deflection */
-	if (p_ptr->tim_deflect) p_ptr->reflect = TRUE;
-
 	/* Temporary "Hero" */
 	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5)) {
 		p_ptr->to_h += 12;
@@ -5285,11 +5131,6 @@ void calc_boni(int Ind)
 	if (p_ptr->cumber_armor) p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 4);
 	else p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 7);
 
-	/* Add the buffs bonuses here */
-	p_ptr->pspeed += p_ptr->rune_speed; 
-	//p_ptr->skill_stl += p_ptr->rune_stealth;
-	
-	p_ptr->see_infra += p_ptr->rune_IV;
 	p_ptr->redraw |= (PR_SPEED|PR_EXTRA) ;
 
 	if (p_ptr->mode & MODE_HARD && p_ptr->pspeed > 110) {
@@ -5340,7 +5181,6 @@ void calc_boni(int Ind)
 	}
 
 	if (get_skill(p_ptr, SKILL_DODGE) && !p_ptr->rogue_heavyarmor)
-	//if ((get_skill(p_ptr, SKILL_DODGE) || p_ptr->tim_dodge) && !p_ptr->rogue_heavyarmor) //Kurzel!!
 //	if (!(r_ptr->flags1 & RF1_NEVER_MOVE));		// not for now
 	{
 #ifndef NEW_DODGING /* reworking dodge, see #else.. */
@@ -5770,10 +5610,6 @@ void calc_boni(int Ind)
 	/* Affect Skill -- stealth (Level, by Class) */
 	p_ptr->skill_stl += (get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5)) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
 	
-	//Runemaster stealth buff correct placement? - Only up to SKILL_MAX, but in this case..((p_ptr->lev + 2)) - Kurzel
-	int max_stealth_skill = ((p_ptr->lev + 2) < SKILL_MAX) ? (p_ptr->lev + 2) : (SKILL_MAX / 1000);
-	if (p_ptr->tim_stealth_pow) p_ptr->skill_stl += (p_ptr->skill_stl < (max_stealth_skill - (p_ptr->tim_stealth_pow)) ? (p_ptr->tim_stealth_pow) : max_stealth_skill - p_ptr->skill_stl); 
-
 	/* Affect Skill -- search ability (Level, by Class) */
 	p_ptr->skill_srh += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_srh * 2));// + get_skill(p_ptr, SKILL_SNEAKINESS);
 
@@ -7587,6 +7423,7 @@ void clear_current(int Ind)
 	p_ptr->current_artifact = 0;
 	p_ptr->current_curse = 0;
 	p_ptr->current_tome_creation = 0;
+	p_ptr->current_rune = 0;
 
 	p_ptr->current_telekinesis = NULL;
 }

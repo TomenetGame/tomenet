@@ -382,19 +382,11 @@ static int Init_setup(void)
 	Setup.frames_per_second = cfg.fps;
 	Setup.max_race = MAX_RACE;
 #if 1
- #ifdef ENABLE_RUNEMASTER
   #ifdef ENABLE_MCRAFT
 	Setup.max_class = MAX_CLASS;
   #else
 	Setup.max_class = MAX_CLASS - 1;
   #endif
- #else
-  #ifdef ENABLE_MCRAFT
-	Setup.max_class = MAX_CLASS - 1;
-  #else
-	Setup.max_class = MAX_CLASS - 2;
-  #endif
- #endif
 #else
 	Setup.max_class = MAX_CLASS;
 #endif
@@ -1542,46 +1534,6 @@ static void Delete_player(int Ind)
 		/* Show everyone his disappearance */
 		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	}
-
-#ifdef ENABLE_RCRAFT
-	/* remove all terrain modifications */
-	cave_type *c_ptr;
-	/* remove all rune traps of this player */
-	if (p_ptr->runetraps) {
-		struct c_special *cs_ptr;
-		int f;
-		if (zcave) {
-			for (i = 0; i < p_ptr->runetraps; i++) {
-				c_ptr = &zcave[p_ptr->runetrap_y[i]][p_ptr->runetrap_x[i]];
-				if (c_ptr->feat != FEAT_RUNE_TRAP) continue; /* paranoia */
-				if (!(cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) continue; /* paranoia */
-
-				f = cs_ptr->sc.runetrap.feat;
-				cs_erase(c_ptr, cs_ptr);
-				cave_set_feat_live(&p_ptr->wpos, p_ptr->runetrap_y[i], p_ptr->runetrap_x[i], f);
-			}
-		}
-		remove_rune_trap_upkeep(Ind, 0, -1, -1);
-	}
-	/* remove all rune portals of this player */
-	for (i = 0; i < 5; i++) {
-		if (p_ptr->memory_feat[i]) {
-			if ((zcave = getcave(&p_ptr->wpos_old))) {
-				c_ptr = &zcave[p_ptr->memory_port[i].y][p_ptr->memory_port[i].x];
-				if (c_ptr->feat != FEAT_RUNE_PORT) continue; /* paranoia */
-			}
-			cave_set_feat_live(&p_ptr->wpos_old, p_ptr->memory_port[i].y, p_ptr->memory_port[i].x, p_ptr->memory_feat[i]);
-			p_ptr->memory_feat[i] = 0;
-			p_ptr->memory_port[i].wpos.wx = 0;
-			p_ptr->memory_port[i].wpos.wy = 0;
-			p_ptr->memory_port[i].wpos.wz = 0;
-			p_ptr->memory_port[i].x = 0;
-			p_ptr->memory_port[i].y = 0;
-			p_ptr->rcraft_upkeep -= UPKEEP_PORT;
-		}
-	}
-	calc_mana(Ind);//perhaps don't need this? - Kurzel
-#endif
 
 	/* If (s)he was in a game team, remove him/her - mikaelh */
 	if (p_ptr->team != 0)
@@ -2880,7 +2832,7 @@ static int Handle_login(int ind)
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth(NumPlayers);
 
-#if (defined(ENABLE_RCRAFT) || defined(DUNGEON_VISIT_BONUS))
+#if defined(DUNGEON_VISIT_BONUS)
 	wpcopy(&Players[NumPlayers]->wpos_old, &p_ptr->wpos);
 #endif
 
@@ -7601,29 +7553,12 @@ static int Receive_activate_skill(int ind)
 			cast_school_spell(player, book, spell, dir, item, aux);
 			p_ptr->shooty_till_kill = FALSE;
 			break;
-
-#ifndef ENABLE_RCRAFT
-		case MKEY_RUNE:
-			book = replay_inven_changes(player, book);
-			if (book == 0xFF) {
-				msg_print(player, "Command failed because item is gone.");
-				return 1;
-			}
-			item = replay_inven_changes(player, item);
-			if (item == 0xFF) {
-				msg_print(player, "Command failed because item is gone.");
-				return 1;
-			}
-
-			cast_rune_spell_header(player, book, spell); 
-			break;
-#else //Kurzel
+			
 		case MKEY_RCRAFT:
 			if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
-			(void)execute_rspell(player, dir, (u16b)(32768 + book), (u16b)(32768 + spell), (u16b)(32768 + item), 0);
+			(void)execute_rspell(player, dir, (u16b)book, (u16b)spell, (u16b)item, 0);
 			p_ptr->shooty_till_kill = FALSE;
 			break;
-#endif
 
 		case MKEY_AURA_FEAR:
 			toggle_aura(player, 0);
@@ -9890,13 +9825,7 @@ void Handle_direction(int Ind, int dir)
 		p_ptr->current_mind = -1;
 		p_ptr->current_rod = -1;
 		p_ptr->current_activation = -1;
-		p_ptr->current_rune_dir = -1;
-		p_ptr->current_rune1 = -1;
-		p_ptr->current_rune2 = -1;
-#ifdef ENABLE_RCRAFT
 		p_ptr->current_rcraft = -1;
-#endif
-
 		p_ptr->current_wand = -1;
 		p_ptr->current_item = -1;
 		p_ptr->current_book = -1;
@@ -9920,13 +9849,8 @@ void Handle_direction(int Ind, int dir)
 			    dir, p_ptr->current_item, p_ptr->current_aux);
 		else p_ptr->current_spell = -1;
 	}
-#ifndef ENABLE_RCRAFT
-	else if (p_ptr->current_rune1 != -1 && p_ptr->current_rune2 != -1)
-		cast_rune_spell(Ind, dir);
-#else //Kurzel
 	else if (p_ptr->current_rcraft != -1)
-		(void)execute_rspell(Ind, dir, p_ptr->current_rcraft_e_flags1, p_ptr->current_rcraft_e_flags2, p_ptr->current_rcraft_m_flags, 0);
-#endif
+		(void)execute_rspell(Ind, dir, p_ptr->current_rcraft_e_flags, p_ptr->current_rcraft_m_flags, 0, 0);
        	else if (p_ptr->current_rod != -1)
 		do_cmd_zap_rod_dir(Ind, dir);
 	else if (p_ptr->current_activation != -1)
@@ -9982,6 +9906,10 @@ void Handle_item(int Ind, int item)
 		i = p_ptr->using_up_item;
 		p_ptr->using_up_item = item;
 		tome_creation_aux(Ind, i);
+	}
+	else if (p_ptr->current_rune)
+	{
+		rune_combine_aux(Ind, item);
 	}
 
 	/* to be safe, clean up; just in case our item was used up */

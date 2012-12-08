@@ -83,8 +83,8 @@ CS_LOAD(montrapload);
 CS_SAVE(montrapsave);
 CS_LOAD(s32bload);
 CS_SAVE(s32bsave);
-CS_LOAD(runetrapload);
-CS_SAVE(runetrapsave);
+CS_LOAD(runeload);
+CS_SAVE(runesave);
 
 void defload(c_special *cs_ptr){
 }
@@ -327,22 +327,22 @@ void montrapsave(c_special *cs_ptr)
 	wr_byte(cs_ptr->sc.montrap.feat);
 }
 
-void runetrapload(c_special *cs_ptr)
+void runeload(c_special *cs_ptr)
 {
-	rd_byte(&cs_ptr->sc.runetrap.typ);
-	rd_byte(&cs_ptr->sc.runetrap.mod);
-	rd_byte(&cs_ptr->sc.runetrap.lev);
-	rd_byte(&cs_ptr->sc.runetrap.feat);
-	rd_s32b(&cs_ptr->sc.runetrap.id);
+	rd_byte(&cs_ptr->sc.rune.typ);
+	rd_byte(&cs_ptr->sc.rune.mod);
+	rd_byte(&cs_ptr->sc.rune.lev);
+	rd_byte(&cs_ptr->sc.rune.feat);
+	rd_s32b(&cs_ptr->sc.rune.id);
 }
 
-void runetrapsave(c_special *cs_ptr)
+void runesave(c_special *cs_ptr)
 {
-	wr_byte(cs_ptr->sc.runetrap.typ);
-	wr_byte(cs_ptr->sc.runetrap.mod);
-	wr_byte(cs_ptr->sc.runetrap.lev);
-	wr_byte(cs_ptr->sc.runetrap.feat);
-	wr_s32b(cs_ptr->sc.runetrap.id);
+	wr_byte(cs_ptr->sc.rune.typ);
+	wr_byte(cs_ptr->sc.rune.mod);
+	wr_byte(cs_ptr->sc.rune.lev);
+	wr_byte(cs_ptr->sc.rune.feat);
+	wr_s32b(cs_ptr->sc.rune.id);
 }
 
 
@@ -389,7 +389,7 @@ struct sfunc csfunc[]={
 	/* CS_FOUNTAIN, CS_BETWEEN, CS_BETWEEN2 to come */
 	{ s32bload, s32bsave, defsee, defhit },	/* CS_SHOP */
 	{ s32bload, s32bsave, defsee, defhit },	/* CS_MIMIC */
-	{ runetrapload, runetrapsave, defsee, defhit },	/* CS_RUNE_TRAP */
+	{ runeload, runesave }, /* CS_RUNE */
 /*
 	{ iload, isave, isee, ihit }
 */

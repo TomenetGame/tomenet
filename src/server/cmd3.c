@@ -1109,7 +1109,6 @@ return;
 	/* Give additional warning messages if item prevents a certain ability */
 	if (o_ptr->tval == TV_SHIELD) {
 		if (get_skill(p_ptr, SKILL_DODGE))
-		//if (get_skill(p_ptr, SKILL_DODGE) || p_ptr->tim_dodge) //Kurzel!!
 			msg_print(Ind, "\377yYou cannot dodge attacks while wielding a shield.");
 		if (get_skill(p_ptr, SKILL_MARTIAL_ARTS))
 			msg_print(Ind, "\377yYou cannot use special martial art styles with a shield.");
@@ -2694,13 +2693,13 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	}
 
 	/* Traps */
-	if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+	if ((cs_ptr=GetCS(c_ptr, CS_TRAPS))) {
 		/* Revealed trap */
 		if (cs_ptr->sc.trap.found) return (TRUE);
 	}
 
 	/* Monster Traps */
-	if(GetCS(c_ptr, CS_MON_TRAP) || GetCS(c_ptr, CS_RUNE_TRAP)){
+	if (GetCS(c_ptr, CS_MON_TRAP)) {
 		return (TRUE);
 	}
 
@@ -2709,6 +2708,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 #if 0	// wow!
 		/* Notice glyphs */
 		if (c_ptr->feat == FEAT_GLYPH) return (TRUE);
+		if (c_ptr->feat == FEAT_RUNE) return (TRUE);
 
 		/* Notice doors */
 		if (c_ptr->feat == FEAT_OPEN) return (TRUE);

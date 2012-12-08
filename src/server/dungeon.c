@@ -678,6 +678,8 @@ static void erase_effects(int effect)
 	e_ptr->dam = 0;
 	e_ptr->time = 0;
 	e_ptr->flags = 0;
+	e_ptr->sx = 0;
+	e_ptr->sy = 0;
 	e_ptr->cx = 0;
 	e_ptr->cy = 0;
 	e_ptr->rad = 0;
@@ -795,10 +797,6 @@ static void process_effects(void)
 
 #ifdef ANIMATE_EFFECTS
  #ifdef FREQUENT_EFFECT_ANIMATION
-		/* Hack -- Decode gf_type (for color). - Kurzel */
-		u32b typ_original = e_ptr->type;
-		e_ptr->type = e_ptr->type % HACK_GF_FACTOR;
-
 		/* hack: animate the effect! Note that this is independant of the effect interval,
 		   as opposed to the other animation code below. - C. Blue */
 		if (!(turn % (cfg.fps / 5)) && e_ptr->time && spell_color_animation(e_ptr->type))
@@ -808,9 +806,6 @@ static void process_effects(void)
 				if (!in_bounds2(wpos, j, i)) continue;
 				everyone_lite_spot(wpos, j, i);
 			}
-
-		/* Hack -- Restore runespell info. - Kurzel */
-		e_ptr->type = typ_original;
  #endif
 #endif
 
@@ -878,7 +873,7 @@ static void process_effects(void)
 						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
 						    PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_PLAY, "");
 						    //PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_PLAY, "");
-					else //Effects should also hit grids, for runemaster EFF_WAVE/STOR functionality. - Kurzel
+					else //Effects should also hit grids, for runemaster EFF_WAVE/STOR functionality. - Kurzel!! - Rewrite for fire_wall() above...
 						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
 						    PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
 						    //PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
@@ -891,19 +886,12 @@ static void process_effects(void)
 					}
 
 #ifdef ANIMATE_EFFECTS
- #ifndef FREQUENT_EFFECT_ANIMATION
-					/* Hack -- Decode gf_type (for color). - Kurzel */
-					u32b typ_original = e_ptr->type;
-					e_ptr->type = e_ptr->type % HACK_GF_FACTOR;
-
+ #ifndef FREQUENT_EFFECT_ANIMATION	
 					/* C. Blue - hack: animate effects inbetween
 					   ie allow random changes in spell_color().
 					   Note: animation speed depends on effect interval. */
 					if (spell_color_animation(e_ptr->type))
 					    everyone_lite_spot(wpos, j, i);
-
-					/* Hack -- Restore runespell info. - Kurzel */
-					e_ptr->type = typ_original;
  #endif
 #endif
 				} else {
@@ -1749,130 +1737,52 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 				return TRUE;
 			}
 			break;
-#ifdef ENABLE_RCRAFT 
-		case TV_RUNE2: {
-			/* Runemaster retaliation - Kurzel */
-			/* Format @O<t?><abc><a-h><a-h> */
-			if (o_ptr->sval >= 0 && o_ptr->sval <= RCRAFT_MAX_ELEMENTS) {
-				u16b e_flags1 = 0, e_flags2 = 0, m_flags = 0, e_flags1_default = r_elements[o_ptr->sval].flag;
-				//int place_char = 0; unused?
-				int i_char = 0, t_char = 0, i_char_t = 0, t_char_t = 0;
-				byte place = 0, imperative = 0, type = 0, success = 0;
-				
-				/* Pick runes a b c with {@O} inscription */
-				byte i, runes = 0;
-				for (i = item; i < INVEN_TOTAL && runes < RSPELL_MAX_ELEMENTS; i++) {
-					o_ptr = &p_ptr->inventory[i];
-					if (o_ptr->tval != TV_RUNE2) continue;
-					/* Get the inscription */
-					inscription = quark_str(o_ptr->note);
-					/* Valid? */
-					if (inscription == NULL) continue;
-					/* Parse the inscription for @O */
-					while (*inscription != '\0') {
-						if (*inscription == '@') {
-							inscription++;
-							if (*inscription == 'O') {
-								inscription++;
-								
-								/* Skip the 't' for '@Ot' */
-								if (*inscription == 't') {
-									if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) continue;
-									inscription++;
-								}
-								
-								switch (runes) {
-									case 0: { //rune 'a'
-									if (*inscription != '\0') {
-										place = *inscription;
-										inscription++;
-										if (place != 'a') continue;
-										/* Record the element of the 'a' rune */
-										e_flags1 |= r_elements[o_ptr->sval].flag;
-										runes++;
-										/* Record the imperative of the 'a' rune */
-										if (*inscription != '\0') {
-											i_char = *inscription;
-											imperative = *inscription - 'a';
-											inscription++;
-											if (imperative < 0 || imperative > RCRAFT_MAX_IMPERATIVES) imperative = 1;
-											m_flags |= r_imperatives[imperative].flag;
-										}
-										/* Record the type of the 'a' rune */
-										if (*inscription != '\0') {
-											t_char = *inscription;
-											type = *inscription - 'a';
-											if (type < 0 || type > RCRAFT_MAX_TYPES) type = 1;
-											m_flags |= r_types[type].flag;
-											success = 1; //We have at least a defined single-rune spell!
-										}
-									}
-									break; }
-									case 1: { //rune 'b'
-									if (*inscription != '\0') {
-										place = *inscription;
-										inscription++;
-										if (place != 'b') continue;
-										/* Test for the same imperative and type */
-										if (*inscription != '\0') {
-											i_char_t = *inscription;
-											inscription++;
-										}
-										if (*inscription != '\0') {
-											t_char_t = *inscription;
-										}
-										/* Skip this item in case it isn't the same */
-										if (i_char != i_char_t || t_char != t_char_t) continue;
-										/* Record the element of the 'b' rune */
-										e_flags1 |= r_elements[o_ptr->sval].flag;
-										e_flags2 |= r_elements[o_ptr->sval].flag;
-										runes++;
-									}
-									break; }
-									case 2: { //rune 'c'
-									if (*inscription != '\0') {
-										place = *inscription;
-										inscription++;
-										if (place != 'c') continue;
-										/* Test for the same imperative and type */
-										if (*inscription != '\0') {
-											i_char_t = *inscription;
-											inscription++;
-										}
-										if (*inscription != '\0') {
-											t_char_t = *inscription;
-										}
-										/* Skip this item in case it isn't the same */
-										if (i_char != i_char_t || t_char != t_char_t) continue;
-										/* Record the element of the 'c' rune */
-										e_flags2 |= r_elements[o_ptr->sval].flag;
-										runes++;
-									}
-									break; }
-								}
-							}
-						}
-						inscription++;
-					}
-				}
-				
-				/* Default */
-				if (!success) {
-					e_flags1 = e_flags1_default;
-					e_flags2 = 0;
-					m_flags = I_MINI | T_MELE;
-				}
-				
-				if (execute_rspell(Ind, 5, e_flags1, e_flags2, m_flags, 1) == 2) return (p_ptr->fail_no_melee);
+
+		
+		case TV_RUNE: { //Format: @O<t?><imperative><form>
+
+			/* Validate Rune */
+			if (o_ptr->sval < 0 || o_ptr->sval > RCRAFT_MAX_PROJECTIONS) break;
+			u16b e_flags = r_projections[o_ptr->sval].flags, m_flags = 0;
+			byte m_index = 0;
+
+			/* Validate Imperative */
+			if (*inscription != '\0') {
+				m_index = *inscription - 'a';
+				if (m_index < 0 || m_index > RCRAFT_MAX_IMPERATIVES) m_flags |= I_MINI;
+				else m_flags |= r_imperatives[m_index].flag;
+			}
+			else {
+				if (execute_rspell(Ind, 5, e_flags, I_MINI | T_BOLT, 0, 1) == 2) return (p_ptr->fail_no_melee);
 				return TRUE;
 			}
-			break; }
+			
+			/* Next Letter */
+			inscription++;
+			
+			/* Validate Form */
+			if (*inscription != '\0') {
+				m_index = *inscription - 'a';
+				if (m_index < 0 || m_index > RCRAFT_MAX_TYPES || r_types[m_index].flag == T_RUNE || r_types[m_index].flag == T_ENCH) m_flags |= T_BOLT;
+				else m_flags |= r_types[m_index].flag;
+			}
+			else {
+				if (execute_rspell(Ind, 5, e_flags, I_MINI | T_BOLT, 0, 1) == 2) return (p_ptr->fail_no_melee);
+				return TRUE;
+			}
+
+			/* Retaliate or Melee */
+#ifdef SAFE_MELEE
+			if (execute_rspell(Ind, 5, e_flags, I_MINI | T_BOLT, 0, 1) == 2) return (p_ptr->fail_no_melee);
+#else
+			if (execute_rspell(Ind, 5, e_flags, m_flags, 0, 1) == 2) return (p_ptr->fail_no_melee);
 #endif
-		/* not likely :) */
+			return TRUE;
+			
+		break; }
 	}
 
 	/* If all fails, then melee */
-//	return FALSE;
 	return (p_ptr->fail_no_melee);
 }
 
@@ -3685,22 +3595,6 @@ static bool process_player_end_aux(int Ind)
 	/* Shield */
 	if (p_ptr->shield)
 		(void)set_shield(Ind, p_ptr->shield - 1, p_ptr->shield_power, p_ptr->shield_opt, p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
-
-#ifdef ENABLE_RCRAFT
-	/* Timed deflection */
-	if (p_ptr->tim_deflect)
-		(void)set_tim_deflect(Ind, p_ptr->tim_deflect - 1);
-
-	/* New debuffs */
-	if (p_ptr->temporary_am)
-		(void)do_temporary_antimagic(Ind, p_ptr->temporary_am - minus_magic);
-
-	if (p_ptr->temporary_to_l_dur)
-		(void)do_life_bonus_aux(Ind, p_ptr->temporary_to_l_dur - minus_magic, p_ptr->temporary_to_l);
-
-	if (p_ptr->temporary_speed_dur)
-		(void)do_speed_bonus_aux(Ind, p_ptr->temporary_speed_dur - minus_magic, p_ptr->temporary_speed);
-#endif
 	
 	/* Timed Levitation */
 	if (p_ptr->tim_ffall)
@@ -3743,37 +3637,21 @@ static bool process_player_end_aux(int Ind)
 			char m_name[MNAME_LEN];
 
 			monster_desc(Ind, m_name, i, 0);
-			msg_format(Ind, "Lightning strikes %s.", m_name, i, dam/3);
-			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_ELEC,
+			msg_format(Ind, "Lightning strikes %s.", m_name, i, dam);
+			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam, GF_THUNDER,
 			        PROJECT_KILL | PROJECT_ITEM, "");
-			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_LITE,
-			        PROJECT_KILL | PROJECT_ITEM, "");
-			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_SOUND,
-			        PROJECT_KILL | PROJECT_ITEM, "");
+			//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_ELEC,
+			//        PROJECT_KILL | PROJECT_ITEM, "");
+			//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_LITE,
+			//        PROJECT_KILL | PROJECT_ITEM, "");
+			//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_SOUND,
+			//        PROJECT_KILL | PROJECT_ITEM, "");
 		}
 
 		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - 1, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
         }
-
-	/* Skill boosts */
-	if (p_ptr->tim_trauma)
-		(void)set_tim_trauma(Ind, p_ptr->tim_trauma - 1, p_ptr->tim_trauma_pow);
-		
-	if (p_ptr->tim_necro)
-		(void)set_tim_necro(Ind, p_ptr->tim_necro - 1, p_ptr->tim_necro_pow);
-		
-	//if (p_ptr->tim_dodge)
-	//	(void)set_tim_dodge(Ind, p_ptr->tim_dodge - 1, p_ptr->tim_dodge_pow);
-		
-	if (p_ptr->tim_stealth)
-		(void)set_tim_stealth(Ind, p_ptr->tim_stealth - 1, p_ptr->tim_stealth_pow);
-		
-#ifdef ENABLE_RCRAFT //Kurzel
-	/* Combination Spells */
-	if (p_ptr->tim_rcraft_xtra)
-		(void)set_tim_rcraft_xtra(Ind, p_ptr->tim_rcraft_xtra - 1);
-		
-	/* Helper Buff */
+	
+	/* Helper Buff -- Copy-pasta of Adam's Thunderstorm - Kurzel!!! - Optimize? Find the *t code and try that. -.-" */
 	if (p_ptr->tim_rcraft_help) {
 		int i, tries = 600;
 		monster_type *m_ptr = NULL;
@@ -3809,91 +3687,28 @@ static bool process_player_end_aux(int Ind)
 				p_ptr->target_who = i;
 				switch (r_types[p_ptr->tim_rcraft_help_type].flag) {
 					case T_BOLT: {
-					msg_format(Ind, "A bolt of %s strikes %s.", r_projections[p_ptr->tim_rcraft_help_projection].name, m_name);
-					fire_bolt(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, 5, p_ptr->tim_rcraft_help_damage, p_ptr->attacker);
-					//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->tim_rcraft_help_damage, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, PROJECT_KILL | PROJECT_ITEM, "");
+					msg_format(Ind, "A bolt of %s strikes out at %s.", r_projections[p_ptr->tim_rcraft_help_projection].name, m_name);
+					fire_bolt(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, 5, damroll(p_ptr->tim_rcraft_help_dx,p_ptr->tim_rcraft_help_dy), p_ptr->attacker);
+					//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, damroll(p_ptr->tim_rcraft_help_dx,p_ptr->tim_rcraft_help_dy), r_projections[p_ptr->tim_rcraft_help_projection].gf_type, PROJECT_KILL | PROJECT_ITEM, "");
 					break; }
-					case T_CLOU: {
-					msg_format(Ind, "A cloud of %s roils about %s.", r_projections[p_ptr->tim_rcraft_help_projection].name, m_name);
-					fire_cloud(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, 5, p_ptr->tim_rcraft_help_damage, 1, 10, 9, p_ptr->attacker);
-					break; }
+					// case T_CLOU: {
+					// msg_format(Ind, "A cloud of %s roils about %s.", r_projections[p_ptr->tim_rcraft_help_projection].name, m_name);
+					// fire_cloud(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, 5, damroll(p_ptr->tim_rcraft_help_dx,p_ptr->tim_rcraft_help_dy), 1, 10, 9, p_ptr->attacker);
+					// break; }
+					default: break;
 				}
 				p_ptr->target_col = temp_tx;
 				p_ptr->target_row = temp_ty;
 				p_ptr->target_who = temp_who;
 			}
-			else { //Kurzel
+			else { //LoS 'gale' (hacked 'type')
 				msg_format(Ind, "The air is filled with %s!", r_projections[p_ptr->tim_rcraft_help_projection].name);
-				project_hack(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, p_ptr->tim_rcraft_help_damage, p_ptr->attacker);
+				project_hack(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, damroll(p_ptr->tim_rcraft_help_dx,p_ptr->tim_rcraft_help_dy), p_ptr->attacker);
 			}
 		}
 
-		(void)set_tim_rcraft_help(Ind, p_ptr->tim_rcraft_help - 1, p_ptr->tim_rcraft_help_type, p_ptr->tim_rcraft_help_projection, p_ptr->tim_rcraft_help_damage);
+		(void)set_tim_rcraft_help(Ind, p_ptr->tim_rcraft_help - 1, p_ptr->tim_rcraft_help_type, p_ptr->tim_rcraft_help_projection, p_ptr->tim_rcraft_help_dx, p_ptr->tim_rcraft_help_dy);
         }
-
-#if 1
-	/* Brand Explode */
-	if (p_ptr->tim_brand_ex)
-		(void)set_tim_brand_ex(Ind, p_ptr->tim_brand_ex - 1, p_ptr->tim_brand_ex_projection, p_ptr->tim_brand_ex_damage);
-
-	/* Aura Explode */
-	if (p_ptr->tim_aura_ex)
-		(void)set_tim_aura_ex(Ind, p_ptr->tim_aura_ex - 1, p_ptr->tim_aura_ex_projection, p_ptr->tim_aura_ex_damage);
-#endif
-#if 0
-	/* Protection from Acid */
-	if (p_ptr->protacid)
-		(void)set_protacid(Ind, p_ptr->protacid - 1);
-
-	/* Protection from Electricity */
-	if (p_ptr->protelec)
-		(void)set_protelec(Ind, p_ptr->protelec - 1);
-
-	/* Protection from Fire */
-	if (p_ptr->protfire)
-		(void)set_protfire(Ind, p_ptr->protfire - 1);
-
-	/* Protection from Cold */
-	if (p_ptr->protcold)
-		(void)set_protcold(Ind, p_ptr->protcold - 1);
-
-	/* Protection from Pois */
-	if (p_ptr->protpois)
-		(void)set_protpois(Ind, p_ptr->protpois - 1);
-#endif
-
-	/* Elemental Shield */
-	if (p_ptr->tim_elemshield)
-		set_tim_elemshield(Ind, p_ptr->tim_elemshield - 1, p_ptr->tim_elemshield_type);
-#endif
-
-	/* Brand Acid */
-	if (p_ptr->tim_brand_acid)
-		(void)set_tim_brand_acid(Ind, p_ptr->tim_brand_acid - 1);
-		
-	/* Brand Electricity */
-	if (p_ptr->tim_brand_elec)
-		(void)set_tim_brand_elec(Ind, p_ptr->tim_brand_elec - 1);
-		
-	/* Brand Fire */
-	if (p_ptr->tim_brand_fire)
-		(void)set_tim_brand_fire(Ind, p_ptr->tim_brand_fire - 1);
-		
-	/* Brand Cold */
-	if (p_ptr->tim_brand_cold)
-		(void)set_tim_brand_cold(Ind, p_ptr->tim_brand_cold - 1);
-		
-	/* Brand Poison */
-	if (p_ptr->tim_brand_pois)
-		(void)set_tim_brand_pois(Ind, p_ptr->tim_brand_pois - 1);
-		
-	/* Brand Vorpal */
-	if (p_ptr->tim_brand_vorp)
-		(void)set_tim_brand_vorp(Ind, p_ptr->tim_brand_vorp - 1);
-
-	/* Brand Confusion */
-	if (p_ptr->tim_brand_conf)
-		(void)set_tim_brand_conf(Ind, p_ptr->tim_brand_conf - 1);
 
 	/* Oppose Acid */
 	if (p_ptr->oppose_acid)
@@ -3914,24 +3729,6 @@ static bool process_player_end_aux(int Ind)
 	/* Oppose Poison */
 	if (p_ptr->oppose_pois)
 		(void)set_oppose_pois(Ind, p_ptr->oppose_pois - 1);
-
-#if 0
-	/* Aura Acid */
-	if (p_ptr->tim_aura_acid)
-		(void)set_tim_aura_acid(Ind, p_ptr->tim_aura_acid - 1);
-#endif
-
-	/* Aura Electricity */
-	if (p_ptr->tim_aura_elec)
-		(void)set_tim_aura_elec(Ind, p_ptr->tim_aura_elec - 1);
-		
-	/* Aura Fire */
-	if (p_ptr->tim_aura_fire)
-		(void)set_tim_aura_fire(Ind, p_ptr->tim_aura_fire - 1);
-		
-	/* Aura Cold */
-	if (p_ptr->tim_aura_cold)
-		(void)set_tim_aura_cold(Ind, p_ptr->tim_aura_cold - 1);
 
 	/*** Poison and Stun and Cut ***/
 
@@ -4255,8 +4052,8 @@ static bool process_player_end_aux(int Ind)
 	}
 
 	/* Drain Hitpoints */
-	if (p_ptr->drain_life || p_ptr->runetrap_drain_life) {
-		int drain = (p_ptr->drain_life + p_ptr->runetrap_drain_life) * (rand_int(p_ptr->mhp / 100) + 1);
+	if (p_ptr->drain_life) {
+		int drain = (p_ptr->drain_life) * (rand_int(p_ptr->mhp / 100) + 1);
 		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
 	}
 
@@ -4571,7 +4368,7 @@ static void process_player_end(int Ind)
 			if (target_okay(Ind)) {
 				/* spells always require 1 turn: */
 				if (p_ptr->shoot_till_kill_spell);
-				/* runespells excepted */
+				/* runespells excepted (for 'brief' modifier)*/
 				else if (p_ptr->shoot_till_kill_rcraft) energy = p_ptr->FTK_energy;
 				/* shooting with ranged weapon: */
 				else energy = energy / p_ptr->num_fire;
@@ -4600,11 +4397,9 @@ static void process_player_end(int Ind)
 						cast_school_spell(Ind, p_ptr->shoot_till_kill_book, p_ptr->shoot_till_kill_spell - 1, 5, -1, 0);
 						if (!p_ptr->shooting_till_kill) p_ptr->shoot_till_kill_spell = 0;
 					}
-#ifdef ENABLE_RCRAFT
 					else if (p_ptr->shoot_till_kill_rcraft) {
-						(void)execute_rspell(Ind, 5, p_ptr->FTK_e_flags1, p_ptr->FTK_e_flags2, p_ptr->FTK_m_flags, 1);
+						(void)execute_rspell(Ind, 5, p_ptr->FTK_e_flags, p_ptr->FTK_m_flags, 0, 1);
 					}
-#endif
 					else {
 						do_cmd_fire(Ind, 5);
 					}
@@ -5445,45 +5240,6 @@ void process_player_change_wpos(int Ind)
 	dun_level *l_ptr;
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
 
-#ifdef ENABLE_RCRAFT
-	/* remove all terrain modifications */
-	cave_type *c_ptr;
-	/* remove all rune traps of this player */
-	if (p_ptr->runetraps) {
-		struct c_special *cs_ptr;
-		if ((zcave = getcave(&p_ptr->wpos_old))) {
-			for (j = 0; j < p_ptr->runetraps; j++) {
-				c_ptr = &zcave[p_ptr->runetrap_y[j]][p_ptr->runetrap_x[j]];
-				if (c_ptr->feat != FEAT_RUNE_TRAP) continue; /* paranoia */
-				if (!(cs_ptr = GetCS(c_ptr, CS_RUNE_TRAP))) continue; /* paranoia */
-
-				d = cs_ptr->sc.runetrap.feat;
-				cs_erase(c_ptr, cs_ptr);
-				cave_set_feat_live(&p_ptr->wpos_old, p_ptr->runetrap_y[j], p_ptr->runetrap_x[j], d);
-			}
-		}
-		remove_rune_trap_upkeep(Ind, 0, -1, -1);
-	}
-	/* remove all rune portals of this player */
-	for (j = 0; j < 5; j++) {
-		if (p_ptr->memory_feat[j]) {
-			if ((zcave = getcave(&p_ptr->wpos_old))) {
-				c_ptr = &zcave[p_ptr->memory_port[j].y][p_ptr->memory_port[j].x];
-				if (c_ptr->feat != FEAT_RUNE_PORT) continue; /* paranoia */
-			}
-			cave_set_feat_live(&p_ptr->wpos_old, p_ptr->memory_port[j].y, p_ptr->memory_port[j].x, p_ptr->memory_feat[j]);
-			p_ptr->memory_feat[j] = 0;
-			p_ptr->memory_port[j].wpos.wx = 0;
-			p_ptr->memory_port[j].wpos.wy = 0;
-			p_ptr->memory_port[j].wpos.wz = 0;
-			p_ptr->memory_port[j].x = 0;
-			p_ptr->memory_port[j].y = 0;
-			p_ptr->rcraft_upkeep -= UPKEEP_PORT;
-		}
-	}
-	calc_mana(Ind);
-#endif
-
 	/* Decide whether we stayed long enough on the previous
 	   floor to get distinct floor feelings here, and also
 	   start counting turns we spend on this floor. */
@@ -5652,7 +5408,7 @@ void process_player_change_wpos(int Ind)
         if (p_ptr->max_panel_cols < 0) p_ptr->max_panel_cols = 0;
 #endif
 
-#if (defined(ENABLE_RCRAFT) || defined(DUNGEON_VISIT_BONUS))
+#if defined(DUNGEON_VISIT_BONUS)
 	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
 #endif
 
@@ -5724,7 +5480,7 @@ void process_player_change_wpos(int Ind)
 		/* Try to find a temple */
 		for (y = 0; y < MAX_HGT; y++) {
 			for (x = 0; x < MAX_WID; x++) {
-				c_ptr = &zcave[y][x];
+				cave_type* c_ptr = &zcave[y][x]; //Kurzel!!! - added a missing cave_type* wtf
 				if (c_ptr->feat == FEAT_SHOP) {
 					struct c_special *cs_ptr = GetCS(c_ptr, CS_SHOP);
 					if (cs_ptr) {

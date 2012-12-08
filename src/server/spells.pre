@@ -161,39 +161,8 @@ typedef unsigned int u32b;
 #define GF_SILENCE	160
 #define GF_CHARMIGNORE	161
 
-#define GF_ACID_ELEC		170 /* Runemasters - Kurzel */
-#define GF_ACID_FIRE		171
-#define GF_ACID_COLD		172
-#define GF_ACID_POISON		173
-#define GF_ELEC_FIRE		174
-#define GF_ELEC_COLD		175
-#define GF_ELEC_POISON		176
-#define GF_FIRE_COLD		177
-#define GF_FIRE_POISON		178
-#define GF_COLD_POISON		179
-
-#define GF_ACID_DISARM		180
-#define GF_ELEC_DISARM		181
-#define GF_FIRE_DISARM		182
-#define GF_COLD_DISARM		183
-
-#define GF_HI_ACID		184
-#define GF_HI_ELEC		185
-#define GF_HI_FIRE		186
-#define GF_HI_COLD		187
-#define GF_HI_POISON		188
-
-#define GF_THUNDER		189
-
-#define GF_GENOCIDE		190
-#define GF_WONDER		191
-#define GF_ANNIHILATION		192
-#define GF_DIG_FIRE		193
-#define GF_AFFLICT		194
-
-#define GF_LIFE_FIRE		196 /* New slay-living rune spells, lifefire has backlash (like a negative GF_OLD_DRAIN) - Kurzel */ 
-#define GF_BLIGHT		197
-#define GF_STOP         	198
+#define GF_THUNDER		189 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
+#define GF_ANNIHILATION		192 /* To differentiate drain effect from hacky non-drain effect for wands? */
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
@@ -218,6 +187,7 @@ typedef unsigned int u32b;
 #define EFF_WAVE                0x00000001      /* A circle whose radius increase */
 #define EFF_LAST                0x00000002      /* The wave lasts */
 #define EFF_STORM               0x00000004      /* The area follows the player */
+#define EFF_WALL		0x00000008	/* A cloud shaped like a beam */
 
 /* Generic weapon branding */
 #define BRAND_ELEC          0
@@ -429,6 +399,8 @@ extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, in
 extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
+extern bool fire_beam_cloud(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
+extern bool fire_crit_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
 extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker);
@@ -467,6 +439,9 @@ extern void do_mstopcharm(int Ind);
 /* traps.c */
 extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found);
 
+/* runecraft.c */
+extern void warding_rune(int Ind, byte typ, byte mod, byte lvl);
+extern bool warding_rune_break(int m_idx);
 
 /* Druidry */
 extern bool create_garden(int Ind, int level);
@@ -479,12 +454,6 @@ extern void divine_vengeance(int Ind, int power);
 extern void divine_empowerment(int Ind, int level);
 extern void divine_intensify(int Ind, int level);
 extern void divine_gateway(int Ind);
-#endif
-
-#ifdef ENABLE_RCRAFT
-extern bool do_temporary_antimagic(int Ind, int p);
-extern bool do_life_bonus(int Ind, int p, int v);
-extern bool do_speed_bonus(int Ind, int p, int v);
 #endif
 
 extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);

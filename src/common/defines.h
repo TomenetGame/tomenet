@@ -88,7 +88,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	4
-#define SF_VERSION_PATCH	29
+#define SF_VERSION_PATCH	30
 #define SF_VERSION_EXTRA	0
 
 
@@ -1146,8 +1146,8 @@
 #define STORE_BLACK	6
 #define STORE_HOME	7
 #define STORE_BOOK	8
-#define STORE_PET	9
-#define STORE_RUNE	STORE_PET /* Using this space for now */
+//#define STORE_PET	9
+#define STORE_RUNE	9
 #define STORE_MAYOR	10
 #define STORE_INN	11
 #define STORE_CASINO	15
@@ -1188,8 +1188,8 @@
 #define STORE_BLACK_DUN		76
 #define STORE_HOME_DUN		77
 #define STORE_BOOK_DUN		78
-#define STORE_PET_DUN		79
-#define STORE_RUNE_DUN	STORE_PET_DUN /* Using this space for now */
+//#define STORE_PET_DUN		79
+#define STORE_RUNE_DUN		79
 
 /* special 'stores' (hacks for build_store()) */
 #define STORE_FEAT_MORE	100	/* staircase down */
@@ -1798,7 +1798,7 @@
 #define FEAT_PERM_SOLID         0x3F
 
 /* Explosive rune */
-#define FEAT_MINOR_GLYPH        0x40
+#define FEAT_RUNE		0x40
 
 /* Pattern */
 #define FEAT_PATTERN_START      0x41
@@ -1900,9 +1900,6 @@
 //
 #define FEAT_SEALED_DOOR	224	/* for pvp-arena, like Andur suggested */
 #define FEAT_UNSEALED_DOOR	225
-//
-#define FEAT_RUNE_TRAP		230
-#define FEAT_RUNE_PORT		231
 
 /* number of connected void gates or something? */
 #define MAX_BETWEEN_EXITS       2
@@ -1924,9 +1921,10 @@
 #define EFF_WAVE                0x00000001      /* A circle whose radius increase */
 #define EFF_LAST                0x00000002      /* The wave lasts */
 #define EFF_STORM               0x00000004      /* The area follows the player */
-#define EFF_CROSSHAIR_A		0x00000008
-#define EFF_CROSSHAIR_B		0x00000010
-#define EFF_CROSSHAIR_C		0x00000020
+#define EFF_WALL		0x00000008	/* A cloud shaped like a beam */
+#define EFF_CROSSHAIR_A		0x00000010
+#define EFF_CROSSHAIR_B		0x00000020
+#define EFF_CROSSHAIR_C		0x00000040
 #define EFF_RAINING		0x08000000	/* New ideas for pushing the edge of Rogue-like gaming ^^ */
 #define EFF_FIREWORKS1		0x10000000	/* For NEW_YEARS_EVE =) - C. Blue*/
 #define EFF_FIREWORKS2		0x20000000	/* For new year's eve too. */
@@ -2506,9 +2504,8 @@
 #define TV_GOLD         100     /* Gold can only be picked up by players(?) */
 #define TV_RANDART      102     /* Random Artifacts */
 
-//We're finally using these two defs? :)
-#define TV_RUNE1        104      /* Base runes */
-#define TV_RUNE2        105      /* Modifier runes */
+/* Runecraft */
+#define TV_RUNE         107
 
 //gemstones
 #define TV_GEM		106
@@ -2606,75 +2603,6 @@
 #define MAX_SHROOM     20       /* Used with mushrooms (min 20) */ 
 #define MAX_TITLES     72       /* Used with scrolls (min 55) */ 
 #define MAX_SYLLABLES 164       /* Used with scrolls (see below) */ 
-
-
-/* Runemaster choices (original vs new ENABLE_RCRAFT code) */
-#ifndef ENABLE_RCRAFT /* original version */
-
- //Here comes the base runes (k_info.txt);
- #define SV_RUNE1_BOLT	1
- #define SV_RUNE1_BEAM	2
- #define SV_RUNE1_BALL	3
- #define SV_RUNE1_CLOUD	4
- #define SV_RUNE1_SELF	5
- //Here are the modifiers (k_info.txt)
- //BASIC
- #define SV_RUNE2_FIRE	1
- #define SV_RUNE2_COLD	2
- #define SV_RUNE2_ACID	3
- #define SV_RUNE2_ELEC	4
- #define SV_RUNE2_POIS	5
-
- //INTERMEDIATE -- more to add...
- #define SV_RUNE2_GRAV	11
- #define SV_RUNE2_WATER	12
- #define SV_RUNE2_DARK	13
- #define SV_RUNE2_LITE	14
- #define SV_RUNE2_STONE	15
-
- //ADVANCE -- more to add...
- #define SV_RUNE2_ARMAGEDDON 16
-
-#elif defined(CLIENT_SIDE) /* original version, compatibility hack */
-
- //Here comes the base runes (k_info.txt);
- #define SV_RUNE1_BOLT	1
- #define SV_RUNE1_BEAM	2
- #define SV_RUNE1_BALL	3
- #define SV_RUNE1_CLOUD	4
- #define SV_RUNE1_SELF	5
- //Here are the modifiers (k_info.txt)
- //BASIC
- #define SV_RUNE2_POIS	5
-
- //INTERMEDIATE -- more to add...
- #define SV_RUNE2_GRAV	11
- #define SV_RUNE2_DARK	13
- #define SV_RUNE2_LITE	14
- #define SV_RUNE2_STONE	15
-
- //ADVANCE -- more to add...
- #define SV_RUNE2_ARMAGEDDON 16
-
-#endif /* ENABLE_RCRAFT */
-#ifdef ENABLE_RCRAFT
-
- //New runes (k_info.txt) - Kurzel
- #define SV_RUNE2_ACID  	 0
- #define SV_RUNE2_WATER   	 1
- #define SV_RUNE2_ELEC   	 2
- #define SV_RUNE2_EARTH  	 3
- #define SV_RUNE2_FIRE   	 4
- #define SV_RUNE2_CHAOS  	 5
- #define SV_RUNE2_COLD   	 6
- #define SV_RUNE2_NETHER   	 7
- #define SV_RUNE2_POISON   	 8
- #define SV_RUNE2_NEXUS		 9
- #define SV_RUNE2_FORCE   	10
- #define SV_RUNE2_TIME		11
-
-#endif /* ENABLE_RCRAFT */
-
 
 /* Sval for golems */
 #define SV_GOLEM_WOOD           0
@@ -3526,7 +3454,6 @@
 
 #define is_custom_tome(sval)	((sval) >= SV_CUSTOM_TOME_1 && (sval) <= SV_CUSTOM_TOME_3)
 
-
 /* For precious stones (TV_PRECIOUS_STONE) */
 /* order is from least rare to most rare (thanks, http://magmawiki.com/index.php/40d:Gem and some creative writing) */
 #define PRECIOUS_STONE_MAX_TIER1_START	1
@@ -3637,6 +3564,7 @@
 
 #define PROJECT_PLAY	0x00001000	/* Affect players too, including the projector. (for GF_HEALINGCLOUD) */
 #define PROJECT_NORF	0x00002000	/* cannot be deflected by REFLECT monster flag */
+#define PROJECT_CRIT	0x00004000	/* Hit again with a radius 1 ball on creatures/players (runecraft enhanced cloud) */ 
 
 
 /* ToME expansions */
@@ -4033,40 +3961,8 @@
 #define GF_SILENCE		160 /* for new mindcrafters */
 #define GF_CHARMIGNORE		161
 
-#define GF_ACID_ELEC		170 /* Runemasters - Kurzel */
-#define GF_ACID_FIRE		171
-#define GF_ACID_COLD		172
-#define GF_ACID_POISON		173
-#define GF_ELEC_FIRE		174
-#define GF_ELEC_COLD		175
-#define GF_ELEC_POISON		176
-#define GF_FIRE_COLD		177
-#define GF_FIRE_POISON		178
-#define GF_COLD_POISON		179
-
-#define GF_ACID_DISARM		180
-#define GF_ELEC_DISARM		181
-#define GF_FIRE_DISARM		182
-#define GF_COLD_DISARM		183
-
-#define GF_HI_ACID		184
-#define GF_HI_ELEC		185
-#define GF_HI_FIRE		186
-#define GF_HI_COLD		187
-#define GF_HI_POISON		188
-
-#define GF_THUNDER		189
-
-#define GF_GENOCIDE		190
-#define GF_WONDER		191
-#define GF_ANNIHILATION		192
-#define GF_DIG_FIRE		193 //Kurzel -to do: add timed terrain (heat/freeze) projections!
-#define GF_AFFLICT		194
-#define GF_RCRAFT_PLAYER	195
-
-#define GF_LIFE_FIRE		196 /* New slay-living rune spells, lifefire has backlash (like a negative GF_OLD_DRAIN) - Kurzel */ 
-#define GF_BLIGHT		197
-#define GF_STOP         	198
+#define GF_THUNDER		189 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
+#define GF_ANNIHILATION		192 /* To differentiate drain effect from hacky non-drain effect for wands */
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200
@@ -6164,8 +6060,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 /* Monster can crush walls (note: Morgoth isn't taken into account here, shouldn't matter much though) */ \
 /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
 ((f_info[(C)->feat].flags1 & FF1_WALL) &&!(f_info[(C)->feat].flags1 & FF1_PERMANENT) && ((R)->flags2 & (RF2_KILL_WALL))) || \
-((C)->feat == FEAT_MON_TRAP) || /* Floor is trapped? */ \
-((C)->feat == FEAT_RUNE_TRAP))
+(C)->feat == FEAT_MON_TRAP) /* Floor is trapped? */ \
 
 
 /* A wall that doesn't "fill" the grid completely, ie could be passed without
@@ -6871,7 +6766,7 @@ extern int PlayerUID;
 #define MKEY_FLETCHERY		9	/* constant to be unused when fletchery becomes subskill of archer abilities */
 #define MKEY_TRAP               10
 #define MKEY_SCHOOL             11
-#define MKEY_RUNE		12
+#define MKEY_RCRAFT		12
 
 #define MKEY_STANCE		13	/* combat stances for warriors - C. Blue */
 #define MKEY_PARRYBLOCK		14	/* check parry/block chance */
@@ -6881,10 +6776,6 @@ extern int PlayerUID;
 #define MKEY_AURA_DEATH		17
 
 #define MAX_AURAS 		3
-
-#ifdef ENABLE_RCRAFT
- #define MKEY_RCRAFT		18
-#endif
 
 
 /*
@@ -6968,7 +6859,6 @@ extern int PlayerUID;
 #define SKILL_DRUID_ARCANE	74
 #define SKILL_DRUID_PHYSICAL	75
 
-#define SKILL_RUNEMASTERY	76
 #define SKILL_ASTRAL		77
 
 #define SKILL_DUAL		78 /* dual-wield for rogues */
@@ -6983,7 +6873,7 @@ extern int PlayerUID;
 #define SKILL_SCHOOL_PRAYING	84
 #define SKILL_SCHOOL_DRUIDISM	85
 #define SKILL_SCHOOL_MINDCRAFT	86
-
+ 
 /* additional ones */
 #define SKILL_CLIMB		90
 #define SKILL_FLY		91
@@ -6994,28 +6884,13 @@ extern int PlayerUID;
  #define SKILL_EGO_POWER
 #endif	/* 0 */
 
-#ifdef ENABLE_RCRAFT
- #define SKILL_SCHOOL_RUNECRAFT	95	//was 87..
-
- //#define SKILL_R_FIRECOLD	96
- //#define SKILL_R_WATEACID	97
- //#define SKILL_R_ELECEART	98	//was 94..
- //#define SKILL_R_WINDPOIS	99
-
- //#define SKILL_R_MANACHAO	100
- //#define SKILL_R_FORCGRAV	101
- //#define SKILL_R_NETHTIME	102
- //#define SKILL_R_MINDNEXU	103
-
- /* Rune reduction */
- #define SKILL_R_ACIDWATE	96 /* used for hardcoding some stuff - careful if modifiying this value */
- #define SKILL_R_ELECEART	97
- #define SKILL_R_FIRECHAO	98
- #define SKILL_R_COLDNETH	99
- #define SKILL_R_POISNEXU	100
- #define SKILL_R_FORCTIME	101
-
-#endif
+#define SKILL_SCHOOL_RUNECRAFT	95
+#define SKILL_R_LITE		96
+#define SKILL_R_DARK		97
+#define SKILL_R_NEXU		98
+#define SKILL_R_NETH		99
+#define SKILL_R_CHAO		100
+#define SKILL_R_MANA		101
 
 /*#define MAX_SKILLS              70 */
 #define MAX_SKILLS              128
@@ -7288,108 +7163,10 @@ extern int PlayerUID;
 #define ACHV_PVP_MID		2
 #define ACHV_PVP_MASS		3
 
-
 /* modify the base crit bonus to make it less linear, remotely similar to LUCK */
 //#define BOOST_CRIT(xtra_crit)	(65 - (975 / ((xtra_crit) + 15))) /* 1:5, 2: 8, 3:11, 5:17, 7:21, 10:26, 15:33, 20:38 */
 //xtra_crit = 60 - (600 / (xtra_crit + 10)); /* 1:6, 2:10, 3:15, 5:20, 7:25, 10:30, 15:36, 20:40 */
 #define BOOST_CRIT(xtra_crit)	(66 - (1350 / ((xtra_crit) + 20))) /* 1:2, 2: 5, 3:8, 5:12, 7:16, 10:21, 15:28, 20:33 */
-
-
-/* Here comes the new rune master macros and what not */
-#ifdef ENABLE_RUNEMASTER
-/* Here is how the rune spell damage gets calculated... 
- * I'll try to keep the latest table of dmg values updated @ 
- *    http://72.58.254.71/meow/rune_damage.txt
- */
- #define rbolt_dmg(x) (3 + damroll(1 + (x), 1 + (x)/2))
- #define rbeam_dmg(x) (3 + damroll(1 + (x), 1 + (x)/3))
- #define rball_dmg(x) (3 + damroll(1 + (x), 1 + (x)/3))
-
-// Halved dmg/sp if runemastery < 25
- #define ALTERNATE_DMG
- #define RBARRIER 25
-
-//By comparison, Nox does 76 damage per turn with no spell power.
-//#define rcloud_dmg(x) damroll((x), 1)
- #define rcloud_dmg(x) (x)
-
-/* Duration of the rune cloud spells...
- * As a comparator, Noxious Cloud (at 50, no spell power) has 45 duration 
- * We can max is at once to keep in the theme of "each class of rune spell
- * takes about the same amount of work to pull off...."
- * These are already expensive as heck anyway...
- */ 
- #define RCLOUD_DURATION	50
-
-/* The level for perfect rune base spell casting... */
- #define RSAFE_BOLT	15
- #define RSAFE_BEAM	25
- #define RSAFE_BALL	35
- #define RSAFE_CLOUD	50
-/* Enable perfect rune spell casting (ie no break chance)? */
-//#define ALLOW_PERFECT_RUNE_CASTING
-
-/* "What about SKILL_RUNEMASTERY?! Doesn't that determine dmg?" -- you say.
- * Well, no. Not if you're reading this!
- * Damage takes into account the value of RUNEMASTERY and char level!
- * Since skills stop at 50 and monsters do not, if we relate the damage to
- * the player's level instead, then we can allow the players to do some
- * decent damage later on. At the moment, the only thing capable to downing
- * Zu is probably a bow/xbow... Mages can't do it with maxed Spell Power...
- * Something new to try =)
- * 
- * SKILL_RUNEMASTERY, however, is used to determine rune breakage. The more
- * skilled you are, the better you are at doing the correct gestures, etc.
- *
- * Note that all rune spells have 0% intrinsic failure rate, but 
- * interceptable. If done in the presence of AM field, give a % chance for
- * the mod AND/OR base runes to shatter and does ball damage.
- *
- * TODO: Add the rune breakage code, add the AM field check too.
- * TODO: Let some badass mob (Tik?) drop the clouding rune (and only him!)
- */
- #define RUNE_DMG (((p_ptr->lev + 1)/2) + get_skill_scale(p_ptr, SKILL_RUNEMASTERY, 25))
-
-/* The folowing are the basic SP usage multipler for the modifier runes */
- #define RBASIC_COST 	(1) /* At lvl 50, this costs 1*50 */
- #define RMEDIUM_COST 	(2) /* At lvl 50, this costs 2*50 */
- #define RADVANCE_COST 	(5) /* At lvl 50, this costs OMG, 250?! =) */
-
-/* The following are the SP usage multiplier
- * The value here is multiplied with the cost obtained above.
- * At 50 ...
- * a basic bolt spell will cost 50 SP to cast,
- * a medium bolt spell will cost 150 SP to cast,
- *
- * a basic beam spell will cost 100 SP to cast,
- * a medium beam spell will cost 300 SP to cast,
- *
- * a basic ball spell will cost 150 SP to cast,
- * a medium ball spell will cost 450 SP to cast
- *
- * a basic cloud spell will cost 250 SP to cast. 
- * a medium cloud spell will cost 750 SP to cast
- * 
- * The idea is that each rune spell in the same class takes about the 
- * same amount of handwork to pull through...
- *
- * Some fun numbers to laugh/look at... 
- *  Base SP with *** stats for these guys are about 800 SP (w/o SKILL_MAGIC)
- * XXX Advanced cloud rune spell will cost about 1250 SP
- * XXX Advanced ball rune spell will cost about 750 SP
- * UPDATE: Toned it down a little.
- */ 
- #define RBOLT_BASE 	(1.0)
-// #define RBEAM_BASE 	2.0
- #define RBEAM_BASE 	(1.5)
-// #define RBALL_BASE 	3
-// #define RBALL_BASE 	2.5
- #define RBALL_BASE 	(2.0)
-// #define RCLOUD_BASE 	3.5
- #define RCLOUD_BASE 	(3.0)
- #define RSELF_BASE	RBOLT_BASE
-#endif //Runemaster
-
 
 //#ifdef ENABLE_MAIA  <- now always defined for important purpose of making savefiles uniform!
  #define MONSTER_RIDX_CANDLEBEARER 1104
@@ -7470,145 +7247,93 @@ extern int PlayerUID;
 
 #endif
 
+/* Runecraft */
+/* Physical Runes - match k_info.txt and common/tables.c index */
+#define SV_R_LITE			0
+#define SV_R_DARK			1
+#define SV_R_NEXU			2
+#define SV_R_NETH			3
+#define SV_R_CHAO			4
+#define SV_R_MANA			5
 
-#ifdef ENABLE_RCRAFT
-/* New Runecraft - Credits: Mark, Adam, Resiet, C.Blue, Kurzel */
-#define RSPELL_MAX_ELEMENTS 3
-//#define RSPELL_MAX_IMPERATIVES 1
-//#define RSPELL_MAX_TYPES 1
+#define SV_R_CONF			6
+#define SV_R_INER			7
+#define SV_R_ELEC			8
+#define SV_R_FIRE			9
+#define SV_R_WATE			10
+#define SV_R_GRAV			11
+#define SV_R_COLD			12
+#define SV_R_ACID			13
+#define SV_R_POIS			14
+#define SV_R_TIME			15
+#define SV_R_SOUN			16
+#define SV_R_SHAR			17
+#define SV_R_DISE			18
+#define SV_R_FORC			19
+#define SV_R_PLAS			20
+
+#define RSPELL_MAX_ELEMENTS 2
 
 /* Elements */
-#define RCRAFT_MAX_ELEMENTS 12
+/* Reduced for elegance while maintaining 'original' element completion / Tolkien lore. */
+#define RCRAFT_MAX_ELEMENTS 6
 
-#define R_ACID 0x0001
-#define R_WATE 0x0002
-#define R_ELEC 0x0004
-#define R_EART 0x0008
+#define R_LITE 0x0001
+#define R_DARK 0x0002
+#define R_NEXU 0x0004
+#define R_NETH 0x0008
 
-#define R_FIRE 0x0010
-#define R_CHAO 0x0020
-#define R_COLD 0x0040
-#define R_NETH 0x0080
+#define R_CHAO 0x0010
+#define R_MANA 0x0020
 
-#define R_POIS 0x0100
-#define R_NEXU 0x0200
-#define R_FORC 0x0400
-#define R_TIME 0x0800
+/* Projections */
+/* Combinations including the above that appear as projectable GF_TYPE elements */
+#define RCRAFT_MAX_PROJECTIONS 21 //6c2+6c1=21
 
 /* Types */
-#define RCRAFT_MAX_TYPES 8
- 
-#define T_MELE 0x0001
-#define T_SELF 0x0002
-#define T_BOLT 0x0004
-#define T_BEAM 0x0008
+/* Order matches the index in common/tables.c; ascending by level. */
+#define RCRAFT_MAX_TYPES 7
+
+#define T_BOLT 0x0001
+#define T_BEAM 0x0002
+#define T_CLOU 0x0004
+#define T_WAVE 0x0008
 
 #define T_BALL 0x0010
-#define T_WAVE 0x0020
-#define T_CLOU 0x0040
-#define T_STOR 0x0080
+#define T_RUNE 0x0020
+#define T_STOR 0x0040
+#define T_ENCH 0x0080
 
 /* Imperatives */
-#define RCRAFT_MAX_IMPERATIVES 8
+/* Order matches the index in common/tables.c; ascending by level. */
+#define RCRAFT_MAX_IMPERATIVES 7
 
 #define I_MINI 0x0100
-#define I_MODE 0x0200
-#define I_MAXI 0x0400
-#define I_COMP 0x0800
+#define I_LENG 0x0200
+#define I_COMP 0x0400
+#define I_MODE 0x0800
 
 #define I_EXPA 0x1000
 #define I_BRIE 0x2000
- 
-#define I_LENG 0x4000
-#define I_CHAO 0x8000
-
-/* Penalties */
-#define RPEN_MIN_RN 0x01 //Break a Rune
-#define RPEN_MIN_SP 0x02 //SP Hit and Effects
-#define RPEN_MIN_HP 0x04 //HP Hit and Effects
-#define RPEN_MIN_ST 0x08 //Stat Drain
-
-#define RPEN_MAJ_SN 0x10 //SN Hit and Effects
-#define RPEN_MAJ_ST 0x20 //Ruination
-#define RPEN_MAJ_HP 0x40 //Half Backlash
-#define RPEN_MAJ_DT 0x80 //Full Backlash and Paralysis
+#define I_MAXI 0x4000
+#define I_ENHA 0x8000
 
 /* Constants */
-#define S_ENERGY_CPR 2
- 
+/* Runespell constants for balancing and sanity checks */
 #define S_COST_MIN 1
 #define S_COST_MAX 75
-#define S_COST_DIV 2
-#define S_DIFF_MAX 15
-
-#define S_FAIL_RUNE 10
- 
+#define S_DIFF_MAX 15 //Maximum level difference between spell and skill levels
 #define S_RADIUS_MIN 1
 #define S_RADIUS_MAX 7
-
-#define S_DURATION_MIN 5
-#define S_DURATION_MAX 100
-
-/* Calculated */
-#define HACK_GF_FACTOR 1000 //Should be larger than the highest gf_type while allowing room in a u32b -.- Kurzel
-#define HACK_TYPE_FACTOR 1000000
-#define HACK_DAM_FACTOR 10000
-
-//Boosting the minimum levels for accessibility difficulty. - Kurzel
-#define RSPELL_MIN_LVL_1 0
-#define RSPELL_MIN_LVL_2 5
-#define RSPELL_MIN_LVL_3 10
-
-#define RSPELL_MAX_LVL_1 50
-#define RSPELL_MAX_LVL_2 85
-#define RSPELL_MAX_LVL_3 115
-
-/* Projections */
-#define RCRAFT_MAX_PROJECTIONS 78
-/* Direct Damage */
-#define DT_DIRECT 0
-#define W_MIN_DIR 100 //refer common/tables.c
-#define W_MAX_DIR 1200 //refer common/tables.c
-#define W_INF_DIR 7 //range 0-10, lower makes element damage closer
-#define DIRECT_MIN 1
-/* Indirect Damage */
-#define DT_INDIRECT 1
-#define W_MIN_IND 10 //refer common/tables.c
-#define W_MAX_IND 20 //refer common/tables.c
-#define W_INF_IND 10
-#define INDIRECT_MIN 1
-/* Effect 'Damage' */
-#define DT_EFFECT 2
-#define W_MIN_EFF 50 //refer common/tables.c
-#define W_MAX_EFF 300 //refer common/tables.c
-#define W_INF_EFF 5
-#define EFFECT_MIN 30
-/* Hack 'Damage' */
-#define DT_HACK 3
-
-/* Self Spells */
-#define UPKEEP_ATTUNE	10 //% Per Resist/Brand (Up to 2/5) Base/Poison
-#define UPKEEP_REPEL	10 //% Per Resist/Aura (Up to 5/5) Base/Poison (No poison aura though)
-#define UPKEEP_BRAND	20 //% Per Hi-Brand (Up to 1/2) Confusion/Annihilation
-#define UPKEEP_HI	30 //% For Digging/Regen Upkeep (Up to 2/2) PVAL+
-
-#define UPKEEP_MIN	10 //% Per Minor Upkeep (Status)
-#define RUPK_MIN_FA	0x01 //Free_act
-#define RUPK_MIN_CU	0x02 //No_Cut
-#define RUPK_MIN_CO	0x04 //No_Confusion
-#define RUPK_MIN_HL	0x08 //Hold Life
-#define UPKEEP_MAJ	20 //% Per Major Upkeep (Skills)
-#define RUPK_MAJ_NE	0x10 //Necro
-#define RUPK_MAJ_TR	0x20 //Trauma
-#define RUPK_MAJ_ST	0x40 //Stealth
-#define RUPK_MAJ_DO	0x80 //Dodge --changed to a 'minor' upkeep for now: Feather Fall
-
-#define UPKEEP_TRAP	20 //100/x% of sp an active rune trap eats up. Also the max # of rune traps.
-#define UPKEEP_PORT	10 //% Per Rune Memory (Up to 5)
+#define S_DURATION_MIN 3
+#define S_DURATION_MAX 50
+#define S_WEIGHT_LO 150 //refer common/tables.c
+#define S_WEIGHT_HI 1200 //refer common/tables.c
+#define S_WEIGHT_INFLUENCE 6 //range 0-10, lower makes elements have a closer spread of damage caps
 
 /* Macros */
-#define rget_level(x) ((skill * (x)) / 50) //No longer uses spell level: not used in fail rate calculator
-#endif
+#define rget_level(x) ((skill * (x)) / 50)
+#define rget_weight(x) (S_WEIGHT_HI * ((10 - S_WEIGHT_INFLUENCE) + (S_WEIGHT_INFLUENCE * (x - S_WEIGHT_LO) / (S_WEIGHT_HI - S_WEIGHT_LO))) / 10 + S_WEIGHT_LO)
 
 
 /* macro for debugging Doppelgaenger @s */
@@ -7769,7 +7494,7 @@ extern int PlayerUID;
 #define CS_MON_TRAP	8	/* monster traps */
 #define CS_SHOP		9	/* shop/building */
 #define CS_MIMIC	10	/* mimic-ing feature (eg. secret door) */
-#define CS_RUNE_TRAP	11	/* runecraft traps */
+#define CS_RUNE		11	/* runecraft glyphs */
 
 /* heheh it's kludge.. */
 #define sc_is_pointer(type)<--->(type < 3 || type == 4 || type > 10)

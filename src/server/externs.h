@@ -480,7 +480,7 @@ extern bool player_can_see_bold(int Ind, int y, int x);
 extern bool no_lite(int Ind);
 extern byte get_trap_color(int Ind, int t_idx, int feat);
 extern byte get_monster_trap_color(int Ind, int o_idx, int feat);
-extern byte get_runecraft_trap_color(int Ind, int typ, int feat);
+extern byte get_rune_color(int Ind, int typ);
 extern void map_info(int Ind, int y, int x, byte *ap, char *cp);
 extern void move_cursor_relative(int row, int col);
 extern void print_rel(char c, byte a, int y, int x);
@@ -1395,6 +1395,8 @@ extern void stair_creation(int Ind);
 extern bool enchant(int Ind, object_type *o_ptr, int n, int eflag);
 extern bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags);
 extern bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, int flags);
+extern void rune_combine(int Ind);
+extern void rune_combine_aux(int Ind, int item);
 extern bool ident_spell(int Ind);
 extern bool ident_spell_aux(int Ind, int item);
 extern bool identify_fully(int Ind);
@@ -1441,6 +1443,8 @@ extern bool cast_snowflake(worldpos *wpos, int x, int interval);
 extern bool cast_fireworks(worldpos *wpos, int x, int y);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
+extern bool fire_beam_cloud(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
+extern bool fire_crit_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
 extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker);
@@ -1490,14 +1494,6 @@ extern void divine_gateway(int Ind);
 extern bool do_divine_xtra_res_time_mana(int Ind, int p);
 extern bool do_divine_hp(int Ind, int p, int v);
 extern bool do_divine_crit(int Ind, int p, int v);
-
-#ifdef ENABLE_RCRAFT
-extern bool do_temporary_antimagic(int Ind, int p);
-extern bool do_life_bonus(int Ind, int p, int v);
-extern bool do_life_bonus_aux(int Ind, int p, int v);
-extern bool do_speed_bonus(int Ind, int p, int v);
-extern bool do_speed_bonus_aux(int Ind, int p, int v);
-#endif
 
 extern void do_autokinesis_to(int Ind, int dis);
 extern bool do_res_stat_temp(int Ind, int stat);
@@ -1922,11 +1918,8 @@ extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, in
 
 extern void place_trap_object(object_type *o_ptr);
 extern void do_cmd_set_trap(int Ind, int item_kit, int item_load);
-extern bool set_rune_trap_okay(int Ind);
-extern void set_rune_trap_aux(int Ind, int typ, int mod, int lev);
 extern void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x);
 extern bool mon_hit_trap(int m_idx);
-extern bool mon_hit_rune_trap(int m_idx);
 
 extern void wiz_place_trap(int Ind, int trap);
 
@@ -2103,59 +2096,16 @@ extern int fireworks_delay;
 /* for /shutrec command */
 extern int shutdown_recall_timer, shutdown_recall_state;
 
-#ifndef ENABLE_RCRAFT
-/* runes.c */
-extern void cast_rune_spell(int, int);
-extern void cast_rune_spell_header(int Ind, int a, int b);
-#else //Kurzel
 /* runecraft.c */
-extern void rune_trap_backlash(int Ind);
-extern void remove_rune_trap_upkeep(int Ind, s32b id, int x, int y);
-extern bool set_rune_port_okay(int Ind, byte type);
-extern void set_rune_port_aux(int Ind, byte type);
-extern byte execute_rspell(int Ind, byte dir, u16b e_flags1, u16b e_flags2, u16b m_flags, bool retaliate);
-/* spells1.c */
-extern bool rune_backlash(int Ind, int typ, int dam);
-/* tables.c */
+extern byte execute_rspell(int Ind, byte dir, u16b e_flags, u16b m_flags, u16b item, bool retaliate);
+extern void warding_rune(int Ind, byte typ, byte mod, byte lvl);
+extern bool warding_rune_break(int m_idx);
+extern bool set_tim_rcraft_help(int Ind, byte duration, byte type, byte projection, byte dx, byte dy);
+/* common/tables.c */
 extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
-extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES];
-extern r_type r_types[RCRAFT_MAX_TYPES];
+extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES+1];
+extern r_type r_types[RCRAFT_MAX_TYPES+1];
 extern r_projection r_projections[RCRAFT_MAX_PROJECTIONS];
-/* xtra2.c */
-extern bool set_tim_trauma(int Ind, int v, int p);
-extern bool set_tim_necro(int Ind, int v, int p);
-//extern bool set_tim_dodge(int Ind, int v, int p);
-extern bool set_tim_stealth(int Ind, int v, int p);
-
-extern bool set_tim_deflect(int Ind, int v);
-
-extern bool set_tim_rcraft_xtra(int Ind, int v);
-extern bool set_tim_rcraft_help(int Ind, byte duration, byte type, byte projection, u32b damage);
-
-extern bool set_tim_brand_acid(int Ind, int v);
-extern bool set_tim_brand_elec(int Ind, int v);
-extern bool set_tim_brand_fire(int Ind, int v);
-extern bool set_tim_brand_cold(int Ind, int v);
-extern bool set_tim_brand_pois(int Ind, int v);
-extern bool set_tim_brand_vorp(int Ind, int v);
-extern bool set_tim_brand_conf(int Ind, int v);
-
-extern bool set_tim_brand_ex(int Ind, int v, byte projection, u32b damage);
-extern bool set_tim_aura_ex(int Ind, int v, byte projection, u32b damage);
-
-extern bool set_tim_aura_acid(int Ind, int v);
-extern bool set_tim_aura_elec(int Ind, int v);
-extern bool set_tim_aura_fire(int Ind, int v);
-extern bool set_tim_aura_cold(int Ind, int v);
-
-extern bool set_protacid(int Ind, int v);
-extern bool set_protelec(int Ind, int v);
-extern bool set_protfire(int Ind, int v);
-extern bool set_protcold(int Ind, int v);
-extern bool set_protpois(int Ind, int v);
-
-extern bool set_tim_elemshield(int Ind, int v, byte type);
-#endif
 
 #ifdef MONSTER_ASTAR
 extern astar_list_open astar_info_open[ASTAR_MAX_INSTANCES];

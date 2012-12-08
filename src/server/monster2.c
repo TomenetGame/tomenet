@@ -2843,6 +2843,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	if (!(summon_override_checks & SO_GRID_GLYPH)) {
 		/* Hack -- no creation on glyph of warding */
 		if (zcave[y][x].feat == FEAT_GLYPH) return (FALSE);
+		if (zcave[y][x].feat == FEAT_RUNE) return (FALSE);
 	}
 
 	/* override protection for monsters spawning inside houses, to generate
@@ -4153,6 +4154,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 		if (!cave_empty_bold(zcave, y, x)) continue;
 		/* Hack -- no summon on glyph of warding */
 		if (zcave[y][x].feat == FEAT_GLYPH) continue;
+		if (zcave[y][x].feat == FEAT_RUNE) continue;
 
 		/* Okay */
 		break;
@@ -4240,6 +4242,7 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 
 			/* Hack -- no summon on glyph of warding */
 			if (zcave[y][x].feat == FEAT_GLYPH) continue;
+			if (zcave[y][x].feat == FEAT_RUNE) continue;
 
 			/* Okay */
 			break;
@@ -4324,6 +4327,7 @@ int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, boo
 		if (!cave_empty_bold(zcave, y, x)) continue;
 		/* Hack -- no summon on glyph of warding */
 		if (zcave[y][x].feat == FEAT_GLYPH) continue;
+		if (zcave[y][x].feat == FEAT_RUNE) continue;
 
 
 		/* Abort */

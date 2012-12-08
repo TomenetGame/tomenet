@@ -433,20 +433,6 @@ D:Spells use the wisdom stat.
 A:11:Cast a spell
 I:1000:111
 
-$ENABLE_RCRAFT!N:76:Runemastery
-$ENABLE_RCRAFT!D:Access to the Runic knowledge
-$ENABLE_RCRAFT!D:Intelligence and dexterity will affect the power.
-$ENABLE_RCRAFT!A:12:Draw a rune
-$ENABLE_RCRAFT!I:1000:104
-$ENABLE_RCRAFT!F:MKEY_HARDCODE
-
-$ENABLE_RCRAFT$N:76:Rune Alacrity
-$ENABLE_RCRAFT$D:Ability to draw runes efficiently.
-$ENABLE_RCRAFT$D:Increases the casting speed of rune spells.
-$ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:104
-$ENABLE_RCRAFT$F:MKEY_HARDCODE
-
 $ENABLE_MAIA$N:77:Astral Knowledge
 $ENABLE_MAIA$D:Access to the astral spells
 $ENABLE_MAIA$A:11:Cast a spell
@@ -523,46 +509,46 @@ F:MAX_1
 #I:1000:0
 #F:MAX_1
 
-$ENABLE_RCRAFT$N:95:Runecraft
-$ENABLE_RCRAFT$D:
-$ENABLE_RCRAFT$I:1000:0
-$ENABLE_RCRAFT$F:DUMMY
+N:95:Runecraft
+D:
+I:1000:0
+F:DUMMY
 
-$ENABLE_RCRAFT$N:96:Acid and Water
-$ENABLE_RCRAFT$D:Ability to transmute dispersion forces.
-$ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:105
-$ENABLE_RCRAFT$F:MKEY_HARDCODE
+N:96:Light
+D:Ability to evoke runes of light.
+A:12:Draw a rune
+I:1000:105
+F:MKEY_HARDCODE
 
-$ENABLE_RCRAFT$N:97:Electricity and Earth
-$ENABLE_RCRAFT$D:Ability to conjure electrostatic forces.
-$ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:105
-$ENABLE_RCRAFT$F:MKEY_HARDCODE
+N:97:Darkness
+D:Ability to evoke runes of darkness.
+A:12:Draw a rune
+I:1000:105
+F:MKEY_HARDCODE
 
-$ENABLE_RCRAFT$N:98:Fire and Chaos
-$ENABLE_RCRAFT$D:Ability to evoke entropic forces.
-$ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:105
-$ENABLE_RCRAFT$F:MKEY_HARDCODE
+N:98:Nexus
+D:Ability to evoke runes of nexus.
+A:12:Draw a rune
+I:1000:105
+F:MKEY_HARDCODE
 
-$ENABLE_RCRAFT$N:99:Cold and Nether
-$ENABLE_RCRAFT$D:Ability to abjure energetic forces.
-$ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:105
-$ENABLE_RCRAFT$F:MKEY_HARDCODE
+N:99:Nether
+D:Ability to evoke runes of nether.
+A:12:Draw a rune
+I:1000:105
+F:MKEY_HARDCODE
 
-$ENABLE_RCRAFT$N:100:Poison and Nexus
-$ENABLE_RCRAFT$D:Ability to illude natural forces.
-$ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:105
-$ENABLE_RCRAFT$F:MKEY_HARDCODE
+N:100:Chaos
+D:Ability to evoke runes of chaos.
+A:12:Draw a rune
+I:1000:105
+F:MKEY_HARDCODE
 
-$ENABLE_RCRAFT$N:101:Force and Time
-$ENABLE_RCRAFT$D:Ability to compel fundamental forces.
-$ENABLE_RCRAFT$A:18:Draw a rune
-$ENABLE_RCRAFT$I:1000:105
-$ENABLE_RCRAFT$F:MKEY_HARDCODE
+N:101:Mana 
+D:Ability to evoke runes of mana.
+A:12:Draw a rune
+I:1000:105
+F:MKEY_HARDCODE
 
 #
 # Skill interactions
@@ -649,7 +635,6 @@ f:Udun:Magic%10
 f:Mimicry:Magic%7
 #f:Demonology:Magic%10
 #f:Necromancy:Magic%4
-#f:Runecraft:Magic%12
 #f:Thaumaturgy:Magic%6
 #f:Casting-speed:Sorcery%10
 #f:Casting-speed:Magic%7
@@ -689,21 +674,12 @@ $ENABLE_MCRAFT$f:Psycho-Power:Magic%10
 $ENABLE_MCRAFT$f:Thought Contact:Magic%10
 $ENABLE_MCRAFT$f:Mental Intrusion:Magic%10
 
-$ENABLE_RCRAFT$f:Rune Alacrity:Magic%20
-
-$ENABLE_RCRAFT$f:Acid and Water:Magic%10
-$ENABLE_RCRAFT$f:Electricity and Earth:Magic%10
-$ENABLE_RCRAFT$f:Fire and Chaos:Magic%10
-$ENABLE_RCRAFT$f:Cold and Nether:Magic%10
-$ENABLE_RCRAFT$f:Poison and Nexus:Magic%10
-$ENABLE_RCRAFT$f:Force and Time:Magic%10
-
-$ENABLE_RCRAFT$f:Acid and Water:Rune Alacrity%15
-$ENABLE_RCRAFT$f:Electricity and Earth:Rune Alacrity%15
-$ENABLE_RCRAFT$f:Fire and Chaos:Rune Alacrity%15
-$ENABLE_RCRAFT$f:Cold and Nether:Rune Alacrity%15
-$ENABLE_RCRAFT$f:Poison and Nexus:Rune Alacrity%15
-$ENABLE_RCRAFT$f:Force and Time:Rune Alacrity%15
+f:Light:Magic%15
+f:Darkness:Magic%15
+f:Nexus:Magic%15
+f:Nether:Magic%15
+f:Chaos:Magic%15
+f:Mana :Magic%15
 
 f:Stealth:Sneakiness%15
 f:Disarming:Sneakiness%10
@@ -771,8 +747,7 @@ T:Magic:Prayer Schools
 T:Magic:Spell-power
 T:Magic:Druidic Schools
 $ENABLE_MCRAFT$T:Magic:Mindcraft Schools
-$ENABLE_RCRAFT$T:Magic:Runecraft
-$ENABLE_RCRAFT!T:Magic:Runemastery
+T:Magic:Runecraft
 $ENABLE_MAIA$T:Magic:Astral Knowledge
 T:Magic:Mimicry
 T:Magic:Magic-device
@@ -793,7 +768,6 @@ T:Magic Schools:Meta
 
 #T:Magic:Demonology
 #T:Magic:Necromancy
-#T:Magic:Runecraft
 #T:Magic:Thaumaturgy
 #T:Magic:Alchemy
 
@@ -811,13 +785,12 @@ $ENABLE_MCRAFT$T:Mindcraft Schools:Psycho-Power
 $ENABLE_MCRAFT$T:Mindcraft Schools:Thought Contact
 $ENABLE_MCRAFT$T:Mindcraft Schools:Mental Intrusion
 
-$ENABLE_RCRAFT$T:Runecraft:Rune Alacrity
-$ENABLE_RCRAFT$T:Rune Alacrity:Acid and Water
-$ENABLE_RCRAFT$T:Rune Alacrity:Electricity and Earth
-$ENABLE_RCRAFT$T:Rune Alacrity:Fire and Chaos
-$ENABLE_RCRAFT$T:Rune Alacrity:Cold and Nether
-$ENABLE_RCRAFT$T:Rune Alacrity:Poison and Nexus
-$ENABLE_RCRAFT$T:Rune Alacrity:Force and Time
+T:Runecraft:Light
+T:Runecraft:Darkness
+T:Runecraft:Nexus
+T:Runecraft:Nether
+T:Runecraft:Chaos
+T:Runecraft:Mana 
 
 #T:Main:Spirituality
 #T:Spirituality:Prayer

@@ -167,14 +167,6 @@ bool wearable_p(object_type *o_ptr)
 			{
 				return (TRUE);
 			}
-#if 0
-		case TV_RUNE1:
-		{
-			if ((o_ptr->sval == SV_RUNE1_SELF) && (o_ptr->name2 != 0)) {
-				return (TRUE);
-			}
-		}
-#endif
 	}
 
 	/* Nope */
@@ -455,30 +447,6 @@ static void rd_item(object_type *o_ptr)
 	/* Fix rods that got 'double-timeout' by erroneous discharge function*/
 	if (o_ptr->tval == TV_ROD) o_ptr->timeout = 0;
 
-#ifndef ENABLE_RCRAFT
-	/* Fix high quality runes levels */
-	if (o_ptr->tval == TV_RUNE1) {
-		switch (o_ptr->sval) {
-			case SV_RUNE1_CLOUD:
-				o_ptr->level = 35;
-			default:
-				break;
-		} 
-	}
-	if (o_ptr->tval == TV_RUNE2) {
-		switch (o_ptr->sval) {
-			case SV_RUNE2_STONE:
-				o_ptr->level = 35;
-				break;
-			case SV_RUNE2_ARMAGEDDON:
-				o_ptr->level = 40;
-				break;
-			default:
-				break;
-		} 
-	}
-#endif
-
 	if (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_FEANORIAN) {
 		if (o_ptr->level < 30) {
 			if (o_ptr->name2 || o_ptr->name2b)
@@ -596,7 +564,7 @@ if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
 
 
 	/* Repair non "wearable" items */
-	if ((o_ptr->tval != TV_TRAPKIT && o_ptr->tval != TV_RUNE1) && !wearable_p(o_ptr))
+	if ((o_ptr->tval != TV_TRAPKIT) && !wearable_p(o_ptr))
 	{
 		/* Acquire correct fields */
 		o_ptr->to_h = k_ptr->to_h;
@@ -1724,19 +1692,20 @@ if (p_ptr->updated_savegame == 0) {
 		p_ptr->free_mimic = tmp16s;
 	}
 
-	/* Runecraft */
-	if (!older_than(4, 3, 26)) {
-		rd_s16b(&p_ptr->memory.wpos.wx);
-		rd_s16b(&p_ptr->memory.wpos.wy);
-		rd_s16b(&p_ptr->memory.wpos.wz);
-		rd_s16b(&p_ptr->memory.x);
-		rd_s16b(&p_ptr->memory.y);
+	/* read obsolete values */
+	if (older_than(4, 4, 30) &&
+	    /* Runecraft */
+	    !older_than(4, 3, 26)) {
+    		rd_s16b(&tmp16s);
+	    	rd_s16b(&tmp16s);
+    		rd_s16b(&tmp16s);
+    		rd_s16b(&tmp16s);
+        	rd_s16b(&tmp16s);
 
-		rd_u16b(&p_ptr->tim_deflect);
-		rd_u16b(&p_ptr->tim_trauma);
-		rd_u16b(&p_ptr->tim_trauma_pow);
+	    	rd_u16b(&tmp16u);
+    		rd_u16b(&tmp16u);
+    		rd_u16b(&tmp16u);
 	}
-
 
 	if (!older_than(4, 4, 1)) {
 		rd_byte(&tmp8u); /* aura states (on/off) */
@@ -1776,75 +1745,78 @@ if (p_ptr->updated_savegame == 0) {
 		rd_u32b(&p_ptr->guild_flags);
 	}
 
-	/* New Runecraft Feature Variables - Kurzel */
-	if (!older_than(4, 4, 25)) {
-		rd_s16b(&p_ptr->rcraft_augment);
+	/* read obsolete values */
+	if (older_than(4, 4, 30) &&
+	    /* New Runecraft Feature Variables - Kurzel */
+	    !older_than(4, 4, 25)) {
+	        rd_s16b(&tmp16s);
 
-		rd_byte(&p_ptr->rcraft_project);
-		rd_s16b(&p_ptr->rcraft_xtra_a);
-		rd_s16b(&p_ptr->rcraft_xtra_b);
-		rd_u16b(&p_ptr->tim_rcraft_xtra);
+	        rd_byte(&tmp8u);
+	        rd_s16b(&tmp16s);
+	        rd_s16b(&tmp16s);
+	        rd_u16b(&tmp16u);
 
-		rd_u16b(&p_ptr->tim_rcraft_help);
-		rd_byte(&p_ptr->tim_rcraft_help_type);
-		rd_byte(&p_ptr->tim_rcraft_help_projection);
-		rd_u32b(&p_ptr->tim_rcraft_help_damage);
+	        rd_u16b(&tmp16u);
+	        rd_byte(&tmp8u);
+	        rd_byte(&tmp8u);
+	        rd_u32b(&tmp32u);
 
-		rd_byte(&p_ptr->rcraft_upkeep);
-		rd_u16b(&p_ptr->rcraft_attune);
-		rd_u16b(&p_ptr->rcraft_repel);
-		rd_byte(&p_ptr->rcraft_brand);
+	        rd_byte(&tmp8u);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        rd_byte(&tmp8u);
 
-		rd_u16b(&p_ptr->tim_brand_acid);
-		rd_u16b(&p_ptr->tim_brand_elec);
-		rd_u16b(&p_ptr->tim_brand_fire);
-		rd_u16b(&p_ptr->tim_brand_cold);
-		rd_u16b(&p_ptr->tim_brand_pois);
-		rd_u16b(&p_ptr->tim_brand_vorp);
-		rd_u16b(&p_ptr->tim_brand_conf);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
 
 #if 0
-		rd_u16b(&p_ptr->tim_aura_acid);
+	        rd_u16b(&tmp16u);
 #endif
-		rd_u16b(&p_ptr->tim_aura_elec);
-		rd_u16b(&p_ptr->tim_aura_fire);
-		rd_u16b(&p_ptr->tim_aura_cold);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
 
-		rd_byte(&p_ptr->rcraft_dig);
-		rd_byte(&p_ptr->rcraft_upkeep_flags);
+	        rd_byte(&tmp8u);
+	        rd_byte(&tmp8u);
 
-		rd_u16b(&p_ptr->tim_necro);
-		rd_u16b(&p_ptr->tim_necro_pow);
-		//rd_u16b(&p_ptr->tim_dodge);
-		//rd_u16b(&p_ptr->tim_dodge_pow);
-		rd_u16b(&p_ptr->tim_stealth);
-		rd_u16b(&p_ptr->tim_stealth_pow);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        //rd_u16b(&tmp16u);
+	        //rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
 
 #if 1
-		if (!older_than(4, 4, 26)) {
-			rd_u16b(&p_ptr->tim_brand_ex);
-			rd_byte(&p_ptr->tim_brand_ex_projection);
-			rd_u32b(&p_ptr->tim_brand_ex_damage);
-			rd_u16b(&p_ptr->tim_aura_ex);
-			rd_byte(&p_ptr->tim_aura_ex_projection);
-			rd_u32b(&p_ptr->tim_aura_ex_damage);
-		}
+	        if (!older_than(4, 4, 26)) {
+	                rd_u16b(&tmp16u);
+	                rd_byte(&tmp8u);
+	                rd_u32b(&tmp32u);
+	                rd_u16b(&tmp16u);
+	                rd_byte(&tmp8u);
+	                rd_u32b(&tmp32u);
+	        }
 #endif
 
-		rd_u16b(&p_ptr->rcraft_empower);
-		rd_u16b(&p_ptr->rcraft_regen);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
 
 #if 0
-		rd_u16b(&p_ptr->protacid);
-		rd_u16b(&p_ptr->protelec);
-		rd_u16b(&p_ptr->protfire);
-		rd_u16b(&p_ptr->protcold);
-		rd_u16b(&p_ptr->protpois);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
+	        rd_u16b(&tmp16u);
 #endif
 
-		rd_u16b(&p_ptr->tim_elemshield);
-		rd_byte(&p_ptr->tim_elemshield_type);
+	        rd_u16b(&tmp16u);
+	        rd_byte(&tmp8u);
 	}
+
 
 	/* Success */
 	return FALSE;

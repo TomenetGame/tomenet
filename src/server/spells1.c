@@ -528,6 +528,7 @@ bool teleport_away(int m_idx, int dis)
 
 			/* Hack -- no teleport onto glyph of warding */
 			if (zcave[ny][nx].feat == FEAT_GLYPH) continue;
+			if (zcave[ny][nx].feat == FEAT_RUNE) continue;
 			/* No teleporting into vaults and such */
 			if (zcave[ny][nx].info & CAVE_ICKY) continue;
 
@@ -649,6 +650,7 @@ void teleport_to_player(int Ind, int m_idx)
 
 			/* Hack -- no teleport onto glyph of warding */
 			if (zcave[ny][nx].feat == FEAT_GLYPH) continue;
+			if (zcave[ny][nx].feat == FEAT_RUNE) continue;
 #if 0
 			if (cave[ny][nx].feat == FEAT_MINOR_GLYPH) continue;
 
@@ -808,7 +810,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 
 			/* Require floor space if not ghost */
 			if (!p_ptr->ghost && !cave_naked_bold(zcave, y, x)) continue;
-			
+
 			/* never teleport onto perma-walls (happens to ghosts in khazad) */
 			if (cave_perma_bold(zcave, y, x)) continue;
 
@@ -1283,34 +1285,9 @@ byte spell_color(int type)
 		case GF_HEALINGCLOUD:	return (TERM_LITE);//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
 		case GF_WATERPOISON:	return (TERM_COLD);return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
 		case GF_ICEPOISON:	return (TERM_SHAR);//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
-		/* Runemasters - Kurzel */
-		case GF_ACID_ELEC:	return (randint(2)==1?TERM_ACID:TERM_ELEC);
-		case GF_ACID_FIRE:	return (randint(2)==1?TERM_ACID:TERM_FIRE);
-		case GF_ACID_COLD:	return (randint(2)==1?TERM_ACID:TERM_COLD);
-		case GF_ACID_POISON:	return (randint(2)==1?TERM_ACID:TERM_POIS);
-		case GF_ELEC_FIRE:	return (randint(2)==1?TERM_FIRE:TERM_ELEC);
-		case GF_ELEC_COLD:	return (randint(2)==1?TERM_ELEC:TERM_COLD);
-		case GF_ELEC_POISON:	return (randint(2)==1?TERM_ELEC:TERM_POIS);
-		case GF_FIRE_COLD:	return (randint(2)==1?TERM_FIRE:TERM_COLD);
-		case GF_FIRE_POISON:	return (randint(2)==1?TERM_FIRE:TERM_POIS);
-		case GF_COLD_POISON:	return (randint(2)==1?TERM_COLD:TERM_POIS);
-		case GF_ACID_DISARM:	return (randint(2)==1?TERM_ACID:TERM_LITE);
-		case GF_ELEC_DISARM:	return (randint(2)==1?TERM_ELEC:TERM_LITE);
-		case GF_FIRE_DISARM:	return (randint(2)==1?TERM_FIRE:TERM_LITE);
-		case GF_COLD_DISARM:	return (randint(2)==1?TERM_COLD:TERM_LITE);
-		case GF_HI_ACID:	return (TERM_ACID);
-		case GF_HI_ELEC:	return (TERM_ELEC);
-		case GF_HI_FIRE:	return (TERM_FIRE);
-		case GF_HI_COLD:	return (TERM_COLD);
-		case GF_HI_POISON:	return (TERM_POIS);
+		/* To remove some hacks? */
 		case GF_THUNDER:	return (randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
-		case GF_GENOCIDE:	return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
-		case GF_WONDER:		return (TERM_MULTI);
-		//case GF_AFFLICT:	return (mh_attr(4));
 		case GF_ANNIHILATION:	return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
-		case GF_LIFE_FIRE:	return (randint(5)==1?TERM_VIOLET:TERM_FIRE);
-		case GF_BLIGHT:		return (randint(5)==1?TERM_L_DARK:TERM_COLD);
-		case GF_STOP:		return (randint(2)==1?TERM_WHITE:TERM_UMBER);
 	}
 
 	/* Standard "color" */
@@ -1372,34 +1349,9 @@ bool spell_color_animation(int type)
 		case GF_HEALINGCLOUD:	return FALSE;//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
 		case GF_WATERPOISON:	return FALSE;return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
 		case GF_ICEPOISON:	return FALSE;//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
-		/* Runemasters - Kurzel */
-		case GF_ACID_ELEC: 	return FALSE;
-		case GF_ACID_FIRE: 	return FALSE;
-		case GF_ACID_COLD: 	return FALSE;
-		case GF_ACID_POISON: 	return FALSE;
-		case GF_ELEC_FIRE: 	return FALSE;
-		case GF_ELEC_COLD: 	return FALSE;
-		case GF_ELEC_POISON: 	return FALSE;
-		case GF_FIRE_COLD:	return FALSE;
-		case GF_FIRE_POISON:	return FALSE;
-		case GF_COLD_POISON:	return FALSE;
-		case GF_ACID_DISARM:	return FALSE;
-		case GF_ELEC_DISARM:	return FALSE;
-		case GF_FIRE_DISARM:	return FALSE;
-		case GF_COLD_DISARM:	return FALSE;
-		case GF_HI_ACID:	return FALSE;
-		case GF_HI_ELEC:	return FALSE;
-		case GF_HI_FIRE:	return FALSE;
-		case GF_HI_COLD:	return FALSE;
-		case GF_HI_POISON:	return FALSE;
+		/* To remove some hacks? */
 		case GF_THUNDER:	return FALSE;
-		case GF_GENOCIDE:	return FALSE;
-		case GF_WONDER:		return FALSE;
-		//case GF_AFFLICT:	return FALSE;
 		case GF_ANNIHILATION:	return FALSE;
-		case GF_LIFE_FIRE:	return FALSE;
-		case GF_BLIGHT:		return FALSE;
-		case GF_STOP:		return FALSE;
 	}
 
 	/* Standard "color" */
@@ -1562,7 +1514,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	p_ptr->deathblow = damage;
 
 	/* for cloaking as well as shadow running:
-	   floor damage (like in nether realm) ain't supposed to break it! - C. Blue */	
+	   floor damage (like in nether realm) ain't supposed to break it! - C. Blue */
 //both ifs should work properly.
 	if (-Ind_attacker != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
 //	if (strcmp(hit_from, "hazardous environment")) break_cloaking(Ind, 0);
@@ -2498,24 +2450,7 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	int inv, hurt_eq;
 
 	dam -= p_ptr->reduc_acid * dam / 100;
-	
-	//Runemaster Elemental Shield - Kurzel
-	if ((p_ptr->tim_elemshield && p_ptr->tim_elemshield_type == 0) && (!bypass_invuln)) {
-		if (p_ptr->csp > 0) {
-			int taken = dam;
-			if (p_ptr->csp < taken) {
-				dam = taken - p_ptr->csp;
-				p_ptr->csp = 0;
-				p_ptr->redraw |= (PR_MANA);
-				set_tim_elemshield(Ind, 0, 0);
-			} else {
-				p_ptr->csp -= taken;
-				p_ptr->redraw |= (PR_MANA);
-				return 0;
-			}
-		}
-	}
-	
+
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* this is SO much softer than MAngband, heh. I think it's good tho - C. Blue */
@@ -2571,24 +2506,7 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	int inv;
 
 	dam -= p_ptr->reduc_elec * dam / 100;
-	
-	//Runemaster Elemental Shield - Kurzel
-	if ((p_ptr->tim_elemshield && p_ptr->tim_elemshield_type == 1) && (!bypass_invuln)) {
-		if (p_ptr->csp > 0) {
-			int taken = dam;
-			if (p_ptr->csp < taken) {
-				dam = taken - p_ptr->csp;
-				p_ptr->csp = 0;
-				p_ptr->redraw |= (PR_MANA);
-				set_tim_elemshield(Ind, 0, 0);
-			} else {
-				p_ptr->csp -= taken;
-				p_ptr->redraw |= (PR_MANA);
-				return 0;
-			}
-		}
-	}
-	
+
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* Total immunity */
@@ -2631,24 +2549,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	int inv, hurt_eq;
 
 	dam -= p_ptr->reduc_fire * dam / 100;
-	
-	//Runemaster Elemental Shield - Kurzel
-	if ((p_ptr->tim_elemshield && p_ptr->tim_elemshield_type == 2) && (!bypass_invuln)) {
-		if (p_ptr->csp > 0) {
-			int taken = dam;
-			if (p_ptr->csp < taken) {
-				dam = taken - p_ptr->csp;
-				p_ptr->csp = 0;
-				p_ptr->redraw |= (PR_MANA);
-				set_tim_elemshield(Ind, 0, 0);
-			} else {
-				p_ptr->csp -= taken;
-				p_ptr->redraw |= (PR_MANA);
-				return 0;
-			}
-		}
-	}
-	
+
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	hurt_eq = (dam < 30) ? 15 : (dam < 60) ? 33 : 100;
@@ -2698,23 +2599,6 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 
 	dam -= p_ptr->reduc_cold * dam / 100;
 
-	//Runemaster Elemental Shield - Kurzel
-	if ((p_ptr->tim_elemshield && p_ptr->tim_elemshield_type == 3) && (!bypass_invuln)) {
-		if (p_ptr->csp > 0) {
-			int taken = dam;
-			if (p_ptr->csp < taken) {
-				dam = taken - p_ptr->csp;
-				p_ptr->csp = 0;
-				p_ptr->redraw |= (PR_MANA);
-				set_tim_elemshield(Ind, 0, 0);
-			} else {
-				p_ptr->csp -= taken;
-				p_ptr->redraw |= (PR_MANA);
-				return 0;
-			}
-		}
-	}
-	
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* Total immunity */
@@ -2924,7 +2808,7 @@ bool dec_stat(int Ind, int stat, int amount, int mode)
 
 			/* a little crude, perhaps */
 			dectime = rand_int(getlevel(&p_ptr->wpos)*50) + 50;
-			
+
 			/* prevent overflow, stat_cnt = u16b */
 			/* or add another temporary drain... */
 			if ( ((p_ptr->stat_cnt[stat]+dectime)<p_ptr->stat_cnt[stat]) ||
@@ -3566,13 +3450,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	{
 		/* Ignore most effects */
 		case GF_ACID:
-		case GF_BLIGHT:
-		//case GF_ACID_DISARM: /* XOR */
-		case GF_HI_ACID:
-		case GF_ACID_ELEC:
-		//case GF_ACID_FIRE: /* Adjoined with GF_FIRE: XOR*/
-		case GF_ACID_COLD:
-		case GF_ACID_POISON:
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Destroy trees */
 			if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_BUSH)
@@ -3605,7 +3482,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_ELEC:
 		case GF_COLD:
 		case GF_ICE:
-		case GF_THUNDER:	/* a gestalt now - Kurzel */
+		case GF_THUNDER:	/* a gestalt now, to remove hacky tri-bolt on thunderstorm */
 		case GF_SHARDS:
 		case GF_FORCE:
 		case GF_SOUND:
@@ -3621,7 +3498,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_EARTHQUAKE:
 		{
-			//Hack -- r = 0 Does a quake roll for a single tile. - Kurzel!!
 			earthquake(wpos, y, x, 0);
 			break;
 		}
@@ -3657,15 +3533,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		case GF_FIRE:
-		case GF_LIFE_FIRE:
-		//case GF_FIRE_DISARM: /* XOR */
-		case GF_HI_FIRE:
-		case GF_ACID_FIRE:
-		case GF_FIRE_COLD:
-		case GF_FIRE_POISON:
 		case GF_METEOR:
 		case GF_PLASMA:
-
 		case GF_HELL_FIRE:
 		{
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
@@ -3773,10 +3642,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Destroy Doors (and traps) */
-		case GF_ACID_DISARM:
-		case GF_ELEC_DISARM:
-		case GF_FIRE_DISARM:
-		case GF_COLD_DISARM:
 		case GF_KILL_DOOR:
 		{
 			byte feat = twall_erosion(wpos, y, x);
@@ -3881,10 +3746,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Destroy walls (and doors) */
 		case GF_KILL_WALL:
-		case GF_DIG_FIRE: /* fix this to leave fire tile, melt l00t? - Kurzel */
 		{
 			byte feat = twall_erosion(wpos, y, x);
-			if (typ == GF_DIG_FIRE && feat == FEAT_FLOOR) feat = FEAT_SHAL_LAVA;
 
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Non-walls (etc) */
@@ -3893,7 +3756,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Permanent walls */
 			if ((c_ptr->feat >= FEAT_PERM_EXTRA || c_ptr->feat == FEAT_PERM_CLEAR)
 				&& !(c_ptr->feat >= FEAT_SANDWALL && c_ptr->feat <= FEAT_SANDWALL_K)) break;
-
 
 			/* the_sandman: sandwalls are stm-able too? */
 			/* fixed it and also added the treasures in sandwalls - mikaelh */
@@ -4030,7 +3892,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Forget the wall */
 			everyone_forget_spot(wpos, y, x);
-	
+
 			if (!quiet)
 			{
 				/* Notice */
@@ -4161,7 +4023,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* from PernA	- Jir - */
-#if 1 //enabled for runespell 'magic circle' - Kurzel
+#if 0
 		case GF_MAKE_GLYPH:
 		{
 			/* Require a "naked" floor grid */
@@ -4345,7 +4207,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Check for artifact */
 	if (artifact_p(o_ptr)) is_art = TRUE;
-	
+
 	/* Stormbringer is artifact-like - C. Blue */
 	if (o_ptr->name2 == EGO_STORMBRINGER) is_art = TRUE;
 
@@ -4361,17 +4223,15 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_IDENTIFY:
 		{
 			do_kill = FALSE;
-			
+
 			/* Identify it fully */
 			if (!quiet) object_aware(Ind, o_ptr);
 			object_known(o_ptr);
 			break;
 		}
-		
+
 		/* Acid -- Lots of things */
 		case GF_ACID:
-		case GF_ACID_DISARM:
-		case GF_HI_ACID:
 		{
 			if (hates_acid(o_ptr))
 			{
@@ -4384,8 +4244,6 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Elec -- Rings and Wands, and now much more to make IM_ELEC better, and elec less laughed at */
 		case GF_ELEC:
-		case GF_ELEC_DISARM:
-		case GF_HI_ELEC:
 		{
 			if (hates_elec(o_ptr))
 			{
@@ -4399,8 +4257,6 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Fire -- Flammable objects */
 		case GF_FIRE:
-		case GF_FIRE_DISARM:
-		case GF_HI_FIRE:
 		{
 			do_smash_effect = TRUE;
 			if (hates_fire(o_ptr))
@@ -4415,8 +4271,6 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Cold -- potions and flasks */
 		case GF_COLD:
-		case GF_COLD_DISARM:
-		case GF_HI_COLD:
 		{
 			if (hates_cold(o_ptr))
 			{
@@ -4439,88 +4293,6 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note_kill = (plural ? " are soaked!" : " is soaked!");
 				do_kill = TRUE;
 				if (f5 & TR5_IGNORE_WATER) ignore = TRUE;
-			}
-			break;
-		}
-
-		/* Acid + Elec */
-		case GF_ACID_ELEC:
-		{
-			if (hates_acid(o_ptr))
-			{
-				do_kill = TRUE;
-				note_kill = (plural ? " melt!" : " melts!");
-				if (f3 & TR3_IGNORE_ACID) ignore = TRUE;
-			}
-			if (hates_elec(o_ptr))
-			{
-				do_kill = TRUE;
-				note_kill = (plural ? " are destroyed!" : " is destroyed!");
-				if (f3 & TR3_IGNORE_ELEC) ignore = TRUE;
-			}
-			else apply_discharge_item(this_o_idx, dam);
-			break;
-		}
-
-		/* Acid + Fire */
-		case GF_ACID_FIRE:
-		{
-			if (hates_acid(o_ptr))
-			{
-				do_kill = TRUE;
-				note_kill = (plural ? " melt!" : " melts!");
-				if (f3 & TR3_IGNORE_ACID) ignore = TRUE;
-			}
-			do_smash_effect = TRUE;
-			if (hates_fire(o_ptr))
-			{
-				do_kill = TRUE;
-				note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
-					: (plural ? " burn up!" : " burns up!");
-				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
-			}
-			break;
-		}
-
-		/* Acid + Cold */
-		case GF_ACID_COLD:
-		{
-			if (hates_acid(o_ptr))
-			{
-				do_kill = TRUE;
-				note_kill = (plural ? " melt!" : " melts!");
-				if (f3 & TR3_IGNORE_ACID) ignore = TRUE;
-			}
-			if (hates_cold(o_ptr))
-			{
-				note_kill = (plural ? " shatter!" : " shatters!");
-				do_kill = TRUE;
-				if (f3 & TR3_IGNORE_COLD) ignore = TRUE;
-#ifdef USE_SOUND_2010
-				else if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-			}
-			break;
-		}
-
-		/* Elec + Cold */
-		case GF_ELEC_COLD:
-		{
-			if (hates_elec(o_ptr))
-			{
-				do_kill = TRUE;
-				note_kill = (plural ? " are destroyed!" : " is destroyed!");
-				if (f3 & TR3_IGNORE_ELEC) ignore = TRUE;
-			}
-			else apply_discharge_item(this_o_idx, dam);
-			if (hates_cold(o_ptr))
-			{
-				note_kill = (plural ? " shatter!" : " shatters!");
-				do_kill = TRUE;
-				if (f3 & TR3_IGNORE_COLD) ignore = TRUE;
-#ifdef USE_SOUND_2010
-				else if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
-#endif
 			}
 			break;
 		}
@@ -4625,7 +4397,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //			note_kill = (plural ? " evaporate!" : " evaporates!");
 			break;
 		}
-		
+
 		case GF_DISENCHANT:
 		{
 			if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) break;
@@ -4928,8 +4700,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		dam = 2;	// the real damage
 	}
 
-	/* Genocide setting (true or false) */
-	int do_geno = 0;
 	/* Polymorph setting (true or false) */
 	int do_poly = 0;
 	/* Teleport setting (max distance) */
@@ -5222,9 +4992,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Earthquake the area */
 		case GF_EARTHQUAKE:
 		{
-			// Reworked earthquake to quake the tile directly, instead of causing a 'remote' quake about the monster. - Kurzel
-			// if (seen) obvious = TRUE;
-			// earthquake(wpos, y, x, dam);
 			dam = 0;
 			break;
 		}
@@ -5239,8 +5006,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Acid */
 		case GF_ACID:
-		case GF_ACID_DISARM:
-		case GF_HI_ACID:
 		{
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_ACID)
@@ -5259,7 +5024,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (seen) r_ptr->r_flags9 |= RF9_RES_ACID;
 #endif
 			}
-			else if (r_ptr->flags9 & RF9_SUSCEP_ACID || (typ == GF_HI_ACID && m_ptr->stunned > 0))
+			else if (r_ptr->flags9 & RF9_SUSCEP_ACID)
 			{
 				note = " is hit hard";
 				dam *= 2;
@@ -5272,8 +5037,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Electricity */
 		case GF_ELEC:
-		case GF_ELEC_DISARM:
-		case GF_HI_ELEC:
 		{
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_ELEC)
@@ -5292,7 +5055,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (seen) r_ptr->r_flags9 |= RF9_RES_ELEC;
 #endif
 			}
-			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC || (typ == GF_HI_ELEC && m_ptr->stunned > 0))
+			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC)
 			{
 				note = " is hit hard";
 				dam *= 2;
@@ -5305,8 +5068,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Fire damage */
 		case GF_FIRE:
-		case GF_FIRE_DISARM:
-		case GF_HI_FIRE:
 		{
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_FIRE)
@@ -5325,7 +5086,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
 #endif
 			}
-			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE || (typ == GF_HI_FIRE && m_ptr->stunned > 0))
+			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
 			{
 				note = " is hit hard";
 				dam *= 2;
@@ -5338,8 +5099,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Cold */
 		case GF_COLD:
-		case GF_COLD_DISARM:
-		case GF_HI_COLD:
 		{
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_COLD)
@@ -5358,7 +5117,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (seen) r_ptr->r_flags9 |= RF9_RES_COLD;
 #endif
 			}
-			else if (r_ptr->flags3 & RF3_SUSCEP_COLD || (typ == GF_HI_COLD && m_ptr->stunned > 0))
+			else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
 			{
 				note = " is hit hard";
 				dam *= 2;
@@ -5371,7 +5130,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Poison */
 		case GF_POIS:
-		case GF_HI_POISON:
 		{
 			if (seen) obvious = TRUE;
 			if ((r_ptr->flags3 & RF3_IM_POIS) ||
@@ -5392,7 +5150,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
 #endif
 			}
-			else if (r_ptr->flags9 & RF9_SUSCEP_POIS  || (typ == GF_HI_POISON && m_ptr->stunned > 0))
+			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
 			{
 				note = " is hit hard";
 				dam *= 2;
@@ -5634,185 +5392,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 		}
 
-		/* Life Fire -- hurts living, non-living are immune, angels/demons/nether resist, others _resist_ - Kurzel */
-		case GF_LIFE_FIRE:
-		{
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags3 & RF3_UNDEAD))
-			{
-				dam = 0;
-				note = " is immune";
-#ifdef OLD_MONSTER_LORE
-				//if (seen) r_ptr->r_flags3 |= (RF3_NONLIVING & RF3_UNDEAD);
-#endif
-			}
-			else if (!((r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) || (r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_RES_NETH)))
-			{
-				if ((r_ptr->flags3 & RF3_IM_FIRE))
-				{
-					note = " resists";
-					dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
-#endif
-				}
-				else if ((r_ptr->flags9 & RF9_RES_FIRE))
-				{
-					note = " is hit";
-					dam = (dam * 6) / 4;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
-#endif
-				}
-#if 0
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-				{
-					note = " is hit hard";
-					dam *= 2;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
-#endif
-				}
-#endif
-				else
-				{
-					dam *= 2;
-					note = " is hit hard";
-					//note = " is hit";
-				}
-#ifdef OLD_MONSTER_LORE
-				//if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
-#endif
-			}
-			else
-			{
-				if (r_ptr->flags3 & RF3_IM_FIRE)
-				{
-					note = " resists a lot";
-					dam *= 2; dam /= 3;//(randint(6)+10);
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
-#endif
-				}
-				else if (r_ptr->flags9 & RF9_RES_FIRE)
-				{
-					note = " resists";
-					dam = (dam * 3) / 4;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
-#endif
-				}
-#if 0
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-				{
-					note = " resists slightly";
-					dam /= 2;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
-#endif
-				}
-#endif
-				else
-				{
-					note = " resists somewhat";
-//					dam *= 5; dam /= (randint(3)+4);
-				}
-			}
-			
-			/* Return 5% of the damage dealt back to the player; don't allow suicide, but perhaps allow this later? - Kurzel */
-			p_ptr->chp -= dam / 10;
-			if (p_ptr->chp < 0) p_ptr->chp = 0;
-			
-			break;
-		}
-		
-		/* Blight -- hurts living, non-living are immune, angels/demons/nether resist, others _resist_ - Kurzel */
-		case GF_BLIGHT:
-		{
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags3 & RF3_UNDEAD))
-			{
-				dam = 0;
-				note = " is immune";
-#ifdef OLD_MONSTER_LORE
-				//if (seen) r_ptr->r_flags3 |= (RF3_NONLIVING & RF3_UNDEAD);
-#endif
-			}
-			else if (!((r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) || (r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_RES_NETH)))
-			{
-				if ((r_ptr->flags3 & RF3_IM_COLD))
-				{
-					note = " resists";
-					dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
-#endif
-				}
-				else if ((r_ptr->flags9 & RF9_RES_COLD))
-				{
-					note = " is hit";
-					dam = (dam * 6) / 4;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags9 |= RF9_RES_COLD;
-#endif
-				}
-#if 0
-				else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
-				{
-					note = " is hit hard";
-					dam *= 2;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_COLD;
-#endif
-				}
-#endif
-				else
-				{
-					dam *= 2;
-					note = " is hit hard";
-					//note = " is hit";
-				}
-#ifdef OLD_MONSTER_LORE
-				//if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
-#endif
-			}
-			else
-			{
-				if (r_ptr->flags3 & RF3_IM_COLD)
-				{
-					note = " resists a lot";
-					dam *= 2; dam /= 3;//(randint(6)+10);
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
-#endif
-				}
-				else if (r_ptr->flags9 & RF9_RES_COLD)
-				{
-					note = " resists";
-					dam = (dam * 3) / 4;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags9 |= RF9_RES_COLD;
-#endif
-				}
-#if 0
-				else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
-				{
-					note = " resists slightly";
-					dam /= 2;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_COLD;
-#endif
-				}
-#endif
-				else
-				{
-					note = " resists somewhat";
-//					dam *= 5; dam /= (randint(3)+4);
-				}
-			}
-			break;
-		}
-		
 		/* Arrow -- XXX no defense */
 		case GF_ARROW:
 		{
@@ -5854,434 +5433,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				} else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) dam = (dam * 4) / 3;
 			}
 
-			break;
-		}
-
-		/* Acid + Elec */
-		case GF_ACID_ELEC:
-		{
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_ELEC)) {
-				note = " is immune";
-				dam = 0;
-			} else if ((r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_ELEC)) {
-				note = " resists";
-				dam /= 2;
-				if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_ELEC)) {
-					note = " resists a lot";
-					dam /= 4;
-				} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF9_SUSCEP_ELEC)) {
-					note = " is hit";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_ELEC)) {
-				note = " resists";
-				dam /= 4;
-			} else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_ELEC)) {
-				note = " resists somewhat";
-				dam *= 5;
-				dam /= 8;
-				if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF9_SUSCEP_ELEC)) {
-					note = " is hit hard";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags9 & RF9_SUSCEP_ELEC)) {
-				note = " is hit hard";
-				dam *= 2;
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF9_SUSCEP_ELEC)) {
-				note = " is hit hard";
-				dam *= 3;
-				dam /= 2;
-			}
-			break;
-		}
-
-		/* Acid + Fire */
-		case GF_ACID_FIRE:
-		{
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_FIRE)) {
-				note = " is immune";
-				dam = 0;
-			} else if ((r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_FIRE)) {
-				note = " resists";
-				dam /= 2;
-				if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_FIRE)) {
-					note = " resists a lot";
-					dam /= 4;
-				} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_FIRE)) {
-					note = " is hit";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_FIRE)) {
-				note = " resists";
-				dam /= 4;
-			} else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_FIRE)) {
-				note = " resists somewhat";
-				dam *= 5;
-				dam /= 8;
-				if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_FIRE)) {
-					note = " is hit hard";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags3 & RF3_SUSCEP_FIRE)) {
-				note = " is hit hard";
-				dam *= 2;
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_FIRE)) {
-				note = " is hit hard";
-				dam *= 3;
-				dam /= 2;
-			}
-			break;
-		}
-
-		/* Acid + Cold */
-		case GF_ACID_COLD:
-		{
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_COLD)) {
-				note = " is immune";
-				dam = 0;
-			} else if ((r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_COLD)) {
-				note = " resists";
-				dam /= 2;
-				if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_COLD)) {
-					note = " resists a lot";
-					dam /= 4;
-				} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-					note = " is hit";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_COLD)) {
-				note = " resists";
-				dam /= 4;
-			} else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_COLD)) {
-				note = " resists somewhat";
-				dam *= 5;
-				dam /= 8;
-				if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-					note = " is hit hard";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-				note = " is hit hard";
-				dam *= 2;
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-				note = " is hit hard";
-				dam *= 3;
-				dam /= 2;
-			}
-			break;
-		}
-
-		/* Acid + Poison + Confusion */
-		case GF_ACID_POISON:
-		{
-			/* Confuse Later */
-			do_conf = damroll(3, (dam / 2)) + 1;
-			
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_ACID) && (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))))) {
-				note = " is immune";
-				dam = 0;
-			} else if ((r_ptr->flags3 & RF3_IM_ACID) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))))) {
-				note = " resists";
-				dam /= 2;
-				if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_POIS)) {
-					note = " resists a lot";
-					dam /= 4;
-				} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-					note = " is hit";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_POIS)) {
-				note = " resists";
-				dam /= 4;
-			} else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_POIS)) {
-				note = " resists somewhat";
-				dam *= 5;
-				dam /= 8;
-				if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-					note = " is hit hard";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-				note = " is hit hard";
-				dam *= 2;
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-				note = " is hit hard";
-				dam *= 3;
-				dam /= 2;
-			}
-			break;
-		}
-
-		/* Elec + Fire */
-		case GF_ELEC_FIRE:
-		{
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags3 & RF3_IM_FIRE)) {
-				note = " is immune";
-				dam = 0;
-			} else if ((r_ptr->flags3 & RF3_IM_ELEC) || (r_ptr->flags3 & RF3_IM_FIRE)) {
-				note = " resists";
-				dam /= 2;
-				if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_FIRE)) {
-					note = " resists a lot";
-					dam /= 4;
-				} else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_FIRE)) {
-					note = " is hit";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_RES_FIRE)) {
-				note = " resists";
-				dam /= 4;
-			} else if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_FIRE)) {
-				note = " resists somewhat";
-				dam *= 5;
-				dam /= 8;
-				if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_FIRE)) {
-					note = " is hit hard";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && (r_ptr->flags3 & RF3_SUSCEP_FIRE)) {
-				note = " is hit hard";
-				dam *= 2;
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_FIRE)) {
-				note = " is hit hard";
-				dam *= 3;
-				dam /= 2;
-			}
-			break;
-		}
-		
-		/* Elec + Cold */
-		case GF_ELEC_COLD:
-		{
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags3 & RF3_IM_COLD)) {
-				note = " is immune";
-				dam = 0;
-			} else if ((r_ptr->flags3 & RF3_IM_ELEC) || (r_ptr->flags3 & RF3_IM_COLD)) {
-				note = " resists";
-				dam /= 2;
-				if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_COLD)) {
-					note = " resists a lot";
-					dam /= 4;
-				} else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-					note = " is hit";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_RES_COLD)) {
-				note = " resists";
-				dam /= 4;
-			} else if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_COLD)) {
-				note = " resists somewhat";
-				dam *= 5;
-				dam /= 8;
-				if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-					note = " is hit hard";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-				note = " is hit hard";
-				dam *= 2;
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-				note = " is hit hard";
-				dam *= 3;
-				dam /= 2;
-			}
-			break;
-		}
-
-		/* Elec + Poison + Stun */
-		case GF_ELEC_POISON:
-		{
-			/* Stun Later */
-			do_stun = randint(15) / div;
-			
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_ELEC) && (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))))) {
-				note = " is immune";
-				dam = 0;
-			} else if ((r_ptr->flags3 & RF3_IM_ELEC) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))))) {
-				note = " resists";
-				dam /= 2;
-				if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_POIS)) {
-					note = " resists a lot";
-					dam /= 4;
-				} else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-					note = " is hit";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_RES_POIS)) {
-				note = " resists";
-				dam /= 4;
-			} else if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_POIS)) {
-				note = " resists somewhat";
-				dam *= 5;
-				dam /= 8;
-				if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-					note = " is hit hard";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-				note = " is hit hard";
-				dam *= 2;
-			} else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-				note = " is hit hard";
-				dam *= 3;
-				dam /= 2;
-			}
-			break;
-		}
-
-		/* Fire + Cold */
-		case GF_FIRE_COLD:
-		{
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags3 & RF3_IM_COLD)) {
-				note = " is immune";
-				dam = 0;
-			} else if ((r_ptr->flags3 & RF3_IM_FIRE) || (r_ptr->flags3 & RF3_IM_COLD)) {
-				note = " resists";
-				dam /= 2;
-				if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags9 & RF9_RES_COLD)) {
-					note = " resists a lot";
-					dam /= 4;
-				} else if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) || (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-					note = " is hit";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_RES_COLD)) {
-				note = " resists";
-				dam /= 4;
-			} else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags9 & RF9_RES_COLD)) {
-				note = " resists somewhat";
-				dam *= 5;
-				dam /= 8;
-				if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) || (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-					note = " is hit hard";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) && (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-				note = " is hit hard";
-				dam *= 2;
-			} else if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) || (r_ptr->flags3 & RF3_SUSCEP_COLD)) {
-				note = " is hit hard";
-				dam *= 3;
-				dam /= 2;
-			}
-			break;
-		}
-		
-		/* Fire + Poison + Blind */
-		case GF_FIRE_POISON:
-		{
-			/* Blind Later */
-			do_blind = damroll(3, (dam / 20)) + 1;
-			
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_FIRE) && (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))))) {
-				note = " is immune";
-				dam = 0;
-			} else if ((r_ptr->flags3 & RF3_IM_FIRE) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))))) {
-				note = " resists";
-				dam /= 2;
-				if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags9 & RF9_RES_POIS)) {
-					note = " resists a lot";
-					dam /= 4;
-				} else if ((r_ptr->flags3 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-					note = " is hit";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_RES_POIS)) {
-				note = " resists";
-				dam /= 4;
-			} else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags9 & RF9_RES_POIS)) {
-				note = " resists somewhat";
-				dam *= 5;
-				dam /= 8;
-				if ((r_ptr->flags3 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-					note = " is hit hard";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags3 & RF3_SUSCEP_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-				note = " is hit hard";
-				dam *= 2;
-			} else if ((r_ptr->flags3 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-				note = " is hit hard";
-				dam *= 3;
-				dam /= 2;
-			}
-			break;
-		}
-
-		/* Cold + Poison + Slow */
-		case GF_COLD_POISON:
-		{
-			//Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_CURSE AND GF_OLD_SLOW
-			/* Powerful monsters can resist */
-			if (r_ptr->flags1 & RF1_UNIQUE) {
-			} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
-			} else if (RES_OLD(r_ptr->level, dam)) {
-			} else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) /* Normal monsters slow down */
-//			else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
-			{
-//				if (m_ptr->mspeed > 100) m_ptr->mspeed -= 10;
-				m_ptr->mspeed -= 10;
-//				note = " starts moving slower";
-			}
-		
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_COLD) && (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))))) {
-				note = " is immune";
-				dam = 0;
-			} else if ((r_ptr->flags3 & RF3_IM_COLD) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))))) {
-				note = " resists";
-				dam /= 2;
-				if ((r_ptr->flags9 & RF9_RES_COLD) || (r_ptr->flags9 & RF9_RES_POIS)) {
-					note = " resists a lot";
-					dam /= 4;
-				} else if ((r_ptr->flags3 & RF3_SUSCEP_COLD) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-					note = " is hit";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags9 & RF9_RES_COLD) && (r_ptr->flags9 & RF9_RES_POIS)) {
-				note = " resists";
-				dam /= 4;
-			} else if ((r_ptr->flags9 & RF9_RES_COLD) || (r_ptr->flags9 & RF9_RES_POIS)) {
-				note = " resists somewhat";
-				dam *= 5;
-				dam /= 8;
-				if ((r_ptr->flags3 & RF3_SUSCEP_COLD) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-					note = " is hit hard";
-					dam *= 2;
-				}
-			} else if ((r_ptr->flags3 & RF3_SUSCEP_COLD) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-				note = " is hit hard";
-				dam *= 2;
-			} else if ((r_ptr->flags3 & RF3_SUSCEP_COLD) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) {
-				note = " is hit hard";
-				dam *= 3;
-				dam /= 2;
-			}
 			break;
 		}
 
@@ -6427,81 +5578,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			do_stun = (10 + randint(15)) / div;
 			break;
 		}
-		
-		/* Affliction -- Random status ailment (no fear/mental effects?) - Kurzel!! --reduced to 'confusion' only, with GF_BLIND */
-		// case GF_AFFLICT:
-		// {
-			// k=randint(6);
-			// if (k==1) do_stun = (10 + randint(15)) / div;
-			// else if (k==2) do_conf = (10 + randint(15)) / div;
-			// else if (k==3) do_blind = dam;
-			// else if (k==4) { //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_CURSE AND GF_OLD_SLOW
-				// /* Powerful monsters can resist */
-				// if ((r_ptr->flags1 & RF1_UNIQUE) ||
-				    // (r_ptr->flags4 & RF4_BR_INER)) {
-					// note = " is unaffected";
-					// obvious = FALSE;
-				// } else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
-					// note = " resists easily"; /* vs damaging it's "resists a lot" and vs effects it's "resists easily" :-o */
-					// obvious = FALSE;
-				// } else if (RES_OLD(r_ptr->level, dam)) {
-					// note = " resists";
-					// obvious = FALSE;
-				// }
-				// else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) /* Normal monsters slow down */
-	// //			else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
-				// {
-	// //				if (m_ptr->mspeed > 100) m_ptr->mspeed -= 10;
-					// m_ptr->mspeed -= 10;
-					// note = " starts moving slower";
-				// } else {
-					// note = " is unaffected";
-					// obvious = FALSE;
-				// }
-				// quiet_dam = TRUE;
-			// }
-			// else if (k==5) {
-				// /* Attempt a saving throw */
-				// if ((r_ptr->flags1 & RF1_UNIQUE) ||
-					// (r_ptr->flags3 & RF3_NO_SLEEP) ||
-					// RES_OLD(r_ptr->level, dam))
-				// {
-					// note = " resists";
-					// if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
-					// /* Memorize a flag */
-					// if (r_ptr->flags3 & RF3_NO_SLEEP) {
-// #ifdef OLD_MONSTER_LORE
-						// if (seen) r_ptr->r_flags3 |= RF3_NO_SLEEP;
-// #endif
-						// note = " is unaffected";
-					// }
-
-					// /* No obvious effect */
-					// obvious = FALSE;
-				// } else {
-					// /* Go to sleep (much) later */
-					// note = " falls asleep";
-					// do_sleep = GF_OLD_SLEEP_DUR;
-				// }
-				// quiet_dam = TRUE;
-			// }
-			// else {
-				// /* Attempt to polymorph (see below) */
-				// do_poly = TRUE;
-
-				// /* Powerful monsters can resist */
-				// if ((r_ptr->flags1 & RF1_UNIQUE) ||
-					// (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
-				// {
-					// note = " is unaffected";
-					// do_poly = FALSE;
-					// obvious = FALSE;
-				// }
-				// quiet_dam = TRUE;
-			// }
-		// dam = 0;
-		// break;
-		// }
 
 		/* Sound -- Sound breathers resist */
 		case GF_SOUND:
@@ -6626,35 +5702,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 			break;
 		}
-		
-		/* Stop -- time resisters resist */
-		case GF_STOP:
-		{
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags4 & RF4_BR_TIME) || (r_ptr->flags9 & RF9_RES_TIME)
-			    || (r_ptr->flags4 & RF3_DEMON) || (r_ptr->flags4 & RF3_NONLIVING)
-			    || (r_ptr->flags4 & RF3_UNDEAD) || (r_ptr->d_char == 'A')||
-			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10)) //Genocide/Poly resist formula OK? - Kurzel
-			{
-				note = " is unaffected";
-			}
-#if 1 /* fixed & sanified */
-			else if (!quiet && rand_int(3) >= 2) { /* only occur if a player cast this - boost chance to 50%, even when unresisted - Kurzel */
-				//long t = m_ptr->hp / 10, tp = damroll(2, plev);
-
-				note = " loses precious seconds"; //no actual drain, just loss
-				m_ptr->energy -= m_ptr->energy / 4;
-
-				//if (t > dam) t = dam;
-				//if (t > tp) t = tp;
-				//p_ptr->energy += (t * level_speed(&p_ptr->wpos)) / 500;
-				/* Prevent too much energy, preventing overflow too. */
-				//limit_energy(p_ptr);
-			}
-#endif
-			dam = 0;
-			break;
-		}
 
 		/* Gravity -- breathers resist */
 		case GF_GRAVITY:
@@ -6663,7 +5710,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 //			dun_level		*l_ptr = getfloor(wpos);
 
 			if (seen) obvious = TRUE;
-			
+
 			if ((r_ptr->flags3 & RF3_RES_TELE) || (r_ptr->flags9 & RF9_IM_TELE))
 			{
 				if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE))
@@ -6768,7 +5815,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case GF_THUNDER:
 		{
 			if (seen) obvious = TRUE;
-			
+
 			k_elec = dam / 3; /* 33% ELEC damage */
 			if (r_ptr->flags3 & RF3_IM_ELEC)
 			{
@@ -6803,7 +5850,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				k_sound *= 2;
 				k_sound /= (randint(6)+6);
 			}
-			
+
 			k_lite = dam / 3; /* 33% LIGHT damage */
 			do_blind = damroll(3, (k_lite / 20)) + 1;
 			if (r_ptr->d_char == 'A') {
@@ -6885,30 +5932,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (dam) hp_player_quiet(Ind, (dam * 15) / 100, TRUE);
 				p_ptr->ret_dam = 0;
 			}
-
-			break;
-		}
-		
-		/* Genocide monster -- Added for Runemasters - Kurzel */
-		case GF_GENOCIDE:
-		{
-			if (seen) obvious = TRUE;
-
-			/* Attempt to genocide (see below) */
-			do_geno = TRUE;
-
-			/* Powerful monsters can resist */
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-				(r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
-			{
-				note = " is unaffected";
-				do_geno = FALSE;
-				obvious = FALSE;
-			}
-
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
 
 			break;
 		}
@@ -7012,7 +6035,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* No "real" damage */
 			dam = 0;
 			quiet_dam = TRUE;
-			
+
 			/* No 'break;' here =) */
 		}
 
@@ -7432,55 +6455,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			break;
 		}
-
-		case GF_DIG_FIRE: /* fix this to leave fire tile, melt l00t? - Kurzel */
-			dam /= 2;
-
-			if (seen) obvious = TRUE;
-
-			if (r_ptr->flags3 & RF3_IM_FIRE)
-			{
-				note = " is immune";
-				dam = 0;
-				quiet = TRUE;
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
-#endif
-			}
-			else if (r_ptr->flags9 & RF9_RES_FIRE)
-			{
-				note = " resists";
-				dam /= 2;
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
-#endif
-			}
-			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-			{
-				note = " is hit hard";
-				dam = (dam * 3) / 2;
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
-#endif
-			}
-
-			/* Hurt by rock remover */
-			if (r_ptr->flags3 & RF3_HURT_ROCK) {
-				dam *= 2;
-
-				/* Notice effect */
-				if (seen) obvious = TRUE;
-
-#ifdef OLD_MONSTER_LORE
-				/* Memorize the effects */
-				if (seen) r_ptr->r_flags3 |= RF3_HURT_ROCK;
-#endif
-
-				/* Cute little message */
-				note = " loses some skin";
-				note_dies = " dissolves";
-			}
-			break;
 
 		/* Stone to Mud */
 		case GF_KILL_WALL:
@@ -8074,7 +7048,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
 					if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
 					if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
-		
+
 					if (m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side) {
 							m_ptr->blow[i].d_dice++;
 							msg_print_near_monster(c_ptr->m_idx, "appears stronger");
@@ -8103,11 +7077,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
 					m_ptr->maxhp = m_ptr->org_maxhp;
 			}
-		
+
 			m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
 			m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
 			msg_print_near_monster(c_ptr->m_idx, "appears healthier");
-		
+
 			dam = 0;
 			quiet = TRUE;
 			break;
@@ -8118,20 +7092,20 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
 					if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
 					if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
-		
+
 					if (m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side) m_ptr->blow[i].d_dice++;
 					else if (m_ptr->blow[i].d_side > 0 && m_ptr->blow[i].d_dice > 0) m_ptr->blow[i].d_side++;
 			}
-				
+
 			if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac;
-				
+
 			m_ptr->ac += 5;
-				
+
 			if (m_ptr->maxhp < m_ptr->org_maxhp) {
 					m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
 					m_ptr->maxhp = m_ptr->org_maxhp;
 			}
-						
+
 			m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
 			m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
 
@@ -8153,13 +7127,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 							m_ptr->blow[i].d_side -= 1;
 					}
 				}
-				
+
 				if ((m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2) && (m_ptr->org_ac - m_ptr->ac < 30)) {
 						if (m_ptr->ac) m_ptr->ac -= 1;
 						if (m_ptr->ac) m_ptr->ac -= 1;
 						if (m_ptr->ac) m_ptr->ac -= 1;
 				}
-				
+
 				if ((m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2) && (m_ptr->org_maxhp - m_ptr->maxhp < 20)) {
 						if (m_ptr->hp > 50) m_ptr->hp -= 10;
 						if (m_ptr->hp > 30) m_ptr->hp -= 6;
@@ -8183,7 +7157,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			dam = 0;
 			quiet = TRUE;
 			break;
-			
+
 		/* Default */
 		default:
 			/* No damage */
@@ -8638,64 +7612,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	}
 #endif
 
-	/* Genocide flag - do_geno - Kurzel */
-	if (do_geno) {
-		/* Roll for resistance */
-		k = r_ptr->level;
-#ifdef RESIST_GENO
-		if (randint(RESIST_GENO) < k) continue;
-#endif	// RESIST_GENO
-
-#ifdef NO_GENO_ON_ICKY
-		/* Not valid inside a vault */
-		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
-#endif	// NO_GENO_ON_ICKY
-
-		/* Delete the monster */
-		delete_monster_idx(c_ptr->m_idx, TRUE);
-
-		/* Take damage */
-		if (Ind > 0)
-		{
-			if (!p_ptr->admin_dm)
-				take_hit(Ind, randint(4 + (k >> 3)), "the strain of recoiling", 0);
-				//take_hit(Ind, randint(4 + (k >> 3)), "the strain of casting Genocide", 0);
-
-			/* Redraw */
-			p_ptr->redraw |= (PR_HP);
-
-			/* Window stuff */
-			/* p_ptr->window |= (PW_PLAYER); */
-
-			/* Handle */
-			handle_stuff(Ind);
-
-			/* Delay */
-//			Send_flush(Ind); /* I don't think a delay is really necessary - mikaelh */
-
-#ifdef SEVERE_GENO
-			if (!p_ptr->death && result && !p_ptr->admin_dm)
-				take_hit(Ind, p_ptr->chp >> 1, "the strain of recoiling", 0);
-				//take_hit(Ind, p_ptr->chp >> 1, "the strain of casting Genocide", 0);
-
-			/* Redraw */
-			p_ptr->redraw |= (PR_HP);
-#endif	// SEVERE_GENO
-
-			/* Window stuff */
-			p_ptr->window |= (PW_PLAYER);
-
-			/* Handle */
-			handle_stuff(Ind);
-		}
-
-		/* XXX XXX XXX Hack -- Assume success */
-		if (!quiet && c_ptr->m_idx == 0) {
-			msg_format(Ind, "%^s recoils!", m_name);
-			return (FALSE);
-		}
-	}
-
 	/* Update the monster XXX XXX XXX */
 	update_mon(c_ptr->m_idx, FALSE);
 
@@ -8818,15 +7734,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Extract radius */
 	div = r + 1;
 
-	/* Decrease damage - Hack -- Damage stores information for rune charges - Kurzel */
-	if (typ != GF_RCRAFT_PLAYER) dam = radius_damage(dam, div, typ);
-
 	/* Hack -- always do at least one point of damage */
-	if (dam <= 0 && typ != GF_RCRAFT_PLAYER) dam = 1;
+	if (dam <= 0) dam = 1;
 
 	/* Hack -- Never do excessive damage */
-	if (dam > MAGICAL_CAP && typ != GF_RCRAFT_PLAYER) dam = MAGICAL_CAP;
-
+	if (dam > MAGICAL_CAP) dam = MAGICAL_CAP;
 
 	/* If the player is blind, be more descriptive */
 	if (blind) fuzzy = TRUE;
@@ -8967,7 +7879,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
                         (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 			(typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 			(typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
-			(typ != GF_OLD_POLY) && (typ != GF_RCRAFT_PLAYER)) /* Non-hostile players may polymorph each other */
+			(typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
 		{
 			/* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind)) {
@@ -9073,7 +7985,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	(typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
 	(typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	(typ == GF_HEALINGCLOUD) || /* shoo ghost, shoo */
-	(typ == GF_IDENTIFY) || (typ == GF_RCRAFT_PLAYER) ||
+	(typ == GF_IDENTIFY) ||
 	(typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER)))) &&
 
 	/* ADMIN CHECK */
@@ -9097,7 +8009,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	(typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 	(typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	(typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
-	(typ == GF_RCRAFT_PLAYER) ||
 	(typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))))
 	{ /* No effect on ghosts / admins */
 
@@ -9360,11 +8271,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!IS_PVP) take_sanity_hit(Ind, dam / 8, killer); /* note: traps deal ~130..320 damage (depth 0..100) */
 		break;
 
-
 		/* Standard damage -- hurts inventory too */
 		case GF_ACID:
-		case GF_ACID_DISARM:
-		case GF_HI_ACID:
 		dam = acid_dam(Ind, dam, killer, -who);
 		if (fuzzy) msg_format(Ind, "You are hit by acid for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -9373,8 +8281,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Standard damage -- hurts inventory too */
 		case GF_FIRE:
-		case GF_FIRE_DISARM:
-		case GF_HI_FIRE:
 		dam = fire_dam(Ind, dam, killer, -who);
 		if (fuzzy) msg_format(Ind, "You are hit by fire for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -9383,8 +8289,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Standard damage -- hurts inventory too */
 		case GF_COLD:
-		case GF_COLD_DISARM:
-		case GF_HI_COLD:
 		dam = cold_dam(Ind, dam, killer, -who);
 		if (fuzzy) msg_format(Ind, "You are hit by cold for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -9393,8 +8297,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Standard damage -- hurts inventory too */
 		case GF_ELEC:
-		case GF_ELEC_DISARM:
-		case GF_HI_ELEC:
 		dam = elec_dam(Ind, dam, killer, -who);
 		apply_discharge(Ind, dam);
 		if (fuzzy) msg_format(Ind, "You are hit by lightning for \377%c%d \377wdamage!", damcol, dam);
@@ -9404,7 +8306,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Standard damage -- also poisons player */
 		case GF_POIS:
-		case GF_HI_POISON:
 		if (p_ptr->immune_poison)
 		{
 			dam = 0;
@@ -9414,23 +8315,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->resist_pois) dam = (dam + 2) / 3;
 			if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
 			if (p_ptr->suscep_pois) dam = (dam + 2) * 2;
-
-			//Runemaster Elemental Shield - Kurzel
-			if ((p_ptr->tim_elemshield && p_ptr->tim_elemshield_type == 4) && (!bypass_invuln)) {
-				if (p_ptr->csp > 0) {
-					int taken = dam;
-					if (p_ptr->csp < taken) {
-						dam = taken - p_ptr->csp;
-						p_ptr->csp = 0;
-						p_ptr->redraw |= (PR_MANA);
-						set_tim_elemshield(Ind, 0, 0);
-					} else {
-						p_ptr->csp -= taken;
-						p_ptr->redraw |= (PR_MANA);
-						dam = 0;
-					}
-				}
-			}
 
 			if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -9453,6 +8337,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
+
 #ifdef ARCADE_SERVER
                 case GF_PUSH:
           //    msg_print(Ind, "You are pushed by something!");
@@ -9460,7 +8345,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
                 (void)set_pushed(Ind, dam);
 		break;
 #endif
-
 
 		case GF_HELL_FIRE:
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam *= 2;
@@ -9484,35 +8368,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam /= 4;
 		if (p_ptr->pclass == CLASS_PRIEST) dam = 0;
 		if (p_ptr->pclass == CLASS_PALADIN) dam /= 2;
-		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
-		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer, -who);
-		break;
-
-		case GF_LIFE_FIRE:
-		if (p_ptr->suscep_life) dam = 0;
-		if (p_ptr->body_monster && ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags3 & RF3_UNDEAD))) dam /= 4;
-		if (p_ptr->immune_fire || p_ptr->resist_neth) dam /= 2;
-		else {
-			if (p_ptr->resist_fire) dam = ((dam + 2) * 3) / 4;
-				if (p_ptr->oppose_fire) dam = ((dam + 2) * 3) / 4;
-			if (p_ptr->suscep_fire) dam = ((dam + 2) * 4) / 3;
-		}
-		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
-		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer, -who);
-		/* No backlash in PvP, similar to no GF_OLD_DRAIN - Kurzel */
-		break;
-
-		case GF_BLIGHT:
-		if (p_ptr->suscep_life) dam = 0;
-		if (p_ptr->body_monster && ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags3 & RF3_UNDEAD))) dam /= 4;
-		if (p_ptr->immune_cold || p_ptr->resist_neth) dam /= 2;
-		else {
-			if (p_ptr->resist_cold) dam = ((dam + 2) * 3) / 4;
-				if (p_ptr->oppose_cold) dam = ((dam + 2) * 3) / 4;
-			if (p_ptr->suscep_cold) dam = ((dam + 2) * 4) / 3;
-		}
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
@@ -9607,644 +8462,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
 			} else if (inven_elec) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
 			else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-
-			break;
-		}
-
-		/* Runemaster Gestalts - Kurzel */
-		/* Acid + Elec */
-		case GF_ACID_ELEC:
-		{
-			bool ignore_acid = p_ptr->oppose_acid || p_ptr->resist_acid || p_ptr->immune_acid;
-			bool ignore_elec = p_ptr->oppose_elec || p_ptr->resist_elec || p_ptr->immune_elec;
-			bool inven_acid = (p_ptr->oppose_acid && p_ptr->resist_acid) || p_ptr->immune_acid;
-			bool inven_elec = (p_ptr->oppose_elec && p_ptr->resist_elec) || p_ptr->immune_elec;
-
-			if (p_ptr->immune_acid && p_ptr->immune_elec) dam = 0; //Immune + Immune. (0)
-			else if ((p_ptr->immune_acid && (p_ptr->resist_elec && p_ptr->oppose_elec)) || (p_ptr->immune_elec && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
-			else if ((p_ptr->immune_acid && (p_ptr->resist_elec || p_ptr->oppose_elec)) || (p_ptr->immune_elec && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if ((p_ptr->immune_acid && p_ptr->suscep_elec) || (p_ptr->immune_elec && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
-			else if (p_ptr->immune_acid || p_ptr->immune_elec) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_elec && p_ptr->oppose_elec)) dam = (dam + 8) / 9; //Double + Double. (1/9)
-			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_elec || p_ptr->oppose_elec)) || ((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_elec) || ((p_ptr->resist_elec && p_ptr->oppose_elec) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_elec && p_ptr->oppose_elec)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-			
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_elec || p_ptr->oppose_elec)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_elec) || ((p_ptr->resist_elec || p_ptr->oppose_elec) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_elec || p_ptr->oppose_elec)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			
-			else if (p_ptr->suscep_acid && p_ptr->suscep_elec) dam *= 2; //Susceptable + Susceptable. (2)
-			else if (p_ptr->suscep_acid || p_ptr->suscep_elec) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-
-			if (fuzzy) msg_format(Ind, "You are hit by ions for \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-
-			take_hit(Ind, dam, killer, -who);
-
-			/* Reduce stats */
-			if (!ignore_acid && !ignore_elec) {
-				if (randint(HURT_CHANCE)==1) {
-					if (rand_int(3)) (void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-					else (void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-				}
-			} else if (ignore_elec) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			} else if (ignore_acid) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			}
-
-			/* Don't kill inventory in bloodbond... */
-			int breakable = 1;
-			if (IS_PVP && check_blood_bond(Ind, -who)) {
-				breakable = 0;
-				break;
-			}
-
-			/* Inventory damage */
-			if (inven_acid && inven_elec) break;
-			if (!inven_acid && !inven_elec) {
-				if (rand_int(3)) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-				else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			} else if (inven_elec) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-
-			break;
-		}
-
-		/* Acid + Fire */
-		case GF_ACID_FIRE:
-		{
-			bool ignore_acid = p_ptr->oppose_acid || p_ptr->resist_acid || p_ptr->immune_acid;
-			bool ignore_fire = p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire;
-			bool inven_acid = (p_ptr->oppose_acid && p_ptr->resist_acid) || p_ptr->immune_acid;
-			bool inven_fire = (p_ptr->oppose_fire && p_ptr->resist_fire) || p_ptr->immune_fire;
-
-			if (p_ptr->immune_acid && p_ptr->immune_fire) dam = 0; //Immune + Immune. (0)
-			else if ((p_ptr->immune_acid && (p_ptr->resist_fire && p_ptr->oppose_fire)) || (p_ptr->immune_fire && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
-			else if ((p_ptr->immune_acid && (p_ptr->resist_fire || p_ptr->oppose_fire)) || (p_ptr->immune_fire && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if ((p_ptr->immune_acid && p_ptr->suscep_fire) || (p_ptr->immune_fire && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
-			else if (p_ptr->immune_acid || p_ptr->immune_fire) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_fire && p_ptr->oppose_fire)) dam = (dam + 8) / 9; //Double + Double. (1/9)
-			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_fire || p_ptr->oppose_fire)) || ((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_fire) || ((p_ptr->resist_fire && p_ptr->oppose_fire) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_fire && p_ptr->oppose_fire)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-			
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_fire || p_ptr->oppose_fire)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_fire) || ((p_ptr->resist_fire || p_ptr->oppose_fire) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_fire || p_ptr->oppose_fire)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			
-			else if (p_ptr->suscep_acid && p_ptr->suscep_fire) dam *= 2; //Susceptable + Susceptable. (2)
-			else if (p_ptr->suscep_acid || p_ptr->suscep_fire) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-
-			if (fuzzy) msg_format(Ind, "You are hit by bile for \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-
-			take_hit(Ind, dam, killer, -who);
-
-			/* Reduce stats */
-			if (!ignore_acid && !ignore_fire) {
-				if (randint(HURT_CHANCE)==1) {
-					if (rand_int(3)) (void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-					else (void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-				}
-			} else if (ignore_fire) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			} else if (ignore_acid) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			}
-
-			/* Don't kill inventory in bloodbond... */
-			int breakable = 1;
-			if (IS_PVP && check_blood_bond(Ind, -who)) {
-				breakable = 0;
-				break;
-			}
-
-			/* Inventory damage */
-			if (inven_acid && inven_fire) break;
-			if (!inven_acid && !inven_fire) {
-				if (rand_int(3)) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-				else inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			} else if (inven_fire) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			else inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-
-			break;
-		}
-
-		/* Acid + Cold */
-		case GF_ACID_COLD:
-		{
-			bool ignore_acid = p_ptr->oppose_acid || p_ptr->resist_acid || p_ptr->immune_acid;
-			bool ignore_cold = p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold;
-			bool inven_acid = (p_ptr->oppose_acid && p_ptr->resist_acid) || p_ptr->immune_acid;
-			bool inven_cold = (p_ptr->oppose_cold && p_ptr->resist_cold) || p_ptr->immune_cold;
-
-			if (p_ptr->immune_acid && p_ptr->immune_cold) dam = 0; //Immune + Immune. (0)
-			else if ((p_ptr->immune_acid && (p_ptr->resist_cold && p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
-			else if ((p_ptr->immune_acid && (p_ptr->resist_cold || p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if ((p_ptr->immune_acid && p_ptr->suscep_cold) || (p_ptr->immune_cold && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
-			else if (p_ptr->immune_acid || p_ptr->immune_cold) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) / 9; //Double + Double. (1/9)
-			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_cold || p_ptr->oppose_cold)) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_cold) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-			
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_cold) || ((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			
-			else if (p_ptr->suscep_acid && p_ptr->suscep_cold) dam *= 2; //Susceptable + Susceptable. (2)
-			else if (p_ptr->suscep_acid || p_ptr->suscep_cold) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-
-			if (fuzzy) msg_format(Ind, "You are hit by rime for \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-
-			take_hit(Ind, dam, killer, -who);
-
-			/* Reduce stats */
-			if (!ignore_acid && !ignore_cold) {
-				if (randint(HURT_CHANCE)==1) {
-					if (rand_int(3)) (void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-					else (void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-				}
-			} else if (ignore_cold) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			} else if (ignore_acid) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			}
-
-			/* Don't kill inventory in bloodbond... */
-			int breakable = 1;
-			if (IS_PVP && check_blood_bond(Ind, -who)) {
-				breakable = 0;
-				break;
-			}
-
-			/* Inventory damage */
-			if (inven_acid && inven_cold) break;
-			if (!inven_acid && !inven_cold) {
-				if (rand_int(3)) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-				else inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			} else if (inven_cold) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			else inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-
-			break;
-		}
-
-		/* Acid + Poison */
-		case GF_ACID_POISON:
-		{
-			bool ignore_acid = p_ptr->oppose_acid || p_ptr->resist_acid || p_ptr->immune_acid;
-			//bool ignore_pois = p_ptr->oppose_pois || p_ptr->resist_pois || p_ptr->immune_poison;
-			bool inven_acid = (p_ptr->oppose_acid && p_ptr->resist_acid) || p_ptr->immune_acid;
-			//bool inven_pois = (p_ptr->oppose_pois && p_ptr->resist_pois) || p_ptr->immune_poison;
-
-			if (p_ptr->immune_acid && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
-			else if ((p_ptr->immune_acid && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_acid && p_ptr->oppose_acid))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
-			else if ((p_ptr->immune_acid && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if ((p_ptr->immune_acid && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_acid)) dam = dam; //Immune + Susceptable. (1)
-			else if (p_ptr->immune_acid || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
-			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_acid || p_ptr->oppose_acid))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if (((p_ptr->resist_acid && p_ptr->oppose_acid) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_acid)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
-			else if ((p_ptr->resist_acid && p_ptr->oppose_acid) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-			
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((p_ptr->resist_acid || p_ptr->oppose_acid) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_acid)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((p_ptr->resist_acid || p_ptr->oppose_acid) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			
-			else if (p_ptr->suscep_acid && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
-			else if (p_ptr->suscep_acid || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-
-			if (fuzzy) msg_format(Ind, "You are hit by venom for \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-
-			/* Confusion */
-			if (!(p_ptr->resist_conf || p_ptr->resist_chaos))
-			{
-				(void)set_confused(Ind, p_ptr->confused + randint(20) + 10);
-			}
-			
-			take_hit(Ind, dam, killer, -who);
-			
-			/* Poison */
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
-				/* don't poison for too long in pvp */
-				if (IS_PVP) {
-					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4), -who);
-				} else {
-					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
-				}
-			}
-
-			/* Reduce stats */
-			if (!ignore_acid) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			}
-
-			/* Don't kill inventory in bloodbond... */
-			int breakable = 1;
-			if (IS_PVP && check_blood_bond(Ind, -who)) {
-				breakable = 0;
-				break;
-			}
-
-			/* Inventory damage */
-			if (!inven_acid) inven_damage(Ind, set_acid_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-
-			break;
-		}
-
-		/* Elec + Fire */
-		case GF_ELEC_FIRE:
-		{
-			bool ignore_elec = p_ptr->oppose_elec || p_ptr->resist_elec || p_ptr->immune_elec;
-			bool ignore_fire = p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire;
-			bool inven_elec = (p_ptr->oppose_elec && p_ptr->resist_elec) || p_ptr->immune_elec;
-			bool inven_fire = (p_ptr->oppose_fire && p_ptr->resist_fire) || p_ptr->immune_fire;
-
-			if (p_ptr->immune_elec && p_ptr->immune_fire) dam = 0; //Immune + Immune. (0)
-			else if ((p_ptr->immune_elec && (p_ptr->resist_fire && p_ptr->oppose_fire)) || (p_ptr->immune_fire && (p_ptr->resist_elec && p_ptr->oppose_elec))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
-			else if ((p_ptr->immune_elec && (p_ptr->resist_fire || p_ptr->oppose_fire)) || (p_ptr->immune_fire && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if ((p_ptr->immune_elec && p_ptr->suscep_fire) || (p_ptr->immune_fire && p_ptr->suscep_elec)) dam = dam; //Immune + Susceptable. (1)
-			else if (p_ptr->immune_elec || p_ptr->immune_fire) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			
-			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_fire && p_ptr->oppose_fire)) dam = (dam + 8) / 9; //Double + Double. (1/9)
-			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_fire || p_ptr->oppose_fire)) || ((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && p_ptr->suscep_fire) || ((p_ptr->resist_fire && p_ptr->oppose_fire) && p_ptr->suscep_elec)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
-			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) || (p_ptr->resist_fire && p_ptr->oppose_fire)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-			
-			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) && (p_ptr->resist_fire || p_ptr->oppose_fire)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((p_ptr->resist_elec || p_ptr->oppose_elec) && p_ptr->suscep_fire) || ((p_ptr->resist_fire || p_ptr->oppose_fire) && p_ptr->suscep_elec)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) || (p_ptr->resist_fire || p_ptr->oppose_fire)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			
-			else if (p_ptr->suscep_elec && p_ptr->suscep_fire) dam *= 2; //Susceptable + Susceptable. (2)
-			else if (p_ptr->suscep_elec || p_ptr->suscep_fire) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-
-			if (fuzzy) msg_format(Ind, "You are hit by flux for \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-
-			take_hit(Ind, dam, killer, -who);
-
-			/* Reduce stats */
-			if (!ignore_elec && !ignore_fire) {
-				if (randint(HURT_CHANCE)==1) {
-					if (rand_int(3)) (void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-					else (void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-				}
-			} else if (ignore_fire) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			} else if (ignore_elec) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			}
-
-			/* Don't kill inventory in bloodbond... */
-			int breakable = 1;
-			if (IS_PVP && check_blood_bond(Ind, -who)) {
-				breakable = 0;
-				break;
-			}
-
-			/* Inventory damage */
-			if (inven_elec && inven_fire) break;
-			if (!inven_elec && !inven_fire) {
-				if (rand_int(3)) inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-				else inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			} else if (inven_fire) inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			else inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-
-			break;
-		}
-		
-		/* Elec + Cold */
-		case GF_ELEC_COLD:
-		{
-			bool ignore_elec = p_ptr->oppose_elec || p_ptr->resist_elec || p_ptr->immune_elec;
-			bool ignore_cold = p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold;
-			bool inven_elec = (p_ptr->oppose_elec && p_ptr->resist_elec) || p_ptr->immune_elec;
-			bool inven_cold = (p_ptr->oppose_cold && p_ptr->resist_cold) || p_ptr->immune_cold;
-
-			if (p_ptr->immune_elec && p_ptr->immune_cold) dam = 0; //Immune + Immune. (0)
-			else if ((p_ptr->immune_elec && (p_ptr->resist_cold && p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_elec && p_ptr->oppose_elec))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
-			else if ((p_ptr->immune_elec && (p_ptr->resist_cold || p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if ((p_ptr->immune_elec && p_ptr->suscep_cold) || (p_ptr->immune_cold && p_ptr->suscep_elec)) dam = dam; //Immune + Susceptable. (1)
-			else if (p_ptr->immune_elec || p_ptr->immune_cold) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			
-			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) / 9; //Double + Double. (1/9)
-			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_cold || p_ptr->oppose_cold)) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && p_ptr->suscep_cold) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_elec)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
-			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) || (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-			
-			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) && (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((p_ptr->resist_elec || p_ptr->oppose_elec) && p_ptr->suscep_cold) || ((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_elec)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) || (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			
-			else if (p_ptr->suscep_elec && p_ptr->suscep_cold) dam *= 2; //Susceptable + Susceptable. (2)
-			else if (p_ptr->suscep_elec || p_ptr->suscep_cold) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-
-			if (fuzzy) msg_format(Ind, "You are hit by static for \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-
-			take_hit(Ind, dam, killer, -who);
-
-			/* Reduce stats */
-			if (!ignore_elec && !ignore_cold) {
-				if (randint(HURT_CHANCE)==1) {
-					if (rand_int(3)) (void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-					else (void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-				}
-			} else if (ignore_cold) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			} else if (ignore_elec) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			}
-
-			/* Don't kill inventory in bloodbond... */
-			int breakable = 1;
-			if (IS_PVP && check_blood_bond(Ind, -who)) {
-				breakable = 0;
-				break;
-			}
-
-			/* Inventory damage */
-			if (inven_elec && inven_cold) break;
-			if (!inven_elec && !inven_cold) {
-				if (rand_int(3)) inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-				else inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			} else if (inven_cold) inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			else inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-
-			break;
-		}
-
-		/* Elec + Poison */
-		case GF_ELEC_POISON:
-		{
-			bool ignore_elec = p_ptr->oppose_elec || p_ptr->resist_elec || p_ptr->immune_elec;
-			//bool ignore_pois = p_ptr->oppose_pois || p_ptr->resist_pois || p_ptr->immune_poison;
-			bool inven_elec = (p_ptr->oppose_elec && p_ptr->resist_elec) || p_ptr->immune_elec;
-			//bool inven_pois = (p_ptr->oppose_pois && p_ptr->resist_pois) || p_ptr->immune_poison;
-
-			if (p_ptr->immune_elec && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
-			else if ((p_ptr->immune_elec && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_elec && p_ptr->oppose_elec))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
-			else if ((p_ptr->immune_elec && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if ((p_ptr->immune_elec && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_elec)) dam = dam; //Immune + Susceptable. (1)
-			else if (p_ptr->immune_elec || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			
-			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
-			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_elec || p_ptr->oppose_elec))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if (((p_ptr->resist_elec && p_ptr->oppose_elec) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_elec)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
-			else if ((p_ptr->resist_elec && p_ptr->oppose_elec) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-			
-			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((p_ptr->resist_elec || p_ptr->oppose_elec) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_elec)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((p_ptr->resist_elec || p_ptr->oppose_elec) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			
-			else if (p_ptr->suscep_elec && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
-			else if (p_ptr->suscep_elec || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-
-			if (fuzzy) msg_format(Ind, "You are hit by jolting for \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-
-			/* Stun */
-			if (!p_ptr->resist_sound)
-			{
-				(void)set_stun(Ind, p_ptr->stun + randint(20));
-			}
-			
-			take_hit(Ind, dam, killer, -who);
-			
-			/* Poison */
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
-				/* don't poison for too long in pvp */
-				if (IS_PVP) {
-					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4), -who);
-				} else {
-					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
-				}
-			}
-
-			/* Reduce stats */
-			if (!ignore_elec) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			}
-
-			/* Don't kill inventory in bloodbond... */
-			int breakable = 1;
-			if (IS_PVP && check_blood_bond(Ind, -who)) {
-				breakable = 0;
-				break;
-			}
-
-			/* Inventory damage */
-			if (!inven_elec) inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-
-			break;
-		}
-
-		/* Fire + Cold */
-		case GF_FIRE_COLD:
-		{
-			bool ignore_fire = p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire;
-			bool ignore_cold = p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold;
-			bool inven_fire = (p_ptr->oppose_fire && p_ptr->resist_fire) || p_ptr->immune_fire;
-			bool inven_cold = (p_ptr->oppose_cold && p_ptr->resist_cold) || p_ptr->immune_cold;
-
-			if (p_ptr->immune_fire && p_ptr->immune_cold) dam = 0; //Immune + Immune. (0)
-			else if ((p_ptr->immune_fire && (p_ptr->resist_cold && p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_fire && p_ptr->oppose_fire))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
-			else if ((p_ptr->immune_fire && (p_ptr->resist_cold || p_ptr->oppose_cold)) || (p_ptr->immune_cold && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if ((p_ptr->immune_fire && p_ptr->suscep_cold) || (p_ptr->immune_cold && p_ptr->suscep_fire)) dam = dam; //Immune + Susceptable. (1)
-			else if (p_ptr->immune_fire || p_ptr->immune_cold) dam = (dam + 1) / 2; //Immune + None. (1/2)
-
-			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) / 9; //Double + Double. (1/9)
-			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_cold || p_ptr->oppose_cold)) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && p_ptr->suscep_cold) || ((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_fire)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
-			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) || (p_ptr->resist_cold && p_ptr->oppose_cold)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-
-			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) && (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((p_ptr->resist_fire || p_ptr->oppose_fire) && p_ptr->suscep_cold) || ((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_fire)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) || (p_ptr->resist_cold || p_ptr->oppose_cold)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-
-			else if (p_ptr->suscep_fire && p_ptr->suscep_cold) dam *= 2; //Susceptable + Susceptable. (2)
-			else if (p_ptr->suscep_fire || p_ptr->suscep_cold) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-
-			if (fuzzy) msg_format(Ind, "You are hit by whitefire for \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-
-			take_hit(Ind, dam, killer, -who);
-
-			/* Reduce stats */
-			if (!ignore_fire && !ignore_cold) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			}
-
-			/* Don't kill inventory in bloodbond... */
-			int breakable = 1;
-			if (IS_PVP && check_blood_bond(Ind, -who)) {
-				breakable = 0;
-				break;
-			}
-
-			/* Inventory damage */
-			if (inven_fire && inven_cold) break;
-			if (!inven_fire && !inven_cold) {
-				if (rand_int(3)) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-				else inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			} else if (inven_cold) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			else inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-
-			break;
-		}
-
-		/* Fire + Poison */
-		case GF_FIRE_POISON:
-		{
-			bool ignore_fire = p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire;
-			//bool ignore_pois = p_ptr->oppose_pois || p_ptr->resist_pois || p_ptr->immune_poison;
-			bool inven_fire = (p_ptr->oppose_fire && p_ptr->resist_fire) || p_ptr->immune_fire;
-			//bool inven_pois = (p_ptr->oppose_pois && p_ptr->resist_pois) || p_ptr->immune_poison;
-
-			if (p_ptr->immune_fire && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
-			else if ((p_ptr->immune_fire && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_fire && p_ptr->oppose_fire))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
-			else if ((p_ptr->immune_fire && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if ((p_ptr->immune_fire && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_fire)) dam = dam; //Immune + Susceptable. (1)
-			else if (p_ptr->immune_fire || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
-
-			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
-			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_fire || p_ptr->oppose_fire))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if (((p_ptr->resist_fire && p_ptr->oppose_fire) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_fire)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
-			else if ((p_ptr->resist_fire && p_ptr->oppose_fire) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-
-			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((p_ptr->resist_fire || p_ptr->oppose_fire) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_fire)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((p_ptr->resist_fire || p_ptr->oppose_fire) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-
-			else if (p_ptr->suscep_fire && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
-			else if (p_ptr->suscep_fire || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-
-			if (fuzzy) msg_format(Ind, "You are hit by ash for \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-
-			/* Blind */
-			if (!blind && !p_ptr->resist_blind)
-			{
-				(void)set_blind(Ind, p_ptr->blind + randint(5) + 2);
-			}
-
-			take_hit(Ind, dam, killer, -who);
-
-			/* Poison */
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
-				/* don't poison for too long in pvp */
-				if (IS_PVP) {
-					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4), -who);
-				} else {
-					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
-				}
-			}
-
-			/* Reduce stats */
-			if (!ignore_fire) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			}
-
-			/* Don't kill inventory in bloodbond... */
-			int breakable = 1;
-			if (IS_PVP && check_blood_bond(Ind, -who)) {
-				breakable = 0;
-				break;
-			}
-
-			/* Inventory damage */
-			if (!inven_fire) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-
-			break;
-		}
-
-		/* Cold + Poison */
-		case GF_COLD_POISON:
-		{
-			bool ignore_cold = p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold;
-			//bool ignore_pois = p_ptr->oppose_pois || p_ptr->resist_pois || p_ptr->immune_poison;
-			bool inven_cold = (p_ptr->oppose_cold && p_ptr->resist_cold) || p_ptr->immune_cold;
-			//bool inven_pois = (p_ptr->oppose_pois && p_ptr->resist_pois) || p_ptr->immune_poison;
-
-			if (p_ptr->immune_cold && p_ptr->immune_poison) dam = 0; //Immune + Immune. (0)
-			else if ((p_ptr->immune_cold && (p_ptr->resist_pois && p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_cold && p_ptr->oppose_cold))) dam = (dam + 17) / 18; //Immune + Double. (1/18)
-			else if ((p_ptr->immune_cold && (p_ptr->resist_pois || p_ptr->oppose_pois)) || (p_ptr->immune_poison && (p_ptr->resist_cold || p_ptr->oppose_cold))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if ((p_ptr->immune_cold && p_ptr->suscep_pois) || (p_ptr->immune_poison && p_ptr->suscep_cold)) dam = dam; //Immune + Susceptable. (1)
-			else if (p_ptr->immune_cold || p_ptr->immune_poison) dam = (dam + 1) / 2; //Immune + None. (1/2)
-
-			else if ((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) / 9; //Double + Double. (1/9)
-			else if (((p_ptr->resist_cold && p_ptr->oppose_cold) && (p_ptr->resist_pois || p_ptr->oppose_pois)) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && (p_ptr->resist_cold || p_ptr->oppose_cold))) dam = (dam + 8) * 2 / 9; //Double + Single. (2/9)
-			else if (((p_ptr->resist_cold && p_ptr->oppose_cold) && p_ptr->suscep_pois) || ((p_ptr->resist_pois && p_ptr->oppose_pois) && p_ptr->suscep_cold)) dam = (dam + 17) * 19 / 18; //Double + Susceptable. (19/18)
-			else if ((p_ptr->resist_cold && p_ptr->oppose_cold) || (p_ptr->resist_pois && p_ptr->oppose_pois)) dam = (dam + 8) * 5 / 9; //Double + None. (5/9)
-
-			else if ((p_ptr->resist_cold || p_ptr->oppose_cold) && (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((p_ptr->resist_cold || p_ptr->oppose_cold) && p_ptr->suscep_pois) || ((p_ptr->resist_pois || p_ptr->oppose_pois) && p_ptr->suscep_cold)) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((p_ptr->resist_cold || p_ptr->oppose_cold) || (p_ptr->resist_pois || p_ptr->oppose_pois)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-
-			else if (p_ptr->suscep_cold && p_ptr->suscep_pois) dam *= 2; //Susceptable + Susceptable. (2)
-			else if (p_ptr->suscep_cold || p_ptr->suscep_pois) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-
-			if (fuzzy) msg_format(Ind, "You are hit by frostbite for \377%c%d \377wdamage!", damcol, dam);
-			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-
-			/* Slow */
-			if (p_ptr->mindboost && magik(p_ptr->mindboost_power))
-			{ /* resist the effect */
-			} else if (!p_ptr->free_act) {
-				(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 4);
-			} else {
-				(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 2);
-			}
-
-			take_hit(Ind, dam, killer, -who);
-
-			/* Poison */
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
-				/* don't poison for too long in pvp */
-				if (IS_PVP) {
-					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4), -who);
-				} else {
-					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
-				}
-			}
-
-			/* Reduce stats */
-			if (!ignore_cold) {
-				if (randint(HURT_CHANCE)==1)
-					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
-			}
-
-			/* Don't kill inventory in bloodbond... */
-			int breakable = 1;
-			if (IS_PVP && check_blood_bond(Ind, -who)) {
-				breakable = 0;
-				break;
-			}
-
-			/* Inventory damage */
-			if (!inven_cold) inven_damage(Ind, set_cold_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
 
 			break;
 		}
@@ -10356,63 +8573,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!p_ptr->resist_sound)
 		{
 			(void)set_stun(Ind, p_ptr->stun + randint(40));
-		}
-		dam = 0;
-		break;
-
-		/* Affliction -- random ailment (no sleep on players?) - Kurzel */
-		case GF_AFFLICT:
-		if (fuzzy) msg_print(Ind, "You are hit by something!");
-		k=randint(6);
-		if (k==1) {
-			if (!p_ptr->resist_sound)
-				(void)set_stun(Ind, p_ptr->stun + randint(40));
-		} else if (k==2) {
-			if (!(p_ptr->resist_conf || p_ptr->resist_chaos))
-				(void)set_confused(Ind, p_ptr->confused + randint(20) + 10);
-		} else if (k==3) {
-			if (p_ptr->resist_blind)
-			{
-				msg_print(Ind, "You are unaffected!");
-			}
-			else if (rand_int(100 + dam*6) < p_ptr->skill_sav)
-			{
-				msg_print(Ind, "You resist the effects!");
-			}
-			else if (!p_ptr->blind)
-			{
-				(void)set_blind(Ind, dam);
-			}
-		} else if (k==4) {
-			if (fuzzy || self) msg_print(Ind, "Something drains power from your muscles!");
-			else msg_format(Ind, "%^s drains power from your muscles!", killer);
-
-			if (p_ptr->free_act)
-			{
-				msg_print(Ind, "You are unaffected!");
-			}
-			else if (rand_int(100 + dam*6) < p_ptr->skill_sav ||
-			    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
-			{
-				msg_print(Ind, "You resist the effects!");
-			}
-			//else set_slow(Ind, p_ptr->slow + dam); too much for pvp..
-			else set_slow(Ind, p_ptr->slow + 2 + rand_int(3));
-		}
-		else if (k==5) {
-			//No sleep? (paralysis?) - Kurzel
-		}
-		else if (k==6) {
-			dam = 0;
-			if (p_ptr->afk) break;
-			if (fuzzy || self) msg_print(Ind, "You feel bizzare!");
-			else msg_format(Ind, "%^s polymorphs you!", killer);
-			if (p_ptr->resist_nexus) {
-				msg_print(Ind, "You resist the effects!");
-			} else {
-				msg_print(Ind, "The magic continuum twists around you!");
-				apply_morph(Ind, dam, killer);
-			}
 		}
 		dam = 0;
 		break;
@@ -10645,10 +8805,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				break;
 			}
 
-			break;
-
-		/* Energy Drain -- Should never 'freeze' players? - Kurzel */
-		case GF_STOP:
 			break;
 
 		/* Gravity -- stun plus slowness plus teleport */
@@ -10930,7 +9086,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_WRAITH_PLAYER:		
+		case GF_WRAITH_PLAYER:
 		{
 			if (fuzzy) msg_print(Ind, "You feel less constant!");
 			else msg_format(Ind, "%^s turns you into a wraith!", killer);
@@ -11357,30 +9513,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_RCRAFT_PLAYER: //Kurzel
-		{
-			if (p_ptr->rcraft_project) {
-				if (dam > 100) { //two runes
-					if (((dam / 100 - 1) != p_ptr->rcraft_xtra_b) 
-					|| ((dam % 100) != p_ptr->rcraft_xtra_a)) p_ptr->tim_rcraft_xtra = 0; //setup a new message - Kurzel
-					p_ptr->rcraft_xtra_b = dam / 100 - 1;
-					p_ptr->rcraft_xtra_a = dam % 100;
-				}
-				else { //one rune
-					if ((p_ptr->rcraft_xtra_b != -1) || (dam != p_ptr->rcraft_xtra_a)) p_ptr->tim_rcraft_xtra = 0; //setup a new message - Kurzel
-					p_ptr->rcraft_xtra_b = -1;
-					p_ptr->rcraft_xtra_a = dam;
-				}
-				(void)set_tim_rcraft_xtra(Ind, 10 + randint(5));
-			}
-			break;
-		}
-
 		case GF_OLD_CONF:
-		
+
 		if (fuzzy || self) msg_print(Ind, "You hear puzzling noises!");
 		else msg_format(Ind, "%^s creates a mesmerising illusion!", killer);
-		
+
 		if (p_ptr->resist_conf ||
 		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 		{
@@ -11392,15 +9529,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		//else set_confused(Ind, p_ptr->confused + dam); too much for pvp
 		else set_confused(Ind, p_ptr->confused + 2 + rand_int(3));
-		
+
 		dam = 0;
 		break;
-		
+
 		case GF_OLD_SLOW:
-		
+
 		if (fuzzy || self) msg_print(Ind, "Something drains power from your muscles!");
 		else msg_format(Ind, "%^s drains power from your muscles!", killer);
-		
+
 		if (p_ptr->free_act)
 		{
 			msg_print(Ind, "You are unaffected!");
@@ -11415,12 +9552,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		dam = 0;
 		break;
-		
+
 		case GF_TURN_ALL:
-		
+
 		if (fuzzy || self) msg_print(Ind, "Something mumbles, and you hear scary noises!");
 		else msg_format(Ind, "%^s casts a fearful illusion!", killer);
-		
+
 		if (p_ptr->resist_fear)
 		{
 			msg_print(Ind, "You refuse to be frightened.");
@@ -11434,13 +9571,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			//(void)set_afraid(Ind, p_ptr->afraid + dam);  too much for pvp
 			(void)set_afraid(Ind, p_ptr->afraid + 2 + rand_int(3));
 		}
-		
+
 		dam = 0;
 		break;
-		
-		case GF_GENOCIDE:
-			break;
-		
+
 		case GF_OLD_POLY:
 			if (p_ptr->afk) break;
 			if (fuzzy || self) msg_print(Ind, "You feel bizzare!");
@@ -11452,7 +9586,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				apply_morph(Ind, dam, killer);
 			}
 			break;
-		
+
 		/* PernA ones */
 		/* Rocket -- stun, cut, fire, raw impact */
 		case GF_INFERNO:
@@ -11708,7 +9842,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 				msg_print(Ind, "You resist the effect!");
 			}
-			
+
 		    }
 
 			/* No "real" damage */
@@ -12222,20 +10356,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
-	/* Hack -- Decode gf_type - Kurzel */
-	u32b typ_original = typ;
-	u32b typ_explode = 0;
-	u32b typ_effect = 0;
-	u32b dam_off = 0;
-	if (typ_original > HACK_GF_FACTOR) { //Mega-Hack -- Works with less than HACK_GF_FACTOR GF_typ + 2 digit places.
-		typ_effect = (typ / HACK_TYPE_FACTOR);
-		typ = typ % HACK_TYPE_FACTOR; 
-		typ_explode = typ / HACK_GF_FACTOR;
-		typ = typ % HACK_GF_FACTOR;
-		dam_off = dam / HACK_DAM_FACTOR;
-		dam = dam % HACK_DAM_FACTOR;
-	}	
-
 	/* Spells which never affect monsters, read:
 	   Spells which we want to exclude from merely _waking monsters up_!
 	   Note: Bolt spells will still be 'stopped' when hitting a monster. */
@@ -12482,7 +10602,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			else if (who < 0) {
 				/* always hit monsters */
 				if (c_ptr->m_idx > 0) break;
-			
+
 				/* Hostile players hit each other */
 				if (check_hostile(0 - who, 0 - c_ptr->m_idx)) break;
 
@@ -12494,13 +10614,13 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 #if 0				/* neutral people hit each other ..NOT! - C. Blue FF$$$ */
 				if (!Players[0 - who]->party) break;
-			
+
 				/* people not in the same party hit each other ..NOT! - C. Blue */
 				if (!player_in_party(Players[0 - who]->party, 0 - c_ptr->m_idx))
 #if FRIEND_FIRE_CHANCE
 					if (!magik(FRIEND_FIRE_CHANCE))
 #endif
-						break;	
+						break;
 #endif
 			}
 //			else break;	// Huh? always break? XXX XXX
@@ -12874,7 +10994,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 						if (who_can_see[k] == j)
 							flag = FALSE;
 					}
-							
+
 					if (flag) who_can_see[num_can_see++] = j;
 				}
 			}
@@ -12915,9 +11035,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 		/* Effect ? */
 		if (flg & PROJECT_STAY) {
-		
-			typ = typ_original; //Hack -- Pass the runespell info. - Kurzel
-		
 			/* I believe it's not right */
 //			effect = new_effect(typ, dam, project_time, py, px, rad, project_time_effect);
 			/* MEGAHACK -- quick hack to make fire_wall work
@@ -13054,42 +11171,18 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 */
 
 			if (project_m(0 - who, who, y2, x2, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
-			
-			/* Generate additional runespell explosions, based on hacky decoded 'typ' information. - Kurzel
-			 * Explosions use project() and are always treated as 'ball' effects, appearing at the sub-target locations (who = 0).
-			 * Fixed radius explosions, 50% chance to explode. Damage and radius varies by typ_effect.
-			 * Burst	 75% Radius 1
-			 * Bolt		100% Radius 0
-			 * Beam		 75% Radius 1
-			 * Ball		 50% Radius 2
-			 * Wave		 50% Radius 2
-			 * Cloud	 75% Radius 1
-			 * Storm	100% Radius 0
-			*/			
-			if (typ_explode != 0 && randint(2) == 1) {
-				switch (typ_effect){
-				case T_MELE:
-					project(who, 2, wpos, y, x, dam_off * 3 / 4 + 1, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-					break;
-				case T_BOLT:
-					project(who, 1, wpos, y, x, dam_off, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-					break;
-				case T_BEAM:
-					project(who, 2, wpos, y, x, dam_off * 3 / 4 + 1, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-					break;
-				case T_BALL:
-					project(who, 3, wpos, y, x, dam_off / 2 + 1, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-					break;
-				case T_WAVE:
-					project(who, 3, wpos, y, x, dam_off / 2 + 1, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-					break;
-				case T_CLOU:
-					project(who, 2, wpos, y, x, dam_off * 3 / 4 + 1, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-					break;
-				case T_STOR:
-					project(who, 1, wpos, y, x, dam_off, typ_explode, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-					break;
-				}
+
+			/* Should the spell strike the target with an additional mini-ball?
+			 * Added for runecraft's 'enhanced' cloud spell.
+			 * Legacy from exploding gestalt spells. =P Should be fine on cloud, no?
+			 * Implement for PvP in the future? - Kurzel
+			*/
+			if ((flg & PROJECT_CRIT) && (randint(2) == 1)) {
+				/* Sound */
+#ifdef USE_SOUND_2010
+				sound_near_monster(c_ptr->m_idx, "cast_ball", NULL, SFX_TYPE_COMMAND);
+#endif
+				project(0 - who, 1, wpos, y, x, dam, typ, PROJECT_JUMP | PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 			}
 		}
 
@@ -13214,7 +11307,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 						if (who_can_see[k] == j)
 							flag = FALSE;
 					}
-							
+
 					if (flag)
 						who_can_see[num_can_see++] = j;
 				}
@@ -13261,25 +11354,6 @@ int safe_area(int Ind) {
 	return 0;
 }
 
-#ifdef ENABLE_RCRAFT
-bool rune_backlash(int Ind, int typ, int dam) {
-	player_type *p_ptr;
-
-	if (!Ind) return FALSE;
-	p_ptr = Players[Ind];
-
-	if(typ == 0) typ = GF_GRAVITY;
-	if(dam < 10) dam = 10;
-
-	msg_format(Ind, "You are caught in the backlash of your incantation!");
-	dam *= 2;
-
-	(void) project(0 - Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, typ,
-	   (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF), "");
-	return TRUE;
-}
-#endif
-
 
 /* Helper function for monster_is_safe() to determine how damaging a
  * projection is and if we should therefore try to move out of it. - C. Blue
@@ -13293,7 +11367,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 	if (dam == 9999) dam = 2; /* Priest drain-life spell hack */
 
-	int do_geno = 0;
 	int do_poly = 0;
 	int do_dist = 0;
 	int do_blind = 0;
@@ -13363,26 +11436,15 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_ACID:
-		case GF_ACID_DISARM:
 			if (r_ptr->flags3 & RF3_IM_ACID)
 				dam = 0;
 			else if (r_ptr->flags9 & RF9_RES_ACID)
 				dam /= 4;
-			else if (r_ptr->flags9 & RF9_SUSCEP_ACID)
-				dam *= 2;
-			break;
-
-		case GF_HI_ACID:
-			if (r_ptr->flags3 & RF3_IM_ACID)
-				dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_ACID)
-				dam /= 3;
 			else if (r_ptr->flags9 & RF9_SUSCEP_ACID)
 				dam *= 2;
 			break;
 
 		case GF_ELEC:
-		case GF_ELEC_DISARM:
 			if (r_ptr->flags3 & RF3_IM_ELEC)
 				dam = 0;
 			else if (r_ptr->flags9 & RF9_RES_ELEC)
@@ -13391,17 +11453,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam *= 2;
 			break;
 
-		case GF_HI_ELEC:
-			if (r_ptr->flags3 & RF3_IM_ELEC)
-				dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_ELEC)
-				dam /= 3;
-			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC)
-				dam *= 2;
-			break;
-
 		case GF_FIRE:
-		case GF_FIRE_DISARM:
 			if (r_ptr->flags3 & RF3_IM_FIRE)
 				dam = 0;
 			else if (r_ptr->flags9 & RF9_RES_FIRE)
@@ -13410,31 +11462,12 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam *= 2;
 			break;
 
-		case GF_HI_FIRE:
-			if (r_ptr->flags3 & RF3_IM_FIRE)
-				dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_FIRE)
-				dam /= 3;
-			else if (r_ptr->flags9 & RF3_SUSCEP_FIRE)
-				dam *= 2;
-			break;
-
 		case GF_COLD:
-		case GF_COLD_DISARM:
 			if (r_ptr->flags3 & RF3_IM_COLD)
 				dam = 0;
 			else if (r_ptr->flags9 & RF9_RES_COLD)
 				dam /= 4;
 			else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
-				dam *= 2;
-			break;
-
-		case GF_HI_COLD:
-			if (r_ptr->flags3 & RF3_IM_COLD)
-				dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_COLD)
-				dam /= 3;
-			else if (r_ptr->flags9 & RF3_SUSCEP_COLD)
 				dam *= 2;
 			break;
 
@@ -13445,17 +11478,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam = 0;
 			else if (r_ptr->flags9 & RF9_RES_POIS)
 				dam /= 4;
-			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
-				dam *= 2;
-			break;
-
-		case GF_HI_POISON:
-			if ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
-				dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_POIS)
-				dam /= 3;
 			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
 				dam *= 2;
 			break;
@@ -13529,54 +11551,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 			}
 			break;
 
-		case GF_LIFE_FIRE:
-			if ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags3 & RF3_UNDEAD))
-				dam = 0;
-			else if (!((r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) || (r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_RES_NETH))) {
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
-				} else if (r_ptr->flags9 & RF9_RES_FIRE)
-					dam = (dam * 6) / 4;
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-					dam *= 2;
-				else
-					dam *= 2;
-			} else {
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					dam *= 2; dam /= 3;//(randint(6)+10);
-				} else if (r_ptr->flags9 & RF9_RES_FIRE)
-					dam = (dam * 3) / 4;
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-					dam /= 2;
-				else ;
-//					dam *= 5; dam /= (randint(3)+4);
-			}
-			break;
-
-		case GF_BLIGHT:
-			if ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags3 & RF3_UNDEAD))
-				dam = 0;
-			else if (!((r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) || (r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_RES_NETH))) {
-				if (r_ptr->flags3 & RF3_IM_COLD) {
-					dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
-				} else if (r_ptr->flags9 & RF9_RES_COLD)
-					dam = (dam * 6) / 4;
-				else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
-					dam *= 2;
-				else
-					dam *= 2;
-			} else {
-				if (r_ptr->flags3 & RF3_IM_COLD) {
-					dam *= 2; dam /= 3;//(randint(6)+10);
-				} else if (r_ptr->flags9 & RF9_RES_COLD)
-					dam = (dam * 3) / 4;
-				else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
-					dam /= 2;
-				else ;
-//					dam *= 5; dam /= (randint(3)+4);
-			}
-			break;
-
 		case GF_ARROW:
 			break;
 
@@ -13589,159 +11563,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam /= 3;
 			else if (r_ptr->flags9 & RF9_RES_FIRE)
 				dam = (dam * 3) / 5;
-			break;
-
-		/* Runemaster Gestalts - Kurzel */
-		case GF_ACID_ELEC:
-			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_ELEC)) dam = 0; //Immune + Immune. (0)
-			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_RES_ELEC)) || ((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_RES_ACID))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_SUSCEP_ELEC)) || ((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = dam; //Immune + Susceptable. (1)
-			else if ((r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_ELEC)) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_ELEC)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_SUSCEP_ELEC)) || ((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_ELEC)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags9 & RF9_SUSCEP_ELEC)) dam *= 2; //Susceptable + Susceptable. (2)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF9_SUSCEP_ELEC)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-			break;
-
-		case GF_ACID_FIRE:
-			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_FIRE)) dam = 0; //Immune + Immune. (0)
-			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_RES_FIRE)) || ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF9_RES_ACID))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF3_SUSCEP_FIRE)) || ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = dam; //Immune + Susceptable. (1)
-			else if ((r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_FIRE)) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_FIRE)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF3_SUSCEP_FIRE)) || ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_FIRE)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags9 & RF3_SUSCEP_FIRE)) dam *= 2; //Susceptable + Susceptable. (2)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF3_SUSCEP_FIRE)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-			break;
-
-		case GF_ACID_COLD:
-			if ((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags3 & RF3_IM_COLD)) dam = 0; //Immune + Immune. (0)
-			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_RES_COLD)) || ((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_RES_ACID))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) || ((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = dam; //Immune + Susceptable. (1)
-			else if ((r_ptr->flags3 & RF3_IM_ACID) || (r_ptr->flags3 & RF3_IM_COLD)) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_COLD)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) || ((r_ptr->flags9 & RF9_RES_COLD) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_COLD)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam *= 2; //Susceptable + Susceptable. (2)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-			break;
-
-		case GF_ACID_POISON:
-			if ((r_ptr->flags3 & RF3_IM_ACID) && ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = 0; //Immune + Immune. (0)
-			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_RES_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_RES_ACID))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (((r_ptr->flags3 & RF3_IM_ACID) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = dam; //Immune + Susceptable. (1)
-			else if ((r_ptr->flags3 & RF3_IM_ACID) || ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			else if ((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((r_ptr->flags9 & RF9_RES_ACID) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || ((r_ptr->flags9 & RF9_RES_POIS) && (r_ptr->flags9 & RF9_SUSCEP_ACID))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((r_ptr->flags9 & RF9_RES_ACID) || (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam *= 2; //Susceptable + Susceptable. (2)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ACID) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-			break;
-
-		case GF_ELEC_FIRE:
-			if ((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags3 & RF3_IM_FIRE)) dam = 0; //Immune + Immune. (0)
-			else if (((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_RES_FIRE)) || ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF9_RES_ELEC))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF3_SUSCEP_FIRE)) || ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_ELEC))) dam = dam; //Immune + Susceptable. (1)
-			else if ((r_ptr->flags3 & RF3_IM_ELEC) || (r_ptr->flags3 & RF3_IM_FIRE)) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			else if ((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_RES_FIRE)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF3_SUSCEP_FIRE)) || ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_ELEC))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_FIRE)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && (r_ptr->flags9 & RF3_SUSCEP_FIRE)) dam *= 2; //Susceptable + Susceptable. (2)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags9 & RF3_SUSCEP_FIRE)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-			break;
-
-		case GF_ELEC_COLD:
-			if ((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags3 & RF3_IM_COLD)) dam = 0; //Immune + Immune. (0)
-			else if (((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_RES_COLD)) || ((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_RES_ELEC))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) || ((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_SUSCEP_ELEC))) dam = dam; //Immune + Susceptable. (1)
-			else if ((r_ptr->flags3 & RF3_IM_ELEC) || (r_ptr->flags3 & RF3_IM_COLD)) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			else if ((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_RES_COLD)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) || ((r_ptr->flags9 & RF9_RES_COLD) && (r_ptr->flags9 & RF9_SUSCEP_ELEC))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_COLD)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam *= 2; //Susceptable + Susceptable. (2)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-			break;
-
-		case GF_ELEC_POISON:
-			if ((r_ptr->flags3 & RF3_IM_ELEC) && ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = 0; //Immune + Immune. (0)
-			else if (((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_RES_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_RES_ELEC))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (((r_ptr->flags3 & RF3_IM_ELEC) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_SUSCEP_ELEC))) dam = dam; //Immune + Susceptable. (1)
-			else if ((r_ptr->flags3 & RF3_IM_ELEC) || ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			else if ((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((r_ptr->flags9 & RF9_RES_ELEC) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || ((r_ptr->flags9 & RF9_RES_POIS) && (r_ptr->flags9 & RF9_SUSCEP_ELEC))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((r_ptr->flags9 & RF9_RES_ELEC) || (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam *= 2; //Susceptable + Susceptable. (2)
-			else if ((r_ptr->flags9 & RF9_SUSCEP_ELEC) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-			break;
-
-		case GF_FIRE_COLD:
-			if ((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags3 & RF3_IM_COLD)) dam = 0; //Immune + Immune. (0)
-			else if (((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF9_RES_COLD)) || ((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_RES_FIRE))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) || ((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF3_SUSCEP_FIRE))) dam = dam; //Immune + Susceptable. (1)
-			else if ((r_ptr->flags3 & RF3_IM_FIRE) || (r_ptr->flags3 & RF3_IM_COLD)) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_RES_COLD)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) || ((r_ptr->flags9 & RF9_RES_COLD) && (r_ptr->flags9 & RF3_SUSCEP_FIRE))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags9 & RF9_RES_COLD)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			else if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) && (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam *= 2; //Susceptable + Susceptable. (2)
-			else if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF3_SUSCEP_COLD)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-			break;
-
-		case GF_FIRE_POISON:
-			if ((r_ptr->flags3 & RF3_IM_FIRE) && ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = 0; //Immune + Immune. (0)
-			else if (((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF9_RES_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_RES_FIRE))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (((r_ptr->flags3 & RF3_IM_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF3_SUSCEP_FIRE))) dam = dam; //Immune + Susceptable. (1)
-			else if ((r_ptr->flags3 & RF3_IM_FIRE) || ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || ((r_ptr->flags9 & RF9_RES_POIS) && (r_ptr->flags9 & RF3_SUSCEP_FIRE))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			else if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam *= 2; //Susceptable + Susceptable. (2)
-			else if ((r_ptr->flags9 & RF3_SUSCEP_FIRE) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
-			break;
-
-		case GF_COLD_POISON:
-			if ((r_ptr->flags3 & RF3_IM_COLD) && ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = 0; //Immune + Immune. (0)
-			else if (((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_RES_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF9_RES_COLD))) dam = (dam + 5) / 6; //Immune + Single. (1/6)
-			else if (((r_ptr->flags3 & RF3_IM_COLD) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || (((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) && (r_ptr->flags9 & RF3_SUSCEP_COLD))) dam = dam; //Immune + Susceptable. (1)
-			else if ((r_ptr->flags3 & RF3_IM_COLD) || ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))) dam = (dam + 1) / 2; //Immune + None. (1/2)
-			else if ((r_ptr->flags9 & RF9_RES_COLD) && (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) / 3; //Single + Single. (1/3)
-			else if (((r_ptr->flags9 & RF9_RES_COLD) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) || ((r_ptr->flags9 & RF9_RES_POIS) && (r_ptr->flags9 & RF3_SUSCEP_COLD))) dam = (dam + 5) * 7 / 6; //Single + Susceptable. (7/6)
-			else if ((r_ptr->flags9 & RF9_RES_COLD) || (r_ptr->flags9 & RF9_RES_POIS)) dam = (dam + 2) * 2 / 3; //Single + None. (2/3)
-			else if ((r_ptr->flags9 & RF3_SUSCEP_COLD) && (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam *= 2; //Susceptable + Susceptable. (2)
-			else if ((r_ptr->flags9 & RF3_SUSCEP_COLD) || (r_ptr->flags9 & RF9_SUSCEP_POIS)) dam = (dam + 1) * 3 / 2; //Susceptable + None. (3/2)
 			break;
 
 		case GF_NETHER:
@@ -13826,10 +11647,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 			if (r_ptr->flags9 & RF9_RES_SOUND) do_stun /= 4;
 			break;
 
-		case GF_AFFLICT:
-			dam = 0;
-			break;
-
 		case GF_SOUND:
 			do_stun = 18;
 			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
@@ -13876,12 +11693,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 			    || (r_ptr->flags4 & RF3_UNDEAD))
 				dam /= 3;
 			break;
-
-		case GF_STOP: //Note: Only drains energy.
-		{
-			dam = 0;
-			break;
-		}
 
 		case GF_GRAVITY:
 		{
@@ -13975,15 +11786,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 			    (r_ptr->flags1 & RF1_UNIQUE) ||
 			    (strchr("Egv", r_ptr->d_char)))
 				dam = 0;
-			break;
-
-		case GF_GENOCIDE:
-			do_geno = TRUE;
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))
-				do_geno = FALSE;
-
-			dam = 0;
 			break;
 
 		case GF_OLD_POLY:
@@ -14124,16 +11926,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 			}
 			break;
 
-		case GF_DIG_FIRE:
-			dam /= 2;
-
-			if (r_ptr->flags3 & RF3_IM_FIRE) dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_FIRE) dam /= 2;
-			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) dam = (dam * 3) / 2;
-
-			if (r_ptr->flags3 & RF3_HURT_ROCK) dam *= 2;
-			break;
-
 		case GF_KILL_WALL:
 			if (!(r_ptr->flags3 & RF3_HURT_ROCK))
 				dam = 0;
@@ -14203,7 +11995,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 #if 0
 	/* maybe TODO: */
-	int do_geno = 0;
 	int do_poly = 0;
 	int do_dist = 0;
 	int do_blind = 0;

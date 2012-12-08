@@ -1717,13 +1717,6 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 110,
                         },
-#ifdef ENABLE_RCRAFT
-			{
-				SKILL_RUNEMASTERY,
-				'+', 0,
-				'%', 110, /*10% 'Spell-Power' Type Bonus for Gnomes for "Rune Alacrity" skill - Nimble Gnomes! (fits 3rd Lore) at suggestion from C.Blue - Kurzel*/
-			},
-#endif
                         {
                                 SKILL_DIG,
                                 '+', 1000,
@@ -2226,28 +2219,12 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 110,
                         },
-#ifdef ENABLE_RCRAFT
-			{ 
-				SKILL_R_ACIDWATE,
-				'+', 0,
-				'%', 110,
-			},
-			{
-				SKILL_R_ELECEART,
-				'+', 0,
-				'%', 110,
-			},
-			{
-				SKILL_R_FIRECHAO,
-				'+', 0,
-				'%', 110,
-			},
-			{
-				SKILL_R_COLDNETH,
-				'+', 0,
-				'%', 110,
-			},
-#endif
+						/* A moderate bonus to Nexus, dragonrider lore! */
+						{
+							SKILL_R_NEXU,
+							'+', 0,
+							'%', 120,
+						},
                         {
                                 SKILL_CLIMB,
                                 '+', 0,
@@ -2429,18 +2406,12 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 0,
                         },
-#ifdef ENABLE_RCRAFT
-			{
-				SKILL_R_COLDNETH,
-				'+', 0,
-				'%', 110,
-			},
-			{
-				SKILL_R_POISNEXU,
-				'+', 0,
-				'%', 110,
-			},
-#endif
+						/* Moderate bonus to Nether, being the undead... */
+						{
+							SKILL_R_NETH,
+							'+', 0,
+							'%', 120,
+						},
                         {
                                 SKILL_MIMIC, /* polymorph to vampire bat and maybe vampiric mist */
                                 '+', 1000,
@@ -4364,49 +4335,37 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
-#ifndef ENABLE_RCRAFT
+
 			{
-				SKILL_RUNEMASTERY,
-				'+', 0,
-				'+', 400,
-			},
-#else
-			{
-				SKILL_RUNEMASTERY,
-				'+', 0,
-				'+', 350,
-			},
-			{
-				SKILL_R_ACIDWATE,
+				SKILL_R_LITE,
 				'+', 0,
 				'+', 500,
 			},
 			{
-				SKILL_R_ELECEART,
+				SKILL_R_DARK,
 				'+', 0,
 				'+', 500,
 			},
 			{
-				SKILL_R_FIRECHAO,
+				SKILL_R_NEXU,
 				'+', 0,
 				'+', 500,
 			},
 			{
-				SKILL_R_COLDNETH,
+				SKILL_R_NETH,
 				'+', 0,
 				'+', 500,
 			},
 			{
-				SKILL_R_POISNEXU,
+				SKILL_R_CHAO,
 				'+', 0,
 				'+', 500,
 			},
 			{
-				SKILL_R_FORCTIME,
+				SKILL_R_MANA,
 				'+', 0,
 				'+', 500,
 			},
-#endif
                         {
                                 SKILL_MIMIC,
                                 '+', 0,
@@ -5016,33 +4975,30 @@ player_class class_info[MAX_CLASS] =
 #endif
                 }
 	},
-#ifdef ENABLE_RUNEMASTER
+
 	{
-                "Runemaster",
+                "Runemaster",	/* A mage/rogue class, more caster than fighter, but with high spell damage / low durability.
+								   Intended to be the 'warrior' of the magic classes, but with allowed hybridization. */
                 TERM_L_BLUE, 
 		{ 1, 2, -3, 3, -3, -3},
 		{15, 0+100, 0, 19+100, 0, 0},
-//		{ -1, 3, 1, -3, -3, 2}, <- originally was for ENABLE_RCRAFT, taken out for now: they remain roguish instead of rather mageish
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-        //Great at searching, bad at stealth. Great @ MD? I say no because we don't want them carrying
-        //support rods + runes
-        //HP dice... Hm, tough question. What other skills will be made available to them? *Keeping @ 5 for now*
-		10, 23, 20,  2, 20, 30, 45, 40,
-		 0, 11, 10,  0,  3,  5, 20, 20,
-		5, 20,//5, 20
-                {
+		20, 23, 20,  2, 20, 30, 45, 40,
+		10, 11, 10,  0,  3,  5, 20, 20,
+		 5, 20,
+        {
 			{
 				SKILL_COMBAT,
 				'+', 0,
 				'+', 1000,
 			},
-                        {
-                                SKILL_TECHNIQUE,
-                                '+', 1000,
-                                '+', 0,
-                        },
+			{
+				SKILL_TECHNIQUE,
+				'+', 1000,
+				'+', 0,
+			},
 			/* "I am able to learn sword, but not weapon mastery in general, nor combat" */
 			/* combat is ok, but i guess they aren't disciplined enough for w-mastery ;) */
 			{
@@ -5070,34 +5026,34 @@ player_class class_info[MAX_CLASS] =
 				'+', 0,
 				'+', 800,
 			},
+			/* MA ratio is so low, let's remove it and increase boomerangs, for class variety? */
+			/* For flavour, make them boomerang specialists (enchantable), removing ammo-fueled types.  */
+			/* This should further distance them from rangers as a class. */
+			/*
 			{
 				SKILL_MARTIAL_ARTS,
 				'+', 0,
 				'+', 200,
 			},
+			*/
 			{
 				SKILL_BOOMERANG,
 				'+', 0,
-				'+', 900,
+				'+', 1000,
 			},
+			/*
 			{
 				SKILL_SLING,
 				'+', 0,
 				'+', 700,
 			},
-#ifndef ENABLE_RCRAFT
+			*/
+			/* Starting MP equivalent to Istari, er, or just slightly worse! (caster/blaster) */
 			{
 				SKILL_MAGIC,
-				'+', 1000,
-				'+', 200,
-			},
-#else
-			{
-				SKILL_MAGIC,
-				'+', 1000,
+				'+', 3000, //4000
 				'+', 1000,
 			},
-#endif
 			/* Sneakiness tree */
 			{
 				SKILL_SNEAKINESS,
@@ -5109,15 +5065,19 @@ player_class class_info[MAX_CLASS] =
 				'+', 1000,
 				'+', 600,
 			},
+			/* Disabling trapping too, runies would use glyphs, and don't want additional inventory clutter. */
+			/*
 			{
 				SKILL_TRAPPING,
 				'+', 0,
 				'+', 900,
 			},
+			// And this is a sub-skill, so disabled too. Increasing base disarming skill to be closer to rogues.
+			*/
 			{
 				SKILL_DISARM,
 				'+', 0,
-				'+', 2000,
+				'+', 1000,
 			},
 			{
 				SKILL_STEALING,
@@ -5131,7 +5091,7 @@ player_class class_info[MAX_CLASS] =
 			},
 			{
 				SKILL_DODGE,
-				'+', 0,/*1000*/
+				'+', 0,
 				'+', 700,
 			},
 			{
@@ -5144,94 +5104,80 @@ player_class class_info[MAX_CLASS] =
 				'+', 0,
 				'+', 1000,
 			},
-#ifndef ENABLE_RCRAFT
-			{
-				SKILL_RUNEMASTERY,
-				'+', 1000,
-				'+', 1500,
-			},
-#else
-			{
-				SKILL_RUNEMASTERY,
-				'+', 1000,
-				'+', 400,
-			},
 			{ 
-				SKILL_R_ACIDWATE,
+				SKILL_R_LITE,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_R_DARK,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_R_NEXU,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_R_NETH,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_R_CHAO,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_R_MANA,
+				'+', 1000,
+				'+', 1000,
+			},
+			/* Necromancy tree */
+			{
+				SKILL_NECROMANCY,
 				'+', 0,
 				'+', 1000,
 			},
 			{
-				SKILL_R_ELECEART,
+				SKILL_TRAUMATURGY,
 				'+', 0,
 				'+', 1000,
 			},
 			{
-				SKILL_R_FIRECHAO,
+				SKILL_AURA_FEAR,
 				'+', 0,
 				'+', 1000,
 			},
 			{
-				SKILL_R_COLDNETH,
+				SKILL_AURA_SHIVER,
 				'+', 0,
 				'+', 1000,
 			},
 			{
-				SKILL_R_POISNEXU,
+				SKILL_AURA_DEATH,
 				'+', 0,
 				'+', 1000,
 			},
-			{
-				SKILL_R_FORCTIME,
-				'+', 0,
-				'+', 1000,
-			},
-#endif
-                        /* Necromancy tree */
-                        {
-                                SKILL_NECROMANCY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_TRAUMATURGY,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_FEAR,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_SHIVER,
-                                '+', 0,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_AURA_DEATH,
-                                '+', 0,
-                                '+', 1000,
-                        },
 			/* Health tree */
-                        {
-                                SKILL_HEALTH,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_SWIM,
-                                '+', 0,
-                                '%', 110,
-                        },
-                        {
-                                SKILL_DIG,
-                                '+', 1000,
-                                '+', 1600,
-                        }, 
-                }
+			{
+				SKILL_HEALTH,
+				'+', 1000,
+				'+', 1000,
+			},
+			{
+				SKILL_SWIM,
+				'+', 0,
+				'%', 110,
+			},
+			{
+				SKILL_DIG,
+				'+', 1000,
+				'+', 1600,
+			}, 
+		}
 	},
-#endif
 
 #ifdef ENABLE_MCRAFT
 	{
@@ -5659,13 +5605,13 @@ cptr player_title[MAX_CLASS][11][4] =
 {
 	/* Warrior */
 	{
-                {"Rookie", "Rookie", "Rookie", "Rookie", },
+        {"Rookie", "Rookie", "Rookie", "Rookie", },
 		{"Mercenary", "Mercenary", "Mercenary", "Mercenary", },
 		{"Soldier", "Soldier", "Soldier", "Soldier", },
 		{"Veteran", "Veteran", "Veteran", "Veteran", },
 		{"Captain", "Captain", "Captain", "Captain", },
 		{"Champion", "Champion", "Champion", "Champion", },
-                {"Hero", "Heroine", "Hero", "Heroine", },//heh they are back :)
+        {"Hero", "Heroine", "Hero", "Heroine", },//heh they are back :)
 		{"General", "General", "General", "General", },
 		{"Baron", "Baroness", "Baron", "Baroness", },
 		{"Duke", "Duchess", "Duke", "Duchess", },
@@ -5759,9 +5705,9 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Crusader", "Crusader", "Crusader", "Crusader", },
 		{"Knight", "Knight", "Knight", "Knight", },
 		{"Blessed Knight", "Blessed Knight", "Bless.Knight", "Bless.Knight", },
-	        {"Sacred Knight", "Sacred Knight", "Sacr.Knight", "Sacr.Knight", },
-	        {"Paladin", "Paladin", "Paladin", "Paladin", },
-                {"Knight Commander", "Knight Commander", "Knight Cmdr.", "Knight Cmdr.", },
+	    {"Sacred Knight", "Sacred Knight", "Sacr.Knight", "Sacr.Knight", },
+	    {"Paladin", "Paladin", "Paladin", "Paladin", },
+        {"Knight Commander", "Knight Commander", "Knight Cmdr.", "Knight Cmdr.", },
         },
 
         /* Ranger */
@@ -5776,10 +5722,10 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Guard Captain", "Guard Captain", "Guard Captain", "Guard Captain", },
 		//removed 'Ranger' and added 'Ranger Champion'
 		{"Supervisor", "Supervisor", "Supervisor", "Supervisor", },
-		//{"Ranger", "Ranger", "Ranger", "Ranger", },
-	        {"High Ranger", "High Ranger", "High Ranger", "High Ranger", },
-//	        {"Ranger Champion", "Ranger Champion", },
-                {"Ranger Chieftain", "Ranger Chieftain", "Ranger Chief", "Ranger Chief", }, /* to check: Isn't it Chief Ranger rather? */
+//		{"Ranger", "Ranger", "Ranger", "Ranger", },
+	    {"High Ranger", "High Ranger", "High Ranger", "High Ranger", },
+//	    {"Ranger Champion", "Ranger Champion", },
+        {"Ranger Chieftain", "Ranger Chieftain", "Ranger Chief", "Ranger Chief", }, /* to check: Isn't it Chief Ranger rather? */
         },
 
 	/* Adventurer */
@@ -5798,51 +5744,53 @@ cptr player_title[MAX_CLASS][11][4] =
 	},
 
 	/* Druid */
-        {
-                {"Green", "Green", "Green", "Green", },
-                {"Tree Hugger", "Tree Hugger", "Tree Hugger", "Tree Hugger", },
-                {"Flower Boy", "Flower Girl", "Flower Boy", "Flower Girl", },
-                {"Herbalist", "Herbalist", "Herbalist", "Herbalist", },
-                {"Spiritualist","Spiritualist", "Spiritualist","Spiritualist", },
-                {"Elder", "Elder", "Elder", "Elder", },
-                {"Druid", "Druid", "Druid", "Druid", },
-                {"High Druid", "High Druid", "High Druid", "High Druid", },
-                {"Master Druid", "Master Druid", "Master Druid", "Master Druid", },
+	{
+		{"Green", "Green", "Green", "Green", },
+		{"Tree Hugger", "Tree Hugger", "Tree Hugger", "Tree Hugger", },
+		{"Flower Boy", "Flower Girl", "Flower Boy", "Flower Girl", },
+		{"Herbalist", "Herbalist", "Herbalist", "Herbalist", },
+		{"Spiritualist","Spiritualist", "Spiritualist","Spiritualist", },
+		{"Elder", "Elder", "Elder", "Elder", },
+		{"Druid", "Druid", "Druid", "Druid", },
+		{"High Druid", "High Druid", "High Druid", "High Druid", },
+		{"Master Druid", "Master Druid", "Master Druid", "Master Druid", },
 		{"Wildlife Preserver", "Wildlife Preserver", "Wl.Preserver", "Wl.Preserver", },
-                {"Arch-Druid", "Arch-Druid", "Arch-Druid", "Arch-Druid", }, //was Arch Druid
-        },
+		{"Arch-Druid", "Arch-Druid", "Arch-Druid", "Arch-Druid", }, //was Arch Druid
+	},
 
 	/* Shaman */
-        {
-                {"Smoker", "Smoker", "Smoker", "Smoker", },
-                {"Novice Walker", "Novice Walker", "Nov. Walker", "Nov. Walker", },
-                {"Walker", "Walker", "Walker", "Walker", },
-                {"Spiritwalker", "Spiritwalker", "Spiritwalker", "Spiritwalker", },
-                {"Bone Fletcher", "Bone Fletcher", "Bone Fletchr", "Bone Fletchr", },
-                {"Cursed", "Cursed", "Cursed", "Cursed", },
-                {"Chanter", "Chantress", "Chanter", "Chantress", },
-                {"Elder Chanter", "Elder Chantress", "Eld.Chanter", "El.Chantress", },
+	{
+		{"Smoker", "Smoker", "Smoker", "Smoker", },
+		{"Novice Walker", "Novice Walker", "Nov. Walker", "Nov. Walker", },
+		{"Walker", "Walker", "Walker", "Walker", },
+		{"Spiritwalker", "Spiritwalker", "Spiritwalker", "Spiritwalker", },
+		{"Bone Fletcher", "Bone Fletcher", "Bone Fletchr", "Bone Fletchr", },
+		{"Cursed", "Cursed", "Cursed", "Cursed", },
+		{"Chanter", "Chantress", "Chanter", "Chantress", },
+		{"Elder Chanter", "Elder Chantress", "Eld.Chanter", "El.Chantress", },
 //		{"Spiritwatcher", "Spiritwatcher", },
-                {"Shaman", "Shaman", "Shaman", "Shaman", },
-                {"Elder Shaman", "Elder Shaman", "Elder Shaman", "Elder Shaman", },
-                {"Shaman King", "Shaman Queen", "Shaman King", "Shaman Queen", },
-        },
+		{"Shaman", "Shaman", "Shaman", "Shaman", },
+		{"Elder Shaman", "Elder Shaman", "Elder Shaman", "Elder Shaman", },
+		{"Shaman King", "Shaman Queen", "Shaman King", "Shaman Queen", },
+	},
 	/* Runemaster */
-        {
-                {"Digger", "Digger", "Digger", "Digger", },
-                {"Rock Collector", "Rock Collector", "R.Collector", "R.Collector", },
-                {"Rock Painter", "Rock Paintress", "Rock Painter", "Rock Paintrs", },
-                {"Fire Starter", "Fire Starter", "Fire Starter", "Fire Starter", },
-                {"Earth Guard", "Earth Guard", "Earth Guard", "Earth Guard", },
-                {"Rune Acolyte", "Rune Acolyte", "Rune Acolyte", "Rune Acolyte", },
-                {"Rune Adept", "Rune Adept", "Rune Adept", "Rune Adept", },
-                {"Rune Veteran", "Rune Veteran", "Rune Veteran", "Rune Veteran", },
-                {"Rune Keeper", "Rune Keepress", "Rune Keeper", "Rune Keeprss", },
-                {"Runemaster", "Runemistress", "Runemaster", "Runemistress", },
-                {"Grand Runemaster", "Grand Runemistress", "G-Runemaster", "G-Runemstrss", },
+	{
+		{"Digger", "Digger", "Digger", "Digger", },
+		{"Rune Tracer", "Rune Tracer", "Rune Tracer", "Rune Tracer", },
+		{"Rock Collector", "Rock Collector", "R.Collector", "R.Collector", },
+//		{"Rock Painter", "Rock Paintress", "Rock Painter", "Rock Paintrs", },
+		{"Fire Starter", "Fire Starter", "Fire Starter", "Fire Starter", },
+		{"Treasure Hunter", "Treasure Hunter", "T.Hunter", "T.Hunter", },
+//		{"Archaeologist", "Archaeologist", "Professor", "Professor," }, //too cool for 12 letters? ^^
+		{"Archaeologist", "Archaeologist", "Archaelgst.", "Archaelgst.", },
+		{"Earth Guard", "Earth Guard", "Earth Guard", "Earth Guard", },
+		{"Rune Knight", "Rune Knight", "Rune Knight", "Rune Knight", },
+		{"Rune Keeper", "Rune Keepress", "Rune Keeper", "Rune Keeprss", },
+		{"Runemaster", "Runemistress", "Runemaster", "Runemistress", },
+//		{"Grand Runemaster", "Grand Runemistress", "G-Runemaster", "G-Runemstrss", },
         },
 	/* Mindcrafter */
-        {
+	{
 //		{"Simple-minded", "Simple-minded", "Simple-mind", "Simple-mind", },
 //		{"Reflector", "Reflectress", "Reflector", "Reflectress", },
 //		{"Paranoid", "Paranoid", "Paranoid", "Paranoid", },
@@ -5858,7 +5806,7 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Manipulator", "Manipulatress", "Manipulator", "Manipulatrs.", },
 		{"Controller", "Controller", "Controller", "Controller", },
 		{"Master Mindcrafter", "Master Mindcraftress", "M-Mindcrftr.", "M-Mindcrftr.", },
-        },
+	},
 };
 
 /*
@@ -5871,12 +5819,12 @@ cptr player_title_special[MAX_CLASS][5][4] =
 	/* Warrior */
 	{
 #if 1
-                {"Highlord", "Highlady", "Highlord", "Highlady", },
+		{"Highlord", "Highlady", "Highlord", "Highlady", },
 		{"Overlord", "Overlord", "Overlord", "Overlord", },
-//                {"Hero", "Hero", }, hero is back in the normal warrior ranks!
-                {"Destroyer", "Destroyess", "Destroyer", "Destroyess", },
-                {"Annihilator", "Annihilatress", "Annihilator", "Annihilatrss", },
-                {"Titan", "Titan", "Titan", "Titan", },
+//  	{"Hero", "Hero", }, hero is back in the normal warrior ranks!
+		{"Destroyer", "Destroyess", "Destroyer", "Destroyess", },
+		{"Annihilator", "Annihilatress", "Annihilator", "Annihilatrss", },
+		{"Titan", "Titan", "Titan", "Titan", },
 #else
 		{"Admiral", "Admiral", },
 		{"Bombardier", "Bombardier", },
@@ -5888,7 +5836,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 
 	/* Istar */
 	{
-	      	{"Istar", "Istar", "Istar", "Istar", },
+		{"Istar", "Istar", "Istar", "Istar", },
 		{"Dragon Lord", "Dragon Lady", "Dragon Lord", "Dragon Lady", },/* explanation about all the 'Dragon..' stuff: I was out of ideas and
 						    just thought of 'Earthsea Quartet' from Ursula LeGuin - C. Blue */
 		{"Dragon Highlord", "Dragon Highlady", "Dragon HLord", "Dragon HLady", },//yolady
@@ -5919,8 +5867,8 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Death Fate", "Death Fate", "Death Fate", "Death Fate", },
 /* yeah it's fitting, but let's not make the game JOKEBAND anyway */
 //		{"RNG", "RNG", }, //LOL! Perfect, do you not think so? :) -adam 
-        },
-
+	},
+	
 	/* Mimic */
 	{
 		{"Faker", "Fakeress", "Faker", "Fakeress", },
@@ -5930,38 +5878,38 @@ cptr player_title_special[MAX_CLASS][5][4] =
 //		{"Master Replicator", "Master Replicatress", "M-Replicator", "M-Replicatrs", },
 		{"Unlimited", "Unlimited", "Unlimited", "Unlimited", },
 	},
-
+	
 	/* Archer */
 	{
 		{"Elite Archer", "Elite Archer", "Elite Archer", "Elite Archer", },
 		{"Grand Elite Archer", "Grand Elite Archer", "GE-Archer", "GE-Archer", },
 		{"Legendary Archer", "Legendary Archer", "Legd.Archer", "Legd.Archer", },
 		{"Sirring Death", "Sirring Death", "Sirrg.Death", "Sirrg.Death", },
-		{"Golden Eye", "Golden Eye", },
+		{"Golden Eye", "Golden Eye", "Golden Eye", "Golden Eye", },
 	},
-
-        /* Paladin */
+	
+    /* Paladin */
 	{
-                {"Sacred Defender", "Sacred Defender", "Sac.Defender", "Sac.Defender", },
+        {"Sacred Defender", "Sacred Defender", "Sac.Defender", "Sac.Defender", },
 		{"Sacred Avenger", "Sacred Avenger", "Sacr.Avenger", "Sacr.Avenger", },
 		{"Holy Avenger", "Holy Avenger", "Holy Avenger", "Holy Avenger", },
 //		{"Holy Defender", "Holy Defender", }, defender comes before avenger if at all;
 //							DF and HA are old 'good' ego mods from predecessors.
 		{"Holy King", "Holy Queen", "Holy King", "Holy Queen", },
 		{"God's Hand", "God's Hand", "God's Hand", "God's Hand", },
-        },
-
-        /* Ranger */
+	},
+	
+    /* Ranger */
 	{
-                {"Elite Ranger", "Elite Ranger", "Elite Ranger", "Elite Ranger", },
+		{"Elite Ranger", "Elite Ranger", "Elite Ranger", "Elite Ranger", },
 //		{"Ranger Supervisor", "Ranger Supervisor", "Ranger Svis.", "Ranger Svis.", },
 		{"Champion of Law", "Champion of Law", "Champ of Law", "Champ of Law", },
 		{"Lord of Law", "Lady of Law", "Lord of Law", "Lady of Law", },
 //		{"Ranger Commander", "Ranger Commander", "Ranger Cmdr.", "Ranger Cmdr.", },
 		{"Legend", "Legend", "Legend", "Legend", },
 		{"Justice", "Justice", "Justice", "Justice", },
-        },
-
+	},
+	
 	/* Adventurer */
 	{
 		{"Seasoned Adventurer", "Seasoned Adventuress", "Seasoned Adv", "Seasoned Adv", },
@@ -5970,40 +5918,44 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Legendary Adventurer", "Legendary Adventuress", "Legend. Adv.", "Legend. Adv.", },
 		{"Mythical Adventurer", "Mythical Adventuress", "Mythic Adv.", "Mythic Adv.", },
 	},
-
-        /* Druid */
+	
+	/* Druid */
 	{
-                {"Forest Guardian", "Forest Guardian", "Forest Guard", "Forest Guard", },
-                {"Wind Evoker", "Wind Evokeress", "Wind Evoker", "Wind Evokrss", },
-                {"Forest Keeper", "Forest Keepress", "Forest Kpr.", "Forest Kprs.", },
-                {"Autumn", "Autumn", "Autumn", "Autumn", },
-                {"Evergreen", "Evergreen", "Evergreen", "Evergreen", },
-        },
-
-        /* Shaman */
+		{"Forest Guardian", "Forest Guardian", "Forest Guard", "Forest Guard", },
+		{"Wind Evoker", "Wind Evokeress", "Wind Evoker", "Wind Evokrss", },
+		{"Forest Keeper", "Forest Keepress", "Forest Kpr.", "Forest Kprs.", },
+		{"Autumn", "Autumn", "Autumn", "Autumn", },
+		{"Evergreen", "Evergreen", "Evergreen", "Evergreen", },
+	},
+	
+	/* Shaman */
 	{
-                {"Spirit Keeper", "Spirit Keepress", "Sprt.Keeper", "Spt.Keepress", },
-                {"Spirit Master", "Spirit Mistress", "Sprt.Master", "Spt.Mistress", },
-                {"Realm Keeper", "Realm Keepress", "Realm Keeper", "Realm Kprss.", },
-                {"Realm Master", "Realm Mistress", "Realm Master", "Realm Mistr.", },
-                {"Presence", "Presence", "Presence", "Presence", },
-        },
-        /* Runemaster */
-        {
-                {"Force Master", "Force Mistress", "Force Master", "Force Mistr.", },
-                {"Elemental", "Elemental", "Elemental", "Elemental", },
-                {"Elemental Overlord", "Elemental Overlady", "E-Overlord", "E-Overlady", },
-                {"Elemental Channelist", "Elemental Channelist", "E-Channelist", "E-Channelist", },
-                {"Elemental Vortex", "Elemental Vortex", "Elemn.Vortex", "Elemn.Vortex", },
-        },
-        /* Mindcrafter */
-        {
-                {"Master Manipulator", "Master Manipulatress", "M.Manipultr.", "M.Manipultr.", },
-                {"Master Controller", "Master Controller", "M.Controllr.", "M.Controllr.", },
-                {"Alterator", "Alteratress", "Alterator", "Alteratress", },
-                {"Reality Shifter", "Reality Shifter", "Real.Shifter", "Real.Shifter", },
-                {"Truth", "Truth", "Truth", "Truth", },
-        },
+		{"Spirit Keeper", "Spirit Keepress", "Sprt.Keeper", "Spt.Keepress", },
+		{"Spirit Master", "Spirit Mistress", "Sprt.Master", "Spt.Mistress", },
+		{"Realm Keeper", "Realm Keepress", "Realm Keeper", "Realm Kprss.", },
+		{"Realm Master", "Realm Mistress", "Realm Master", "Realm Mistr.", },
+		{"Presence", "Presence", "Presence", "Presence", },
+	},
+	
+	/* Runemaster */
+	{
+		{"Grand Runemaster", "Grand Runemistress", "G.Runemaster", "G.Runemstrss", },
+		{"Force Master", "Force Mistress", "Force Master", "Force Mstrss", },
+		{"Elemental", "Elemental", "Elemental", "Elemental", },
+		//{"Elemental Overlord", "Elemental Overlady", "E-Overlord", "E-Overlady", },
+		//{"Elemental Channelist", "Elemental Channelist", "E-Channelist", "E-Channelist", },
+		{"Elemental Vortex", "Elemental Vortex", "Elemn.Vortex", "Elemn.Vortex", },
+		{"Savant", "Savant", "Savant", "Savant", },	
+	},
+	
+	/* Mindcrafter */
+	{
+		{"Master Manipulator", "Master Manipulatress", "M.Manipultr.", "M.Manipultr.", },
+		{"Master Controller", "Master Controller", "M.Controllr.", "M.Controllr.", },
+		{"Alterator", "Alteratress", "Alterator", "Alteratress", },
+		{"Reality Shifter", "Reality Shifter", "Real.Shifter", "Real.Shifter", },
+		{"Truth", "Truth", "Truth", "Truth", },
+	},
 };
 
 /*

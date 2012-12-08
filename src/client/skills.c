@@ -683,7 +683,7 @@ static bool item_tester_hook_potion(object_type *o_ptr)
 static bool item_tester_hook_scroll_rune(object_type *o_ptr)
 {
 	if ((o_ptr->tval == TV_SCROLL) ||
-	    (o_ptr->tval == TV_RUNE2)) return (TRUE);
+	    (o_ptr->tval == TV_RUNE)) return (TRUE);
 
 	/* Assume not */
 	return (FALSE);
@@ -752,38 +752,6 @@ static void do_trap(int item_kit)
 }
 
 /*
- * cast a runic spell
- */
-static void do_rune() {
-	int basic_rune, mod_rune;
-	//object_type *o_ptr;
-
-        //Ask for a basic rune
-	item_tester_tval = TV_RUNE1;
-	if (!c_get_item(&basic_rune, "Use which basic rune? ", (USE_INVEN)))
-	{
-		if (basic_rune == -2)
-			c_msg_print("You have no runes.");
-		return;
-	}
-
-	//o_ptr = &inventory[basic_rune];
-
-	//Ask for a modifier rune
-	item_tester_tval = TV_RUNE2;
-
-	if (!c_get_item(&mod_rune, "Use which modifier rune? ", (USE_EQUIP | USE_INVEN)))
-	{
-		if (mod_rune == -2)
-			c_msg_print("You have nothing to use that with.");
-		return;
-	}
-
-	/* Send it */
-	Send_activate_skill(MKEY_RUNE, basic_rune, mod_rune, 0, 0, 0);
-}
-
-/*
  * Handle the mkey according to the types.
  * if item is less than zero, ask for an item if needed.
  */
@@ -802,14 +770,9 @@ void do_activate_skill(int x_idx, int item)
 			case MKEY_TRAP:
 				do_trap(item);
 				break;
-			case MKEY_RUNE:
-				do_rune();
-				break;
-#ifdef ENABLE_RCRAFT
 			case MKEY_RCRAFT:
 				do_runespell();
 				break;
-#endif
 			case MKEY_STANCE:
 				do_stance();
 				break;
