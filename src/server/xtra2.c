@@ -8627,6 +8627,9 @@ bool target_able(int Ind, int m_idx)
 		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) return (FALSE);
 
 		/* Player must be visible */
+		if (!p_ptr->play_vis[-m_idx]) return (FALSE);
+
+		/* Player must be in FoV */
 		if (!player_can_see_bold(Ind, q_ptr->py, q_ptr->px)) return (FALSE);
 
 		/* Distance to target too great?
