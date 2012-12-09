@@ -5605,13 +5605,13 @@ cptr player_title[MAX_CLASS][11][4] =
 {
 	/* Warrior */
 	{
-        {"Rookie", "Rookie", "Rookie", "Rookie", },
+	        {"Rookie", "Rookie", "Rookie", "Rookie", },
 		{"Mercenary", "Mercenary", "Mercenary", "Mercenary", },
 		{"Soldier", "Soldier", "Soldier", "Soldier", },
 		{"Veteran", "Veteran", "Veteran", "Veteran", },
 		{"Captain", "Captain", "Captain", "Captain", },
 		{"Champion", "Champion", "Champion", "Champion", },
-        {"Hero", "Heroine", "Hero", "Heroine", },//heh they are back :)
+	        {"Hero", "Heroine", "Hero", "Heroine", },//heh they are back :)
 		{"General", "General", "General", "General", },
 		{"Baron", "Baroness", "Baron", "Baroness", },
 		{"Duke", "Duchess", "Duke", "Duchess", },
@@ -5705,9 +5705,9 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Crusader", "Crusader", "Crusader", "Crusader", },
 		{"Knight", "Knight", "Knight", "Knight", },
 		{"Blessed Knight", "Blessed Knight", "Bless.Knight", "Bless.Knight", },
-	    {"Sacred Knight", "Sacred Knight", "Sacr.Knight", "Sacr.Knight", },
-	    {"Paladin", "Paladin", "Paladin", "Paladin", },
-        {"Knight Commander", "Knight Commander", "Knight Cmdr.", "Knight Cmdr.", },
+		{"Sacred Knight", "Sacred Knight", "Sacr.Knight", "Sacr.Knight", },
+		{"Paladin", "Paladin", "Paladin", "Paladin", },
+	        {"Knight Commander", "Knight Commander", "Knight Cmdr.", "Knight Cmdr.", },
         },
 
         /* Ranger */
@@ -5723,9 +5723,9 @@ cptr player_title[MAX_CLASS][11][4] =
 		//removed 'Ranger' and added 'Ranger Champion'
 		{"Supervisor", "Supervisor", "Supervisor", "Supervisor", },
 //		{"Ranger", "Ranger", "Ranger", "Ranger", },
-	    {"High Ranger", "High Ranger", "High Ranger", "High Ranger", },
-//	    {"Ranger Champion", "Ranger Champion", },
-        {"Ranger Chieftain", "Ranger Chieftain", "Ranger Chief", "Ranger Chief", }, /* to check: Isn't it Chief Ranger rather? */
+		{"High Ranger", "High Ranger", "High Ranger", "High Ranger", },
+//	 	{"Ranger Champion", "Ranger Champion", },
+        	{"Ranger Chieftain", "Ranger Chieftain", "Ranger Chief", "Ranger Chief", }, /* to check: Isn't it Chief Ranger rather? */
         },
 
 	/* Adventurer */
@@ -5787,7 +5787,7 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Rune Knight", "Rune Knight", "Rune Knight", "Rune Knight", },
 		{"Rune Keeper", "Rune Keepress", "Rune Keeper", "Rune Keeprss", },
 		{"Runemaster", "Runemistress", "Runemaster", "Runemistress", },
-//		{"Grand Runemaster", "Grand Runemistress", "G-Runemaster", "G-Runemstrss", },
+		{"Grand Runemaster", "Grand Runemistress", "G-Runemaster", "G-Runemstrss", },
         },
 	/* Mindcrafter */
 	{
@@ -5821,7 +5821,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 #if 1
 		{"Highlord", "Highlady", "Highlord", "Highlady", },
 		{"Overlord", "Overlord", "Overlord", "Overlord", },
-//  	{"Hero", "Hero", }, hero is back in the normal warrior ranks!
+//  		{"Hero", "Hero", }, hero is back in the normal warrior ranks!
 		{"Destroyer", "Destroyess", "Destroyer", "Destroyess", },
 		{"Annihilator", "Annihilatress", "Annihilator", "Annihilatrss", },
 		{"Titan", "Titan", "Titan", "Titan", },
@@ -5868,7 +5868,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 /* yeah it's fitting, but let's not make the game JOKEBAND anyway */
 //		{"RNG", "RNG", }, //LOL! Perfect, do you not think so? :) -adam 
 	},
-	
+
 	/* Mimic */
 	{
 		{"Faker", "Fakeress", "Faker", "Fakeress", },
@@ -5878,7 +5878,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 //		{"Master Replicator", "Master Replicatress", "M-Replicator", "M-Replicatrs", },
 		{"Unlimited", "Unlimited", "Unlimited", "Unlimited", },
 	},
-	
+
 	/* Archer */
 	{
 		{"Elite Archer", "Elite Archer", "Elite Archer", "Elite Archer", },
@@ -5887,10 +5887,10 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Sirring Death", "Sirring Death", "Sirrg.Death", "Sirrg.Death", },
 		{"Golden Eye", "Golden Eye", "Golden Eye", "Golden Eye", },
 	},
-	
-    /* Paladin */
+
+	/* Paladin */
 	{
-        {"Sacred Defender", "Sacred Defender", "Sac.Defender", "Sac.Defender", },
+	        {"Sacred Defender", "Sacred Defender", "Sac.Defender", "Sac.Defender", },
 		{"Sacred Avenger", "Sacred Avenger", "Sacr.Avenger", "Sacr.Avenger", },
 		{"Holy Avenger", "Holy Avenger", "Holy Avenger", "Holy Avenger", },
 //		{"Holy Defender", "Holy Defender", }, defender comes before avenger if at all;
@@ -5898,8 +5898,8 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Holy King", "Holy Queen", "Holy King", "Holy Queen", },
 		{"God's Hand", "God's Hand", "God's Hand", "God's Hand", },
 	},
-	
-    /* Ranger */
+
+	/* Ranger */
 	{
 		{"Elite Ranger", "Elite Ranger", "Elite Ranger", "Elite Ranger", },
 //		{"Ranger Supervisor", "Ranger Supervisor", "Ranger Svis.", "Ranger Svis.", },
@@ -5909,7 +5909,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Legend", "Legend", "Legend", "Legend", },
 		{"Justice", "Justice", "Justice", "Justice", },
 	},
-	
+
 	/* Adventurer */
 	{
 		{"Seasoned Adventurer", "Seasoned Adventuress", "Seasoned Adv", "Seasoned Adv", },
@@ -5918,7 +5918,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Legendary Adventurer", "Legendary Adventuress", "Legend. Adv.", "Legend. Adv.", },
 		{"Mythical Adventurer", "Mythical Adventuress", "Mythic Adv.", "Mythic Adv.", },
 	},
-	
+
 	/* Druid */
 	{
 		{"Forest Guardian", "Forest Guardian", "Forest Guard", "Forest Guard", },
@@ -5927,7 +5927,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Autumn", "Autumn", "Autumn", "Autumn", },
 		{"Evergreen", "Evergreen", "Evergreen", "Evergreen", },
 	},
-	
+
 	/* Shaman */
 	{
 		{"Spirit Keeper", "Spirit Keepress", "Sprt.Keeper", "Spt.Keepress", },
@@ -5936,18 +5936,18 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Realm Master", "Realm Mistress", "Realm Master", "Realm Mistr.", },
 		{"Presence", "Presence", "Presence", "Presence", },
 	},
-	
+
 	/* Runemaster */
 	{
-		{"Grand Runemaster", "Grand Runemistress", "G.Runemaster", "G.Runemstrss", },
+//		{"Grand Runemaster", "Grand Runemistress", "G.Runemaster", "G.Runemstrss", },
 		{"Force Master", "Force Mistress", "Force Master", "Force Mstrss", },
-		{"Elemental", "Elemental", "Elemental", "Elemental", },
 		//{"Elemental Overlord", "Elemental Overlady", "E-Overlord", "E-Overlady", },
-		//{"Elemental Channelist", "Elemental Channelist", "E-Channelist", "E-Channelist", },
+		{"Elemental Channelist", "Elemental Channelist", "E-Channelist", "E-Channelist", },
+		{"Elemental Master", "Elemental Master", "Elemental-M", "Elemental-M", },
 		{"Elemental Vortex", "Elemental Vortex", "Elemn.Vortex", "Elemn.Vortex", },
-		{"Savant", "Savant", "Savant", "Savant", },	
+		{"Savant", "Savant", "Savant", "Savant", },
 	},
-	
+
 	/* Mindcrafter */
 	{
 		{"Master Manipulator", "Master Manipulatress", "M.Manipultr.", "M.Manipultr.", },
