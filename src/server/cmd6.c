@@ -393,7 +393,9 @@ void do_cmd_eat_food(int Ind, int item)
 				/* 'Rogue' tribute :) */
 				if (magik(10)) {
 					msg_print(Ind, "Yuk, that food tasted awful.");
-					if (p_ptr->max_lev < 2) gain_exp(Ind, 1);
+					if (p_ptr->max_lev < 2 &&
+					    !((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)))
+						gain_exp(Ind, 1);
 					break;
 				}
 				/* Fall through */

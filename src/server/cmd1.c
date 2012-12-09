@@ -1416,6 +1416,11 @@ void carry(int Ind, int pickup, int confirm)
 			return;
 		}
 
+		if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+		    && o_ptr->owner && o_ptr->owner != p_ptr->id) {
+			msg_print(Ind, "\377yYou cannot pick up someone else's money or your life would be forfeit.");
+			return;
+		}
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
 		/* If we are still below the limit but this gold pile would exceed it
 		   then only pick up as much of it as is allowed! - C. Blue */
@@ -1602,6 +1607,12 @@ void carry(int Ind, int pickup, int confirm)
 		    p_ptr->total_winner && cfg.kings_etiquette) {
 			msg_print(Ind, "Royalties may not own true artifacts!");
 			if (!is_admin(p_ptr)) return;
+		}
+
+		if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+		    && o_ptr->owner && o_ptr->owner != p_ptr->id) {
+			msg_print(Ind, "\377yYou cannot pick up someone else's goods or your life would be forfeit.");
+			return;
 		}
 
 /*#ifdef RPG_SERVER -- let's do this also for normal server */

@@ -3197,6 +3197,13 @@ void store_purchase(int Ind, int item, int amt)
 		if (!is_admin(p_ptr)) return;
 	}
 
+
+        if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+            && o_ptr->owner && o_ptr->owner != p_ptr->id) {
+                msg_print(Ind, "\377yYou cannot purchase used goods or your life would be forfeit.");
+                return;
+        }
+
 	/* Assume the player wants just one of them */
 	/*amt = 1;*/
 
@@ -3728,7 +3735,7 @@ void store_confirm(int Ind)
 		if (!o_ptr->k_idx) return;
 #endif
 	}
-	
+
 	/* Add '!s' inscription, w00t - C. Blue */
 	if (check_guard_inscription(o_ptr->note, 's')) {
 		msg_print(Ind, "The item's inscription prevents it.");
@@ -3736,6 +3743,15 @@ void store_confirm(int Ind)
 	}
 
 	/* Get some money */
+#ifdef EVENT_TOWNIE_GOLD_LIMIT
+        /* If we are still below the limit but this gold pile would exceed it
+           then only pick up as much of it as is allowed! - C. Blue */
+        if (!p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1 &&
+            p_ptr->gold_picked_up < EVENT_TOWNIE_GOLD_LIMIT && price > EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up) {
+                price = EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up;
+                msg_format(Ind, "\377yYou accept only %d gold, or your life would be forfeit.", price);
+        }
+#endif
 	if (!gain_au(Ind, price, FALSE, FALSE)) return;
 
 	/* Trash the saved variables */
