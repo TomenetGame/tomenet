@@ -83,6 +83,7 @@
 #define MAX_VERSION_MAJOR	4
 #define MAX_VERSION_MINOR	15
 #define MAX_VERSION_PATCH	15
+#define MAX_VERSION_EXTRA	INT_MAX
 
 
 /* For savefile purpose only */
