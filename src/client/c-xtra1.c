@@ -2326,7 +2326,12 @@ void do_weather() {
 
 
 	/* continue animating current weather (if any) */
-	if (!weather_type && !weather_elements) return;
+	if (!weather_type && !weather_elements) {
+#ifdef USE_SOUND_2010
+		weather_particles_seen = 0;
+#endif
+		return;
+	}
 
 
 /* perform redraw and sync hacks ------------------------------------------- */
@@ -2523,6 +2528,10 @@ void do_weather() {
 
 /* move weather elements --------------------------------------------------- */
 
+#ifdef USE_SOUND_2010
+	weather_particles_seen = 0;
+#endif
+
 	/* display and advance currently existing weather elements */
 	if (screen_icky) Term_switch(0);
 	for (i = 0; i < weather_elements; i++) {
@@ -2544,6 +2553,16 @@ void do_weather() {
 			}
 		}
 
+#ifdef USE_SOUND_2010
+		/* register weather element, if it is currently supposed to be visible on screen */
+		if (weather_element_type[i] != 0 &&
+		    (weather_element_x[i] >= weather_panel_x &&
+		    weather_element_x[i] < weather_panel_x + screen_wid &&
+		    weather_element_y[i] >= weather_panel_y &&
+		    weather_element_y[i] < weather_panel_y + screen_hgt))
+			weather_particles_seen++;
+#endif
+
 		/* advance raindrops */
 		if (weather_element_type[i] == 1 && !weather_speed_rain_ticks) {
 			/* perform movement (y:speed, x:wind) */
@@ -2551,7 +2570,7 @@ void do_weather() {
 			if (wind_west_effective) weather_element_x[i]++;
 			else if (wind_east_effective) weather_element_x[i]--;
 
-			/* pac-man effect for leaving screen to the left/right */			
+			/* pac-man effect for leaving screen to the left/right */
 			if (weather_element_x[i] < 1) weather_element_x[i] = MAX_WID - 2;
 			else if (weather_element_x[i] > MAX_WID - 2) weather_element_x[i] = 1;
 
@@ -2577,9 +2596,6 @@ void do_weather() {
 				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 				    PANEL_Y + weather_element_y[i] - weather_panel_y,
 				    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
-#ifdef USE_SOUND_2010
-				weather_particles_seen++;
-#endif
 			}
 		}
 		/* advance snowflakes - falling slowly (assumed weather_speed isn't
@@ -2616,9 +2632,6 @@ void do_weather() {
 				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 				    PANEL_Y + weather_element_y[i] - weather_panel_y,
 				    TERM_WHITE, '*');
-#ifdef USE_SOUND_2010
-				weather_particles_seen++;
-#endif
 			}
 		}
 	}
