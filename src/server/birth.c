@@ -1879,7 +1879,7 @@ static void player_setup(int Ind, bool new)
 	   carry him out of that dungeon to make sure he doesn't die to the crash. */
 	if (p_ptr->panic) {
 #ifndef RPG_SERVER    /* Not in RPG */
-		if (wpos->wz) {
+		if (wpos->wz && !in_irondeepdive(wpos)) {
 			s_printf("Auto-recalled panic-saved player %s.\n", p_ptr->name);
 			wpos->wz = 0;
 	    		/* Avoid landing in permanent rock or trees or mountains etc.
