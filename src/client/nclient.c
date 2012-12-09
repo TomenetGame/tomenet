@@ -4754,7 +4754,7 @@ int Send_ping(void)
 #else
 	gettimeofday(&tv, NULL);
 #endif
-	
+
 	/* hack: pseudo-packet loss, see prt_lagometer() */
 	if (ping_times[0] == -1) prt_lagometer(9999);
 
@@ -4778,31 +4778,31 @@ int Send_ping(void)
 int Send_account_info(void)
 {
 	int n;
-	
+
 	if (!is_newer_than(&server_version, 4, 4, 2, 2, 0, 0)) {
 		return 1;
 	}
-	
+
 	if ((n = Packet_printf(&wbuf, "%c", PKT_ACCOUNT_INFO)) <= 0)
 	{
 		return n;
 	}
-	
+
 	return 1;
 }
 
 int Send_change_password(char *old_pass, char *new_pass) {
 	int n;
-	
+
 	if (!is_newer_than(&server_version, 4, 4, 2, 2, 0, 0)) {
 		return 1;
 	}
-	
+
 	if ((n = Packet_printf(&wbuf, "%c%s%s", PKT_CHANGE_PASSWORD, old_pass, new_pass)) <= 0)
 	{
 		return n;
 	}
-	
+
 	return 1;
 }
 
@@ -4957,6 +4957,10 @@ void do_ping()
 	/* handle audio output -- avoid easy oscillating */
 	if (weather_particles_seen >= 7) {
 		weather_sound_change = 0;
+
+		//in case the below method is active code-wise, also add this hack here:
+		//weather_vol_smooth = cfg_audio_weather_volume;
+
 		if (weather_type != -1) {
 			if (weather_type % 10 == 1) { //rain
 				if (weather_wind >= 1 && weather_wind <= 2) sound_weather(rain2_sound_idx);
@@ -4973,18 +4977,18 @@ void do_ping()
 			sound_weather(-1); //fade out, insufficient particles to support the noise ;)
 		}
 	} else weather_sound_change = 0;
- #else /* new method: Amount of weather particles determines the sfx volume. */
+ #else /* WEATHER_VOL_PARTICLES -- new method: Amount of weather particles determines the sfx volume. */
 	/* handle audio output -- avoid easy oscillating */
 	if (weather_particles_seen >= 1) {
 		weather_sound_change = 0; /* for delaying, and then fading out, further below */
 
 		if (weather_type != -1) {
 			if (weather_type % 10 == 1) { //rain
-				if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(rain2_sound_idx, weather_particles_seen > 40 ? 100 : 20 + weather_particles_seen * 2);
-				else sound_weather_vol(rain1_sound_idx, weather_particles_seen > 50 ? 100 : weather_particles_seen * 2);
+				if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(rain2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+				else sound_weather_vol(rain1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 			} else if (weather_type % 10 == 2) { //snow
-				if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 40 ? 100 : 20 + weather_particles_seen * 2);
-				else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 50 ? 100 : weather_particles_seen * 2);
+				if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+				else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 			}
 		}
 	} else {

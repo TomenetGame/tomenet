@@ -834,6 +834,9 @@ extern int weather_particles_seen, weather_sound_change, weather_fading;
 extern int cfg_audio_rate, cfg_max_channels, cfg_audio_buffer;
 extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather, no_cache_audio, weather_resume;
 extern int cfg_audio_master_volume, cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume;
+#if 1 /* WEATHER_VOL_PARTICLES */
+extern int weather_vol_smooth, weather_vol_smooth_anti_oscill, weather_smooth_avg[20];
+#endif
 extern bool count_half_sfx_attack, sound_hint;
 
 extern const struct module sound_modules[];

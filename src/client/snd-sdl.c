@@ -25,6 +25,13 @@
 
 #ifdef SOUND_SDL
 
+/* Smooth dynamic weather volume change depending on amount of particles,
+   instead of just on/off depending on particle count window? */
+//#define WEATHER_VOL_PARTICLES  -- not yet that cool
+
+/* Maybe this will be cool: Dynamic weather volume calculated from distances to registered clouds */
+#define WEATHER_VOL_CLOUDS
+
 /*
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
@@ -771,7 +778,7 @@ static void clear_channel(int c) {
 	channel_sample[c] = -1;
 }
 
-/* Overlay a weather noise */
+/* Overlay a weather noise -- not WEATHER_VOL_PARTICLES or WEATHER_VOL_CLOUDS */
 static void play_sound_weather(int event) {
 	Mix_Chunk *wave = NULL;
 	int s, new_wc;
@@ -893,7 +900,8 @@ static void play_sound_weather(int event) {
 #endif
 }
 
-/* Overlay a weather noise, with a certain volume */
+
+/* Overlay a weather noise, with a certain volume -- WEATHER_VOL_PARTICLES */
 static void play_sound_weather_vol(int event, int vol) {
 	Mix_Chunk *wave = NULL;
 	int s, new_wc;
@@ -921,8 +929,36 @@ static void play_sound_weather_vol(int event, int vol) {
 	/* we're already in this weather? */
 	if (weather_channel != -1 && weather_current == event &&
 	    Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
+		int v = (cfg_audio_weather_volume * vol) / 100, n, va = 0;
+
+		/* shift array and calculate average over the last n volume values */
+		for (n = 20 - 1; n >= 0; n--) {
+			va += weather_smooth_avg[n];
+			/* and shift array to make room for new value */
+			weather_smooth_avg[n] = weather_smooth_avg[n - 1];
+		}
+		va /= 20;
+		/* queue new value */
+		weather_smooth_avg[0] = v;
+
 		/* change volume though? */
-		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
+//c_message_add(format("vol %d, v %d", vol, v));
+		if (weather_vol_smooth < va - 20) {
+			weather_vol_smooth_anti_oscill = va;
+//c_message_add(format("smooth++ %d (vol %d)", weather_vol_smooth, vol));
+		}
+		else if (weather_vol_smooth > va + 20) {
+			weather_vol_smooth_anti_oscill = va;
+//c_message_add(format("smooth-- %d (vol %d)", weather_vol_smooth, vol));
+		}
+
+		if (weather_vol_smooth < weather_vol_smooth_anti_oscill)
+			weather_vol_smooth++;
+		else if (weather_vol_smooth > weather_vol_smooth_anti_oscill)
+				weather_vol_smooth--;
+
+//c_message_add(format("smooth %d", weather_vol_smooth));
+		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
 
 		/* Done */
 		return;
@@ -956,7 +992,8 @@ static void play_sound_weather_vol(int event, int vol) {
 #if 1 /* volume glitch paranoia (first fade-in seems to move volume to 100% instead of designated cfg_audio_... */
 	new_wc = Mix_PlayChannel(weather_channel, wave, -1);
 	if (new_wc != -1) {
-		Mix_Volume(new_wc, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
+		weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
+		Mix_Volume(new_wc, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
 		if (!weather_resume) new_wc = Mix_FadeInChannel(new_wc, wave, -1, 500);
 	}
 #else
@@ -982,7 +1019,8 @@ static void play_sound_weather_vol(int event, int vol) {
 		weather_channel = new_wc;
 		weather_current = event;
 
-		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
+		weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
+		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
 	} else {
 		//failed to start playing?
 		if (new_wc == -1) {
@@ -998,7 +1036,8 @@ static void play_sound_weather_vol(int event, int vol) {
 				Mix_HaltChannel(weather_channel);
 				weather_channel = new_wc;
 				weather_current = event;
-				Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
+				weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
+				Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
 			}
 		}
 	}
@@ -1029,7 +1068,11 @@ void weather_handle_fading(void) {
 	}
 
 	if (Mix_FadingChannel(weather_channel) == MIX_NO_FADING) {
+#ifndef WEATHER_VOL_PARTICLES
 		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+#else
+		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
+#endif
 		weather_fading = 0;
 		return;
 	}
@@ -1139,8 +1182,13 @@ static void set_mixing_sdl(void) {
 	} else if (!Mix_PlayingMusic()) reenable_music();
 #endif
 
-	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
+	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
+ #ifndef WEATHER_VOL_PARTICLES
 		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+ #else
+		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
+ #endif
+	}
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_weather) {
 		weather_resume = TRUE;
@@ -1180,7 +1228,7 @@ errr init_sound_sdl(int argc, char **argv) {
 		/* Failure */
 		return (1);
 	}
-	
+
 	/* Set the mixing hook */
 	mixing_hook = set_mixing_sdl;
 
