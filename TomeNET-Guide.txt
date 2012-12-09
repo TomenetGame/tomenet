@@ -2,7 +2,7 @@
 |      TomeNET Guide      |
 +=========================+-
 | Latest update: 9. December 2012 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.9d - official websites are:
+| for TomeNET version v4.5.0 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
