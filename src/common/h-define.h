@@ -133,5 +133,10 @@
 #endif
 
 
-#endif
+/*
+ * Make sure the standard constants for types are available.
+ */
+#include <limits.h>
 
+
+#endif
