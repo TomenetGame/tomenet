@@ -6512,6 +6512,13 @@ void sound_weather(int val) {
 	if (sound_weather_hook) sound_weather_hook(val);
 }
 
+void sound_weather_vol(int val, int vol) {
+	if (!use_sound) return;
+
+	/* play a sound */
+	if (sound_weather_hook_vol) sound_weather_hook_vol(val, vol);
+}
+
 void music(int val) {
 	if (!use_sound) return;
 

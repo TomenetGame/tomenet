@@ -893,6 +893,134 @@ static void play_sound_weather(int event) {
 #endif
 }
 
+/* Overlay a weather noise, with a certain volume */
+static void play_sound_weather_vol(int event, int vol) {
+	Mix_Chunk *wave = NULL;
+	int s, new_wc;
+
+#ifdef DISABLE_MUTED_AUDIO
+	if (!cfg_audio_master || !cfg_audio_weather) return;
+#endif
+
+	if (event == -2 && weather_channel != -1) {
+#ifdef DEBUG_SOUND
+		puts(format("w-2: wco %d, ev %d", weather_channel, event));
+#endif
+		Mix_HaltChannel(weather_channel);
+		return;
+	}
+	else if (event == -1 && weather_channel != -1) {
+#ifdef DEBUG_SOUND
+		puts(format("w-1: wco %d, ev %d", weather_channel, event));
+#endif
+		if (Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
+			Mix_FadeOutChannel(weather_channel, 2000);
+		return;
+	}
+
+	/* we're already in this weather? */
+	if (weather_channel != -1 && weather_current == event &&
+	    Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
+		/* change volume though? */
+		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
+
+		/* Done */
+		return;
+	}
+
+	/* Paranoia */
+	if (event < 0 || event >= SOUND_MAX_2010) return;
+
+	/* Check there are samples for this event */
+	if (!samples[event].num) return;
+
+	/* Choose a random event */
+	s = rand_int(samples[event].num);
+	wave = samples[event].wavs[s];
+
+	/* Try loading it, if it's not cached */
+	if (!wave) {
+		if (on_demand_loading || no_cache_audio) {
+			if (!(wave = load_sample(event, s))) {
+				/* we really failed to load it */
+				plog(format("SDL sound load failed (%d, %d).", event, s));
+				return;
+			}
+		} else {
+			/* Fail silently */
+			return;
+		}
+	}
+
+	/* Actually play the thing */
+#if 1 /* volume glitch paranoia (first fade-in seems to move volume to 100% instead of designated cfg_audio_... */
+	new_wc = Mix_PlayChannel(weather_channel, wave, -1);
+	if (new_wc != -1) {
+		Mix_Volume(new_wc, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
+		if (!weather_resume) new_wc = Mix_FadeInChannel(new_wc, wave, -1, 500);
+	}
+#else
+	if (!weather_resume) new_wc = Mix_FadeInChannel(weather_channel, wave, -1, 500);
+#endif
+
+	if (!weather_resume) weather_fading = 1;
+	else weather_resume = FALSE;
+
+#ifdef DEBUG_SOUND
+	puts(format("old: %d, new: %d, ev: %d", weather_channel, new_wc, event));
+#endif
+
+#if 1
+	/* added this <if> after weather seemed to glitch sometimes,
+	   with its channel becoming unmutable */
+	//we didn't play weather so far?
+	if (weather_channel == -1) {
+		//failed to start playing?
+		if (new_wc == -1) return;
+
+		//successfully started playing the first weather
+		weather_channel = new_wc;
+		weather_current = event;
+
+		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
+	} else {
+		//failed to start playing?
+		if (new_wc == -1) {
+			Mix_HaltChannel(weather_channel);
+			return;
+		//successfully started playing a follow-up weather
+		} else {
+			//same channel?
+			if (new_wc == weather_channel) {
+				weather_current = event;
+			//different channel?
+			} else {
+				Mix_HaltChannel(weather_channel);
+				weather_channel = new_wc;
+				weather_current = event;
+				Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
+			}
+		}
+	}
+#endif
+#if 0
+	/* added this <if> after weather seemed to glitch sometimes,
+	   with its channel becoming unmutable */
+	if (new_wc != weather_channel) {
+		if (weather_channel != -1) Mix_HaltChannel(weather_channel);
+		weather_channel = new_wc;
+	}
+	if (weather_channel != -1) { //paranoia? should always be != -1 at this point
+		weather_current = event;
+		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
+	}
+#endif
+
+#ifdef DEBUG_SOUND
+	puts(format("now: %d, oev: %d, ev: %d", weather_channel, event, weather_current));
+#endif
+}
+
 /* make sure volume is set correct after fading-in has been completed (might be just paranoia) */
 void weather_handle_fading(void) {
 	if (weather_channel == -1) { //paranoia
@@ -1064,6 +1192,7 @@ errr init_sound_sdl(int argc, char **argv) {
 
 	/* Enable weather noise overlay */
 	sound_weather_hook = play_sound_weather;
+	sound_weather_hook_vol = play_sound_weather_vol;
 
 	/* clean-up hook */
 	atexit(close_audio);

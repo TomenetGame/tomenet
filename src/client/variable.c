@@ -291,6 +291,7 @@ int audio_sfx = 0, audio_music = 0;
 void (*mixing_hook)(void);
 bool (*sound_hook)(int sound, int type, int vol, s32b player_id);
 void (*sound_weather_hook)(int sound);
+void (*sound_weather_hook_vol)(int sound, int vol);
 void (*music_hook)(int music);
 int cfg_audio_rate = 44100, cfg_max_channels = 32, cfg_audio_buffer = 1024;
 int music_cur = -1, music_cur_song = -1, music_next = -1, weather_channel = -1, weather_current;
