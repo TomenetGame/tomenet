@@ -1438,21 +1438,11 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 		return E_VERSION_UNKNOWN;
 #else
 	/* Extended version support */
-	if (version->major < MIN_VERSION_MAJOR)
+	if (is_older_than(version, MIN_VERSION_MAJOR, MIN_VERSION_MINOR, MIN_VERSION_PATCH, MIN_VERSION_EXTRA, 0, 0)) {
 		return E_VERSION_OLD;
-	else if (version->major > MAX_VERSION_MAJOR)
+	} else if (is_newer_than(version, MAX_VERSION_MAJOR, MAX_VERSION_MINOR, MAX_VERSION_PATCH, MAX_VERSION_EXTRA, 0, INT_MAX)) {
 		return E_VERSION_UNKNOWN;
-	else if (version->minor < MIN_VERSION_MINOR)
-		return E_VERSION_OLD;
-	else if (version->minor > MAX_VERSION_MINOR)
-		return E_VERSION_UNKNOWN;
-	else if (version->patch < MIN_VERSION_PATCH)
-		return E_VERSION_OLD;
-	else if (version->patch > MAX_VERSION_PATCH)
-		return E_VERSION_UNKNOWN;
-	else if (version->extra < MIN_VERSION_EXTRA)
-		return E_VERSION_OLD;
-	/* Note: Clients with newer extra value are allowed */
+	}
 #endif
 
 	if(!player_allowed(nick))
