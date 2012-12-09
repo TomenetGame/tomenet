@@ -6292,7 +6292,13 @@ void do_slash_cmd(int Ind, char *message)
 						if (wild_info[y][x].weather_type > 0 &&
 						    (wild_info[y][x].weather_type == 1 || //rain
 						    wild_info[y][x].weather_type == 2) && //snow
-						    wild_info[y][x].cloud_idx[0] > 0) {
+						    wild_info[y][x].cloud_idx[0] > 0 &&
+						    wild_info[y][x].cloud_x1[0] > 0) {
+							/* skip sectors 'before' us? (counting from bottom left corner) */
+							if (tk && (y < p_ptr->wpos.wy || (y == p_ptr->wpos.wy && x <= p_ptr->wpos.wx))) continue;
+							/* we're already here? pick a different sector */
+							if (p_ptr->wpos.wx == x && p_ptr->wpos.wy == y) continue;
+
 							p_ptr->recall_pos.wx = x;
 							p_ptr->recall_pos.wy = y;
 							p_ptr->recall_pos.wz = 0;
