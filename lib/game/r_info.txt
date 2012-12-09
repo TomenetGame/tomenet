@@ -20281,9 +20281,9 @@ F:FORCE_MAXHP | CAN_FLY | REFLECTING | NONLIVING | SMART |
 F:BASH_DOOR | POWERFUL | MOVE_BODY | PASS_WALL | KILL_ITEM | WILD_TOO |
 F:DRAGON | NO_CONF | NO_SLEEP | NO_STUN | BLUEBAND | GENO_NO_THIN
 F:IM_ACID | IM_COLD | IM_FIRE | IM_ELEC | IM_POIS | RES_NETH | RES_DISE
-D:A huge and very powerful dragon.  Great steaming pools of acid drip from 
-D:its form onto the ground.  You shudder when you see the acid eating away 
-D:the very stones of the dungeon - what could it do to you?
+D:A slate and insanely speedy bat of large size, conjured from great
+D:malevolence. Acid drips off its claws while this nightmare shoots
+D:straight at you like lightning.
 
 # Just for testing stuff - C. Blue
 
