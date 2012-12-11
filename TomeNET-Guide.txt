@@ -5404,6 +5404,12 @@ Ironman Deep Dive Challenge (IDDC)
     1 xp for that.
     Use the /ex command to see how much more gold you may pick up.
 
+    If you log out in the IDDC and log back on before the level has changed,
+    you can continue business as usual. However, if you log off and wait until
+    the level has reset, then the level will be "stale" for you, the next time
+    you log on, which will prevent you from getting any experience, items or
+    gold until you move on by taking a staircase to the next floor.
+
     If you make a 'slot-exclusive' IDDC character, it will automatically be
     unable to pick up too much gold or items of other players and your
     character won't get experience from eating bad food either.
