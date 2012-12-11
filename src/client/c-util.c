@@ -4838,9 +4838,9 @@ void interact_macros(void)
 						Term_putstr(10, 16, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
 						Term_putstr(10, 17, -1, TERM_L_GREEN, "   otherwise target own grid.");
 						Term_putstr(10, 18, -1, TERM_L_GREEN, "d) Target own grid (ie yourself).");
-						Term_putstr(10, 20, -1, TERM_L_GREEN, "e) Target most hurt friendly player,");
+						Term_putstr(10, 20, -1, TERM_L_GREEN, "e) Target most wounded friendly player,");
 						Term_putstr(10, 21, -1, TERM_L_GREEN, "   cancel action if no player is nearby. (\377UEg for 'Cure Wounds'.\377G)");
-						Term_putstr(10, 22, -1, TERM_L_GREEN, "f) Target most hurt friendly player,");
+						Term_putstr(10, 22, -1, TERM_L_GREEN, "f) Target most wounded friendly player,");
 						Term_putstr(10, 23, -1, TERM_L_GREEN, "   target own grid instead if no player is nearby.");
 
 						while (TRUE) {
