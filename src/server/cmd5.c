@@ -463,7 +463,7 @@ static void do_mimic_power(int Ind, int power, int dir)
 
 	/* Check mana */
 	if (s_ptr->smana > p_ptr->csp) {
-		msg_print(Ind, "You do not have enough mana.");
+		msg_format(Ind, "You need %d mana to cast this spell.", s_ptr->smana);
 		return;
 	}
 
