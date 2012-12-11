@@ -1861,13 +1861,11 @@ bool make_attack_melee(int Ind, int m_idx)
 					else
 					{
 						s32b d = damroll(10, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->hold_life)
-						{
+						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						else if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
 							lose_exp(Ind, d/10);
-						}
-						else
-						{
+						} else {
 							msg_print(Ind, "You feel your life draining away!");
 							lose_exp(Ind, d);
 						}
@@ -1891,13 +1889,11 @@ bool make_attack_melee(int Ind, int m_idx)
 					else
 					{
 						s32b d = damroll(20, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->hold_life)
-						{
+						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						else if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
 							lose_exp(Ind, d/10);
-						}
-						else
-						{
+						} else {
 							msg_print(Ind, "You feel your life draining away!");
 							lose_exp(Ind, d);
 						}
@@ -1921,13 +1917,11 @@ bool make_attack_melee(int Ind, int m_idx)
 					else
 					{
 						s32b d = damroll(40, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->hold_life)
-						{
+						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						else if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
 							lose_exp(Ind, d/10);
-						}
-						else
-						{
+						} else {
 							msg_print(Ind, "You feel your life draining away!");
 							lose_exp(Ind, d);
 						}
@@ -1951,13 +1945,11 @@ bool make_attack_melee(int Ind, int m_idx)
 					else
 					{
 						s32b d = damroll(80, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->hold_life)
-						{
+						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						else if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
 							lose_exp(Ind, d/10);
-						}
-						else
-						{
+						} else {
 							msg_print(Ind, "You feel your life draining away!");
 							lose_exp(Ind, d);
 						}
@@ -2024,8 +2016,11 @@ bool make_attack_melee(int Ind, int m_idx)
 					{
 						case 1: case 2: case 3: case 4: case 5:
 							{
-								msg_print(Ind, "You feel life has clocked back.");
-								lose_exp(Ind, 100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+								if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+								else {
+									msg_print(Ind, "You feel life has clocked back.");
+									lose_exp(Ind, 100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+								}
 								break;
 							}
 

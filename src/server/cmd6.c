@@ -714,9 +714,12 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					if (!p_ptr->hold_life && (p_ptr->exp > 0))
 					{
-						msg_print(Ind, "\377GYou feel your memories fade.");
-						lose_exp(Ind, p_ptr->exp / 4);
-						ident = TRUE;
+						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						else {
+							msg_print(Ind, "\377GYou feel your memories fade.");
+							lose_exp(Ind, p_ptr->exp / 4);
+							ident = TRUE;
+						}
 					}
 					break;
 				}

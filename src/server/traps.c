@@ -779,13 +779,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		 /* Lose Memory Trap */
 		case TRAP_OF_LOSE_MEMORY:
 		{
-			lose_exp(Ind, p_ptr->exp / 4);
+			if (p_ptr->lev != 99) lose_exp(Ind, p_ptr->exp / 4);
 			ident |= dec_stat(Ind, A_WIS, rand_int(20)+10, STAT_DEC_NORMAL);
 			ident |= dec_stat(Ind, A_INT, rand_int(20)+10, STAT_DEC_NORMAL);
-			if (!p_ptr->resist_conf)
-			{
+			if (!p_ptr->resist_conf) {
 				if (set_confused(Ind, p_ptr->confused + rand_int(100) + 50))
-					ident=TRUE;
+					ident = TRUE;
 			}
 			if (ident)
 				msg_print(Ind, "You suddenly don't remember what you were doing.");

@@ -4011,8 +4011,7 @@ static bool process_player_end_aux(int Ind)
 #if 0
 		if (rand_int(2))
 		(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
-		else
-		lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+		else if (p_ptr->lev != 99) lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE);
 		/* take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "an ancient foul curse", TRUE, TRUE, TRUE); */
 #else
 		(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);

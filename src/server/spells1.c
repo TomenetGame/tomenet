@@ -1772,6 +1772,11 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 
 	if (p_ptr->alert_afk_dam && p_ptr->afk && p_ptr->paging == 0) p_ptr->paging = 1;
 
+	if (p_ptr->lev == 99) {
+		//msg_print(Ind, "You are impervious to life force drain!");
+		return;
+	}
+
 	/* arena is safe, although this may be doubtful */
 	if (safe_area(Ind)) return;
 
@@ -8490,17 +8495,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who); /* Prevent going down to level 1 and then taking full damage -> instakill */
 
-			if (p_ptr->hold_life && (rand_int(100) < 75))
-			{
+			if (p_ptr->lev == 99) {
+				msg_print(Ind, "You are unaffected!");
+			} else if (p_ptr->hold_life && (rand_int(100) < 75)) {
 				msg_print(Ind, "You keep hold of your life force!");
-			}
-			else if (p_ptr->hold_life)
-			{
+			} else if (p_ptr->hold_life) {
 				msg_print(Ind, "You feel your life slipping away!");
 				lose_exp(Ind, 200 + (p_ptr->exp/1000) * MON_DRAIN_LIFE);
-			}
-			else
-			{
+			} else {
 				msg_print(Ind, "You feel your life draining away!");
 				lose_exp(Ind, 200 + (p_ptr->exp/100) * MON_DRAIN_LIFE);
 			}
@@ -8600,17 +8602,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		if (!p_ptr->resist_neth && !p_ptr->resist_chaos)
 		{
-			if (p_ptr->hold_life && (rand_int(100) < 75))
-			{
+			if (p_ptr->lev == 99) {
+				msg_print(Ind, "You are unaffected!");
+			} else if (p_ptr->hold_life && (rand_int(100) < 75)) {
 				msg_print(Ind, "You keep hold of your life force!");
-			}
-			else if (p_ptr->hold_life)
-			{
+			} else if (p_ptr->hold_life) {
 				msg_print(Ind, "You feel your life slipping away!");
 				lose_exp(Ind, 500 + (p_ptr->exp/1000) * MON_DRAIN_LIFE);
-			}
-			else
-			{
+			} else {
 				msg_print(Ind, "You feel your life draining away!");
 				lose_exp(Ind, 5000 + (p_ptr->exp/100) * MON_DRAIN_LIFE);
 			}
@@ -8783,14 +8782,20 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (p_ptr->resist_time) {
 					/* let's disable it for now to improve time resistance: */
 					if (magik(25)) {
-						msg_print(Ind, "You feel life has clocked back.");
-						lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE / 4);
+						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						else {
+							msg_print(Ind, "You feel life has clocked back.");
+							lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE / 4);
+						}
 					} else {
 						msg_print(Ind, "You feel as if life has clocked back, but the feeling passes.");
 					}
 				} else {
-					msg_print(Ind, "You feel life has clocked back.");
-					lose_exp(Ind, 100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+					if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected.");
+					else {
+						msg_print(Ind, "You feel life has clocked back.");
+						lose_exp(Ind, 100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+					}
 				}
 				break;
 
