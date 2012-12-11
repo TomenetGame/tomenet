@@ -13,9 +13,6 @@
 
 #define SERVER
 
-// #define DEBUG1	/* for monster generation in place_monster_one */
-// #define DEBUG1_IDX 1097	/* monster index to monitor at DEBUG1 (1033) */
-#define DEBUG1_IDX 1098
 
 #include "angband.h"
 
@@ -2713,7 +2710,7 @@ void update_players(void)
 static bool allow_unique_level(int r_idx, struct worldpos *wpos)
 {
 	int i;
-	
+
 	for (i = 1; i <= NumPlayers; i++) {
 		player_type *p_ptr = Players[i];
 
@@ -2723,7 +2720,7 @@ static bool allow_unique_level(int r_idx, struct worldpos *wpos)
 			return (TRUE);
 		}
 	}
-	
+
 	/* Yeah but we need at least ONE */
 	return (FALSE);
 }
@@ -3077,7 +3074,10 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 				}
 			}
 		}
-		if (r_ptr->cur_num >= r_ptr->max_num || already_on_level) {
+		/* Exception for Ironman Deep Dive Challenge:
+		   Allow unique monsters to spawn although they already exist elsewhere right now. */
+		if ((r_ptr->cur_num >= r_ptr->max_num && !in_irondeepdive(wpos))
+		    || already_on_level) {
 			/* Cannot create */
 			return (FALSE);
 		}
@@ -3104,7 +3104,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	m_ptr->r_idx = r_idx;
 #ifdef RANDUNIS
 	m_ptr->ego = ego;
-//	m_ptr->name3 = randuni;		
+//	m_ptr->name3 = randuni;
 #endif	// RANDUNIS
 
 	/* Place the monster at the location */
@@ -3202,7 +3202,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	if (m_ptr->clone > 100) m_ptr->clone = 100;
 	/* Don't let it overflow over time.. (well, not very realistic) */
 	if (m_ptr->clone_summoning - cfg.clone_summoning > 4) m_ptr->clone_summoning = 4 + cfg.clone_summoning;
-    
+
 	/* Hack - Unique monsters are never clones - C. Blue */
 	if (r_ptr->flags1 & RF1_UNIQUE)
 		/* hack for global event "Arena Monster Challenge" - C. Blue */
