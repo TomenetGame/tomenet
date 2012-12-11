@@ -4680,6 +4680,8 @@ void monster_death(int Ind, int m_idx)
 		}
 	}
 
+	/* Log-scumming in IDDC is like fighting clones */
+	if (p_ptr->IDDC_logscum) return;
 	/* clones don't drop treasure or complete quests.. */
 	if (m_ptr->clone) return;
 	/* ..neither do cheezed kills */
