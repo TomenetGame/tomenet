@@ -5325,6 +5325,9 @@ void process_player_change_wpos(int Ind)
 	/* Reset bot hunting variables */
 	p_ptr->silly_door_exp = 0;
 
+	/* For Ironman Deep Dive Challenge */
+	p_ptr->IDDC_logscum = 0; /* we changed floor, all fine and dandy.. */
+
 	/* Somebody has entered an ungenerated level */
 	if (players_on_depth(wpos) && !getcave(wpos)) {
 		/* Allocate space for it */

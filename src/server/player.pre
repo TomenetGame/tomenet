@@ -1017,6 +1017,9 @@ struct player_type
 	int vampiric_ranged;
 
 	bool insta_res;
+
+	int IDDC_found_rndtown;
+	int IDDC_logscum;
 };
 
 extern bool imprison(int Ind, int time, char *reason);

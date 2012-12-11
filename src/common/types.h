@@ -2840,7 +2840,8 @@ struct player_type
 	bool max_depth_tower[MAX_D_IDX * 2];
 
 	u32b gold_picked_up; /* for EVENT_TOWNIE_GOLD_LIMIT */
-	int found_rndtown; /* for IDDC */
+	int IDDC_found_rndtown; /* prevent multiple random towns within one 'interval' */
+	int IDDC_logscum; /* prevent log-scumming instead of proceeding downwards */
 
 	/* Instant resurrection */
 	bool insta_res;
