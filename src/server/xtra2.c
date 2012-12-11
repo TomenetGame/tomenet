@@ -4219,6 +4219,11 @@ void gain_exp(int Ind, s64b amount) {
                 return;
 	}
 
+	if (p_ptr->IDDC_logscum) {
+                //(spammy) msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
+                return;
+        }
+
 #ifdef IRON_TEAM_EXPERIENCE
 	int iron_team_members_here = 0, iron_team_limit = 0;
 #endif

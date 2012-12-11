@@ -1406,6 +1406,11 @@ void carry(int Ind, int pickup, int confirm)
 			return;
 		}
 
+		if (p_ptr->IDDC_logscum && o_ptr->owner != p_ptr->id) {
+			msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
+			return;
+		}
+
 		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner) {
 			msg_print(Ind, "\377oYou cannot take gold of other players without a valid account.");
 			return;
@@ -1542,6 +1547,12 @@ void carry(int Ind, int pickup, int confirm)
 			Send_floor(Ind, o_ptr->tval);
 			return;
 		}
+
+		if (p_ptr->IDDC_logscum && o_ptr->owner != p_ptr->id) {
+			msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
+			return;
+		}
+
 
 		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner) {
 			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||

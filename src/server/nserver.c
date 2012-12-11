@@ -2701,7 +2701,7 @@ static int Handle_login(int ind)
 	        else
 			msg_format(NumPlayers, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
 	}
-	
+
 	/* for PvP mode chars */
 	if (p_ptr->free_mimic) msg_format(NumPlayers, "\377GYou have %d free mimicry transformation left.", p_ptr->free_mimic);
 
@@ -2804,6 +2804,8 @@ static int Handle_login(int ind)
 		}
 	}
 #endif
+
+	if (p_ptr->IDDC_logscum) msg_print(NumPlayers, "\377RThis floor has become stale, take a staircase to move on!");
 
 	/* some one-time hints after char creation in player_birth() */
 	if (p_ptr->newly_created) {
