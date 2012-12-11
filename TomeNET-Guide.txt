@@ -9711,7 +9711,8 @@ vary. For example a warrior cannot learn magic spells.
     Their primary stats are same as the warrior i.e. strength and constituion
     with dexterity coming in handy too.
     Intelligence is not of primary importance but it can help somewhat to
-    increase the mana pool for making use of monster spells/breaths.
+    increase the mana pool for making use of monster spells/breaths, and it
+    also affects the success chance when attempting to use a monster power.
     Mimics learn forms by killing as many of a certain monster type as that
     monster has high a level. Further, their 'Mimicry' skill must be at least
     1/2 of the monster level.
@@ -10333,6 +10334,8 @@ F: flag list
 S: spell list
     These spells can be cast by the monster. Most of them are available to
     the mimic too, some of them have slightly different effects.
+    The chance to successfully use such a monster power is affected by the
+    mimic's intelligence (INT).
     Depending on how frequently the monster is able to cast spells, the player
     gets boni on intelligence and mana! This only applies if the spells are in
     fact magic spells, not if the monster cannot do anything except firing

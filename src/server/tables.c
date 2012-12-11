@@ -6005,41 +6005,41 @@ magic_type innate_powers[96] =
 // RF4_BR_COLD			0x00000800	/* Breathe Cold */
   {0, 15, 20, 0},
 // RF4_BR_POIS			0x00001000	/* Breathe Poison */
-  {0, 20, 30, 0},
+  {0, 20, 25, 0},
 // RF4_BR_NETH			0x00002000	/* Breathe Nether */
-  {0, 25, 60, 0},
-// RF4_BR_LITE			0x00004000	/* Breathe Lite */
-  {0, 25, 30, 0},
-// RF4_BR_DARK			0x00008000	/* Breathe Dark */
-  {0, 25, 30, 0},
-// RF4_BR_CONF			0x00010000	/* Breathe Confusion */
-  {0, 20, 30, 0},
-// RF4_BR_SOUN			0x00020000	/* Breathe Sound */
   {0, 25, 40, 0},
+// RF4_BR_LITE			0x00004000	/* Breathe Lite */
+  {0, 15, 20, 0},
+// RF4_BR_DARK			0x00008000	/* Breathe Dark */
+  {0, 15, 20, 0},
+// RF4_BR_CONF			0x00010000	/* Breathe Confusion */
+  {0, 15, 25, 0},
+// RF4_BR_SOUN			0x00020000	/* Breathe Sound */
+  {0, 20, 30, 0},
 // RF4_BR_CHAO			0x00040000	/* Breathe Chaos */
-  {0, 30, 50, 0},
+  {0, 30, 40, 0},
 // RF4_BR_DISE			0x00080000	/* Breathe Disenchant */
-  {0, 30, 60, 0},
+  {0, 30, 45, 0},
 // RF4_BR_NEXU			0x00100000	/* Breathe Nexus */
-  {0, 20, 60, 0},
+  {0, 25, 45, 0},
 // RF4_BR_TIME			0x00200000	/* Breathe Time */
-  {0, 30, 60, 0},
-// RF4_BR_INER			0x00400000	/* Breathe Inertia */
   {0, 30, 50, 0},
+// RF4_BR_INER			0x00400000	/* Breathe Inertia */
+  {0, 30, 35, 0},
 // RF4_BR_GRAV			0x00800000	/* Breathe Gravity */
-  {0, 30, 30, 0},
+  {0, 30, 35, 0},
 // RF4_BR_SHAR			0x01000000	/* Breathe Shards */
-  {0, 30, 60, 0},
+  {0, 20, 25, 0},
 // RF4_BR_PLAS			0x02000000	/* Breathe Plasma */
   {0, 30, 30, 0},
 // RF4_BR_WALL			0x04000000	/* Breathe Force */
-  {0, 40, 60, 0},
+  {0, 35, 40, 0},
 // RF4_BR_MANA			0x08000000	/* Breathe Mana */
-  {0, 50, 70, 0},
+  {0, 40, 45, 0},
 // RF4_BR_DISI			0x10000000
-  {0, 60, 70, 0},
+  {0, 50, 70, 0},
 // RF4_BR_NUKE			0x20000000
-  {0, 45, 50, 0},
+  {0, 35, 40, 0},
 // 0x40000000
   {0, 0, 0, 0},
 // RF4_BOULDER
@@ -6059,11 +6059,11 @@ magic_type innate_powers[96] =
 // RF5_BA_POIS			0x00000010	/* Poison Ball */
   {0, 25, 20, 0},
 // RF5_BA_NETH			0x00000020	/* Nether Ball */
-  {0, 35, 50, 0},
+  {0, 35, 40, 0},
 // RF5_BA_WATE			0x00000040	/* Water Ball */
-  {0, 35, 50, 0},
+  {0, 25, 30, 0},
 // RF5_BA_MANA			0x00000080	/* Mana Storm */
-  {0, 55, 80, 0},
+  {0, 50, 50, 0},
 // RF5_BA_DARK			0x00000100	/* Darkness Storm */
   {0, 35, 0, 0},
 // RF5_DRAIN_MANA		0x00000200	/* Drain Mana */
@@ -6073,13 +6073,13 @@ magic_type innate_powers[96] =
 // RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
   {0, 35, 15, 0},
 // RF5_CAUSE_1			0x00001000	/* Cause Light Wound */
-  {0, 5, 20, 0},
+  {0, 5, 15, 0},
 // RF5_CAUSE_2			0x00002000	/* Cause Serious Wound */
-  {0, 10, 25, 0},
+  {0, 10, 20, 0},
 // RF5_BA_NUKE			0x00004000	/* Toxic Ball */
-  {0, 45, 50, 0},
+  {0, 45, 30, 0},
 // RF5_BA_CHAO			0x00008000	/* Chaos Ball */
-  {0, 50, 50, 0},
+  {0, 50, 40, 0},
 // RF5_BO_ACID			0x00010000	/* Acid Bolt */
   {0, 5, 13, 0},
 // RF5_BO_ELEC			0x00020000	/* Elec Bolt (unused) */
@@ -6089,17 +6089,17 @@ magic_type innate_powers[96] =
 // RF5_BO_COLD			0x00080000	/* Cold Bolt */
   {0, 5, 13, 0},
 // RF5_BO_POIS			0x00100000	/* Poison Bolt (unused) */
-  {0, 8, 23, 0},
+  {0, 8, 18, 0},
 // RF5_BO_NETH			0x00200000	/* Nether Bolt */
-  {0, 12, 43, 0},
+  {0, 15, 20, 0},
 // RF5_BO_WATE			0x00400000	/* Water Bolt */
-  {0, 15, 43, 0},
+  {0, 15, 18, 0},
 // RF5_BO_MANA			0x00800000	/* Mana Bolt */
-  {0, 20, 63, 0},
+  {0, 20, 25, 0},
 // RF5_BO_PLAS			0x01000000	/* Plasma Bolt */
-  {0, 12, 53, 0},
+  {0, 15, 18, 0},
 // RF5_BO_ICEE			0x02000000	/* Ice Bolt */
-  {0, 12, 53, 0},
+  {0, 12, 15, 0},
 // RF5_MISSILE			0x04000000	/* Magic Missile */
   {0, 2, 5, 0},
 // RF5_SCARE			0x08000000	/* Frighten Player */
@@ -6117,11 +6117,11 @@ magic_type innate_powers[96] =
  * New monster race bit flags
  */
 // RF6_HASTE			0x00000001	/* Speed self */
-  {0, 40, 50, 0},
+  {0, 20, 20, 0},
 // RF6_HAND_DOOM		0x00000002	/* Speed a lot (?) */
   {0, 100, 80, 0},
 // RF6_HEAL			0x00000004	/* Heal self */
-  {0, 40, 50, 0},
+  {0, 20, 20, 0},
 // RF6_XXX2			0x00000008	/* Heal a lot (?) */
   {0, 0, 0, 0},
 // RF6_BLINK			0x00000010	/* Teleport Short */
@@ -6133,9 +6133,9 @@ magic_type innate_powers[96] =
 // RF6_XXX4			0x00000080	/* Move to Monster (?) */
   {0, 0, 0, 0},
 // RF6_TELE_TO			0x00000100	/* Move player to monster */
-  {0, 20, 40, 0},
+  {0, 20, 30, 0},
 // RF6_TELE_AWAY		0x00000200	/* Move player far away */
-  {0, 20, 40, 0},
+  {0, 20, 30, 0},
 // RF6_TELE_LEVEL		0x00000400	/* Move player vertically */
   {0, 30, 60, 0},
 // RF6_XXX5			0x00000800	/* Move player (?) */
