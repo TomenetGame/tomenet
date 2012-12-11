@@ -174,35 +174,49 @@ byte level_rand_y(struct worldpos *wpos)
 
 static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
 	/* override colour from easiest to worst */
-	if (d_ptr->flags2 & DF2_NO_RECALL_INTO) {
-		*c = TERM_YELLOW;
-		return 1;
+	/* joker overrides the king ;) */
+	if (d_ptr->flags2 & DF2_NO_DEATH) {
+		*c = TERM_GREEN;
+		return -1;
 	}
-	if (d_ptr->flags1 & DF1_NO_UP) {
-		*c = TERM_ORANGE;
-		return 2;
+
+	if (d_ptr->flags2 & DF2_NO_EXIT_WOR) {
+		if ((d_ptr->flags2 & DF2_IRON) || (d_ptr->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))) {
+			*c = TERM_DARKNESS;
+			return 7;
+		}
 	}
-	if (d_ptr->flags1 & DF1_NO_RECALL) {
-		*c = TERM_RED;
-		return 3;
+	if ((d_ptr->flags2 & DF2_NO_EXIT_STAIR)
+	    && (d_ptr->flags2 & DF2_NO_EXIT_PROB)
+	    && (d_ptr->flags2 & DF2_NO_EXIT_FLOAT)
+	    && (d_ptr->flags2 & DF2_NO_EXIT_WOR)) {
+		*c = TERM_DARKNESS;
+		return 7;
 	}
-	if (d_ptr->flags1 & DF1_FORCE_DOWN) {
-		*c = TERM_L_RED;
-		return 4;
+
+	if (d_ptr->flags2 & DF2_IRON) {
+		*c = TERM_L_DARK;
+		return 6;
 	}
 	if (d_ptr->flags2 & DF2_HELL) {
 		*c = TERM_FIRE;
 		return 5;
 	}
-	if (d_ptr->flags2 & DF2_IRON) {
-		*c = TERM_L_DARK;
-		return 6;
+	if (d_ptr->flags1 & DF1_FORCE_DOWN) {
+		*c = TERM_L_RED;
+		return 4;
 	}
-
-	/* joker overrides the king ;) */
-	if (d_ptr->flags2 & DF2_NO_DEATH) {
-		*c = TERM_GREEN;
-		return -1;
+	if (d_ptr->flags1 & DF1_NO_RECALL) {
+		*c = TERM_RED;
+		return 3;
+	}
+	if (d_ptr->flags1 & DF1_NO_UP) {
+		*c = TERM_ORANGE;
+		return 2;
+	}
+	if (d_ptr->flags2 & DF2_NO_RECALL_INTO) {
+		*c = TERM_YELLOW;
+		return 1;
 	}
 
 	/* normal */
@@ -210,7 +224,8 @@ static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
 	return 0;
 }
 
-/* mode: 1 stairs, 2 wor, 3 probtravel, 4 ghostfloating */
+/* For staircase-placement.
+   Mode: 1 stairs, (doesn't make sense? 2 wor,) (handled in cmd2.c, can't handle here actually: 4 probtravel, 8 ghostfloating) */
 bool can_go_up(struct worldpos *wpos, byte mode)
 {
         struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
@@ -248,7 +263,8 @@ bool can_go_up(struct worldpos *wpos, byte mode)
 
 	return((wild->flags&WILD_F_UP)?TRUE:FALSE);
 }
-/* mode: 1 stairs, 2 wor, 3 probtravel, 4 ghostfloating */
+/* For staircase-placement and sinking/pit traps.
+   Mode: 1 stairs, (doesn't make sense? 2 wor,) (handled in cmd2.c, can't handle here actually: 4 probtravel, 8 ghostfloating) */
 bool can_go_down(struct worldpos *wpos, byte mode)
 {
         struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
@@ -285,6 +301,7 @@ bool can_go_down(struct worldpos *wpos, byte mode)
 
 	return((wild->flags&WILD_F_DOWN)?TRUE:FALSE);
 }
+/* ignore all dungeon/floor flags */
 bool can_go_up_simple(struct worldpos *wpos)
 {
         struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
@@ -292,6 +309,7 @@ bool can_go_up_simple(struct worldpos *wpos)
 	if (wpos->wz>0) return(wpos->wz < wild->tower->maxdepth);
 	return((wild->flags&WILD_F_UP)?TRUE:FALSE);
 }
+/* ignore all dungeon/floor flags */
 bool can_go_down_simple(struct worldpos *wpos)
 {
         struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];

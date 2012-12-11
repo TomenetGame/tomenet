@@ -4965,7 +4965,8 @@ if (cfg.unikill_format) {
 		if ((((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN)
 		    && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
 		    (d_ptr->flags1 & DF1_NO_RECALL))
-		    && !(l_ptr->flags1 & LF1_IRON_RECALL)) {
+		    && !(l_ptr->flags1 & LF1_IRON_RECALL)
+		    && !(d_ptr->flags2 & DF2_NO_EXIT_WOR)) {
 			/* Allow exceptional recalling.. */
 			l_ptr->flags1 |= LF1_IRON_RECALL;
 			/* ..and notify everyone on the level about it */

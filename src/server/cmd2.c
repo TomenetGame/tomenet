@@ -42,17 +42,18 @@ void do_cmd_go_up(int Ind)
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
 	struct worldpos *wpos = &p_ptr->wpos, old_wpos;
-	bool tower=TRUE;
+	bool tower = FALSE, dungeon = FALSE, surface = FALSE;
 	cave_type **zcave;
 	bool one_way = FALSE;
 	int i;
 	if(!(zcave = getcave(wpos))) return;
 
-        /* Are we entering/inside a dungeon or a tower? */
-        if (wpos->wz < 0) tower = FALSE;
+	if (wpos->wz > 0) tower = TRUE;
+	if (wpos->wz < 0) dungeon = TRUE;
+	if (wpos->wz == 0) surface = TRUE;
 
 	/* Is this a one-way tower? */
-	if (wpos->wz > 0) {
+	if (tower) {
 		if (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
 		    wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))
 			one_way = TRUE;
@@ -63,16 +64,14 @@ void do_cmd_go_up(int Ind)
 		return;
 
 	/* Can we move ? */
-	if (r_ptr->flags1 & RF1_NEVER_MOVE)
-	{
+	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
 		msg_print(Ind, "You cannot move by nature.");
 		return;
 	}
 
 #if STAIR_FAIL_IF_CONFUSED
 	/* Hack -- handle confusion */
-	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED))
-	{
+	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED)) {
 		int dir = 5;
 
 		/* Prevent walking nowhere */
@@ -84,7 +83,7 @@ void do_cmd_go_up(int Ind)
 	}
 #endif // STAIR_FAIL_IF_CONFUSED
 
-	if(cfg.runlevel<5 && !p_ptr->wpos.wz){
+	if (cfg.runlevel < 5 && surface) {
 		msg_print(Ind,"The dungeon is closed");
 		return;
 	}
@@ -100,14 +99,13 @@ void do_cmd_go_up(int Ind)
 
 	/* Verify stairs if not a ghost, or admin wizard */
 	if (!is_admin(p_ptr) &&
-		c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
-		(!p_ptr->prob_travel || (c_ptr->info & CAVE_STCK)))
+	    c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
+	    (!p_ptr->prob_travel || (c_ptr->info & CAVE_STCK)))
 	{
 		struct worldpos twpos;
 		wpcopy(&twpos, wpos);
-		if(twpos.wz<0) twpos.wz++;
-		if (!p_ptr->ghost)
-		{
+		if (twpos.wz < 0) twpos.wz++;
+		if (!p_ptr->ghost) {
 			msg_print(Ind, "I see no up staircase here.");
 			return;
 		}
@@ -125,8 +123,8 @@ void do_cmd_go_up(int Ind)
 		}
 #endif
 	}
-	if(wpos->wz == 0) {
-		if (!(wild_info[wpos->wy][wpos->wx].flags&WILD_F_UP)) {
+	if (surface) {
+		if (!(wild_info[wpos->wy][wpos->wx].flags & WILD_F_UP)) {
 			msg_print(Ind, "There is nothing above you.");
 			return;
 		} else if ((c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS) &&
@@ -136,13 +134,13 @@ void do_cmd_go_up(int Ind)
 			if (!is_admin(p_ptr)) return;
 		}
 	}
-	if(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth==wpos->wz){
+	if (tower && wild_info[wpos->wy][wpos->wx].tower->maxdepth == wpos->wz) {
 		msg_print(Ind,"You are at the top of the tower!");
 		return;
 	}
 
 #ifdef RPG_SERVER /* Exclude NO_DEATH dungeons from the gameplay */
-	if ((wpos->wz == 0) && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_DEATH)) {
+	if ((surface) && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_DEATH)) {
 		/* needed for 'Arena Monster Challenge' again, NO_DEATH are now simply empty (no items/monsters) */
 		if (!(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) && !is_admin(p_ptr)) {
 			msg_print(Ind,"\377sOnly ivy-clad ruins of a former tower remain at this place..");
@@ -151,34 +149,43 @@ void do_cmd_go_up(int Ind)
 	}
 #endif
 
-/*	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){*/
-	if(wpos->wz < 0 && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
-			 wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
-			 (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS))
-	{
+/*	if (dungeon && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){*/
+	if (dungeon && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
+	     wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
+	     (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
 		msg_print(Ind,"\377rThe stairways leading upwards are magically sealed in this dungeon.");
 		if (!is_admin(p_ptr)) return;
 	}
 #if 1
 	/* probability travel restrictions */
-	if (tower) {
-		if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
-		    !p_ptr->ghost && ((wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL) ||
-				      (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO) ||
-				      (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))) {
-			msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
-			if (!is_admin(p_ptr)) return;
+	if (dungeon) {
+		if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS) {
+			if (!p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN))) {
+				msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (wpos->wz == -1 && p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_EXIT_FLOAT) {
+				msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (wpos->wz == -1 && p_ptr->prob_travel && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_EXIT_PROB) {
+				msg_print(Ind,"\377rA magical force prevents you from travelling upwards.");
+				if (!is_admin(p_ptr)) return;
+			}
 		}
 	} else {
-		if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
-		    !p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN))){
+		if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
+		    !p_ptr->ghost &&
+		    ((wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL) ||
+		    (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO) ||
+		    (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))) {
 			msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
 			if (!is_admin(p_ptr)) return;
 		}
 	}
 #endif
 #ifndef ARCADE_SERVER
-	if(wpos->wz == 0){
+	if(surface){
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
@@ -204,12 +211,12 @@ void do_cmd_go_up(int Ind)
 		}
 	}
 #endif
-	if(p_ptr->inval && p_ptr->wpos.wz >= 10){
+	if (p_ptr->inval && p_ptr->wpos.wz >= 10) {
 		msg_print(Ind, "\377You may go no higher without a valid account.");
 		return;
 	}
 
-	if (p_ptr->wpos.wz == 0 && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y && WPOS_IRONDEEPDIVE_Z > 0) {
+	if (surface && p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y && WPOS_IRONDEEPDIVE_Z > 0) {
 		if (p_ptr->mode & MODE_PVP) {
 			msg_format(Ind, "\377DPvP-mode characters are not eligible to enter the Ironman Deep Dive Challenge!");
 			if (!is_admin(p_ptr)) return;
@@ -239,10 +246,9 @@ void do_cmd_go_up(int Ind)
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Success */
-	if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)
-	{
+	if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS) {
 		process_hooks(HOOK_STAIR, "d", Ind);
-		if (!wpos->wz) {
+		if (surface) {
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0));
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
@@ -319,9 +325,7 @@ void do_cmd_go_up(int Ind)
 #ifdef USE_SOUND_2010
 		sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-	}
-	else
-	{
+	} else {
 		if (p_ptr->safe_float_turns) {
 			msg_print(Ind, "Floating attempt blocked by client option.");
 			return;
@@ -333,7 +337,7 @@ void do_cmd_go_up(int Ind)
 		if (!is_admin(p_ptr)) return;
 #endif
 
-		if (wpos->wz >= 0) {
+		if (surface || tower) {
 			if (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON) {
 				msg_print(Ind, "There is a magic barrier blocking your attempt.");
 				if (!is_admin(p_ptr)) return;
@@ -345,7 +349,7 @@ void do_cmd_go_up(int Ind)
 			}
 		}
 
-		if (!wpos->wz) msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0));
+		if (surface) msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0));
 		else if (wpos->wz == -1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0));
 		else msg_print(Ind, "You float upwards.");
 		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
@@ -426,17 +430,18 @@ void do_cmd_go_down(int Ind)
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
 	struct worldpos *wpos = &p_ptr->wpos, old_wpos;
-	bool tower = FALSE;
+	bool tower = FALSE, dungeon = FALSE, surface = FALSE;
 	cave_type **zcave;
 	bool one_way = FALSE; //ironman, no_up, force_down
 	int i;
 	if(!(zcave = getcave(wpos))) return;
 
-	/* Are we entering/inside a dungeon or a tower? */
 	if (wpos->wz > 0) tower = TRUE;
+	if (wpos->wz < 0) dungeon = TRUE;
+	if (wpos->wz == 0) surface = TRUE;
 
 	/* Is this a one-way dungeon? */
-	if (wpos->wz < 0) {
+	if (dungeon) {
 		if (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
 		    wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP))
 			one_way = TRUE;
@@ -447,21 +452,19 @@ void do_cmd_go_down(int Ind)
 		return;
 
 	/* Can we move ? */
-	if (r_ptr->flags1 & RF1_NEVER_MOVE)
-	{
+	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
 		msg_print(Ind, "You cannot move by nature.");
 		return;
 	}
 
-	if(cfg.runlevel < 5 && !p_ptr->wpos.wz){
+	if (cfg.runlevel < 5 && surface) {
 		msg_print(Ind,"The dungeon is closed");
 		return;
 	}
 
 #if STAIR_FAIL_IF_CONFUSED
 	/* Hack -- handle confusion */
-	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED))
-	{
+	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED)) {
 		int dir = 5;
 
 		/* Prevent walking nowhere */
@@ -517,8 +520,7 @@ void do_cmd_go_down(int Ind)
 		struct worldpos twpos;
 		wpcopy(&twpos, wpos);
 		if(twpos.wz>0) twpos.wz--;
-		if (!p_ptr->ghost)
-		{
+		if (!p_ptr->ghost) {
 			msg_print(Ind, "I see no down staircase here.");
 			return;
 		}
@@ -536,7 +538,7 @@ void do_cmd_go_down(int Ind)
 		}
 #endif
 	}
-	if (wpos->wz == 0) {
+	if (surface) {
 		if (!(wild_info[wpos->wy][wpos->wx].flags&WILD_F_DOWN)) {
 			msg_print(Ind, "There is nothing below you.");
 			return;
@@ -549,14 +551,13 @@ void do_cmd_go_down(int Ind)
 	}
 
 	/* Verify maximum depth */
-	if(wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth == -wpos->wz)
-	{
+	if (dungeon && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth == -wpos->wz) {
 		msg_print(Ind, "You are at the bottom of the dungeon.");
 		return;
 	}
 
 #ifdef RPG_SERVER /* Exclude NO_DEATH dungeons from the gameplay */
-	if ((wpos->wz == 0) && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_DEATH)) {
+	if ((surface) && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_DEATH)) {
 		msg_print(Ind,"\377sOnly mud-filled ruins of a former cave remain at this place..");
 		if (!is_admin(p_ptr)) return;
 	}
@@ -567,10 +568,10 @@ void do_cmd_go_down(int Ind)
 		if (!is_admin(p_ptr)) return;
 	}
 
-/*	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){*/
-	if(wpos->wz > 0 && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
-			 wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
-			(c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE))
+/*	if (tower && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){*/
+	if (tower && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
+	     wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
+	    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE))
 	{
 		msg_print(Ind,"\377rThe stairways leading downwards are magically sealed in this tower.");
 		if (!is_admin(p_ptr)) return;
@@ -578,16 +579,26 @@ void do_cmd_go_down(int Ind)
 #if 1
 	/* probability travel restrictions */
 	if (tower) {
-		if((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
-		    (!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_NO_RECALL | DF1_NO_UP))) {
-			msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
-			if (!is_admin(p_ptr)) return;
+		if ((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE)) {
+			if ((!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN))) {
+				msg_print(Ind,"\377rA magical force prevents you from travelling downwards.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (wpos->wz == 1 && p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_EXIT_FLOAT) {
+				msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (wpos->wz == 1 && p_ptr->prob_travel && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_EXIT_PROB) {
+				msg_print(Ind,"\377rA magical force prevents you from travelling downwards.");
+				if (!is_admin(p_ptr)) return;
+			}
 		}
 	} else {
-		if((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
-		    (!p_ptr->ghost) && ((wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL) ||
-				      (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_INTO) ||
-				      (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON))) {
+		if ((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
+		    !p_ptr->ghost &&
+		    ((wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL) ||
+		    (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_INTO) ||
+		    (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON))) {
 			msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
 			if (!is_admin(p_ptr)) return;
 		}
@@ -595,7 +606,7 @@ void do_cmd_go_down(int Ind)
 #endif
 
 #ifndef ARCADE_SERVER
-	if(wpos->wz == 0){
+	if(surface){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
 #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
@@ -603,8 +614,7 @@ void do_cmd_go_down(int Ind)
 		//		d_info[d_ptr->type].min_plev > p_ptr->lev)
 //		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
 		if ((!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7) ||
-		    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
-		{
+		    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev)) {
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
@@ -613,8 +623,7 @@ void do_cmd_go_down(int Ind)
 		}
 #endif
 		/* Nether Realm only for Kings/Queens*/
-		if ((d_ptr->type == 6) && !p_ptr->total_winner)
-		{
+		if ((d_ptr->type == 6) && !p_ptr->total_winner) {
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
@@ -624,7 +633,7 @@ void do_cmd_go_down(int Ind)
 	}
 #endif
 
-	if(p_ptr->inval && p_ptr->wpos.wz <= -10){
+	if (p_ptr->inval && p_ptr->wpos.wz <= -10) {
 		msg_print(Ind, "\377You may go no lower without a valid account.");
 		return;
 	}
@@ -659,10 +668,9 @@ void do_cmd_go_down(int Ind)
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Success */
-	if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)
-	{
+	if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE) {
 		process_hooks(HOOK_STAIR, "d", Ind);
-		if (!wpos->wz) {
+		if (surface) {
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0));
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
@@ -739,9 +747,7 @@ void do_cmd_go_down(int Ind)
 #ifdef USE_SOUND_2010
 		sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-	}
-	else
-	{
+	} else {
 		if (p_ptr->safe_float_turns) {
 			msg_print(Ind, "Floating attempt blocked by client option.");
 			return;
@@ -753,7 +759,7 @@ void do_cmd_go_down(int Ind)
 		if (!is_admin(p_ptr)) return;
 #endif
 
-		if (wpos->wz <= 0) {
+		if (surface || dungeon) {
 			if (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON) {
 				msg_print(Ind, "There is a magic barrier blocking your attempt.");
 				if (!is_admin(p_ptr)) return;
@@ -765,7 +771,7 @@ void do_cmd_go_down(int Ind)
 			}
 		}
 
-		if (!wpos->wz) msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0));
+		if (surface) msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0));
 		else if (wpos->wz == 1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0));
 		else msg_print(Ind, "You float downwards.");
 		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
@@ -892,7 +898,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 
 	/* Determine how much to drop (see above) */
 	number = (o_ptr->sval % SV_CHEST_MIN_LARGE) * 2;
-	
+
 	/* Generate some treasure */
 	if (o_ptr->pval && (number > 0)) {
 		/* let's not be scrooges =) - C. Blue */
@@ -958,7 +964,7 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 
 	/* Obtain the trap */
 	trap = o_ptr->pval;
-	
+
 	/* Message */
 //	msg_print(Ind, "You found a trap!");
 	msg_print(Ind, "You triggered a trap!");
@@ -4192,7 +4198,7 @@ void do_cmd_fire(int Ind, int dir)
 		/* prevent possible exploit (fire 4 rounds with a 5bpr shooter, then switch to 2bpr shooter)
 		   although hardly someone will use that =-p */
 		if (p_ptr->ranged_double_used >= thits) p_ptr->ranged_double_used = 0;
-	
+
 		if (!p_ptr->ranged_double_used) {
 			if (!rand_int(5)) p_ptr->cst--; /* artificially: slow drain */
 			p_ptr->redraw |= PR_STAMINA;

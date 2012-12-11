@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. December 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 11. December 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.0 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4142,6 +4142,9 @@ staircases.
 Sometimes you might find ruins of old staircases that don't lead to any
 dungeon or tower. Those have no further functionality and are coloured grey
 (make sure you don't confuse them with an ironman dungeon accidentally).
+
+There are rumours about a dungeon that will never let anyone escape from it
+again, ever.
 
 
 Overview:

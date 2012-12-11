@@ -1092,8 +1092,11 @@ void teleport_player_to_force(int Ind, int ny, int nx)
  * otherwise levels with players still on them might be destroyed, or empty
  * levels could be kept around, wasting memory.
  */
- 
- /* in the wilderness, teleport to a neighboring wilderness level. */
+
+ /* in the wilderness, teleport to a neighboring wilderness level.
+  * 'force' : TRUE only for level-unstaticing, ie administration work.
+  *           (can transport players out of dungeons in ways that are not 'legal' (ironman etc).
+  */
 void teleport_player_level(int Ind, bool force) {
 	player_type *p_ptr = Players[Ind];
 	wilderness_type *w_ptr;
