@@ -1258,7 +1258,7 @@ byte spell_color(int type)
 		case GF_ARROW:		return (TERM_L_UMBER);
 		case GF_WATER:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 		case GF_WAVE:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
-		case GF_NETHER:		return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
+		case GF_NETHER:		return (randint(4)==1?TERM_L_GREEN:TERM_L_DARK);
 		case GF_CHAOS:		return (TERM_MULTI);
 		case GF_DISENCHANT:	return (randint(4)!=1?TERM_ORANGE:TERM_BLUE);
 		case GF_NEXUS:		return (randint(5)<3?TERM_L_RED:TERM_VIOLET);
