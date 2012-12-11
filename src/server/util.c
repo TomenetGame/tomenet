@@ -2751,8 +2751,12 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 
 	/* replace certain non-alpha chars by alpha chars (leet speak detection)? */
 	if (leet) {
+		bool is_num = FALSE, prev_num;
 		i = 0;
 		while (lcopy[i]) {
+			prev_num = is_num;
+			is_num = FALSE;
+
 			switch (lcopy[i]) {
 			case '@': lcopy[i] = 'a'; break;
 			case '<': lcopy[i] = 'c'; break;
@@ -2764,14 +2768,31 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 //			case '\\': lcopy[i] = 'i'; break;
 			case '$': lcopy[i] = 's'; break;
 			case '+': lcopy[i] = 't'; break;
-			case '1': lcopy[i] = 'i'; break;
-			case '3': lcopy[i] = 'e'; break;
-			case '4': lcopy[i] = 'a'; break;
-			case '5': lcopy[i] = 's'; break;
-			case '7': lcopy[i] = 't'; break;
-			case '8': lcopy[i] = 'b'; break;
-			case '0': lcopy[i] = 'o'; break;
+			case '1': lcopy[i] = 'i'; is_num = TRUE; break;
+			case '3': lcopy[i] = 'e'; is_num = TRUE; break;
+			case '4': lcopy[i] = 'a'; is_num = TRUE; break;
+			case '5': lcopy[i] = 's'; is_num = TRUE; break;
+			case '7': lcopy[i] = 't'; is_num = TRUE; break;
+			case '8': lcopy[i] = 'b'; is_num = TRUE; break;
+			case '0': lcopy[i] = 'o'; is_num = TRUE; break;
+#ifdef HIGHLY_EFFECTIVE_CENSOR
+			/* hack: Actually _counter_ the capabilities of highly-effective
+			   censoring being done further below after this. Reason:
+			   Catch numerical expressions that probably aren't l33t sp34k,
+			   such as "4.5", "4,5" or "4/5" etc.
+			   Exact rule: <number><inconspicuous non-alphanum char><number> = allowed ->
+			               Replace <inc. non-alphanum char> by inconspicuous alpha char. */
+			default:
+				/* inconspicuous non-alphanum char? */
+				if (prev_num &&
+				    ((lcopy[i] < 'a' || lcopy[i] > 'z') && (lcopy[i] < '0' || lcopy[i] > '9')) &&
+				    lcopy[i + 1] >= '0' && lcopy[i + 1] <= '9')
+					/* replace by, say 'x' (harmless^^) (Note: Capital character doesn't work, gets filtered out futher below */
+					lcopy[i] = 'x';
+				break;
+#endif
 			}
+
 			line[cc[i]] = lcopy[i];
 			i++;
 		}
