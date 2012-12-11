@@ -4388,7 +4388,12 @@ void do_slash_cmd(int Ind, char *message)
 //						d_ptr->flags2 &= ~(DF2_IRON || DF2_IRONFIX1 || DF2_IRONFIX2 || DF2_IRONFIX3 || DF2_IRONFIX4 || 
 //							    DF2_IRONRND1 || DF2_IRONRND2 || DF2_IRONRND3 || DF2_IRONRND4) ; /* Reset flags first */
 //						if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
-						if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
+
+						if (
+ #if 0
+						    !(d_ptr->flags2 & DF2_NO_DEATH) &&
+ #endif
+						    !(d_ptr->flags2 & DF2_IRON)) { /* already Ironman? Don't change it */
 							found_town = FALSE;
 						        for(i = 0; i < numtowns; i++) {
 	    	        					if(town[i].x == tpos->wx && town[i].y == tpos->wy) {
@@ -4437,7 +4442,11 @@ void do_slash_cmd(int Ind, char *message)
 //						d_ptr->flags2 &= ~(DF2_IRON || DF2_IRONFIX1 || DF2_IRONFIX2 || DF2_IRONFIX3 || DF2_IRONFIX4 || 
 //							    DF2_IRONRND1 || DF2_IRONRND2 || DF2_IRONRND3 || DF2_IRONRND4) ; /* Reset flags first */
 //						if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
-						if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
+						if (
+ #if 0
+						    !(d_ptr->flags2 & DF2_NO_DEATH) &&
+ #endif
+						    !(d_ptr->flags2 & DF2_IRON)) { /* already Ironman? Don't change it */
 							found_town = FALSE;
 						        for(i = 0; i < numtowns; i++) {
 	    	        					if(town[i].x == tpos->wx && town[i].y == tpos->wy) {
