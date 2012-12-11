@@ -4284,13 +4284,15 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 						/* Handle polymorph */
 						if (tmp != m_ptr->r_idx) {
-							msg_format(Ind, "%^s changes!", m_name);
+							int cl = m_ptr->clone, cls = m_ptr->clone_summoning;
 
-							/* Create a new monster (no groups) */
-							(void)place_monster_aux(wpos, y, x, tmp, FALSE, FALSE, m_ptr->clone, m_ptr->clone_summoning);
+							msg_format(Ind, "%^s changes!", m_name);
 
 							/* "Kill" the "old" monster */
 							delete_monster_idx(c_ptr->m_idx, TRUE);
+
+							/* Create a new monster (no groups) */
+							(void)place_monster_aux(wpos, y, x, tmp, FALSE, FALSE, cl, cls);
 
 							/* XXX XXX XXX Hack -- Assume success */
 
