@@ -9102,6 +9102,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	}
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
 	if (is_fixed_irondeepdive_town(wpos, dun_lev)) {
+		p_ptr->found_rndtown = FALSE;
 		town = TRUE;
  #ifdef IRONDEEPDIVE_STATIC_TOWNS
 		town_static = TRUE;
@@ -9121,7 +9122,8 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 #else /* towns have high probability around n*1000ft floors, otherwise rare (for IRONDEEPDIVE) \
 	 Also: No towns at Morgy depth or beyond. */
 	k = 0;
-	if (dun_lev > 2 && (town || (dun_lev < 100 && (
+	if (dun_lev > 2 && (town ||
+	    (dun_lev < 100 && (!p_ptr->found_rndtown || !in_irondeepdive(wpos)) && (
 	    ((d_ptr->flags2 & DF2_TOWNS_FIX) && !(dun_lev % 20)) ||
 	    (!p_ptr->dummy_option_8 && (d_ptr->flags2 & DF2_TOWNS_RND) &&
  #if 0 /* for generic dungeons maybe */
@@ -9136,7 +9138,10 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	    /* and new: no 2 towns within the same 1000ft interval (anti-cheeze, as if..) */
 	    && no_nearby_dungeontown(wpos)
 	    ))))) {
-		if (k) s_printf("Generated random dungeon town at %d%% chance.\n", k);
+		if (k) {
+			if (in_irondeepdive(wpos)) p_ptr->found_rndtown = TRUE;
+			s_printf("Generated random dungeon town at %d%% chance.\n", k);
+		}
 #endif
 		bool lit = rand_int(3) == 0;
 		/* prepare level: max size and permanent walls */
