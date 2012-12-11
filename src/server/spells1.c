@@ -1252,23 +1252,23 @@ byte spell_color(int type)
 		case GF_UNBREATH:	return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
 //		case GF_HOLY_ORB:	return (TERM_L_DARK);
 		case GF_HOLY_ORB:	return (randint(6)==1?TERM_ORANGE:TERM_L_DARK);
-		case GF_HOLY_FIRE:	return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
-		case GF_HELL_FIRE:	return (randint(6)==1?TERM_RED:TERM_L_DARK);
+		case GF_HOLY_FIRE:	return (randint(3)!=1?TERM_ORANGE:(randint(2)==1?TERM_YELLOW:TERM_WHITE));
+		case GF_HELL_FIRE:	return (randint(5)==1?TERM_RED:TERM_L_DARK);
 		case GF_MANA:		return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
 		case GF_ARROW:		return (TERM_L_UMBER);
 		case GF_WATER:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 		case GF_WAVE:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 		case GF_NETHER:		return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
 		case GF_CHAOS:		return (TERM_MULTI);
-		case GF_DISENCHANT:	return (randint(5)!=1?TERM_L_BLUE:TERM_VIOLET);
+		case GF_DISENCHANT:	return (randint(4)!=1?TERM_ORANGE:TERM_BLUE);
 		case GF_NEXUS:		return (randint(5)<3?TERM_L_RED:TERM_VIOLET);
 		case GF_CONFUSION:	return (TERM_CONF);
-		case GF_SOUND:		return (randint(4)==1?TERM_VIOLET:TERM_WHITE);
-		case GF_SHARDS:		return (randint(5)<3?TERM_UMBER:TERM_SLATE);
+		case GF_SOUND:		return (TERM_SOUN);
+		case GF_SHARDS:		return (TERM_SHAR);
 		case GF_FORCE:		return (randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
 		case GF_INERTIA:	return (randint(5)<3?TERM_SLATE:TERM_L_WHITE);
 		case GF_GRAVITY:	return (randint(3)==1?TERM_L_UMBER:TERM_UMBER);
-		case GF_TIME:		return (randint(2)==1?TERM_WHITE:TERM_L_DARK);
+		case GF_TIME:		return (randint(3)==1?TERM_GREEN:TERM_L_BLUE);
 		case GF_LITE_WEAK:	return (TERM_LITE);
 		case GF_LITE:		return (TERM_LITE);
 		case GF_DARK_WEAK:	return (TERM_DARKNESS);
@@ -1279,14 +1279,14 @@ byte spell_color(int type)
 		case GF_INFERNO: case GF_DETONATION:
 		case GF_ROCKET:		return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
 		case GF_NUKE:		return (mh_attr(2));
-		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_L_UMBER));
+		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_VIOLET));
 		case GF_PSI:		return (randint(5)!=1?(rand_int(2)?(rand_int(2)?TERM_YELLOW:TERM_L_BLUE):127):TERM_WHITE);
 		/* new spell - the_sandman */
 		case GF_CURSE:		return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
 		case GF_OLD_DRAIN:	return (TERM_DARKNESS);
 		/* Druids stuff */
 		case GF_HEALINGCLOUD:	return (TERM_LITE);//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
-		case GF_WATERPOISON:	return (TERM_COLD);return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
+		case GF_WATERPOISON:	return (TERM_COLD);//return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
 		case GF_ICEPOISON:	return (TERM_SHAR);//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
 		/* To remove some hacks? */
 		case GF_THUNDER:	return (randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
@@ -1313,48 +1313,48 @@ bool spell_color_animation(int type)
 		case GF_FIRE:		return FALSE;
 		case GF_COLD:		return FALSE;
 		case GF_POIS:		return FALSE;
-		case GF_UNBREATH:	return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
+		case GF_UNBREATH:	return TRUE;//(randint(7)<3?TERM_L_GREEN:TERM_GREEN);
 //		case GF_HOLY_ORB:	return FALSE;
-		case GF_HOLY_ORB:	return (randint(6)==1?TERM_ORANGE:TERM_L_DARK);
-		case GF_HOLY_FIRE:	return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
-		case GF_HELL_FIRE:	return (randint(6)==1?TERM_RED:TERM_L_DARK);
-		case GF_MANA:		return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
+		case GF_HOLY_ORB:	return TRUE;//(randint(6)==1?TERM_ORANGE:TERM_L_DARK);
+		case GF_HOLY_FIRE:	return TRUE;//(randint(3)!=1?TERM_ORANGE:(randint(2)==1?TERM_YELLOW:TERM_WHITE));
+		case GF_HELL_FIRE:	return TRUE;//(randint(5)==1?TERM_RED:TERM_L_DARK);
+		case GF_MANA:		return TRUE;//(randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
 		case GF_ARROW:		return FALSE;
-		case GF_WATER:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
-		case GF_WAVE:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
-		case GF_NETHER:		return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
+		case GF_WATER:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+		case GF_WAVE:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+		case GF_NETHER:		return TRUE;//(randint(4)==1?TERM_SLATE:TERM_L_DARK);
 		case GF_CHAOS:		return FALSE;
-		case GF_DISENCHANT:	return (randint(5)!=1?TERM_L_BLUE:TERM_VIOLET);
-		case GF_NEXUS:		return (randint(5)<3?TERM_L_RED:TERM_VIOLET);
-		case GF_CONFUSION:	return (TERM_CONF);
-		case GF_SOUND:		return (randint(4)==1?TERM_VIOLET:TERM_WHITE);
-		case GF_SHARDS:		return (randint(5)<3?TERM_UMBER:TERM_SLATE);
-		case GF_FORCE:		return (randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
-		case GF_INERTIA:	return (randint(5)<3?TERM_SLATE:TERM_L_WHITE);
-		case GF_GRAVITY:	return (randint(3)==1?TERM_L_UMBER:TERM_UMBER);
-		case GF_TIME:		return (randint(2)==1?TERM_WHITE:TERM_L_DARK);
+		case GF_DISENCHANT:	return TRUE;//(randint(4)==1?TERM_ORANGE:TERM_BLUE;//TERM_L_BLUE:TERM_VIOLET);
+		case GF_NEXUS:		return TRUE;//(randint(5)<3?TERM_L_RED:TERM_VIOLET);
+		case GF_CONFUSION:	return FALSE;
+		case GF_SOUND:		return FALSE;//(randint(4)==1?TERM_VIOLET:TERM_WHITE);
+		case GF_SHARDS:		return FALSE;//(randint(5)<3?TERM_UMBER:TERM_SLATE);
+		case GF_FORCE:		return TRUE;//(randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
+		case GF_INERTIA:	return TRUE;//(randint(5)<3?TERM_SLATE:TERM_L_WHITE);
+		case GF_GRAVITY:	return TRUE;//(randint(3)==1?TERM_L_UMBER:TERM_UMBER);
+		case GF_TIME:		return TRUE;//(randint(3)==1?TERM_GREEN:TERM_L_BLUE);
 		case GF_LITE_WEAK:	return FALSE;
 		case GF_LITE:		return FALSE;
 		case GF_DARK_WEAK:	return FALSE;
 		case GF_DARK:		return FALSE;
-		case GF_PLASMA:		return (randint(5)==1?TERM_RED:TERM_L_RED);
-		case GF_METEOR:		return (randint(3)==1?TERM_RED:TERM_UMBER);
-		case GF_ICE:		return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
+		case GF_PLASMA:		return TRUE;//(randint(5)==1?TERM_RED:TERM_L_RED);
+		case GF_METEOR:		return TRUE;//(randint(3)==1?TERM_RED:TERM_UMBER);
+		case GF_ICE:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_WHITE);
 		case GF_INFERNO: case GF_DETONATION:
-		case GF_ROCKET:		return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
-		case GF_NUKE:		return (mh_attr(2));
-		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_L_UMBER));
-		case GF_PSI:		return (randint(5)!=1?(rand_int(2)?(rand_int(2)?TERM_YELLOW:TERM_L_BLUE):127):TERM_WHITE);
+		case GF_ROCKET:		return TRUE;//(randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
+		case GF_NUKE:		return TRUE;//(mh_attr(2));
+		case GF_DISINTEGRATE:   return TRUE;//(randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_VIOLET:TERM_L_ORANGE));//TERM_ORANGE:TERM_L_UMBER));
+		case GF_PSI:		return TRUE;//(randint(5)!=1?(rand_int(2)?(rand_int(2)?TERM_YELLOW:TERM_L_BLUE):127):TERM_WHITE);
 		/* new spell - the_sandman */
-		case GF_CURSE:		return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+		case GF_CURSE:		return TRUE;//(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
 		case GF_OLD_DRAIN:	return FALSE;
 		/* Druids stuff */
 		case GF_HEALINGCLOUD:	return FALSE;//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
-		case GF_WATERPOISON:	return FALSE;return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
+		case GF_WATERPOISON:	return FALSE;//return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
 		case GF_ICEPOISON:	return FALSE;//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
 		/* To remove some hacks? */
-		case GF_THUNDER:	return FALSE;
-		case GF_ANNIHILATION:	return FALSE;
+		case GF_THUNDER:	return TRUE;//(randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
+		case GF_ANNIHILATION:	return TRUE;//(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
 	}
 
 	/* Standard "color" */
