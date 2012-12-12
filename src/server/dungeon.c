@@ -3187,12 +3187,16 @@ static bool process_player_end_aux(int Ind)
 				/* Regeneration takes more food */
 				if (p_ptr->tim_regen) i += p_ptr->tim_regen_pow / 10;
 
-				/* DragonRider and Half-Troll take more food */
+				/* Draconian and Half-Troll take more food */
 				if (p_ptr->prace == RACE_DRACONIAN
-						|| p_ptr->prace == RACE_HALF_TROLL) i += 15;
+				    || p_ptr->prace == RACE_HALF_TROLL) i += 15;
 
-				/* Vampires consume food very quickly */
-				if (p_ptr->prace == RACE_VAMPIRE) i += 20;
+				/* Vampires consume food very quickly,
+				   but old vampires don't need food frequently */
+				if (p_ptr->prace == RACE_VAMPIRE) {
+					if (p_ptr->lev >= 40) i += 60 / (p_ptr->lev - 37);
+					else i += 20;
+				}
 
 				/* Invisibility consume a lot of food */
 				i += p_ptr->invis / 2;
@@ -3212,6 +3216,10 @@ static bool process_player_end_aux(int Ind)
 
 				/* Never negative */
 				if (i < 1) i = 1;
+
+				/* Cut vampires some slack for Nether Realm:
+				   Ancient vampire lords almost don't need any food at all */
+				if (p_ptr->prace == RACE_VAMPIRE && p_ptr->total_winner) i = 1;
 
 				/* Digest some food */
 				(void)set_food(Ind, p_ptr->food - i);
