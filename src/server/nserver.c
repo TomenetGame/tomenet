@@ -3557,7 +3557,7 @@ static int Receive_login(int ind){
 			return -1;
 		}
 		if (Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE) != SUCCESS) {
-			Destroy_connection(ind, "The server didn't like your accountname, username or hostname");
+			Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
 			return(-1);
 		}
 
