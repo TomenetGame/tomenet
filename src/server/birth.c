@@ -90,24 +90,25 @@ static hist_type bg[] =
 	{"You are one of several children ",			95, 1, 2, 45},
 	{"You are the first child ",				100, 1, 2, 50},
 
-	{"of a Serf.  ",					40, 2, 3, 65},
-	{"of a Yeoman.  ",					65, 2, 3, 80},
-	{"of a Townsman.  ",					80, 2, 3, 90},
-	{"of a Guildsman.  ",					90, 2, 3, 105},
-	{"of a Landed Knight.  ",				96, 2, 3, 120},
-	{"of a Titled Noble.  ",				99, 2, 3, 130},
-	{"of a Royal Blood Line.  ",				100, 2, 3, 140},
+	{"of a Serf. ",						40, 2, 3, 65},
+	{"of a Yeoman. ",					65, 2, 3, 80},
+	{"of a Townsman. ",					80, 2, 3, 90},
+	{"of a Guildsman. ",					90, 2, 3, 105},
+	{"of a Landed Knight. ",				96, 2, 3, 120},
+	{"of a Titled Noble. ",					99, 2, 3, 130},
+	{"of a Royal Blood Line. ",				100, 2, 3, 140},
 
-	{"You are the black sheep of the family.  ",		20, 3, 50, 20},
-	{"You are a credit to the family.  ",			80, 3, 50, 55},
-	{"You are a well liked child.  ",			100, 3, 50, 60},
+	/* Human/Gnome/Halfling */
+	{"You are the black sheep of the family. ",		20, 3, 50, 20},
+	{"You are a credit to the family. ",			80, 3, 50, 55},
+	{"You are a well liked child. ",			100, 3, 50, 60},
 
-	{"Your mother was of the Teleri.  ",			40, 4, 1, 50},
-	{"Your father was of the Teleri.  ",			75, 4, 1, 55},
-	{"Your mother was of the Noldor.  ",			90, 4, 1, 55},
-	{"Your father was of the Noldor.  ",			95, 4, 1, 60},
-	{"Your mother was of the Vanyar.  ",			98, 4, 1, 65},
-	{"Your father was of the Vanyar.  ",			100, 4, 1, 70},
+	{"Your mother was of the Teleri. ",			40, 4, 1, 50},
+	{"Your father was of the Teleri. ",			75, 4, 1, 55},
+	{"Your mother was of the Noldor. ",			90, 4, 1, 55},
+	{"Your father was of the Noldor. ",			95, 4, 1, 60},
+	{"Your mother was of the Vanyar. ",			98, 4, 1, 65},
+	{"Your father was of the Vanyar. ",			100, 4, 1, 70},
 
 	{"You are one of several children ",			60, 7, 8, 50},
 	{"You are the only child ",				100, 7, 8, 55},
@@ -116,53 +117,57 @@ static hist_type bg[] =
 	{"of a Noldor ",					95, 8, 9, 55},
 	{"of a Vanyar ",					100, 8, 9, 60},
 
-	{"Ranger.  ",						40, 9, 54, 80},
-	{"Archer.  ",						70, 9, 54, 90},
-	{"Warrior.  ",						87, 9, 54, 110},
-	{"Mage.  ",						95, 9, 54, 125},
-	{"Prince.  ",						99, 9, 54, 140},
-	{"King.  ",						100, 9, 54, 145},
+	{"Ranger. ",						40, 9, 54, 80},
+	{"Archer. ",						70, 9, 54, 90},
+	{"Warrior. ",						87, 9, 54, 110},
+	{"Mage. ",						95, 9, 54, 125},
+	{"Prince. ",						99, 9, 54, 140},
+	{"King. ",						100, 9, 54, 145},
 
-	{"You are one of several children of a Hobbit ",        85, 10, 11, 45},
-	{"You are the only child of a Hobbit ",                 100, 10, 11, 55},
+	{"You are one of several children of a Hobbit ",	85, 10, 11, 45},
+	{"You are the only child of a Hobbit ",			100, 10, 11, 55},
 
-	{"Bum.  ",                                              20, 11, 3, 55},
-	{"Tavern Owner.  ",                                     30, 11, 3, 80},
-	{"Miller.  ",                                           40, 11, 3, 90},
-	{"Home Owner.  ",                                       50, 11, 3, 100},
-	{"Burglar.  ",                                          80, 11, 3, 110},
-	{"Warrior.  ",                                          95, 11, 3, 115},
-	{"Mage.  ",                                             99, 11, 3, 125},
-	{"Clan Elder.  ",                                       100, 11, 3, 140},
+	{"Bum. ",                                              20, 11, 3, 55},
+	{"Tavern Owner. ",                                     30, 11, 3, 80},
+	{"Miller. ",                                           40, 11, 3, 90},
+	{"Home Owner. ",                                       50, 11, 3, 100},
+	{"Burglar. ",                                          80, 11, 3, 110},
+	{"Warrior. ",                                          95, 11, 3, 115},
+	{"Mage. ",                                             99, 11, 3, 125},
+	{"Clan Elder. ",                                       100, 11, 3, 140},
 
-	{"You are one of several children of a Gnome ",         85, 13, 14, 45},
-	{"You are the only child of a Gnome ",                  100, 13, 14, 55},
+	/* Gnome */
+	{"You are one of several children of a Gnome ",		85, 13, 14, 45},
+	{"You are the only child of a Gnome ",			100, 13, 14, 55},
 
-	{"Beggar.  ",                                           20, 14, 3, 55},
-	{"Braggart.  ",                                         50, 14, 3, 70},
-	{"Prankster.  ",                                        75, 14, 3, 85},
-	{"Warrior.  ",                                          95, 14, 3, 100},
-	{"Mage.  ",                                             100, 14, 3, 125},
+	{"Beggar. ",                                           20, 14, 3, 55},
+	{"Braggart. ",                                         50, 14, 3, 70},
+	{"Prankster. ",                                        75, 14, 3, 85},
+	{"Warrior. ",                                          95, 14, 3, 100},
+	{"Mage. ",                                             100, 14, 3, 125},
 
+	/* Dwarf */
 	{"You are one of two children of a Dwarven ",           25, 16, 17, 40},
 	{"You are the only child of a Dwarven ",                100, 16, 17, 50},
 
-	{"Thief.  ",                                            10, 17, 18, 60},
-	{"Prison Guard.  ",                                     25, 17, 18, 75},
-	{"Miner.  ",                                            75, 17, 18, 90},
-	{"Warrior.  ",                                          90, 17, 18, 110},
-	{"Priest.  ",                                           99, 17, 18, 130},
-	{"King.  ",                                             100, 17, 18, 150},
+	{"Thief. ",                                            10, 17, 18, 60},
+	{"Prison Guard. ",                                     25, 17, 18, 75},
+	{"Miner. ",                                            75, 17, 18, 90},
+	{"Warrior. ",                                          90, 17, 18, 110},
+	{"Priest. ",                                           99, 17, 18, 130},
+	{"King. ",                                             100, 17, 18, 150},
 
-	{"You are the black sheep of the family.  ",            15, 18, 57, 10},
-	{"You are a credit to the family.  ",                   85, 18, 57, 50},
-	{"You are a well liked child.  ",                       100, 18, 57, 55},
+	{"You are the black sheep of the family. ",            15, 18, 57, 10},
+	{"You are a credit to the family. ",                   85, 18, 57, 50},
+	{"You are a well liked child. ",                       100, 18, 57, 55},
 
-	{"Your mother was an Orc, but it is unacknowledged.  ", 25, 19, 20, 25},
-	{"Your father was an Orc, but it is unacknowledged.  ", 100, 19, 20, 25},
+	/* Orc/Goblin --todo: more Goblin stuff */
+	{"Your mother was an Orc, but it is unacknowledged. ", 25, 19, 20, 25},
+	{"Your father was an Orc, but it is unacknowledged. ", 100, 19, 20, 25},
 
 	{"You are the adopted child ",                          100, 20, 2, 50},
 
+	/* Troll */
 	{"Your mother was a Cave-Troll ",                       30, 22, 23, 20},
 	{"Your father was a Cave-Troll ",                       60, 22, 23, 25},
 	{"Your mother was a Hill-Troll ",                       75, 22, 23, 30},
@@ -170,11 +175,12 @@ static hist_type bg[] =
 	{"Your mother was a Water-Troll ",                      95, 22, 23, 40},
 	{"Your father was a Water-Troll ",                      100, 22, 23, 45},
 
-	{"Cook.  ",                                             5, 23, 62, 60},
-	{"Warrior.  ",                                          95, 23, 62, 55},
-	{"Shaman.  ",                                           99, 23, 62, 65},
-	{"Clan Chief.  ",                                       100, 23, 62, 80},
+	{"Cook. ",                                             5, 23, 62, 60},
+	{"Warrior. ",                                          95, 23, 62, 55},
+	{"Shaman. ",                                           99, 23, 62, 65},
+	{"Clan Chief. ",                                       100, 23, 62, 80},
 
+	/* Human features */
 	{"You have dark brown eyes, ",                          20, 50, 51, 50},
 	{"You have brown eyes, ",                               60, 50, 51, 50},
 	{"You have hazel eyes, ",                               70, 50, 51, 50},
@@ -198,6 +204,7 @@ static hist_type bg[] =
 	{"and a fair complexion.",                              90, 53, 0, 50},
 	{"and a very fair complexion.",                         100, 53, 0, 50},
 
+	/* Elven features */
 	{"You have light grey eyes, ",                          85, 54, 55, 50},
 	{"You have light blue eyes, ",                          95, 54, 55, 50},
 	{"You have light green eyes, ",                         100, 54, 55, 50},
@@ -210,6 +217,7 @@ static hist_type bg[] =
 	{"blond hair, and a fair complexion.",                  95, 56, 0, 50},
 	{"silver hair, and a fair complexion.",                 100, 56, 0, 50},
 
+	/* Dwarven features */
 	{"You have dark brown eyes, ",                          99, 57, 58, 50},
 	{"You have glowing red eyes, ",                         100, 57, 58, 60},
 
@@ -226,6 +234,7 @@ static hist_type bg[] =
 
 	{"and a dark complexion.",                              100, 61, 0, 50},
 
+	/* Trollish features */
 	{"You have slime green eyes, ",                         60, 62, 63, 50},
 	{"You have puke yellow eyes, ",                         85, 62, 63, 50},
 	{"You have blue-bloodshot eyes, ",                      99, 62, 63, 50},
@@ -249,90 +258,216 @@ static hist_type bg[] =
 	{"leprous skin.",                                       100, 66, 0, 50},
 
 
-	/* XXX lol.. change it */
-	{"You are one of several children of a dragon and a human.", 85, 89, 91, 50  },
-	{"You are the only child of a dragon and a human.",      100, 89, 91, 60 },
+	/* Draconian (text inspired by Hengband -- hey, they had Draconians too?) */
+#if 0
+        {"You are ", 100, 89, 135, 50 },
 
-	{"You have a Green Eagle.", 30, 91, 0, 40 },
-	{"You have a Blue Eagle.", 55, 91, 0, 60 },
-	{"You have a Brown Eagle.", 80, 91, 0, 80 },
-	{"You have a Bronze Eagle.", 90, 91, 0, 100 },
-	{"You have a Gold Eagle.", 100, 91, 0, 120},
+        {"the oldest child of a Draconian ", 30, 135, 90, 55 },
+        {"the youngest child of a Draconian ", 50, 135, 90, 50 },
+        {"the adopted child of a Draconian ", 55, 135, 90, 50 },
+        {"an orphaned child of a Draconian ", 60, 135, 90, 45 },
+        {"one of several children of a Draconian ", 85, 135, 90, 50 },
+        {"the only child of a Draconian ", 100, 135, 90, 55 },
 
-	{"You are of an unknown generation of the Ents.",       30, 94, 95, 30},
-	{"You are of the third generation of the Ents.",        40, 94, 95, 50},
-	{"You are of the second generation of the Ents.",       60, 94, 95, 60},
-	{"You are of the first beings who awoke on Arda.",      100, 94, 95, 80},
+        {"Beggar. ", 10, 90, 91, 20 },
+        {"Thief. ", 21, 90, 91, 30 },
+        {"Sailor. ", 26, 90, 91, 45 },
+        {"Mercenary. ", 42, 90, 91, 45 },
+        {"Warrior. ", 73, 90, 91, 50 },
+        {"Merchant. ", 78, 90, 91, 50 },
+        {"Artisan. ", 85, 90, 91, 55 },
+        {"Healer. ", 89, 90, 91, 60 },
+        {"Priest. ", 94, 90, 91, 65 },
+        {"Mage. ", 97, 90, 91, 70 },
+        {"Scholar. ", 99, 90, 91, 80 },
+        {"Noble. ", 100, 90, 91, 100 },
 
-	{"You have green skin and unflexible members.",          50, 95, 0, 50},
-	{"You have brown skin and unflexible members.",          100, 95, 0, 50},
+        {"You have ", 100, 91, 136, 50 },
+
+        {"charcoal wings, charcoal skin and a smoke-gray belly.", 11, 136, 0, 50 },
+        {"bronze wings, bronze skin, and a copper belly.", 16, 136, 0, 50 },
+        {"golden wings, and golden skin.", 24, 136, 0, 50 },
+        {"white wings, and white skin.", 26, 136, 0, 60 },
+        {"blue wings, blue skin, and a cyan belly.", 32, 136, 0, 50 },
+        {"multi-hued wings, and multi-hued skin.", 33, 136, 0, 70 },
+        {"brown wings, and brown skin.", 37, 136, 0, 45 },
+        {"black wings, black skin, and a white belly.", 41, 136, 0, 50 },
+        {"lavender wings, lavender skin, and a white belly.", 48, 136, 0, 50 },
+        {"green wings, green skin and yellow belly.", 65, 136, 0, 50 },
+        {"green wings, and green skin.", 75, 136, 0, 50 },
+        {"red wings, and red skin.", 88, 136, 0, 50 },
+        {"black wings, and black skin.", 94, 136, 0, 50 },
+        {"metallic skin, and shining wings.", 100, 136, 0, 55},
+#endif
+	{"You are one of several children of a dragon and a human. ",	85, 89, 91, 50},
+	{"You are the only child of a dragon and a human. ",		100, 89, 91, 60},
+
+	{"You have a Green Eagle.",				30, 91, 0, 40},
+	{"You have a Blue Eagle.",				55, 91, 0, 60},
+	{"You have a Brown Eagle.",				80, 91, 0, 80},
+	{"You have a Bronze Eagle.",				90, 91, 0, 100},
+	{"You have a Gold Eagle.",				100, 91, 0, 120},
+
+
+	/* Ent (text inspired by Hengband) */
+	{"You are of an unknown generation of the Ents. ",	30, 94, 95, 30},
+	{"You are of the third generation of the Ents. ",	40, 94, 95, 50},
+	{"You are of the second generation of the Ents. ",	60, 94, 95, 60},
+	{"You are of the first beings who awoke on Arda. ",	100, 94, 95, 80},
+
+	{"You have green skin and unflexible members.",		50, 95, 0, 50},
+	{"You have brown skin and unflexible members.",		100, 95, 0, 50},
+#if 0
+        {"You are the lost offspring of ", 25, 137, 138, 40},
+        {"You are the wandering offspring of ", 50, 137, 138, 50},
+        {"You are the only offspring of ", 75, 137, 138, 60},
+        {"You are the beloved offspring of ", 100, 137, 138, 70},
+
+        {"an Ent whose name you have no recollection of. ", 10, 138, 139, 35},
+        {"a solitary Ent. ", 35, 138, 139, 50},
+        {"a member of a farflung Entish band. ", 55, 138, 139, 60},
+        {"a leader of a prosperous community of Ents. ", 70, 138, 139, 70},
+        {"an Entish Forestwarden. ", 81, 138, 139, 80},
+        {"a respected Entish sage. ", 91, 138, 139, 90},
+        {"an Entwife whose memory men cherish. ", 96, 138, 139, 100},
+        {"Fangorn himself. ", 100, 138, 139, 110},
+
+
+        {"You have ", 100, 139, 140, 50},
+
+        {"three fingers and toes, and are covered in ", 5, 140, 141, 50},
+        {"four fingers and toes, and are covered in ", 20, 140, 141, 50},
+        {"five fingers and toes, and are covered in ", 40, 140, 141, 50},
+        {"six fingers and toes, and are covered in ", 60, 140, 141, 50},
+        {"seven fingers and toes, and are covered in ", 80, 140, 141, 50},
+        {"eight fingers and toes, and are covered in ", 95, 140, 141, 50},
+        {"nine fingers and toes, and are covered in ", 100, 140, 141, 50},
+
+        {"scaly brown skin.", 10, 141, 0, 50},
+        {"rough brown skin.", 20, 141, 0, 50},
+        {"smooth grey skin.", 30, 141, 0, 50},
+        {"dark green skin.", 40, 141, 0, 50},
+        {"mossy skin.", 50, 141, 0, 50},
+        {"deep brown skin.", 60, 141, 0, 50},
+        {"pale brown, flaky skin.", 70, 141, 0, 50},
+        {"rich chocolate-colored skin.", 80, 141, 0, 50},
+        {"ridged black skin.", 90, 141, 0, 50},
+        {"thick, almost corky skin.", 100, 141, 0, 50},
+#endif
 
 
 	/* Maiar background */
 	{"You are a Maiar spirit, bound to ", 				100, 100, 101, 70},
 
-	{"Manwe Sulimo, King of the Valar.  ",				10,101,102,150},
-	{"Ulmo, King of the Sea.  ",					20,101,102,100},
-	{"Aule, the Smith.  ",						30,101,102,100},
-	{"Orome Aldaron, the Great Rider and Hunter of Valinor.  ",	40,101,102,120},
-	{"Mandos, Judge of the Dead.  ",				50,101,102,100},
-	{"Irmo, Master of Dreams and Desires.  ",			60,101,102,100},
-	{"Tulkas Astaldo, Champion of Valinor.  ",			65,101,102,130},
-	{"Varda Elentari, Queen of the Stars, wife of Manwe.  ",	70,101,102,120},
-	{"Yavanna Kementari, Giver of Fruits, wife of Aule.  ",		75,101,102,90},
-	{"Nienna, Lady of Mercy.  ",					80,101,102,90},
-	{"Este the Gentle.  ",						85,101,102,90},
-	{"Vaire the Weaver.  ",						90,101,102,90},
-	{"Vana the Ever-young.  ",					95,101,102,90},
-	{"Nessa the Dancer.  ",						100,101,102,90},
+	{"Manwe Sulimo, King of the Valar. ",				10,101,102,150},
+	{"Ulmo, King of the Sea. ",					20,101,102,100},
+	{"Aule, the Smith. ",						30,101,102,100},
+	{"Orome Aldaron, the Great Rider and Hunter of Valinor. ",	40,101,102,120},
+	{"Mandos, Judge of the Dead. ",					50,101,102,100},
+	{"Irmo, Master of Dreams and Desires. ",			60,101,102,100},
+	{"Tulkas Astaldo, Champion of Valinor. ",			65,101,102,130},
+	{"Varda Elentari, Queen of the Stars, wife of Manwe. ",		70,101,102,120},
+	{"Yavanna Kementari, Giver of Fruits, wife of Aule. ",		75,101,102,90},
+	{"Nienna, Lady of Mercy. ",					80,101,102,90},
+	{"Este the Gentle. ",						85,101,102,90},
+	{"Vaire the Weaver. ",						90,101,102,90},
+	{"Vana the Ever-young. ",					95,101,102,90},
+	{"Nessa the Dancer. ",						100,101,102,90},
 
-/* //too long :(
-	{"You were sent to assist the Elves that stayed in the East.  ",			25,102,103,0},
-	{"You suspend your pilgrimage in Aman to spend some time in the mortal land.  ",	50,102,103,0},
-	{"Your ambition compels your physical manifestation here in Arda.  ",			75,102,103,0},
-	{"You were ordered to assist the humans and elves in the West.  ",			100,102,103,0},
-*/
+	{"You were sent to assist the Elves ",				25,102,103,0},
+	{"You suspend your pilgrimage in Aman ",			50,102,104,0},
+	{"Your ambition compels your physical manifestation in Arda. ",	63,102,50,0},
+	{"Your ambition compels your physical manifestation in Arda. ",	75,102,54,0},
+	{"You were ordered to assist the humans and elves ",		100,102,105,0},
+	    {"that stayed in the East. ",				100,103,54,0},
+	    {"to spend some time in the mortal land. ",			100,104,50,0},
+	    {"in the West. ",						50,105,50,0},
+	    {"in the West. ",						50,105,54,0},
+	//{"Your physical form is Elven in feature. ", 		50, 102, 54, 70},
+	//{"You manifest as a Human to casual observers. ", 	100, 102, 50, 70},
 
-	{"Your physical form is Elven in feature.  ", 		50, 102, 54, 70},
-	{"You manifest as a Human to casual observers.  ", 	100, 102, 50, 70},
 
 	/* Kobold background */
-	{"You are the runt of ",				20, 103, 104, 40},
-	{"You come from ",					80, 103, 104, 50},
-	{"You are the largest of ",				100, 103, 104, 55},
+	{"You are the runt of ",				20, 110, 111, 40},
+	{"You come from ",					80, 110, 111, 50},
+	{"You are the largest of ",				100, 110, 111, 55},
 
-	{"a litter of 3 pups. ",				15, 104, 105, 45},
-	{"a litter of 4 pups. ",				40, 104, 105, 45},
-	{"a litter of 5 pups. ",				70, 104, 105, 50},
-	{"a litter of 6 pups. ",				85, 104, 105, 50},
-	{"a litter of 7 pups. ",				95, 104, 105, 55},
-	{"a litter of 8 pups. ",				100, 104, 105, 55},
+	{"a litter of 3 pups. ",				15, 111, 112, 45},
+	{"a litter of 4 pups. ",				40, 111, 112, 45},
+	{"a litter of 5 pups. ",				70, 111, 112, 50},
+	{"a litter of 6 pups. ",				85, 111, 112, 50},
+	{"a litter of 7 pups. ",				95, 111, 112, 55},
+	{"a litter of 8 pups. ",				100, 111, 112, 55},
 
-	{"Your father was a fungus farmer, ",			25, 105, 106, 40},
-	{"Your father was a hunter, ",				50, 105, 106, 45},
-	{"Your father was a warrior, ",				75, 105, 106, 50},
-	{"Your father was a shaman, ",				95, 105, 106, 55},
-	{"Your father was the tribal chief, ",			100, 105, 106, 60},
+	{"Your father was a fungus farmer, ",			25, 112, 113, 40},
+	{"Your father was a hunter, ",				50, 112, 113, 45},
+	{"Your father was a warrior, ",				75, 112, 113, 50},
+	{"Your father was a shaman, ",				95, 112, 113, 55},
+	{"Your father was the tribal chief, ",			100, 112, 113, 60},
 
-	{"and your mother was a prisoner of war. ",		20, 106, 107, 45},
-	{"and your mother was a cook. ",			95, 106, 107, 50},
-	{"and your mother was one of the Chief's harem. ",	100, 106, 107, 55},
+	{"and your mother was a prisoner of war. ",		20, 113, 114, 45},
+	{"and your mother was a cook. ",			95, 113, 114, 50},
+	{"and your mother was one of the Chief's harem. ",	100, 113, 114, 55},
 
-	{"You have black eyes, ",				10, 107, 108, 50},
-	{"You have dark brown eyes, ",				40, 107, 108, 50},
-	{"You have brown eyes, ",				80, 107, 108, 50},
-	{"You have light brown eyes, ",				99, 107, 108, 50},
-	{"You have glowing red eyes, ",				100, 107, 108, 50},
+	{"You have black eyes, ",				10, 114, 115, 50},
+	{"You have dark brown eyes, ",				40, 114, 115, 50},
+	{"You have brown eyes, ",				80, 114, 115, 50},
+	{"You have light brown eyes, ",				99, 114, 115, 50},
+	{"You have glowing red eyes, ",				100, 114, 115, 50},
 
-	{"a dark brown hide, ",					40, 108, 109, 50},
-	{"a reddish-brown hide, ",				60, 108, 109, 50},
-	{"an olive green hide, ",				95, 108, 109, 50},
-	{"a deep blue hide, ",					100, 108, 109, 50},
+	{"a dark brown hide, ",					40, 115, 116, 50},
+	{"a reddish-brown hide, ",				60, 115, 116, 50},
+	{"an olive green hide, ",				95, 115, 116, 50},
+	{"a deep blue hide, ",					100, 115, 116, 50},
 
-	{"and large, flat teeth.",				10, 109, 0, 50},
-	{"and small, sharp teeth.",				90, 109, 0, 50},
-	{"and large, sharp teeth.",				100, 109, 0, 50},
+	{"and large, flat teeth.",				10, 116, 0, 50},
+	{"and small, sharp teeth.",				90, 116, 0, 50},
+	{"and large, sharp teeth.",				100, 116, 0, 50},
 
+
+	/* Dark-Elf (text inspired by Hengband) */
+	{"",							100,120,0,50},
+#if 0
+        {"You are one of several children of a Dark Elven ",      85, 69, 70, 45},
+        {"You are the only child of a Dark Elven ",          100, 69, 70, 55},
+
+        {"Warrior.  ", 50, 70, 71, 60 },
+        {"Warlock.  ", 80, 70, 71, 75 },
+        {"Noble.  ", 100, 70, 71, 95 },
+
+        {"You have black eyes, ", 100, 71, 72, 50},
+
+        {"straight ",                        70, 72, 73, 50},
+        {"wavy ",                            90, 72, 73, 50},
+        {"curly ",                          100, 72, 73, 50},
+
+        {"black hair and a very dark complexion.", 100, 73, 0, 50 },
+#endif
+
+
+	/* Vampire (text inspired by Hengband) */
+	{"",							100,130,0,50},
+#if 0
+        {"You arose from an unmarked grave. ", 20, 113, 114, 50 },
+        {"In life you were a simple peasant, the victim of a powerful Vampire Lord. ", 40, 113, 114, 50 },
+        {"In life you were a Vampire Hunter, but they got you. ", 60, 113, 114, 50 },
+        {"In life you were a Necromancer. ", 80, 113, 114, 50 },
+        {"In life you were a powerful noble. ", 95, 113, 114, 50 },
+        {"In life you were a powerful and cruel tyrant. ", 100, 113, 114, 50 },
+        {"You have ", 100, 114, 115, 50 },
+
+        {"jet-black hair, ", 25, 115, 116, 50 },
+        {"matted brown hair, ", 50, 115, 116, 50 },
+        {"white hair, ", 75, 115, 116, 50 },
+        {"a hairless head, ", 100, 115, 116, 50 },
+
+        {"eyes like red coals, ", 25, 116, 117, 50 },
+        {"blank white eyes, ", 50, 116, 117, 50 },
+        {"feral yellow eyes, ", 75, 116, 117, 50 },
+        {"bloodshot red eyes, ", 100, 116, 117, 50 },
+
+        {"and a deathly pale complexion.", 100, 117, 0, 50 },
+#endif
 };
 
 
@@ -456,7 +591,7 @@ static bool get_stats(int Ind, int stat_order[6])
 				{
 					if (stats[j])
 						continue;
-	
+
 					stat_order[i] = j;
 				}
 			}
@@ -473,11 +608,11 @@ static bool get_stats(int Ind, int stat_order[6])
 			{
 				/* Roll the dice */
 				dice[i] = randint(3 + i % 3);
-	
+
 				/* Collect the maximum */
 				j += dice[i];
 			}
-	
+
 			/* Verify totals */
 #ifdef STARTING_STAT_LIMIT
 			if ((j > 48) && (j < 58)) break;
@@ -491,11 +626,11 @@ static bool get_stats(int Ind, int stat_order[6])
 		{
 			/* Extract 5 + 1d3 + 1d4 + 1d5 */
 			j = 5 + dice[3*i] + dice[3*i+1] + dice[3*i+2];
-	
+
 			/* Save that value */
 			stats[i] = j;
 		}
-    
+
 		/* Now sort the stats */
 		/* I use a bubble sort because I'm lazy at the moment */
 		for (i = 0; i < 6; i++)
@@ -505,7 +640,7 @@ static bool get_stats(int Ind, int stat_order[6])
 				if (stats[j] < stats[j + 1])
 				{
     					int t;
-	
+
 					t = stats[j];
 					stats[j] = stats[j + 1];
 					stats[j + 1] = t;
@@ -518,13 +653,13 @@ static bool get_stats(int Ind, int stat_order[6])
 		{
 			p_ptr->stat_max[stat_order[i]] = stats[i];
 		}
-    
+
 		/* Adjust the stats */
 		for (i = 0; i < 6; i++)
 		{
     			/* Obtain a "bonus" for "race" and "class" */
 			bonus = p_ptr->rp_ptr->r_adj[i] + p_ptr->cp_ptr->c_adj[i];
-	
+
 			/* Variable stat maxes */
 			if (p_ptr->maximize)
 			{
@@ -532,21 +667,21 @@ static bool get_stats(int Ind, int stat_order[6])
 				if (!is_fighter(p_ptr))
 					while (modify_stat_value(p_ptr->stat_max[i], bonus) > 18 + 40)
 						p_ptr->stat_max[i]--;
-	
+
 #endif	//STARTING_STAT_LIMIT
 				/* Start fully healed */
 				p_ptr->stat_cur[i] = p_ptr->stat_max[i];
-	
+
 				/* Efficiency -- Apply the racial/class bonuses */
 				stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
 			}
-	
+
 			/* Fixed stat maxes */
 			else
 			{
 				/* Apply the bonus to the stat (somewhat randomly) */
 				stat_use[i] = adjust_stat(Ind, p_ptr->stat_max[i], bonus, FALSE);
-	
+
 				/* Save the resulting stat maximum */
 				p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
         		}
@@ -578,7 +713,7 @@ static bool get_stats(int Ind, int stat_order[6])
 			else if (stat_order[i] <= 16) free_points -= (6 + (stat_order[i] - 14) * 3);
 			else free_points -= 16; /* ouch */
 		}
-		
+
 		/* If client has been hacked or a version desync error occured, quit. */
 		if (free_points < 0) return FALSE;
 
@@ -589,7 +724,7 @@ static bool get_stats(int Ind, int stat_order[6])
 			stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
 		}
 	}
-	
+
 	return TRUE;
 }
 
@@ -699,96 +834,65 @@ static void get_history(int Ind)
 	social_class = randint(4);
 
 	/* Starting place */
-	switch (p_ptr->prace)
-	{
-		case RACE_HUMAN:
-		case RACE_DUNADAN:
-		case RACE_YEEK:
-		{
-			chart = 1;
-			break;
-		}
-
-		case RACE_HALF_ELF:
-		{
-			chart = 4;
-			break;
-		}
-
-		case RACE_ELF:
-		case RACE_HIGH_ELF:
-		{
-			chart = 7;
-			break;
-		}
-
-		case RACE_HOBBIT:
-		{
-			chart = 10;
-			break;
-		}
-
-		case RACE_GNOME:
-		{
-			chart = 13;
-			break;
-		}
-
-		case RACE_DWARF:
-		{
-			chart = 16;
-			break;
-		}
-
-		case RACE_HALF_ORC:
-		case RACE_GOBLIN:
-		{
-			chart = 19;
-			break;
-		}
-
-		case RACE_HALF_TROLL:
-		{
-			chart = 22;
-			break;
-		}
-
-		case RACE_ENT:
-		{
-			chart = 94;
-			break;
-		}
-
-		case RACE_DRACONIAN:
-		{
-			chart = 89;
-			break;
-		}
+	switch (p_ptr->prace) {
+	case RACE_HUMAN:
+	case RACE_DUNADAN:
+	case RACE_YEEK:
+		chart = 1;
+		break;
+	case RACE_HALF_ELF:
+		chart = 4;
+		break;
+	case RACE_ELF:
+	case RACE_HIGH_ELF:
+		chart = 7;
+		break;
+	case RACE_HOBBIT:
+		chart = 10;
+		break;
+	case RACE_GNOME:
+		chart = 13;
+		break;
+	case RACE_DWARF:
+		chart = 16;
+		break;
+	case RACE_HALF_ORC:
+	case RACE_GOBLIN:
+		chart = 19;
+		break;
+	case RACE_HALF_TROLL:
+		chart = 22;
+		break;
+	case RACE_ENT:
+		chart = 94;
+		break;
+	case RACE_DRACONIAN:
+		chart = 89;
+		break;
+	case RACE_DARK_ELF:
+		chart = 120;
+		break;
+	case RACE_VAMPIRE:
+		chart = 130;
+		break;
 #ifdef ENABLE_MAIA
-		case RACE_MAIA:
-		{
-			chart = 100;
-			break;
-		}
+	case RACE_MAIA:
+		chart = 100;
+		break;
 #endif
 #ifdef ENABLE_KOBOLD
-		case RACE_KOBOLD:
-		{
-			chart = 103;
-			break;
-		}
+	case RACE_KOBOLD:
+		chart = 110;
+		break;
 #endif
-		default:
-		{
-			chart = 0;
-			break;
-		}
+	default:
+		chart = 0;
+		break;
 	}
 
 
 	/* Process the history */
-	while (chart)
-	{
+	while (chart) {
 		/* Start over */
 		i = 0;
 
@@ -832,14 +936,12 @@ static void get_history(int Ind)
 	i = 0;
 
 	/* Collect the history */
-	while (--tries)
-	{
+	while (--tries) {
 		/* Extract remaining length */
 		n = strlen(s);
 
 		/* All done */
-		if (n < 60)
-		{
+		if (n < 60) {
 			/* Save one line of history */
 			strcpy(p_ptr->history[i++], s);
 
@@ -1041,7 +1143,7 @@ static void player_wipe(int Ind)
 
 	/* Assume no cheating */
 	p_ptr->noscore = 0;
-	
+
 	/* clear the wilderness map */
 	for (i = 0; i < MAX_WILD_8; i++)
 		p_ptr->wild_map[i] = 0;
@@ -1700,7 +1802,7 @@ static void player_outfit(int Ind)
 		o_ptr->number = 5;
 		do_player_outfit();
 	}
-	
+
 	/* Normal Lantern for Runemasters */
 	if (p_ptr->pclass == CLASS_RUNEMASTER) {
 		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
@@ -1712,7 +1814,7 @@ static void player_outfit(int Ind)
 		o_ptr->number = rand_range(3, 7);
 		do_player_outfit();
 	}
-	
+
 	/* hack for mimics: pick a type of poly ring - C. Blue */
 #if 0 /* disabled for now */
 	if (p_ptr->pclass == CLASS_MIMIC) {
