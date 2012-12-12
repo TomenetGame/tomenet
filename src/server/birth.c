@@ -259,101 +259,82 @@ static hist_type bg[] =
 
 
 	/* Draconian (text inspired by Hengband -- hey, they had Draconians too?) */
+        {"You are ",						100, 89, 90, 50 },
+
+        {"the oldest child of a Draconian ",			30, 90, 91, 55 },
+        {"the youngest child of a Draconian ",			50, 90, 91, 50 },
+        {"the adopted child of a Draconian ",			55, 90, 91, 50 },
+        {"an orphaned child of a Draconian ",			60, 90, 91, 45 },
+        {"one of several children of a Draconian ",		85, 90, 91, 50 },
+        {"the only child of a Draconian ",			100, 90, 91, 55 },
+
+        //{"Beggar. ", 10, 90, 91, 20 },
+        {"Thief. ",						21, 91, 92, 30 },
+        {"Sailor. ",						26, 91, 92, 45 },
+        {"Mercenary. ",						42, 91, 92, 45 },
+        {"Warrior. ",						73, 91, 92, 50 },
+        {"Merchant. ",						78, 91, 92, 50 },
+        {"Artisan. ",						85, 91, 92, 55 },
+        {"Healer. ",						89, 91, 92, 60 },
+        {"Priest. ",						94, 91, 92, 65 },
+        {"Mage. ",						97, 91, 92, 70 },
+        //{"Scholar. ", 99, 90, 91, 80 },
+        //{"Noble. ", 100, 90, 91, 100 },
+
+        {"You have ",						100, 92, 93, 50 },
+
+        {"charcoal wings, charcoal skin and a smoke-gray belly. ",11, 93, 94, 50 },
+        {"bronze wings, bronze skin, and a copper belly. ",	16, 93, 94, 50 },
+        {"golden wings, and golden skin. ",			24, 93, 94, 50 },
+        {"white wings, and white skin. ",			26, 93, 94, 60 },
+        {"blue wings, blue skin, and a cyan belly. ",		32, 93, 94, 50 },
+        {"multi-hued wings, and multi-hued skin. ",		33, 93, 94, 70 },
+        {"brown wings, and brown skin. ",			37, 93, 94, 45 },
+        {"black wings, black skin, and a white belly. ",	41, 93, 94, 50 },
+        {"lavender wings, lavender skin, and a white belly. ",	48, 93, 94, 50 },
+        {"green wings, green skin and yellow belly. ",		65, 93, 94, 50 },
+        {"green wings, and green skin. ",			75, 93, 94, 50 },
+        {"red wings, and red skin. ",				88, 93, 94, 50 },
+        {"black wings, and black skin. ",			94, 93, 94, 50 },
+        {"metallic skin, and shining wings. ",			100, 93, 94, 55},
+
 #if 0
-        {"You are ", 100, 89, 135, 50 },
-
-        {"the oldest child of a Draconian ", 30, 135, 90, 55 },
-        {"the youngest child of a Draconian ", 50, 135, 90, 50 },
-        {"the adopted child of a Draconian ", 55, 135, 90, 50 },
-        {"an orphaned child of a Draconian ", 60, 135, 90, 45 },
-        {"one of several children of a Draconian ", 85, 135, 90, 50 },
-        {"the only child of a Draconian ", 100, 135, 90, 55 },
-
-        {"Beggar. ", 10, 90, 91, 20 },
-        {"Thief. ", 21, 90, 91, 30 },
-        {"Sailor. ", 26, 90, 91, 45 },
-        {"Mercenary. ", 42, 90, 91, 45 },
-        {"Warrior. ", 73, 90, 91, 50 },
-        {"Merchant. ", 78, 90, 91, 50 },
-        {"Artisan. ", 85, 90, 91, 55 },
-        {"Healer. ", 89, 90, 91, 60 },
-        {"Priest. ", 94, 90, 91, 65 },
-        {"Mage. ", 97, 90, 91, 70 },
-        {"Scholar. ", 99, 90, 91, 80 },
-        {"Noble. ", 100, 90, 91, 100 },
-
-        {"You have ", 100, 91, 136, 50 },
-
-        {"charcoal wings, charcoal skin and a smoke-gray belly.", 11, 136, 0, 50 },
-        {"bronze wings, bronze skin, and a copper belly.", 16, 136, 0, 50 },
-        {"golden wings, and golden skin.", 24, 136, 0, 50 },
-        {"white wings, and white skin.", 26, 136, 0, 60 },
-        {"blue wings, blue skin, and a cyan belly.", 32, 136, 0, 50 },
-        {"multi-hued wings, and multi-hued skin.", 33, 136, 0, 70 },
-        {"brown wings, and brown skin.", 37, 136, 0, 45 },
-        {"black wings, black skin, and a white belly.", 41, 136, 0, 50 },
-        {"lavender wings, lavender skin, and a white belly.", 48, 136, 0, 50 },
-        {"green wings, green skin and yellow belly.", 65, 136, 0, 50 },
-        {"green wings, and green skin.", 75, 136, 0, 50 },
-        {"red wings, and red skin.", 88, 136, 0, 50 },
-        {"black wings, and black skin.", 94, 136, 0, 50 },
-        {"metallic skin, and shining wings.", 100, 136, 0, 55},
+	{"You have a Green Eagle.",				30, 94, 0, 40},
+	{"You have a Blue Eagle.",				55, 94, 0, 60},
+	{"You have a Brown Eagle.",				80, 94, 0, 80},
+	{"You have a Bronze Eagle.",				90, 94, 0, 100},
+	{"You have a Golden Eagle.",				100, 94, 0, 120},
+#else
+	{"",							100, 94, 0, 50},
 #endif
-	{"You are one of several children of a dragon and a human. ",	85, 89, 91, 50},
-	{"You are the only child of a dragon and a human. ",		100, 89, 91, 60},
-
-	{"You have a Green Eagle.",				30, 91, 0, 40},
-	{"You have a Blue Eagle.",				55, 91, 0, 60},
-	{"You have a Brown Eagle.",				80, 91, 0, 80},
-	{"You have a Bronze Eagle.",				90, 91, 0, 100},
-	{"You have a Gold Eagle.",				100, 91, 0, 120},
 
 
 	/* Ent (text inspired by Hengband) */
-	{"You are of an unknown generation of the Ents. ",	30, 94, 95, 30},
-	{"You are of the third generation of the Ents. ",	40, 94, 95, 50},
-	{"You are of the second generation of the Ents. ",	60, 94, 95, 60},
-	{"You are of the first beings who awoke on Arda. ",	100, 94, 95, 80},
+	{"You are of an unknown generation of the Ents. ",	30, 95, 96, 30},
+	{"You are of the third generation of the Ents. ",	40, 95, 96, 50},
+	{"You are of the second generation of the Ents. ",	60, 95, 96, 60},
+	{"You are of the first beings who awoke on Arda. ",	100, 95, 96, 80},
 
-	{"You have green skin and unflexible members.",		50, 95, 0, 50},
-	{"You have brown skin and unflexible members.",		100, 95, 0, 50},
-#if 0
-        {"You are the lost offspring of ", 25, 137, 138, 40},
-        {"You are the wandering offspring of ", 50, 137, 138, 50},
-        {"You are the only offspring of ", 75, 137, 138, 60},
-        {"You are the beloved offspring of ", 100, 137, 138, 70},
+        {"You have ",						100, 96, 98, 50},
 
-        {"an Ent whose name you have no recollection of. ", 10, 138, 139, 35},
-        {"a solitary Ent. ", 35, 138, 139, 50},
-        {"a member of a farflung Entish band. ", 55, 138, 139, 60},
-        {"a leader of a prosperous community of Ents. ", 70, 138, 139, 70},
-        {"an Entish Forestwarden. ", 81, 138, 139, 80},
-        {"a respected Entish sage. ", 91, 138, 139, 90},
-        {"an Entwife whose memory men cherish. ", 96, 138, 139, 100},
-        {"Fangorn himself. ", 100, 138, 139, 110},
+        {"three fingers and toes, and are covered in ",		5, 98, 99, 50},
+        {"four fingers and toes, and are covered in ",		20, 98, 99, 50},
+        {"five fingers and toes, and are covered in ",		40, 98, 99, 50},
+        {"six fingers and toes, and are covered in ",		60, 98, 99, 50},
+        {"seven fingers and toes, and are covered in ",		80, 98, 99, 50},
+        {"eight fingers and toes, and are covered in ",		95, 98, 99, 50},
+        {"nine fingers and toes, and are covered in ",		100, 98, 99, 50},
 
-
-        {"You have ", 100, 139, 140, 50},
-
-        {"three fingers and toes, and are covered in ", 5, 140, 141, 50},
-        {"four fingers and toes, and are covered in ", 20, 140, 141, 50},
-        {"five fingers and toes, and are covered in ", 40, 140, 141, 50},
-        {"six fingers and toes, and are covered in ", 60, 140, 141, 50},
-        {"seven fingers and toes, and are covered in ", 80, 140, 141, 50},
-        {"eight fingers and toes, and are covered in ", 95, 140, 141, 50},
-        {"nine fingers and toes, and are covered in ", 100, 140, 141, 50},
-
-        {"scaly brown skin.", 10, 141, 0, 50},
-        {"rough brown skin.", 20, 141, 0, 50},
-        {"smooth grey skin.", 30, 141, 0, 50},
-        {"dark green skin.", 40, 141, 0, 50},
-        {"mossy skin.", 50, 141, 0, 50},
-        {"deep brown skin.", 60, 141, 0, 50},
-        {"pale brown, flaky skin.", 70, 141, 0, 50},
-        {"rich chocolate-colored skin.", 80, 141, 0, 50},
-        {"ridged black skin.", 90, 141, 0, 50},
-        {"thick, almost corky skin.", 100, 141, 0, 50},
-#endif
+        {"scaly brown skin.",					10, 99, 0, 50},
+        {"rough brown skin.",					20, 99, 0, 50},
+        {"smooth grey skin.",					30, 99, 0, 50},
+        {"dark green skin.",					40, 99, 0, 50},
+        {"mossy skin.",						50, 99, 0, 50},
+        {"deep brown skin.",					60, 99, 0, 50},
+        {"pale brown, flaky skin.",				70, 99, 0, 50},
+        {"rich chocolate-colored skin.",			80, 99, 0, 50},
+        {"ridged black skin.",					90, 99, 0, 50},
+        {"thick, almost corky skin.",				100, 99, 0, 50},
 
 
 	/* Maiar background */
@@ -426,48 +407,58 @@ static hist_type bg[] =
 
 
 	/* Dark-Elf (text inspired by Hengband) */
-	{"",							100,120,0,50},
-#if 0
-        {"You are one of several children of a Dark Elven ",      85, 69, 70, 45},
-        {"You are the only child of a Dark Elven ",          100, 69, 70, 55},
+        {"You are one of several children of a Dark Elven ",	85, 120, 121, 45},
+        {"You are the only child of a Dark Elven ",		100, 120, 121, 55},
 
-        {"Warrior.  ", 50, 70, 71, 60 },
-        {"Warlock.  ", 80, 70, 71, 75 },
-        {"Noble.  ", 100, 70, 71, 95 },
+        {"Warrior. ",						50, 121, 122, 60},
+        {"Warlock. ",						80, 121, 122, 75},
+        {"Noble. ",						100, 121, 122, 95},
 
-        {"You have black eyes, ", 100, 71, 72, 50},
+        {"You have black eyes, ",				60, 122, 123, 50},
+        {"You have red eyes, ",					85, 122, 123, 50},
+        {"You have purple eyes, ",				100, 122, 123, 50},
 
-        {"straight ",                        70, 72, 73, 50},
-        {"wavy ",                            90, 72, 73, 50},
-        {"curly ",                          100, 72, 73, 50},
+        {"straight ",						70, 123, 124, 50},
+        {"wavy ",						90, 123, 124, 50},
+        {"curly ",						100, 123, 124, 50},
 
-        {"black hair and a very dark complexion.", 100, 73, 0, 50 },
-#endif
+        {"black hair ",						50, 124, 125, 50 },
+        {"white hair ",						100, 124, 125, 50 },
+
+        {"and a very dark complexion.",				100, 125, 0, 0},
 
 
 	/* Vampire (text inspired by Hengband) */
-	{"",							100,130,0,50},
-#if 0
-        {"You arose from an unmarked grave. ", 20, 113, 114, 50 },
-        {"In life you were a simple peasant, the victim of a powerful Vampire Lord. ", 40, 113, 114, 50 },
-        {"In life you were a Vampire Hunter, but they got you. ", 60, 113, 114, 50 },
-        {"In life you were a Necromancer. ", 80, 113, 114, 50 },
-        {"In life you were a powerful noble. ", 95, 113, 114, 50 },
-        {"In life you were a powerful and cruel tyrant. ", 100, 113, 114, 50 },
-        {"You have ", 100, 114, 115, 50 },
+        {"You arose from an unmarked grave. ", 			20,130,132,30},
+        {"In life you were a simple peasant. ",			50,130,132,40},
+        {"In life you were a decent citizen. ",			70,130,132,50},
+//    	    {"the victim of a powerful Vampire Lord. ",		100,131,132,0},
+        {"In life you were a Vampire Hunter, but they got you. ",75,130,132,55},
+        {"In life you were a Necromancer. ",			80,130,132,60},
+        {"In life you were a powerful noble. ",			95,130,132,70},
+        {"In life you were a powerful and cruel tyrant. ",	100,130,132,75},
 
-        {"jet-black hair, ", 25, 115, 116, 50 },
-        {"matted brown hair, ", 50, 115, 116, 50 },
-        {"white hair, ", 75, 115, 116, 50 },
-        {"a hairless head, ", 100, 115, 116, 50 },
+	{"You were bitten by ",					100,132,133,50},
 
-        {"eyes like red coals, ", 25, 116, 117, 50 },
-        {"blank white eyes, ", 50, 116, 117, 50 },
-        {"feral yellow eyes, ", 75, 116, 117, 50 },
-        {"bloodshot red eyes, ", 100, 116, 117, 50 },
+	{"a renegade vampire. ",				20,133,134,40},
+	{"a vampire serving an unknown house. ",		50,133,134,45},
+	{"a vampire serving a major house. ",			85,133,134,50},
+	{"an actual vampire noble. ",				95,133,134,55},
+	{"a powerful vampire lord himself. ",			100,133,134,60},
 
-        {"and a deathly pale complexion.", 100, 117, 0, 50 },
-#endif
+        {"You have ",						100,134,135,50},
+
+        {"jet-black hair, ",					25,135,136,50},
+        {"matted brown hair, ",					50,135,136,50},
+        {"white hair, ",					75,135,136,50},
+        {"a hairless head, ",					100,135,136,50},
+
+        {"eyes like red coals, ",				25,136,137,50},
+        {"blank white eyes, ",					50,136,137,50},
+        {"feral yellow eyes, ",					75,136,137,50},
+        {"bloodshot red eyes, ",				100,136,137,50},
+
+        {"and a deathly pale complexion.",			100,137,0,50},
 };
 
 
@@ -864,7 +855,7 @@ static void get_history(int Ind)
 		chart = 22;
 		break;
 	case RACE_ENT:
-		chart = 94;
+		chart = 95;
 		break;
 	case RACE_DRACONIAN:
 		chart = 89;
