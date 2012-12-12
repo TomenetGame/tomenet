@@ -803,7 +803,7 @@ static void get_extra(int Ind)
 /*
  * Get the racial history, and social class, using the "history charts".
  */
-static void get_history(int Ind)
+void get_history(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int             i, n, chart, roll, social_class;

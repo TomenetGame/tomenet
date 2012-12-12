@@ -4992,6 +4992,20 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "  Min: %d, Max: %d, Avg: %d.", min, max, avg);
 				return;
 			}
+			/* Reroll a player's background history text (for d-elves/vampires/draconians, maybe ents) */
+			else if (prefix(message, "/rollhistory")) {
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /rollhistory <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE, FALSE);
+				if (!p) return;
+				get_history(p);
+				Players[p]->redraw |= PR_HISTORY; //update the client's history text
+				msg_format(Ind, "Rerolled history for %s.", token[1]);
+				return;
+			}
 			/* Turn all non-everlasting items inside a house to everlasting items if the owner is everlasting */
 			else if (prefix(message, "/everhouse")) {
 				/* house_contents_chmod .. (scan_obj style) */
