@@ -5205,10 +5205,17 @@ int Send_study(int ind, bool study)
 
 int Send_bpr(int ind, byte bpr, byte attr)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
+	int Ind2;
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL;
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (Players[ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if ((Ind2 = get_esp_link(ind, LINKF_VIEW, &p_ptr2))) {
+		connp2 = Conn[p_ptr2->conn];
+		Packet_printf(&connp2->c, "%c%c%c", PKT_BPR, bpr, attr);
+	}
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for bpr (%d.%d.%d)",
 			ind, connp->state, connp->id));
