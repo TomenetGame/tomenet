@@ -300,23 +300,25 @@ void initialize_player_ins_files(void) {
 		strcpy(auto_inscription_tag[i], "");
 	}
 
+#if 0 /* disabled, since everyone only has 1 account anyway. It just disturbs macros if you have a character of same name. */
+	/* Access the "account" ins file */
+	sprintf(buf, "%s.ins", nick);
+#else /* this should be just fine as replacement */
+	sprintf(buf, "global.ins");
+#endif
+	load_auto_inscriptions(buf);
+
 	/* Access the "race" ins file */
-	if (race < Setup.max_race)
-	{
+	if (race < Setup.max_race) {
 		sprintf(buf, "%s.ins", race_info[race].title);
 		load_auto_inscriptions(buf);
 	}
 
 	/* Access the "class" ins file */
-	if (class < Setup.max_class)
-	{
+	if (class < Setup.max_class) {
 		sprintf(buf, "%s.ins", class_info[class].title);
 		load_auto_inscriptions(buf);
 	}
-
-	/* Access the "account" ins file */
-	sprintf(buf, "%s.ins", nick);
-	load_auto_inscriptions(buf);
 
 	/* Access the "character" ins file */
 	/* hack: only if account and character name aren't the same */
