@@ -9455,7 +9455,8 @@ Warrior is strongly recommended.
     but sometimes a hassle for ranged/caster classes.
     At level 40 they will need less and less food to sustain themselves.
     Vampire royalties will require the least amount of food, independant of
-    their level, enabling them to survive a very long time without feeding.
+    their level, enabling them to survive a very long time without feeding -
+    even an item granting 'Slow Digestion' will not improve this any further.
     Vampires hate 'Blunt' weapons, get a penalty on 'Divination' magic school,
     but receive a bonus on 'Mental Intrusion' and a large bonus on 'Necromancy'
     and all aura skills and a small bonus on 'Traumaturgy'. They cannot use
