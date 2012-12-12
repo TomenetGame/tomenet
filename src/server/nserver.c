@@ -3499,9 +3499,9 @@ static int Receive_quit(int ind)
 		Destroy_connection(ind, "receive error in quit");
 		return -1;
 	}
-	
+
 	do_quit(ind, 0);
-	
+
 	return 1;
 }
 
@@ -3548,15 +3548,21 @@ static int Receive_login(int ind){
 			}
 		}
 
-		if (Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE) != SUCCESS)
-		{
-			Destroy_connection(ind, "The server didn't like your nickname, realname or hostname");
+		if (!connp->nick[0]) {
+			Destroy_connection(ind, "You need to enter an account name and password!");
+			return -1;
+		}
+		if (!connp->pass[0]) {
+			Destroy_connection(ind, "You need to enter a password!");
+			return -1;
+		}
+		if (Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE) != SUCCESS) {
+			Destroy_connection(ind, "The server didn't like your accountname, username or hostname");
 			return(-1);
 		}
 
 		/* Password obfuscation introduced in pre-4.4.1a client or 4.4.1.1 */
-		if (connp->pass && is_newer_than(&connp->version, 4, 4, 1, 0, 0, 0))
-		{
+		if (connp->pass && is_newer_than(&connp->version, 4, 4, 1, 0, 0, 0)) {
 			/* Use memfrob for the password - mikaelh */
 			my_memfrob(connp->pass, strlen(connp->pass));
 		}

@@ -13680,21 +13680,19 @@ SOLUTION:   Read the error message displayed in a message box on quitting.
                     version than your client is.
             "Sorry, the game is full.  Try again later."
                     Wow the game is really full!
-            "That nickname is already in use."
-                    Choose a different character name.
-            "The server didn't like your nickname, realname or hostname"
+            "The server didn't like your accountname, username or hostname"
             (or just "Net input error")
-                    Player characters are identified by 3 names:
-                    -Nickname (character's name)
-                    -Realname (account name)
+                    Player characters are identified by 4 names:
+                    -Character name
+                    -Account name
+                    -Username (The name they are logged on with on their PC)
                     -Hostname (The hostname of the connecting computer)
                     The hostname is not really important. However, make sure
-                    that all of these 3 names may only consist of letters,
+                    that all of these names may only consist of letters,
                     numbers, spaces, and all other characters with an ASCII
                     code between 32 (SPACE) and 122 ('z').
-                    The realname and hostname must not be empty. The nickname
-                    (character name) needs to start with a letter ('A'..'Z'
-                    or 'a'..'z').
+                    The username and hostname must not be empty. The character
+                    name needs to start with a letter ('A'..'Z' or 'a'..'z').
             "There is already another character from this user/machine on the
             server."
                     You tried to login with two characters from the same
