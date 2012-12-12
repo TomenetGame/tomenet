@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. December 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. December 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.0 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9448,11 +9448,14 @@ Warrior is strongly recommended.
     They resist time, darkness, nether, poison and it's hard to drain their
     life force. They also have partially life leeching (vampiric) attacks
     (see '(5.15) Vampirism' for more information).
+    They become able to turn into a bat at level 20.
     Vampires cannot eat normal food, instead they need to feed off living
     creatures. This means that you need to kill monsters in melee combat in
     order to satisfy your hunger, which might be quite easy for melee classes
     but sometimes a hassle for ranged/caster classes.
-    They become able to turn into a bat at level 20.
+    At level 40 they will need less and less food to sustain themselves.
+    Vampire royalties will require the least amount of food, independant of
+    their level, enabling them to survive a very long time without feeding.
     Vampires hate 'Blunt' weapons, get a penalty on 'Divination' magic school,
     but receive a bonus on 'Mental Intrusion' and a large bonus on 'Necromancy'
     and all aura skills and a small bonus on 'Traumaturgy'. They cannot use
