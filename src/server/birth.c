@@ -363,7 +363,7 @@ static hist_type bg[] =
 	    {"that stayed in the East. ",				100,103,54,0},
 	    {"to spend some time in the mortal land. ",			100,104,50,0},
 	    {"in the West. ",						50,105,50,0},
-	    {"in the West. ",						50,105,54,0},
+	    {"in the West. ",						100,105,54,0},
 	//{"Your physical form is Elven in feature. ", 		50, 102, 54, 70},
 	//{"You manifest as a Human to casual observers. ", 	100, 102, 50, 70},
 
