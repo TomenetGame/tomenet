@@ -1892,6 +1892,7 @@ static void player_setup(int Ind, bool new)
 	dun_level *l_ptr;
 
 	bool unstaticed = FALSE;
+	bool panic = p_ptr->panic;
 
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -2118,7 +2119,7 @@ static void player_setup(int Ind, bool new)
 		}
 
 		/* for IDDC: We might be trying to log-scum here! In dubio pro duriore =P */
-		if (in_irondeepdive(&p_ptr->wpos)
+		if (in_irondeepdive(&p_ptr->wpos) && !panic
 		    && !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
 			p_ptr->IDDC_logscum = TRUE;
 	} else if (p_ptr->wpos.wz) {
@@ -2137,7 +2138,7 @@ static void player_setup(int Ind, bool new)
 			p_ptr->dlev_id = l_ptr->id;
 
 			/* for IDDC: We might be trying to log-scum here! In dubio pro duriore =P */
-			if (in_irondeepdive(&p_ptr->wpos)
+			if (in_irondeepdive(&p_ptr->wpos) && !panic
 			    && !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
 				p_ptr->IDDC_logscum = TRUE;
 		}
