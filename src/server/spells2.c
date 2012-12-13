@@ -6265,11 +6265,19 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
 
 	/* Hack -- Use an actual "target" */
 	if ((dir == 5) && target_okay(Ind)) {
+		cave_type **zcave = getcave(&p_ptr->wpos);
+
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 
-		/* Allow targetting the item/floor of a specific grid with a bolt spell */
-		if (!(flg & PROJECT_BEAM)) flg &= ~PROJECT_THRU;
+		/* Allow targetting the item/floor of a specific grid with a bolt spell
+		   ..if no monster on it! Assume that the floor won't get hit if the monster
+		     instead gets hit, basically. Makes sense for bolt spells and prevents
+		     too much loot destruction. */
+		if (!(flg & PROJECT_BEAM) &&
+		    zcave && /* paranoia */
+		    zcave[ty][tx].m_idx == 0)
+			flg &= ~PROJECT_THRU;
 	}
 
 	/* Analyze the "dir" and the "target", do NOT explode */
