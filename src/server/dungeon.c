@@ -2827,7 +2827,7 @@ static void do_recall(int Ind, bool bypass)
 			{
 				if (!is_admin(p_ptr))
 					p_ptr->recall_pos.wz = 0;
-				else
+				else if (p_ptr->recall_pos.wz != 0) /* got zero already from get_max_depth()? then don't give 'nowhere' msg twice */
 					msg_print(Ind, "You feel yourself yanked toward nowhere...");
 			}
 
@@ -2877,7 +2877,7 @@ static void do_recall(int Ind, bool bypass)
 			{
 				if (!is_admin(p_ptr))
 					p_ptr->recall_pos.wz = 0;
-				else
+				else if (p_ptr->recall_pos.wz != 0) /* got zero already from get_max_depth()? then don't give 'nowhere' msg twice */
 					msg_print(Ind, "You feel yourself yanked toward nowhere...");
 			}
 
