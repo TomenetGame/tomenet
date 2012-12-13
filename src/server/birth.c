@@ -2118,7 +2118,9 @@ static void player_setup(int Ind, bool new)
 		}
 
 		/* for IDDC: We might be trying to log-scum here! In dubio pro duriore =P */
-		if (in_irondeepdive(&p_ptr->wpos)) p_ptr->IDDC_logscum = TRUE;
+		if (in_irondeepdive(&p_ptr->wpos)
+		    && !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
+			p_ptr->IDDC_logscum = TRUE;
 	} else if (p_ptr->wpos.wz) {
 		struct dun_level *l_ptr;
 		l_ptr = getfloor(wpos);
@@ -2135,7 +2137,9 @@ static void player_setup(int Ind, bool new)
 			p_ptr->dlev_id = l_ptr->id;
 
 			/* for IDDC: We might be trying to log-scum here! In dubio pro duriore =P */
-			if (in_irondeepdive(&p_ptr->wpos)) p_ptr->IDDC_logscum = TRUE;
+			if (in_irondeepdive(&p_ptr->wpos)
+			    && !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
+				p_ptr->IDDC_logscum = TRUE;
 		}
 		else p_ptr->IDDC_logscum = FALSE; /* It's still the same level we left [a moment ago], np. */
 
@@ -2166,9 +2170,9 @@ static void player_setup(int Ind, bool new)
 		i = p_ptr->view_perma_grids;
 		p_ptr->view_perma_grids = TRUE;
 
-//		if (IS_DAY) world_surface_day(wpos); 
+//		if (IS_DAY) world_surface_day(wpos);
 //		else world_surface_night(wpos);
-		if (IS_DAY) player_day(Ind); 
+		if (IS_DAY) player_day(Ind);
 		else player_night(Ind);
 
 		p_ptr->view_perma_grids = i;
