@@ -1447,8 +1447,7 @@ void cmd_character(void)
 	/* Save screen */
 	Term_save();
 
-	while (!done)
-	{
+	while (!done) {
 		/* Display player info */
 		display_player(hist);
 
@@ -1458,35 +1457,33 @@ void cmd_character(void)
 		/* Wait for key */
 		ch = inkey();
 
+                /* specialty: allow chatting from within here -- to tell others about your lineage ;) - C. Blue */
+                if (ch == ':') {
+                        cmd_message();
+                        continue;
+                }
+
 		/* Check for "display history" */
-		if (ch == 'h' || ch == 'H')
-		{
+		if (ch == 'h' || ch == 'H') {
 			/* Toggle */
 			hist = !hist;
 		}
 
 		/* Dump */
-		if ((ch == 'f') || (ch == 'F'))
-		{
+		if ((ch == 'f') || (ch == 'F')) {
 			strnfmt(tmp, 79, "%s.txt", cname);
-			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 79))
-			{
+			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 79)) {
 				if (tmp[0] && (tmp[0] != ' '))
-				{
 					file_character(tmp, FALSE);
-				}
 			}
 		}
 
 		/* Take a screenshot */
 		if (ch == KTRL('T'))
-		{
 			xhtml_screenshot("screenshot????");
-		}
 
 		/* Check for quit */
-		if (ch == 'q' || ch == 'Q' || ch == ESCAPE)
-		{
+		if (ch == 'q' || ch == 'Q' || ch == ESCAPE) {
 			/* Quit */
 			done = 1;
 		}
