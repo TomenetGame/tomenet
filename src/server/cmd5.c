@@ -433,7 +433,7 @@ static void do_mimic_power(int Ind, int power, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
-	int rlev = r_ptr->level;
+	int rlev = (r_ptr->level + p_ptr->lev * 2 + 1) / 3;
 	int j, chance;
 	magic_type *s_ptr = &innate_powers[power];
 
@@ -653,7 +653,6 @@ static void do_mimic_power(int Ind, int power, int dir)
     case 59:
 // RF5_BLIND			0x10000000	/* Blind Player */
     case 60:
-//      msg_print(Ind, "Haha, you wish ... :)");
 // RF5_CONF			0x20000000	/* Confuse Player */
     case 61:
 // RF5_SLOW			0x40000000	/* Slow Player */
@@ -678,7 +677,9 @@ static void do_mimic_power(int Ind, int power, int dir)
 	return;
 // RF6_HEAL			0x00000004	/* Heal self */
     case 66:
-	hp_player(Ind, rlev * 2);
+	if (p_ptr->lev >= 40) hp_player(Ind, ((rlev + 100) * (rlev + 100)) / 100);//225..400 (335 as eg avg)
+	else hp_player(Ind, ((rlev + 5) * (rlev + 30)) / 14);
+	//hp_player(Ind, rlev * 2);
 	break;
 //#define RF6_S_ANIMALS                   0x00000008      /* Summon animals */ 
     case 67:
@@ -775,7 +776,7 @@ void do_mimic_power_aux(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	int rad;
-	int rlev = r_ptr->level;
+	int rlev = (r_ptr->level + p_ptr->lev * 2 + 1) / 3;
 	magic_type *s_ptr = &innate_powers[p_ptr->current_spell];
 
 	/* Determine the radius of the blast */
@@ -1131,22 +1132,22 @@ void do_mimic_power_aux(int Ind, int dir)
 // RF5_SCARE			0x08000000	/* Frighten Player */
     case 59:
         sprintf(p_ptr->attacker, " focusses on your mind");
-        fire_bolt(Ind, GF_TURN_ALL, dir, damroll(2, 6) + (rlev / 3), "");
+        fire_grid_bolt(Ind, GF_TURN_ALL, dir, damroll(2, 6) + (rlev / 3), p_ptr->attacker);
         break;
 // RF5_CONF			0x20000000	/* Confuse Player */
     case 61:
         sprintf(p_ptr->attacker, " focusses on your mind");
-        fire_bolt(Ind, GF_CONFUSION, dir, damroll(2, 6) + (rlev / 3), "");
+        fire_grid_bolt(Ind, GF_CONFUSION, dir, damroll(2, 6) + (rlev / 3), p_ptr->attacker);
         break;
 // RF5_SLOW			0x40000000	/* Slow Player */
     case 62:
         sprintf(p_ptr->attacker, " concentrates on your body");
-        fire_bolt(Ind, GF_OLD_SLOW, dir, damroll(2, 6) + (rlev / 3), "");
+        fire_grid_bolt(Ind, GF_OLD_SLOW, dir, damroll(2, 6) + (rlev / 3), p_ptr->attacker);
         break;
 // RF5_HOLD			0x80000000	/* Paralyze Player */
     case 63:
         sprintf(p_ptr->attacker, " concentrates on your body");
-        fire_bolt(Ind, GF_STASIS, dir, damroll(2, 6) + (rlev / 3), "");
+        fire_grid_bolt(Ind, GF_STASIS, dir, damroll(2, 6) + (rlev / 3), p_ptr->attacker);
         break;
 // RF6_HAND_DOOM		0x00000002	/* Should we...? */ /* YES! */
     case 65:
@@ -1162,16 +1163,21 @@ void do_mimic_power_aux(int Ind, int dir)
 // RF6_TELE_AWAY
     case 73:
         sprintf(p_ptr->attacker, " invokes a teleportation spell");
-        (void)fire_beam(Ind, GF_AWAY_ALL, dir, rlev, "");
+        (void)fire_beam(Ind, GF_AWAY_ALL, dir, rlev, p_ptr->attacker);
 	break;
 // RF6_TRAPS			0x00002000	/* Create Traps */
     case 77:
         sprintf(p_ptr->attacker, " cackles evilly");
 #if 0 /* Note: These traps would be exploitable for xp badly. */
 	//msg_print(Ind, "You cackle evilly.");
-	fire_ball(Ind, GF_MAKE_TRAP, dir, 1, 1 + rlev / 30, "");
+	fire_ball(Ind, GF_MAKE_TRAP, dir, 1, 1 + rlev / 30, p_ptr->attacker);
 #endif
         break;
+// RF6_FORGET
+    case 78:
+        sprintf(p_ptr->attacker, " tries to blank your mind");
+        fire_grid_bolt(Ind, GF_CONFUSION, dir, damroll(4, 6) + (rlev / 2), p_ptr->attacker);
+	break;
 
 	default: /* For some reason we got called for a spell that
 		    doesn't require a direction */
@@ -1281,15 +1287,18 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 	p_ptr->mimic_seed = rand_int(0xFFFF) << 16;
 	p_ptr->mimic_seed += rand_int(0xFFFF);
 
+	/* Penalise form-switching just for using a spell */
+	p_ptr->csp = 0;
+
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA | PU_HP | PU_BONUS | PU_VIEW);
 
 	/* Tell the client */
-	p_ptr->redraw |= PR_VARIOUS;
+	p_ptr->redraw |= PR_VARIOUS | PR_MANA;
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-	
+
 #if POLY_RING_METHOD == 1
 	/* clear temporary mimicking from polymorph ring */
 	p_ptr->tim_mimic = 0;
