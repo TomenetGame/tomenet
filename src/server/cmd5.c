@@ -1288,13 +1288,13 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 	p_ptr->mimic_seed += rand_int(0xFFFF);
 
 	/* Penalise form-switching just for using a spell */
-	p_ptr->csp = 0;
+	p_ptr->csp /= 2;
 
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA | PU_HP | PU_BONUS | PU_VIEW);
 
 	/* Tell the client */
-	p_ptr->redraw |= PR_VARIOUS | PR_MANA;
+	p_ptr->redraw |= PR_VARIOUS | PR_MANA;//PR_MANA was for when p_ptr->csp was reduced as form-switch penalty
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
