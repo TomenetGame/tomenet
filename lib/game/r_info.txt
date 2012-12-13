@@ -3990,7 +3990,7 @@ F:ESCORT |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | 
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | ORC | IM_COLD | IM_POIS | 
-F:MORTAL | BASEANGBAND | HAS_LITE
+F:MORTAL | BASEANGBAND | HAS_LITE | DUN_9
 D:A strong orc guarding the pass of Cirith Ungol. He is mortally afraid of 
 D:spiders:  he was captured by Shelob once, but escaped when she forgot 
 D:completely about him.
@@ -4853,7 +4853,7 @@ F:ESCORT | DROP_SKELETON | DROP_CORPSE |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | 
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | ORC | IM_POIS | 
-F:MORTAL | BASEANGBAND | HAS_LITE
+F:MORTAL | BASEANGBAND | HAS_LITE | DUN_9
 D:He is an orc of power and great cunning, leader of the garrison at Cirith
 D:Ungol. 
 

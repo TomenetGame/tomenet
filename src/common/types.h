@@ -515,6 +515,8 @@ struct monster_race
 	obj_theme drops;		/* The drops type */
 
 	int u_idx;			/* Counter for sorted unique positioning */
+
+	int restrict_dun;		/* restrict to specific dungeon (used for non-FINAL_GUARDIAN monsters) */
 };
 
 
@@ -816,9 +818,9 @@ struct npc_type{
 
         s32b exp;                       /* Experience of the monster */
         s16b level;                     /* Level of the monster */
-	
+
 	s16b energy;		/* Monster "energy" */
-	
+
 	byte stunned;		/* Monster is stunned */
 	byte confused;		/* Monster is confused */
 	byte monfear;		/* Monster is afraid */

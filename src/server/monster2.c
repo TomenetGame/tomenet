@@ -2914,6 +2914,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 			s_printf("allowed FINAL_GUARDIAN %d\n", r_idx);
 		}
 
+		/* Also use for DUN_xx dungeon-restricted monsters */
+		if (r_ptr->restrict_dun && r_ptr->restrict_dun != d_ptr->type) return FALSE;
+
 		/* Couple of Nether Realm-only monsters hardcoded here */
 		if ((r_ptr->flags8 & RF8_NETHER_REALM) && (dlev < 166))
 			return (FALSE);

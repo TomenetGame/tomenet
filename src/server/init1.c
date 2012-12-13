@@ -4456,6 +4456,18 @@ errr init_r_info_txt(FILE *fp, char *buf)
 					while (*t == ' ' || *t == '|') t++;
 				}
 
+				/* Hack: Flag 'DUN_xx' dungeon restriction 'flag', for Ufthak - C. Blue ;) */
+				if (1 == sscanf(s, "DUN_%d", &i)) {
+					/* Extract the dungeon it is restricted to */
+                                        r_ptr->restrict_dun = i;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
 				/* Parse this entry */
 				if (0 != grab_one_basic_flag(r_ptr, s)) return (5);
 
