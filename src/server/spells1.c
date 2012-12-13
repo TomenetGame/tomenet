@@ -3301,13 +3301,13 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 /*
  * Apply Polymorph
  */
- 
+
 /* Ho Ho Ho... I really want this to have a chance of turning people into
    a fruit bat,  but something tells me I should put that off until the next version...
-   
+
    I CANT WAIT. DOING FRUIT BAT RIGHT NOW!!! 
    -APD-
-*/   
+*/
 static void apply_morph(int Ind, int power, char * killer)
 {
 	player_type *p_ptr = Players[Ind];
@@ -3319,61 +3319,58 @@ static void apply_morph(int Ind, int power, char * killer)
 
 	switch (randint(2)) {
 #if 1
-		case 1: msg_print(Ind, "You resist the effects!"); break;
+	case 1: msg_print(Ind, "You resist the effects!");
+		break;
 #else
-		case 1:
-		{
-			if (rand_int(40 + power*2) < p_ptr->skill_sav)
-			{
-				msg_print(Ind, "You resist the effects!");
-				break;
-			}
-
-			msg_print(Ind, "\376\377oYour body starts to scramble...");
-			s_printf("MORPH_SCRAMBLE: %s\n", p_ptr->name);
-
-			/* Pick a pair of stats */
-			ii = rand_int(6);
-			for (jj = ii; jj == ii; jj = rand_int(6)) /* loop */;
-
-			max1 = p_ptr->stat_max[ii];
-			cur1 = p_ptr->stat_cur[ii];
-			max2 = p_ptr->stat_max[jj];
-			cur2 = p_ptr->stat_cur[jj];
-
-			p_ptr->stat_max[ii] = max2;
-			p_ptr->stat_cur[ii] = cur2;
-			p_ptr->stat_max[jj] = max1;
-			p_ptr->stat_cur[jj] = cur1;
-
-			p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SANITY);
-
+	case 1:
+		if (rand_int(40 + power*2) < p_ptr->skill_sav) {
+			msg_print(Ind, "You resist the effects!");
 			break;
 		}
+
+		msg_print(Ind, "\376\377oYour body starts to scramble...");
+		s_printf("MORPH_SCRAMBLE: %s\n", p_ptr->name);
+
+		/* Pick a pair of stats */
+		ii = rand_int(6);
+		for (jj = ii; jj == ii; jj = rand_int(6)) /* loop */;
+
+		max1 = p_ptr->stat_max[ii];
+		cur1 = p_ptr->stat_cur[ii];
+		max2 = p_ptr->stat_max[jj];
+		cur2 = p_ptr->stat_cur[jj];
+
+		p_ptr->stat_max[ii] = max2;
+		p_ptr->stat_cur[ii] = cur2;
+		p_ptr->stat_max[jj] = max1;
+		p_ptr->stat_cur[jj] = cur1;
+
+		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SANITY);
+
+		break;
 #endif
-		case 2:
-		{
-			if (!p_ptr->fruit_bat) {
-				if (rand_int(10 + power * 4) < p_ptr->skill_sav) {
-					msg_print(Ind, "You resist the effects!");
-				} else {
-					/* FRUIT BAT!!!!!! */
-					if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
-					msg_print(Ind, "\377yYou have been turned into a fruit bat!");
-					strcpy(p_ptr->died_from, killer);
-					strcpy(p_ptr->really_died_from, killer);
-					p_ptr->fruit_bat = -1;
-					p_ptr->deathblow = 0;
-					player_death(Ind);
-				}
-			} else if (p_ptr->fruit_bat == 2) {
-				/* no saving throw for being restored..... */
-				msg_print(Ind, "You have been restored!");
-				p_ptr->fruit_bat = 0;
-				p_ptr->update |= (PU_BONUS | PU_HP);
+	case 2:
+		if (!p_ptr->fruit_bat) {
+			if (rand_int(10 + power * 4) < p_ptr->skill_sav) {
+				msg_print(Ind, "You resist the effects!");
 			} else {
-				msg_print(Ind, "You feel certain you are a fruit bat!");
+				s_printf("MORPH_FRUITBAT: %s\n", p_ptr->name);
+				/* FRUIT BAT!!!!!! */
+				if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
+				msg_print(Ind, "\377yYou have been turned into a fruit bat!");
+				strcpy(p_ptr->died_from, killer);
+				strcpy(p_ptr->really_died_from, killer);
+				p_ptr->fruit_bat = -1;
+				p_ptr->deathblow = 0;
+				player_death(Ind);
 			}
+		} else if (p_ptr->fruit_bat == 2) {
+			/* no saving throw for being restored..... */
+			msg_print(Ind, "You have been restored!");
+			p_ptr->fruit_bat = 0;
+			p_ptr->update |= (PU_BONUS | PU_HP);
+		} else {
+			msg_print(Ind, "You feel certain you are a fruit bat!");
 		}
 	}
 }
@@ -9584,12 +9581,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		case GF_OLD_POLY:
+			s_printf("PLAYER_POLY: %s -> %s ", killer, p_ptr->name);
 			if (p_ptr->afk) break;
 			if (fuzzy || self) msg_print(Ind, "You feel bizzare!");
 			else msg_format(Ind, "%^s polymorphs you!", killer);
 			if (p_ptr->resist_nexus) {
+				s_printf("resists\n");
 				msg_print(Ind, "You resist the effects!");
 			} else {
+				s_printf("morphs\n");
 				msg_print(Ind, "The magic continuum twists around you!");
 				apply_morph(Ind, dam, killer);
 			}
@@ -10617,8 +10617,10 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 				/* If player hits himself, he hits others too */
 				if (flg & PROJECT_PLAY) break;
 
+#if 0 /* covered by PROJECT_PLAY above now */
 				/* Always affect players (regardless of hostility/party state): */
 				if (typ == GF_OLD_POLY) break;
+#endif
 
 #if 0				/* neutral people hit each other ..NOT! - C. Blue FF$$$ */
 				if (!Players[0 - who]->party) break;

@@ -6552,7 +6552,7 @@ bool poly_monster(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_SELF | PROJECT_PLAY;
 	return (project_hook(Ind, GF_OLD_POLY, dir, p_ptr->lev, flg, ""));
 }
 
