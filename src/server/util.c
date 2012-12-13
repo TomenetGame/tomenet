@@ -3987,7 +3987,7 @@ void player_talk(int Ind, char *message)
 		}
 	}
 }
-	
+
 
 /*
  * Check a char for "vowel-hood"
@@ -4037,53 +4037,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 
 	/* Look for a recipient who matches the search string */
 	if (len) {
-		if (party) {
-			/* First check parties */
-			for (i = 1; i < MAX_PARTIES; i++) {
-				/* Skip if empty */
-				if (!parties[i].members) continue;
-
-				/* Check that the party has players online - mikaelh */
-				party_online = FALSE;
-				for (j = 1; j <= NumPlayers; j++) {
-					/* Check this one */
-					q_ptr = Players[j];
-
-					/* Skip if disconnected */
-					if (q_ptr->conn == NOT_CONNECTED) continue;
-
-					/* Check if the player belongs to this party */
-					if (q_ptr->party == i) {
-						party_online = TRUE;
-						break;
-					}
-				}
-				if (!party_online) continue;
-
-				/* Check name */
-				if (!strncasecmp(parties[i].name, name, len)) {
-					/* Set target if not set already */
-					if (!target) {
-						target = 0 - i;
-					} else {
-						/* Matching too many parties */
-						problem = "parties";
-					}
-
-					/* Check for exact match */
-					if (len == (int)strlen(parties[i].name)) {
-						/* Never a problem */
-						target = 0 - i;
-						problem = "";
-
-						/* Finished looking */
-						break;
-					}
-				}
-			}
-		}
-
-		/* Then check players */
+		/* Check players */
 		for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
@@ -4159,6 +4113,52 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 
 					/* Finished looking */
 					break;
+				}
+			}
+		}
+
+		/* Check parties */
+		if (party && !target) {
+			for (i = 1; i < MAX_PARTIES; i++) {
+				/* Skip if empty */
+				if (!parties[i].members) continue;
+
+				/* Check that the party has players online - mikaelh */
+				party_online = FALSE;
+				for (j = 1; j <= NumPlayers; j++) {
+					/* Check this one */
+					q_ptr = Players[j];
+
+					/* Skip if disconnected */
+					if (q_ptr->conn == NOT_CONNECTED) continue;
+
+					/* Check if the player belongs to this party */
+					if (q_ptr->party == i) {
+						party_online = TRUE;
+						break;
+					}
+				}
+				if (!party_online) continue;
+
+				/* Check name */
+				if (!strncasecmp(parties[i].name, name, len)) {
+					/* Set target if not set already */
+					if (!target) {
+						target = 0 - i;
+					} else {
+						/* Matching too many parties */
+						problem = "parties";
+					}
+
+					/* Check for exact match */
+					if (len == (int)strlen(parties[i].name)) {
+						/* Never a problem */
+						target = 0 - i;
+						problem = "";
+
+						/* Finished looking */
+						break;
+					}
 				}
 			}
 		}
@@ -4204,53 +4204,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party, bool include_account
 
 	/* Look for a recipient who matches the search string */
 	if (len) {
-		if (party) {
-			/* First check parties */
-			for (i = 1; i < MAX_PARTIES; i++) {
-				/* Skip if empty */
-				if (!parties[i].members) continue;
-
-				/* Check that the party has players online - mikaelh */
-				party_online = FALSE;
-				for (j = 1; j <= NumPlayers; j++) {
-					/* Check this one */
-					q_ptr = Players[j];
-
-					/* Skip if disconnected */
-					if (q_ptr->conn == NOT_CONNECTED) continue;
-
-					/* Check if the player belongs to this party */
-					if (q_ptr->party == i) {
-						party_online = TRUE;
-						break;
-					}
-				}
-				if (!party_online) continue;
-
-				/* Check name */
-				if (!strncasecmp(parties[i].name, name, len)) {
-					/* Set target if not set already */
-					if (!target) {
-						target = 0 - i;
-					} else {
-						/* Matching too many parties */
-						problem = "parties";
-					}
-
-					/* Check for exact match */
-					if (len == (int)strlen(parties[i].name)) {
-						/* Never a problem */
-						target = 0 - i;
-						problem = "";
-
-						/* Finished looking */
-						break;
-					}
-				}
-			}
-		}
-
-		/* Then check players */
+		/* Check players */
 		for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
@@ -4329,6 +4283,52 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party, bool include_account
 				}
 			}
 		}
+
+		/* Check parties */
+		if (party && !target) {
+			for (i = 1; i < MAX_PARTIES; i++) {
+				/* Skip if empty */
+				if (!parties[i].members) continue;
+
+				/* Check that the party has players online - mikaelh */
+				party_online = FALSE;
+				for (j = 1; j <= NumPlayers; j++) {
+					/* Check this one */
+					q_ptr = Players[j];
+
+					/* Skip if disconnected */
+					if (q_ptr->conn == NOT_CONNECTED) continue;
+
+					/* Check if the player belongs to this party */
+					if (q_ptr->party == i) {
+						party_online = TRUE;
+						break;
+					}
+				}
+				if (!party_online) continue;
+
+				/* Check name */
+				if (!strncasecmp(parties[i].name, name, len)) {
+					/* Set target if not set already */
+					if (!target) {
+						target = 0 - i;
+					} else {
+						/* Matching too many parties */
+						problem = "parties";
+					}
+
+					/* Check for exact match */
+					if (len == (int)strlen(parties[i].name)) {
+						/* Never a problem */
+						target = 0 - i;
+						problem = "";
+
+						/* Finished looking */
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	/* Check for recipient set but no match found */
@@ -4367,41 +4367,7 @@ int name_lookup(int Ind, cptr name, u16b party, bool include_account_names)
 
 	/* Look for a recipient who matches the search string */
 	if (len) {
-		if (party) {
-			/* First check parties */
-			for (i = 1; i < MAX_PARTIES; i++) {
-				/* Skip if empty */
-				if (!parties[i].members) continue;
-
-				/* Check that the party has players online - mikaelh */
-				party_online = FALSE;
-				for (j = 1; j <= NumPlayers; j++) {
-					/* Check this one */
-					q_ptr = Players[j];
-
-					/* Skip if disconnected */
-					if (q_ptr->conn == NOT_CONNECTED) continue;
-
-					/* Check if the player belongs to this party */
-					if (q_ptr->party == i) {
-						party_online = TRUE;
-						break;
-					}
-				}
-				if (!party_online) continue;
-
-				/* Check name */
-				if (!strcasecmp(parties[i].name, name)) {
-					/* Never a problem */
-					target = 0 - i;
-
-					/* Finished looking */
-					break;
-				}
-			}
-		}
-
-		/* Then check players */
+		/* Check players */
 		for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
@@ -4454,6 +4420,40 @@ int name_lookup(int Ind, cptr name, u16b party, bool include_account_names)
 
 				/* Finished looking */
 				break;
+			}
+		}
+
+		/* Check parties */
+		if (party && !target) {
+			for (i = 1; i < MAX_PARTIES; i++) {
+				/* Skip if empty */
+				if (!parties[i].members) continue;
+
+				/* Check that the party has players online - mikaelh */
+				party_online = FALSE;
+				for (j = 1; j <= NumPlayers; j++) {
+					/* Check this one */
+					q_ptr = Players[j];
+
+					/* Skip if disconnected */
+					if (q_ptr->conn == NOT_CONNECTED) continue;
+
+					/* Check if the player belongs to this party */
+					if (q_ptr->party == i) {
+						party_online = TRUE;
+						break;
+					}
+				}
+				if (!party_online) continue;
+
+				/* Check name */
+				if (!strcasecmp(parties[i].name, name)) {
+					/* Never a problem */
+					target = 0 - i;
+
+					/* Finished looking */
+					break;
+				}
 			}
 		}
 	}
@@ -4488,41 +4488,7 @@ int name_lookup_quiet(int Ind, cptr name, u16b party, bool include_account_names
 
 	/* Look for a recipient who matches the search string */
 	if (len) {
-		if (party) {
-			/* First check parties */
-			for (i = 1; i < MAX_PARTIES; i++) {
-				/* Skip if empty */
-				if (!parties[i].members) continue;
-
-				/* Check that the party has players online - mikaelh */
-				party_online = FALSE;
-				for (j = 1; j <= NumPlayers; j++) {
-					/* Check this one */
-					q_ptr = Players[j];
-
-					/* Skip if disconnected */
-					if (q_ptr->conn == NOT_CONNECTED) continue;
-
-					/* Check if the player belongs to this party */
-					if (q_ptr->party == i) {
-						party_online = TRUE;
-						break;
-					}
-				}
-				if (!party_online) continue;
-
-				/* Check name */
-				if (!strcasecmp(parties[i].name, name)) {
-					/* Never a problem */
-					target = 0 - i;
-
-					/* Finished looking */
-					break;
-				}
-			}
-		}
-
-		/* Then check players */
+		/* Check players */
 		for (i = 1; i <= NumPlayers; i++) {
 			/* Check this one */
 			q_ptr = Players[i];
@@ -4575,6 +4541,40 @@ int name_lookup_quiet(int Ind, cptr name, u16b party, bool include_account_names
 
 				/* Finished looking */
 				break;
+			}
+		}
+
+		/* Check parties */
+		if (party && !target) {
+			for (i = 1; i < MAX_PARTIES; i++) {
+				/* Skip if empty */
+				if (!parties[i].members) continue;
+
+				/* Check that the party has players online - mikaelh */
+				party_online = FALSE;
+				for (j = 1; j <= NumPlayers; j++) {
+					/* Check this one */
+					q_ptr = Players[j];
+
+					/* Skip if disconnected */
+					if (q_ptr->conn == NOT_CONNECTED) continue;
+
+					/* Check if the player belongs to this party */
+					if (q_ptr->party == i) {
+						party_online = TRUE;
+						break;
+					}
+				}
+				if (!party_online) continue;
+
+				/* Check name */
+				if (!strcasecmp(parties[i].name, name)) {
+					/* Never a problem */
+					target = 0 - i;
+
+					/* Finished looking */
+					break;
+				}
 			}
 		}
 	}
