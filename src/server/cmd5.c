@@ -1288,7 +1288,7 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 	p_ptr->mimic_seed += rand_int(0xFFFF);
 
 	/* Penalise form-switching just for using a spell */
-	p_ptr->csp /= 2;
+//	p_ptr->csp /= 2;
 
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA | PU_HP | PU_BONUS | PU_VIEW);
