@@ -3136,7 +3136,11 @@ player_class class_info[MAX_CLASS] =
 		"Priest",
                 TERM_GREEN,
                 {-1, -3, 3, -1, 0, 2},
+#if 0 /* disabled recommendations for STR/DEX because STR cannot even be reached by dwarven priests.. */
 		{19, 0, 0+100, 10, 0, 0},
+#else
+		{0, 0, 0+100, 0, 0, 0},
+#endif
 		25, 25, 32, 2,  16, 8, 48, 35,
 		7,  10, 12, 0,  0,  0, 20, 15,
 		4, 20, //2, 20,//4,20
