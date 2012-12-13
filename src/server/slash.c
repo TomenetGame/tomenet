@@ -4968,7 +4968,7 @@ void do_slash_cmd(int Ind, char *message)
 				p = name_lookup_loose(Ind, token[1], FALSE, FALSE);
 				if (!p) return;
 				lua_recalc_char(p);
-				msg_format(Ind, "Rerolled HP for %s.", token[1]);
+				msg_format(Ind, "Rerolled HP for %s.", Players[p]->name);
 				return;
 			}
 			/* Reroll a player's HP a lot and measure */
@@ -4988,7 +4988,7 @@ void do_slash_cmd(int Ind, char *message)
 					avg += Players[p]->mhp;
 				}
 				avg /= 10000;
-				msg_format(Ind, "Rerolled HP for %s 10000 times:", token[1]);
+				msg_format(Ind, "Rerolled HP for %s 10000 times:", Players[p]->name);
 				msg_format(Ind, "  Min: %d, Max: %d, Avg: %d.", min, max, avg);
 				return;
 			}
@@ -5003,7 +5003,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (!p) return;
 				get_history(p);
 				Players[p]->redraw |= PR_HISTORY; //update the client's history text
-				msg_format(Ind, "Rerolled history for %s.", token[1]);
+				msg_format(Ind, "Rerolled history for %s.", Players[p]->name);
 				return;
 			}
 			/* Turn all non-everlasting items inside a house to everlasting items if the owner is everlasting */
