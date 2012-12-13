@@ -369,7 +369,7 @@ static hist_type bg[] =
 #else /* for testing max len */
 	{"Orome Aldaron, the Great Rider and Hunter of Valinor. ",	100,101,102,120},
 	{"You suspend your pilgrimage in Aman ",			100,102,104,0},
-	    {"to spend tim in the mortal land. ",			100,104,50,0},
+	    {"to spend time in the mortal land. ",			100,104,50,0},
 #endif
 
 	/* Kobold background */
