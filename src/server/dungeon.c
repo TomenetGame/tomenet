@@ -3647,7 +3647,7 @@ static bool process_player_end_aux(int Ind)
 			monster_desc(Ind, m_name, i, 0);
 			msg_format(Ind, "Lightning strikes %s.", m_name, i, dam);
 			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam, GF_THUNDER,
-			        PROJECT_KILL | PROJECT_ITEM, "");
+			        PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID, "");
 			//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_ELEC,
 			//        PROJECT_KILL | PROJECT_ITEM, "");
 			//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_LITE,

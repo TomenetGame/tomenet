@@ -10439,6 +10439,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		flg &= ~PROJECT_THRU;
 
 
+
 	/* Hack -- Assume there will be no blast (max radius 16) */
 //	for (dist = 0; dist < 16; dist++) gm[dist] = 0;
 	for (dist = 0; dist < PREPARE_RADIUS; dist++) gm[dist] = 0;
@@ -10761,6 +10762,11 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		y = y9;
 		x = x9;
 	}
+
+	/* Hack: Usually, elemental bolt spells will not hurt floor/item if they already hurt a monster/player.
+	         Some bolt spells (poly) don't need this flag, since they don't hurt items/floor at all. */
+	if ((flg & PROJECT_EVSG) && zcave[y][x].m_idx != 0)
+                flg &= ~(PROJECT_GRID | PROJECT_ITEM);
 
 	/* hack: FF1_BLOCK_CONTACT grids prevent explosions,
 	   since those would carry over on the other side if it's

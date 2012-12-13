@@ -3565,8 +3565,8 @@
 
 #define PROJECT_PLAY	0x00001000	/* Affect players too, including the projector. (for GF_HEALINGCLOUD) */
 #define PROJECT_NORF	0x00002000	/* cannot be deflected by REFLECT monster flag */
-#define PROJECT_CRIT	0x00004000	/* Hit again with a radius 1 ball on creatures/players (runecraft enhanced cloud) */ 
-
+#define PROJECT_CRIT	0x00004000	/* Hit again with a radius 1 ball on creatures/players (runecraft enhanced cloud) */
+#define PROJECT_EVSG	0x00008000	/* 'Entity vs Grid': It's a bolt spell that can hit EITHER mon/py OR floor/item. */
 
 /* ToME expansions */
 #if 0	/* soon */

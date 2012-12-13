@@ -3533,7 +3533,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
 //	monster_race    *r_ptr = race_inf(m_ptr);
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
-	u32b f1, f2, f3, f4, f5, esp, flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP;
+	u32b f1, f2, f3, f4, f5, esp, flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP;
 	object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
 
 	cave_type **zcave;
@@ -3597,21 +3597,25 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
 			typ = GF_ACID;
 			dam = damroll(8, 8);
 			flg &= ~PROJECT_NORF;
+			flg |= PROJECT_EVSG;
 			break;
 		case SV_ROD_ELEC_BOLT:
 			typ = GF_ELEC;
 			dam = damroll(6, 8);
 			flg &= ~PROJECT_NORF;
+			flg |= PROJECT_EVSG;
 			break;
 		case SV_ROD_FIRE_BOLT:
 			typ = GF_FIRE;
 			dam = damroll(10, 8);
 			flg &= ~PROJECT_NORF;
+			flg |= PROJECT_EVSG;
 			break;
 		case SV_ROD_COLD_BOLT:
 			typ = GF_COLD;
 			dam = damroll(7, 8);
 			flg &= ~PROJECT_NORF;
+			flg |= PROJECT_EVSG;
 			break;
 		case SV_ROD_ACID_BALL:
 			typ = GF_ACID;
@@ -4085,21 +4089,25 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
 			typ = GF_ACID;
 			dam = damroll(5, 8);
 			flg &= ~PROJECT_NORF;
+			flg |= PROJECT_EVSG;
 			break;
 		case SV_WAND_FIRE_BOLT:
 			typ = GF_FIRE;
 			dam = damroll(6, 8);
 			flg &= ~PROJECT_NORF;
+			flg |= PROJECT_EVSG;
 			break;
 		case SV_WAND_ELEC_BOLT:
 			typ = GF_ELEC;
 			dam = damroll(4, 8);
 			flg &= ~PROJECT_NORF;
+			flg |= PROJECT_EVSG;
 			break;
 		case SV_WAND_COLD_BOLT:
 			typ = GF_COLD;
 			dam = damroll(4, 8);
 			flg &= ~PROJECT_NORF;
+			flg |= PROJECT_EVSG;
 			break;
 		case SV_WAND_ACID_BALL:
 			typ = GF_ACID;

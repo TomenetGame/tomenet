@@ -6265,11 +6265,12 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
 
 	/* Hack -- Use an actual "target" */
 	if ((dir == 5) && target_okay(Ind)) {
-		cave_type **zcave = getcave(&p_ptr->wpos);
+//		cave_type **zcave = getcave(&p_ptr->wpos);
 
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 
+#if 0 /* oops, nonsense >_< this only concerns PROJECT_GRID/PROJECT_ITEM flags of course.. */
 		/* Allow targetting the item/floor of a specific grid with a bolt spell
 		   ..if no monster on it! Assume that the floor won't get hit if the monster
 		     instead gets hit, basically. Makes sense for bolt spells and prevents
@@ -6278,6 +6279,9 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
 		    zcave && /* paranoia */
 		    zcave[ty][tx].m_idx == 0)
 			flg &= ~PROJECT_THRU;
+#else
+		if (!(flg & PROJECT_BEAM)) flg &= ~PROJECT_THRU;
+#endif
 	}
 
 	/* Analyze the "dir" and the "target", do NOT explode */
@@ -6293,7 +6297,7 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
 bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
 {
 	char pattacker[80];
-	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_EVSG;
 	snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 
 #ifdef USE_SOUND_2010
@@ -6412,7 +6416,7 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	char pattacker[80];
 	int tx, ty;
 
-	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID;
+	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_EVSG;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) {
