@@ -6267,6 +6267,9 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
 	if ((dir == 5) && target_okay(Ind)) {
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
+
+		/* Allow targetting the item/floor of a specific grid with a bolt spell */
+		if (!(flg & PROJECT_BEAM)) flg &= ~PROJECT_THRU;
 	}
 
 	/* Analyze the "dir" and the "target", do NOT explode */
@@ -6282,7 +6285,7 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
 bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
 {
 	char pattacker[80];
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID;
 	snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 
 #ifdef USE_SOUND_2010
@@ -6300,7 +6303,7 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
 bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
 {
         char pattacker[80];
-	int flg = PROJECT_BEAM | PROJECT_KILL;
+	int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID;
         snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 
 #ifdef USE_SOUND_2010
@@ -6337,7 +6340,7 @@ bool fire_beam_cloud(int Ind, int typ, int dir, int dam, int time, int interval,
 	project_interval = interval;
 	project_time = time;
 	project_time_effect = EFF_WALL; //Kurzel -- Rewrite effect code for this new flag!
-	
+
 #ifdef USE_SOUND_2010
 	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
@@ -6401,7 +6404,7 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	char pattacker[80];
 	int tx, ty;
 
-	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL;//PROJECT_ITEM | PROJECT_GRID
+	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) {
@@ -6665,7 +6668,7 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 	case SV_R_NETH: r_ptr->flags3 |= RF3_RES_NETH; break;
 	case SV_R_CHAO: r_ptr->flags9 |= RF9_RES_CHAOS; break;
 	case SV_R_MANA: r_ptr->flags9 |= RF9_RES_MANA; break;
-	
+
 	case SV_R_CONF: r_ptr->flags3 |= RF3_NO_CONF; break;
 //	case SV_R_INER: r_ptr->flags4 |= RF4_BR_INER; break; //Inertia has no resist; alt: RF3_NO_TELE!
 	case SV_R_ELEC: r_ptr->flags3 |= RF3_IM_ELEC; break;
@@ -6681,7 +6684,7 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 	case SV_R_DISE: r_ptr->flags3 |= RF3_RES_DISE; break;
 //	case SV_R_FORC: r_ptr->flags4 |= RF4_BR_WALL; break; //Force has no resist (for mobs); alt: RF3_NO_SLEEP!
 	case SV_R_PLAS: r_ptr->flags3 |= RF3_RES_PLAS; break;
-	
+
 	default: break;
 	}
 }

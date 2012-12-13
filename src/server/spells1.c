@@ -10360,7 +10360,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	dun_level *l_ptr;
 	cave_type **zcave;
 
-
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
