@@ -2791,6 +2791,12 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	dlev = getlevel(wpos);
 
 
+	/* No live spawn inside IDDC */
+	if (!(summon_override_checks & SO_EVENTS) &&
+	    !cave_set_quietly &&
+	    in_irondeepdive(wpos))
+		return (FALSE);
+
 	if (!(summon_override_checks & SO_PROTECTED)) {
 		/* require non-protected field. - C. Blue
 		    Note that there are two ways (technically) to protect a field:
@@ -3061,7 +3067,6 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	}
 
 
-
 	/* Uniques monster consistency - stuff that is exempt from overriding really */
 	if (r_ptr->flags1 & RF1_UNIQUE) {
 		/* Ego Uniques are NOT to be created */
@@ -3085,7 +3090,6 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 			return (FALSE);
 		}
 	}
-
 
 
         /* Now could we generate an Ego Monster */
