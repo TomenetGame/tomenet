@@ -393,13 +393,14 @@ void do_cmd_skill()
 		{
 			sel = max - 1;
 			start = sel - (hgt - 4);
+			if (start < 0) start = 0;
 			if (sel >= start + (hgt - 4)) start = sel - (hgt - 4) + 1;
 		}
 		/* Hack -- go to a specific line */
 		else if (c == '#')
 		{
 			char tmp[80];
-			prt(format("Goto Line(max %d): ", max), 23, 0);
+			prt(format("Goto Line(max %d): ", max), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "1");
 			if (askfor_aux(tmp, 10, 0))
 			{
