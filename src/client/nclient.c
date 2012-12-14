@@ -2053,6 +2053,7 @@ int Receive_message(void)
 	int	n, c;
 	char	ch;
 	char	buf[MSG_LEN], *bptr, *bptr_chat;
+	char	l_buf[MSG_LEN], l_cname[NAME_LEN], *lptr;
 
 	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0)
 	{
@@ -2089,11 +2090,22 @@ int Receive_message(void)
 
 	if (screen_icky && (!shopping || perusing)) Term_switch(0);
 
+
+	/* strcasestr() is _GNU_SOURCE specific -_- */
+	strcpy(l_buf, buf);
+	lptr = l_buf;
+	while (*lptr) *lptr++ = tolower(*lptr);
+	strcpy(l_cname, cname);
+	lptr = l_cname;
+	while (*lptr) *lptr++ = tolower(*lptr);
+	/* map found location onto original string -_- */
+	if ((bptr = strstr(l_buf, l_cname))) bptr = buf + (bptr - l_buf);
+
 	/* Highlight or beep on incoming chat messages containing our name? */
 	if ((c_cfg.hilite_chat || c_cfg.hibeep_chat) /* enabled? */
 	    && (bptr_chat = strchr(buf, '[')) /* chat? */
 	    && bptr_chat <= buf + 7 /* chat? */
-	    && (bptr = strcasestr(buf, cname)) /* our name? */
+	    && bptr /* our name? */
 	    && bptr > bptr_chat + 2) { /* not typed by ourselves? */
 
 		/* enough space to add colour codes for highlighting? */
