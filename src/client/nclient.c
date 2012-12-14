@@ -2052,8 +2052,8 @@ int Receive_message(void)
 {
 	int	n, c;
 	char	ch;
-	char	buf[MSG_LEN], *bptr, *bptr_chat;
-	char	l_buf[MSG_LEN], l_cname[NAME_LEN], *lptr;
+	char	buf[MSG_LEN], *bptr, *sptr;
+	char	l_buf[MSG_LEN], l_cname[NAME_LEN], *ptr;
 
 	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0)
 	{
@@ -2091,50 +2091,55 @@ int Receive_message(void)
 	if (screen_icky && (!shopping || perusing)) Term_switch(0);
 
 
-	/* strcasestr() is _GNU_SOURCE specific -_- */
-	strcpy(l_buf, buf);
-	lptr = l_buf;
-	while (*lptr) { *lptr = tolower(*lptr); lptr++; }
-	strcpy(l_cname, cname);
-	lptr = l_cname;
-	while (*lptr) { *lptr = tolower(*lptr); lptr++; }
-	/* map found location onto original string -_- */
-	if ((bptr = strstr(l_buf, l_cname))) bptr = buf + (bptr - l_buf);
+	/* Highlight or beep on incoming PUBLIC chat messages containing our name? */
+	if (c_cfg.hilite_chat || c_cfg.hibeep_chat) { /* enabled? */
+		/* Is it public chat? */
+		if ((sptr = strchr(buf, '[')) /* a '[' occurs somewhere at the start? */
+		    && sptr <= buf + 7 + ((strstr(buf, "(IRC)") <= buf + 7) ? 9 : 0)
+		    && (*(sptr - 1) != 'g') /* and it's not coloured as a guild/party/private message? */
+		    && (*(sptr - 1) != 'G')
+		    && (*(sptr - 1) != 'y')) {
+			/* strcasestr() is _GNU_SOURCE specific -_- */
+			strcpy(l_buf, buf);
+			ptr = l_buf;
+			while (*ptr) { *ptr = tolower(*ptr); ptr++; }
+			strcpy(l_cname, cname);
+			ptr = l_cname;
+			while (*ptr) { *ptr = tolower(*ptr); ptr++; }
+			/* map location found onto original string -_- */
+			if ((bptr = strstr(l_buf, l_cname))) bptr = buf + (bptr - l_buf);
 
-	/* Highlight or beep on incoming chat messages containing our name? */
-	if ((c_cfg.hilite_chat || c_cfg.hibeep_chat) /* enabled? */
-	    && (bptr_chat = strchr(buf, '[')) /* chat? */
-	    && bptr_chat <= buf + 7 /* chat? */
-	    && bptr /* our name? */
-	    && bptr > bptr_chat + 2 /* not typed by ourselves? */
-	    && *(bptr - 1) != ':') { /* not a private message? (handled already, by different options) */
+			/* our name occurs in the message? */
+			if (bptr &&
+			    bptr > sptr + 2) { /* and isn't the sender of this message? */
+				/* enough space to add colour codes for highlighting? */
+				if (c_cfg.hilite_chat
+				    && strlen(buf) < MSG_LEN - 4) {
+					char buf2[MSG_LEN], called_name[NAME_LEN], *col_ptr = buf;
+					int prev_colour = 'w';
 
-		/* enough space to add colour codes for highlighting? */
-		if (c_cfg.hilite_chat
-		    && strlen(buf) < MSG_LEN - 4) {
-			char buf2[MSG_LEN], called_name[NAME_LEN], *col_ptr = buf;
-			int prev_colour = 'w';
+					/* remember last colour used before our name occurred, so we can restore it */
+					while (col_ptr < bptr) {
+						if (*col_ptr == '\377') {
+							col_ptr++;
+							prev_colour = *col_ptr;
+						} else col_ptr++;
+					}
 
-			/* remember last colour used before our name occurred, so we can restore it */
-			while (col_ptr < bptr) {
-				if (*col_ptr == '\377') {
-					col_ptr++;
-					prev_colour = *col_ptr;
-				} else col_ptr++;
+					/* keep the way our name was actually written (lower/upper-case) in the original chat message */
+					strncpy(called_name, bptr, strlen(cname));
+
+					strcpy(buf2, buf);
+					strcpy(bptr, "\377R");
+					strcpy(bptr + 2, called_name);
+					strcpy(bptr + 2 + strlen(cname), format("\377%c", prev_colour));
+					strcpy(bptr + 4 + strlen(cname), buf2 + (bptr - buf) + strlen(cname));
+				}
+
+				/* also give audial feedback if enabled */
+				if (c_cfg.hibeep_chat) page();
 			}
-
-			/* keep the way our name was actually written (lower/upper-case) in the original chat message */
-			strncpy(called_name, bptr, strlen(cname));
-
-			strcpy(buf2, buf);
-			strcpy(bptr, "\377R");
-			strcpy(bptr + 2, called_name);
-			strcpy(bptr + 2 + strlen(cname), format("\377%c", prev_colour));
-			strcpy(bptr + 4 + strlen(cname), buf2 + (bptr - buf) + strlen(cname));
 		}
-
-		/* also give audial feedback if enabled */
-		if (c_cfg.hibeep_chat) page();
 	}
 
 	c_msg_print(buf);
