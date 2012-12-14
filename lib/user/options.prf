@@ -15,9 +15,9 @@ Y:always_repeat
 Y:depth_in_feet
 Y:stack_force_notes
 Y:stack_force_costs
-Y:show_labels
+Y:hilite_chat
 Y:show_weights
-X:show_choices
+Y:hibeep_chat
 Y:show_details
 Y:use_color
 Y:ring_bell
