@@ -3084,9 +3084,9 @@ struct client_opts
 	bool depth_in_feet;
 	bool stack_force_notes;
 	bool stack_force_costs;
-	bool show_labels;
+	bool hilite_chat;//show_labels;
 	bool show_weights;
-	bool show_choices;
+	bool hibeep_chat;//show_choices;
 	bool show_details;
 	bool ring_bell;
 	bool use_color;

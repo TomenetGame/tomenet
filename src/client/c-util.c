@@ -6000,29 +6000,30 @@ void do_cmd_options(void)
 		/* Give some choices */
 		Term_putstr(5,  4, -1, TERM_WHITE, "(\377y1\377w) User Interface Options 1");
 		Term_putstr(5,  5, -1, TERM_WHITE, "(\377y2\377w) User Interface Options 2");
-		Term_putstr(5,  6, -1, TERM_WHITE, "(\377y3\377w) Game-Play Options 1");
-		Term_putstr(5,  7, -1, TERM_WHITE, "(\377y4\377w) Game-Play Options 2");
-		Term_putstr(5,  8, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
+		Term_putstr(5,  6, -1, TERM_WHITE, "(\377y3\377w) Audio Options");
+		Term_putstr(5,  7, -1, TERM_WHITE, "(\377y4\377w) Game-Play Options 1");
+		Term_putstr(5,  8, -1, TERM_WHITE, "(\377y5\377w) Game-Play Options 2");
+		Term_putstr(5,  9, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
 
-		Term_putstr(5, 10, -1, TERM_WHITE, "(\377ys\377w) Save Options");
-		Term_putstr(5, 11, -1, TERM_WHITE, "(\377yl\377w) Load Options from pref file");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(\377ys\377w) Save Options");
+		Term_putstr(5, 12, -1, TERM_WHITE, "(\377yl\377w) Load Options from pref file");
 
 #ifdef WINDOWS
-		Term_putstr(5, 14, -1, TERM_WHITE, "(\377Uf\377w) Change font size (tap to cycle)");
+		Term_putstr(5, 15, -1, TERM_WHITE, "(\377Uf\377w) Change font size (tap to cycle)");
 #else
 #if 1 /* CHANGE_FONTS_X11 */
-		Term_putstr(5, 14, -1, TERM_WHITE, "(\377Uf\377w) Change font size (tap to cycle)");
+		Term_putstr(5, 15, -1, TERM_WHITE, "(\377Uf\377w) Change font size (tap to cycle)");
 #endif
 #endif
-		Term_putstr(5, 15, -1, TERM_WHITE, "(\377UA\377w) Account Options");
-		Term_putstr(5, 16, -1, TERM_WHITE, "(\377Uv\377w) Check Server Options");
+		Term_putstr(5, 16, -1, TERM_WHITE, "(\377UA\377w) Account Options");
+		Term_putstr(5, 17, -1, TERM_WHITE, "(\377Uv\377w) Check Server Options");
 //#ifndef WINDOWS /* not yet implemented */
 #if defined(USE_X11) || defined(WINDOWS) /* rely on GUI for 'password' popup */
-		Term_putstr(5, 18, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from file");
+		Term_putstr(5, 19, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from file");
 #endif
 
 		/* Prompt */
-		c_prt(TERM_L_GREEN, "Command: ", 20, 0);
+		c_prt(TERM_L_GREEN, "Command: ", 21, 0);
 
 		/* Get command */
 		k = inkey();
@@ -6041,8 +6042,10 @@ void do_cmd_options(void)
 		} else if (k == '2') {
 			do_cmd_options_aux(4, "User Interface Options 2");
 		} else if (k == '3') {
-			do_cmd_options_aux(2, "Game-Play Options 1");
+			do_cmd_options_aux(5, "Audio Options");
 		} else if (k == '4') {
+			do_cmd_options_aux(2, "Game-Play Options 1");
+		} else if (k == '5') {
 			do_cmd_options_aux(3, "Game-Play Options 2");
 		}
 
