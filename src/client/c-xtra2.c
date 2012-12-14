@@ -259,6 +259,7 @@ void do_cmd_messages(void)
 		{
 			/* Go oldest */
 			i = n - (20 + HGT_PLUS);
+			if (i < 0) i = 0;
 		}
 
 		/* Recall the newest messages */
@@ -515,6 +516,7 @@ void do_cmd_messages_chatonly(void)
 		{
 			/* Go oldest */
 			i = n - (20 + HGT_PLUS);
+			if (i < 0) i = 0;
 		}
 
 		/* Recall the newest messages */
