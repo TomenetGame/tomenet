@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. December 2012 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.0 - official websites are:
+| Latest update: 14. December 2012 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.0a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -1843,8 +1843,7 @@ and CTRL+N to toggle the master mixer on/off).
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 (Compare troubleshooting section (8.6), problem 21.)
 
-Also be sure to press '=' key to have a look at the audio options, which are in
-'User Interface Options 2'.
+Also be sure to press '=' key to have a look at the audio options.
 
 If you want to temporarily disable all loading/initializing of audio then
 instead of editing the config file's 'Sound' entry you can just use the '-q'
@@ -1996,7 +1995,12 @@ self-explaining or that are especially important are listed in detail here:
 
     Also, (2) has all of the audio options. (See (2.1a) for more information.)
 
-(3 & 4) Game-Play Options
+(3) Audio Options
+    A bunch of stuff here, mostly you might want to look at attack-sound effect
+    frequency. Some people don't like to have those be played on each single
+    attack, so you can tweak them here.
+
+(4 & 5) Game-Play Options
     Set 'AFK mode' automatically (auto_afk)
         Rogues might want to turn this off in order to sit out their blacklist
         timer in town.
@@ -13863,10 +13867,10 @@ SOLUTION A: You are probably using OSS. If your soundcard or soundchip doesn't
             Another example (to start the Opera webbrowser):    $> aoss opera
 SOLUTION B: If you are using X11, this problem may occur depending on your
             terminal configuration. You can try to change your configuration,
-            or you can press '=' key to go to Options/User Interface Options 2
-            and enable 'Use audio system for paging sounds'. This will result
-            in paging sounds being played via your sound card, instead of the
-            operating system's beep (requires TomeNET v4.4.5 or higher).
+            or you can press '=' key to go to Audio Options and enable
+            'Use audio system for paging sounds'. This will result in paging
+            sounds being played via your sound card, instead of the operating
+            system's beep (requires TomeNET v4.4.5 or higher).
             (See (2.1a) for more information about the audio system.)
 
 PROBLEM 20: Are 'ToME' and 'TomeNET' similar?
