@@ -2094,10 +2094,10 @@ int Receive_message(void)
 	/* strcasestr() is _GNU_SOURCE specific -_- */
 	strcpy(l_buf, buf);
 	lptr = l_buf;
-	while (*lptr) *lptr++ = tolower(*lptr);
+	while (*lptr) { *lptr = tolower(*lptr); lptr++; }
 	strcpy(l_cname, cname);
 	lptr = l_cname;
-	while (*lptr) *lptr++ = tolower(*lptr);
+	while (*lptr) { *lptr = tolower(*lptr); lptr++; }
 	/* map found location onto original string -_- */
 	if ((bptr = strstr(l_buf, l_cname))) bptr = buf + (bptr - l_buf);
 
