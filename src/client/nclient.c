@@ -2091,14 +2091,14 @@ int Receive_message(void)
 	if (screen_icky && (!shopping || perusing)) Term_switch(0);
 
 
-	/* Highlight or beep on incoming PUBLIC chat messages containing our name? */
+	/* Highlight or beep on incoming chat messages containing our name? */
 	if (c_cfg.hilite_chat || c_cfg.hibeep_chat) { /* enabled? */
-		/* Is it public chat? */
+		/* Is it non-private chat? */
 		if ((sptr = strchr(buf, '[')) /* a '[' occurs somewhere at the start? */
 		    && sptr <= buf + 7 + ((strstr(buf, "(IRC)") <= buf + 7) ? 9 : 0)
-		    && (*(sptr - 1) != 'g') /* and it's not coloured as a guild/party/private message? */
-		    && (*(sptr - 1) != 'G')
-		    && (*(sptr - 1) != 'y')) {
+//		    && (*(sptr - 1) != 'y')
+//		    && (*(sptr - 1) != 'G')
+		    && (*(sptr - 1) != 'g')) { /* and it's not coloured as a private message? */
 			/* strcasestr() is _GNU_SOURCE specific -_- */
 			strcpy(l_buf, buf);
 			ptr = l_buf;
@@ -2111,7 +2111,8 @@ int Receive_message(void)
 
 			/* our name occurs in the message? */
 			if (bptr &&
-			    bptr > sptr + 2) { /* and isn't the sender of this message? */
+			    bptr > sptr + 2 && /* and isn't the sender of this message? */
+			    (!(ptr = strchr(sptr + 1, '(')) || ptr > sptr + 3 || bptr > ptr + 6)) { /* mind '(G)' and '(P)' */
 				/* enough space to add colour codes for highlighting? */
 				if (c_cfg.hilite_chat
 				    && strlen(buf) < MSG_LEN - 4) {
