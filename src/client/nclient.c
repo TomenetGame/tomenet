@@ -2106,7 +2106,8 @@ int Receive_message(void)
 	    && (bptr_chat = strchr(buf, '[')) /* chat? */
 	    && bptr_chat <= buf + 7 /* chat? */
 	    && bptr /* our name? */
-	    && bptr > bptr_chat + 2) { /* not typed by ourselves? */
+	    && bptr > bptr_chat + 2 /* not typed by ourselves? */
+	    && *(bptr - 1) != ':') { /* not a private message? (handled already, by different options) */
 
 		/* enough space to add colour codes for highlighting? */
 		if (c_cfg.hilite_chat
