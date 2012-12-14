@@ -2052,7 +2052,7 @@ int Receive_message(void)
 {
 	int	n, c;
 	char	ch;
-	char	buf[MSG_LEN];
+	char	buf[MSG_LEN], *bptr, *bptr_chat;
 
 	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0)
 	{
@@ -2088,6 +2088,40 @@ int Receive_message(void)
 			return 1;
 
 	if (screen_icky && (!shopping || perusing)) Term_switch(0);
+
+	/* Highlight incoming chat messages if they contain our name? */
+	if (FALSE /* enabled? */
+	    && (bptr_chat = strchr(buf, '[')) /* chat? */
+	    && bptr_chat <= buf + 7 /* chat? */
+	    && (bptr = strcasestr(buf, cname)) /* our name? */
+	    && bptr > bptr_chat + 2) { /* not typed by ourselves? */
+		char buf2[MSG_LEN], called_name[NAME_LEN];
+
+		/* enough space to add colour codes for highlighting? */
+		if (strlen(buf) < MSG_LEN - 4) {
+			int prev_colour = 'w';
+			char *col_ptr = buf;
+
+			while (col_ptr < bptr) {
+				if (*col_ptr == '\377') {
+					col_ptr++;
+					prev_colour = *col_ptr;
+				} else col_ptr++;
+			}
+
+			strncpy(called_name, bptr, strlen(cname));
+
+			strcpy(buf2, buf);
+			strcpy(bptr, "\377R");
+			strcpy(bptr + 2, called_name);
+			strcpy(bptr + 2 + strlen(cname), format("\377%c", prev_colour));
+			strcpy(bptr + 4 + strlen(cname), buf2 + (bptr - buf) + strlen(cname));
+		}
+
+		/* also give audial feedback if enabled */
+		if (TRUE)
+			page();
+	}
 
 	c_msg_print(buf);
 
