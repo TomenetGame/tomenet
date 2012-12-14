@@ -5278,7 +5278,8 @@ The following actions may reward 1 XP without you noticing:
   -Eating a bad food ration.
   -Picking a lock.
   -Transferring items or money from another player to you.
-  -Picking up/earning more than 300 gold pieces.
+  -Picking up/earning more than 300 gold pieces (IDDC-exclusive characters are
+   unable to pick up ny gold at all, and in turn start out with 300 extra).
    Use the /ex command to see how much more gold you may pick up
 Killing townspeople in Bree however will not give you any experience.
 Stay clean!
@@ -5414,9 +5415,10 @@ Ironman Deep Dive Challenge (IDDC)
     you log on, which will prevent you from getting any experience, items or
     gold until you move on by taking a staircase to the next floor.
 
-    If you make a 'slot-exclusive' IDDC character, it will automatically be
-    unable to pick up too much gold or items of other players and your
-    character won't get experience from eating bad food either.
+    If you make a 'slot-exclusive' IDDC character, it will start out with 300
+    extra gold, and in turn automatically be unable to pick up any more gold or
+    items of other players, and it won't get experience from eating bad food
+    either.
 
     Monsters cannot spawn in the wilderness sector of the dungeon, so you can
     just idle at the entrance, waiting for team mates.
