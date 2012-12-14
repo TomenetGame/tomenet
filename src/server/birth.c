@@ -2870,6 +2870,13 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 		inven_carry(Ind, o_ptr);
 	}
 
+#ifdef EVENT_TOWNIE_GOLD_LIMIT
+	if ((p_ptr->mode & MODE_DED_IDDC) && EVENT_TOWNIE_GOLD_LIMIT != -1) {
+		p_ptr->au += EVENT_TOWNIE_GOLD_LIMIT;
+		p_ptr->gold_picked_up = EVENT_TOWNIE_GOLD_LIMIT;
+	}
+#endif
+
 	/* admin hacks */
 	if (p_ptr->admin_wiz) {
 		/* the admin wizard can basically do what he wants */
