@@ -7739,6 +7739,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Extract radius */
 	div = r + 1;
 
+	/* Damage decrease over radius */
+	dam = radius_damage(dam, div, typ);
+
 	/* Hack -- always do at least one point of damage */
 	if (dam <= 0) dam = 1;
 
@@ -9257,25 +9260,20 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_HEAL_PLAYER:
 		{
 			/* hacks */
-			dam += hack_dam;
-			if (dam >= 4000) { /* CCW */
-				dam -= 4000;
+			if (hack_dam >= 4000) { /* CCW */
 				(void)set_blind(Ind, 0);
 				(void)set_cut(Ind, 0, 0);
 				(void)set_confused(Ind, 0);
 				(void)set_stun(Ind, 0);
-			} else if (dam >= 3000) { /* CSW */
-				dam -= 3000;
+			} else if (hack_dam >= 3000) { /* CSW */
 				(void)set_blind(Ind, 0);
 				(void)set_cut(Ind, 0, 0);
 				(void)set_confused(Ind, 0);
-			} else if (dam >= 2000) { /* CLW */
-				dam -= 2000;
+			} else if (hack_dam >= 2000) { /* CLW */
 				(void)set_blind(Ind, 0);
 				(void)set_cut(Ind, 0, 0);
 			}
-			if (dam >= 1000) { /* holy curing PBAoE */
-				dam -= 1000;
+			if (hack_dam >= 1000) { /* holy curing PBAoE */
 				if (Ind != -who) dam = (dam * 3) / 2; /* heals allies for 3/4 of the self-heal amount */
 			}
 
