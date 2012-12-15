@@ -293,7 +293,7 @@ static bool do_player_trap_call_out(int Ind)
                 m_ptr->fx = cx;
                 m_ptr->fy = cy;
                 /* we do not change the sublevel! */
-                ident=TRUE;
+                ident = TRUE;
 
 		/* Gone from previous location - mikaelh */
 		everyone_lite_spot(&p_ptr->wpos, old_y, old_x);
@@ -365,7 +365,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 	{
 		note_spot(Ind, y,x);
 		lite_spot(Ind, y,x);
-		ident=TRUE;
+		ident = TRUE;
 		object_desc(Ind, o_name, i_ptr, FALSE, 0);
 		if (player_has_los_bold(Ind, y1, x1))
 		{
@@ -663,51 +663,49 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		/* Earthquake Trap */
 		case TRAP_OF_EARTHQUAKE:
-		{
 			msg_print(Ind, "As you touch the trap, the ground starts to shake.");
 			earthquake(wpos, y, x, 10);
-			ident=TRUE;
+			ident = TRUE;
 			destroy_chest(i_ptr);
 			break;
-		}
+
 		/* Poison Needle Trap */
 		case TRAP_OF_POISON_NEEDLE:
-		{
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
-			{
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison)) {
 				msg_print(Ind, "You prick yourself on a poisoned needle.");
 				(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10, 0);
-				ident=TRUE;
-			}
-			else
-			{
+				ident = TRUE;
+			} else {
 				msg_print(Ind, "You prick yourself on a needle.");
 			}
 			break;
-		}
+
 		/* Summon Monster Trap */
 		case TRAP_OF_SUMMON_MONSTER:
-		{
 			msg_print(Ind, "A spell hangs in the air.");
+			summon_override_checks = SO_IDDC;
 			//            for (k = 0; k < randint(3); k++) ident |= summon_specific(y, x, max_dlv[dungeon_type], 0, SUMMON_UNDEAD, 1);	// max?
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 100, 0, 1, 0);
+			summon_override_checks = SO_NONE;
 			break;
-		}
+
 		/* Summon Undead Trap */
 		case TRAP_OF_SUMMON_UNDEAD:
-		{
 			msg_print(Ind, "A mighty spell hangs in the air.");
+			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_UNDEAD, 1, 0);
+			summon_override_checks = SO_NONE;
 			break;
-		}
+
 		/* Summon Greater Undead Trap */
 		case TRAP_OF_SUMMON_GREATER_UNDEAD:
-		{
 			msg_print(Ind, "An old and evil spell hangs in the air.");
+			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_HI_UNDEAD, 1, 0);
-			destroy_chest(i_ptr); 
+			summon_override_checks = SO_NONE;
+			destroy_chest(i_ptr);
 			break;
-		}
+
 		/* Teleport Trap */
 		case TRAP_OF_TELEPORT:
 		{
@@ -717,7 +715,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			if (p_ptr->anti_tele || check_st_anchor(wpos, y, x) || magik(chance)) break;
 			msg_print(Ind, "The world whirls around you.");
 			teleport_player(Ind, RATIO*67, TRUE);
-			ident=TRUE;
+			ident = TRUE;
 			break;
 		}
 		/* Paralyzing Trap */
@@ -727,7 +725,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			{
 				msg_print(Ind, "You touch a poisoned part and can't move.");
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(10) + 10);
-				ident=TRUE;
+				ident = TRUE;
 			}
 			else
 			{
@@ -740,7 +738,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			msg_print(Ind, "A hidden explosive device explodes in your face.");
 			take_hit(Ind, damroll(5, 8), "an explosion", 0);
-			ident=TRUE;
+			ident = TRUE;
 			destroy_chest(i_ptr);
 			break;
 		}
@@ -820,7 +818,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			if (!p_ptr->free_act && !p_ptr->slow_digest) {
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(3) + 3);
 			}
-			ident=TRUE;
+			ident = TRUE;
 		    }
 			break;
 		}
@@ -831,12 +829,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			if (!p_ptr->resist_blind)
 			{
 				(void)set_blind(Ind, p_ptr->blind + rand_int(100) + 100);
-				ident=TRUE;
+				ident = TRUE;
 			}
 			if (!p_ptr->resist_conf)
 			{
 				if (set_confused(Ind, p_ptr->confused + rand_int(20) + 15))
-					ident=TRUE;
+					ident = TRUE;
 			}
 			break;
 		}
@@ -921,19 +919,18 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				inven_item_increase(Ind, i,-1);
 				inven_item_optimize(Ind, i);
-				ident=TRUE;
+				ident = TRUE;
 			}
 			break;
 		}
 		/* Summon Fast Quylthulgs Trap */
 		case TRAP_OF_SUMMON_FAST_QUYLTHULGS:
 		{
+			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++)
-			{
 				ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_QUYLTHULG, 1, 0);
-			}
-			if (ident)
-			{
+			summon_override_checks = SO_NONE;
+			if (ident) {
 				msg_print(Ind, "You suddenly have company.");
 				if (!(p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 					(void)set_slow(Ind, p_ptr->slow + randint(25) + 15);
@@ -982,7 +979,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				p_ptr->csp_frac = 0;
 				p_ptr->redraw |= (PR_MANA);
 				msg_print(Ind, "You sense a great loss.");
-				ident=TRUE;
+				ident = TRUE;
 			}
 			else
 			{
@@ -1015,13 +1012,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			{
 				msg_print(Ind, "Your purse feels lighter.");
 				msg_format(Ind, "\376\377o%ld coins were stolen!", (long int)gold);
-				ident=TRUE;
+				ident = TRUE;
 			}
 			else
 			{
 				msg_print(Ind, "Your purse feels empty.");
 				msg_print(Ind, "\376\377oAll of your coins were stolen!");
-				ident=TRUE;
+				ident = TRUE;
 			}
 			p_ptr->redraw |= (PR_GOLD);
 			break;
@@ -1053,7 +1050,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 						msg_print(Ind, "A small fire works it's way through your backpack. Some scrolls are burnt.");
 					else
 						msg_print(Ind, "The fire hasn't finished.");
-					ident=TRUE;
+					ident = TRUE;
 				}
 				//               else if ((j_ptr->tval==TV_ROD_MAIN) && (j_ptr->sval == SV_ROD_RECALL))
 				else if ((j_ptr->tval==TV_ROD) && (j_ptr->sval == SV_ROD_RECALL))
@@ -1061,7 +1058,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					//                  j_ptr->timeout = 0; /* a long time */
 					j_ptr->pval = 999; /* a long time */
 					if (!ident) msg_print(Ind, "You feel the air stabilize around you.");
-					ident=TRUE;
+					ident = TRUE;
 				}
 			}
 			if ((!ident) && (p_ptr->word_recall))
@@ -1069,7 +1066,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				msg_print(Ind, "You feel like staying around.");
 				p_ptr->word_recall = 0;
 				p_ptr->redraw |= (PR_DEPTH);
-				ident=TRUE;
+				ident = TRUE;
 			}
 			break;
 		}
@@ -1079,103 +1076,84 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			s16b i,j,slot1,slot2;
 			object_type *j_ptr, *k_ptr;
-			for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
-			{
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 				j_ptr = &p_ptr->inventory[i];
 				if (!j_ptr->k_idx) continue;
-				slot1=wield_slot(Ind, j_ptr);
-				for (j=0;j<INVEN_WIELD;j++)
-				{
+				slot1 = wield_slot(Ind, j_ptr);
+				for (j = 0; j < INVEN_WIELD; j++) {
 					k_ptr = &p_ptr->inventory[j];
 					if (!k_ptr->k_idx) continue;
 					/* this is a crude hack, but it prevent wielding 6 torches... */
 					if (k_ptr->number > 1) continue;
-					slot2=wield_slot(Ind, k_ptr);
+					slot2 = wield_slot(Ind, k_ptr);
 					/* a chance of 4 in 5 of switching something, then 2 in 5 to do it again */
-					if (slot1 && (slot1==slot2) && (rand_int(100)<(80-ident*40)))
-					{
+					if (slot1 && (slot1 == slot2) && (rand_int(100) < (80 - ident * 40))) {
 						object_type tmp_obj;
 						tmp_obj = p_ptr->inventory[j];
 						p_ptr->inventory[j] = p_ptr->inventory[i];
 						p_ptr->inventory[i] = tmp_obj;
-						ident=TRUE;
+						ident = TRUE;
 					}
 				}
 			}
-			if (ident)
-			{
+			if (ident) {
 				p_ptr->update |= (PU_BONUS);
 				p_ptr->update |= (PU_TORCH);
 				p_ptr->update |= (PU_MANA);
 				msg_print(Ind, "You somehow feel an other person.");
-			}
-			else
-			{
+			} else {
 				msg_print(Ind, "You feel a lack of useful items.");
 			}
 			break;
 		}
 		/* Trap of Walls */
 		case TRAP_OF_WALLS:
-		{
 			//         ident = player_handle_trap_of_walls();
 			/* let's do a quick job ;) */
 			ident = player_handle_breath_trap(Ind, 1 + glev / 40, GF_STONE_WALL, TRAP_OF_WALLS);
 			break;
-		}
+
 		/* Trap of Calling Out */
 		case TRAP_OF_CALLING_OUT:
-		{
-			ident=do_player_trap_call_out(Ind);
-			if (!ident)
-			{
+			ident = do_player_trap_call_out(Ind);
+			if (!ident) {
 				/* Increase "afraid" */
 				if (p_ptr->resist_fear)
-				{
 					msg_print(Ind, "You feel as if you had a nightmare!");
-				}
 				else if (rand_int(100) < p_ptr->skill_sav)
-				{
 					msg_print(Ind, "You remember having a nightmare!");
-				}
-				else
-				{
+				else {
 					if (set_afraid(Ind, p_ptr->afraid + 3 + randint(40)))
-					{
 						msg_print(Ind, "You have a vision of a powerful enemy.");
-					}
 				}
 			}
 			break;
-		}
+
 		/* Trap of Sliding */
 		case TRAP_OF_SLIDING:
-		{
 			/* ? */
 			destroy_chest(i_ptr); /* ah well, let's at least do this then */
 			break;
-		}
+
 		/* Trap of Charges Drain */
 		case TRAP_OF_CHARGES_DRAIN:
 		{
 			s16b         i;
 			object_type *j_ptr;
 			/* Find an item */
-			for (k = 0; k < 10; k++)
-			{
+			for (k = 0; k < 10; k++) {
 				i = rand_int(INVEN_PACK);
 				j_ptr = &p_ptr->inventory[i];
 				/* Drain charged wands/staffs */
 				if (((j_ptr->tval == TV_STAFF) || (j_ptr->tval == TV_WAND)) &&
-						(j_ptr->pval))
-				{
+				    (j_ptr->pval)) {
 					ident = TRUE;
 					j_ptr->pval = j_ptr->pval / (randint(4)+1);
 					/* Window stuff */
 					p_ptr->window |= PW_INVEN;
 					/* Combine / Reorder the pack */
 					p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-					if (randint(10)>3) break; /* 60% chance of only 1 */
+					if (randint(10) > 3) break; /* 60% chance of only 1 */
 				}
 			}
 			if (ident)
@@ -1315,26 +1293,22 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		// maybe could become more interesting if it spawns several more traps at random locations? :)
 		{
 			struct c_special *cs_ptr;
-			cs_ptr=GetCS(c_ptr, CS_TRAPS);
+			cs_ptr = GetCS(c_ptr, CS_TRAPS);
 			/* if we're on a floor or on a door, place a new trap */
-			if ((item == -1) || (item == -2))
-			{
+			if ((item == -1) || (item == -2)) {
 				cs_erase(c_ptr, cs_ptr);
 				place_trap(wpos, y , x, 0);
-				if (player_has_los_bold(Ind, y, x))
-				{
+				if (player_has_los_bold(Ind, y, x)) {
 					note_spot(Ind, y, x);
 					lite_spot(Ind, y, x);
 				}
-			}
-			else
-			{
+			} else {
 				/* re-trap the chest */
 				//				place_trap(wpos, y , x, 0);
 				place_trap_object(i_ptr);
 			}
 			msg_print(Ind, "You hear a noise, and then it's echo.");
-			ident=FALSE;
+			ident = FALSE;
 
 			break;
 		}
@@ -1401,14 +1375,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					{
 						if ((j_ptr->sval>=SV_WAND_NASTY_WAND) && (rand_int(5)==1))
 						{
-							if (object_known_p(Ind, j_ptr)) ident=TRUE;
+							if (object_known_p(Ind, j_ptr)) ident = TRUE;
 							j_ptr->sval = rand_int(SV_WAND_NASTY_WAND);
 							j_ptr->k_idx = lookup_kind(j_ptr->tval, j_ptr->sval);
 							p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 						}
 						if ((j_ptr->sval>=SV_STAFF_NASTY_STAFF) && (rand_int(5)==1))
 						{
-							if (object_known_p(Ind, j_ptr)) ident=TRUE;
+							if (object_known_p(Ind, j_ptr)) ident = TRUE;
 							j_ptr->sval = rand_int(SV_STAFF_NASTY_STAFF);
 							j_ptr->k_idx = lookup_kind(j_ptr->tval, j_ptr->sval);
 							p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -1569,52 +1543,52 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			ident = do_player_drop_items(Ind, 90, TRUE); destroy_chest(i_ptr); break;
 
 		/* Bolt Trap */
-		case TRAP_OF_ELEC_BOLT:       ident=player_handle_breath_trap(Ind, 1, GF_ELEC, TRAP_OF_ELEC_BOLT); break;
-		case TRAP_OF_POIS_BOLT:       ident=player_handle_breath_trap(Ind, 1, GF_POIS, TRAP_OF_POIS_BOLT); break;
-		case TRAP_OF_ACID_BOLT:       ident=player_handle_breath_trap(Ind, 1, GF_ACID, TRAP_OF_ACID_BOLT); destroy_chest(i_ptr); break;
-		case TRAP_OF_COLD_BOLT:       ident=player_handle_breath_trap(Ind, 1, GF_COLD, TRAP_OF_COLD_BOLT); break;
-		case TRAP_OF_FIRE_BOLT:       ident=player_handle_breath_trap(Ind, 1, GF_FIRE, TRAP_OF_FIRE_BOLT); destroy_chest(i_ptr); break;
-		case TRAP_OF_PLASMA_BOLT:     ident=player_handle_breath_trap(Ind, 1, GF_PLASMA, TRAP_OF_PLASMA_BOLT); destroy_chest(i_ptr); break;
-		case TRAP_OF_WATER_BOLT:      ident=player_handle_breath_trap(Ind, 1, GF_WATER, TRAP_OF_WATER_BOLT); break;
-		case TRAP_OF_LITE_BOLT:       ident=player_handle_breath_trap(Ind, 1, GF_LITE, TRAP_OF_LITE_BOLT); break;
-		case TRAP_OF_DARK_BOLT:       ident=player_handle_breath_trap(Ind, 1, GF_DARK, TRAP_OF_DARK_BOLT); break;
-		case TRAP_OF_SHARDS_BOLT:     ident=player_handle_breath_trap(Ind, 1, GF_SHARDS, TRAP_OF_SHARDS_BOLT); destroy_chest(i_ptr); break;
-		case TRAP_OF_SOUND_BOLT:      ident=player_handle_breath_trap(Ind, 1, GF_SOUND, TRAP_OF_SOUND_BOLT); break;
-		case TRAP_OF_CONFUSION_BOLT:  ident=player_handle_breath_trap(Ind, 1, GF_CONFUSION, TRAP_OF_CONFUSION_BOLT); break;
-		case TRAP_OF_FORCE_BOLT:      ident=player_handle_breath_trap(Ind, 1, GF_FORCE, TRAP_OF_FORCE_BOLT); destroy_chest(i_ptr); break;
-		case TRAP_OF_INERTIA_BOLT:    ident=player_handle_breath_trap(Ind, 1, GF_INERTIA, TRAP_OF_INERTIA_BOLT); break;
-		case TRAP_OF_MANA_BOLT:       ident=player_handle_breath_trap(Ind, 1, GF_MANA, TRAP_OF_MANA_BOLT); destroy_chest(i_ptr); break;
-		case TRAP_OF_ICE_BOLT:        ident=player_handle_breath_trap(Ind, 1, GF_ICE, TRAP_OF_ICE_BOLT); break;
-		case TRAP_OF_CHAOS_BOLT:      ident=player_handle_breath_trap(Ind, 1, GF_CHAOS, TRAP_OF_CHAOS_BOLT); destroy_chest(i_ptr); break;
-		case TRAP_OF_NETHER_BOLT:     ident=player_handle_breath_trap(Ind, 1, GF_NETHER, TRAP_OF_NETHER_BOLT); break;
-		case TRAP_OF_DISENCHANT_BOLT: ident=player_handle_breath_trap(Ind, 1, GF_DISENCHANT, TRAP_OF_DISENCHANT_BOLT); destroy_chest(i_ptr); break;
-		case TRAP_OF_NEXUS_BOLT:      ident=player_handle_breath_trap(Ind, 1, GF_NEXUS, TRAP_OF_NEXUS_BOLT); break;
-		case TRAP_OF_TIME_BOLT:       ident=player_handle_breath_trap(Ind, 1, GF_TIME, TRAP_OF_TIME_BOLT); break;
-		case TRAP_OF_GRAVITY_BOLT:    ident=player_handle_breath_trap(Ind, 1, GF_GRAVITY, TRAP_OF_GRAVITY_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_ELEC_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_ELEC, TRAP_OF_ELEC_BOLT); break;
+		case TRAP_OF_POIS_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_POIS, TRAP_OF_POIS_BOLT); break;
+		case TRAP_OF_ACID_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_ACID, TRAP_OF_ACID_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_COLD_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_COLD, TRAP_OF_COLD_BOLT); break;
+		case TRAP_OF_FIRE_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_FIRE, TRAP_OF_FIRE_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_PLASMA_BOLT:     ident = player_handle_breath_trap(Ind, 1, GF_PLASMA, TRAP_OF_PLASMA_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_WATER_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_WATER, TRAP_OF_WATER_BOLT); break;
+		case TRAP_OF_LITE_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_LITE, TRAP_OF_LITE_BOLT); break;
+		case TRAP_OF_DARK_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_DARK, TRAP_OF_DARK_BOLT); break;
+		case TRAP_OF_SHARDS_BOLT:     ident = player_handle_breath_trap(Ind, 1, GF_SHARDS, TRAP_OF_SHARDS_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_SOUND_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_SOUND, TRAP_OF_SOUND_BOLT); break;
+		case TRAP_OF_CONFUSION_BOLT:  ident = player_handle_breath_trap(Ind, 1, GF_CONFUSION, TRAP_OF_CONFUSION_BOLT); break;
+		case TRAP_OF_FORCE_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_FORCE, TRAP_OF_FORCE_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_INERTIA_BOLT:    ident = player_handle_breath_trap(Ind, 1, GF_INERTIA, TRAP_OF_INERTIA_BOLT); break;
+		case TRAP_OF_MANA_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_MANA, TRAP_OF_MANA_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_ICE_BOLT:        ident = player_handle_breath_trap(Ind, 1, GF_ICE, TRAP_OF_ICE_BOLT); break;
+		case TRAP_OF_CHAOS_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_CHAOS, TRAP_OF_CHAOS_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_NETHER_BOLT:     ident = player_handle_breath_trap(Ind, 1, GF_NETHER, TRAP_OF_NETHER_BOLT); break;
+		case TRAP_OF_DISENCHANT_BOLT: ident = player_handle_breath_trap(Ind, 1, GF_DISENCHANT, TRAP_OF_DISENCHANT_BOLT); destroy_chest(i_ptr); break;
+		case TRAP_OF_NEXUS_BOLT:      ident = player_handle_breath_trap(Ind, 1, GF_NEXUS, TRAP_OF_NEXUS_BOLT); break;
+		case TRAP_OF_TIME_BOLT:       ident = player_handle_breath_trap(Ind, 1, GF_TIME, TRAP_OF_TIME_BOLT); break;
+		case TRAP_OF_GRAVITY_BOLT:    ident = player_handle_breath_trap(Ind, 1, GF_GRAVITY, TRAP_OF_GRAVITY_BOLT); destroy_chest(i_ptr); break;
 
 		/* Ball Trap */
-		case TRAP_OF_ELEC_BALL:       ident=player_handle_breath_trap(Ind, 3, GF_ELEC, TRAP_OF_ELEC_BALL); break;
-		case TRAP_OF_POIS_BALL:       ident=player_handle_breath_trap(Ind, 3, GF_POIS, TRAP_OF_POIS_BALL); break;
-		case TRAP_OF_ACID_BALL:       ident=player_handle_breath_trap(Ind, 3, GF_ACID, TRAP_OF_ACID_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_COLD_BALL:       ident=player_handle_breath_trap(Ind, 3, GF_COLD, TRAP_OF_COLD_BALL); break;
-		case TRAP_OF_FIRE_BALL:       ident=player_handle_breath_trap(Ind, 3, GF_FIRE, TRAP_OF_FIRE_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_PLASMA_BALL:     ident=player_handle_breath_trap(Ind, 3, GF_PLASMA, TRAP_OF_PLASMA_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_WATER_BALL:      ident=player_handle_breath_trap(Ind, 3, GF_WATER, TRAP_OF_WATER_BALL); break;
-		case TRAP_OF_LITE_BALL:       ident=player_handle_breath_trap(Ind, 3, GF_LITE, TRAP_OF_LITE_BALL); break;
-		case TRAP_OF_DARK_BALL:       ident=player_handle_breath_trap(Ind, 3, GF_DARK, TRAP_OF_DARK_BALL); break;
-		case TRAP_OF_SHARDS_BALL:     ident=player_handle_breath_trap(Ind, 3, GF_SHARDS, TRAP_OF_SHARDS_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_SOUND_BALL:      ident=player_handle_breath_trap(Ind, 3, GF_SOUND, TRAP_OF_SOUND_BALL); break;
-		case TRAP_OF_CONFUSION_BALL:  ident=player_handle_breath_trap(Ind, 3, GF_CONFUSION, TRAP_OF_CONFUSION_BALL); break;
-		case TRAP_OF_FORCE_BALL:      ident=player_handle_breath_trap(Ind, 3, GF_FORCE, TRAP_OF_FORCE_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_INERTIA_BALL:    ident=player_handle_breath_trap(Ind, 3, GF_INERTIA, TRAP_OF_INERTIA_BALL); break;
-		case TRAP_OF_MANA_BALL:       ident=player_handle_breath_trap(Ind, 3, GF_MANA, TRAP_OF_MANA_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_ICE_BALL:        ident=player_handle_breath_trap(Ind, 3, GF_ICE, TRAP_OF_ICE_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_CHAOS_BALL:      ident=player_handle_breath_trap(Ind, 3, GF_CHAOS, TRAP_OF_CHAOS_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_NETHER_BALL:     ident=player_handle_breath_trap(Ind, 3, GF_NETHER, TRAP_OF_NETHER_BALL); break;
-		case TRAP_OF_DISENCHANT_BALL: ident=player_handle_breath_trap(Ind, 3, GF_DISENCHANT, TRAP_OF_DISENCHANT_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_NEXUS_BALL:      ident=player_handle_breath_trap(Ind, 3, GF_NEXUS, TRAP_OF_NEXUS_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_TIME_BALL:       ident=player_handle_breath_trap(Ind, 3, GF_TIME, TRAP_OF_TIME_BALL); destroy_chest(i_ptr); break;
-		case TRAP_OF_GRAVITY_BALL:    ident=player_handle_breath_trap(Ind, 3, GF_GRAVITY, TRAP_OF_GRAVITY_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_ELEC_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_ELEC, TRAP_OF_ELEC_BALL); break;
+		case TRAP_OF_POIS_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_POIS, TRAP_OF_POIS_BALL); break;
+		case TRAP_OF_ACID_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_ACID, TRAP_OF_ACID_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_COLD_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_COLD, TRAP_OF_COLD_BALL); break;
+		case TRAP_OF_FIRE_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_FIRE, TRAP_OF_FIRE_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_PLASMA_BALL:     ident = player_handle_breath_trap(Ind, 3, GF_PLASMA, TRAP_OF_PLASMA_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_WATER_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_WATER, TRAP_OF_WATER_BALL); break;
+		case TRAP_OF_LITE_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_LITE, TRAP_OF_LITE_BALL); break;
+		case TRAP_OF_DARK_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_DARK, TRAP_OF_DARK_BALL); break;
+		case TRAP_OF_SHARDS_BALL:     ident = player_handle_breath_trap(Ind, 3, GF_SHARDS, TRAP_OF_SHARDS_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_SOUND_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_SOUND, TRAP_OF_SOUND_BALL); break;
+		case TRAP_OF_CONFUSION_BALL:  ident = player_handle_breath_trap(Ind, 3, GF_CONFUSION, TRAP_OF_CONFUSION_BALL); break;
+		case TRAP_OF_FORCE_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_FORCE, TRAP_OF_FORCE_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_INERTIA_BALL:    ident = player_handle_breath_trap(Ind, 3, GF_INERTIA, TRAP_OF_INERTIA_BALL); break;
+		case TRAP_OF_MANA_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_MANA, TRAP_OF_MANA_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_ICE_BALL:        ident = player_handle_breath_trap(Ind, 3, GF_ICE, TRAP_OF_ICE_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_CHAOS_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_CHAOS, TRAP_OF_CHAOS_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_NETHER_BALL:     ident = player_handle_breath_trap(Ind, 3, GF_NETHER, TRAP_OF_NETHER_BALL); break;
+		case TRAP_OF_DISENCHANT_BALL: ident = player_handle_breath_trap(Ind, 3, GF_DISENCHANT, TRAP_OF_DISENCHANT_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_NEXUS_BALL:      ident = player_handle_breath_trap(Ind, 3, GF_NEXUS, TRAP_OF_NEXUS_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_TIME_BALL:       ident = player_handle_breath_trap(Ind, 3, GF_TIME, TRAP_OF_TIME_BALL); destroy_chest(i_ptr); break;
+		case TRAP_OF_GRAVITY_BALL:    ident = player_handle_breath_trap(Ind, 3, GF_GRAVITY, TRAP_OF_GRAVITY_BALL); destroy_chest(i_ptr); break;
 
 		/* -SC- */
 		case TRAP_OF_FEMINITY:
@@ -1655,7 +1629,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			p_ptr->male = FALSE;
 			ident = TRUE;
 			trap_hit(Ind, trap);
-	p_ptr->redraw |= PR_MISC;
+			p_ptr->redraw |= PR_MISC;
 #endif
 			break;
 		}
@@ -1713,7 +1687,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				p_ptr->ctp = 0;
 				p_ptr->redraw |= (PR_TANK);
 				msg_print(Ind, "You sense a great loss.");
-				ident=TRUE;
+				ident = TRUE;
 			}
 			else
 			{
@@ -1735,7 +1709,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_DIVINE_ANGER: // No hell below us above us only sky o/~
 		{
 #if 0 /* completely insane */
-		
+
 			{
 				if (p_ptr->pgod == 0)
 				{
@@ -1825,7 +1799,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				drop_near(o_ptr, -1, wpos, p_ptr->py, p_ptr->px);
 
 				msg_print(Ind, "You feel like having a shot.");
-				ident=TRUE;
+				ident = TRUE;
 
 				p_ptr->redraw |= (PR_GOLD);
 			}
@@ -1858,7 +1832,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				/* 1turn = 100 food value when satiated */
 				(void)set_food(Ind, PY_FOOD_MAX + glev*50 + 1000 + rand_int(1000));
 			}
-			ident=TRUE;
+			ident = TRUE;
 			break;
 		}
 		/* Trap of unmagic */
@@ -1869,35 +1843,30 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		/* Vermin Trap */
 		case TRAP_OF_VERMIN:
-		{
 			l = randint(20 + glev) + 30;/*let's give the player a decent chance to clean the mess
 						    over a reasonable amount of time.*/
-			for (k = 0; k < l; k++)
-			{
+			for (k = 0; k < l; k++) {
 				s16b cx = x+20-rand_int(40);
 				s16b cy = y+20-rand_int(40);
 
-				if (!in_bounds(cy,cx)) 
-				{
+				if (!in_bounds(cy,cx)) {
 					cx = x;
 					cy = y;
 				}
 
 				/* paranoia */
-				if (!cave_empty_bold(zcave, cy, cx))
-				{
+				if (!cave_empty_bold(zcave, cy, cx)) {
 					cx = x;
 					cy = y;
 				}
 
+				summon_override_checks = SO_IDDC;
 				ident |= summon_specific(wpos, cy, cx, glev, 0, SUMMON_VERMIN, 1, 0);
+				summon_override_checks = SO_NONE;
 			}
-			if (ident)
-			{
-				msg_print(Ind, "You suddenly feel itchy.");
-			}
+			if (ident) msg_print(Ind, "You suddenly feel itchy.");
 			break;
-		}
+
 		/* Trap of amnesia (and not lose_memory) */
 		case TRAP_OF_AMNESIA:
 		{
@@ -2098,7 +2067,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				if ((j = o_ptr->number) < 2) continue;
 				if (o_ptr->name1 == ART_POWER) continue;
-				
+
 				ok_ptr = &k_info[o_ptr->k_idx];
 				if (ok_ptr->cost > 150) continue;
 				//cure crits cost 100, WoR 150, so it still poses a decent threat.
@@ -2351,7 +2320,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			p_ptr->target_who = 0;
 
 			scatter(wpos, &ty, &tx, p_ptr->py, p_ptr->px, 15, 0);
-			
+
 			/* Set the target */
 			p_ptr->target_row = ty;
 			p_ptr->target_col = tx;
@@ -2403,7 +2372,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				{
 					note_spot(Ind, iy,ix);
 					lite_spot(Ind, iy,ix);
-					ident=TRUE;
+					ident = TRUE;
 					object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
 					msg_format(Ind, "You suddenly don't see the %s anymore!", o_name);
@@ -2461,16 +2430,17 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 		}
 		/* why not? :) */
-		case TRAP_OF_DISINTEGRATION_I: ident=player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap); destroy_chest(i_ptr); break;
-		case TRAP_OF_DISINTEGRATION_II: ident=player_handle_breath_trap(Ind, 3, GF_DISINTEGRATE, trap); destroy_chest(i_ptr); break;
+		case TRAP_OF_DISINTEGRATION_I: ident = player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap); destroy_chest(i_ptr); break;
+		case TRAP_OF_DISINTEGRATION_II: ident = player_handle_breath_trap(Ind, 3, GF_DISINTEGRATE, trap); destroy_chest(i_ptr); break;
 		case TRAP_OF_BATTLE_FIELD:
-		{
-			ident=player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap);
+			ident = player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap);
 			destroy_chest(i_ptr);
+			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, 0, 1, 0);
+			summon_override_checks = SO_NONE;
 			if (ident) msg_print(Ind, "You hear drums of battle!");
 			break;
-		}
+
 		/* Death Molds Trap */
 		case TRAP_OF_DEATH_MOLDS:
 		case TRAP_OF_DEATH_SWORDS:
@@ -2627,17 +2597,16 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			if (amt > 20) amt = 20;
 			if (amt > (u32b) glev / 3) amt = glev / 3;
 
-			for (k = 0; k < (int) amt; k++)
-			{
-				if (summon_specific(wpos, y, x, glev, 0, SUMMON_BIZARRE5, 1, 0))
-				{
+			summon_override_checks = SO_IDDC;
+			for (k = 0; k < (int) amt; k++) {
+				if (summon_specific(wpos, y, x, glev, 0, SUMMON_BIZARRE5, 1, 0)) {
 					ident = TRUE;
 					p_ptr->au -= price;
 				}
 			}
+			summon_override_checks = SO_NONE;
 
-			if (ident)
-			{
+			if (ident) {
 				msg_print(Ind, "Your purse suddenly squirms!");
 				p_ptr->redraw |= PR_GOLD;
 				destroy_chest(i_ptr);
@@ -2690,6 +2659,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 			break;
 		}
+
 		/* Trap of Hide Traps */
 		case TRAP_OF_HIDE_TRAPS:
 		{
@@ -2718,16 +2688,15 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			ident = FALSE;	// naturally.
 			break;
 		}
+
 		/* Trap of Respawning */
 		case TRAP_OF_RESPAWN:
 		{
 			dun_level *l_ptr = getfloor(&p_ptr->wpos);
-			if (!l_ptr || !(l_ptr->flags1 & LF1_NO_NEW_MONSTER))
-			{
+			if (!l_ptr || !(l_ptr->flags1 & LF1_NO_NEW_MONSTER)) {
 				/* Set the monster generation depth */
 				monster_level = glev;
-				for (k = 0; k < 5 + glev / 4; k++)
-				{
+				for (k = 0; k < 5 + glev / 4; k++) {
 					if (p_ptr->wpos.wz)
 						ident |= alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
 					else wild_add_monster(&p_ptr->wpos);
@@ -2736,29 +2705,25 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			msg_print(Ind, "You feel uneasy.");
 			ident = FALSE;	// always out of LOS (cept ESP..)
 		}
+
 		/* Jack-in-the-box trap */
 		case TRAP_OF_JACK:
-		{
+			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3); k++)
-			{
 				ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_BIZARRE6, 1, 0);
-			}
+			summon_override_checks = SO_NONE;
 #if 0
-			if (ident)
-			{
+			if (ident) {
 				msg_print(Ind, "Doh!!");
 				set_stun(Ind, p_ptr->stun + randint(50));
 			}
 #endif	// 0
 			break;
-		}
 
 
 		default:
-		{
 			/* XXX LUA hook here maybe? */
 			s_printf("Executing unknown trap %d\n", trap);
-		}
 	}
 
 	/* some traps vanish */
@@ -3882,11 +3847,15 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 			}
 			return (FALSE);
 		case SV_SCROLL_SUMMON_MONSTER:
+			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3) ; k++) if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, 0, 1, 0)) id = TRUE;
+			summon_override_checks = SO_NONE;
 			if (id) identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_SCROLL_SUMMON_UNDEAD:
+			summon_override_checks = SO_IDDC;
 			for (k = 0; k < randint(3) ; k++) if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_UNDEAD, 1, 0)) id = TRUE;
+			summon_override_checks = SO_NONE;
 			if (id) identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_SCROLL_PHASE_DOOR:

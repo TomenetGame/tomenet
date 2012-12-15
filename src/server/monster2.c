@@ -2791,10 +2791,11 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	dlev = getlevel(wpos);
 
 
-	/* No live spawn inside IDDC */
-	if (!(summon_override_checks & SO_EVENTS) &&
+	/* No live spawn inside IDDC -- except for breeder clones/summons */
+	if (!(summon_override_checks & SO_IDDC) &&
 	    !cave_set_quietly &&
-	    in_irondeepdive(wpos))
+	    in_irondeepdive(wpos)
+	    && !clo && !clone_summoning)
 		return (FALSE);
 
 	if (!(summon_override_checks & SO_PROTECTED)) {

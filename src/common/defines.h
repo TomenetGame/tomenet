@@ -992,6 +992,8 @@
 #define SO_BOSS_MONSTERS	0x0400	/* ignore checks which restrict boss/special/unique monster appearances (nether realm monsters too) */
 #define SO_SURFACE		0x0800	/* ignore checks which restrict certain monster spawns on the world surface (breeders, uniques) */
 
+#define SO_IDDC			0x1000	/* legalize uncheezable summoning in ironman deep dive challenge. Note: clone/clone_summoning imply this flag! */
+
 
 /*
  * Methods of leaving a level

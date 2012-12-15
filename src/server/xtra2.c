@@ -4618,10 +4618,12 @@ void monster_death(int Ind, int m_idx)
 			} while (!(in_bounds(wy,wx) && cave_floor_bold(zcave, wy,wx)) && --attempts);
 
 			if (attempts > 0) {
+				summon_override_checks = SO_IDDC;
 				if (summon_specific(wpos, wy, wx, 100, 0, SUMMON_BLUE_HORROR, 1, 0)) { /* that's _not_ 2, lol */
 					if (player_can_see_bold(Ind, wy, wx))
 						msg_print (Ind, "A blue horror appears!");
 				}
+				summon_override_checks = SO_NONE;
 			}
 		}
 	}
