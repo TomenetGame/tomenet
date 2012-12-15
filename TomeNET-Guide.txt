@@ -464,6 +464,7 @@ U       O       use undead powers (use this if you died and became a ghost).
                 NOTE: Undead powers are currently not available.
 CTRL+S          spike a door (using iron spikes, the door will be jammed).
 p       p       Concentrate on opening your mind for telekinesis.
+                ("You open your mind.." and "You close your mind.")
                 You need to open your mind in order to receive items from
                 other players by telekinesis. If you are not concentrating,
                 they will receive an according message, telling them that
