@@ -89,6 +89,8 @@ extern monster_spell_type monster_spells5[32];
 extern monster_spell_type monster_spells6[32];
 extern cptr melee_techniques[16];
 extern cptr ranged_techniques[16];
+extern byte adj_int_pow[];
+extern magic_type innate_powers[96];
 
 
 /* variable.c */
