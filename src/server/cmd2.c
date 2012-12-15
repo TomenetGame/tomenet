@@ -906,7 +906,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 
 		/* Drop some objects (non-chests) */
 		for (; number > 0; --number) {
-				/* Opening a chest */
+				/* Opening a chest -- this hack makes sure we don't find a chest in a chest, even though yo like chests */
 				opening_chest = TRUE;
 
 				/* Determine the "value" of the items */
@@ -916,12 +916,13 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Small chests often drop gold */
 				if (little && magik(75))
 					place_gold(wpos, y, x, cash);
-
+				else if (!little && magik(20))
+					place_gold(wpos, y, x, cash);
 				/* Otherwise drop an item */
 				else {
 					place_object_restrictor = RESF_NONE;
 					/* mostly DROP_GOOD */
-					place_object(wpos, y, x, magik(75) ? TRUE : FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL);
+					place_object(wpos, y, x, magik(75) ? TRUE : FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 				}
 
 				/* for anti-cheeze make the dropped items o_ptr->owner = p_ptr->id (loot might be piled btw) */
