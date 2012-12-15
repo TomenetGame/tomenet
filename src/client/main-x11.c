@@ -2085,7 +2085,12 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	Infowin_set(td->outer);
 	Infowin_init_top(topx, topy, wid + 2, hgt + 2, 1, Metadpy->fg, Metadpy->bg);
 	Infowin_set_mask(StructureNotifyMask | KeyPressMask);
-	Infowin_set_name(name);
+	if (!strcmp(name, ang_term_name[0])) {
+		char version[MAX_CHARS];
+	        sprintf(version, "TomeNET %d.%d.%d%s",
+                    VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
+		Infowin_set_name(version);
+	} else Infowin_set_name(name);
 	Infowin_set_class_hint(name);
 	Infowin_set_size(wid + 2, hgt + 2, td->fnt->wid, td->fnt->hgt, fixed);
 	Infowin_map();
