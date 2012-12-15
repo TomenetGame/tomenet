@@ -50,314 +50,12 @@ char hexsym[16] =
 	'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 };
 
-/*
- * Stat Table (INT/WIS) -- Minimum failure rate (percentage)
- */
-byte adj_mag_fail[] =
-{
-	99	/* 3 */,
-	99	/* 4 */,
-	99	/* 5 */,
-	99	/* 6 */,
-	99	/* 7 */,
-	50	/* 8 */,
-	30	/* 9 */,
-	20	/* 10 */,
-	15	/* 11 */,
-	12	/* 12 */,
-	11	/* 13 */,
-	10	/* 14 */,
-	9	/* 15 */,
-	8	/* 16 */,
-	7	/* 17 */,
-	6	/* 18/00-18/09 */,
-	6	/* 18/10-18/19 */,
-	5	/* 18/20-18/29 */,
-	5	/* 18/30-18/39 */,
-	5	/* 18/40-18/49 */,
-	4	/* 18/50-18/59 */,
-	4	/* 18/60-18/69 */,
-	4	/* 18/70-18/79 */,
-	4	/* 18/80-18/89 */,
-	3	/* 18/90-18/99 */,
-	3	/* 18/100-18/109 */,
-	2	/* 18/110-18/119 */,
-	2	/* 18/120-18/129 */,
-	2	/* 18/130-18/139 */,
-	2	/* 18/140-18/149 */,
-	1	/* 18/150-18/159 */,
-	1	/* 18/160-18/169 */,
-	1	/* 18/170-18/179 */,
-	1	/* 18/180-18/189 */,
-	1	/* 18/190-18/199 */,
-	0	/* 18/200-18/209 */,
-	0	/* 18/210-18/219 */,
-	0	/* 18/220+ */
-};
-
-
-/*
- * Stat Table (INT/WIS) -- Various things
- */
-byte adj_mag_stat[] =
-{
-	0	/* 3 */,
-	0	/* 4 */,
-	0	/* 5 */,
-	0	/* 6 */,
-	0	/* 7 */,
-	1	/* 8 */,
-	1	/* 9 */,
-	1	/* 10 */,
-	1	/* 11 */,
-	1	/* 12 */,
-	1	/* 13 */,
-	1	/* 14 */,
-	2	/* 15 */,
-	2	/* 16 */,
-	2	/* 17 */,
-	3	/* 18/00-18/09 */,
-	3	/* 18/10-18/19 */,
-	3	/* 18/20-18/29 */,
-	3	/* 18/30-18/39 */,
-	3	/* 18/40-18/49 */,
-	4	/* 18/50-18/59 */,
-	4	/* 18/60-18/69 */,
-	5	/* 18/70-18/79 */,
-	6	/* 18/80-18/89 */,
-	7	/* 18/90-18/99 */,
-	8	/* 18/100-18/109 */,
-	9	/* 18/110-18/119 */,
-	10	/* 18/120-18/129 */,
-	11	/* 18/130-18/139 */,
-	12	/* 18/140-18/149 */,
-	13	/* 18/150-18/159 */,
-	14	/* 18/160-18/169 */,
-	15	/* 18/170-18/179 */,
-	16	/* 18/180-18/189 */,
-	17	/* 18/190-18/199 */,
-	18	/* 18/200-18/209 */,
-	19	/* 18/210-18/219 */,
-	20	/* 18/220+ */
-};
-
-/*
- * Each chest has a certain set of traps, determined by pval
- * Each chest has a "pval" from 1 to the chest level (max 55)
- * If the "pval" is negative then the trap has been disarmed
- * The "pval" of a chest determines the quality of its treasure
- * Note that disarming a trap on a chest also removes the lock.
- */
-byte chest_traps[64] =
-{
-	0,					/* 0 == empty */
-	(CHEST_POISON),
-	(CHEST_LOSE_STR),
-	(CHEST_LOSE_CON),
-	(CHEST_LOSE_STR),
-	(CHEST_LOSE_CON),			/* 5 == best small wooden */
-	0,
-	(CHEST_POISON),
-	(CHEST_POISON),
-	(CHEST_LOSE_STR),
-	(CHEST_LOSE_CON),
-	(CHEST_POISON),
-	(CHEST_LOSE_STR | CHEST_LOSE_CON),
-	(CHEST_LOSE_STR | CHEST_LOSE_CON),
-	(CHEST_LOSE_STR | CHEST_LOSE_CON),
-	(CHEST_SUMMON),			/* 15 == best large wooden */
-	0,
-	(CHEST_LOSE_STR),
-	(CHEST_LOSE_CON),
-	(CHEST_PARALYZE),
-	(CHEST_LOSE_STR | CHEST_LOSE_CON),
-	(CHEST_SUMMON),
-	(CHEST_PARALYZE),
-	(CHEST_LOSE_STR),
-	(CHEST_LOSE_CON),
-	(CHEST_EXPLODE),			/* 25 == best small iron */
-	0,
-	(CHEST_POISON | CHEST_LOSE_STR),
-	(CHEST_POISON | CHEST_LOSE_CON),
-	(CHEST_LOSE_STR | CHEST_LOSE_CON),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_PARALYZE),
-	(CHEST_POISON | CHEST_SUMMON),
-	(CHEST_SUMMON),
-	(CHEST_EXPLODE),
-	(CHEST_EXPLODE | CHEST_SUMMON),	/* 35 == best large iron */
-	0,
-	(CHEST_SUMMON),
-	(CHEST_EXPLODE),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_POISON | CHEST_PARALYZE),
-	(CHEST_EXPLODE),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_POISON | CHEST_PARALYZE),	/* 45 == best small steel */
-	0,
-	(CHEST_LOSE_STR | CHEST_LOSE_CON),
-	(CHEST_LOSE_STR | CHEST_LOSE_CON),
-	(CHEST_POISON | CHEST_PARALYZE | CHEST_LOSE_STR),
-	(CHEST_POISON | CHEST_PARALYZE | CHEST_LOSE_CON),
-	(CHEST_POISON | CHEST_LOSE_STR | CHEST_LOSE_CON),
-	(CHEST_POISON | CHEST_LOSE_STR | CHEST_LOSE_CON),
-	(CHEST_POISON | CHEST_PARALYZE | CHEST_LOSE_STR | CHEST_LOSE_CON),
-	(CHEST_POISON | CHEST_PARALYZE),
-	(CHEST_POISON | CHEST_PARALYZE),	/* 55 == best large steel */
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-	(CHEST_EXPLODE | CHEST_SUMMON),
-};
-
-
-
-
-
-
-
-
-/*
- * Class titles for the player.
- *
- * The player gets a new title every five levels, so each class
- * needs only ten titles total.
- */
-cptr player_title[MAX_CLASS][PY_MAX_LEVEL/5] =
-{
-	/* Adventurer */
-	{
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-	},
-
-	/* Warrior */
-	{
-		"Rookie",
-		"Soldier",
-		"Mercenary",
-		"Veteran",
-		"Swordsman",
-		"Champion",
-		"Hero",
-		"Baron",
-		"Duke",
-		"Lord",
-	},
-
-	/* Warlock */
-	{
-		"Novice",
-		"Apprentice",
-		"Trickster",
-		"Illusionist",
-		"Spellbinder",
-		"Evoker",
-		"Conjurer",
-		"Warlock",
-		"Sorcerer",
-		"Mage Lord",
-	},
-
-	/* Priest */
-	{
-		"Believer",
-		"Acolyte",
-		"Adept",
-		"Curate",
-		"Canon",
-		"Lama",
-		"Patriarch",
-		"Priest",
-		"High Priest",
-		"Priest Lord",
-	},
-
-	/* Rogues */
-	{
-		"Vagabond",
-		"Cutpurse",
-		"Robber",
-		"Burglar",
-		"Filcher",
-		"Sharper",
-		"Low Thief",
-		"High Thief",
-		"Master Thief",
-		"Assassin",
-	},
-	/* Mimic */
-	{
-                "Copier",
-                "Copier",
-                "Modifier",
-                "Multiple",
-                "Multiple",
-                "Changer",
-                "Metamorph",
-                "Metamorph",
-                "Shapeshifter",
-                "Shapeshifter",
-        },
-
-        /* Archer */
-	{
-                "Rock Thrower",
-                "Slinger",
-                "Great Slinger",
-                "Bowsen",
-                "Bowsen",
-                "Great Bowmen",
-                "Great Bowmen",
-                "Archer",
-                "Archer",
-                "Great Archer",
-	},
-};
-
-
-
-/*
- * Hack -- the "basic" color names (see "TERM_xxx")
- */
-cptr color_names[16] =
-{
-	"Dark",
-	"White",
-	"Slate",
-	"Orange",
-	"Red",
-	"Green",
-	"Blue",
-	"Umber",
-	"Light Dark",
-	"Light Slate",
-	"Violet",
-	"Yellow",
-	"Light Red",
-	"Light Green",
-	"Light Blue",
-	"Light Umber",
-};
-
 
 /*
  * Hack -- the "basic" sound names (see "SOUND_xxx")
  */
+//#ifdef USE_SOUND
+//#ifndef USE_SOUND_2010
 cptr sound_names[SOUND_MAX] =
 {
 	"",
@@ -369,7 +67,8 @@ cptr sound_names[SOUND_MAX] =
 	"level",
 	"death",
 };
-
+//#endif
+//#endif
 
 
 /*
@@ -392,19 +91,6 @@ cptr stat_names_reduced[6] =
 /*
  * Standard window names
  */
-#if 0
-char ang_term_name[ANGBAND_TERM_MAX][40] =
-{
-	"Angband",
-	"Mirror",
-	"Recall",
-	"Choice",
-	"Term-4",
-	"Term-5",
-	"Term-6",
-	"Term-7"
-};
-#else
 char ang_term_name[ANGBAND_TERM_MAX][40] =
 {
 	"TomeNET",
@@ -416,7 +102,6 @@ char ang_term_name[ANGBAND_TERM_MAX][40] =
 	"Term-6",
 	"Term-7"
 };
-#endif
 
 
 /*
