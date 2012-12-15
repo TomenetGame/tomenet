@@ -479,6 +479,7 @@ static void do_mimic_power(int Ind, int power, int dir)
 #else /* instead use newly added adj_int_pow[] - C. Blue */
 	chance = (s_ptr->sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
 	if (chance < 1) chance = 1; /* minimum fail chance */
+	if (chance > 99) chance = 99; /* maximum fail chance */
 #endif
 
 	if (j >= 32 && interfere(Ind, cfg.spell_interfere)) return; /* mimic spells interference chance */
