@@ -1,0 +1,97 @@
+This is the TomeNET license file. The copyright statements and licenses
+that appear in the source code are listed here.
+
+--------------------------------------------------------------------------------
+
+Most of the code is available under the following license known as the
+Moria license or the Angband license.
+
+Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
+
+This software may be copied and distributed for educational, research, and
+not for profit purposes provided that this copyright and statement are
+included in all such copies.
+
+--------------------------------------------------------------------------------
+
+Low-level networking code is available under the following license.
+
+Copyright (C) 1991 by Arne Helme, The TRACE project
+
+Rights to use this source is granted for all non-commercial and research
+uses. Creation of derivate forms of this software may be subject to
+restriction. Please obtain written permission from the author.
+
+This software is provided "as is" without any express or implied
+warranty.
+
+--------------------------------------------------------------------------------
+
+The XPilot networking code is available under the GNU General Public License.
+
+XPilot, a multiplayer gravity war game.  Copyright (C) 1991-95 by
+
+     Bjørn Stabell        (bjoerns@staff.cs.uit.no)
+     Ken Ronny Schouten   (kenrsc@stud.cs.uit.no)
+     Bert G sbers         (bert@mc.bio.uva.nl)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+--------------------------------------------------------------------------------
+
+The Lua language implementation is available under the following license.
+
+Copyright (C) 1994-2000 TeCGraf, PUC-Rio.  All rights reserved.
+
+Permission is hereby granted, without written agreement and without license
+or royalty fees, to use, copy, modify, and distribute this software and its
+documentation for any purpose, including commercial applications, subject to
+the following conditions:
+
+ - The above copyright notice and this permission notice shall appear in all
+   copies or substantial portions of this software.
+
+ - The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software in a
+   product, an acknowledgment in the product documentation would be greatly
+   appreciated (but it is not required).
+
+ - Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+
+The authors specifically disclaim any warranties, including, but not limited
+to, the implied warranties of merchantability and fitness for a particular
+purpose.  The software provided hereunder is on an "as is" basis, and the
+authors have no obligation to provide maintenance, support, updates,
+enhancements, or modifications.  In no event shall TeCGraf, PUC-Rio, or the
+authors be held liable to any party for direct, indirect, special,
+incidental, or consequential damages arising out of the use of this software
+and its documentation.
+
+The Lua language and this implementation have been entirely designed and
+written by Waldemar Celes Filho, Roberto Ierusalimschy and
+Luiz Henrique de Figueiredo at TeCGraf, PUC-Rio.
+
+This implementation contains no third-party code.
+
+--------------------------------------------------------------------------------
+
+The SFMT random number generator is available under the new BSD license.
+
+Copyright (C) 2006, 2007 Mutsuo Saito, Makoto Matsumoto and Hiroshima
+University. All rights reserved.
+
+The new BSD License is applied to this software.
+see LICENSE.txt
