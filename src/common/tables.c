@@ -101,7 +101,7 @@ byte adj_mag_stat[] =
 };
 
 /*
- * Stat Table (INT) -- also used for mimicry powers fail rate modifier (%)
+ * Stat Table (INT) for mimicry powers fail rate modifier (%)
  */
 byte adj_int_pow[] =
 {
