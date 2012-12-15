@@ -3661,9 +3661,7 @@ bool recharge(int Ind, int num)
 bool recharge_aux(int Ind, int item, int num)
 {
 	player_type *p_ptr = Players[Ind];
-
 	int                 i, t, lev;
-
 	object_type		*o_ptr;
 
 
@@ -3671,19 +3669,11 @@ bool recharge_aux(int Ind, int item, int num)
 	item_tester_hook = item_tester_hook_recharge;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &p_ptr->inventory[item];
-	}
-
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
+	else o_ptr = &o_list[0 - item];
 
-	if (!item_tester_hook(o_ptr))
-	{
+	if (!item_tester_hook(o_ptr)) {
 		msg_print(Ind, "You cannot recharge that item.");
 		get_item(Ind);
 		return (FALSE);
@@ -3693,8 +3683,7 @@ bool recharge_aux(int Ind, int item, int num)
 	lev = k_info[o_ptr->k_idx].level;
 
 	/* Recharge a rod */
-	if (o_ptr->tval == TV_ROD)
-	{
+	if (o_ptr->tval == TV_ROD) {
 		/* Extract a recharge power */
 		i = (100 - lev + num) / 5;
 
@@ -3702,8 +3691,7 @@ bool recharge_aux(int Ind, int item, int num)
 		if (i < 1) i = 1;
 
 		/* Back-fire */
-		if (rand_int(i) == 0)
-		{
+		if (rand_int(i) == 0) {
 			/* Hack -- backfire */
 			//msg_print(Ind, "The recharge backfires, draining the rod further!");
 			msg_print(Ind, "There is a static discharge.");
@@ -3713,28 +3701,19 @@ bool recharge_aux(int Ind, int item, int num)
 		}
 
 		/* Recharge */
-		else
-		{
+		else {
 			/* Rechange amount */
 			t = (num * damroll(2, 4));
 
 			/* Recharge by that amount */
-			if (o_ptr->pval > t)
-			{
-				o_ptr->pval -= t;
-			}
-
+			if (o_ptr->pval > t) o_ptr->pval -= t;
 			/* Fully recharged */
-			else
-			{
-				o_ptr->pval = 0;
-			}
+			else o_ptr->pval = 0;
 		}
 	}
 
 	/* Recharge wand/staff */
-	else
-	{
+	else {
 		/* Recharge power */
 		i = (num + 100 - lev - (10 * o_ptr->pval)) / 15;
 
@@ -3742,8 +3721,7 @@ bool recharge_aux(int Ind, int item, int num)
 		if (i < 1) i = 1;
 
 		/* Back-fire XXX XXX XXX */
-		if (rand_int(i) == 0)
-		{
+		if (rand_int(i) == 0) {
 			/* a chance to just discharge it instead of destroying it */
 			if (!rand_int(2)) {
 				msg_print(Ind, "There is a static discharge.");
@@ -3768,9 +3746,15 @@ bool recharge_aux(int Ind, int item, int num)
 			}
 		}
 
+		/* Hack: No controlled mass-summoning in ironman deep dive challenge */
+		else if (in_irondeepdive(&p_ptr->wpos) && o_ptr->tval == TV_STAFF && o_ptr->sval == SV_STAFF_SUMMONING) {
+			msg_print(Ind, "There is a static discharge.");
+			o_ptr->pval = 0;
+			o_ptr->ident |= ID_EMPTY;
+		}
+
 		/* Recharge */
-		else
-		{
+		else {
 			/* Extract a "power" */
 			t = (num / (lev + 2)) + 1;
 
@@ -3789,8 +3773,7 @@ bool recharge_aux(int Ind, int item, int num)
 	}
 
 	/* Did we use up an item? */
-	if (p_ptr->using_up_item >= 0)
-	{
+	if (p_ptr->using_up_item >= 0) {
 		inven_item_describe(Ind, p_ptr->using_up_item);
 		inven_item_optimize(Ind, p_ptr->using_up_item);
 		p_ptr->using_up_item = -1;

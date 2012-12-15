@@ -3068,13 +3068,12 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			if(!check_self_summon(p_ptr)) break;
 			s_printf("SUMMON_SPECIFIC: %s\n", p_ptr->name);
-			for (k = 0; k < randint(4); k++)
-			{
+			summon_override_checks = SO_IDDC;
+			for (k = 0; k < randint(4); k++) {
 				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, 0, 1, 0))
-				{
 					ident = TRUE;
-				}
 			}
+			summon_override_checks = SO_NONE;
 			break;
 		}
 
