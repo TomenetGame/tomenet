@@ -199,7 +199,7 @@ N:31:Lose Memory Trap
 I:6:30:30:6:10:0d0:r:10
 D:You suddenly can't remember what you were doing here...
 F:FLOOR | CHEST | DOOR
-F:SPECIAL_GENE
+#F:SPECIAL_GENE
 
 N:32:Bitter Regret Trap
 I:9:15:20:9:20:0d0:r:10

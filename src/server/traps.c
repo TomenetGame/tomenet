@@ -740,11 +740,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 		 /* Lose Memory Trap */
 		case TRAP_OF_LOSE_MEMORY:
-			if (p_ptr->lev != 99) lose_exp(Ind, p_ptr->exp / 4);
-			ident |= dec_stat(Ind, A_WIS, rand_int(20)+10, STAT_DEC_NORMAL);
-			ident |= dec_stat(Ind, A_INT, rand_int(20)+10, STAT_DEC_NORMAL);
+			if (p_ptr->lev != 99) lose_exp(Ind, p_ptr->exp / 10);
+			ident |= dec_stat(Ind, A_WIS, rand_int(10) + 10, STAT_DEC_NORMAL);
+			ident |= dec_stat(Ind, A_INT, rand_int(10) + 10, STAT_DEC_NORMAL);
 			if (!p_ptr->resist_conf) {
-				if (set_confused(Ind, p_ptr->confused + rand_int(100) + 50))
+				if (set_confused(Ind, p_ptr->confused + rand_int(20) + 20))
 					ident = TRUE;
 			}
 			if (ident)
@@ -1097,106 +1097,104 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		/* Trap of Stair Movement */
 		case TRAP_OF_STAIR_MOVEMENT:
-		{
 #if 0	// after f_info!
-			{
-				s16b cx,cy,i,j;
-				s16b cnt = 0;
-				s16b cnt_seen = 0;
-				s16b tmps, tmpx;
-				u32b tmpf;
-				bool seen = FALSE;
-				s16b index_x[20],index_y[20]; /* 20 stairs per level is enough? */
-				cave_type *cv_ptr;
-				if (max_dlv[dungeon_type] != 99) { /* no sense in relocating that stair! */
-					for (cx = 0; cx < p_ptr->cur_wid; cx++) {
-						for (cy = 0; cy < p_ptr->cur_hgt; cy++) {
-							cv_ptr = &zcave[cy][cx];
+		{
+			s16b cx,cy,i,j;
+			s16b cnt = 0;
+			s16b cnt_seen = 0;
+			s16b tmps, tmpx;
+			u32b tmpf;
+			bool seen = FALSE;
+			s16b index_x[20],index_y[20]; /* 20 stairs per level is enough? */
+			cave_type *cv_ptr;
+
+			for (cx = 0; cx < p_ptr->cur_wid; cx++) {
+				for (cy = 0; cy < p_ptr->cur_hgt; cy++) {
+					cv_ptr = &zcave[cy][cx];
 #if 0
-							if ((cv_ptr->feat != FEAT_LESS) &&
-							    (cv_ptr->feat != FEAT_MORE) &&
-							    (cv_ptr->feat != FEAT_SHAFT_UP) &&
-							    (cv_ptr->feat != FEAT_SHAFT_DOWN)) continue;
+					if ((cv_ptr->feat != FEAT_LESS) &&
+					    (cv_ptr->feat != FEAT_MORE) &&
+					    (cv_ptr->feat != FEAT_SHAFT_UP) &&
+					    (cv_ptr->feat != FEAT_SHAFT_DOWN)) continue;
 #endif
-							if ((cv_ptr->feat != FEAT_LESS) &&
-							    (cv_ptr->feat != FEAT_MORE)) continue;
+					if ((cv_ptr->feat != FEAT_LESS) &&
+					    (cv_ptr->feat != FEAT_MORE)) continue;
 
-							index_x[cnt] = cx;
-							index_y[cnt] = cy;
-							cnt++;
-						}
-					}
-					if (cnt == 0) {
-						//                  quit("Executing moving stairs trap on level with no stairs!");
-						s_printf("Executing moving stairs trap on level with no stairs!\n");
-						break;
-					} else {
-						for (i = 0; i < cnt; i++) {
-							for (j = 0; j < 10; j++) { /* try 10 times to relocate */
-								cave_type *c_ptr2 = &zcave[index_y[i]][index_x[i]];
-
-								cx = rand_int(p_ptr->cur_wid);
-								cy = rand_int(p_ptr->cur_hgt);
-
-								if ((cx == index_x[i]) || (cy == index_y[i])) continue;
-								if (!cave_valid_bold(zcave, cy, cx) || zcave[cy][cx].o_idx != 0) continue;
-
-								/* don't put anything in vaults/nests/pits */
-								if (zcave[cy][cx].info & CAVE_ICKY) continue;
-								if (zcave[cy][cx].info & CAVE_NEST_PIT) continue;
-
-								tmpf = zcave[cy][cx].feat;
-								tmps = zcave[cy][cx].info;
-								tmpx = zcave[cy][cx].mimic;
-								zcave[cy][cx].feat = c_ptr2->feat;
-								zcave[cy][cx].info = c_ptr2->info;
-								zcave[cy][cx].mimic = c_ptr2->mimic;
-								c_ptr2->feat  = tmpf;
-								c_ptr2->info  = tmps;
-								c_ptr2->mimic = tmpx;
-
-								/* if we are placing walls in rooms, make them rubble instead */
-								if ((c_ptr2->info & CAVE_ROOM) &&
-								    (c_ptr2->feat >= FEAT_WALL_EXTRA) &&
-								    (c_ptr2->feat <= FEAT_PERM_SOLID)) {
-									cave[index_y[i]][index_x[i]].feat = FEAT_RUBBLE;
-								}
-								if (player_has_los_bold(Ind, cy, cx)) {
-									note_spot(Ind, cy,cx);
-									lite_spot(Ind, cy,cx);
-									seen = TRUE;
-								} else {
-									cave[cy][cx].info &= ~CAVE_MARK;
-								}
-								if (player_has_los_bold(index_y[i],index_x[i])) {
-									note_spot(index_y[i],index_x[i]);
-									lite_spot(index_y[i],index_x[i]);
-									seen = TRUE;
-								} else {
-									cave[index_y[i]][index_x[i]].info &= ~CAVE_MARK;
-								}
-								break;
-							}
-							if (seen) cnt_seen++;
-							seen = FALSE;
-						} /* cnt loop */
-
-						ident = (cnt_seen > 0);
-						if ((ident) && (cnt_seen>1))
-							msg_print(Ind, "You see some stairs move.");
-						else if (ident)
-							msg_print(Ind, "You see a stair move.");
-						else
-							msg_print(Ind, "You hear distant scraping noises.");
-						p_ptr->redraw |= PR_MAP;
-					} /* any stairs found */
-				} else { /* are we on level 99 */
-					msg_print(Ind, "You have a feeling that this trap could be dangerous.");
+					index_x[cnt] = cx;
+					index_y[cnt] = cy;
+					cnt++;
+					if (cnt == 20) break;
 				}
+				if (cnt == 20) break;
 			}
-#endif	// 0
-			break;
+			if (cnt == 0) break;
+
+			for (i = 0; i < cnt; i++) {
+				for (j = 0; j < 10; j++) { /* try 10 times to relocate */
+					cave_type *c_ptr2 = &zcave[index_y[i]][index_x[i]];
+
+					cx = rand_int(p_ptr->cur_wid);
+					cy = rand_int(p_ptr->cur_hgt);
+
+					if ((cx == index_x[i]) || (cy == index_y[i])) continue;
+					if (!cave_valid_bold(zcave, cy, cx) || zcave[cy][cx].o_idx != 0) continue;
+
+					/* don't put anything in vaults/nests/pits */
+					if (zcave[cy][cx].info & CAVE_ICKY) continue;
+					if (zcave[cy][cx].info & CAVE_NEST_PIT) continue;
+
+					tmpf = zcave[cy][cx].feat;
+					tmps = zcave[cy][cx].info;
+					tmpx = zcave[cy][cx].mimic;
+					zcave[cy][cx].feat = c_ptr2->feat;
+					zcave[cy][cx].info = c_ptr2->info;
+					zcave[cy][cx].mimic = c_ptr2->mimic;
+					c_ptr2->feat  = tmpf;
+					c_ptr2->info  = tmps;
+					c_ptr2->mimic = tmpx;
+
+					/* if we are placing walls in rooms, make them rubble instead */
+					if ((c_ptr2->info & CAVE_ROOM) &&
+					    (c_ptr2->feat >= FEAT_WALL_EXTRA) &&
+					    (c_ptr2->feat <= FEAT_PERM_SOLID)) {
+						cave[index_y[i]][index_x[i]].feat = FEAT_RUBBLE;
+					}
+					if (player_has_los_bold(Ind, cy, cx)) {
+						note_spot(Ind, cy,cx);
+						lite_spot(Ind, cy,cx);
+						seen = TRUE;
+					} else {
+						cave[cy][cx].info &= ~CAVE_MARK;
+					}
+					if (player_has_los_bold(index_y[i],index_x[i])) {
+						note_spot(index_y[i],index_x[i]);
+						lite_spot(index_y[i],index_x[i]);
+						seen = TRUE;
+					} else {
+						cave[index_y[i]][index_x[i]].info &= ~CAVE_MARK;
+					}
+					break;
+				}
+				if (seen) cnt_seen++;
+				seen = FALSE;
+			} /* cnt loop */
+
+			ident = (cnt_seen > 0);
+			if ((ident) && (cnt_seen>1))
+				msg_print(Ind, "You see some stairs move.");
+					else if (ident)
+						msg_print(Ind, "You see a stair move.");
+					else
+						msg_print(Ind, "You hear distant scraping noises.");
+					p_ptr->redraw |= PR_MAP;
+				} /* any stairs found */
+			} else { /* are we on level 99 */
+				msg_print(Ind, "You have a feeling that this trap could be dangerous.");
+			}
 		}
+#endif	// 0
+		break;
+
 		/* Trap of New Trap */
 		case TRAP_OF_NEW:
 		// maybe could become more interesting if it spawns several more traps at random locations? :)
@@ -2791,7 +2789,7 @@ void place_trap_object(object_type *o_ptr)
                 if (t_ptr->flags & FTRAP_SPECIAL_GENE) continue;
 
                 /* how probable is this trap   */
-                if (rand_int(100)<t_ptr->probability) {
+                if (rand_int(100) < t_ptr->probability) {
                         o_ptr->pval = trap;
                         more = FALSE;
                 }
