@@ -5416,7 +5416,7 @@ Ironman Deep Dive Challenge (IDDC)
     you log on, which will prevent you from getting any experience, items or
     gold until you move on by taking a staircase to the next floor.
     Monsters cannot spawn 'live' in the IDDC, but only at the time of creation
-    of each dungeon floor.
+    of each dungeon floor. Summon staves cannot be recharged in the IDDC.
 
     If you make a 'slot-exclusive' IDDC character, it will start out with 300
     extra gold, and in turn automatically be unable to pick up any more gold or
