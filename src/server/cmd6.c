@@ -5920,7 +5920,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 						p_ptr->csp_frac = 0;
 
 						/* Message */
-						msg_print(Ind, "You don't have enough mana to control the stone!");
+						msg_print(Ind, "You do not have enough mana to control the stone!");
 
 						/* Confusing. */
 						(void)set_confused(Ind, p_ptr->confused + 5 + randint(5));
