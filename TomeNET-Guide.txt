@@ -10748,13 +10748,17 @@ Small kobold     1  Actually very weak, but it has poison resistance. This way
                     Not really useful other than that.
 Novice mage      2  Sort of weak but has 'blink' spell (aka phase door) and
                     more.
+                    It occurs solo at depth 2, but in packs at depth 6!
+Novice priest    2  Sort of weak but can cast fear/curse and self-heal spells.
+                    It occurs solo at depth 2, but in packs at depth 6!
 Novice ranger    4  Can pass trees easily. Gives an extra shot with ranged
                     weapons. This can be pretty powerful early on if the
                     character has a decent 'bows/throws' ability or has a bow
                     that is well enchanted to-hit.
-Novice priest    6  Sort of weak but can cast heal/fear/curse spells.
-N. mindcrafter   8  Free action, resists confusion and slightly insanity too.
+                    It occurs solo at depth 4, but in packs at depth 8!
+N. mindcrafter   4  Free action, resists confusion and slightly insanity too.
                     Can cast blind/slow/confuse/fear spells.
+                    It occurs solo at depth 4, but in packs at depth 8!
 Rotting corpse   8  Free action, resists confusion/fear/cold, poison immunity,
                     brands melee attacks with poison, decent AC.
 Phantom warrior  8  Useful only for shamans because it has no limbs:
@@ -10767,6 +10771,11 @@ Tengu           10  High HP, good AC, can blink/teleport and more, resists fear
 Master yeek     12  Although everyone knows that Yeek = weak, this particular
                     kind of Yeek can cast some interesting magic spells.
                     And as a plus it's actually immune to acid.
+Illusionist and Druid
+                13  These two have an array of spells at their disposal, one of
+                    them being 'Haste' which speeds themselves up temporarily,
+                    which can be a very powerful asset.
+                    These two monsters appear somewhat rarely though.
 Ogre            13  This form can cross thick woods and mountain terrain.
                     Note that Ogres also count as giants which means that
                     shamans can use this form too.
