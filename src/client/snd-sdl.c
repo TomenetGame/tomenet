@@ -1223,7 +1223,7 @@ errr init_sound_sdl(int argc, char **argv) {
 #else /* never cache audio right at program start, because it creates an annoying delay! */
 	if (!sound_sdl_init(TRUE)) {
 #endif
-		plog("Failed to load audio config");
+		plog("Failed to initialise audio.");
 
 		/* Failure */
 		return (1);
