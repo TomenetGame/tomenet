@@ -2957,7 +2957,7 @@ static void cmd_master_aux_build(void)
 					sprintf(&buf[2],"%d",keyid);
 				}
 				break;
-			/* Build mode off */
+			/* Sign post */
 			case '9':
 				buf[0] = FEAT_SIGN;
 				get_string("Sign:", &buf[2], 77);
@@ -2966,6 +2966,7 @@ static void cmd_master_aux_build(void)
 			case '0':
 				buf[0] = c_get_quantity("Enter feature value:",0xff);
 				break;
+			/* Build mode off */
 			case 'a': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
 			/* Oops */
 			default : bell(); break;
