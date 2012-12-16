@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. December 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 16. December 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.0a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1740,12 +1740,17 @@ home folder, same as Linux.
 Starting with version 4.4.5, TomeNET features a new SDL-based audio system,
 which provides sound effects and background music.
 
-To make use of it, all you have to do is download (www.tomenet.net) and install
-a sound pack and/or a music pack. Read on for instructions how to do that:
+To make use of it, all you have to do is download a sound and/or music pack and
+then install it. For downloading, go to www.tomenet.net and then click on
+'Downloads'.
+Read on for instructions how to install those once you downloaded them. There
+are two ways, automatically (client does it for you) and manually (you unzip
+them to the correct location yourself):
 
 
-Automatic audio pack installation
----------------------------------
+a) Automatic audio pack installation
+------------------------------------
+(See paragraph above for where to download audio packs.)
 Starting with client version 4.4.9, there is an automatic installer for sound
 and music pack:
 
@@ -1777,8 +1782,9 @@ In case you want to install the packs manually instead of using auto-install,
 read on.
 
 
-Manual audio pack installation
--------------------------
+b) Manual audio pack installation
+---------------------------------
+(See first paragraph of (2.1a) above for where to download audio packs.)
 Instead of automatic installation explained above you can also just manually
 unpack audio packs to your TomeNET/lib/xtra/ folder. Make sure the game isn't
 running while you do.
