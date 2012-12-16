@@ -646,7 +646,7 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 	struct worldpos *wpos = &p_ptr->wpos;
 	
 	/* Allowed? */
-	if ((!allow_terraforming(wpos, FEAT_RUNE) || is_town(wpos))
+	if ((!allow_terraforming(wpos, FEAT_RUNE) || istown(wpos))
 	    && !is_admin(p_ptr))
 		return;
 	
