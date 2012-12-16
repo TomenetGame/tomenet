@@ -4088,7 +4088,7 @@ For a list of dungeons and towers, see (4.5).
 
 Dungeon types
 -------------
-There are different types of dungeons. The main five are:
+There are different types of dungeons:
 
 -Normal dungeons. The main dungeons below the five cities Bree, Minas Anor,
  Gondolin, Lothlorien and Khazad-dum are such regular dungeons.
