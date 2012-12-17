@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. December 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 17. December 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.0a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9491,8 +9491,9 @@ Warrior is strongly recommended.
     darkling, a harbinger of demonkind (to become enlightened) before reaching
     level 20 or they will lose the ability to stay in the realm and their
     physical form will be destroyed.
-    They will also meet such a fate if they kill both of these kind
-    indiscriminately before having reached initiation, so take care.
+    They will also meet such a fate of being destroyed by indecisiveness if
+    they kill both of these kind indiscriminately before having reached
+    initiation, so take care.
     Using but their mind they can easily perceive both good and demonkind
     telepathically. The servants and harbingers of those factions that Maiar
     need to slay occur between dungeon level 12 and 20 (which correspond to
