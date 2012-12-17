@@ -7400,6 +7400,12 @@ bool prepare_quest(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num
 	}
 #endif
 
+	/* Slightly easier in IDDC */
+	if (in_irondeepdive(&Players[j]->wpos)) {
+		if (i > 6) i--;
+		if (i > 4) i--;
+	}
+
 	/* Hack: If (non-)FRIENDS variant exists, use the first one (usually the non-FRIENDS one) */
 	if (r_info[r].dup_idx) r = r_info[r].dup_idx;
 
