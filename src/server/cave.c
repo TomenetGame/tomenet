@@ -1788,28 +1788,28 @@ static byte breath_to_attr[32][2] =
 	{  0, 0},
 	{  0, 0},
 	{  0, 0},
-	{  TERM_ACID },		/* RF4_BRTH_ACID */
-	{  TERM_ELEC },		/* RF4_BRTH_ELEC */
-	{  TERM_FIRE },		/* RF4_BRTH_FIRE */
-	{  TERM_COLD },		/* RF4_BRTH_COLD */
-	{  TERM_POIS },		/* RF4_BRTH_POIS */
-	{  TERM_L_GREEN,  TERM_GREEN },		/* RF4_BRTH_NETHR */
-	{  TERM_LITE, 0 },		/* RF4_BRTH_LITE */
-	{  TERM_DARKNESS, 0 },		/* RF4_BRTH_DARK */
-	{  TERM_CONF, 0 },		/* RF4_BRTH_CONFU */
-	{  TERM_SOUN, 0 },	/* RF4_BRTH_SOUND */
+	{  TERM_ACID },				/* RF4_BRTH_ACID */
+	{  TERM_ELEC },				/* RF4_BRTH_ELEC */
+	{  TERM_FIRE },				/* RF4_BRTH_FIRE */
+	{  TERM_COLD },				/* RF4_BRTH_COLD */
+	{  TERM_POIS },				/* RF4_BRTH_POIS */
+	{  TERM_L_GREEN,  TERM_L_DARK },	/* RF4_BRTH_NETHR */
+	{  TERM_LITE, 0 },			/* RF4_BRTH_LITE */
+	{  TERM_DARKNESS, 0 },			/* RF4_BRTH_DARK */
+	{  TERM_CONF, 0 },			/* RF4_BRTH_CONFU */
+	{  TERM_SOUN, 0 },			/* RF4_BRTH_SOUND */
 	{  255,  255 },   /* (any color) */	/* RF4_BRTH_CHAOS */
-	{  TERM_VIOLET,  TERM_VIOLET },		/* RF4_BRTH_DISEN */
+	{  TERM_ORANGE,  TERM_BLUE },		/* RF4_BRTH_DISEN */
 	{  TERM_L_RED,  TERM_VIOLET },		/* RF4_BRTH_NEXUS */
-	{  TERM_L_BLUE,  TERM_L_BLUE },		/* RF4_BRTH_TIME */
-	{  TERM_L_WHITE,  TERM_SLATE },		/* RF4_BRTH_INER */
-	{  TERM_L_WHITE,  TERM_SLATE },		/* RF4_BRTH_GRAV */
-	{  TERM_SHAR, 0 },		/* RF4_BRTH_SHARD */
-	{  TERM_ORANGE, TERM_RED },		/* RF4_BRTH_PLAS */
-	{  TERM_UMBER, TERM_L_UMBER },		/* RF4_BRTH_FORCE */
-	{  TERM_L_BLUE, TERM_WHITE },		/* RF4_BRTH_MANA */
-	{  TERM_WHITE, TERM_L_RED },		/* RF4_BRTH_DISINT */
-	{  TERM_GREEN, TERM_L_GREEN },		/* RF4_BRTH_NUKE */
+	{  TERM_L_BLUE,  TERM_L_GREEN },	/* RF4_BRTH_TIME */
+	{  TERM_L_WHITE, TERM_SLATE },		/* RF4_BRTH_INER */
+	{  TERM_L_UMBER,  TERM_UMBER },		/* RF4_BRTH_GRAV */
+	{  TERM_SHAR, 0 },			/* RF4_BRTH_SHARD */
+	{  TERM_L_RED, TERM_RED },		/* RF4_BRTH_PLAS */
+	{  TERM_L_WHITE, TERM_ORANGE },		/* RF4_BRTH_FORCE */
+	{  TERM_VIOLET, TERM_L_BLUE },		/* RF4_BRTH_MANA */
+	{  TERM_L_DARK, TERM_ORANGE },		/* RF4_BRTH_DISINT */
+	{  TERM_GREEN, TERM_RED },		/* RF4_BRTH_NUKE */
 	{  0,  0 },     /*  */
 	{  0,  0 },     /*  */
 };

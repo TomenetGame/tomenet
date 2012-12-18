@@ -19437,7 +19437,7 @@ D:beyond comprehension, daring to look at it will drive you insane, let alone
 D:fighting it!
 
 N:1073:Star Blade
-G:A:b
+G:A:v
 I:130:400d35:200:200:255
 #W:90:8:3200:30000
 W:90:8:3200:35000
@@ -20633,7 +20633,7 @@ D:A grey-brown bird with orange-red breast feathers.
 
 #Nether Realm only
 N:1143:Nether vortex
-G:v:v
+G:v:G
 I:140:900d13:100:30:0
 W:97:4:0:30000
 E:0:0:0:0:0:0
@@ -20644,8 +20644,7 @@ B:ENGULF:HURT:10d10
 F:NETHER_REALM | FORCE_SLEEP | RAND_50 | CAN_FLY | WILD_VOLCANO | NO_CUT
 F:WILD_TOO | BASH_DOOR | POWERFUL | IM_POIS | IM_FIRE | IM_COLD | IM_ELEC
 F:IM_ACID | RES_NETH | NO_FEAR | NO_CONF | NO_SLEEP | NO_STUN | NONLIVING
-F:BLUEBAND | EMPTY_MIND
-#S:1_IN_3 |
+F:BLUEBAND | EMPTY_MIND | ATTR_MULTI
 S:1_IN_2 |
 S:BR_NETH
 D:A whirling anomaly of nether mists that will drain your life force.
