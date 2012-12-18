@@ -5389,6 +5389,8 @@ Ironman Deep Dive Challenge (IDDC)
     magic spells you might be missing.
     Inside the challenge dungeon you can acquire a kill quest via /quest
     command at level 1 already, instead of the usual minimum level of 5.
+    Players in the IDDC receive a 20% experience gain bonus in addition to the
+    usual experience bonus all ironman dungeons provide.
 
     Since you cannot recall out before reaching the 127th floor (or in one of
     the static towns), in case you need to go offline you'll just have to log
