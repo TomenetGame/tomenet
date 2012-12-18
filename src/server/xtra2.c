@@ -8324,6 +8324,45 @@ void ang_sort_aux(int Ind, vptr u, vptr v, int p, int q)
 	ang_sort_aux(Ind, u, v, b+1, q);
 }
 
+void ang_sort_extra_aux(int Ind, vptr u, vptr v, vptr w, int p, int q)
+{
+	int z, a, b;
+
+	/* Done sort */
+	if (p >= q) return;
+
+	/* Pivot */
+	z = p;
+
+	/* Begin */
+	a = p;
+	b = q;
+
+	/* Partition */
+	while (TRUE) {
+		/* Slide i2 */
+		while (!(*ang_sort_extra_comp)(Ind, u, v, w, b, z)) b--;
+
+		/* Slide i1 */
+		while (!(*ang_sort_extra_comp)(Ind, u, v, w, z, a)) a++;
+
+		/* Done partition */
+		if (a >= b) break;
+
+		/* Swap */
+		(*ang_sort_extra_swap)(Ind, u, v, w, a, b);
+
+		/* Advance */
+		a++, b--;
+	}
+
+	/* Recurse left side */
+	ang_sort_extra_aux(Ind, u, v, w, p, b);
+
+	/* Recurse right side */
+	ang_sort_extra_aux(Ind, u, v, w, b+1, q);
+}
+
 
 /*
  * Angband sorting algorithm -- quick sort in place
@@ -8339,6 +8378,14 @@ void ang_sort(int Ind, vptr u, vptr v, int n)
 	ang_sort_aux(Ind, u, v, 0, n-1);
 }
 
+/* Added this for further sorting the all monsters that are *closest* to
+   the player by their sleep state: Target awake monsters first, before
+   waking up sleeping ones. Suggested by Caine/Ifrit - C. Blue */
+void ang_sort_extra(int Ind, vptr u, vptr v, vptr w, int n)
+{
+	/* Sort the array */
+	ang_sort_extra_aux(Ind, u, v, w, 0, n-1);
+}
 
 /* returns our max times 100 divided by our current...*/
 static int player_wounded(s16b ind)
@@ -8454,6 +8501,59 @@ void ang_sort_swap_distance(int Ind, vptr u, vptr v, int a, int b)
 	temp = y[a];
 	y[a] = y[b];
 	y[b] = temp;
+}
+
+
+bool ang_sort_extra_comp_distance(int Ind, vptr u, vptr v, vptr w, int a, int b)
+{
+	player_type *p_ptr = Players[Ind];
+
+	byte *x = (byte*)(u);
+	byte *y = (byte*)(v);
+	byte *z = (byte*)(w);
+
+	int da, db, kx, ky;
+
+	/* Absolute distance components */
+	kx = x[a]; kx -= p_ptr->px; kx = ABS(kx);
+	ky = y[a]; ky -= p_ptr->py; ky = ABS(ky);
+
+	/* Approximate Double Distance to the first point */
+	da = ((kx > ky) ? (kx + kx + ky) : (ky + ky + kx));
+
+	/* Absolute distance components */
+	kx = x[b]; kx -= p_ptr->px; kx = ABS(kx);
+	ky = y[b]; ky -= p_ptr->py; ky = ABS(ky);
+
+	/* Approximate Double Distance to the first point */
+	db = ((kx > ky) ? (kx + kx + ky) : (ky + ky + kx));
+
+	/* Compare the distances -- if equal, prefer the target that is not asleep, default to 'a'. */
+	return ((da == db) ? (z[b] || !z[a]) : (da <= db));
+}
+
+void ang_sort_extra_swap_distance(int Ind, vptr u, vptr v, vptr w, int a, int b)
+{
+	byte *x = (byte*)(u);
+	byte *y = (byte*)(v);
+	byte *z = (byte*)(w);
+
+	byte temp;
+
+	/* Swap "x" */
+	temp = x[a];
+	x[a] = x[b];
+	x[b] = temp;
+
+	/* Swap "y" */
+	temp = y[a];
+	y[a] = y[b];
+	y[b] = temp;
+
+	/* Swap "z" */
+	temp = z[a];
+	z[a] = z[b];
+	z[b] = temp;
 }
 
 
@@ -8611,7 +8711,7 @@ bool target_able(int Ind, int m_idx)
 
 		/* XXX XXX XXX Hack -- Never target trappers */
 		/* if (CLEAR_ATTR && CLEAR_CHAR) return (FALSE); */
-		
+
 		/* Cannot be targeted */
 #ifdef CHEAP_NO_TARGET_TEST
 		/* Allow targetting if it's next to player? */
@@ -8835,6 +8935,7 @@ bool target_set(int Ind, int dir)
 			/* Save this monster index */
 			p_ptr->target_x[p_ptr->target_n] = m_ptr->fx;
 			p_ptr->target_y[p_ptr->target_n] = m_ptr->fy;
+			p_ptr->target_state[p_ptr->target_n] = m_ptr->csleep ? 1 : 0;
 			p_ptr->target_n++;
 		}
 
@@ -8859,15 +8960,16 @@ bool target_set(int Ind, int dir)
 			/* Save the player index */
 			p_ptr->target_x[p_ptr->target_n] = q_ptr->px;
 			p_ptr->target_y[p_ptr->target_n] = q_ptr->py;
+			p_ptr->target_state[p_ptr->target_n] = q_ptr->afk ? 1 : 0; /* AFK players count as 'asleep' ;) */
 			p_ptr->target_n++;
 		}
 
 		/* Set the sort hooks */
-		ang_sort_comp = ang_sort_comp_distance;
-		ang_sort_swap = ang_sort_swap_distance;
+		ang_sort_extra_comp = ang_sort_extra_comp_distance;
+		ang_sort_extra_swap = ang_sort_extra_swap_distance;
 
 		/* Sort the positions */
-		ang_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_n);
+		ang_sort_extra(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_state, p_ptr->target_n);
 
 		/* Collect indices */
 		for (i = 0; i < p_ptr->target_n; i++) {
@@ -8928,7 +9030,32 @@ bool target_set(int Ind, int dir)
 		i = target_pick(Ind, p_ptr->target_y[m], p_ptr->target_x[m], ddy[dir], ddx[dir]);
 
 		/* Use that monster */
-		if (i > 0) m = i;
+		if (i > 0) {
+			m = i;
+
+#if 0 /* enable when this targetting method is fixed: */
+    /* Currently you cannot select any available target, even though you can look at it,
+	probably a problem in target_pick(). */
+    /* Also make 'l'ooking at a monster target it, probably. (p_ptr->look_index vs p_ptr->target_who) */
+			if (p_ptr->target_idx[i] > 0) {
+				m_ptr = &m_list[p_ptr->target_idx[i]];
+				snprintf(out_val, sizeof(out_val), "%s%s (Lv %d, %s%s)",
+				    ((r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1) ? "\377D" : "",
+				    r_name_get(&m_list[p_ptr->target_idx[m]]),
+				    m_ptr->level, look_mon_desc(p_ptr->target_idx[m]),
+				    m_ptr->clone ? ", clone" : "");
+			} else if (p_ptr->target_idx[i] < 0) {
+				q_ptr = Players[0 - p_ptr->target_idx[i]];
+				if (q_ptr->body_monster) {
+		                        snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE));
+		                } else {
+		                        snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, get_prace(q_ptr), get_ptitle(q_ptr, FALSE));
+				}
+			}
+//			strcpy(out_val, "[<dir>, t, q] ");
+			Send_target_info(Ind, p_ptr->target_x[m] - p_ptr->panel_col_prt, p_ptr->target_y[m] - p_ptr->panel_row_prt, out_val);
+#endif
+		}
 	}
 
 	/* Target monsters */

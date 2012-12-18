@@ -2038,6 +2038,7 @@ struct player_type
 	s16b target_n;		/* Array of grids used for targetting/looking */
 	byte target_y[TEMP_MAX];
 	byte target_x[TEMP_MAX];
+	byte target_state[TEMP_MAX];
 	s16b target_idx[TEMP_MAX];
 
 	char infofile[MAX_PATH_LENGTH];		/* Temp storage of *ID* and Self Knowledge info */
