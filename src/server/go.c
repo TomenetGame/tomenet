@@ -1610,7 +1610,7 @@ static void go_engine_move_result(int move_result) {
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "Was obvious ya can't do much");
 				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "against her. So.. train more!");
 			} else if (won) {
-				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Heh, you managed to defend");
+				Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "Heh, you managed to defeat");
 				Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "Talithe? She's quite strong.");
 				Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "Well looks like things start");
 				Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "getting interesting.");
