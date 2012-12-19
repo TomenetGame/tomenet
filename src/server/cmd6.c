@@ -2478,14 +2478,14 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 			case SV_SCROLL_ENCHANT_ARMOR:
 				msg_print(Ind, "This is a Scroll of Enchant Armour.");
 				ident = TRUE;
-				(void)enchant_spell(Ind, 0, 0, 1, 0);
+				(void)enchant_spell(Ind, 0, 0, 1, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
 				used_up = FALSE;
 				p_ptr->using_up_item = item;
 				break;
 
 			case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
 				msg_print(Ind, "This is a Scroll of Enchant Weapon To-Hit.");
-				(void)enchant_spell(Ind, 1, 0, 0, 0);
+				(void)enchant_spell(Ind, 1, 0, 0, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
 				used_up = FALSE;
 				p_ptr->using_up_item = item;
 				ident = TRUE;
@@ -2493,7 +2493,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 
 			case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
 				msg_print(Ind, "This is a Scroll of Enchant Weapon To-Dam.");
-				(void)enchant_spell(Ind, 0, 1, 0, 0);
+				(void)enchant_spell(Ind, 0, 1, 0, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
 				used_up = FALSE;
 				p_ptr->using_up_item = item;
 				ident = TRUE;
@@ -2501,7 +2501,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 
 			case SV_SCROLL_STAR_ENCHANT_ARMOR:
 				msg_print(Ind, "This is a Scroll of *Enchant Armour*.");
-				(void)enchant_spell(Ind, 0, 0, randint(3) + 3, 0);
+				(void)enchant_spell(Ind, 0, 0, randint(3) + 3, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
 				used_up = FALSE;
 				p_ptr->using_up_item = item;
 				ident = TRUE;
@@ -2509,7 +2509,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 
 			case SV_SCROLL_STAR_ENCHANT_WEAPON:
 				msg_print(Ind, "This is a Scroll of *Enchant Weapon*.");
-				(void)enchant_spell(Ind, 1 + randint(2), 1 + randint(2), 0, 0);
+				(void)enchant_spell(Ind, 1 + randint(2), 1 + randint(2), 0, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
 				used_up = FALSE;
 				p_ptr->using_up_item = item;
 				ident = TRUE;

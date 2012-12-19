@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. December 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. December 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.0a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5425,6 +5425,12 @@ Ironman Deep Dive Challenge (IDDC)
     gold until you move on by taking a staircase to the next floor.
     Monsters cannot spawn 'live' in the IDDC, but only at the time of creation
     of each dungeon floor. Summon staves cannot be recharged in the IDDC.
+
+    NOTE: If you use stolen enchant scrolls on an item while you are in a town,
+    then the item will get a 100% off discount. If you want to use stolen
+    scrolls to enchant your items and keep the items sellable, then you have
+    to take the staircase to leave the town, and read the scrolls in an actual
+    dungeon level instead.
 
     If you make a 'slot-exclusive' IDDC character, it will start out with 300
     extra gold, and in turn automatically be unable to pick up any more gold or

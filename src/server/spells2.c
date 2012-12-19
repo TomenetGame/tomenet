@@ -2911,15 +2911,10 @@ static bool item_tester_hook_armour(object_type *o_ptr)
 bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 {
 	player_type *p_ptr = Players[Ind];
-
 	int i, chance, prob;
-
 	bool res = FALSE;
-
 	bool a = like_artifact_p(o_ptr);
-
 	u32b f1, f2, f3, f4, f5, esp;
-
 	bool did_tohit = FALSE, did_todam = FALSE, did_toac = FALSE;
 
 	/* Extract the flags */
@@ -2927,10 +2922,8 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 
 	/* Unenchantable items always fail */
 	if (f5 & TR5_NO_ENCHANT) return (FALSE);
-	
 	/* Dark Swords are unenchantable too */
 	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) return (FALSE);
-	
 	/* Artifacts cannot be enchanted. */
 	if (a) return (FALSE);
 
@@ -3203,19 +3196,18 @@ bool curse_spell_aux(int Ind, int item)
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
 
-	if(artifact_p(o_ptr) && (randint(10)<8)){
+	if (artifact_p(o_ptr) && (randint(10) < 8)) {
 		msg_print(Ind,"The artifact resists your attempts.");
 		return(FALSE);
 	}
-	if(item_tester_hook_weapon(o_ptr)){
+
+	if (item_tester_hook_weapon(o_ptr)) {
 		o_ptr->to_h = 0 - (randint(10) + 1);
 		o_ptr->to_d = 0 - (randint(10) + 1);
-	}
-	else if(item_tester_hook_armour(o_ptr)){
+	} else if (item_tester_hook_armour(o_ptr)) {
 		o_ptr->to_a = 0 - (randint(10) + 1);
-	}
-	else{
-		switch(o_ptr->tval){
+	} else {
+		switch (o_ptr->tval) {
 			case TV_RING:
 			default:
 				msg_print(Ind,"You cannot curse that item!");
@@ -3231,13 +3223,10 @@ bool curse_spell_aux(int Ind, int item)
 	o_ptr->ident |= ID_CURSED;
 	o_ptr->ident &= ~(ID_KNOWN | ID_SENSE);	/* without this, the spell is pointless */
 
-	if(o_ptr->name2){
-		o_ptr->pval = 0 - (randint(10) + 1);	/* nasty */
-	}
+	if (o_ptr->name2) o_ptr->pval = 0 - (randint(10) + 1);	/* nasty */
 
 	/* Did we use up an item? */
-	if (p_ptr->using_up_item >= 0)
-	{
+	if (p_ptr->using_up_item >= 0) {
 		inven_item_describe(Ind, p_ptr->using_up_item);
 		inven_item_optimize(Ind, p_ptr->using_up_item);
 		p_ptr->using_up_item = -1;
@@ -3268,24 +3257,21 @@ bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags)
 
 	return (TRUE);
 }
-	
+
 /*
  * Enchant an item (in the inventory or on the floor)
  * Note that "num_ac" requires armour, else weapon
  * Returns TRUE if attempted, FALSE if cancelled
  */
 /* 
- * For now, 'flags' is the chance of the item getting 'discounted'
+ * //deprecated//For now, 'flags' is the chance of the item getting 'discounted'
  * in the process.
  */
 bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, int flags)
 {
 	player_type *p_ptr = Players[Ind];
-
 	bool		okay = FALSE;
-
 	object_type		*o_ptr;
-
 	char		o_name[ONAME_LEN];
 
 	/* Assume enchant weapon */
@@ -3295,20 +3281,12 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
  	if (num_ac) item_tester_hook = item_tester_hook_armour;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &p_ptr->inventory[item];
-	}
-
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
+	else o_ptr = &o_list[0 - item];
 
 
-	if (!item_tester_hook(o_ptr))
-	{
+	if (!item_tester_hook(o_ptr)) {
 		msg_print(Ind, "Sorry, you cannot enchant that item.");
 		get_item(Ind);
 		return (FALSE);
@@ -3326,24 +3304,22 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	if (enchant(Ind, o_ptr, num_hit, ENCH_TOHIT)) okay = TRUE;
 	if (enchant(Ind, o_ptr, num_dam, ENCH_TODAM)) okay = TRUE;
 	if (enchant(Ind, o_ptr, num_ac, ENCH_TOAC)) okay = TRUE;
-	
+
 	/* Artifacts cannot be enchanted. */
 	if (artifact_p(o_ptr)) msg_format(Ind,"Your %s %s unaffected.",o_name,((o_ptr->number != 1)?"are":"is"));
 
 	/* Failure */
-	if (!okay)
-	{
+	if (!okay) {
 		/* Message */
 		msg_print(Ind, "The enchantment failed.");
 	}
 
+#if 0
 	// else
 	/* Anti-cheeze */
-	if (!artifact_p(o_ptr) && !ego_item_p(o_ptr) && magik(flags))
-	{
+	if (!artifact_p(o_ptr) && !ego_item_p(o_ptr) && magik(flags)) {
 		int discount = (100 - o_ptr->discount) / 2;
-		if (discount > 0)
-		{
+		if (discount > 0) {
 			o_ptr->discount += discount;
 
 			/* Message */
@@ -3351,10 +3327,18 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 					((item >= 0) ? "your" : "the"), o_name);
 		}
 	}
+#else
+        /* Anti-cheeze: Prevent stealers from making infinite money in IDDC towns.
+           It doesn't matter that much in other places, since there are usually
+           better/equal ways to make money. */
+        if ((flags & ENCH_STOLEN) && isdungeontown(&p_ptr->wpos) && in_irondeepdive(&p_ptr->wpos)) {
+                o_ptr->discount = 100;
+                if (!o_ptr->note) o_ptr->note = quark_add("devalued");
+        }
+#endif
 
 	/* Did we use up an item? */
-	if (p_ptr->using_up_item >= 0)
-	{
+	if (p_ptr->using_up_item >= 0) {
 		inven_item_describe(Ind, p_ptr->using_up_item);
 		inven_item_optimize(Ind, p_ptr->using_up_item);
 		p_ptr->using_up_item = -1;
