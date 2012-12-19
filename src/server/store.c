@@ -2828,7 +2828,8 @@ void store_stole(int Ind, int item)
 		chance *= 2;
 	} else if (st_info[st_ptr->st_idx].flags1 & SF1_HARD_STEAL) {
 		if (chance < 10) chance = 10;
-		chance += 2;
+		//chance += 2;
+		chance += (chance * 2) / 10;
 	}
 
 	/* limit steal-back cheeze for loot that you (or someone else) sold previously */
