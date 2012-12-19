@@ -253,7 +253,6 @@ void initialize_player_pref_files(void){
 #if 0 /* disabled, since everyone only has 1 account anyway. It just disturbs macros if you have a character of same name. */
 	/* Access the "account" pref file */
 	sprintf(buf, "%s.prf", nick);
-//	buf[0] = tolower(buf[0]);
 #else /* this should be just fine as replacement */
 	sprintf(buf, "global.prf");
 #endif
@@ -262,29 +261,21 @@ void initialize_player_pref_files(void){
 	process_pref_file(buf);
 
 	/* Access the "race" pref file */
-	if (race < Setup.max_race)
-	{
+	if (race < Setup.max_race) {
 		sprintf(buf, "%s.prf", race_info[race].title);
-//		buf[0] = tolower(buf[0]);
-
 		/* Process that file */
 		process_pref_file(buf);
 	}
 
 	/* Access the "class" pref file */
-	if (class < Setup.max_class)
-	{
+	if (class < Setup.max_class) {
 		sprintf(buf, "%s.prf", class_info[class].title);
-//		buf[0] = tolower(buf[0]);
-
 		/* Process that file */
 		process_pref_file(buf);
 	}
 
 	/* Access the "character" pref file */
 	sprintf(buf, "%s.prf", cname);
-//	buf[0] = tolower(buf[0]);
-
 	/* Process that file */
 	process_pref_file(buf);
 }
@@ -321,11 +312,8 @@ void initialize_player_ins_files(void) {
 	}
 
 	/* Access the "character" ins file */
-	/* hack: only if account and character name aren't the same */
-	if (strcmp(nick, cname)) {
-		sprintf(buf, "%s.ins", cname);
-		load_auto_inscriptions(buf);
-	}
+	sprintf(buf, "%s.ins", cname);
+	load_auto_inscriptions(buf);
 }
 
 
