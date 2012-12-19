@@ -7050,7 +7050,9 @@ Learning        Gives you 1..3 (random) additional skill points to spend.
 
 Scrolls
 -------
-Rumour          Entertains the audience.
+Rumour          Makes a random rumour come to your character's (and everyone
+                else's characters') mind. Has no further effect and is not
+                necessarily true even.
 Blessing/Holy Chant/Holy Prayer
                 Increases your AC by 10/15/20, also increases your to-hit
                 bonus. (Temporarily)
