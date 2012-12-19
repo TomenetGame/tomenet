@@ -6021,19 +6021,22 @@ u32b place_object_restrictor = RESF_NONE;
 //void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
 void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker)
 {
-	int prob, base, tmp_luck, i;
+	int prob, base, tmp_luck, i, dlev;
 	int tries = 0, k_idx, debug_k_idx = 0;
 
 	object_type		forge;
 	dun_level *l_ptr = getfloor(wpos);
+	dungeon_type *d_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+	dlev = getlevel(wpos);
+	d_ptr = getdungeon(wpos);
 
 	/* Paranoia -- check bounds */
 	if (!in_bounds(y, x)) return;
 
 	/* Hack - No l00t in Valinor */
-	if (getlevel(wpos) == 200) return;
+	if (dlev == 200) return;
 
 #ifdef RPG_SERVER /* no objects are generated in Training Tower */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && cave_set_quietly) return;
@@ -6050,8 +6053,20 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	/* place_object_restrictor overrides resf */
 	resf |= place_object_restrictor;
 
-	/* Check luck */
-	luck += global_luck;
+	/* Luck does not affect items placed at level creation time */
+	if (!cave_set_quietly) {
+		luck += global_luck;
+		if (d_ptr) {
+			if ((d_ptr->flags3 & DF3_LUCK_PROG_IDDC)) {
+				/* progressive luck bonus past Menegroth */
+				luck += dlev > 40 ? dlev / 20 + 1 : 0;
+			}
+			if ((d_ptr->flags3 & DF3_LUCK_1)) luck++;
+			if ((d_ptr->flags3 & DF3_LUCK_5)) luck += 5;
+			if ((d_ptr->flags3 & DF3_LUCK_20)) luck += 20;
+		}
+	}
+
 	if (luck < -10) luck = -10;
 	if (luck > 40) luck = 40;
 
@@ -6085,16 +6100,14 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 		forge.number = 1;
 	}
 	/* Generate a special object, or a normal object */
-	else if ((rand_int(prob) != 0) || !make_artifact_special(wpos, &forge, resf))
-	{
+	else if ((rand_int(prob) != 0) || !make_artifact_special(wpos, &forge, resf)) {
 		/* Check global variable, if some base types are forbidden */
 		do {
 			tries++;
 			k_idx = 0;
 
 			/* Good objects */
-			if (good)
-			{
+			if (good) {
 				/* Activate restriction */
 				get_obj_num_hook = kind_is_good;
 
@@ -6102,8 +6115,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 				get_obj_num_prep(resf);
 			}
 			/* Normal objects */
-			else
-			{
+			else {
 				/* Select items based on "theme" */
 				init_match_theme(theme);
 
@@ -6132,9 +6144,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 
 			/* Good objects */
 #if 0	// commented out for efficiency
-
-			if (good)
-			{
+			if (good) {
 				/* Clear restriction */
 				get_obj_num_hook = NULL;
 
@@ -6155,7 +6165,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 
 			if (!(resf & RESF_WINNER) && k_info[k_idx].flags5 & TR5_WINNERS_ONLY) continue;
 
-			if ((k_info[k_idx].flags5 & TR5_FORCE_DEPTH) && getlevel(wpos) < k_info[k_idx].level) continue;
+			if ((k_info[k_idx].flags5 & TR5_FORCE_DEPTH) && dlev < k_info[k_idx].level) continue;
 
 			/* Allow all other items here - mikaelh */
 			break;
@@ -6210,27 +6220,42 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	/* for now ignore live-spawns. change that maybe? */
 	if (cave_set_quietly) {
 		if (forge.name1) l_ptr->flags2 |= LF2_ARTIFACT;
-		if (k_info[forge.k_idx].level >= getlevel(wpos) + 8) l_ptr->flags2 |= LF2_ITEM_OOD;
+		if (k_info[forge.k_idx].level >= dlev + 8) l_ptr->flags2 |= LF2_ITEM_OOD;
 	}
 
 }
 
 /* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */
 void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck) {
-	int prob, base, tmp_luck, i;
+	int prob, base, tmp_luck, i, dlev;;
 	int tries = 0, k_idx;
+	dungeon_type *d_ptr;
 
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+	dlev = getlevel(wpos);
+	d_ptr = getdungeon(wpos);
 
 	/* Hack - No l00t in Valinor */
-	if (getlevel(wpos) == 200) return;
+	if (dlev == 200) return;
 
 	/* place_object_restrictor overrides resf */
 	resf |= place_object_restrictor;
 
-	/* Check luck */
-	luck += global_luck;
+	/* Luck does not affect items placed at level creation time */
+	if (!cave_set_quietly) {
+		luck += global_luck;
+		if (d_ptr) {
+			if ((d_ptr->flags3 & DF3_LUCK_PROG_IDDC)) {
+				/* progressive luck bonus past Menegroth */
+				luck += dlev > 40 ? dlev / 20 + 1 : 0;
+			}
+			if ((d_ptr->flags3 & DF3_LUCK_1)) luck++;
+			if ((d_ptr->flags3 & DF3_LUCK_5)) luck += 5;
+			if ((d_ptr->flags3 & DF3_LUCK_20)) luck += 20;
+		}
+	}
+
 	if (luck < -10) luck = -10;
 	if (luck > 40) luck = 40;
 
