@@ -381,7 +381,7 @@ T:100:111:255
 A:0:0:1:2:3:4
 O:42:43:44:45:42:43
 G:9:o
-W:48
+W:72
 # more fireproof spell scrolls and codices:
 #F:GOOD
 F:GREAT
@@ -1462,7 +1462,7 @@ T:100:111:255
 A:0:0:1:2:3:4
 O:42:43:44:45:42:43
 G:9:o
-W:48
+W:72
 # more fireproof spell scrolls and codices:
 #F:GOOD
 F:GREAT
