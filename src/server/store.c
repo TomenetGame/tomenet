@@ -2825,10 +2825,10 @@ void store_stole(int Ind, int item)
 	/* shopkeepers in special shops are often especially careful */
 	if (st_info[st_ptr->st_idx].flags1 & SF1_VHARD_STEAL) {
 		if (chance < 10) chance = 10;
-		chance = chance * 2 + 20;
+		chance *= 2;
 	} else if (st_info[st_ptr->st_idx].flags1 & SF1_HARD_STEAL) {
 		if (chance < 10) chance = 10;
-		chance *= 2;
+		chance += 2;
 	}
 
 	/* limit steal-back cheeze for loot that you (or someone else) sold previously */
@@ -2836,7 +2836,7 @@ void store_stole(int Ind, int item)
 
 	/* always 1% chance to fail, so that ppl won't macro it */
 	/* 1% pfft. 5% and rising... */
-	if (rand_int(chance) <= 10 && !magik(5)) {
+	if (rand_int(chance) < 10 && !magik(5)) {
 		if (p_ptr->store_num > -2) { /* Never become aware of player store items */
 			/* Hack -- buying an item makes you aware of it */
 			object_aware(Ind, &sell_obj);
