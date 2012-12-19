@@ -2591,6 +2591,8 @@
 	(o_ptr)->tval == TV_BOOK || \
 	(o_ptr)->tval == TV_WAND || \
 	((o_ptr)->tval == TV_ROD && rod_requires_direction(Ind, o_ptr)))
+#define is_firearm_trapkit(sval) \
+	((sval) == SV_TRAPKIT_SLING || (sval) == SV_TRAPKIT_BOW || (sval) == SV_TRAPKIT_XBOW)
 /* more possibilities: is_potion, is_rune, is_jewelry, is_rare_armour(tval,sval) */
 
 

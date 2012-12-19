@@ -2841,24 +2841,22 @@ void stair_creation(int Ind)
  */
 static bool item_tester_hook_weapon(object_type *o_ptr)
 {
-	switch (o_ptr->tval)
-	{
-		case TV_SWORD:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_DIGGING:
-		case TV_BOW:
-		case TV_BOLT:
-		case TV_ARROW:
-		case TV_SHOT:
-		case TV_MSTAFF:
-		case TV_BOOMERANG:
-		case TV_AXE:
-		/* and now new.. :) */
-		case TV_TRAPKIT:
-		{
-			return (TRUE);
-		}
+	switch (o_ptr->tval) {
+	/* and now new.. :) */
+	case TV_TRAPKIT:
+		if (!is_firearm_trapkit(o_ptr->sval)) return FALSE;
+	case TV_SWORD:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_DIGGING:
+	case TV_BOW:
+	case TV_BOLT:
+	case TV_ARROW:
+	case TV_SHOT:
+	case TV_MSTAFF:
+	case TV_BOOMERANG:
+	case TV_AXE:
+		return (TRUE);
 	}
 
 	return (FALSE);
@@ -2870,22 +2868,19 @@ static bool item_tester_hook_weapon(object_type *o_ptr)
  */
 static bool item_tester_hook_armour(object_type *o_ptr)
 {
-	switch (o_ptr->tval)
-	{
-		case TV_DRAG_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_SOFT_ARMOR:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_CROWN:
-		case TV_HELM:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		/* and now new.. :) */
-		case TV_TRAPKIT:
-		{
-			return (TRUE);
-		}
+	switch (o_ptr->tval) {
+	case TV_DRAG_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_SOFT_ARMOR:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_CROWN:
+	case TV_HELM:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	/* and now new.. :) */
+	//nope, not enchantable -- case TV_TRAPKIT:
+		return (TRUE);
 	}
 
 	return (FALSE);

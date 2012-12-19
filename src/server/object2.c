@@ -5233,6 +5233,8 @@ for (i = 0; i < 25; i++) {
 
 	/* Apply magic */
 	switch (o_ptr->tval) {
+		case TV_TRAPKIT:
+			if (!is_firearm_trapkit(o_ptr->sval)) break;
 		case TV_DIGGING:
 		case TV_BLUNT:
 		case TV_POLEARM:
