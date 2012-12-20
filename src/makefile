@@ -3,6 +3,24 @@
 
 # This is not a very "nice" Makefile, but it usually works.
 
+
+# --------------------------------- READ THIS ---------------------------------
+#
+# Currently, only 4 target builds are supported for building the client:
+#
+#  -DWIN32 for Windows
+#  -DUSE_X11 (optionally with USE_GCU) for X11 client
+#  -DUSE_X11 )optionally with USE_GCU) with -DOSX for a Mac OSX client
+#  -DUSE_GCU for a linux ncurses command-line client
+#
+# The below paragraph that mentions a bunch of other targets such as
+# Mac/IBM/LSL/ACN/XAW is long outdated.
+#
+# Additionally, -DSOUND_SDL and the according sdl-config call for both compiler
+# and linker flags and linking against -lSDL_mixer should be added so the
+# client provides SDL sound/music support.
+
+
 #
 # Note that you may have to make modifications below according
 # to your machine, available libraries, compilation options,
@@ -204,14 +222,29 @@ CPPFLAGS = -C -P
 #CPPFLAGS = -x c -E -Wp,-C,-P
 
 
-#
-# Standard version (see main-x11.c and main-gcu.c)
-#
-# This version supports both "X11" and "curses" in a single executable.
-#
+# For variations with X11
+X11BASE = /usr/X11R6
+
+
+##
+## Standard version -- supports X11 (main-x11.c)
+## Standard client for X11 usage.
+##
 # You may have to add various X11 include/library directories to the
 # "CFLAGS", if your machine places files in a weird location.
 #
+## With SDL
+CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
+LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm `sdl-config --libs` -lSDL_mixer
+##
+## Without SDL
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm
+
+##
+## Variation: main-x11.c and main-gcu.c
+## This version supports both "X11" and "curses" in a single executable.
+##
 # You may be able to remove "-ltermcap" on some machines (ex: Solaris).
 #
 # You may have to replace "-lcurses" with "-lncurses" to use the
@@ -222,11 +255,39 @@ CPPFLAGS = -C -P
 # including "USE_GETCH" and "USE_CURS_SET".  Note that "config.h" will
 # attempt to "guess" at many of these flags based on your system.
 #
-#CFLAGS = -Wall -g -pipe -DUSE_X11 -DUSE_GCU
-#LIBS = -L/usr/X11R6/lib -lX11 -lcurses
+## With SDL
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -O2 -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
+#tomenet.test: CFLAGS += -DTEST_CLIENT
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm `sdl-config --libs` -lSDL_mixer
+##
+## Without SDL
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -O2 -DMEXP=19937
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm
 
 
-X11BASE = /usr/X11R6
+##
+## Variation -- Only support "main-gcu.c" (not "main-x11.c")
+## This is a command-line client that relies on ncurses.
+##
+## With SDL
+#CFLAGS = -g -pipe -Wall -DUSE_GCU -O2 -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
+#tomenet.test: CFLAGS += -DTEST_CLIENT
+#LIBS = -L/usr/pkg/lib -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
+##
+## Without SDL
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
+
+
+##
+## Variation -- OS X : See makefile.osx
+##
+
+
+##
+## Variation -- Windows : See makefile.mingw (MinGW32) or makefile.win (Cygwin)
+##
+
 
 ##
 ## Variation -- Linux / FreeBSD
@@ -235,33 +296,19 @@ X11BASE = /usr/X11R6
 ##
 ## You can compile the client without X11 support by removing -DUSE_X11 from
 ## CFLAGS and -lX11 from LIBS
-## 
+##
 ## Without SDL
 #CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 ##
 ## With SDL
-CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
-tomenet.test: CFLAGS += -DTEST_CLIENT
-LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
+#tomenet.test: CFLAGS += -DTEST_CLIENT
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 #-lXtst (for numlock - obsolete)
 
 ## Uncomment this if you want to bundle libraries with the client
 #LDFLAGS = -Wl,-rpath,\$$ORIGIN
-
-
-##
-## Variation -- Only support "main-x11.c" (not "main-gcu.c")
-##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_X11
-#LIBS = -lX11
-
-
-##
-## Variation -- Only support "main-gcu.c" (not "main-x11.c")
-##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_GCU
-#LIBS = -lcurses -ltermcap
 
 
 ## Added by thaler, 6/28/97
@@ -308,6 +355,10 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config -
 ##
 #CFLAGS = -Wall -O2 -pipe -g -DUSE_X11 -DUSE_GCU -DSOLARIS -I/usr/openwin/include
 #LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
+
+
+# Compile a client with 'test client' version/tag
+tomenet.test: CFLAGS += -DTEST_CLIENT
 
 
 # Lua
