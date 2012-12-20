@@ -8943,6 +8943,12 @@ Note that not every skill is available to every profession (class).
                                 Trying to 'steal back' an item that was already
                                 owned by a player, ie an item that has been
                                 sold to the shop, is especially hard.
+                                Blacklist times, very roughly:
+                                Murderous look - 1 hour +
+                                Gazes at you angrily - 40 min +
+                                Looks at you suspiciously - 25 min +
+                                Looks at you disapprovingly - 10 min +
+                                Cool glance - less than 10 min.
     .Backstabbing               Lets you backstab enemies, afflicting high
                                 damage. Works if the opponent is asleep or
                                 running away in fear, exposing his back to you.
