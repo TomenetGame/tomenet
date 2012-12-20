@@ -234,11 +234,11 @@ X11BASE = /usr/X11R6
 # "CFLAGS", if your machine places files in a weird location.
 #
 ## With SDL
-CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
+CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
 LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm
 
 ##
@@ -256,11 +256,11 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm `sdl-config --libs` -lS
 # attempt to "guess" at many of these flags based on your system.
 #
 ## With SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 
 
@@ -269,11 +269,11 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm `sdl-config --libs` -lS
 ## This is a command-line client that relies on ncurses.
 ##
 ## With SDL
-#CFLAGS = -g -pipe -Wall -DUSE_GCU -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
+#CFLAGS = -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
 #LIBS = -L/usr/pkg/lib -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
-#CFLAGS = -g -pipe -Wall -DUSE_GCU -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
+#CFLAGS = -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
 #LIBS = -L/usr/pkg/lib -lncurses -lcrypt -lm
 
 
@@ -296,11 +296,11 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm `sdl-config --libs` -lS
 ## CFLAGS and -lX11 from LIBS
 ##
 ## Without SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 ##
 ## With SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -O2 -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
 #tomenet.test: CFLAGS += -DTEST_CLIENT
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 #-lXtst (for numlock - obsolete)
@@ -316,47 +316,50 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm `sdl-config --libs` -lS
 ## on the same machine!  Also define META_ADDRESS to be an empty string
 ## in config.h.  --Keldon
 ##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_GCU -DUNIX_SOCKETS
+#CFLAGS = -Wall -pipe -g -DUSE_GCU -DUNIX_SOCKETS
 #LIBS = -lncurses -ltermcap
 
 
 ##
 ## Variation -- Use "main-xaw.c" instead of "main-x11.c"
 ##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_XAW -DUSE_GCU
+#CFLAGS = -Wall -pipe -g -DUSE_XAW -DUSE_GCU
 #LIBS = -lXaw -lXmu -lXt -lX11 -lcurses -ltermcap
 
 
 ##
 ## Variation -- Use "main-cap.c" instead of "main-gcu.c"
 ##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_X11 -DUSE_CAP
+#CFLAGS = -Wall -pipe -g -DUSE_X11 -DUSE_CAP
 #LIBS = -lX11 -ltermcap
 
 
 ##
 ## Variation -- Only work on simple vt100 terminals
 ##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_CAP -DUSE_HARDCODE
+#CFLAGS = -Wall -pipe -g -DUSE_CAP -DUSE_HARDCODE
 
 
 ##
 ## Variation -- FreeBSD 4.3R
 ##
 #PREFIX = /usr/local
-#CFLAGS = -Wall -O2 -g -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/tomenet\""
+#CFLAGS = -Wall -g -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/tomenet\""
 #LIBS = -L${X11BASE}/lib -lX11 -lcurses
 
 
 ##
 ## Variation -- compile for Solaris
 ##
-#CFLAGS = -Wall -O2 -pipe -g -DUSE_X11 -DUSE_GCU -DSOLARIS -I/usr/openwin/include
+#CFLAGS = -Wall -pipe -g -DUSE_X11 -DUSE_GCU -DSOLARIS -I/usr/openwin/include
 #LIBS = -L/usr/openwin/lib -R/usr/openwin/lib -lX11 -lsocket -lnsl -lcurses
 
 
 # Compile a client with 'test client' version/tag
-tomenet.test: CFLAGS += -DTEST_CLIENT
+tomenet.test: CFLAGS += -DTEST_CLIENT -O0
+
+# Normal release build
+tomenet: CFLAGS += -O2
 
 
 # Lua
