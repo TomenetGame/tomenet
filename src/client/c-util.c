@@ -362,7 +362,7 @@ static void sync_sleep(int milliseconds)
 		/* Use the multimedia timer function */
 		DWORD systime_ms = timeGetTime();
 		now.tv_sec = systime_ms / 1000;
-		now.tv_usec = (systime_ms % 1000) * 1000;		
+		now.tv_usec = (systime_ms % 1000) * 1000;
 #else
 		gettimeofday(&now, NULL);
 #endif
@@ -462,7 +462,7 @@ static char inkey_aux(void)
 	char	buf_atoi[3];
 	bool	inkey_max_line_set;
 	int net_fd;
-	
+
 	inkey_max_line_set = inkey_max_line;
 
 	/* Acquire and save maximum file descriptor */
@@ -485,7 +485,7 @@ static char inkey_aux(void)
 
 			/* If we got a key, break */
 			if (ch) break;
-			
+
 			/* If we received a 'max_line' value from the net,
 			   break if inkey_max_line flag was set */
 			if (inkey_max_line != inkey_max_line_set) {
@@ -1393,7 +1393,7 @@ bool askfor_aux(char *buf, int len, char mode)
 	int vis_len = len;
 
 	bool done = FALSE;
-	
+
 	/* Hack -- if short, don't use history */
 	bool nohist = (mode & ASKFOR_PRIVATE) || len < 20;
 	byte cur_hist;
@@ -1777,7 +1777,7 @@ bool get_string(cptr prompt, char *buf, int len)
 {
 	bool res;
 	char askfor_mode = 0x00;
-	
+
 	/* suppress hybrid macros */
 	bool inkey_msg_old = inkey_msg;
 	inkey_msg = TRUE;
@@ -3392,11 +3392,11 @@ void interact_macros(void)
 		/* Leave */
 		if (i == ESCAPE) break;
 
+		/* Allow to chat, to tell exact macros to other people easily */
+		else if (i == ':') cmd_message();
+
 		/* Take a screenshot */
-		else if (i == KTRL('T'))
-		{
-			xhtml_screenshot("screenshot????");
-		}
+		else if (i == KTRL('T')) xhtml_screenshot("screenshot????");
 
 		/* Load a pref file */
 		else if (i == 'l') {
@@ -3856,7 +3856,7 @@ void interact_macros(void)
 		else if (i == 'Q') {
 			/* Prompt */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Configure 'quick & dirty' macro functionality");
-			
+
 			/* TODO:
 			   config auto-prefix '\e)' */
 		}
@@ -3901,17 +3901,16 @@ void interact_macros(void)
 			/* leave the macro menu */
 			return;
 		}
+
 		/* Configure macro recording functionality */
-		else if (i == 'R')
-		{
+		else if (i == 'R') {
 			/* Prompt */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Configure macro recording functionality");
 
 			/* TODO: implement */
 		}
 
-		else  if (i == 'W')
-		{
+		else  if (i == 'W') {
 			/* Wipe all macros */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Wipe all macros");
 
@@ -3923,16 +3922,11 @@ void interact_macros(void)
 				macro__cmd[i] = FALSE;
 				macro__hyb[i] = FALSE;
 			}
-
 			macro__num = 0;
-
-			for (i = 0; i < 256; i++) {
-				macro__use[i] = 0;
-			}
+			for (i = 0; i < 256; i++) macro__use[i] = 0;
 		}
 
-		else if (i == 'w')
-		{
+		else if (i == 'w') {
 			/* Reload default macro files */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Reload default macro files");
 
@@ -4134,7 +4128,7 @@ void interact_macros(void)
 								j--;
 								continue;
 							default:
-							
+
                                 /* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'a' + RCRAFT_MAX_ELEMENTS - 1) {
 									j--;
@@ -4172,16 +4166,16 @@ void interact_macros(void)
 						byte element[RCRAFT_MAX_ELEMENTS];
 						byte elements = flags_to_elements(element, e_flags);
 						byte skill = rspell_skill(element, elements);
-						
+
 						/* Fill the list */
 						int color;
 						char tmpbuf[80];
 						for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
-						
+
 							/* Get the line color */
 							if (r_imperatives[i].level < skill) color = 'G';
 							else color = 'D';
-						
+
 							/* Fill a line */
 							sprintf(tmpbuf, "\377%c%c) %-10s %5d %3d%% %s%d%% %5d%% %5s%d %7d%% %5d%%",
 							color,
@@ -4195,7 +4189,7 @@ void interact_macros(void)
 							r_imperatives[i].duration * 10,
 							r_imperatives[i].energy * 10
 							);
-							
+
 							/* Print the line */
 							Term_putstr(10, 14 + i, -1, TERM_L_GREEN, tmpbuf);
 						}
@@ -4253,12 +4247,12 @@ void interact_macros(void)
 						byte imperative = flags_to_imperative(m_flags);
 						byte level, cost, fail;
 						s16b diff, sdiff;
-						
+
 						/* Print the list */
 						//int color;
 						//char tmpbuf[80];
 						for (i = 0; i < RCRAFT_MAX_TYPES; i++) {
-						
+
 						/* Analyze parameters */
 						level = rspell_level(imperative, i);
 						diff = rspell_diff(skill, level);
@@ -4268,7 +4262,7 @@ void interact_macros(void)
 						u16b damage = rspell_damage(&dx, &dy, imperative, i, skill, projection);
 						byte radius = rspell_radius(imperative, i, skill, projection);
 						byte duration = rspell_duration(imperative, i, skill);
-						
+
 						/* Extra parameters */
 						sdiff = skill - level + 1; //For a real 'level difference' display.
 
@@ -4280,7 +4274,7 @@ void interact_macros(void)
 							if (p_ptr->anti_magic) color = 'r';
 						}
 						else color = 'D';
-						
+
 						/* Fill a line */
 						switch (r_types[i].flag) {
 							case T_BOLT:
@@ -4952,8 +4946,7 @@ void interact_macros(void)
 		}
 
 		/* Oops */
-		else
-		{
+		else {
 			/* Oops */
 			bell();
 		}
@@ -5369,7 +5362,7 @@ static void do_cmd_options_acc(void)
 				my_memfrob(tmp, strlen(tmp));
 				strncpy(con_pass, tmp, sizeof(con_pass));
 				con_pass[sizeof(con_pass) - 1] = '\0';
-	
+
 				/* Compare */
 				if (strcmp(new_pass, con_pass)) {
 					prt("Passwords don't match!", 8, 2);
@@ -6476,7 +6469,7 @@ bool is_newer_than(version_type *version, int major, int minor, int patch, int e
 		else if (version->build > build)
 			return TRUE;
 	}
-	
+
 	/* Default */
 	return FALSE;
 }
