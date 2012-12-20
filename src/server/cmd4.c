@@ -1441,7 +1441,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 	for (k = 1; k < NumPlayers + 1; k++) {
 		player_type *q_ptr = Players[k];
 		byte attr = 'w';
-		bool hidden = FALSE;
+		bool hidden = FALSE, hidden_diz = FALSE;
 
 		/* Only print connected players */
 		if (q_ptr->conn == NOT_CONNECTED)
@@ -1530,7 +1530,10 @@ void do_cmd_check_player_equip(int Ind, int line)
 			char o_name[ONAME_LEN];
 #ifdef WRAPPING_NEW
 			if (hidden) {
-				if (i == INVEN_LITE || i == INVEN_AMMO) fprintf(fff, "\377%c (Covered by a grubby wrapping)\n", 'D');
+				if ((i == INVEN_LITE || i == INVEN_AMMO) && !hidden_diz) {
+					fprintf(fff, "\377%c (Covered by a grubby wrapping)\n", 'D');
+					hidden_diz = TRUE;
+				}
 				if (i >= INVEN_LEFT && i != INVEN_LITE && i != INVEN_AMMO) continue;
 			}
 #endif
@@ -1540,11 +1543,12 @@ void do_cmd_check_player_equip(int Ind, int line)
 					fprintf(fff, "\377%c%c) %s\n", i < INVEN_WIELD? 'o' : 'w', 97 + i, o_name);
 				else
 					fprintf(fff, "\377%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
+				hidden_diz = FALSE;
 			}
 		}
 #ifndef WRAPPING_NEW
 		/* Covered by a mummy wrapping? */
-		if (hidden) {
+		if (hidden && !hidden_diz) {
 #if 0 /* changed position of INVEN_ARM to occur before INVEN_LEFT, so following hack isn't needed anymore */
 			/* for dual-wield, but also in general, INVEN_ARM should be visible too */
 			object_type *o_ptr = &q_ptr->inventory[INVEN_ARM];
