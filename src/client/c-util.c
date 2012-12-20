@@ -5836,18 +5836,18 @@ static void do_cmd_options_install_audio_packs(void) {
 	_spawnl(_P_WAIT, path_7z, path_7z_quoted, "a", "tmp.7z", "tmp", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
 	remove("tmp");
 
-    if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
+	if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
 		Term_putstr(0, 1, -1, TERM_RED, "7-zip wasn't installed properly. Please reinstall it. (www.7-zip.org)");
 		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
 		inkey();
 		return;
-    } else if (fgetc(fff) == EOF) { /* normal */
+	} else if (fgetc(fff) == EOF) { /* normal */
 		Term_putstr(0, 1, -1, TERM_RED, "7-zip wasn't installed properly. Please reinstall it. (www.7-zip.org)");
-	    fclose(fff);
+		fclose(fff);
 		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
 		inkey();
 		return;
-    }
+	}
 	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver 7-Zip (7zG.exe) found.");
 #elif defined(USE_X11) /* assume posix */
  #if 0	/* command-line 7z */
@@ -5856,33 +5856,48 @@ static void do_cmd_options_install_audio_packs(void) {
  	fff = fopen("tmp", "w");
  	fclose(fff);
 	system("7zG a tmp.7z tmp");
-    remove("tmp");
+	remove("tmp");
  #endif
-    if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
+        if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
 		Term_putstr(0, 1, -1, TERM_RED, "7-zip GUI not found ('7zG'). Install it first. (Package name is 'p7zip'.)");
 		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
 		inkey();
 		return;
-    } else if (fgetc(fff) == EOF) { /* normal */
+	} else if (fgetc(fff) == EOF) { /* normal */
 		Term_putstr(0, 1, -1, TERM_RED, "7-zip GUI not found ('7zG'). Install it first. (Package name is 'p7zip'.)");
-	    fclose(fff);
+		fclose(fff);
 		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
 		inkey();
 		return;
-    }
+	}
 	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7zG) found.");
+#elif defined(USE_GCU) /* assume posix; ncurses commandline */
+	system("7z > tmp.7z");
+	if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
+		Term_putstr(0, 1, -1, TERM_RED, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
+		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+		inkey();
+		return;
+	} else if (fgetc(fff) == EOF) { /* normal */
+		Term_putstr(0, 1, -1, TERM_RED, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
+		fclose(fff);
+		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
+		inkey();
+		return;
+	}
+	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7z) found.");
 #endif
 	Term_fresh();
-    fclose(fff);
-    remove("tmp.7z");
+	fclose(fff);
+	remove("tmp.7z");
 
 	/* test for existance of sound pack file */
-    if (!(fff = fopen("TomeNET-soundpack.7z", "r"))) sound_pack = FALSE;
-    else fclose(fff);
+	if (!(fff = fopen("TomeNET-soundpack.7z", "r"))) sound_pack = FALSE;
+	else fclose(fff);
 
 	/* test for existance of music pack file */
-    if (!(fff = fopen("TomeNET-musicpack.7z", "r"))) music_pack = FALSE;
-    else fclose(fff);
+	if (!(fff = fopen("TomeNET-musicpack.7z", "r"))) music_pack = FALSE;
+	else fclose(fff);
 
 	if (!sound_pack && !music_pack) {
 		Term_putstr(0, 3, -1, TERM_ORANGE, "Neither file 'TomeNET-soundpack.7z' nor 'TomeNET-musicpack.7z' were");
@@ -5929,6 +5944,14 @@ static void do_cmd_options_install_audio_packs(void) {
 		sprintf(out_val, "cp --recursive -f sound/* %s/", path);
 		system(out_val);
 		system("rm -rf sound");
+#elif defined(USE_GCU)
+		system("7z x TomeNET-soundpack.7z");
+		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
+		//system(format("mv sound %s", path));
+		mkdir(path, 0777); /* in case someone deleted his whole sound folder */
+		sprintf(out_val, "cp --recursive -f sound/* %s/", path);
+		system(out_val);
+		system("rm -rf sound");
 #endif
 		Term_putstr(0, 3, -1, TERM_L_GREEN, "Sound pack has been installed.             ");
 		Term_putstr(0, 4, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
@@ -5965,6 +5988,14 @@ static void do_cmd_options_install_audio_packs(void) {
 		system("rmdir /S /Q music");
 #elif defined(USE_X11)
 		system("7zG x TomeNET-musicpack.7z");
+		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
+		//system(format("mv music %s", path));
+		mkdir(path, 0777); /* in case someone deleted his whole music folder */
+		sprintf(out_val, "cp --recursive -f music/* %s/", path);
+		system(out_val);
+		system("rm -rf music");
+#elif defined(USE_GCU)
+		system("7z x TomeNET-musicpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 		//system(format("mv music %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole music folder */
@@ -6133,6 +6164,10 @@ void do_cmd_options(void)
 
 //#ifndef WINDOWS /* not yet implemented */
 #if defined(USE_X11) || defined(WINDOWS) /* rely on GUI for 'password' popup */
+		else if (k == 'I') {
+			do_cmd_options_install_audio_packs();
+		}
+#elif defined(USE_GCU)
 		else if (k == 'I') {
 			do_cmd_options_install_audio_packs();
 		}

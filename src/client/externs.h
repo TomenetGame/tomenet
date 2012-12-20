@@ -21,6 +21,8 @@ extern void change_font(int s);
 #endif
 extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name);
 extern void resize_main_window(int cols, int rows);
+#elif defined(USE_GCU)
+extern void resize_main_window(int cols, int rows);
 #endif
 
 #ifdef USE_XAW
