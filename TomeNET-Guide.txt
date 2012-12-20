@@ -4521,7 +4521,7 @@ NOTE: Minimum level requirements for entering might be disabled, based on
       the server's settings.
 
 Dungeon                        |     Depth* / Level    | Min. required player
-                               |  (*relative to Lv.1)  |   level to enter
+                               |  (*relative to Lv.1)  |   level to enter(**)
 -------------------------------+-----------------------+---------------------
 Death Fate                     |    50..  50/  1..1    |        1
 The Halls of Mandos            |    50..4900/  1..98   |        1
@@ -4542,7 +4542,10 @@ The Sacred Land Of Mountains   |  2000..2250/ 40..45   |       20
 Erebor                         |  2500..3050/ 50..61   |       35
 Dol Guldur                     |  2850..3550/ 57..71   |       28
 Mount Doom                     |  4250..5000/ 85..100  |       38
-Nether Realm                   |  8300..9800/166..196  |       40 (*)
+Nether Realm                   |  8300..9800/166..196  |       40 (***)
+
+(**) Minimum level requirements are usually disabled, so you can actually
+enter any dungeon you like at any character level.
 
 The official main server usually has one or several 'ironman' dungeons
 (see (4.8)), their entrances (stairs) waiting to be discovered by some bold
@@ -4552,7 +4555,7 @@ list, and usually have no minimum required character level to enter.
 There may also be certain special dungeons, related to events or jails, that
 show up under according names in the list.
 
-(*) Nether Realm details:
+(***) Nether Realm details:
 -To enter the Nether Realm a player must carry the 'King'/'Queen' title,
  acquired by beating Morgoth, Lord of Darkness.
 -Each floor in the Nether Realm gives a +2% bonus to experience from monster
