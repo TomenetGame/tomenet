@@ -247,7 +247,7 @@ LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixe
 tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0
 
 # Normal release build
-tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O2
+tomenet.exe: CFLAGS += -O2
 
 
 # Lua

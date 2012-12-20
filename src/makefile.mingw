@@ -293,7 +293,7 @@ NCC = gcc
 tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0
 
 # Normal release build
-tomenet.test.exe: CFLAGS += -O2
+tomenet.exe: CFLAGS += -O2
 
 
 # Lua

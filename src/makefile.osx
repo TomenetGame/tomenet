@@ -286,7 +286,7 @@ LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 tomenet.test: CFLAGS += -DTEST_CLIENT -O0
 
 # Normal release build
-tomenet.test: CFLAGS += -DTEST_CLIENT -O2
+tomenet: CFLAGS += -O2
 
 
 # Lua
