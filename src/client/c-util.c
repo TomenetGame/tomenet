@@ -3317,7 +3317,7 @@ void interact_macros(void)
 {
 	int i, j = 0, l;
 
-	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr;
+	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr, chain_macro_buf[1024];
 
 	char fff[1024], t_key[10], choice;
 	bool m_ctrl, m_alt, m_shift, t_hyb, t_com;
@@ -3951,6 +3951,10 @@ void interact_macros(void)
 #define mw_device 'l'
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
+
+			/* initialise macro-chaining */
+			chain_macro_buf[0] = 0;
+Chain_Macro:
 
 			/* Clear screen */
 			Term_clear();
@@ -4882,7 +4886,12 @@ void interact_macros(void)
 #endif
 
 					/* Extract an action */
-					text_to_ascii(macro__buf, buf2);
+					/* Omit repeated '\e)' -- can break chain macros (todo: fix?) */
+					if (chain_macro_buf[0]) text_to_ascii(macro__buf, buf2 + 3);
+					else text_to_ascii(macro__buf, buf2 + 3);
+					/* Handle chained macros */
+					strcat(chain_macro_buf, macro__buf);
+					strcpy(macro__buf, chain_macro_buf);
 
 					/* advance to next step */
 					i++;
@@ -4893,12 +4902,14 @@ void interact_macros(void)
 					Term_putstr(10, 12, -1, TERM_GREEN, "You should use keys that have no other purpose!");
 					Term_putstr(10, 13, -1, TERM_GREEN, "Good examples are the F-keys, F1 to F12.");
 					Term_putstr(10, 14, -1, TERM_GREEN, "The keys ESC and '%' are NOT allowed to be used.");
-					Term_putstr(5, 16, -1, TERM_L_GREEN, "Press the key to bind the macro to:");
+					Term_putstr(10, 16, -1, TERM_GREEN, "If you want to \377Uchain another macro\377g, press '\377U%\377g' key.");
+					Term_putstr(10, 17, -1, TERM_GREEN, "By doing this you can combine multiple macros into one hotkey.");
+					Term_putstr(5, 19, -1, TERM_L_GREEN, "Press the key to bind the macro to, or '%' for chaining:");
 
 					while (TRUE) {
 						/* Get a macro trigger */
-						Term_putstr(45, 16, -1, TERM_WHITE, "  ");
-						Term_gotoxy(45, 16);
+						Term_putstr(67, 19, -1, TERM_WHITE, "  ");//45
+						Term_gotoxy(67, 19);
 						get_macro_trigger(buf);
 
 						/* choose proper macro type, and bind it to key */
@@ -4906,13 +4917,22 @@ void interact_macros(void)
 							/* Take a screenshot */
 							xhtml_screenshot("screenshot????");
 							continue;
-						} else if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
+						} else if (!strcmp(buf, "\e")) {//chaining: || !strcmp(buf, "%")) {
 							c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 							if (!strcmp(buf, "\e")) {
 								i = -1; /* leave */
 								break;
 							}
 							continue;
+						} else if (!strcmp(buf, "%")) {
+							/* max length check, rough estimate */
+							if (strlen(chain_macro_buf) + strlen(macro__buf) >= 1024 - 50) {
+								c_msg_print("\377oYou cannot chain any further commands to this macro.");
+								continue;
+							}
+
+							/* chain another macro */
+							goto Chain_Macro;
 						}
 						break;
 					}
