@@ -7489,26 +7489,44 @@ static int Receive_activate_skill(int ind)
 					case 3:
 						p_ptr->mimic_immunity = 1;
 						msg_print(player, "Preferred form immunity is now lightning.");
+						if (p_ptr->body_monster &&
+						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_ELEC))
+							calc_boni(player);
 						break;
 					case 4:
 						p_ptr->mimic_immunity = 2;
 						msg_print(player, "Preferred form immunity is now frost.");
+						if (p_ptr->body_monster &&
+						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_COLD))
+							calc_boni(player);
 						break;
 					case 5:
 						p_ptr->mimic_immunity = 3;
 						msg_print(player, "Preferred form immunity is now acid.");
+						if (p_ptr->body_monster &&
+						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_ACID))
+							calc_boni(player);
 						break;
 					case 6:
 						p_ptr->mimic_immunity = 4;
 						msg_print(player, "Preferred form immunity is now fire.");
+						if (p_ptr->body_monster &&
+						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_FIRE))
+							calc_boni(player);
 						break;
 					case 7:
 						p_ptr->mimic_immunity = 5;
 						msg_print(player, "Preferred form immunity is now poison.");
+						if (p_ptr->body_monster &&
+						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_POIS))
+							calc_boni(player);
 						break;
 					case 8:
 						p_ptr->mimic_immunity = 6;
 						msg_print(player, "Preferred form immunity is now water.");
+						if (p_ptr->body_monster &&
+						    (r_info[p_ptr->body_monster].flags9 & RF9_IM_WATER))
+							calc_boni(player);
 						break;
 					default:
 						msg_print(player, "That immunity does not exist.");
@@ -7558,7 +7576,7 @@ static int Receive_activate_skill(int ind)
 			cast_school_spell(player, book, spell, dir, item, aux);
 			p_ptr->shooty_till_kill = FALSE;
 			break;
-			
+
 		case MKEY_RCRAFT:
 			if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 			(void)execute_rspell(player, dir, (u16b)book, (u16b)spell, (u16b)item, 0);
