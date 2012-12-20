@@ -243,6 +243,10 @@ CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DCYGWIN -DMEXP=199
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer
 
 
+# Compile a client with 'test client' version/tag
+tomenet.test.exe: CFLAGS += -DTEST_CLIENT
+
+
 # Lua
 SRCS += $(LUASRCS)
 SRCS += $(CLI_LUASRCS)
@@ -285,6 +289,9 @@ tomenet.server.exe: $(SERV_OBJS) $(TOLUA)
 #
 
 tomenet.exe: $(CLI_OBJS) $(TOLUA)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.exe $(CLI_OBJS) $(LIBS)
+
+tomenet.test.exe: $(CLI_OBJS) $(TOLUA)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.exe $(CLI_OBJS) $(LIBS)
 
 

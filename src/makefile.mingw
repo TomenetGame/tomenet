@@ -247,7 +247,6 @@ SDL_CONFIG = /usr/mingw32/bin/sdl-config
 ##
 ## With SDL, without using 'sdl-config', entered SDL's include/lib folders manually (as located on my system - C. Blue):
 CFLAGS = -g -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -DSOUND_SDL -I/usr/i486-mingw32/include/SDL -DWINVER=0x0501 -Wno-unused-but-set-variable
-tomenet.test.exe: CFLAGS += -DTEST_CLIENT
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer -L/usr/i486-mingw32/lib
 
 # Added the according preprocessor for 'preproc' - C. Blue
@@ -288,6 +287,10 @@ CPPFLAGS = -x c -E -Wp,-C,-P
 # Todo actually: Fix this to allow preproc-win.c -> preproc.exe compilation and use,
 # currently preproc.exe couldn't access the CPP from within wine environment.
 NCC = gcc
+
+
+# Compile a client with 'test client' version/tag
+tomenet.test.exe: CFLAGS += -DTEST_CLIENT
 
 
 # Lua

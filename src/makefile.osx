@@ -282,6 +282,10 @@ LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 #LIBS = -lX11 -ltermcap
 
 
+# Compile a client with 'test client' version/tag 
+tomenet.test: CFLAGS += -DTEST_CLIENT
+
+
 # Lua
 SRCS += $(LUASRCS)
 SRCS += $(CLI_LUASRCS)
@@ -350,6 +354,9 @@ evilmeta: server/evilmeta.o
 #
 
 tomenet: $(CLI_OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet $(CLI_OBJS) $(LIBS)
+
+tomenet.test: $(CLI_OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet $(CLI_OBJS) $(LIBS)
 
 
