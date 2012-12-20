@@ -3325,8 +3325,10 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 #else
         /* Anti-cheeze: Prevent stealers from making infinite money in IDDC towns.
            It doesn't matter that much in other places, since there are usually
-           better/equal ways to make money. */
-        if ((flags & ENCH_STOLEN) && isdungeontown(&p_ptr->wpos) && in_irondeepdive(&p_ptr->wpos)) {
+           better/equal ways to make money.
+           For items probably >= 12k it doesn't matter anymore though. */
+        if ((flags & ENCH_STOLEN) && object_value_real(0, o_ptr) < 15000 &&
+    	    isdungeontown(&p_ptr->wpos) && in_irondeepdive(&p_ptr->wpos)) {
                 o_ptr->discount = 100;
                 if (!o_ptr->note) o_ptr->note = quark_add("devalued");
         }
