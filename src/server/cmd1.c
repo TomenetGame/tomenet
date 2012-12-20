@@ -1638,10 +1638,16 @@ void carry(int Ind, int pickup, int confirm)
 		}
 #endif
 
+		if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner) {
+			msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
+			if (!is_admin(p_ptr)) return;
+		}
+
 /* the_sandman: item lvl restrictions are disabled in rpg */
 #ifndef RPG_SERVER
 		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) &&
-		    (o_ptr->level > p_ptr->lev || o_ptr->level == 0)) {
+		    (o_ptr->level > p_ptr->lev || o_ptr->level == 0) &&
+		    !in_irondeepdive(&p_ptr->wpos)) {
 			if (cfg.anti_cheeze_pickup) {
 				msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
 				return;
@@ -1660,11 +1666,6 @@ void carry(int Ind, int pickup, int confirm)
 
 		}
 #endif
-		if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner) {
-			msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
-			if (!is_admin(p_ptr)) return;
-		}
-
 		/* Save old inscription in case pickup fails */
 		old_note = o_ptr->note;
 
@@ -1700,21 +1701,11 @@ void carry(int Ind, int pickup, int confirm)
 			} else o_ptr->note_utag = 0; //paranoia?
 		}
 
-#if 1
 		/* Try to add to the quiver */
 		if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO], 0x0)) {
 			int slot = INVEN_AMMO, num = o_ptr->number;
 
 			msg_print(Ind, "You add the ammo to your quiver.");
-
-#if 0
-			/* Own it */
-			if (!o_ptr->owner) {
-				o_ptr->owner = p_ptr->id;
-				o_ptr->mode = p_ptr->mode;
-			}
-			can_use(Ind, o_ptr);
-#endif	// 0
 
 			/* Get the item again */
 			o_ptr = &(p_ptr->inventory[slot]);
@@ -1729,7 +1720,7 @@ void carry(int Ind, int pickup, int confirm)
 
 			/* Message */
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
-			
+
 			/* Delete original */
 //			delete_object(wpos, p_ptr->py, p_ptr->px);
 			delete_object_idx(c_ptr->o_idx, FALSE);
@@ -1751,12 +1742,11 @@ void carry(int Ind, int pickup, int confirm)
 		}
 		/* Try to add to the empty quiver (XXX rewrite me - too long!) */
 		else if (auto_load && is_ammo(o_ptr->tval) &&
-		    !p_ptr->inventory[INVEN_AMMO].k_idx)
-		{
+		    !p_ptr->inventory[INVEN_AMMO].k_idx) {
 			int slot = INVEN_AMMO;
 			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
 
-			msg_print(Ind, "You add the ammo to your quiver.");
+			msg_print(Ind, "You put the ammo into your quiver.");
 
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 			o_ptr->marked = 0;
@@ -1822,8 +1812,7 @@ void carry(int Ind, int pickup, int confirm)
 		}
 		/* Boomerangs: */
 		else if (auto_load && o_ptr->tval == TV_BOOMERANG &&
-		    !p_ptr->inventory[INVEN_BOW].k_idx && item_tester_hook_wear(Ind, INVEN_BOW))
-		{
+		    !p_ptr->inventory[INVEN_BOW].k_idx && item_tester_hook_wear(Ind, INVEN_BOW)) {
 			int slot = INVEN_BOW;
 			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
 
@@ -1891,7 +1880,7 @@ void carry(int Ind, int pickup, int confirm)
 			/* Window stuff */
 			p_ptr->window |= (PW_EQUIP);
 		}
-#endif	// 0
+
 		/* Note that the pack is too full */
 		else if (!inven_carry_okay(Ind, o_ptr)) {
 			msg_format(Ind, "You have no room for %s.", o_name);
@@ -2031,6 +2020,8 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 #endif	// CHEEZELOG_LEVEL
 
 				can_use(Ind, o_ptr);
+				/* for Ironman Deep Dive Challenge cross-trading */
+				o_ptr->mode = p_ptr->mode;
 
 				/* the_sandman: attempt to id a newly picked up item if we have the means to do so.
  				 * Check that we don't know the item and can read a scroll - mikaelh */
@@ -2095,7 +2086,7 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 								i_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 								if (i_ptr->name2 == EGO_RISTARI /* of istari */ || i_ptr->name2 == EGO_RCHARGING /* of charging */)
 									i_ptr->pval /= 2;
-							
+
 								//Unstack
 								if (i_ptr->number > 1) {
 									/* Make a fake item */
@@ -2214,7 +2205,7 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 						/* otherwise inscribe it textually */
 						if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
 					}
-#if 0					
+#if 0
 					/* Combine / Reorder the pack (later) */
 			                p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 			                /* Window stuff */

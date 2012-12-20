@@ -5351,12 +5351,17 @@ bool can_use(int Ind, object_type *o_ptr)
 
 	if (compat_pomode(Ind, o_ptr)) return FALSE;
 
+#ifndef RPG_SERVER
 	/* Hack -- convert if available */
-	if (p_ptr->lev >= o_ptr->level && !p_ptr->admin_dm) {
+	if ((p_ptr->lev >= o_ptr->level || in_irondeepdive(&p_ptr->wpos))
+	    && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;
 		return (TRUE);
 	}
 	else return (FALSE);
+#else
+	return TRUE;
+#endif
 }
 
 /* Same as can_use(), but avoids auto-owning items (to be used for admin characters) */
