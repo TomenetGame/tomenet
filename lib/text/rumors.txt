@@ -7,7 +7,7 @@
 # You should manually write the total # of rumours (lines - 10).
 
 N:*:Default
-958
+949
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -752,7 +752,7 @@ I can't believe it's not buttocks
 Hot chick, 10 o'clock
 This is it
 The kiss of Judas...
-If there is a God, he is like me
+If there is a God, he is like me.
 I hear footsteps closing in...
 I recognize them from my early days..
 Time changes, images stay the same
@@ -943,19 +943,8 @@ The technological singularity is coming!
 O fortuna! Velut luna!
 Never feed a gremlin after midnight.
 This l00t's not gonna l00t itself!
-Give me liberty or give me death!
 He that hath no sword, let him sell his garment and buy one.
-There never was a good war or a bad peace.
 Let him who would move the world, first move himself.
-The limitation of tyrants is the endurance of those they oppose.
-It is better to die on your feet than live on your knees.
-Men are more apt to believe what they least understand.
-Man is born free, yet he is everywhere in chains.
-We tell our children to be good, but we have no idea what goodness is.
-The size and shape of your prison is not important. That you are in prison is.
-Doubt is the midwife of curiosity, and curiosity breeds wisdom.
-The world chokes on imaginary knowledge.
-There's a gun in the room.
 Know ye, O seeker of the mystic wisdoms, that the ways of magic are diverse and strange.
 What it do?
 There's a little fruit bat in all of us.
@@ -965,3 +954,6 @@ If you want it for yourself, please say so.
 I have made my decision.
 There's no hope as long as the Ring exists.
 This is what I was afraid of.
+Give me liberty or give me death!
+Men are more apt to believe what they least understand.
+Doubt is the midwife of curiosity, and curiosity breeds wisdom.
