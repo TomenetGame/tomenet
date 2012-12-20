@@ -2052,8 +2052,8 @@ int Receive_message(void)
 {
 	int	n, c;
 	char	ch;
-	char	buf[MSG_LEN], *bptr, *sptr;
-	char	l_buf[MSG_LEN], l_cname[NAME_LEN], *ptr;
+	char	buf[MSG_LEN], *bptr, *sptr, *bnptr;
+	char	l_buf[MSG_LEN], l_cname[NAME_LEN], *ptr, l_nick[NAME_LEN], called_name[NAME_LEN];
 
 	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0)
 	{
@@ -2106,8 +2106,31 @@ int Receive_message(void)
 			strcpy(l_cname, cname);
 			ptr = l_cname;
 			while (*ptr) { *ptr = tolower(*ptr); ptr++; }
+			strcpy(l_nick, nick);
+			ptr = l_nick;
+			while (*ptr) { *ptr = tolower(*ptr); ptr++; }
 			/* map location found onto original string -_- */
 			if ((bptr = strstr(l_buf, l_cname))) bptr = buf + (bptr - l_buf);
+			if ((bnptr = strstr(l_buf, l_nick))) bnptr = buf + (bnptr - l_buf);
+
+			/* Check which one it is (first), character name or account name */
+			if (bptr) {
+				if (!bnptr || bptr <= bnptr) {
+					/* keep the way our name was actually written (lower/upper-case) in the original chat message */
+					strncpy(called_name, bptr, strlen(cname));
+					called_name[strlen(cname)] = 0;
+				} else {
+					bptr = bnptr;
+					/* keep the way our name was actually written (lower/upper-case) in the original chat message */
+					strncpy(called_name, bptr, strlen(nick));
+					called_name[strlen(nick)] = 0;
+				}
+			} else if (bnptr) {
+				bptr = bnptr;
+				/* keep the way our name was actually written (lower/upper-case) in the original chat message */
+				strncpy(called_name, bptr, strlen(nick));
+				called_name[strlen(nick)] = 0;
+			}
 
 			/* our name occurs in the message? */
 			if (bptr &&
@@ -2116,7 +2139,7 @@ int Receive_message(void)
 				/* enough space to add colour codes for highlighting? */
 				if (c_cfg.hilite_chat
 				    && strlen(buf) < MSG_LEN - 4) {
-					char buf2[MSG_LEN], called_name[NAME_LEN], *col_ptr = buf;
+					char buf2[MSG_LEN], *col_ptr = buf;
 					int prev_colour = 'w';
 
 					/* remember last colour used before our name occurred, so we can restore it */
@@ -2127,14 +2150,11 @@ int Receive_message(void)
 						} else col_ptr++;
 					}
 
-					/* keep the way our name was actually written (lower/upper-case) in the original chat message */
-					strncpy(called_name, bptr, strlen(cname));
-
 					strcpy(buf2, buf);
 					strcpy(bptr, "\377R");
 					strcpy(bptr + 2, called_name);
-					strcpy(bptr + 2 + strlen(cname), format("\377%c", prev_colour));
-					strcpy(bptr + 4 + strlen(cname), buf2 + (bptr - buf) + strlen(cname));
+					strcpy(bptr + 2 + strlen(called_name), format("\377%c", prev_colour));
+					strcpy(bptr + 4 + strlen(called_name), buf2 + (bptr - buf) + strlen(called_name));
 				}
 
 				/* also give audial feedback if enabled */
