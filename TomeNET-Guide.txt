@@ -14068,6 +14068,18 @@ PROBLEM 33: On OSX when entering the game (right after picking a character) in
              only when you actually log in with a character, thus circumventing
              the bug.
 
+PROBLEM 34: On certain terminal emulators, TomeNET when run in ncurses-mode
+            ('-c' command-line option or just a GCU-only client) will display
+            wrong colours. This used to happen on Xfce4's 'Terminal' up till
+            TomeNET version 4.5.0 (but didn't happen on xterm).
+SOLUTION:   Since TomeNET 4.5.0a a hack has been added to work with Xfce4's
+            'Terminal' terminal emulator.
+            On other terminals where colours aren't correct, try exporting
+            the TERM environment variable with the value "xterm16-color".
+            For example run tomenet with this command (assumed you're inside
+            the same folder as the executable binary 'tomenet'):
+            TERM=xterm-16color ./tomenet -c
+
 
 
 ==============================================================================
