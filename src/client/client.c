@@ -518,6 +518,8 @@ bool write_mangrc(void) {
 #endif
 
 #ifdef USE_X11
+/* Don't do this in terminal mode ('-c') */
+if (!strcmp("ANGBAND_SYS", "x11")) {
 			/* new: save window positions/sizes/visibility (and possibly fonts) */
 			if (!strncmp(buf, "Mainwindow", 10))
 				write_mangrc_aux_line(0, "Mainwindow", buf);
@@ -541,6 +543,7 @@ bool write_mangrc(void) {
 			else if (!strncmp(buf, "Term-9window", 12))
 				write_mangrc_aux_line(9, "Term-9window", buf);
 #endif
+}
 #endif /* USE_X11 */
 
 

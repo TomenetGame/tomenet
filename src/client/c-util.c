@@ -5775,7 +5775,7 @@ static void do_cmd_options_install_audio_packs(void) {
 	}
 
 	/* test for availability of unarchiver */
-#if defined(WINDOWS)
+#ifdef WINDOWS
 	/* check registry for 7zip (note that for example WinRAR could cause problems with 7z files) */
 	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\7-Zip\\"), 0, KEY_READ, &hTestKey) == ERROR_SUCCESS) {
 		if (RegQueryValueEx(hTestKey, "Path", NULL, &path_7z_type, path_7z_p, path_7z_size_p) == ERROR_SUCCESS) {
@@ -5849,7 +5849,8 @@ static void do_cmd_options_install_audio_packs(void) {
 		return;
 	}
 	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver 7-Zip (7zG.exe) found.");
-#elif defined(USE_X11) /* assume posix */
+#else /* assume posix */
+if (!strcmp(ANGBAND_SYS, "x11")) {
  #if 0	/* command-line 7z */
 	system("7z > tmp.7z");
  #else	/* GUI 7z (for password prompts) */
@@ -5871,7 +5872,8 @@ static void do_cmd_options_install_audio_packs(void) {
 		return;
 	}
 	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7zG) found.");
-#elif defined(USE_GCU) /* assume posix; ncurses commandline */
+} else { /* gcu */
+	/* assume posix; ncurses commandline */
 	system("7z > tmp.7z");
 	if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
 		Term_putstr(0, 1, -1, TERM_RED, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
@@ -5886,6 +5888,7 @@ static void do_cmd_options_install_audio_packs(void) {
 		return;
 	}
 	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7z) found.");
+}
 #endif
 	Term_fresh();
 	fclose(fff);
@@ -5936,7 +5939,8 @@ static void do_cmd_options_install_audio_packs(void) {
 		sprintf(out_val, "xcopy /I /E /Q /Y /H sound %s", path);
 		system(out_val);
 		system("rmdir /S /Q sound");
-#elif defined(USE_X11)
+#else /* assume posix */
+if (!strcmp(ANGBAND_SYS, "x11")) {
 		system("7zG x TomeNET-soundpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
 		//system(format("mv sound %s", path));
@@ -5944,7 +5948,7 @@ static void do_cmd_options_install_audio_packs(void) {
 		sprintf(out_val, "cp --recursive -f sound/* %s/", path);
 		system(out_val);
 		system("rm -rf sound");
-#elif defined(USE_GCU)
+} else { /* gcu */
 		system("7z x TomeNET-soundpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
 		//system(format("mv sound %s", path));
@@ -5952,6 +5956,7 @@ static void do_cmd_options_install_audio_packs(void) {
 		sprintf(out_val, "cp --recursive -f sound/* %s/", path);
 		system(out_val);
 		system("rm -rf sound");
+}
 #endif
 		Term_putstr(0, 3, -1, TERM_L_GREEN, "Sound pack has been installed.             ");
 		Term_putstr(0, 4, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
@@ -5986,7 +5991,8 @@ static void do_cmd_options_install_audio_packs(void) {
 		sprintf(out_val, "xcopy /I /E /Q /Y /H music %s", path);
 		system(out_val);
 		system("rmdir /S /Q music");
-#elif defined(USE_X11)
+#else /* assume posix */
+if (!strcmp(ANGBAND_SYS, "x11")) {
 		system("7zG x TomeNET-musicpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 		//system(format("mv music %s", path));
@@ -5994,7 +6000,7 @@ static void do_cmd_options_install_audio_packs(void) {
 		sprintf(out_val, "cp --recursive -f music/* %s/", path);
 		system(out_val);
 		system("rm -rf music");
-#elif defined(USE_GCU)
+} else { /* gcu */
 		system("7z x TomeNET-musicpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 		//system(format("mv music %s", path));
@@ -6002,6 +6008,7 @@ static void do_cmd_options_install_audio_packs(void) {
 		sprintf(out_val, "cp --recursive -f music/* %s/", path);
 		system(out_val);
 		system("rm -rf music");
+}
 #endif
 		Term_putstr(0, 6, -1, TERM_L_GREEN, "Music pack has been installed.             ");
 		Term_putstr(0, 7, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
@@ -6052,19 +6059,12 @@ void do_cmd_options(void)
 		Term_putstr(5, 11, -1, TERM_WHITE, "(\377ys\377w) Save Options");
 		Term_putstr(5, 12, -1, TERM_WHITE, "(\377yl\377w) Load Options from pref file");
 
-#ifdef WINDOWS
+#if defined(WINDOWS) || defined(USE_X11) /* CHANGE_FONTS_X11 */
 		Term_putstr(5, 15, -1, TERM_WHITE, "(\377Uf\377w) Change font size (tap to cycle)");
-#else
-#if 1 /* CHANGE_FONTS_X11 */
-		Term_putstr(5, 15, -1, TERM_WHITE, "(\377Uf\377w) Change font size (tap to cycle)");
-#endif
 #endif
 		Term_putstr(5, 16, -1, TERM_WHITE, "(\377UA\377w) Account Options");
 		Term_putstr(5, 17, -1, TERM_WHITE, "(\377Uv\377w) Check Server Options");
-//#ifndef WINDOWS /* not yet implemented */
-#if defined(USE_X11) || defined(WINDOWS) /* rely on GUI for 'password' popup */
 		Term_putstr(5, 19, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from file");
-#endif
 
 		/* Prompt */
 		c_prt(TERM_L_GREEN, "Command: ", 21, 0);
@@ -6149,29 +6149,15 @@ void do_cmd_options(void)
 			do_cmd_options_win();
 		}
 
-#ifdef WINDOWS
+#if defined(WINDOWS) || defined(USE_X11)
 		else if (k == 'f') {
 			change_font(-1);
 		}
-#endif
-#ifdef USE_X11
-#if 1 /* CHANGE_FONTS_X11 */
-		else if (k == 'f') {
-			change_font(-1);
-		}
-#endif
 #endif
 
-//#ifndef WINDOWS /* not yet implemented */
-#if defined(USE_X11) || defined(WINDOWS) /* rely on GUI for 'password' popup */
 		else if (k == 'I') {
 			do_cmd_options_install_audio_packs();
 		}
-#elif defined(USE_GCU)
-		else if (k == 'I') {
-			do_cmd_options_install_audio_packs();
-		}
-#endif
 
 		/* Unknown option */
 		else
