@@ -615,8 +615,7 @@ void check_Morgoth(int Ind)
 		num_on_depth = 0;
 		for (i = 1; i <= NumPlayers; i++) {
 			/* skip disconnected players */
-			if (Players[i]->conn == NOT_CONNECTED)
-		    		continue;
+			if (Players[i]->conn == NOT_CONNECTED) continue;
 			/* skip admins */
 			if (admin_p(i)) continue;
 			/* player on this depth? */
@@ -645,45 +644,79 @@ void check_Morgoth(int Ind)
 		   will be insta-recalled to town. Otherwise, Morgy will be removed.
 		   Invalid player alone with Morgy?: Yes->Remove Morgy, No->recall */
 		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
 			p_ptr = Players[i];
-
 			if (is_admin(p_ptr)) continue;
 
 			if (inarea(&p_ptr->wpos, wpos) &&
 			    ((p_ptr->mode & MODE_PVP) || p_ptr->total_winner || (p_ptr->r_killed[860] != 1)))
 			{
-				/* Tell everyone related to Morgy's depth */
-				if (num_on_depth > 1) {
-					/* For now :/ need better solutions - C. Blue */
-					if (!in_irondeepdive(&p_ptr->wpos)) {
-						/* tell a message to the player */
-						if (p_ptr->total_winner) {
-							sprintf(msg, "\377sA hellish force drives you out of this dungeon!");
-							/* log */
-							s_printf("Morgoth recalled winner %s\n", p_ptr->name);
-						} else if (p_ptr->mode & MODE_PVP) {
-							sprintf(msg, "\377sA hellish force drives you out of this dungeon!");
-							/* log */
-							s_printf("Morgoth recalled MODE_PVP %s\n", p_ptr->name);
-						} else {
-							sprintf(msg, "\377sYou hear Sauron's laughter as his spell drives you out of the dungeon!");
-							/* log */
-							s_printf("Morgoth recalled Sauron-misser %s\n", p_ptr->name);
-						}
+				/* Replace Morgoth with Sauron if Sauron is missing,
+				   the other two cases have no repercussions for now -- just allow - C. Blue */
+				if (in_irondeepdive(&p_ptr->wpos)) {
+					if (p_ptr->r_killed[860] != 1) {
+						dun_level *l_ptr = getfloor(wpos);
 
-						/* get him out of here */
-						p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
-						p_ptr->recall_pos.wx = p_ptr->wpos.wx;
-						p_ptr->recall_pos.wy = p_ptr->wpos.wy;
-						p_ptr->recall_pos.wz = 0;
-						recall_player(i, msg);
+						/* remove morgy here */
+						delete_monster_idx(k, TRUE); /* careful, 'wpos' is now zero'ed */
+						l_ptr->flags1 &= ~LF1_NO_GHOST;
+
+						/* notifications */
+						sprintf(msg, "\377sMorgoth, Lord of Darkness summons Sauron, the Sorceror, and teleports out!");
+						for (i = 1; i <= NumPlayers; i++) {
+							if (Players[i]->conn == NOT_CONNECTED) continue;
+							/* Player on Morgy depth? */
+							if (inarea(&Players[i]->wpos, &p_ptr->wpos)) {
+								msg_print(i, msg);
+								handle_music(i); /* :-o */
+							}
+						}
+						s_printf("Morgoth left level (inserting Sauron) due to %s\n", p_ptr->name);
+
+						/* place Sauron so players can kill him first */
+						summon_override_checks = SO_ALL; /* (SO_IDDC?) */
+						place_monster_one(&p_ptr->wpos, y, x, 860, FALSE, FALSE, FALSE, 0, 0);
+						summon_override_checks = SO_NONE;
+
+	                        	    	/* Notice */
+	    		        	        note_spot_depth(&p_ptr->wpos, y, x);
+			                        /* Display */
+		                                everyone_lite_spot(&p_ptr->wpos, y, x);
 					}
-				} else {
+					/* the rest is allowed..
+					   -PvP chars can't enter IDDC anyway
+					   -and kings may just help their team mates for now, maybe cool */
+				}
+
+				/* Teleport player in question out, tell the others on this depth */
+				else if (num_on_depth > 1) {
 					/* tell a message to the player */
+					if (p_ptr->total_winner) {
+						sprintf(msg, "\377sA hellish force drives you out of this dungeon!");
+						/* log */
+						s_printf("Morgoth recalled winner %s\n", p_ptr->name);
+					} else if (p_ptr->mode & MODE_PVP) {
+						sprintf(msg, "\377sA hellish force drives you out of this dungeon!");
+						/* log */
+						s_printf("Morgoth recalled MODE_PVP %s\n", p_ptr->name);
+					} else {
+						sprintf(msg, "\377sYou hear Sauron's laughter as his spell drives you out of the dungeon!");
+						/* log */
+						s_printf("Morgoth recalled Sauron-misser %s\n", p_ptr->name);
+					}
+
+					/* get him out of here */
+					p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+					p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+					p_ptr->recall_pos.wz = 0;
+					recall_player(i, msg);
+
+				/* Teleport Morgoth out, since no other players are affected */
+				} else {
 					sprintf(msg, "\377sMorgoth, Lord of Darkness teleports to a different dungeon floor!");
 					for (i = 1; i <= NumPlayers; i++) {
-						if (Players[i]->conn == NOT_CONNECTED)
-					    		continue;
+						if (Players[i]->conn == NOT_CONNECTED) continue;
 						/* Player on Morgy depth? */
 						if (inarea(&Players[i]->wpos, wpos))
 							msg_print(i, msg);
@@ -695,13 +728,13 @@ void check_Morgoth(int Ind)
 					delete_monster_idx(k, TRUE);
 
 					/* place replacement monster (clone): Death Orb (Star-Spawn, GB, GWoP) */
-//					place_monster_one(wpos, y, x, 975, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//DOrb
-					place_monster_one(wpos, y, x, 847, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//GWoP
+//					place_monster_one(&p_ptr->wpos, y, x, 975, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//DOrb
+//					place_monster_one(&p_ptr->wpos, y, x, 847, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//GWoP
 
 	                                /* Notice */
-	    		                note_spot_depth(wpos, y, x);
+	    		                note_spot_depth(&p_ptr->wpos, y, x);
 		                        /* Display */
-	                                everyone_lite_spot(wpos, y, x);
+	                                everyone_lite_spot(&p_ptr->wpos, y, x);
 				}
 				return;
 			}

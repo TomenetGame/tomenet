@@ -28,6 +28,9 @@
 #define MAX_FUNNY 22
 #define MAX_COMMENT 5
 
+/* Debug spawning of a particular monster */
+//#define PMO_DEBUG 860
+
 static cptr horror_desc[MAX_HORROR] =
 {
 	"abominable",
@@ -185,7 +188,7 @@ int monster_check_experience(int m_idx, bool silent)
 	}
 	/* keep some figures for more accuracy (instead of / 1000) */
 	levels_gained_tmp /= 100; /* now is value * 100. so we have 2 extra accuracy figures */
-	
+
 	for (i = 0; i < 4; i++) {
 		/* to fix rounding issues and prevent super monsters (2d50 -> 3d50 at +1 level) */
 		tmp_dice = m_ptr->blow[i].d_dice;
@@ -207,11 +210,11 @@ int monster_check_experience(int m_idx, bool silent)
 		} else {
 			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100);
 		}
-		
+
 		/* Catch rounding problems */
 		m_ptr->blow[i].d_dice = tmp_dice + (tmp_dice * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
 		levels_gained_melee = (((m_ptr->blow[i].d_dice - tmp_dice) * 100) / tmp_dice) + 100;
-		
+
 		/* round sides upwards sometimes */
 		if (((m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) * 100) <
 		    (m_ptr->blow[i].d_side * (levels_gained_melee - 100))) {
@@ -236,7 +239,7 @@ int monster_check_experience(int m_idx, bool silent)
 		} else {
 			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100);
 		}
-		
+
 	}
 
 	/* Insanity caps */
@@ -1432,7 +1435,7 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 	if (Ind > 0)
 	{
 		p_ptr = Players[Ind];
-	
+
 		/* Can we "see" it (exists + forced, or visible + not unforced) */
 		seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40) && p_ptr->mon_vis[m_idx])));
 
@@ -1946,7 +1949,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 			(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(4) + 4);
 		}
 		while (rand_int(100) > p_ptr->skill_sav)
-			(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);	
+			(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);
 		while (rand_int(100) > p_ptr->skill_sav)
 			(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
 		if (!p_ptr->resist_chaos)
@@ -2504,15 +2507,15 @@ void update_player(int Ind)
 			byte *w_ptr = &p_ptr->cave_flag[py][px];
 
 			/* Normal line of sight, and player is not blind */
-			
+
 			/* -APD- this line needs to be seperated to support seeing party
 			   members who are out of line of sight */
 			/* if ((*w_ptr & CAVE_VIEW) && (!p_ptr->blind)) */
-			
+
 			if (!p_ptr->blind)
 			{
 			if ((player_in_party(q_ptr->party, i)) && (q_ptr->party)) easy = flag = TRUE;
-			
+
 			if (*w_ptr & CAVE_VIEW) {
 				/* Check infravision */
 				if (dis <= (byte)(p_ptr->see_infra)) {
@@ -2529,7 +2532,7 @@ void update_player(int Ind)
 						easy = flag = TRUE;
 					}
 				}
-				
+
 				} /* end yucky hack */
 			}
 
@@ -2778,11 +2781,14 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	dungeon_info_type *dinfo_ptr = d_ptr ? &d_info[d_ptr->type] : NULL;
 
 	cave_type **zcave;
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 0\n");
+#endif
 	if (!(zcave = getcave(wpos))) return (FALSE);
 	/* Verify location */
 	if (!in_bounds(y, x)) return (FALSE);
 	/* Require empty space */
-	if (!cave_empty_bold(zcave, y, x)) return (FALSE);
+	if (!cave_empty_bold(zcave, y, x) && !(summon_override_checks & SO_EMPTY)) return (FALSE);
 	/* Paranoia */
 	if (!r_idx) return (FALSE);
 	/* Paranoia */
@@ -2791,6 +2797,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	dlev = getlevel(wpos);
 
 
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
+#endif
 	/* No live spawn inside IDDC -- except for breeder clones/summons */
 	if (!(summon_override_checks & SO_IDDC) &&
 	    !cave_set_quietly &&
@@ -2798,6 +2807,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	    && !clo && !clone_summoning)
 		return (FALSE);
 
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
+#endif
 	if (!(summon_override_checks & SO_PROTECTED)) {
 		/* require non-protected field. - C. Blue
 		    Note that there are two ways (technically) to protect a field:
@@ -2850,6 +2862,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		if (zcave[y][x].feat == FEAT_RUNE) return (FALSE);
 	}
 
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 3\n");
+#endif
 	/* override protection for monsters spawning inside houses, to generate
 	   monster 'invaders' and/or monster 'owners' in wild houses? */
 	if (!(summon_override_checks & SO_HOUSE)) {
@@ -2860,6 +2875,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		}
 	}
 
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 4\n");
+#endif
 #ifdef RPG_SERVER /* no spawns in Training Tower at all */
 	if (!(summon_override_checks & SO_TT_RPG)) {
 		if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return(FALSE);
@@ -2879,6 +2897,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		/* Note: Spawns in 0,0 surface during events are caught in wild_add_monster() */
 	}
 
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 5\n");
+#endif
 	if (!(summon_override_checks & SO_PRE_STAIRS)) {
 		/* No monster pre-spawns on staircases, to avoid 'pushing off' a player when he goes up/down. */
 		if (cave_set_quietly && (
@@ -2888,6 +2909,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		    zcave[y][x].feat == FEAT_MORE)) return(FALSE);
 	}
 
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6\n");
+#endif
 	if (!(summon_override_checks & SO_BOSS_LEVELS)) {
 		/* Nether Realm bottom */
 		if (dlev == (166 + 30)) {
@@ -2907,6 +2931,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		    (r_idx != 1100 ) && (r_idx != 1098)) /* Brightlance, Orome */
 			return(FALSE);
 	}
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
+#endif
 
 	if (!(summon_override_checks & SO_BOSS_MONSTERS)) {
 		/* Dungeon boss? */
@@ -2999,6 +3026,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 			}
 #endif
 		}
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6b\n");
+#endif
 
 		/* Update r_ptr due to possible r_idx changes */
 		r_ptr = &r_info[r_idx];
@@ -3041,6 +3071,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 			}
 		}
 	}
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 7\n");
+#endif
 
 	/* "unique" monsters combo check */
 	if ((r_ptr->flags1 & RF1_UNIQUE) &&
@@ -3048,6 +3081,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		/* may not appear on the world surface */
 		if (wpos->wz == 0) return(FALSE);
 	}
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 8\n");
+#endif
 
 	if (!(summon_override_checks & SO_FORCE_DEPTH)) {
 		/* Depth monsters may NOT be created out of depth */
@@ -3066,6 +3102,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 		if ((r_ptr->flags7 & RF7_OOD_20) && (dlev + 20 < r_ptr->level))
 			return (FALSE);
 	}
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
+#endif
 
 
 	/* Uniques monster consistency - stuff that is exempt from overriding really */
@@ -3091,7 +3130,9 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 			return (FALSE);
 		}
 	}
-
+#ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
+#endif
 
         /* Now could we generate an Ego Monster */
         r_ptr = race_info_idx(r_idx, ego, randuni);
@@ -4923,7 +4964,7 @@ int pick_ego_monster(int r_idx, int Level)
 
         /* No townspeople ego */
         if (!r_info[r_idx].level) return 0;
-	
+
 	/* No Great Pumpkin ego (HALLOWEEN) */
 	if (r_idx == 1086 || r_idx == 1087 || r_idx == 1088) return 0;
 

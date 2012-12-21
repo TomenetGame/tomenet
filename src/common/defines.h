@@ -975,7 +975,7 @@
 
 /* Summoning/spawning override flags for checks in monster placement routines */
 #define SO_NONE			0x0000	/* apply all checks (default) */
-#define SO_ALL			0xffff	/* ignore ALL checks (admin summmoning) */
+#define SO_ALL			0xFFFF	/* ignore ALL checks (admin summmoning) */
 
 #define SO_PROTECTED		0x0001	/* ignore PROTECTED grids (Inn) */
 #define SO_HOUSE		0x0002	/* ignore CAVE_ICKY grids on surface around towns (houses) */
@@ -993,6 +993,7 @@
 #define SO_SURFACE		0x0800	/* ignore checks which restrict certain monster spawns on the world surface (breeders, uniques) */
 
 #define SO_IDDC			0x1000	/* legalize uncheezable summoning in ironman deep dive challenge. Note: clone/clone_summoning imply this flag! */
+#define SO_EMPTY		0x2000	/* don't require empty (FLOOR and no monster on it) grid */
 
 
 /*
