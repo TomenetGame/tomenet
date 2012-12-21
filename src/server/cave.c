@@ -531,6 +531,10 @@ void check_Pumpkin(void) {
 		/* search for Great Pumpkins */
 		if (streq(r_name_get(m_ptr), "Great Pumpkin")) {
 			wpos = &m_ptr->wpos;
+
+			/* Exception for IDDC - just allow */
+			if (in_irondeepdive(wpos)) continue;
+
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (is_admin(p_ptr)) continue;
@@ -588,7 +592,7 @@ void check_Morgoth(int Ind)
 
 	/* Let Morgoth, Lord of Darkness gain additional power
 	for each player who joins the depth */
-	
+
 	/* Process the monsters */
 	for (k = m_top - 1; k >= 0; k--) {
 		/* Access the index */
@@ -596,59 +600,16 @@ void check_Morgoth(int Ind)
 		/* Access the monster */
 		m_ptr = &m_list[m_idx];
 		/* Excise "dead" monsters */
-		if (!m_ptr->r_idx)
-		{
+		if (!m_ptr->r_idx) {
 		        /* Excise the monster */
 	    		m_fast[k] = m_fast[--m_top];
 		        /* Skip */
 		        continue;
 		}
 
-#if 0 /* moved to check_Pumpkin() */
-if (season_halloween) {
-		/* Players of level higher than 30 cannot participate in killing attemps (anti-cheeze) */
-		/* search for Great Pumpkins */
-		if (streq(r_name_get(m_ptr), "Great Pumpkin")) {
-			wpos = &m_ptr->wpos;
-			for (i = 1; i <= NumPlayers; i++)
-			{
-				p_ptr = Players[i];
-				if (is_admin(p_ptr)) continue;
-				if (inarea(&p_ptr->wpos, wpos) &&
-#ifndef RPG_SERVER
-				    (p_ptr->max_lev > 30))
-#else
-				    (p_ptr->max_lev > 40))
-#endif
-				{
-					sprintf(msg, "\377sL ghostly force drives you out of this dungeon!");
-					/* log */
-#ifndef RPG_SERVER
-					s_printf("Great Pumpkin recalled player>30 %s\n", p_ptr->name);
-#else
-					s_printf("Great Pumpkin recalled player>40 %s\n", p_ptr->name);
-#endif
-					/* get him out of here */
-					p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
-					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
-					p_ptr->recall_pos.wy = p_ptr->wpos.wy;
-					p_ptr->recall_pos.wz = 0;
-//					p_ptr->word_recall =- 666;/*HACK: avoid recall_player loops! */
-					recall_player(i, msg);
-				}
-			}
-		}
-}
-#endif
-
 		/* search for Morgy */
 		if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) continue;
 		wpos = &m_ptr->wpos;
-
-#if 0
-		/* log - done in place_monster_one now -C. Blue */
-		s_printf("Morgoth generated on %d\n", getlevel(wpos));
-#endif
 
 		/* check if players are on his depth */
 		num_on_depth = 0;
@@ -693,9 +654,8 @@ if (season_halloween) {
 			{
 				/* Tell everyone related to Morgy's depth */
 				if (num_on_depth > 1) {
-					/* HACK: avoid recall_player loops! */
-//					if (p_ptr->word_recall != -666)
-//					{
+					/* For now :/ need better solutions - C. Blue */
+					if (!in_irondeepdive(&p_ptr->wpos)) {
 						/* tell a message to the player */
 						if (p_ptr->total_winner) {
 							sprintf(msg, "\377sA hellish force drives you out of this dungeon!");
@@ -710,15 +670,14 @@ if (season_halloween) {
 							/* log */
 							s_printf("Morgoth recalled Sauron-misser %s\n", p_ptr->name);
 						}
-					
+
 						/* get him out of here */
 						p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 						p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 						p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 						p_ptr->recall_pos.wz = 0;
-//						p_ptr->word_recall = -666; /*HACK: avoid recall_player loops! */
 						recall_player(i, msg);
-//					}
+					}
 				} else {
 					/* tell a message to the player */
 					sprintf(msg, "\377sMorgoth, Lord of Darkness teleports to a different dungeon floor!");
@@ -748,51 +707,6 @@ if (season_halloween) {
 			}
 		}
 
-#if 0
-		/* More players here than Morgy has power for? */
-		if (((m_ptr->mspeed - r_ptr->speed + 6) / 6) < num_on_depth)
-		{
-			/* tmphp is actually the base hp, from r_info.txt */
-			tmphp = m_ptr->maxhp * 3 / (3 + ((num_on_depth - 2) * 2));
-			if (m_ptr->maxhp < tmphp + (tmphp * num_on_depth * 2 / 3)) {
-				m_ptr->hp += tmphp * 2 / 3;
-				m_ptr->maxhp += tmphp * 2 / 3;
-			}
-			m_ptr->mspeed = (r_ptr->speed - 6) + (6 * num_on_depth);
-			
-			/* Anti-cheeze: Fully heal!
-			   Otherwise 2 players could bring him down and the 3rd one
-			   just joins for the last 'few' HP.. */
-			m_ptr->hp = m_ptr->maxhp;
-
-			/* log */
-			s_printf("Morgoth grows stronger\n");
-			/* Tell everyone related to Morgy's depth */
-			msg_print_near_monster(m_idx, "becomes stronger!");
-			return;
-		}
-		/* Less players here than Morgy has power for? */
-		else if (((m_ptr->mspeed - r_ptr->speed + 6) / 6) > num_on_depth)
-		{
-			/* tmphp is actually the base hp, from r_info.txt */
-			tmphp = m_ptr->maxhp * 3 / (3 + ((num_on_depth - 0) * 2));
-			/* anti-cheeze */
-			if (m_ptr->hp == m_ptr->maxhp) {
-				m_ptr->hp -= tmphp * 2 / 3;
-			}
-			m_ptr->maxhp -= tmphp * 2 / 3;
-			m_ptr->mspeed = (r_ptr->speed - 6) + (6 * num_on_depth);
-
-			/* Sanity check */
-			if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp; 
-
-			/* log */
-			s_printf("Morgoth weakens\n");
-			/* Tell everyone related to Morgy's depth */
-			msg_print_near_monster(m_idx, "becomes weaker!");
-			return;
-		}
-#else
 		tmphp = (m_ptr->org_maxhp * (2 * (num_on_depth - 1) + 3)) / 3; /* 2/3 HP boost for each additional player */
 		/* More players here than Morgy has power for? */
 		if (m_ptr->maxhp < tmphp) {
@@ -827,7 +741,6 @@ if (season_halloween) {
 			msg_print_near_monster(m_idx, "becomes weaker!");
 			return;
 		}
-#endif
 	}
 }
 

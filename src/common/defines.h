@@ -7552,3 +7552,7 @@ extern int PlayerUID;
 #define is_fixed_irondeepdive_town(wpos, dlev) \
 	(in_irondeepdive(wpos) && \
         ((dlev) == 40 || (dlev) == 80))
+
+/* Are we on the final floor and therefore eligile for recalling out? */
+#define irondeepdive_bottom(wpos) \
+	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && (wpos)->wz * WPOS_IRONDEEPDIVE_Z == 127)

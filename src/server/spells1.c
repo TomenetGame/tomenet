@@ -9415,6 +9415,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_RECALL_PLAYER:
 			dam = 0;
 			if (p_ptr->afk) break;
+
+			/* prevent silly things */
+			if (in_irondeepdive(&p_ptr->wpos) && !irondeepdive_bottom(&p_ptr->wpos)) {
+				msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
+				break;
+			}
+
 			if (!p_ptr->word_recall) {
 #ifdef SEPARATE_RECALL_DEPTHS
 				p_ptr->recall_pos.wz = get_recall_depth(&p_ptr->wpos, p_ptr);
@@ -9422,12 +9429,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				p_ptr->recall_pos.wz = p_ptr->max_dlv;
 #endif
 				p_ptr->word_recall = dam;
-				if (fuzzy) msg_print(Ind, "You feel unstable!");
-				else msg_format(Ind, "%^s recalls you!", killer);
+				if (fuzzy) msg_print(Ind, "\377oThe air around you suddenly becomes charged!");
+				else msg_format(Ind, "\377o%^s charges the air around you!", killer);
 			} else {
 				p_ptr->word_recall = 0;
-				if (fuzzy) msg_print(Ind, "You feel more stable!");
-				else msg_format(Ind, "%^s stops your recall!", killer);
+				if (fuzzy) msg_print(Ind, "\377oA tension leaves the air around you!");
+				else msg_format(Ind, "\377o%^s dispels the tension from the air around you!", killer);
 			}
 			p_ptr->redraw |= (PR_DEPTH);
 			break;

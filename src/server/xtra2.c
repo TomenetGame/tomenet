@@ -9530,8 +9530,15 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 bool set_recall_timer(int Ind, int v)
 {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
+
+	/* don't accidentally recall players in Ironman Deep Dive Challenge
+	   by some effect (spell/Morgoth) */
+	if (!is_admin(p_ptr) &&
+	    in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos)) {
+		msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
+		return FALSE;
+	}
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -9573,6 +9580,14 @@ bool set_recall_timer(int Ind, int v)
 bool set_recall(int Ind, int v, object_type * o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
+
+	/* don't accidentally recall players in Ironman Deep Dive Challenge
+	   by some effect (spell/Morgoth) */
+	if (!is_admin(p_ptr) &&
+	    in_irondeepdive(&p_ptr->wpos) && (p_ptr->mode & MODE_DED_IDDC) && !irondeepdive_bottom(&p_ptr->wpos)) {
+		msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
+		return FALSE;
+	}
 
 	if (!p_ptr->word_recall) {
 		set_recall_depth(p_ptr, o_ptr);
