@@ -917,8 +917,8 @@ errr init_gcu(void)
 	                 (COLOR_PAIRS >= 16));
 #endif
 	/* Attempt to use customized colors */
-	if (can_fix_color)
-	{
+	if (can_fix_color) {
+plog("canfix");
 		/* Prepare the color pairs */
 		/* if (can_use_color) { */
 		init_pair(0, 0, 0);	/*black */
@@ -963,20 +963,20 @@ errr init_gcu(void)
 #else /* real ones hopefully */
 		init_color(0,     0,    0,    0);	/* Dark */
 		init_color(1,  1000, 1000, 1000);	/* White */
-		init_color(2,   616,  616,  616);	/* Slate */
+		init_color(2,   615,  615,  615);	/* Slate */
 		init_color(3,  1000,  552,    0);	/* Orange */
-		init_color(4,   718,    0,    0);	/* Red */
-		init_color(5,     0,  616,  267);	/* Green */
+		init_color(4,   717,    0,    0);	/* Red */
+		init_color(5,     0,  615,  266);	/* Green */
 		init_color(6,     0,    0, 1000);	/* Blue */
 		init_color(7,   552,  400,    0);	/* Umber */
-		init_color(8,   455,  455,  455);	/* "Light Dark" */
+		init_color(8,   454,  454,  454);	/* "Light Dark" */
 		init_color(9,   843,  843,  843);	/* Light Slate */
 		init_color(10,  686,    0, 1000);	/* Violet */
 		init_color(11, 1000, 1000,    0);	/* Yellow */
 		init_color(12, 1000,  188,  188);	/* Light Red */
 		init_color(13,    0, 1000,    0);	/* Light Green */
 		init_color(14,    0, 1000, 1000);	/* Light Blue */
-		init_color(15,  780,  616,  333);	/* Light Umber */
+		init_color(15,  780,  615,  333);	/* Light Umber */
 #endif
 
 		/* Prepare the "Angband Colors" */
@@ -1000,8 +1000,8 @@ errr init_gcu(void)
 	}
 
 	/* Attempt to use colors */
-	else if (can_use_color)
-	{
+	else if (can_use_color) {
+plog("canuse");
 		/* Color-pair 0 is *always* WHITE on BLACK */
 		/* Prepare the color pairs */
 		init_pair(1, COLOR_RED,     COLOR_BLACK);
