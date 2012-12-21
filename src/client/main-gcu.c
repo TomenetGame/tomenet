@@ -918,7 +918,6 @@ errr init_gcu(void)
 #endif
 	/* Attempt to use customized colors */
 	if (can_fix_color) {
-plog("canfix");
 		/* Prepare the color pairs */
 		/* if (can_use_color) { */
 		init_pair(0, 0, 0);	/*black */
@@ -1001,7 +1000,6 @@ plog("canfix");
 
 	/* Attempt to use colors */
 	else if (can_use_color) {
-plog("canuse");
 		/* Color-pair 0 is *always* WHITE on BLACK */
 		/* Prepare the color pairs */
 		init_pair(1, COLOR_RED,     COLOR_BLACK);
