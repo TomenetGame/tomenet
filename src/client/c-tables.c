@@ -244,7 +244,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.show_labels,		TRUE,	1,	0, 10, FALSE,
 	"show_labels",			"(broken) Show labels in object listings" },
 #else
-	{ &c_cfg.hilite_chat,		TRUE,	4,	0, 11, TRUE,
+	{ &c_cfg.hilite_chat,		TRUE,	4,	0, 10, TRUE,
 	"hilite_chat",			"Highlight chat messages containing your name" },
 #endif
 	{ &c_cfg.show_weights,		TRUE,	1,	0, 11, TRUE,
