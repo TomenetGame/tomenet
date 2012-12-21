@@ -2788,7 +2788,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 0\n");
 	/* Verify location */
 	if (!in_bounds(y, x)) return (FALSE);
 	/* Require empty space */
-	if (!cave_empty_bold(zcave, y, x) && !(summon_override_checks & SO_EMPTY)) return (FALSE);
+	if (!cave_empty_bold(zcave, y, x)) return (FALSE);
 	/* Paranoia */
 	if (!r_idx) return (FALSE);
 	/* Paranoia */

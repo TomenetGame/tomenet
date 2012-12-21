@@ -993,7 +993,6 @@
 #define SO_SURFACE		0x0800	/* ignore checks which restrict certain monster spawns on the world surface (breeders, uniques) */
 
 #define SO_IDDC			0x1000	/* legalize uncheezable summoning in ironman deep dive challenge. Note: clone/clone_summoning imply this flag! */
-#define SO_EMPTY		0x2000	/* don't require empty (FLOOR and no monster on it) grid */
 
 
 /*
