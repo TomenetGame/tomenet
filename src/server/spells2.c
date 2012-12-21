@@ -3576,7 +3576,8 @@ bool identify_fully_item_quiet(int Ind, int item)
 }
 
 /* variant of identify_fully_item_quiet that doesn't use player inventory,
-   added for !X on Iron Helm of Knowledge - C. Blue */
+   added for !X on Iron Helm of Knowledge, which probably doesn't make much
+   sense though - C. Blue */
 bool identify_fully_object_quiet(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
