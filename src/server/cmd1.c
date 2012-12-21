@@ -2026,44 +2026,128 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 				/* the_sandman: attempt to id a newly picked up item if we have the means to do so.
  				 * Check that we don't know the item and can read a scroll - mikaelh */
 				if (!object_aware_p(Ind, o_ptr) || !object_known_p(Ind, o_ptr)) { /* was just object_known_p */
-					int index;
-					for (index = 0; index < INVEN_PACK; index++) {
-						/* Check if the player does want this feature (!X - for now :) ) */
-						if (!check_guard_inscription(p_ptr->inventory[index].note, 'X')) continue;
+					object_type *i_ptr;
+					int index, lev, chance;
+					u32b dummy, f4;
+					bool ID_item_found = FALSE;
 
-						object_type *i_ptr = &(p_ptr->inventory[index]);
+					/* check activatable items we have equipped */
+					for (index = INVEN_WIELD; index <= INVEN_TOTAL; index++) {
+						 i_ptr = &(p_ptr->inventory[index]);
+
+						/* Check if the player does want this feature (!X - for now :) ) */
+						if (!check_guard_inscription(i_ptr->note, 'X')) continue;
+
+						/* This paragraph sort of replaces item_tester_hook_activate() */
+						if (!object_known_p(Ind, i_ptr)) continue;
+						/* hard-coded -- the only artifacts that have ID activation */
+						if (i_ptr->name1 != ART_ERIRIL &&
+						    i_ptr->name1 != ART_STONE_LORE) continue;
+
+						ID_item_found = TRUE;
+
+						/* Item is still charging up? */
+						if (i_ptr->timeout) continue;
+
+						if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+							msg_format(Ind, "\377%cYour antimagic prevents you from using your magic device.", COLOUR_AM_OWN);
+							break; /* can't activate any other items either */
+						}
+
+						object_flags(i_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy);
+
+						/* Extract the item level */
+						lev = k_info[i_ptr->k_idx].level;
+						if (artifact_p(i_ptr)) lev = a_info[i_ptr->name1].level;
+						/* Base chance of success */
+						chance = p_ptr->skill_dev;
+						/* Confusion hurts skill */
+						if (p_ptr->confused) chance = chance / 2;
+						/* Simplicity? */
+						if (f4 & TR4_EASY_USE) chance *= 2;
+						/* High level objects are harder */
+						chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
+						if (chance < 0) chance = 0;
+						/* Give everyone a (slight) chance */
+						if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0)) chance = USE_DEVICE;
+						/* Roll for usage */
+						if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
+							msg_print(Ind, "You failed to activate it properly.");
+							break;
+						}
+
+						//We managed to pull it off :-)
+						/* we id the newly picked up item */
+						object_aware(Ind, o_ptr);
+						object_known(o_ptr);
+
+						p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+						object_tried(Ind, i_ptr);
+						if (!object_aware_p(Ind, i_ptr)) object_aware(Ind, i_ptr);
+						p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+						/* activate the item -- copy/pasted from cmd6.c - KEEP CONSISTENT! */
+						switch (i_ptr->name1) {
+						case ART_ERIRIL:
+							i_ptr->timeout = 10;
+							break;
+						case ART_STONE_LORE:
+							i_ptr->timeout = 10;
+
+		                                        if (20 <= p_ptr->csp) {
+		                                                p_ptr->csp -= 20;
+		                                                if (rand_int(5) == 0) (void)set_confused(Ind, p_ptr->confused + randint(5));
+		                                        } else {
+								p_ptr->csp = 0;
+								p_ptr->csp_frac = 0;
+								msg_print(Ind, "You do not have enough mana to control the stone!");
+								(void)set_confused(Ind, p_ptr->confused + 5 + randint(5));
+			                                }
+                    			            	p_ptr->redraw |= (PR_MANA);
+			                                take_hit(Ind, damroll(1, 12), "perilous secrets", 0);
+							break;
+						}
+
+						/* consume a turn */
+						p_ptr->energy -= level_speed(&p_ptr->wpos);
+						break;
+					}
+
+					if (!ID_item_found) /* Check ID tools in our inventory if we haven't had any activatable tool */
+					for (index = 0; index < INVEN_PACK; index++) {
+						i_ptr = &(p_ptr->inventory[index]);
+
+						/* Check if the player does want this feature (!X - for now :) ) */
+						if (!check_guard_inscription(i_ptr->note, 'X')) continue;
 
 						/* ID rod && ID staff (no *perc*) */
 						if (can_use(Ind, i_ptr) &&
-						    ((i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY && !i_ptr->pval) || 
+						    ((i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY && !i_ptr->pval) ||
 						    (i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY && i_ptr->pval > 0))) {
+							ID_item_found = TRUE;
+
 							if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 								msg_format(Ind, "\377%cYour antimagic prevents you from using your magic device.", COLOUR_AM_OWN);
 								continue; // find the scrolls =/
 							}
 
+							object_flags(i_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy);
+
 							/* Extract the item level */
-							int lev = k_info[o_ptr->k_idx].level;
-
+							lev = k_info[i_ptr->k_idx].level;
 							/* Base chance of success */
-							int chance = p_ptr->skill_dev;
-
+							chance = p_ptr->skill_dev;
 							/* Confusion hurts skill */
 							if (p_ptr->confused) chance = chance / 2;
-
 							/* perc rod only: is it easy to use? */
-							if (i_ptr->tval == TV_ROD && (i_ptr->name2 == EGO_RSIMPLICITY /* of Simplicity */)) chance *= 2;
-
+							if (f4 & TR4_EASY_USE) chance *= 2;
 							/* High level objects are harder */
 							chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
 							if (chance < 0) chance = 0;
-
 							/* Give everyone a (slight) chance */
 							if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0)) chance = USE_DEVICE;
-
 							/* Roll for usage */
-							if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
-							{
+							if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
 								if (i_ptr->tval == TV_ROD)
 									msg_print(Ind, "You failed to use the rod properly.");
 								else
@@ -2138,6 +2222,8 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 						} else
 						/* ID scroll */
 						if (i_ptr->tval == TV_SCROLL && i_ptr->sval == SV_SCROLL_IDENTIFY && i_ptr->number > 0) { 
+							ID_item_found = TRUE;
+
 					 		if (p_ptr->blind || no_lite(Ind) || p_ptr->confused) {
 								//Allow the possible existence of an id staff/rod in bag and contain !X?
 								//continue;
@@ -2161,7 +2247,7 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 							p_ptr->energy -= level_speed(&p_ptr->wpos);*/
 							break;
 						}
-					} 
+					}
 				}
 
 				/* Carry the item */
