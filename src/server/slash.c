@@ -4246,11 +4246,11 @@ void do_slash_cmd(int Ind, char *message)
 				worldpos *tpos = &p_ptr->wpos;
 				cave_type **zcave = getcave(tpos);
 				if (!(zcave = getcave(tpos))) return;
-				
+
 				if (!tk) {
 					msg_print(Ind, "Usage: /move-stair dun|tow");
 				}
-				
+
 				for (scx = 0; scx < MAX_WID; scx++) {
 					for (scy = 0;scy < MAX_HGT; scy++) {
 						if (zcave[scy][scx].feat == FEAT_MORE && !strcmp(token[1], "dun")) {
@@ -5937,7 +5937,7 @@ void do_slash_cmd(int Ind, char *message)
 				                town[i].townstore[j].last_visit = turn;
 
  					store_debug_mode = k;
-					
+
 					if (tk > 1) store_debug_quickmotion = atoi(token[2]);
 					else store_debug_quickmotion = 10;
 
@@ -6794,6 +6794,47 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Initiating passage to Valinor.");
                                 p_ptr->auto_transport = AT_VALINOR;
 			        return;
+			}
+			/* Recall all players out of the dungeons, kick those who aren't eligible */
+			else if (prefix(message, "/allrec")) {
+				struct worldpos pwpos;
+				player_type *p_ptr;
+
+				for (i = 1; i <= NumPlayers; i++) {
+					p_ptr = Players[i];
+					pwpos = Players[i]->wpos;
+
+					if (!pwpos.wz) continue;
+					if (is_admin(p_ptr)) continue;
+
+					if (in_irondeepdive(&pwpos)) {
+			                	msg_print(i, "\377OServer is restarting...");
+                                                Destroy_connection(p_ptr->conn, "Server is restarting");
+						continue;
+					}
+					if (pwpos.wz > 0) {
+						if ((wild_info[pwpos.wy][pwpos.wx].tower->flags2 & DF2_IRON) ||
+				                    (wild_info[pwpos.wy][pwpos.wx].tower->flags1 & DF1_FORCE_DOWN)) {
+				                	msg_print(i, "\377OServer is restarting...");
+                                                        Destroy_connection(p_ptr->conn, "Server is restarting");
+							continue;
+						}
+					} else {
+						if ((wild_info[pwpos.wy][pwpos.wx].dungeon->flags2 & DF2_IRON) ||
+				                    (wild_info[pwpos.wy][pwpos.wx].dungeon->flags1 & DF1_FORCE_DOWN)) {
+				                	msg_print(i, "\377OServer is restarting...");
+                                                        Destroy_connection(p_ptr->conn, "Server is restarting");
+							continue;
+						}
+					}
+
+					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+					p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+					p_ptr->recall_pos.wz = 0;
+					p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+					recall_player(i, "");
+				}
+				return;
 			}
 		}
 	}
