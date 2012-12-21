@@ -2042,7 +2042,6 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 						if (!object_known_p(Ind, i_ptr)) continue;
 						/* hard-coded -- the only artifacts that have ID activation */
 						if (i_ptr->name1 != ART_ERIRIL &&
-						    i_ptr->name1 != ART_KNOWLEDGE && /* *identify*, but w/e since it's repeatable */
 						    i_ptr->name1 != ART_STONE_LORE) continue;
 
 						ID_item_found = TRUE;
@@ -2091,13 +2090,6 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 						switch (i_ptr->name1) {
 						case ART_ERIRIL:
 							i_ptr->timeout = 10;
-							break;
-						case ART_KNOWLEDGE:
-							identify_fully_object_quiet(Ind, o_ptr);
-							msg_print(Ind, "\377RYou hear horrible, otherworldly sounds of the dead in your head..");
-		                	                take_sanity_hit(Ind, damroll(2, 7), "the sounds of the dead");
-//		    		                        take_hit(Ind, damroll(10, 7), "the sounds of the dead", 0);
-			                                i_ptr->timeout = rand_int(200) + 100;
 							break;
 						case ART_STONE_LORE:
 							i_ptr->timeout = 10;
