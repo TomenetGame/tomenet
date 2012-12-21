@@ -6804,6 +6804,7 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		if (option_info[i].o_var == &c_cfg.big_map)
 			c_cfg.big_map = FALSE;
 			Client_setup.options[i] = FALSE;
+			screen_hgt = SCREEN_HGT;
 	}
 
 	if (option_info[i].o_var == &c_cfg.big_map

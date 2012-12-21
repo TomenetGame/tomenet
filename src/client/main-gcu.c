@@ -878,6 +878,12 @@ errr init_gcu(void)
 		setenv("TERM", "xterm-16color", -1);
 
 
+        /* BIG_MAP is currently not supported in GCU client */
+        c_cfg.big_map = FALSE;
+        Client_setup.options[43] = FALSE;
+	screen_hgt = SCREEN_HGT;
+
+
 	/* Extract the normal keymap */
 	keymap_norm_prepare();
 
@@ -889,10 +895,6 @@ errr init_gcu(void)
 	/* Initialize for others systems */
 	if (initscr() == (WINDOW*)ERR) return (-1);
 #endif
-
-
-        /* BIG_MAP is currently not supported in GCU client */
-	screen_hgt = SCREEN_HGT;
 
 
 	/* Hack -- Require large screen, or Quit with message */
