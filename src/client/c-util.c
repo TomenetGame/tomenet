@@ -6813,6 +6813,13 @@ void Send_paste_msg(char *msg) {
 /* Check if certain options have an immediate effect when toggled,
    for switching BIG_MAP feature on/off live. - C. Blue */
 void check_immediate_options(int i, bool yes, bool playing) {
+	/* BIG_MAP is currently not supported in GCU client */
+	if (!strcmp(ANGBAND_SYS, "gcu")) {
+		if (option_info[i].o_var == &c_cfg.big_map)
+			c_cfg.big_map = FALSE;
+			Client_setup.options[i] = FALSE;
+	}
+
 	if (option_info[i].o_var == &c_cfg.big_map
             && is_newer_than(&server_version, 4, 4, 9, 1, 0, 1) /* redundant */
             && (sflags1 & SFLG1_BIG_MAP)) {

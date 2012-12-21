@@ -887,6 +887,10 @@ errr init_gcu(void)
 #endif
 
 
+        /* BIG_MAP is currently not supported in GCU client */
+	screen_hgt = SCREEN_HGT;
+
+
 	/* Hack -- Require large screen, or Quit with message */
 	i = ((LINES < 24) || (COLS < 80));
 	if (i) quit("Angband needs an 80x24 'curses' screen");
