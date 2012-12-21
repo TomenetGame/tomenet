@@ -3,45 +3,6 @@
 
 # This is not a very "nice" Makefile, but it usually works.
 
-#
-# Note that you may have to make modifications below according
-# to your machine, available libraries, compilation options,
-# and your "visual module" of choice.  This Makefile is intended
-# for use with Unix machines running X11, Curses, Ncurses, or Vt100,
-# or possibly for "Atari" or "Amiga" computers with "Curses" ports,
-# see below for more information.
-#
-# Note that "main-mac.c", the visual module for the Macintosh,
-# must be compiled in a special way, see elsewhere.
-#
-# Note that "main-win.c", the visual module for Windows,
-# must be compiled in a special way, see elsewhere.
-#
-# Note that "main-ibm.c", "main-emx.c", and "main-286.c",
-# the visual modules for various types of IBM-PC computers,
-# must be compiled with special Makefiles, see elsewhere.
-#
-# Note that "main-lsl.c", the visual module for ???,
-# must be compiled with "Makefile.lsl", see elsewhere.
-#
-# Note that "main-acn.c", the visual module for Risc Acorn,
-# must be compiled with "Makefile.acn", see elsewhere.
-#
-# Note that "Makefile.w31" and "Makefile.wat" are slight variations
-# on "Makefile.win" and "Makefile.ibm", respectively, which allow
-# the use of the "main-win.c" and "main-ibm.c" files, respectively,
-# with special compilers.
-#
-# If you are able to construct "main-xxx.c" and/or "Makefile.xxx"
-# files for a currently unsupported system, please send them to me
-# (benh@voicenet.com) for inclusion in future versions.
-#
-# This Makefile comes with "default" dependancies that may be obsolete.
-#
-# You may want to run "make depend" if you are planning on changing
-# anything.
-#
-
 
 #
 # The "source" and "object" files.
@@ -160,25 +121,9 @@ CLI_LUAOBJS = \
   client/c-script.o client/lua_bind.o \
   client/w_play.o client/w_util.o client/w_spells.o
 
+
 ##
 ## Following are some "system" definitions
-##
-## No changes are needed to compile a version that will run on both
-## X11 and Curses, in debugging mode, with maximal warnings, on many
-## normal Unix machines of the Sun OS variety (non-solaris).
-##
-## To use an "alternative" definition, simply "modify" (or "replace")
-## the definition below with one that you like.  For example, you can
-## change the compiler to "cc", or remove the "debugging" options, or
-## remove the X11 or Curses support, etc, as desired.
-##
-## See also "config.h" and "h-config.h" for important information.
-##
-## Some "examples" are given below, they can be used by simply
-## removing the FIRST column of "#" signs from the "block" of lines
-## you wish to use, and commenting out "standard" block below.
-##
-## This is not intended to be a "good" Makefile, just a "simple" one.
 ##
 
 
@@ -196,33 +141,10 @@ CC = gcc
 CPP = gcc
 CPPFLAGS = -x c -E -Wp,-C,-P
 
-
-#
-# Standard version (see main-x11.c and main-gcu.c)
-#
-# This version supports both "X11" and "curses" in a single executable.
-#
-# You may have to add various X11 include/library directories to the
-# "CFLAGS", if your machine places files in a weird location.
-#
-# You may be able to remove "-ltermcap" on some machines (ex: Solaris).
-#
-# You may have to replace "-lcurses" with "-lncurses" to use the
-# "new curses" library instead of the "old curses" library, and
-# you may have to add "-l/usr/include/ncurses" to the "CFLAGS".
-#
-# See "main-gcu.c" and "config.h" for some optional "curses" defines,
-# including "USE_GETCH" and "USE_CURS_SET".  Note that "config.h" will
-# attempt to "guess" at many of these flags based on your system.
-#
-#CFLAGS = -Wall -DOSX -g -pipe -DUSE_X11 -DUSE_GCU
-#LIBS = -L/usr/X11R6/lib -lX11 -lcurses
-
-
 X11BASE = /usr/X11R6
 
 ##
-## Variation -- Mac OS X
+## Makefile for Mac OS X -- C. Blue
 ##
 ## Add -msse2 -DHAVE_SSE2=1 to CFLAGS to enable SSE2 support in SFMT.
 ##
@@ -236,50 +158,11 @@ X11BASE = /usr/X11R6
 ##
 ## With SDL
 CFLAGS = -g -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl-config --cflags`
-LIBS = -lX11 -lncurses -lgcrypt -lm -lSDL_mixer
+LIBS = -lX11 -lgcrypt -lm -lSDL_mixer
 LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 #-lXtst (for numlock - obsolete)
 ## Uncomment this if you want to bundle libraries with the client
 #LDFLAGS += -Wl,-rpath,\$$ORIGIN
-
-
-##
-## Variation -- Only support "main-x11.c" (not "main-gcu.c")
-##
-#CFLAGS = -Wall -DOSX -pipe -g -DUSE_X11
-#LIBS = -lX11
-
-
-##
-## Variation -- Only support "main-gcu.c" (not "main-x11.c")
-##
-#CFLAGS = -Wall -DOSX -pipe -g -DUSE_GCU
-#LIBS = -lcurses -ltermcap
-
-
-## Added by thaler, 6/28/97
-## Variation -- Only support "main-gcu.c" (not "main-x11.c") on localhost
-##
-## NOTE -- Using this variation requires that the server and client run
-## on the same machine!  Also define META_ADDRESS to be an empty string
-## in config.h.  --Keldon
-##
-#CFLAGS = -Wall -DOSX -pipe -g -DUSE_GCU -DUNIX_SOCKETS
-#LIBS = -lncurses -ltermcap
-
-
-##
-## Variation -- Use "main-xaw.c" instead of "main-x11.c"
-##
-#CFLAGS = -Wall -DOSX -pipe -g -DUSE_XAW -DUSE_GCU
-#LIBS = -lXaw -lXmu -lXt -lX11 -lcurses -ltermcap
-
-
-##
-## Variation -- Use "main-cap.c" instead of "main-gcu.c"
-##
-#CFLAGS = -Wall -DOSX -pipe -g -DUSE_X11 -DUSE_CAP
-#LIBS = -lX11 -ltermcap
 
 
 # Compile a client with 'test client' version/tag
