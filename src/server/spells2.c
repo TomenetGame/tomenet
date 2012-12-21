@@ -3575,6 +3575,38 @@ bool identify_fully_item_quiet(int Ind, int item)
 	return (TRUE);
 }
 
+/* variant of identify_fully_item_quiet that doesn't use player inventory,
+   added for !X on Iron Helm of Knowledge - C. Blue */
+bool identify_fully_object_quiet(int Ind, object_type *o_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* Identify it fully */
+	object_aware(Ind, o_ptr);
+	object_known(o_ptr);
+
+	/* Mark the item as fully known */
+	o_ptr->ident |= (ID_MENTAL);
+
+	/* Did we use up an item? */
+	if (p_ptr->using_up_item >= 0) {
+//		inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not for *ID* */
+		inven_item_optimize(Ind, p_ptr->using_up_item);
+		p_ptr->using_up_item = -1;
+
+		p_ptr->window |= PW_INVEN;
+	}
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* We no longer have a *identify* in progress */
+	p_ptr->current_star_identify = 0;
+
+	/* Success */
+	return (TRUE);
+}
+
 /*
  * Hook for "get_item()".  Determine if something is rechargable.
  */
