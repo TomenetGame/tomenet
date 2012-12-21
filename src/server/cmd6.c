@@ -5817,8 +5817,9 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			case ART_KNOWLEDGE:
 			{
 				identify_fully(Ind);
-				//                                take_sanity_hit(damroll(10, 7), "the sounds of deads");
-				take_hit(Ind, damroll(10, 7), "the sounds of deads", 0);
+				msg_print(Ind, "\377RYou hear horrible, otherworldy sounds of the dead in your head..");
+                                take_sanity_hit(Ind, damroll(2, 7), "the sounds of the dead");
+//				take_hit(Ind, damroll(10, 7), "the sounds of the dead", 0);
 				o_ptr->timeout = rand_int(200) + 100;
 				break;
 			}
