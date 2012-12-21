@@ -869,10 +869,14 @@ static errr term_data_init(term_data *td, int rows, int cols, int y, int x)
 errr init_gcu(void)
 {
 	int i;
-
 	/*term *t = &term_screen_body;*/
-
 	int num_term = 4, next_win = 0;
+
+
+	/* hack -- work on Xfce4's 'Terminal' without requiring the user to set this */
+	if (!strcmp(getenv("TERM"), "xterm"))
+		setenv("TERM", "xterm-16color", -1);
+
 
 	/* Extract the normal keymap */
 	keymap_norm_prepare();
