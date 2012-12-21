@@ -239,6 +239,8 @@ static int colortable[16];
 
 #endif
 
+void resize_main_window_gcu(int cols, int rows);
+
 
 
 /*
@@ -890,13 +892,17 @@ errr init_gcu(void)
 	if (i) quit("Angband needs an 80x24 'curses' screen");
 
 
+        /* set OS-specific resize_main_window() hook */
+        resize_main_window = resize_main_window_gcu;
+
+
 #ifdef A_COLOR
 
 	/*** Init the Color-pairs and set up a translation table ***/
 
 	/* Do we have color, and enough color, available? */
 	can_use_color = ((start_color() != ERR) && has_colors() &&
-	                 (COLORS >= 8) && (COLOR_PAIRS >= 8));	             
+	                 (COLORS >= 8) && (COLOR_PAIRS >= 8));
 
 	COLORS=16;
 	COLOR_PAIRS=16;
@@ -1093,7 +1099,7 @@ errr init_gcu(void)
 }
 
 /* for big_map mode */
-void resize_main_window(int cols, int rows) {
+void resize_main_window_gcu(int cols, int rows) {
 #if 0 /* copy/pasted from USE_X11 -- todo: implement for ncurses */
         int wid, hgt;
         term_data *td = term_idx_to_term_data(0);

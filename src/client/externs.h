@@ -9,6 +9,7 @@
 
 #ifdef USE_GCU
 extern errr init_gcu(void);
+extern void resize_main_window_gcu(int cols, int rows);
 #endif
 
 #ifdef USE_X11
@@ -20,9 +21,7 @@ extern void turn_off_numlock_X11(void);
 extern void change_font(int s);
 #endif
 extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name);
-extern void resize_main_window(int cols, int rows);
-#elif defined(USE_GCU)
-extern void resize_main_window(int cols, int rows);
+extern void resize_main_window_x11(int cols, int rows);
 #endif
 
 #ifdef USE_XAW
@@ -813,7 +812,7 @@ extern int stricmp(cptr a, cptr b);
 /* main-win.c */
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 extern void change_font(int s);
-extern void resize_main_window(int cols, int rows);
+extern void resize_main_window_win(int cols, int rows);
 #endif
 
 extern const cptr angband_sound_name[SOUND_MAX];
@@ -860,3 +859,4 @@ extern char kind_list_name[MAX_K_IDX][80];
 extern int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_idx;
 
 extern int screen_wid, screen_hgt;
+extern void (*resize_main_window)(int cols, int rows);

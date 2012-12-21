@@ -19,6 +19,8 @@ extern char recorded_macro[160];
 static char get_shimmer_color(void);
 byte flick_colour(byte attr);
 
+void (*resize_main_window)(int cols, int rows);
+
 /*
  * This file provides a generic, efficient, terminal window package,
  * which can be used not only on standard terminal environments such

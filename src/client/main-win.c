@@ -290,6 +290,9 @@ unsigned _cdecl _dos_getfileattr(const char *, unsigned *);
 #define VUD_BRIGHT	0x80
 
 
+void resize_main_window_win(int cols, int rows);
+
+
 /*
  * Forward declare
  */
@@ -3756,6 +3759,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	/* make version strings. */
 	version_build();
 
+	/* set OS-specific resize_main_window() hook */
+	resize_main_window = resize_main_window_win;
+
 	if (hPrevInst == NULL)
 	{
 		wc.style         = CS_CLASSDC;
@@ -4051,7 +4057,7 @@ void change_font(int s) {
 	}
 }
 
-void resize_main_window(int cols, int rows) {
+void resize_main_window_win(int cols, int rows) {
 	term_data *td = &data[0];
 	term *t = &td->t;
 

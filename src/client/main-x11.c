@@ -68,7 +68,7 @@
  */
 
 
-
+void resize_main_window_x11(int cols, int rows);
 
 
 /**** Available Types ****/
@@ -2261,21 +2261,21 @@ static XImage *ReadBMP(Display *disp, char Name[])
 		if((fileheader.bfType != 19778) || (infoheader.biSize != 40)) {
 				plog_fmt("Incorrect file format %s",Name);
 				quit("Bad BMP format");};
-	
+
 		/* Compute number of colors recorded */
 		ncol = (fileheader.bfOffBits - 54) / 4;
-		
+
 		for(x=0;x<ncol;++x) {
 		   fread(&clrg,4,1,f);
 		   sprintf(cname,"#%02x%02x%02x",clrg.r,clrg.g,clrg.b);
 		   clr_Pixells[x] = Infoclr_Pixell(cname); }
 
 		depth = DefaultDepth(disp, DefaultScreen(disp));
-		
+
 		x = 1;
 		y = (depth-1) >> 2;
 		while (y>>=1) x<<=1;
-		
+
 		Data = (char *)malloc(infoheader.biSizeImage*x);
 
 		if (Data != NULL)
@@ -2461,6 +2461,10 @@ errr init_x11(void) {
 
 	/* Init the Metadpy if possible */
 	if (Metadpy_init_name(dpy_name)) return (-1);
+
+
+        /* set OS-specific resize_main_window() hook */
+        resize_main_window = resize_main_window_x11;
 
 
 	/* Prepare color "xor" (for cursor) */
@@ -2894,7 +2898,7 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 	*y -= y_rel;
 }
 
-void resize_main_window(int cols, int rows) {
+void resize_main_window_x11(int cols, int rows) {
 	int wid, hgt;
 	term_data *td = term_idx_to_term_data(0);
         term *t = ang_term[0]; //&screen
