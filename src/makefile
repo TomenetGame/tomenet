@@ -295,18 +295,17 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcrypt -lm `sdl-config --libs` -lS
 ## You can compile the client without X11 support by removing -DUSE_X11 from
 ## CFLAGS and -lX11 from LIBS
 ##
-## Without SDL
-#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
-#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
-##
 ## With SDL
 #CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -DSOUND_SDL `sdl-config --cflags`
 #tomenet.test: CFLAGS += -DTEST_CLIENT
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 #-lXtst (for numlock - obsolete)
-
 ## Uncomment this if you want to bundle libraries with the client
 #LDFLAGS = -Wl,-rpath,\$$ORIGIN
+##
+## Without SDL
+#CFLAGS = -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 
 
 ## Added by thaler, 6/28/97

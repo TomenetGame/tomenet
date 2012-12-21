@@ -234,13 +234,13 @@ WINDRES = windres
 ##
 ## Variation -- Cygwin
 ##
-## Without SDL
-#CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DCYGWIN -DMEXP=19937
-#LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
-##
 ## With SDL
 CFLAGS = -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DCYGWIN -DMEXP=19937 -DSOUND_SDL -DWINVER=0x0501 -Wno-unused-but-set-variable
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer
+##
+## Without SDL
+#CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DCYGWIN -DMEXP=19937
+#LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
 
 # Compile a client with 'test client' version/tag
