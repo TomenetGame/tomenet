@@ -2918,19 +2918,16 @@ void do_cmd_use_staff(int Ind, int item)
 
 
 #if 1
-	if (p_ptr->anti_magic)
-	{
-		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);	
+	if (p_ptr->anti_magic) {
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
 #endif
-	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
-	{
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
-        if (magik((p_ptr->antimagic * 8) / 5))
-        {
+        if (magik((p_ptr->antimagic * 8) / 5)) {
                 msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
                 return;
         }
@@ -2939,14 +2936,9 @@ void do_cmd_use_staff(int Ind, int item)
 	item_tester_tval = TV_STAFF;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &p_ptr->inventory[item];
-	}
-
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
-	else
-	{
+	else {
 		if (-item >= o_max)
 			return; /* item doesn't exist */
 
@@ -2956,10 +2948,9 @@ void do_cmd_use_staff(int Ind, int item)
 	if( check_guard_inscription( o_ptr->note, 'u' )) {
                 msg_print(Ind, "The item's inscription prevents it.");
                 return;
-        }; 
+        };
 
-	if (o_ptr->tval != TV_STAFF)
-	{
+	if (o_ptr->tval != TV_STAFF) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-staff!");
 		return;
 	}
@@ -2967,8 +2958,7 @@ void do_cmd_use_staff(int Ind, int item)
         if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
-	if ((item < 0) && (o_ptr->number > 1))
-	{
+	if ((item < 0) && (o_ptr->number > 1)) {
 		msg_print(Ind, "You must first pick up the staffs.");
 		return;
 	}
@@ -3000,34 +2990,27 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
-	/* High level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
-
         /* Extract object flags */
         object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
         /* Is it simple to use ? */
-        if (f4 & TR4_EASY_USE)
-        {
-                chance *= 10;
-        }
+        if (f4 & TR4_EASY_USE) chance *= 10;
+
+	/* High level objects are harder */
+	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-	{
 		chance = USE_DEVICE;
-	}
 
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
-	{
+	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
 		msg_print(Ind, "You failed to use the staff properly.");
 		return;
 	}
 
 	/* Notice empty staffs */
-	if (o_ptr->pval <= 0)
-	{
+	if (o_ptr->pval <= 0) {
 		msg_print(Ind, "The staff has no charges left.");
 		o_ptr->ident |= ID_EMPTY;
 
@@ -3491,6 +3474,9 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
+
+        /* Extract object flags */
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
         /* Is it simple to use ? */
         if (f4 & TR4_EASY_USE) chance *= 2;
@@ -5048,9 +5034,11 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
+        /* Extract object flags */
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
 	/* Is it simple to use ? */
-	if (f4 & TR4_EASY_USE)
-		chance *= 2;
+	if (f4 & TR4_EASY_USE) chance *= 2;
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
