@@ -1907,8 +1907,10 @@ static void quit_hook(cptr s)
 	write_mangrc();
 #endif
 
+#ifdef USE_GCU
         /* clean up USE_GCU's terminal colour modifications */
         if (!strcmp(ANGBAND_SYS, "gcu")) gcu_restore_colours();
+#endif
 
 	/* Nuke each term */
 	for (j = ANGBAND_TERM_MAX - 1; j >= 0; j--)
