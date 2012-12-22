@@ -813,6 +813,11 @@ int main(int argc, char **argv)
 			save_chat = TRUE;
 			break;
 
+		case 'e':
+			/* Since ALSA might spam underrun errors.. */
+			freopen("tomenet.log", "w", stderr);
+			break;
+
 		default:
 			modus = -1;
 			i = argc;
@@ -830,18 +835,21 @@ int main(int argc, char **argv)
 		puts("       : tomenet -f.myrc -lOlorin_archer");
 		puts("  -c                 Always use CUI(GCU) interface");
 		puts("  -C                 Compatibility mode for very old servers");
+		puts("  -e                 Create file 'tomenet.log' instead of displaying");
+		puts("                     error messages in the terminal");
 		puts("  -f                 specify rc File to read");
 		puts("  -F                 Client FPS");
 		puts("  -i                 Ignore .tomenetrc");
 		puts("  -l<nick> <passwd>  Login as");
+		puts("  -m                 skip motd (message of the day) on login");
 		puts("  -N<name>           character Name");
 		puts("  -p<num>            change game Port number");
 		puts("  -P<path>           set the lib directory Path");
 		puts("  -q                 disable audio capabilities ('quiet mode')");
-		puts("  -w                 disable client-side weather effects");
 		puts("  -u                 disable client-side automatic lua updates");
-		puts("  -m                 skip motd (message of the day) on login");
+		puts("                     (you shouldn't use this option!");
 		puts("  -v                 save chat log on exit, don't prompt");
+		puts("  -w                 disable client-side weather effects");
 
 #ifdef USE_SOUND_2010
 #if 0 //we don't have 'modules' for everything, yet :-p only sound_modules for now - C. Blue

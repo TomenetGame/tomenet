@@ -14086,13 +14086,12 @@ PROBLEM 35: When running the client in terminal-mode, messages like
             How to get rid of the messages?
 SOLUTION:   Either tweak your sound settings (buffer size etc.) so ALSA doesn't
             get underruns anymore, or, if the audio actually sounds ok, you can
-            suppress the messages by starting TomeNET with this command-line:
-              ./tomenet <your options here> 2>/dev/null
-            For example (assuming an X11/GCU client):
-              ./tomenet -c 2>/dev/null
-            This will redirect all those messages which usually are sent to
-            stderr (the '2') to /dev/null instead, effectively suppressing
-            them.
+            suppress the messages by starting TomeNET with '-e' option, for
+            example:
+              ./tomenet -c -e
+            This will redirect all messages which usually are sent to stderr
+            to a log file "tomenet.log" instead, which will be created in your
+            TomeNET folder.
 
 
 
