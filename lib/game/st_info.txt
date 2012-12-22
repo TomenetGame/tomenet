@@ -142,10 +142,10 @@ N:3:Temple
 T:100:111:56
 T:100:111:56
 T:100:111:56
-I:100:& Nunchaku~
+#I:100:& Nunchaku~
 I:100:& Quarterstaff~
 I:100:& Mace~
-I:100:& Bo Staff~
+#I:100:& Bo Staff~
 I:100:& War Hammer~
 I:100:& Lucerne Hammer~
 I:100:& Morning Star~
@@ -1227,10 +1227,10 @@ N:73:Temple
 T:100:111:56
 T:100:111:56
 T:100:111:56
-I:100:& Nunchaku~
+#I:100:& Nunchaku~
 I:100:& Quarterstaff~
 I:100:& Mace~
-I:100:& Bo Staff~
+#I:100:& Bo Staff~
 I:100:& War Hammer~
 I:100:& Lucerne Hammer~
 I:100:& Morning Star~
