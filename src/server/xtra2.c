@@ -7779,7 +7779,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		/* Recall even invisible uniques or winners */
 		if (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE)) {
 			/* Count kills in all lives */
-			r_ptr->r_tkills++;
+			if (!is_admin(p_ptr)) r_ptr->r_tkills++;
 
 			/* Hack -- Auto-recall */
 			recent_track(m_ptr->r_idx);

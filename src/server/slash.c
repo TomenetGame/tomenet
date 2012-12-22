@@ -3833,15 +3833,14 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /uniques (unseen | nonkill)");
 					return;
 				}
-
-				if (prefix(token[k], "unseen")) {
+				if (prefix(token[tk], "unseen")) {
 					for (i = 0; i < MAX_R_IDX - 1 ; i++) {
 						r_ptr = &r_info[i];
 						if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
 						r_ptr->r_sights = 0;
 					}
 					msg_print(Ind, "All the uniques are set as '\377onot seen\377'.");
-				} else if (prefix(token[k], "nonkill")) {
+				} else if (prefix(token[tk], "nonkill")) {
 					monster_race *r_ptr;
 					for (i = 0; i < MAX_R_IDX - 1 ; i++) {
 						r_ptr = &r_info[i];

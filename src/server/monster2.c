@@ -2300,7 +2300,7 @@ void update_mon(int m_idx, bool dist)
 				if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
 
 				/* Hack -- Count "fresh" sightings */
-				r_ptr->r_sights++;
+				if (!is_admin(p_ptr)) r_ptr->r_sights++;
 
 				/* Disturb on appearance */
 				if(!m_list[m_idx].special && r_ptr->d_char != 't' &&

@@ -1537,6 +1537,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		r_ptr = &r_info[i];
 
 		if (p_ptr->r_killed[i] && !r_ptr->r_tkills &&
+		    !is_admin(p_ptr) &&
 		    (r_ptr->flags1 & RF1_UNIQUE)) {
 			r_ptr->r_tkills = r_ptr->r_sights = 1;
 			s_printf("TKILL FIX: Player %s assisted for/killed unique %d\n", p_ptr->name, i);
