@@ -3361,6 +3361,11 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* We want to convert into ded.iddc? */
 			else {
+				if (!in_irondeepdive(&p_ptr->wpos)) {
+					msg_print(Ind, "\377yYou must be inside the Ironman Deep Dive Challenge when converting!");
+					s_printf("FAILED.\n");
+					return;
+				}
 				if (ok == -5 || ok == -8 || ok == -6 || ok == -7) {
 					p_ptr->mode |= MODE_DED_IDDC;
 					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
