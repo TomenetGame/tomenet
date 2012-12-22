@@ -874,7 +874,8 @@ errr init_gcu(void)
 
 
 	/* hack -- work on Xfce4's 'Terminal' without requiring the user to set this */
-	if (!strcmp(getenv("TERM"), "xterm"))
+	if (!strcmp(getenv("TERM"), "xterm") &&
+	    !getenv("XTERM_VERSION"))
 		setenv("TERM", "xterm-16color", -1);
 
 
