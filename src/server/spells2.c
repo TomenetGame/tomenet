@@ -3292,8 +3292,8 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 
 	/* Describe */
 	msg_format(Ind, "%s %s glow%s brightly!",
-	           ((item >= 0) ? "Your" : "The"), o_name,
-	           ((o_ptr->number > 1) ? "" : "s"));
+	    ((item >= 0) ? "Your" : "The"), o_name,
+	    ((o_ptr->number > 1) ? "" : "s"));
 
 	/* Enchant */
 	if (enchant(Ind, o_ptr, num_hit, ENCH_TOHIT)) okay = TRUE;
@@ -3301,7 +3301,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	if (enchant(Ind, o_ptr, num_ac, ENCH_TOAC)) okay = TRUE;
 
 	/* Artifacts cannot be enchanted. */
-	if (artifact_p(o_ptr)) msg_format(Ind,"Your %s %s unaffected.",o_name,((o_ptr->number != 1)?"are":"is"));
+	if (artifact_p(o_ptr)) msg_format(Ind,"Your %s %s unaffected.",o_name,((o_ptr->number != 1) ? "are" : "is"));
 
 	/* Failure */
 	if (!okay) {
@@ -3310,16 +3310,15 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	}
 
 #if 0
-	// else
 	/* Anti-cheeze */
-	if (!artifact_p(o_ptr) && !ego_item_p(o_ptr) && magik(flags)) {
+	if (okay && !artifact_p(o_ptr) && !ego_item_p(o_ptr) && magik(flags)) {
 		int discount = (100 - o_ptr->discount) / 2;
 		if (discount > 0) {
 			o_ptr->discount += discount;
 
 			/* Message */
 			msg_format(Ind, "It spoiled the appearence of %s %s somewhat!",
-					((item >= 0) ? "your" : "the"), o_name);
+			    ((item >= 0) ? "your" : "the"), o_name);
 		}
 	}
 #else
@@ -3327,8 +3326,11 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
            It doesn't matter that much in other places, since there are usually
            better/equal ways to make money.
            For items probably >= 12k it doesn't matter anymore though. */
-        if ((flags & ENCH_STOLEN) && object_value_real(0, o_ptr) < 15000 &&
+        if (okay && (flags & ENCH_STOLEN) &&
+    	    object_value_real(0, o_ptr) < 15000 && o_ptr->discount != 100 &&
     	    isdungeontown(&p_ptr->wpos) && in_irondeepdive(&p_ptr->wpos)) {
+		msg_format(Ind, "The stolen enchantment scroll spoiled the appearence of %s %s!",
+		    ((item >= 0) ? "your" : "the"), o_name);
                 o_ptr->discount = 100;
                 if (!o_ptr->note) o_ptr->note = quark_add("devalued");
         }
