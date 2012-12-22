@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. December 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. December 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.0a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -648,13 +648,20 @@ They all start with a slash '/' hence they're called slash commands:
 /gbbs <text>    Same usage as /bbs, but only readable/writable for guild
                 members. So it's a guild-internal BBS.
                 To read its contents, type /gbbs without any <text>.
+/convertexclusive    Attempts to convert your current character into a
+                     slot-exclusive character (either PvP-mode or IDDC aka
+                     Ironman Deep Dive Challenge). Warning: This process is NOT
+                     REVERSIBLE! To attempt to convert your character, type:
+                     /convertexclusive <your-character-name>
+                     for example:
+                     /convertexclusive Gandalf
+/coin       Flip a coin to get either heads or tails.
+            The result is random and can be seen by other players who stand
+            nearby.
 /deal       Deals a card (completely random).
             The result is random and can be seen by other players who stand
             nearby.
 /dice       Roll some dice, you must specify a number of dice from 1 to 100.
-            The result is random and can be seen by other players who stand
-            nearby.
-/coin       Flip a coin to get either heads or tails.
             The result is random and can be seen by other players who stand
             nearby.
 /dis        DESTROYS every item in your inventory that has one of these
