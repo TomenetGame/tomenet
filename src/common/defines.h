@@ -40,8 +40,8 @@
 /* MAJOR/MINOR/PATCH version should be 0-15. */
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		5
-#define VERSION_PATCH		0
-#define VERSION_EXTRA		1
+#define VERSION_PATCH		1
+#define VERSION_EXTRA		0
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -51,7 +51,7 @@
    with a 'T' marker which is visible only to admins.*/
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	5
-#define VERSION_PATCH_LATEST	0
+#define VERSION_PATCH_LATEST	1
 #define VERSION_EXTRA_LATEST	0
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
@@ -6587,7 +6587,7 @@ extern int PlayerUID;
 
 //see true_artifact_p - #define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))
 #define PRICE_BOOST(value, base, step) \
-			(value > base ? value << ((value - base)/step) : value )	
+			(value > base ? value << ((value - base)/step) : value )
 
 #define is_fighter(p_ptr) \
 	((p_ptr->pclass == CLASS_WARRIOR) || (p_ptr->pclass == CLASS_PALADIN) || (p_ptr->pclass == CLASS_RANGER) || (p_ptr->pclass == CLASS_MIMIC))
