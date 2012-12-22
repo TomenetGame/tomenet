@@ -5883,6 +5883,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
+		    (typ != GF_SLOWPOISON_PLAYER) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
 			sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
 	}

@@ -828,7 +828,14 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_SLOW_POISON:
 				{
+#if 0
 					if (set_poisoned(Ind, p_ptr->poisoned / 2, p_ptr->poisoned_attacker)) ident = TRUE;
+#else /* back to traditional way */
+					if (p_ptr->poisoned && !p_ptr->slow_poison) {
+						p_ptr->slow_poison = 1;
+						ident = TRUE;
+					}
+#endif
 					break;
 				}
 

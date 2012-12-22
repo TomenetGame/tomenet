@@ -5449,7 +5449,7 @@ byte get_book_name_color(int Ind, object_type *o_ptr)
 	} else { /* School Tomes */
 		/* priests */
 		if ((o_ptr->sval >= 12 && o_ptr->sval <= 15) ||
-		    o_ptr->sval == 53)
+		    o_ptr->sval == 53 || o_ptr->sval == 56)
 			return TERM_GREEN;
 		/* druids */
 		else if (o_ptr->sval >= 16 && o_ptr->sval <= 17) return TERM_L_GREEN;

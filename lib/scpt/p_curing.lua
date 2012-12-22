@@ -173,29 +173,58 @@ HCURING = add_spell
 	["name"] =      "Curing",
 	["school"] =    {SCHOOL_HCURING},
         ["am"] =	75,
-	["level"] =     16,
-	["mana"] =      10,
+	["level"] =     3,
+	["mana"] =      2,
+	["mana_max"] =  10,
+	["fail"] =      20,
+	["stat"] =      A_WIS,
+	["spell"] =     function()
+	                if get_level(Ind, HCURING, 50) >= 15 then
+				set_confused(Ind, 0)
+				set_blind(Ind, 0)
+				set_stun(Ind, 0)
+		                set_poisoned(Ind, 0, 0)
+	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1, 1, " concentrates on your maladies.")
+			elseif get_level(Ind, HCURING, 50) >= 10 then
+		                set_poisoned(Ind, 0, 0)
+	                        fire_ball(Ind, GF_CUREPOISON_PLAYER, 0, 1, 1, " concentrates on your maladies.")
+		        else
+		    		if (player.poisoned ~= 0 and player.slow_poison == 0) then
+					player.slow_poison = 1
+				end
+	                        fire_ball(Ind, GF_SLOWPOISON_PLAYER, 0, 1, 1, " concentrates on your maladies.")
+			end
+		        end,
+	["info"] =      function()
+		        return ""
+	    		end,
+        ["desc"] =      {
+                        "Slows down the effect of poison",
+                        "At level 10 it neutralizes poison",
+                        "At level 15 it cures confusion, blindness and stun",
+                	"***Automatically projecting***",
+	}
+}
+
+HRESTORING = add_spell
+{
+	["name"] =      "Restoration",
+	["school"] =    {SCHOOL_HCURING},
+        ["am"] =	75,
+	["level"] =     26,
+	["mana"] =      20,
 	["mana_max"] =  25,
 	["fail"] =      20,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-	        	set_poisoned(Ind, player.poisoned / 2, player.poisoned_attacker)
-	                if get_level(Ind, HCURING, 50) >= 10 then
-		                set_poisoned(Ind, 0, 0)
-		                set_cut(Ind, 0, 0)
-				set_stun(Ind, 0)
-	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1, 1, " concentrates on your maladies.")
-			end
-	                if get_level(Ind, HCURING, 50) >= 20 then
-			        do_res_stat(Ind, A_STR)
-			        do_res_stat(Ind, A_CON)
-			        do_res_stat(Ind, A_DEX)
-			        do_res_stat(Ind, A_WIS)
-			        do_res_stat(Ind, A_INT)
-				do_res_stat(Ind, A_CHR)
-	                        fire_ball(Ind, GF_RESTORESTATS_PLAYER, 0, 1, 1, "")
-                        end
-                        if get_level(Ind, HCURING, 50) >= 25 then
+		        do_res_stat(Ind, A_STR)
+		        do_res_stat(Ind, A_CON)
+		        do_res_stat(Ind, A_DEX)
+		        do_res_stat(Ind, A_WIS)
+		        do_res_stat(Ind, A_INT)
+			do_res_stat(Ind, A_CHR)
+                        fire_ball(Ind, GF_RESTORESTATS_PLAYER, 0, 1, 1, "")
+                        if get_level(Ind, HRESTORING, 50) >= 5 then
 	                        restore_level(Ind)
 	                        fire_ball(Ind, GF_RESTORELIFE_PLAYER, 0, 1, 1, "")
 	                end
@@ -204,10 +233,8 @@ HCURING = add_spell
 		        return ""
 	    		end,
         ["desc"] =      {
-                        "Reduces the length of time that you are poisoned",
-                        "At level 10 it cures poison, cuts, stun, blindness and confusion",
-                        "At level 20 it restores drained stats",
-	                "At level 25 it restores lost experience",
+                        "At level 1 restores drained stats",
+	                "At level 5 it restores lost experience",
                 	"***Automatically projecting***",
 	}
 }

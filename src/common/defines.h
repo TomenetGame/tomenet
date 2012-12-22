@@ -3947,6 +3947,7 @@
 #define GF_MINDBOOST_PLAYER	145
 #define GF_REMCONF_PLAYER	146
 #define GF_REMIMAGE_PLAYER	147
+#define GF_SLOWPOISON_PLAYER 	148
 
 /* Zangband changes */
 #define GF_TELE_TO		150

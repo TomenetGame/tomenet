@@ -61,33 +61,68 @@ RECOVERY = add_spell
         ["mana_max"] = 	25,
         ["fail"] = 	20,
         ["spell"] = 	function()
-        		set_poisoned(Ind, player.poisoned / 2, player.poisoned_attacker)
-                        if get_level(Ind, RECOVERY, 50) >= 10 then
+                        if get_level(Ind, RECOVERY, 50) >= 25 then
                         	set_poisoned(Ind, 0, 0)
                                 set_cut(Ind, 0, 0)
-	                        if player.spell_project > 0 then
-        	                        fire_ball(Ind, GF_CURECUT_PLAYER, 0, 1, player.spell_project, "")
-        	                        fire_ball(Ind, GF_CUREPOISON_PLAYER, 0, 1, player.spell_project, "")
-                	        end
-                        end
-                        if get_level(Ind, RECOVERY, 50) >= 20 then
+                                set_confused(Ind, 0)
+                                set_blind(Ind, 0)
+                                set_stun(Ind, 0)
 				do_res_stat(Ind, A_STR)
 				do_res_stat(Ind, A_CON)
 				do_res_stat(Ind, A_DEX)
 				do_res_stat(Ind, A_WIS)
 				do_res_stat(Ind, A_INT)
 				do_res_stat(Ind, A_CHR)
-                        end
-                        if get_level(Ind, RECOVERY, 50) >= 25 then
                         	restore_level(Ind)
-                        end
+	                        if player.spell_project > 0 then
+        	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1, player.spell_project, "")
+        	                        fire_ball(Ind, GF_RESTORESTATS_PLAYER, 0, 1, player.spell_project, "")
+        	                        fire_ball(Ind, GF_RESTORELIFE_PLAYER, 0, 1, player.spell_project, "")
+                	        end
+                        elseif get_level(Ind, RECOVERY, 50) >= 20 then
+                        	set_poisoned(Ind, 0, 0)
+                                set_cut(Ind, 0, 0)
+                                set_confused(Ind, 0)
+                                set_blind(Ind, 0)
+                                set_stun(Ind, 0)
+				do_res_stat(Ind, A_STR)
+				do_res_stat(Ind, A_CON)
+				do_res_stat(Ind, A_DEX)
+				do_res_stat(Ind, A_WIS)
+				do_res_stat(Ind, A_INT)
+				do_res_stat(Ind, A_CHR)
+	                        if player.spell_project > 0 then
+        	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1, player.spell_project, "")
+        	                        fire_ball(Ind, GF_RESTORESTATS_PLAYER, 0, 1, player.spell_project, "")
+                	        end
+                        elseif get_level(Ind, RECOVERY, 50) >= 15 then
+                        	set_poisoned(Ind, 0, 0)
+                                set_cut(Ind, 0, 0)
+                                set_confused(Ind, 0)
+                                set_blind(Ind, 0)
+                                set_stun(Ind, 0)
+	                        if player.spell_project > 0 then
+        	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1, player.spell_project, "")
+                	        end
+                        elseif get_level(Ind, RECOVERY, 50) >= 5 then
+                        	set_poisoned(Ind, 0, 0)
+	                        if player.spell_project > 0 then
+        	                        fire_ball(Ind, GF_CUREPOISON_PLAYER, 0, 1, player.spell_project, "")
+                	        end
+                        else
+	        		if (player.poisoned ~= 0 and player.slow_poison == 0) then player.slow_poison = 1 end
+	                        if player.spell_project > 0 then
+	                    		fire_ball(Ind, GF_SLOWPOISON_PLAYER, 0, 1, player.spell_project, "")
+	    	                end
+	        	end
 	end,
 	["info"] = 	function()
 			return ""
 	end,
         ["desc"] =	{
-        		"Reduces the length of time that you are poisoned",
-                        "At level 10 it cures poison and cuts (projectable)",
+        		"Slows down the effect of poison",
+                        "At level 5 it neutralizes poison,",
+                        "At level 15 it heals cuts and cures confusion, blindness and stun",
                         "At level 20 it restores drained stats",
                         "At level 25 it restores lost experience",
                         "***Affected by the Meta spell: Project Spell***",

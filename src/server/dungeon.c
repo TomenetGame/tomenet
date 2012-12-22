@@ -525,7 +525,7 @@ static void sense_inventory(int Ind)
 
 		/* We have "felt" it */
 		o_ptr->ident |= (ID_SENSE | ID_SENSED_ONCE);
-		
+
 		/* Remember feeling of that flavour, if and only if an item is always the same!
 		   For example, rings might be cursed by ego power. Wands may not.
 		   Other than that, this way an interesting middle-way between RPG-style
@@ -886,7 +886,7 @@ static void process_effects(void)
 					}
 
 #ifdef ANIMATE_EFFECTS
- #ifndef FREQUENT_EFFECT_ANIMATION	
+ #ifndef FREQUENT_EFFECT_ANIMATION
 					/* C. Blue - hack: animate effects inbetween
 					   ie allow random changes in spell_color().
 					   Note: animation speed depends on effect interval. */
@@ -1299,7 +1299,7 @@ void world_surface_night(struct worldpos *wpos) {
 	int y, x;
 	int stores = 0, y1, x1, i;
 	byte sx[255], sy[255];
-	
+
 	if (!zcave) return; /* paranoia */
 
 	/* Hack -- Scan the level */
@@ -1738,7 +1738,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 			}
 			break;
 
-		
+
 		case TV_RUNE: { //Format: @O<t?><imperative><form>
 
 			/* Validate Rune */
@@ -1756,10 +1756,10 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 				if (execute_rspell(Ind, 5, e_flags, I_MINI | T_BOLT, 0, 1) == 2) return (p_ptr->fail_no_melee);
 				return TRUE;
 			}
-			
+
 			/* Next Letter */
 			inscription++;
-			
+
 			/* Validate Form */
 			if (*inscription != '\0') {
 				m_index = *inscription - 'a';
@@ -1778,7 +1778,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 			if (execute_rspell(Ind, 5, e_flags, m_flags, 0, 1) == 2) return (p_ptr->fail_no_melee);
 #endif
 			return TRUE;
-			
+
 		break; }
 	}
 
@@ -2967,8 +2967,16 @@ static bool process_player_end_aux(int Ind)
 
 	/* Take damage from poison */
 	if (p_ptr->poisoned) {
-		/* Take damage */
-		take_hit(Ind, 1, "poison", p_ptr->poisoned_attacker);
+		if (p_ptr->slow_poison == 1) {
+			p_ptr->slow_poison = 2;
+			/* Take damage */
+			take_hit(Ind, 1, "poison", p_ptr->poisoned_attacker);
+		} else if (p_ptr->slow_poison == 2) {
+			p_ptr->slow_poison = 1;
+		} else {
+			/* Take damage */
+			take_hit(Ind, 1, "poison", p_ptr->poisoned_attacker);
+		}
 	}
 
 	/* Misc. terrain effects */
@@ -3603,7 +3611,7 @@ static bool process_player_end_aux(int Ind)
 	/* Shield */
 	if (p_ptr->shield)
 		(void)set_shield(Ind, p_ptr->shield - 1, p_ptr->shield_power, p_ptr->shield_opt, p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
-	
+
 	/* Timed Levitation */
 	if (p_ptr->tim_ffall)
 		(void)set_tim_ffall(Ind, p_ptr->tim_ffall - 1);
@@ -3658,7 +3666,7 @@ static bool process_player_end_aux(int Ind)
 
 		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - 1, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
         }
-	
+
 	/* Helper Buff -- Copy-pasta of Adam's Thunderstorm - Kurzel!!! - Optimize? Find the *t code and try that. -.-" */
 	if (p_ptr->tim_rcraft_help) {
 		int i, tries = 600;
@@ -3675,7 +3683,7 @@ static bool process_player_end_aux(int Ind)
 
 			/* pfft. not even our level */
 			if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
-			
+
 			/* Cant see ? cant hit */
 			if (!los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) continue;
 			if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) > 15) continue;
@@ -3748,6 +3756,8 @@ static bool process_player_end_aux(int Ind)
 
 		//(void)set_poisoned(Ind, p_ptr->poisoned - adjust - minus_health * 2, p_ptr->poisoned_attacker);
 		(void)set_poisoned(Ind, p_ptr->poisoned - (adjust + minus_health) * (minus_health + 1), p_ptr->poisoned_attacker);
+
+		if (!p_ptr->poisoned) p_ptr->slow_poison = 0;
 	}
 
 	/* Stun */
@@ -3771,7 +3781,7 @@ static bool process_player_end_aux(int Ind)
 
 		/* Biofeedback always helps */
 		if (p_ptr->biofeedback) adjust += 5;
-		
+
 		/* Hack -- Truly "mortal" wound */
 		if (p_ptr->cut > 1000) adjust = 0;
 
@@ -4480,7 +4490,7 @@ static void process_player_end(int Ind)
 	if (p_ptr->update) update_stuff(Ind);
 
 //	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) p_ptr->tim_wraith = 0;
-	
+
 	/* Redraw stuff (if needed) */
 	if (p_ptr->redraw) redraw_stuff(Ind);
 
@@ -4639,7 +4649,7 @@ static void purge_old()
 						if (cfg.level_unstatic_chance > 0 &&
 						    players_on_depth(&twpos))
 							do_unstat(&twpos);
-						
+
 						if (!players_on_depth(&twpos) && getcave(&twpos) &&
 						    stale_level(&twpos, cfg.anti_scum))
 							dealloc_dungeon_level(&twpos);
@@ -5069,7 +5079,7 @@ static void process_various(void)
 		s_printf("Finished maintenance\n");
 		get_date(&dwd, &dd, &dm, &dy);
 		exec_lua(0, format("cron_24h(\"%s\", %d, %d, %d, %d, %d, %d, %d)", showtime(), h, m, s, dwd, dd, dm, dy));
-		
+
 /*		bbs_add_line("--- new day line ---"); */
 	}
 
@@ -6868,7 +6878,7 @@ void shutdown_server(void) {
 
 void pack_overflow(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	
+
 	/* XXX XXX XXX Pack Overflow */
 	if (p_ptr->inventory[INVEN_PACK].k_idx) {
 		object_type *o_ptr;

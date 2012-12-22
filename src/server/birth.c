@@ -1193,7 +1193,8 @@ static byte player_init[2][MAX_CLASS][5][3] =
 		/* Priest */
 		{ TV_BLUNT, SV_MACE, 0 },
 		{ TV_POTION, SV_POTION_HEALING, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
+//		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
+		{ TV_BOOK, 56, 0 },
 //		{ TV_SOFT_ARMOR, SV_ROBE, 0},
 		{ TV_SOFT_ARMOR, SV_FROCK, 0},
 		{ 255, 255, 0 },
@@ -1266,7 +1267,7 @@ static byte player_init[2][MAX_CLASS][5][3] =
 
 	{
 		/* Shaman */
-		{ TV_BOOK, 50, 0 },
+		{ TV_BOOK, 61, 0 },
 		{ TV_SOFT_ARMOR, SV_ROBE, 0 },
 		{ TV_AMULET, SV_AMULET_INFRA, 3 },
 		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
@@ -1314,7 +1315,8 @@ static byte player_init[2][MAX_CLASS][5][3] =
 		/* Priest */
 		{ TV_HELM, SV_CLOTH_CAP, 0 },
 		{ TV_POTION, SV_POTION_HEALING, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
+//		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
+		{ TV_BOOK, 56, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ 255, 255, 0 },
 	},
@@ -1386,7 +1388,7 @@ static byte player_init[2][MAX_CLASS][5][3] =
 
 	{
 		/* Shaman */
-		{ TV_BOOK, 50, 0 },
+		{ TV_BOOK, 61, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_AMULET, SV_AMULET_INFRA, 3 },
 		{ TV_POTION, SV_POTION_CURE_POISON, 0 },

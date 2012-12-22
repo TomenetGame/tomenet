@@ -256,7 +256,7 @@ school_book[13] = {
 
 -- Create the book of Holy Curing (66-72)
 school_book[14] = {
-	HCUREWOUNDS, HHEALING, HDELCURSES, HHEALING2, HCURING, HSANITY, HRESURRECT, HDELBB,
+	HCUREWOUNDS, HHEALING, HDELCURSES, HHEALING2, HCURING, HRESTORING, HSANITY, HRESURRECT, HDELBB,
 }
 
 -- Create the book of Holy Support (73-79)
@@ -337,6 +337,11 @@ school_book[55] = {
 --	HELLFIRE, GENOCIDE, BANISHMENT, CONFUSE, FIERYAURA
 --}
 
+-- Create the handbook of novice etiquette
+school_book[56] = {
+        HDELFEAR, HBLESSING, HGLOBELIGHT, HHEALING, HCURING
+}
+
 ---- Create the handbook for rogues (of shadows)
 school_book[57] = {
 	BLINK, DISARM, NOXIOUSCLOUD, SENSEHIDDEN, REVEALWAYS, VISION, INVISIBILITY
@@ -356,4 +361,9 @@ school_book[59] = {
 school_book[60] = {
 	--TELEAWAY, MTELEAWAY
 	BLINK, TELEPORT, RECALL, TELEKINESIS, MBLINK, MTELEPORT, MTELETOWARDS, MTELEKINESIS, RELOCATION, GATEWAY
+}
+
+-- Create the handbook of first visions
+school_book[61] = {
+        HDELFEAR, MANATHRUST, HCURSE, GLOBELIGHT, DETECTMONSTERS, HSENSEMON, SENSEHIDDEN, HSANCTUARY
 }

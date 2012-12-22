@@ -5487,7 +5487,8 @@ P:0:1d1:0:0:0
 
 N:738:& Handbook~ of Beginner Cantrips
 #G:?:w
-G:?:W
+#G:?:W
+G:?:B
 I:111:50:0
 #W:5:0:30:100
 W:5:0:30:1500
@@ -7561,6 +7562,23 @@ W:50:0:30:12000
 A:20/30:40/65
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW
+
+N:1036:& Handbook~ of Novice Etiquette
+G:?:g
+I:111:56:0
+W:5:0:30:1500
+A:5/50
+P:0:1d1:0:0:0
+F:IGNORE_WATER
+
+N:1037:& Handbook~ of First Visions
+G:?:s
+I:111:61:0
+W:5:0:30:1500
+A:5/50
+P:0:1d1:0:0:0
+F:IGNORE_WATER
+
 
 
 #N:(No.):(name)

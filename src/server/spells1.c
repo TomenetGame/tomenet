@@ -7887,6 +7887,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
                         (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 			(typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 			(typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
+			(typ != GF_SLOWPOISON_PLAYER) &&
 			(typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
 		{
 			/* If this was intentional, make target hostile */
@@ -7993,7 +7994,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	(typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
 	(typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	(typ == GF_HEALINGCLOUD) || /* shoo ghost, shoo */
-	(typ == GF_IDENTIFY) ||
+	(typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) ||
 	(typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER)))) &&
 
 	/* ADMIN CHECK */
@@ -8017,6 +8018,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	(typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 	(typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	(typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
+	(typ == GF_SLOWPOISON_PLAYER) ||
 	(typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))))
 	{ /* No effect on ghosts / admins */
 
@@ -9204,6 +9206,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
+		case GF_SLOWPOISON_PLAYER:
+			if (p_ptr->poisoned && !p_ptr->slow_poison) p_ptr->slow_poison = 1;
+			break;
+
 		case GF_SEEINVIS_PLAYER:
 		{
 			(void)set_tim_invis(Ind, dam); /* removed stacking */
@@ -9451,21 +9457,20 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)restore_level(Ind);
 			break;
 		case GF_CURE_PLAYER:
-			switch(dam){
+			switch (dam) {
 			case 1:
+				(void)set_confused(Ind, 0);
 				(void)set_blind(Ind, 0);
 				(void)set_poisoned(Ind, 0, 0);
-				(void)set_confused(Ind, 0);
 				(void)set_stun(Ind, 0);
-				(void)set_cut(Ind, 0, 0);
+//				(void)set_cut(Ind, 0, 0);
 				break;
 			case 2:
 				msg_print(Ind, "You feel a calming warmth touching your soul.");
 #if 1
 				if (p_ptr->suscep_life) take_hit(Ind, (p_ptr->chp / 3) * 2, killer, -who);
 #endif
-				if (p_ptr->black_breath)
-				{
+				if (p_ptr->black_breath) {
 					msg_print(Ind, "The hold of the Black Breath on you is broken!");
 					p_ptr->black_breath = FALSE;
 				}
@@ -10389,7 +10394,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		 (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
 		 (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 		 (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
-		 (typ == GF_IDENTIFY))
+		 (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER))
 		players_only = TRUE;
 
 
