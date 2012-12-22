@@ -126,6 +126,7 @@ Contents
     (5.21c) Digging - Further information
     (5.22)  Recharging
     (5.23)  Monster loot types
+    (5.24)  Wraithform
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
@@ -8352,6 +8353,33 @@ And a 'hidden' 5th class:
 Example: 'Green naga'.
 A Green naga has 25% chance of dropping 'Combat' loot and 65% chance of
 dropping 'Tools' loot. The remaining 10% chance translates to 'Junk' drops.
+
+
+
+(5.24) Wraithform
+-----------------
+Wraithform, or "pass wall" form is a character state obtained from the spell
+"Wraithform" (Udun school) or from certain items.
+It allows a character to pass through solid walls easily, but at the same time
+prevents them from attacking anything else in close combat, except if the
+target is also able to pass walls (ie possesses wraitform too, or is actually
+a ghost or other monster that can pass through walls).
+Also, spells cast while in wraithform will only deal half as much damage as
+usual.
+
+Items that provide wraithform are:
+-Spectral weapons ('A' to activate them for temporary wraithform).
+-Ethereal Dragon Scale Mail and Death Dragon Scale Mail (just wear it and you
+ obtain wraithform until you take it off again).
+
+There is a confirmation message when using the Wraithform spell:
+"You turn into a wraith!" when you attain wraithform.
+"You lose your wraith powers." when your wraithform runs out.
+
+Wraithform is very powerful since it allows you to move around the dungeon
+without having to follow its room/passages structure, making it easy to pick
+encounters or loot items you detected on the ground via detection magic,
+and to escape dangerous situations easily (just retreat into walls).
 
 
 
