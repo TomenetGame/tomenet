@@ -9,6 +9,7 @@
 
 #ifdef USE_GCU
 extern errr init_gcu(void);
+extern void gcu_restore_colours(void);
 extern void resize_main_window_gcu(int cols, int rows);
 #endif
 

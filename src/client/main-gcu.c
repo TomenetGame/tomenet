@@ -242,6 +242,10 @@ static int colortable[16];
 void resize_main_window_gcu(int cols, int rows);
 
 
+/* Remember original terminal colours to restore on exit */
+static short int cor[16], cog[16], cob[16];
+
+
 
 /*
  * Place the "keymap" into its "normal" state
@@ -926,7 +930,6 @@ errr init_gcu(void)
 	/* Attempt to use customized colors */
 	if (can_fix_color) {
 		/* Prepare the color pairs */
-		/* if (can_use_color) { */
 		init_pair(0, 0, 0);	/*black */
 		init_pair(1, 1, 0);	/*white */
 		init_pair(2, 2, 0);	/*grey */
@@ -944,29 +947,12 @@ errr init_gcu(void)
 		init_pair(14, 14, 0);	/*light blue */
 		init_pair(15, 15, 0);	/*light umber */
 
-
 		/* XXX XXX XXX Take account of "gamma correction" */
+
+		for (i = 0; i < 16; i++) color_content(i, &cor[i], &cog[i], &cob[i]);
 
 		/* Using the real colours if terminal supports redefining -  thanks Pepe for the patch */
 		/* Prepare the "Angband Colors" */
-#if 0 /* trying to adjust them even better below */
-		init_color(0,     0,    0,    0);	/* Black */
-		init_color(1,  1000, 1000, 1000);	/* White */
-		init_color(2,   500,  500,  500);	/* Grey */
-		init_color(3,  1000,  500,    0);	/* Orange */
-		init_color(4,   750,    0,    0);	/* Red */
-		init_color(5,     0,  500,  250);	/* Green */
-		init_color(6,     0,    0, 1000);	/* Blue */
-		init_color(7,   500,  250,    0);	/* Brown */
-		init_color(8,   250,  250,  250);	/* Dark-grey */
-		init_color(9,   750,  750,  750);	/* Light-grey */
-		init_color(10, 1000,    0, 1000);	/* Purple */
-		init_color(11, 1000, 1000,    0);	/* Yellow */
-		init_color(12, 1000,    0,    0);	/* Light Red */
-		init_color(13,    0, 1000,    0);	/* Light Green */
-		init_color(14,    0, 1000, 1000);	/* Light Blue */
-		init_color(15,  750,  500,  250);	/* Light Brown */
-#else /* real ones hopefully */
 		init_color(0,     0,    0,    0);	/* Dark */
 		init_color(1,  1000, 1000, 1000);	/* White */
 		init_color(2,   615,  615,  615);	/* Slate */
@@ -983,7 +969,6 @@ errr init_gcu(void)
 		init_color(13,    0, 1000,    0);	/* Light Green */
 		init_color(14,    0, 1000, 1000);	/* Light Blue */
 		init_color(15,  780,  615,  333);	/* Light Umber */
-#endif
 
 		/* Prepare the "Angband Colors" */
 		colortable[0] = (COLOR_PAIR(0) | A_NORMAL);	/* Black */
@@ -1105,6 +1090,12 @@ errr init_gcu(void)
 
 	/* Success */
 	return (0);
+}
+
+void gcu_restore_colours(void) {
+	int i;
+	for (i = 0; i < 16; i++) init_color(i, cor[i], cog[i], cob[i]);
+	
 }
 
 /* for big_map mode */
