@@ -233,7 +233,7 @@ HRESTORING = add_spell
 		        return ""
 	    		end,
         ["desc"] =      {
-                        "At level 1 restores drained stats",
+                        "Restores drained stats",
 	                "At level 5 it restores lost experience",
                 	"***Automatically projecting***",
 	}
