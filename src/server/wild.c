@@ -3816,12 +3816,16 @@ static void fix_coasts() {
 
 		sea = FALSE;
 		for (d = 0; d < 8; d++) {
-			switch (wild_info[y + ddy_cyc[d]][x + ddx_cyc[d]].type) {
-			case WILD_OCEAN:
-			case WILD_OCEANBED1: case WILD_OCEANBED2:
-			case WILD_SHORE1: case WILD_SHORE2:
-				sea = TRUE;
-				break;
+			int x2 = x + ddx_cyc[d];
+			int y2 = y + ddy_cyc[d];
+			if (in_bounds_wild(y2, x2)) {
+				switch (wild_info[y2][x2].type) {
+				case WILD_OCEAN:
+				case WILD_OCEANBED1: case WILD_OCEANBED2:
+				case WILD_SHORE1: case WILD_SHORE2:
+					sea = TRUE;
+					break;
+				}
 			}
 		}
 		/* if this coast doesn't make sense, reset it to default fill type grassland */
