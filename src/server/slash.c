@@ -110,16 +110,16 @@ void do_slash_cmd(int Ind, char *message){
 					}
 					if(*cp=='\0') break;
 					args[j++]=cp;
-	
+
 					while(*cp!=' ') cp++;
 					if(*cp=='\0') break;
 				}
-	
+
 				if(j < scmd[i].minargs || j > scmd[i].maxargs){
 					if(scmd[i].errorhlp) msg_print(Ind, scmd[i].errorhlp);
 					return;
 				}
-	
+
 				args[j]=NULL;
 				if(scmd[i].maxargs==1){
 					scmd[i].func(Ind, args[0]);
@@ -252,7 +252,7 @@ static char *find_inscription(s16b quark, char *what)
 {
     const char  *ax = quark_str(quark);
     if( ax == NULL || !what) { return FALSE; };
-	
+
 	return (strstr(ax, what));
 }  
 
@@ -656,7 +656,7 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/tag"))
 		{
 			object_type *o_ptr;
-			
+
 			if (tk && (token[1][0] != '*')) {
 				h = (token[1][0]) - 'a';
 				j = h;
@@ -798,7 +798,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 			if(*token[1]>='1' && *token[1]<='9')
-			{	
+			{
 				object_type *o_ptr;
 				char c[4] = "@";
 				bool found = FALSE;
@@ -828,30 +828,30 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				//					book = atoi(token[1])-1;
-			}	
+			}
 			else
-			{	
+			{
 				*token[1] &= ~(0x20);
 				if(*token[1]>='A' && *token[1]<='W')
-				{	
+				{
 					book = (int)(*token[1]-'A');
-				}		
+				}
 				else 
 				{
 					msg_print(Ind,"\377oBook variable was out of range (a-i) or (1-9)");
 					return;
-				}	
+				}
 			}
 
 			if(*token[2]>='1' && *token[2]<='9')
-			{	
+			{
 				//					whichspell = atoi(token[2]+'A'-1);
 				whichspell = atoi(token[2]) - 1;
-			}	
+			}
 			else if(*token[2]>='a' && *token[2]<='i')
-			{	
+			{
 				whichspell = (int)(*token[2]-'a');
-			}		
+			}
 			/* if Capital letter, it's for friends */
 			else if(*token[2]>='A' && *token[2]<='I')
 			{
@@ -864,7 +864,7 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				msg_print(Ind,"\377oSpell out of range [A-I].");
 				return;
-			}	
+			}
 
 			if (token[3])
 			{
@@ -1038,13 +1038,13 @@ void do_slash_cmd(int Ind, char *message)
 //			do_cmd_knowledge_dungeons(Ind);
 			if (p_ptr->depth_in_feet) msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
 			else msg_format(Ind, "The deepest point you've reached: Lev \377G-%d", p_ptr->max_dlv);
-			
+
 
 			msg_format(Ind, "You can move %d.%d times each turn.",
 					extract_energy[p_ptr->pspeed] / 10,
 					extract_energy[p_ptr->pspeed]
 					- (extract_energy[p_ptr->pspeed] / 10) * 10);
-			
+
 			if (get_skill(p_ptr, SKILL_DODGE)) use_ability_blade(Ind);
 
 #if 0 /* this is already displayed to the left */
@@ -1205,10 +1205,10 @@ void do_slash_cmd(int Ind, char *message)
 				if (lev >= 55) msg_print(Ind, "\377GYou know how to change into a Horned Serpent (#1131)");
 				if (lev >= 60) msg_print(Ind, "\377GYou know how to change into a Firebird (#1127)");
 			}
-			
+
 			if (p_ptr->prace == RACE_VAMPIRE) {
 				if (lev >= 20) msg_print(Ind, "\377GYou are able to turn into a vampire bat (#391).");
-			}		
+			}
 
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
 				if (!p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1) {
@@ -1248,7 +1248,7 @@ void do_slash_cmd(int Ind, char *message)
 
 			tx = p_ptr->px + k;
 			ty = p_ptr->py + atoi(token[2]);
-			
+
 			if (!in_bounds(ty,tx))
 			{
 				msg_print(Ind, "\377oIllegal position!");
@@ -1261,7 +1261,7 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* Set 'stationary' target */
 			p_ptr->target_who = 0 - MAX_PLAYERS - 2;
-			
+
 			return;
 		}
 		/* Now this command is opened for everyone */
@@ -1625,7 +1625,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 			/* TODO: show monster description */
-			
+
 			return;
 		}
 		/* add inscription to books */
@@ -1918,7 +1918,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_party_format(Ind, "\377b%s changed party note to: %s", p_ptr->name, party_note[i]);
 					return;
 				}
-				
+
 				/* seach for free spot to create a new party note */
 				for (i = 0; i < MAX_PARTYNOTES; i++) {
 	    				if (!strcmp(party_note[i], "")) {
@@ -2008,7 +2008,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_guild_format(Ind, "\377b%s changed the guild note to: %s", p_ptr->name, guild_note[i]);
 					return;
 				}
-				
+
 				/* seach for free spot to create a new guild note */
 				for (i = 0; i < MAX_GUILDNOTES; i++) {
 	    				if (!strcmp(guild_note[i], "")) {
@@ -3319,6 +3319,56 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 			restore_estate(Ind);
+			return;
+		}
+		/* Specialty: Convert current character into a 'slot-exclusive' character if possible */
+		else if (prefix(message, "/convertexclusive")) {
+			int ok;
+
+			if (!istown(&p_ptr->wpos)) {
+				msg_print(Ind, "\377oThis command is only available when in town!");
+				return;
+			}
+			if (!tk || strcmp(p_ptr->name, message3)) {
+				msg_print(Ind, "\377oThis command converts your CURRENT character into a 'slot-exclusive' character if possible!");
+				msg_print(Ind, "\377oUsage:    /convertexclusive <your-current-character-name>");
+				msg_format(Ind, "\377oExample:  /convertexclusive %s", p_ptr->name);
+				msg_format(Ind, "\377RWarning: This process is NOT REVERSIBLE!");
+				return;
+			}
+			if ((p_ptr->mode & (MODE_DED_PVP | MODE_DED_IDDC))) {
+				msg_print(Ind, "\377yThis character is already a slot-exclusive character.");
+				return;
+			}
+
+			/* check what's possible for us to convert into */
+			ok = check_account(p_ptr->accountname, "");
+			s_printf("CONVEXCL: '%s' (%d) -> %d\n", p_ptr->name, p_ptr->mode, ok);
+
+			/* We want to convert into ded.pvp? */
+			if ((p_ptr->mode & MODE_PVP)) {
+				if (ok == -4 || ok == -9 || ok == -6 || ok == -7) {
+					p_ptr->mode |= MODE_DED_PVP;
+					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0);
+//					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
+					return;
+				}
+				msg_print(Ind, "\377yYou already have a slot-exclusive PvP-mode character.");
+				return;
+			}
+			/* We want to convert into ded.iddc? */
+			else {
+				if (ok == -5 || ok == -8 || ok == -6 || ok == -7) {
+					p_ptr->mode |= MODE_DED_IDDC;
+					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0);
+//					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
+					return;
+				}
+				msg_print(Ind, "\377yYou already have a slot-exclusive IDDC-mode character.");
+				return;
+			}
 			return;
 		}
 
