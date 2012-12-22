@@ -3747,7 +3747,8 @@ void store_confirm(int Ind)
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
         /* If we are still below the limit but this gold pile would exceed it
            then only pick up as much of it as is allowed! - C. Blue */
-        if (!p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1 &&
+        if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos) &&
+    	    !p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1 &&
             p_ptr->gold_picked_up < EVENT_TOWNIE_GOLD_LIMIT && price > EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up) {
                 price = EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up;
                 msg_format(Ind, "\377yYou accept only %d gold, or your life would be forfeit.", price);
