@@ -3325,10 +3325,12 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/convertexclusive")) {
 			int ok;
 
+#if 0 /* was because of Destroy_connection().. */
 			if (!istown(&p_ptr->wpos)) {
 				msg_print(Ind, "\377oThis command is only available when in town!");
 				return;
 			}
+#endif
 			if (!tk || strcmp(p_ptr->name, message3)) {
 				msg_print(Ind, "\377oThis command converts your CURRENT character into a 'slot-exclusive' character if possible!");
 				msg_print(Ind, "\377oUsage:    /convertexclusive <your-current-character-name>");
