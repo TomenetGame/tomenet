@@ -171,6 +171,7 @@ static bool anti_mirror_active;
 #endif
 
 /* Gameplay configuration */
+#if 0 /* was a good incentive, but might be a bit cheezy regarding IDDC casino */
 static int wager_lvl[9] = {
       5000,   7500,
      10000,  15000,
@@ -178,6 +179,15 @@ static int wager_lvl[9] = {
      50000, 100000,
     0,
 };
+#else
+static int wager_lvl[9] = {
+      2500,   5000,
+      7500,  10000,
+     15000,  20000,
+     30000,  50000,
+    0,
+};
+#endif
 
 
 /* ------------------------------------------------------------------------- */
