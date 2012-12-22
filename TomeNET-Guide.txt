@@ -11024,10 +11024,11 @@ Nature
                     Required skill level for first spell level: 6.
     Healing         Heals a percentage of your hit points.          (project)
                     Required skill level for first spell level: 10.
-    Recovery        Reduces poison duration.
-                    Lv10: Cures poison and cuts.                    (project)
-                    Lv20: Restores drained stats.
-                    Lv25: Restores lost experience.
+    Recovery        Slows down the effect of poison.                (project)
+                    Lv5: Neutralizes poison.                        (project)
+                    Lv15: Heals cuts, cures confusion, blindness, stun (proj)
+                    Lv20: Restores drained stats.                   (project)
+                    Lv25: Restores lost experience.                 (project)
                     Required skill level for first spell level: 15.
     Regeneration    Increases your hit point regeneration rate.
                     Required skill level for first spell level: 20.
@@ -11256,11 +11257,13 @@ Holy Curing
                     Required skill level for first spell level: 10.
     Cleansing Light Continuously heals every player who steps inside.
                     Required skill level for first spell level: 18.
-    Curing          Reduces poison duration.
-                    Lv10: Cure poison/cuts/stun/blindness/confusion.(auto-p.)
-                    Lv20: Restore stats.                       (auto-project)
-                    Lv25: Restore experience.                  (auto-project)
-                    Required skill level for first spell level: 16.
+    Curing          Slows down the effect of poison.
+                    Lv10: Neutralize poison.                   (auto-project)
+                    Lv15: Cure confusion/blindness/stun.       (auto-project)
+                    Required skill level for first spell level: 3.
+    Restoration     Restores stats.                            (auto-project)
+                    Lv5: Restores experience.                  (auto-project)
+                    Required skill level for first spell level: 26.
     Faithful Focus  Cure hallucinations and insanity.          (auto-project)
                     Required skill level for first spell level: 21.
     Resurrection    Resurrect another player's ghost. The resurrected player
