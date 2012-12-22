@@ -3879,7 +3879,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					plog(format("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 					    longVersion,
 					    "Usage  : tomenet [options] [servername]",
-					    "Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.net",
+					    "Example: tomenet -lMorgoth MorgyPass",
+					    "                 -p18348 europe.tomenet.net",
 					    "  -C                 Compatibility mode for very old servers",
 					    "  -F                 Client FPS",
 					    "  -k                 don't disable numlock on client startup",
@@ -3891,8 +3892,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					    "  -q                 disable audio capabilities ('quiet mode')",
 					    "  -u                 disable client-side automatic lua updates",
 					    "  -v                 save chat log on exit, don't prompt",
-					    "  -w                 disable client-side weather effects",
-					    " "));
+					    "  -w                 disable client-side weather effects"));
 #endif
 					quit(NULL);
 					break;
