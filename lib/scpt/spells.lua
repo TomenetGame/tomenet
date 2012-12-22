@@ -301,7 +301,7 @@ school_book[21] = {
 
 -- Create the book of beginner's cantrip
 school_book[50] = {
-        MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, DETECTMONSTERS, SENSEHIDDEN,
+        MANATHRUST, GLOBELIGHT, BLINK, DETECTMONSTERS, SENSEHIDDEN, ENTPOTION
 }
 
 -- Create the elementalist's handbook
@@ -365,5 +365,5 @@ school_book[60] = {
 
 -- Create the handbook of first visions
 school_book[61] = {
-        HDELFEAR, MANATHRUST, HCURSE, GLOBELIGHT, DETECTMONSTERS, HSENSEMON, SENSEHIDDEN, HSANCTUARY
+        HDELFEAR, MANATHRUST, HCURSE, GLOBELIGHT, DETECTMONSTERS, HSENSEMON, HSANCTUARY, SENSEHIDDEN
 }
