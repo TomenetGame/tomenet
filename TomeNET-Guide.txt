@@ -14094,6 +14094,9 @@ SOLUTION:   Either tweak your sound settings (buffer size etc.) so ALSA doesn't
             This will redirect all messages which usually are sent to stderr
             to a log file "tomenet.log" instead, which will be created in your
             TomeNET folder.
+            Alternatively, you can just redirect all error out put to /dev/null
+            to completely discard it:
+              ./tomenet -c 2>/dev/null
 
 
 
