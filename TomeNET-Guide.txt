@@ -1638,18 +1638,20 @@ Depending on your system, some possible fonts are usually:
 Last but not least, you may use the following command-line options:
 -c                      force command-line interface instead of X11 etc.
                         Use it if you want to run the client within a terminal.
+-e                      Create file 'tomenet.log' instead of displaying
+                        error messages in the terminal
 -f<config file>         use a different config file than ~/.tomenetrc
 -i                      ignore the ~/.tomenetrc config file
--p<Port>                for example -p19348
 -l<Account> <Password>  for example -lGandalf geheim
+-m                      skip motd (message of the day) on login
 -N<character name>      for example -NDruidor
+-p<Port>                for example -p19348
 <ip address>            for example 85.118.45.235
 -q                      turns off loading/initializing of audio ('quiet mode')
--w                      disables weather effects
 -u                      disables automatic LUA script updating
                         (You should NOT use this option!)
--m                      skip motd (message of the day) on login
 -v                      automatically save chat log on exit
+-w                      disables weather effects
 
 Full command-line example:
         ./tomenet -p19348 -lGandalf geheim -NGandalf 85.118.45.235
