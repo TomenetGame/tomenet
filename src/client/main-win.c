@@ -3876,22 +3876,23 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					puts("  -m                 skip motd (message of the day) on login");
 					puts("  -v                 save chat log on exit instead of asking");
 #else
-					plog(format("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
+					plog(format("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 					    longVersion,
 					    "Usage  : tomenet [options] [servername]",
 					    "Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.net",
 					    "  -C                 Compatibility mode for very old servers",
 					    "  -F                 Client FPS",
+					    "  -k                 don't disable numlock on client startup",
 					    "  -l<nick> <passwd>  Login as",
+					    "  -m                 skip motd (message of the day) on login",
 					    "  -N<name>           character Name",
 					    "  -p<num>            change game Port number",
 					    "  -P<path>           set the lib directory Path",
 					    "  -q                 disable audio capabilities ('quiet mode')",
-					    "  -w                 disable client-side weather effects",
 					    "  -u                 disable client-side automatic lua updates",
-					    "  -k                 don't disable numlock on client startup",
-					    "  -m                 skip motd (message of the day) on login",
-					    "  -v                 save chat log on exit, don't prompt"));
+					    "  -v                 save chat log on exit, don't prompt",
+					    "  -w                 disable client-side weather effects",
+					    " "));
 #endif
 					quit(NULL);
 					break;
