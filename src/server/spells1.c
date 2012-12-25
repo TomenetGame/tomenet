@@ -9591,7 +9591,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		case GF_OLD_POLY:
-			s_printf("PLAYER_POLY: %s -> %s ", killer, p_ptr->name);
+			s_printf("PLAYER_POLY: %s -> %s ", Players[0 - who]->name, p_ptr->name);
 			if (p_ptr->afk) break;
 			if (fuzzy || self) msg_print(Ind, "You feel bizzare!");
 			else msg_format(Ind, "%^s polymorphs you!", killer);
