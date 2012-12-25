@@ -429,11 +429,11 @@ void do_cmd_eat_food(int Ind, int item)
 					msg_print(Ind, "\377gYou drank the liquior of the gods");
 					msg_format_near(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
 					switch (randint(10)) {
-						case 1: 
+						case 1:
 						case 2:
 						case 3:	// 3 in 10 for Hero effect
 							set_hero(Ind, 20 + randint(10)); break;
-						case 4: 
+						case 4:
 						case 5:
 						case 6:	// 3 in 10 for Speed
 							set_fast(Ind, 20 + randint(10), 10); break;
@@ -442,7 +442,7 @@ void do_cmd_eat_food(int Ind, int item)
 						case 9: // 3 in 10 for Berserk
 							set_shero(Ind, 20 + randint(10)); break;
 						case 10:// 1 in 10 for confusion ;)
-						default: 
+						default:
 							if (!(p_ptr->resist_conf)) {
 								set_confused(Ind, randint(10));
 							} break;
@@ -1169,7 +1169,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_RESISTANCE:
 				{
-					ident = 
+					ident =
 						set_oppose_acid(Ind, randint(20) + 20) |
 						set_oppose_elec(Ind, randint(20) + 20) |
 						set_oppose_fire(Ind, randint(20) + 20) |
@@ -2032,13 +2032,13 @@ static bool do_cancellation(int Ind, int flags)
  * include scrolls with no effects but recharge or identify, which are
  * cancelled before use.  XXX Reading them still takes a turn, though.
  */
- 
+
  /*
- 
+
  Added scroll of Life... uses vars x,y
 -AD-
  */
- 
+
 /* Pfft, it's silly long */
 #define LOTTERY_MAX_PRIZE	7
 static void do_lottery(int Ind, object_type *o_ptr)
@@ -2407,7 +2407,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 				break;
 
 			/* not adding bounds checking now... because of perma walls
-			   hope that I don't need to...... 
+			   hope that I don't need to......
 
 			   OK, modified so you cant ressurect ghosts in walls......
 			   to prevent bad things from happening in town.
@@ -2532,11 +2532,11 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 
 			case SV_SCROLL_LIGHT:
 				if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
-				//if (p_ptr->suscep_lite && !p_ptr->resist_lite) 
-				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite) 
+				//if (p_ptr->suscep_lite && !p_ptr->resist_lite)
+				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite)
 					take_hit(Ind, damroll(10, 3), "a Scroll of Light", 0);
-                        	//if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) 
-				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite && !p_ptr->resist_blind) 
+                        	//if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind)
+				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite && !p_ptr->resist_blind)
 					(void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 				break;
 
@@ -2634,7 +2634,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 
 			case SV_SCROLL_DISPEL_UNDEAD:
 				if (dispel_undead(Ind, 100 + p_ptr->lev * 8)) ident = TRUE;
-				//if (p_ptr->suscep_life) 
+				//if (p_ptr->suscep_life)
 				if (p_ptr->prace == RACE_VAMPIRE)
 					take_hit(Ind, damroll(30, 3), "a Scroll of Dispel Undead", 0);
 				break;
@@ -2699,7 +2699,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 			case SV_SCROLL_CHAOS:
 				sprintf(p_ptr->attacker, " is enveloped by raw chaos for");
 #if 0 // GF_CHAOS == teleporting/polymorphing stuff around...
-				fire_ball(Ind, GF_CHAOS, 0, 500, 4, p_ptr->attacker); 
+				fire_ball(Ind, GF_CHAOS, 0, 500, 4, p_ptr->attacker);
 #else
 				call_chaos(Ind, 0, 0);
 #endif
@@ -3405,12 +3405,12 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 #if 1	// anti_magic is not antimagic :)
 	if (p_ptr->anti_magic) {
-		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);	
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
 #endif	// 0
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);	
+		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
         if (magik((p_ptr->antimagic * 8) / 5)) {
@@ -3431,7 +3431,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	if( check_guard_inscription( o_ptr->note, 'a' )) {
                 msg_print(Ind, "The item's inscription prevents it.");
                 return;
-        }; 
+        };
 
 	if (o_ptr->tval != TV_WAND) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
@@ -4603,7 +4603,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
 //a bit too much?	o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
 			o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
-			break; 
+			break;
 #endif
 		}
 
@@ -4631,7 +4631,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 				(void)set_fast(Ind, p_ptr->fast + 5, 10);
 				 /* not removed stacking due to interesting effect */
 			}
-			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49); 
+			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
 			break;
 		}
 
@@ -4648,8 +4648,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			sprintf(p_ptr->attacker, " invokes havoc for");
 			call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 675));
 			ident = TRUE;
-			o_ptr->pval = 45 - get_skill_scale(p_ptr, SKILL_DEVICE, 23); 
-			break; 
+			o_ptr->pval = 45 - get_skill_scale(p_ptr, SKILL_DEVICE, 23);
+			break;
 #endif
 		}
 		case SV_ROD_NOTHING: //lol?
@@ -4985,11 +4985,11 @@ void do_cmd_activate(int Ind, int item, int dir)
 
 if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	if (p_ptr->anti_magic) {
-		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);	
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);	
+		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
 	if (magik((p_ptr->antimagic * 8) / 5)) {
@@ -5083,7 +5083,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	}
 
 	process_hooks(HOOK_ACTIVATE, "d", Ind);
-	
+
 	if (o_ptr->tval != TV_RUNE) { //Disable rune 'you activate it' text for now. - Kurzel
 		if (o_ptr->tval != TV_BOOK) {
 			/* Wonder Twin Powers... Activate! */
@@ -5128,7 +5128,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 			/* Get the rune to combine with */
 			rune_combine(Ind);
-			
+
 			return;
 		} else { //top-tier rune, so decombine
 			if (o_ptr->level || o_ptr->owner == p_ptr->id) { //Do we own it..?
@@ -5148,7 +5148,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				s16b level = o_ptr->level;
 				byte discount = o_ptr->discount;
 				byte number = o_ptr->number;
-		
+
 				/* Destroy the rune stack in the pack */
 				msg_format(Ind, "There is a decoupling of magic.");
 				inven_item_increase(Ind, item, -number);
@@ -6257,12 +6257,14 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				(void)set_oppose_fire(Ind, randint(30) + 40);
 				(void)set_oppose_cold(Ind, randint(30) + 40);
 				(void)set_oppose_pois(Ind, randint(30) + 40);
+				break;
 			}
 			case ART_SPIRITSHARD:
 			{
 				msg_print(Ind, "Shimmers and flashes travel over the surface of the amulet...");
 				o_ptr->timeout = 300 + randint(100);
 				(void)set_tim_wraith(Ind, 150);
+				break;
 			}
 			case ART_PHASING:
 			{
@@ -6270,6 +6272,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 //				msg_print(Ind, "You hear a voice, saying 'Sorry, not yet implemented!'");
 				o_ptr->timeout = 1000;
 				p_ptr->auto_transport = AT_VALINOR;
+				break;
 			}
 		}
 
@@ -7205,10 +7208,10 @@ bool unmagic(int Ind)
 void fortune(int Ind, bool broadcast)
 {
 	char Rumor[MAX_CHARS_WIDE], Broadcast[MAX_CHARS];
-	
+
 	strcpy(Broadcast, "Suddenly a thought comes to your mind:");
 	msg_print(Ind, NULL);
-	
+
 //	switch(randint(20))
 	switch(randint(80))
 	{
@@ -7358,7 +7361,7 @@ void do_cmd_fletchery(int Ind)
 	{
 		int x,y, dir;
 		cave_type *c_ptr;
-		
+
 		if (p_ptr->tim_wraith) { /* Not in WRAITHFORM ^^ */
 			msg_print(Ind, "You can't pick up the rubble!");
 			return;
@@ -7639,7 +7642,7 @@ s_printf("SWITCH_STANCE: %s - balance\n", p_ptr->name);
 			return;
 		}
 #endif
-		
+
 		switch(p_ptr->pclass) {
 		case CLASS_WARRIOR:
 			if (p_ptr->max_lev < 15) {
@@ -8035,7 +8038,7 @@ s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		if (!p_ptr->ranged_double) {
 //			if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 			if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 2) {
-				msg_print(Ind, "You need at least 2 projectiles for a dual-shot!"); 
+				msg_print(Ind, "You need at least 2 projectiles for a dual-shot!");
 				return;
 			}
 			p_ptr->ranged_double_used = 0;
@@ -8055,7 +8058,7 @@ s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 		}
 		if (p_ptr->cst < 9) { msg_print(Ind, "Not enough stamina!"); return; }
 		if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 6) {
-			msg_print(Ind, "You need at least 6 projectiles for a barrage!"); 
+			msg_print(Ind, "You need at least 6 projectiles for a barrage!");
 			return;
 		}
 //		p_ptr->cst -= 9;
