@@ -4888,7 +4888,7 @@ Chain_Macro:
 					/* Extract an action */
 					/* Omit repeated '\e)' -- can break chain macros (todo: fix?) */
 					if (chain_macro_buf[0]) text_to_ascii(macro__buf, buf2 + 3);
-					else text_to_ascii(macro__buf, buf2 + 3);
+					else text_to_ascii(macro__buf, buf2);
 					/* Handle chained macros */
 					strcat(chain_macro_buf, macro__buf);
 					strcpy(macro__buf, chain_macro_buf);
