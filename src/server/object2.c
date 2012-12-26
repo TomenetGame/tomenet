@@ -6221,8 +6221,11 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 
 	/* for now ignore live-spawns. change that maybe? */
 	if (cave_set_quietly) {
-		if (forge.name1) l_ptr->flags2 |= LF2_ARTIFACT;
-		if (k_info[forge.k_idx].level >= dlev + 8) l_ptr->flags2 |= LF2_ITEM_OOD;
+		/* Check that we're in a dungeon */
+		if (l_ptr) {
+			if (forge.name1) l_ptr->flags2 |= LF2_ARTIFACT;
+			if (k_info[forge.k_idx].level >= dlev + 8) l_ptr->flags2 |= LF2_ITEM_OOD;
+		}
 	}
 
 }
