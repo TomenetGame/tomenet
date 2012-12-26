@@ -3626,10 +3626,17 @@ P:0:1d3:0:0:0
 F:SHOW_MODS | NO_ENCHANT
 
 
-### Numbers 446-459 unused ###
+### Numbers 446-458 unused ###
 
 
 ##### Additional skeletons #####
+
+N:459:& Kobold Skeleton~
+G:~:w
+I:1:14:0
+W:5:0:40:0
+A:5/1
+P:0:1d2:0:0:0
 
 N:460:& Halfling Skeleton~
 G:~:w
