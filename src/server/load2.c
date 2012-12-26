@@ -1729,7 +1729,7 @@ if (p_ptr->updated_savegame == 0) {
 	}
 
 	if (!older_than(4, 4, 2)) rd_string(p_ptr->info_msg, 80);
-	/* feature is currently not enabled: */
+	/* for now 'forget' info_msg on logout: */
 	strcpy(p_ptr->info_msg, "");
 
 	/* for ENABLE_GO_GAME */

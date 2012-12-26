@@ -866,19 +866,18 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
   #endif
 
 	/* overlapping AFK msg with guild/party names */
-	if (q_ptr->afk && strlen(q_ptr->afk_msg)) {
-		fprintf(fff, "  \377u(%s\377u)", q_ptr->afk_msg);
-	} else {
-		if (q_ptr->guild) {
-			fprintf(fff, ", \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
-		}
-		if (q_ptr->party) {
-			if (!q_ptr->guild) fprintf(fff, ", Party:");
-			fprintf(fff, " '%s%s\377U'",
-			(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
-			parties[q_ptr->party].name);
-		}
-	}
+	if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
+		if (!q_ptr->info_msg[0]) {
+			if (q_ptr->guild)
+				fprintf(fff, ", \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
+			if (q_ptr->party) {
+				if (!q_ptr->guild) fprintf(fff, ", Party:");
+				fprintf(fff, " '%s%s\377U'",
+				(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
+				parties[q_ptr->party].name);
+			}
+		} else fprintf(fff, "  \377U(%s\377U)", q_ptr->info_msg);
+	} else fprintf(fff, "  \377u(%s\377u)", q_ptr->afk_msg);
 
  } else { //#else
 	/* Check for special character */

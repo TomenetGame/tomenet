@@ -2837,7 +2837,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			return;
 		}
-#if 0
+#if 1
 		else if (prefix(message, "/info")) { /* set a personal info message - C. Blue */
 			char to_strip[80];
 			if (strlen(message2) > 6) {
