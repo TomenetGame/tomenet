@@ -125,7 +125,9 @@ void do_cmd_go_up(int Ind)
 	}
 	if (surface) {
 		if (!(wild_info[wpos->wy][wpos->wx].flags & WILD_F_UP)) {
-			msg_print(Ind, "There is nothing above you.");
+			if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)
+				msg_print(Ind,"\377sOnly ivy-clad ruins of a former tower remain at this place..");
+			else msg_print(Ind, "There is nothing above you.");
 			return;
 		} else if ((c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS) &&
 			    ((!p_ptr->prob_travel || (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_ENTRY_PROB)) &&
@@ -539,8 +541,10 @@ void do_cmd_go_down(int Ind)
 #endif
 	}
 	if (surface) {
-		if (!(wild_info[wpos->wy][wpos->wx].flags&WILD_F_DOWN)) {
-			msg_print(Ind, "There is nothing below you.");
+		if (!(wild_info[wpos->wy][wpos->wx].flags & WILD_F_DOWN)) {
+			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)
+				msg_print(Ind,"\377sOnly mud-filled ruins of former catacombs remain at this place..");
+			else msg_print(Ind, "There is nothing above you.");
 			return;
 		} else if ((c_ptr->feat != FEAT_MORE && c_ptr->feat != FEAT_WAY_MORE) &&
 			    ((!p_ptr->prob_travel || (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_ENTRY_PROB)) &&
@@ -558,7 +562,7 @@ void do_cmd_go_down(int Ind)
 
 #ifdef RPG_SERVER /* Exclude NO_DEATH dungeons from the gameplay */
 	if ((surface) && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_DEATH)) {
-		msg_print(Ind,"\377sOnly mud-filled ruins of a former cave remain at this place..");
+		msg_print(Ind,"\377sOnly mud-filled ruins of former catacombs remain at this place..");
 		if (!is_admin(p_ptr)) return;
 	}
 #endif
