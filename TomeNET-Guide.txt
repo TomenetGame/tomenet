@@ -4847,8 +4847,9 @@ These feelings are as follows:
                                         clairvoyance here!
                                         (NO_MAGIC_MAP, +10% experience bonus!)
 
-  "The walls here seem very solid." ->  You cannot destroy the dungeon
-                                        structure on this level.
+  "The walls here seem very solid." ->  The dungeon structure on this level
+                                        is unaffected by *Destruction* or by
+                                        earthquake magic.
                                         (NO_DESTROY, +5% experience bonus!)
 
   "You feel that your life hangs in the balance!" ->    ** Extremely dangerous
@@ -7132,8 +7133,11 @@ Protection from evil    Repels evil creatures that try to attack you.
                 and a terrible shockwave that will blind you and knock you and
                 everyone else out.
                 Use this as a last resort!
-                This magic will fail in towns or town-surrounding area within
-                a radius of 3 worldmap sectors.
+                This magic will fail inside vaults and in towns or in the area
+                surrounding a town within a radius of 3 worldmap sectors.
+                It will also fail on dungeon floors that do not allow
+                *destruction* magic explicitely (orange floor feeling saying
+                "The walls here seem very solid.", also see (4.8)).
 Genocide        Removes all monsters of a certain kind from the current level.
                 Drains your HP for each one removed.
                 The race will be determined by the monster which stands
