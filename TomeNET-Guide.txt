@@ -12399,8 +12399,8 @@ Low level character (up to 15)
 + Several Rations of Food or Scrolls of Satisfy Hunger, some Flasks of Oil
 + Some Potions of Heroism
 + Some Potions of Cure Serious Wounds / Critical Wounds
-  Note that Potions of Cure Critical Wounds also remove certain effects like
-  blindness and confusion!
+  Note that Potions of Cure Wounds also remove certain effects like blindness
+  and confusion, depending on the exact potion type (light/serious/critical).
 + Several Scrolls of Phase Door
 + Some Scrolls of Word-of-Recall
 + Some Scrolls of Identify
