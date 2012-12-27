@@ -850,6 +850,14 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				   (for when two lines are merged -> the space would be missing) */
 				if (info[strlen(info) - 1] != ' ') strcat(info, " ");
 
+				/* Strip flags that are useless to know */
+				if ((p2 = strstr(info, "PLURAL"))) {
+					strcpy(info_tmp, info);
+					info_tmp[(p2 - info)] = '\0';
+					strcat(info_tmp, p2 + 7);
+					strcpy(info, info_tmp);
+				}
+
 				/* add flags to existing line */
 				p1 = info;
 				while (p1) {
