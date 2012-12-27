@@ -970,12 +970,10 @@ Items that induce random teleportation, like a 'ring of teleportation' or
     A Long Sword Of The Thunderlords (2d5) (+10,+15) {NxFAReg..}
 
 Items that 'can cause Earthquakes':
-    !E          Depends on server settings. If it's enabled for all items, it
-                will make the item stop causing earthquakes randomly on
-                striking. By default !E is only available on the artifact
-                "The Mighty Hammer 'Grond'" though. Press keys  ~d  in the game
-                to check server settings.
-                (See (5.13) for more information about earthquakes.)
+    !E          Prevents the item from causing an earthquake. This usually
+                only works on the artifact "The Mighty Hammer 'Grond'".
+                (Press keys  ~d  in the game to check server settings.)
+                See (5.13) for more information about earthquakes.
 
 Word-of-Recall scrolls:
     @R500       will teleport you to depth 500ft (tower).
@@ -4487,8 +4485,8 @@ See (5.7) for more information about ID, *ID* and shops!
 (4.5b) Towns & town dungeons
 ----------------------------
 Here is a list of towns and their corresponding local dungeons:
-NOTE: Minimum level requirements for entering might be disabled, based on
-      the server's settings.
+NOTE: Minimum level requirements for entering are usually disabled in normal
+      server settings, so you can enter any dungeon anytime, if you dare.
 
 Town        |Depth/Level|   Local dungeons    | Depth/Level      |Required
             |of the town|                     | of the local     |player level
@@ -4534,8 +4532,8 @@ Since The Orc Cave goes from level 10 to level 23 that means it has 14 floors,
 so its final floor will be -700 ft which is of the same difficulty level as
 -1150 ft Barrow-Downs (ie level 23).
 
-NOTE: Minimum level requirements for entering might be disabled, based on
-      the server's settings.
+NOTE: Minimum level requirements for entering are usually disabled in normal
+      server settings, so you can enter any dungeon anytime, if you dare.
 
 Dungeon                        |     Depth* / Level    | Min. required player
                                |  (*relative to Lv.1)  |   level to enter(**)
@@ -5677,9 +5675,9 @@ That means you will hardly be able to deflect anything, and also you'll get
 less Armour Class increase from it than it usually provides. Even if your
 shield has magical reflection ability, you won't be able to utilize it.
 
-Depending on your server settings, your character might have a chance to parry
-attacks with his weapon and block attacks with his shield, provided he uses
-one. For more details about class-specific ability to utilize weapons and
+Your character might have a chance to parry attacks with his weapon and block
+attacks with his shield, provided he uses one.
+For more details about class-specific ability to utilize weapons and
 shields for parrying and blocking, see (6.5), for more details about parrying
 and blocking in general see (6.11).
 In general, the bigger a weapon the more you may parry, while the bigger a
@@ -6758,8 +6756,8 @@ LIFE ('It affects your hit points')
         to mimics' final HP but the lower base HP.)
         LIFE affects your complete hit point pool, including the additional
         HP a character gained from 'Health' skill.
-        +LIFE on randarts is only allowed in special cases, see server options
-        in-game via ~d for details.
+        +LIFE on randarts will only affect player characters if they meet
+        certain conditions, see server options in-game via ~d for details.
 AGGRAVATE ('It aggravates nearby creatures')
         Wakes up all monsters in whose radius of awareness you are.
         (Does not haste them as scrolls do, compare to (5.9)).
@@ -6816,7 +6814,8 @@ CHAOTIC ('It produces chaotic effects')
         a) drain life (VAMPIRIC, see (5.15)) (very likely).
         b) earthquake (see (5.13) for details).
            (If enabled in the server settings, it can be suppressed with
-           the !E inscription. See (0.3) for !E settings or press ~d in game.)
+           the !E inscription. See (0.3) for !E settings or press ~d in game.
+           Usually, !E only works on the artifact "Grond".)
         c) confuse target (very likely).
         d) teleport target away.
         e) polymorph target.
@@ -6827,7 +6826,8 @@ IMPACT ('It can cause earthquakes')
         Causes earthquakes if the damage is > 50. See (5.13) for details about
         earthquakes.
         (If enabled in the server settings, it can be suppressed with
-        the !E inscription. See (0.3) for !E settings or press ~d in game.)
+        the !E inscription. See (0.3) for !E settings or press ~d in game.
+        Usually, !E only works on the artifact "Grond".)
 WOUNDING ('It is very sharp and makes your foes bleed.')
         Has additional to-hit/to-dam bonus.
 Weapons of Spinning
@@ -7150,8 +7150,8 @@ Genocide        Removes all monsters of a certain kind from the current level.
                 points of damage, which cannot be absorbed by any magic shield
                 or other protective effect!
                 Depending on the server configuration, the caster's remaining
-                hit points might be halved (extra penalty) after the spell
-                finished (this penalty is enabled by default).
+                hit points are usually halved (as an additional extra penalty)
+                after the spell finished.
                 Monsters have a chance to resist genocide, depending on their
                 level. Monsters inside vaults, Uniques, and monsters that are
                 immune to teleportation attacks cannot be genocided.
@@ -8580,7 +8580,6 @@ Note that not every skill is available to every profession (class).
                                 armed combat. Increases your chance to score
                                 critical hits in armed combat (Note: The skill
                                 'Critical-Strike' has much more effect.)
-                                If your server has parrying enabled,
                                 Weaponmastery will also increase your parry
                                 chance a good deal (see (6.11) for details).
         +Sword-mastery          Greatly improves to-dam/to-hit with swords.
@@ -10072,8 +10071,7 @@ from a specific weapon-type mastery or from rings of extra attacks or magical
 influence from priest prayer 'Zeal'.
 Note that these blows/round limits don't count for Martial Arts users (as long
 as they fight barehanded). See (5.4) for a table of MA attacks.
-Parrying and blocking only has effect if your server has enabled the ability
-to parry or block (using weapon or shield) enemy attacks.
+"Parrying" is done with weapons, while "blocking" is done with a shield;
 See (6.11) for details about parry and block.
 
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
@@ -11912,7 +11910,7 @@ Here you can..
     another player who is now just within range of his lowered level.
     Example: Player A was level 45, but lost 5 levels due to dying twice and is
     now level 40. He teams up with player B whose level is a regular 33.
-    What happens depends on the server settings, there are two rules:
+    What happens depends on the server settings, there are three rules:
     a) the difference of player A's real level and his current level counts in
        50%. So he'd be treated like a 40 + (45-40)/2 = 42 (rounded down) player
        and player B wouldn't get any exp since he's not level 35 or higher.
@@ -11935,7 +11933,9 @@ Here you can..
     If the owner dies, the whole party is disbanded. (Exception: On a server
     running 'RPG' rules the party ownership will be transferred to another
     player in the party automatically. See (8.5) for more information about RPG
-    settings.)
+    settings. Within the 'Ironman Deep Dive Dungeon', party ownership is also
+    transferred in the same manner. See (4.13) for more information about
+    the persistent "Ironman Deep Dive Challenge" event.)
     Be aware that his houses will be wiped too, so the party might lose quite
     an amount of items that way.
 
@@ -13374,6 +13374,7 @@ Shields
         Reflection
         Reduced weight
         Always the maximum of +15 AC, if the server uses block-percentages
+         (which is the default setting.)
 Cloaks
         Stealth
         Feather falling (levitation)
