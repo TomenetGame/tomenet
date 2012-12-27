@@ -10668,12 +10668,12 @@ Werebear                same as Grizzly Bear, but tougher
 Great eagle             speedy; can fly; passes most terrain types
 (Code 335)
 
-Great White shark       speedy and tough aquatic form
+Great White shark       speedy and tough aquatic(*) form
 (Code 898)              (aquatic means that it requires deep water to breathe
                         and greatly resists water-based attacks)
 
 Aranea                  a speedy greater spider;
-(Code 963)              poisonous hits;
+(Code 963)              all melee attacks are poisonous;
                         resists fire, completely immune to poison;
                         susceptible to light and to 'good' (creature is evil);
                         has a small array of magic spells at its disposal
@@ -10681,39 +10681,38 @@ Aranea                  a speedy greater spider;
 Level 25:
 ---------
 Wyvern                  speedy; can fly; passes most terrains;
-(Code 334)              25% poisonous attacks;
+(Code 334)              25% poisonous melee attacks;
                         immune to poison; susceptible to 'good'
 
-Multi-hued Hound        resists fire/cold/lightning/acid/poison and gets a
-(Code 513)              random immunity of those five on polymorphing;
+Multi-hued Hound        resists fire/cold/lightning/acid/poison and is immune
+(Code 513)              to one of those five elements;
                         can't be confused or paralyzed;
                         can breathe the five elements mentioned above
 
 Level 30:
 ---------
 5-headed hydra          tough and speedy; can swim;
-(Code 440)              poisonous attacks; immune to poison;
+(Code 440)              all melee attacks are poisonous; immune to poison;
                         can cast fear and poison ball
 
 Minotaur                tough and very speed; susceptible to 'good'
 (Code 641)
 
-Giant squid             tough and speedy aquatic creature;
-(Code 482)              resists water greatly;
-                        resists cold/acid/lightning/poison;
+Giant squid             tough and speedy aquatic(*) creature;
+(Code 482)              resists cold/acid/lightning/poison;
                         can breathe lightning, acid and poison
 
 Level 35:
 ---------
 7-headed hydra          tough and speedy; can swim;
-(Code 614)              poisonous (75%) and blinding (25%) attacks;
+(Code 614)              poisonous (75%) and blinding (25%) melee attacks;
                         immune to poison;
                         can cast fear, poison ball, and breathe poison
 
 Elder aranea            speedy and smart (INT bonus) greater spider;
-(Code 964)              50% poisonous attacks;
-                        resists darkness, fire, poison; immune to either fire
-                        or poison chosen randomly on polymorphing;
+(Code 964)              50% of melee attacks are poisonous;
+                        resists darkness, fire, poison;
+                        immune to either fire or poison;
                         susceptible to 'good' and to light;
                         can't be confused or paralyzed;
                         regenerates HP quickly;
@@ -10737,9 +10736,8 @@ Giant Roc               speedy giant bird; deals high damage;
                         immune to electricity; resists sound;
                         can't be paralyzed or confused;
 
-Lesser kraken           speedy, smart and very tough aquatic creature;
-(Code 740)              resists water greatly as well as lightning, cold,
-                        darkness, poison;
+Lesser kraken           speedy, smart and very tough aquatic(*) creature;
+(Code 740)              resists lightning, cold, darkness, poison;
                         completely immune to either water attacks or poison;
                         can't be paralyzed or confused;
                         has a medium size array of spells;
@@ -10747,7 +10745,7 @@ Lesser kraken           speedy, smart and very tough aquatic creature;
 Level 45:
 ---------
 Maulotaur               like Minotaur, but tougher; stupid (INT malus);
-(Code 723)              immune to fire and resisting teleportation attacks;
+(Code 723)              immune to fire; resists teleportation attacks;
                         can cast plasma bolt and fire ball
 
 Winged Horror           speedy winged creature; can fly;
@@ -10767,9 +10765,8 @@ Spectral Tyrannosaur    speedy undead animal;
                         can't be cut, scared, confused or paralyzed;
                         can breathe nexus, poison and nether
 
-Greater kraken          speedy, smart and extremely tough aquatic creature;
-(Code 775)              resists water attacks greatly, as well as cold, poison,
-                        lightning, acid, darkness;
+Greater kraken          speedy, smart and extremely tough aquatic(*) creature;
+(Code 775)              resists cold, poison, lightning, acid, darkness;
                         completely immune to one of lightning/poison/water;
                         susceptible to 'good';
                         can cast from a large array of spells
@@ -10797,6 +10794,11 @@ Firebird                speedy and tough; can fly and passes most terrains;
                         resists poison, plasma and light;
                         regenerates HP quickly;
                         can breathe fire and light
+
+(*) "Aquatic" means that this form requires deep water to breathe, you will get
+    increasingly stunned and continuously take damage if you stay outside of
+    deep water, beware.
+    Aquatic forms also resist all water-based attacks *greatly*.
 
 
 (6.7c) Useful low-level humanoid forms for weapon-using mimics
