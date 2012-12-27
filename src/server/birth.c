@@ -2559,6 +2559,11 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_bpr2 = 1;
 		p_ptr->warning_bpr3 = 1;
 	}
+
+#ifdef RPG_SERVER
+	/* No need for WoR hints in an all-Ironman environment */
+	p_ptr->warning_wor = 1;
+#endif
 }
 
 /*
