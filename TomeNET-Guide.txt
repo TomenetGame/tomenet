@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. December 2012 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.1 - official websites are:
+| Latest update: 27. December 2012 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.1a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -7888,18 +7888,25 @@ curse is broken, however.
 If you equip an unidentified item and it carries a curse your character will
 notice 'Oops, it feels deadly cold!'.
 
+Note: Instead of dropping an item which curse you have successfully broken,
+      you may of course also just outright destroy it with 'k' key instead.
+      You cannot destroy artifacts though (for example Rings of Power dropped
+      by Nazgul).
+
 There are different types of curses:
 CURSED          can be broken by a regular 'remove curse'.
-                Item cannot be taken off until the curse is broken.
+                Item cannot be taken off or destroyed (via 'k' key) until the
+                curse is broken.
 HEAVY_CURSE     requires a strong '*remove curse*' to be broken.
-                Item cannot be taken off until the curse is broken.
+                Item cannot be removed until the curse is broken.
                 On weapons, there is a high chance of resisting disarming.
                 See the hint regarding the use of enchant scrolls to break a
                 heavy curse instead of using a *rc* scroll, written at the
                 bottom of this paragraph!
 PERMA_CURSE     This curse can never be broken.
-                Item can never be taken off again! Mimics polymorphing into a
-                form that cannot wear the specific item won't succeed either.
+                Item can never be taken off or otherwise removed again!
+                Mimics polymorphing into a form that cannot wear the specific
+                item won't succeed either.
                 There is absolutely no way to get rid of this item. If you
                 find a way then you found a bug =).
 CURSE_NO_DROP   these items cannot be dropped from inventory as long as the
@@ -7913,6 +7920,9 @@ AUTO_CURSE      occurs together with CURSED or HEAVY_CURSE.
                 broken. If you had the item equipped, don't take it off but
                 (d)rop it to the ground right from your equipment! Otherwise
                 it will recurse itself.
+                To drop directly from your equipment, press '/' key at the
+                "drop what?" prompt, which will switch to equipment (and back
+                to inventory if pressed again).
 TY_CURSE        Randomly drains stats sometimes, even if the item is uncursed.
                 (TY_CURSE will stay, even if the 'normal' curse is broken!)
                 Lowers the items value by 15000 Au.
@@ -7935,6 +7945,9 @@ This is an especially commonly used trick for getting rid of Morgul weapons.
 Just pick the stat that is already higher. Example:
 A Dagger of Morgul (-33,-15) -> You'd enchant its damage to +0 or higher,
 since it requires you to buy less scrolls (15+) than going for to-hit (33+).
+If the item you want to enchant is among your equipment instead of your
+inventory, press '/' key at the "enchant what?" prompt, which will switch to
+equipment (and back to inventory if pressed again).
 
 
 
