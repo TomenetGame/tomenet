@@ -1290,12 +1290,18 @@ void calc_mana(int Ind)
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
 		break;
 	/* in theory these actually don't use 'magic mana' at all?: */
-	case CLASS_PRIEST:
+	case CLASS_PRIEST: /* maybe Shamans are treated too good in comparison here */
 	case CLASS_PALADIN:
-	/* non-holy again: */
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
+		break;
+	/* non-holy again: -- hm not sure if they still need to get reduced effect*/
 	case CLASS_MIMIC:
 	case CLASS_ROGUE:
+#if 0
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
+#else /* why not.. */
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
+#endif
 		break;
 	/* hybrids & more */
 	case CLASS_SHAMAN:

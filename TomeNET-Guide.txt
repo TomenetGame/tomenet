@@ -6742,8 +6742,9 @@ MANA ('It affects your mana capacity.')
         Will increase your total mana points by +x0%. Example:
         Gloves of the magi (+3) increase your mana by 30%.
         MANA items _add_ to each other, they aren't multiplied.
-        They have slightly less effect on non-mages and quite less effect
-        on priests or paladins who need wisdom rather than intelligence.
+        MANA-increasing items have reduced effect on priests or paladins,
+        because their spells are not so much pure magic but rather a form
+        of praying.
         MANA affects your complete mana pool, including the additional MP
         (mana points) a character gained from 'Magic' skill.
 LIFE ('It affects your hit points')
