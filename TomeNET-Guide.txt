@@ -2025,6 +2025,10 @@ self-explaining or that are especially important are listed in detail here:
         Rogues might want to turn this off in order to sit out their blacklist
         timer in town.
 
+    Double height of the map shown in the main window (big_map)
+        Definitely enable this to see if you prefer it: It doubles the size of
+        the game-play area displayed in the main window.
+
     Automatically open doors (easy_open)
         Your character attempts to open a door just by you moving into it.
 
