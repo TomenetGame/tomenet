@@ -1370,7 +1370,7 @@ E:0:0:0:0:0:0
 O:0:0:0:0
 B:HIT:HURT:1d4
 B:TOUCH:POISON:2d4
-F:ONLY_GOLD | DROP_1D2 | SUSCEP_ACID |
+F:ONLY_GOLD | DROP_1D2 | SUSCEP_ACID | PLURAL
 F:COLD_BLOOD | BASH_DOOR | 
 F:RES_ELEC | RES_POIS | CHAR_MULTI | 
 F:NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
@@ -1811,7 +1811,7 @@ E:0:0:0:0:0:0
 O:0:0:0:0
 B:HIT:HURT:1d6
 B:TOUCH:POISON:2d6
-F:ONLY_GOLD | DROP_60 | DROP_1D2 | 
+F:ONLY_GOLD | DROP_60 | DROP_1D2 | PLURAL
 F:COLD_BLOOD | BASH_DOOR | SUSCEP_ACID | CHAR_MULTI | 
 F:IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 D:It appears to be a pile of silver coins, until it starts crawling towards you 
@@ -2984,7 +2984,7 @@ E:0:0:0:0:0:0
 O:0:0:0:0
 B:HIT:HURT:2d5
 B:TOUCH:POISON:3d5
-F:ONLY_GOLD | DROP_90 | DROP_1D2 | 
+F:ONLY_GOLD | DROP_90 | DROP_1D2 | PLURAL
 F:COLD_BLOOD | BASH_DOOR | RES_MANA | REFLECTING | 
 F:IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 D:It appears to be a pile of gold coins, until it starts crawling towards you 
@@ -3663,7 +3663,7 @@ E:0:0:0:0:0:0
 O:0:0:0:0
 B:HIT:HURT:2d5
 B:TOUCH:POISON:3d5
-F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | 
+F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | PLURAL
 F:COLD_BLOOD | BASH_DOOR | IM_ACID | CHAR_MULTI | 
 F:IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 D:It appears to be a pile of sentient mithril coins that doesn't like being 
@@ -6628,7 +6628,7 @@ B:BITE:POISON:3d4
 B:TOUCH:POISON:3d5
 B:HIT:HURT:1d12
 B:HIT:HURT:1d12
-F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | 
+F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | PLURAL
 F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI | 
 F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 D:It appears to be a pile of coins made of precious adamant, slithering toward 
@@ -19032,32 +19032,34 @@ S:UNMAGIC
 D:Small winged jolly annoying chatterbox, actually he is a descendant
 D:of dispersed minimite race.
 
-N:1052:Adamantite
-G:$:v
-I:110:10d15:15:50:10
-W:55:6:0:60
-E:0:0:0:0:0:0
-O:0:0:0:0
-#was: 100d3, which was too much: $ traps killed everyone.
-B:EXPLODE:SHATTER:80d2
-F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | 
-F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI | NEVER_MOVE | EMPTY_MIND
-F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
-D:It is a pile of coins made of precious adamant... containing explosives.
+#We have 3x this monster now, commenting out two of them
+#N:1052:Creeping Adamantite coins
+#G:$:v
+#I:110:10d15:15:50:10
+#W:55:6:0:60
+#E:0:0:0:0:0:0
+#O:0:0:0:0
+##was: 100d3, which was too much: $ traps killed everyone.
+#B:EXPLODE:SHATTER:80d2
+#F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | PLURAL
+#F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI | NEVER_MOVE | EMPTY_MIND
+#F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
+#D:It is a pile of coins made of precious adamant... containing explosives.
 
-N:1053:Creeping adamantite coins
-G:$:v
-I:120:20d25:5:50:10
-W:50:6:0:60
-E:0:0:0:0:0:0
-O:0:0:0:0
-#B:EXPLODE:HURT:100d4
-B:EXPLODE:HURT:100d3
-F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | 
-F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI | 
-F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
-D:It appears to be a pile of coins made of precious adamant, slithering toward 
-D:you on lots of tiny legs. 
+#We have 3x this monster now, commenting out two of them
+#N:1053:Creeping adamantite coins
+#G:$:v
+#I:120:20d25:5:50:10
+#W:50:6:0:60
+#E:0:0:0:0:0:0
+#O:0:0:0:0
+##B:EXPLODE:HURT:100d4
+#B:EXPLODE:HURT:100d3
+#F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | PLURAL
+#F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI | 
+#F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
+#D:It appears to be a pile of coins made of precious adamant, slithering toward 
+#D:you on lots of tiny legs. 
 
 N:1054:Goldfish
 G:~:r

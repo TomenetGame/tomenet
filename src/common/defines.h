@@ -4887,6 +4887,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF8_WILD_DESERT		0x00080000
 #define RF8_WILD_ICE			0x00100000
 #define RF8_NETHER_REALM		0x00200000	/* may only spawn in the Nether Realm */
+#define RF8_PLURAL			0x00400000	/* The monster's name is already in plural form */
 //FREE FLAGS HOLE
 #define RF8_GENO_PERSIST	0x08000000	/* Don't automatically genocide/compact this monster */
 #define RF8_GENO_NO_THIN		0x10000000	/* Don't genocide this monster when thinning out surface spawns */

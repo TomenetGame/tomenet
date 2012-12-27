@@ -466,7 +466,7 @@ static cptr r_info_flags8[] =
 	"WILD_DESERT",
 	"WILD_ICE",
 	"NETHER_REALM",
-	"XXX8X22",
+	"PLURAL",
 	"XXX8X23",
 	"XXX8X24",
 	"XXX8X25",

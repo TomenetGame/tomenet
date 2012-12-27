@@ -1432,8 +1432,7 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 	bool            seen, pron;
 
 	/* Check for bad player number */
-	if (Ind > 0)
-	{
+	if (Ind > 0) {
 		p_ptr = Players[Ind];
 
 		/* Can we "see" it (exists + forced, or visible + not unforced) */
@@ -1441,9 +1440,7 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 
 		if (!(mode & 0x0100) && p_ptr->image)
 			name = r_name_garbled_get();
-	}
-	else
-	{
+	} else {
 		seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40))));
 	}
 
@@ -1452,8 +1449,7 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 
 
 	/* First, try using pronouns, or describing hidden monsters */
-	if (!seen || pron)
-	{
+	if (!seen || pron) {
 		/* an encoding of the monster "sex" */
 		int kind = 0x00;
 
@@ -1469,8 +1465,7 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 		res = "it";
 
 		/* Brute force: split on the possibilities */
-		switch (kind + (mode & 0x07))
-		{
+		switch (kind + (mode & 0x07)) {
 			/* Neuter, or unknown */
 			case 0x00: res = "it"; break;
 			case 0x01: res = "it"; break;
@@ -1508,8 +1503,7 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 
 
 	/* Handle visible monsters, "reflexive" request */
-	else if ((mode & 0x02) && (mode & 0x01))
-	{
+	else if ((mode & 0x02) && (mode & 0x01)) {
 		/* The monster is visible, so use its gender */
 		if (r_ptr->flags1 & RF1_FEMALE) strcpy(desc, "herself");
 		else if (r_ptr->flags1 & RF1_MALE) strcpy(desc, "himself");
@@ -1518,40 +1512,38 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 
 
 	/* Handle all other visible monster requests */
-	else
-	{
+	else {
 		/* It could be a Unique */
-		if (r_ptr->flags1 & RF1_UNIQUE)
-		{
+		if (r_ptr->flags1 & RF1_UNIQUE) {
 			/* Start with the name (thus nominative and objective) */
 			(void)strcpy(desc, name);
 		}
 
 		/* It could be an indefinite monster */
-		else if (mode & 0x08)
-		{
+		else if (mode & 0x08) {
 			/* XXX Check plurality for "some" */
-
-			/* Indefinite monsters need an indefinite article */
-			(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
-			(void)strcat(desc, name);
+			if ((r_ptr->flags8 & RF8_PLURAL))
+				(void)strcpy(desc, name);
+			else {
+				/* Indefinite monsters need an indefinite article */
+				(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
+				(void)strcat(desc, name);
+			}
 		}
 
 		/* It could be a normal, definite, monster */
-		else
-		{
+		else {
 			/* Definite monsters need a definite article */
 			(void)strcpy(desc, "the ");
 			(void)strcat(desc, name);
 		}
 
 		/* Handle the Possessive as a special afterthought */
-		if (mode & 0x02)
-		{
+		if (mode & 0x02) {
 			/* XXX Check for trailing "s" */
-
+			if (name[strlen(name) - 1] == 's') (void)strcat(desc, "'");
 			/* Simply append "apostrophe" and "s" */
-			(void)strcat(desc, "'s");
+			else (void)strcat(desc, "'s");
 		}
 	}
 }
@@ -1650,10 +1642,13 @@ void monster_race_desc(int Ind, char *desc, int r_idx, int mode)
 		/* It could be an indefinite monster */
 		else if (mode & 0x08) {
 			/* XXX Check plurality for "some" */
-
-			/* Indefinite monsters need an indefinite article */
-			(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
-			(void)strcat(desc, name);
+			if ((r_ptr->flags8 & RF8_PLURAL))
+				(void)strcpy(desc, name);
+			else {
+				/* Indefinite monsters need an indefinite article */
+				(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
+				(void)strcat(desc, name);
+			}
 		}
 		/* It could be a normal, definite, monster */
 		else {
@@ -1665,9 +1660,9 @@ void monster_race_desc(int Ind, char *desc, int r_idx, int mode)
 		/* Handle the Possessive as a special afterthought */
 		if (mode & 0x02) {
 			/* XXX Check for trailing "s" */
-
+			if (name[strlen(name) - 1] == 's') (void)strcat(desc, "'");
 			/* Simply append "apostrophe" and "s" */
-			(void)strcat(desc, "'s");
+			else (void)strcat(desc, "'s");
 		}
 	}
 }
@@ -1767,9 +1762,9 @@ void player_desc(int Ind, char *desc, int Ind2, int mode)
 		/* Handle the Possessive as a special afterthought */
 		if (mode & 0x02) {
 			/* XXX Check for trailing "s" */
-
+			if (name[strlen(name) - 1] == 's') (void)strcat(desc, "'");
 			/* Simply append "apostrophe" and "s" */
-			(void)strcat(desc, "'s");
+			else (void)strcat(desc, "'s");
 		}
 	}
 }
