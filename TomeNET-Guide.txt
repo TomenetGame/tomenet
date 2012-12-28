@@ -10047,7 +10047,7 @@ vary. For example a warrior cannot learn magic spells.
     They are able to detect 'Telepath' ego monsters via ESP which usually are
     able to conceal their presence telepathically vs all other classes.
     Also they are able to resist malicious mind-affecting effects better than
-    other classes, for example such as forgetfulness or psionic attacks.
+    other classes, for example such as mind-blanking or psionic attacks.
     Mindcrafters learn to judge their own sanity much more accurately as they
     level up, getting a more detailed sanity display at level 10, 20 and 40
     (same as other characters get when they actually train 'Health' skill to
