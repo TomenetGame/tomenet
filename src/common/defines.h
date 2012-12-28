@@ -6098,7 +6098,7 @@ extern int PlayerUID;
 /*** Color constants ***/
 
 /* New in 4.5.1.2: Support 100% client-side animated spellcasting - C. Blue */
-#define EXTENDED_TERM_COLOURS
+//#define EXTENDED_TERM_COLOURS
 
 /*
  * Angband "attributes" (with symbols, and base (R,G,B) codes)
