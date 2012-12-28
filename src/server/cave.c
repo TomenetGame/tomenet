@@ -3031,11 +3031,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			} else {
 				if (!(p_ptr->mode & MODE_EVERLASTING)) (*ap) = c_ptr->colour - 1;
 			}
-		}
  #else
-		if (c_ptr->colour > 100) (*ap) = c_ptr->colour - 100 - 1;
-		else (*ap) = c_ptr->colour - 1;
+			if (c_ptr->colour > 100) (*ap) = c_ptr->colour - 100 - 1;
+			else (*ap) = c_ptr->colour - 1;
  #endif
+		}
 #endif
 
 		/* jails */
