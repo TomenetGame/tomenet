@@ -5859,7 +5859,11 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 					/* int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100:100; */
 //					int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100 + (p_ptr->lev / 10) * (p_ptr->lev / 10) * 800:100;
 //					int i = (p_ptr->lev > 4) ? 100 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 5 : 100;
+#if 0 /* got exploited by chain-dying on purpose */
 					int i = 300 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2; /* buffed it greatly, yet still sensible */
+#else
+					int i = 300 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 4 + p_ptr->lev * 15;
+#endif
 					msg_format(Ind, "The temple priest gives you %ld gold pieces for your revival!", i);
 					gain_au(Ind, i, FALSE, FALSE);
 				}
