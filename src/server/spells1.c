@@ -6289,8 +6289,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					do_conf = 0;
 				}
 				//let's do some actual damage, too?
-				dam = 0;
-				quiet_dam = TRUE;
+//				dam = 0;
+//				quiet_dam = TRUE;
 				break;
 			} else { //Blind
 				do_blind = dam;
