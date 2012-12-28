@@ -664,14 +664,57 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 }
 
 
+/* Number of buffers for format() */
+#define NUM_FORMAT_BUFFERS	32
+
+
 /*
  * Do a vstrnfmt (see above) into a (growable) static buffer.
  * This buffer is usable for very short term formatting of results.
+ *
+ * I added support for using multiple buffers. The contents of each
+ * buffer will be preserved across a fixed number of calls. This will
+ * enable nested calls and also make debugging easier. - mikaelh
  */
 char *vformat(cptr fmt, va_list vp)
 {
+	/* Array of buffers */
+	static char *format_buffers[NUM_FORMAT_BUFFERS] = { NULL };
+
+	/* Array of buffer lengths */
+	static huge format_lengths[NUM_FORMAT_BUFFERS] = { 0 };
+
+	/* Previous and current position in the array */
+	static int prev_pos = 0;
+	static int current_pos = 0;
+
+	/* Selected buffer and its length */
 	static char *format_buf = NULL;
 	static huge format_len = 0;
+
+	/* Null format yields last result */
+	if (!fmt) {
+		/* Load the previous buffer */
+		format_buf = format_buffers[prev_pos];
+		format_len = format_lengths[prev_pos];
+
+		/* Initial allocation */
+		if (!format_buf)
+		{
+			format_len = 1024;
+			C_MAKE(format_buf, format_len, char);
+
+			/* Store the changed values into the arrays */
+			format_buffers[prev_pos] = format_buf;
+			format_lengths[prev_pos] = format_len;
+		}
+
+		return (format_buf);
+	}
+
+	/* Load the next buffer */
+	format_buf = format_buffers[current_pos];
+	format_len = format_lengths[current_pos];
 
 	/* Initial allocation */
 	if (!format_buf)
@@ -679,9 +722,6 @@ char *vformat(cptr fmt, va_list vp)
 		format_len = 1024;
 		C_MAKE(format_buf, format_len, char);
 	}
-
-	/* Null format yields last result */
-	if (!fmt) return (format_buf);
 
 	/* Keep going until successful */
 	while (1)
@@ -699,6 +739,14 @@ char *vformat(cptr fmt, va_list vp)
 		format_len = format_len * 2;
 		C_MAKE(format_buf, format_len, char);
 	}
+
+	/* Store the possibly changed values */
+	format_buffers[current_pos] = format_buf;
+	format_lengths[current_pos] = format_len;
+
+	/* Advance to the next position in the array */
+	prev_pos = current_pos;
+	current_pos = (current_pos + 1) % NUM_FORMAT_BUFFERS;
 
 	/* Return the new buffer */
 	return (format_buf);
