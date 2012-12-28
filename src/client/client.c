@@ -620,6 +620,8 @@ if (!strcmp("ANGBAND_SYS", "x11")) {
 
 #ifdef USE_X11
 ///LINUX_TERM_CFG
+/* Don't do this in terminal mode ('-c') */
+if (!strcmp("ANGBAND_SYS", "x11")) {
 		write_mangrc_aux(0, "Mainwindow", config2);
 		write_mangrc_aux(1, "Mirrorwindow", config2);
 		write_mangrc_aux(2, "Recallwindow", config2);
@@ -632,6 +634,7 @@ if (!strcmp("ANGBAND_SYS", "x11")) {
 		write_mangrc_aux(8, "Term-8window", config2);
 		write_mangrc_aux(9, "Term-9window", config2);
 #endif
+}
 #endif
 
 		fclose(config2);
