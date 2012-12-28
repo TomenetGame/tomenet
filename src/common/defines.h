@@ -6097,7 +6097,9 @@ extern int PlayerUID;
 
 /*** Color constants ***/
 
-/* New in 4.5.1.2: Support 100% client-side animated spellcasting - C. Blue */
+/* New in 4.5.1.2: Support 100% client-side animated spellcasting - C. Blue
+   Note: This must be on for clients >= 4.5.1.2.0.0 and off for those before.
+   Same for servers. */
 //#define EXTENDED_TERM_COLOURS
 
 /*

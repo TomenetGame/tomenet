@@ -532,6 +532,7 @@ static char get_shimmer_color()
 
 byte flick_colour(byte attr){
 	byte flags = attr;//(remember flags) obsolete: & 0xE0;
+#ifdef EXTENDED_TERM_COLOURS
 	if (!is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) {
 		if (flags & TERM_OLD_PVP) {
 			flags &= ~TERM_OLD_PVP;
@@ -543,6 +544,9 @@ byte flick_colour(byte attr){
 		}
 	}
 	attr = attr & 0x3F; /* cut flags off actual colour */
+#else
+	attr = attr & 0x1F; /* cut flags off actual colour */
+#endif
 
 	/* additional flickering from 'black'n'white' flag? */
 	if (flags & TERM_BNW) {
@@ -614,7 +618,7 @@ byte flick_colour(byte attr){
 			return(randint(5)>4?TERM_SLATE:TERM_L_DARK);
 		/* NOTE: TERM_SHAL_LAVA, TERM_DEEP_LAVA, TERM_SHAL_WATER,
 		 * TERM_DEEP_WATER would be nice for terrains  - Jir - */
-		/* EXTENDED_TERM_COLOURS: - C. Blue */
+#ifdef EXTENDED_TERM_COLOURS /* C. Blue */
 		case TERM_CURSE:
 			return(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
 		case TERM_ANNI:
@@ -661,7 +665,7 @@ byte flick_colour(byte attr){
 			return (randint(5)==1?TERM_RED:TERM_L_DARK);
 		case TERM_THUNDER:
 			return (randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
-
+#endif
 		default:
 			return(attr);
 	}
