@@ -1319,19 +1319,19 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f3 & TR3_SHOW_MODS) total += 0;
 	if (f3 & TR3_INSTA_ART) total += 0;
 	if (f3 & TR3_SEE_INVIS) total += 2000;
-	if (esp & ESP_ORC) total += 5000;
-	if (esp & ESP_TROLL) total += 10000;
-	if (esp & ESP_DRAGON) total += 20000;
-	if (esp & ESP_GIANT) total += 15000;
-	if (esp & ESP_DEMON) total += 20000;
-	if (esp & ESP_UNDEAD) total += 20000;
-	if (esp & ESP_EVIL) total += 50000;
-	if (esp & ESP_ANIMAL) total += 15000;
-	if (esp & ESP_DRAGONRIDER) total += 10000;
-	if (esp & ESP_GOOD) total += 10000;
-	if (esp & ESP_NONLIVING) total += 20000;
-	if (esp & ESP_UNIQUE) total += 20000;
-	if (esp & ESP_SPIDER) total += 10000;
+	if (esp & ESP_ORC) total += 1000;
+	if (esp & ESP_TROLL) total += 2000;
+	if (esp & ESP_DRAGON) total += 5000;
+	if (esp & ESP_GIANT) total += 3000;
+	if (esp & ESP_DEMON) total += 6000;
+	if (esp & ESP_UNDEAD) total += 6000;
+	if (esp & ESP_EVIL) total += 20000;
+	if (esp & ESP_ANIMAL) total += 6000;
+	if (esp & ESP_DRAGONRIDER) total += 3000;
+	if (esp & ESP_GOOD) total += 8000;
+	if (esp & ESP_NONLIVING) total += 5000;
+	if (esp & ESP_UNIQUE) total += 4000;
+	if (esp & ESP_SPIDER) total += 2000;
 //        if (esp) total += (12500 * count_bits(esp));
         if (esp & ESP_ALL) total += 150000;/* was 125k, but ESP crowns cost 150k */
 	if (f3 & TR3_SLOW_DIGEST) total += 750;
@@ -1451,7 +1451,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 		} else {
 			a_ptr = &a_info[o_ptr->name1];
 			value = a_ptr->cost;
-			
+
 			/* Let true arts' prices be totally determined in a_info.txt */
 			return(value);
 		}
@@ -2080,8 +2080,8 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (esp & ESP_GOOD) total += 8000;
 	if (esp & ESP_NONLIVING) total += 5000;
 	if (esp & ESP_UNIQUE) total += 4000;
-	if (esp & ESP_SPIDER) total += 3000;
-	if (esp & ESP_ALL) total += 150000 + 40000; /* hm, extra bonus */
+	if (esp & ESP_SPIDER) total += 2000;
+	if (esp & ESP_ALL) total += 150000;// + 40000; /* hm, extra bonus */
 	if (f3 & TR3_SLOW_DIGEST) total += 750;
 	if (f3 & TR3_REGEN) total += 3500;
 	if (f5 & TR5_REGEN_MANA) total += 2500;
