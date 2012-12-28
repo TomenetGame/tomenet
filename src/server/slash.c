@@ -518,7 +518,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377oAllows you to send a 'beep' sound to someone who is currently afk.");
 				return;
 			}
-			p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+			p = name_lookup_loose(Ind, message3, FALSE, TRUE);
 			if (!p || (Players[Ind]->admin_dm && cfg.secret_dungeon_master && !is_admin(Players[Ind]))) {
 				msg_format(Ind, "\377yPlayer %s not online.", message3);
 				return;
@@ -4750,7 +4750,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* very dangerous if player is poisoned, very weak, or has hp draining */
 			else if (prefix(message, "/threaten") || prefix(message, "/thr")) { /* Nearly kill someone, as threat >:) */
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
 				if (!tk) {
 					msg_print(Ind, "Usage: /threaten <player name>");
 					return;
@@ -4767,10 +4767,10 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/aslap")) { /* Slap someone around, as threat :-o */
 				if (!tk) {
-					msg_print(Ind, "Usage: /slap <player name>");
+					msg_print(Ind, "Usage: /aslap <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
 				if (!j) return;
 #ifdef USE_SOUND_2010
 				sound_near_site(Players[j]->py, Players[j]->px, &p_ptr->wpos, 0, "hit_whip", "hit", SFX_TYPE_COMMAND, TRUE);
@@ -4785,10 +4785,10 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/apat")) { /* Counterpart to /slap :-p */
 				if (!tk) {
-					msg_print(Ind, "Usage: /pat <player name>");
+					msg_print(Ind, "Usage: /apat <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
 				if (!j) return;
 				msg_format(Ind, "\377yPatting %s.", Players[j]->name);
 				msg_print(j, "\377yYou are patted by something invisible.");
@@ -4797,10 +4797,10 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/ahug")) { /* Counterpart to /slap :-p */
 				if (!tk) {
-					msg_print(Ind, "Usage: /hug <player name>");
+					msg_print(Ind, "Usage: /ahug <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
 				if (!j) return;
 				msg_format(Ind, "\377yHugging %s.", Players[j]->name);
 				msg_print(j, "\377yYou are hugged by something invisible.");
@@ -4809,10 +4809,10 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/apoke")) {
 				if (!tk) {
-					msg_print(Ind, "Usage: /poke <player name>");
+					msg_print(Ind, "Usage: /apoke <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
 				if (!j) return;
 				msg_format(Ind, "\377yPoking %s.", Players[j]->name);
 				msg_print(j, "\377yYou are poked by something invisible.");
@@ -4824,7 +4824,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /strangle <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
 				if (!j) return;
 				msg_format(Ind, "\377yPoking %s.", Players[j]->name);
 				msg_print(j, "\377yYou are being strangled by something invisible!");
@@ -4840,7 +4840,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /cheer <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
 				if (!j) return;
 				msg_print(j, "\377ySomething invisible is cheering for you!");
 				msg_format_near(j, "\377yYou hear something invisible cheering for %s!", Players[j]->name);
@@ -4853,7 +4853,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /applaud <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
 				if (!j) return;
 				msg_format(Ind, "\377yApplauding %s.", Players[j]->name);
 				msg_print(j, "\377ySomeone invisible is applauding for you!");
@@ -4866,7 +4866,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /presence <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
 				if (!j) return;
 				msg_print(j, "\377yYou feel an invisible presence watching you!");
 				msg_format_near(j, "\377yYou feel an invisible presence near %s!", Players[j]->name);
@@ -4877,7 +4877,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /snicker <player name>");
 					return;
 				}
-				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
 				if (!j) return;
 				msg_format(Ind, "\377ySnickering at %s.", Players[j]->name);
 				msg_print(j, "\377yYou hear someone invisible snickering evilly!");
