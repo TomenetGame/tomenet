@@ -1208,30 +1208,7 @@ void teleport_player_level(int Ind, bool force) {
 	p_ptr->new_level_flag = TRUE;
 }
 
-static byte mh_attr(int max)
-{
-	switch (randint(max))
-	{
-		case  1: return (TERM_RED);
-		case  2: return (TERM_GREEN);
-		case  3: return (TERM_BLUE);
-		case  4: return (TERM_YELLOW);
-		case  5: return (TERM_ORANGE);
-		case  6: return (TERM_VIOLET);
-		case  7: return (TERM_L_RED);
-		case  8: return (TERM_L_GREEN);
-		case  9: return (TERM_L_BLUE);
-		case 10: return (TERM_UMBER);
-		case 11: return (TERM_L_UMBER);
-		case 12: return (TERM_SLATE);
-		case 13: return (TERM_WHITE);
-		case 14: return (TERM_L_WHITE);
-		case 15: return (TERM_L_DARK);
-	}
-
-	return (TERM_WHITE);
-}
-
+#ifndef EXTENDED_TERM_COLOURS
 /*
  * Return a color to use for the bolt/ball spells
  */
@@ -1360,6 +1337,72 @@ bool spell_color_animation(int type)
 	/* Standard "color" */
 	return FALSE;
 }
+#else
+/*
+ * Return a color to use for the bolt/ball spells
+ */
+byte spell_color(int type)
+{
+	/* Hack -- fake monochrome */
+	if (!use_color) return (TERM_WHITE);
+
+	/* Analyze */
+	switch (type)	/* colourful ToME ones :) */
+	{
+		case GF_MISSILE:	return (TERM_SLATE);
+		case GF_ACID:		return (TERM_ACID);
+		case GF_ELEC:		return (TERM_ELEC);
+		case GF_FIRE:		return (TERM_FIRE);
+		case GF_COLD:		return (TERM_COLD);
+		case GF_POIS:		return (TERM_POIS);
+		case GF_UNBREATH:	return (TERM_UNBREATH);
+//		case GF_HOLY_ORB:	return (TERM_L_DARK);
+		case GF_HOLY_ORB:	return (TERM_HOLYORB);
+		case GF_HOLY_FIRE:	return (TERM_HOLYFIRE);
+		case GF_HELL_FIRE:	return (TERM_HELLFIRE);
+		case GF_MANA:		return (TERM_MANA);
+		case GF_ARROW:		return (TERM_L_UMBER);
+		case GF_WATER:		return (TERM_WATE);
+		case GF_WAVE:		return (TERM_WATE);
+		case GF_NETHER:		return (TERM_NETH);
+		case GF_CHAOS:		return (TERM_MULTI);
+		case GF_DISENCHANT:	return (TERM_DISE);
+		case GF_NEXUS:		return (TERM_NEXU);
+		case GF_CONFUSION:	return (TERM_CONF);
+		case GF_SOUND:		return (TERM_SOUN);
+		case GF_SHARDS:		return (TERM_SHAR);
+		case GF_FORCE:		return (TERM_FORC);
+		case GF_INERTIA:	return (TERM_INER);
+		case GF_GRAVITY:	return (TERM_GRAV);
+		case GF_TIME:		return (TERM_TIME);
+		case GF_LITE_WEAK:	return (TERM_LITE);
+		case GF_LITE:		return (TERM_LITE);
+		case GF_DARK_WEAK:	return (TERM_DARKNESS);
+		case GF_DARK:		return (TERM_DARKNESS);
+		case GF_PLASMA:		return (TERM_PLAS);
+		case GF_METEOR:		return (TERM_METEOR);
+		case GF_ICE:		return (TERM_ICE);
+		case GF_INFERNO: case GF_DETONATION:
+		case GF_ROCKET:		return (TERM_DETO);
+		case GF_NUKE:		return (TERM_NUKE);
+		case GF_DISINTEGRATE:   return (TERM_DISI);
+		case GF_PSI:		return (TERM_PSI);
+		/* new spell - the_sandman */
+		case GF_CURSE:		return (TERM_CURSE);
+		case GF_OLD_DRAIN:	return (TERM_DARKNESS);
+		/* Druids stuff */
+		case GF_HEALINGCLOUD:	return (TERM_LITE);//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
+		case GF_WATERPOISON:	return (TERM_COLD);//return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
+		case GF_ICEPOISON:	return (TERM_SHAR);//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
+		/* To remove some hacks? */
+		case GF_THUNDER:	return (TERM_THUNDER);
+		case GF_ANNIHILATION:	return (TERM_ANNI);
+	}
+
+	/* Standard "color" */
+	return (TERM_WHITE);
+}
+#endif
 
 /*
  * Decreases players hit points and sets death flag if necessary

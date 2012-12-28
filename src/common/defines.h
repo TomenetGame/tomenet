@@ -41,7 +41,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		5
 #define VERSION_PATCH		1
-#define VERSION_EXTRA		1
+#define VERSION_EXTRA		2
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -71,7 +71,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG	"a"
+#define CLIENT_VERSION_TAG	"b"
 
 /* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
@@ -6097,6 +6097,8 @@ extern int PlayerUID;
 
 /*** Color constants ***/
 
+/* New in 4.5.1.2: Support 100% client-side animated spellcasting - C. Blue */
+#define EXTENDED_TERM_COLOURS
 
 /*
  * Angband "attributes" (with symbols, and base (R,G,B) codes)
@@ -6134,16 +6136,51 @@ extern int PlayerUID;
 #define TERM_LITE	25	/* similar to sound */
 #define TERM_DARKNESS	26	/* similar to acid */
 
-#define TERM_SHIELDM	27	/* 64: mana shield */
-#define TERM_SHIELDI	28	/* 128: invulnerability */
+#define TERM_SHIELDM	27	/* mana shield */
+#define TERM_SHIELDI	28	/* invulnerability */
+
+#ifdef EXTENDED_TERM_COLOURS
+ #define TERM_CURSE	29
+ #define TERM_ANNI	30
+#endif
 
 #define TERM_HALF	31	/* only the brighter colours */
 
-#define TERM_BNW	0x20	/* 32: black & white MASK, for admin wizards */
-#define TERM_PVP	0x40	/* 64: black & red MASK, for active PvP-hostility (or stormbringer) */
+#ifdef EXTENDED_TERM_COLOURS
+ #define TERM_OLD_BNW	0x20	/* 32: black & white MASK, for admin wizards */
+ #define TERM_OLD_PVP	0x40	/* 64: black & red MASK, for active PvP-hostility (or stormbringer) */
 
-/* Reserved attr values - do not exceed */
-#define TERM_RESERVED	0x80	/* 128 */
+ #define TERM_PSI	32
+ #define TERM_NEXU	33
+ #define TERM_NETH	34
+ #define TERM_DISE	35
+ #define TERM_INER	36
+ #define TERM_FORC	37
+ #define TERM_GRAV	38
+ #define TERM_TIME	39
+ #define TERM_METEOR	40
+ #define TERM_MANA	41
+ #define TERM_DISI	42
+ #define TERM_WATE	43
+ #define TERM_ICE	44
+ #define TERM_PLAS	45
+ #define TERM_DETO	46
+ #define TERM_NUKE	47
+ #define TERM_UNBREATH	48
+ #define TERM_HOLYORB	49
+ #define TERM_HOLYFIRE	50
+ #define TERM_HELLFIRE	51
+ #define TERM_THUNDER	52
+
+ #define TERM_BNW	0x40	/* 64: black & white MASK, for admin wizards */
+ #define TERM_PVP	0x80	/* 128: black & red MASK, for active PvP-hostility (or stormbringer) */
+#else
+ #define TERM_BNW	0x20	/* 32: black & white MASK, for admin wizards */
+ #define TERM_PVP	0x40	/* 64: black & red MASK, for active PvP-hostility (or stormbringer) */
+
+ /* Reserved attr values - do not exceed */
+ #define TERM_RESERVED	0x80	/* 128 */
+#endif
 
 
 /*** Sound constants ***/

@@ -54,8 +54,7 @@
  */
 int color_char_to_attr(char c)
 {
-	switch (c)
-	{
+	switch (c) {
 		case 'd': return (TERM_DARK);
 		case 'w': return (TERM_WHITE);
 		case 's': return (TERM_SLATE);
@@ -82,13 +81,15 @@ int color_char_to_attr(char c)
 		case 'h': return (TERM_HALF);
 		case 'm': return (TERM_MULTI);
 		case 'L': return (TERM_LITE);
-		
+
 		case 'C': return (TERM_CONF);
 		case 'S': return (TERM_SOUN);
 		case 'H': return (TERM_SHAR);
 		case 'A': return (TERM_DARKNESS);
 		case 'M': return (TERM_SHIELDM);
 		case 'I': return (TERM_SHIELDI);
+
+		/* maybe TODO: add EXTENDED_TERM_COLOURS here too */
 	}
 
 	return (-1);
@@ -100,8 +101,7 @@ int color_char_to_attr(char c)
  */
 char color_attr_to_char(int a)
 {
-	switch (a)
-	{
+	switch (a) {
 		case TERM_DARK: return 'd';
 		case TERM_WHITE: return 'w';
 		case TERM_SLATE: return 's';
@@ -128,16 +128,39 @@ char color_attr_to_char(int a)
 		case TERM_ELEC: return 'e';
 		case TERM_COLD: return 'c';
 		case TERM_LITE: return 'L';
-		
+
 		case TERM_CONF: return 'C';
 		case TERM_SOUN: return 'S';
 		case TERM_SHAR: return 'H';
 		case TERM_DARKNESS: return 'A';
 		case TERM_SHIELDM: return 'M';
 		case TERM_SHIELDI: return 'I';
+
+		/* maybe TODO: add EXTENDED_TERM_COLOURS here too */
 	}
 
 	return 'w';
+}
+
+byte mh_attr(int max) {
+        switch (randint(max)) {
+                case  1: return (TERM_RED);
+                case  2: return (TERM_GREEN);
+                case  3: return (TERM_BLUE);
+                case  4: return (TERM_YELLOW);
+                case  5: return (TERM_ORANGE);
+                case  6: return (TERM_VIOLET);
+                case  7: return (TERM_L_RED);
+                case  8: return (TERM_L_GREEN);
+                case  9: return (TERM_L_BLUE);
+                case 10: return (TERM_UMBER);
+                case 11: return (TERM_L_UMBER);
+                case 12: return (TERM_SLATE);
+                case 13: return (TERM_WHITE);
+                case 14: return (TERM_L_WHITE);
+                case 15: return (TERM_L_DARK);
+        }
+        return (TERM_WHITE);
 }
 
 /*

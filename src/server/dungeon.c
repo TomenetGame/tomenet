@@ -795,8 +795,9 @@ static void process_effects(void)
  #endif
 #endif
 
-#ifdef ANIMATE_EFFECTS
- #ifdef FREQUENT_EFFECT_ANIMATION
+#ifndef EXTENDED_TERM_COLOURS
+ #ifdef ANIMATE_EFFECTS
+  #ifdef FREQUENT_EFFECT_ANIMATION
 		/* hack: animate the effect! Note that this is independant of the effect interval,
 		   as opposed to the other animation code below. - C. Blue */
 		if (!(turn % (cfg.fps / 5)) && e_ptr->time && spell_color_animation(e_ptr->type))
@@ -806,6 +807,7 @@ static void process_effects(void)
 				if (!in_bounds2(wpos, j, i)) continue;
 				everyone_lite_spot(wpos, j, i);
 			}
+  #endif
  #endif
 #endif
 
@@ -885,13 +887,15 @@ static void process_effects(void)
 						who = PROJECTOR_PLAYER;
 					}
 
-#ifdef ANIMATE_EFFECTS
- #ifndef FREQUENT_EFFECT_ANIMATION
+#ifndef EXTENDED_TERM_COLOURS
+ #ifdef ANIMATE_EFFECTS
+  #ifndef FREQUENT_EFFECT_ANIMATION
 					/* C. Blue - hack: animate effects inbetween
 					   ie allow random changes in spell_color().
 					   Note: animation speed depends on effect interval. */
 					if (spell_color_animation(e_ptr->type))
 					    everyone_lite_spot(wpos, j, i);
+  #endif
  #endif
 #endif
 				} else {

@@ -772,6 +772,7 @@ extern cptr shortVersion;
 extern void version_build(void);
 extern int find_realm(int book);
 extern char color_attr_to_char(int a);
+extern byte mh_attr(int max);
 
 /* common/files.c */
 int local_file_init(int ind, unsigned short fnum, char *fname);

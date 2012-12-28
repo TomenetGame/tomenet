@@ -2043,7 +2043,10 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 			(*ap) = rand_int(2) ? TERM_L_DARK : TERM_WHITE;
 		}
 #else /* handle client-side -> the usual fast flickering, same as dungeon wizards */
-		(*ap) = TERM_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
+		if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0))
+			(*ap) = TERM_OLD_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
+		else
+			(*ap) = TERM_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
 #endif
 	}
 	/* Normal monster (not "clear" in any way) */
@@ -2124,7 +2127,7 @@ static byte player_color(int Ind)
 
 	/* Ghosts are black */
 	if (p_ptr->ghost) {
-		if (p_ptr->admin_wiz) return TERM_L_DARK + TERM_BNW;
+		if (p_ptr->admin_wiz) return TERM_L_DARK + (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW);
 		return TERM_L_DARK;
 	}
 
@@ -2170,7 +2173,7 @@ static byte player_color(int Ind)
 //	if ((p_ptr->tim_manashield > 10)) return p_ptr->cp_ptr->color + TERM_SHIELDM;
 //	if ((p_ptr->invuln > 5)) return p_ptr->cp_ptr->color + TERM_SHIELDI;
 	if (p_ptr->tim_manashield > 10) return TERM_SHIELDM;
-	
+
 #if 0 /* shouldn't be necessary - mikaelh */
 //the_sandman: some redudant stuff, mebbe needs to be added here as the last colour possible
 	if (p_ptr->body_monster) {
@@ -2220,7 +2223,7 @@ static byte player_color(int Ind)
 
 	/* Holy Martyr or shadow running */
 	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
-	if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz) pcolor += TERM_BNW;
+	if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz) pcolor += is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
 
 	/* Team colours have highest priority */
 	if (p_ptr->team) {
@@ -3188,11 +3191,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* part 'A' end */
 
 			/* TERM_BNW if blood bonded - mikaelh */
-			if (check_blood_bond(Ind, Ind2)) a |= TERM_BNW;
+			if (check_blood_bond(Ind, Ind2)) a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
 			/* new: renamed TERM_RLE (unused) to TERM_PVP for use for this: - C. Blue */
 			else if (is_newer_than(&p_ptr->version, 4, 4, 2, 0, 0, 0) &&
 			    (check_hostile(Ind, Ind2) || p2_ptr->stormbringer))
-				a |= TERM_PVP;
+				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_PVP : TERM_PVP;
 
 			if (((p2_ptr->chp * 95) / (p2_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) {
 				/* part 'A' used to be here */
@@ -3486,7 +3489,7 @@ void lite_spot(int Ind, int y, int x)
 
 			/* Holy Martyr */
 			/* Admin wizards sometimes flicker black & white (TERM_BNW) */
-			if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz) a += TERM_BNW;
+			if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz) a += is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
 
 			if (p_ptr->team) {
 				if (magik(25)) { /* chance for showing him/her which team (s)he's in - mikaelh */

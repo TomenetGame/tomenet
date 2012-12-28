@@ -30,6 +30,7 @@ extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern int color_char_to_attr(char c);
 extern char color_attr_to_char(int a);
 extern void version_build(void);
+extern byte mh_attr(int max);
 
 
 /* common/files.c */
@@ -1311,7 +1312,9 @@ extern void teardown_timer(void);
 
 /* spells1.c */
 extern byte spell_color(int type);
+#ifndef EXTENDED_TERM_COLOURS
 extern bool spell_color_animation(int type);
+#endif
 extern void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool disturb);
 extern void take_sanity_hit(int Ind, int damage, cptr hit_from);
 extern s16b poly_r_idx(int r_idx);

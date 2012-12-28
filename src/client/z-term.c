@@ -5,9 +5,8 @@
 
 #include "z-term.h"
 
-#include "../common/z-virt.h"
-
-#include "../common/angband.h"
+//#include "../common/z-virt.h"
+#include "angband.h"
 
 /* evil test */
 extern client_opts c_cfg;
@@ -533,7 +532,17 @@ static char get_shimmer_color()
 
 byte flick_colour(byte attr){
 	byte flags = attr;//(remember flags) obsolete: & 0xE0;
-	attr = attr & 0x1F; /* cut flags off actual colour */
+	if (!is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) {
+		if (flags & TERM_OLD_PVP) {
+			flags &= ~TERM_OLD_PVP;
+			flags |= TERM_PVP;
+		}
+		if (flags & TERM_OLD_BNW) {
+			flags &= ~TERM_OLD_BNW;
+			flags |= TERM_BNW;
+		}
+	}
+	attr = attr & 0x3F; /* cut flags off actual colour */
 
 	/* additional flickering from 'black'n'white' flag? */
 	if (flags & TERM_BNW) {
@@ -581,43 +590,77 @@ byte flick_colour(byte attr){
 	switch(attr) {
 		case TERM_MULTI:
 			return(randint(15));
-			break;	/* unnecessary breaks ;) */
 		case TERM_FIRE:
 			return(randint(7)>6?TERM_YELLOW:rand_int(3)>1?TERM_RED:TERM_L_RED);
-			break;
 		case TERM_POIS:
 			return(randint(5)>3?TERM_GREEN:TERM_L_GREEN);
-			break;
 		case TERM_COLD:
 			return(randint(5)>3?TERM_WHITE:TERM_L_WHITE);
-			break;
 		case TERM_ELEC:
 			return(randint(7)>6?TERM_WHITE:(randint(4)==1?TERM_L_BLUE:TERM_BLUE));
-			break;
 		case TERM_HALF:
 			return(get_shimmer_color());
-			break;
 		case TERM_ACID:
 			return(randint(5)>4?TERM_L_DARK:TERM_SLATE);
-			break;
 		case TERM_CONF:
 			return(randint(5)>3?TERM_UMBER:TERM_L_UMBER);
-			break;
 		case TERM_SOUN:
 			return(randint(5)>3?TERM_L_UMBER:TERM_YELLOW);
-			break;
 		case TERM_SHAR:
 			return(randint(5)>3?TERM_UMBER:TERM_SLATE);
-			break;
 		case TERM_LITE:
 			return(randint(5)>3?TERM_ORANGE:TERM_YELLOW);
-			break;
 		case TERM_DARKNESS:
 			return(randint(5)>4?TERM_SLATE:TERM_L_DARK);
-			break;
 		/* NOTE: TERM_SHAL_LAVA, TERM_DEEP_LAVA, TERM_SHAL_WATER,
 		 * TERM_DEEP_WATER would be nice for terrains  - Jir - */
-
+		/* EXTENDED_TERM_COLOURS: - C. Blue */
+		case TERM_CURSE:
+			return(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+		case TERM_ANNI:
+			return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+		case TERM_PSI:
+			return (randint(5)!=1?(rand_int(2)?(rand_int(2)?TERM_YELLOW:TERM_L_BLUE):127):TERM_WHITE);
+		case TERM_NEXU:
+			return (randint(5)<3?TERM_L_RED:TERM_VIOLET);
+		case TERM_NETH:
+			return (randint(4)==1?TERM_L_GREEN:TERM_L_DARK);
+		case TERM_DISE:
+			return (randint(4)!=1?TERM_ORANGE:TERM_BLUE);
+		case TERM_INER:
+			return (randint(5)<3?TERM_SLATE:TERM_L_WHITE);
+		case TERM_FORC:
+			return (randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
+		case TERM_GRAV:
+			return (randint(3)==1?TERM_L_UMBER:TERM_UMBER);
+		case TERM_TIME:
+			return (randint(3)==1?TERM_GREEN:TERM_L_BLUE);
+		case TERM_METEOR:
+			return (randint(3)==1?TERM_RED:TERM_UMBER);
+                case TERM_MANA:
+            		return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
+		case TERM_WATE:
+			return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+		case TERM_ICE:
+			return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
+		case TERM_PLAS:
+			return (randint(5)==1?TERM_RED:TERM_L_RED);
+		case TERM_DETO:
+			return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
+		case TERM_DISI:
+			return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_VIOLET));
+		case TERM_NUKE:
+			return (mh_attr(2));
+		case TERM_UNBREATH:
+			return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
+		case TERM_HOLYORB:
+			return (randint(6)==1?TERM_ORANGE:TERM_L_DARK);
+		case TERM_HOLYFIRE:
+			return (randint(3)!=1?TERM_ORANGE:(randint(2)==1?TERM_YELLOW:TERM_WHITE));
+		case TERM_HELLFIRE:
+			return (randint(5)==1?TERM_RED:TERM_L_DARK);
+		case TERM_THUNDER:
+			return (randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
 
 		default:
 			return(attr);

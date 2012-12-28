@@ -5448,6 +5448,10 @@ int Send_line_info(int ind, int y)
 	char c;
 	byte a;
 	int Ind2 = 0;
+#ifdef EXTENDED_TERM_COLOURS
+	bool old_colours = is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0);
+	int a_c;
+#endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5473,6 +5477,14 @@ int Send_line_info(int ind, int y)
 		c = p_ptr->scr_info[y][x].c;
 		a = p_ptr->scr_info[y][x].a;
 
+#ifdef EXTENDED_TERM_COLOURS
+		if (old_colours) {
+		    a_c = a & ~(TERM_BNW | TERM_PVP);
+		    if (a_c == 29 || a_c == 30 || a_c >= 32)
+			a = TERM_WHITE; /* use white to indicate that client needs updating */
+		}
+#endif
+
 		/* Start looking here */
 		x1 = x + 1;
 
@@ -5481,7 +5493,7 @@ int Send_line_info(int ind, int y)
 
 		/* Count repetitions of this grid */
 		while (p_ptr->scr_info[y][x1].c == c &&
-			p_ptr->scr_info[y][x1].a == a && x1 < 80)
+			p_ptr->scr_info[y][x1].a == a && x1 < 80) //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
 		{
 			/* Increment count and column */
 			n++;
@@ -5525,7 +5537,7 @@ int Send_line_info(int ind, int y)
 			/* Normal, single grid */
 			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* Remove 0x40 (TERM_PVP) if the client is old */
-				Packet_printf(&connp->c, "%c%c", c, a & ~0x40); 
+				Packet_printf(&connp->c, "%c%c", c, a & ~0xC0);
 			}
 			else
 			{
@@ -5545,7 +5557,7 @@ int Send_line_info(int ind, int y)
 			{
 				if (!is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a & ~0x40);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a & ~0xC0);
 				}
 				else
 				{
@@ -5566,7 +5578,7 @@ int Send_line_info(int ind, int y)
 
 	/* Hack -- Prevent buffer overruns by flushing after each line sent */
 	/* Send_reliable(Players[ind]->conn); */
-	
+
 	return 1;
 }
 
@@ -5597,7 +5609,7 @@ int Send_mini_map(int ind, int y, byte *sa, char *sc)
 	if ((Ind2 = get_esp_link(ind, LINKF_VIEW, &p_ptr2)))
 		connp2 = Conn[p_ptr2->conn];
 #endif
-	
+
 	/* Packet header */
 	Packet_printf(&connp->c, "%c%hd", PKT_MINI_MAP, y);
      	if (Ind2) Packet_printf(&connp2->c, "%c%hd", PKT_MINI_MAP, y);
@@ -5660,7 +5672,7 @@ int Send_mini_map(int ind, int y, byte *sa, char *sc)
 			/* Normal, single grid */
 			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* Remove 0x40 (TERM_PVP) if the client is old */
-				Packet_printf(&connp->c, "%c%c", c, a & ~0x40); 
+				Packet_printf(&connp->c, "%c%c", c, a & ~0xD0);
 			}
 			else
 			{
@@ -5680,7 +5692,7 @@ int Send_mini_map(int ind, int y, byte *sa, char *sc)
 			{
 				if (!is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a & ~0x40);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a & ~0xD0);
 				}
 				else
 				{
@@ -6205,6 +6217,7 @@ int Send_special_line(int ind, s32b max, s32b line, byte attr, cptr buf)
 	case TERM_DARKNESS:	xattr = 'A';break;
 	case TERM_SHIELDM:	xattr = 'M';break;
 	case TERM_SHIELDI:	xattr = 'I';break;
+	//TODO: implement/watch client version for EXTENDED_TERM_COLOURS
 	}
 
 	strncpy(temp, buf, ONAME_LEN - 4);
