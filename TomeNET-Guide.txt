@@ -4170,7 +4170,7 @@ dungeon or tower. Those have no further functionality and are coloured grey
 (make sure you don't confuse them with an ironman dungeon accidentally).
 
 There are rumours about a dungeon that will never let anyone escape from it
-again, ever.
+again, ever. A death fate with a dark, flashing staircase of no return.
 
 
 Overview:
@@ -4538,7 +4538,7 @@ NOTE: Minimum level requirements for entering are usually disabled in normal
 Dungeon                        |     Depth* / Level    | Min. required player
                                |  (*relative to Lv.1)  |   level to enter(**)
 -------------------------------+-----------------------+---------------------
-Death Fate                     |    50..  50/  1..1    |        1
+Death Fate (***)               |    50..  50/  1..1    |        1
 The Halls of Mandos            |    50..4900/  1..98   |        1
 The Orc Cave                   |   500..1150/ 10..23   |        3
 Mirkwood                       |   550..1700/ 11..34   |        5
@@ -4557,7 +4557,7 @@ The Sacred Land Of Mountains   |  2000..2250/ 40..45   |       20
 Erebor                         |  2500..3050/ 50..61   |       35
 Dol Guldur                     |  2850..3550/ 57..71   |       28
 Mount Doom                     |  4250..5000/ 85..100  |       38
-Nether Realm                   |  8300..9800/166..196  |       40 (***)
+Nether Realm                   |  8300..9800/166..196  |       40 (****)
 
 (**) Minimum level requirements are usually disabled, so you can actually
 enter any dungeon you like at any character level.
@@ -4570,7 +4570,11 @@ list, and usually have no minimum required character level to enter.
 There may also be certain special dungeons, related to events or jails, that
 show up under according names in the list.
 
-(***) Nether Realm details:
+(***) Death Fate:
+You cannot escape this dungeon, ever. Any character that enters it is fated to
+die to monsters (unlikely) or starvation (very likely).
+
+(****) Nether Realm details:
 -To enter the Nether Realm a player must carry the 'King'/'Queen' title,
  acquired by beating Morgoth, Lord of Darkness.
 -Each floor in the Nether Realm gives a +2% bonus to experience from monster
