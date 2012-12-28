@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. December 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. December 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.1a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -40,7 +40,7 @@ Contents
     (1.2)   What is a rogue-like game?
     (1.2a)  Where do I find more information about rogue-like games?
     (1.3)   Goal and progress of TomeNET players
-    (1.3a)  Morgoth and his Nazgul
+    (1.3a)  Sauron, Morgoth and the Nazgul
     (1.3b)  How to encounter the final boss: Morgoth, Lord of Darkness
 (2) Installation & setup
     (2.1)   Installing TomeNET
@@ -1415,7 +1415,7 @@ dangers but also fantastic treasure. Players on the same server can also play
 together by forming parties and sharing their experience! Players will acquire
 new ranks as their experience grows, allowing them to learn new abilities and
 to become stronger. Morgoth is said not to show up until his servant Sauron,
-the sorceror has been killed. (See 1.5 for more information about Morgoth.)
+the Sorceror has been killed. (See 1.5 for more information about Morgoth.)
 
 Players who defeat Morgoth, become 'winners' and get the title of King and
 Queen respectively, or Emperor/Empress if their character is of unworldly or
@@ -1427,8 +1427,8 @@ to '<charname>-victory-screenshot.xhtml'.
 (You can view xhtml files in most webbrowsers.)
 
 
-(1.3a) Morgoth and his Nazgul
------------------------------
+(1.3a) Sauron, Morgoth and the Nazgul
+-------------------------------------
 Morgoth, Lord of Darkness commands nine Ring Wraiths, called 'Nazgul'.
 These corrupted souls of former ring-wearers are named..
 Uvatha the Horseman, Adunaphel the Quiet, Akhorahil the Blind,
@@ -1489,14 +1489,23 @@ will always provide invisibility (5.16) and experience drain (5.19). They are
 also always heavily cursed, cannot be dropped while cursed, and can re-curse
 themselves (5.14).
 
+In order to find Morgoth, players have to defeat Sauron, the Sorceror first.
+For more information about encountering Sauron and Morgoth, see next paragraph
+(1.3b).
+It is noteworthy that Sauron is able to boost his own spell-casting speed for
+as long as he finds himself or the area around his target blocked by Glyphs of
+Warding (also called Runes of Protection).
+Also, he might try to avoid going into melee range of players who he deems good
+at close quarters combat. In general, do not underestimate Sauron's power!
+
 
 (1.3b) How to encounter the final boss: Morgoth, Lord of Darkness
 -----------------------------------------------------------------
 -Morgoth is found only at dungeon level 100 or deeper.
--He won't show up until you killed Sauron, The Sorceror (who usually appears
+-He won't show up until you killed Sauron, the Sorceror (who usually appears
  at dungeon level 99).
 -Morgoth and Sauron do not neccessarily spawn on each fitting dungeon level,
- sometimes you have to search for him, like for all other monsters/uniques.
+ sometimes you have to search for them, like for all other monsters/uniques.
 -If a player who hasn't killed Sauron yet or who has already beaten Morgoth
  enters a dungeon level where Morgoth is currently on, Morgoth will instantly
  teleport to a different dungeon level.
