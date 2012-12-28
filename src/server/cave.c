@@ -2133,7 +2133,7 @@ static byte player_color(int Ind)
 #ifdef EXTENDED_TERM_COLOURS
 			return TERM_L_DARK + (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW);
 #else
-			return TERM_L_DARK + TERM_BNW);
+			return TERM_L_DARK + TERM_BNW;
 #endif
 		return TERM_L_DARK;
 	}
