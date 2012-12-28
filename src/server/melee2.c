@@ -2000,7 +2000,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	summon_test = summon_possible(wpos, ys, xs);
 #ifdef SAURON_ANTI_GLYPH
 	if (m_ptr->r_idx == 860 && summon && !summon_test && m_ptr->hp < m_ptr->maxhp) {
-		base_r_ptr->freq_spell = base_r_ptr->freq_innate = 67;
+		base_r_ptr->freq_spell = base_r_ptr->freq_innate = SAURON_SPELL_BOOST;
 		if (!m_ptr->extra) s_printf("SAURON: boost (glyph/nospace summon).\n");
 		m_ptr->extra = 5; /* stay boosted for 5 turns at least */
 	}
@@ -7386,8 +7386,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			}
 #ifdef SAURON_ANTI_GLYPH
 			/* Special power boost for Sauron if he gets hindered by glyphs */
-			else if (m_ptr->r_idx == 860 && base_r_ptr->freq_innate != 67) {
-				base_r_ptr->freq_spell = base_r_ptr->freq_innate = 67;
+			else if (m_ptr->r_idx == 860 && base_r_ptr->freq_innate != SAURON_SPELL_BOOST) {
+				base_r_ptr->freq_spell = base_r_ptr->freq_innate = SAURON_SPELL_BOOST;
 				s_printf("SAURON: boost (glyph move).\n");
 			}
 		} else if (do_move && m_ptr->r_idx == 860 &&
@@ -7421,8 +7421,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			}
 #ifdef SAURON_ANTI_GLYPH
 			/* Special power boost for Sauron if he gets hindered by glyphs */
-			else if (m_ptr->r_idx == 860 && base_r_ptr->freq_innate != 67) {
-				base_r_ptr->freq_spell = base_r_ptr->freq_innate = 67;
+			else if (m_ptr->r_idx == 860 && base_r_ptr->freq_innate != SAURON_SPELL_BOOST) {
+				base_r_ptr->freq_spell = base_r_ptr->freq_innate = SAURON_SPELL_BOOST;
 				s_printf("SAURON: boost (glyph move).\n");
 			}
 		} else if (do_move && m_ptr->r_idx == 860 &&

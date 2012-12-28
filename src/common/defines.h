@@ -770,6 +770,8 @@
    by giving him faster cast rate while blocked by glyphs. */
 #define SAURON_ANTI_GLYPH
 
+/* Set Sauron's boost factor (1/n chance to cast spells) [67,75] */
+#define SAURON_SPELL_BOOST	67
 
 /* Auto-retaliation: */
 /* No class restriction; limit to non-escape mechanisms. */
