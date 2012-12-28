@@ -4597,7 +4597,7 @@ leaving the level, waiting for a little bit, then entering it again).
 Of course you can only find an artifact if it is currently not on the list of
 known artifacts ie if noone else is currently in possession of it.
 Even if you don't get an artifact, some of the dungeon bosses have 'DROP_GREAT'
-flagged, which means you will usually get especially good loot from them.
+flag, which means you will usually get especially good loot from them.
 
 Here is a list of all dungeon bosses and the artifacts they are guarding:
 (Some names have been shortened to fit.)
