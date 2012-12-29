@@ -3308,6 +3308,7 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->regenerate)
 		regen_amount = regen_amount * 2;
 
+	/* Health skill improves regen_amount */
 	if (minus_health)
 		regen_amount = regen_amount * 3 / 2;
 
@@ -3318,14 +3319,14 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->tim_regen) regen_amount += p_ptr->tim_regen_pow;
 
 	/* Poisoned or cut yields no healing */
-	if (p_ptr->poisoned) regen_amount = 0;
-	if (p_ptr->cut) regen_amount = 0;
+	if (p_ptr->poisoned || p_ptr->cut || p_ptr->sun_burn)
+		regen_amount = 0;
 
 	/* But Biofeedback always helps */
 	if (p_ptr->biofeedback) regen_amount += randint(0x400) + regen_amount;
 
 	/* Regenerate Hit Points if needed */
-	if (p_ptr->chp < p_ptr->mhp)
+	if (p_ptr->chp < p_ptr->mhp && regen_amount)
 		regenhp(Ind, regen_amount);
 
 	/* Undiminish healing penalty in PVP mode */

@@ -4133,8 +4133,6 @@ void calc_boni(int Ind)
 		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED)) {
 			p_ptr->drain_life++;
 			p_ptr->sun_burn = TRUE;
-			if (!p_ptr->body_monster) /* only if not in vampire bat form */
-				p_ptr->regenerate = FALSE; /* wow - cancel out regen! */
 		}
 	}
 
