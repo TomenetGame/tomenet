@@ -2239,6 +2239,7 @@ void client_init(char *argv1, bool skip)
 	        c_cfg.big_map = TRUE;
 		Client_setup.options[43] = TRUE;
 		check_immediate_options(43, TRUE, FALSE);
+		(void)options_dump("user.prf");
         }
 #endif
 
