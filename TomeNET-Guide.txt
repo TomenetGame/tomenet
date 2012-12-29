@@ -424,8 +424,8 @@ V       V       enter 'cloaking mode'. This can only be used by rogues.
 A       A       activate an item. Usually an artifact, a dragon scale mail or
                 a ring of polymorphing (shapechanging).
 T or +  +       tunnel (dig) through an obstacle or a wall.
-R       R       rest. Your hit points and mana will regenerate faster while
-                resting.
+R       R       rest. Your hit points, mana and stamina will regenerate faster
+                while resting.
 o       o       open something.
 c       c       close something.
 c   while in a store:
