@@ -747,10 +747,11 @@ They all start with a slash '/' hence they're called slash commands:
             Enables or disables fire-till-kill mode (see (5.2a)).
             Alternatively, you can toggle it in 'm' menu.
 /guild_adder <name of another player>
-            Allows that player permanently to add other players to the guild too.
-            Use the command a second time to revoke his rights again.
+            Allows that player permanently to add other players to the guild
+            too. Use the command a second time to revoke his rights again.
 /guild_cfg [<flag> [<value]]
-            Shows you your current guild configuration and allows you to change it.
+            Shows you your current guild configuration and allows you to change
+            it.
 /hou        Displays your houses, same as ~6.
  (/house)
 /ig <player name>
@@ -761,6 +762,10 @@ They all start with a slash '/' hence they're called slash commands:
             player's name in the player overview screen which can be invoked
             by pressing '@', indicating that this player currently cannot read
             normal chat messages.)
+/info <msg> Sets an informative message that is displayed to other players in
+            '@' screen, similar to an afk-message, except this message is
+            displayed when you're not afk.
+            For example do:  /info Want to team up for Mordor!
 /lite a..w  Refills your light source with an item from your inventory.
             Usually it's easier to just press 'F' instead.
 /mar        Tells a prayer-user if he may use the prayer 'Martyrdom'.
