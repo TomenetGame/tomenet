@@ -2944,7 +2944,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 		}
 
 		/* Also use for DUN_xx dungeon-restricted monsters */
-		if (r_ptr->restrict_dun && r_ptr->restrict_dun != d_ptr->type) return FALSE;
+		if (r_ptr->restrict_dun && (!d_ptr || r_ptr->restrict_dun != d_ptr->type)) return FALSE;
 
 		/* Couple of Nether Realm-only monsters hardcoded here */
 		if ((r_ptr->flags8 & RF8_NETHER_REALM) && (dlev < 166))
