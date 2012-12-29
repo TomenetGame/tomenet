@@ -57,6 +57,14 @@ static void cloud_erase(int i);
 #define CLOUD_YS(cx1, cy1, cx2, cy2, cdsum) ((cy1 - ((cdsum * 87) / 200)) / MAX_HGT)
 #define CLOUD_XD(cx1, cy1, cx2, cy2, cdsum) ((cx2 + (cdsum - (cx2 - cx1)) / 2) / MAX_WID)
 #define CLOUD_YD(cx1, cy1, cx2, cy2, cdsum) ((cy2 + ((cdsum * 87) / 200)) / MAX_HGT)
+
+/* Enable wind in general? */
+#define WEATHER_WINDS
+
+/* Activate hack that disables all cloud movement,
+   as a workaround for the 'eternal rain' bug for now - C. Blue */
+#define WEATHER_NO_CLOUD_MOVEMENT
+
  #else
 
 static void process_weather_control(void);
@@ -7346,13 +7354,15 @@ static void process_wild_weather() {
    clients via buffered direction & duration.)
    New note: Negative values should probably work too (inverse direction). */
 static void cloud_set_movement(int i) {
+#ifdef WEATHER_NO_CLOUD_MOVEMENT
 { /* hack: Try to fix the eternal rain bug:
      Disable cloud movement for now - C. Blue */
        cloud_xm100[i] = 0;
        cloud_ym100[i] = 0;
-       cloud_mdur[i] = 300;
+       cloud_mdur[i] = 30 + rand_int(300);
        return;
 }
+#endif
 
 #ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
  #if 0
@@ -7367,11 +7377,11 @@ static void cloud_set_movement(int i) {
  #endif
 #else
 	if (rand_int(2)) {
-		/* no wind */
+		/* no pseudo-wind */
 		cloud_xm100[i] = 0;
 		cloud_ym100[i] = 0;
 	} else {
-		/* wind */
+		/* pseudo-wind */
 		cloud_xm100[i] = randint(100);
 		cloud_ym100[i] = randint(100);
 	}
@@ -7575,9 +7585,12 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 #endif
 #endif
 
-#if 0 /* no winds */
-				w_ptr->weather_wind = 0; /* todo: change =p (implement winds, actually) */
+#ifndef WEATHER_WINDS /* no winds */
+				w_ptr->weather_wind = 0; /* todo: change =p (implement winds, actually -- currently we're
+				                            using pseudo-winds by just setting random cloud movement - C. Blue */
+				w_ptr->weather_wind_vertical = 0;
 #else /* winds */
+ #ifndef WEATHER_NO_CLOUD_MOVEMENT /* Cloud movemenet is disabled as a workaround for the 'eternal rain' bug.. */
 				/* note- pretty provisional implementation, since winds shouldnt depend
 				   on cloud movement, but actually the other way round ;) This is merely
 				   so we get to see some wind already, and these 'winds' would also conflict
@@ -7589,10 +7602,40 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
 				if (cloud_ym100[i] > 40) w_ptr->weather_wind_vertical = 5 - (2 * ((cloud_ym100[i] - 40) / 21));
 				else if (cloud_ym100[i] < -40) w_ptr->weather_wind_vertical = 6 - (2 * ((-cloud_ym100[i] - 40) / 21));
 				else w_ptr->weather_wind_vertical = 0;
+ #else /* ..so a little hack is needed to bring back 'windy' weather^^ - C. Blue */
+				/* hack - randomly assume some winds, that stay sufficiently consistent */
+				{
+					/* this should allow smooth/consistent winds over slight changes in a player's wilderness position: */
+					int seed = (y + x + ((int)((turn / (cfg.fps * 1200)) % 90))) / 3; /* hourly change */
+					switch (seed % 30) {
+					case 0: case 1: case 2: case 3:		w_ptr->weather_wind = 0; break;
+					case 4:	case 5:	case 6:			w_ptr->weather_wind = 5; break;
+					case 7:	case 8:				w_ptr->weather_wind = 3; break;
+					case 9:					w_ptr->weather_wind = 1; break;
+					case 10: case 11:			w_ptr->weather_wind = 3; break;
+					case 12: case 13: case 14:		w_ptr->weather_wind = 5; break;
+					case 15: case 16: case 17: case 18:	w_ptr->weather_wind = 0; break;
+					case 19: case 20: case 21:		w_ptr->weather_wind = 6; break;
+					case 22: case 23:			w_ptr->weather_wind = 4; break;
+					case 24:				w_ptr->weather_wind = 2; break;
+					case 25: case 26:			w_ptr->weather_wind = 4; break;
+					case 27: case 28: case 29:		w_ptr->weather_wind = 6; break;
+					}
+					w_ptr->weather_wind_vertical = 0;
+				}
+ #endif
 #endif
 
-				w_ptr->weather_intensity = (w_ptr->weather_type == 2) ? 5 : 8;
-				w_ptr->weather_speed = (w_ptr->weather_type == 2) ? 3 * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
+				w_ptr->weather_intensity =
+				    (w_ptr->weather_type == 2 && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
+				    5 : 8;
+				w_ptr->weather_speed =
+#if 1 /* correct! (this is a different principle than 'weather_intensity' above) */
+				    (w_ptr->weather_type == 2) ? 3 * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
+#else /* just for testing stuff */
+				    (w_ptr->weather_type == 2 && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
+				    3 * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
+#endif
 				break;
 			}
 		}
