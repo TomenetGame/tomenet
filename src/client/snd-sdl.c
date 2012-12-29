@@ -812,7 +812,17 @@ static void play_sound_weather(int event) {
 	if (event < 0 || event >= SOUND_MAX_2010) return;
 
 	/* Check there are samples for this event */
-	if (!samples[event].num) return;
+	if (!samples[event].num) {
+		/* stop previous weather sound */
+#if 0 /* stop apruptly */
+		if (weather_channel != -1) Mix_HaltChannel(weather_channel);
+#else /* fade out */
+		if (weather_channel != -1 &&
+		    Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
+			Mix_FadeOutChannel(weather_channel, 2000);
+#endif
+		return;
+	}
 
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
