@@ -2318,7 +2318,7 @@ void do_weather() {
 	static int weather_gen_ticks = 0, weather_ticks10 = 0;
 	static int weather_wind_ticks = 0, weather_speed_snow_ticks = 0, weather_speed_rain_ticks = 0; /* sub-ticks when weather really is processed */
 	bool wind_west_effective = FALSE, wind_east_effective = FALSE; /* horizontal movement */
-	bool gravity_effective = FALSE; /* vertical movement */
+	bool gravity_effective_rain = FALSE, gravity_effective_snow = FALSE; /* vertical movement */
 	bool redraw = FALSE;
 	int x, y, dx, dy, d; /* distance calculations (cloud centre) */
 	static int cloud_movement_ticks = 0, cloud_movement_lasttick = 0;
@@ -2509,20 +2509,20 @@ void do_weather() {
 		}
 	}
 	/* vertical movement: check whether elements are to be pulled by gravity this time */
-	weather_speed_snow_ticks++;
 	weather_speed_rain_ticks++;
+	weather_speed_snow_ticks++;
 
-	if (weather_speed_snow_ticks == weather_speed_snow) {
-		gravity_effective = TRUE;
-		weather_speed_snow_ticks = 0;
-	}
 	if (weather_speed_rain_ticks == weather_speed_rain) {
-		gravity_effective = TRUE;
+		gravity_effective_rain = TRUE;
 		weather_speed_rain_ticks = 0;
+	}
+	if (weather_speed_snow_ticks == weather_speed_snow) {
+		gravity_effective_snow = TRUE;
+		weather_speed_snow_ticks = 0;
 	}
 
 	/* nothing to do this time? - exit */
-	if (!gravity_effective && !wind_west_effective && !wind_east_effective)
+	if (!gravity_effective_rain && !gravity_effective_snow && !wind_west_effective && !wind_east_effective)
 		return;
 
 
@@ -2537,9 +2537,7 @@ void do_weather() {
 	for (i = 0; i < weather_elements; i++) {
 		/* restore old tile before moving the weather element */
 		/* if panel view was freshly updated from server then no need */
-		if (!weather_panel_changed &&
-		    ((weather_element_type[i] == 1 && !weather_speed_rain_ticks) ||
-		    (weather_element_type[i] == 2 && !weather_speed_snow_ticks))) {
+		if (!weather_panel_changed) {
 			/* only for elements within visible panel screen area */
 			if (weather_element_x[i] >= weather_panel_x &&
 			    weather_element_x[i] < weather_panel_x + screen_wid &&
@@ -2564,9 +2562,9 @@ void do_weather() {
 #endif
 
 		/* advance raindrops */
-		if (weather_element_type[i] == 1 && !weather_speed_rain_ticks) {
+		if (weather_element_type[i] == 1) {
 			/* perform movement (y:speed, x:wind) */
-			if (gravity_effective) weather_element_y[i]++;
+			if (gravity_effective_rain) weather_element_y[i]++;
 			if (wind_west_effective) weather_element_x[i]++;
 			else if (wind_east_effective) weather_element_x[i]--;
 
@@ -2600,11 +2598,11 @@ void do_weather() {
 		}
 		/* advance snowflakes - falling slowly (assumed weather_speed isn't
 		   set to silyl value 1 - well, maybe that could be a 'hail storm') */
-		else if (weather_element_type[i] == 2 && !weather_speed_snow_ticks) {
+		else if (weather_element_type[i] == 2) {
 			/* perform movement (y:speed, x:wind) */
-			if (gravity_effective) weather_element_y[i]++;
-			if (wind_west_effective) weather_element_x[i]++;
-			else if (wind_east_effective) weather_element_x[i]--;
+			if (gravity_effective_snow) weather_element_y[i]++;
+			if (wind_west_effective && !rand_int(weather_wind)) weather_element_x[i]++;
+			else if (wind_east_effective && !rand_int(weather_wind)) weather_element_x[i]--;
 
 			/* pac-man effect for leaving screen to the left/right */
 			if (weather_element_x[i] < 1) weather_element_x[i] = MAX_WID - 2;

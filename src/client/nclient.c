@@ -3705,7 +3705,6 @@ int Receive_weather(void)
 		if (weather_type % 10 == 2) weather_speed_snow = ws;
 		else if (weather_type % 10 == 1) weather_speed_rain = ws;
 	}
-
 #ifdef USE_SOUND_2010
 	/* Play overlay sound (if enabled) */
 	if (use_sound) {
