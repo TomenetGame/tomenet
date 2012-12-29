@@ -5578,10 +5578,10 @@ allow you to react more easily.
 
 Day/night change:
 In the game there is day and night. Vampires burn if they move around in day
-light without a protective wrapping or at least in bat form which has HP
-regeneration to counter the drain effect. Wanderers in the wilderness in turn
-would rather prefer day light in order to locate the entrance to that dungeon
-they are looking out for.
+light without either a protective wrapping or an item that provides resistance
+to light.
+Wanderers in the wilderness in turn would rather prefer day light in order to
+locate the entrance to that dungeon they are looking for.
 
 The in-game day time can be checked with /ex chat command too.
 Usually a whole day (day + night, ie full 24h in-game time cycle) will last for
@@ -9552,8 +9552,7 @@ Warrior is strongly recommended.
     Vampires start with a mummy wrapping, because it can protect them from the
     sunlight (press 'w' to wear it). If they are moving on the world surface
     (meaning not in a dungeon/tower) while it's day, the sun will burn them if
-    they don't resist light or wear a mummy wrapping. Hint: Polymorphing into
-    a vampire bat may improve hit point regeneration rate.
+    they don't resist light or wear a mummy wrapping.
     Vampires are good fighters and decent mages. However, they are unable to
     utilize magic of water or nature school. Neither can they make use of
     mimicry techniques or holy spells. They are unable to try and suppress
