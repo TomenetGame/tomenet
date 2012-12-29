@@ -766,6 +766,7 @@ They all start with a slash '/' hence they're called slash commands:
             '@' screen, similar to an afk-message, except this message is
             displayed when you're not afk.
             For example do:  /info Want to team up for Mordor!
+            If you type /info without a message, it clears your info message.
 /lite a..w  Refills your light source with an item from your inventory.
             Usually it's easier to just press 'F' instead.
 /mar        Tells a prayer-user if he may use the prayer 'Martyrdom'.
