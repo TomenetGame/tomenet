@@ -7477,7 +7477,7 @@ Weapons of the Thunderlords: Teleportation.
 Weapons of Spinning: Spin attack.
 Fury weapons: Berserk.
 Noldor caps: Treasure detection.
-Spectral weapons: Wraithform.
+Spectral weapons: Wraithform (see (5.24)).
 
 Serpent amulets: Poison breath.
 Moon amulets: Sleep monsters.
@@ -8400,7 +8400,8 @@ dropping 'Tools' loot. The remaining 10% chance translates to 'Junk' drops.
 (5.24) Wraithform
 -----------------
 Wraithform, or "pass wall" form is a character state obtained from the spell
-"Wraithform" (Udun school) or from certain items.
+"Wraithform" (Udun school) or from certain items (either spectral weapons or
+items that give permanent wraithform: "It renders you incorporeal").
 It allows a character to pass through solid walls easily, but at the same time
 prevents them from attacking anything else in close combat, except if the
 target is also able to pass walls (ie possesses wraitform too, or is actually

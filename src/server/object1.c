@@ -3059,7 +3059,7 @@ cptr item_activation(object_type *o_ptr)
 	}
 	if (is_ego_p(o_ptr, EGO_SPECTRAL))
 	{
-		return "wraith-form every 50+d50 turns";
+		return "wraithform every 50+d50 turns";
 	}
 	if (o_ptr->tval == TV_RING)
 	{
