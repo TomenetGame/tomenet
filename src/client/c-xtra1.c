@@ -686,7 +686,7 @@ void prt_afraid(bool fear)
 	{
 		put_str("      ", ROW_AFRAID, COL_AFRAID);
 	}
-	
+
 	/* restore cursor position */
 	Term_gotoxy(x, y);
 }
@@ -709,7 +709,7 @@ void prt_poisoned(bool poisoned)
 	{
 		put_str("        ", ROW_POISONED, COL_POISONED);
 	}
-	
+
 	/* restore cursor position */
 	Term_gotoxy(x, y);
 }
@@ -762,7 +762,7 @@ void prt_state(bool paralyzed, bool searching, bool resting)
 	Term_locate(&x, &y);
 
 	c_put_str(attr, text, ROW_STATE, COL_STATE);
-	
+
 	/* restore cursor position */
 	Term_gotoxy(x, y);
 }
@@ -788,16 +788,16 @@ void prt_speed(int speed)
 		attr = TERM_L_DARK;
 		if (!speed) sprintf(buf, "No-Teleport");
 	}
-	
+
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	/* Display the speed */
 	c_put_str(attr, format("%-11s", buf), ROW_SPEED, COL_SPEED);
-	
+
 	/* restore cursor position */
 	Term_gotoxy(x, y);
-	
+
 	/* hack: remember speed (for extra no-tele warning) */
 	p_speed = speed;
 }
@@ -1016,7 +1016,7 @@ void prt_lagometer(int lag) {
 	int attr = TERM_L_GREEN;
 	int num;
 	int x, y;
-	
+
 	/* disable(d)? */
 	if (!lagometer_enabled) return;
 	if (lag == -1) {
@@ -1032,7 +1032,7 @@ void prt_lagometer(int lag) {
 
 	/* hack: we have previous packet assumed to be lost? */
 	if (lag == 9999) num = 10;
-	
+
 	if (num >= 9) attr = TERM_RED;
 	else if (num >= 7) attr = TERM_ORANGE;
 	else if (num >= 5) attr = TERM_YELLOW;
