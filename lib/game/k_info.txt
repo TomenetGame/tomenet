@@ -3405,7 +3405,8 @@ P:0:25d25:0:0:0
 N:418:Augmentation
 G:!:d
 I:71:55:0
-W:40:0:4:60000
+#W:40:0:4:60000 -- make price slightly less than all 6 stat potions combined (41000):
+W:40:0:4:35000
 A:40/16
 P:0:1d1:0:0:0
 #F:FOUNTAIN
