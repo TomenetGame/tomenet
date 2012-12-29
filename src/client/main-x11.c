@@ -2922,6 +2922,9 @@ void resize_main_window_x11(int cols, int rows) {
         }
 }
 
+bool ask_for_bigmap(void) {
+	return ask_for_bigmap_generic();
+}
 
 /* SHUT: main-x11.c */
 

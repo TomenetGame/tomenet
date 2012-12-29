@@ -953,7 +953,6 @@ static void load_prefs(void)
 	/* Extract the "use_sound" flag */
 	use_sound_org = use_sound = (GetPrivateProfileInt("Base", "Sound", 1, ini_file) != 0);
 	if (!use_sound) quiet_mode = TRUE;
-
  #ifdef USE_SOUND_2010
 	sound_hint = (GetPrivateProfileInt("Base", "HintSound", 1, ini_file) != 0);
 	if (sound_hint) WritePrivateProfileString("Base", "HintSound", "0", ini_file);
@@ -992,6 +991,8 @@ static void load_prefs(void)
 
 	load_prefs_aux(&data[7], "Term-7 window");
 
+	bigmap_hint = (GetPrivateProfileInt("Base", "HintBigmap", 1, ini_file) != 0);
+	if (bigmap_hint) WritePrivateProfileString("Base", "HintBigmap", "0", ini_file);
 
 #ifdef USE_SOUND
 #ifndef USE_SOUND_2010
@@ -3484,8 +3485,7 @@ static void hook_quit(cptr str)
 	data[0].w = 0;
 
 	/* Nuke each term */
-	for (i = ANGBAND_TERM_MAX - 1; i >= 0; i--)
-	{
+	for (i = ANGBAND_TERM_MAX - 1; i >= 0; i--) {
 		/* Unused */
 		if (!ang_term[i]) continue;
 
@@ -3546,8 +3546,7 @@ static void init_stuff(void)
 	if (!i) quit("LibPath shouldn't be empty in ANGBAND.INI");
 
 	/* Nuke terminal backslash */
-	if (i && (path[i-1] != '\\'))
-	{
+	if (i && (path[i-1] != '\\')) {
 		path[i++] = '\\';
 		path[i] = '\0';
 	}
@@ -3635,11 +3634,9 @@ static int cmd_get_number(char *str, int *number)
 	/* Skip any spaces */
 	for (i = 0; str[i] == ' ' && str[i] != '\0'; i++);
 
-	for (; str[i] != '\0'; i++)
-	{
+	for (; str[i] != '\0'; i++) {
 		/* Confirm number */
-		if ('0' <= str[i] && str[i] <= '9')
-		{
+		if ('0' <= str[i] && str[i] <= '9') {
 			tmp *= 10;
 			tmp += str[i] - '0';
 		}
@@ -3666,15 +3663,12 @@ static int cmd_get_string(char *str, char *dest, int n)
 	for (start = 0; str[start] == ' ' && str[start] != '\0'; start++);
 
 	/* Check for a double quote */
-	if (str[start] == '"')
-	{
+	if (str[start] == '"') {
 		start++;
 
 		/* Find another double quote */
 		for (end = start; str[end] != '"' && str[end] != '\0'; end++);
-	}
-	else
-	{
+	} else {
 		/* Find the next space */
 		for (end = start + 1; str[end] != ' ' && str[end] != '\0'; end++);
 	}
@@ -3684,10 +3678,7 @@ static int cmd_get_string(char *str, char *dest, int n)
 	/* Make sure it doesn't overflow */
 	if (len > n - 1) len = n - 1;
 
-	if (len > 0)
-	{
-		strncpy(dest, &str[start], len);
-	}
+	if (len > 0) strncpy(dest, &str[start], len);
 
 	/* Always terminate */
 	if (len >= 0)
@@ -3762,8 +3753,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	/* set OS-specific resize_main_window() hook */
 	resize_main_window = resize_main_window_win;
 
-	if (hPrevInst == NULL)
-	{
+	if (hPrevInst == NULL) {
 		wc.style         = CS_CLASSDC;
 		wc.lpfnWndProc   = AngbandWndProc;
 		wc.cbClsExtra    = 0;
@@ -3842,15 +3832,12 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 #endif
 
 	/* Process the command line */
-	for (i = 0, n = strlen(lpCmdLine); i < n; i++)
-	{
+	for (i = 0, n = strlen(lpCmdLine); i < n; i++) {
 		/* Check for an option */
-		if (lpCmdLine[i] == '-')
-		{
+		if (lpCmdLine[i] == '-') {
 			i++;
 
-			switch (lpCmdLine[i])
-			{
+			switch (lpCmdLine[i]) {
 				case 'C': /* compatibility mode */
 					server_protocol = 1;
 					break;
@@ -3929,13 +3916,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					save_chat = TRUE;
 					break;
 			}
-		}
-		else if (lpCmdLine[i] == ' ')
-		{
+		} else if (lpCmdLine[i] == ' ') {
 			/* Ignore spaces */
-		}
-		else
-		{
+		} else {
 			/* Get a server name */
 			i += cmd_get_string(&lpCmdLine[i], svname, MAX_CHARS);
 		}
@@ -3958,18 +3941,13 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	/* Do network initialization, etc. */
 	/* Add ability to specify cmdline to windows  -Zz*/
 	if (strlen(svname) > 0)
-	{
-		client_init(svname, done);	
-	}
+		client_init(svname, done);
 	else
-	{
 		/* Initialize and query metaserver */
 		client_init(NULL, done);
-	}
 
 	/* Process messages forever */
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
+	while (GetMessage(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
@@ -4068,6 +4046,22 @@ void resize_main_window_win(int cols, int rows) {
         term_window_resize(td);
 	Term_activate(t);
         Term_resize(td->cols, td->rows);
+}
+
+bool ask_for_bigmap(void) {
+#if 0
+        if (MessageBox(NULL,
+            "Do you want to double the height of this window?\n"
+            "It is recommended to do this on desktops,\n"
+	    "but it may not fit on small netbook screens.\n"
+	    "You can change this later anytime in the game's options menu.",
+            "Enable 'big_map' option?",
+            MB_YESNO + MB_ICONQUESTION) == IDYES)
+        	return TRUE;
+        return FALSE;
+#else
+	return ask_for_bigmap_generic();
+#endif
 }
 
 #endif /* _Windows */

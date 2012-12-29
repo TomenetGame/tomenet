@@ -2041,24 +2041,20 @@ void client_init(char *argv1, bool skip)
 
 #ifndef UNIX_SOCKETS
 	/* Check whether we should query the metaserver */
-	if (argv1 == NULL)
-	{
-		server_port=cfg_game_port;
+	if (argv1 == NULL) {
+		server_port = cfg_game_port;
 		/* Query metaserver */
 		if (!get_server_name())
 			quit("No server specified.");
 #ifdef EXPERIMENTAL_META
                 cfg_game_port = server_port;
 #endif
-	}
-	else
-	{
+	} else {
 		/* Set the server's name */
                 strcpy(server_name, argv1);
                 if (strchr(server_name, ':') &&
 		    /* Make sure it's not an IPv6 address. */
-		    !strchr(strchr(server_name, ':') + 1, ':'))
-                {
+		    !strchr(strchr(server_name, ':') + 1, ':')) {
 
                         char *port = strchr(server_name, ':');
                         cfg_game_port = atoi(port + 1);
@@ -2075,8 +2071,7 @@ void client_init(char *argv1, bool skip)
 	/* Get character name and pass */
 	if (!skip) get_char_name();
 
-	if (server_protocol >= 2)
-	{
+	if (server_protocol >= 2) {
 		/* Use memfrob on the password */
 		my_memfrob(pass, strlen(pass));
 	}
@@ -2086,14 +2081,11 @@ void client_init(char *argv1, bool skip)
 
 	/* Create the net socket and make the TCP connection */
 	if ((Socket = CreateClientSocket(server_name, cfg_game_port)) == -1)
-	{
 		quit("That server either isn't up, or you mistyped the hostname.\n");
-	}
 
 	/* Create a socket buffer */
 	if (Sockbuf_init(&ibuf, Socket, CLIENT_SEND_SIZE,
-		SOCKBUF_READ | SOCKBUF_WRITE) == -1)
-	{
+	    SOCKBUF_READ | SOCKBUF_WRITE) == -1) {
 		quit("No memory for socket buffer\n");
 	}
 
@@ -2101,10 +2093,7 @@ void client_init(char *argv1, bool skip)
 	Sockbuf_clear(&ibuf);
 
 	/* Extended version */
-	if (server_protocol >= 2)
-	{
-		version = 0xFFFFU;
-	}
+	if (server_protocol >= 2) version = 0xFFFFU;
 
 	/* Put the contact info in it */
 	Packet_printf(&ibuf, "%u", magic);
@@ -2113,9 +2102,7 @@ void client_init(char *argv1, bool skip)
 
 	/* Extended version */
 	if (server_protocol >= 2)
-	{
 		Packet_printf(&ibuf, "%d%d%d%d%d%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD + (VERSION_OS) * 1000000);
-	}
 
 	/* Connect to server */
 #ifdef UNIX_SOCKETS
@@ -2124,13 +2111,10 @@ void client_init(char *argv1, bool skip)
 
 	/* Send the info */
 	if ((bytes = DgramWrite(Socket, ibuf.buf, ibuf.len) == -1))
-	{
 		quit("Couldn't send contact information\n");
-	}
 
 	/* Listen for reply */
-	for (retries = 0; retries < 10; retries++)
-        {
+	for (retries = 0; retries < 10; retries++) {
 		/* Set timeout */
 		SetTimeout(1, 0);
 
@@ -2138,8 +2122,7 @@ void client_init(char *argv1, bool skip)
 		if (!SocketReadable(Socket)) continue;
 
 		/* Read reply */
-		if(DgramRead(Socket, ibuf.buf, ibuf.size) <= 0)
-		{
+		if(DgramRead(Socket, ibuf.buf, ibuf.size) <= 0) {
 			/*printf("DgramReceiveAny failed (errno = %d)\n", errno);*/
 			continue;
 		}
@@ -2185,18 +2168,15 @@ void client_init(char *argv1, bool skip)
 	}
 
 	/* Check for failure */
-	if (retries >= 10)
-	{
+	if (retries >= 10) {
 		Net_cleanup();
 		quit("Server didn't respond!\n");
 	}
 
 	/* Server returned error code */
-	if (status && status != E_NEED_INFO)
-	{
+	if (status && status != E_NEED_INFO) {
 		/* The server didn't like us.... */
-		switch (status)
-		{
+		switch (status) {
 			case E_VERSION_OLD:
 				quit("Your client is outdated. Please get the latest one from http://www.tomenet.net/");
 			case E_VERSION_UNKNOWN:
@@ -2231,25 +2211,21 @@ void client_init(char *argv1, bool skip)
 
 	/* Connect to the server on the port it sent */
 	if (Net_init(Socket) == -1)
-	{
 		quit("Network initialization failed!\n");
-	}
 
 	/* Verify that we are on the correct port */
-	if (Net_verify(real_name, nick, pass) == -1)
-	{
+	if (Net_verify(real_name, nick, pass) == -1) {
 		Net_cleanup();
 		quit("Network verify failed!\n");
 	}
 
 	/* Receive stuff like the MOTD */
-	if (Net_setup() == -1)
-	{
+	if (Net_setup() == -1) {
 		Net_cleanup();
 		quit("Network setup failed!\n");
 	}
 
-	status=Net_login();
+	status = Net_login();
 
 	/* Hack -- display the nick */
 	prt(format("Name        : %s", cname), 2, 1);
@@ -2257,8 +2233,16 @@ void client_init(char *argv1, bool skip)
 	/* Initialize the pref files */
 	initialize_main_pref_files();
 
-	if (status == E_NEED_INFO)
-	{
+        /* Handle asking for big_map mode on first time startup */
+#if defined(USE_X11) || defined(WINDOWS)
+        if (bigmap_hint && !c_cfg.big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {
+	        c_cfg.big_map = TRUE;
+		Client_setup.options[43] = TRUE;
+		check_immediate_options(43, TRUE, FALSE);
+        }
+#endif
+
+	if (status == E_NEED_INFO) {
 		/* Get sex/race/class */
 		/* XXX this function sends PKT_KEEPALIVE */
 		get_char_info();
@@ -2275,8 +2259,7 @@ void client_init(char *argv1, bool skip)
 	Term_clear();
 
 	/* Start the game */
-	if (Net_start(sex, race, class) == -1)
-	{
+	if (Net_start(sex, race, class) == -1) {
 		Net_cleanup();
 		quit("Network start failed!\n");
 	}
@@ -2295,4 +2278,26 @@ void client_init(char *argv1, bool skip)
 
 	/* Quit, closing term windows */
 	quit(NULL);
+}
+
+bool ask_for_bigmap_generic(void) {
+        int ch;
+
+        Term_clear();
+        Term_putstr(10, 3, -1, TERM_ORANGE, "Do you want to double the height of this window?");
+        Term_putstr(10, 5, -1, TERM_YELLOW, "It is recommended to do this on desktops,");
+        Term_putstr(10, 6, -1, TERM_YELLOW, "but it may not fit on small netbook screens.");
+        Term_putstr(10, 7, -1, TERM_YELLOW, "You can change this later anytime in the game's options menu.");
+        Term_putstr(10, 9, -1, TERM_ORANGE, "Press 'y' to enable BIG_MAP now, 'n' to not enable.");
+
+        while (TRUE) {
+                ch = inkey();
+                if (ch == 'y') {
+                        Term_clear();
+                        return TRUE;
+                } else if (ch == 'n') {
+                        Term_clear();
+                        return FALSE;
+                }
+        }
 }

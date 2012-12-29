@@ -350,6 +350,9 @@ static bool read_mangrc(cptr filename)
 				read_mangrc_aux(9, buf);
 #endif
 
+			/* big_map hint */
+			if (!strncmp(buf, "hintBigmap", 10)) bigmap_hint = FALSE;
+
 			/*** Everything else is ignored ***/
 		}
 		fclose(config);
@@ -557,6 +560,10 @@ if (!strcmp("ANGBAND_SYS", "x11")) {
 			if (!strncmp(buf, "sound", 5) && sound_hint) fputs("hintSound\n", config2);
 #endif
 		}
+
+		/* hack: disable one-time hint */
+		if (bigmap_hint) fputs("\nhintBigmap\n", config2);
+
 		fclose(config);
 		fclose(config2);
 
@@ -636,6 +643,9 @@ if (!strcmp("ANGBAND_SYS", "x11")) {
 #endif
 }
 #endif
+
+		fputs("\n", config2);
+		fputs("hintBigmap\n", config2);
 
 		fclose(config2);
 
@@ -992,7 +1002,6 @@ int main(int argc, char **argv)
  #endif
 #endif
 #endif
-
 
 #ifdef UNIX_SOCKETS
 	/* Always call with NULL argument */

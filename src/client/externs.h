@@ -23,6 +23,7 @@ extern void change_font(int s);
 #endif
 extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name);
 extern void resize_main_window_x11(int cols, int rows);
+extern bool ask_for_bigmap(void);
 #endif
 
 #ifdef USE_XAW
@@ -772,6 +773,7 @@ extern cptr shortVersion;
 extern void version_build(void);
 extern int find_realm(int book);
 extern char color_attr_to_char(int a);
+extern int color_char_to_attr(char c);
 extern byte mh_attr(int max);
 
 /* common/files.c */
@@ -815,6 +817,7 @@ extern int stricmp(cptr a, cptr b);
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 extern void change_font(int s);
 extern void resize_main_window_win(int cols, int rows);
+extern bool ask_for_bigmap(void);
 #endif
 
 extern const cptr angband_sound_name[SOUND_MAX];
@@ -862,3 +865,5 @@ extern int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_idx;
 
 extern int screen_wid, screen_hgt;
 extern void (*resize_main_window)(int cols, int rows);
+extern bool bigmap_hint;
+extern bool ask_for_bigmap_generic(void);
