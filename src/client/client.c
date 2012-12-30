@@ -522,7 +522,7 @@ bool write_mangrc(void) {
 
 #ifdef USE_X11
 /* Don't do this in terminal mode ('-c') */
-if (!strcmp("ANGBAND_SYS", "x11")) {
+if (!strcmp(ANGBAND_SYS, "x11")) {
 			/* new: save window positions/sizes/visibility (and possibly fonts) */
 			if (!strncmp(buf, "Mainwindow", 10))
 				write_mangrc_aux_line(0, "Mainwindow", buf);
@@ -628,7 +628,7 @@ if (!strcmp("ANGBAND_SYS", "x11")) {
 #ifdef USE_X11
 ///LINUX_TERM_CFG
 /* Don't do this in terminal mode ('-c') */
-if (!strcmp("ANGBAND_SYS", "x11")) {
+if (!strcmp(ANGBAND_SYS, "x11")) {
 		write_mangrc_aux(0, "Mainwindow", config2);
 		write_mangrc_aux(1, "Mirrorwindow", config2);
 		write_mangrc_aux(2, "Recallwindow", config2);
