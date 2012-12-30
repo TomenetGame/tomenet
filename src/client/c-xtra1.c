@@ -1833,6 +1833,13 @@ void display_lagometer(bool display_commands)
 	char graph[16][61];
 #ifdef COLOURED_LAGOMETER
 	byte attr = TERM_VIOLET; /* silyl compiler */
+ #if 0 /* use same colours as mini lag-o-meter? */
+//	byte attr0 = TERM_L_GREEN, attr1 = TERM_GREEN;
+	char attrc0 = 'G', attrc1 = 'g';
+ #else /* use white instead of green tones, for being easier on the eye maybe? */
+//	byte attr0 = TERM_WHITE, attr1 = TERM_SLATE;
+	char attrc0 = 'w', attrc1 = 's';
+ #endif
 	int cur_lag;
 	char *underscore, *underscore2, *underscore2a, c_graph[60 * 3 + 1], attrc;
 #endif
@@ -1905,8 +1912,8 @@ void display_lagometer(bool display_commands)
 		if (cur_lag >= 400) attr = TERM_RED;
 		else if (cur_lag >= 300) attr = TERM_ORANGE;
 		else if (cur_lag >= 200) attr = TERM_YELLOW;
-		else if (cur_lag >= 100) attr = TERM_GREEN;
-		else attr = TERM_L_GREEN;
+		else if (cur_lag >= 100) attr = attr1;
+		else attr = attr0;
 		c_prt(attr, graph[y], 3 + y, 10);
  #else /* does take care */
 		memset(c_graph, 0, sizeof(char) * (60 * 3 + 1));
@@ -1920,8 +1927,8 @@ void display_lagometer(bool display_commands)
 			if (cur_lag >= 400) attrc = 'r';
 			else if (cur_lag >= 300) attrc = 'o';
 			else if (cur_lag >= 200) attrc = 'y';
-			else if (cur_lag >= 100) attrc = 'g';
-			else attrc = 'G';
+			else if (cur_lag >= 100) attrc = attrc1;
+			else attrc = attrc0;
 			if (underscore2 - underscore) strcat(c_graph, format("\377%c", attrc));
 			strncat(c_graph, underscore, underscore2 - underscore);
 			underscore = underscore2;
@@ -1939,8 +1946,8 @@ void display_lagometer(bool display_commands)
 					if (cur_lag >= 400) attrc = 'r';
 					else if (cur_lag >= 300) attrc = 'o';
 					else if (cur_lag >= 200) attrc = 'y';
-					else if (cur_lag >= 100) attrc = 'g';
-					else attrc = 'G';
+					else if (cur_lag >= 100) attrc = attrc1;
+					else attrc = attrc0;
 					strcat(c_graph, format("\377%c%c", attrc, *underscore2a));
 				}
 				underscore = underscore2a;
