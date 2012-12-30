@@ -1704,11 +1704,12 @@ static errr Term_xtra_win_react(void)
 	for (i = 0; i < MAX_TERM_DATA; i++)
 	{
 		term *old = Term;
-
 		term_data *td = &data[i];
 
 		/* Skip non-changes XXX XXX XXX */
 		if ((td->cols == td->t.wid) && (td->rows == td->t.hgt)) continue;
+
+		/* Check this vs WM_SIZING in AngbandWndProc - Redundant/problem? */
 
 		/* Activate */
 		Term_activate(&td->t);
@@ -2891,25 +2892,18 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 
 	/* Acquire proper "term_data" info */
 	td = (term_data *)GetWindowLongPtr(hWnd, 0);
-
 	/* Handle message */
-	switch (uMsg)
-	{
+	switch (uMsg) {
 		/* XXX XXX XXX */
 		case WM_NCCREATE:
-		{
 			SetWindowLongPtr(hWnd, 0, (LONG_PTR)(td_ptr));
 			break;
-		}
 
 		/* XXX XXX XXX */
 		case WM_CREATE:
-		{
 			return 0;
-		}
 
 		case WM_GETMINMAXINFO:
-		{
 			lpmmi = (MINMAXINFO FAR *)lParam;
 
 			if (!td) return 1;  /* this message was sent before WM_NCCREATE */
@@ -2955,14 +2949,10 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			lpmmi->ptMaxTrackSize.y = rc.bottom - rc.top;
 
 			return 0;
-		}
 
 		case WM_PAINT:
-		{
 			handle_wm_paint(hWnd, td);
-
 			return 0;
-		}
 
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
@@ -2983,8 +2973,7 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			if ((wParam == VK_INSERT) || (wParam == VK_DELETE)) enhanced = TRUE;
 
 			/* XXX XXX XXX */
-			if (enhanced)
-			{
+			if (enhanced) {
 				/* Begin the macro trigger */
 				Term_keypress(31);
 
@@ -3013,86 +3002,76 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 		}
 
 		case WM_CHAR:
-		{
 			Term_keypress(wParam);
 			return 0;
-		}
 
 		case WM_INITMENU:
-		{
 			setup_menus();
 			return 0;
-		}
 
 		case WM_CLOSE:
 		case WM_QUIT:
-		{
 			quit(NULL);
 			return 0;
-		}
 
 		case WM_COMMAND:
-		{
 			process_menus(LOWORD(wParam));
 			return 0;
-		}
 
 		case WM_SIZE:
-		{
 			if (!td) return 1;    /* this message was sent before WM_NCCREATE */
 			if (!td->w) return 1; /* it was sent from inside CreateWindowEx */
 			if (td->size_hack) return 1; /* was sent from WM_SIZE */
 
-			switch (wParam)
-			{
+			switch (wParam) {
 				case SIZE_MINIMIZED:
-				{
 					for (i = 1; i < MAX_TERM_DATA; i++)
-					{
 						if (data[i].visible) ShowWindow(data[i].w, SW_HIDE);
-					}
+
 					return 0;
-				}
 
 				case SIZE_MAXIMIZED:
-				{
 					/* fall through XXX XXX XXX */
-				}
 
-				case SIZE_RESTORED:
-				{
+				case SIZE_RESTORED: {
+					int rows, cols;
+
 					td->size_hack = TRUE;
 
-					td->cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->font_wid;
-					td->rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->font_hgt;
+					cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->font_wid;
+					rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->font_hgt;
 
-					term_getsize(td);
+		                        /* Hack -- do not allow bad resizing of main screen */
+		                        cols = 80;
+		                        /* respect big_map option */
+		                        if (rows <= 24) rows = 24;
+		                        else rows = 46;
+		                        /* hack: need to redraw map or it may look cut off */
+	                                if (in_game) cmd_redraw();
 
-					MoveWindow(hWnd, td->pos_x, td->pos_y, td->size_wid, td->size_hgt, TRUE);
+	                                Term_activate(&td->t);
+    		                        Term_resize(cols, rows);
+
+//					term_getsize(td);
+//					MoveWindow(hWnd, td->pos_x, td->pos_y, td->size_wid, td->size_hgt, TRUE);
 
 					td->size_hack = FALSE;
 
 					/* Windows */
 					for (i = 1; i < MAX_TERM_DATA; i++)
-					{
 						if (data[i].visible) ShowWindow(data[i].w, SW_SHOWNOACTIVATE);
-					}
 
 					return 0;
 				}
 			}
 			break;
-		}
 
 		case WM_PALETTECHANGED:
-		{
 			/* ignore if palette change caused by itself */
 			if ((HWND)wParam == hWnd) return FALSE;
 			/* otherwise, fall through!!! */
-		}
 
 		case WM_QUERYNEWPALETTE:
-		{
 			if (!paletted) return FALSE;
 			hdc = GetDC(hWnd);
 			SelectPalette(hdc, hPal, FALSE);
@@ -3101,22 +3080,16 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			if (i) InvalidateRect(hWnd, NULL, TRUE);
 			ReleaseDC(hWnd, hdc);
 			return FALSE;
-		}
 
 		case WM_ACTIVATE:
-		{
-			if (wParam && !HIWORD(lParam))
-			{
+			if (wParam && !HIWORD(lParam)) {
 				for (i = 1; i < MAX_TERM_DATA; i++)
-				{
 					SetWindowPos(data[i].w, hWnd, 0, 0, 0, 0,
-					             SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
-				}
+					    SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 				SetFocus(hWnd);
 				return 0;
 			}
 			break;
-		}
 	}
 
 
@@ -3144,23 +3117,18 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 	td = (term_data *)GetWindowLongPtr(hWnd, 0);
 
 	/* Process message */
-	switch (uMsg)
-	{
+//if (in_game) c_message_add(format("uMsg %d", uMsg));
+	switch (uMsg) {
 		/* XXX XXX XXX */
 		case WM_NCCREATE:
-		{
 			SetWindowLongPtr(hWnd, 0, (LONG_PTR)(td_ptr));
 			break;
-		}
 
 		/* XXX XXX XXX */
 		case WM_CREATE:
-		{
 			return 0;
-		}
 
 		case WM_GETMINMAXINFO:
-		{
 			if (!td) return 1;  /* this message was sent before WM_NCCREATE */
 
 			lpmmi = (MINMAXINFO FAR *)lParam;
@@ -3206,34 +3174,38 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 			lpmmi->ptMaxTrackSize.y = rc.bottom - rc.top;
 
 			return 0;
-		}
 
 		case WM_SIZE:
-		{
 			if (!td) return 1;    /* this message was sent before WM_NCCREATE */
 			if (!td->w) return 1; /* it was sent from inside CreateWindowEx */
 			if (td->size_hack) return 1; /* was sent from inside WM_SIZE */
 
-			td->size_hack = TRUE;
+			if (wParam == SIZE_RESTORED) {
+				int cols, rows;
 
-			td->cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->font_wid;
-			td->rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->font_hgt;
+				td->size_hack = TRUE;
 
-			term_getsize(td);
+				cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->font_wid;
+				rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->font_hgt;
 
-			MoveWindow(hWnd, td->pos_x, td->pos_y, td->size_wid, td->size_hgt, TRUE);
+                                Term_activate(&td->t);
+                                Term_resize(cols, rows);
 
-			td->size_hack = FALSE;
+            	        	/* In case we resized Chat/Msg/Msg+Chat window,
+                		   refresh contents so they are displayed properly,
+                    		   without having to wait for another incoming message to do it for us. */
+	                        p_ptr->window |= PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT;
 
-			return 0;
-		}
+				td->size_hack = FALSE;
+
+				return 0;
+			}
+			break;
 
 		case WM_PAINT:
-		{
 			handle_wm_paint(hWnd, td);
 
 			return 0;
-		}
 
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
@@ -3254,8 +3226,7 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 			if ((wParam == VK_INSERT) || (wParam == VK_DELETE)) enhanced = TRUE;
 
 			/* XXX XXX XXX */
-			if (enhanced)
-			{
+			if (enhanced) {
 				/* Begin the macro trigger */
 				Term_keypress(31);
 
@@ -3284,20 +3255,15 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 		}
 
 		case WM_CHAR:
-		{
 			Term_keypress(wParam);
 			return 0;
-		}
 
 		case WM_PALETTECHANGED:
-		{
 			/* ignore if palette change caused by itself */
 			if ((HWND)wParam == hWnd) return FALSE;
 			/* otherwise, fall through!!! */
-		}
 
 		case WM_QUERYNEWPALETTE:
-		{
 			if (!paletted) return 0;
 			hdc = GetDC(hWnd);
 			SelectPalette(hdc, hPal, FALSE);
@@ -3306,17 +3272,12 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 			if (i) InvalidateRect(hWnd, NULL, TRUE);
 			ReleaseDC(hWnd, hdc);
 			return 0;
-		}
 
 		case WM_NCLBUTTONDOWN:
-		{
-			if (wParam == HTSYSMENU)
-			{
+			if (wParam == HTSYSMENU) {
 				/* Hide sub-windows */
-				if (td != &data[0])
-				{
-					if (td->visible)
-					{
+				if (td != &data[0]) {
+					if (td->visible) {
 						td->visible = FALSE;
 						ShowWindow(td->w, SW_HIDE);
 					}
@@ -3324,8 +3285,6 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 				return 0;
 			}
 			break;
-		}
-
 	}
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
