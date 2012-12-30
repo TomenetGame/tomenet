@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. December 2012 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. December 2012 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.1a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -14178,6 +14178,22 @@ SOLUTION:   Either tweak your sound settings (buffer size etc.) so ALSA doesn't
             Alternatively, you can just redirect all error out put to /dev/null
             to completely discard it:
               ./tomenet -c 2>/dev/null
+
+PROBLEM 36: Can I made the game windows larger?
+SOLUTION:   You can resize windows that hold messages (chat and/or game
+            messages) simply by dragging the lower edge down/upwards with your
+            mouse. This also works for the main window, but this one will not
+            remember its new size unless you also save your client options
+            after you resized it (press '=' and then 's' to save those).
+            Alternatively, you can edit the TomeNET.ini file (on Windows) or
+            the .tomenetrc file (on Linux or OSX) and change the amount of
+            lines for each window manually.
+            Other than that, you can also increase the font size (that is the
+            text size) in TomeNET: Either press '=' key and then cycle through
+            pre-defined font sizes by tapping 'f' key, or again you can edit
+            the TomeNET.ini file (Windows) or .tomenetrc file (Linux/OSX) to
+            set fonts manually for each game window.
+            Well, and you could change your actual screen resolution of course.
 
 
 
