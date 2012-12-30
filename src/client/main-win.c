@@ -3022,8 +3022,6 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			if (!td) return 1;    /* this message was sent before WM_NCCREATE */
 			if (!td->w) return 1; /* it was sent from inside CreateWindowEx */
 			if (td->size_hack) return 1; /* was sent from WM_SIZE */
-//			if (td->size_hack) return 0;
-//			if (td->size_hack) return DefWindowProc(hWnd, uMsg, wParam, lParam);
 
 
 			switch (wParam) {
@@ -3047,25 +3045,32 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 		                        /* Hack -- do not allow bad resizing of main screen */
 		                        cols = 80;
 		                        /* respect big_map option */
-		                        if (rows <= 24) rows = 24;
+		                        if (rows <= 24 || !(sflags1 & SFLG1_BIG_MAP)) rows = 24;
 		                        else rows = 46;
 		                        /* hack: need to redraw map or it may look cut off */
-	                                if (in_game) cmd_redraw();
 
-#if 1
-					resize_main_window_win(cols, rows);
-#endif
-#if 0
+					if ((rows == 24 && Client_setup.options[43]) ||
+					    (rows == 46 && !Client_setup.options[43])) {
+				                bool val = !Client_setup.options[43];
+
+				                Client_setup.options[43] = val;
+				                c_cfg.big_map = val;
+				                check_immediate_options(43, val, TRUE);
+
+				                if (in_game) cmd_redraw();
+					}
+
+#if 0 /* test code stuff~ */
 	                                Term_activate(&td->t);
     		                        Term_resize(cols, rows);
 //	                                term_getsize(td);
 //				        term_window_resize(td);
 
 #endif
-#if 0
+					td->cols = cols;
+					td->rows = rows;
 					term_getsize(td);
 					MoveWindow(hWnd, td->pos_x, td->pos_y, td->size_wid, td->size_hgt, TRUE);
-#endif
 
 					td->size_hack = FALSE;
 
