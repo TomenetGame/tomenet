@@ -603,6 +603,11 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 					msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
 				} else {
 					p_ptr->au = p_ptr->au + (odds * wager);
+					/* Prevent a very far-fetched IDDC/Highlander exploit ^^ */
+					if (!p_ptr->max_exp) {
+						msg_print(Ind, "You gain a tiny bit of experience from gambling.");
+						gain_exp(Ind, 1);
+					}
 					msg_format(Ind, "Payoff: %d", odds);
 				}
 			} else {

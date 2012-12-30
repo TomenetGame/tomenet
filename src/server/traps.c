@@ -2340,7 +2340,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				(void)inven_carry(Ind, q_ptr);
 
 				/* This trap is polite */
-				gain_au(Ind, bottles * 10, TRUE, FALSE);
+				/* Don't mess with IDDC or Highlander */
+				if (p_ptr->max_exp) gain_au(Ind, bottles * 10, TRUE, FALSE);
 			}
 
 			//if (ident)
@@ -2414,6 +2415,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				if (is_admin(q_ptr)) continue; /* admins are invisible and have high levels */
 				/* No transfer between everlasting and non-everlasting? */
 				if (compat_pmode(Ind, k, FALSE)) continue;
+				/* Don't mess with IDDC or Highlander */
+				if (in_irondeepdive(&q_ptr->wpos) || !q_ptr->max_exp) continue;
 
 //				if (!inarea(wpos, &q_ptr->wpos)) continue;
 
