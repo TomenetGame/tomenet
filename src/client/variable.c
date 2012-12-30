@@ -347,3 +347,4 @@ int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_idx = 0;
 
 int screen_wid = SCREEN_WID, screen_hgt = SCREEN_HGT;
 bool bigmap_hint = TRUE;
+bool in_game = FALSE;

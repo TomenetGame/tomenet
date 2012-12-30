@@ -1714,6 +1714,9 @@ static void Input_loop(void)
            we have to resend them. - C. Blue */
         Send_screen_dimensions();
 
+	/* For term-resizing hacks */
+	in_game = TRUE;
+
 	for (;;)
 	{
 		/* Send out a keepalive packet if need be */

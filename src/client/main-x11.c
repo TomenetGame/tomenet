@@ -1484,6 +1484,8 @@ static errr CheckEvent(bool wait)
 	//int flag = 0;
 	//int x, y, data;
 
+	int t_idx = -1;
+
 
 	/* Do not wait unless requested */
 	if (!wait && !XPending(Metadpy->dpy)) return (1);
@@ -1505,6 +1507,7 @@ static errr CheckEvent(bool wait)
 	{
 		td = &screen;
 		iwin = td->inner;
+		t_idx = 0;
 	}
 
 	/* Main screen, outer window */
@@ -1512,16 +1515,18 @@ static errr CheckEvent(bool wait)
 	{
 		td = &screen;
 		iwin = td->outer;
+		t_idx = 0;
 	}
 
 
-#ifdef GRAPHIC_MIRROR
+//#ifdef GRAPHIC_MIRROR
 
 	/* Mirror window, inner window */
 	else if (xev->xany.window == mirror.inner->win)
 	{
 		td = &mirror;
 		iwin = td->inner;
+		t_idx = 1;
 	}
 
 	/* Mirror window, outer window */
@@ -1529,17 +1534,19 @@ static errr CheckEvent(bool wait)
 	{
 		td = &mirror;
 		iwin = td->outer;
+		t_idx = 1;
 	}
 
-#endif
+//#endif
 
-#ifdef GRAPHIC_RECALL
+//#ifdef GRAPHIC_RECALL
 
 	/* Recall window, inner window */
 	else if (xev->xany.window == recall.inner->win)
 	{
 		td = &recall;
 		iwin = td->inner;
+		t_idx = 2;
 	}
 
 	/* Recall Window, outer window */
@@ -1547,17 +1554,19 @@ static errr CheckEvent(bool wait)
 	{
 		td = &recall;
 		iwin = td->outer;
+		t_idx = 2;
 	}
 
-#endif
+//#endif
 
-#ifdef GRAPHIC_CHOICE
+//#ifdef GRAPHIC_CHOICE
 
 	/* Choice window, inner window */
 	else if (xev->xany.window == choice.inner->win)
 	{
 		td = &choice;
 		iwin = td->inner;
+		t_idx = 3;
 	}
 
 	/* Choice Window, outer window */
@@ -1565,17 +1574,19 @@ static errr CheckEvent(bool wait)
 	{
 		td = &choice;
 		iwin = td->outer;
+		t_idx = 3;
 	}
 
-#endif
+//#endif
 
-#ifdef GRAPHIC_TERM_4
+//#ifdef GRAPHIC_TERM_4
 
 	/* Choice window, inner window */
 	else if (xev->xany.window == term_4.inner->win)
 	{
 		td = &term_4;
 		iwin = td->inner;
+		t_idx = 4;
 	}
 
 	/* Choice Window, outer window */
@@ -1583,17 +1594,19 @@ static errr CheckEvent(bool wait)
 	{
 		td = &term_4;
 		iwin = td->outer;
+		t_idx = 4;
 	}
 
-#endif
+//#endif
 
-#ifdef GRAPHIC_TERM_5
+//#ifdef GRAPHIC_TERM_5
 
 	/* Choice window, inner window */
 	else if (xev->xany.window == term_5.inner->win)
 	{
 		td = &term_5;
 		iwin = td->inner;
+		t_idx = 5;
 	}
 
 	/* Choice Window, outer window */
@@ -1601,17 +1614,19 @@ static errr CheckEvent(bool wait)
 	{
 		td = &term_5;
 		iwin = td->outer;
+		t_idx = 5;
 	}
 
-#endif
+//#endif
 
-#ifdef GRAPHIC_TERM_6
+//#ifdef GRAPHIC_TERM_6
 
 	/* Choice window, inner window */
 	else if (xev->xany.window == term_6.inner->win)
 	{
 		td = &term_6;
 		iwin = td->inner;
+		t_idx = 6;
 	}
 
 	/* Choice Window, outer window */
@@ -1619,17 +1634,19 @@ static errr CheckEvent(bool wait)
 	{
 		td = &term_6;
 		iwin = td->outer;
+		t_idx = 6;
 	}
 
-#endif
+//#endif
 
-#ifdef GRAPHIC_TERM_7
+//#ifdef GRAPHIC_TERM_7
 
 	/* Choice window, inner window */
 	else if (xev->xany.window == term_7.inner->win)
 	{
 		td = &term_7;
 		iwin = td->inner;
+		t_idx = 7;
 	}
 
 	/* Choice Window, outer window */
@@ -1637,9 +1654,10 @@ static errr CheckEvent(bool wait)
 	{
 		td = &term_7;
 		iwin = td->outer;
+		t_idx = 7;
 	}
 
-#endif
+//#endif
 
 
 	/* Unknown window */
@@ -1769,14 +1787,12 @@ static errr CheckEvent(bool wait)
 		/* A Move AND/OR Resize Event */
 		case ConfigureNotify:
 		{
-			//int x1, y1, w1, h1;
 			int cols, rows, wid, hgt;
+			int old_w, old_h;
 
 			/* Save the Old information */
-			/* x1 = Infowin->x;
-			y1 = Infowin->y;
-			w1 = Infowin->w;
-			h1 = Infowin->h; */
+			old_w = Infowin->w;
+			old_h = Infowin->h;
 
 			/* Save the new Window Parms */
 			Infowin->x = xev->xconfigure.x;
@@ -1788,11 +1804,15 @@ static errr CheckEvent(bool wait)
 			cols = ((Infowin->w - 2) / td->fnt->wid);
 			rows = ((Infowin->h - 2) / td->fnt->hgt);
 
-#if 0
-			/* Hack -- do not allow resize of main screen */
+			/* Hack -- do not allow bad resizing of main screen */
 			if (td == &screen) cols = 80;
-			if (td == &screen) rows = 24;
-#endif
+			if (td == &screen) {
+				/* respect big_map option */
+				if (rows <= 24) rows = 24;
+				else rows = 46;
+				/* hack: need to redraw map or it may look cut off */
+				if (in_game) cmd_redraw();
+			}
 
 			/* Hack -- minimal size */
 			if (cols < 1) cols = 1;
@@ -1802,13 +1822,26 @@ static errr CheckEvent(bool wait)
 			wid = cols * td->fnt->wid;
 			hgt = rows * td->fnt->hgt;
 
-			/* Resize the windows if any "change" is needed */
-			if ((Infowin->w != wid + 2) || (Infowin->h != hgt + 2))
-			{
+			/* Resize the windows if any "change" is needed -- This should work now - C. Blue */
+			if ((old_w != wid + 2) || (old_h != hgt + 2)) {
 				Infowin_set(td->outer);
 				Infowin_resize(wid + 2, hgt + 2);
 				Infowin_set(td->inner);
 				Infowin_resize(wid, hgt);
+
+				/* Make the changes go live (triggers on next c_message_add() call) */
+		                Term_activate(&td->t);
+            			Term_resize(cols, rows);
+
+				/* basically obsolete, since these values are unused once they were
+				   read and used in the very begining of client initialisation, but w/e */
+				term_prefs[t_idx].columns = cols;
+			        term_prefs[t_idx].lines = rows;
+
+				/* In case we resized Chat/Msg/Msg+Chat window,
+				   refresh contents so they are displayed properly,
+				   without having to wait for another incoming message to do it for us. */
+				p_ptr->window |= PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT;
 			}
 
 			break;

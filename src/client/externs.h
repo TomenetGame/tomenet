@@ -867,3 +867,4 @@ extern int screen_wid, screen_hgt;
 extern void (*resize_main_window)(int cols, int rows);
 extern bool bigmap_hint;
 extern bool ask_for_bigmap_generic(void);
+extern bool in_game;
