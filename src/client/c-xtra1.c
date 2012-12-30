@@ -1901,7 +1901,7 @@ void display_lagometer(bool display_commands)
 		prt(graph[y], 3 + y, 10);
 #else
  #if 0 /* doesn't take care of correct '_' colouring */
-		cur_lag = (max * (15 - y)) / 16;
+		cur_lag = (max * (16 - y)) / 16;
 		if (cur_lag >= 400) attr = TERM_RED;
 		else if (cur_lag >= 300) attr = TERM_ORANGE;
 		else if (cur_lag >= 200) attr = TERM_YELLOW;
@@ -1916,9 +1916,6 @@ void display_lagometer(bool display_commands)
 			   their colouring can be handled in one go too */
 			underscore2 = strchr(underscore, '_');
 			if (!underscore2) underscore2 = graph[y] + 60;
-			/* should be '15 - y' but then green '*' may be displayed between red '_',
-			   which "should" be impossible. So we go with what looks more sensible,
-			   and accept the little rounding glitchiness: */
 			cur_lag = (max * (16 - y)) / 16;
 			if (cur_lag >= 400) attrc = 'r';
 			else if (cur_lag >= 300) attrc = 'o';
