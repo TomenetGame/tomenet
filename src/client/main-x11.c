@@ -1791,6 +1791,7 @@ static errr CheckEvent(bool wait)
 			int old_w, old_h;
 
 			/* Save the Old information */
+			Infowin_set(td->outer);
 			old_w = Infowin->w;
 			old_h = Infowin->h;
 
@@ -1808,10 +1809,8 @@ static errr CheckEvent(bool wait)
 			if (td == &screen) cols = 80;
 			if (td == &screen) {
 				/* respect big_map option */
-				if (rows <= 24) rows = 24;
+				if (rows <= 24 || !(sflags1 & SFLG1_BIG_MAP)) rows = 24;
 				else rows = 46;
-				/* hack: need to redraw map or it may look cut off */
-				if (in_game) cmd_redraw();
 			}
 
 			/* Hack -- minimal size */
@@ -1842,6 +1841,27 @@ static errr CheckEvent(bool wait)
 				   refresh contents so they are displayed properly,
 				   without having to wait for another incoming message to do it for us. */
 				p_ptr->window |= PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT;
+			}
+
+			/* hack: Switch big_map mode (and clear screen)  */
+			if (td == &screen && in_game &&
+			    ((rows == 24 && Client_setup.options[43]) ||
+			    (rows == 46 && !Client_setup.options[43]))) {
+				/* and for big_map.. */
+				if (rows == 24) {
+					/* turn off big_map */
+					c_cfg.big_map = FALSE;
+            				Client_setup.options[43] = FALSE;
+        			        screen_hgt = SCREEN_HGT;
+				} else {
+					/* turn on big_map */
+					c_cfg.big_map = TRUE;
+            				Client_setup.options[43] = TRUE;
+        			        screen_hgt = MAX_SCREEN_HGT;
+				}
+				Term_clear();
+				Send_screen_dimensions();
+				cmd_redraw();
 			}
 
 			break;
