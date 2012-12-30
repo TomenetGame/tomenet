@@ -389,7 +389,7 @@ struct sfunc csfunc[]={
 	/* CS_FOUNTAIN, CS_BETWEEN, CS_BETWEEN2 to come */
 	{ s32bload, s32bsave, defsee, defhit },	/* CS_SHOP */
 	{ s32bload, s32bsave, defsee, defhit },	/* CS_MIMIC */
-	{ runeload, runesave }, /* CS_RUNE */
+	{ runeload, runesave, defsee, defhit }, /* CS_RUNE */
 /*
 	{ iload, isave, isee, ihit }
 */
