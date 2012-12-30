@@ -2692,7 +2692,7 @@ static void do_id_trap(int Ind, int t_idx)
 
 /* A nice idea:
  * Disarming a trap will have a disarm_skill% chance of dropping a 
- * random trap set? =) - the_sandman
+ * random trap kit? =) - the_sandman
  */
 void do_cmd_disarm(int Ind, int dir)
 {

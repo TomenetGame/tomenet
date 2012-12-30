@@ -85,7 +85,7 @@ Contents
     (4.5c)  Dungeons
     (4.5d)  Dungeon bosses
     (4.6)   Pits and vaults
-    (4.7)   Traps & trap sets
+    (4.7)   Traps & trap kits
     (4.8)   Level & vault feelings
     (4.9)   Navigating on maps
     (4.10)  Houses
@@ -4685,7 +4685,7 @@ see 'Pit', 'Vault' or 'Room' in (0.4).
 
 
 
-(4.7) Traps & trap sets
+(4.7) Traps & trap kits
 -----------------------
 
 About traps:
@@ -4732,47 +4732,47 @@ Trap symbols ('^') come in different colours. Here's an overview:
     white           miscellaneous traps
 
 
-About trap sets (or "trapping kits"):
--------------------------------------
+About trap kits:
+----------------
 The 'Trapping' skill allows a player to set up 'monster traps'.
 
 A monster trap consists of
--a trap set
--an item (or a stack of items) to load the trap set.
+-a trap kit
+-an item (or a stack of items) to load the trap kit.
 
-Each kind of trap set requires different items serving as ammunition:
-Catapult Trap Set       -       Sling ammo (fires with 2x base might).
-Arrow Trap Set          -       Arrows (fires with 3x base might).
-Bolt Trap Set           -       Bolts (fires with 4x base might).
-Fumes Trap Set          -       Potions. The effects are very similar to the
+Each kind of trap kit requires different items serving as ammunition:
+Catapult Trap Kit       -       Sling ammo (fires with 2x base might).
+Arrow Trap Kit          -       Arrows (fires with 3x base might).
+Bolt Trap Kit           -       Bolts (fires with 4x base might).
+Fumes Trap Kit          -       Potions. The effects are very similar to the
                                 effects when throwing a potion at a monster,
                                 the trap will greatly increase the potion's
                                 effectiveness though, by generating a thick
                                 fume that envelops nearby creatues and
                                 possibly gets inhaled as well.
-Magic Trap Set          -       Scrolls or runes. Even scrolls that are usually
+Magic Trap Kit          -       Scrolls or runes. Even scrolls that are usually
                                 only used on other items might have effects on
                                 certain creatures.
-Device Trap Set         -       Wands/Staves/Rods.
+Device Trap Kit         -       Wands/Staves/Rods.
                                 The charges of wands and staves will be
                                 decreased by 1 each time the trap sets off.
                                 Rod-traps will have timeouts, same as the rod
                                 itself.
 
-A normal trap set can be loaded with 1 item of the according ammo.
+A normal trap kit can be loaded with 1 item of the according ammo.
 After it went off (and is out of charges for device traps) you can pick up the
-trap set to use it again.
-If it was a catapult/arrow/bolt trap set you can often recover the ammunition
+trap kit to use it again.
+If it was a catapult/arrow/bolt trap kit you can often recover the ammunition
 too, in case it didn't break. (Magic ammo and artifact ammo never break).
 
-Trap sets can have special (ego) powers:
+Trap kits can have special (ego) powers:
 (prefixes:)
 Automatic       - Can set off up to 99 times, with a 20% chance each time of
                   ceasing to function. Requires the according amount of ammo
-                  though, if it's not a device trap set.
+                  though, if it's not a device trap kit.
 Fully Automatic - Sets off up to 99 times.
                   Requires the according amount of ammunition if it's not a
-                  device trap set.
+                  device trap kit.
 Well-hidden     - Makes it harder for monsters to spot the trap.
 Complicated     - Trap gets an extra AC bonus, making it harder to disarm.
 Obvious         - Curses the trap and makes it practically useless.
@@ -4790,18 +4790,28 @@ for Undead      - Only triggers against undead. Especially hard to spot.
 for Evil        - Only triggers against evil. Especially hard to spot.
                   Fires extra shots. May damage or destroy ghosts.
 
-If monsters notice a trap they can try to disarm it. Armour class of a trap
-makes it harder for monsters to disarm the trap. Trap sets and ammo that were
-disarmed by a monster cannot be recovered.
+If monsters notice a trap they can try to disarm it:
 
-You can disarm your own traps to get back the trap set (and ammunition).
+A pval (that's a number in round parentheses, eg (+2)) increases the trap's
+"stealth", making it well-hidden and therefore harder for monsters to notice.
+
+For trap kits that have XTRA_SHOTS flag, ie that fire more than 1 shot at once
+(you see "It fires missiles excessively fast." on *identifying* the trap kit),
+this value also determines the number of extra shots.
+
+The "armour class" bonus of a trap kit, given in brackets (eg [+8]) increases
+the trap's complexity, making it harder for monsters to disarm the trap.
+
+Trap kits and ammo that were disarmed by a monster cannot be recovered.
+
+You can disarm your own traps to get back the trap kit (and ammunition).
 
 
 Hints for quick and easy handling:
 ----------------------------------
 It is a good idea to inscribe trap kits and their loads.
 For example you could inscribe all trapping-related items  !=  so you will pick
-them up from the floor automatically when you want to retrieve trap sets that
+them up from the floor automatically when you want to retrieve trap kits that
 went off.
 
 Also you could inscribe the ammo/load items  @m1  so you can macro them easily.
@@ -4811,7 +4821,7 @@ kit to use if you enter a blank line (just hit ENTER key) when it asks you
 which item you want to load a trap with.
 
 Last but not least when your trapper is low level and you pick up all sorts of
-bad potions you could make a macro to load a fumes trap set with a potion
+bad potions you could make a macro to load a fumes trap kit with a potion
 inscribed  @m1 . Now make another macro that lets you inscribe all the bad
 potions you pick up  @m1  so you won't have to do that manually for each of
 them. That inscribing-macro could look like this:
@@ -6757,6 +6767,20 @@ FEATHER ('It allows you to levitate.')
 FLY     ('It allows you to fly.')
         Allows you to cross water areas without drowning. Enables you to fly
         over trees.
+XTRA_SHOTS
+        ('It fires missiles excessively fast.')
+        This ranged weapon can fire an extra shot per round, see your number of
+        shots per round go up in 'C' character overview screen.
+        For trap kits, the number of shots they fire can actually increase by
+        more than one, depending on their pval (the number in parentheses, for
+        example '(+2)' would fire 2 extra shots).
+XTRA_MIGHT
+        ('It fires missiles with extra might.')
+        This ranged weapon fires more damaging shots: Its damage multiplier is
+        increased by 1 above the usual multiplier for this weapon type.
+        For example a Long Bow of Extra might would show a (x4) multiplier,
+        although Long Bows usually have a (x3) multiplier.
+        Note that the multiplier may also affect the maximum shooting range.
 MANA ('It affects your mana capacity.')
         Will increase your total mana points by +x0%. Example:
         Gloves of the magi (+3) increase your mana by 30%.

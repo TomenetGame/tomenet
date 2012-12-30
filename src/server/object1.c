@@ -1435,7 +1435,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Trapping Kits */
 		case TV_TRAPKIT:
 			modstr = basenm;
-			basenm = "& # Trap Set~";
+			basenm = "& # Trap Kit~";
 			break;
 
 			/* Armour */

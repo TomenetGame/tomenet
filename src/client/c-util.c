@@ -4543,7 +4543,7 @@ Chain_Macro:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the trap kit name or inscription");
 						Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
 						Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GCatapult");
-						Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Catapult Trap Set'.");
+						Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Catapult Trap Kit'.");
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial trap kit name or inscription:");
 
 						/* Get an item name */

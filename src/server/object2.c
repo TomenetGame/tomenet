@@ -8302,7 +8302,7 @@ void process_objects(void)
 		/* Recharge rods on the ground */
 		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) o_ptr->pval--;
 		
-		/* Recharge rod trap sets */
+		/* Recharge rod trap kits */
 		if (o_ptr->tval == TV_TRAPKIT && o_ptr->sval == SV_TRAPKIT_DEVICE &&
 		    o_ptr->timeout) o_ptr->timeout--;
 	}
