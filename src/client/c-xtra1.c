@@ -1825,11 +1825,17 @@ static cptr likert(int x, int y, int max)
 /*
  * Draws the lag-o-meter.
  */
+#define COLOURED_LAGOMETER
 void display_lagometer(bool display_commands)
 {
 	int i, cnt, sum, cur, min, max, avg, x, y, packet_loss, height;
 	char tmp[80];
 	char graph[16][61];
+#ifdef COLOURED_LAGOMETER
+	byte attr = TERM_VIOLET; /* silyl compiler */
+	int cur_lag;
+	char *underscore, *underscore2, *underscore2a, c_graph[60 * 3 + 1], attrc;
+#endif
 
 	/* Clear screen */
 	Term_clear();
@@ -1891,42 +1897,158 @@ void display_lagometer(bool display_commands)
 
 	/* Draw the graph */
 	for (y = 0; y < 16; y++) {
+#ifndef COLOURED_LAGOMETER
 		prt(graph[y], 3 + y, 10);
+#else
+ #if 0 /* doesn't take care of correct '_' colouring */
+		cur_lag = (max * (15 - y)) / 16;
+		if (cur_lag >= 400) attr = TERM_RED;
+		else if (cur_lag >= 300) attr = TERM_ORANGE;
+		else if (cur_lag >= 200) attr = TERM_YELLOW;
+		else if (cur_lag >= 100) attr = TERM_GREEN;
+		else attr = TERM_L_GREEN;
+		c_prt(attr, graph[y], 3 + y, 10);
+ #else /* does take care */
+		memset(c_graph, 0, sizeof(char) * (60 * 3 + 1));
+		underscore = underscore2 = graph[y];
+		while (underscore < graph[y] + 60) {
+			/* handle non-underscore chunk (ie a chunk of asterisks),
+			   their colouring can be handled in one go too */
+			underscore2 = strchr(underscore, '_');
+			if (!underscore2) underscore2 = graph[y] + 60;
+			/* should be '15 - y' but then green '*' may be displayed between red '_',
+			   which "should" be impossible. So we go with what looks more sensible,
+			   and accept the little rounding glitchiness: */
+			cur_lag = (max * (16 - y)) / 16;
+			if (cur_lag >= 400) attrc = 'r';
+			else if (cur_lag >= 300) attrc = 'o';
+			else if (cur_lag >= 200) attrc = 'y';
+			else if (cur_lag >= 100) attrc = 'g';
+			else attrc = 'G';
+			if (underscore2 - underscore) strcat(c_graph, format("\377%c", attrc));
+			strncat(c_graph, underscore, underscore2 - underscore);
+			underscore = underscore2;
+
+			/* handle a chunk of underscores,
+			   but handle their colouring separately, one by one */
+			if (underscore < graph[y] + 60) {
+				underscore2 = strchr(underscore, '*');
+				underscore2a = strchr(underscore, ' ');
+				if (!underscore2) underscore2 = graph[y] + 60;
+				if (!underscore2a) underscore2a = graph[y] + 60;
+				if (underscore2a < underscore2) underscore2 = underscore2a;
+				for (underscore2a = underscore; underscore2a < underscore2; underscore2a++) {
+					cur_lag = ping_times[59 - (underscore2a - graph[y])];
+					if (cur_lag >= 400) attrc = 'r';
+					else if (cur_lag >= 300) attrc = 'o';
+					else if (cur_lag >= 200) attrc = 'y';
+					else if (cur_lag >= 100) attrc = 'g';
+					else attrc = 'G';
+					strcat(c_graph, format("\377%c%c", attrc, *underscore2a));
+				}
+				underscore = underscore2a;
+			}
+		}
+		c_put_str(TERM_WHITE, c_graph, 3 + y, 10);
+ #endif
+#endif
 	}
 
-	prt("Cur:", 19, 2);
+#ifndef COLOURED_LAGOMETER
+	prt("Cur:", 20, 2);
 	if (cur != -1) sprintf(tmp, "%5dms", cur);
 	else tmp[0] = '\0';
-	prt(tmp, 19, 7);
+	prt(tmp, 20, 7);
 
-	prt("Avg:", 19, 17);
+	prt("Avg:", 20, 17);
 	if (avg != -1) sprintf(tmp, "%5dms", avg);
 	else tmp[0] = '\0';
-	prt(tmp, 19, 22);
+	prt(tmp, 20, 22);
 
-	prt("Min:", 19, 32);
+	prt("Min:", 20, 32);
 	if (min != -1) sprintf(tmp, "%5dms", min);
 	else tmp[0] = '\0';
-	prt(tmp, 19, 37);
+	prt(tmp, 20, 37);
 
-	prt("Max:", 19, 47);
+	prt("Max:", 20, 47);
 	if (max != -1) sprintf(tmp, "%5dms", max);
 	else tmp[0] = '\0';
-	prt(tmp, 19, 52);
+	prt(tmp, 20, 52);
 
-	prt("Packet Loss:", 19, 62);
+	prt("Packet Loss:", 20, 62);
 	sprintf(tmp, "%2d", packet_loss);
-	prt(tmp, 19, 75);
+	prt( tmp, 20, 75);
+#else
+	prt("Cur:", 20, 2);
+	if (cur != -1) {
+		sprintf(tmp, "%5dms", cur);
+		if (cur >= 400) attr = TERM_RED;
+		else if (cur >= 300) attr = TERM_ORANGE;
+		else if (cur >= 200) attr = TERM_YELLOW;
+		else if (cur >= 100) attr = TERM_GREEN;
+		else attr = TERM_L_GREEN;
+	}
+	else tmp[0] = '\0';
+	c_prt(attr, tmp, 20, 7);
+
+	prt("Avg:", 20, 17);
+	if (avg != -1) {
+		sprintf(tmp, "%5dms", avg);
+		if (avg >= 400) attr = TERM_RED;
+		else if (avg >= 300) attr = TERM_ORANGE;
+		else if (avg >= 200) attr = TERM_YELLOW;
+		else if (avg >= 100) attr = TERM_GREEN;
+		else attr = TERM_L_GREEN;
+	}
+	else tmp[0] = '\0';
+	c_prt(attr, tmp, 20, 22);
+
+	prt("Min:", 20, 32);
+	if (min != -1) {
+		sprintf(tmp, "%5dms", min);
+		if (min >= 400) attr = TERM_RED;
+		else if (min >= 300) attr = TERM_ORANGE;
+		else if (min >= 200) attr = TERM_YELLOW;
+		else if (min >= 100) attr = TERM_GREEN;
+		else attr = TERM_L_GREEN;
+	}
+	else tmp[0] = '\0';
+	c_prt(attr, tmp, 20, 37);
+
+	prt("Max:", 20, 47);
+	if (max != -1) {
+		sprintf(tmp, "%5dms", max);
+		if (max >= 400) attr = TERM_RED;
+		else if (max >= 300) attr = TERM_ORANGE;
+		else if (max >= 200) attr = TERM_YELLOW;
+		else if (max >= 100) attr = TERM_GREEN;
+		else attr = TERM_L_GREEN;
+	}
+	else tmp[0] = '\0';
+	c_prt(attr, tmp, 20, 52);
+
+	prt("Packet Loss:", 20, 62);
+	sprintf(tmp, "%2d", packet_loss);
+	c_prt(packet_loss ? TERM_RED : TERM_L_GREEN, tmp, 20, 75);
+#endif
 
 	if (display_commands) {
+#ifndef COLOURED_LAGOMETER
 		if (lagometer_enabled) {
-			prt("(2) Disable lag-o-meter", 21, 4);
+			prt("(2) Disable lag-o-meter", 22, 4);
+		} else {
+			prt("(1) Enable lag-o-meter", 22, 4);
 		}
-		else {
-			prt("(1) Enable lag-o-meter", 21, 4);
+		prt("(c) Clear lag-o-meter", 22, 40);
+#else
+		if (lagometer_enabled) {
+			c_put_str(TERM_WHITE, "(\377U2\377w) Disable lag-o-meter", 22, 4);
+		} else {
+			c_put_str(TERM_WHITE, "(\377U1\377w) Enable lag-o-meter", 22, 4);
 		}
-
-		prt("Command: ", 22, 2);
+		c_put_str(TERM_WHITE, "(\377Uc\377w) Clear lag-o-meter", 22, 40);
+#endif
+//		prt("Command: ", 23, 2);
 	}
 }
 

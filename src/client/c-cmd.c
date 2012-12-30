@@ -3748,6 +3748,11 @@ void cmd_lagometer(void)
 
 				lagometer_enabled = FALSE;
 				break;
+
+			/* Clear ping memory */
+			case 'c':
+				for (k = 0; k < 60; k++) ping_times[k] = 0;
+				break;
 		}
 	}
 
