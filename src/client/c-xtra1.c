@@ -1842,6 +1842,7 @@ void display_lagometer(bool display_commands)
  #endif
 	int cur_lag;
 	char *underscore, *underscore2, *underscore2a, c_graph[60 * 3 + 1], attrc;
+	char attrc_prev = attrc0; /* assume best case at the top line */
 #endif
 
 	/* Clear screen */
@@ -1929,8 +1930,23 @@ void display_lagometer(bool display_commands)
 			else if (cur_lag >= 200) attrc = 'y';
 			else if (cur_lag >= 100) attrc = attrc1;
 			else attrc = attrc0;
-			if (underscore2 - underscore) strcat(c_graph, format("\377%c", attrc));
-			strncat(c_graph, underscore, underscore2 - underscore);
+			if (underscore2 - underscore) {
+				/* avoid 'skipping' a colour level, for better visuals ;) */
+				switch (attrc_prev) {
+				case 'r':
+					if (attrc == 'y' || attrc == attrc1 || attrc == attrc0) attrc = 'o';
+					break;
+				case 'o':
+					if (attrc == attrc1 || attrc == attrc0) attrc = 'y';
+					break;
+				case 'y':
+					if (attrc == attrc0) attrc = attrc1;
+					break;
+				}
+
+				strcat(c_graph, format("\377%c", attrc));
+				strncat(c_graph, underscore, underscore2 - underscore);
+			}
 			underscore = underscore2;
 
 			/* handle a chunk of underscores,
@@ -1954,6 +1970,7 @@ void display_lagometer(bool display_commands)
 			}
 		}
 		c_put_str(TERM_WHITE, c_graph, 3 + y, 10);
+		attrc_prev = attrc;
  #endif
 #endif
 	}
