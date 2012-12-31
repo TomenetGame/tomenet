@@ -540,7 +540,9 @@ int Net_setup(void) {
 				} else C_MAKE(trait_info, Setup.max_trait, player_trait);
 
 				for (i = 0; i < Setup.max_race; i++) {
-					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s%d", &b1, &b2, &b3, &b4, &b5, &b6, &str, &race_info[i].choice);
+					cptr *diz = race_info[i].diz;
+
+					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s%d", &b1, &b2, &b3, &b4, &b5, &b6, str, &race_info[i].choice);
 					race_info[i].title = string_make(str);
 					race_info[i].r_adj[0] = b1 - 50;
                                         race_info[i].r_adj[1] = b2 - 50;
@@ -548,10 +550,17 @@ int Net_setup(void) {
                                         race_info[i].r_adj[3] = b4 - 50;
                                         race_info[i].r_adj[4] = b5 - 50;
                                         race_info[i].r_adj[5] = b6 - 50;
+
+                                        if (is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) do {
+						Packet_scanf(&cbuf, "%s", str);
+						*diz = string_make(str);
+					} while ((*diz)[0] && ++diz < race_info[i].diz + 12);
 				}
 
 				for (i = 0; i < Setup.max_class; i++) {
-					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s", &b1, &b2, &b3, &b4, &b5, &b6, &str);
+					cptr *diz = class_info[i].diz;
+
+					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s", &b1, &b2, &b3, &b4, &b5, &b6, str);
 					class_info[i].title = string_make(str);
 					class_info[i].c_adj[0] = b1 - 50;
                                         class_info[i].c_adj[1] = b2 - 50;
@@ -564,12 +573,25 @@ int Net_setup(void) {
 							Packet_scanf(&cbuf, "%c", &b1);
 							class_info[i].min_recommend[j] = b1;
 						}
+
+                                        if (is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) do {
+						Packet_scanf(&cbuf, "%s", str);
+						*diz = string_make(str);
+					} while ((*diz)[0] && ++diz < class_info[i].diz + 12);
 				}
 
-                                if (Setup.max_trait != 0)
-				for (i = 0; i < Setup.max_trait; i++) {
-					Packet_scanf(&cbuf, "%s%d", &str, &trait_info[i].choice);
-					trait_info[i].title = string_make(str);
+                                if (Setup.max_trait != 0) {
+					for (i = 0; i < Setup.max_trait; i++) {
+						cptr *diz = trait_info[i].diz;
+
+						Packet_scanf(&cbuf, "%s%d", str, &trait_info[i].choice);
+						trait_info[i].title = string_make(str);
+
+	                                        if (is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) do {
+							Packet_scanf(&cbuf, "%s", str);
+							*diz = string_make(str);
+						} while ((*diz)[0] && ++diz < trait_info[i].diz + 12);
+					}
 				}
 
 				ptr = (char *) &Setup;

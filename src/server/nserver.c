@@ -2032,6 +2032,7 @@ static int Handle_setup(int ind)
 		}
 
 		for (i = 0; i < Setup.max_race; i++) {
+			cptr *diz = race_info[i].diz;
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 //			Packet_printf(&connp->c, "%s%d", Setup.race_title[i], Setup.race_choice[i]);
 			b1 = race_info[i].r_adj[0]+50;
@@ -2041,9 +2042,13 @@ static int Handle_setup(int ind)
 			b5 = race_info[i].r_adj[4]+50;
 			b6 = race_info[i].r_adj[5]+50;
 			Packet_printf(&connp->c, "%c%c%c%c%c%c%s%d", b1, b2, b3, b4, b5, b6, race_info[i].title, race_info[i].choice);
+			if (is_newer_than(&connp->version, 4, 5, 1, 1, 0, 0)) do {
+				Packet_printf(&connp->c, "%s", *diz);
+			} while ((*diz)[0] && ++diz < race_info[i].diz + 12);
 		}
 
 		for (i = 0; i < Setup.max_class; i++) {
+			cptr *diz = class_info[i].diz;
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 //			Packet_printf(&connp->c, "%s", Setup.class_title[i]);
 			b1 = class_info[i].c_adj[0]+50;
@@ -2056,11 +2061,19 @@ static int Handle_setup(int ind)
 			if (is_newer_than(&connp->version, 4, 4, 3, 1, 0, 0))
 				for (j = 0; j < 6; j++)
 					Packet_printf(&connp->c, "%c", class_info[i].min_recommend[j]);
+			if (is_newer_than(&connp->version, 4, 5, 1, 1, 0, 0)) do {
+				Packet_printf(&connp->c, "%s", *diz);
+			} while ((*diz)[0] && ++diz < class_info[i].diz + 12);
 		}
 
 		if (is_newer_than(&connp->version, 4, 4, 5, 10, 0, 0))
-		for (i = 0; i < Setup.max_trait; i++)
+		for (i = 0; i < Setup.max_trait; i++) {
+			cptr *diz = trait_info[i].diz;
 			Packet_printf(&connp->c, "%s%d", trait_info[i].title, trait_info[i].choice);
+			if (is_newer_than(&connp->version, 4, 5, 1, 1, 0, 0)) do {
+				Packet_printf(&connp->c, "%s", *diz);
+			} while ((*diz)[0] && ++diz < trait_info[i].diz + 12);
+		}
 
 		connp->setup = (char *) &Setup.motd[0] - (char *) &Setup;
 		connp->setup = 0;

@@ -24,6 +24,9 @@
 /* Don't display 'Trait' if traits aren't available */
 #define HIDE_UNAVAILABLE_TRAIT
 
+/* For race/class/trait descriptions */
+#define DIZ_ROW 3
+#define DIZ_COL 29
 
 /*
  * Choose the character's name
@@ -195,13 +198,30 @@ static bool choose_sex(void)
 }
 
 
+static void clear_diz(void) {
+	int i;
+//	c_put_str(TERM_UMBER, "                              ", DIZ_ROW, DIZ_COL);
+	for (i = 0; i < 12; i++)
+		c_put_str(TERM_L_UMBER, "                                                  ", DIZ_ROW + i, DIZ_COL);
+}
+
+static void display_race_diz(int r) {
+	int i = 0;
+	clear_diz();
+//	c_put_str(TERM_UMBER, format("--- %s ---", race_info[r].title), DIZ_ROW, DIZ_COL);
+	while (i < 12 && race_info[r].diz[i][0]) {
+		c_put_str(TERM_L_UMBER, race_info[r].diz[i], DIZ_ROW + i, DIZ_COL);
+		i++;
+	}
+}
+
 /*
  * Allows player to select a race			-JWT-
  */
 static bool choose_race(void)
 {
 	player_race *rp_ptr;
-	int i, j, l, m, n;
+	int i, j, l, m, n, sel = 0;
 	char c = '\0';
 	char out_val[160];
 	bool hazard = FALSE;
@@ -238,9 +258,13 @@ static bool choose_race(void)
 
 	while (1) {
 		c_put_str(TERM_SLATE, "Choose a race (* for random, Q to Quit, BACKSPACE to go back): ", n, 2);
+		display_race_diz(sel);
+
 		if (!hazard) c = inkey();
+
 		if (c == 'Q') quit(NULL);
 		if (c == '\b') {
+			clear_diz();
 			clear_from(n);
 			return FALSE;
 		}
@@ -267,10 +291,21 @@ static bool choose_race(void)
 		} else bell();
 	}
 
+	clear_diz();
 	clear_from(n);
 	return TRUE;
 }
 
+
+static void display_trait_diz(int r) {
+	int i = 0;
+	clear_diz();
+//	c_put_str(TERM_UMBER, format("--- %s ---", trait_info[r].title), DIZ_ROW, DIZ_COL);
+	while (i < 12 && trait_info[r].diz[i][0]) {
+		c_put_str(TERM_L_UMBER, trait_info[r].diz[i], DIZ_ROW + i, DIZ_COL);
+		i++;
+	}
+}
 
 /*
  * Allows player to select a racial trait (introduced for Draconians) - C. Blue
@@ -278,7 +313,7 @@ static bool choose_race(void)
 static bool choose_trait(void) {
 	player_trait *tp_ptr;
 
-	int i, j, l, m, n;
+	int i, j, l, m, n, sel = 0;
 	char c = '\0';
 	char out_val[160];
 	bool hazard = FALSE;
@@ -342,11 +377,13 @@ static bool choose_trait(void) {
 	/* Get a trait */
 	while (1) {
 		c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to Quit, BACKSPACE to go back):  ", n, 2);
+		display_trait_diz(sel);
 
 		if (!hazard) c = inkey();
 
 		if (c == 'Q') quit(NULL);
 		if (c == '\b') {
+			clear_diz();
 			clear_from(n);
 			return FALSE;
 		}
@@ -383,10 +420,21 @@ static bool choose_trait(void) {
 		}
 	}
 
+	clear_diz();
 	clear_from(n);
 	return TRUE;
 }
 
+
+static void display_class_diz(int r) {
+	int i = 0;
+	clear_diz();
+//	c_put_str(TERM_UMBER, format("--- %s ---", class_info[r].title), DIZ_ROW, DIZ_COL);
+	while (i < 12 && class_info[r].diz[i][0]) {
+		c_put_str(TERM_L_UMBER, class_info[r].diz[i], DIZ_ROW + i, DIZ_COL);
+		i++;
+	}
+}
 
 /*
  * Gets a character class				-JWT-
@@ -397,7 +445,7 @@ static bool choose_class(void)
 #ifndef CLASS_BEFORE_RACE
 	player_race *rp_ptr = &race_info[race];
 #endif
-	int i, j, l, m, n;
+	int i, j, l, m, n, sel = 0;
 	char c = '\0';
 	char out_val[160];
 	bool hazard = FALSE;
@@ -445,10 +493,13 @@ static bool choose_class(void)
 	/* Get a class */
 	while (1) {
 		c_put_str(TERM_SLATE, "Choose a class (* for random, Q to Quit, BACKSPACE to go back):  ", n, 2);
+		display_class_diz(sel);
+
 		if (!hazard) c = inkey();
 
 		if (c == 'Q') quit(NULL);
 		if (c == '\b') {
+			clear_diz();
 			clear_from(n - 3);
 			return FALSE;
 		}
@@ -475,6 +526,7 @@ static bool choose_class(void)
 		} else bell();
 	}
 
+	clear_diz();
 	clear_from(n - 3); /* -3 so beginner-warnings are also cleared */
 	return TRUE;
 }

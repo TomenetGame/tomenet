@@ -1433,26 +1433,26 @@ struct player_magic
 
 typedef struct player_race player_race;
 
-struct player_race
-{
-	cptr title;			/* Type of race */
+struct player_race {
+	cptr title;		/* Type of race */
+	cptr diz[12];		/* Description */
 
 	s16b r_adj[6];		/* Racial stat boni */
 
-	s16b r_dis;			/* disarming */
-	s16b r_dev;			/* magic devices */
-	s16b r_sav;			/* saving throw */
-	s16b r_stl;			/* stealth */
-	s16b r_srh;			/* search ability */
-	s16b r_fos;			/* search frequency */
-	s16b r_thn;			/* combat (normal) */
-	s16b r_thb;			/* combat (shooting) */
+	s16b r_dis;		/* disarming */
+	s16b r_dev;		/* magic devices */
+	s16b r_sav;		/* saving throw */
+	s16b r_stl;		/* stealth */
+	s16b r_srh;		/* search ability */
+	s16b r_fos;		/* search frequency */
+	s16b r_thn;		/* combat (normal) */
+	s16b r_thb;		/* combat (shooting) */
 
-	byte r_mhp;			/* Race hit-dice modifier */
-	s16b r_exp;			/* Race experience factor */
+	byte r_mhp;		/* Race hit-dice modifier */
+	s16b r_exp;		/* Race experience factor */
 
-	byte b_age;			/* base age */
-	byte m_age;			/* mod age */
+	byte b_age;		/* base age */
+	byte m_age;		/* mod age */
 
 	byte m_b_ht;		/* base height (males) */
 	byte m_m_ht;		/* mod height (males) */
@@ -1464,15 +1464,13 @@ struct player_race
 	byte f_b_wt;		/* base weight (females) */
 	byte f_m_wt;		/* mod weight (females) */
 
-	byte infra;			/* Infra-vision	range */
+	byte infra;		/* Infra-vision	range */
 
         s32b choice;            /* Legal class choices depending on race */
 
         s16b mana;              /* % mana */
 
-
-        struct
-        {
+        struct {
                 s16b skill;
 
                 char vmod;
@@ -1490,9 +1488,9 @@ struct player_race
 
 typedef struct player_class player_class;
 
-struct player_class
-{
+struct player_class {
 	cptr title;			/* Type of class */
+	cptr diz[12];			/* Description */
 
         byte color;                     /* @ color */
 
@@ -1520,8 +1518,7 @@ struct player_class
 	s16b c_mhp;			/* Class hit-dice adjustment */
         s16b c_exp;			/* Class experience factor */
 
-        struct
-        {
+        struct {
                 s16b skill;
 
                 char vmod;
@@ -1540,8 +1537,9 @@ typedef struct player_trait player_trait;
 
 struct player_trait
 {
-	cptr title; /* Name of trait */
-	s32b choice; /* Legal trait choices, depending on race */
+	cptr title;	/* Name of trait */
+	cptr diz[12];	/* Description */
+	s32b choice;	/* Legal trait choices, depending on race */
 };
 
 
