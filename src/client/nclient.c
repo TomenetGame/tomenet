@@ -56,14 +56,11 @@ static char		initialized = 0;
 /*
  * Initialize the function dispatch tables.
  */
-static void Receive_init(void)
-{
+static void Receive_init(void) {
 	int i;
 
 	for (i = 0; i < 256; i++)
-	{
 		receive_tbl[i] = NULL;
-	}
 
 	receive_tbl[PKT_RELIABLE]	= NULL; /* Server shouldn't be sending this */
 	receive_tbl[PKT_QUIT]		= Receive_quit;
@@ -167,12 +164,12 @@ int Receive_file(void){
 	unsigned short len;
 	u32b csum = 0;
 	int n, bytes_read;
-	
+
 	/* NOTE: The amount of data read is stored in n so that the socket
 	 * buffer can be rolled back if the packet isn't complete. - mikaelh */
 	if ((n = Packet_scanf(&rbuf, "%c%c%hd", &ch, &command, &fnum)) <= 0)
 		return n;
-	
+
 	if (n == 3) {
 		bytes_read = 4;
 
@@ -181,7 +178,7 @@ int Receive_file(void){
 				if ((n = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&rbuf, bytes_read);
-					
+
 					return n;
 				}
 				if (no_lua_updates) {
@@ -194,28 +191,25 @@ int Receive_file(void){
 				if (x) {
 					sprintf(outbuf, "\377oReceiving updated file %s [%d]", fname, fnum);
 					c_msg_print(outbuf);
-				}
-				else {
-					if (errno == EACCES) {
-						c_msg_print("\377rNo access to update files");
-					}
+				} else {
+					if (errno == EACCES) c_msg_print("\377rNo access to update files");
 				}
 				break;
 			case PKT_FILE_DATA:
 				if ((n = Packet_scanf(&rbuf, "%hd", &len)) <= 0) {
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&rbuf, bytes_read);
-					
+
 					return n;
 				}
 				bytes_read += 2;
 				x = local_file_write(0, fnum, len);
 				if (x == -1) {
 					/* Not enough data available */
-					
+
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&rbuf, bytes_read);
-					
+
 					return 0;
 				} else if (x == -2) {
 					/* Write failed */
@@ -249,7 +243,7 @@ int Receive_file(void){
 				if ((n = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&rbuf, bytes_read);
-					
+
 					return n;
 				}
 				x = local_file_check(fname, &csum);
@@ -260,7 +254,7 @@ int Receive_file(void){
 				if ((n = Packet_scanf(&rbuf, "%d", &csum)) <= 0) {
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&rbuf, bytes_read);
-					
+
 					return n;
 				}
 				check_return(0, fnum, csum, 0);
@@ -291,8 +285,7 @@ int Receive_file_data(int ind, unsigned short len, char *buffer) {
 		memcpy(buffer, rbuf.ptr, len);
 		rbuf.ptr += len;
 		return 1;
-	}
-	else {
+	} else {
 		/* Wait for more data */
 		return 0;
 	}
@@ -312,9 +305,8 @@ int Send_file_init(int ind, unsigned short id, char *fname) {
 int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len) {
 	Sockbuf_flush(&wbuf);
 	Packet_printf(&wbuf, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
-	if (Sockbuf_write(&wbuf, buf, len) != len){
+	if (Sockbuf_write(&wbuf, buf, len) != len)
 		printf("failed sending file data\n");
-	}
 	return 0;
 }
 
@@ -495,8 +487,7 @@ void Receive_login(void)
  * I haven't really figured out this function yet too;  however I'm perfectly
  * sure I ruined what it used to do.  Please blame DG instead	- Jir -
  */
-int Net_setup(void)
-{
+int Net_setup(void) {
 	int i, n, len, done = 0, j;
 	s16b b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
 	long todo = 1;
@@ -505,8 +496,7 @@ int Net_setup(void)
 
 	/* Initialize a new socket buffer */
 	if (Sockbuf_init(&cbuf, -1, CLIENT_RECV_SIZE,
-		SOCKBUF_WRITE | SOCKBUF_READ | SOCKBUF_LOCK) == -1)
-	{
+	    SOCKBUF_WRITE | SOCKBUF_READ | SOCKBUF_LOCK) == -1) {
 		plog(format("No memory for control buffer (%u)", CLIENT_RECV_SIZE));
 		return -1;
 	}
@@ -537,9 +527,7 @@ int Net_setup(void)
 
 				/* Make sure the client runs fast enough too - mikaelh */
 				if (Setup.frames_per_second > cfg_client_fps)
-				{
 					cfg_client_fps = Setup.frames_per_second;
-				}
 
 				/* allocate the arrays after loading */
 				C_MAKE(race_info, Setup.max_race, player_race);
@@ -642,8 +630,7 @@ int Net_setup(void)
  * is from the right UDP connection, it already has
  * this info from the ENTER_GAME_pack.
  */
-int Net_verify(char *real, char *nick, char *pass)
-{
+int Net_verify(char *real, char *nick, char *pass) {
 	int	n,
 		type,
 		result;
@@ -652,45 +639,37 @@ int Net_verify(char *real, char *nick, char *pass)
 	n = Packet_printf(&wbuf, "%c%s%s%s", PKT_VERIFY, real, nick, pass);
 
 	if (n <= 0 || Sockbuf_flush(&wbuf) <= 0)
-	{
 		plog("Can't send verify packet");
-	}
 
 	SetTimeout(5, 0);
-	if (!SocketReadable(rbuf.sock))
-	{
+	if (!SocketReadable(rbuf.sock)) {
 		errno = 0;
 		plog("No verify response");
 		return -1;
 	}
 	Sockbuf_clear(&rbuf);
-	if (Sockbuf_read(&rbuf) == -1)
-	{
+	if (Sockbuf_read(&rbuf) == -1) {
 		plog("Can't read verify reply packet");
 		return -1;
 	}
 	if (Sockbuf_flush(&wbuf) == -1)
 		return -1;
-	if (Receive_reply(&type, &result) <= 0)
-	{
+	if (Receive_reply(&type, &result) <= 0) {
 		errno = 0;
 		plog("Can't receive verify reply packet");
 		return -1;
 	}
-	if (type != PKT_VERIFY)
-	{
+	if (type != PKT_VERIFY) {
 		errno = 0;
 		plog(format("Verify wrong reply type (%d)", type));
 		return -1;
 	}
-	if (result != PKT_SUCCESS)
-	{
+	if (result != PKT_SUCCESS) {
 		errno = 0;
 		plog(format("Verification failed (%d)", result));
 		return -1;
 	}
-	if (Receive_magic() <= 0)
-	{
+	if (Receive_magic() <= 0) {
 		plog("Can't receive magic packet after verify");
 		return -1;
 	}
@@ -706,8 +685,7 @@ int Net_verify(char *real, char *nick, char *pass)
  * 1) wbuf is used only for sending packets (write/printf).
  * 2) rbuf is used for receiving packets in (read/scanf).
  */
-int Net_init(int fd)
-{
+int Net_init(int fd) {
 	int		 sock;
 
 	/*signal(SIGPIPE, SIG_IGN);*/
@@ -717,8 +695,7 @@ int Net_init(int fd)
 	sock = fd;
 
 	wbuf.sock = sock;
-	if (SetSocketNoDelay(sock, 1) == -1)
-	{
+	if (SetSocketNoDelay(sock, 1) == -1) {
 		plog("Can't set TCP_NODELAY on socket");
 		return -1;
 	}
@@ -729,24 +706,21 @@ int Net_init(int fd)
 
 	/* queue buffer, not a valid socket filedescriptor needed */
 	if (Sockbuf_init(&qbuf, -1, CLIENT_RECV_SIZE,
-		SOCKBUF_WRITE | SOCKBUF_READ | SOCKBUF_LOCK) == -1)
-	{
+	    SOCKBUF_WRITE | SOCKBUF_READ | SOCKBUF_LOCK) == -1) {
 		plog(format("No memory for queue buffer (%u)", CLIENT_RECV_SIZE));
 		return -1;
 	}
 
 	/* read buffer */
 	if (Sockbuf_init(&rbuf, sock, CLIENT_RECV_SIZE,
-		SOCKBUF_READ | SOCKBUF_WRITE) == -1)
-	{
+	    SOCKBUF_READ | SOCKBUF_WRITE) == -1) {
 		plog(format("No memory for read buffer (%u)", CLIENT_RECV_SIZE));
 		return -1;
 	}
 
 	/* write buffer */
 	if (Sockbuf_init(&wbuf, sock, CLIENT_SEND_SIZE,
-		SOCKBUF_WRITE) == -1)
-	{
+	    SOCKBUF_WRITE) == -1) {
 		plog(format("No memory for write buffer (%u)", CLIENT_SEND_SIZE));
 		return -1;
 	}
@@ -762,16 +736,13 @@ int Net_init(int fd)
  * Cleanup all the network buffers and close the datagram socket.
  * Also try to send the server a quit packet if possible.
  */
-void Net_cleanup(void)
-{
+void Net_cleanup(void) {
 	int	sock = wbuf.sock;
 	char	ch;
 
-	if (sock > 2)
-	{
+	if (sock > 2) {
 		ch = PKT_QUIT;
-		if (DgramWrite(sock, &ch, 1) != 1)
-		{
+		if (DgramWrite(sock, &ch, 1) != 1) {
 			GetSocketError(sock);
 			DgramWrite(sock, &ch, 1);
 		}
@@ -796,10 +767,8 @@ void Net_cleanup(void)
  * Flush the network output buffer if it has some data in it.
  * Called by the main loop before blocking on a select(2) call.
  */
-int Net_flush(void)
-{
-	if (wbuf.len == 0)
-	{
+int Net_flush(void) {
+	if (wbuf.len == 0) {
 		wbuf.ptr = wbuf.buf;
 		return 0;
 	}
@@ -814,43 +783,40 @@ int Net_flush(void)
 /*
  * Return the socket filedescriptor for use in a select(2) call.
  */
-int Net_fd(void)
-{
+int Net_fd(void) {
 	if (!initialized || c_quit)
 		return -1;
 	return rbuf.sock;
 }
 
-unsigned char Net_login(){
+unsigned char Net_login() {
 	unsigned char tc;
+
 	Sockbuf_clear(&wbuf);
 	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, "");
 	if (Sockbuf_flush(&wbuf) == -1)
-	{
 		quit("Can't send first login packet");
-	}
+
 	SetTimeout(5, 0);
-	if (!SocketReadable(rbuf.sock))
-	{
+	if (!SocketReadable(rbuf.sock)) {
 		errno = 0;
 		quit("No login reply received.");
 	}
+
 	Sockbuf_clear(&rbuf);
 	Sockbuf_read(&rbuf);
 	Receive_login();
 	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, cname);
 	if (Sockbuf_flush(&wbuf) == -1)
-	{
 		quit("Can't send login packet");
-	}
 
 	/* Wait for reply - mikaelh */
 	SetTimeout(5, 0);
-        if (!SocketReadable(rbuf.sock))
-        {
+        if (!SocketReadable(rbuf.sock)) {
                 errno = 0;
                 quit("No login reply received.");
         }
+
 	Sockbuf_read(&rbuf);
 
 	/* Peek in the buffer to check if the server wanted to destroy the
@@ -871,8 +837,7 @@ unsigned char Net_login(){
  * we have initialized all our other stuff like the user interface
  * and we also have the map already.
  */
-int Net_start(int sex, int race, int class)
-{
+int Net_start(int sex, int race, int class) {
 	int	i;
 	//int n;
 	int		type,
@@ -888,95 +853,73 @@ int Net_start(int sex, int race, int class)
 
 	/* Send the desired stat order */
 	for (i = 0; i < 6; i++)
-	{
 		Packet_printf(&wbuf, "%hd", stat_order[i]);
-	}
 
 	/* Send the options */
 	for (i = 0; i < OPT_MAX; i++)
-	{
 		Packet_printf(&wbuf, "%c", Client_setup.options[i]);
-	}
 
 	/* Send screen dimensions */
-	if (is_newer_than(&server_version, 4, 4, 9, 1, 0, 1)) {
+	if (is_newer_than(&server_version, 4, 4, 9, 1, 0, 1))
 		Packet_printf(&wbuf, "%d%d", screen_wid, screen_hgt);
-	}
 
 #ifndef BREAK_GRAPHICS
 	/* Send the "unknown" redefinitions */
 	for (i = 0; i < TV_MAX; i++)
-	{
 		Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);
-	}
 
 	/* Send the "feature" redefinitions */
 	for (i = 0; i < MAX_F_IDX; i++)
-	{
 		Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);
-	}
 
 	/* Send the "object" redefinitions */
 	for (i = 0; i < MAX_K_IDX; i++)
-	{
 		Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
-	}
 
 	/* Send the "monster" redefinitions */
 	for (i = 0; i < MAX_R_IDX; i++)
-	{
 		Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
-	}
 #endif
 
 	if (Sockbuf_flush(&wbuf) == -1)
-	{
 		quit("Can't send start play packet");
-	}
 
 	/* Wait for data to arrive */
 	SetTimeout(5, 0);
-	if (!SocketReadable(rbuf.sock))
-	{
+	if (!SocketReadable(rbuf.sock)) {
 		errno = 0;
 		quit("No play packet reply received.");
 	}
 
 	Sockbuf_clear(&rbuf);
-	if (Sockbuf_read(&rbuf) == -1)
-	{
+	if (Sockbuf_read(&rbuf) == -1) {
 		quit("Error reading play reply");
 		return -1;
 	}
 
 	/* If our connection wasn't accepted, quit */
-	if (rbuf.ptr[0] == PKT_QUIT)
-	{
+	if (rbuf.ptr[0] == PKT_QUIT) {
 		errno = 0;
 		quit(&rbuf.ptr[1]);
 		return -1;
 	}
-	if (rbuf.ptr[0] != PKT_REPLY)
-	{
+	if (rbuf.ptr[0] != PKT_REPLY) {
 		errno = 0;
 		quit(format("Not a reply packet after play (%d,%d,%d)",
 			rbuf.ptr[0], rbuf.ptr - rbuf.buf, rbuf.len));
 		return -1;
 	}
-	if (Receive_reply(&type, &result) <= 0)
-	{
+	if (Receive_reply(&type, &result) <= 0) {
 		errno = 0;
 		quit("Can't receive reply packet after play");
 		return -1;
 	}
-	if (type != PKT_PLAY)
-	{
+	if (type != PKT_PLAY) {
 		errno = 0;
 		quit("Can't receive reply packet after play");
 		return -1;
 	}
-	if (result != PKT_SUCCESS)
-	{
+	if (result != PKT_SUCCESS) {
 		errno = 0;
 		quit(format("Start play not allowed (%d)", result));
 		return -1;
@@ -989,9 +932,7 @@ int Net_start(int sex, int race, int class)
 	 * Actually process any leftover commands in rbuf
 	 */
 	if (Net_packet() == -1)
-	{
 		return -1;
-	}
 
 	errno = 0;
 	return 0;
@@ -1001,22 +942,19 @@ int Net_start(int sex, int race, int class)
 /*
  * Process a packet.
  */
-static int Net_packet(void)
-{
+static int Net_packet(void) {
 	int		type,
 			prev_type = 0,
 			result;
 	char *old_ptr;
 
 	/* Process all of the received client updates */
-	while (rbuf.buf + rbuf.len > rbuf.ptr)
-	{
+	while (rbuf.buf + rbuf.len > rbuf.ptr) {
 		type = (*rbuf.ptr & 0xFF);
 #if DEBUG_LEVEL > 2
 		if (type > 50) printf("Received packet: %d\n", type);
 #endif	/* DEBUG_LEVEL */
-		if (receive_tbl[type] == NULL)
-		{
+		if (receive_tbl[type] == NULL) {
 			errno = 0;
 #ifndef WIN32 /* suppress annoying msg boxes in windows clients, when unknown-packet-errors occur. */
 			plog(format("Received unknown packet type (%d, %d), dropping",
@@ -1027,15 +965,11 @@ static int Net_packet(void)
 
 			Sockbuf_clear(&rbuf);
 			break;
-		}
-		else {
+		} else {
 			old_ptr = rbuf.ptr;
-			if ((result = (*receive_tbl[type])()) <= 0)
-			{
-				if (result == -1)
-				{
-					if (type != PKT_QUIT)
-					{
+			if ((result = (*receive_tbl[type])()) <= 0) {
+				if (result == -1) {
+					if (type != PKT_QUIT) {
 						errno = 0;
 						plog(format("Processing packet type (%d, %d) failed", type, prev_type));
 					}
@@ -1044,13 +978,9 @@ static int Net_packet(void)
 				}
 
 				/* Check whether the socket buffer has advanced */
-				if (rbuf.ptr == old_ptr)
-				{
+				if (rbuf.ptr == old_ptr) {
 					/* Return code 0 means that there wasn't enough data in the socket buffer */
-					if (result == 0)
-					{
-						break;
-					}
+					if (result == 0) break;
 				}
 
 				/* Something weird may have happened, clear the socket buffer */
@@ -1067,8 +997,7 @@ static int Net_packet(void)
 /*
  * Read packets from the net until there are no more available.
  */
-int Net_input(void)
-{
+int Net_input(void) {
 	int	n;
 	int	netfd;
 
@@ -1088,24 +1017,21 @@ int Net_input(void)
 			/* Make room for more packets */
 			Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
 
-			if (n == -1)
-				return -1;
+			if (n == -1) return -1;
 		}
 	}
 
 	return 1;
 }
 
-int Flush_queue(void)
-{
+int Flush_queue(void) {
 	int	len;
 
 	if (!initialized) return 0;
 
 	len = qbuf.len - (qbuf.ptr - qbuf.buf);
 
-	if (Sockbuf_write(&rbuf, qbuf.ptr, len) != len)
-	{
+	if (Sockbuf_write(&rbuf, qbuf.ptr, len) != len) {
 		plog("Can't copy queued data to buffer");
 		return -1;
 	}
@@ -1114,8 +1040,7 @@ int Flush_queue(void)
 	Net_packet();
 
 	/* If a redraw has been requested, send the request */
-	if (request_redraw)
-	{
+	if (request_redraw) {
 		Send_redraw(0);
 		request_redraw = FALSE;
 	}
@@ -1129,41 +1054,34 @@ int Flush_queue(void)
  * as the frame head.  If this terminating packet
  * is missing then the packet is corrupt or incomplete.
  */
-int Receive_end(void)
-{
+int Receive_end(void) {
 	int	n;
 	byte	ch;
 
-	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
-		return n;
-
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 	return 1;
 }
 
 /*
  * Magic packets are old relics that don't do anything useful.
  */
-int Receive_magic(void)
-{
+int Receive_magic(void) {
 	int	n;
 	byte	ch;
 	unsigned magic;
 
-	if ((n = Packet_scanf(&rbuf, "%c%u", &ch, &magic)) <= 0)
-		return n;
+	if ((n = Packet_scanf(&rbuf, "%c%u", &ch, &magic)) <= 0) return n;
 	return 1;
 }
 
-int Receive_reply(int *replyto, int *result)
-{
+int Receive_reply(int *replyto, int *result) {
 	int	n;
 	byte	type, ch1, ch2;
 
 	n = Packet_scanf(&rbuf, "%c%c%c", &type, &ch1, &ch2);
 	if (n <= 0)
 		return n;
-	if (n != 3 || type != PKT_REPLY)
-	{
+	if (n != 3 || type != PKT_REPLY) {
 		plog("Can't receive reply packet");
 		return 1;
 	}
@@ -1172,8 +1090,7 @@ int Receive_reply(int *replyto, int *result)
 	return 1;
 }
 
-int Receive_quit(void)
-{
+int Receive_quit(void) {
 	unsigned char		pkt;
 	char			reason[MAX_CHARS];
 
@@ -1182,21 +1099,17 @@ int Receive_quit(void)
         if (screen_icky) Term_load();
         topline_icky = FALSE;
 
-	if (Packet_scanf(&rbuf, "%c", &pkt) != 1)
-	{
+	if (Packet_scanf(&rbuf, "%c", &pkt) != 1) {
 		errno = 0;
 		plog("Can't read quit packet");
-	}
-	else
-	{
+	} else {
 		if (Packet_scanf(&rbuf, "%s", reason) <= 0)
 			strcpy(reason, "unknown reason");
 		errno = 0;
 
 		/* Hack -- tombstone */
 		if (strstr(reason, "Killed by") ||
-				strstr(reason, "Committed suicide"))
-		{
+		    strstr(reason, "Committed suicide")) {
 			/* TERAHACK */
 			initialized = FALSE;
 
@@ -1207,16 +1120,13 @@ int Receive_quit(void)
 	return -1;
 }
 
-int Receive_sanity(void)
-{
+int Receive_sanity(void) {
 #ifdef SHOW_SANITY
 	int n;
 	char ch, buf[MAX_CHARS];
 	byte attr;
 	if ((n = Packet_scanf(&rbuf, "%c%c%s", &ch, &attr, buf)) <= 0)
-	{
 		return n;
-	}
 
 	strcpy(c_p_ptr->sanity, buf);
 	c_p_ptr->sanity_attr = attr;
@@ -1238,17 +1148,14 @@ int Receive_sanity(void)
 #endif	/* SHOW_SANITY */
 }
 
-int Receive_stat(void)
-{
+int Receive_stat(void) {
 	int	n;
 	char	ch;
 	char	stat;
 	s16b	max, cur, s_ind, max_base;
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%hd%hd", &ch, &stat, &max, &cur, &s_ind, &max_base)) <= 0)
-	{
 		return n;
-	}
 
 	p_ptr->stat_top[(int) stat] = max;
 	p_ptr->stat_use[(int) stat] = cur;
@@ -1256,9 +1163,7 @@ int Receive_stat(void)
 	p_ptr->stat_max[(int) stat] = max_base;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_stat(stat, max, cur, max_base);
-
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
@@ -1267,16 +1172,13 @@ int Receive_stat(void)
 	return 1;
 }
 
-int Receive_hp(void)
-{
+int Receive_hp(void) {
 	int	n;
 	char 	ch;
 	s16b	max, cur;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0)
-	{
 		return n;
-	}
 
 	p_ptr->mhp = max;
 	p_ptr->chp = cur;
@@ -1297,24 +1199,19 @@ int Receive_hp(void)
 	return 1;
 }
 
-int Receive_stamina(void)
-{
+int Receive_stamina(void) {
 	int	n;
 	char 	ch;
 	s16b	max, cur;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0)
-	{
 		return n;
-	}
 
 	p_ptr->mst = max;
 	p_ptr->cst = cur;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_stamina(max, cur);
-
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
@@ -1323,16 +1220,12 @@ int Receive_stamina(void)
 	return 1;
 }
 
-int Receive_ac(void)
-{
+int Receive_ac(void) {
 	int	n;
 	char	ch;
 	s16b	base, plus;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &base, &plus)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &base, &plus)) <= 0) return n;
 
 	p_ptr->dis_ac = base;
 	p_ptr->dis_to_a = plus;
@@ -1349,8 +1242,7 @@ int Receive_ac(void)
 	return 1;
 }
 
-int Receive_inven(void)
-{
+int Receive_inven(void) {
 	int	n;
 	char	ch;
 	char pos, attr, tval, sval, uses_dir = 0;
@@ -1486,8 +1378,7 @@ int Receive_inven(void)
 }
 
 /* Receive xtra data of an item. Added for customizable spell tomes - C. Blue */
-int Receive_inven_wide(void)
-{
+int Receive_inven_wide(void) {
 	int	n;
 	char	ch;
 	char pos, attr, tval, sval, *insc;
@@ -1632,18 +1523,14 @@ int Receive_inven_wide(void)
 }
 
 /* Receive some unique list info for client-side processing - C. Blue */
-int Receive_unique_monster(void)
-{
+int Receive_unique_monster(void) {
 	int	n;
 	char	ch;
 	int	u_idx, killed;
 	char name[60];
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%s", &ch, &u_idx, &killed, name)) <= 0)
-	{
-		return n;
-	}
-	
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%s", &ch, &u_idx, &killed, name)) <= 0) return n;
+
 	r_unique[u_idx] = killed;
 	strcpy(r_unique_name[u_idx], name);
 	return 1;
@@ -1667,8 +1554,7 @@ char *equipment_slot_names[] = {
 	"(tool)"
 };
 
-int Receive_equip(void)
-{
+int Receive_equip(void) {
 	int	n;
 	char 	ch;
 	char pos, attr, tval, sval, uses_dir;
@@ -1708,8 +1594,7 @@ int Receive_equip(void)
 	return 1;
 }
 
-int Receive_char_info(void)
-{
+int Receive_char_info(void) {
 	int	n;
 	char	ch;
 
@@ -1734,8 +1619,7 @@ int Receive_char_info(void)
 	p_ptr->mode = mode;
 
 	/* Load preferences once */
-	if (!player_pref_files_loaded)
-	{
+	if (!player_pref_files_loaded) {
 		initialize_player_pref_files();
 		player_pref_files_loaded = TRUE;
 
@@ -1747,9 +1631,7 @@ int Receive_char_info(void)
 	}
 
 	if (screen_icky) Term_switch(0);
-
 	prt_basic();
-
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
@@ -1758,16 +1640,12 @@ int Receive_char_info(void)
 	return 1;
 }
 
-int Receive_various(void)
-{
+int Receive_various(void) {
 	int	n;
 	char	ch, buf[MAX_CHARS];
 	s16b	hgt, wgt, age, sc;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%hu%s", &ch, &hgt, &wgt, &age, &sc, buf)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%hu%s", &ch, &hgt, &wgt, &age, &sc, buf)) <= 0) return n;
 
 	p_ptr->ht = hgt;
 	p_ptr->wt = wgt;
@@ -1783,18 +1661,14 @@ int Receive_various(void)
 	return 1;
 }
 
-int Receive_plusses(void)
-{
+int Receive_plusses(void) {
 	int	n;
 	char	ch;
 	s16b	dam, hit;
 	s16b	dam_r, hit_r;
 	s16b	dam_m, hit_m;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd%hd", &ch, &hit, &dam, &hit_r, &dam_r, &hit_m, &dam_m)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd%hd", &ch, &hit, &dam, &hit_r, &dam_r, &hit_m, &dam_m)) <= 0) return n;
 
 	p_ptr->dis_to_h = hit;
 	p_ptr->dis_to_d = dam;
@@ -1811,17 +1685,13 @@ int Receive_plusses(void)
 	return 1;
 }
 
-int Receive_experience(void)
-{
+int Receive_experience(void) {
 	int	n;
 	char	ch;
 	s32b	max, cur, adv;
 	s16b	lev, max_lev, max_plv;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%d%d%d", &ch, &lev, &max_lev, &max_plv, &max, &cur, &adv)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%d%d%d", &ch, &lev, &max_lev, &max_plv, &max, &cur, &adv)) <= 0) return n;
 
 	p_ptr->lev = lev;
 	p_ptr->max_lev = max_lev;
@@ -1831,9 +1701,7 @@ int Receive_experience(void)
 	exp_adv = adv;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_level(lev, max_lev, max_plv, max, cur, adv);
-
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
@@ -1842,8 +1710,7 @@ int Receive_experience(void)
 	return 1;
 }
 
-int Receive_skill_init(void)
-{
+int Receive_skill_init(void) {
 	int	n;
 	char	ch;
 	u16b	i;
@@ -1853,10 +1720,7 @@ int Receive_skill_init(void)
 	u16b	tval;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%d%c%S%S%S", &ch, &i,
-		&father, &order, &mkey, &flags1, &tval, name, desc, act)) <= 0)
-	{
-		return n;
-	}
+	    &father, &order, &mkey, &flags1, &tval, name, desc, act)) <= 0) return n;
 
 	/* XXX XXX These are x32b, not char * !!!!!
 	 * It's really needed that we separate c-types.h from types.h
@@ -1874,16 +1738,12 @@ int Receive_skill_init(void)
 	return 1;
 }
 
-int Receive_skill_points(void)
-{
+int Receive_skill_points(void) {
 	int	n;
         char	ch;
 	int	pt;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &pt)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &pt)) <= 0) return n;
 
 	p_ptr->skill_points = pt;
 
@@ -1893,8 +1753,7 @@ int Receive_skill_points(void)
 	return 1;
 }
 
-int Receive_skill_info(void)
-{
+int Receive_skill_info(void) {
 	int	n;
         char	ch;
         s32b    val;
@@ -1902,16 +1761,11 @@ int Receive_skill_info(void)
 	char	flags1;
 
 	if (is_newer_than(&server_version, 4, 4, 4, 1, 0, 0)) {
-		if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%c%d", &ch, &i, &val, &mod, &dev, &flags1, &mkey)) <= 0) {
-			return n;
-		}
-	}
-	else {
+		if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%c%d", &ch, &i, &val, &mod, &dev, &flags1, &mkey)) <= 0) return n;
+	} else {
 		int hidden, dummy;
 
-		if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d", &ch, &i, &val, &mod, &dev, &hidden, &mkey, &dummy)) <= 0) {
-			return n;
-		}
+		if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d", &ch, &i, &val, &mod, &dev, &hidden, &mkey, &dummy)) <= 0) return n;
 
 		flags1 = 0;
 		if (hidden) flags1 |= SKF1_HIDDEN;
@@ -1937,31 +1791,22 @@ int Receive_skill_info(void)
 	return 1;
 }
 
-int Receive_gold(void)
-{
+int Receive_gold(void) {
 	int	n;
 	char	ch;
 	int	gold, balance;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &gold, &balance)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &gold, &balance)) <= 0) return n;
 
 	p_ptr->au = gold;
 	p_ptr->balance = balance;
 
-	if (shopping)
-	{
+	if (shopping) {
 		/* Display the players remaining gold */
 		c_store_prt_gold();
-	}
-	else
-	{
+	} else {
 		if (screen_icky) Term_switch(0);
-
 		prt_gold(gold);
-
 		if (screen_icky) Term_switch(0);
 	}
 
@@ -1971,24 +1816,18 @@ int Receive_gold(void)
 	return 1;
 }
 
-int Receive_sp(void)
-{
+int Receive_sp(void) {
 	int	n;
 	char	ch;
 	s16b	max, cur;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0) return n;
 
 	p_ptr->msp = max;
 	p_ptr->csp = cur;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_sp(max, cur);
-
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
@@ -1997,17 +1836,13 @@ int Receive_sp(void)
 	return 1;
 }
 
-int Receive_history(void)
-{
+int Receive_history(void) {
 	int	n;
 	char	ch;
 	s16b	line;
 	char	buf[MAX_CHARS];
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu%s", &ch, &line, buf)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hu%s", &ch, &line, buf)) <= 0) return n;
 
 	strcpy(p_ptr->history[line], buf);
 
@@ -2019,18 +1854,14 @@ int Receive_history(void)
 	return 1;
 }
 
-int Receive_char(void)
-{
+int Receive_char(void) {
 	int	n;
 	char	ch;
 	char	x, y;
 	byte	a;
 	char	c;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
 
 	/* remember map_info in client-side buffer */
 	if (x >= PANEL_X && x < PANEL_X + screen_wid &&
@@ -2040,25 +1871,18 @@ int Receive_char(void)
 	}
 
 	if (screen_icky) Term_switch(0);
-
 	Term_draw(x, y, a, c);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_message(void)
-{
+int Receive_message(void) {
 	int	n, c;
 	char	ch;
 	char	buf[MSG_LEN], *bptr, *sptr, *bnptr;
 	char	l_buf[MSG_LEN], l_cname[NAME_LEN], *ptr, l_nick[NAME_LEN], called_name[NAME_LEN];
 
-	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0) return n;
 
 	/* XXX Mega-hack -- because we are not using checksums, sometimes under
 	 * heavy traffic Receive_line_input receives corrupted data, which will cause
@@ -2170,36 +1994,25 @@ int Receive_message(void)
 	return 1;
 }
 
-int Receive_state(void)
-{
+int Receive_state(void) {
 	int	n;
 	char	ch;
 	s16b	paralyzed, searching, resting;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu", &ch, &paralyzed, &searching, &resting)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu", &ch, &paralyzed, &searching, &resting)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_state(paralyzed, searching, resting);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_title(void)
-{
+int Receive_title(void) {
 	int	n;
 	char	ch;
 	char	buf[MAX_CHARS];
 
-	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, buf)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, buf)) <= 0) return n;
 
 	/* XXX -- Extract "ghost-ness" */
 	p_ptr->ghost = streq(buf, "Ghost") || streq(buf, "\377rGhost (dead)");
@@ -2207,16 +2020,12 @@ int Receive_title(void)
 	p_ptr->total_winner = (strstr(buf, "**") != NULL);
 
 	if (screen_icky) Term_switch(0);
-
 	prt_title(buf);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_depth(void)
-{
+int Receive_depth(void) {
 	int	n;
 	char	ch;
 	s16b	x, y, z, old_colour;
@@ -2228,8 +2037,7 @@ int Receive_depth(void)
 	if (is_newer_than(&server_version, 4, 4, 1, 6, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%c%c%s", &ch, &x, &y, &z, &town, &colour, &colour_sector, buf)) <= 0)
 			return n;
-	} else
-	{
+	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu%s", &ch, &x, &y, &z, &town, &old_colour, buf)) <= 0)
 			return n;
 		colour = old_colour;
@@ -2237,8 +2045,7 @@ int Receive_depth(void)
 	}
 
 	/* Compatibility with older servers - mikaelh */
-	if (!is_newer_than(&server_version, 4, 4, 1, 5, 0, 0))
-	{
+	if (!is_newer_than(&server_version, 4, 4, 1, 5, 0, 0)) {
 		if (colour) colour = TERM_ORANGE;
 		else colour = TERM_WHITE;
 	}
@@ -2262,244 +2069,158 @@ int Receive_depth(void)
 	return 1;
 }
 
-int Receive_confused(void)
-{
+int Receive_confused(void) {
 	int	n;
 	char	ch;
 	bool	confused;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &confused)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &confused)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_confused(confused);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_poison(void)
-{
+int Receive_poison(void) {
 	int	n;
 	char	ch;
 	bool	poison;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &poison)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &poison)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_poisoned(poison);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_study(void)
-{
+int Receive_study(void) {
 	int	n;
 	char	ch;
 	bool	study;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &study)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &study)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_study(study);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_bpr(void)
-{
+int Receive_bpr(void) {
 	int	n;
 	char	ch;
 	byte	bpr, attr;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &bpr, &attr)) <= 0)
-		return n;
+	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &bpr, &attr)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
 	prt_bpr(bpr, attr);
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_food(void)
-{
+int Receive_food(void) {
 	int	n;
 	char	ch;
 	u16b	food;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu", &ch, &food)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hu", &ch, &food)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_hunger(food);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_fear(void)
-{
+int Receive_fear(void) {
 	int	n;
 	char	ch;
 	bool	afraid;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &afraid)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &afraid)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_afraid(afraid);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_speed(void)
-{
+int Receive_speed(void) {
 	int	n;
 	char	ch;
 	s16b	speed;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &speed)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &speed)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_speed(speed);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_cut(void)
-{
+int Receive_cut(void) {
 	int	n;
 	char	ch;
 	s16b	cut;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &cut)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &cut)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_cut(cut);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_blind(void)
-{
+int Receive_blind(void) {
 	int	n;
 	char	ch;
 	bool	blind;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &blind)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &blind)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_blind(blind);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_stun(void)
-{
+int Receive_stun(void) {
 	int	n;
 	char	ch;
 	s16b	stun;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &stun)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &stun)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_stun(stun);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_item(void)
-{
+int Receive_item(void) {
 	char	ch;
 	int	n, item;
 
-	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
-	if (!screen_icky && !topline_icky)
-	{
+	if (!screen_icky && !topline_icky) {
 		c_msg_print(NULL);
-
-		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN)))
-		{
-			return 1;
-		}
-
+		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN))) return 1;
 		Send_item(item);
-	}
-	else
-		if ((n = Packet_printf(&qbuf, "%c", ch)) <= 0)
-		{
-			return n;
-		}
-
+	} else if ((n = Packet_printf(&qbuf, "%c", ch)) <= 0) return n;
 	return 1;
 }
 
-int Receive_spell_info(void)
-{
+int Receive_spell_info(void) {
 	char	ch;
 	int	n;
 	u16b	realm, book, line;
 	char	buf[MAX_CHARS];
 	s32b    spells[3];
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%hu%hu%hu%s", &ch, &spells[0], &spells[1], &spells[2], &realm, &book, &line, buf)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%hu%hu%hu%s", &ch, &spells[0], &spells[1], &spells[2], &realm, &book, &line, buf)) <= 0) return n;
 
 	/* Save the info */
         strcpy(spell_info[realm][book][line], buf);
@@ -2510,16 +2231,12 @@ int Receive_spell_info(void)
 	return 1;
 }
 
-int Receive_technique_info(void)
-{
+int Receive_technique_info(void) {
 	char	ch;
 	int	n;
 	s32b    melee, ranged;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &melee, &ranged)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &melee, &ranged)) <= 0) return n;
 
 	/* Save the info */
 	p_ptr->melee_techniques = melee;
@@ -2528,54 +2245,34 @@ int Receive_technique_info(void)
 	return 1;
 }
 
-int Receive_direction(void)
-{
+int Receive_direction(void) {
 	char	ch;
 	int	n, dir = 0;
 
-	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
-	if (!screen_icky && !topline_icky && !shopping)
-	{
+	if (!screen_icky && !topline_icky && !shopping) {
 		/* Ask for a direction */
 		if (!get_dir(&dir)) return 0;
 
 		/* Send it back */
-		if ((n = Packet_printf(&wbuf, "%c%c", PKT_DIRECTION, dir)) <= 0)
-		{
-			return n;
-		}
-	}
-	else
-		if ((n = Packet_printf(&qbuf, "%c", ch)) <= 0)
-		{
-			return n;
-		}
+		if ((n = Packet_printf(&wbuf, "%c%c", PKT_DIRECTION, dir)) <= 0) return n;
+	} else if ((n = Packet_printf(&qbuf, "%c", ch)) <= 0) return n;
 
 	return 1;
 }
 
-int Receive_flush(void)
-{
+int Receive_flush(void) {
 	char	ch;
 	int	n;
 
-	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
 	/* Flush the terminal */
 	Term_fresh();
 
 	/* Disable the delays altogether? */
-	if (c_cfg.disable_flush)
-	{
-		return 1;
-	}
+	if (c_cfg.disable_flush) return 1;
 
 	/* Wait */
 	/*
@@ -2589,8 +2286,7 @@ int Receive_flush(void)
 #if 0
 	if (!thin_down_flush || magik(33)) Term_xtra(TERM_XTRA_DELAY, 1);
 #else
-	if (c_cfg.thin_down_flush)
-	{
+	if (c_cfg.thin_down_flush) {
 		if (++flush_count > 10) return 1;
 	}
 
@@ -2601,18 +2297,14 @@ int Receive_flush(void)
 }
 
 
-int Receive_line_info(void)
-{
+int Receive_line_info(void) {
 	char	ch, c;
 	int	x, i, n, bytes_read;
 	s16b	y;
 	byte	a;
 	bool	draw = FALSE;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &y)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &y)) <= 0) return n;
 
 	/* Keep track of how many bytes have been read from the sockbuf */
 	bytes_read = 3;
@@ -2630,13 +2322,12 @@ int Receive_line_info(void)
 	if (y > last_line_info)
 		last_line_info = y;
 
-	for (x = 0; x < 80; x++)
-	{
+	for (x = 0; x < 80; x++) {
 		/* Read the char/attr pair */
 		if ((n = Packet_scanf(&rbuf, "%c%c", &c, &a)) <= 0) {
 			/* Rollback the socket buffer */
 			Sockbuf_rollback(&rbuf, bytes_read);
-			
+
 			/* Packet isn't complete, graceful failure */
 			return n;
 		}
@@ -2644,25 +2335,18 @@ int Receive_line_info(void)
 		bytes_read += n;
 
 		/* 4.4.3.1 servers use new RLE */
-		if (is_newer_than(&server_version, 4, 4, 3, 0, 0, 5))
-		{
+		if (is_newer_than(&server_version, 4, 4, 3, 0, 0, 5)) {
 			/* New RLE */
-			if (a == 0xFF)
-			{
+			if (a == 0xFF) {
 				/* Read the real attr and number of repetitions */
 				Packet_scanf(&rbuf, "%c%c", &a, &n);
-			}
-			else
-			{
+			} else {
 				/* No RLE, just one instance */
 				n = 1;
 			}
-		}
-		else
-		{
+		} else {
 			/* Check for bit 0x40 on the attribute */
-			if (a & 0x40)
-			{
+			if (a & 0x40) {
 				/* First, clear the bit */
 				a &= ~(0x40);
 
@@ -2670,23 +2354,20 @@ int Receive_line_info(void)
 				if ((n = Packet_scanf(&rbuf, "%c", &n)) <= 0) {
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&rbuf, bytes_read);
-					
+
 					/* Packet isn't complete, graceful failure */
 					return n;
 				}
 
 				bytes_read += n;
-			}
-			else
-			{
+			} else {
 				/* No RLE, just one instance */
 				n = 1;
 			}
 		}
 
 		/* Draw a character n times */
-		for (i = 0; i < n; i++)
-		{
+		for (i = 0; i < n; i++) {
 			/* Don't draw anything if "char" is zero */
 			if (c && draw) {
 				/* remember map_info in client-side buffer */
@@ -2706,11 +2387,7 @@ int Receive_line_info(void)
 		/* hack -- if x > 80, assume we have received corrupted data,
 		 * flush our buffers
 		 */
-		if (x > 80)
-		{
-			Sockbuf_clear(&rbuf);
-		}
-
+		if (x > 80) Sockbuf_clear(&rbuf);
 	}
 
 	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(0);
@@ -2727,17 +2404,13 @@ int Receive_line_info(void)
  * flag, as it is only used for displaying the mini-map,
  * and the screen should be icky during that time.
  */
-int Receive_mini_map(void)
-{
+int Receive_mini_map(void) {
 	char	ch, c;
 	int	n, x, bytes_read;
 	s16b	y;
 	byte	a;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &y)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &y)) <= 0) return n;
 
 	bytes_read = 3;
 
@@ -2745,12 +2418,11 @@ int Receive_mini_map(void)
 	if (y > last_line_info)
 		last_line_info = y;
 
-	for (x = 0; x < 80; x++)
-	{
+	for (x = 0; x < 80; x++) {
 		if ((n = Packet_scanf(&rbuf, "%c%c", &c, &a)) <= 0) {
 			/* Rollback the socket buffer */
 			Sockbuf_rollback(&rbuf, bytes_read);
-			
+
 			/* Packet isn't complete, graceful failure */
 			return n;
 		}
@@ -2766,15 +2438,11 @@ int Receive_mini_map(void)
 	return 1;
 }
 
-int Receive_special_other(void)
-{
+int Receive_special_other(void) {
 	int	n;
 	char	ch;
 
-	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
 	/* Set file perusal method to "other" */
 	special_line_type = SPECIAL_FILE_OTHER;
@@ -2785,16 +2453,12 @@ int Receive_special_other(void)
 	return 1;
 }
 
-int Receive_store_action(void)
-{
+int Receive_store_action(void) {
 	int	n, cost, action, bact;
 	char	ch, pos, name[MAX_CHARS], letter, attr;
 	byte	flag;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%c", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &flag)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%c", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &flag)) <= 0) return n;
 
 	c_store.bact[(int)pos] = bact;
 	c_store.actions[(int)pos] = action;
@@ -2805,16 +2469,12 @@ int Receive_store_action(void)
 	c_store.flags[(int)pos] = flag;
 
 	/* Make sure that we're in a store */
-	if (shopping)
-	{
-		display_store_action();
-	}
+	if (shopping) display_store_action();
 
 	return 1;
 }
 
-int Receive_store(void)
-{
+int Receive_store(void) {
 	int	n, price;
 	char	ch, pos, name[ONAME_LEN], tval, sval;
 	byte	attr;
@@ -2844,8 +2504,7 @@ int Receive_store(void)
 	return 1;
 }
 
-int Receive_store_wide(void)
-{
+int Receive_store_wide(void) {
 	int	n, price;
 	char	ch, pos, name[ONAME_LEN], tval, sval;
 	byte	attr;
@@ -2946,8 +2605,7 @@ int Receive_store_special_clr(void) {
 	return 1;
 }
 
-int Receive_store_info(void)
-{
+int Receive_store_info(void) {
 	int	n, max_cost;
 	char	ch, owner_name[MAX_CHARS] , store_name[MAX_CHARS];
 	s16b	num_items;
@@ -2955,15 +2613,9 @@ int Receive_store_info(void)
 	char store_char = '?';
 
 	if (is_newer_than(&server_version, 4, 4, 4, 0, 0, 0)) {
-		if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d%c%c", &ch, &store_num, store_name, owner_name, &num_items, &max_cost, &store_attr, &store_char)) <= 0)
-		{
-			return n;
-		}
+		if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d%c%c", &ch, &store_num, store_name, owner_name, &num_items, &max_cost, &store_attr, &store_char)) <= 0) return n;
 	} else {
-		if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d", &ch, &store_num, store_name, owner_name, &num_items, &max_cost)) <= 0)
-		{
-			return n;
-		}
+		if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d", &ch, &store_num, store_name, owner_name, &num_items, &max_cost)) <= 0) return n;
 	}
 
 	store.stock_num = num_items >= 0 ? num_items : 0; /* Hack: Use num_items to encode SPECIAL store flag */
@@ -2985,15 +2637,11 @@ int Receive_store_info(void)
 	return 1;
 }
 
-int Receive_store_kick(void)
-{
+int Receive_store_kick(void) {
 	int	n;
 	char	ch;
 
-	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
 	/* Leave the store */
 	leave_store = TRUE;
@@ -3001,15 +2649,11 @@ int Receive_store_kick(void)
 	return 1;
 }
 
-int Receive_sell(void)
-{
+int Receive_sell(void) {
 	int	n, price;
 	char	ch, buf[1024];
 
-	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &price)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &price)) <= 0) return n;
 
 	/* Tell the user about the price */
 	if (store_num == 57) sprintf(buf, "Really donate it? ");
@@ -3021,15 +2665,11 @@ int Receive_sell(void)
 	return 1;
 }
 
-int Receive_target_info(void)
-{
+int Receive_target_info(void) {
 	int	n;
 	char	ch, x, y, buf[MAX_CHARS];
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%s", &ch, &x, &y, buf)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%s", &ch, &x, &y, buf)) <= 0) return n;
 
 	/* Print the message */
 	if (c_cfg.target_history) c_msg_print(buf);
@@ -3101,8 +2741,7 @@ int Receive_music(void) {
 	return 1;
 }
 
-int Receive_special_line(void)
-{
+int Receive_special_line(void) {
 	int	n;
 	char	ch, attr;
 	s32b	max, line;
@@ -3187,15 +2826,11 @@ int Receive_special_line(void)
 	return 1;
 }
 
-int Receive_floor(void)
-{
+int Receive_floor(void) {
 	int	n;
 	char	ch, tval;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &tval)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &tval)) <= 0) return n;
 
 	/* Ignore for now */
 	tval = tval;
@@ -3203,19 +2838,14 @@ int Receive_floor(void)
 	return 1;
 }
 
-int Receive_pickup_check(void)
-{
+int Receive_pickup_check(void) {
 	int	n;
 	char	ch, buf[MAX_CHARS];
 
-	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, buf)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, buf)) <= 0) return n;
 
 	/* Get a check */
-	if (get_check(buf))
-	{
+	if (get_check(buf)) {
 		/* Pick it up */
 		Send_stay();
 	}
@@ -3224,28 +2854,20 @@ int Receive_pickup_check(void)
 }
 
 
-int Receive_party_stats(void)
-{
+int Receive_party_stats(void) {
 	int n,j,k,chp, mhp, csp, msp, color;
 	char ch, partymembername[90];
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%s%d%d%d%d%d", &ch, &j, &color, &partymembername, &k, &chp, &mhp, &csp, &msp)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%s%d%d%d%d%d", &ch, &j, &color, &partymembername, &k, &chp, &mhp, &csp, &msp)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_party_stats(j,color,partymembername,k,chp,mhp,csp,msp);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
 
-int Receive_party(void)
-{
+int Receive_party(void) {
 	int n;
 	char ch, pname[90], pmembers[MAX_CHARS], powner[MAX_CHARS];
 
@@ -3279,8 +2901,7 @@ int Receive_party(void)
 	return 1;
 }
 
-int Receive_guild(void)
-{
+int Receive_guild(void) {
 	int n;
 	char ch, gname[90], gmembers[MAX_CHARS], gowner[MAX_CHARS];
 
@@ -3303,31 +2924,24 @@ int Receive_guild(void)
 	return 1;
 }
 
-int Receive_skills(void)
-{
+int Receive_skills(void) {
 	int	n, i, bytes_read;
 	s16b	tmp[12];
 	char	ch;
 
-	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
 	bytes_read = n;
 
 	/* Read into skills info */
-	for (i = 0; i < 12; i++)
-	{
-		if ((n = Packet_scanf(&rbuf, "%hd", &tmp[i])) <= 0)
-		{
+	for (i = 0; i < 12; i++) {
+		if ((n = Packet_scanf(&rbuf, "%hd", &tmp[i])) <= 0) {
 			/* Rollback the socket buffer */
 			Sockbuf_rollback(&rbuf, bytes_read);
-			
+
 			/* Packet isn't complete, graceful failure */
 			return n;
 		}
-
 		bytes_read += 2 * n;
 	}
 
@@ -3351,15 +2965,11 @@ int Receive_skills(void)
 	return 1;
 }
 
-int Receive_pause(void)
-{
+int Receive_pause(void) {
 	int n;
 	char ch;
 
-	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
 	/* Show the most recent changes to the screen */
 	Term_fresh();
@@ -3377,16 +2987,12 @@ int Receive_pause(void)
 }
 
 
-int Receive_monster_health(void)
-{
+int Receive_monster_health(void) {
 	int n;
 	char ch, num;
 	byte attr;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &num, &attr)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &num, &attr)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
 
@@ -3398,8 +3004,7 @@ int Receive_monster_health(void)
 	return 1;
 }
 
-int Receive_chardump(void)
-{
+int Receive_chardump(void) {
 	char	ch;
 	int	n;
 	char tmp[160], type[20];
@@ -3435,28 +3040,21 @@ int Receive_chardump(void)
 
 /* Some simple paging, especially useful to notify ghosts
    who are afk while being rescued :) - C. Blue */
-int Receive_beep(void)
-{
+int Receive_beep(void) {
 	char	ch;
 	int	n;
 
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
-
 	if (!c_cfg.allow_paging) return 1;
-
 	return page();
 }
 
-int Receive_AFK(void)
-{
+int Receive_AFK(void) {
 	int	n;
 	char	ch;
 	byte	afk;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &afk)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &afk)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
 
@@ -3471,8 +3069,7 @@ int Receive_AFK(void)
 	return 1;
 }
 
-int Receive_encumberment(void)
-{
+int Receive_encumberment(void) {
 	int	n;
 	char	ch;
         byte cumber_armor;      /* Encumbering armor (tohit/sneakiness) */
@@ -3492,15 +3089,11 @@ int Receive_encumberment(void)
 	if (is_newer_than(&server_version, 4, 4, 2, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shield, &heavy_shoot,
 		    &icky_wield, &awkward_wield, &easy_wield, &cumber_weight, &monk_heavyarmor, &rogue_heavyarmor, &awkward_shoot)) <= 0)
-		{
 			return n;
-		}
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shield, &heavy_shoot,
 		    &icky_wield, &awkward_wield, &easy_wield, &cumber_weight, &monk_heavyarmor, &awkward_shoot)) <= 0)
-		{
 			return n;
-		}
 		rogue_heavyarmor = 0;
 	}
 
@@ -3514,50 +3107,34 @@ int Receive_encumberment(void)
 	return 1;
 }
 
-int Receive_extra_status(void)
-{
+int Receive_extra_status(void) {
 	int	n;
 	char	ch;
 	char    status[12 + 24];
 
-	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, &status)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, &status)) <= 0) return n;
 
 	if (screen_icky) Term_switch(0);
-
 	prt_extra_status(status);
-
 	if (screen_icky) Term_switch(0);
-
 	return 1;
 }
 
-int Receive_keepalive(void)
-{
+int Receive_keepalive(void) {
 	int n;
 	char ch;
 
-	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 	return 1;
 }
 
-int Receive_ping(void)
-{
+int Receive_ping(void) {
 	int n, id, tim, utim, tim_now, utim_now, rtt, index;
 	char ch, pong;
 	char buf[MSG_LEN];
 	struct timeval tv;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%d%d%d%S", &ch, &pong, &id, &tim, &utim, &buf)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%c%d%d%d%S", &ch, &pong, &id, &tim, &utim, &buf)) <= 0) return n;
 
 	if (pong) {
 #ifdef WINDOWS
@@ -3606,17 +3183,12 @@ int Receive_ping(void)
 				prt_lagometer(ping_times[1]);
 			}
 		}
-	}
-	else
-	{
+	} else {
 		/* reply */
 
 		pong = 1;
 
-		if ((n = Packet_printf(&wbuf, "%c%c%d%d%d%S", ch, pong, id, tim, utim, buf)) <= 0)
-		{
-			return n;
-		}
+		if ((n = Packet_printf(&wbuf, "%c%c%d%d%d%S", ch, pong, id, tim, utim, buf)) <= 0) return n;
 	}
 
 	return 1;
@@ -3627,8 +3199,7 @@ int Receive_ping(void)
    weather_type = -1, 0, 1, 2: stop, none, rain, snow
    weather_type +10 * n: pre-generate n steps
 */
-int Receive_weather(void)
-{
+int Receive_weather(void) {
 	int	n, i, clouds, bytes_read;
 	char	ch;
     	int	wg, wt, ww, wi, ws, wx, wy;
@@ -3658,7 +3229,7 @@ int Receive_weather(void)
 		    &cidx, &cx1, &cy1, &cx2, &cy2, &cd, &cxm, &cym)) <= 0) {
 			/* Rollback the socket buffer */
 			Sockbuf_rollback(&rbuf, bytes_read);
-			
+
 			/* Packet isn't complete, graceful failure */
 			return n;
 		}
@@ -3749,8 +3320,7 @@ int Receive_weather(void)
 	return 1;
 }
 
-int Receive_inventory_revision(void)
-{
+int Receive_inventory_revision(void) {
 	int n;
 	char ch;
 	int revision;
@@ -3761,10 +3331,7 @@ int Receive_inventory_revision(void)
 	char *match, tag_buf[ONAME_LEN];
 	bool auto_inscribe, found;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &revision)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &revision)) <= 0) return n;
 
 	p_ptr->inventory_revision = revision;
 	Send_inventory_revision(revision);
@@ -3899,19 +3466,16 @@ int Receive_inventory_revision(void)
 	return 1;
 }
 
-int Receive_account_info(void)
-{
+int Receive_account_info(void) {
 	int n;
 	char ch;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &acc_flags)) <= 0)
-	{
 		return n;
-	}
-	
+
 	acc_got_info = TRUE;
 	display_account_information();
-	
+
 	return 1;
 }
 
@@ -3919,6 +3483,7 @@ int Receive_account_info(void)
 int Receive_request_key(void) {
 	int n, id;
 	char ch, prompt[80], buf;
+
 	if ((n = Packet_scanf(&rbuf, "%c%d%s", &ch, &id, prompt)) <= 0) return n;
 
 	request_pending = TRUE;
@@ -3931,6 +3496,7 @@ int Receive_request_key(void) {
 int Receive_request_num(void) {
 	int n, id, std;
 	char ch, prompt[80];
+
 	if ((n = Packet_scanf(&rbuf, "%c%d%s%d", &ch, &id, prompt, &std)) <= 0) return n;
 
 	request_pending = TRUE;
@@ -3942,6 +3508,7 @@ int Receive_request_num(void) {
 int Receive_request_str(void) {
 	int n, id;
 	char ch, prompt[80], buf[MAX_CHARS_WIDE];
+
 	if ((n = Packet_scanf(&rbuf, "%c%d%s%s", &ch, &id, prompt, buf)) <= 0) return n;
 
 	request_pending = TRUE;
@@ -3965,439 +3532,232 @@ int Receive_request_cfr(void) {
 int Receive_request_abort(void) {
 	int n;
 	char ch;
+
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 	if (request_pending) request_abort = TRUE;
 	return 1;
 }
 
-int Send_search(void)
-{
+int Send_search(void) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_SEARCH)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_SEARCH)) <= 0) return n;
 	return 1;
 }
 
-int Send_walk(int dir)
-{
+int Send_walk(int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_WALK, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_WALK, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_run(int dir)
-{
+int Send_run(int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_RUN, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_RUN, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_drop(int item, int amt)
-{
+int Send_drop(int item, int amt) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_DROP, item, amt)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_DROP, item, amt)) <= 0) return n;
 	return 1;
 }
 
-int Send_drop_gold(s32b amt)
-{
+int Send_drop_gold(s32b amt) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%d", PKT_DROP_GOLD, amt)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%d", PKT_DROP_GOLD, amt)) <= 0) return n;
 	return 1;
 }
 
-int Send_tunnel(int dir)
-{
+int Send_tunnel(int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_TUNNEL, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_TUNNEL, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_stay(void)
-{
+int Send_stay(void) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_STAND)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_STAND)) <= 0) return n;
 	return 1;
 }
 
-static int Send_keepalive(void)
-{
+static int Send_keepalive(void) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_KEEPALIVE)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_KEEPALIVE)) <= 0) return n;
 	return 1;
 }
 
-int Send_toggle_search(void)
-{
+int Send_toggle_search(void) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_SEARCH_MODE)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_SEARCH_MODE)) <= 0) return n;
 	return 1;
 }
 
-int Send_rest(void)
-{
+int Send_rest(void) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_REST)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_REST)) <= 0) return n;
 	return 1;
 }
 
-int Send_go_up(void)
-{
+int Send_go_up(void) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_GO_UP)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_GO_UP)) <= 0) return n;
 	return 1;
 }
 
-int Send_go_down(void)
-{
+int Send_go_down(void) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_GO_DOWN)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_GO_DOWN)) <= 0) return n;
 	return 1;
 }
 
-int Send_open(int dir)
-{
+int Send_open(int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_OPEN, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_OPEN, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_close(int dir)
-{
+int Send_close(int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_CLOSE, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_CLOSE, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_bash(int dir)
-{
+int Send_bash(int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_BASH, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_BASH, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_disarm(int dir)
-{
+int Send_disarm(int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_DISARM, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_DISARM, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_wield(int item)
-{
+int Send_wield(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_WIELD, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_WIELD, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_observe(int item)
-{
+int Send_observe(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_OBSERVE, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_OBSERVE, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_take_off(int item)
-{
+int Send_take_off(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_TAKE_OFF, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_TAKE_OFF, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_take_off_amt(int item, int amt)
-{
+int Send_take_off_amt(int item, int amt) {
 	int n;
-
 	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_TAKE_OFF_AMT, item, amt)) <= 0) return n;
+	return 1;
+}
+
+int Send_destroy(int item, int amt) {
+	int	n;
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_DESTROY, item, amt)) <= 0) return n;
 
 	return 1;
 }
 
-int Send_destroy(int item, int amt)
-{
+int Send_inscribe(int item, cptr buf) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_DESTROY, item, amt)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_INSCRIBE, item, buf)) <= 0) return n;
 	return 1;
 }
 
-int Send_inscribe(int item, cptr buf)
-{
+int Send_uninscribe(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_INSCRIBE, item, buf)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_UNINSCRIBE, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_uninscribe(int item)
-{
+int Send_steal(int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_UNINSCRIBE, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_STEAL, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_steal(int dir)
-{
+int Send_quaff(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_STEAL, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_QUAFF, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_quaff(int item)
-{
+int Send_read(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_QUAFF, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_READ, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_read(int item)
-{
+int Send_aim(int item, int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_READ, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%c", PKT_AIM_WAND, item, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_aim(int item, int dir)
-{
+int Send_use(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%c", PKT_AIM_WAND, item, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_USE, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_use(int item)
-{
+int Send_zap(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_USE, item)) <= 0)
-	{
-		return n;
-	}
-
-	return 1;
-}
-
-int Send_zap(int item)
-{
-	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_ZAP, item)) <= 0)
-		return n;
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_ZAP, item)) <= 0) return n;
 	return 1;
 }
 
 int Send_zap_dir(int item, int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%c", PKT_ZAP_DIR, item, dir)) <= 0)
-		return n;
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%c", PKT_ZAP_DIR, item, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_fill(int item)
-{
+int Send_fill(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_FILL, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_FILL, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_eat(int item)
-{
+int Send_eat(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_EAT, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_EAT, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_activate(int item)
-{
+int Send_activate(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_ACTIVATE, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_ACTIVATE, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_activate_dir(int item, int dir)
-{
+int Send_activate_dir(int item, int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%c", PKT_ACTIVATE_DIR, item, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%c", PKT_ACTIVATE_DIR, item, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_target(int dir)
-{
+int Send_target(int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_TARGET, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_TARGET, dir)) <= 0) return n;
 	return 1;
 }
 
 
-int Send_target_friendly(int dir)
-{
+int Send_target_friendly(int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_TARGET_FRIENDLY, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_TARGET_FRIENDLY, dir)) <= 0) return n;
 	return 1;
 }
 
 
-int Send_look(int dir)
-{
+int Send_look(int dir) {
 	int	n;
 
 	if (is_newer_than(&server_version, 4, 4, 9, 3, 0, 0)) {
@@ -4409,236 +3769,127 @@ int Send_look(int dir)
 	return 1;
 }
 
-int Send_msg(cptr message)
-{
+int Send_msg(cptr message) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%S", PKT_MESSAGE, message)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%S", PKT_MESSAGE, message)) <= 0) return n;
 	return 1;
 }
 
-int Send_fire(int dir)
-{
+int Send_fire(int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_FIRE, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_FIRE, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_throw(int item, int dir)
-{
+int Send_throw(int item, int dir) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c%hd", PKT_THROW, dir, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c%hd", PKT_THROW, dir, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_item(int item)
-{
+int Send_item(int item) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_ITEM, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_ITEM, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_activate_skill(int mkey, int book, int spell, int dir, int item, int aux)
-{
+int Send_activate_skill(int mkey, int book, int spell, int dir, int item, int aux) {
 	int	n;
-
 	if ((n = Packet_printf(&wbuf, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL,
 					mkey, book, spell, dir, item, aux)) <= 0)
-	{
 		return n;
-	}
-
 	return 1;
 }
 
-int Send_pray(int book, int spell)
-{
+int Send_pray(int book, int spell) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_PRAY, book, spell)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_PRAY, book, spell)) <= 0) return n;
 	return 1;
 }
 
 #if 0 /* instead, Send_telekinesis is used */
-int Send_mind()
-{
+int Send_mind() {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_MIND)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_MIND)) <= 0) return n;
 	return 1;
 }
 #endif
 
-int Send_ghost(int ability)
-{
+int Send_ghost(int ability) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_GHOST, ability)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_GHOST, ability)) <= 0) return n;
 	return 1;
 }
 
-int Send_map(char mode)
-{
+int Send_map(char mode){
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_MAP, mode)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_MAP, mode)) <= 0) return n;
 	return 1;
 }
 
-int Send_locate(int dir)
-{
+int Send_locate(int dir) {
 	int n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_LOCATE, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_LOCATE, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_store_command(int action, int item, int item2, int amt, int gold)
-{
+int Send_store_command(int action, int item, int item2, int amt, int gold) {
 	int 	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd%hd%hd%d", PKT_STORE_CMD, action, item, item2, amt, gold)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd%hd%hd%d", PKT_STORE_CMD, action, item, item2, amt, gold)) <= 0) return n;
 	return 1;
 }
 
-int Send_store_examine(int item)
-{
+int Send_store_examine(int item) {
 	int 	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_STORE_EXAMINE, item)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_STORE_EXAMINE, item)) <= 0) return n;
 	return 1;
 }
 
-int Send_store_purchase(int item, int amt)
-{
+int Send_store_purchase(int item, int amt) {
 	int 	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_PURCHASE, item, amt)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_PURCHASE, item, amt)) <= 0) return n;
 	return 1;
 }
 
-int Send_store_sell(int item, int amt)
-{
+int Send_store_sell(int item, int amt) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SELL, item, amt)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SELL, item, amt)) <= 0) return n;
 	return 1;
 }
 
-int Send_store_leave(void)
-{
+int Send_store_leave(void) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_STORE_LEAVE)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_STORE_LEAVE)) <= 0) return n;
 	return 1;
 }
 
-int Send_store_confirm(void)
-{
+int Send_store_confirm(void) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_STORE_CONFIRM)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_STORE_CONFIRM)) <= 0) return n;
 	return 1;
 }
 
-int Send_redraw(char mode)
-{
+int Send_redraw(char mode) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_REDRAW, mode)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_REDRAW, mode)) <= 0) return n;
 	return 1;
 }
 
-int Send_clear_buffer(void)
-{
+int Send_clear_buffer(void) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_CLEAR_BUFFER)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_CLEAR_BUFFER)) <= 0) return n;
 	return 1;
 }
 
 int Send_clear_actions(void) {
 	int n;
-
 	if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
 		if ((n = Packet_printf(&wbuf, "%c", PKT_CLEAR_ACTIONS)) <= 0) return n;
 	}
 	return 1;
 }
 
-int Send_special_line(int type, s32b line)
-{
+int Send_special_line(int type, s32b line) {
 	int	n;
 
 	if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
@@ -4650,20 +3901,13 @@ int Send_special_line(int type, s32b line)
 	return 1;
 }
 
-int Send_skill_mod(int i)
-{
+int Send_skill_mod(int i) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%d", PKT_SKILL_MOD, i)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%d", PKT_SKILL_MOD, i)) <= 0) return n;
 	return 1;
 }
 
-int Send_skill_dev(int i, bool dev)
-{
+int Send_skill_dev(int i, bool dev) {
 	int	n;
 	if (is_newer_than(&server_version, 4, 4, 8, 2, 0, 0)) {
 		if ((n = Packet_printf(&wbuf, "%c%d%c", PKT_SKILL_DEV, i, dev)) <= 0) return n;
@@ -4671,149 +3915,83 @@ int Send_skill_dev(int i, bool dev)
 	return 1;
 }
 
-int Send_party(s16b command, cptr buf)
-{
+int Send_party(s16b command, cptr buf) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_PARTY, command, buf)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_PARTY, command, buf)) <= 0) return n;
 	return 1;
 }
 
 int Send_guild(s16b command, cptr buf){
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_GUILD, command, buf)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_GUILD, command, buf)) <= 0) return n;
 	return 1;
 }
 
-int Send_purchase_house(int dir)
-{
+int Send_purchase_house(int dir) {
 	int n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_PURCHASE, dir, 0)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_PURCHASE, dir, 0)) <= 0) return n;
 	return 1;
 }
 
-int Send_suicide(void)
-{
+int Send_suicide(void) {
 	int n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_SUICIDE)) <= 0)
-	{
-		return n;
-	}
+	if ((n = Packet_printf(&wbuf, "%c", PKT_SUICIDE)) <= 0) return n;
 
 	/* Newer servers require couple of extra bytes for suicide - mikaelh */
-	if (is_newer_than(&server_version, 4, 4, 2, 3, 0, 0))
-	{
+	if (is_newer_than(&server_version, 4, 4, 2, 3, 0, 0)) {
 		if ((n = Packet_printf(&wbuf, "%c%c", 1, 4)) <= 0)
-		{
 			return n;
-		}
 	}
 
 	return 1;
 }
 
-int Send_options(void)
-{
+int Send_options(void) {
 	int i, n;
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_OPTIONS)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c", PKT_OPTIONS)) <= 0) return n;
 	/* Send each option */
 	for (i = 0; i < OPT_MAX; i++)
-	{
 		Packet_printf(&wbuf, "%c", Client_setup.options[i]);
-	}
-
 	return 1;
 }
 
-int Send_screen_dimensions(void)
-{
+int Send_screen_dimensions(void) {
 	int n;
-
-	if ((n = Packet_printf(&wbuf, "%c%d%d", PKT_SCREEN_DIM, screen_wid, screen_hgt)) <= 0) {
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%d%d", PKT_SCREEN_DIM, screen_wid, screen_hgt)) <= 0) return n;
 	return 1;
 }
 
 int Send_admin_house(int dir, cptr buf){
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_HOUSE, dir, buf)) <= 0)
-		return n;
+	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_HOUSE, dir, buf)) <= 0) return n;
 	return 1;
 }
 
-int Send_master(s16b command, cptr buf)
-{
+int Send_master(s16b command, cptr buf) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_MASTER, command, buf)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_MASTER, command, buf)) <= 0) return n;
 	return 1;
 }
 
-int Send_King(byte type)
-{
+int Send_King(byte type) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_KING, type)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_KING, type)) <= 0) return n;
 	return 1;
 }
 
-int Send_spike(int dir)
-{
+int Send_spike(int dir){
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_SPIKE, dir)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_SPIKE, dir)) <= 0) return n;
 	return 1;
 }
 
-int Send_raw_key(int key)
-{
+int Send_raw_key(int key) {
 	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%c", PKT_RAW_KEY, key)) <= 0)
-	{
-		return n;
-	}
-
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_RAW_KEY, key)) <= 0) return n;
 	return 1;
 }
 
-int Send_ping(void)
-{
+int Send_ping(void) {
 	int i, n, tim, utim;
 	char pong = 0;
 	char *buf = "";
@@ -4835,47 +4013,27 @@ int Send_ping(void)
 	utim = tv.tv_usec;
 
 	if ((n = Packet_printf(&wbuf, "%c%c%d%d%d%S", PKT_PING, pong, ++ping_id, tim, utim, buf)) <= 0)
-	{
 		return n;
-	}
 
 	/* Shift ping_times */
-	for (i = 59; i > 0; i--) {
+	for (i = 59; i > 0; i--)
 		ping_times[i] = ping_times[i - 1];
-	}
 	ping_times[i] = -1;
 
 	return 1;
 }
 
-int Send_account_info(void)
-{
+int Send_account_info(void) {
 	int n;
-
-	if (!is_newer_than(&server_version, 4, 4, 2, 2, 0, 0)) {
-		return 1;
-	}
-
-	if ((n = Packet_printf(&wbuf, "%c", PKT_ACCOUNT_INFO)) <= 0)
-	{
-		return n;
-	}
-
+	if (!is_newer_than(&server_version, 4, 4, 2, 2, 0, 0)) return 1;
+	if ((n = Packet_printf(&wbuf, "%c", PKT_ACCOUNT_INFO)) <= 0) return n;
 	return 1;
 }
 
 int Send_change_password(char *old_pass, char *new_pass) {
 	int n;
-
-	if (!is_newer_than(&server_version, 4, 4, 2, 2, 0, 0)) {
-		return 1;
-	}
-
-	if ((n = Packet_printf(&wbuf, "%c%s%s", PKT_CHANGE_PASSWORD, old_pass, new_pass)) <= 0)
-	{
-		return n;
-	}
-
+	if (!is_newer_than(&server_version, 4, 4, 2, 2, 0, 0)) return 1;
+	if ((n = Packet_printf(&wbuf, "%c%s%s", PKT_CHANGE_PASSWORD, old_pass, new_pass)) <= 0) return n;
 	return 1;
 }
 
@@ -4891,8 +4049,7 @@ int Send_change_password(char *old_pass, char *new_pass) {
  * timeGetTime should provide a 1 ms resolution.
  *  - mikaelh
  */
-void update_ticks()
-{
+void update_ticks() {
 	struct timeval cur_time;
 	int newticks;
 
@@ -4923,28 +4080,26 @@ void update_ticks()
  * network output before calling this function again very bad things could
  * happen, such as an overflow of our send queue.
  */
-void do_keepalive()
-{
+void do_keepalive() {
 	/*
 	 * Check to see if it has been 2 seconds since we last sent anything.  Assume
 	 * that each game turn lasts 100 ms.
 	 */
 	if ((ticks - last_send_anything) >= 20)
-	{
 		Send_keepalive();
-	}
 }
 
 #define FL_SPEED 1
 
-void do_flicker(){
-	static int flticks=0;
-	if(ticks-flticks<FL_SPEED) return;
+void do_flicker() {
+	static int flticks = 0;
+
+	if (ticks-flticks < FL_SPEED) return;
 	flicker();
-	flticks=ticks;
+	flticks = ticks;
 }
 
-void do_mail(){
+void do_mail() {
 #ifdef CHECK_MAIL
  #ifdef SET_UID
 	static int mailticks=0;
@@ -4960,44 +4115,43 @@ void do_mail(){
 	strcpy(mpath,"/var/spool/mail/");
   #endif
 
-	uid=getuid();
-	pw=getpwuid(uid);
-	if(pw==(struct passwd*)NULL)
+	uid = getuid();
+	pw = getpwuid(uid);
+	if(pw == (struct passwd*)NULL)
 		return;
-	strcat(mpath,pw->pw_name);
+	strcat(mpath, pw->pw_name);
 
 	if(ticks-mailticks >= 300){	/* testing - too fast */
 		struct stat inf;
 		if(!stat(mpath,&inf)){
   #ifndef _POSIX_C_SOURCE
-			if(inf.st_size!=0){
-				if(inf.st_mtimespec.tv_sec>lm.tv_sec || (inf.st_mtimespec.tv_sec==lm.tv_sec && inf.st_mtimespec.tv_nsec>lm.tv_nsec)){
-					lm.tv_sec=inf.st_mtimespec.tv_sec;
-					lm.tv_nsec=inf.st_mtimespec.tv_nsec;
+			if (inf.st_size != 0) {
+				if (inf.st_mtimespec.tv_sec > lm.tv_sec || (inf.st_mtimespec.tv_sec == lm.tv_sec && inf.st_mtimespec.tv_nsec > lm.tv_nsec)) {
+					lm.tv_sec = inf.st_mtimespec.tv_sec;
+					lm.tv_nsec = inf.st_mtimespec.tv_nsec;
 					sprintf(buffer,"\377yYou have new mail in %s.", mpath);
 					c_msg_print(buffer);
 				}
 			}
   #else
-			if(inf.st_size!=0){
-				if(inf.st_mtime>lm.tv_sec || (inf.st_mtime==lm.tv_sec && inf.st_mtimensec>lm.tv_nsec)){
-					lm.tv_sec=inf.st_mtime;
-					lm.tv_nsec=inf.st_mtimensec;
+			if (inf.st_size != 0) {
+				if (inf.st_mtime > lm.tv_sec || (inf.st_mtime == lm.tv_sec && inf.st_mtimensec > lm.tv_nsec)) {
+					lm.tv_sec = inf.st_mtime;
+					lm.tv_nsec = inf.st_mtimensec;
 					sprintf(buffer,"\377yYou have new mail in %s.", mpath);
 					c_msg_print(buffer);
 				}
 			}
   #endif
 		}
-		mailticks=ticks;
+		mailticks = ticks;
 	}
  #endif
 #endif /* CHECK_MAIL */
 }
 
 /* Ping the server once a second when enabled - mikaelh */
-void do_ping()
-{
+void do_ping() {
 	static int last_ping = 0, last_sfx = 0;
 	static int time_stamp_hour = -1;
 
