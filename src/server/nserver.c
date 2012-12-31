@@ -413,7 +413,7 @@ static int Init_setup(void)
 
 		my_fclose(fp);
 	}
-	
+
 	/* MEGAHACK -- copy race/class names */
 	/* XXX I know this ruins the meaning of Setup... sry	- Jir - */
 	for (i = 0; i < MAX_RACE; i++)
@@ -908,7 +908,7 @@ void setup_contact_socket(void)
 	}
 
 	install_input(Contact, Socket, 0);
-	
+
 #ifdef SERVER_CONSOLE
 	/* Hack -- Install stdin an the "console" input */
 	install_input(Console, 0, 0);
@@ -1003,7 +1003,7 @@ static int Reply(char *host_addr, int fd)
 	if ((result = DgramWrite(fd, ibuf.buf, ibuf.len)) == -1)
 	{
 		GetSocketError(ibuf.sock);
-	}	
+	}
 
 	return result;
 }
@@ -1147,13 +1147,13 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 			}
 			else return E_IN_USE;
 		    }
-		
+
 		    /* All restrictions on the number of allowed players from one IP have 
 		     * been removed at this time. -APD
 		     *
 		     * Restored after the advent of Tcp/IP, becuase there is
 		     * no longer any good reason to allow them.  --Crimson
-		
+
 		    if (!strcasecmp(Players[i]->realname, real_name) &&
 			!strcasecmp(Players[i]->addr, addr) &&
 			strcasecmp(Players[i]->realname, cfg_admin_wizard) &&
@@ -1196,7 +1196,7 @@ static void Console(int fd, int arg)
 		shutdown_server();
 	}
 
-		
+
 	if (!strncmp(buf, "STATUS", 6))
 	{
 		s_printf("There %s %d %s.\n", (NumPlayers != 1 ? "are" : "is"), NumPlayers, (NumPlayers != 1 ? "players" : "player"));
@@ -1218,14 +1218,14 @@ static void Console(int fd, int arg)
 		/* Acknowledge */
 		s_printf("Message sent.\n");
 	}
-		
+
 	if (!strncmp(buf, "KELDON", 6))
 	{
 		/* Whatever I need at the moment */
 	}
 }
 #endif // if 0
-		
+
 static void Contact(int fd, int arg)
 {
 	int bytes, login_port, newsock;
@@ -1334,7 +1334,7 @@ static void Contact(int fd, int arg)
 			plog(format("Incomplete extended version from %s", host_addr));
 			return;
 		}
-		
+
 		/* Hack: Clients > 4.4.8.1.0.0 also send their binary type
 		   (OS they were compiled for), useful for MinGW weirdness
 		   in the future, like the LUA crash bug - C. Blue */
@@ -1457,7 +1457,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 
 	return SUCCESS;
 }
-		
+
 
 static void Conn_set_state(connection_t *connp, int state, int drain_state)
 {
@@ -1723,7 +1723,7 @@ static void Delete_player(int Ind)
 	/* Update Morgoth eventually if the player was on his level */
 	check_Morgoth(0);
 
-	/* Tell the metaserver about the loss of a player */	
+	/* Tell the metaserver about the loss of a player */
 	Report_to_meta(META_UPDATE);
 }
 
@@ -1995,7 +1995,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 		Destroy_connection(free_conn_index, "Server is out of memory.");
 		return -1;
 	}
-	
+
 	// Remove the contact input handler
 	remove_input(sock);
 	// Install the game input handler
@@ -2010,7 +2010,7 @@ static int Handle_setup(int ind)
 	char *buf;
 	int n, len, i, j;
 	char b1, b2, b3, b4, b5, b6;
-	
+
 	if (connp->state != CONN_SETUP)
 	{
 		Destroy_connection(ind, "not setup");
@@ -2259,7 +2259,7 @@ static int Handle_listening(int ind)
 		Destroy_connection(ind, "verify incorrect");
 		return -1;
 	}
-	
+
 	/* Set his character info */
 	connp->pass = strdup(pass);
 
@@ -2963,7 +2963,7 @@ void process_pending_commands(int ind)
 
 	// Attempt to execute every pending command. Any command that fails due
 	// to lack of energy will be put into the queue for next turn by the
-	// respective receive function. 		
+	// respective receive function. 
 
 	//while ( (p_ptr->energy >= level_speed(p_ptr->dun_depth)) && 
 	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) && 
@@ -3124,7 +3124,7 @@ void Handle_input(int fd, int arg)
 #if 0
 	/* Clear connp->r, which will be our new queue */
 	Sockbuf_clear(&connp->r);
-	
+
 	/* Put any old commands at the beginning of the new queue we are reading into */
 	if (connp->q.len > 0)
 	{
@@ -3166,7 +3166,7 @@ void Handle_input(int fd, int arg)
 			// If this happens, the the client has probably closed his TCP connection.
 			do_quit(ind, 0);
 		}
-		
+
 		//Destroy_connection(ind, "input error");
 		return;
 	}
@@ -3335,7 +3335,7 @@ int Net_output(void)
 		 * stream was causing us to loose priority in the routing tables.
 		 * Thanks to Crimson for explaining this. -APD
 		 */
-		
+
 		/* to keep a good UDP connection, send data that requests a response
 		 * every 1/4 of a second
 		 */
@@ -3346,7 +3346,7 @@ int Net_output(void)
 		 * synchronized way.
 		 */
 
-		/* 	
+		/* 
 		   Can't coment this out, it updates things like food
 		    and stores.   
 		   Still have to worry about routing with TCP :)
@@ -3884,7 +3884,7 @@ static int Receive_play(int ind)
 		}
 
 #if 0
-		/* Read class extra */	
+		/* Read class extra */
 		n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
 
 		if (n <= 0)
@@ -4344,7 +4344,7 @@ static int Receive_ack(int ind)
 			&& connp->c.buf[0] != PKT_SUCCESS
 			&& connp->c.buf[0] != PKT_FAILURE)))
 		Conn_set_state(connp, connp->drain_state, connp->drain_state);
-	
+
 	connp->rtt_timeouts = 0;
 
 	/*printf("Received ack to data sent at %ld.\n", rel_loops);*/
@@ -4450,7 +4450,7 @@ int Send_skill_init(int ind, u16b i)
 
 	char *tmp;
 	int mkey;
-	
+
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
 		errno = 0;
@@ -4461,7 +4461,7 @@ int Send_skill_init(int ind, u16b i)
 
 	tmp = s_info[i].action_desc ? s_text + s_info[i].action_desc : "";
 	mkey = s_info[i].action_mkey;
-	
+
 	/* hack for fighting/shooting techniques */
 	if (mkey == MKEY_MELEE && Players[ind]->melee_techniques == 0x0000) mkey = 0;
 	if (mkey == MKEY_RANGED && Players[ind]->ranged_techniques == 0x0000) mkey = 0;
@@ -5713,7 +5713,7 @@ int Send_mini_map(int ind, int y, byte *sa, char *sc)
 
 	/* Hack -- Prevent buffer overruns by flushing after each line sent */
 	/* Send_reliable(Players[ind]->conn); */
-	
+
 	return 1;
 }
 
@@ -5724,7 +5724,7 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 #ifdef MINDLINK_STORE
 	connection_t *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
-	
+
 #endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -5765,7 +5765,7 @@ int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price
 #ifdef MINDLINK_STORE
 	connection_t *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
-	
+
 #endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -6414,7 +6414,7 @@ int Send_guild(int ind, bool leave, bool clear)
 		if (memb == 1) strcat(bufm, " member");
 		else strcat(bufm, " members");
 
-		
+
 		if (master) {
 			strcpy(bufo, "master: ");
 			strcat(bufo, master);
@@ -6468,7 +6468,7 @@ int Send_skills(int ind)
 		tmp /= 2;
 	}
 #endif
-	
+
 	tmp += p_ptr->to_h + p_ptr->to_h_melee;
 	skills[0] = p_ptr->skill_thn + (tmp * BTH_PLUS_ADJ);
 
@@ -6510,7 +6510,7 @@ int Send_skills(int ind)
 
 	return 1;
 }
-	
+
 
 int Send_pause(int ind)
 {
@@ -8990,7 +8990,7 @@ static int Receive_store_leave(int ind)
 	} else player = 0;
 
 	if (player) p_ptr = Players[player];
-	
+
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
@@ -9221,7 +9221,7 @@ static int Receive_King(int ind)
 	}
 	return 1;
 }
-	
+
 static int Receive_redraw(int ind)
 {
 	connection_t *connp = Conn[ind];
@@ -9415,7 +9415,7 @@ static int Receive_clear_buffer(int ind)
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 	{
-		if (n == -1)	
+		if (n == -1)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
@@ -9740,7 +9740,7 @@ static int Receive_party(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
-	
+
 	/* sanitize input - C. Blue */
 	if (strlen(buf) > 40) *(buf + 40) = 0;
 	for (n = 0; n < (int)strlen(buf); n++)
@@ -9899,7 +9899,7 @@ void Handle_direction(int Ind, int dir)
 	else if (p_ptr->current_throw != -1)
 		do_cmd_throw(Ind, dir, p_ptr->current_throw, 0);
 }
-		
+
 void Handle_item(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
@@ -9959,13 +9959,13 @@ bool player_is_king(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	return FALSE;
-	
+
 	if (p_ptr->total_winner && ((inarea(&p_ptr->own1, &p_ptr->wpos)) || (inarea(&p_ptr->own2, &p_ptr->wpos))))
 	{
 		return TRUE;
 	}
 
-	/* Assume false */	
+	/* Assume false */
 	return FALSE;
 }
 
@@ -10025,7 +10025,7 @@ static int Receive_master(int ind)
 				master_summon(player, buf);
 				break;
 			}
-		
+
 			case MASTER_GENERATE:
 			{
 				master_generate(player, buf);
@@ -10084,7 +10084,7 @@ static int Receive_autophase(int ind)
 	if (connp->id != -1) player = GetInd[connp->id];
 		else player = 0;
 
-	/* a valid player was found, try to do the autophase */	
+	/* a valid player was found, try to do the autophase */
 	if (player)
 	{
 		p_ptr = Players[player];
@@ -10180,7 +10180,7 @@ static int Receive_raw_key(int ind)
 
 	char ch, key;
 	int n, player = -1;
-	
+
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
