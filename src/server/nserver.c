@@ -373,9 +373,8 @@ static void Init_receive(void)
 	playing_receive[PKT_REQUEST_CFR]	= Receive_request_cfr;
 }
 
-static int Init_setup(void)
-{
-	int n = 0, i;
+static int Init_setup(void) {
+	int n = 0, i, j;
 	char buf[1024];
 	FILE *fp;
 
@@ -390,7 +389,6 @@ static int Init_setup(void)
 #else
 	Setup.max_class = MAX_CLASS;
 #endif
-
 	Setup.max_trait = MAX_TRAIT;
 
 
@@ -404,8 +402,7 @@ static int Init_setup(void)
 
 	if (fp) {
 		/* Dump the file into the buffer */
-		while (0 == my_fgets(fp, buf, 1024, TRUE) && n < 23)
-		{
+		while (0 == my_fgets(fp, buf, 1024, TRUE) && n < 23) {
 			/* strncpy(&Setup.motd[n * 80], buf, 80); */
 			strncpy(&Setup.motd[n * 120], buf, 120);
 			n++;
@@ -416,10 +413,8 @@ static int Init_setup(void)
 
 	/* MEGAHACK -- copy race/class names */
 	/* XXX I know this ruins the meaning of Setup... sry	- Jir - */
-	for (i = 0; i < MAX_RACE; i++)
-	{
-		if (!race_info[i].title)
-		{
+	for (i = 0; i < MAX_RACE; i++) {
+		if (!race_info[i].title) {
 			Setup.max_race = i;
 			break;
 		}
@@ -427,17 +422,19 @@ static int Init_setup(void)
 //		Setup.race_choice[i] = race_info[i].choice;
 		/* 1 for '\0', 4 for race_choice */
 		Setup.setup_size += strlen(race_info[i].title) + 1 + 4 + 6;
+		for (j = 0; j < 12; j++) /* >4.5.1.2 */
+			Setup.setup_size += strlen(race_info[i].diz[j]) + 1;
 	}
 
-	for (i = 0; i < MAX_CLASS; i++)
-	{
-		if (!class_info[i].title)
-		{
+	for (i = 0; i < MAX_CLASS; i++) {
+		if (!class_info[i].title) {
 			Setup.max_class = i;
 			break;
 		}
 //		strncpy(&Setup.class_title[i], class_info[i].title, 12);
 		Setup.setup_size += strlen(class_info[i].title) + 1 + 6;
+		for (j = 0; j < 12; j++) /* >4.5.1.2 */
+			Setup.setup_size += strlen(class_info[i].diz[j]) + 1;
 	}
 
 	for (i = 0; i < MAX_TRAIT; i++) {
@@ -445,13 +442,15 @@ static int Init_setup(void)
 			Setup.max_trait = i;
 			break;
 		}
-		Setup.setup_size += strlen(trait_info[i].title) + 4;
+		Setup.setup_size += strlen(trait_info[i].title) + 1 + 4;
+		for (j = 0; j < 12; j++) /* >4.5.1.2 */
+			Setup.setup_size += strlen(trait_info[i].diz[j]) + 1;
 	}
 
 	return 0;
 }
 
-void init_players(){
+void init_players() {
 	max_connections = MAX_SELECT_FD - 24; /* 999 connections at most */
 	/* Last player is the DM Edit player ! */
 	/* As no extra connection is required, */
