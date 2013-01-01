@@ -25,77 +25,77 @@ __traits_diz = {
     {"", "", "", "", "", "", "", "", "", "", "", "",},
 
 
-    "Blue lineage",
+"Blue lineage",
     {"The \255ublue\255U lineage provides intrinsic resistance to",
     "lightning",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "White lineage",
+"White lineage",
     {"The \255uwhite\255U lineage provides intrinsic resistance",
     "to frost",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "Red lineage",
+"Red lineage",
     {"The \255ured\255U lineage provides intrinsic resistance to",
     "fire",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "Black lineage",
+"Black lineage",
     {"The \255ublack\255U lineage provides intrinsic resistance",
     "to acid",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "Green lineage",
+"Green lineage",
     {"The \255ugreen\255U lineage provides intrinsic resistance",
     "to poison",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "Multi-hued lineage",
+"Multi-hued lineage",
     {"The \255umulti-hued\255U lineage provides intrinsic",
     "regenerative powers.",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "Bronze lineage",
+"Bronze lineage",
     {"The \255ubronze\255U lineage provides intrinsic resistance",
     "to confusion",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "Silver lineage",
+"Silver lineage",
     {"The \255usilver\255U lineage provides intrinsic resistance",
     "to frost",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "Golden lineage",
+"Golden lineage",
     {"The \255ugolden\255U lineage provides intrinsic resistance",
     "to sound",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "Law lineage",
+"Law lineage",
     {"The \255ulaw\255U lineage provides intrinsic resistance to",
     "shards",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "Chaos lineage",
+"Chaos lineage",
     {"The \255uchaos\255U lineage provides intrinsic resistance",
     "to confusion",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "Balance lineage",
+"Balance lineage",
     {"The \255ubalance\255U lineage provides intrinsic resistance",
     "to disenchantment",
     "", "", "", "", "", "", "", "", "", "",},
 
-    "Power lineage",
+"Power lineage",
     {"The \255upower\255U lineage provides intrinsic regenerative",
     "powers.",
     "", "", "", "", "", "", "", "", "", "",},
 
 
-    "Enlightened",
-    {"\255uEnlightenment\255U attunes to divine powers.",
+"Enlightened",
+    {"\255uEnlightenment\255U attunes to angelic powers.",
     "", "", "", "", "", "", "", "", "", "", "",},
 
-    "Corrupted",
+"Corrupted",
     {"\255uCorruption\255U attunes to demonic powers.",
     "", "", "", "", "", "", "", "", "", "", "",},
 
