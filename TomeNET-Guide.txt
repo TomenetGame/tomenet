@@ -9709,21 +9709,6 @@ Maia        +2  +3  +3  +1  +1  +2      11      400%   100ft
 Depending on your class, your start-up equipment and your skill tree will
 vary. For example a warrior cannot learn magic spells.
 
-- Adventurer
-    Adventurers are hardy and versatile, they have no preferred way of fighting
-    or magic, and can adapt to any situation at hand.
-    They have no big big strengths nor weaknesses.
-    Adventurers can train nearly all skills, but do not excel at any specific
-    one. The size of their mana pool depends on both their intelligence and
-    their wisdom in equal parts.
-    Adventurers are often hybrids that combine various features of different
-    and more distinct classes in one character, creating unusual mixtures of
-    abilities.
-
-    Hint: Adventurers are difficult to play for beginners because to fully
-    utilize them you need to know exactly what you are trying to achieve and
-    how you want to distribute their skill points to make them effective.
-
 - Warrior
     A warrior is a hack-and-slash character, who solves most of his problems
     by cutting them to pieces, but will occasionally fall back on the help of
@@ -9965,6 +9950,21 @@ vary. For example a warrior cannot learn magic spells.
     away, for example a cheap dagger, or even dispose of your starter weapon
     completely and go with two cheap and light weapons instead. (See (6.2) for
     details on dual-wielding.)
+
+- Adventurer
+    Adventurers are hardy and versatile, they have no preferred way of fighting
+    or magic, and can adapt to any situation at hand.
+    They have no big big strengths nor weaknesses.
+    Adventurers can train nearly all skills, but do not excel at any specific
+    one. The size of their mana pool depends on both their intelligence and
+    their wisdom in equal parts.
+    Adventurers are often hybrids that combine various features of different
+    and more distinct classes in one character, creating unusual mixtures of
+    abilities.
+
+    Hint: Adventurers are difficult to play for beginners because to fully
+    utilize them you need to know exactly what you are trying to achieve and
+    how you want to distribute their skill points to make them effective.
 
 - Druid
     Druids are able to call upon the mystical powers of nature. Their wisdom
