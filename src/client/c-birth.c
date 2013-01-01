@@ -1034,17 +1034,17 @@ void get_char_info(void)
 	memset(trait_diz, 0, sizeof(char) * MAX_TRAIT * 12 * 61);
 	for (j = 0; j < 12; j++) {
 		for (i = 0; i < MAX_RACE; i++) {
+			if (!race_info[i].title) continue;
 			sprintf(out_val, "return get_race_diz(\"%s\", %d)", race_info[i].title, j);
 			strcpy(race_diz[i][j], string_exec_lua(0, out_val));
-			if (!i) printf("'%s'\n", race_diz[i][j]);
 		}
-#if 0
 		for (i = 0; i < MAX_CLASS; i++) {
+			if (!class_info[i].title) continue;
 			sprintf(out_val, "return get_class_diz(\"%s\", %d)", class_info[i].title, j);
 			strcpy(class_diz[i][j], string_exec_lua(0, out_val));
 		}
-#endif
 		for (i = 0; i < MAX_TRAIT; i++) {
+			if (!trait_info[i].title) continue;
 			sprintf(out_val, "return get_trait_diz(\"%s\", %d)", trait_info[i].title, j);
 			strcpy(trait_diz[i][j], string_exec_lua(0, out_val));
 		}

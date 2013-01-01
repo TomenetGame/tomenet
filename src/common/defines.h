@@ -453,8 +453,7 @@
 /*
  * Maximum number of player "class" types (see "table.c", etc)
  */
-#define MAX_CLASS       14	/* 11 if there're Druids. 10 o/w. */
-				// 12 => shaman; 13 => runemaster; 14 mindcrafter
+#define MAX_CLASS       13
 
 
 /*

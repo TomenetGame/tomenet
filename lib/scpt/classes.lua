@@ -4,12 +4,12 @@
 function get_class_diz(r_title, l)
     local i
     i = 0
-    while __class_diz[i * 2 + 1] ~= nil do
-        if __class_diz[i * 2 + 1] == r_title then
-            if __class_diz[i * 2 + 2][l + 1] == nil then
+    while __classes_diz[(i * 2) + 1] ~= nil do
+        if __classes_diz[(i * 2) + 1] == r_title then
+            if __classes_diz[(i * 2) + 2][l + 1] == nil then
                 return ""
             else
-                return __class_diz[i * 2 + 2][l + 1]
+                return __classes_diz[(i * 2) + 2][l + 1]
             end
         end
         i = i + 1
