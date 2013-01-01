@@ -9939,7 +9939,8 @@ vary. For example a warrior cannot learn magic spells.
     any situation. They use intelligence for spellcasting same as mages, they
     need strength if they rely on fighting in close combat, and they should
     have good dexterity if they aim at training ranged weapons.
-    At level 20 rangers learn to find paths passing thick woods.
+    At level 15 rangers learn to find paths passing thick woods, and at 25 they
+    have become very able swimmers as well.
 
     Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
