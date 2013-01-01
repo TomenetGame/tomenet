@@ -397,12 +397,17 @@ void init_lua()
         lua_dostring(L, ind);
         lua_settop(L, oldtop);
 
+#if 1
+/* CONFLICT: We want to fetch server flags before opening lua, so we can't read audio.lua
+   in time, nor xml.lua/meta.lua which are needed earlier too, so we need to hard-code it here -_-. */
+
         /* Load the xml module */
 	pern_dofile(0, "xml.lua");
 	pern_dofile(0, "meta.lua");
 
 	/* Sound system */
 	pern_dofile(0, "audio.lua");
+#endif
 
         init_lua_done = TRUE;
 }

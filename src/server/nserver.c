@@ -374,7 +374,7 @@ static void Init_receive(void)
 }
 
 static int Init_setup(void) {
-	int n = 0, i, j;
+	int n = 0, i;
 	char buf[1024];
 	FILE *fp;
 
@@ -422,8 +422,6 @@ static int Init_setup(void) {
 //		Setup.race_choice[i] = race_info[i].choice;
 		/* 1 for '\0', 4 for race_choice */
 		Setup.setup_size += strlen(race_info[i].title) + 1 + 4 + 6;
-		for (j = 0; j < 12; j++) /* >4.5.1.2 */
-			Setup.setup_size += strlen(race_info[i].diz[j]) + 1;
 	}
 
 	for (i = 0; i < MAX_CLASS; i++) {
@@ -433,8 +431,6 @@ static int Init_setup(void) {
 		}
 //		strncpy(&Setup.class_title[i], class_info[i].title, 12);
 		Setup.setup_size += strlen(class_info[i].title) + 1 + 6;
-		for (j = 0; j < 12; j++) /* >4.5.1.2 */
-			Setup.setup_size += strlen(class_info[i].diz[j]) + 1;
 	}
 
 	for (i = 0; i < MAX_TRAIT; i++) {
@@ -443,8 +439,6 @@ static int Init_setup(void) {
 			break;
 		}
 		Setup.setup_size += strlen(trait_info[i].title) + 1 + 4;
-		for (j = 0; j < 12; j++) /* >4.5.1.2 */
-			Setup.setup_size += strlen(trait_info[i].diz[j]) + 1;
 	}
 
 	return 0;
@@ -2010,8 +2004,7 @@ static int Handle_setup(int ind)
 	int n, len, i, j;
 	char b1, b2, b3, b4, b5, b6;
 
-	if (connp->state != CONN_SETUP)
-	{
+	if (connp->state != CONN_SETUP) {
 		Destroy_connection(ind, "not setup");
 		return -1;
 	}
@@ -2024,16 +2017,13 @@ static int Handle_setup(int ind)
 			n = Packet_printf(&connp->c, "%ld%hd%c%c%ld",
 			    Setup.motd_len, Setup.frames_per_second, Setup.max_race, Setup.max_class, Setup.setup_size);
 
-		if (n <= 0)
-		{
+		if (n <= 0) {
 			Destroy_connection(ind, "Setup 0 write error");
 			return -1;
 		}
 
 		for (i = 0; i < Setup.max_race; i++) {
-			cptr *diz = race_info[i].diz;
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
-//			Packet_printf(&connp->c, "%s%d", Setup.race_title[i], Setup.race_choice[i]);
 			b1 = race_info[i].r_adj[0]+50;
 			b2 = race_info[i].r_adj[1]+50;
 			b3 = race_info[i].r_adj[2]+50;
@@ -2041,15 +2031,10 @@ static int Handle_setup(int ind)
 			b5 = race_info[i].r_adj[4]+50;
 			b6 = race_info[i].r_adj[5]+50;
 			Packet_printf(&connp->c, "%c%c%c%c%c%c%s%d", b1, b2, b3, b4, b5, b6, race_info[i].title, race_info[i].choice);
-			if (is_newer_than(&connp->version, 4, 5, 1, 1, 0, 0)) do {
-				Packet_printf(&connp->c, "%s", *diz);
-			} while ((*diz)[0] && ++diz < race_info[i].diz + 12);
 		}
 
 		for (i = 0; i < Setup.max_class; i++) {
-			cptr *diz = class_info[i].diz;
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
-//			Packet_printf(&connp->c, "%s", Setup.class_title[i]);
 			b1 = class_info[i].c_adj[0]+50;
 			b2 = class_info[i].c_adj[1]+50;
 			b3 = class_info[i].c_adj[2]+50;
@@ -2060,28 +2045,18 @@ static int Handle_setup(int ind)
 			if (is_newer_than(&connp->version, 4, 4, 3, 1, 0, 0))
 				for (j = 0; j < 6; j++)
 					Packet_printf(&connp->c, "%c", class_info[i].min_recommend[j]);
-			if (is_newer_than(&connp->version, 4, 5, 1, 1, 0, 0)) do {
-				Packet_printf(&connp->c, "%s", *diz);
-			} while ((*diz)[0] && ++diz < class_info[i].diz + 12);
 		}
 
 		if (is_newer_than(&connp->version, 4, 4, 5, 10, 0, 0))
-		for (i = 0; i < Setup.max_trait; i++) {
-			cptr *diz = trait_info[i].diz;
+		for (i = 0; i < Setup.max_trait; i++)
 			Packet_printf(&connp->c, "%s%d", trait_info[i].title, trait_info[i].choice);
-			if (is_newer_than(&connp->version, 4, 5, 1, 1, 0, 0)) do {
-				Packet_printf(&connp->c, "%s", *diz);
-			} while ((*diz)[0] && ++diz < trait_info[i].diz + 12);
-		}
 
 		connp->setup = (char *) &Setup.motd[0] - (char *) &Setup;
 		connp->setup = 0;
 	}
 	/* else if (connp->setup < Setup.setup_size) */
-	else if (connp->setup < Setup.motd_len)
-	{
-		if (connp->c.len > 0)
-		{
+	else if (connp->setup < Setup.motd_len) {
+		if (connp->c.len > 0) {
 			/* If there is still unacked reliable data test for acks. */
 			Handle_input(-1, ind);
 			if (connp->state == CONN_FREE)
@@ -2089,11 +2064,9 @@ static int Handle_setup(int ind)
 		}
 	}
 	/* if (connp->setup < Setup.setup_size) */
-	if (connp->setup < Setup.motd_len)
-	{
+	if (connp->setup < Setup.motd_len) {
 		len = MIN(connp->c.size, 4096) - connp->c.len;
-		if (len <= 0)
-		{
+		if (len <= 0) {
 			/* Wait for acknowledgement of previously transmitted data. */
 			return 0;
 		}
@@ -2102,15 +2075,14 @@ static int Handle_setup(int ind)
 			len = Setup.setup_size - connp->setup;
 	*/
 
-		if(len>Setup.motd_len-connp->setup){
-			len=Setup.motd_len-connp->setup;
-			len=Setup.motd_len;
+		if (len>Setup.motd_len-connp->setup) {
+			len = Setup.motd_len - connp->setup;
+			len = Setup.motd_len;
 		}
 
 	/*	buf = (char *) &Setup; */
 		buf = (char *) &Setup.motd[0];
-		if (Sockbuf_write(&connp->c, &buf[connp->setup], len) != len)
-		{
+		if (Sockbuf_write(&connp->c, &buf[connp->setup], len) != len) {
 			Destroy_connection(ind, "sockbuf write setup error");
 			return -1;
 		}

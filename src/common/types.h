@@ -1435,7 +1435,6 @@ typedef struct player_race player_race;
 
 struct player_race {
 	cptr title;		/* Type of race */
-	cptr diz[12];		/* Description */
 
 	s16b r_adj[6];		/* Racial stat boni */
 
@@ -1490,7 +1489,6 @@ typedef struct player_class player_class;
 
 struct player_class {
 	cptr title;			/* Type of class */
-	cptr diz[12];			/* Description */
 
         byte color;                     /* @ color */
 
@@ -1538,7 +1536,6 @@ typedef struct player_trait player_trait;
 struct player_trait
 {
 	cptr title;	/* Name of trait */
-	cptr diz[12];	/* Description */
 	s32b choice;	/* Legal trait choices, depending on race */
 };
 

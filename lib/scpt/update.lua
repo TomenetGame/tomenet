@@ -37,6 +37,10 @@ __update_table =
 	"scpt/xml.lua",
 
 	"scpt/audio.lua",
+
+	"scpt/classes.lua",
+	"scpt/races.lua",
+	"scpt/traits.lua",
 }
 
 function update_client()

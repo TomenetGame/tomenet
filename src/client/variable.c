@@ -147,6 +147,10 @@ player_race *race_info;
 player_class *class_info;
 player_trait *trait_info;
 
+char race_diz[MAX_RACE][12][61]; /* 50 chars, 1 terminator, 10 for colour codes! */
+char class_diz[MAX_CLASS][12][61];
+char trait_diz[MAX_TRAIT][12][61];
+
 cptr ANGBAND_DIR;
 cptr ANGBAND_DIR_SCPT;
 cptr ANGBAND_DIR_TEXT;

@@ -33,6 +33,9 @@ function def_hack(x, default)
 	end
 end
 
+-- Automaticaly update clients, neat heh ? :;=)
+pern_dofile(Ind, "update.lua")
+
 -- Init !
 pern_dofile(Ind, "player.lua")
 pern_dofile(Ind, "s_aux.lua")
@@ -44,9 +47,10 @@ pern_dofile(Ind, "spells.lua")
 -- Initialize audio
 pern_dofile(Ind, "audio.lua")
 
--- Automaticaly update clients, neat heh ? :;=)
-pern_dofile(Ind, "update.lua")
-
+-- Initialize tables
+pern_dofile(Ind, "races.lua")
+pern_dofile(Ind, "classes.lua")
+pern_dofile(Ind, "traits.lua")
 
 -- Put whatever is needed here
 
