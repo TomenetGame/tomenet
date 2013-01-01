@@ -207,7 +207,10 @@ static void clear_diz(void) {
 
 static void display_race_diz(int r) {
 	int i = 0;
+
 	clear_diz();
+	if (!race_info[r].diz[i]) return; /* server !newer_than 4.5.1.2 */
+
 //	c_put_str(TERM_UMBER, format("--- %s ---", race_info[r].title), DIZ_ROW, DIZ_COL);
 	while (i < 12 && race_info[r].diz[i][0]) {
 		c_put_str(TERM_L_UMBER, race_info[r].diz[i], DIZ_ROW + i, DIZ_COL);
@@ -299,7 +302,10 @@ static bool choose_race(void)
 
 static void display_trait_diz(int r) {
 	int i = 0;
+
 	clear_diz();
+	if (!trait_info[r].diz[i]) return; /* server !newer_than 4.5.1.2 */
+
 //	c_put_str(TERM_UMBER, format("--- %s ---", trait_info[r].title), DIZ_ROW, DIZ_COL);
 	while (i < 12 && trait_info[r].diz[i][0]) {
 		c_put_str(TERM_L_UMBER, trait_info[r].diz[i], DIZ_ROW + i, DIZ_COL);
@@ -428,7 +434,10 @@ static bool choose_trait(void) {
 
 static void display_class_diz(int r) {
 	int i = 0;
+
 	clear_diz();
+	if (!class_info[r].diz[i]) return; /* server !newer_than 4.5.1.2 */
+
 //	c_put_str(TERM_UMBER, format("--- %s ---", class_info[r].title), DIZ_ROW, DIZ_COL);
 	while (i < 12 && class_info[r].diz[i][0]) {
 		c_put_str(TERM_L_UMBER, class_info[r].diz[i], DIZ_ROW + i, DIZ_COL);

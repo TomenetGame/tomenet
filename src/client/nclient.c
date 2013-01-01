@@ -551,7 +551,7 @@ int Net_setup(void) {
                                         race_info[i].r_adj[4] = b5 - 50;
                                         race_info[i].r_adj[5] = b6 - 50;
 
-                                        if (is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) do {
+                                        if (is_newer_than(&server_version, 4, 5, 1, 2, 0, 0)) do {
 						Packet_scanf(&cbuf, "%s", str);
 						*diz = string_make(str);
 					} while ((*diz)[0] && ++diz < race_info[i].diz + 12);
@@ -574,7 +574,7 @@ int Net_setup(void) {
 							class_info[i].min_recommend[j] = b1;
 						}
 
-                                        if (is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) do {
+                                        if (is_newer_than(&server_version, 4, 5, 1, 2, 0, 0)) do {
 						Packet_scanf(&cbuf, "%s", str);
 						*diz = string_make(str);
 					} while ((*diz)[0] && ++diz < class_info[i].diz + 12);
@@ -587,7 +587,7 @@ int Net_setup(void) {
 						Packet_scanf(&cbuf, "%s%d", str, &trait_info[i].choice);
 						trait_info[i].title = string_make(str);
 
-	                                        if (is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) do {
+	                                        if (is_newer_than(&server_version, 4, 5, 1, 2, 0, 0)) do {
 							Packet_scanf(&cbuf, "%s", str);
 							*diz = string_make(str);
 						} while ((*diz)[0] && ++diz < trait_info[i].diz + 12);
