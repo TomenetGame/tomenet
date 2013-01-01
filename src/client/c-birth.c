@@ -423,7 +423,7 @@ trait_redraw:
 
 	/* Get a trait */
 	while (1) {
-		c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to Quit, BACKSPACE to go back):  ", n, 2);
+		c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_trait_diz(sel);
 
 		if (!hazard) c = inkey();
@@ -581,7 +581,7 @@ class_redraw:
 
 	/* Get a class */
 	while (1) {
-		c_put_str(TERM_SLATE, "Choose a class (* for random, Q to Quit, BACKSPACE to go back):  ", n, 2);
+		c_put_str(TERM_SLATE, "Choose a class (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_class_diz(sel);
 
 		if (!hazard) c = inkey();
