@@ -229,11 +229,12 @@ static bool choose_race(void)
 	char out_val[160];
 	bool hazard = FALSE;
 
+	for (i = 18; i < 24; i++) Term_erase(1, i, 255);
+
+race_redraw:
 	l = 2;
 	m = 22 - (Setup.max_race - 1) / 5;
 	n = m - 1;
-
-	for (i = 18; i < 24; i++) Term_erase(1, i, 255);
 
 	for (j = 0; j < Setup.max_race; j++) {
 		rp_ptr = &race_info[j];
@@ -245,7 +246,8 @@ static bool choose_race(void)
 		} else
 #endif
 		{
-			c_put_str(TERM_WHITE, out_val, m, l);
+			if (j == sel) c_put_str(TERM_YELLOW, out_val, m, l);
+			else c_put_str(TERM_WHITE, out_val, m, l);
 		}
 		l += 15;
 		if (l > 70) {
@@ -260,7 +262,7 @@ static bool choose_race(void)
 #endif
 
 	while (1) {
-		c_put_str(TERM_SLATE, "Choose a race (* for random, Q to Quit, BACKSPACE to go back): ", n, 2);
+		c_put_str(TERM_SLATE, "Choose a race (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8): ", n, 2);
 		display_race_diz(sel);
 
 		if (!hazard) c = inkey();
@@ -271,6 +273,39 @@ static bool choose_race(void)
 			clear_from(n);
 			return FALSE;
 		}
+
+		/* Allow 'navigating', to highlight and display the descriptive text */
+		if (c == '4' || c == 'j') {
+			sel = (Setup.max_race + sel - 1) % Setup.max_race;
+			while (!(race_info[sel].choice & BITS(class)))
+			    sel = (Setup.max_race + sel - 1) % Setup.max_race;
+			goto race_redraw;
+		}
+		if (c == '6' || c == 'k') {
+			sel = (sel + 1) % Setup.max_race;
+			while (!(race_info[sel].choice & BITS(class)))
+			    sel = (sel + 1) % Setup.max_race;
+			goto race_redraw;
+		}
+		if (c == '8' || c == 'h') {
+			if (sel - 5 < 0) sel = sel + ((Setup.max_race - sel) / 5) * 5;
+			else sel -= 5;
+			while (!(race_info[sel].choice & BITS(class))) {
+				if (sel - 5 < 0) sel = sel + ((Setup.max_race - sel) / 5) * 5;
+				else sel -= 5;
+			}
+			goto race_redraw;
+		}
+		if (c == '2' || c == 'l') {
+			if (sel + 5 >= Setup.max_race) sel = sel % 5;
+			else sel += 5;
+			while (!(race_info[sel].choice & BITS(class))) {
+				if (sel + 5 >= Setup.max_race) sel = sel % 5;
+				else sel += 5;
+			}
+			goto race_redraw;
+		}
+		if (c == '\r' || c == '\n') c = 'a' + sel;
 
 		if (c == '*') hazard = TRUE;
 		if (hazard) j = rand_int(Setup.max_race);
@@ -363,6 +398,11 @@ static bool choose_trait(void) {
 
 	for (i = 18; i < 24; i++) Term_erase(1, i, 255);
 
+trait_redraw:
+	l = 2;
+	m = 20 - (Setup.max_trait - 1) / 5;
+	n = m - 1;
+
 	/* Display the legal choices */
 	i = 0;
 	for (j = 0; j < Setup.max_trait; j++) {
@@ -370,7 +410,8 @@ static bool choose_trait(void) {
                 if (!(tp_ptr->choice & BITS(race))) continue;
 
 		sprintf(out_val, "%c) %s", I2A(i), tp_ptr->title);
-		c_put_str(TERM_WHITE, out_val, m, l);
+		if (j == sel) c_put_str(TERM_YELLOW, out_val, m, l);
+		else c_put_str(TERM_WHITE, out_val, m, l);
 		i++;
 
 		l += 25;
@@ -393,6 +434,39 @@ static bool choose_trait(void) {
 			clear_from(n);
 			return FALSE;
 		}
+
+		/* Allow 'navigating', to highlight and display the descriptive text */
+		if (c == '4' || c == 'j') {
+			sel = (Setup.max_trait + sel - 1) % Setup.max_trait;
+			while (!(trait_info[sel].choice & BITS(race)))
+			    sel = (Setup.max_trait + sel - 1) % Setup.max_trait;
+			goto trait_redraw;
+		}
+		if (c == '6' || c == 'k') {
+			sel = (sel + 1) % Setup.max_trait;
+			while (!(trait_info[sel].choice & BITS(race)))
+			    sel = (sel + 1) % Setup.max_trait;
+			goto trait_redraw;
+		}
+		if (c == '8' || c == 'h') {
+			if (sel - 5 < 0) sel = sel + ((Setup.max_trait - sel) / 5) * 5;
+			else sel -= 5;
+			while (!(trait_info[sel].choice & BITS(race))) {
+				if (sel - 5 < 0) sel = sel + ((Setup.max_trait - sel) / 5) * 5;
+				else sel -= 5;
+			}
+			goto trait_redraw;
+		}
+		if (c == '2' || c == 'l') {
+			if (sel + 5 >= Setup.max_trait) sel = sel % 5;
+			else sel += 5;
+			while (!(trait_info[sel].choice & BITS(race))) {
+				if (sel + 5 >= Setup.max_trait) sel = sel % 5;
+				else sel += 5;
+			}
+			goto trait_redraw;
+		}
+		if (c == '\r' || c == '\n') c = 'a' + sel;
 
 		if (c == '*') hazard = TRUE;
 		if (hazard) j = rand_int(Setup.max_trait);
@@ -473,6 +547,11 @@ static bool choose_class(void)
 		Term_erase(1, i, 255);
 	}
 
+class_redraw:
+	l = 2;
+	m = 22 - (Setup.max_class - 1) / 5;
+	n = m - 1;
+
 	/* Display the legal choices */
 	for (j = 0; j < Setup.max_class; j++) {
                 cp_ptr = &class_info[j];
@@ -484,7 +563,8 @@ static bool choose_class(void)
 		} else
 #endif
 		{
-			c_put_str(TERM_WHITE, out_val, m, l);
+			if (j == sel) c_put_str(TERM_YELLOW, out_val, m, l);
+			else c_put_str(TERM_WHITE, out_val, m, l);
 		}
 
 		l += 15;
@@ -512,6 +592,47 @@ static bool choose_class(void)
 			clear_from(n - 3);
 			return FALSE;
 		}
+
+		/* Allow 'navigating', to highlight and display the descriptive text */
+		if (c == '4' || c == 'j') {
+			sel = (Setup.max_class + sel - 1) % Setup.max_class;
+#ifndef CLASS_BEFORE_RACE
+			while (!(race_info[race].choice & BITS(sel)))
+			    sel = (Setup.max_class + sel - 1) % Setup.max_class;
+#endif
+			goto class_redraw;
+		}
+		if (c == '6' || c == 'k') {
+			sel = (sel + 1) % Setup.max_class;
+#ifndef CLASS_BEFORE_RACE
+			while (!(race_info[race].choice & BITS(sel)))
+			    sel = (sel + 1) % Setup.max_class;
+#endif
+			goto class_redraw;
+		}
+		if (c == '8' || c == 'h') {
+			if (sel - 5 < 0) sel = sel + ((Setup.max_class - sel) / 5) * 5;
+			else sel -= 5;
+#ifndef CLASS_BEFORE_RACE
+			while (!(race_info[race].choice & BITS(sel))) {
+				if (sel - 5 < 0) sel = sel + ((Setup.max_class - sel) / 5) * 5;
+				else sel -= 5;
+			}
+#endif
+			goto class_redraw;
+		}
+		if (c == '2' || c == 'l') {
+			if (sel + 5 >= Setup.max_class) sel = sel % 5;
+			else sel += 5;
+#ifndef CLASS_BEFORE_RACE
+			while (!(race_info[race].choice & BITS(sel))) {
+				if (sel + 5 >= Setup.max_class) sel = sel % 5;
+				else sel += 5;
+			}
+#endif
+			goto class_redraw;
+		}
+		if (c == '\r' || c == '\n') c = 'a' + sel;
 
 		if (c == '*') hazard = TRUE;
 		if (hazard) j = rand_int(Setup.max_class);
