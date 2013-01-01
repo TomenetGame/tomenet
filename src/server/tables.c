@@ -1537,7 +1537,7 @@ player_race race_info[MAX_RACE] =
                 "Hobbit",
 //		"12345678901234567890123456789012345678901234567890",
                 {"\377uHobbits\377U have infra-vision, resist black breath",
-                "somewhat, have their dexterity sustained and get a"
+                "somewhat, have their dexterity sustained and get a",
                 "dexterity bonus for not wearing shoes.",
                 "They make excellent rogues (they prefer to be",
                 "called burglars), but might want to train 'Health'",
