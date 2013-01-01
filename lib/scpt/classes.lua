@@ -121,7 +121,7 @@ __classes_diz = {
 
 "Ranger",
     {"\255uRangers\255U are very versatile, being able to",
-    "fight, cast spells, or shoot like an archers. Their",
+    "fight, cast spells, or shoot like archers. Their",
     "primary spell-casting attribute is intelligence.",
     "They are able to train Archery up to 10, allowing",
     "them to acquire all ranged techniques. They are",
@@ -200,7 +200,7 @@ __classes_diz = {
     "also affect his own mind and body, to bolster his",
     "combat abilities or those of his team mates.",
     "Their primary stat are strength and intelligence,",
-    "and some of their spells can actually be cast while",
-    "they are blinded or even confused.",
+    "and some of their spells can actually be cast",
+    "while they are blinded or even confused.",
     "",},
 }
