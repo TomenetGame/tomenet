@@ -9501,7 +9501,7 @@ Warrior is strongly recommended.
     and more often than not you cannot tell whether or not they are eyeing you
     like a side of meat. They are as sturdy as Dwarves and are quite agile
     making them good fighters, rogues, and mimics. Being creatures of the
-    night, Golbins have natural resistance to darkness.
+    night, Goblins have natural resistance to darkness.
     They receive bonus on 'Boomerang-Mastery' and 'Stealing'.
 
 - Ent
