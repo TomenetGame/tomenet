@@ -79,7 +79,7 @@ __races_diz = {
     "how to pass even the highest mountain regions at",
     "level 30. They are headstrong miners and fighters",
     "of legend. Strong and wise, they are less intelli-",
-    "gent than humans though. Since they live under-"
+    "gent than humans though. Since they live under-",
     "ground they have infra-vision, and their toughness",
     "makes for a good saving throw. They do have one",
     "big drawback, though. Dwarves are loudmouthed and",
