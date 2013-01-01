@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. December 2012 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.2 - official websites are:
+| Latest update: 1. January 2013 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.1a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -14220,6 +14220,15 @@ SOLUTION:   You can resize windows that hold messages (chat and/or game
             the TomeNET.ini file (Windows) or .tomenetrc file (Linux/OSX) to
             set fonts manually for each game window.
             Well, and you could change your actual screen resolution of course.
+
+PROBLEM 37: When I join the server I get spammed with violet LUA error messages
+            and also it will say in orange/dark-green that my LUA files are
+            getting updated.
+SOLUTION:   This happens when your LUA files are quite outdated.
+            Just wait until the lua update has completed, you see that it has
+            when you get a light green message saying "Reinitializing Lua".
+            When that happened, quit and rejoin the server, the LUA errors
+            should no longer happen now.
 
 
 
