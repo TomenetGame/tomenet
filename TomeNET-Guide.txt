@@ -9559,7 +9559,8 @@ Warrior is strongly recommended.
     city. The children are already drilled to become sworn enemies of most
     other races of the underground, and also of the hated Elves and High-Elves
     who live on the surface under the burning light of the sun. Overthrowing
-    rivals by treachery and murder are acknowledged ways in their society.
+    rivals by treachery and murder are acknowledged ways in their society,
+    as long as noone is left alive who might bring charge against the victors.
     Dark-Elves are good fighters and sorcerors, but also decent priests.
     Dark-Elves intrinsically resist darkness, but are susceptible to light.
     At level 20 they learn to see the invisible.
