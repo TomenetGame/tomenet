@@ -3159,7 +3159,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			c_ptr->m_idx = 0;
 
 			/* Log it */
-			s_printf("MIDX_FIX: Cleared an invalid player m_idx (ind = %d) (wpos = %d, %d, %d) (x = %d, y = %d)\n", Ind2, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
+			s_printf("MIDX_FIX: Cleared an invalid player m_idx (Ind = %d) (wpos = %d, %d, %d) (x = %d, y = %d)\n", Ind2, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
 		}
 
 		/* Check for doppelgangers - mikaelh */
@@ -3169,7 +3169,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			c_ptr->m_idx = 0;
 
 			/* Log it */
-			s_printf("MIDX_FIX: Cleared a doppelganger (ind = %d, \"%s\") (wpos = %d, %d, %d) (x = %d, y = %d)\n", Ind2, Players[Ind2]->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
+			s_printf("MIDX_FIX: Cleared a doppelganger (Ind = %d, \"%s\") (wpos = %d, %d, %d) (x = %d, y = %d)\n", Ind2, Players[Ind2]->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
 		}
 
 		/* Is that player visible? */
