@@ -10903,7 +10903,7 @@ bool master_player(int Ind, char *parms){
 			break;
 		case 'B':
 			/* This could be fun - be wise dungeon master */
-			sprintf(buf, "\375\377r[\377%c%s\377r] \377%c%s", 'b', p_ptr->name, COLOUR_CHAT, &parms[1]); /* admin colour 'b' */
+			sprintf(buf, "\375\377r[\377%c%s\377r]\377%c %s", 'b', p_ptr->name, COLOUR_CHAT, &parms[1]); /* admin colour 'b' */
 			censor_length = 0;
 			msg_broadcast_format(0, buf);
 #ifdef TOMENET_WORLDS

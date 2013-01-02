@@ -2446,11 +2446,11 @@ void do_slash_cmd(int Ind, char *message)
 
 			censor_message = TRUE;
 			censor_length = strlen(message3);
-			msg_broadcast_format(0, "\374\377s[%s->BBS] \377W%s", p_ptr->name, message3);
+			msg_broadcast_format(0, "\374\377s[%s->BBS]\377W %s", p_ptr->name, message3);
 			censor_message = FALSE;
 			handle_punish(Ind, censor_punish);
 //			bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
-			bbs_add_line(format("\377s%s %s: \377W%s",showdate(), p_ptr->name, message3));
+			bbs_add_line(format("\377s%s %s:\377W %s",showdate(), p_ptr->name, message3));
 			return;
 		}
 		else if (prefix(message, "/time")) { /* show time / date */
@@ -2857,7 +2857,7 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 #if 0
 		else if (prefix(message, "/pray")) { /* hidden broadcast to all admins :) */
-			msg_admin("\377b[\377U%s\377b]\377D%s", p_ptr->name, 'w', message3);
+			msg_admin("\377b[\377U%s\377b]\377D %s", p_ptr->name, 'w', message3);
 			return;
 		}
 #endif
@@ -2873,8 +2873,8 @@ void do_slash_cmd(int Ind, char *message)
 
 			if (tk) {
 				/* write something */
-				msg_party_format(Ind, "\374\377B[%s->PBBS] \377W%s", p_ptr->name, message3);
-				pbbs_add_line(p_ptr->party, format("\377B%s %s: \377W%s",showdate(), p_ptr->name, message3));
+				msg_party_format(Ind, "\374\377B[%s->PBBS]\377W %s", p_ptr->name, message3);
+				pbbs_add_line(p_ptr->party, format("\377B%s %s:\377W %s",showdate(), p_ptr->name, message3));
 				return;
 			}
 			msg_print(Ind, "\377BParty bulletin board (type '/pbbs <text>' in chat to write something):");
@@ -2898,8 +2898,8 @@ void do_slash_cmd(int Ind, char *message)
 
 			if (tk) {
 				/* write something */
-				msg_guild_format(Ind, "\374\377%c[%s->GBBS] \377W%s", COLOUR_CHAT_GUILD, p_ptr->name, message3);
-				gbbs_add_line(p_ptr->guild, format("\377%c%s %s: \377W%s", COLOUR_CHAT_GUILD, showdate(), p_ptr->name, message3));
+				msg_guild_format(Ind, "\374\377%c[%s->GBBS]\377W %s", COLOUR_CHAT_GUILD, p_ptr->name, message3);
+				gbbs_add_line(p_ptr->guild, format("\377%c%s %s:\377W %s", COLOUR_CHAT_GUILD, showdate(), p_ptr->name, message3));
 				return;
 			}
 			msg_format(Ind, "\377%cGuild bulletin board (type '/gbbs <text>' in chat to write something):", COLOUR_CHAT_GUILD);

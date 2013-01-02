@@ -1882,12 +1882,19 @@ void msg_print(int Ind, cptr msg_raw)
 					}
 				}
 
-				/* remember first actual chat colour (guild chat changes colour a few times for [..] brackets and name)
-				   for {- etc feature */
+				/* remember first actual chat colour (guild chat changes
+				   colour a few times for [..] brackets and name).
+				   This is for {- etc feature.
+				   However, if there is no new colour specified before
+				   beginning of chat text then use the one we had, or {-
+				   wouldn't work correctly in private chat anymore. - C. Blue */
 				if (msg[msg_scan] == ']' &&
+#if 0  /* this is wrong, because the colour code COULD already be from \\a feature! */
 				    ((msg[msg_scan + 1] == ' ' && msg[msg_scan + 2] == '\377') ||
-				    msg[msg_scan + 1] == '\377'))
+#endif
+				    msg[msg_scan + 1] == '\377') {
 					first_colour_code_set = FALSE;
+				}
 
 				/* Process text.. */
 				first_character = FALSE;
@@ -3517,7 +3524,7 @@ static void player_talk_aux(int Ind, char *message)
 	/* '%:' at the beginning sends to self - mikaelh */
 	if ((strlen(message) >= 2) && (message[0] == '%') && (message[1] == ':') && (colon)) {
 		/* Send message to self */
-		msg_format(Ind, "\377o<%%> \377w%s", message + 2);
+		msg_format(Ind, "\377o<%%>\377w %s", message + 2);
 
 		/* Done */
 		return;
@@ -3739,10 +3746,10 @@ static void player_talk_aux(int Ind, char *message)
 
 #ifdef TOMENET_WORLDS
 	if (broadcast) {
-		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r] \377%c%s", c_n, sender, COLOUR_CHAT, message + 11);
+		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
 		censor_length = strlen(message + 11);
 	} else if (!me) {
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s] \377%c%s", c_n, sender, COLOUR_CHAT, message + mycolor);
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message + mycolor);
 		censor_length = strlen(message + mycolor);
 	} else {
 		/* Why not... */
@@ -3803,10 +3810,10 @@ static void player_talk_aux(int Ind, char *message)
 		/* Send message */
 		if (broadcast) {
 			censor_length = strlen(message + 11);
-			msg_format(i, "\375\377r[\377%c%s\377r] \377%c%s", c_n, sender, COLOUR_CHAT, message + 11);
+			msg_format(i, "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
 		} else if (!me) {
 			censor_length = strlen(message + mycolor);
-			msg_format(i, "\375\377%c[%s] \377%c%s", c_n, sender, COLOUR_CHAT, message + mycolor);
+			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message + mycolor);
 			/* msg_format(i, "\375\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
 		}
 		else {
