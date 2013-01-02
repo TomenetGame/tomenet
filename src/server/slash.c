@@ -1160,7 +1160,7 @@ void do_slash_cmd(int Ind, char *message)
 				cave_type **zcave;
 				cave_type *c_ptr;
 
-				msg_format(Ind, "your sanity: %d/%d", p_ptr->csane, p_ptr->msane);
+//				msg_format(Ind, "your sanity: %d/%d", p_ptr->csane, p_ptr->msane);
 				msg_format(Ind, "server status: m_max(%d) o_max(%d)",
 						m_max, o_max);
 
