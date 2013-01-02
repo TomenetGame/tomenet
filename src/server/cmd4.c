@@ -1539,9 +1539,9 @@ void do_cmd_check_player_equip(int Ind, int line)
 			if (o_ptr->tval) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3 + (i < INVEN_WIELD ? 0 : 0x10));
 				if (admin && i < INVEN_WIELD)
-					fprintf(fff, "\377%c%c) %s\n", i < INVEN_WIELD? 'o' : 'w', 97 + i, o_name);
+					fprintf(fff, "\377%c%c) %s\n", i < INVEN_WIELD? 'u' : 'w', 97 + i, o_name);
 				else
-					fprintf(fff, "\377%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
+					fprintf(fff, "\377%c %s\n", i < INVEN_WIELD? 'u' : 'w', o_name);
 				hidden_diz = FALSE;
 			}
 		}
