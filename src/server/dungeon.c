@@ -3865,7 +3865,7 @@ static bool process_player_end_aux(int Ind)
 	}
 #endif
 
-	/* Don't accidentally float after dieing */
+	/* Don't accidentally float after dying */
 	if (p_ptr->safe_float_turns) p_ptr->safe_float_turns--;
 
 #ifdef USE_SOUND_2010
@@ -5970,7 +5970,7 @@ void dungeon(void)
 	   NOTE: Some of these (global events) mustn't
 	   be handled _after_ a player got set to 'dead',
 	   or gameplay might in very rare occasions get
-	   screwed up (someone dieing when he shouldn't) - C. Blue */
+	   screwed up (someone dying when he shouldn't) - C. Blue */
 	if (!(turn % cfg.fps)) {
 		/* Process global_events */
 		process_global_events();

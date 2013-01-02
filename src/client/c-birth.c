@@ -910,7 +910,7 @@ static bool choose_stat_order(void)
 				case 4:	c_put_str(TERM_L_UMBER,"   - Constitution -", 3, 30);
 					c_put_str(TERM_YELLOW, "   Determines your amout of HP                  ", 4, 30);
 					c_put_str(TERM_YELLOW, "    (hit points, ie how much damage you can     ", 5, 30);
-					c_put_str(TERM_YELLOW, "    take without dieing.                        ", 6, 30);
+					c_put_str(TERM_YELLOW, "    take without dying.                         ", 6, 30);
 					c_put_str(TERM_YELLOW, "    Very high constitution might not show much  ", 7, 30);
 					c_put_str(TERM_YELLOW, "    effect until your character also reaches    ", 8, 30);
 					c_put_str(TERM_YELLOW, "    an appropriate level.)                      ", 9, 30);

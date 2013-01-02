@@ -12973,7 +12973,7 @@ Teamplay:
  certain death to them while you could still take some hits.
 
 -Make sure you stick together with your team mates. If you wander off instead
- of staying close you will greatly increase your risk of dieing to something.
+ of staying close you will greatly increase your risk of dying to something.
 
 
 

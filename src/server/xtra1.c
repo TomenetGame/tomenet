@@ -7008,7 +7008,7 @@ static void process_global_event(int ge_id) {
 				if (!Players[i]->admin_dm && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
 					n++;
 					j = i;
-					/* count players who have already been kicked out of the dungeon by pseudo-dieing */
+					/* count players who have already been kicked out of the dungeon by pseudo-dying */
 					if (!Players[i]->wpos.wz) k++;
 				}
 
