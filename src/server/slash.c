@@ -1001,8 +1001,8 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		/* Display extra information */
 		else if (prefix(message, "/extra") ||
-				prefix(message, "/examine") ||
-				prefix(message, "/ex"))
+		    prefix(message, "/examine") ||
+		    (prefix(message, "/ex") && !prefix(message, "/exit")))
 		{
 			if (admin) msg_format(Ind, "The game turn: %d", turn);
 
@@ -3377,6 +3377,23 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			return;
+		} else if (prefix(message, "/pquit") || prefix(message, "/pleave")) {
+			if (!p_ptr->party) {
+				msg_print(Ind, "You are not in a party.");
+				return;
+			}
+			party_leave(Ind);
+			return;
+		} else if (prefix(message, "/gquit") || prefix(message, "/gleave")) {
+			if (!p_ptr->guild) {
+				msg_print(Ind, "You are not in a guild.");
+				return;
+			}
+			guild_leave(Ind);
+			return;
+		} else if (prefix(message, "/quit") || prefix(message, "/exit") || prefix(message, "/leave")) {
+			do_quit(Players[Ind]->conn, 0);
+			return;
 		}
 
 
@@ -3416,8 +3433,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 #endif
 
-			if (prefix(message, "/shutdown") ||
-					prefix(message, "/quit"))
+			if (prefix(message, "/shutdown"))// || prefix(message, "/quit"))
 			{
 				bool kick = (cfg.runlevel == 1024);
 

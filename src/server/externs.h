@@ -61,6 +61,7 @@ extern void add_banlist(int Ind, int time);
 extern void add_banlist_ip(char *ip_addy, int time);
 //extern connection_t **Conn;
 extern char* get_conn_userhost(int ind);
+extern void do_quit(int ind, bool tellclient);
 
 /* randart.c */
 extern artifact_type *ego_make(object_type *o_ptr);

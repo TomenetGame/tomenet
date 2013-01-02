@@ -739,6 +739,8 @@ They all start with a slash '/' hence they're called slash commands:
               automatically receive 1 experience point (to limit the amount
               of cash you can pick up before participating in certain events,
               such as Highlander Tournament or Ironman Deep Dive Challenge).
+/exit       Leaves the game, same as pressing CTRL+X.
+ (/leave,/quit)
 /fe         Repeat the level feeling. See (4.8) for more information.
  (/feeling)
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
@@ -746,6 +748,8 @@ They all start with a slash '/' hence they're called slash commands:
 /ftkon or /ftkoff
             Enables or disables fire-till-kill mode (see (5.2a)).
             Alternatively, you can toggle it in 'm' menu.
+/gleave     Leaves your guild. Same as pressing 'SHIFT+P' and 'd'.
+ or /gquit
 /guild_adder <name of another player>
             Allows that player permanently to add other players to the guild
             too. Use the command a second time to revoke his rights again.
@@ -767,6 +771,8 @@ They all start with a slash '/' hence they're called slash commands:
             displayed when you're not afk.
             For example do:  /info Want to team up for Mordor!
             If you type /info without a message, it clears your info message.
+/leave      Leaves the game, same as pressing CTRL+X.
+ (/exit, /quit)
 /lite a..w  Refills your light source with an item from your inventory.
             Usually it's easier to just press 'F' instead.
 /mar        Tells a prayer-user if he may use the prayer 'Martyrdom'.
@@ -815,6 +821,8 @@ They all start with a slash '/' hence they're called slash commands:
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
             Will at some point in the future be absorbed by /evsign and
             thereby become obsolete.
+/pleave     Leaves your party. Same as pressing 'SHIFT+P' and '5'.
+ or /pquit
 /pstore     (Also available by pressing 'h' for house menu.)
             Attempts to enter a player store next to you, even if it's your own
             house. So this command is good for 'testing' your own store.
@@ -828,6 +836,8 @@ They all start with a slash '/' hence they're called slash commands:
             The player who completes it gets a great item as reward. It will
             appear in your inventory and carry an inscription indicating
             it's the quest reward. (See (4.13) for more info.)
+/quit       Leaves the game, same as pressing CTRL+X.
+ (/exit, /leave)
 /rec -550   recalls you to -550ft, using an item inscribed {@R}.
 /rec 32 32  recalls you to Bree (Town at 32,32 world map coordinates),
  (/recall)  using an item inscribed {@R}. See "(0.3) Important Inscriptions"
