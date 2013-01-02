@@ -927,7 +927,8 @@ The !* inscription:
     '*' is a 'wild card' which stands for multiple inscriptions at once,
     inscribing an item '!*' will do all of these checks:
 !d  Prevent dropping an item.
-!k  Prevent killing (destroying) an item.
+!k  Prevent killing (destroying) an item. (Note that '!k' on a torch also
+    prevents using that torch to refuel another one.)
 !s  Prevent selling an item to shop (!s).
     For example, if you found an artifact and you want to avoid (d)ropping it,
     (s)elling it, or (v) throwing it away accidentally you could either
@@ -951,7 +952,8 @@ intend to pick up again, you may inscribe the ammo to make it disappear:
 
 Other !-inscriptions:
 !T  prevent taking off a secondary item.
-!F  prevent filling a light source with this item. (Ok, not really important.)
+!F  prevent using up this torch to fuel your currently used torch with it.
+    (Note that !k on a torch implies this too.)
 !E  prevent eating this item.
     (Note: !E may also prevent items from causing earthquakes, see below.)
 !q  prevent quaffing this potion.

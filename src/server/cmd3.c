@@ -2297,7 +2297,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 
 	object_type *o_ptr;
 	object_type *j_ptr;
-	
+
 	long int used_fuel = 0, spilled_fuel = 0, available_fuel = 0;
 
 
@@ -2463,6 +2463,11 @@ static void do_cmd_refill_torch(int Ind, int item)
 		return;
 	}
 
+	if (check_guard_inscription(o_ptr->note, 'F')) { /* implies !k too */
+		msg_print(Ind, "The item's incription prevents it.");
+		return;
+	}
+
 	/* Too kind? :) */
 	if (artifact_p(o_ptr)) {
 		msg_print(Ind, "Your light seems to resist!");
@@ -2479,7 +2484,10 @@ static void do_cmd_refill_torch(int Ind, int item)
 	j_ptr = &(p_ptr->inventory[INVEN_LITE]);
 
 	/* Refuel */
-	j_ptr->timeout += o_ptr->timeout + 5;
+	j_ptr->timeout += o_ptr->timeout;
+	/* Lose very slightly sometimes */
+	if (o_ptr->timeout >= 10) j_ptr->timeout -= rand_int(5);
+ 	else j_ptr->timeout -= o_ptr->timeout / (2 + rand_int(5));
 
 	/* Message */
 	msg_print(Ind, "You combine the torches.");
@@ -2529,11 +2537,6 @@ void do_cmd_refill(int Ind, int item)
 
 	/* Get the light */
 	o_ptr = &(p_ptr->inventory[INVEN_LITE]);
-
-	if (check_guard_inscription( o_ptr->note, 'F' )) {
-		msg_print(Ind, "The item's incription prevents it.");
-		return;
-	}
 
 	/* It is nothing */
 	if (o_ptr->tval != TV_LITE || !o_ptr->k_idx) {
@@ -2611,6 +2614,7 @@ bool do_auto_refill(int Ind)
 			j_ptr = &(p_ptr->inventory[i]);
 			if (!item_tester_hook(j_ptr)) continue;
 			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
+			if (check_guard_inscription(j_ptr->note, 'F')) continue; /* implies !k too */
 
 			do_cmd_refill_torch(Ind, i);
 			return (TRUE);
