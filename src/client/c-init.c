@@ -457,7 +457,7 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, %d)",
+		strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, %d) ", /* need 1 space at the end to overwrite 'search result' */
 			monster_list_name[rlidx],
 			monster_list_symbol[rlidx][0],
 			monster_list_symbol[rlidx][1],
