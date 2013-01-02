@@ -1004,9 +1004,11 @@ void do_slash_cmd(int Ind, char *message)
 		    prefix(message, "/examine") ||
 		    (prefix(message, "/ex") && !prefix(message, "/exit")))
 		{
+			if (admin && tk) admin = FALSE; //allow admin to use 'normal' /ex command too
 			if (admin) msg_format(Ind, "The game turn: %d", turn);
 
 			do_cmd_time(Ind);
+
 			if (!(p_ptr->mode & (MODE_EVERLASTING | MODE_PVP | MODE_NO_GHOST)))
 				msg_format(Ind, "You have %d %s left.", p_ptr->lives-1-1, p_ptr->lives-1-1 > 1 ? "resurrections" : "resurrection");
 
@@ -1036,8 +1038,8 @@ void do_slash_cmd(int Ind, char *message)
 			if (get_skill(p_ptr, SKILL_AURA_DEATH)) check_aura(Ind, 2);
 
 //			do_cmd_knowledge_dungeons(Ind);
-			if (p_ptr->depth_in_feet) msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
-			else msg_format(Ind, "The deepest point you've reached: Lev \377G-%d", p_ptr->max_dlv);
+//			if (p_ptr->depth_in_feet) msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
+//			else msg_format(Ind, "The deepest point you've reached: Lev \377G-%d", p_ptr->max_dlv);
 
 
 			msg_format(Ind, "You can move %d.%d times each turn.",
