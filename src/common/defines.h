@@ -1307,7 +1307,7 @@
 #define YEAR                    (DAY * 365)             /* Number of turns per year */
 
 #define SUNRISE			6			/* Sunrise */
-#define NIGHTFALL		19			/* Nightfall */
+#define NIGHTFALL		20			/* Nightfall */
 
 #define START_YEAR              2890                    /* Bilbo birthday year */
 #define START_DAY               265			/* Bilbo birthday (22. Sept.) */
