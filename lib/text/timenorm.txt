@@ -3,85 +3,86 @@ E:0000
 D:It is midnight.
 
 S:0001
-E:0200
+E:0259
 D:It is deep night.
 
-# Hole here..?
-
-S:0300 
-E:0400
+S:0300
+E:0459
 D:It is early morning, but still dark.
 
-# Hole here..?
-
-S:0500 
+S:0500
 E:0544
 D:It will be day soon.
 
-S:0545 
+S:0545
 E:0559
 D:The sun is rising.
 
-S:0600 
+S:0600
 E:0614
 D:The sun has risen.
 
-S:0615 
+S:0615
 E:0659
 D:Morning has broken.
 
-S:0700 
+S:0700
 E:0859
 D:It is early morning.
 
-S:0900 
+S:0900
 E:0959
 D:It is midmorning.
 
-S:1000 
-E:1154
+S:1000
+E:1149
 D:It is late morning.
 
-S:1155 
+S:1150
 E:1159
 D:It is almost noon.
 
-S:1200 
-E:1200
+S:1200
+E:1259
 D:It is noon.
 
-S:1201 
+S:1300
 E:1459
 D:It is early afternoon.
 
-S:1500 
+S:1500
 E:1559
 D:It is midafternoon.
 
-S:1600 
+S:1600
 E:1659
 D:It is late afternoon.
 
-S:1700 
-E:1729
-D:It will be night soon.
-
-S:1730 
+S:1700
 E:1759
+D:It is early evening.
+
+S:1800
+E:1929
+D:It is evening.
+#midevening is unusual but possible
+
+S:1930
+E:1959
 D:The sun is setting.
 
-S:1800 
-E:1859
+S:2000
+E:2029
 D:The night has begun.
 
-S:1900 
-E:2059
+S:2030
+E:2159
 D:It is early night.
 
-S:2100 
-E:2358
+S:2200
+E:2349
 D:It is late night.
 
-S:2359
-E:2358
+S:2350
+E:2359
 D:It is almost midnight.

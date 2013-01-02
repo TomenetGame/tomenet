@@ -2748,68 +2748,26 @@ void show_motd2(int Ind)
 /*
  * Display the time and date
  */
-void do_cmd_time(int Ind)
-{
-	player_type *p_ptr = Players[Ind];
-
-	int day = bst(DAY, turn);
-
-	int hour = bst(HOUR, turn);
-
-	int min = bst(MINUTE, turn);
-
-	int full = hour * 100 + min;
-
-	char buf2[20];
-
-	int start = 9999;
-
-	int end = -9999;
-
-	int num = 0;
-
-	char desc[1024];
-
+static void fetch_time_diz(char *path, char *desc) {
+	FILE *fff;
 	char buf[1024];
 
-	FILE *fff;
+	int start = 9999;
+	int end = -9999;
+	int num = 0;
 
-
-	/* Note */
-	strcpy(desc, "It is a strange time.");
-
-	/* Format time of the day */
-	strnfmt(buf2, 20, get_day(bst(YEAR, turn))); /* hack: abuse get_day()'s capabilities */
-
-	/* Display current date in the Elvish calendar */
-	msg_format(Ind, "This is %s of the %s year of the third age.",
-	           get_month_name(day, is_admin(p_ptr), FALSE), buf2);
-
-	/* Message */
-	msg_format(Ind, "The time is %d:%02d %s.",
-				 (hour % 12 == 0) ? 12 : (hour % 12),
-				 min, (hour < 12) ? "AM" : "PM");
-
-#if CHATTERBOX_LEVEL > 2
-	/* Find the path */
-	if (!rand_int(10) || p_ptr->image)
-	{
-		path_build(buf, 1024, ANGBAND_DIR_TEXT, "timefun.txt");
-	}
-	else
-	{
-		path_build(buf, 1024, ANGBAND_DIR_TEXT, "timenorm.txt");
-	}
+	int hour = bst(HOUR, turn);
+	int min = bst(MINUTE, turn);
+	int full = hour * 100 + min;
 
 	/* Open this file */
-	fff = my_fopen(buf, "r");
+	fff = my_fopen(path, "r");
 
 	/* Oops */
 	if (!fff) return;
 
 	/* Find this time */
-	while (!my_fgets(fff, buf, 1024, FALSE))
-	{
+	while (!my_fgets(fff, buf, 1024, FALSE)) {
 		/* Ignore comments */
 		if (!buf[0] || (buf[0] == '#')) continue;
 
@@ -2817,8 +2775,7 @@ void do_cmd_time(int Ind)
 		if (buf[1] != ':') continue;
 
 		/* Process 'Start' */
-		if (buf[0] == 'S')
-		{
+		if (buf[0] == 'S') {
 			/* Extract the starting time */
 			start = atoi(buf + 2);
 
@@ -2830,8 +2787,7 @@ void do_cmd_time(int Ind)
 		}
 
 		/* Process 'End' */
-		if (buf[0] == 'E')
-		{
+		if (buf[0] == 'E') {
 			/* Extract the ending time */
 			end = atoi(buf + 2);
 
@@ -2843,8 +2799,7 @@ void do_cmd_time(int Ind)
 		if ((start > full) || (full > end)) continue;
 
 		/* Process 'Description' */
-		if (buf[0] == 'D')
-		{
+		if (buf[0] == 'D') {
 			num++;
 
 			/* Apply the randomizer */
@@ -2855,11 +2810,59 @@ void do_cmd_time(int Ind)
 		}
 	}
 
-	/* Message */
-	msg_print(Ind, desc);
-
 	/* Close the file */
 	my_fclose(fff);
+}
+void do_cmd_time(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	bool fun;
+
+	int day = bst(DAY, turn);
+	int hour = bst(HOUR, turn);
+	int min = bst(MINUTE, turn);
+
+	char buf2[20];
+	char desc[1024];
+	char buf[1024];
+	char desc2[1024];
+
+	/* Format time of the day */
+	strnfmt(buf2, 20, get_day(bst(YEAR, turn))); /* hack: abuse get_day()'s capabilities */
+
+	/* Display current date in the Elvish calendar */
+	msg_format(Ind, "This is %s of the %s year of the third age.",
+	           get_month_name(day, is_admin(p_ptr), FALSE), buf2);
+
+	/* Message */
+	desc[0] = 0;
+	sprintf(desc2, "The time is %d:%02d %s. ",
+	     (hour % 12 == 0) ? 12 : (hour % 12),
+	     min, (hour < 12) ? "AM" : "PM");
+
+#if CHATTERBOX_LEVEL > 2
+	/* Find the path */
+	if (!rand_int(10) || p_ptr->image) fun = TRUE;
+	if (fun) path_build(buf, 1024, ANGBAND_DIR_TEXT, "timefun.txt");
+	else path_build(buf, 1024, ANGBAND_DIR_TEXT, "timenorm.txt");
+
+	/* try to find a fitting description */
+	fetch_time_diz(buf, desc);
+	/* found none? */
+	if (!desc[0]) {
+		/* if we were looking for silyl descriptions, try for a serious one instead */
+		if (fun) {
+			path_build(buf, 1024, ANGBAND_DIR_TEXT, "timenorm.txt");
+			fetch_time_diz(buf, desc);
+		}
+		/* give up */
+		if (!desc[0]) strcpy(desc, "It is a strange time.");
+	}
+
+	/* Message */
+	strcat(desc2, desc);
+	msg_print(Ind, desc2);
+
 #endif	// 0
 }
 
