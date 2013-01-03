@@ -1649,8 +1649,16 @@ void carry(int Ind, int pickup, int confirm)
 		    (o_ptr->level > p_ptr->lev || o_ptr->level == 0) &&
 		    !in_irondeepdive(&p_ptr->wpos)) {
 			if (cfg.anti_cheeze_pickup) {
-				msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
-				return;
+				if (o_ptr->level) {
+					msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
+					return;
+				}
+ #if 1 /* doesn't matter probably? Food exchange was already done above. */
+				else {
+					msg_print(Ind, "You cannot pick up a zero-level item.");
+					return;
+				}
+ #endif
 			/* new: this is to prevent newbies to pick up all nearby stuff with their
 			   level 1 char aimlessly without being able to drop it again. */
 			} else if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
@@ -1660,7 +1668,8 @@ void carry(int Ind, int pickup, int confirm)
 			if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
 //			if (artifact_p(o_ptr) && cfg.anti_arts_pickup)
 			{
-				msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
+				if (o_ptr->level == 0) msg_print(Ind, "You cannot pick up a zero-level artifact.");
+				else msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
 				return;
 			}
 

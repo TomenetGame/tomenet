@@ -5311,11 +5311,20 @@ void home_purchase(int Ind, int item, int amt)
 	if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) &&
 	    (o_ptr->level > p_ptr->lev || o_ptr->level == 0)) {
 		if (cfg.anti_cheeze_pickup) {
-			msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
-			return;
+			if (o_ptr->level) {
+				msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
+				return;
+			}
+#if 1 /* doesn't matter probably? */
+			else {
+				msg_print(Ind, "You cannot pick up a zero-level item.");
+				return;
+			}
+#endif
 		}
 		if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup) {
-			msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
+			if (!o_ptr->level) msg_print(Ind, "You cannot pick up a zero-level artifacts.");
+			else msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
 			return;
 		}
 	}
