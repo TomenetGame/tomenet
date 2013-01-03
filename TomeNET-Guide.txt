@@ -874,6 +874,8 @@ They all start with a slash '/' hence they're called slash commands:
             death, neither one of detonations, so you won't get instakilled.
             (It's easier to press '_' instead of using the /sip command.
             Also see '_' key above, for additional information.)
+/stime      Tells you the current date and time (of the server, not of your
+            local timezone).
 /tag [a..w] Tags all uninscribed items in your backpack by adding a '!k'
             inscription. Helpful for looting in conjunction with /dis command.
             If a slot (a..w) is specified, it only tags the item in that
@@ -892,8 +894,7 @@ or shorter: /tym [rs]
                   attacks that missed, were blocked/parried/dodged or
                   nullified by invulnerability, etc.
                   It however counts ALL attacks, for example aura hits too.
-/time       Tells you the current date and time (of the server, not of your
-            local timezone).
+/time       Tells you the current in-game time, same as /ex does.
 /untag [<inscription>]
             If <inscription is omitted, it removes all inscriptions from items
             in your backpack which are exactly '!k' (as done by /tag command).

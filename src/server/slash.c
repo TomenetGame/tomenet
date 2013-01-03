@@ -1230,6 +1230,10 @@ void do_slash_cmd(int Ind, char *message)
 			msg_print(Ind, " ");
 			return;
 		}
+		else if (prefix(message, "/time")) {
+			do_cmd_time(Ind);
+			return;
+		}
 		/* Please add here anything you think is needed.  */
 		else if ((prefix(message, "/refresh")) ||
 				prefix(message, "/ref"))
@@ -2457,7 +2461,7 @@ void do_slash_cmd(int Ind, char *message)
 			bbs_add_line(format("\377s%s %s:\377W %s",showdate(), p_ptr->name, message3));
 			return;
 		}
-		else if (prefix(message, "/time")) { /* show time / date */
+		else if (prefix(message, "/stime")) { /* show time / date */
 			msg_format(Ind, "Current server time is %s", showtime());
 			return;
 		}
