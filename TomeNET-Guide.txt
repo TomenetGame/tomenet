@@ -963,8 +963,8 @@ intend to pick up again, you may inscribe the ammo to make it disappear:
 
 Other !-inscriptions:
 !T  prevent taking off a secondary item.
-!F  prevent using up this torch to fuel your currently used torch with it.
-    (Note that !k on a torch implies this too.)
+!F  prevent using up this item to fuel your currently equipped light source.
+    (Note that !k inscription implies this too.)
 !E  prevent eating this item.
     (Note: !E may also prevent items from causing earthquakes, see below.)
 !q  prevent quaffing this potion.
