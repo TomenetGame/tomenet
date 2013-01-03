@@ -1004,6 +1004,8 @@ void do_slash_cmd(int Ind, char *message)
 		    prefix(message, "/examine") ||
 		    (prefix(message, "/ex") && !prefix(message, "/exit")))
 		{
+//			msg_print(Ind, "\377D--- Extra Information: ---");
+			msg_print(Ind, " ");
 			if (admin && tk) admin = FALSE; //allow admin to use 'normal' /ex command too
 			if (admin) msg_format(Ind, "The game turn: %d", turn);
 
@@ -1224,6 +1226,8 @@ void do_slash_cmd(int Ind, char *message)
 			/* display PvP kills */
 			if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills);
 
+//			msg_print(Ind, "\377D--------------------------");
+			msg_print(Ind, " ");
 			return;
 		}
 		/* Please add here anything you think is needed.  */
