@@ -5323,7 +5323,7 @@ void home_purchase(int Ind, int item, int amt)
 #endif
 		}
 		if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup) {
-			if (!o_ptr->level) msg_print(Ind, "You cannot pick up a zero-level artifacts.");
+			if (!o_ptr->level) msg_print(Ind, "You cannot pick up a zero-level artifact.");
 			else msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
 			return;
 		}
