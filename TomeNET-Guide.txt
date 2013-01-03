@@ -11145,7 +11145,8 @@ Nature
     Vermin Control  Prevents vermin from breeding any further on
                     your current level.
                     Required skill level for first spell level: 15.
-  BONI:             Regeneration ability (Hit Points) at 30,
+  BONI:             Regeneration (faster hit point regeneration, same as from
+                    items that provide regeneration) at 30,
                     Pass trees easily at 30,
                     Pass water easily at 40.
 
