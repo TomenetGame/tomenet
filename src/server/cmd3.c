@@ -2317,6 +2317,11 @@ static void do_cmd_refill_lamp(int Ind, int item)
 		return;
 	}
 
+	if (check_guard_inscription(o_ptr->note, 'F')) { /* implies !k too */
+		msg_print(Ind, "The item's incription prevents it.");
+		return;
+	}
+
 	/* Too kind? :) */
 	if (artifact_p(o_ptr)) {
 		msg_print(Ind, "Your light seems to resist!");
@@ -2599,6 +2604,7 @@ bool do_auto_refill(int Ind)
 			j_ptr = &(p_ptr->inventory[i]);
 			if (!item_tester_hook(j_ptr)) continue;
 			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
+			if (check_guard_inscription(j_ptr->note, 'F')) continue; /* implies !k too */
 
 			do_cmd_refill_lamp(Ind, i);
 			return (TRUE);
