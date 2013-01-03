@@ -1403,6 +1403,9 @@ static void night_falls() {
 
 		player_night(i);
 	}
+
+	/* If it's new year's eve, start the fireworks! */
+	if (season_newyearseve) fireworks = 1;
 }
 
 /* take care of day/night changes, on world surface.
@@ -1416,15 +1419,12 @@ static void process_day_and_night() {
 
 	/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks)! */
 	if (sunrise && !fireworks && !season_halloween)
-	{
 		sun_rises();
-	}
 
 	/* Night falls - but only if it was actually day so far:
 	   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
-	else if (nightfall && !night_surface) {
+	else if (nightfall && !night_surface)
 		night_falls();
-	}
 }
 
 /* Called when the server starts up */
