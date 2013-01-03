@@ -2816,7 +2816,7 @@ static void fetch_time_diz(char *path, char *desc) {
 void do_cmd_time(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	bool fun;
+	bool fun = FALSE;
 
 	int day = bst(DAY, turn);
 	int hour = bst(HOUR, turn);
