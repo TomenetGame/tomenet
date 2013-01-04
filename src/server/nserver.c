@@ -2635,6 +2635,10 @@ static int Handle_login(int ind)
 		msg_print(NumPlayers, "\374\377D --- Your client is NOT the latest version, it's not 'outdated' though. ---");
 	}
 #endif
+#if 1
+	if (p_ptr->audio_mus == 49) /* problem: cannot take into account if the player purposefully removed some songs */
+		msg_print(NumPlayers, "\374\377D --- Your music pack is outdated. ---");
+#endif
 
 	/* Admin messages */
 	if (p_ptr->admin_dm && (cfg.runlevel == 2048))
