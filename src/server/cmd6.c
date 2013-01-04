@@ -6337,14 +6337,8 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		return;
 	}
 	else if (is_ego_p(o_ptr, EGO_SPECTRAL)) {
-		//                if (!p_ptr->wraith_form)
-		if (!p_ptr->tim_wraith)
-			//                        set_shadow(Ind, 20 + randint(20));
-			set_tim_wraith(Ind, 20 + randint(20));
-		else
-			//                       set_shadow(Ind, p_ptr->tim_wraith + randint(20));
-			//set_tim_wraith(Ind, p_ptr->tim_wraith + randint(20));
-			set_tim_wraith(Ind, randint(20)); /* removed stacking */
+                //set_shadow(Ind, 20 + randint(20));
+		set_tim_wraith(Ind, 15 + randint(10));
 		o_ptr->timeout = 50 + randint(50);
 
 		/* Window stuff */
