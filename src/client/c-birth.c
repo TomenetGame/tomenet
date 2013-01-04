@@ -539,9 +539,9 @@ static bool choose_class(void)
 	m = 22 - (Setup.max_class - 1) / 5;
 	n = m - 1;
 
-	c_put_str(TERM_SLATE, "--- Important: For beginners, classes easy to play are... ---", n - 3, 2);
-	c_put_str(TERM_YELLOW, "Important", n - 3, 6);
-	c_put_str(TERM_SLATE, "Warrior, Rogue, Paladin, Druid, and possibly Mimic, Archer, Ranger.", n - 2, 2);
+	c_put_str(TERM_SLATE, "Important: For beginners, classes easy to play are:", n - 3, 2);
+	c_put_str(TERM_ORANGE, "Important", n - 3, 2);
+	c_put_str(TERM_SLATE, "Warrior, Rogue, Paladin, Druid, and maybe Archer.", n - 2, 2);
 
 	for (i = 18; i < 24; i++) {
 		Term_erase(1, i, 255);
