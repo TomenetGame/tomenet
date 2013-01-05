@@ -5317,6 +5317,8 @@ for (i = 0; i < 25; i++) {
 		o_ptr->to_h += a_ptr->to_h;
 		o_ptr->to_d += a_ptr->to_d;
 
+		apply_enchantment_limits(o_ptr); /* new: paranoia? worked fine without so far */
+
 		/* Reduce enchantment boni for ego Dark Swords - C. Blue
 		   (since they're no more (dis)enchantable, make work easier for unbelievers..) */
 		if ((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD)) {

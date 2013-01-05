@@ -2072,6 +2072,36 @@ void randart_name(object_type *o_ptr, char *buffer, char *raw_buffer)
 }
 
 
+void apply_enchantment_limits(object_type *o_ptr) {
+	/* not too high to-hit/to-dam boni. No need to check gloves. */
+	switch (o_ptr->tval) { /* CAP_ITEM_BONI */
+	case TV_SHIELD:
+#ifdef USE_NEW_SHIELDS	/* should actually be USE_BLOCKING, but could be too */
+			/* dramatic a change if it gets enabled temporarily - C. Blue */
+		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
+		break;
+#endif
+	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
+	case TV_CLOAK: case TV_HELM: case TV_CROWN: case TV_GLOVES: case TV_BOOTS:
+		if (o_ptr->to_a > 35) o_ptr->to_a = 35;
+		break;
+
+	case TV_BOLT:
+        case TV_ARROW:
+        case TV_SHOT:
+		if (o_ptr->to_h > 15) o_ptr->to_h = 15;
+		if (o_ptr->to_d > 15) o_ptr->to_d = 15;
+		break;
+
+	case TV_BOW:
+	case TV_BOOMERANG:
+	case TV_TRAPKIT:
+	default: /* all melee weapons */
+		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
+		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
+		break;
+	}
+}
 /*
  * Here begins the code for new ego-items.		- Jir -
  * Powers of ego-items are determined from random seed
@@ -2137,7 +2167,7 @@ try_an_other_ego:
 			add_random_ego_flag(a_ptr, e_ptr->fego[j], &limit_blows, o_ptr->level, o_ptr);
 		}
 	}
-	
+
 	/* Hack - Amulet of telepathic awareness (formerly of ESP) */
 #if 1
 	{
@@ -2320,26 +2350,8 @@ try_an_other_ego:
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
 	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->flags1 & TR1_BLOWS) && (a_ptr->pval > 1)) a_ptr->pval = 1;
-	/* not too high to-hit/to-dam boni. No need to check gloves. */
-	switch (o_ptr->tval) { /* CAP_ITEM_BONI */
-	case TV_SHIELD:
-#ifdef USE_NEW_SHIELDS	/* should actually be USE_BLOCKING, but could be too */
-			/* dramatic a change if it gets enabled temporarily - C. Blue */
-		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
-		break;
-#endif
-	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
-	case TV_CLOAK: case TV_HELM: case TV_CROWN: case TV_GLOVES: case TV_BOOTS:
-//		if (o_ptr->to_a > 50) o_ptr->to_a = 50;
-		if (o_ptr->to_a > 35) o_ptr->to_a = 35;
-		break;
-	case TV_BOW:
-	case TV_BOOMERANG:
-	default: /* all melee weapons */
-		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
-		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
-		break;
-	}
+
+	apply_enchantment_limits(o_ptr);
 #if 0 /* removed LIFE from VAMPIRIC items for now */
 	/* Back Hack :( */
 	if ((o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC) &&

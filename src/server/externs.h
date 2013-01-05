@@ -71,6 +71,7 @@ extern void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blow
 extern void random_resistance (artifact_type *a_ptr, bool is_scroll, int specific);
 extern void dragon_resist(artifact_type *a_ptr);
 extern s32b artifact_power (artifact_type *a_ptr);
+extern void apply_enchantment_limits(object_type *o_ptr);
 
 /* tables.c */
 extern s16b ddd[9];
