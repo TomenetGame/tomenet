@@ -7,7 +7,7 @@
 /* Purpose: Angband specific configuration stuff */
 
 /* Note : Much of the functionality of this file is being phased into
- * mangband.cfg.  This will allow server reconfiguration without recompilation.
+ * tomenet.cfg.  This will allow server reconfiguration without recompilation.
  */
 
 /*
@@ -216,7 +216,7 @@
  */
 
 /* NOTE: client uses these values.
- * server uses those in mangband.cfg.
+ * server uses those in tomenet.cfg.
  * bad design.
  */
 
@@ -257,7 +257,7 @@
 */
 
 /* Define the password for the server console, used if NEW_SERVER_CONSOLE
- * is defined below.  Provides authentication for the mangconsole program.
+ * is defined below.  Provides authentication for the tomenetconsole program.
  */
 #define		CONSOLE_PASSWORD	"change_me"
 
@@ -686,7 +686,7 @@
 #define PREPARE_RADIUS	16
 
 /*
- * OPTION: verbosity of server for debug msgs in stdout/mangband.log.
+ * OPTION: verbosity of server for debug msgs in stdout/tomenet.log.
  *
  * 0 - no debug msgs
  * 1 - very recent debug msgs
@@ -697,7 +697,7 @@
 #define DEBUG_LEVEL 1
 
 /*
- * OPTION: verbosity of server for anti-cheeze msgs in stdout/mangband.log.
+ * OPTION: verbosity of server for anti-cheeze msgs in stdout/tomenet.log.
  *
  * 0 - no cheeze msgs
  * 1 - very limited cheeze msgs

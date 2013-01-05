@@ -83,7 +83,7 @@ static void enter_password(void)
 static void show_menu(void)
 {
 	/* Title */
-	prt("MAngband server console", 1, 1);
+	prt("TomeNET server console", 1, 1);
 
 	/* Options */
 	prt("(a) Get player list", 3, 5);

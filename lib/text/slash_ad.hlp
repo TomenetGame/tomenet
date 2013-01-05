@@ -22,8 +22,8 @@ Admin Commands: art cfg cheeze clv cp en eq geno id kick lua purge respawn
 
 /less [filename]
     Displays specified file in lib/text directory.
-    If filename is omitted, mangband.rfe is shown.
-        /less mangband.log
+    If filename is omitted, tomenet.rfe is shown.
+        /less tomenet.log
 
 /pet
     (not implemented yet) summon a pet??
@@ -42,7 +42,7 @@ Admin Commands: art cfg cheeze clv cp en eq geno id kick lua purge respawn
 
 Only Dungeon Master(DM) and Wizard character can use these commands.
 Those commands are intended for administrative/debugging purpose -
-Now that an admin can do everything without using mangconsole.
+Now that an admin can do everything without using tomenetconsole.
 (Most of them should be replaced with LUA scripts, btw)
 
 Note: {worldpos} is interpreted in the following ways.
@@ -75,7 +75,7 @@ Note: {worldpos} is interpreted in the following ways.
 /cfg [configuration filename] 
     Reload configuration file.
     If filename is ommitted, the default one will be loaded again (which is
-    'mangband.cfg', or a file specified with '-m' option when booting.)
+    'tomenet.cfg', or a file specified with '-m' option when booting.)
 
 /cheeze
     Scan all the houses to check suspicious cheeze, and display tomenet.log.
@@ -115,7 +115,7 @@ Note: {worldpos} is interpreted in the following ways.
     Purge(erase) non-used monsters/objects/traps(mainly on wilderness).
         monsters, traps: all
         objects: all non-owned ones (it's to protect house-contents).
-    (cf. AUTO_PURGE in mangband.cfg)
+    (cf. AUTO_PURGE in tomenet.cfg)
 
 /quit [runlevel] {alias: /shutdown} 
     Set the server runlevel. If runlevel is omitted, toggle between 5/6.

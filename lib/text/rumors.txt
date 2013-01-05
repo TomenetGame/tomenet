@@ -273,7 +273,7 @@ They say that with 2 words 'pfft' and 'w00t' you can describe the universe.
 They say that you should carry flasks of oil even when your lamp is full.
 Never harm the future Einstein on the village!
 They say that you'll have headache after a trip with magic mushrooms.
-They say that everyone can be a F.L.Wright in PernMangband.
+They say that everyone can be a F.L.Wright in TomeNET.
 Ever seen a member of The Guild?
 Ask a priest to enchant your stuffs.
 Ask a rogue to curse your stuffs.
@@ -504,7 +504,7 @@ They say that in this world darkness kills.
 Can a dragon enter into a church?
 They say that pints of ale are expensive deep in the dungeon.
 They say that discordance creeps into your party without making a sound..
-They say that in Mangband most of bugs are inside the code.
+They say that in TomeNET most of bugs are inside the code.
 They say that you should always attack a vault from the flank.
 They say that you should be very careful when a trap seemed to do nothing.
 They say that traps of the same name can does various effect.

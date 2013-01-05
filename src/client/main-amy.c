@@ -840,9 +840,9 @@ int init_amy(void)
         IOtr.tr_node.io_Error = 0;
 
 /*evileye*/
-        if((GetVar("mang_scr",modestr,256,0L))==-1){
+        if((GetVar("tomenet_scr",modestr,256,0L))==-1){
           request_mode(modestr);
-          SetVar("mang_scr",modestr,strlen(modestr),GVF_GLOBAL_ONLY);
+          SetVar("tomenet_scr",modestr,strlen(modestr),GVF_GLOBAL_ONLY);
         }
         scr_m = strtol( modestr, &s, 0 );
         if ( scr_m == 0 || scr_m == INVALID_ID ){
@@ -902,7 +902,7 @@ int init_amy(void)
 
 /*Evileye NEW*/
 
-        if((GetVar("mang_gfx",modestr,256,0L))==-1){
+        if((GetVar("tomenet_gfx",modestr,256,0L))==-1){
           char ch;
           Term_activate(&screen.t);
           MSG(0,0,"Do you want graphics (y/n):");
@@ -912,7 +912,7 @@ int init_amy(void)
             strcpy(modestr,"true");
           else
             strcpy(modestr,"false");
-          SetVar("mang_gfx",modestr,strlen(modestr),GVF_GLOBAL_ONLY);
+          SetVar("tomenet_gfx",modestr,strlen(modestr),GVF_GLOBAL_ONLY);
         }
         if(!(stricmp(modestr,"true")))
           use_graphics=TRUE;

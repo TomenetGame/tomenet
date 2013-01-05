@@ -1883,7 +1883,7 @@ void DgramClose(int fd){
 void GetLocalHostName(char *name, unsigned size){
     struct hostent	*he;
 
-    if((GetVar("mang_host",name,size,0L))!=-1){
+    if((GetVar("tomenet_host",name,size,0L))!=-1){
       return;
     }
 

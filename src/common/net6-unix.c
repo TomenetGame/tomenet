@@ -274,11 +274,11 @@ int	port;
     memset((char *)&addr_in, 0, sizeof(addr_in));
     addr_in.sun_family          = AF_UNIX; 
     if (port) {
-       sprintf(addr_in.sun_path, "/tmp/mangband%d", port);
+       sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
        for (port=getpid(); port > 0; port--) {
-          sprintf(addr_in.sun_path, "/tmp/mangband%d", port);
+          sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
              break;
@@ -376,7 +376,7 @@ int	fd;
     if (getsockname(fd, (struct sockaddr *)&addr, &len) < 0)
 	return (-1);
 
-    if (sscanf(addr.sun_path, "/tmp/mangband%d", &port) < 1)
+    if (sscanf(addr.sun_path, "/tmp/tomenet%d", &port) < 1)
         return (-1);
     return port;
 #else
@@ -570,7 +570,7 @@ int	port;
     struct sockaddr_un  peer;
     memset((char *)&peer, 0, sizeof(peer));
     peer.sun_family          = AF_UNIX; 
-    sprintf(peer.sun_path, "/tmp/mangband%d", (port)? port : getpid());
+    sprintf(peer.sun_path, "/tmp/tomenet%d", (port)? port : getpid());
     fd = socket(AF_UNIX, SOCK_STREAM, 0);
 #else
     struct hostent	*hp;
@@ -1426,11 +1426,11 @@ int	port;
     }
 
     if (port) {
-       sprintf(addr_in.sun_path, "/tmp/mangband%d", port);
+       sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
        for (port=getpid(); port > 0; port--) {
-          sprintf(addr_in.sun_path, "/tmp/mangband%d", port);
+          sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
              break;
@@ -1533,11 +1533,11 @@ int	port;
     }
 
     if (port) {
-       sprintf(addr_in.sun_path, "/tmp/mangband%d", port);
+       sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
        for (port=getpid(); port > 0; port--) {
-          sprintf(addr_in.sun_path, "/tmp/mangband%d", port);
+          sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
              break;
@@ -1631,11 +1631,11 @@ int	port;
     addr_in.sun_family          = AF_UNIX; 
 
     if (port) {
-       sprintf(addr_in.sun_path, "/tmp/mangband%d", port);
+       sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
        for (port=getpid(); port > 0; port--) {
-          sprintf(addr_in.sun_path, "/tmp/mangband%d", port);
+          sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
              break;
@@ -1716,7 +1716,7 @@ int	port;
     struct sockaddr_un  addr_in;
     memset((char *)&addr_in, 0, sizeof(addr_in));
     addr_in.sun_family          = AF_UNIX;
-    sprintf(addr_in.sun_path, "/tmp/mangband%d", (port)? port : getpid());
+    sprintf(addr_in.sun_path, "/tmp/tomenet%d", (port)? port : getpid());
 #else
     struct hostent	*hp;
     struct sockaddr_in6  addr_in;
@@ -1822,7 +1822,7 @@ char	*host, *sbuf;
     struct sockaddr_un  the_addr;
     memset((char *)&the_addr, 0, sizeof(the_addr));
     the_addr.sun_family          = AF_UNIX; 
-    sprintf(the_addr.sun_path, "/tmp/mangband%d", (port)? port : getpid());
+    sprintf(the_addr.sun_path, "/tmp/tomenet%d", (port)? port : getpid());
     sl_errno = 0;
 #else
     struct hostent	*hp;
@@ -2443,7 +2443,7 @@ DgramLastport(int fd)
 #ifdef UNIX_SOCKETS
     int port;
 
-    if (sscanf(sl_dgram_lastaddr.sun_path, "/tmp/mangband%d", &port) < 1)
+    if (sscanf(sl_dgram_lastaddr.sun_path, "/tmp/tomenet%d", &port) < 1)
         return (-1);
     return port;
 #else

@@ -1470,7 +1470,7 @@ DgramLastport(int fd)
 #ifdef UNIX_SOCKETS
     int port;
 
-    if (sscanf(sl_dgram_lastaddr.sun_path, "/tmp/mangband%d", &port) < 1)
+    if (sscanf(sl_dgram_lastaddr.sun_path, "/tmp/tomenet%d", &port) < 1)
         return (-1);
     return port;
 #else
