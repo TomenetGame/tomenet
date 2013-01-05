@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. January 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. January 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.1a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -2298,7 +2298,8 @@ standard is 3 lifes.
 
 Mode: 'Everlasting'
 -------------------
-Create an everlasting character for an infinite amount of resurrections.
+Create an everlasting character for an infinite amount of resurrections (with
+the exception that they too are completely destroyed if they die to insanity.)
 Everlasting characters can become king/queen, but cannot enter the high-score.
 Other character types cannot use items that belong to everlasting
 characters. Exception: Word-of-recall scrolls can be exchanged between an
