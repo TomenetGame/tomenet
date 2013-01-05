@@ -4325,6 +4325,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 	int tries = 0, i;
 	artifact_bias = 0;
 
+	if (!power && (rand_int(100) < CURSED_JEWELRY_CHANCE)) power = -1;
+
 	/* Very good */
 	if (power > 1) {
 #if 0
@@ -5134,10 +5136,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* hack: if we apply_magic() again on _already created_ jewelry,
 		   we don't want to reset its hit/dam/ac, because we're also called
 		   when we create an artifact out of an item. */
-		if (!o_ptr->name1) {
-			if (!power && (rand_int(100) < CURSED_JEWELRY_CHANCE)) power = -1;
-			a_m_aux_3(o_ptr, lev, power, resf);
-		}
+		if (!o_ptr->name1) a_m_aux_3(o_ptr, lev, power, resf);
 		o_ptr->name2 = o_ptr->name2b = 0; /* required? */
 	}
 	/* --------------------------------------------------------------------------------- */
@@ -5267,7 +5266,6 @@ for (i = 0; i < 25; i++) {
 
 		case TV_RING:
 		case TV_AMULET:
-			if (!power && (rand_int(100) < CURSED_JEWELRY_CHANCE)) power = -1;
 			a_m_aux_3(o_ptr, lev, power, resf);
 			break;
 
