@@ -1944,8 +1944,11 @@ artifact_type *randart_make(object_type *o_ptr) {
 			else if ((ap < 0) && (ap < (-(power * 1)) / 10)) break;
 		} /* end of power selection */
 
-		/* should almost never happen: Rolled a 'too powerful' artifact on _every_ attempt. */
+#if 0 /* allow such randarts that haven't gained any extra powers over base item version? */
+		/* should almost never happen: Rolled a 'too powerful' artifact on _every_ attempt.
+		   This would require a base item that is already extremely powerful (eg PDSM). */
 		if (tries == MAX_TRIES) return (NULL);
+#endif
 
 		if (aggravate_me) {
 			a_ptr->flags3 |= TR3_AGGRAVATE;
