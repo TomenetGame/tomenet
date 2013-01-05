@@ -10778,7 +10778,7 @@ Elder aranea            speedy and smart (INT bonus) greater spider;
                         has a medium array of spells at its disposal
 
 Plasma hound            speedy;
-(Code 726)              resists plasma, sound; immune to fire;
+(Code 726)              resists plasma, sound, light; immune to fire;
                         susceptible to cold;
                         can't be cut/stunned/confused or paralyzed;
                         can breathe plasma
