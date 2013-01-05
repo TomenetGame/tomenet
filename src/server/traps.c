@@ -2333,7 +2333,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				invcopy(q_ptr, lookup_kind(TV_BOTTLE, 1));
 				q_ptr->number = bottles;
-				q_ptr->level = glev / 2 + 1;
+				q_ptr->level = glev / 10 + 1;
 				q_ptr->note = quark_add("Thank you");
 				q_ptr->owner = p_ptr->id;
 				q_ptr->mode = p_ptr->mode;
