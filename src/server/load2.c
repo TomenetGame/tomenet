@@ -610,44 +610,40 @@ if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
 
 
 	/* Artifacts */
-	if (o_ptr->name1)
-	{
+	if (o_ptr->name1) {
 		artifact_type *a_ptr;
 
 		/* Obtain the artifact info */
 		/* Hack -- Randarts! */
 		if (o_ptr->name1 == ART_RANDART)
-		{
 			a_ptr = randart_make(o_ptr);
-		}
 		else
-		{
 			a_ptr = &a_info[o_ptr->name1];
+
+		/* Hack: Fix old, meanwhile illegal, randarts */
+		if (!a_ptr) {
+			o_ptr->name1 = 0;
+			o_ptr->name3 = 0L;
+			//o_ptr->pval = 0;
+		} else {
+			/* Acquire new artifact "pval" */
+			o_ptr->pval = a_ptr->pval;
+
+			/* Acquire new artifact fields */
+			o_ptr->ac = a_ptr->ac;
+			o_ptr->dd = a_ptr->dd;
+			o_ptr->ds = a_ptr->ds;
+
+			/* Acquire new artifact weight */
+			o_ptr->weight = a_ptr->weight;
+
+			/* Hack -- extract the "broken" flag */
+			if (!a_ptr->cost) o_ptr->ident |= ID_BROKEN;
 		}
-
-	    /* Hack: Fix old, meanwhile illegal, randarts */
-	    if (!a_ptr) o_ptr->name1 = 0;
-	    else {
-
-		/* Acquire new artifact "pval" */
-		o_ptr->pval = a_ptr->pval;
-
-		/* Acquire new artifact fields */
-		o_ptr->ac = a_ptr->ac;
-		o_ptr->dd = a_ptr->dd;
-		o_ptr->ds = a_ptr->ds;
-
-		/* Acquire new artifact weight */
-		o_ptr->weight = a_ptr->weight;
-
-		/* Hack -- extract the "broken" flag */
-		if (!a_ptr->cost) o_ptr->ident |= ID_BROKEN;
-	    }
 	}
 
 	/* Ego items */
-	if (o_ptr->name2)
-	{
+	if (o_ptr->name2) {
 		ego_item_type *e_ptr;
 		artifact_type *a_ptr;
 
