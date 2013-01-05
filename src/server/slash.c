@@ -4748,6 +4748,53 @@ void do_slash_cmd(int Ind, char *message)
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 				return;
 			}
+			else if (prefix(message, "/debugart")) /* re-roll a random artifact */
+			{
+				object_type *o_ptr;
+				int tries = 1;
+
+				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
+					msg_print(Ind, "\377oInvalid inventory slot.");
+					return;
+				}
+
+				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
+				if (o_ptr->name1 != ART_RANDART) {
+					if (o_ptr->name1) {
+						msg_print(Ind, "\377oIt's a static art. Aborting.");
+						return;
+					} else {
+						msg_print(Ind, "\377oNot a randart - turning it into one.");
+						o_ptr->name1 = ART_RANDART;
+					}
+				}
+
+				while (tries < 1000000) {
+					if (!(tries % 10000)) s_printf("%d, ", tries);
+					/* Piece together a 32-bit random seed */
+					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 += rand_int(0xFFFF);
+					/* Check the tval is allowed */
+					if (randart_make(o_ptr) == NULL) {
+						/* If not, wipe seed. No randart today */
+						o_ptr->name1 = 0;
+						o_ptr->name3 = 0L;
+						msg_print(Ind, "Randart creation failed..");
+						return;
+					}
+					o_ptr->timeout = 0;
+					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
+
+					if (o_ptr->to_a > 35) break;
+					tries++;
+				}
+				if (!tries) msg_format(Ind, "Re-rolling failed, %d tries.", tries);
+				else msg_format(Ind, "Re-rolled randart in inventory slot %d (Tries: %d).", atoi(token[1]), tries);
+
+				o_ptr->ident |= ID_MENTAL; /* *id*ed */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+				return;
+			}
 			else if (prefix(message, "/reego")) /* re-roll an ego item */
 			{
 				object_type *o_ptr;
