@@ -1944,6 +1944,9 @@ artifact_type *randart_make(object_type *o_ptr) {
 			else if ((ap < 0) && (ap < (-(power * 1)) / 10)) break;
 		} /* end of power selection */
 
+		/* should almost never happen: Rolled a 'too powerful' artifact on _every_ attempt. */
+		if (tries == MAX_TRIES) return (NULL);
+
 		if (aggravate_me) {
 			a_ptr->flags3 |= TR3_AGGRAVATE;
 			a_ptr->flags1 &= ~(TR1_STEALTH);
