@@ -8921,6 +8921,8 @@ Note that not every skill is available to every profession (class).
         .Nether                 Learn to evoke nether runes.
         .Chaos                  Learn to evoke chaos runes.
         .Mana                   Learn to evoke mana runes.
+    .Astral Knowledge           Learn spells of the Astral branch of magic,
+                                exclusively available to the Maia race.
     .Mimicry                    Ability to shapechange into a monster!
                                 You also inherit the monsters abilities,
                                 weaknesses and resistances!
@@ -9988,7 +9990,8 @@ vary. For example a warrior cannot learn magic spells.
 - Druid
     Druids are able to call upon the mystical powers of nature. Their wisdom
     is of primary importance to determine their mana and success chances when
-    casting spells.
+    casting spells. Apart from the druidic schools, the other magic schools
+    available to druids use intelligence for determining spell success chance.
     Druids fight using Martial Arts, which is the only melee skill they are
     able to train, as well as a variety of magic spells.
     Druids can shapechange into several forms (mostly animals) without having
@@ -11036,7 +11039,7 @@ to a certain extent. The boni are listed below each school.
 
 Istar schools:
 --------------
-Mana
+- Mana
     Manathrust      Casts a powerful mana bolt.
                     Required skill level for first spell level: 1.
     Remove Curses   Removes all curses of carried/worn objects.
@@ -11056,7 +11059,7 @@ Mana
                     Required skill level for first spell level: 35.
   BONI:             Mana resistance at 40.
 
-Fire
+- Fire
     Globe of Light  Creates a globe of magical light.
                     Lv10: Damages monsters.
                     Lv25: Turns into a more powerful kind of light.
@@ -11074,7 +11077,7 @@ Fire
   BONI:             Fire resistance at 30,
                     Fire immunity at 50.
 
-Water
+- Water
     Frost Bolt      Fires a frost bolt at a target.
                     Required skill level for first spell level: 8.
     Tidal Wave      Summons a monstrous tidal wave.
@@ -11093,7 +11096,7 @@ Water
                     Passing water at 40,
                     Water immunity at 50.
 
-Air
+- Air
     Noxious Cloud   Fires a poison cloud at a designated target.
                     Lv30: Unbreath cloud, irresistable.
                     Required skill level for first spell level: 3.
@@ -11115,7 +11118,7 @@ Air
                     Poison resistance at 40,
                     Flying at 50.
 
-Earth
+- Earth
     Dig             Turns walls into mud.
                     Required skill level for first spell level: 12.
     Acid Bolt       Fires an acid bolt at a target.
@@ -11130,7 +11133,7 @@ Earth
   BONI:             Shard resistance at 30,
                     Great damage reduction against earthquakes at 45.
 
-Nature
+- Nature
     Grow Trees      Grows trees quickly around you.
                     Required skill level for first spell level: 6.
     Healing         Heals a percentage of your hit points.          (project)
@@ -11151,7 +11154,7 @@ Nature
                     Pass trees easily at 30,
                     Pass water easily at 40.
 
-Conveyance
+- Conveyance
     Phase Door      Teleports you on a small scale range.           (project)
                     Required skill level for first spell level: 2.
     Disarm          Destroys doors and traps around you.
@@ -11174,7 +11177,7 @@ Conveyance
                     Required skill level for first spell level: 35.
   BONI:             Resistance to teleportation attacks at 30.
 
-Divination
+- Divination
     Detect Monsters Detects all monsters nearby.                    (project)
                     Required skill level for first spell level: 3.
     Identify        Identifies items.
@@ -11194,7 +11197,7 @@ Divination
                     Required skill level for first spell level: 9.
   BONI:             Automatic identification at 50.
 
-Temporal
+- Temporal
     Magelock        Magically locks a door.
                     Lv40: Creates a Glyph of Warding on the ground that stops
                           monsters from crossing the field or summoning on it.
@@ -11211,7 +11214,7 @@ Temporal
                     Shared spell (see above): Temporal, Conveyance.
   BONI:             Time resistance at 50.
 
-Udun
+- Udun
     Genocide        Genocides all monsters of a race on the level.
                     Lv15: Alternatively genocides all monsters near you ("mass
                             genocide", choose 'y'. 'n' will do a normal geno).
@@ -11230,7 +11233,7 @@ Udun
   BONI:             Resist teleportation attacks at 30,
                     Hold life at 40.
 
-Mind
+- Mind
     Confuse         Confuses a monsters.
                     Lv15: Turns into a ball.
                     Lv35: Affects all monsters in sight.
@@ -11252,7 +11255,7 @@ Mind
   BONI:             Reduces confusion and hallucination at 30,
                     Reduce insanity influence at 40 and especially at 50.
 
-Meta
+- Meta
     Recharge        Recharges a magic staff or wand.
                     Required skill level for first spell level: 5.
     Project Spells  Makes several spells and prayers affect other players too,
@@ -11280,7 +11283,7 @@ Meta
 
 Priest schools:
 ---------------
-Holy Offense
+- Holy Offense
     Curse           Randomly causes confusion damage or slowness or blindness.
                     Lv15: Turns from bolt into beam, passing through the
                           target and also hitting those behind.
@@ -11308,7 +11311,7 @@ Holy Offense
   BONI:             Adds slay undead at 30, slay demon at 40, slay evil at 50
                     to all melee and ranged attacks.
 
-Holy Defense
+- Holy Defense
     Blessing        Same effect as scroll of Blessing.         (auto-project)
                     Lv15: Same effect as scroll of Holy Chant. (auto-project)
                     Lv30: Same effect as scroll of Holy Prayer.(auto-project)
@@ -11346,7 +11349,7 @@ Holy Defense
   BONI:             Protects the player from undead at 30, from demons at 40,
                     and from evil in general at 50. Better than the spell.
 
-Holy Curing
+- Holy Curing
     Cure Wounds     Heals a fixed amount of hit points of a friendly target,
                     which is capped at 14d8, the same amount a potion of cure
                     critical wounds actually heals.
@@ -11395,7 +11398,7 @@ Holy Curing
                     (hallucination),
                     Less frequent suffering from black breath at 50.
 
-Holy Support
+- Holy Support
     Remove Fear     Keeps your heart boldened for a while.     (auto-project)
                     Required skill level for first spell level: 1.
     Holy Light      Creates a globe of pure light.
@@ -11431,7 +11434,7 @@ Holy Support
 
 Druid schools:
 --------------
-Arcane Lore
+- Arcane Lore
     Nature's Call   Quickly grows trees around you.
                     Required skill level for first spell level: 10.
     Toxic Moisture  Creates a cloud of toxic moisture at a designated target,
@@ -11451,7 +11454,7 @@ Arcane Lore
                     Animals have a chance to resist, depending on their level.
                     Required skill level for first spell level: 1.
 
-Physical Lore
+- Physical Lore
     Forest's Embrace
                     Creates a cloud around you which heals everyone including
                     yourself over time.                        (auto-project)
@@ -11476,7 +11479,7 @@ Physical Lore
 
 Mindcraft schools:
 ------------------
-Psycho-Power
+- Psycho-Power
     Psychic Hammer  Telekinetic power focussed to bash an enemy,
                     damaging and stunning him.
                     Required skill level for first spell level: 1.
@@ -11511,7 +11514,7 @@ Psycho-Power
                     draining your mana each time.
                     Required skill level for first spell level: 40.
 
-Thought Contact
+- Thought Contact
     Clear Mind      Removes fear, confusion and hallucination. (auto-project)
                     Required skill level for first spell level: 3.
     Willpower       Boosts your willpower to unleash hidden potential,
@@ -11543,7 +11546,7 @@ Thought Contact
                     Required skill level for first spell level: 35.
                     Shared spell (see above): Psycho-Power / Thought Contact.
 
-Mental Intrusion
+- Mental Intrusion
  (Note that psi attacks don't have any effect on angels, nonliving creatures,
  or empty-minded creatures, and that undead, stupid creatures and common
  animals as well as weird-minded creatures may resist it. At the same time,
@@ -11616,9 +11619,16 @@ Mental Intrusion
                     Required skill level for first spell level: 33.
 
 
-Divine school of Maiar:
------------------------
-Astral
+Exclusive astral school for Maiar:
+----------------------------------
+Instead of normal spell level, the spells of this school use an 'astral level'
+to determine damage or effect. This astral level consists to equal parts of
+your character level and your Astral Knowledge school level. This means that
+a level 49 character with 1.000 in Astral Knowledge will still cast spells that
+deal damage and have effects as if the spell was actually at level 25 (the
+average value of 1 and 49). (Spell success chance uses the normal spell level
+though, as all other magic schools do, not the astral level.)
+- Astral Knowledge
     Power Bolt      Casts a bolt of electricity/mana/nether depending on your
                     alignment:
                     Still neutral -> electricity,
@@ -11673,17 +11683,18 @@ not shown anywhere at the moment, this might be subject to improvement.
 The fail rate of a spell depends on..
 
 Magic schools:
-    Nearly all spells depend on the spell level and your INTelligence,
+    Nearly all magic spells depend on the spell level and your INTelligence,
     some spells however use WISdom instead of intelligence, those spells are
     designated in (6.8) in their spell description.
+    Currently, the only magic spell using wisdom is 'Genocide'.
 Prayer schools:
-    All spells depend on the spell level and your WISdom.
+    All holy spells depend on the spell level and your WISdom.
 Mindcraft schools:
-    All spells depend on the spell level and your INTelligence.
+    All mind spells depend on the spell level and your INTelligence.
 Druidic schools:
-    All spells depend on the spell level and your WISdom.
+    All druidic spells depend on the spell level and your WISdom.
 Astral school:
-    Some spells depend on the spell level and WISdom, some on the spell level
+    Some astral spells depend on the spell level and WISdom, some on the spell level
     and INTelligence, as designated in (6.8) in the spell descriptions.
 
 In general, when you learn a new spell that starts at a high fail rate, you
