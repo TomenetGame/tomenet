@@ -1837,8 +1837,8 @@ void display_lagometer(bool display_commands)
 //	byte attr0 = TERM_L_GREEN, attr1 = TERM_GREEN;
 	char attrc0 = 'G', attrc1 = 'g';
  #else /* use white instead of green tones, for being easier on the eye maybe? */
-//	byte attr0 = TERM_WHITE, attr1 = TERM_SLATE;
-	char attrc0 = 'w', attrc1 = 's';
+//	byte attr0 = TERM_L_WHITE, attr1 = TERM_SLATE;
+	char attrc0 = 'W', attrc1 = 's';
  #endif
 	int cur_lag;
 	char *underscore, *underscore2, *underscore2a, c_graph[60 * 3 + 1];
