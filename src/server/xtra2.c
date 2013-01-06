@@ -3885,7 +3885,7 @@ void check_experience(int Ind)
 		}
 
 		/* Give warning message to get involved with macros, aimed at newbies */
-		if (old_lev < 10 && p_ptr->lev >= 10) { /* (p_ptr->warning_macros) */
+		if (old_lev < 10 && p_ptr->lev >= 10 && !p_ptr->warning_macros) {
 			/* scan inventory for any macroish inscriptions */
 			bool found_macroishness = FALSE;
 			int i;
