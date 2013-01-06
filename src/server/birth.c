@@ -2612,7 +2612,7 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 		return FALSE;
 	}
 	/* If we have no traits available at all for this race then any trait choice is illegal*/
-	if (trait_info[0].choice & BITS(race)) {
+	if (trait && (trait_info[0].choice & BITS(race))) {
 		s_printf("%s EXPLOIT_TRAIT_N/A: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
 		return FALSE;
 	}
