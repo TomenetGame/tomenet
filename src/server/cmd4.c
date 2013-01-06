@@ -457,17 +457,22 @@ void do_cmd_check_uniques(int Ind, int line)
 
 static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, char attr, bool admin)
 {
-	int modify_number = 0, compaction = (Players[Ind]->player_list ? 2 : 0) + (Players[Ind]->player_list2 ? 1 : 0);
+	player_type *p_ptr = Players[Ind];
+	int modify_number = 0, compaction = (p_ptr->player_list ? 2 : 0) + (p_ptr->player_list2 ? 1 : 0);
 	cptr p = "";
 	char info_chars[4];
 	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE, text_allow_dm_chat = FALSE;
 	bool iddc = in_irondeepdive(&q_ptr->wpos) || (q_ptr->mode & MODE_DED_IDDC);
+	bool iddc0 = in_irondeepdive(&p_ptr->wpos) || (p_ptr->mode & MODE_DED_IDDC);
+	bool cant_iddc = !iddc && q_ptr->max_exp;
+	bool cant_iddc0 = !iddc0 && p_ptr->max_exp;
 	char attr_p[3];
 
 	if (attr == 'w' &&
-	    ((Players[Ind]->total_winner && q_ptr->total_winner && ABS(q_ptr->lev - Players[Ind]->lev) <= MAX_KING_PARTY_LEVEL_DIFF) ||
-	    ABS(q_ptr->lev - Players[Ind]->lev) <= MAX_PARTY_LEVEL_DIFF) &&
-	    !compat_pmode(Ind, q_ptr->Ind, FALSE))
+	    ((p_ptr->total_winner && q_ptr->total_winner && ABS(q_ptr->lev - p_ptr->lev) <= MAX_KING_PARTY_LEVEL_DIFF) ||
+	    ABS(q_ptr->lev - p_ptr->lev) <= MAX_PARTY_LEVEL_DIFF) &&
+	    !compat_pmode(Ind, q_ptr->Ind, FALSE) &&
+	    !((iddc && cant_iddc0) || (iddc0 && cant_iddc))) /* if one of them is in iddc and the other cant go there, we cant party */
 		strcpy(attr_p, "\377B");
 	else	strcpy(attr_p, "");
 
