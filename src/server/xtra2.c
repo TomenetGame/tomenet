@@ -4217,11 +4217,15 @@ void gain_exp(int Ind, s64b amount) {
 
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 	if (amount && (p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)) {
+#if 0 /* poof when gaining exp prematurely */
 		msg_print(Ind, "\377RYou failed to enter the Ironman Deep Dive Challenge!");
 		strcpy(p_ptr->died_from, "indetermination");
 		p_ptr->deathblow = 0;
                 p_ptr->death = TRUE;
                 return;
+#else /* just don't get exp */
+		return;
+#endif
 	}
 
 	if (p_ptr->IDDC_logscum) {
@@ -4689,6 +4693,10 @@ void monster_death(int Ind, int m_idx)
 
 	/* Log-scumming in IDDC is like fighting clones */
 	if (p_ptr->IDDC_logscum) return;
+        /* enforce dedicated Ironman Deep Dive Challenge character slot usage */
+        if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+    	    && r_ptr->mexp) /* Allow kills in Bree */
+    		return;
 	/* clones don't drop treasure or complete quests.. */
 	if (m_ptr->clone) return;
 	/* ..neither do cheezed kills */
