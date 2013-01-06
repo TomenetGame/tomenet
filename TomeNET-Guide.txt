@@ -8953,16 +8953,22 @@ Note that not every skill is available to every profession (class).
                                 Traumaturgy has no effect on angels, undead,
                                 and nonliving monsters.
     .Aura of Fear               Monsters that hit you are stroke by fear.
+                                Is automatically enabled when you train the
+                                skill; you can disable the aura in 'm' menu.
     .Shivering Aura             Monsters that hit you are stunned.
                                 At a skill of 30 the aura is so strong that
                                 your melee attacks (weapon as well as martial
                                 arts will be branded by it. (Cold brand.)
+                                Is automatically enabled when you train the
+                                skill; you can disable the aura in 'm' menu.
     .Aura of Death              Monsters that hit you are hit by waves
                                 of plasma and ice.
                                 At a skill of 40 the aura is so strong that
                                 your melee attacks (weapon as well as martial
                                 arts) will be branded by it.
                                 (Alternating fire or cold brand.)
+                                Is automatically enabled when you train the
+                                skill; you can disable the aura in 'm' menu.
 .Antimagic                      Generated from your strong disbelief in magic
                                 an anti-magic field surrounds you, preventing
                                 attempts from other casters to cast spells or
