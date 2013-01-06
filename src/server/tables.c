@@ -5251,130 +5251,37 @@ player_trait trait_info[MAX_TRAIT] = {
 #else
 		0xFFFFFF, /* disable for all */
 #endif
-	},
-	{
-		"Blue lineage",
-		RFC,
-	},
-	{
-		"White lineage",
-		RFC,
-	},
-	{
-		"Red lineage",
-		RFC,
-	},
-	{
-		"Black lineage",
-		RFC,
-	},
-	{
-		"Green lineage",
-		RFC,
-	},
-	{
-		"Multi-hued lineage",
-		RFC,
-	},
-	{
-		"Bronze lineage",
-		RFC,
-	},
-	{
-		"Silver lineage",
-		RFC,
-	},
-	{
-		"Golden lineage",
-		RFC,
-	},
-	{
-		"Law lineage",
-		0,
-	},
-	{
-		"Chaos lineage",
-		0,
-	},
-	{
-		"Balance lineage",
-		0,
-	},
-	{
-		"Power lineage",
-		0,
-	},
-	{
-		"Enlightened",	/* note: directly assigned live; must be N/A on char creation time */
-		0,
-	},
-	{
-		"Corrupted",	/* note: directly assigned live; must be N/A on char creation time */
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
-	},
-	{
-		"",
-		0,
+	},{	"Blue lineage",	RFC,
+	},{	"White lineage", RFC,
+	},{	"Red lineage", RFC,
+	},{	"Black lineage", RFC,
+	},{	"Green lineage", RFC,
+	},{	"Multi-hued lineage", RFC,
+	},{	"Bronze lineage", RFC,
+	},{	"Silver lineage", RFC,
+	},{	"Golden lineage", RFC,
+	},{	"Law lineage", 0,
+	},{	"Chaos lineage", 0,
+	},{	"Balance lineage", 0,
+	},{	"Power lineage", 0,
+	},{	"Enlightened", 0, /* note: directly assigned live; must be N/A on char creation time */
+	},{	"Corrupted", 0, /* note: directly assigned live; must be N/A on char creation time */
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
+	},{	"", 0,
 	},
 };
 
