@@ -5358,7 +5358,7 @@ void do_slash_cmd(int Ind, char *message)
 				    i, st_name + sti_ptr->name, st_ptr->stock_size, sti_ptr->max_obj);
 				return;
 			}
-			else if (prefix(message, "/acclist")){ /* list all living characters of a specified account name - C. Blue */
+			else if (prefix(message, "/acclist")) { /* list all living characters of a specified account name - C. Blue */
 				int *id_list, i, n;
 				struct account *l_acc;
 				byte tmpm;
@@ -5391,6 +5391,55 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Account not found.");
 				}
 				return;
+			}
+			else if (prefix(message, "/characc")) { /* returns account name to which the given character name belongs */
+				u32b p_id;
+				cptr acc;
+				struct account *l_acc;
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /characc <character name>");
+					return;
+				}
+				if (!(p_id = lookup_player_id(message3))) {
+					msg_print(Ind, "That character name does not exist.");
+					return;
+				}
+				acc = lookup_accountname(p_id);
+				if (!acc) {
+					msg_print(Ind, "***ERROR: No account found.");
+					return;
+				}
+				msg_format(Ind, "Account name: \377s'%s'", acc);
+                                if (!(l_acc = Admin_GetAccount(acc))) {
+					msg_print(Ind, "***ERROR: Account does not exist.");
+					return;
+                                }
+                                /* maybe do /acclist here? */
+                                if (prefix(message, "/characcl")) {
+					int *id_list, i, n;
+					byte tmpm;
+					char colour_sequence[3 + 1]; /* colour + dedicated slot marker */
+
+					n = player_id_list(&id_list, l_acc->id);
+					/* Display all account characters here */
+					for(i = 0; i < n; i++) {
+//unused huh					u16b ptype = lookup_player_type(id_list[i]);
+						/* do not change protocol here */
+						tmpm = lookup_player_mode(id_list[i]);
+						if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377B");
+						else if (tmpm & MODE_PVP) strcpy(colour_sequence, format("\377%c", COLOUR_MODE_PVP));
+						else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
+						else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");
+						else strcpy(colour_sequence, "\377W");
+						if (tmpm & MODE_DED_IDDC) strcat(colour_sequence, "*");
+						if (tmpm & MODE_DED_PVP) strcat(colour_sequence, "*");
+						msg_format(Ind, "Character #%d: %s%s (%d) (ID: %d)", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i]);
+					}
+					if (n) C_KILL(id_list, n, int);
+					KILL(l_acc, struct account);
+                                }
+                                return;
+
 			}
 			else if (prefix(message, "/addnewdun")) {
 				msg_print(Ind, "Trying to add new dungeons..");
