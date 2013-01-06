@@ -5260,10 +5260,14 @@ player_trait trait_info[MAX_TRAIT] = {
 	},{	"Bronze lineage", RFC,//conf+fa(+fire?)+refl	conf/fa/refl
 	},{	"Silver lineage", RFC,//cold+fa,refl (pois)	cold/pois/refl
 	},{	"Golden lineage", RFC,//sound+acid,refl(+fear?)	acid/sound/refl
-	},{	"Law lineage", 0,//shards+sound			shards/sound
-	},{	"Chaos lineage", 0,//chaos			chaos/disen
-	},{	"Balance lineage", 0,//disen			disen/sound
-	},{	"Power lineage", 0,//mana?			mana/regen
+	},{	"Law lineage", RFC,//shards+sound		shards/sound
+	},{	"Chaos lineage", RFC,//chaos			chaos/disen
+	},{	"Balance lineage", RFC,//disen			disen/sound
+#if 1
+	},{	"Power lineage", RFC,//mana?/regen		mana
+#else
+	},{	"", 0,
+#endif
 	},{	"Enlightened", 0, /* note: directly assigned live; must be N/A on char creation time */
 	},{	"Corrupted", 0, /* note: directly assigned live; must be N/A on char creation time */
 	},{	"", 0,
