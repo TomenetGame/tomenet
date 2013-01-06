@@ -5251,19 +5251,19 @@ player_trait trait_info[MAX_TRAIT] = {
 #else
 		0xFFFFFF, /* disable for all */
 #endif
-	},{	"Blue lineage",	RFC,
-	},{	"White lineage", RFC,
-	},{	"Red lineage", RFC,
-	},{	"Black lineage", RFC,
-	},{	"Green lineage", RFC,
-	},{	"Multi-hued lineage", RFC,
-	},{	"Bronze lineage", RFC,
-	},{	"Silver lineage", RFC,
-	},{	"Golden lineage", RFC,
-	},{	"Law lineage", 0,
-	},{	"Chaos lineage", 0,
-	},{	"Balance lineage", 0,
-	},{	"Power lineage", 0,
+	},{	"Blue lineage",	RFC,//ELEC			res->imm
+	},{	"White lineage", RFC,//COLD			res->imm
+	},{	"Red lineage", RFC,//FIRE			res->imm
+	},{	"Black lineage", RFC,//ACID			res->imm
+	},{	"Green lineage", RFC,//POIS			res->imm
+	},{	"Multi-hued lineage", RFC,//base(+pois?)	base/pois
+	},{	"Bronze lineage", RFC,//conf+fa(+fire?)+refl	conf/fa/refl
+	},{	"Silver lineage", RFC,//cold+fa,refl (pois)	cold/pois/refl
+	},{	"Golden lineage", RFC,//sound+acid,refl(+fear?)	acid/sound/refl
+	},{	"Law lineage", 0,//shards+sound			shards/sound
+	},{	"Chaos lineage", 0,//chaos			chaos/disen
+	},{	"Balance lineage", 0,//disen			disen/sound
+	},{	"Power lineage", 0,//mana?			mana/regen
 	},{	"Enlightened", 0, /* note: directly assigned live; must be N/A on char creation time */
 	},{	"Corrupted", 0, /* note: directly assigned live; must be N/A on char creation time */
 	},{	"", 0,
