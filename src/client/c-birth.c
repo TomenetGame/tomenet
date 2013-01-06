@@ -227,7 +227,7 @@ static bool choose_race(void)
 	int i, j, l, m, n, sel = 0;
 	char c = '\0';
 	char out_val[160];
-	bool hazard = FALSE;
+	bool hazard = FALSE, sel_ok = FALSE;
 
 	for (i = 18; i < 24; i++) Term_erase(1, i, 255);
 
@@ -243,9 +243,11 @@ race_redraw:
 #ifdef CLASS_BEFORE_RACE
 		if (!(rp_ptr->choice & BITS(class))) {
 			c_put_str(TERM_L_DARK, out_val, m, l);
+			if (!sel_ok) sel++;
 		} else
 #endif
 		{
+			sel_ok = TRUE;
 			if (j == sel) c_put_str(TERM_YELLOW, out_val, m, l);
 			else c_put_str(TERM_WHITE, out_val, m, l);
 		}
@@ -357,11 +359,11 @@ static bool choose_trait(void) {
 	int i, j, l, m, n, sel = 0;
 	char c = '\0';
 	char out_val[160];
-	bool hazard = FALSE;
+	bool hazard = FALSE, sel_ok = FALSE;
 
 	/* Prepare to list */
 	l = 2;
-	m = 20 - (Setup.max_trait - 1) / 5;
+	m = 24 - (Setup.max_trait - 1) / 5;
 	n = m - 1;
 
 #ifdef HIDE_UNAVAILABLE_TRAIT
@@ -400,14 +402,18 @@ static bool choose_trait(void) {
 
 trait_redraw:
 	l = 2;
-	m = 20 - (Setup.max_trait - 1) / 5;
+	m = 24 - (Setup.max_trait - 1) / 5;
 	n = m - 1;
 
 	/* Display the legal choices */
 	i = 0;
 	for (j = 0; j < Setup.max_trait; j++) {
                 tp_ptr = &trait_info[j];
-                if (!(tp_ptr->choice & BITS(race))) continue;
+                if (!(tp_ptr->choice & BITS(race))) {
+			if (!sel_ok) sel++;
+        		continue;
+            	}
+            	sel_ok = TRUE;
 
 		sprintf(out_val, "%c) %s", I2A(i), tp_ptr->title);
 		if (j == sel) c_put_str(TERM_YELLOW, out_val, m, l);
@@ -449,20 +455,20 @@ trait_redraw:
 			goto trait_redraw;
 		}
 		if (c == '8' || c == 'h') {
-			if (sel - 5 < 0) sel = sel + ((Setup.max_trait - sel) / 5) * 5;
-			else sel -= 5;
+			if (sel - 3 < 0) sel = sel + ((Setup.max_trait - sel) / 3) * 3;
+			else sel -= 3;
 			while (!(trait_info[sel].choice & BITS(race))) {
-				if (sel - 5 < 0) sel = sel + ((Setup.max_trait - sel) / 5) * 5;
-				else sel -= 5;
+				if (sel - 3 < 0) sel = sel + ((Setup.max_trait - sel) / 3) * 3;
+				else sel -= 3;
 			}
 			goto trait_redraw;
 		}
 		if (c == '2' || c == 'l') {
-			if (sel + 5 >= Setup.max_trait) sel = sel % 5;
-			else sel += 5;
+			if (sel + 3 >= Setup.max_trait) sel = sel % 3;
+			else sel += 3;
 			while (!(trait_info[sel].choice & BITS(race))) {
-				if (sel + 5 >= Setup.max_trait) sel = sel % 5;
-				else sel += 5;
+				if (sel + 3 >= Setup.max_trait) sel = sel % 3;
+				else sel += 3;
 			}
 			goto trait_redraw;
 		}
@@ -527,6 +533,7 @@ static bool choose_class(void)
 	player_class *cp_ptr;
 #ifndef CLASS_BEFORE_RACE
 	player_race *rp_ptr = &race_info[race];
+	bool sel_ok = FALSE;
 #endif
 	int i, j, l, m, n, sel = 0;
 	char c = '\0';
@@ -543,9 +550,7 @@ static bool choose_class(void)
 	c_put_str(TERM_ORANGE, "Important", n - 3, 2);
 	c_put_str(TERM_SLATE, "Warrior, Rogue, Paladin, Druid, and maybe Archer.", n - 2, 2);
 
-	for (i = 18; i < 24; i++) {
-		Term_erase(1, i, 255);
-	}
+	for (i = 18; i < 24; i++) Term_erase(1, i, 255);
 
 class_redraw:
 	l = 2;
@@ -560,9 +565,13 @@ class_redraw:
 #ifndef CLASS_BEFORE_RACE
 		if (!(rp_ptr->choice & BITS(j))) {
 			c_put_str(TERM_L_DARK, out_val, m, l);
+			if (!sel_ok) sel++;
 		} else
 #endif
 		{
+#ifndef CLASS_BEFORE_RACE
+			sel_ok = TRUE;
+#endif
 			if (j == sel) c_put_str(TERM_YELLOW, out_val, m, l);
 			else c_put_str(TERM_WHITE, out_val, m, l);
 		}
@@ -772,8 +781,7 @@ static bool choose_stat_order(void)
 			stats[i][3] = '\0';
 		}
 
-		while (1)
-		{
+		while (1) {
 			c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
 
 			for (i = 0; i < 6; i++) {
