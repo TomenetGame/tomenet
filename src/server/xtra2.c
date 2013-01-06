@@ -7332,7 +7332,7 @@ bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags) {
 		del_quest(questid);
 		return(FALSE);
 	}
-	s_printf("Added quest id %d (players %d)\n", quests[i].id, quests[i].active);
+	s_printf("Added quest id %d (players %d), target %d (%s)\n", quests[i].id, quests[i].active, target, p_ptr != NULL ? p_ptr->name : "NULL");
 	questid++;
 	if (questid == 0) questid = 1;
 	if (target != Ind) {
