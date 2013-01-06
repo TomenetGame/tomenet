@@ -3587,6 +3587,7 @@ static bool process_player_end_aux(int Ind)
 		        handle_stuff(Ind);
 			/* log a hint that newbies got it */
 			if (p_ptr->lev == 15) s_printf("CLOAKING-15: %s.\n", p_ptr->name);
+			p_ptr->warning_cloak = 1;
 		}
 	}
 

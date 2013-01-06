@@ -3854,6 +3854,9 @@ void check_experience(int Ind)
 			msg_print(Ind, "\374\377GHINT: Press \377gSHIFT + g\377G to distribute your skill points!");
 		}
 
+		if (p_ptr->warning_cloak == 2 && p_ptr->lev >= 15)
+			msg_print(Ind, "\374\377GHINT: You can press \377gSHIFT + v\377G to cloak your appearance.");
+
 		/* Remind how to send chat messages */
 		if (old_lev < 3 && p_ptr->lev >= 3 && p_ptr->warning_chat == 0) {
 			p_ptr->warning_chat = 1;
@@ -4061,8 +4064,10 @@ void check_experience(int Ind)
 			break;
 		case CLASS_ROGUE:
 #ifdef ENABLE_CLOAKING
-			if (old_lev < LEARN_CLOAKING_LEVEL && p_ptr->lev >= LEARN_CLOAKING_LEVEL)
+			if (old_lev < LEARN_CLOAKING_LEVEL && p_ptr->lev >= LEARN_CLOAKING_LEVEL) {
 				msg_print(Ind, "\374\377GYou learn how to cloak yourself to pass unnoticed (press 'V').");
+				if (!p_ptr->warning_cloak) p_ptr->warning_cloak = 2;
+			}
 #endif
 			if (old_lev < 3 && p_ptr->lev >= 3)
 				msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");

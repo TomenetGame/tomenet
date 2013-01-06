@@ -2560,6 +2560,9 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_bpr3 = 1;
 	}
 
+	if (p_ptr->pclass != CLASS_ROGUE)
+		p_ptr->warning_cloak = 1;
+
 #ifdef RPG_SERVER
 	/* No need for WoR hints in an all-Ironman environment */
 	p_ptr->warning_wor = 1;
