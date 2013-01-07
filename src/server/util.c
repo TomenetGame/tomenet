@@ -3649,8 +3649,12 @@ static void player_talk_aux(int Ind, char *message)
 			/* Set target player */
 			q_ptr = Players[target];
 			/* Remember sender, to be able to reply to him quickly */
+#if 0
 			strcpy(q_ptr->reply_name, sender);
-
+#else /* use his account name instead, since it's possible now */
+			if (!strcmp(sender, p_ptr->name)) strcpy(q_ptr->reply_name, p_ptr->accountname);
+			else strcpy(q_ptr->reply_name, sender);
+#endif
 			/* Send message to target */
 			msg_format(target, "\375\377g[%s:%s] %s", sender, q_ptr->name, colon);
 			if ((q_ptr->page_on_privmsg ||
@@ -3682,7 +3686,11 @@ static void player_talk_aux(int Ind, char *message)
 			   probably the other variant above. That one stays
 			   true to the '+:' definition given in the guide though,
 			   while this one diverges a bit. */
+ #if 0
 			strcpy(p_ptr->reply_name, q_ptr->name);
+ #else /* use his account name instead, since it's possible now */
+			strcpy(p_ptr->reply_name, q_ptr->accountname);
+ #endif
 #endif
 
 			exec_lua(0, "chat_handler()");
