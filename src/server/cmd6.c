@@ -8076,6 +8076,7 @@ void do_cmd_breathe(int Ind) {
         p_ptr->current_breath = 1;
         get_aim_dir(Ind);
 }
+//todo: make this a ranged technique; rename 'shooting technique' -> 'ranged technique', edit macro wizard texts accordingly
 void do_cmd_breathe_aux(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int trait;
