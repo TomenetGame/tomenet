@@ -1788,12 +1788,15 @@ static errr CheckEvent(bool wait)
 		case ConfigureNotify:
 		{
 			int cols, rows, wid, hgt;
-			int old_w, old_h;
+			//int old_w, old_h;
+			/* For OSX: Prevent loop bug of outer-infowin-resizing forever, freezing/slowing down */
+			int old_cols, old_rows;
+
+			Infowin_set(td->outer);
 
 			/* Save the Old information */
-			Infowin_set(td->outer);
-			old_w = Infowin->w;
-			old_h = Infowin->h;
+			//old_w = Infowin->w;
+			//old_h = Infowin->h;
 
 			/* Save the new Window Parms */
 			Infowin->x = xev->xconfigure.x;
@@ -1804,6 +1807,9 @@ static errr CheckEvent(bool wait)
 			/* Detemine "proper" number of rows/cols */
 			cols = ((Infowin->w - 2) / td->fnt->wid);
 			rows = ((Infowin->h - 2) / td->fnt->hgt);
+
+			old_cols = cols;
+			old_rows = rows;
 
 			/* Hack -- do not allow bad resizing of main screen */
 			if (td == &screen) cols = 80;
@@ -1821,16 +1827,25 @@ static errr CheckEvent(bool wait)
 			wid = cols * td->fnt->wid;
 			hgt = rows * td->fnt->hgt;
 
-			/* Resize the windows if any "change" is needed -- This should work now - C. Blue */
-			if ((old_w != wid + 2) || (old_h != hgt + 2)) {
-				Infowin_set(td->outer);
-				Infowin_resize(wid + 2, hgt + 2);
+			/* Resize the windows if any "change" is needed -- This should work now.
+			   Added hack for OSX, where Infowin_resize() wouldn't resize except for
+			   the very first time it was called, but not while mouse-resizing. :( - C. Blue */
+			if (old_rows != rows || old_cols != cols /* for main window */
+			    || td != &screen) { /* for sub windows */
 				Infowin_set(td->inner);
 				Infowin_resize(wid, hgt);
 
 				/* Make the changes go live (triggers on next c_message_add() call) */
 		                Term_activate(&td->t);
             			Term_resize(cols, rows);
+
+				/* only change rows/cols of outer infowin if we really have to,
+				   or it'll cause freeze/slowing loop on OSX. For some reason,
+				   doing it in this exceptional case seems to work though. */
+				if (td == &screen) { /* for main window only */
+					Infowin_set(td->outer);
+					Infowin_resize(wid + 2, hgt + 2);
+				}
 
 				/* basically obsolete, since these values are unused once they were
 				   read and used in the very begining of client initialisation, but w/e */
