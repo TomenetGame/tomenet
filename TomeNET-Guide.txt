@@ -9600,7 +9600,7 @@ Warrior is strongly recommended.
     These somewhat smallish dog-faced humanoids resist poison intrinsically.
     They are able to take most roles, being somewhat better at archery than
     close combat. Their intelligence is somewhat suspect, and although they do
-    not pick up careers as mages or other elaborate professions, but they do
+    not pick up careers as mages or other very elaborate professions, they can
     become shamans or druids.
     They can see in the dark thanks to infra-vision, have extraordinarily sharp
     senses, and can move very silently, making them hard to spot. They are also
