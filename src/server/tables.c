@@ -5251,8 +5251,8 @@ player_trait trait_info[MAX_TRAIT] = {
 #else
 		0xFFFFFF, /* disable for all */
 #endif
-	},{	"Blue lineage",	RFC,//ELEC			res->imm
-	},{	"White lineage", RFC,//COLD			res->imm
+	},{	"Blue lineage",	RFC,//ELEC			res->imm	+sheath+aura
+	},{	"White lineage", RFC,//COLD			res->imm	+aura
 	},{	"Red lineage", RFC,//FIRE			res->imm
 	},{	"Black lineage", RFC,//ACID			res->imm
 	},{	"Green lineage", RFC,//POIS			res->imm

@@ -392,6 +392,13 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		}
 	}
 
+	/* From Draconian traits */
+	if (p_ptr->brand_elec) f1 |= TR1_BRAND_ELEC;
+	if (p_ptr->brand_cold) f1 |= TR1_BRAND_COLD;
+	if (p_ptr->brand_fire) f1 |= TR1_BRAND_FIRE;
+	if (p_ptr->brand_acid) f1 |= TR1_BRAND_ACID;
+	if (p_ptr->brand_pois) f1 |= TR1_BRAND_POIS;
+
 	/* Extra melee branding */
 	if (Ind > 0 && !is_ammo(o_ptr->tval)) {
 		/* Apply brands from (powerful) auras! */
@@ -916,6 +923,43 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL) &&
 		    (i != INVEN_ARM || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) /* dual-wielders */
 			f1 |= ef1;
+	}
+
+	/* From Draconian traits */
+	if (p_ptr->brand_elec) f1 |= TR1_BRAND_ELEC;
+	if (p_ptr->brand_cold) f1 |= TR1_BRAND_COLD;
+	if (p_ptr->brand_fire) f1 |= TR1_BRAND_FIRE;
+	if (p_ptr->brand_acid) f1 |= TR1_BRAND_ACID;
+	if (p_ptr->brand_pois) f1 |= TR1_BRAND_POIS;
+
+	/* Extra melee branding */
+	if (Ind > 0 && !is_ammo(o_ptr->tval)) {
+		/* Apply brands from (powerful) auras! */
+		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
+		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
+		/* Temporary weapon branding */
+		if ((p_ptr->inventory[INVEN_WIELD].k_idx || 
+		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
+			if (p_ptr->brand) {
+				switch (p_ptr->brand_t) {
+				case BRAND_ELEC:
+					f1 |= TR1_BRAND_ELEC;
+					break;
+				case BRAND_COLD:
+					f1 |= TR1_BRAND_COLD;
+					break;
+				case BRAND_FIRE:
+					f1 |= TR1_BRAND_FIRE;
+					break;
+				case BRAND_ACID:
+					f1 |= TR1_BRAND_ACID;
+					break;
+				case BRAND_POIS:
+					f1 |= TR1_BRAND_POIS;
+					break;
+				}
+			}
+		}
 	}
 
 #if 1 /* for debugging only, so far: */

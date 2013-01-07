@@ -2308,6 +2308,11 @@ struct player_type
 	s16b brand; 	/* Timed -- Weapon Branding */
 	byte brand_t; 	/* Timed -- Weapon Branding */
 	s16b brand_d; 	/* Timed -- Weapon Branding */
+	bool brand_fire;	/* Added for Draconians, but could clean up a lot of tot_dam_aux.. code too */
+	bool brand_cold;
+	bool brand_elec;
+	bool brand_acid;
+	bool brand_pois;
 	s16b prob_travel;       /* Timed -- Probability travel */
 	s16b st_anchor;         /* Timed -- Space/Time Anchor */
 	s16b tim_esp;           /* Timed -- ESP */
