@@ -2451,3 +2451,8 @@ void do_runespell() {
 	Send_activate_skill(MKEY_RCRAFT, (int)e_flags, (int)m_flags, (int)dir, item, 0);
 }
 
+void do_breath() {
+	int dir = 0;
+	if (!get_dir(&dir)) return;
+	Send_activate_skill(MKEY_BREATH, 0, 0, dir, 0, 0);
+}

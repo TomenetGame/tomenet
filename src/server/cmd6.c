@@ -8069,8 +8069,24 @@ s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
 void do_cmd_breathe(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
+        p_ptr->current_breath = 1;
+        get_aim_dir(Ind);
+}
+void do_cmd_breathe_aux(int Ind, int dir) {
+	player_type *p_ptr = Players[Ind];
+	int trait;
+
 	/* feature not available? */
 	if (!p_ptr->ptrait) return;
+
+        if (!is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) {
+                /* Only fire in direction 5 if we have a target */
+                if ((dir == 5) && !target_okay(Ind)) {
+                        /* Reset current breath */
+                        p_ptr->current_breath = 0;
+                        return;
+                }
+        }
 
 	if (p_ptr->ghost) {
 		msg_print(Ind, "You cannot use your breath as a ghost.");
@@ -8084,29 +8100,25 @@ void do_cmd_breathe(int Ind) {
 		msg_print(Ind, "You need to be at least level 5 to breathe elements.");
 		return;
 	}
-
 	if (p_ptr->cst < 6) { msg_print(Ind, "Not enough stamina!"); return; }
 
-	disturb(Ind, 1, 0); /* stop things like running, resting.. */
-	p_ptr->cst -= 6;
-	p_ptr->redraw |= PR_STAMINA;
-
-        p_ptr->current_breath = 1;
-        get_aim_dir(Ind);
-}
-void do_cmd_breathe_aux(int Ind, int dir) {
-	player_type *p_ptr = Players[Ind];
-	int trait;
-
-        if (!is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) {
-                /* Only fire in direction 5 if we have a target */
-                if ((dir == 5) && !target_okay(Ind)) {
-                        /* Reset current breath */
-                        p_ptr->current_breath = 0;
-                        return;
-                }
+        /* New '+' feat in 4.4.6.2 */
+        if (dir == 11) {
+                get_aim_dir(Ind);
+                p_ptr->current_breath = 1;
+                return;
         }
 
+        break_cloaking(Ind, 5);
+        break_shadow_running(Ind);
+        stop_precision(Ind);
+        stop_shooting_till_kill(Ind);
+        un_afk_idle(Ind);
+	disturb(Ind, 1, 0); /* stop things like running, resting.. */
+
+	p_ptr->cst -= 6;
+	p_ptr->redraw |= PR_STAMINA;
+        p_ptr->current_breath = 0;
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	trait = p_ptr->ptrait;

@@ -7579,6 +7579,9 @@ static int Receive_activate_skill(int ind)
 			break;
 
 		case MKEY_RCRAFT:
+			/* Sanity check #2 */
+			if (dir == -1) dir = 5;
+
 			if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 			(void)execute_rspell(player, dir, (u16b)book, (u16b)spell, (u16b)item, 0);
 			p_ptr->shooty_till_kill = FALSE;
@@ -7609,7 +7612,11 @@ static int Receive_activate_skill(int ind)
 			break;
 #endif
 		case MKEY_BREATH:
-			do_cmd_breathe(player);
+			/* Sanity check #2 */
+			if (dir == -1) dir = 5;
+
+			//do_cmd_breathe(player);
+			do_cmd_breathe_aux(player, dir);
 			break;
 		}
 		return 2;

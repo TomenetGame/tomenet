@@ -554,6 +554,7 @@ N:110:Breathe element
 D:Ability to breathe an element.
 A:18:Breathe
 I:1000:0
+F:MKEY_HARDCODE
 F:HIDDEN
 
 #

@@ -56,7 +56,28 @@ extern errr init_gtk(int, char **);
  * Not-so-Automatically generated "variable" declarations
  */
 
- /* client/c-spell.c */
+/* common/tables.c */
+extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
+extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES+1];
+extern r_type r_types[RCRAFT_MAX_TYPES+1];
+extern r_projection r_projections[RCRAFT_MAX_PROJECTIONS];
+
+/* c-spell.c */
+/*extern void show_browse(int book); */
+s32b get_school_spell(cptr do_what, int *item_book);
+extern int get_spell(s32b *sn, cptr prompt, int book, bool known);
+extern void show_browse(object_type *o_ptr);
+extern void browse_school_spell(int item, int book, int pval);
+extern void do_study(int book);
+extern void do_cast(int book);
+extern void do_pray(int book);
+extern void do_fight(int book);
+extern void do_ghost(void);
+extern void do_mimic(void);
+extern void do_stance(void);
+extern void do_melee_technique(void);
+extern void do_ranged_technique(void);
+extern bool get_item_hook_find_spell(int *item, bool inven_first);
 extern byte flags_to_elements(byte element[], u16b e_flags);
 extern byte flags_to_imperative(u16b m_flags);
 extern byte flags_to_projection(u16b e_flags);
@@ -69,12 +90,8 @@ extern u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte s
 extern byte rspell_radius(byte imperative, byte type, byte skill, byte projection);
 extern byte rspell_duration(byte imperative, byte type, byte skill);
 extern void do_runespell();
-/* common/tables.c */
-extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
-extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES+1];
-extern r_type r_types[RCRAFT_MAX_TYPES+1];
-extern r_projection r_projections[RCRAFT_MAX_PROJECTIONS];
- 
+extern void do_breath(void);
+
 /* tables.c */
 extern byte adj_mag_stat[];
 extern byte adj_mag_fail[];
@@ -526,22 +543,6 @@ extern int macro_missing_item;
 extern void Send_paste_msg(char *msg);
 extern void check_immediate_options(int i, bool yes, bool playing);
 
-/* c-spell.c */
-/*extern void show_browse(int book); */
-s32b get_school_spell(cptr do_what, int *item_book);
-extern int get_spell(s32b *sn, cptr prompt, int book, bool known);
-extern void show_browse(object_type *o_ptr);
-extern void browse_school_spell(int item, int book, int pval);
-extern void do_study(int book);
-extern void do_cast(int book);
-extern void do_pray(int book);
-extern void do_fight(int book);
-extern void do_ghost(void);
-extern void do_mimic(void);
-extern void do_stance(void);
-extern void do_melee_technique(void);
-extern void do_ranged_technique(void);
-extern bool get_item_hook_find_spell(int *item, bool inven_first);
 
 /* c-store.c */
 extern bool leave_store;
@@ -733,7 +734,6 @@ extern int Send_request_key(int id, char key);
 extern int Send_request_num(int id, int num);
 extern int Send_request_str(int id, char *str);
 extern int Send_request_cfr(int id, int cfr);
-
 
 /* skills.c */
 extern s16b get_skill(int skill);

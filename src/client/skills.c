@@ -759,12 +759,10 @@ static void do_trap(int item_kit)
 void do_activate_skill(int x_idx, int item)
 {
 	char out_val[160];
-	int dir=0;
-	s32b spell=0L;
-	if (s_info[x_idx].flags1 & SKF1_MKEY_HARDCODE)
-	{
-		switch (s_info[x_idx].action_mkey)
-		{
+	int dir = 0;
+	s32b spell = 0L;
+	if (s_info[x_idx].flags1 & SKF1_MKEY_HARDCODE) {
+		switch (s_info[x_idx].action_mkey) {
 			case MKEY_MIMICRY:
 				do_mimic();
 				break;
@@ -783,14 +781,15 @@ void do_activate_skill(int x_idx, int item)
 			case MKEY_RANGED:
 				do_ranged_technique();
 				break;
+			case MKEY_BREATH:
+				do_breath();
+				break;
 			default:
 				c_msg_print("Very sorry, you need more recent client.");
 				break;
 		}
 		return;
-	}
-	else if (s_info[x_idx].action_mkey == MKEY_SCHOOL)
-	{
+	} else if (s_info[x_idx].action_mkey == MKEY_SCHOOL) {
 		int item_obj = -1, aux=0;
 
 		/* Ask for a spell, allow cancel */
@@ -819,14 +818,10 @@ void do_activate_skill(int x_idx, int item)
 		Send_activate_skill(MKEY_SCHOOL, item, spell, dir, item_obj, aux);
 
 		return;
-	}
-	else if (s_info[x_idx].flags1 & SKF1_MKEY_SPELL)
-	{
-		if (item < 0)
-		{
+	} else if (s_info[x_idx].flags1 & SKF1_MKEY_SPELL) {
+		if (item < 0) {
 			item_tester_tval = s_info[x_idx].tval;
-			if (!c_get_item(&item, "Cast from which book? ", (USE_INVEN)))
-			{
+			if (!c_get_item(&item, "Cast from which book? ", (USE_INVEN))) {
 				if (item == -2)
 					c_msg_print("You have no books that you can cast from.");
 				return;
@@ -842,17 +837,13 @@ void do_activate_skill(int x_idx, int item)
 		return;
 	}
 
-	if (item < 0 && s_info[x_idx].flags1 & SKF1_MKEY_ITEM)
-	{
+	if (item < 0 && s_info[x_idx].flags1 & SKF1_MKEY_ITEM) {
 		item_tester_tval = s_info[x_idx].tval;
 		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN)))
-		{
 			return;
-		}
 	}
 
-	if (s_info[x_idx].flags1 & SKF1_MKEY_DIRECTION)
-	{
+	if (s_info[x_idx].flags1 & SKF1_MKEY_DIRECTION) {
 		if (!get_dir(&dir))
 			return;
 	}
