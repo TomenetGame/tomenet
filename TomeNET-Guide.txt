@@ -9583,14 +9583,16 @@ Warrior is strongly recommended.
     ways, except that they are really bad at moving stealthily. Similar to
     dragons, they can eat firestones to temporarily boost their powers.
     (See (5.9) for firestone details.)
-    They have an intrinsic telepathic vision of all nearby creatures, the
-    radius expands as they gain levels. At level 5 they can spot dragons
-    anywhere on the level. They even gain intrinsic basic resistances,
+    At level 5 they can spot dragons anywhere on the level. At level 6 they
+    acquire an intrinsic telepathic vision of all nearby creatures, the radius
+    expands as they gain levels. They even gain intrinsic basic resistances,
     fire at 10, cold at 15, acid at 20 and electricity at 25. At level 30
     they learn how to fly. Draconians need a very long time to gain further
     experience and need to eat often. They have feather falling (levitation)
     instrinsically from birth.
-    They receive a bonus on 'Thought Contact' and a large bonus on
+    They need to eat often and they may get hurt from the cold of the void when
+    taking void jump gates. Armour can help to mitigate this effect somewhat.
+    Draconians receive a bonus on 'Thought Contact' and a large bonus on
     'Polearm-Mastery', 'Aura of Fear' and the magic schools 'Conveyance' and
     'Fire'. Draconians also recieve a moderate bonus to 'Nexus' rune magic.
 
