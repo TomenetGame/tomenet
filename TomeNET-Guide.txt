@@ -163,7 +163,7 @@ Contents
     (8.2)   Character dumps
     (8.3)   Golem creation
     (8.4)   Artifact creation
-    (8.5)   Alternative ruleset 'RPG Server'
+    (8.5)   Alternative ruleset 'Ironman Server'
     (8.5a)  Special server type 'Arcade Server'
     (8.6)   Troubleshooting
 
@@ -1381,9 +1381,9 @@ with other players and developers via the following media:
 -The forum at http://www.tomenet.net/.
 -IRC: Channel #tomenet on server irc.freenode.net (port 6667)
       (For help on Internet Relay Chat visit www.irchelp.org).
-      The channels #tomenet, #tomenet.rpg and #tomenet.arcade relay chat from
-      and to the main/rpg/arcade server, allowing you to read what's going on
-      in-game, and to chat with players simply with any IRC client.
+      The channels #tomenet, #tomenet.iron and #tomenet.arcade relay chat from
+      and to the main/ironman/arcade server, allowing you to read what's going
+      on in-game, and to chat with players simply with any IRC client.
 -Voice chat via mumble, get it from http://mumble.sourceforge.net/.
       IP is 'europe.tomenet.net', port is '23348', password is 'tomenet'.
       For details see "(2.4) Installing voice chat".
@@ -4179,12 +4179,12 @@ There are different types of dungeons:
  saying "You don't sense a magic barrier here..." (compare (4.8)).
  Ironman dungeons/towers are marked by a dark grey < or > symbol.
 
- NOTE: In the case of RPG-server settings, you can usually recall INTO town
+ NOTE: In the case of Ironman-server settings, you can usually recall INTO town
  dungeons every (n*1000)+50 ft, n starting at 0. Example: -50 ft, -1050 ft,
  -2050 ft, etc. Also, ALL dungeons will usually not allow recalling OUT until
  you reach a floor that is equivalent to at least dungeon level 20. Examples:
  At least -1000 ft in Barrow-Downs, at least -550 ft in The Orc Cave.
- (See (8.5) for more information about RPG settings.)
+ (See (8.5) for more information about Ironman settings.)
 
 -NO_DEATH. The Training Tower in Bree has this flag. Players who die inside a
  no-death dungeon won't turn into a ghost if they 'die' but just be teleported
@@ -4947,7 +4947,7 @@ In addition to those orange level specialties, there are more feelings you
 may get about the danger a level poses. Those only appear if you spent some
 time (usually a few minutes) on the dungeon level you were coming from, so
 they won't be helpful while stair-scumming or probability-travelling quickly.
-(Exception: On RPG-rule servers these will always be displayed, since all
+(Exception: On Ironman-rule servers these will always be displayed, since all
 dungeons are ironman and stair-scumming is not possible.)
 The number telling you the current floor's depth (or a town name if you're in a
 town) in the bottom right corner of the main window will turn light blue when
@@ -5452,8 +5452,8 @@ events:
 
 Ironman Deep Dive Challenge (IDDC)
     There is exactly one designated huge ironman dungeon (or tower) on each
-    server, normal one and rpg server, which is 127 levels in size and does not
-    allow recalling in between, except for two 'dungeon towns' which will
+    server, normal one and ironman server, which is 127 levels in size and does
+    not allow recalling in between, except for two 'dungeon towns' which will
     always occur at dungeon level 40 and 80 respectively. If you recall at such
     a town it calls as withdrawing from the challenge and you won't make it on
     the leaderboard that can be viewed at the mayor's office in Bree.
@@ -5500,7 +5500,7 @@ Ironman Deep Dive Challenge (IDDC)
 
     If the party leader dies inside the IDDC, the party isn't disbanded but
     ownership of the party is transferred to another party member. (Same as on
-    RPG server.)
+    Ironman server.)
 
     NOTE: The Deep Dive dungeon requires your character to have zero experience
     points in order to be eligible to enter.
@@ -5550,8 +5550,8 @@ Halloween
     or medium or high amount of hit points, depending on the location.
     The event is aiming at intermediate-level characters. The pumpkin always
     spawns shallower than dungeon level 40. Players who are too high level
-    (above 35 on main, above 40 on RPG) will not be able to hunt him, for the
-    others he will still be tough and might require teamwork.
+    (above 35 on main, above 40 on Ironman) will not be able to hunt him, for
+    the others he will still be tough and might require teamwork.
     The Great Pumpkin does not cause any damage but still has a few annoying
     spells at its disposal. It is level 127 and therefore can drop any item in
     the game, and usually drops very good. Please share fairly. ;)
@@ -12040,11 +12040,11 @@ Here you can..
     (use 'h' key next to the door) to allow all party members to access that
     house.
     If the owner dies, the whole party is disbanded. (Exception: On a server
-    running 'RPG' rules the party ownership will be transferred to another
-    player in the party automatically. See (8.5) for more information about RPG
-    settings. Within the 'Ironman Deep Dive Dungeon', party ownership is also
-    transferred in the same manner. See (4.13) for more information about
-    the persistent "Ironman Deep Dive Challenge" event.)
+    running 'Ironman' rules the party ownership will be transferred to another
+    player in the party automatically. See (8.5) for more information about
+    Ironman settings. Within the 'Ironman Deep Dive Dungeon', party ownership
+    is also transferred in the same manner. See (4.13) for more information
+    about the persistent "Ironman Deep Dive Challenge" event.)
     Be aware that his houses will be wiped too, so the party might lose quite
     an amount of items that way.
 
@@ -13572,22 +13572,20 @@ power is, the more likely the randart will be 'aggravating nearby creatures'.
 
 
 
-(8.5) Alternative ruleset 'RPG Server'
---------------------------------------
-A server might be configured with a special ruleset called 'RPG Server' rules.
-Such a server will be listed on the meta server under
-  "TomeNET RPG ..."
+(8.5) Alternative ruleset 'Ironman Server'
+------------------------------------------
+A server might be configured with a special ruleset called 'Ironman Server'
+rules. Such a server will be listed on the meta server under
+  "TomeNET Ironman ..."
 instead of just
   "TomeNET ..."
 and when you connect to it and enter the character overview
 screen, at the bottom there will be a line reading
-  "The server is running 'RPG_SERVER' settings".
+  "The server is running 'IRONMAN_SERVER' settings".
 
-In general, RPG rules are stricter than normal server configurations and could
-also be dubbed 'ironman' settings, since ironman dungeons are one of the most
-prevalent features of an RPG server.
+In general, Ironman rules are stricter than normal server configurations.
 
-The differences between RPG ruleset and normal servers are as follows:
+The differences between Ironman ruleset and normal servers are as follows:
   -Only one character is allowed per account.
   -All characters are no-ghost mode, so they have only 1 life (ie 'unworldly').
   -Usually, accounts expire slower (180 days instead of 60 days).
@@ -13634,7 +13632,7 @@ The differences between RPG ruleset and normal servers are as follows:
     The arcade server might not be running at all times but
     you could ask for it to be started when an admin is online. ***
 
-Like 'RPG Server' mentioned in the paragraph above, 'Arcade Server' is an
+Like 'Ironman Server' mentioned in the paragraph above, 'Arcade Server' is an
 alternate ruleset, which is however *very* different from normal gameplay:
 
 The Arcade Server was originally created and developed by Moltor. Later on
@@ -13717,9 +13715,9 @@ PROBLEM 00: I am behind a firewall. What ports do I need to open in order to
 SOLUTION:   If you want to connect directly to a specific server by specifying
             its address via command-line or config file, you only need to allow
             an outgoing TCP/IP connection to remote port 18348, that's the
-            standard port servers run on. (If you'd like to play on the RPG
+            standard port servers run on. (If you'd like to play on the Ironman
             server, it's port 19348 instead of 18348. See (8.5) for more
-            information about RPG settings. For the Arcade server it's port
+            information about Ironman settings. For the Arcade server it's port
             20348, see (8.5a) for more information about Arcade server.)
             If you want to make use of the server list that appears when you
             don't specify a particular server, you additionally have to allow

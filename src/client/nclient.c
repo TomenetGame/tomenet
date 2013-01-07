@@ -375,7 +375,7 @@ void Receive_login(void)
 
 	if (s_ARCADE) c_put_str(TERM_SLATE, "The server is running 'ARCADE_SERVER' settings.", 21, 10);
 	if (s_RPG) {
-		if (!s_ARCADE) c_put_str(TERM_SLATE, "The server is running 'RPG_SERVER' settings.", 21, 10);
+		if (!s_ARCADE) c_put_str(TERM_SLATE, "The server is running 'IRONMAN_SERVER' settings.", 21, 10);
 		if (!s_RPG_ADMIN) max_cpa = 1;
 	}
 	if (s_DED_IDDC) max_cpa_plus++;
