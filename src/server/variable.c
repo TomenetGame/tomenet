@@ -971,6 +971,6 @@ bool dungeon_tower[MAX_D_IDX * 2], dungeon_visit_check[MAX_D_IDX * 2];
 int dungeon_bonus[MAX_D_IDX * 2];
 #endif
 
-bool censor_swearing = TRUE;
+bool censor_swearing = TRUE, censor_swearing_identity = TRUE;
 bool jails_enabled = TRUE;
 bool allow_requesting_estate = FALSE;

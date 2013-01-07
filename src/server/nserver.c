@@ -3554,7 +3554,7 @@ static int Receive_login(int ind){
 
 		/* Check for forbidden names (swearing).
 		   Note: This overrides 'censor_swearing' and is always on! */
-		censor_swearing = TRUE;
+		censor_swearing = censor_swearing_identity;
 		strcpy(tmp_name, connp->nick);
 		if (handle_censor(tmp_name)) {
 			censor_swearing = censor_swearing_tmp;
@@ -3673,7 +3673,7 @@ static int Receive_login(int ind){
 
 		/* Check for forbidden names (swearing).
 		   Note: This overrides 'censor_swearing' and is always on! */
-		censor_swearing = TRUE;
+		censor_swearing = censor_swearing_identity;
 		strcpy(tmp_name, choice);
 		if (handle_censor(tmp_name)) {
 			censor_swearing = censor_swearing_tmp;
