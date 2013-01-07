@@ -12326,7 +12326,9 @@ The techniques are as follows:
         out of this state. Performing actions that require calm movements or
         anything that distracts or disrupts your attention from focussing on
         keeping up your movement, as well as attacking someone will break
-        shadow running.
+        shadow running - it will not wear off on its own but last indefinitely
+        until broken.
+        Note that stamina does not regenerate while shadow running.
 
     Shooting techniques:
     --------------------
