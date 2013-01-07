@@ -5263,8 +5263,8 @@ player_trait trait_info[MAX_TRAIT] = {
 	},{	"Law lineage", RFC,//shards+sound		shards/sound
 	},{	"Chaos lineage", RFC,//chaos			chaos/disen
 	},{	"Balance lineage", RFC,//disen			disen/sound
-#if 1
-	},{	"Power lineage", RFC,//mana?/regen		mana
+#if 0
+	},{	"Power lineage", RFC,//mana/res_tele?NOPE/rare!	reflect/blind/fear
 #else
 	},{	"", 0,
 #endif

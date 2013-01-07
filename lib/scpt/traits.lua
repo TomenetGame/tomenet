@@ -99,8 +99,9 @@ __traits_diz = {
 
 "Power lineage",
     {"The \255upower\255U lineage provides intrinsic resistance",
-    "to raw magical energy itself later on (25).",
-    "", "", "", "", "", "", "", "", "", "",},
+    "to fear and blindness (5), and its metallic scales",
+    "have a chance to reflect bolts and arrows (20).",
+    "", "", "", "", "", "", "", "", "",},
 
 
 "Enlightened",
