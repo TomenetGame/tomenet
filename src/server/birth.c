@@ -2285,6 +2285,13 @@ static void player_setup(int Ind, bool new)
 	p_ptr->ps_house_x = p_ptr->ps_house_y = -1;
 	p_ptr->ps_mcheque_x = p_ptr->ps_mcheque_y = -1;
 #endif
+	p_ptr->current_item = -1;
+	p_ptr->current_book = -1;
+	p_ptr->current_aux = -1;
+	p_ptr->current_realm = -1;
+	p_ptr->current_fire = -1;
+	p_ptr->current_throw = -1;
+	p_ptr->current_breath = 0;
 
 	/* Runecraft */
 	p_ptr->shoot_till_kill_rcraft = 0;
