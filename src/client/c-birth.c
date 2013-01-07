@@ -156,6 +156,10 @@ static bool choose_sex(void)
 	while (1)
 	{
 		c_put_str(TERM_SLATE, "Choose a sex (* for random, Q to Quit): ", 20, 2);
+
+	        Term->scr->cx = Term->wid;
+	        Term->scr->cu = 1;
+
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 		if (c == 'm')
@@ -267,6 +271,9 @@ race_redraw:
 		c_put_str(TERM_SLATE, "Choose a race (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8): ", n, 2);
 		display_race_diz(sel);
 
+	        Term->scr->cx = Term->wid;
+	        Term->scr->cu = 1;
+
 		if (!hazard) c = inkey();
 
 		if (c == 'Q') quit(NULL);
@@ -338,8 +345,13 @@ race_redraw:
 
 
 static void display_trait_diz(int r) {
-	int i = 0;
+	int i;
 
+	/* Transform visible index back to real index */
+	for (i = 0; i <= r; i++)
+		if (!(trait_info[i].choice & BITS(race))) r++;
+
+	i = 0;
 	clear_diz();
 	if (!trait_diz[r][i]) return; /* server !newer_than 4.5.1.2 */
 
@@ -356,15 +368,13 @@ static void display_trait_diz(int r) {
 static bool choose_trait(void) {
 	player_trait *tp_ptr;
 
-	int i, j, l, m, n, sel = 0;
+	int i, j, l, m, n, sel = 0, sel_offset, shown_traits = 0;
 	char c = '\0';
 	char out_val[160];
-	bool hazard = FALSE, sel_ok = FALSE;
+	bool hazard = FALSE;
 
-	/* Prepare to list */
-	l = 2;
-	m = 24 - (Setup.max_trait - 1) / 5;
-	n = m - 1;
+	/* Assume traits are N/A: */
+	trait = -1;
 
 #ifdef HIDE_UNAVAILABLE_TRAIT
 	/* If server doesn't support traits, or we only have the
@@ -398,25 +408,35 @@ static bool choose_trait(void) {
 		return TRUE;
 	}
 
+	/* Prepare to list */
+	for (j = 0; j < Setup.max_trait; j++) {
+                tp_ptr = &trait_info[j];
+                if (!(tp_ptr->choice & BITS(race))) continue;
+            	shown_traits++;
+	}
+
 	for (i = 18; i < 24; i++) Term_erase(1, i, 255);
+
+	/* Traits are available */
+	trait = 0;
 
 trait_redraw:
 	l = 2;
-	m = 24 - (Setup.max_trait - 1) / 5;
+	m = 22 - (shown_traits - 1) / 3;
 	n = m - 1;
 
 	/* Display the legal choices */
 	i = 0;
+	sel_offset = 0;
 	for (j = 0; j < Setup.max_trait; j++) {
                 tp_ptr = &trait_info[j];
                 if (!(tp_ptr->choice & BITS(race))) {
-			if (!sel_ok) sel++;
+			sel_offset++;
         		continue;
             	}
-            	sel_ok = TRUE;
 
 		sprintf(out_val, "%c) %s", I2A(i), tp_ptr->title);
-		if (j == sel) c_put_str(TERM_YELLOW, out_val, m, l);
+		if (j == sel + sel_offset) c_put_str(TERM_YELLOW, out_val, m, l);
 		else c_put_str(TERM_WHITE, out_val, m, l);
 		i++;
 
@@ -432,6 +452,9 @@ trait_redraw:
 		c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_trait_diz(sel);
 
+	        Term->scr->cx = Term->wid;
+	        Term->scr->cu = 1;
+
 		if (!hazard) c = inkey();
 
 		if (c == 'Q') quit(NULL);
@@ -443,61 +466,43 @@ trait_redraw:
 
 		/* Allow 'navigating', to highlight and display the descriptive text */
 		if (c == '4' || c == 'j') {
-			sel = (Setup.max_trait + sel - 1) % Setup.max_trait;
-			while (!(trait_info[sel].choice & BITS(race)))
-			    sel = (Setup.max_trait + sel - 1) % Setup.max_trait;
+			sel = (shown_traits + sel - 1) % shown_traits;
 			goto trait_redraw;
 		}
 		if (c == '6' || c == 'k') {
-			sel = (sel + 1) % Setup.max_trait;
-			while (!(trait_info[sel].choice & BITS(race)))
-			    sel = (sel + 1) % Setup.max_trait;
+			sel = (sel + 1) % shown_traits;
 			goto trait_redraw;
 		}
 		if (c == '8' || c == 'h') {
-			if (sel - 3 < 0) sel = sel + ((Setup.max_trait - sel) / 3) * 3;
+			if (sel - 3 < 0) sel = sel + ((shown_traits - sel) / 3) * 3;
 			else sel -= 3;
-			while (!(trait_info[sel].choice & BITS(race))) {
-				if (sel - 3 < 0) sel = sel + ((Setup.max_trait - sel) / 3) * 3;
-				else sel -= 3;
-			}
 			goto trait_redraw;
 		}
 		if (c == '2' || c == 'l') {
-			if (sel + 3 >= Setup.max_trait) sel = sel % 3;
+			if (sel + 3 >= shown_traits) sel = sel % 3;
 			else sel += 3;
-			while (!(trait_info[sel].choice & BITS(race))) {
-				if (sel + 3 >= Setup.max_trait) sel = sel % 3;
-				else sel += 3;
-			}
 			goto trait_redraw;
 		}
 		if (c == '\r' || c == '\n') c = 'a' + sel;
 
 		if (c == '*') hazard = TRUE;
-		if (hazard) j = rand_int(Setup.max_trait);
+		if (hazard) j = rand_int(shown_traits);
 		else j = (islower(c) ? A2I(c) : -1);
 
+
 		/* Paranoia */
-		if (j > Setup.max_trait) continue;
+		if (j > shown_traits) continue;
 
 		/* Transform visible index back to real index */
-		for (i = 0; i <= j; i++) {
-			tp_ptr = &trait_info[i];
-			if (!(tp_ptr->choice & BITS(race))) j++;
-		}
+		for (i = 0; i <= j; i++)
+			if (!(trait_info[i].choice & BITS(race))) j++;
 
 		/* Verify if legal */
 		if ((j < Setup.max_trait) && (j >= 0)) {
+			tp_ptr = &trait_info[j];
 			if (!(tp_ptr->choice & BITS(race))) continue;
 
 			trait = j;
-			tp_ptr = &trait_info[j];
-#ifndef CLASS_BEFORE_RACE
-			c_put_str(TERM_L_BLUE, (char*)tp_ptr->title, 6, 15);
-#else
-			c_put_str(TERM_L_BLUE, (char*)tp_ptr->title, 7, 15);
-#endif
 			break;
 		} else if (c == '?') {
 			/*do_cmd_help("help.hlp");*/
@@ -507,7 +512,15 @@ trait_redraw:
 	}
 
 	clear_diz();
+	/* hack: Draw this _after_ clear_diz(), because lineage
+	   titles are too long -_- */
+#ifndef CLASS_BEFORE_RACE
+	c_put_str(TERM_L_BLUE, (char*)trait_info[trait].title, 6, 15);
+#else
+	c_put_str(TERM_L_BLUE, (char*)trait_info[trait].title, 7, 15);
+#endif
 	clear_from(n);
+
 	return TRUE;
 }
 
@@ -592,6 +605,9 @@ class_redraw:
 	while (1) {
 		c_put_str(TERM_SLATE, "Choose a class (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_class_diz(sel);
+
+	        Term->scr->cx = Term->wid;
+	        Term->scr->cu = 1;
 
 		if (!hazard) c = inkey();
 
@@ -724,6 +740,9 @@ static bool choose_stat_order(void)
 				if (hazard) {
 					j = rand_int(6);
 				} else {
+			    	        Term->scr->cx = Term->wid;
+				        Term->scr->cu = 1;
+
 					c = inkey();
 					if (c == 'Q') quit(NULL);
 					if (c == '*') hazard = TRUE;
@@ -822,6 +841,9 @@ static bool choose_stat_order(void)
 		                        	c_put_str(TERM_L_UMBER, out_val, 16 + i, col2);
 		                }
                 	}
+
+		        Term->scr->cx = Term->wid;
+		        Term->scr->cu = 1;
 
 			c = inkey();
 			crb = cp_ptr->c_adj[j] + rp_ptr->r_adj[j];
@@ -981,6 +1003,10 @@ static bool choose_mode(void)
 
 	while (1) {
 		c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to Quit, BACKSPACE to go back): ", 15, 2);
+
+	        Term->scr->cx = Term->wid;
+	        Term->scr->cu = 1;
+
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 		if (c == '\b') {
@@ -1062,6 +1088,10 @@ static bool choose_body_modification(void)
 
 	while (1) {
 		c_put_str(TERM_SLATE, "Choose a body modification (* for random, Q to Quit, BACKSPACE to go back): ", 19, 2);
+
+	        Term->scr->cx = Term->wid;
+	        Term->scr->cu = 1;
+
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 		if (c == '\b') {
@@ -1224,11 +1254,15 @@ csex:
 crace:
 	/* Choose a race */
 	if (!choose_race()) goto csex;
+ctrait:
 	/* Choose a trait */
 	if (!choose_trait()) goto crace;
 cbody:
 	/* Choose character's body modification */
-	if (!choose_body_modification()) goto crace;
+	if (!choose_body_modification()) {
+		if (trait == -1) goto crace;
+		else goto ctrait;
+	}
 cclass:
 	/* Choose a class */
 	if (!choose_class()) goto cbody;
@@ -1246,11 +1280,15 @@ cclass:
 crace:
 	/* Choose a race */
 	if (!choose_race()) goto cclass;
+ctrait:
 	/* Choose a trait */
 	if (!choose_trait()) goto crace;
 cbody:
 	/* Choose character's body modification */
-	if (!choose_body_modification()) goto crace;
+	if (!choose_body_modification()) {
+		if (trait == -1) goto crace;
+		else goto ctrait;
+	}
 
 
 cstats:
@@ -1451,6 +1489,8 @@ bool get_server_name(void)
 	while (1)
 	{
 		/* Get a key */
+	        Term->scr->cx = Term->wid;
+	        Term->scr->cu = 1;
 		c = inkey();
 
 		/* Check for quit */
