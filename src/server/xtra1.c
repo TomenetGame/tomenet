@@ -2886,7 +2886,6 @@ int calc_crit_obj(int Ind, object_type *o_ptr)
 void calc_boni(int Ind)
 {
 	cptr inscription = NULL;
-	
 //	char tmp[80];
 
 	player_type *p_ptr = Players[Ind];
@@ -3031,6 +3030,11 @@ void calc_boni(int Ind)
 	p_ptr->sh_fire = p_ptr->sh_fire_fix = FALSE;
 	p_ptr->sh_elec = p_ptr->sh_elec_fix = FALSE;
 	p_ptr->sh_cold = p_ptr->sh_cold_fix = FALSE;
+	p_ptr->brand_fire = FALSE;
+	p_ptr->brand_cold = FALSE;
+	p_ptr->brand_elec = FALSE;
+	p_ptr->brand_acid = FALSE;
+	p_ptr->brand_pois = FALSE;
 	p_ptr->auto_tunnel = FALSE;
 	p_ptr->fly = FALSE;
 	p_ptr->can_swim = FALSE;
@@ -3363,43 +3367,65 @@ void calc_boni(int Ind)
 	default:
 		break;
 	case TRAIT_BLUE: /* Draconic Blue */
-		p_ptr->resist_elec = TRUE;
+		if (p_ptr->lev >= 5) p_ptr->brand_elec = TRUE;
+		if (p_ptr->lev >= 15) p_ptr->sh_elec = TRUE;
+		if (p_ptr->lev < 25) p_ptr->resist_elec = TRUE;
+		else p_ptr->immune_elec = TRUE;
 		break;
 	case TRAIT_WHITE: /* Draconic White */
-		p_ptr->resist_cold = TRUE;
+		if (p_ptr->lev >= 15) p_ptr->sh_cold = TRUE;
+		if (p_ptr->lev < 25) p_ptr->resist_cold = TRUE;
+		else p_ptr->immune_cold = TRUE;
 		break;
 	case TRAIT_RED: /* Draconic Red */
-		p_ptr->resist_fire = TRUE;
+		if (p_ptr->lev < 25) p_ptr->resist_fire = TRUE;
+		else p_ptr->immune_fire = TRUE;
 		break;
 	case TRAIT_BLACK: /* Draconic Black */
-		p_ptr->resist_acid = TRUE;
+		if (p_ptr->lev < 25) p_ptr->resist_acid = TRUE;
+		else p_ptr->immune_acid = TRUE;
 		break;
 	case TRAIT_GREEN: /* Draconic Green */
-		p_ptr->resist_pois = TRUE;
+		if (p_ptr->lev < 25) p_ptr->resist_pois = TRUE;
+		else p_ptr->immune_poison = TRUE;
 		break;
 	case TRAIT_MULTI: /* Draconic Multi-hued */
-		p_ptr->regenerate = TRUE;
+		if (p_ptr->lev >= 5) p_ptr->resist_elec = TRUE;
+		if (p_ptr->lev >= 10) p_ptr->resist_cold = TRUE;
+		if (p_ptr->lev >= 15) p_ptr->resist_fire = TRUE;
+		if (p_ptr->lev >= 20) p_ptr->resist_acid = TRUE;
+		if (p_ptr->lev >= 25) p_ptr->resist_pois = TRUE;
 		break;
 	case TRAIT_BRONZE: /* Draconic Bronze */
-		p_ptr->resist_conf = TRUE;
+		if (p_ptr->lev >= 5) p_ptr->resist_conf = TRUE;
+		if (p_ptr->lev >= 10) p_ptr->free_act = TRUE;
+		if (p_ptr->lev >= 20) p_ptr->reflect = TRUE;
 		break;
 	case TRAIT_SILVER: /* Draconic Silver */
-		p_ptr->resist_cold = TRUE;
+		if (p_ptr->lev >= 5) p_ptr->resist_cold = TRUE;
+		if (p_ptr->lev >= 15) p_ptr->resist_pois = TRUE;
+		if (p_ptr->lev >= 20) p_ptr->reflect = TRUE;
 		break;
 	case TRAIT_GOLD: /* Draconic Gold */
-		p_ptr->resist_sound = TRUE;
+		if (p_ptr->lev >= 5) p_ptr->resist_acid = TRUE;
+		if (p_ptr->lev >= 15) p_ptr->resist_sound = TRUE;
+		if (p_ptr->lev >= 20) p_ptr->reflect = TRUE;
 		break;
 	case TRAIT_LAW: /* Draconic Law */
-		p_ptr->resist_shard = TRUE;
+		if (p_ptr->lev >= 5) p_ptr->resist_shard = TRUE;
+		if (p_ptr->lev >= 15) p_ptr->resist_sound = TRUE;
 		break;
 	case TRAIT_CHAOS: /* Draconic Chaos */
-		p_ptr->resist_conf = TRUE;
+		if (p_ptr->lev >= 5) p_ptr->resist_conf = TRUE;
+		if (p_ptr->lev >= 15) p_ptr->resist_chaos = TRUE;
+		if (p_ptr->lev >= 20) p_ptr->resist_disen = TRUE;
 		break;
 	case TRAIT_BALANCE: /* Draconic Balance */
-		p_ptr->resist_disen = TRUE;
+		if (p_ptr->lev >= 10) p_ptr->resist_disen = TRUE;
+		if (p_ptr->lev >= 20) p_ptr->resist_sound = TRUE;
 		break;
 	case TRAIT_POWER: /* Draconic Power */
-		p_ptr->regenerate = TRUE;
+		if (p_ptr->lev >= 25) p_ptr->resist_mana = TRUE;
 		break;
 	}
 
