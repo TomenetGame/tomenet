@@ -375,45 +375,51 @@ static bool choose_trait(void) {
 
 	/* Assume traits are N/A: */
 	trait = -1;
+	tp_ptr = &trait_info[0];
+
+
+	/* Absolutely no traits, not even #0 'N/A' */
+	if (Setup.max_trait == 0) return TRUE;
 
 #ifdef HIDE_UNAVAILABLE_TRAIT
 	/* If server doesn't support traits, or we only have the
 	   dummy 'N/A' trait available in general, skip trait choice */
-	if (Setup.max_trait <= 1) return TRUE;
-
-	/* Slaughter compiler warning */
-	tp_ptr = &trait_info[0];
-
-	/* If we have no traits available for the race chosen, skip trait choice */
-	if (trait_info[0].choice & BITS(race)) return TRUE;
-
-	/* If we have traits available for the race chose, prepare to display them */
- #ifdef CLASS_BEFORE_RACE
-	put_str("Trait       :                               ", 7, 1);
- #else
-	put_str("Trait       :                               ", 6, 1);
- #endif
+	if (Setup.max_trait == 1) return TRUE;
 #endif
 
-	/* Outdated server? */
-	if (Setup.max_trait == 0) {
-		c_put_str(TERM_L_BLUE, trait_info[0].title, 7, 15);
-		return TRUE;
-	}
-
-	/* No traits available for this race? Skip forward then.
-	   Note: trait #0 is "N/A", which only traitless classes are supposed to 'have'. */
-	if (trait_info[0].choice & BITS(race)) {
-		c_put_str(TERM_L_BLUE, trait_info[0].title, 7, 15);
-		return TRUE;
-	}
-
-	/* Prepare to list */
-	for (j = 0; j < Setup.max_trait; j++) {
+	/* Prepare to list, skip trait #0 'N/A' */
+	for (j = 1; j < Setup.max_trait; j++) {
                 tp_ptr = &trait_info[j];
                 if (!(tp_ptr->choice & BITS(race))) continue;
             	shown_traits++;
 	}
+	/* No traits available? */
+	if (shown_traits == 0) {
+		/* Paranoia - server bug (not even 'N/A' "available") */
+		if (!(trait_info[0].choice & BITS(race))) return TRUE;
+	}
+
+	/* No traits available for this race (except for 'N/A')? Skip forward then.
+	   Note: trait #0 is "N/A", which only traitless classes are supposed to 'have'. */
+	if (trait_info[0].choice & BITS(race)) {
+#ifndef HIDE_UNAVAILABLE_TRAIT
+ #ifdef CLASS_BEFORE_RACE
+		put_str("Trait       :                               ", 7, 1);
+		c_put_str(TERM_L_BLUE, trait_info[0].title, 7, 15);
+ #else
+		put_str("Trait       :                               ", 6, 1);
+		c_put_str(TERM_L_BLUE, trait_info[0].title, 6, 15);
+ #endif
+#endif
+		return TRUE;
+	}
+
+	/* If we have traits available for the race chose, prepare to display them */
+#ifdef CLASS_BEFORE_RACE
+	put_str("Trait       :                               ", 7, 1);
+#else
+	put_str("Trait       :                               ", 6, 1);
+#endif
 
 	for (i = 18; i < 24; i++) Term_erase(1, i, 255);
 
@@ -1253,6 +1259,7 @@ csex:
 #ifndef CLASS_BEFORE_RACE
 crace:
 	/* Choose a race */
+	put_str("             ", 6, 1);
 	if (!choose_race()) goto csex;
 ctrait:
 	/* Choose a trait */
@@ -1279,6 +1286,7 @@ cclass:
 	if (!choose_class()) goto csex;
 crace:
 	/* Choose a race */
+	put_str("             ", 7, 1);
 	if (!choose_race()) goto cclass;
 ctrait:
 	/* Choose a trait */
@@ -1297,6 +1305,10 @@ cstats:
 	/* Choose stat order */
 	if (!choose_stat_order()) goto cbody;
 #endif
+
+
+	/* Fix trait hack: '-1' meant "no traits available" */
+	if (trait == -1) trait = 0;
 
 
 	/* Choose character mode */
