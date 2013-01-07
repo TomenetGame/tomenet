@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. January 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. January 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.1a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -83,6 +83,7 @@ Contents
     (4.5a)  Shops
     (4.5b)  Towns & town dungeons
     (4.5c)  Dungeons
+    (4.5c2) Eample dungeon depth relations
     (4.5d)  Dungeon bosses
     (4.6)   Pits and vaults
     (4.7)   Traps & trap kits
@@ -4613,6 +4614,32 @@ die to monsters (unlikely) or starvation (very likely).
  flags.)
 -Note that the amount of experience is already very high even without this
  depth-bonus, since creatures in the Nether Realm are of a very high level.
+
+
+(4.5c2) Eample dungeon depth relations
+--------------------------------------
+Here are some examples of relations of dungeon level difficulties.
+
+This does not take into account the dungeon 'theme', ie types of walls, floors
+and other terrain and preferred/disallowed monster types.
+It is purely about the depth, ie the dungeon floor level, and therefore the
+basic average monster level encountered on those dungeon floors.
+(The average level of monsters you can expect there is always the same as the
+level of the dungeon floor. With a few random exceptions sometimes.)
+
+-The Orc Cave -50ft is same depth as Barrow-Downs -500ft, aka dungeon level 10.
+
+-Mordor -50ft is dungeon level 34, while Barrow-Down's deepest floor at -1750ft
+ is actually dungeon level 35 (1750ft/50ft).
+
+-Path of the Dead -50ft is dungeon level 40, which is the same dungeon level as
+ Mordor -350ft, ie 6 levels 'deeper' (34*50ft + 6*50ft).
+
+-Angband -50ft is dungeon level 67, while Mordor's deepest floor at -1650 is
+ dungeon level 66. Pretty seamless.
+
+-Path of the Dead bottom at -1550ft is the same dungeon level as Angband -200ft
+ ie dungeon level 70.
 
 
 (4.5d) Dungeon bosses
