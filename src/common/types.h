@@ -2221,6 +2221,7 @@ struct player_type
 	s16b current_rcraft;
 	u16b current_rcraft_e_flags;
 	u16b current_rcraft_m_flags;
+	s16b current_breath;
 	s16b current_selling;
 	s16b current_sell_amt;
 	int current_sell_price;

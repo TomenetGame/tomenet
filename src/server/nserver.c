@@ -7608,6 +7608,9 @@ static int Receive_activate_skill(int ind)
 			toggle_dual_mode(player);
 			break;
 #endif
+		case MKEY_BREATH:
+			do_cmd_breathe(player);
+			break;
 		}
 		return 2;
 	} else if (player) {
@@ -9858,6 +9861,7 @@ void Handle_direction(int Ind, int dir)
 		p_ptr->current_realm = -1;
 		p_ptr->current_fire = -1;
 		p_ptr->current_throw = -1;
+		p_ptr->current_breath = 0;
 		return;
 	}
 
@@ -9886,6 +9890,8 @@ void Handle_direction(int Ind, int dir)
 		do_cmd_fire(Ind, dir);
 	else if (p_ptr->current_throw != -1)
 		do_cmd_throw(Ind, dir, p_ptr->current_throw, 0);
+	else if (p_ptr->current_breath != 0)
+		do_cmd_breathe_aux(Ind, dir);
 }
 
 void Handle_item(int Ind, int item)

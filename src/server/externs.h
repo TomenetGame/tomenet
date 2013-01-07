@@ -705,6 +705,8 @@ extern void do_cmd_fletchery(int Ind);
 extern void do_cmd_stance(int Ind, int stance);
 extern void do_cmd_melee_technique(int Ind, int technique);
 extern void do_cmd_ranged_technique(int Ind, int technique);
+extern void do_cmd_breathe(int Ind);
+extern void do_cmd_breathe_aux(int Ind, int dir);
 
 
 /* control.c */

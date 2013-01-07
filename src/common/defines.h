@@ -6829,6 +6829,8 @@ extern int PlayerUID;
 #define MKEY_AURA_SHIVER	16
 #define MKEY_AURA_DEATH		17
 
+#define MKEY_BREATH		18
+
 #define MAX_AURAS 		3
 
 
@@ -6945,6 +6947,9 @@ extern int PlayerUID;
 #define SKILL_R_NETH		99
 #define SKILL_R_CHAO		100
 #define SKILL_R_MANA		101
+
+/* For Draconians */
+#define SKILL_BREATH		110
 
 /*#define MAX_SKILLS              70 */
 #define MAX_SKILLS              128

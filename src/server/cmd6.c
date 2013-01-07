@@ -8065,3 +8065,113 @@ s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
 		break;
 	}
 }
+
+void do_cmd_breathe(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	/* feature not available? */
+	if (!p_ptr->ptrait) return;
+
+	if (p_ptr->ghost) {
+		msg_print(Ind, "You cannot use your breath as a ghost.");
+		return;
+	}
+	if (p_ptr->prace != RACE_DRACONIAN) {
+		msg_print(Ind, "You cannot breathe elements.");
+		return;
+	}
+	if (p_ptr->lev < 5) {
+		msg_print(Ind, "You need to be at least level 5 to breathe elements.");
+		return;
+	}
+
+	if (p_ptr->cst < 6) { msg_print(Ind, "Not enough stamina!"); return; }
+
+	disturb(Ind, 1, 0); /* stop things like running, resting.. */
+	p_ptr->cst -= 6;
+	p_ptr->redraw |= PR_STAMINA;
+
+        p_ptr->current_breath = 1;
+        get_aim_dir(Ind);
+}
+void do_cmd_breathe_aux(int Ind, int dir) {
+	player_type *p_ptr = Players[Ind];
+	int trait;
+
+        if (!is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) {
+                /* Only fire in direction 5 if we have a target */
+                if ((dir == 5) && !target_okay(Ind)) {
+                        /* Reset current breath */
+                        p_ptr->current_breath = 0;
+                        return;
+                }
+        }
+
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+	trait = p_ptr->ptrait;
+	if (trait == TRAIT_MULTI) /* Draconic Multi-hued */
+		trait = rand_int(5) + TRAIT_BLUE;
+	if (trait == TRAIT_POWER) {
+		trait = rand_int(10) + TRAIT_BLUE;
+		if (trait >= TRAIT_MULTI) trait++;
+	}
+
+	switch (trait) {
+        case TRAIT_BLUE: /* Draconic Blue */
+	        sprintf(p_ptr->attacker, " breathes lightning for");
+	        msg_print(Ind, "You breathe lightning.");
+	        fire_ball(Ind, GF_FIRE, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), 2, p_ptr->attacker);
+                break;
+        case TRAIT_WHITE: /* Draconic White */
+	        sprintf(p_ptr->attacker, " breathes frost for");
+	        msg_print(Ind, "You breathe frost.");
+	        fire_ball(Ind, GF_COLD, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), 2, p_ptr->attacker);
+                break;
+        case TRAIT_RED: /* Draconic Red */
+	        sprintf(p_ptr->attacker, " breathes fire for");
+	        msg_print(Ind, "You breathe fire.");
+	        fire_ball(Ind, GF_FIRE, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), 2, p_ptr->attacker);
+                break;
+        case TRAIT_BLACK: /* Draconic Black */
+	        sprintf(p_ptr->attacker, " breathes acid for");
+	        msg_print(Ind, "You breathe acid.");
+	        fire_ball(Ind, GF_ACID, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), 2, p_ptr->attacker);
+                break;
+        case TRAIT_GREEN: /* Draconic Green */
+	        sprintf(p_ptr->attacker, " breathes poison for");
+	        msg_print(Ind, "You breathe poison.");
+	        fire_ball(Ind, GF_POIS, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), 2, p_ptr->attacker);
+                break;
+        case TRAIT_BRONZE: /* Draconic Bronze */
+	        sprintf(p_ptr->attacker, " breathes confusion for");
+	        msg_print(Ind, "You breathe confusion.");
+	        fire_ball(Ind, GF_CONFUSION, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), 2, p_ptr->attacker);
+                break;
+        case TRAIT_SILVER: /* Draconic Silver */
+	        sprintf(p_ptr->attacker, " breathes frost for");
+	        msg_print(Ind, "You breathe frost.");
+	        fire_ball(Ind, GF_COLD, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), 2, p_ptr->attacker);
+                break;
+        case TRAIT_GOLD: /* Draconic Gold */
+	        sprintf(p_ptr->attacker, " breathes sound for");
+	        msg_print(Ind, "You breathe sound.");
+	        fire_ball(Ind, GF_SOUND, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), 2, p_ptr->attacker);
+                break;
+        case TRAIT_LAW: /* Draconic Law */
+	        sprintf(p_ptr->attacker, " breathes shards for");
+	        msg_print(Ind, "You breathe shards.");
+	        fire_ball(Ind, GF_SHARDS, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), 2, p_ptr->attacker);
+                break;
+        case TRAIT_CHAOS: /* Draconic Chaos */
+	        sprintf(p_ptr->attacker, " breathes chaos for");
+	        msg_print(Ind, "You breathe chaos.");
+	        fire_ball(Ind, GF_CHAOS, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), 2, p_ptr->attacker);
+                break;
+        case TRAIT_BALANCE: /* Draconic Balance */
+	        sprintf(p_ptr->attacker, " breathes disenchantment for");
+	        msg_print(Ind, "You breathe disenchantment.");
+	        fire_ball(Ind, GF_DISENCHANT, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), 2, p_ptr->attacker);
+                break;
+        }
+}

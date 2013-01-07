@@ -550,6 +550,12 @@ A:12:Draw a rune
 I:1000:105
 F:MKEY_HARDCODE
 
+N:110:Breathe element
+D:Ability to breathe an element.
+A:18:Breathe
+I:1000:0
+F:HIDDEN
+
 #
 # Skill interactions
 #
@@ -842,3 +848,5 @@ T:Health:Digging
 #T:Main:Miscellaneous
 #T:Miscellaneous:Calmness
 #T:Miscellaneous:Interception
+
+T:Main:Breathe element
