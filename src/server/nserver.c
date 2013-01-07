@@ -3519,11 +3519,14 @@ static int Receive_login(int ind){
 		return -1;
 	}
 
-	if(strlen(choice)==0){
+	if (strlen(choice) == 0) {
+		u32b p_id;
+		bool censor_swearing_tmp = censor_swearing;
+		char tmp_name[NAME_LEN];
+
 		/* Check if player tries to create an account of the same name as
 		   an already existing character - give an error message.
 		   (Mostly for new feat 'privmsg to account name' - C. Blue) */
-		u32b p_id;
 		if ((p_id = lookup_player_id(connp->nick))) { /* character name identical to this account name already exists? */
 			/* That character doesn't belong to our account? Forbid creating an account of this name then. */
 			if (strcmp(lookup_accountname(p_id), connp->nick)) {
@@ -3548,6 +3551,17 @@ static int Receive_login(int ind){
 			Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
 			return(-1);
 		}
+
+		/* Check for forbidden names (swearing).
+		   Note: This overrides 'censor_swearing' and is always on! */
+		censor_swearing = TRUE;
+		strcpy(tmp_name, connp->nick);
+		if (handle_censor(tmp_name)) {
+			censor_swearing = censor_swearing_tmp;
+                        Destroy_connection(ind, "This account name is not available. Please choose a different name.");
+                        return(-1);
+		}
+		censor_swearing = censor_swearing_tmp;
 
 		/* Password obfuscation introduced in pre-4.4.1a client or 4.4.1.1 */
 		if (connp->pass && is_newer_than(&connp->version, 4, 4, 1, 0, 0, 0)) {
@@ -3640,6 +3654,8 @@ static int Receive_login(int ind){
 		return(0);
 	} else if (connp->password_verified) {
 		int check_account_reason = 0;
+		bool censor_swearing_tmp = censor_swearing;
+		char tmp_name[NAME_LEN];
 
 		/* just in case - some places can't handle a longer name and a valid client shouldn't supply a name this long anyway - mikaelh */
 		choice[NAME_LEN - 1] = '\0';
@@ -3648,11 +3664,23 @@ static int Receive_login(int ind){
 		s_printf("Player %s chooses character '%s' (strlen=%d)\n", connp->nick, choice, strlen(choice));
 		Trim_name(choice);
 
+		/* Check for forbidden names (technical/lore reasons) */
 		if (forbidden_name(choice)) {
 //			Packet_printf(&connp->c, "%c", E_INVAL);
                         Destroy_connection(ind, "Forbidden character name. Please choose a different name.");
                         return(-1);
 		}
+
+		/* Check for forbidden names (swearing).
+		   Note: This overrides 'censor_swearing' and is always on! */
+		censor_swearing = TRUE;
+		strcpy(tmp_name, choice);
+		if (handle_censor(tmp_name)) {
+			censor_swearing = censor_swearing_tmp;
+                        Destroy_connection(ind, "This character name is not available. Please choose a different name.");
+                        return(-1);
+		}
+		censor_swearing = censor_swearing_tmp;
 
 		/* at this point, we are authorised as the owner
 		   of the account. any valid name will be
