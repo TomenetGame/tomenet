@@ -2136,7 +2136,7 @@ D:for blood.
 
 N:156:'Orchast'
 I:24:11:4
-W:15:2:170:44000
+W:15:3:170:44000
 P:0:2d7:20:16:0
 F:STR | DEX | SEARCH | SLAY_ORC | ACTIVATE | HIDE_TYPE | SHOW_MODS | BRAND_FIRE
 D:Forged by the dwarves of Khazad-dum in a time of desperation, 
