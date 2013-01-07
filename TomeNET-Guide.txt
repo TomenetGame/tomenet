@@ -14296,6 +14296,22 @@ SOLUTION:   This happens when your LUA files are quite outdated.
             When that happened, quit and rejoin the server, the LUA errors
             should no longer happen now.
 
+PROBLEM 38: I want to edit my TomeNET.ini file to enter name and password, so I
+            don't have to type it in everytime I log on. But I don't see this
+            file in my 'TomeNET' folder.
+SOLUTION:   Windows by default hides the extension of most files, this means
+            that the ".ini" part is invisible.
+            Three ways around this:
+            1) In file explorer, go to 'folder options' (usually in the Extras
+               menu) and turn off hiding known file extensions.
+            2) Right-click on a small (3kB) plain-looking file named 'TomeNET'
+               in your TomeNET folder, and choose 'edit' (pick notepad.exe for
+               editing, if asked). This file is most likely TomeNET.ini with
+               its extension being hidden.
+            3) Open an editor (for example notepad) and go to menu File->Open
+               and browse to your TomeNET folder, and then type in
+               'tomenet.ini' to have notepad open it.
+
 
 
 ==============================================================================
