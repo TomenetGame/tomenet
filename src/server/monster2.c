@@ -2213,7 +2213,7 @@ void update_mon(int m_idx, bool dist)
 				bool see = FALSE, drsee = FALSE;
 
 				/* Different ESP */
-				if (p_ptr->prace==RACE_DRACONIAN) drsee = TRUE;
+				if (p_ptr->prace == RACE_DRACONIAN) drsee = TRUE;
 				if ((p_ptr->telepathy & ESP_ORC) && (r_ptr->flags3 & RF3_ORC)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_SPIDER) && (r_ptr->flags7 & RF7_SPIDER)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_TROLL) && (r_ptr->flags3 & RF3_TROLL)) see = TRUE;
@@ -2236,7 +2236,7 @@ void update_mon(int m_idx, bool dist)
 				if (drsee && !see) {
 //					if (p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/2)) see = TRUE;
 					/* They receive 'fly' instead */
-					if (p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/3)) see = TRUE;
+					if (p_ptr->lev >= 6 && m_ptr->cdis <= (3 + p_ptr->lev / 3)) see = TRUE;
 				}
 
 				if (see) {
@@ -2532,13 +2532,13 @@ void update_player(int Ind)
 			}
 
 			/* Telepathy can see all players */
-			if (p_ptr->telepathy & ESP_ALL || (p_ptr->prace == RACE_DRACONIAN)) {
+			if ((p_ptr->telepathy & ESP_ALL) || (p_ptr->prace == RACE_DRACONIAN)) {
 			  bool see = FALSE;
 
 			  if (!(p_ptr->mode & MODE_HARD)) see = TRUE;
 			  if ((p_ptr->mode & MODE_HARD) && (dis < MAX_SIGHT)) see = TRUE;
 			  if (!(p_ptr->telepathy & ESP_ALL) && (p_ptr->prace == RACE_DRACONIAN) &&
-			    (p_ptr->lev < 6 || (dis > (5 + p_ptr->lev / 2))))
+			    (p_ptr->lev < 6 || (dis > (3 + p_ptr->lev / 3))))
 				see = FALSE;
 
 			  if (see)
