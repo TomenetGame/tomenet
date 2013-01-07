@@ -3965,10 +3965,14 @@ void check_experience(int Ind)
 		break;
 		case RACE_DRACONIAN:
 			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou learn to telepathically sense dragons!");
+#ifndef ENABLE_DRACONIAN_TRAITS
 			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou become more resistant to fire!");
 			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou become more resistant to cold!");
 			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou become more resistant to acid!");
 			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou become more resistant to lightning!");
+#else
+			if (old_lev < 8 && p_ptr->lev >= 8) msg_print(Ind, "\374\377GYou learn how to breathe an element!");
+#endif
 			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
 			break;
 		case RACE_DARK_ELF:

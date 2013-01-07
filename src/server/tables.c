@@ -2111,7 +2111,7 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                         },
 
-#ifdef TEST_SERVER
+#ifdef ENABLE_DRACONIAN_TRAITS
                         {
                                 SKILL_BREATH,
                                 '+', 1000,
@@ -5254,7 +5254,7 @@ player_trait trait_info[MAX_TRAIT] = {
 	{ /* Note: This trait #0 must be allowed for EXACTLY the races that DON'T have any trait.
 	     This can be used to 'disable' all traits for a specific race: Just add it here. */
 		"N/A",
-#ifdef TEST_SERVER /* don't forget to also enable SKILL_BREATH */
+#ifdef ENABLE_DRACONIAN_TRAITS
 		0xFFFFFF & ~RFC,
 #else
 		0xFFFFFF, /* disable for all */

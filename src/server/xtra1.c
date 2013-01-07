@@ -3272,10 +3272,12 @@ void calc_boni(int Ind)
 		if (!p_ptr->body_monster) p_ptr->feather_fall = TRUE;
 
 		if (p_ptr->lev >= 5) p_ptr->telepathy |= ESP_DRAGON;
+#ifndef ENABLE_DRACONIAN_TRAITS
 		if (p_ptr->lev >= 10) p_ptr->resist_fire = TRUE;
 		if (p_ptr->lev >= 15) p_ptr->resist_cold = TRUE;
 		if (p_ptr->lev >= 20) p_ptr->resist_acid = TRUE;
 		if (p_ptr->lev >= 25) p_ptr->resist_elec = TRUE;
+#endif
 		/* not while in mimicried form */
 		if (!p_ptr->body_monster)
 		    if (p_ptr->lev >= 30) p_ptr->fly = TRUE;

@@ -8069,6 +8069,10 @@ s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
 void do_cmd_breathe(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
+#ifndef ENABLE_DRACONIAN_TRAITS
+	return;
+#endif
+
         p_ptr->current_breath = 1;
         get_aim_dir(Ind);
 }
@@ -8076,6 +8080,9 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int trait;
 
+#ifndef ENABLE_DRACONIAN_TRAITS
+	return;
+#endif
 	/* feature not available? */
 	if (!p_ptr->ptrait) return;
 
@@ -8096,8 +8103,8 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 		msg_print(Ind, "You cannot breathe elements.");
 		return;
 	}
-	if (p_ptr->lev < 5) {
-		msg_print(Ind, "You need to be at least level 5 to breathe elements.");
+	if (p_ptr->lev < 8) {
+		msg_print(Ind, "You need to be at least level 8 to breathe elements.");
 		return;
 	}
 	if (p_ptr->cst < 6) { msg_print(Ind, "Not enough stamina!"); return; }
