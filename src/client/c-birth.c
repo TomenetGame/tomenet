@@ -297,10 +297,10 @@ race_redraw:
 			goto race_redraw;
 		}
 		if (c == '8' || c == '<') {//h
-			if (sel - 5 < 0) sel = sel + ((Setup.max_race - sel) / 5) * 5;
+			if (sel - 5 < 0) sel = sel + ((Setup.max_race - 1 - sel) / 5) * 5;
 			else sel -= 5;
 			while (!(race_info[sel].choice & BITS(class))) {
-				if (sel - 5 < 0) sel = sel + ((Setup.max_race - sel) / 5) * 5;
+				if (sel - 5 < 0) sel = sel + ((Setup.max_race - 1 - sel) / 5) * 5;
 				else sel -= 5;
 			}
 			goto race_redraw;
@@ -480,7 +480,7 @@ trait_redraw:
 			goto trait_redraw;
 		}
 		if (c == '8' || c == '<') {//h
-			if (sel - 3 < 0) sel = sel + ((shown_traits - sel) / 3) * 3;
+			if (sel - 3 < 0) sel = sel + ((shown_traits - 1 - sel) / 3) * 3;
 			else sel -= 3;
 			goto trait_redraw;
 		}
@@ -642,11 +642,11 @@ class_redraw:
 			goto class_redraw;
 		}
 		if (c == '8' || c == '<') {//h
-			if (sel - 5 < 0) sel = sel + ((Setup.max_class - sel) / 5) * 5;
+			if (sel - 5 < 0) sel = sel + ((Setup.max_class - 1 - sel) / 5) * 5;
 			else sel -= 5;
 #ifndef CLASS_BEFORE_RACE
 			while (!(race_info[race].choice & BITS(sel))) {
-				if (sel - 5 < 0) sel = sel + ((Setup.max_class - sel) / 5) * 5;
+				if (sel - 5 < 0) sel = sel + ((Setup.max_class - 1 - sel) / 5) * 5;
 				else sel -= 5;
 			}
 #endif
