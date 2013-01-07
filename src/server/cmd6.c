@@ -8109,7 +8109,7 @@ void do_cmd_breathe_aux(int Ind, int dir) {
                 return;
         }
 
-        break_cloaking(Ind, 5);
+        break_cloaking(Ind, 0);
         break_shadow_running(Ind);
         stop_precision(Ind);
         stop_shooting_till_kill(Ind);
