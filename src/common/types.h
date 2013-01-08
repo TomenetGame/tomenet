@@ -2269,6 +2269,7 @@ struct player_type
 	s16b martyr_dur;
 	s16b res_fear_temp;
 	s16b invuln, invuln_applied;	/* Timed -- Invulnerable; helper var */
+	s16b invuln_dur;		/* How long this invuln was when it started */
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
 	s16b berserk;			/* Timed -- Berserk #2 */

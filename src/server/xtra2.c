@@ -2261,18 +2261,19 @@ bool set_invuln(int Ind, int v)
 	/* Open */
 	if (v) {
 		if (!p_ptr->invuln) {
-			msg_print(Ind, "\377vA powerful iridescent shield forms around your body!");
+			p_ptr->invuln_dur = v;
+			msg_print(Ind, "\377A powerful iridescent shield forms around your body!");
 			notice = TRUE;
+		} else if (p_ptr->invuln > 5 && v <= 5) {
+			msg_print(Ind, "\376\377vThe invulnerability shield starts to fade...");
 		}
 	}
 
 	/* Shut */
 	else {
-		if (p_ptr->invuln) {
-			/* Keeps the 2 turn GOI from getting annoying. DEG */
-			if (get_skill(p_ptr, SKILL_MAGERY) > 39) {
-				msg_print(Ind, "\377vThe invulnerability shield fades away.");
-			}
+		if (p_ptr->invuln &&
+		    p_ptr->invuln_dur >= 5) { /* avoid spam on stair-GoI */
+			msg_print(Ind, "\376\377vThe invulnerability shield fades away.");
 			notice = TRUE;
 		}
 	}

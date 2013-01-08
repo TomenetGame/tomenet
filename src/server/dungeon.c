@@ -3598,8 +3598,12 @@ static bool process_player_end_aux(int Ind)
 	/* Invulnerability */
 	/* Hack -- make -1 permanent invulnerability */
 	if (p_ptr->invuln) {
-		if (p_ptr->invuln > 0) (void)set_invuln(Ind, p_ptr->invuln - minus_magic);
-		if (p_ptr->invuln == 5) msg_print(Ind, "\377vThe invulnerability shield starts to flicker and fade...");
+		if (p_ptr->invuln > 0) {
+			/* Hack: Don't diminish Stair-GoI by Antimagic: */
+			if (p_ptr->invuln_dur >= 5) (void)set_invuln(Ind, p_ptr->invuln - minus_magic);
+			else (void)set_invuln(Ind, p_ptr->invuln - 1);
+		}
+		if (p_ptr->invuln == 5) msg_print(Ind, "\377vThe invulnerability shield starts to fade...");
 	}
 
 	/* Heroism */

@@ -909,7 +909,7 @@
  */
 #define STAIR_FAIL_IF_CONFUSED  50
 
-/* duration of GoI when climbing stairs.        [2] */
+/* duration of GoI when climbing stairs.        [2], must be 0<=n<=4. */
 #define STAIR_GOI_LENGTH        3
 
 /* when do rogues learn cloaking mode? */

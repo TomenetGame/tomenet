@@ -2174,7 +2174,7 @@ static byte player_color(int Ind)
 #ifdef EXTENDED_TERM_COLOURS
 	if (!is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) {
 		if (p_ptr->invuln > 5) return TERM_SHIELDI;
-		else if(p_ptr->invuln) return TERM_NUKE;
+		else if (p_ptr->invuln && p_ptr->invuln_dur >= 5) return TERM_NUKE;
 	} else
 #endif
 	if (p_ptr->invuln > 5) return TERM_SHIELDI;
@@ -3439,25 +3439,21 @@ void lite_spot(int Ind, int y, int x)
 					else
 						a = (randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
 				} else {
-					if (a != TERM_VIOLET)
-						a = TERM_BNW;
-					else
-						a = TERM_BNW;
+					a = TERM_BNW;
 				}
 			}
-			if ((p_ptr->invuln > 5) && (randint(4) != 1)) {
-				switch(randint(5)) {
-				case 1: a=TERM_L_RED;break;
-				case 2: a=TERM_L_GREEN;break;
-				case 3: a=TERM_L_BLUE;break;
-				case 4: a=TERM_YELLOW;break;
-				case 5: a=TERM_VIOLET;break;
-		/*              case 1: return (TERM_L_RED);
-				case 2: return (TERM_VIOLET);
-				case 3: return (TERM_RED);
-				case 4: return (TERM_L_DARK);
-				case 5: return (TERM_WHITE);
-		*/              }
+			if (p_ptr->invuln && rand_int(4)) {
+				if (p_ptr->invuln > 5) {
+					switch (randint(5)) {
+					case 1: a = TERM_L_RED; break;
+					case 2: a = TERM_L_GREEN; break;
+					case 3: a = TERM_L_BLUE; break;
+					case 4: a = TERM_YELLOW; break;
+					case 5: a = TERM_VIOLET; break;
+					}
+				} else if (p_ptr->invuln_dur >= 5) { /* avoid animating normal stair-GoI */
+					a = TERM_BNW;
+				}
 			}
 
 			/* notice own Black Breath by colour instead just from occasional message */
