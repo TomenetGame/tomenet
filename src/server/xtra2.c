@@ -6270,6 +6270,11 @@ void player_death(int Ind)
 			if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 			(void)set_food(Ind, PY_FOOD_FULL - 1);
 
+			if (p_ptr->black_breath) {
+				//msg_print(Ind, "The hold of the Black Breath on you is broken!");
+                                p_ptr->black_breath = FALSE;
+			}
+
 			/* Remove the death flag */
 			p_ptr->death = FALSE;
 
