@@ -14311,6 +14311,11 @@ SOLUTION:   Windows by default hides the extension of most files, this means
                and browse to your TomeNET folder, and then type in
                'tomenet.ini' to have notepad open it.
 
+PROBLEM 39: I run the Windows client on Wine, and when I resize the main window
+            it doesn't resize properly or its contents aren't resized properly.
+SOLUTION:   You need at least Wine 1.5.20 for this to work properly.
+            (That Wine got a bugfix for correctly dispatching WM_EXITSIZEMOVE).
+
 
 
 ==============================================================================
