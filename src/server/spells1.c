@@ -8235,6 +8235,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->shield_deflect && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
 			if (blind) msg_format(Ind, "\377%cSomething glances off your shield!", COLOUR_BLOCK_GOOD);
 			else msg_format(Ind, "\377%cYou deflect %s attack!", COLOUR_BLOCK_GOOD, m_name_gen);
+#ifdef USE_SOUND_2010
+                        sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);//not block_shield_projectile (silly for magical attacks)
+#endif
 
 			/* if we hid behind the shield from an acidic attack, damage the shield probably! */
 			if (magik((dam < 5 ? 5 : (dam < 50 ? 10 : 25)))) shield_takes_damage(Ind, typ);
