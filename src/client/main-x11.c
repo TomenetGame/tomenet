@@ -1815,7 +1815,7 @@ static errr CheckEvent(bool wait)
 			if (td == &screen) cols = 80;
 			if (td == &screen) {
 				/* respect big_map option */
-				if (rows <= 24 || !(sflags1 & SFLG1_BIG_MAP)) rows = 24;
+				if (rows <= 24 || (in_game && !(sflags1 & SFLG1_BIG_MAP))) rows = 24;
 				else rows = 46;
 			}
 
