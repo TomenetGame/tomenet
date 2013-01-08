@@ -337,7 +337,7 @@ D:warding and stability deeply engraved into its surface.
 
 N:21:of the Rohirrim
 I:37:9:2
-W:30:3:200:80000
+W:30:5:200:80000
 P:19:1d4:0:0:20
 F:STR | DEX | SPEED | HIDE_TYPE | RES_FEAR | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_CONF | RES_POIS | RES_SOUND
@@ -382,7 +382,7 @@ D:it powers to protect and banish.
 
 N:24:of Arvedui
 I:37:4:2
-W:15:3:220:50000
+W:15:5:220:50000
 P:14:1d4:-2:0:15
 F:STR | CHR | HIDE_TYPE | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_SHARDS | RES_NEXUS
@@ -439,7 +439,7 @@ D:imps are said to be less annoying with this on.
 
 N:28:'Thalkettoth'
 I:36:11:3
-W:7:3:60:35000
+W:7:5:60:35000
 P:11:1d1:-1:0:25
 F:DEX | SPEED | HIDE_TYPE
 #F: | SPECIAL_GENE |
@@ -479,7 +479,7 @@ D:this little metal shield is proof against the Element of Earth.
 
 N:31:of Celegorm
 I:34:4:0
-W:18:3:60:50000
+W:18:5:60:50000
 $USE_NEW_SHIELDS!P:4:1d2:0:0:20
 $USE_NEW_SHIELDS$P:19:1d2:0:0:15
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_DARK
@@ -2125,7 +2125,7 @@ D:this axe has been lost to time... until now.
 
 N:155:'Limbslicer'
 I:24:2:4
-W:15:3:100:22000
+W:15:5:100:22000
 P:0:2d5:22:15:0
 F:DEX | VORPAL | HIDE_TYPE | SHOW_MODS | WOUNDING | FEATHER
 D:The Petty-dwarves of Bathak forged this axe, and it shares their thirst 
@@ -2136,7 +2136,7 @@ D:for blood.
 
 N:156:'Orchast'
 I:24:11:4
-W:15:3:170:44000
+W:15:5:170:44000
 P:0:2d7:20:16:0
 F:STR | DEX | SEARCH | SLAY_ORC | ACTIVATE | HIDE_TYPE | SHOW_MODS | BRAND_FIRE
 D:Forged by the dwarves of Khazad-dum in a time of desperation, 
