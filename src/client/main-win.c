@@ -2889,6 +2889,8 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 	RECT            rc;
 	int             i;
 
+	static int screen_term_cols = -1;//just some dummy vals
+	static int screen_term_rows = -1;
 
 	/* Acquire proper "term_data" info */
 	td = (term_data *)GetWindowLongPtr(hWnd, 0);
@@ -3023,7 +3025,6 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			if (!td->w) return 1; /* it was sent from inside CreateWindowEx */
 			if (td->size_hack) return 1; /* was sent from WM_SIZE */
 
-
 			switch (wParam) {
 				case SIZE_MINIMIZED:
 					for (i = 1; i < MAX_TERM_DATA; i++)
@@ -3036,52 +3037,69 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 
 				case SIZE_RESTORED: {
 					int rows, cols;
+					int old_rows, old_cols;
 
 					td->size_hack = TRUE;
 
 					cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->font_wid;
 					rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->font_hgt;
 
+					old_cols = cols;
+					old_rows = rows;
+
 		                        /* Hack -- do not allow bad resizing of main screen */
 		                        cols = 80;
 		                        /* respect big_map option */
-		                        if (rows <= 24 || !(sflags1 & SFLG1_BIG_MAP)) rows = 24;
+		                        if (rows <= 24 || (in_game && !(sflags1 & SFLG1_BIG_MAP))) rows = 24;
 		                        else rows = 46;
-		                        /* hack: need to redraw map or it may look cut off */
 
-					if ((rows == 24 && Client_setup.options[43]) ||
-					    (rows == 46 && !Client_setup.options[43])) {
-				                bool val = !Client_setup.options[43];
-
-				                Client_setup.options[43] = val;
-				                c_cfg.big_map = val;
-				                check_immediate_options(43, val, TRUE);
-
-				                if (in_game) cmd_redraw();
-					}
-
-#if 0 /* test code stuff~ */
-	                                Term_activate(&td->t);
-    		                        Term_resize(cols, rows);
-//	                                term_getsize(td);
-//				        term_window_resize(td);
-
-#endif
-					td->cols = cols;
-					td->rows = rows;
-					term_getsize(td);
-					MoveWindow(hWnd, td->pos_x, td->pos_y, td->size_wid, td->size_hgt, TRUE);
-
-					td->size_hack = FALSE;
+					/* Remember for WM_EXITSIZEMOVE later */
+					screen_term_cols = cols;
+					screen_term_rows = rows;
 
 					/* Windows */
 					for (i = 1; i < MAX_TERM_DATA; i++)
 						if (data[i].visible) ShowWindow(data[i].w, SW_SHOWNOACTIVATE);
 
+					td->size_hack = FALSE;
+
 					return 0;
 				}
 			}
 			break;
+
+		case WM_EXITSIZEMOVE:
+			/* Remember final size values from WM_SIZE -> SIZE_RESTORED */
+			if ((screen_term_rows == 24 && Client_setup.options[43]) ||
+			    (screen_term_rows == 46 && !Client_setup.options[43])) {
+		                bool val = !Client_setup.options[43];
+
+		                Client_setup.options[43] = val;
+		                c_cfg.big_map = val;
+
+                    		if (!val) screen_hgt = SCREEN_HGT;
+                    		else screen_hgt = MAX_SCREEN_HGT;
+
+	                        /* hack: need to redraw map or it may look cut off */
+                                if (in_game) {
+                                        if (screen_icky) Term_switch(0);
+	                                Term_clear(); /* get rid of map tiles where now status bars go instead */
+    		                        if (screen_icky) Term_switch(0);
+	                                Send_screen_dimensions();
+        		                cmd_redraw();
+    		    		}
+			}
+
+			/* Set main window size */
+			td->cols = screen_term_cols;
+			td->rows = screen_term_rows;
+			term_getsize(td);
+                        Term_activate(&td->t);
+                        Term_resize(screen_term_cols, screen_term_rows);
+			term_window_resize(td);//not required? used in resize_main_window though
+
+			MoveWindow(hWnd, td->pos_x, td->pos_y, td->size_wid, td->size_hgt, TRUE);
+			return 0;
 
 		case WM_PALETTECHANGED:
 			/* ignore if palette change caused by itself */
