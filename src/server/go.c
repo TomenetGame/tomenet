@@ -103,6 +103,12 @@ static const int NONE = 0, DOWN = 1, UP = 2;
 #define GO_DEBUGLOG
 
 
+#ifdef USE_SOUND_2010
+/* Play stone clacking sound */
+ #define CLACK "item_rune"
+#endif
+
+
 /* Global control variables */
 bool go_engine_up;		/* Go engine is online? */
 int go_engine_processing = 0;	/* Go engine is expected to deliver replies to commands? */
@@ -1097,6 +1103,9 @@ static void go_engine_move_CPU() {
 #ifdef GO_DEBUGLOG
 			s_printf("GO_RND: %s\n", cpu_rnd_move + 11);
 #endif
+#ifdef USE_SOUND_2010
+			sound(Ind, CLACK, NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 			last_white_move[0] = 'a' + x;
 			last_white_move[1] = '1' + y;
 			last_white_move[2] = 0;
@@ -1119,6 +1128,9 @@ static void go_engine_move_CPU() {
 			Send_store_special_str(Ind, 6, GO_BOARD_X - 1, TERM_YELLOW, tmp);
 #ifdef GO_DEBUGLOG
 			s_printf("GO_RND: %s\n", cpu_rnd_move + 11);
+#endif
+#ifdef USE_SOUND_2010
+			sound(Ind, CLACK, NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 			last_black_move[0] = 'a' + x;
 			last_black_move[1] = '1' + y;
@@ -1214,7 +1226,12 @@ static int verify_move_human(void) {
 
 		writeToPipe("final_score");
 		return 0;
-	} else if (!last_move_was_pass) pass_count = 0;
+	} else if (!last_move_was_pass) {
+		pass_count = 0;
+#ifdef USE_SOUND_2010
+		sound(Ind, CLACK, NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+	}
 	last_move_was_pass = FALSE;
 
 	player_timeleft_sec = player_timelimit_sec;
@@ -1322,6 +1339,9 @@ static int verify_move_CPU(void) {
 //		Send_store_special_str(Ind, 6, GO_BOARD_X + 3, TERM_YELLOW, cpu_move);
 		sprintf(tmp, "just played %s", cpu_move + 2);
 		Send_store_special_str(Ind, 6, GO_BOARD_X - 1, TERM_YELLOW, tmp);
+#endif
+#ifdef USE_SOUND_2010
+		sound(Ind, CLACK, NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		pass_count = 0;
 
