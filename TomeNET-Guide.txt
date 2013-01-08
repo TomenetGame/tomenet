@@ -1043,6 +1043,7 @@ Weapons that ricochet (sling ammo):
 Scrolls of Identify, Rods/Staves of Perception:
     !X          If you pick up an unidentified item, you will automatically
                 read a scroll to identify it.
+                This inscription also works on 'The Stone of Lore'.
                 See (5.7) for more information about identification.
 
 An item that can be activated:
