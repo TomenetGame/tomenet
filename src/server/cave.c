@@ -2149,86 +2149,35 @@ static byte player_color(int Ind)
 
 	/* Mimicing a monster */
 	/* TODO: handle 'ATTR_MULTI', 'ATTR_CLEAR' */
-//	if (p_ptr->body_monster) pcolor = (r_ptr->d_attr);
-//	if (p_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
-/* the_sandman: an attempt to actually diplay the mhd flickers on mimicking player using DS spell */
-	if (p_ptr->body_monster) {
+	/* the_sandman: an attempt to actually diplay the mhd flickers on mimicking player using DS spell */
+	if (p_ptr->body_monster)
 		get_monster_color(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
-#if 0 /* done couple of lines below */
-		if (p_ptr->tim_manashield > 10) {
-			pcolor = TERM_SHIELDM; //the_sandman: so we can have mhd monsters mimicked :)
-		}
-#endif
-	}
 
 	/* Wearing a costume */
-	if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
+	if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME))
 		get_monster_color(Ind, NULL, &r_info[p_ptr->inventory[INVEN_BODY].bpval], c_ptr, &pcolor, &dummy);
-	}
-
-	/* Bats are orange */
-	/* taking this out since bat parties
-	become hard to oversee. Mimicked bats stay orange,
-	that should be fine. (C. Blue)
-	if (p_ptr->fruit_bat) return TERM_ORANGE; */
-
-//	if (p_ptr->tim_mimic) pcolor = p_ptr->tim_mimic_what;
 
 	/* See vampires burn in the sun sometimes.. */
 	if (p_ptr->sun_burn && magik(33)) return TERM_FIRE;
 
 	/* Mana Shield and GOI also flicker */
-#if 1
-//	if ((p_ptr->tim_manashield > 10)) return p_ptr->cp_ptr->color + TERM_SHIELDM;
-//	if ((p_ptr->invuln > 5)) return p_ptr->cp_ptr->color + TERM_SHIELDI;
-	if (p_ptr->tim_manashield > 10) return TERM_SHIELDM;
-
-#if 0 /* shouldn't be necessary - mikaelh */
-//the_sandman: some redudant stuff, mebbe needs to be added here as the last colour possible
-	if (p_ptr->body_monster) {
-		get_monster_color(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
-		if (p_ptr->tim_manashield > 10) {
-			pcolor = TERM_SHIELDM;
-		}
-	}
+	/* NOTE: For the player looking at himself, this is done in lite_spot(),
+	         which is called from set_tim_manashield().  */
+#ifdef EXTENDED_TERM_COLOURS
+	if (!is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) {
+		if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
+		else if (p_ptr->tim_manashield) return TERM_NEXU;
+	} else
 #endif
+	if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
 
+#ifdef EXTENDED_TERM_COLOURS
+	if (!is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) {
+		if (p_ptr->invuln > 5) return TERM_SHIELDI;
+		else if(p_ptr->invuln) return TERM_NUKE;
+	} else
+#endif
 	if (p_ptr->invuln > 5) return TERM_SHIELDI;
-#else
-/*	if ((p_ptr->tim_manashield > 10) && (randint(2)==1)) {
-		byte a = p_ptr->cp_ptr->color;
-*/	if (p_ptr->tim_manashield > 10)
-/*		if (a!=TERM_VIOLET)
-		a=(randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
-		else
-		a=(randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
-		return a;*/
-		byte a = p_ptr->cp_ptr->color;
-		switch(randint(3)) {
-		case 1: a = TERM_VIOLET; break;
-		case 2: a = TERM_L_RED; break;
-		case 3: a = TERM_ORANGE; break;
-		}
-		return a;
-	}
-//	else if ((p_ptr->invuln > 5) && (randint(4)!=1)) {
-	else if (p_ptr->invuln > 5) {
-		byte a = p_ptr->cp_ptr->color;
-		switch(randint(5)) {
-		case 1: a = TERM_L_RED; break;
-		case 2: a = TERM_L_GREEN; break;
-		case 3: a = TERM_L_BLUE; break;
-		case 4: a = TERM_YELLOW; break;
-		case 5: a = TERM_VIOLET; break;
-/*              case 1: return (TERM_L_RED);
-		case 2: return (TERM_VIOLET);
-		case 3: return (TERM_RED);
-		case 4: return (TERM_L_DARK);
-		case 5: return (TERM_WHITE);
-*/		}
-		return a;
-	}
-#endif
 
 	/* Holy Martyr or shadow running */
 	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
@@ -3482,12 +3431,19 @@ void lite_spot(int Ind, int y, int x)
 				else a = TERM_L_DARK;
 			}
 			/* Mana Shield and GOI also flicker */
-			if ((p_ptr->tim_manashield > 10) && (randint(2) == 1)) {
-				/* prevent too much violet colour in our mix.. */
-				if (a != TERM_VIOLET)
-					a = (randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
-				else
-					a = (randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
+			if (p_ptr->tim_manashield && rand_int(2)) {
+				if (p_ptr->tim_manashield > 15) {
+					/* prevent too much violet colour in our mix.. */
+					if (a != TERM_VIOLET)
+						a = (randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
+					else
+						a = (randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
+				} else {
+					if (a != TERM_VIOLET)
+						a = TERM_BNW;
+					else
+						a = TERM_BNW;
+				}
 			}
 			if ((p_ptr->invuln > 5) && (randint(4) != 1)) {
 				switch(randint(5)) {
