@@ -432,6 +432,10 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		}
 		if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect + 15))) {
 			msg_print(Ind, "You deflect the attack!");
+#ifdef USE_SOUND_2010
+                        sound(Ind, "block_shield_projectile", NULL, SFX_TYPE_ATTACK, FALSE);
+#endif
+
 			continue;
 		}
 		if ((dodge > 0) && magik(dodge)) {
