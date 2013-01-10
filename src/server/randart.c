@@ -1844,7 +1844,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 
 	/* Ensure weapons have some bonus to hit & dam */
 	if ((a_ptr->tval == TV_DIGGING) || is_weapon(a_ptr->tval) ||
-	    (a_ptr->tval == TV_BOW)) {
+	    (a_ptr->tval == TV_BOW) || (a_ptr->tval == TV_BOOMERANG)) {
 		a_ptr->to_d += 1 + rand_int(20);
 		a_ptr->to_h += 1 + rand_int(20);
 	}

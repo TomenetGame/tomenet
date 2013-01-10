@@ -505,57 +505,40 @@ static bool object_easy_know(int i)
  *
  * XXX XXX XXX Off-load to "pref.prf" file
  */
-static byte default_tval_to_attr(int tval)
-{
-	switch (tval)
-	{
+static byte default_tval_to_attr(int tval) {
+	switch (tval) {
 		case TV_SKELETON:
 		case TV_BOTTLE:
 		case TV_JUNK:
 		case TV_GAME:
-		{
 			return (TERM_WHITE);
-		}
 
 		case TV_CHEST:
-		{
 			return (TERM_SLATE);
-		}
 
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_ARROW:
-		{
 			return (TERM_L_UMBER);
-		}
 
 		case TV_LITE:
-		{
 			return (TERM_YELLOW);
-		}
 
 		case TV_SPIKE:
-		{
 			return (TERM_SLATE);
-		}
 
+		case TV_BOOMERANG: /* maybe L_UMBER? */
 		case TV_BOW:
-		{
 			return (TERM_UMBER);
-		}
 
 		case TV_DIGGING:
-		{
 			return (TERM_SLATE);
-		}
 
 		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:
-		{
 			return (TERM_L_WHITE);
-		}
 
 		case TV_BOOTS:
 		case TV_GLOVES:
@@ -563,69 +546,45 @@ static byte default_tval_to_attr(int tval)
 		case TV_HELM:
 		case TV_SHIELD:
 		case TV_CLOAK:
-		{
 			return (TERM_L_UMBER);
-		}
 
 		case TV_SOFT_ARMOR:
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
-		{
 			return (TERM_SLATE);
-		}
 
                 case TV_GOLEM:
-		{
                         return (TERM_VIOLET);
-		}
 
 		case TV_AMULET:
-		{
 			return (TERM_ORANGE);
-		}
 
 		case TV_RING:
-		{
 			return (TERM_RED);
-		}
 
 		case TV_STAFF:
-		{
 			return (TERM_L_UMBER);
-		}
 
 		case TV_WAND:
-		{
 			return (TERM_L_GREEN);
-		}
 
 		case TV_ROD:
-		{
 			return (TERM_L_WHITE);
-		}
 
 		case TV_SCROLL:
 		case TV_PARCHMENT:
-		{
 			return (TERM_WHITE);
-		}
 
 		case TV_POTION:
 		case TV_POTION2:
 		case TV_BOOK:	/* Right? */
-		{
 			return (TERM_L_BLUE);
-		}
 
 		case TV_FLASK:
-		{
 			return (TERM_YELLOW);
-		}
 
 		case TV_FOOD:
-		{
 			return (TERM_L_UMBER);
-		}
 	}
 
 	return (TERM_WHITE);

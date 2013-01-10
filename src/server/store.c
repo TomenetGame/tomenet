@@ -962,7 +962,6 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_SWORD:
 				case TV_AXE:
 				case TV_MSTAFF:
-				case TV_BOOMERANG:
 				break;
 				default:
 				return (FALSE);
@@ -976,6 +975,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_BOLT:
 				case TV_ARROW:
 				case TV_BOW:
+				case TV_BOOMERANG:
 				break;
 				default:
 				return (FALSE);
