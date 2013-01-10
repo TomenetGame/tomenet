@@ -40,6 +40,9 @@ HEALING = add_spell
         ["spell"] = 	function()
                         if player.spell_project > 0 then
                                 fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(), player.spell_project, "")
+                        else
+                                fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(), 0, "")
+--                                hp_player(Ind, get_healing_power()) <- doesn't give a neat msg with numbers
                         end
 	end,
 	["info"] = 	function()
