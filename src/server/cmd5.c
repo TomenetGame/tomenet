@@ -839,55 +839,55 @@ void do_mimic_power_aux(int Ind, int dir)
     case 8:
         sprintf(p_ptr->attacker, " breathes acid for");
 	msg_print(Ind, "You breathe acid.");
-        fire_ball(Ind, GF_ACID, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
+        fire_ball(Ind, GF_ACID, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), rad, p_ptr->attacker);
         break;
 //#define RF4_BR_ELEC			0x00000200	/* Breathe Elec */
     case 9:
         sprintf(p_ptr->attacker, " breathes lightning for");
 	msg_print(Ind, "You breathe lightning.");
-        fire_ball(Ind, GF_ELEC, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
+        fire_ball(Ind, GF_ELEC, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), rad, p_ptr->attacker);
         break;
 //#define RF4_BR_FIRE			0x00000400	/* Breathe Fire */
     case 10:
         sprintf(p_ptr->attacker, " breathes fire for");
 	msg_print(Ind, "You breathe fire.");
-        fire_ball(Ind, GF_FIRE, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
+        fire_ball(Ind, GF_FIRE, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), rad, p_ptr->attacker);
         break;
 //#define RF4_BR_COLD			0x00000800	/* Breathe Cold */
     case 11:
         sprintf(p_ptr->attacker, " breathes frost for");
 	msg_print(Ind, "You breathe frost.");
-        fire_ball(Ind, GF_COLD, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
+        fire_ball(Ind, GF_COLD, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), rad, p_ptr->attacker);
         break;
 //#define RF4_BR_POIS			0x00001000	/* Breathe Poison */
     case 12:
         sprintf(p_ptr->attacker, " breathes gas for");
 	msg_print(Ind, "You breathe gas.");
-        fire_ball(Ind, GF_POIS, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
+        fire_ball(Ind, GF_POIS, dir, ((p_ptr->chp / 3) > 450) ? 450 : (p_ptr->chp / 3), rad, p_ptr->attacker);
         break;
 //#define RF4_BR_NETH			0x00002000	/* Breathe Nether */
     case 13:
         sprintf(p_ptr->attacker, " breathes nether for");
 	msg_print(Ind, "You breathe nether.");
-        fire_ball(Ind, GF_NETHER, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), rad, p_ptr->attacker);
+        fire_ball(Ind, GF_NETHER, dir, ((p_ptr->chp / 4) > 450) ? 450 : (p_ptr->chp / 4), rad, p_ptr->attacker);
         break;
 //#define RF4_BR_LITE			0x00004000	/* Breathe Lite */
     case 14:
         sprintf(p_ptr->attacker, " breathes light for");
 	msg_print(Ind, "You breathe light.");
-        fire_ball(Ind, GF_LITE, dir, ((p_ptr->chp / 3) > 400) ? 400 : (p_ptr->chp / 3), rad, p_ptr->attacker);
+        fire_ball(Ind, GF_LITE, dir, ((p_ptr->chp / 4) > 400) ? 400 : (p_ptr->chp / 4), rad, p_ptr->attacker);
         break;
 //#define RF4_BR_DARK			0x00008000	/* Breathe Dark */
     case 15:
         sprintf(p_ptr->attacker, " breathes darkness for");
 	msg_print(Ind, "You breathe darkness.");
-        fire_ball(Ind, GF_DARK, dir, ((p_ptr->chp / 3) > 400) ? 400 : (p_ptr->chp / 3) , rad, p_ptr->attacker);
+        fire_ball(Ind, GF_DARK, dir, ((p_ptr->chp / 4) > 400) ? 400 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
         break;
 //#define RF4_BR_CONF			0x00010000	/* Breathe Confusion */
     case 16:
         sprintf(p_ptr->attacker, " breathes confusion for");
 	msg_print(Ind, "You breathe confusion.");
-        fire_ball(Ind, GF_CONFUSION, dir, ((p_ptr->chp / 3) > 400) ? 400 : (p_ptr->chp / 3), rad, p_ptr->attacker);
+        fire_ball(Ind, GF_CONFUSION, dir, ((p_ptr->chp / 4) > 400) ? 400 : (p_ptr->chp / 4), rad, p_ptr->attacker);
         break;
 //#define RF4_BR_SOUN			0x00020000	/* Breathe Sound */
     case 17:
@@ -899,7 +899,7 @@ void do_mimic_power_aux(int Ind, int dir)
     case 18:
         sprintf(p_ptr->attacker, " breathes chaos for");
 	msg_print(Ind, "You breathe chaos.");
-        fire_ball(Ind, GF_CHAOS, dir, ((p_ptr->chp / 4) > 500) ? 500 : (p_ptr->chp / 4), rad, p_ptr->attacker);
+        fire_ball(Ind, GF_CHAOS, dir, ((p_ptr->chp / 4) > 450) ? 450 : (p_ptr->chp / 4), rad, p_ptr->attacker);
         break;
 //#define RF4_BR_DISE			0x00080000	/* Breathe Disenchant */
     case 19:
@@ -917,7 +917,7 @@ void do_mimic_power_aux(int Ind, int dir)
     case 21:
         sprintf(p_ptr->attacker, " breathes time for");
 	msg_print(Ind, "You breathe time.");
-        fire_ball(Ind, GF_TIME, dir, ((p_ptr->chp / 4) > 200) ? 200 : (p_ptr->chp / 4), rad, p_ptr->attacker);
+        fire_ball(Ind, GF_TIME, dir, ((p_ptr->chp / 3) > 200) ? 200 : (p_ptr->chp / 3), rad, p_ptr->attacker);
         break;
 //#define RF4_BR_INER			0x00400000	/* Breathe Inertia */
     case 22:
@@ -935,7 +935,7 @@ void do_mimic_power_aux(int Ind, int dir)
     case 24:
         sprintf(p_ptr->attacker, " breathes shards for");
 	msg_print(Ind, "You breathe shards.");
-        fire_ball(Ind, GF_SHARDS, dir, ((p_ptr->chp / 4) > 300) ? 300 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
+        fire_ball(Ind, GF_SHARDS, dir, ((p_ptr->chp / 4) > 350) ? 350 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
         break;
 //#define RF4_BR_PLAS			0x02000000	/* Breathe Plasma */
     case 25:
@@ -953,7 +953,7 @@ void do_mimic_power_aux(int Ind, int dir)
     case 27:
         sprintf(p_ptr->attacker, " breathes mana for");
 	msg_print(Ind, "You breathe mana.");
-        fire_ball(Ind, GF_MANA, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3) , rad, p_ptr->attacker);
+        fire_ball(Ind, GF_MANA, dir, ((p_ptr->chp / 3) > 250) ? 250 : (p_ptr->chp / 3) , rad, p_ptr->attacker);
         break;
 /* RF4_BR_DISI */
     case 28:
@@ -967,7 +967,7 @@ void do_mimic_power_aux(int Ind, int dir)
 	sprintf(p_ptr->attacker, " breathes toxic waste for");
 	msg_print(Ind, "You breathe toxic waste.");
 	fire_ball(Ind, GF_NUKE, dir,
-	    ((p_ptr->chp / 3) > 800 ? 800 : (p_ptr->chp / 3)), rad, p_ptr->attacker);
+	    ((p_ptr->chp / 3) > 450 ? 450 : (p_ptr->chp / 3)), rad, p_ptr->attacker);
 	break;
 /* RF4_BOULDER */
     case 31:
