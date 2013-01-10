@@ -2587,7 +2587,7 @@
 #define is_cheap_misc(tval) \
 	(is_ammo(tval) || (tval) == TV_FIRESTONE || (tval) == TV_SPIKE || (tval) == TV_JUNK)
 #define is_ranged_item(Ind, o_ptr) \
-	((o_ptr)->tval == TV_BOW || \
+	((o_ptr)->tval == TV_BOW || (o_ptr)->tval == TV_BOOMERANG || \
 	is_ammo((o_ptr)->tval) || \
 	(o_ptr)->tval == TV_BOOK || \
 	(o_ptr)->tval == TV_WAND || \
