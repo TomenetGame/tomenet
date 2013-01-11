@@ -710,7 +710,10 @@ static bool get_stats(int Ind, int stat_order[6])
 		}
 
 		/* If client has been hacked or a version desync error occured, quit. */
-		if (free_points < 0) return FALSE;
+		if (free_points < 0) {
+			s_printf("EXPLOIT: %s allocates too many (+%d) stat points.\n", p_ptr->name, -free_points);
+			return FALSE;
+		}
 
 		/* Apply selected stats */
 		for (i = 0; i < 6; i++) {
