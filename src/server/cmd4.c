@@ -458,6 +458,9 @@ void do_cmd_check_uniques(int Ind, int line)
 	fd_kill(file_name);
 }
 
+/* KEEP THESE ANTI_MAXPLV_ DEFINES CONSISTENT WITH party.c! */
+#define ANTI_MAXPLV_EXPLOIT
+#define ANTI_MAXPLV_EXPLOIT_SOFTLEV
 static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, char attr, bool admin)
 {
 	player_type *p_ptr = Players[Ind];
@@ -471,17 +474,46 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	bool cant_iddc0 = !iddc0 && p_ptr->max_exp;
 	char attr_p[3];
 
-	if (attr == 'w' &&
-	    ((p_ptr->total_winner && q_ptr->total_winner && ABS(q_ptr->lev - p_ptr->lev) <= MAX_KING_PARTY_LEVEL_DIFF) ||
-	    ABS(q_ptr->lev - p_ptr->lev) <= MAX_PARTY_LEVEL_DIFF) &&
-	    !compat_pmode(Ind, q_ptr->Ind, FALSE) &&
-	    !((iddc && cant_iddc0) || (iddc0 && cant_iddc))) /* if one of them is in iddc and the other cant go there, we cant party */
-		strcpy(attr_p, "\377B");
-	else	strcpy(attr_p, "");
-
+	attr_p[0] = 0;
+	if (attr == 'w') {
+		/* display level in light blue for partyable players */
+		if (p_ptr->total_winner == q_ptr->total_winner &&
+		    ((p_ptr->total_winner && ABS(q_ptr->max_lev - p_ptr->max_lev) <= MAX_KING_PARTY_LEVEL_DIFF) ||
+		    ABS(q_ptr->max_lev - p_ptr->max_lev) <= MAX_PARTY_LEVEL_DIFF) &&
+		    !compat_pmode(Ind, q_ptr->Ind, FALSE) &&
+		    !((iddc && cant_iddc0) || (iddc0 && cant_iddc))) /* if one of them is in iddc and the other cant go there, we cant party */
+			strcpy(attr_p, "\377B");
 #ifdef IDDC_CHAR_COLOUR_INDICATOR
-	if (iddc && attr == 'w') attr = 's';
+		if (iddc) attr = 's';
 #endif
+	} else if (attr == 'B') {
+		/* display level in grey for party members out of our exp-sharing range.
+		   NOTE: This won't work well with ANTI_MAXPLV_EXPLOIT code except for
+		         ANTI_MAXPLV_EXPLOIT_SOFTLEV, which fortunately is the default.
+		   NOTE2: Some of these rules might produce asymmetrical colouring,
+		          because they ask 'will _I_ get exp from _his_ kills'. */
+		if ((p_ptr->total_winner && !(q_ptr->total_winner || q_ptr->once_winner)) ||
+		    (q_ptr->total_winner && !(p_ptr->total_winner || p_ptr->once_winner)) ||
+#ifdef ANTI_MAXPLV_EXPLOIT
+ #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
+		    (p_ptr->total_winner && ABS(p_ptr->max_lev - (q_ptr->max_plv - (q_ptr->max_plv - q_ptr->max_lev) / 2)) > MAX_KING_PARTY_LEVEL_DIFF) ||
+		    (!p_ptr->total_winner && ABS(p_ptr->max_lev - (q_ptr->max_plv - (q_ptr->max_plv - q_ptr->max_lev) / 2)) > MAX_PARTY_LEVEL_DIFF))
+ #else
+  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
+		    /* let's just have no actual effect on level here */
+		    (p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) ||
+		    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF))
+  #else
+		    (p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_plv) > MAX_KING_PARTY_LEVEL_DIFF) ||
+		    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_plv) > MAX_PARTY_LEVEL_DIFF))
+  #endif
+ #endif
+#else
+		    (p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) ||
+		    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF))
+#endif
+			strcpy(attr_p, "\377s");
+	}
 
 	/* Prepare title at this point already */
 	p = get_ptitle(q_ptr, FALSE);
