@@ -16,6 +16,8 @@
  * formula: (PARTY_XP_BOOST+1)/(PARTY_XP_BOOST + (# of applicable players))
  */
 #define PARTY_XP_BOOST	(cfg.party_xp_boost)
+
+/* KEEP CONSISTENT WITH cmd4.c */
 /* prevent exploit strategies */
 #define ANTI_MAXPLV_EXPLOIT	/* prevent exploiting by having a powerful char losing levels deliberately to get in range with lowbies to boost */
 // #define ANTI_MAXPLV_EXPLOIT_SOFTLEV	/* be somewhat less strict (average between max_plv and current max_lev) */
@@ -1855,14 +1857,14 @@ void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...)
     -APD-
     */
 
-static bool players_in_level(int Ind, int Ind2)
-{
-	if (Players[Ind2]->total_winner) {
-	        if ((Players[Ind]->lev - Players[Ind2]->lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
-	        if ((Players[Ind2]->lev - Players[Ind]->lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
+/* This helper function doesn't care about whether winners, fallen winners and non-winners
+   are actually allowed to share exp or not. That is handled in party_gain_exp().
+   This should maybe be changed. */
+static bool players_in_level(int Ind, int Ind2) {
+	if (Players[Ind]->total_winner && Players[Ind2]->total_winner) {
+	        if (ABS(Players[Ind]->lev - Players[Ind2]->lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
 	} else {
-	        if ((Players[Ind]->lev - Players[Ind2]->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
-	        if ((Players[Ind2]->lev - Players[Ind]->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
+	        if (ABS(Players[Ind]->lev - Players[Ind2]->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
 	}
         return TRUE;
 }
@@ -1935,8 +1937,8 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 		   This is actually important because winners get special features
 		   such as super heavy armour and royal stances which are aimed at
 		   nether realm, and are not meant to influence pre-king gameplay. */
-		if (Players[Ind]->total_winner &&
-		    !(p_ptr->total_winner || p_ptr->once_winner))
+		if ((Players[Ind]->total_winner && !(p_ptr->total_winner || p_ptr->once_winner)) ||
+		    (p_ptr->total_winner && !(Players[Ind]->total_winner || Players[Ind]->once_winner)))
 			continue;
 
 		/* Check for existance in the party */
