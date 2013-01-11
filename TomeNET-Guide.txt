@@ -11994,21 +11994,22 @@ Here you can..
     levels to each other and on the same dungeon/tower level respectively
     the same worldmap/wilderness sector. A slight experience bonus is applied
     for killing monsters in a party!
-    The range is 11 levels instead of 7 for winners (queens/kings/empresses/
+    The range is 11 levels instead of 7 for "winners" (queens/kings/empresses/
     emperors).
-    Winners don't share experience with non-winner characters.
+    Winners don't share experience with non-winner characters. They do share
+    experience with fallen winners though, within 7 levels.
 
     Monsters will usually remember the highest player they have met and not
     give experience nor kill credit to players who are more than the 8
-    (exp-sharing level limit plus 1) levels away from it. So, avoid being on
-    the same dungeon floor as teammates whose character level differs by more
-    than 8 levels from yours.
+    (exp-sharing level limit plus 1) levels away from it, 12 for winners.
+    So, avoid being on the same dungeon floor as teammates whose character
+    level differs by more than 8 levels (12 for winners) from yours.
 
     Similarly, a player who received a power-up spell from another player
-    who is higher in levels than the allowed difference of 8, may cause that
-    player to not gain any experience or kill credit until a number of turns
-    (usually 200) has passed and the buff spell has worn off.
-    Kings/queens/emperors/empresses are free from those restrictions though!
+    who is higher in levels than the allowed difference of 8 (12 for winners),
+    may cause that player to not gain any experience or kill credit until a
+    number of turns (usually 200) has passed and the buff spell has worn off.
+    Kings/queens/emperors/empresses are freed from this restriction.
 
     Note that there are two exceptions to these rules:
     -Morgoth, Lord of Darkness (Game boss)
@@ -12025,9 +12026,9 @@ Here you can..
        50%. So he'd be treated like a 40 + (45-40)/2 = 42 (rounded down) player
        and player B wouldn't get any exp since he's not level 35 or higher.
     b) if player B is way below player A's top level (default is more than 5
-       levels) the exp he gets will be cut down depending on the difference
-       between player B's current level and player A's top level, but he still
-       receives exp.
+       levels beyond the level limit for sharing experience) the exp he gets
+       will be cut down depending on the difference between player B's current
+       level and player A's top level, but he still receives exp.
     c) the server only looks at the highest reached level and compares the
        current level of all team members to it. So it would compare player B's
        33 to player A's 45 when it wants to determine if player B receives a
