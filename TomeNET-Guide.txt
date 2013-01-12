@@ -2984,7 +2984,7 @@ It is recommended to use only race/class/account/character preference files
 for storing your macros.
 
 
-Command macros:  !WORKS DIFFERENT FROM MOST ROGUE-LIKES!
+Command macros:
 ---------------
 Command macros are only executed if the game isn't currently waiting for a
 specific input, for example "quaff which potion?" or while you're typing chat
