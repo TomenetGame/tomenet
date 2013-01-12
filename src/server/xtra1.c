@@ -3430,7 +3430,6 @@ void calc_boni(int Ind)
 		p_ptr->resist_fear = TRUE;
 		if (p_ptr->lev >= 5) p_ptr->resist_blind = TRUE;
 		if (p_ptr->lev >= 20) p_ptr->reflect = TRUE;
-		//if (p_ptr->lev >= 25) p_ptr->resist_mana = TRUE;
 		break;
 	}
 
