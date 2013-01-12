@@ -16,6 +16,7 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+#include <dirent.h>
 
 /*
  * Some machines have a "main()" function in their "main-xxx.c" file,
@@ -103,6 +104,64 @@ static void init_stuff(void)
 }
 
 
+/*
+ * The server config files were moved to lib/config with version 4.5.2.
+ * The account file was also moved to lib/save. This code will
+ * automatically create lib/config and move files to their new
+ * locations. - mikaelh
+ */
+static void migrate_files(void)
+{
+	char buf[1024];
+	int errval;
+	DIR *dp;
+	FILE *fp;
+
+	/* Check that lib/config exists */
+	dp = opendir(ANGBAND_DIR_CONFIG);
+	if (!dp) {
+		/* Try to create lib/config */
+		if (mkdir(ANGBAND_DIR_CONFIG, 0777) != 0) {
+			errval = errno;
+			fprintf(stderr, "Failed to create directory \"%s\"! (errno = %d)", ANGBAND_DIR_CONFIG, errval);
+		} else {
+			/* Try to move files to lib/config */
+			path_build(buf, 1024, ANGBAND_DIR_CONFIG, "badnames.txt");
+			rename("badnames.txt", buf);
+
+			path_build(buf, 1024, ANGBAND_DIR_CONFIG, "nonswearing.txt");
+			rename("nonswearing.txt", buf);
+
+			path_build(buf, 1024, ANGBAND_DIR_CONFIG, "swearing.txt");
+			rename("swearing.txt", buf);
+
+			path_build(buf, 1024, ANGBAND_DIR_CONFIG, "tomenet.cfg");
+			rename("tomenet.cfg", buf);
+		}
+	} else {
+		closedir(dp);
+	}
+
+	/* Check the new location of account file */
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "r");
+	if (!fp) {
+		/* Check the old location */
+		fp = fopen("tomenet.acc", "r");
+		if (fp) {
+			fclose(fp);
+
+			/* Move from old to new location */
+			if (rename("tomenet.acc", buf) != 0) {
+				fprintf(stderr, "Could not move tomenet.acc to new location in %s!\n", buf);
+			}
+		}
+	} else {
+		fclose(fp);
+	}
+}
+
+
 static void writepid(char *str)
 {
 	FILE *fp;
@@ -180,6 +239,9 @@ int main(int argc, char *argv[])
 
 	/* Get the file paths */
 	init_stuff();
+
+	/* Possibly move the server config files and the account file */
+	migrate_files();
 
 	/* Initialize the server log file */
 	path_build(buf, 1024, ANGBAND_DIR_DATA, "tomenet.log");
