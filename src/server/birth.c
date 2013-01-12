@@ -283,6 +283,7 @@ static hist_type bg[] =
 
         {"You have ",						100, 92, 93, 50 },
 
+#ifndef ENABLE_DRACONIAN_TRAITS
         {"charcoal wings, charcoal skin and a smoke-gray belly. ",11, 93, 94, 50 },
         {"bronze wings, bronze skin, and a copper belly. ",	16, 93, 94, 50 },
         {"golden wings, and golden skin. ",			24, 93, 94, 50 },
@@ -297,7 +298,23 @@ static hist_type bg[] =
         {"red wings, and red skin. ",				88, 93, 94, 50 },
         {"black wings, and black skin. ",			94, 93, 94, 50 },
         {"metallic skin, and shining wings. ",			100, 93, 94, 55},
-
+#else
+	//changed social class values for draconian trait implementation
+        {"blue wings, blue skin, and a cyan belly. ",		6, 93, 94, 50 },
+        {"white wings, and white skin. ",			8, 93, 94, 50 },
+        {"red wings, and red skin. ",				21, 93, 94, 50 },
+        {"charcoal wings, charcoal skin and a smoke-gray belly. ",32, 93, 94, 50 },
+        {"black wings, black skin, and a white belly. ",	36, 93, 94, 55 },
+        {"black wings, and black skin. ",			42, 93, 94, 50 },
+        {"green wings, green skin and yellow belly. ",		59, 93, 94, 50 },
+        {"green wings, and green skin. ",			69, 93, 94, 50 },
+        {"multi-hued wings, and multi-hued skin. ",		70, 93, 94, 60 },
+        {"bronze wings, bronze skin, and a copper belly. ",	75, 93, 94, 50 },
+        {"metallic skin, and shining wings. ",			81, 93, 94, 55},
+        {"golden wings, and golden skin. ",			89, 93, 94, 60 },
+        {"brown wings, and brown skin. ",			93, 93, 94, 50 },
+        {"lavender wings, lavender skin, and a white belly. ",	100, 93, 94, 60 },
+#endif
 #if 0
 	{"You have a Green Eagle.",				30, 94, 0, 40},
 	{"You have a Blue Eagle.",				55, 94, 0, 60},
@@ -893,6 +910,27 @@ void get_history(int Ind)
 	while (chart) {
 		/* Start over */
 		i = 0;
+
+#ifdef ENABLE_DRACONIAN_TRAITS
+		if (p_ptr->prace == RACE_DRACONIAN && chart == 93)
+			/* Hack; Fixed nobility, based on trait choice */
+			switch (p_ptr->ptrait) {
+			case TRAIT_BLUE: roll = 6; break;
+			case TRAIT_WHITE: roll = 8; break;
+			case TRAIT_RED: roll = 21; break;
+			case TRAIT_BLACK: roll = 22 + rand_int(21); break;
+			case TRAIT_GREEN: roll = 43 + rand_int(27); break;
+			case TRAIT_MULTI: roll = 70; break;
+			case TRAIT_BRONZE: roll = 75; break;
+			case TRAIT_SILVER: roll = 81; break;
+			case TRAIT_GOLD: roll = 89; break;
+			case TRAIT_LAW: roll = 93; break;
+			case TRAIT_CHAOS: roll = 70; break;
+			case TRAIT_BALANCE: roll = 100; break;
+			default: roll = randint(100); break;
+			}
+		else
+#endif
 
 		/* Roll for nobility */
 		roll = randint(100);
