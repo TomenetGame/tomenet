@@ -352,7 +352,7 @@ G:#:w
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | DOOR
 F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:TUNNELABLE | LAMP_LITE
 D:1:You tunnel.
 
 # 0x31 --> rubble
@@ -361,7 +361,7 @@ N:49:pile of rubble
 G:::w
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE
 F:CAN_FLY | SUPPORT_LIGHT
-F:TUNNELABLE
+F:TUNNELABLE | LAMP_LITE
 D:1:You dig in the rubble.
 
 # 0x32 --> magma vein
@@ -369,7 +369,7 @@ D:1:You dig in the rubble.
 N:50:magma vein
 G:%:s
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the magma vein.
 
 # 0x33 --> quartz vein
@@ -419,7 +419,7 @@ D:1:You tunnel into the quartz vein.
 N:56:granite wall
 G:#:s
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the granite wall.
 
 # 0x39 --> granite wall -- inner
@@ -428,7 +428,7 @@ N:57:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the granite wall.
 
 # 0x3A --> granite wall -- outer
@@ -437,7 +437,7 @@ N:58:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the granite wall.
 
 # 0x3B --> granite wall -- solid
@@ -446,7 +446,7 @@ N:59:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the granite wall.
 
 # 0x3C --> permanent wall -- basic (perm)
@@ -454,7 +454,7 @@ D:1:You tunnel into the granite wall.
 N:60:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 # 0x3D --> permanent wall -- inner (perm)
 
@@ -462,7 +462,7 @@ N:61:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 # 0x3E --> permanent wall -- outer (perm)
 
@@ -470,7 +470,7 @@ N:62:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 # 0x3F --> permanent wall -- solid (perm)
 
@@ -478,7 +478,7 @@ N:63:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 N:64:rune of warding
 G:;:B
@@ -532,22 +532,22 @@ F:BLOCK_CONTACT
 N:75:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 N:76:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 N:77:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 N:78:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 N:79:permanent clear wall
 G: :w

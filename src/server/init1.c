@@ -973,6 +973,49 @@ static cptr f_info_flags1[] =
 	"BLOCK_CONTACT"	/* like BLOCK_LOS, but allows the player to actually see across it */
 };
 
+static cptr f_info_flags2[] =
+{
+	"LAMP_LITE",
+	"XXX",
+	"XXX",
+	"XXX",
+
+	"XXX",
+	"XXX",
+	"XXX",
+	"XXX",
+
+	"XXX",
+	"XXX",
+	"XXX",
+	"XXX",
+
+	"XXX",
+	"XXX",
+	"XXX",
+	"XXX",
+
+	"XXX",
+	"XXX",
+	"XXX",
+	"XXX",
+
+	"XXX",
+	"XXX",
+	"XXX",
+	"XXX",
+
+	"XXX",
+	"XXX",
+	"XXX",
+	"XXX",
+
+	"XXX",
+	"XXX",
+	"XXX",
+	"XXX"
+};
+
 #if 1	// flags from ToME, for next expansion
 
 /*
@@ -1955,11 +1998,13 @@ static errr grab_one_feature_flag(feature_type *f_ptr, cptr what)
 	int i;
 
 	/* Check flags1 */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, f_info_flags1[i]))
-		{
+	for (i = 0; i < 32; i++) {
+                if (streq(what, f_info_flags1[i])) {
                         f_ptr->flags1 |= (1L << i);
+			return (0);
+		}
+                if (streq(what, f_info_flags2[i])) {
+                        f_ptr->flags2 |= (1L << i);
 			return (0);
 		}
 	}

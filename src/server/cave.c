@@ -2280,44 +2280,10 @@ static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y,
 	/* To use always the same feats for this everytime the player
 	   enters a worldmap sector, we seed the RNG with that particular
 	   worldmap coords. */
-#if 0
-	Rand_quick = TRUE;
-	Rand_value = wpos->wy +	wpos->wx + y + x;
-#endif
-#if 0
-	Rand_quick = TRUE;
-	Rand_value = wpos->wy * (MAX_WILD_X * 64 + 1) * (MAX_HGT * 8 + 2) * (MAX_WID * 2 + 2) +
-		wpos->wx * (MAX_HGT * 8 + 2) * (MAX_WID * 2 + 2) +
-		y * (MAX_WID * 2 + 2) +
-		x;
-#endif
-#if 0
-	Rand_quick = FALSE;
-	Rand_place = wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
-		wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
-		y * (MAX_WID + 2) +
-		x;
-#endif
-#if 0
-	Rand_quick = FALSE;
-	Rand_state_init(wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
-		wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
-		y * (MAX_WID + 2) +
-		x);
-#endif
-#if 0
-	Rand_quick = TRUE;
-	Rand_value = wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
-		wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
-		y * (MAX_WID + 2) +
-		x;
-#endif
-#if 1
 	Rand_quick = TRUE;
 	/* My attempt to create something chaotic - mikaelh */
 	Rand_value = (3623 * wpos->wy + 29753) * (2843 * wpos->wx + 48869) +
 		(1741 * y + 22109) * y * x + (x + 96779) * x + 42;
-#endif
 
 
 	/* World surface manipulation */
@@ -2857,7 +2823,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 
 			/* Special lighting effects */
-			if (p_ptr->view_granite_lite && (a == TERM_WHITE) && (feat >= FEAT_SECRET)) {
+			if (p_ptr->view_granite_lite && (f_ptr->flags2 & FF2_LAMP_LITE)) {
 				/* Handle "blind" */
 				if (p_ptr->blind) {
 					/* Use "dark gray" */
@@ -2869,7 +2835,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					/* Torch lite */
 					if (p_ptr->view_yellow_lite) {
 						/* Use "yellow" */
-						a = TERM_YELLOW;
+						a = TERM_YELLOW;//TERM_ORANGE; hm, not quite
 					}
 				}
 
@@ -2959,7 +2925,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			if (rand_int(8) != 1)
 				a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
-			
+
 			(*ap) = a;
 		}
 #if 1
