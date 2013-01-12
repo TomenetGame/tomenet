@@ -2432,7 +2432,9 @@ static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y,
 		}
 
 		/* Darkness on the world surface at night. Darken all colours. */
-		if (night_surface && !(c_ptr->info & (CAVE_GLOW | CAVE_LITE))) {
+		if (night_surface &&
+		    (!(c_ptr->info & (CAVE_GLOW | CAVE_LITE)) ||
+		    (f_info[c_ptr->feat].flags2 & FF2_NIGHT_DARK))) {
 			switch (color) {
 			case TERM_DARK: color = TERM_DARK; break;
 			case TERM_WHITE: color = TERM_SLATE; break;

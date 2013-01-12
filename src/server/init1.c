@@ -977,7 +977,7 @@ static cptr f_info_flags2[] =
 {
 	"LAMP_LITE",
 	"LAMP_LITE_SNOW",
-	"XXX",
+	"NIGHT_DARK",
 	"XXX",
 
 	"XXX",
