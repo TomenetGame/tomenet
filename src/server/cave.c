@@ -147,7 +147,7 @@ byte level_down_x(struct worldpos *wpos)
 {
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz==0) return(wild->dn_x); 
+	if (wpos->wz==0) return(wild->dn_x);
 	return(wpos->wz>0?wild->tower->level[wpos->wz-1].dn_x:wild->dungeon->level[ABS(wpos->wz)-1].dn_x);
 }
 byte level_down_y(struct worldpos *wpos)
@@ -434,8 +434,8 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 			d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 		else
 			d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
-	
-		
+
+
 		l_ptr = &d_ptr->level[ABS(wpos->wz)-1];
 
 		l_ptr->ondepth=(inc?l_ptr->ondepth+value:value);
@@ -574,7 +574,7 @@ void check_Pumpkin(void) {
 }
 
 /* This lets Morgoth become stronger, weaker or teleport himself away if
- * a King/Queen joins his level or if a player enters it who hasn't killed 
+ * a King/Queen joins his level or if a player enters it who hasn't killed
  * Sauron, the Sorceror yet - C. Blue
  */
 void check_Morgoth(int Ind)
@@ -766,7 +766,7 @@ void check_Morgoth(int Ind)
 				m_ptr->hp -= (tmphp - m_ptr->maxhp);
 			}
 			m_ptr->maxhp = tmphp;
-			if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp; 
+			if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
 			m_ptr->mspeed -= 6;
 			m_ptr->speed -= 6; /* also adjust base speed, only important for aggr-haste */
 
@@ -1655,7 +1655,7 @@ static void image_random(byte *ap, char *cp)
 }
 
 #ifndef CLIENT_SHIMMER
-/* 
+/*
  * Some eye-candies from PernAngband :)		- Jir -
  */
 char get_shimmer_color()
@@ -1681,15 +1681,15 @@ char get_shimmer_color()
 }
 #endif
 
-/* 
- * Table of breath colors.  Must match listings in a single set of 
+/*
+ * Table of breath colors.  Must match listings in a single set of
  * monster spell flags.
  *
- * The value "255" is special.  Monsters with that kind of breath 
+ * The value "255" is special.  Monsters with that kind of breath
  * may be any color.
  */
 #if 0 /* old */
-static byte breath_to_attr[32][2] = 
+static byte breath_to_attr[32][2] =
 {
 	{  0,  0 },
 	{  0,  0 },
@@ -1726,7 +1726,7 @@ static byte breath_to_attr[32][2] =
 };
 #else
 /* new table that uses animated TERM_ colour codes - C. Blue */
-static byte breath_to_attr[32][2] = 
+static byte breath_to_attr[32][2] =
 {
 	{  0, 0},
 	{  0, 0},
@@ -1765,8 +1765,8 @@ static byte breath_to_attr[32][2] =
 /*
  * Multi-hued monsters shimmer acording to their breaths.
  *
- * If a monster has only one kind of breath, it uses both colors 
- * associated with that breath.  Otherwise, it just uses the first 
+ * If a monster has only one kind of breath, it uses both colors
+ * associated with that breath.  Otherwise, it just uses the first
  * color for any of its breaths.
  *
  * If a monster does not breath anything, it can be any color.
@@ -1832,8 +1832,8 @@ static byte multi_hued_attr(monster_race *r_ptr)
 			stored_colors++;
 		}
 
-		/* 
-		 * Remember (but do not immediately store) the second color 
+		/*
+		 * Remember (but do not immediately store) the second color
 		 * of the first breath.
 		 */
 		if (breaths == 1) {
@@ -2199,7 +2199,7 @@ static byte player_color(int Ind)
 			case 2:
 				pcolor = TERM_L_BLUE;
 				break;
-			case 3: 
+			case 3:
 				pcolor = TERM_YELLOW;
 				break;
 			case 4:
@@ -2371,7 +2371,7 @@ static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y,
 					case 0:
 						color = TERM_L_GREEN; break;
 					case 1: case 2:
-						if (c_ptr->info & CAVE_LITE) color = TERM_YELLOW; 
+						if (c_ptr->info & CAVE_LITE) color = TERM_YELLOW;
 						else color = TERM_L_UMBER;
 								break;
 					case 3: case 4:
@@ -2403,7 +2403,7 @@ static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y,
 					case 0: case 1: case 2:
 						color = TERM_GREEN; break;
 					case 3: case 4:
-						if (c_ptr->info & CAVE_LITE) color = TERM_L_UMBER; 
+						if (c_ptr->info & CAVE_LITE) color = TERM_L_UMBER;
 						else color = TERM_UMBER;
 						break;
 					case 5: case 6:
@@ -2597,7 +2597,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	char c;
 
 	cave_type **zcave;
-	if (!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* Get the cave */
 	c_ptr = &zcave[y][x];
@@ -2613,8 +2613,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	/* Floors (etc) */
 	/* XXX XXX Erm, it is DIRTY.  should be replaced soon */
 //	if (feat <= FEAT_INVIS)
-	if (f_ptr->flags1 & (FF1_FLOOR))
-	{
+	if (f_ptr->flags1 & (FF1_FLOOR)) {
 		/* Memorized (or visible) floor */
 		/* Hack -- space are visible to the dungeon master */
 		if (((*w_ptr & CAVE_MARK) ||
@@ -2657,20 +2656,15 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) a = get_rune_color(Ind, cs_ptr->sc.rune.typ);
 
 			/* Hack to display detected traps */
-			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)))
-			{
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 				int t_idx = cs_ptr->sc.trap.t_idx;
-				if (cs_ptr->sc.trap.found)
-				{
+				if (cs_ptr->sc.trap.found) {
 					/* Hack -- random hallucination */
-					if (p_ptr->image)
-					{
+					if (p_ptr->image) {
 /*						image_random(ap, cp); */
 						image_object(ap, cp);
 						a = randint(15);
-					}
-					else
-					{
+					} else {
 						/* If trap isn't on door display it */
 						/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
 						(*cp) = '^';
@@ -2681,66 +2675,77 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 
 			/* Quick Hack -- shop */
-			if ((cs_ptr = GetCS(c_ptr, CS_SHOP)))
-			{
+			if ((cs_ptr = GetCS(c_ptr, CS_SHOP))) {
 				(*cp) = st_info[cs_ptr->sc.omni].d_char;
 				a = st_info[cs_ptr->sc.omni].d_attr;
+
+				a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
 			}
 
 			/* apply colour to OPEN house doors (which have FF1_FLOOR,
 			   are hence separated from close house doors - C. Blue */
-			else if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR)))
+			else if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
 				a = access_door_colour(Ind, cs_ptr->sc.ptr);
 
+				a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
+			}
+
 			/* Special lighting effects */
-			else if (p_ptr->view_special_lite && (a == TERM_WHITE))
-			{
-				/* Handle "blind" */
-				if (p_ptr->blind)
-				{
-					/* Use "dark gray" */
-					a = TERM_L_DARK;
-				}
+			else if (p_ptr->view_special_lite &&
+			    ((f_ptr->flags2 & FF2_LAMP_LITE) || (f_ptr->flags2 & FF2_LAMP_LITE_SNOW))) {
+				a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
 
-				/* Handle "torch-lit" grids */
-				else if (c_ptr->info & CAVE_LITE && *w_ptr & CAVE_VIEW)
-				{
-					/* Torch lite */
-					if (p_ptr->view_yellow_lite)
-					{
-						/* Use "yellow" */
-						a = TERM_YELLOW;
+				if (!(f_ptr->flags2 & FF2_LAMP_LITE_SNOW) || a == TERM_WHITE || a == TERM_L_WHITE) /* dirty snow and clean slow :) */
+				    /* && season == SEASON_WINTER (should be covered by TERM_WHITE check actually) */ {
+					/* Handle "blind" */
+					if (p_ptr->blind) {
+						/* Use "dark gray" */
+						a = TERM_L_DARK;
 					}
-				}
 
-				/* Handle "dark" grids */
-				else if (!(c_ptr->info & CAVE_GLOW))
-				{
-					/* Use "dark gray" */
-					a = TERM_L_DARK;
-				}
+					/* Handle "torch-lit" grids */
+					else if (c_ptr->info & CAVE_LITE && *w_ptr & CAVE_VIEW) {
+						/* Torch lite */
+						if (p_ptr->view_yellow_lite) {
+							/* Use "yellow" */
+							a = TERM_YELLOW;
+						}
+					}
 
-				/* Handle "out-of-sight" grids */
-				else if (!(*w_ptr & CAVE_VIEW))
-				{
-					/* Special flag */
-					if (p_ptr->view_bright_lite)
-					{
-						/* Use "gray" */
-						a = TERM_SLATE;
+					/* Handle "dark" grids */
+					else if (!(c_ptr->info & CAVE_GLOW)) {
+						/* Use "dark gray" */
+						a = TERM_L_DARK;
+					}
+
+					/* Handle "out-of-sight" grids */
+					else if (!(*w_ptr & CAVE_VIEW)) {
+						/* Special flag */
+						if (p_ptr->view_bright_lite) {
+							/* Use "gray" */
+							a = TERM_SLATE;
+						}
 					}
 				}
 			}
-
-			a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
+#if 0
+			else if (p_ptr->view_special_lite) {
+				/* Handle "dark" grids */
+				if (!(c_ptr->info & CAVE_GLOW)) {
+					/* Use "dark gray" */
+					a = TERM_L_DARK;
+				}
+				a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
+			}
+#endif
+			else a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
 
 			/* The attr */
 			(*ap) = a;
 		}
 
 		/* Unknown */
-		else
-		{
+		else {
 			/* Access darkness */
 			f_ptr = &f_info[FEAT_NONE];
 
@@ -2768,9 +2773,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			//if (feat == FEAT_SECRET && (cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) {
 				feat = cs_ptr->sc.omni;
-			}
-			else
-			{
+			} else {
 				/* Apply "mimic" field */
 				feat = f_info[feat].mimic;
 			}
@@ -2794,8 +2797,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			   if ((c_ptr->special.type == CS_TRAPS) && (c_ptr->special.sc.ptr->found))
 			*/
 			/* Hack to display detected traps */
-			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && c_ptr->feat != FEAT_ILLUS_WALL)
-			{
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && c_ptr->feat != FEAT_ILLUS_WALL) {
 				int t_idx = cs_ptr->sc.trap.t_idx;
 				if (cs_ptr->sc.trap.found) {
 					/* Hack -- random hallucination */
@@ -2808,12 +2810,12 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 			}
 			/* Hack -- gee it's great to be back home */
-			if ((cs_ptr=GetCS(c_ptr, CS_DNADOOR))) {
+			if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
 #if 0
 				if (access_door(Ind, cs_ptr->sc.ptr, FALSE)) {
 					a = TERM_L_GREEN;
 				} else {
-					struct dna_type *dna=cs_ptr->sc.ptr;
+					struct dna_type *dna = cs_ptr->sc.ptr;
 					if (dna->owner && dna->owner_type)
 						a = TERM_L_DARK;
 				}
@@ -2823,54 +2825,60 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 
 			/* Special lighting effects */
-			if (p_ptr->view_granite_lite && (f_ptr->flags2 & FF2_LAMP_LITE)) {
-				/* Handle "blind" */
-				if (p_ptr->blind) {
-					/* Use "dark gray" */
-					a = TERM_L_DARK;
-				}
+			if (p_ptr->view_granite_lite &&
+			    ((f_ptr->flags2 & FF2_LAMP_LITE) || (f_ptr->flags2 & FF2_LAMP_LITE_SNOW))) {
+				a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
 
-				/* Handle "torch-lit" grids */
-				else if (*w_ptr & CAVE_LITE) {
-					/* Torch lite */
-					if (p_ptr->view_yellow_lite) {
-						/* Use "yellow" */
-						a = TERM_YELLOW;//TERM_ORANGE; hm, not quite
-					}
-				}
+				if (!(f_ptr->flags2 & FF2_LAMP_LITE_SNOW) || a == TERM_WHITE || a == TERM_L_WHITE) /* dirty snow and clean slow :) */
+				    /* && season == SEASON_WINTER (should be covered by TERM_WHITE check actually) */ {
 
-				/* Handle "view_bright_lite" */
-				else if (p_ptr->view_bright_lite) {
-					/* Not viewable */
-					if (!(*w_ptr & CAVE_VIEW)) {
-						/* Use "gray" */
-						a = TERM_SLATE;
+					/* Handle "blind" */
+					if (p_ptr->blind) {
+						/* Use "dark gray" */
+						a = TERM_L_DARK;
 					}
 
-					/* Not glowing */
-					else if (!(c_ptr->info & CAVE_GLOW)) {
-						/* Use "gray" */
-						a = TERM_SLATE;
+					/* Handle "torch-lit" grids */
+					else if (*w_ptr & CAVE_LITE) {
+						/* Torch lite */
+						if (p_ptr->view_yellow_lite) {
+							/* Use "yellow" */
+							a = TERM_YELLOW;//TERM_ORANGE; hm, not quite
+						}
 					}
 
-					/* Not glowing correctly */
-					else {
-						int xx, yy;
-
-						/* Hack -- move towards player */
-						yy = (y < p_ptr->py) ? (y + 1) : (y > p_ptr->py) ? (y - 1) : y;
-						xx = (x < p_ptr->px) ? (x + 1) : (x > p_ptr->px) ? (x - 1) : x;
-
-						/* Check for "local" illumination */
-						if (!(zcave[yy][xx].info & CAVE_GLOW)) {
+					/* Handle "view_bright_lite" */
+					else if (p_ptr->view_bright_lite) {
+						/* Not viewable */
+						if (!(*w_ptr & CAVE_VIEW)) {
 							/* Use "gray" */
 							a = TERM_SLATE;
+						}
+
+						/* Not glowing */
+						else if (!(c_ptr->info & CAVE_GLOW)) {
+							/* Use "gray" */
+							a = TERM_SLATE;
+						}
+
+						/* Not glowing correctly */
+						else {
+							int xx, yy;
+
+							/* Hack -- move towards player */
+							yy = (y < p_ptr->py) ? (y + 1) : (y > p_ptr->py) ? (y - 1) : y;
+							xx = (x < p_ptr->px) ? (x + 1) : (x > p_ptr->px) ? (x - 1) : x;
+
+							/* Check for "local" illumination */
+							if (!(zcave[yy][xx].info & CAVE_GLOW)) {
+								/* Use "gray" */
+								a = TERM_SLATE;
+							}
 						}
 					}
 				}
 			}
-
-			a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
+			else a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
 
 			/* The attr */
 			(*ap) = a;
@@ -2910,7 +2918,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		if (c_ptr->effect) {
 #if 0
 			(*ap) = spell_color(effects[c_ptr->effect].type);
-#else /* allow 'transparent' spells */					
+#else /* allow 'transparent' spells */
 			a = spell_color(effects[c_ptr->effect].type);
 			if (a != 127) (*ap) = a;
 #endif
@@ -2984,20 +2992,17 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 
 	/* Objects */
-	if (c_ptr->o_idx)
-	{
+	if (c_ptr->o_idx) {
 		struct c_special *cs_ptr;
 
 		/* Hack - Traps override objects while searching - mikaelh */
-		if (!p_ptr->searching || !((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found))
-		{
+		if (!p_ptr->searching || !((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found)) {
 			/* Get the actual item */
 			object_type *o_ptr = &o_list[c_ptr->o_idx];
 
 			/* Memorized objects */
 			/* Hack -- the dungeon master knows where everything is */
-			if ((p_ptr->obj_vis[c_ptr->o_idx]) || (p_ptr->admin_dm))
-			{
+			if ((p_ptr->obj_vis[c_ptr->o_idx]) || (p_ptr->admin_dm)) {
 				/* Normal char */
 				(*cp) = object_char(o_ptr);
 
@@ -3038,8 +3043,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 
 	/* Handle monsters */
-	if (c_ptr->m_idx > 0)
-	{
+	if (c_ptr->m_idx > 0) {
 		monster_type *m_ptr = &m_list[c_ptr->m_idx];
 
 		if (c_ptr->m_idx >= m_max) {
@@ -3052,8 +3056,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		}
 
 		/* Visible monster */
-		if (p_ptr->mon_vis[c_ptr->m_idx])
-		{
+		if (p_ptr->mon_vis[c_ptr->m_idx]) {
 			monster_race *r_ptr = race_inf(m_ptr);
 
 			get_monster_color(Ind, m_ptr, r_ptr, c_ptr, ap, cp);
@@ -3080,8 +3083,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		}
 
 		/* Check for doppelgangers - mikaelh */
-		else if (memcmp(&p_ptr->wpos, &p2_ptr->wpos, sizeof(struct worldpos)) != 0 || x != p2_ptr->px || y != p2_ptr->py)
-		{
+		else if (memcmp(&p_ptr->wpos, &p2_ptr->wpos, sizeof(struct worldpos)) != 0 || x != p2_ptr->px || y != p2_ptr->py) {
 			/* Clear doppelgangers */
 			c_ptr->m_idx = 0;
 
@@ -3617,7 +3619,7 @@ void clear_ovl(int Ind)
  * of both "lite_spot()" and "print_rel()", and that we use the
  * "lite_spot()" function to display the player grid, if needed.
  */
- 
+
 void prt_map(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -3812,8 +3814,8 @@ static byte priority(byte a, char c) {
  * function to work with any graphic attr/char mappings, and the
  * attempts to optimize this function where possible.
  */
- 
- 
+
+
 void display_map(int Ind, int *cy, int *cx)
 {
 	player_type *p_ptr = Players[Ind];
@@ -4191,11 +4193,11 @@ static void wild_display_map(int Ind, char mode)
 /*
  * Display a "small-scale" map of the dungeon for the player
  */
- 
+
  /* in the wilderness, have several scales of maps availiable... adding one
     "wilderness map" mode now that will represent each level with one character.
  */
- 
+
 void do_cmd_view_map(int Ind, char mode) {
 	int cy, cx;
 
@@ -4793,7 +4795,7 @@ void forget_view(int Ind)
 	int i;
 
 	byte *w_ptr;
-	
+
 	/* None to forget */
 	if (!(p_ptr->view_n)) return;
 
@@ -4835,7 +4837,7 @@ void forget_view(int Ind)
 
 
 
-#ifdef USE_OLD_UPDATE_VIEW 
+#ifdef USE_OLD_UPDATE_VIEW
 /*
  * Helper function for "update_view()" below
  *
@@ -4853,8 +4855,8 @@ void forget_view(int Ind)
  *
  * This function now returns "TRUE" if vision is "blocked" by grid (y,x).
  */
- 
- 
+
+
 static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x2)
 {
 	player_type *p_ptr = Players[Ind];
@@ -5061,13 +5063,13 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
  * Well, I for one don't understand it, so I'm hoping I didn't screw anything
  * up while trying to do this. --KLJ--
  */
- 
- /* Hmm, this function doesn't seem to be very "mangworld" friendly... 
+
+ /* Hmm, this function doesn't seem to be very "mangworld" friendly...
     lets add some speedbumps/sanity checks.
-    -APD-  
-    
-    With my new "invisible wall" code this shouldn't be neccecary. 
-    
+    -APD-
+
+    With my new "invisible wall" code this shouldn't be neccecary.
+
  */
 
 /* TODO: Hrm, recent variants seem to get better algorithm
@@ -5305,13 +5307,13 @@ void update_view(int Ind)
 				/* Scan */
 				for (k = n, d = 1; d <= m; d++) {
 					/*if (ypn + d >= MAX_HGT) break; */
-				
+
 					/* Check grid "d" in strip "n", notice "blockage" */
 					if (update_view_aux(Ind, ypn+d, xpn, ypn+d-1, xpn-1, ypn+d-1, xpn))
 					{
 						if (n + d >= se) break;
 					}
-					
+
 					/* Track most distant "non-blockage" */
 					else
 					{
@@ -5328,7 +5330,7 @@ void update_view(int Ind)
 				/* Scan */
 				for (k = n, d = 1; d <= m; d++) {
 					/*if (ypn + d >= MAX_HGT) break;*/
-				
+
 					/* Check grid "d" in strip "n", notice "blockage" */
 					if (update_view_aux(Ind, ypn+d, xmn, ypn+d-1, xmn+1, ypn+d-1, xmn))
 					{
@@ -5340,7 +5342,7 @@ void update_view(int Ind)
 					{
 						k = n + d;
 					}
-										
+
 				}
 
 				/* Limit the next strip */
@@ -5362,7 +5364,7 @@ void update_view(int Ind)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/*if (d > ymn) break;*/
-				
+
 					/* Check grid "d" in strip "n", notice "blockage" */
 					if (update_view_aux(Ind, ymn-d, xpn, ymn-d+1, xpn-1, ymn-d+1, xpn))
 					{
@@ -5373,7 +5375,7 @@ void update_view(int Ind)
 					else
 					{
 						k = n + d;
-					}                                                                               
+					}
 				}
 
 				/* Limit the next strip */
@@ -5387,7 +5389,7 @@ void update_view(int Ind)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/*if (d > ymn) break;*/
-					
+
 					/* Check grid "d" in strip "n", notice "blockage" */
 					if (update_view_aux(Ind, ymn-d, xmn, ymn-d+1, xmn+1, ymn-d+1, xmn))
 					{
@@ -5398,7 +5400,7 @@ void update_view(int Ind)
 					else
 					{
 						k = n + d;
-					}                                                                               
+					}
 				}
 
 				/* Limit the next strip */
@@ -5420,7 +5422,7 @@ void update_view(int Ind)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/*if (ypn >= MAX_HGT) break;*/
-				
+
 					/* Check grid "d" in strip "n", notice "blockage" */
 					if (update_view_aux(Ind, ypn, xpn+d, ypn-1, xpn+d-1, ypn, xpn+d-1))
 					{
@@ -5445,7 +5447,7 @@ void update_view(int Ind)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/*if (ymn >= MAX_HGT) break;*/
-				
+
 					/* Check grid "d" in strip "n", notice "blockage" */
 					if (update_view_aux(Ind, ymn, xpn+d, ymn+1, xpn+d-1, ymn, xpn+d-1))
 					{
@@ -5478,7 +5480,7 @@ void update_view(int Ind)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/*if (ypn >= MAX_HGT) break;*/
-				
+
 					/* Check grid "d" in strip "n", notice "blockage" */
 					if (update_view_aux(Ind, ypn, xmn-d, ypn-1, xmn-d+1, ypn, xmn-d+1))
 					{
@@ -5503,7 +5505,7 @@ void update_view(int Ind)
 				for (k = n, d = 1; d <= m; d++)
 				{
 					/*if (ymn >= MAX_HGT) break;*/
-				
+
 					/* Check grid "d" in strip "n", notice "blockage" */
 					if (update_view_aux(Ind, ymn, xmn-d, ymn+1, xmn-d+1, ymn, xmn-d+1))
 					{
@@ -6192,7 +6194,7 @@ void update_view(int Ind)
 							/* Mark as "CAVE_SEEN" */
 							info |= (CAVE_SEEN);
 						}
-						else 
+						else
 #endif	/* 0 */
 
 						/* Perma-lit grids */
@@ -6943,7 +6945,7 @@ void wiz_lite_extra(int Ind)
 
 	for (x = 1; x <= NumPlayers; x++) {
 		p_ptr = Players[x];
-		
+
 		/* Only works for players on the level */
 		if (!inarea(wpos, &p_ptr->wpos)) continue;
 
@@ -6974,22 +6976,22 @@ void wiz_dark(int Ind)
 
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
-		
+
 		/* Only works for players on the level */
 		if (!inarea(wpos, &p_ptr->wpos)) continue;
-		
+
 		o_ptr = &p_ptr->inventory[INVEN_LITE];
-		
+
 		/* Bye bye light */
 		if (o_ptr->k_idx) {
 			if (((o_ptr->sval == SV_LITE_TORCH) || (o_ptr->sval == SV_LITE_LANTERN)) && (!o_ptr->name1)) {
 				msg_print(i, "Your light suddenly empties.");
-				
+
 				/* No more light, it's Rogues day today :) */
 				o_ptr->timeout = 0;
 			}
 		}
-	
+
 		/* Forget every grid */
 		for (y = 0; y < p_ptr->cur_hgt; y++)
 		{
@@ -7097,10 +7099,10 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		p_ptr = Players[i];
-		
+
 		/* Only works for players on the level */
 		if (!inarea(wpos, &p_ptr->wpos)) continue;
-		
+
 		/* Notice */
 		note_spot(i, y, x);
 
@@ -7176,7 +7178,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 		/* hack: only allow around store entrances */
 		if (feat == FEAT_GLYPH || feat == FEAT_RUNE) {
 			return; //disallow glyphs
-		
+
 			for (i = 0; i < 9; i++)
 				if (zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat == FEAT_SHOP) break;
 			/* no nearby store entrance found? */
@@ -7452,7 +7454,7 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 	for (dist = 0; dist <= range; dist++) {
 		/* Protected grids prevent targetting */
 		if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
-	
+
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);
 
@@ -7489,7 +7491,7 @@ bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2
 	for (dist = 0; dist <= range; dist++) {
 		/* Protected grids prevent targetting */
 		if (f_info[zcave[y][x].feat].flags1 & FF1_PERMANENT) break;
-	
+
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);
 
@@ -7682,7 +7684,7 @@ void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m
 //	long tries = 100000;
 	/* Reduced to 10k to lessen lockups - mikaelh */
 	long tries = 10000;
-	
+
         cave_type **zcave;
         if (!(zcave=getcave(wpos))) {
 		(*yp) = y;
@@ -7937,7 +7939,7 @@ msg_broadcast(0, "no flags");
         player_type *pfft_ptr = Players[interval];
         pfft_ptr->e = i;
         } */
-#endif 
+#endif
 
         return i;
 }
@@ -8148,7 +8150,7 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 		return;
 	}
 
-#ifdef CLIENT_WEATHER_GLOBAL /* use global weather instead of sector-specific? */ 
+#ifdef CLIENT_WEATHER_GLOBAL /* use global weather instead of sector-specific? */
 	w = ((entered_level) ? ((weather) ? 200 : -1) : 0);
 	Send_weather(Ind,
 	    weather + w

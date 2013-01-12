@@ -5317,6 +5317,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define FF1_BLOCK_CONTACT	0x80000000L	/* like BLOCK_LOS, except players can see across it even if they cant attack (nor can monsters) */
 
 #define FF2_LAMP_LITE		0x00000001L	/* Gets coloured by view_granite_lite */
+#define FF2_LAMP_LITE_SNOW	0x00000002L	/* Gets coloured by view_granite_lite, if it's winter season, due to assumed snow-covering */
 
 /* for switching places with another player: */
 #define FF1_SWITCH_MASK \

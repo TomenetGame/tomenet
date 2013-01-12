@@ -976,7 +976,7 @@ static cptr f_info_flags1[] =
 static cptr f_info_flags2[] =
 {
 	"LAMP_LITE",
-	"XXX",
+	"LAMP_LITE_SNOW",
 	"XXX",
 	"XXX",
 
