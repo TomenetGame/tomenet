@@ -51,13 +51,15 @@ bool WriteAccount(struct account *r_acc, bool new){
 	short found = 0;
 	struct account c_acc;
 	long delpos = -1L;
+	char buf[1024];
 	size_t retval;
 
-	fp = fopen("tomenet.acc", "rb+");
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb+");
 
 	if (!fp) {
 		/* Attempt to create a new file */
-		fp = fopen("tomenet.acc", "wb+");
+		fp = fopen(buf, "wb+");
 	}
 
 	if (!fp) {
@@ -324,14 +326,17 @@ char acc_get_deed_achievement(char *name){
    the removal of the last character. */
 struct account *GetAccount(cptr name, char *pass, bool leavepass){
 	FILE *fp;
+	char buf[1024];
 	struct account *c_acc;
 
 	MAKE(c_acc, struct account);
 	if (!c_acc) return(NULL);
-	fp = fopen("tomenet.acc", "rb+");
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb+");
 	if (!fp) {
 		if (errno == ENOENT) {	/* ONLY if non-existent */
-			fp = fopen("tomenet.acc", "wb+");
+			fp = fopen(buf, "wb+");
 			if (!fp) {
 				KILL(c_acc, struct account);
 				return(NULL);
@@ -410,11 +415,14 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 /* Return account structure of a specified account name */
 struct account *Admin_GetAccount(cptr name){
 	FILE *fp;
+	char buf[1024];
 	struct account *c_acc;
 
 	MAKE(c_acc, struct account);
 	if (!c_acc) return(NULL);
-	fp = fopen("tomenet.acc", "rb");
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb");
 	if (!fp) {
 		KILL(c_acc, struct account);
 		return(NULL); /* cannot access account file */
@@ -434,10 +442,12 @@ struct account *Admin_GetAccount(cptr name){
 /* Return account name of a specified PLAYER id */
 cptr lookup_accountname(int p_id){
 	FILE *fp;
+	char buf[1024];
 	static struct account c_acc;
 	u32b acc_id = lookup_player_account(p_id);
 
-	fp = fopen("tomenet.acc", "rb");
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb");
 	if (!fp) return(NULL); /* cannot access account file */
 	while (fread(&c_acc, sizeof(struct account), 1, fp)) {
 		if (c_acc.flags & ACC_DELD) continue;
@@ -590,13 +600,16 @@ int check_account(char *accname, char *c_name) {
 
 struct account *GetAccountID(u32b id, bool leavepass){
 	FILE *fp;
+	char buf[1024];
 	struct account *c_acc;
 
 	/* we may want to store a local index for fast
 	   id/name/filepos lookups in the future */
 	MAKE(c_acc, struct account);
 	if (!c_acc) return(NULL);
-	fp = fopen("tomenet.acc", "rb");
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb");
 	if (!fp) return(NULL);	/* failed */
 	while (fread(c_acc, sizeof(struct account), 1, fp)) {
 		if(id == c_acc->id && !(c_acc->flags & ACC_DELD)){
@@ -614,11 +627,13 @@ static u32b new_accid() {
 	u32b id;
 	FILE *fp;
 	char *t_map;
+	char buf[1024];
 	struct account t_acc;
 	int num_entries = 0;
 	id = account_id;
 
-	fp = fopen("tomenet.acc", "rb");
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb");
 	if (!fp) return(0L);
 
 	C_MAKE(t_map, MAX_ACCOUNTS / 8, char);
@@ -3016,6 +3031,7 @@ void scan_accounts() {
 	int total = 0, nondel = 0, active = 0, expired = 0, fixed = 0;
 	bool modified;
 	FILE *fp;
+	char buf[1024];
 	struct account c_acc;
 	time_t now;
 
@@ -3028,7 +3044,8 @@ void scan_accounts() {
 
 	s_printf("Starting account inactivity check..\n");
 
-	fp = fopen("tomenet.acc", "rb+");
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb+");
 	if (!fp) {
 		return;
 	}

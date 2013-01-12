@@ -221,7 +221,8 @@ int main(int argc, char *argv[])
 
 #endif
 
-	MANGBAND_CFG = string_make("tomenet.cfg");
+	path_build(buf, 1024, ANGBAND_DIR_CONFIG, "tomenet.cfg");
+	MANGBAND_CFG = string_make(buf);
 
 	/* Process the command line arguments */
 	for (--argc, ++argv; argc > 0; --argc, ++argv)

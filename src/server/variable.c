@@ -559,6 +559,11 @@ cptr ANGBAND_DIR_SCPT;
 cptr ANGBAND_DIR_DATA;
 
 /*
+ * Server configuration files
+ */
+cptr ANGBAND_DIR_CONFIG;
+
+/*
  * Textual template files for the "*_info" arrays (ascii)
  * These files are portable between platforms
  */

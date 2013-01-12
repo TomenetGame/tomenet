@@ -80,6 +80,7 @@ void init_file_paths(char *path)
 	/* Free the sub-paths */
 	string_free(ANGBAND_DIR_SCPT);
 	string_free(ANGBAND_DIR_DATA);
+	string_free(ANGBAND_DIR_CONFIG);
 	string_free(ANGBAND_DIR_GAME);
 	string_free(ANGBAND_DIR_SAVE);
 	string_free(ANGBAND_DIR_TEXT);
@@ -107,6 +108,7 @@ void init_file_paths(char *path)
 	/* Use "blank" path names */
 	ANGBAND_DIR_SCPT = string_make("");
 	ANGBAND_DIR_DATA = string_make("");
+	ANGBAND_DIR_CONFIG = string_make("");
 	ANGBAND_DIR_GAME = string_make("");
 	ANGBAND_DIR_SAVE = string_make("");
 	ANGBAND_DIR_TEXT = string_make("");
@@ -125,6 +127,10 @@ void init_file_paths(char *path)
 	/* Build a path name */
 	strcpy(tail, "data");
 	ANGBAND_DIR_DATA = string_make(path);
+
+	/* Build a path name */
+	strcpy(tail, "config");
+	ANGBAND_DIR_CONFIG = string_make(path);
 
 	/* Build a path name */
 	strcpy(tail, "game");
@@ -2444,10 +2450,13 @@ static errr init_other(void)
 
 
 void init_swearing() {
+	char buf[1024];
 	int i = 0;
 	FILE *fp;
 
-	fp = fopen("swearing.txt", "r");
+	path_build(buf, 1024, ANGBAND_DIR_CONFIG, "swearing.txt");
+
+	fp = fopen(buf, "r");
 	swear[0].word[0] = '\0';
 	if (!fp) return;
 
@@ -2467,8 +2476,9 @@ void init_swearing() {
 
 	fclose(fp);
 
+	path_build(buf, 1024, ANGBAND_DIR_CONFIG, "nonswearing.txt");
 
-	fp = fopen("nonswearing.txt", "r");
+	fp = fopen(buf, "r");
 	nonswear[0][0] = '\0';
 	if (!fp) return;
 	i = 0;

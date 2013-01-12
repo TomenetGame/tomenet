@@ -366,6 +366,7 @@ extern cptr ANGBAND_SYS;
 extern cptr ANGBAND_DIR;
 extern cptr ANGBAND_DIR_SCPT;
 extern cptr ANGBAND_DIR_DATA;
+extern cptr ANGBAND_DIR_CONFIG;
 extern cptr ANGBAND_DIR_GAME;
 extern cptr ANGBAND_DIR_SAVE;
 extern cptr ANGBAND_DIR_TEXT;

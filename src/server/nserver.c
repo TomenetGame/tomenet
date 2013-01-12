@@ -731,18 +731,21 @@ static bool update_acc_file_version(void) {
 	struct account_old c_acc_old;
 	struct account c_acc;
         size_t retval;
+	char buf[1024];
         int amt = 0;
 
 //	return FALSE; /* security, while not actively used */
 
-	fp_old = fopen("tomenet.acc_old", "rb");
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc_old");
+	fp_old = fopen(buf, "rb");
 
 	/* No updating to do?
 	   Exit here, if no 'tomenet.acc_old' file exists: */
 	if (!fp_old) return(FALSE);
 	s_printf("Initiating update of tomenet.acc file.. ");
 
-	fp = fopen("tomenet.acc", "wb");
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "wb");
 	if (!fp) {
 		s_printf("failed.\n");
 		fclose(fp_old);
@@ -803,7 +806,9 @@ static bool update_acc_file_version(void) {
         }
 	fclose(fp);
 	fclose(fp_old);
-	remove("tomenet.acc_old");
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc_old");
+	remove(buf);
 
         return(TRUE);
 }
@@ -1030,6 +1035,7 @@ static bool player_allowed(char *name){
 /* blacklist of special nicknames unavailable to players (monster names, "Insanity",..) - C. Blue */
 static bool forbidden_name(char *name) {
 	FILE *sfp;
+	char path_buf[1024];
 	char buffer[80];
 	bool success = FALSE;
 	/* Hack -- allow 'guest' account */
@@ -1057,7 +1063,9 @@ static bool forbidden_name(char *name) {
 	/* For logging chat relayed from IRC */
 	if (!strcmp(name, "IRC")) return TRUE;
 
-	sfp = fopen("badnames.txt", "r");
+	path_build(path_buf, 1024, ANGBAND_DIR_CONFIG, "badnames.txt");
+
+	sfp = fopen(path_buf, "r");
 	if (sfp == (FILE*) NULL)
 		return FALSE;
 	else {
