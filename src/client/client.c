@@ -49,7 +49,10 @@ static void read_mangrc_aux(int t, cptr sec_name) {
 
 	if ((val = strstr(sec_name, "_Columns"))) {
 		term_prefs[t].columns = atoi(val + 8);
-	        if (t == 0) screen_wid = term_prefs[0].columns - SCREEN_PAD_X;
+	        if (t == 0) {
+			if (term_prefs[t].columns != 80) term_prefs[t].columns = 80;
+	    		screen_wid = term_prefs[0].columns - SCREEN_PAD_X;
+	    	}
 	}
 	if ((val = strstr(sec_name, "_Lines"))) {
 		term_prefs[t].lines = atoi(val + 6);
