@@ -1550,6 +1550,8 @@ static void artifact_lore(void) {
 	int selected_line = 0;
 	/* for pasting lore to chat */
 	char paste_lines[18][MSG_LEN];
+        /* suppress hybrid macros */
+        bool inkey_msg_old;
 
 	Term_save();
 
@@ -1630,7 +1632,10 @@ static void artifact_lore(void) {
 	        Term->scr->cy = 2;
 	        Term->scr->cu = 1;
 
+		inkey_msg_old = inkey_msg;
+	        inkey_msg = TRUE;
 		c = inkey();
+		inkey_msg = inkey_msg_old;
 
 		/* specialty: allow chatting from within here */
                 if (c == ':') {
@@ -1745,6 +1750,8 @@ static void monster_lore(void) {
 	int selected_line = 0;
 	/* for pasting lore to chat */
 	char paste_lines[18][MSG_LEN];
+        /* suppress hybrid macros */
+        bool inkey_msg_old;
 
 	Term_save();
 
@@ -1824,7 +1831,10 @@ static void monster_lore(void) {
 	        Term->scr->cy = 2;
 	        Term->scr->cu = 1;
 
+    		inkey_msg_old = inkey_msg;
+	        inkey_msg = TRUE;
 		c = inkey();
+    		inkey_msg = inkey_msg_old;
 
 		/* specialty: allow chatting from within here */
                 if (c == ':') {
@@ -1941,6 +1951,8 @@ void cmd_check_misc(void)
 {
 	char i = 0, choice;
 	int second = 10;
+        /* suppress hybrid macros in some submenus */
+	bool inkey_msg_old;
 
 	Term_save();
 	Term_clear();
@@ -1985,12 +1997,18 @@ void cmd_check_misc(void)
 				cmd_artifacts();
 				break;
 			case '2':
+			        inkey_msg_old = inkey_msg;
+			        inkey_msg = TRUE;
 				get_com("What kind of monsters? (ESC for all):", &choice);
+			        inkey_msg = inkey_msg_old;
 				if (choice <= ESCAPE) choice = 0;
 				Send_special_line(SPECIAL_FILE_MONSTER, choice);
 				break;
 			case '4':
+			        inkey_msg_old = inkey_msg;
+			        inkey_msg = TRUE;
 				get_com("What type of objects? (ESC for all):", &choice);
+			        inkey_msg = inkey_msg_old;
 				if (choice <= ESCAPE) choice = 0;
 				Send_special_line(SPECIAL_FILE_OBJECT, choice);
 				break;
