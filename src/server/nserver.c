@@ -1030,8 +1030,14 @@ static bool player_allowed(char *name){
 /* blacklist of special nicknames unavailable to players (monster names, "Insanity",..) - C. Blue */
 static bool forbidden_name(char *name) {
 	FILE *sfp;
-	char buffer[80];
+	char buffer[80], lname[80];
 	bool success = FALSE;
+	int i = 0;
+
+	/* All bad names must be specified in lower-case */
+	do lname[i] = tolower(name[i]);
+	while (name[i++]);
+
 	/* Hack -- allow 'guest' account */
 	/* if (!strcmp("Guest", name)) return FALSE; */
 
@@ -1052,10 +1058,10 @@ static bool forbidden_name(char *name) {
 #endif
 	if (!strcmp(name, "indetermination")) return TRUE;
 	/* Hardcode some not so important ones */
-	if (!strcmp(name, "tBot")) return TRUE; /* Sandman's internal chat bot */
+	if (!strcmp(name, "tbot")) return TRUE; /* Sandman's internal chat bot */
 	if (!strcmp(name, "8ball")) return TRUE; /* Sandman's internal chat bot */
 	/* For logging chat relayed from IRC */
-	if (!strcmp(name, "IRC")) return TRUE;
+	if (!strcmp(name, "irc")) return TRUE;
 
 	sfp = fopen("badnames.txt", "r");
 	if (sfp == (FILE*) NULL)
