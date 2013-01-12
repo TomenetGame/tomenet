@@ -1033,16 +1033,16 @@ static bool player_allowed(char *name){
 }
 
 /* blacklist of special nicknames unavailable to players (monster names, "Insanity",..) - C. Blue */
-static bool forbidden_name(char *name) {
+static bool forbidden_name(char *cname) {
 	FILE *sfp;
 	char path_buf[1024];
-	char buffer[80], lname[80];
+	char buffer[80], name[80];
 	bool success = FALSE;
 	int i = 0;
 
 	/* All bad names must be specified in lower-case */
-	do lname[i] = tolower(name[i]);
-	while (name[i++]);
+	do name[i] = tolower(cname[i]);
+	while (cname[i++]);
 
 	/* Hack -- allow 'guest' account */
 	/* if (!strcmp("Guest", name)) return FALSE; */
