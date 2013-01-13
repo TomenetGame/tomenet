@@ -3869,11 +3869,31 @@ void un_afk_idle(int Ind) {
 /*
  * toggle AFK mode on/off.	- Jir -
  */
+//#define ALLOW_AFK_COLOURCODES
+#ifdef ALLOW_AFK_COLOURCODES
+void toggle_afk(int Ind, char *msg0)
+#else
 void toggle_afk(int Ind, char *msg)
+#endif
 {
 	player_type *p_ptr = Players[Ind];
 	char afk[MAX_CHARS];
-	int i;
+	int i = 0;
+#ifdef ALLOW_AFK_COLOURCODES
+	char msg[MAX_CHARS], *m = msg0;
+
+	/* strip colour codes and cap message at len 60 */
+	while ((*m) && i < 60) {
+		if (*m == '\377') {
+			m++;
+			if (*m == '\377') {
+				msg[i++] = '{';
+			}
+		} else msg[i++] = *m;
+		m++;
+	}
+	msg[i] = 0;
+#endif
 
 	/* don't go un-AFK from auto-retaliation */
 	if (p_ptr->afk && p_ptr->auto_retaliaty) return;
