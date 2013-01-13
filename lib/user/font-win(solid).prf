@@ -1,0 +1,99 @@
+# File: font-win.prf
+
+#
+# This file is used by Angband (when it was compiled using "main-win.c")
+# to specify simple attr/char remappings using a standard font, allowing
+# the use of special pseudo-graphic pictures for walls and such.
+#
+# Note that this file is extremely similar to the "font-ibm.prf" file,
+# but it uses different codes, since it uses the special pseudo-graphic
+# symbols defined in the "lib/xtra/font/*.FON" files, and there is only
+# one special wall type, so we have to use special "colors".
+#
+
+
+### Terrain features ###
+
+
+# Floors (white / centered dot)
+
+#F:1:1/31
+
+# Invis traps (white / centered dot)
+
+F:8:1/31
+
+
+# Magma (slate / solid block)
+
+#F:114:2/127
+#F:116:2/127
+
+F:50:8/127
+F:52:8/127
+
+
+# Quartz (light slate / solid block)
+
+#F:115:9/127
+#F:117:9/127
+
+F:51:9/127
+F:53:9/127
+
+
+# Secret door (white / solid block)
+
+#F:112:1/127
+
+# Granite walls & permanent rock (white / solid block)
+
+#F:120:1/127
+#F:121:1/127
+#F:122:1/127
+#F:123:1/127
+#F:124:7/127
+#F:125:7/127
+#F:126:7/127
+#F:127:7/127
+
+F:56:2/127
+F:57:2/127
+F:58:2/127
+F:59:2/127
+F:60:1/127
+F:61:1/127
+F:62:1/127
+F:63:1/127
+
+
+# Permanent walls for houses
+
+F:26:1/127
+F:28:1/127
+F:75:1/127
+F:76:1/127
+F:77:1/127
+F:78:1/127
+
+# Ice wall W
+F:95:1/127
+# Sand wall y
+F:98:11/127
+# Sand wall->treasure
+F:99:11/127
+# Lava wall R
+F:177:12/127
+# Glass wall B
+F:188:14/127
+# Illusion wall w
+F:189:9/127
+
+# Grass roof
+F:190:11/127
+# Grass roof top
+F:191:11/127
+# Brick roof
+F:193:4/127
+# Brick roof top
+F:194:4/127
