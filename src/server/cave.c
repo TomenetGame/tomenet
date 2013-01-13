@@ -2649,8 +2649,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		     !p_ptr->blind)) || (p_ptr->admin_dm))
 		{
 			struct c_special *cs_ptr;
-			/* Access floor */
-			f_ptr = &f_info[FEAT_FLOOR];
 
 			/* Normal char */
 			(*cp) = p_ptr->f_char[feat];
