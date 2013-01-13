@@ -3049,6 +3049,8 @@ void do_cmd_look(int Ind, int dir) {
 		else snprintf(out_val, sizeof(out_val), "%s%s%s", p1, p2, name);
 	}
 
+	if (is_admin(p_ptr)) strcat(out_val, format(" (%d)", c_ptr->feat));
+
 	/* Append a little info */
 	strcat(out_val, " [<dir>, p, q]");
 
