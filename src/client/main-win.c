@@ -1590,9 +1590,9 @@ static void term_data_redraw_section(term_data *td, int x1, int y1, int x2, int 
  */
 static HDC myGetDC(HWND hWnd)
 {
+#ifdef OPTIMIZE_DRAWING
 	term_data *td = (term_data*)(Term->data);
 
-#ifdef OPTIMIZE_DRAWING
 	if (!oldDC) {
 		oldDC = GetDC(hWnd);
 
