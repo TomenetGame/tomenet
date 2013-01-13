@@ -462,7 +462,7 @@ N:61:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE
 
 # 0x3E --> permanent wall -- outer (perm)
 
@@ -470,7 +470,7 @@ N:62:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE
 
 # 0x3F --> permanent wall -- solid (perm)
 
@@ -478,7 +478,7 @@ N:63:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE
+F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE
 
 N:64:rune of warding
 G:;:B
@@ -631,8 +631,8 @@ D:1:You chop away at the dead tree.
 D:2:a tree blocking your way
 
 N:93:ash
-G:.:s
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | LAMP_LITE
+G:.:D
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
 
 N:94:mud
 G:~:u
