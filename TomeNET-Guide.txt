@@ -13034,6 +13034,10 @@ Teamplay:
  For winners (queens/kings/empresses/emperors) the range in which they share
  experience is as far as 11 levels.
  Winners don't share experience with non-winner characters.
+ If a party member gets reduced experience because his level is too high
+ for the dungeon floor, this penalty will affect all of his team mates on this
+ floor too, even if their level is lower. This means the party should always
+ dive at the optimum depth for its highest member.
  See (6.9) for details about partying!
 
 -Good combinations are the classical meat shields / damage dealers /
