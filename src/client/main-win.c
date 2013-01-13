@@ -3217,6 +3217,7 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 			if (td->size_hack) return 1; /* was sent from inside WM_SIZE */
 
 			if (wParam == SIZE_RESTORED) {
+				term *old;
 				int cols, rows;
 
 				td->size_hack = TRUE;
@@ -3224,8 +3225,10 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 				cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->font_wid;
 				rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->font_hgt;
 
+				old = Term;
                                 Term_activate(&td->t);
                                 Term_resize(cols, rows);
+				Term_activate(old);
 
             	        	/* In case we resized Chat/Msg/Msg+Chat window,
                 		   refresh contents so they are displayed properly,
