@@ -185,6 +185,7 @@ extern bool alert_hitpoint;
 extern bool alert_afk_dam;//alert_failure;
 extern bool view_yellow_lite;
 extern bool view_bright_lite;
+extern bool view_bright_lite2;
 extern bool view_granite_lite;
 extern bool view_special_lite;
 extern bool view_perma_grids;

@@ -392,20 +392,25 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.safe_macros,		TRUE,	3,	1, 26, TRUE, /* was compress_savefile (broken&obsolete); use Term_flush() to clear macro execution */
 	"safe_macros",			"Abort macro execution if an action fails" },
 
+#if 0
 	{ &c_cfg.hilite_player,		FALSE,	1,	1, 27, FALSE, /* (resurrect me) */
 	"hilite_player",		"(broken) Hilite the player with the cursor" },
+#else
+	{ &c_cfg.view_bright_lite2,	FALSE,	1,	1, 27, TRUE,
+	"view_bright_lite2",		"Use special colors for 'viewable' wall grids" },
+#endif
 
 	{ &c_cfg.view_yellow_lite,	TRUE,	1,	1, 28, TRUE,
 	"view_yellow_lite",		"Use special colors for torch-lit grids" },
 
 	{ &c_cfg.view_bright_lite,	TRUE,	1,	1, 29, TRUE,
-	"view_bright_lite",		"Use special colors for 'viewable' grids" },
+	"view_bright_lite",		"Use special colors for 'viewable' floor grids" },
 
-	{ &c_cfg.view_granite_lite,	FALSE,	1,	1, 30, TRUE,
-	"view_granite_lite",		"Use special colors for wall grids (slow)" },
+	{ &c_cfg.view_granite_lite,	TRUE,	1,	1, 30, TRUE,
+	"view_granite_lite",		"Use special colors for wall grids" },
 
 	{ &c_cfg.view_special_lite,	TRUE,	1,	1, 31, TRUE,	/* (59) */
-	"view_special_lite",		"Use special colors for floor grids (slow)" },
+	"view_special_lite",		"Use special colors for floor grids" },
 
 
 
@@ -434,7 +439,7 @@ option_type option_info[OPT_MAX] =
 	"auto_inscribe",		"Use additional predefined auto-inscriptions" },
 #endif
 
-	{ &c_cfg.taciturn_messages,	FALSE,	1,	9, 65, TRUE,
+	{ &c_cfg.taciturn_messages,	FALSE,	4,	9, 65, TRUE,
 	"taciturn_messages",		"Suppress server messages as far as possible" },
 
 	{ &c_cfg.last_words,		TRUE,	1,	9, 66, TRUE,

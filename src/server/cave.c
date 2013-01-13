@@ -2862,12 +2862,12 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					}
 				}
 
-				/* Handle "view_bright_lite" */
+				/* Handle "view_bright_lite2" */
 				/* NOTE: The only prob here is that if magma doesn't have a different
 					 symbol from granite walls, for example if the player maps
 					 both to 'solid block' character, shaded granite walls and
 					 magma walls will look the same - C. Blue */
-				else if (p_ptr->view_bright_lite && !(f_ptr->flags2 & FF2_NO_SHADE)) {
+				else if (p_ptr->view_bright_lite2 && !(f_ptr->flags2 & FF2_NO_SHADE)) {
 					/* Not viewable */
 					if (!(*w_ptr & CAVE_VIEW)) {
 						/* Allow distinguishing permanent walls from granite */

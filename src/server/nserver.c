@@ -2092,6 +2092,12 @@ static void sync_options(int Ind, bool *options)
 	else
 		p_ptr->censor_swearing = options[53];
 
+	if (is_older_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
+		p_ptr->view_bright_lite2 = options[57];
+	else {
+		tmp = p_ptr->view_bright_lite2;
+		if ((p_ptr->view_bright_lite2 = options[55]) != tmp) p_ptr->redraw |= PR_MAP;
+	}
 	tmp = p_ptr->view_yellow_lite;
 	if ((p_ptr->view_yellow_lite = options[56]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_bright_lite;

@@ -2101,6 +2101,7 @@ struct player_type
 	bool view_reduce_view;
 	bool view_yellow_lite;
 	bool view_bright_lite;
+	bool view_bright_lite2;
 	bool view_granite_lite;
 	bool view_special_lite;
 
@@ -3145,6 +3146,7 @@ struct client_opts
 	bool hilite_player;
 	bool view_yellow_lite;
 	bool view_bright_lite;
+	bool view_bright_lite2;
 	bool view_granite_lite;
 	bool view_special_lite;
 

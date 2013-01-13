@@ -64,7 +64,8 @@ X:player_list2
 X:fresh_after
 Y:censor_swearing
 Y:safe_macros
-X:hilite_player
+#X:hilite_player
+X:view_bright_lite2
 Y:view_yellow_lite
 Y:view_bright_lite
 Y:view_granite_lite
