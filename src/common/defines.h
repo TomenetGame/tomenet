@@ -5319,6 +5319,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define FF2_LAMP_LITE		0x00000001L	/* Gets coloured by view_granite_lite */
 #define FF2_LAMP_LITE_SNOW	0x00000002L	/* Gets coloured by view_granite_lite, if it's winter season, due to assumed snow-covering */
 #define FF2_NIGHT_DARK		0x00000004L	/* Stays darkened at night, unaffected by glow (magical light) or lite (lamps) */
+#define FF2_NO_SHADE		0x00000008L	/* Don't shade to TERM_SLATE in view_bright_lite (or vault walls become indistinguishable from granite, without magic light) */
 
 /* for switching places with another player: */
 #define FF1_SWITCH_MASK \

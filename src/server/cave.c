@@ -2736,13 +2736,13 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					}
 
 					/* Handle "dark" grids */
-					else if (!(c_ptr->info & CAVE_GLOW)) {
+					else if (!(c_ptr->info & CAVE_GLOW) && !(f_ptr->flags2 & FF2_NO_SHADE)) {
 						/* Use "dark gray" */
 						a = TERM_L_DARK;
 					}
 
 					/* Handle "out-of-sight" grids */
-					else if (!(*w_ptr & CAVE_VIEW)) {
+					else if (!(*w_ptr & CAVE_VIEW) && !(f_ptr->flags2 & FF2_NO_SHADE)) {
 						/* Special flag */
 						if (p_ptr->view_bright_lite) {
 							/* Use "gray" */
@@ -2873,7 +2873,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					}
 
 					/* Handle "view_bright_lite" */
-					else if (p_ptr->view_bright_lite) {
+					else if (p_ptr->view_bright_lite && !(f_ptr->flags2 & FF2_NO_SHADE)) {
 						/* Not viewable */
 						if (!(*w_ptr & CAVE_VIEW)) {
 							/* Use "gray" */
