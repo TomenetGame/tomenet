@@ -17,38 +17,15 @@
 
 # Floors (white / centered dot)
 
-F:1:1/31
+#F:1:1/31
 
 # Invis traps (white / centered dot)
 
-F:8:1/31
-
-
 # Magma (slate / solid block)
-
-F:114:2/127
-F:116:2/127
-
 
 # Quartz (light slate / solid block)
 
-F:115:9/127
-F:117:9/127
-
-
 # Secret door (white / solid block)
 
-F:112:1/127
-
 # Granite walls & permanent rock (white / solid block)
-
-F:120:1/127
-F:121:1/127
-F:122:1/127
-F:123:1/127
-F:124:7/127
-F:125:7/127
-F:126:7/127
-F:127:7/127
-
 

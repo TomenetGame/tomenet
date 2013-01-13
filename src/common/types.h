@@ -168,6 +168,7 @@ struct feature_type
 	u32b block;             /* Text for blocking */
 
 	u32b flags1;            /* First set of flags */
+	u32b flags2;
 #endif
 
 	byte mimic;			/* Feature to mimic */

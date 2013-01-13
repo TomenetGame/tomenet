@@ -94,7 +94,7 @@
 
 
 /* hack to prevent the floor tile bug on windows xp and windows 2003 machines */
-#define FLOORTILEBUG_WORKAROUND
+//#define FLOORTILEBUG_WORKAROUND
 
 /* Message to send to client when kicking him out due to starvation while being idle */
 //#define STARVING_AUTOKICK_MSG "starving auto-kick"

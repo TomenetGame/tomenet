@@ -31,7 +31,7 @@ F:FLOOR
 
 N:1:open floor
 G:.:w
-F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW
 
 # 0x02 -> fountain
 N:2:fountain
@@ -189,7 +189,7 @@ F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
 N:26:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | NIGHT_DARK
 
 # XXX XXX XXX
 
@@ -352,7 +352,7 @@ G:#:w
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | DOOR
 F:DONT_NOTICE_RUNNING
-F:TUNNELABLE
+F:TUNNELABLE | LAMP_LITE
 D:1:You tunnel.
 
 # 0x31 --> rubble
@@ -361,7 +361,7 @@ N:49:pile of rubble
 G:::w
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE
 F:CAN_FLY | SUPPORT_LIGHT
-F:TUNNELABLE
+F:TUNNELABLE | LAMP_LITE
 D:1:You dig in the rubble.
 
 # 0x32 --> magma vein
@@ -369,7 +369,7 @@ D:1:You dig in the rubble.
 N:50:magma vein
 G:%:s
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the magma vein.
 
 # 0x33 --> quartz vein
@@ -419,7 +419,7 @@ D:1:You tunnel into the quartz vein.
 N:56:granite wall
 G:#:s
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the granite wall.
 
 # 0x39 --> granite wall -- inner
@@ -428,7 +428,7 @@ N:57:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the granite wall.
 
 # 0x3A --> granite wall -- outer
@@ -437,7 +437,7 @@ N:58:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the granite wall.
 
 # 0x3B --> granite wall -- solid
@@ -446,7 +446,7 @@ N:59:granite wall
 G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | TUNNELABLE
+F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the granite wall.
 
 # 0x3C --> permanent wall -- basic (perm)
@@ -454,7 +454,7 @@ D:1:You tunnel into the granite wall.
 N:60:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 # 0x3D --> permanent wall -- inner (perm)
 
@@ -462,7 +462,7 @@ N:61:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 # 0x3E --> permanent wall -- outer (perm)
 
@@ -470,7 +470,7 @@ N:62:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 # 0x3F --> permanent wall -- solid (perm)
 
@@ -478,7 +478,7 @@ N:63:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 N:64:rune of warding
 G:;:B
@@ -532,22 +532,22 @@ F:BLOCK_CONTACT
 N:75:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 N:76:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 N:77:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 N:78:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | LAMP_LITE
 
 N:79:permanent clear wall
 G: :w
@@ -558,7 +558,7 @@ F:DONT_NOTICE_RUNNING
 
 N:83:snow
 G:.:w
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | LAMP_LITE
 
 N:84:stream of shallow water
 G:~:B
@@ -600,12 +600,12 @@ D:0:Ohhh, it is dark and deep.
 
 N:88:dirt
 G:.:u
-F:FLOOR | SUPPORT_LIGHT | CAN_RUN
+F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW
 F:DONT_NOTICE_RUNNING
 
 N:89:patch of grass
 G:.:G
-F:FLOOR | SUPPORT_LIGHT | CAN_RUN
+F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW
 F:DONT_NOTICE_RUNNING
 
 N:90:ice
@@ -613,11 +613,11 @@ N:90:ice
 #E:1d1:50:ICE
 #F:FLOOR | NOTICE
 G:.:B
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | LAMP_LITE
 
 N:91:sand
 G:.:y
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | LAMP_LITE
 
 N:92:dead tree
 #G:#:D
@@ -632,7 +632,7 @@ D:2:a tree blocking your way
 
 N:93:ash
 G:.:s
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | LAMP_LITE
 
 N:94:mud
 G:~:u
@@ -658,7 +658,7 @@ D:2:a tree blocking your way
 N:97:mountain chain
 G:^:U
 F:CAN_CLIMB | CAN_PASS | SUPPORT_LIGHT
-F:WALL | NO_WALK | NO_VISION
+F:WALL | NO_WALK | NO_VISION | NIGHT_DARK
 F:DONT_NOTICE_RUNNING | PERMANENT
 D:1:You cannot tunnel into such a hard stone.
 D:2:a hard stone block blocking your way
@@ -863,32 +863,32 @@ D:0:Looks like this wall is not so real.
 # Grass roof
 N:190:Grass roof
 G:#:y
-F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NIGHT_DARK
 
 # grass roof top
 N:191:grass roof top
 G:#:y
-F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NIGHT_DARK
 
 # grass roof chimney
 N:192:grass roof chimney
 G:#:y
-F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NIGHT_DARK
 
 # brick roof
 N:193:brick roof
 G:#:r
-F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NIGHT_DARK
 
 # brick roof top
 N:194:brick roof top
 G:#:r
-F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NIGHT_DARK
 
 # brick roof chimney
 N:195:brick roof chimney
 G:":r
-F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NIGHT_DARK
 
 # window
 N:196:window
@@ -913,12 +913,12 @@ F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
 # cobblestone road
 N:200:cobblestone road
 G:.:w
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | LAMP_LITE
 
 # cobblestone with outlet
 N:201:cobblestone with outlet
 G:.:w
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | LAMP_LITE
 
 N:202:ivy
 G:#:g
@@ -956,7 +956,7 @@ D:1:Looks like this pile of rubble is quite hard.
 # Rocky ground - rougher terrain.
 N:207:rocky ground
 G:.:s
-F:FLOOR | SUPPORT_LIGHT | CAN_RUN
+F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE
 F:DONT_NOTICE_RUNNING
 
 N:208:Team A goal

@@ -67,7 +67,7 @@ Y:safe_macros
 X:hilite_player
 Y:view_yellow_lite
 Y:view_bright_lite
-X:view_granite_lite
+Y:view_granite_lite
 Y:view_special_lite
 
 Y:easy_open
