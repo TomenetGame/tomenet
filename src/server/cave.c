@@ -13,6 +13,11 @@
  */
 #define MULTI_HUED_PROPER
 
+/* View_bright_lite really shades all floor types, not just FEAT_FLOOR.
+   For this, the floor feats must have SPECIAL_LITE flag (or LAMP_LITE).
+   This usually doesn't look as cool as you might expect. - C. Blue */
+//#define SHADE_ALL_FLOOR
+
 
 /*
  * Scans for cave_type array pointer.
@@ -2271,13 +2276,13 @@ byte get_rune_color(int Ind, int typ) {
  * Manipulate map grid colours, for example outside on world surface,
  * depending on clima or daytime!  - C. Blue
  */
-static int manipulate_cave_color_season(cave_type *c_ptr, worldpos *wpos, int x, int y, int color) {
+static int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
 	bool old_rand = Rand_quick;
 	u32b tmp_seed = Rand_value; /* save RNG */
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 
 	/* World surface manipulation only */
-	if (wpos->wz) return color;
+	if (wpos->wz) return colour;
 
 	/* To use always the same feats for this everytime the player
 	   enters a worldmap sector, we seed the RNG with that particular
@@ -2297,37 +2302,37 @@ static int manipulate_cave_color_season(cave_type *c_ptr, worldpos *wpos, int x,
 			case FEAT_DIRT:
 				switch (Rand_div(7)) {
 				case 0: case 1: case 2: case 3: case 4:
-					color = TERM_L_WHITE; break;
-				case 5: if (c_ptr->info & CAVE_LITE) color = TERM_L_UMBER;
-					else color = TERM_UMBER;
+					colour = TERM_L_WHITE; break;
+				case 5: if (c_ptr->info & CAVE_LITE) colour = TERM_L_UMBER;
+					else colour = TERM_UMBER;
 					break;
-				case 6: color = TERM_SLATE; break;
+				case 6: colour = TERM_SLATE; break;
 				}
 				break;
 			case FEAT_GRASS:
 				switch (Rand_div(7)) {
 				case 0: case 1: case 2: case 3: case 4:
-					color = TERM_L_WHITE; break;
+					colour = TERM_L_WHITE; break;
 				case 5: case 6:
-					if (c_ptr->info & CAVE_LITE) color = TERM_L_UMBER;
-					else color = TERM_UMBER;
+					if (c_ptr->info & CAVE_LITE) colour = TERM_L_UMBER;
+					else colour = TERM_UMBER;
 					break;
-//				case 7:	color = TERM_GREEN; break;
+//				case 7:	colour = TERM_GREEN; break;
 				}
 				break;
 			case FEAT_TREE:
 			case FEAT_BUSH:
-				if (Rand_div(50)) color = TERM_WHITE;
-				else if (Rand_div(3)) color = TERM_UMBER;
-				else color = TERM_GREEN;
+				if (Rand_div(50)) colour = TERM_WHITE;
+				else if (Rand_div(3)) colour = TERM_UMBER;
+				else colour = TERM_GREEN;
 				break;
 			case FEAT_IVY:
-				if (Rand_div(50)) color = TERM_WHITE;
-				else if (Rand_div(3)) color = TERM_UMBER;
-				else color = TERM_GREEN;
+				if (Rand_div(50)) colour = TERM_WHITE;
+				else if (Rand_div(3)) colour = TERM_UMBER;
+				else colour = TERM_GREEN;
 				break;
 			case FEAT_MOUNTAIN:
-				if (Rand_div(4)) color = TERM_WHITE;
+				if (Rand_div(4)) colour = TERM_WHITE;
 				break;
 			}
 		}
@@ -2339,23 +2344,23 @@ static int manipulate_cave_color_season(cave_type *c_ptr, worldpos *wpos, int x,
 			case FEAT_GRASS:
 				switch (Rand_div(7)) {
 				case 0: case 1: case 2: case 3: case 4:
-					color = TERM_L_GREEN; break;
-				case 5:	if (c_ptr->info & CAVE_LITE) color = TERM_L_UMBER;
-					else color = TERM_UMBER;
+					colour = TERM_L_GREEN; break;
+				case 5:	if (c_ptr->info & CAVE_LITE) colour = TERM_L_UMBER;
+					else colour = TERM_UMBER;
 					break;
-				case 6: color = TERM_GREEN; break;
+				case 6: colour = TERM_GREEN; break;
 				}
 				break;
 			case FEAT_TREE:
 			case FEAT_BUSH:
-				if (Rand_div(300)) color = TERM_L_GREEN;
-				else if (Rand_div(3)) color = TERM_L_UMBER;
-				else color = TERM_UMBER;
+				if (Rand_div(300)) colour = TERM_L_GREEN;
+				else if (Rand_div(3)) colour = TERM_L_UMBER;
+				else colour = TERM_UMBER;
 				break;
 			case FEAT_IVY:
-				if (Rand_div(500)) color = TERM_GREEN;
-				else if (Rand_div(3)) color = TERM_GREEN;
-				else color = TERM_UMBER;
+				if (Rand_div(500)) colour = TERM_GREEN;
+				else if (Rand_div(3)) colour = TERM_GREEN;
+				else colour = TERM_UMBER;
 				break;
 			}
 		}
@@ -2367,27 +2372,27 @@ static int manipulate_cave_color_season(cave_type *c_ptr, worldpos *wpos, int x,
 			case FEAT_GRASS:
 				switch (Rand_div(6)) {
 				case 0:
-					color = TERM_L_GREEN; break;
+					colour = TERM_L_GREEN; break;
 				case 1: case 2:
-					if (c_ptr->info & CAVE_LITE) color = TERM_YELLOW;
-					else color = TERM_L_UMBER;
+					if (c_ptr->info & CAVE_LITE) colour = TERM_YELLOW;
+					else colour = TERM_L_UMBER;
 							break;
 				case 3: case 4:
-					color = TERM_GREEN; break;
+					colour = TERM_GREEN; break;
 				case 5:
-					color = TERM_YELLOW; break;
+					colour = TERM_YELLOW; break;
 				}
 				break;
 			case FEAT_TREE:
 			case FEAT_BUSH:
-				if (Rand_div(4)) color = TERM_GREEN;
-				else if (Rand_div(10)) color = TERM_L_GREEN;
-				else color = TERM_L_UMBER;
+				if (Rand_div(4)) colour = TERM_GREEN;
+				else if (Rand_div(10)) colour = TERM_L_GREEN;
+				else colour = TERM_L_UMBER;
 				break;
 			case FEAT_IVY:
-				if (Rand_div(3)) color = TERM_GREEN;
-				else if (Rand_div(3)) color = TERM_L_UMBER;
-				else color = TERM_UMBER;
+				if (Rand_div(3)) colour = TERM_GREEN;
+				else if (Rand_div(3)) colour = TERM_L_UMBER;
+				else colour = TERM_UMBER;
 				break;
 			}
 		}
@@ -2399,30 +2404,30 @@ static int manipulate_cave_color_season(cave_type *c_ptr, worldpos *wpos, int x,
 			case FEAT_GRASS:
 				switch (Rand_div(7)) {
 				case 0: case 1: case 2:
-					color = TERM_GREEN; break;
+					colour = TERM_GREEN; break;
 				case 3: case 4:
-					if (c_ptr->info & CAVE_LITE) color = TERM_L_UMBER;
-					else color = TERM_UMBER;
+					if (c_ptr->info & CAVE_LITE) colour = TERM_L_UMBER;
+					else colour = TERM_UMBER;
 					break;
 				case 5: case 6:
-					color = TERM_YELLOW; break;
+					colour = TERM_YELLOW; break;
 				}
 				break;
 			case FEAT_TREE:
 			case FEAT_BUSH:
 				if (Rand_div(50))
 				switch (Rand_div(10)) {
-				case 0: case 1: color = TERM_GREEN; break;
-				case 2: case 3: case 4: color = TERM_YELLOW; break;
-				case 5: case 6: case 7: color = TERM_L_UMBER; break;
-				case 8: case 9: color = TERM_UMBER; break;
+				case 0: case 1: colour = TERM_GREEN; break;
+				case 2: case 3: case 4: colour = TERM_YELLOW; break;
+				case 5: case 6: case 7: colour = TERM_L_UMBER; break;
+				case 8: case 9: colour = TERM_UMBER; break;
 				}
-				else color = TERM_RED;
+				else colour = TERM_RED;
 				break;
 			case FEAT_IVY:
-				if (Rand_div(3)) color = TERM_GREEN;
-				else if (Rand_div(3)) color = TERM_L_UMBER;
-				else color = TERM_UMBER;
+				if (Rand_div(3)) colour = TERM_GREEN;
+				else if (Rand_div(3)) colour = TERM_L_UMBER;
+				else colour = TERM_UMBER;
 				break;
 			}
 		}
@@ -2431,55 +2436,65 @@ static int manipulate_cave_color_season(cave_type *c_ptr, worldpos *wpos, int x,
 
 	Rand_quick = old_rand; /* resume complex rng - mikaelh */
 	Rand_value = tmp_seed; /* restore RNG */
-	return (color);
+	return colour;
 }
-static int manipulate_cave_color_daytime(cave_type *c_ptr, worldpos *wpos, int x, int y, int color) {
-	bool old_rand = Rand_quick;
-	u32b tmp_seed = Rand_value; /* save RNG */
-
+static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
 	/* World surface manipulation only */
-	if (wpos->wz) return color;
-
-	/* To use always the same feats for this everytime the player
-	   enters a worldmap sector, we seed the RNG with that particular
-	   worldmap coords. */
-	Rand_quick = TRUE;
-	/* My attempt to create something chaotic - mikaelh */
-	Rand_value = (3623 * wpos->wy + 29753) * (2843 * wpos->wx + 48869) +
-		(1741 * y + 22109) * y * x + (x + 96779) * x + 42;
+	if (wpos->wz) return colour;
 
 	/* Darkness on the world surface at night. Darken all colours. */
 	if (night_surface &&
 	    (!(c_ptr->info & (CAVE_GLOW | CAVE_LITE)) ||
 	    (f_info[c_ptr->feat].flags2 & FF2_NIGHT_DARK))) {
-		switch (color) {
-		case TERM_DARK: color = TERM_DARK; break;
-		case TERM_WHITE: color = TERM_SLATE; break;
-		case TERM_SLATE: color = TERM_L_DARK; break;
-		case TERM_ORANGE: color = TERM_UMBER; break;
-		case TERM_RED: color = TERM_RED; break;
-		case TERM_GREEN: color = TERM_GREEN; break;
-		case TERM_BLUE: color = TERM_BLUE; break;
-		case TERM_UMBER: color = TERM_UMBER; break;
-		case TERM_L_DARK: color = TERM_L_DARK; break;
-		case TERM_L_WHITE: color = TERM_SLATE; break;
-		case TERM_VIOLET: color = TERM_VIOLET; break;
-		case TERM_YELLOW: color = TERM_L_UMBER; break;
-		case TERM_L_RED: color = TERM_RED; break;
-		case TERM_L_GREEN: color = TERM_GREEN; break;
-		case TERM_L_BLUE: color = TERM_BLUE; break;
-		case TERM_L_UMBER: color = TERM_UMBER; break;
+		switch (colour) {
+		case TERM_DARK: return TERM_DARK;
+		case TERM_WHITE: return TERM_SLATE;
+		case TERM_SLATE: return TERM_L_DARK;
+		case TERM_ORANGE: return TERM_UMBER;
+		case TERM_RED: return TERM_RED;
+		case TERM_GREEN: return TERM_GREEN;
+		case TERM_BLUE: return TERM_BLUE;
+		case TERM_UMBER: return TERM_UMBER;
+		case TERM_L_DARK: return TERM_L_DARK;
+		case TERM_L_WHITE: return TERM_SLATE;
+		case TERM_VIOLET: return TERM_VIOLET;
+		case TERM_YELLOW: return TERM_L_UMBER;
+		case TERM_L_RED: return TERM_RED;
+		case TERM_L_GREEN: return TERM_GREEN;
+		case TERM_L_BLUE: return TERM_BLUE;
+		case TERM_L_UMBER: return TERM_UMBER;
 		}
 	}
 
-	Rand_quick = old_rand; /* resume complex rng - mikaelh */
-	Rand_value = tmp_seed; /* restore RNG */
-	return (color);
+	return colour;
 }
-static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y, int color) {
-	color = manipulate_cave_color_season(c_ptr, wpos, x,  y,  color);
-	return manipulate_cave_color_daytime(c_ptr, wpos, x,  y,  color);
+static int manipulate_cave_colour(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
+	colour = manipulate_cave_colour_season(c_ptr, wpos, x,  y,  colour);
+	return manipulate_cave_colour_daytime(c_ptr, wpos, x,  y,  colour);
 }
+#ifdef SHADE_ALL_FLOOR
+static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
+	switch (colour) {
+	case TERM_DARK: return TERM_DARK;
+	case TERM_WHITE: return TERM_SLATE;
+	case TERM_SLATE: return TERM_L_DARK;
+	case TERM_ORANGE: return TERM_UMBER;
+	case TERM_RED: return TERM_RED;
+	case TERM_GREEN: return TERM_GREEN;
+	case TERM_BLUE: return TERM_BLUE;
+	case TERM_UMBER: return TERM_UMBER;
+	case TERM_L_DARK: return TERM_L_DARK;
+	case TERM_L_WHITE: return TERM_SLATE;
+	case TERM_VIOLET: return TERM_VIOLET;
+	case TERM_YELLOW: return TERM_L_UMBER;
+	case TERM_L_RED: return TERM_RED;
+	case TERM_L_GREEN: return TERM_GREEN;
+	case TERM_L_BLUE: return TERM_BLUE;
+	case TERM_L_UMBER: return TERM_UMBER;
+	}
+	return colour;
+}
+#endif
 
 
 /*
@@ -2702,7 +2717,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				(*cp) = st_info[cs_ptr->sc.omni].d_char;
 				a = st_info[cs_ptr->sc.omni].d_attr;
 
-				a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
+				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
 			}
 
 			/* apply colour to OPEN house doors (which have FF1_FLOOR,
@@ -2710,16 +2725,16 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			else if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
 				a = access_door_colour(Ind, cs_ptr->sc.ptr);
 
-				a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
+				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
 			}
 
 			/* Special lighting effects */
 			else if (p_ptr->view_special_lite &&
-			    (a_org = manipulate_cave_color_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
+			    (a_org = manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
 			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
 			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
 			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)))) {
-				a = manipulate_cave_color_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
+				a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
 
 				/* Handle "blind" */
 				if (p_ptr->blind) {
@@ -2747,12 +2762,17 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				else if (!(*w_ptr & CAVE_VIEW) && !(f_ptr->flags2 & FF2_NO_SHADE)) {
 					/* Special flag */
 					if (p_ptr->view_bright_lite) {
+#ifndef SHADE_ALL_FLOOR
 						/* Use "gray" */
 						a = TERM_SLATE;
+#else
+						if (p_ptr->wpos.wz || !night_surface) /* not already shaded in m.c.c.daytime() above? */
+							a = manipulate_cave_colour_shade(c_ptr, &p_ptr->wpos, x, y, a);
+#endif
 					}
 				}
 			}
-			else a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
+			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
 
 			/* The attr */
 			(*ap) = a;
@@ -2840,11 +2860,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* Special lighting effects */
 			if (p_ptr->view_granite_lite &&
-			    (a_org = manipulate_cave_color_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
+			    (a_org = manipulate_cave_colour_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
 			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
 			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
 			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)))) {
-				a = manipulate_cave_color_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
+				a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
 
 				/* Handle "blind" */
 				if (p_ptr->blind) {
@@ -2907,7 +2927,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 #endif
 				}
 			}
-			else a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
+			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
 
 			/* The attr */
 			(*ap) = a;
@@ -2961,7 +2981,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			a = f_ptr->shimmer[rand_int(7)];
 
 			if (rand_int(8) != 1)
-				a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
+				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
 
 			(*ap) = a;
 		}
