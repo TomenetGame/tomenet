@@ -120,11 +120,13 @@ I:100:& Spear~
 I:100:& Awl-Pike~
 I:100:& Trident~
 I:100:& Pike~
+I:100:& Halberd~
+I:100:& Lance~
 I:100:& Beaked Axe~
 I:100:& Broad Axe~
-I:100:& Lance~
 I:100:& Battle Axe~
 I:100:& Hatchet~
+I:100:& Cleaver~
 I:100:& Sling~
 I:100:& Short Bow~
 I:100:& Long Bow~
@@ -143,11 +145,11 @@ T:100:111:56
 T:100:111:56
 T:100:111:56
 #I:100:& Nunchaku~
+#I:100:& Bo Staff~
+#I:100:& Lucerne Hammer~
 I:100:& Quarterstaff~
 I:100:& Mace~
-#I:100:& Bo Staff~
 I:100:& War Hammer~
-I:100:& Lucerne Hammer~
 I:100:& Morning Star~
 I:100:& Flail~
 I:100:& Lead-Filled Mace~
@@ -1203,11 +1205,13 @@ I:100:& Spear~
 I:100:& Awl-Pike~
 I:100:& Trident~
 I:100:& Pike~
+I:100:& Halberd~
+I:100:& Lance~
 I:100:& Beaked Axe~
 I:100:& Broad Axe~
-I:100:& Lance~
 I:100:& Battle Axe~
 I:100:& Hatchet~
+I:100:& Cleaver~
 I:100:& Sling~
 I:100:& Short Bow~
 I:100:& Long Bow~
@@ -1228,11 +1232,11 @@ T:100:111:56
 T:100:111:56
 T:100:111:56
 #I:100:& Nunchaku~
+#I:100:& Bo Staff~
+#I:100:& Lucerne Hammer~
 I:100:& Quarterstaff~
 I:100:& Mace~
-#I:100:& Bo Staff~
 I:100:& War Hammer~
-I:100:& Lucerne Hammer~
 I:100:& Morning Star~
 I:100:& Flail~
 I:100:& Lead-Filled Mace~
