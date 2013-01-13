@@ -367,7 +367,7 @@ D:1:You dig in the rubble.
 # 0x32 --> magma vein
 
 N:50:magma vein
-G:%:s
+G:%:D
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the magma vein.
@@ -383,7 +383,7 @@ D:1:You tunnel into the quartz vein.
 # 0x34 --> magma vein + treasure
 
 N:52:magma vein
-G:%:s
+G:%:D
 M:50
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | TUNNELABLE
