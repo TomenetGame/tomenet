@@ -63,7 +63,7 @@ F:-:89:3
 #F:#:63:3
 F:#:60:3
 # For Bree-style houses: Permanent wall that is too high and should not receive lamp lighting - C. Blue
-F:*:26:3
+F:*:28:3
 
 # Brick Roof
 F:s:193:3

@@ -1775,6 +1775,9 @@
 /* New features, filling up the gaps in f_info */
 #define FEAT_FOUNTAIN_BLOOD	0x1B	/* for Vampires */
 
+/* Like house wall, but for upper storeys, not illuminated by lamp light therefore */
+#define FEAT_WALL_HOUSEUPPER	0x1C
+
 /* Doors */
 #define FEAT_DOOR_HEAD          0x20
 #define FEAT_DOOR_TAIL          0x2F
