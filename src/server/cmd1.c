@@ -1600,21 +1600,16 @@ void carry(int Ind, int pickup, int confirm)
 
 		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner) {
 			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
+			    (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
 			    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
-			    (o_ptr->tval == TV_FOOD)) {
+			// "Why not share ale? -Molt" <- good idea, here too!
+			    (o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD)) {
 //				o_ptr->number = 1;
 				o_ptr->discount = 100;
 				if (o_ptr->level <= p_ptr->lev) {
 //					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
 				}
-			// "Why not share ale? -Molt" <- good idea, here too!
-			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_ALE) {
-				o_ptr->mode = p_ptr->mode;
-				o_ptr->discount = 100;
-  			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
-                                o_ptr->mode = p_ptr->mode;
-				o_ptr->discount = 100;
                         } else {
 				msg_print(Ind, "\377oYou cannot take items of other players without a valid account.");
 				return;
@@ -1624,8 +1619,10 @@ void carry(int Ind, int pickup, int confirm)
 		if (compat_pomode(Ind, o_ptr)) {
 			/* Make an exception for WoR scrolls in case of rescue missions (become 100% off tho) */
 			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
+			    (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
 			    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
-			    (o_ptr->tval == TV_FOOD)) {
+			// Why not share ale? -Molt
+			    (o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD)) {
 //				o_ptr->number = 1;
 				o_ptr->discount = 100;
 				if (o_ptr->level <= p_ptr->lev) {
@@ -1644,13 +1641,6 @@ void carry(int Ind, int pickup, int confirm)
 			// the one with esp
     			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS2) {
 				o_ptr->mode = p_ptr->mode;
-			// Why not share ale? -Molt
-			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_ALE) {
-				o_ptr->mode = p_ptr->mode;
-				o_ptr->discount = 100;
-   			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
-                                o_ptr->mode = p_ptr->mode;
-				o_ptr->discount = 100;
 			} else {
 				msg_format(Ind, "You cannot take items of %s players.", compat_pomode(Ind, o_ptr));
 				return;
@@ -1674,7 +1664,8 @@ void carry(int Ind, int pickup, int confirm)
 #if 1
 		/* Turn level 0 food into level 1 food - mikaelh */
 		if (o_ptr->owner && o_ptr->owner != p_ptr->id && o_ptr->level == 0 &&
-		    ((o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD) ||
+		    ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
+		    (o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD) ||
 		    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER)))
 		{
 			o_ptr->level = 1;
