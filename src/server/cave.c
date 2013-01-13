@@ -2718,9 +2718,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* Special lighting effects */
 			else if (p_ptr->view_special_lite &&
 			    (a_org = manipulate_cave_color_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
-			    ((f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
-			    (lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
-			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))))) {
+			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
+			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
+			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)))) {
 				a = manipulate_cave_color_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
 
 				/* Handle "blind" */
@@ -2750,9 +2750,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					/* Special flag */
 					if (p_ptr->view_bright_lite) {
 						/* Use "gray" */
-						/* Allow distinguishing permanent walls from granite */
-						if (a_org != TERM_WHITE) a = TERM_SLATE;
-						else if (a == TERM_WHITE) a = TERM_L_WHITE;
+						a = TERM_SLATE;
 					}
 				}
 			}
@@ -2845,9 +2843,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* Special lighting effects */
 			if (p_ptr->view_granite_lite &&
 			    (a_org = manipulate_cave_color_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
-			    ((f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
-			    (lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
-			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))))) {
+			    ((lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
+			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
+			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)))) {
 				a = manipulate_cave_color_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
 
 				/* Handle "blind" */
@@ -2867,19 +2865,29 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 
 				/* Handle "view_bright_lite" */
+				/* NOTE: The only prob here is that if magma doesn't have a different
+					 symbol from granite walls, for example if the player maps
+					 both to 'solid block' character, shaded granite walls and
+					 magma walls will look the same - C. Blue */
 				else if (p_ptr->view_bright_lite && !(f_ptr->flags2 & FF2_NO_SHADE)) {
 					/* Not viewable */
 					if (!(*w_ptr & CAVE_VIEW)) {
-						/* Use "gray" */
 						/* Allow distinguishing permanent walls from granite */
-						if (a_org != TERM_WHITE) a = TERM_SLATE;
+						if (a_org != TERM_WHITE) {
+							if (a_org == TERM_L_WHITE) a = TERM_SLATE;
+							else a = TERM_L_DARK;
+						}
+						/* don't "brighten up" if it was darkened by night */
 						else if (a == TERM_WHITE) a = TERM_L_WHITE;
 					}
 						/* Not glowing */
 					else if (!(c_ptr->info & CAVE_GLOW)) {
-						/* Use "gray" */
 						/* Allow distinguishing permanent walls from granite */
-						if (a_org != TERM_WHITE) a = TERM_SLATE;
+						if (a_org != TERM_WHITE) {
+							if (a_org == TERM_L_WHITE) a = TERM_SLATE;
+							else a = TERM_L_DARK;
+						}
+						/* don't "brighten up" if it was darkened by night */
 						else if (a == TERM_WHITE) a = TERM_L_WHITE;
 					}
 
