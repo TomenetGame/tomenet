@@ -3070,6 +3070,9 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			break;
 
 		case WM_EXITSIZEMOVE:
+		{
+			term *old;
+
 			/* Remember final size values from WM_SIZE -> SIZE_RESTORED */
 			if ((screen_term_rows == 24 && Client_setup.options[43]) ||
 			    (screen_term_rows == 46 && !Client_setup.options[43])) {
@@ -3095,12 +3098,15 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			td->cols = screen_term_cols;
 			td->rows = screen_term_rows;
 			term_getsize(td);
+			old = Term;
                         Term_activate(&td->t);
                         Term_resize(screen_term_cols, screen_term_rows);
 			term_window_resize(td);//not required? used in resize_main_window though
+			Term_activate(old);
 
 			MoveWindow(hWnd, td->pos_x, td->pos_y, td->size_wid, td->size_hgt, TRUE);
 			return 0;
+		}
 
 		case WM_PALETTECHANGED:
 			/* ignore if palette change caused by itself */
@@ -4036,14 +4042,17 @@ void change_font(int s) {
 
 void resize_main_window_win(int cols, int rows) {
 	term_data *td = &data[0];
+	term *old;
 	term *t = &td->t;
 
         td->cols = cols;
         td->rows = rows;
         term_getsize(td);
         term_window_resize(td);
+	old = Term;
 	Term_activate(t);
         Term_resize(td->cols, td->rows);
+	Term_activate(old);
 }
 
 bool ask_for_bigmap(void) {
