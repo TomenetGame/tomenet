@@ -585,6 +585,11 @@ static byte default_tval_to_attr(int tval) {
 
 		case TV_FOOD:
 			return (TERM_L_UMBER);
+
+		case TV_TRAPKIT:
+			return TERM_SLATE;
+		case TV_RUNE:
+			return TERM_L_RED;
 	}
 
 	return (TERM_WHITE);
