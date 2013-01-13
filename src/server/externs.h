@@ -1309,6 +1309,8 @@ extern bool save_server_info(void);
 extern void install_timer_tick(void (*func)(void), int freq);
 extern void install_input(void (*func)(int, int), int fd, int arg);
 extern void remove_input(int fd);
+extern void install_output(void (*func)(int, int), int fd, int arg);
+extern void remove_output(int fd);
 extern void sched(void);
 extern void block_timer(void);
 extern void allow_timer(void);
@@ -1968,6 +1970,10 @@ extern void wipe_hooks(void);
 extern bool is_state(int Ind, store_type *s_ptr, int state);
 extern void show_building(int Ind, store_type *s_ptr);
 extern bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item, int item2, int amt, int gold);
+
+/* metaclient.c */
+extern void meta_tick(void);
+extern void meta_report(int flag);
 
 /* lua_bind.c */
 s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus);

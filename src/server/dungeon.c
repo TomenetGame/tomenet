@@ -5120,7 +5120,6 @@ static void process_various(void)
 
 		check_quests();		/* It's enough with 'once a minute', none? -Jir */
 
-		Check_evilmeta();	/* check that evilmeta is still up */
 		check_banlist();	/* unban some players */
 		scan_objs();		/* scan objects and houses */
 
@@ -5907,6 +5906,9 @@ void dungeon(void)
 		}
 		process_player_change_wpos(i);
 	}
+	
+	/* New meta client implementation */
+	meta_tick();
 
 	/* Handle any network stuff */
 	Net_input();

@@ -121,7 +121,11 @@ static void migrate_files(void)
 	dp = opendir(ANGBAND_DIR_CONFIG);
 	if (!dp) {
 		/* Try to create lib/config */
+#ifdef WINDOWS
+		if (mkdir(ANGBAND_DIR_CONFIG) != 0) {
+#else
 		if (mkdir(ANGBAND_DIR_CONFIG, 0777) != 0) {
+#endif
 			errval = errno;
 			fprintf(stderr, "Failed to create directory \"%s\"! (errno = %d)", ANGBAND_DIR_CONFIG, errval);
 		} else {

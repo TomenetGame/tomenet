@@ -461,267 +461,15 @@ void init_players() {
  */
 bool Report_to_meta(int flag)
 {
- 	static char local_name[1024];
-	static int init = 0;
-#ifndef EVIL_METACLIENT
-        static long resolved_ip;
-#endif
-	char buf_meta[16384];	/* 16k is quite enough */
-//	int bytes;
-	int i, sock;
-	char temp[100];
-	char *url, *notes;
-	bool hidden_dungeon_master = 0;
-
         /* Abort if the user doesn't want to report */
-	if (!cfg.report_to_meta || cfg.runlevel<4 || ((cfg.runlevel > 1023) && (cfg.runlevel < 2045)))
-		return FALSE;
-
-	/* If this is the first time called, initialize our hostname */
-	if (!init)
-	{
-#ifndef EVIL_METACLIENT
-		struct hostent	*hp;
-#endif
-
-		/* Never do this again */
-		init = 1;
-
-		/* Get our hostname */
-#if 0
-# ifdef BIND_NAME
-		strncpy(local_name, BIND_NAME, 1024);
-# else
-		GetLocalHostName(local_name, 1024);
-# endif
-#else
-		if (cfg.bind_name)
-			strncpy(local_name, cfg.bind_name, 1024);
-		else
-			GetLocalHostName(local_name, 1024);
-#endif
-
-#ifndef EVIL_METACLIENT
-		hp = gethostbyname(cfg.meta_address);
-		if (hp == NULL)
-		{
-# ifndef WINDOWS
-			sl_errno = SL_EHOSTNAME;
-# endif
-                        init = 0;
-			return (FALSE);
-		} else {
-			resolved_ip = ((struct in_addr*)(hp->h_addr))->s_addr;
-		}
-#endif
-	}
-
-	memset(buf_meta, 0, sizeof(buf_meta));
-
-	url = html_escape(local_name);
-	sprintf(buf_meta, "<server url=\"%s\" port=\"%d\" protocol=\"2\"", url, (int) cfg.game_port);
-	free(url);
-
-	if (flag & META_DIE)
-	{
-		strcat(buf_meta, " death=\"true\"></server>");
-	}
-	else
-	{
-		strcat(buf_meta, ">");
-		if (flag & META_START)
-		{
-#ifndef WINDOWS
-			signal(SIGUSR1, SIG_IGN);
-#endif
-		}
-
-                else if (flag & META_UPDATE)
-                {
-                        /* Hack -- If cfg_secret_dungeon_master is enabled, determine
-                         * if the DungeonMaster is playing, and if so, reduce the
-                         * number of players reported.
-                         */
-
-			strcat(buf_meta, "<notes>");
-			notes = html_escape(cfg.server_notes);
-			strcat(buf_meta, notes);
-			free(notes);
-			strcat(buf_meta, "</notes>");
-
-                        for (i = 1; i <= NumPlayers; i++)
-                        {
-                                if (Players[i]->admin_dm && cfg.secret_dungeon_master) hidden_dungeon_master++;
-                        }
-
-                        /* if someone other than a dungeon master is playing */
-                        if (NumPlayers - hidden_dungeon_master)
-                        {
-				char *name;
-                                for (i = 1; i <= NumPlayers; i++)
-                                {
-                                        /* handle the cfg_secret_dungeon_master option */
-                                        if (Players[i]->admin_dm && cfg.secret_dungeon_master) continue;
-
-                                        strcat(buf_meta, "<player>");
-					name = html_escape(Players[i]->name);
-					strcat(buf_meta, name);
-					free(name);
-                                        strcat(buf_meta, "</player>");
-                                }
-                        }
-                }
-
-#ifdef TEST_SERVER
-		strcat(buf_meta, "<game>TomeNET TEST-ONLY</game>");
-#else
- #ifdef ARCADE_SERVER /* made this one higher priority since using RPG_SERVER as an "ARCADE-addon" might be desired :) */
-		//removed "Smash." -Moltor
-		strcat(buf_meta, "<game>TomeNET Arcade</game>");
- #else
-  #ifdef RPG_SERVER
-//		strcat(buf_meta, "<game>TomeNET Ironman (not for beginners)</game>");
-		strcat(buf_meta, "<game>TomeNET Ironman</game>");
-  #else
-   #ifdef FUN_SERVER
-		strcat(buf_meta, "<game>TomeNET Fun</game>");
-   #else
-                strcat(buf_meta, "<game>TomeNET</game>");
-   #endif
-  #endif
- #endif
-#endif
-
-                /* Append the version number */
-                snprintf(temp, sizeof(temp), "<version>%d.%d.%d%s", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, SERVER_VERSION_TAG);
-                strcat(buf_meta, temp);
-                strcat(buf_meta, "</version></server>");
-        }
-
-        s_printf("Sending meta info...\n");
-
-	/* If we haven't setup the meta connection yet, abort */
-#ifdef EVIL_METACLIENT
-	sock = open("metadata", O_WRONLY|O_CREAT|O_TRUNC, 0700);
-#else
-        block_timer();
-        sock = socket(AF_INET, SOCK_STREAM, 0);
-#endif
-	if (sock == -1){
+	if (!cfg.report_to_meta || cfg.runlevel < 4 || ((cfg.runlevel > 1023) && (cfg.runlevel < 2045))) {
 		return FALSE;
 	}
 
-	{
-#ifndef EVIL_METACLIENT
-		struct sockaddr_in	iaddr;
-
-		memset(&iaddr, 0, sizeof (iaddr));
-		iaddr.sin_family = AF_INET;
-		iaddr.sin_port = htons(cfg.meta_port);
-		iaddr.sin_addr.s_addr = resolved_ip;
-		if (connect(sock, (struct sockaddr*)&iaddr, sizeof (iaddr)) == -1)
-		{
-			s_printf("Meta Info NOT sent to the meta : connect %s\n", strerror(errno));
-			close(sock);
-			return FALSE;
-		}
-#endif
-
-		if (write(sock, buf_meta, strlen(buf_meta)) == -1)
-		{
-			s_printf("Meta Info NOT sent to the meta : write\n");
-			close(sock);
-			return FALSE;
-		}
-		s_printf("Info sent to the meta\n");
-                close(sock);
-	}
-#ifdef EVIL_METACLIENT
-	Check_evilmeta();
-
-	/* kill it or update it */
-	if (metapid > 0) {
-#ifndef WINDOWS
-		kill(metapid, (flag & META_DIE ? SIGTERM : SIGUSR1));
-#endif
-	}
-#else
-        allow_timer();
-#endif
+	/* New implementation */
+//	s_printf("Reporting to meta...\n");
+	meta_report(flag);
 	return TRUE;
-}
-
-/*
- * Start the evilmeta client
- */
-void Start_evilmeta(void)
-{
-#ifdef EVIL_METACLIENT
-#ifndef WINDOWS
-	if (cfg.report_to_meta && !metapid) {
-#ifdef ARCADE_SERVER /* made this one top priority since using RPG_SERVER as an "ARCADE-addon" might be desired :) */
-		char *cmd = "./evilmeta.arcade";
-#else
-#ifdef RPG_SERVER
-		char *cmd = "./evilmeta.rpg";
-#else
-		char *cmd = "./evilmeta";
-#endif
-#endif
-
-		if (access(cmd, X_OK) < 0) {
-			s_printf("Metaserver reporting failed: cannot execute %s\n", cmd);
-			metapid = -1;
-			return;
-		}
-
-		metapid = fork();
-		if (metapid == -1) {
-			/* didnt work.. we should die */
-			fprintf(stderr, "fork failed!\n");
-			exit(-5);
-		}
-		if (metapid == 0) {
-			char *args[] = {cmd, NULL};
-
-			/* We are the meta client */
-			execve(args[0], args, NULL);
-
-			/* GONE */
-			printf("exec failed! [%d - %s]\n", errno, strerror(errno));
-
-			exit(-20);
-		}
-	}
-#else
-	s_printf("Metaserver reporting has not been implemented for Windows.");
-#endif /* WINDOWS */
-	metapid = 1;
-#endif
-}
-
-void Check_evilmeta(void)
-{
-	int status;
-
-	if (metapid == 0)
-	{
-		Start_evilmeta();
-	}
-
-#ifndef WINDOWS
-	/* find out what has happened to evilmeta - mikaelh */
-	else if (waitpid(metapid, &status, WNOHANG | WUNTRACED) > 0)
-	{
-		if (WIFEXITED(status) || WIFSIGNALED(status))
-		{
-			/* evilmeta is dead, restart it */
-//			s_printf("evilmeta is dead, restarting it\n");
-			metapid = 0;
-			Start_evilmeta();
-		}
-	}
-#endif /* WINDOWS */
 }
 
 /* update tomenet.acc record structure to a new version - C. Blue
@@ -839,11 +587,8 @@ int Setup_net_server(void)
 	memset(Conn, 0, size);
 
 	/* Tell the metaserver that we're starting up */
-	s_printf("Report to meta server:\n");
+	s_printf("Report to metaserver\n");
 	Report_to_meta(META_START);
-#ifdef EVIL_METACLIENT
-	Start_evilmeta();
-#endif
 
 	s_printf("%s\n", longVersion);
 	s_printf("Server is running version %04x\n", MY_VERSION);
@@ -3384,11 +3129,9 @@ int Net_output(void)
 		//Sockbuf_clear(&connp->w);
 	}
 
-#ifndef EVIL_METACLIENT
 	/* Every fifteen seconds, update the info sent to the metaserver */
 	if (!(turn % (15 * cfg.fps)))
 		Report_to_meta(META_UPDATE);
-#endif
 
 	return 1;
 }
