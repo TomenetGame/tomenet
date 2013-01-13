@@ -104,7 +104,6 @@ void meta_tick(void) {
  */
 static void meta_connect(int blocking) {
 	int sock;
-	int sendbuf = 32 * 1024;
 	
 	/* Create a socket */
 	sock = socket(AF_INET, SOCK_STREAM, 0);
