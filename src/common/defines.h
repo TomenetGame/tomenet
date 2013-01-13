@@ -5316,10 +5316,11 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define FF1_BLOCK_LOS		0x40000000L	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
 #define FF1_BLOCK_CONTACT	0x80000000L	/* like BLOCK_LOS, except players can see across it even if they cant attack (nor can monsters) */
 
-#define FF2_LAMP_LITE		0x00000001L	/* Gets coloured by view_granite_lite */
-#define FF2_LAMP_LITE_SNOW	0x00000002L	/* Gets coloured by view_granite_lite, if it's winter season, due to assumed snow-covering */
-#define FF2_NIGHT_DARK		0x00000004L	/* Stays darkened at night, unaffected by glow (magical light) or lite (lamps) */
-#define FF2_NO_SHADE		0x00000008L	/* Don't shade to TERM_SLATE in view_bright_lite (or vault walls become indistinguishable from granite, without magic light) */
+#define FF2_LAMP_LITE		0x00000001L	/* Gets coloured by view_granite_lite. Implies SPECIAL_LITE. */
+#define FF2_LAMP_LITE_SNOW	0x00000002L	/* Gets coloured by view_granite_lite, if it's winter season, due to assumed snow-covering. Implies SPECIAL_LITE if successful. */
+#define FF2_SPECIAL_LITE	0x00000004L	/* Gets coloured slate/gets slightly darkened by special fx: no LoS/no GLOW. This is implied by LAMP_LITE and successful LAMP_LITE_SNOW. */
+#define FF2_NIGHT_DARK		0x00000008L	/* Stays darkened at night, unaffected by glow (magical light) or lite (lamps) */
+#define FF2_NO_SHADE		0x00000010L	/* Don't shade to TERM_SLATE in view_bright_lite (or vault walls become indistinguishable from granite, without magic light) */
 
 /* for switching places with another player: */
 #define FF1_SWITCH_MASK \

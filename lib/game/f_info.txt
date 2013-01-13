@@ -449,36 +449,39 @@ F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | TUNNELABLE | LAMP_LITE
 D:1:You tunnel into the granite wall.
 
-# 0x3C --> permanent wall -- basic (perm)
+# 0x3C --> permanent wall -- basic/extra (perm) (for houses/stores)
 
 N:60:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | LAMP_LITE
 
-# 0x3D --> permanent wall -- inner (perm)
+# 0x3D --> permanent wall -- inner (perm) (for vaults)
 
 N:61:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE
+F:DONT_NOTICE_RUNNING | SPECIAL_LITE
+# | NO_SHADE <- in case ice walls are too annoying
 
-# 0x3E --> permanent wall -- outer (perm)
+# 0x3E --> permanent wall -- outer (perm) (for vaults)
 
 N:62:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE
+F:DONT_NOTICE_RUNNING | SPECIAL_LITE
+# | NO_SHADE <- in case ice walls are too annoying
 
-# 0x3F --> permanent wall -- solid (perm)
+# 0x3F --> permanent wall -- solid (perm) (for vaults)
 
 N:63:permanent wall
 G:#:w
 M:60
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE
+F:DONT_NOTICE_RUNNING | SPECIAL_LITE
+# | NO_SHADE <- in case ice walls are too annoying
 
 N:64:rune of warding
 G:;:B

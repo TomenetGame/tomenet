@@ -2617,6 +2617,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	byte a;
 	char c;
 
+	int a_org;
+	bool lite_snow;
+
 	cave_type **zcave;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
@@ -2635,6 +2638,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	/* XXX XXX Erm, it is DIRTY.  should be replaced soon */
 //	if (feat <= FEAT_INVIS)
 	if (f_ptr->flags1 & (FF1_FLOOR)) {
+
 		/* Memorized (or visible) floor */
 		/* Hack -- space are visible to the dungeon master */
 		if (((*w_ptr & CAVE_MARK) ||
@@ -2713,55 +2717,45 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* Special lighting effects */
 			else if (p_ptr->view_special_lite &&
-			    ((f_ptr->flags2 & FF2_LAMP_LITE) || (f_ptr->flags2 & FF2_LAMP_LITE_SNOW))) {
-				a = manipulate_cave_color_season(c_ptr, &p_ptr->wpos, x, y, a);
+			    (a_org = manipulate_cave_color_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
+			    ((f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
+			    (lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
+			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))))) {
+				a = manipulate_cave_color_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
 
-				if (!(f_ptr->flags2 & FF2_LAMP_LITE_SNOW) || a == TERM_WHITE || a == TERM_L_WHITE) /* dirty snow and clean slow :) */
-				    /* && season == SEASON_WINTER (should be covered by TERM_WHITE check actually) */ {
-					a = manipulate_cave_color_daytime(c_ptr, &p_ptr->wpos, x, y, a);
-
-					/* Handle "blind" */
-					if (p_ptr->blind) {
-						/* Use "dark gray" */
-						a = TERM_L_DARK;
-					}
-
-					/* Handle "torch-lit" grids */
-					else if (c_ptr->info & CAVE_LITE && *w_ptr & CAVE_VIEW) {
-						/* Torch lite */
-						if (p_ptr->view_yellow_lite) {
-							/* Use "yellow" */
-							a = TERM_YELLOW;
-						}
-					}
-
-					/* Handle "dark" grids */
-					else if (!(c_ptr->info & CAVE_GLOW) && !(f_ptr->flags2 & FF2_NO_SHADE)) {
-						/* Use "dark gray" */
-						a = TERM_L_DARK;
-					}
-
-					/* Handle "out-of-sight" grids */
-					else if (!(*w_ptr & CAVE_VIEW) && !(f_ptr->flags2 & FF2_NO_SHADE)) {
-						/* Special flag */
-						if (p_ptr->view_bright_lite) {
-							/* Use "gray" */
-							a = TERM_SLATE;
-						}
-					}
-				}
-				else a = manipulate_cave_color_daytime(c_ptr, &p_ptr->wpos, x, y, a);
-			}
-#if 0
-			else if (p_ptr->view_special_lite) {
-				/* Handle "dark" grids */
-				if (!(c_ptr->info & CAVE_GLOW)) {
+				/* Handle "blind" */
+				if (p_ptr->blind) {
 					/* Use "dark gray" */
 					a = TERM_L_DARK;
 				}
-				a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
+
+				/* Handle "torch-lit" grids */
+				else if (((f_ptr->flags2 & FF2_LAMP_LITE) || lite_snow) &&
+				    (c_ptr->info & CAVE_LITE && *w_ptr & CAVE_VIEW)) {
+					/* Torch lite */
+					if (p_ptr->view_yellow_lite) {
+						/* Use "yellow" */
+						a = TERM_YELLOW;
+					}
+				}
+
+				/* Handle "dark" grids */
+				else if (!(c_ptr->info & CAVE_GLOW) && !(f_ptr->flags2 & FF2_NO_SHADE)) {
+					/* Use "dark gray" */
+					a = TERM_L_DARK;
+				}
+
+				/* Handle "out-of-sight" grids */
+				else if (!(*w_ptr & CAVE_VIEW) && !(f_ptr->flags2 & FF2_NO_SHADE)) {
+					/* Special flag */
+					if (p_ptr->view_bright_lite) {
+						/* Use "gray" */
+						/* Allow distinguishing permanent walls from granite */
+						if (a_org != TERM_WHITE) a = TERM_SLATE;
+						else if (a == TERM_WHITE) a = TERM_L_WHITE;
+					}
+				}
 			}
-#endif
 			else a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
 
 			/* The attr */
@@ -2850,61 +2844,62 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* Special lighting effects */
 			if (p_ptr->view_granite_lite &&
-			    ((f_ptr->flags2 & FF2_LAMP_LITE) || (f_ptr->flags2 & FF2_LAMP_LITE_SNOW))) {
-				a = manipulate_cave_color_season(c_ptr, &p_ptr->wpos, x, y, a);
+			    (a_org = manipulate_cave_color_season(c_ptr, &p_ptr->wpos, x, y, a)) != -1 && /* dummy */
+			    ((f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
+			    (lite_snow = ((f_ptr->flags2 & FF2_LAMP_LITE_SNOW) && /* dirty snow and clean slow */
+			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))))) {
+				a = manipulate_cave_color_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
 
-				if (!(f_ptr->flags2 & FF2_LAMP_LITE_SNOW) || a == TERM_WHITE || a == TERM_L_WHITE) /* dirty snow and clean slow :) */
-				    /* && season == SEASON_WINTER (should be covered by TERM_WHITE check actually) */ {
-					a = manipulate_cave_color_daytime(c_ptr, &p_ptr->wpos, x, y, a);
+				/* Handle "blind" */
+				if (p_ptr->blind) {
+					/* Use "dark gray" */
+					a = TERM_L_DARK;
+				}
 
-					/* Handle "blind" */
-					if (p_ptr->blind) {
-						/* Use "dark gray" */
-						a = TERM_L_DARK;
-					}
-
-					/* Handle "torch-lit" grids */
-					else if (*w_ptr & CAVE_LITE) {
-						/* Torch lite */
-						if (p_ptr->view_yellow_lite) {
-							/* Use "yellow" */
-							a = TERM_YELLOW;//TERM_ORANGE; hm, not quite
-						}
-					}
-
-					/* Handle "view_bright_lite" */
-					else if (p_ptr->view_bright_lite && !(f_ptr->flags2 & FF2_NO_SHADE)) {
-						/* Not viewable */
-						if (!(*w_ptr & CAVE_VIEW)) {
-							/* Use "gray" */
-							a = TERM_SLATE;
-						}
-
-						/* Not glowing */
-						else if (!(c_ptr->info & CAVE_GLOW)) {
-							/* Use "gray" */
-							a = TERM_SLATE;
-						}
-
-#if 0 /* anyone know what the idea for this is? It causes a visual glitch, so disabling it for now */
-						/* Not glowing correctly */
-						else {
-							int xx, yy;
-
-							/* Hack -- move towards player */
-							yy = (y < p_ptr->py) ? (y + 1) : (y > p_ptr->py) ? (y - 1) : y;
-							xx = (x < p_ptr->px) ? (x + 1) : (x > p_ptr->px) ? (x - 1) : x;
-
-							/* Check for "local" illumination */
-							if (!(zcave[yy][xx].info & CAVE_GLOW)) {
-								/* Use "gray" */
-								a = TERM_SLATE;
-							}
-						}
-#endif
+				/* Handle "torch-lit" grids */
+				else if (((f_ptr->flags2 & FF2_LAMP_LITE) || lite_snow) &&
+				    (*w_ptr & CAVE_LITE)) {
+					/* Torch lite */
+					if (p_ptr->view_yellow_lite) {
+						/* Use "yellow" */
+						a = TERM_YELLOW;//TERM_ORANGE; hm, not quite
 					}
 				}
-				else a = manipulate_cave_color_daytime(c_ptr, &p_ptr->wpos, x, y, a);
+
+				/* Handle "view_bright_lite" */
+				else if (p_ptr->view_bright_lite && !(f_ptr->flags2 & FF2_NO_SHADE)) {
+					/* Not viewable */
+					if (!(*w_ptr & CAVE_VIEW)) {
+						/* Use "gray" */
+						/* Allow distinguishing permanent walls from granite */
+						if (a_org != TERM_WHITE) a = TERM_SLATE;
+						else if (a == TERM_WHITE) a = TERM_L_WHITE;
+					}
+						/* Not glowing */
+					else if (!(c_ptr->info & CAVE_GLOW)) {
+						/* Use "gray" */
+						/* Allow distinguishing permanent walls from granite */
+						if (a_org != TERM_WHITE) a = TERM_SLATE;
+						else if (a == TERM_WHITE) a = TERM_L_WHITE;
+					}
+
+#if 0 /* anyone know what the idea for this is? It causes a visual glitch, so disabling it for now */
+					/* Not glowing correctly */
+					else {
+						int xx, yy;
+
+						/* Hack -- move towards player */
+						yy = (y < p_ptr->py) ? (y + 1) : (y > p_ptr->py) ? (y - 1) : y;
+						xx = (x < p_ptr->px) ? (x + 1) : (x > p_ptr->px) ? (x - 1) : x;
+
+						/* Check for "local" illumination */
+						if (!(zcave[yy][xx].info & CAVE_GLOW)) {
+							/* Use "gray" */
+							a = TERM_SLATE;
+						}
+					}
+#endif
+				}
 			}
 			else a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
 
