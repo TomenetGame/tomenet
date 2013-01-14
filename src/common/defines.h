@@ -3539,8 +3539,8 @@
 #define CAVE_MAGELOCK	0x00004000	/* Anti-exploit: Remember magelocked doors so they don't give exp repeatedly */
 #define CAVE_JAIL	0x00008000	/* part of a jail: for special colour/lighting of jail walls */
 
-#define CAVE_LITE_VAMP	0x00010000	/* lite flag  */
-#define CAVE_LITE_ART	0x00020000	/* lite flag  */
+#define CAVE_LITE_VAMP	0x00010000	/* lite flag for RACE_VAMPIRE 'light' */
+#define CAVE_LITE_WHITE	0x00020000	/* lite flag for non-fiery light sources */
 
 
 #if 0	/* for future expansion.. */

@@ -2749,7 +2749,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					/* Torch lite */
 					if (p_ptr->view_yellow_lite) {
 #ifdef CAVE_LITE_COLOURS
-						if ((c_ptr->info & CAVE_LITE_ART)) a = TERM_WHITE;
+						if ((c_ptr->info & CAVE_LITE_WHITE)) a = TERM_WHITE;
 						else if ((c_ptr->info & CAVE_LITE_VAMP)) a = TERM_L_WHITE;
 						else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) a = TERM_LAMP;
 						else a = TERM_YELLOW;
@@ -2893,7 +2893,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					/* Torch lite */
 					if (p_ptr->view_yellow_lite) {
 #ifdef CAVE_LITE_COLOURS
-						if ((c_ptr->info & CAVE_LITE_ART)) a = TERM_WHITE;
+						if ((c_ptr->info & CAVE_LITE_WHITE)) a = TERM_WHITE;
 						else if ((c_ptr->info & CAVE_LITE_VAMP)) a = TERM_L_WHITE;
 						else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) a = TERM_LAMP;
 						else a = TERM_YELLOW;
@@ -4535,7 +4535,7 @@ void forget_lite(int Ind)
 
 		/* Forget "LITE" flag */
 		p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
-		zcave[y][x].info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_ART);
+		zcave[y][x].info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
 
 		for (j = 1; j <= NumPlayers; j++)
 		{
@@ -4556,7 +4556,7 @@ void forget_lite(int Ind)
 				zcave[y][x].info |= CAVE_LITE;
 				switch (Players[j]->lite_type) {
 				case 1: zcave[y][x].info |= CAVE_LITE_VAMP; break;
-				case 2: zcave[y][x].info |= CAVE_LITE_ART;
+				case 2: zcave[y][x].info |= CAVE_LITE_WHITE;
 				}
 			}
 		}
@@ -4584,9 +4584,9 @@ void forget_lite(int Ind)
  */
 #define cave_lite_hack(Y,X) \
     switch (p_ptr->lite_type) { \
-    case 0: zcave[Y][X].info &= ~(CAVE_LITE_ART | CAVE_LITE_VAMP); break; \
-    case 1: if (!(zcave[Y][X].info & (CAVE_LITE | CAVE_LITE_ART))) zcave[Y][X].info |= CAVE_LITE_VAMP; break; \
-    case 2: if (!(zcave[Y][X].info & CAVE_LITE)) zcave[Y][X].info |= CAVE_LITE_ART; \
+    case 0: zcave[Y][X].info &= ~(CAVE_LITE_WHITE | CAVE_LITE_VAMP); break; \
+    case 1: if (!(zcave[Y][X].info & (CAVE_LITE | CAVE_LITE_WHITE))) zcave[Y][X].info |= CAVE_LITE_VAMP; break; \
+    case 2: if (!(zcave[Y][X].info & CAVE_LITE)) zcave[Y][X].info |= CAVE_LITE_WHITE; \
     } \
     zcave[Y][X].info |= CAVE_LITE; \
     p_ptr->cave_flag[Y][X] |= CAVE_LITE; \
@@ -4658,7 +4658,7 @@ void update_lite(int Ind)
 
 		/* Mark the grid as not "lite" */
 		p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
-		zcave[y][x].info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_ART);
+		zcave[y][x].info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_WHITE);
 
 		for (j = 1; j <= NumPlayers; j++)
 		{
@@ -4679,7 +4679,7 @@ void update_lite(int Ind)
 				zcave[y][x].info |= CAVE_LITE;
                                 switch (Players[j]->lite_type) {
                                 case 1: zcave[y][x].info |= CAVE_LITE_VAMP; break;
-                                case 2: zcave[y][x].info |= CAVE_LITE_ART;
+                                case 2: zcave[y][x].info |= CAVE_LITE_WHITE;
                                 }
 			}
 		}
