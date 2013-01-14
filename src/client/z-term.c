@@ -665,6 +665,9 @@ byte flick_colour(byte attr){
 			return (randint(5)==1?TERM_RED:TERM_L_DARK);
 		case TERM_THUNDER:
 			return (randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
+
+		case TERM_LAMP:
+			return (rand_term_lamp ? TERM_YELLOW:TERM_ORANGE);
 #endif
 		default:
 			return(attr);
@@ -680,6 +683,13 @@ void flicker() {
 	term *tterm, *old;
 
 	old = Term;
+
+	/* handle TERM_LAMP preparations */
+	rand_term_lamp_ticks++;
+	if (rand_term_lamp_ticks == 1) {
+		rand_term_lamp = (rand_int(3) != 0);
+		rand_term_lamp_ticks = 0;
+	}
 
 	for(i = 0; i < ANGBAND_TERM_MAX; i++) {
 		tterm = ang_term[i];

@@ -872,3 +872,5 @@ extern void (*resize_main_window)(int cols, int rows);
 extern bool bigmap_hint;
 extern bool ask_for_bigmap_generic(void);
 extern bool in_game;
+extern bool rand_term_lamp;
+extern int rand_term_lamp_ticks;
