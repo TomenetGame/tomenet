@@ -7173,7 +7173,7 @@ extern int PlayerUID;
 	(r_info[ridx].d_char == 'H') || (r_info[ridx].d_char == 'T')) && \
  	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING))) || \
 	(r_info[ridx].d_char == 'G') || mimic_shaman_E(ridx) || (r_info[ridx].d_char == 'X') || \
-	(r_info[ridx].d_char == 'g'))
+	(r_info[ridx].d_char == 'g') || (r_info[ridx].d_char == 'A'))
 #define mimic_shaman_E(ridx)	\
 	((r_info[ridx].d_char == 'E') && !(ridx == 514 || ridx == 815 || ridx == 975))
 #define mimic_shaman_fulleq(c)	(strchr("EG", c))

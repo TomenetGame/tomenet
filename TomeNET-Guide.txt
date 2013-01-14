@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. January 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. January 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.2 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10062,8 +10062,8 @@ vary. For example a warrior cannot learn magic spells.
     whatever currently is easiest for them!
     Shamans are able to shapeshift same as mimics (see mimics above for details
     about how to learn forms) but they are limited to animals, trolls, giants,
-    dragons and dragonriders, hybrid creatures, golems, spirits, elementals and
-    ghosts.
+    dragons and dragonriders, angels, hybrid creatures, golems, spirits,
+    elementals and ghosts.
     However, they may use the latter three types while still wearing their full
     equipment and they are always able to move straight even if the creature in
     whose shape they appear usually moves erratically - these two are feats

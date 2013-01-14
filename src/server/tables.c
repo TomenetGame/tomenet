@@ -3904,7 +3904,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,	/* Allow to cast Manathrust */
-                                '+', 800,//was 600 hmm
+                                '+', 700,//was 600 hmm
                         },
                         {
                                 SKILL_FIRE,
@@ -4530,7 +4530,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 700,//600
                         },
                         {
                                 SKILL_FIRE,
@@ -4695,7 +4695,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MAGIC,
                                 '+', 2000,
-                                '+', 500,
+                                '+', 600,//500
                         },
                         {
                                 SKILL_CONVEYANCE,
@@ -4715,7 +4715,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 700,//600
                         },
                         {
                                 SKILL_FIRE,
