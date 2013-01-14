@@ -268,7 +268,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 		/* Hack -- extract temp branding */
-		if (Ind > 0 && p_ptr->bow_brand) {
+		if (p_ptr && p_ptr->bow_brand) {
 			switch (p_ptr->bow_brand_t) {
 			case BRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
@@ -293,7 +293,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 
 	/* Apply brands from mimic monster forms */
-        if (Ind > 0 && p_ptr->body_monster) {
+        if (p_ptr && p_ptr->body_monster) {
 #if 0
 		switch (pr_ptr->r_ptr->d_char) {
 			/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
@@ -368,7 +368,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	}
 
 	/* Add brands/slaying from non-weapon items (gloves, frost-armour) */
-	if (Ind > 0) for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+	if (p_ptr) for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		e_ptr = &p_ptr->inventory[i];
 		/* k_ptr = &k_info[e_ptr->k_idx];
 		pval = e_ptr->pval; not needed */
@@ -393,14 +393,16 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	}
 
 	/* From Draconian traits */
-	if (p_ptr->brand_elec) f1 |= TR1_BRAND_ELEC;
-	if (p_ptr->brand_cold) f1 |= TR1_BRAND_COLD;
-	if (p_ptr->brand_fire) f1 |= TR1_BRAND_FIRE;
-	if (p_ptr->brand_acid) f1 |= TR1_BRAND_ACID;
-	if (p_ptr->brand_pois) f1 |= TR1_BRAND_POIS;
+	if (p_ptr) {
+		if (p_ptr->brand_elec) f1 |= TR1_BRAND_ELEC;
+		if (p_ptr->brand_cold) f1 |= TR1_BRAND_COLD;
+		if (p_ptr->brand_fire) f1 |= TR1_BRAND_FIRE;
+		if (p_ptr->brand_acid) f1 |= TR1_BRAND_ACID;
+		if (p_ptr->brand_pois) f1 |= TR1_BRAND_POIS;
+	}
 
 	/* Extra melee branding */
-	if (Ind > 0 && !is_ammo(o_ptr->tval)) {
+	if (p_ptr && !is_ammo(o_ptr->tval)) {
 		/* Apply brands from (powerful) auras! */
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
@@ -570,9 +572,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			}
 
 			/* Slay Evil */
-			if (((f1 & TR1_SLAY_EVIL) || (Ind > 0 && get_skill(p_ptr, SKILL_HOFFENSE) >= 50)
+			if (((f1 & TR1_SLAY_EVIL) || (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 50)
 #ifdef ENABLE_MAIA
-			    || (Ind > 0 && p_ptr->prace == RACE_MAIA && (p_ptr->ptrait == TRAIT_ENLIGHTENED) && p_ptr->lev >= 50)
+			    || (p_ptr && p_ptr->prace == RACE_MAIA && (p_ptr->ptrait == TRAIT_ENLIGHTENED) && p_ptr->lev >= 50)
 #endif
 			    ) && (r_ptr->flags3 & RF3_EVIL)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
@@ -581,7 +583,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			}
 
 			/* Slay Undead */
-			if (((f1 & TR1_SLAY_UNDEAD) || (Ind > 0 && get_skill(p_ptr, SKILL_HOFFENSE) >= 30)) &&
+			if (((f1 & TR1_SLAY_UNDEAD) || (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 30)) &&
 			    (r_ptr->flags3 & RF3_UNDEAD)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
@@ -589,7 +591,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			}
 
 			/* Slay Demon */
-			if (((f1 & TR1_SLAY_DEMON) || (Ind > 0 && get_skill(p_ptr, SKILL_HOFFENSE) >= 40)) &&
+			if (((f1 & TR1_SLAY_DEMON) || (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 40)) &&
 			    (r_ptr->flags3 & RF3_DEMON)) {
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
 				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
@@ -810,13 +812,13 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 {
 	int mult = FACTOR_MULT, bonus = 0;
 	u32b f1, f2, f3, f4, f5, esp;
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = NULL;
 	object_type *e_ptr;
 	u32b ef1, ef2, ef3, ef4, ef5, eesp;
 	int brands_total, brand_msgs_added;
 	/* char brand_msg[80]; */
 
-	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
+	monster_race *pr_ptr = NULL;
 	bool apply_monster_brands = TRUE;
 	int i, monster_brands = 0;
 	u32b monster_brand[6], monster_brand_chosen;
@@ -825,6 +827,11 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	monster_brand[3] = 0;
 	monster_brand[4] = 0;
 	monster_brand[5] = 0;
+
+	if (Ind > 0) {
+		p_ptr = Players[Ind];
+		pr_ptr = &r_info[p_ptr->body_monster];
+	}
 
 	/* Extract the flags */
 	if (o_ptr->k_idx)
@@ -926,14 +933,16 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	}
 
 	/* From Draconian traits */
-	if (p_ptr->brand_elec) f1 |= TR1_BRAND_ELEC;
-	if (p_ptr->brand_cold) f1 |= TR1_BRAND_COLD;
-	if (p_ptr->brand_fire) f1 |= TR1_BRAND_FIRE;
-	if (p_ptr->brand_acid) f1 |= TR1_BRAND_ACID;
-	if (p_ptr->brand_pois) f1 |= TR1_BRAND_POIS;
+	if (p_ptr) {
+		if (p_ptr->brand_elec) f1 |= TR1_BRAND_ELEC;
+		if (p_ptr->brand_cold) f1 |= TR1_BRAND_COLD;
+		if (p_ptr->brand_fire) f1 |= TR1_BRAND_FIRE;
+		if (p_ptr->brand_acid) f1 |= TR1_BRAND_ACID;
+		if (p_ptr->brand_pois) f1 |= TR1_BRAND_POIS;
+	}
 
 	/* Extra melee branding */
-	if (Ind > 0 && !is_ammo(o_ptr->tval)) {
+	if (p_ptr && !is_ammo(o_ptr->tval)) {
 		/* Apply brands from (powerful) auras! */
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
