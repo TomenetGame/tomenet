@@ -2756,7 +2756,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				/* Handle "dark" grids */
 				else if (!(c_ptr->info & CAVE_GLOW)
 #ifndef SHADE_ALL_FLOOR
-				    && !(f_ptr->flags2 & FF2_NO_SHADE)
+				    && (!(f_ptr->flags2 & FF2_NO_SHADE) || lite_snow)
 #endif
 				    ){
 					/* Use "dark gray" */
@@ -2766,7 +2766,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				/* Handle "out-of-sight" grids */
 				else if (!(*w_ptr & CAVE_VIEW)
 #ifndef SHADE_ALL_FLOOR
-				    && !(f_ptr->flags2 & FF2_NO_SHADE)
+				    && (!(f_ptr->flags2 & FF2_NO_SHADE) || lite_snow)
 #endif
 				    ) {
 					/* Special flag */
