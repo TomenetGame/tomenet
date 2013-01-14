@@ -606,7 +606,7 @@ D:0:Ohhh, it is dark and deep.
 
 N:88:dirt
 G:.:u
-F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW
+F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE
 F:DONT_NOTICE_RUNNING
 
 N:89:patch of grass
