@@ -14322,6 +14322,11 @@ PROBLEM 39: I run the Windows client on Wine, and when I resize the main window
 SOLUTION:   You need at least Wine 1.5.20 for this to work properly.
             (That Wine got a bugfix for correctly dispatching WM_EXITSIZEMOVE).
 
+PROBLEM 40: I see black floor tiles that seem buggy. They can't be lit or they
+            'smear' if other things pass over them.
+SOLUTION:   In a file explorer, navigate into the folder 'TomeNET/lib/user'
+            and delete the file 'font-win.prf' in there.
+
 
 
 ==============================================================================
