@@ -2092,7 +2092,7 @@ static void sync_options(int Ind, bool *options)
 	else
 		p_ptr->censor_swearing = options[53];
 
-	if (is_older_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
+	if (!is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
 		p_ptr->view_animated_lite = FALSE;
 	else {
 		tmp = p_ptr->view_animated_lite;
