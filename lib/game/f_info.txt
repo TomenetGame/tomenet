@@ -606,7 +606,7 @@ D:0:Ohhh, it is dark and deep.
 
 N:88:dirt
 G:.:u
-F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE | NO_SHADE
+F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_SHADE
 F:DONT_NOTICE_RUNNING
 
 N:89:patch of grass
@@ -962,7 +962,7 @@ D:1:Looks like this pile of rubble is quite hard.
 # Rocky ground - rougher terrain.
 N:207:rocky ground
 G:.:s
-F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE | NO_SHADE
+F:FLOOR | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_SHADE
 F:DONT_NOTICE_RUNNING
 
 N:208:Team A goal
