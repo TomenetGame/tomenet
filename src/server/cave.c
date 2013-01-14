@@ -2748,8 +2748,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				    (c_ptr->info & CAVE_LITE && *w_ptr & CAVE_VIEW)) {
 					/* Torch lite */
 					if (p_ptr->view_yellow_lite) {
-						/* Use "yellow" */
+#ifdef CAVE_LITE_COLOURS
+						if ((c_ptr->info & CAVE_LITE_ART)) a = TERM_WHITE;
+						else if ((c_ptr->info & CAVE_LITE_VAMP)) a = TERM_L_WHITE;
+						else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) a = TERM_LAMP;
+						else a = TERM_YELLOW;
+#else
 						a = TERM_YELLOW;
+#endif
 					}
 				}
 
@@ -2886,8 +2892,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				    (*w_ptr & CAVE_LITE)) {
 					/* Torch lite */
 					if (p_ptr->view_yellow_lite) {
-						/* Use "yellow" */
-						a = TERM_YELLOW;//TERM_ORANGE; hm, not quite
+#ifdef CAVE_LITE_COLOURS
+						if ((c_ptr->info & CAVE_LITE_ART)) a = TERM_WHITE;
+						else if ((c_ptr->info & CAVE_LITE_VAMP)) a = TERM_L_WHITE;
+						else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) a = TERM_LAMP;
+						else a = TERM_YELLOW;
+#else
+						a = TERM_YELLOW;
+#endif
 					}
 				}
 
@@ -4523,7 +4535,7 @@ void forget_lite(int Ind)
 
 		/* Forget "LITE" flag */
 		p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
-		zcave[y][x].info &= ~CAVE_LITE;
+		zcave[y][x].info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_ART);
 
 		for (j = 1; j <= NumPlayers; j++)
 		{
@@ -4540,8 +4552,13 @@ void forget_lite(int Ind)
 				continue;
 
 			/* If someone else also lites this spot relite it */
-			if (Players[j]->cave_flag[y][x] & CAVE_LITE)
+			if (Players[j]->cave_flag[y][x] & CAVE_LITE) {
 				zcave[y][x].info |= CAVE_LITE;
+				switch (Players[j]->lite_type) {
+				case 1: zcave[y][x].info |= CAVE_LITE_VAMP; break;
+				case 2: zcave[y][x].info |= CAVE_LITE_ART;
+				}
+			}
 		}
 
 		/* Redraw */
@@ -4566,6 +4583,11 @@ void forget_lite(int Ind)
  * top.  --KLJ--
  */
 #define cave_lite_hack(Y,X) \
+    switch (p_ptr->lite_type) { \
+    case 0: zcave[Y][X].info &= ~(CAVE_LITE_ART | CAVE_LITE_VAMP); break; \
+    case 1: if (!(zcave[Y][X].info & (CAVE_LITE | CAVE_LITE_ART))) zcave[Y][X].info |= CAVE_LITE_VAMP; break; \
+    case 2: if (!(zcave[Y][X].info & CAVE_LITE)) zcave[Y][X].info |= CAVE_LITE_ART; \
+    } \
     zcave[Y][X].info |= CAVE_LITE; \
     p_ptr->cave_flag[Y][X] |= CAVE_LITE; \
     p_ptr->lite_y[p_ptr->lite_n] = (Y); \
@@ -4636,7 +4658,7 @@ void update_lite(int Ind)
 
 		/* Mark the grid as not "lite" */
 		p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
-		zcave[y][x].info &= ~CAVE_LITE;
+		zcave[y][x].info &= ~(CAVE_LITE | CAVE_LITE_VAMP | CAVE_LITE_ART);
 
 		for (j = 1; j <= NumPlayers; j++)
 		{
@@ -4653,8 +4675,13 @@ void update_lite(int Ind)
 				continue;
 
 			/* If someone else also lites this spot relite it */
-			if (Players[j]->cave_flag[y][x] & CAVE_LITE)
+			if (Players[j]->cave_flag[y][x] & CAVE_LITE) {
 				zcave[y][x].info |= CAVE_LITE;
+                                switch (Players[j]->lite_type) {
+                                case 1: zcave[y][x].info |= CAVE_LITE_VAMP; break;
+                                case 2: zcave[y][x].info |= CAVE_LITE_ART;
+                                }
+			}
 		}
 		/* Mark the grid as "seen" */
 		zcave[y][x].info |= CAVE_TEMP;

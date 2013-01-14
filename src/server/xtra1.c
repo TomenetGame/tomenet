@@ -2925,6 +2925,8 @@ void calc_boni(int Ind)
 	bool old_auto_id = p_ptr->auto_id;
 	bool old_dual_wield = p_ptr->dual_wield;
 
+	int lite_inc_norm = 0, lite_inc_white = 0, old_lite_type;
+
 #ifdef EQUIPMENT_SET_BONUS
 	/* for boni of artifact "sets" ie arts of (about) identical name - C. Blue */
 	int equipment_set[INVEN_TOTAL - INVEN_WIELD], equipment_set_amount[INVEN_TOTAL - INVEN_WIELD];
@@ -3321,6 +3323,7 @@ void calc_boni(int Ind)
 			p_ptr->resist_lite = TRUE;
 			if (p_ptr->lev >= 20) {
 				p_ptr->cur_lite += 1 + (p_ptr->lev - 20) / 6; //REAL light!
+				lite_inc_white += 1 + (p_ptr->lev - 20) / 6;
 				p_ptr->to_a += (p_ptr->lev - 20)/2;
 				p_ptr->dis_to_a += (p_ptr->lev - 20)/2;
 			}
@@ -3919,6 +3922,8 @@ void calc_boni(int Ind)
 			if (f4 & TR4_LITE3) j += 3;
 
 			p_ptr->cur_lite += j;
+			if (f5 & TR5_WHITE_LIGHT) lite_inc_white += j;
+			else lite_inc_norm += j;
 			if (j && !(f4 & TR4_FUEL_LITE)) p_ptr->lite = TRUE;
 		}
 
@@ -5926,6 +5931,18 @@ void calc_boni(int Ind)
 	if ((p_ptr->num_blow > 20) && !is_admin(p_ptr)) p_ptr->num_blow = 20;
 	/* ghost-dive limit to not destroy the real gameplay */
 	if (p_ptr->ghost && !is_admin(p_ptr)) p_ptr->num_blow = (p_ptr->lev + 15) / 16;
+
+
+	/* Determine colour of our light radius */
+	old_lite_type = p_ptr->lite_type;
+	if (p_ptr->cur_vlite > p_ptr->cur_lite) p_ptr->lite_type = 1; /* vampiric */
+	else if (lite_inc_white > lite_inc_norm) p_ptr->lite_type = 2; /* artificial */
+	else p_ptr->lite_type = 0; /* normal, fiery */
+	if (old_lite_type != p_ptr->lite_type) {
+		forget_lite(Ind);
+		update_lite(Ind);
+		old_lite_type = p_ptr->lite_type;
+	}
 
 
 	/* XXX - Always resend skills */

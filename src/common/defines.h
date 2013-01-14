@@ -3519,25 +3519,28 @@
 /*
  * Special cave grid flags
  */
-#define CAVE_MARK	0x0001 	/* memorized feature */
-#define CAVE_GLOW	0x0002 	/* self-illuminating */
-#define CAVE_ICKY	0x0004 	/* part of a vault */
-#define CAVE_ROOM	0x0008 	/* part of a room */
+#define CAVE_MARK	0x00000001 	/* memorized feature */
+#define CAVE_GLOW	0x00000002 	/* self-illuminating */
+#define CAVE_ICKY	0x00000004 	/* part of a vault */
+#define CAVE_ROOM	0x00000008 	/* part of a room */
 
-#define CAVE_LITE	0x0010 	/* lite flag  */
-#define CAVE_VIEW	0x0020 	/* view flag */
-#define CAVE_TEMP	0x0040 	/* temp flag */
-#define CAVE_XTRA	0x0080 	/* misc flag */
+#define CAVE_LITE	0x00000010 	/* lite flag  */
+#define CAVE_VIEW	0x00000020 	/* view flag */
+#define CAVE_TEMP	0x00000040 	/* temp flag */
+#define CAVE_XTRA	0x00000080 	/* misc flag */
 
-#define CAVE_NOPK	0x0100	/* no pkill (arena?, tavern) */
-#define CAVE_STCK	0x0200	/* sticky (no-tele vault), not icky (prison?) */
-#define CAVE_DARKEN	0x0400	/* world surface at night - change colours to darker variants */
-#define CAVE_ICKY_PERMA	0x0800 	/* part of a perma-walled vault */
+#define CAVE_NOPK	0x00000100	/* no pkill (arena?, tavern) */
+#define CAVE_STCK	0x00000200	/* sticky (no-tele vault), not icky (prison?) */
+#define CAVE_DARKEN	0x00000400	/* world surface at night - change colours to darker variants */
+#define CAVE_ICKY_PERMA	0x00000800 	/* part of a perma-walled vault */
 
-#define CAVE_PROT	0x1000 	/* protected from monster-spawn + cannot be monster teleport destination */
-#define CAVE_NEST_PIT	0x2000	/* grid is part of a monster nest and target for monster placement */
-#define CAVE_MAGELOCK	0x4000	/* Anti-exploit: Remember magelocked doors so they don't give exp repeatedly */
-#define CAVE_JAIL	0x8000	/* part of a jail: for special colour/lighting of jail walls */
+#define CAVE_PROT	0x00001000 	/* protected from monster-spawn + cannot be monster teleport destination */
+#define CAVE_NEST_PIT	0x00002000	/* grid is part of a monster nest and target for monster placement */
+#define CAVE_MAGELOCK	0x00004000	/* Anti-exploit: Remember magelocked doors so they don't give exp repeatedly */
+#define CAVE_JAIL	0x00008000	/* part of a jail: for special colour/lighting of jail walls */
+
+#define CAVE_LITE_VAMP	0x00010000	/* lite flag  */
+#define CAVE_LITE_ART	0x00020000	/* lite flag  */
 
 
 #if 0	/* for future expansion.. */
@@ -4321,7 +4324,7 @@
 #define TR5_IMMOVABLE           0x00000400L     /* Cannot move */
 #define TR5_LEVELS              0x00000800L     /* Can gain exp/exp levels !! */
 #define TR5_FORCE_DEPTH			0x00001000L	/* Can only occur on depth >= its k_info level */
-//#define TR5_XXXX			0x00002000L	/* True artifact is not to be listed on regular artifact list */
+#define TR5_WHITE_LIGHT			0x00002000L	/* Light source colour is white instead of flame-yellow (for CAVE_LITE_COLOURS) */
 #define TR5_IGNORE_DISEN		0x00004000L	/* For 'Arcane' ego power for Heavy winners-only armour */
 #define TR5_RES_TELE            	0x00008000L     /* For Sky Dragon Scale Mail */
 #define TR5_SH_COLD             0x00010000L     /* Winter's might/Snow grasp/Frostweaving (Cold aura) */
@@ -6183,6 +6186,8 @@ extern int PlayerUID;
  #define TERM_HOLYFIRE	50
  #define TERM_HELLFIRE	51
  #define TERM_THUNDER	52
+
+ #define TERM_LAMP	53
 
  #define TERM_BNW	0x40	/* 64: black & white MASK, for admin wizards */
  #define TERM_PVP	0x80	/* 128: black & red MASK, for active PvP-hostility (or stormbringer) */

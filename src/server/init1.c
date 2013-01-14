@@ -820,7 +820,7 @@ static cptr k_info_flags5[] =
         "IMMOVABLE",
         "LEVELS",
 	"FORCE_DEPTH",
-	"XXX",
+	"WHITE_LIGHT",
 	"IGNORE_DISEN",
 	"RES_TELE",
 	"SH_COLD",

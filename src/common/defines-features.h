@@ -13,6 +13,9 @@
 /* --------------------------------------------------------------------------*/
 /* Features that are allowed in all build types, ie server-type independant: */
 
+/* Distinguished light colour for flaming lites, magic lights, vampire light */
+#define CAVE_LITE_COLOURS
+
 /* Add an extra character slot dedicated to Ironman Deep Dive Challenge */
 #define DED_IDDC_CHAR
 /* Add an extra character slot dedicated to PvP mode */

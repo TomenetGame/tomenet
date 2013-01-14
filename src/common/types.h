@@ -626,7 +626,7 @@ struct sfunc{
 
 struct cave_type
 {
-	u16b info;		/* Hack -- cave flags */
+	u32b info;		/* Hack -- cave flags */
 	byte feat;		/* Hack -- feature type */
 	byte feat_org;		/* Feature type backup (todo: for wall-created grids to revert to original feat when tunneled!) */
 	s16b o_idx;		/* Item index (in o_list) or zero */
@@ -2104,6 +2104,7 @@ struct player_type
 	bool view_bright_lite2;
 	bool view_granite_lite;
 	bool view_special_lite;
+	bool view_animated_lite;
 
 	/* TomeNET additions -- consider using macro or bitfield */
 	bool easy_open;
@@ -2389,6 +2390,7 @@ struct player_type
 
 	s16b cur_lite;		/* Radius of lite (if any) */
 	s16b cur_vlite;		/* radius of virtual light (not visible to others) */
+	byte lite_type;
 
 
 	u32b notice;		/* Special Updates (bit flags) */
@@ -3140,7 +3142,8 @@ struct client_opts
 	bool flush_disturb;
 	bool player_list;
 	bool player_list2;
-	bool fresh_after;
+	//bool fresh_after;
+	bool view_animated_lite;
 	bool censor_swearing;//fresh_message;
 	bool safe_macros;//compress_savefile;
 	bool hilite_player;

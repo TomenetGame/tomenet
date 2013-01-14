@@ -535,6 +535,7 @@ struct player_type
 	bool view_bright_lite2;
 	bool view_granite_lite;
 	bool view_special_lite;
+	bool view_animated_lite;
 
 	/* TomeNET additions -- consider using macro or bitfield */
 	bool easy_open;
@@ -716,6 +717,7 @@ struct player_type
 	bool rogue_heavyarmor;  /* No AoE-searching? Encumbered dual-wield? */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
+	byte lite_type;
 
 
 	u32b notice;		/* Special Updates (bit flags) */

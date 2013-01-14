@@ -383,8 +383,13 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.player_list2,		FALSE,	4,	1, 23, TRUE,
 	"player_list2",			"Compacts the player list in @ screen even more" },//fresh_before
 
+#if 0
 	{ &c_cfg.fresh_after,           FALSE,  1,      1, 24, FALSE,
 	"fresh_after",                  "(obsolete) Flush output after every command" },
+#else
+	{ &c_cfg.view_animated_lite,	FALSE,	1,	1, 24, TRUE,
+	"view_animated_lite",		"Animate lantern light, flickering in colour" },
+#endif
 
 	{ &c_cfg.censor_swearing,	TRUE,	4,	1, 25, TRUE,
 	"censor_swearing",		"Censor certain swear words in public messages" },//fresh_message
@@ -466,7 +471,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.always_show_lists,	FALSE,	1,	9, 73, TRUE,
 	"always_show_lists",		"Always show lists in item/skill selection" },
 
-	{ &c_cfg.target_history,	FALSE,	1,	9, 74, TRUE,
+	{ &c_cfg.target_history,	FALSE,	4,	9, 74, TRUE,
 	"target_history",		"Add target informations to the message history" },
 
 	{ &c_cfg.linear_stats,		FALSE,	1,	9, 75, TRUE,
@@ -475,7 +480,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.exp_need,		FALSE,	1,	9, 76, TRUE,
 	"exp_need",			"Show the experience needed for next level" },
 
-	{ &c_cfg.short_item_names,      FALSE,	1,	0, 77, TRUE,
+	{ &c_cfg.short_item_names,      FALSE,	4,	0, 77, TRUE,
         "short_item_names", 		"Don't display 'flavours' in item names" },
 
 
