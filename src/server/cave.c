@@ -15,7 +15,8 @@
 
 /* View_bright_lite really shades all floor types, not just FEAT_FLOOR.
    For this, the floor feats must have SPECIAL_LITE flag (or LAMP_LITE).
-   This usually doesn't look as cool as you might expect. - C. Blue */
+   This usually doesn't look as cool as you might expect. - C. Blue
+   Note: This overrides NO_SHADE flag. */
 //#define SHADE_ALL_FLOOR
 
 
@@ -2753,13 +2754,21 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 
 				/* Handle "dark" grids */
-				else if (!(c_ptr->info & CAVE_GLOW) && !(f_ptr->flags2 & FF2_NO_SHADE)) {
+				else if (!(c_ptr->info & CAVE_GLOW)
+#ifndef SHADE_ALL_FLOOR
+				    && !(f_ptr->flags2 & FF2_NO_SHADE)
+#endif
+				    ){
 					/* Use "dark gray" */
 					a = TERM_L_DARK;
 				}
 
 				/* Handle "out-of-sight" grids */
-				else if (!(*w_ptr & CAVE_VIEW) && !(f_ptr->flags2 & FF2_NO_SHADE)) {
+				else if (!(*w_ptr & CAVE_VIEW)
+#ifndef SHADE_ALL_FLOOR
+				    && !(f_ptr->flags2 & FF2_NO_SHADE)
+#endif
+				    ) {
 					/* Special flag */
 					if (p_ptr->view_bright_lite) {
 #ifndef SHADE_ALL_FLOOR
