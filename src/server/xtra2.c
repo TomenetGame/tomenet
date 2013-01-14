@@ -2274,8 +2274,8 @@ bool set_invuln(int Ind, int v)
 		if (p_ptr->invuln &&
 		    p_ptr->invuln_dur >= 5) { /* avoid spam on stair-GoI */
 			msg_print(Ind, "\376\377vThe invulnerability shield fades away.");
-			notice = TRUE;
 		}
+		notice = TRUE;
 	}
 
 	/* Use the value */
