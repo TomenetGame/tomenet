@@ -3371,6 +3371,7 @@ void calc_boni(int Ind)
 	case TRAIT_NONE: /* N/A */
 	default:
 		break;
+#ifdef ENABLE_DRACONIAN_TRAITS
 	case TRAIT_BLUE: /* Draconic Blue */
 		if (p_ptr->lev >= 5) p_ptr->brand_elec = TRUE;
 		if (p_ptr->lev >= 15) p_ptr->sh_elec = TRUE;
@@ -3434,6 +3435,7 @@ void calc_boni(int Ind)
 		if (p_ptr->lev >= 5) p_ptr->resist_blind = TRUE;
 		if (p_ptr->lev >= 20) p_ptr->reflect = TRUE;
 		break;
+#endif
 	}
 
 	if (p_ptr->pclass == CLASS_RANGER) {
