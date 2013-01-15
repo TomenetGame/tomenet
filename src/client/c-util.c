@@ -3984,15 +3984,15 @@ Chain_Macro:
 					Term_putstr(10, 11, -1, TERM_L_GREEN, "b) Read a scroll");
 					Term_putstr(10, 12, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
 					Term_putstr(10, 13, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
-					Term_putstr(10, 14, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell that uses a target");
-					Term_putstr(10, 15, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (both targetted or not targetted)");
+					Term_putstr(10, 14, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell with target");
+					Term_putstr(10, 15, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (with and without target)");
 					Term_putstr(10, 16, -1, TERM_L_GREEN, "g) Polymorph into a certain monster (mimicry users)");
 					Term_putstr(10, 17, -1, TERM_L_GREEN, "h) Draw runes to cast a runespell");
 					Term_putstr(10, 18, -1, TERM_L_GREEN, "i) Use a fighting technique (most melee classes)");
 					Term_putstr(10, 19, -1, TERM_L_GREEN, "j) Use a shooting technique (archers and rangers)");
 					Term_putstr(10, 20, -1, TERM_L_GREEN, "k) Set up a monster trap");
 					Term_putstr(10, 21, -1, TERM_L_GREEN, "l) Use a magic device");
-					Term_putstr(10, 22, -1, TERM_L_GREEN, "m)/M) Use a basic ability that doesn't/does require a target");
+					Term_putstr(10, 22, -1, TERM_L_GREEN, "m)/M) Use a basic ability ('m') without/with target");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
