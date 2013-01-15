@@ -3949,6 +3949,8 @@ void interact_macros(void)
 #define mw_shoot 'j'
 #define mw_trap 'k'
 #define mw_device 'l'
+#define mw_abilitynt 'm'
+#define mw_abilityt 'M'
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
 
@@ -3963,7 +3965,7 @@ Chain_Macro:
 			Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
 			//Term_putstr(25, 22, -1, TERM_L_UMBER, "[Press ESC to exit anytime]");
 			Term_putstr(1, 6, -1, TERM_L_DARK, "Don't forget to save your macros with 's' when you are back in the macro menu!");
-			Term_putstr(19, 8, -1, TERM_L_UMBER, "----------------------------------------");
+			Term_putstr(19, 7, -1, TERM_L_UMBER, "----------------------------------------");
 
 			/* Initialize wizard state: First state */
 			i = choice = 0;
@@ -3973,23 +3975,24 @@ Chain_Macro:
 				Term_putstr(12, 3, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and target method.");
 				Term_putstr(12, 4, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
 
-				clear_from(10);
+				clear_from(9);
 
 				switch (i) {
 				case 0:
-					Term_putstr( 5, 10, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
-					Term_putstr(10, 11, -1, TERM_L_GREEN, "a) Drink a potion");
-					Term_putstr(10, 12, -1, TERM_L_GREEN, "b) Read a scroll");
-					Term_putstr(10, 13, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
-					Term_putstr(10, 14, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
-					Term_putstr(10, 15, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell that uses a target");
-					Term_putstr(10, 16, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (both targetted or not targetted)");
-					Term_putstr(10, 17, -1, TERM_L_GREEN, "g) Polymorph into a certain monster (mimicry users)");
-					Term_putstr(10, 18, -1, TERM_L_GREEN, "h) Draw runes to cast a runespell");
-					Term_putstr(10, 19, -1, TERM_L_GREEN, "i) Use a fighting technique (most melee classes)");
-					Term_putstr(10, 20, -1, TERM_L_GREEN, "j) Use a shooting technique (archers and rangers)");
-					Term_putstr(10, 21, -1, TERM_L_GREEN, "k) Set up a monster trap");
-					Term_putstr(10, 22, -1, TERM_L_GREEN, "l) Use a magic device");
+					Term_putstr( 5, 9, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
+					Term_putstr(10, 10, -1, TERM_L_GREEN, "a) Drink a potion");
+					Term_putstr(10, 11, -1, TERM_L_GREEN, "b) Read a scroll");
+					Term_putstr(10, 12, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
+					Term_putstr(10, 13, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
+					Term_putstr(10, 14, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell that uses a target");
+					Term_putstr(10, 15, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (both targetted or not targetted)");
+					Term_putstr(10, 16, -1, TERM_L_GREEN, "g) Polymorph into a certain monster (mimicry users)");
+					Term_putstr(10, 17, -1, TERM_L_GREEN, "h) Draw runes to cast a runespell");
+					Term_putstr(10, 18, -1, TERM_L_GREEN, "i) Use a fighting technique (most melee classes)");
+					Term_putstr(10, 19, -1, TERM_L_GREEN, "j) Use a shooting technique (archers and rangers)");
+					Term_putstr(10, 20, -1, TERM_L_GREEN, "k) Set up a monster trap");
+					Term_putstr(10, 21, -1, TERM_L_GREEN, "l) Use a magic device");
+					Term_putstr(10, 22, -1, TERM_L_GREEN, "m)/M) Use a basic ability that doesn't/does require a target");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
@@ -4004,7 +4007,7 @@ Chain_Macro:
 							continue;
 						default:
 							/* invalid action -> exit wizard */
-							if ((choice < 'a' || choice > 'l') && choice != 'D' && choice != 'E') {
+							if ((choice < 'a' || choice > 'm') && choice != 'D' && choice != 'E' && choice != 'M') {
 //								i = -1;
 								continue;
 							}
@@ -4036,14 +4039,14 @@ Chain_Macro:
 					case mw_schoolnt:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
 						Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 12, -1, TERM_GREEN, "or another example:     \377GPhase Door");
+						Term_putstr(10, 12, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
 						Term_putstr(10, 13, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
 					case mw_mimicnt:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name and pay attention");
 						Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 12, -1, TERM_GREEN, "or another example:     \377GBlink");
+						Term_putstr(10, 12, -1, TERM_GREEN, "For example, enter:     \377GBlink");
 						Term_putstr(10, 13, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
@@ -4664,6 +4667,19 @@ Chain_Macro:
 						choice = mw_device;
 
 						break;
+
+					case mw_abilitynt:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact ability name and pay attention");
+						Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 12, -1, TERM_GREEN, "For example, enter:     \377GSwitch between main-hand and dual-hand");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact ability name:");
+						break;
+					case mw_abilityt:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact ability name and pay attention");
+						Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
+						Term_putstr(10, 12, -1, TERM_GREEN, "For example, enter:     \377GBreathe element");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact ability name:");
+						break;
 					}
 
 					/* mw_mimicidx is special: it requires a number (1..n) */
@@ -4819,6 +4835,16 @@ Chain_Macro:
 						if (j == 1) strcat(buf, "*t");
 
 						strcat(buf2, buf);
+						break;
+					case mw_abilitynt:
+					case mw_abilityt:
+						buf2[3] = 'm';
+						buf2[4] = '@';
+						strcpy(buf2 + 5, buf);
+						if (choice == mw_abilityt) {
+							strcpy(buf, "*t");
+							strcat(buf2, buf);
+						}
 						break;
 					}
 
