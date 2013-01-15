@@ -5938,7 +5938,8 @@ void calc_boni(int Ind)
 	if (p_ptr->cur_vlite > p_ptr->cur_lite) p_ptr->lite_type = 1; /* vampiric */
 	else if (lite_inc_white > lite_inc_norm) p_ptr->lite_type = 2; /* artificial */
 	else p_ptr->lite_type = 0; /* normal, fiery */
-	if (old_lite_type != p_ptr->lite_type) {
+	if (old_lite_type != p_ptr->lite_type
+	    && p_ptr->px) { /* calc_boni() is called once on birth, where player isn't positioned yet. */
 		forget_lite(Ind);
 		update_lite(Ind);
 		old_lite_type = p_ptr->lite_type;
