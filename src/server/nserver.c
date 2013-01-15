@@ -4458,6 +4458,10 @@ int Send_char_info(int ind, int race, int class, int trait, int sex, int mode)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 
+#ifndef ENABLE_DRACONIAN_TRAITS
+	if (race == RACE_DRACONIAN) trait = 0;
+#endif
+
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
 		errno = 0;
