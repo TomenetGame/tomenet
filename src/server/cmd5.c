@@ -887,7 +887,7 @@ void do_mimic_power_aux(int Ind, int dir)
     case 16:
         sprintf(p_ptr->attacker, " breathes confusion for");
 	msg_print(Ind, "You breathe confusion.");
-        fire_ball(Ind, GF_CONFUSION, dir, ((p_ptr->chp / 4) > 400) ? 400 : (p_ptr->chp / 4), rad, p_ptr->attacker);
+        fire_ball(Ind, GF_CONFUSION, dir, ((p_ptr->chp / 4) > 350) ? 350 : (p_ptr->chp / 4), rad, p_ptr->attacker);
         break;
 //#define RF4_BR_SOUN			0x00020000	/* Breathe Sound */
     case 17:
