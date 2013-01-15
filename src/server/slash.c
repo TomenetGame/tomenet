@@ -3404,6 +3404,52 @@ void do_slash_cmd(int Ind, char *message)
 		} else if (prefix(message, "/quit") || prefix(message, "/exit") || prefix(message, "/leave")) {
 			do_quit(Players[Ind]->conn, 0);
 			return;
+#ifdef ENABLE_DRACONIAN_TRAITS
+		} else if (prefix(message, "/trait")) {
+			if (p_ptr->prace != RACE_DRACONIAN) {
+				msg_print(Ind, "This command is only available to draconians.");
+				return;
+			}
+			if (p_ptr->ptrait) {
+				msg_print(Ind, "You already have a trait.");
+				return;
+			}
+			if (!tk) {
+				msg_print(Ind, "\377U------------------------------------------------");
+				msg_print(Ind, "\377yUse this command like this:");
+				msg_print(Ind, "\377o  /trait colour");
+				msg_print(Ind, "\377yWhere colour is one of these:");
+				msg_print(Ind, "\377o  blue, white, red, black, green, multi,");
+				msg_print(Ind, "\377o  bronze, silver, gold, law, chaos, balance.");
+				msg_print(Ind, "\377yWARNING: Once you set a trait, it will be FINAL.");
+				msg_print(Ind, "\377U------------------------------------------------");
+				return;
+			}
+
+			if (!strcmp(message3, "blue")) p_ptr->ptrait = 1;
+			else if (!strcmp(message3, "white")) p_ptr->ptrait = 2;
+			else if (!strcmp(message3, "red")) p_ptr->ptrait = 3;
+			else if (!strcmp(message3, "black")) p_ptr->ptrait = 4;
+			else if (!strcmp(message3, "green")) p_ptr->ptrait = 5;
+			else if (!strcmp(message3, "multi")) p_ptr->ptrait = 6;
+			else if (!strcmp(message3, "bronze")) p_ptr->ptrait = 7;
+			else if (!strcmp(message3, "silver")) p_ptr->ptrait = 8;
+			else if (!strcmp(message3, "gold")) p_ptr->ptrait = 9;
+			else if (!strcmp(message3, "law")) p_ptr->ptrait = 10;
+			else if (!strcmp(message3, "chaos")) p_ptr->ptrait = 11;
+			else if (!strcmp(message3, "balance")) p_ptr->ptrait = 12;
+			else {
+				msg_print(Ind, "You entered an invalid colour, please try again.");
+				return;
+			}
+			msg_format(Ind, "\377U*** Your trait has been set to '%s' ***.", trait_info[p_ptr->ptrait].title);
+			s_printf("TRAIT_SET: %s (%s) -> %d\n", p_ptr->name, p_ptr->accountname, p_ptr->ptrait);
+			p_ptr->redraw |= PR_MISC;
+
+			p_ptr->s_info[SKILL_BREATH].value = 1000;
+			Send_skill_info(Ind, SKILL_BREATH, TRUE);
+			return;
+#endif
 		}
 
 
