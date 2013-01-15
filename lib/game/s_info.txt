@@ -552,7 +552,7 @@ F:MKEY_HARDCODE
 
 N:110:Breathe element
 D:Ability to breathe an element.
-A:18:Breathe
+A:18:Breathe element
 I:1000:0
 F:MKEY_HARDCODE
 F:HIDDEN
