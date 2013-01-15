@@ -3446,6 +3446,9 @@ void do_slash_cmd(int Ind, char *message)
 			s_printf("TRAIT_SET: %s (%s) -> %d\n", p_ptr->name, p_ptr->accountname, p_ptr->ptrait);
 			p_ptr->redraw |= PR_MISC;
 
+			get_history(Ind);
+			p_ptr->redraw |= PR_HISTORY;
+
 			p_ptr->s_info[SKILL_BREATH].value = 1000;
 			Send_skill_info(Ind, SKILL_BREATH, TRUE);
 			return;
