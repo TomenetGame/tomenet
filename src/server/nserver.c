@@ -4295,6 +4295,10 @@ int Send_skill_info(int ind, int i, bool keep)
 	if (mkey == MKEY_MELEE && Players[ind]->melee_techniques == 0x0000) mkey = 0;
 	if (mkey == MKEY_RANGED && Players[ind]->ranged_techniques == 0x0000) mkey = 0;
 
+#ifndef ENABLE_DRACONIAN_TRAITS
+	if (mkey == MKEY_BREATH) mkey = 0;
+#endif
+
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0))
 	        return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN);
 	else if (!is_newer_than(&connp->version, 4, 4, 1, 7, 0, 0)) {
