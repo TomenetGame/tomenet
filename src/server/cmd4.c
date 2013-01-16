@@ -2352,12 +2352,12 @@ void do_cmd_show_houses(int Ind)
 	/* Output color byte */
 //	fprintf(fff, "%c", 'G');
 
-	fprintf(fff, "======== House List ========\n");
+	if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
+		fprintf(fff, "======== House List ========\n");
 
-	for(i = 0; i < num_houses; i++)
-	{
-		//				if(!houses[i].dna->owner) continue;
-		//				if(!admin && houses[i].dna->owner != p_ptr->id) continue;
+	for(i = 0; i < num_houses; i++) {
+		//if(!houses[i].dna->owner) continue;
+		//if(!admin && houses[i].dna->owner != p_ptr->id) continue;
 		h_ptr = &houses[i];
 		dna = h_ptr->dna;
 
@@ -2370,12 +2370,11 @@ void do_cmd_show_houses(int Ind)
 		fprintf(fff, "\377%c", color_attr_to_char((char)access_door_colour(Ind, h_ptr->dna)));
 
 		fprintf(fff, "%3d)   [%d,%d] in %s", total,
-				h_ptr->dy * 5 / MAX_HGT, h_ptr->dx * 5 / MAX_WID,
-				wpos_format(Ind, &h_ptr->wpos));
-//				h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
+		    h_ptr->dy * 5 / MAX_HGT, h_ptr->dx * 5 / MAX_WID,
+		    wpos_format(Ind, &h_ptr->wpos));
+//		    h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
 
-		if (dna->creator == p_ptr->dna)
-		{
+		if (dna->creator == p_ptr->dna) {
 			/* Take player's CHR into account */
 			int factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 			int price = dna->price / 100 * factor;
@@ -2384,8 +2383,7 @@ void do_cmd_show_houses(int Ind)
 			fprintf(fff, "  %dau", price / 2);
 		}
 
-		if (admin)
-		{
+		if (admin) {
 #if 0
 			name = lookup_player_name(houses[i].dna->creator);
 			if (name) fprintf(fff, "  Creator:%s", name);
@@ -2397,61 +2395,43 @@ void do_cmd_show_houses(int Ind)
 		}
 
 #if 1
-		switch(dna->owner_type)
-		{
-			case OT_PLAYER:
+		switch(dna->owner_type) {
+		case OT_PLAYER:
 #if 0
-				if (dna->owner == dna->creator) break;
-				name = lookup_player_name(dna->owner);
-				if (name)
-				{
-					fprintf(fff, "  Legal owner:%s", name);
-				}
+			if (dna->owner == dna->creator) break;
+			name = lookup_player_name(dna->owner);
+			if (name) fprintf(fff, "  Legal owner:%s", name);
 #endif	// 0
 #if 0	// nothig so far.
-				else
-				{
-					s_printf("Found old player houses. ID: %d\n", houses[i].dna->owner);
-					kill_houses(houses[i].dna->owner, OT_PLAYER);
-				}
+			else {
+				s_printf("Found old player houses. ID: %d\n", houses[i].dna->owner);
+				kill_houses(houses[i].dna->owner, OT_PLAYER);
+			}
 #endif	// 0
-				break;
+			break;
 
-			case OT_PARTY:
-				name = parties[dna->owner].name;
-				if(strlen(name))
-				{
-					fprintf(fff, "  as party %s", name);
-				}
+		case OT_PARTY:
+			name = parties[dna->owner].name;
+			if(strlen(name)) fprintf(fff, "  as party %s", name);
 #if 0	// nothig so far.
-				else
-				{
-					s_printf("Found old party houses. ID: %d\n", houses[i].dna->owner);
-					kill_houses(houses[i].dna->owner, OT_PARTY);
-				}
+			else {
+				s_printf("Found old party houses. ID: %d\n", houses[i].dna->owner);
+				kill_houses(houses[i].dna->owner, OT_PARTY);
+			}
 #endif	// 0
-				break;
-			case OT_CLASS:
-				name = class_info[dna->owner].title;
-				if(strlen(name))
-				{
-					fprintf(fff, "  as class %s", name);
-				}
-				break;
-			case OT_RACE:
-				name = race_info[dna->owner].title;
-				if(strlen(name))
-				{
-					fprintf(fff, "  as race %s", name);
-				}
-				break;
-			case OT_GUILD:
-				name = guilds[dna->owner].name;
-				if(strlen(name))
-				{
-					fprintf(fff, "  as guild %s", name);
-				}
-				break;
+			break;
+		case OT_CLASS:
+			name = class_info[dna->owner].title;
+			if(strlen(name)) fprintf(fff, "  as class %s", name);
+			break;
+		case OT_RACE:
+			name = race_info[dna->owner].title;
+			if(strlen(name)) fprintf(fff, "  as race %s", name);
+			break;
+		case OT_GUILD:
+			name = guilds[dna->owner].name;
+			if(strlen(name)) fprintf(fff, "  as guild %s", name);
+			break;
 		}
 #endif	// 0
 

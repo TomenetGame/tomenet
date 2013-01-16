@@ -875,6 +875,7 @@ int guild_create(int Ind, cptr name){
 		guilds[index].flags |= GFLG_EVERLASTING;
 
 	Send_guild(Ind, FALSE, FALSE);
+	Send_guild_config(Ind);
 
 	return(TRUE);
 }

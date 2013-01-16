@@ -2362,6 +2362,7 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 							guild_msg_format(p_ptr->guild, "\374\377%c%s is the new guildmaster!", COLOUR_CHAT_GUILD, p_ptr->name);
 							guilds[p_ptr->guild].master = p_ptr->id;
 							Send_guild(Ind, FALSE, FALSE);
+							Send_guild_config(Ind);
 						}
 					}
 				}
