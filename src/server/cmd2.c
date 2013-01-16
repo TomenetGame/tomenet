@@ -6122,7 +6122,7 @@ void house_admin(int Ind, int dir, char *args){
 					} else msg_print(Ind,"\377oChange failed.");
 				} else msg_print(Ind,"\377oAccess not permitted.");
 			} else msg_print(Ind,"\377yNot a door of a private house.");
-		} else msg_print(Ind,"\377sThere is no door there.");
+		} else msg_print(Ind,"\377sThere is no home door there.");
 	}
 	return;
 }
