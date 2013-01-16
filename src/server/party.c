@@ -1579,6 +1579,7 @@ static void erase_guild_key(int id) {
 				return;
 			} else {
 				i = 1;
+				q_ptr = &o_list[m_ptr->hold_o_idx];//compiler warning
 				for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx) {
 					if (this_o_idx == i) {
 						q_ptr->next_o_idx = o_list[this_o_idx].next_o_idx;
