@@ -1605,7 +1605,9 @@ int Receive_char_info(void) {
 	/* Clear any old info */
 	race = class = trait = sex = mode = 0;
 
-	if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd%s", &ch, &race, &class, &trait, &sex, &mode, cname)) <= 0) return n;
+	} else if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd", &ch, &race, &class, &trait, &sex, &mode)) <= 0) return n;
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &race, &class, &sex, &mode)) <= 0) return n;

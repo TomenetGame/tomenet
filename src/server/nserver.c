@@ -4456,22 +4456,23 @@ int Send_stamina(int ind, int mst, int cst) {
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_STAMINA, mst, cst);
 }
 
-int Send_char_info(int ind, int race, int class, int trait, int sex, int mode)
-{
+int Send_char_info(int ind, int race, int class, int trait, int sex, int mode, cptr name) {
 	connection_t *connp = Conn[Players[ind]->conn];
 
 #ifndef ENABLE_DRACONIAN_TRAITS
 	if (race == RACE_DRACONIAN) trait = 0;
 #endif
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for char info (%d.%d.%d)",
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (is_newer_than(&connp->version, 4, 4, 5, 10, 0, 0)) {
+
+	if (is_newer_than(&connp->version, 4, 5, 2, 0, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name);
+	} else if (is_newer_than(&connp->version, 4, 4, 5, 10, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd", PKT_CHAR_INFO, race, class, trait, sex, mode);
 	} else {
 		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd", PKT_CHAR_INFO, race, class, sex, mode);

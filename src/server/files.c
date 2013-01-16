@@ -516,7 +516,7 @@ void display_player(int Ind)
 
 
 	/* Send basic information */
-	Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode);
+	Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode, p_ptr->name);
 
 	/* Age, Height, Weight, Social */
 	Send_various(Ind, p_ptr->ht, p_ptr->wt, p_ptr->age, p_ptr->sc);

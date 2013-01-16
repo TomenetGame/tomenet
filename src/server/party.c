@@ -3247,53 +3247,100 @@ void scan_accounts() {
 	C_KILL(account_active, MAX_ACCOUNTS / 8, bool);
 }
 
-/* Rename a player's char savegame as well as the name inside */
-void rename_player_name(char *pnames){
-	int slot;
+/* Rename a player's char savegame as well as the name inside.
+   Not sure if this function is 100% ok to use, regarding treatment of hash table. */
+void rename_character(char *pnames){
+	int slot, pos, i, Ind;
 	hash_entry *ptr;
 	char pname[40], nname[40];
-	int pos, i;
-
-	int Ind;
-
-return; /* not completely implemented yet! (load_player lacks infos what to load, ie names) */
+	player_type *p_ptr;
 
 	Ind = ++NumPlayers;
-	player_type *p_ptr;
+
         /* Allocate memory for him */
         MAKE(Players[Ind], player_type);
         C_MAKE(Players[Ind]->inventory, INVEN_TOTAL, object_type);
 	p_ptr = Players[Ind];
 
-
+	/* extract old+new name from 'pnames' */
 	if (!(strchr(pnames, ':'))) return;
 	pos = strchr(pnames, ':') - pnames;
 	strncpy(pname, pnames, pos);
+	pname[pos] = 0;
 	strcpy(nname, pnames + pos + 1);
 	s_printf("Renaming player: %s to %s\n", pname, nname);
 
-	for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
-		ptr=hash_table[slot];
-		while(ptr){
-			if(!strcmp(ptr->name, pname)){
-				load_player(Ind);
-
-				for(i=1; i<MAX_PARTIES; i++){ /* was i = 0 but real parties start from i = 1 - mikaelh */
-					if(streq(parties[i].owner, ptr->name)){
-						s_printf("Renaming owner of party: %s\n",parties[i].name);
-						strcpy(parties[i].owner, nname);
-						break;
-					}
-				}
-				strcpy((char *) ptr->name, nname);
-				strcpy(p_ptr->name, nname);
-
-				save_player(Ind);
+	/* scan hash entries */
+	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+		ptr = hash_table[slot];
+		while (ptr) {
+			if (strcmp(ptr->name, pname)) {
+				ptr = ptr->next;
+				continue;
 			}
-			ptr=ptr->next;
+
+			/* load him */
+			strcpy(p_ptr->name, pname);
+			process_player_name(Ind, TRUE);
+			load_player(Ind);
+
+			/* change his name */
+			strcpy(p_ptr->name, nname);
+			if (!process_player_name(Ind, TRUE)) {
+				/* done (failure) */
+				s_printf("rename_character: bad new name '%s'\n", nname);
+			        C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
+			        KILL(Players[Ind], player_type);
+				NumPlayers--;
+				return;
+			}
+			/* change his name in hash table */
+			strcpy((char *) ptr->name, p_ptr->name);
+			/* save him */
+			save_player(Ind);
+			/* delete old savefile) */
+			sf_delete(pname);
+
+			/* change his name as party owner */
+			for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
+				if (streq(parties[i].owner, ptr->name)) {
+					s_printf("Renaming owner of party: %s\n",parties[i].name);
+					strcpy(parties[i].owner, nname);
+					break;
+				}
+			}
+
+			/* (guilds only use numerical ID, not names) */
+
+			/* done (success) */
+			s_printf("rename_character: success '%s' -> '%s'\n", pname, nname);
+		        C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
+		        KILL(Players[Ind], player_type);
+			NumPlayers--;
+
+			/* update live player */
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (strcmp(p_ptr->name, pname)) continue;
+
+				strcpy(p_ptr->name, nname);
+				if (!process_player_name(i, TRUE)) {
+					/* done (failure) -- paranoia, shouldn't happen (caught above already!) */
+					s_printf("rename_character: *LIVE* bad new name '%s'\n", nname);
+					Destroy_connection(i, "Name changed. Please log in again.");
+					/* delete old savefile) */
+					sf_delete(pname);
+					return;
+				}
+				Send_char_info(i, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode, p_ptr->name);
+				return;
+			}
+			return;
 		}
 	}
+
 	/* free temporary player */
+	s_printf("rename_character: name not found\n");
         C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
         KILL(Players[Ind], player_type);
 	NumPlayers--;

@@ -5566,7 +5566,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				msg_format(Ind, "Renaming character %s.", message3);
-				rename_player_name(message3);
+				rename_character(message3);
 				return;
 			}
 			/* list of players about to expire - mikaelh */
