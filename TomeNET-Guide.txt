@@ -3340,7 +3340,8 @@ the game prompts you to enter a direction.
 In our macros so far we have answered that question by specifying '*t' instead
 of an actual direction ie one of: 1,2,3,4,6,7,8,9.
 We have learned that '*' means 'acquire target' and 't' means 'choose closest
-hostile target'.
+hostile target'. If there are two targets that are equally close, one that is
+awake is preferred over one that is alseep.
 The '*' key can also be pressed as a command key, ie on its own without any
 direction request from the server. Press '*' and it will ask you to set a
 target, which you can do by pressing 't' again to choose the closest hostile
