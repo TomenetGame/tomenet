@@ -1489,7 +1489,14 @@ static void erase_guild_key(int id) {
 			/* generate savefile name */
 			process_player_name(NumPlayers, TRUE);
 			/* try to load him! */
-			load_player(NumPlayers);
+			if (!load_player(NumPlayers)) {
+				/* bad fail */
+				s_printf("GUILD_KEY_ERASE: load_player '%s' failed\n", p_ptr->name);
+			        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+			        KILL(p_ptr, player_type);
+				NumPlayers--;
+				return;
+			}
 			/* scan his inventory */
 			for (i = 0; i < INVEN_TOTAL; i++) {
 				o_ptr = &p_ptr->inventory[i];
@@ -3282,7 +3289,14 @@ void rename_character(char *pnames){
 			/* load him */
 			strcpy(p_ptr->name, pname);
 			process_player_name(Ind, TRUE);
-			load_player(Ind);
+			if (!load_player(Ind)) {
+				/* bad fail */
+				s_printf("rename_character: load_player '%s' failed\n", pname);
+			        C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
+			        KILL(Players[Ind], player_type);
+				NumPlayers--;
+				return;
+			}
 
 			/* change his name */
 			strcpy(p_ptr->name, nname);
