@@ -155,6 +155,8 @@ extern char guild_info_members[20];
 extern char guild_info_owner[50];
 extern bool guild_master;
 extern guild_type guild;
+extern int guildhall_wx, guildhall_wy;
+extern char guildhall_pos[14];
 
 extern setup_t Setup;
 extern client_setup_t Client_setup;

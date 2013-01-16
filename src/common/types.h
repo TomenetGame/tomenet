@@ -1589,6 +1589,7 @@ typedef struct guild_type {
 	u32b flags;		/* Guild rules flags */
 	s16b minlev;		/* minimum level to join */
 	char adder[5][NAME_LEN];	/* Guild may have up to 5 people who can add besides the guild master */
+	s16b h_idx;		/* Guild Hall - house index */
 } guild_type;
 
 /* Save data work information for guild halls */

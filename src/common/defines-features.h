@@ -107,7 +107,7 @@
 
 #define WILDERNESS_NEW_FEATURES	/* Use new 4.4.9 wilderness features? WARNING: Changes wilderness and houses */
 
- #define BIG_MAP		/* Allow a larger main window with a map bigger than 66x22 - C. Blue */
+#define BIG_MAP		/* Allow a larger main window with a map bigger than 66x22 - C. Blue */
 
 
 
@@ -128,7 +128,7 @@
 
 #ifdef TEST_SERVER
  #define ENABLE_DRACONIAN_TRAITS
- #define ENABLE_GUILD_HALL
+ #define ENABLE_GUILD_HALL	/* Allow an OT_GUILD house */
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 
  #ifdef MAX_CLOUDS

@@ -1072,20 +1072,16 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 
 /* Door change ownership */
 static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
-	player_type *p_ptr=Players[Ind];
-	int newowner=-1;
+	player_type *p_ptr = Players[Ind];
+	int newowner = -1;
 	int i, h_idx;
 
 	/* to prevent house amount cheeze (houses_owned)
 	   let's just say house ownership can't be transferred.
 	   Changing the door access should be sufficient. */
-/*	msg_print(Ind,"\377ySorry, this feature is not available"); -- see below
-	if (!is_admin(p_ptr)) return(FALSE);*/
-
 	if (!is_admin(p_ptr)) {
-		if (dna->creator!=p_ptr->dna) return(FALSE);
-//(covered below)		if(args[1]>='3' && args[1]<'5') return(FALSE);
-		/* maybe make party leader only chown party */
+		if (dna->creator != p_ptr->dna) return(FALSE);
+		/* maybe make guild leader only chown guild -> "guild hall" */
 	}
 	switch (args[1]) {
 	case '1':
@@ -1136,7 +1132,29 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 		break;
 #ifdef ENABLE_GUILD_HALL
 	case '2':
-		newowner = guild_lookup(&args[2]);
+		h_idx = pick_house(&p_ptr->wpos, y, x);
+		/* paranoia */
+		if (h_idx == -1) {
+			msg_print(Ind, "There is no transferrable house there.");
+			return FALSE;
+		}
+		/* only the guild master can assign an OT_GUILD house */
+		if (!p_ptr->guild || p_ptr->id != guilds[p_ptr->guild].master) {
+			msg_print(Ind, "You must be the guild master to give house ownership to a guild.");
+			return FALSE;
+		}
+		/* there can only be one guild hall */
+		if (guilds[p_ptr->guild].h_idx) {
+			msg_print(Ind, "The guild already has a guild hall.");
+			return FALSE;
+		}
+		/* guild master 'loses' one own house */
+		if (dna->owner_type == OT_PLAYER) {
+			p_ptr->houses_owned--;
+			if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
+		}
+		newowner = p_ptr->guild;
+		msg_format(Ind, "This house is now owned by %s.", guilds[p_ptr->guild].name);
 		break;
 #endif
 /*	case '3':
@@ -1181,6 +1199,10 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 		}
 		dna->owner = newowner;
 		dna->owner_type = args[1] - '0';
+		if (dna->owner_type == OT_GUILD) {
+			guilds[p_ptr->guild].h_idx = h_idx + 1;
+			Send_guild_config(p_ptr->guild);
+		}
 		return(TRUE);
 	}
 	return FALSE;
@@ -6216,8 +6238,10 @@ void do_cmd_purchase_house(int Ind, int dir)
 
 					/* sell house */
 					msg_format(Ind, "You sell your house for %ld gold.", price / 2);
-					p_ptr->houses_owned--;
-					if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
+					if (dna->owner_type != OT_GUILD) {
+						p_ptr->houses_owned--;
+						if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
+					}
 
 					/* make sure we don't get stuck by selling it while inside - C. Blue */
 					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)
@@ -6229,6 +6253,10 @@ void do_cmd_purchase_house(int Ind, int dir)
 					}
 					else
 						msg_print(Ind,"The house is reset");
+				}
+				if (dna->owner_type == OT_GUILD) {
+					guilds[dna->owner].h_idx = 0;
+					Send_guild_config(dna->owner);
 				}
 				dna->creator = 0L;
 				dna->owner = 0L;

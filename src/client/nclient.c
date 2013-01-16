@@ -2934,7 +2934,7 @@ int Receive_guild_config(void) {
 	int x, y;
 	Term_locate(&x, &y);
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &master, &guild.flags, &guild.minlev, &guild_adders)) <= 0) return n;
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%s", &ch, &master, &guild.flags, &guild.minlev, &guild_adders, &guildhall_wx, &guildhall_wy, guildhall_pos)) <= 0) return n;
 	if (master) guild_master = TRUE;
 	else guild_master = FALSE;
 
@@ -2951,18 +2951,20 @@ int Receive_guild_config(void) {
 	if (guildcfg_mode) {
 		int acnt = 0;
 		char buf[(NAME_LEN + 1) * 5 + 1];
-                Term_putstr(5, 2, -1, TERM_L_UMBER, "Current guild configuration:");
-                Term_putstr(5, 3, -1, TERM_WHITE,  format("adders     : %s", guild.flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno"));
-                Term_putstr(5, 4, -1, TERM_L_WHITE,       "    Allows players designated via /guild_adder command to add others.");
-                Term_putstr(5, 5, -1, TERM_WHITE,  format("autoreadd  : %s", guild.flags & GFLG_AUTO_READD ? "\377GYES" : "\377rno"));
-                Term_putstr(5, 6, -1, TERM_L_WHITE,      "    If a guild mate ghost-dies then the next character he logs on with");
-                Term_putstr(5, 7, -1, TERM_L_WHITE,      "    - if it is newly created - is automatically added to the guild again.");
-                Term_putstr(5, 8, -1, TERM_WHITE, format("minlev     : \377%c%d   ", guild.minlev <= 1 ? 'w' : (guild.minlev <= 10 ? 'G' : (guild.minlev < 20 ? 'g' :
+		if (guildhall_wx == -1) Term_putstr(5, 2, -1, TERM_SLATE, "The guild does own a guild hall.");
+		else if (guildhall_wx >= 0) Term_putstr(5, 2, -1, TERM_L_UMBER, format("The guild hall is located in the %s area of (%d,%d).",
+		    guildhall_pos, guildhall_wx, guildhall_wy));
+                Term_putstr(5, 4, -1, TERM_WHITE,  format("adders     : %s", guild.flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno "));
+                Term_putstr(5, 5, -1, TERM_L_WHITE,       "    Allows players designated via /guild_adder command to add others.");
+                Term_putstr(5, 6, -1, TERM_WHITE,  format("autoreadd  : %s", guild.flags & GFLG_AUTO_READD ? "\377GYES" : "\377rno "));
+                Term_putstr(5, 7, -1, TERM_L_WHITE,      "    If a guild mate ghost-dies then the next character he logs on with");
+                Term_putstr(5, 8, -1, TERM_L_WHITE,      "    - if it is newly created - is automatically added to the guild again.");
+                Term_putstr(5, 9, -1, TERM_WHITE, format("minlev     : \377%c%d   ", guild.minlev <= 1 ? 'w' : (guild.minlev <= 10 ? 'G' : (guild.minlev < 20 ? 'g' :
                     (guild.minlev < 30 ? 'y' : (guild.minlev < 40 ? 'o' : (guild.minlev <= 50 ? 'r' : 'v'))))), guild.minlev));
-                Term_putstr(5, 9, -1, TERM_L_WHITE,      "    Minimum character level required to get added to the guild.");
+                Term_putstr(5, 10, -1, TERM_L_WHITE,      "    Minimum character level required to get added to the guild.");
 
-                Term_erase(5, 10, 69);
                 Term_erase(5, 11, 69);
+                Term_erase(5, 12, 69);
 
                 buf[0] = 0;
                 for (i = 0; i < 5; i++) if (guild.adder[i][0] != '\0') {
@@ -2975,12 +2977,12 @@ int Receive_guild_config(void) {
                                 strcat(buf, guild.adder[i]);
                                 acnt++;
                                 if (acnt == 3) {
-                            		Term_putstr(5, 10, -1, TERM_SLATE, buf);
+                            		Term_putstr(5, 11, -1, TERM_SLATE, buf);
                             		buf[0] = 0;
                             	}
                         }
                 }
-                Term_putstr(5 + (acnt <= 3 ? 0 : 12), acnt <= 3 ? 10 : 11, -1, TERM_SLATE, buf);
+                Term_putstr(5 + (acnt <= 3 ? 0 : 12), acnt <= 3 ? 11 : 12, -1, TERM_SLATE, buf);
 	}
 
 	Term_gotoxy(x, y);

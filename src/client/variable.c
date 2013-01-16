@@ -46,6 +46,8 @@ char guild_info_members[20];
 char guild_info_owner[50];
 bool guild_master;
 guild_type guild;
+int guildhall_wx = -1, guildhall_wy;
+char guildhall_pos[14];
 
 setup_t Setup;				/* The information given to us by the server */
 client_setup_t Client_setup;		/* The information we give to the server */

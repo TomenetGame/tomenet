@@ -1052,7 +1052,7 @@ extern int Send_floor(int ind, char tval);
 extern int Send_pickup_check(int ind, cptr buf);
 extern int Send_party(int Ind, bool leave, bool clear);
 extern int Send_guild(int Ind, bool leave, bool clear);
-extern int Send_guild_config(int Ind);
+extern int Send_guild_config(int id);
 extern int Send_special_other(int ind);
 extern int Send_skills(int ind);
 extern int Send_pause(int ind);

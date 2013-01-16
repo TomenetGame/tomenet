@@ -2297,7 +2297,7 @@ static int Handle_login(int ind)
 	/* Send party/guild information */
 	Send_party(NumPlayers, FALSE, FALSE);
 	Send_guild(NumPlayers, FALSE, FALSE);
-	Send_guild_config(NumPlayers);
+	Send_guild_config(p_ptr->guild);
 
 	/* Hack -- terminate the data stream sent to the client */
 	if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
@@ -6239,10 +6239,41 @@ int Send_guild(int Ind, bool leave, bool clear) {
 	return 1;
 }
 
-int Send_guild_config(int Ind) {
+int Send_guild_config(int id) {
 	int i, j;
-	guild_type *g_ptr = &guilds[Players[Ind]->guild];
+	guild_type *g_ptr = &guilds[id];
 	int master;
+	int ghwx = -1, ghwy, ghx, ghy;
+	char ghpos[14];
+
+	/* guild hall location */
+	if (g_ptr->h_idx) {
+		ghwx = houses[g_ptr->h_idx - 1].wpos.wx;
+		ghwy = houses[g_ptr->h_idx - 1].wpos.wy;
+		ghx = houses[g_ptr->h_idx - 1].x;
+		ghy = houses[g_ptr->h_idx - 1].y;
+		ghpos[0] = 0;
+		if (ghy < MAX_HGT / 3) {
+			strcpy(ghpos, "north");
+		} else if (ghy < 2 * MAX_HGT / 3) {
+			/* nothing */
+		} else {
+			strcpy(ghpos, "south");
+		}
+		if (ghx < MAX_WID / 3) {
+			if (!ghpos[0]) strcpy(ghpos, "western");
+			else strcat(ghpos, "-western");
+		} else if (ghx < 2 * MAX_WID / 3) {
+			if (!ghpos[0]) strcpy(ghpos, "central");
+			else strcat(ghpos, "ern");
+		} else {
+			if (!ghpos[0]) strcpy(ghpos, "eastern");
+			else strcat(ghpos, "-eastern");
+		}
+	}
+#ifndef ENABLE_GUILD_HALL
+	else ghwx = -2;
+#endif
 
 	/* scan party members and send info */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -6250,7 +6281,7 @@ int Send_guild_config(int Ind) {
 		connection_t *connp = Conn[p_ptr->conn];
 
 		if (!is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0)) continue;
-		if (p_ptr->guild != Players[Ind]->guild) continue;
+		if (p_ptr->guild != id) continue;
 		if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 			errno = 0;
 			plog(format("Connection nor ready for guild info (%d.%d.%d)",
@@ -6261,7 +6292,7 @@ int Send_guild_config(int Ind) {
 		if (g_ptr->master == p_ptr->id) master = 1;
 		else master = 0;
 
-		Packet_printf(&connp->c, "%c%d%d%d%d", PKT_GUILD_CFG, master, g_ptr->flags, g_ptr->minlev, 5);
+		Packet_printf(&connp->c, "%c%d%d%d%d%d%d%s", PKT_GUILD_CFG, master, g_ptr->flags, g_ptr->minlev, 5, ghwx, ghwy, ghpos);
 		for (j = 0; j < 5; j++) Packet_printf(&connp->c, "%s", g_ptr->adder[j]);
 	}
 
@@ -9801,7 +9832,7 @@ static int Receive_guild_config(int ind) {
 		break;
 	}
 
-	Send_guild_config(player);
+	Send_guild_config(p_ptr->guild);
 	return 1;
 }
 

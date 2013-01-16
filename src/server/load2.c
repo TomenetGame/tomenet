@@ -993,7 +993,7 @@ static void rd_quests(){
 	}
 }
 
-static void rd_guilds(){
+static void rd_guilds() {
 	int i;
 	u16b tmp16u;
 	rd_u16b(&tmp16u);
@@ -1001,7 +1001,7 @@ static void rd_guilds(){
 		s_printf("Too many guilds (%d)\n", tmp16u);
 		return;
 	}
-	for(i=0; i<tmp16u; i++){
+	for (i = 0; i < tmp16u; i++) {
 		rd_string(guilds[i].name, 80);
 		rd_s32b(&guilds[i].master);
 		rd_s32b(&guilds[i].members);
@@ -1012,6 +1012,8 @@ static void rd_guilds(){
 			for (j = 0; j < 5; j++)
 				rd_string(guilds[i].adder[j], NAME_LEN);
 		}
+		if (!older_than(4, 5, 0)) rd_s16b(&guilds[i].h_idx);
+		else guilds[i].h_idx = 0;
 	}
 }
 

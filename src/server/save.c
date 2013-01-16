@@ -460,6 +460,7 @@ static void wr_guilds(){
 		wr_s16b(guilds[i].minlev);
 		for (j = 0; j < 5; j++)
 			wr_string(guilds[i].adder[j]);
+		wr_s16b(guilds[i].h_idx);
 	}
 }
 
