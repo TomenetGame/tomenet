@@ -9750,7 +9750,7 @@ static int Receive_guild_config(int ind) {
                         }
                         guild->adder[j][0] = '\0';
                         msg_format(player, "Player \377r%s\377w is no longer authorized to add others.", adder);
-                        return 1;
+                        break;
 #else
                         msg_print(player, "Player not online.");
                         return 1;

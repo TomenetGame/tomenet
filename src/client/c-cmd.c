@@ -2228,7 +2228,7 @@ void cmd_message(void)
 
 /* set flags and options such as minlvl / auto-rejoin */
 static void cmd_guild_options() {
-	int i, acnt = 0;
+	int i, acnt;
 	char buf[(NAME_LEN + 1) * 5 + 1], buf0[NAME_LEN + 1];
 
 	/* We are now in party mode */
@@ -2244,6 +2244,7 @@ static void cmd_guild_options() {
 
 		/* Initialize buffer */
 		buf[0] = '\0';
+		acnt = 0;
 
 		/* Describe */
 		Term_putstr(0, 0, -1, TERM_L_GREEN, "============== Guild configuration ===============");

@@ -2936,6 +2936,7 @@ int Receive_guild_config(void) {
 	if (master) guild_master = TRUE;
 	else guild_master = FALSE;
 
+	for (i = 0; i < 5; i++) guild.adder[i][0] = 0;
 	for (i = 0; i < guild_adders; i++) {
 		if (i >= 5) {
 			if ((n = Packet_scanf(&rbuf, "%s", dummy)) <= 0) return n;
