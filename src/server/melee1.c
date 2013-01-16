@@ -258,7 +258,9 @@ static bool do_eat_item(int Ind, int m_idx)
 		if (artifact_p(o_ptr)) continue;
 
 		/* Don't steal keys */
+#ifdef MON_IGNORE_KEYS
 		if (o_ptr->tval == TV_KEY) continue;
+#endif
 
 		/* Get a description */
 		object_desc(Ind, o_name, o_ptr, FALSE, 3);

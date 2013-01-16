@@ -800,7 +800,7 @@ int guild_create(int Ind, cptr name){
 		/* Admin can actually create a duplicate 'spare' key this way */
 		if (p_ptr->admin_dm) {
 			/* make the guild key */
-			invcopy(o_ptr, lookup_kind(TV_KEY, 2));
+			invcopy(o_ptr, lookup_kind(TV_KEY, SV_GUILD_KEY));
 			o_ptr->number = 1;
 			o_ptr->pval = index;
 			o_ptr->level = 1;
@@ -838,7 +838,7 @@ int guild_create(int Ind, cptr name){
 	p_ptr->redraw |= PR_GOLD;
 
 	/* make the guild key */
-	invcopy(o_ptr, lookup_kind(TV_KEY, 2));
+	invcopy(o_ptr, lookup_kind(TV_KEY, SV_GUILD_KEY));
 	o_ptr->number = 1;
 	o_ptr->pval = index;
 	o_ptr->level = 1;
@@ -1373,6 +1373,152 @@ int party_add(int adder, cptr name)
 	return TRUE;
 }
 
+static void erase_guild_key(int id) {
+	int i, this_o_idx, next_o_idx;
+	monster_type *m_ptr;
+	object_type *o_ptr, *q_ptr;
+	char m_name[MNAME_LEN];
+
+#if 0 /* account-based */
+	int j;
+        FILE *fp;
+        char buf[1024];
+        cptr cname;
+        struct account c_acc;
+#else /* just hash-table (character) based */
+	int slot;
+	hash_entry *ptr;
+	player_type *p_ptr;
+#endif
+
+
+	/* objects on the floor/in monster inventories */
+        for (i = 0; i < o_max; i++) {
+                o_ptr = &o_list[i];
+                /* Skip dead objects */
+                if (!o_ptr->k_idx) continue;
+                /* skip non-guild keys */
+                if (o_ptr->tval != TV_KEY || o_ptr->sval != SV_GUILD_KEY) continue;
+		/* Skip wrong guild keys */
+		if (o_ptr->pval != id) continue;
+
+		/* in monster inventory */
+                if (o_ptr->held_m_idx) {
+			m_ptr = &m_list[o_ptr->held_m_idx];
+			/* 1st object held is the key? */
+			if (m_ptr->hold_o_idx == i) {
+				m_ptr->hold_o_idx = o_ptr->next_o_idx;
+				monster_desc(0, m_name, o_ptr->held_m_idx, 0);
+				s_printf("GUILD_KEY_ERASE: monster inventory (%d, '%s', #1)\n", o_ptr->held_m_idx, m_name);
+				delete_object_idx(i, FALSE);
+				return;
+			} else {
+				i = 1;
+				for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx) {
+					if (this_o_idx == i) {
+						q_ptr->next_o_idx = o_list[this_o_idx].next_o_idx;
+						monster_desc(0, m_name, o_ptr->held_m_idx, 0);
+						s_printf("GUILD_KEY_ERASE: monster inventory (%d, '%s', #%d)\n", o_ptr->held_m_idx, m_name, i);
+						delete_object_idx(this_o_idx, FALSE);
+						return;
+					}
+					q_ptr = &o_list[this_o_idx];
+					next_o_idx = q_ptr->next_o_idx;
+					i++;
+				}
+			}
+                }
+
+		s_printf("GUILD_KEY_ERASE: floor\n");
+                delete_object_idx(i, FALSE);
+                return;
+        }
+
+	/* Players online */
+	for (this_o_idx = 1; this_o_idx <= NumPlayers; this_o_idx++) {
+	        p_ptr = Players[this_o_idx];
+		/* scan his inventory */
+		for (i = 0; i < INVEN_TOTAL; i++) {
+			o_ptr = &p_ptr->inventory[i];
+			if (!o_ptr->k_idx) continue;
+
+			if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY && o_ptr->pval == id) {
+				s_printf("GUILD_KEY_ERASE: player '%s'\n", p_ptr->name);
+				inven_item_increase(this_o_idx, i, -1);
+				inven_item_describe(this_o_idx, i);
+				inven_item_optimize(this_o_idx, i);
+				return;
+			}
+		}
+	}
+
+#if 0 /* account-based */
+	/* objects in player inventories */
+        path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+        fp = fopen(buf, "rb+");
+        if (!fp) {
+		s_printf("GUILD_KEY_ERASE: failed to open tomenet.acc\n");
+    		return;
+        }
+        while (fread(&c_acc, sizeof(struct account), 1, fp)) {
+		int *id_list, chars;
+                chars = player_id_list(&id_list, c_acc->id);
+                for (i = 0; i < chars; i++) {
+			cname = lookup_player_name(id_list[i]);
+			...//not implemented
+                }
+                if (chars) C_KILL(id_list, chars, int);
+        }
+#else /* just hash-table (character) based */
+	/* hack */
+	NumPlayers++;
+        MAKE(Players[NumPlayers], player_type);
+        p_ptr = Players[NumPlayers];
+        p_ptr->inventory = C_NEW(INVEN_TOTAL, object_type);
+        for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+                ptr = hash_table[slot];
+                while (ptr) {
+			/* clear his data (especially inventory) */
+			o_ptr = p_ptr->inventory;
+			WIPE(p_ptr, player_type);
+			p_ptr->inventory = o_ptr;
+			p_ptr->Ind = NumPlayers;
+			C_WIPE(p_ptr->inventory, INVEN_TOTAL, object_type);
+			/* set his supposed name */
+			strcpy(p_ptr->name, ptr->name);
+			/* generate savefile name */
+			process_player_name(NumPlayers, TRUE);
+			/* try to load him! */
+			load_player(NumPlayers);
+			/* scan his inventory */
+			for (i = 0; i < INVEN_TOTAL; i++) {
+				o_ptr = &p_ptr->inventory[i];
+				if (!o_ptr->k_idx) continue;
+
+				if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY && o_ptr->pval == id) {
+					s_printf("GUILD_KEY_ERASE: savegame '%s'\n", p_ptr->name);
+					o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
+					/* write savegame back */
+					save_player(NumPlayers);
+					/* unhack */
+					NumPlayers--;
+					return;
+				}
+			}
+			/* advance to next character */
+			ptr = ptr->next;
+		}
+	}
+	/* unhack */
+        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+        KILL(p_ptr, player_type);
+	NumPlayers--;
+#endif
+
+	/* hm, failed to locate the guild key. Maybe someone actually lost it. */
+	s_printf("GUILD_KEY_ERASE: not found\n");
+}
+
 /*
  * Remove a guild. What a sad day.
  *
@@ -1409,7 +1555,7 @@ static void del_guild(int id){
 	guilds[id].minlev = 0;
 
 	/* TODO: Find and destroy the guild key! */
-	
+	erase_guild_key(id);
 }
 
 /*
@@ -2877,7 +3023,7 @@ void sf_delete(const char *name){
 		if (isalpha(c) || isdigit(c)) temp[k++] = c;
 
 		/* Convert space, dot, and underscore to underscore */
-		else if (strchr(":!?\\/()\"@. _", c)) temp[k++] = '_';
+		else if (strchr(SF_BAD_CHARS, c)) temp[k++] = '_';
 	}
 	temp[k] = '\0';
 	path_build(fname, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, temp);

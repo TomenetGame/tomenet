@@ -1667,7 +1667,7 @@ void do_cmd_open(int Ind, int dir)
 				struct key_type *key = cs_ptr->sc.ptr;
 				for ( j = 0; j < INVEN_PACK; j++){
 					object_type *o_ptr = &p_ptr->inventory[j];
-					if (o_ptr->tval == TV_KEY && o_ptr->pval == key->id) {
+					if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id) {
 						c_ptr->feat = FEAT_HOME_OPEN;
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);

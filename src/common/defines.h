@@ -162,6 +162,12 @@
 
 
 
+/* Characters disallowed in save files */
+#define SF_BAD_CHARS ":!?\\/()\"@. _"
+
+/* Keys are safe from monsters? (taking/killing/stealing) */
+//#define MON_IGNORE_KEYS
+
 #ifdef MONSTER_ASTAR
  #define ASTAR_MAX_NODES 1000		/* max size of open/closed pathfinding table in an A* instance */
  #define ASTAR_MAX_INSTANCES 20		/* how many spawned monsters can use A* at once */
@@ -2612,6 +2618,11 @@
 #define MAX_SHROOM     20       /* Used with mushrooms (min 20) */ 
 #define MAX_TITLES     72       /* Used with scrolls (min 55) */ 
 #define MAX_SYLLABLES 164       /* Used with scrolls (see below) */ 
+
+
+/* svals for TV_KEY */
+#define SV_HOUSE_KEY		1
+#define SV_GUILD_KEY		2
 
 /* Sval for golems */
 #define SV_GOLEM_WOOD           0

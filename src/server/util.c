@@ -5920,7 +5920,7 @@ bool backup_estate(void) {
         	        /* Accept some letters */
 	                if (isalpha(c) || isdigit(c)) savefile[k++] = c;
     	        	/* Convert space, dot, and underscore to underscore */
-	                else if (strchr(":!?\\/()\"@. _", c)) savefile[k++] = '_';
+	                else if (strchr(SF_BAD_CHARS, c)) savefile[k++] = '_';
     		}
     		savefile[k] = '\0';
 		/* build path name and try to create/append to player's backup file */

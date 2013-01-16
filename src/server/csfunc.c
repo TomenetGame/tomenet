@@ -144,7 +144,7 @@ int keyhit(c_special *cs_ptr, int y, int x, int Ind){
 	if(p_ptr==(struct player_type*)NULL) return(FALSE);
 	for(j=0; j<INVEN_PACK; j++){
 		object_type *o_ptr=&p_ptr->inventory[j];
-		if(o_ptr->tval == TV_KEY && o_ptr->pval == key->id){
+		if(o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id){
 			c_ptr->feat = FEAT_HOME_OPEN;
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 			note_spot_depth(&p_ptr->wpos, y, x);
@@ -170,7 +170,7 @@ void keysee(c_special *cs_ptr, char *c, byte *a, int Ind){
 	if(p_ptr == (struct player_type*)NULL) return;
 	for(j = 0; j < INVEN_PACK; j++){
 		object_type *o_ptr = &p_ptr->inventory[j];
-		if(o_ptr->tval == TV_KEY && o_ptr->pval == key->id){
+		if(o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id){
 			/* colours are only test colours! */
 			*c = '*';
 			*a = TERM_L_DARK;

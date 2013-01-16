@@ -5328,7 +5328,9 @@ static void get_moves(int Ind, int m_idx, int *mm)
 #ifndef MONSTER_PICKUP_GOLD
 				(o_ptr->tval != TV_GOLD) &&
 #endif	// MONSTER_PICKUP_GOLD
+#ifdef MON_IGNORE_KEYS
 				(o_ptr->tval != TV_KEY) &&
+#endif
 				(monster_can_pickup(r_ptr, o_ptr)))
 			{
 				/* Just Stay */
@@ -5354,7 +5356,9 @@ static void get_moves(int Ind, int m_idx, int *mm)
 #ifndef MONSTER_PICKUP_GOLD
 							(o_ptr->tval != TV_GOLD) &&
 #endif	// MONSTER_PICKUP_GOLD
+#ifdef MON_IGNORE_KEYS
 							(o_ptr->tval != TV_KEY) &&
+#endif
 							(monster_can_pickup(r_ptr, o_ptr)))
 					{
 						/* Extract the new "pseudo-direction" */
@@ -7893,7 +7897,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #ifndef MONSTER_PICKUP_GOLD
 				(o_ptr->tval != TV_GOLD) &&
 #endif	// MONSTER_PICKUP_GOLD
+#ifdef MON_IGNORE_KEYS
 			    (o_ptr->tval != TV_KEY) &&
+#endif
 			    ((r_ptr->flags2 & RF2_TAKE_ITEM) ||
 			     (r_ptr->flags2 & RF2_KILL_ITEM)))
 			{

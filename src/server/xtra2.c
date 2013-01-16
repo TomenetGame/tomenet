@@ -10417,7 +10417,7 @@ bool master_build(int Ind, char * parms)
 		MAKE(key, struct key_type);
 		sscanf(&parms[2],"%d",&id);
 		key->id = id;
-		invcopy(&newkey, lookup_kind(TV_KEY, 1));
+		invcopy(&newkey, lookup_kind(TV_KEY, SV_HOUSE_KEY ));
 		newkey.pval = key->id;
 		newkey.marked2 = ITEM_REMOVAL_NEVER;
 		drop_near(&newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
