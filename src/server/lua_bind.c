@@ -1185,8 +1185,10 @@ void lua_forget_map(int Ind) {
 /* for resetting all party information */
 void lua_forget_parties(void) {
 	int i, j;
-	for (i = 1; i <= NumPlayers; i++)
+	for (i = 1; i <= NumPlayers; i++) {
 		Players[i]->party = 0;
+		clockin(i, 2);
+	}
 	for (i = 0; i < MAX_PARTIES; i++) {
 		parties[i].name[0] = '\0';
 	        parties[i].owner[0] = '\0';
@@ -1203,8 +1205,10 @@ void lua_forget_parties(void) {
    --note: guild halls/save files? */
 void lua_forget_guilds(void) {
 	int i, j;
-	for (i = 1; i <= NumPlayers; i++)
+	for (i = 1; i <= NumPlayers; i++) {
 		Players[i]->guild = 0;
+		clockin(i, 3);
+	}
 	for (i = 0; i < MAX_GUILDS; i++) {
 		guilds[i].name[0] = '\0';
 		guilds[i].master = 0;

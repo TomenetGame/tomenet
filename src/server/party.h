@@ -20,6 +20,7 @@ struct hash_entry
 	u16b party;			/* Player party */
 	/* 3.5.0 */
 	byte guild;			/* Player guild */
+	u32b guild_flags;		/* 4.5.2.0.0.1 */
 	s16b quest;			/* Player quest */
 
 	time_t laston;			/* Last on time */

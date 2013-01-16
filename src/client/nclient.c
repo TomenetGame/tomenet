@@ -2890,6 +2890,9 @@ int Receive_party(void) {
 			Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
 			if (strlen(pname)) Term_putstr(0, 21, -1, TERM_WHITE, format("%s (%s, %s)", pname, pmembers, powner));
 			else Term_putstr(0, 21, -1, TERM_SLATE, "(You are not in a party.)");
+
+                        if (party_info_name[0]) Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add a player to party");
+                        else Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add yourself to party");
 		} else {
 			Term_erase(0, 18, 70);
 			Term_erase(0, 20, 90);
@@ -2923,6 +2926,9 @@ int Receive_guild(void) {
 		Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
 		if (strlen(gname)) Term_putstr(0, 22, -1, TERM_WHITE, format("%s (%s, %s)", gname, gmembers, gowner));
 		else Term_putstr(0, 22, -1, TERM_SLATE, "(You are not in a guild.)");
+
+                if (guild_info_name[0]) Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add a player to guild");
+        	else Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add yourself to guild");
 	}
 
 	return 1;

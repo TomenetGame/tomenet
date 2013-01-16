@@ -1804,6 +1804,7 @@ static void wr_player_names(void)
 			wr_byte(ptr->level);
 			wr_u16b(ptr->party); /* changed to u16b to allow more parties */
 			wr_byte(ptr->guild);
+			wr_u32b(ptr->guild_flags);
 			wr_u16b(ptr->quest);
 			/* Store the player name */
 			wr_string(ptr->name);

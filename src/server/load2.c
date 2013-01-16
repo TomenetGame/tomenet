@@ -1231,8 +1231,7 @@ static bool rd_extra(int Ind)
 		else if (p_ptr->pclass < CLASS_DRUID) p_ptr->pclass--;
 	}
 	rd_byte(&p_ptr->male);
-	if (older_than(4, 2, 4))
-	{
+	if (older_than(4, 2, 4)) {
 		rd_byte(&tmp8u);
 		p_ptr->party = tmp8u; /* convert the old byte to u16b - mikaelh */
 	}
@@ -2707,15 +2706,14 @@ errr rd_server_savefile()
 	{
 		char name[80];
 		byte level, old_party, guild, race, class, mode;
-		u32b acct;
+		u32b acct, guild_flags;
 		u16b party;
 		u16b quest;
 
 		rd_u32b(&tmp32u);
 
 		/* Read the available records */
-		for (i = 0; i < tmp32u; i++)
-		{
+		for (i = 0; i < tmp32u; i++) {
 			s32b laston;
 
 			/* Read the ID */
@@ -2735,13 +2733,14 @@ errr rd_server_savefile()
 			}
 			else rd_u16b(&party);
 			rd_byte(&guild);
+		        if (!s_older_than(4, 5, 1)) rd_u32b(&guild_flags); else guild_flags = 0;
 			rd_u16b(&quest);
 
 			/* Read the player name */
 			rd_string(name, 80);
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, quest, laston);
+			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, quest, laston);
 		}
 	}
 

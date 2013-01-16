@@ -5386,6 +5386,23 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 	return NULL; /* means "is compatible" */
 }
 
+cptr compat_mode(byte mode1, byte mode2) {
+	if (mode1 & MODE_PVP) {
+		if (!(mode2 & MODE_PVP)) {
+			return "non-pvp";
+		}
+	} else if (mode1 & MODE_EVERLASTING) {
+		if (!(mode2 & MODE_EVERLASTING)) {
+			return "non-everlasting";
+		}
+	} else if (mode2 & MODE_PVP) {
+		return "pvp";
+	} else if (mode2 & MODE_EVERLASTING) {
+		return "everlasting";
+	}
+	return NULL; /* means "is compatible" */
+}
+
 /* cut out pseudo-id inscriptions from a string (a note ie inscription usually),
    save resulting string in s2,
    save highest found pseudo-id string in psid. - C. Blue */

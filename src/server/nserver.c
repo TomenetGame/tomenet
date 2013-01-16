@@ -9648,20 +9648,17 @@ static int Receive_suicide(int ind)
 	return 1;
 }
 
-static int Receive_party(int ind)
-{
+static int Receive_party(int ind) {
 	connection_t *connp = Conn[ind];
 	int player = -1, n;
 	char ch, buf[MAX_CHARS];
 	s16b command;
 
 	if (connp->id != -1) player = GetInd[connp->id];
-		else player = 0;
+		else return 1;
 
-	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
+	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
@@ -9670,101 +9667,64 @@ static int Receive_party(int ind)
 	for (n = 0; n < (int)strlen(buf); n++)
 		if (*(buf + n) < 32) *(buf + n) = '_';
 
-	if (player)
-	{
-		switch (command)
-		{
-			case PARTY_CREATE:
-			{
-				party_create(player, buf);
-				break;
-			}
-
-			case PARTY_CREATE_IRONTEAM:
-			{
-				party_create_ironteam(player, buf);
-				break;
-			}
-
-			case PARTY_ADD:
-			{
-				party_add(player, buf);
-				break;
-			}
-
-			case PARTY_DELETE:
-			{
-				party_remove(player, buf);
-				break;
-			}
-
-			case PARTY_REMOVE_ME:
-			{
-				party_leave(player);
-				break;
-			}
-
-			case PARTY_HOSTILE:
-			{
-				add_hostility(player, buf, TRUE);
-				break;
-			}
-
-			case PARTY_PEACE:
-			{
-				remove_hostility(player, buf);
-				break;
-			}
-		}
+	switch (command) {
+	case PARTY_CREATE:
+		party_create(player, buf);
+		break;
+	case PARTY_CREATE_IRONTEAM:
+		party_create_ironteam(player, buf);
+		break;
+	case PARTY_ADD:
+		if (!Players[player]->party) party_add_self(player, buf);
+		else party_add(player, buf);
+		break;
+	case PARTY_DELETE:
+		party_remove(player, buf);
+		break;
+	case PARTY_REMOVE_ME:
+		party_leave(player);
+		break;
+	case PARTY_HOSTILE:
+		add_hostility(player, buf, TRUE);
+		break;
+	case PARTY_PEACE:
+		remove_hostility(player, buf);
+		break;
 	}
 
 	return 1;
 }
 
-static int Receive_guild(int ind){
+static int Receive_guild(int ind) {
 	connection_t *connp = Conn[ind];
 	int player = -1, n;
 	char ch, buf[MAX_CHARS];
 	s16b command;
 
 	if (connp->id != -1) player = GetInd[connp->id];
-		else player = 0;
+		else return 1;
 
-	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
+	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
-	if (player)
-	{
-		switch(command){
-			case GUILD_CREATE:
-			{
-				guild_create(player, buf);
-				break;
-			}
-
-			case GUILD_ADD:
-			{
-				guild_add(player, buf);
-				break;
-			}
-
-			case GUILD_DELETE:
-			{
-				guild_remove(player, buf);
-				break;
-			}
-
-			case GUILD_REMOVE_ME:
-			{
-				guild_leave(player);
-				break;
-			}
-		}
+	switch (command) {
+	case GUILD_CREATE:
+		guild_create(player, buf);
+		break;
+	case GUILD_ADD:
+		if (!Players[player]->guild) guild_add_self(player, buf);
+		else guild_add(player, buf);
+		break;
+	case GUILD_DELETE:
+		guild_remove(player, buf);
+		break;
+	case GUILD_REMOVE_ME:
+		guild_leave(player);
+		break;
 	}
+
 	return 1;
 }
 

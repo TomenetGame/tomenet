@@ -2377,12 +2377,18 @@ void cmd_party(void)
 		/* See also: Receive_party() */
 		Term_putstr(5, 2, -1, TERM_WHITE, "(\377G1\377w) Create or rename a party");
 		Term_putstr(5, 3, -1, TERM_WHITE, "(\377G2\377w) Create or rename an 'Iron Team' party");
-		Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add a player to party");
+		if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
+			if (party_info_name[0]) Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add a player to party");
+			else Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add yourself to party");
+		} else Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add a player to party");
 		Term_putstr(5, 5, -1, TERM_WHITE, "(\377G4\377w) Delete a player from party");
 		Term_putstr(5, 6, -1, TERM_WHITE, "(\377G5\377w) Leave your current party");
 
 		Term_putstr(5, 8, -1, TERM_WHITE, "(\377Ua\377w) Create a new guild");
-		Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add player to guild");
+		if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
+			if (guild_info_name[0]) Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add a player to guild");
+			else Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add yourself to guild");
+		} else Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add a player to guild");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(\377UC\377w) Remove player from guild");
 		Term_putstr(5, 11, -1, TERM_WHITE, "(\377UD\377w) Leave guild");
 		if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0))
@@ -2432,9 +2438,15 @@ void cmd_party(void)
 
 		/* Add player */
 		else if (i == '3') {
-			/* Get player name */
-			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");
-			if (askfor_aux(buf, 79, 0)) Send_party(PARTY_ADD, buf);
+			if (party_info_name[0]) {
+				/* Get player name */
+				Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");
+				if (askfor_aux(buf, 79, 0)) Send_party(PARTY_ADD, buf);
+			} else {
+				/* Get party name */
+				Term_putstr(0, 19, -1, TERM_YELLOW, "Enter party name: ");
+				if (askfor_aux(buf, 79, 0)) Send_party(PARTY_ADD, buf);
+			}
 		}
 
 		/* Delete player */
@@ -2469,9 +2481,15 @@ void cmd_party(void)
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter guild name: ");
 			if (askfor_aux(buf, 79, 0)) Send_guild(GUILD_CREATE, buf);
 		} else if (i == 'b') {
-			/* Get player name */
-			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");
-			if (askfor_aux(buf, 79, 0)) Send_guild(GUILD_ADD, buf);
+			if (guild_info_name[0]) {
+				/* Get player name */
+				Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");
+				if (askfor_aux(buf, 79, 0)) Send_guild(GUILD_ADD, buf);
+			} else {
+				/* Get guild name */
+				Term_putstr(0, 19, -1, TERM_YELLOW, "Enter guild name: ");
+				if (askfor_aux(buf, 79, 0)) Send_guild(GUILD_ADD, buf);
+			}
 		} else if (i == 'C') {
 			/* Get player name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");

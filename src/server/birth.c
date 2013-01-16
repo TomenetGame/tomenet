@@ -2305,7 +2305,7 @@ static void player_setup(int Ind, bool new)
 	if (!lookup_player_name(p_ptr->id)) {
 		time_t ttime;
 		/* Add */
-		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, time(&ttime));
+		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, time(&ttime));
 	} else {
 	/* Verify his data - only needed for 4.2.0 -> 4.2.2 savegame conversion :) - C. Blue */
 		time_t ttime;
@@ -2379,12 +2379,14 @@ static void player_setup(int Ind, bool new)
 	if (p_ptr->party && parties[p_ptr->party].members == 0) {
 		/* Reset to neutral */
 		p_ptr->party = 0;
+		clockin(Ind, 2);
 	}
 
 	/* Make sure his guild still exists */
 	if (p_ptr->guild && guilds[p_ptr->guild].members == 0 && !strlen(guilds[p_ptr->guild].name)) {
 		/* Reset to neutral */
 		p_ptr->guild = 0;
+		clockin(Ind, 3);
 	}
 
 	/* Tell the server to redraw the player's display */

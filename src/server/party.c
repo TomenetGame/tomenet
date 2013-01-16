@@ -684,8 +684,7 @@ static u32b new_accid() {
 /*
  * Lookup a guild number by name.
  */
-int guild_lookup(cptr name)
-{
+int guild_lookup(cptr name) {
 	int i;
 
 	/* Check each guild */
@@ -703,8 +702,7 @@ int guild_lookup(cptr name)
 /*
  * Lookup a party number by name.
  */
-int party_lookup(cptr name)
-{
+int party_lookup(cptr name) {
 	int i;
 
 	/* Check each party */
@@ -718,11 +716,11 @@ int party_lookup(cptr name)
 	return -1;
 }
 
+
 /*
  * Check for the existance of a player in a party.
  */
-bool player_in_party(int party_id, int Ind)
-{
+bool player_in_party(int party_id, int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Check - Fail on non party */
@@ -832,7 +830,7 @@ int guild_create(int Ind, cptr name){
 	/* broadcast the news */
 	snprintf(temp, 160, "\374\377GA new guild '\377%c%s\377G' has been created.", COLOUR_CHAT_GUILD, name);
 	msg_broadcast(0, temp);
-	msg_print(Ind, "\374\377Gou can adjust guild options with the '/guild_cfg' command.");
+//	msg_print(Ind, "\374\377Gou can adjust guild options with the '/guild_cfg' command.");
 
 	p_ptr->au -= GUILD_PRICE;
 	p_ptr->redraw |= PR_GOLD;
@@ -868,6 +866,7 @@ int guild_create(int Ind, cptr name){
 
 	/* Add the owner as a member */
 	p_ptr->guild = index;
+	clockin(Ind, 3);
 	guilds[index].members = 1;
 
 	/* Set guild mode */
@@ -1195,12 +1194,101 @@ int guild_add(int adder, cptr name) {
 	}
 
 	if (p_ptr->lev < guilds[guild_id].minlev) {
-		msg_format(adder, "\377yThat player does not meet the minimum level requirement of the guild of %d.", guilds[guild_id].minlev);
+		msg_format(adder, "\377yThat player does not meet the minimum level requirements, %d, of the guild.", guilds[guild_id].minlev);
 		return FALSE;
 	}
 
 	/* Log - security */
 	s_printf("GUILD_ADD: %s has been added to %s by %s.\n", p_ptr->name, guilds[guild_id].name, q_ptr->name);
+
+	/* Tell the guild about its new member */
+	guild_msg_format(guild_id, "\374\377y%s has been added to %s.", p_ptr->name, guilds[guild_id].name);
+
+	/* One more player in this guild */
+	guilds[guild_id].members++;
+
+	/* Tell him about it */
+	msg_format(Ind, "\374\377yYou've been added to '%s'.", guilds[guild_id].name);
+
+	/* Set his guild number */
+	p_ptr->guild = guild_id;
+	clockin(Ind, 3);
+
+	/* Resend info */
+	Send_guild(Ind, FALSE, FALSE);
+
+	/* Display the guild note to him */
+	for (i = 0; i < MAX_GUILDNOTES; i++) {
+		if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
+			if (strcmp(guild_note[i], ""))
+				msg_format(Ind, "\374\377bGuild Note: %s", guild_note[i]);
+			break;
+		}
+	}
+
+	/* Success */
+	return TRUE;
+}
+int guild_add_self(int Ind, cptr guild) {
+	player_type *p_ptr = Players[Ind];
+	int guild_id = guild_lookup(guild), i, *id_list, ids;
+	struct account *acc;
+	bool member = FALSE;
+
+	if (guild_id == -1) {
+		msg_print(Ind, "That guild does not exist.");
+		return FALSE;
+	}
+
+	if (p_ptr->lev < guilds[guild_id].minlev) {
+		msg_format(Ind, "\377yYou do not meet the minimum level requirements, %d, of the guild.", guilds[guild_id].minlev);
+		return FALSE;
+	}
+
+	/* check if he has a character in there already, to be eligible to self-add */
+	acc = GetAccount(p_ptr->accountname, NULL, FALSE);
+	/* paranoia */
+	if (!acc) {
+		/* uhh.. */
+		msg_print(Ind, "Sorry, self-adding has failed.");
+		return FALSE;
+	}
+	ids = player_id_list(&id_list, acc->id);
+	for (i = 0; i < ids; i++) {
+                if (lookup_player_guild(id_list[i]) == guild_id) {
+			member = TRUE;
+
+			/* Everlasting and other chars cannot be in the same guild */
+			if (compat_mode(p_ptr->mode, lookup_player_mode(id_list[i]))) {
+				msg_format(Ind, "\377yYou cannot join %s guilds.", compat_mode(p_ptr->mode, lookup_player_mode(id_list[i])));
+				return FALSE;
+			}
+
+			/* player is guild master? -> ok */
+			if (id_list[i] == guilds[guild_id].master) {
+				/* Log - security */
+				s_printf("GUILD_ADD_SELF: (master) %s has been added to %s.\n", p_ptr->name, guilds[guild_id].name);
+
+				/* success */
+				break;
+			}
+			/* Make sure this isn't an impostor */
+			if (!(guilds[guild_id].flags & GFLG_ALLOW_ADDERS)) continue;
+			if (!(lookup_player_guildflags(id_list[i]) & PGF_ADDER)) continue;
+
+			/* Log - security */
+			s_printf("GUILD_ADD_SELF: (adder) %s has been added to %s.\n", p_ptr->name, guilds[guild_id].name);
+
+			/* success */
+			break;
+                }
+        }
+        /* failure? */
+        if (i == ids) {
+		if (!member) msg_print(Ind, "You do not have any character that is member of that guild.");
+		else msg_print(Ind, "You have no character in that guild that is allowed to add others.");
+		return FALSE;
+        }
 
 	/* Tell the guild about its new member */
 	guild_msg_format(guild_id, "\374\377y%s has been added to %s.", p_ptr->name, guilds[guild_id].name);
@@ -1286,8 +1374,7 @@ int guild_auto_add(int Ind, int guild_id, char *message) {
 /*
  * Add a player to a party.
  */
-int party_add(int adder, cptr name)
-{
+int party_add(int adder, cptr name) {
 	player_type *p_ptr;
 	player_type *q_ptr = Players[adder];
 	int party_id = q_ptr->party, Ind = 0, i;
@@ -1341,6 +1428,83 @@ int party_add(int adder, cptr name)
 
 	/* Log - security */
 	s_printf("PARTY_ADD: %s has been added to %s by %s.\n", p_ptr->name, parties[party_id].name, q_ptr->name);
+
+	/* Tell the party about its new member */
+	party_msg_format(party_id, "\374\377y%s has been added to party %s.", p_ptr->name, parties[party_id].name);
+
+	/* One more player in this party */
+	parties[party_id].members++;
+
+	/* Tell him about it */
+	if (parties[party_id].mode == PA_IRONTEAM)
+		msg_format(Ind, "\374\377yYou've been added to iron team '%s'.", parties[party_id].name);
+	else
+		msg_format(Ind, "\374\377yYou've been added to party '%s'.", parties[party_id].name);
+
+	/* Set his party number */
+	p_ptr->party = party_id;
+	clockin(Ind, 2);
+
+	/* Resend info */
+	Send_party(Ind, FALSE, FALSE);
+
+	/* Display the party note to him */
+	for (i = 0; i < MAX_PARTYNOTES; i++) {
+		if (!strcmp(party_note_target[i], parties[p_ptr->party].name)) {
+			if (strcmp(party_note[i], ""))
+				msg_format(Ind, "\374\377bParty Note: %s", party_note[i]);
+			break;
+		}
+	}
+
+	/* Success */
+	return TRUE;
+}
+int party_add_self(int Ind, cptr party) {
+	player_type *p_ptr = Players[Ind];
+	int party_id = party_lookup(party), i, *id_list, ids;
+	struct account *acc;
+
+	if (party_id == -1) {
+		msg_print(Ind, "That party does not exist.");
+		return FALSE;
+	}
+
+	/* Everlasting and other chars cannot be in the same party */
+	if (compat_mode(p_ptr->mode, parties[party_id].mode)) {
+		msg_format(Ind, "\377yYou cannot join %s parties.", compat_mode(p_ptr->mode, parties[party_id].mode));
+		return FALSE;
+	}
+
+	/* Only newly created characters can join an iron team */
+	if ((parties[party_id].mode & PA_IRONTEAM) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1)) {
+		msg_print(Ind, "\377yOnly newly created characters without experience can join an iron team.");
+		return FALSE;
+	}
+
+	/* check if he has a character in there already, to be eligible to self-add */
+	acc = GetAccount(p_ptr->accountname, NULL, FALSE);
+	/* paranoia */
+	if (!acc) {
+		/* uhh.. */
+		msg_print(Ind, "Sorry, self-adding has failed.");
+		return FALSE;
+	}
+	ids = player_id_list(&id_list, acc->id);
+	for (i = 0; i < ids; i++) {
+                if (lookup_player_party(id_list[i]) == party_id) {
+			/* success */
+			break;
+                }
+        }
+        /* failure? */
+        if (i == ids) {
+		msg_print(Ind, "You do not have any character that is member of that party.");
+		return FALSE;
+        }
+
+	/* Log - security */
+	s_printf("PARTY_ADD_SELF: %s has been added to %s.\n", p_ptr->name, parties[party_id].name);
 
 	/* Tell the party about its new member */
 	party_msg_format(party_id, "\374\377y%s has been added to party %s.", p_ptr->name, parties[party_id].name);
@@ -1624,17 +1788,15 @@ int guild_remove(int remover, cptr name){
 	player_type *q_ptr = Players[remover];
 	int guild_id = q_ptr->guild, Ind = 0;
 
-	if(!guild_id){
-		if(!is_admin(q_ptr))
-		{
+	if (!guild_id) {
+		if (!is_admin(q_ptr)) {
 			msg_print(remover, "\377yYou are not in a guild");
 			return FALSE;
 		}
 	}
 
 	/* Make sure this is the owner */
-	if (guilds[guild_id].master!=q_ptr->id && !is_admin(q_ptr))
-	{
+	if (guilds[guild_id].master!=q_ptr->id && !is_admin(q_ptr)) {
 		/* Message */
 		msg_print(remover, "\377yYou must be the owner to delete someone.");
 
@@ -1644,26 +1806,19 @@ int guild_remove(int remover, cptr name){
 
 	Ind = name_lookup_loose(remover, name, FALSE, TRUE);
 
-	if (Ind <= 0)
-	{
-		return FALSE;
-	}
+	if (Ind <= 0) return FALSE;
 
-	if(Ind == remover){	/* remove oneself from guild - leave */
+	if (Ind == remover) {	/* remove oneself from guild - leave */
 		guild_leave(remover);
 		return TRUE;
 	}
 
 	p_ptr = Players[Ind];
 
-	if(!guild_id && is_admin(q_ptr))
-	{
-		guild_id = p_ptr->guild;
-	}
+	if (!guild_id && is_admin(q_ptr)) guild_id = p_ptr->guild;
 
 	/* Make sure they were in the guild to begin with */
-	if (guild_id!=p_ptr->guild)
-	{
+	if (guild_id != p_ptr->guild) {
 		/* Message */
 		msg_print(remover, "\377yYou can only delete guild members.");
 
@@ -1672,8 +1827,7 @@ int guild_remove(int remover, cptr name){
 	}
 
 	/* Keep the guild, just lose a member */
-	else
-	{
+	else {
 		/* Lose a member */
 		guilds[guild_id].members--;
 
@@ -1685,10 +1839,12 @@ int guild_remove(int remover, cptr name){
 		if (guilds[guild_id].members == 0) {
 			Send_guild(Ind, TRUE, TRUE);
 			p_ptr->guild = 0;
+			clockin(Ind, 3);
 			del_guild(guild_id);
 		} else {
 			Send_guild(Ind, TRUE, FALSE);
 			p_ptr->guild = 0;
+			clockin(Ind, 3);
 		}
 	}
 
@@ -1819,6 +1975,7 @@ void guild_leave(int Ind){
 
 	/* Set him back to "neutral" */
 	p_ptr->guild = 0;
+	clockin(Ind, 3);
 
 	/* Last member deleted? */
 	if (guilds[guild_id].members == 0)
@@ -2004,19 +2161,19 @@ void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...)
  * 3) Higher-leveled members of a party get higher percentages of the
  * experience.
  */
- 
+
  /* The XP distribution was too unfair for low level characters,
     it made partying a real pain. I am changing it so that if the players
     have a difference in level of less than 5 than there is no difference
-    in XP distribution. 
-    
+    in XP distribution.
+
     I am also changing it so it divides by each players level, AFTER
     it has been given to them.
-    
+
     UPDATE: it appears that it may be giving too much XP to the low lvl chars,
     but I have been too lazy to change it... however, this doesnt appear to be being
     abused much, and the new system is regardless much nicer than the old one.
-    
+
     -APD-
     */
 
@@ -2194,8 +2351,7 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 /*
  * Add a player to another player's list of hostilities.
  */
-bool add_hostility(int Ind, cptr name, bool initiator)
-{
+bool add_hostility(int Ind, cptr name, bool initiator) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	hostile_type *h_ptr;
 	int i;
@@ -2343,8 +2499,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 /*
  * Remove an entry from a player's list of hostilities
  */
-bool remove_hostility(int Ind, cptr name)
-{
+bool remove_hostility(int Ind, cptr name) {
 	player_type *p_ptr = Players[Ind];
 	hostile_type *h_ptr, *i_ptr;
 	cptr p, q = NULL;
@@ -2432,8 +2587,7 @@ bool remove_hostility(int Ind, cptr name)
 /*
  * Check if one player is hostile toward the other
  */
-bool check_hostile(int attacker, int target)
-{
+bool check_hostile(int attacker, int target) {
 	player_type *p_ptr = Players[attacker], *q_ptr = Players[target];
 	hostile_type *h_ptr;
 
@@ -2475,8 +2629,7 @@ bool check_hostile(int attacker, int target)
  * Add/remove a player to/from another player's list of ignorance.
  * These functions should be common with hostilityes in the future. -Jir-
  */
-bool add_ignore(int Ind, cptr name)
-{
+bool add_ignore(int Ind, cptr name) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	hostile_type *h_ptr, *i_ptr;
 	int i;
@@ -2533,9 +2686,7 @@ bool add_ignore(int Ind, cptr name)
 #endif
 
 	i = name_lookup_loose(Ind, name, TRUE, TRUE);
-	if (!i) {
-		return FALSE;
-	}
+	if (!i) return FALSE;
 
 	/* Check for another silliness */
 	if (i == Ind) {
@@ -2554,8 +2705,7 @@ bool add_ignore(int Ind, cptr name)
 	i_ptr = NULL;
 
 	/* Toggle ignorance if already on the list */
-	for (h_ptr = p_ptr->ignore; h_ptr; i_ptr = h_ptr, h_ptr = h_ptr->next)
-	{
+	for (h_ptr = p_ptr->ignore; h_ptr; i_ptr = h_ptr, h_ptr = h_ptr->next) {
 		/* Lookup name of this entry */
 		if (h_ptr->id > 0) {
 			/* Efficiency */
@@ -2655,8 +2805,7 @@ bool add_ignore(int Ind, cptr name)
 /*
  * Check if one player is ignoring the other
  */
-bool check_ignore(int attacker, int target)
-{
+bool check_ignore(int attacker, int target) {
 	player_type *p_ptr = Players[attacker];
 	hostile_type *h_ptr;
 
@@ -2697,8 +2846,7 @@ bool check_ignore(int attacker, int target)
 /*
  * Return the slot in which an ID should be stored.
  */
-static int hash_slot(int id)
-{
+static int hash_slot(int id) {
 	/* Be very efficient */
 	return (id & (NUM_HASH_ENTRIES - 1));
 }
@@ -2707,8 +2855,7 @@ static int hash_slot(int id)
 /*
  * Lookup a player record ID.  Will return NULL on failure.
  */
-hash_entry *lookup_player(int id)
-{
+hash_entry *lookup_player(int id) {
 	int slot;
 	hash_entry *ptr;
 
@@ -2736,10 +2883,10 @@ hash_entry *lookup_player(int id)
 /*
  * Get the player's highest level.
  */
-byte lookup_player_level(int id)
-{
+byte lookup_player_level(int id) {
 	hash_entry *ptr;
-	if((ptr=lookup_player(id)))
+
+	if ((ptr = lookup_player(id)))
 		return ptr->level;
 
 	/* Not found */
@@ -2748,8 +2895,9 @@ byte lookup_player_level(int id)
 
 u16b lookup_player_type(int id) {
 	hash_entry *ptr;
-	if((ptr=lookup_player(id)))
-		return(ptr->race|(ptr->class<<8));
+
+	if ((ptr = lookup_player(id)))
+		return(ptr->race | (ptr->class <<8 ));
 
 	/* Not found */
 	return -1L;
@@ -2758,11 +2906,31 @@ u16b lookup_player_type(int id) {
 /*
  * Get the player's current party.
  */
-s32b lookup_player_party(int id)
-{
+s32b lookup_player_party(int id) {
 	hash_entry *ptr;
-	if((ptr=lookup_player(id)))
+
+	if ((ptr = lookup_player(id)))
 		return ptr->party;
+
+	/* Not found */
+	return -1L;
+}
+
+s32b lookup_player_guild(int id) {
+	hash_entry *ptr;
+
+	if ((ptr = lookup_player(id)))
+		return ptr->guild;
+
+	/* Not found */
+	return -1L;
+}
+
+u32b lookup_player_guildflags(int id) {
+	hash_entry *ptr;
+
+	if ((ptr = lookup_player(id)))
+		return ptr->guild_flags;
 
 	/* Not found */
 	return -1L;
@@ -2771,11 +2939,10 @@ s32b lookup_player_party(int id)
 /*
  * Get the timestamp for the last time player was on.
  */
-time_t lookup_player_laston(int id)
-{
+time_t lookup_player_laston(int id) {
 	hash_entry *ptr;
 
-	if((ptr=lookup_player(id)))
+	if ((ptr = lookup_player(id)))
 		return ptr->laston;
 
 	/* Not found */
@@ -2785,10 +2952,10 @@ time_t lookup_player_laston(int id)
 /*
  * Lookup a player name by ID.  Will return NULL if the name doesn't exist.
  */
-cptr lookup_player_name(int id)
-{
+cptr lookup_player_name(int id) {
 	hash_entry *ptr;
-	if((ptr=lookup_player(id)))
+
+	if ((ptr = lookup_player(id)))
 		return ptr->name;
 
 	/* Not found */
@@ -2798,10 +2965,10 @@ cptr lookup_player_name(int id)
 /*
  * Get the player's character mode (needed for account overview screen only).
  */
-byte lookup_player_mode(int id)
-{
+byte lookup_player_mode(int id) {
 	hash_entry *ptr;
-	if((ptr=lookup_player(id)))
+
+	if ((ptr = lookup_player(id)))
 		return ptr->mode;
 
 	/* Not found */
@@ -2812,10 +2979,10 @@ byte lookup_player_mode(int id)
 /*
  * Get the amount of gold the player has.
  */
-s32b lookup_player_au(int id)
-{
+s32b lookup_player_au(int id) {
 	hash_entry *ptr;
-	if((ptr=lookup_player(id)))
+
+	if ((ptr = lookup_player(id)))
 		return ptr->au;
 
 	/* Not found */
@@ -2825,10 +2992,10 @@ s32b lookup_player_au(int id)
 /*
  * Get the player's bank balance.
  */
-s32b lookup_player_balance(int id)
-{
+s32b lookup_player_balance(int id) {
 	hash_entry *ptr;
-	if((ptr=lookup_player(id)))
+
+	if ((ptr = lookup_player(id)))
 		return ptr->balance;
 
 	/* Not found */
@@ -2944,42 +3111,43 @@ void stat_player(char *name, bool on){
 }
 
 /* Timestamp an existing player */
-void clockin(int Ind, int type){
+void clockin(int Ind, int type) {
 	int slot;
 	hash_entry *ptr;
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
 	slot = hash_slot(p_ptr->id);
 	ptr = hash_table[slot];
-	while (ptr){
-		if (ptr->id == p_ptr->id){
-			switch(type){
-				case 0:
-					if(ptr->laston) ptr->laston=time(&ptr->laston);
-					break;
-				case 1:
-/*					if(p_ptr->lev>ptr->level)  -- changed it to != -- C. Blue */
-					if(p_ptr->lev!=ptr->level)
-						ptr->level=p_ptr->lev;
-					break;
-				case 2:
-					ptr->party=p_ptr->party;
-					break;
-				case 3:
-					ptr->guild=p_ptr->guild;
-					break;
-				case 4:
-					ptr->quest=p_ptr->quest_id;
-					break;
+	while (ptr) {
+		if (ptr->id == p_ptr->id) {
+			switch (type) {
+			case 0:
+				if (ptr->laston) ptr->laston = time(&ptr->laston);
+				break;
+			case 1:
+/*				if(p_ptr->lev>ptr->level)  -- changed it to != -- C. Blue */
+				if (p_ptr->lev != ptr->level)
+					ptr->level = p_ptr->lev;
+				break;
+			case 2:
+				ptr->party = p_ptr->party;
+				break;
+			case 3:
+				ptr->guild = p_ptr->guild;
+				ptr->guild_flags = p_ptr->guild_flags;
+				break;
+			case 4:
+				ptr->quest = p_ptr->quest_id;
+				break;
 #ifdef AUCTION_SYSTEM
-				case 5:
-					ptr->au = p_ptr->au;
-					ptr->balance = p_ptr->balance;
-					break;
+			case 5:
+				ptr->au = p_ptr->au;
+				ptr->balance = p_ptr->balance;
+				break;
 #endif
 			}
 			break;
 		}
-		ptr=ptr->next;
+		ptr = ptr->next;
 	}
 }
 
@@ -3495,7 +3663,7 @@ void account_checkexpiry(int Ind)
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u16b quest, time_t laston)
+void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston)
 {
 	int slot;
 	hash_entry *ptr;
@@ -3516,6 +3684,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 	ptr->level = level;
 	ptr->party = party;
 	ptr->guild = guild;
+	ptr->guild_flags = guild_flags;
 	ptr->quest = quest;
 	ptr->race = race;
 	ptr->class = class;
@@ -3986,7 +4155,7 @@ void restore_acclists(void) {
 			time_t ttime;
 			//s_printf("  adding: '%s' (id %d, acc %d)\n", ptr->name, ptr->id, ptr->account);
 			/* Add backed-up entry again */
-			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, time(&ttime));
+			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, 0, time(&ttime));
 		} else s_printf("  already exists: '%s' (id %d, acc %d)\n", name_forge, ptr->id, ptr->account);
 	}
 
