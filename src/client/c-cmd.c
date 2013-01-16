@@ -2476,10 +2476,9 @@ void cmd_party(void)
 		} else if (i == 'D') {
 			if (get_check("Leave the guild ? "))
 				Send_guild(GUILD_REMOVE_ME, "");
-		} else if (i == 'e') {
+		} else if (i == 'e' && is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
 			/* Set guild flags/options */
-			if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0))
-				cmd_guild_options();
+			cmd_guild_options();
 		}
 
 		/* Oops */
