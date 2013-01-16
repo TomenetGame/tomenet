@@ -1046,7 +1046,8 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 	if (!is_admin(p_ptr))
 	{
 		if(dna->creator!=p_ptr->dna) {
-			msg_print(Ind, "Only the house owner may change permissions.");
+			/* note: the house 'master' is not necessarily the house owner! */
+			msg_print(Ind, "Only the house master may change permissions.");
 			return(FALSE);
 		}
 		/* more security needed... */
