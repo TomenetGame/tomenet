@@ -2065,7 +2065,9 @@ struct player_type
 	byte d_attr[MAX_K_IDX];
 	char d_char[MAX_K_IDX];
 	byte f_attr[MAX_F_IDX];
+	byte f_attr_solid[MAX_F_IDX];
 	char f_char[MAX_F_IDX];
+	char f_char_solid[MAX_F_IDX];
 	byte k_attr[MAX_K_IDX];
 	char k_char[MAX_K_IDX];
 	byte r_attr[MAX_R_IDX];
@@ -2857,9 +2859,10 @@ struct player_type
 
 	/* Instant resurrection */
 	bool insta_res;
-
 	/* temporary xtra stuff, can be used by whatever */
 	s16b tmp_x, tmp_y;
+
+	bool font_map_solid_walls; /* Hack: Certain Windows bitmap fonts: Map walls to /127, solid block tile */
 };
 
 /* For Monk martial arts */
@@ -3097,7 +3100,7 @@ struct client_opts
 	bool hilite_chat;//show_labels;
 	bool show_weights;
 	bool hibeep_chat;//show_choices;
-	bool show_details;
+	bool font_map_solid_walls;//show_details;
 	bool ring_bell;
 	bool use_color;
 	bool short_item_names;

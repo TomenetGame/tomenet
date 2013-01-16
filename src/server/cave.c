@@ -2830,13 +2830,19 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* Access feature */
 			f_ptr = &f_info[feat];
 
-			/* Normal char */
-			/* (*cp) = f_ptr->f_char; */
-			(*cp) = p_ptr->f_char[feat];
+			if (!p_ptr->font_map_solid_walls) {
+				/* Normal char */
+				/* (*cp) = f_ptr->f_char; */
+				(*cp) = p_ptr->f_char[feat];
 
-			/* Normal attr */
-			/* a = f_ptr->f_attr; */
-			a = p_ptr->f_attr[feat];
+				/* Normal attr */
+				/* a = f_ptr->f_attr; */
+				a = p_ptr->f_attr[feat];
+			} else { /* hack */
+				(*cp) = p_ptr->f_char_solid[feat];
+				a = p_ptr->f_attr_solid[feat];
+			}
+
 
 			/* Add trap color - Illusory wall masks everythink */
 			/* Hack to display detected traps */

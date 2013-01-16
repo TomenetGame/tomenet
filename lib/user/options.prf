@@ -18,7 +18,7 @@ Y:stack_force_costs
 Y:hilite_chat
 Y:show_weights
 Y:hibeep_chat
-Y:show_details
+X:font_map_solid_walls
 Y:use_color
 Y:ring_bell
 

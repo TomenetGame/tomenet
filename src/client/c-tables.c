@@ -257,8 +257,13 @@ option_type option_info[OPT_MAX] =
 	"hibeep_chat",			"Beep on chat messages containing your name" },
 #endif
 
+#if 0
 	{ &c_cfg.show_details,		TRUE,	1,	0, 13, FALSE,
 	"show_details",			"(broken) Show details in certain sub-windows" },
+#else
+	{ &c_cfg.font_map_solid_walls,	FALSE,	1,	0, 13, TRUE,
+	"font_map_solid_walls",		"Certain fonts only: Walls look like solid blocks" },
+#endif
 
 	{ &c_cfg.use_color,		TRUE,	1,	0, 14, TRUE,
 	"use_color",			"Use color if possible (slow)" },

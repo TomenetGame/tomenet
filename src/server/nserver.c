@@ -2060,6 +2060,12 @@ static void sync_options(int Ind, bool *options)
 	p_ptr->always_pickup = options[5];
 	p_ptr->stack_force_notes = options[8];
 	p_ptr->stack_force_costs = options[9];
+	if (!is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
+		p_ptr->font_map_solid_walls = FALSE;
+	else {
+		tmp = p_ptr->font_map_solid_walls;
+		if ((p_ptr->font_map_solid_walls = options[13]) != tmp) p_ptr->redraw |= PR_MAP;
+	}
 	p_ptr->find_ignore_stairs = options[16];
 	p_ptr->find_ignore_doors = options[17];
 	p_ptr->find_cut = options[18];
@@ -2242,7 +2248,43 @@ static int Handle_login(int ind)
 		p_ptr->f_attr[i] = f_info[i].z_attr;
 		p_ptr->f_char[i] = f_info[i].z_char;
 #endif
+		/* local, hacked copy: for font_map_solid_walls */
+		p_ptr->f_char_solid[i] = f_info[i].z_char;
+		p_ptr->f_attr_solid[i] = f_info[i].z_attr;
+
 	}
+	/* modify solid walls of local copy for font_map_solid_walls */
+	p_ptr->f_char_solid[50] = 127; //magma, 8
+	p_ptr->f_char_solid[52] = 127;
+	p_ptr->f_char_solid[51] = 127; //quarts, 9
+	p_ptr->f_attr_solid[51] = 9;
+	p_ptr->f_char_solid[53] = 127;
+	p_ptr->f_attr_solid[53] = 9;
+	p_ptr->f_char_solid[56] = 127; //granite, 2
+	p_ptr->f_char_solid[57] = 127;
+	p_ptr->f_char_solid[58] = 127;
+	p_ptr->f_char_solid[59] = 127; //perma vaults, 1
+	p_ptr->f_char_solid[60] = 127;
+	p_ptr->f_char_solid[61] = 127;
+	p_ptr->f_char_solid[62] = 127;
+	p_ptr->f_char_solid[63] = 127;
+	p_ptr->f_char_solid[26] = 127; //perma houses, 1
+	p_ptr->f_char_solid[28] = 127;
+	p_ptr->f_char_solid[75] = 127;
+	p_ptr->f_char_solid[76] = 127;
+	p_ptr->f_char_solid[77] = 127;
+	p_ptr->f_char_solid[78] = 127;
+	p_ptr->f_char_solid[95] = 127; //misc walls
+	p_ptr->f_attr_solid[95] = 1;
+	p_ptr->f_char_solid[98] = 127;
+	p_ptr->f_char_solid[99] = 127;
+	p_ptr->f_char_solid[177] = 127;
+	p_ptr->f_char_solid[188] = 127;
+	p_ptr->f_char_solid[189] = 127;
+	p_ptr->f_char_solid[190] = 127; //house roofs, 11
+	p_ptr->f_char_solid[191] = 127;
+	p_ptr->f_char_solid[193] = 127; //house roofs, 4
+	p_ptr->f_char_solid[194] = 127;
 
 	for (i = 0; i < MAX_K_IDX; i++) {
 		p_ptr->k_attr[i] = connp->Client_setup.k_attr[i];
