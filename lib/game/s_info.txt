@@ -136,7 +136,7 @@ A:3:Use innate power
 F:MKEY_HARDCODE
 I:1000:0
 
-N:17:Magic-device
+N:17:Magic device
 D:Increases chance to successfully use magic devices such as
 D:wands, rods, staves, artifacts. Also increases their power.
 I:1000:0
@@ -624,7 +624,7 @@ O:Archery:Sorcery%100
 O:Martial Arts:Sorcery%100
 
 # All magic skills affect magic skill
-f:Magic-device:Magic%7
+f:Magic device:Magic%7
 f:Spell-power:Magic%20
 f:Sorcery:Magic%20
 f:Mana:Magic%10
@@ -653,7 +653,7 @@ f:Mimicry:Magic%7
 #f:Revelation:Magic%5
 
 # Antimagic exclude all magic
-E:Magic-device:Antimagic
+E:Magic device:Antimagic
 E:Sorcery:Antimagic
 E:Mimicry:Antimagic
 
@@ -757,7 +757,7 @@ $ENABLE_MCRAFT$T:Magic:Mindcraft Schools
 T:Magic:Runecraft
 $ENABLE_MAIA$T:Magic:Astral Knowledge
 T:Magic:Mimicry
-T:Magic:Magic-device
+T:Magic:Magic device
 
 T:Magic Schools:Sorcery
 T:Magic Schools:Mana

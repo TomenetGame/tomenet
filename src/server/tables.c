@@ -2066,35 +2066,18 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_POLEARM,
                                 '+', 0,
-                                '%', 115,
+                                '%', 110,
                         },
                         {
-                                SKILL_AURA_FEAR,
-                                '+', 2000,
-                                '%', 120,
-                        },
-                        /* TL is jumpy */
-                        {
-                                SKILL_CONVEYANCE,
+                                SKILL_DEVICE,
                                 '+', 0,
-                                '%', 120,
-                        },
-                        {
-                                SKILL_FIRE,
-                                '+', 0,
-                                '%', 120,
+                                '%', 110,
                         },
 			{
                                 SKILL_TCONTACT,
                                 '+', 0,
                                 '%', 110,
                         },
-						/* A moderate bonus to Nexus, dragonrider lore! */
-						{
-							SKILL_R_NEXU,
-							'+', 0,
-							'%', 120,
-						},
                         {
                                 SKILL_CLIMB,
                                 '+', 0,

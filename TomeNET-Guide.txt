@@ -8958,7 +8958,7 @@ Note that not every skill is available to every profession (class).
                                 To find out details about a monster form,
                                 press  ~ 7  in game or consult a spoiler file.
                                 (See (7.4) for more info about spoiler files.)
-    .Magic-device               Ability to use magic devices (wands,rods,etc.)
+    .Magic device               Ability to use magic devices (wands,rods,etc.)
                                 without failing. Also increases their power.
                                 Speeds up recharging of rods you carry.
                                 See (6.10) for more information.
@@ -9275,7 +9275,7 @@ Take care on the following combinations:
         Weaponmastery   <->     Sorcery
         Archery         <->     Sorcery
         Martial Arts    <->     Sorcery
-        Anti-magic      <->     excludes any type of magic and magic-devices,
+        Anti-magic      <->     excludes any type of magic and magic devices,
                                 including mimicry.
                                 However, a mimicking player won't lose his
                                 current form on training in Anti-magic.
@@ -9411,7 +9411,7 @@ Stealth         Mimic form weight, stealth items, _'Stealth'_, cloaking,
 Perception      search items, _'Sneakiness'_
 Searching       search items, _'Sneakiness'_, cloaking
 Disarming       Intelligence, dexterity, _'Trapping'_
-Magic Device    Intelligence, _'Magic-Device'_
+Magic Device    Intelligence, _'Magic Device'_
 
 
 For age, height, weight, social class and gender see (6.14).
@@ -9593,9 +9593,8 @@ Warrior is strongly recommended.
     instrinsically from birth.
     They need to eat often and they may get hurt from the cold of the void when
     taking void jump gates. Armour can help to mitigate this effect somewhat.
-    Draconians receive a bonus on 'Thought Contact' and a large bonus on
-    'Polearm-Mastery', 'Aura of Fear' and the magic schools 'Conveyance' and
-    'Fire'. Draconians also recieve a moderate bonus to 'Nexus' rune magic.
+    Draconians receive a bonus on 'Thought Contact', 'Polearm-Mastery' and
+    'Magic devices'.
 
 - Kobold
     These somewhat smallish dog-faced humanoids resist poison intrinsically.
