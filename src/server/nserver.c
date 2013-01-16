@@ -6243,10 +6243,11 @@ int Send_guild_config(int id) {
 	int i, j;
 	guild_type *g_ptr = &guilds[id];
 	int master;
-	int ghwx = -1, ghwy, ghx, ghy;
+	int ghwx = -1, ghwy = 0, ghx, ghy;
 	char ghpos[14];
 
 	/* guild hall location */
+	ghpos[0] = 0;
 	if (g_ptr->h_idx) {
 		ghwx = houses[g_ptr->h_idx - 1].wpos.wx;
 		ghwy = houses[g_ptr->h_idx - 1].wpos.wy;
