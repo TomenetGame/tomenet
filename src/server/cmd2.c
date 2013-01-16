@@ -1088,83 +1088,85 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 		/* maybe make party leader only chown party */
 	}
 	switch (args[1]) {
-		case '1':
-			/* Check house limit of target player! */
-			i = name_lookup_loose(Ind, &args[2], FALSE, FALSE);
-			if (!i) {
-				msg_print(Ind, "Target player isn't logged on.");
-				return(FALSE);
-			}
-			if (compat_pmode(Ind, i, TRUE)) {
-				msg_format(Ind, "You cannot transfer houses to %s players!", compat_pmode(Ind, i, TRUE));
-				return(FALSE);
-			}
-			if (Players[i]->inval) {
-				msg_print(Ind, "You cannot transfer houses to players that aren't validated!");
-				return(FALSE);
-			}
-			if (cfg.houses_per_player && (Players[i]->houses_owned >= ((Players[i]->lev > 50 ? 50 : Players[i]->lev) / cfg.houses_per_player)) && !is_admin(Players[i])) {
-				if ((int)(Players[i]->lev / cfg.houses_per_player) == 0)
-					msg_format(Ind, "That player needs to be at least level %d to own a house!", cfg.houses_per_player);
-				else
-					msg_print(Ind, "At his current level, that player cannot own more houses!");
-				return (FALSE);
-			}
-			h_idx = pick_house(&p_ptr->wpos, y, x);
-			/* paranoia */
-			if (h_idx == -1) {
-				msg_print(Ind, "There is no transferrable house there.");
+	case '1':
+		/* Check house limit of target player! */
+		i = name_lookup_loose(Ind, &args[2], FALSE, FALSE);
+		if (!i) {
+			msg_print(Ind, "Target player isn't logged on.");
+			return(FALSE);
+		}
+		if (compat_pmode(Ind, i, TRUE)) {
+			msg_format(Ind, "You cannot transfer houses to %s players!", compat_pmode(Ind, i, TRUE));
+			return(FALSE);
+		}
+		if (Players[i]->inval) {
+			msg_print(Ind, "You cannot transfer houses to players that aren't validated!");
+			return(FALSE);
+		}
+		if (cfg.houses_per_player && (Players[i]->houses_owned >= ((Players[i]->lev > 50 ? 50 : Players[i]->lev) / cfg.houses_per_player)) && !is_admin(Players[i])) {
+			if ((int)(Players[i]->lev / cfg.houses_per_player) == 0)
+				msg_format(Ind, "That player needs to be at least level %d to own a house!", cfg.houses_per_player);
+			else
+				msg_print(Ind, "At his current level, that player cannot own more houses!");
+			return (FALSE);
+		}
+		h_idx = pick_house(&p_ptr->wpos, y, x);
+		/* paranoia */
+		if (h_idx == -1) {
+			msg_print(Ind, "There is no transferrable house there.");
+			return FALSE;
+		}
+		if (houses[h_idx].flags & HF_MOAT) {
+			if (cfg.castles_for_kings && !Players[i]->total_winner) {
+				msg_print(Ind, "That player is neither king nor queen, neither emperor nor empress!");
 				return FALSE;
 			}
-			if (houses[h_idx].flags & HF_MOAT) {
-				if (cfg.castles_for_kings && !Players[i]->total_winner) {
-					msg_print(Ind, "That player is neither king nor queen, neither emperor nor empress!");
-					return FALSE;
-				}
-				if (cfg.castles_per_player && (Players[i]->castles_owned >= cfg.castles_per_player))  {
-					if (cfg.castles_per_player == 1)
-						msg_format(Ind, "That player already owns a castle!");
-					else
-						msg_format(Ind, "That player already owns %d castles!", cfg.castles_per_player);
-					return FALSE;
-				}
+			if (cfg.castles_per_player && (Players[i]->castles_owned >= cfg.castles_per_player))  {
+				if (cfg.castles_per_player == 1)
+					msg_format(Ind, "That player already owns a castle!");
+				else
+					msg_format(Ind, "That player already owns %d castles!", cfg.castles_per_player);
+				return FALSE;
 			}
+		}
 
-			/* Finally change the owner */
-			newowner = lookup_player_id_messy(&args[2]);
-			if (!newowner) newowner = -1;
-			break;
-		default:
-			msg_print(Ind,"\377ySorry, this feature is not available");
-			if (!is_admin(p_ptr)) return(FALSE);
+		/* Finally change the owner */
+		newowner = lookup_player_id_messy(&args[2]);
+		if (!newowner) newowner = -1;
+		break;
+#ifdef ENABLE_GUILD_HALL
+	case '2':
+		newowner = guild_lookup(&args[2]);
+		break;
+#endif
+/*	case '3':
+		newowner = party_lookup(&args[2]);
+		break;
+	case '4':
+		for (i = 0; i < MAX_CLASS; i++) {
+			if (!strcmp(&args[2], class_info[i].title))
+				newowner = i;
+		}
+		break;
+	case '5':
+		for (i = 0; i < MAX_RACE; i++) {
+			if (!strcmp(&args[2], race_info[i].title))
+				newowner = i;
+		}
+		break; */
+	default:
+		msg_print(Ind,"\377ySorry, this feature is not available");
+		if (!is_admin(p_ptr)) return FALSE;
 	}
-/*		case '2':
-			newowner=party_lookup(&args[2]);
-			break;
-		case '3':
-			for(i=0;i<MAX_CLASS;i++){
-				if(!strcmp(&args[2],class_info[i].title))
-					newowner=i;
-			}
-			break;
-		case '4':
-			for(i=0;i<MAX_RACE;i++){
-				if(!strcmp(&args[2],race_info[i].title))
-					newowner=i;
-			}
-			break;
-		case '5':
-			newowner=guild_lookup(&args[2]);
-			break;
-	}*/
-	if(newowner!=-1){
-		if(args[1]=='1'){
-			for(i=1;i<=NumPlayers;i++){     /* in game? maybe long winded */
-				if(Players[i]->id==newowner){
-					dna->creator=Players[i]->dna;
-					dna->owner=newowner;
-					dna->owner_type=args[1]-'0';
-					dna->a_flags=ACF_NONE;
+
+	if (newowner != -1) {
+		if (args[1] == '1') {
+			for (i = 1; i <= NumPlayers; i++) {     /* in game? maybe long winded */
+				if (Players[i]->id == newowner) {
+					dna->creator = Players[i]->dna;
+					dna->owner = newowner;
+					dna->owner_type = args[1] - '0';
+					dna->a_flags = ACF_NONE;
 
 					Players[i]->houses_owned++;
 					p_ptr->houses_owned--;
@@ -1177,8 +1179,8 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 			}
 			return(FALSE);
 		}
-		dna->owner=newowner;
-		dna->owner_type=args[1]-'0';
+		dna->owner = newowner;
+		dna->owner_type = args[1] - '0';
 		return(TRUE);
 	}
 	return FALSE;

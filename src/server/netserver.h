@@ -137,6 +137,7 @@ static int Receive_clear_actions(int ind);
 
 static int Receive_spike(int ind);
 static int Receive_guild(int ind);
+static int Receive_guild_config(int ind);
 static int Receive_activate_skill(int ind);
 static int Receive_raw_key(int ind);
 static int Receive_store_examine(int ind);

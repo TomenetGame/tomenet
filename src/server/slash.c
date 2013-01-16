@@ -3116,6 +3116,12 @@ void do_slash_cmd(int Ind, char *message)
 			guild_type *guild;
 			player_type *q_ptr;
 
+			if (!tk) {
+				msg_print(Ind, "Usage: /guild_adder name");
+				msg_print(Ind, "Will add/remove that player to/from the list of 'adders', ie players");
+				msg_print(Ind, "allowed to add others to the guild in the guild master's stead.");
+			}
+
 			if (!p_ptr->guild) {
 				msg_print(Ind, "You are not in a guild.");
 				return;
@@ -3134,6 +3140,7 @@ void do_slash_cmd(int Ind, char *message)
 			if (!i) {
 #ifdef GUILD_ADDERS_LIST
 				/* Handle de-authorization */
+				message3[0] = toupper(message[3]); /* be helpful */
 				for (j = 0; j < 5; j++) if (streq(guild->adder[j], message3)) break;
 				if (j == 5) {
 					msg_print(Ind, "Player must be online to become an adder.");
@@ -3185,7 +3192,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				q_ptr->guild_flags |= PGF_ADDER;
 				msg_format(Ind, "Player \377G%s\377w is now authorized to add other players.", q_ptr->name);
-				msg_format(i, "\374\377%cGuild master %s \377Gauthorized\377%c to add other players.", COLOUR_CHAT_GUILD, p_ptr->name, COLOUR_CHAT_GUILD);
+				msg_format(i, "\374\377%cGuild master %s \377Gauthorized\377%c you to add other players.", COLOUR_CHAT_GUILD, p_ptr->name, COLOUR_CHAT_GUILD);
 				if (!(*flags & GFLG_ALLOW_ADDERS)) {
 					msg_print(Ind, "However, note that currently the guild configuration still prevent this!");
 					msg_print(Ind, "To toggle the corresponding flag, use '/guild_cfg adders' command.");
@@ -3197,6 +3204,7 @@ void do_slash_cmd(int Ind, char *message)
 			u32b *flags;
 			guild_type *guild;
 			bool master;
+			char buf[(NAME_LEN + 1) * 5 + 1];
 			if (!p_ptr->guild) {
 				msg_print(Ind, "You are not in a guild.");
 				return;
@@ -3225,14 +3233,14 @@ void do_slash_cmd(int Ind, char *message)
 
 #ifdef GUILD_ADDERS_LIST
 				for (i = 0; i < 5; i++) if (guild->adder[i][0] != '\0') {
-					sprintf(message4, "\377s    Adders are: ");
-					strcat(message4, guild->adder[i]);
+					sprintf(buf, "\377s    Adders are: ");
+					strcat(buf, guild->adder[i]);
 					for (i++; i < 5; i++) {
 						if (guild->adder[i][0] == '\0') continue;
-						strcat(message4, ", ");
-						strcat(message4, guild->adder[i]);
+						strcat(buf, ", ");
+						strcat(buf, guild->adder[i]);
 					}
-					msg_print(Ind, message4);
+					msg_print(Ind, buf);
 					break;
 				}
 #endif

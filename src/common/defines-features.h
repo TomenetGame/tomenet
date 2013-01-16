@@ -128,6 +128,7 @@
 
 #ifdef TEST_SERVER
  #define ENABLE_DRACONIAN_TRAITS
+ #define ENABLE_GUILD_HALL
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 
  #ifdef MAX_CLOUDS

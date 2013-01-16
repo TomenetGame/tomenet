@@ -44,6 +44,8 @@ char party_info_owner[50];
 char guild_info_name[90];		/* Information about your guild: */
 char guild_info_members[20];
 char guild_info_owner[50];
+bool guild_master;
+guild_type guild;
 
 setup_t Setup;				/* The information given to us by the server */
 client_setup_t Client_setup;		/* The information we give to the server */
@@ -141,7 +143,7 @@ s16b class_extra;
 
 bool topline_icky;
 short screen_icky;
-bool party_mode;
+bool party_mode = FALSE, guildcfg_mode = FALSE;
 
 player_race *race_info;
 player_class *class_info;

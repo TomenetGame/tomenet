@@ -346,6 +346,7 @@ static void Init_receive(void)
 
 	playing_receive[PKT_SPIKE]		= Receive_spike;
 	playing_receive[PKT_GUILD]		= Receive_guild;
+	playing_receive[PKT_GUILD_CFG]		= Receive_guild_config;
 
         playing_receive[PKT_SKILL_MOD]		= Receive_skill_mod;
 	playing_receive[PKT_SKILL_DEV]		= Receive_skill_dev;
@@ -2296,6 +2297,7 @@ static int Handle_login(int ind)
 	/* Send party/guild information */
 	Send_party(NumPlayers, FALSE, FALSE);
 	Send_guild(NumPlayers, FALSE, FALSE);
+	Send_guild_config(NumPlayers);
 
 	/* Hack -- terminate the data stream sent to the client */
 	if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
@@ -6108,117 +6110,161 @@ int Send_pickup_check(int ind, cptr buf)
    -APD-
 */
 
-int Send_party(int ind, bool leave, bool clear)
-{
-    int i;
-    for (i = 1; i <= NumPlayers; i++)
-    {
-	player_type *p_ptr = Players[i];
-	connection_t *connp = Conn[p_ptr->conn];
+int Send_party(int Ind, bool leave, bool clear) {
+	int i;
+	party_type *pa_ptr = &parties[Players[Ind]->party];
 	char bufn[90], bufm[20], bufo[50], buf[10];
+	char bufn_compat[90], bufm_compat[20], bufo_compat[50];
 
-	if (Players[i]->party != Players[ind]->party) continue;
+	/* prepare data for outdated clients */
+	if (pa_ptr->mode == PA_IRONTEAM)
+		snprintf(bufn_compat, 90, "Party (Iron Team): %s", pa_ptr->name);
+	else
+		snprintf(bufn_compat, 90, "Party  : %s", pa_ptr->name);
+	strcpy(bufm_compat, "Members: ");
+	snprintf(buf, 10, "%d", pa_ptr->members);
+	strcat(bufm_compat, buf);
+	strcpy(bufo_compat, "Owner  : ");
+	strcat(bufo_compat, pa_ptr->owner);
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
-		errno = 0;
-		plog(format("Connection nor ready for party info (%d.%d.%d)",
-			i, connp->state, connp->id));
-		return 0;
+	/* We're just sending that we aren't in a party? */
+	if (Players[Ind]->party == 0) {
+		connection_t *connp = Conn[Players[Ind]->conn];
+		if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+			errno = 0;
+			plog(format("Connection nor ready for party info (%d.%d.%d)",
+				Ind, connp->state, connp->id));
+			return 0;
+		}
+		if (!is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0)) {
+			Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, bufn_compat, "Members: - ", "Owner  : - ");
+		} else {
+			Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, "", "", "");
+		}
+		return 1;
 	}
 
-	if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0)) {
-		if (parties[p_ptr->party].mode == PA_IRONTEAM)
-			snprintf(bufn, 90, "Party (Iron Team): %s", parties[p_ptr->party].name);
-		else
-			snprintf(bufn, 90, "Party  : %s", parties[p_ptr->party].name);
+	/* prepare data for clients */
+	if (pa_ptr->mode == PA_IRONTEAM)
+		snprintf(bufn, 90, "Iron Team: '\377%c%s\377w'", COLOUR_CHAT_PARTY, pa_ptr->name);
+	else
+		snprintf(bufn, 90, "Party: '\377%c%s\377w'", COLOUR_CHAT_PARTY, pa_ptr->name);
+	snprintf(buf, 10, "%d", pa_ptr->members);
+	strcpy(bufm, buf);
+	if (pa_ptr->members == 1) strcat(bufm, " member");
+	else strcat(bufm, " members");
+	strcpy(bufo, "owner: ");
+	strcat(bufo, pa_ptr->owner);
 
-		bufm[0] = '\0';
-		bufo[0] = '\0';
+	/* scan party members and send info */
+	for (i = 1; i <= NumPlayers; i++) {
+		player_type *p_ptr = Players[i];
+		connection_t *connp = Conn[p_ptr->conn];
 
-		if (p_ptr->party > 0) {
-			strcpy(bufm, "Members: ");
-			snprintf(buf, 10, "%d", parties[p_ptr->party].members);
-			strcat(bufm, buf);
-
-			strcpy(bufo, "Owner  : ");
-			strcat(bufo, parties[p_ptr->party].owner);
+		if (p_ptr->party != Players[Ind]->party) continue;
+		if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+			errno = 0;
+			plog(format("Connection nor ready for party info (%d.%d.%d)",
+				i, connp->state, connp->id));
+			continue;
 		}
-	} else {
-		bufn[0] = '\0';
-		bufm[0] = '\0';
-		bufo[0] = '\0';
 
-		if (p_ptr->party > 0 && !clear && (!leave || i != ind)) {
-			if (parties[p_ptr->party].mode == PA_IRONTEAM)
-				snprintf(bufn, 90, "Iron Team: '\377%c%s\377w'", COLOUR_CHAT_PARTY, parties[p_ptr->party].name);
-			else
-				snprintf(bufn, 90, "Party: '\377%c%s\377w'", COLOUR_CHAT_PARTY, parties[p_ptr->party].name);
-
-			snprintf(buf, 10, "%d", parties[p_ptr->party].members);
-			strcpy(bufm, buf);
-			if (parties[p_ptr->party].members == 1) strcat(bufm, " member");
-			else strcat(bufm, " members");
-
-			strcpy(bufo, "owner: ");
-			strcat(bufo, parties[p_ptr->party].owner);
+		if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0)) {
+			Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, bufn_compat, bufm_compat, bufo_compat);
+		} else {
+			if (!clear && (!leave || i != Ind)) {
+				Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, bufn, bufm, bufo);
+			} else {
+				Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, "", "", "");
+			}
 		}
 	}
 
-	Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, bufn, bufm, bufo);
-    }
-    return(1);
+	return 1;
 }
 
-int Send_guild(int ind, bool leave, bool clear)
-{
-    int i;
-
-    for (i = 1; i <= NumPlayers; i++)
-    {
-	player_type *p_ptr = Players[i];
-	connection_t *connp = Conn[p_ptr->conn];
+int Send_guild(int Ind, bool leave, bool clear) {
+	int i;
+	guild_type *g_ptr = &guilds[Players[Ind]->guild];
 	char bufn[90], bufm[20], bufo[50], buf[10];
 
-	if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0)) continue;
-
-	if (Players[i]->guild != Players[ind]->guild) continue;
-
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
-		errno = 0;
-		plog(format("Connection nor ready for guild info (%d.%d.%d)",
-			i, connp->state, connp->id));
-		return 0;
+	/* We're just sending that we aren't in a guild? */
+	if (Players[Ind]->guild == 0) {
+		connection_t *connp = Conn[Players[Ind]->conn];
+		if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+			errno = 0;
+			plog(format("Connection nor ready for guild info (%d.%d.%d)",
+				Ind, connp->state, connp->id));
+			return 0;
+		}
+		Packet_printf(&connp->c, "%c%s%s%s", PKT_GUILD, "", "", "");
+		return 1;
 	}
 
-	bufn[0] = '\0';
-	bufm[0] = '\0';
-	bufo[0] = '\0';
+	/* prepare data for clients */
+	snprintf(bufn, 90, "Guild: '\377%c%s\377w'", COLOUR_CHAT_GUILD, g_ptr->name);
+	snprintf(buf, 10, "%d", g_ptr->members);
+	strcpy(bufm, buf);
+	if (g_ptr->members == 1) strcat(bufm, " member");
+	else strcat(bufm, " members");
+	if (lookup_player_name(g_ptr->master)) {
+		strcpy(bufo, "master: ");
+		strcat(bufo, lookup_player_name(g_ptr->master));
+	} else {
+		strcpy(bufo, "master: <leaderless>");
+	}
 
-	if (p_ptr->guild > 0 && !clear && (!leave || i != ind)) {
-		int memb = guilds[p_ptr->guild].members;
-		cptr master = lookup_player_name(guilds[p_ptr->guild].master);
+	/* scan party members and send info */
+	for (i = 1; i <= NumPlayers; i++) {
+		player_type *p_ptr = Players[i];
+		connection_t *connp = Conn[p_ptr->conn];
 
-		snprintf(bufn, 90, "Guild: '\377%c%s\377w'", COLOUR_CHAT_GUILD, guilds[p_ptr->guild].name);
+		if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0)) continue;
+		if (p_ptr->guild != Players[Ind]->guild) continue;
+		if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+			errno = 0;
+			plog(format("Connection nor ready for guild info (%d.%d.%d)",
+				i, connp->state, connp->id));
+			continue;
+		}
 
-		snprintf(buf, 10, "%d", memb);
-		strcpy(bufm, buf);
-		if (memb == 1) strcat(bufm, " member");
-		else strcat(bufm, " members");
-
-
-		if (master) {
-			strcpy(bufo, "master: ");
-			strcat(bufo, master);
+		if (!clear && (!leave || i != Ind)) {
+			Packet_printf(&connp->c, "%c%s%s%s", PKT_GUILD, bufn, bufm, bufo);
 		} else {
-			strcpy(bufo, "master: <leaderless>");
+			Packet_printf(&connp->c, "%c%s%s%s", PKT_GUILD, "", "", "");
 		}
 	}
 
-	Packet_printf(&connp->c, "%c%s%s%s", PKT_GUILD, bufn, bufm, bufo);
-    }
-    return(1);
+	return 1;
+}
+
+int Send_guild_config(int Ind) {
+	int i, j;
+	guild_type *g_ptr = &guilds[Players[Ind]->guild];
+	int master;
+
+	/* scan party members and send info */
+	for (i = 1; i <= NumPlayers; i++) {
+		player_type *p_ptr = Players[i];
+		connection_t *connp = Conn[p_ptr->conn];
+
+		if (!is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0)) continue;
+		if (p_ptr->guild != Players[Ind]->guild) continue;
+		if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+			errno = 0;
+			plog(format("Connection nor ready for guild info (%d.%d.%d)",
+				i, connp->state, connp->id));
+			continue;
+		}
+
+		if (g_ptr->master == p_ptr->id) master = 1;
+		else master = 0;
+
+		Packet_printf(&connp->c, "%c%d%d%d%d", PKT_GUILD_CFG, master, g_ptr->flags, g_ptr->minlev, 5);
+		for (j = 0; j < 5; j++) Packet_printf(&connp->c, "%s", g_ptr->adder[j]);
+	}
+
+	return 1;
 }
 
 int Send_special_other(int ind)
@@ -9644,6 +9690,117 @@ static int Receive_guild(int ind){
 			}
 		}
 	}
+	return 1;
+}
+
+static int Receive_guild_config(int ind) {
+	connection_t *connp = Conn[ind];
+	int player = 0, n, j;
+	char ch, adder[MAX_CHARS];
+	s16b command;
+	u32b flags;
+	guild_type *guild;
+	player_type *p_ptr, *q_ptr;
+
+	if (connp->id != -1) player = GetInd[connp->id];
+	if ((n = Packet_scanf(&connp->r, "%c%d%d%s", &ch, &command, &flags, adder)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+	if (!player) return 1;
+	p_ptr = Players[player];
+
+	/* Must be a guild master */
+	if (!p_ptr->guild) {
+		s_printf("GUILDCFG_EXPLOIT: (noguild) %s(%s) - %d, %d, %s\n", p_ptr->name, p_ptr->accountname, command, flags, adder);
+		return 1;
+	}
+	guild = &guilds[p_ptr->guild];
+	if (guild->master != p_ptr->id) {
+		s_printf("GUILDCFG_EXPLOIT: (nomaster) %s(%s) - %d, %d, %s\n", p_ptr->name, p_ptr->accountname, command, flags, adder);
+		return 1;
+	}
+
+	switch (command) {
+	case 0: /* set flags */
+		guild->flags = flags;
+		break;
+	case 1: /* set minlev */
+                if (flags < 0) flags = 0;
+                if (flags > 100) flags = 100;
+                //msg_format(player, "Minimum level required to join the guild so far was %d..", guild->minlev);
+		guild->minlev = flags;
+                //msg_format(player, "..and has now been set to %d.", guild->minlev);
+		break;
+	case 2: /* set/remove adder */
+		if (!adder[0]) break;
+		adder[0] = toupper(adder[0]); /* be helpful */
+                n = name_lookup_loose(player, adder, FALSE, FALSE);
+                if (!n) {
+#ifdef GUILD_ADDERS_LIST
+                        /* Handle de-authorization */
+                        for (j = 0; j < 5; j++) if (streq(guild->adder[j], adder)) break;
+                        if (j == 5) {
+                                msg_print(player, "Player must be online to become an adder.");
+                                return 1;
+                        }
+                        if (streq(p_ptr->name, adder)) {
+                                msg_print(player, "As guild master you can always add others.");
+                                return 1;
+                        }
+                        guild->adder[j][0] = '\0';
+                        msg_format(player, "Player \377r%s\377w is no longer authorized to add others.", adder);
+                        return 1;
+#else
+                        msg_print(player, "Player not online.");
+                        return 1;
+#endif
+                }
+                if (n == player) {
+                        msg_print(player, "As guild master you can always add others.");
+                        return 1;
+                }
+                q_ptr = Players[n];
+                if (q_ptr->guild != p_ptr->guild) {
+                        msg_print(player, "That player is not in your guild.");
+                        return 1;
+                }
+
+                if ((q_ptr->guild_flags & PGF_ADDER)) {
+#ifdef GUILD_ADDERS_LIST
+                        for (j = 0; j < 5; j++) if (streq(guild->adder[j], q_ptr->name)) {
+                                guild->adder[j][0] = '\0';
+                                break;
+                        }
+#endif
+
+                        q_ptr->guild_flags &= ~PGF_ADDER;
+                        //msg_format(player, "Player \377r%s\377w is no longer authorized to add others.", q_ptr->name);
+                        msg_format(n, "\374\377%cGuild master %s \377rretracted\377%c your authorization to add others.", COLOUR_CHAT_GUILD, p_ptr->name, COLOUR_CHAT_GUILD);
+                } else {
+#ifdef GUILD_ADDERS_LIST
+                        /* look if we have less than 5 adders still */
+                        for (j = 0; j < 5; j++) if (guild->adder[j][0] == '\0') break; /* found a vacant slot? */
+                        if (j == 5) {
+                                msg_print(player, "You cannot designate more than 5 adders.");
+                                return 1;
+                        }
+                        strcpy(guild->adder[j], q_ptr->name);
+#endif
+
+                        q_ptr->guild_flags |= PGF_ADDER;
+                        //msg_format(player, "Player \377G%s\377w is now authorized to add other players.", q_ptr->name);
+                        msg_format(n, "\374\377%cGuild master %s \377Gauthorized\377%c you to add other players.", COLOUR_CHAT_GUILD, p_ptr->name, COLOUR_CHAT_GUILD);
+                        if (!(guild->flags & GFLG_ALLOW_ADDERS)) {
+                    		//spam msg_print(player, "Note that currently the guild configuration prevents 'adders'!");
+                                //msg_print(player, "However, note that currently the guild configuration still prevent this!");
+				//msg_print(player, "To toggle the corresponding flag, use '/guild_cfg adders' command.");
+                        }
+                }
+		break;
+	}
+
+	Send_guild_config(player);
 	return 1;
 }
 

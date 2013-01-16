@@ -732,7 +732,7 @@ bool player_in_party(int party_id, int Ind)
 	/* Not in the party */
 	return FALSE;
 }
-	
+
 /*
  * Create a new guild.
  */
@@ -1131,7 +1131,7 @@ int party_create_ironteam(int Ind, cptr name)
 
 	/* Set owner name */
 	strcpy(parties[index].owner, p_ptr->name);
-	
+
 	/* Set mode to iron team */
 	parties[index].mode = PA_IRONTEAM;
 
@@ -1407,6 +1407,9 @@ static void del_guild(int id){
 	for (i = 0; i < 5; i++) guilds[id].adder[i][0] = '\0'; /* they should be cleared anyway */
 	guilds[id].flags = GFLG_NONE;
 	guilds[id].minlev = 0;
+
+	/* TODO: Find and destroy the guild key! */
+	
 }
 
 /*
@@ -1416,6 +1419,7 @@ static void del_guild(int id){
  */
 static void del_party(int id){
 	int i;
+	bool sent = FALSE;
 	/* Remove the party altogether */
 	kill_houses(id, OT_PARTY);
 
@@ -1438,7 +1442,10 @@ static void del_party(int id){
 	for (i = 1; i <= NumPlayers; i++) {
 		/* Check if they are in here */
 		if (player_in_party(id, i)) {
-			Send_party(i, FALSE, TRUE);
+			if (!sent) { /* no need to spam this more than once */
+				Send_party(i, FALSE, TRUE);
+				sent = TRUE;
+			}
 			Players[i]->party = 0;
 			clockin(i, 2);
 			if (parties[id].mode == PA_IRONTEAM)
@@ -1583,13 +1590,10 @@ int party_remove(int remover, cptr name)
 			if (Players[i]->party == q_ptr->party && i != Ind) {
 				strcpy(parties[party_id].owner, Players[i]->name);
 				msg_print(i, "\374\377yYou are now the party owner!");
-				Send_party(i, FALSE, FALSE);
 
 				for (j = 1; j <= NumPlayers; j++)
-					if (Players[j]->party == Players[i]->party && j != i) {
-						//Send_party(j);
+					if (Players[j]->party == Players[i]->party && j != i)
 						msg_format(j, "\374\377y%s is now the party owner.", Players[i]->name);
-					}
 				break;
 			}
 		}
@@ -1598,33 +1602,30 @@ int party_remove(int remover, cptr name)
 			del_party(party_id);
 			return TRUE;
 		}
-	}
-#ifndef RPG_SERVER
-	else if (remover == Ind)
+	} else if (remover == Ind) {
 		del_party(party_id);
-	else
-#endif
-	{
-		/* Lose a member */
-		parties[party_id].members--;
-
-		/* Resend info */
-		Send_party(Ind, TRUE, FALSE);
-
-		/* Set his party number back to "neutral" */
-		p_ptr->party = 0;
-		clockin(Ind, 2);
-
-		/* Messages */
-		if (parties[party_id].mode == PA_IRONTEAM)
-		{
-			msg_print(Ind, "\374\377yYou have been removed from your iron team.");
-			party_msg_format(party_id, "\374\377y%s has been removed from the iron team.", p_ptr->name);
-		} else {
-			msg_print(Ind, "\374\377yYou have been removed from your party.");
-			party_msg_format(party_id, "\374\377y%s has been removed from the party.", p_ptr->name);
-		}
+		return TRUE;
 	}
+
+	/* Lose a member */
+	parties[party_id].members--;
+
+	/* Resend info */
+	Send_party(Ind, TRUE, FALSE);
+
+	/* Set his party number back to "neutral" */
+	p_ptr->party = 0;
+	clockin(Ind, 2);
+
+	/* Messages */
+	if (parties[party_id].mode == PA_IRONTEAM) {
+		msg_print(Ind, "\374\377yYou have been removed from your iron team.");
+		party_msg_format(party_id, "\374\377y%s has been removed from the iron team.", p_ptr->name);
+	} else {
+		msg_print(Ind, "\374\377yYou have been removed from your party.");
+		party_msg_format(party_id, "\374\377y%s has been removed from the party.", p_ptr->name);
+	}
+
 	return TRUE;
 }
 
@@ -1633,8 +1634,7 @@ void guild_leave(int Ind){
 	int guild_id = p_ptr->guild, i;
 
 	/* Make sure he belongs to a guild */
-	if (!guild_id)
-	{
+	if (!guild_id) {
 		msg_print(Ind, "\377yYou don't belong to a guild.");
 		return;
 	}
@@ -1653,7 +1653,7 @@ void guild_leave(int Ind){
 	/* Inform people */
 	msg_print(Ind, "\374\377yYou have been removed from your guild.");
 	guild_msg_format(guild_id, "\374\377y%s has left the guild.", p_ptr->name);
-	
+
 	/* If he's the guildmaster, set master to zero */
 	if (p_ptr->id == guilds[guild_id].master) {
 		guild_msg(guild_id, "\374\377yThe guild is currently leaderless");
@@ -1680,15 +1680,13 @@ void party_leave(int Ind)
 	int party_id = p_ptr->party;
 
 	/* Make sure he belongs to a party */
-	if (!party_id)
-	{
+	if (!party_id) {
 		msg_print(Ind, "\377yYou don't belong to a party.");
 		return;
 	}
 
 	/* If he's the owner, use the other function */
-	if (streq(p_ptr->name, parties[party_id].owner))
-	{
+	if (streq(p_ptr->name, parties[party_id].owner)) {
 		/* Call party_remove */
 		party_remove(Ind, p_ptr->name);
 		return;
@@ -1705,8 +1703,7 @@ void party_leave(int Ind)
 	clockin(Ind, 2);
 
 	/* Inform people */
-	if (parties[party_id].mode == PA_IRONTEAM)
-	{
+	if (parties[party_id].mode == PA_IRONTEAM) {
 		msg_print(Ind, "\374\377yYou have been removed from your iron team.");
 		party_msg_format(party_id, "\374\377y%s has left the iron team.", p_ptr->name);
 	} else {
@@ -1723,8 +1720,7 @@ void guild_msg(int guild_id, cptr msg)
 	int i;
 
 	/* Check for this guy */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
@@ -1764,8 +1760,7 @@ void party_msg(int party_id, cptr msg)
 	int i;
 
 	/* Check for this guy */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
@@ -1804,8 +1799,7 @@ static void party_msg_ignoring(int sender, int party_id, cptr msg)
 	int i;
 
 	/* Check for this guy */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
@@ -1959,7 +1953,7 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 		/* Check for existance in the party */
                 if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i)) {
 			/* Calculate this guy's experience */
-			
+
 			if (p_ptr->lev < average_lev) { // below average
 				if ((average_lev - p_ptr->lev) > 2)
 					modified_level = p_ptr->lev + 2;
@@ -2138,7 +2132,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 				return FALSE;
 			}
 		}
-		
+
 		/* Create a new hostility node */
 		MAKE(h_ptr, hostile_type);
 
@@ -2202,14 +2196,10 @@ bool remove_hostility(int Ind, cptr name)
 	cptr p, q = NULL;
 	int i = name_lookup_loose(Ind, name, TRUE, TRUE);
 
-	if (!i)
-	{
-		return FALSE;
-	}
+	if (!i) return FALSE;
 
 	/* Check for another silliness */
-	if (i == Ind)
-	{
+	if (i == Ind) {
 		/* Message */
 		msg_print(Ind, "\377GYou are not hostile toward yourself.");
 
@@ -2217,20 +2207,15 @@ bool remove_hostility(int Ind, cptr name)
 	}
 
 	/* Forge name */
-	if (i > 0)
-	{
-		q = Players[i]->name;
-	}
+	if (i > 0) q = Players[i]->name;
 
 	/* Initialize lock-step */
 	i_ptr = NULL;
 
 	/* Search entries */
-	for (h_ptr = p_ptr->hostile; h_ptr; i_ptr = h_ptr, h_ptr = h_ptr->next)
-	{
+	for (h_ptr = p_ptr->hostile; h_ptr; i_ptr = h_ptr, h_ptr = h_ptr->next) {
 		/* Lookup name of this entry */
-		if (h_ptr->id > 0)
-		{
+		if (h_ptr->id > 0) {
 			/* Efficiency */
 			if (i < 0) continue;
 
@@ -2239,16 +2224,12 @@ bool remove_hostility(int Ind, cptr name)
 
 			/* Check player name */
 //			if (p && (streq(p, q) || streq(p, name)))
-			if (p && streq(p, q))
-			{
+			if (p && streq(p, q)) {
 				/* Delete this entry */
-				if (i_ptr)
-				{
+				if (i_ptr) {
 					/* Skip over */
 					i_ptr->next = h_ptr->next;
-				}
-				else
-				{
+				} else {
 					/* Adjust beginning of list */
 					p_ptr->hostile = h_ptr->next;
 				}
@@ -2263,24 +2244,18 @@ bool remove_hostility(int Ind, cptr name)
 				/* Success */
 				return TRUE;
 			}
-		}
-		else
-		{
+		} else {
 			/* Efficiency */
 			if (i >= 0) continue;
 
 			/* Assume this is a party */
 //			if (streq(parties[0 - h_ptr->id].name, q))
-			if (i == h_ptr->id)
-			{
+			if (i == h_ptr->id) {
 				/* Delete this entry */
-				if (i_ptr)
-				{
+				if (i_ptr) {
 					/* Skip over */
 					i_ptr->next = h_ptr->next;
-				}
-				else
-				{
+				} else {
 					/* Adjust beginning of list */
 					p_ptr->hostile = h_ptr->next;
 				}
@@ -2307,7 +2282,7 @@ bool check_hostile(int attacker, int target)
 {
 	player_type *p_ptr = Players[attacker], *q_ptr = Players[target];
 	hostile_type *h_ptr;
-	
+
 	/* Highlander Tournament is a fight to death */
 	if ((p_ptr->global_event_temp & PEVF_AUTOPVP_00) &&
 	    (q_ptr->global_event_temp & PEVF_AUTOPVP_00)) {
@@ -2324,17 +2299,13 @@ bool check_hostile(int attacker, int target)
 	    (p_ptr->mode & MODE_PVP)) return(TRUE);
 
 	/* Scan list */
-	for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next)
-	{
+	for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next) {
 		/* Check ID */
-		if (h_ptr->id > 0)
-		{
+		if (h_ptr->id > 0) {
 			/* Identical ID's yield hostility */
 			if (h_ptr->id == q_ptr->id)
 				return TRUE;
-		}
-		else
-		{
+		} else {
 			/* Check if target belongs to hostile party */
 			if (q_ptr->party == 0 - h_ptr->id)
 				return TRUE;
@@ -2360,8 +2331,7 @@ bool add_ignore(int Ind, cptr name)
 	char search[80], *pname;
 
 	/* Check for silliness */
-	if (!name)
-	{
+	if (!name) {
 		msg_print(Ind, "Usage: /ignore foobar");
 
 		return FALSE;
@@ -2537,17 +2507,13 @@ bool check_ignore(int attacker, int target)
 	hostile_type *h_ptr;
 
 	/* Scan list */
-	for (h_ptr = p_ptr->ignore; h_ptr; h_ptr = h_ptr->next)
-	{
+	for (h_ptr = p_ptr->ignore; h_ptr; h_ptr = h_ptr->next) {
 		/* Check ID */
-		if (h_ptr->id > 0)
-		{
+		if (h_ptr->id > 0) {
 			/* Identical ID's yield hostility */
 			if (h_ptr->id == Players[target]->id)
 				return TRUE;
-		}
-		else
-		{
+		} else {
 			/* Check if target belongs to hostile party */
 			if (Players[target]->party == 0 - h_ptr->id)
 				return TRUE;
@@ -2599,8 +2565,7 @@ hash_entry *lookup_player(int id)
 	ptr = hash_table[slot];
 
 	/* Search the chain, looking for the correct ID */
-	while (ptr)
-	{
+	while (ptr) {
 		/* Check this entry */
 		if (ptr->id == id)
 			return ptr;
@@ -3300,7 +3265,7 @@ void account_checkexpiry(int Ind)
 	time_t now;
 
 	now = time(NULL);
-	
+
 	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 		ptr = hash_table[slot];
 		while (ptr) {
@@ -3645,7 +3610,7 @@ void strip_true_arts_from_hashed_players(){
         int slot, i, j = 0;
         hash_entry *ptr;
         object_type *o_ptr;
-			
+
         s_printf("Starting player true artifact stripping\n");
         for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
 		j++;

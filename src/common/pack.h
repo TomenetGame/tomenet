@@ -152,7 +152,8 @@
 
 #define PKT_SANITY		130
 #define PKT_SCREEN_DIM		131	/* client's screen dimensions */
-//XXX 132-149
+#define PKT_GUILD_CFG		132
+//XXX 133-149
 
 /* Packet types 150- are hacks */
 #define PKT_FLUSH		150

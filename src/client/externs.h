@@ -153,6 +153,8 @@ extern char party_info_owner[50];
 extern char guild_info_name[90];
 extern char guild_info_members[20];
 extern char guild_info_owner[50];
+extern bool guild_master;
+extern guild_type guild;
 
 extern setup_t Setup;
 extern client_setup_t Client_setup;
@@ -250,7 +252,7 @@ extern s16b stat_order[6];
 
 extern bool topline_icky;
 extern short screen_icky;
-extern bool party_mode;
+extern bool party_mode, guildcfg_mode;
 
 extern player_race *race_info;
 extern player_class *class_info;
@@ -705,6 +707,7 @@ extern int Send_redraw(char mode);
 extern int Send_special_line(int type, s32b line);
 extern int Send_party(s16b command, cptr buf);
 extern int Send_guild(s16b command, cptr buf);
+extern int Send_guild_config(s16b command, u32b flags, cptr buf);
 extern int Send_purchase_house(int dir);
 extern int Send_suicide(void);
 extern int Send_options(void);

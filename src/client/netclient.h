@@ -77,6 +77,7 @@ int Receive_floor(void);
 int Receive_pickup_check(void);
 int Receive_party(void);
 int Receive_guild(void);
+int Receive_guild_config(void);
 int Receive_party_stats(void);
 int Receive_skills(void);
 int Receive_pause(void);

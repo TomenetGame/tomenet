@@ -7514,10 +7514,10 @@ extern int PlayerUID;
 
 /* House owner type flags */
 #define OT_PLAYER	1
-#define OT_PARTY	2
-#define OT_CLASS	3
-#define OT_RACE		4
-#define OT_GUILD	5
+#define OT_GUILD	2
+#define OT_PARTY	3
+#define OT_CLASS	4
+#define OT_RACE		5
 
 /* house access flags */
 #define ACF_NONE	0x00

@@ -2228,7 +2228,124 @@ void cmd_message(void)
 
 /* set flags and options such as minlvl / auto-rejoin */
 static void cmd_guild_options() {
+	int i, acnt = 0;
+	char buf[(NAME_LEN + 1) * 5 + 1], buf0[NAME_LEN + 1];
 
+	/* We are now in party mode */
+	guildcfg_mode = TRUE;
+
+	/* Save screen */
+	Term_save();
+
+	/* Process requests until done */
+	while (1) {
+		/* Clear screen */
+		Term_clear();
+
+		/* Initialize buffer */
+		buf[0] = '\0';
+
+		/* Describe */
+		Term_putstr(0, 0, -1, TERM_L_GREEN, "============== Guild configuration ===============");
+
+		if (!guild_info_name[0]) {
+	                Term_putstr(5, 2, -1, TERM_L_UMBER, "You are not in a guild.");
+		} else {
+			/* Selections */
+	                Term_putstr(5, 2, -1, TERM_L_UMBER, "Current guild configuration:");
+			Term_putstr(5, 3, -1, TERM_WHITE,  format("adders     : %s", guild.flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno"));
+			Term_putstr(5, 4, -1, TERM_L_WHITE,       "    Allows players designated via /guild_adder command to add others.");
+			Term_putstr(5, 5, -1, TERM_WHITE,  format("autoreadd  : %s", guild.flags & GFLG_AUTO_READD ? "\377GYES" : "\377rno"));
+			Term_putstr(5, 6, -1, TERM_L_WHITE,      "    If a guild mate ghost-dies then the next character he logs on with");
+			Term_putstr(5, 7, -1, TERM_L_WHITE,      "    - if it is newly created - is automatically added to the guild again.");
+			Term_putstr(5, 8, -1, TERM_WHITE, format("minlev     : \377%c%d   ", guild.minlev <= 1 ? 'w' : (guild.minlev <= 10 ? 'G' : (guild.minlev < 20 ? 'g' :
+		            (guild.minlev < 30 ? 'y' : (guild.minlev < 40 ? 'o' : (guild.minlev <= 50 ? 'r' : 'v'))))), guild.minlev));
+			Term_putstr(5, 9, -1, TERM_L_WHITE,      "    Minimum character level required to get added to the guild.");
+
+            		Term_erase(5, 10, 69);
+                        Term_erase(5, 11, 69);
+
+		        for (i = 0; i < 5; i++) if (guild.adder[i][0] != '\0') {
+		                sprintf(buf, "Adders are: ");
+		                strcat(buf, guild.adder[i]);
+		                acnt++;
+		                for (i++; i < 5; i++) {
+	                    		if (guild.adder[i][0] == '\0') continue;
+		                        if (acnt != 3) strcat(buf, ", ");
+	    	                	strcat(buf, guild.adder[i]);
+	                                acnt++;
+    	                	        if (acnt == 3) {
+        	                                Term_putstr(5, 10, -1, TERM_SLATE, buf);
+                	                        buf[0] = 0;
+                            		}
+	        	        }
+	        	}
+	        	Term_putstr(5 + (acnt <= 3 ? 0 : 12), acnt <= 3 ? 10 : 11, -1, TERM_SLATE, buf);
+
+			/* Display commands for changing options */
+		        if (guild_master) {
+				Term_putstr(5, 13, -1, TERM_WHITE, "(\377G1\377w) Toggle 'enable-adders' flag");
+				Term_putstr(5, 14, -1, TERM_WHITE, "(\377G2\377w) Toggle 'auto-re-add' flag");
+				Term_putstr(5, 15, -1, TERM_WHITE, "(\377G3\377w) Set minimum level required to join the guild");
+				Term_putstr(5, 16, -1, TERM_WHITE, "(\377G4\377w) Add/remove 'adders' who may add players in your stead");
+			}
+		}
+
+		/* Prompt */
+		Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
+
+		/* Get a key */
+		i = inkey();
+
+		/* Leave */
+		if (i == ESCAPE || i == KTRL('X')) break;
+
+		/* Take a screenshot */
+		else if (i == KTRL('T'))
+			xhtml_screenshot("screenshot????");
+
+		else if (guild_master && i == '1') {
+                        if (guild.flags & GFLG_ALLOW_ADDERS) {
+	                        Send_guild_config(0, guild.flags & ~GFLG_ALLOW_ADDERS, "");
+                        } else {
+	                        Send_guild_config(0, guild.flags | GFLG_ALLOW_ADDERS, "");
+                        }
+		} else if (guild_master && i == '2') {
+                        if (guild.flags & GFLG_AUTO_READD) {
+	                        Send_guild_config(0, guild.flags & ~GFLG_AUTO_READD, "");
+                        } else {
+	                        Send_guild_config(0, guild.flags | GFLG_AUTO_READD, "");
+                        }
+		} else if (guild_master && i == '3') {
+			strcpy(buf0, "0");
+			if (!get_string("Specify new minimum level: ", buf0, 4)) continue;
+			i = atoi(buf0);
+                        Send_guild_config(1, i, "");
+		} else if (guild_master && i == '4') {
+			if (!get_string("Specify player name: ", buf0, NAME_LEN)) continue;
+                        Send_guild_config(2, -1, buf0);
+		}
+
+		/* Oops */
+		else {
+			/* Ring bell */
+			bell();
+		}
+
+		/* Flush messages */
+		c_msg_print(NULL);
+	}
+
+	/* Reload screen */
+	Term_load();
+
+	/* No longer in party mode */
+	guildcfg_mode = FALSE;
+
+	/* Flush any events */
+	Flush_queue();
+
+	return;
 }
 
 void cmd_party(void)
@@ -2243,8 +2360,7 @@ void cmd_party(void)
 	Term_save();
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
@@ -2263,10 +2379,10 @@ void cmd_party(void)
 		Term_putstr(5, 6, -1, TERM_WHITE, "(\377G5\377w) Leave your current party");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(\377Ua\377w) Create a new guild");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add player to guild");
-		Term_putstr(5, 10, -1, TERM_WHITE, "(\377Uc\377w) Remove player from guild");
-		Term_putstr(5, 11, -1, TERM_WHITE, "(\377Ud\377w) Leave guild");
-//		Term_putstr(5, 12, -1, TERM_WHITE, "(\377Ue\377w) Set guild options");
-		Term_putstr(5, 14, -1, TERM_WHITE, "(\377RA\377w) Declare war on player (not recommended!)");
+		Term_putstr(5, 10, -1, TERM_WHITE, "(\377UC\377w) Remove player from guild");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(\377UD\377w) Leave guild");
+		Term_putstr(5, 12, -1, TERM_WHITE, "(\377Ue\377w) Set/view guild options");
+		Term_putstr(5, 14, -1, TERM_WHITE, "(\377RA\377w) Declare war on player/party (not recommended!)");
 		Term_putstr(5, 15, -1, TERM_WHITE, "(\377gP\377w) Make peace with player");
 
 		/* Show current party status */
@@ -2292,91 +2408,78 @@ void cmd_party(void)
 
 		/* Take a screenshot */
 		else if (i == KTRL('T'))
-		{
 			xhtml_screenshot("screenshot????");
-		}
 
 		/* Create party */
-		else if (i == '1')
-		{
+		else if (i == '1') {
 			/* Get party name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter party name: ");
 			if (askfor_aux(buf, 79, 0)) Send_party(PARTY_CREATE, buf);
 		}
 
 		/* Create 'Iron Team' party */
-		else if (i == '2')
-		{
+		else if (i == '2') {
 			/* Get party name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter party name: ");
 			if (askfor_aux(buf, 79, 0)) Send_party(PARTY_CREATE_IRONTEAM, buf);
 		}
 
 		/* Add player */
-		else if (i == '3')
-		{
+		else if (i == '3') {
 			/* Get player name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");
 			if (askfor_aux(buf, 79, 0)) Send_party(PARTY_ADD, buf);
 		}
 
 		/* Delete player */
-		else if (i == '4')
-		{
+		else if (i == '4') {
 			/* Get player name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");
 			if (askfor_aux(buf, 79, 0)) Send_party(PARTY_DELETE, buf);
 		}
 
 		/* Leave party */
-		else if (i == '5')
-		{
+		else if (i == '5') {
 			/* Send the command */
 			Send_party(PARTY_REMOVE_ME, "");
 		}
 
 		/* Attack player/party */
-		else if (i == 'A')
-		{
+		else if (i == 'A') {
 			/* Get player name */
 			Term_putstr(0, 19, -1, TERM_L_RED, "Enter player/party to attack: ");
 			if (askfor_aux(buf, 79, 0)) Send_party(PARTY_HOSTILE, buf);
 		}
-
 		/* Make peace with player/party */
-		else if (i == 'P')
-		{
+		else if (i == 'P') {
 			/* Get player/party name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Make peace with: ");
 			if (askfor_aux(buf, 79, 0)) Send_party(PARTY_PEACE, buf);
 		}
-		else if (i == 'a'){
+
+		/* Guild options */
+		else if (i == 'a') {
 			/* Get new guild name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter guild name: ");
 			if (askfor_aux(buf, 79, 0)) Send_guild(GUILD_CREATE, buf);
-		}
-		else if (i == 'b'){
+		} else if (i == 'b') {
 			/* Get player name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");
 			if (askfor_aux(buf, 79, 0)) Send_guild(GUILD_ADD, buf);
-		}
-		else if (i == 'c'){
+		} else if (i == 'C') {
 			/* Get player name */
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");
 			if (askfor_aux(buf, 79, 0)) Send_guild(GUILD_DELETE, buf);
-		}
-		else if (i == 'd'){
+		} else if (i == 'D') {
 			if (get_check("Leave the guild ? "))
 				Send_guild(GUILD_REMOVE_ME, "");
-		}
-		else if (i == 'e'){
+		} else if (i == 'e') {
 			/* Set guild flags/options */
 			cmd_guild_options();
 		}
 
 		/* Oops */
-		else
-		{
+		else {
 			/* Ring bell */
 			bell();
 		}
@@ -2508,10 +2611,10 @@ static void cmd_house_chown(int dir)
 	Term_clear();
 	Term_putstr(0, 2, -1, TERM_BLUE, "Select owner type");
 	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Player");
-	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Party");
-	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Class");
-	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Race");
-	Term_putstr(5, 8, -1, TERM_WHITE, "(5) Guild");
+	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Guild");
+//	Term_putstr(5, 5, -1, TERM_WHITE, "(3) Party");
+//	Term_putstr(5, 6, -1, TERM_WHITE, "(4) Class");
+//	Term_putstr(5, 7, -1, TERM_WHITE, "(5) Race");
 	while(i!=ESCAPE){
 		i=inkey();
 		switch(i){
