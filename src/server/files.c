@@ -2214,8 +2214,7 @@ void close_game(void)
 	/* No suspending now */
 	signals_ignore_tstp();
 
-	for (i = 0; i < NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		player_type *p_ptr = Players[i];
 
 		/* Make sure the player is connected */
@@ -2236,8 +2235,7 @@ void close_game(void)
 
 
 		/* Handle death */
-		if (p_ptr->death)
-		{
+		if (p_ptr->death) {
 			/* Handle retirement */
 		        /* Retirement in Valinor? - C. Blue :) */
 	    		if (getlevel(&p_ptr->wpos) == 200) kingly(i, 2);
@@ -2251,8 +2249,7 @@ void close_game(void)
 		}
 
 		/* Still alive */
-		else
-		{
+		else {
 			/* Save the game */
 			do_cmd_save_game(i);
 
