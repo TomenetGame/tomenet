@@ -2377,11 +2377,14 @@ void cmd_party(void)
 		Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add a player to party");
 		Term_putstr(5, 5, -1, TERM_WHITE, "(\377G4\377w) Delete a player from party");
 		Term_putstr(5, 6, -1, TERM_WHITE, "(\377G5\377w) Leave your current party");
+
 		Term_putstr(5, 8, -1, TERM_WHITE, "(\377Ua\377w) Create a new guild");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(\377Ub\377w) Add player to guild");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(\377UC\377w) Remove player from guild");
 		Term_putstr(5, 11, -1, TERM_WHITE, "(\377UD\377w) Leave guild");
-		Term_putstr(5, 12, -1, TERM_WHITE, "(\377Ue\377w) Set/view guild options");
+		if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0))
+			Term_putstr(5, 12, -1, TERM_WHITE, "(\377Ue\377w) Set/view guild options");
+
 		Term_putstr(5, 14, -1, TERM_WHITE, "(\377RA\377w) Declare war on player/party (not recommended!)");
 		Term_putstr(5, 15, -1, TERM_WHITE, "(\377gP\377w) Make peace with player");
 
@@ -2475,7 +2478,8 @@ void cmd_party(void)
 				Send_guild(GUILD_REMOVE_ME, "");
 		} else if (i == 'e') {
 			/* Set guild flags/options */
-			cmd_guild_options();
+			if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0))
+				cmd_guild_options();
 		}
 
 		/* Oops */
