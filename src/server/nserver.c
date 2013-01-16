@@ -6844,10 +6844,10 @@ static int Receive_run(int ind)
 #ifdef HOSTILITY_ABORTS_RUNNING
 		/* Check for hostile players. They should be treated as a disturbance.
 		 * Should lessen the unfair advantage melee have in PVP */
-		for (i = 1; i < NumPlayers; i++) {
+		for (i = 1; i <= NumPlayers; i++) {
 			if (i == player) continue;
 			if (check_hostile(player, i)) {
-				if (target_able(player, 0-i)) { /* target_able takes in midx usually */
+				if (target_able(player, 0 - i)) { /* target_able takes in midx usually */
 					return Receive_walk(ind);
 				}
 			}

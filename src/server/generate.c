@@ -11715,7 +11715,7 @@ void regenerate_cave(struct worldpos *wpos)
 #else /* what a pain */
 	/* mad hack:
 	   remove players from level, regenerate it completely, bring players back */
-	for (i = 1; i < NumPlayers; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 		if (inarea(&p_ptr->wpos, wpos)) p_ptr->wpos.wz = 9999;
 	}
@@ -11724,7 +11724,7 @@ void regenerate_cave(struct worldpos *wpos)
 	alloc_dungeon_level(wpos);
 	generate_cave(wpos, NULL);
 
-	for (i = 1; i < NumPlayers; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 		if (p_ptr->wpos.wz == 9999) p_ptr->wpos.wz = 0;
 	}

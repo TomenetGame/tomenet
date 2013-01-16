@@ -5822,7 +5822,7 @@ void process_player_change_wpos(int Ind)
 	if ((p_ptr->mode & MODE_PVP) && p_ptr->wpos.wz &&
 	    !(p_ptr->wpos.wx == WPOS_PVPARENA_X && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z)) { /* <- not in the pvp arena actually */
 		/* anti-chicken: Don't allow a high player to 'chase' a very low player */
-		for (j = 1; j < NumPlayers; j++) {
+		for (j = 1; j <= NumPlayers; j++) {
 			if (Players[j]->conn == NOT_CONNECTED) continue;
 			if (is_admin(Players[j])) continue;
 			if (!(Players[j]->mode & MODE_PVP)) continue;
