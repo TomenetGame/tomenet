@@ -665,6 +665,9 @@ if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
 		/* Hack -- extract the "broken" flag */
 		if (!e_ptr->cost) o_ptr->ident |= ID_BROKEN;
 	}
+
+/* hack- fix trap kits with wrong enchantments */
+if (o_ptr->tval == TV_TRAPKIT && !is_firearm_trapkit(o_ptr->sval)) o_ptr->to_h = o_ptr->to_d = 0;
 }
 
 
