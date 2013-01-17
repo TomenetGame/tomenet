@@ -6572,10 +6572,9 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 				s_printf("(%s's ghost was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
 #if CHATTERBOX_LEVEL > 2
-			if (p_ptr->last_words)
-			{
+			if (p_ptr->last_words) {
 				char death_message[80];
-    
+
         			(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
@@ -6667,19 +6666,21 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 #endif
 
 #if (MAX_PING_RECVS_LOGGED > 0)
-			/* Print last ping reception times */
-			struct timeval now;
-			gettimeofday(&now, NULL);
-			s_printf("PINGS_RECEIVED:");
-			/* Starting from latest */
-			for (i = 0; i < MAX_PING_RECVS_LOGGED; i++) {
-				j = (p_ptr->pings_received_head - i + MAX_PING_RECVS_LOGGED) % MAX_PING_RECVS_LOGGED;
-				if (p_ptr->pings_received[j].tv_sec) {
-					s_printf(" %s", timediff(&p_ptr->pings_received[j], &now));
-				}
+		/* Print last ping reception times */
+		struct timeval now;
+		gettimeofday(&now, NULL);
+		s_printf("PINGS_RECEIVED:");
+		/* Starting from latest */
+		for (i = 0; i < MAX_PING_RECVS_LOGGED; i++) {
+			j = (p_ptr->pings_received_head - i + MAX_PING_RECVS_LOGGED) % MAX_PING_RECVS_LOGGED;
+			if (p_ptr->pings_received[j].tv_sec) {
+				s_printf(" %s", timediff(&p_ptr->pings_received[j], &now));
 			}
-			s_printf("\n");
+		}
+		s_printf("\n");
 #endif
+
+		if (is_admin(p_ptr)) snprintf(buf, sizeof(buf), "\376\377D%s bids farewell to this plane.", p_ptr->name);
 
 		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)){
 #ifdef TOMENET_WORLDS
@@ -6740,7 +6741,6 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 					players_in_area++;
 				}
 				if (players_in_area) {
-				
 					/* give everyone a 'share' of the kills */
 #if 0 /* round downwards */
 					avg_kills = p_ptr->kills / players_in_area;
@@ -6817,23 +6817,44 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", pvp ? "PVP" : "NOGHOS
 
 	/* Tell everyone he died */
 	if (p_ptr->alive) {
-		if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
+		if (cfg.unikill_format) {
+			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
 #ifdef ENABLE_MAIA
-		    || (streq(p_ptr->died_from, "indecisiveness"))
+			    || (streq(p_ptr->died_from, "indecisiveness"))
 #endif
-		    || (streq(p_ptr->died_from, "indetermination"))
-		    || (streq(p_ptr->died_from, "insanity"))) {
-			/* snprintf(buf, sizeof(buf), "\374\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
-			/* Add the player lvl to the death message. the_sandman */
-			snprintf(buf, sizeof(buf), "\374\377r%s (%d) was killed by %s", p_ptr->name, p_ptr->lev, p_ptr->died_from);
-		}
-		else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
-			/* snprintf(buf, sizeof(buf), "\377r%s was annihilated by %s.", p_ptr->name, p_ptr->died_from); */
-			snprintf(buf, sizeof(buf), "\374\377r%s (%d) was annihilated by %s", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			    || (streq(p_ptr->died_from, "indetermination"))
+			    || (streq(p_ptr->died_from, "insanity"))) {
+				/* snprintf(buf, sizeof(buf), "\374\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
+				/* Add the player lvl to the death message. the_sandman */
+				snprintf(buf, sizeof(buf), "\374\377r%s %s (%d) was killed by %s", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			}
+			else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
+				/* snprintf(buf, sizeof(buf), "\377r%s was annihilated by %s.", p_ptr->name, p_ptr->died_from); */
+				snprintf(buf, sizeof(buf), "\374\377r%s %s (%d) was annihilated by %s", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
 
-		}
-		else {
-			snprintf(buf, sizeof(buf), "\374\377r%s (%d) was vaporized by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			}
+			else {
+				snprintf(buf, sizeof(buf), "\374\377r%s %s (%d) was vaporized by %s.", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			}
+		} else {
+			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
+#ifdef ENABLE_MAIA
+			    || (streq(p_ptr->died_from, "indecisiveness"))
+#endif
+			    || (streq(p_ptr->died_from, "indetermination"))
+			    || (streq(p_ptr->died_from, "insanity"))) {
+				/* snprintf(buf, sizeof(buf), "\374\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
+				/* Add the player lvl to the death message. the_sandman */
+				snprintf(buf, sizeof(buf), "\374\377r%s (%d) was killed by %s", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			}
+			else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
+				/* snprintf(buf, sizeof(buf), "\377r%s was annihilated by %s.", p_ptr->name, p_ptr->died_from); */
+				snprintf(buf, sizeof(buf), "\374\377r%s (%d) was annihilated by %s", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+
+			}
+			else {
+				snprintf(buf, sizeof(buf), "\374\377r%s (%d) was vaporized by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			}
 		}
 		s_printf("%s (%d) was killed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
@@ -6874,7 +6895,10 @@ s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s\n", race_info[p_ptr-
 s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 	}
 
-	if (is_admin(p_ptr)) snprintf(buf, sizeof(buf), "\376\377D%s bids farewell to this plane.", p_ptr->name);
+	if (is_admin(p_ptr)) {
+		if (death_type == -1) snprintf(buf, sizeof(buf), "\376\377D%s enters a ghostly state.", p_ptr->name);
+		else snprintf(buf, sizeof(buf), "\376\377D%s bids farewell to this plane.", p_ptr->name);
+	}
 
 	/* Tell the players */
 	/* handle the secret_dungeon_master option */
