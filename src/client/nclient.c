@@ -2935,12 +2935,24 @@ int Receive_guild(void) {
 }
 
 int Receive_guild_config(void) {
-	int i, n, master, guild_adders;
+	int i, n, master, guild_adders, ghp;
 	char ch, dummy[MAX_CHARS];
 	int x, y;
 	Term_locate(&x, &y);
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%s", &ch, &master, &guild.flags, &guild.minlev, &guild_adders, &guildhall_wx, &guildhall_wy, guildhall_pos)) <= 0) return n;
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d", &ch, &master, &guild.flags, &guild.minlev, &guild_adders, &guildhall_wx, &guildhall_wy, &ghp)) <= 0) return n;
+	switch (ghp) {
+	case 0: strcpy(guildhall_pos, "north-western"); break;
+	case 4: strcpy(guildhall_pos, "northern"); break;
+	case 8: strcpy(guildhall_pos, "north-eastern"); break;
+	case 1: strcpy(guildhall_pos, "western"); break;
+	case 5: strcpy(guildhall_pos, "central"); break;
+	case 9: strcpy(guildhall_pos, "eastern"); break;
+	case 2: strcpy(guildhall_pos, "south-western"); break;
+	case 6: strcpy(guildhall_pos, "southern"); break;
+	case 10: strcpy(guildhall_pos, "south-eastern"); break;
+	default: strcpy(guildhall_pos, "unknown");
+	}
 	if (master) guild_master = TRUE;
 	else guild_master = FALSE;
 

@@ -6285,34 +6285,21 @@ int Send_guild_config(int id) {
 	int i, j;
 	guild_type *g_ptr = &guilds[id];
 	int master;
-	int ghwx = -1, ghwy = 0, ghx, ghy;
-	char ghpos[14];
+	int ghwx = -1, ghwy = 0, ghx, ghy, ghpos = -1;
 
 	/* guild hall location */
-	ghpos[0] = 0;
 	if (g_ptr->h_idx) {
 		ghwx = houses[g_ptr->h_idx - 1].wpos.wx;
 		ghwy = houses[g_ptr->h_idx - 1].wpos.wy;
 		ghx = houses[g_ptr->h_idx - 1].x;
 		ghy = houses[g_ptr->h_idx - 1].y;
-		ghpos[0] = 0;
-		if (ghy < MAX_HGT / 3) {
-			strcpy(ghpos, "north");
-		} else if (ghy < 2 * MAX_HGT / 3) {
-			/* nothing */
-		} else {
-			strcpy(ghpos, "south");
-		}
-		if (ghx < MAX_WID / 3) {
-			if (!ghpos[0]) strcpy(ghpos, "western");
-			else strcat(ghpos, "-western");
-		} else if (ghx < 2 * MAX_WID / 3) {
-			if (!ghpos[0]) strcpy(ghpos, "central");
-			else strcat(ghpos, "ern");
-		} else {
-			if (!ghpos[0]) strcpy(ghpos, "eastern");
-			else strcat(ghpos, "-eastern");
-		}
+
+		if (ghy < MAX_HGT / 3) ghpos = 0;
+		else if (ghy < 2 * MAX_HGT / 3) ghpos = 1;
+		else ghpos = 2;
+		if (ghx < MAX_WID / 3) ghpos += 0;
+		else if (ghx < 2 * MAX_WID / 3) ghpos += 4;
+		else ghpos += 8;
 	}
 #ifndef ENABLE_GUILD_HALL
 	else ghwx = -2;
@@ -6335,7 +6322,7 @@ int Send_guild_config(int id) {
 		if (g_ptr->master == p_ptr->id) master = 1;
 		else master = 0;
 
-		Packet_printf(&connp->c, "%c%d%d%d%d%d%d%s", PKT_GUILD_CFG, master, g_ptr->flags, g_ptr->minlev, 5, ghwx, ghwy, ghpos);
+		Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_GUILD_CFG, master, g_ptr->flags, g_ptr->minlev, 5, ghwx, ghwy, ghpos);
 		for (j = 0; j < 5; j++) Packet_printf(&connp->c, "%s", g_ptr->adder[j]);
 	}
 
