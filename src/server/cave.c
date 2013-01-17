@@ -8037,7 +8037,7 @@ msg_broadcast(0, "no flags");
 
 bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool bree = (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0);
-	bool town = istown(wpos);
+	bool town = istown(wpos) || isdungeontown(wpos);
 	bool townarea = istownarea(wpos, MAX_TOWNAREA);
 //unused atm	bool dungeon_town = isdungeontown(wpos);
 	bool sector00 = (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z);
