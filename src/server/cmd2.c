@@ -1128,6 +1128,10 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 		}
 
 		/* Finally change the owner */
+		if (dna->owner_type == OT_GUILD) {
+			guilds[dna->owner].h_idx = 0;
+			Send_guild_config(dna->owner);
+		}
 		newowner = lookup_player_id_messy(&args[2]);
 		if (!newowner) newowner = -1;
 		break;
@@ -1182,22 +1186,22 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 		if (args[1] == '1') {
 			for (i = 1; i <= NumPlayers; i++) {     /* in game? maybe long winded */
 				if (Players[i]->id == newowner) {
+					if (dna->owner_type == OT_PLAYER) p_ptr->houses_owned--;
+					Players[i]->houses_owned++;
+					if (houses[h_idx].flags & HF_MOAT) {
+						if (dna->owner_type == OT_PLAYER) p_ptr->castles_owned--;
+						Players[i]->castles_owned++;
+					}
 					dna->creator = Players[i]->dna;
 					dna->owner = newowner;
 					dna->owner_type = args[1] - '0';
 					dna->a_flags = ACF_NONE;
-
-					Players[i]->houses_owned++;
-					p_ptr->houses_owned--;
-					if (houses[h_idx].flags & HF_MOAT) {
-						Players[i]->castles_owned++;
-						p_ptr->castles_owned--;
-					}
 					return(TRUE);
 				}
 			}
 			return(FALSE);
 		}
+		/* args[1] == '2' aka change to OT_GUILD: */
 		dna->owner = newowner;
 		dna->owner_type = args[1] - '0';
 		if (dna->owner_type == OT_GUILD) {

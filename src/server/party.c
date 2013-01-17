@@ -864,6 +864,11 @@ int guild_create(int Ind, cptr name){
 	/* Set guildmaster */
 	guilds[index].master = p_ptr->id;
 
+	/* Init guild hall, flags & level */
+	guilds[index].h_idx = 0;
+	guilds[index].flags = 0;
+	guilds[index].minlev = 0;
+
 	/* Add the owner as a member */
 	p_ptr->guild = index;
 	clockin(Ind, 3);
@@ -1726,6 +1731,19 @@ static void del_guild(int id){
 	for (i = 0; i < 5; i++) guilds[id].adder[i][0] = '\0'; /* they should be cleared anyway */
 	guilds[id].flags = GFLG_NONE;
 	guilds[id].minlev = 0;
+
+	/* erase guild hall */
+#if 0 /* not needed, since there can only be one guild hall */
+	kill_houses(id, OT_GUILD);
+#else
+	if (guilds[id].h_idx) {
+		struct dna_type *dna = houses[guilds[id].h_idx - 1].dna;
+		dna->owner = 0L;
+	        dna->creator = 0L;
+	        dna->a_flags = ACF_NONE;
+	        kill_house_contents(&houses[guilds[id].h_idx - 1]);
+	}
+#endif
 
 	/* TODO: Find and destroy the guild key! */
 	erase_guild_key(id);
