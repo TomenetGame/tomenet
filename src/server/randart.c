@@ -2082,27 +2082,31 @@ void apply_enchantment_limits(object_type *o_ptr) {
 #ifdef USE_NEW_SHIELDS	/* should actually be USE_BLOCKING, but could be too */
 			/* dramatic a change if it gets enabled temporarily - C. Blue */
 		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
-		break;
+		return;
 #endif
 	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
 	case TV_CLOAK: case TV_HELM: case TV_CROWN: case TV_GLOVES: case TV_BOOTS:
 		if (o_ptr->to_a > 35) o_ptr->to_a = 35;
-		break;
+		return;
 
 	case TV_BOLT:
         case TV_ARROW:
         case TV_SHOT:
 		if (o_ptr->to_h > 15) o_ptr->to_h = 15;
 		if (o_ptr->to_d > 15) o_ptr->to_d = 15;
-		break;
+		return;
 
+	case TV_TRAPKIT:
+		if (!is_firearm_trapkit(o_ptr->sval)) {
+			o_ptr->to_h = o_ptr->to_d = 0;
+			return;
+		}
 	case TV_BOW:
 	case TV_BOOMERANG:
-	case TV_TRAPKIT:
 	default: /* all melee weapons */
 		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
 		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
-		break;
+		return;
 	}
 }
 /*
