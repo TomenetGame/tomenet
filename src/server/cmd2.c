@@ -2999,8 +2999,8 @@ void do_cmd_disarm(int Ind, int dir)
 							default:
 								break;
 						}
-							
 					}
+					if (!is_firearm_trapkit(yay->sval)) yay->to_h = yay->to_d = 0;
 					yay->number = 1;
 					yay->level = p_ptr->lev;
 					drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
