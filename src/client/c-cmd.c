@@ -1560,7 +1560,7 @@ static void artifact_lore(void) {
     while (TRUE) {
 	Term_clear();
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) artifact name to refine the search:");
-	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the selected artifact.");
+	Term_putstr(2,  3, -1, TERM_WHITE, "Press ENTER to display lore about the selected artifact.");
 
 	while (TRUE) {
 		Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
@@ -1627,7 +1627,8 @@ static void artifact_lore(void) {
 			else Term_putstr(5, 5 + selected_line, -1, TERM_L_UMBER, artifact_list_name[list_idx[selected_line]]);
 		}
 
-		Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
+		//Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
+		Term_putstr(8,  23, -1, TERM_WHITE, "-- press ESC to exit, ENTER to view lore, up/down to navigate --");
 		/* hack: place cursor at pseudo input prompt */
 	        Term->scr->cx = 54 + strlen(s);
 	        Term->scr->cy = 2;
@@ -1871,7 +1872,8 @@ static void monster_lore(void) {
 			    monster_list_code[list_idx[selected_line]], monster_list_name[list_idx[selected_line]]));
 		}
 
-		Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
+		//Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
+		Term_putstr(8,  23, -1, TERM_WHITE, "-- press ESC to exit, ENTER to view lore, up/down to navigate --");
 		/* hack: place cursor at pseudo input prompt */
 	        Term->scr->cx = 53 + strlen(s);
 	        Term->scr->cy = 2;
