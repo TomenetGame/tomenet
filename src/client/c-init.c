@@ -195,7 +195,7 @@ void initialize_main_pref_files(void)
 	process_pref_file(buf);
 
 	/* Access the "user" pref file */
-	sprintf(buf, "user.prf");
+	sprintf(buf, "global.opt");
 
 	/* Process that file */
 	process_pref_file(buf);
@@ -213,7 +213,7 @@ void initialize_main_pref_files(void)
 	process_pref_file(buf);
 
 	/* Access the "user" system pref file */
-	sprintf(buf, "user-%s.prf", ANGBAND_SYS);
+	sprintf(buf, "global-%s.opt", ANGBAND_SYS);
 
 	/* Process that file */
 	process_pref_file(buf);
@@ -243,12 +243,21 @@ void initialize_main_pref_files(void)
 			window_flag[i] = new_flags;
 		}
 		/* and.. save them! */
-		(void)options_dump("user.prf");
+		(void)options_dump("global.opt");
 	}
 }
 
 void initialize_player_pref_files(void){
 	char buf[1024];
+
+
+	/* Process character-specific options */
+	sprintf(buf, "%s.opt", cname);
+	/* Process that file */
+	process_pref_file(buf);
+	keymap_init();
+	prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv);
+        Send_options();
 
 #if 0 /* disabled, since everyone only has 1 account anyway. It just disturbs macros if you have a character of same name. */
 	/* Access the "account" pref file */
@@ -2242,7 +2251,7 @@ void client_init(char *argv1, bool skip)
 	        c_cfg.big_map = TRUE;
 		Client_setup.options[43] = TRUE;
 		check_immediate_options(43, TRUE, FALSE);
-		(void)options_dump("user.prf");
+		(void)options_dump("global.opt");
         }
 #endif
 

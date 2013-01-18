@@ -972,7 +972,6 @@ errr process_pref_file_aux(char *buf)
 		char tmp[1024];
 		text_to_ascii(tmp, buf+2);
 		macro_del(tmp);
-		
 		return 0;
 	}
 
@@ -1022,7 +1021,7 @@ errr process_pref_file_aux(char *buf)
                         {
                                 (*option_info[i].o_var) = FALSE;
 				Client_setup.options[i] = FALSE;
-				check_immediate_options(i, FALSE, FALSE);
+				check_immediate_options(i, FALSE, in_game);
                                 return (0);
                         }
                 }
@@ -1039,7 +1038,7 @@ errr process_pref_file_aux(char *buf)
                         {
                                 (*option_info[i].o_var) = TRUE;
 				Client_setup.options[i] = TRUE;
-				check_immediate_options(i, TRUE, FALSE);
+				check_immediate_options(i, TRUE, in_game);
                                 return (0);
                         }
                 }
@@ -1437,7 +1436,7 @@ errr file_character(cptr name, bool full)
 		}
 		buf[x] = '\0';
 		fprintf(fff, "%s\n", buf);
-	}	
+	}
 	if (screen_icky) Term_switch(0);
 	fprintf(fff, "\n\n");
 

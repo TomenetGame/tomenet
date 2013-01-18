@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. January 2013 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.2 - official websites are:
+| Latest update: 18. January 2013 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.2a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -50,6 +50,7 @@ Contents
     (2.1d)  "Promoting" TomeNET on Steam ;)
     (2.2)   Starting TomeNET and getting to play on an internet server
     (2.3)   Client options
+    (2.3a)  Client options configuration files
     (2.4)   Installing voice chat
 (3) Creating a character & starting to play
     (3.1)   Creating a new character; character modes
@@ -2119,6 +2120,26 @@ self-explaining or that are especially important are listed in detail here:
     so you don't miss important messages during combat.
 
 
+(2.3a) Client options configuration files
+-----------------------------------------
+Don't forget to save options to a file after you changed them, so the change
+becomes persistent and will be remembered next time you log on.
+The following files will be automatically processed by TomeNET:
+
+global.opt                      global client options, will be loaded on all
+                                characters
+
+global-<operating system>.opt   client options for specific OS, can be used to
+                                have different options depending on whether
+                                a Linux client is running in X11 mode or as
+                                GCU terminal application. The file names would
+                                be global-x11.opt and global-gcu.opt.
+
+<character name>.opt            client options file that will be loaded for a
+                                particularly named character only, if you log
+                                on with it, eg "Gandalf.opt".
+
+
 
 (2.4) Installing voice chat
 ---------------------------
@@ -2965,7 +2986,7 @@ These files are meant to store client options and configuration,
 you should NOT use them for macros:
 -----------------------------------
 pref.prf (global for all OS and users on the system)
-user.prf (global, for the specific user)
+*.opt files (client options configuration files, ending on ".opt")
 pref-<operating system>.prf (loaded if under the specific operating system)
 graf-<operating system>.prf OR font-<operating system>.prf
                             (loaded if using graphics / ascii font on the

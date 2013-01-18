@@ -6054,8 +6054,7 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
  * The user must use the "Ctrl-R" command to "adapt" to changes
  * in any options which control "visual" aspects of the game.
  */
-void do_cmd_options(void)
-{
+void do_cmd_options(void) {
 	int k;
 	char tmp[1024];
 
@@ -6066,8 +6065,7 @@ void do_cmd_options(void)
 
 
 	/* Interact */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
@@ -6083,7 +6081,7 @@ void do_cmd_options(void)
 		Term_putstr(5,  9, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
 
 		Term_putstr(5, 11, -1, TERM_WHITE, "(\377ys\377w) Save Options");
-		Term_putstr(5, 12, -1, TERM_WHITE, "(\377yl\377w) Load Options from pref file");
+		Term_putstr(5, 12, -1, TERM_WHITE, "(\377yl\377w) Load Options");
 
 #if defined(WINDOWS) || defined(USE_X11) /* CHANGE_FONTS_X11 */
 		Term_putstr(5, 15, -1, TERM_WHITE, "(\377Uf\377w) Change font size (tap to cycle)");
@@ -6102,12 +6100,9 @@ void do_cmd_options(void)
 		if (k == ESCAPE || k == KTRL('X')) break;
 
 		/* Take a screenshot */
-		if (k == KTRL('T'))
-		{
-			xhtml_screenshot("screenshot????");
-		}
+		if (k == KTRL('T')) xhtml_screenshot("screenshot????");
 
-		if (k == '1') {
+		else if (k == '1') {
 			do_cmd_options_aux(1, "User Interface Options 1");
 		} else if (k == '2') {
 			do_cmd_options_aux(4, "User Interface Options 2");
@@ -6120,22 +6115,18 @@ void do_cmd_options(void)
 		}
 
 		/* Server Options */
-		else if (k == 'v')
-		{
-			Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0);
-		}
+		else if (k == 'v') Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0);
 
 		/* Save a 'option' file */
-		else if (k == 's')
-		{
+		else if (k == 's') {
 			/* Prompt */
-			Term_putstr(0, 20, -1, TERM_L_GREEN, "Command: Save an option file");
+			Term_putstr(0, 20, -1, TERM_L_GREEN, "Command: Save an options file");
 
 			/* Get a filename, handle ESCAPE */
 			Term_putstr(0, 21, -1, TERM_YELLOW, "File: ");
 
 			/* Default filename */
-			sprintf(tmp, "user.prf");
+			sprintf(tmp, "global.opt");
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
@@ -6144,16 +6135,15 @@ void do_cmd_options(void)
 			(void)options_dump(tmp);
 		}
 		/* Load a pref file */
-		else if (k == 'l')
-		{
+		else if (k == 'l') {
 			/* Prompt */
-			Term_putstr(0, 20, -1, TERM_L_GREEN, "Command: Load a user pref file");
+			Term_putstr(0, 20, -1, TERM_L_GREEN, "Command: Load an options file");
 
 			/* Get a filename, handle ESCAPE */
 			Term_putstr(0, 21, -1, TERM_YELLOW, "File: ");
 
 			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
+			sprintf(tmp, "global.opt");
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
@@ -6163,31 +6153,22 @@ void do_cmd_options(void)
 		}
 
 		/* Account options */
-		else if (k == 'A')
-		{
-			do_cmd_options_acc();
-		}
+		else if (k == 'A') do_cmd_options_acc();
 
 		/* Window flags */
-		else if (k == 'w')
-		{
+		else if (k == 'w') {
 			/* Spawn */
 			do_cmd_options_win();
 		}
 
 #if defined(WINDOWS) || defined(USE_X11)
-		else if (k == 'f') {
-			change_font(-1);
-		}
+		else if (k == 'f') change_font(-1);
 #endif
 
-		else if (k == 'I') {
-			do_cmd_options_install_audio_packs();
-		}
+		else if (k == 'I') do_cmd_options_install_audio_packs();
 
 		/* Unknown option */
-		else
-		{
+		else {
 			/* Oops */
 			bell();
 		}
