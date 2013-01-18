@@ -2041,9 +2041,19 @@ self-explaining or that are especially important are listed in detail here:
         Skills that your character cannot use will not be displayed in the
         skill menu invoked by 'G' key.
 
-    Also, (2) has all of the audio options. (See (2.1a) for more information.)
+    A bunch of options for special visual effects and lighting.
+        These options change how lighting is applied to lamp light and walls,
+        lamp light colour and how walls are displayed depending on the font:
+        font_map_solid_walls (depending on font displays walls as solid blocks)
+        view_animated_lite (fire-based light sources flicker yellow-orange)
+        view_bright_lite2 (darkens wall grids out of sight)
+        view_yellow_lite (your light source lights up certain floor/wall grids)
+        view_bright_lite (darkens floor grids out of sight)
+        view_granite_lite (enables special lighting fx listed above for walls)
+        view_special_lite (enables special lighting fx listed above for floors)
 
 (3) Audio Options
+    (See (2.1a) for more information about sound and music.)
     A bunch of stuff here, mostly you might want to look at attack-sound effect
     frequency. Some people don't like to have those be played on each single
     attack, so you can tweak them here.
@@ -9607,17 +9617,38 @@ Warrior is strongly recommended.
     ways, except that they are really bad at moving stealthily. Similar to
     dragons, they can eat firestones to temporarily boost their powers.
     (See (5.9) for firestone details.)
+    Draconians need a very long time to gain further experience and need to eat
+    often. They have feather falling (levitation) instrinsically from birth.
     At level 5 they can spot dragons anywhere on the level. At level 6 they
     acquire an intrinsic telepathic vision of all nearby creatures, the radius
-    expands as they gain levels. They even gain intrinsic basic resistances,
-    fire at 10, cold at 15, acid at 20 and electricity at 25. At level 30
-    they learn how to fly. Draconians need a very long time to gain further
-    experience and need to eat often. They have feather falling (levitation)
-    instrinsically from birth.
-    They need to eat often and they may get hurt from the cold of the void when
-    taking void jump gates. Armour can help to mitigate this effect somewhat.
+    expands as they gain levels. At level 30 they learn how to fly.
+    Unlike other races, draconians are susceptible to the void connecting
+    void jump gates and may get hurt by it when they travel through it,
+    perceiving it as "cold" even if they resist or are immune to normal frost.
+    Armour can help to mitigate this effect somewhat.
+    Draconians possess a certain trait from birth, depending on their lineage,
+    providing them specific intrinsic resistances and elemental breath, which
+    they can use if they have sufficient stamina and which is a physical
+    ability of theirs, not a magic spell.
     Draconians receive a bonus on 'Thought Contact', 'Polearm-Mastery' and
     'Magic devices'.
+
+    Table of their traits:
+    Lineage     Breath          Resistances/abilities
+    --------------------------------------------------------------------------
+    Blue        Lightning       lightning, brand (5), aura (15), immune (25)
+    White       Frost           frost, aura (15), immune (25)
+    Red         Fire            fire, immune (25)
+    Black       Acid            acid, immune (25)
+    Green       Poison          poison, immune (25)
+    Multi-hued  Random of       lightning (5), frost (10), fire (15),
+                those above     acid (20), poison (25)
+    Bronze      Confusion       confusion (5), paralysis (10), reflection (20)
+    Silver      Frost           cold (5), poison (10), reflection (20)
+    Gold        Sound           acid (5), sound (10), reflection (20)
+    Law         Shards          shards (5), sound (15)
+    Chaos       Chaos           confusion (5), chaos (15), disenchantment (20)
+    Balance     Disenchantment  disenchantment (10), sound (20)
 
 - Kobold
     These somewhat smallish dog-faced humanoids resist poison intrinsically.
@@ -12081,6 +12112,9 @@ Parties:
 
     If you choose 'Create or rename a party' while already being in a party,
     you will be prompted to rename the party. Only the party owner can do this.
+
+    Specialty: Everlasting and non-everlasting players can team up while
+               inside the Nether Realm.
 
 -Create or rename an 'Iron Team' party
     An iron team is like a party with the following differences:
