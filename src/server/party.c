@@ -863,6 +863,7 @@ int guild_create(int Ind, cptr name){
 
 	/* Set guildmaster */
 	guilds[index].master = p_ptr->id;
+	guilds[index].cmode = p_ptr->mode;
 
 	/* Init guild hall, flags & level */
 	guilds[index].h_idx = 0;
@@ -1038,6 +1039,7 @@ int party_create(int Ind, cptr name)
 
 	/* Set mode to normal */
 	parties[index].mode = PA_NORMAL;
+	parties[index].cmode = p_ptr->mode;
 
 	/* Add the owner as a member */
 	p_ptr->party = index;
@@ -1139,6 +1141,7 @@ int party_create_ironteam(int Ind, cptr name)
 
 	/* Set mode to iron team */
 	parties[index].mode = PA_IRONTEAM;
+	parties[index].cmode = p_ptr->mode;
 
 	/* Initialize max exp */
 	parties[index].experience = 0;
@@ -1420,7 +1423,7 @@ int party_add(int adder, cptr name) {
 	}
 
 #ifdef ALLOW_NR_CROSS_PARTIES
-	if (!in_netherrealm(&q_ptr->wpos) || !in_neatherrealm(&p_ptr->wpos))
+	if (!in_netherrealm(&q_ptr->wpos) || !in_netherrealm(&p_ptr->wpos))
 #endif
 	/* Everlasting and other chars cannot be in the same party */
 	if (compat_pmode(adder, Ind, FALSE)) {
@@ -4183,4 +4186,22 @@ void restore_acclists(void) {
 
 	s_printf("done.\n");
 	fclose(fp);
+}
+
+/* search for any members of a guild, and set guild's mode to that first member found's mode */
+void fix_lost_guild_mode(int g_id) {
+        int slot;
+        hash_entry *ptr;
+        for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+                ptr = hash_table[slot];
+                while (ptr) {
+                        if (ptr->guild && ptr->guild == g_id) {
+                                guilds[g_id].cmode = ptr->mode;
+                                s_printf("Guild %s (%d): Mode has been fixed to %d.\n", guilds[g_id].name, g_id, guilds[g_id].cmode);
+				return;
+                        }
+                        ptr = ptr->next;
+                }
+
+        }
 }

@@ -1558,6 +1558,7 @@ typedef struct party_type {
 	char owner[NAME_LEN];	/* Owner's name */
 	s32b members;		/* Number of people in the party */
 	s32b created;		/* Creation (or disband-tion) time */
+	byte cmode;		/* Party creator's character mode */
 	byte mode;		/* 'Iron Team' or normal party? (C. Blue) */
 	s32b experience;	/* For 'Iron Teams': Max experienc of members. */
 	u32b flags;		/* Party rules flags */
@@ -1586,6 +1587,7 @@ typedef struct guild_type {
 	char name[MAX_CHARS];
 	s32b master;		/* Guildmaster unique player ID */
 	s32b members;		/* Number of guild members */
+	byte cmode;		/* Guild creator's character mode */
 	u32b flags;		/* Guild rules flags */
 	s16b minlev;		/* minimum level to join */
 	char adder[5][NAME_LEN];	/* Guild may have up to 5 people who can add besides the guild master */
@@ -2744,7 +2746,7 @@ struct player_type
 	byte tim_rcraft_help_dy;
 	
 
-#if defined(DUNGEON_VISIT_BONUS)
+#if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES)
 	struct worldpos wpos_old;
 #endif
 

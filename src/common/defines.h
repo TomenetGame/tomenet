@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	1
+#define SF_VERSION_PATCH	2
 #define SF_VERSION_EXTRA	0
 
 
@@ -7616,7 +7616,9 @@ extern int PlayerUID;
 #endif
 
 /* check if a player is in the Nether Realms -- side effect: Works in Valinor too ;) */
-#define in_netherrealm(wpos) (getlevel(wpos) >= 166)
+#ifdef ALLOW_NR_CROSS_PARTIES
+ #define in_netherrealm(wpos) (getlevel(wpos) >= 166)
+#endif
 
 /* quickly check if a given wpos is within certain special dungeons */
 #define in_irondeepdive(wpos) \

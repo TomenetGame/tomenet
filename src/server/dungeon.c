@@ -2593,7 +2593,7 @@ void recall_player(int Ind, char *message){
 
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 		/* need to leave party, since we might be teamed up with incompatible char mode players! */
-		if (p_ptr->party) party_leave(Ind);
+		if (p_ptr->party && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) party_leave(Ind);
 #endif
 
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
@@ -2650,11 +2650,6 @@ void recall_player(int Ind, char *message){
 		}
 #endif
 	}
-#ifdef ALLOW_NR_CROSS_PARTIES
-	else if (p_ptr->party && in_netherrealm(&old_wpos))
-		/* need to leave party, since we might be teamed up with incompatible char mode players! */
-		party_leave(Ind);
-#endif
 }
 
 
@@ -5454,7 +5449,13 @@ void process_player_change_wpos(int Ind)
         if (p_ptr->max_panel_cols < 0) p_ptr->max_panel_cols = 0;
 #endif
 
-#if defined(DUNGEON_VISIT_BONUS)
+#ifdef ALLOW_NR_CROSS_PARTIES
+        if (p_ptr->party && in_netherrealm(&p_ptr->wpos_old) && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode))
+                /* need to leave party, since we might be teamed up with incompatible char mode players! */
+                party_leave(Ind);
+#endif
+
+#if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES)
 	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
 #endif
 
@@ -5911,7 +5912,7 @@ void dungeon(void)
 		}
 		process_player_change_wpos(i);
 	}
-	
+
 	/* New meta client implementation */
 	meta_tick();
 

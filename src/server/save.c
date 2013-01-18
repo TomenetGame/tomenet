@@ -456,6 +456,7 @@ static void wr_guilds(){
 		wr_string(guilds[i].name);
 		wr_s32b(guilds[i].master);
 		wr_s32b(guilds[i].members);
+		wr_byte(guilds[i].cmode);
 		wr_u32b(guilds[i].flags);
 		wr_s16b(guilds[i].minlev);
 		for (j = 0; j < 5; j++)
@@ -478,6 +479,9 @@ static void wr_party(party_type *party_ptr)
 
 	/* Save the modus and members */
 	wr_byte(party_ptr->mode);
+
+	/* Save the creator's character mode */
+	wr_byte(party_ptr->cmode);
 
 	/* New - party flags, maybe */
 	wr_u32b(party_ptr->flags);

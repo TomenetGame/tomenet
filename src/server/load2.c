@@ -1008,6 +1008,17 @@ static void rd_guilds() {
 		rd_string(guilds[i].name, 80);
 		rd_s32b(&guilds[i].master);
 		rd_s32b(&guilds[i].members);
+		if (!older_than(4, 5, 2)) rd_byte(&guilds[i].cmode);
+		else {
+			/* first entry is dummy anyway */
+			if (i == 0) guilds[0].cmode = 0;
+			else if (guilds[i].master) {
+				guilds[i].cmode = lookup_player_mode(guilds[i].master);
+				s_printf("Guild %s (%d): Mode has been fixed to master's mode %d.\n", guilds[i].name, i, guilds[i].cmode);
+			} else { /* leaderless guild, ow */
+				fix_lost_guild_mode(i);
+			}
+		}
 		rd_u32b(&guilds[i].flags);
 		rd_s16b(&guilds[i].minlev);
 		if (!older_than(4, 4, 20)) {
@@ -1040,12 +1051,27 @@ static void rd_party(int n)
 	/* Number of people and creation time */
 	rd_s32b(&party_ptr->members);
 	rd_s32b(&party_ptr->created);
-	
+
 	/* Party type and members */
 	if (!s_older_than(4, 1, 7))
 		rd_byte(&party_ptr->mode);
 	else
 		party_ptr->mode = 0;
+
+	if (!older_than(4, 5, 2)) rd_byte(&party_ptr->cmode);
+	else {
+		/* first entry is dummy anyway; party in use at all? if not then we're done */
+		if (n == 0 || !party_ptr->members) party_ptr->cmode = 0;
+		else {
+			u32b p_id = lookup_player_id(party_ptr->owner);
+			if (p_id) {
+				party_ptr->cmode = lookup_player_mode(p_id);
+				s_printf("Party %s (%d): Mode has been fixed to %d.\n", party_ptr->name, n, party_ptr->cmode);
+			}
+			/* paranoia - a party without owner shouldn't exist */
+			else s_printf("Party %s (%d): Mode couldn't be fixed.\n", party_ptr->name, n);
+		}
+	}
 
 	if (!older_than(4, 4, 19)) rd_u32b(&party_ptr->flags);
 

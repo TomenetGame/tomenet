@@ -1289,6 +1289,7 @@ extern int lookup_player_ind(u32b id);
 
 extern void backup_acclists(void);
 extern void restore_acclists(void);
+extern void fix_lost_guild_mode(int g_id);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);
