@@ -2,7 +2,7 @@
 |      TomeNET Guide      |
 +=========================+-
 | Latest update: 18. January 2013 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.2a - official websites are:
+| for TomeNET version v4.5.3 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -147,6 +147,7 @@ Contents
     (6.8b)  Runes & Runemastery
     (6.8c)  Runespell tables
     (6.9)   Parties, Iron Teams, Guilds
+    (6.9a)  Guild halls
     (6.10)  Magic Device skill/ability details
     (6.11)  Parrying and blocking
     (6.12)  Fighting/shooting techniques
@@ -12010,6 +12011,9 @@ Rune    | Detonates when broken.
 Press 'P' to display the party menu.
 Here you can..
 
+
+Parties:
+--------
 -Create or rename a party
     In a party you will share experience points if you are within 7 character
     levels to each other and on the same dungeon/tower level respectively
@@ -12103,14 +12107,19 @@ Here you can..
     If the owner leaves his own party, the whole party is disbanded.
 
 
+Guilds:
+-------
 -Create a new guild
     You can create a guild with a character that is at least level 30.
     This costs 2,000,000 Au. A guild will stay, even if the owner dies.
     The guild creator will receive a 'Guild Key' which designates him as the
     guild master. In case the guild master dies, another guild member may
     fetch the key to become the new guild master.
-    (Apart from the dedicated guild chat, guilds currently don't do anything
-    except looking cool.)
+
+    A guild offers a dedicated guild chat, so players in a guild can organize
+    themselves in diving parties and still have a global chat if needed.
+
+    Guilds may have a guild hall, see (6.9a) below for more information.
 
     The following slash commands are available to manage your guild, only the
     guild master may use them:
@@ -12124,6 +12133,9 @@ Here you can..
     /guild_cfg [<flag> [<value]]
         Shows you your current guild configuration if used without any parms
         and allows you to change it by specifying a flag.
+
+    The same functionality as provided by these commands can simply be
+    accessed by pressing SHIFT+P and then choosing 'e)'.
 
 -Add player to guild
     Only the guild master can do this.
@@ -12140,12 +12152,14 @@ Here you can..
     The next player from that guild who grabs the guild key becomes the new
     guild master.
 
-Note: In general, a player of a guild who grabs the guild key becomes the new
+Note: A player of a leaderless guild who grabs the guild key becomes the new
       guild master.
 
 Note: Keys are indestructible, they can be lost though..
 
 
+PvP outside of the dedicated 'PvP' character mode:
+--------------------------------------------------
 -Specify player to attack
     Now you are hostile to that player and you will hurt each other like
     when fighting a monster (this includes auto-retaliating and targetting).
@@ -12154,6 +12168,33 @@ Note: Keys are indestructible, they can be lost though..
 -Make peace
     Make peace with a player you are hostile too. Better pay attention that
     your opponent makes peace too.
+
+
+(6.9a) Guild halls
+------------------
+A guild may have a guild hall. That is a house owned by the guild, which will
+persist until the guild is disbanded or it is sold by the guild master.
+
+To get a guild hall, the current guild master must buy a house and transfer
+ownership to the guild. He does this by standing next to the house door,
+pressing 'h' key for house operations, and then choose '(2) Change house owner'
+followed by '(2) Guild'.
+
+After the ownership has been changed to the guild, the house no longer counts
+to houses owned by the guild master. So it does not affect his house limit nor
+will it be wiped if the guild master dies.
+
+The guild master is the only person who can change back ownership of the guild
+hall or even sell it if the guild for example wants to migrate to a bigger
+guild hall.
+
+The appromimate guild hall location can be viewed by all guild members by
+pressing SHIFT+P and then choosing 'e)'.
+
+The door of a guild hall is displayed in violet colour to all eligible members.
+Note that a guild hall can, same as party-accessible houses, have restrictions
+put on it such as minimum level required to enter, et cetera. These can only be
+installed or changed by the current guild master.
 
 
 
