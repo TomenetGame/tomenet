@@ -380,6 +380,8 @@ static void init_monster_list() {
 			breathhued = FALSE;
 		}
 		if (buf[0] == 'F' && strstr(buf, "JOKEANGBAND")) discard = TRUE;
+		if (buf[0] == 'F' && strstr(buf, "PET")) discard = TRUE;
+		if (buf[0] == 'F' && strstr(buf, "NEUTRAL")) discard = TRUE;
 		if (buf[0] == 'F' && strstr(buf, "ATTR_ANY")) multihued = TRUE;
 		if (buf[0] == 'F' && strstr(buf, "ATTR_MULTI")) breathhued = TRUE;
 
@@ -406,6 +408,8 @@ static void init_monster_list() {
 			if (!p1 && !p2) continue;
 
 			if (buf[0] == 'F' && strstr(buf, "JOKEANGBAND")) discard = TRUE;
+			if (buf[0] == 'F' && strstr(buf, "PET")) discard = TRUE;
+			if (buf[0] == 'F' && strstr(buf, "NEUTRAL")) discard = TRUE;
 			if (buf[0] == 'F' && strstr(buf, "ATTR_ANY")) multihued = TRUE;
 			if (buf[0] == 'F' && strstr(buf, "ATTR_MULTI")) breathhued = TRUE;
 
