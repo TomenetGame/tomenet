@@ -725,8 +725,6 @@ They all start with a slash '/' hence they're called slash commands:
               character;
             - which of your auras are currently active (if you have points in
               the corresponding aura skills);
-            - the deepest dungeon level you have ever
-              reached (same as checking '~7');
             - extremities your current monster form possesses (if you're
               transformed into a monster form at the moment). This can be
               helpful to figure out what types of items you may equip while in
