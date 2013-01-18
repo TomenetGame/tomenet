@@ -3464,13 +3464,50 @@ void do_slash_cmd(int Ind, char *message)
 		}
 
 
+
+		/*
+		 * Privileged commands, level 2
+		 */
+		else if (!admin && p_ptr->privileged == 2) {
+		}
+
+		/*
+		 * Privileged commands, level 1
+		 */
+		else if (!admin && p_ptr->privileged) {
+			if (prefix(message, "/val")){
+				if(!tk) return;
+				/* added checking for account existance - mikaelh */
+				switch(validate(message3)) {
+				case -1: msg_format(Ind, "\377GValidating %s", message3);
+					break;
+				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
+					break;
+				case 1: msg_format(Ind, "\377rAccount %s already completely valid", message3);
+				}
+				return;
+			}
+			else if (prefix(message, "/inval")){
+				if(!tk) return;
+				/* added checking for account existance - mikaelh */
+				switch(invalidate(message3)) {
+				case -1: msg_format(Ind, "\377GInvalidating %s", message3);
+					break;
+				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
+					break;
+				case 1: msg_format(Ind, "\377rAccount %s already completely invalid", message3);
+				}
+				return;
+			}
+		}
+
+
+
 		/*
 		 * Admin commands
 		 *
 		 * These commands should be replaced by LUA scripts in the future.
 		 */
-
-
 		else if (admin) {
 			/* presume worldpos */
 			switch (tk) {
