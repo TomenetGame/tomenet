@@ -7385,6 +7385,8 @@ Elemental rings (flames, frost, acid, lightning)
                     Provide the according resistance and can be activated for
                     temporary resistance too, thereby temporarily giving you
                     "double resistance" (see (5.17) for details).
+                    They also brand your physical attacks with the according
+                    element.
 Amulet of the Moon      Gives infra-vision, the power to see invisible, and it
                         can be activated to sleep monsters nearby.
                         It also improves your +hit and +dam boni.
