@@ -790,6 +790,7 @@ static bool forbidden_name(char *cname) {
 	do name[i] = tolower(cname[i]);
 	while (cname[i++]);
 
+
 	/* Hack -- allow 'guest' account */
 	/* if (!strcmp("Guest", name)) return FALSE; */
 
@@ -801,19 +802,27 @@ static bool forbidden_name(char *cname) {
 	if (strstr(name, "guild") && strstr(name, ".data")) return TRUE; /* moved guild hall save files to save folder, from data folder */
 	if (strlen(name) >= 5 && name[0] == 's' && name[1] == 'a' && name[2] == 'v' && name[3] == 'e' &&
 	    name[4] >= '0' && name[4] <= '9') return TRUE; /* backup save file folders, save00..saveNN */
-	if (!strcmp(name, "tomenet.acc")) return TRUE; /* just in case someone copies it over into save folder */
-	if (!strcmp(name, "insanity")) return TRUE;
 	if (!strcmp(name, "estate")) return TRUE; /* for new 'estate' folder that backs up houses. */
+
+	/* account file management */
+	if (!strcmp(name, "tomenet.acc")) return TRUE;
+	if (!strcmp(name, "tomenet.acc_old")) return TRUE;
+	if (!strcmp(name, "accedit")) return TRUE;
+
+	/* special death causes */
+	if (!strcmp(name, "insanity")) return TRUE;
 	if (!strcmp(name, "divine wrath")) return TRUE;
 #ifdef ENABLE_MAIA
 	if (!strcmp(name, "indecisiveness")) return TRUE;
 #endif
 	if (!strcmp(name, "indetermination")) return TRUE;
+
 	/* Hardcode some not so important ones */
 	if (!strcmp(name, "tbot")) return TRUE; /* Sandman's internal chat bot */
 	if (!strcmp(name, "8ball")) return TRUE; /* Sandman's internal chat bot */
 	/* For logging chat relayed from IRC */
 	if (!strcmp(name, "irc")) return TRUE;
+
 
 	path_build(path_buf, 1024, ANGBAND_DIR_CONFIG, "badnames.txt");
 
