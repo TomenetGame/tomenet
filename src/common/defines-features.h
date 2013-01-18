@@ -127,6 +127,7 @@
 #endif
 
 #ifdef TEST_SERVER
+ #define ALLOW_NR_CROSS_PARTIES
  #define ENABLE_DRACONIAN_TRAITS
  #define ENABLE_GUILD_HALL	/* Allow an OT_GUILD house */
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */

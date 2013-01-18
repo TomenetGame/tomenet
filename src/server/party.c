@@ -1419,6 +1419,9 @@ int party_add(int adder, cptr name) {
 		return FALSE;
 	}
 
+#ifdef ALLOW_NR_CROSS_PARTIES
+	if (!in_netherrealm(&q_ptr->wpos) || !in_neatherrealm(&p_ptr->wpos))
+#endif
 	/* Everlasting and other chars cannot be in the same party */
 	if (compat_pmode(adder, Ind, FALSE)) {
 		msg_format(adder, "\377yYou cannot form a party with %s characters.", compat_pmode(adder, Ind, FALSE));

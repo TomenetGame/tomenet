@@ -2593,7 +2593,7 @@ void recall_player(int Ind, char *message){
 
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 		/* need to leave party, since we might be teamed up with incompatible char mode players! */
-		party_leave(Ind);
+		if (p_ptr->party) party_leave(Ind);
 #endif
 
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
@@ -2650,6 +2650,11 @@ void recall_player(int Ind, char *message){
 		}
 #endif
 	}
+#ifdef ALLOW_NR_CROSS_PARTIES
+	else if (p_ptr->party && in_netherrealm(&old_wpos))
+		/* need to leave party, since we might be teamed up with incompatible char mode players! */
+		party_leave(Ind);
+#endif
 }
 
 

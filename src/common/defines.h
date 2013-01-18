@@ -7615,6 +7615,9 @@ extern int PlayerUID;
  //#define HOUSE_PAINTING_HIDE_MUSEUM
 #endif
 
+/* check if a player is in the Nether Realms -- side effect: Works in Valinor too ;) */
+#define in_netherrealm(wpos) (getlevel(wpos) >= 166)
+
 /* quickly check if a given wpos is within certain special dungeons */
 #define in_irondeepdive(wpos) \
 	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && (wpos)->wz * WPOS_IRONDEEPDIVE_Z > 0)
