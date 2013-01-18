@@ -20646,7 +20646,7 @@ D:A grey-brown bird with orange-red breast feathers.
 #Nether Realm only
 N:1143:Nether vortex
 G:v:G
-I:140:900d13:100:30:0
+I:140:40d20:100:30:0
 W:97:4:0:30000
 E:0:0:0:0:0:0
 O:0:0:0:0
