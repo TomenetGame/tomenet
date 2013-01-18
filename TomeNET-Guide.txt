@@ -9922,10 +9922,10 @@ vary. For example a warrior cannot learn magic spells.
     want to use these forms.)
     To find out the special abilities of a monster form, see section (6.7).
     A list of useful low-level humanoid forms for weapon-using mimics is given
-    in (6.7c).
-    because those have a somewhat harder time to find usable forms early on
-    than martial artists who might just utilize easy-to-get forms such as fruit
-    bat, wild cat, crow or spiders right away for great effect.
+    in (6.7c) because weapon-using mimics have a somewhat harder time to find
+    usable forms early on than martial artists who might just utilize
+    easy-to-get forms such as fruit bat, wild cat, crow or spiders right away
+    for great effect.
 
     Mimics can get the highest amount of hit points of any class, even in the
     very long run ie at very high character levels far above 50, provided they
