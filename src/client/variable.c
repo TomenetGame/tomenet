@@ -346,6 +346,7 @@ bool request_abort = FALSE;
    and also for monster lore */
 char monster_list_name[MAX_R_IDX][80], monster_list_symbol[MAX_R_IDX][2];
 int monster_list_code[MAX_R_IDX], monster_list_idx = 0;
+bool monster_list_any[MAX_R_IDX], monster_list_breath[MAX_R_IDX];
 /* For artifact lore */
 char artifact_list_name[MAX_A_IDX][80];
 int artifact_list_code[MAX_A_IDX], artifact_list_idx = 0;

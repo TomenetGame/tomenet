@@ -332,7 +332,7 @@ static void init_monster_list() {
 	char buf[1024], *p1, *p2;
 	int v1 = 0, v2 = 0, v3 = 0;
 	FILE *fff;
-	bool discard = FALSE;
+	bool discard = FALSE, multihued = FALSE, breathhued = FALSE;
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
@@ -373,8 +373,15 @@ static void init_monster_list() {
 
 				discard = FALSE;
 			}
+
+			if (multihued) 	monster_list_any[monster_list_idx - 1] = TRUE;
+			else if (breathhued) monster_list_breath[monster_list_idx - 1] = TRUE;
+			multihued = FALSE;
+			breathhued = FALSE;
 		}
 		if (buf[0] == 'F' && strstr(buf, "JOKEANGBAND")) discard = TRUE;
+		if (buf[0] == 'F' && strstr(buf, "ATTR_ANY")) multihued = TRUE;
+		if (buf[0] == 'F' && strstr(buf, "ATTR_MULTI")) breathhued = TRUE;
 
 		p1 = buf + 2; /* monster code */
 		p2 = strchr(p1, ':'); /* 1 before monster name */
@@ -399,6 +406,8 @@ static void init_monster_list() {
 			if (!p1 && !p2) continue;
 
 			if (buf[0] == 'F' && strstr(buf, "JOKEANGBAND")) discard = TRUE;
+			if (buf[0] == 'F' && strstr(buf, "ATTR_ANY")) multihued = TRUE;
+			if (buf[0] == 'F' && strstr(buf, "ATTR_MULTI")) breathhued = TRUE;
 
 			if (strlen(buf) < 5 || buf[0] != 'G') continue;
 

@@ -1543,9 +1543,10 @@ void cmd_help(void)
 	peruse_file();
 }
 
+#define ARTIFACT_LORE_LIST_SIZE 17
 static void artifact_lore(void) {
 	char s[20 + 1], tmp[80];
-	int c, i, j, n, selected, selected_list, list_idx[15];
+	int c, i, j, n, selected, selected_list, list_idx[ARTIFACT_LORE_LIST_SIZE];
 	bool show_lore = TRUE;
 	int selected_line = 0;
 	/* for pasting lore to chat */
@@ -1600,7 +1601,7 @@ static void artifact_lore(void) {
 			}
 		}
 
-		for (i = 0; i < MAX_A_IDX && n < 15; i++) {
+		for (i = 0; i < MAX_A_IDX && n < ARTIFACT_LORE_LIST_SIZE; i++) {
 			/* direct match above already? */
 			if (i == selected_list) continue;
 
@@ -1743,9 +1744,13 @@ static void artifact_lore(void) {
 	Term_load();
 }
 
+/* 18 ATTR_MULTI 'D's in the game atm, but Chaos Wyrm is also ATTR_ANY,
+   so we'll just have ATTR_ANY override ATTR_MULTI and disallow both,
+   hence ending up with a neat amount of 17 'pure' ATTR_ANY monsters. ;) - C. Blue */
+#define MONSTER_LORE_LIST_SIZE 17
 static void monster_lore(void) {
 	char s[20 + 1], tmp[80];
-	int c, i, j, n, selected, selected_list, list_idx[15];
+	int c, i, j, n, selected, selected_list, list_idx[MONSTER_LORE_LIST_SIZE];
 	bool show_lore = TRUE;
 	int selected_line = 0;
 	/* for pasting lore to chat */
@@ -1755,11 +1760,12 @@ static void monster_lore(void) {
 
 	Term_save();
 
-    s[0] = '\0';
+    s[0] = '\0'; s[1] = 0; s[2] = 0;
     while (TRUE) {
 	Term_clear();
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) monster name to refine the search:");
-	Term_putstr(2,  3, -1, TERM_WHITE, "Press RETURN to display lore about the selected monster.");
+	Term_putstr(2,  3, -1, TERM_WHITE, "Or press '!' followed by a monster symbol and a colour symbol or 'm' or 'M'.");
+	//Term_putstr(2,  4, -1, TERM_WHITE, "Press RETURN to display lore about the selected monster.");
 
 	while (TRUE) {
 		Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
@@ -1771,49 +1777,89 @@ static void monster_lore(void) {
 		n = 0;
 		selected = selected_list = -1;
 
-		/* hack 1: direct match always takes top position
-		   hack 2: match at beginning of name takes precedence */
-		if (s[0]) for (i = 1; i < MAX_R_IDX; i++) {
-			/* create upper-case working copy */
-			strcpy(tmp, monster_list_name[i]);
-			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
-
-			/* exact match? */
-			if (!strcmp(tmp, s)) {
-				selected = monster_list_code[i];
-				selected_list = i;
-				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
-				list_idx[0] = i;
-				n++;
-				break;
+		/* Entering a '!' first means "search for monster symbol instead" */
+		if (s[0] == '!') {
+			if (s[1]) for (i = 1; i < MAX_R_IDX; i++) {
+				/* match? */
+				if (monster_list_symbol[i][1] == s[1] &&
+				    (!s[2] || monster_list_symbol[i][0] == s[2] ||
+				    (s[2] == 'm' && monster_list_any[i]) ||
+				    (s[2] == 'M' && monster_list_breath[i]))) {
+		    			selected = monster_list_code[i];
+					selected_list = i;
+					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+					list_idx[0] = i;
+					n++;
+					break;
+				}
 			}
-			/* beginning of line match? */
-			else if (!strncmp(tmp, s, strlen(s))) {
-				selected = monster_list_code[i];
-				selected_list = i;
-				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
-				list_idx[0] = i;
-				n++;
-				break;
+
+			/* check for more matches */
+			for (i = 1; i < MAX_R_IDX && n < MONSTER_LORE_LIST_SIZE; i++) {
+				/* direct match above already? */
+				if (i == selected_list) continue;
+
+				if (monster_list_code[i] &&
+				    monster_list_symbol[i][1] == s[1] &&
+				    (!s[2] || monster_list_symbol[i][0] == s[2] ||
+				    (s[2] == 'm' && monster_list_any[i]) ||
+				    (s[2] == 'M' && monster_list_breath[i]))) {
+					if (n == 0) {
+						selected = monster_list_code[i];
+						selected_list = i;
+					}
+					Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+					list_idx[n] = i;
+					n++;
+				}
 			}
 		}
+		/* Classic: Search for monster name */
+		else {
+			/* hack 1: direct match always takes top position
+			   hack 2: match at beginning of name takes precedence */
+			if (s[0]) for (i = 1; i < MAX_R_IDX; i++) {
+				/* create upper-case working copy */
+				strcpy(tmp, monster_list_name[i]);
+				for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
 
-		for (i = 1; i < MAX_R_IDX && n < 15; i++) {
-			/* direct match above already? */
-			if (i == selected_list) continue;
-
-			/* create upper-case working copy */
-			strcpy(tmp, monster_list_name[i]);
-			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
-
-			if (monster_list_code[i] && strstr(tmp, s)) {
-				if (n == 0) {
-					selected = monster_list_code[i];
+				/* exact match? */
+				if (!strcmp(tmp, s)) {
+	    				selected = monster_list_code[i];
 					selected_list = i;
+					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+					list_idx[0] = i;
+					n++;
+					break;
 				}
-				Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
-				list_idx[n] = i;
-				n++;
+				/* beginning of line match? */
+				else if (!strncmp(tmp, s, strlen(s))) {
+		    			selected = monster_list_code[i];
+					selected_list = i;
+					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+					list_idx[0] = i;
+					n++;
+					break;
+				}
+			}
+
+			for (i = 1; i < MAX_R_IDX && n < MONSTER_LORE_LIST_SIZE; i++) {
+				/* direct match above already? */
+				if (i == selected_list) continue;
+
+				/* create upper-case working copy */
+				strcpy(tmp, monster_list_name[i]);
+				for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
+
+				if (monster_list_code[i] && strstr(tmp, s)) {
+					if (n == 0) {
+						selected = monster_list_code[i];
+						selected_list = i;
+					}
+					Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+					list_idx[n] = i;
+					n++;
+				}
 			}
 		}
 
@@ -1874,9 +1920,9 @@ static void monster_lore(void) {
 		/* illegal char */
 		if (c < 32 || c > 127) continue;
 		/* name too long? */
-		if (strlen(s) >= 20) continue;
+		if (strlen(s) >= (s[0] == '!' ? 3 : 20)) continue;
 		/* build name */
-		c = toupper(c);
+		if (s[0] != '!') c = toupper(c); /* We're looking for a name, not a symbol */
 		strcat(s, format("%c", c));
 	}
 
@@ -1931,7 +1977,7 @@ static void monster_lore(void) {
 		}
 		/* ESC = go back and erase search term */
 		if (c == '\e') {
-			s[0] = '\0';
+			s[0] = '\0'; s[1] = 0; s[2] = 0;
 			break;
 		}
 		/* Backspace = go back but keep search term */

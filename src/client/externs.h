@@ -864,6 +864,7 @@ extern errr init_sound_sdl(int argc, char **argv);
 #endif
 
 extern char monster_list_name[MAX_R_IDX][80], monster_list_symbol[MAX_R_IDX][2];
+extern bool monster_list_any[MAX_R_IDX], monster_list_breath[MAX_R_IDX];
 extern int monster_list_code[MAX_R_IDX], monster_list_idx;
 
 extern char artifact_list_name[MAX_A_IDX][80];
