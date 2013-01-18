@@ -2022,7 +2022,25 @@ static void player_setup(int Ind, bool new)
 #ifndef RPG_SERVER    /* Not in RPG */
 		if (wpos->wz && !in_irondeepdive(wpos)) {
 			s_printf("Auto-recalled panic-saved player %s.\n", p_ptr->name);
+
+ #ifdef ALLOW_NR_CROSS_PARTIES
+		        if (p_ptr->party && in_netherrealm(&p_ptr->wpos) && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) {
+    	        	/* need to leave party, since we might be teamed up with incompatible char mode players! */
+				/* party_leave(Ind); */
+			        if (streq(p_ptr->name, parties[party_id].owner)) {
+            				/* impossible, because the owner always has the same mode as the party's cmode */
+            				/* party_remove(Ind, p_ptr->name); */
+			        } else {
+				        parties[p_ptr->party].members--;
+				        Send_party(Ind, TRUE, FALSE);
+				        p_ptr->party = 0;
+				        clockin(Ind, 2);
+			        }
+			}
+ #endif
+
 			wpos->wz = 0;
+
 	    		/* Avoid landing in permanent rock or trees or mountains etc.
 		           after an auto-recall, caused by a previous panic save. */
 			p_ptr->auto_transport = AT_BLINK;
