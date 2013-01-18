@@ -2027,7 +2027,7 @@ static void player_setup(int Ind, bool new)
 		        if (p_ptr->party && in_netherrealm(&p_ptr->wpos) && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) {
     	        	/* need to leave party, since we might be teamed up with incompatible char mode players! */
 				/* party_leave(Ind); */
-			        if (streq(p_ptr->name, parties[party_id].owner)) {
+			        if (streq(p_ptr->name, parties[p_ptr->party].owner)) {
             				/* impossible, because the owner always has the same mode as the party's cmode */
             				/* party_remove(Ind, p_ptr->name); */
 			        } else {
