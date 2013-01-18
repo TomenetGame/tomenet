@@ -9915,7 +9915,7 @@ vary. For example a warrior cannot learn magic spells.
     mimic has to kill 40 of them and have a mimicry skill of at least 20.
 
     To find out how many monsters you already killed and how many you need
-    in total to learn a form, press the '~' key followed by '3'.
+    in total to learn a form, press the '~' key followed by '2'.
     To polymorph into a form, press 'm' key, like casting a magic spell.
     (Forms that have DISBELIEVE ability are skipped when using the normal
     'Polymorph Self' spell. You have to use 'Polymorph Self Into..' if you
