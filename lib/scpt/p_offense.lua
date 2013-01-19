@@ -46,13 +46,13 @@ HGLOBELIGHT = add_spell
 		if get_level(Ind, HGLOBELIGHT, 50) >= 3 then lite_area(Ind, 10, 4)
 		else lite_room(Ind, player.wpos, player.py, player.px) end
 		if get_level(Ind, HGLOBELIGHT, 50) >= 8 then
-			fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT, 100)) * 2, 5 + get_level(Ind, HGLOBELIGHT, 6), " calls a globe of light of")
+			fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT, 100)) * 2, 4 + get_level(Ind, HGLOBELIGHT, 3), " calls a globe of light of")
 		end
 		msg_print(Ind, "You are surrounded by a globe of light")
 	end,
 	["info"] = 	function()
 		if get_level(Ind, HGLOBELIGHT, 50) >= 8 then
-			return "dam "..(10 + get_level(Ind, HGLOBELIGHT, 100)).." rad "..(5 + get_level(Ind, HGLOBELIGHT, 6))
+			return "dam "..(10 + get_level(Ind, HGLOBELIGHT, 100)).." rad "..(4 + get_level(Ind, HGLOBELIGHT, 3))
 		else
 			return ""
 		end
@@ -103,10 +103,10 @@ HORBDRAIN = add_spell
 	["spell"] = 	function(args)
 		local type
 		type = GF_HOLY_ORB
-		fire_ball(Ind, type, args.dir, 20 + get_level(Ind, HORBDRAIN, 475), 2 + get_level(Ind, HORBDRAIN, 5), " casts a holy orb for")
+		fire_ball(Ind, type, args.dir, 20 + get_level(Ind, HORBDRAIN, 475), 2 + get_level(Ind, HORBDRAIN, 3), " casts a holy orb for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, HORBDRAIN, 475)).." rad "..(2 + get_level(Ind, HORBDRAIN, 5))
+		return "dam "..(20 + get_level(Ind, HORBDRAIN, 475)).." rad "..(2 + get_level(Ind, HORBDRAIN, 3))
 	end,
 	["desc"] =	{
 			"Calls an holy orb to devour the evil",

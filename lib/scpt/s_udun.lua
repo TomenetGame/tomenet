@@ -176,10 +176,10 @@ HELLFIRE = add_spell
 	["spell"] =     function(args)
 			local type
 	                type = GF_HELL_FIRE
-	                fire_ball(Ind, type, args.dir, 20 + get_level(Ind, HELLFIRE, 500), 2 + get_level(Ind, HELLFIRE, 4), " casts a ball of hellfire for")
+	                fire_ball(Ind, type, args.dir, 20 + get_level(Ind, HELLFIRE, 500), 2 + get_level(Ind, HELLFIRE, 2), " casts a ball of hellfire for")
 	        end,
         ["info"] =      function()
-	                return "dam "..(20 + get_level(Ind, HELLFIRE, 500)).." rad "..(2 + get_level(Ind, HELLFIRE, 4))
+	                return "dam "..(20 + get_level(Ind, HELLFIRE, 500)).." rad "..(2 + get_level(Ind, HELLFIRE, 2))
 	        end,
         ["desc"] =      {
 	                "Conjures a ball of hellfire to burn your foes to ashes",

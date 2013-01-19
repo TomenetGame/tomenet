@@ -140,10 +140,10 @@ VAPOR = add_spell
 --		        fire_cloud(Ind, GF_WATER, 0, 3 + get_level(Ind, VAPOR, 20), 3 + get_level(Ind, VAPOR, 9, 0), 5, 10, " fires a cloud of vapor for")
 --dur should strictly calculating be 3, but that'd be too short feeling-wise, so leaving it at 5, buffing the spell a bit.
 --1.5			fire_cloud(Ind, GF_WATER, 0, 3 + get_level(Ind, VAPOR, 24), 3 + get_level(Ind, VAPOR, 9, 0), 5, 8, " fires a cloud of vapor for")
-			fire_cloud(Ind, GF_WATER, 0, 3 + get_level(Ind, VAPOR, 34), 3 + get_level(Ind, VAPOR, 9, 0), 5, 8, " fires a cloud of vapor for")
+			fire_cloud(Ind, GF_WATER, 0, 3 + get_level(Ind, VAPOR, 34), 3 + get_level(Ind, VAPOR, 4, 0), 5, 8, " fires a cloud of vapor for")
 	end,
 	["info"] = 	function()
-       			return "dam "..(3 + get_level(Ind, VAPOR, 34)).." rad "..(3 + get_level(Ind, VAPOR, 9, 0)).." dur 5"
+       			return "dam "..(3 + get_level(Ind, VAPOR, 34)).." rad "..(3 + get_level(Ind, VAPOR, 4, 0)).." dur 5"
 	end,
         ["desc"] =	{
                         "Fills the air with toxic moisture to eradicate annoying critters"

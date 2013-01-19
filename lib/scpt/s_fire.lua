@@ -14,13 +14,13 @@ GLOBELIGHT = add_spell
                 if get_level(Ind, GLOBELIGHT, 50) >= 10 then lite_area(Ind, 10, 4)
                 else lite_room(Ind, player.wpos, player.py, player.px) end
                 if get_level(Ind, GLOBELIGHT, 50) >= 25 then
-		        fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 5 + get_level(Ind, GLOBELIGHT, 6), " calls a globe of light of")
+		        fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 4 + get_level(Ind, GLOBELIGHT, 3), " calls a globe of light of")
 		end
 		msg_print(Ind, "You are surrounded by a globe of light")
 	end,
 	["info"] = 	function()
         	if get_level(Ind, GLOBELIGHT, 50) >= 10 then
-			return "dam "..(10 + get_level(Ind, GLOBELIGHT, 100)).." rad "..(5 + get_level(Ind, GLOBELIGHT, 6))
+			return "dam "..(10 + get_level(Ind, GLOBELIGHT, 100)).." rad "..(4 + get_level(Ind, GLOBELIGHT, 3))
                 else
                 	return ""
                 end
@@ -74,14 +74,14 @@ FIREFLASH = add_spell
                 local type
         	if (get_level(Ind, FIREFLASH, 50) >= 20) then
 	        	type = GF_HOLY_FIRE
-	    		fire_ball(Ind, type, args.dir, 20 + get_level(Ind, FIREFLASH, 500), 2 + get_level(Ind, FIREFLASH, 5), " casts a ball of holy fire for")
+	    		fire_ball(Ind, type, args.dir, 20 + get_level(Ind, FIREFLASH, 500), 2 + get_level(Ind, FIREFLASH, 3), " casts a ball of holy fire for")
         	else
         		type = GF_FIRE
-			fire_ball(Ind, type, args.dir, 20 + get_level(Ind, FIREFLASH, 500), 2 + get_level(Ind, FIREFLASH, 5), " casts a fire ball for")
+			fire_ball(Ind, type, args.dir, 20 + get_level(Ind, FIREFLASH, 500), 2 + get_level(Ind, FIREFLASH, 3), " casts a fire ball for")
 	        end
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, FIREFLASH, 500)).." rad "..(2 + get_level(Ind, FIREFLASH, 5))
+		return "dam "..(20 + get_level(Ind, FIREFLASH, 500)).." rad "..(2 + get_level(Ind, FIREFLASH, 3))
 	end,
         ["desc"] =	{
         		"Conjures a ball of fire to burn your foes to ashes",
