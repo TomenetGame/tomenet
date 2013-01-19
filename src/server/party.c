@@ -4204,4 +4204,9 @@ void fix_lost_guild_mode(int g_id) {
                 }
 
         }
+        /* paranoia: something went really wrong, such as savefile rollback or divine intervention */
+        if (slot == NUM_HASH_ENTRIES) {
+		guilds[g_id].members = 0;
+		s_printf("Guild %s (%d): Has been erased!\n", guilds[g_id].name, g_id);
+        }
 }
