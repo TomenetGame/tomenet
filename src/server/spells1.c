@@ -9324,8 +9324,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			} else if (hack_dam >= 2000) { /* CLW */
 				(void)set_blind(Ind, 0);
 				(void)set_cut(Ind, 0, 0);
-			}
-			if (hack_dam >= 1000) { /* holy curing PBAoE */
+			} else if (hack_dam >= 1000) { /* holy curing PBAoE */
 				if (Ind != -who) dam = (dam * 3) / 2; /* heals allies for 3/4 of the self-heal amount */
 			}
 
