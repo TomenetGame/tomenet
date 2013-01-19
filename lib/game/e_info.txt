@@ -2349,7 +2349,7 @@ F:NO_SEED
 # Weapon of Perfection (must be light (<=100) and sword or polearm)
 N:199:of Perfection
 X:A:24:30
-W:50:1:30:5000
+W:0:1:107:5000
 T:22:1:3
 T:22:5:5
 T:22:7:7
