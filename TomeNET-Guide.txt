@@ -12046,6 +12046,8 @@ Here you can..
 Parties:
 --------
 -Create or rename a party
+    Allows you to create a party if you aren't in one yet, or rename your
+    current party, provided you are the party owner.
     In a party you will share experience points if you are within 7 character
     levels to each other and on the same dungeon/tower level respectively
     the same worldmap/wilderness sector. A slight experience bonus is applied
@@ -12117,6 +12119,8 @@ Parties:
                inside the Nether Realm.
 
 -Create or rename an 'Iron Team' party
+    Allows you to create an iron team if you aren't in one yet, or rename your
+    current iron team, provided you are the party owner.
     An iron team is like a party with the following differences:
     An 'Iron Team' can only be formed with newly created characters. Its
     members will only get experience for killing monsters if ALL members
@@ -12125,8 +12129,14 @@ Parties:
     If you choose this while already being in an iron team, you will be
     prompted to rename it. Only the iron team owner can do this.
 
--Add a player to party
+-Add a player to party / Add yourself to party
+    If you are in a party you will see the option "Add a player to party",
+    allowing you to add more players to your party.
     This can be done by all members of the party, not just by the owner!
+
+    If you aren't in a party, you will see "Add yourself to party" instead!
+    This will allow you to add this character to a party, provided that at
+    least one of your other characters is already a member of it.
 
 -Delete a player from your party
     This can only be done by the party owner.
@@ -12171,8 +12181,19 @@ Guilds:
     The same functionality as provided by these commands can simply be
     accessed by pressing SHIFT+P and then choosing 'e)'.
 
--Add player to guild
-    Only the guild master can do this.
+-Add player to guild / Add yourself to guild
+    Only the guild master or a designated 'adder' can do this.
+
+    If you are in a guild you will see the option "Add a player to guild",
+    which allows you to add another player to this guild. You need to be either
+    the guild master or one of the designated 'adders' to do this (and the
+    'adders' guild flag must be enabled).
+
+    If you aren't in a guild, you will see "Add yourself to guild" instead!
+    This will allow you to add this character to a guild, provided that at
+    least one of your other characters is either the guild master or one of the
+    'adders' designated by the guild master (and the 'adders' guild flag must
+    be enabled).
 
 -Remove player from guild
     Only the guild master can do this. If all members are removed including
@@ -12186,10 +12207,8 @@ Guilds:
     The next player from that guild who grabs the guild key becomes the new
     guild master.
 
-Note: A player of a leaderless guild who grabs the guild key becomes the new
-      guild master.
-
-Note: Keys are indestructible, they can be lost though..
+A player of a leaderless guild who grabs the guild key becomes the new
+guild master. Keys are indestructible, they can be lost though..
 
 
 PvP outside of the dedicated 'PvP' character mode:
