@@ -5743,11 +5743,11 @@ void do_slash_cmd(int Ind, char *message)
 		                        p_id = lookup_player_id(parties[i].owner);
 		                        if (p_id) {
 		                                parties[i].cmode = lookup_player_mode(p_id);
-            			                s_printf("Party %s (%d): Mode has been fixed to %d ('%s',%d).\n",
+            			                s_printf("Party '%s' (%d): Mode has been fixed to %d ('%s',%d).\n",
             			            	    parties[i].name, i, parties[i].cmode, parties[i].owner, p_id);
 		                        }
 		                        /* paranoia - a party without owner shouldn't exist */
-		                        else s_printf("Party %s (%d): Mode couldn't be fixed ('%s',%d).\n",
+		                        else s_printf("Party '%s' (%d): Mode couldn't be fixed ('%s',%d).\n",
 		                    	    parties[i].name, i, parties[i].owner, p_id);
 		                }
 		                s_printf("done.\n");
@@ -5760,10 +5760,10 @@ void do_slash_cmd(int Ind, char *message)
 					if (!guilds[i].members) continue;
 		                        if (guilds[i].master && (name = lookup_player_name(guilds[i].master)) != NULL) {
             		                    guilds[i].cmode = lookup_player_mode(guilds[i].master);
-                        		        s_printf("Guild %s (%d): Mode has been fixed to master's ('%s',%d) mode %d.\n",
+                        		        s_printf("Guild '%s' (%d): Mode has been fixed to master's ('%s',%d) mode %d.\n",
                         		    	    guilds[i].name, i, name, guilds[i].master, guilds[i].cmode);
 		                        } else { /* leaderless guild, ow */
-		                    		s_printf("Guild %s (%d): Fixing lost guild, master (%d) is '%s'.\n",
+		                    		s_printf("Guild '%s' (%d): Fixing lost guild, master (%d) is '%s'.\n",
 		                    		    guilds[i].name, i, guilds[i].master, name);
             		                	fix_lost_guild_mode(i);
 		                        }

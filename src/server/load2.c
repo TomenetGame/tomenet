@@ -1015,10 +1015,10 @@ static void rd_guilds() {
 			if (i == 0) guilds[0].cmode = 0;
 			else if (guilds[i].master && (name = lookup_player_name(guilds[i].master)) != NULL) {
 				guilds[i].cmode = lookup_player_mode(guilds[i].master);
-	                        s_printf("Guild %s (%d): Mode has been fixed to master's ('%s',%d) mode %d.\n",
+	                        s_printf("Guild '%s' (%d): Mode has been fixed to master's ('%s',%d) mode %d.\n",
                                     guilds[i].name, i, name, guilds[i].master, guilds[i].cmode);
                         } else { /* leaderless guild, ow */
-                                s_printf("Guild %s (%d): Fixing lost guild, master (%d) is '%s'.\n",
+                                s_printf("Guild '%s' (%d): Fixing lost guild, master (%d) is '%s'.\n",
                                     guilds[i].name, i, name ? name : "(null)", guilds[i].master);
                                 fix_lost_guild_mode(i);
                         }
@@ -1070,11 +1070,11 @@ static void rd_party(int n)
 			u32b p_id = lookup_player_id(party_ptr->owner);
                         if (p_id) {
                                 parties[n].cmode = lookup_player_mode(p_id);
-                                s_printf("Party %s (%d): Mode has been fixed to %d ('%s',%d).\n",
+                                s_printf("Party '%s' (%d): Mode has been fixed to %d ('%s',%d).\n",
                                     parties[n].name, n, parties[n].cmode, parties[n].owner, p_id);
                         }
                         /* paranoia - a party without owner shouldn't exist */
-                        else s_printf("Party %s (%d): Mode couldn't be fixed ('%s',%d).\n",
+                        else s_printf("Party '%s' (%d): Mode couldn't be fixed ('%s',%d).\n",
                             parties[n].name, n, parties[n].owner, p_id);
 		}
 	}

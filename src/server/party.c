@@ -4197,7 +4197,7 @@ void fix_lost_guild_mode(int g_id) {
                 while (ptr) {
                         if (ptr->guild && ptr->guild == g_id) {
                                 guilds[g_id].cmode = ptr->mode;
-                                s_printf("Guild %s (%d): Mode has been fixed to %d.\n", guilds[g_id].name, g_id, guilds[g_id].cmode);
+                                s_printf("Guild '%s' (%d): Mode has been fixed to %d.\n", guilds[g_id].name, g_id, guilds[g_id].cmode);
 				return;
                         }
                         ptr = ptr->next;
@@ -4207,6 +4207,6 @@ void fix_lost_guild_mode(int g_id) {
         /* paranoia: something went really wrong, such as savefile rollback or divine intervention */
         if (slot == NUM_HASH_ENTRIES) {
 		guilds[g_id].members = 0;
-		s_printf("Guild %s (%d): Has been erased!\n", guilds[g_id].name, g_id);
+		s_printf("Guild '%s' (%d): Has been erased!\n", guilds[g_id].name, g_id);
         }
 }
