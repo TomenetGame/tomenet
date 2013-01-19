@@ -5450,7 +5450,7 @@ void process_player_change_wpos(int Ind)
 #endif
 
 #ifdef ALLOW_NR_CROSS_PARTIES
-        if (p_ptr->party && in_netherrealm(&p_ptr->wpos_old) && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode))
+        if (p_ptr->party && in_netherrealm(&p_ptr->wpos_old) && !in_netherrealm(&p_ptr->wpos) && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode))
                 /* need to leave party, since we might be teamed up with incompatible char mode players! */
                 party_leave(Ind);
 #endif
