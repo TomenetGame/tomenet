@@ -1019,7 +1019,7 @@ static void rd_guilds() {
                                     guilds[i].name, i, name, guilds[i].master, guilds[i].cmode);
                         } else { /* leaderless guild, ow */
                                 s_printf("Guild '%s' (%d): Fixing lost guild, master (%d) is '%s'.\n",
-                                    guilds[i].name, i, name ? name : "(null)", guilds[i].master);
+                                    guilds[i].name, i, guilds[i].master, name ? name : "(null)");
                                 fix_lost_guild_mode(i);
                         }
 		}

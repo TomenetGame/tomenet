@@ -5754,7 +5754,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/guildmodefix")) {
-				cptr name;
+				cptr name = NULL;
 				s_printf("Fixing guild modes..\n");
 				for (i = 1; i < MAX_GUILDS; i++) {
 					if (!guilds[i].members) continue;
@@ -5764,7 +5764,7 @@ void do_slash_cmd(int Ind, char *message)
                         		    	    guilds[i].name, i, name, guilds[i].master, guilds[i].cmode);
 		                        } else { /* leaderless guild, ow */
 		                    		s_printf("Guild '%s' (%d): Fixing lost guild, master (%d) is '%s'.\n",
-		                    		    guilds[i].name, i, guilds[i].master, name);
+		                    		    guilds[i].name, i, guilds[i].master, name ? name : "(null)");
             		                	fix_lost_guild_mode(i);
 		                        }
 		                }
