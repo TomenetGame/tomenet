@@ -11258,6 +11258,7 @@ Istar schools:
                     Inscribe your spell scroll or book like you would inscribe
                     a scroll, in order to specify a destination.
                     Required skill level for first spell level: 30.
+                    Projecting this spell does not work on players who are AFK.
                     See "(0.3) Important inscriptions" for more info about
                     Word of Recall!
     Probability Travel
