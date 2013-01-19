@@ -2940,7 +2940,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 				return FALSE;
 			}
 			/* generating the boss is ok. go on. */
-			s_printf("allowed FINAL_GUARDIAN %d\n", r_idx);
+//			s_printf("allowed FINAL_GUARDIAN %d\n", r_idx);
 		}
 
 		/* Also use for DUN_xx dungeon-restricted monsters */

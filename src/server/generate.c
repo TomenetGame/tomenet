@@ -9675,7 +9675,7 @@ if (!nether_bottom) {
 	if ((k = d_info[d_ptr->type].final_guardian)
 	    && d_ptr->maxdepth == ABS(wpos->wz)
 	    && !rand_int(r_info[k].rarity)) {
-		s_printf("Attempting to generate FINAL_GUARDIAN %d (1 in %d)\n", k, r_info[k].rarity);
+//		s_printf("Attempting to generate FINAL_GUARDIAN %d (1 in %d)\n", k, r_info[k].rarity);
 		summon_override_checks = SO_FORCE_DEPTH; /* allow >20 level OoD if desired */
 		alloc_monster_specific(wpos, k, 20, TRUE);
 		summon_override_checks = SO_NONE;
