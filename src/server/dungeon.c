@@ -5450,7 +5450,11 @@ void process_player_change_wpos(int Ind)
 #endif
 
 #ifdef ALLOW_NR_CROSS_PARTIES
-        if (p_ptr->party && in_netherrealm(&p_ptr->wpos_old) && !in_netherrealm(&p_ptr->wpos) && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode))
+        if (p_ptr->party && in_netherrealm(&p_ptr->wpos_old) && !in_netherrealm(&p_ptr->wpos)
+    	    && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)
+            /* actually preserve his nether realm cross party for this,
+               so he can tell everyone involved about Valinor in party chat: */
+    	    && p_ptr->auto_transport != AT_VALINOR)
                 /* need to leave party, since we might be teamed up with incompatible char mode players! */
                 party_leave(Ind);
 #endif

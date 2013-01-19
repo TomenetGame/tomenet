@@ -7617,7 +7617,13 @@ extern int PlayerUID;
 
 /* check if a player is in the Nether Realms -- side effect: Works in Valinor too ;) */
 #ifdef ALLOW_NR_CROSS_PARTIES
- #define in_netherrealm(wpos) (getlevel(wpos) >= 166)
+ #if 0
+  /* allow partying only _inside_ the Nether Realm */
+  #define in_netherrealm(wpos) (getlevel(wpos) >= 166)
+ #else
+  /* allow partying at 0ft above Nether Realm too: */
+  #define in_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z >= 0)
+ #endif
 #endif
 
 /* quickly check if a given wpos is within certain special dungeons */
