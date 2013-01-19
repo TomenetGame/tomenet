@@ -1010,7 +1010,7 @@ static void rd_guilds() {
 		rd_s32b(&guilds[i].members);
 		if (!older_than(4, 5, 2)) rd_byte(&guilds[i].cmode);
 		else {
-			cptr name;
+			cptr name = NULL;
 			/* first entry is dummy anyway */
 			if (i == 0) guilds[0].cmode = 0;
 			else if (guilds[i].master && (name = lookup_player_name(guilds[i].master)) != NULL) {
@@ -1019,7 +1019,7 @@ static void rd_guilds() {
                                     guilds[i].name, i, name, guilds[i].master, guilds[i].cmode);
                         } else { /* leaderless guild, ow */
                                 s_printf("Guild %s (%d): Fixing lost guild, master (%d) is '%s'.\n",
-                                    guilds[i].name, i, name, guilds[i].master);
+                                    guilds[i].name, i, name ? name : "(null)", guilds[i].master);
                                 fix_lost_guild_mode(i);
                         }
 		}
