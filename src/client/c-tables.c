@@ -219,7 +219,7 @@ option_type option_info[OPT_MAX] =
 	"carry_query_flag",		"(broken) Prompt before picking things up" },
 #else
 	{ &c_cfg.newbie_hints,		TRUE,	4,	0, 3, TRUE,
-	"newbie_hints",			"Display yellow hints for new players in chat" },
+	"newbie_hints",			"Display hints/warnings for new players" },
 #endif
 
 	{ &c_cfg.use_old_target,	TRUE,	2,	0, 4, TRUE,
