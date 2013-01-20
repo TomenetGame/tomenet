@@ -1621,73 +1621,72 @@ void calc_hitpoints(int Ind)
 	mhp_playerform = mhp;
 
 
-	if (p_ptr->body_monster)
-	{
-	    long rhp = ((long)(r_info[p_ptr->body_monster].hdice)) * ((long)(r_info[p_ptr->body_monster].hside));
+	if (p_ptr->body_monster) {
+		long rhp = ((long)(r_info[p_ptr->body_monster].hdice)) * ((long)(r_info[p_ptr->body_monster].hside));
 
 #if 0 /* this gives bad HP if your race has high HD and you don't use an uber-form */
-	    /* pre-cap monster HP against ~3500 (5000) */
-/*	    mHPLim = (100000 / ((100000 / rhp) + 18)); this was for non RPG_SERVER originally */
-	    mHPLim = (50000 / ((50000 / rhp) + 20));/*18*/ /* for the new RPG_SERVER originally */
-	    /* average with player HP */
-	    finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
-	    /* cap final HP against ~2300 */
-//	    finalHP = (100000 / ((100000 / finalHP) + 20));
+		/* pre-cap monster HP against ~3500 (5000) */
+/*	 	mHPLim = (100000 / ((100000 / rhp) + 18)); this was for non RPG_SERVER originally */
+		mHPLim = (50000 / ((50000 / rhp) + 20));/*18*/ /* for the new RPG_SERVER originally */
+		/* average with player HP */
+		finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
+		/* cap final HP against ~2300 */
+//		finalHP = (100000 / ((100000 / finalHP) + 20));
 #endif
 #if 0 /* fairer for using non-uber forms; still bad for races with high HD (Draconian) */
-	    mHPLim = (50000 / ((50000 / rhp) + 20));
-	    if (mHPLim < mhp) {
-		    levD = p_ptr->lev - r_ptr->level;
-		    hpD = mhp - mHPLim;
-		    if (levD < 0) levD = 0;
-		    mHPLim = mhp - hpD * levD / 20; /* When your form is 20 or more levels below your charlevel,
-						       you receive the full HP difference in the formula below. */
-	    }
-	    finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
+		mHPLim = (50000 / ((50000 / rhp) + 20));
+		if (mHPLim < mhp) {
+			levD = p_ptr->lev - r_ptr->level;
+			hpD = mhp - mHPLim;
+			if (levD < 0) levD = 0;
+			mHPLim = mhp - hpD * levD / 20; /* When your form is 20 or more levels below your charlevel,
+							   you receive the full HP difference in the formula below. */
+		}
+		finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
 #endif
 #if 0 /* assume human mimic HP for calculation; afterwards, add up our 'extra' hit points if we're a stronger race */
-	    long levD, hpD, raceHPbonus;
-	    mHPLim = (50000 / ((50000 / rhp) + 20));
+		long levD, hpD, raceHPbonus;
+		mHPLim = (50000 / ((50000 / rhp) + 20));
 
-	    raceHPbonus = mhp - ((mhp * 15) / p_ptr->hitdie); /* 10 human + 5 mimic */
-	    mhp -= raceHPbonus;
-	    if (mHPLim < mhp) {
-		    levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
-		    if (levD < 0) levD = 0;
-		    if (levD > 20) levD = 20;
-		    hpD = mhp - mHPLim;
-		    mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
-						       you receive the full HP difference in the formula below. */
-	    }
-	    finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
-	    finalHP += raceHPbonus;
+		raceHPbonus = mhp - ((mhp * 15) / p_ptr->hitdie); /* 10 human + 5 mimic */
+		mhp -= raceHPbonus;
+		if (mHPLim < mhp) {
+			levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
+			if (levD < 0) levD = 0;
+			if (levD > 20) levD = 20;
+			hpD = mhp - mHPLim;
+			mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
+							   you receive the full HP difference in the formula below. */
+		}
+		finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
+		finalHP += raceHPbonus;
 #endif
 #if 1 /* assume human mimic HP for calculation; afterwards, add up our 'extra' hit points if we're a stronger race */
 	/* additionally, scale form HP better with very high character levels */
-	    long levD, hpD, raceHPbonus;
-	    mHPLim = (50000 / ((50000 / rhp) + 20));
+		long levD, hpD, raceHPbonus;
+		mHPLim = (50000 / ((50000 / rhp) + 20));
 
  #if 0 /* done below */
-	    /* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
-	    mHPLim += p_ptr->lev > 50 ? (((p_ptr->lev - 50) * (r_info[p_ptr->body_monster].level + 30)) / 100) * 20 : 0;
+		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
+		mHPLim += p_ptr->lev > 50 ? (((p_ptr->lev - 50) * (r_info[p_ptr->body_monster].level + 30)) / 100) * 20 : 0;
  #endif
 
-	    raceHPbonus = mhp - ((mhp * 16) / p_ptr->hitdie); /* 10 human + 6 mimic */
-	    mhp -= raceHPbonus;
-	    if (mHPLim < mhp) {
-		    levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
-		    if (levD < 0) levD = 0;
-		    if (levD > 20) levD = 20;
-		    hpD = mhp - mHPLim;
-		    mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
-						       you receive the full HP difference in the formula below. */
-	    }
-	    finalHP = (mHPLim < mhp) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
-	    finalHP += raceHPbonus;
+		raceHPbonus = mhp - ((mhp * 16) / p_ptr->hitdie); /* 10 human + 6 mimic */
+		mhp -= raceHPbonus;
+		if (mHPLim < mhp) {
+			levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
+			if (levD < 0) levD = 0;
+			if (levD > 20) levD = 20;
+			hpD = mhp - mHPLim;
+		        mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
+							   you receive the full HP difference in the formula below. */
+	        }
+	        finalHP = (mHPLim < mhp) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
+	        finalHP += raceHPbonus;
 #endif
 
-	    /* done */
-	    mhp = finalHP;
+		/* done */
+		mhp = finalHP;
 	}
 
 	/* Always have at least one hitpoint per level */
