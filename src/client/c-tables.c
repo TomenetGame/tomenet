@@ -266,7 +266,7 @@ option_type option_info[OPT_MAX] =
 #endif
 
 	{ &c_cfg.use_color,		TRUE,	1,	0, 14, TRUE,
-	"use_color",			"Use color if possible (slow)" },
+	"use_color",			"Use color if possible" },
 
 	{ &c_cfg.ring_bell,		TRUE,	1,	0, 15, TRUE,
 	"ring_bell",			"Beep on misc warnings and errors" },
