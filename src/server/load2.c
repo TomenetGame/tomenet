@@ -527,12 +527,8 @@ static void rd_item(object_type *o_ptr)
 	}
 	rd_u16b(&o_ptr->held_m_idx);
 
-/* hack: mistrust cloaks were removed, and existing ones become aman cloaks */
-if (o_ptr->name2 == EGO_MISTRUST) o_ptr->name2 = EGO_AMAN;
-if (o_ptr->name2b == EGO_MISTRUST) o_ptr->name2b = EGO_AMAN;
-
-/* hack: remove (due to bug) created explodingness from magic ammo */
-if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr->pval = 0;
+	/* hack: remove (due to bug) created explodingness from magic ammo */
+	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr->pval = 0;
 
 	/* Obtain k_idx from tval/sval instead :) */
 	if (o_ptr->k_idx)	/* zero is cipher :) */
@@ -549,11 +545,11 @@ if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr
 #endif
 
 #if 0 /* commented out again till it's of use once more (hopefully not) */
-/*HACK just to get rid of invalid seals in Bree.. */
-if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
-	invwipe(o_ptr);
-	return;
-}
+	/*HACK just to get rid of invalid seals in Bree.. */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
+		invwipe(o_ptr);
+		return;
+	}
 #endif
 
 	/* Obtain the "kind" template */
@@ -564,8 +560,7 @@ if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
 
 
 	/* Repair non "wearable" items */
-	if ((o_ptr->tval != TV_TRAPKIT) && !wearable_p(o_ptr))
-	{
+	if ((o_ptr->tval != TV_TRAPKIT) && !wearable_p(o_ptr)) {
 		/* Acquire correct fields */
 		o_ptr->to_h = k_ptr->to_h;
 		o_ptr->to_d = k_ptr->to_d;
@@ -580,13 +575,11 @@ if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
 		return;
 	}
 
-
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Paranoia */
-	if (o_ptr->name2)
-	{
+	if (o_ptr->name2) {
 		ego_item_type *e_ptr;
 
 		/* Obtain the ego-item info */
@@ -666,8 +659,8 @@ if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
 		if (!e_ptr->cost) o_ptr->ident |= ID_BROKEN;
 	}
 
-/* hack- fix trap kits with wrong enchantments */
-if (o_ptr->tval == TV_TRAPKIT && !is_firearm_trapkit(o_ptr->sval)) o_ptr->to_h = o_ptr->to_d = 0;
+	/* hack- fix trap kits with wrong enchantments */
+	if (o_ptr->tval == TV_TRAPKIT && !is_firearm_trapkit(o_ptr->sval)) o_ptr->to_h = o_ptr->to_d = 0;
 }
 
 
