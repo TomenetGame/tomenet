@@ -1672,7 +1672,7 @@ void calc_hitpoints(int Ind)
 	    mHPLim += p_ptr->lev > 50 ? (((p_ptr->lev - 50) * (r_info[p_ptr->body_monster].level + 30)) / 100) * 20 : 0;
  #endif
 
-	    raceHPbonus = mhp - ((mhp * 15) / p_ptr->hitdie); /* 10 human + 5 mimic */
+	    raceHPbonus = mhp - ((mhp * 16) / p_ptr->hitdie); /* 10 human + 6 mimic */
 	    mhp -= raceHPbonus;
 	    if (mHPLim < mhp) {
 		    levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
@@ -1682,7 +1682,7 @@ void calc_hitpoints(int Ind)
 		    mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
 						       you receive the full HP difference in the formula below. */
 	    }
-	    finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
+	    finalHP = (mHPLim < mhp) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
 	    finalHP += raceHPbonus;
 #endif
 
