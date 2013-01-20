@@ -1248,16 +1248,13 @@ int Receive_inven(void) {
 	int	n;
 	char	ch;
 	char pos, attr, tval, sval, uses_dir = 0;
-	s16b wgt, amt, pval;
+	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN], *insc;
 
-#if 0
-	int i;
-	char *ex, ex_buf[ONAME_LEN], *ex2, ex_buf2[ONAME_LEN];
-	bool auto_inscribe = FALSE, found;
-#endif
-
-	if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1, &uses_dir, name)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &uses_dir, name)) <= 0)
 			return n;
 	} else if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
@@ -1278,6 +1275,7 @@ int Receive_inven(void) {
 	inventory[pos - 'a'].sval = sval;
 	inventory[pos - 'a'].tval = tval;
 	inventory[pos - 'a'].pval = pval;
+	inventory[pos - 'a'].name1 = name1;
 	inventory[pos - 'a'].attr = attr;
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
@@ -1296,83 +1294,6 @@ int Receive_inven(void) {
 
 	strncpy(inventory_name[pos - 'a'], name, ONAME_LEN - 1);
 
-#if 0 /* AUTOINSCRIBE */
-	/* apply auto-inscriptions - C. Blue */
-	/* skip empty item */
-	if (strlen(inventory_name[pos - 'a'])) {
-
-		/* haaaaack: check for existing inscription! */
-		/* look for 1st '{' which must be level requirements on ANY item */
-		ex = strstr(inventory_name[pos - 'a'], "{");
-		if (ex == NULL) continue; /* paranoia - should always be FALSE */
-		strcpy(ex_buf, ex + 1);
-		/* look for 2nd '{' which MUST be an inscription */
-		ex = strstr(ex_buf, "{");
-		/* no inscription? inscribe it then automatically */
-		if (ex == NULL) auto_inscribe = TRUE;
-		/* check whether inscription is just a discount/stolen tag */
-		else if (strstr(ex, "% off}") ||
-		    !strcmp(ex, "{on sale}") ||
-		    !strcmp(ex, "{stolen}"))
-			auto_inscribe = TRUE;
-
-		/* item already carries a real inscription? -> can't auto-inscribe */
-		if (auto_inscribe) {
-			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-				/* skip empty auto-inscriptions */
-				if (!strlen(auto_inscription_match[i])) continue;
-//allow empty inscription--	if (!strlen(auto_inscription_tag[i])) continue;
-				/* found a matching inscription? */
- #if 0 /* no '?' wildcard allowed */
- 				if (strstr(inventory_name[pos - 'a'], auto_inscription_match[i])) break;
- #else /* '?' wildcard allowed: a random number (including 0) of random chars */
-				/* prepare */
-				strcpy(ex_buf, auto_inscription_match[i]);
-				ex2 = inventory_name[pos - 'a'];
-				found = FALSE;
-
-				do {
- 					ex = strstr(ex_buf, "?");
- 					if (ex == NULL) {
-	 					if (strstr(ex2, ex_buf)) found = TRUE;
- 						break;
-		 			} else {
-		 				/* get partial string up to before the '?' */
-	 					strncpy(ex_buf2, ex_buf, ex - ex_buf);
- 						ex_buf2[ex - ex_buf] = '\0';
- 						/* test partial string for match */
- 						ex2 = strstr(ex2, ex_buf2);
-	 					if (ex2 == NULL) break; /* no match! */
- 						/* this partial string matched, discard and continue with next part */
- 						/* advance searching position in the item name */
- 						ex2 += strlen(ex_buf2);
- 						/* get next part of search string */
- 						strcpy(ex_buf, ex + 1);
-	 					/* no more search string left? exit */
-						if (!strlen(ex_buf)) break;
- 						/* no more item name left although search string is finished? exit with negative result */
-						if (!strlen(ex2)) {
-							found = FALSE;
-							break;
-						}
-					}
-				} while (TRUE);
-				if (found) break;
- #endif
-			}
-
-			/* send the new inscription */
-			if (i < MAX_AUTO_INSCRIPTIONS) {
-				/* security hack: avoid infinite looping */
-				if (strstr(auto_inscription_tag[i], "% off") == NULL &&
-				    strcmp(auto_inscription_tag[i], "on sale") &&
-				    strcmp(auto_inscription_tag[i], "stolen"))
-					Send_inscribe(pos - 'a', auto_inscription_tag[i]);
-			}
-		}
-	}
-#endif
-
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
 
@@ -1385,16 +1306,14 @@ int Receive_inven_wide(void) {
 	char	ch;
 	char pos, attr, tval, sval, *insc;
 	byte xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
-	s16b wgt, amt, pval;
+	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN];
 
-#if 0
-	int i;
-	char *ex, ex_buf[ONAME_LEN];
-	bool auto_inscribe = FALSE;
-#endif
-
-	if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%c%c%c%c%c%c%c%c%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1,
+		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
 		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
 			return n;
@@ -1414,6 +1333,7 @@ int Receive_inven_wide(void) {
 	inventory[pos - 'a'].sval = sval;
 	inventory[pos - 'a'].tval = tval;
 	inventory[pos - 'a'].pval = pval;
+	inventory[pos - 'a'].name1 = name1;
 	inventory[pos - 'a'].attr = attr;
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
@@ -1440,83 +1360,6 @@ int Receive_inven_wide(void) {
 	} else inventory_inscription[pos - 'a'] = 0;
 
 	strncpy(inventory_name[pos - 'a'], name, ONAME_LEN - 1);
-
-#if 0 /* AUTOINSCRIBE - moved to Receive_inventory_revision() */
-	/* apply auto-inscriptions - C. Blue */
-	/* skip empty item */
-	if (strlen(inventory_name[pos - 'a'])) {
-
-		/* haaaaack: check for existing inscription! */
-		/* look for 1st '{' which must be level requirements on ANY item */
-		ex = strstr(inventory_name[pos - 'a'], "{");
-		if (ex == NULL) continue; /* paranoia - should always be FALSE */
-		strcpy(ex_buf, ex + 1);
-		/* look for 2nd '{' which MUST be an inscription */
-		ex = strstr(ex_buf, "{");
-		/* no inscription? inscribe it then automatically */
-		if (ex == NULL) auto_inscribe = TRUE;
-		/* check whether inscription is just a discount/stolen tag */
-		else if (strstr(ex, "% off}") ||
-		    !strcmp(ex, "{on sale}") ||
-		    !strcmp(ex, "{stolen}"))
-			auto_inscribe = TRUE;
-
-		/* item already carries a real inscription? -> can't auto-inscribe */
-		if (auto_inscribe) {
-			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-				/* skip empty auto-inscriptions */
-				if (!strlen(auto_inscription_match[i])) continue;
-				if (!strlen(auto_inscription_tag[i])) continue;
-				/* found a matching inscription? */
- #if 0 /* no '?' wildcard allowed */
- 				if (strstr(inventory_name[pos - 'a'], auto_inscription_match[i])) break;
- #else /* '?' wildcard allowed: a random number (including 0) of random chars */
-				/* prepare */
-				strcpy(ex_buf, auto_inscription_match[i]);
-				ex2 = inventory_name[pos - 'a'];
-				found = FALSE;
-
-				do {
- 					ex = strstr(ex_buf, "?");
- 					if (ex == NULL) {
-	 					if (strstr(ex2, ex_buf)) found = TRUE;
- 						break;
-		 			} else {
-		 				/* get partial string up to before the '?' */
-	 					strncpy(ex_buf2, ex_buf, ex - ex_buf);
- 						ex_buf2[ex - ex_buf] = '\0';
- 						/* test partial string for match */
- 						ex2 = strstr(ex2, ex_buf2);
-	 					if (ex2 == NULL) break; /* no match! */
- 						/* this partial string matched, discard and continue with next part */
- 						/* advance searching position in the item name */
- 						ex2 += strlen(ex_buf2);
- 						/* get next part of search string */
- 						strcpy(ex_buf, ex + 1);
-	 					/* no more search string left? exit */
-						if (!strlen(ex_buf)) break;
- 						/* no more item name left although search string is finished? exit with negative result */
-						if (!strlen(ex2)) {
-							found = FALSE;
-							break;
-						}
-					}
-				} while (TRUE);
-				if (found) break;
- #endif
-			}
-
-			/* send the new inscription */
-			if (i < MAX_AUTO_INSCRIPTIONS) {
-				/* security hack: avoid infinite looping */
-				if (strstr(auto_inscription_tag[i], "% off") == NULL &&
-				    strcmp(auto_inscription_tag[i], "on sale") &&
-				    strcmp(auto_inscription_tag[i], "stolen"))
-					Send_inscribe(pos - 'a', auto_inscription_tag[i]);
-			}
-		}
-	}
-#endif
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
@@ -1560,10 +1403,13 @@ int Receive_equip(void) {
 	int	n;
 	char 	ch;
 	char pos, attr, tval, sval, uses_dir;
-	s16b wgt, amt, pval;
+	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN];
 
-	if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1, &uses_dir, name)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &uses_dir, name)) <= 0)
 			return n;
 	} else if (is_newer_than(&server_version, 4, 4, 4, 2, 0, 0)) {
@@ -1580,6 +1426,7 @@ int Receive_equip(void) {
 	inventory[pos - 'a' + INVEN_WIELD].sval = sval;
 	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
 	inventory[pos - 'a' + INVEN_WIELD].pval = pval;
+	inventory[pos - 'a' + INVEN_WIELD].name1 = name1;
 	inventory[pos - 'a' + INVEN_WIELD].attr = attr;
 	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
 	inventory[pos - 'a' + INVEN_WIELD].number = amt;
