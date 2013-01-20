@@ -8397,8 +8397,8 @@ be 1 in 800 in that case.
 (5.21b) Digging - Common example values
 ---------------------------------------
 Some example values, assuming 0.000 'Digging' skill
-and unenchanted (ie (+0,+0)) digging tools:
--------------------------------------------
+and unenchanted (ie (+0,+0)) digging tools with (+1) to digging:
+----------------------------------------------------------------
 -You always have a chance to remove rubble and organic material, even without
  a digging tool. Might take quite a while if your strength is low though.
 -You cannot tunnel through granite wall without a digging tool if your STRength
@@ -8414,6 +8414,11 @@ and unenchanted (ie (+0,+0)) digging tools:
  (For quartz, you have a 3% chance to succeed at 18/50 STR with the shovel
   and at 18/10 STR with a pick. If you use an enchanted shovel (+9,+9) (+1)
   however, you already have a 3% chance to succeed at only 5 STR.)
+
+You can tunnel through all tunneable materials, no matter your strength, with..
+-a (+1) shovel that has +hit and +dam enchanted to a total of at least +15.
+-a (+1) pick that has +hit and +dam enchanted to a total of at least +6.
+-any (+2) digging tool or better (except if it has negative +hit/+dam values).
 
 
 (5.21c) Digging - Further information
