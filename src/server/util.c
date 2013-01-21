@@ -16,6 +16,8 @@
 #include <sys/time.h>
 #endif
 
+static void console_talk_aux(char *message);
+
 //static int name_lookup_loose_quiet(int Ind, cptr name, u16b party);
 
 #ifndef HAS_MEMSET
@@ -3198,17 +3200,16 @@ static void player_talk_aux(int Ind, char *message)
 	char tmessage[MSG_LEN];		/* TEMPORARY! We will not send the name soon */
 #endif
 
-	/* Get sender's name */
-	if (Ind) {
-		p_ptr = Players[Ind];
-		/* Get player name */
-		strcpy(sender, p_ptr->name);
-		admin = is_admin(p_ptr);
-	} else {
-		/* Default name */
-		strcpy(sender, "Server Admin");
-		admin = TRUE;
+	if (!Ind) {
+		console_talk_aux(message);
+		return;
 	}
+
+	/* Get sender's name */
+	p_ptr = Players[Ind];
+	/* Get player name */
+	strcpy(sender, p_ptr->name);
+	admin = is_admin(p_ptr);
 
 	/* Default to no search string */
 	strcpy(search, "");
@@ -3405,42 +3406,41 @@ static void player_talk_aux(int Ind, char *message)
 			return;
 		}
 	}
-#ifndef ARCADE_SERVER
-	if (p_ptr) {
-		if (!colon) p_ptr->msgcnt++; /* !colon -> only prevent spam if not in party/private chat */
-		if (p_ptr->msgcnt > 12) {
-			time_t last = p_ptr->msg;
-			time(&p_ptr->msg);
-			if (p_ptr->msg - last < 6) {
-				p_ptr->spam++;
-				switch (p_ptr->spam) {
-				case 1:
-					msg_print(Ind, "\377yPlease don't spam the server");
-					break;
-				case 3:
-				case 4:
-					msg_print(Ind, "\374\377rWarning! this behaviour is unacceptable!");
-					break;
-				case 5:
-					p_ptr->chp = -3;
-					strcpy(p_ptr->died_from, "hypoxia");
-					p_ptr->spam = 1;
-					p_ptr->deathblow = 0;
-					player_death(Ind);
-					return;
-				}
-			}
-			if (p_ptr->msg-last > 240 && p_ptr->spam) p_ptr->spam--;
-			p_ptr->msgcnt = 0;
-		}
-		if (p_ptr->spam > 1 || p_ptr->muted) return;
-#endif
-		process_hooks(HOOK_CHAT, "d", Ind);
 
-		if (++p_ptr->talk > 10) {
-			imprison(Ind, 30, "talking too much.");
-			return;
+#ifndef ARCADE_SERVER
+	if (!colon) p_ptr->msgcnt++; /* !colon -> only prevent spam if not in party/private chat */
+	if (p_ptr->msgcnt > 12) {
+		time_t last = p_ptr->msg;
+		time(&p_ptr->msg);
+		if (p_ptr->msg - last < 6) {
+			p_ptr->spam++;
+			switch (p_ptr->spam) {
+			case 1:
+				msg_print(Ind, "\377yPlease don't spam the server");
+				break;
+			case 3:
+			case 4:
+				msg_print(Ind, "\374\377rWarning! this behaviour is unacceptable!");
+				break;
+			case 5:
+				p_ptr->chp = -3;
+				strcpy(p_ptr->died_from, "hypoxia");
+				p_ptr->spam = 1;
+				p_ptr->deathblow = 0;
+				player_death(Ind);
+				return;
+			}
 		}
+		if (p_ptr->msg-last > 240 && p_ptr->spam) p_ptr->spam--;
+		p_ptr->msgcnt = 0;
+	}
+	if (p_ptr->spam > 1 || p_ptr->muted) return;
+#endif
+	process_hooks(HOOK_CHAT, "d", Ind);
+
+	if (++p_ptr->talk > 10) {
+		imprison(Ind, 30, "talking too much.");
+		return;
 	}
 
 	for (i = 1; i <= NumPlayers; i++) {
@@ -3452,7 +3452,7 @@ static void player_talk_aux(int Ind, char *message)
 
 	/* Special function '!:' at beginning of message sends to own party - sorry for hack, C. Blue */
 //	if ((strlen(message) >= 1) && (message[0] == ':') && (!colon) && (p_ptr->party))
-	if (p_ptr && (strlen(message) >= 2) && (message[0] == '!') && (message[1] == ':') && (colon) && (p_ptr->party)) {
+	if ((strlen(message) >= 2) && (message[0] == '!') && (message[1] == ':') && (colon) && (p_ptr->party)) {
 		target = p_ptr->party;
 
 #if 1 /* No private chat for invalid accounts ? */
@@ -3477,7 +3477,7 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* '#:' at beginning of message sends to dungeon level - C. Blue */
-	if (p_ptr && (strlen(message) >= 2) && (message[0] == '#') && (message[1] == ':') && (colon)) {
+	if ((strlen(message) >= 2) && (message[0] == '#') && (message[1] == ':') && (colon)) {
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
 			msg_print(Ind, "\377yYour account is not valid, wait for an admin to validate it.");
@@ -3522,7 +3522,7 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* '%:' at the beginning sends to self - mikaelh */
-	if (p_ptr && (strlen(message) >= 2) && (message[0] == '%') && (message[1] == ':') && (colon)) {
+	if ((strlen(message) >= 2) && (message[0] == '%') && (message[1] == ':') && (colon)) {
 		/* Send message to self */
 		msg_format(Ind, "\377o<%%>\377w %s", message + 2);
 
@@ -3531,7 +3531,7 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* '+:' at beginning of message sends reply to last player who sent us a private msg  - C. Blue */
-	if (p_ptr && (strlen(message) >= 2) && (message[0] == '+') && (message[1] == ':') && colon) {
+	if ((strlen(message) >= 2) && (message[0] == '+') && (message[1] == ':') && colon) {
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
 			msg_print(Ind, "\377yYour account is not valid, wait for an admin to validate it.");
@@ -3557,7 +3557,7 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* '$:' at beginning of message sends to guild - C. Blue */
-	if (p_ptr && (strlen(message) >= 2) && (message[0] == '$') && (message[1] == ':') && (colon) && (p_ptr->guild)) {
+	if ((strlen(message) >= 2) && (message[0] == '$') && (message[1] == ':') && (colon) && (p_ptr->guild)) {
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
 			msg_print(Ind, "\377yYour account is not valid, wait for an admin to validate it.");
@@ -3580,7 +3580,7 @@ static void player_talk_aux(int Ind, char *message)
 
 
 	/* Form a search string if we found a colon */
-	if (p_ptr && colon) {
+	if (colon) {
 		if (p_ptr->mutedchat == 2) return;
 #if 1 /* No private chat for invalid accounts ? */
 		if (p_ptr->inval) {
@@ -3614,7 +3614,7 @@ static void player_talk_aux(int Ind, char *message)
 				/* hack: assume that the target player will become the
 				   one we want to 'reply' to, afterwards, if we don't
 				   have a reply-to target yet. */
-				if (p_ptr && (!p_ptr->reply_name || !strlen(p_ptr->reply_name)))
+				if ((!p_ptr->reply_name || !strlen(p_ptr->reply_name)))
 					strcpy(p_ptr->reply_name, w_player->name);
 
 				return;
@@ -3644,7 +3644,7 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* Send to appropriate player */
-	if (p_ptr && len && target > 0) {
+	if (len && target > 0) {
 		if (!check_ignore(target, Ind)) {
 			/* Set target player */
 			q_ptr = Players[target];
@@ -3703,7 +3703,7 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* Send to appropriate party */
-	if (p_ptr && len && target < 0) {
+	if (len && target < 0) {
 		/* Can't send msg to party from 'outside' as non-admin */
 		if (p_ptr->party != 0 - target && !admin) {
 			msg_print(Ind, "You aren't in that party.");
@@ -3773,13 +3773,12 @@ static void player_talk_aux(int Ind, char *message)
 
 #if 0
  #if 0
-	if (p_ptr && ((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
+	if ((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
 	    && !(len && (target != 0) && !cfg.worldd_privchat)) /* privchat = to party or to person */
 		world_chat(p_ptr->id, tmessage);	/* no ignores... */
  #else
-	if (p_ptr)
-		/* Incoming chat is now filtered instead of outgoing which allows IRC relay to get public chat messages from worldd - mikaelh */
-		world_chat(p_ptr->id, tmessage);	/* no ignores... */
+	/* Incoming chat is now filtered instead of outgoing which allows IRC relay to get public chat messages from worldd - mikaelh */
+	world_chat(p_ptr->id, tmessage);	/* no ignores... */
  #endif
 #else /* Remove current redundancy. Make worldd_pubchat decide if we broadcast all our chat out there or not. */
 	/* in case privchat wasn't handled above (because it's disabled),
@@ -3787,24 +3786,22 @@ static void player_talk_aux(int Ind, char *message)
 	if (!(!cfg.worldd_privchat && len && target != 0)) {
 		if (broadcast && cfg.worldd_broadcast) {
 			world_chat(0, tmessage); /* can't ignore */
-		} else if (p_ptr && !broadcast && cfg.worldd_pubchat) {
+		} else if (!broadcast && cfg.worldd_pubchat) {
 			world_chat(p_ptr->id, tmessage);
 		}
 	}
 #endif
 
-	if (p_ptr) {
-		for(i = 1; i <= NumPlayers; i++) {
-			q_ptr = Players[i];
+	for(i = 1; i <= NumPlayers; i++) {
+		q_ptr = Players[i];
 
-			if (!admin) {
-				if (check_ignore(i, Ind)) continue;
-				if (q_ptr->ignoring_chat) continue;
-				if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
-				    !inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
-			}
-			msg_print(i, tmessage);
+		if (!admin) {
+			if (check_ignore(i, Ind)) continue;
+			if (q_ptr->ignoring_chat) continue;
+			if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
+			    !inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 		}
+		msg_print(i, tmessage);
 	}
 #else
 	/* Send to everyone */
@@ -3835,13 +3832,90 @@ static void player_talk_aux(int Ind, char *message)
 #endif
 
 	censor_message = FALSE;
-	if (p_ptr) {
-		p_ptr->warning_chat = 1;
-		handle_punish(Ind, censor_punish);
-	}
+	p_ptr->warning_chat = 1;
+	handle_punish(Ind, censor_punish);
 
 	exec_lua(0, "chat_handler()");
 
+}
+/* Console talk is automatically sent by 'Server Admin' which is treated as an admin */
+static void console_talk_aux(char *message)
+{
+ 	int i;
+	cptr sender = "Server Admin";
+	bool me = FALSE, log = TRUE;
+	char c_n = 'y'; /* colours of sender name and of brackets (unused atm) around this name */
+	bool broadcast = FALSE;
+
+#ifdef TOMENET_WORLDS
+	char tmessage[MSG_LEN];		/* TEMPORARY! We will not send the name soon */
+#else
+	player_type *q_ptr;
+#endif
+
+	/* tBot's stuff */
+	/* moved here to allow tbot to see fake pvt messages. -Molt */
+	strncpy(last_chat_owner, sender, NAME_LEN);
+	strncpy(last_chat_line, message, MSG_LEN);
+
+	/* no big brother */
+	if (cfg.log_u && log) s_printf("[%s] %s\n", sender, message);
+
+	/* Special - shutdown command (for compatibility) */
+	if (prefix(message, "@!shutdown")) {
+		/*world_reboot();*/
+		shutdown_server();
+		return;
+	}
+
+	if (message[0] == '/' ){
+		if (!strncmp(message, "/me ", 4)) me = TRUE;
+		else if (!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
+		else return;
+	}
+
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		Players[i]->talk = 0;
+	}
+
+	censor_message = TRUE;
+
+#ifdef TOMENET_WORLDS
+	if (broadcast) {
+		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
+		censor_length = strlen(message + 11);
+	} else if (!me) {
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message);
+		censor_length = strlen(message);
+	} else {
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4);
+		censor_length = strlen(message + 4);
+	}
+
+#else
+	/* Send to everyone */
+	for (i = 1; i <= NumPlayers; i++) {
+		q_ptr = Players[i];
+
+		/* Send message */
+		if (broadcast) {
+			censor_length = strlen(message + 11);
+			msg_format(i, "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
+		} else if (!me) {
+			censor_length = strlen(message);
+			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message);
+		}
+		else {
+			censor_length = strlen(message + 4);
+			msg_format(i, "%s %s", sender, message + 4);
+		}
+	}
+#endif
+
+	censor_message = FALSE;
+
+	exec_lua(0, "chat_handler()");
 }
 
 /* Check for swear words, censor + punish */
