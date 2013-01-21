@@ -4152,8 +4152,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 #endif
-			else if (prefix(message, "/trap") ||
-					prefix(message, "/tr"))
+			else if (prefix(message, "/trap"))// ||	prefix(message, "/tr")) conflicts with /trait maybe
 			{
 				if (k) {
 					wiz_place_trap(Ind, k);
