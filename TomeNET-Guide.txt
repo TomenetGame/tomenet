@@ -7170,6 +7170,7 @@ Chauve-Souris   Turns you into a fruit bat. Quaff another one to be restored
                 Make sure you don't resist nexus if someone tries to polymorph
                 you back. Or just use 'Morph Restoration' service.
 Enlightenment   Illuminates and maps the whole level and reveals all objects.
+                It also identifies all of the user's items.
 *Enlightenment* Raises your intelligence and wisdom, detect treasures,
                 objects, secret doors, traps. Identifies all items. And tells
                 you about yourself like a potion of Self-Knowledge would do.
@@ -7357,6 +7358,12 @@ Magi            Restores your intelligence and 500 mana points.
 Power           Dispels nearby monsters.
 Holiness        Dispels nearby evil. Also protects you from evil for a while.
                 Cures poison/cuts, removes fear/stun, heals you somewhat.
+Healing         Staves:
+                Heals 300 to 400 hit points, depending on magic device skill,
+                cures stun and cuts.
+                Rods:
+                Heals 100 to 350 hit points, depending on magic device skill,
+                cures stun and cuts.
 Dragon's Breath These wands fire a ball of dragon odem (more powerful than
                 normal ball spell wands.)
 Restoration     Restores experience points (aka live levels) and drained stats,

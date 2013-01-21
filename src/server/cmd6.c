@@ -330,7 +330,7 @@ void do_cmd_eat_food(int Ind, int item)
 				if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
 //				(void)set_poisoned(Ind, 0, 0);
 //				(void)set_image(Ind, 0);	// ok?
-				if (hp_player(Ind, damroll(5, 8))) ident = TRUE;
+				if (hp_player(Ind, damroll(6, 8))) ident = TRUE;
 				break;
 			}
 
@@ -3167,7 +3167,7 @@ void do_cmd_use_staff(int Ind, int item)
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
-			if (hp_player(Ind, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8))) ident = TRUE;
+			if (hp_player(Ind, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 9), 8))) ident = TRUE;
 			break;
 		}
 
