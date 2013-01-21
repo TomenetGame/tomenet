@@ -810,7 +810,7 @@ static cptr k_info_flags5[] =
         "TEMPORARY",
         "DRAIN_MANA",
         "DRAIN_HP",
-	"VORPAL",	//"XXX5",		
+	"VORPAL",	//"XXX5",
 	"IMPACT",
         "CRIT",
         "ATTR_MULTI",
@@ -1355,7 +1355,7 @@ static bool invalid_server_conditions(char *buf)
 		   It's just a switch that means
 		   "don't parse this line if any special macro is defined".
 		   (negation: "parse this line if any special macro is defined".)
-		   
+
 		   Any other rule means
 		   "only parse this line if that particular macro is defined".
 
@@ -1465,7 +1465,7 @@ if (!season_newyearseve) {
 			TRUE)
 			invalid = TRUE;
 	}
-	
+
 	return invalid; /* only pass if none of our tests proves to be invalid */
 }
 
@@ -2466,6 +2466,9 @@ errr init_k_info_txt(FILE *fp, char *buf)
 	int i, idx = 0;
 
 	char *s, *t;
+#ifdef KIND_DIZ
+	char tmp[MSG_LEN];
+#endif
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -2496,7 +2499,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
-		
+
 		/* Verify correct "colon" format */
 		if (buf[1] != ':') return (1);
 
@@ -2585,22 +2588,25 @@ errr init_k_info_txt(FILE *fp, char *buf)
 		/* Process 'D' for "Description" */
 		if (buf[0] == 'D')
 		{
-#if 0	// not used anyway
+#ifdef KIND_DIZ
 			/* Acquire the text */
 			s = buf + 2;
 
+			strcpy(tmp, " \377w");
+			strcat(tmp, s);
+			strcat(tmp, "\n");
+
 			/* Hack -- Verify space */
-			if (k_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+			if (k_head->text_size + strlen(tmp) + 8 > fake_text_size) return (7);
 
 			/* Advance and Save the text index */
 			if (!k_ptr->text) k_ptr->text = ++k_head->text_size;
 
 			/* Append chars to the name */
-			strcpy(k_text + k_head->text_size, s);
+			strcpy(k_text + k_head->text_size, tmp);
 
 			/* Advance the index */
-			k_head->text_size += strlen(s);
-
+			k_head->text_size += strlen(tmp);
 #endif
 			/* Next... */
 			continue;
@@ -3005,7 +3011,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			strcat(tmp, "\n");
 
 			/* Hack -- Verify space */
-			if (a_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+			if (a_head->text_size + strlen(tmp) + 8 > fake_text_size) return (7);
 
 			/* Advance and Save the text index */
 			if (!a_ptr->text) a_ptr->text = ++a_head->text_size;
@@ -3409,7 +3415,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			for (z = 0; z < MAX_SKILLS; z++)
 //			for (z = 0; z < max_s_idx; z++)
 			{
-				s_ptr->action[z] = 0;                                
+				s_ptr->action[z] = 0;
 			}
 
 			/* Next... */
@@ -3752,7 +3758,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 
 			/* Advance and Save the name index */
 			if (!e_ptr->name) e_ptr->name = ++e_head->name_size;
-			
+
 			/* Append chars to the name */
 			strcpy(e_name + e_head->name_size, s);
 
@@ -7592,7 +7598,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			{
 				new_level_down_y(wpos, y);
 				new_level_down_x(wpos, x);
-			} 
+			}
 			else if (c_ptr->feat == FEAT_MORE)
 			{
 				new_level_up_y(wpos, y);
@@ -7934,13 +7940,13 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				if (p_ptr->inside_quest || (init_flags & INIT_POSITION))
 				{
 					py = atoi(zz[0]);
-					px = atoi(zz[1]); 
+					px = atoi(zz[1]);
 				}
 				/* Place player in the town */
 				else if ((p_ptr->oldpx == 0) && (p_ptr->oldpy == 0))
 				{
 					p_ptr->oldpy = atoi(zz[0]);
-					p_ptr->oldpx = atoi(zz[1]); 
+					p_ptr->oldpx = atoi(zz[1]);
 				}
 			}
 		}
@@ -7984,25 +7990,25 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			/* Maximum towns */
 			if (zz[0][0] == 'T')
 			{
-				max_towns = atoi(zz[1]); 
+				max_towns = atoi(zz[1]);
 			}
 
 			/* Maximum real towns */
 			if (zz[0][0] == 't')
 			{
-				max_real_towns = atoi(zz[1]); 
+				max_real_towns = atoi(zz[1]);
 			}
 
 			/* Maximum r_idx */
 			else if (zz[0][0] == 'R')
 			{
-				max_r_idx = atoi(zz[1]); 
+				max_r_idx = atoi(zz[1]);
 			}
 
 			/* Maximum re_idx */
 			else if (zz[0][0] == 'r')
 			{
-				max_re_idx = atoi(zz[1]); 
+				max_re_idx = atoi(zz[1]);
 			}
 
 			/* Maximum s_idx */
@@ -8015,43 +8021,43 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			/* Maximum k_idx */
 			else if (zz[0][0] == 'K')
 			{
-				max_k_idx = atoi(zz[1]); 
+				max_k_idx = atoi(zz[1]);
 			}
 
 			/* Maximum v_idx */
 			else if (zz[0][0] == 'V')
 			{
-				max_v_idx = atoi(zz[1]); 
+				max_v_idx = atoi(zz[1]);
 			}
 
 			/* Maximum f_idx */
 			else if (zz[0][0] == 'F')
 			{
-				max_f_idx = atoi(zz[1]); 
+				max_f_idx = atoi(zz[1]);
 			}
 
 			/* Maximum a_idx */
 			else if (zz[0][0] == 'A')
 			{
-				max_a_idx = atoi(zz[1]); 
+				max_a_idx = atoi(zz[1]);
 			}
 
 			/* Maximum e_idx */
 			else if (zz[0][0] == 'E')
 			{
-				max_e_idx = atoi(zz[1]); 
+				max_e_idx = atoi(zz[1]);
 			}
 
 			/* Maximum ra_idx */
 			else if (zz[0][0] == 'Z')
 			{
-				max_ra_idx = atoi(zz[1]); 
+				max_ra_idx = atoi(zz[1]);
 			}
 
 			/* Maximum o_idx */
 			else if (zz[0][0] == 'O')
 			{
-				max_o_idx = atoi(zz[1]); 
+				max_o_idx = atoi(zz[1]);
 			}
 
 			/* Maximum player types */
@@ -8059,11 +8065,11 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			{
 				if (zz[1][0] == 'R')
 				{
-					max_rp_idx = atoi(zz[2]); 
+					max_rp_idx = atoi(zz[2]);
 				}
 				else if (zz[1][0] == 'S')
 				{
-					max_rmp_idx = atoi(zz[2]); 
+					max_rmp_idx = atoi(zz[2]);
 				}
 				else if (zz[1][0] == 'C')
 				{
@@ -8075,38 +8081,38 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				}
 				else if (zz[1][0] == 'H')
 				{
-					max_bg_idx = atoi(zz[2]); 
+					max_bg_idx = atoi(zz[2]);
 				}
 			}
 
 			/* Maximum m_idx */
 			else if (zz[0][0] == 'M')
 			{
-				max_m_idx = atoi(zz[1]); 
+				max_m_idx = atoi(zz[1]);
 			}
 
 			/* Maximum tr_idx */
 			else if (zz[0][0] == 'U')
 			{
-				max_t_idx = atoi(zz[1]); 
+				max_t_idx = atoi(zz[1]);
 			}
 
 			/* Maximum wf_idx */
 			else if (zz[0][0] == 'W')
 			{
-				max_wf_idx = atoi(zz[1]); 
+				max_wf_idx = atoi(zz[1]);
 			}
 
 			/* Maximum ba_idx */
 			else if (zz[0][0] == 'B')
 			{
-				max_ba_idx = atoi(zz[1]); 
+				max_ba_idx = atoi(zz[1]);
 			}
 
 			/* Maximum st_idx */
 			else if (zz[0][0] == 'S')
 			{
-				max_st_idx = atoi(zz[1]); 
+				max_st_idx = atoi(zz[1]);
 			}
 
 			/* Maximum set_idx */
@@ -8118,25 +8124,25 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			/* Maximum ow_idx */
 			else if (zz[0][0] == 'N')
 			{
-				max_ow_idx = atoi(zz[1]); 
+				max_ow_idx = atoi(zz[1]);
 			}
 
 			/* Maximum wilderness x size */
 			else if (zz[0][0] == 'X')
 			{
-				max_wild_x = atoi(zz[1]); 
+				max_wild_x = atoi(zz[1]);
 			}
 
 			/* Maximum wilderness y size */
 			else if (zz[0][0] == 'Y')
 			{
-				max_wild_y = atoi(zz[1]); 
+				max_wild_y = atoi(zz[1]);
 			}
 
 			/* Maximum d_idx */
 			else if (zz[0][0] == 'D')
 			{
-				max_d_idx = atoi(zz[1]); 
+				max_d_idx = atoi(zz[1]);
 			}
 
 			return (0);

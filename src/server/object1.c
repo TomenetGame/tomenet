@@ -3699,6 +3699,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	}
 #endif
 
+#ifdef KIND_DIZ
+	fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
+#endif
+
 	/* in case we just *ID* it because an admin inspected it */
 	if (!(o_ptr->ident & ID_MENTAL) && is_admin(p_ptr)) fprintf(fff, "\377y(This item has not been *identified* yet.)\n");
 

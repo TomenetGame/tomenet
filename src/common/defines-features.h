@@ -127,6 +127,7 @@
 #endif
 
 #ifdef TEST_SERVER
+ #define KIND_DIZ
  #define ALLOW_NR_CROSS_PARTIES
  #define ENABLE_DRACONIAN_TRAITS
  #define ENABLE_GUILD_HALL	/* Allow an OT_GUILD house */
