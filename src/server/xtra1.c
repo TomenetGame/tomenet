@@ -1663,6 +1663,9 @@ void calc_hitpoints(int Ind)
 #endif
 #if 1 /* assume human mimic HP for calculation; afterwards, add up our 'extra' hit points if we're a stronger race */
 	/* additionally, scale form HP better with very high character levels */
+		/* Reduce the effect of racial hit dice when in monster form? [3..6]
+		   3 = no reduction, 6 = high reduction */
+		#define FORM_REDUCES_RACE_DICE_INFLUENCE 6
 		long levD, hpD, raceHPbonus;
 		mHPLim = (50000 / ((50000 / rhp) + 20));
 
@@ -1672,7 +1675,11 @@ void calc_hitpoints(int Ind)
  #endif
 
 		raceHPbonus = mhp - ((mhp * 16) / p_ptr->hitdie); /* 10 human + 6 mimic */
-		mhp -= raceHPbonus;
+		mhp -= (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE;
+  #if 0 /* nonsense^^ */
+		/* compensate overall HP gain for values > 3 */
+		mhp -= ((raceHPbonus - (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE) * 5) / 3;
+  #endif
 		if (mHPLim < mhp) {
 			levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
 			if (levD < 0) levD = 0;
@@ -1682,7 +1689,7 @@ void calc_hitpoints(int Ind)
 							   you receive the full HP difference in the formula below. */
 	        }
 	        finalHP = (mHPLim < mhp) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
-	        finalHP += raceHPbonus;
+	        finalHP += (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE;
 #endif
 
 		/* done */
