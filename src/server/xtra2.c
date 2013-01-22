@@ -17,9 +17,11 @@
 #include "party.h"
 
 
+/* Give a crazy form learning boost inside Ironman Deep Dive Challenge? [9] */
+//#define IDDC_MIMICRY_BOOST 9
+
 //#define IRON_TEAM_EXPERIENCE
 /* todo before enabling: implement way to decrease party.experience again! */
-
 
 /*
  * What % of exp points will be lost when resurrecting? [40]	- Jir -
@@ -4857,7 +4859,11 @@ void monster_death(int Ind, int m_idx)
 
 		/* get +1 bonus credit in Ironman Deep Dive Challenge */
 		if (in_irondeepdive(wpos))
+#ifndef IDDC_MIMICRY_BOOST
 			p_ptr->r_killed[credit_idx]++;
+#else /* give a possibly greater boost than just +1 */
+			p_ptr->r_killed[credit_idx] += IDDC_MIMICRY_BOOST;
+#endif
 
 #ifdef RPG_SERVER
 		/* There is a 1 in (m_ptr->level - kill count)^2 chance of learning form straight away 
