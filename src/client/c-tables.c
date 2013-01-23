@@ -407,20 +407,20 @@ option_type option_info[OPT_MAX] =
 	"hilite_player",		"(broken) Hilite the player with the cursor" },
 #else
 	{ &c_cfg.view_bright_lite2,	FALSE,	1,	1, 27, TRUE,
-	"view_bright_lite2",		"Use special colors for 'viewable' wall grids" },
+	"view_bright_lite2",		"Use special colors to shade wall grids" },
 #endif
 
 	{ &c_cfg.view_yellow_lite,	TRUE,	1,	1, 28, TRUE,
 	"view_yellow_lite",		"Use special colors for torch-lit grids" },
 
 	{ &c_cfg.view_bright_lite,	TRUE,	1,	1, 29, TRUE,
-	"view_bright_lite",		"Use special colors for 'viewable' floor grids" },
+	"view_bright_lite",		"Use special colors to shade floor grids" },
 
 	{ &c_cfg.view_granite_lite,	TRUE,	1,	1, 30, TRUE,
-	"view_granite_lite",		"Use special colors for wall grids" },
+	"view_granite_lite",		"Use special colors for lit wall grids" },
 
 	{ &c_cfg.view_special_lite,	TRUE,	1,	1, 31, TRUE,	/* (59) */
-	"view_special_lite",		"Use special colors for floor grids" },
+	"view_special_lite",		"Use special colors for lit floor grids" },
 
 
 
