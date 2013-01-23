@@ -290,7 +290,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	player_type *q_ptr = Players[Ind];
 	bool admin = is_admin(q_ptr);
 	s16b idx[MAX_R_IDX];
-	
+
 	char buf[17];
 
 
@@ -343,7 +343,7 @@ void do_cmd_check_uniques(int Ind, int line)
 			r_ptr = &r_info[k];
 
 			/* Output color byte */
-			fprintf(fff, "\377w");
+			fprintf(fff, "\377%c", Players[Ind]->r_killed[k] == 1 ? 'w' : 'D');
 
 			/* Hack -- Show the ID for admin -- and also the level */
 			if (admin) fprintf(fff, "(%4d, L%d) ", k, r_ptr->level);
@@ -351,8 +351,8 @@ void do_cmd_check_uniques(int Ind, int line)
 			/* Format message */
 //			fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
 			/* different colour for uniques higher than Morgoth (the 'boss') */
-			if (r_ptr->level > 100) fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name);
-			else if (r_ptr->level == 100) fprintf(fff, "\377v%s was slain by", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
+//			if (r_ptr->level > 100) fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name); else
+			if (r_ptr->level == 100) fprintf(fff, "\377v%s was slain by", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
 			else fprintf(fff, "%s was slain by", r_name + r_ptr->name);
 
 			for (i = 1; i <= NumPlayers; i++) {
@@ -383,7 +383,7 @@ void do_cmd_check_uniques(int Ind, int line)
 					/* add this player name as entry */
 					fprintf(fff, "\377%c", attr);
 					fprintf(fff, "  %-16.16s", q_ptr->name);
-					
+
 					/* after 4 entries per line go to next line */
 					j++;
 					full = FALSE;
