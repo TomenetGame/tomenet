@@ -3784,11 +3784,12 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		block = parry = 0;
 		if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
 		    !(r_ptr->flags3 & RF3_ANIMAL)) {
-#ifdef USE_BLOCKING
-			if (!(r_ptr->flags8 & RF8_NO_BLOCK)) block = 10;
-#endif
 #ifdef USE_PARRYING
 			parry = 5 + m_ptr->ac / 10;
+#endif
+#ifdef USE_BLOCKING
+			if (r_ptr->flags8 & RF8_NO_BLOCK) parry += 5; /* assuming 2-handed weapon or otherwise greater parrying abilities */
+			else block = 10;
 #endif
 		}
 		/* Evaluate: 0 = no, other values = yes */
