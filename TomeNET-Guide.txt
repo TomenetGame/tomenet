@@ -1268,9 +1268,10 @@ Static      A level that is static will not change if you leave it but stay
             static-by-death levels.
 Static Art  See 'Art' at the top of this section.
 Stair-GoI   Stair-globe of invulnerability. This describes the magical
-            protection that any player who takes a staircase up or down will
-            receive a temporary buff of +100 AC and high chance to deflect any
-            projections (bolts/balls/breaths/curses..) that hit him.
+            protection that any player who takes a staircase up or down or uses
+            word-of-recall will receive: A temporary buff of +100 armour class
+            and 40% chance to deflect any attacks that hit him. Attacks that
+            aren't deflected still get their damage halved.
 True Art    See 'Art' at the top of this section.
 Unique      A monster that is named and exists only once. Although it can
             respawn for another player who hasn't defeated it yet, each player
@@ -4124,10 +4125,11 @@ An experience penalty might be applied for killing monsters in the tower
 there is a newbie tower (also called 'Training Tower'), or you might search for
 it yourself. It's usually in Bree, to the lower right of the town centre.
 
-In general, when you take a staircase, your character will temporarily get a
-high Armour bonus (+100) and a chance to deflect enemy attacks, for a very
-short duration. This is an extra protection (also called 'stair-GoI', compare
-(0.4)) to help surviving nasty surprises.
+In general, when you take a staircase or use word-of-recall, your character
+will temporarily get a high Armour bonus (+100) and a chance to deflect enemy
+attacks and to reduce their damage, for a very short duration.
+This is an extra protection (called 'stair-GoI', compare (0.4)) to help
+surviving nasty surprises when entering a new dungeon level.
 Keep your scrolls of teleportation ready anyway!
 
 While in a town, you can invoke a map that shows the staircases upwards
@@ -7185,8 +7187,9 @@ Detonations / Death
                 If thrown (press 'v' to throw an item) these potions show the
                 strongest effect by far of all potions - devastating!
                 Accordingly useful to be used in fumes traps.
-Invulnerability Will turn you partially invulnerable (50% chance to get hit,
-                50% damage reduction).
+Invulnerability Will turn you partially invulnerable (40% chance to fully
+                deflect any attack, 50% damage reduction if it still hits) and
+                increases armour class by 100 temporarily.
 Learning        Gives you 1..3 (random) additional skill points to spend.
 
 
@@ -7220,6 +7223,9 @@ Word of Recall  Use it to quickly travel from the town or the wilderness into a
                 spot a monster you want to kill just after you read a WoR.
                 Word-of-Recall scrolls can be exchanged between an everlasting
                 and a non-everlasting player!
+                After being recalled the player will receive 'stair-goi' (a
+                temporary extra protection from taking damage) for a short
+                amount of time, see (0.4) for details.
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 it to form a blood bond between you and that player. (Only one
                 of you has to read a BB scroll, it's working bidirectional).
