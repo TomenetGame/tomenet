@@ -2407,6 +2407,7 @@ static errr init_other(void)
 	C_MAKE(lite_later, 16, struct worldspot);
 	lite_later_alloc = 16;
 
+
 	/*** Pre-allocate the basic "auto-inscriptions" ***/
 
 	/* The "basic" feelings */
@@ -2427,6 +2428,40 @@ static errr init_other(void)
 	(void)quark_add("handmade");
 	(void)quark_add("stolen");
 	(void)quark_add("bad");
+
+	/* More extra strings */
+#ifdef PLAYER_STORES
+ /* keep consistent with store.c! */
+ #define MASS_CHEQUE_NOTE "various piled items"
+	(void)quark_add(MASS_CHEQUE_NOTE);
+#endif
+#if 0 /* is it really necessary to allocate these in advance? */
+	(void)quark_add("devalued");
+	(void)quark_add("Thank you");
+#endif
+
+	/* Server-side auto-inscriptions */
+#if 0 /* is it really necessary to allocate these in advance? */
+	(void)quark_add("@q1");
+	(void)quark_add("@q2");
+	(void)quark_add("@q3");
+	(void)quark_add("@q4");
+	(void)quark_add("@r1");
+	(void)quark_add("@r2");
+	(void)quark_add("@r5!X");
+	(void)quark_add("@r8");
+	(void)quark_add("@r9");
+	(void)quark_add("@r0");
+	(void)quark_add("@r3@R");
+	(void)quark_add("@z3@R");
+	/* and these just because */
+	(void)quark_add("@r3");
+	(void)quark_add("@r4");
+	(void)quark_add("!X");
+	(void)quark_add("!*");
+	(void)quark_add("!=");
+#endif
+
 
 	/* Turn on color */
 	use_color = TRUE;
