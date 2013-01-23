@@ -7914,6 +7914,32 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		sprintf(killer, p_ptr->male ? "himself" : "herself");
 		sprintf(m_name, "It's yourself who");
 		sprintf(m_name_gen, "your own");
+
+		/* Do not apply Stair-GoI/deflection etc. on one's own helpful self-affecting spells */
+		if ((typ == GF_HEAL_PLAYER) || (typ == GF_AWAY_ALL) ||
+		    (typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) ||
+		    (typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) ||
+		    (typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) ||
+		    (typ == GF_REMCONF_PLAYER) || (typ == GF_REMIMAGE_PLAYER) ||
+		    (typ == GF_SATHUNGER_PLAYER) || (typ == GF_RESFIRE_PLAYER) ||
+		    (typ == GF_RESCOLD_PLAYER) || (typ == GF_CUREPOISON_PLAYER) ||
+		    (typ == GF_SEEINVIS_PLAYER) || (typ == GF_SEEMAP_PLAYER) ||
+		    (typ == GF_CURECUT_PLAYER) || (typ == GF_CURESTUN_PLAYER) ||
+		    (typ == GF_DETECTCREATURE_PLAYER) || (typ == GF_DETECTDOOR_PLAYER) ||
+		    (typ == GF_DETECTTRAP_PLAYER) || (typ == GF_TELEPORTLVL_PLAYER) ||
+		    (typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) ||
+		    (typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) ||
+		    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
+		    (typ == GF_TELEPORT_PLAYER) || (typ == GF_ZEAL_PLAYER) ||
+		    (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
+		    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
+		    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
+                    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) || (typ == GF_PUSH) ||
+		    (typ == GF_HEALINGCLOUD) || /* Also not a hostile spell */
+		    (typ == GF_MINDBOOST_PLAYER) || (typ == GF_IDENTIFY) ||
+		    (typ == GF_SLOWPOISON_PLAYER) ||
+		    (typ == GF_OLD_POLY)) /* may (un)polymorph himself */
+			friendly_player = TRUE;
 	}
 	else if (IS_PVP) {
 //		strcpy(killer, p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
@@ -7928,30 +7954,29 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Do not become hostile if it was a friendly spell */
 		if ((typ != GF_HEAL_PLAYER) && (typ != GF_AWAY_ALL) &&
-			(typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) &&
-			(typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) &&
-			(typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) &&
-			(typ != GF_REMCONF_PLAYER) && (typ != GF_REMIMAGE_PLAYER) &&
-			(typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) &&
-			(typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) &&
-			(typ != GF_SEEINVIS_PLAYER) && (typ != GF_SEEMAP_PLAYER) &&
-			(typ != GF_CURECUT_PLAYER) && (typ != GF_CURESTUN_PLAYER) &&
-			(typ != GF_DETECTCREATURE_PLAYER) && (typ != GF_DETECTDOOR_PLAYER) &&
-			(typ != GF_DETECTTRAP_PLAYER) && (typ != GF_TELEPORTLVL_PLAYER) &&
-			(typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) &&
-			(typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
-			(typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) && (typ != GF_MINDBOOST_PLAYER) &&
-			(typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
-			(typ != GF_RESTORESTATS_PLAYER) && (typ != GF_RESTORELIFE_PLAYER) &&
-			(typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
-			(typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
-                        (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
-			(typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
-			(typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
-			(typ != GF_SLOWPOISON_PLAYER) &&
-			(typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
-		{
-			/* If this was intentional, make target hostile */
+		    (typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) &&
+		    (typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) &&
+		    (typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) &&
+		    (typ != GF_REMCONF_PLAYER) && (typ != GF_REMIMAGE_PLAYER) &&
+		    (typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) &&
+		    (typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) &&
+		    (typ != GF_SEEINVIS_PLAYER) && (typ != GF_SEEMAP_PLAYER) &&
+		    (typ != GF_CURECUT_PLAYER) && (typ != GF_CURESTUN_PLAYER) &&
+		    (typ != GF_DETECTCREATURE_PLAYER) && (typ != GF_DETECTDOOR_PLAYER) &&
+		    (typ != GF_DETECTTRAP_PLAYER) && (typ != GF_TELEPORTLVL_PLAYER) &&
+		    (typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) &&
+		    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
+		    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) && (typ != GF_MINDBOOST_PLAYER) &&
+		    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
+		    (typ != GF_RESTORESTATS_PLAYER) && (typ != GF_RESTORELIFE_PLAYER) &&
+		    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
+		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
+                    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
+		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
+		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
+		    (typ != GF_SLOWPOISON_PLAYER) &&
+		    (typ != GF_OLD_POLY)) /* Non-hostile players may (un)polymorph each other */
+		{ /* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind)) {
 				/* Make target hostile if not already */
 				if (!check_hostile(Ind, 0 - who)) {
@@ -8035,53 +8060,62 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Ghost-check (also checks for admin status) */
 	/* GHOST CHECK */
-	if ((!(p_ptr->ghost && ((typ == GF_HEAL_PLAYER) || /*(typ == GF_AWAY_ALL) ||*/
-	(typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) ||
-	/*(typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) ||*/
-	(typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) ||
-	(typ == GF_REMCONF_PLAYER) || (typ == GF_REMIMAGE_PLAYER) ||
-	(typ == GF_SATHUNGER_PLAYER) || /*(typ == GF_RESFIRE_PLAYER) ||
-	(typ == GF_RESCOLD_PLAYER) ||*/ (typ == GF_CUREPOISON_PLAYER) ||
-	(typ == GF_SEEINVIS_PLAYER) || (typ == GF_SEEMAP_PLAYER) ||
-	(typ == GF_CURECUT_PLAYER) || /*(typ == GF_CURESTUN_PLAYER) ||*/
-	(typ == GF_DETECTCREATURE_PLAYER) || (typ == GF_DETECTDOOR_PLAYER) ||
-	(typ == GF_DETECTTRAP_PLAYER) || /*(typ == GF_TELEPORTLVL_PLAYER) ||
-	(typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) ||
-	(typ == GF_RESACID_PLAYER) ||*/ (typ == GF_HPINCREASE_PLAYER) ||
-	(typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
-	/*(typ == GF_TELEPORT_PLAYER) ||*/ (typ == GF_ZEAL_PLAYER) ||
-	(typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
-	(typ == GF_CURE_PLAYER) || /*(typ == GF_RESURRECT_PLAYER) ||
-	(typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
-	(typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
-	(typ == GF_HEALINGCLOUD) || /* shoo ghost, shoo */
-	(typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) ||
-	(typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER)))) &&
-
-	/* ADMIN CHECK */
-	((!(is_admin(p_ptr) && ((typ == GF_HEAL_PLAYER) || (typ == GF_AWAY_ALL) ||
-	(typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) ||
-	(typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) ||
-	(typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) ||
-	(typ == GF_REMCONF_PLAYER) || (typ == GF_REMIMAGE_PLAYER) ||
-	(typ == GF_SATHUNGER_PLAYER) || (typ == GF_RESFIRE_PLAYER) ||
-	(typ == GF_RESCOLD_PLAYER) || (typ == GF_CUREPOISON_PLAYER) ||
-	(typ == GF_SEEINVIS_PLAYER) || (typ == GF_SEEMAP_PLAYER) ||
-	(typ == GF_CURECUT_PLAYER) || (typ == GF_CURESTUN_PLAYER) ||
-	(typ == GF_DETECTCREATURE_PLAYER) || (typ == GF_DETECTDOOR_PLAYER) ||
-	(typ == GF_DETECTTRAP_PLAYER) || (typ == GF_TELEPORTLVL_PLAYER) ||
-	(typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) ||
-	(typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) ||
-	(typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
-	(typ == GF_TELEPORT_PLAYER) || (typ == GF_ZEAL_PLAYER) ||
-	(typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
-	(typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
-	(typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
-	(typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
-	(typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
-	(typ == GF_SLOWPOISON_PLAYER) ||
-	(typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))))
+	if ((p_ptr->ghost && ((typ == GF_HEAL_PLAYER) || /*(typ == GF_AWAY_ALL) ||*/
+	    (typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) ||
+	    /*(typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) ||*/
+	    (typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) ||
+	    (typ == GF_REMCONF_PLAYER) || (typ == GF_REMIMAGE_PLAYER) ||
+	    (typ == GF_SATHUNGER_PLAYER) || /*(typ == GF_RESFIRE_PLAYER) ||
+	    (typ == GF_RESCOLD_PLAYER) ||*/ (typ == GF_CUREPOISON_PLAYER) ||
+	    (typ == GF_SEEINVIS_PLAYER) || (typ == GF_SEEMAP_PLAYER) ||
+	    (typ == GF_CURECUT_PLAYER) || /*(typ == GF_CURESTUN_PLAYER) ||*/
+	    (typ == GF_DETECTCREATURE_PLAYER) || (typ == GF_DETECTDOOR_PLAYER) ||
+	    (typ == GF_DETECTTRAP_PLAYER) || /*(typ == GF_TELEPORTLVL_PLAYER) ||
+	    (typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) ||
+	    (typ == GF_RESACID_PLAYER) ||*/ (typ == GF_HPINCREASE_PLAYER) ||
+	    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
+	    /*(typ == GF_TELEPORT_PLAYER) ||*/ (typ == GF_ZEAL_PLAYER) ||
+	    (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
+	    (typ == GF_CURE_PLAYER) || /*(typ == GF_RESURRECT_PLAYER) ||
+	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
+	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
+	    (typ == GF_HEALINGCLOUD) || /* shoo ghost, shoo */
+	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) ||
+	    (typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER)))
+	    ||
+	    /* ADMIN CHECK */
+	    (is_admin(p_ptr) && ((typ == GF_HEAL_PLAYER) || (typ == GF_AWAY_ALL) ||
+	    (typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) ||
+	    (typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) ||
+	    (typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) ||
+	    (typ == GF_REMCONF_PLAYER) || (typ == GF_REMIMAGE_PLAYER) ||
+	    (typ == GF_SATHUNGER_PLAYER) || (typ == GF_RESFIRE_PLAYER) ||
+	    (typ == GF_RESCOLD_PLAYER) || (typ == GF_CUREPOISON_PLAYER) ||
+	    (typ == GF_SEEINVIS_PLAYER) || (typ == GF_SEEMAP_PLAYER) ||
+	    (typ == GF_CURECUT_PLAYER) || (typ == GF_CURESTUN_PLAYER) ||
+	    (typ == GF_DETECTCREATURE_PLAYER) || (typ == GF_DETECTDOOR_PLAYER) ||
+	    (typ == GF_DETECTTRAP_PLAYER) || (typ == GF_TELEPORTLVL_PLAYER) ||
+	    (typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) ||
+	    (typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) ||
+	    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
+	    (typ == GF_TELEPORT_PLAYER) || (typ == GF_ZEAL_PLAYER) ||
+	    (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
+	    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
+	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
+	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
+	    (typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
+	    (typ == GF_SLOWPOISON_PLAYER) ||
+	    (typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))
 	{ /* No effect on ghosts / admins */
+		/* Skip non-connected players */
+		if (!p_ptr->conn == NOT_CONNECTED) {
+			/* Disturb */
+			disturb(Ind, 1, 0);
+		}
+
+		/* Return "Anything seen?" */
+		return (obvious);
+	}
 
 
 
@@ -10193,9 +10227,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Player was hit - mikaelh */
 	p_ptr->got_hit = TRUE;
-
-	/* Ghost/admin-check end */
-	}
 
 	/* Skip non-connected players */
 	if (!p_ptr->conn == NOT_CONNECTED)
