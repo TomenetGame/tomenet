@@ -5741,7 +5741,7 @@ depending on the character class . A table showing the blows/round limits
 is at section (6.5).
 
 There are four different classes of melee weapons,
-swords/daggers, blunt weapons, axes, polearms.
+swords/daggers, blunt weapons, axes, polearms. (Also see (5.1a) below!)
 You may examine a weapon by pressing 'I' to see its base class.
 Those again are divided into four sub-classes each:
 Single-handed, forced two-handed, should-be-wielded-two-handed,
