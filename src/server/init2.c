@@ -2425,6 +2425,8 @@ static errr init_other(void)
 	(void)quark_add("uncursed");
 	(void)quark_add("on sale");
 	(void)quark_add("handmade");
+	(void)quark_add("stolen");
+	(void)quark_add("bad");
 
 	/* Turn on color */
 	use_color = TRUE;
