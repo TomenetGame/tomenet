@@ -1589,7 +1589,7 @@ void do_cmd_fill_bottle(int Ind)
 	}
 
 	if (c_ptr->feat == FEAT_FOUNTAIN_BLOOD) {
-		msg_print(Ind, "Fresh blood don't last well.");
+		msg_print(Ind, "Fresh blood perishes too quickly.");
 		return;
 	}
 
