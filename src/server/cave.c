@@ -2749,9 +2749,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					/* Torch lite */
 					if (p_ptr->view_yellow_lite) {
 #ifdef CAVE_LITE_COLOURS
-						if ((c_ptr->info & CAVE_LITE_WHITE)) a = TERM_WHITE;
-						else if ((c_ptr->info & CAVE_LITE_VAMP)) a = TERM_L_WHITE;
-						else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) a = TERM_LAMP;
+						if ((c_ptr->info & CAVE_LITE_WHITE)) {
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_WHITE;
+						} else if ((c_ptr->info & CAVE_LITE_VAMP)) {
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_L_WHITE;
+						} else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) a = TERM_LAMP;
 						else a = TERM_YELLOW;
 #else
 						a = TERM_YELLOW;
@@ -2764,7 +2766,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 #ifndef SHADE_ALL_FLOOR
 				    && (!(f_ptr->flags2 & FF2_NO_SHADE) || lite_snow)
 #endif
-				    ){
+				    ) {
 					/* Use "dark gray" */
 					a = TERM_L_DARK;
 				}
@@ -2899,9 +2901,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					/* Torch lite */
 					if (p_ptr->view_yellow_lite) {
 #ifdef CAVE_LITE_COLOURS
-						if ((c_ptr->info & CAVE_LITE_WHITE)) a = TERM_WHITE;
-						else if ((c_ptr->info & CAVE_LITE_VAMP)) a = TERM_L_WHITE;
-						else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) a = TERM_LAMP;
+						if ((c_ptr->info & CAVE_LITE_WHITE)) {
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_WHITE;
+						} else if ((c_ptr->info & CAVE_LITE_VAMP)) {
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_L_WHITE;
+						} else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) a = TERM_LAMP;
 						else a = TERM_YELLOW;
 #else
 						a = TERM_YELLOW;

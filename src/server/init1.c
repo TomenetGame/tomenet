@@ -981,7 +981,7 @@ static cptr f_info_flags2[] =
 	"NIGHT_DARK",
 
 	"NO_SHADE",
-	"XXX",
+	"NO_LITE_WHITEN",
 	"XXX",
 	"XXX",
 

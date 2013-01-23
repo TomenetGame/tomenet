@@ -5338,6 +5338,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define FF2_SPECIAL_LITE	0x00000004L	/* Gets coloured slate/gets slightly darkened by special fx: no LoS/no GLOW. This is implied by LAMP_LITE and successful LAMP_LITE_SNOW. */
 #define FF2_NIGHT_DARK		0x00000008L	/* Stays darkened at night, unaffected by glow (magical light) or lite (lamps) */
 #define FF2_NO_SHADE		0x00000010L	/* Don't shade to TERM_SLATE in view_bright_lite (or vault walls become indistinguishable from granite, without magic light) */
+#define FF2_NO_LITE_WHITEN	0x00000020L	/* Won't change to WHITE or L_WHITE lamp light colour. For tiles that are affected from yellow light but retain their colour in white light. */
 
 /* for switching places with another player: */
 #define FF1_SWITCH_MASK \
