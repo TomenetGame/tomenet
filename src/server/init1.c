@@ -467,7 +467,7 @@ static cptr r_info_flags8[] =
 	"WILD_ICE",
 	"NETHER_REALM",
 	"PLURAL",
-	"XXX8X23",
+	"NO_BLOCK",
 	"XXX8X24",
 	"XXX8X25",
 	"XXX8X26",
@@ -4629,8 +4629,21 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			r_info[i].flags8 |= RF8_WILD_EASY_MASK;
 
 		/* Implied flags */
-		if (r_info[i].flags1 & RF1_UNIQUE)
-			r_info[i].flags7 |= RF7_OOD_20;
+
+		/* Uniques can never occure more than 20 levels ood */
+		if (r_info[i].flags1 & RF1_UNIQUE) r_info[i].flags7 |= RF7_OOD_20;
+
+		/* Certain NON-UNIQUE monsters don't use shields, so they don't block */
+		else if (r_info[i].d_char == 'p') {
+			if (r_info[i].d_attr == 'b' || r_info[i].d_attr == 'o' ||
+			    r_info[i].d_attr == 'G' || r_info[i].d_attr == 'r' ||
+			    r_info[i].d_attr == 'R')
+				r_info[i].flags8 |= RF8_NO_BLOCK;
+		} else if (r_info[i].d_char == 'h') {
+			if (r_info[i].d_attr == 'r' || r_info[i].d_attr == 'v' ||
+			    r_info[i].d_attr == 'R')
+				r_info[i].flags8 |= RF8_NO_BLOCK;
+		}
 
 		/* clear flags that we want to be 'disabled' in defines.h for the time being,
 		   for example RF6_RAISE_DEAD isn't implemented fully! - C. Blue */

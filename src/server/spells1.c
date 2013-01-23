@@ -4833,12 +4833,34 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	else seen = FALSE;
 
 
+	/* Get the monster name (BEFORE polymorphing) */
+	if (!quiet) monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+
+
 	/* Handle reflection - it's back, though weaker - C. Blue */
-	if ((r_ptr->flags2 & RF2_REFLECTING) && magik(50) &&
-	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP))) { /* only for fire_bolt() */
+	if ((r_ptr->flags2 & RF2_REFLECTING) &&
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP)) /* only for fire_bolt() */
+	    && magik(50)) {
 		if (seen) msg_print(Ind, "Your attack was deflected.");
-		return (TRUE); /* notice */
+		return TRUE; /* notice */
 	}
+
+#ifdef USE_BLOCKING
+	/* handle blocking (deflection) */
+        if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
+            !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) &&
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP)) /* only for fire_bolt() */
+            && !rand_int(60 - m_ptr->level / 2)) { /* small chance to block spells */
+		if (seen) {
+			char hit_desc[MAX_CHARS];
+	                sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+    		        hit_desc[0] = toupper(hit_desc[0]);
+	                msg_format(Ind, hit_desc);
+		}
+		return TRUE; /* notice */
+        }
+#endif
+
 
 	/* Extract radius */
 	div = r + 1;
@@ -4851,10 +4873,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	project_m_n++;
 	project_m_x = x;
 	project_m_y = y;
-
-
-	/* Get the monster name (BEFORE polymorphing) */
-	if (!quiet) monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 
 
