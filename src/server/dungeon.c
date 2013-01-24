@@ -6275,10 +6275,16 @@ void dungeon(void)
 			} else {
 				for (i = NumPlayers; i > 0 ;i--) {
 					if (Players[i]->conn == NOT_CONNECTED) continue;
+
 					/* Ignore admins that are loged in */
 					if (admin_p(i)) continue;
+
+					/* Ignore chars in fixed irondeepdive towns */
+					if (is_fixed_irondeepdive_town(&Players[i]->wpos, getlevel(&Players[i]->wpos))) continue;
+
 					/* Ignore characters that are afk and not in a dungeon/tower */
 //						if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+
 					/* Ignore characters that are not in a dungeon/tower */
 					if(Players[i]->wpos.wz == 0) {
 						/* Don't interrupt events though */
