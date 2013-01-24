@@ -1438,7 +1438,8 @@ void handle_music(int Ind) {
 	} else {
 		/* Dungeon towns have their own music to bolster the player's motivation ;) */
 		if (isdungeontown(&p_ptr->wpos)) {
-			Send_music(Ind, 2);
+			if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) Send_music(Ind, 1); /* 'generic town' music instead, for a change */
+			else Send_music(Ind, 2); /* the usual music for this case */
 			return;
 		}
 
