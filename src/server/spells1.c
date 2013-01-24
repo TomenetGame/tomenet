@@ -4818,7 +4818,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
         if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
             !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) &&
 	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP)) /* only for fire_bolt() */
-            && !rand_int(60 - r_ptr->level / 2)) { /* small chance to block spells */
+            && !rand_int(52 - r_ptr->level / 3)) { /* small chance to block spells */
 		if (seen) {
 			char hit_desc[MAX_CHARS];
 	                sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
