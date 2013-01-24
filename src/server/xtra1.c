@@ -2897,7 +2897,12 @@ void calc_boni(int Ind)
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	cave_type **zcave;
-	if (!(zcave=getcave(&p_ptr->wpos))) return;
+
+	if (!(zcave = getcave(&p_ptr->wpos))) {
+		/* for stair-goi: try to repeat this failed calc_boni() call asap - C. Blue */
+		p_ptr->update |= PU_BONUS;
+		return;
+	}
 
 	int			j, hold, minus, am_bonus = 0, am_temp;
 	long			w, i;
