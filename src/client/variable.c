@@ -236,8 +236,8 @@ int weather_speed_snow = 999; /* speed at which snowflakes move aka a second win
         		  parameter (doesnt make sense for raindrops) [9] */
 int weather_elements = 0; /* current amount of raindrops/snowflakes on the move */
 int weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024], weather_element_type[1024];
-int weather_panel_x, weather_panel_y; /* part of the map we're viewing on screen, top left corner */
-bool weather_panel_changed; /* view got updated anyway by switching panel? */
+int weather_panel_x = -1, weather_panel_y = -1; /* part of the map we're viewing on screen, top left corner */
+bool weather_panel_changed = FALSE; /* view got updated anyway by switching panel? */
 /* a client-side map_info buffer of current view panel (for weather) */
 byte panel_map_a[MAX_SCREEN_WID][MAX_SCREEN_HGT];
 char panel_map_c[MAX_SCREEN_WID][MAX_SCREEN_HGT];
