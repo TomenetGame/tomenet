@@ -4613,6 +4613,7 @@ void do_cmd_fire(int Ind, int dir)
 								}
 							}
 #endif
+#if 0 /* disable for now? */
 #ifdef USE_PARRYING
 							if (q_ptr->weapon_parry) {
 								// && !p_ptr->ranged_barrage etc, any prepared bow stance?
@@ -4625,6 +4626,7 @@ void do_cmd_fire(int Ind, int dir)
 									continue;
 								}
 							}
+#endif
 #endif
 
 							if (!dodged) {	// 'goto' would be cleaner
