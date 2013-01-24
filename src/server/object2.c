@@ -3121,7 +3121,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 	/* Hack -- require semi-matching "inscriptions" */
 	/* Hack^2 -- books do merge.. it's to prevent some crashes */
-s_printf("onote %s, jnote %s\n", quark_str(o_ptr->note), quark_str(j_ptr->note));
 	if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)
 		&& strcmp(quark_str(o_ptr->note), "on sale")
 		&& strcmp(quark_str(j_ptr->note), "on sale")
