@@ -2451,6 +2451,8 @@ static int Handle_login(int ind)
 
 	/* warning_rest only occurs once per account */
 	if (acc_get_flags(p_ptr->accountname) & ACC_WARN_REST) p_ptr->warning_rest = 1;
+#else
+	greeting = FALSE;
 #endif
 
 #if 1
