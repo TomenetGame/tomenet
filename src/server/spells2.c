@@ -2917,8 +2917,6 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 
 	/* Unenchantable items always fail */
 	if (f5 & TR5_NO_ENCHANT) return (FALSE);
-	/* Dark Swords are unenchantable too */
-	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) return (FALSE);
 	/* Artifacts cannot be enchanted. */
 	if (a) return (FALSE);
 
@@ -3301,7 +3299,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	if (enchant(Ind, o_ptr, num_ac, ENCH_TOAC)) okay = TRUE;
 
 	/* Artifacts cannot be enchanted. */
-	if (artifact_p(o_ptr)) msg_format(Ind,"Your %s %s unaffected.",o_name,((o_ptr->number != 1) ? "are" : "is"));
+	//if (artifact_p(o_ptr)) msg_format(Ind,"Your %s %s unaffected.",o_name,((o_ptr->number != 1) ? "are" : "is"));
 
 	/* Failure */
 	if (!okay) {

@@ -181,7 +181,7 @@ static void reset_tim_flags()
 	p_ptr->stun = 0;            /* Timed -- Stun */
 
 	p_ptr->protevil = 0;        /* Timed -- Protection */
-	p_ptr->protgood = 0;        /* Timed -- Protection */	
+	p_ptr->protgood = 0;        /* Timed -- Protection */
 	p_ptr->invuln = 0;          /* Timed -- Invulnerable */
 	p_ptr->hero = 0;            /* Timed -- Heroism */
 	p_ptr->shero = 0;           /* Timed -- Super Heroism */
@@ -223,7 +223,7 @@ static void arena_comm(int cmd)
 			if (p_ptr->arena_number == MAX_ARENA_MONS) {
 				clear_bldg(5,19);
 				prt("               Arena Victor!", 5, 0);
-				prt("Congratulations!  You have defeated all before you.", 7, 0); 
+				prt("Congratulations!  You have defeated all before you.", 7, 0);
 				prt("For that, receive the prize: 10,000 gold pieces", 8, 0);
 				prt("",10,0);
 				prt("", 11, 0);
@@ -251,7 +251,7 @@ static void arena_comm(int cmd)
 
 		case BACT_POSTER:
 		{
-			if (p_ptr->arena_number == MAX_ARENA_MONS) 
+			if (p_ptr->arena_number == MAX_ARENA_MONS)
 				msg_print("You are victorious. Enter the arena for the ceremony.");
 			else if (p_ptr->arena_number > MAX_ARENA_MONS)
 				msg_print("You have won against all foes.");
@@ -498,7 +498,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 				roll2 = randint(6);
 				roll3 = roll1 +  roll2;
 				choice = roll3;
-				msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1, 
+				msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1,
 				    roll2, roll3);
 				if ((roll3 == 7) || (roll3 == 11))
 					win = TRUE;
@@ -635,7 +635,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 
 #if 0
 		prt("", 18, 37);
-		if (p_ptr->au >= oldgold) 
+		if (p_ptr->au >= oldgold)
 			msg_print(Ind, "You came out a winner! We'll win next time, I'm sure.");
 		else
 			msg_print(Ind, "You lost gold! Haha, better head home.");
@@ -655,7 +655,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
  * Now that the ghosts are temporarily disabled in 2.8.X, this function
  * will not be that useful.  I will keep it in the hopes the player
  * ghost code does become a reality again. Does help to avoid filthy urchins.
- * Resting at night is also a quick way to restock stores -KMW- 
+ * Resting at night is also a quick way to restock stores -KMW-
  */
 static bool inn_comm(int Ind, int cmd)
 {
@@ -1206,14 +1206,11 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 		maxenchant_eff = maxenchant;
 		if (is_ammo(o_ptr->tval) && (maxenchant_eff > 15)) maxenchant_eff = 15; /* CAP_ITEM_BONI */
 
-	        /* Unenchantable items always fail */                                                                            
+	        /* Unenchantable items always fail */
 	        if (f5 & TR5_NO_ENCHANT) continue;
 
-	        /* Dark Swords are unenchantable too */                                                                          
-	        if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) continue;
-
-	        /* Artifacts cannot be enchanted. */                                                                             
-	        if (artifact_p(o_ptr)) continue;                                                                           
+	        /* Artifacts cannot be enchanted. */
+	        if (artifact_p(o_ptr)) continue;
 
 		if (ispecific > 0) {
 			if (o_ptr->tval != ispecific)
@@ -1230,7 +1227,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 			if ((o_ptr->name1 && (o_ptr->ident & ID_KNOWN)) ||
 					f5 & TR5_NO_ENCHANT)
 				msg_format(Ind, "%-40s: beyond our skills!", tmp_str);
-			else if (o_ptr->name1) 
+			else if (o_ptr->name1)
 				msg_format(Ind, "%-40s: in fine condition", tmp_str);
 			else
 			{
@@ -1302,7 +1299,7 @@ static bool research_item(void)
 
 
 /*
- * Show the current quest monster. 
+ * Show the current quest monster.
  */
 static void show_quest_monster(void)
 {
@@ -1371,7 +1368,7 @@ static bool item_tester_hook_quest_monster(object_type* o_ptr)
 }
 
 
-/* 
+/*
  * Return the boost in the corpse's value depending on how rare the body
  * part is.
  */

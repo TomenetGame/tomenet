@@ -2218,15 +2218,13 @@ int set_all_destroy(object_type *o_ptr)
  * Destruction taken from "melee.c" code for "stealing".
  * Returns number of items destroyed.
  */
-int inven_damage(int Ind, inven_func typ, int perc)
-{
-	player_type *p_ptr = Players[Ind];
+int inven_damage(int Ind, inven_func typ, int perc) {
+	player_type	*p_ptr = Players[Ind];
 	int		i, j, k, amt;
 	object_type	*o_ptr;
-	char	o_name[ONAME_LEN];
+	char		o_name[ONAME_LEN];
 
 	if (safe_area(Ind)) return(FALSE);
-
 	/* secret dungeon master is unaffected (potion shatter effects might be bad) */
 	if (p_ptr->admin_dm) return(FALSE);
 
@@ -2234,8 +2232,7 @@ int inven_damage(int Ind, inven_func typ, int perc)
 	k = 0;
 
 	/* Scan through the slots backwards */
-//	for (i = 0; i < INVEN_PACK; i++)
-	for (i = 0; i < INVEN_TOTAL; i++) { /* Let's see what will happen.. */
+	for (i = 0; i < INVEN_TOTAL; i++) {
 		/* Hack -- equipments are harder to be harmed */
 		if (i >= INVEN_PACK && i != INVEN_AMMO && !magik(HARM_EQUIP_CHANCE))
 			continue;
@@ -2302,10 +2299,9 @@ int inven_damage(int Ind, inven_func typ, int perc)
  */
 /* Hack -- 'water' means it was water damage (and not acid).
  * TODO: add IGNORE_WATER flags */
-int equip_damage(int Ind, int typ)
-{
-	player_type *p_ptr = Players[Ind];
-	object_type		*o_ptr = NULL;
+int equip_damage(int Ind, int typ) {
+	player_type	*p_ptr = Players[Ind];
+	object_type	*o_ptr = NULL;
 	char		o_name[ONAME_LEN];
 
 	if (safe_area(Ind)) return(FALSE);
@@ -2313,13 +2309,14 @@ int equip_damage(int Ind, int typ)
 
 	/* Pick a (possibly empty) inventory slot */
 	switch (randint(6)) {
-		case 1: o_ptr = &p_ptr->inventory[INVEN_BODY]; break;
-		case 2: o_ptr = &p_ptr->inventory[INVEN_ARM]; break;
-		case 3: o_ptr = &p_ptr->inventory[INVEN_OUTER]; break;
-		case 4: o_ptr = &p_ptr->inventory[INVEN_HANDS]; break;
-		case 5: o_ptr = &p_ptr->inventory[INVEN_HEAD]; break;
-		case 6: o_ptr = &p_ptr->inventory[INVEN_FEET]; break;
+	case 1: o_ptr = &p_ptr->inventory[INVEN_BODY]; break;
+	case 2: o_ptr = &p_ptr->inventory[INVEN_ARM]; break;
+	case 3: o_ptr = &p_ptr->inventory[INVEN_OUTER]; break;
+	case 4: o_ptr = &p_ptr->inventory[INVEN_HANDS]; break;
+	case 5: o_ptr = &p_ptr->inventory[INVEN_HEAD]; break;
+	case 6: o_ptr = &p_ptr->inventory[INVEN_FEET]; break;
 	}
+
 	/* Nothing to damage */
 	if (!o_ptr->k_idx) return (FALSE);
 
@@ -2359,13 +2356,13 @@ int equip_damage(int Ind, int typ)
  * Acid or water has hit the player but he blocked it. Damage the shield! - C. Blue
  * Note that the "base armor" of an object never changes.
  */
-int shield_takes_damage(int Ind, int typ)
-{
-	player_type *p_ptr = Players[Ind];
-	object_type		*o_ptr = &p_ptr->inventory[INVEN_ARM];
+int shield_takes_damage(int Ind, int typ) {
+	player_type	*p_ptr = Players[Ind];
+	object_type	*o_ptr = &p_ptr->inventory[INVEN_ARM];
 	char		o_name[ONAME_LEN];
 
 	if (safe_area(Ind)) return(FALSE);
+	if (p_ptr->admin_dm) return(FALSE);
 
 	/* Nothing to damage */
 	if (!o_ptr->k_idx) return (FALSE);
@@ -2408,32 +2405,16 @@ int shield_takes_damage(int Ind, int typ)
 	return (TRUE);
 }
 
-int weapon_takes_damage(int Ind, int typ, int slot)
-{
-	player_type *p_ptr = Players[Ind];
+int weapon_takes_damage(int Ind, int typ, int slot) {
+	player_type	*p_ptr = Players[Ind];
+	object_type	*o_ptr = &p_ptr->inventory[slot];
 	char		o_name[ONAME_LEN];
-		u32b f1, f2, f3, f4, f5, esp;
-#if 0
-	object_type		*o_ptr = NULL, *o2_ptr = NULL;
-
-	o_ptr = &p_ptr->inventory[INVEN_WIELD];
-	/* dual-wield */
-	o2_ptr = &p_ptr->inventory[INVEN_ARM];
-	if (!o2_ptr->k_idx || o2_ptr->tval == TV_SHIELD) o2_ptr = NULL;
-
-	/* Nothing to damage */
-	if (!o_ptr->k_idx && o2_ptr == NULL) return (FALSE);
-	/* dual-wield - choose one randomly */
-	if (!o_ptr->k_idx || (o2_ptr != NULL && magik(50))) o_ptr = o2_ptr;
-#else
-	object_type		*o_ptr = &p_ptr->inventory[slot];
-
-	/* Nothing to damage */
-	if (!o_ptr->k_idx) return (FALSE);
-#endif
 
 	if (safe_area(Ind)) return(FALSE);
 	if (p_ptr->admin_dm) return(FALSE);
+
+	/* Nothing to damage */
+	if (!o_ptr->k_idx) return (FALSE);
 
 	switch (typ) {
 	case GF_WATER:
@@ -2459,14 +2440,6 @@ int weapon_takes_damage(int Ind, int typ, int slot)
 		break;
 	default: return(FALSE);
 	}
-
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-		/* Unenchantable items always fail */
-		if (f5 & TR5_NO_ENCHANT) return (FALSE);
-		/* Dark Swords are unenchantable too */
-		if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) return (FALSE);
-		/* Artifacts cannot be enchanted. */
-		if (artifact_p(o_ptr)) return (FALSE);
 
 	/* No damage left to be done */
 	if (o_ptr->to_d <= -10) return (FALSE);
@@ -2996,9 +2969,7 @@ bool apply_disenchant(int Ind, int mode)
 		return (FALSE);
 	}
 
-	if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ||
-	    (f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN))
-	{
+	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) {
 		msg_format(Ind, "Your %s (%c) %s unaffected!",
 				   o_name, index_to_label(t),
 				   ((o_ptr->number != 1) ? "are" : "is"));
@@ -3008,10 +2979,7 @@ bool apply_disenchant(int Ind, int mode)
 
 	/* Artifacts have 70%(randart) or 80%(trueart) chance to resist */
 	if ((artifact_p(o_ptr) && (rand_int(100) < 70)) ||
-	    (true_artifact_p(o_ptr) && (rand_int(100) < 80)))
-//		((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD)))
-/*		(artifact_p(o_ptr) && (o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD)))*/
-	{
+	    (true_artifact_p(o_ptr) && (rand_int(100) < 80))) {
 		/* Message */
 		msg_format(Ind, "Your %s (%c) resist%s!",
 				   o_name, index_to_label(t),

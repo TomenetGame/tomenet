@@ -4414,14 +4414,9 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	if (o_ptr->name2 == EGO_STORMBRINGER)
 		fprintf(fff, "\377DIt's possessed by mad wrath!\n");
 
-
-	if ((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD))
-		fprintf(fff, "\377WIt cannot be enchanted nor disenchanted by any means.\n");
-	else if (f5 & (TR5_NO_ENCHANT))
+	if (f5 & (TR5_NO_ENCHANT))
 		fprintf(fff, "\377WIt cannot be enchanted by any means.\n");
 
-#if 1
-//	strcpy(buf_tmp, "\377WIt cannot be harmed by ");
 	strcpy(buf_tmp, "\377WUnaffected by ");
 	buf_tmp_i = buf_tmp_n = 0;
 	if (f3 & (TR3_IGNORE_FIRE)) buf_tmp_n++;
@@ -4466,24 +4461,6 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		buf_tmp_i++;
 	}
 	if (buf_tmp_n) fprintf(fff, "%s.\n", buf_tmp);
-#else
-	if ((f5 & (TR5_IGNORE_WATER)) && (f5 & (TR5_IGNORE_MANA)) && (f3 & (TR3_IGNORE_ACID)) && (f3 & (TR3_IGNORE_FIRE)) && (f3 & (TR3_IGNORE_COLD)) && (f3 & (TR3_IGNORE_ELEC))) {
-		fprintf(fff, "\377WIt cannot be harmed by water, lightning, cold, acid, fire or pure energy.\n");
-	} else {
-		if (f5 & (TR5_IGNORE_WATER))
-			fprintf(fff, "\377WIt cannot be harmed by water.\n");
-		if (f3 & (TR3_IGNORE_ELEC))
-			fprintf(fff, "\377WIt cannot be harmed by electricity.\n");
-		if (f3 & (TR3_IGNORE_COLD))
-			fprintf(fff, "\377WIt cannot be harmed by cold.\n");
-		if (f3 & (TR3_IGNORE_ACID))
-			fprintf(fff, "\377WIt cannot be harmed by acid.\n");
-		if (f3 & (TR3_IGNORE_FIRE))
-			fprintf(fff, "\377WIt cannot be harmed by fire.\n");
-		if (f5 & (TR5_IGNORE_MANA))
-			fprintf(fff, "\377WIt cannot be harmed by pure energy.\n");
-	}
-#endif
 
 	/* special artifacts hardcoded - C. Blue */
 	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_AMBER)
