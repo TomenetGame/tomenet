@@ -182,6 +182,11 @@ extern s16b command_wrk;
 extern bool item_tester_full;
 extern byte item_tester_tval;
 extern bool (*item_tester_hook)(object_type *o_ptr);
+extern bool item_tester_hook_device(object_type *o_ptr);
+extern bool item_tester_hook_armour(object_type *o_ptr);
+extern bool item_tester_hook_weapon(object_type *o_ptr);
+extern bool item_tester_hook_custom_tome(object_type *o_ptr);
+
 
 extern int special_line_type;
 extern int special_page_size;

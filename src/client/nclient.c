@@ -2051,10 +2051,35 @@ int Receive_stun(void) {
 }
 
 int Receive_item(void) {
-	char	ch;
+	char	ch, th = ITH_NONE;
 	int	n, item;
 
-	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
+	if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &th)) <= 0) return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
+	}
+
+	switch (th) {
+	case ITH_NONE:
+	default:
+		break;
+	case ITH_RECHARGE:
+		item_tester_hook = item_tester_hook_device;
+		break;
+	case ITH_ENCH_AC:
+		item_tester_hook = item_tester_hook_armour;
+		break;
+	case ITH_ENCH_WEAP:
+		item_tester_hook = item_tester_hook_weapon;
+		break;
+	case ITH_CUSTOM_TOME:
+		item_tester_hook = item_tester_hook_custom_tome;
+		break;
+	case ITH_RUNE:
+		item_tester_tval = TV_RUNE;
+		break;
+	}
 
 	if (!screen_icky && !topline_icky) {
 		c_msg_print(NULL);

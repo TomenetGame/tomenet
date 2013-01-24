@@ -20,7 +20,7 @@
  *
  * Note also that some vaults/quests will be genocide-resistant.
  */
-/* 
+/*
  * (Mass) Genocide spell being way too powerful, the caster's HP is halved
  * if this option is set.
  */
@@ -49,8 +49,8 @@
 
 #ifdef ENABLE_MAIA
 /*
- * For angelic beings, this spell will gather any party 
- * members on the same level to him/herself. This also 
+ * For angelic beings, this spell will gather any party
+ * members on the same level to him/herself. This also
  * tele_to's all monsters in LOS.
  * For demonic beings, do a dispel on LOS.
  */
@@ -97,7 +97,7 @@ void divine_vengeance(int Ind, int power) {
 /* A: fury
  * D: +hp (does not stack with +LIFE)
  */
-void divine_empowerment(int Ind, int level) { 
+void divine_empowerment(int Ind, int level) {
 	player_type *p_ptr = Players[Ind];
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
 		set_fury(Ind, 20 + level / 10);
@@ -147,7 +147,7 @@ void divine_gateway(int Ind) {
 
 		int i;
 		for (i = 1; i <= NumPlayers; i++) {
-                        if (i == Ind) continue; 
+                        if (i == Ind) continue;
                         if (Players[i]->conn == NOT_CONNECTED) continue;
 
                         /* on the same dungeon floor */
@@ -155,9 +155,9 @@ void divine_gateway(int Ind) {
 
                         /* must be in the same party */
                         if (!Players[i]->party || p_ptr->party != Players[i]->party) continue;
-			
+
 			set_recall_timer(i, 1);
-		} 
+		}
 	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
 		struct worldpos *wpos = &(p_ptr->wpos);
 		cave_type **zcave;
@@ -181,7 +181,7 @@ void divine_gateway(int Ind) {
 
 			// Let's not have this in towns/houses; OK everywhere else
 			if (!allow_terraforming(wpos, FEAT_TREE)) return;
-		
+
 			msg_format(Ind, "\377vYou set your mind to create a gateway here.");
 
 			p_ptr->voidx = p_ptr->px;
@@ -194,7 +194,7 @@ void divine_gateway(int Ind) {
 void divine_vengeance(int Ind, int power) {
 	return;
 }
-void divine_empowerment(int Ind, int power) { 
+void divine_empowerment(int Ind, int power) {
 	return;
 }
 void divine_intensify(int Ind, int power) {
@@ -207,7 +207,7 @@ void divine_gateway(int Ind) {
 
 
 /* for mindcrafters: teleport to friendly player with open mind - C. Blue */
-void do_autokinesis_to(int Ind, int dis) { 
+void do_autokinesis_to(int Ind, int dis) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	int i;
 
@@ -256,7 +256,7 @@ void grow_trees(int Ind, int rad)
 	if (!allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
 
 #ifdef USE_SOUND_2010
-        sound(Ind, "grow_trees", NULL, SFX_TYPE_COMMAND, FALSE); 
+        sound(Ind, "grow_trees", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	for (a = 0; a < rad * rad + 11; a++) {
@@ -298,32 +298,32 @@ bool create_garden(int Ind, int chance) {
 	for (y = 0; y < MAX_HGT; y++) {
 		for (x = 0; x < MAX_WID; x++) {
 			if (!in_bounds(y, x)) continue;
-	
+
 			c_ptr = &zcave[y][x];
-			
+
 			/*
 			 * Never transform vaults (altough it would create some potentially
 			 * nasty effects >;) Imagine all those Z seeping out to get you...
 			 */
 			if (c_ptr->info & CAVE_ICKY) continue;
-	
+
 			if((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
-			
+
 			if (cave_valid_bold(zcave, y, x) && ( /* <- destroyable, no art on grid, not FF1_PERMANENT */
 //				(c_ptr->feat == FEAT_QUARTZ) ||
-//				(c_ptr->feat == FEAT_MAGMA) || 
+//				(c_ptr->feat == FEAT_MAGMA) ||
 //				(c_ptr->feat == FEAT_QUARTZ_H) ||
-//				(c_ptr->feat == FEAT_QUARTZ_K) || 
-//				(c_ptr->feat == FEAT_MAGMA_K) || 
-//				(c_ptr->feat == FEAT_SAND_WALL) || 
-//				(c_ptr->feat == FEAT_SAND_WALL_H) || 
-//				(c_ptr->feat == FEAT_SAND_WALL_K) || 
-//				(c_ptr->feat == FEAT_ICE_WALL) || 
-//				(c_ptr->feat == FEAT_GLASS_WALL) || 
-//				(c_ptr->feat == FEAT_ILLUS_WALL) || 
+//				(c_ptr->feat == FEAT_QUARTZ_K) ||
+//				(c_ptr->feat == FEAT_MAGMA_K) ||
+//				(c_ptr->feat == FEAT_SAND_WALL) ||
+//				(c_ptr->feat == FEAT_SAND_WALL_H) ||
+//				(c_ptr->feat == FEAT_SAND_WALL_K) ||
+//				(c_ptr->feat == FEAT_ICE_WALL) ||
+//				(c_ptr->feat == FEAT_GLASS_WALL) ||
+//				(c_ptr->feat == FEAT_ILLUS_WALL) ||
 				(c_ptr->feat == FEAT_WALL_EXTRA) || /* granite walls: */
-				(c_ptr->feat == FEAT_WALL_INNER) || 
-				(c_ptr->feat == FEAT_WALL_OUTER) || 
+				(c_ptr->feat == FEAT_WALL_INNER) ||
+				(c_ptr->feat == FEAT_WALL_OUTER) ||
 				(c_ptr->feat == FEAT_WALL_SOLID))
 //				&& !cave_floor_bold(zcave, y, x) /* don't convert empty floor! */
 //				&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)
@@ -338,21 +338,21 @@ bool create_garden(int Ind, int chance) {
 			}
 		} //width
 	} //height
-	
+
 	/* Message */
 	msg_print(Ind, "You see raw power escaping from the rocks!");
 	msg_print_near(Ind, "You see raw power escaping from the rocks!");
 	return (TRUE);
 }//garden
 
-/* 
+/*
  * this will now add to both melee and ranged toHit instead at a rate of
  * spell_lvl/2
- * Yep. More druidry. - the_sandman 
+ * Yep. More druidry. - the_sandman
  */
 bool do_focus_shot(int Ind, int v, int p) {
     player_type *p_ptr = Players[Ind];
-    bool notice = FALSE; 
+    bool notice = FALSE;
 
     /* Hack -- Force good values */
     v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -498,7 +498,7 @@ bool do_banish_animals(int Ind, int chance) {
 			delete_monster_idx(i, TRUE);
 			j++;
 		}
-	}	
+	}
 	if (j < 5) {
 		msg_print(Ind, "\337gA few here longs for their gardens.");
 		msg_format_near(Ind, "\337g%s tried hard but alas can only convert a few.", p_ptr->name);
@@ -526,7 +526,7 @@ bool hp_player(int Ind, int num) {
 	player_type *p_ptr = Players[Ind];
 
 	// The "number" that the character is displayed as before healing
-	int old_num, new_num; 
+	int old_num, new_num;
 	long eff_num; /* actual amount of HP gain */
 
 	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
@@ -534,7 +534,7 @@ bool hp_player(int Ind, int num) {
 	p_ptr->test_heal += num;
 
 	// The "number" that the character is displayed as before healing
-	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
+	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10);
 	if (old_num >= 7) old_num = 10;
 
 	/* player can't be healed while burning in the holy fire of martyrium */
@@ -625,7 +625,7 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 
 	p_ptr->test_heal += num;
 
-	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
+	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10);
 	if (old_num >= 7) old_num = 10;
 
 	/* player can't be healed while burning in the holy fire of martyrium */
@@ -668,7 +668,7 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 		p_ptr->redraw |= (PR_HP);
 
 		/* Figure out of if the player's "number" has changed */
-		new_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
+		new_num = (p_ptr->chp * 95) / (p_ptr->mhp*10);
 		if (new_num >= 7) new_num = 10;
 
 		/* If so then refresh everyone's view of this player */
@@ -691,7 +691,7 @@ void flash_bomb(int Ind)
 	msg_print(Ind, "You throw down a blinding flash bomb!");
 	msg_format_near(Ind, "%s throws a blinding flash bomb!", p_ptr->name);
 
-#ifdef USE_SOUND_2010 
+#ifdef USE_SOUND_2010
 	sound(Ind, "flash_bomb", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
@@ -1398,7 +1398,7 @@ void self_knowledge(int Ind) {
 	if (p_ptr->suscep_good) fprintf(fff, "You are susceptible to evil-vanquishing effects.\n");
 	if (p_ptr->suscep_evil) fprintf(fff, "You are susceptible to good-vanquishing effects.\n");
 	if (p_ptr->suscep_life) fprintf(fff, "You are susceptible to undead-vanquishing effects.\n");
-	
+
 	if (p_ptr->sh_fire) fprintf(fff, "You are surrounded with a fiery aura.\n");
 	if (p_ptr->sh_elec) fprintf(fff, "You are surrounded with electricity.\n");
 	if (p_ptr->sh_cold) fprintf(fff, "You are surrounded with a freezing aura.\n");
@@ -2395,7 +2395,7 @@ bool detect_bounty(int Ind, int rad)
 	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
 	{
 		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++)
-		{ 
+		{
 			/* Reject locations outside of dungeon */
 			if (!in_bounds4(l_ptr, i, j)) continue;
 
@@ -2412,7 +2412,7 @@ bool detect_bounty(int Ind, int rad)
 
 			/* Detect traps on chests */
 			if ((c_ptr->o_idx) && (o_ptr->tval == TV_CHEST)
-			    && p_ptr->obj_vis[c_ptr->o_idx] && (o_ptr->pval) 
+			    && p_ptr->obj_vis[c_ptr->o_idx] && (o_ptr->pval)
 			    && !object_known_p(Ind, o_ptr) && magik(chance)) {
 				/* Message =-p */
 				msg_print(Ind, "You have discovered a trap on the chest!");
@@ -2461,7 +2461,7 @@ bool detect_bounty(int Ind, int rad)
 				detect = TRUE;
 			}
 
-			// You feel a gust of air from nearby ... 
+			// You feel a gust of air from nearby ...
 			if (((c_ptr->feat == FEAT_LESS) || (c_ptr->feat == FEAT_MORE) ||
 			    (c_ptr->feat == FEAT_WAY_LESS) || (c_ptr->feat == FEAT_WAY_MORE))
 				&& magik(chance)) {
@@ -2494,8 +2494,8 @@ bool detect_bounty(int Ind, int rad)
 				}
 			}
 		}
-	} 
-	return (detect); 
+	}
+	return (detect);
 }
 #endif
 
@@ -3054,7 +3054,7 @@ bool create_artifact(int Ind) {
 	clear_current(Ind);
 
 	p_ptr->current_artifact = TRUE;
-	get_item(Ind);
+	get_item(Ind, ITH_NONE);
 
 	return TRUE;
 }
@@ -3171,12 +3171,12 @@ bool create_artifact_aux(int Ind, int item) {
 	return TRUE;
 }
 
-bool curse_spell(int Ind){	// could be void
-	player_type *p_ptr=Players[Ind];
+bool curse_spell(int Ind) {	// could be void
+	player_type *p_ptr = Players[Ind];
 	clear_current(Ind);
-	get_item(Ind);
-	p_ptr->current_curse=TRUE;	/* This is awful. I intend to change it */
-	return(TRUE);
+	get_item(Ind, ITH_NONE);
+	p_ptr->current_curse = TRUE;	/* This is awful. I intend to change it */
+	return TRUE;
 }
 
 bool curse_spell_aux(int Ind, int item)
@@ -3238,7 +3238,7 @@ bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags)
 {
 	player_type *p_ptr = Players[Ind];
 
-	get_item(Ind);
+	get_item(Ind, num_ac ? ITH_ENCH_AC : ITH_ENCH_WEAP);
 
 	/* Clear any other pending actions - mikaelh */
 	clear_current(Ind);
@@ -3256,7 +3256,7 @@ bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags)
  * Note that "num_ac" requires armour, else weapon
  * Returns TRUE if attempted, FALSE if cancelled
  */
-/* 
+/*
  * //deprecated//For now, 'flags' is the chance of the item getting 'discounted'
  * in the process.
  */
@@ -3281,7 +3281,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 
 	if (!item_tester_hook(o_ptr)) {
 		msg_print(Ind, "Sorry, you cannot enchant that item.");
-		get_item(Ind);
+		get_item(Ind, num_ac ? ITH_ENCH_AC : ITH_ENCH_WEAP);
 		return (FALSE);
 	}
 
@@ -3358,7 +3358,7 @@ bool ident_spell(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	get_item(Ind);
+	get_item(Ind, ITH_NONE);
 
 	/* Clear any other pending actions - mikaelh */
 	clear_current(Ind);
@@ -3394,7 +3394,7 @@ bool ident_spell_aux(int Ind, int item)
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
-	
+
 	/* redraw to-hit/to-dam */
 	p_ptr->redraw |= (PR_PLUSSES);
 
@@ -3441,7 +3441,7 @@ bool ident_spell_aux(int Ind, int item)
 bool identify_fully(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	get_item(Ind);
+	get_item(Ind, ITH_NONE);
 
 	/* Clear any other pending actions - mikaelh */
 	clear_current(Ind);
@@ -3634,7 +3634,7 @@ bool recharge(int Ind, int num)
 {
 	player_type *p_ptr = Players[Ind];
 
-	get_item(Ind);
+	get_item(Ind, ITH_RECHARGE);
 
 	/* Clear any other pending actions - mikaelh */
 	clear_current(Ind);
@@ -3672,8 +3672,7 @@ bool recharge(int Ind, int num)
  *
  * XXX XXX XXX Perhaps we should auto-unstack recharging stacks.
  */
-bool recharge_aux(int Ind, int item, int num)
-{
+bool recharge_aux(int Ind, int item, int num) {
 	player_type *p_ptr = Players[Ind];
 	int                 i, t, lev;
 	object_type		*o_ptr;
@@ -3689,7 +3688,7 @@ bool recharge_aux(int Ind, int item, int num)
 
 	if (!item_tester_hook(o_ptr)) {
 		msg_print(Ind, "You cannot recharge that item.");
-		get_item(Ind);
+		get_item(Ind, ITH_RECHARGE);
 		return (FALSE);
 	}
 
@@ -3867,7 +3866,7 @@ bool project_hack(int Ind, int typ, int dam, char *attacker) {
                 /* If he's not here, skip him */
                 if (!inarea(wpos, &Players[i]->wpos))
                         continue;
-							
+
                 /* Ignore players we aren't hostile to */
 //                if (!check_hostile(Ind, i)) continue;
 
@@ -4186,13 +4185,13 @@ void distract_monsters(int Ind)
 		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
             	    (strchr("hHkptn", r_ptr->d_char))) tauntable = TRUE;
 		else tauntable = FALSE;
-		
+
 		if (r_ptr->level >= 98) tauntable = FALSE; /* end-game specialties are exempt */
 		if (r_ptr->flags1 & RF1_UNIQUE) {
 #if 0 /* still distractable, hence if 0'ed */
 			if (r_ptr->flags2 & RF2_POWERFUL) {
 				if (magik(75)) tauntable = FALSE; /* powerful unique monsters prefer to stay alive */
-			} else 
+			} else
 #endif
 				{
 				if (magik(50)) tauntable = FALSE; /* unique monsters resist more often */
@@ -4250,7 +4249,7 @@ void taunt_monsters(int Ind)
 		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
             	    (strchr("hHkptn", r_ptr->d_char))) tauntable = TRUE;
 		else tauntable = FALSE;
-		
+
 		if (r_ptr->level >= 98) tauntable = FALSE; /* end-game specialties are exempt */
 		if (r_ptr->flags1 & RF1_UNIQUE) {
 			if (r_ptr->flags2 & RF2_POWERFUL) {
@@ -4581,7 +4580,7 @@ bool genocide(int Ind)
 
 	int		i;
 
-	char	typ=-1;	
+	char	typ=-1;
 
 	int d = 999, tmp;
 
@@ -4905,7 +4904,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 
 				/* Update the monsters */
 				p_ptr->update |= (PU_MONSTERS);
-		
+
 				/* Redraw map */
 				p_ptr->redraw |= (PR_MAP);
 
@@ -5477,10 +5476,10 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 
 			/* Lose room and vault */
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY | CAVE_NEST_PIT | CAVE_STCK | CAVE_ICKY_PERMA);
-			
+
 			/* Turn into basic floor */
 			cave_set_feat(wpos, yy, xx, FEAT_FLOOR);
-			
+
 			/* Delete monsters */
 			if (c_ptr->m_idx > 0) {
 				monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
@@ -6954,7 +6953,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	if (!in_bounds(y, x)) return (0);
 	/* Require empty space */
 	if (!cave_empty_bold(zcave, y, x)) return (0);
-	
+
 	/* Paranoia */
 	if (!r_idx) return (0);
 
@@ -7125,7 +7124,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 
 	char buf[80];
 
-	cave_type **zcave; 
+	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return (0);
 
 
@@ -7136,7 +7135,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 	/* Hack -- no creation on glyph of warding */
 	if (zcave[y][x].feat == FEAT_GLYPH) return (0);
 	if (zcave[y][x].feat == FEAT_RUNE) return (0);
-	
+
 	/* Paranoia */
 	if (!r_idx) return (0);
 
@@ -7174,7 +7173,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 	m_ptr->special = 0;
 
 	/* Hack -- Count the monsters on the level */
-	r_ptr->cur_num++; 
+	r_ptr->cur_num++;
 
 	/* Assign maximal hitpoints */
 	if (r_ptr->flags1 & RF1_FORCE_MAXHP)
@@ -7219,7 +7218,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 	/* No knowledge */
 	m_ptr->cdis = 0;
 
-	/* special pet value */ 
+	/* special pet value */
         m_ptr->owner = Players[owner_id]->id;
         m_ptr->pet = 1;
 
@@ -7241,7 +7240,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 	strcpy(buf, (r_name + r_ptr->name));
 
 	/* Update the monster */
-	update_mon(c_ptr->m_idx, TRUE); 
+	update_mon(c_ptr->m_idx, TRUE);
 
 	/* Assume no sleeping */
 	m_ptr->csleep = 0;
@@ -7269,12 +7268,12 @@ char pet_creation(int Ind)
 	else if (lev < 10) id = 127; //wood S
 	else if (lev < 15) id = 277; //mirkwood S
 	else if (lev < 20) id = 963; //aranea
-	else id = 964; //elder aranea	
+	else id = 964; //elder aranea
 
 	if (!Players[Ind]->has_pet) {
-		place_pet(Ind, 
+		place_pet(Ind,
 		   &(Players[Ind]->wpos), Players[Ind]->py, Players[Ind]->px+1,  /* E of player */
-		   id); 
+		   id);
 		Players[Ind]->has_pet = 1;
 		return 1;
 	}
@@ -7324,7 +7323,7 @@ void golem_creation(int Ind, int max)
 		return;
 	}
 
-	for (x = p_ptr->px - 1; x <= p_ptr->px; x++)        
+	for (x = p_ptr->px - 1; x <= p_ptr->px; x++)
 		for (y = p_ptr->py - 1; y <= p_ptr->py; y++)
 		{
 			/* Verify location */
@@ -7520,7 +7519,7 @@ void golem_creation(int Ind, int max)
 
 					/* a valid @G has been located */
 					if (*inscription == 'G')
-					{                
+					{
 						inscription++;
 
 						scan_golem_flags(o_ptr, r_ptr);
@@ -7586,13 +7585,13 @@ void call_chaos(int Ind, int dir, int extra_damage)
 	player_type *p_ptr = Players[Ind];
 	int Chaos_type, dummy;
 	int plev = p_ptr->lev;
-	bool line_chaos = FALSE; 
+	bool line_chaos = FALSE;
 
 	int hurt_types[29] =	// 30
 	{
 		GF_ELEC,      GF_POIS,    GF_ACID,    GF_COLD,
 		GF_FIRE,      GF_MISSILE, GF_ARROW,   GF_PLASMA,
-//		GF_HOLY_FIRE, 
+//		GF_HOLY_FIRE,
 		GF_WATER,     GF_LITE,    GF_DARK,
 		GF_FORCE,     GF_INERTIA, GF_MANA,    GF_METEOR,
 		GF_ICE,       GF_CHAOS,   GF_NETHER,  GF_DISENCHANT,
@@ -7702,34 +7701,34 @@ bool do_vermin_control(int Ind) {
 
 /* see rune_aux() below */
 void rune_combine(int Ind) {
-  player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind];
 
-  clear_current(Ind);
+	clear_current(Ind);
 
-  p_ptr->current_rune = TRUE;
-  get_item(Ind);
+	p_ptr->current_rune = TRUE;
+	get_item(Ind, ITH_RUNE);
 
-  return;
+	return;
 }
 
 void rune_combine_aux(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 
 	if (item == p_ptr->current_activation) return; //don't combine the same rune
-	
+
 	/* Recall the first rune */
 	object_type *o_ptr = &p_ptr->inventory[p_ptr->current_activation];
-			
+
 	/* Store the combining flag */
 	s16b e_flags = r_elements[o_ptr->sval].flag;
-	
+
 	/* Remember the original info */
 	s32b owner = o_ptr->owner;
 	byte mode = o_ptr->mode;
 	s16b level = o_ptr->level;
 	byte discount = o_ptr->discount;
 	byte number = o_ptr->number;
-			
+
 	/* Recall the second rune */
 	o_ptr = &p_ptr->inventory[item];
 #ifdef RCRAFT_DEBUG
@@ -7761,12 +7760,12 @@ s_printf("RCRAFT_DEBUG: 5 \n");
 		if (e_flags == r_projections[i].flags)
 			break;
 	}
-			
+
 	/* Store combined item values -- use worst case! */
 	level = (o_ptr->level > level) ? o_ptr->level : level;
 	discount = (o_ptr->discount > discount) ? o_ptr->discount : discount;
 	number = (o_ptr->number < number) ? o_ptr->number : number;
-			
+
 	/* Destroy the rune stacks in the pack */
 	msg_format(Ind, "There is a coupling of magic.");
 	inven_item_increase(Ind, p_ptr->current_activation, -number);
@@ -7801,14 +7800,14 @@ s_printf("RCRAFT_DEBUG: 5 \n");
 
 /* see create_custom_tome_aux() below */
 void tome_creation(int Ind) {
-  player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind];
 
-  clear_current(Ind);
+	clear_current(Ind);
 
-  p_ptr->current_tome_creation = TRUE;
-  get_item(Ind);
+	p_ptr->current_tome_creation = TRUE;
+	get_item(Ind, ITH_CUSTOM_TOME);
 
-  return;
+	return;
 }
 
 /* add a spell scroll to the player's custom-made tome - C. Blue
@@ -7843,7 +7842,7 @@ void tome_creation_aux(int Ind, int item) {
 
 #if 1 /* done in do_cmd_activate already. double-check */
 	/* free space left? */
-	/* k_info-pval dependant */ 
+	/* k_info-pval dependant */
 	switch (o_ptr->bpval) {
 	case 0: okay = FALSE; break;
 	case 1: if (o_ptr->xtra1) okay = FALSE; break;
@@ -7870,7 +7869,7 @@ void tome_creation_aux(int Ind, int item) {
 		/* restore silyl hack.. */
 		p_ptr->using_up_item = item;
 		/* try again */
-		get_item(Ind);
+		get_item(Ind, ITH_CUSTOM_TOME);
 		return;
 	}
 
@@ -7880,7 +7879,7 @@ void tome_creation_aux(int Ind, int item) {
 		/* restore silyl hack.. */
 		p_ptr->using_up_item = item;
 		/* try again */
-		get_item(Ind);
+		get_item(Ind, ITH_CUSTOM_TOME);
 		return;
 	}
 
@@ -7898,7 +7897,7 @@ void tome_creation_aux(int Ind, int item) {
 		/* restore silyl hack.. */
 		p_ptr->using_up_item = item;
 		/* try again */
-		get_item(Ind);
+		get_item(Ind, ITH_CUSTOM_TOME);
 		return;
 	}
 

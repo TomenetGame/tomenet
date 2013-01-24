@@ -378,7 +378,7 @@ bool set_adrenaline(int Ind, int v)
 	bool notice = FALSE, sudden = FALSE, crash = FALSE;
 
         int i;
-	
+
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
@@ -393,7 +393,7 @@ bool set_adrenaline(int Ind, int v)
 				v = v - i + 1;
 				p_ptr->biofeedback = 0;
 			}
-			
+
 			notice = TRUE;
 		} else {
 			/* Sudden crash */
@@ -404,13 +404,13 @@ bool set_adrenaline(int Ind, int v)
 				if (!rand_int(2)) crash = TRUE;
 			}
 		}
-		
+
 		while (v > 30 + randint(p_ptr->lev * 5)) {
 			msg_print(Ind, "Your body can't handle that much adrenaline!");
 			i = randint(randint(v));
 			take_hit(Ind, damroll(3, i * 2),"adrenaline poisoning", 0);
 			v = v - i + 1;
-		}		
+		}
 	}
 
 	/* Shut */
@@ -434,7 +434,7 @@ bool set_adrenaline(int Ind, int v)
 
 	/* Notice */
 	p_ptr->update |= (PU_BONUS | PU_HP);
-	
+
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
@@ -443,7 +443,7 @@ bool set_adrenaline(int Ind, int v)
 
 	/* Result */
 	return (TRUE);
-	
+
 }
 /*
  * Set "p_ptr->biofeedback", notice observable changes
@@ -454,7 +454,7 @@ bool set_biofeedback(int Ind, int v)
 	player_type *p_ptr = Players[Ind];
 
 	bool notice = FALSE;
-	
+
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
@@ -473,7 +473,7 @@ bool set_biofeedback(int Ind, int v)
 				}
 			}
 			notice = TRUE;
-		}		
+		}
 	}
 
 	/* Shut */
@@ -483,7 +483,7 @@ bool set_biofeedback(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-				
+
 	while (v > 35 + rand_int(rand_int(p_ptr->lev))) {
 			msg_print(Ind, "You speed up your pulse to avoid fainting!");
 			v -= 20;
@@ -497,7 +497,7 @@ bool set_biofeedback(int Ind, int v)
 
 	/* Notice */
 	p_ptr->update |= (PU_BONUS | PU_HP);
-	
+
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
@@ -506,7 +506,7 @@ bool set_biofeedback(int Ind, int v)
 
 	/* Result */
 	return (TRUE);
-	
+
 }
 
 
@@ -540,7 +540,7 @@ bool set_tim_esp(int Ind, int v)
 
 	/* Use the value */
 	p_ptr->tim_esp = v;
-	
+
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
 
@@ -660,9 +660,9 @@ bool set_brand(int Ind, int v, int t, int p)
 	player_type *p_ptr = Players[Ind];
 
 	bool notice = FALSE;
-	
+
 	char weapons[20], dual[2];
-	
+
 	//strcpy(weapons, "\377oYour weapon");
 	strcpy(weapons, "\377wYour weapon");
 	strcpy(dual, "s");
@@ -740,7 +740,7 @@ bool set_brand(int Ind, int v, int t, int p)
 	p_ptr->brand = v;
 	p_ptr->brand_t = t;
 	p_ptr->brand_d = p;
-	
+
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
@@ -824,7 +824,7 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 	p_ptr->bow_brand = v;
 	p_ptr->bow_brand_t = t;
 	p_ptr->bow_brand_d = p;
-	
+
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
@@ -877,7 +877,7 @@ bool set_mimic(int Ind, int v, int p)
 	/* Use the value */
 	p_ptr->tim_mimic = v;
 
-#if 0 /* once you might have mimicked other classes, now we will use it for polymorph rings! */	
+#if 0 /* once you might have mimicked other classes, now we will use it for polymorph rings! */
 	/* Enforce good values */
 	if (p < 0) p = 0;
 	if (p >= MAX_CLASS) p = MAX_CLASS - 1;
@@ -1174,7 +1174,7 @@ bool set_tim_wraith(int Ind, int v)
 				msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
 				msg_print(Ind, "You turn into a wraith!");
 				notice = TRUE;
-			
+
 				p_ptr->wraith_in_wall = TRUE;
 			}
 		}
@@ -1276,7 +1276,7 @@ bool set_blind(int Ind, int v)
 			msg_print(Ind, "You are blind!");
 			notice = TRUE;
 		}
-		
+
 		break_shadow_running(Ind);
 	}
 
@@ -2161,7 +2161,7 @@ bool set_zeal(int Ind, int p, int v)
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
 
-	/* Redraw the Blows/Round */	
+	/* Redraw the Blows/Round */
 	p_ptr->update |= PU_BONUS;
 
 	/* Disturb */
@@ -2200,7 +2200,7 @@ bool set_martyr(int Ind, int v)
 		} else {
 			msg_print(Ind, "\377wYou burn in holy fire!");
 			/* assumes that martyr starts at -15 turns! : */
-			p_ptr->chp = (p_ptr->mhp * p_ptr->martyr) / p_ptr->martyr_dur; 
+			p_ptr->chp = (p_ptr->mhp * p_ptr->martyr) / p_ptr->martyr_dur;
 			/* Update health bars */
 			update_health(0 - Ind);
 			/* Redraw */
@@ -2725,7 +2725,7 @@ bool set_stun(int Ind, int v)
 			s_printf("%s EFFECT: Knockedout %s.\n", showtime(), p_ptr->name);
 			break;
 		}
-		
+
 		break_shadow_running(Ind);
 
 		/* Notice */
@@ -3062,8 +3062,8 @@ bool do_divine_hp(int Ind, int v, int p) {
         return (TRUE);
 }
 
-/* 
-   timed crit bonus for RACE_MAIA. 
+/*
+   timed crit bonus for RACE_MAIA.
    *fastest* path (SKILL_ASTRAL = lvl+2):
    +2 at lvl 44, +2 per 5 levels thereafter
 */
@@ -3112,8 +3112,8 @@ bool do_divine_crit(int Ind, int v, int p) {
         return (TRUE);
 }
 
-/* 
-   timed time and mana res bonus for RACE_MAIA. 
+/*
+   timed time and mana res bonus for RACE_MAIA.
 */
 bool do_divine_xtra_res_time_mana(int Ind, int v) {
         player_type *p_ptr = Players[Ind];
@@ -3830,7 +3830,7 @@ void check_experience(int Ind)
 
 		/* Redraw some stuff */
 		p_ptr->redraw |= (PR_LEV | PR_TITLE | PR_DEPTH | PR_STATE);
-			/* PR_STATE is only needed if player can unlearn 
+			/* PR_STATE is only needed if player can unlearn
 			    techniques by dropping in levels */
 
 		/* Window stuff */
@@ -4866,10 +4866,10 @@ void monster_death(int Ind, int m_idx)
 #endif
 
 #ifdef RPG_SERVER
-		/* There is a 1 in (m_ptr->level - kill count)^2 chance of learning form straight away 
+		/* There is a 1 in (m_ptr->level - kill count)^2 chance of learning form straight away
 		 * to make it easier (at least statistically) getting forms in the iron server. Plus,
 		 * mimicked speed and hp are lowered already anyway.	- the_sandman */
-		if ( ( r_info[m_ptr->r_idx].level - p_ptr->r_killed[credit_idx] > 0 ) && 
+		if ( ( r_info[m_ptr->r_idx].level - p_ptr->r_killed[credit_idx] > 0 ) &&
 		     ( (randint((r_info[m_ptr->r_idx].level - p_ptr->r_killed[credit_idx]) *
 		     	     	(r_info[m_ptr->r_idx].level - p_ptr->r_killed[credit_idx])) == 1))) {
 			p_ptr->r_killed[credit_idx] = r_info[credit_idx].level;
@@ -4903,7 +4903,7 @@ void monster_death(int Ind, int m_idx)
 		    /* for level 0 townspeople: */
 		    r_info[credit_idx].level == 0))
 		{
-			if (!((r_ptr->flags1 & RF1_UNIQUE) || (p_ptr->pclass == CLASS_DRUID) || 
+			if (!((r_ptr->flags1 & RF1_UNIQUE) || (p_ptr->pclass == CLASS_DRUID) ||
 			    ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(credit_idx)) ||
 			    (p_ptr->prace == RACE_VAMPIRE))) {
 				msg_format(Ind, "\374\377UYou have learned the form of %s! (%d)",
@@ -4957,7 +4957,7 @@ if (cfg.unikill_format) {
 				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by fusion %s-%s.\377b**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 		}
 
-		/* give credit to the party if there is a teammate on the 
+		/* give credit to the party if there is a teammate on the
 		   level, and the level is not 0 (the town)  */
 		if (p_ptr->party) {
 			for (i = 1; i <= NumPlayers; i++) {
@@ -5703,8 +5703,8 @@ static void check_roller(int Ind)
 
 		/* staying for more than 60 seconds? */
 		if (now - lookup_player_laston(p_ptr->id) > 60) return;
-		
-		/* died to a townie? 
+
+		/* died to a townie?
 		if (p_ptr->ghost) return; */
 	}
 
@@ -5874,14 +5874,14 @@ static void equip_death_damage(int Ind, int verbose) {
 /*
  * Handle the death of a player and drop their stuff.
  */
- 
- /* 
-  HACKED to handle fruit bat 
+
+ /*
+  HACKED to handle fruit bat
   changed so players remain in the team when killed
   changed so when leader ghosts perish the team is disbanded
   -APD-
  */
- 
+
 void player_death(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
@@ -6453,7 +6453,7 @@ void player_death(int Ind)
 			if (!true_artifact_p(o_ptr)) continue;
 
 			/* hack -- total winners do not drop artifacts when they suicide */
-			//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
+			//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i]))
 
 			/* Artifacts cannot be dropped after all */
 			/* Don't litter Valinor -- Ring of Phasing must be destroyed anyways */
@@ -6552,7 +6552,7 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s\n", race_info[p_ptr
 			else if (p_ptr->last_words)
 			{
 				char death_message[80];
-    
+
         			(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
@@ -7115,15 +7115,15 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 /*
  * Resurrect a player
  */
- 
+
  /* To prevent people from ressurecting too many times, I am modifying this to give
-    everyone 1 "freebie", and then to have a p_ptr->level % chance of failing to 
+    everyone 1 "freebie", and then to have a p_ptr->level % chance of failing to
     ressurect and have your ghost be destroyed.
-    
+
     -APD-
-    
+
     hmm, haven't gotten aroudn to doing this yet...
-    
+
     loss_reduction tells by how much % the GHOST_XP_LOST is reduced (C. Blue).
  */
 void resurrect_player(int Ind, int loss_reduction) {
@@ -7135,10 +7135,10 @@ void resurrect_player(int Ind, int loss_reduction) {
 
 	/* Reset ghost flag */
 	p_ptr->ghost = 0;
-	
+
 	disturb(Ind, 1, 0);
 
-	/* paranoia limits */	
+	/* paranoia limits */
 	if (loss_reduction < 0) loss_reduction = 0;
 	if (loss_reduction > 100) loss_reduction = 100;
 
@@ -7715,7 +7715,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		if (p_ptr->party == 0 || p_ptr->ghost) {
 			/* Don't allow cheap support from super-high level characters */
 			if (cfg.henc_strictness && !p_ptr->total_winner) {
-				if (m_ptr->highest_encounter - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) tmp_exp = 0; /* zonk */ 
+				if (m_ptr->highest_encounter - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) tmp_exp = 0; /* zonk */
 				if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) tmp_exp = 0; /* zonk */
 			}
 
@@ -7772,10 +7772,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 				get_skill_scale(p_ptr, SKILL_NECROMANCY, 100)) / 100 +
 				get_skill(p_ptr, SKILL_NECROMANCY); */
 			long gain, gain_sp, skill; /* let's make it more complicated - gain HP and SP now - C. Blue */
-			
+
 			skill = get_skill_scale(p_ptr, SKILL_NECROMANCY, 50);
 			gain = get_skill_scale(p_ptr, SKILL_NECROMANCY, 100);
-			
+
 			gain = (m_ptr->level > gain ? gain : m_ptr->level);
 			gain_sp = gain;
 
@@ -8463,7 +8463,7 @@ static int player_wounded(s16b ind)
 sleeping right now.....
 Selects the most wounded target.
 
-Hmm, I am sure there are faster sort algorithms out there... oh well, I don't 
+Hmm, I am sure there are faster sort algorithms out there... oh well, I don't
 think it really matters... this one goes out to you Mr. Munroe.
 -ADA-
 */
@@ -8474,7 +8474,7 @@ static void wounded_player_target_sort(int Ind, vptr sx, vptr sy, vptr id, int n
 	s16b swp;
 	s16b * idx = (s16b *) id;
 	byte * x = (byte *) sx;
-	byte * y = (byte *) sy; 
+	byte * y = (byte *) sy;
 	byte swpb;
 
 	/* num equals our max index */
@@ -9275,9 +9275,9 @@ bool target_set_friendly(int Ind, int dir, ...)
 			p_ptr->target_idx[p_ptr->target_n] = castplayer;
 			p_ptr->target_n++;
 		}
-		
-			
-		/* Set the sort hooks */ 
+
+
+		/* Set the sort hooks */
 		ang_sort_comp = ang_sort_comp_distance;
 		ang_sort_swap = ang_sort_swap_distance;
 
@@ -9287,8 +9287,8 @@ bool target_set_friendly(int Ind, int dir, ...)
 		m = 0;
 
 	/* too lazy to handle dirs right now */
-	
-	/* handle player target.... */	
+
+	/* handle player target.... */
 	if (p_ptr->target_n) {
 		y = p_ptr->target_y[m];
 		x = p_ptr->target_x[m];
@@ -9316,7 +9316,7 @@ bool target_set_friendly(int Ind, int dir, ...)
 
 	p_ptr->target_who = 0 - p_ptr->target_idx[m];
 	p_ptr->target_col = p_ptr->target_x[m];
-	p_ptr->target_row = p_ptr->target_y[m];	
+	p_ptr->target_row = p_ptr->target_y[m];
 
 	/* Failure */
 	if (!p_ptr->target_who) return (FALSE);
@@ -9477,9 +9477,8 @@ bool get_aim_dir(int Ind)
 }
 
 
-bool get_item(int Ind)
-{
-	Send_item_request(Ind);
+bool get_item(int Ind, char tester_hook) {
+	Send_item_request(Ind, tester_hook);
 
 	return (TRUE);
 }
@@ -9767,7 +9766,7 @@ if (q_ptr->level != 0) {
 		determine_level_req(75, q_ptr);
 		s_printf("%d.\n", q_ptr->level);
 	}
-	if (q_ptr->tval == TV_RING && q_ptr->sval >= SV_RING_MIGHT && q_ptr->sval <= SV_RING_CUNNINGNESS && q_ptr->level < q_ptr->bpval * 3 + 15) {   
+	if (q_ptr->tval == TV_RING && q_ptr->sval >= SV_RING_MIGHT && q_ptr->sval <= SV_RING_CUNNINGNESS && q_ptr->level < q_ptr->bpval * 3 + 15) {
 		s_printf("HACK-STATSREQ (Tele): %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, q_ptr->bpval, q_ptr->level);
 		determine_level_req(25, q_ptr);
 		s_printf("%d.\n", q_ptr->level);
@@ -9898,7 +9897,7 @@ int get_monster(int Ind, object_type *o_ptr)
 		msg_print(Ind, "No monster specified.");
 		return 0;
 	}
-	
+
 	/* scan the inscription for @M */
 	while ((*inscription != '\0') && ok1 && ok2) {
 		if (*inscription == '@') {
@@ -10058,29 +10057,27 @@ void remove_blood_bond(int Ind, int Ind2)
 		pl_ptr = pl_ptr->next;
 	}
 }
-	
 
-bool telekinesis(int Ind, object_type *o_ptr)
-{
-  player_type *p_ptr = Players[Ind];
+bool telekinesis(int Ind, object_type *o_ptr) {
+	player_type *p_ptr = Players[Ind];
 
-  p_ptr->current_telekinesis = o_ptr;
-  get_item(Ind);
+	p_ptr->current_telekinesis = o_ptr;
+	get_item(Ind, ITH_NONE);
 
-  return TRUE;
+	return TRUE;
 }
 
 /* this has finally earned its own function, to make it easy for restoration to do this also */
 bool do_scroll_life(int Ind)
 {
 	int x,y;
-	
+
 	player_type * p_ptr = Players[Ind], *q_ptr;
 	cave_type * c_ptr;
 	cave_type **zcave;
 	zcave=getcave(&p_ptr->wpos);
 	if(!zcave) return(FALSE);
-	
+
 	for (y = -1; y <= 1; y++)
 	{
 		for (x = -1; x <= 1; x++)
@@ -10108,11 +10105,11 @@ bool do_scroll_life(int Ind)
 						msg_print(Ind, "The scroll fails here!");
 					}
       				}
-  			} 
+  			}
   		}
-  	}  	
+  	}
   	/* we did nore ressurect anyone */
-  	return FALSE; 
+  	return FALSE;
 }
 
 
@@ -10120,18 +10117,18 @@ bool do_scroll_life(int Ind)
 bool do_restoreXP_other(int Ind)
 {
 	int x,y;
-	
+
 	player_type * p_ptr = Players[Ind];
 	cave_type * c_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
-	
+
 	for (y = -1; y <= 1; y++)
 	{
 		for (x = -1; x <= 1; x++)
 	 	{
 	   		c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
-	
+
 	  		if (c_ptr->m_idx < 0)
 	   		{
    				if (Players[0 - c_ptr->m_idx]->exp < Players[0 - c_ptr->m_idx]->max_exp)
@@ -10139,13 +10136,13 @@ bool do_restoreXP_other(int Ind)
     					restore_level(0 - c_ptr->m_idx);
    			        	return TRUE;
       				}
-  			} 
+  			}
   		}
-  	}  	
+  	}
   	/* we did nore ressurect anyone */
-  	return FALSE; 
+  	return FALSE;
   }
-  
+
 
 /* Hack -- since the framerate has been boosted by five times since version
  * 0.6.0 to make game movement more smooth, we return the old level speed
@@ -10200,7 +10197,7 @@ bool master_level(int Ind, char * parms)
 		/* static the level */
 		case 's':
 		{
-			/* Increase the number of players on the dungeon 
+			/* Increase the number of players on the dungeon
 			 * masters level by one. */
 			new_players_on_depth(&p_ptr->wpos,1,TRUE);
 			msg_format(Ind, "The level %s has been staticed.", wpos_format(Ind, &p_ptr->wpos));
@@ -10358,7 +10355,7 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms)
 		/* static the level */
 		case 's':
 		{
-			/* Increase the number of players on the dungeon 
+			/* Increase the number of players on the dungeon
 			 * masters level by one. */
 			new_players_on_depth(&p_ptr->wpos,1,TRUE);
 			msg_print(Ind, "The level has been staticed.");
@@ -10373,7 +10370,7 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms)
 
 /*
  *
- * Guild build access 
+ * Guild build access
  * Must be owner inside guild hall
  *
  */
@@ -10560,7 +10557,7 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 			}
 			break;
 		}
-		
+
 		/* high undead specified */
 		case 'U':
 		{
@@ -10611,7 +10608,7 @@ static u16b master_summon_aux_monster_type(int Ind, char monster_type, char * mo
 bool master_acquire(int Ind, char * parms)
 {
 	player_type * p_ptr = Players[Ind];
-	
+
 	if (!is_admin(p_ptr)) return FALSE;
 	acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, TRUE, make_resf(p_ptr));
 	return TRUE;
@@ -10644,7 +10641,7 @@ bool master_summon(int Ind, char * parms)
 		/* Hack -- since monster_parms is a string, throw it on the end */
 		strcpy(monster_parms, &parms[3]);
 	}
-	
+
 	switch (summon_type)
 	{
 		/* summon x here */
@@ -10706,10 +10703,10 @@ bool master_summon(int Ind, char * parms)
 		}
 		/* summon mode on (use with discretion... lets not be TOO mean ;-) )*/
 		case 'T':
-		{	
+		{
 			summon_type = 'x';
 			summon_parms = 1;
-			
+
 			p_ptr->master_move_hook = master_summon;
 			break;
 		}
@@ -10889,7 +10886,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 }
 
 static void player_edit(char *name){
-	
+
 }
 
 bool master_player(int Ind, char *parms){
@@ -10995,7 +10992,7 @@ bool master_player(int Ind, char *parms){
 static vault_type *get_vault(char *name)
 {
 	int i;
-	
+
 	for(i=0; i<MAX_V_IDX; i++)
 	{
 		if(strstr(v_name + v_info[i].name, name))
@@ -11010,7 +11007,7 @@ bool master_generate(int Ind, char * parms)
 {
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
-	
+
 	if (!is_admin(p_ptr)) return FALSE;
 
 	switch (parms[0])
@@ -11019,7 +11016,7 @@ bool master_generate(int Ind, char * parms)
 		case 'v':
 		{
 			vault_type *v_ptr = NULL;
-			
+
 			switch(parms[1])
 			{
 				case '#':
@@ -11028,7 +11025,7 @@ bool master_generate(int Ind, char * parms)
 				case 'n':
 					v_ptr = get_vault(&parms[2]);
 			}
-			
+
 			if(!v_ptr || !v_ptr->wid) return FALSE;
 
 //			build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);

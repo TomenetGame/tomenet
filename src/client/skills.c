@@ -658,7 +658,7 @@ static int do_cmd_activate_skill_aux()
 /*
  * Hook to determine if an object is a device
  */
-static bool item_tester_hook_device(object_type *o_ptr)
+bool item_tester_hook_device(object_type *o_ptr)
 {
 	if ((o_ptr->tval == TV_ROD) ||
 	    (o_ptr->tval == TV_STAFF) ||
@@ -688,6 +688,52 @@ static bool item_tester_hook_scroll_rune(object_type *o_ptr)
 
 	/* Assume not */
 	return (FALSE);
+}
+
+bool item_tester_hook_armour(object_type *o_ptr) {
+	return (is_armour(o_ptr->tval));
+}
+bool item_tester_hook_weapon(object_type *o_ptr) {
+	return (is_weapon(o_ptr->tval) || is_ammo(o_ptr->tval) ||
+	    o_ptr->tval == TV_BOW || o_ptr->tval == TV_BOOMERANG ||
+	    (o_ptr->tval == TV_TRAPKIT && is_firearm_trapkit(o_ptr->sval)) ||
+	    o_ptr->tval == TV_DIGGING || o_ptr->tval == TV_MSTAFF);
+}
+bool item_tester_hook_custom_tome(object_type *o_ptr) {
+	bool free = TRUE;
+
+	/* check for correct book type */
+	if (o_ptr->tval != TV_BOOK || o_ptr->sval != SV_SPELLBOOK) return FALSE;
+
+	/* and even check for blank pages left */
+#if 0 /* we don't know bpval! */
+        switch (o_ptr->bpval) {
+        case 0: i = 0; break;
+        case 1: if (o_ptr->xtra1) i = 0; break;
+        case 2: if (o_ptr->xtra2) i = 0; break;
+        case 3: if (o_ptr->xtra3) i = 0; break;
+        case 4: if (o_ptr->xtra4) i = 0; break;
+        case 5: if (o_ptr->xtra5) i = 0; break;
+        case 6: if (o_ptr->xtra6) i = 0; break;
+        case 7: if (o_ptr->xtra7) i = 0; break;
+        case 8: if (o_ptr->xtra8) i = 0; break;
+        default: if (o_ptr->xtra9) i = 0; break;
+        }
+#else /* hard-code, ouch */
+        switch (o_ptr->sval) {
+        case 100:
+    		if (o_ptr->xtra3) free = FALSE;
+    		break;
+        case 101:
+    		if (o_ptr->xtra4) free = FALSE;
+    		break;
+        case 102:
+    		if (o_ptr->xtra5) free = FALSE;
+    		break;
+        }
+#endif
+
+	return free;
 }
 
 /*

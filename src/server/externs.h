@@ -1023,7 +1023,7 @@ extern int Send_message(int Ind, cptr msg);
 extern int Send_char(int Ind, int x, int y, byte a, char c);
 extern int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val);
 extern int Send_technique_info(int Ind); /* for MKEY_MELEE and MKEY_RANGED */
-extern int Send_item_request(int Ind);
+extern int Send_item_request(int Ind, char tester_hook);
 extern int Send_state(int Ind, bool paralyzed, bool searching, bool resting);
 extern int Send_flush(int Ind);
 extern int Send_line_info(int Ind, int y);
@@ -1856,7 +1856,7 @@ extern bool target_set(int Ind, int dir);
  extern bool target_set_friendly(int Ind, int dir);
 #endif
 extern bool get_aim_dir(int Ind/*, int *dp*/);
-extern bool get_item(int Ind);
+extern bool get_item(int Ind, char tester_hook);
 extern bool do_scroll_life(int Ind);
 extern bool do_restoreXP_other(int Ind);
 extern bool telekinesis(int Ind, object_type *o_ptr);

@@ -7641,3 +7641,11 @@ extern int PlayerUID;
 /* Are we on the final floor and therefore eligile for recalling out? */
 #define irondeepdive_bottom(wpos) \
 	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && (wpos)->wz * WPOS_IRONDEEPDIVE_Z == 127)
+
+/* constants for get_item() to be transmitted to the client for choosing an item_tester_hook */
+#define ITH_NONE	0
+#define ITH_RECHARGE	1
+#define ITH_ENCH_AC	2
+#define ITH_ENCH_WEAP	3
+#define ITH_CUSTOM_TOME	4
+#define ITH_RUNE	5

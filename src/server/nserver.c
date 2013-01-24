@@ -5265,23 +5265,34 @@ int Send_technique_info(int Ind)
 	return Packet_printf(&connp->c, "%c%d%d", PKT_TECHNIQUE_INFO, p_ptr->melee_techniques, p_ptr->ranged_techniques);
 }
 
-int Send_item_request(int Ind)
-{
-	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
+int Send_item_request(int Ind, char tester_hook) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+#if 0
+	connection_t *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
+#endif
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for item request (%d.%d.%d)",
-			Ind, connp->state, connp->id));
+		    Ind, connp->state, connp->id));
 		return 0;
 	}
+
+#if 0 /* what is this needed for, actually? */
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c", PKT_ITEM);
+		if (is_newer_than(&p_ptr2->version, 4, 5, 2, 0, 0, 0))
+			Packet_printf(&connp2->c, "%c%c", PKT_ITEM, tester_hook);
+		else
+			Packet_printf(&connp2->c, "%c", PKT_ITEM);
 	}
-	return Packet_printf(&connp->c, "%c", PKT_ITEM);
+#endif
+
+	if (is_newer_than(&Players[Ind]->version, 4, 5, 2, 0, 0, 0))
+		return Packet_printf(&connp->c, "%c%c", PKT_ITEM, tester_hook);
+	else
+		return Packet_printf(&connp->c, "%c", PKT_ITEM);
 }
 
 int Send_flush(int Ind)

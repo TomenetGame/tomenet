@@ -1107,12 +1107,10 @@ static void display_inven(void)
 	object_type *o_ptr;
 
 	char	o_name[ONAME_LEN];
-
 	char	tmp_val[80];
 
 	/* Find the "final" slot */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
+	for (i = 0; i < INVEN_PACK; i++) {
 		o_ptr = &inventory[i];
 
 		/* Track non-empty slots */
@@ -1120,8 +1118,7 @@ static void display_inven(void)
 	}
 
 	/* Display the inventory */
-	for (i = 0; i < z; i++)
-	{
+	for (i = 0; i < z; i++) {
 		o_ptr = &inventory[i];
 
 		/* Start with an empty "index" */
@@ -1138,13 +1135,10 @@ static void display_inven(void)
 		tmp_val[1] = ')';
 
 		/* Is this item acceptable? */
-		if (item_tester_okay(o_ptr))
-		{
+		if (item_tester_okay(o_ptr)) {
 			/* Display the index */
 			Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
-		}
-		else
-		{
+		} else {
 			/* Grey out the index */
 			Term_putstr(0, i, 3, TERM_L_DARK, tmp_val);
 		}
@@ -1155,15 +1149,22 @@ static void display_inven(void)
 		/* Obtain length of description */
 		n = strlen(o_name);
 
+#if 1 /* grey out the complete slot if item isn't eligible */
+		if (item_tester_okay(o_ptr)) {
+			Term_putstr(3, i, n, o_ptr->attr, o_name);
+		} else {
+			Term_putstr(3, i, n, TERM_L_DARK, o_name);
+		}
+#else /* only grey out the index */
 		/* Clear the line with the (possibly indented) index */
 		Term_putstr(3, i, n, o_ptr->attr, o_name);
+#endif
 
 		/* Erase the rest of the line */
-		Term_erase(3+n, i, 255);
+		Term_erase(3 + n, i, 255);
 
 		/* Display the weight if needed */
-		if (c_cfg.show_weights && o_ptr->weight)
-		{
+		if (c_cfg.show_weights && o_ptr->weight) {
 			wgt = o_ptr->weight * o_ptr->number;
 			if (wgt < 10000) /* still fitting into 3 digits? */
 				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
@@ -1174,8 +1175,7 @@ static void display_inven(void)
 	}
 
 	/* Erase the rest of the window */
-	for (i = z; i < Term->hgt; i++)
-	{
+	for (i = z; i < Term->hgt; i++) {
 		/* Erase the line */
 		Term_erase(0, i, 255);
 	}
