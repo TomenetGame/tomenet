@@ -4786,7 +4786,7 @@ void do_cmd_fire(int Ind, int dir)
 #else
 					if ((r_ptr->flags2 & RF2_REFLECTING) && magik(50)) {
 #endif
-						msg_format(Ind, "The %s was deflected.", o_name);
+						if (visible) msg_format(Ind, "The %s was deflected.", o_name);
 						num_ricochet = 1;
 						hit_body = 1;
 
@@ -4795,7 +4795,22 @@ void do_cmd_fire(int Ind, int dir)
 
 						break;
 					}
-					
+
+#ifdef USE_BLOCKING
+				        /* handle blocking (deflection) */
+				        if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
+				            !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK)
+				            && !rand_int(25 - r_ptr->level / 6)) { /* small chance to block arrows */
+				                if (visible) {
+				                        char hit_desc[MAX_CHARS];
+				                        sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+				                        hit_desc[0] = toupper(hit_desc[0]);
+				                        msg_print(Ind, hit_desc);
+				                }
+				                break;
+				        }
+#endif
+
 					/* Handle unseen monster */
 					if (!visible) {
 						/* Invisible monster */
@@ -5873,6 +5888,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 			/* Did we hit it (penalize range) */
 			if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible)) {
 				bool fear = FALSE;
+				char m_name[MNAME_LEN];
+
+				/* Get "the monster" or "it" */
+				monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+
 
 				/* Assume a default death */
 				cptr note_dies = " dies";
@@ -5887,6 +5907,34 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 					note_dies = " is destroyed";
 				}
 
+				/* Handle reflection - it's back, though weaker */
+#if 0 /* hm doesn't make sense, but is pretty unbalanced even :/ */
+				/* New: Boomerangs can't be deflected, nor can exploding ammo (!) - C. Blue */
+				if ((r_ptr->flags2 & RF2_REFLECTING) && !boomerang && !o_ptr->pval && magik(50)) {
+#else
+				if ((r_ptr->flags2 & RF2_REFLECTING) && magik(50)) {
+#endif
+					if (visible) msg_format(Ind, "The %s was deflected.", o_name);
+					hit_body = 1;
+
+					break;
+				}
+
+#ifdef USE_BLOCKING
+			        /* handle blocking (deflection) */
+			        if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
+			            !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK)
+			            && !rand_int(10 - r_ptr->level / 10)) { /* decent chance to block throws */
+			                if (visible) {
+			                        char hit_desc[MAX_CHARS];
+			                        sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+			                        hit_desc[0] = toupper(hit_desc[0]);
+			                        msg_print(Ind, hit_desc);
+			                }
+			                break;
+			        }
+#endif
+
 
 				/* Handle unseen monster */
 				if (!visible) {
@@ -5896,11 +5944,6 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 
 				/* Handle visible monster */
 				else {
-					char m_name[MNAME_LEN];
-
-					/* Get "the monster" or "it" */
-					monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
 					/* Message */
 					msg_format(Ind, "The %s hits %s.", o_name, m_name);
 
