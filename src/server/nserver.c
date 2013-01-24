@@ -2252,7 +2252,9 @@ static int Handle_login(int ind)
 		p_ptr->f_char[i] = connp->Client_setup.f_char[i];
 #ifndef FLOORTILEBUG_WORKAROUND
 		if (!p_ptr->f_attr[i]) p_ptr->f_attr[i] = f_info[i].z_attr;
-		if (!p_ptr->f_char[i]) p_ptr->f_char[i] = f_info[i].z_char;
+		if (!p_ptr->f_char[i]
+		    || p_ptr->f_char[i] == 31) /* workaround for people who are still using old font-win.prf files with floor tile /31 mapping glitch */
+			p_ptr->f_char[i] = f_info[i].z_char;
 #else		/*now all tiles are bright white and never dimmed.*/
 		p_ptr->f_attr[i] = f_info[i].z_attr;
 		p_ptr->f_char[i] = f_info[i].z_char;
