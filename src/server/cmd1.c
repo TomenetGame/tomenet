@@ -3516,7 +3516,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	bool		secondary_wield = (p_ptr->inventory[INVEN_ARM].k_idx != 0 && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD);
 	bool		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
 	int		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
-	bool		nolite, nolite2, martial = FALSE;
+	bool		nolite, nolite2, martial = FALSE, did_stun, did_knee, did_slow;
 	int		block, parry;
 
 	int		vorpal_cut = 0;
@@ -3712,6 +3712,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 	/* Attack once for each legal blow */
 	while (num++ < p_ptr->num_blow) {
+		did_stun = FALSE;
+		did_knee = FALSE;
+		did_slow = FALSE;
+
 #ifdef USE_SOUND_2010
 		if (p_ptr->cut_sfx_attack) {
 			sfx = extract_energy[p_ptr->pspeed] * p_ptr->num_blow;
@@ -3870,6 +3874,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				k = damroll(ma_ptr->dd, ma_ptr->ds);
 
 				if (ma_ptr->effect == MA_KNEE) {
+#if 0 /* less message order problems */
 					if (r_ptr->flags1 & RF1_MALE) {
 						msg_format(Ind, "You hit %s in the groin with your knee!", m_name);
 						special_effect = MA_KNEE;
@@ -3877,9 +3882,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						sprintf(hit_desc, ma_ptr->desc, m_name);
 //						msg_format(Ind, ma_ptr->desc, m_name);
 					}
+#else
+					if (r_ptr->flags1 & RF1_MALE) special_effect = MA_KNEE;
+					sprintf(hit_desc, ma_ptr->desc, m_name);
+#endif
 				}
 
 				else if (ma_ptr->effect == MA_SLOW) {
+#if 0 /* less message order problems */
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
 					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char))) {
 						msg_format(Ind, "You kick %s in the ankle.", m_name);
@@ -3888,15 +3898,28 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						sprintf(hit_desc, ma_ptr->desc, m_name);
 //						msg_format(Ind, ma_ptr->desc, m_name);
 					}
-				} else if (ma_ptr->effect == MA_ROYAL_SLOW) {
+#else
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
-					    || strchr("ANjmeEv$,sbBFIJQSXlw!=?", r_ptr->d_char))) {
+					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char)))
+						special_effect = MA_SLOW;
+					sprintf(hit_desc, ma_ptr->desc, m_name);
+#endif
+				} else if (ma_ptr->effect == MA_ROYAL_SLOW) { /* works against U,D,d,J,c,n */
+#if 0 /* less message order problems */
+					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
+					    || strchr("ANjmeEv$,sbBFIQSXlw!=?", r_ptr->d_char))) {
 						msg_format(Ind, "You strike %s's pressure points.", m_name);
 						special_effect = MA_SLOW;
 					} else {
 						sprintf(hit_desc, ma_ptr->desc, m_name);
 //						msg_format(Ind, ma_ptr->desc, m_name);
 					}
+#else
+					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
+					    || strchr("ANjmeEv$,sbBFIQSXlw!=?", r_ptr->d_char)))
+						special_effect = MA_SLOW;
+					sprintf(hit_desc, ma_ptr->desc, m_name);
+#endif
 				} else {
 					if (ma_ptr->effect)
 						stun_effect = (ma_ptr->effect/2) + randint(ma_ptr->effect/2);
@@ -3914,7 +3937,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				k = k3;
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp)) {
-					msg_format(Ind, "%^s moans in agony!", m_name);
+					did_knee = TRUE;
 					stun_effect = 7 + randint(13);
 					resist_stun /= 3;
 				}
@@ -3924,7 +3947,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					    !((r_ptr->flags2 & RF2_POWERFUL) && (r_ptr->flags8 & RF8_NO_CUT)) &&
 					    (randint(marts * 2) > r_ptr->level) &&
 					    m_ptr->mspeed > m_ptr->speed - 20) {
-						msg_format(Ind, "\377o%^s starts limping slower.", m_name);
+						did_slow = TRUE;
 						m_ptr->mspeed -= 3 + rand_int(3);
 					}
 				}
@@ -3936,13 +3959,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						msg_format(Ind, "%^s is unaffected.", m_name);*/
 					} else if (marts > randint(r_ptr->level + resist_stun + 10)) {
 						m_ptr->stunned += (stun_effect + get_skill_scale(p_ptr, SKILL_COMBAT, 3));
-
-						if (m_ptr->stunned > 100)
-							msg_format(Ind, "\377y%^s is knocked out.", m_name);
-						else if (m_ptr->stunned > 50)
-							msg_format(Ind, "\377y%^s is heavily stunned.", m_name);
-						else
-							msg_format(Ind, "\377y%^s is stunned.", m_name);
+						did_stun = TRUE;
 					}
 				}
 
@@ -4010,12 +4027,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 //						else if (!magik((r_ptr->level + 100) / 3 + resist_stun)) {
 						else if (!magik(90 - (1000 / (r_ptr->level + 50)) + resist_stun)) {
 							m_ptr->stunned += (stun_effect + get_skill_scale(p_ptr, SKILL_COMBAT, 3));
-							if (m_ptr->stunned > 100)
-								msg_format(Ind, "\377y%^s is knocked out.", m_name);
-							else if (m_ptr->stunned > 50)
-								msg_format(Ind, "\377y%^s is heavily stunned.", m_name);
-							else
-								msg_format(Ind, "\377y%^s is stunned.", m_name);
+							did_stun = TRUE;
 						}
 					}
 				}
@@ -4221,6 +4233,18 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				else msg_format(Ind, "%s for \377g%d \377wdamage.", hit_desc, k);
 			}
 //less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+
+			if (did_stun) {
+				if (m_ptr->stunned > 100)
+					msg_format(Ind, "\377y%^s is knocked out.", m_name);
+				else if (m_ptr->stunned > 50)
+					msg_format(Ind, "\377y%^s is heavily stunned.", m_name);
+				else
+					msg_format(Ind, "\377y%^s is stunned.", m_name);
+			}
+			if (did_knee) msg_format(Ind, "%^s moans in agony!", m_name);
+			if (did_slow) msg_format(Ind, "\377o%^s starts limping slower.", m_name);
+
 
 			/* target dummy */
 			if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126) {
