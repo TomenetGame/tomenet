@@ -5025,8 +5025,10 @@ static void process_various(void)
 {
 	int i, j;
 	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
+#ifndef ARCADE_SERVER
 	time_t now;
 	struct tm *tmp;
+#endif
 	//cave_type *c_ptr;
 	player_type *p_ptr;
 
