@@ -1990,6 +1990,7 @@ static void init_sound() {
 
 	/* remember indices of sounds that are hardcoded on client-side anyway, for efficiency */
 	page_sound_idx = exec_lua(0, "return get_sound_index(\"page\")");
+	warning_sound_idx = exec_lua(0, "return get_sound_index(\"warning\")");
 	rain1_sound_idx = exec_lua(0, "return get_sound_index(\"rain_soft\")");
 	rain2_sound_idx = exec_lua(0, "return get_sound_index(\"rain_storm\")");
 	snow1_sound_idx = exec_lua(0, "return get_sound_index(\"snow_soft\")");

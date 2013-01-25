@@ -1427,7 +1427,15 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	// The "number" that the character is displayed as before the hit
 	int old_num, new_num;
 
-	if (p_ptr->alert_afk_dam && p_ptr->afk && p_ptr->paging == 0) p_ptr->paging = 1;
+	if (p_ptr->alert_afk_dam && p_ptr->afk
+#ifdef USE_SOUND_2010
+	    ) {
+		sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+#else
+	    && p_ptr->paging == 0) {
+		p_ptr->paging = 1;
+#endif
+	}
 
 	/* Amulet of Immortality */
 	if (p_ptr->admin_invuln) return;
@@ -1676,7 +1684,15 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	int warning = (p_ptr->msane * hitpoint_warn / 10);
 #endif	// 0
 
-	if (p_ptr->alert_afk_dam && p_ptr->afk && p_ptr->paging == 0) p_ptr->paging = 1;
+	if (p_ptr->alert_afk_dam && p_ptr->afk
+#ifdef USE_SOUND_2010
+	    ) {
+		sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+#else
+	    && p_ptr->paging == 0) {
+		p_ptr->paging = 1;
+#endif
+	}
 
 	/* For 'Arena Monster Challenge' event: */
 	if (safe_area(Ind)) {
@@ -1813,7 +1829,15 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 		stop_precision(Ind);
 	}
 
-	if (p_ptr->alert_afk_dam && p_ptr->afk && p_ptr->paging == 0) p_ptr->paging = 1;
+	if (p_ptr->alert_afk_dam && p_ptr->afk
+#ifdef USE_SOUND_2010
+	    ) {
+		sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+#else
+	    && p_ptr->paging == 0) {
+		p_ptr->paging = 1;
+#endif
+	}
 
 	if (p_ptr->lev == 99) {
 		//msg_print(Ind, "You are impervious to life force drain!");

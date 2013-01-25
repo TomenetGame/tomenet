@@ -758,6 +758,51 @@ extern bool sound_page(void) {
 
 	return TRUE;
 }
+/* play the 'warning' sound */
+extern bool sound_warning(void) {
+	Mix_Chunk *wave = NULL;
+	int s;
+
+	if (warning_sound_idx == -1) return FALSE;
+	if (!samples[warning_sound_idx].num) return FALSE;
+
+	/* already playing? prevent multiple sounds of the same kind from being mixed simultaneously, for preventing silliness */
+	if (samples[warning_sound_idx].current_channel != -1) return TRUE;
+
+	/* Choose a random event */
+	s = rand_int(samples[warning_sound_idx].num);
+	wave = samples[warning_sound_idx].wavs[s];
+
+	/* Try loading it, if it's not cached */
+	if (!wave) {
+		if (on_demand_loading || no_cache_audio) {
+			if (!(wave = load_sample(warning_sound_idx, s))) {
+				/* we really failed to load it */
+				plog(format("SDL sound load failed (%d, %d).", warning_sound_idx, s));
+				return FALSE;
+			}
+		} else {
+			/* Fail silently */
+			return TRUE;
+		}
+	}
+
+	/* Actually play the thing */
+	/* remember, for efficiency management */
+	s = Mix_PlayChannel(-1, wave, 0);
+	if (s != -1) {
+		channel_sample[s] = warning_sound_idx;
+		/* use 'page' sound volume settings for warning too */
+		if (c_cfg.paging_max_volume) {
+			Mix_Volume(s, MIX_MAX_VOLUME);
+		} else if (c_cfg.paging_master_volume) {
+			Mix_Volume(s, CALC_MIX_VOLUME(1, 100));
+		}
+	}
+	samples[warning_sound_idx].current_channel = s;
+
+	return TRUE;
+}
 
 
 /* Release weather channel after fading out has been completed */
@@ -770,7 +815,7 @@ static void clear_channel(int c) {
 
 	/* a sample has finished playing, so allow this kind to be played again */
 	/* hack: if the sample was the 'paging' sound, reset the channel's volume to be on the safe side */
-	if (channel_sample[c] == page_sound_idx) {
+	if (channel_sample[c] == page_sound_idx || channel_sample[c] == warning_sound_idx) {
 		Mix_Volume(c, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
 	}
 

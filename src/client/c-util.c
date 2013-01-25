@@ -1320,6 +1320,23 @@ int page(void) {
 
 	return 1;
 }
+/* Generate a warning sfx (beep) or if it's missing then a page sfx */
+int warning_page(void) {
+#ifdef USE_SOUND_2010
+#ifdef SOUND_SDL
+	/* Try to beep via page sfx of the SDL audio system first */
+	if (sound_warning()) return 1;
+	if (c_cfg.audio_paging && sound_page()) return 1;
+#endif
+#endif
+
+	/* Fall back on system-specific default beeps */
+	//Term_fresh();
+	Term_xtra(TERM_XTRA_NOISE, 0);
+	//flush();
+
+	return 1;
+}
 
 
 /*

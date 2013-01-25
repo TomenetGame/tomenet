@@ -6884,7 +6884,8 @@ void shutdown_server(void) {
 		else if (p_ptr->turns_idle >= cfg.fps * AUTO_AFK_TIMER) Send_beep(1);
 #endif
 #if 1 /* send a warning sound (usually same as page beep) */
-		sound(1, "warning", "page", SFX_TYPE_NO_OVERLAP, FALSE);
+//		sound(1, "warning", "page", SFX_TYPE_NO_OVERLAP, FALSE);
+		sound(1, "page", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
 #endif
 		Net_output1(1);
 

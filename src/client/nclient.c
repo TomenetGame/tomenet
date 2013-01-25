@@ -1137,7 +1137,7 @@ int Receive_sanity(void) {
 
 	prt_sane(attr, (char*)buf);
 	if (c_cfg.alert_hitpoint && (attr == TERM_MULTI)) {
-		page();
+		warning_page();
 		c_msg_print("\377R*** LOW SANITY WARNING! ***");
 	}
 
@@ -1189,7 +1189,7 @@ int Receive_hp(void) {
 
 	prt_hp(max, cur);
 	if (c_cfg.alert_hitpoint && (cur < max / 5)) {
-		page();
+		warning_page();
 		c_msg_print("\377R*** LOW HITPOINT WARNING! ***");
 	}
 
