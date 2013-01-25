@@ -1135,11 +1135,11 @@ return;
 	if (ma_warning_weapon && p_ptr->warning_ma_weapon == 0) {
 //		p_ptr->warning_ma_weapon = 1;
 		msg_print(Ind, "\374\377RWarning: Using any sort of weapon renders Martial Arts skill effectless.");
-		s_printf("warning_ma_weapon: %s\n", p_ptr->name);
+//		s_printf("warning_ma_weapon: %s\n", p_ptr->name);
 	} else if (ma_warning_shield && p_ptr->warning_ma_shield == 0) {
 //		p_ptr->warning_ma_shield = 1;
 		msg_print(Ind, "\374\377RWarning: Using a shield will prevent Martial Arts combat styles.");
-		s_printf("warning_ma_shield: %s\n", p_ptr->name);
+//		s_printf("warning_ma_shield: %s\n", p_ptr->name);
 	}
 
 	if (hobbit_warning) msg_print(Ind, "\377yYou feel somewhat less dextrous than when barefeet.");
