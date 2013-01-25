@@ -18,7 +18,7 @@
 
 
 /* Give a crazy form learning boost inside Ironman Deep Dive Challenge? [9] */
-//#define IDDC_MIMICRY_BOOST 9
+#define IDDC_MIMICRY_BOOST 9
 
 //#define IRON_TEAM_EXPERIENCE
 /* todo before enabling: implement way to decrease party.experience again! */
