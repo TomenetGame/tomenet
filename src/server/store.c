@@ -2920,7 +2920,7 @@ void store_stole(int Ind, int item)
 s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Complain */
 		// say_comment_4();
-		msg_print(Ind, "\"\377yBastard\377L!!!'\377w\" - The angry shopkeeper throws you out!");
+		msg_print(Ind, "\"\377yBastard\377L!!!\377w\" - The angry shopkeeper throws you out!");
 		msg_print(Ind, "\377rNow you'll be on the black list of merchants for a while..");
 		msg_print_near(Ind, "You hear loud shouting..");
 		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the store!", p_ptr->name);
