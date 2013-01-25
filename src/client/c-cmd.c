@@ -1581,7 +1581,8 @@ static void artifact_lore(void) {
 
 			/* exact match? exact match without 'The ' at the beginning maybe? */
 			if (!strcmp(tmp, s) ||
-			    (tmp[0] == 'T' && tmp[1] == 'H' && tmp[2] == 'E' && tmp[3] == ' ' && !strcmp(tmp + 4, s))) {
+			    (tmp[0] == 'T' && tmp[1] == 'H' && tmp[2] == 'E' && tmp[3] == ' ' && !strcmp(tmp + 4, s))
+			    || (s[0] == '#' && atoi(s + 1) && artifact_list_code[i] == atoi(s + 1))) { /* also allow typing in the artifact's aidx directly! */
 				selected = artifact_list_code[i];
 				selected_list = i;
 				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
@@ -1646,14 +1647,14 @@ static void artifact_lore(void) {
             	}
 
 		/* navigate in the list (up/down) */
-		if (c == '8') { //rl:'k'
+		if (s[0] != '#' && c == '8') { //rl:'k'
 			if (n > 0) {
 				if (selected_line > 0) selected_line--;
 				else selected_line = n - 1;
 			}
 			continue;
 		}
-		if (c == '2') { //rl:'j'
+		if (s[0] != '#' && c == '2') { //rl:'j'
 			if (n > 0) {
 				if (selected_line < n - 1) selected_line++;
 				else selected_line = 0;
@@ -1825,7 +1826,8 @@ static void monster_lore(void) {
 				for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
 
 				/* exact match? */
-				if (!strcmp(tmp, s)) {
+				if (!strcmp(tmp, s)
+				    || (s[0] == '#' && atoi(s + 1) && monster_list_code[i] == atoi(s + 1))) { /* also allow typing in the monster's ridx directly! */
 	    				selected = monster_list_code[i];
 					selected_list = i;
 					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
@@ -1891,14 +1893,14 @@ static void monster_lore(void) {
             	}
 
 		/* navigate in the list (up/down) */
-		if (c == '8') { //rl:'k'
+		if (s[0] != '#' && c == '8') { //rl:'k'
 			if (n > 0) {
 				if (selected_line > 0) selected_line--;
 				else selected_line = n - 1;
 			}
 			continue;
 		}
-		if (c == '2') { //rl:'j'
+		if (s[0] != '#' && c == '2') { //rl:'j'
 			if (n > 0) {
 				if (selected_line < n - 1) selected_line++;
 				else selected_line = 0;
