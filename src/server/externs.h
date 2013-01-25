@@ -1044,6 +1044,7 @@ extern int Send_sound(int ind, int sound, int alternative, int type, int vol, s3
 extern int Send_music(int ind, int music);
 #endif
 extern int Send_beep(int ind);
+extern int Send_warning_beep(int ind);
 extern int Send_AFK(int ind, byte afk);
 extern int Send_encumberment(int ind, byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
         byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte rogue_heavyarmor, byte awkward_shoot);

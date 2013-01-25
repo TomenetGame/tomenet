@@ -6004,6 +6004,24 @@ int Send_beep(int Ind)
 	return Packet_printf(&connp->c, "%c", PKT_BEEP);
 }
 
+int Send_warning_beep(int Ind)
+{
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for beep (warning) (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (is_newer_than(&Players[Ind]->version, 4, 5, 2, 0, 0, 0))
+		return Packet_printf(&connp->c, "%c", PKT_WARNING_BEEP);
+	else
+		return Packet_printf(&connp->c, "%c", PKT_BEEP);
+}
+
 int Send_AFK(int Ind, byte afk)
 {
 	connection_t *connp = Conn[Players[Ind]->conn];

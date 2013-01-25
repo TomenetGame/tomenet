@@ -128,6 +128,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_BACT]		= Receive_store_action;
 
 	receive_tbl[PKT_BEEP]		= Receive_beep;
+	receive_tbl[PKT_WARNING_BEEP]	= Receive_warning_beep;
 	receive_tbl[PKT_AFK]		= Receive_AFK;
 	receive_tbl[PKT_ENCUMBERMENT]	= Receive_encumberment;
 	receive_tbl[PKT_KEEPALIVE]	= Receive_keepalive;
@@ -3008,6 +3009,13 @@ int Receive_beep(void) {
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 	if (!c_cfg.allow_paging) return 1;
 	return page();
+}
+int Receive_warning_beep(void) {
+	char	ch;
+	int	n;
+
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
+	return warning_page();
 }
 
 int Receive_AFK(void) {

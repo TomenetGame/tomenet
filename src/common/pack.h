@@ -226,6 +226,7 @@
 #define PKT_STORE_SPECIAL_CHAR	190	/* for SPECIAL flag stores (those don't have an inventory) */
 #define PKT_STORE_SPECIAL_CLR	191	/* for SPECIAL flag stores (those don't have an inventory) */
 
+#define PKT_WARNING_BEEP	192
 
 /*
  * Possible error codes returned

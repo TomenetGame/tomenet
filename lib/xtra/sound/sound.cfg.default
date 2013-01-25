@@ -33,4 +33,5 @@
 
 [misc]
 page = misc/paging/ding.ogg
+warning = misc/paging/warning.ogg
 greeting = misc/paging/greeting.ogg

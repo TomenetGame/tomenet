@@ -1430,7 +1430,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	if (p_ptr->alert_afk_dam && p_ptr->afk
 #ifdef USE_SOUND_2010
 	    ) {
-		sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+		Send_warning_beep(Ind);
+		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
 #else
 	    && p_ptr->paging == 0) {
 		p_ptr->paging = 1;
@@ -1687,7 +1688,8 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	if (p_ptr->alert_afk_dam && p_ptr->afk
 #ifdef USE_SOUND_2010
 	    ) {
-		sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+		Send_warning_beep(Ind);
+		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
 #else
 	    && p_ptr->paging == 0) {
 		p_ptr->paging = 1;
@@ -1832,7 +1834,8 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 	if (p_ptr->alert_afk_dam && p_ptr->afk
 #ifdef USE_SOUND_2010
 	    ) {
-		sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+		Send_warning_beep(Ind);
+		//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
 #else
 	    && p_ptr->paging == 0) {
 		p_ptr->paging = 1;
