@@ -7740,7 +7740,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Catch healing hacks */
 	if (typ == GF_HEAL_PLAYER) {
-		hack_dam = dam & 0x3B00;
+		hack_dam = dam & 0x3C00;
 		dam = dam & 0x03FF;
 	}
 

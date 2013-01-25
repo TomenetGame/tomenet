@@ -5839,8 +5839,8 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 
 	/* WRAITHFORM reduces damage/effect */
 	if (p_ptr->tim_wraith) {
-		if (typ == GF_HEAL_PLAYER && dam >= 1000) {
-			dam = dam - (dam % 1000) + (dam % 1000) / 2;
+		if (typ == GF_HEAL_PLAYER && (dam & 0x3C00)) {
+			dam = (dam & 0x3C00) + (dam & 0x03FF) / 2;
 		} else dam /= 2;
 	}
 
@@ -6423,8 +6423,8 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) {
-		if (typ == GF_HEAL_PLAYER && dam >= 1000) {
-			dam = dam - (dam % 1000) + (dam % 1000) / 2;
+		if (typ == GF_HEAL_PLAYER && (dam & 0x3C00)) {
+			dam = (dam & 0x3C00) + (dam & 0x03FF) / 2;
 		} else dam /= 2;
 	}
 
@@ -6617,7 +6617,7 @@ bool heal_other_proj(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
-	return (project_hook(Ind, GF_HEAL_PLAYER, dir, 2000, flg, Players[Ind]->attacker));
+	return (project_hook(Ind, GF_HEAL_PLAYER, dir, 100, flg, Players[Ind]->attacker));
 }
 
 

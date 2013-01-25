@@ -42,9 +42,9 @@ HEALING = add_spell
                         status_ailments = 0
                         --hacks to cure effects same as potions would
                         if get_level(Ind, HHEALING, 50) >= 24 then
-                                status_ailments = status_ailments + 8192
+                                status_ailments = status_ailments + 8192 + 4096 + 2048
                         elseif get_level(Ind, HHEALING, 50) >= 10 then
-                                status_ailments = status_ailments + 4096
+                                status_ailments = status_ailments + 4096 + 2048
                         elseif get_level(Ind, HHEALING, 50) >= 4 then
                                 status_ailments = status_ailments + 2048
                         end
