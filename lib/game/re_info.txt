@@ -275,8 +275,8 @@ M:EVIL | FORCE_MAXHP
 # no 'Fallen Fallen Angel' :)
 H:EVIL
 O:RES_LITE | GOOD
-S:BO_NETH
-T:S_ANGEL
+S:1_IN_3 | BO_NETH
+T:S_ANGEL | HEAL
 
 N:21:Corrupted
 G:*:*
@@ -290,8 +290,9 @@ F:R_CHAR_A
 M:EVIL | FORCE_MAXHP | FORCE_DEPTH
 # no 'Corrupted Fallen Angel either'..
 H:EVIL
-S:BO_NETH | BA_NETH | S_DEMON
-T:S_ANGEL
+O:RES_LITE | GOOD
+S:1_IN_3 | BO_NETH | BA_NETH | S_DEMON
+T:S_ANGEL | HEAL
 
 N:22:Blink
 G:*:B
