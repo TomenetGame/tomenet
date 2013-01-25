@@ -2060,32 +2060,38 @@ int Receive_item(void) {
 		if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 	}
 
-	switch (th) {
-	case ITH_NONE:
-	default:
-		break;
-	case ITH_RECHARGE:
-		item_tester_hook = item_tester_hook_device;
-		break;
-	case ITH_ENCH_AC:
-		item_tester_hook = item_tester_hook_armour;
-		break;
-	case ITH_ENCH_WEAP:
-		item_tester_hook = item_tester_hook_weapon;
-		break;
-	case ITH_CUSTOM_TOME:
-		item_tester_hook = item_tester_hook_custom_tome;
-		break;
-	case ITH_RUNE:
-		item_tester_tval = TV_RUNE;
-		break;
-	}
-
 	if (!screen_icky && !topline_icky) {
+		switch (th) {
+		case ITH_NONE:
+		default:
+			break;
+		case ITH_RECHARGE:
+			item_tester_hook = item_tester_hook_device;
+			break;
+		case ITH_ENCH_AC:
+			item_tester_hook = item_tester_hook_armour;
+			break;
+		case ITH_ENCH_WEAP:
+			item_tester_hook = item_tester_hook_weapon;
+			break;
+		case ITH_CUSTOM_TOME:
+			item_tester_hook = item_tester_hook_custom_tome;
+			break;
+		case ITH_RUNE:
+			item_tester_tval = TV_RUNE;
+			break;
+		}
+
 		c_msg_print(NULL);
 		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN))) return 1;
 		Send_item(item);
-	} else if ((n = Packet_printf(&qbuf, "%c", ch)) <= 0) return n;
+	} else {
+		if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
+			if ((n = Packet_printf(&qbuf, "%c%c", ch, th)) <= 0) return n;
+		} else {
+			if ((n = Packet_printf(&qbuf, "%c", ch)) <= 0) return n;
+		}
+	}
 	return 1;
 }
 
