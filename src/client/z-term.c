@@ -2757,6 +2757,34 @@ errr Term_load(void)
 
 
 /*
+ * Restore the "requested" contents (see above),
+ * without actually leaving the screen_icky level, so it's basically a
+ * 'Term_load()' without the 'pop' from the stack of saved terms.
+ * I added this for browsing the spell descriptions of spells in spell books. - C. Blue
+ */
+errr Term_restore(void)
+{
+	int w = Term->wid;
+	int h = Term->hgt;
+
+	if (!screen_icky) return(0);	/* should really be a value */
+
+ 	term_win_copy(Term->scr, Term->mem[screen_icky - 1], w, h);
+
+	/* Assume change */
+	memset(Term->x1, 0, h);
+	memset(Term->x2, w - 1, h);
+
+	/* Assume change */
+	Term->y1 = 0;
+	Term->y2 = h - 1;
+
+	/* Success */
+	return (0);
+}
+
+
+/*
  * Switch the current screen with one in memory.
  *
  * This might be a bit dirty.

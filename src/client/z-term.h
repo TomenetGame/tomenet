@@ -282,6 +282,7 @@ extern errr Term_inkey(char *ch, bool wait, bool take);
 
 extern errr Term_save(void);
 extern errr Term_load(void);
+extern errr Term_restore(void);
 extern errr Term_switch(int screen);
 
 extern errr Term_resize(int w, int h);

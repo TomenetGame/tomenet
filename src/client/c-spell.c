@@ -1031,8 +1031,7 @@ s32b get_school_spell(cptr do_what, int *item_book)
 }
 
 /* TODO: handle blindness */
-void browse_school_spell(int item, int book, int pval)
-{
+void browse_school_spell(int item, int book, int pval) {
 	int i;
 	int num = 0, where = 1;
 	int ask;
@@ -1063,8 +1062,10 @@ void browse_school_spell(int item, int book, int pval)
 	where = exec_lua(0, out_val);
 
 	/* Get a spell from the user */
-	while (get_com(out_val2, &choice))
-	{
+	while (get_com(out_val2, &choice)) {
+		/* Restore the screen (ie Term_load() without 'popping' it) */
+		Term_restore();
+
 		/* Display a list of spells */
 		sprintf(out_val, "return print_book2(0, %d, %d, %d)", item, sval, pval);
 		where = exec_lua(0, out_val);
@@ -1079,8 +1080,7 @@ void browse_school_spell(int item, int book, int pval)
 		i = (islower(choice) ? A2I(choice) : -1);
 
 		/* Totally Illegal */
-		if ((i < 0) || (i >= num))
-		{
+		if ((i < 0) || (i >= num)) {
 			bell();
 			continue;
 		}
