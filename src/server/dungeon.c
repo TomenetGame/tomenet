@@ -5342,7 +5342,7 @@ void process_player_change_wpos(int Ind)
 				}
 			}
 
-			if (winner_artifact_p(o_ptr)) continue;
+			if (winner_artifact_p(o_ptr) || admin_artifact_p(o_ptr)) continue;
 
 			/* Describe the object */
 			object_desc(Ind, o_name, o_ptr, TRUE, 0);
