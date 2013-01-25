@@ -5876,7 +5876,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
 		    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) && (typ != GF_MINDBOOST_PLAYER) &&
 		    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
-		    (typ != GF_RESTORESTATS_PLAYER) && (typ != GF_RESTORELIFE_PLAYER) &&
+		    (typ != GF_RESTORE_PLAYER) &&
 		    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&

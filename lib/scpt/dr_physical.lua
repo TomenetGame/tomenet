@@ -71,26 +71,37 @@ HERBALTEA = add_spell
 	["spell"] = 	function()
 			local lvl
 			lvl = get_level(Ind, HERBALTEA, 50)
-			set_food(Ind, PY_FOOD_MAX - 1)
-			fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, 1, "");
 
-			if lvl >= 20 then
+			msg_print(Ind, "That tasted bitter sweet.")
+			set_food(Ind, PY_FOOD_MAX - 1)
+
+			if lvl >= 35 then
 				restore_level(Ind)
-				fire_ball(Ind, GF_RESTORELIFE_PLAYER, 0, 1, 1, "")
-			end
-                        if lvl >= 25 then
                                 do_res_stat(Ind, A_STR)
                                 do_res_stat(Ind, A_CON)
                                 do_res_stat(Ind, A_DEX)
                                 do_res_stat(Ind, A_WIS)
                                 do_res_stat(Ind, A_INT)
                                 do_res_stat(Ind, A_CHR)
-				fire_ball(Ind, GF_RESTORESTATS_PLAYER, 0, 1, 1, "")
-			end
-			if lvl >= 35 then
-				msg_print(Ind, "That tasted bitter sweet.")
-				player.black_breath = FALSE
-				fire_ball(Ind, GF_SOULCURE_PLAYER, 0, 1, 1, " gives you something bitter to drink.")
+	                        if (player.black_breath) then
+    		                        msg_print(Ind, "The hold of the Black Breath on you is broken!");
+            		                player.black_breath = FALSE
+                    		end
+				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2 + 4 + 8, 1, " gives you something bitter to drink.")
+			elseif lvl >= 25 then
+				restore_level(Ind)
+                                do_res_stat(Ind, A_STR)
+                                do_res_stat(Ind, A_CON)
+                                do_res_stat(Ind, A_DEX)
+                                do_res_stat(Ind, A_WIS)
+                                do_res_stat(Ind, A_INT)
+                                do_res_stat(Ind, A_CHR)
+				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 1 + 2 + 4, 1, " gives you something bitter to drink.")
+			elseif lvl >= 20 then
+				restore_level(Ind)
+				fire_ball(Ind, GF_RESTORE_PLAYER, 0, 2, 1 + 2, " gives you something bitter to drink.")
+			else
+				fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, 1, " gives you something bitter to drink.");
 			end
 			end,
 	["info"] = 	function()

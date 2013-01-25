@@ -72,15 +72,14 @@ HCUREWOUNDS = add_spell
 	["direction"] = TRUE,
 	["spell"] =     function(args)
 			local status_ailments
+			status_ailments = 0
 			--hacks to cure effects same as potions would
 			if get_level(Ind, HCUREWOUNDS, 50) >= 24 then
-				status_ailments = 4000
+				status_ailments = status_ailments + 8192
 			elseif get_level(Ind, HCUREWOUNDS, 50) >= 10 then
-				status_ailments = 3000
+				status_ailments = status_ailments + 4096
 			elseif get_level(Ind, HCUREWOUNDS, 50) >= 4 then
-				status_ailments = 2000
-			else
-				status_ailments = 0
+				status_ailments = status_ailments + 2048
 			end
 			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + get_curewounds_power(), " points at your wounds.")
 	end,
@@ -108,15 +107,27 @@ HHEALING = add_spell
 	["fail"] =      25,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, 1000 + get_healing_power2(), 1, " points at your wounds.")
+			local status_ailments
+			status_ailments = 1024
+			--hacks to cure effects same as potions would
+			if get_level(Ind, HHEALING, 50) >= 24 then
+				status_ailments = status_ailments + 8192
+			elseif get_level(Ind, HHEALING, 50) >= 10 then
+				status_ailments = status_ailments + 4096
+			elseif get_level(Ind, HHEALING, 50) >= 4 then
+				status_ailments = status_ailments + 2048
+			end
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(), 1, " points at your wounds.")
 	end,
 	["info"] =      function()
 			return "heal "..get_healing_percents().."% (max "..get_healing_cap()..") = "..get_healing_power2()
 	end,
 	["desc"] =      {
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap",
-		"The final cap is 400",
-		"Projecting it will heal up to 3/4 of that amount on nearby players",
+		"Also cures blindness and cuts at level 4",
+		"Also cures confusion at level 10",
+		"Also cures stun at level 24",
+		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount",
 		"***Automatically projecting***",
 	}
 }
@@ -179,15 +190,39 @@ HCURING = add_spell
 	["fail"] =      20,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-	                if get_level(Ind, HCURING, 50) >= 15 then
+	                if get_level(Ind, HCURING, 50) >= 20 then
+				if (player.food >= PY_FOOD_MAX) then
+					set_food(Ind, PY_FOOD_MAX - 1)
+				end
 				set_confused(Ind, 0)
 				set_blind(Ind, 0)
 				set_stun(Ind, 0)
 		                set_poisoned(Ind, 0, 0)
-	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1, 1, " concentrates on your maladies.")
-			elseif get_level(Ind, HCURING, 50) >= 10 then
+		                set_image(Ind, 0)
+	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 10 + 20, 1, " concentrates on your maladies.")
+	                elseif get_level(Ind, HCURING, 50) >= 15 then
+				if (player.food >= PY_FOOD_MAX) then
+					set_food(Ind, PY_FOOD_MAX - 1)
+				end
+				set_confused(Ind, 0)
+				set_blind(Ind, 0)
+				set_stun(Ind, 0)
 		                set_poisoned(Ind, 0, 0)
-	                        fire_ball(Ind, GF_CUREPOISON_PLAYER, 0, 1, 1, " concentrates on your maladies.")
+	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4 + 10, 1, " concentrates on your maladies.")
+			elseif get_level(Ind, HCURING, 50) >= 10 then
+				if (player.food >= PY_FOOD_MAX) then
+					set_food(Ind, PY_FOOD_MAX - 1)
+				end
+		                set_poisoned(Ind, 0, 0)
+	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 2 + 4, 1, " concentrates on your maladies.")
+			elseif get_level(Ind, HCURING, 50) >= 5 then
+				if (player.food >= PY_FOOD_MAX) then
+					set_food(Ind, PY_FOOD_MAX - 1)
+				end
+		    		if (player.poisoned ~= 0 and player.slow_poison == 0) then
+					player.slow_poison = 1
+				end
+	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1 + 4, 1, " concentrates on your maladies.")
 		        else
 		    		if (player.poisoned ~= 0 and player.slow_poison == 0) then
 					player.slow_poison = 1
@@ -200,8 +235,10 @@ HCURING = add_spell
 	    		end,
         ["desc"] =      {
                         "Slows down the effect of poison",
+                        "At level 5 it cures being gorged",
                         "At level 10 it neutralizes poison",
                         "At level 15 it cures confusion, blindness and stun",
+                        "At level 20 it cures hallucinations",
                 	"***Automatically projecting***",
 	}
 }
@@ -223,10 +260,11 @@ HRESTORING = add_spell
 		        do_res_stat(Ind, A_WIS)
 		        do_res_stat(Ind, A_INT)
 			do_res_stat(Ind, A_CHR)
-                        fire_ball(Ind, GF_RESTORESTATS_PLAYER, 0, 1, 1, "")
                         if get_level(Ind, HRESTORING, 50) >= 5 then
 	                        restore_level(Ind)
-	                        fire_ball(Ind, GF_RESTORELIFE_PLAYER, 0, 1, 1, "")
+	                        fire_ball(Ind, GF_RESTORE_PLAYER, 0, 2 + 4, 1, "")
+	                else
+	                        fire_ball(Ind, GF_RESTORE_PLAYER, 0, 2, 1, "")
 	                end
 		        end,
 	["info"] =      function()
@@ -353,7 +391,7 @@ HDELBB = add_spell
 	            		msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				player.black_breath = FALSE
 			end
-                        fire_ball(Ind, GF_SOULCURE_PLAYER, 0, 1, 1, " chants loudly, praising the light!")
+                        fire_ball(Ind, GF_SOULCURE_PLAYER, 0, 2, 1, " chants loudly, praising the light!")
 		        end,
 	["info"] =      function()
 		        return ""

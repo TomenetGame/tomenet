@@ -3399,6 +3399,9 @@ static int radius_damage(int dam, int div, int typ) {
 	case GF_OLD_SLEEP:
 	case GF_TURN_ALL:
 
+	case GF_CURE_PLAYER:
+	case GF_RESTORE_PLAYER:
+
 		return (dam);
 	}
 
@@ -7736,9 +7739,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	r_ptr = &r_info[p_ptr->body_monster];
 
 	/* Catch healing hacks */
-	if (typ == GF_HEAL_PLAYER && dam >= 1000) {
-		hack_dam = dam - (dam % 1000);
-		dam = dam % 1000;
+	if (typ == GF_HEAL_PLAYER) {
+		hack_dam = dam & 0x3B00;
+		dam = dam & 0x03FF;
 	}
 
 	/* shadow running protects from taking ranged damage - C. Blue
@@ -7899,7 +7902,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) ||
 		    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
 		    (typ == GF_TELEPORT_PLAYER) || (typ == GF_ZEAL_PLAYER) ||
-		    (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
+		    (typ == GF_RESTORE_PLAYER) ||
 		    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 		    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
                     (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) || (typ == GF_PUSH) ||
@@ -7936,7 +7939,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
 		    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) && (typ != GF_MINDBOOST_PLAYER) &&
 		    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
-		    (typ != GF_RESTORESTATS_PLAYER) && (typ != GF_RESTORELIFE_PLAYER) &&
+		    (typ != GF_RESTORE_PLAYER) &&
 		    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
                     (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
@@ -8043,7 +8046,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_RESACID_PLAYER) ||*/ (typ == GF_HPINCREASE_PLAYER) ||
 	    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
 	    /*(typ == GF_TELEPORT_PLAYER) ||*/ (typ == GF_ZEAL_PLAYER) ||
-	    (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
+	    (typ == GF_RESTORE_PLAYER) ||
 	    (typ == GF_CURE_PLAYER) || /*(typ == GF_RESURRECT_PLAYER) ||
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
@@ -8067,7 +8070,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) ||
 	    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
 	    (typ == GF_TELEPORT_PLAYER) || (typ == GF_ZEAL_PLAYER) ||
-	    (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
+	    (typ == GF_RESTORE_PLAYER) ||
 	    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
@@ -9332,19 +9335,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_HEAL_PLAYER:
 		{
 			/* hacks */
-			if (hack_dam >= 4000) { /* CCW */
-				(void)set_blind(Ind, 0);
-				(void)set_cut(Ind, 0, 0);
-				(void)set_confused(Ind, 0);
+			if (hack_dam & 0x2000) /* CCW */
 				(void)set_stun(Ind, 0);
-			} else if (hack_dam >= 3000) { /* CSW */
-				(void)set_blind(Ind, 0);
-				(void)set_cut(Ind, 0, 0);
+			if (hack_dam & 0x1000) /* CSW */
 				(void)set_confused(Ind, 0);
-			} else if (hack_dam >= 2000) { /* CLW */
+			if (hack_dam & 0x800) { /* CLW */
 				(void)set_blind(Ind, 0);
 				(void)set_cut(Ind, 0, 0);
-			} else if (hack_dam >= 1000) { /* holy curing PBAoE */
+			}
+			if (hack_dam & 0x400) { /* holy curing PBAoE */
 				if (Ind != -who) dam = (dam * 3) / 2; /* heals allies for 3/4 of the self-heal amount */
 			}
 
@@ -9510,36 +9509,59 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			p_ptr->redraw |= (PR_DEPTH);
 			break;
 
-		case GF_RESTORESTATS_PLAYER:
-			(void)do_res_stat(Ind, A_STR);
-			(void)do_res_stat(Ind, A_CON);
-			(void)do_res_stat(Ind, A_DEX);
-			(void)do_res_stat(Ind, A_WIS);
-			(void)do_res_stat(Ind, A_INT);
-			(void)do_res_stat(Ind, A_CHR);
-			break;
-		case GF_RESTORELIFE_PLAYER:
-			(void)restore_level(Ind);
-			break;
-		case GF_CURE_PLAYER:
-			switch (dam) {
-			case 1:
-				(void)set_confused(Ind, 0);
-				(void)set_blind(Ind, 0);
-				(void)set_poisoned(Ind, 0, 0);
-				(void)set_stun(Ind, 0);
-//				(void)set_cut(Ind, 0, 0);
-				break;
-			case 2:
-				msg_print(Ind, "You feel a calming warmth touching your soul.");
-#if 1
-				if (p_ptr->suscep_life) take_hit(Ind, (p_ptr->chp / 3) * 2, killer, -who);
-#endif
+		case GF_RESTORE_PLAYER:
+			if (dam & 0x1) { /* Restore stats */
+				(void)do_res_stat(Ind, A_STR);
+				(void)do_res_stat(Ind, A_CON);
+				(void)do_res_stat(Ind, A_DEX);
+				(void)do_res_stat(Ind, A_WIS);
+				(void)do_res_stat(Ind, A_INT);
+				(void)do_res_stat(Ind, A_CHR);
+			}
+			if (dam & 0x2) { /* Restore exp */
+				(void)restore_level(Ind);
+			}
+			if (dam & 0x4) { /* Restore food */
+				set_food(Ind, PY_FOOD_MAX - 1);
+			}
+			if (dam & 0x8) { /* Black breath (herbal tea) */
 				if (p_ptr->black_breath) {
 					msg_print(Ind, "The hold of the Black Breath on you is broken!");
 					p_ptr->black_breath = FALSE;
 				}
-				break;
+			}
+			break;
+		case GF_CURE_PLAYER:
+			if (dam & 0x1) { /* Slow Poison */
+				if (p_ptr->poisoned && !p_ptr->slow_poison) p_ptr->slow_poison = 1;
+			}
+			if (dam & 0x2) { /* Ungorge */
+				if (p_ptr->food >= PY_FOOD_MAX) set_food(Ind, PY_FOOD_MAX - 1);
+			}
+			if (dam & 0x4) { /* Neutralise Poison */
+				(void)set_poisoned(Ind, 0, 0);
+			}
+			if (dam & 0x8) { /* Close cuts */
+				(void)set_cut(Ind, 0, 0);
+			}
+			if (dam & 0x10) { /* Remove conf/blind/stun */
+				(void)set_confused(Ind, 0);
+				(void)set_blind(Ind, 0);
+				(void)set_stun(Ind, 0);
+			}
+			if (dam & 0x20) { /* Remove hallu */
+				set_image(Ind, 0);
+			}
+			if (dam & 0x40) { /* Restore stats */
+				(void)do_res_stat(Ind, A_STR);
+				(void)do_res_stat(Ind, A_CON);
+				(void)do_res_stat(Ind, A_DEX);
+				(void)do_res_stat(Ind, A_WIS);
+				(void)do_res_stat(Ind, A_INT);
+				(void)do_res_stat(Ind, A_CHR);
+			}
+			if (dam & 0x80) { /* Restore exp */
+				(void)restore_level(Ind);
 			}
 			break;
 		case GF_RESURRECT_PLAYER:
@@ -9576,11 +9598,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			break;
 		case GF_SOULCURE_PLAYER:
-			if (strcmp(attacker, " gives you something bitter to drink."))
-			{
-				if (p_ptr->suscep_life)	take_hit(Ind, (p_ptr->chp / 3) * 2, killer, -who);
+			/* priest variant hurts undead, druid tea is fine */
+			if (p_ptr->suscep_life) {
+				msg_print(Ind, "You feel a calming warmth touching your soul.");
+				take_hit(Ind, (p_ptr->chp / 3) * 2, killer, -who);
 			}
-			msg_print(Ind, "You feel a calming warmth touching your soul.");
 			if (p_ptr->black_breath) {
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				p_ptr->black_breath = FALSE;
@@ -10453,7 +10475,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		 (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) ||
 		 (typ == GF_SHERO_PLAYER) || (typ == GF_TELEPORT_PLAYER) ||
 		 (typ == GF_ZEAL_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
-		 (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
+		 (typ == GF_RESTORE_PLAYER) ||
 		 (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 		 (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 		 (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER))

@@ -3954,8 +3954,8 @@
 
 #define GF_TELEPORT_PLAYER 	136	/* UNUSED actually: only s_convey used it once */
 
-#define GF_RESTORESTATS_PLAYER 	137	/* C. Blue changes */
-#define GF_RESTORELIFE_PLAYER 	138
+#define GF_RESTORE_PLAYER 	137	/* C. Blue changes */
+//hole
 #define GF_CURE_PLAYER 		139
 #define GF_RESURRECT_PLAYER 	140
 #define GF_SANITY_PLAYER 	141
