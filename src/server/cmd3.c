@@ -983,10 +983,16 @@ return;
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
+	/* for Hobbits wearing boots -> give message */
+	if (p_ptr->prace == RACE_HOBBIT &&
+	    o_ptr->tval == TV_BOOTS && !p_ptr->inventory[slot].k_idx) {
+		hobbit_warning = TRUE;
+	}
+
 	/* Get a copy of the object to wield */
 	tmp_obj = *o_ptr;
 
-	if(slot == INVEN_AMMO) num = o_ptr->number; 
+	if (slot == INVEN_AMMO) num = o_ptr->number;
 	tmp_obj.number = num;
 
 	/* Decrease the item (from the pack) */
@@ -1000,102 +1006,85 @@ return;
 		floor_item_optimize(0 - item);
 	}
 
-
-	/* for Hobbits wearing boots -> give message */
-	if (p_ptr->prace == RACE_HOBBIT &&
-	    o_ptr->tval == TV_BOOTS && !p_ptr->inventory[slot].k_idx)
-		hobbit_warning = TRUE;
-
-
 	/* Access the wield slot */
 	o_ptr = &(p_ptr->inventory[slot]);
 
 	/*** Could make procedure "inven_wield()" ***/
-    //no need to try to combine the non esp HL amulet?
-    //if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS && tmp_obj.tval == TV_AMULET && tmp_obj.sval == SV_AMULET_HIGHLANDS))
-    if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS2 && tmp_obj.tval == TV_AMULET && tmp_obj.sval == SV_AMULET_HIGHLANDS2))
-    {
-	o_ptr->bpval += tmp_obj.bpval;
-    }
-    else
-    {
+	//no need to try to combine the non esp HL amulet?
+	//if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS && tmp_obj.tval == TV_AMULET && tmp_obj.sval == SV_AMULET_HIGHLANDS))
+	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS2 &&
+	    tmp_obj.tval == TV_AMULET && tmp_obj.sval == SV_AMULET_HIGHLANDS2)) {
+		o_ptr->bpval += tmp_obj.bpval;
+	} else {
 
 #if 0
-	/* Take off the "entire" item if one is there */
-	if (p_ptr->inventory[slot].k_idx) inven_takeoff(Ind, slot, 255, TRUE);
+		/* Take off the "entire" item if one is there */
+		if (p_ptr->inventory[slot].k_idx) inven_takeoff(Ind, slot, 255, TRUE);
 #else	// 0
-	/* Take off existing item */
-	if (slot != INVEN_AMMO) {
-		if (o_ptr->k_idx) {
-			/* Take off existing item */
-			(void)inven_takeoff(Ind, slot, 255, TRUE);
-		}
-	} else {
-		if (o_ptr->k_idx) {
-			/* !M inscription tolerates different +hit / +dam enchantments,
-			   which will be merged and averaged in object_absorb.
-			   However, this doesn't work for cursed items or artefacts. - C. Blue */
-			if (!object_similar(Ind, o_ptr, &tmp_obj, 0x1)) {
+		/* Take off existing item */
+		if (slot != INVEN_AMMO) {
+			if (o_ptr->k_idx) {
 				/* Take off existing item */
 				(void)inven_takeoff(Ind, slot, 255, TRUE);
-			} else {
-				// tmp_obj.number += o_ptr->number;
-				object_absorb(Ind, &tmp_obj, o_ptr);
+			}
+		} else {
+			if (o_ptr->k_idx) {
+				/* !M inscription tolerates different +hit / +dam enchantments,
+				   which will be merged and averaged in object_absorb.
+				   However, this doesn't work for cursed items or artefacts. - C. Blue */
+				if (!object_similar(Ind, o_ptr, &tmp_obj, 0x1)) {
+					/* Take off existing item */
+					(void)inven_takeoff(Ind, slot, 255, TRUE);
+				} else {
+					// tmp_obj.number += o_ptr->number;
+					object_absorb(Ind, &tmp_obj, o_ptr);
+				}
 			}
 		}
-	}
 #endif	// 0
 
-	/* Wear the new stuff */
-	*o_ptr = tmp_obj;
+		/* Wear the new stuff */
+		*o_ptr = tmp_obj;
 
-	/* Increase the weight */
-	p_ptr->total_weight += o_ptr->weight * num;
+		/* Increase the weight */
+		p_ptr->total_weight += o_ptr->weight * num;
 
-	/* Increment the equip counter by hand */
-	p_ptr->equip_cnt++;
+		/* Increment the equip counter by hand */
+		p_ptr->equip_cnt++;
 
-	/* Where is the item now */
-	if (slot == INVEN_WIELD) {
-		act = "You are wielding";
-	} else if (slot == INVEN_ARM) {
-		act = "You are wielding";
-	} else if (slot == INVEN_BOW) {
-		act = "You are shooting with";
-	} else if (slot == INVEN_LITE) {
-		act = "Your light source is";
-	} else if (slot == INVEN_AMMO) {
-		act = "In your quiver you have";
-	} else if (slot == INVEN_TOOL) {
-		act = "You are using";
-	} else {
-		act = "You are wearing";
+		/* Where is the item now */
+		if (slot == INVEN_WIELD) act = "You are wielding";
+		else if (slot == INVEN_ARM) act = "You are wielding";
+		else if (slot == INVEN_BOW) act = "You are shooting with";
+		else if (slot == INVEN_LITE) act = "Your light source is";
+		else if (slot == INVEN_AMMO) act = "In your quiver you have";
+		else if (slot == INVEN_TOOL) act = "You are using";
+		else act = "You are wearing";
+
+		/* Describe the result */
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+		/* Message */
+		msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(slot));
+
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+		/* Auto Curse */
+		if (f3 & TR3_AUTO_CURSE) {
+			/* The object recurse itself ! */
+			o_ptr->ident |= ID_CURSED;
+		}
+
+		/* Cursed! */
+		if (cursed_p(o_ptr)) {
+			/* Warn the player */
+			msg_print(Ind, "Oops! It feels deathly cold!");
+
+			/* Note the curse */
+			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
+		}
+
 	}
-
-	/* Describe the result */
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
-
-	/* Message */
-	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(slot));
-
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-	/* Auto Curse */
-	if (f3 & TR3_AUTO_CURSE) {
-		/* The object recurse itself ! */
-		o_ptr->ident |= ID_CURSED;
-	}
-
-	/* Cursed! */
-	if (cursed_p(o_ptr)) {
-		/* Warn the player */
-		msg_print(Ind, "Oops! It feels deathly cold!");
-
-		/* Note the curse */
-		o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
-	}
-
-    }
 
 #ifdef ENABLE_STANCES
 	/* take care of combat stances */
@@ -1158,7 +1147,6 @@ return;
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-
 
 	/* warning messages, mostly for newbies */
 	if (p_ptr->warning_bpr3 == 0 && slot == INVEN_WIELD)
