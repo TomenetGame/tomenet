@@ -2527,7 +2527,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					featm = f_info[featm].mimic;
 				}
 
-				/* Is the mimicked feat tunnelable? */
+				/* Is the mimicked feat un-tunnelable? */
 				if (!(f_info[featm].flags1 & FF1_TUNNELABLE) ||
 				    (f_info[featm].flags1 & FF1_PERMANENT)) {
 					/* Message */
@@ -2535,8 +2535,21 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 					return;
 				}
 
-				msg_print(Ind, f_text + f_info[featm].tunnel);
-				more = TRUE;
+
+				/* hack: 'successful' tunnelling reveals the secret door */
+			    	if (power > 40 + rand_int(1600)) { /* just assume 1600 as for Granite Wall */
+                                        struct c_special *cs_ptr;
+                                        msg_print(Ind, "You have found a secret door!");
+                                        c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+                                        /* Clear mimic feature */
+                                        if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
+
+                                        note_spot_depth(wpos, y, x);
+                                        everyone_lite_spot(wpos, y, x);
+			    	} else {
+					msg_print(Ind, f_text + f_info[featm].tunnel);
+					more = TRUE;
+				}
 
  #ifdef USE_SOUND_2010
 				/* sound: for now assume that only such features get mimicked that
@@ -2549,7 +2562,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Hack -- Search */
-				search(Ind);
+				if (more) search(Ind);
 			}
 			/* Granite + misc (Ice..) */
 			else if (c_ptr->feat >= FEAT_WALL_EXTRA) {
