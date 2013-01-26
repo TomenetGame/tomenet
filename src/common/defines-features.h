@@ -109,6 +109,12 @@
 
 #define BIG_MAP		/* Allow a larger main window with a map bigger than 66x22 - C. Blue */
 
+/* Use an info screen for normal ID too, not just for *ID*, and display all
+   guaranteed abilities (k_info and 100%-e_info flags/esp) in it. - C. Blue */
+#define NEW_ID_SCREEN
+
+/* Load 'D:' tags from k_info.txt file and display them on examining - C. Blue */
+#define KIND_DIZ
 
 
 /* --------------------- Server-type dependant features -------------------- */
@@ -127,7 +133,6 @@
 #endif
 
 #ifdef TEST_SERVER
- #define KIND_DIZ
  #define ALLOW_NR_CROSS_PARTIES
  #define ENABLE_DRACONIAN_TRAITS
  #define ENABLE_GUILD_HALL	/* Allow an OT_GUILD house */
