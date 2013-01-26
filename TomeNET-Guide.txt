@@ -13965,6 +13965,14 @@ TomeNET 'engine'. :)
 Note: After logging in you may press '?' key for a help screen.
       The descriptions below are partially taken from that help file.
 
+
+If you log on to an Arcade Server, your client will automatically attempt to
+load the required macro file to play, which is
+- 'arcade-win.prf' on Windows OS
+- 'arcade-x11.prf' on X11 (Linux/OSX)
+- 'arcade-gcu.prf' if you are using a Linux/OSX command-line client.
+
+
 On the Arcade server, you can play..
 
 
@@ -13979,13 +13987,18 @@ shoot. For details press '?' in the game.
 To play Smash'em you need to download the Smash'em macros from the download
 page and place them in your TomeNET/lib/user folder.
 Controls are:
-    F1                  starts the game.
-    q,w,e               makes your character auto-fire in the according
-    a, ,d               direction.
+
+    F1              starts the game.
+    q,w,e           makes your character auto-fire in the according
+    a, ,d            direction (y key works same as z key).
     z,x,c
-    s                   stops firing.
-    CTRL+numpad         shifts the screen.
-    ,                   same as < key
+    s               stops firing.
+    numpad          movement.
+    CTRL+numpad     shifts the screen.
+    ,               same as < key (ie take staircase upwards)
+
+    F12             switch macro set from "Smash'em" to "Tron".
+
 Type "play 2smash" in chat to start the game and skip the early levels if you
 feel that those are too easy.
 
@@ -14001,15 +14014,22 @@ Up to four players can participate at once. For details press '?' in the game.
 To play Tron you need to download the Tron macros from the download page and
 place them in your TomeNET/lib/user folder.
 Controls are:
-    F3  enter arena.
-    F4  start game.
-    F5  list options.
-    F6  reduce game speed.
-    F7  increase game speed.
-    Q   quit game.
-    Arrow keys or numpad 2,4,6,8 or w,x,a,d are for movement.
+
+    F3              enter arena.
+    F4              start game.
+    F5              list options.
+    F6              reduce game speed.
+    F7              increase game speed.
+    Q               quit game.
+    Arrow keys or   movement.
+    numpad 2,4,6,8
+    or w,x,a,d
+
+    F12             switch macro set from "Tron" to "Smash'em".
+
 Hit F4 as soon as at least two players have joined the areana via F3 key to
 start the actual match.
+
 To toggle an option, type "option" or "option on"/"option off" in chat.
 Speed can be changed via "moar speed"/"less speed",
 length can be changed via "moar length"/"less length".
