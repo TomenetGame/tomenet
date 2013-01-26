@@ -13966,11 +13966,13 @@ Note: After logging in you may press '?' key for a help screen.
       The descriptions below are partially taken from that help file.
 
 
-If you log on to an Arcade Server, your client will automatically attempt to
-load the required macro file to play, which is
-- 'arcade-win.prf' on Windows OS
-- 'arcade-x11.prf' on X11 (Linux/OSX)
-- 'arcade-gcu.prf' if you are using a Linux/OSX command-line client.
+*******************************************************************************
+ If you log on to an Arcade Server, your client will automatically attempt to
+ load the required macro file to play, which is
+  - 'arcade-win.prf' on Windows OS
+  - 'arcade-x11.prf' on X11 (Linux/OSX)
+  - 'arcade-gcu.prf' if you are using a Linux/OSX command-line client.
+*******************************************************************************
 
 
 On the Arcade server, you can play..
@@ -13984,9 +13986,7 @@ joysticks to allow you to run and fire in different directions. Unfortunately
 tomenet doesn't support joystick input. Here you must use special macros to
 shoot. For details press '?' in the game.
 
-To play Smash'em you need to download the Smash'em macros from the download
-page and place them in your TomeNET/lib/user folder.
-Controls are:
+The Smash'em macros provide the following controls:
 
     F1              starts the game.
     q,w,e           makes your character auto-fire in the according
@@ -14011,9 +14011,7 @@ which results in their elimination.
 Power-ups will randomly spawn and increase the trail length.
 Up to four players can participate at once. For details press '?' in the game.
 
-To play Tron you need to download the Tron macros from the download page and
-place them in your TomeNET/lib/user folder.
-Controls are:
+The Tron macros provide the following controls:
 
     F3              enter arena.
     F4              start game.
