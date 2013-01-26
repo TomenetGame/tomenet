@@ -2452,7 +2452,12 @@ static int Handle_login(int ind)
 	/* warning_rest only occurs once per account */
 	if (acc_get_flags(p_ptr->accountname) & ACC_WARN_REST) p_ptr->warning_rest = 1;
 #else
+	/* no greeting */
 	greeting = FALSE;
+
+	/* auto-validate */
+	if (acc_get_flags(p_ptr->accountname) & ACC_TRIAL)
+		validate(p_ptr->acountname);
 #endif
 
 #if 1
