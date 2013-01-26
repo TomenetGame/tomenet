@@ -3519,7 +3519,6 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, esp;
-//	int hold;
 
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
@@ -3600,32 +3599,15 @@ void observe_aux(int Ind, object_type *o_ptr) {
  * just display some basic information, a note that it isn't *ID*ed, and exit
  * (for player stores maybe.).
  */
-bool identify_fully_aux(int Ind, object_type *o_ptr)
-{
+bool identify_fully_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
-//	cptr		*info = p_ptr->info;
-
-	int j, am;//, hold;
-
+	int j, am;
 	u32b f1, f2, f3, f4, f5, esp;
-
-	//        cptr            info[400];
-	//        byte            color[400];
-
 	FILE *fff;
 	char buf[1024], o_name[ONAME_LEN];
 	char *ca_ptr = "", a = artifact_p(o_ptr) ? 'U' : 'w';
 	char buf_tmp[90];
 	int buf_tmp_i, buf_tmp_n;
-
-#if 0
-	char file_name[MAX_PATH_LENGTH];
-
-	/* Temporary file */
-	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
-
-	strcpy(p_ptr->infofile, file_name);
-#endif	// 0
 
 	/* Open a new file */
 	fff = my_fopen(p_ptr->infofile, "wb");
@@ -3635,10 +3617,6 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	/* Let the player scroll through this info */
 	p_ptr->special_file_type = TRUE;
-
-	/* Output color byte */
-//	fprintf(fff, "%c", 'w');
-
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -3660,21 +3638,6 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "\377sIt's a cheque worth \377y%d\377s gold pieces.\n", ps_get_cheque_value(o_ptr));
 		my_fclose(fff);
 
-		/* Hack -- anything written? (rewrite me) */
-		/* Open a new file */
-		fff = my_fopen(p_ptr->infofile, "rb");
-		if (my_fgets(fff, buf, 1024, FALSE)) {
-			/* Close the file */
-			my_fclose(fff);
-			return (FALSE);
-		}
-
-		/* Close the file */
-		my_fclose(fff);
-
-		/* No special effects */
-//		if (!i) return (FALSE);
-
 		/* Let the client know it's about to get some info */
 		strcpy(p_ptr->cur_file_title, "Cheque Details");
 		Send_special_other(Ind);
@@ -3694,9 +3657,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	}
 
 #ifdef ART_DIZ
-	if (true_artifact_p(o_ptr)) {
-		fprintf(fff, "%s", a_text + a_info[o_ptr->name1].text);
-	}
+	if (true_artifact_p(o_ptr)) fprintf(fff, "%s", a_text + a_info[o_ptr->name1].text);
 #endif
 
 #ifdef KIND_DIZ
@@ -3728,179 +3689,6 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 			fprintf(fff, "\377%cIt's a%s.\377w\n", a, ca_ptr);
 		break;
 	}
-
-	/* todo: Display artifact description text
-	   (currently, reading it is disabled in init1.c) */
-	if (true_artifact_p(o_ptr)) {
-		//see #if 0 stuff below
-	}
-
-#if 0
-	/* All white */
-	for (j = 0; j < 400; j++)
-		color[j] = TERM_WHITE;
-
-	/* No need to dump that */
-	if (fff == NULL) {
-		i = grab_tval_desc(o_ptr->tval, info, 0);
-		if ((fff == NULL) && i) info[i++] = "";
-		for (j = 0; j < i; j++)
-			color[j] = TERM_L_BLUE;
-	}
-
-	if (o_ptr->k_idx) {
-		char buff2[400], *s, *t;
-		int n, oi = i;
-		object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
-		strcpy (buff2, k_text + k_ptr->text);
-
-		s = buff2;
-
-		/* Collect the history */
-		while (TRUE) {
-
-			/* Extract remaining length */
-			n = strlen(s);
-
-			/* All done */
-			if (n < 60) {
-				/* Save one line of history */
-				color[i] = TERM_ORANGE;
-				info[i++] = s;
-
-				/* All done */
-				break;
-			}
-
-			/* Find a reasonable break-point */
-			for (n = 60; ((n > 0) && (s[n-1] != ' ')); n--) /* loop */;
-
-			/* Save next location */
-			t = s + n;
-
-			/* Wipe trailing spaces */
-			while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
-
-			/* Save one line of history */
-			color[i] = TERM_ORANGE;
-			info[i++] = s;
-
-			s = t;
-		}
-
-		/* Add a blank line */
-		if ((fff == NULL) && (oi < i)) info[i++] = "";
-	}
-
-	if (o_ptr->name1) {
-
-		char buff2[400], *s, *t;
-		int n, oi = i;
-		artifact_type *a_ptr = &a_info[o_ptr->name1];
-
-		strcpy (buff2, a_text + a_ptr->text);
-
-		s = buff2;
-
-		/* Collect the history */
-		while (TRUE) {
-			/* Extract remaining length */
-			n = strlen(s);
-
-			/* All done */
-			if (n < 60) {
-				/* Save one line of history */
-				color[i] = TERM_YELLOW;
-				info[i++] = s;
-
-				/* All done */
-				break;
-			}
-
-			/* Find a reasonable break-point */
-			for (n = 60; ((n > 0) && (s[n-1] != ' ')); n--) /* loop */;
-
-			/* Save next location */
-			t = s + n;
-
-			/* Wipe trailing spaces */
-			while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
-
-			/* Save one line of history */
-			color[i] = TERM_YELLOW;
-			info[i++] = s;
-
-			s = t;
-		}
-
-		/* Add a blank line */
-		if ((fff == NULL) && (oi < i)) info[i++] = "";
-
-		if (a_ptr->set != -1) {
-			char buff2[400], *s, *t;
-			int n;
-			set_type *set_ptr = &set_info[a_ptr->set];
-
-			strcpy (buff2, set_text + set_ptr->desc);
-
-			s = buff2;
-
-			/* Collect the history */
-			while (TRUE) {
-				/* Extract remaining length */
-				n = strlen(s);
-
-				/* All done */
-				if (n < 60) {
-					/* Save one line of history */
-					color[i] = TERM_GREEN;
-					info[i++] = s;
-
-					/* All done */
-					break;
-				}
-
-				/* Find a reasonable break-point */
-				for (n = 60; ((n > 0) && (s[n-1] != ' ')); n--) /* loop */;
-
-				/* Save next location */
-				t = s + n;
-
-				/* Wipe trailing spaces */
-				while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
-
-				/* Save one line of history */
-				color[i] = TERM_GREEN;
-				info[i++] = s;
-
-				s = t;
-			}
-
-			/* Add a blank line */
-			info[i++] = "";
-		}
-	}
-
-	if (f5 & TR5_LEVELS) {
-		int j = 0;
-
-		color[i] = TERM_VIOLET;
-		if (count_bits(o_ptr->pval3) == 0) info[i++] = "It is sentient.";
-		else if (count_bits(o_ptr->pval3) > 1) info[i++] = "It is sentient and can have access to the realms of:";
-		else  info[i++] = "It is sentient and can have access to the realm of:";
-
-		for (j = 0; j < MAX_FLAG_GROUP; j++) {
-			if (BIT(j) & o_ptr->pval3) {
-				color[i] = flags_groups[j].color;
-				info[i++] = flags_groups[j].name;
-			}
-		}
-
-		/* Add a blank line */
-		info[i++] = "";
-	}
-#endif
 
 	if (f4 & TR4_SHOULD2H) fprintf(fff, "It should be wielded two-handed.\n");
 	else if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
@@ -3999,7 +3787,6 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	}
 #endif	// 0
 
-
 	/* Hack -- describe lite's */
 	if (o_ptr->tval == TV_LITE) {
 		int radius = 0;
@@ -4023,11 +3810,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "It prevents the space-time continuum from being disrupted.\n");
 
 	am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
-		+ ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
-		+ ((f4 & (TR4_ANTIMAGIC_20)) ? 20 : 0)
-		+ ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0);
-	if (am)
-	{
+	    + ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
+	    + ((f4 & (TR4_ANTIMAGIC_20)) ? 20 : 0)
+	    + ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0);
+	if (am) {
 		j = o_ptr->to_h + o_ptr->to_d;// + o_ptr->pval + o_ptr->to_a;
 		if (j > 0) am -= j;
 		if (am > 50) am = 50;
@@ -4486,28 +4272,16 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		display_ammo_damage(Ind, o_ptr, fff);
 	}
 
-	//	info[i]=NULL;
 	/* Close the file */
 	my_fclose(fff);
 
 	/* Hack -- anything written? (rewrite me) */
-
-	/* Open a new file */
 	fff = my_fopen(p_ptr->infofile, "rb");
-
-	if (my_fgets(fff, buf, 1024, FALSE))
-	{
-		/* Close the file */
+	if (my_fgets(fff, buf, 1024, FALSE)) {
 		my_fclose(fff);
-
 		return (FALSE);
 	}
-
-	/* Close the file */
 	my_fclose(fff);
-
-	/* No special effects */
-//	if (!i) return (FALSE);
 
 	/* Let the client know it's about to get some info */
 	strcpy(p_ptr->cur_file_title, "Item Details");
@@ -4585,13 +4359,11 @@ s16b label_to_equip(int Ind, int c)
 /*
  * Determine which equipment slot (if any) an item likes
  */
-s16b wield_slot(int Ind, object_type *o_ptr)
-{
+s16b wield_slot(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Slot for equipment */
-	switch (o_ptr->tval)
-	{
+	switch (o_ptr->tval) {
 		case TV_DIGGING:
 		case TV_TOOL:
 			return (INVEN_TOOL);
@@ -4601,100 +4373,53 @@ s16b wield_slot(int Ind, object_type *o_ptr)
 		case TV_SWORD:
 		case TV_AXE:
 		case TV_MSTAFF:
-		{
 			return (INVEN_WIELD);
-		}
 
 		case TV_BOW:
 		case TV_BOOMERANG:
 		case TV_INSTRUMENT:
-		{
 			return (INVEN_BOW);
-		}
 
 		case TV_RING:
-		{
 			/* Use the right hand first */
 			if (!p_ptr->inventory[INVEN_RIGHT].k_idx) return (INVEN_RIGHT);
 
 			/* Use the left hand for swapping (by default) */
 			return (INVEN_LEFT);
-		}
 
 		case TV_AMULET:
-		{
 			return (INVEN_NECK);
-		}
 
 		case TV_LITE:
-		{
 			return (INVEN_LITE);
-		}
 
 		case TV_DRAG_ARMOR:
 		case TV_HARD_ARMOR:
 		case TV_SOFT_ARMOR:
-		{
 			return (INVEN_BODY);
-		}
 
 		case TV_CLOAK:
-		{
 			return (INVEN_OUTER);
-		}
 
 		case TV_SHIELD:
-		{
 			return (INVEN_ARM);
-		}
 
 		case TV_CROWN:
 		case TV_HELM:
-		{
 			return (INVEN_HEAD);
-		}
 
 		case TV_GLOVES:
-		{
 			return (INVEN_HANDS);
-		}
 
 		case TV_BOOTS:
-		{
 			return (INVEN_FEET);
-		}
 
 		case TV_SHOT:
-		{
-/*			if(p_ptr->inventory[INVEN_BOW].k_idx)
-			{
-				if(p_ptr->inventory[INVEN_BOW].sval < 10)
-//					return get_slot(INVEN_AMMO);
-*/					return (INVEN_AMMO);
-/*			}
-			return -1;
-*/		}
-
+			return (INVEN_AMMO);
 		case TV_ARROW:
-		{
-/*			if(p_ptr->inventory[INVEN_BOW].k_idx)
-			{
-				if((p_ptr->inventory[INVEN_BOW].sval >= 10)&&(p_ptr->inventory[INVEN_BOW].sval < 20))
-//					return get_slot(INVEN_AMMO);
-*/					return (INVEN_AMMO);
-/*			}
-			return -1;
-*/		}
+			return (INVEN_AMMO);
 		case TV_BOLT:
-		{                        
-/*			if(p_ptr->inventory[INVEN_BOW].k_idx)
-			{
-				if(p_ptr->inventory[INVEN_BOW].sval >= 20)
-//					return get_slot(INVEN_AMMO);
-*/				return (INVEN_AMMO);
-/*			}
-			return -1;
-*/		}
+			return (INVEN_AMMO);
 	}
 
 	/* No slot available */
