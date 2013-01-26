@@ -3515,6 +3515,7 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff, boo
 
 
 /* Display examine (x/I) text of an item we haven't *identified* yet */
+#ifndef NEW_ID_SCREEN /* old way: paste some info directly into chat */
 void observe_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	char o_name[ONAME_LEN];
@@ -3592,6 +3593,15 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	    )
 		msg_print(Ind, "\377s  You have no special knowledge about that item.");
 }
+#else /* new way: display an info screen as for identify_fully_aux(), for additional k_info information - C. Blue */
+bool identify_dual_aux(int Ind, object_type *o_ptr, bool full);
+void observe_aux(int Ind, object_type *o_ptr) {
+	(void)identify_dual_aux(Ind, o_ptr, FALSE);
+}
+bool identify_fully_aux(int Ind, object_type *o_ptr) {
+	return identify_dual_aux(Ind, o_ptr, TRUE);
+}
+#endif
 
 /*
  * Describe a "fully identified" item
@@ -3599,7 +3609,13 @@ void observe_aux(int Ind, object_type *o_ptr) {
  * just display some basic information, a note that it isn't *ID*ed, and exit
  * (for player stores maybe.).
  */
+#ifndef NEW_ID_SCREEN
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
+#else
+bool identify_dual_aux(int Ind, object_type *o_ptr, bool full) {
+	bool can_have_hidden_powers = FALSE, eff_full = full;
+	ego_item_type *e_ptr;
+#endif
 	player_type *p_ptr = Players[Ind];
 	int j, am;
 	u32b f1, f2, f3, f4, f5, esp;
@@ -3608,6 +3624,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 	char *ca_ptr = "", a = artifact_p(o_ptr) ? 'U' : 'w';
 	char buf_tmp[90];
 	int buf_tmp_i, buf_tmp_n;
+
 
 	/* Open a new file */
 	fff = my_fopen(p_ptr->infofile, "wb");
@@ -3618,19 +3635,80 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 	/* Let the player scroll through this info */
 	p_ptr->special_file_type = TRUE;
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-        /* Describe the result */
-	/* in case we just *ID* it because an admin inspected it */
-	if (!(o_ptr->ident & ID_MENTAL)) object_desc(0, o_name, o_ptr, TRUE, 3);
-	/* normal players: */
-	else object_desc(Ind, o_name, o_ptr, TRUE, 3);
+#ifdef NEW_ID_SCREEN
+	/* ---------------------------- determine degree of knowledge ------------------------------- */
+
+	/* hack: can *identifying* actually make a difference at all? */
+	if (o_ptr->name1) can_have_hidden_powers = TRUE;
+
+	/* Item is *identified*? */
+	if (full) {
+		/* Extract the flags */
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	        /* Describe the result */
+		/* in case we just *ID* it because an admin inspected it */
+		if (!(o_ptr->ident & ID_MENTAL)) object_desc(0, o_name, o_ptr, TRUE, 3);
+		/* normal players: */
+		else object_desc(Ind, o_name, o_ptr, TRUE, 3);
+	} else {
+		/* Just assume basic fixed flags */
+		f1 = k_info[o_ptr->k_idx].flags1;
+		f2 = k_info[o_ptr->k_idx].flags2;
+		f3 = k_info[o_ptr->k_idx].flags3;
+		f4 = k_info[o_ptr->k_idx].flags4;
+		f5 = k_info[o_ptr->k_idx].flags5;
+		esp = k_info[o_ptr->k_idx].esp;
+
+		/* Just add the fixed ego flags that we know to be on the item */
+	        if (o_ptr->name2) {
+		        e_ptr = &e_info[o_ptr->name2];
+		        for (j = 0; j < 5; j++) {
+	    		        if (e_ptr->rar[j] != 100) {
+					/* hack: can *identifying* actually make a difference at all? */
+		    		        can_have_hidden_powers = TRUE;
+	    		    		continue;
+	    		    	}
+	                        f1 |= e_ptr->flags1[j];
+	                        f2 |= e_ptr->flags2[j];
+	                        f3 |= e_ptr->flags3[j];
+	                        f4 |= e_ptr->flags4[j];
+	                        f5 |= e_ptr->flags5[j];
+	                        esp |= e_ptr->esp[j];
+	                }
+	        }
+	        if (o_ptr->name2b) {
+		        e_ptr = &e_info[o_ptr->name2b];
+		        for (j = 0; j < 5; j++) {
+		                if (e_ptr->rar[j] != 100) {
+					/* hack: can *identifying* actually make a difference at all? */
+		    		        can_have_hidden_powers = TRUE;
+		            		continue;
+		            	}
+	                        f1 |= e_ptr->flags1[j];
+	                        f2 |= e_ptr->flags2[j];
+	                        f3 |= e_ptr->flags3[j];
+	                        f4 |= e_ptr->flags4[j];
+	                        f5 |= e_ptr->flags5[j];
+	                        esp |= e_ptr->esp[j];
+	                }
+	        }
+
+	        /* Describe the result */
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+	}
+
+	/* conclude hack: can *identifying* actually make a difference at all? */
+	if (!can_have_hidden_powers) eff_full = TRUE;
+
+	/* ------------------------------------------------------------------------------------------ */
+#endif
+
 
 #ifdef USE_SOUND_2010
 	sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
 #endif
-
 
 #ifdef PLAYER_STORES
 	if (p_ptr->store_num <= -2 && o_ptr->note) player_stores_cut_inscription(o_name);
@@ -3665,7 +3743,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 #endif
 
 	/* in case we just *ID* it because an admin inspected it */
-	if (!(o_ptr->ident & ID_MENTAL) && is_admin(p_ptr)) fprintf(fff, "\377y(This item has not been *identified* yet.)\n");
+	if (!(o_ptr->ident & ID_MENTAL) && is_admin(p_ptr)
+#ifdef NEW_ID_SCREEN
+	    && full
+#endif
+	    )
+		fprintf(fff, "\377y(This item has not been *identified* yet.)\n");
 
 	if (artifact_p(o_ptr)) {
 		if (true_artifact_p(o_ptr)) ca_ptr = " true artifact";
@@ -3707,9 +3790,9 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 		fprintf(fff, "\377vIt may only be worn by kings and queens!\377w\n");
 	}
 
-	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, o_ptr, fff, TRUE);
-	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, o_ptr, fff, TRUE);
-	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, o_ptr, fff, TRUE);
+	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, o_ptr, fff, eff_full);
+	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, o_ptr, fff, eff_full);
+	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, o_ptr, fff, eff_full);
 
 	/* specialty: recognize custom spell books and display their contents! - C. Blue */
 	if (o_ptr->tval == TV_BOOK &&
@@ -3730,7 +3813,11 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 	}
 
 	/* Hack: Stop here if the item wasn't *ID*ed and we still were allowed to read so far (player stores maybe?) */
-	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) {
+	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)
+#ifdef NEW_ID_SCREEN
+	    && full
+#endif
+	    ) {
 		fprintf(fff, "\n\377y(This item has not been *identified* yet.)\n");
 		my_fclose(fff);
 		fff = my_fopen(p_ptr->infofile, "rb");
@@ -3821,16 +3908,11 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 #ifdef NEW_ANTIMAGIC_RATIO
 	am = (am * 3) / 5;
 #endif
-/*	if (am >= 100)
-		fprintf(fff, "It generates a perfect antimagic field.\n");
-	else if (am >= 80)
-		fprintf(fff, "It generates a mighty antimagic field.\n");
-	else if (am >= 60)
-		fprintf(fff, "It generates a strong antimagic field.\n");
-	else if (am >= 40)
-		fprintf(fff, "It generates an antimagic field.\n");
-	else if (am >= 20)
-		fprintf(fff, "It generates a mellow antimagic field.\n");
+/*	if (am >= 100) fprintf(fff, "It generates a perfect antimagic field.\n");
+	else if (am >= 80) fprintf(fff, "It generates a mighty antimagic field.\n");
+	else if (am >= 60) fprintf(fff, "It generates a strong antimagic field.\n");
+	else if (am >= 40) fprintf(fff, "It generates an antimagic field.\n");
+	else if (am >= 20) fprintf(fff, "It generates a mellow antimagic field.\n");
 	else if (am > 0) fprintf(fff, "It generates a feeble antimagic field.\n");
 */
 	if (am > 0) fprintf(fff, "It generates an antimagic field that has %d%% chance of supressing magic.\n", am);
@@ -4271,6 +4353,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 		fprintf(fff, "\377WIt has %d%% chances to break upon hit.\n", breakage_chance(o_ptr));
 		display_ammo_damage(Ind, o_ptr, fff);
 	}
+
+#ifdef NEW_ID_SCREEN
+	if (!eff_full) fprintf(fff, "\377yIt may have hidden powers.\n");
+#endif
 
 	/* Close the file */
 	my_fclose(fff);
