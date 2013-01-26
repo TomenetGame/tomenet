@@ -287,6 +287,12 @@ void initialize_player_pref_files(void){
 	sprintf(buf, "%s.prf", cname);
 	/* Process that file */
 	process_pref_file(buf);
+
+	/* Special hack: On ARCADE_SERVER, load special arcade macros! */
+	if (s_ARCADE) {
+		sprintf(buf, "arcade-%s.prf", ANGBAND_SYS);
+		process_pref_file(buf);
+	}
 }
 
 /* handle auto-loading of auto-inscription files (*.ins) on logon */
