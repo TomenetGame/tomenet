@@ -5803,7 +5803,7 @@ static void do_cmd_options_install_audio_packs(void) {
 #endif
 
 	bool sound_pack = TRUE, music_pack = TRUE;
-	bool sound_already = (audio_sfx > 2), music_already = (audio_music > 0);
+	bool sound_already = (audio_sfx > 3), music_already = (audio_music > 0);
 
 	/* Clear screen */
 	Term_clear();
@@ -6620,9 +6620,9 @@ void interact_audio(void) {
 			Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
 
 			if (quiet_mode) Term_putstr(12, 4, -1, TERM_L_RED,                              "  Client is running in 'quiet mode': Audio is disabled.  ");
-			else if (audio_sfx > 2 && audio_music > 0) Term_putstr(12, 4, -1, TERM_L_GREEN, "        Sound and music pack have been detected.         ");
-			else if (audio_sfx > 2 && audio_music == 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Sound pack detected. No music pack seems to be installed.");
-			else if (audio_sfx <= 2 && audio_music > 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Music pack detected. No sound pack seems to be installed.");
+			else if (audio_sfx > 3 && audio_music > 0) Term_putstr(12, 4, -1, TERM_L_GREEN, "        Sound and music pack have been detected.         ");
+			else if (audio_sfx > 3 && audio_music == 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Sound pack detected. No music pack seems to be installed.");
+			else if (audio_sfx <= 3 && audio_music > 0) Term_putstr(12, 4, -1, TERM_YELLOW, "Music pack detected. No sound pack seems to be installed.");
 			else Term_putstr(12, 4, -1, TERM_L_RED,                                         "   Neither sound nor music pack seems to be installed.   ");
 
 			Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio and music by CTRL+N and CTRL+C.");
