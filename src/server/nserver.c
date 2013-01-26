@@ -2457,7 +2457,7 @@ static int Handle_login(int ind)
 
 	/* auto-validate */
 	if (acc_get_flags(p_ptr->accountname) & ACC_TRIAL)
-		validate(p_ptr->acountname);
+		validate(p_ptr->accountname);
 #endif
 
 #if 1
