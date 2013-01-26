@@ -1678,7 +1678,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 
 
 				/* Flags moved here exclusively from flag_cost */
-			        if (f1 & TR1_MANA) value += (1000 * pval);
+			        if (f1 & TR1_MANA) value += (200 * pval * (pval + 5));
 
 				/* End of flags, moved here from flag_cost */
 
