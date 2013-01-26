@@ -3419,13 +3419,14 @@ static void apply_morph(int Ind, int power, char * killer)
    Decrease the damage over the radius. */
 static int radius_damage(int dam, int div, int typ) {
 	switch (typ) {
-	case GF_RECALL_PLAYER: /* not for recall (dam is timeout) - mikaelh */
-
-	case GF_OLD_SLOW: /* When these are cast as 'ball spells' they'd be gimped too much probably */
+	/* When these are cast as 'ball spells' they'd be gimped too much probably: */
+	case GF_OLD_SLOW:
 	case GF_OLD_CONF:
 	case GF_OLD_SLEEP:
 	case GF_TURN_ALL:
 
+	/* These must not be reduced, since 'dam' stores the functionality */
+	case GF_RECALL_PLAYER: /* not for recall (dam is timeout) - mikaelh */
 	case GF_CURE_PLAYER:
 	case GF_RESTORE_PLAYER:
 

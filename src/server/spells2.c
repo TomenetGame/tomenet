@@ -47,10 +47,14 @@
 #define PVP_DIMINISHING_HEALING_CAP(p) (((p)->lev + 5) * ((p)->lev + 5)) /* 10: 225, 20: 625, 30: 1225 */
 
 
-/* Reduce spell damage by 50% while in wraithform */
+/* Helper function to educe spell damage by 50% while in wraithform.
+ *  Some spells must be excempt, because their 'dam'
+ * actually stores their functionality. - C. Blue
+ */
 static void proj_dam_wraith(int typ, int *dam) {
 
 	switch (typ) {
+	case GF_RECALL_PLAYER: /* <- dam is timeout! */
 	case GF_RESTORE_PLAYER:
 	case GF_CURE_PLAYER:
 		return;
