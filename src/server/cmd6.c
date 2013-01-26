@@ -5775,7 +5775,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				c_ptr = &cave[y][x];
 				if (!c_ptr->m_idx) break;
 
-				r_ptr = &r_info[c_ptr->m_idx];
+				r_ptr = race_inf(m_list[c_ptr->m_idx]);
 
 #ifdef OLD_MONSTER_LORE
 				/* Observe "maximal" attacks */
