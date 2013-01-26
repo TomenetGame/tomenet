@@ -11501,7 +11501,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 	monster_race *r_ptr = race_inf(m_ptr);
 	cptr name = r_name_get(m_ptr);
 
-	if (dam == 9999) dam = 2; /* Priest drain-life spell hack */
+	if (dam == 9999 && typ == GF_OLD_DRAIN) dam = 2; /* Priest drain-life spell hack */
 
 	int do_poly = 0;
 	int do_dist = 0;

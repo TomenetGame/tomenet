@@ -47,6 +47,24 @@
 #define PVP_DIMINISHING_HEALING_CAP(p) (((p)->lev + 5) * ((p)->lev + 5)) /* 10: 225, 20: 625, 30: 1225 */
 
 
+/* Reduce spell damage by 50% while in wraithform */
+static void proj_dam_wraith(int typ, int *dam) {
+
+	switch (typ) {
+	case GF_RESTORE_PLAYER:
+	case GF_CURE_PLAYER:
+		return;
+	case GF_HEAL_PLAYER:
+		*dam = (*dam & 0x3C00) + (*dam & 0x03FF) / 2;
+		return;
+	case GF_OLD_DRAIN:
+		/* - sorry, 9999 is the priest spell hack :P */
+		if (*dam == 9999) return;
+	default:
+		*dam /= 2;
+	}
+}
+
 #ifdef ENABLE_MAIA
 /*
  * For angelic beings, this spell will gather any party
@@ -5775,7 +5793,7 @@ bool lite_area(int Ind, int dam, int rad) {
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL;
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) dam /= 2;
+	if (p_ptr->tim_wraith) proj_dam_wraith(GF_LITE_WEAK, &dam);
 
 	/* Hack -- Message */
 	if (!p_ptr->blind)
@@ -5803,7 +5821,7 @@ bool unlite_area(int Ind, int dam, int rad)
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL;
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) dam /= 2;
+	if (p_ptr->tim_wraith) proj_dam_wraith(GF_DARK_WEAK, &dam);
 
 	/* Hack -- Message */
 	if (!p_ptr->blind)
@@ -5838,11 +5856,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	/* WRAITHFORM reduces damage/effect */
-	if (p_ptr->tim_wraith) {
-		if (typ == GF_HEAL_PLAYER && (dam & 0x3C00)) {
-			dam = (dam & 0x3C00) + (dam & 0x03FF) / 2;
-		} else dam /= 2;
-	}
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -5912,8 +5926,8 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 
 	char pattacker[80];
 
-	/* WRAITHFORM reduces damage/effect!  - sorry, 9999 is the priest spell hack :P */
-	if (p_ptr->tim_wraith && dam != 9999) dam /= 2;
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -5970,8 +5984,8 @@ bool fire_crit_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int 
 
 	char pattacker[80];
 
-	/* WRAITHFORM reduces damage/effect!  - sorry, 9999 is the priest spell hack :P */
-	if (p_ptr->tim_wraith && dam != 9999) dam /= 2;
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -6023,9 +6037,6 @@ bool fire_crit_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int 
 bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker)
 {
 	char pattacker[80];
-
-	/* WRAITHFORM reduces damage/effect! */
-//	if (Players[Ind]->tim_wraith) dam /= 2; /* fire_cloud() does this too! - mikaelh */
 
 	project_time_effect = eff;
         snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
@@ -6257,7 +6268,7 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
 	int tx, ty;
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) dam /= 2;
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
 
 	/* Pass through the target if needed */
 	flg |= (PROJECT_THRU);
@@ -6340,7 +6351,7 @@ bool fire_beam_cloud(int Ind, int typ, int dir, int dam, int time, int interval,
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) dam /= 2;
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
 
 	/* Use the given direction */
 	tx = p_ptr->px + ddx[dir];
@@ -6378,7 +6389,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_GRAV;
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) dam /= 2;
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
 
 	/* Use the given direction */
 	tx = p_ptr->px + ddx[dir];
@@ -6422,11 +6433,7 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_EVSG;
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) {
-		if (typ == GF_HEAL_PLAYER && (dam & 0x3C00)) {
-			dam = (dam & 0x3C00) + (dam & 0x03FF) / 2;
-		} else dam /= 2;
-	}
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -6475,7 +6482,7 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 	int tx = p_ptr->px + 99 * ddx[dir], ty = p_ptr->py + 99 * ddy[dir];
 
 	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) dam /= 2;
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
 
 	/* Hack -- Use an actual "target" */
 	if ((dir == 5) && target_okay(Ind)) {
