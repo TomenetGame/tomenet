@@ -1417,7 +1417,7 @@ O:34:35:36:37:46:49
 G:6:r
 #W:24
 W:36
-F:HARD_STEAL
+F:HARD_STEAL | GOOD
 
 N:76:Black Market
 # --- EXTRA: normal BM doesn't have this: more *Identify* scrolls for dungeon stores ---
