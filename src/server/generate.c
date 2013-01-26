@@ -5040,40 +5040,50 @@ s_printf("DEBUG_FEELING: VAULT_HI by build_type8->build_vault\n");
  * If its less, make it a normal grid. If it's == make it an outer
  * wall.
  */
+/* Don't allow outer walls that can be passed by walking diagonally? - C. Blue */
+#define BUILD_TYPE9_SOLID_OUTER_WALLS
 static void build_type9(worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
-	int rad, x, y, x0, y0;
+	int rad, x, y, x0, y0, d;
 	int light = FALSE;
 	int dun_lev = getlevel(wpos);
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
-
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Occasional light */
 	if (randint(dun_lev) <= 5) light = TRUE;
 
+	/* Room size */
 	rad = rand_int(10);
 
 	/* Try to allocate space for room.  If fails, exit */
-	if (!room_alloc(wpos, rad*2+1, rad*2+1, FALSE, by0, bx0, &x0, &y0)) return;
+	if (!room_alloc(wpos, rad * 2 + 1, rad * 2 + 1, FALSE, by0, bx0, &x0, &y0)) return;
 
-	for (x = x0 - rad; x <= x0 + rad; x++)
-	{
-		for (y = y0 - rad; y <= y0 + rad; y++)
-		{
-			if (distance(y0, x0, y, x) == rad)
-			{
+	for (x = x0 - rad; x <= x0 + rad; x++) {
+		for (y = y0 - rad; y <= y0 + rad; y++) {
+#ifdef BUILD_TYPE9_SOLID_OUTER_WALLS
+			d = distance(y0 * 10, x0 * 10, y * 10, x * 10);
+#else
+			d = distance(y0, x0, y, x);
+#endif
+
+#ifdef BUILD_TYPE9_SOLID_OUTER_WALLS
+			if (d <= rad * 10 + 5 && d >= rad * 10 - 5) {
+#else
+			if (d == rad) {
+#endif
 				zcave[y][x].info |= (CAVE_ROOM);
 				if (light) zcave[y][x].info |= (CAVE_GLOW);
-
 				cave_set_feat(wpos, y, x, feat_wall_outer);
 			}
 
-			if (distance(y0, x0, y, x) < rad)
-			{
+#ifdef BUILD_TYPE9_SOLID_OUTER_WALLS
+			if (d < rad * 10 - 5) {
+#else
+			if (d < rad) {
+#endif
 				zcave[y][x].info |= (CAVE_ROOM);
 				if (light) zcave[y][x].info |= (CAVE_GLOW);
-
 				place_floor(wpos, y, x);
 			}
 		}
