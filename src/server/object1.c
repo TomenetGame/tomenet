@@ -3604,16 +3604,12 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		msg_print(Ind, "\377s  You have no special knowledge about that item.");
 }
 #else /* new way: display an info screen as for identify_fully_aux(), for additional k_info information - C. Blue */
-bool identify_dual_aux(int Ind, object_type *o_ptr, bool id, bool full);
+bool identify_combo_aux(int Ind, object_type *o_ptr, bool full);
 void observe_aux(int Ind, object_type *o_ptr) {
-	/* item has undergone basic ID (or is easy-know and basic)? */
-	if (object_known_p(Ind, o_ptr))
-		(void)identify_dual_aux(Ind, o_ptr, TRUE, FALSE);
-	else
-		(void)identify_dual_aux(Ind, o_ptr, FALSE, FALSE);
+	(void)identify_combo_aux(Ind, o_ptr, FALSE);
 }
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
-	return identify_dual_aux(Ind, o_ptr, TRUE, TRUE);
+	return identify_combo_aux(Ind, o_ptr, TRUE);
 }
 #endif
 
@@ -3626,13 +3622,17 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 #ifndef NEW_ID_SCREEN
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
 #else
-bool identify_dual_aux(int Ind, object_type *o_ptr, bool id, bool full) {
+/* combined handling of non-id, id, *id* info screens: */
+bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
+	bool id = full || object_known_p(Ind, o_ptr); /* item has undergone basic ID (or is easy-know and basic)? */
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
+	bool aware = object_aware_p(Ind, o_ptr);
+	s_printf("known %d, aware %d\n", id, aware);
 #endif
 	player_type *p_ptr = Players[Ind];
 	int j, am;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, esp = 0;
 	FILE *fff;
 	char buf[1024], o_name[ONAME_LEN];
 	char *ca_ptr = "", a = (id && artifact_p(o_ptr)) ? 'U' : 'w';
@@ -3668,15 +3668,17 @@ bool identify_dual_aux(int Ind, object_type *o_ptr, bool id, bool full) {
 		else object_desc(Ind, o_name, o_ptr, TRUE, 3);
 	} else {
 		/* Just assume basic fixed flags */
-		f1 = k_info[o_ptr->k_idx].flags1;
-		f2 = k_info[o_ptr->k_idx].flags2;
-		f3 = k_info[o_ptr->k_idx].flags3;
-		f4 = k_info[o_ptr->k_idx].flags4;
-		f5 = k_info[o_ptr->k_idx].flags5;
-		esp = k_info[o_ptr->k_idx].esp;
+		if (aware) {
+			f1 = k_info[o_ptr->k_idx].flags1;
+			f2 = k_info[o_ptr->k_idx].flags2;
+			f3 = k_info[o_ptr->k_idx].flags3;
+			f4 = k_info[o_ptr->k_idx].flags4;
+			f5 = k_info[o_ptr->k_idx].flags5;
+			esp = k_info[o_ptr->k_idx].esp;
+		}
 
+		/* Just add the fixed ego flags that we know to be on the item */
 		if (id) {
-			/* Just add the fixed ego flags that we know to be on the item */
 		        if (o_ptr->name2) {
 			        e_ptr = &e_info[o_ptr->name2];
 			        for (j = 0; j < 5; j++) {
@@ -3711,7 +3713,7 @@ bool identify_dual_aux(int Ind, object_type *o_ptr, bool id, bool full) {
 	            	}
 	        }
 
-	        /* Describe the result */
+	        /* Get the item name we know */
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 	}
 
