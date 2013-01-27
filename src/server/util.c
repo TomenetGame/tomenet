@@ -1700,7 +1700,7 @@ bool check_guard_inscription( s16b quark, char what ) {
  * XXX XXX XXX Note that "msg_print(NULL)" will clear the top line
  * even if no messages are pending.  This is probably a hack.
  */
-bool suppress_message = FALSE, censor_message = FALSE;
+bool suppress_message = FALSE, censor_message = FALSE, suppress_boni = FALSE;
 int censor_length = 0, censor_punish = 0;
 
 void msg_print(int Ind, cptr msg_raw)

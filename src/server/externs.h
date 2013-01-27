@@ -762,6 +762,7 @@ extern void cloud_create(int i, int cx, int cy);
 extern void local_weather_update(void);
  #endif
 #endif
+//extern int pseudo_id_result(object_type *o_ptr, bool heavy);
 
 /* files.c */
 extern int highscore_send(char *buffer, int max);
@@ -1578,7 +1579,7 @@ extern int auction_examine(int Ind, int auction_id);
 extern void handle_store_leave(int Ind);
 
 /* util.c */
-extern bool suppress_message, censor_message;
+extern bool suppress_message, censor_message, suppress_boni;
 extern int censor_length, censor_punish;
 /* The next buffers are for catching the chat */
 extern char last_chat_line[MSG_LEN]; /* What was said */ 

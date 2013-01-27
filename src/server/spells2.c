@@ -1607,7 +1607,7 @@ bool lose_all_info(int Ind)
 		o_ptr->ident &= ~ID_KNOWN;
 
 		/* Hack -- Clear the "felt" flag */
-		o_ptr->ident &= ~ID_SENSE;
+		o_ptr->ident &= ~(ID_SENSE | ID_SENSE_HEAVY);
 	}
 
 	/* Recalculate bonuses */

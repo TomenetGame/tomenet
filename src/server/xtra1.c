@@ -3166,7 +3166,7 @@ void calc_boni(int Ind)
 		p_ptr->innate_spells[0] = 0x0;
 		p_ptr->innate_spells[1] = 0x0;
 		p_ptr->innate_spells[2] = 0x0;
-		Send_spell_info(Ind, 0, 0, 0, "nothing");
+		if (!suppress_boni) Send_spell_info(Ind, 0, 0, 0, "nothing");
 
 		/* Start with "normal" speed */
 		p_ptr->pspeed = 110;
@@ -4490,38 +4490,39 @@ void calc_boni(int Ind)
 
 	p_ptr->rogue_heavyarmor = rogue_heavy_armor(p_ptr);
 	if (p_ptr->old_rogue_heavyarmor != p_ptr->rogue_heavyarmor) {
-		if (p_ptr->rogue_heavyarmor) {
-			msg_print(Ind, "\377RThe weight of your armour strains your flexibility and awareness.");
-			break_cloaking(Ind, 0);
-			break_shadow_running(Ind);
-			/* Don't kill warnings by inspecting weapons/armour in stores! */
-			if (!suppress_message)
-			if (p_ptr->dual_wield && !p_ptr->warning_dual && p_ptr->pclass != CLASS_ROGUE && p_ptr->max_plv <= 10) {
-				p_ptr->warning_dual = 1;
-				msg_print(Ind, "\374\377yHINT: You won't get any benefits from dual-wielding if your armour is");
-				msg_print(Ind, "\374\377y      too heavy; in that case, consider using one weapon together with");
-				msg_print(Ind, "\374\377y      a shield, or -if your STR is very high- try a two-handed weapon.");
-				s_printf("warning_dual: %s\n", p_ptr->name);
+		/* Don't kill warnings by inspecting weapons/armour in stores! */
+		if (!suppress_boni) {
+			if (p_ptr->rogue_heavyarmor) {
+				msg_print(Ind, "\377RThe weight of your armour strains your flexibility and awareness.");
+				break_cloaking(Ind, 0);
+				break_shadow_running(Ind);
+				if (p_ptr->dual_wield && !p_ptr->warning_dual && p_ptr->pclass != CLASS_ROGUE && p_ptr->max_plv <= 10) {
+					p_ptr->warning_dual = 1;
+					msg_print(Ind, "\374\377yHINT: You won't get any benefits from dual-wielding if your armour is");
+					msg_print(Ind, "\374\377y      too heavy; in that case, consider using one weapon together with");
+					msg_print(Ind, "\374\377y      a shield, or -if your STR is very high- try a two-handed weapon.");
+					s_printf("warning_dual: %s\n", p_ptr->name);
+				}
 			}
-		}
-		/* do we still wear armour, and are still rogue or dual-wielding? */
-		else if (armour_weight(p_ptr)) {
-			if (p_ptr->pclass == CLASS_ROGUE || p_ptr->dual_wield) {
-				msg_print(Ind, "\377gYour armour is comfortable and flexible.");
+			/* do we still wear armour, and are still rogue or dual-wielding? */
+			else if (armour_weight(p_ptr)) {
+				if (p_ptr->pclass == CLASS_ROGUE || p_ptr->dual_wield) {
+					msg_print(Ind, "\377gYour armour is comfortable and flexible.");
+				} else { /* we took off a weapon, not armour.. */
+					msg_print(Ind, "\377gYou feel comfortable again.");
+				}
+			}
+			/* if not, give a slightly different msg */
+			else if (p_ptr->pclass == CLASS_ROGUE || p_ptr->dual_wield) {
+				msg_print(Ind, "\377gYou feel comfortable and flexible again.");
 			} else { /* we took off a weapon, not armour.. */
 				msg_print(Ind, "\377gYou feel comfortable again.");
 			}
 		}
-		/* if not, give a slightly different msg */
-		else if (p_ptr->pclass == CLASS_ROGUE || p_ptr->dual_wield) {
-			msg_print(Ind, "\377gYou feel comfortable and flexible again.");
-		} else { /* we took off a weapon, not armour.. */
-			msg_print(Ind, "\377gYou feel comfortable again.");
-		}
 		p_ptr->old_rogue_heavyarmor = p_ptr->rogue_heavyarmor;
 	}
 
-	if (p_ptr->stormbringer) {
+	if (p_ptr->stormbringer && !suppress_boni) {
 		if (p_ptr->cloaked) {
 			msg_print(Ind, "\377yYou cannot remain cloaked effectively while wielding the stormbringer!");
 			break_cloaking(Ind, 0);
@@ -4531,13 +4532,15 @@ void calc_boni(int Ind)
 			break_shadow_running(Ind);
 		}
 	}
-	if (p_ptr->aggravate) {
+	if (p_ptr->aggravate && !suppress_boni) {
 		if (p_ptr->cloaked) {
 			msg_print(Ind, "\377yYou cannot remain cloaked effectively while using aggravating items!");
 			break_cloaking(Ind, 0);
 		}
 	}
-	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) {
+	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
+	    (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
+	    && !suppress_boni) {
 		if (p_ptr->cloaked && !instakills(Ind)) {
 			msg_print(Ind, "\377yYour weapon is too large to remain cloaked effectively.");
 			break_cloaking(Ind, 0);
@@ -4547,7 +4550,8 @@ void calc_boni(int Ind)
 			break_shadow_running(Ind);
 		}
 	}
-	if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
+	if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD
+	    && !suppress_boni) {
 		if (p_ptr->cloaked) {
 			msg_print(Ind, "\377yYou cannot remain cloaked effectively while wielding a shield.");
 			break_cloaking(Ind, 0);
@@ -5894,7 +5898,7 @@ void calc_boni(int Ind)
 
 
 	/* swapping in AUTO_ID items will instantly ID inventory and equipment */
-	if (p_ptr->auto_id && !old_auto_id)
+	if (p_ptr->auto_id && !old_auto_id && !suppress_boni)
 		for (i = 0; i < INVEN_TOTAL; i++) {
 			o_ptr = &p_ptr->inventory[i];
 			object_aware(Ind, o_ptr);
@@ -5951,11 +5955,13 @@ void calc_boni(int Ind)
 	if (p_ptr->cur_vlite > p_ptr->cur_lite) p_ptr->lite_type = 1; /* vampiric */
 	else if (lite_inc_white > lite_inc_norm) p_ptr->lite_type = 2; /* artificial */
 	else p_ptr->lite_type = 0; /* normal, fiery */
-	if (old_lite_type != p_ptr->lite_type
-	    && p_ptr->px) { /* calc_boni() is called once on birth, where player isn't positioned yet. */
-		forget_lite(Ind);
-		update_lite(Ind);
-		old_lite_type = p_ptr->lite_type;
+	if (old_lite_type != p_ptr->lite_type) {
+		if (p_ptr->px /* calc_boni() is called once on birth, where player isn't positioned yet. */
+		    && !suppress_boni) {
+			forget_lite(Ind);
+			update_lite(Ind);
+		}
+		old_lite_type = p_ptr->lite_type; /* erm, this isnt needed? */
 	}
 
 
@@ -5968,36 +5974,36 @@ void calc_boni(int Ind)
 		p_ptr->redraw |= PR_BPR;
 
 
-    /* Don't kill warnings by inspecting weapons/armour in stores! */
-    if (!suppress_message) {
-	/* warning messages, mostly for newbies */
-	if (p_ptr->max_plv <= 15 && /* limit, so it won't annoy priests anymore who use zeal spell */
-	    p_ptr->num_blow == 1 && old_num_blow > 1 &&
-	    p_ptr->warning_bpr == 0 &&
-	    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
-		p_ptr->warning_bpr = 1;
-		msg_print(Ind, "\374\377yWARNING! Your number of melee attacks per round has just dropped to ONE.");
-		msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
-		msg_print(Ind, "\374\377y    get AT LEAST TWO blows/round (press shift+c to check the #).");
-		msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
-		msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
-		msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
-		s_printf("warning_bpr: %s\n", p_ptr->name);
-	}
-	if (p_ptr->max_plv == 1 &&
-	    p_ptr->num_blow == 1 && old_num_blow == 1 && p_ptr->warning_bpr3 == 2 &&
-	    /* and don't spam Martial Arts users or mage-staff wielders ;) */
-	    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
-		p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
-		msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE melee attack per round.");
-		msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
-		msg_print(Ind, "\374\377y    get AT LEAST TWO blows/round (press shift+c to check the #).");
-		msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
-		msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
-		msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
-		s_printf("warning_bpr23: %s\n", p_ptr->name);
-	}
-    } /* suppress_message */
+	/* Don't kill warnings by inspecting weapons/armour in stores! */
+	if (!suppress_message) {
+		/* warning messages, mostly for newbies */
+		if (p_ptr->max_plv <= 15 && /* limit, so it won't annoy priests anymore who use zeal spell */
+		    p_ptr->num_blow == 1 && old_num_blow > 1 &&
+		    p_ptr->warning_bpr == 0 &&
+		    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
+			p_ptr->warning_bpr = 1;
+			msg_print(Ind, "\374\377yWARNING! Your number of melee attacks per round has just dropped to ONE.");
+			msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
+			msg_print(Ind, "\374\377y    get AT LEAST TWO blows/round (press shift+c to check the #).");
+			msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
+			msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
+			msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
+			s_printf("warning_bpr: %s\n", p_ptr->name);
+		}
+		if (p_ptr->max_plv == 1 &&
+		    p_ptr->num_blow == 1 && old_num_blow == 1 && p_ptr->warning_bpr3 == 2 &&
+		    /* and don't spam Martial Arts users or mage-staff wielders ;) */
+		    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
+			p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
+			msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE melee attack per round.");
+			msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
+			msg_print(Ind, "\374\377y    get AT LEAST TWO blows/round (press shift+c to check the #).");
+			msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
+			msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
+			msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
+			s_printf("warning_bpr23: %s\n", p_ptr->name);
+		}
+	} /* suppress_message */
 }
 
 

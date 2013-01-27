@@ -2886,6 +2886,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
+	suppress_boni = TRUE;
 	calc_boni(Ind);
 
 	fprintf(fff, "\n");
@@ -2925,6 +2926,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	p_ptr->tim_wraith = tim_wraith;
 
 	suppress_message = FALSE;
+	suppress_boni = FALSE;
 }
 
 static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, int bonus, int bonus2, cptr against, cptr against2)
@@ -2985,6 +2987,7 @@ static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
+	suppress_boni = TRUE;
 	calc_boni(Ind);
 
 	fprintf(fff, "\n");
@@ -3022,6 +3025,7 @@ static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff)
 	p_ptr->tim_wraith = tim_wraith;
 
 	suppress_message = FALSE;
+	suppress_boni = FALSE;
 }
 
 /*
@@ -3092,6 +3096,7 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
+	suppress_boni = TRUE;
 	calc_boni(Ind);
 
 	/* Extract the flags */
@@ -3142,6 +3147,7 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 	p_ptr->tim_wraith = tim_wraith;
 
 	suppress_message = FALSE;
+	suppress_boni = FALSE;
 }
 
 static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff)
@@ -3161,6 +3167,7 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
+	suppress_boni = TRUE;
 	calc_boni(Ind);
 
 	/* Extract the flags */
@@ -3211,6 +3218,7 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff)
 	p_ptr->tim_wraith = tim_wraith;
 
 	suppress_message = FALSE;
+	suppress_boni = FALSE;
 }
 
 /* display how much AC an armour would add for us (for MA users!) and
@@ -3247,9 +3255,9 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
+	suppress_boni = TRUE;
 	calc_boni(Ind);
 	calc_mana(Ind);
-	suppress_message = FALSE;
 
 	/* Gained encumberment? */
 	if ((p_ptr->cumber_armor && !old_cumber_armor) ||
@@ -3329,9 +3337,9 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 	/* get our armour back */
 	object_copy(&p_ptr->inventory[slot], old_ptr);
 
-	suppress_message = TRUE;
 	calc_boni(Ind);
 	calc_mana(Ind);
+	suppress_boni = FALSE;
 	suppress_message = FALSE;
 
 	/* and get our mana (in most cases the problem) back, yay */
@@ -3375,9 +3383,9 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
+	suppress_boni = TRUE;
 	calc_boni(Ind);
 	calc_mana(Ind);
-	suppress_message = FALSE;
 
 	/* Gained encumberment? */
 	if ((p_ptr->awkward_wield && !old_awkward_wield) ||
@@ -3435,10 +3443,10 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 	object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
 	object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
 
-	suppress_message = TRUE;
 	calc_boni(Ind);
 	calc_mana(Ind);
 	suppress_message = FALSE;
+	suppress_boni = FALSE;
 
 	/* and get our mana (in most cases the problem) back, yay */
 	COPY(p_ptr, &p_backup, player_type);
@@ -3474,9 +3482,9 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff, boo
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
+	suppress_boni = TRUE;
 	calc_boni(Ind);
 	calc_mana(Ind);
-	suppress_message = FALSE;
 
 	/* Gained encumberment? */
 	if (p_ptr->heavy_shoot && !old_heavy_shoot) {
@@ -3501,10 +3509,10 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff, boo
 	/* get our weapon back */
 	object_copy(&p_ptr->inventory[INVEN_BOW], old_ptr);
 
-	suppress_message = TRUE;
 	calc_boni(Ind);
 	calc_mana(Ind);
 	suppress_message = FALSE;
+	suppress_boni = FALSE;
 
 	/* and get our mana (in most cases the problem) back, yay */
 	COPY(p_ptr, &p_backup, player_type);
@@ -3578,12 +3586,14 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		    (is_weapon(p_ptr->inventory[INVEN_ARM].tval)))
 			p_ptr->inventory[INVEN_ARM].k_idx = 0;
 		suppress_message = TRUE;
+		suppress_boni = TRUE;
 		calc_boni(Ind);
 		msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
 		    p_ptr->num_blow, p_ptr->num_blow > 1 ? "s" : "");
 		object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
 		object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
 		calc_boni(Ind);
+		suppress_boni = FALSE;
 		suppress_message = FALSE;
 		p_ptr->tim_wraith = tim_wraith;
 	}
@@ -3594,12 +3604,16 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		msg_print(Ind, "\377s  You have no special knowledge about that item.");
 }
 #else /* new way: display an info screen as for identify_fully_aux(), for additional k_info information - C. Blue */
-bool identify_dual_aux(int Ind, object_type *o_ptr, bool full);
+bool identify_dual_aux(int Ind, object_type *o_ptr, bool id, bool full);
 void observe_aux(int Ind, object_type *o_ptr) {
-	(void)identify_dual_aux(Ind, o_ptr, FALSE);
+	/* item has undergone basic ID (or is easy-know and basic)? */
+	if (object_known_p(Ind, o_ptr))
+		(void)identify_dual_aux(Ind, o_ptr, TRUE, FALSE);
+	else
+		(void)identify_dual_aux(Ind, o_ptr, FALSE, FALSE);
 }
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
-	return identify_dual_aux(Ind, o_ptr, TRUE);
+	return identify_dual_aux(Ind, o_ptr, TRUE, TRUE);
 }
 #endif
 
@@ -3612,7 +3626,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 #ifndef NEW_ID_SCREEN
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
 #else
-bool identify_dual_aux(int Ind, object_type *o_ptr, bool full) {
+bool identify_dual_aux(int Ind, object_type *o_ptr, bool id, bool full) {
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
 #endif
@@ -3621,7 +3635,7 @@ bool identify_dual_aux(int Ind, object_type *o_ptr, bool full) {
 	u32b f1, f2, f3, f4, f5, esp;
 	FILE *fff;
 	char buf[1024], o_name[ONAME_LEN];
-	char *ca_ptr = "", a = artifact_p(o_ptr) ? 'U' : 'w';
+	char *ca_ptr = "", a = (id && artifact_p(o_ptr)) ? 'U' : 'w';
 	char buf_tmp[90];
 	int buf_tmp_i, buf_tmp_n;
 
@@ -3640,7 +3654,7 @@ bool identify_dual_aux(int Ind, object_type *o_ptr, bool full) {
 	/* ---------------------------- determine degree of knowledge ------------------------------- */
 
 	/* hack: can *identifying* actually make a difference at all? */
-	if (o_ptr->name1) can_have_hidden_powers = TRUE;
+	if (!id || o_ptr->name1) can_have_hidden_powers = TRUE;
 
 	/* Item is *identified*? */
 	if (full) {
@@ -3661,38 +3675,40 @@ bool identify_dual_aux(int Ind, object_type *o_ptr, bool full) {
 		f5 = k_info[o_ptr->k_idx].flags5;
 		esp = k_info[o_ptr->k_idx].esp;
 
-		/* Just add the fixed ego flags that we know to be on the item */
-	        if (o_ptr->name2) {
-		        e_ptr = &e_info[o_ptr->name2];
-		        for (j = 0; j < 5; j++) {
-	    		        if (e_ptr->rar[j] != 100) {
-					/* hack: can *identifying* actually make a difference at all? */
-		    		        can_have_hidden_powers = TRUE;
-	    		    		continue;
-	    		    	}
-	                        f1 |= e_ptr->flags1[j];
-	                        f2 |= e_ptr->flags2[j];
-	                        f3 |= e_ptr->flags3[j];
-	                        f4 |= e_ptr->flags4[j];
-	                        f5 |= e_ptr->flags5[j];
-	                        esp |= e_ptr->esp[j];
+		if (id) {
+			/* Just add the fixed ego flags that we know to be on the item */
+		        if (o_ptr->name2) {
+			        e_ptr = &e_info[o_ptr->name2];
+			        for (j = 0; j < 5; j++) {
+	    			        if (e_ptr->rar[j] != 100) {
+						/* hack: can *identifying* actually make a difference at all? */
+		    		    		can_have_hidden_powers = TRUE;
+		    		    		continue;
+		    		    	}
+	    	        	        f1 |= e_ptr->flags1[j];
+	        	                f2 |= e_ptr->flags2[j];
+	        	        	f3 |= e_ptr->flags3[j];
+	                	        f4 |= e_ptr->flags4[j];
+	                    		f5 |= e_ptr->flags5[j];
+	                    	        esp |= e_ptr->esp[j];
+	                    	    }
 	                }
-	        }
-	        if (o_ptr->name2b) {
-		        e_ptr = &e_info[o_ptr->name2b];
-		        for (j = 0; j < 5; j++) {
-		                if (e_ptr->rar[j] != 100) {
-					/* hack: can *identifying* actually make a difference at all? */
-		    		        can_have_hidden_powers = TRUE;
-		            		continue;
-		            	}
-	                        f1 |= e_ptr->flags1[j];
-	                        f2 |= e_ptr->flags2[j];
-	                        f3 |= e_ptr->flags3[j];
-	                        f4 |= e_ptr->flags4[j];
-	                        f5 |= e_ptr->flags5[j];
-	                        esp |= e_ptr->esp[j];
-	                }
+		        if (o_ptr->name2b) {
+			        e_ptr = &e_info[o_ptr->name2b];
+			        for (j = 0; j < 5; j++) {
+		    	    	        if (e_ptr->rar[j] != 100) {
+						/* hack: can *identifying* actually make a difference at all? */
+		    			        can_have_hidden_powers = TRUE;
+			            		continue;
+			            	}
+	    	        	        f1 |= e_ptr->flags1[j];
+	        	                f2 |= e_ptr->flags2[j];
+	                    		f3 |= e_ptr->flags3[j];
+		                        f4 |= e_ptr->flags4[j];
+		                        f5 |= e_ptr->flags5[j];
+	    		                esp |= e_ptr->esp[j];
+	            		}
+	            	}
 	        }
 
 	        /* Describe the result */
@@ -3735,7 +3751,12 @@ bool identify_dual_aux(int Ind, object_type *o_ptr, bool full) {
 	}
 
 #ifdef ART_DIZ
-	if (true_artifact_p(o_ptr)) fprintf(fff, "%s", a_text + a_info[o_ptr->name1].text);
+	if (true_artifact_p(o_ptr)
+ #ifdef NEW_ID_SCREEN
+	    && full
+ #endif
+	    )
+		fprintf(fff, "%s", a_text + a_info[o_ptr->name1].text);
 #endif
 
 #ifdef KIND_DIZ
@@ -3750,12 +3771,22 @@ bool identify_dual_aux(int Ind, object_type *o_ptr, bool full) {
 	    )
 		fprintf(fff, "\377y(This item has not been *identified* yet.)\n");
 
-	if (artifact_p(o_ptr)) {
-		if (true_artifact_p(o_ptr)) ca_ptr = " true artifact";
-		else {
-			if (!is_admin(p_ptr)) ca_ptr = " random artifact";
-			else ca_ptr = format(" random artifact (ap = %d, %d Au)", artifact_power(randart_make(o_ptr)), object_value_real(0, o_ptr));
-		}
+	if (artifact_p(o_ptr)
+#ifdef NEW_ID_SCREEN
+	    && id
+#endif
+	    ) {
+#ifdef NEW_ID_SCREEN
+		if (full || is_admin(p_ptr)) {
+#endif
+			if (true_artifact_p(o_ptr)) ca_ptr = " true artifact";
+			else {
+				if (!is_admin(p_ptr)) ca_ptr = " random artifact";
+				else ca_ptr = format(" random artifact (ap = %d, %d Au)", artifact_power(randart_make(o_ptr)), object_value_real(0, o_ptr));
+			}
+#ifdef NEW_ID_SCREEN
+		} else ca_ptr = "n artifact";
+#endif
 	}
 
 	switch(o_ptr->tval){
@@ -3768,7 +3799,11 @@ bool identify_dual_aux(int Ind, object_type *o_ptr, bool full) {
 	case TV_AXE:
 		fprintf(fff, "\377%cIt's a%s axe-type weapon.\377w\n", a, ca_ptr); break;
 	default:
-		if (artifact_p(o_ptr))
+		if (artifact_p(o_ptr)
+#ifdef NEW_ID_SCREEN
+		    && id
+#endif
+		    )
 			fprintf(fff, "\377%cIt's a%s.\377w\n", a, ca_ptr);
 		break;
 	}
@@ -4331,9 +4366,17 @@ bool identify_dual_aux(int Ind, object_type *o_ptr, bool full) {
 	if (buf_tmp_n) fprintf(fff, "%s.\n", buf_tmp);
 
 	/* special artifacts hardcoded - C. Blue */
-	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_AMBER)
+	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_AMBER
+#ifdef NEW_ID_SCREEN
+	    && id
+#endif
+	    )
 		fprintf(fff, "\377wIt turns your skin into amber, increasing your powers.\n");
-	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SLEEPING)
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SLEEPING
+#ifdef NEW_ID_SCREEN
+	    && id
+#endif
+	    )
 		fprintf(fff, "\377wIt drops a veil of sleep over all your surroundings.\n");
 
 	/* Damage display for weapons */
@@ -4355,7 +4398,34 @@ bool identify_dual_aux(int Ind, object_type *o_ptr, bool full) {
 	}
 
 #ifdef NEW_ID_SCREEN
-	if (!eff_full) fprintf(fff, "\377yIt may have hidden powers.\n");
+	if (!eff_full) {
+		if (!id) {
+ #if 0 /* can be incorrect etc! disabled for now */
+			/* make message depend on pseudo-id status! */
+			if ((o_ptr->ident & ID_SENSE)) {
+				int quality;
+				if ((o_ptr->ident & ID_SENSE_HEAVY)) quality = pseudo_id_result(o_ptr, TRUE);
+				else quality = pseudo_id_result(o_ptr, FALSE);
+
+				if (quality == -1) {
+					//fprintf(fff, "\377yIt seems to be cursed.\n"); //cursed/terrible/broken/worthless
+				} else if (quality == 0) {
+					//no message //(average)
+				}
+
+
+				/* note: some high-cost base items can be excellent without ego power */
+				fprintf(fff, "\377yIt seems to be enchanted or have hidden powers.\n"); //good/excellent
+
+				fprintf(fff, "\377yIt seems to have hidden powers.\n"); //special
+			} else fprintf(fff, "\377yIt might be enchanted or have hidden powers.\n"); //no pseudo-id
+ #else
+			/* no message maybe */
+			//fprintf(fff, "\377yIt has not been identified yet.\n");
+ #endif
+		} else if (o_ptr->name1) fprintf(fff, "\377yIt seems to have hidden powers.\n"); //art
+		else fprintf(fff, "\377yIt may have hidden powers.\n"); //ego
+	}
 #endif
 
 	/* Close the file */

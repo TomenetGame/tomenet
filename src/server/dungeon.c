@@ -336,8 +336,6 @@ cptr value_check_aux2_magic(object_type *o_ptr)
 	return (NULL);
 }
 
-
-
 /*
  * Sense the inventory
  */
@@ -533,6 +531,7 @@ static void sense_inventory(int Ind)
 
 		/* We have "felt" it */
 		o_ptr->ident |= (ID_SENSE | ID_SENSED_ONCE);
+		if (felt_heavy) o_ptr->ident |= ID_SENSE_HEAVY;
 
 		/* Remember feeling of that flavour, if and only if an item is always the same!
 		   For example, rings might be cursed by ego power. Wands may not.
@@ -578,7 +577,141 @@ static void sense_inventory(int Ind)
 	}
 }
 
+#if 0 /* the results might be too incorrect! for example 'average' can still mean enchantment, etc. */
+/* for NEW_ID_SCREEN's pseudo-id handling: */
 
+static int quality_check_aux1(object_type *o_ptr) {
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+	if (artifact_p(o_ptr)) return 3;
+
+	if (ego_item_p(o_ptr)) {
+		if (o_ptr->name2 == EGO_STORMBRINGER) return 3;
+		if (cursed_p(o_ptr) || broken_p(o_ptr)) return 2;
+		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) return 2;
+		if (object_value(0, o_ptr) < 4000) return 1;
+		return 2;
+	}
+
+	if (cursed_p(o_ptr)) return -1;
+	if (broken_p(o_ptr)) return -1;
+
+	switch (o_ptr->tval) {
+	case TV_DIGGING:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_AXE:
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOW:
+	case TV_BOOMERANG:
+		if ((o_ptr->ident & ID_SENSE_GOOD)) return 1;
+		break;
+	default:
+		if ((o_ptr->ident & ID_SENSE_GOOD)) return 1;
+	}
+
+	return 0;
+}
+
+/*
+ * Return a "feeling" (or NULL) about an item.  Method 2 (Light).
+ */
+static int quality_check_aux2(object_type *o_ptr) {
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+	if (cursed_p(o_ptr)) -1;
+	if (broken_p(o_ptr)) -1;
+	if (artifact_p(o_ptr)) return 1;
+	if (!k_ptr->cost) return -1;
+	if (ego_item_p(o_ptr)) {
+		return 1;
+	}
+
+	switch (o_ptr->tval) {
+	case TV_DIGGING:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_AXE:
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOW:
+	case TV_BOOMERANG:
+		if ((o_ptr->ident & ID_SENSE_GOOD)) return 1;
+		break;
+	default:
+		if ((o_ptr->ident & ID_SENSE_GOOD)) return 1;
+	}
+
+	return 0;
+}
+
+int pseudo_id_result(object_type *o_ptr) {
+	int quality = 0;
+
+	switch (o_ptr->tval) {
+	case TV_DIGGING:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_AXE:
+	case TV_TRAPKIT:
+
+	case TV_MSTAFF:
+
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOW:
+	case TV_BOOMERANG:
+		quality = ((o_ptr->ident & ID_SENSE_HEAVY) ? quality_check_aux1(o_ptr) :
+		    quality_check_aux2(o_ptr));
+		break;
+
+	case TV_SCROLL:
+	case TV_POTION:
+	case TV_POTION2:
+	case TV_WAND:
+	case TV_STAFF:
+	case TV_ROD:
+	case TV_FOOD:
+		return 0;
+	}
+
+	return quality;
+}
+#endif
 
 /*
  * Regenerate hit points				-RAK-

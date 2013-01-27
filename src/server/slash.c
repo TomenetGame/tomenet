@@ -6557,7 +6557,7 @@ void do_slash_cmd(int Ind, char *message)
 				/* Hack -- Clear the "known" flag */
 				o_ptr->ident &= ~ID_KNOWN;
 				/* Hack -- Clear the "felt" flag */
-				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_MENTAL);
+				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_MENTAL | ID_SENSE_HEAVY);
 				p_ptr->window |= PW_INVEN;
 
 				/* remove pseudo-id tags too */

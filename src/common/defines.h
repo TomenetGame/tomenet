@@ -4128,6 +4128,7 @@
 #define ID_CURSED	0x0040	/* Item is temporarily cursed */
 #define ID_BROKEN	0x0080	/* Item is permanently worthless */
 #define ID_SENSED_ONCE	0x0100	/* Item was at least sensed once, maybe even IDed. (anti-exploit) */
+#define ID_SENSE_HEAVY	0x0200	/* Item was deeply pseudo-identified (felt_heavy) */
 
 
 

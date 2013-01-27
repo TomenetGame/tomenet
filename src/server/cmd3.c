@@ -1500,7 +1500,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 		o_ptr->note = quark_add(feel);
 
 		/* We have "felt" it (again) */
-		o_ptr->ident |= (ID_SENSE | ID_SENSED_ONCE);
+		o_ptr->ident |= (ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
 
 		/* Combine the pack */
 		p_ptr->notice |= (PN_COMBINE);

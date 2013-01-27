@@ -1077,7 +1077,7 @@ void object_known(object_type *o_ptr)
 	}
 
 	/* Clear the "Felt" info */
-	o_ptr->ident &= ~ID_SENSE;
+	o_ptr->ident &= ~(ID_SENSE | ID_SENSE_HEAVY);
 
 	/* Clear the "Empty" info */
 	o_ptr->ident &= ~ID_EMPTY;
