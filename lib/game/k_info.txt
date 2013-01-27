@@ -2355,6 +2355,8 @@ I:65:12:0
 W:50:0:10:15000
 A:50/5
 P:0:1d1:0:0:0
+D:Damages a monster for a percentage of its current hit points
+D:and returns some of the life force to you, replenishing your hit points.
 
 N:281:Trap/Door Destruction
 G:-:d
@@ -2496,6 +2498,7 @@ W:60:0:10:30000
 A:60/5
 P:0:1d1:0:0:0
 F:IGNORE_ELEC
+D:Damages a monster by a percentage of its current hit points.
 
 N:299:Rockets
 G:-:d
@@ -3009,6 +3012,8 @@ I:66:18:30
 W:75:0:15:25000
 A:75/4
 P:0:1d1:0:0:0
+D:Damages a monster for a percentage of its current hit points
+D:and returns some of the life force to you, replenishing your hit points.
 
 N:364:Teleport Other
 G:-:d
@@ -4188,6 +4193,7 @@ I:40:15:0
 W:35:0:3:15000
 A:35/4
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD
+D:Provides temporary resistance to fire, cold, acid, lightning and poison.
 
 ##### New arms #####
 
