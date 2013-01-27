@@ -5892,7 +5892,7 @@ void player_death(int Ind) {
 	monster_type *m_ptr;
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-	char buf[1024], o_name[ONAME_LEN], m_name_extra[MNAME_LEN], msg_layout = 'a';
+	char buf[1024], m_name_extra[MNAME_LEN], msg_layout = 'a';
 	int i, k, j, tries = 0;
 #if 0
 	int inventory_loss = 0, equipment_loss = 0;
@@ -6457,8 +6457,7 @@ void player_death(int Ind) {
 
 	/* Starting with the most valuable, drop things one by one */
 	for (i = 0; i < INVEN_TOTAL; i++) {
-		bool away = FALSE, item_lost = FALSE;
-		int real_pos = p_ptr->inventory[i].inven_order;
+		bool away = FALSE;
 
 		o_ptr = &p_ptr->inventory[i];
 		/* Make sure we have an object */
@@ -6488,28 +6487,18 @@ void player_death(int Ind) {
 		    !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND)) {
 #ifdef DEATH_ITEM_SCATTER
 			/* Apply penalty of death */
-			if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER) && !item_lost)
+			if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER))
 				away = TRUE;
 			else
 #endif	/* DEATH_ITEM_SCATTER */
 			{
-				if (!item_lost) {
-					if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-					else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
-					else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
+				if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+				else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
+				else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
 
-					/* Drop this one */
-					away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
-						<= 0 ? TRUE : FALSE;
-				} else {
-					object_desc(Ind, o_name, o_ptr, TRUE, 3);
-//					if (object_value_real(0, o_ptr) >= 10000)
-					s_printf("item_lost: %s (slot %d)\n", o_name, real_pos);
-					if (true_artifact_p(o_ptr)) {
-						/* set the artifact as unfound */
-						handle_art_d(o_ptr->name1);
-					}
-				}
+				/* Drop this one */
+				away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
+					<= 0 ? TRUE : FALSE;
 			}
 
 			if (away) {
