@@ -4416,6 +4416,14 @@ void lose_exp(int Ind, s32b amount)
 
 	if (safe_area(Ind)) return;
 
+#if 0 /* todo: get this right and all */
+        /* Mega-Hack -- Apply "invulnerability" */
+        if (p_ptr->invuln && (!bypass_invuln) && !p_ptr->invuln_applied) {
+                /* Hack: Just reduce exp loss flat */
+                amount = (amount + 1) / 2;
+        }
+#endif
+
 	/* Never drop below zero experience */
 	if (amount > p_ptr->exp) amount = p_ptr->exp - 1;
 
