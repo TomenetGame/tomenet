@@ -1551,7 +1551,7 @@ G:?:d
 I:70:50:0
 W:100:0:5:10000
 A:100/8
-F:IGNORE_FIRE | IGNORE_ACID | IGNORE_WATER
+#F:IGNORE_FIRE | IGNORE_ACID | IGNORE_WATER
 D:It creates a ball of chaos that hits the reader too if he doesn't resist.
 
 N:180:Remove Curse
@@ -1733,7 +1733,7 @@ W:70:0:5:500000
 #A:70/16
 #A:70/32
 A:80/48
-F:IGNORE_FIRE | IGNORE_ACID | IGNORE_WATER
+#F:IGNORE_FIRE | IGNORE_ACID | IGNORE_WATER
 D:Creates a random artifact from a basic item that must not possess ego-powers.
 
 N:206:Recharging
