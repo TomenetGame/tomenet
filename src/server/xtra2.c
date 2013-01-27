@@ -6307,9 +6307,13 @@ void player_death(int Ind) {
 
 			/* Also lose some cash on death */
 			s_printf("gold_lost: carried %d, remaining ", p_ptr->au);
+#if 0 /* lose 0 below 50k, up to 50% up to 500k, 50% after that */
 			if (p_ptr->au <= 50000) ;
 			else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
 			else p_ptr->au /= 2;
+#else /* lose 5..33% */
+			p_ptr->au = (p_ptr->au * (rand_int(29) + 67)) / 100;
+#endif
 			s_printf("%d.\n", p_ptr->au);
 
 			p_ptr->safe_sane = TRUE;
@@ -6412,9 +6416,13 @@ void player_death(int Ind) {
 //		if (p_ptr->au > 32000) p_ptr->au = 32000;
 		/* (actually, this if-clause is not necessary) */
 		s_printf("gold_lost: carried %d, remaining ", p_ptr->au);
+#if 0 /* lose 0 below 50k, up to 50% up to 500k, 50% after that */
 		if (p_ptr->au <= 50000) ;
 		else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
 		else p_ptr->au /= 2;
+#else /* lose 5..33% */
+		p_ptr->au = (p_ptr->au * (rand_int(29) + 67)) / 100;
+#endif
 
 		if (p_ptr->max_plv >= cfg.newbies_cannot_drop) {
 			/* Set the amount */
