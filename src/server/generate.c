@@ -631,9 +631,14 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 			    ((k_ptr->sval == SV_POTION_LOSE_MEMORIES) ||
 			    ((!k_ptr->cost) && magik(50)))) /* bad fountains 50% less probable before stat-fountains appear */
 			    )) &&
+#ifndef EXPAND_TV_POTION
 			    !((k_ptr->tval == TV_POTION2) && (dun_lev < 20) &&
-			    (k_ptr->sval == SV_POTION2_CHAUVE_SOURIS)
-			    ))
+			    (k_ptr->sval == SV_POTION2_CHAUVE_SOURIS))
+#else
+			    !((k_ptr->tval == TV_POTION) && (dun_lev < 20) &&
+			    (k_ptr->sval == SV_POTION_CHAUVE_SOURIS))
+#endif
+			    )
 			{
 				if (k_ptr->tval == TV_POTION2) svals[maxsval] = k_ptr->sval + SV_POTION_LAST;
 				else svals[maxsval] = k_ptr->sval;
@@ -655,7 +660,7 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 		cs_ptr->sc.fountain.rest = damroll(1, 5);
 
 		/* Some hacks: */
-		if (cs_ptr->sc.fountain.type < SV_POTION_LAST)
+		if (cs_ptr->sc.fountain.type <= SV_POTION_LAST)
 			switch (cs_ptr->sc.fountain.type) {
 /*			case SV_POTION_NEW_LIFE:
 				cs_ptr->sc.fountain.rest = 1;
@@ -673,9 +678,13 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 			case SV_POTION_SELF_KNOWLEDGE:
 				cs_ptr->sc.fountain.rest = damroll(1, 3);
 				break;
-			case SV_POTION_LEARNING: /* not used, see SV_POTION2_LEARNING instead */
+#ifdef EXPAND_TV_POTION
+			case SV_POTION2_CHAUVE_SOURIS:
+			case SV_POTION2_CURE_SANITY:
+			case SV_POTION_LEARNING:
 				cs_ptr->sc.fountain.rest = damroll(1, 2);
 				break;
+#endif
 			}
 		else
 			switch (cs_ptr->sc.fountain.type - SV_POTION_LAST) {

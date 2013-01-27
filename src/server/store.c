@@ -1729,7 +1729,6 @@ static void store_create(store_type *st_ptr)
 						case SV_POTION_LEARNING:
 #endif
 							continue;
-							break;
 						default:
 							break;
 					} break;
@@ -1741,7 +1740,6 @@ static void store_create(store_type *st_ptr)
 						case SV_POTION2_CURE_SANITY:
 						case SV_POTION2_LEARNING:
 							continue;
-							break;
 						default:
 							break;
 					} break;

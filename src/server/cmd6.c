@@ -1178,8 +1178,61 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 						set_oppose_pois(Ind, randint(20) + 20); /* removed stacking */
 					break;
 				}
+#ifdef EXPAND_TV_POTION
+			//max sanity of a player can go up to around 900 later!
+			case SV_POTION_CURE_LIGHT_SANITY:
+				if (heal_insanity(Ind, damroll(4,8))) ident = TRUE;
+				(void)set_image(Ind, 0);
+				break;
+			case SV_POTION_CURE_SERIOUS_SANITY:
+//				if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
+				if (heal_insanity(Ind, damroll(8,12))) ident = TRUE;
+				(void)set_image(Ind, 0);
+				break;
+			case SV_POTION_CURE_CRITICAL_SANITY:
+//				if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
+				if (heal_insanity(Ind, damroll(16,18))) ident = TRUE;
+				(void)set_image(Ind, 0);
+				break;
+			case SV_POTION_CURE_SANITY:
+//				if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
+				if (heal_insanity(Ind, damroll(32,27))) ident = TRUE;
+				(void)set_image(Ind, 0);
+				break;
+			case SV_POTION_CHAUVE_SOURIS:
+//				apply_morph(Ind, 100, "Potion of Chauve-Souris");
+				if (!p_ptr->fruit_bat) {
+					/* FRUIT BAT!!!!!! */
+					if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
+					msg_print(Ind, "You have been turned into a fruit bat!");
+					strcpy(p_ptr->died_from,"a Potion of Chauve-Souris");
+					strcpy(p_ptr->really_died_from,"a Potion of Chauve-Souris");
+					p_ptr->fruit_bat = -1;
+					p_ptr->deathblow = 0;
+					player_death(Ind);
+					ident = TRUE;
+				} else if(p_ptr->fruit_bat == 2) {
+					msg_print(Ind, "You have been restored!");
+					p_ptr->fruit_bat = 0;
+					p_ptr->update |= (PU_BONUS | PU_HP);
+					ident = TRUE;
+				}
+				else msg_print(Ind, "You feel certain you are a fruit bat!");
 
+				break;
+			case SV_POTION_LEARNING:
+				ident = TRUE;
 
+				/* gain skill points */
+				i = 1 + rand_int(3);
+				p_ptr->skill_points += i;
+				p_ptr->update |= PU_SKILL_MOD;
+				if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
+
+				msg_format(Ind, "You gained %d more skill point%s.", i, (i == 1)?"":"s");
+
+				break;
+#endif
 		}
 	}
 	else
