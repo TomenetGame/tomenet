@@ -3762,7 +3762,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 #endif
 
 #ifdef KIND_DIZ
-	fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
+ #ifdef NEW_ID_SCREEN
+	if (aware)
+ #endif
+		fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
 #endif
 
 	/* in case we just *ID* it because an admin inspected it */
