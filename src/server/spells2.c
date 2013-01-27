@@ -57,6 +57,7 @@ static void proj_dam_wraith(int typ, int *dam) {
 	case GF_RECALL_PLAYER: /* <- dam is timeout! */
 	case GF_RESTORE_PLAYER:
 	case GF_CURE_PLAYER:
+	case GF_CURING:
 		return;
 	case GF_HEAL_PLAYER:
 		*dam = (*dam & 0x3C00) + (*dam & 0x03FF) / 2;
@@ -5900,7 +5901,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
-		    (typ != GF_SLOWPOISON_PLAYER) &&
+		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
 			sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
 	}

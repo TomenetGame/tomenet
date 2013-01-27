@@ -3295,8 +3295,8 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
 //			lite_room(y, x);
 			break;
 		case SV_ROD_CURING:
-			typ = GF_OLD_HEAL;
-			dam = damroll(3, 4); /* and heal conf? */
+			typ = GF_CURING; //GF_OLD_HEAL;
+			dam = 0x4 + 0x8 + 0x10 + 0x20; //damroll(3, 4); /* and heal conf? */
 			break;
 		case SV_ROD_HEALING:
 			typ = GF_OLD_HEAL;
@@ -3388,8 +3388,10 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
 	if (dam) identify_mon_trap_load(who, o_ptr);
 
 	/* Trapping skill influences damage - C. Blue */
-	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
-	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
+	if (typ != GF_CURING) {
+		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
+		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
+	}
 
 	/* Actually hit the monster */
 	if (typ) (void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
@@ -3478,13 +3480,13 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr)
 		case SV_STAFF_DETECT_TRAP:
 //                        m_ptr->smart |= SM_NOTE_TRAP;
 			return (FALSE);
-		case SV_STAFF_CURE_LIGHT:
+		case SV_STAFF_CURE_SERIOUS:
 			typ = GF_OLD_HEAL;
-			dam = randint(8);
+			dam = damroll(6, 8);
 			break;
 		case SV_STAFF_CURING:
-			typ = GF_OLD_HEAL;
-			dam = randint(4); /* hack */
+			typ = GF_CURING; //GF_OLD_HEAL;
+			dam = 0x4 + 0x8 + 0x10 + 0x20; //randint(4); /* hack */
 			break;
 		case SV_STAFF_HEALING:
 			typ = GF_OLD_HEAL;
@@ -3551,8 +3553,10 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr)
 	identify_mon_trap_load(who, o_ptr);
 
 	/* Trapping skill influences damage - C. Blue */
-	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
-	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
+	if (typ != GF_CURING) {
+		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
+		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
+	}
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
@@ -4134,8 +4138,8 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 				rad = 2;
 				break;
 			case SV_POTION_CURING:
-				typ = GF_OLD_HEAL;
-				dam = 300;
+				typ = GF_CURING; //GF_OLD_HEAL;
+				dam = 0x4 + 0x8 + 0x10 + 0x20; //300;
 				rad = 3;
 				break;
 			case SV_POTION_HEALING:
@@ -4149,18 +4153,8 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 				rad = 4;
 				break;
 			case SV_POTION_LIFE:
-/*				if (r_ptr->flags3 & RF3_UNDEAD)
-				{
-					typ = GF_HOLY_FIRE;
-					dam = damroll(20, 20);
-				}
-				else
-				{	
-					typ = GF_OLD_HEAL;
-					dam = 5000;
-				}*/
 				typ = GF_LIFEHEAL;
-				dam = damroll(50, 20); /* Holy Fire damage vs undead */
+				dam = damroll(30, 20);
 				rad = 3;
 				break;
 			default:
@@ -4180,8 +4174,10 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 	identify_mon_trap_load(who, o_ptr);
 
 	/* Trapping skill influences damage - C. Blue */
-	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
-	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
+	if (typ != GF_CURING) {
+		dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
+		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
+	}
 
 	/* Actually hit the monster */
 //	(void) project_m(who, y, x, 0, y, x, dam, typ);

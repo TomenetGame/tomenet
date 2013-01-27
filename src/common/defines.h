@@ -3077,7 +3077,7 @@
 #define SV_STAFF_DETECT_DOOR            13
 #define SV_STAFF_DETECT_INVIS           14
 #define SV_STAFF_DETECT_EVIL            15
-#define SV_STAFF_CURE_LIGHT             16
+#define SV_STAFF_CURE_SERIOUS           16
 #define SV_STAFF_CURING                 17
 #define SV_STAFF_HEALING                18
 #define SV_STAFF_THE_MAGI               19
@@ -3966,6 +3966,7 @@
 #define GF_REMCONF_PLAYER	146
 #define GF_REMIMAGE_PLAYER	147
 #define GF_SLOWPOISON_PLAYER 	148
+#define GF_CURING 		149
 
 /* Zangband changes */
 #define GF_TELE_TO		150

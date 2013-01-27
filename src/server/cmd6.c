@@ -3160,7 +3160,7 @@ void do_cmd_use_staff(int Ind, int item)
 			break;
 		}
 
-		case SV_STAFF_CURE_LIGHT:
+		case SV_STAFF_CURE_SERIOUS:
 		{
 //			if (hp_player(Ind, randint(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 10)))) ident = TRUE;
 			/* Turned it into 'Cure Serious Wounds' - C. Blue */

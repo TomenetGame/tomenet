@@ -308,8 +308,8 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			ident = TRUE;
 			break;
 		case SV_POTION_CURING:
-			dt = GF_OLD_HEAL;
-			dam = damroll(15,10);
+			dt = GF_CURING; //GF_OLD_HEAL;
+			dam = 0x4 + 0x8 + 0x10 + 0x20; //damroll(5,10);
 			ident = TRUE;
 			break;
 		case SV_POTION_HEALING:
@@ -319,13 +319,13 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			break;
 		case SV_POTION_STAR_HEALING:
 			dt = GF_OLD_HEAL;
-			dam = damroll(30,20);//50x50 was more in average than STAR_HEALING heals
+			dam = damroll(30,20);
 			radius = 1;
 			ident = TRUE;
 			break;
 		case SV_POTION_LIFE:
 			dt = GF_LIFEHEAL;
-			dam = damroll(50,20);//50x50 was more in average than STAR_HEALING heals
+			dam = damroll(30,20);
 			radius = 1;
 			ident = TRUE;
 			break;
@@ -349,7 +349,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 	}
 
 	/* doh! project halves the dam ?! */
-	dam *= 2;
+	if (dt != GF_CURING) dam *= 2;
 
 	(void) project(who, radius, wpos, y, x, dam, dt,
 	    (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF), "");
@@ -3429,6 +3429,7 @@ static int radius_damage(int dam, int div, int typ) {
 	case GF_RECALL_PLAYER: /* not for recall (dam is timeout) - mikaelh */
 	case GF_CURE_PLAYER:
 	case GF_RESTORE_PLAYER:
+	case GF_CURING:
 
 		return (dam);
 	}
@@ -4892,7 +4893,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			typ = GF_HOLY_FIRE;
 		} else {
 			typ = GF_OLD_HEAL;
-			dam = 700;
 		}
 	}
 
@@ -7223,6 +7223,43 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			quiet = TRUE;
 			break;
 
+		case GF_CURING:
+			if (m_ptr->confused) {
+				m_ptr->confused = 0;
+				msg_print_near_monster(c_ptr->m_idx, "is no longer confused.");
+			}
+			if (m_ptr->stunned) {
+				m_ptr->stunned = 0;
+				msg_print_near_monster(c_ptr->m_idx, "is no longer stunned.");
+			}
+
+			dam = 0; /* hack :) */
+			for (i = 0; i < 4; i++) {
+				if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) {
+					m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
+					dam = 1;
+				}
+				if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) {
+					m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
+					dam = 1;
+				}
+			}
+			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less weak");
+
+			if (m_ptr->ac < m_ptr->org_ac) {
+				m_ptr->ac = m_ptr->org_ac;
+				msg_print_near_monster(c_ptr->m_idx, "appears less clumsy");
+			}
+
+			if (m_ptr->maxhp < m_ptr->org_maxhp) {
+				m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
+				m_ptr->maxhp = m_ptr->org_maxhp;
+				msg_print_near_monster(c_ptr->m_idx, "appears less sick");
+			}
+			dam = 0;
+			quiet = TRUE;
+			break;
+
 		/* Default */
 		default:
 			/* No damage */
@@ -7936,7 +7973,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
                     (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) || (typ == GF_PUSH) ||
 		    (typ == GF_HEALINGCLOUD) || /* Also not a hostile spell */
 		    (typ == GF_MINDBOOST_PLAYER) || (typ == GF_IDENTIFY) ||
-		    (typ == GF_SLOWPOISON_PLAYER) ||
+		    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
 		    (typ == GF_OLD_POLY)) /* may (un)polymorph himself */
 			friendly_player = TRUE;
 	}
@@ -7973,7 +8010,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
                     (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
-		    (typ != GF_SLOWPOISON_PLAYER) &&
+		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may (un)polymorph each other */
 		{ /* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind)) {
@@ -8074,7 +8111,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_RESACID_PLAYER) ||*/ (typ == GF_HPINCREASE_PLAYER) ||
 	    (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
 	    /*(typ == GF_TELEPORT_PLAYER) ||*/ (typ == GF_ZEAL_PLAYER) ||
-	    (typ == GF_RESTORE_PLAYER) ||
+	    (typ == GF_RESTORE_PLAYER) || (typ == GF_CURING) ||
 	    (typ == GF_CURE_PLAYER) || /*(typ == GF_RESURRECT_PLAYER) ||
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
@@ -8103,7 +8140,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	    (typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
-	    (typ == GF_SLOWPOISON_PLAYER) ||
+	    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
 	    (typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))
 	{ /* No effect on ghosts / admins */
 		/* Skip non-connected players */
@@ -9559,6 +9596,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 			}
 			break;
+		case GF_CURING:
 		case GF_CURE_PLAYER:
 			if (dam & 0x1) { /* Slow Poison */
 				if (p_ptr->poisoned && !p_ptr->slow_poison) p_ptr->slow_poison = 1;
@@ -11520,7 +11558,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 			typ = GF_HOLY_FIRE;
 		} else {
 			typ = GF_OLD_HEAL;
-			dam = 700;
 		}
 	}
 

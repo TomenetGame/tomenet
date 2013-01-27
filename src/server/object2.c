@@ -3996,7 +3996,7 @@ static void charge_staff(object_type *o_ptr)
 	case SV_STAFF_DETECT_DOOR:		o_ptr->pval = randint(8)  + 6; break;
 	case SV_STAFF_DETECT_INVIS:		o_ptr->pval = randint(15) + 8; break;
 	case SV_STAFF_DETECT_EVIL:		o_ptr->pval = randint(15) + 8; break;
-	case SV_STAFF_CURE_LIGHT:		o_ptr->pval = randint(5)  + 6; break;
+	case SV_STAFF_CURE_SERIOUS:		o_ptr->pval = randint(5)  + 6; break;
 	case SV_STAFF_CURING:			o_ptr->pval = randint(3)  + 4; break;
 	case SV_STAFF_HEALING:			o_ptr->pval = randint(2)  + 1; break;
 	case SV_STAFF_THE_MAGI:			o_ptr->pval = randint(2)  + 2; break;
