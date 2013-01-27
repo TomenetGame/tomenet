@@ -5624,7 +5624,7 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
 
         int y2 = targy;
         int x2 = targx;
-	bool done = FALSE, c_blue_ai_done = FALSE;	// not used fully (FIXME)
+	bool done = FALSE;//, c_blue_ai_done = FALSE;	// not used fully (FIXME)
 
 
 	/* Extract the "pseudo-direction" */
