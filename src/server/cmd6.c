@@ -4983,20 +4983,20 @@ void do_cmd_activate(int Ind, int item, int dir)
 		o_ptr = &o_list[0 - item];
 	}
 
-if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
-	if (p_ptr->anti_magic) {
-		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
-		return;
+	if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
+		if (p_ptr->anti_magic) {
+			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+			return;
+		}
+		if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+			msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
+			return;
+		}
+		if (magik((p_ptr->antimagic * 8) / 5)) {
+			msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+			return;
+		}
 	}
-	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
-		return;
-	}
-	if (magik((p_ptr->antimagic * 8) / 5)) {
-		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-		return;
-	}
-}
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {
