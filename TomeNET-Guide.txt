@@ -1548,8 +1548,7 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 -If you press CTRL+X to save&exit the game, you should do that in a safe town.
  Dungeons might change while you are logged off, and the next time you log on
- you might find yourself stuck inside a wall, where the previous dungeon had a
- wide room.
+ you might find yourself in a nasty place if unlucky.
  Another problem is that if you don't leave in a town, your character will
  stay for another 20-30 seconds in the game before it finally disappears from
  the dungeon! If monsters were around, you might get killed easily during that
