@@ -235,7 +235,8 @@ static void store_examine(void)
 
 	/* Tell the server */
 	if (is_realm_book(o_ptr)) show_browse(o_ptr);
-	else if (o_ptr->tval == TV_BOOK)
+	else if (o_ptr->tval == TV_BOOK &&
+	    (!is_custom_tome(o_ptr->sval) || o_ptr->xtra1))
 		browse_school_spell(-(item + 1), o_ptr->sval, o_ptr->pval);
 	else Send_store_examine(item);
 }
