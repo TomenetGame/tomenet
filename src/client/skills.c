@@ -699,12 +699,17 @@ bool item_tester_hook_weapon(object_type *o_ptr) {
 	    (o_ptr->tval == TV_TRAPKIT && is_firearm_trapkit(o_ptr->sval)) ||
 	    o_ptr->tval == TV_DIGGING || o_ptr->tval == TV_MSTAFF);
 }
+/* this actually tests for spell scrolls, not the custom tome itself */
 bool item_tester_hook_custom_tome(object_type *o_ptr) {
+#if 0
 	bool free = TRUE;
+#endif
 
 	/* check for correct book type */
 	if (o_ptr->tval != TV_BOOK || o_ptr->sval != SV_SPELLBOOK) return FALSE;
+	return TRUE;
 
+#if 0
 	/* and even check for blank pages left */
 #if 0 /* we don't know bpval! */
         switch (o_ptr->bpval) {
@@ -734,6 +739,7 @@ bool item_tester_hook_custom_tome(object_type *o_ptr) {
 #endif
 
 	return free;
+#endif
 }
 
 /*
