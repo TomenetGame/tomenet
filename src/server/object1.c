@@ -3681,9 +3681,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		        if (o_ptr->name2) {
 			        e_ptr = &e_info[o_ptr->name2];
 			        for (j = 0; j < 5; j++) {
-		    	    	        if (e_ptr->rar[j] != 0 && e_ptr->rar[j] != 100) {
+		    	    	        if (e_ptr->rar[j] != 100) {
 						/* hack: can *identifying* actually make a difference at all? */
-		    		    		can_have_hidden_powers = TRUE;
+		    		    		if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
 		    		    		continue;
 		    		    	}
 	    	        	        f1 |= e_ptr->flags1[j];
@@ -3697,9 +3697,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		        if (o_ptr->name2b) {
 			        e_ptr = &e_info[o_ptr->name2b];
 			        for (j = 0; j < 5; j++) {
-		    	    	        if (e_ptr->rar[j] != 0 && e_ptr->rar[j] != 100) {
+		    	    	        if (e_ptr->rar[j] != 100) {
 						/* hack: can *identifying* actually make a difference at all? */
-		    			        can_have_hidden_powers = TRUE;
+		    		    		if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
 			            		continue;
 			            	}
 	    	        	        f1 |= e_ptr->flags1[j];
