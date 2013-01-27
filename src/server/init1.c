@@ -1446,6 +1446,11 @@ if (!season_newyearseve) {
 //#else
 //		if (streq(m, "PRECIOUS_STONES") && negation) invalid = TRUE;
 //#endif
+#ifndef EXPAND_TV_POTION
+		if (streq(m, "EXPAND_TV_POTION") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "EXPAND_TV_POTION") && negation) invalid = TRUE;
+#endif
 
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
@@ -1462,6 +1467,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_MCRAFT") &&
 		    strcmp(m, "NEW_TOMES") &&
 //		    strcmp(m, "PRECIOUS_STONES") &&
+		    strcmp(m, "EXPAND_TV_POTION") &&
 			TRUE)
 			invalid = TRUE;
 	}

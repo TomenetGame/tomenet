@@ -2614,7 +2614,11 @@
 #define MAX_AMULETS    43       /* Used with amulets (min 30) */ 
 #define MAX_WOODS      36       /* Used with staffs (min 32) */ 
 #define MAX_METALS     39       /* Used with wands/rods (min 32/30) */ 
-#define MAX_COLORS     68       /* Used with potions (min 62) */ 
+#ifndef EXPAND_TV_POTION
+ #define MAX_COLORS     65       /* Used with potions (min 62) */ 
+#else
+ #define MAX_COLORS     66       /* Used with potions (min 62) */ 
+#endif
 #define MAX_SHROOM     20       /* Used with mushrooms (min 20) */ 
 #define MAX_TITLES     72       /* Used with scrolls (min 55) */ 
 #define MAX_SYLLABLES 164       /* Used with scrolls (see below) */ 
@@ -3266,6 +3270,7 @@
 #define SV_SCROLL_EMERGENCY_PARTY_RECALL	70
 #define SV_SCROLL_CHEQUE			71 /* for player houses; read to redeem, easily. */
 
+
 /* The "sval" codes for TV_POTION */
 #define SV_POTION_WATER                  0
 #define SV_POTION_APPLE_JUICE            1
@@ -3277,11 +3282,13 @@
 #define SV_POTION_BLINDNESS              7
 #define SV_POTION_INVIS                  8
 #define SV_POTION_CONFUSION              9
-#define SV_POTION_MUTATION              10
+//#define SV_POTION_MUTATION		10
+/* used for EXPAND_TV_POTION		10 */
 #define SV_POTION_SLEEP                 11
-#define SV_POTION_LEARNING              12 /* not used. see SV_POTION2_LEARNING instead */
+//#define SV_POTION_LEARNING		12 /* not used. see SV_POTION2_LEARNING instead */
+/* used for EXPAND_TV_POTION		12 */
 #define SV_POTION_LOSE_MEMORIES         13
-/* xxx */
+/* xxx -- used for EXPAND_TV_POTION	14 */
 #define SV_POTION_RUINATION             15
 #define SV_POTION_DEC_STR               16
 #define SV_POTION_DEC_INT               17
@@ -3321,7 +3328,7 @@
 #define SV_POTION_INC_DEX               51
 #define SV_POTION_INC_CON               52
 #define SV_POTION_INC_CHR               53
-/* xxx */
+/* xxx -- used for EXPAND_TV_POTION	54 */
 #define SV_POTION_AUGMENTATION          55
 #define SV_POTION_ENLIGHTENMENT         56
 #define SV_POTION_STAR_ENLIGHTENMENT    57
@@ -3330,10 +3337,24 @@
 #define SV_POTION_RESISTANCE            60
 #define SV_POTION_CURING                61
 #define SV_POTION_INVULNERABILITY       62
-//disabled: #define SV_POTION_NEW_LIFE              63
+/*disabled: #define SV_POTION_NEW_LIFE  63
+  used for EXPAND_TV_POTION		63 */
 #define SV_POTION_RESTORE_MANA          64
 
-#define SV_POTION_LAST                  64
+#ifndef EXPAND_TV_POTION
+ #define SV_POTION_LAST			64	/* used for handling fountains */
+#else
+ #define SV_POTION_LAST			65	/* used for handling fountains */
+#endif
+
+/* for EXPAND_TV_POTION, always defined for conversion in load2.c: */
+#define SV_POTION_CHAUVE_SOURIS		10
+#define SV_POTION_LEARNING		12
+#define SV_POTION_CURE_SANITY		14
+#define SV_POTION_CURE_LIGHT_SANITY	54
+#define SV_POTION_CURE_SERIOUS_SANITY	63
+#define SV_POTION_CURE_CRITICAL_SANITY	65
+
 
 /*
  * NOTE: due to hard-coded flavor code, adding SV_POTION is bad idea.

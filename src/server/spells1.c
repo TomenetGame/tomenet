@@ -94,7 +94,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 	bool	ident = FALSE;
 	bool	angry = FALSE;
 
-	switch(o_sval) {
+	switch (o_sval) {
 		case SV_POTION_SLIME_MOLD:
 		case SV_POTION_WATER:   /* perhaps a 'water' attack? */
 		case SV_POTION_APPLE_JUICE:
@@ -4193,7 +4193,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	u32b f1, f2, f3, f4, f5, esp;
 	char	o_name[ONAME_LEN];
 	int o_sval = 0;
-	bool is_potion = FALSE;
+	bool is_potion = FALSE, is_basic_potion = FALSE;
 
 	int		div;
 	cave_type **zcave;
@@ -4260,13 +4260,13 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (o_ptr->name2 == EGO_STORMBRINGER) is_art = TRUE;
 
 	o_sval = o_ptr->sval;
-	/* XXX POTION2 is not handled right! */
-//	is_potion = ((k_info[o_ptr->k_idx].tval == TV_POTION)||(k_info[o_ptr->k_idx].tval == TV_POTION2));
-	is_potion = (k_info[o_ptr->k_idx].tval == TV_POTION);
+	/* potion_smash_effect only takes sval as parameter, so it can't handle TV_POTION2 at this time.
+	   For this reason, add is_basic_potion: It determines whether smash effect is applied. */
+	is_potion = ((k_info[o_ptr->k_idx].tval == TV_POTION) || (k_info[o_ptr->k_idx].tval == TV_POTION2));
+	is_basic_potion = (k_info[o_ptr->k_idx].tval == TV_POTION);
 
 	/* Analyze the type */
-	switch (typ)
-	{
+	switch (typ) {
 		/* Identify */
 		case GF_IDENTIFY:
 		{
@@ -4585,7 +4585,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 	/* Attempt to destroy the object */
-//	if (is_potion && do_smash_effect) potion_smash_effect(who, wpos, y, x, o_sval);
+//	if (is_basic_potion && do_smash_effect) potion_smash_effect(who, wpos, y, x, o_sval);
 
 //	if(do_kill && (wpos->wz))
 	if (do_kill) {
@@ -4618,7 +4618,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			delete_object_idx(this_o_idx, TRUE);
 
 			/* Potions produce effects when 'shattered' */
-			if (is_potion && do_smash_effect) {
+			if (is_basic_potion && do_smash_effect) {
 				/* prevent mass deto exploit */
 				if (mon_hit_proj_id == mon_hit_proj_id2) {
 					mon_hit_proj_id++;

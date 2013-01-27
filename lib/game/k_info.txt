@@ -6441,7 +6441,8 @@ F:REFLECT
 
 N:892:Cure Light Insanity
 G:!:d
-I:72:14:0
+$EXPAND_TV_POTION$I:71:54:0
+$EXPAND_TV_POTION!I:72:14:0
 #W:5:5:4:15
 W:5:5:4:250
 #A:5/1:1/1:3/1
@@ -6451,7 +6452,8 @@ F:FOUNTAIN
 
 N:893:Cure Serious Insanity
 G:!:d
-I:72:15:0
+$EXPAND_TV_POTION$I:71:63:0
+$EXPAND_TV_POTION!I:72:15:0
 #W:10:5:4:40
 W:10:5:4:1000
 #A:10/1
@@ -6461,7 +6463,8 @@ F:FOUNTAIN
 
 N:894:Cure Critical Insanity
 G:!:d
-I:72:16:0
+$EXPAND_TV_POTION$I:71:65:0
+$EXPAND_TV_POTION!I:72:16:0
 #W:15:5:4:100
 W:15:12:4:5000
 #A:15/3
@@ -6471,7 +6474,8 @@ F:FOUNTAIN
 
 N:895:Cure Insanity
 G:!:d
-I:72:17:0
+$EXPAND_TV_POTION$I:71:14:0
+$EXPAND_TV_POTION!I:72:17:0
 #W:25:5:4:30
 W:25:5:4:15000
 #A:25/3
@@ -6536,7 +6540,8 @@ D:Stops natural breeders on your dungeon level from multiplying any further.
 
 N:901:Chauve-Souris
 G:!:d
-I:72:19:0
+$EXPAND_TV_POTION$I:71:10:0
+$EXPAND_TV_POTION!I:72:19:0
 ##W:15:5:4:10000
 #W:15:5:4:7500
 #A:15/30
@@ -6605,7 +6610,8 @@ A:0/12
 
 N:909:Learning
 G:!:d
-I:72:20:0
+$EXPAND_TV_POTION$I:71:12:0
+$EXPAND_TV_POTION!I:72:20:0
 #W:101:0:4:25000
 #A:101/3
 W:127:255:4:25000

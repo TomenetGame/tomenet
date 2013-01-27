@@ -5286,7 +5286,11 @@ if (cfg.unikill_format) {
 			object_wipe(qq_ptr);
 
 			/* Drop Potions Of Learning along with loot */
+#ifdef EXPAND_TV_POTION
+			invcopy(qq_ptr, lookup_kind(TV_POTION, SV_POTION_LEARNING));
+#else
 			invcopy(qq_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
+#endif
 			qq_ptr->number = randint(2);
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
@@ -5413,7 +5417,11 @@ if (cfg.unikill_format) {
 			/* Prepare a second reward */
 			object_wipe(qq_ptr);
 			/* Drop Potions Of Learning along with loot */
+#ifdef EXPAND_TV_POTION
+			invcopy(qq_ptr, lookup_kind(TV_POTION, SV_POTION_LEARNING));
+#else
 			invcopy(qq_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
+#endif
 			qq_ptr->number = (a_info[203].cur_num == 0)?1:2;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));

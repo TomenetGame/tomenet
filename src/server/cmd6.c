@@ -692,12 +692,13 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					}
 					break;
 				}
+#if 0
 			case SV_POTION_MUTATION:
 				{
 					ident = TRUE;
 					break;
 				}
-
+#endif
 			case SV_POTION_SLEEP:
 				{
 					if (!p_ptr->free_act)

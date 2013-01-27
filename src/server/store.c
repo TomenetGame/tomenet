@@ -1665,9 +1665,22 @@ static void store_create(store_type *st_ptr)
 			/* No "worthless" items */
 			/* if (object_value(o_ptr) <= 0) continue; */
 
+#ifndef EXPAND_TV_POTION
 			/* Hack -- No POTION2 items */
 			if (o_ptr->tval == TV_POTION2) continue;
-			
+#else
+			if (o_ptr->tval == TV_POTION)
+				switch (o_ptr->sval) {
+				case SV_POTION_CURE_LIGHT_SANITY:
+				case SV_POTION_CURE_SERIOUS_SANITY:
+				case SV_POTION_CURE_CRITICAL_SANITY:
+				case SV_POTION_CURE_SANITY:
+				case SV_POTION_LEARNING:
+				case SV_POTION_CHAUVE_SOURIS:
+					continue;
+				}
+#endif
+
 			/* Hack -- Less POTION items */
 			if ((o_ptr->tval == TV_POTION) && magik(80)) continue;
 
@@ -1708,6 +1721,13 @@ static void store_create(store_type *st_ptr)
 						case SV_POTION_AUGMENTATION:
 						case SV_POTION_EXPERIENCE:
 						case SV_POTION_INVULNERABILITY:
+#ifdef EXPAND_TV_POTION
+						case SV_POTION_CURE_LIGHT_SANITY:
+						case SV_POTION_CURE_SERIOUS_SANITY:
+						case SV_POTION_CURE_CRITICAL_SANITY:
+						case SV_POTION_CURE_SANITY:
+						case SV_POTION_LEARNING:
+#endif
 							continue;
 							break;
 						default:

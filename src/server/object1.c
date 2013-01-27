@@ -125,8 +125,8 @@ static byte amulet_col[MAX_AMULETS] = {
 	TERM_L_DARK, TERM_WHITE, TERM_ORANGE, TERM_L_UMBER, TERM_SLATE,
 	TERM_GREEN, TERM_YELLOW, TERM_L_BLUE, TERM_L_BLUE, TERM_L_WHITE,
 	TERM_L_UMBER, TERM_VIOLET, TERM_L_BLUE, TERM_BLUE, TERM_L_WHITE,
-	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN, 
-	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_L_WHITE, TERM_L_GREEN, 
+	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN,
+	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_L_WHITE, TERM_L_GREEN,
 	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER, TERM_L_WHITE,
 	TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_LITE, TERM_L_DARK,
 	TERM_L_WHITE, TERM_L_GREEN, TERM_RED
@@ -137,8 +137,8 @@ static byte amulet_col[MAX_AMULETS] = {
 	TERM_L_DARK, TERM_WHITE, TERM_ORANGE, TERM_L_UMBER, TERM_SLATE,
 	TERM_GREEN, TERM_YELLOW, TERM_L_BLUE, TERM_L_BLUE, TERM_L_WHITE,
 	TERM_L_UMBER, TERM_VIOLET, TERM_L_BLUE, TERM_BLUE, TERM_L_WHITE,
-	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN, 
-	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE, TERM_L_GREEN, 
+	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN,
+	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE, TERM_L_GREEN,
 	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER, TERM_L_WHITE,
 	TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_LITE, TERM_L_DARK,
 	TERM_L_WHITE, TERM_L_GREEN, TERM_RED
@@ -242,6 +242,7 @@ static byte food_col[MAX_SHROOM] =
  */
 
 #ifdef EXTRA_FLAVORS
+
 /* 15 */
 static cptr potion_mod[MAX_MOD_COLORS] =
 {
@@ -256,28 +257,28 @@ static cptr potion_base[MAX_BASE_COLORS] =
         "Clear", "Light Brown", "Icky Green", "Phosphorescent",
 	"Azure", "Blue", "Black", "Brown",
 	"Chartreuse", "Crimson", "Cyan", "Dark Blue",
-	"Dark Green", "Dark Red", "Green", "Grey", 
-	"Hazy", "Indigo", "Light Blue", "Light Green", 
+	"Dark Green", "Dark Red", "Green", "Grey",
+	"Hazy", "Indigo", "Light Blue", "Light Green",
 	"Magenta", "Orange", "Pink", "Puce",
-	"Purple", "Red", "Tangerine", "Violet", 
-	"Vermilion", "White", "Yellow", "Gloopy Green", 
-	"Gold", "Ichor", "Ivory White", "Sky Blue", 
+	"Purple", "Red", "Tangerine", "Violet",
+	"Vermilion", "White", "Yellow", "Gloopy Green",
+	"Gold", "Ichor", "Ivory White", "Sky Blue",
 	"Beige",
 };
 
-#ifdef HOUSE_PAINTING
-byte potion_col[MAX_COLORS] =
-#else
-static byte potion_col[MAX_COLORS] =
-#endif
-{
+ #ifdef HOUSE_PAINTING
+    byte potion_col[MAX_COLORS] =
+ #else
+    static byte potion_col[MAX_COLORS] =
+ #endif
+    {
         TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_MULTI,
 	TERM_L_BLUE, TERM_BLUE, TERM_L_DARK, TERM_UMBER,
-	TERM_L_GREEN, TERM_RED, TERM_L_BLUE, TERM_BLUE, 
+	TERM_L_GREEN, TERM_RED, TERM_L_BLUE, TERM_BLUE,
 	TERM_GREEN, TERM_RED, TERM_GREEN, TERM_SLATE,
-	TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE, TERM_L_GREEN, 
-	TERM_RED, TERM_ORANGE, TERM_L_RED, TERM_VIOLET, 
-	TERM_VIOLET, TERM_RED, TERM_ORANGE, TERM_VIOLET, 
+	TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE, TERM_L_GREEN,
+	TERM_RED, TERM_ORANGE, TERM_L_RED, TERM_VIOLET,
+	TERM_VIOLET, TERM_RED, TERM_ORANGE, TERM_VIOLET,
 	TERM_RED, TERM_WHITE, TERM_YELLOW, TERM_GREEN,
 	TERM_YELLOW, TERM_RED, TERM_WHITE, TERM_L_BLUE,
 	TERM_L_UMBER,
@@ -285,79 +286,107 @@ static byte potion_col[MAX_COLORS] =
 
 static char potion_adj[MAX_COLORS][24];
 
-#else
+#else /* no EXTRA_FLAVOURS */
+
 static cptr potion_adj[MAX_COLORS] = {
-        "Clear", "Light Brown", "Icky Green", "Phosphorescent",
+        "Clear", "Light Brown", "Icky Green", "Scarlet", /* instead of "Blood Red", */
 	"Azure", "Blue", "Blue Speckled", "Black",
-	"Brown", "Brown Speckled", "Bubbling", "Chartreuse", 
+	"Brown", "Brown Speckled", "Bubbling", "Chartreuse",
 	"Cloudy", "Copper Speckled", "Crimson", "Cyan",
 	"Dark Blue", "Dark Green", "Dark Red", "Gold Speckled",
-	"Green", "Green Speckled", "Grey", "Grey Speckled", 
-	"Hazy", "Indigo", "Light Blue", "Light Green", 
-	"Magenta", "Metallic Blue", "Metallic Red", "Metallic Green", 
+	"Green", "Green Speckled", "Grey", "Grey Speckled",
+	"Hazy", "Indigo", "Light Blue", "Light Green",
+	"Magenta", "Metallic Blue", "Metallic Red", "Metallic Green",
 	"Metallic Purple", "Misty", "Orange", "Orange Speckled",
 	"Pink", "Pink Speckled", "Puce", "Purple",
-	"Purple Speckled", "Red", "Red Speckled", "Silver Speckled", 
-	"Smoky", "Tangerine", "Violet", "Vermilion", 
-	"White", "Yellow", "Violet Speckled", "Pungent", 
+	"Purple Speckled", "Red", "Red Speckled", "Silver Speckled",
+	"Smoky", "Tangerine", "Violet", "Vermilion",
+	"White", "Yellow", "Violet Speckled", "Pungent",
 	"Clotted Red", "Viscous Pink", "Oily Yellow", "Gloopy Green",
 	"Shimmering", "Coagulated Crimson", "Yellow Speckled", "Gold",
 	"Manly", "Stinking", "Oily Black", "Ichor",
-	"Ivory White", "Sky Blue", "Beige", "Whirling",
-//	"Glowing Green", "Glowing Blue", "Glowing Red", "Glittering",
-};
-# if 1
-#ifdef HOUSE_PAINTING
-byte potion_col[MAX_COLORS] = {
-#else
-static byte potion_col[MAX_COLORS] = {
+	"Whirling", /* 65 (basic TV_POTION) */
+#ifdef EXPAND_TV_POTION
+	"Ivory White",
 #endif
-	TERM_ELEC, TERM_L_UMBER, TERM_GREEN, TERM_LITE,
-	TERM_L_BLUE, TERM_BLUE, TERM_ELEC, TERM_L_DARK, 
-	TERM_UMBER, TERM_SHAR, TERM_COLD, TERM_L_GREEN, 
+
+	/* add more colours to make TV_POTION2 obsolete */
+//	"Turquoise", "Beige",
+	// "Amber",
+	//  "Radiant", "Lilac", <- note, we already have TOO MANY TERM_VIOLET colours..
+//	"Glowing Green", "Glowing Blue", "Glowing Red", "Glittering", "Phosphorescent",
+//	notes: light red is covered by vermillon, ochre is covered by light brown, sky blue by azure, sepia by beige maybe
+//		viridian==turquoise, citron covered by chartreuse, 
+//viridian, sienna, sepia, amber, umber, ivory
+};
+
+ # if 1 /* more sparkly term colours for more visual diversity */
+
+  #ifdef HOUSE_PAINTING
+    byte potion_col[MAX_COLORS] = {
+  #else
+    static byte potion_col[MAX_COLORS] = {
+  #endif
+	TERM_ELEC, TERM_L_UMBER, TERM_GREEN, TERM_RED,
+	TERM_L_BLUE, TERM_BLUE, TERM_ELEC, TERM_L_DARK,
+	TERM_UMBER, TERM_SHAR, TERM_COLD, TERM_L_GREEN,
 	TERM_ACID, TERM_CONF, TERM_RED, TERM_L_BLUE,
-	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_LITE, 
-	TERM_GREEN, TERM_POIS, TERM_SLATE, TERM_ACID, 
-	TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE, TERM_L_GREEN, 
-	TERM_L_RED, TERM_BLUE, TERM_RED, TERM_GREEN, 
+	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_LITE,
+	TERM_GREEN, TERM_POIS, TERM_SLATE, TERM_ACID,
+	TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE, TERM_L_GREEN,
+	TERM_L_RED, TERM_BLUE, TERM_RED, TERM_GREEN,
 	TERM_VIOLET, TERM_L_WHITE, TERM_ORANGE, TERM_SOUN,
-	TERM_L_RED, TERM_L_RED, TERM_VIOLET, TERM_VIOLET, 
-	TERM_VIOLET, TERM_RED, TERM_RED, TERM_COLD, 
-	TERM_DARKNESS, TERM_ORANGE, TERM_VIOLET, TERM_RED, 
-	TERM_WHITE, TERM_YELLOW, TERM_VIOLET, TERM_L_RED, 
+	TERM_L_RED, TERM_L_RED, TERM_VIOLET, TERM_VIOLET,
+	TERM_VIOLET, TERM_RED, TERM_RED, TERM_COLD,
+	TERM_DARKNESS, TERM_ORANGE, TERM_VIOLET, TERM_RED,
+	TERM_WHITE, TERM_YELLOW, TERM_VIOLET, TERM_L_RED,
 	TERM_RED, TERM_L_RED, TERM_YELLOW, TERM_GREEN,
 	TERM_MULTI, TERM_RED, TERM_YELLOW, TERM_LITE,
-	TERM_L_UMBER, TERM_UMBER, TERM_L_DARK, TERM_RED, 
-	TERM_WHITE, TERM_L_BLUE, TERM_L_WHITE, TERM_MULTI,
-//	TERM_POIS, TERM_ELEC, TERM_FIRE, TERM_COLD,
-};
-# else
-#ifdef HOUSE_PAINTING
-byte potion_col[MAX_COLORS] = {
-#else
-static byte potion_col[MAX_COLORS] = {
+	TERM_L_UMBER, TERM_UMBER, TERM_L_DARK, TERM_RED,
+	TERM_MULTI, /* 64 (basic TV_POTION) */
+#ifdef EXPAND_TV_POTION
+	TERM_WHITE,
 #endif
+
+//	TERM_L_BLUE, TERM_L_WHITE,
+	//TERM_LITE, (amber)
+	//lilac:TERM_VIOLET, radiant TERM_COLD,
+//	TERM_POIS, TERM_ELEC, TERM_FIRE, TERM_COLD,
+    };
+ #else /* traditional conservative colour usage, less sparkly */
+
+  #ifdef HOUSE_PAINTING
+    byte potion_col[MAX_COLORS] = {
+  #else
+    static byte potion_col[MAX_COLORS] = {
+  #endif
         TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_LITE,
-	TERM_L_BLUE, TERM_BLUE, TERM_BLUE, TERM_L_DARK, 
-	TERM_UMBER, TERM_UMBER, TERM_L_WHITE, TERM_L_GREEN, 
+	TERM_L_BLUE, TERM_BLUE, TERM_BLUE, TERM_L_DARK,
+	TERM_UMBER, TERM_UMBER, TERM_L_WHITE, TERM_L_GREEN,
 	TERM_WHITE, TERM_L_UMBER, TERM_RED, TERM_L_BLUE,
-	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_YELLOW, 
-	TERM_GREEN, TERM_GREEN, TERM_SLATE, TERM_SLATE, 
-	TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE, TERM_L_GREEN, 
-	TERM_RED, TERM_BLUE, TERM_RED, TERM_GREEN, 
+	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_YELLOW,
+	TERM_GREEN, TERM_GREEN, TERM_SLATE, TERM_SLATE,
+	TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE, TERM_L_GREEN,
+	TERM_RED, TERM_BLUE, TERM_RED, TERM_GREEN,
 	TERM_VIOLET, TERM_L_WHITE, TERM_ORANGE, TERM_ORANGE,
-	TERM_L_RED, TERM_L_RED, TERM_VIOLET, TERM_VIOLET, 
-	TERM_VIOLET, TERM_RED, TERM_RED, TERM_L_WHITE, 
-	TERM_L_DARK, TERM_ORANGE, TERM_VIOLET, TERM_RED, 
-	TERM_WHITE, TERM_YELLOW, TERM_VIOLET, TERM_L_RED, 
+	TERM_L_RED, TERM_L_RED, TERM_VIOLET, TERM_VIOLET,
+	TERM_VIOLET, TERM_RED, TERM_RED, TERM_L_WHITE,
+	TERM_L_DARK, TERM_ORANGE, TERM_VIOLET, TERM_RED,
+	TERM_WHITE, TERM_YELLOW, TERM_VIOLET, TERM_L_RED,
 	TERM_RED, TERM_L_RED, TERM_YELLOW, TERM_GREEN,
 	TERM_MULTI, TERM_RED, TERM_YELLOW, TERM_YELLOW,
-	TERM_L_UMBER, TERM_UMBER, TERM_L_DARK, TERM_RED, 
-	TERM_WHITE, TERM_L_BLUE, TERM_L_UMBER, TERM_L_WHITE,
+	TERM_L_UMBER, TERM_UMBER, TERM_L_DARK, TERM_RED,
+	TERM_L_WHITE, /* 64 (basic TV_POTION) */
+#ifdef EXPAND_TV_POTION
+	TERM_WHITE,
+#endif
+
+	//TERM_L_BLUE, TERM_L_UMBER,
 //	TERM_POIS, TERM_ELEC, TERM_FIRE, TERM_COLD,
-};
-# endif
-#endif	// 0
+    };
+ #endif
+
+#endif /* EXTRA_FLAVOURS */
 
 
 /*
@@ -1319,7 +1348,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	char		c1 = '{', c2 = '}';
 
 	char		tmp_val[ONAME_LEN];
-	
+
 	bool 		short_item_names = FALSE;
 
 	u32b f1, f2, f3, f4, f5, esp;
@@ -1433,7 +1462,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Known artifacts */
 //			if (artifact_p(o_ptr) && aware) break;
 			if (artifact_p(o_ptr) && known) break;
-			
+
 			/* "Amulets of Luck" are just called "Talismans" -C. Blue */
 			if ((o_ptr->sval == SV_AMULET_LUCK) && aware) break;
 
@@ -1885,10 +1914,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 			/* Add the false name */
 			if (str) {
-				/* the_sandman: lets omit the space so we 
+				/* the_sandman: lets omit the space so we
 				   can make cool names like
 				   'Cloak'->'Cloaking Device' =)
-				
+
 				t = object_desc_chr(t, ' ');
 				*/
 
@@ -2190,7 +2219,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 if (!(mode & 32)) {
 	/* Dump "pval" flags for wearable items */
         if (known && (((f1 & (TR1_PVAL_MASK)) || (f5 & (TR5_PVAL_MASK))) || (o_ptr->tval == TV_GOLEM))) {
-		/* Hack -- first display any base pval bonuses.  
+		/* Hack -- first display any base pval bonuses.
 		 * The "bpval" flags are never displayed.  */
 		if (o_ptr->bpval && !(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL)) {
 			if (!(mode & 8)) t = object_desc_chr(t, ' ');
@@ -2343,7 +2372,7 @@ if (!(mode & 32)) {
 		strcpy(tmp_val, quark_str(o_ptr->note));
 
                 for (; *u && (*u != '#'); u++);
-	
+
 		*u = '\0';
 	}
 

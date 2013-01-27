@@ -353,7 +353,7 @@ static void rd_item(object_type *o_ptr)
 	/* Location */
 	rd_byte(&o_ptr->iy);
 	rd_byte(&o_ptr->ix);
-	
+
 	rd_s16b(&o_ptr->wpos.wx);
 	rd_s16b(&o_ptr->wpos.wy);
 	rd_s16b(&o_ptr->wpos.wz);
@@ -368,6 +368,40 @@ static void rd_item(object_type *o_ptr)
 
 /* HACKHACKHACK - C. Blue - Moved Khopesh to polearms */
 //if (o_ptr->tval == 23 && o_ptr->sval == 14) {o_ptr->tval = 22; o_ptr->sval = 9;}
+
+#ifdef EXPAND_TV_POTION
+	/* Convert outdated potions that still use TV_POTION2 to new TV_POTION values */
+	if (o_ptr->tval == TV_POTION2) {
+		o_ptr->tval = TV_POTION;
+		switch (o_ptr->sval) {
+		case SV_POTION2_CHAUVE_SOURIS: o_ptr->sval = SV_POTION_CHAUVE_SOURIS; break;
+		case SV_POTION2_LEARNING: o_ptr->sval = SV_POTION_LEARNING; break;
+		case SV_POTION2_CURE_SANITY: o_ptr->sval = SV_POTION_CURE_SANITY; break;
+		case SV_POTION2_CURE_LIGHT_SANITY: o_ptr->sval = SV_POTION_CURE_LIGHT_SANITY; break;
+		case SV_POTION2_CURE_SERIOUS_SANITY: o_ptr->sval = SV_POTION_CURE_SERIOUS_SANITY; break;
+		case SV_POTION2_CURE_CRITICAL_SANITY: o_ptr->sval = SV_POTION_CURE_CRITICAL_SANITY; break;
+		default:
+			/* failure? revert change! */
+			o_ptr->tval = TV_POTION2;
+		}
+	}
+#else
+	/* Convert already converted potions back if we reverted EXPAND_TV_POTION, which shouldn't happen :-p */
+	if (o_ptr->tval == TV_POTION) {
+		o_ptr->tval = TV_POTION2;
+		switch (o_ptr->sval) {
+		case SV_POTION_CHAUVE_SOURIS: o_ptr->sval = SV_POTION2_CHAUVE_SOURIS; break;
+		case SV_POTION_LEARNING: o_ptr->sval = SV_POTION2_LEARNING; break;
+		case SV_POTION_CURE_SANITY: o_ptr->sval = SV_POTION2_CURE_SANITY; break;
+		case SV_POTION_CURE_LIGHT_SANITY: o_ptr->sval = SV_POTION2_CURE_LIGHT_SANITY; break;
+		case SV_POTION_CURE_SERIOUS_SANITY: o_ptr->sval = SV_POTION2_CURE_SERIOUS_SANITY; break;
+		case SV_POTION_CURE_CRITICAL_SANITY: o_ptr->sval = SV_POTION2_CURE_CRITICAL_SANITY; break;
+		default:
+			/* failure? revert tval */
+			o_ptr->tval = TV_POTION;
+		}
+	}
+#endif
 
 	/* Base pval */
 	rd_s32b(&o_ptr->bpval);
@@ -401,8 +435,7 @@ static void rd_item(object_type *o_ptr)
 	rd_s32b(&o_ptr->name3);
         if (!older_than(4, 2, 1))
 		rd_s32b(&o_ptr->timeout);
-	else
-	{
+	else {
 		/* Increase portability with pointers to correct type - mikaelh */
 		s16b old_timeout;
 		rd_s16b(&old_timeout);

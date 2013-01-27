@@ -120,6 +120,9 @@
    Must be at the worldmap sector of NR entrance, or inside NR. */
 #define ALLOW_NR_CROSS_PARTIES
 
+/* expand TV_POTION svals to make TV_POTION2 obsolete? */
+#define EXPAND_TV_POTION
+
 
 /* --------------------- Server-type dependant features -------------------- */
 
