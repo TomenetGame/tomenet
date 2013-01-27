@@ -3628,7 +3628,6 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
 	bool aware = object_aware_p(Ind, o_ptr);
-	s_printf("known %d, aware %d\n", id, aware);
 #endif
 	player_type *p_ptr = Players[Ind];
 	int j, am;
