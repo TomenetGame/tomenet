@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. January 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 27. January 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -185,6 +185,7 @@ compile the game under '(2.1) Installing TomeNET'.
  and www.c-blue.de/rogue.html (my own site).
  The game client is named something like 'tomenet-???-client.zip', extract it
  to C:\TomeNET for example.
+
 -Either run 'TomeNET-main.bat' to directly connect to official main server
  (recommended), or run TomeNET.exe and choose a server (Enter 85.118.45.235
  to connect to the official main server).
@@ -192,7 +193,7 @@ compile the game under '(2.1) Installing TomeNET'.
        the meta server's hostname is "meta.tomenet.net" (the meta server is the
        server that presents you the list of actual game servers).
 
- -Create a character, Half-Troll warrior is good for beginners.
+-Create a character, Half-Troll warrior is good for beginners.
  The server should now allow you to manually choose your stats.
  In case you chose a (Half-Troll) warrior, try this:
   STR 18/30, CON as high as possible, INT as low as possible,
@@ -227,15 +228,18 @@ compile the game under '(2.1) Installing TomeNET'.
  (If you are new to the game, it is NOT recommended to choose one of these:
  Istar, Priest, Shaman, Adventurer.
  Details about how STR and DEX affect startup blows/round are given in (6.5a).)
+
 -Make sure you DO NOT chose 'PvP' mode. It's a restricted special thing that
  has nothing to do with the normal gameplay at all! (See (6.13) for info).
+
 -It's strongly recommended to not choose 'fruit bat' body either :).
 
  Now you're in the game and should see the town of Bree.
 
- -To chat, press the colon key ':' . Don't hesitate to ask other players
+-To chat, press the colon key ':' . Don't hesitate to ask other players
  if you have any problems with getting started.
  (For details about chat features see (3.3).)
+
 -To run, press SHIFT + <direction key> where direction keys are on
  the number pad 7,8,9, 4,6, 1,2,3. Running often requires that
  Numlock is turned off (press the 'Num' key above your number key pad on the
@@ -244,34 +248,44 @@ compile the game under '(2.1) Installing TomeNET'.
  followed by a direction key. (If you use rogue-like keys, see section (0.2)!)
  You can also use the arrow keys to move, but the numpad is better since it
  allows you to move diagonally too, which is very important.
+
 -You can wear/wield your armour/weapons by pressing 'w' and choosing them
  from your inventory which is displayed in the bottom right window.
+
 -You can pick up items if you stand on them and press 'g'. Items that are
  especially valuable in the beginning are magic wands and staves, so make sure
  to pick those up, identify them with a scroll of identify, and sell them to
  the magic shop in town.
+
 -You can drop items with 'd' or destroy items with 'k'.
+
 -You can enter stairs down/upwards by standing on them and pressing the
  corresponding key '<' or '>'.
+
 -You can press '?' to get an in-game help about keys and commands.
 
 -Nearby the town there's often a 'training tower' which is a good place
  to start because if you die there nothing will happen except a slight
  loss of experience and gold. Ask people where the dark-green '<' symbol
  (the tower entrance) is found. Usually to the lower-right of the town centre.
+
 -If you die outside of the training tower you will usually turn into a ghost.
  This ghost cant wear any items, so it's a good idea to care about being
  revived. To get revived, either visit the temple in town (it's a green '4')
  or ask another player to read a 'Scroll of Life' while standing next to you.
  While you're a ghost you can freely float up/down by pressing '<' and '>'.
--If you have any journals like 'Guide to Middle Earth' or 'The Gazette' in
+
+-If you have any parchments like 'Guide to Middle Earth' or 'The Gazette' in
  your inventory (bottom right window) you should read those by pressing 'r' to
  read.
+
 -If your character gains a new level it also gains skill points. To distribute
  those, invoke the skill screen with 'G'. (See 3.10, 6.2 and 7.5.)
+
 -If you don't like your character and want to delete it, you may commit
  suicide by pressing SHIFT+q or CTRL+k and double-confirming the following
  questions with 'y' and '@'.
+
 -To drop items, privately chat with other players, or advance beyond a certain
  level you will need an admin to 'validate' your account.
  Usually, all you have to do is to keep playing/stay online for a bit until an
@@ -280,6 +294,7 @@ compile the game under '(2.1) Installing TomeNET'.
  chatting (Admin's names are displayed in dark blue in the chat).
  If the server's intro screen mentions to send an email to an admin, try that
  and specify your account name in it.
+
 -Press '@' key to see a list of players who're currently online. Note that a
  yellow '(I)' before a name stands for 'invalid', and means that this player
  is still awaiting account validation by an admin.
@@ -288,6 +303,7 @@ compile the game under '(2.1) Installing TomeNET'.
  If another player's character level is displayed in light blue colour, that
  means he is within sensible level range of you to form a party! Press SHIFT+P
  for party menu. One of you has to create the party and add the other one.
+
 -Note that your character's "speed" may change. Speed is the factor telling you
  how fast your character can move, fight or perform any other kind of action.
  If your character's speed gets increased (for example by drinking a potion of
@@ -2636,33 +2652,33 @@ important stats:
 -starting with your race
 -your class
 -your current title
-(the title will change as you gain experience levels by fighting monsters),
+ (the title will change as you gain experience levels by fighting monsters),
 -followed by your character level
 -your amount of experience
 -and your cash ('Au' stands for Aurum, latin for gold)
 -the 'encumberment' bar (blank at the beginning)
 -a mini lag-o-meter bar displaying your 'ping' by coloured plusses, 1 plus
-symbol means your latency is below 50ms, each further plus symbol means 50ms
-more, so if you see +++ your latency is between 100 and 149 ms.
+ symbol means your latency is below 50ms, each further plus symbol means 50ms
+ more, so if you see +++ your latency is between 100 and 149 ms.
 -your 6 character attributes:
-STRength, INTelligence, WISdom, DEXterity, CONstitution, CHaRisma,
+ STRength, INTelligence, WISdom, DEXterity, CONstitution, CHaRisma,
 -your current sanity (sound means you are completely sane, this might drop, for
-example if a mindcrafter blasts your mind with psionic energy, leaving you
-mad)
+ example if a mindcrafter blasts your mind with psionic energy, leaving you
+ mad)
 -then comes your Armor Class (AC) which describes how well you are protected
-by all the armor you're currently wearing.
+ by all the armor you're currently wearing.
 -The next two values are most important and will change all the time while
-fighting monsters.
-They are your Hit Points (HP) and Mana Points (MP), current/maximum values.
-Mana points are very important for wizards, since they determine which spells
-and how many of them you can cast. The current hit points (Cur HP) tell you if
-you are injured. If they drop below zero you die!
-If they are the same as your Max HP then you are fully rested and physically
-healed.
+ fighting monsters.
+ They are your Hit Points (HP) and Mana Points (MP), current/maximum values.
+ Mana points are very important for wizards, since they determine which spells
+ and how many of them you can cast. The current hit points (Cur HP) tell you if
+ you are injured. If they drop below zero you die!
+ If they are the same as your Max HP then you are fully rested and physically
+ healed.
 -Next entry is your stamina (ST), if you chose a class that makes use of it.
-Stamina may allow you to employ special techniques accessed with 'm'.
+ Stamina may allow you to employ special techniques accessed with 'm'.
 -Below stamina is a 'flag bar' which displays certain combat-related modi of
-your character, if available to your class:
+ your character, if available to your class:
  -Combat stance (Bl = balanced, Df = defensive, Of = offensive, see (6.2))
  -Dual-wield mode (DH = dual-hand aka default, MH = main hand only, see (6.2))
  -Fire-till-kill toggle (FK = enabled, see (5.2a))
@@ -2670,10 +2686,10 @@ your character, if available to your class:
 
 Below that, there are further status indicators such as
 -your current world map location (sector 32,32 aka the starter town of 'Bree'
-when you log in for the first time) and the 'AFK' status indicator
+ when you log in for the first time) and the 'AFK' status indicator
 -as well as your food indicator ('full' by default). Note that if you don't
-eat when you become hungry you might get paralyzed sporadically and eventually
-even die of starvation!
+ eat when you become hungry you might get paralyzed sporadically and eventually
+ even die of starvation!
 
 By the way: If you enter the game and find that you don't like your
 character and want to recreate it from scratch, you can suicide by pressing
