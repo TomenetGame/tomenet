@@ -5802,6 +5802,9 @@ static void inven_death_damage(int Ind, int verbose) {
 		o_ptr = &p_ptr->inventory[j];
 		if (!o_ptr->k_idx) continue;
 
+		/* hack: don't discard his remaining gold - a penalty was already deducted from it */
+		if (o_ptr->tval == TV_GOLD) continue;
+
 		if (magik(DEATH_PACK_ITEM_LOST)) {
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 			s_printf("item_lost: %s (slot %d)\n", o_name, j);
@@ -5882,8 +5885,7 @@ static void equip_death_damage(int Ind, int verbose) {
   -APD-
  */
 
-void player_death(int Ind)
-{
+void player_death(int Ind) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	int Ind2;
 	object_type *o_ptr;
@@ -6121,7 +6123,7 @@ void player_death(int Ind)
 		return;
 	}
 
-	if((!(p_ptr->mode & MODE_NO_GHOST)) && !cfg.no_ghost && !pvp){
+	if ((!(p_ptr->mode & MODE_NO_GHOST)) && !cfg.no_ghost && !pvp) {
 		if(!p_ptr->wpos.wz || !(d_ptr->flags2 & (DF2_HELL | DF2_IRON)))
 			hell = FALSE;
 	}
@@ -6303,6 +6305,13 @@ void player_death(int Ind)
 				p_ptr->au = 0;
 			}
 
+			/* Also lose some cash on death */
+			s_printf("gold_lost: carried %d, remaining ", p_ptr->au);
+			if (p_ptr->au <= 50000) ;
+			else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
+			else p_ptr->au /= 2;
+			s_printf("%d.\n", p_ptr->au);
+
 			p_ptr->safe_sane = TRUE;
 
 			/* Lose some experience */
@@ -6407,7 +6416,7 @@ void player_death(int Ind)
 		else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
 		else p_ptr->au /= 2;
 
-		if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
+		if (p_ptr->max_plv >= cfg.newbies_cannot_drop) {
 			/* Set the amount */
 			p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
 			s_printf("%d.\n", p_ptr->au);
