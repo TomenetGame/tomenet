@@ -2452,15 +2452,14 @@ void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mod
  * Determine the "Activation" (if any) for an artifact
  * Return a string, or NULL for "no activation"
  */
-cptr item_activation(object_type *o_ptr)
-{
-	    u32b f1, f2, f3, f4, f5, esp;
+cptr item_activation(object_type *o_ptr) {
+	u32b f1, f2, f3, f4, f5, esp;
 
         /* Needed hacks */
         //static char rspell[2][80];
 
-			  /* Extract the flags */
-			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Require activation ability */
 	if (!(f3 & TR3_ACTIVATE)) return (NULL);
@@ -2799,6 +2798,10 @@ cptr item_activation(object_type *o_ptr)
 		default:
 			return NULL;
 		}
+	}
+
+	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
+		return "transcribing a spell scroll into it";
 	}
 
 	/* For the moment ignore (non-ego) randarts */
@@ -3834,10 +3837,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, o_ptr, fff, eff_full);
 
 	/* specialty: recognize custom spell books and display their contents! - C. Blue */
-	if (o_ptr->tval == TV_BOOK &&
-	    (o_ptr->sval == SV_CUSTOM_TOME_1 ||
-	    o_ptr->sval == SV_CUSTOM_TOME_2 ||
-	    o_ptr->sval == SV_CUSTOM_TOME_3)) {
+	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
 		if (!o_ptr->xtra1) fprintf(fff, "It contains no spells yet.\n");
 		else fprintf(fff,"It contains spells:\n");
 		if (o_ptr->xtra1) fprintf(fff, "- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1)));
@@ -3880,11 +3880,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		cptr activation;
 		if (!(activation = item_activation(o_ptr))) {
 			/* Mysterious message for items missing description (eg. golem command scrolls) - mikaelh */
-			fprintf(fff, "It can be activated.\n");
+			if (wearable_p(o_ptr)) fprintf(fff, "When equipped, it can be activated.\n");
+			else fprintf(fff, "It can be activated.\n");
 		} else {
-			fprintf(fff, "It can be activated for...\n");
-			fprintf(fff, "%s\n", item_activation(o_ptr));
-			fprintf(fff, "...if it is being worn.\n");
+			if (wearable_p(o_ptr)) fprintf(fff, "When equipped, it can be activated for...\n");
+			else fprintf(fff, "It can be activated for...\n");
+			fprintf(fff, " %s.\n", item_activation(o_ptr));
+			//fprintf(fff, "...if it is being worn.\n");
 		}
 	}
 
@@ -4804,7 +4806,7 @@ void display_inven(int Ind)
 
 		/* Send the info to the client */
 		if (is_newer_than(&p_ptr->version, 4, 4, 1, 7, 0, 0)) {
-			if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
+			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
 				Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
 			} else {
 				Send_inven_wide(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
@@ -5000,7 +5002,7 @@ byte get_book_name_color(int Ind, object_type *o_ptr)
 	//player_type *p_ptr = Players[Ind];
 	if (o_ptr->sval == SV_SPELLBOOK) { /* Simple spell scrolls */
 		return get_spellbook_name_colour(o_ptr->pval);
-	} else if (o_ptr->sval >= SV_CUSTOM_TOME_1) { /* Custom books */
+	} else if (is_custom_tome(o_ptr->sval)) { /* Custom books */
 		/* first annotated spell decides */
 		if (o_ptr->xtra1)
 			return get_spellbook_name_colour(o_ptr->xtra1 - 1);

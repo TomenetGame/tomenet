@@ -3011,9 +3011,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_BOOK:	/* Books can be 'fireproof' */
 		{
 			/* custom tomes which appear identical, spell-wise too, may stack */
-			if (o_ptr->tval == TV_BOOK &&
-			    o_ptr->sval >= SV_CUSTOM_TOME_1 &&
-			    o_ptr->sval < SV_SPELLBOOK &&
+			if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval) &&
 			    ((o_ptr->xtra1 != j_ptr->xtra1) ||
 			    (o_ptr->xtra2 != j_ptr->xtra2) ||
 			    (o_ptr->xtra3 != j_ptr->xtra3) ||

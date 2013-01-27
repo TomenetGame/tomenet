@@ -7843,9 +7843,7 @@ void tome_creation_aux(int Ind, int item) {
 	else o2_ptr = &o_list[0 - p_ptr->using_up_item];
 
 	/* severe error: custom book no longer there */
-	if (o_ptr->tval != TV_BOOK || o_ptr->sval == SV_SPELLBOOK ||
-	    o_ptr->sval < SV_CUSTOM_TOME_1)
-	{
+	if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
 		/* completely start from scratch (have to re-'activate') */
 		msg_print(Ind, "A book's inventory location was changed, please retry!");
 		clear_current(Ind); /* <- not required actually */

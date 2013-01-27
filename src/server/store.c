@@ -561,7 +561,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	/* Require identical "ego-item" names */
 	if (o_ptr->name2 != j_ptr->name2) return (0);
 	if (o_ptr->name2b != j_ptr->name2b) return (0);
-	
+
 	/* require same seed */
 	if (o_ptr->name3 != j_ptr->name3) return (0);
 
@@ -582,11 +582,9 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	if (o_ptr->tval == TV_CHEST) return (0);
 
 	/* Hack -- Never stack 'used' custom tomes */
-	if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_CUSTOM_TOME_1 &&
-	    o_ptr->sval < SV_SPELLBOOK && o_ptr->xtra1)
+	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval) && o_ptr->xtra1)
 		return(0);
-	if (j_ptr->tval == TV_BOOK && j_ptr->sval >= SV_CUSTOM_TOME_1 &&
-	    j_ptr->sval < SV_SPELLBOOK && j_ptr->xtra1)
+	if (j_ptr->tval == TV_BOOK && is_custom_tome(j_ptr->sval) && j_ptr->xtra1)
 		return(0);
 
 	/* cheques may have different value, so they must not stack */
@@ -1238,7 +1236,7 @@ static bool black_market_crap(object_type *o_ptr)
 
 	/* No "Handbook"s in the BM (can only be found) - C. Blue */
 	if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_BOOK_COMBO && o_ptr->sval < SV_CUSTOM_TOME_1) return (TRUE);
-	
+
 	/* no ethereal ammo */
 	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return(TRUE);
 
@@ -1837,8 +1835,7 @@ static void store_create(store_type *st_ptr)
 					else if (k_ptr->tval == TV_ROD) continue;
 
 					/* keep custom books out of XBM, so they may appear more often in BM/SBM */
-					else if (k_ptr->tval == TV_BOOK &&
-					    k_ptr->sval >= SV_CUSTOM_TOME_1 && k_ptr->sval <= SV_CUSTOM_TOME_3)
+					else if (k_ptr->tval == TV_BOOK && is_custom_tome(k_ptr->sval))
 						continue;
 
 					/* XBM must not make Khazad Mining Supply Store unemployed! */
@@ -2197,7 +2194,7 @@ static void display_entry(int Ind, int pos)
 
 		/* Send the info */
 		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
-                        if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
+                        if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
                                 Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 			} else {
                                 Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
@@ -2280,7 +2277,7 @@ static void display_entry(int Ind, int pos)
 #endif
 		/* Send the info */
 		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
-			if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
+			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
 				Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 			} else {
 				Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
@@ -4727,20 +4724,14 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	case TV_BOOK:	/* Books can be 'fireproof' */
 #if 0 /* custom tomes which aren't blank can't be stacked */
 		/* hack: 'used' custom tomes can't be stacked */
-		if (o_ptr->tval == TV_BOOK &&
-		    o_ptr->sval >= SV_CUSTOM_TOME_1 &&
-		    o_ptr->sval < SV_SPELLBOOK &&
+		if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval) &&
 		    o_ptr->xtra1) /* not 'empty' anymore, ie already written into? */
 			return(FALSE);
-		if (j_ptr->tval == TV_BOOK &&
-		    j_ptr->sval >= SV_CUSTOM_TOME_1 &&
-		    j_ptr->sval < SV_SPELLBOOK &&
+		if (j_ptr->tval == TV_BOOK && is_custom_tome(j_ptr->sval) &&
 		    j_ptr->xtra1) /* not 'empty' anymore, ie already written into? */
 			return(FALSE);
 #else /* custom tomes which appear identical, spell-wise too, may stack */
-		if (o_ptr->tval == TV_BOOK &&
-		    o_ptr->sval >= SV_CUSTOM_TOME_1 &&
-		    o_ptr->sval < SV_SPELLBOOK &&
+		if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval) &&
 		    ((o_ptr->xtra1 != j_ptr->xtra1) ||
 		    (o_ptr->xtra2 != j_ptr->xtra2) ||
 		    (o_ptr->xtra3 != j_ptr->xtra3) ||
@@ -5614,7 +5605,7 @@ static void display_house_entry(int Ind, int pos, house_type *h_ptr)
 
 	/* Send the info */
 	if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
-		if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
+		if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
 			Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 		} else {
 			Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,

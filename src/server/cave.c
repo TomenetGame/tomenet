@@ -3095,8 +3095,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					(*ap) = TERM_L_BLUE;
 
 				/* hack: custom books' colour depends on their content! - C. Blue */
-				if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_CUSTOM_TOME_1 &&
-				    o_ptr->sval < SV_SPELLBOOK)
+				if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval))
 					(*ap) = get_book_name_color(Ind, o_ptr);
 				/* hack: colour of fancy shirts or custom objects can vary  */
 				if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
