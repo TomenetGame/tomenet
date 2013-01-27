@@ -338,11 +338,13 @@ i       i       display your inventory. You can then press SHIFT + inventory
                 You can also type \\<slot letter> shortcut in chat to paste an
                 item right into some text you are writing, eg "\\a" for the
                 item in your inventory slot 'a)'.
+
 e       e       display your equipment. You can then press SHIFT + equipment
                 slot letter to paste that item name into chat.
                 You can also type \\<capital slot letter> shortcut in chat to
                 paste an item right into some text you are writing, eg "\\A"
                 for the item in your equipment slot 'a)'.
+
 I       I       inspects an item, showing its special abilities in case it
                 has some. To examine an item you must either have bought it
                 from a shop or *identified* it. Mages can learn *ID* spell
@@ -353,11 +355,15 @@ I       I       inspects an item, showing its special abilities in case it
                 If you examine weapons, it always tells you the weapon class
                 (sword/blunt/axe/polearm) as well as if it's 1-, 2- or
                 1,5-handed.
+
 w       w       wear/wield an item from your inventory (weapons, armour,
                 ammunition, tools, rings, amulets, etc).
+
 W       W       wear/wield an item, same as 'w', but tries to use the second
                 available slot in case two inventory slots are both egligible.
+
 t       T       take off an item.
+
 x               swap an item. This is basically like both "wear/wield" and
                 "take off" in one command. This makes only sense if it is used
                 with an item that has been _inscribed_ accordingly, for example
@@ -365,40 +371,58 @@ x               swap an item. This is basically like both "wear/wield" and
                 When the item is currently in the inventory, it will be
                 equipped. If it already is equipped though, then it will be
                 taken off.
+
 q       q       quaff a potion.
+
 r       r       read a scroll.
+
 E       E       eat. (Draconians can eat firestones to gain temporary special
                 abilities, see (5.9).)
+
 F       F       fuel your light source.
                 Use oil for lanterns, and torches to fuel another torch.
+
 f       t       fire ammo from your quiver.
+
 v       v       throw an item from your inventory.
+
 b       (P)     browse (peruse) a book.
+
 m       m       activate a skill (ie cast a magic spell, lay a trap, use an
                 ability, use a technique, polymorph into a monster form or
                 back to normal, cast a monster-spell while polymorphed,
                 enter a combat stance).
+
 a       z       use (aim) a magic wand.
+
 z       a       use (zap) a magic rod.
+
 u       Z       use a magic staff.
+
 g       g       pick up an item from the floor. You have to stand on the item
                 to do that. You can also pick up an item by pressing '5' on
                 the number pad while numlock is turned off. Gold is always
                 picked up automatically.
+
 C       C       see a character overview.
+
 L       W       look around your current sector/floor (use direction keys).
+
 M       M       display either the world map if you're not in a town or in a
                 dungeon, otherwise display a minimap of the town or of your
                 currentl dungeon level.
                 If you want to see the world map while you're in town or in
                 the dungeon, press ~ and choose "Wilderness map" there.
                 You can scroll around the map via directional keys.
+
 s       s       search adjacent fields, objects or walls for hidden traps or
                 doors.
+
 S       #       enter 'search mode'. You will search your adjacent fields once
                 each turn. If you stand next to a room and you want to find
                 its hidden door, turn this on and run along its walls until
                 you find it.
+
 V       V       enter 'cloaking mode'. This can only be used by rogues.
                 It will take a couple of turns to perfectly cloak your
                 physical appearance and body warmth pattern, after which you
@@ -424,12 +448,17 @@ V       V       enter 'cloaking mode'. This can only be used by rogues.
                 now it's still set to overrides ESP of other players for the
                 sake of PvP usage, similar to invisibility.
                 (Also see (5.16) for details on 'normal' invisibility.)
+
 A       A       activate an item. Usually an artifact, a dragon scale mail or
                 a ring of polymorphing (shapechanging).
+
 T or +  +       tunnel (dig) through an obstacle or a wall.
+
 R       R       rest. Your hit points, mana and stamina will regenerate faster
                 while resting.
+
 o       o       open something.
+
 c       c       close something.
 c   while in a store:
                 Paste an item name, its price and the store symbol into chat,
@@ -437,16 +466,23 @@ c   while in a store:
                 You can also type \\\<slot letter> shortcut in chat to paste an
                 item right into some text you are writing, eg "\\\a" for the
                 first item on the store page you are currently looking at.
+
 d       d       drop an item.
+
 $       $       drop some gold. You can use 'k' and 'm' for thousands or
                 millions, example: 3k -> drops 3000. 2m -> drops 2000000.
+
 D       D       disarm a trap. This yields experience points, depending on the
                 trap type. (Note that you won't get experience points for
                 disarming traps via magic spells or magic devices.)
                 Also see (4.7) for details about traps.
+
 k       CTRL+D  destroy an item. (Note that artifacts are indestructible.)
+
 G       G       skills screen.
+
 B       f       bash/force something (ie a stuck door).
+
 l       x       look at a player/monster/object (use direction keys for
                 targetting). Similar to targetting, while looking you can press
                 'p' to switch to manual cursor positioning, allowing you to
@@ -460,13 +496,17 @@ l       x       look at a player/monster/object (use direction keys for
                 target when you use a ranged attack that requires a target.
                 This behaviour has no real effect on gameplay though it just
                 looks odd in those rare cases it happens :-p.)
+
 j               attempt to steal from players (not recommended!).
+
 U       O       use undead powers (use this if you died and became a ghost).
                 Using these will drain your experience. If you ran out of
                 experience points, your ghost fades away (= you character will
                 be completely erased).
                 NOTE: Undead powers are currently not available.
+
 CTRL+S          spike a door (using iron spikes, the door will be jammed).
+
 p       p       Concentrate on opening your mind for telekinesis.
                 ("You open your mind.." and "You close your mind.")
                 You need to open your mind in order to receive items from
@@ -477,7 +517,9 @@ p       p       Concentrate on opening your mind for telekinesis.
                 Certain spells of the mindcrafter class might also require
                 players in the same party to open their minds in order to work
                 or to affect them as intended.
+
 h               sell/buy a house or change house parameters. See (4.10).
+
 P       O       party screen. Form/disband/modify a party with other players
                 here. In a party you will share experience points if you are
                 within 7 character levels to each other and on the same
@@ -488,12 +530,16 @@ P       O       party screen. Form/disband/modify a party with other players
 
 SPACE   Stop executing repeatable actions such as searching, tunnelling or
         disarming traps. Also stops fire-till-kill.
+
 < or >  go upstairs/downstairs. Press '>' to use a void gate (violet '+').
         Void jump gates teleport you to their counterpart and vice versa.
         If you take staircases up/down, you'll receive the stair-GoI buff,
         see (0.4) for details on that.
+
 {       inscribe an item.
+
 }       remove inscription from an item.
+
 /       in general, use an item (combines q,r, etc..).
         This can be useful if you run out of macros for a specific action,
         for example if you already use @m0...@m9 and still have more spell
@@ -506,10 +552,12 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         to kill orcs, jellies, and other light-sensitive critters.
         Note that in the spell book example above, you could of course just use
         call-by-name instead so you won't need any inscriptions at all (3.9b) !
+
 ~       display further information of your character.
         Point (3) here is especially helpful for mimics:
         The number shown in round brackets before each monster name is the
         number they have to enter for their 'Polymorph self into..' ability!
+
 @       displays a list of players currently on the server.
         Note that a yellow '(I)' before a name stands for 'invalid', and means
         that this player is still awaiting account validation by an admin.
@@ -520,8 +568,11 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         that means he is within sensible level range of you to form a party!
         Press SHIFT+P for party menu. One of you has to create the party and
         add the other one.
+
 %       edit your macros.
+
 &       edit your auto-inscriptions.
+
 =       edit your preferences.
         Most important entries here are..
         User Interface Options:
@@ -548,6 +599,7 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
             "Scroll the screen more frequently" helps to avoid death by
                 attacks that came from off-screen. However, this option can be
                 a bit irritating.
+
 :       type a chat message. To whisper privately, enter <player>:<text>
         You can also enter a slash command here.
         Press TAB to cycle between different chat modes, such as party-chat.
@@ -555,34 +607,49 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         For details about slash commands, see further below in this paragraph.
         There is also a /say command for talking to players nearby, and a
         /shout command for waking up monsters! See further below.
+
 '       lets you peek at the equipment of party members or players within
         sight.
+
 #       displays the high scores (same as ~c).
         (Note: If you press this while browsing any text you can jump to a
         line number of your choice.)
+
 |       displays the unique monster list (same as ~1).
+
 X       quickly swap between two equippable items. They must be inscribed
         '@x0'. (It's basically just the macro 'x0' bound to shift+x key.)
+
 _       Two uses, regarding a) fountains or b) item piles:
-        Main: Drink from a fountain. You must stand on the fountain to do this.
+
+        a) Main: Drink from a fountain. You must be standing on the fountain.
         Fountains can have good/bad/no effects. There is no fountain of death,
         neither one of detonations, so you won't get instakilled.
         If you see a message 'You feel less thirsty' that means the fountain
         was just plain water. A message 'You have quenched your thirst' means
         that the fountain had no effect on you, although it wasn't water.
         (Same as /sip command.)
-        Secondary: If you press _ while standing on an item or a pile of items,
-        you will get a message what item is currently below your feet.
+        Fountains cannot have effects of potions which are of higher level than
+        the dungeon level where the fountain is.
+
+        b) Secondary: If you press _ while standing on an item or a pile of
+        items, you will get a message what item is currently below your feet.
+
 ?       invoke an in-game help screen
+
 !       look at the in-game bulletin board. Players can write lines of text to
         it by using the /bbs <text> command.
+
 K       forcibly combines a level 0 item in your inventory with other items of
         the same type that aren't level 0. Be warned, that this will change the
         level of all the items involved to 0.
+
 CTRL+P  view previous messages.
         Note: You can also press this when in chat prompt, to cycle backward
         through lines that you previously typed (also see CTRL+N).
+
 CTRL+O  view previous chat messages.
+
 CTRL+X  save your character & quit the game. (You should do this in town!)
         This also automatically saves some settings, like window positions on
         MS-Windows, or mixer settings (CTRL+U to change), and you will be asked
@@ -590,19 +657,26 @@ CTRL+X  save your character & quit the game. (You should do this in town!)
         Note that if you exit the game just by clicking on the 'x' button in
         the game window's titlebar, these extra features will be skipped, and
         any changes in settings or window positions will be discarded.
+
 Q or CTRL+K
         lets your character commit suicide (permanently deletes it!).
         Characters who suicide won't drop items except for artifacts (if the
         server has ANTI_ARTS_HOARD enabled then no item at all will be
         dropped), nor will they keep the level static as it happens on a
         normal 'final death' (see (3.11) for details about static levels).
+
 CTRL+R  redraw the screen (do this if it's messed up for some reason).
  (/refresh, /ref)
+
 CTRL+T  take a screen shot. See /screenshot command below.
+
 TAB or CTRL+I
         displays lag-o-meter.
+
 CTRL+U  Displays/exits the audio mixer settings. (Also see (2.1a).)
+
 CTRL+C  Toggles music. (Shortcut for toggling it in the mixer settings.)
+
 CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
         Note: If you press this while in chat prompt, you can cycle forward
         through lines you previously typed (also see CTRL+P).
@@ -610,11 +684,15 @@ Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 (Compare troubleshooting section (8.6), problem 21.)
 
 ^       Allows to enter a CTRL character as command.
+
 \       Enter a command, bypassing the client's key map.
         Also allows to enter ^ next to enter a CTRL character as command.
+
 )       Clears the command buffer of pending key presses (used in macros).
+
 *       Initiates targetting a monster, hostile player or location
         (used in macros).
+
 (       Initiates targetting a friendly player (used in macros).
         (Currently targets the most hurt player who is in your party, or the
         most wounded player in general if you aren't in a party.)
@@ -623,6 +701,7 @@ There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
 
 /help       get a help about slash-commands.
+
 /afk        toggle AFK (away from keyboard) mode if you have to take a
             quick break from playing. If your character is currently on the
             blacklist of merchants (because you got caught stealing from a
@@ -638,20 +717,25 @@ They all start with a slash '/' hence they're called slash commands:
             you, use teleportation or word-of-recall on you, infect you with
             black breath by bumping into you, steal from you, form a blood bond
             with you or attempt to polymorph you while you are afk.
+
 /afk <msg>  You can specify a reason that will be displayed to the other
             players, so they know why you are currently AFK or when you will
             be back.
+
 /bbs <text> Add a line of text to the in-game bulletin board system. Players
             can look at the board by pressing the '!' key.
             (You can verify or compare the date with the /time command.)
             If <text> is omitted, the current BBS contents will be shown, same
             as using the '!' key.
+
 /pbbs <text>    Same usage as /bbs, but only readable/writable for party
                 members. So it's a party-internal BBS.
                 To read its contents, type /pbbs without any <text>.
+
 /gbbs <text>    Same usage as /bbs, but only readable/writable for guild
                 members. So it's a guild-internal BBS.
                 To read its contents, type /gbbs without any <text>.
+
 /convertexclusive    Attempts to convert your current character into a
                      slot-exclusive character (either PvP-mode or IDDC aka
                      Ironman Deep Dive Challenge). Warning: This process is NOT
@@ -659,15 +743,19 @@ They all start with a slash '/' hence they're called slash commands:
                      /convertexclusive <your-character-name>
                      for example:
                      /convertexclusive Gandalf
+
 /coin       Flip a coin to get either heads or tails.
             The result is random and can be seen by other players who stand
             nearby.
+
 /deal       Deals a card (completely random).
             The result is random and can be seen by other players who stand
             nearby.
+
 /dice       Roll some dice, you must specify a number of dice from 1 to 100.
             The result is random and can be seen by other players who stand
             nearby.
+
 /dis        DESTROYS every item in your inventory that has one of these
  (/dispose) inscriptions: terrible, cursed, uncursed, broken, worthless,
             average, good. Works only on items that actually can be destroyed.
@@ -676,30 +764,39 @@ They all start with a slash '/' hence they're called slash commands:
             Skips items which 
             inscription contains more than a pseudo-ID tag.
             Also see /tag and /untag. Note that artifacts cannot be destroyed.
+
 /dis a      DESTROYS items like /dis, and additionally destroys all items that
             have no inscription at all.
             Also see /tag and /untag.
+
 /dis b      DESTROYS items like '/dis a' does, but skips identified ego items.
             It also skips exploding ammo, although it isn't really an ego item.
+
 /dr [tag]   Without tag it equips all items in your inventory that are: not
 (/dress)    cursed, not {worthless}, not {terrible}, known to you.
             With tag it just equips all items that contain that tag in their
             name or inscription somewhere (even if they are cursed).
+
 /bed        Opposite of /dress.
  (/naked)
+
 (The /empty function is currently disabled)
 /empty <inventory slot>
             Empty a potion from your inventory, leaving an empty bottle.
             Example: /empty c   (if you have 'c) 3 potions of boldness', one
             will be emptied and 2 remain at 'c) 2 potions of boldness'.))
+
 /evinfo     Displays information about all ongoing events.
+
 /evinfo <#> Displays information about the specific event number #.
             Note: If you log out, your sign-up is cancelled automatically.
+
 /evsign <#> Signs you up for the event number #.
             Depending on the event, you might need to specify additional
             parameters after the number. If that is the case, you'll see
             a message telling you so, and speficying details what's missing.
             Note: If you log out, your sign-up is cancelled automatically.
+
 /ex or /examine or /extra
             Gives you detailed information about your character's status, such
             as how many actions you may perform per turn.
@@ -740,74 +837,100 @@ They all start with a slash '/' hence they're called slash commands:
               automatically receive 1 experience point (to limit the amount
               of cash you can pick up before participating in certain events,
               such as Highlander Tournament or Ironman Deep Dive Challenge).
+
 /exit       Leaves the game, same as pressing CTRL+X.
  (/leave,/quit)
+
 /fe         Repeat the level feeling. See (4.8) for more information.
  (/feeling)
+
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
             fountain. You must stand on the fountain to do this.
+
 /ftkon or /ftkoff
             Enables or disables fire-till-kill mode (see (5.2a)).
             Alternatively, you can toggle it in 'm' menu.
+
 /gleave     Leaves your guild. Same as pressing 'SHIFT+P' and 'd'.
  or /gquit
+
 /guild_adder <name of another player>
             Allows that player permanently to add other players to the guild
             too. Use the command a second time to revoke his rights again.
+
 /guild_cfg [<flag> [<value]]
             Shows you your current guild configuration and allows you to change
             it.
+
 /hou        Displays your houses, same as ~6.
  (/house)
+
 /ig <player name>
  (/ignore)  ignores all chat messages from the specified player. (Toggle)
             Also silences all paging attempts from that player.
+
 /ic         ignore all normal chat messages which are neither private messages
  (/ignchat) nor party messages. ('Private mode' will be displayed after the
             player's name in the player overview screen which can be invoked
             by pressing '@', indicating that this player currently cannot read
             normal chat messages.)
+
 /info <msg> Sets an informative message that is displayed to other players in
             '@' screen, similar to an afk-message, except this message is
             displayed when you're not afk.
             For example do:  /info Want to team up for Mordor!
             If you type /info without a message, it clears your info message.
+
 /leave      Leaves the game, same as pressing CTRL+X.
  (/exit, /quit)
+
 /lite a..w  Refills your light source with an item from your inventory.
             Usually it's easier to just press 'F' instead.
+
 /mar        Tells a prayer-user if he may use the prayer 'Martyrdom'.
  (/martyr)
+
 /me         Write an emote. Example: /me hides.
+
 /mon <monster character>
             Same as going to ~ menu and selecting 'Monsters':
             Will show your kill count of all matching monsters.
             Example: /mon D  ->  shows your greater dragons kill count.
+
 /motd       Shows the current server notes that are displayed at login.
  (/snotes)
+
 /news       Shows the login screen, same as ~f, but in monochrome.
+
 /note <account name>:<text>
             Leave a note to another player. Note: You have to specify his
             ACCOUNT NAME, not a character name. That way, no matter which of
             his characters he chooses to logon, he always gets the note.
+
 /note <account name>
             Delete all pending notes that were addressed to that player.
+
 /notes      Display all pending notes that you wrote to other players.
+
 /pnote <text>
             Leave a note to the party you own.
             If <text> is omitted, it will display the current note.
             If <text> is just an '*' char, it will erase the current note.
+
 /gnote <text>
             Leave a note to the guild you own.
             If <text> is omitted, it will display the current note.
             If <text> is just an '*' char, it will erase the current note.
+
 /obj        Displays all objects known to you, same as ~4.
  (/object)
+
 /page <player-name>     Sends beeps to that player to help you getting his
                         attention. (Using /ignore on a player will also
                         prevent getting paged by him.)
                         If you're on Linux and not hearing the page sounds,
                         see problem 19 in the troubleshooting section (8.6).
+
 /paint      (Also available by pressing 'h' for house menu.)
             Use a potion in your inventory to paint your house entrance in a
             similar colour. The potion is used up in the process. A potion of
@@ -819,73 +942,95 @@ They all start with a slash '/' hence they're called slash commands:
             Note that players of incompatible character mode (everlasting vs
             non-everlasting) won't see each other's house paint.
             (See (4.10a) for more information about player stores.)
+
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
             Will at some point in the future be absorbed by /evsign and
             thereby become obsolete.
+
 /pleave     Leaves your party. Same as pressing 'SHIFT+P' and '5'.
  or /pquit
+
 /pstore     (Also available by pressing 'h' for house menu.)
             Attempts to enter a player store next to you, even if it's your own
             house. So this command is good for 'testing' your own store.
             Usually you simply enter another player's store by trying to enter
             his house, which will preset you with the store screen.
             (See (4.10a) for more information about player stores.)
+
 /pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
             chars. See (6.13) for details about PvP mode.
+
 /que        gives a quest! It needs to be fulfilled before a certain period
  (/quest)   of time passes (continues to expire even while not logged on).
             The player who completes it gets a great item as reward. It will
             appear in your inventory and carry an inscription indicating
             it's the quest reward. (See (4.13) for more info.)
+
 /quit       Leaves the game, same as pressing CTRL+X.
  (/exit, /leave)
+
 /rec -550   recalls you to -550ft, using an item inscribed {@R}.
 /rec 32 32  recalls you to Bree (Town at 32,32 world map coordinates),
  (/recall)  using an item inscribed {@R}. See "(0.3) Important Inscriptions"
             for more info about Word of Recall.
+
 /ref        redraw the screen (do this if it's messed up for some reason).
  (/refresh, or simply hit CTRL+R)
+
 /bug        report a bug to the admin(s).
+
 /rfe        Store a message/suggestion for the admin(s).
+
 /whisper <text>
             Speaks <text> in a low voice, so only players standing directly
             next to you can hear it.
+
 /say <text>
             Speaks <text> to players who are currently nearby your position,
             instead of sending your message to everyone on the server.
+
 /whisper <text>
             Whispers <text> to players currently standing right next to you.
             Others won't be able to hear it.
+
 /cough      You cough noisily. Will disturb the sleep of monsters or at least
             make it less deep..
+
 /shout <text>
             Shout <text> loudly, will wake up monsters.
+
 /scream <text>
             Same as /shout, but also aggravates monsters in your current
             line of sight. (Same effect as scroll of aggravate monsters,
             see (5.9)).
+
 /shot  or  /shot <filename>
  (/screenshot)
             Takes a screen shot to a html file. If <filename> is omitted, it
             writes to 'screenshot?????.xhtml' by default, where ????? are
             increasing numbers. You may also use CTRL+T.
             You can view those xhtml files in most webbrowsers.
+
 /sip        drink from a fountain. You must stand on the fountain to do this.
             Fountains can have good/bad/no effects. There is no fountain of
             death, neither one of detonations, so you won't get instakilled.
             (It's easier to press '_' instead of using the /sip command.
             Also see '_' key above, for additional information.)
+
 /stime      Tells you the current date and time (of the server, not of your
             local timezone).
+
 /tag [a..w] Tags all uninscribed items in your backpack by adding a '!k'
             inscription. Helpful for looting in conjunction with /dis command.
             If a slot (a..w) is specified, it only tags the item in that
             particular inventory slot (if not yet inscribed already).
             Will not affect equipped items.
+
 /tar <x> <y>
  (/target)
             Allows you to target a specific grid specified by X,Y as offset
             to your current character position.
+
 /testyourmight [rs]
 or shorter: /tym [rs]
             Displays damage and healing stats for your character, totals and
@@ -895,7 +1040,12 @@ or shorter: /tym [rs]
                   attacks that missed, were blocked/parried/dodged or
                   nullified by invulnerability, etc.
                   It however counts ALL attacks, for example aura hits too.
+
 /time       Tells you the current in-game time, same as /ex does.
+
+/trait      Allows outdated Draconian characters to acquire a lineage trait.
+            This cannot be reversed, so the player should pick carefully.
+
 /untag [<inscription>]
             If <inscription is omitted, it removes all inscriptions from items
             in your backpack which are exactly '!k' (as done by /tag command).
@@ -904,12 +1054,17 @@ or shorter: /tym [rs]
             Will not affect equipped items (except for '/untag *').
             Note that some <inscription> parameters are special and therefore
             reserved, those are:
+
 /untag *    will remove all inscriptions from all items in your inventory.
+
 /untag p    will remove all pseudo-id tags from your inventory items.
             Note: This will work on equipped items too!
+
 /untag u    will remove all unique-loot tags from your inventory items.
+
 /at         Apply auto-inscription settings to current inventory.
  (/autotag)
+
 /undoskills Allows you to undo the skill points you assigned in 'G' menu last
             time. Use this to correct points you accidentally put into a wrong
             skill.
@@ -917,6 +1072,7 @@ or shorter: /tym [rs]
             making it impossible to undo points spent previously.
             Also, it can only be used ONCE per level, so make sure you get your
             skill point distribution right on the second attempt.
+
 /version    Displays the server version.
  (/ver)
 
@@ -1120,39 +1276,56 @@ Art         Artifact. Those can be 'Static arfifacts' from the a_info.txt
             Depending on the server settings, fallen winners might also not be
             able to use static arts.
             See (5.9b) for more information about artifacts.
+
 Auto-ID     A special ability of some items. If you equip an item that grants
             you 'Auto-ID' all items you touch will automatically be
             identified! Items who grant their wielder Auto-Identification are
             highly sought after. Randart helmets or gloves sometimes have it.
             See (5.7) for more information about identification.
+
 BM          Black Market (Store '7').
+
 Cheeze      Questionable action, not quite cheating but close to it.
             This can be transferring items to a store character (mule)
             or exploiting weaknesses in the game design instead of
             reporting them to the forum.
+
 DEW         Dark-elven warlock. A very deadly monster that comes in packs and
             shoots high-damage mana bolts, glass cannon style.
+
 Dive        A trip into the dungeon, usually quite deep compared to the
             diver's character level.
+
 DSM         Dragon Scale Mail. Legendary pieces of armour.
+
 Excellents  Items that pseudo-identified as 'excellent'.
+
 EA          Extra Attacks. Rings, gloves or weapons which increase your number
             of blows per round with melee weapons. Quite expensive.
+
 FA          Free Action (immunity to paralysis).
+
 FF          Feather falling (Levitation).
+
 GoI         Globe of invulnerability. This only exists as 'Stair-GoI', see
             further below.
+
 Gorth       Room in the dungeon, divided into 4 chambers, similar to a pit.
             Also see 'Room', 'Pit' and (4.6).
+
 GV          Greater Vault. (See 4.6)
+
 GCV         Greater Checkerboard Vault (looks remotely like a checkerboard).
+
 ID, *ID*    Identify and *Identify* magic respectively, which is used to
             reveal magic properties of unknown items. Scrolls of ID can be
             bought in store 5.
             See (5.7) for more information about identification.
+
 Iron Team   A special type of party which can only be formed with newly
             created characters. Its members only gain experience if all
             members are online and on the same dungeon level.
+
 klevel, olevel
             Somewhat more technical terms, these stand for the exact type of
             item level that is meant in a certain context:
@@ -1170,9 +1343,12 @@ klevel, olevel
             which equals dungeon level 80, an actual amulet you find might have
             a level requirement (olev) of 30.
             (Note: This is similar to mlevel vs rlevel for monsters.)
+
 Loot        Items that have been dropped by dead monsters or players and
             are waiting to be picked up by someone. :)
+
 LV          Lesser Vault. (See 4.6)
+
 mlevel, rlevel
             Somewhat more technical terms, these stand for the exact type of
             monster level that is meant in a certain context:
@@ -1199,15 +1375,19 @@ mlevel, rlevel
             of this dragon is still 41, its real level, the mlev, is 42.
             Some formulas used by the game use mlev, some use rlev.
             (Note: This is similar to klevel vs olevel for items.)
+
 Morgy       Morgoth, Lord of Darkness. Final boss enemy in TomeNET.
             See (1.3) for details.
+
 Nest        Originally also just called 'pits', nests only differ from pits in
             the monsters in them being strewn around in a randomly mixed manner
             while pits contain 'organized' rings and circles of monsters.
             The monsters in a nest are not completely random but follow certain
             schemes. For example all monsters in a 'clones nest' are exactly
             the same type. Also see 'pits'.
+
 olevel      see klevel.
+
 OoD         Out-of-depth. Means a monster or an item encounter that happened at
             a surprisingly shallow level, opposed to the base level for that
             monster (shown in ~7) or item (given in k_info.txt) where
@@ -1218,46 +1398,59 @@ OoD         Out-of-depth. Means a monster or an item encounter that happened at
             vaults); unique monsters can actually only be up to 20 levels OoD
             (even in vaults) and, as a specialty, Great Wyrms of Power can only
             ever occur up to 10 levels OoD.
+
 Party       A group of players who fight together and share experience.
             In a party you will share experience points if you are within 7
             character levels to each other and on the same dungeon/tower level
             respectively the same worldmap/wilderness sector.
             You can invoke the party menu with shift+p key. See (6.9).
+
 Phase Door  A short-range teleportation.
+
 Pit         Pits contain monsters of a certain type, for example 'demon pits'
             or 'orc pits', with the monsters in them being placed in a somewhat
             'organized' manner of rings and circles. Also see 'Nest' or 'Room'.
             Pits are often confused with special rooms.
+
 Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             'feel' if the item is average, good, cursed or special. The item
             will automatically receive a 'pseudo-id inscription' then.
             Pseudo-id intensity and speed depend on the 'Combat' skill.
             It does not matter whether the player is acting, afk or idle.
             See (5.7) for more information about identification.
+
 PvP         Player vs player. Describes the act of player characters fighting
             each other. If you want to fight other players to death, create a
             new 'pvp-mode' character. It's an option during the character
             creation process, much like 'everlasting mode' or 'normal mode'.
             For more information about pvp mode, see (6.13).
+
 Randart     Randomly generated artifact. As opposed to 'Truearts' which are
             also called 'Static arts' from the file a_info.txt (you can search
             static arts by pressing  ~ 6  in game). See 'Art' at the top of
             this section for more information.
             See (5.9b) for more information about artifacts.
+
 Res         Resistance.
+
 Room        The dungeon contains many rooms connected by passages. Some of the
             rooms are of special shape. Especially rooms containing a further,
             inner room similarly to pits are thereby often confused with those,
             mostly 'Gorths' (rooms divided into four chambers containing a
             lot of monsters), 'Checkerboard-Rooms' (rooms containing a
             checkerboard-like maze structure and a lot of monsters).
+
 rlevel      see mlevel.
+
 Scumming    Repeatedly using staircases up/downwards to make a level become
             recreated. Usually in hope of finding a specific monster on that
             depth. ('I scum 450..500 ft for Wormy'.)
+
 SI          See invisible.
+
 Specials    Items that pseudo-identify as 'special'. These are true arts or
             randarts.
+
 Static      A level that is static will not change if you leave it but stay
             the same, permanently until it is unstaticed.
             All levels remain static for a short period of time after the
@@ -1266,13 +1459,17 @@ Static      A level that is static will not change if you leave it but stay
             ultimatively without possibility of resurrection) for a longer
             while depending on the dungeon level, see (3.11) for details about
             static-by-death levels.
+
 Static Art  See 'Art' at the top of this section.
+
 Stair-GoI   Stair-globe of invulnerability. This describes the magical
             protection that any player who takes a staircase up or down or uses
             word-of-recall will receive: A temporary buff of +100 armour class
             and 40% chance to deflect any attacks that hit him. Attacks that
             aren't deflected still get their damage halved.
+
 True Art    See 'Art' at the top of this section.
+
 Unique      A monster that is named and exists only once. Although it can
             respawn for another player who hasn't defeated it yet, each player
             will receive loot only once from it. So if you engage a unique
@@ -1299,8 +1496,10 @@ Unique      A monster that is named and exists only once. Although it can
             more. There are some exceptions though, the following monsters
             will never respawn: The Nazguls, Sauron, Michael, Morgoth, and all
             super-uniques that come after Morgoth, starting with Tik'srvzllat.
+
 WoR         Word-of-Recall (teleports you into the dungeon and back or on the
             world map). See "(0.3) Important inscriptions" for more info.
+
 Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 
