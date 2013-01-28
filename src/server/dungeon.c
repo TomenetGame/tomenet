@@ -3136,7 +3136,11 @@ static bool process_player_end_aux(int Ind)
 
 		/* Drowning, but not ghosts */
 		if (c_ptr->feat == FEAT_DEEP_WATER) {
-			if ((!p_ptr->fly) && (!p_ptr->can_swim)) {
+
+			/* note: TODO (bug): items should get damaged even if player can_swim,
+			   but this might devalue swimming too much compared to flying. Dunno. */
+
+			if ((!p_ptr->tim_wraith) && (!p_ptr->fly) && (!p_ptr->can_swim)) {
 				/* Take damage */
 				if (!(p_ptr->body_monster) || (
 					!(r_info[p_ptr->body_monster].flags7 &
@@ -3180,7 +3184,7 @@ static bool process_player_end_aux(int Ind)
 							}
 						}
 
-						if(randint(1000 - factor) < 10) {
+						if (randint(1000 - factor) < 10) {
 							if (p_ptr->prace != RACE_HALF_TROLL) {
 								msg_print(Ind,"\377oYou are weakened by the exertion of swimming!");
 								//							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
@@ -3193,13 +3197,14 @@ static bool process_player_end_aux(int Ind)
 			}
 		}
 		/* Aquatic anoxia */
-		else if((p_ptr->body_monster) &&
+		else if ((p_ptr->body_monster) &&
 		    ((r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) &&
 		    !(r_info[p_ptr->body_monster].flags3 & RF3_UNDEAD))
 		    && ((c_ptr->feat != FEAT_SHAL_WATER) ||
 		    r_info[p_ptr->body_monster].weight > 700)
 		    /* new: don't get stunned from crossing door/stair grids every time - C. Blue */
-		    && !(is_door(c_ptr->feat) || is_stair(c_ptr->feat)))
+		    && !(is_door(c_ptr->feat) || is_stair(c_ptr->feat))
+		    && !p_ptr->tim_wraith)
 		{
 			long hit = p_ptr->mhp>>6; /* Take damage */
 			hit += randint(p_ptr->chp>>5);
