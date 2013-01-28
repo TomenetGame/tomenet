@@ -791,7 +791,7 @@ bool get_item_hook_find_spell(int *item, bool inven_first)
 
 		if (o_ptr->tval == TV_BOOK) {
 			/* A random book ? */
-			if ((o_ptr->sval == 255) && (o_ptr->pval == spell)) {
+			if ((o_ptr->sval == SV_SPELLBOOK) && (o_ptr->pval == spell)) {
 				*item = i;
 				hack_force_spell = spell;
 				return TRUE;
