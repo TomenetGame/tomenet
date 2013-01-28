@@ -2666,16 +2666,21 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		{
 			struct c_special *cs_ptr;
 
-			/* Normal char */
-			(*cp) = p_ptr->f_char[feat];
+			/* for FEAT_ILLUS_WALL, which aren't walls but floors! */
+			if (!p_ptr->font_map_solid_walls) {
+				/* Normal char */
+				(*cp) = p_ptr->f_char[feat];
 
-			/* Normal attr */
-			a = p_ptr->f_attr[feat];
-
+				/* Normal attr */
+				a = p_ptr->f_attr[feat];
+			} else { /* hack */
+				(*cp) = p_ptr->f_char_solid[feat];
+				a = p_ptr->f_attr_solid[feat];
+			}
 
 			/* Hack to display monster traps */
-			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
-
+			/* Illusory wall masks everythink */
+			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP)) && c_ptr->feat != FEAT_ILLUS_WALL) {
 				/* Hack -- random hallucination */
 				if (p_ptr->image) {
 /*					image_random(ap, cp); */
@@ -2692,10 +2697,13 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 
 			/* Hack to display "runes of warding" which are coloured by GF_TYPE */
-			if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) a = get_rune_color(Ind, cs_ptr->sc.rune.typ);
+			/* Illusory wall masks everythink */
+			if ((cs_ptr = GetCS(c_ptr, CS_RUNE)) && c_ptr->feat != FEAT_ILLUS_WALL)
+				a = get_rune_color(Ind, cs_ptr->sc.rune.typ);
 
 			/* Hack to display detected traps */
-			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
+			/* Illusory wall masks everythink */
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && c_ptr->feat != FEAT_ILLUS_WALL) {
 				int t_idx = cs_ptr->sc.trap.t_idx;
 				if (cs_ptr->sc.trap.found) {
 					/* Hack -- random hallucination */
