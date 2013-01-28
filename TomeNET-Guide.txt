@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. January 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. January 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8715,9 +8715,12 @@ Note: Rings of polymorphing cannot be recharged.
 
 When an item is recharged the result depends on the method of recharging and
 the item's base type level. For wands and staves it also depends on the current
-amount of charges in the device, to get the most out of it and to minimize the
-risk of a failure you should only recharge wands and staves that are already
-fully depleted ie have zero charges left.
+amount of charges in the device: To minimize the risk of a failure you should
+only recharge wands and staves that are already fully depleted ie have zero
+charges left.
+In general, higher recharge power and lower base item level result in...
+ -lower chance for the recharge process to fail,
+ -chance for gaining a higher amount of charges replenished.
 
 If unlucky, recharging may result in a failure. Even when recharging at highest
 magic spell level there is still a very slim chance for a failure to occur.
@@ -8727,6 +8730,7 @@ depending on your (bad) luck.
 So only recharge those when they are already fully depleted to minimize that
 risk.
 
+
 Means of recharging:
 -Scrolls            (60 power)
 -Thingol artifact   (60..100 power, depending on magic device skill)
@@ -8735,8 +8739,18 @@ Means of recharging:
 
 The power determines both, the chance of succeeding in recharging the item and
 the degree of recharging done to the item.
-Note: Staves 'of plenty' will receive about twice as many charges from
-      recharging, so look out for those.
+
+
+Staves and wands 'of plenty' will receive about twice as many charges from
+recharging (with the risk of breaking remaining unchanged) so look out for
+those!
+
+If you try to recharge a whole stack of devices in one go, the risk for it to
+fail is actually the same as if you recharged just a single item.
+You will get the amount of charges replenished to every single magic device in
+the stack, at a slight rate of diminishing returns.
+In other words: Recharging stacks is okay, it can save you a lot of scrolls of
+recharging, just don't go too crazy with the stacks size.
 
 
 
