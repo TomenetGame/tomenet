@@ -772,6 +772,7 @@ void do_ghost(void)
  * get_item_extra_hook; it's unused here though - C. Blue
  */
 static int hack_force_spell = -1;
+#ifndef DISCRETE_SPELL_SYSTEM /* good method before the big spell system rework */
 bool get_item_hook_find_spell(int *item, bool inven_first)
 {
 	int i, spell;
@@ -814,6 +815,43 @@ bool get_item_hook_find_spell(int *item, bool inven_first)
 
 	return FALSE;
 }
+#else /* new method that allows to enter partial spell names, for comfortable 'I/II/III..' handling */
+bool get_item_hook_find_spell(int *item, bool inven_first) {
+	int i, spos;
+	char buf[80];
+	char buf2[100];
+	char sname[20];
+	object_type *o_ptr;
+
+	strcpy(buf, "Manathrust");
+	if (!get_string("Spell name? ", buf, 79))
+		return FALSE;
+
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		o_ptr = &inventory[i];
+		if (o_ptr->tval != TV_BOOK) continue;
+
+		spos = 0;
+		do {
+			spos++;
+			sprintf(buf2, "return get_spellname_in_book(%d, %d)", i, spos);
+			strcpy(sname, string_exec_lua(0, buf2));
+			if (!sname[0]) break;
+			if (strncmp(buf, sname, strlen(buf))) continue;
+
+			sprintf(buf2, "return find_spell(\"%s\")", sname);
+			spos = exec_lua(0, buf2); /* abuse spos for this (was 'spell') */
+			if (spos == -1) return FALSE; /* paranoia - can't happen */
+
+			*item = i;
+			hack_force_spell = spos;
+			return TRUE;
+		} while (TRUE);
+	}
+
+	return FALSE;
+}
+#endif
 
 /*
  * Get a spell from a book

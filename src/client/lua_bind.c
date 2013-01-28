@@ -286,6 +286,9 @@ int lua_get_new_bounty_monster(int lev)
 int get_inven_sval(int Ind, int inven_slot) {
 	return (inventory[inven_slot].sval);
 }
+int get_inven_pval(int Ind, int inven_slot) {
+	return (inventory[inven_slot].pval);
+}
 int get_inven_xtra(int Ind, int inven_slot, int n) {
 	/* browsing item in a store? */
 	if (inven_slot < 0) {

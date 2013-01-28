@@ -781,6 +781,7 @@ extern s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int
 extern int get_inven_sval(int Ind, int inven_slot);
 extern int get_inven_xtra(int Ind, int inven_slot, int n);
 extern bool get_item_aux(int *cp, cptr pmt, bool equip, bool inven, bool floor);
+extern int get_inven_pval(int Ind, int inven_slot);
 
 /* common/common.c */
 extern errr path_build(char *buf, int max, cptr path, cptr file);

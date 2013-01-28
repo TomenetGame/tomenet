@@ -736,3 +736,5 @@ extern void lua_set_item_tester(int tval, char *fct);
 
 extern int get_inven_sval(int Ind, int inven_slot);
 extern int get_inven_xtra(int Ind, int inven_slot, int n);
+
+extern int get_inven_pval(int Ind, int inven_slot);

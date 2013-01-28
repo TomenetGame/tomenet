@@ -123,6 +123,10 @@
 /* expand TV_POTION svals to make TV_POTION2 obsolete? */
 #define EXPAND_TV_POTION
 
+/* Use newly reworked spell system: Discrete stages for each component of
+   compound spells, and fixed mana cost to go with it. */
+#define DISCRETE_SPELL_SYSTEM
+
 
 /* --------------------- Server-type dependant features -------------------- */
 
