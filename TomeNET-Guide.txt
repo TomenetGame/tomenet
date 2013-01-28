@@ -548,7 +548,9 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         disarming traps. Also stops fire-till-kill.
 
 < or >  go upstairs/downstairs. Press '>' to use a void gate (violet '+').
-        Void jump gates teleport you to their counterpart and vice versa.
+        Void jump gates teleport you to their counterpart and vice versa giving
+        you a message "You fall into the void. Brrrr! It's deadly cold.".
+        Draconians can get harmed by using void jump gates, see (6.4).
         If you take staircases up/down, you'll receive the stair-GoI buff,
         see (0.4) for details on that.
 

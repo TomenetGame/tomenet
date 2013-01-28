@@ -398,8 +398,7 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 		return(TRUE);
 	}
 
-	msg_print(Ind, "You fall into the void.");
-	msg_print(Ind, "Brrrr! It's deadly cold.");
+	msg_print(Ind, "You fall into the void. Brrrr! It's deadly cold.");
 
 //	if (PRACE_FLAG(PR1_TP))
 	if (p_ptr->prace == RACE_DRACONIAN) {
