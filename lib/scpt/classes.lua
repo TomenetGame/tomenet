@@ -1,4 +1,4 @@
--- Tables with descriptive text about the classes, to be displayed 
+-- Tables with descriptive text about the classes, to be displayed
 -- during character creation process. - C. Blue
 
 function get_class_diz(r_title, l)
