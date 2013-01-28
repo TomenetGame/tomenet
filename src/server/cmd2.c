@@ -3717,53 +3717,71 @@ void do_cmd_stay(int Ind, int pickup)
  *
  * Note that artifacts never break, see the "drop_near()" function.
  */
-int breakage_chance(object_type *o_ptr)
-{
+int breakage_chance(object_type *o_ptr) {
 	/* artifacts never break */
-	if (artifact_p(o_ptr)) return (0);
+	if (artifact_p(o_ptr)) return 0;
+
+	/* Special: Light armour and shields seldom break */
+	if (is_textile_armour(o_ptr->tval, o_ptr->sval)) return 2;
+	if (o_ptr->tval == TV_SHIELD) return 2;
 
 	/* Examine the item type */
 	switch (o_ptr->tval) {
-		/* Always break */
-		case TV_FLASK:
-		case TV_POTION:
-		case TV_POTION2:
-		case TV_BOTTLE:
-			return (100);
+	/* Always break */
+	case TV_FLASK:
+	case TV_POTION:
+	case TV_POTION2:
+	case TV_BOTTLE:
+		return 100;
 
-		/* Often break */
-		case TV_FOOD:
-		case TV_JUNK:
-		case TV_LITE:
-		case TV_SKELETON:
-			return (50);
+	/* Often break */
+	case TV_FOOD:
+	case TV_JUNK:
+	case TV_LITE:
+	case TV_SKELETON:
+	case TV_TRAPKIT:
+		return 50;
 
-		/* Sometimes break */
-		case TV_SCROLL:
-		case TV_WAND:
-		case TV_SPIKE:
-			return (25);
+	/* Sometimes break */
+	//case TV_SPIKE:
+	case TV_SCROLL:
+	case TV_WAND:
+		return 25;
 
-		case TV_SHOT:
-		case TV_BOLT:
-		case TV_ARROW:
-			if (o_ptr->sval == SV_AMMO_MAGIC && !cursed_p(o_ptr)) return (0);
-			else if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return (10);
-			else if (o_ptr->tval == TV_SHOT) return (10);
-			else if (o_ptr->tval == TV_BOLT) return (15);
-			return (20);
+	case TV_SHOT:
+	case TV_BOLT:
+	case TV_ARROW:
+		if (o_ptr->sval == SV_AMMO_MAGIC && !cursed_p(o_ptr)) return (0);
+		else if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return (10);
+		else if (o_ptr->tval == TV_SHOT) return (10);
+		else if (o_ptr->tval == TV_BOLT) return (15);
+		return (20);
 
-		/* seldom break */
-		case TV_BOOMERANG:
-			return (2);
+	/* seldom break */
+	case TV_BOOMERANG:
+	case TV_FIRESTONE:
+	case TV_RING:
+	case TV_AMULET:
+	//case TV_RUNE:
+	case TV_GEM:
+		return 2;
 
-		/* never break */
-		case TV_GAME:
-			return 0;
+	/* never break */
+	case TV_GAME:
+	case TV_GOLD:
+	case TV_KEY:
+		return 0;
+
+	/* special */
+	case TV_GOLEM:
+		if (o_ptr->sval <= SV_GOLEM_ADAM) return 0; /* massive piece */
+		if (o_ptr->sval >= SV_GOLEM_ATTACK) return 25; /* scroll */
+		return 10; /* arm/leg */
 	}
 
-	/* Rarely break */
-	return (10);
+	/* Default: Rarely break */
+	/* (eg rod, staff, mstaff, weapon, other armour, tool) */
+	return 10;
 }
 
 /* Add a nice ball if needed */
