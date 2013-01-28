@@ -815,7 +815,7 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 	int i, spos;
 	char buf[80], buf2[100], sname[20], *bufptr;
 	object_type *o_ptr;
-	bool exact_match = FALSE;
+	bool exact_match = FALSE, combo_spell, found_something = FALSE;
 
 	strcpy(buf, "Manathrust");
 	if (!get_string("Spell name? ", buf, 79))
@@ -842,21 +842,51 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 			sprintf(buf2, "return get_spellname_in_book(%d, %d)", i, spos);
 			strcpy(sname, string_exec_lua(0, buf2));
 			if (!sname[0]) break;
-			if (exact_match) {
+
+			/* does this spell actually have different versions? */
+			combo_spell = FALSE;
+			if (strlen(sname) >= 4) {
+				bufptr = sname + strlen(sname);
+				if (streq(bufptr - 2, " I") ||
+				    streq(bufptr - 3, " II") ||
+				    streq(bufptr - 4, " III") ||
+				    streq(bufptr - 3, " IV") ||
+				    streq(bufptr - 2, " V") ||
+				    streq(bufptr - 3, " VI"))
+					combo_spell = TRUE;
+			}
+
+			/* Only allow testing for partial match if it's a combo spell */
+			if (exact_match || !combo_spell) {
 				if (strcmp(buf, sname)) continue;
 			} else {
 				if (strncmp(buf, sname, strlen(buf))) continue;
 			}
 
+			/* get the spell's spell array index */
 			sprintf(buf2, "return find_spell(\"%s\")", sname);
 			spos = exec_lua(0, buf2); /* abuse spos for this (was 'spell') */
 			if (spos == -1) return FALSE; /* paranoia - can't happen */
 
+			/* assume that we can probably cast this spell */
 			*item = i;
 			hack_force_spell = spos;
+			found_something = TRUE;
+
+			/* hack: if this is a multi-version spell, keep it in mind but continue
+			   checking, if we can not cast this particular version of it. */
+			if (!exact_match && combo_spell) {
+				sprintf(buf2, "return is_ok_spell(0, %d)", spos);
+    	                        if (!exec_lua(0, buf2)) continue;
+	                }
+
+			/* Ok, we found a spell that we can use, or we didn't find
+			   an alternative compound-spell's sub-spell variant. */
 			return TRUE;
 		} while (TRUE);
 	}
+
+	if (found_something) return TRUE;
 
 	return FALSE;
 }
