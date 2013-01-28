@@ -13,21 +13,21 @@ HBLESSING = add_spell
 	["spell"] = 	function()
 		local dur
 		if get_level(Ind, HBLESSING, 50) < 15 then
-			if player.blessed_power == 0 then
+			if player.blessed_power <= 10 then
 				player.blessed_power = 10
 				dur = 9 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
 				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " recites a blessing.")
 			end
 		elseif get_level(Ind, HBLESSING, 50) < 30 then
-			if player.blessed_power < 20 then
+			if player.blessed_power <= 20 then
 				player.blessed_power = 20
 				dur = 17 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
 				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " chants.")
 			end
 		else
-			if player.blessed_power < 30 then
+			if player.blessed_power <= 30 then
 				player.blessed_power = 30
 				dur = 32 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
