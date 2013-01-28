@@ -7967,57 +7967,64 @@ floor. Items that IGNORE_COLD also resist impact damage.
 Usually items that contain wood, leather or stuff are susceptible to fire and
 acid, while things that consist only of metal are just susceptible to acid.
 
-            Acid    Elec    Fire    Cold    Impact  Water
----------------------------------------------------------
-Arrows      x               x
-Bolts       x               x
+                    Acid    Elec    Fire    Cold    Impact  Water
+-----------------------------------------------------------------
+Arrows              x               x
+Bolts               x               x
 Pebbles
 Shots
 
-Slings      x               x
-Bows        x               x
-Crossbows   x               x
-Boomerangs  x               x
+Slings              x               x
+Bows                x               x
+Crossbows           x               x
+Boomerangs          x               x
 
-Swords      x
-Axes        x               x
-Blunt       x               x
-Polearms    x               x
+Swords              x
+Axes                x               x
+Blunt               x               x
+Polearms            x               x
 
-Helms       x
-Crowns      x
-Shields     x
+Helms               x
+Crowns              x
+Shields             x
 
-Boots       x               x
-Gloves      x               x
-Cloaks      x               x
-Soft Armour x               x
-Hard Armour x
+Boots               x               x
+Gloves              x               x
+Cloaks              x               x
+Soft Armour         x               x
+Hard Armour         x
 DSM Armour
 
-Scrolls     x               x                       x
-Parchments  x               x
-Chests      x               x
-Skeletons   x
-Bottles     x                       x       x
-Junks       x
+Scrolls             x               x                       x
+Parchments          x               x
+Chests              x               x
+Skeletons           x
+Bottles             x                       x       x
+Junk                x
 
-Rings               x
+Rings                       x
 Amulets
-Wands               x
-Staves      x               x
+Wands                       x
+Staves              x               x
 Rods
 
-Lamps                       x
-Potions                     x       x       x
-Flasks                              x       x
-Books/Tomes x               x                       x
+Lamps                               x
+Potions                             x       x       x
+Flasks                                      x       x
 
+Spell Scrolls       x               x                       x
+Spell Crystals      x
+Beginner Handbooks  x               x
+Handbooks           x               x                       x
+Tomes               x               x
+Greater Crystals
+Custom Books        x               x
 
-Items, even tomes, resist certain elements if they have the according
-resistance due to ego powers (for example a leather shield of resist fire)
-or -in case of tomes- according content :)
-For example a Tome of the Eternal Flame cannot be harmed by fire.
+Items ignore certain elements if they have the according resistance due to ego
+powers, for example a leather shield of resist fire will ignore fire.
+
+Some tomes or spellbooks will resist certain elements, for example a
+Tome of the Eternal Flame cannot be harmed by fire.
 
 
 
