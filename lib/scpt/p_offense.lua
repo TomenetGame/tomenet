@@ -205,7 +205,7 @@ HDRAINCLOUD = add_spell
 			fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 4 + get_level(Ind, HDRAINCLOUD, 4), 10, " drains for")
 			-- dmgs a Power D for 2050 (307 goes to hp), Balance D for 1286 (192 goes to hp) from full hp
 			-- (with, of course, maxed spell power and h_offense schools)
-			-- The amount of what goes to player is 15% of the damage the monster taken. 
+			-- The amount of what goes to player is 15% of the damage the monster taken.
 			-- 9999 is a hack handled in spells1.c. Sorry for this. For the moment this
 			-- the only possible way (i think) to do this spell without affecting the
 			-- current ability of wands and artifacts (that can be activated) that uses

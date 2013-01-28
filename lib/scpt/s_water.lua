@@ -8,7 +8,7 @@ FROSTBOLT = add_spell
         ["name"] =      "Frost Bolt",
         ["school"] =    SCHOOL_WATER,
         ["level"] =     8,
-        ["mana"] =      2, 
+        ["mana"] =      2,
         ["mana_max"] =  11,
         ["fail"] =      -10,
         ["direction"] = TRUE,
@@ -22,7 +22,7 @@ FROSTBOLT = add_spell
                         x, y = get_frostbolt_dam()
                         return "dam "..x.."d"..y
         end,
-        ["desc"] =      {  
+        ["desc"] =      {
                         "Conjures up icy moisture into a powerful frost bolt",
                 }
 }

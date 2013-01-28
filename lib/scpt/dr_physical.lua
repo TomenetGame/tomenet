@@ -138,7 +138,7 @@ EXTRASTATS = add_spell
 			  "Not projectable.",}
 }
 
--- A shot that increases a players SPR (if wearing a shooter) 
+-- A shot that increases a players SPR (if wearing a shooter)
 -- but also decreases his/her speed!
 FOCUSSHOT = add_spell
 {

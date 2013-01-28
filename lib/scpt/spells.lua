@@ -6,14 +6,14 @@
 
 SCHOOL_CONVEYANCE = add_school
 {
-	["name"] = "Conveyance", 
+	["name"] = "Conveyance",
         ["skill"] = SKILL_CONVEYANCE,
         ["sorcery"] = TRUE,
 }
 
 SCHOOL_MANA = add_school
 {
-	["name"] = "Mana", 
+	["name"] = "Mana",
         ["skill"] = SKILL_MANA,
         ["sorcery"] = TRUE,
 }
@@ -271,7 +271,7 @@ school_book[16] = {
 
 -- Create the book of druidism: Physical Lore (85-89)
 school_book[17] = {
-	FOCUSSHOT, HERBALTEA, QUICKFEET, EXTRASTATS, HEALINGCLOUD, 
+	FOCUSSHOT, HERBALTEA, QUICKFEET, EXTRASTATS, HEALINGCLOUD,
 }
 
 -- Divine Race Tome
@@ -283,7 +283,7 @@ if (def_hack("TEST_SERVER", nil)) then
 school_book[19] = {MBASH, MDISARM, MBLINK, MTELEPORT, MTELETOWARDS, MFEEDBACK, MPYROKINESIS, MCRYOKINESIS, MTELEAWAY, MTELEKINESIS, MSHIELD, MFUSION,}
 school_book[20] = {MCURE, MBOOST, MSELFKNOW, MHASTE, MSENSEMON, MIDENTIFY, MSANITY, MTELEKINESIS, MFUSION,}
 else
--- Create the book of mindcrafting: Psycho-power (-) 
+-- Create the book of mindcrafting: Psycho-power (-)
 school_book[19] = {
 	MBASH, MDISARM, MBLINK, MTELEPORT, MTELETOWARDS, MFEEDBACK, MPYROKINESIS, MCRYOKINESIS, MTELEAWAY, MTELEKINESIS, MSHIELD,
 }

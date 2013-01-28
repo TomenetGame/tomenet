@@ -2,13 +2,13 @@
 
 --
 -- simple scripts to examine/modify players' status.
--- 
+--
 
 -- display some information about a specified player.
 function p_in(i)
 -- +1 offset
 local p = players(i)
-        
+
 -- Ind is global.
 	msg_print(Ind, "location: ("..p.px..","..p.py..") of ["..(p.wpos.wx)..","..(p.wpos.wy).."], "..(p.wpos.wz*50).."ft  AU:"..p.au)
 	msg_print(Ind, "HP:"..p.chp.."/"..p.mhp.."  SP:"..p.csp.."/"..p.msp.."  SN:"..p.csane.."/"..p.msane.."  XP:"..p.exp.."/"..p.max_exp)
@@ -21,7 +21,7 @@ end
 function o_in(i, j)
 -- +1 offset
 local o = players(i).inventory[j+1]
-        
+
 -- Ind is global.
 	msg_print(Ind, "location: ("..o.ix..","..o.iy..") of ["..(o.wpos.wx)..","..(o.wpos.wy).."], "..(o.wpos.wz*50).."ft")
 	msg_print(Ind, "k_idx:"..o.k_idx.." tval:"..o.tval.." sval:"..o.sval.." bpval:"..o.bpval.." pval:"..o.pval)
@@ -80,7 +80,7 @@ function id_all2()
 	id_all(1)
 	trap_k()
 end
-	
+
 -- namely.
 function healup(i)
 local p = players(i)

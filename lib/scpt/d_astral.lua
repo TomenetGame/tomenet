@@ -1,16 +1,17 @@
+
 -- The astral school ///update-dummy-bytes
 
 function get_astral_lev(Ind)
 	return ((players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000 + players(Ind).lev / 2)
 end
 
---[[ 
+--[[
 manathrust does 3...53 d 1 .. 21 damage base
 powerbolt/beam doing 3 .. 53 d 1 .. 26 might be OK because:
 1. mana school on its own is severely lacking (manathrust as main nuke only really viable with spell power)
-2. reflection 
+2. reflection
 
-I'll let you know about #1 when Pikachu is higher level :) 
+I'll let you know about #1 when Pikachu is higher level :)
 ]]
 function get_astral_dam(Ind)
 	return (3 + ((get_astral_lev(Ind) * 3) / 5)), (1 + get_astral_lev(Ind) / 2)
@@ -35,7 +36,7 @@ function get_astral_dam_ball(Ind)
 end
 
 function get_astral_bonus_hp(Ind)
-	if (players(Ind).ptrait == TRAIT_ENLIGHTNED) then 
+	if (players(Ind).ptrait == TRAIT_ENLIGHTNED) then
 		return 0
 	end
 
@@ -77,7 +78,7 @@ POWERBOLT = add_spell
 			end
 	end,
 	["info"] = 	function()
-			local xx, yy 
+			local xx, yy
 			xx, yy = get_astral_dam(Ind)
 			return "dam "..xx.."d"..yy
 	end,
@@ -140,7 +141,7 @@ POWERBALL = add_spell
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
 				fire_ball(Ind, GF_NETHER, args.dir, damroll(get_astral_dam_ball(Ind)), 2 + get_level(Ind, POWERBALL, 2), " casts a nether ball for")
 				--fire_ball(Ind, GF_NETHER, args.dir, get_astral_dam_ball(Ind), 2 + get_level(Ind, POWERBALL, 2), " casts a ball of nether for")
-			else	
+			else
 				fire_ball(Ind, GF_ELEC, args.dir, damroll(get_astral_dam_ball(Ind)), 2 + get_level(Ind, POWERBALL, 2), " casts a lightning ball for")
 				--fire_ball(Ind, GF_ELEC, args.dir, get_astral_dam_ball(Ind), 2 + get_level(Ind, POWERBALL, 2), " casts a ball of lightning for")
 			end

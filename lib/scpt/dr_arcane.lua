@@ -76,7 +76,7 @@ BAGIDENTIFY = add_spell
 	["desc"] = 	{ "Identifies your backpack.",}
 }
 
--- The best spell yet! 
+-- The best spell yet!
 -- For each wall on level: (spell_lvl)% chance for it to get turned to a tree!
 REPLACEWALL = add_spell
 {

@@ -22,14 +22,14 @@ end
 
 function add_school(s)
 	__schools[__schools_num] = s
-        
+
         __schools_num = __schools_num + 1
         return (__schools_num - 1)
 end
 
 function finish_school(i)
 	local s
-        
+
         s = __schools[i]
         assert(s.name, "No school name!")
         assert(s.skill, "No school skill!")
@@ -38,14 +38,14 @@ end
 
 function add_spell(s)
 	__tmp_spells[__tmp_spells_num] = s
-        
+
         __tmp_spells_num = __tmp_spells_num + 1
         return (__tmp_spells_num - 1)
 end
 
 function finish_spell(must_i)
 	local i, s
-        
+
         s = __tmp_spells[must_i]
 
         assert(s.name, "No spell name!")
@@ -137,7 +137,7 @@ function get_level_school(i, s, max, min)
                 if __schools[sch].sorcery then
                         p = player.s_info[SKILL_SORCERY + 1].value
                 end
-                
+
                 -- Find the higher
                 ok = r
                 if r < p then ok = p end
@@ -417,7 +417,7 @@ end
 -- XXX client only
 function print_spell_desc(s, y)
 	local index, desc, x
-        
+
         x = 0
 
 	if type(__spell_desc[s]) == "string" then c_prt(TERM_L_BLUE, __spell_desc[s], y, x)
@@ -791,7 +791,7 @@ HAVE_OBJECT = 1
 HAVE_EGO = 2
 function have_object(mode, type, find, find2)
 	local o, i, min, max
-        
+
         max = 0
         min = 0
         if band(mode, USE_EQUIP) == USE_EQUIP then

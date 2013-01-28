@@ -51,7 +51,7 @@ function xml:collect (s)
         error("trying to close "..toclose.label.." with "..label)
       end
       tinsert(top, toclose)
-    end 
+    end
     i = j+1
   end
   local text = strsub(s, i)
