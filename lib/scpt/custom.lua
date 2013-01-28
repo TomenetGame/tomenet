@@ -40,8 +40,8 @@ end
 function playloop_startup(timestamp, h, m, s, dwd, dd, dm, dy)
 	lua_s_print(timestamp.."_PLAYLOOPSTARTUP_"..h..":"..m..":"..s.."-"..dy.."/"..dm.."/"..dd.."("..dwd..")\n")
 
-        --[[automatically fix season if required, for example if server 
-            was down for 24+ hours while a season change date occured. 
+        --[[automatically fix season if required, for example if server
+            was down for 24+ hours while a season change date occured.
             see cron_24h() for details and to keep values synchronized.]]
         if (season ~= 0) then
                 if (dm >= 3 and dm <= 5) then
@@ -133,7 +133,7 @@ end
 -- Run once every 24 hours:
 function cron_24h(timestamp, h, m, s, dwd, dd, dm, dy)
 	lua_s_print(timestamp.."_CRON24H_"..h..":"..m..":"..s.."-"..dy.."/"..dm.."/"..dd.."("..dwd..")\n")
-	
+
 	--[[season changes (averaged, may in reality vary +/- 1 day:
 	    spring 20.march, summer 21.june,
 	    autumn 23. september, winter 21. december ]]
