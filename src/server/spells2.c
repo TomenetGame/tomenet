@@ -3695,9 +3695,9 @@ bool recharge(int Ind, int num)
  *
  * XXX XXX XXX Perhaps we should auto-unstack recharging stacks.
  */
-bool recharge_aux(int Ind, int item, int num) {
+bool recharge_aux(int Ind, int item, int pow) {
 	player_type *p_ptr = Players[Ind];
-	int                 i, t, lev;
+	int                 i, t, lev, dr;
 	object_type		*o_ptr;
 
 
@@ -3721,7 +3721,7 @@ bool recharge_aux(int Ind, int item, int num) {
 	/* Recharge a rod */
 	if (o_ptr->tval == TV_ROD) {
 		/* Extract a recharge power */
-		i = (100 - lev + num) / 5;
+		i = (100 - lev + pow) / 5;
 
 		/* Paranoia -- prevent crashes */
 		if (i < 1) i = 1;
@@ -3739,7 +3739,7 @@ bool recharge_aux(int Ind, int item, int num) {
 		/* Recharge */
 		else {
 			/* Rechange amount */
-			t = (num * damroll(2, 4));
+			t = (pow * damroll(2, 4));
 
 			/* Recharge by that amount */
 			if (o_ptr->pval > t) o_ptr->pval -= t;
@@ -3751,7 +3751,7 @@ bool recharge_aux(int Ind, int item, int num) {
 	/* Recharge wand/staff */
 	else {
 		/* Recharge power */
-		i = (num + 100 - lev - (10 * o_ptr->pval)) / 15;
+		i = (pow + 100 - lev - (10 * o_ptr->pval)) / 15;
 
 		/* Paranoia -- prevent crashes */
 		if (i < 1) i = 1;
@@ -3792,13 +3792,35 @@ bool recharge_aux(int Ind, int item, int num) {
 		/* Recharge */
 		else {
 			/* Extract a "power" */
-			t = (num / (lev + 2)) + 1;
+			t = (pow / (lev + 2)) + 1;
 
 			/* Hack -- ego */
 			if (o_ptr->name2 == EGO_PLENTY) t <<= 1;
 
-			/* Recharge based on the power */
-			if (t > 0) o_ptr->pval += 2 + randint(t);
+#if 0 /* old way */
+                       /* Recharge based on the power */
+                       if (t > 0) o_ptr->pval += 2 + randint(t);
+#else /* new way: correct wand stacking, added stack size dr */
+			/* Wands stack, so recharging must multiply the power.
+			   Add small 'laziness' diminishing returns malus. */
+			if (o_ptr->tval == TV_WAND) {
+				/* Recharge based on the power */
+				//if (t > 0) o_ptr->pval += (2 * o_ptr->number) + rand_int(t * o_ptr->number);
+
+				/* allow dr to factor in more: */
+				//Diminishing returns start at number=10: ' * (1050 / (10 + 1000 / (o_ptr->number + 4)) - 4) '
+				//Diminishing returns start at number=3~: ' * (450 / (10 + 400 / (o_ptr->number + 3)) - 3) '
+				dr = 4500 / (10 + 400 / (o_ptr->number + 3)) - 30;
+				if (t > 0) o_ptr->pval += (3 * dr) / 10 + rand_int(t * dr) / 10;
+			} else {
+				/* Recharge based on the power */
+				//if (t > 0) o_ptr->pval += 2 + randint(t);
+
+				/* allow dr to factor in more: */
+				dr = 4500 / (10 + 400 / (o_ptr->number + 3)) - 30;
+				if (t > 0) o_ptr->pval += 1 + (rand_int((t + 2) * dr) / o_ptr->number) / 10;
+			}
+#endif
 
 			/* Hack -- we no longer "know" the item */
 			o_ptr->ident &= ~ID_KNOWN;
