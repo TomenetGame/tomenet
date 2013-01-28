@@ -1864,6 +1864,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 
 				/* Get the spell */
 				if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+					/* no longer supported! to make s_aux.lua slimmer */
 					spell = exec_lua(Ind, format("return spell_x(%d, %d, %d)", o_ptr->sval, o_ptr->pval, choice));
 				} else {
 					spell = exec_lua(Ind, format("return spell_x2(%d, %d, %d, %d)", item, o_ptr->sval, o_ptr->pval, choice));

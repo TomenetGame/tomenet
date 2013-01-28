@@ -224,54 +224,6 @@ end
 
 -- Print the book and the spells
 -- XXX client only
-function print_book(i, book, spl)
-	local x, y, index, sch, size, s
-
-	x = 0
-	y = 2
-	size = 0
-
-	-- Hack if the book is 255 it is a random book
-	if book == 255 then
-		school_book[book] = {spl}
-	end
-
-	-- Parse all spells
-	for index, s in school_book[book] do
-		local color = TERM_L_DARK
-		local lvl = get_level(i, s, 50, -50)
-		local xx, sch_str
-
-		if is_ok_spell(i, s) then
-			if get_mana(i, s) > get_power(i, s) then color = TERM_ORANGE
-			else color = TERM_L_GREEN end
-		end
-
-		xx = nil
-		sch_str = ""
-
-		for index, sch in __spell_school[s] do
-			if xx then
-				sch_str = sch_str.."/"..school(sch).name
-			else
-				xx = 1
-				sch_str = sch_str..school(sch).name
-			end
-		end
-		sch_str = sch_str_lim(sch_str)
-
-		c_prt(color, format("%c) %-22s%-16s %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(i, s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
-		y = y + 1
-		size = size + 1
-	end
-
-	prt(format("   %-22s%-14s Level Cost Fail Info", "Name", "School"), 1, x)
-	return y
-end
-
-
--- Print the book and the spells
--- XXX client only
 function print_book2(i, inven_slot, sval, spl)
 	local x, y, index, sch, size, s, book
 
@@ -441,24 +393,6 @@ function print_spell_desc(s, y)
         end
 end
 
-function book_spells_num(book)
-	local size, index, sch
-
-        size = 0
-
-        -- Hack if the book is 255 it is a random book
-	if book == 255 then
-                return 1
-        end
-
-        -- Parse all spells
-        for index, s in school_book[book] do
-		size = size + 1
-        end
-
-        return size
-end
-
 function book_spells_num2(inven_slot, sval)
 	local size, index, sch, book
 
@@ -527,22 +461,6 @@ function book_spells_num2(inven_slot, sval)
         return size
 end
 
-function spell_x(book, spl, s)
-        if book == 255 then
-                return spl
-        else
-                local i, x, val
-
-                i, val = next(school_book[book], nil)
-                x = 0
-                while x < s do
-                        i, val = next(school_book[book], i)
-                        x = x + 1
-                end
-                return val
-        end
-end
-
 function spell_x2(inven_slot, sval, spl, s)
 	local book
 
@@ -588,14 +506,6 @@ function spell_x2(inven_slot, sval, spl, s)
                 end
                 return val
         end
-end
-
-function spell_in_book(book, spell)
-        local i, s
-	for i, s in school_book[book] do
-                if s == spell then return TRUE end
-        end
-        return FALSE
 end
 
 function spell_in_book2(inven_slot, book, spell)

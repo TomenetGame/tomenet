@@ -1530,6 +1530,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	} else {
 		if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
 			if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE) {
+			/* no longer supported! to make s_aux.lua slimmer */
 				/* log for debugging */
 				s_printf("CAST_SCHOOL_SPELL_ERROR: MY_VERSION < - %d, %d\n", o_ptr->sval, spell);
 
