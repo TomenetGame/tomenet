@@ -812,7 +812,7 @@ bool get_item_hook_find_spell(int *item, bool inven_first)
 }
 #else /* new method that allows to enter partial spell names, for comfortable 'I/II/III..' handling */
 bool get_item_hook_find_spell(int *item, bool inven_first) {
-	int i, spos;
+	int i, spos, highest = 0, current;
 	char buf[80], buf2[100], sname[20], *bufptr;
 	object_type *o_ptr;
 	bool exact_match = FALSE, combo_spell, found_something = FALSE;
@@ -845,15 +845,16 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 
 			/* does this spell actually have different versions? */
 			combo_spell = FALSE;
+			current = 0;
 			if (strlen(sname) >= 4) {
 				bufptr = sname + strlen(sname);
-				if (streq(bufptr - 2, " I") ||
-				    streq(bufptr - 3, " II") ||
-				    streq(bufptr - 4, " III") ||
-				    streq(bufptr - 3, " IV") ||
-				    streq(bufptr - 2, " V") ||
-				    streq(bufptr - 3, " VI"))
-					combo_spell = TRUE;
+				if (streq(bufptr - 2, " I")) current = 1;
+				if (streq(bufptr - 3, " II")) current = 2;
+				if (streq(bufptr - 4, " III")) current = 3;
+				if (streq(bufptr - 3, " IV")) current = 4;
+				if (streq(bufptr - 2, " V")) current = 5;
+				if (streq(bufptr - 3, " VI")) current = 6;
+				if (current) combo_spell = TRUE;
 			}
 
 			/* Only allow testing for partial match if it's a combo spell */
@@ -868,17 +869,34 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 			spos = exec_lua(0, buf2); /* abuse spos for this (was 'spell') */
 			if (spos == -1) return FALSE; /* paranoia - can't happen */
 
+			/* hack: if this is a multi-version spell, keep it in mind but continue
+			   checking, if we can not cast this particular version of it. */
+			if (!exact_match && combo_spell) {
+				if (!found_something) {
+					/* assume that we can probably cast this spell */
+					*item = i;
+					hack_force_spell = spos;
+					found_something = TRUE;
+				}
+
+				sprintf(buf2, "return is_ok_spell(0, %d)", spos);
+    	                        if (!exec_lua(0, buf2)) continue;
+
+				if (current > highest) {
+					/* the highest spell we found so far that we can cast */
+					*item = i;
+					hack_force_spell = spos;
+					highest = current;
+				}
+
+				/* continue checking, maybe we find a higher spell variant that is still usable */
+				continue;
+	                }
+
 			/* assume that we can probably cast this spell */
 			*item = i;
 			hack_force_spell = spos;
 			found_something = TRUE;
-
-			/* hack: if this is a multi-version spell, keep it in mind but continue
-			   checking, if we can not cast this particular version of it. */
-			if (!exact_match && combo_spell) {
-				sprintf(buf2, "return is_ok_spell(0, %d)", spos);
-    	                        if (!exec_lua(0, buf2)) continue;
-	                }
 
 			/* Ok, we found a spell that we can use, or we didn't find
 			   an alternative compound-spell's sub-spell variant. */
