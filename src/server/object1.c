@@ -3718,12 +3718,16 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		    		    		if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
 		    		    		continue;
 		    		    	}
+		    		    	if ((e_ptr->fego[j] & ETR4_R_MASK) ||
+		    		    	    (e_ptr->esp[j] & ESP_R_MASK)) {
+		    		    		can_have_hidden_powers = TRUE;
+		    		    	}
 	    	        	        f1 |= e_ptr->flags1[j];
 	        	                f2 |= e_ptr->flags2[j];
 	        	        	f3 |= e_ptr->flags3[j];
 	                	        f4 |= e_ptr->flags4[j];
 	                    		f5 |= e_ptr->flags5[j];
-	                    	        esp |= e_ptr->esp[j];
+	                    	        esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
 	                    	    }
 	                }
 		        if (o_ptr->name2b) {
@@ -3734,12 +3738,16 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		    		    		if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
 			            		continue;
 			            	}
+		    		    	if ((e_ptr->fego[j] & ETR4_R_MASK) ||
+		    		    	    (e_ptr->esp[j] & ESP_R_MASK)) {
+		    		    		can_have_hidden_powers = TRUE;
+		    		    	}
 	    	        	        f1 |= e_ptr->flags1[j];
 	        	                f2 |= e_ptr->flags2[j];
 	                    		f3 |= e_ptr->flags3[j];
 		                        f4 |= e_ptr->flags4[j];
 		                        f5 |= e_ptr->flags5[j];
-	    		                esp |= e_ptr->esp[j];
+	    		                esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
 	            		}
 	            	}
 	        }
@@ -4458,7 +4466,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 			/* no message maybe */
 			//fprintf(fff, "\377yIt has not been identified yet.\n");
  #endif
-		} else if (o_ptr->name1) fprintf(fff, "\377yIt seems to have hidden powers.\n"); //art
+		}
+ #if 0 /* looks better if the text is the same for artifacts, visually =P */
+		else if (o_ptr->name1) fprintf(fff, "\377yIt seems to have hidden powers.\n"); //art
+ #endif
 		else fprintf(fff, "\377yIt may have hidden powers.\n"); //ego
 	}
 #endif

@@ -4453,6 +4453,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define R_ESP_ANY               0x40000000L /* random esp == R_ESP from ego flags */
 #define ESP_ALL                 0x80000000L
 
+#define ESP_R_MASK	(R_ESP_LOW | R_ESP_HIGH | R_ESP_ANY)
+
 /* Number of group of flags to choose from */
 #define MAX_FLAG_GROUP          12
 #define NEW_GROUP_CHANCE        40      /* Chance to get a new group */
@@ -4519,7 +4521,11 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define ETR4_R_STAT            0x10000000L     /* Item affects a random stat */
 #define ETR4_R_STAT_SUST       0x20000000L     /* Item affects a random stat & sustains it */
 #define ETR4_R_IMMUNITY        0x40000000L     /* Item gives a random immunity */
-#define ETR4_LIMIT_BLOWS       0x80000000L     /* switch the "limit blows" feature */
+#define ETR4_LIMIT_BLOWS       0x80000000L     /* Only on 'Aman' weapons atm - reduces bpr */
+
+#define ETR4_R_MASK	\
+    (0xFFFFFFFF & ~(ETR4_DAM_DIE | ETR4_DAM_SIZE | ETR4_PVAL_M1 | \
+    ETR4_PVAL_M2 | ETR4_PVAL_M3 | ETR4_PVAL_M5 | ETR4_LIMIT_BLOWS))
 
 #define BIAS_ELEC 1                     /* "Biases" for random artifact gen */
 #define BIAS_POIS 2
