@@ -1107,6 +1107,10 @@ $ARCADE_SERVER$F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
 $ARCADE_SERVER$F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the moving powerup.
 
+
+# NOTE: 255 is reserved for special purpose ('not done yet' indicator)
+
+
 # generic scheme (all lines are unique except
 # where it's mentioned otherwise) - C. Blue
 # N:<number>:<name>
