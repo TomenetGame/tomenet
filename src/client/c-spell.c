@@ -786,31 +786,26 @@ bool get_item_hook_find_spell(int *item, bool inven_first)
 	spell = exec_lua(0, buf2);
 	if (spell == -1) return FALSE;
 
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
+	for (i = 0; i < INVEN_TOTAL; i++) {
 		object_type *o_ptr = &inventory[i];
 
 		if (o_ptr->tval == TV_BOOK) {
 			/* A random book ? */
-			if ((o_ptr->sval == 255) && (o_ptr->pval == spell))
-			{
+			if ((o_ptr->sval == 255) && (o_ptr->pval == spell)) {
 				*item = i;
 				hack_force_spell = spell;
 				return TRUE;
 			}
 			/* A normal book */
-			else
-			{
+			else {
 				sprintf(buf2, "return spell_in_book2(%d, %d, %d)", i, o_ptr->sval, spell);
-				if (exec_lua(0, buf2))
-				{
+				if (exec_lua(0, buf2)) {
 					*item = i;
 					hack_force_spell = spell;
 					return TRUE;
 				}
 			}
 		}
-		
 	}
 
 	return FALSE;
@@ -818,14 +813,24 @@ bool get_item_hook_find_spell(int *item, bool inven_first)
 #else /* new method that allows to enter partial spell names, for comfortable 'I/II/III..' handling */
 bool get_item_hook_find_spell(int *item, bool inven_first) {
 	int i, spos;
-	char buf[80];
-	char buf2[100];
-	char sname[20];
+	char buf[80], buf2[100], sname[20], *bufptr;
 	object_type *o_ptr;
+	bool exact_match = FALSE;
 
 	strcpy(buf, "Manathrust");
 	if (!get_string("Spell name? ", buf, 79))
 		return FALSE;
+
+	if (strlen(buf) >= 4) {
+		bufptr = buf + strlen(buf);
+		if (streq(bufptr - 2, " I") ||
+		    streq(bufptr - 3, " II") ||
+		    streq(bufptr - 4, " III") ||
+		    streq(bufptr - 3, " IV") ||
+		    streq(bufptr - 2, " V") ||
+		    streq(bufptr - 3, " VI"))
+			exact_match = TRUE;
+	}
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &inventory[i];
@@ -837,7 +842,11 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 			sprintf(buf2, "return get_spellname_in_book(%d, %d)", i, spos);
 			strcpy(sname, string_exec_lua(0, buf2));
 			if (!sname[0]) break;
-			if (strncmp(buf, sname, strlen(buf))) continue;
+			if (exact_match) {
+				if (strcmp(buf, sname)) continue;
+			} else {
+				if (strncmp(buf, sname, strlen(buf))) continue;
+			}
 
 			sprintf(buf2, "return find_spell(\"%s\")", sname);
 			spos = exec_lua(0, buf2); /* abuse spos for this (was 'spell') */
