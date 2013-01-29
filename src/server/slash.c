@@ -6292,24 +6292,29 @@ void do_slash_cmd(int Ind, char *message)
 			/* copy an object from someone's inventory into own inventory */
 			else if (prefix(message, "/ocopy")) {
 				object_type forge, *o_ptr = &forge;
-				if (tk < 2) return;
-#if 0
-				/* syntax: /ocopy <name> <0..37> - bad idea */
-				j = name_lookup_loose(Ind, token[1], FALSE, FALSE);
-				if (!j) return;
-				object_copy(o_ptr, &Players[j]->inventory[atoi(token[2])]);
-#else
+				if (tk < 2) {
+					msg_print(Ind, "Usage: /ocopy <1..38> <name>");
+					return;
+				}
+
 				/* syntax: /ocopy <1..38> <name> */
 				j = name_lookup_loose(Ind, strstr(message3, " ") + 1, FALSE, FALSE);
-				if (!j) return;
+				if (!j) {
+					msg_print(Ind, "Name not found.");
+					return;
+				}
 				object_copy(o_ptr, &Players[j]->inventory[atoi(token[1]) - 1]);
-#endif
+
 				/* skip true arts to prevent duplicates */
 				if (true_artifact_p(o_ptr)) {
-					if (!multiple_artifact_p(o_ptr)) return;
+					if (!multiple_artifact_p(o_ptr)) {
+						msg_print(Ind, "Skipping true artifact.");
+						return;
+					}
 					handle_art_inum(o_ptr->name1);
 				}
 				inven_carry(Ind, o_ptr);
+				msg_print(Ind, "Done.");
 				return;
 			}
 			/* re-initialize the skill chart */
