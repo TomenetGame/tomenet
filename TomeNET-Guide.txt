@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. January 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 29. January 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -14208,7 +14208,11 @@ Note: After logging in you may press '?' key for a help screen.
  load the required macro file to play, which is
   - 'arcade-win.prf' on Windows OS
   - 'arcade-x11.prf' on X11 (Linux/OSX)
-  - 'arcade-gcu.prf' if you are using a Linux/OSX command-line client.
+
+ If your client is older than 4.5.3 you probably don't have these macros.
+ In that case you can download them at the bottom of the downloads page on
+ www.tomenet.net and extract them to folder TomeNET/lib/user.
+ But of course you should actually just update your whole client instead.
 *******************************************************************************
 
 
@@ -14226,18 +14230,22 @@ shoot. For details press '?' in the game.
 The Smash'em macros provide the following controls:
 
     F1              starts the game.
+    F2              starts the game at level 4, skipping the early
+                    levels if you feel that those are too easy.
+
     q,w,e           makes your character auto-fire in the according
     a, ,d            direction (y key works same as z key).
     z,x,c
-    s               stops firing.
+
+    s               stops firing/bandages.
+
+    ,               same as '<' key (ie go up one level).
+
     numpad          movement.
-    CTRL+numpad     shifts the screen.
-    ,               same as < key (ie take staircase upwards)
 
-    F12             switch macro set from "Smash'em" to "Tron".
+    Q               quit game.
 
-Type "play 2smash" in chat to start the game and skip the early levels if you
-feel that those are too easy.
+    TAB             switch macro set from "Smash'em" to "Tron".
 
 
 Tron
@@ -14252,22 +14260,32 @@ The Tron macros provide the following controls:
 
     F3              enter arena.
     F4              start game.
+
     F5              list options.
+
     F6              reduce game speed.
     F7              increase game speed.
-    Q               quit game.
+
+    F9              reduce snake max length.
+    F10             increase snake max length.
+
+    F11             reduce amount of walls.
+    F12             increase amount of walls.
+
     Arrow keys or   movement.
     numpad 2,4,6,8
-    or w,x,a,d
 
-    F12             switch macro set from "Tron" to "Smash'em".
+    Q               quit game.
+
+    TAB             switch macro set from "Tron" to "Smash'em".
 
 Hit F4 as soon as at least two players have joined the areana via F3 key to
 start the actual match.
 
 To toggle an option, type "option" or "option on"/"option off" in chat.
 Speed can be changed via "moar speed"/"less speed",
-length can be changed via "moar length"/"less length".
+length can be changed via "moar length"/"less length",
+walls can be changed via "moar walls"/"less walls".
 
 
 Food Fight
