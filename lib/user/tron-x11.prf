@@ -1,0 +1,122 @@
+
+
+# Automatic macro dump
+
+# Macro '0'
+
+A::command:\splay\stron\r
+C:^__FFC0\r
+
+
+# Macro '1'
+
+A::begin\r
+C:^__FFC1\r
+
+
+# Macro '2'
+
+A::options\r
+C:^__FFC2\r
+
+
+# Macro '3'
+
+A::moar\sspeed\r
+C:^__FFC4\r
+
+
+# Macro '4'
+
+A::less\sspeed\r
+C:^__FFC3\r
+
+
+# Macro '5'
+
+A::less\slength\r
+C:^__FFC6\r
+
+
+# Macro '6'
+
+A::moar\slength\r
+C:^__FFC7\r
+
+
+# Macro '7'
+
+A::less\swalls\r
+C:^__FFC8\r
+
+
+# Macro '8'
+
+A::moar\swalls\r
+C:^__FFC9\r
+
+
+# Macro '9'
+
+A::command:\sfire\s2\r
+C:^__FFB2\r^\2^\
+
+
+# Macro '10'
+
+A::command:\sfire\s4\r
+C:^__FFB4\r^\4^\
+
+
+# Macro '11'
+
+A::command:\sfire\s6\r
+C:^__FFB6\r^\6^\
+
+
+# Macro '12'
+
+A::command:\sfire\s8\r
+C:^__FFB8\r^\8^\
+
+
+# Macro '13'
+
+A::command:\sfire\s8\r
+C:^__FF52\r
+
+
+# Macro '14'
+
+A::command:\sfire\s2\r
+C:^__FF54\r
+
+
+# Macro '15'
+
+A::command:\sfire\s4\r
+C:^__FF51\r
+
+
+# Macro '16'
+
+A::command:\sfire\s6\r
+C:^__FF53\r
+
+
+# Macro '17'
+
+A::quit\r
+C:Q
+
+
+# Macro '18'
+
+A:%lsmash-x11.prf\r\e:%:SMASH\smacros\sloaded.\r
+C:\t
+
+
+
+
+
+

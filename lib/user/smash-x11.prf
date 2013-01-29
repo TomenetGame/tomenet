@@ -1,0 +1,206 @@
+
+
+# Automatic macro dump
+
+# Macro '0'
+
+A::quit\r
+C:Q
+
+
+# Macro '1'
+
+A::command:\splay\ssmash\r
+C:^__FFBE\r
+
+
+# Macro '2'
+
+A::command:play\s2smash\r
+C:^__FFBF\r
+
+
+# Macro '3'
+
+A:<
+C:,
+
+
+# Macro '4'
+
+A:<
+C:^__FFAC\r^\,^\
+
+
+# Macro '5'
+
+A::command:\scease\sfire\r
+C:s
+
+
+# Macro '6'
+
+A::command:\sfire\s1\r
+C:y
+
+
+# Macro '7'
+
+A::command:\sfire\s1\r
+C:z
+
+
+# Macro '8'
+
+A::command:\sfire\s2\r
+C:x
+
+
+# Macro '9'
+
+A::command:\sfire\s3\r
+C:c
+
+
+# Macro '10'
+
+A::command:\sfire\s4\r
+C:a
+
+
+# Macro '11'
+
+A::command:\sfire\s6\r
+C:d
+
+
+# Macro '12'
+
+A::command:\sfire\s7\r
+C:q
+
+
+# Macro '13'
+
+A::command:\sfire\s8\r
+C:w
+
+
+# Macro '14'
+
+A::command:\sfire\s9\r
+C:e
+
+
+# Macro '15'
+
+A:2
+C:^__FFB2\r^\2^\
+
+
+# Macro '16'
+
+A:4
+C:^__FFB4\r^\4^\
+
+
+# Macro '17'
+
+A:6
+C:^__FFB6\r^\6^\
+
+
+# Macro '18'
+
+A:8
+C:^__FFB8\r^\8^\
+
+
+# Macro '19'
+
+A:1
+C:^__FFB1\r^\1^\
+
+
+# Macro '20'
+
+A:3
+C:^__FFB3\r^\3^\
+
+
+# Macro '21'
+
+A:5
+C:^__FFB5\r^\5^\
+
+
+# Macro '22'
+
+A:7
+C:^__FFB7\r^\7^\
+
+
+# Macro '23'
+
+A:9
+C:^__FFB9\r^\9^\
+
+
+# Macro '24'
+
+A:\e\e\\.1
+C:^_S_FF9C\r
+
+
+# Macro '25'
+
+A:\e\e\\.2
+C:^_S_FF99\r
+
+
+# Macro '26'
+
+A:\e\e\\.3
+C:^_S_FF9B\r
+
+
+# Macro '27'
+
+A:\e\e\\.4
+C:^_S_FF96\r
+
+
+# Macro '28'
+
+A:\e\e\\.6
+C:^_S_FF98\r
+
+
+# Macro '29'
+
+A:\e\e\\.7
+C:^_S_FF95\r
+
+
+# Macro '30'
+
+A:\e\e\\.8
+C:^_S_FF97\r
+
+
+# Macro '31'
+
+A:\e\e\\.9
+C:^_S_FF9A\r
+
+
+# Macro '32'
+
+A:%ltron-x11.prf\r\e:%:TRON\smacros\sloaded.\r
+C:\t
+
+
+
+
+
+
