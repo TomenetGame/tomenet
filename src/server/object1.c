@@ -3693,6 +3693,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		if (!(o_ptr->ident & ID_MENTAL)) object_desc(0, o_name, o_ptr, TRUE, 3);
 		/* normal players: */
 		else object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+		/* create virtual object here too, just because we're lazy */
+		object_copy(&forge, o_ptr);
 	} else {
 		/* Just assume basic fixed flags */
 		if (aware) {
