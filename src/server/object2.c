@@ -5431,8 +5431,7 @@ for (i = 0; i < 25; i++) {
  * This 'utter hack' function is to allow item-generation w/o specifing
  * worldpos.
  */
-void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf)
-{
+void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf) {
 	worldpos wpos;
 
 	/* CHANGEME */
@@ -5449,13 +5448,49 @@ void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool g
  */
 //#ifndef TEST_SERVER /* cloned the function below, for reworking - C. Blue */
 #if 1
-void determine_level_req(int level, object_type *o_ptr)
-{
-	int i, j, klev = k_info[o_ptr->k_idx].level, base;
+void determine_level_req(int level, object_type *o_ptr) {
+	int i, j, klev = k_info[o_ptr->k_idx].level, base = klev / 2;
 	artifact_type *a_ptr = NULL;
-	base = klev / 2;
 
-	/* Exceptions */
+
+	/* -------------------- Dungeon level hacks -------------------- */
+
+
+	switch (o_ptr->tval) {
+	case TV_RING:
+		switch (o_ptr->sval) {
+		case SV_RING_SPEED:
+	                if (level < 75) level = 75;
+		        break;
+		case SV_RING_MIGHT:
+		case SV_RING_TOUGHNESS:
+		case SV_RING_READYWIT:
+		case SV_RING_CUNNINGNESS:
+			if (level < 25) level = 25;
+		        break;
+		}
+		break;
+	case TV_DRAG_ARMOR:
+	        if (o_ptr->sval == SV_DRAGON_POWER && level < 100) level = 100;
+	        break;
+	case TV_POTION:
+		switch (o_ptr->sval) {
+		case SV_POTION_INC_STR:
+		case SV_POTION_INC_INT:
+		case SV_POTION_INC_WIS:
+		case SV_POTION_INC_DEX:
+		case SV_POTION_INC_CON:
+		case SV_POTION_INC_CHR:
+			if (level < 20) level = 20;
+			break;
+	        }
+	        break;
+	}
+
+
+	/* -------------------- Exceptions -------------------- */
+
+
 	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) {
 		o_ptr->level = ring_of_polymorph_level(r_info[o_ptr->pval].level);
 		return;
@@ -5494,15 +5529,19 @@ void determine_level_req(int level, object_type *o_ptr)
 							(base = k_info level / 2, level = dungeonlevel usually) */
 		return;
 	}
-	
+
+
+	/* ---------- Base level boost depending on item type ---------- */
+
+
 	/* stat/heal potions harder to cheeze-transfer */
 	if (o_ptr->tval == TV_POTION) {
 		switch(o_ptr->sval) {
 		case SV_POTION_HEALING:
-			base += 15+10;
+			base += 15 + 10;
 			break;
 		case SV_POTION_RESTORE_MANA:
-			base += 10+10;
+			base += 10 + 10;
 			break;
 		case SV_POTION_INC_STR:
 		case SV_POTION_INC_INT:
@@ -5510,13 +5549,13 @@ void determine_level_req(int level, object_type *o_ptr)
 		case SV_POTION_INC_DEX:
 		case SV_POTION_INC_CON:
 		case SV_POTION_INC_CHR:
-			base += 40+30;
+			base += 40 + 30;
 			break;
 		case SV_POTION_AUGMENTATION:
-			base += 45+20;
+			base += 45 + 20;
 			break;
 		case SV_POTION_EXPERIENCE:
-			base += 20+20;
+			base += 20 + 20;
 			break;
 		}
 	}
@@ -5661,6 +5700,10 @@ void determine_level_req(int level, object_type *o_ptr)
 	/* '17/72' == 0.2361... < 1/4 :) */
 	base >>= 1;
 
+
+	/* --------------- Adjust, randomize and sanitize --------------- */
+
+
 #if 0 /* would need rework in conjunction with ego powers I'm afraid - C. Blue ;/ */
 	/* increase plain items' levels -> no more level 21 red dsm or level 18 thunder axe! - C. Blue */
 	if (klev <= 40) base += (klev / 10);
@@ -5684,6 +5727,10 @@ void determine_level_req(int level, object_type *o_ptr)
 	/* Level must be between 1 and 100 inclusively */
 	o_ptr->level = (j < 100) ? ((j > 1) ? j : 1) : 100;
 
+
+	/* --------------- Final bottom limits --------------- */
+
+
 	/* Anti-cheeze hacks */
 	if ((o_ptr->tval == TV_POTION) && ( /* potions that mustn't be transferred, otherwise resulting in 1 out-of-line char */
 	    (o_ptr->sval == SV_POTION_EXPERIENCE) ||
@@ -5704,6 +5751,10 @@ void determine_level_req(int level, object_type *o_ptr)
 		}
 	}
 
+	/* Fix cheap but high +dam weaponry: */
+	if (o_ptr->level * 10 < o_ptr->to_d * 12) o_ptr->level = (o_ptr->to_d * 12) / 10;
+
+
 #if 0 /* done above instead, where EGO_ are tested */
 	/* Reduce outrageous ego item levels (double-ego adamantite of immunity for example */
 	if (o_ptr->name2) {
@@ -5712,6 +5763,11 @@ void determine_level_req(int level, object_type *o_ptr)
 	}
 //	else {
 #endif
+
+
+	/* --------------- Reduce excessive level --------------- */
+
+
 	/* Slightly reduce high levels */
 	if (o_ptr->level > 55) o_ptr->level--;
 	if (o_ptr->level > 50) o_ptr->level--;
@@ -5736,15 +5792,9 @@ void determine_level_req(int level, object_type *o_ptr)
 	/* Special limit for WINNERS_ONLY items */
 	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && (o_ptr->level <= 50))
 		o_ptr->level = 51 + rand_int(5);
-
-	/* Fix cheap but high +dam weaponry: */
-//	if ((o_ptr->to_d * 12) / 10) { /* provided it's greater 0 - PARANOIA */
-		if (o_ptr->level * 10 < o_ptr->to_d * 12) o_ptr->level = (o_ptr->to_d * 12) / 10;
-//	}
 }
 #else /* new way, quite reworked */
-void determine_level_req(int level, object_type *o_ptr)
-{
+void determine_level_req(int level, object_type *o_ptr) {
 }
 #endif
 
@@ -5752,8 +5802,13 @@ void determine_level_req(int level, object_type *o_ptr)
    What it does: Check current level against theoretical minimum level of
    that item according to current determine_level_req() values.
    Fix if below, by applying bottom cap value. */
-void verify_level_req(object_type *o_ptr)
-{
+void verify_level_req(object_type *o_ptr) {
+	int lv = o_ptr->level;
+
+	if (!lv) return;
+
+	determine_level_req(0, o_ptr);
+	if (lv > o_ptr->level) o_ptr->level = lv;
 }
 
 /* Set level req for polymorph ring on its creation - C. Blue */
@@ -8352,8 +8407,7 @@ void setup_objects(void)
 /*
  * Wipe an object clean.
  */
-void object_wipe(object_type *o_ptr)
-{
+void object_wipe(object_type *o_ptr) {
 	/* Wipe the structure */
 	o_ptr=WIPE(o_ptr, object_type);
 }
@@ -8362,8 +8416,7 @@ void object_wipe(object_type *o_ptr)
 /*
  * Prepare an object based on an existing object: dest, src
  */
-void object_copy(object_type *o_ptr, object_type *j_ptr)
-{
+void object_copy(object_type *o_ptr, object_type *j_ptr) {
 	/* Copy the structure */
 	COPY(o_ptr, j_ptr, object_type);
 }

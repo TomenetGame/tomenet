@@ -1963,46 +1963,6 @@ void carry(int Ind, int pickup, int confirm)
 			if (okay) {
 				int slot;
 
-
-/* TEMPORARY ANTI-CHEEZE HACKS */  // todo: move to verify_level_req()
-if (o_ptr->level != 0) {
-	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30) && (o_ptr->bpval > 0)) {
-		s_printf("HACK-SPEEDREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
-		determine_level_req(75, o_ptr);
-		s_printf("%d.\n", o_ptr->level);
-	}
-	if (o_ptr->tval == TV_RING && o_ptr->sval >= SV_RING_MIGHT && o_ptr->sval <= SV_RING_CUNNINGNESS && o_ptr->level < o_ptr->bpval * 3 + 15) {
-		s_printf("HACK-STATSREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
-		determine_level_req(25, o_ptr);
-		s_printf("%d.\n", o_ptr->level);
-	}
-	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && (o_ptr->level < 45)) {
-		s_printf("HACK-PDSM: %s(%d) : %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
-		determine_level_req(100, o_ptr);
-		s_printf("%d.\n", o_ptr->level);
-	}
-	if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval <= SV_POTION_INC_CHR && o_ptr->level < 28) {
-		s_printf("HACK-STATPOT: %s(%d) potion: %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
-		determine_level_req(20, o_ptr);
-		s_printf("%d.\n", o_ptr->level);
-	}
-	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 == EGO_STORMBRINGER) {
-		s_printf("HACK-STORMBRINGER.\n");
-		o_ptr->level = 0;
-	}
-	if (o_ptr->tval == TV_HARD_ARMOR &&
-	    (o_ptr->name2 == EGO_HEAVY_PRESERVANCE || o_ptr->name2b == EGO_HEAVY_PRESERVANCE) &&
-	    o_ptr->pval > 1) {
-		s_printf("HACK-PRESERVANCE: %s(%d) armour: +%d -> +1.\n", p_ptr->name, p_ptr->lev, o_ptr->pval);
-		o_ptr->pval = 1;
-	}
-}
-if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
-    && (o_ptr->name2 == EGO_LIFE || o_ptr->name2b == EGO_LIFE) && (o_ptr->pval > 2)) {
-        o_ptr->pval = 2;
-}
-
-
 				/* Own it */
 				if (!o_ptr->owner) {
 					o_ptr->owner = p_ptr->id;

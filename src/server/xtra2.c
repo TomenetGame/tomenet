@@ -9780,31 +9780,6 @@ void telekinesis_aux(int Ind, int item)
 			if (!is_admin(p_ptr)) return;
 		}
 
-
-/* TEMPORARY ANTI-CHEEZE HACKS */  // todo: move to verify_level_req()
-if (q_ptr->level != 0) {
-	if (q_ptr->tval == TV_RING && q_ptr->sval == SV_RING_SPEED && q_ptr->level < 30 && (q_ptr->bpval > 0)) {
-		s_printf("HACK-SPEEDREQ (Tele): %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, q_ptr->bpval, q_ptr->level);
-		determine_level_req(75, q_ptr);
-		s_printf("%d.\n", q_ptr->level);
-	}
-	if (q_ptr->tval == TV_RING && q_ptr->sval >= SV_RING_MIGHT && q_ptr->sval <= SV_RING_CUNNINGNESS && q_ptr->level < q_ptr->bpval * 3 + 15) {
-		s_printf("HACK-STATSREQ (Tele): %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, q_ptr->bpval, q_ptr->level);
-		determine_level_req(25, q_ptr);
-		s_printf("%d.\n", q_ptr->level);
-	}
-	if (q_ptr->tval == TV_POTION && q_ptr->sval >= SV_POTION_INC_STR && q_ptr->sval <= SV_POTION_INC_CHR && q_ptr->level < 28) {
-		s_printf("HACK-STATPOT (Tele): %s(%d) potion: %d -> ", p_ptr->name, p_ptr->lev, q_ptr->level);
-		determine_level_req(20, q_ptr);
-		s_printf("%d.\n", q_ptr->level);
-	}
-}
-if (is_weapon(q_ptr->tval) && !(k_info[q_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
-    && (q_ptr->name2 == EGO_LIFE || q_ptr->name2b == EGO_LIFE) && (q_ptr->pval > 2)) {
-	q_ptr->pval = 2;
-}
-
-
 		/* Log it - mikaelh */
 		object_desc_store(Ind, o_name, q_ptr, TRUE, 3);
 		s_printf("(Tele) Item transaction from %s(%d) to %s(%d):\n  %s\n", p_ptr->name, p_ptr->lev, Players[Ind2]->name, Players[Ind2]->lev, o_name);
