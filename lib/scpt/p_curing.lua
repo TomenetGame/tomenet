@@ -262,9 +262,9 @@ HRESTORING = add_spell
 			do_res_stat(Ind, A_CHR)
                         if get_level(Ind, HRESTORING, 50) >= 5 then
 	                        restore_level(Ind)
-	                        fire_ball(Ind, GF_RESTORE_PLAYER, 0, 2 + 4, 1, "")
+	                        fire_ball(Ind, GF_RESTORE_PLAYER, 0, 2 + 4, 1, " recites a prayer.")
 	                else
-	                        fire_ball(Ind, GF_RESTORE_PLAYER, 0, 2, 1, "")
+	                        fire_ball(Ind, GF_RESTORE_PLAYER, 0, 4, 1, " recites a prayer.")
 	                end
 		        end,
 	["info"] =      function()

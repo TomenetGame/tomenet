@@ -9578,19 +9578,19 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		case GF_RESTORE_PLAYER:
-			if (dam & 0x1) { /* Restore stats */
+			if (dam & 0x1) { /* Restore food */
+				set_food(Ind, PY_FOOD_MAX - 1);
+			}
+			if (dam & 0x2) { /* Restore exp */
+				(void)restore_level(Ind);
+			}
+			if (dam & 0x4) { /* Restore stats */
 				(void)do_res_stat(Ind, A_STR);
 				(void)do_res_stat(Ind, A_CON);
 				(void)do_res_stat(Ind, A_DEX);
 				(void)do_res_stat(Ind, A_WIS);
 				(void)do_res_stat(Ind, A_INT);
 				(void)do_res_stat(Ind, A_CHR);
-			}
-			if (dam & 0x2) { /* Restore exp */
-				(void)restore_level(Ind);
-			}
-			if (dam & 0x4) { /* Restore food */
-				set_food(Ind, PY_FOOD_MAX - 1);
 			}
 			if (dam & 0x8) { /* Black breath (herbal tea) */
 				if (p_ptr->black_breath) {
