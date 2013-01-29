@@ -1882,8 +1882,10 @@ bool get_com(cptr prompt, char *command)
  * Note that this command is used both in the dungeon and in
  * stores, and must be careful to work in both situations.
  */
-void request_command()
-{
+/* This should be extended onto all top-line clearing/message prompting during macro execution,
+   to avoid erasing %:bla lines coming from the macro, by overwriting them with useless prompts: */
+#define DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+void request_command() {
 	char cmd;
 
 
@@ -1907,18 +1909,23 @@ void request_command()
 	msg_flag = FALSE;
 	c_msg_print(NULL);
 
+#ifndef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 	/* Clear top line */
 	prt("", 0, 0);
+#endif
 
 	/* Bypass "keymap" */
-	if (cmd == '\\')
-	{
+	if (cmd == '\\') {
+#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+		/* Clear top line */
+		prt("", 0, 0);
+#endif
+
 		/* Get a char to use without casting */
 		(void)(get_com("Command: ", &cmd));
 
 		/* Hack -- allow "control chars" to be entered */
-		if (cmd == '^')
-		{
+		if (cmd == '^') {
 			/* Get a char to "cast" into a control char */
 			(void)(get_com("Command: Control: ", &cmd));
 
@@ -1926,20 +1933,31 @@ void request_command()
 			cmd = KTRL(cmd);
 		}
 
+#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+		/* Clear top line */
+		prt("", 0, 0);
+#endif
+
 		/* Use the key directly */
 		command_cmd = cmd;
-	}
-
-	else
-	{
+	} else {
 		/* Hack -- allow "control chars" to be entered */
-		if (cmd == '^')
-		{
+		if (cmd == '^') {
+#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+			/* Clear top line */
+			prt("", 0, 0);
+#endif
+
 			/* Get a char to "cast" into a control char */
 			(void)(get_com("Control: ", &cmd));
 
 			/* Convert */
 			cmd = KTRL(cmd);
+
+#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+			/* Clear top line */
+			prt("", 0, 0);
+#endif
 		}
 
 		/* Access the array info */
@@ -1950,8 +1968,10 @@ void request_command()
 	/* Paranoia */
 	if (!command_cmd) command_cmd = ESCAPE;
 
+#ifndef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 	/* Hack -- erase the message line. */
 	prt("", 0, 0);
+#endif
 }
 
 bool get_dir(int *dp)
