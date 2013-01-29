@@ -203,7 +203,7 @@ VENGEANCE = add_spell
 	end,
 	["desc"] =	{
 			"Enlightened: summons party member on the same area to you",
-			"         (Also teleports all monsters in LOS to you!)",
+			"             (Also teleports all monsters in LOS to you!)",
 			"Corrupted: damages all monsters in sight"
 		}
 }
@@ -256,10 +256,10 @@ INTENSIFY = add_spell
 	end,
 	["desc"] =	{
 --			"Requires astral level of 45",
-			"Enlightened: slows down monsters in sight",
-			"         grants temporary mana and time resistance",
+			"Enlightened: slows down monsters in sight and",
+			"             grants temporary mana and time resistance",
 			"Corrupted: increases your critical chance (+2 base",
-			"         +2 per 5 astral levels thereafter)"
+			"           +2 per 5 astral levels thereafter)"
 		}
 }
 POWERCLOUD = add_spell
@@ -318,6 +318,6 @@ GATEWAY = add_spell
 			"Requires level 50 Astral Knowledge and at least character level 62",
 			"Enlightened: instantaneous wor for every party member on the level",
 			"Corrupted: creates a void jump gate",
-			"         (cast once to set the first location and the second for the target)"
+			"           (cast once to set the first location and the second for the target)"
 		}
 }
