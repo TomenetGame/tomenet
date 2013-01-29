@@ -1738,6 +1738,33 @@ void do_cmd_fill_bottle(int Ind)
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
 
+#ifdef FOUNTAIN_GUARDS
+	item = 0;
+//	if (k_info[lookup_kind(tval, sval)].cost > 0) {
+	if (magik(FOUNTAIN_GUARDS)) {
+		if (getlevel(&p_ptr->wpos) >= 40) { switch (randint(2)) { case 1:item = 924;break; case 2:item = 893; }
+		} else if (getlevel(&p_ptr->wpos) >= 35) { switch (randint(3)) { case 1:item = 1038;break; case 2:item = 894;break; case 3:item = 902; }
+		} else if (getlevel(&p_ptr->wpos) >= 30) { switch (randint(2)) { case 1:item = 512;break; case 2:item = 509; }
+		} else if (getlevel(&p_ptr->wpos) >= 25) { item = 443;
+		} else if (getlevel(&p_ptr->wpos) >= 20) { switch (randint(4)) {case 1:item = 919;break; case 2:item = 882;break; case 3:item = 927;break; case 4:item = 1057; }
+		} else if (getlevel(&p_ptr->wpos) >= 15) { switch (randint(3)) {case 1:item = 303;break; case 2:item = 923;break; case 3:item = 926; }
+		} else if (getlevel(&p_ptr->wpos) >= 10) { item = 925;
+		} else if (getlevel(&p_ptr->wpos) >= 5) { item = 207;
+		} else { item = 900;
+		}
+		s_printf("FOUNTAIN_GUARDS: %d ", item);
+	}
+//	}
+	if (item) {
+		msg_print(Ind, "A monster appears in the fountain!");
+		summon_override_checks = SO_GRID_TERRAIN | SO_IDDC;
+		if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, item, 0, 1))
+			s_printf("ok.\n");
+		else s_printf("failed.\n");
+		summon_override_checks = SO_NONE;
+	}
+#endif
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
