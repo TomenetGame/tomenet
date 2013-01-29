@@ -9315,11 +9315,13 @@ Note that not every skill is available to every profession (class).
                                 cloaking mode.
     .Stealth                    Increases your stealth, which determines
                                 if monsters can hear you from a distance
-                                or if you can sneak past them. Note that even
-                                Draconians can become stealthy by using this!
-                                (Without further +stealth items, stealth of a
-                                Draconian Adventurer will become 'poor' instead
-                                of 'bad' with Stealth at 26.000.)
+                                or if you can sneak past them.
+                                The stealth gain is half as much as from items
+                                that give +Stealth.
+                                If your character is really bad at stealth,
+                                like Draconians, it might seem as if the skill
+                                doesn't help. But if you invest a lot of points
+                                you will eventually see an improvement ;).
     .Stealing                   Ability to steal items from stores.
                                 If you get caught, you will be on the
                                 'blacklist of merchants' for a minute up
