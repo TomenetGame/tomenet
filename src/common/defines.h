@@ -2446,6 +2446,11 @@
 #define EGO_AURA_COLD2		222
 #define EGO_AURA_FIRE2		223
 
+#define EGO_ROBE_MAGI		224
+#define EGO_FROCK_PIETY		225
+#define EGO_MARTIAL		226
+
+#define EGO_TEMPORARY		227
 
 
 /*** Object "tval" and "sval" codes ***/

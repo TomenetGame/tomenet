@@ -2845,8 +2845,7 @@ cptr item_activation(object_type *o_ptr) {
  * Display the damage done with a multiplier
  */
 //void output_dam(object_type *o_ptr, int mult, int mult2, cptr against, cptr against2, bool *first)
-static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, int bonus, int bonus2, cptr against, cptr against2)
-{
+static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, int bonus, int bonus2, cptr against, cptr against2) {
 	player_type *p_ptr = Players[Ind];
 	int dam;
 
@@ -2879,18 +2878,13 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 
 
 /* XXX this ignores the chance of extra dmg via 'critical hit' */
-static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
-{
+static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1) {
 	player_type *p_ptr = Players[Ind];
 	object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
-	u32b f1, f2, f3, f4, f5, esp;
 	bool first = TRUE;
 
 	/* save timed effects that might be changed on weapon switching - C. Blue */
 	long tim_wraith = p_ptr->tim_wraith;
-
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* this stuff doesn't take into account dual-wield or shield(lessness) directly,
 	   but the player actually has to take care of unequipping/reequipping his
@@ -2908,11 +2902,11 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	/* handle secondary weapon or shield */
 	object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
 	/* take care of MUST2H if player still has a shield or secondary weapon equipped */
-	if (f4 & TR4_MUST2H) {
+	if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) {
 		p_ptr->inventory[INVEN_ARM].k_idx = 0; /* temporarily delete */
 	}
 	/* take care of SHOULD2H if player is dual-wielding */
-	else if ((f4 & TR4_SHOULD2H) && (is_weapon(p_ptr->inventory[INVEN_ARM].tval))) {
+	else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) && (is_weapon(p_ptr->inventory[INVEN_ARM].tval))) {
 		p_ptr->inventory[INVEN_ARM].k_idx = 0; /* temporarily delete */
 	}
 
@@ -2961,8 +2955,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	suppress_boni = FALSE;
 }
 
-static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, int bonus, int bonus2, cptr against, cptr against2)
-{
+static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, int bonus, int bonus2, cptr against, cptr against2) {
 	player_type *p_ptr = Players[Ind];
 	int dam;
 
@@ -2992,18 +2985,13 @@ static void output_boomerang_dam(int Ind, FILE *fff, object_type *o_ptr, int mul
 	fprintf(fff, "\n");
 }
 
-static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff)
-{
+static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1) {
 	player_type *p_ptr = Players[Ind];
 	object_type forge, *old_ptr = &forge;
-	u32b f1, f2, f3, f4, f5, esp;
 	bool first = TRUE;
 
 	/* save timed effects that might be changed on weapon switching - C. Blue */
 	long tim_wraith = p_ptr->tim_wraith;
-
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* this stuff doesn't take into account dual-wield or shield(lessness) directly,
 	   but the player actually has to take care of unequipping/reequipping his
@@ -3064,8 +3052,7 @@ static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff)
  * Display the ammo damage done with a multiplier
  */
 //void output_ammo_dam(object_type *o_ptr, int mult, int mult2, cptr against, cptr against2, bool *first)
-static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2)
-{
+static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2) {
 	player_type *p_ptr = Players[Ind];
 	long dam;
 	object_type *b_ptr = &p_ptr->inventory[INVEN_BOW];
@@ -3111,10 +3098,8 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
  * Outputs the damage we do/would do with the current bow and this ammo
  */
 /* TODO: tell something about boomerangs */
-static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
-{
+static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1, u32b bow_f1) {
 	player_type *p_ptr = Players[Ind];
-	u32b f1, f2, f3, f4, f5, esp;
 	object_type forge, *old_ptr = &forge;
 	bool first = TRUE;
 	// int i;
@@ -3131,8 +3116,8 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 	suppress_boni = TRUE;
 	calc_boni(Ind);
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	/* combine slay flags of ammo and bow */
+	f1 |= bow_f1;
 
 	fprintf(fff, "\nUsing it with your current shooter you would do an avarage damage per shot of:\n");
 	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "animals", NULL);
@@ -3182,10 +3167,8 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 	suppress_boni = FALSE;
 }
 
-static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff)
-{
+static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1, u32b ammo_f1) {
 	player_type *p_ptr = Players[Ind];
-	u32b f1, f2, f3, f4, f5, esp;
 	object_type forge, *old_ptr = &forge, *oa_ptr = &p_ptr->inventory[INVEN_AMMO];
 	bool first = TRUE;
 	// int i;
@@ -3202,8 +3185,8 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff)
 	suppress_boni = TRUE;
 	calc_boni(Ind);
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	/* combine slay flags of ammo and bow */
+	f1 |= ammo_f1;
 
 	fprintf(fff, "\nUsing it with your current ammunition you would do an avarage damage per shot of:\n");
 	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_HURT, 0, "animals", NULL);
@@ -3255,8 +3238,7 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 /* display how much AC an armour would add for us (for MA users!) and
    especially if it would encumber us, so we won't have to guess in shops - C. Blue */
-static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff, bool star_identify)
-{
+static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	player_type *p_ptr = Players[Ind], p_backup;
 	object_type forge, *old_ptr = &forge;
 	int slot = wield_slot(Ind, o_ptr); /* slot the item goes into */
@@ -3280,10 +3262,13 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 	object_copy(old_ptr, &p_ptr->inventory[slot]);
 	object_copy(&p_ptr->inventory[slot], o_ptr);
 	p_ptr->inventory[slot].number = 1; /* fix weight, for martial arts especially */
+
+#if 0 /* shouldn't be required just for measuring encumberment */
 	if (!star_identify) {
 		p_ptr->inventory[slot].name1 = p_ptr->inventory[slot].name2 = p_ptr->inventory[slot].name2b = 0;
 		p_ptr->inventory[slot].pval = 0;
 	}
+#endif
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
@@ -3382,8 +3367,7 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 }
 
 /* display weapon encumberment changes, so we won't have to guess in shops - C. Blue */
-static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, bool star_identify)
-{
+static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	player_type *p_ptr = Players[Ind], p_backup;
 	object_type forge, *old_ptr = &forge, forge2, *old_ptr2 = &forge2;
 
@@ -3407,11 +3391,14 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 	else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) &&
 	    (is_weapon(p_ptr->inventory[INVEN_ARM].tval)))
 		p_ptr->inventory[INVEN_ARM].k_idx = 0;
+
+#if 0 /* shouldn't be required just for measuring encumberment */
 	/* If we don't really know the item, rely on k_info flags only! */
 	if (!star_identify) {
 		p_ptr->inventory[INVEN_WIELD].name1 = p_ptr->inventory[INVEN_WIELD].name2 = p_ptr->inventory[INVEN_WIELD].name2b = 0;
 		p_ptr->inventory[INVEN_WIELD].pval = 0;
 	}
+#endif
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
@@ -3488,8 +3475,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff, bool
 }
 
 /* display ranged weapon encumberment changes, so we won't have to guess in shops - C. Blue */
-static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff, bool star_identify)
-{
+static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	player_type *p_ptr = Players[Ind], p_backup;
 	object_type forge, *old_ptr = &forge;
 
@@ -3506,11 +3492,14 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff, boo
 	object_copy(old_ptr, &p_ptr->inventory[INVEN_BOW]);
 	object_copy(&p_ptr->inventory[INVEN_BOW], o_ptr);
 	p_ptr->inventory[INVEN_BOW].number = 1; /* fix weight */
+
+#if 0 /* shouldn't be required just for measuring encumberment */
 	/* If we don't really know the item, rely on k_info flags only! */
 	if (!star_identify) {
 		p_ptr->inventory[INVEN_BOW].name1 = p_ptr->inventory[INVEN_BOW].name2 = p_ptr->inventory[INVEN_BOW].name2b = 0;
 		p_ptr->inventory[INVEN_BOW].pval = 0;
 	}
+#endif
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
@@ -3560,6 +3549,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, esp;
+	object_type forge;
 
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
@@ -3572,8 +3562,13 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	}
 #endif
 
+	/* Not *identified* */
+	object_copy(&forge, o_ptr);
+	forge.name1 = forge.name2 = forge.name2b = 0;
+	forge.pval = 0;
+
 	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(&forge, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Describe */
 	msg_format(Ind, "\377s%s:", o_name);
@@ -3600,9 +3595,9 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	}
 	else if (is_weapon(o_ptr->tval) && o_ptr->weight <= 80) msg_print(Ind, "\377s  It may be dual-wielded.");
 
-	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, o_ptr, NULL, FALSE);
-	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, o_ptr, NULL, FALSE);
-	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, o_ptr, NULL, FALSE);
+	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, NULL);
+	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, NULL);
+	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, NULL);
 
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD) {
 		/* copied from object1.c.. */
@@ -3660,6 +3655,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
 	bool aware = object_aware_p(Ind, o_ptr);
+	object_type forge;
 #endif
 	player_type *p_ptr = Players[Ind];
 	int j, am;
@@ -3747,13 +3743,29 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	                    		f3 |= e_ptr->flags3[j];
 		                        f4 |= e_ptr->flags4[j];
 		                        f5 |= e_ptr->flags5[j];
-	    		                esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
+	    		                esp |= (e_ptr->esp[j] & ~ESP_R_MASK);
 	            		}
 	            	}
 	        }
 
 	        /* Get the item name we know */
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+		/* create virtual object with those flags that are certain */
+		object_copy(&forge, o_ptr);
+		forge.name1 = forge.name2 = forge.name2b = 0;
+		/* not for artifacts */
+		if (!o_ptr->name1) {
+			e_ptr = &e_info[EGO_TEMPORARY];
+			forge.name2 = EGO_TEMPORARY;
+			e_ptr->rar[0] = 100;
+			e_ptr->flags1[0] = f1; /* need f1 for determining encumberment (+stats) */
+			e_ptr->flags2[0] = f2;
+			e_ptr->flags3[0] = f3; /* need f3 for determining encumberment (BLESSED) */
+			e_ptr->flags4[0] = f4;
+			e_ptr->flags5[0] = f5;
+			e_ptr->esp[0] = esp;
+		}
 	}
 
 	/* conclude hack: can *identifying* actually make a difference at all? */
@@ -3833,7 +3845,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 #endif
 	}
 
-	switch(o_ptr->tval){
+	switch (o_ptr->tval) {
 	case TV_BLUNT:
 		fprintf(fff, "\377%cIt's a%s blunt weapon.\377w\n", a, ca_ptr); break;
 	case TV_POLEARM:
@@ -3865,13 +3877,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	/* Kings/Queens only warning */
 	if (f5 & TR5_WINNERS_ONLY) fprintf(fff, "\377vIt is to be used by royalties exclusively.\377w\n");
 	/* Morgoth crown hardcoded note to give a warning!- C. Blue */
-	else if (o_ptr->name1 == ART_MORGOTH) {
+	else if (o_ptr->name1 == ART_MORGOTH && full) {
 		fprintf(fff, "\377vIt may only be worn by kings and queens!\377w\n");
 	}
 
-	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, o_ptr, fff, eff_full);
-	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, o_ptr, fff, eff_full);
-	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, o_ptr, fff, eff_full);
+	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, fff);
+	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, fff);
+	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, fff);
 
 	/* specialty: recognize custom spell books and display their contents! - C. Blue */
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
@@ -3927,31 +3939,6 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		}
 	}
 
-#if 0
-	/* Mega-Hack -- describe activation */
-	if (f3 & (TR3_ACTIVATE)) {
-		info[i++] = "It can be activated for...";
-		if (is_ego_p(o_ptr, EGO_MSTAFF_SPELL))
-		{
-			info[i++] = item_activation(o_ptr, 1);
-			info[i++] = "And...";
-		}
-		info[i++] = item_activation(o_ptr, 0);
-
-		/* Mega-hack -- get rid of useless line for randarts */
-		if (o_ptr->tval != TV_RANDART) {
-			info[i++] = "...if it is being worn.";
-		}
-	}
-
-	/* Granted power */
-	if (object_power(o_ptr) != -1) {
-		info[i++] = "It grants you the power of...";
-		info[i++] = powers_type[object_power(o_ptr)].name;
-		info[i++] = "...if it is being worn.";
-	}
-#endif	// 0
-
 	/* Hack -- describe lite's */
 	if (o_ptr->tval == TV_LITE) {
 		int radius = 0;
@@ -3971,7 +3958,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	}
 
 	/* Mega Hack^3 -- describe the Anchor of Space-time */
-	if (o_ptr->name1 == ART_ANCHOR)
+	if (o_ptr->name1 == ART_ANCHOR && full)
 		fprintf(fff, "It prevents the space-time continuum from being disrupted.\n");
 
 	am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
@@ -3986,13 +3973,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 #ifdef NEW_ANTIMAGIC_RATIO
 	am = (am * 3) / 5;
 #endif
-/*	if (am >= 100) fprintf(fff, "It generates a perfect antimagic field.\n");
-	else if (am >= 80) fprintf(fff, "It generates a mighty antimagic field.\n");
-	else if (am >= 60) fprintf(fff, "It generates a strong antimagic field.\n");
-	else if (am >= 40) fprintf(fff, "It generates an antimagic field.\n");
-	else if (am >= 20) fprintf(fff, "It generates a mellow antimagic field.\n");
-	else if (am > 0) fprintf(fff, "It generates a feeble antimagic field.\n");
-*/
+
 	if (am > 0) fprintf(fff, "It generates an antimagic field that has %d%% chance of supressing magic.\n", am);
 	if (am < 0) fprintf(fff, "It generates a suppressed antimagic field.\n");
 
@@ -4411,33 +4392,93 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	/* special artifacts hardcoded - C. Blue */
 	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_AMBER
 #ifdef NEW_ID_SCREEN
-	    && id
+	    && full
 #endif
 	    )
 		fprintf(fff, "\377wIt turns your skin into amber, increasing your powers.\n");
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SLEEPING
 #ifdef NEW_ID_SCREEN
-	    && id
+	    && full
 #endif
 	    )
 		fprintf(fff, "\377wIt drops a veil of sleep over all your surroundings.\n");
 
 	/* Damage display for weapons */
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
-		display_weapon_damage(Ind, o_ptr, fff);
+		display_weapon_damage(Ind, &forge, fff, f1);
 
 	/* Damage display for ranged weapons */
 	if (wield_slot(Ind, o_ptr) == INVEN_BOW) {
-		if (o_ptr->tval == TV_BOW)
-			display_shooter_damage(Ind, o_ptr, fff);
-		else
-			display_boomerang_damage(Ind, o_ptr, fff);
+		if (o_ptr->tval == TV_BOW) {
+			u32b ammo_f1 = 0, dummy;
+			object_type *x_ptr = &p_ptr->inventory[INVEN_AMMO];
+			if (x_ptr->k_idx) {
+				if ((x_ptr->ident & ID_MENTAL)) {
+					object_flags(x_ptr, &ammo_f1, &dummy, &dummy, &dummy, &dummy, &dummy);
+				} else {
+					/* Just assume basic fixed flags */
+					ammo_f1 = k_info[o_ptr->k_idx].flags1;
+					/* item has undergone basic ID (or is easy-know and basic)? */
+					if (object_known_p(Ind, x_ptr)) {
+	                                        /* Just add the fixed ego flags that we know to be on the item */
+					        if (x_ptr->name2) {
+						        e_ptr = &e_info[x_ptr->name2];
+						        for (j = 0; j < 5; j++) {
+					    	    	        if (e_ptr->rar[j] != 100) continue;
+				    	        	        ammo_f1 |= e_ptr->flags1[j];
+				                	}
+				        	}
+					        if (x_ptr->name2b) {
+						        e_ptr = &e_info[x_ptr->name2b];
+						        for (j = 0; j < 5; j++) {
+					    	    	        if (e_ptr->rar[j] != 100) continue;
+				    	        	        ammo_f1 |= e_ptr->flags1[j];
+				                	}
+				        	}
+		            		}
+		            	}
+		        }
+			display_shooter_damage(Ind, &forge, fff, f1, ammo_f1);
+		} else
+			display_boomerang_damage(Ind, &forge, fff, f1);
 	}
 
 	/* Breakage/Damage display for ammo */
 	if (wield_slot(Ind, o_ptr) == INVEN_AMMO) {
+		u32b shooter_f1 = 0, dummy;
+		object_type *x_ptr = &p_ptr->inventory[INVEN_BOW];
+		if (x_ptr->k_idx && x_ptr->tval == TV_BOW &&
+                    (( (x_ptr->sval == SV_SHORT_BOW || x_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
+                     ( (x_ptr->sval == SV_LIGHT_XBOW || x_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
+                     (x_ptr->sval == SV_SLING && o_ptr->tval == TV_SHOT))) {
+			if ((x_ptr->ident & ID_MENTAL)) {
+				object_flags(x_ptr, &shooter_f1, &dummy, &dummy, &dummy, &dummy, &dummy);
+			} else {
+				/* Just assume basic fixed flags */
+				shooter_f1 = k_info[o_ptr->k_idx].flags1;
+				/* item has undergone basic ID (or is easy-know and basic)? */
+				if (object_known_p(Ind, x_ptr)) {
+	                                /* Just add the fixed ego flags that we know to be on the item */
+				        if (x_ptr->name2) {
+					        e_ptr = &e_info[x_ptr->name2];
+					        for (j = 0; j < 5; j++) {
+				    	    	        if (e_ptr->rar[j] != 100) continue;
+			    	        	        shooter_f1 |= e_ptr->flags1[j];
+			                	}
+			        	}
+				        if (x_ptr->name2b) {
+					        e_ptr = &e_info[x_ptr->name2b];
+					        for (j = 0; j < 5; j++) {
+				    	    	        if (e_ptr->rar[j] != 100) continue;
+			    	        	        shooter_f1 |= e_ptr->flags1[j];
+			                	}
+			        	}
+				}
+            		}
+            	}
+
 		fprintf(fff, "\377WIt has %d%% chances to break upon hit.\n", breakage_chance(o_ptr));
-		display_ammo_damage(Ind, o_ptr, fff);
+		display_ammo_damage(Ind, &forge, fff, f1, shooter_f1);
 	}
 
 #ifdef NEW_ID_SCREEN

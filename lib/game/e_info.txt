@@ -2665,6 +2665,10 @@ T:36:22:23
 R:100
 F:DEX | SUST_DEX | HIDE_TYPE
 
+# hack for NEW_ID_SCREEN: temporary ego item
+N:227:temporary
+# This item has no defined stats.
+
 
 
 ##N:(No.):(name)
