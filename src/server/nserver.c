@@ -319,6 +319,7 @@ static void Init_receive(void)
 	playing_receive[PKT_GO_DOWN]		= Receive_go_down;
 	playing_receive[PKT_MESSAGE]		= Receive_message;
 	playing_receive[PKT_ITEM]		= Receive_item;
+	playing_receive[PKT_SPELL]		= Receive_spell;
 	playing_receive[PKT_PURCHASE]		= Receive_purchase;
 	playing_receive[PKT_KING]		= Receive_King;
 
@@ -5302,6 +5303,20 @@ int Send_item_request(int Ind, char tester_hook) {
 		return Packet_printf(&connp->c, "%c", PKT_ITEM);
 }
 
+/* for DISCRETE_SPELL_SYSTEM */
+int Send_spell_request(int Ind, int item) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for spell request (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	return Packet_printf(&connp->c, "%c%d", PKT_SPELL, item);
+}
+
 int Send_flush(int Ind)
 {
 	connection_t *connp = Conn[Players[Ind]->conn];
@@ -8816,6 +8831,43 @@ static int Receive_item(int ind)
 			return 1;
 		}
 		Handle_item(player, item);
+	}
+	return 1;
+}
+
+/* for DISCRETE_SPELL_SYSTEM */
+static int Receive_spell(int ind) {
+	connection_t *connp = Conn[ind];
+	char ch;
+	s16b item, spell;
+	int n, player = -1;
+	player_type *p_ptr = NULL;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
+		p_ptr = Players[player];
+	}
+	else player = 0;
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &spell)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	/* Sanity check - mikaelh */
+	if (item >= INVEN_TOTAL)
+		return 1;
+	if (spell > max_spells) return 1;
+
+	if (p_ptr) {
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF) {
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+		//Handle_item(player, item);
+		//TODO: finish tome_creation_aux() here
 	}
 	return 1;
 }

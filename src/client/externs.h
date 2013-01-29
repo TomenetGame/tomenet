@@ -701,6 +701,7 @@ extern int Send_msg(cptr message);
 extern int Send_fire(int dir);
 extern int Send_throw(int item, int dir);
 extern int Send_item(int item);
+extern int Send_spell(int item, int spell);
 extern int Send_gain(int book, int spell);
 extern int Send_cast(int book, int spell);
 extern int Send_pray(int book, int spell);

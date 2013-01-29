@@ -98,6 +98,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_BLIND]		= Receive_blind;
 	receive_tbl[PKT_STUN]		= Receive_stun;
 	receive_tbl[PKT_ITEM]		= Receive_item;
+	receive_tbl[PKT_SPELL]		= Receive_spell_request;
 	receive_tbl[PKT_SPELL_INFO]	= Receive_spell_info;
 	receive_tbl[PKT_DIRECTION]	= Receive_direction;
 	receive_tbl[PKT_FLUSH]		= Receive_flush;
@@ -2096,6 +2097,24 @@ int Receive_item(void) {
 	return 1;
 }
 
+/* for DISCRETE_SPELL_SYSTEM */
+int Receive_spell_request(void) {
+	char	ch;
+	int	n, item, spell;
+
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &item)) <= 0) return n;
+
+	if (!screen_icky && !topline_icky) {
+		c_msg_print(NULL);
+	       /* Ask for a spell, allow cancel */
+	        if ((spell = get_school_spell("choose", &item)) == -1) return 1;
+		Send_spell(item, spell);
+	} else {
+		if ((n = Packet_printf(&qbuf, "%c%d", ch, item)) <= 0) return n;
+	}
+	return 1;
+}
+
 int Receive_spell_info(void) {
 	char	ch;
 	int	n;
@@ -3759,6 +3778,13 @@ int Send_throw(int item, int dir) {
 int Send_item(int item) {
 	int	n;
 	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_ITEM, item)) <= 0) return n;
+	return 1;
+}
+
+/* for DISCRETE_SPELL_SYSTEM */
+int Send_spell(int item, int spell) {
+	int	n;
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SPELL, item, spell)) <= 0) return n;
 	return 1;
 }
 

@@ -93,7 +93,7 @@
 #define PKT_STAND		76
 #define PKT_DESTROY		77
 #define PKT_LOOK		78
-#define PKT_SPELL		79
+#define PKT_SPELL		79	/* reuse now for Receive_request_spell/Send_spell */
 
 #define PKT_OPEN		80
 #define PKT_PRAY		81
