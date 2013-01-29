@@ -68,7 +68,7 @@ D:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT                         
 D:#TTTTTTTTTTTTTttTTTTTTTTTTTTTTTTTTTTTTTT                   ,,     ,                                ,               ,                ,,          ,              ,               , ,              ,    #
 D:#TTTTTTTTTTTTTTTTTTTTTTTTTTttT           ,            ,                  ,     ,                   ,        ,                                     ,                                                  #
 D:#TTTTTTTTTTtttTTTTTTTTTTTT           ,                             ,                               ,x                                          ,                                 ,                   #
-D:#TTTTTTTTTTTTTTTTTTTTTTT                                                                           ,                             <>            ,                ,        ,                           #
+D:#TTTTTTTTTTTTTTTTTTTTTTT                                                                           ,                              >            ,                ,        ,                           #
 D:#TTTTtTTTTTTTTTTTTTTTTt               ,,     ,                                                     ,     ,    ,,                            ,                              ,                ,        #
 D:#TTTTTTTTTTTTTTTTTTTTTT          ,            ,                                                    ,                       ,                                                                         #
 D:#TTTTTTTTTTTTTTTTTTTTT                         ,  ,                  ,                             ,    -TTTt     ,    ,                ,,                         , ,             ,                 #
