@@ -5753,6 +5753,9 @@ void process_player_change_wpos(int Ind)
 		    p_ptr->new_level_method == LEVEL_PROB_TRAVEL))
 			continue;
 
+		/* Prevent landing onto a store entrance */
+		if (zcave[y][x].feat == FEAT_SHOP) continue;
+
 		/* Must be inside the level borders - mikaelh */
 		if (x < 1 || y < 1 || x > p_ptr->cur_wid - 2 || y > p_ptr->cur_hgt - 2)
 			continue;
@@ -5784,6 +5787,7 @@ void process_player_change_wpos(int Ind)
 	zcave[y][x].m_idx = 0 - Ind;
 	cave_midx_debug(wpos, y, x, -Ind);
 
+	/* Update his golem's location */
 	for (m_idx = m_top - 1; m_idx >= 0; m_idx--) {
 		monster_type *m_ptr = &m_list[m_fast[m_idx]];
 		cave_type **mcave;

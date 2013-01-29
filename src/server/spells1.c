@@ -824,6 +824,9 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 			/* No teleporting into monster nests (experimental, 2008-05-26) */
 			if (zcave[y][x].info & CAVE_NEST_PIT) continue;
 
+	                /* Prevent landing onto a store entrance */
+	                if (zcave[y][x].feat == FEAT_SHOP) continue;
+
 			/* Never break into st-anchor */
 			if (!p_ptr->death && check_st_anchor(wpos, y, x)) return FALSE;
 
