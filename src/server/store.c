@@ -2867,7 +2867,9 @@ void store_stole(int Ind, int item)
 
 #ifdef STEAL_CHEEZEREDUCTION
 //		if (!magik((5000000 / tbest) + 5))
-		if (!magik((5000000 / object_value_real(0, &sell_obj)) + 5))
+		if ((!magik((5000000 / object_value_real(0, &sell_obj)) + 5))
+		    && !(in_irondeepdive(&p_ptr->wpos) &&
+		    (st_info[st_ptr->st_idx].flags1 & (SF1_VHARD_STEAL | SF1_HARD_STEAL))))
 			sell_obj.level = 0;
 #endif
 
