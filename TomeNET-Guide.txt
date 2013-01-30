@@ -1063,6 +1063,7 @@ or shorter: /tym [rs]
 
 /trait      Allows outdated Draconian characters to acquire a lineage trait.
             This cannot be reversed, so the player should pick carefully.
+            See (6.4) "- Draconian" for a list of traits and what they do.
 
 /untag [<inscription>]
             If <inscription is omitted, it removes all inscriptions from items
