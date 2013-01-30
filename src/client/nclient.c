@@ -2577,7 +2577,7 @@ int Receive_target_info(void) {
 	if (c_cfg.target_history) c_msg_print(buf);
 	else {
 		/* Clear the topline */
-		prt("", 0, 0);
+		clear_topline();
 
 		/* Display target info */
 		put_str(buf, 0, 0);

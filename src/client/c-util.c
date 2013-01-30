@@ -16,6 +16,10 @@
    the form *tXXX- instead of XXX*t? - C. Blue */
 #define MACRO_WIZARD_SMART_TARGET
 
+/* This should be extended onto all top-line clearing/message prompting during macro execution,
+   to avoid erasing %:bla lines coming from the macro, by overwriting them with useless prompts: */
+#define DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+
 
 
 #ifdef SET_UID
@@ -74,7 +78,7 @@ static int MACRO_WAIT = 96;
 static void ascii_to_text(char *buf, cptr str);
 
 static bool after_macro = FALSE;
-bool parse_macro = FALSE;
+bool parse_macro = FALSE; /* are we inside the process of executing a macro */
 int macro_missing_item = 0;
 static bool parse_under = FALSE;
 static bool parse_slash = FALSE;
@@ -114,6 +118,9 @@ void flush_now(void)
 
 	/* Cancel "macro" info */
 	parse_macro = after_macro = FALSE;
+#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+	restore_prompt();
+#endif
 
 	/* Cancel "sequence" info */
 	parse_under = parse_slash = FALSE;
@@ -541,7 +548,13 @@ static char inkey_aux(void)
 
 
 	/* End of internal macro */
-	if (ch == 29) parse_macro = FALSE;
+	if (ch == 29) {
+		parse_macro = FALSE;
+
+#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+		restore_prompt();
+#endif
+	}
 
 
 	/* Do not check "ascii 28" */
@@ -807,6 +820,9 @@ char inkey(void)
 
                 /* Cancel "macro" info */
                 parse_macro = after_macro = FALSE;
+#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+		restore_prompt();
+#endif
 
                 /* Cancel "sequence" info */
                 parse_under = parse_slash = FALSE;
@@ -1824,7 +1840,8 @@ bool get_string(cptr prompt, char *buf, int len)
 	res = askfor_aux(buf, len, askfor_mode);
 
 	/* Clear prompt */
-	prt("", 0, 0);
+	if (askfor_mode & ASKFOR_CHATTING) prt("", 0, 0);
+	else clear_topline();
 
 	/* restore responsiveness to hybrid macros */
 	inkey_msg = inkey_msg_old;
@@ -1847,13 +1864,13 @@ bool get_com(cptr prompt, char *command)
 	topline_icky = TRUE;
 
 	/* Display a prompt */
-	prt(prompt, 0, 0);
+	prompt_topline(prompt);
 
 	/* Get a key */
 	*command = inkey();
 
 	/* Clear the prompt */
-	prt("", 0, 0);
+	clear_topline();
 
 	/* Fix the top line */
 	topline_icky = FALSE;
@@ -1882,9 +1899,6 @@ bool get_com(cptr prompt, char *command)
  * Note that this command is used both in the dungeon and in
  * stores, and must be careful to work in both situations.
  */
-/* This should be extended onto all top-line clearing/message prompting during macro execution,
-   to avoid erasing %:bla lines coming from the macro, by overwriting them with useless prompts: */
-#define DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 void request_command() {
 	char cmd;
 
@@ -1911,14 +1925,14 @@ void request_command() {
 
 #ifndef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 	/* Clear top line */
-	prt("", 0, 0);
+	clear_topline();
 #endif
 
 	/* Bypass "keymap" */
 	if (cmd == '\\') {
 #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 		/* Clear top line */
-		prt("", 0, 0);
+		clear_topline();
 #endif
 
 		/* Get a char to use without casting */
@@ -1935,7 +1949,7 @@ void request_command() {
 
 #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 		/* Clear top line */
-		prt("", 0, 0);
+		clear_topline();
 #endif
 
 		/* Use the key directly */
@@ -1945,7 +1959,7 @@ void request_command() {
 		if (cmd == '^') {
 #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 			/* Clear top line */
-			prt("", 0, 0);
+			clear_topline();
 #endif
 
 			/* Get a char to "cast" into a control char */
@@ -1956,7 +1970,7 @@ void request_command() {
 
 #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 			/* Clear top line */
-			prt("", 0, 0);
+			clear_topline();
 #endif
 		}
 
@@ -1970,7 +1984,7 @@ void request_command() {
 
 #ifndef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 	/* Hack -- erase the message line. */
-	prt("", 0, 0);
+	clear_topline();
 #endif
 }
 
@@ -2053,7 +2067,7 @@ bool get_check(cptr prompt)
 	topline_icky = TRUE;
 
 	/* Prompt for it */
-	prt(buf, 0, 0);
+	prompt_topline(buf);
 
 #if 0
 	/* Get an acceptable answer */
@@ -2071,7 +2085,7 @@ bool get_check(cptr prompt)
 #endif
 
 	/* Erase the prompt */
-	prt("", 0, 0);
+	clear_topline();
 
 	/* The top line is OK again */
 	topline_icky = FALSE;
@@ -2791,7 +2805,7 @@ void c_msg_print(cptr msg)
 
 	/* Keldon-Hack -- Always reset */
 	p = 0;
-	if (!topline_icky) prt("", 0, 0);
+	if (!topline_icky) clear_topline();
 
 	/* Message length */
 	n = (msg ? strlen(msg) : 0);
@@ -2916,7 +2930,7 @@ void c_msg_print(cptr msg)
 	/* Remember cursor position */
 	Term_locate(&x, &y);
 
-	if (!topline_icky) prt("", 0, 0);
+	if (!topline_icky) clear_topline();
 
 	/* Message length */
 	n = (msg ? strlen(msg) : 0);
@@ -5798,7 +5812,7 @@ static void do_cmd_options_aux(int page, cptr info)
 	{
 		/* Prompt XXX XXX XXX */
 		sprintf(buf, "%s (RET advances, y/n sets, t toggles, ESC accepts)", info);
-		prt(buf, 0, 0);
+		prompt_topline(buf);
 
 		/* Display the options */
 		for (i = 0; i < n; i++)
@@ -7419,3 +7433,29 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		}
 	}
 }
+
+/* Helper functions for DONT_CLEAR_TOPLINE_IF_AVOIDABLE - C. Blue */
+void prompt_topline(cptr prompt) {
+#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+	/* store prompt in case macro fails at an item prompt etc */
+	strcpy(last_prompt, prompt);
+	if (!parse_macro)
+#endif
+	prt(prompt, 0, 0);
+}
+void clear_topline(void) {
+#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+	/* clear stored prompt */
+	last_prompt[0] = 0;
+	if (!parse_macro)
+#endif
+	prt("", 0, 0);
+}
+#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+/* If a macro failed while waiting for input at topline prompt,
+   then restore the prompt, so the user can manually respond. */
+void restore_prompt(void) {
+	if (!last_prompt[0]) return;
+	prt(last_prompt, 0, 0);
+}
+#endif

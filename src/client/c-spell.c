@@ -328,7 +328,7 @@ void show_browse(object_type *o_ptr)
 	print_spells(o_ptr);
 
 	/* Clear the top line */
-	prt("", 0, 0);
+	clear_topline();
 
 	/* Prompt user */
 	put_str("[Press any key to continue]", 0, 23);

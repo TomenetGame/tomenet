@@ -180,7 +180,7 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
         }
 
         /* Clear the prompt */
-        prt("", 0, 0);
+        clear_topline();
 
         /* Cancel */
         if (command == ESCAPE) return (FALSE);

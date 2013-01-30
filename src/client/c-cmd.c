@@ -502,7 +502,7 @@ void process_command()
 
 			/*
 			   if (!strcmp(nick,DUNGEON_MASTER)) cmd_master();
-			   else prt("Hit '?' for help.", 0, 0);
+			   else prompt_topline("Hit '?' for help.");
 			   */
 			cmd_master();
 			break;
@@ -1315,7 +1315,7 @@ int cmd_target(void)
 			case 'q':
 			{
 				/* Clear top line */
-				prt("", 0, 0);
+				clear_topline();
 				return FALSE;
 			}
 			case 't':
@@ -1344,7 +1344,7 @@ int cmd_target(void)
 					 * something else, like stay alive...
 					 */
 					/* Clear the top line */
-					prt("", 0, 0);
+					clear_topline();
 					return FALSE;
 				}
 				else
@@ -1404,7 +1404,7 @@ void cmd_look(void)
 			case 'q':
 			{
 				/* Clear top line */
-				prt("", 0, 0);
+				clear_topline();
 				return;
 			}
 			case KTRL('T'):
@@ -2837,7 +2837,7 @@ void cmd_suicide(void)
 	prt("Please verify SUICIDE by typing the '@' sign: ", 0, 0);
 	flush();
 	i = inkey();
-	prt("", 0, 0);
+	clear_topline();
 	if (i != '@') return;
 
 	/* Send it */

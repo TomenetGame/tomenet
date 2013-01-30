@@ -371,6 +371,7 @@ extern bool redraw_store;
 extern bool request_pending;
 extern bool request_abort;
 
+extern char last_prompt[MAX_CHARS];
 
 /*
  * Not-so-Automatically generated "function declarations"
@@ -553,7 +554,9 @@ extern bool parse_macro;
 extern int macro_missing_item;
 extern void Send_paste_msg(char *msg);
 extern void check_immediate_options(int i, bool yes, bool playing);
-
+extern void prompt_topline(cptr prompt);
+extern void clear_topline(void);
+extern void restore_prompt(void); /* DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
 
 /* c-store.c */
 extern bool leave_store;

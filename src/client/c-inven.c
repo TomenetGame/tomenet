@@ -461,7 +461,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 		sprintf(tmp_val, "(%s) %s", out_val, pmt);
 
 		/* Show the prompt */
-		prt(tmp_val, 0, 0);
+		prompt_topline(tmp_val);
 
 
 		/* Get a key */
@@ -713,7 +713,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 
 
 	/* Clear the prompt line */
-	prt("", 0, 0);
+	clear_topline();
 
 	/* Cease command macro exception */
 //	inkey_get_item = FALSE;
