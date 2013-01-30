@@ -2080,7 +2080,7 @@ int Receive_item(void) {
 			item_tester_hook = item_tester_hook_custom_tome;
 			break;
 		case ITH_RUNE:
-			item_tester_tval = TV_RUNE;
+			item_tester_tval = item_tester_hook_rune;
 			break;
 		}
 

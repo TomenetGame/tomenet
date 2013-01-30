@@ -88,7 +88,7 @@ extern byte rspell_cost(byte imperative, byte type, byte skill);
 extern byte rspell_fail(byte imperative, byte type, s16b diff, u16b penalty);
 extern u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, byte projection);
 extern byte rspell_radius(byte imperative, byte type, byte skill, byte projection);
-extern byte rspell_duration(byte imperative, byte type, byte skill);
+extern byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u16b dice);
 extern void do_runespell();
 extern void do_breath(void);
 
@@ -186,7 +186,7 @@ extern bool item_tester_hook_device(object_type *o_ptr);
 extern bool item_tester_hook_armour(object_type *o_ptr);
 extern bool item_tester_hook_weapon(object_type *o_ptr);
 extern bool item_tester_hook_custom_tome(object_type *o_ptr);
-
+extern bool item_tester_hook_rune(object_type *o_ptr);
 
 extern int special_line_type;
 extern int special_page_size;
