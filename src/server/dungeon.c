@@ -5959,6 +5959,9 @@ void process_player_change_wpos(int Ind)
 	p_ptr->music_monster = -1;
 	handle_music(Ind);
 #endif
+
+	/* flicker player for a moment, to allow for easy location */
+//	p_ptr->hilite = cfg.fps / 4; //todo: make client option
 }
 
 
@@ -6131,9 +6134,15 @@ void dungeon(void)
 			Players[i]->last_gold_drop_timer = turn;
 		}
 
+		/* Check for hilite */
+		if (Players[i]->hilite && !(turn % (cfg.fps / 15))) {
+			Players[i]->hilite--;
+			everyone_lite_spot(&Players[i]->wpos, Players[i]->py, Players[i]->px);
+		}
+
 		/* Play server-side animations (consisting of cycling/random colour choices,
 		   instead of animated colours which are circled client-side) */
-		if (!(turn % (cfg.fps / 6))) {
+		else if (!(turn % (cfg.fps / 6))) {
 			/* Flicker invisible player? (includes colour animation!) */
 //			if (Players[i]->invis) update_player(i);
 			if (Players[i]->invis) {

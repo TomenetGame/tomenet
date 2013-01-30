@@ -2738,7 +2738,7 @@ struct player_type
 	u16b FTK_e_flags;
 	u16b FTK_m_flags;
 	u16b FTK_energy;
-	
+
 	u16b tim_deflect;
 
 #if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES)
@@ -2860,6 +2860,7 @@ struct player_type
 	s16b tmp_x, tmp_y;
 
 	bool font_map_solid_walls; /* Hack: Certain Windows bitmap fonts: Map walls to /127, solid block tile */
+	int hilite;
 };
 
 /* For Monk martial arts */

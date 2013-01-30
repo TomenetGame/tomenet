@@ -3542,6 +3542,9 @@ void lite_spot(int Ind, int y, int x)
 				else if ((has_ball(p_ptr) != -1) && magik(25)) a = TERM_ORANGE; /* game ball carrier has orange flickering - mikaelh */
 			}
 
+			/* display player in really easily spottable colours */
+			if (p_ptr->hilite) a = (p_ptr->hilite % 2) ? TERM_L_RED : TERM_L_GREEN;
+
 			/* bugfix on MASSIVE deaths (det/death) */
 			if (p_ptr->fruit_bat && !p_ptr->body_monster &&
 				!((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME))) c = 'b';
@@ -3550,7 +3553,7 @@ void lite_spot(int Ind, int y, int x)
 				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) <= TURN_CHAR_INTO_NUMBER) {
 					int num;
 					num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
-					c = '0'+num;
+					c = '0' + num;
 				}
 			} else if (p_ptr->msp > 0) {
 				if (((p_ptr->csp * 95) / (p_ptr->msp * 10)) <= TURN_CHAR_INTO_NUMBER) {
