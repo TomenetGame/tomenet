@@ -5165,7 +5165,7 @@ void do_cmd_activate(int Ind, int item, int dir)
 
 	process_hooks(HOOK_ACTIVATE, "d", Ind);
 
-	if (o_ptr->tval != TV_RUNE) { //Disable rune 'you activate it' text for now. - Kurzel
+	if (o_ptr->tval != TV_RUNE) { //Disable rune 'you activate it' text.
 		if (o_ptr->tval != TV_BOOK) {
 			/* Wonder Twin Powers... Activate! */
 			msg_print(Ind, "You activate it...");
@@ -7245,7 +7245,7 @@ bool unmagic(int Ind)
 		set_tim_meditation(Ind, 0) |
 		set_tim_wraith(Ind, 0) |
 		set_fast(Ind, 0, 0) |
-		set_shield(Ind, 0, 50, SHIELD_NONE, 0, 0) |
+		set_shield(Ind, 0, 0, SHIELD_NONE, 0, 0) |
 		set_blessed(Ind, 0) |
 		set_hero(Ind, 0) |
 		set_shero(Ind, 0) |
@@ -7263,7 +7263,8 @@ bool unmagic(int Ind)
 //		set_martyr(Ind, 0) |
 		set_sh_fire_tim(Ind, 0) |
 		set_sh_cold_tim(Ind, 0) |
-		set_sh_elec_tim(Ind, 0)
+		set_sh_elec_tim(Ind, 0) |
+		set_tim_deflect(Ind, 0)
 	) ident = TRUE;
 
 	if (p_ptr->word_recall) ident |= set_recall_timer(Ind, 0);

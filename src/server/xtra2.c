@@ -3160,6 +3160,54 @@ bool do_divine_xtra_res_time_mana(int Ind, int v) {
 #endif
 
 /*
+ * Set "p_ptr->tim_deflect", notice observable changes
+ */
+bool set_tim_deflect(int Ind, int v)
+{
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_deflect) {
+			msg_print(Ind, "A deflective shield forms around your body!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_deflect) {
+			msg_print(Ind, "Your deflective shield crumbles away.");
+			notice = TRUE;
+		}
+	}
+
+
+	/* Use the value */
+	p_ptr->tim_deflect = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+/*
  * Set "p_ptr->sh_fire/cold/elec", notice observable changes
  */
 bool set_sh_fire_tim(int Ind, int v)

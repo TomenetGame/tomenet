@@ -1885,7 +1885,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 			break;
 
 
-		case TV_RUNE: { //Format: @O<t?><imperative><form>
+		case TV_RUNE: { //Format: @O<t?><imperative><form> {!R}
 
 			/* Validate Rune */
 			if (o_ptr->sval < 0 || o_ptr->sval > RCRAFT_MAX_PROJECTIONS) break;
@@ -1909,7 +1909,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 			/* Validate Form */
 			if (*inscription != '\0') {
 				m_index = *inscription - 'a';
-				if (m_index < 0 || m_index > RCRAFT_MAX_TYPES || r_types[m_index].flag == T_RUNE || r_types[m_index].flag == T_ENCH) m_flags |= T_BOLT;
+				if (m_index < 0 || m_index > RCRAFT_MAX_TYPES || r_types[m_index].flag == T_SIGN || r_types[m_index].flag == T_RUNE || r_types[m_index].flag == T_ENCH) m_flags |= T_BOLT; //Hack -- Disallow 'self' types. - Kurzel
 				else m_flags |= r_types[m_index].flag;
 			}
 			else {
@@ -1918,11 +1918,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 			}
 
 			/* Retaliate or Melee */
-#ifdef SAFE_MELEE
-			if (execute_rspell(Ind, 5, e_flags, I_MINI | T_BOLT, 0, 1) == 2) return (p_ptr->fail_no_melee);
-#else
 			if (execute_rspell(Ind, 5, e_flags, m_flags, 0, 1) == 2) return (p_ptr->fail_no_melee);
-#endif
 			return TRUE;
 
 		break; }
@@ -3772,7 +3768,11 @@ static bool process_player_end_aux(int Ind)
 	/* Shield */
 	if (p_ptr->shield)
 		(void)set_shield(Ind, p_ptr->shield - 1, p_ptr->shield_power, p_ptr->shield_opt, p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
-
+	
+	/* Timed deflection */
+	if (p_ptr->tim_deflect)
+		(void)set_tim_deflect(Ind, p_ptr->tim_deflect - 1);
+	
 	/* Timed Levitation */
 	if (p_ptr->tim_ffall)
 		(void)set_tim_ffall(Ind, p_ptr->tim_ffall - 1);
@@ -3826,65 +3826,6 @@ static bool process_player_end_aux(int Ind)
 		}
 
 		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - 1, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
-        }
-
-	/* Helper Buff -- Copy-pasta of Adam's Thunderstorm - Kurzel!!! - Optimize? Find the *t code and try that. -.-" */
-	if (p_ptr->tim_rcraft_help) {
-		int i, tries = 600;
-		monster_type *m_ptr = NULL;
-
-		while (tries) {
-			/* Access the monster */
-			m_ptr = &m_list[i = rand_range(1, m_max - 1)];
-
-			tries--;
-
-			/* Ignore "dead" monsters */
-			if (!m_ptr->r_idx) continue;
-
-			/* pfft. not even our level */
-			if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
-
-			/* Cant see ? cant hit */
-			if (!los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) continue;
-			if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) > 15) continue;
-
-			/* Do not hurt friends! */
-			/* if (is_friend(m_ptr) >= 0) continue; */
-			break;
-		}
-
-		if (tries) {
-			char m_name[MNAME_LEN];
-			monster_desc(Ind, m_name, i, 0);
-			if (p_ptr->tim_rcraft_help_type < RCRAFT_MAX_TYPES) {
-				int temp_tx = p_ptr->target_col;
-				int temp_ty = p_ptr->target_row;
-				int temp_who = p_ptr->target_who;
-				p_ptr->target_who = i;
-				switch (r_types[p_ptr->tim_rcraft_help_type].flag) {
-					case T_BOLT: {
-					msg_format(Ind, "A bolt of %s strikes out at %s.", r_projections[p_ptr->tim_rcraft_help_projection].name, m_name);
-					fire_bolt(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, 5, damroll(p_ptr->tim_rcraft_help_dx,p_ptr->tim_rcraft_help_dy), p_ptr->attacker);
-					//project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, damroll(p_ptr->tim_rcraft_help_dx,p_ptr->tim_rcraft_help_dy), r_projections[p_ptr->tim_rcraft_help_projection].gf_type, PROJECT_KILL | PROJECT_ITEM, "");
-					break; }
-					// case T_CLOU: {
-					// msg_format(Ind, "A cloud of %s roils about %s.", r_projections[p_ptr->tim_rcraft_help_projection].name, m_name);
-					// fire_cloud(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, 5, damroll(p_ptr->tim_rcraft_help_dx,p_ptr->tim_rcraft_help_dy), 1, 10, 9, p_ptr->attacker);
-					// break; }
-					default: break;
-				}
-				p_ptr->target_col = temp_tx;
-				p_ptr->target_row = temp_ty;
-				p_ptr->target_who = temp_who;
-			}
-			else { //LoS 'gale' (hacked 'type')
-				msg_format(Ind, "The air is filled with %s!", r_projections[p_ptr->tim_rcraft_help_projection].name);
-				project_hack(Ind, r_projections[p_ptr->tim_rcraft_help_projection].gf_type, damroll(p_ptr->tim_rcraft_help_dx,p_ptr->tim_rcraft_help_dy), p_ptr->attacker);
-			}
-		}
-
-		(void)set_tim_rcraft_help(Ind, p_ptr->tim_rcraft_help - 1, p_ptr->tim_rcraft_help_type, p_ptr->tim_rcraft_help_projection, p_ptr->tim_rcraft_help_dx, p_ptr->tim_rcraft_help_dy);
         }
 
 	/* Oppose Acid */
@@ -5672,7 +5613,7 @@ void process_player_change_wpos(int Ind)
 		/* Try to find a temple */
 		for (y = 0; y < MAX_HGT; y++) {
 			for (x = 0; x < MAX_WID; x++) {
-				cave_type* c_ptr = &zcave[y][x]; //Kurzel!!! - added a missing cave_type* wtf
+				cave_type* c_ptr = &zcave[y][x];
 				if (c_ptr->feat == FEAT_SHOP) {
 					struct c_special *cs_ptr = GetCS(c_ptr, CS_SHOP);
 					if (cs_ptr) {

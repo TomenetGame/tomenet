@@ -172,6 +172,13 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield)
 	if((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith)
 		p_ptr->tim_wraith = 1;
 
+	/* Sigil (reset it) */
+	if (o_ptr->sigil) {
+		msg_print(Ind, "The sigil fades away.");
+		o_ptr->sigil = 0;
+		o_ptr->sseed = 0;
+	}
+
 	/* Artifacts */
 	if (o_ptr->name1)
 	{
@@ -184,8 +191,6 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield)
 
 		if ((a_ptr->flags3 & TR3_WRAITH) && p_ptr->tim_wraith) p_ptr->tim_wraith = 1;
 	}
-
-
 
 	/* Carry the object, saving the slot it went in */
 	posn = inven_carry(Ind, &tmp_obj);

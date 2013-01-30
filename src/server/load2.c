@@ -411,8 +411,8 @@ static void rd_item(object_type *o_ptr)
 		rd_s32b(&o_ptr->pval3);
 	}
         if (!older_than(4, 2, 6)) {
-		rd_s32b(&o_ptr->pval4);
-		rd_s32b(&o_ptr->pval5);
+		rd_s32b(&o_ptr->sigil);
+		rd_s32b(&o_ptr->sseed);
 	}
 
 	rd_byte(&o_ptr->discount);
@@ -1806,7 +1806,7 @@ if (p_ptr->updated_savegame == 0) {
 
 	/* read obsolete values */
 	if (older_than(4, 4, 30) &&
-	    /* New Runecraft Feature Variables - Kurzel */
+	    /* Read obselete Runecraft variables into dummy variables - Kurzel */
 	    !older_than(4, 4, 25)) {
 	        rd_s16b(&tmp16s);
 
@@ -1876,6 +1876,7 @@ if (p_ptr->updated_savegame == 0) {
 	        rd_byte(&tmp8u);
 	}
 
+	if (!older_than(4, 4, 25)) rd_u16b(&p_ptr->tim_deflect);
 
 	/* Success */
 	return FALSE;

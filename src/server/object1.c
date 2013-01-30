@@ -1030,11 +1030,10 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	(*f5) = k_ptr->flags5;
 	(*esp) = k_ptr->esp;
 
-
+	artifact_type *a_ptr;
+	
 	/* Artifact */
 	if (o_ptr->name1) {
-		artifact_type *a_ptr;
-
 		/* Hack -- Randarts! */
 		if (o_ptr->name1 == ART_RANDART) {
 			if (!(a_ptr = randart_make(o_ptr))) return;
@@ -1062,7 +1061,6 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	/* Ego-item */
 	if (o_ptr->name2) {
 //		ego_item_type *e_ptr = &e_info[o_ptr->name2];
-		artifact_type *a_ptr;
 		a_ptr = ego_make(o_ptr);
 
 		(*f1) |= a_ptr->flags1;
@@ -1073,6 +1071,526 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 		(*esp) |= a_ptr->esp;
 	}
 
+	/* Sigil */
+	if (o_ptr->sigil) {
+		bool failed = 0;
+		if (o_ptr->sseed) { //Kurzel
+			/* Save RNG */
+			bool old_rand = Rand_quick;
+			u32b tmp_seed = Rand_value;
+			
+			/* Use the stored/quick RNG */
+			Rand_quick = TRUE;
+			Rand_value = o_ptr->sseed;
+			
+			/* Build the flag pool */
+			u32b flag_pool[192]; byte flag_category[192]; byte flag_count = 0; //192 is 32*6, aka max # of flags - Kurzel
+			s16b pval = o_ptr->pval; //PVAL for discrimination of flags
+			byte sigil = o_ptr->sigil-1;
+			if (sigil == SV_R_LITE) {
+				if (!((*f3) & TR3_LITE1)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_LITE1; flag_count++; }
+				if (!((*f2) & TR2_RES_BLIND)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_BLIND; flag_count++; }
+				if (!((*f3) & TR3_SEE_INVIS)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SEE_INVIS; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_MSTAFF:
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+						if (!((*f3) & TR3_SEE_INVIS)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SEE_INVIS; flag_count++; }
+					break;
+					case TV_HELM:
+					case TV_CROWN:
+						if (!((*f1) & TR1_INFRA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_INFRA; flag_count++; }
+						if (!((*f2) & TR2_RES_BLIND)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_BLIND; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_DARK) {
+				if (!((*f2) & TR2_RES_BLIND)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_BLIND; flag_count++; }
+				if (!((*f3) & TR3_SEE_INVIS)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SEE_INVIS; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_MSTAFF:
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+						if (!((*f3) & TR3_SEE_INVIS)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SEE_INVIS; flag_count++; }
+					break;
+					case TV_HELM:
+					case TV_CROWN:
+						if (!((*f1) & TR1_INFRA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_INFRA; flag_count++; }
+						if (!((*f2) & TR2_RES_BLIND)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_BLIND; flag_count++; }
+					break;
+					case TV_CLOAK:
+						if (!((*f5) & TR5_INVIS)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_INVIS; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_NEXU) {
+				if (!((*f2) & TR2_SUST_STR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_STR; flag_count++; }
+				if (!((*f2) & TR2_SUST_INT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_INT; flag_count++; }
+				if (!((*f2) & TR2_SUST_WIS)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_WIS; flag_count++; }
+				if (!((*f2) & TR2_SUST_DEX)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_DEX; flag_count++; }
+				if (!((*f2) & TR2_SUST_CON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CON; flag_count++; }
+				if (!((*f2) & TR2_SUST_CHR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CHR; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+						if (!((*f1) & TR1_SLAY_ANIMAL)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SLAY_ANIMAL; flag_count++; }
+						if (!((*f1) & TR1_SLAY_EVIL)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SLAY_EVIL; flag_count++; }
+						if (!((*f1) & TR1_SLAY_UNDEAD)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SLAY_UNDEAD; flag_count++; }
+						if (!((*f1) & TR1_SLAY_DEMON)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SLAY_DEMON; flag_count++; }
+						if (!((*f1) & TR1_SLAY_ORC)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SLAY_ORC; flag_count++; }
+						if (!((*f1) & TR1_SLAY_TROLL)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SLAY_TROLL; flag_count++; }
+						if (!((*f1) & TR1_SLAY_GIANT)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SLAY_GIANT; flag_count++; }
+						if (!((*f1) & TR1_SLAY_DRAGON)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SLAY_DRAGON; flag_count++; }
+						if (!((*f1) & TR1_KILL_DRAGON)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_KILL_DRAGON; flag_count++; }
+						if (!((*f1) & TR1_KILL_DEMON)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_KILL_DEMON; flag_count++; }
+						if (!((*f1) & TR1_KILL_UNDEAD)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_KILL_UNDEAD; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_NETH) {
+				if (!((*f2) & TR2_HOLD_LIFE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_HOLD_LIFE; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+					case TV_GLOVES:
+						if (!((*f1) & TR1_VAMPIRIC)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_VAMPIRIC; flag_count++; }
+					break;
+					case TV_CLOAK:
+					case TV_SOFT_ARMOR:
+					case TV_HARD_ARMOR:
+					case TV_DRAG_ARMOR:
+						if (!((*f2) & TR2_HOLD_LIFE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_HOLD_LIFE; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_CHAO) {
+				if (!((*f2) & TR2_RES_ACID) && !((*f2) & TR2_IM_ACID)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_ACID; flag_count++; }
+				if (!((*f2) & TR2_RES_ELEC) && !((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_ELEC; flag_count++; }
+				if (!((*f2) & TR2_RES_FIRE) && !((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_FIRE; flag_count++; }
+				if (!((*f2) & TR2_RES_COLD) && !((*f2) & TR2_IM_COLD)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_COLD; flag_count++; }
+				if (!((*f2) & TR2_RES_POIS) && !((*f5) & TR5_IM_POISON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_POIS; flag_count++; }
+				if (!((*f2) & TR2_RES_LITE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_LITE; flag_count++; }
+				if (!((*f2) & TR2_RES_DARK)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_DARK; flag_count++; }
+				if (!((*f2) & TR2_RES_BLIND)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_BLIND; flag_count++; }
+				if (!((*f2) & TR2_RES_CONF)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_CONF; flag_count++; }
+				if (!((*f2) & TR2_RES_SOUND)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_SOUND; flag_count++; }
+				if (!((*f2) & TR2_RES_SHARDS)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_SHARDS; flag_count++; }
+				if (!((*f2) & TR2_RES_NETHER)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_NETHER; flag_count++; }
+				if (!((*f2) & TR2_RES_NEXUS)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_NEXUS; flag_count++; }
+				if (!((*f2) & TR2_RES_DISEN)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_DISEN; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+						if (!((*f5) & TR5_CHAOTIC)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CHAOTIC; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_MANA) {
+				if (!((*f5) & TR5_REGEN_MANA)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REGEN_MANA; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_MSTAFF:
+						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
+					break;
+					case TV_GLOVES:
+						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
+						if (!((*f4) & TR4_AUTO_ID)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_AUTO_ID; flag_count++; }
+					break;
+					case TV_HELM:
+						if (!((*f4) & TR4_AUTO_ID)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_AUTO_ID; flag_count++; }
+					break;
+					case TV_CROWN:
+						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
+						if (!((*f4) & TR4_AUTO_ID)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_AUTO_ID; flag_count++; }
+						if (!((*f5) & TR5_REGEN_MANA)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REGEN_MANA; flag_count++; }
+					break;
+					case TV_SHIELD:
+					case TV_CLOAK:
+					case TV_SOFT_ARMOR:
+					case TV_HARD_ARMOR:
+					case TV_DRAG_ARMOR:
+						if (!((((*f2) & TR2_RES_ACID) || ((*f2) & TR2_IM_ACID)) && (((*f2) & TR2_RES_ELEC) || ((*f2) & TR2_IM_ELEC)) && (((*f2) & TR2_RES_FIRE) || ((*f2) & TR2_IM_FIRE)) && (((*f2) & TR2_RES_COLD) || ((*f2) & TR2_IM_COLD)))) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR5_ATTR_MULTI; flag_count++; } //Hack -- Base resist!
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_CONF) {
+				if (!((*f2) & TR2_FREE_ACT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_FREE_ACT; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_MSTAFF:
+					case TV_CROWN:
+						if (!((*f1) & TR1_INT) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_INT; flag_count++; }
+						if (!((*f1) & TR1_WIS) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_WIS; flag_count++; }
+					break;
+					case TV_GLOVES:
+						if (!((*f2) & TR2_FREE_ACT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_FREE_ACT; flag_count++; }
+					break;
+					case TV_SHIELD:
+					case TV_HARD_ARMOR:
+					case TV_DRAG_ARMOR:
+						if (!((*f5) & TR5_REFLECT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REFLECT; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_INER) {
+				if (!((*f1) & TR1_SPEED) && (pval < 0)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SPEED; flag_count++; } //slow down :)
+				if (!((*f2) & TR2_FREE_ACT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_FREE_ACT; flag_count++; }
+				if (!((*f3) & TR3_NO_TELE)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_NO_TELE; flag_count++; }
+			} else if (sigil == SV_R_ELEC) {
+				if (!((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ELEC; flag_count++; }
+				if (!((*f1) & TR1_DEX) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_DEX; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+					case TV_GLOVES:
+						if (!((*f1) & TR1_BRAND_ELEC)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_ELEC; flag_count++; }
+					break;
+					case TV_CLOAK:
+						if (!((*f3) & TR3_SH_ELEC)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SH_ELEC; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_FIRE) {
+				if (!((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_FIRE; flag_count++; }
+				if (!((*f1) & TR1_STR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STR; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+					case TV_GLOVES:
+						if (!((*f1) & TR1_BRAND_FIRE)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_FIRE; flag_count++; }
+					break;
+					case TV_CLOAK:
+						if (!((*f3) & TR3_SH_FIRE)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SH_FIRE; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_WATE) {
+				if (!((*f5) & TR5_IM_WATER)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IM_WATER; flag_count++; }
+				if (!((*f3) & TR3_REGEN)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_REGEN; flag_count++; }
+				if (!((*f3) & TR3_SLOW_DIGEST)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SLOW_DIGEST; flag_count++; }
+			} else if (sigil == SV_R_GRAV) {
+				if (!((*f2) & TR2_FREE_ACT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_FREE_ACT; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BOOTS:
+						if (!((*f4) & TR4_CLIMB)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_CLIMB; flag_count++; }
+					case TV_CLOAK:
+						if (!((*f4) & TR4_FLY)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_FLY; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_COLD) {
+				if (!((*f2) & TR2_IM_COLD)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_COLD; flag_count++; }
+				if (!((*f1) & TR1_STR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STR; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+					case TV_GLOVES:
+						if (!((*f1) & TR1_BRAND_COLD)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_COLD; flag_count++; }
+					break;
+					case TV_CLOAK:
+						if (!((*f5) & TR5_SH_COLD)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_SH_COLD; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_ACID) {
+				if (!((*f2) & TR2_IM_ACID)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ACID; flag_count++; }
+				if (!((*f1) & TR1_CHR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_CHR; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+					case TV_GLOVES:
+						if (!((*f1) & TR1_BRAND_ACID)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_ACID; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_POIS) {
+				if (!((*f5) & TR5_IM_POISON)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IM_POISON; flag_count++; }
+				if (!((*f1) & TR1_CON) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_CON; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+					case TV_GLOVES:
+						if (!((*f1) & TR1_BRAND_POIS)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_POIS; flag_count++; }
+					break;
+					case TV_SOFT_ARMOR:
+					case TV_HARD_ARMOR:
+					case TV_DRAG_ARMOR:
+						if (!((*f1) & TR1_CON) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_CON; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_TIME) {
+				if (!((*f2) & TR2_SUST_STR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_STR; flag_count++; }
+				if (!((*f2) & TR2_SUST_INT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_INT; flag_count++; }
+				if (!((*f2) & TR2_SUST_WIS)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_WIS; flag_count++; }
+				if (!((*f2) & TR2_SUST_DEX)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_DEX; flag_count++; }
+				if (!((*f2) & TR2_SUST_CON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CON; flag_count++; }
+				if (!((*f2) & TR2_SUST_CHR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CHR; flag_count++; }
+				if (!((*f1) & TR1_SPEED) && pval && (((!((*f5) & TR5_CRIT) || !((*f1) & TR1_MANA)) || pval < 8) || (!(((*f5) & TR5_CRIT) && ((*f1) & TR1_MANA)) || pval < 6))) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SPEED; flag_count++; } //Obey speed laws! ie. max 7 or 5 if you have crit/mana already in addition to speed! Hardcoded - Kurzel
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+						if (!((*f1) & TR1_BLOWS) && pval < 4) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BLOWS; flag_count++; }
+					break;
+					case TV_GLOVES:
+						if (!((*f1) & TR1_BLOWS) && pval < 3) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BLOWS; flag_count++; }
+					break;
+					case TV_BOOMERANG:
+						if (!((*f3) & TR3_XTRA_SHOTS)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_XTRA_SHOTS; flag_count++; }
+					break;
+					case TV_BOOTS:
+						if (!((*f1) & TR1_SPEED) && pval && (((!((*f5) & TR5_CRIT) || !((*f1) & TR1_MANA)) || pval < 8) || (!(((*f5) & TR5_CRIT) && ((*f1) & TR1_MANA)) || pval < 6))) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SPEED; flag_count++; } //Obey speed laws! ie. max 7 or 5 if you have crit/mana already in addition to speed! - Kurzel
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_SOUN) {
+				if (!((*f1) & TR1_STEALTH) && pval < 6) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STEALTH; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BOOTS:
+					case TV_CLOAK:
+					case TV_SOFT_ARMOR:
+					case TV_HARD_ARMOR:
+					case TV_DRAG_ARMOR:
+						if (!((*f1) & TR1_STEALTH) && pval < 6) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STEALTH; flag_count++; }
+					break;
+					case TV_HELM:
+					case TV_CROWN:
+						if (!((*f2) & TR2_RES_FEAR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_FEAR; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_SHAR) {
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+						if (!((*f5) & TR5_IMPACT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IMPACT; flag_count++; }
+						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
+					break;
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+						if (!((*f5) & TR5_VORPAL)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_VORPAL; flag_count++; }
+						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
+					break;
+					case TV_GLOVES:
+						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_DISE) {
+				if (!((*f3) & TR3_NO_MAGIC)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_NO_MAGIC; flag_count++; }
+			} else if (sigil == SV_R_FORC) { //not much to put here, also time uses these as a deterrent - Kurzel
+				if (!((*f2) & TR2_SUST_STR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_STR; flag_count++; }
+				if (!((*f2) & TR2_SUST_INT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_INT; flag_count++; }
+				if (!((*f2) & TR2_SUST_WIS)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_WIS; flag_count++; }
+				if (!((*f2) & TR2_SUST_DEX)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_DEX; flag_count++; }
+				if (!((*f2) & TR2_SUST_CON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CON; flag_count++; }
+				if (!((*f2) & TR2_SUST_CHR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CHR; flag_count++; }
+			} else if (sigil == SV_R_PLAS) {
+				if (!((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ELEC; flag_count++; }
+				if (!((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_FIRE; flag_count++; }
+				if (!((*f1) & TR1_DEX) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_DEX; flag_count++; }
+				if (!((*f1) & TR1_STR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STR; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_BLUNT:
+					case TV_POLEARM:
+					case TV_SWORD:
+					case TV_AXE:
+					case TV_BOOMERANG:
+					case TV_GLOVES:
+						if (!((*f1) & TR1_BRAND_ELEC)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_ELEC; flag_count++; }
+						if (!((*f1) & TR1_BRAND_FIRE)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_FIRE; flag_count++; }
+					break;
+					case TV_CLOAK:
+						if (!((*f3) & TR3_SH_ELEC)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SH_ELEC; flag_count++; }
+						if (!((*f3) & TR3_SH_FIRE)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SH_FIRE; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else failed = 1;
+			
+			/* Assign a flag from the pool */
+			if (flag_count) {
+				byte flag_pick = randint(flag_count) - 1; //0 to flag_count-1
+				byte category = flag_category[flag_pick];
+				if (category == 1) { 
+					switch (flag_pool[flag_pick]) { //Hack -- Stats may also sustain! (50% chance)
+						case TR1_STR: { if (!((*f2) & TR2_SUST_STR) && randint(2) == 1) (*f2) |= TR2_SUST_STR; break; }
+						case TR1_DEX: { if (!((*f2) & TR2_SUST_DEX) && randint(2) == 1) (*f2) |= TR2_SUST_DEX; break; }
+						case TR1_CON: { if (!((*f2) & TR2_SUST_CON) && randint(2) == 1) (*f2) |= TR2_SUST_CON; break; }
+						case TR1_INT: { if (!((*f2) & TR2_SUST_INT) && randint(2) == 1) (*f2) |= TR2_SUST_INT; break; }
+						case TR1_WIS: { if (!((*f2) & TR2_SUST_WIS) && randint(2) == 1) (*f2) |= TR2_SUST_WIS; break; }
+						case TR1_CHR: { if (!((*f2) & TR2_SUST_CHR) && randint(2) == 1) (*f2) |= TR2_SUST_CHR; break; }
+						default:
+						break;
+					}
+					(*f1) |= flag_pool[flag_pick];
+				} else if (category == 2) {
+					switch (flag_pool[flag_pick]) {
+						case TR5_ATTR_MULTI: //Hack -- Base resist!
+							if (!(((*f2) & TR2_RES_ACID) || ((*f2) & TR2_IM_ACID))) (*f2) |= TR2_RES_ACID;
+							if (!(((*f2) & TR2_RES_ELEC) || ((*f2) & TR2_IM_ELEC))) (*f2) |= TR2_RES_ELEC;
+							if (!(((*f2) & TR2_RES_FIRE) || ((*f2) & TR2_IM_FIRE))) (*f2) |= TR2_RES_FIRE;
+							if (!(((*f2) & TR2_RES_COLD) || ((*f2) & TR2_IM_COLD))) (*f2) |= TR2_RES_COLD;
+						break;
+						case TR2_IM_ACID: { if ((*f2) & TR2_RES_ACID) (*f2) &= ~(TR2_RES_ACID); (*f2) |= flag_pool[flag_pick]; break; }
+						case TR2_IM_ELEC: { if ((*f2) & TR2_RES_ELEC) (*f2) &= ~(TR2_RES_ELEC); (*f2) |= flag_pool[flag_pick]; break; }
+						case TR2_IM_FIRE: { if ((*f2) & TR2_RES_FIRE) (*f2) &= ~(TR2_RES_FIRE); (*f2) |= flag_pool[flag_pick]; break; }
+						case TR2_IM_COLD: { if ((*f2) & TR2_RES_COLD) (*f2) &= ~(TR2_RES_COLD); (*f2) |= flag_pool[flag_pick]; break; }
+						default:
+							(*f2) |= flag_pool[flag_pick];
+						break;
+					}
+				} else if (category == 3) (*f3) |= flag_pool[flag_pick];
+				else if (category == 4) (*f4) |= flag_pool[flag_pick];
+				else if (category == 5) { 
+					switch (flag_pool[flag_pick]) {
+						case TR5_IM_POISON: { if ((*f2) & TR2_RES_POIS) (*f2) &= ~(TR2_RES_POIS); (*f5) |= flag_pool[flag_pick]; break; }
+						case TR5_IM_WATER: { if ((*f5) & TR5_RES_WATER) (*f5) &= ~(TR5_RES_WATER); (*f5) |= flag_pool[flag_pick]; break; }
+						default:
+							(*f5) |= flag_pool[flag_pick];
+						break;
+					}
+				} else if (category == 6) (*esp) |= flag_pool[flag_pick];
+				else failed = 1;
+			} else failed = 1;
+
+			/* Restore RNG */
+			Rand_quick = old_rand;
+			Rand_value = tmp_seed;
+		} else {
+			/* Add the resist, handle conflicts */
+			switch (o_ptr->sigil-1) {
+				/* (*f2) with no conflicts */
+				case SV_R_LITE: 
+				case SV_R_DARK:
+				case SV_R_NEXU:
+				case SV_R_NETH:
+				case SV_R_CHAO:
+				case SV_R_CONF:
+				case SV_R_SOUN:
+				case SV_R_SHAR:
+				case SV_R_DISE:
+				case SV_R_FORC:
+					if (!((*f2) & r_projections[o_ptr->sigil-1].resist)) (*f2) |= r_projections[o_ptr->sigil-1].resist;
+					else failed = 1;
+				break;
+				
+				/* (*f2) with conflicts (base/immunes) */
+				case SV_R_ELEC:
+					if ((*f2) & TR2_IM_ELEC) { failed = 1; break; }
+					(*f2) |= r_projections[o_ptr->sigil-1].resist;
+				break;
+				case SV_R_FIRE:
+					if ((*f2) & TR2_IM_FIRE) { failed = 1; break; }
+					(*f2) |= r_projections[o_ptr->sigil-1].resist;
+				break;
+				case SV_R_COLD:
+					if ((*f2) & TR2_IM_COLD) { failed = 1; break; }
+					(*f2) |= r_projections[o_ptr->sigil-1].resist;
+				break;
+				case SV_R_ACID:
+					if ((*f2) & TR2_IM_ACID) { failed = 1; break; }
+					(*f2) |= r_projections[o_ptr->sigil-1].resist;
+				break;
+				case SV_R_POIS:
+					if ((*f5) & TR5_IM_POISON) { failed = 1; break; }
+					(*f2) |= r_projections[o_ptr->sigil-1].resist;
+				break;
+				case SV_R_WATE:
+					if ((*f5) & TR5_IM_WATER) { failed = 1; break; }
+					(*f5) |= r_projections[o_ptr->sigil-1].resist;
+				break;
+				
+				/* (*f3) with no conflicts */
+				case SV_R_GRAV:
+					if (!((*f3) & r_projections[o_ptr->sigil-1].resist)) (*f3) |= r_projections[o_ptr->sigil-1].resist;
+					else failed = 1;
+				break;
+				
+				/* (*f5) with no conflicts */
+				case SV_R_MANA:
+				case SV_R_INER:
+				case SV_R_TIME:
+				case SV_R_PLAS:
+					if (!((*f5) & r_projections[o_ptr->sigil-1].resist)) (*f5) |= r_projections[o_ptr->sigil-1].resist;
+					else failed = 1;
+				break;
+				
+				default:
+				break;
+			}
+		}
+		
+#if 0 //How to make a_ptr or edit it? - Kurzel
+		/* Really powerful items should aggravate. */
+		s32b power = artifact_power(a_ptr);
+		if (power > 100) {
+			if (rand_int (100) < (power - 100) * 3) {
+				/* Add the flag */
+				(*f3) |= TR3_AGGRAVATE;
+				/* Remove conflicts */
+				(*f1) &= ~(TR1_STEALTH);
+				(*f5) &= ~(TR5_INVIS);
+			}
+		}
+#endif
+		
+		/* Sigil (reset it) */
+		if (failed) {
+			//msg_print(Ind, "The sigil is ineffective.");
+			o_ptr->sigil = 0;
+			o_ptr->sseed = 0;
+		}
+	}
+	
 	/* Hack for mindcrafter spell scrolls:
 	   Since they're called 'crystals', add water+fire immunity.
 	   Acid immunity is only for the greater crystals.
@@ -1930,6 +2448,14 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 				t = object_desc_str(t, &str[1]);
 			}
 		}
+	}
+	
+	/* Sigil - Perhaps add colour for the '&' in the future. */
+	if (o_ptr->sigil) {
+		t = object_desc_chr(t, ' ');
+		t = object_desc_chr(t, '<');
+		t = object_desc_chr(t, '&');
+		t = object_desc_chr(t, '>');
 	}
 
 	/* Print level and owning */
@@ -3574,6 +4100,9 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	msg_format(Ind, "\377s%s:", o_name);
 	// ?<-->if (strlen(o_name) > 77) msg_format(Ind, "\377s%s:", o_name + 77);
 
+	/* Sigil */
+	if (o_ptr->sigil) msg_format(Ind, "\377s  It is emblazoned with a sigil of %s.", r_projections[o_ptr->sigil-1].name);
+	
 	switch (o_ptr->tval) {
 	case TV_BLUNT:
 		msg_print(Ind, "\377s  It's a blunt weapon."); break;
@@ -3821,6 +4350,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
  #endif
 		fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
 #endif
+
+	/* Sigil */
+	if (o_ptr->sigil) fprintf(fff, "\377sIt is emblazoned with a sigil of %s.\n", r_projections[o_ptr->sigil-1].name);
 
 	/* in case we just *ID* it because an admin inspected it */
 	if (!(o_ptr->ident & ID_MENTAL) && is_admin(p_ptr)
@@ -4181,6 +4713,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		fprintf(fff, "It provides complete protection from unleashed water.\n");
 	else if (f5 & (TR5_RES_WATER))
 		fprintf(fff, "It provides resistance to unleashed water.\n");
+	if (f5 & (TR5_RES_PLASMA))
+		fprintf(fff, "It provides resistance to plasma.\n");
 	if (f5 & (TR5_RES_TIME))
 		fprintf(fff, "It provides resistance to time.\n");
 	if (f5 & (TR5_RES_MANA))

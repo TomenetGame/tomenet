@@ -1443,7 +1443,7 @@ extern bool genocide_aux(int Ind, worldpos *wpos, char typ);
 extern bool genocide(int Ind);
 extern bool mass_genocide(int Ind);
 extern bool probing(int Ind);
-extern bool project_hack(int Ind, int typ, int dam, char *attacker);
+extern bool project_los(int Ind, int typ, int dam, char *attacker);
 extern bool banish_evil(int Ind, int dist);
 extern bool dispel_evil(int Ind, int dam);
 extern bool dispel_undead(int Ind, int dam);
@@ -1458,6 +1458,7 @@ extern void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern bool lite_area(int Ind, int dam, int rad);
 extern bool unlite_area(int Ind, int dam, int rad);
 extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker);
+extern bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker);
 extern bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
 extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
 extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker);
@@ -1466,8 +1467,6 @@ extern bool cast_snowflake(worldpos *wpos, int x, int interval);
 extern bool cast_fireworks(worldpos *wpos, int x, int y);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
-extern bool fire_beam_cloud(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
-extern bool fire_crit_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
 extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker);
@@ -1751,7 +1750,7 @@ extern void set_dungeon_bonus(int id, bool reset);
 extern void intshuffle(int *array, int size);
 
 /* xtra2.c */
-
+extern bool set_tim_deflect(int Ind, int v);
 #ifdef ARCADE_SERVER
 extern void set_pushed(int Ind, int dir);
 #endif
@@ -2132,7 +2131,6 @@ extern int shutdown_recall_timer, shutdown_recall_state;
 extern byte execute_rspell(int Ind, byte dir, u16b e_flags, u16b m_flags, u16b item, bool retaliate);
 extern void warding_rune(int Ind, byte typ, byte mod, byte lvl);
 extern bool warding_rune_break(int m_idx);
-extern bool set_tim_rcraft_help(int Ind, byte duration, byte type, byte projection, byte dx, byte dy);
 /* common/tables.c */
 extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
 extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES+1];

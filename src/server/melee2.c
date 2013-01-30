@@ -4454,6 +4454,7 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 		case GF_TIME:
 		case GF_GRAVITY:
 		case GF_KILL_WALL:
+		case GF_SHATTER:
 		case GF_OLD_POLY:
 		case GF_OLD_SLOW:
 		case GF_OLD_CONF:
@@ -7369,8 +7370,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 
-		/* Hack -- check for Glyph of Warding */
-		if (do_move && (c_ptr->feat == FEAT_GLYPH) &&
+		/* Hack -- check for Glyph of Warding / Rune of Protection */
+		if (do_move && ((c_ptr->feat == FEAT_GLYPH) || (c_ptr->feat == FEAT_RUNE)) &&
 		    !((r_ptr->flags1 & RF1_NEVER_MOVE) && (r_ptr->flags1 & RF1_NEVER_BLOW))) {
 			/* Assume no move allowed */
 			do_move = FALSE;
@@ -7378,50 +7379,27 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			/* Break the ward - Michael (because he embodies the Glyph power sort of),
 			   Morgoth and certain Nether Realm monsters may insta-break them. */
 			if (randint(BREAK_GLYPH) < r_ptr->level || r_ptr->level >= 98) { // || r_ptr->level == 98 || r_ptr->level >= 100) {
-				/* Describe observable breakage */
-				/* Prolly FIXME */
-				msg_print_near_site(ny, nx, wpos, 0, TRUE, "The rune of protection is broken!");
+				if (c_ptr->feat == FEAT_GLYPH) {
+					/* Describe observable breakage */
+					/* Prolly FIXME */
+					msg_print_near_site(ny, nx, wpos, 0, TRUE, "The rune of protection is broken!");
+					
+					/* Break the rune */
+					cave_set_feat_live(wpos, ny, nx, FEAT_FLOOR);
+					
+					/* Allow movement */
+					do_move = TRUE;
+				} else { //(c_ptr->feat == FEAT_RUNE)
+					/* Describe observable breakage */
+					/* Prolly FIXME */
+					msg_print_near_site(ny, nx, wpos, 0, TRUE, "The glyph of warding is broken!");
 
-				/* Break the rune */
-				cave_set_feat_live(wpos, ny, nx, FEAT_FLOOR);
-
-				/* Allow movement */
-				do_move = TRUE;
-			}
-#ifdef SAURON_ANTI_GLYPH
-			/* Special power boost for Sauron if he gets hindered by glyphs */
-			else if (m_ptr->r_idx == 860 && base_r_ptr->freq_innate != SAURON_SPELL_BOOST) {
-				base_r_ptr->freq_spell = base_r_ptr->freq_innate = SAURON_SPELL_BOOST;
-				s_printf("SAURON: boost (glyph move).\n");
-			}
-		} else if (do_move && m_ptr->r_idx == 860 &&
-		    !m_ptr->extra && /* avoid oscillating too quickly from glyphs-prevent-summoning boost */
-		    base_r_ptr->freq_innate != 50) {
-			base_r_ptr->freq_spell = base_r_ptr->freq_innate = 50; /* hardcoded :| */
-			s_printf("SAURON: normal.\n");
-		}
-#else
-		}
-#endif
-
-		/* Hack -- check for Rune of Warding (Runecraft) */
-		if (do_move && (c_ptr->feat == FEAT_RUNE) &&
-		    !((r_ptr->flags1 & RF1_NEVER_MOVE) && (r_ptr->flags1 & RF1_NEVER_BLOW))) {
-			/* Assume no move allowed */
-			do_move = FALSE;
-
-			/* Break the ward - Michael (because he embodies the Glyph power sort of),
-			   Morgoth and certain Nether Realm monsters may insta-break them. */
-			if (randint(BREAK_GLYPH) < r_ptr->level || r_ptr->level >= 98) { // || r_ptr->level == 98 || r_ptr->level >= 100) {
-				/* Describe observable breakage */
-				/* Prolly FIXME */
-				msg_print_near_site(ny, nx, wpos, 0, TRUE, "The rune of warding is broken!");
-
-				/* Do this after the monster moves */
-				//if (warding_rune_break(m_idx)) return;
-				
-				/* Allow movement */
-				do_move = TRUE;
+					/* Do this after the monster moves */
+					//if (warding_rune_break(m_idx)) return;
+					
+					/* Allow movement */
+					do_move = TRUE;
+				}
 			}
 #ifdef SAURON_ANTI_GLYPH
 			/* Special power boost for Sauron if he gets hindered by glyphs */

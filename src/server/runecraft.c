@@ -19,21 +19,21 @@
 /** Options **/
 
 /* Class Options */
+//#define ENABLE_SKILLFUL_CASTING //Increases or decreases damage for individual spells slightly, based on fail rate margin. (Disabled currently, would mismatch INFO mkey/wizard displays.)
+//#define ENABLE_SUSCEPT //Extra backlash if the caster is susceptable to the projection element. (Disabled for now, until it can be completely implemented across classes; ie. Globe of Light hurts Dark-Elf casters.)
 //#define ENABLE_LIFE_CASTING //Allows casting with HP if not enough MP. (Disabled due to simplified, damage only, backlash penalties. We don't want OP necro/blood (infinite mana) runies!)
 #ifdef ENABLE_LIFE_CASTING
  #define SAFE_RETALIATION //Disable retaliation/FTK when casting with HP.
 #endif
-//#define ENABLE_ENCHANTING //Leverage this for T_ENCH and combine with #define RUNE_SOCKET/ENCHANT or whatever - Kurzel
-#ifdef ENABLE_ENCHANTING
- //#define ENABLE_SHELL_ENCHANT //Allow the T_ENCH (enchanting) spell type to be cast under an antimagic shell. (All 'projection' types fail, but not 'self' types. If enabled, change c-spell.c color check!)
-#endif
-//define ENABLE_SUSCEPT //Extra backlash if the caster is susceptable to the projection element. (Disabled for now, until it can be completely implemented across classes; ie. Globe of Light hurts Dark-Elf casters.)
-//#define SAFE_MELEE //Runes don't break if we're automatically retaliating, and retaliation is automagically a minimized bolt. (Experimental! Perhaps only implement this while inside towns? - Kurzel)
 
 /* Spell Options */
 //#define ENABLE_AVERAGE_SKILL //Take the average skill level, rather than the lowest. (Disabled to prevent one skill granting half-access to all others.)
 #define ENABLE_BLIND_CASTING //Blinding increases fail chance instead of preventing the cast. (No 'reading' aka 'no_lite(Ind)' check as with books.)
-//#define ENABLE_CONFUSED_CASTING //Consusion increases fail chance instead of preventing the cast. (Runecraft tends toward magic rather than something like archery, so this remains disabled.)
+//#define ENABLE_CONFUSED_CASTING //Confusion increases fail chance instead of preventing the cast. (Runecraft tends toward magic rather than something like archery, so this remains disabled.)
+#define ENABLE_SHELL_ENCHANT //Allow the T_ENCH (enchanting) spell type to be cast under an antimagic shell. (Allows equipment to be targetted, all other 'projection' types still fail.)
+
+/* Spell Constants */
+#define RCRAFT_PJ_RADIUS 2 //What radius do friendly projecting spells project outward to? (Default: 2; This matches auto-magically projecting spells of other classes.)
 
 /* Interface */
 //#define FEEDBACK_MESSAGE //Gives the caster a feedback message if penalized. (Disabled under the pretext that we want to reduce messages. The guide is now more explicit about failure of runespells.)
@@ -58,10 +58,11 @@ byte rspell_cost(byte imperative, byte type, byte skill);
 byte rspell_fail(int Ind, byte imperative, byte type, s16b diff, u16b penalty);
 u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, byte projection);
 byte rspell_radius(byte imperative, byte type, byte skill, byte projection);
-byte rspell_duration(byte imperative, byte type, byte skill);
+byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u16b dice);
 
-/* Search and Destroy a Rune */
+/* Item Handling */
 bool rspell_socket(int Ind, byte projection);
+bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item);
 
 /** Internal Functions **/
 
@@ -191,7 +192,31 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 	/* Return */
 	*dx = (byte)d1;
 	*dy = (byte)d2;
+	
+	/* Further modify for individual spells */
+	if (r_types[type].flag == T_SIGN) {
+		switch (projection) {				
+			case SV_R_WATE: { //regen
+				damage *= 10;
+			break; }
 
+			case SV_R_TIME: { //speed
+				damage /= 5;
+				if (damage > 10) damage = 10;
+				if (damage < 3) damage = 3;
+			break; }
+			
+			case SV_R_FORC: { //armor
+				damage /= 5;
+				if (damage > 15) damage = 15;
+				if (damage < 5) damage = 5;
+			}
+
+			default: {
+			break; }
+		}
+	}
+	
 	return (u16b)damage;
 }
 
@@ -200,14 +225,62 @@ byte rspell_radius(byte imperative, byte type, byte skill, byte projection) {
 	radius += r_imperatives[imperative].radius;
 	if (radius < S_RADIUS_MIN) radius = S_RADIUS_MIN;
 	if (radius > S_RADIUS_MAX) radius = S_RADIUS_MAX;
+	
+	/* Further modify for individual spells (not limited) */
+	if (r_types[type].flag == T_SIGN) {
+		switch (projection) {
+			case SV_R_NEXU: { //teleport
+				radius = radius * radius * 5; //actually caps at 150 though!
+			break; }
+
+			case SV_R_INER: { //tele_away
+				radius = radius * 3 / 2;
+			break; }
+
+			case SV_R_GRAV: { //tele_to
+				radius = radius * 3 / 2;
+			break; }
+
+			default: {
+			break; }
+		}
+	}
+	
 	return (byte)radius;
 }
 
-byte rspell_duration(byte imperative, byte type, byte skill) {
+byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u16b dice) {
 	s16b duration = r_types[type].d_min + rget_level(r_types[type].d_max - r_types[type].d_min);
 	duration = duration * r_imperatives[imperative].duration / 10;
+	
+	/* Further modify for individual spells (limited) */
+	if (r_types[type].flag == T_SIGN) {
+		switch (projection) {
+			
+			case SV_R_DARK: //invis
+			case SV_R_CONF: //reflect
+			case SV_R_FORC: //armor
+				duration = dice;
+			break;
+			
+			case SV_R_ELEC: //resist
+			case SV_R_FIRE:
+			case SV_R_COLD:
+			case SV_R_ACID:	
+			case SV_R_POIS:
+			case SV_R_TIME: //haste
+			case SV_R_PLAS: //resist (x2)
+				duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
+			break;
+			
+			default: {
+			break; }
+		}
+	}
+	
 	if (duration < S_DURATION_MIN) duration = S_DURATION_MIN;
 	if (duration > S_DURATION_MAX) duration = S_DURATION_MAX;
+	
 	return (byte)duration;
 }
 
@@ -220,8 +293,7 @@ bool rspell_socket(int Ind, byte projection) {
 		if (i >= INVEN_PACK) continue;		
 		o_ptr = &p_ptr->inventory[i];
 		if ((o_ptr->tval == TV_RUNE) && (o_ptr->level || o_ptr->owner == p_ptr->id)) { //Do we own it..?
-			if (o_ptr->sval == projection) {
-
+			if (o_ptr->sval == projection && !check_guard_inscription(o_ptr->note, 'R')) { //Element match, not protected?
 				byte amt = 1; //Always consume exactly one!
 				char o_name[ONAME_LEN];
 				object_desc(Ind, o_name, o_ptr, FALSE, 3);
@@ -232,16 +304,96 @@ bool rspell_socket(int Ind, byte projection) {
 
 				/* Erase a rune from inventory */
 				inven_item_increase(Ind, i, -1);
+				
+				/* Play a sound! */
+				sound(Ind, "item_rune", NULL, SFX_TYPE_COMMAND, FALSE);
 
 				/* Clean up inventory */
 				inven_item_optimize(Ind, i);
 
-				return TRUE;			
+				return TRUE;
 			}
 		}
 	}
 	
 	return FALSE;
+}
+
+bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[item];
+	
+	/* Restrict new sigils to one per category */
+	if (!o_ptr->sigil) {
+		/* Store tval for comparison speed */
+		byte tval = o_ptr->tval;
+
+		/* Weapon */
+		if ((tval == TV_MSTAFF)
+		 || (tval == TV_BLUNT)
+		 || (tval == TV_POLEARM)
+		 || (tval == TV_SWORD)
+		 || (tval == TV_AXE)
+		 || (tval == TV_BOOMERANG)) {
+			if ((p_ptr->inventory[INVEN_WIELD].sigil)
+			 || (p_ptr->inventory[INVEN_BOW].sigil)
+			 || ((p_ptr->inventory[INVEN_ARM].sigil) && (p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
+
+				/* Give a message */
+				msg_format(Ind, "\377yYou can only maintain a single weapon sigil.");
+
+				return FALSE;
+			}
+		}
+		
+		/* Armor */
+		if ((tval == TV_BOOTS)
+		 || (tval == TV_GLOVES)
+		 || (tval == TV_HELM)
+		 || (tval == TV_CROWN)
+		 || (tval == TV_SHIELD)
+		 || (tval == TV_CLOAK)
+		 || (tval == TV_SOFT_ARMOR)
+		 || (tval == TV_HARD_ARMOR)
+		 || (tval == TV_DRAG_ARMOR)) {
+			if ((p_ptr->inventory[INVEN_BODY].sigil)
+			 || (p_ptr->inventory[INVEN_OUTER].sigil)
+			 || ((p_ptr->inventory[INVEN_ARM].sigil) && (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD))
+			 || (p_ptr->inventory[INVEN_HEAD].sigil)
+			 || (p_ptr->inventory[INVEN_HANDS].sigil)
+			 || (p_ptr->inventory[INVEN_FEET].sigil)) {
+			 
+				/* Give a message */
+				msg_format(Ind, "\377yYou can only maintain a single armor sigil.");
+			
+				return FALSE;
+			}
+		}
+	}
+	
+	/* Do we have a rune? */
+	if (!rspell_socket(Ind, projection)) {
+		msg_format(Ind, "\377yYou do not have the required rune. (%s)", r_projections[projection].name);
+		return FALSE;
+	}
+	
+	/* Artifact? */
+	if (o_ptr->name1) {
+		msg_print(Ind, "The artifact resists your attempts!");
+		return FALSE;
+	}
+	
+	/* Store the info */
+	o_ptr = &p_ptr->inventory[item];
+	o_ptr->sigil = projection + 1; //Hack -- 0 is an item WITHOUT a sigil. Subtract 1 later...
+	if (r_imperatives[imperative].flag == I_ENHA) o_ptr->sseed = Rand_value; /* Save RNG */
+
+	/* Give a message */
+	char o_name[ONAME_LEN];
+	object_desc(Ind, o_name, o_ptr, FALSE, 3);	
+	msg_format(Ind, "\377sYour %s is emblazoned with %s!", o_name, r_projections[projection].name);
+
+	return TRUE;
 }
 
 /** External Functions **/
@@ -273,6 +425,9 @@ byte execute_rspell(int Ind, byte dir, u16b e_flags, u16b m_flags, u16b item, bo
 	byte element[RCRAFT_MAX_ELEMENTS];
 	byte elements = flags_to_elements(element, e_flags);
 	
+	/* Projection Element */
+	byte projection = flags_to_projection(e_flags);
+
 	/* Imperative and Type */
 	byte imperative = flags_to_imperative(m_flags);
 	byte type = flags_to_type(m_flags);
@@ -296,7 +451,7 @@ s_printf("Type: %s\n", r_types[type].name);
 	/* Check it! */
 	s16b diff = rspell_diff(skill, level);
 	if (diff < 1) {
-		msg_print(Ind, "You are not skilled enough to evoke this runespell.");
+		msg_format(Ind, "\377sYou are not skilled enough. (%s %s %s; level: %d)", r_imperatives[imperative].name, r_projections[projection].name, r_types[type].name, diff);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return 0;
 	}
@@ -333,8 +488,7 @@ s_printf("Type: %s\n", r_types[type].name);
 			}
 			
 			/* Cancel if we've lost our target */
-			if (dir != 5 || !target_okay(Ind))
-				return 0;
+			if (!target_okay(Ind)) return 0;
 			
 			/* Cancel if we're going to automatically wake new monsters */
 #ifndef PY_PROJ_ON_WALL
@@ -343,10 +497,12 @@ s_printf("Type: %s\n", r_types[type].name);
 			if (!projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE))
 #endif
 				return 0;
-
-			/* Continue casting if everything up to this point was a success */
-			p_ptr->shooting_till_kill = TRUE;
-			p_ptr->shoot_till_kill_rcraft = TRUE;
+			
+			/* Don't FTK if not targetting a monster in FTK mode; but continue and fire the spell! */
+			if (dir == 5) {
+				p_ptr->shooting_till_kill = TRUE;
+				p_ptr->shoot_till_kill_rcraft = TRUE;
+			}
 		}
 	}
 	
@@ -394,12 +550,12 @@ s_printf("Type: %s\n", r_types[type].name);
 	if (p_ptr->anti_magic) {
 #ifdef ENABLE_SHELL_ENCHANT
 		if (r_types[type].flag != T_ENCH) {
-			msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell.", COLOUR_AM_OWN);
+			msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell. (%s %s %s)", COLOUR_AM_OWN, r_imperatives[imperative].name, r_projections[projection].name, r_types[type].name);
 			p_ptr->energy -= energy;
 			return 0;
 		}
 #else
-		msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell.", COLOUR_AM_OWN);
+		msg_format(Ind, "\377%cYour anti-magic shell absorbs the spell. (%s %s %s)", COLOUR_AM_OWN, r_imperatives[imperative].name, r_projections[projection].name, r_types[type].name);
 		p_ptr->energy -= energy;
 		return 0;
 #endif
@@ -412,7 +568,7 @@ s_printf("Type: %s\n", r_types[type].name);
 	}
 	
 	/* Interception */
-	if ((r_types[type].flag != T_ENCH) && (interfere(Ind, cfg.spell_interfere))) {
+	if ((r_types[type].flag != T_ENCH) && (interfere(Ind, cfg.spell_interfere))) { //Ignore intercept for now (don't waste a rune?)
 		p_ptr->energy -= energy;
 		return 0;
 	}
@@ -432,7 +588,7 @@ s_printf("Type: %s\n", r_types[type].name);
 		msg_1 = "\377rExhausted\377s, you";
  #endif
 #else
-		msg_print(Ind, "You do not have enough mana.");
+		msg_format(Ind, "\377oYou do not have enough mana. (%s %s %s; cost: %d)", r_imperatives[imperative].name, r_projections[projection].name, r_types[type].name, cost);
 		p_ptr->energy -= energy;
 		return 0;
 #endif
@@ -470,9 +626,6 @@ s_printf("Type: %s\n", r_types[type].name);
 	
 	/* Calculate Failure Chance */
 	byte fail = rspell_fail(Ind, imperative, type, diff, penalty);
-	
-	/* Choose the Projection */
-	byte projection = flags_to_projection(e_flags);
 
 	/* Calculate the Damage */
 	u32b dx, dy;
@@ -481,32 +634,41 @@ s_printf("Type: %s\n", r_types[type].name);
 
 	/* Calculate the Remaining Parameters */
 	byte radius = rspell_radius(imperative, type, skill, projection);
-	byte duration = rspell_duration(imperative, type, skill);
+	byte duration = rspell_duration(imperative, type, skill, projection, dice);
 	
 	/** Cast the Runespell **/
 	
-	/* Success? Store an indicator of the spell fail rate. (Remove this 'flavour' maybe? Pending feedback...)*/
+	/* Success? Store an indicator of the spell fail margin. (Additionally boost or reduce damage, if the option is enabled). */
 	char * msg_q = NULL;
 	bool failure = 0;
 	s16b margin = randint(100) - fail;
 	if (margin < 1) {
 		msg_q = "\377rincompetently\377w";
+#ifdef ENABLE_SKILLFUL_CASTING
+		damage = damage * 8 / 10 + 1;
+#endif
 		failure = 1;
 	}
 	else if (margin < 10) { 
 		msg_q = "clumsily";
-		//damage = damage * 9 / 10 + 1;
+#ifdef ENABLE_SKILLFUL_CASTING
+		damage = damage * 9 / 10 + 1;
+#endif
 	}
 	else if (margin < 30) {
 		msg_q = "casually";
 	}
 	else if (margin < 50) {
 		msg_q = "effectively";
-		//damage = damage * 11 / 10;
+#ifdef ENABLE_SKILLFUL_CASTING
+		damage = damage * 11 / 10 + 1;
+#endif
 	}
 	else {
 		msg_q = "elegantly";
-		//damage = damage * 12 / 10;
+#ifdef ENABLE_SKILLFUL_CASTING
+		damage = damage * 12 / 10 + 1;
+#endif
 	}
 	
 #ifdef RCRAFT_DEBUG
@@ -527,66 +689,209 @@ s_printf("Duration: %d\n", duration);
 
 	/** Resolve the Runespell **/
 	
+	/* Set the projection type */
 	byte gf_type = r_projections[projection].gf_type;
+	
+	/* Generic spell message */
+	msg_format(Ind, "You %s trace %s %s %s of %s.", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
 	
 	switch (r_types[type].flag) {
 		
 		case T_BOLT: {
-		msg_format(Ind, "You %s summon %s %s %s of %s.", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		sprintf(p_ptr->attacker, " %s summons %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		//if (r_imperatives[imperative].flag == I_ENHA) fire_grid_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
-		//else 
-		fire_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
+			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
+			if (r_imperatives[imperative].flag != I_ENHA) fire_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
+			else fire_grid_bolt(Ind, gf_type, dir, dice, p_ptr->attacker);
 		break; }
 		
 		case T_BEAM: {
-		msg_format(Ind, "You %s summon %s %s %s of %s.", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		sprintf(p_ptr->attacker, " %s summons %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		fire_beam(Ind, gf_type, dir, dice, p_ptr->attacker);
-		// if (r_imperatives[imperative].flag == I_ENHA) fire_beam_cloud(Ind, gf_type, dir, damage, duration, 9, p_ptr->attacker);
+			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
+			if (r_imperatives[imperative].flag != I_ENHA) fire_beam(Ind, gf_type, dir, dice, p_ptr->attacker);
+			else fire_wall(Ind, gf_type, dir, damage, duration, 9, p_ptr->attacker);
 		break; }
 		
 		case T_CLOU: {
-		msg_format(Ind, "You %s summon %s %s %s of %s.", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		sprintf(p_ptr->attacker, " %s summons %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		//if (r_imperatives[imperative].flag == I_ENHA) fire_crit_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
-		//else 
-		fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
+			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
+			if (r_imperatives[imperative].flag != I_ENHA) fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
+			else fire_wave(Ind, gf_type, 0, damage*3/2, radius, duration*2, 5, EFF_STORM, p_ptr->attacker); //Storm Hack Modifiers
 		break; }
 		
-		case T_WAVE: {
-		msg_format(Ind, "You %s summon %s %s %s of %s.", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		sprintf(p_ptr->attacker, " %s summons %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		//if (r_imperatives[imperative].flag == I_ENHA) project_hack(Ind, gf_type, damage * 3 / 2, p_ptr->attacker);
-		//else 
-		fire_wave(Ind, gf_type, 0, damage, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
-		break; }
-	
 		case T_BALL: {
-		msg_format(Ind, "You %s summon %s %s %s of %s.", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		sprintf(p_ptr->attacker, " %s summons %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		// if (r_imperatives[imperative].flag == I_ENHA) {
-			// int k;
-			// for (k = 0; k < 8; k++) fire_grid_beam(0 - Ind, gf_type, ddd[k], dice, p_ptr->attacker); //problem??
-		// }
-		fire_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
+			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
+			if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
+			else fire_full_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
+		break; }
+		
+		case T_SIGN: {
+			switch (projection) {
+			
+				case SV_R_LITE: {
+					sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
+					if (r_imperatives[imperative].flag != I_ENHA) lite_area(Ind, damage, radius); 
+					else { byte k; for (k = 0; k < 8; k++) lite_line(Ind, ddd[k], dice); } //actually GF_LITE_WEAK
+				break; }
+				
+				case SV_R_DARK: {
+					sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
+					if (r_imperatives[imperative].flag != I_ENHA) unlite_area(Ind, damage, radius); 
+					else set_invis(Ind, duration, damage);
+				break; }
+				
+				case SV_R_NEXU: {
+					if (r_imperatives[imperative].flag != I_ENHA) teleport_player(Ind, radius, FALSE); //FALSE -> reduced effect in pvp
+					else fire_ball(Ind, GF_TELEPORT_PLAYER, 0, radius, RCRAFT_PJ_RADIUS, ""); //Does this hit self too? :)
+				break; }
+				
+				case SV_R_NETH: {
+					if (r_imperatives[imperative].flag != I_ENHA) (void)mass_genocide(Ind); //Use a radius in the future?
+					else (void)genocide(Ind); //Maybe resist/power in the future as well?
+				break; }
+				
+				case SV_R_CHAO: {
+					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_OLD_POLY, 0, 0, 0, ""); //damage if ever there is power/resist
+					else fire_ball(Ind, GF_OLD_POLY, 0, 0, RCRAFT_PJ_RADIUS, ""); //self-hit? damage is again 0
+				break; }
+				
+				case SV_R_MANA: {
+					if (r_imperatives[imperative].flag != I_ENHA) remove_curse(Ind);
+					else remove_all_curse(Ind);
+				break; }
+				
+				case SV_R_CONF: {
+					if (r_imperatives[imperative].flag != I_ENHA) set_tim_deflect(Ind, duration);
+					else fire_ball(Ind, GF_DEFLECT_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, ""); //self-hit?
+				break; }
+				
+				case SV_R_INER: {
+					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_AWAY_ALL, 0, damage, radius, "");
+					else set_st_anchor(Ind, duration); //always an area now?
+				break; }
+				
+				case SV_R_ELEC: {
+					if (r_imperatives[imperative].flag != I_ENHA) set_oppose_elec(Ind, duration);
+					else fire_ball(Ind, GF_RESELEC_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+				break; }
+				
+				case SV_R_FIRE: {
+					if (r_imperatives[imperative].flag != I_ENHA) set_oppose_fire(Ind, duration);
+					else fire_ball(Ind, GF_RESFIRE_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+				break; }
+				
+				case SV_R_WATE: {
+					if (r_imperatives[imperative].flag != I_ENHA) set_tim_regen(Ind, duration, damage);
+					else fire_ball(Ind, GF_REGEN_PLAYER, 0, damage, RCRAFT_PJ_RADIUS, "");
+				break; }
+				
+				case SV_R_GRAV: {
+					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_TELE_TO, 0, damage, radius, "");
+					else {
+						int ty, tx, py = p_ptr->py, px = p_ptr->px;
+						if ((dir == 5) && target_okay(Ind)) { /* Use a target -- Fix this in wizard/mkey!! - Kurzel */
+							tx = p_ptr->target_col;
+							ty = p_ptr->target_row;
+							if (player_has_los_bold(Ind, ty, tx)) teleport_player_to(Ind, ty, tx); //Require LoS. (No jumping through walls!)
+						} else { //Use a a direction...(Teleport in a direction until collision or max range. No thru-wall powers!)
+							tx = px;
+							ty = py;
+							switch (dir) { //Kurzel -- Test to ensure spam doesn't overload!
+								case 1:
+								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) { ty++; tx--; }
+								break;
+								case 2:
+								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) ty++;
+								break;
+								case 3:
+								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) { ty++; tx++; }
+								break;
+								case 4:
+								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) tx--;
+								break;
+								case 6:
+								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) tx++;
+								break;
+								case 7:
+								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) { ty--; tx--; }
+								break;
+								case 8:
+								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) ty--;
+								break;
+								case 9:
+								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) { ty--; tx++; }
+								break;
+								default:
+									msg_print(Ind, "Gravity warps around you.");
+								break;
+							}
+							if (ty == p_ptr->py && tx == p_ptr->px) teleport_player(Ind, 5, FALSE);
+							else teleport_player_to(Ind, ty, tx);
+						}
+					}
+				break; }
+				
+				case SV_R_COLD: {
+					if (r_imperatives[imperative].flag != I_ENHA) set_oppose_cold(Ind, duration);
+					else fire_ball(Ind, GF_RESCOLD_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+				break; }
+				
+				case SV_R_ACID: {
+					if (r_imperatives[imperative].flag != I_ENHA) set_oppose_acid(Ind, duration);
+					else fire_ball(Ind, GF_RESACID_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+				break; }
+				
+				case SV_R_POIS: {
+					if (r_imperatives[imperative].flag != I_ENHA) set_oppose_pois(Ind, duration);
+					else fire_ball(Ind, GF_RESPOIS_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+				break; }
+				
+				case SV_R_TIME: {
+					if (r_imperatives[imperative].flag != I_ENHA) set_fast(Ind, duration, damage);
+					else fire_ball(Ind, GF_SPEED_PLAYER, 0, damage*2, RCRAFT_PJ_RADIUS, ""); //Hacked -- duration =P same for set_shield, full value when rad 1 (must not hit self!)
+				break; }
+				
+				case SV_R_SOUN: {
+					sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
+					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_SHATTER, 0, damage, radius, p_ptr->attacker);
+					else fire_beam(Ind, GF_SHATTER, dir, dice, p_ptr->attacker);
+				break; }
+				
+				case SV_R_SHAR: {
+					sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
+					if (r_imperatives[imperative].flag != I_ENHA) earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, radius); //careful of PvP pwnage - Kurzel
+					else fire_bolt(Ind, GF_KILL_WALL, dir, dice, p_ptr->attacker);
+				break; }
+				
+				case SV_R_DISE: {
+					if (r_imperatives[imperative].flag != I_ENHA) unmagic(Ind);
+					else fire_ball(Ind, GF_UNMAGIC, 0, damage, RCRAFT_PJ_RADIUS, ""); //projected, unmagic monsters/glyphs in the future too! (damage to resist?)
+				break; }
+				
+				case SV_R_FORC: {
+					if (r_imperatives[imperative].flag != I_ENHA) set_shield(Ind, duration, damage, SHIELD_NONE, 0, 0);
+					else fire_ball(Ind, GF_SHIELD_PLAYER, 0, damage, RCRAFT_PJ_RADIUS, "");
+				break; }
+				
+				case SV_R_PLAS: {
+					if (r_imperatives[imperative].flag != I_ENHA) { set_oppose_fire(Ind, duration); set_oppose_elec(Ind, duration); }
+					else { fire_ball(Ind, GF_RESFIRE_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, ""); fire_ball(Ind, GF_RESELEC_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, ""); }
+				break; }
+				
+				default: {
+				break; }
+			}
 		break; }
 		
 		case T_RUNE: {
-		msg_format(Ind, "You %s summon %s %s %s of %s.", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		warding_rune(Ind, projection, imperative, skill);
-		break; }
-		
-		case T_STOR: {
-		msg_format(Ind, "You %s summon %s %s %s of %s.", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		sprintf(p_ptr->attacker, " %s summons %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_STORM, p_ptr->attacker);
-		// if (r_imperatives[imperative].flag == I_ENHA) set_tim_rcraft_help(Ind, duration, type, projection, dx, dy);
+			if (r_imperatives[imperative].flag != I_ENHA) warding_rune(Ind, projection, imperative, skill);
+			else warding_glyph(Ind);
 		break; }
 		
 		case T_ENCH: {
-		msg_format(Ind, "You %s summon %s %s %s of %s.", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-		//Code this last! /* File: randart.c */
+			rspell_sigil(Ind, projection, imperative, item);
+		break; }
+		
+		case T_WAVE: {
+			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
+			if (r_imperatives[imperative].flag != I_ENHA) fire_wave(Ind, gf_type, 0, damage, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
+			else project_los(Ind, gf_type, damage, p_ptr->attacker);
 		break; }
 		
 	}
@@ -610,23 +915,16 @@ s_printf("Duration: %d\n", duration);
 
 	/* Failure */
 	if (failure)
-#ifdef SAFE_MELEE
-		if (!retaliate)
 		if (!rspell_socket(Ind, projection)) {
-#else
-		if (!rspell_socket(Ind, projection)) {
-#endif
-			//msg_print(Ind, "\377rThe runespell lashes out at you!"); //Implied with new \377r warning? - waiting on feedback?
-			if (dice > damage) damage = dice; //Get the highest damage part of the spell!
-			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, gf_type, PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP, "");
-			p_ptr->shooting_till_kill = FALSE;
+			if (dice > damage) damage = dice; //Get the highest damage part of the spell, could be reworked to match actual spell type (as modified by enhanced). TODO
+			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, gf_type, (PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP), "");
 		}
 
 #ifdef ENABLE_SUSCEPT
 	/* Lite Susceptability Check -- Add other suscept checks? ie. Fire for Ents? Disabled for consistancy until this is done. */
 	if (!failure && (gf_type == GF_LITE)) {
 		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 4 + randint(10));
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, GF_LITE, PROJECT_KILL | PROJECT_NORF, "");
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite) project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, GF_LITE, (PROJECT_KILL | PROJECT_NORF), "");
 		p_ptr->shooting_till_kill = FALSE;
 	}
 #endif
@@ -788,24 +1086,17 @@ bool warding_rune_break(int m_idx)
 		//if (who > 0 && p_ptr->tim_wraith) damage /= 2;
 
 		/* Calculate the Remaining Parameters */
-		byte radius = rspell_radius(imperative, 5, skill, projection);
-//unused atm	byte duration = rspell_duration(imperative, 5, skill);
+		//byte radius = rspell_radius(imperative, 5, skill, projection);
+		byte radius = 0; //Be consistent with player traps, for now.
 		
 		/* Resolve the Effect */
 		byte gf_type = r_projections[projection].gf_type;
 
 		/* Create the Effect */
-		//Hack -- Reduce cloud damage further! (Balanced by 'ball' trap damage for time being...)
-		//if (r_imperatives[imperative].flag == I_ENHA) fire_cloud(-who, gf_type, 5, damage / 3, radius, duration, 9, p_ptr->attacker);
-		//else 
-		//fire_ball(-who, gf_type, 5, damage, radius, p_ptr->attacker);
+		project(0 - who, radius, wpos, my, mx, damage, gf_type, (PROJECT_JUMP | PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL), "");
 
-		project(0 - who, radius, wpos, my, mx, damage, gf_type, PROJECT_JUMP | PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
-
-		/* Sound */
 #ifdef USE_SOUND_2010
-		//if (r_imperatives[cs_ptr->sc.rune.mod].flag == I_ENHA) sound_near_site(my, mx, wpos, 0, "cast_cloud", NULL, SFX_TYPE_COMMAND, FALSE);
-		//else 
+		/* Sound */
 		sound_near_site(my, mx, wpos, 0, "ball", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 	}
@@ -819,66 +1110,5 @@ bool warding_rune_break(int m_idx)
 
 	/* Return TRUE if m_idx still alive */
 	return (zcave[my][mx].m_idx == 0 ? TRUE : FALSE);
-}
-
-/*
- * Set a 'helper buff'. Casts a spell each turn like Thunderstorm.
- * Now just used for the 'enhanced storm' thunderstorm effect.
- * Needs a rewrite... - Kurzel!
- */
-bool set_tim_rcraft_help(int Ind, byte duration, byte type, byte projection, byte dx, byte dy) {
-	player_type *p_ptr = Players[Ind];
-	bool notice = FALSE;
-
-	/* Hack -- Force good values */
-	duration = (duration > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (duration < 0) ? 0 : duration;
-
-	/* Open */
-	if (duration) {
-		if (!p_ptr->tim_rcraft_help || p_ptr->tim_rcraft_help_type != type || p_ptr->tim_rcraft_help_projection != projection) {
-			if (type < RCRAFT_MAX_TYPES) {
-				switch (r_types[type].flag) {
-					case T_BOLT: {
-						msg_format(Ind, "The air around you charges with %s!", r_projections[projection].name);
-					break; }
-					// case T_CLOU: {
-						// msg_format(Ind, "The air around you roils with %s!", r_projections[projection].name);
-					// break; }
-				}
-			}
-			notice = TRUE;
-		}
-	}
-
-	/* Shut */
-	else {
-		if (p_ptr->tim_rcraft_help) {
-			msg_print(Ind, "The storm dissipates.");
-			notice = TRUE;
-			type = 0;
-			projection = 0;
-			dx = 0;
-			dy = 0;
-		}
-	}
-
-	/* Use the value */
-	p_ptr->tim_rcraft_help = duration;
-	p_ptr->tim_rcraft_help_type = type;
-	p_ptr->tim_rcraft_help_projection = projection;
-	p_ptr->tim_rcraft_help_dx = dx;
-	p_ptr->tim_rcraft_help_dy = dy;
-
-	/* Nothing to notice */
-	if (!notice) return (FALSE);
-
-	/* Disturb */
-	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
-
-	/* Handle stuff */
-	handle_stuff(Ind);
-
-	/* Result */
-	return (TRUE);
 }
 

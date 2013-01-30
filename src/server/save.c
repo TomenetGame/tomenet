@@ -147,8 +147,8 @@ static void wr_item(object_type *o_ptr)
 	wr_s32b(o_ptr->pval);
 	wr_s32b(o_ptr->pval2);
 	wr_s32b(o_ptr->pval3);
-	wr_s32b(o_ptr->pval4);
-	wr_s32b(o_ptr->pval5);
+	wr_s32b(o_ptr->sigil);
+	wr_s32b(o_ptr->sseed);
 
 	wr_byte(o_ptr->discount);
 	wr_byte(o_ptr->number);
@@ -740,7 +740,7 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->tim_esp);
 	wr_s16b(p_ptr->adrenaline);
 	wr_s16b(p_ptr->biofeedback);
-
+	wr_u16b(p_ptr->tim_deflect);
 	wr_byte(p_ptr->confusing);
 	wr_u16b(p_ptr->tim_jail);
 	wr_u16b(p_ptr->tim_susp);

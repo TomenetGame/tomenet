@@ -2354,11 +2354,7 @@ static void player_setup(int Ind, bool new)
 
 	/* Runecraft */
 	p_ptr->shoot_till_kill_rcraft = 0;
-	p_ptr->tim_rcraft_help = 0;
-	p_ptr->tim_rcraft_help_type = 0;
-	p_ptr->tim_rcraft_help_projection = 0;
-	p_ptr->tim_rcraft_help_dx = 0;
-	p_ptr->tim_rcraft_help_dy = 0;
+	p_ptr->tim_deflect = 0;
 
 	/* No item being used up */
 	p_ptr->using_up_item = -1;

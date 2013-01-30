@@ -164,6 +164,10 @@ typedef unsigned int u32b;
 
 #define GF_THUNDER		189 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
 #define GF_ANNIHILATION		192 /* To differentiate drain effect from hacky non-drain effect for wands? */
+#define GF_SHATTER		193 /* Runecraft 'disarm'; also breaks items as with meteor, deals damage to creatures susceptable to StM - Kurzel */
+#define GF_UNMAGIC		194 /* Projected dispel, players only for now */
+#define GF_REGEN_PLAYER		195 /* Projected tim_regen, for RC water */
+#define GF_DEFLECT_PLAYER		196 
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
@@ -380,7 +384,7 @@ extern bool genocide_aux(int Ind, worldpos *wpos, char typ);
 extern bool genocide(int Ind);
 extern bool mass_genocide(int Ind);
 extern bool probing(int Ind);
-extern bool project_hack@project_los(int Ind, int typ, int dam, char *attacker);
+extern bool project_los(int Ind, int typ, int dam, char *attacker);
 extern bool banish_evil(int Ind, int dist);
 extern bool dispel_evil(int Ind, int dam);
 extern bool dispel_undead(int Ind, int dam);
@@ -400,8 +404,6 @@ extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, in
 extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
-extern bool fire_beam_cloud(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
-extern bool fire_crit_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
 extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker);

@@ -3911,6 +3911,7 @@ void calc_boni(int Ind)
 		if (f3 & TR3_XTRA_MIGHT) p_ptr->xtra_might++;
 		if (f3 & TR3_SLOW_DIGEST) p_ptr->slow_digest = TRUE;
 		if (f3 & TR3_REGEN) p_ptr->regenerate = TRUE;
+		if (f5 & TR5_RES_PLASMA) p_ptr->resist_plasma = TRUE;
 		if (f5 & TR5_RES_TIME) p_ptr->resist_time = TRUE;
 		if (f5 & TR5_RES_MANA) p_ptr->resist_mana = TRUE;
 		if (f5 & TR5_IM_POISON) p_ptr->immune_poison = TRUE;
@@ -4321,15 +4322,18 @@ void calc_boni(int Ind)
 		p_ptr->dis_to_h += p_ptr->blessed_power / 2;
 	}
 
-	/* Temprory invisibility */
+	/* Temporary invisibility */
 //	if (p_ptr->tim_invisibility)
 		p_ptr->invis = p_ptr->tim_invis_power;
 
-	/* Temprory shield */
+	/* Temporary shield */
 	if (p_ptr->shield) {
 		p_ptr->to_a += p_ptr->shield_power;
 		p_ptr->dis_to_a += p_ptr->shield_power;
 	}
+	
+	/* Temporary deflection */
+	if (p_ptr->tim_deflect) p_ptr->reflect = TRUE;
 	
 	/* Temporary "Hero" */
 	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5)) {

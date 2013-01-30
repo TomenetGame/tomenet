@@ -2270,7 +2270,7 @@ player_race race_info[MAX_RACE] =
 			/* Moderate bonus to Nether, being the undead... */
 			{
 				SKILL_R_NETH,
-				'+', 0,
+				'+', 800,
 				'%', 120,
 			},
                         {
@@ -4843,7 +4843,8 @@ player_class class_info[MAX_CLASS] =
 
 	{
                 "Runemaster",	/* A mage/rogue class, more caster than fighter, but with high spell damage / low durability.
-								   Intended to be the 'warrior' of the magic classes, but with allowed hybridization. */
+				 * Intended to be the 'warrior' of the magic classes, but with allowed hybridization.
+				 */
                 TERM_L_BLUE, 
 		{ 1, 2, -3, 3, -3, -3},
 		{15, 0+100, 0, 19+100, 0, 0},
@@ -4937,13 +4938,7 @@ player_class class_info[MAX_CLASS] =
 				'+', 0,
 				'+', 900,
 			},
-			// And this is a sub-skill, so disabled too. Increasing base disarming skill to be closer to rogues.
 			*/
-			{
-				SKILL_DISARM,
-				'+', 0,
-				'+', 1000,
-			},
 			{
 				SKILL_STEALING,
 				'+', 0,
@@ -4971,32 +4966,32 @@ player_class class_info[MAX_CLASS] =
 			},
 			{
 				SKILL_R_LITE,
-				'+', 1000,
+				'+', 0,
 				'+', 1000,
 			},
 			{
 				SKILL_R_DARK,
-				'+', 1000,
+				'+', 0,
 				'+', 1000,
 			},
 			{
 				SKILL_R_NEXU,
-				'+', 1000,
+				'+', 0,
 				'+', 1000,
 			},
 			{
 				SKILL_R_NETH,
-				'+', 1000,
+				'+', 0,
 				'+', 1000,
 			},
 			{
 				SKILL_R_CHAO,
-				'+', 1000,
+				'+', 0,
 				'+', 1000,
 			},
 			{
 				SKILL_R_MANA,
-				'+', 1000,
+				'+', 0,
 				'+', 1000,
 			},
 			/* Necromancy tree */

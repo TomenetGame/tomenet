@@ -110,10 +110,10 @@ void divine_vengeance(int Ind, int power) {
 			teleport_player_to(i, p_ptr->py, p_ptr->px);
 		}
 		/* monsters TELE_TO */
-		project_hack(Ind, GF_TELE_TO, 0, " commands return");
+		project_los(Ind, GF_TELE_TO, 0, " commands return");
 	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
 		dispel_monsters(Ind, power);
-	//	project_hack(Ind, GF_DISP_ALL, power, " commands leave");
+	//	project_los(Ind, GF_DISP_ALL, power, " commands leave");
 	}
 }
 
@@ -145,7 +145,7 @@ void divine_intensify(int Ind, int level) {
 	player_type *p_ptr = Players[Ind];
 	if (p_ptr->ptrait==TRAIT_ENLIGHTENED) {
 		//aoe divine_xtra_res_time_mana
-		project_hack(Ind, GF_OLD_SLOW, level * 3, "");
+		project_los(Ind, GF_OLD_SLOW, level * 3, "");
 		(void)do_divine_xtra_res_time_mana(Ind, (level * 3) / 2);
 		return;
 	} else if (p_ptr->ptrait==TRAIT_CORRUPTED) {
@@ -718,8 +718,8 @@ void flash_bomb(int Ind)
 	sound(Ind, "flash_bomb", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
-//	project_hack(Ind, GF_BLIND, (p_ptr->lev / 10) + 4, "");
-	project_hack(Ind, GF_BLIND, (p_ptr->lev / 10) + 8, "");
+//	project_los(Ind, GF_BLIND, (p_ptr->lev / 10) + 4, "");
+	project_los(Ind, GF_BLIND, (p_ptr->lev / 10) + 8, "");
 }
 
 
@@ -3860,7 +3860,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 /*
  * Apply a "project()" directly to all viewable monsters
  */
-bool project_hack(int Ind, int typ, int dam, char *attacker) {
+bool project_los(int Ind, int typ, int dam, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 	int		i, x, y;
@@ -3897,7 +3897,7 @@ bool project_hack(int Ind, int typ, int dam, char *attacker) {
 		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, pattacker)) obvious = TRUE;
 	}
 
-#if 1	//this would require to differ between project_hack calls that are meant
+#if 1	//this would require to differ between project_los calls that are meant
 	//to work on players and those that are meant to work on monsters only
 	//like GF_OLD_SPEED, GF_OLD_HEAL, etc. If this is done, an attacker string
 	//should be added as well, however.
@@ -3943,7 +3943,7 @@ bool speed_monsters(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	return (project_hack(Ind, GF_OLD_SPEED, p_ptr->lev, ""));
+	return (project_los(Ind, GF_OLD_SPEED, p_ptr->lev, ""));
 }
 
 /*
@@ -3951,7 +3951,7 @@ bool speed_monsters(int Ind)
  */
 bool slow_monsters(int Ind, int pow)
 {
-	return (project_hack(Ind, GF_OLD_SLOW, pow, ""));
+	return (project_los(Ind, GF_OLD_SLOW, pow, ""));
 }
 
 /*
@@ -3959,7 +3959,7 @@ bool slow_monsters(int Ind, int pow)
  */
 bool sleep_monsters(int Ind, int pow)
 {
-	return (project_hack(Ind, GF_OLD_SLEEP, pow, ""));
+	return (project_los(Ind, GF_OLD_SLEEP, pow, ""));
 }
 
 /*
@@ -3967,7 +3967,7 @@ bool sleep_monsters(int Ind, int pow)
  */
 bool fear_monsters(int Ind, int pow)
 {
-	return (project_hack(Ind, GF_TURN_ALL, pow, ""));
+	return (project_los(Ind, GF_TURN_ALL, pow, ""));
 }
 
 /*
@@ -3975,7 +3975,7 @@ bool fear_monsters(int Ind, int pow)
  */
 bool stun_monsters(int Ind, int pow)
 {
-	return (project_hack(Ind, GF_STUN, pow, ""));
+	return (project_los(Ind, GF_STUN, pow, ""));
 }
 
 
@@ -3984,7 +3984,7 @@ bool stun_monsters(int Ind, int pow)
  */
 bool banish_evil(int Ind, int dist)
 {
-	return (project_hack(Ind, GF_AWAY_EVIL, dist, " banishes all evil"));
+	return (project_los(Ind, GF_AWAY_EVIL, dist, " banishes all evil"));
 }
 
 
@@ -3995,7 +3995,7 @@ bool turn_undead(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	return (project_hack(Ind, GF_TURN_UNDEAD, p_ptr->lev, " calls against all undead"));
+	return (project_los(Ind, GF_TURN_UNDEAD, p_ptr->lev, " calls against all undead"));
 }
 
 /*
@@ -4003,7 +4003,7 @@ bool turn_undead(int Ind)
  */
 bool turn_monsters(int Ind, int dam)
 {
-	return (project_hack(Ind, GF_TURN_ALL, dam, " calls against all monsters"));
+	return (project_los(Ind, GF_TURN_ALL, dam, " calls against all monsters"));
 }
 
 
@@ -4012,7 +4012,7 @@ bool turn_monsters(int Ind, int dam)
  */
 bool dispel_undead(int Ind, int dam)
 {
-	return (project_hack(Ind, GF_DISP_UNDEAD, dam, " banishes all undead"));
+	return (project_los(Ind, GF_DISP_UNDEAD, dam, " banishes all undead"));
 }
 
 /*
@@ -4020,12 +4020,12 @@ bool dispel_undead(int Ind, int dam)
  */
 bool dispel_evil(int Ind, int dam)
 {
-	return (project_hack(Ind, GF_DISP_EVIL, dam, " banishes all evil"));
+	return (project_los(Ind, GF_DISP_EVIL, dam, " banishes all evil"));
 }
 
 bool dispel_demons(int Ind, int dam)
 {
-	return (project_hack(Ind, GF_DISP_DEMON, dam, " banishes all demons"));
+	return (project_los(Ind, GF_DISP_DEMON, dam, " banishes all demons"));
 }
 
 /*
@@ -4033,7 +4033,7 @@ bool dispel_demons(int Ind, int dam)
  */
 bool dispel_monsters(int Ind, int dam)
 {
-	return (project_hack(Ind, GF_DISP_ALL, dam, " banishes all monsters"));
+	return (project_los(Ind, GF_DISP_ALL, dam, " banishes all monsters"));
 }
 
 
@@ -5915,7 +5915,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_DETECTTRAP_PLAYER) && (typ != GF_TELEPORTLVL_PLAYER) &&
 		    (typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) &&
 		    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
-		    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) && (typ != GF_MINDBOOST_PLAYER) &&
+		    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) &&
 		    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
 		    (typ != GF_RESTORE_PLAYER) &&
 		    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
@@ -5924,6 +5924,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
+		    (typ != GF_DEFLECT_PLAYER) && (typ != GF_UNMAGIC) && (typ != GF_REGEN_PLAYER) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
 			sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
 	}
@@ -5939,19 +5940,18 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 }
 
 /*
- * Cast a cloud spell
+ * Cast a full ball spell
  * Stop if we hit a monster, act as a "ball"
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
  */
-bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker)
-{
+bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 	player_type *p_ptr = Players[Ind];
+	char pattacker[80];
 	int tx, ty;
 
-	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
+	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_FULL;
 
-	char pattacker[80];
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
@@ -5961,53 +5961,66 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	ty = p_ptr->py + 99 * ddy[dir];
 
 	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay(Ind))
-	{
+	if ((dir == 5) && target_okay(Ind)) {
 		flg &= ~(PROJECT_STOP);
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
-	project_interval = interval;
-	project_time = time;
-
-	if (snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker) < 0) return (FALSE);
-
-	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-
+#if 1
 #ifdef USE_SOUND_2010
-	/* paranoia, aka this won't exist as "clouds".. */
 	if (typ == GF_ROCKET) sound(Ind, "rocket", NULL, SFX_TYPE_COMMAND, FALSE);
 	else if (typ == GF_DETONATION) sound(Ind, "detonation", NULL, SFX_TYPE_COMMAND, FALSE);
 	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_COMMAND, FALSE);
-	/* only this one needed really */
-	else sound(Ind, "cast_cloud", NULL, SFX_TYPE_COMMAND, FALSE);
+	else {
+		/* The 'cast_ball' sound is only for attack spells */
+		if ((typ != GF_HEAL_PLAYER) && (typ != GF_AWAY_ALL) &&
+		    (typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) &&
+		    (typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) &&
+		    (typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) &&
+		    (typ != GF_REMCONF_PLAYER) && (typ != GF_REMIMAGE_PLAYER) &&
+		    (typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) &&
+		    (typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) &&
+		    (typ != GF_SEEINVIS_PLAYER) && (typ != GF_SEEMAP_PLAYER) &&
+		    (typ != GF_CURECUT_PLAYER) && (typ != GF_CURESTUN_PLAYER) &&
+		    (typ != GF_DETECTCREATURE_PLAYER) && (typ != GF_DETECTDOOR_PLAYER) &&
+		    (typ != GF_DETECTTRAP_PLAYER) && (typ != GF_TELEPORTLVL_PLAYER) &&
+		    (typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) &&
+		    (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
+		    (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) &&
+		    (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
+		    (typ != GF_RESTORE_PLAYER) &&
+		    (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
+		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
+		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
+		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
+		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
+		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
+		    (typ != GF_DEFLECT_PLAYER) && (typ != GF_UNMAGIC) && (typ != GF_REGEN_PLAYER) &&
+		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
+			sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
+	}
 #endif
+#endif
+       /* Analyze the "dir" and the "target".  Hurt items on floor. */
+       snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 
-	/* Hack: Make HEALINGCLOUD affect the caster too! */
-#if 0
-	/* Note: 'Ind' < 0 (eg PROJECTOR_EFFECT) disables projection on monsters,
-	   so HEALINGCLOUD wouldn't damage undeads - well, maybe it shouldn't. */
-	if (typ == GF_HEALINGCLOUD)
-		return (project(PROJECTOR_EFFECT, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
-	else
-		return (project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
-#else /* affect self + players + monsters AND give credit on kill */
-	if (typ == GF_HEALINGCLOUD) flg |= PROJECT_PLAY;
-	return (project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
-#endif
+       /* affect self + players + monsters AND give credit on kill */
+       if (typ == GF_HEAL_PLAYER) flg |= PROJECT_PLAY;
+
+       return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
 /*
- * Cast a cloud spell that may additionally hit targets with rad 1 balls.
- * Added for runecraft's 'enhanced' cloud spell.
- * (Note: PROJECT_CRIT should be kept separate from instantaneous type spells, to prevent overload.)
+ * Cast a cloud spell
+ * Stop if we hit a monster, act as a "ball"
+ * Allow "target" mode to pass over monsters
+ * Affect grids, objects, and monsters
  */
-bool fire_crit_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker)
-{
+bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 
-	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_CRIT;
+	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
 
 	char pattacker[80];
 
@@ -6364,42 +6377,6 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
 #endif
 
 	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
-}
-
-/*
- * Cast a cloud spell in the shape of a beam.
- * Added for runecraft's 'enhanced' beam spell.
- */
-bool fire_beam_cloud(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker)
-{
-	player_type *p_ptr = Players[Ind];
-	int tx, ty;
-
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
-
-	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
-
-	/* Use the given direction */
-	tx = p_ptr->px + ddx[dir];
-	ty = p_ptr->py + ddy[dir];
-
-	/* Hacked hack -- Use the original "target" */
-	if ((dir == 5) && target_okay(Ind)) {
-		tx = p_ptr->target_col;
-		ty = p_ptr->target_row;
-	}
-
-	project_interval = interval;
-	project_time = time;
-	project_time_effect = EFF_WALL; //Kurzel -- Rewrite effect code for this new flag!
-
-#ifdef USE_SOUND_2010
-	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
-#endif
-
-	/* Analyze the "dir" and the "target", do NOT explode */
-	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
 
 /*
@@ -7733,7 +7710,6 @@ bool do_vermin_control(int Ind) {
         return FALSE;
 }
 
-/* see rune_aux() below */
 void rune_combine(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
@@ -7765,30 +7741,16 @@ void rune_combine_aux(int Ind, int item) {
 
 	/* Recall the second rune */
 	o_ptr = &p_ptr->inventory[item];
-#ifdef RCRAFT_DEBUG
-s_printf("RCRAFT_DEBUG: 1 \n");
-#endif
-	/* Sanity check */
-#ifdef RCRAFT_DEBUG
-s_printf("RCRAFT_DEBUG: 2 \n");
-#endif
+	
+	/* Sanity */
 	if (o_ptr->tval != TV_RUNE) return; //not a rune
-#ifdef RCRAFT_DEBUG
-s_printf("RCRAFT_DEBUG: 3 \n");
-#endif
 	if (o_ptr->sval >= RCRAFT_MAX_ELEMENTS) return; //not a basic rune
-#ifdef RCRAFT_DEBUG
-s_printf("RCRAFT_DEBUG: 4 \n");
-#endif
 	if (!(o_ptr->level) && !(o_ptr->owner == p_ptr->id)) return; //not owned
-#ifdef RCRAFT_DEBUG
-s_printf("RCRAFT_DEBUG: 5 \n");
-#endif
 
 	/* Store the combining flag */
 	e_flags |= r_elements[o_ptr->sval].flag;
 
-	/* Lookup resulting rune -- (flags_to_projection) - Kurzel */
+	/* Lookup resulting rune -- (flags_to_projection) */
 	byte i;
 	for (i = 0; i < RCRAFT_MAX_PROJECTIONS; i++) {
 		if (e_flags == r_projections[i].flags)

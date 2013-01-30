@@ -1435,10 +1435,18 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 	/* Hack -- "worthless" items */
 	if (!value) return (0L);
 
+	/* Sigil (ignore it) */
+	s32b temp_sigil = o_ptr->sigil;
+	s32b temp_sseed = o_ptr->sseed;
+	o_ptr->sigil = 0;
+	o_ptr->sseed = 0;
 
 	/* Extract some flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
+	/* Sigil (restore it) */
+	o_ptr->sigil = temp_sigil;
+	o_ptr->sseed = temp_sseed;
 
 	/* Artifact */
 	if (o_ptr->name1) {
@@ -7364,6 +7372,13 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 		/* Make a new object */
 		o_idx = o_pop();
+		
+		/* Sigil (reset it) */
+		if (o_ptr->sigil) {
+			//msg_print(Ind, "The sigil fades away.");
+			o_ptr->sigil = 0;
+			o_ptr->sseed = 0;
+		}
 
 		/* Success */
 		if (o_idx) {

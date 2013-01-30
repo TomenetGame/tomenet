@@ -118,7 +118,7 @@ static void do_curse (artifact_type *a_ptr)
  * Evaluate the artifact's overall power level.
  */
 #define AP_JEWELRY_COMBAT /* helps +dam/+hit/+ac rings/amulets a bit, causing those values to not factor in. - C. Blue */
-s32b artifact_power(artifact_type *a_ptr) {
+s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	object_kind *k_ptr = &k_info[lookup_kind(a_ptr->tval, a_ptr->sval)];
 	s32b p = 0;
 	int immunities = 0, i, mult;
@@ -402,7 +402,7 @@ s32b artifact_power(artifact_type *a_ptr) {
 
 
 
-static void remove_contradictory (artifact_type *a_ptr, bool aggravate_me)
+static void remove_contradictory (artifact_type *a_ptr, bool aggravate_me) //Kurzel
 {
 	/* If the item is predestined to be aggravating, already get free
 	   its ap from useless mods that won't make it onto the final item */
