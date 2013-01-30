@@ -4491,6 +4491,10 @@ int Send_stamina(int Ind, int mst, int cst) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 
 #ifndef ENABLE_TECHNIQUES
+ #ifdef ENABLE_DRACONIAN_TRAITS
+	/* may breathe elements for stamina */
+	if (p_ptr->race != RACE_DRACONIAN)
+ #endif
 	return(0); /* disabled until client can handle it */
 #endif
 
@@ -4499,7 +4503,12 @@ int Send_stamina(int Ind, int mst, int cst) {
 	/* can we use stamina at all? */
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0) &&
 	    (p_ptr->pclass == CLASS_MAGE || p_ptr->pclass == CLASS_PRIEST ||
-	    p_ptr->pclass == CLASS_SHAMAN)) {
+	    p_ptr->pclass == CLASS_SHAMAN)
+#ifdef ENABLE_DRACONIAN_TRAITS
+	    /* may breathe elements for stamina */
+	    && p_ptr->prace != RACE_DRACONIAN
+#endif
+	    ) {
 		mst = -9999;
 		cst = -9999;
 	}
