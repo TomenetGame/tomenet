@@ -4042,7 +4042,7 @@ void do_slash_cmd(int Ind, char *message)
 					if (uniques_only && !(r_info[i].flags1 & RF1_UNIQUE)) continue;
 					j = 0;
 					/* Now count how many monsters there are of each race */
-					for (k = 1; k < m_max; k++)
+					for (k = 0; k < m_max; k++)
 						if (m_list[k].r_idx == i) j++;
 					if (r_info[i].cur_num != j)
 						msg_format(Ind, "(%d) %s mismatch: cur_num %d, real %d.",
