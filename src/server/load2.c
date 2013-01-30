@@ -1876,7 +1876,7 @@ if (p_ptr->updated_savegame == 0) {
 	        rd_byte(&tmp8u);
 	}
 
-	if (!older_than(4, 4, 25)) rd_u16b(&p_ptr->tim_deflect);
+	if (!older_than(4, 5, 3)) rd_u16b(&p_ptr->tim_deflect);
 
 	/* Success */
 	return FALSE;

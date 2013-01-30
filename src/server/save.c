@@ -740,7 +740,6 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->tim_esp);
 	wr_s16b(p_ptr->adrenaline);
 	wr_s16b(p_ptr->biofeedback);
-	wr_u16b(p_ptr->tim_deflect);
 	wr_byte(p_ptr->confusing);
 	wr_u16b(p_ptr->tim_jail);
 	wr_u16b(p_ptr->tim_susp);
@@ -877,6 +876,9 @@ static void wr_extra(int Ind)
 	/* For things like 'Officer' status to add others etc */
 	wr_u32b(p_ptr->party_flags);
 	wr_u32b(p_ptr->guild_flags);
+
+	/* Runecraft buff */
+	wr_u16b(p_ptr->tim_deflect);
 }
 
 /*
