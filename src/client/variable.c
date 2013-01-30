@@ -361,4 +361,4 @@ bool rand_term_lamp;
 int rand_term_lamp_ticks;
 
 /* for DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
-char last_prompt[MAX_CHARS];
+char last_prompt[MAX_CHARS] = { 0 };

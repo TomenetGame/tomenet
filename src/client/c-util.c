@@ -2784,140 +2784,7 @@ void c_message_add_msgnochat(cptr str)
  * XXX XXX XXX Note that "msg_print(NULL)" will clear the top line
  * even if no messages are pending.  This is probably a hack.
  */
-void c_msg_print(cptr msg)
-{
-#if 0 /* line-length related code is dead code now, because splitting is done server-side */
-	static int p = 0;
-	int n, x, y;
-	char *t;
-	char buf[1024];
-
-	/* Copy it */
-	if (msg) strcpy(buf, msg);
-	/* mark beginning of text to output */
-	t = buf;
-
-	/* Hack -- Reset */
-	if (!msg_flag) p = 0;
-
-	/* Remember cursor position */
-	Term_locate(&x, &y);
-
-	/* Keldon-Hack -- Always reset */
-	p = 0;
-	if (!topline_icky) clear_topline();
-
-	/* Message length */
-	n = (msg ? strlen(msg) : 0);
-
-	/* Hack -- flush when requested or needed */
-	if (p && (!msg || ((p + n) > 72)))
-	{
-		/* Flush */
-		/*msg_flush(p);*/
-
-		/* Forget it */
-		msg_flag = FALSE;
-
-		/* Reset */
-		p = 0;
-	}
-
-	/* No message */
-	if (!msg) return;
-
-	/* Paranoia */
-	if (n > 1000) return;
-
-	/* Memorize the message */
-	if (msg[0] == '\375') {
-		was_chat_buffer = TRUE;
-		was_all_buffer = FALSE;
-	} else if (msg[0] == '\374') {
-		was_all_buffer = TRUE;
-		was_chat_buffer = FALSE;
-	} else {
-		was_chat_buffer = FALSE;
-		was_all_buffer = FALSE;
-	}
-
-	/* strip (from here on) effectless control codes */
-	if (*t == '\374') t++;
-	if (*t == '\375') t++;
-
-	/* add the message to generic, chat-only and no-chat buffers
-	   accordingly, KEEPING '\376' control code (v>4.4.2.4) for main buffer */
-	c_message_add(t);
-
-	/* strip remaining control codes before displaying on screen */
-	if (*t == '\376') t++;
-
-	if (was_chat_buffer || was_all_buffer)
-		c_message_add_chat(t);
-	if (!was_chat_buffer)
-		c_message_add_msgnochat(t);
-
-	/* Analyze the buffer */
-//done at the beginning.	t = buf;
-
- #if 0 /* Done on server-side now - mikaelh */
-	/* Split message */
-	while (n > 72)
-	{
-		char oops;
-
-		int check, split;
-
-		/* Default split */
-		split = 72;
-
-		/* Find the "best" split point */
-		for (check = 40; check < 72; check++)
-		{
-			/* Found a valid split point */
-			if (t[check] == ' ') split = check;
-		}
-
-		/* Save the split character */
-		oops = t[split];
-
-		/* Split the message */
-		t[split] = '\0';
-
-		/* Display part of the message */
-		Term_putstr(0, 0, split, TERM_WHITE, t);
-
-		/* Flush it */
-		/*msg_flush(split + 1);*/
-
-		/* Restore the split character */
-		t[split] = oops;
-
-		/* Insert a space */
-		t[--split] = ' ';
-
-		/* Prepare to recurse on the rest of "buf" */
-		t += split; n -= split;
-	}
- #else
-	/* Small length limit */
-	if (n > 80) n = 80;
- #endif
-
-	/* Display the tail of the message */
-	if (!topline_icky) Term_putstr(p, 0, n, TERM_WHITE, t);
-
-	/* Restore cursor */
-	Term_gotoxy(x, y);
-
-	/* Remember the message */
-	msg_flag = TRUE;
-
-	/* Remember the position */
-	p += n + 1;
-
-#else
-
+void c_msg_print(cptr msg) {
 	int n, x, y;
 	char *t;
 	char buf[1024];
@@ -2930,6 +2797,7 @@ void c_msg_print(cptr msg)
 	/* Remember cursor position */
 	Term_locate(&x, &y);
 
+	/* using clear_topline() here sprevent top-line clearing via c_msg_print(NULL) */
 	if (!topline_icky) clear_topline();
 
 	/* Message length */
@@ -2980,7 +2848,6 @@ void c_msg_print(cptr msg)
 
 	/* Remember the message */
 	msg_flag = TRUE;
-#endif
 }
 
 /*

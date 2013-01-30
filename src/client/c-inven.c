@@ -334,10 +334,26 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 		if (parse_macro) macro_missing_item = extra ? 1 : 3;
 
 		/* Actually output a warning to combat message window */
+		topline_icky = FALSE;
 		c_msg_print("You do not have an eligible item.");
 
-		/* Done */
-		done = TRUE;
+		/* Redraw inventory */
+		p_ptr->window |= PW_INVEN;
+		window_stuff();
+
+		/* Flush any events */
+		Flush_queue();
+
+		/* Hack -- Cancel "display" */
+		command_see = FALSE;
+
+		/* Forget the item_tester_tval restriction */
+		item_tester_tval = 0;
+
+		/* Forget the item_tester_hook restriction */
+		item_tester_hook = 0;
+
+		return item;
 	}
 
 	/* Analyze choices */
