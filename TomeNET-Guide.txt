@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. January 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. January 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -461,7 +461,7 @@ V       V       enter 'cloaking mode'. This can only be used by rogues.
                 Note: Cloaking has no effect on shoplifting; it breaks on
                 entering any shop.
                 Note: Although ESP is supposed to detect cloaked targets, for
-                now it's still set to overrides ESP of other players for the
+                now it's still set to override ESP of other players for the
                 sake of PvP usage, similar to invisibility.
                 (Also see (5.16) for details on 'normal' invisibility.)
 
@@ -7566,7 +7566,8 @@ Curing          Cures being gorged, removes blindness/confusion/stun,
                 cures poison/cuts.
 Probing         Tells you hit points, melee attacks, speed and armour class of
                 monsters in your line of sight.
-Detection       Detects treasures, objects, traps, secret doors, creatures.
+Detection       Detects treasures, objects, traps, secret doors, and
+                non-invisible creatures.
 Perception      Identifies a specific item.
 *Perception*    *Identifies* a specific item, you guessed it..
 Enlightenment   Magically maps your surroundings.
@@ -11582,7 +11583,7 @@ Istar schools:
 
 - Divination
 
-    Detect Monsters Detects all monsters nearby.                    (project)
+    Detect Monsters Detects all non-invisible monsters nearby.      (project)
                     Required skill level for first spell level: 3.
 
     Identify        Identifies items.
@@ -11879,7 +11880,7 @@ Priest schools:
                     support school, meaning that increases in one of those
                     school will increase the spell level by only half as much.
 
-    Sense Monsters  Detect monsters, see invisible for a while.
+    Sense Monsters  Detect non-invisible monsters, see invisible for a while.
                     Lv30: Gives full temporary ESP.
                     Required skill level for first spell level: 3.
 
@@ -11891,7 +11892,7 @@ Priest schools:
                     Required skill level for first spell level: 10.
 
     Sense Surroundings
-                    Detect monsters, see invisible for a while.
+                    Detect non-invisible monsters, see invisible for a while.
                     Lv15: Maps the dungeon around you.
                     Lv30: Gives clairvoyance (full enlightened map).
                           Gives full temporary ESP.
