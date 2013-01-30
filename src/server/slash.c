@@ -3432,6 +3432,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377o  blue, white, red, black, green, multi,");
 				msg_print(Ind, "\377o  bronze, silver, gold, law, chaos, balance.");
 				msg_print(Ind, "\377yWARNING: Once you set a trait, it will be FINAL.");
+				msg_print(Ind, "\377yPlease check the guide (6.4) for trait details.");
 				msg_print(Ind, "\377U------------------------------------------------");
 				return;
 			}
