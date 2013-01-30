@@ -6907,6 +6907,14 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 	/* Finish initializing dungeon monsters */
 	setup_monsters();
 
+	/* Detect and fix wrong monster counts. Important to keep uniques spawnable:
+	   Their counts might have been corrupted by panic save or similar crash. */
+        /* First set all to zero */
+        for (h = 0; h < MAX_R_IDX; h++) r_info[h].cur_num = 0;
+        /* Now count how many monsters there are of each race */
+        for (h = 1; h < m_max; h++)
+    		if (m_list[h].r_idx) r_info[m_list[h].r_idx].cur_num++;
+
 	/* Finish initializing dungeon objects */
 	setup_objects();
 
