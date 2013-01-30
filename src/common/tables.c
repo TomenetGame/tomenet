@@ -339,57 +339,57 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 { R_MANA, "Mana", 	SKILL_R_MANA },
 };
 
-r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES+1] =
+r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES] =
 {
 { I_MINI, "minimized",	 0,  6, -10,  6, -1,  8, 10 },
-{ I_LENG, "lengthened",	 2,  8,  +5, 10,  0, 15, 10 },
-{ I_COMP, "compressed",	 3, 13,  -5, 13, -2,  8, 10 },
+{ I_LENG, "lengthened",	 2,  8,  +5,  9,  0, 15, 10 },
+{ I_COMP, "compressed",	 3, 12,  -5, 13, -2,  8, 10 },
 { I_MODE, "moderate",	 5, 10,   0, 10,  0, 10, 10 },
-{ I_EXPA, "expanded",	 7, 13,  +5, 10, +2, 13, 10 },
-{ I_BRIE, "brief",	 8,  8,  -5,  8,  0,  6,  5 },
-{ I_MAXI, "maximized",	10, 15, +10, 15, +1, 13, 10 },
+{ I_EXPA, "expanded",	 7, 13,  +5, 11, +2, 13, 10 },
+{ I_BRIE, "brief",	 8,  9,  -5,  8,  0,  6,  5 },
+{ I_MAXI, "maximized",	10, 14, +10, 14, +1, 13, 10 },
 { I_ENHA, "enhanced",	10, 15,   0, 10,  0, 10, 10 },
 };
 
-r_type r_types[RCRAFT_MAX_TYPES+1] =
+r_type r_types[RCRAFT_MAX_TYPES] =
 {
-{ T_BOLT, "bolt",	 1,  1, 15, 3,  4, 53, 27,  0,   0, 0, 0,  0,  0 },
-{ T_BEAM, "beam",	 5,  2, 25, 3,  9, 53, 32,  9, 169, 0, 0,  6, 14 },
+{ T_BOLT, "bolt",	 1,  1, 15, 3,  4, 53, 41,  0,   0, 0, 0,  0,  0 },
+{ T_BEAM, "beam",	 5,  2, 25, 3,  9, 53, 46, 16, 256, 0, 0,  3,  7 },
 { T_CLOU, "cloud",	10,  3, 30, 0,  0,  0,  0,  9, 169, 1, 5,  6, 14 },
-{ T_BALL, "ball",	15,  5, 30, 0,  0, 28, 28, 25, 784, 2, 7,  0,  0 },
-{ T_WAVE, "wave",	20,  4, 40, 0,  0,  0,  0, 25, 441, 0, 0,  6, 10 },
-{ T_STOR, "storm",	25, 10, 40, 5, 10, 25, 25, 16, 256, 1, 3, 10, 35 },
-{ T_RUNE, "rune",	30, 20, 20, 0,  0,  0,  0, 16, 625, 1, 2,  3,  7 },
-{ T_ENCH, "augment",	35, 50, 50, 0,  0,  0,  0,  0,   0, 0, 0,  0,  0 },
+{ T_BALL, "ball",	15,  5, 30, 0,  0,  0,  0, 25, 784, 2, 7,  0,  0 },
+{ T_SIGN, "sign",	20, 10, 20, 4,  5,  7, 10, 10, 100, 0, 0, 10, 35 },
+{ T_RUNE, "glyph",	25, 20, 30, 0,  0,  0,  0, 16, 625, 1, 2,  3,  7 },
+{ T_ENCH, "sigil",	30, 30, 40, 0,  0,  0,  0, 10, 100, 0, 0,  0,  0 },
+{ T_WAVE, "wave",	35, 40, 50, 0,  0,  0,  0, 25, 441, 0, 0,  6, 10 },
 };
 
 r_projection r_projections[RCRAFT_MAX_PROJECTIONS] =
 {
-{ R_LITE,		GF_LITE,	400,	"light" },
-{ R_DARK,		GF_DARK,	900,	"darkness" },
-{ R_NEXU,		GF_NEXUS,	350,	"lightning" },
-{ R_NETH,		GF_NETHER,	550,	"nether" },
-{ R_CHAO,		GF_CHAOS,	600,	"chaos" },
-{ R_MANA,		GF_MANA,	550,	"mana" },
+{ R_LITE,		GF_LITE,	300,	"light", TR2_RES_LITE },
+{ R_DARK,		GF_DARK,	900,	"darkness", TR2_RES_DARK },
+{ R_NEXU,		GF_NEXUS,	400,	"nexus", TR2_RES_NEXUS },
+{ R_NETH,		GF_NETHER,	550,	"nether", TR2_RES_NETHER },
+{ R_CHAO,		GF_CHAOS,	600,	"chaos", TR2_RES_CHAOS },
+{ R_MANA,		GF_MANA,	550,	"mana", TR5_RES_MANA },
 
-{ R_LITE | R_DARK,	GF_CONFUSION,	400,	"confusion" },
-{ R_LITE | R_NEXU,	GF_INERTIA,	350,	"inertia" },
-{ R_LITE | R_NETH,	GF_ELEC,	1200,	"lightning" },
-{ R_LITE | R_CHAO,	GF_FIRE,	1200,	"fire" },
-{ R_LITE | R_MANA,	GF_WAVE,	250,	"water" },
+{ R_LITE | R_DARK,	GF_CONFUSION,	600,	"confusion", TR2_RES_CONF },
+{ R_LITE | R_NEXU,	GF_INERTIA,	350,	"inertia", TR5_RES_TELE },
+{ R_LITE | R_NETH,	GF_ELEC,	1200,	"lightning", TR2_RES_ELEC },
+{ R_LITE | R_CHAO,	GF_FIRE,	1200,	"fire", TR2_RES_FIRE },
+{ R_LITE | R_MANA,	GF_WAVE,	450,	"water", TR5_RES_WATER },
 
-{ R_DARK | R_NEXU,	GF_GRAVITY,	300,	"gravity" },
-{ R_DARK | R_NETH,	GF_COLD,	1200,	"frost" },
-{ R_DARK | R_CHAO,	GF_ACID,	600,	"acid" },
-{ R_DARK | R_MANA,	GF_POIS,	800,	"poison" },
+{ R_DARK | R_NEXU,	GF_GRAVITY,	350,	"gravity", TR3_FEATHER },
+{ R_DARK | R_NETH,	GF_COLD,	1200,	"frost", TR2_RES_COLD },
+{ R_DARK | R_CHAO,	GF_ACID,	1200,	"acid", TR2_RES_ACID },
+{ R_DARK | R_MANA,	GF_POIS,	800,	"poison", TR2_RES_POIS },
 
-{ R_NEXU | R_NETH,	GF_TIME,	150,	"time" },
-{ R_NEXU | R_CHAO,	GF_SOUND,	400,	"sound" },
-{ R_NEXU | R_MANA,	GF_SHARDS,	400,	"shards" },
+{ R_NEXU | R_NETH,	GF_TIME,	250,	"time", TR5_RES_TIME },
+{ R_NEXU | R_CHAO,	GF_SOUND,	500,	"sound", TR2_RES_SOUND },
+{ R_NEXU | R_MANA,	GF_SHARDS,	500,	"shards", TR2_RES_SHARDS },
 
-{ R_NETH | R_CHAO,	GF_DISENCHANT,	500,	"disenchantment" },
-{ R_NETH | R_MANA,	GF_FORCE,	400,	"force"},
+{ R_NETH | R_CHAO,	GF_DISENCHANT,	600,	"disenchantment", TR2_RES_DISEN },
+{ R_NETH | R_MANA,	GF_FORCE,	300,	"force", TR2_RES_SOUND },
 
-{ R_CHAO | R_MANA,	GF_PLASMA,	700,	"plasma" },
+{ R_CHAO | R_MANA,	GF_PLASMA,	600,	"plasma", TR5_RES_PLASMA },
 };
 

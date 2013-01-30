@@ -727,10 +727,10 @@ struct object_type
 	s32b pval2;			/* Item extra-parameter for some special items */
 	s32b pval3;			/* Item extra-parameter for some special items */
 #endif
-#if 1 /* don't exist in the code at all, except load/save - Shall be used for temporarily augmented items, such as for Runecraft. - Kurzel */
-	s32b pval4;			/* Item extra-parameter for some special items */
-	s32b pval5;			/* Item extra-parameter for some special items */
-#endif
+
+	/* Used for temporarily augmented equipment. (Runecraft) */
+	s32b sigil;			/* Element index (+1) for r_projection (common/tables.c) boni lookup. Zero if no sigil. */
+	s32b sseed;			/* RNG Seed used to determine the boni (if random). Zero if not randomized. */
 
 	byte discount;		/* Discount (if any) */
 
@@ -2738,13 +2738,8 @@ struct player_type
 	u16b FTK_e_flags;
 	u16b FTK_m_flags;
 	u16b FTK_energy;
-	/* Timed Buff (NOT saved!) For enhanced storm spell.*/
-	u16b tim_rcraft_help;
-	byte tim_rcraft_help_type;
-	byte tim_rcraft_help_projection;
-	byte tim_rcraft_help_dx;
-	byte tim_rcraft_help_dy;
 	
+	u16b tim_deflect;
 
 #if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES)
 	struct worldpos wpos_old;
@@ -3303,7 +3298,7 @@ struct global_event_type
     int cleanup;		/* what kind of cleaning-up is required when event ends (state=255) ? */
 };
 
-
+/* Runecraft */
 typedef struct r_element r_element;
 struct r_element
 {
@@ -3311,7 +3306,6 @@ struct r_element
 	char * name;
 	u16b skill;
 };
-
 typedef struct r_imperative r_imperative;
 struct r_imperative
 {
@@ -3325,7 +3319,6 @@ struct r_imperative
 	byte duration;
 	byte energy;
 };
-
 typedef struct r_type r_type;
 struct r_type
 {
@@ -3345,7 +3338,6 @@ struct r_type
 	byte d_min;
 	byte d_max;
 };
-
 typedef struct r_projection r_projection;
 struct r_projection
 {
@@ -3353,8 +3345,8 @@ struct r_projection
 	int gf_type;
 	int weight;
 	char * name;
+	u32b resist;
 };
-
 
 /* Auction system - mikaelh */
 typedef struct bid_type bid_type;

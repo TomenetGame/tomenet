@@ -3617,7 +3617,7 @@
 
 #define PROJECT_PLAY	0x00001000	/* Affect players too, including the projector. (for GF_HEALINGCLOUD) */
 #define PROJECT_NORF	0x00002000	/* cannot be deflected by REFLECT monster flag */
-#define PROJECT_CRIT	0x00004000	/* Hit again with a radius 1 ball on creatures/players (runecraft enhanced cloud) */
+#define PROJECT_FULL	0x00004000	/* Deal full damage over radius spread (May dehack many things with this! - Kurzel) */
 #define PROJECT_EVSG	0x00008000	/* 'Entity vs Grid': It's a bolt spell that can hit EITHER mon/py OR floor/item. */
 
 /* ToME expansions */
@@ -4019,6 +4019,10 @@
 
 #define GF_THUNDER		189 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
 #define GF_ANNIHILATION		192 /* To differentiate drain effect from hacky non-drain effect for wands */
+#define GF_SHATTER		193 /* Runecraft 'disarm'; also breaks items as with meteor, deals damage to creatures susceptable to StM - Kurzel */
+#define GF_UNMAGIC		194 /* Projected dispel, players only for now */
+#define GF_REGEN_PLAYER		195 /* Projected tim_regen, for RC water */ 
+#define GF_DEFLECT_PLAYER		196
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200
@@ -4364,7 +4368,7 @@
 #define TR5_WOUNDING            	0x00000080L     /* Wounds monsters */
 #define TR5_FULL_NAME           0x00000100L     /* Uses direct name from k_info - UNUSED appearently */
 #define TR5_LUCK                0x00000200L     /* Luck += pval */
-#define TR5_IMMOVABLE           0x00000400L     /* Cannot move */
+#define TR5_RES_PLASMA          0x00000400L     /* For the runecraft sigil */
 #define TR5_LEVELS              0x00000800L     /* Can gain exp/exp levels !! */
 #define TR5_FORCE_DEPTH			0x00001000L	/* Can only occur on depth >= its k_info level */
 #define TR5_WHITE_LIGHT			0x00002000L	/* Light source colour is white instead of flame-yellow (for CAVE_LITE_COLOURS) */
@@ -7372,7 +7376,7 @@ extern int PlayerUID;
 #endif
 
 /* Runecraft */
-/* Physical Runes - match k_info.txt and common/tables.c index */
+/* Physical Runes - match k_info.txt and common/tables.c index; Sigils in object_flags() */
 #define SV_R_LITE			0
 #define SV_R_DARK			1
 #define SV_R_NEXU			2
@@ -7416,21 +7420,21 @@ extern int PlayerUID;
 
 /* Types */
 /* Order matches the index in common/tables.c; ascending by level. */
-#define RCRAFT_MAX_TYPES 7
+#define RCRAFT_MAX_TYPES 8
 
 #define T_BOLT 0x0001
 #define T_BEAM 0x0002
 #define T_CLOU 0x0004
-#define T_WAVE 0x0008
+#define T_BALL 0x0008
 
-#define T_BALL 0x0010
+#define T_SIGN 0x0010
 #define T_RUNE 0x0020
-#define T_STOR 0x0040
-#define T_ENCH 0x0080
+#define T_ENCH 0x0040
+#define T_WAVE 0x0080
 
 /* Imperatives */
 /* Order matches the index in common/tables.c; ascending by level. */
-#define RCRAFT_MAX_IMPERATIVES 7
+#define RCRAFT_MAX_IMPERATIVES 8
 
 #define I_MINI 0x0100
 #define I_LENG 0x0200
