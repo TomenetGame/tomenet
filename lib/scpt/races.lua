@@ -86,8 +86,7 @@ __races_diz = {
     "proud, singing in loud voices, arguing with them-",
     "selves for no good reason, and screaming out chal-",
     "lenges to nearby foes. In other words, dwarves",
-    "have miserable stealth.",
-    "",},
+    "have miserable stealth.",},
 
 "Half-Orc",
     {"\255uHalf-Orcs\255U resist darkness because of their",
