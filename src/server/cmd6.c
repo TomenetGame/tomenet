@@ -8175,12 +8175,16 @@ void do_cmd_breathe_aux(int Ind, int dir) {
                 }
         }
 
-	if (p_ptr->ghost) {
-		msg_print(Ind, "You cannot use your breath as a ghost.");
-		return;
-	}
 	if (p_ptr->prace != RACE_DRACONIAN || !p_ptr->ptrait) {
 		msg_print(Ind, "You cannot breathe elements.");
+		return;
+	}
+	if (p_ptr->ghost) {
+		msg_print(Ind, "You cannot use your elemental breath as a ghost.");
+		return;
+	}
+	if (p_ptr->body_monster && !strchr("JRdD", r_info[p_ptr->body_monster].d_char)) {
+		msg_print(Ind, "You cannot use your elemental breath in your current form.");
 		return;
 	}
 	if (p_ptr->lev < 8) {
