@@ -5807,14 +5807,14 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	/* Remove him from his party/guild */
 	if (p_ptr->party) {
 		/* He leaves */
-		party_leave(Ind);
+		party_leave(Ind, FALSE);
 	}
 	if (p_ptr->guild) {
 		if ((guilds[p_ptr->guild].flags & GFLG_AUTO_READD))
 			acc_set_guild(p_ptr->accountname, p_ptr->guild);
 		if ((p_ptr->guild_flags & PGF_ADDER))
 			acc_set_flags(p_ptr->accountname, ACC_GUILD_ADDER, TRUE);
-		guild_leave(Ind);
+		guild_leave(Ind, FALSE);
 	}
 
 	/* Ghosts dont static the lvl if under cfg_preserve_death_level ft. DEG */

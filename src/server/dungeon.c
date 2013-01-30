@@ -2723,7 +2723,7 @@ void recall_player(int Ind, char *message){
 
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 		/* need to leave party, since we might be teamed up with incompatible char mode players! */
-		if (p_ptr->party && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) party_leave(Ind);
+		if (p_ptr->party && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) party_leave(Ind, FALSE);
 #endif
 
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
@@ -5538,7 +5538,7 @@ void process_player_change_wpos(int Ind)
                so he can tell everyone involved about Valinor in party chat: */
     	    && p_ptr->auto_transport != AT_VALINOR)
                 /* need to leave party, since we might be teamed up with incompatible char mode players! */
-                party_leave(Ind);
+                party_leave(Ind, FALSE);
 #endif
 
 #if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES)

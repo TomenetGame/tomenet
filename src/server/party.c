@@ -1834,7 +1834,7 @@ int guild_remove(int remover, cptr name){
 	if (Ind <= 0) return FALSE;
 
 	if (Ind == remover) {	/* remove oneself from guild - leave */
-		guild_leave(remover);
+		guild_leave(remover, TRUE);
 		return TRUE;
 	}
 
@@ -1964,7 +1964,7 @@ int party_remove(int remover, cptr name)
 	return TRUE;
 }
 
-void guild_leave(int Ind){
+void guild_leave(int Ind, bool voluntarily) {
 	player_type *p_ptr = Players[Ind];
 	int guild_id = p_ptr->guild, i;
 
@@ -1986,8 +1986,13 @@ void guild_leave(int Ind){
 	guilds[guild_id].members--;
 
 	/* Inform people */
-	msg_print(Ind, "\374\377yYou have been removed from your guild.");
-	guild_msg_format(guild_id, "\374\377y%s has left the guild.", p_ptr->name);
+	if (voluntarily) {
+		msg_print(Ind, "\374\377yYou have left your guild.");
+		guild_msg_format(guild_id, "\374\377y%s has left the guild.", p_ptr->name);
+	} else {
+		msg_print(Ind, "\374\377yYou have been removed from your guild.");
+		guild_msg_format(guild_id, "\374\377y%s has been removed from the guild.", p_ptr->name);
+	}
 
 	/* If he's the guildmaster, set master to zero */
 	if (p_ptr->id == guilds[guild_id].master) {
@@ -2010,8 +2015,7 @@ void guild_leave(int Ind){
 /*
  * A player wants to leave a party.
  */
-void party_leave(int Ind)
-{
+void party_leave(int Ind, bool voluntarily) {
 	player_type *p_ptr = Players[Ind];
 	int party_id = p_ptr->party;
 
@@ -2039,12 +2043,22 @@ void party_leave(int Ind)
 	clockin(Ind, 2);
 
 	/* Inform people */
-	if (parties[party_id].mode == PA_IRONTEAM) {
-		msg_print(Ind, "\374\377yYou have been removed from your iron team.");
-		party_msg_format(party_id, "\374\377y%s has left the iron team.", p_ptr->name);
+	if (voluntarily) {
+		if (parties[party_id].mode == PA_IRONTEAM) {
+			msg_print(Ind, "\374\377yYou have left your iron team.");
+			party_msg_format(party_id, "\374\377y%s has left the iron team.", p_ptr->name);
+		} else {
+			msg_print(Ind, "\374\377yYou have left your party.");
+			party_msg_format(party_id, "\374\377y%s has left the party.", p_ptr->name);
+		}
 	} else {
-		msg_print(Ind, "\374\377yYou have been removed from your party.");
-		party_msg_format(party_id, "\374\377y%s has left the party.", p_ptr->name);
+		if (parties[party_id].mode == PA_IRONTEAM) {
+			msg_print(Ind, "\374\377yYou have been removed from your iron team.");
+			party_msg_format(party_id, "\374\377y%s has been removed from the iron team.", p_ptr->name);
+		} else {
+			msg_print(Ind, "\374\377yYou have been removed from your party.");
+			party_msg_format(party_id, "\374\377y%s has been removed from the party.", p_ptr->name);
+		}
 	}
 }
 

@@ -2202,8 +2202,8 @@ void do_cmd_steal(int Ind, int dir)
 			msg_print(Ind, "You have been purged from your party.");
 			party_msg_format(q_ptr->party, "%s has betrayed your party!", p_ptr->name);
 
-			p_ptr->party=party;
-			party_leave(Ind);
+			p_ptr->party = party;
+			party_leave(Ind, FALSE);
 
 		}
 

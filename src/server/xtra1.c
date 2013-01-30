@@ -7138,7 +7138,7 @@ static void process_global_event(int ge_id) {
 						if (j == i) continue;
 						if (Players[j]->wpos.wx || Players[j]->wpos.wy) continue;
 						/* leave party */
-						if (Players[j]->party == p_ptr->party) party_leave(i);
+						if (Players[j]->party == p_ptr->party) party_leave(i, FALSE);
 					}
 				}
 

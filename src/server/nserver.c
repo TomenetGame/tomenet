@@ -9766,7 +9766,7 @@ static int Receive_party(int ind) {
 		party_remove(player, buf);
 		break;
 	case PARTY_REMOVE_ME:
-		party_leave(player);
+		party_leave(player, TRUE);
 		break;
 	case PARTY_HOSTILE:
 		add_hostility(player, buf, TRUE);
@@ -9805,7 +9805,7 @@ static int Receive_guild(int ind) {
 		guild_remove(player, buf);
 		break;
 	case GUILD_REMOVE_ME:
-		guild_leave(player);
+		guild_leave(player, TRUE);
 		break;
 	}
 

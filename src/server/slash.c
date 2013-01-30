@@ -3402,14 +3402,14 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "You are not in a party.");
 				return;
 			}
-			party_leave(Ind);
+			party_leave(Ind, TRUE);
 			return;
 		} else if (prefix(message, "/gquit") || prefix(message, "/gleave")) {
 			if (!p_ptr->guild) {
 				msg_print(Ind, "You are not in a guild.");
 				return;
 			}
-			guild_leave(Ind);
+			guild_leave(Ind, TRUE);
 			return;
 		} else if (prefix(message, "/quit") || prefix(message, "/exit") || prefix(message, "/leave")) {
 			do_quit(Players[Ind]->conn, 0);
