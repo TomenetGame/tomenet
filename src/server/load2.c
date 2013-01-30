@@ -1877,6 +1877,7 @@ if (p_ptr->updated_savegame == 0) {
 	}
 
 	if (!older_than(4, 5, 3)) rd_u16b(&p_ptr->tim_deflect);
+	else p_ptr->tim_deflect = 0;
 
 	/* Success */
 	return FALSE;
