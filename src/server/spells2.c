@@ -144,9 +144,9 @@ void divine_empowerment(int Ind, int level) {
 void divine_intensify(int Ind, int level) {
 	player_type *p_ptr = Players[Ind];
 	if (p_ptr->ptrait==TRAIT_ENLIGHTENED) {
-		//aoe divine_xtra_res_time_mana
+		//aoe divine_xtra_res_time
 		project_los(Ind, GF_OLD_SLOW, level * 3, "");
-		(void)do_divine_xtra_res_time_mana(Ind, (level * 3) / 2);
+		(void)do_divine_xtra_res_time(Ind, (level * 3) / 2);
 		return;
 	} else if (p_ptr->ptrait==TRAIT_CORRUPTED) {
 		int bonus = 2 + ((level - 45) / 5) * 2;

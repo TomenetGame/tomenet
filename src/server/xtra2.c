@@ -3115,7 +3115,7 @@ bool do_divine_crit(int Ind, int v, int p) {
 /*
    timed time and mana res bonus for RACE_MAIA.
 */
-bool do_divine_xtra_res_time_mana(int Ind, int v) {
+bool do_divine_xtra_res_time(int Ind, int v) {
         player_type *p_ptr = Players[Ind];
         bool notice = (FALSE);
 
@@ -3124,23 +3124,21 @@ bool do_divine_xtra_res_time_mana(int Ind, int v) {
 
         /* Open */
         if (v) {
-                if (!p_ptr->divine_xtra_res_time_mana) {
+                if (!p_ptr->divine_xtra_res_time) {
 			msg_print(Ind, "You feel resistant to \377Btime\377w.");
-			msg_print(Ind, "You feel resistant to \377vmana\377w.");
                         notice = (TRUE);
                 }
         }
 
         /* Shut */
         else { //v = 0;
-                if (p_ptr->divine_xtra_res_time_mana) {
+                if (p_ptr->divine_xtra_res_time) {
 			msg_print(Ind, "You feel less resistant to \377Btime\377w.");
-			msg_print(Ind, "You feel less resistant to \377vmana\377w.");
                         notice = (TRUE);
                 }
         }
 
-        p_ptr->divine_xtra_res_time_mana = v;
+        p_ptr->divine_xtra_res_time = v;
 
         /* Nothing to notice */
         if (!notice) return (FALSE);

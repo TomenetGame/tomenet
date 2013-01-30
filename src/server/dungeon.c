@@ -3678,8 +3678,8 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->divine_hp)
 		(void)do_divine_hp(Ind, p_ptr->divine_hp - minus_magic, p_ptr->divine_hp_mod);
 
-	if (p_ptr->divine_xtra_res_time_mana)
-		(void)do_divine_xtra_res_time_mana(Ind, p_ptr->divine_xtra_res_time_mana - minus_magic);
+	if (p_ptr->divine_xtra_res_time)
+		(void)do_divine_xtra_res_time(Ind, p_ptr->divine_xtra_res_time - minus_magic);
 #endif
 	/* xtra shot? - the_sandman */
 	if (p_ptr->focus_time)

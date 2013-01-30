@@ -12182,8 +12182,8 @@ though, as all other magic schools do, not the astral level.)
                     Required skill level for first spell level: 40.
 
     The Silent Force
-                    Enlightened: Slows down monsters within sight and grants
-                                 temporary mana and time resistance.
+                    Enlightened: Slows down monsters within sight
+                                 and grants temporary time resistance.
                     Corrupted: Increases your chance to strike critically.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 45.

@@ -3349,10 +3349,8 @@ void calc_boni(int Ind)
 			}
 
 			/* Bonus resistance for the good side */
-			if (p_ptr->divine_xtra_res_time_mana > 0) {
+			if (p_ptr->divine_xtra_res_time > 0)
 				p_ptr->resist_time = TRUE;
-				p_ptr->resist_mana = TRUE;
-			}
 		} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
 			p_ptr->suscep_good = TRUE;
 
