@@ -3972,6 +3972,7 @@ void interact_macros(void)
 		}
 
 		else if (i == 'z') {
+			int target_dir = '5';
 #define mw_quaff 'a'
 #define mw_read 'b'
 #define mw_fire 'c'
@@ -5385,20 +5386,23 @@ Chain_Macro:
 #ifdef MACRO_WIZARD_SMART_TARGET
 					/* ask about replacing '*t' vs '-' (4.4.6) vs '+' (4.4.6b) */
 					if (strstr(buf2, "*t") && choice != mw_mimicidx) {
-						clear_from(10);
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the targetting method:");
+						clear_from(8);
+						Term_putstr(10, 8, -1, TERM_GREEN, "Please choose the targetting method:");
+
 						//Term_putstr(10, 11, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
-						Term_putstr(10, 12, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
-						Term_putstr(10, 13, -1, TERM_L_GREEN, "   otherwise cancel action. (\377URecommended in most cases!\377G)");
-						Term_putstr(10, 14, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
-						Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
-						Term_putstr(10, 16, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
-						Term_putstr(10, 17, -1, TERM_L_GREEN, "   otherwise target own grid.");
-						Term_putstr(10, 18, -1, TERM_L_GREEN, "d) Target own grid (ie yourself).");
-						Term_putstr(10, 20, -1, TERM_L_GREEN, "e) Target most wounded friendly player,");
-						Term_putstr(10, 21, -1, TERM_L_GREEN, "   cancel action if no player is nearby. (\377UEg for 'Cure Wounds'.\377G)");
-						Term_putstr(10, 22, -1, TERM_L_GREEN, "f) Target most wounded friendly player,");
-						Term_putstr(10, 23, -1, TERM_L_GREEN, "   target own grid instead if no player is nearby.");
+						Term_putstr(10, 10, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
+						Term_putstr(10, 11, -1, TERM_L_GREEN, "   otherwise cancel action. (\377URecommended in most cases!\377G)");
+						Term_putstr(10, 12, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
+						Term_putstr(10, 13, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
+						Term_putstr(10, 14, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
+						Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise target own grid.");
+						Term_putstr(10, 16, -1, TERM_L_GREEN, "d) Fire into a fixed direction.");
+						Term_putstr(10, 17, -1, TERM_L_GREEN, "e) Target own grid (ie yourself).");
+
+						Term_putstr(10, 19, -1, TERM_L_GREEN, "f) Target most wounded friendly player,");
+						Term_putstr(10, 20, -1, TERM_L_GREEN, "   cancel action if no player is nearby. (\377UEg for 'Cure Wounds'.\377G)");
+						Term_putstr(10, 21, -1, TERM_L_GREEN, "g) Target most wounded friendly player,");
+						Term_putstr(10, 22, -1, TERM_L_GREEN, "   target own grid instead if no player is nearby.");
 
 						while (TRUE) {
 							switch (choice = inkey()) {
@@ -5413,7 +5417,7 @@ Chain_Macro:
 								continue;
 							default:
 								/* invalid action -> exit wizard */
-								if (choice < 'a' || choice > 'f') {
+								if (choice < 'a' || choice > 'g') {
 //									i = -1;
 									continue;
 								}
@@ -5423,10 +5427,48 @@ Chain_Macro:
 						/* exit? */
 						if (i == -1) continue;
 
+						/* Get a specific fixed direction */
+						if (choice == 'd') {
+							clear_from(8);
+							Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction:");
+
+							Term_putstr(30, 13, -1, TERM_L_GREEN, " 7  8  9");
+							Term_putstr(30, 14, -1, TERM_GREEN, "  \\ | / ");
+							Term_putstr(30, 15, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
+							Term_putstr(30, 16, -1, TERM_GREEN, "  / | \\ ");
+							Term_putstr(30, 17, -1, TERM_L_GREEN, " 1  2  3");
+
+							Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9) ");
+
+							while (TRUE) {
+								switch (target_dir = inkey()) {
+								case ESCAPE:
+								case 'p':
+								case '\010': /* backspace */
+									i = -1; /* leave */
+									break;
+								case KTRL('T'):
+									/* Take a screenshot */
+									xhtml_screenshot("screenshot????");
+									continue;
+								default:
+									/* invalid action -> exit wizard */
+									if (target_dir < '1' || target_dir > '9') {
+//										i = -1;
+										continue;
+									}
+								}
+								break;
+							}
+							/* exit? */
+							if (i == -1) continue;
+						}
+
 						if (choice != 'c') {
 							/* choose initial targetting mechanics */
-							if (choice == 'd') strcpy(buf, "\\e)*q");
-							else if (choice == 'e') strcpy(buf, "\\e)(");
+							if (choice == 'd') strcpy(buf, "\\e)");
+							else if (choice == 'e') strcpy(buf, "\\e)*q");
+							else if (choice == 'f') strcpy(buf, "\\e)(");
 							else strcpy(buf, "\\e)*t");
 
 							/* We assume that '*t' is always the last part in the macro
@@ -5435,7 +5477,8 @@ Chain_Macro:
 
 							/* add new direction feature */
 							if (choice == 'b') strcat(buf, "+");
-							else if (choice == 'd' || choice == 'f') strcat(buf, "5");
+							else if (choice == 'd') strcat(buf, format("%c", target_dir));
+							else if (choice == 'e' || choice == 'g') strcat(buf, "5");
 							else strcat(buf, "-");
 
 							/* replace old macro by this one */
@@ -5463,7 +5506,7 @@ Chain_Macro:
 					Term_putstr(10, 14, -1, TERM_GREEN, "The keys ESC and '%' are NOT allowed to be used.");
 					Term_putstr(10, 16, -1, TERM_GREEN, "If you want to \377Uchain another macro\377g, press '\377U%\377g' key.");
 					Term_putstr(10, 17, -1, TERM_GREEN, "By doing this you can combine multiple macros into one hotkey.");
-					Term_putstr(5, 19, -1, TERM_L_GREEN, "Press the key to bind the macro to, or '%' for chaining:");
+					Term_putstr(5, 19, -1, TERM_L_GREEN, "Press the key to bind the macro to, or '%' for chaining: ");
 
 					while (TRUE) {
 						/* Get a macro trigger */
