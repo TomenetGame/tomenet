@@ -2228,8 +2228,7 @@ static bool players_in_level(int Ind, int Ind2) {
         return TRUE;
 }
 
-void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc)
-{
+void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc) {
 	player_type *p_ptr;
 	int i, eff_henc;
 	struct worldpos *wpos = &Players[Ind]->wpos;
@@ -2238,6 +2237,11 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 	int dlev;
 #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
 	int soft_max_plv;
+#endif
+
+#ifdef ALLOW_NR_CROSS_PARTIES
+	/* anti-cheeze (for if NR surface already allows partying up) */
+        if (in_netherrealm(wpos) && !wpos->wz) return;
 #endif
 
 #if 1
