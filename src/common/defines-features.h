@@ -127,6 +127,13 @@
    compound spells, and fixed mana cost to go with it. */
 #define DISCRETE_SPELL_SYSTEM
 
+/* Draconians get to pick a 'lineage trait' on birth,
+   giving specific resistances and a breath weapon. - C. Blue */
+#define ENABLE_DRACONIAN_TRAITS
+
+/* Allow an OT_GUILD house for each guild. - C. Blue */
+#define ENABLE_GUILD_HALL
+
 
 /* --------------------- Server-type dependant features -------------------- */
 
@@ -144,9 +151,6 @@
 #endif
 
 #ifdef TEST_SERVER
- #define ENABLE_DRACONIAN_TRAITS
- #define ENABLE_GUILD_HALL	/* Allow an OT_GUILD house */
-
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 
  #ifdef MAX_CLOUDS
