@@ -3743,7 +3743,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 /*
  * Verify a player's data against the hash table. - C. Blue
  */
-void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u16b quest, time_t laston)
+void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston)
 {
 	hash_entry *ptr = lookup_player(id);
 
@@ -3756,6 +3756,14 @@ void verify_player(cptr name, int id, u32b account, byte race, byte class, byte 
 	if (ptr->class != class) {
 		s_printf("hash_entry: fixing class of %s.\n", ptr->name);
 		ptr->class = class;
+	}
+	if (ptr->guild != guild) {
+		s_printf("hash_entry: fixing guild of %s.\n", ptr->name);
+		ptr->guild = guild;
+	}
+	if (ptr->guild_flags != guild_flags) {
+		s_printf("hash_entry: fixing guild_flags of %s.\n", ptr->name);
+		ptr->guild_flags = guild_flags;
 	}
 }
 
