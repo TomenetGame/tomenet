@@ -1041,10 +1041,9 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
  * args example: ynn1 -> Party, Class, Race, MinLevel
  */
 static bool chmod_door(int Ind, struct dna_type *dna, char *args){
-	player_type *p_ptr=Players[Ind];
-	if (!is_admin(p_ptr))
-	{
-		if(dna->creator!=p_ptr->dna) {
+	player_type *p_ptr = Players[Ind];
+	if (!is_admin(p_ptr)) {
+		if(dna->creator != p_ptr->dna) {
 			/* note: the house 'master' is not necessarily the house owner! */
 			msg_print(Ind, "Only the house master may change permissions.");
 			return(FALSE);
@@ -1053,18 +1052,22 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 	}
 
 	if (dna->a_flags & ACF_PARTY) {
-		if(!p_ptr->party) {
-			msg_print(Ind, "You are not owner of a party.");
+		if (!p_ptr->party) {
+			msg_print(Ind, "You are not in a party.");
 			return(FALSE);
 		}
-		if(strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner))) {
+		if (dna->owner_type != OT_PLAYER) {
+			msg_print(Ind, "Only houses owned by the party owner can be given party access.");
+			return FALSE;
+		}
+		if (strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner))) {
 			msg_print(Ind, "You must be owner of your party to allow party access.");
 			return(FALSE);
 		}
 	}
 
-	if((dna->a_flags=args[1])){
-		dna->min_level=atoi(&args[2]);
+	if ((dna->a_flags = args[1])) {
+		dna->min_level = atoi(&args[2]);
 	}
 
 	return(TRUE);

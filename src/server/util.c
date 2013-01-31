@@ -6003,6 +6003,9 @@ bool backup_estate(void) {
 		if (au < 100) au = 100;
 		//h_ptr->dy,dx
 
+		/* WARNING: For now unable to save guild halls */
+		if (h_ptr->dna->owner_type != OT_PLAYER) continue;
+
 		name = lookup_player_name(h_ptr->dna->owner);
 		if (!name) {
 			s_printf("  warning: house %d's owner %d doesn't have a name.\n", i, h_ptr->dna->owner);

@@ -5665,8 +5665,7 @@ static void display_house_inventory(int Ind, house_type *h_ptr)
 /*
  * Displays store (after clearing screen)		-RAK-
  */
-static void display_trad_house(int Ind, house_type *h_ptr)
-{
+static void display_trad_house(int Ind, house_type *h_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	/* This should never happen */
@@ -5674,15 +5673,21 @@ static void display_trad_house(int Ind, house_type *h_ptr)
 
 	/* Send the house info */
 	/* our own house */
-	if (!h_ptr->dna->owner || h_ptr->dna->owner == p_ptr->id)
+	if (!h_ptr->dna->owner || (h_ptr->dna->owner_type == OT_PLAYER && h_ptr->dna->owner == p_ptr->id))
 		Send_store_info(Ind, p_ptr->store_num, "Your House", "", h_ptr->stock_num, h_ptr->stock_size, TERM_L_UMBER, '+');
 	/* someone else's house (can't happen at the moment) */
 	else {
 		char owner[40];
+
 		/* get name of real owner of this house */
-		strcpy(owner, lookup_player_name(h_ptr->dna->owner));
-		if (owner[strlen(owner) - 1] == 's') strcat(owner, "' House");
-		else strcat(owner, "'s House");
+		if (h_ptr->dna->owner_type == OT_PLAYER) {
+			strcpy(owner, lookup_player_name(h_ptr->dna->owner));
+			if (owner[strlen(owner) - 1] == 's') strcat(owner, "' House");
+			else strcat(owner, "'s House");
+		} else if (h_ptr->dna->owner_type == OT_GUILD) {
+			strcpy(owner, "Hall of ");
+			strcat(owner, guilds[h_ptr->dna->owner].name);
+		} else strcpy(owner, "nobody's home"); /* paranoia */
 
 		/* Don't display capacity, since with long owner names it could be too wide */
 		Send_store_info(Ind, p_ptr->store_num, owner, "", h_ptr->stock_num, 0, TERM_L_UMBER, '+');
@@ -6356,8 +6361,13 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 		return; /* oops? */
 	}
 	h_ptr = &houses[h_idx];
+
 	/* Get house owner's name for misc purpose and notification */
-	strcpy(owner_name, lookup_player_name(h_ptr->dna->owner));
+	if (h_ptr->dna->owner_type == OT_PLAYER)
+		strcpy(owner_name, lookup_player_name(h_ptr->dna->owner));
+	else if (h_ptr->dna->owner_type == OT_GUILD)
+		strcpy(owner_name, guilds[h_ptr->dna->owner].name);
+	else strcpy(owner_name, "nobody"); /* paranoia */
 
 	if (!(zcave = getcave(&p_ptr->wpos))) {
 		s_printf("PLAYER_STORE_ERROR: NO ZCAVE! (owner %s (%d), value %d, buyer %s)\n",
@@ -6538,16 +6548,18 @@ s_printf("PLAYER_STORE_HANDLE: full, mang, owner %s (%d), %s, value %d, buyer %s
 	}
 
 	/* Notify the store owner about the sale now or next time he logs in */
-	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED) continue;
-		if (strcmp(owner_name, Players[i]->name)) continue;
+	if (h_ptr->dna->owner_type == OT_PLAYER) {
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (strcmp(owner_name, Players[i]->name)) continue;
 
-		/* Notify the owner now that he's online */
-		msg_format(i, "\374\377yYour store at (%d,%d) just sold something!", p_ptr->wpos.wx, p_ptr->wpos.wy);
-		break;
+			/* Notify the owner now that he's online */
+			msg_format(i, "\374\377yYour store at (%d,%d) just sold something!", p_ptr->wpos.wx, p_ptr->wpos.wy);
+			break;
+		}
+		/* If he's not online, store account notification for later */
+		if (i > NumPlayers) acc_set_flags_id(h_ptr->dna->owner, ACC_WARN_SALE, TRUE);
 	}
-	/* If he's not online, store account notification for later */
-	if (i > NumPlayers) acc_set_flags_id(h_ptr->dna->owner, ACC_WARN_SALE, TRUE);
 }
 #endif
 

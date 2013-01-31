@@ -4707,6 +4707,12 @@ static void scan_houses()
 					kill_houses(houses[i].dna->owner, OT_PARTY);
 				}
 				break;
+			case OT_GUILD:
+				if(!strlen(guilds[houses[i].dna->owner].name)) {
+					s_printf("Found old guild houses. ID: %d\n", houses[i].dna->owner);
+					kill_houses(houses[i].dna->owner, OT_GUILD);
+				}
+				break;
 		}
 	}
 	s_printf("Finished house maintenance\n");
@@ -4801,6 +4807,15 @@ void cheeze(object_type *o_ptr){
 						}
 					}
 				}
+				else if(houses[j].dna->owner_type == OT_GUILD){
+					int owner;
+					if((owner = guilds[houses[j].dna->owner].master)){
+						if(o_ptr->owner != owner){
+							if(o_ptr->level > lookup_player_level(owner))
+								s_printf("Suspicious item: (%d,%d) Owned by %s, in %s party house. (%d,%d)\n", o_ptr->wpos.wx, o_ptr->wpos.wy, lookup_player_name(o_ptr->owner), guilds[houses[j].dna->owner].name, o_ptr->level, lookup_player_level(owner));
+						}
+					}
+				}
 				break;
 			}
 		}
@@ -4846,6 +4861,22 @@ void cheeze_trad_house()
 									o_ptr->wpos.wx, o_ptr->wpos.wy,
 									lookup_player_name(o_ptr->owner),
 									parties[h_ptr->dna->owner].name,
+									j, o_ptr->level, lookup_player_level(owner));
+					}
+				}
+			}
+		}
+		else if(h_ptr->dna->owner_type == OT_GUILD) {
+			int owner;
+			if((owner = guilds[h_ptr->dna->owner].master)) {
+				for (i = 0; i < h_ptr->stock_num; i++) {
+					o_ptr = &h_ptr->stock[i];
+					if(o_ptr->owner != owner) {
+						if(o_ptr->level > lookup_player_level(owner))
+							s_printf("Suspicious item: (%d,%d) Owned by %s, in %s guild trad house(%d). (%d,%d)\n",
+									o_ptr->wpos.wx, o_ptr->wpos.wy,
+									lookup_player_name(o_ptr->owner),
+									guilds[h_ptr->dna->owner].name,
 									j, o_ptr->level, lookup_player_level(owner));
 					}
 				}

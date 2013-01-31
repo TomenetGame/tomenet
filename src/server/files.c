@@ -1258,11 +1258,20 @@ int houses_send(char *buffer, int max) {
 
 		price = dna->price;
 
-		owner = lookup_player_name(houses[i].dna->owner);
+		if (houses[i].dna->owner_type == OT_PLAYER)
+			owner = lookup_player_name(houses[i].dna->owner);
+		else if (houses[i].dna->owner_type == OT_GUILD)
+			owner = guilds[houses[i].dna->owner].name;
+		else owner = "";
+
 		if (!owner) owner = "";
 
-		len2 = snprintf(buf, 1024, "location=[%d,%d] in %s\nprice=%d\nowner=%s\n",
-			screen_y, screen_x, wpos, price, owner);
+		if (houses[i].dna->owner_type == OT_GUILD)
+			len2 = snprintf(buf, 1024, "location=[%d,%d] in %s\nprice=%d\nguild=%s\n",
+			    screen_y, screen_x, wpos, price, owner);
+		else
+			len2 = snprintf(buf, 1024, "location=[%d,%d] in %s\nprice=%d\nowner=%s\n",
+			    screen_y, screen_x, wpos, price, owner);
 
 		if (len + len2 < max) {
 			memcpy(&buffer[len], buf, len2);

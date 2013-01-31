@@ -2389,9 +2389,17 @@ void do_cmd_show_houses(int Ind)
 			if (name) fprintf(fff, "  Creator:%s", name);
 			else fprintf(fff, "  Dead's. ID: %d", dna->creator);
 #endif	// 0
-			name = lookup_player_name(houses[i].dna->owner);
-			if (name) fprintf(fff, "  ID: %d  Owner: %s", dna->owner, name);
-			else fprintf(fff, "  ID: %d", dna->owner);
+			if (dna->owner_type == OT_PLAYER) {
+				name = lookup_player_name(houses[i].dna->owner);
+				if (name) fprintf(fff, "  ID: %d  Owner: %s", dna->owner, name);
+				else fprintf(fff, "  ID: %d", dna->owner);
+			} else if (dna->owner_type == OT_GUILD) {
+				name = guilds[houses[i].dna->owner].name;
+				if (name) fprintf(fff, "  ID: %d  Guild: %s", dna->owner, name);
+				else fprintf(fff, "  ID: %d", dna->owner);
+			} else { /* paranoia */
+				fprintf(fff, "  ID: %d", dna->owner);
+			}
 		}
 
 #if 1
