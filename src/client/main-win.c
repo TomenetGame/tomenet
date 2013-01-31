@@ -3521,16 +3521,33 @@ static void hook_quit(cptr str)
 /*
  * Init some stuff
  */
-static void init_stuff(void)
-{
+static void init_stuff(void) {
 	int   i;
-
 	char path[1024];
 
 
 	/* Hack -- access "ANGBAND.INI" */
 	GetModuleFileName(hInstance, path, 512);
-	strcpy(path + strlen(path) - 4, ".INI");
+	strcpy(path + strlen(path) - 4, ".ini");
+
+	/* If tomenet.ini file doesn't exist yet, check for tomenet.ini.default
+	   and copy it over. This way a full client update won't kill our config. */
+	if (!check_file(path)) {
+		char path2[1024], out_val[2048];
+
+		GetModuleFileName(hInstance, path2, 512);
+		strcpy(path2 + strlen(path2) - 4, ".ini.default");
+
+		if (check_file(path2)) {
+			/* copy it */
+			sprintf(out_val, "copy %s %s", path2, path);
+            		system(out_val);
+
+			/* rebuild tomenet.ini filename */
+			GetModuleFileName(hInstance, path, 512);
+			strcpy(path + strlen(path) - 4, ".ini");
+		}
+	}
 
 	/* Save "ANGBAND.INI" */
 	ini_file = string_make(path);
