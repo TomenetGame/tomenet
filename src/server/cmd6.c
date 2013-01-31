@@ -7904,6 +7904,18 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		msg_print(Ind, "You cannot use techniques as a ghost.");
 		return;
 	}
+	if (p_ptr->confused) {
+		msg_print(Ind, "You cannot use techniques while confused.");
+		return;
+	}
+	if (p_ptr->blind) {
+		switch (technique) {
+		case 1: case 3: case 9:
+		case 10: case 14:
+			msg_print(Ind, "You cannot use this technique while blind.");
+			return;
+		}
+	}
 /*	it's superfluous, and rogues now get techniques too but don't have stances..
 	if (!get_skill(p_ptr, SKILL_STANCE)) return;
 */
@@ -8023,6 +8035,15 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		msg_print(Ind, "You cannot use techniques as a ghost.");
 		return;
 	}
+	if (p_ptr->confused) {
+		msg_print(Ind, "You cannot use techniques while confused.");
+		return;
+	}
+	if (p_ptr->blind) {
+		msg_print(Ind, "You cannot use ranged techniques while confused.");
+		return;
+	}
+
 	if (!get_skill(p_ptr, SKILL_ARCHERY)) return; /* paranoia */
 
 	if (technique != 3 || !p_ptr->ranged_double) { /* just toggling that one off? */
@@ -8181,6 +8202,10 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 	}
 	if (p_ptr->ghost) {
 		msg_print(Ind, "You cannot use your elemental breath as a ghost.");
+		return;
+	}
+	if (p_ptr->confused) {
+		msg_print(Ind, "You cannot use your elemental breath while confused.");
 		return;
 	}
 	if (p_ptr->body_monster && !strchr("JRdD", r_info[p_ptr->body_monster].d_char)) {
