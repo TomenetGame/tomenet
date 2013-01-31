@@ -2394,9 +2394,9 @@ void do_cmd_show_houses(int Ind)
 				if (name) fprintf(fff, "  ID: %d  Owner: %s", dna->owner, name);
 				else fprintf(fff, "  ID: %d", dna->owner);
 			} else if (dna->owner_type == OT_GUILD) {
-				name = lookup_player_name(houses[i].dna->creator);
-				if (name) fprintf(fff, "  ID: %d  Creator: %s", dna->creator, name);
-				else fprintf(fff, "  ID: %d", dna->creator);
+				name = lookup_player_name(guilds[houses[i].dna->owner].master);
+				if (name) fprintf(fff, "  ID: %d  Master: %s", dna->owner, name);
+				else fprintf(fff, "  ID: %d", dna->owner);
 			} else { /* paranoia */
 				fprintf(fff, "  ID: %d", dna->owner);
 			}
