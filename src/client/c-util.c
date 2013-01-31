@@ -117,10 +117,10 @@ void flush_now(void)
 	flush_later = FALSE;
 
 	/* Cancel "macro" info */
-	parse_macro = after_macro = FALSE;
 #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 	restore_prompt();
 #endif
+	parse_macro = after_macro = FALSE;
 
 	/* Cancel "sequence" info */
 	parse_under = parse_slash = FALSE;
@@ -549,11 +549,10 @@ static char inkey_aux(void)
 
 	/* End of internal macro */
 	if (ch == 29) {
-		parse_macro = FALSE;
-
 #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 		restore_prompt();
 #endif
+		parse_macro = FALSE;
 	}
 
 
@@ -819,10 +818,10 @@ char inkey(void)
                 flush_later = FALSE;
 
                 /* Cancel "macro" info */
-                parse_macro = after_macro = FALSE;
 #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 		restore_prompt();
 #endif
+                parse_macro = after_macro = FALSE;
 
                 /* Cancel "sequence" info */
                 parse_under = parse_slash = FALSE;
@@ -7322,7 +7321,9 @@ void clear_topline(void) {
 /* If a macro failed while waiting for input at topline prompt,
    then restore the prompt, so the user can manually respond. */
 void restore_prompt(void) {
-	if (!last_prompt[0]) return;
-	prt(last_prompt, 0, 0);
+	if (last_prompt[0] && parse_macro)
+		prt(last_prompt, 0, 0);
+	/* clear for next time (paranoia) */
+	last_prompt[0] = 0;
 }
 #endif
