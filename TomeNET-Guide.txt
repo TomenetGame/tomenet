@@ -2774,7 +2774,7 @@ Please do not use foul language in chat. If you do, depending on the server
 settings you might end up in jail.
 Also, foul language is filtered by default. If you want to turn that off,
 press  = 2  and toggle the client option "censor_swearing". (Requires client
-version newer than 4.4.8a, or the 'test client' download.)
+version newer than 4.4.8a.)
 
 You can also enter slash commands in the chat line. For details about slash
 commands see (0.2).
