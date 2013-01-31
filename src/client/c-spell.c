@@ -813,7 +813,7 @@ bool get_item_hook_find_spell(int *item, bool inven_first)
 #else /* new method that allows to enter partial spell names, for comfortable 'I/II/III..' handling */
 bool get_item_hook_find_spell(int *item, bool inven_first) {
 	int i, spos, highest = 0, current, spell;
-	char buf[80], buf2[100], sname[20], *bufptr;
+	char buf[80], buf2[100], sname[40], *bufptr;
 	object_type *o_ptr;
 	bool exact_match = FALSE, combo_spell, found_something = FALSE;
 
