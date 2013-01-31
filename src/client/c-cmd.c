@@ -2303,7 +2303,7 @@ static void cmd_guild_options() {
 	                Term_putstr(5, 2, -1, TERM_L_UMBER, "You are not in a guild.");
 		} else {
 			/* Selections */
-                        if (guildhall_wx == -1) Term_putstr(5, 2, -1, TERM_SLATE, "The guild does own a guild hall.");
+                        if (guildhall_wx == -1) Term_putstr(5, 2, -1, TERM_SLATE, "The guild does not own a guild hall.");
 	                else if (guildhall_wx >= 0) Term_putstr(5, 2, -1, TERM_L_UMBER, format("The guild hall is located in the %s area of (%d,%d).",
     		            guildhall_pos, guildhall_wx, guildhall_wy));
 			Term_putstr(5, 4, -1, TERM_WHITE,  format("adders     : %s", guild.flags & GFLG_ALLOW_ADDERS ? "\377GYES" : "\377rno "));
