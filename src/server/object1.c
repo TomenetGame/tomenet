@@ -1209,18 +1209,16 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				if (!((*f5) & TR5_REGEN_MANA)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REGEN_MANA; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_MSTAFF:
-						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
+						/* mhhh */
 					break;
 					case TV_GLOVES:
 						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
-						if (!((*f4) & TR4_AUTO_ID)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_AUTO_ID; flag_count++; }
 					break;
 					case TV_HELM:
-						if (!((*f4) & TR4_AUTO_ID)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_AUTO_ID; flag_count++; }
+						/* mhhh */
 					break;
 					case TV_CROWN:
 						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
-						if (!((*f4) & TR4_AUTO_ID)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_AUTO_ID; flag_count++; }
 						if (!((*f5) & TR5_REGEN_MANA)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REGEN_MANA; flag_count++; }
 					break;
 					case TV_SHIELD:
@@ -1228,7 +1226,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					case TV_SOFT_ARMOR:
 					case TV_HARD_ARMOR:
 					case TV_DRAG_ARMOR:
-						if (!((((*f2) & TR2_RES_ACID) || ((*f2) & TR2_IM_ACID)) && (((*f2) & TR2_RES_ELEC) || ((*f2) & TR2_IM_ELEC)) && (((*f2) & TR2_RES_FIRE) || ((*f2) & TR2_IM_FIRE)) && (((*f2) & TR2_RES_COLD) || ((*f2) & TR2_IM_COLD)))) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR5_ATTR_MULTI; flag_count++; } //Hack -- Base resist!
+						if (!((((*f2) & TR2_RES_ACID) || ((*f2) & TR2_IM_ACID)) && (((*f2) & TR2_RES_ELEC) || ((*f2) & TR2_IM_ELEC)) &&
+						    (((*f2) & TR2_RES_FIRE) || ((*f2) & TR2_IM_FIRE)) && (((*f2) & TR2_RES_COLD) || ((*f2) & TR2_IM_COLD))))
+							{ flag_category[flag_count] = 2; flag_pool[flag_count] = TR5_ATTR_MULTI; flag_count++; } //Hack -- Base resist!
 					break;
 					default:
 					break;
@@ -1367,7 +1367,10 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				if (!((*f2) & TR2_SUST_DEX)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_DEX; flag_count++; }
 				if (!((*f2) & TR2_SUST_CON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CON; flag_count++; }
 				if (!((*f2) & TR2_SUST_CHR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CHR; flag_count++; }
-				if (!((*f1) & TR1_SPEED) && pval && (((!((*f5) & TR5_CRIT) || !((*f1) & TR1_MANA)) || pval < 8) || (!(((*f5) & TR5_CRIT) && ((*f1) & TR1_MANA)) || pval < 6))) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SPEED; flag_count++; } //Obey speed laws! ie. max 7 or 5 if you have crit/mana already in addition to speed! Hardcoded - Kurzel
+				if (!((*f1) & TR1_SPEED) && pval && (((!((*f5) & TR5_CRIT) || !((*f1) & TR1_MANA)) || pval < 8) ||
+				    (!(((*f5) & TR5_CRIT) && ((*f1) & TR1_MANA)) || pval < 6)))
+					//Obey speed laws! ie. max 7 or 5 if you have crit/mana already in addition to speed! Hardcoded - Kurzel
+					{ flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SPEED; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
 					case TV_POLEARM:
@@ -1382,7 +1385,10 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 						if (!((*f3) & TR3_XTRA_SHOTS)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_XTRA_SHOTS; flag_count++; }
 					break;
 					case TV_BOOTS:
-						if (!((*f1) & TR1_SPEED) && pval && (((!((*f5) & TR5_CRIT) || !((*f1) & TR1_MANA)) || pval < 8) || (!(((*f5) & TR5_CRIT) && ((*f1) & TR1_MANA)) || pval < 6))) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SPEED; flag_count++; } //Obey speed laws! ie. max 7 or 5 if you have crit/mana already in addition to speed! - Kurzel
+						if (!((*f1) & TR1_SPEED) && pval && (((!((*f5) & TR5_CRIT) || !((*f1) & TR1_MANA)) || pval < 8) ||
+						    (!(((*f5) & TR5_CRIT) && ((*f1) & TR1_MANA)) || pval < 6)))
+							//Obey speed laws! ie. max 7 or 5 if you have crit/mana already in addition to speed! - Kurzel
+							{ flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_SPEED; flag_count++; }
 					break;
 					default:
 					break;
@@ -1408,17 +1414,21 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
 						if (!((*f5) & TR5_IMPACT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IMPACT; flag_count++; }
-						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
+						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8))
+							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
 					break;
 					case TV_POLEARM:
 					case TV_SWORD:
 					case TV_AXE:
 					case TV_BOOMERANG:
-						if (!((*f5) & TR5_VORPAL)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_VORPAL; flag_count++; }
-						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
+						if (!((*f5) & TR5_VORPAL))
+							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_VORPAL; flag_count++; }
+						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8))
+							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
 					break;
 					case TV_GLOVES:
-						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
+						if (!((*f5) & TR5_CRIT) && pval && ((!((*f1) & TR1_SPEED) || !((*f1) & TR1_MANA)) || pval < 8))
+							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_CRIT; flag_count++; }
 					break;
 					default:
 					break;
