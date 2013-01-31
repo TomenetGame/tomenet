@@ -367,7 +367,7 @@ extern int ge_contender_buffer_deed[128];
 /* The party information */
 struct party_type
 {
-	char name[MAX_CHARS];	/* Name of the party */
+	const char *name; /* name[MAX_CHARS]; */
 	char owner[NAME_LEN];	/* Owner's name */
 	s32b members;		/* Number of people in the party */
 	s32b created;		/* Creation (or disband-tion) time */
@@ -379,7 +379,7 @@ struct party_type
 party_type parties[MAX_PARTIES];
 struct guild_type
 {
-	char name[MAX_CHARS];
+	const char *name; /* [MAX_CHARS]; */
 	s32b master;		/* Guildmaster unique player ID */
 	s32b members;		/* Number of guild members */
         byte cmode;             /* Guild creator's character mode */
