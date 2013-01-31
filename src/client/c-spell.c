@@ -812,7 +812,7 @@ bool get_item_hook_find_spell(int *item, bool inven_first)
 }
 #else /* new method that allows to enter partial spell names, for comfortable 'I/II/III..' handling */
 bool get_item_hook_find_spell(int *item, bool inven_first) {
-	int i, spos, highest = 0, current;
+	int i, spos, highest = 0, current, spell;
 	char buf[80], buf2[100], sname[20], *bufptr;
 	object_type *o_ptr;
 	bool exact_match = FALSE, combo_spell, found_something = FALSE;
@@ -866,8 +866,8 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 
 			/* get the spell's spell array index */
 			sprintf(buf2, "return find_spell(\"%s\")", sname);
-			spos = exec_lua(0, buf2); /* abuse spos for this (was 'spell') */
-			if (spos == -1) return FALSE; /* paranoia - can't happen */
+			spell = exec_lua(0, buf2);
+			if (spell == -1) return FALSE; /* paranoia - can't happen */
 
 			/* hack: if this is a multi-version spell, keep it in mind but continue
 			   checking, if we can not cast this particular version of it. */
@@ -875,17 +875,17 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 				if (!found_something) {
 					/* assume that we can probably cast this spell */
 					*item = i;
-					hack_force_spell = spos;
+					hack_force_spell = spell;
 					found_something = TRUE;
 				}
 
-				sprintf(buf2, "return is_ok_spell(0, %d)", spos);
+				sprintf(buf2, "return is_ok_spell(0, %d)", spell);
     	                        if (!exec_lua(0, buf2)) continue;
 
 				if (current > highest) {
 					/* the highest spell we found so far that we can cast */
 					*item = i;
-					hack_force_spell = spos;
+					hack_force_spell = spell;
 					highest = current;
 				}
 
@@ -895,7 +895,7 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 
 			/* assume that we can probably cast this spell */
 			*item = i;
-			hack_force_spell = spos;
+			hack_force_spell = spell;
 			found_something = TRUE;
 
 			/* Ok, we found a spell that we can use, or we didn't find
