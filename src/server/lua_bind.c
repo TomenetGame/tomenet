@@ -1195,6 +1195,7 @@ void lua_forget_parties(void) {
 	        parties[i].members = 0;
 	        parties[i].created = 0;
 	        parties[i].mode = 0;
+	        parties[i].cmode = 0;
 	        parties[i].flags = 0x0;
 	        for (j = 0; j < BBS_LINES; j++)
     			pbbs_line[i][j][0] = '\0';
@@ -1213,6 +1214,7 @@ void lua_forget_guilds(void) {
 		guilds[i].name[0] = '\0';
 		guilds[i].master = 0;
 		guilds[i].members = 0;
+	        guilds[i].cmode = 0;
 		guilds[i].flags = 0x0;
 		guilds[i].minlev = 0;
                 for (j = 0; j < 5; j++)

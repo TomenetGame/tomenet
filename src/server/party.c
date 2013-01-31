@@ -1482,8 +1482,8 @@ int party_add_self(int Ind, cptr party) {
 	}
 
 	/* Everlasting and other chars cannot be in the same party */
-	if (compat_mode(p_ptr->mode, parties[party_id].mode)) {
-		msg_format(Ind, "\377yYou cannot join %s parties.", compat_mode(p_ptr->mode, parties[party_id].mode));
+	if (compat_mode(p_ptr->mode, parties[party_id].cmode)) {
+		msg_format(Ind, "\377yYou cannot join %s parties.", compat_mode(p_ptr->mode, parties[party_id].cmode));
 		return FALSE;
 	}
 
