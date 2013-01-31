@@ -3264,17 +3264,21 @@ int Receive_weather(void) {
 		if (weather_type % 10 == 2) weather_speed_snow = ws;
 		else if (weather_type % 10 == 1) weather_speed_rain = ws;
 	}
+
+	if (weather_type == -1) {
+		wind_noticable = FALSE;
 #ifdef USE_SOUND_2010
-	/* Play overlay sound (if enabled) */
-	if (use_sound) {
+		/* Play overlay sound (if enabled) */
+		if (use_sound) sound_weather(-2); //stop
 //puts(format("read weather: type %d, wind %d.", weather_type, weather_wind));
-		if (weather_type == -1) {
-			sound_weather(-2); //stop
-		} else if (weather_type % 10 == 0) {
-			sound_weather(-1); //fade out
-		}
-	}
 #endif
+	} else if (weather_type % 10 == 0) {
+		wind_noticable = FALSE;
+#ifdef USE_SOUND_2010
+		/* Play overlay sound (if enabled) */
+		if (use_sound) sound_weather(-1); //fade out
+#endif
+	}
 
 	/* hack: insta-erase all weather */
 	if (weather_type == -1 ||
@@ -4180,10 +4184,11 @@ void do_ping() {
     if (!noweather_mode) {
 	do_weather();
 
-#ifdef USE_SOUND_2010
- #if 1 /* old method: Many weather particles turn on the sfx, few turn it off again. */
+#if 1 /* old method: Many weather particles turn on the sfx, few turn it off again. */
 	/* handle audio output -- avoid easy oscillating */
 	if (weather_particles_seen >= 7) {
+		wind_noticable = TRUE;
+ #ifdef USE_SOUND_2010
 		weather_sound_change = 0;
 
 		//in case the below method is active code-wise, also add this hack here:
@@ -4198,18 +4203,25 @@ void do_ping() {
 				else sound_weather(snow1_sound_idx);
 			}
 		}
+ #endif
 	} else if (weather_particles_seen <= 4) {
+		wind_noticable = FALSE;
+ #ifdef USE_SOUND_2010
 		weather_sound_change++;
 		if (weather_sound_change == (cfg_client_fps > 100 ? 100 : cfg_client_fps)) {
 			weather_sound_change = 0;
 			sound_weather(-1); //fade out, insufficient particles to support the noise ;)
 		}
-	} else weather_sound_change = 0;
- #else /* WEATHER_VOL_PARTICLES -- new method: Amount of weather particles determines the sfx volume. */
+	} else {
+		weather_sound_change = 0;
+ #endif
+	}
+#else /* WEATHER_VOL_PARTICLES -- new method: Amount of weather particles determines the sfx volume. */
 	/* handle audio output -- avoid easy oscillating */
 	if (weather_particles_seen >= 1) {
+		wind_noticable = TRUE;
+ #ifdef USE_SOUND_2010
 		weather_sound_change = 0; /* for delaying, and then fading out, further below */
-
 		if (weather_type != -1) {
 			if (weather_type % 10 == 1) { //rain
 				if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(rain2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
@@ -4219,7 +4231,10 @@ void do_ping() {
 				else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 			}
 		}
+ #endif
 	} else {
+		wind_noticable = FALSE;
+ #ifdef USE_SOUND_2010
   #if 0
 		sound_weather(-2); //turn off
   #else /* make it smoother: delay and then fade */
@@ -4233,11 +4248,13 @@ void do_ping() {
 		sound_weather(-1); //fade out
    #endif
   #endif
-	}
  #endif
+	}
 
- #ifdef SOUND_SDL
+ #ifdef USE_SOUND_2010
+  #ifdef SOUND_SDL
 	if (weather_fading) weather_handle_fading();
+  #endif
  #endif
 #endif
     }
