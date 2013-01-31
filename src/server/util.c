@@ -3045,6 +3045,8 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	return(level);
 }
 
+/* 433+ $p34k: Try to translate certain numbers and symbols to letters? */
+//#define CENSOR_LEET
 static int censor(char *line) {
 	int i, j, im, jm, cc[MSG_LEN], offset;
 	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
@@ -3146,21 +3148,33 @@ static int censor(char *line) {
 	strcpy(lcopy, lcopy2);
 	i = censor_aux(tmp1, lcopy, cc, FALSE, FALSE); /* continue with normal check */
 	strcpy(lcopy, lcopy2);
+#ifdef CENSOR_LEET
 	j = censor_aux(tmp2, lcopy, cc, TRUE, FALSE); /* continue with leet speek check */
 	strcpy(lcopy, lcopy2);
+#else
+	j = 0;
+#endif
 	im = censor_aux(tmp3, lcopy, cc, FALSE, TRUE); /* continue with normal check */
 	strcpy(lcopy, lcopy2);
+#ifdef CENSOR_LEET
 	jm = censor_aux(tmp4, lcopy, cc, TRUE, TRUE); /* continue with leet speek check */
+#else
+	jm = 0;
+#endif
 
 	/* combine all censored characters */
 	for (offset = 0; tmp1[offset]; offset++)
 		if (tmp1[offset] == '*') line[offset] = '*';
+#ifdef CENSOR_LEET
 	for (offset = 0; tmp2[offset]; offset++)
 		if (tmp2[offset] == '*') line[offset] = '*';
+#endif
 	for (offset = 0; tmp3[offset]; offset++)
 		if (tmp3[offset] == '*') line[offset] = '*';
+#ifdef CENSOR_LEET
 	for (offset = 0; tmp4[offset]; offset++)
 		if (tmp4[offset] == '*') line[offset] = '*';
+#endif
 
 	/* return 'worst' result */
 	if (j > i) i = j;
