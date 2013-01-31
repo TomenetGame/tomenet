@@ -12520,7 +12520,6 @@ D+ - Dexterity bonus (PVAL Required)
 S+ - Strength bonus (PVAL Required)
 Rh - Regen health
 SD - Slow digestion
-Cl - Climbing
 Fl - Flying
 c+ - Charisma bonus (PVAL Required)
 C+ - Constitution bonus (PVAL Required)
@@ -12547,7 +12546,7 @@ Inertia        | FANT    |      |        |       |       |      |       |
 Lightning      | Im      | Br   |        |       | Au    |      | BrD+  |      
 Fire           | Im      | Br   |        |       | Au    |      | BrS+  |      
 Water          | ImRhSD  |      |        |       |       |      |       |      
-Gravity        | FA      |      |        |       |       |      |       | ClFl
+Gravity        | FA      |      |        |       |       |      |       | Fl
 Frost          | Im      | Br   |        |       | Au    |      | BrS+  |      
 Acid           | Im      | Br   |        |       |       |      | Brc+  |      
 Poison         | Im      | Br   |        | C+    |       |      | BrC+  |      
