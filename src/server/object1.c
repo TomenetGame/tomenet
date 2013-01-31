@@ -1300,7 +1300,8 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				if (!((*f2) & TR2_FREE_ACT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_FREE_ACT; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BOOTS:
-						if (!((*f4) & TR4_CLIMB)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_CLIMB; flag_count++; }
+						if (!((*f4) & TR4_FLY)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_FLY; flag_count++; }
+						//if (!((*f4) & TR4_CLIMB)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_CLIMB; flag_count++; }
 					case TV_CLOAK:
 						if (!((*f4) & TR4_FLY)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_FLY; flag_count++; }
 					break;
