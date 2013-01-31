@@ -12509,7 +12509,6 @@ Ch - Chaotic
 Rm - Regen mana
 MP - Max mana increase (PVAL Required)
 Ba - Base resist (acid/elec/fire/cold)
-ID - Auto-ID
 FA - Free action
 W+ - Wisdom bonus (PVAL Required)
 I+ - Intelligence bonus (PVAL Required)
@@ -12541,7 +12540,7 @@ Darkness       | BlSI    | SI   |        |       | In    | BlIf |       |
 Nexus          | Su      | SK   |        |       |       |      | SK    |      
 Nether         | HL      | Va   |        | HL    | HL    |      | Va    |      
 Chaos          | RR      | Ch   |        |       |       |      |       |      
-Mana           | Rm      | MP   | Ba     | Ba    | Ba    | Rm   | MPID  |      
+Mana           | Rm      |      | Ba     | Ba    | Ba    | Rm   | MP    |      
 -------------------------------------------------------------------------------
 Confusion      | FA      | W+I+ |        |       |       | W+I+ | FA    |      
 Inertia        | FANT    |      |        |       |       |      |       |      
