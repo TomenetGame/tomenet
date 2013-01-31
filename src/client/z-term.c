@@ -687,7 +687,8 @@ void flicker() {
 	/* handle TERM_LAMP preparations */
 	rand_term_lamp_ticks++;
 	if (rand_term_lamp_ticks == 1) {
-		rand_term_lamp = (rand_int(3) != 0);
+		/* 3: busy, 5-8: normal, 15-20: relaxed */
+		rand_term_lamp = (rand_int(20) != 0);
 		rand_term_lamp_ticks = 0;
 	}
 
