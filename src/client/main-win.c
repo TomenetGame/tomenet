@@ -3524,6 +3524,7 @@ static void hook_quit(cptr str)
 static void init_stuff(void) {
 	int   i;
 	char path[1024];
+	FILE *fp0;
 
 
 	/* Hack -- access "ANGBAND.INI" */
@@ -3532,21 +3533,35 @@ static void init_stuff(void) {
 
 	/* If tomenet.ini file doesn't exist yet, check for tomenet.ini.default
 	   and copy it over. This way a full client update won't kill our config. */
-	if (!check_file(path)) {
-		char path2[1024], out_val[2048];
+	fp0 = fopen(path, "r");
+	if (!fp0) {
+		char path2[1024];
 
 		GetModuleFileName(hInstance, path2, 512);
 		strcpy(path2 + strlen(path2) - 4, ".ini.default");
 
 		if (check_file(path2)) {
 			/* copy it */
+#if 0
+			char out_val[2048];
 			sprintf(out_val, "copy %s %s", path2, path);
             		system(out_val);
-
-			/* rebuild tomenet.ini filename */
-			GetModuleFileName(hInstance, path, 512);
-			strcpy(path + strlen(path) - 4, ".ini");
-		}
+#else
+			FILE *fp, *fp2;
+			char buf[1024];
+			buf[0] = 0;
+			fp = fopen(path, "w");
+			fp2 = fopen(path2, "r");
+			if (!fp) quit(format("error: can't open %s for writing", path));
+			if (!fp2) quit(format("error: can't open %s for reading", path2));
+			while (!feof(fp2)) {
+				fgets(buf, 1024, fp2);
+				if (!feof(fp2)) fputs(buf, fp);
+			}
+			fclose(fp2);
+			fclose(fp);
+#endif
+		} else plog(format("Error: Neither %s nor %s exists", path, path2));
 	}
 
 	/* Save "ANGBAND.INI" */
