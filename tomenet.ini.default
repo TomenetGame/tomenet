@@ -1,0 +1,172 @@
+[Online]
+;Metaserver address
+meta=meta.tomenet.net
+
+;Pick a host, unlike the UNIX version of TomeNET, this version gets the
+;host name from the INI file instead of from the command line.
+host=europe.tomenet.net
+
+;Game host's port
+port=18348
+
+;Pick a name.  Spaces are allowed.  The name should be no longer than
+;15 characters and shouldn't contain any "special" characters.
+nick=
+
+;Pick a password.  It should not be more than 15 characters long.  Also,
+;you shouldn't use a password that you use anywhere else, because it is 
+;not encrypted.
+pass=
+
+
+;Client-side FPS changes how often the game checks for keyboard input.
+;Increase it if you like. (Recommended: 100)
+fps=100
+
+
+; Pick a race (deprecated)
+;race=1
+
+; Pick a class (deprecated)
+;class3=
+
+; Pick a sex (deprecated)
+; 0 - Female   1 - Male
+;sex=0
+
+; DEPRECATED - ignore:
+; Now, set the order that you want your stats to be.  The first number
+; specifies the highest stat (most important) down to the lowest stat.
+; This will be *before* plusses are added in.
+; 1 - STR   2 - INT   3 - WIS   4 - DEX   5 - CON   6 - CHR
+; For example, a warrior might want:
+; 'stat=1 5 4 3 2 6'
+;stat=4 1 2 3 5 6
+
+
+[Base]
+LibPath=.\lib
+
+; - disable num lock key on starting up (1 = do so)
+DisableNumlock=1
+
+; - enable graphics in general (0 = off)
+Graphics=0
+
+; - enable audio in general (0 = off, 1 = on)
+Sound=1
+
+; pre-cache audio (defaults to on; recommended)
+CacheAudio=1
+
+; - mixer sample rate, default is 44100 (best left disabled)
+;   It is highly recommended to not changed this to
+;   avoid wrongly pitched audio on some systems.
+SampleRate=44100
+
+; - number of mixer channels, ie the number of sound effects
+;   that can be played simultaneously. (4..32)
+MaxChannels=32
+
+; - Sample buffer size (larger = more lagging sound,
+;   smaller = skipping on slow machines. 128..8192)
+AudioBuffer=1024
+
+; - turn various things on(1) or off(0)
+AudioMaster=1
+AudioMusic=1
+AudioSound=1
+AudioWeather=1
+
+; - mixer values for various things (0..100)
+AudioVolumeMaster=100
+AudioVolumeMusic=100
+AudioVolumeSound=100
+AudioVolumeWeather=100
+
+
+[Main window]
+WindowNumber=0
+PositionX=0
+PositionY=1
+Columns=80
+Rows=24
+Font=8X13.FON
+Graf=8X13.BMP
+
+[Mirror window]
+WindowNumber=1
+WindowTitle=Game messages
+Visible=1
+PositionX=0
+PositionY=359
+Columns=80
+Rows=24
+Font=6X10.FON
+Graf=8X13.BMP
+
+[Recall window]
+WindowNumber=2
+WindowTitle=Inventory
+Visible=1
+PositionX=484
+PositionY=359
+Columns=80
+Rows=24
+Font=6X10.FON
+Graf=8X13.BMP
+
+[Choice window]
+WindowNumber=3
+WindowTitle=Character overview
+Visible=1
+PositionX=652
+PositionY=1
+Columns=80
+Rows=22
+Font=5X8.FON
+Graf=8X13.BMP
+
+[Term-4 window]
+WindowNumber=4
+WindowTitle=Chat
+Visible=1
+PositionX=652
+PositionY=183
+Columns=80
+Rows=17
+Font=6X10.FON
+Graf=8X13.BMP
+
+[Term-5 window]
+WindowNumber=5
+WindowTitle=Equipment
+Visible=1
+PositionX=484
+PositionY=622
+Columns=80
+Rows=14
+Font=6X10.FON
+Graf=8X13.BMP
+
+[Term-6 window]
+WindowNumber=6
+WindowTitle=Term-6
+Visible=0
+PositionX=184
+PositionY=549
+Columns=80
+Rows=24
+Font=5X8.FON
+Graf=8X13.BMP
+
+[Term-7 window]
+WindowNumber=7
+WindowTitle=Term-7
+Visible=0
+PositionX=676
+PositionY=548
+Columns=80
+Rows=24
+Font=5X8.FON
+Graf=8X13.BMP
