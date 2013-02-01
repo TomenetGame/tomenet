@@ -83,7 +83,7 @@ HERBALTEA = add_spell
                                 do_res_stat(Ind, A_WIS)
                                 do_res_stat(Ind, A_INT)
                                 do_res_stat(Ind, A_CHR)
-	                        if (player.black_breath) then
+	                        if (player.black_breath == TRUE) then
     		                        msg_print(Ind, "The hold of the Black Breath on you is broken!");
             		                player.black_breath = FALSE
                     		end
