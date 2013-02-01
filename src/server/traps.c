@@ -3281,7 +3281,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Depend on rod type */
-        switch (o_ptr->pval) {
+        switch (o_ptr->sval) {
 		case SV_ROD_DETECT_TRAP:
 //                        m_ptr->smart |= SM_NOTE_TRAP;
 			break;
