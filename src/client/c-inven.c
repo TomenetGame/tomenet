@@ -337,10 +337,6 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 		topline_icky = FALSE;
 		c_msg_print("You do not have an eligible item.");
 
-		/* Redraw inventory */
-		p_ptr->window |= PW_INVEN;
-		window_stuff();
-
 		/* Flush any events */
 		Flush_queue();
 
@@ -352,6 +348,10 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 
 		/* Forget the item_tester_hook restriction */
 		item_tester_hook = 0;
+
+		/* Redraw inventory */
+		p_ptr->window |= PW_INVEN;
+		window_stuff();
 
 		return item;
 	}
