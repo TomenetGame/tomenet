@@ -241,7 +241,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 			}
 			fprintf(fff, "     The %s%s\n", base_name, admin && !a_ptr->known ? " (unknown)" : "");
 #ifdef ART_DIZ
-	                fprintf(fff, "%s", a_text + a_info[forge.name1].text);
+//	                fprintf(fff, "%s", a_text + a_info[forge.name1].text);
 #endif
 		}
 
