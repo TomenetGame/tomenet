@@ -1676,7 +1676,7 @@ bool load_player(int Ind)
 		if (err) what = "Cannot parse savefile error";
 		if (err == 35) what = edit ? "Server is closed for login now" :
 			"Incorrect password";
-		if (err == 1) what = "Name in use/exploit";
+		if (err == 1) what = "Name already in use";
 	}
 
 	/* Paranoia */
