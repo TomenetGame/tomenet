@@ -5869,7 +5869,8 @@ void process_player_change_wpos(int Ind)
 	p_ptr->new_level_flag = FALSE;
 
 	/* warning messages, mostly for newbies */
-	if (p_ptr->max_plv == 1 &&
+	if (p_ptr->ghost) ; /* don't warn ghosts */
+	else if (p_ptr->max_plv == 1 &&
 	    p_ptr->num_blow == 1 && p_ptr->warning_bpr2 != 1 &&
 	    /* and don't spam Martial Arts users or mage-staff wielders ;) */
 	    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
