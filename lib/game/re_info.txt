@@ -564,7 +564,7 @@ N:43:Tolkien-based
 G:*:*
 I:+0:+0d+0:+0:+0:+0
 W:+0:120:+0:+0:B
-H:JOKEANGBAND
+F:JOKEANGBAND
 #F:BASEANGBAND
 
 N:44:Vigorous

@@ -408,7 +408,6 @@ accedit: account/accedit.o
 preproc/preproc: preproc/preproc.o
 	$(CC) $(CFLAGS) -o preproc/preproc preproc/preproc.o
 
-
 #
 # Build the TomeNET server
 #
