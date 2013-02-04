@@ -51,7 +51,13 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield)
         };
         bypass_inscrption = FALSE;
 
-
+	/* Sigil (reset it) */
+	if (o_ptr->sigil) {
+		msg_print(Ind, "The sigil fades away.");
+		o_ptr->sigil = 0;
+		o_ptr->sseed = 0;
+	}
+	
 	/* Verify */
 	if (amt > o_ptr->number) amt = o_ptr->number;
 
