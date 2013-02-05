@@ -9997,6 +9997,7 @@ Warrior is strongly recommended.
     they can use if they have sufficient stamina and which is a physical
     ability of theirs, not a magic spell. This breath weapon cannot be used
     while polymorphed, except if the form is a reptile or dragon.
+    The resistances obtained from a trait stay, even while polymorphed.
     Draconians receive a bonus on 'Thought Contact', 'Polearm-Mastery' and
     'Magic devices'.
 
