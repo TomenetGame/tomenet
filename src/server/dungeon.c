@@ -3097,7 +3097,7 @@ static bool process_player_end_aux(int Ind)
 	/* Unbelievers "resist" magic */
 	//		int minus = (p_ptr->anti_magic)?3:1;
 	int minus = 1;
-	int minus_magic = 1 + get_skill_scale_fine(p_ptr, SKILL_ANTIMAGIC, 3); /* was 3 before, trying slightly less harsh 2 now */
+	int minus_magic = 1 + get_skill_scale_fine(p_ptr, SKILL_ANTIMAGIC, 2); /* was 3 before, trying slightly less harsh 2 now */
 	int minus_health = get_skill_scale_fine(p_ptr, SKILL_HEALTH, 2); /* was 3, but then HEALTH didn't give HP.. */
 	int minus_combat = get_skill_scale_fine(p_ptr, SKILL_COMBAT, 3);
 
@@ -3691,7 +3691,7 @@ static bool process_player_end_aux(int Ind)
 
 	/* Protection from evil */
 	if (p_ptr->protevil)
-		(void)set_protevil(Ind, p_ptr->protevil - 1);
+		(void)set_protevil(Ind, p_ptr->protevil - minus_magic);
 
 	/* Holy Zeal - EA bonus */
 	if (p_ptr->zeal)
@@ -3767,11 +3767,11 @@ static bool process_player_end_aux(int Ind)
 
 	/* Shield */
 	if (p_ptr->shield)
-		(void)set_shield(Ind, p_ptr->shield - 1, p_ptr->shield_power, p_ptr->shield_opt, p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
+		(void)set_shield(Ind, p_ptr->shield - minus_magic, p_ptr->shield_power, p_ptr->shield_opt, p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
 	
 	/* Timed deflection */
 	if (p_ptr->tim_deflect)
-		(void)set_tim_deflect(Ind, p_ptr->tim_deflect - 1);
+		(void)set_tim_deflect(Ind, p_ptr->tim_deflect - minus_magic);
 	
 	/* Timed Levitation */
 	if (p_ptr->tim_ffall)
@@ -3825,28 +3825,28 @@ static bool process_player_end_aux(int Ind)
 			//        PROJECT_KILL | PROJECT_ITEM, "");
 		}
 
-		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - 1, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
+		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - minus_magic, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
         }
 
 	/* Oppose Acid */
 	if (p_ptr->oppose_acid)
-		(void)set_oppose_acid(Ind, p_ptr->oppose_acid - 1);
+		(void)set_oppose_acid(Ind, p_ptr->oppose_acid - minus_magic);
 
 	/* Oppose Electricity */
 	if (p_ptr->oppose_elec)
-		(void)set_oppose_elec(Ind, p_ptr->oppose_elec - 1);
+		(void)set_oppose_elec(Ind, p_ptr->oppose_elec - minus_magic);
 
 	/* Oppose Fire */
 	if (p_ptr->oppose_fire)
-		(void)set_oppose_fire(Ind, p_ptr->oppose_fire - 1);
+		(void)set_oppose_fire(Ind, p_ptr->oppose_fire - minus_magic);
 
 	/* Oppose Cold */
 	if (p_ptr->oppose_cold)
-		(void)set_oppose_cold(Ind, p_ptr->oppose_cold - 1);
+		(void)set_oppose_cold(Ind, p_ptr->oppose_cold - minus_magic);
 
 	/* Oppose Poison */
 	if (p_ptr->oppose_pois)
-		(void)set_oppose_pois(Ind, p_ptr->oppose_pois - 1);
+		(void)set_oppose_pois(Ind, p_ptr->oppose_pois - minus_magic);
 
 	/*** Poison and Stun and Cut ***/
 
@@ -3900,9 +3900,9 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->bless_temp_luck) (void)bless_temp_luck(Ind, p_ptr->bless_temp_luck_power, p_ptr->bless_temp_luck - 1);
 
 	/* Temporary auras */
-	if (p_ptr->sh_fire_tim) (void)set_sh_fire_tim(Ind, p_ptr->sh_fire_tim - 1);
-	if (p_ptr->sh_cold_tim) (void)set_sh_cold_tim(Ind, p_ptr->sh_cold_tim - 1);
-	if (p_ptr->sh_elec_tim) (void)set_sh_elec_tim(Ind, p_ptr->sh_elec_tim - 1);
+	if (p_ptr->sh_fire_tim) (void)set_sh_fire_tim(Ind, p_ptr->sh_fire_tim - minus_magic);
+	if (p_ptr->sh_cold_tim) (void)set_sh_cold_tim(Ind, p_ptr->sh_cold_tim - minus_magic);
+	if (p_ptr->sh_elec_tim) (void)set_sh_elec_tim(Ind, p_ptr->sh_elec_tim - minus_magic);
 
 	/* Still possible effects from another player's support spell on this player? */
 	if (p_ptr->support_timer) {
