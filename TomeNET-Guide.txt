@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. January 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. February 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7127,7 +7127,7 @@ ANTIMAGIC ('Antimagic field')
         The radius is approximately the field power / 9, and is cumulative
         to the 'Antimagic' skill. The field power is the chance of
         suppressing a spell. It caps at 75% and is cumulative to the
-        'Antimagic' skill.
+        'Antimagic' skill. Make sure to read up on antimagic skill at (6.2).
 BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed weapons
         without penalties, even if they are not blunt.
@@ -8927,6 +8927,7 @@ Note that not every skill is available to every profession (class).
                                 Lets you wear heavier armour without getting
                                 a penalty to to-hit or sneakiness
                                 (See (5.5) for details about encumberment.)
+
                                 Ability to pseudo-ID items: You can sense
                                 if items are terrible, worthless, cursed,
                                 average, good, excellent or special.
@@ -8943,6 +8944,7 @@ Note that not every skill is available to every profession (class).
                                 roughly estimate usefulness of magical items.
                                 The further you train Combat, the faster you
                                 will pseudo-id items.
+
                                 Increases Fear/Stun/Confuse duration of the
                                 target (if attacking causes those).
                                 Reduces Fear/Stun/Confuse durations that you
@@ -8951,10 +8953,12 @@ Note that not every skill is available to every profession (class).
                                 bonus, and melee to-damage bonus.
                                 Increases 'Fighting' and 'Bows/Throws'
                                 abilities.
+
                                 If your Combat skill isn't zero, then you can
                                 press 'm' to check your base chance of
                                 parrying (weapon) and blocking (shield), see
                                 (6.11) for more details about parry/block.
+
     +Weaponmastery              Improves your Fighting ability.
                                 Slightly increases melee to-dam and to-hit for
                                 armed combat. Increases your chance to score
@@ -8962,13 +8966,16 @@ Note that not every skill is available to every profession (class).
                                 'Critical-Strike' has much more effect.)
                                 Weaponmastery will also increase your parry
                                 chance a good deal (see (6.11) for details).
+
         +Sword-mastery          Greatly improves to-dam/to-hit with swords.
                                 At 25 and 50 you will get +1 blow per round
                                 while having a sword equipped.
+
             .Critical-strike    Increases your chance to score hits of
                                 extremely high damage. This skill improves
                                 the chance to score critical hits and adds
                                 to critical-hit bonus from your equipment.
+
                                 NOTES ABOUT CRITICAL-STRIKE SKILL:
                                 Critical-strike skill only helps light swords,
                                 not heavier than 10.0 lb., while critical-hits
@@ -8976,6 +8983,7 @@ Note that not every skill is available to every profession (class).
                                 Also, Critical-strike skill will not give you
                                 any benefits if your armour is so heavy that
                                 you get a flexibility warning (compare (5.5)).
+
                                 NOTES ABOUT CRITICAL HITS IN GENERAL:
                                 You can always score critical hits,
                                 independent on weapon class and crit-skill.
@@ -9005,9 +9013,13 @@ Note that not every skill is available to every profession (class).
                                 one- is higher if your weapon is heavier
                                 (in detail: the crit class is more likely
                                 to be higher for heavier weapons).
+
         .Axe-mastery            See Sword-mastery
+
         .Blunt-mastery          See Sword-mastery
+
         .Polearm-mastery        See Sword-mastery
+
         .Combat Stances         This ability cannot be trained, but it is
                                 increased automatically each time your
                                 character gains a level.
@@ -9020,14 +9032,19 @@ Note that not every skill is available to every profession (class).
                                 Only warriors, mimics, paladins and rangers
                                 can learn certain stances.
                                 On certain skill levels, you will learn a new
-                                rank of a stance.
+                                rank of a stance. A higher ranked stance
+                                features more of its benefits and/or less of
+                                its drawbacks.
+
                                 Press 'm' to enter one of the combat stances
                                 you have learned. You will learn a couple of
                                 ranks of three basic combat stances, when you
                                 reach a certain character level i.e. skill.
                                 Each stance has advantages and disadvantages,
                                 those are:
+
                                 Balanced stance  - the default, no boni/mali.
+
                                 Defensive stance - you will block more,
                                                  - intercept less often,
                                                  - deal less damage.
@@ -9035,53 +9052,62 @@ Note that not every skill is available to every profession (class).
                                                  without shield - in that case
                                                  your chance of parrying is
                                                  increased instead of blocking.
+
                                 Offensive stance - you can stun opponents
                                                    (compare (4.12)),
                                                  - intercept more often,
                                                  - parry and dodge less often,
                                                  - get an AC penalty same as
                                                    for being in 'fury'.
-                                (A higher ranked stance features more of its
-                                benefits and/or less of its drawbacks.)
+
         .Dual-Wield             The ability to wield two weapons at once. This
                                 ability cannot be trained, it's always at 1.000
                                 if your character's class can dual-wield, else
                                 at zero. (So it's basically a switch.)
+                                Classes that are able to dual-wield are
+                                warriors, rangers and rogues.
+                                Note that both weapons must be 1-handed.
+                                1,5- or 2-handed weapons cannot be used.
+
                                 Dual-wielding will give you additional parry
                                 chance as well as a blows/round bonus
-                                (see (6.11) for details about parrying).
+                                (see (6.11) for details about parrying), and of
+                                course your character will gain all magical
+                                boni from both weapons (such as resistances).
+
                                 NOTE: If your armour is too heavy (see (5.5))
                                 then you won't receive any bonus and your
                                 second weapon will actually be ignored as if
                                 you didn't wield it at all ie you won't gain
                                 any resistances/abilities/whatever from it.
-                                By dual-wielding, your character gains all
-                                magical abilities of both weapons at once (only
-                                very few don't stack)!
+
                                 In combat, a coin is flipped for each blow you
                                 deal, determining randomly which weapon will
                                 be used for that particular hit.
-                                Note that both weapons must be 1-handed.
-                                1,5- or 2-handed weapons cannot be used.
+
                                 To avoid confusion: If you use weapons with
                                 different blows/round, their bpr will get
                                 averaged, and rounded up, then bpr bonus for
                                 dual-wielding is added.
                                 Example: 4bpr & 5bpr = 4.5bpr rounded to 5bpr.
                                 +1 bonus bpr for dual-wielding -> 6bpr total.
-                                Also by pressing 'm' you can disable/reenable
+
+                                By pressing 'm' you can disable/reenable
                                 dual-wield mode.
                                 While disabled ('Main-Hand mode') you will just
                                 attack with your primary weapon exclusively,
                                 and not receive any dual-wield specific boni;
                                 this can be useful if it deals much more damage
                                 than your secondary weapon.
+                                You still gain all magical boni from both
+                                weapons while in main-hand mode, as usual.
                                 While enabled ('Dual-hand mode') you will
                                 attack with both weapons, picked randomly.
-                                Classes that are able to dual-wield are
-                                warriors, rangers and rogues.
+
     .Martial Arts               Ability to fight with bare hands.
                                 Slightly raises your character speed.
+                                Slightly increases your Dodging skill.
+                                Increases your chance of intercepting an enemy.
                                 Lets you attack with special combat styles.
                                 You get +1 extra attack at 1,10,20,30,40,45,50
                                 each, so up to +7 blows per round in total.
@@ -9095,24 +9121,25 @@ Note that not every skill is available to every profession (class).
                                 cross even highest mountains.
                                 At 50 a martial artist will learn the
                                 technique of flying!
-                                Under certain conditions MA abilities cannot
-                                be used and lose their effect, see (5.4)!
+
                                 The dice of martial arts special moves
                                 (which your character will use automatically
                                 depending on your MA skill) are affected by
                                 elemental brands, but slightly less than
                                 normal weapons (2/3 as much).
-                                Martial Arts gives you a chance / adds to your
-                                chance of intercepting an enemy! See
-                                'Interception' skill below.
-                                For more details about MA see section (5.4).
-                                Training Martial Arts skill will also slightly
-                                increase your Dodging skill.
+
+                                Under certain conditions MA abilities cannot
+                                be used and lose their effect. About this and
+                                for more information about Martial Arts in
+                                general, see (5.4)!
+
     .Interception               Ability to interfere with adjacent enemies.
                                 Can prevent them from teleporting, casting,
-                                summoning, running away. The chance to
-                                intercept an enemy is (2 * interception) +
-                                (martial_arts_skill / 2) - (enemy_level / 3).
+                                summoning, running away.
+
+                                The chance to intercept an enemy is
+                                (2 * interception) + (martial_arts_skill / 2)
+                                - (enemy_level / 3).
                                 Example: Chance to intercept summoning of the
                                 Balrog of Moria with maxed interception is
                                 (2*50) + 0 - (50/3) = 84% base. Now since it's
@@ -9123,8 +9150,15 @@ Note that not every skill is available to every profession (class).
                                 Note that this formula shows that interception
                                 is actually not that useful if you don't keep
                                 it at the maximum possible value all the time.
-                                Interception chance is recuded to 33% while
+                                Note: Enemy level means 'rlevel' (see (0.4)).
+
+                                Interception chance is recuded by 2/3 while
                                 you are blind.
+                                You aren't able to intercept while you are
+                                stunned, confused, paralyed, resting, cloaked
+                                or shadow running (compare (4.11)).
+                                Player ghosts cannot intercept either.
+
                                 Interception chances also depend on what the
                                 enemy is trying to do. Certain actions are
                                 harder to intercept, those reduce the chance
@@ -9135,30 +9169,30 @@ Note that not every skill is available to every profession (class).
                                  50%    for teleporting / phasing (blinking)
                                 Note: While ball/bolt attacks are spells,
                                       breathing is NOT.
+
                                 Interception chance caps at 80% (cap is
                                 applied after all other penalties have been
                                 factored in, at the very end of calculation).
-                                Note: You aren't able to intercept a monster's
-                                action while you are stunned. (Compare (4.11))
-                                Note: Monster level means 'rlevel' (see (0.4)).
+
     +Archery                    Improves ranged to-damage bonus.
                                 Allows you to learn some shooting techniques,
                                 accessible via 'm', see (6.12) for details.
                                 Increases your chance to score critical hits.
-                                At 10 you may create ammunition from bones,
-                                skeletons and rubble on the floor (see (6.12)).
+                                At 20 the quality of your handmade ammunition
+                                becomes remarkably better.
+                                50 in archery grants +1 'extra might',
+                                increasing your launcher's multiplier by 1.
+
                                 Lets you pseudo-id ranged weapons and
                                 ammunition more often the higher the skill.
                                 If increased to at least 11, pseudo-id will
                                 give you much more distinctive feelings about
                                 the items. Before that, you can only
                                 distinguish between cursed and good.
-                                At 20 the quality of your handmade ammunition
-                                becomes remarkably better.
-                                50 in archery grants +1 'extra might',
-                                increasing your launcher's multiplier by 1.
+
                                 NOTE: The extra might bonus does not apply
                                 to Boomerangs! All other boni do apply.
+
         .Sling-mastery          Increases hit chance (while using a sling).
                                 At 10,20,30,40,50 you will get +1 additional
                                 shot per round each (while using a sling).
@@ -9168,36 +9202,46 @@ Note that not every skill is available to every profession (class).
                                 will only have a 1% chance of breaking if your
                                 skill is at 50.000.)
                                 (only concerns ammo for slings).
+
                                 Adds chance for your shots to ricochet, even
                                 multiple times, hitting multiple enemies.
                                 Note that magic and ethereal ammo fades away
                                 the moment it hits, and never ricochets.
+
                                 Note that the explosion of exploding ammo will
                                 still hit "reflecting" monsters.
+
                                 Artifact ammunition never breaks.
+
         .Bow-mastery            At 12.5, 25, 37.5, 50 you will get +1 extra
                                 shot per round each.
                                 Otherwise same as Sling-mastery, except no
                                 ricochetting.
+
         .Crossbow-mastery       At 25 and 50 you will get +1 extra shot AND
                                 +1 extra-might-bonus each.
                                 Otherwise same as Sling-mastery, except no
                                 ricochetting.
+
     .Boomerang-mastery          At 16.6, 33.3 and 50 you get +1 extra throw
                                 each. Boomerang-mastery also increases ranged
                                 to-damage bonus while using a boomerang, and
                                 reduces the chance of a boomerang to break or
                                 to fall to the ground instead of returning.
+
                                 Artifact boomerangs never break or fall down.
+
 << For more information about learning spells, see (6.8)
    Most spells will increase in power in one way or the other when you increase
-   their school skill. >>
+   their school skill. Often their failure rate decreases, too. >>
+
 +Magic                          Increases your mana capacity.
                                 Lets you pseudo-id magic items, potions and
                                 scrolls faster the higher your skill is.
                                 If 'Magic' is at least at 11 points, you will
                                 get more distinctive feelings from pseudo-id,
                                 before that you only sense 'good' or 'cursed'.
+
     +Magic Schools
         .Sorcery                Learn to use spells of ALL magic schools at
                                 once, instead of training a particular branch!
@@ -9213,11 +9257,13 @@ Note that not every skill is available to every profession (class).
         .Udun                   Learn spells of the Udun branch.
         .Mind                   Learn spells of the Mind branch.
         .Meta                   Learn spells of the Meta branch.
+
     +Prayer Schools
         .Holy Offense           Learn prayers of the Holy Offense branch.
         .Holy Defense           Learn prayers of the Holy Defense branch.
         .Holy Curing            Learn prayers of the Holy Curing branch.
         .Holy Support           Learn prayers of the Holy Support branch.
+
     .Spell-power                Increases the power of learned spells by
                                 adding a bonus to the spell level.
                                 At 50, it will raise spell levels by 40%.
@@ -9225,13 +9271,16 @@ Note that not every skill is available to every profession (class).
                                 haven't learned yet.)
                                 Note that Spell-power does not affect magic of
                                 druids, mindcrafters, runemasters or maiar.
+
     +Druidic Schools
         .Arcane Lore            Learn druid magic tought by arcane lore.
         .Physical Lore          Learn druid magic tought by physical lore.
+
     +Mindcraft Schools
         .Psycho-Power           Learn mindcrafter spells of psycho-power.
         .Thought Contact        Learn mindcrafter spells of tought contact.
         .Mental Intrusion       Learn mindcrafter spells of mental intrusion.
+
     +Runecraft                  See '(6.8b) Runes & Runemastery'.
         .Light                  Learn to evoke light runes.
         .Darkness               Learn to evoke darkness runes.
@@ -9239,8 +9288,10 @@ Note that not every skill is available to every profession (class).
         .Nether                 Learn to evoke nether runes.
         .Chaos                  Learn to evoke chaos runes.
         .Mana                   Learn to evoke mana runes.
+
     .Astral Knowledge           Learn spells of the Astral branch of magic,
                                 exclusively available to the Maia race.
+
     .Mimicry                    Ability to shapechange into a monster!
                                 You also inherit the monsters abilities,
                                 weaknesses and resistances!
@@ -9248,10 +9299,12 @@ Note that not every skill is available to every profession (class).
                                 To find out details about a monster form,
                                 press  ~ 7  in game or consult a spoiler file.
                                 (See (7.4) for more info about spoiler files.)
+
     .Magic device               Ability to use magic devices (wands,rods,etc.)
                                 without failing. Also increases their power.
                                 Speeds up recharging of rods you carry.
                                 See (6.10) for more information.
+
 +Necromancy                     Drains life and mana from killed monsters,
                                 replenishing your HP and SP.
                                 Only works if you are able to see the target,
@@ -9262,6 +9315,7 @@ Note that not every skill is available to every profession (class).
                                 high as the monster level.
                                 Necromancy has no effect on undead and
                                 nonliving monsters.
+
     .Traumaturgy                Drains mana from monsters when you inflict
                                 damage on them, replenishing your SP.
                                 Only works if you are able to see the target.
@@ -9270,15 +9324,18 @@ Note that not every skill is available to every profession (class).
                                 depends on damage and skill.
                                 Traumaturgy has no effect on angels, undead,
                                 and nonliving monsters.
+
     .Aura of Fear               Monsters that hit you are stroke by fear.
                                 Is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
+
     .Shivering Aura             Monsters that hit you are stunned.
                                 At a skill of 30 the aura is so strong that
                                 your melee attacks (weapon as well as martial
                                 arts will be branded by it. (Cold brand.)
                                 Is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
+
     .Aura of Death              Monsters that hit you are hit by waves
                                 of plasma and ice.
                                 At a skill of 40 the aura is so strong that
@@ -9287,6 +9344,7 @@ Note that not every skill is available to every profession (class).
                                 (Alternating fire or cold brand.)
                                 Is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
+
 .Antimagic                      Generated from your strong disbelief in magic
                                 an anti-magic field surrounds you, preventing
                                 attempts from other casters to cast spells or
@@ -9295,35 +9353,50 @@ Note that not every skill is available to every profession (class).
                                 (See 5.9 for more info about dark swords.)
                                 It's capped at 75% chance of interrupting
                                 enemy spells.
-                                Note that as soon as you invest a point into
-                                this skill you won't be able to use any magic
-                                wands,staves or rods anymore!
-                                This skill also slightly affects your fellow
-                                party members (casters).
                                 Each point in Antimagic adds 1% to your
                                 AM chance, so the max gain is +50% from skill.
                                 Note: While ball/bolt attacks are spells,
                                       breathing is NOT.
-                                Antimagic will also reduce the duration of all
-                                timed magic effects on you, be it good or bad.
                                 Warriors that specialize in Antimagic are
                                 called 'Unbelievers' (The Anti-magic powers
                                 result from their strong disbelief in magic).
+
+                                Note that as soon as you invest a point into
+                                this skill you won't be able to use any magic
+                                wands,staves or rods anymore!
+
+                                This skill also slightly affects your fellow
+                                party members (casters) chance to successfully
+                                cast their spells, if they're standing close to
+                                you.
+
+                                An antimagic field will also shorten the
+                                duration of certain magical temporary buffs
+                                and debuffs on your character, which are:
+                                ESP, space/time anchor, probability travel,
+                                wraithform, infra-vision, see invisible,
+                                invisibilty, haste, slowness, resistances,
+                                invulnerability obtained from a potion,
+                                deflection, shield.
+
 +Sneakiness                     Slightly increases your character speed
                                 (+7 at 50, so approx +1 every 7..8 points).
                                 Slightly increases perception and searching.
                                 Slightly reduces speed loss while in searching
                                 mode, and very slightly while in rogues'
                                 cloaking mode.
+
     .Stealth                    Increases your stealth, which determines
                                 if monsters can hear you from a distance
                                 or if you can sneak past them.
                                 The stealth gain is half as much as from items
                                 that give +Stealth.
+
                                 If your character is really bad at stealth,
                                 like Draconians, it might seem as if the skill
                                 doesn't help. But if you invest a lot of points
                                 you will eventually see an improvement ;).
+
     .Stealing                   Ability to steal items from stores.
                                 If you get caught, you will be on the
                                 'blacklist of merchants' for a minute up
@@ -9342,7 +9415,16 @@ Note that not every skill is available to every profession (class).
                                 depends on the item's _base_ value (so it does
                                 not matter whether you got caught in a normal
                                 store or in the black market.) Price discount
-                                applies though, reducing the base value.
+                                applies though, reducing the base value and
+                                therefore the blacklist time too.
+
+                                Blacklist times, very roughly:
+                                Murderous look - 1 hour +
+                                Gazes at you angrily - 40 min +
+                                Looks at you suspiciously - 25 min +
+                                Looks at you disapprovingly - 10 min +
+                                Cool glance - less than 10 min.
+
                                 Note that usually people don't want to be seen
                                 with stolen goods, which means that very
                                 expensive items, depending on their value, have
@@ -9351,6 +9433,7 @@ Note that not every skill is available to every profession (class).
                                 stealing Morgoth's crown, which has a value of
                                 10 million Au, you'd still have at least a 5%
                                 chance of it retaining its original level.)
+
                                 Your chance to steal an item from a shop
                                 depends on your dexterity, your stealing skill
                                 and the price and weight of the item. Stealth
@@ -9362,15 +9445,18 @@ Note that not every skill is available to every profession (class).
                                 You need to be at least level 5 to steal
                                 and at least level 10 to steal anything of
                                 somewhat higher value.
+
                                 You have a chance to successfully steal an
                                 item even if your stealing skill is 0 and your
                                 dexterity low, so everyone could give it a try.
+
                                 If a shop offers an item more expensive than
                                 it actually is (black market) that has no
                                 effect on stealing. The 'normal' item value
                                 is used to calculate the chances.
                                 However, if an item is offered at reduced
                                 price, it'll be easier to steal it!
+
                                 It's more difficult to steal from certain
                                 stores, eg stores that are found in the dungeon
                                 or that don't belong to the basic town stores
@@ -9382,25 +9468,22 @@ Note that not every skill is available to every profession (class).
                                 shop and rare jewelry shop (both in dungeons),
                                 or from a dungeon town's temple, potion store
                                 or black market.
+
                                 It's a good idea to wear as many +DEX items
                                 as possible while trying to steal from a shop,
                                 since DEX is the main factor besides the skill.
-                                Additional notes:
+
                                 Stealing items which have a base value (with
                                 discount applied, as usual for stealing) not
                                 higher than your stealing_skill * 10 are
                                 especially easy to steal. Also, if you still
                                 get caught on such an item, the blacklist time
                                 will be much shorter too.
+
                                 Trying to 'steal back' an item that was already
                                 owned by a player, ie an item that has been
                                 sold to the shop, is especially hard.
-                                Blacklist times, very roughly:
-                                Murderous look - 1 hour +
-                                Gazes at you angrily - 40 min +
-                                Looks at you suspiciously - 25 min +
-                                Looks at you disapprovingly - 10 min +
-                                Cool glance - less than 10 min.
+
     .Backstabbing               Lets you backstab enemies, afflicting high
                                 damage. Works if the opponent is asleep or
                                 running away in fear, exposing his back to you.
@@ -9408,31 +9491,39 @@ Note that not every skill is available to every profession (class).
                                 monster though, so re-cloaking won't help) or
                                 shadow running. Increasing this skill increases
                                 the damage your backstab attacks deal.
+
                                 Backstabbing requires sword-type weapons or
                                 martial arts skill, in which case it transforms
                                 into neck-twisting. That means your target must
                                 possess a neck, read: A head and a torso.
+
                                 If you dual-wield, you will also dual-backstab
                                 if the moster is either asleep, or you perform
                                 the attack from cloaking mode or shadow run.
                                 Although you'll deal somewhat less damage with
                                 each stab, since they are executed both at once
-                                they will provide a great damage boost.
+                                you will do more overall damage than with a
+                                single weapon.
+
                                 Note: Weapon weight or whether it's 1-h, 1 1/2h
                                 or 2h weapon does not matter for backstabbing.
+
                                 Vampires will feed especially much from
                                 backstabbing a sleeping opponent to death.
+
     .Dodging                    Ability to evade attacks. In order to get any
                                 benefits from doding skill at all, your armour
                                 mustn't be too heavy. If it is, you will get a
                                 flexibility warning (compare (5.5)).
                                 Also, you must not be using a shield.
+
                                 There are various attacks that can be dodged:
                                 Melee attacks mostly, bolts, arrows and the
                                 likes (both magical and physical) shot by
                                 enemies or traps at you. And it slightly helps
                                 to dodge rubble coming down during an
                                 earthquake.
+
                                 Your actual chance to dodge an attack depends
                                 on the total weight you are carrying around
                                 with you, where inventory usually weighs most
@@ -9452,6 +9543,7 @@ Note that not every skill is available to every profession (class).
                                 levels the monster may have gained due to
                                 dwelling deeper than usual will not affect
                                 your dodge chance.)
+
                                 You can check your average dodging chance
                                 against opponents of same level by pressing
                                 'm' and choosing "Check dodge chance".
@@ -9464,17 +9556,22 @@ Note that not every skill is available to every profession (class).
                                 "Very good chance" -> less than 40%,
                                 otherwise "High chance" (may occur in actual
                                 game play if opponent is much lower than you).
+
                                 Against monsters that have way higher level
                                 than you, you receive a minor penalty. You can
                                 still dodge them quite effectively though.
-                                Dodging also gets slightly increased when you
-                                put points into "Martial Arts" skill.
+
+                                Dodging also gets slightly increased by the
+                                "Martial Arts" skill (see above in this skill
+                                table).
+
     .Calmness                   Ability to not get hindered by enemies.
                                 Adjacent foes can interfere if you try to..
                                 -shoot with ranged weapons,
                                 -use a void jumpgate,
                                 -invoke a mimic spell,
                                 -set a monster trap.
+
     .Trapping                   Improves your ability to set traps:
                                 Gives you a higher chance to successfully
                                 place a trap if a monster is close to you and
@@ -9482,14 +9579,17 @@ Note that not every skill is available to every profession (class).
                                 a harder time to discover your traps.
                                 Last but not least you learn to optimize your
                                 traps for higher damage output.
+
                                 See (4.7) for details about monster traps.
                                 Trapping also improves your disarming ability,
                                 making it safer to disarm traps via the manual
                                 disarm command. (The experience you gain from
                                 manually disarming traps is not affected by the
                                 skill but only by the traps' level).
+
                                 Also gives you a chance to salvage a trap kit
                                 from any trap when you disarm it!
+
 +Health                         Increases your hit point regeneration rate:
                                 (skill_level * 2)% chance to regenerate 1.5x
                                 the normal amount of HP per turn (stacks with
@@ -9498,27 +9598,34 @@ Note that not every skill is available to every profession (class).
                                 Also helps you to recover from temporary stats
                                 drain, hallucination, blindness, paralysis,
                                 confusion, slowness, poison and cuts faster.
+
                                 If you spend 10 points into Health, your
                                 sanity will be displayed as a bar.
                                 At 20 points you'll get the percentage
                                 displayed. At 40 the value will be shown.
+
                                 Note that Health skill stacks with +LIFE items
                                 (compare '+LIFE' in (5.8)).
+
     .Swimming                   Allows you to swim even while carrying more
                                 weight and to better protect your items from
                                 water.
+
                                 Skill maxes at 01.000, with the ability to
                                 swim improving steadily while increasing it.
                                 At 0.700 you become able to swim very swiftly
                                 if no monsters are within sight, enabling you
                                 to 'run' through water.
-    .Climbing                   You need this at 01.000 to learn climbing.
+
+    .Climbing                   You need this at 01.000 to be able to climb.
+
     .Digging                    How well you are able to dig. Also affects
                                 your chance to find items, for the items to
                                 be good or even great, and affects the amount
                                 of cash if you mine treasure.
                                 Depending on the skill, you might also uncover
                                 special things.
+
                                 Certain tools such as shovels, picks and
                                 mattocks will also increase your digging speed
                                 greatly (independant of the skill), see (5.9).
