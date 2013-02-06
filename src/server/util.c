@@ -6078,7 +6078,7 @@ bool backup_estate(void) {
 				fwrite(o_ptr, sizeof(object_type), 1, fp);
 				/* store inscription too! */
 				if (o_ptr->note) {
-    					fprintf(fp, "%ld\n", strlen(quark_str(o_ptr->note)));
+    					fprintf(fp, "%d\n", (int)strlen(quark_str(o_ptr->note)));
     					fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp);
     				} else
     					fprintf(fp, "%d\n", -1);
@@ -6295,7 +6295,7 @@ void restore_estate(int Ind) {
 					/* paranoia: should always be inscriptionless of course */
 					/* ..and its inscription */
 					if (o_ptr->note) {
-						fprintf(fp_tmp, "%ld\n", strlen(quark_str(o_ptr->note)));
+						fprintf(fp_tmp, "%d\n", (int)strlen(quark_str(o_ptr->note)));
 						fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp_tmp);
 					} else
 						fprintf(fp_tmp, "%d\n", -1);
@@ -6320,7 +6320,7 @@ void restore_estate(int Ind) {
 
 				/* ..and its inscription */
 				if (o_ptr->note) {
-					fprintf(fp_tmp, "%ld\n", strlen(quark_str(o_ptr->note)));
+					fprintf(fp_tmp, "%d\n", (int)strlen(quark_str(o_ptr->note)));
 					fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp_tmp);
 				} else
 					fprintf(fp_tmp, "%d\n", -1);

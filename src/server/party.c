@@ -4124,7 +4124,7 @@ void backup_acclists(void) {
 			/* Check this name */
 			if ((c_acc = GetAccountID(ptr->account, FALSE))) {
 				/* back him up */
-				fprintf(fp, "%ld\n", strlen(ptr->name));
+				fprintf(fp, "%d\n", (int)strlen(ptr->name));
 				fwrite(ptr->name, sizeof(char), strlen(ptr->name), fp);
 #if 0
 				fprintf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
