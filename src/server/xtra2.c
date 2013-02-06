@@ -6315,6 +6315,14 @@ void player_death(int Ind) {
 			/* Log it */
 			s_printf("INSTA_RES: %s (%d) was defeated by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
+#ifdef USE_SOUND_2010
+			/* Play the death sound */
+			if (p_ptr->male) sound(Ind, "death_male", "death", SFX_TYPE_MISC, TRUE);
+			else sound(Ind, "death_female", "death", SFX_TYPE_MISC, TRUE);
+#else
+			sound(Ind, SOUND_DEATH);
+#endif
+
 			/* Message to other players */
 			if (cfg.unikill_format)
 				snprintf(buf, sizeof(buf), "\374\377D%s %s (%d) was defeated by %s.", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
@@ -6409,12 +6417,6 @@ void player_death(int Ind) {
 			msg_print(Ind, "\377oYou were defeated, but the priests have saved you.");
 			msg_format(Ind, "\377oThey have requested a fee of %d gold pieces.", instant_res_cost);
 
-			/* Play the death sound */
-			if (p_ptr->male) sound(Ind, "death_male", "death", SFX_TYPE_MISC, TRUE);
-			else sound(Ind, "death_female", "death", SFX_TYPE_MISC, TRUE);
-
-
-
 #if 0
 			/* Unown land */
 			if (p_ptr->total_winner) {
@@ -6431,7 +6433,6 @@ void player_death(int Ind) {
 			}
 #endif
 
-			/* Hmm... Shouldn't this be after the death message so we can get a nice message for retiring winners? - mikaelh */
 			/* No longer a winner */
 			p_ptr->total_winner = FALSE;
 
