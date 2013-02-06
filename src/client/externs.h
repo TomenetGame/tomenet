@@ -372,6 +372,7 @@ extern bool request_pending;
 extern bool request_abort;
 
 extern char last_prompt[MAX_CHARS];
+extern bool last_prompt_macro;
 
 /*
  * Not-so-Automatically generated "function declarations"

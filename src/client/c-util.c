@@ -7305,6 +7305,7 @@ void prompt_topline(cptr prompt) {
 #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 	/* store prompt in case macro fails at an item prompt etc */
 	strcpy(last_prompt, prompt);
+	last_prompt_macro = parse_macro;
 	if (!parse_macro)
 #endif
 	prt(prompt, 0, 0);
@@ -7313,9 +7314,10 @@ void clear_topline(void) {
 #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 	/* clear stored prompt */
 	last_prompt[0] = 0;
-	if (!parse_macro)
+	if (!parse_macro || !last_prompt_macro)
 #endif
 	prt("", 0, 0);
+	//last_prompt_macro = parse_macro; not needed (it's just done in next prompt_topline call that follows)
 }
 #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 /* If a macro failed while waiting for input at topline prompt,
