@@ -1781,10 +1781,10 @@ static int Handle_setup(int ind)
 
 	if (connp->setup == 0) {
 		if (is_newer_than(&connp->version, 4, 4, 5, 10, 0, 0))
-			n = Packet_printf(&connp->c, "%ld%hd%c%c%c%ld",
+			n = Packet_printf(&connp->c, "%d%hd%c%c%c%d",
 			    Setup.motd_len, Setup.frames_per_second, Setup.max_race, Setup.max_class, Setup.max_trait, Setup.setup_size);
 		else
-			n = Packet_printf(&connp->c, "%ld%hd%c%c%ld",
+			n = Packet_printf(&connp->c, "%d%hd%c%c%d",
 			    Setup.motd_len, Setup.frames_per_second, Setup.max_race, Setup.max_class, Setup.setup_size);
 
 		if (n <= 0) {
@@ -4070,7 +4070,7 @@ int Send_reliable_old(int ind)
 	for (i = 0; i <= connp->acks && todo > 0; i++)
 	{
 		len = (todo > max_packet_size) ? max_packet_size : todo;
-		if (Packet_printf(&connp->w, "%c%hd%ld%ld%ld", PKT_RELIABLE,
+		if (Packet_printf(&connp->w, "%c%hd%d%d%d", PKT_RELIABLE,
 			len, rel_off, turn, max_todo) <= 0
 			|| Sockbuf_write(&connp->w, read_buf, len) != len)
 		{
@@ -4132,7 +4132,7 @@ static int Receive_ack(int ind)
 	unsigned char ch;
 	long rel, rtt, diff, delta, rel_loops;
 
-	if ((n = Packet_scanf(&connp->r, "%c%ld%ld", &ch, &rel, &rel_loops))
+	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &rel, &rel_loops))
 		<= 0)
 	{
 		errno = 0;
@@ -4166,7 +4166,7 @@ static int Receive_ack(int ind)
 	if (diff > connp->c.len)
 	{
 		errno = 0;
-		plog(format("Bad ack (diff=%ld,cru=%ld,c=%ld,len=%d)",
+		plog(format("Bad ack (diff=%d,cru=%d,c=%d,len=%d)",
 			diff, rel, connp->reliable_offset, connp->c.len));
 		Destroy_connection(ind, "bad ack");
 		return -1;
@@ -4195,7 +4195,7 @@ static int Receive_ack(int ind)
 
 	connp->rtt_timeouts = 0;
 
-	/*printf("Received ack to data sent at %ld.\n", rel_loops);*/
+	/*printf("Received ack to data sent at %d.\n", rel_loops);*/
 
 	return 1;
 }
@@ -4316,7 +4316,7 @@ int Send_skill_init(int Ind, u16b i)
 
 	/* Note: %hd is 2 bytes - use this for x16b.
 	   We can use %c for bytes. */
-	return( Packet_printf(&connp->c, "%c%hd%hd%hd%hd%ld%c%S%S%S",
+	return( Packet_printf(&connp->c, "%c%hd%hd%hd%hd%d%c%S%S%S",
 		PKT_SKILL_INIT, i,
 		s_info[i].father, s_info[i].order, mkey,
 		s_info[i].flags1, s_info[i].tval, s_name+s_info[i].name,
