@@ -6113,7 +6113,7 @@ bool backup_estate(void) {
 			    				fwrite(o_ptr, sizeof(object_type), 1, fp);
 			    				/* store inscription too! */
 			    				if (o_ptr->note) {
-			    					fprintf(fp, "%ld\n", strlen(quark_str(o_ptr->note)));
+			    					fprintf(fp, "%d\n", (int)strlen(quark_str(o_ptr->note)));
 			    					fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp);
 			    				} else
 			    					fprintf(fp, "%d\n", -1);
