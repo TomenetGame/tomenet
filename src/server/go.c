@@ -115,6 +115,7 @@ int go_engine_processing = 0;	/* Go engine is expected to deliver replies to com
 bool go_game_up;		/* A game of Go is actually being played right now? */
 u32b go_engine_player_id;	/* Player ID of the player who plays a game of Go right now. */
 static char avatar_name[40];
+static char sgf_name[1024];
 
 /* Private control variable to determine what to do next
    after go_engine_processing reaches 0 again: */
@@ -717,6 +718,13 @@ void go_challenge_start(int Ind) {
 	Send_store_special_clr(Ind, 4, 18);
 	if (go_err(DOWN, DOWN, "go_challenge_start")) return;
 
+#ifdef ENGINE_FUEGO
+	writeToPipe("komi 0"); //reset current_komi behaviour
+#endif
+#ifdef ENGINE_GNUGO
+	writeToPipe("komi 0"); //reset current_komi behaviour
+#endif
+
 	/* somehow spread from 30k to dan level.. Final stage: Take white!
 	   Place opponent and configure game parameters accordingly. */
 	/* we have 512 MB.. *//* time per CPU move default is 10s */
@@ -821,11 +829,15 @@ void go_challenge_start(int Ind) {
 #ifdef ENGINE_FUEGO
 		writeToPipe("uct_max_memory 300000000");
 		writeToPipe("go_param timelimit 20");
+
+		writeToPipe("komi 1"); //prepare for current_komi possibly = 1
 #endif
 #ifdef ENGINE_GNUGO
 		writeToPipe("level 10");
 		random_move_prob = 0;
 		writeToPipe("time_settings 0 20 1");
+
+		writeToPipe("komi 1"); //prepare for current_komi possibly = 1
 #endif
 		player_timelimit_sec = GO_TIME_PY;
 		break;
@@ -897,6 +909,7 @@ void go_challenge_start(int Ind) {
 	sprintf(path, "go/TomeNET-%04d%02d%02d-%02d%02d%02d.sgf",
 	    1900 + tmstart->tm_year, tmstart->tm_mon + 1, tmstart->tm_mday,
 	    tmstart->tm_hour, tmstart->tm_min, tmstart->tm_sec);
+	strcpy(sgf_name, path);
 	sgf = fopen(path, "w");
 	if (sgf) {
 		fprintf(sgf, "(;SZ[9]RU[Chinese]KM[0]\n");
@@ -2255,6 +2268,10 @@ static void go_challenge_cleanup(bool server_shutdown) {
 
 #ifdef ENGINE_FUEGO
 	/* Save it as sgf */
+
+	/* Fix sgf displaying correct +1 bonus point on w 1st pass */
+	if (current_komi) writeToPipe("komi 1");
+
 	sprintf(tmp, "savesgf go/TomeNET-%04d%02d%02d-%02d%02d%02d.sgf",
 	    1900 + tmstart->tm_year, tmstart->tm_mon + 1, tmstart->tm_mday,
 	    tmstart->tm_hour, tmstart->tm_min, tmstart->tm_sec);
@@ -2266,6 +2283,29 @@ static void go_challenge_cleanup(bool server_shutdown) {
 	if (sgf) {
 		fprintf(sgf, ")\n");
 		fclose(sgf);
+
+		/* Fix sgf displaying correct +1 bonus point on w 1st pass */
+		if (current_komi) {
+			char buf[1024], *ck;
+			FILE *fp;
+
+			rename(sgf_name, "tmp$$$.sgf");
+			sgf = fopen("tmp$$$.sgf", "r");
+			fp = fopen(sgf_name, "w");
+
+			while (!feof(sgf)) {
+				fgets(buf, 1024, sgf);
+		                if (!feof(sgf)) {
+	    	        		ck = strstr(buf, "KM[");
+		            		if (ck) *(ck + 3) = '1';
+		            		fputs(buf, fp);
+				}
+			}
+			fclose(fp);
+			fclose(sgf);
+
+			remove("tmp$$$.sgf");
+		}
 	}
 #endif
 
