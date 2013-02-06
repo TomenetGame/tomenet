@@ -952,7 +952,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				msg_print(Ind, "You feel something touching you.");
 			} else if (p_ptr->au) {
 				msg_print(Ind, "Your purse feels lighter.");
-				msg_format(Ind, "\376\377o%ld coins were stolen!", (long int)gold);
+				msg_format(Ind, "\376\377o%d coins were stolen!", (long int)gold);
 				ident = TRUE;
 			} else {
 				msg_print(Ind, "Your purse feels empty.");

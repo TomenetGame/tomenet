@@ -5840,8 +5840,8 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	/* Format string for death reason */
 	if (death_type == DEATH_QUIT) strcpy(buf, "Committed suicide");
 	else if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
-		snprintf(buf, sizeof(buf), "Killed by %s (%ld pts)", p_ptr->really_died_from, total_points(Ind));
-	else snprintf(buf, sizeof(buf), "Killed by %s (%ld pts)", p_ptr->died_from, total_points(Ind));
+		snprintf(buf, sizeof(buf), "Killed by %s (%d pts)", p_ptr->really_died_from, total_points(Ind));
+	else snprintf(buf, sizeof(buf), "Killed by %s (%d pts)", p_ptr->died_from, total_points(Ind));
 
 	/* Get rid of him */
 	Destroy_connection(p_ptr->conn, buf);

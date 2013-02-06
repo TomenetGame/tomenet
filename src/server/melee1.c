@@ -182,7 +182,7 @@ static bool do_eat_gold(int Ind, int m_idx)
 	else if (p_ptr->au)
 	{
 		msg_print(Ind, "Your purse feels lighter.");
-		msg_format(Ind, "\376\377o%ld coins were stolen!", (long int)gold);
+		msg_format(Ind, "\376\377o%d coins were stolen!", (long int)gold);
 	}
 	else
 	{

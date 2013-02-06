@@ -1043,7 +1043,7 @@ void do_cmd_save_game(int Ind)
  */
 /* FIXME: this function returns bad value when max_exp is stupidly large
  * (usually admin chars) */
-long total_points(int Ind)
+int total_points(int Ind)
 {
 	u32b points, tmp_base, tmp1, tmp2, tmp3, tmp3a, bonusm, bonusd;
 	u32b lev_factoring;
@@ -1988,15 +1988,15 @@ static errr top_twenty(int Ind)
 		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Calculate and save the points */
-	sprintf(the_score.pts, "%10lu", (long)total_points(Ind));
+	sprintf(the_score.pts, "%10u", total_points(Ind));
 	the_score.pts[10] = '\0';
 
 	/* Save the current gold */
-	sprintf(the_score.gold, "%10lu", (long)p_ptr->au);
+	sprintf(the_score.gold, "%10u", p_ptr->au);
 	the_score.gold[10] = '\0';
 
 	/* Save the current turn */
-	sprintf(the_score.turns, "%10lu", (long)turn);
+	sprintf(the_score.turns, "%10u", turn);
 	the_score.turns[10] = '\0';
 
 #ifdef HIGHSCORE_DATE_HACK
@@ -2091,13 +2091,13 @@ static errr predict_score(int Ind, int line)
 		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Calculate and save the points */
-	sprintf(the_score.pts, "%10lu", (long)total_points(Ind));
+	sprintf(the_score.pts, "%10u", total_points(Ind));
 
 	/* Save the current gold */
-	sprintf(the_score.gold, "%10lu", (long)p_ptr->au);
+	sprintf(the_score.gold, "%10u", p_ptr->au);
 
 	/* Save the current turn */
-	sprintf(the_score.turns, "%10lu", (long)turn);
+	sprintf(the_score.turns, "%10u", turn);
 
 	/* Hack -- no time needed */
 	strcpy(the_score.day, "TODAY");

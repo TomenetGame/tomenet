@@ -2995,7 +2995,7 @@ void prt_num(cptr header, int num, int row, int col, byte color)
 	char out_val[32];
 	put_str(header, row, col);
 	put_str("   ", row, col + len);
-	(void)sprintf(out_val, "%6ld", (long)num);
+	(void)sprintf(out_val, "%6d", num);
 	c_put_str(color, out_val, row, col + len + 3);
 }
 
@@ -3004,7 +3004,7 @@ void prt_lnum(cptr header, s32b num, int row, int col, byte color)
 	int len = strlen(header);
 	char out_val[32];
 	put_str(header, row, col);
-	(void)sprintf(out_val, "%9ld", (long)num);
+	(void)sprintf(out_val, "%9d", (int)num);
 	c_put_str(color, out_val, row, col + len);
 }
 
@@ -6736,16 +6736,16 @@ static void print_tomb(cptr reason)
         	center_string(buf, class_info[class].title);
 		put_str(buf, 9, 11);
 
-		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
+		(void)sprintf(tmp, "Level: %d", p_ptr->lev);
 		center_string(buf, tmp);
 		put_str(buf, 11, 11);
 
-		(void)sprintf(tmp, "Exp: %ld", (long)p_ptr->exp);
+		(void)sprintf(tmp, "Exp: %d", p_ptr->exp);
 		center_string(buf, tmp);
 		put_str(buf, 12, 11);
 
 		/* XXX usually 0 */
-		(void)sprintf(tmp, "AU: %ld", (long)p_ptr->au);
+		(void)sprintf(tmp, "AU: %d", p_ptr->au);
 		center_string(buf, tmp);
 		put_str(buf, 13, 11);
 

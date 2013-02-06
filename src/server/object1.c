@@ -3590,7 +3590,7 @@ static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff, u32
 //void output_ammo_dam(object_type *o_ptr, int mult, int mult2, cptr against, cptr against2, bool *first)
 static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2) {
 	player_type *p_ptr = Players[Ind];
-	long dam;
+	int dam;
 	object_type *b_ptr = &p_ptr->inventory[INVEN_BOW];
 	int tmul = get_shooter_mult(b_ptr);
 	tmul += p_ptr->xtra_might;
@@ -3603,9 +3603,9 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	dam /= FACTOR_MULT;
 	if (dam > 0) {
 		if (dam % 10)
-			fprintf(fff, "    %ld.%ld", dam / 10, dam % 10);
+			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
 		else
-			fprintf(fff, "    %ld", dam / 10);
+			fprintf(fff, "    %d", dam / 10);
 	} else fprintf(fff, "    0");
 	fprintf(fff, " against %s", against);
 
@@ -3619,9 +3619,9 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 		dam /= FACTOR_MULT;
 		if (dam > 0) {
 			if (dam % 10)
-				fprintf(fff, "    %ld.%ld", dam / 10, dam % 10);
+				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
 			else
-				fprintf(fff, "    %ld", dam / 10);
+				fprintf(fff, "    %d", dam / 10);
 		}
 		else
 			fprintf(fff, "    0");

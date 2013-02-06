@@ -61,8 +61,8 @@ static void display_entry(int pos)
                 if (c_cfg.show_weights)
                 {
                         /* Only show the weight of an individual item */
-                        long int wgt = o_ptr->weight;
-                        (void)sprintf(out_val, "%3ld.%ld lb", wgt / 10, wgt % 10);
+                        int wgt = o_ptr->weight;
+                        (void)sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
                         put_str(out_val, i+6, 68);
                 }
         }
@@ -83,15 +83,15 @@ static void display_entry(int pos)
                 if (c_cfg.show_weights)
                 {
                         /* Only show the weight of an individual item */
-                        long int wgt = o_ptr->weight;
-                        (void)sprintf(out_val, "%3ld.%ld", wgt / 10, wgt % 10);
+                        int wgt = o_ptr->weight;
+                        (void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
                         put_str(out_val, i+6, 61);
 				}
 
 			x = store_prices[pos];
             if (x >= 0) {
 				/* Actually draw the price (not fixed) */
-				(void)sprintf(out_val, "%9ld  ", (long)x);
+				(void)sprintf(out_val, "%9d  ", x);
 				c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i+6, 68);
 			}
         }
@@ -296,7 +296,7 @@ static void store_purchase(void)
         if (o_ptr->number > 1) {
                 /* Hack -- note cost of "fixed" items */
                 if (store_num != STORE_HOME || store_num == STORE_HOME_DUN) {
-                        c_msg_print(format("That costs %ld gold per item.", (long)(store_prices[item])));
+                        c_msg_print(format("That costs %d gold per item.", (long)(store_prices[item])));
 
 			if (store_prices[item] > 0) amt_afford = p_ptr->au / store_prices[item];
 			else amt_afford = o_ptr->number;
@@ -698,7 +698,7 @@ void c_store_prt_gold(void)
 
 	prt("Gold Remaining: ", 19, 53);
 
-	sprintf(out_val, "%9ld", (long) p_ptr->au);
+	sprintf(out_val, "%9d", p_ptr->au);
 	prt(out_val, 19, 68);
 
 	/* Hack -- show balance (if not 0) */
@@ -706,7 +706,7 @@ void c_store_prt_gold(void)
 	{
 		prt("Your balance  : ", 20, 53);
 
-		sprintf(out_val, "%9ld", (long) p_ptr->balance);
+		sprintf(out_val, "%9d", p_ptr->balance);
 		prt(out_val, 20, 68);
 	}
 	else
@@ -725,7 +725,7 @@ void do_redraw_store(void)
 		if ((store_num == STORE_HOME || store_num == STORE_HOME_DUN)
 		    && c_store.max_cost) {
 			char buf[1024];
-			sprintf(buf, "%s (Capacity: %ld)", c_store.store_name, (long)(c_store.max_cost));
+			sprintf(buf, "%s (Capacity: %d)", c_store.store_name, c_store.max_cost);
 			prt(buf, 3, 50);
 		}
 		display_inventory();
@@ -756,7 +756,7 @@ void display_store(void)
 
 		/* Show the store name (usually blank for houses) and -hack- max_cost is the capacity */
 		if (c_store.max_cost)
-			sprintf(buf, "%s (Capacity: %ld)", c_store.store_name, (long)(c_store.max_cost));
+			sprintf(buf, "%s (Capacity: %d)", c_store.store_name, c_store.max_cost);
 		else
 			sprintf(buf, "%s", c_store.store_name);
 		prt(buf, 3, 50);
@@ -779,7 +779,7 @@ void display_store(void)
 			/* improve it a bit visually for player stores who don't buy anything */
 			sprintf(buf, "%s", c_store.store_name);
 		} else {
-			sprintf(buf, "%s (%ld)", c_store.store_name, (long)(c_store.max_cost));
+			sprintf(buf, "%s (%d)", c_store.store_name, c_store.max_cost);
 		}
 		prt(buf, 3, 50);
 

@@ -216,7 +216,7 @@ void prt_gold(int gold)
 	Term_locate(&x, &y);
 
 	put_str("AU ", ROW_GOLD, COL_GOLD);
-	sprintf(tmp, "%9ld", (long)gold);
+	sprintf(tmp, "%9d", gold);
 	c_put_str(TERM_L_GREEN, tmp, ROW_GOLD, COL_GOLD + 3);
 
 	/* restore cursor position */

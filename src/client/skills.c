@@ -286,7 +286,7 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 		
 		if (!(p_ptr->s_info[i].flags1 & SKF1_DUMMY))
 			c_prt(color,
-			      format("%02ld.%03ld [%01d.%03d]",
+			      format("%02d.%03d [%01d.%03d]",
 			         p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
 			         p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000),
 				 j + 4 - start, 60);

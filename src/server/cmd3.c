@@ -1393,8 +1393,8 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 /* 	un_afk_idle(Ind); */
 
 	/* Message */
-//	msg_format(Ind, "You drop %ld pieces of gold.", amt);
-	msg_format(Ind, "You drop %ld pieces of %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
+//	msg_format(Ind, "You drop %d pieces of gold.", amt);
+	msg_format(Ind, "You drop %d pieces of %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
 
 #ifdef USE_SOUND_2010
 	sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, FALSE);
@@ -1404,7 +1404,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 //	if (amt >= 10000) {
 		p_ptr->last_gold_drop += amt;
 		if (turn - p_ptr->last_gold_drop_timer >= cfg.fps * 2) {
-			s_printf("Gold dropped (%ld by %s at %d,%d,%d).\n", p_ptr->last_gold_drop, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("Gold dropped (%d by %s at %d,%d,%d).\n", p_ptr->last_gold_drop, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			p_ptr->last_gold_drop = 0;
 			p_ptr->last_gold_drop_timer = turn;
 		}
@@ -2103,7 +2103,7 @@ void do_cmd_steal(int Ind, int dir)
 				q_ptr->redraw |= (PR_GOLD);
 
 				/* Tell thief */
-				msg_format(Ind, "You steal %ld gold.", amt);
+				msg_format(Ind, "You steal %d gold.", amt);
 				s_printf("StealingPvP: %s steals %d gold from %s (chance %d%%).\n", p_ptr->name, amt, q_ptr->name, success);
 			}
 
@@ -2113,7 +2113,7 @@ void do_cmd_steal(int Ind, int dir)
 			/* Check for target noticing */
 			if (rand_int(100) < notice) {
 				/* Message */
-				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %ld gold!",
+				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %d gold!",
 						p_ptr->name, amt);
 				caught = TRUE;
 			}

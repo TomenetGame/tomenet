@@ -1492,7 +1492,7 @@ void carry(int Ind, int pickup, int confirm)
 		if (!gain_au(Ind, amount, FALSE, p_ptr->id == o_ptr->owner)) return;
 
 		/* Message */
-		msg_format(Ind, "You have found %ld gold pieces worth of %s.",
+		msg_format(Ind, "You have found %d gold pieces worth of %s.",
 			   (long int)amount, o_name);
 
 #ifdef USE_SOUND_2010
@@ -1501,7 +1501,7 @@ void carry(int Ind, int pickup, int confirm)
 
 /* #if DEBUG_LEVEL > 3 */
 		if (amount >= 10000)
-			s_printf("Gold found (%ld by %s at %d,%d,%d).\n", amount, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("Gold found (%d by %s at %d,%d,%d).\n", amount, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
@@ -1515,27 +1515,27 @@ void carry(int Ind, int pickup, int confirm)
 			if (p_ptr->id != o_ptr->owner) {
  #if 0
 				if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
-					s_printf("%s -CHEEZY- Money transaction: %ldau from %s(%d) to %s(%d) at (%d,%d,%d)\n",
+					s_printf("%s -CHEEZY- Money transaction: %dau from %s(%d) to %s(%d) at (%d,%d,%d)\n",
 							showtime(), amount, name ? name : "(Dead player)", lev,
 							p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-					c_printf("%s GOLD %s(%d,%s) %s(%d,%s) %ld\n",
+					c_printf("%s GOLD %s(%d,%s) %s(%d,%s) %d\n",
 							showtime(), name ? name : "(---)", lev, acc_name,
 							p_ptr->name, p_ptr->lev, p_ptr->accountname, amount);
 				} else {
-					s_printf("%s Money transaction: %ldau from %s(%d) to %s(%d) at (%d,%d,%d)\n",
+					s_printf("%s Money transaction: %dau from %s(%d) to %s(%d) at (%d,%d,%d)\n",
 							showtime(), amount, name ? name : "(Dead player)", lev,
 							p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-					c_printf("%s gold %s(%d,%s) %s(%d,%s) %ld\n",
+					c_printf("%s gold %s(%d,%s) %s(%d,%s) %d\n",
 							showtime(), name ? name : "(---)", lev, acc_name,
 							p_ptr->name, p_ptr->lev, p_ptr->accountname, amount);
 				}
  #else
-				s_printf("%s Money transaction: %ldau from %s(%d) to %s(%d%s) at (%d,%d,%d)\n",
+				s_printf("%s Money transaction: %dau from %s(%d) to %s(%d%s) at (%d,%d,%d)\n",
 						showtime(), amount, name ? name : "(Dead player)", lev,
 						p_ptr->name, p_ptr->lev,
 						p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
 						p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-				c_printf("%s GOLD %s(%d,%s) : %s(%d,%s%s) : %ld\n",
+				c_printf("%s GOLD %s(%d,%s) : %s(%d,%s%s) : %d\n",
 						showtime(), name ? name : "(---)", lev, acc_name,
 						p_ptr->name, p_ptr->lev, p_ptr->accountname,
 						p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
@@ -5905,7 +5905,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 #else
 					int i = 300 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 4 + p_ptr->lev * 15;
 #endif
-					msg_format(Ind, "The temple priest gives you %ld gold pieces for your revival!", i);
+					msg_format(Ind, "The temple priest gives you %d gold pieces for your revival!", i);
 					gain_au(Ind, i, FALSE, FALSE);
 				}
 			}

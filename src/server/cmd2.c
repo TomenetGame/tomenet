@@ -1679,7 +1679,7 @@ void do_cmd_open(int Ind, int dir)
 						long factor,price;
 						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 						price = dna->price / 100 * factor;
-						msg_format(Ind,"\377oThat house costs %ld gold.",price);
+						msg_format(Ind,"\377oThat house costs %d gold.",price);
 					} else {
 #ifdef PLAYER_STORES
 						/* We don't have house access, but if it's set up as
@@ -6321,7 +6321,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 					if (!gain_au(Ind, price / 2, FALSE, FALSE)) return;
 
 					/* sell house */
-					msg_format(Ind, "You sell your house for %ld gold.", price / 2);
+					msg_format(Ind, "You sell your house for %d gold.", price / 2);
 					if (dna->owner_type != OT_GUILD) {
 						p_ptr->houses_owned--;
 						if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
@@ -6388,7 +6388,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 				return;
 			}
 		}
-		msg_format(Ind, "You buy the house for %ld gold.", price);
+		msg_format(Ind, "You buy the house for %d gold.", price);
 		p_ptr->au -= price;
 		p_ptr->houses_owned++;
 		if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned++;

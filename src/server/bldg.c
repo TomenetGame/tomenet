@@ -433,7 +433,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 		/* Get the wager */
 #if 0
 		strcpy(out_val, "");
-		strnfmt(tmp_str, 80, "Your wager (1-%ld) ? ", maxbet);
+		strnfmt(tmp_str, 80, "Your wager (1-%d) ? ", maxbet);
 		get_string(tmp_str, out_val,32);
 
 		/* Strip spaces */
@@ -450,7 +450,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 			//screen_load();
 			return(FALSE);
 		} else if (wager > maxbet) {
-			msg_format(Ind, "I'll take $%ld of that. Keep the rest.", maxbet);
+			msg_format(Ind, "I'll take $%d of that. Keep the rest.", maxbet);
 			wager = maxbet;
 		} else if (wager < 1) {
 			msg_print(Ind, "Ok, we'll start with 1 Au.");
@@ -462,10 +462,10 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 		oldgold = p_ptr->au;
 
 #if 0
-		strnfmt(tmp_str, 80, "Gold before game: %10ld", oldgold);
+		strnfmt(tmp_str, 80, "Gold before game: %10d", oldgold);
 		prt(tmp_str,20,2);
 
-		strnfmt(tmp_str, 80, "Current Wager:    %10ld", wager);
+		strnfmt(tmp_str, 80, "Current Wager:    %10d", wager);
 		prt(tmp_str,21,2);
 #endif	// 0
 
@@ -616,7 +616,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 			}
 			Send_gold(Ind, p_ptr->au, p_ptr->balance);
 #if 0
-			strnfmt(tmp_str, 80, "Current Gold:     %10ld", p_ptr->au);
+			strnfmt(tmp_str, 80, "Current Gold:     %10d", p_ptr->au);
 			prt(tmp_str, 22, 2);
 			prt("Again(Y/N)?", 18, 37);
 			move_cursor(18, 49);
@@ -626,7 +626,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 				msg_print(Ind, NULL);
 				screen_load();
 				return(FALSE);
-/*				strnfmt(tmp_str, 80, "Current Wager:    %10ld",wager);
+/*				strnfmt(tmp_str, 80, "Current Wager:    %10d",wager);
 				prt(tmp_str, 17, 2); */
 			}
 #endif /* 0 */
@@ -1413,7 +1413,7 @@ static void sell_corpses(void)
 
 			if (!gain_au(Ind, value, FALSE, FALSE)) return;
 
-			msg_format("Sold for %ld gold pieces.", value);
+			msg_format("Sold for %d gold pieces.", value);
 			msg_print(NULL);
 
 			/* Increase the number of collected bounties */

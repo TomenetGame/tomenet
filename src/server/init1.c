@@ -2670,10 +2670,10 @@ errr init_k_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'W')
 		{
 			int level, extra, wgt;
-			long cost;
+			int cost;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
 			                &level, &extra, &wgt, &cost)) return (1);
 
 			/* Save the values */
@@ -3055,10 +3055,10 @@ errr init_a_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'W')
 		{
 			int level, rarity, wgt;
-			long cost;
+			int cost;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
 			                &level, &rarity, &wgt, &cost)) return (1);
 
 			/* Save the values */
@@ -3911,10 +3911,10 @@ errr init_e_info_txt(FILE *fp, char *buf)
 		if (buf[0] == 'W')
 		{
 			int level, rarity, pad2;	// rarity2
-			long cost;
+			int cost;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
 			                &level, &rarity, &pad2, &cost)) return (1);
 
 			/* Save the values */
@@ -4422,10 +4422,10 @@ errr init_r_info_txt(FILE *fp, char *buf)
 		/* Process 'W' for "More Info" (one line only) */
 		if (buf[0] == 'W') {
 			int lev, rar, pad;
-			long exp;
+			int exp;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf + 2, "%d:%d:%d:%ld",
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
 			                &lev, &rar, &pad, &exp)) return (1);
 
 			/* Save the values */
@@ -5121,10 +5121,10 @@ errr init_re_info_txt(FILE *fp, char *buf)
 		{
                         int lev, rar, wt;
                         char mlev, mwt, mexp, pos;
-			long exp;
+			int exp;
 
 			/* Scan for the values */
-                        if (8 != sscanf(buf + 2, "%c%d:%d:%c%d:%c%ld:%c",
+                        if (8 != sscanf(buf + 2, "%c%d:%d:%c%d:%c%d:%c",
                                 &mlev, &lev, &rar, &mwt, &wt, &mexp, &exp, &pos)) return (1);
 
 			/* Save the values */

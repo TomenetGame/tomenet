@@ -78,7 +78,7 @@ void setup_timer(void) {
 	 * Install a real-time timer.
 	 */
 	if (timer_freq <= 0) {
-		plog(format("illegal timer frequency: %ld", timer_freq));
+		plog(format("illegal timer frequency: %d", timer_freq));
 		exit(1);
 	}
 	itv.it_interval.tv_sec = 0;
