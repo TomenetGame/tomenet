@@ -288,7 +288,7 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 			c_prt(color,
 			      format("%02d.%03d [%01d.%03d]",
 			         p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
-			         p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000),
+			         (int)p_ptr->s_info[i].mod / 1000, (int)p_ptr->s_info[i].mod % 1000),
 				 j + 4 - start, 60);
 	}
 

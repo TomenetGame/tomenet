@@ -296,7 +296,7 @@ static void store_purchase(void)
         if (o_ptr->number > 1) {
                 /* Hack -- note cost of "fixed" items */
                 if (store_num != STORE_HOME || store_num == STORE_HOME_DUN) {
-                        c_msg_print(format("That costs %d gold per item.", (long)(store_prices[item])));
+                        c_msg_print(format("That costs %d gold per item.", store_prices[item]));
 
 			if (store_prices[item] > 0) amt_afford = p_ptr->au / store_prices[item];
 			else amt_afford = o_ptr->number;

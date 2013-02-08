@@ -4034,8 +4034,7 @@ int Send_reliable_old(int ind)
 {
 	connection_t *connp = Conn[ind];
 	char *read_buf;
-	int i, n, len, todo, max_todo;
-	long rel_off;
+	int i, n, len, todo, max_todo, rel_off;
 	const int max_packet_size = MAX_RELIABLE_DATA_PACKET_SIZE,
 		min_send_size = 1;
 
@@ -4130,7 +4129,7 @@ static int Receive_ack(int ind)
 	connection_t *connp = Conn[ind];
 	int n;
 	unsigned char ch;
-	long rel, rtt, diff, delta, rel_loops;
+	int rel, rtt, diff, delta, rel_loops;
 
 	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &rel, &rel_loops))
 		<= 0)

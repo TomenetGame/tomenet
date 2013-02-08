@@ -6736,7 +6736,7 @@ static void print_tomb(cptr reason)
         	center_string(buf, class_info[class].title);
 		put_str(buf, 9, 11);
 
-		(void)sprintf(tmp, "Level: %d", p_ptr->lev);
+		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
 		center_string(buf, tmp);
 		put_str(buf, 11, 11);
 

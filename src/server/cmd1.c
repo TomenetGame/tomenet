@@ -1492,8 +1492,7 @@ void carry(int Ind, int pickup, int confirm)
 		if (!gain_au(Ind, amount, FALSE, p_ptr->id == o_ptr->owner)) return;
 
 		/* Message */
-		msg_format(Ind, "You have found %d gold pieces worth of %s.",
-			   (long int)amount, o_name);
+		msg_format(Ind, "You have found %d gold pieces worth of %s.", amount, o_name);
 
 #ifdef USE_SOUND_2010
 		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);

@@ -31,7 +31,7 @@ void SGWHit(int read_fd, int arg){
 		if(sdb!=(char*)NULL){
 			int i;
 			time(&now);
-			size+=sprintf(sdb,"runtime=%d\n", now-cfg.runtime);
+			size+=sprintf(sdb,"runtime=%d\n", (int)(now-cfg.runtime));
 			size+=sprintf(&sdb[size], "turn=%d\n", turn);
 			size+=sprintf(&sdb[size], "day=%d\n", DAY); /* day const */
 			size+=sprintf(&sdb[size], "year=%d\n", bst(YEAR, turn)); /* starting year const */

@@ -1676,10 +1676,10 @@ void do_cmd_open(int Ind, int dir)
 				} else {
 					struct dna_type *dna = cs_ptr->sc.ptr;
 					if (!strcmp(get_house_owner(cs_ptr), "nobody.")) {
-						long factor,price;
+						int factor, price;
 						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 						price = dna->price / 100 * factor;
-						msg_format(Ind,"\377oThat house costs %d gold.",price);
+						msg_format(Ind, "\377oThat house costs %d gold.", price);
 					} else {
 #ifdef PLAYER_STORES
 						/* We don't have house access, but if it's set up as

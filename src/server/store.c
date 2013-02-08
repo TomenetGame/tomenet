@@ -3261,7 +3261,7 @@ void store_purchase(int Ind, int item, int amt)
 		/* Hack -- note cost of "fixed" items */
 		if ((p_ptr->store_num != STORE_HOME) && (o_ptr->ident & ID_FIXED))
 		{
-			msg_format("That costs %d gold per item.", (long int)(best));
+			msg_format("That costs %d gold per item.", (int)best);
 		}
 
 		/* Get a quantity */
@@ -3352,9 +3352,9 @@ void store_purchase(int Ind, int item, int amt)
 				object_desc(Ind, o_name, &sell_obj, TRUE, 3);
 
 				/* Message */
-				msg_format(Ind, "You bought %s for %d gold.", o_name, (long int)price);
+				msg_format(Ind, "You bought %s for %d gold.", o_name, (int)price);
 if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
-	s_printf("ARTSCROLL bought by %s for %d gold (#=%d).\n", p_ptr->name, (long int)price, sell_obj.number);
+	s_printf("ARTSCROLL bought by %s for %d gold (#=%d).\n", p_ptr->name, (int)price, sell_obj.number);
 #ifdef USE_SOUND_2010
 				sound_item(Ind, sell_obj.tval, sell_obj.sval, "pickup_");
 #endif
@@ -3742,7 +3742,7 @@ void store_confirm(int Ind)
 
 	(void) sell_haggle(Ind, &sold_obj, &price_redundance);
 	if (price != price_redundance && !museum) {
-		s_printf("$INTRUSION$ Tried to sell %d for %d! Sold by %s.\n", (long int)price_redundance, (long int)price, p_ptr->name);
+		s_printf("$INTRUSION$ Tried to sell %d for %d! Sold by %s.\n", (int)price_redundance, (int)price, p_ptr->name);
 #if 0
 		msg_print(Ind, "Wrong item!");
 		return;
@@ -3822,7 +3822,7 @@ void store_confirm(int Ind)
 	object_desc(Ind, o_name, &sold_obj, TRUE, 3);
 
 	/* Describe the result (in message buffer) */
-	if (!museum) msg_format(Ind, "You sold %s for %d gold.", o_name, (long int)price);
+	if (!museum) msg_format(Ind, "You sold %s for %d gold.", o_name, (int)price);
 	else {
 		msg_format(Ind, "You donate %s.", o_name);
 		s_printf("MUSEUM (%d,%d): %s donates %s.\n", p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->name, o_name);
