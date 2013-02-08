@@ -2269,6 +2269,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #endif
 
 			disturb(Ind, 1, 0);
+			if (monst_check_grab(m_idx, 100, "fire")) break;
 			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires a shot.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a shot for", m_name);
@@ -2287,6 +2288,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #endif
 
 			disturb(Ind, 1, 0);
+			if (monst_check_grab(m_idx, 100, "fire")) break;
 			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires a bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a bolt for", m_name);
