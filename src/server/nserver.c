@@ -667,7 +667,7 @@ void setup_contact_socket(void)
 	}
 #ifdef FD_CLOEXEC
 	/* Make the socket close-on-exec if possible - mikaelh */
-	if (fcntl(Socket, F_SETFD, FD_CLOEXEC) == -1)
+	if (fcntl(ConsoleSocket, F_SETFD, FD_CLOEXEC) == -1)
 	{
 		plog("Can't make console socket close-on-exec");
 	}
