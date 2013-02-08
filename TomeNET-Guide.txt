@@ -9163,12 +9163,14 @@ Note that not every skill is available to every profession (class).
                                 enemy is trying to do. Certain actions are
                                 harder to intercept, those reduce the chance
                                 further, to..
-                                100%    for shooting
+                                100%    for shooting (except for missiles or
+                                        rockets, see below)
                                  85%    for running (fleeing / stepping back)
                                  75%    for casting a spell / summoning
                                  50%    for teleporting / phasing (blinking)
-                                Note: While ball/bolt attacks are spells,
-                                      breathing is NOT.
+                                Some abilities cannot be intercepted:
+                                Shrieking, unmagic, shooting missiles/rockets,
+                                throwing boulders, breathing.
 
                                 Interception chance caps at 80% (cap is
                                 applied after all other penalties have been
