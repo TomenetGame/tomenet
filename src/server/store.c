@@ -6568,7 +6568,7 @@ s_printf("PLAYER_STORE_HANDLE: full, mang, owner %s (%d), %s, value %d, buyer %s
    requests and currently ongoing interactions. - C. Blue */
 void handle_store_leave(int Ind) {
 	int i = gettown(Ind);
-	store_type *st_ptr;
+	store_type *st_ptr = NULL;
 	player_type *p_ptr = Players[Ind];
 
 	/* hack: non-town stores (ie dungeon, but could also be wild) */
@@ -6581,13 +6581,19 @@ void handle_store_leave(int Ind) {
                 fake_store_visited[-2 - p_ptr->store_num] = 0;
 	} else
 #endif
-	st_ptr = &town[i].townstore[p_ptr->store_num];
+	/* Make a pointer only if store_num is valid - mikaelh */
+	if (p_ptr->store_num >= 0) {
+		st_ptr = &town[i].townstore[p_ptr->store_num];
+	}
 
 	/* Leave */
 	p_ptr->store_num = -1;
 
 	/* We're no longer busy with anything */
 	p_ptr->store_action = 0;
+
+	/* Do nothing if pointer is not valid - mikaelh */
+	if (!st_ptr) return;
 
 	/* Not a special store? Nothing to do then */
 	if (!(st_info[st_ptr->st_idx].flags1 & SF1_SPECIAL)) return;
