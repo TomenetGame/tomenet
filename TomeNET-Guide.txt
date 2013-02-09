@@ -6654,7 +6654,7 @@ Water           Water resistance is rare (an *ID*ed item will say
                 Water balls do 50+(1...[level*5/2]) damage.
                 Note: The confusion effect can be prevented by confusion
                 resistance, and the stun effect by sound resistance.
-Sound           Sound attacks do less damage but can stun your or even knock
+Sound           Sound attacks do less damage but can stun you or even knock
                 you out so you will die as if you were paralyzed. Free Action
                 won't help you then.
                 Resistance will cut damage to 5/7..5/12.
