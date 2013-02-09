@@ -2046,6 +2046,7 @@ void carry(int Ind, int pickup, int confirm)
 					/* check activatable items we have equipped */
 					for (index = INVEN_WIELD; index <= INVEN_TOTAL; index++) {
 						 i_ptr = &(p_ptr->inventory[index]);
+						 if (!i_ptr->k_idx) continue;
 
 						/* Check if the player does want this feature (!X - for now :) ) */
 						if (!check_guard_inscription(i_ptr->note, 'X')) continue;
