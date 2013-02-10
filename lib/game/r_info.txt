@@ -19763,6 +19763,8 @@ S:MOAN | SLOW | SCARE | HOLD | TPORT
 #BLINK | UNMAGIC
 #S:SLOW | SLOW | SCARE | SCARE | SCARE | HOLD | HOLD | HOLD | HOLD |
 #S:MOAN | MOAN | MOAN | MOAN | MOAN | MOAN | MOAN | MOAN | TPORT
+D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
+D:and flies through the air with his bag of loot for all the adventurers!
 
 #medium HP version
 N:1087:Great Pumpkin
@@ -19786,6 +19788,8 @@ $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
 S:MOAN | SLOW | SCARE | HOLD | TPORT
+D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
+D:and flies through the air with his bag of loot for all the adventurers!
 
 #high HP version
 N:1088:Great Pumpkin
@@ -19809,6 +19813,8 @@ $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
 S:MOAN | SLOW | SCARE | HOLD | TPORT
+D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
+D:and flies through the air with his bag of loot for all the adventurers!
 
 N:1089:Ghoul (Mimic)
 G:z:D
