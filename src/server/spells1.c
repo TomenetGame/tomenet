@@ -1840,6 +1840,7 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 		stop_precision(Ind);
 	}
 
+#if 0
 	if (p_ptr->alert_afk_dam && p_ptr->afk
 #ifdef USE_SOUND_2010
 	    ) {
@@ -1850,6 +1851,7 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 		p_ptr->paging = 1;
 #endif
 	}
+#endif
 
 	if (p_ptr->lev == 99) {
 		//msg_print(Ind, "You are impervious to life force drain!");
