@@ -3240,7 +3240,7 @@ bool apply_discharge_item(int o_idx, int dam)
 /*
  * Apply Nexus
  */
-static void apply_nexus(int Ind, monster_type *m_ptr)
+static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
 	int max1, cur1, max2, cur2, ii, jj;
@@ -3249,6 +3249,9 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
         if (p_ptr->res_tele) chance = 50;
 
 	if (p_ptr->martyr) return;
+
+	if (IS_PLAYER(Ind_attacker))
+		s_printf("APPLY_NEXUS_PY: %s by %s\n", p_ptr->name, Players[Ind_attacker]->name);
 
 	switch (randint(safe_area(Ind) ? 5 : 8)) { /* don't do baaad things in Monster Arena Challenge */
 		case 4: case 5:
@@ -3357,7 +3360,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
    I CANT WAIT. DOING FRUIT BAT RIGHT NOW!!! 
    -APD-
 */
-static void apply_morph(int Ind, int power, char * killer)
+static void apply_morph(int Ind, int power, char * killer, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
 #if 0
@@ -3365,6 +3368,9 @@ static void apply_morph(int Ind, int power, char * killer)
 #endif
 
 	if (p_ptr->martyr) return;
+
+        if (IS_PLAYER(Ind_attacker))
+    		s_printf("APPLY_MORPH_PY: %s by %s\n", p_ptr->name, Players[Ind_attacker]->name);
 
 	switch (randint(2)) {
 #if 1
@@ -8858,7 +8864,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-			apply_nexus(Ind, m_ptr);
+			apply_nexus(Ind, m_ptr, -who);
 		}
 		take_hit(Ind, dam, killer, -who);
 		break;
@@ -9798,7 +9804,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			} else {
 				s_printf("morphs\n");
 				msg_print(Ind, "The magic continuum twists around you!");
-				apply_morph(Ind, dam, killer);
+				apply_morph(Ind, dam, killer, -who);
 			}
 			break;
 
