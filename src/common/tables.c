@@ -325,6 +325,135 @@ magic_type innate_powers[96] =
 
 };
 
+monster_spell_type monster_spells4[32] =
+{
+  {"Shriek", FALSE},
+  {"Negate magic", FALSE},
+  {"XXX", TRUE},
+  {"Fire Rocket", TRUE},
+
+  {"Arrow", TRUE},
+  {"Shot", TRUE},
+  {"Bolt", TRUE},
+  {"Missile", TRUE},
+
+  {"Breathe Acid", TRUE},
+  {"Breathe Lightning", TRUE},
+  {"Breathe Fire", TRUE},
+  {"Breathe Cold", TRUE},
+
+  {"Breathe Poison", TRUE},
+  {"Breathe Nether", TRUE},
+  {"Breathe Lite", TRUE},
+  {"Breathe Darkness", TRUE},
+
+  {"Breathe Confusion", TRUE},
+  {"Breathe Sound", TRUE},
+  {"Breathe Chaos", TRUE},
+  {"Breathe Disenchantment", TRUE},
+
+  {"Breathe Nexus", TRUE},
+  {"Breathe Time", TRUE},
+  {"Breathe Inertia", TRUE},
+  {"Breathe Gravity", TRUE},
+
+  {"Breathe Shards", TRUE},
+  {"Breathe Plasma", TRUE},
+  {"Breathe Force", TRUE},
+  {"Breathe Mana", TRUE},
+
+  {"Breathe Disintegration", TRUE},
+  {"Breathe Toxic Waste", TRUE},
+  {"Ghastly Moan", FALSE},
+  {"Throw Boulder", TRUE},      /* "XXX", */
+};
+
+monster_spell_type monster_spells5[32] =
+{
+  {"Acid Ball", TRUE},
+  {"Lightning Ball", TRUE},
+  {"Fire Ball", TRUE},
+  {"Cold Ball", TRUE},
+
+  {"Poison Ball", TRUE},
+  {"Nether Ball", TRUE},
+  {"Water Ball", TRUE},
+  {"Mana Storm", TRUE},
+
+  {"Darkness Storm", TRUE},
+  {"Drain Mana", TRUE},
+  {"Mind Blast", TRUE},
+  {"Brain Smash", TRUE},
+
+  {"Cause Wounds", TRUE},
+  {"XXX", TRUE},
+  {"Ball Toxic Waste", TRUE},
+  {"Raw Chaos", TRUE},
+
+  {"Acid Bolt", TRUE},
+  {"Lightning Bolt", TRUE},
+  {"Fire Bolt", TRUE},
+  {"Cold Bolt", TRUE},
+
+  {"Poison Bolt", TRUE},
+  {"Nether Bolt", TRUE},
+  {"Water Bolt", TRUE},
+  {"Mana Bolt", TRUE},
+
+  {"Plasma Bolt", TRUE},
+  {"Ice Bolt", TRUE},
+  {"Magic Missile", TRUE},
+  {"Scare", TRUE},
+
+  {"Blind", TRUE},
+  {"Confusion", TRUE},
+  {"Slow", TRUE},
+  {"Paralyze", TRUE},
+};
+
+monster_spell_type monster_spells6[32] =
+{
+  {"Haste Self", FALSE},
+  {"Hand of Doom", TRUE},
+  {"Heal", FALSE},
+  {"XXX", TRUE},
+
+  {"Blink", FALSE},
+  {"Teleport", FALSE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+
+  {"Teleport To", TRUE},
+  {"Teleport Away", TRUE},
+  {"Teleport Level", FALSE},
+  {"XXX", TRUE},
+
+  {"Darkness", FALSE},
+  {"Trap Creation", FALSE},
+  {"Cause Amnesia", TRUE},
+  /* Summons follow, but players can't summon */
+  {"XXX", TRUE},
+
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+};
 
 
 /* Runecraft --------------------------------------------------------------- */

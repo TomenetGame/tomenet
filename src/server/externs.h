@@ -135,6 +135,9 @@ extern cptr month_name[9];
 extern town_extra town_profile[6];
 extern int p_tough_ac[51];
 
+extern monster_spell_type monster_spells4[32];
+extern monster_spell_type monster_spells5[32];
+extern monster_spell_type monster_spells6[32];
 
 /* variable.c */
 extern int teamscore[];
