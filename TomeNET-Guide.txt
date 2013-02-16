@@ -14324,8 +14324,8 @@ Items that give speed, crit and mana cannot give more than +6.
 Items that cannot give +speed via type-dependant mod cannot get more than +7
  speed (which is already *extremely* rare).
 Items cannot give more than +6 luck.
+Items cannot have more than +5 stealth, except for cloaks which can have +6.
 Items cannot give more than +5 to stats (STR/INT/WIS/DEX/CON/CHR).
-Items cannot have more than +5 stealth, except or cloaks which can have +6.
 Items cannot have more than +4 searching.
 Items cannot give more than +3 extra attacks.
 Items cannot give more than +3 life (+30% base hit points).
