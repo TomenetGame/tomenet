@@ -967,6 +967,7 @@ struct player_type
 	bool shooting_till_kill;
 	int shoot_till_kill_book;
 	int shoot_till_kill_spell;
+	int shoot_till_kill_mimic;
 
 	int kills_own;
 	int kills;

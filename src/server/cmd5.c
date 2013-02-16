@@ -780,6 +780,15 @@ void do_mimic_power_aux(int Ind, int dir)
 	int rlev = (r_ptr->level + p_ptr->lev * 2 + 1) / 3;
 	magic_type *s_ptr = &innate_powers[p_ptr->current_spell];
 
+#if 1 /* Fire-till-kill */
+	int cs = p_ptr->current_spell;
+
+        if (p_ptr->shooting_till_kill) { /* we were shooting till kill last turn? */
+                p_ptr->shooting_till_kill = FALSE; /* well, gotta re-test for another success now.. */
+                if (dir == 5) p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
+        }
+#endif
+
 	/* Determine the radius of the blast */
 	rad = (r_ptr->flags2 & RF2_POWERFUL) ? 3 : 2;
 
@@ -1228,6 +1237,40 @@ void do_mimic_power_aux(int Ind, int dir)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
+
+#if 1 /* Fire-Till-Kill */
+        if (p_ptr->shooty_till_kill) {
+		int ftk;
+#if 0
+		if (cs < 32) {
+			ftk = monster_spell4[cs].ftk;
+		} else if (cs < 64) {
+			ftk = monster_spell5[cs - 32].ftk;
+		} else {
+			ftk = monster_spell6[cs - 64].ftk;
+		}
+#else
+		ftk = innate_powers[cs].ftk;
+#endif
+                /* spell actually doesn't allow ftk? */
+                if (!ftk) return;
+
+                /* To continue shooting_till_kill, check if spell requires clean LOS to target
+                   with no other monsters in the way, so we won't wake up more monsters accidentally. */
+#ifndef PY_PROJ_WALL
+                if (ftk == 1 && !projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+#else
+                if (ftk == 1 && !projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+#endif
+
+                /* We lost our target? (monster dead?) */
+                if (dir != 5 || !target_okay(Ind)) return;
+
+                /* we're now indeed ftk */
+                p_ptr->shooting_till_kill = TRUE;
+                p_ptr->shoot_till_kill_mimic = cs + 1;
+        }
+#endif
 }
 
 void do_mimic_change(int Ind, int r_idx, bool force)

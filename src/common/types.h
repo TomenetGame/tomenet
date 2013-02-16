@@ -1403,9 +1403,10 @@ typedef struct magic_type magic_type;
 struct magic_type
 {
 	byte slevel;		/* Required level (to learn) */
-	byte smana;			/* Required mana (to cast) */
-	byte sfail;			/* Minimum chance of failure */
-	byte sexp;			/* Encoded experience bonus */
+	byte smana;		/* Required mana (to cast) */
+	byte sfail;		/* Minimum chance of failure */
+	byte sexp;		/* Encoded experience bonus */
+	byte ftk;		/* Fire-till-kill class (0 = not possible, 1 = needs LOS, 2 = does't need LOS) */
 };
 
 
@@ -2728,7 +2729,7 @@ struct player_type
 	s16b melee_sprint, ranged_double_used;
 	bool ranged_flare, ranged_precision, ranged_double, ranged_barrage;
 	bool shoot_till_kill, shooty_till_kill, shooting_till_kill; /* Shoot a target until it's dead, like a ranged 'auto-retaliator' - C. Blue */
-	int shoot_till_kill_book, shoot_till_kill_spell;
+	int shoot_till_kill_book, shoot_till_kill_spell, shoot_till_kill_mimic;
 	bool shadow_running;
 	bool dual_mode; /* for dual-wield: TRUE = dual-mode, FALSE = main-hand-mode */
 

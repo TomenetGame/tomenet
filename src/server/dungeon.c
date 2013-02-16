@@ -4536,11 +4536,11 @@ static void process_player_end(int Ind)
 					if (p_ptr->shoot_till_kill_spell) {
 						cast_school_spell(Ind, p_ptr->shoot_till_kill_book, p_ptr->shoot_till_kill_spell - 1, 5, -1, 0);
 						if (!p_ptr->shooting_till_kill) p_ptr->shoot_till_kill_spell = 0;
-					}
-					else if (p_ptr->shoot_till_kill_rcraft) {
+					} else if (p_ptr->shoot_till_kill_rcraft) {
 						(void)execute_rspell(Ind, 5, p_ptr->FTK_e_flags, p_ptr->FTK_m_flags, 0, 1);
-					}
-					else {
+					} else if (p_ptr->shoot_till_kill_mimic) {
+						do_cmd_mimic(Ind, p_ptr->shoot_till_kill_mimic - 1 + 3, 5);
+					} else {
 						do_cmd_fire(Ind, 5);
 					}
 

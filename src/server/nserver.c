@@ -7531,7 +7531,9 @@ static int Receive_activate_skill(int ind)
 					}
 					return 2;
 				}
+				if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 				do_cmd_mimic(player, spell, dir);
+				p_ptr->shooty_till_kill = FALSE;
 			}
 			break;
 
