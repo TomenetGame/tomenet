@@ -122,6 +122,9 @@ void cast_rune_spell (int Ind, int dir) {
 	p_ptr->current_rune2 = -1;
 	object_type *base, *mod;
 
+	/* Consume a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 	/* Check some conditions */
 	if (p_ptr->blind)
 	{
@@ -396,9 +399,6 @@ void cast_rune_spell (int Ind, int dir) {
 			return;
 			break;
 	} 
-
-	/* Consume a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	//Failed to cast-- out of SP!
 	if (notice) {
