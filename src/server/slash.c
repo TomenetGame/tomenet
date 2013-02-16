@@ -3464,6 +3464,20 @@ void do_slash_cmd(int Ind, char *message)
 			Send_skill_info(Ind, SKILL_BREATH, TRUE);
 			return;
 #endif
+#if 0
+		} else if (prefix(message, "/autoret")) {
+			/* Set up a spell by name for auto-retaliation, so mimics can use it too */
+			if (!tk) {
+				msg_print(Ind, "Set up a monster spell, by name, for auto-retaliation.");
+				msg_print(Ind, " Usage:    /autoret <mimic spell name>");
+				msg_print(Ind, " Example:  /autoret Fire Bolt");
+				return;
+			}
+
+			
+
+			return;
+#endif
 		}
 
 
