@@ -14318,11 +14318,6 @@ Item Mod Limits:
 Certain power limits are applied on items, depending on mod-combinations or the
 item's base type.
 
-Gloves cannot get more than +6 to-hit or to-dam bonus, so (+6,+6) is max.
-Gloves cannot give more than +2 extra attacks.
-
-Amulets cannot give more than +3 to stats.
-
 Items cannot give more than +11 to speed, crit or mana.
 Items that give two of speed, crit or mana cannot give more than +8.
 Items that give speed, crit and mana cannot give more than +6.
@@ -14341,6 +14336,11 @@ Items that add mana, give mana regeneration or are blessed will never have an
 Headgear cannot give more than +6 infra-vision.
 Headgear cannot give more than +3 speed.
 Headgear cannot give more than +3 mana.
+
+Gloves cannot get more than +6 to-hit or to-dam bonus, so (+6,+6) is max.
+Gloves cannot give more than +2 extra attacks.
+
+Amulets cannot give more than +3 to stats.
 
 1-handed weapons and shields cannot give more than +3 speed.
 1-handed weapons cannot give more than +2 life (+20% base hit points).
