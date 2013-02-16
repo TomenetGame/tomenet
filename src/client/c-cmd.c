@@ -1732,6 +1732,29 @@ static void artifact_lore(void) {
 					Send_paste_msg(paste_lines[i]);
 				}
 			}
+			if (c == 'C') {
+				/* paste lore AND stats into chat */
+				for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
+				artifact_lore_aux(selected, selected_list, paste_lines);
+				for (i = 0; i < 18; i++) {
+					if (!paste_lines[i][0]) break;
+					//if (i == 6 || i == 12) usleep(10000000);
+					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
+						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
+					Send_paste_msg(paste_lines[i]);
+				}
+				/* don't double-post the title: skip paste line 0 */
+				for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
+				artifact_stats_aux(selected, selected_list, paste_lines);
+				for (i = 1; i < 18; i++) {
+					if (!paste_lines[i][0]) break;
+					//if (i == 6 || i == 12) usleep(10000000);
+					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
+						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
+					Send_paste_msg(paste_lines[i]);
+				}
+				break;
+			}
 		}
 		/* ESC = go back and erase search term */
 		if (c == '\e') {
@@ -1977,6 +2000,29 @@ static void monster_lore(void) {
 						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
 					Send_paste_msg(paste_lines[i]);
 				}
+			}
+			if (c == 'C') {
+				/* paste lore AND stats into chat */
+				for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
+				monster_lore_aux(selected, selected_list, paste_lines);
+				for (i = 0; i < 18; i++) {
+					if (!paste_lines[i][0]) break;
+					//if (i == 6 || i == 12) usleep(10000000);
+					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
+						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
+					Send_paste_msg(paste_lines[i]);
+				}
+				/* don't double-post the title: skip paste line 0 */
+				for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
+				monster_stats_aux(selected, selected_list, paste_lines);
+				for (i = 1; i < 18; i++) {
+					if (!paste_lines[i][0]) break;
+					//if (i == 6 || i == 12) usleep(10000000);
+					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
+						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
+					Send_paste_msg(paste_lines[i]);
+				}
+				break;
 			}
 		}
 		/* ESC = go back and erase search term */
