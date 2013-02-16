@@ -1722,14 +1722,19 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 			/* valid inscription? */
 			if (choice >= 0) {
 				/* shape-changing for retaliation is not so nice idea, eh? */
-				if (choice < 3) {	/* 3 polymorph powers */
+				if (choice < 4) {	/* 3 polymorph powers + immunity preference */
+#if 1
+					return FALSE;
+#else
 					/* hack: prevent 'polymorph into...' power */
 					if (choice == 2) do_cmd_mimic(Ind, 1, 5);
 					else do_cmd_mimic(Ind, choice, 5);
 					return TRUE;
+#endif
 				} else {
-					int power = retaliate_mimic_power(Ind, choice);
+					int power = retaliate_mimic_power(Ind, choice - 1); /* immunity preference */
 					if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
+#if 0
 					if (power) {
 						/* undirected power? */
 						switch (power) {
@@ -1744,6 +1749,10 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 						do_cmd_mimic(Ind, power + 3, 5);
 						return TRUE;
 					}
+#else
+					do_cmd_mimic(Ind, power + 3, 5);
+					return TRUE;
+#endif
 				}
 			}
 		}
