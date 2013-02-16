@@ -1733,6 +1733,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 #endif
 				} else {
 					int power = retaliate_mimic_power(Ind, choice - 1); /* immunity preference */
+					bool dir = FALSE;
 					if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
 #if 0
 					if (power) {
@@ -1750,7 +1751,15 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 						return TRUE;
 					}
 #else
-					do_cmd_mimic(Ind, power + 3, 5);
+					switch (power / 32) {
+					case 0: dir = monster_spells4[power].uses_dir;
+						break;
+					case 1: dir = monster_spells5[power - 32].uses_dir;
+						break;
+					case 2: dir = monster_spells6[power - 64].uses_dir;
+						break;
+					}
+					do_cmd_mimic(Ind, power + 3, dir ? 5 : 0);
 					return TRUE;
 #endif
 				}
