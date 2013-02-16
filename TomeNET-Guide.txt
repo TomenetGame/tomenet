@@ -11972,7 +11972,7 @@ Priest schools:
 
     BONI:           Improves HP regeneration rate extraordinarily the further
                     it is trained above 30,
-                    Half duration of various bad effects on the body at
+                    Reduces duration of various bad effects on the body at
                     30 (blindness, poison) / 40 (stun, cuts) / 50
                     (hallucination),
                     Less frequent suffering from black breath at 50.
