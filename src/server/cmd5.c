@@ -439,6 +439,7 @@ static void do_mimic_power(int Ind, int power, int dir)
 
 //	j = power;
 
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Not when confused */
 	if (p_ptr->confused) {
@@ -470,8 +471,6 @@ static void do_mimic_power(int Ind, int power, int dir)
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
-
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 #if 0 /* note: currently s_ptr->slevel is always 0 and there is no SKILL_MAGERY (0 too), so chance = sptr->sfail basically. */
 	/* Spell failure chance -- Hack, use the same stats as magery*/
