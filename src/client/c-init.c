@@ -480,7 +480,8 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	FILE *fff;
 	int l = 0, pl = -1, cl = strlen(cname);
 	int pl_len = 80 - 3 - cl - 2; /* 80 - 3 - namelen = chars available per chat line; 3 for brackets+space, 2 for colour code */
-	int chars_per_pline = ((int)MSG_LEN / pl_len) * pl_len; /* chars usable in a paste_lines[] */
+	int msg_len_eff = MSG_LEN - cl - 5 - 3 - 8;
+	int chars_per_pline = (msg_len_eff / pl_len) * pl_len; /* chars usable in a paste_lines[] */
 	char tmp[MSG_LEN];
 
 	/* actually use local r_info.txt - a novum */
@@ -1316,7 +1317,8 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	FILE *fff;
 	int l = 0, pl = -1, cl = strlen(cname);
 	int pl_len = 80 - 3 - cl - 2; /* 80 - 3 - namelen = chars available per chat line; 3 for brackets+space, 2 for colour code */
-	int chars_per_pline = ((int)MSG_LEN / pl_len) * pl_len; /* chars usable in a paste_lines[] */
+	int msg_len_eff = MSG_LEN - cl - 5 - 3 - 8;
+	int chars_per_pline = (msg_len_eff / pl_len) * pl_len; /* chars usable in a paste_lines[] */
 	char tmp[MSG_LEN];
 
 	/* actually use local a_info.txt - a novum */
