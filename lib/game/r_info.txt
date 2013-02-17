@@ -19690,7 +19690,7 @@ D:enormously massive piece of metal is nearly impossible to destroy.
 N:1084:Force vortex
 G:v:r
 I:140:50d70:100:30:0
-W:97:4:0:30000
+W:97:4:0:25000
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:ENGULF:HURT:100d1
@@ -20654,7 +20654,7 @@ D:A grey-brown bird with orange-red breast feathers.
 N:1143:Nether vortex
 G:v:G
 I:140:40d20:100:30:0
-W:97:4:0:30000
+W:97:4:0:10000
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:ENGULF:EXP_80:10d10
