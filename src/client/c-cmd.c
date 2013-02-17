@@ -1700,10 +1700,10 @@ static void artifact_lore(void) {
 
 		if (show_lore) {
 			artifact_lore_aux(selected, selected_list, paste_lines);
-			Term_putstr(6,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for stats, c to chat-paste --");
+			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for stats, c/C to chat-paste --");
 		} else {
 			artifact_stats_aux(selected, selected_list, paste_lines);
-			Term_putstr(6,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, c to chat-paste --");
+			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, c/C to chat-paste --");
 		}
 		/* hack: hide cursor */
 	        Term->scr->cx = Term->wid;
@@ -1969,10 +1969,10 @@ static void monster_lore(void) {
 
 		if (show_lore) {
 			monster_lore_aux(selected, selected_list, paste_lines);
-			Term_putstr(6,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for stats, c to chat-paste --");
+			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for stats, c/C to chat-paste --");
 		} else {
 			monster_stats_aux(selected, selected_list, paste_lines);
-			Term_putstr(6,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, c to chat-paste --");
+			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, c/C to chat-paste --");
 		}
 		/* hack: hide cursor */
 	        Term->scr->cx = Term->wid;
