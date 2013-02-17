@@ -1712,8 +1712,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 		inscription++;
 	}
 
-	/* Hack -- use innate power
-	 * TODO: devise a generic way to activate skills for retaliation */
+#ifndef AUTO_RET_CMD
+	/* Hack -- use innate power via inscription on any item */
 	if (inscription != NULL && *inscription == 'M' && get_skill(p_ptr, SKILL_MIMIC)) {
 		/* Spell to cast */
 		if (*(inscription + 1)) {
@@ -1767,6 +1767,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 		}
 		return FALSE;
 	}
+#endif
 
 #ifndef AUTO_RET_NEW
 	/* Only fighter classes can use various items for this */
@@ -1946,6 +1947,59 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 	return (p_ptr->fail_no_melee);
 }
 
+#ifdef AUTO_RET_CMD
+/* Check auto-retaliation set via slash command /autoret or /ar.
+   This was added for mimics to use their powers without having to inscribe
+   a random item as a workaround. - C. Blue */
+static bool retaliate_cmd(int Ind, bool fallback) {
+	player_type *p_ptr = Players[Ind];
+	int ar = p_ptr->autoret;
+
+	/* Is it variant @Ot for town-only auto-retaliation? - C. Blue */
+	if (ar >= 100) {
+		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		ar -= 100;
+	}
+
+	/* no autoret set? */
+	if (!ar) return FALSE;
+
+	/* Hack -- use innate power via inscription on any item */
+	if (get_skill(p_ptr, SKILL_MIMIC)) {
+		/* Spell to cast */
+		int choice = ar - 1;
+
+		if (choice < 4)	/* 3 polymorph powers + immunity preference */
+			return FALSE;
+
+		int power = retaliate_mimic_power(Ind, choice - 1);
+		bool dir = FALSE;
+		if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
+		switch (power / 32) {
+		case 0: dir = monster_spells4[power].uses_dir;
+			break;
+		case 1: dir = monster_spells5[power - 32].uses_dir;
+			break;
+		case 2: dir = monster_spells6[power - 64].uses_dir;
+			break;
+		}
+
+		/* Accept reasonable targets:
+		 * This prevents a player from getting stuck when facing a
+		 * monster inside a wall.
+		 * NOTE: The above statement becomes obsolete nowadays if
+		 * PY_PROJ_ and similar are defined.
+		 */
+		if (!target_able(Ind, p_ptr->target_who)) return FALSE;
+
+		do_cmd_mimic(Ind, power + 3, dir ? 5 : 0);
+		return TRUE;
+	}
+
+	/* If all fails, then melee */
+	return (p_ptr->fail_no_melee);
+}
+#endif
 
 /*
  * Check for nearby players or monsters and attempt to do something useful.
@@ -2344,8 +2398,12 @@ static int auto_retaliate(int Ind)
 		/* Attack him */
 		/* Stormbringer bypasses everything!! */
 //		py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
-		if (p_ptr->stormbringer ||
-		    (!retaliate_item(Ind, item, at_O_inscription, fallback) && !p_ptr->afraid && !no_melee)) {
+		if (p_ptr->stormbringer || (
+#ifdef AUTO_RET_CMD
+		    !retaliate_cmd(Ind, fallback) &&
+#endif
+		    !retaliate_item(Ind, item, at_O_inscription, fallback) &&
+		    !p_ptr->afraid && !no_melee)) {
 			py_attack(Ind, p_target_ptr->py, p_target_ptr->px, FALSE);
 		}
 
@@ -2374,7 +2432,12 @@ static int auto_retaliate(int Ind)
 
 		/* Attack it */
 //		py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
-		if (!retaliate_item(Ind, item, at_O_inscription, fallback) && !p_ptr->afraid && !no_melee) {
+		if (p_ptr->stormbringer || (
+#ifdef AUTO_RET_CMD
+		    !retaliate_cmd(Ind, fallback) &&
+#endif
+		    !retaliate_item(Ind, item, at_O_inscription, fallback) &&
+		    !p_ptr->afraid && !no_melee)) {
 			py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx, FALSE);
 
 			/* manage autoretaliation warning for newbies (reset it) */

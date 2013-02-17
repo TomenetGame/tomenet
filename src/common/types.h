@@ -2728,9 +2728,13 @@ struct player_type
 	byte cloaked, cloak_neutralized; /* Cloaking mode enabled; suspicious action was spotted */
 	s16b melee_sprint, ranged_double_used;
 	bool ranged_flare, ranged_precision, ranged_double, ranged_barrage;
+	bool shadow_running;
+
+#ifdef AUTO_RET_CMD
+	int autoret; /* set auto-retaliation via command instead of inscription */
+#endif
 	bool shoot_till_kill, shooty_till_kill, shooting_till_kill; /* Shoot a target until it's dead, like a ranged 'auto-retaliator' - C. Blue */
 	int shoot_till_kill_book, shoot_till_kill_spell, shoot_till_kill_mimic;
-	bool shadow_running;
 	bool dual_mode; /* for dual-wield: TRUE = dual-mode, FALSE = main-hand-mode */
 
 	/* Runecraft Info */

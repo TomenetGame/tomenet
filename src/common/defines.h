@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	3
+#define SF_VERSION_PATCH	4
 #define SF_VERSION_EXTRA	0
 
 
@@ -781,6 +781,10 @@
 /* Auto-retaliation: */
 /* No class restriction; limit to non-escape mechanisms. */
 #define AUTO_RET_NEW
+/* Enable use of /autoret or /ar command to specify auto-retaliation.
+   This is especially to enable mimics to use their powers in auto-retaliation,
+   if this option is enabled, they will be unable to use @OM inscription for that instead. */
+#define AUTO_RET_CMD
 
 
 /* Does a projection 'explode' ON a wall grid it hits, or BEFORE the wall grid?

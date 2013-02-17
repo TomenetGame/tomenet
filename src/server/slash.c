@@ -1035,6 +1035,11 @@ void do_slash_cmd(int Ind, char *message)
 			}
 #endif
 #endif
+
+#ifdef AUTO_RET_CMD
+			if (p_ptr->autoret) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
+#endif
+
 			if (get_skill(p_ptr, SKILL_AURA_FEAR)) check_aura(Ind, 0); /* MAX_AURAS */
 			if (get_skill(p_ptr, SKILL_AURA_SHIVER)) check_aura(Ind, 1);
 			if (get_skill(p_ptr, SKILL_AURA_DEATH)) check_aura(Ind, 2);
@@ -3464,18 +3469,45 @@ void do_slash_cmd(int Ind, char *message)
 			Send_skill_info(Ind, SKILL_BREATH, TRUE);
 			return;
 #endif
-#if 0
-		} else if (prefix(message, "/autoret")) {
+#ifdef AUTO_RET_CMD
+		} else if (prefix(message, "/autoret") || prefix(message, "/ar")) {
+			char *p = token[1];
+
 			/* Set up a spell by name for auto-retaliation, so mimics can use it too */
 			if (!tk) {
-				msg_print(Ind, "Set up a monster spell, by name, for auto-retaliation.");
-				msg_print(Ind, " Usage:    /autoret <mimic spell name>");
-				msg_print(Ind, " Example:  /autoret Fire Bolt");
+				if (p_ptr->autoret) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
+				else msg_print(Ind, "You have not set a mimic power for auto-retaliation.");
+				msg_print(Ind, " (Enter '/ar help' to see command usage and examples.)");
+				return;
+			}
+			if (streq(token[1], "help")) {
+				msg_print(Ind, "Set up a monster spell for auto-retaliation by specifying the spell slot letter");
+				msg_print(Ind, "starting with e), or '-' to disable. Optional prefix 't' for 'in town only'.");
+				msg_print(Ind, " Usage:    /ar [t]<mimic power slot (e..z)>");
+				msg_print(Ind, " Example:  /ar e    sets the first mimic power to auto-retaliate");
+				msg_print(Ind, " Example:  /ar th   sets the fourth mimic power, but only when in town");
+				msg_print(Ind, " Example:  /ar -    disables auto-retaliation with mimic powers");
 				return;
 			}
 
-			
+			if (*p == 't') {
+				p_ptr->autoret = 100;
+				p++;
+			}
+			else p_ptr->autoret = 0;
 
+			if (*p == '-') {
+				msg_print(Ind, "Mimic power auto-retaliation is now disabled.");
+				return;
+			}
+
+			if (*p < 'e' || *p > 'z') {
+				msg_print(Ind, "\377yMimic power must be within range 'e' to 'z'!");
+				return;
+			}
+
+			msg_format(Ind, "Mimic power '%c)' is now set for auto-retaliation.", *p);
+			p_ptr->autoret += *p - 'a' + 1;
 			return;
 #endif
 		}
