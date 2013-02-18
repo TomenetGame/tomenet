@@ -126,6 +126,16 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	/* Start with a "power" rating derived from the base item's level. */
 	p = (k_ptr->level + 7) / 8;
 
+	/* Hack: MHDSMs don't get their k_ptr imms added up because they don't
+	   use normal flags but xtra2 instead. Fix that here: */
+	if (k_ptr->tval == TV_DRAG_ARMOR && k_ptr->sval == SV_DRAGON_MULTIHUED)
+		/* Note: This is just a bad hack: We simply prevent any imms being generated on MHDSMs.
+		   The clean way would be to add the actual xtra2-induced immunities to the correct
+		   a_ptr->flags2/5 flags instead, so they get processed further down just like any added
+		   immunities. But it doesn't matter, and may even benefit MHDSM randarts this way,
+		   allowing them to get actually useful abilities instead of a redundant immunity. - C. Blue */
+		immunities += 2;
+
 	/* Evaluate certain abilities based on type of object. */
 	switch (a_ptr->tval) {
 	case TV_BOW:
