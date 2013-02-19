@@ -242,11 +242,11 @@ void do_cmd_check_artifacts(int Ind, int line)
 			}
 			fprintf(fff, "%sThe %s", admin ? " " : "     ", base_name);
 			if (admin) {
-				sprintf(fmt, "%%%ds%%s%%s%%s\n", (int)(45 - strlen(base_name)));
-				if (!a_ptr->known) fprintf(fff, fmt, "", "(unknown)", "", "");
+				sprintf(fmt, "%%%ds%%s\n", (int)(45 - strlen(base_name)));
+				if (!a_ptr->known) fprintf(fff, fmt, "", "(unknown)");
 				else if (multiple_artifact_p(&forge)) fprintf(fff, "\n");
-				else if (a_ptr->owner) fprintf(fff, fmt, "", "[", lookup_player_name(a_ptr->owner), "]");
-				else fprintf(fff, fmt, "", "[???]", "", "");
+				else if (a_ptr->owner) fprintf(fff, fmt, "", lookup_player_name(a_ptr->owner));
+				else fprintf(fff, fmt, "", "???");
 			} else fprintf(fff, "\n");
 #ifdef ART_DIZ
 //	                fprintf(fff, "%s", a_text + a_info[forge.name1].text);
