@@ -170,12 +170,12 @@ void wproto(struct client *ccl){
                                 /* only relay all for now */
 				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
 					char msg[MSG_LEN], *p = wpk->d.chat.ctxt;
+					client_all = client_chat = client_ctrlo = 0;
 					/* strip chat codes and reinsert them at the beginning */
 					if (*p == '\374') {
 						client_all = 1;
 						p++;
-					}
-					else if (*p == '\375') {
+					} else if (*p == '\375') {
 						client_chat = 1;
 						p++;
 					}
@@ -198,12 +198,12 @@ void wproto(struct client *ccl){
                                 /* only relay all for now */
 				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
 					char msg[MSG_LEN], *p = wpk->d.chat.ctxt;
+					client_all = client_chat = client_ctrlo = 0;
 					/* strip chat codes and reinsert them at the beginning */
 					if (*p == '\374') {
 						client_all = 1;
 						p++;
-					}
-					else if (*p == '\375') {
+					} else if (*p == '\375') {
 						client_chat = 1;
 						p++;
 					}
@@ -256,16 +256,15 @@ void wproto(struct client *ccl){
 				break;
 			case WP_MESSAGE:
 				/* simple relay message */
+				client_all = client_chat = client_ctrlo = 0;
 				if(ccl->authed && (ccl->authed>0 || secure.msgs)){
-
 					/* add same code in front as for WP_CHAT */
 					char msg[MSG_LEN], *p = wpk->d.smsg.stxt;
 					/* strip chat codes and reinsert them at the beginning */
 					if (*p == '\374') {
 						client_all = 1;
 						p++;
-					}
-					else if (*p == '\375') {
+					} else if (*p == '\375') {
 						client_chat = 1;
 						p++;
 					}
