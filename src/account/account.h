@@ -27,7 +27,11 @@ struct account{
 	u32b flags;     /* account flags */
 	char name[30];  /* login */
 	char pass[20];  /* some crypts are not 13 */
+#ifdef ACC32
+	int acc_laston;
+#else
 	time_t acc_laston;      /* last time this account logged on (for expiry check) */
+#endif
 	s32b cheeze;    /* value in gold of cheezed goods or money */
 	s32b cheeze_self; /* value in gold of cheezed goods or money to own characters */
 	char deed_event;        /* receive a deed for a global event participation? */
