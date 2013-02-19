@@ -4577,6 +4577,8 @@ void monster_death(int Ind, int m_idx)
 	bool do_gold = (!(r_ptr->flags1 & RF1_ONLY_ITEM));
 	bool do_item = (!(r_ptr->flags1 & RF1_ONLY_GOLD));
 
+	bool art_created = FALSE;
+
 	int force_coin = get_coin_type(r_ptr);
 	s16b local_quark = 0;
 	object_type forge;
@@ -5124,7 +5126,7 @@ if (cfg.unikill_format) {
 
 				/* Little sanity hack for level requirements
 				   of the Ring of Phasing - would be 92 otherwise */
-				if (a_idx == 203) {
+				if (a_idx == ART_PHASING) {
 					qq_ptr->level = (60 + rand_int(6));
 					qq_ptr->marked2 = ITEM_REMOVAL_NEVER;
 				}
@@ -5135,6 +5137,7 @@ if (cfg.unikill_format) {
 				qq_ptr->owner = p_ptr->id;
 				qq_ptr->mode = p_ptr->mode;
 #endif
+				art_created = TRUE;
 				drop_near(qq_ptr, -1, wpos, y, x);
 				s_printf("..dropped.\n");
 			} else  s_printf("..failed.\n");
@@ -5475,7 +5478,7 @@ if (cfg.unikill_format) {
 			object_wipe(qq_ptr);
 			/* Drop Scroll Of Artifact Creation if Ring Of Phasing already exists */
 			invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
-			qq_ptr->number = 1; /*(a_info[a_idx].cur_num == 0)?1:2;*/
+			qq_ptr->number = 1; /*(a_info[a_idx].cur_num == 0 || art_created) ? 1 : 2;*/
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
@@ -5490,7 +5493,7 @@ if (cfg.unikill_format) {
 #else
 			invcopy(qq_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
 #endif
-			qq_ptr->number = (a_info[203].cur_num == 0)?1:2;
+			qq_ptr->number = (a_info[ART_PHASING].cur_num == 0 || art_created) ? 1 : 2;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
@@ -9844,6 +9847,8 @@ void telekinesis_aux(int Ind, int item)
 		/* Log it - mikaelh */
 		object_desc_store(Ind, o_name, q_ptr, TRUE, 3);
 		s_printf("(Tele) Item transaction from %s(%d) to %s(%d):\n  %s\n", p_ptr->name, p_ptr->lev, Players[Ind2]->name, Players[Ind2]->lev, o_name);
+
+		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].owner = p_ptr->id;
 
 		/* Highlander Tournament: Don't allow transactions before it begins */
 		if (!p2_ptr->max_exp) {
