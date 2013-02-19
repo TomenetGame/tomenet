@@ -3473,6 +3473,11 @@ void do_slash_cmd(int Ind, char *message)
 		} else if (prefix(message, "/autoret") || prefix(message, "/ar")) {
 			char *p = token[1];
 
+			if (p_ptr->prace == RACE_VAMPIRE || !get_skill(p_ptr, SKILL_MIMIC)) {
+				msg_print(Ind, "You cannot use mimic powers.");
+				return;
+			}
+
 			/* Set up a spell by name for auto-retaliation, so mimics can use it too */
 			if (!tk) {
 				if (p_ptr->autoret) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
@@ -3936,8 +3941,8 @@ void do_slash_cmd(int Ind, char *message)
 
 				return;
 			}
-			else if (prefix(message, "/artifact") ||
-			    prefix(message, "/art")) {
+			else if (prefix(message, "/sartifact") ||
+			    prefix(message, "/sart")) {
 				if (k) {
 					if (a_info[k].cur_num) {
 						a_info[k].cur_num = 0;
@@ -3991,7 +3996,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 					msg_print(Ind, "All the artifacts are \377runfindable\377w!");
 				} else {
-					msg_print(Ind, "Usage: /artifact (No. | (show | fix | reset! | ban!)");
+					msg_print(Ind, "Usage: /sartifact (No. | (show | fix | reset! | ban!)");
 				}
 				return;
 			}
