@@ -5421,6 +5421,9 @@ void home_purchase(int Ind, int item, int amt)
 					p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
 					object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
+
+			if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].owner = p_ptr->id;
+
 			/* Highlander Tournament: Don't allow transactions before it begins */
 			if (!p_ptr->max_exp) {
 				msg_print(Ind, "You gain a tiny bit of experience from trading a used item.");

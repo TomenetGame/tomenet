@@ -5526,7 +5526,10 @@ bool can_use(int Ind, object_type *o_ptr)
 	}
 
 	/* Owner always can use */
-	if (p_ptr->id == o_ptr->owner || p_ptr->admin_dm) return (TRUE);
+	if (p_ptr->id == o_ptr->owner || p_ptr->admin_dm) {
+		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].owner = p_ptr->id;
+		return (TRUE);
+	}
 
 	if (o_ptr->level < 1 && o_ptr->owner) return (FALSE);
 
@@ -5546,10 +5549,12 @@ bool can_use(int Ind, object_type *o_ptr)
 	if ((p_ptr->lev >= o_ptr->level || in_irondeepdive(&p_ptr->wpos))
 	    && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;
+		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].owner = p_ptr->id;
 		return (TRUE);
 	}
 	else return (FALSE);
 #else
+	if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].owner = p_ptr->id;
 	return TRUE;
 #endif
 }

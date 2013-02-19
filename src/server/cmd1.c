@@ -1966,14 +1966,18 @@ void carry(int Ind, int pickup, int confirm)
 				if (!o_ptr->owner) {
 					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
-
+					if (true_artifact_p(o_ptr)) {
+						a_info[o_ptr->name1].owner = p_ptr->id;
 #if CHEEZELOG_LEVEL > 2
-					if (true_artifact_p(o_ptr)) s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d%s%s: %s\n",
+						s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d%s%s: %s\n",
 									    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+#endif
+					}
+#if CHEEZELOG_LEVEL > 2
 					else if (o_ptr->name1 == ART_RANDART) s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
 									    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
 
-#endif	// CHEEZELOG_LEVEL
+#endif
 					/* log the encounters of players with special heavy armour, just for informative purpose */
 					if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) s_printf("%s FOUND_WINNERS_ONLY: %s (%d) %s\n", showtime(), p_ptr->name, p_ptr->wpos.wz, o_name_real);
 				}
@@ -2022,6 +2026,8 @@ void carry(int Ind, int pickup, int confirm)
 							p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
 							object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
+
+					if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].owner = p_ptr->id;
 
 					/* Highlander Tournament: Don't allow transactions before it begins */
 					if (!p_ptr->max_exp) {

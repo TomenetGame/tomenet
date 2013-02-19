@@ -2695,8 +2695,11 @@ errr rd_server_savefile()
 		a_info[i].cur_num = tmp8u;
 		rd_byte(&tmp8u);
 		a_info[i].known = tmp8u;
-		rd_byte(&tmp8u);
-		rd_byte(&tmp8u);
+		if (s_older_than(4, 5, 5)) {
+			rd_byte(&tmp8u);
+			rd_byte(&tmp8u);
+			a_info[i].owner = 0;
+		} else rd_s32b(&a_info[i].owner);
 	}
 
 	rd_u16b(&tmp16u);

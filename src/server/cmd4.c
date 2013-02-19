@@ -91,6 +91,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 	object_type forge, *o_ptr;
 	player_type *p_ptr;
 	artifact_type *a_ptr;
+	char fmt[10];
 
 
 	/* Temporary file */
@@ -239,7 +240,14 @@ void do_cmd_check_artifacts(int Ind, int line)
 				fprintf(fff, "(%3d) (%3d)", radix_idx[i], a_ptr->cur_num);
 #endif
 			}
-			fprintf(fff, "     The %s%s\n", base_name, admin && !a_ptr->known ? " (unknown)" : "");
+			fprintf(fff, "%sThe %s", admin ? " " : "     ", base_name);
+			if (admin) {
+				sprintf(fmt, "%%%lds%%s%%s%%s\n", 45 - strlen(base_name));
+				if (!a_ptr->known) fprintf(fff, fmt, "", "(unknown)", "", "");
+//				else if (multiple_artifact_p(&forge)) fprintf(fff, "\n");
+				else if (a_ptr->owner) fprintf(fff, fmt, "", "[", lookup_player_name(a_ptr->owner), "]");
+				else fprintf(fff, fmt, "", "[???]", "", "");
+			} else fprintf(fff, "\n");
 #ifdef ART_DIZ
 //	                fprintf(fff, "%s", a_text + a_info[forge.name1].text);
 #endif

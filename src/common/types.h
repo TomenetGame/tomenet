@@ -283,25 +283,25 @@ typedef struct artifact_type artifact_type;
 
 struct artifact_type
 {
-	u16b name;			/* Name (offset) */
-	u16b text;			/* Text (offset) */
+	u16b name;		/* Name (offset) */
+	u16b text;		/* Text (offset) */
 
-	byte tval;			/* Artifact type */
-	byte sval;			/* Artifact sub type */
+	byte tval;		/* Artifact type */
+	byte sval;		/* Artifact sub type */
 
-	s16b pval;			/* Artifact extra info */
+	s16b pval;		/* Artifact extra info */
 
-	s16b to_h;			/* Bonus to hit */
-	s16b to_d;			/* Bonus to damage */
-	s16b to_a;			/* Bonus to armor */
+	s16b to_h;		/* Bonus to hit */
+	s16b to_d;		/* Bonus to damage */
+	s16b to_a;		/* Bonus to armor */
 
-	s16b ac;			/* Base armor */
+	s16b ac;		/* Base armor */
 
 	byte dd, ds;		/* Damage when hits */
 
 	s16b weight;		/* Weight */
 
-	s32b cost;			/* Artifact "cost" */
+	s32b cost;		/* Artifact "cost" */
 
 	u32b flags1;		/* Artifact Flags, set 1 */
 	u32b flags2;		/* Artifact Flags, set 2 */
@@ -309,20 +309,22 @@ struct artifact_type
         u32b flags4;            /* Artifact Flags, set 4 */
         u32b flags5;            /* Artifact Flags, set 5 */
 
-	byte level;			/* Artifact level */
+	byte level;		/* Artifact level */
 	byte rarity;		/* Artifact rarity */
 
 	byte cur_num;		/* Number created (0 or 1) */
 	byte max_num;		/* Unused (should be "1") */
-        u32b esp;                       /* ESP flags */
+        u32b esp;               /* ESP flags */
 #if 0
 
-        s16b power;                     /* Power granted(if any) */
+        s16b power;             /* Power granted(if any) */
 
         s16b set;               /* Does it belongs to a set ?*/
 #endif	/* 0 */
 
-	bool known;			/* Is this artifact already IDed? */
+	bool known;		/* Is this artifact already IDed? */
+
+	s32b owner;		/* Current owner, just to keep track */
 };
 
 
