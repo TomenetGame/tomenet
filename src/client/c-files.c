@@ -1353,7 +1353,7 @@ errr file_character(cptr name, bool full)
 	for (y = 1; y < 22; y++)
 	{
 		/* Dump each row */
-		for (x = 0; x < 79; x++)
+		for (x = 0; x < Term->wid; x++)
 		{
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
@@ -1376,7 +1376,7 @@ errr file_character(cptr name, bool full)
 	for (y = 14; y < 19; y++)
 	{
 		/* Dump each row */
-		for (x = 0; x < 79; x++)
+		for (x = 0; x < Term->wid; x++)
 		{
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
@@ -1429,8 +1429,8 @@ errr file_character(cptr name, bool full)
 	fprintf(fff, "  [Surroundings]\n\n");
 	if (screen_icky) Term_switch(0);
 	/* skip top line, already in 'last messages' if any at all */
-	for (y = 1; y < 24; y++) {
-		for (x = 0; x < 79; x++) {
+	for (y = 1; y < Term->hgt; y++) {
+		for (x = 0; x < Term->wid; x++) {
 			(void)(Term_what(x, y, &a, &c));
 			buf[x] = c;
 		}
