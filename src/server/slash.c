@@ -4326,20 +4326,6 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* take 'cheezelog'
 			 * result is output to the logfile */
-			else if (prefix(message, "/cheeze")) {
-				char path[MAX_PATH_LENGTH];
-				object_type *o_ptr;
-				for (i = 0; i < o_max; i++) {
-					o_ptr = &o_list[i];
-					cheeze(o_ptr);
-				}
-
-				cheeze_trad_house();
-
-				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
-				do_cmd_check_other_prepare(Ind, path, "Log File");
-				return;
-			}
 			/* Respawn monsters on the floor
 			 * TODO: specify worldpos to respawn */
 			else if (prefix(message, "/respawn")) {
@@ -7201,6 +7187,19 @@ void do_slash_cmd(int Ind, char *message)
 					p_ptr->recall_pos.wz = 0;
 					p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 					recall_player(i, "");
+				}
+				return;
+			}
+			/* sets current true artifact holders to players who own them */
+			else if (prefix(message, "/fixartowners")) {
+				object_type *o_ptr;
+				int a_idx;
+				for (i = 0; i < o_max; i++) {
+					o_ptr = &o_list[i];
+					a_idx = o_ptr->name1;
+					if (a_idx == 0 || a_idx == ART_RANDART) continue;
+					if (a_info[a_idx].owner) continue;
+					a_info[a_idx].owner = o_ptr->owner;
 				}
 				return;
 			}
