@@ -2303,10 +2303,12 @@ void do_slash_cmd(int Ind, char *message)
 			if (kidx == 428 && o_ptr->pval > 3) o_ptr->pval = 3; //436  (limit EA ring +BLOWS)
 
 			/* Wish arts out! */
-			if (tk > 4)
-			{
+			if (tk > 4) {
+				object_type forge;
 				int nom = atoi(token[5]);
-				if (nom == 203 || nom == 218) return; /* Phasing ring, Wizard cloak */
+
+				forge.name1 = nom;
+				if (nom == ART_PHASING || admin_artifact_p(&forge)) return; /* Phasing ring, admin-only items */
 				o_ptr->number = 1;
 
 				if (nom > 0) o_ptr->name1 = nom;

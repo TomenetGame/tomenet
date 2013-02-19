@@ -5592,7 +5592,7 @@ if (cfg.unikill_format) {
 
 					/* Little sanity hack for level requirements
 					   of the Ring of Phasing - would be 92 otherwise */
-					if (a_idx == 203) {
+					if (a_idx == ART_PHASING) {
 						qq_ptr->level = (60 + rand_int(6));
 						qq_ptr->marked2 = ITEM_REMOVAL_NEVER;
 					}
