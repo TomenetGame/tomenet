@@ -2643,6 +2643,13 @@ static int Handle_login(int ind)
 		}
 	}
 
+#ifdef ENABLE_DRACONIAN_TRAITS
+        if (p_ptr->prace == RACE_DRACONIAN && !p_ptr->ptrait) {
+		msg_print(NumPlayers, "\377oDraconians now have specific 'traits'. You do not have one yet!");
+		msg_print(NumPlayers, "\377o Press ':' key to chat and enter the command    /trait   to get one.");
+        }
+#endif
+
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth(NumPlayers);
 
