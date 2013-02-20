@@ -2979,11 +2979,11 @@ void do_cmd_disarm(int Ind, int dir)
 					if (magik((sdis/10)+1)) {
 						apply_magic(&p_ptr->wpos, yay, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
 						drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-						msg_print(Ind, "You have discovered a great trapkit!");
+						msg_print(Ind, "You have created a wonderful trapkit using pieces of the disarmed trap.");
 					} else {
 						apply_magic(&p_ptr->wpos, yay, -2, TRUE, FALSE, FALSE, FALSE, TRUE);
 						drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-						msg_print(Ind, "You have discovered a trapkit.");
+						msg_print(Ind, "You have fashioned a trapkit of a sort from the disarmed trap.");
 					}
 				}
 
