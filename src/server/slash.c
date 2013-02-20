@@ -4326,6 +4326,20 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* take 'cheezelog'
 			 * result is output to the logfile */
+			else if (prefix(message, "/cheeze")) {
+				char path[MAX_PATH_LENGTH];
+				object_type *o_ptr;
+				for (i = 0; i < o_max; i++) {
+					o_ptr = &o_list[i];
+					cheeze(o_ptr);
+				}
+
+				cheeze_trad_house();
+
+				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
+				do_cmd_check_other_prepare(Ind, path, "Log File");
+				return;
+			}
 			/* Respawn monsters on the floor
 			 * TODO: specify worldpos to respawn */
 			else if (prefix(message, "/respawn")) {
@@ -4337,24 +4351,17 @@ void do_slash_cmd(int Ind, char *message)
 
 				return;
 			}
-			else if (prefix(message, "/log_u"))
-			{
-				if (tk)
-				{
-					if(!strcmp(token[1], "on"))
-					{
+			else if (prefix(message, "/log_u")) {
+				if (tk) {
+					if (!strcmp(token[1], "on")) {
 						msg_print(Ind, "log_u is now on");
 						cfg.log_u = TRUE;
 						return;
-					}
-					else if(!strcmp(token[1], "off"))
-					{
+					} else if (!strcmp(token[1], "off")) {
 						msg_print(Ind, "log_u is now off");
 						cfg.log_u = FALSE;
 						return;
-					}
-					else
-					{
+					} else {
 						msg_print(Ind, "valid parameters are 'on' or 'off'");
 						return;
 					}
@@ -4363,25 +4370,17 @@ void do_slash_cmd(int Ind, char *message)
 				else msg_print(Ind, "log_u is off");
 				return;
 			}
-
-			else if (prefix(message, "/noarts"))
-			{
-				if (tk)
-				{
-					if(!strcmp(token[1], "on"))
-					{
+			else if (prefix(message, "/noarts")) {
+				if (tk) {
+					if(!strcmp(token[1], "on")) {
 						msg_print(Ind, "artifact generation is now supressed");
 						cfg.arts_disabled = TRUE;
 						return;
-					}
-					else if(!strcmp(token[1], "off"))
-					{
+					} else if(!strcmp(token[1], "off")) {
 						msg_print(Ind, "artifact generation is now back to normal");
 						cfg.arts_disabled = FALSE;
 						return;
-					}
-					else
-					{
+					} else {
 						msg_print(Ind, "valid parameters are 'on' or 'off'");
 						return;
 					}
