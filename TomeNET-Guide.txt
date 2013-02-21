@@ -3931,11 +3931,19 @@ monsters on deeper dungeon levels give more experience than easy kills.
 
 Hanging out on easy dungeon levels compared to your character level (for
 example a high level 50 character on an (to him) easy dungeon level like 60)
-may result in diminishing returns of experience points for killed monsters,
-while monsters that dwell in deeper regions that are more fitted as a
-challenge to the player, and whose levels are far above the player
-character's level, will be very rewarding in terms of experience and loot.
+may result in diminishing returns of experience points for killed monsters.
+
+On the other hand, killing monsters of higher level than the player's level
+will give bonus experience.
+
 Experience is shared automatically in 'parties', see (6.9).
+
+Note that if your experience is drained (it will be displayed in yellow instead
+of in light green to indicate that it is drained), your maximum experience ie
+the amount you used to have before getting drained still profits of 10% of any
+experience you gain, so it is not completely wasted if you don't have a potion
+of restore life levels at hand, or some other means to restore your experience
+back to normal.
 
 
 Recommended minimum depths for optimal experience gain
