@@ -7209,6 +7209,7 @@ void do_slash_cmd(int Ind, char *message)
 				for (j = 1; j <= NumPlayers; j++) {
 					for (i = 0; i < INVEN_TOTAL; i++) {
 						o_ptr = &Players[j]->inventory[i];
+						if (!o_ptr->k_idx) continue;
 						a_idx = o_ptr->name1;
 						if (a_idx == 0 || a_idx == ART_RANDART) continue;
 						if (a_info[a_idx].owner) continue;
