@@ -7206,7 +7206,7 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/fixartowners2")) {
 				object_type *o_ptr;
 				int a_idx;
-				for (j = 0; j <= NumPlayers; j++) {
+				for (j = 1; j <= NumPlayers; j++) {
 					for (i = 0; i < INVEN_TOTAL; i++) {
 						o_ptr = &Players[j]->inventory[i];
 						a_idx = o_ptr->name1;
