@@ -2050,7 +2050,7 @@ void carry(int Ind, int pickup, int confirm)
 					bool ID_item_found = FALSE;
 
 					/* check activatable items we have equipped */
-					for (index = INVEN_WIELD; index <= INVEN_TOTAL; index++) {
+					for (index = INVEN_WIELD; index < INVEN_TOTAL; index++) {
 						 i_ptr = &(p_ptr->inventory[index]);
 						 if (!i_ptr->k_idx) continue;
 
