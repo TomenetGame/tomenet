@@ -7190,7 +7190,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			/* sets current true artifact holders to players who own them */
-			else if (prefix(message, "/fixartowners")) {
+			else if (prefix(message, "/fixartowners1")) {
 				object_type *o_ptr;
 				int a_idx;
 				for (i = 0; i < o_max; i++) {
@@ -7199,6 +7199,21 @@ void do_slash_cmd(int Ind, char *message)
 					if (a_idx == 0 || a_idx == ART_RANDART) continue;
 					if (a_info[a_idx].owner) continue;
 					a_info[a_idx].owner = o_ptr->owner;
+				}
+				return;
+			}
+			/* sets current true artifact holders to players who own them */
+			else if (prefix(message, "/fixartowners2")) {
+				object_type *o_ptr;
+				int a_idx;
+				for (j = 0; j <= NumPlayers; j++) {
+					for (i = 0; i < INVEN_TOTAL; i++) {
+						o_ptr = &Players[j]->inventory[i];
+						a_idx = o_ptr->name1;
+						if (a_idx == 0 || a_idx == ART_RANDART) continue;
+						if (a_info[a_idx].owner) continue;
+						a_info[a_idx].owner = o_ptr->owner;
+					}
 				}
 				return;
 			}
