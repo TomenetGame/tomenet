@@ -2418,11 +2418,19 @@ static void display_store(int Ind)
 		if (p_ptr->store_num <= -2) {
 			/* Hack: Player stores display the owner's name */
 			store_name = "";
-			strcpy(owner_name_ps, lookup_player_name(st_ptr->player_owner));
-			if (owner_name_ps[strlen(owner_name_ps) - 1] == 's')
-				strcat(owner_name_ps, "' Private Store");
-			else
-				strcat(owner_name_ps, "'s Private Store");
+			switch (st_ptr->player_owner_type) {
+			case OT_PLAYER:
+				strcpy(owner_name_ps, lookup_player_name(st_ptr->player_owner));
+				if (owner_name_ps[strlen(owner_name_ps) - 1] == 's')
+					strcat(owner_name_ps, "' Private Store");
+				else
+					strcat(owner_name_ps, "'s Private Store");
+				break;
+			case OT_GUILD:
+				strcpy(owner_name_ps, "Public Store of ");
+				strcat(owner_name_ps, guilds[st_ptr->player_owner].name);
+				break;
+			}
 			owner_name = owner_name_ps;
 
 			/* Send modified private store info */
@@ -6131,6 +6139,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 		/* found a free one, remember its index and initialize it */
 		fake_store[i].stock_num = 0;
 		fake_store[i].player_owner = h_ptr->dna->owner;
+		fake_store[i].player_owner_type = h_ptr->dna->owner_type;
 
 		/* would need to set up a fake info template with legal
 		   commands and all.. see hack in show_building().

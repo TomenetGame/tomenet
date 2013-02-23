@@ -1158,6 +1158,7 @@ struct store_type
 
 #ifdef PLAYER_STORES
 	u32b player_owner;		/* Temporary value for player's id */
+	byte player_owner_type;		/* Is it really a player or maybe a guild? */
 #endif
 
 	s16b insult_cur;		/* Insult counter */
