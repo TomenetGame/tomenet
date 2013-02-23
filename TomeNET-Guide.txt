@@ -9028,7 +9028,12 @@ Note that not every skill is available to every profession (class).
 
         .Polearm-mastery        See Sword-mastery
 
-        .Combat Stances         This ability cannot be trained, but it is
+        .Combat Stances         Allows you to switch between one of three types
+                                of combat stance. You need to wield a weapon to
+                                use stances, certain restrictions apply and are
+                                explained further below.
+
+                                This ability cannot be trained, but it is
                                 increased automatically each time your
                                 character gains a level.
                                 If you attain the status of King, Queen,
@@ -9067,6 +9072,10 @@ Note that not every skill is available to every profession (class).
                                                  - parry and dodge less often,
                                                  - get an AC penalty same as
                                                    for being in 'fury'.
+                                                 Note: You must wield a weapon
+                                                 that is not too small to be
+                                                 gripped with both hands
+                                                 (COULD2H, SHOULD2H, MUST2H).
 
         .Dual-Wield             The ability to wield two weapons at once. This
                                 ability cannot be trained, it's always at 1.000
