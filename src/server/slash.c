@@ -561,13 +561,31 @@ void do_slash_cmd(int Ind, char *message)
 					nontag = TRUE;
 				} else if (prefix(token[1], "b")) {
 					nontag = baseonly = TRUE;
+				} else if (prefix(token[1], "f")) { /* Lerg's patch/idea, "/dis f" command */
+					struct worldpos *wpos = &p_ptr->wpos;
+					cave_type *c_ptr;
+					cave_type **zcave;
+
+					/* get our grid */
+					if (!(zcave = getcave(wpos))) return;
+					c_ptr = &zcave[p_ptr->py][p_ptr->px];
+					if (!c_ptr->o_idx) return;
+
+					/* Get the object */
+					o_ptr = &o_list[c_ptr->o_idx];
+					if (!o_ptr->k_idx) return;
+
+					do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number);
+					whats_under_your_feet(Ind);
+					return;
 				} else {
-					msg_print(Ind, "\377oUsage: /dis [a|b]");
+					msg_print(Ind, "\377oUsage:    /dis [a|b|f]");
+					msg_print(Ind, "\377oExample:  /dis b");
 					return;
 				}
 			}
 
-			for(i = 0; i < INVEN_PACK; i++) {
+			for (i = 0; i < INVEN_PACK; i++) {
 				bool resist = FALSE;
 				o_ptr = &(p_ptr->inventory[i]);
 				if (!o_ptr->tval) break;

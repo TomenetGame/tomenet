@@ -790,6 +790,9 @@ They all start with a slash '/' hence they're called slash commands:
 /dis b      DESTROYS items like '/dis a' does, but skips identified ego items.
             It also skips exploding ammo, although it isn't really an ego item.
 
+/dis f      DESTROYS the item on the floor you're standing on, and tells you
+            about the next item below that.
+
 /dr [tag]   Without tag it equips all items in your inventory that are: not
 (/dress)    cursed, not {worthless}, not {terrible}, known to you.
             With tag it just equips all items that contain that tag in their
