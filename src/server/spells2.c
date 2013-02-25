@@ -6390,7 +6390,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_GRAV;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
@@ -6404,6 +6404,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
+	project_time_effect = EFF_WALL;
 	project_interval = interval;
 	project_time = time;
 

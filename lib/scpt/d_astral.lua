@@ -279,18 +279,19 @@ POWERCLOUD = add_spell
 				if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
 					fire_cloud(Ind, GF_MANA, args.dir, (1 + lev * 2), 3, (5 + lev / 5), 9, " conjures up a mana storm of")
 				else
-					fire_cloud(Ind, GF_INFERNO, args.dir, (1 + lev * 2), 3, (5 + lev / 5), 9, " conjures up a raging inferno of")
+					fire_cloud(Ind, GF_ANNIHILATION, args.dir, ((lev + 3) / 10) - 4, 3, (5 + lev / 5), 9, " conjures up an annihilating sphere of")
 				end
 --			end
 	end,
 	["info"] = 	function()
 			local lev = get_astral_lev(Ind)
-			return "dam "..(1 + (lev * 2)).." rad 3 dur "..(5 + (lev / 5))
+			--return "dam "..(1 + (lev * 2)).." rad 3 dur "..(5 + (lev / 5))
+			return "dam var rad 3 dur "..(5 + (lev / 5))
 	end,
 	["desc"] =	{
 --			"Requires astral level of 50",
 			"Enlightened: conjures up a storm of mana",
-			"Corrupted: conjures up raging inferno"
+			"Corrupted: conjures up a sphere of annihilation"
 		}
 }
 GATEWAY = add_spell

@@ -61,7 +61,7 @@ byte rspell_radius(byte imperative, byte type, byte skill, byte projection);
 byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u16b dice);
 
 /* Item Handling */
-bool rspell_socket(int Ind, byte projection);
+bool rspell_socket(int Ind, byte projection, bool sigil);
 bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item);
 
 /** Internal Functions **/
@@ -197,19 +197,21 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 	if (r_types[type].flag == T_SIGN) {
 		switch (projection) {				
 			case SV_R_WATE: { //regen
-				damage *= 10;
+				damage = rget_level(700) * r_imperatives[imperative].damage / 10;
+				if (damage > 700) damage = 700;
+				if (damage < 70) damage = 70;
 			break; }
 
 			case SV_R_TIME: { //speed
-				damage /= 5;
+				damage = rget_level(15) * r_imperatives[imperative].damage / 10;
 				if (damage > 10) damage = 10;
-				if (damage < 3) damage = 3;
+				if (damage < 1) damage = 1;
 			break; }
 			
 			case SV_R_FORC: { //armor
-				damage /= 5;
-				if (damage > 15) damage = 15;
-				if (damage < 5) damage = 5;
+				damage = rget_level(20) * r_imperatives[imperative].damage / 10;
+				if (damage > 20) damage = 20;
+				if (damage < 1) damage = 1;
 			}
 
 			default: {
@@ -230,15 +232,17 @@ byte rspell_radius(byte imperative, byte type, byte skill, byte projection) {
 	if (r_types[type].flag == T_SIGN) {
 		switch (projection) {
 			case SV_R_NEXU: { //teleport
-				radius = radius * radius * 5; //actually caps at 150 though!
+				radius = rget_level(150) * radius / S_RADIUS_MAX;
+				if (radius > 150) radius = 150;
+				if (radius < 10) radius = 10;
 			break; }
 
 			case SV_R_INER: { //tele_away
-				radius = radius * 3 / 2;
+				radius = rget_level(10) * radius / S_RADIUS_MAX;
 			break; }
 
 			case SV_R_GRAV: { //tele_to
-				radius = radius * 3 / 2;
+				radius = rget_level(10) * radius / S_RADIUS_MAX;
 			break; }
 
 			default: {
@@ -284,7 +288,7 @@ byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u1
 	return (byte)duration;
 }
 
-bool rspell_socket(int Ind, byte projection) {
+bool rspell_socket(int Ind, byte projection, bool sigil) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	
@@ -293,7 +297,7 @@ bool rspell_socket(int Ind, byte projection) {
 		if (i >= INVEN_PACK) continue;		
 		o_ptr = &p_ptr->inventory[i];
 		if ((o_ptr->tval == TV_RUNE) && (o_ptr->level || o_ptr->owner == p_ptr->id)) { //Do we own it..?
-			if (o_ptr->sval == projection && !check_guard_inscription(o_ptr->note, 'R')) { //Element match, not protected?
+			if (o_ptr->sval == projection && (sigil || !check_guard_inscription(o_ptr->note, 'R'))) { //Element match, not protected?
 				byte amt = 1; //Always consume exactly one!
 				char o_name[ONAME_LEN];
 				object_desc(Ind, o_name, o_ptr, FALSE, 3);
@@ -372,7 +376,7 @@ bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
 	}
 	
 	/* Do we have a rune? */
-	if (!rspell_socket(Ind, projection)) {
+	if (!rspell_socket(Ind, projection, TRUE)) {
 		msg_format(Ind, "\377yYou do not have the required rune. (%s)", r_projections[projection].name);
 		return FALSE;
 	}
@@ -712,7 +716,7 @@ s_printf("Duration: %d\n", duration);
 		case T_CLOU: {
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);	
 			if (r_imperatives[imperative].flag != I_ENHA) fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
-			else fire_wave(Ind, gf_type, 0, damage*3/2, radius, duration*2, 5, EFF_STORM, p_ptr->attacker); //Storm Hack Modifiers
+			else fire_wave(Ind, gf_type, 0, damage*3/2, radius, duration*2, 10, EFF_STORM, p_ptr->attacker);
 		break; }
 		
 		case T_BALL: {
@@ -915,7 +919,7 @@ s_printf("Duration: %d\n", duration);
 
 	/* Failure */
 	if (failure)
-		if (!rspell_socket(Ind, projection)) {
+		if (!rspell_socket(Ind, projection, FALSE)) {
 			if (dice > damage) damage = dice; //Get the highest damage part of the spell, could be reworked to match actual spell type (as modified by enhanced). TODO
 			project(PROJECTOR_RUNE, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, damage / 5 + 1, gf_type, (PROJECT_KILL | PROJECT_NORF | PROJECT_JUMP), "");
 		}
@@ -942,7 +946,7 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 	player_type *p_ptr = Players[Ind];
 	int y = p_ptr->py, x = p_ptr->px;
 	struct worldpos *wpos = &p_ptr->wpos;
-	
+
 	/* Allowed? */
 	if ((!allow_terraforming(wpos, FEAT_RUNE) || istown(wpos))
 	    && !is_admin(p_ptr))
@@ -978,6 +982,12 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 	/* Don't mess with inns please! */
 	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return;
 
+	/* Do we have a rune? */
+	if (!rspell_socket(Ind, projection, TRUE)) {
+		msg_format(Ind, "\377yYou do not have the required rune. (%s)", r_projections[projection].name);
+		return;
+	}
+	
 	/* Overwrite old runes */
 	if ((cs_ptr=GetCS(c_ptr, CS_RUNE)))
 	{

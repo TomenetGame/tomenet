@@ -1256,7 +1256,8 @@ byte spell_color(int type)
 		case GF_PLASMA:		return (randint(5)==1?TERM_RED:TERM_L_RED);
 		case GF_METEOR:		return (randint(3)==1?TERM_RED:TERM_UMBER);
 		case GF_ICE:		return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
-		case GF_INFERNO: case GF_DETONATION:
+		case GF_INFERNO:
+		case GF_DETONATION:
 		case GF_ROCKET:		return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
 		case GF_NUKE:		return (mh_attr(2));
 		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_VIOLET));
@@ -1322,7 +1323,8 @@ bool spell_color_animation(int type)
 		case GF_PLASMA:		return TRUE;//(randint(5)==1?TERM_RED:TERM_L_RED);
 		case GF_METEOR:		return TRUE;//(randint(3)==1?TERM_RED:TERM_UMBER);
 		case GF_ICE:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_WHITE);
-		case GF_INFERNO: case GF_DETONATION:
+		case GF_INFERNO:
+		case GF_DETONATION:
 		case GF_ROCKET:		return TRUE;//(randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
 		case GF_NUKE:		return TRUE;//(mh_attr(2));
 		case GF_DISINTEGRATE:   return TRUE;//(randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_VIOLET:TERM_L_ORANGE));//TERM_ORANGE:TERM_L_UMBER));
@@ -1389,7 +1391,8 @@ byte spell_color(int type)
 		case GF_PLASMA:		return (TERM_PLAS);
 		case GF_METEOR:		return (TERM_METEOR);
 		case GF_ICE:		return (TERM_ICE);
-		case GF_INFERNO: case GF_DETONATION:
+		case GF_INFERNO:
+		case GF_DETONATION:
 		case GF_ROCKET:		return (TERM_DETO);
 		case GF_NUKE:		return (TERM_NUKE);
 		case GF_DISINTEGRATE:   return (TERM_DISI);
@@ -4446,6 +4449,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Mana -- destroys everything -- except IGNORE_MANA items :p */
+		case GF_ANNIHILATION:
 		case GF_MANA:
 		{
 			if (!(f5 & (TR5_IGNORE_MANA | TR5_RES_MANA))) {
@@ -5962,7 +5966,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Drain Life */
 		case GF_OLD_DRAIN:
-		case GF_ANNIHILATION:
 		{
 			if (seen) obvious = TRUE;
 
@@ -6021,6 +6024,38 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			break;
 		}
+		
+		case GF_ANNIHILATION: {
+			i = dam - 1;
+			if (seen) obvious = TRUE;
+			if (m_ptr->hp > 9362)
+				dam = (m_ptr->hp / 100) * dam;
+			else if (m_ptr->hp > 936)
+				dam = ((m_ptr->hp / 10) * dam) / 10;
+			else
+				dam = (m_ptr->hp * dam) / 100;
+			
+			if (dam > i * 200) {
+				dam = i * 200;
+				if ((r_ptr->flags1 & RF1_UNIQUE) ||
+				(r_ptr->flags3 & RF3_UNDEAD) ||
+				(r_ptr->flags3 & RF3_NONLIVING)) {
+				note = " resists";
+				dam *= 6; dam /= (randint(6) + 6);
+				}
+			}
+			
+			if (dam < i * 10 + 100) {
+				dam = i * 10 + 100;
+				if ((r_ptr->flags1 & RF1_UNIQUE) ||
+				(r_ptr->flags3 & RF3_UNDEAD) ||
+				(r_ptr->flags3 & RF3_NONLIVING)) {
+				note = " resists";
+				dam *= 6; dam /= (randint(6) + 6);
+				}
+			}
+			
+		break; }
 
 		/* Polymorph monster (Use "dam" as "power") */
 		case GF_OLD_POLY:
@@ -10689,6 +10724,10 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	while (TRUE) {
 		/* Gather beam grids */
 		if (flg & PROJECT_BEAM) {
+			if (project_time_effect & EFF_WALL) {
+				effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
+				if (effect != -1) zcave[y][x].effect = effect;
+			}
 			gy[grids] = y;
 			gx[grids] = x;
 			grids++;
@@ -10973,7 +11012,14 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		y = y9;
 		x = x9;
 	}
-
+	
+	if (project_time_effect & EFF_WALL) {
+		flg &= ~(PROJECT_STAY);
+		project_time = 0;
+		project_interval = 0;
+		project_time_effect = 0;
+	}
+	
 	/* Hack: Usually, elemental bolt spells will not hurt floor/item if they already hurt a monster/player.
 	         Some bolt spells (poly) don't need this flag, since they don't hurt items/floor at all. */
 	if ((flg & PROJECT_EVSG) && zcave[y][x].m_idx != 0)
@@ -11273,9 +11319,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			 *			  +pseudo 'centre'
 			 */
 			if (rad == 0) {
-				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
-						(y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
-						project_time_effect);
+				// effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
+						// (y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
+						// project_time_effect);
 #ifdef ARCADE_SERVER
 #if 0
                                                 if (project_time_effect & EFF_CROSSHAIR_A || project_time_effect & EFF_CROSSHAIR_B ||
@@ -11306,6 +11352,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 			if(!in_bounds(y,x)) continue;
 			/* Affect the feature */
+			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
 			if (project_f(0 - who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
 
 			/* Effect ? */
@@ -11339,6 +11386,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 			if(!in_bounds(y,x)) continue;
 			/* Affect the object */
+			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
 			if (project_i(0 - who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
 		}
 	}
@@ -11395,7 +11443,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 				monster_race *ref_ptr = race_inf(&m_list[zcave[y][x].m_idx]);
 			}
 */
-
+			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
 			if (project_m(0 - who, who, y2, x2, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
 		}
 
@@ -11458,6 +11506,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			player_idx = 0 - zcave[y][x].m_idx;
 
 			/* Affect the player */
+			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
 			if (project_p(player_idx, who, dist, wpos, y, x, dam, typ, rad, flg, attacker)) notice = TRUE;
 			/* reset stair-goi helper flag (used by project_p()) again */
 			if (player_idx >= 1 && player_idx <= NumPlayers) Players[player_idx]->invuln_applied = FALSE;
@@ -11984,7 +12033,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_OLD_DRAIN:
-		case GF_ANNIHILATION:
 			if (m_ptr->hp > 9362)
 				dam = (m_ptr->hp / 100) * dam;
 			else if (m_ptr->hp > 936)
@@ -11999,6 +12047,35 @@ int approx_damage(int m_idx, int dam, int typ) {
 			    (strchr("Egv", r_ptr->d_char)))
 				dam = 0;
 			break;
+			
+		case GF_ANNIHILATION: {
+			j = dam - 1;
+			if (m_ptr->hp > 9362)
+				dam = (m_ptr->hp / 100) * dam;
+			else if (m_ptr->hp > 936)
+				dam = ((m_ptr->hp / 10) * dam) / 10;
+			else
+				dam = (m_ptr->hp * dam) / 100;
+			
+			if (dam > j * 200) {
+				dam = j * 200;
+				if ((r_ptr->flags1 & RF1_UNIQUE) ||
+				(r_ptr->flags3 & RF3_UNDEAD) ||
+				(r_ptr->flags3 & RF3_NONLIVING)) {
+				dam *= 6; dam /= (randint(6) + 6);
+				}
+			}
+			
+			if (dam < j * 10 + 100) {
+				dam = j * 10 + 100;
+				if ((r_ptr->flags1 & RF1_UNIQUE) ||
+				(r_ptr->flags3 & RF3_UNDEAD) ||
+				(r_ptr->flags3 & RF3_NONLIVING)) {
+				dam *= 6; dam /= (randint(6) + 6);
+				}
+			}
+			
+		break; }
 
 		case GF_OLD_POLY:
 			do_poly = TRUE;
