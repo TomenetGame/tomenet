@@ -6041,7 +6041,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				(r_ptr->flags3 & RF3_UNDEAD) ||
 				(r_ptr->flags3 & RF3_NONLIVING)) {
 				note = " resists";
-				dam *= 6; dam /= (randint(6) + 6);
+				dam *= 3; dam /= (randint(6) + 6);
 				}
 			}
 			
@@ -6051,7 +6051,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				(r_ptr->flags3 & RF3_UNDEAD) ||
 				(r_ptr->flags3 & RF3_NONLIVING)) {
 				note = " resists";
-				dam *= 6; dam /= (randint(6) + 6);
+				dam *= 3; dam /= (randint(6) + 6);
 				}
 			}
 			
@@ -12062,7 +12062,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				if ((r_ptr->flags1 & RF1_UNIQUE) ||
 				(r_ptr->flags3 & RF3_UNDEAD) ||
 				(r_ptr->flags3 & RF3_NONLIVING)) {
-				dam *= 6; dam /= (randint(6) + 6);
+				dam /= 3;
 				}
 			}
 			
@@ -12071,7 +12071,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				if ((r_ptr->flags1 & RF1_UNIQUE) ||
 				(r_ptr->flags3 & RF3_UNDEAD) ||
 				(r_ptr->flags3 & RF3_NONLIVING)) {
-				dam *= 6; dam /= (randint(6) + 6);
+				dam /= 3;
 				}
 			}
 			
