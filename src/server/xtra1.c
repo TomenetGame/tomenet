@@ -6627,7 +6627,7 @@ void stop_global_event(int Ind, int n) {
  #if 0 /* of for normal cases */
 	ge->announcement_time = -1; /* enter the processing phase, */
  #else /* for turn overflow situations */
-	ge->paused_turns = 0;
+	ge->paused_turns = 0; /* potentially fix turn counter */
 	ge->start_turn = turn;
 	ge->announcement_time = -1; /* enter the processing phase, */
  #endif
@@ -6883,6 +6883,15 @@ static void process_global_event(int ge_id) {
 	elapsed_turns = turn - ge->start_turn - ge->paused_turns;
 	elapsed = elapsed_turns / cfg.fps;
 	wpos.wx = 0; wpos.wy = 0; wpos.wz = 0; /* sector 0,0 by default, for 'sector00separation' */
+
+	/* catch absurdities (happens on turn overflow) */
+	if (elapsed_turns > 100000 * cfg.fps) {
+		ge->paused_turns = 0;
+		ge->start_turn = turn; /* fix turn counter */
+		elapsed_turns = 0;
+		ge->announcement_time = -1; /* enter the processing phase, */
+		ge->state[0] = 255; /* ..and process clean-up! */
+	}
 
 	if (ge->announcement_time * cfg.fps - elapsed_turns == 240L * cfg.fps) { /* extra warning at T-4min for last minute subscribers */
 		announce_global_event(ge_id);
