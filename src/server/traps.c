@@ -4798,8 +4798,14 @@ bool mon_hit_trap(int m_idx)
 
 				if (load_o_ptr->number <= 0) {
 					remove = TRUE;
-					delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
-					kit_o_ptr->next_o_idx = 0;
+					/* runes stay, scrolls poof */
+					if (load_o_ptr->tval == TV_SCROLL) {
+						delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
+						kit_o_ptr->next_o_idx = 0;
+					} else {
+						/* hack: runes don't get consumed, so counter the previous decrement */
+						load_o_ptr->number++;
+					}
 				}
 			}
 			break;
