@@ -317,7 +317,7 @@ school_book[52] = {
 
 -- Create the handbook of piety
 school_book[53] = {
-	HDELFEAR, HBLESSING, HSATISFYHUNGER, HDELCURSES, HPROTEVIL, HEXORCISM, HRELSOULS
+	HBLESSING, HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HPROTEVIL, HEXORCISM, HRELSOULS
 }
 
 -- Create the naturalist's handbook
@@ -339,7 +339,7 @@ school_book[55] = {
 
 -- Create the handbook of novice etiquette
 school_book[56] = {
-        HDELFEAR, HBLESSING, HGLOBELIGHT, HHEALING, HCURING
+        HDELFEAR, HBLESSING, HGLOBELIGHT, HCUREWOUNDS, HHEALING, HCURING
 }
 
 ---- Create the handbook for rogues (of shadows)
