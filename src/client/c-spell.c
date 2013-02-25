@@ -592,6 +592,9 @@ void do_mimic()
 	/* later on maybe this can moved to server side, then no need for '20000 hack'.
 	   Btw, 30000, the more logical one, doesnt work, dont ask me why */
 	if (spell == 2) {
+		bool is_string = FALSE;
+		char *cptr;
+
 		out_val[0] = '\0';
 		get_string("Which form (name or number; 0 for player) ? ", out_val, 40);
 		out_val[40] = '\0';
@@ -599,8 +602,18 @@ void do_mimic()
 		/* empty input? */
 		if (strlen(out_val) == 0) return;
 
+		/* did user input an index number or a name? */
+		cptr = out_val;
+		while (*cptr) {
+			if (*cptr < '0' || *cptr > '9') {
+				is_string = TRUE;
+				break;
+			}
+			cptr++;
+		}
+
 		/* input is a string? */
-		if (atoi(out_val) == 0 && !strchr(out_val, '0')) {
+		if (is_string) {
 			/* hack for quick'n'dirty macros */
 			if (out_val[0] == '@') {
 				for (j = 1; out_val[j]; j++) out_val[j - 1] = out_val[j];
@@ -1800,19 +1813,21 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 	if (r_types[type].flag == T_SIGN) {
 		switch (projection) {				
 			case SV_R_WATE: { //regen
-				damage *= 10;
+				damage = rget_level(700) * r_imperatives[imperative].damage / 10;
+				if (damage > 700) damage = 700;
+				if (damage < 70) damage = 70;
 			break; }
 
 			case SV_R_TIME: { //speed
-				damage /= 10;
+				damage = rget_level(15) * r_imperatives[imperative].damage / 10;
 				if (damage > 10) damage = 10;
-				if (damage < 3) damage = 3;
+				if (damage < 1) damage = 1;
 			break; }
 			
 			case SV_R_FORC: { //armor
-				damage /= 5;
+				damage = rget_level(20) * r_imperatives[imperative].damage / 10;
 				if (damage > 20) damage = 20;
-				if (damage < 5) damage = 5;
+				if (damage < 1) damage = 1;
 			}
 
 			default: {
@@ -1833,15 +1848,17 @@ byte rspell_radius(byte imperative, byte type, byte skill, byte projection) {
 	if (r_types[type].flag == T_SIGN) {
 		switch (projection) {
 			case SV_R_NEXU: { //teleport
-				radius = radius * radius * 5; //actually caps at 150 though!
+				radius = rget_level(150) * radius / S_RADIUS_MAX;
+				if (radius > 150) radius = 150;
+				if (radius < 10) radius = 10;
 			break; }
 
 			case SV_R_INER: { //tele_away
-				radius = radius * 3 / 2;
+				radius = rget_level(10) * radius / S_RADIUS_MAX;
 			break; }
 
 			case SV_R_GRAV: { //tele_to
-				radius = radius * 3 / 2;
+				radius = rget_level(10) * radius / S_RADIUS_MAX;
 			break; }
 
 			default: {
@@ -1873,7 +1890,7 @@ byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u1
 			case SV_R_POIS:
 			case SV_R_TIME: //haste
 			case SV_R_PLAS: //resist (x2)
-				duration = duration + dice;
+				duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
 			break;
 			
 			default: {
