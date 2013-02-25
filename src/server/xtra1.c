@@ -6624,7 +6624,13 @@ void stop_global_event(int Ind, int n) {
 	ge->getype = GE_NONE;
 	for (i = 1; i <= NumPlayers; i++) Players[i]->global_event_type[n] = GE_NONE;
 #else /* we really need to call the clean-up instead of just GE_NONEing it: */
+ #if 0 /* of for normal cases */
 	ge->announcement_time = -1; /* enter the processing phase, */
+ #else /* for turn overflow situations */
+	ge->paused_turns = 0;
+	ge->start_turn = turn;
+	ge->announcement_time = -1; /* enter the processing phase, */
+ #endif
 	ge->state[0] = 255; /* ..and process clean-up! */
 #endif
 	return;
@@ -6936,20 +6942,23 @@ static void process_global_event(int ge_id) {
 		}
 	}
 
-	/* Time Over? :( */
-	if ((ge->end_turn && turn >= ge->end_turn) ||
-	    (ge->ending && now >= ge->ending)) {
-		timeout = TRUE; /* d'oh */
-		ge->state[0] = 255; /* state[0] is used as indicator for clean-up phase of any event */
-		msg_broadcast_format(0, "\377y>>%s ends due to time limit!<<", ge->title);
-		s_printf("%s EVENT_TIMEOUT: %d - %s.\n", showtime(), ge_id+1, ge->title);
-	}
-	/* Time warning at T-5minutes! (only if the whole event lasts MORE THAN 10 minutes) */
-	/* Note: paused turns will be added to the running time, IF the event end is given in "turns" */
-	if ((ge->end_turn && ge->end_turn - ge->start_turn - ge->paused_turns > 600 * cfg.fps && turn - ge->paused_turns == ge->end_turn - 300 * cfg.fps) ||
-	    /* However, paused turns will be ignored if the event end is given as absolute time! */
-	    (!ge->end_turn && ge->ending && ge->ending - ge->started > 600 && now == ge->ending - 360)) {
-		msg_broadcast_format(0, "\377y[%s (%d) comes to an end in 6 more minutes!]", ge->title, ge_id + 1);
+	/* if event is not yet over, check if it could be.. */
+	if (ge->state[0] != 255) {
+		/* Time Over? :( */
+		if ((ge->end_turn && turn >= ge->end_turn) ||
+		    (ge->ending && now >= ge->ending)) {
+			timeout = TRUE; /* d'oh */
+			ge->state[0] = 255; /* state[0] is used as indicator for clean-up phase of any event */
+			msg_broadcast_format(0, "\377y>>%s ends due to time limit!<<", ge->title);
+			s_printf("%s EVENT_TIMEOUT: %d - %s.\n", showtime(), ge_id+1, ge->title);
+		}
+		/* Time warning at T-5minutes! (only if the whole event lasts MORE THAN 10 minutes) */
+		/* Note: paused turns will be added to the running time, IF the event end is given in "turns" */
+		if ((ge->end_turn && ge->end_turn - ge->start_turn - ge->paused_turns > 600 * cfg.fps && turn - ge->paused_turns == ge->end_turn - 300 * cfg.fps) ||
+		    /* However, paused turns will be ignored if the event end is given as absolute time! */
+		    (!ge->end_turn && ge->ending && ge->ending - ge->started > 600 && now == ge->ending - 360)) {
+			msg_broadcast_format(0, "\377y[%s (%d) comes to an end in 6 more minutes!]", ge->title, ge_id + 1);
+		}
 	}
 
 	/* Event is running! Process its stages... */
