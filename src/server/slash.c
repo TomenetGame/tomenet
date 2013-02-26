@@ -557,16 +557,25 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* only tagged ones? */
 			if (tk > 0) {
-				if (token[1][0] == 'a') {
+				char *parm = token[1];
+				bool floor = FALSE;
+
+				if (*parm == 'f') {
+					floor = TRUE;
+					parm++;
+				}
+
+				if (*parm == 'a') {
 					nontag = TRUE;
-				} else if (token[1][0] == 'b') {
+				} else if (*parm == 'b') {
 					nontag = baseonly = TRUE;
-				} else if (token[1][0] != 'f') {
+				} else if (!floor || *parm) {
 					msg_print(Ind, "\377oUsage:    /dis [f][a|b]");
 					msg_print(Ind, "\377oExample:  /dis fb");
 					return;
 				}
-				if (token[1][0] == 'f' || token[1][1] == 'f') { /* Lerg's patch/idea, "/dis f" command */
+
+				if (floor) { /* Lerg's patch/idea, "/dis f" command */
 					struct worldpos *wpos = &p_ptr->wpos;
 					cave_type *c_ptr;
 					cave_type **zcave;
@@ -574,14 +583,14 @@ void do_slash_cmd(int Ind, char *message)
 					/* get our grid */
 					if (!(zcave = getcave(wpos))) return;
 					c_ptr = &zcave[p_ptr->py][p_ptr->px];
-					if (!c_ptr->o_idx) return;
-
-					/* Get the object */
-					o_ptr = &o_list[c_ptr->o_idx];
-					if (!o_ptr->k_idx) {
+					if (!c_ptr->o_idx) {
 						msg_print(Ind, "There is no item on the floor here.");
 						return;
 					}
+
+					/* Get the object */
+					o_ptr = &o_list[c_ptr->o_idx];
+					if (!o_ptr->k_idx) return;
 
 					/* keep inscribed items? */
 					if (!nontag && o_ptr->note) return;
