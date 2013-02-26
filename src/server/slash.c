@@ -557,11 +557,16 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* only tagged ones? */
 			if (tk > 0) {
-				if (prefix(token[1], "a")) {
+				if (token[1][0] == 'a') {
 					nontag = TRUE;
-				} else if (prefix(token[1], "b")) {
+				} else if (token[1][0] == 'b') {
 					nontag = baseonly = TRUE;
-				} else if (prefix(token[1], "f")) { /* Lerg's patch/idea, "/dis f" command */
+				} else if (token[1][0] != 'f') {
+					msg_print(Ind, "\377oUsage:    /dis [f][a|b]");
+					msg_print(Ind, "\377oExample:  /dis fb");
+					return;
+				}
+				if (token[1][0] == 'f' || token[1][1] == 'f') { /* Lerg's patch/idea, "/dis f" command */
 					struct worldpos *wpos = &p_ptr->wpos;
 					cave_type *c_ptr;
 					cave_type **zcave;
@@ -573,14 +578,23 @@ void do_slash_cmd(int Ind, char *message)
 
 					/* Get the object */
 					o_ptr = &o_list[c_ptr->o_idx];
-					if (!o_ptr->k_idx) return;
+					if (!o_ptr->k_idx) {
+						msg_print(Ind, "There is no item on the floor here.");
+						return;
+					}
+
+					/* keep inscribed items? */
+					if (!nontag && o_ptr->note) return;
+
+					/* destroy base items (non-egos)? */
+					if (baseonly && object_known_p(Ind, o_ptr) &&
+					    (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b ||
+					    /* let exploding ammo count as ego.. pft */
+					    (is_ammo(o_ptr->tval) && o_ptr->pval)))
+						return;
 
 					do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number);
 					whats_under_your_feet(Ind);
-					return;
-				} else {
-					msg_print(Ind, "\377oUsage:    /dis [a|b|f]");
-					msg_print(Ind, "\377oExample:  /dis b");
 					return;
 				}
 			}

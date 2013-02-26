@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. February 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. February 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -783,15 +783,21 @@ They all start with a slash '/' hence they're called slash commands:
             inscription contains more than a pseudo-ID tag.
             Also see /tag and /untag. Note that artifacts cannot be destroyed.
 
-/dis a      DESTROYS items like /dis, and additionally destroys all items that
+/dis a      DESTROYS items like '/dis', and additionally destroys all items that
             have no inscription at all.
             Also see /tag and /untag.
 
 /dis b      DESTROYS items like '/dis a' does, but skips identified ego items.
             It also skips exploding ammo, although it isn't really an ego item.
 
-/dis f      DESTROYS the item on the floor you're standing on, and tells you
-            about the next item below that.
+/dis f      DESTROYS the item on the floor you're standing on provided it is
+            not inscribed in any way, and tells you about the next item below
+            that.
+
+/dis fa     DESTROYS an item like '/dis f', even if it has an inscription.
+
+/dis fb     DESTROYS an item like '/dis fa', but skips identified ego items.
+            It also skips exploding ammo, although it isn't really an ego item.
 
 /dr [tag]   Without tag it equips all items in your inventory that are: not
 (/dress)    cursed, not {worthless}, not {terrible}, known to you.
