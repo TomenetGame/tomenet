@@ -35,7 +35,7 @@ __traits_diz = {
 
 "White lineage",
     {"The \255uwhite\255U lineage provides intrinsic resistance",
-    "to frost which turns into immunity later.",
+    "to frost which turns into immunity later (25).",
     "It also surrounds you with a freezing aura (15).",
     "This lineage provides frost breath.",
     "", "", "", "", "", "", "", "",},
