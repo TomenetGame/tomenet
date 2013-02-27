@@ -54,7 +54,10 @@ eg.
 \{D==============================================================================
 \{U3. 'Go challenge'
 
-(Nice read: http://users.eniinternet.com/bradleym/America.html)
+Two different short video tutorials on YouTube:
+\{Bhttp://youtu.be/qhBQasS5IRI
+\{Bhttp://youtu.be/gECcsSeRcNo
+Nice read: \{Bhttp://users.eniinternet.com/bradleym/America.html
 
 You will play the ~3000 year old asian strategy game of Go, also often
 dubbed 'the divine game', on a 9x9 board against an opponent that gets
