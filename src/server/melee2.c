@@ -5209,7 +5209,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		/* As long as we have good HP there's no need to hold back,
 		   [if player is low on HP we should try to attack him anyways,
 		   this is not basing on consequent logic though, since we probably still can't hurt him] */
-		(((m_ptr->hp <= (m_ptr->maxhp * 3) / 4) && (p_ptr->chp > (p_ptr->mhp * 4) / 5)) ||
+		(((m_ptr->hp <= (m_ptr->maxhp * 3) / 4) && (p_ptr->chp > (p_ptr->mhp * 3) / 4)) ||
 		/* If we're very low on HP, only try to attack the player if he's hurt *badly* */
 		((m_ptr->hp < (m_ptr->maxhp * 1) / 2) && ((p_ptr->chp >= (p_ptr->mhp * 1) / 5) || (p_ptr->chp >= 200)))) &&
  #endif
@@ -5437,7 +5437,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		/* As long as we have good HP there's no need to hold back,
 		   [if player is low on HP we should try to attack him anyways,
 		   this is not basing on consequent logic though, since we probably still can't hurt him] */
-		(((m_ptr->hp <= (m_ptr->maxhp * 3) / 5) && (p_ptr->chp > (p_ptr->mhp * 5) / 6)) ||
+		(((m_ptr->hp <= (m_ptr->maxhp * 3) / 5) && (p_ptr->chp > (p_ptr->mhp * 3) / 4)) ||
 		/* If we're very low on HP, only try to attack the player if he's hurt *badly* */
 		((m_ptr->hp < (m_ptr->maxhp * 1) / 4) && (p_ptr->chp >= (p_ptr->mhp * 1) / 5))) &&
  #endif
