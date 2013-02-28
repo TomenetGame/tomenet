@@ -1670,8 +1670,6 @@ bool check_guard_inscription( s16b quark, char what ) {
 					return TRUE;
 				};
 			};
-			/* Refilling is blocked if item must not be destroyed */
-			if (what == 'F' && *ax == 'k') return TRUE;
 		};
 	};
 	return FALSE;

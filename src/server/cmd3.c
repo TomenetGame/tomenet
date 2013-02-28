@@ -2316,7 +2316,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 		return;
 	}
 
-	if (check_guard_inscription(o_ptr->note, 'F')) { /* implies !k too */
+	if (check_guard_inscription(o_ptr->note, 'F')) {
 		msg_print(Ind, "The item's incription prevents it.");
 		return;
 	}
@@ -2467,7 +2467,7 @@ static void do_cmd_refill_torch(int Ind, int item)
 		return;
 	}
 
-	if (check_guard_inscription(o_ptr->note, 'F')) { /* implies !k too */
+	if (check_guard_inscription(o_ptr->note, 'F')) {
 		msg_print(Ind, "The item's incription prevents it.");
 		return;
 	}
@@ -2588,7 +2588,7 @@ bool do_auto_refill(int Ind)
 	o_ptr = &(p_ptr->inventory[INVEN_LITE]);
 
 	if( check_guard_inscription( o_ptr->note, 'F' )) {
-		//		msg_print(Ind, "The item's incription prevents it.");
+		//msg_print(Ind, "The item's incription prevents it.");
 		return (FALSE);
 	}
 
@@ -2603,7 +2603,7 @@ bool do_auto_refill(int Ind)
 			j_ptr = &(p_ptr->inventory[i]);
 			if (!item_tester_hook(j_ptr)) continue;
 			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
-			if (check_guard_inscription(j_ptr->note, 'F')) continue; /* implies !k too */
+			if (check_guard_inscription(j_ptr->note, 'F')) continue;
 
 			do_cmd_refill_lamp(Ind, i);
 			return (TRUE);
@@ -2619,7 +2619,7 @@ bool do_auto_refill(int Ind)
 			j_ptr = &(p_ptr->inventory[i]);
 			if (!item_tester_hook(j_ptr)) continue;
 			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
-			if (check_guard_inscription(j_ptr->note, 'F')) continue; /* implies !k too */
+			if (check_guard_inscription(j_ptr->note, 'F')) continue;
 
 			do_cmd_refill_torch(Ind, i);
 			return (TRUE);
