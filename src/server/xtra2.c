@@ -6418,6 +6418,19 @@ void player_death(int Ind) {
 			p_ptr->exp -= reduce;
 
 			check_experience(Ind);
+			
+			/* Remove Massive Iron Crown of Morgoth */
+			if (p_ptr->inventory[INVEN_HEAD].k_idx && p_ptr->inventory[INVEN_HEAD].name1 == ART_MORGOTH) {
+				char o_name[ONAME_LEN];
+
+				o_ptr = &p_ptr->inventory[INVEN_HEAD];
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				msg_format(Ind, "\376\377oYour %s was destroyed!", o_name);
+				handle_art_d(o_ptr->name1);
+
+				inven_item_increase(Ind, INVEN_HEAD, -(o_ptr->number));
+				inven_item_optimize(Ind, INVEN_HEAD);
+			}
 
 			/* update stats */
 			p_ptr->update |= PU_SANITY;
