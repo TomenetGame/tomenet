@@ -72,9 +72,13 @@
    Without this, if TRADITIONAL_LOOT_LEVEL is on, no loot above klevel 108
    could drop outside of NR anymore (Star Blade being highest normal monster
    at 90).
-   Without TRADITIONAL_LOOT_LEVEL the situation becomes worse and no loot above
-   klevel 102 could drop anymore (again Star Blades at level 90 assumed).
-   Note: Items of klevel > 115 cannot drop outside of NR, even with this on. - C. Blue */
+   Without TRADITIONAL_LOOT_LEVEL the situation becomes worse and usually no
+   loot above klevel 102 could drop anymore (again Star Blades lv90 assumed).
+   Note: Items of klevel > 115 usually cannot drop outside of NR, even with
+   this on.
+   EXCEPTIONS to all the above stuff:
+   Note2: Objects still get an extra boost from being 'good' or 'great', of +10
+   to object_level and from GREAT_OBJ which can even be +128. - C. Blue */
 #define RANDOMIZED_LOOT_LEVEL
 
 /* Level 50 limit for non-kings:    RECOMMENDED!  */
