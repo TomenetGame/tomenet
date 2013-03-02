@@ -6233,9 +6233,9 @@ D:This is a chunk of material used for building a golem.
 N:856:& Massive Piece~ of Mithril
 G:*:B
 I:52:6:0
-W:110:0:2500:10000
-#A:110/64
-A:100/48
+W:105:0:2500:10000
+#A:105/64
+A:105/48
 P:0:1d1:0:0:0
 F:EASY_KNOW
 D:This is a chunk of material used for building a golem.
@@ -6243,9 +6243,9 @@ D:This is a chunk of material used for building a golem.
 N:857:& Massive Piece~ of Adamantite
 G:*:v
 I:52:7:0
-W:120:0:4500:20000
-#A:120/64
-A:120/48
+W:115:0:4500:20000
+#A:115/64
+A:115/48
 P:0:1d1:0:0:0
 F:EASY_KNOW
 D:This is a chunk of material used for building a golem.
@@ -6820,7 +6820,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 N:926:& Heavy Ball~
 G:*:u
 I:13:1:0
-W:120:0:2000:0
+W:127:0:2000:0
 A:127/255
 P:0:1d1:0:0:0
 
@@ -7104,7 +7104,7 @@ F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY | FORCE_DEPTH
 N:962:Heavy Mithril Plate Armour~
 G:[:B
 I:37:27:0
-W:90:0:330:45000
+W:100:0:330:45000
 A:100/32
 P:70:4d4:-5:0:10
 F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY | FORCE_DEPTH
@@ -7121,7 +7121,7 @@ N:964:Heavy Adamantite Scale Armour~
 G:[:v
 I:37:31:0
 W:95:0:360:45000
-A:100/48
+A:95/48
 P:72:4d4:-6:0:10
 F:IGNORE_ACID | IGNORE_WATER | IGNORE_MANA | WINNERS_ONLY | FORCE_DEPTH
 
@@ -7129,15 +7129,15 @@ N:965:Heavy Adamantite Plate Armour~
 G:[:v
 I:37:32:0
 W:105:0:380:50000
-A:110/48
+A:105/48
 P:76:4d4:-6:0:10
 F:IGNORE_ACID | IGNORE_WATER | IGNORE_MANA | WINNERS_ONLY | FORCE_DEPTH
 
 N:966:Heavy Ribbed Adamantite Armour~
 G:[:v
 I:37:33:0
-W:120:0:400:55000
-A:120/48
+W:115:0:400:55000
+A:115/48
 P:80:4d4:-6:0:10
 F:IGNORE_ACID | IGNORE_WATER | IGNORE_MANA | WINNERS_ONLY | FORCE_DEPTH
 

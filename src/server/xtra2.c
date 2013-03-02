@@ -59,11 +59,23 @@
          melee chars who aim at high level weapons and armour be at a
          disadvantage, compared to light armour dropping everywhere.
          Also, floor level determines monster level of spawns anyway.
-         However, contra side is cheezy high unique farming on harmless
-         floors via vaults - probably only affects melee chars though.
+         However, contra side of disabling this is cheezy high unique
+         farming on harmless floors via vaults for great loot -
+         probably only affects melee chars though.
    Disabling this definition will cause loot to depend more on monster level. */
-//#define TRADITIONAL_LOOT_LEVEL
+#define TRADITIONAL_LOOT_LEVEL
 
+/* Should be defined to allow finding top-level items on non-NR floors
+   in cases where you just cannot find monsters of high enough level so
+   that averaging floor and monster level would pass the test.
+   Details:
+   Without this, if TRADITIONAL_LOOT_LEVEL is on, no loot above klevel 108
+   could drop outside of NR anymore (Star Blade being highest normal monster
+   at 90).
+   Without TRADITIONAL_LOOT_LEVEL the situation becomes worse and no loot above
+   klevel 102 could drop anymore (again Star Blades at level 90 assumed).
+   Note: Items of klevel > 115 cannot drop outside of NR, even with this on. - C. Blue */
+#define RANDOMIZED_LOOT_LEVEL
 
 /* Level 50 limit for non-kings:    RECOMMENDED!  */
 #define KINGCAP_LEV
@@ -4585,6 +4597,7 @@ void monster_death(int Ind, int m_idx)
 	object_type *qq_ptr;
 	struct worldpos *wpos;
 	cave_type **zcave;
+	int dlev, rlev, tol_lev;
 
 	int a_idx, chance, I_kind;
 	artifact_type *a_ptr;
@@ -4782,6 +4795,8 @@ void monster_death(int Ind, int m_idx)
 	    !streq(r_name_get(m_ptr), "Great Pumpkin")) /* allow a mixed hunting group */
 		return;
 
+	dlev = getlevel(wpos);
+	rlev = r_ptr->level;
 
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
@@ -4824,23 +4839,26 @@ void monster_death(int Ind, int m_idx)
 
 #ifdef TRADITIONAL_LOOT_LEVEL
 			/* Average dungeon and monster levels */
-			object_level = (getlevel(wpos) + r_ptr->level) / 2;
+			object_level = (dlev + rlev) / 2;
+ #ifdef RANDOMIZED_LOOT_LEVEL
+			if (object_level < rlev) tol_lev = rlev - object_level;
+			else tol_lev = dlev - object_level;
+			if (tol_lev > 11) tol_lev = 13; /* need +12 levels of tolerance to allow depth-115 items to drop from level 80 monsters */
+			object_level += rand_int(tol_lev);
+ #endif
 #else
 			/* Monster level is more important than floor level */
- #if 0 /* extreme */
-			object_level = r_ptr->level;
- #endif
- #if 0 /* spiking average */
-			if (rand_int(2)) object_level = (getlevel(wpos) + (r_ptr->level * 2)) / 3;
-			else object_level = r_ptr->level;
- #endif
- #if 1 /* safe average */
-			object_level = (getlevel(wpos) + r_ptr->level * 2) / 3;
+			object_level = (dlev + rlev * 2) / 3;
+ #ifdef RANDOMIZED_LOOT_LEVEL
+			if (object_level < rlev) tol_lev = rlev - object_level;
+			else tol_lev = dlev - object_level;
+			if (tol_lev > 21) tol_lev = 21; /* need +20 levels of tolerance to allow depth-115 items to drop from level 80 monsters */
+			object_level += rand_int(tol_lev);
  #endif
 #endif
 
 			/* No easy item hunting in towns.. */
-			if (wpos->wz == 0) object_level = r_ptr->level / 2;
+			if (wpos->wz == 0) object_level = rlev / 2;
 
 			/* Place Gold */
 			if (do_gold && (!do_item || (rand_int(100) < 50))) {
@@ -4882,7 +4900,7 @@ void monster_death(int Ind, int m_idx)
 			}
 
 			/* Reset the object level */
-			object_level = getlevel(wpos);
+			object_level = dlev;
 
 			/* Reset "coin" type */
 			coin_type = 0;
