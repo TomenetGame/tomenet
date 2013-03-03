@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. February 2013 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.3 - official websites are:
+| Latest update: 3. March 2013 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.3a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -37,6 +37,7 @@ Contents
 (1) Introduction
     (1.1)   What is TomeNET? (Where can I get the latest sources?)
     (1.1a)  Where do I get in contact?
+    (1.1b)  How do I set up IRC chat?
     (1.2)   What is a rogue-like game?
     (1.2a)  Where do I find more information about rogue-like games?
     (1.3)   Goal and progress of TomeNET players
@@ -1612,9 +1613,44 @@ with other players and developers via the following media:
       The channels #tomenet, #tomenet.iron and #tomenet.arcade relay chat from
       and to the main/ironman/arcade server, allowing you to read what's going
       on in-game, and to chat with players simply with any IRC client.
+      See below (1.1b) for how to set up IRC chat in detail.
 -Voice chat via mumble, get it from http://mumble.sourceforge.net/.
       IP is 'europe.tomenet.net', port is '23348', password is 'tomenet'.
       For details see "(2.4) Installing voice chat".
+
+
+(1.1b) How to set up IRC chat
+-----------------------------
+First you need to install an IRC client to connect to IRC chat networks:
+
+Windows: Most popular client is probably mIRC.
+
+Linux: Popular IRC clients for Linux are Pidgin (actually rather a multi-
+       protocol messaging tool, pretty nifty), x-chat (GUI), Konversation (KDE
+       GUI) or irssi (command-line).
+
+Mac OSX: For example Colloquy, X-Chat Aqua or Linkinus.
+
+After installing your preferred IRC chat client, enter an username of your
+choice and set it up to connect to the "Freenode" IRC network.
+(For detailed help on Internet Relay Chat visit www.irchelp.org.)
+
+After you established a connection to Freenode, have your client join the
+so-called "channels" named:
+
+ #tomenet           (this is the main chat channel)
+ #tomenet.iron      (if you are also interested in the ironman server)
+ #tomenet.arcade    (if you wanna know what's going on on the arcade server!)
+
+Joining a channel will relay chat from and to the respective TomeNET server,
+allowing you to read what's going on in-game, and to chat with the players.
+(Note that not all kinds of messages are actually relayed, for example AFK
+messages are not.)
+
+Usually all IRC clients offer a possibility to configure them to connect a
+specific network (Freenode) and to join specific channels (#tomenet etc.)
+automatically on startup, so you don't have to do it manually each time you
+start the IRC client.
 
 
 
