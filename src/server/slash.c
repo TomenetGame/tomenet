@@ -1484,6 +1484,9 @@ void do_slash_cmd(int Ind, char *message)
 				p_ptr->recall_pos.wx = k % MAX_WILD_X;
 				p_ptr->recall_pos.wy = atoi(token[2]) % MAX_WILD_Y;
 				p_ptr->recall_pos.wz = 0;
+				/* fix negative modulo results, sigh */
+				if (p_ptr->recall_pos.wx < 0) p_ptr->recall_pos.wx = 0;
+				if (p_ptr->recall_pos.wy < 0) p_ptr->recall_pos.wy = 0;
 				break;
 //			default:	/* follow the inscription */
 				/* TODO: support tower */
