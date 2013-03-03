@@ -243,6 +243,7 @@ void world_comm(int fd, int arg){
 
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->conn == NOT_CONNECTED) continue;
+					if (Players[i]->ignoring_chat) continue;
 					msg_print(i, wpk->d.chat.ctxt);
 				}
 
