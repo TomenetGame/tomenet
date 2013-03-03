@@ -9702,6 +9702,10 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 		}
 		inscription++;
 	}
+
+	/* sanity check or crash */
+	if (p_ptr->recall_pos.wx < 0) p_ptr->recall_pos.wx = 0;
+	if (p_ptr->recall_pos.wy < 0) p_ptr->recall_pos.wy = 0;
 }
 
 bool set_recall_timer(int Ind, int v)
