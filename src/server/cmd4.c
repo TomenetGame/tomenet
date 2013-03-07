@@ -2116,7 +2116,7 @@ void do_cmd_check_server_settings(int Ind)
 		if (cfg.zang_monsters)
 			fprintf(fff, "  Zelasny Angband additions (%d%%)\n", cfg.zang_monsters);
 		if (cfg.pern_monsters)
-			fprintf(fff, "  Draconian additions (%d%%)\n", cfg.pern_monsters);
+			fprintf(fff, "  Pern additions (%d%%)\n", cfg.pern_monsters);
 		if (cfg.cth_monsters)
 			fprintf(fff, "  Lovecraft additions (%d%%)\n", cfg.cth_monsters);
 		if (cfg.cblue_monsters)
@@ -2133,7 +2133,7 @@ void do_cmd_check_server_settings(int Ind)
 		if (cfg.zang_monsters > TELL_MONSTER_ABOVE)
 			fprintf(fff, "  Zelasny Angband additions\n");
 		if (cfg.pern_monsters > TELL_MONSTER_ABOVE)
-			fprintf(fff, "  Draconian additions\n");
+			fprintf(fff, "  Pern additions\n");
 		if (cfg.cth_monsters > TELL_MONSTER_ABOVE)
 			fprintf(fff, "  Lovecraft additions\n");
 		if (cfg.cblue_monsters > TELL_MONSTER_ABOVE)
