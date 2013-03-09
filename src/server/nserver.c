@@ -810,6 +810,9 @@ static bool forbidden_name(char *cname) {
 	if (!strcmp(name, "tomenet.acc_old")) return TRUE;
 	if (!strcmp(name, "accedit")) return TRUE;
 
+	if (!strncmp(name, "save", 4) && name[4] >= '0' && name[4] <= '9') return TRUE; /* paranoia - backup folders "saveX..." */
+	if (!strncmp(name, "estate", 6)) return TRUE; /* paranoia - house contents backup folder for server resets */
+
 	/* special death causes */
 	if (!strcmp(name, "insanity")) return TRUE;
 	if (!strcmp(name, "divine wrath")) return TRUE;
