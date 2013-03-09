@@ -8249,7 +8249,7 @@ void do_cmd_breathe_aux(int Ind, int dir) {
         case TRAIT_BLUE: /* Draconic Blue */
 	        sprintf(p_ptr->attacker, " breathes lightning for");
 	        msg_print(Ind, "You breathe lightning.");
-	        fire_ball(Ind, GF_FIRE, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), 2, p_ptr->attacker);
+	        fire_ball(Ind, GF_ELEC, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), 2, p_ptr->attacker);
                 break;
         case TRAIT_WHITE: /* Draconic White */
 	        sprintf(p_ptr->attacker, " breathes frost for");
