@@ -1359,6 +1359,8 @@ if (season_halloween) {
 
 /* Check if player intercept's a monster's attempt to do something */
 //bool monst_check_grab(int Ind, int m_idx, cptr desc)
+/* Don't allow interception of multiple players to stack? */
+#define NO_INTERCEPTION_STACKING
 bool monst_check_grab(int m_idx, int mod, cptr desc)
 {
 //	player_type *p_ptr;
@@ -1370,6 +1372,9 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 	cave_type **zcave;
 	int i, x2 = m_ptr->fx, y2 = m_ptr->fy;
 	int grabchance = 0;
+#ifdef NO_INTERCEPTION_STACKING
+	int grabchance_top = 0, i_top;
+#endif
 	int rlev = r_ptr->level;
 
 	/* hack: if we dont auto-retaliate vs a monster than we dont intercept either */
@@ -1433,29 +1438,42 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 
 		if (q_ptr->blind) grabchance /= 3;
 
+#ifndef NO_INTERCEPTION_STACKING
 		if (grabchance < 1) continue;
 
 //		grabchance = 50 + q_ptr->lev/2 - (q_ptr->blind?30:0);
 		if (grabchance > INTERCEPT_CAP) grabchance = INTERCEPT_CAP;/* Interception cap */
 
 		/* Got disrupted ? */
-		if (magik(grabchance))
-		{
+		if (magik(grabchance)) {
 			char		m_name[MNAME_LEN];
 			/* Get the monster name (or "it") */
 			monster_desc(i, m_name, m_idx, 0x00);
 
-//			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-#if 0
-			if (i == Ind) msg_format(Ind, "\377yYou grab %s back from teleportation!", m_name);
-			else msg_format(Ind, "%s grabs %s back from teleportation!", q_ptr->name, m_name);
-#else	// 0
 			msg_format(i, "\377%cYou intercept %s's attempt to %s!", COLOUR_IC_GOOD, m_name, desc);
 			msg_format_near(i, "\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name, desc);
-#endif	// 0
 			return TRUE;
 		}
+#else
+		if (grabchance > grabchance_top) {
+			grabchance_top = grabchance;
+			i_top = i;
+		}
+#endif
 	}
+
+#ifdef NO_INTERCEPTION_STACKING
+	/* Got disrupted ? */
+	if (magik(grabchance)) {
+		char m_name[MNAME_LEN];
+		/* Get the monster name (or "it") */
+		monster_desc(i_top, m_name, m_idx, 0x00);
+
+		msg_format(i_top, "\377%cYou intercept %s's attempt to %s!", COLOUR_IC_GOOD, m_name, desc);
+		msg_format_near(i_top, "\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, Players[i_top]->name, m_name, desc);
+		return TRUE;
+	}
+#endif
 
 	/* Assume no grabbing */
 	return FALSE;
