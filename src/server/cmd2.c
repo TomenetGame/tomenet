@@ -2666,6 +2666,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 		}
+	} else {
+		/* we didn't dig into anything, but since we might still cause earthquakes,
+		   we need to deduct one turn of energy appropriately:
+		   We basically stroke the floor to cause an earthquake instead. */
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
 	}
 
 	/* Apply Earthquakes */
