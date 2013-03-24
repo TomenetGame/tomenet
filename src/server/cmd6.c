@@ -8208,7 +8208,7 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 		msg_print(Ind, "You cannot use your elemental breath while confused.");
 		return;
 	}
-	if (p_ptr->body_monster && !strchr("JRdD", r_info[p_ptr->body_monster].d_char)) {
+	if (p_ptr->body_monster && !strchr("dDJRM", r_info[p_ptr->body_monster].d_char)) {
 		msg_print(Ind, "You cannot use your elemental breath in your current form.");
 		return;
 	}
