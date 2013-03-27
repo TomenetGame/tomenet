@@ -13040,13 +13040,14 @@ raw numbers:
 "You have a slight chance of blocking."         Below 14% chance.
 "You have a significant chance of blocking."    Below 23% chance
 "You have a good chance of blocking."           Below 33% chance.
-"You have a very good chance of blocking."      Below 44% chance.
-"You have an excellent chance of blocking."     Below 55% chance.
-"You have a superb chance of blocking."         55% chance or better
-                                                (60% is highest reachable)
+"You have a very good chance of blocking."      Below 43% chance.
+"You have an excellent chance of blocking."     Below 48% chance.
+"You have a superb chance of blocking."         48-50% chance (the highest reachable).
+
 Note: To achieve an extraordinarily high block chance above 30% you'll
       have to enter a defensive combat stance, and your class should be
-      fairly skilled at blocking. See the note below.
+      fairly skilled at blocking and/or your shield should have a high
+      block chance. See the note below.
 
 
 Additional information:

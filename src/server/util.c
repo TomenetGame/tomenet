@@ -2608,9 +2608,9 @@ void check_parryblock(int Ind)
 			msg_print(Ind, "You have a significant chance of blocking.");
 		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 33)
 			msg_print(Ind, "You have a good chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 44)
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 43)
 			msg_print(Ind, "You have a very good chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 55)
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 48)
 			msg_print(Ind, "You have an excellent chance of blocking.");
 		else
 			msg_print(Ind, "You have a superb chance of blocking.");
