@@ -5534,6 +5534,7 @@ void calc_boni(int Ind)
 		if ((p_ptr->combat_stance == 1) &&
 		    (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) switch (p_ptr->combat_stance_power) {
 			/* note that defensive stance also increases chance to actually prefer shield over parrying in melee.c */
+  #if 0 /* multiplicative */
 			case 0: p_ptr->shield_deflect = (p_ptr->shield_deflect * 11) / 10;
 				p_ptr->dis_to_d = (p_ptr->dis_to_d * 5) / 10;
 				p_ptr->to_d = (p_ptr->to_d * 5) / 10;
@@ -5558,6 +5559,32 @@ void calc_boni(int Ind)
 				p_ptr->to_d_melee = (p_ptr->to_d_melee * 8) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
+  #else /* additive: less disadvantage for low-block shields */
+			case 0: p_ptr->shield_deflect += 8;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+				break;
+			case 1: p_ptr->shield_deflect += 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+				break;
+			case 2: p_ptr->shield_deflect += 12;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+				break;
+			case 3: p_ptr->shield_deflect += 20;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 8) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 8) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 8) / 10;
+				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+				break;
+  #endif
 		}
  #endif
  #ifdef USE_PARRYING /* need parrying to make use of offensive stance */
@@ -5578,28 +5605,28 @@ void calc_boni(int Ind)
   #ifdef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
 		else if ((p_ptr->combat_stance == 1) &&
 		    (p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) switch (p_ptr->combat_stance_power) {
-			case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 11) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 5) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 5) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 10;
+			case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 6) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 6) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 6) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
-			case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 12) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 5) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 5) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 10;
+			case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
-			case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 5) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 5) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 10;
+			case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 14) / 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
 			case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 17) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 5) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 5) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
 		}
