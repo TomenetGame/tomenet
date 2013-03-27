@@ -120,11 +120,8 @@ static void do_curse (artifact_type *a_ptr)
 #define AP_JEWELRY_COMBAT /* helps +dam/+hit/+ac rings/amulets a bit, causing those values to not factor in. - C. Blue */
 s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	object_kind *k_ptr = &k_info[lookup_kind(a_ptr->tval, a_ptr->sval)];
-	s32b p = 0;
+	s32b p = 1;
 	int immunities = 0, i, mult;
-
-	/* Start with a "power" rating derived from the base item's level. */
-	p = (k_ptr->level + 7) / 8;
 
 	/* Hack: MHDSMs don't get their k_ptr imms added up because they don't
 	   use normal flags but xtra2 instead. Fix that here: */
@@ -157,23 +154,23 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	case TV_POLEARM:
 	case TV_SWORD:
 	case TV_AXE:
-		if (a_ptr->flags1 & TR1_KILL_DRAGON) p = (p * 3) / 2;
-		if (a_ptr->flags1 & TR1_KILL_DEMON) p = (p * 3) / 2;
-		if (a_ptr->flags1 & TR1_KILL_UNDEAD) p = (p * 3) / 2;
+		if (a_ptr->flags1 & TR1_KILL_DRAGON) p += 4;
+		if (a_ptr->flags1 & TR1_KILL_DEMON) p += 4;
+		if (a_ptr->flags1 & TR1_KILL_UNDEAD) p += 4;
 
-		if (a_ptr->flags1 & TR1_SLAY_EVIL) p = (p * 3) / 2;
-		if (a_ptr->flags1 & TR1_SLAY_ANIMAL) p = (p * 4) / 3;
-		if (a_ptr->flags1 & TR1_SLAY_UNDEAD) p = (p * 4) / 3;
-		if (a_ptr->flags1 & TR1_SLAY_DRAGON) p = (p * 4) / 3;
-		if (a_ptr->flags1 & TR1_SLAY_DEMON) p = (p * 4) / 3;
-		if (a_ptr->flags1 & TR1_SLAY_TROLL) p = (p * 5) / 4;
-		if (a_ptr->flags1 & TR1_SLAY_ORC) p = (p * 5) / 4;
-		if (a_ptr->flags1 & TR1_SLAY_GIANT) p = (p * 6) / 5;
+		if (a_ptr->flags1 & TR1_SLAY_EVIL) p += 4;
+		if (a_ptr->flags1 & TR1_SLAY_ANIMAL) p += 2;
+		if (a_ptr->flags1 & TR1_SLAY_UNDEAD) p += 3;
+		if (a_ptr->flags1 & TR1_SLAY_DRAGON) p += 3;
+		if (a_ptr->flags1 & TR1_SLAY_DEMON) p += 3;
+		if (a_ptr->flags1 & TR1_SLAY_TROLL) p += 1;
+		if (a_ptr->flags1 & TR1_SLAY_ORC) p += 1;
+		if (a_ptr->flags1 & TR1_SLAY_GIANT) p += 1;
 
-		if (a_ptr->flags1 & TR1_BRAND_ACID) p = (p * 3) / 2;
-		if (a_ptr->flags1 & TR1_BRAND_ELEC) p = (p * 3) / 2;
-		if (a_ptr->flags1 & TR1_BRAND_FIRE) p = (p * 4) / 3;
-		if (a_ptr->flags1 & TR1_BRAND_COLD) p = (p * 4) / 3;
+		if (a_ptr->flags1 & TR1_BRAND_ACID) p += 4;
+		if (a_ptr->flags1 & TR1_BRAND_ELEC) p += 4;
+		if (a_ptr->flags1 & TR1_BRAND_FIRE) p += 3;
+		if (a_ptr->flags1 & TR1_BRAND_COLD) p += 3;
 
 		if (a_ptr->flags1 & TR1_BLOWS) p += (a_ptr->pval) * 6;
 		if (a_ptr->flags1 & TR1_LIFE) p += (a_ptr->pval) * 7;
