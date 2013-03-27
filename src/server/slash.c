@@ -3597,12 +3597,16 @@ void do_slash_cmd(int Ind, char *message)
 			if (prefix(message, "/inval")){
 				if(!tk) return;
 				/* added checking for account existance - mikaelh */
-				switch(invalidate(message3)) {
+				switch(invalidate(message3, FALSE)) {
 				case -1: msg_format(Ind, "\377GInvalidating %s", message3);
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
 					break;
 				case 1: msg_format(Ind, "\377rAccount %s already completely invalid", message3);
+					break;
+				case 2: msg_print(Ind, "\377rYou may not invalidate admin accounts");
+					s_printf("ATTEMPT_INVAL_ADMIN: %s -> %s\n", p_ptr->name, message3);
+					break;
 				}
 				return;
 			}
@@ -3733,12 +3737,16 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/inval")){
 				if(!tk) return;
 				/* added checking for account existance - mikaelh */
-				switch(invalidate(message3)) {
+				switch(invalidate(message3, TRUE)) {
 				case -1: msg_format(Ind, "\377GInvalidating %s", message3);
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
 					break;
 				case 1: msg_format(Ind, "\377rAccount %s already completely invalid", message3);
+					break;
+				case 2: msg_print(Ind, "\377rAdmin accounts must be validated via accedit.");
+					s_printf("CANNOT_INVAL_ADMIN: %s -> %s\n", p_ptr->name, message3);
+					break;
 				}
 				return;
 			}

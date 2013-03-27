@@ -1209,7 +1209,7 @@ extern int ring_of_polymorph_level(int r_lev);
 extern void account_check(int Ind);
 extern bool WriteAccount(struct account *r_acc, bool new);
 extern int validate(char *name);
-extern int invalidate(char *name);
+extern int invalidate(char *name, bool admin);
 extern int makeadmin(char *name);
 extern int acc_set_flags(char *name, u32b flags, bool set);
 extern int acc_set_flags_id(u32b id, u32b flags, bool set);

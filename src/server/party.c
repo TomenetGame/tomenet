@@ -46,7 +46,7 @@ static hash_entry *hash_table[NUM_HASH_ENTRIES];
 
 
 /* admin only - account edit function */
-bool WriteAccount(struct account *r_acc, bool new){
+bool WriteAccount(struct account *r_acc, bool new) {
 	FILE *fp;
 	short found = 0;
 	struct account c_acc;
@@ -107,7 +107,7 @@ bool WriteAccount(struct account *r_acc, bool new){
  Modified to return 0 if not found, 1 if found but already 100% validated,
  and -1 if found and there was still something invalid about it - C. Blue
  */
-int validate(char *name){
+int validate(char *name) {
 	struct account *c_acc;
 	int i;
 	bool effect = FALSE;
@@ -115,8 +115,10 @@ int validate(char *name){
 	c_acc = GetAccount(name, NULL, TRUE);
 	if (!c_acc) return(0);
 
-	if (c_acc->flags & (ACC_TRIAL | ACC_NOSCORE)) effect = TRUE;
-	c_acc->flags &= ~(ACC_TRIAL | ACC_NOSCORE);
+	if (c_acc->flags & ACC_TRIAL) {
+		effect = TRUE;
+		c_acc->flags &= ~(ACC_TRIAL | ACC_NOSCORE);
+	}
 	WriteAccount(c_acc, FALSE);
 	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	for (i = 1; i <= NumPlayers; i++) {
@@ -132,7 +134,7 @@ int validate(char *name){
 }
 
 /* invalidate - opposite to validate() */
-int invalidate(char *name){
+int invalidate(char *name, bool admin) {
 	struct account *c_acc;
 	int i;
 	bool effect = FALSE;
@@ -140,8 +142,12 @@ int invalidate(char *name){
 	c_acc = GetAccount(name, NULL, TRUE);
 	if (!c_acc) return(0);
 
-	if (!(c_acc->flags & (ACC_TRIAL | ACC_NOSCORE))) effect = TRUE;
-	c_acc->flags |= (ACC_TRIAL | ACC_NOSCORE);
+	if (!admin && (c_acc->flags & ACC_ADMIN)) return 2;
+
+	if (!(c_acc->flags & ACC_TRIAL)) {
+		effect = TRUE;
+		c_acc->flags |= (ACC_TRIAL | ACC_NOSCORE);
+	}
 	WriteAccount(c_acc, FALSE);
 	memset(c_acc->pass, 0, sizeof(c_acc->pass));
 	for (i = 1; i <= NumPlayers; i++) {
@@ -156,7 +162,7 @@ int invalidate(char *name){
 	return(1);
 }
 
-int makeadmin(char *name){
+int makeadmin(char *name) {
 	struct account *c_acc;
 	int i;
 	c_acc = GetAccount(name, NULL, TRUE);
