@@ -10156,6 +10156,7 @@ Warrior is strongly recommended.
     guide elves and man by gaining their trust. Appearing in such shape, their
     abilities will seem somewhat superior in all aspects and they also possess
     infra-vision.
+
     Maiar have a choice of ascending to enlightenment, or submit to corruption
     of the promise of demonic powers. To determine their fate, they must kill
     either a candlebearer, a servant of good (to become corrupted), or a
@@ -10174,16 +10175,21 @@ Warrior is strongly recommended.
     If a Maia generates the dungeon level, there will be a guaranteed spawn, so
     if you are in a party with non-Maiar, make sure you are the first one
     taking the staircase so you generate the level.
+
     Maiar are able to train in the 'Astral' school, an exclusive divine magic
     which has spells of different effect depending on the caster's alignment.
-    Initiation to either enlightened or corrupted beings will decide the effect
-    of astral spells, extra abilities, and also their skill chart layout!
+    Some astral spells use intelligence for determining their spell failure
+    rates, some use wisdom.
+    Initiation to either enlightened or corrupted beings, or during their first
+    few character levels the lack thereof, will decide the effect of astral
+    spells.
     Maiar can be any class that can utilize mana. They get the best shop prices
     of all races since they are either greatly respected or feared by all other
     creatures.
     They gain experience extremely slowly, and rarely need to feed before
     initiation. Afterwards they have no more need for any worldly food at all.
     Alignment-dependant boni are..
+
     Enlightened:
         Able to see invisible and resisting light, while being susceptible to
         evil-based attacks.
@@ -10192,18 +10198,19 @@ Warrior is strongly recommended.
         At level 50 they will be able to fly, become resistant to poison,
         electricity, cold and be enveloped in an aura of frost and lightning;
         also, their melee attacks will slay evil opponents intrinsically.
+
     Corrupted:
         Resist fire and darkness while being susceptible to good-based attacks.
         +2 bonus HP for each level above 20.
         At level 50 they will become resistant to poison, immune to fire, and
         be enveloped in a fiery aura.
-    Some astral spells use intelligence for determining their spell failure
-    rates, some use wisdom.
+
     Maiar start with a low profile skill chart which gets boosted on initiation
     depending on their alignment. Their skills will be adjusted so that they
     remain as close to their previous values as possible while the character
     gets back any skill points that are freed up due to higher skill ratios
     after the initiation took place, see (6.2a) for details.
+
     Maia get a bonus on 'Sneakiness' and 'Stealth' no matter the alignment.
 
 
