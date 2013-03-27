@@ -3566,15 +3566,22 @@ void do_slash_cmd(int Ind, char *message)
 
 
 		/*
-		 * Privileged commands, level 2
-		 */
-		else if (!admin && p_ptr->privileged == 2) {
-		}
-
-		/*
-		 * Privileged commands, level 1
+		 * Privileged commands
+		 *
+		 * (Admins might have different versions of these commands)
 		 */
 		else if (!admin && p_ptr->privileged) {
+			/*
+			 * Privileged commands, level 2
+			 */
+			if (p_ptr->privileged == 2) {
+			}
+
+
+
+			/*
+			 * Privileged commands, level 1
+			 */
 			if (prefix(message, "/val")){
 				if(!tk) return;
 				/* added checking for account existance - mikaelh */
@@ -3587,7 +3594,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
-			else if (prefix(message, "/inval")){
+			if (prefix(message, "/inval")){
 				if(!tk) return;
 				/* added checking for account existance - mikaelh */
 				switch(invalidate(message3)) {
