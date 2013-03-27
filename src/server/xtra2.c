@@ -3647,10 +3647,10 @@ void shape_Maia_skills(int Ind) {
 		/* Yay */
 		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);
 		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30);
-		do_Maia_skill(Ind, SKILL_HOFFENSE, 24);
-		do_Maia_skill(Ind, SKILL_HCURING, 24);
-		do_Maia_skill(Ind, SKILL_HDEFENSE, 24);
-		do_Maia_skill(Ind, SKILL_HSUPPORT, 24);
+		do_Maia_skill(Ind, SKILL_HOFFENSE, 21);
+		do_Maia_skill(Ind, SKILL_HCURING, 21);
+		do_Maia_skill(Ind, SKILL_HDEFENSE, 21);
+		do_Maia_skill(Ind, SKILL_HSUPPORT, 21);
 		do_Maia_skill(Ind, SKILL_DIVINATION, 17);
 		do_Maia_skill(Ind, SKILL_SWORD, 13);
 		do_Maia_skill(Ind, SKILL_BLUNT, 13);
