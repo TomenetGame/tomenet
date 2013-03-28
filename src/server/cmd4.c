@@ -1865,16 +1865,16 @@ void do_cmd_check_server_settings(int Ind)
 	/* General information */
 	fprintf(fff, "Server notes: %s\n", cfg.server_notes);
 #ifdef TEST_SERVER
-	fprintf(fff, "This is a test server. Expect frequent restarts/crashes.");
+	fprintf(fff, "This is a test server. Expect frequent restarts/crashes.\n");
 #endif
 #ifdef RPG_SERVER
-	fprintf(fff, "This is an 'Ironman' server. See guide (8.5) for ruleset details.");
+	fprintf(fff, "This is an 'Ironman' server. See guide (8.5) for ruleset details.\n");
 #endif
 #ifdef ARCADE_SERVER
-	fprintf(fff, "This is an 'Arcade' server. See guide (8.5a) for ruleset details.");
+	fprintf(fff, "This is an 'Arcade' server. See guide (8.5a) for ruleset details.\n");
 #endif
 #ifdef FUN_SERVER
-	fprintf(fff, "This is a 'Fun' server: Players may use '/wish' command freely.");
+	fprintf(fff, "This is a 'Fun' server: Players may use '/wish' command freely.\n");
 #endif
 
 	fprintf(fff, "Inactive characters will be deleted after %d days.\n", CHARACTER_EXPIRY_DAYS);
