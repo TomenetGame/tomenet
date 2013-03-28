@@ -8793,6 +8793,12 @@ void erase_artifact(int a_idx) {
 	hash_entry *ptr;
 	player_type *p_ptr;
 
+	object_type forge;
+	i = lookup_kind(a_info[a_idx].tval, a_info[a_idx].sval);
+	if (i) invcopy(&forge, i);
+	forge.name1 = a_idx;
+	object_desc(0, o_name, &forge, FALSE, 3);
+
 	/* objects on the floor/in monster inventories */
         for (i = 0; i < o_max; i++) {
                 o_ptr = &o_list[i];
@@ -8801,6 +8807,7 @@ void erase_artifact(int a_idx) {
                 /* Look for specific true artifact */
                 if (o_ptr->name1 != a_idx) continue;
 
+
 		/* in monster inventory */
                 if (o_ptr->held_m_idx) {
 			m_ptr = &m_list[o_ptr->held_m_idx];
@@ -8808,7 +8815,7 @@ void erase_artifact(int a_idx) {
 			if (m_ptr->hold_o_idx == i) {
 				m_ptr->hold_o_idx = o_ptr->next_o_idx;
 				monster_desc(0, m_name, o_ptr->held_m_idx, 0);
-				s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #1)\n", o_ptr->held_m_idx, m_name);
+				s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #1)\n  '%s'\n", o_ptr->held_m_idx, m_name, o_name);
 				delete_object_idx(i, FALSE);
 				return;
 			} else {
@@ -8818,7 +8825,7 @@ void erase_artifact(int a_idx) {
 					if (this_o_idx == i) {
 						q_ptr->next_o_idx = o_list[this_o_idx].next_o_idx;
 						monster_desc(0, m_name, o_ptr->held_m_idx, 0);
-						s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #%d)\n", o_ptr->held_m_idx, m_name, i);
+						s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #%d)\n  '%s'\n", o_ptr->held_m_idx, m_name, i, o_name);
 						delete_object_idx(this_o_idx, FALSE);
 						return;
 					}
@@ -8829,7 +8836,7 @@ void erase_artifact(int a_idx) {
 			}
                 }
 
-		s_printf("FLUENT_ARTIFACT_RESETS: floor\n");
+		s_printf("FLUENT_ARTIFACT_RESETS: floor '%s'\n", o_name);
                 delete_object_idx(i, FALSE);
                 return;
         }
@@ -8843,7 +8850,7 @@ void erase_artifact(int a_idx) {
 			if (!o_ptr->k_idx) continue;
 
 			if (o_ptr->name1 == a_idx) {
-				s_printf("FLUENT_ARTIFACT_RESETS: player '%s'\n", p_ptr->name);
+				s_printf("FLUENT_ARTIFACT_RESETS: player '%s'\n  '%s'\n", p_ptr->name, o_name);
 				object_desc(this_o_idx, o_name, o_ptr, FALSE, 3);
 				msg_format(this_o_idx, "\374\377R%s bids farewell to you...", o_name);
 				handle_art_d(a_idx);
@@ -8876,7 +8883,7 @@ void erase_artifact(int a_idx) {
 			/* try to load him! */
 			if (!load_player(NumPlayers)) {
 				/* bad fail */
-				s_printf("FLUENT_ARTIFACT_RESETS: load_player '%s' failed\n", p_ptr->name);
+				s_printf("FLUENT_ARTIFACT_RESETS: load_player '%s' failed\n  '%s'\n", p_ptr->name, o_name);
 			        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
 			        KILL(p_ptr, player_type);
 				NumPlayers--;
@@ -8888,7 +8895,7 @@ void erase_artifact(int a_idx) {
 				if (!o_ptr->k_idx) continue;
 
 				if (o_ptr->name1 == a_idx) {
-					s_printf("FLUENT_ARTIFACT_RESETS: savegame '%s'\n", p_ptr->name);
+					s_printf("FLUENT_ARTIFACT_RESETS: savegame '%s'\n  '%s'\n", p_ptr->name, o_name);
 					handle_art_d(a_idx);
 					o_ptr->tval = o_ptr->sval = o_ptr->k_idx = o_ptr->name1 = 0;
 					p_ptr->artifact_reset = 1; /* hack to notify him next time he logs on */
@@ -8909,5 +8916,5 @@ void erase_artifact(int a_idx) {
 	NumPlayers--;
 
 	/* Paranoia: Failed to locate the artifact. Shouldn't happen! */
-	s_printf("FLUENT_ARTIFACT_RESET: not found\n");
+	s_printf("FLUENT_ARTIFACT_RESETS: not found '%s'\n", o_name);
 }
