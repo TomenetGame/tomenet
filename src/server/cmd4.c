@@ -2022,6 +2022,13 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff,"\n");
 
 	/* arts & winners */
+#ifdef FLUENT_ARTIFACT_RESETS
+	fprintf(fff, "True artifacts will disappear some time after they have been found ('I'nspect).\n");
+#else
+	/*unknown, since it's done in LUA:
+	fprintf(fff, "True artifacts will be reset by static schedule.");*/
+#endif
+
 	if (cfg.anti_arts_hoard)
 		fprintf(fff, "True artifacts will disappear if you drop/leave them.\n");
 	else {
