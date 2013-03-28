@@ -1373,7 +1373,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 	int i, x2 = m_ptr->fx, y2 = m_ptr->fy;
 	int grabchance = 0;
 #ifdef NO_INTERCEPTION_STACKING
-	int grabchance_top = 0, i_top;
+	int grabchance_top = 0, i_top = 0;
 #endif
 	int rlev = r_ptr->level;
 
