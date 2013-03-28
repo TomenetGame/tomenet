@@ -8533,13 +8533,24 @@ void handle_art_inumpara(int aidx) {
 }
 void handle_art_dnum(int aidx) {
 	if (a_info[aidx].cur_num > 0) a_info[aidx].cur_num--;
+#ifdef FLUENT_ARTIFACT_RESETS
+	if (a_info[aidx].cur_num == 0) a_info[aidx].timeout = 0;
+#endif
 }
 void handle_art_d(int aidx) {
 	if (a_info[aidx].cur_num > 0) {
 		a_info[aidx].cur_num--;
-		if (!a_info[aidx].cur_num) a_info[aidx].known = FALSE;
+		if (!a_info[aidx].cur_num) {
+			a_info[aidx].known = FALSE;
+#ifdef FLUENT_ARTIFACT_RESETS
+			a_info[aidx].timeout = 0;
+#endif
+		}
 	} else {
 		a_info[aidx].cur_num = 0;
+#ifdef FLUENT_ARTIFACT_RESETS
+		a_info[aidx].timeout = 0;
+#endif
 	}
 }
 
