@@ -8914,6 +8914,7 @@ void erase_artifact(int a_idx) {
 			if (!load_player(NumPlayers)) {
 				/* bad fail */
 				s_printf("FLUENT_ARTIFACT_RESETS: load_player '%s' failed\n  '%s'\n", p_ptr->name, o_name);
+				/* unhack */
 			        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
 			        KILL(p_ptr, player_type);
 				NumPlayers--;
@@ -8932,12 +8933,16 @@ void erase_artifact(int a_idx) {
 					/* write savegame back */
 					save_player(NumPlayers);
 					/* unhack */
+				        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+				        KILL(p_ptr, player_type);
 					NumPlayers--;
 					return;
 				}
 			}
-			/* advance to next character */
-			ptr = ptr->next;
+
+			/* exit with failure */
+			slot = NUM_HASH_ENTRIES;
+			break;
 		}
 	}
 	/* unhack */

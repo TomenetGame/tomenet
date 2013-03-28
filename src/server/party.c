@@ -1675,6 +1675,7 @@ static void erase_guild_key(int id) {
 			if (!load_player(NumPlayers)) {
 				/* bad fail */
 				s_printf("GUILD_KEY_ERASE: load_player '%s' failed\n", p_ptr->name);
+				/* unhack */
 			        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
 			        KILL(p_ptr, player_type);
 				NumPlayers--;
@@ -1691,6 +1692,8 @@ static void erase_guild_key(int id) {
 					/* write savegame back */
 					save_player(NumPlayers);
 					/* unhack */
+				        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+				        KILL(p_ptr, player_type);
 					NumPlayers--;
 					return;
 				}
