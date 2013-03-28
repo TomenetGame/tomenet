@@ -8887,12 +8887,19 @@ void erase_artifact(int a_idx) {
 
 	/* hack */
 	NumPlayers++;
-        MAKE(Players[NumPlayers], player_type);
-        p_ptr = Players[NumPlayers];
-        p_ptr->inventory = C_NEW(INVEN_TOTAL, object_type);
-        for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
-                ptr = hash_table[slot];
-                while (ptr) {
+	MAKE(Players[NumPlayers], player_type);
+	p_ptr = Players[NumPlayers];
+	p_ptr->inventory = C_NEW(INVEN_TOTAL, object_type);
+	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+		ptr = hash_table[slot];
+		while (ptr) {
+			/* not the holder of the artifact? */
+			if (ptr->id != a_info[a_idx].carrier) {
+				/* advance to next character */
+				ptr = ptr->next;
+				continue;
+			}
+
 			/* clear his data (especially inventory) */
 			o_ptr = p_ptr->inventory;
 			WIPE(p_ptr, player_type);
