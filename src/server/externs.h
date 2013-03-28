@@ -1204,6 +1204,9 @@ extern byte potion_col[MAX_COLORS];
 
 extern byte get_spellbook_name_colour(int pval);
 extern int ring_of_polymorph_level(int r_lev);
+void determine_artifact_timeout(int a_idx);
+void erase_artifact(int a_idx);
+
 
 /* party.c */
 extern void account_check(int Ind);
@@ -1296,6 +1299,8 @@ extern int lookup_player_ind(u32b id);
 extern void backup_acclists(void);
 extern void restore_acclists(void);
 extern void fix_lost_guild_mode(int g_id);
+
+extern hash_entry *hash_table[NUM_HASH_ENTRIES];
 
 /* printout.c */
 extern int s_print_only_to_file(int which);

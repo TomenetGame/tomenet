@@ -42,7 +42,7 @@ static void del_guild(int id);
 static u32b new_accid(void);
 
 /* The hash table itself */
-static hash_entry *hash_table[NUM_HASH_ENTRIES];
+hash_entry *hash_table[NUM_HASH_ENTRIES];
 
 
 /* admin only - account edit function */

@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	5
+#define SF_VERSION_PATCH	6
 #define SF_VERSION_EXTRA	0
 
 
@@ -297,6 +297,12 @@
 
 /* maximum respawn time for uniques.... from japanese patch */
 #define COME_BACK_TIME_MAX 600
+
+
+/* Do artifacts time out after a while to prevent hoarding?
+   (Fluent artifact reset system vs static reset schedules) - C. Blue */
+#define FLUENT_ARTIFACT_RESETS
+
 
 /*
  * The types of communication that we send to the metaserver

@@ -2653,6 +2653,13 @@ static int Handle_login(int ind)
         }
 #endif
 
+#ifdef FLUENT_ARTIFACT_RESETS
+	if (p_ptr->artifact_reset == 1) {
+		msg_print(NumPlayers, "\374\377ROne or more true artifacts have bidden you farewell!");
+		p_ptr->artifact_reset = 0;
+	}
+#endif
+
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth(NumPlayers);
 

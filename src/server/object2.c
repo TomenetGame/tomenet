@@ -8769,3 +8769,145 @@ void inven_confirm_revision(int Ind, int revision)
 		}
 	}
 }
+
+/* Set timeout for a newly found artifact, for fluent artifact reset system
+   to counter long-time hoarding of artifacts. - C. Blue */
+void determine_artifact_timeout(int a_idx) {
+	object_type forge;
+	forge.name1 = a_idx;
+
+	if (multiple_artifact_p(&forge)) a_info[a_idx].timeout = -1; /* grond/crown don't expire */
+	else if (winner_artifact_p(&forge)) a_info[a_idx].timeout = 40320 * 3; /* ring of phasing/mirror of glory */
+	else a_info[a_idx].timeout = 40320; /* minutes: 4 weeks */
+}
+
+/* Similarly to erase_guild_key() this function searches *everywhere* for a
+   true artifact to erase it. Used for FLUENT_ARTIFACT_RESETS. - C. Blue */
+void erase_artifact(int a_idx) {
+	int i, this_o_idx, next_o_idx;
+	monster_type *m_ptr;
+	object_type *o_ptr, *q_ptr;
+	char m_name[MNAME_LEN], o_name[ONAME_LEN];
+
+	int slot;
+	hash_entry *ptr;
+	player_type *p_ptr;
+
+	/* objects on the floor/in monster inventories */
+        for (i = 0; i < o_max; i++) {
+                o_ptr = &o_list[i];
+                /* Skip dead objects */
+                if (!o_ptr->k_idx) continue;
+                /* Look for specific true artifact */
+                if (o_ptr->name1 != a_idx) continue;
+
+		/* in monster inventory */
+                if (o_ptr->held_m_idx) {
+			m_ptr = &m_list[o_ptr->held_m_idx];
+			/* 1st object held is the artifact? */
+			if (m_ptr->hold_o_idx == i) {
+				m_ptr->hold_o_idx = o_ptr->next_o_idx;
+				monster_desc(0, m_name, o_ptr->held_m_idx, 0);
+				s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #1)\n", o_ptr->held_m_idx, m_name);
+				delete_object_idx(i, FALSE);
+				return;
+			} else {
+				i = 1;
+				q_ptr = &o_list[m_ptr->hold_o_idx];//compiler warning
+				for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx) {
+					if (this_o_idx == i) {
+						q_ptr->next_o_idx = o_list[this_o_idx].next_o_idx;
+						monster_desc(0, m_name, o_ptr->held_m_idx, 0);
+						s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #%d)\n", o_ptr->held_m_idx, m_name, i);
+						delete_object_idx(this_o_idx, FALSE);
+						return;
+					}
+					q_ptr = &o_list[this_o_idx];
+					next_o_idx = q_ptr->next_o_idx;
+					i++;
+				}
+			}
+                }
+
+		s_printf("FLUENT_ARTIFACT_RESETS: floor\n");
+                delete_object_idx(i, FALSE);
+                return;
+        }
+
+	/* Players online */
+	for (this_o_idx = 1; this_o_idx <= NumPlayers; this_o_idx++) {
+	        p_ptr = Players[this_o_idx];
+		/* scan his inventory */
+		for (i = 0; i < INVEN_TOTAL; i++) {
+			o_ptr = &p_ptr->inventory[i];
+			if (!o_ptr->k_idx) continue;
+
+			if (o_ptr->name1 == a_idx) {
+				s_printf("FLUENT_ARTIFACT_RESETS: player '%s'\n", p_ptr->name);
+				object_desc(this_o_idx, o_name, o_ptr, FALSE, 3);
+				msg_format(this_o_idx, "\374\377R%s bids farewell to you...", o_name);
+				handle_art_d(a_idx);
+				inven_item_increase(this_o_idx, i, -99);
+				inven_item_describe(this_o_idx, i);
+				inven_item_optimize(this_o_idx, i);
+				return;
+			}
+		}
+	}
+
+	/* hack */
+	NumPlayers++;
+        MAKE(Players[NumPlayers], player_type);
+        p_ptr = Players[NumPlayers];
+        p_ptr->inventory = C_NEW(INVEN_TOTAL, object_type);
+        for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+                ptr = hash_table[slot];
+                while (ptr) {
+			/* clear his data (especially inventory) */
+			o_ptr = p_ptr->inventory;
+			WIPE(p_ptr, player_type);
+			p_ptr->inventory = o_ptr;
+			p_ptr->Ind = NumPlayers;
+			C_WIPE(p_ptr->inventory, INVEN_TOTAL, object_type);
+			/* set his supposed name */
+			strcpy(p_ptr->name, ptr->name);
+			/* generate savefile name */
+			process_player_name(NumPlayers, TRUE);
+			/* try to load him! */
+			if (!load_player(NumPlayers)) {
+				/* bad fail */
+				s_printf("FLUENT_ARTIFACT_RESETS: load_player '%s' failed\n", p_ptr->name);
+			        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+			        KILL(p_ptr, player_type);
+				NumPlayers--;
+				return;
+			}
+			/* scan his inventory */
+			for (i = 0; i < INVEN_TOTAL; i++) {
+				o_ptr = &p_ptr->inventory[i];
+				if (!o_ptr->k_idx) continue;
+
+				if (o_ptr->name1 == a_idx) {
+					s_printf("FLUENT_ARTIFACT_RESETS: savegame '%s'\n", p_ptr->name);
+					handle_art_d(a_idx);
+					o_ptr->tval = o_ptr->sval = o_ptr->k_idx = o_ptr->name1 = 0;
+					p_ptr->artifact_reset = 1; /* hack to notify him next time he logs on */
+					/* write savegame back */
+					save_player(NumPlayers);
+					/* unhack */
+					NumPlayers--;
+					return;
+				}
+			}
+			/* advance to next character */
+			ptr = ptr->next;
+		}
+	}
+	/* unhack */
+        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+        KILL(p_ptr, player_type);
+	NumPlayers--;
+
+	/* Paranoia: Failed to locate the artifact. Shouldn't happen! */
+	s_printf("FLUENT_ARTIFACT_RESET: not found\n");
+}

@@ -2700,6 +2700,8 @@ errr rd_server_savefile()
 			rd_byte(&tmp8u);
 			a_info[i].owner = 0;
 		} else rd_s32b(&a_info[i].owner);
+		if (s_older_than(4, 5, 6)) determine_artifact_timeout(i);
+		else rd_s32b(&a_info[i].timeout);
 	}
 
 	rd_u16b(&tmp16u);

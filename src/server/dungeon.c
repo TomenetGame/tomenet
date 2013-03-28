@@ -6239,7 +6239,7 @@ void dungeon(void)
 
 
 	/* Do some beginning of turn processing for each player */
-	for (i = 1; i < NumPlayers + 1; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
@@ -6290,6 +6290,15 @@ void dungeon(void)
 			teleport_away(m_fast[i], m_list[m_fast[i]].do_dist);
 			m_list[m_fast[i]].do_dist = FALSE;
 		}
+
+#ifdef FLUENT_ARTIFACT_RESETS
+	/* handle in 1-minute resolution - assume we have less artifacts than 60*cfg.fps */
+	i = turn % (cfg.fps * 60);
+	if (i < MAX_A_IDX && a_info[i].timeout > 0) {
+		a_info[i].timeout--;
+		if (a_info[i].timeout == 0) erase_artifact(i);
+	}
+#endif
 
 	/* Process all of the monsters */
 	if (!(turn % MONSTER_TURNS))
