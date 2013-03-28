@@ -7256,8 +7256,8 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr = &o_list[i];
 					a_idx = o_ptr->name1;
 					if (a_idx == 0 || a_idx == ART_RANDART) continue;
-					if (a_info[a_idx].owner) continue;
-					a_info[a_idx].owner = o_ptr->owner;
+					if (a_info[a_idx].carrier) continue;
+					a_info[a_idx].carrier = o_ptr->owner;
 				}
 				return;
 			}
@@ -7271,8 +7271,8 @@ void do_slash_cmd(int Ind, char *message)
 						if (!o_ptr->k_idx) continue;
 						a_idx = o_ptr->name1;
 						if (a_idx == 0 || a_idx == ART_RANDART) continue;
-						if (a_info[a_idx].owner) continue;
-						a_info[a_idx].owner = o_ptr->owner;
+						if (a_info[a_idx].carrier) continue;
+						a_info[a_idx].carrier = o_ptr->owner;
 					}
 				}
 				return;

@@ -5430,7 +5430,7 @@ void home_purchase(int Ind, int item, int amt)
 					object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
 
-			if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].owner = p_ptr->id;
+			if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
 
 			/* Highlander Tournament: Don't allow transactions before it begins */
 			if (!p_ptr->max_exp) {

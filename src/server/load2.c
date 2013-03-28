@@ -2698,8 +2698,8 @@ errr rd_server_savefile()
 		if (s_older_than(4, 5, 5)) {
 			rd_byte(&tmp8u);
 			rd_byte(&tmp8u);
-			a_info[i].owner = 0;
-		} else rd_s32b(&a_info[i].owner);
+			a_info[i].carrier = 0;
+		} else rd_s32b(&a_info[i].carrier);
 		if (s_older_than(4, 5, 6)) determine_artifact_timeout(i);
 		else {
 			rd_s32b(&a_info[i].timeout);

@@ -354,7 +354,7 @@ struct artifact_type
         byte max_num;        /* Unused (should be "1") */
 	u32b esp;                       /* ESP flags */
         bool known;                /* Is this artifact already IDed? */
-        s32b owner;
+        s32b carrier;
         s32b timeout;
 };
 artifact_type a_info[MAX_A_IDX];

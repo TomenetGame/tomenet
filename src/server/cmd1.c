@@ -1967,7 +1967,7 @@ void carry(int Ind, int pickup, int confirm)
 					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
 					if (true_artifact_p(o_ptr)) {
-						a_info[o_ptr->name1].owner = p_ptr->id;
+						a_info[o_ptr->name1].carrier = p_ptr->id;
 						determine_artifact_timeout(o_ptr->name1);
 #if CHEEZELOG_LEVEL > 2
 						s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d%s%s: %s\n",
@@ -2028,7 +2028,7 @@ void carry(int Ind, int pickup, int confirm)
 							object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
 
-					if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].owner = p_ptr->id;
+					if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
 
 					/* Highlander Tournament: Don't allow transactions before it begins */
 					if (!p_ptr->max_exp) {

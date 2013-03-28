@@ -9887,7 +9887,7 @@ void telekinesis_aux(int Ind, int item)
 		object_desc_store(Ind, o_name, q_ptr, TRUE, 3);
 		s_printf("(Tele) Item transaction from %s(%d) to %s(%d):\n  %s\n", p_ptr->name, p_ptr->lev, Players[Ind2]->name, Players[Ind2]->lev, o_name);
 
-		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].owner = p_ptr->id;
+		if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
 
 		/* Highlander Tournament: Don't allow transactions before it begins */
 		if (!p2_ptr->max_exp) {

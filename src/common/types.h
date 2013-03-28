@@ -324,7 +324,7 @@ struct artifact_type
 
 	bool known;		/* Is this artifact already IDed? */
 
-	s32b owner;		/* Current owner, just to keep track */
+	s32b carrier;		/* Current holder (not necessarily same as o_ptr->owner), just to keep track */
 	s32b timeout;		/* anti-hoarding artifact reset timer (-1 = permanent) */
 };
 
