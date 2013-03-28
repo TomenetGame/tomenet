@@ -8777,6 +8777,10 @@ void determine_artifact_timeout(int a_idx) {
 	a_info[a_idx].timeout = -2; /* marker for when it gets reactivated */
 #else
 	object_type forge;
+	int i;
+
+	i = lookup_kind(a_info[a_idx].tval, a_info[a_idx].sval);
+        if (i) invcopy(&forge, i);
 	forge.name1 = a_idx;
 
 	if (multiple_artifact_p(&forge)) a_info[a_idx].timeout = -1; /* grond/crown don't expire */
