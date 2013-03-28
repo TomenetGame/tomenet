@@ -4205,6 +4205,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	char *ca_ptr = "", a = (id && artifact_p(o_ptr)) ? 'U' : 'w';
 	char buf_tmp[90];
 	int buf_tmp_i, buf_tmp_n;
+	char timeleft[26];
 
 
 	/* Open a new file */
@@ -4381,8 +4382,17 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 #ifdef NEW_ID_SCREEN
 		if (full || is_admin(p_ptr)) {
 #endif
-			if (true_artifact_p(o_ptr)) ca_ptr = " true artifact";
-			else {
+			if (true_artifact_p(o_ptr)) {
+				ca_ptr = " true artifact";
+#ifdef FLUENT_ARTIFACT_RESETS
+				if (a_info[o_ptr->name1].timeout <= 0) timeleft[0] = 0;
+				else if (a_info[o_ptr->name1].timeout < 60 * 2) sprintf(timeleft, " (\377r%d minutes\377%c till reset)", a_info[o_ptr->name1].timeout, a);
+				else if (a_info[o_ptr->name1].timeout < 60 * 24 * 2) sprintf(timeleft, " (\377y%d hours\377%c till reset)", a_info[o_ptr->name1].timeout / 60, a);
+				else sprintf(timeleft, " (%d days till reset)", a_info[o_ptr->name1].timeout / 60 / 24);
+#else
+				timeleft[0] = 0;
+#endif
+			} else {
 				if (!is_admin(p_ptr)) ca_ptr = " random artifact";
 				else ca_ptr = format(" random artifact (ap = %d, %d Au)", artifact_power(randart_make(o_ptr)), object_value_real(0, o_ptr));
 			}
@@ -4393,20 +4403,20 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 
 	switch (o_ptr->tval) {
 	case TV_BLUNT:
-		fprintf(fff, "\377%cIt's a%s blunt weapon.\377w\n", a, ca_ptr); break;
+		fprintf(fff, "\377%cIt's a%s blunt weapon%s.\377w\n", a, ca_ptr, timeleft); break;
 	case TV_POLEARM:
-		fprintf(fff, "\377%cIt's a%s polearm.\377w\n", a, ca_ptr); break;
+		fprintf(fff, "\377%cIt's a%s polearm%s.\377w\n", a, ca_ptr, timeleft); break;
 	case TV_SWORD:
-		fprintf(fff, "\377%cIt's a%s sword-type weapon.\377w\n", a, ca_ptr); break;
+		fprintf(fff, "\377%cIt's a%s sword-type weapon%s.\377w\n", a, ca_ptr, timeleft); break;
 	case TV_AXE:
-		fprintf(fff, "\377%cIt's a%s axe-type weapon.\377w\n", a, ca_ptr); break;
+		fprintf(fff, "\377%cIt's a%s axe-type weapon%s.\377w\n", a, ca_ptr, timeleft); break;
 	default:
 		if (artifact_p(o_ptr)
 #ifdef NEW_ID_SCREEN
 		    && id
 #endif
 		    )
-			fprintf(fff, "\377%cIt's a%s.\377w\n", a, ca_ptr);
+			fprintf(fff, "\377%cIt's a%s%s.\377w\n", a, ca_ptr, timeleft);
 		break;
 	}
 

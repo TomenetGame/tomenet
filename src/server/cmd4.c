@@ -229,15 +229,22 @@ void do_cmd_check_artifacts(int Ind, int line)
 
 			/* Hack -- Build the artifact name */
 			if (admin) {
-				if (a_ptr->cur_num != 1 && !multiple_artifact_p(&forge)) fprintf(fff, "\377r");
-				else if (admin_artifact_p(&forge)) fprintf(fff, "\377y");
-				else if (winner_artifact_p(&forge)) fprintf(fff, "\377v");
-				else if (a_ptr->flags4 & TR4_SPECIAL_GENE) fprintf(fff, "\377B");
-				else if (a_ptr->cur_num != 1) fprintf(fff, "\377o");
+				char timeleft[9], c = 'w';
+				if (a_ptr->timeout <= 0) sprintf(timeleft, "\377w  - ");
+				else if (a_ptr->timeout < 60 * 2) sprintf(timeleft, "\377r%3dm", a_ptr->timeout);
+				else if (a_ptr->timeout < 60 * 24 * 2) sprintf(timeleft, "\377y%3dh", a_ptr->timeout / 60);
+				else sprintf(timeleft, "\377w%3dd", a_ptr->timeout / 60 / 24);
+
+				if (a_ptr->cur_num != 1 && !multiple_artifact_p(&forge)) c = 'r';
+				else if (admin_artifact_p(&forge)) c = 'y';
+				else if (winner_artifact_p(&forge)) c = 'v';
+				else if (a_ptr->flags4 & TR4_SPECIAL_GENE) c = 'B';
+				else if (a_ptr->cur_num != 1) c = 'o';
+				fprintf(fff, "\377%c", c);
 #ifndef ARTS_PRE_SORT
-				fprintf(fff, "(%3d) (%3d)", i, a_ptr->cur_num);
+				fprintf(fff, "%3d/%d %s\377%c", i, a_ptr->cur_num, timeleft, c);
 #else
-				fprintf(fff, "(%3d) (%3d)", radix_idx[i], a_ptr->cur_num);
+				fprintf(fff, "%3d/%d %s\377%c", radix_idx[i], a_ptr->cur_num, timeleft, c);
 #endif
 			}
 			fprintf(fff, "%sThe %s", admin ? " " : "     ", base_name);

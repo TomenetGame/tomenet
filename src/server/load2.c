@@ -2701,7 +2701,15 @@ errr rd_server_savefile()
 			a_info[i].owner = 0;
 		} else rd_s32b(&a_info[i].owner);
 		if (s_older_than(4, 5, 6)) determine_artifact_timeout(i);
-		else rd_s32b(&a_info[i].timeout);
+		else {
+			rd_s32b(&a_info[i].timeout);
+#ifdef FLUENT_ARTIFACT_RESETS
+			/* fluent-artifact-timeout was temporarily disabled? reset timer now then */
+			if (a_info[i].timeout == -2) determine_artifact_timeout(i);
+#else
+			a_info[i].timeout = -2;
+#endif
+		}
 	}
 
 	rd_u16b(&tmp16u);

@@ -8773,12 +8773,16 @@ void inven_confirm_revision(int Ind, int revision)
 /* Set timeout for a newly found artifact, for fluent artifact reset system
    to counter long-time hoarding of artifacts. - C. Blue */
 void determine_artifact_timeout(int a_idx) {
+#ifndef FLUENT_ARTIFACT_RESETS
+	a_info[a_idx].timeout = -2; /* marker for when it gets reactivated */
+#else
 	object_type forge;
 	forge.name1 = a_idx;
 
 	if (multiple_artifact_p(&forge)) a_info[a_idx].timeout = -1; /* grond/crown don't expire */
 	else if (winner_artifact_p(&forge)) a_info[a_idx].timeout = 40320 * 3; /* ring of phasing/mirror of glory */
 	else a_info[a_idx].timeout = 40320; /* minutes: 4 weeks */
+#endif
 }
 
 /* Similarly to erase_guild_key() this function searches *everywhere* for a
