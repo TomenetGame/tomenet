@@ -774,13 +774,12 @@ static void wr_extra(int Ind)
 	for (i = 0; i < tmp16u; i++) wr_s16b(p_ptr->r_killed[i]);
 
 	wr_u32b(p_ptr->gold_picked_up);
-
 	wr_byte(p_ptr->insta_res);
-
 	wr_byte(p_ptr->castles_owned);
+	wr_s16b(p_ptr->hilite_self);
 
 	/* Future use */
-	for (i = 0; i < 37; i++) wr_byte(0);
+	for (i = 0; i < 35; i++) wr_byte(0);
 
         /* Toggle for possible automatic save-game updates
            (done via script login-hook, eg custom.lua) - C. Blue */

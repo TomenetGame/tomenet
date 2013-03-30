@@ -6076,8 +6076,10 @@ void process_player_change_wpos(int Ind)
 	handle_music(Ind);
 #endif
 
+#ifdef ENABLE_SELF_HIGHLIGHTING
 	/* flicker player for a moment, to allow for easy location */
-	//p_ptr->hilite_self = cfg.fps / 4; //todo: make client option
+	if (p_ptr->hilite_self >= 0) p_ptr->hilite_self = cfg.fps / 4; //todo: make client option
+#endif
 }
 
 
@@ -6252,11 +6254,13 @@ void dungeon(void)
 			p_ptr->last_gold_drop_timer = turn;
 		}
 
+#ifdef ENABLE_SELF_HIGHLIGHTING
 		/* Check for hilite */
-		if (p_ptr->hilite_self && !(turn % (cfg.fps / 15))) {
+		if (p_ptr->hilite_self > 0 && !(turn % (cfg.fps / 15))) {
 			p_ptr->hilite_self--;
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
+#endif
 
 		/* Play server-side animations (consisting of cycling/random colour choices,
 		   instead of animated colours which are circled client-side) */
