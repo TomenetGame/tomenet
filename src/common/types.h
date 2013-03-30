@@ -2873,7 +2873,7 @@ struct player_type
 	s16b tmp_x, tmp_y;
 
 	bool font_map_solid_walls; /* Hack: Certain Windows bitmap fonts: Map walls to /127, solid block tile */
-	int hilite;
+	int hilite_self;
 };
 
 /* For Monk martial arts */

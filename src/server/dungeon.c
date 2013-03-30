@@ -6077,7 +6077,7 @@ void process_player_change_wpos(int Ind)
 #endif
 
 	/* flicker player for a moment, to allow for easy location */
-//	p_ptr->hilite = cfg.fps / 4; //todo: make client option
+	//p_ptr->hilite_self = cfg.fps / 4; //todo: make client option
 }
 
 
@@ -6094,6 +6094,7 @@ void process_player_change_wpos(int Ind)
 void dungeon(void)
 {
 	int i;
+	player_type *p_ptr;
 
 	/* Return if no one is playing */
 	/* if (!NumPlayers) return; */
@@ -6111,7 +6112,7 @@ void dungeon(void)
 
 	/* Check player's depth info */
 	for (i = 1; i < NumPlayers + 1; i++) {
-		player_type *p_ptr = Players[i]; 
+		p_ptr = Players[i]; 
 		if (p_ptr->conn == NOT_CONNECTED || !p_ptr->new_level_flag)
 			continue;
 		if (p_ptr->iron_winner_ded) {
@@ -6240,41 +6241,42 @@ void dungeon(void)
 
 	/* Do some beginning of turn processing for each player */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED)
+		p_ptr = Players[i]; 
+		if (p_ptr->conn == NOT_CONNECTED)
 			continue;
 
 		/* Print queued log messages (anti-spam feature) - C. Blue */
-		if (Players[i]->last_gold_drop && turn - Players[i]->last_gold_drop_timer >= cfg.fps * 2) {
-			s_printf("Gold dropped (%d by %s at %d,%d,%d) [anti-spam].\n", Players[i]->last_gold_drop, Players[i]->name, Players[i]->wpos.wx, Players[i]->wpos.wy, Players[i]->wpos.wz);
-			Players[i]->last_gold_drop = 0;
-			Players[i]->last_gold_drop_timer = turn;
+		if (p_ptr->last_gold_drop && turn - p_ptr->last_gold_drop_timer >= cfg.fps * 2) {
+			s_printf("Gold dropped (%d by %s at %d,%d,%d) [anti-spam].\n", p_ptr->last_gold_drop, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			p_ptr->last_gold_drop = 0;
+			p_ptr->last_gold_drop_timer = turn;
 		}
 
 		/* Check for hilite */
-		if (Players[i]->hilite && !(turn % (cfg.fps / 15))) {
-			Players[i]->hilite--;
-			everyone_lite_spot(&Players[i]->wpos, Players[i]->py, Players[i]->px);
+		if (p_ptr->hilite_self && !(turn % (cfg.fps / 15))) {
+			p_ptr->hilite_self--;
+			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 
 		/* Play server-side animations (consisting of cycling/random colour choices,
 		   instead of animated colours which are circled client-side) */
 		else if (!(turn % (cfg.fps / 6))) {
 			/* Flicker invisible player? (includes colour animation!) */
-//			if (Players[i]->invis) update_player(i);
-			if (Players[i]->invis) {
+//			if (p_ptr->invis) update_player(i);
+			if (p_ptr->invis) {
 				update_player_flicker(i);
 				update_player(i);
 			}
 			/* Otherwise only take care of colour animation */
-//			else { /* && Players[i]->body_monster */
-				everyone_lite_spot(&Players[i]->wpos, Players[i]->py, Players[i]->px);
+//			else { /* && p_ptr->body_monster */
+				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 //			}
 		}
 
 		/* Perform beeping players who are currently being paged by others */
-		if (Players[i]->paging && !(turn % (cfg.fps / 4))) {
+		if (p_ptr->paging && !(turn % (cfg.fps / 4))) {
 			Send_beep(i);
-			Players[i]->paging--;
+			p_ptr->paging--;
 		}
 
 		/* Actually process that player */
@@ -6333,21 +6335,22 @@ void dungeon(void)
 		if (cfg.runlevel == 2048) {
 #endif
 			for (i = NumPlayers; i > 0 ;i--) {
-				if (Players[i]->conn == NOT_CONNECTED) continue;
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
 
 				/* Ignore admins that are loged in */
 				if (admin_p(i)) continue;
 
 				/* Ignore chars in fixed irondeepdive towns */
-				if (is_fixed_irondeepdive_town(&Players[i]->wpos, getlevel(&Players[i]->wpos))) continue;
+				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
 
 				/* Ignore characters that are afk and not in a dungeon/tower */
-//				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+//				if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
 
 				/* Ignore characters that are not in a dungeon/tower */
-				if (Players[i]->wpos.wz == 0) {
+				if (p_ptr->wpos.wz == 0) {
 					/* Don't interrupt events though */
-					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
@@ -6359,22 +6362,23 @@ void dungeon(void)
 		if (cfg.runlevel == 2047) {
 			int n = 0;
 			for (i = NumPlayers; i > 0 ;i--) {
-				if (Players[i]->conn == NOT_CONNECTED) continue;
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
 				/* Ignore admins that are loged in */
 				if (admin_p(i)) continue;
 				/* count players */
 				n++;
 
 				/* Ignore characters that are afk and not in a dungeon/tower */
-//				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+//				if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
 
 				/* Ignore chars in fixed irondeepdive towns */
-				if (is_fixed_irondeepdive_town(&Players[i]->wpos, getlevel(&Players[i]->wpos))) continue;
+				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
 
 				/* Ignore characters that are not in a dungeon/tower */
-				if (Players[i]->wpos.wz == 0) {
+				if (p_ptr->wpos.wz == 0) {
 					/* Don't interrupt events though */
-					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
@@ -6386,22 +6390,23 @@ void dungeon(void)
 		if (cfg.runlevel == 2046) {
 			int n = 0;
 			for (i = NumPlayers; i > 0 ;i--) {
-				if(Players[i]->conn == NOT_CONNECTED) continue;
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
 				/* Ignore admins that are loged in */
-				if(admin_p(i)) continue;
+				if (admin_p(i)) continue;
 				/* count players */
 				n++;
 
 				/* Ignore characters that are afk and not in a dungeon/tower */
-//				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+//				if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
 
 				/* Ignore chars in fixed irondeepdive towns */
-				if (is_fixed_irondeepdive_town(&Players[i]->wpos, getlevel(&Players[i]->wpos))) continue;
+				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
 
 				/* Ignore characters that are not in a dungeon/tower */
-				if (Players[i]->wpos.wz == 0) {
+				if (p_ptr->wpos.wz == 0) {
 					/* Don't interrupt events though */
-					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
@@ -6427,13 +6432,14 @@ void dungeon(void)
 		if (cfg.runlevel == 2044) {
 			int n = 0;
 			for (i = NumPlayers; i > 0 ;i--) {
-				if (Players[i]->conn == NOT_CONNECTED) continue;
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
 
 				/* Ignore admins that are loged in */
 				if (admin_p(i)) continue;
 
 				/* Ignore perma-afk players! */
-				//if (Players[i]->afk && 
+				//if (p_ptr->afk && 
 				if (is_inactive(i) >= 30 * 20) /* 20 minutes idle? */
 					continue;
 
@@ -6441,15 +6447,15 @@ void dungeon(void)
 				n++;
 
 				/* Ignore characters that are afk and not in a dungeon/tower */
-//				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+//				if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
 
 				/* Ignore chars in fixed irondeepdive towns */
-				if (is_fixed_irondeepdive_town(&Players[i]->wpos, getlevel(&Players[i]->wpos))) continue;
+				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
 
 				/* Ignore characters that are not in a dungeon/tower */
-				if (Players[i]->wpos.wz == 0) {
+				if (p_ptr->wpos.wz == 0) {
 					/* Don't interrupt events though */
-					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
@@ -6474,19 +6480,20 @@ void dungeon(void)
 			}
 			if (!shutdown_recall_timer) {
 				for (i = NumPlayers; i > 0 ;i--) {
-					if (Players[i]->conn == NOT_CONNECTED) continue;
+					p_ptr = Players[i];
+					if (p_ptr->conn == NOT_CONNECTED) continue;
 
 					/* Don't remove loot from ghosts waiting for res */
-					if (admin_p(i) || Players[i]->ghost) continue;
+					if (admin_p(i) || p_ptr->ghost) continue;
 
 					/* Don't free people from the Ironman Deep Dive Challenge */
-					if (in_irondeepdive(&Players[i]->wpos)) continue;
+					if (in_irondeepdive(&p_ptr->wpos)) continue;
 
-					if (Players[i]->wpos.wz) {
-						Players[i]->recall_pos.wx = Players[i]->wpos.wx;
-						Players[i]->recall_pos.wy = Players[i]->wpos.wy;
-						Players[i]->recall_pos.wz = 0;
-						Players[i]->new_level_method = (Players[i]->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+					if (p_ptr->wpos.wz) {
+						p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+						p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+						p_ptr->recall_pos.wz = 0;
+						p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 						recall_player(i, "");
 					}
 				}
@@ -6494,21 +6501,22 @@ void dungeon(void)
 				cfg.runlevel = 2049;
 			} else {
 				for (i = NumPlayers; i > 0 ;i--) {
-					if (Players[i]->conn == NOT_CONNECTED) continue;
+					p_ptr = Players[i];
+					if (p_ptr->conn == NOT_CONNECTED) continue;
 
 					/* Ignore admins that are loged in */
 					if (admin_p(i)) continue;
 
 					/* Ignore chars in fixed irondeepdive towns */
-					if (is_fixed_irondeepdive_town(&Players[i]->wpos, getlevel(&Players[i]->wpos))) continue;
+					if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
 
 					/* Ignore characters that are afk and not in a dungeon/tower */
-//						if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+//						if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
 
 					/* Ignore characters that are not in a dungeon/tower */
-					if(Players[i]->wpos.wz == 0) {
+					if(p_ptr->wpos.wz == 0) {
 						/* Don't interrupt events though */
-						if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+						if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 					}
 					break;
 				}
@@ -6582,7 +6590,7 @@ void dungeon(void)
 # endif
 
 		for (i = 1; i < NumPlayers + 1; i++) {
-			player_type *p_ptr = Players[i];
+			p_ptr = Players[i];
 			if (p_ptr->conn == NOT_CONNECTED) continue;
 
 			if (p_ptr->wpos.wz == 0) continue;
@@ -6665,7 +6673,7 @@ void dungeon(void)
 
 	/* Refresh everybody's displays */
 	for (i = 1; i < NumPlayers + 1; i++) {
-		player_type *p_ptr = Players[i];
+		p_ptr = Players[i];
 
 		if (p_ptr->conn == NOT_CONNECTED)
 			continue;

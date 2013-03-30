@@ -3543,7 +3543,7 @@ void lite_spot(int Ind, int y, int x)
 			}
 
 			/* display player in really easily spottable colours */
-			if (p_ptr->hilite) a = (p_ptr->hilite % 2) ? TERM_L_RED : TERM_L_GREEN;
+			if (p_ptr->hilite_self) a = (p_ptr->hilite_self % 2) ? TERM_L_RED : TERM_L_GREEN;
 
 			/* bugfix on MASSIVE deaths (det/death) */
 			if (p_ptr->fruit_bat && !p_ptr->body_monster &&
