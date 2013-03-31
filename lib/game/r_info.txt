@@ -19934,7 +19934,8 @@ $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 #F:NO_DEATH | MORTAL | 
 F:WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
-D:The nightmare on Elmstreet. But it is just someone costumed for Halloween festival!
+D:The nightmare on Elmstreet.
+D:But it is just someone costumed for Halloween festival!
 
 
 #More monsters:
