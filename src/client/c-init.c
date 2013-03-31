@@ -750,6 +750,9 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				} else if (info_val <= 3) {
 					strcat(info_tmp, format("\377%cL.common (%d)\377%c, ", a_val, info_val, a_key));
 					strcat(info, format("\377%cLess common (%d)\377%c, ", a_val, info_val, a_key));
+				} else if (info_val == 255) {
+					strcat(info_tmp, format("\377%cUnfindable (%d)\377%c, ", a_val, info_val, a_key));
+					strcat(info, format("\377%cUnfindable (%d)\377%c, ", a_val, info_val, a_key));
 				} else {
 					strcat(info_tmp, format("\377%cRare (%d)\377%c, ", a_val, info_val, a_key));
 					strcat(info, format("\377%cRare (%d)\377%c, ", a_val, info_val, a_key));
