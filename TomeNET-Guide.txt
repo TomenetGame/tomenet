@@ -5387,6 +5387,7 @@ example giving all your party members access to it). You need to stand directly
 next to the house door to do this.
 If you sell a house you get half the money back it cost you to buy it, or
 actually even a bit less than half, depending on your charisma.
+(When that house is sold, all items that are still inside are erased.)
 
 The door colour of private houses will indicate the door permissions,
 ie which players may access it:
