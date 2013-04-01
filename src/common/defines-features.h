@@ -13,9 +13,6 @@
 /* --------------------------------------------------------------------------*/
 /* Features that are allowed in all build types, ie server-type independant: */
 
-/* Allow usage of /hilite command (todo: turn into client option) */
-#define ENABLE_SELF_HIGHLIGHTING
-
 /* Distinguished light colour for flaming lites, magic lights, vampire light */
 #define CAVE_LITE_COLOURS
 
@@ -154,6 +151,9 @@
 #endif
 
 #ifdef TEST_SERVER
+ /* Allow usage of /hilite command (todo: turn into client option) */
+ #define ENABLE_SELF_HIGHLIGHTING
+
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 
  #ifdef MAX_CLOUDS
