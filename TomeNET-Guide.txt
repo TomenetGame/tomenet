@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. March 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. April 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7986,19 +7986,31 @@ completely safe.)
 
 Artifact resets
 ---------------
-Depending on the server settings, an 'artifact reset' occurs usually every
-three months, starting on 1st january.
-This reset will erase all true artifacts players carry, and therefore make all
-of them findable again, since there can only exist one of each true artifact at
-a time. So the main purpose is to prevent characters from hoarding true arts
-indefinitely.
-Also, art resets can cause a sort of art rush (like gold rush but with true
-artifacts), because everyone will be in a race to find the low-level yet useful
-ones which have a relatively high drop chance.
-You do not need to sell all your true artifacts before the reset occurs,
-because characters will automatically get paid the full value of the artifacts,
-which is even more than you'd get in shops (because charisma and shop keeper
-race factors in in stores, reducing the price you get).
+The old system of resetting all true artifacts at once every 3 months has been
+replaced by a new "fluent" reset system:
+
+Artifacts will last for 4 weeks after they have been found (ie dropped by a
+monster/chest/just being generated on the dungeon floor, and picked up by a
+player), after which they will "time out" and disappear. This timer is specific
+for each single true artifact, depending on when it is found (again).
+
+No compensation is given when an artifact times out and disappears, since that
+would encourage hoarding, so sell an artifact to a store in time before it
+actually vanishes.
+
+To check the timeout of an artifact, inspect it ('I' to inspect).
+For your character to 100% "know" if an artifact is a true artifact or not it
+needs to *Identify* the item. So this will be required to see the timer on it.
+
+The timer will also continue to run out while the owner/carrier of an artifact
+is offline.
+Trading artifacts between characters has no effect on the timeout.
+
+Grond and Morgoth's crown do not time out.
+Artifacts that can only be found by winners (kings/queens/emperors/empresses)
+have triple timeout delay (12 weeks).
+All artifact timeout delays are further doubled on the Ironman server (8 weeks
+for regular true artifacts, 24 weeks for winners-only true artifacts).
 
 
 
