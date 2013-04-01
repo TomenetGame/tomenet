@@ -1807,7 +1807,8 @@ void msg_print(int Ind, cptr msg_raw)
 			case '\377': /* Colour code! Text length does not increase. */
 				if (!no_colour_code) {
 					/* broken \377 at the end of the text? ignore */
-					if (color_char_to_attr(msg[msg_scan + 1]) == -1) {
+					if (color_char_to_attr(msg[msg_scan + 1]) == -1
+					    && msg[msg_scan + 1] != '-') {
 						msg_scan++;
 						continue;
 					}
@@ -1827,9 +1828,9 @@ void msg_print(int Ind, cptr msg_raw)
 								first_colour_code = colour_code;
 							}
 						}
-
-           				msg_minibuf[1] = colour_code;
 						msg_scan++;
+
+						msg_minibuf[1] = colour_code;
 						msg_minibuf[2] = '\0';
 						strcat(msg_buf, msg_minibuf);
 						break;
