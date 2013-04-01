@@ -4205,7 +4205,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	char *ca_ptr = "", a = (id && artifact_p(o_ptr)) ? 'U' : 'w';
 	char buf_tmp[90];
 	int buf_tmp_i, buf_tmp_n;
-	char timeleft[26];
+	char timeleft[26] = { 0 };
 
 
 	/* Open a new file */
@@ -4385,12 +4385,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 			if (true_artifact_p(o_ptr)) {
 				ca_ptr = " true artifact";
 #ifdef FLUENT_ARTIFACT_RESETS
-				if (a_info[o_ptr->name1].timeout <= 0) timeleft[0] = 0;
+				if (a_info[o_ptr->name1].timeout <= 0) ;
 				else if (a_info[o_ptr->name1].timeout < 60 * 2) sprintf(timeleft, " (\377r%d minutes\377%c till reset)", a_info[o_ptr->name1].timeout, a);
 				else if (a_info[o_ptr->name1].timeout < 60 * 24 * 2) sprintf(timeleft, " (\377y%d hours\377%c till reset)", a_info[o_ptr->name1].timeout / 60, a);
 				else sprintf(timeleft, " (%d days till reset)", a_info[o_ptr->name1].timeout / 60 / 24);
-#else
-				timeleft[0] = 0;
 #endif
 			} else {
 				if (!is_admin(p_ptr)) ca_ptr = " random artifact";
