@@ -890,10 +890,6 @@ They all start with a slash '/' hence they're called slash commands:
             Shows you your current guild configuration and allows you to change
             it.
 
-/hilite     Toggle highlighting of the '@' symbol (denoting one's own
-            character) in flickering colours when changing dungeon levels,
-            to make it easier to locate yourself, especially in big-map mode.
-
 /hou        Displays your houses, same as ~6.
  (/house)
 
