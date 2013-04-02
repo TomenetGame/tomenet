@@ -7166,10 +7166,13 @@ LUCK ('It affects your luck')
         -opening chests
         -finding items in the dirt by digging.
         'Good' means that an item has enchantments to hitchance, damage or
-        armour class. How much exactly it has isn't affected by luck!
+        armour class. How much exactly it has isn't affected by luck (well, it
+        is by your personal ooc luck I guess :-p).
         'Great' means that an item has ego powers or is an artifact. Luck does
         not affect how great its ego power or artifact abilities will be!
         Note: Luck has NO effect on 'acquirement' and 'artifact creation'.
+        Note: Luck does NOT affect which base item type drops, ie whether it is
+        a dragon scale mail or a cloth hat.
 NO_MAGIC ('Antimagic shell')
         Raises your saving throw to 95%, making you nearly immune to any
         malicious magical influence (like paralysation). Also prevents
