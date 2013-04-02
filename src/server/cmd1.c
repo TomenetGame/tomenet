@@ -1986,8 +1986,12 @@ void carry(int Ind, int pickup, int confirm)
 #if CHEEZELOG_LEVEL > 2
 				/* Take cheezelog
 				 * TODO: ignore cheap items (like cure critical pot) */
+ #if 0
 				else if (p_ptr->id != o_ptr->owner &&
-				        (o_ptr->tval != 1 && o_ptr->sval != 9) /* Heavy ball */ )
+				        !(o_ptr->tval == 1 && o_ptr->sval == 9) /* Heavy ball */ )
+ #else
+				else if (p_ptr->id != o_ptr->owner)
+ #endif
 				{
 					cptr name = lookup_player_name(o_ptr->owner);
 					int lev = lookup_player_level(o_ptr->owner);
