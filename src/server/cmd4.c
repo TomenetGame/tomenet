@@ -2108,6 +2108,14 @@ void do_cmd_check_server_settings(int Ind)
 		if (found) fprintf(fff, ".\n");
 		else fprintf(fff, "Noone.\n");
 
+		fprintf(fff, "WINNERS_ONLY items are usable by: ");
+#ifdef FALLEN_WINNERSONLY
+		fprintf(fff, "Winners and fallen winners");
+#else
+		fprintf(fff, "Winners only");
+#endif
+		fprintf(fff, ".\n");
+
 		fprintf(fff, "+LIFE randarts are findable/usable by: ");
 		if (resf_all & RESF_LIFE) {
 			fprintf(fff, "Everyone");

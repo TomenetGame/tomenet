@@ -3732,12 +3732,16 @@ void calc_boni(int Ind)
 		   pval should contain life bonus, bpval stealth. */
 /*		if (o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC)*/
 		if (f1 & (TR1_LIFE))
+#if 0
 			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner ||
-#if 0 /* changed, didn't seem to make that much sense? - C. Blue */
+ #if 0 /* changed, didn't seem to make that much sense? - C. Blue */
 			    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
 			    (p_ptr->lev >= o_ptr->level))
-#else /* a bit different, hopefully doing better, also catching badly mutated +life arts after randart.c changes! */
+ #else /* a bit different, hopefully doing better, also catching badly mutated +life arts after randart.c changes! */
 			    (p_ptr->once_winner && cfg.fallenkings_etiquette))
+ #endif
+			if ((o_ptr->name1 != ART_RANDART) ||
+			    (make_resf(p_ptr) & RESF_LIFE))
 #endif
 		{
 /*			if ((o_ptr->pval < 0 && o_ptr->bpval > 0) ||

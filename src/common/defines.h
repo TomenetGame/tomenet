@@ -4417,6 +4417,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 */
 
 
+/* Allow fallen winners to wear/wield WINNERS_ONLY items? */
+#define FALLEN_WINNERSONLY
 
 
 /* Item-generation restriction flags */

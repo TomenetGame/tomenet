@@ -3218,7 +3218,13 @@ void store_purchase(int Ind, int item, int amt)
 		}
 	}
 
-	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner) {
+	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) &&
+#ifdef FALLEN_WINNERSONLY
+	    !p_ptr->once_winner
+#else
+	    !p_ptr->total_winner
+#endif
+	    ) {
 		msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
 		if (!is_admin(p_ptr)) return;
 	}
@@ -5350,7 +5356,13 @@ void home_purchase(int Ind, int item, int amt)
 		}
 	}
 
-	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner) {
+	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) &&
+#ifdef FALLEN_WINNERSONLY
+	    !p_ptr->once_winner
+#else
+	    !p_ptr->total_winner
+#endif
+	    ) {
 		msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
 		if (!is_admin(p_ptr)) return;
 	}

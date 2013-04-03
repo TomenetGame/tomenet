@@ -8601,7 +8601,7 @@ u32b make_resf(player_type *p_ptr) {
 			/* since fallen kings are already kinda punished by their status, cut them some slack here?: */
 			if (p_ptr->lev >= 50) {
 //				f |= RESF_WINNER; /* allow generation of WINNERS_ONLY items, if player won once but can't get true arts */
-				f |= RESF_LIFE; /* allowed to find +LIFE artifacts; hack: and WINNERS_ONLY artifacts too */
+//				f |= RESF_LIFE; /* allowed to find +LIFE artifacts; hack: and WINNERS_ONLY artifacts too */
 			}
 		}
 	}
