@@ -23,7 +23,7 @@ void auction_clear(int auction_id);
 void auction_add_bid(int auction_id, s32b bid, s32b bidder);
 void auction_remove_bid(int auction_id, int bid_id);
 void auction_list_print_item(int Ind, int auction_id);
-cptr strcasestr(cptr haystack, cptr needle);
+cptr my_strcasestr(cptr haystack, cptr needle);
 
 /* TODO: How badly can this mess up shopping? */
 void process_auctions()
@@ -1385,7 +1385,7 @@ void auction_list(int Ind)
 	if (!printed) msg_print(Ind, "\377B[@]  \377w<none>");
 }
 
-cptr strcasestr(cptr haystack, cptr needle)
+cptr my_strcasestr(cptr haystack, cptr needle)
 {
 	int i = 0, len;
 
@@ -1417,7 +1417,7 @@ void auction_search(int Ind, cptr search)
 
 		if ((auc_ptr->status == AUCTION_STATUS_BIDDING) && auction_mode_check(Ind, i))
 		{
-			if (strcasestr(auc_ptr->desc, search))
+			if (my_strcasestr(auc_ptr->desc, search))
 			{
 				auction_list_print_item(Ind, i);
 				found++;
