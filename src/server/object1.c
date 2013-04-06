@@ -1849,6 +1849,7 @@ static char *object_desc_per(char *t, sint v)
  *  +64 - Don't add 'total' behind amount of wand charges;
  *        used in store inventory in case STORE_SHOWS_SINGLE_WAND_CHARGES isn't defined;
  *        (not used in player/home inventory, but used in player stores again.) - C. Blue
+ *  +128 - Don't prefix "The"
  *
  * If the strings created with mode 0-3 are too long, this function is called
  * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
@@ -2196,7 +2197,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		else if (known && artifact_p(o_ptr)) {
 			/* hack: some base item types in k_info start
 			   on 'the', so prevent a second 'The ' for those */
-			t = object_desc_str(t, "The ");
+			if (!(mode & 128)) t = object_desc_str(t, "The ");
 			if (strstr(k_name + k_ptr->name, "the ") == k_name + k_ptr->name) {
 				s += 4;
 				skip_base_article = TRUE;
@@ -2244,7 +2245,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		else if (known && artifact_p(o_ptr) && !(mode & 8)) {
 			/* hack: some base item types in k_info start
 			   on 'the', so prevent a second 'The ' for those */
-			t = object_desc_str(t, "The ");
+			if (!(mode & 128)) t = object_desc_str(t, "The ");
 			if (strstr(k_name + k_ptr->name, "the ") == k_name + k_ptr->name) {
 				s += 4;
 				skip_base_article = TRUE;

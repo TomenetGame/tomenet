@@ -302,6 +302,8 @@
 /* Do artifacts time out after a while to prevent hoarding?
    (Fluent artifact reset system vs static reset schedules) - C. Blue */
 #define FLUENT_ARTIFACT_RESETS
+/* Warn a player if an artifact is about to timeout [4 hours] */
+#define FLUENT_ARTIFACT_WARNING	(60 * 4)
 
 
 /*

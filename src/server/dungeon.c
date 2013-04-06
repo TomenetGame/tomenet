@@ -6303,6 +6303,24 @@ void dungeon(void)
 	if (i < MAX_A_IDX && a_info[i].timeout > 0) {
 		a_info[i].timeout--;
 		if (a_info[i].timeout == 0) erase_artifact(i);
+		else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING) {
+			int j, k;
+			char o_name[ONAME_LEN];
+			for (j = 1; j <= NumPlayers; j++) {
+				p_ptr = Players[j];
+				if (p_ptr->id != a_info[i].carrier) continue;
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				for (k = 0; k < INVEN_TOTAL; k++) {
+					if (!p_ptr->inventory[k].k_idx) continue;
+					if (p_ptr->inventory[k].name1 != i) continue;
+					if (!(p_ptr->inventory[k].ident & ID_MENTAL)) continue;
+					object_desc(j, o_name, &p_ptr->inventory[k], TRUE, 128);
+					msg_format(j, "\374\377RYour %s will vanish soon!", o_name);
+					j = NumPlayers;
+					break;
+				}
+			}
+		}
 	}
 #endif
 

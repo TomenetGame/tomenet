@@ -2190,7 +2190,7 @@ static int Handle_login(int ind)
 	object_type forge, *o_ptr = &forge;
 	int i, j;
 	bool options[OPT_MAX], greeting;
-	char namebuf1[80], namebuf2[80];
+	char namebuf1[80], namebuf2[80], o_name[ONAME_LEN];
 	cptr title = "";
 	char traffic[50+1];
 
@@ -2654,6 +2654,15 @@ static int Handle_login(int ind)
 #endif
 
 #ifdef FLUENT_ARTIFACT_RESETS
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		if (!p_ptr->inventory[i].k_idx) continue;
+		j = p_ptr->inventory[i].name1;
+		if (!j || j == ART_RANDART) continue;
+		if (!(p_ptr->inventory[i].ident & ID_MENTAL)) continue;
+		if (a_info[j].timeout <= 0 || a_info[j].timeout > FLUENT_ARTIFACT_WARNING) continue;
+		object_desc(NumPlayers, o_name, &p_ptr->inventory[i], TRUE, 128);
+		msg_format(NumPlayers, "\374\377RYour %s will vanish soon!", o_name);
+	}
 	if (p_ptr->artifact_reset == 1) {
 		msg_print(NumPlayers, "\374\377ROne or more true artifacts have bidden you farewell!");
 		p_ptr->artifact_reset = 0;
