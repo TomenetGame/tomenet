@@ -2612,7 +2612,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	if (getlevel(wpos) == 200) return;
 
 	/* No traps over traps/house doors etc */
-	/* TODO: allow traps on jumpgates/fountains etc */
+	/* TODO: allow traps on jumpgates/fountains etc -- no, doesn't make much sense */
 	if (c_ptr->special) return;	/* its a pointer now */
 
 	/* Require empty, clean, floor grid */
@@ -2622,6 +2622,13 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 		    (c_ptr->feat <= FEAT_DOOR_TAIL + 1))
 		flags = FTRAP_DOOR;
 	else return;
+
+#if 0 //allow?
+	/* no traps on staircases */
+	if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_LESS ||
+	    c_ptr->feat == FEAT_WAY_MORE || c_ptr->feat == FEAT_WAY_LESS)
+		return;
+#endif
 
 	/* no traps on treasure veins */
 	if (c_ptr->feat == FEAT_QUARTZ_H || c_ptr->feat == FEAT_QUARTZ_K ||
