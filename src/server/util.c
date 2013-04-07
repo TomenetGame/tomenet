@@ -1322,12 +1322,17 @@ void handle_music(int Ind) {
 //	    && p_ptr->wpos.wz == WPOS_ARCADE_Z
 	    ) {
 		p_ptr->music_monster = -2;
+ #if 0
 		if (p_ptr->wpos.wz == 0) Send_music(Ind, 1); /* 'generic town' music instead of Bree default */
 		else {
 			//47 and 48 are actually pieces used in other arena events
 			if (rand_int(2)) Send_music(Ind, 47);
 			else Send_music(Ind, 48);
 		}
+ #else
+		if (p_ptr->wpos.wz == 0) Send_music(Ind, 48); /* 'arena' ;) sounds a bit like Unreal Tournament menu music hehe */
+		else Send_music(Ind, 47); /* 'death match' music (pvp arena) */
+ #endif
 		return;
 	}
 #endif

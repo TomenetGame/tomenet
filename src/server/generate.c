@@ -11164,8 +11164,13 @@ static void town_gen(struct worldpos *wpos)
  #endif	// 0
 		switch(type) {
 			case 1:
+#ifndef ARCADE_SERVER
 				process_dungeon_file("t_bree.txt", wpos, &ystart, &xstart,
 						MAX_HGT, MAX_WID, TRUE);
+#else
+				process_dungeon_file("t_bree_arcade.txt", wpos, &ystart, &xstart,
+						MAX_HGT, MAX_WID, TRUE);
+#endif
 				break;
 			case 2:
 				process_dungeon_file("t_gondol.txt", wpos, &ystart, &xstart,
