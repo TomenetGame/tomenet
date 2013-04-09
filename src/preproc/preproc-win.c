@@ -202,7 +202,11 @@ int main(int argc, char *argv[]) {
 			cptr[3] = ' ';
                 }
 
-	        /* on to the actual work.. */
+		/* gcc 4.8.0 now puts an URL in the top comment, on which tolua
+		   chokes, sigh. */
+		if ((cptr = strstr(line_mod, "http://www.gnu.org"))) cptr[5] = ':';
+
+		/* on to the actual work.. */
 
 
 		/* strip prefixed marker sequence again and write line to output file */
