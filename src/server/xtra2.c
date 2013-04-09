@@ -6362,6 +6362,12 @@ void player_death(int Ind) {
 			sound(Ind, SOUND_DEATH);
 #endif
 
+#if 0 /* collides with the "you were defeated" message further down */
+			/* message to himself */
+			snprintf(buf, sizeof(buf), "\374\377DYou were defeated by %s.", p_ptr->died_from);
+			msg_print(Ind, buf);
+#endif
+
 			/* Message to other players */
 			if (cfg.unikill_format)
 				snprintf(buf, sizeof(buf), "\374\377D%s %s (%d) was defeated by %s.", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
