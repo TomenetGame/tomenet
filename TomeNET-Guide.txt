@@ -13227,16 +13227,22 @@ stat and 'Health' skill will further improve regeneration speed.
 (6.13) PvP mode
 ---------------
 PvP stands for "Player vs player". This describes the act of player characters
-fighting each other, usually to death. In that regard, it is quite different
-to the 'blood bond' duel, which always ends without anyone getting hurt.
+fighting each other, usually to the death.
+In that regard, it is quite different to the 'blood bond' duel, which always
+ends without anyone getting hurt for real.
 
 If you want to fight other players to death in a real pvp match, create a
 'pvp-mode' character. It's an option during the character creation process,
 much like 'everlasting mode' or 'normal mode'.
 
-PvP-mode characters use the /pvp command to enter/leave the pvp arena. This
-arena also releases monsters from time to time. The entry point of a player is
-random, because he gets teleported on arrival.
+PvP-mode characters can use the /pvp command to enter/leave the pvp arena.
+This arena also releases monsters from time to time. The entry point of a
+player is random, because he gets teleported on arrival.
+
+Note that you don't HAVE to use the pvp arena. PvP characters are always
+automatically hostile to all other PvP characters everywhere, for example you
+could surprise an opponent in a normal dungeon while he tries to kill a unique
+monster for items. The only safe zones are towns.
 
 Before you go and fight others to the death, look at your inventory. You will
 see a parchment "Gladiator's Entrance". When you turn this in at the mayor's
