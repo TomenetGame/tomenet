@@ -3075,7 +3075,7 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 	p_ptr->updated_savegame = updated_savegame_birth;
 
 	/* for automatic artifact reset */
-	p_ptr->artifact_reset = artifact_reset;
+	p_ptr->artifact_reset = ABS(artifact_reset);
 	p_ptr->fluent_artifact_reset = FALSE;
 
 	/* Prepare newbie-aiding warnings that ought to occur only
