@@ -8929,7 +8929,7 @@ void erase_artifact(int a_idx) {
 					s_printf("FLUENT_ARTIFACT_RESETS: savegame '%s'\n  '%s'\n", p_ptr->name, o_name);
 					handle_art_d(a_idx);
 					o_ptr->tval = o_ptr->sval = o_ptr->k_idx = o_ptr->name1 = 0;
-					p_ptr->artifact_reset = 1; /* hack to notify him next time he logs on */
+					p_ptr->fluent_artifact_reset = TRUE; /* hack to notify him next time he logs on */
 					/* write savegame back */
 					save_player(NumPlayers);
 					/* unhack */

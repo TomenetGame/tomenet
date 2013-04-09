@@ -1619,8 +1619,16 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		p_ptr->hilite_self = -1; /* disabled by default */
 	}
 
+	if (!older_than(4, 5, 7)) {
+		rd_byte(&tmp8u);
+		p_ptr->fluent_artifact_reset = tmp8u;
+	} else {
+		strip_bytes(1);
+		p_ptr->fluent_artifact_reset = FALSE;
+	}
+
 	/* Future use */
-	strip_bytes(35);
+	strip_bytes(34);
 
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */

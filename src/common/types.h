@@ -2681,6 +2681,7 @@ struct player_type
 	byte updated_savegame;
 	/* for automatic artifact reset (similar to updated_savegame) */
 	byte artifact_reset;
+	bool fluent_artifact_reset;
 	/* C. Blue - Fun stuff :) Make player vomit if he turns around ***a lot*** (can't happen in 'normal' gameplay) */
 	s16b corner_turn;
 	int joke_weather;	/* personal rain^^ */

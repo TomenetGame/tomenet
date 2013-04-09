@@ -944,6 +944,7 @@ struct player_type
 	byte updated_savegame;
 	/* for auto-artreset */
 	byte artifact_reset;
+	bool fluent_artifact_reset;
 
 	/* C. Blue - fun stuff */
 	s16b corner_turn;

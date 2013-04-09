@@ -2663,9 +2663,9 @@ static int Handle_login(int ind)
 		object_desc(NumPlayers, o_name, &p_ptr->inventory[i], TRUE, 128);
 		msg_format(NumPlayers, "\374\377RYour %s will vanish soon!", o_name);
 	}
-	if (p_ptr->artifact_reset == 1) {
+	if (p_ptr->fluent_artifact_reset == TRUE) {
 		msg_print(NumPlayers, "\374\377ROne or more true artifacts have bidden you farewell!");
-		p_ptr->artifact_reset = 0;
+		p_ptr->fluent_artifact_reset = FALSE;
 	}
 #endif
 
