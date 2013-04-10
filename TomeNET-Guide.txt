@@ -10786,7 +10786,7 @@ Mimic           similar to priest, also:
 Archer          -
 
 Paladin         18/10   10      2               1
-                18/20   10      2               2
+                18/20   10      2               1-2 (depends on weapon)
                 18/30   10      3               2
 
 Ranger          similar to priest, also:
