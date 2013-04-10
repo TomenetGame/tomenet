@@ -3890,7 +3890,7 @@ Chain_Macro:
 
 			while (i != -1) {
 				Term_putstr(12, 2, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
-				Term_putstr(12, 3, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and target method.");
+				Term_putstr(12, 3, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and targetting method.");
 				Term_putstr(12, 4, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
 
 				clear_from(9);
