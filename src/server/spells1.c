@@ -8122,7 +8122,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			} else {
 				/* Players in the same party can't harm each others */
 #if FRIEND_FIRE_CHANCE
+ #ifdef EXPERIMENTAL_PVP_SPELL_DAM
+				int __dam = randint(dam); 
+				if (randint(1)) __dam *= -1;
+				dam += __dam;
+ #else
 				dam = (dam + PVP_SPELL_DAM_REDUCTION - 1) / PVP_SPELL_DAM_REDUCTION;
+ #endif
 				if (!magik(FRIEND_FIRE_CHANCE))
 #endif
 				return(FALSE);
