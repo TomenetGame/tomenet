@@ -3256,7 +3256,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker)
 	if (IS_PLAYER(Ind_attacker))
 		s_printf("APPLY_NEXUS_PY: %s by %s\n", p_ptr->name, Players[Ind_attacker]->name);
 
-	switch (randint(safe_area(Ind) ? 5 : 8)) { /* don't do baaad things in Monster Arena Challenge */
+	switch (randint((safe_area(Ind) || (p_ptr->mode & MODE_PVP)) ? 5 : 8)) { /* don't do baaad things in Monster Arena Challenge */
 		case 4: case 5:
 		{
 			if (p_ptr->anti_tele || magik(chance))
@@ -8474,7 +8474,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				set_confused(Ind, p_ptr->confused + rand_int(5) + 5);
 
 			/* At the moment:
-			   No sleep/stun/fear effects (like it has on monsters)
+			   No sleep/stun/fear effects (like it has on monsters), or image(hallu)
 			*/
 		}
 		take_hit(Ind, dam, killer, -who);
@@ -8697,7 +8697,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who); /* Prevent going down to level 1 and then taking full damage -> instakill */
 
-			if (p_ptr->lev == 99) {
+			if (p_ptr->lev == 99 || (p_ptr->mode & MODE_PVP)) {
 				msg_print(Ind, "You are unaffected!");
 			} else if (p_ptr->hold_life && (rand_int(100) < 75)) {
 				msg_print(Ind, "You keep hold of your life force!");
@@ -8786,25 +8786,21 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Chaos -- many effects */
 		case GF_CHAOS:
-		if (p_ptr->resist_chaos)
-		{
+		if (p_ptr->resist_chaos) {
 //			dam *= 6; dam /= (randint(7) + 8);
 			dam *= 6; dam /= (randint(6) + 6);
 		}
 		if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
 		take_hit(Ind, dam, killer, -who); /* Prevent going down to level 1 and then taking full damage -> instakill */
+
 		if (!p_ptr->resist_conf)
-		{
 			(void)set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
-		}
-		if (!p_ptr->resist_chaos)
-		{
+		if (!p_ptr->resist_chaos && !(p_ptr->mode & MODE_PVP))
 			(void)set_image(Ind, p_ptr->image + randint(10));
-		}
-		if (!p_ptr->resist_neth && !p_ptr->resist_chaos)
-		{
-			if (p_ptr->lev == 99) {
+		if (!p_ptr->resist_neth && !p_ptr->resist_chaos) {
+			if (p_ptr->lev == 99 || (p_ptr->mode & MODE_PVP)) {
 				msg_print(Ind, "You are unaffected!");
 			} else if (p_ptr->hold_life && (rand_int(100) < 75)) {
 				msg_print(Ind, "You keep hold of your life force!");
@@ -8822,9 +8818,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_SHARDS:
 		if (p_ptr->biofeedback) dam /= 2;
 		if (p_ptr->resist_shard)
-		{
 			dam *= 6; dam /= (randint(6) + 6);
-		}
 		if (fuzzy) msg_format(Ind, "You are hit by something sharp for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
@@ -8974,11 +8968,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who); /* Prevent going down to level 1 and then taking full damage -> instakill */
 
-			if (p_ptr->resist_time) {
-				time_influence_choices = randint(9);
-			} else {
-				time_influence_choices = randint(10);
-			}
+			if ((p_ptr->mode & MODE_PVP)) time_influence_choices = 0;
+			else if (p_ptr->resist_time) time_influence_choices = randint(9);
+			else time_influence_choices = randint(10);
+
 			switch (time_influence_choices) {
 			case 1: case 2: case 3: case 4: case 5:
 				if (p_ptr->resist_time) {
