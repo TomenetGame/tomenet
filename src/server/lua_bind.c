@@ -1178,7 +1178,7 @@ void lua_forget_flavours(int Ind) {
 /* for use with '-w' wilderness creation */
 void lua_forget_map(int Ind) {
 	int i;
-        for (i = 0; i < MAX_WILD_X * MAX_WILD_Y; i++)
+        for (i = 0; i < MAX_WILD_8; i++)
 		Players[Ind]->wild_map[i] = 0;
 }
 
