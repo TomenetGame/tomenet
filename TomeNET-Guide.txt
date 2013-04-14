@@ -1204,9 +1204,9 @@ Word-of-Recall scrolls:
     return and revive in Bree.
 
     Example, a player is in Bree (32,32) and wants to recall to Orc Cave -300ft
-    which is at (31,25) and he has already been at 31,25 before, so he can use
-    Word-of-recall to get there. He has his WoR scrolls inscribed '@R' and now
-    types the following chat commands in order:
+    which we assume is at (31,25) and he has already been at 31,25 before, so
+    he can use Word-of-recall to get there. He has his WoR scrolls inscribed
+    '@R' and now types the following chat commands in order:
         /rec 31 25
         (he waits until that kicked in and transported him to Orc Cave surface)
         /rec -300
