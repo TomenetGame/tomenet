@@ -1203,6 +1203,15 @@ Word-of-Recall scrolls:
     over there will reject you and you won't remember the place when you
     return and revive in Bree.
 
+    Example, a player is in Bree (32,32) and wants to recall to Orc Cave -300ft
+    which is at (31,25) and he has already been at 31,25 before, so he can use
+    Word-of-recall to get there. He has his WoR scrolls inscribed '@R' and now
+    types the following chat commands in order:
+        /rec 31 25
+        (he waits until that kicked in and transported him to Orc Cave surface)
+        /rec -300
+        (this will bring him to the desired depth, from the surface).
+
 Weapons, devices and spells:
     @O and its variants control the 'auto-retaliator' which is a mechanism
        designed to make your character automatically attack targets that are
