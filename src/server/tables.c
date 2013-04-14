@@ -2114,7 +2114,7 @@ player_race race_info[MAX_RACE] =
                 66,  1, 150,  5,
                 62,  1, 120,  5,
                 5,
-		CFW+CFR+CFM+CFA+CFD+CFS+CFU+CFX, /* mh, adventurer?.. */
+		CFW+CFR+CFM+CFA+CFD+CFS+CFU+CFX +CFN, /* mh, adventurer?.. -- new: Ranger too */
                 120,
                 {
                         {
