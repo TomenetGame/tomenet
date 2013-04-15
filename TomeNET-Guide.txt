@@ -10476,10 +10476,12 @@ vary. For example a warrior cannot learn magic spells.
     of their opponents (see (6.12)), accessible via 'm' key or macro wizard.
 
     Hint: Enchanting your ranged weapon to-damage is especially effective,
-    because the enchantment will be multiplied by the weapons multiplier.
+    because the enchantment will be multiplied by the weapons multiplier, so
+    buy enchant to-dam scrolls from the alchemy store as soon as you can afford
+    them.
     Also make sure to have an ample supply of 'Scrolls of Phase Door'.
     Pick one of the three ranged masteries (Bow/Crossbow/Sling) and always
-    keep it maximized. Keep your Archery skill maximized too.
+    keep it maximized.
 
 - Paladin
     Paladins are a combination of warrior and priest. Holy knights that
