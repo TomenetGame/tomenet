@@ -4822,6 +4822,17 @@ different shop. Shops in different towns are run by different owners although
 they may use the same number '1'..'9' and '+' for their entrance symbols.
 If the item is worth more than 300,000 Au maybe you can find a fellow player
 who is wealthy and in urgent need of your items.
+
+Shops regularly change their inventory on a random basis: Roughly every 33
+seconds there is a chance that some items might get dropped and/or some new
+items might get added to the store inventory.
+This "store maintenance" stacks up to 10 times while no player is actually
+visiting the store.
+That means that shop-scumming can be done as fast as checking every ~33 seconds
+for best results if you don't mind the effort, and on the other hand allows for
+pretty relaxed scumming by checking about every 5 1/2 minutes.
+Or anywhere between 33 seconds and 5 1/2 minutes, as you personally prefer.
+
 See (5.7) for more information about ID, *ID* and shops!
 
 
