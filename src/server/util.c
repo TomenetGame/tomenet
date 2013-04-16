@@ -1813,7 +1813,8 @@ void msg_print(int Ind, cptr msg_raw)
 				if (!no_colour_code) {
 					/* broken \377 at the end of the text? ignore */
 					if (color_char_to_attr(msg[msg_scan + 1]) == -1
-					    && msg[msg_scan + 1] != '-') {
+					    && msg[msg_scan + 1] != '-'	/* {- and {{ are handled (further) below */
+					    && msg[msg_scan + 1] != '\377') {
 						msg_scan++;
 						continue;
 					}
