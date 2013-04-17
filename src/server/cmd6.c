@@ -5229,6 +5229,7 @@ void do_cmd_activate(int Ind, int item, int dir)
 				s16b level = o_ptr->level;
 				byte discount = o_ptr->discount;
 				byte number = o_ptr->number;
+				s16b note = o_ptr->note;
 
 				/* Destroy the rune stack in the pack */
 				msg_format(Ind, "There is a decoupling of magic.");
@@ -5250,6 +5251,7 @@ void do_cmd_activate(int Ind, int item, int dir)
 					q_ptr->level = level;
 					q_ptr->discount = discount;
 					q_ptr->number = number;
+					q_ptr->note = note;
 
 					/* Create the rune stack */
 					inven_carry(Ind, q_ptr);

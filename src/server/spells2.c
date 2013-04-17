@@ -7729,25 +7729,31 @@ void rune_combine_aux(int Ind, int item) {
 
 	/* Recall the first rune */
 	object_type *o_ptr = &p_ptr->inventory[p_ptr->current_activation];
-
+	
 	/* Store the combining flag */
 	s16b e_flags = r_elements[o_ptr->sval].flag;
 
 	/* Remember the original info */
+	byte sval = o_ptr->sval;
 	s32b owner = o_ptr->owner;
 	byte mode = o_ptr->mode;
 	s16b level = o_ptr->level;
 	byte discount = o_ptr->discount;
 	byte number = o_ptr->number;
+	s16b note = o_ptr->note; //keep the incription of the initial rune
 
 	/* Recall the second rune */
 	o_ptr = &p_ptr->inventory[item];
 	
 	/* Sanity */
-	if (o_ptr->tval != TV_RUNE) return; //not a rune
-	if (o_ptr->sval >= RCRAFT_MAX_ELEMENTS) return; //not a basic rune
-	if (!(o_ptr->level) && !(o_ptr->owner == p_ptr->id)) return; //not owned
-
+	if ((o_ptr->sval == sval) //same rune type
+	|| (o_ptr->tval != TV_RUNE) //not a rune (obselete)
+	|| (o_ptr->sval >= RCRAFT_MAX_ELEMENTS) //not a basic rune (obselete)
+	|| (!(o_ptr->level) && !(o_ptr->owner == p_ptr->id))) { //not owned
+		msg_format(Ind, "You cannot combine these runes!");
+		return;
+	}
+	
 	/* Store the combining flag */
 	e_flags |= r_elements[o_ptr->sval].flag;
 
@@ -7789,6 +7795,7 @@ void rune_combine_aux(int Ind, int item) {
 	q_ptr->level = level;
 	q_ptr->discount = discount;
 	q_ptr->number = number;
+	q_ptr->note = note;
 
 	/* Create the rune stack */
 	inven_carry(Ind, q_ptr);

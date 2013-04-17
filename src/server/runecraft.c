@@ -61,6 +61,7 @@ byte rspell_radius(byte imperative, byte type, byte skill, byte projection);
 byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u16b dice);
 
 /* Item Handling */
+object_type * rspell_trap(int Ind, byte projection);
 bool rspell_socket(int Ind, byte projection, bool sigil);
 bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item);
 
@@ -286,6 +287,24 @@ byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u1
 	if (duration > S_DURATION_MAX) duration = S_DURATION_MAX;
 	
 	return (byte)duration;
+}
+
+object_type * rspell_trap(int Ind, byte projection) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	
+	byte i;
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		if (i >= INVEN_PACK) continue;		
+		o_ptr = &p_ptr->inventory[i];
+		if ((o_ptr->tval == TV_RUNE) && (o_ptr->level || o_ptr->owner == p_ptr->id)) { //Do we own it..?
+			if (o_ptr->sval == projection) { //Element match
+				return o_ptr;
+			}
+		}
+	}
+	
+	return NULL;
 }
 
 bool rspell_socket(int Ind, byte projection, bool sigil) {
@@ -946,6 +965,9 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 	player_type *p_ptr = Players[Ind];
 	int y = p_ptr->py, x = p_ptr->px;
 	struct worldpos *wpos = &p_ptr->wpos;
+	object_type forge;
+	object_type *o_ptr = &forge;
+	object_type *r_ptr;
 
 	/* Allowed? */
 	if ((!allow_terraforming(wpos, FEAT_RUNE) || istown(wpos))
@@ -982,20 +1004,49 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 	/* Don't mess with inns please! */
 	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return;
 
+	/* 'Disarm' old runes */
+	if ((cs_ptr = GetCS(c_ptr, CS_RUNE)))
+	{
+		/* Restore the original cave feature */
+		cave_set_feat_live(wpos, y, x, cs_ptr->sc.rune.feat);
+		
+		/* Drop rune */
+		invcopy(o_ptr, lookup_kind(TV_RUNE, cs_ptr->sc.rune.typ));
+		o_ptr->discount = cs_ptr->sc.rune.discount;
+		o_ptr->level = cs_ptr->sc.rune.level;
+		o_ptr->owner = cs_ptr->sc.rune.id;
+		o_ptr->note = cs_ptr->sc.rune.note;
+		//drop_near(o_ptr, -1, wpos, y, x);
+		inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
+		
+		/* Cleanup */
+		cs_erase(c_ptr, cs_ptr);
+		return;
+	}
+	
 	/* Do we have a rune? */
-	if (!rspell_socket(Ind, projection, TRUE)) {
+	r_ptr = rspell_trap(Ind, projection);
+	if (!r_ptr) {
 		msg_format(Ind, "\377yYou do not have the required rune. (%s)", r_projections[projection].name);
 		return;
 	}
 	
-	/* Overwrite old runes */
-	if ((cs_ptr=GetCS(c_ptr, CS_RUNE)))
-	{
-		cs_erase(c_ptr, cs_ptr);
-	}
+	/* Store the rune */
+	byte discount = r_ptr->discount;
+	s16b item_level = r_ptr->level;
+	s16b note = r_ptr->note;
+	
+	/* Consume one rune */
+	(void)rspell_socket(Ind, projection, TRUE);
 	
 	/* Allocate memory for a new rune */
 	if (!(cs_ptr = AddCS(c_ptr, CS_RUNE))) return;
+	
+	/* Store the rune */
+	cs_ptr->sc.rune.discount = discount;
+	cs_ptr->sc.rune.level = item_level;
+	cs_ptr->sc.rune.note = note;
+	//cs_ptr->sc.rune.id = r_ptr->owner; //use trap setter, not rune owner
 	
 	/* Preserve Terrain Feature */
 	cs_ptr->sc.rune.feat = c_ptr->feat;
@@ -1004,14 +1055,13 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 	cs_ptr->sc.rune.typ = projection;
 	cs_ptr->sc.rune.mod = imperative;
 	cs_ptr->sc.rune.lev = skill;
-	cs_ptr->sc.rune.id = p_ptr->id;
+	cs_ptr->sc.rune.id = p_ptr->id; 
 	
 	/* Change the feature */
 	if (c_ptr->feat != FEAT_RUNE) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
 	c_ptr->feat = FEAT_RUNE;
 	
 	int i;
-	
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
@@ -1026,14 +1076,7 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 
 		/* Update some things */
 		p_ptr->update |= (PU_VIEW | PU_DISTANCE);
-//		p_ptr->update |= PU_FLOW;
-
-//		p_ptr->redraw |= PR_MAP;
-//		p_ptr->window |= PW_OVERHEAD;
 	}
-	
-	/* Set the Rune */
-	//cave_set_feat_live(wpos, y, x, FEAT_RUNE);
 }
 
 /*
@@ -1044,6 +1087,8 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 bool warding_rune_break(int m_idx)
 {
 	monster_type *m_ptr = &m_list[m_idx];
+	object_type forge;
+	object_type *o_ptr = &forge;
 	
 	/* Location info */
 	int mx = m_ptr->fx;
@@ -1112,8 +1157,15 @@ bool warding_rune_break(int m_idx)
 	}
 
 	/* Restore the original cave feature */
-	i = cs_ptr->sc.rune.feat;
-	cave_set_feat_live(wpos, my, mx, i);
+	cave_set_feat_live(wpos, my, mx, cs_ptr->sc.rune.feat);
+	
+	/* Drop rune */
+	invcopy(o_ptr, lookup_kind(TV_RUNE, cs_ptr->sc.rune.typ));
+	o_ptr->discount = cs_ptr->sc.rune.discount;
+	o_ptr->level = cs_ptr->sc.rune.level;
+	o_ptr->owner = cs_ptr->sc.rune.id;
+	o_ptr->note = cs_ptr->sc.rune.note;
+	drop_near(o_ptr, -1, wpos, my, mx);
 	
 	/* Cleanup */
 	cs_erase(c_ptr, cs_ptr);

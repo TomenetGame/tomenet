@@ -612,7 +612,7 @@ struct c_special{
 		struct { byte wx, wy; s16b wz; } wpos;	/* XXX */
 		struct { byte type, rest; bool known; } fountain;
 		struct { u16b trap_kit; byte difficulty, feat; } montrap;
-		struct { byte typ, mod, lev, feat; s32b id; } rune;
+		struct { byte typ, mod, lev, feat; s32b id; s16b note; byte discount; s16b level; } rune; /* CS_RUNE */
 	} sc;
 	struct c_special *next;
 };
