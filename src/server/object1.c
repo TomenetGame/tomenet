@@ -4915,32 +4915,32 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		buf_tmp_i++;
 	}
 	if (f3 & (TR3_IGNORE_COLD)) {
-		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " or " : ", ");
+		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " and " : ", ");
 		strcat(buf_tmp, "cold");
 		buf_tmp_i++;
 	}
 	if (f3 & (TR3_IGNORE_ELEC)) {
-		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " or " : ", ");
+		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " and " : ", ");
 		strcat(buf_tmp, "lightning");
 		buf_tmp_i++;
 	}
 	if (f3 & (TR3_IGNORE_ACID)) {
-		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " or " : ", ");
+		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " and " : ", ");
 		strcat(buf_tmp, "acid");
 		buf_tmp_i++;
 	}
 	if (f5 & (TR5_IGNORE_WATER)) {
-		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " or " : ", ");
+		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " and " : ", ");
 		strcat(buf_tmp, "water");
 		buf_tmp_i++;
 	}
 	if (f5 & (TR5_IGNORE_MANA)) {
-		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " or " : ", ");
+		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " and " : ", ");
 		strcat(buf_tmp, "mana");
 		buf_tmp_i++;
 	}
 	if (f5 & (TR5_IGNORE_DISEN)) {
-		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " or " : ", ");
+		if (buf_tmp_i) strcat(buf_tmp, buf_tmp_i == buf_tmp_n - 1 ? " and " : ", ");
 		strcat(buf_tmp, "disenchantment");
 		buf_tmp_i++;
 	}
