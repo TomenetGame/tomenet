@@ -10646,7 +10646,11 @@ vary. For example a warrior cannot learn magic spells.
     runespells. However, having the physical runes present can mitigate spell
     backlash and are required for the 'sigil' type runespell.
 
-    Hint: If you want to test rune combinations that pose a risk of going wrong
+    Hint: Runespells cause backlash on failure if you don't have the physical
+    runes in your inventory. For that reason you should use basic elemental
+    spells in the beginning, against which you can easily acquire the required
+    resistance, for example by buying a ring or amulet from the magic store.
+    If you want to test rune combinations that pose a risk of going wrong
     badly, do so in the arena of the 'Arena Monster Challenge' event so you
     will get away unscathed.
 
@@ -12546,6 +12550,8 @@ backlash. Keeping physical runes may become especially important once
 damaging effects of runespells begin to outpace the runemaster's intrinsic 
 durability; resisting one's own spells can be an important factor for 
 survival in critical situations.
+For this reason, beginner runemasters are advised to use basic elemental
+spells that they can easily acquire the according resistance for.
 
 INTelligence, DEXterity, and skill level affect spell failure rates for 
 runespells. Runespell type generally governs the level of a runespell,
