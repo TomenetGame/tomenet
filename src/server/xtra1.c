@@ -3707,13 +3707,11 @@ void calc_boni(int Ind)
 			}
 
 			/* Affect life capacity */
-			if (f1 & (TR1_LIFE)) {
-				if ((o_ptr->name1 != ART_RANDART) ||
-				    (make_resf(p_ptr) & RESF_LIFE)) {
-					p_ptr->to_l += o_ptr->bpval;
-				}
-			}
-
+			if ((f1 & (TR1_LIFE)) &&
+			    ((o_ptr->name1 != ART_RANDART) ||
+			    (make_resf(p_ptr) & RESF_LIFE) ||
+			    o_ptr->bpval < 0))
+				p_ptr->to_l += o_ptr->bpval;
 		}
 
 		if (k_ptr->flags5 & TR5_PVAL_MASK) {
@@ -3725,35 +3723,20 @@ void calc_boni(int Ind)
 #endif
 		}
 
-		/* bad hack, sorry. need redesign of boni - C. Blue
-		   fixes the vampiric shadow blade bug / affects all +life +basestealth weapons:
+		/* bad hack for certain double-egos, sorry. need redesign of boni - C. Blue
+		    *** deprecated, because VAMPIRIC no longer gives -LIFE ***
+		   fixes the vampiric shadow blade bug / affects all -life +basestealth weapons:
 		   (+2)(-2stl) -> life remains unchanged, stealth is increased by 2:
 		   both mods affect the life! Correct mod affects the stealth, but it's displayed wrong.
 		   pval should contain life bonus, bpval stealth. */
-/*		if (o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC)*/
-		if (f1 & (TR1_LIFE))
-#if 0
-			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner ||
- #if 0 /* changed, didn't seem to make that much sense? - C. Blue */
-			    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
-			    (p_ptr->lev >= o_ptr->level))
- #else /* a bit different, hopefully doing better, also catching badly mutated +life arts after randart.c changes! */
-			    (p_ptr->once_winner && cfg.fallenkings_etiquette))
- #endif
-			if ((o_ptr->name1 != ART_RANDART) ||
-			    (make_resf(p_ptr) & RESF_LIFE))
-#endif
-		{
-/*			if ((o_ptr->pval < 0 && o_ptr->bpval > 0) ||
-			    (o_ptr->pval > 0 && o_ptr->bpval < 0)) {*/
-			if (o_ptr->pval != 0 && o_ptr->bpval != 0) {
-				/* first we remove both effects on +LIFE */
-				p_ptr->to_l -= o_ptr->pval + o_ptr->bpval;
-				/* then we add the correct one, which is the wrong one ;) */
-/*				if (o_ptr->pval < 0) p_ptr->to_l += o_ptr->pval;
-				if (o_ptr->bpval < 0) p_ptr->to_l += o_ptr->bpval;*/
-				p_ptr->to_l += o_ptr->pval;
-			}
+/*		if (o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC)	*/
+		if ((f1 & (TR1_LIFE)) && o_ptr->pval != 0 && o_ptr->bpval != 0) {
+			/* first we remove both effects on +LIFE */
+			p_ptr->to_l -= o_ptr->pval + o_ptr->bpval;
+			/* then we add the correct one, which is the wrong one ;) */
+/*			if (o_ptr->pval < 0) p_ptr->to_l += o_ptr->pval;
+			if (o_ptr->bpval < 0) p_ptr->to_l += o_ptr->bpval;		*/
+			p_ptr->to_l += o_ptr->pval;
 		}
 
 		/* Next, add our ego bonuses */
@@ -3817,15 +3800,11 @@ void calc_boni(int Ind)
 		}
 
 		/* Affect life capacity */
-		if (f1 & (TR1_LIFE))
-			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner ||
-#if 0 /* changed, didn't seem to make that much sense? - C. Blue */
-			    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
-			    (p_ptr->lev >= o_ptr->level))
-#else /* a bit different, hopefully doing better, also catching badly mutated +life arts after randart.c changes! */
-			    (p_ptr->once_winner && cfg.fallenkings_etiquette))
-#endif
-				p_ptr->to_l += o_ptr->pval;
+		if ((f1 & (TR1_LIFE)) &&
+		    (o_ptr->name1 != ART_RANDART ||
+		    (make_resf(p_ptr) & RESF_LIFE) ||
+		    o_ptr->pval < 0))
+			p_ptr->to_l += o_ptr->pval;
 
 		/* Affect stealth */
 		if (f1 & TR1_STEALTH) p_ptr->skill_stl += pval;
