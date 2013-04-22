@@ -2193,6 +2193,7 @@ static int Handle_login(int ind)
 	char namebuf1[80], namebuf2[80], o_name[ONAME_LEN];
 	cptr title = "";
 	char traffic[50+1];
+	bool newly_created_msg = FALSE;
 
 	if (Id >= MAX_ID) {
 		errno = 0;
@@ -2634,6 +2635,7 @@ static int Handle_login(int ind)
 
 	/* some one-time hints after char creation in player_birth() */
 	if (p_ptr->newly_created) {
+		newly_created_msg = TRUE;
 		p_ptr->newly_created = FALSE;
 
 		if (p_ptr->mode & MODE_PVP) {
@@ -2729,7 +2731,10 @@ static int Handle_login(int ind)
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (!is_admin(Players[i])) continue;
 
-			msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
+			if (newly_created_msg)
+				msg_format(i, "\374\377%c%s%s has entered the game anew.", COLOUR_SERVER, title, p_ptr->name);
+			else
+				msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
 			if (namebuf1[0] && Players[i]->guild == p_ptr->guild) msg_print(i, namebuf1);
 		}
 		return 0;
@@ -2742,14 +2747,22 @@ static int Handle_login(int ind)
 	/* Tell everyone about our new player */
 	for (i = 1; i < NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
-		msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
+		if (newly_created_msg)
+			msg_format(i, "\374\377%c%s%s has entered the game anew.", COLOUR_SERVER, title, p_ptr->name);
+		else
+			msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
 
 		/* print notification message about guild-auto-add now */
 		if (namebuf1[0] && Players[i]->guild == p_ptr->guild) msg_print(i, namebuf1);
 	}
 
 #ifdef TOMENET_WORLDS
-	if (cfg.worldd_pjoin) world_msg(format("\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name));
+	if (cfg.worldd_pjoin) {
+		if (newly_created_msg)
+			world_msg(format("\374\377%c%s%s has entered the game anew.", COLOUR_SERVER, title, p_ptr->name));
+		else
+			world_msg(format("\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name));
+	}
 #endif
 
 	/* Tell the meta server about the new player */
