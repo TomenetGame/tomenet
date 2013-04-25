@@ -1657,7 +1657,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 
 //				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
 //				if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
-				if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 1000L;/* was 20k, but speed is only 10k */
+				if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 2000L;/* was 20k, but speed is only 10k */
 				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
 
 				/* Give credit for stealth and searching */
@@ -2511,7 +2511,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 
 //				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
 //				if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
-				if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 1000L;/* was 20k, but speed is only 10k */
+				if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 2000L;/* was 20k, but speed is only 10k */
 				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
 
 				/* Give credit for stealth and searching */
