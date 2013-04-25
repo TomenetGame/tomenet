@@ -2608,6 +2608,9 @@ static void process_player_begin(int Ind)
 	p_ptr->energy += extract_energy[p_ptr->pspeed];
 	limit_energy(p_ptr);
 
+	/* clear 'quaked' flag for p_ptr->impact limiting */
+	p_ptr->quaked = FALSE;
+
 	/* Check "resting" status */
 	if (p_ptr->resting) {
 		/* No energy availiable while resting */

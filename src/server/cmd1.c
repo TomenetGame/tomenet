@@ -3444,7 +3444,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	}
 
 	/* Mega-Hack -- apply earthquake brand */
-	if (do_quake) {
+	if (do_quake && !p_ptr->quaked) {
 		if (o_ptr->k_idx
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
 		    && !check_guard_inscription(o_ptr->note, 'E')
@@ -3454,8 +3454,10 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #endif
 		    ) {
 			/* Giga-Hack -- equalize the chance (though not likely..) */
-			if (old || randint(p_ptr->num_blow) < 3)
+			if (old || randint(p_ptr->num_blow) < 3) {
 				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
+				p_ptr->quaked = TRUE;
+			}
 		}
 	}
 }
@@ -4567,7 +4569,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	}
 
 	/* Mega-Hack -- apply earthquake brand */
-	if (do_quake) {
+	if (do_quake && !p_ptr->quaked) {
 		if (o_ptr->k_idx
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
 		    && !check_guard_inscription(o_ptr->note, 'E')
@@ -4577,8 +4579,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 #endif
 		    ) {
 			/* Giga-Hack -- equalize the chance (though not likely..) */
-			if (old || randint(p_ptr->num_blow) < 3)
+			if (old || randint(p_ptr->num_blow) < 3) {
 				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
+				p_ptr->quaked = TRUE;
+			}
 		}
 	}
 
