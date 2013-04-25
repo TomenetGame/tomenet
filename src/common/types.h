@@ -2723,6 +2723,9 @@ struct player_type
 	/* No insane amounts of damage either */
 	s32b total_damage;
 
+	/* Prevent players from causing more than one earthquake per round via melee attacks - C. Blue */
+	bool quaked;
+
 #ifdef AUCTION_SYSTEM
 	/* The current auction - mikaelh */
 	int current_auction;
