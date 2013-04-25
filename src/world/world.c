@@ -428,7 +428,7 @@ uint32_t get_message_type(char *msg) {
 
 	if (strstr(msg, " has left the game.")) {
 		return WMF_PLEAVE;
-	} else if (strstr(msg, " has entered the game.")) {
+	} else if (strstr(msg, " has entered the game.") || strstr(msg, " sets foot into the world.")) {
 		return WMF_PJOIN;
 	} else if (strstr(msg, "Morgoth, Lord of Darkness was slain by ")) {
 		return (WMF_PWIN | WMF_UNIDEATH);
