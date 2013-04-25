@@ -2085,6 +2085,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 		/* No tunnelling through emptiness */
 		if ((cave_floor_bold(zcave, y, x)) || (c_ptr->feat == FEAT_PERM_CLEAR)) {
 			msg_print(Ind, "You see nothing there to tunnel through.");
+			disturb(Ind, 0, 0);
+			return;
 		}
 
 		/* No tunnelling through doors */
@@ -2666,7 +2668,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 		}
-	} else {
+	} else { /* dir == 0 */
 		/* we didn't dig into anything, but since we might still cause earthquakes,
 		   we need to deduct one turn of energy appropriately:
 		   We basically stroke the floor to cause an earthquake instead. */
