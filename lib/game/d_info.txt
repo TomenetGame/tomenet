@@ -34,6 +34,9 @@
 # 3 = OR
 # 4 = NOR
 
+# Note:
+# FLoor/Filltype fields 4 and 5 are now (ab)used for IRONDEEPDIVE_MIXED_TYPES exclusively.
+
 # Version stamp (required)
 
 V:4.0.0
