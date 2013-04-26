@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. April 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. April 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7235,7 +7235,9 @@ CHAOTIC ('It produces chaotic effects')
         c) confuse target (very likely).
         d) teleport target away.
         e) polymorph target.
-        f) clone target.
+        f) clone target aka duplicate the monster it hits. Note that the clone
+           does not give experience, drop items, or give form credit for
+           mimicry users.
         Note that most of these have an *extremely* low chance to occur.
         Most of the time the vampirism or confusion effect is chosen.
 IMPACT ('It can cause earthquakes')
@@ -7635,6 +7637,9 @@ Cheques         These are automatically generated in player stores when someone
 
 Wands/Rods/Staves
 -----------------
+Clone Monster   Duplicates a monster. The duplicate, aka 'clone', does not give
+                experience, drop items, or count as form credit for mimicry
+                users.
 Genocide        See 'Scrolls'.
 *Destruction*   See 'Scrolls'.
 Wonder          Wands of wonder cast random magic spells.
@@ -14122,7 +14127,8 @@ and can push past weaker monsters, they can bash doors. They can dig through
 rock, they are immune to cold, electricity and poison, they don't know fear
 and can neither be confused nor paralyzed. They are immune to teleportation
 attacks. Golems have always the maximum possible hit dice. Further, golems
-count as '100 %clones', hence giving no experience if someone kills them.
+count as '100 %clones', hence giving no experience, items or form credit (for
+mimicry users) if someone kills them.
 Golems always attack by hitting with their arms for raw physical damage.
 A golem has the same level as its owner had at the time of creation.
 Golem owners don't get experience for monsters killed by the golem.
