@@ -1340,8 +1340,13 @@ void handle_music(int Ind) {
 #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
 	if (in_irondeepdive(&p_ptr->wpos)) {
 		l_ptr = getfloor(&p_ptr->wpos);
+ #if 0 /* kinda annoying to have 2 floors of 'unspecified' music - C. Blue */
 		if (!iddc[ABS(p_ptr->wpos.wz)].step) i = iddc[ABS(p_ptr->wpos.wz)].type;
 		else i = 0; //Transition floors
+ #else
+		if (iddc[ABS(p_ptr->wpos.wz)].step < 2) i = iddc[ABS(p_ptr->wpos.wz)].type;
+		else i = iddc[ABS(p_ptr->wpos.wz)].next;
+ #endif
 	} else
 	if (p_ptr->wpos.wz != 0) {
 		l_ptr = getfloor(&p_ptr->wpos);
