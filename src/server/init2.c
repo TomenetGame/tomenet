@@ -2519,7 +2519,7 @@ byte getiddctype(byte depth, byte last) {
 
 
 errr init_iddc() {
-	byte n, i;
+	byte n = 0, i;
 	byte type = getiddctype(1, 0);
 	byte step = 0;
 	byte next = 0;
