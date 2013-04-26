@@ -2542,7 +2542,7 @@ errr init_iddc() {
 			break;
 			case 0:
 			default:
-			if (!indepthrange(i, type) || randint(20) < n) {
+			if (!indepthrange(i, type) || randint(25) < n) {
 				n = 0;
 				next = getiddctype(i, type);
 				if (next != type) step++;
