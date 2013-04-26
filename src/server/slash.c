@@ -7218,6 +7218,14 @@ void do_slash_cmd(int Ind, char *message)
                                 p_ptr->auto_transport = AT_VALINOR;
 			        return;
 			}
+#ifdef IRONDEEPDIVE_MIXED_TYPES // Kurzel
+			/* Re-roll IDDC */
+			else if (prefix(message, "/riddc")) {
+				if (scan_iddc()) msg_print(Ind, "scan_iddc() succeeded.");
+				else msg_print(Ind, "scan_iddc() FAILED!");
+			        return;
+			}
+#endif
 			/* Recall all players out of the dungeons, kick those who aren't eligible */
 			else if (prefix(message, "/allrec")) {
 				struct worldpos pwpos;

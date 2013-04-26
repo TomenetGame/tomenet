@@ -483,6 +483,9 @@ extern int swear_get_level(int i);
 extern void nonswear_set(int i, char *word);
 extern char *nonswear_get(int i);
 extern void init_swearing(void);
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+extern int scan_iddc(void);
+#endif
 
 #ifdef DUNGEON_VISIT_BONUS
 /* 128 = MAX_D_IDX * 2 */

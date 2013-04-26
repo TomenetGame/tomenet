@@ -5285,6 +5285,9 @@ static void process_various(void)
 		scan_players();
 		scan_accounts();
 		scan_houses();
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+		(void)scan_iddc();
+#endif
 		if (cfg.auto_purge) {
 			s_printf("previous server status: m_max(%d) o_max(%d)\n",
 					m_max, o_max);
@@ -7090,7 +7093,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 	scan_players();
 	scan_accounts();
 	scan_houses();
-
+	
 #if defined CLIENT_SIDE_WEATHER && !defined CLIENT_WEATHER_GLOBAL
 	/* initialize weather */
 	wild_weather_init();

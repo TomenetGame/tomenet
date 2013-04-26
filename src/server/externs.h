@@ -299,6 +299,9 @@ extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
 extern guild_type guilds[MAX_GUILDS];
 extern struct quest_type quests[20];	/* server quest data */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+extern struct iddc_type iddc[128]; //(hardcode, ew)
+#endif
 extern house_type *houses;
 #ifdef PLAYER_STORES
 extern store_type *fake_store;
@@ -882,6 +885,9 @@ extern bool load_server_cfg(void);
 extern void init_schools(s16b new_size);
 extern void init_spells(s16b new_size);
 extern void init_swearing(void);
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+extern int scan_iddc(void);
+#endif
 
 /* load1.c */
 /*extern errr rd_savefile_old(void);*/

@@ -2485,6 +2485,103 @@ static errr init_other(void)
 	return (0);
 }
 
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+bool indepthrange(byte depth, byte type) {
+	if (depth < d_info[type].mindepth || depth > d_info[type].maxdepth) return FALSE;
+	return TRUE;
+}
+
+byte getiddctype(byte depth, byte last) {
+	byte pool[MAX_D_IDX];
+	byte n = 0, i;
+	
+	//Scan d_info[] for dungeons
+	for (i = 0; i < MAX_D_IDX; i++) {
+		//Disqualify some dungeons...
+		if (!indepthrange(depth, i) //Out of range
+		//Hardcoded exclusions from d_info.txt indices
+		|| (i == 0) //Wilderness
+		|| (i == 6) //Nether Realm (paranoia, too deep anyhow!)
+		|| (i == 28) //Death Fate
+		|| (i == 31) //Valinor (more paranoia)
+		|| (i == last)) //Exclude the previous dungeon type?
+			continue;
+		else {
+			pool[n] = i;
+			n++;
+		}
+	}
+
+	//Return
+	if (n) return pool[rand_int(n)]; //rand_int(n):[0,n-1]
+	else return last; //Use the previous dungeon type on error!
+}
+
+
+errr init_iddc() {
+	byte n, i;
+	byte type = getiddctype(1, 0);
+	byte step = 0;
+	byte next = 0;
+	for (i = 1; i < 128; i++) {
+#ifdef IRONDEEPDIVE_FIXED_TOWNS
+		if (i == 41 || i == 81 || i == 121) { //immediate change
+			type = getiddctype(i, type);
+			step = 0;
+			next = 0;
+		} else
+#endif		
+		switch (step) {
+			case 2:
+				type = next;
+				step = 0;
+				next = 0;
+			break;
+			case 1:
+				step++;
+			break;
+			case 0:
+			default:
+			if (!indepthrange(i, type) || randint(20) < n) {
+				n = 0;
+				next = getiddctype(i, type);
+				if (next != type) step++;
+			} else n++;
+			break;
+		}
+		
+		//Save the values
+		iddc[i].type = type;
+		iddc[i].step = step;
+		iddc[i].next = next;
+		
+		//Debug Log; print to server? - Kurzel
+		//s_printf("IDDC %d -- Type: %d Step: %d Next: %d\n", i, iddc[i].type, iddc[i].step, iddc[i].next);
+	}
+	
+	return 0;
+}
+
+int scan_iddc() {
+	struct worldpos wpos;
+	wpos.wx = WPOS_IRONDEEPDIVE_X;
+	wpos.wy = WPOS_IRONDEEPDIVE_Y;
+	//Lazy, don't mess with iddc if anyone is inside! (Could be improved...)
+	byte i;
+	for (i = 1; i < 128; i++) {
+		wpos.wz = i;
+		cave_type **zcave;
+		if (!(zcave = getcave(&wpos))) continue;
+		else {
+			s_printf("IDDC Scan Failed!\n");
+			return -1;
+		}
+	}
+	(void)init_iddc();
+	s_printf("IDDC Scan Success!\n");
+	return 0;
+}
+#endif
 
 void init_swearing() {
 	char buf[1024];
@@ -3269,6 +3366,12 @@ void init_some_arrays(void)
 	s_printf("[Initializing arrays... (alloc)]\n");
 	if (init_alloc()) quit("Cannot initialize alloc stuff");
 
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	/* Initialize some other arrays */
+	s_printf("[Initializing arrays... (iddc)]\n");
+	if (init_iddc()) quit("Cannot initialize iddc stuff");
+#endif	
+	
 	init_swearing();
 
 	/* Hack -- all done */

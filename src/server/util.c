@@ -1337,6 +1337,12 @@ void handle_music(int Ind) {
 	}
 #endif
 
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(&p_ptr->wpos)) {
+		l_ptr = getfloor(&p_ptr->wpos);
+		if (!iddc[ABS(p_ptr->wpos.wz)].step) i = iddc[ABS(p_ptr->wpos.wz)].type;
+		else i = 0; //Transition floors
+	} else
 	if (p_ptr->wpos.wz != 0) {
 		l_ptr = getfloor(&p_ptr->wpos);
 		if (p_ptr->wpos.wz < 0)
@@ -1344,7 +1350,15 @@ void handle_music(int Ind) {
 		else
 			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->type;
 	}
-
+#else
+	if (p_ptr->wpos.wz != 0) {
+		l_ptr = getfloor(&p_ptr->wpos);
+		if (p_ptr->wpos.wz < 0)
+			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->type;
+		else
+			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->type;
+	}
+#endif
 
 	if (getlevel(&p_ptr->wpos) == 196) {
 		//Zu-Aon

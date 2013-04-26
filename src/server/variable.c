@@ -255,6 +255,10 @@ guild_type guilds[MAX_GUILDS];
 
 struct quest_type quests[20];	/* server quest data */
 
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+struct iddc_type iddc[128]; //(hardcode, ew)
+#endif
+
 /* The information about houses */
 house_type *houses;
 s32b num_houses = 0;

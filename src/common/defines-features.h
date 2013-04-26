@@ -21,6 +21,8 @@
 /* Add an extra character slot dedicated to PvP mode */
 #define DED_PVP_CHAR
 
+/* Use daily pre-generated IDDC lineups of dungeon types, with transitions, bosses, etc? - Kurzel */
+#define IRONDEEPDIVE_MIXED_TYPES
 /* Add fixed (and safe) towns to "Ironman Deep Dive Challenge"? (at depths 2k and 4k) */
 #define IRONDEEPDIVE_FIXED_TOWNS
 /* Allow to withdraw prematurely in fixed Ironman Deep Dive Challenge towns.

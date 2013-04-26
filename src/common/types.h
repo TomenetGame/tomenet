@@ -2915,6 +2915,15 @@ struct rule_type
 	char r_char[5];			/* Monster race allowed */
 };
 
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+typedef struct iddc_type iddc_type;
+struct iddc_type {
+	byte type; //d_info[] index
+	byte step; //transition stage
+	byte next; //next d_info[] index
+};
+#endif
+
 /* A structure for the != dungeon types */
 typedef struct dungeon_info_type dungeon_info_type;
 struct dungeon_info_type

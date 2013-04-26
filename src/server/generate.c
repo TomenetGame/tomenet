@@ -1280,8 +1280,13 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 	cave_type *c_ptr;
 
 	dungeon_type *dt_ptr = getdungeon(wpos);
-	int dun_type = dt_ptr->type;
-
+	int dun_type;
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+	else dun_type = dt_ptr->type;
+#else
+	dun_type = dt_ptr->type;
+#endif
 	struct c_special *cs_ptr;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
@@ -1340,8 +1345,13 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 				    !(c_ptr->feat == d_info[dun_type].fill_type[0]) &&
 				    !(c_ptr->feat == d_info[dun_type].fill_type[1]) &&
 				    !(c_ptr->feat == d_info[dun_type].fill_type[2]) &&
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+				    !(c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[3]) &&
+				    !(c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 1) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[4]))
+#else
 				    !(c_ptr->feat == d_info[dun_type].fill_type[3]) &&
 				    !(c_ptr->feat == d_info[dun_type].fill_type[4]))
+#endif
 					continue;
 
 #if 0
@@ -1398,7 +1408,13 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall)
 
 #if 0
 	dungeon_type *dt_ptr = getdungeon(wpos);
-	int dun_type = dt_ptr->type;
+	int dun_type;
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+	else dun_type = dt_ptr->type;
+#else
+	dun_type = dt_ptr->type;
+#endif
 #endif	/* 0 */
 
 	struct c_special *cs_ptr;
@@ -3609,7 +3625,13 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	cptr		name;
 
 	dungeon_type *dt_ptr = getdungeon(wpos);
-	int dun_type = dt_ptr->type;
+	int dun_type;
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+	else dun_type = dt_ptr->type;
+#else
+	dun_type = dt_ptr->type;
+#endif
 	dun_level *l_ptr = getfloor(wpos);
 
 	bool (*chosen_type)(int r_idx);
@@ -3942,7 +3964,13 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 #endif
 	cave_type	*c_ptr;
 	dungeon_type *dt_ptr = getdungeon(wpos);
-	int dun_type = dt_ptr->type;
+	int dun_type;
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+	else dun_type = dt_ptr->type;
+#else
+	dun_type = dt_ptr->type;
+#endif
 	dun_level *l_ptr = getfloor(wpos);
 
 	bool (*chosen_type)(int r_idx);
@@ -7818,8 +7846,13 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 	cave_type		*c_ptr;
 
 	dungeon_type	*d_ptr = getdungeon(wpos);
-
-	int dun_type = d_ptr->type;
+	int dun_type;
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+	else dun_type = d_ptr->type;
+#else
+	dun_type = d_ptr->type;
+#endif
 #if 0
 	dungeon_info_type *di_ptr = &d_info[dun_type];
 #endif
@@ -7988,9 +8021,15 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 
 		/* Tunnel through all other walls */
 		else if ((c_ptr->feat == d_info[dun_type].fill_type[0]) ||
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+			 (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[1]) ||
+		         (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 1) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[2]) ||
+		         (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[3]) ||
+#else
 		         (c_ptr->feat == d_info[dun_type].fill_type[1]) ||
 		         (c_ptr->feat == d_info[dun_type].fill_type[2]) ||
 		         (c_ptr->feat == d_info[dun_type].fill_type[3]) ||
+#endif
 		         (c_ptr->feat == d_info[dun_type].fill_type[4])) {
 			/* Accept this location */
 			row1 = tmp_row;
@@ -8015,9 +8054,15 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 
 				/* Make sure it's a wall we want to tunnel */
 				if ((c_ptr->feat == d_info[dun_type].fill_type[0]) ||
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+				    (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[1]) ||
+				    (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 1) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[2]) ||
+				    (c_ptr->feat == d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].fill_type[3]) ||
+#else
 				    (c_ptr->feat == d_info[dun_type].fill_type[1]) ||
 				    (c_ptr->feat == d_info[dun_type].fill_type[2]) ||
 				    (c_ptr->feat == d_info[dun_type].fill_type[3]) ||
+#endif
 				    (c_ptr->feat == d_info[dun_type].fill_type[4]) ||
 				    c_ptr->feat == FEAT_WALL_EXTRA)
 				{
@@ -8131,7 +8176,11 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 
 		/* Occasional doorway */
 		/* Some dungeons don't have doors at all */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+		if ((((in_irondeepdive(wpos)) && (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & (DF1_NO_DOORS)))) || (!(d_ptr->flags1 & (DF1_NO_DOORS)))) &&
+#else
 		if (!(d_ptr->flags1 & (DF1_NO_DOORS)) &&
+#endif
 			rand_int(100) < DUN_TUN_PEN)
 		{
 			/* Place a random door */
@@ -8187,7 +8236,13 @@ static int next_to_corr(struct worldpos *wpos, int y1, int x1)
 	int i, y, x, k = 0;
 	cave_type *c_ptr;
 	dungeon_type *dt_ptr = getdungeon(wpos);
-	int dun_type = dt_ptr->type;
+	int dun_type;
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+	else dun_type = dt_ptr->type;
+#else
+	dun_type = dt_ptr->type;
+#endif
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
@@ -8207,8 +8262,13 @@ static int next_to_corr(struct worldpos *wpos, int y1, int x1)
 		if ((c_ptr->feat != d_info[dun_type].floor[0]) &&
 		    (c_ptr->feat != d_info[dun_type].floor[1]) &&
 		    (c_ptr->feat != d_info[dun_type].floor[2]) &&
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+		    (c_ptr->feat != d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 0) ? iddc[ABS(wpos->wz)].next : dun_type)].floor[3]) &&
+		    (c_ptr->feat != d_info[((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].step > 1) ? iddc[ABS(wpos->wz)].next : dun_type)].floor[4]))
+#else
 		    (c_ptr->feat != d_info[dun_type].floor[3]) &&
 		    (c_ptr->feat != d_info[dun_type].floor[4]))
+#endif
 			continue;
 
 		/* Skip grids inside rooms */
@@ -8363,7 +8423,12 @@ static void try_doors(worldpos *wpos, int y, int x)
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Some dungeons don't have doors at all */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if ((in_irondeepdive(wpos) && (d_info[iddc[ABS(wpos->wz)].type].flags1 & (DF1_NO_DOORS)))
+	|| (d_ptr->flags1 & (DF1_NO_DOORS))) return;
+#else
 	if (d_ptr->flags1 & (DF1_NO_DOORS)) return;
+#endif
 
 	/* Reset tally */
 	n = 0;
@@ -8575,7 +8640,14 @@ static void init_feat_info(worldpos *wpos)
 
 	int dun_lev = getlevel(wpos);
 	dungeon_type *dt_ptr = getdungeon(wpos);
-	int dun_type = dt_ptr->type;
+	int dun_type;
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+	else dun_type = dt_ptr->type;
+#else
+	dun_type = dt_ptr->type;
+#endif
+
 	dungeon_info_type *d_ptr = &d_info[dun_type];
 	dun_level *l_ptr = getfloor(wpos); /* for DIGGING */
 
@@ -8595,9 +8667,18 @@ static void init_feat_info(worldpos *wpos)
 	}
 
 	/* Retrieve dungeon depth info (base 1, to avoid zero divide errors) */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(wpos)) {
+		cur_depth = dun_lev;
+		max_depth = d_ptr->maxdepth + 2; //hardcode (ew, fix for the 2 transitions levels, so max > cur in probability calcs)
+	} else {
+		cur_depth = (dun_lev - d_ptr->mindepth) + 1;
+		max_depth = (d_ptr->maxdepth - d_ptr->mindepth) + 1;
+	}
+#else
 	cur_depth = (dun_lev - d_ptr->mindepth) + 1;
 	max_depth = (d_ptr->maxdepth - d_ptr->mindepth) + 1;
-
+#endif
 
 	/* Set room wall types */
 	feat_wall_outer = d_ptr->outer_wall;
@@ -8615,6 +8696,26 @@ static void init_feat_info(worldpos *wpos)
 	for (i = 0; i < 5; i++) {
 		p1 = d_ptr->floor_percent[i][0];
 		p2 = d_ptr->floor_percent[i][1];
+
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+		/* note: We make the assumption, that tile types of
+		 fields 1,2,3 have no two that are the same */
+		/* hack the first 3 default probabilities for IDDC */
+		if (i < 3) {
+			if (d_ptr->floor[3] == d_ptr->floor[i]) {
+				p1 -= d_ptr->floor_percent[3][0];
+				p2 -= d_ptr->floor_percent[3][1];
+			}
+			if (d_ptr->floor[4] == d_ptr->floor[i]) {
+				p1 -= d_ptr->floor_percent[4][0];
+				p2 -= d_ptr->floor_percent[4][1];
+			}
+		}
+		/* paranoia extreme */
+		if (p1 < 0) p1 = 0;
+		if (p2 < 0) p2 = 0;
+#endif
+
 		floor_lim[i] = (i == 5 - 1 ? 100 : (i > 0 ? floor_lim[i - 1] : 0) + p1 + (p2 - p1) * cur_depth / max_depth);
 		/* for DIGGING */
 		if (p1 != 0 || p2 != 0) {
@@ -8629,6 +8730,26 @@ static void init_feat_info(worldpos *wpos)
 	for (i = 0; i < 5; i++) {
 		p1 = d_ptr->fill_percent[i][0];
 		p2 = d_ptr->fill_percent[i][1];
+
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+		/* note: We make the assumption, that tile types of
+		 fields 1,2,3 have no two that are the same */
+		/* hack the first 3 default probabilities for IDDC */
+		if (i < 3) {
+			if (d_ptr->fill_type[3] == d_ptr->fill_type[i]) {
+				p1 -= d_ptr->fill_percent[3][0];
+				p2 -= d_ptr->fill_percent[3][1];
+			}
+			if (d_ptr->fill_type[4] == d_ptr->fill_type[i]) {
+				p1 -= d_ptr->fill_percent[4][0];
+				p2 -= d_ptr->fill_percent[4][1];
+			}
+		}
+		/* paranoia extreme */
+		if (p1 < 0) p1 = 0;
+		if (p2 < 0) p2 = 0;
+#endif
+
 		fill_lim[i] = (i == 5 - 1 ? 100 : (i > 0 ? fill_lim[i - 1] : 0) + p1 + (p2 - p1) * cur_depth / max_depth);
 		/* for DIGGING */
 		if (p1 != 0 || p2 != 0) {
@@ -8669,7 +8790,32 @@ static void init_feat_info(worldpos *wpos)
 		{
 			for (j = 0; j < 5; j++) {
 				if (i < floor_lim[j] || j == 5 - 1) {
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+					if (in_irondeepdive(wpos)) {
+						if (iddc[ABS(wpos->wz)].step > 1) {
+							switch (j) {
+								case 3:
+								case 4:
+									floor_type[i] = d_info[iddc[ABS(wpos->wz)].next].floor[j];
+								break;
+								default:
+									floor_type[i] = d_ptr->floor[j];
+								break;
+							}
+						} else if (iddc[ABS(wpos->wz)].step > 0) {
+							switch (j) {
+								case 3:
+									floor_type[i] = d_info[iddc[ABS(wpos->wz)].next].floor[j];
+								break;
+								default:
+									floor_type[i] = d_ptr->floor[j];
+								break;
+							}
+						} else floor_type[i] = d_ptr->floor[j];
+					} else floor_type[i] = d_ptr->floor[j];
+#else
 					floor_type[i] = d_ptr->floor[j];
+#endif
 					break;
 				}
 			}
@@ -8677,7 +8823,32 @@ static void init_feat_info(worldpos *wpos)
 
 		for (j = 0; j < 5; j++) {
 			if (i < fill_lim[j] || j == 5 - 1) {
-				fill_type[i] = d_ptr->fill_type[j];
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+					if (in_irondeepdive(wpos)) {
+						if (iddc[ABS(wpos->wz)].step > 1) {
+							switch (j) {
+								case 3:
+								case 4:
+									fill_type[i] = d_info[iddc[ABS(wpos->wz)].next].fill_type[j];
+								break;
+								default:
+									fill_type[i] = d_ptr->fill_type[j];
+								break;
+							}
+						} else if (iddc[ABS(wpos->wz)].step > 0) {
+							switch (j) {
+								case 3:
+									fill_type[i] = d_info[iddc[ABS(wpos->wz)].next].fill_type[j];
+								break;
+								default:
+									fill_type[i] = d_ptr->fill_type[j];
+								break;
+							}
+						} else fill_type[i] = d_ptr->fill_type[j];
+					} else fill_type[i] = d_ptr->fill_type[j];
+#else
+					fill_type[i] = d_ptr->fill_type[j];
+#endif
 				break;
 			}
 		}
@@ -8732,7 +8903,13 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth)
 	int cur_wid = dun->l_ptr->wid;
 
 	dungeon_type *dt_ptr = getdungeon(wpos);
-	int dun_type = dt_ptr->type;
+	int dun_type;
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+	else dun_type = dt_ptr->type;
+#else
+	dun_type = dt_ptr->type;
+#endif
 
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -9017,14 +9194,18 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #else
 	/* yay for hard-coding "The Paths of the Dead".. ;-|
 	   (it's the only affected dungeon anyway) */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].type == 16) fountains_of_blood = TRUE;
+	else if (d_ptr->type == 16) fountains_of_blood = TRUE;
+#else
 	if (d_ptr->type == 16) fountains_of_blood = TRUE;
+#endif
 #endif
 
 	if(!(zcave = getcave(wpos))) return;
 	wild = &wild_info[wpos->wy][wpos->wx];
 	flags1 = (wpos->wz > 0 ? wild->tower->flags1 : wild->dungeon->flags1);
 	flags2 = (wpos->wz > 0 ? wild->tower->flags2 : wild->dungeon->flags2);
-
 
 	/* in case of paranoia, note that ALL normal dungeons (in d_info) are DF2_RANDOM ;) */
 	if(!flags2 & DF2_RANDOM) return;
@@ -9043,12 +9224,22 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	   from the rand_int in 'Small level', not from 'Very small'! - C. Blue */
 
 	/* Very small (1 x 1 panel) level */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if ((in_irondeepdive(wpos) && (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_BIG)) && (d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_SMALLEST))
+	|| (!(d_ptr->flags1 & DF1_BIG) && (d_ptr->flags1 & DF1_SMALLEST))) {
+#else
 	if (!(d_ptr->flags1 & DF1_BIG) && (d_ptr->flags1 & DF1_SMALLEST)) {
+#endif
 		dun->l_ptr->hgt = SCREEN_HGT;
 		dun->l_ptr->wid = SCREEN_WID;
 	}
 	/* Small level */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	else if ((in_irondeepdive(wpos) && (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_BIG) && ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_SMALL) || (!rand_int(SMALL_LEVEL)))))
+	|| (!(d_ptr->flags1 & DF1_BIG) && ((d_ptr->flags1 & DF1_SMALL) || (!rand_int(SMALL_LEVEL)))))
+#else
 	else if (!(d_ptr->flags1 & DF1_BIG) && ( (d_ptr->flags1 & DF1_SMALL) || (!rand_int(SMALL_LEVEL))))
+#endif
 	{
 #if 0 /* No more ultra-small levels for now (1/2 x 1/2 panel), and no max size here either :) - C. Blue*/
 		dun->l_ptr->wid = MAX_WID - rand_int(MAX_WID / SCREEN_WID * 2) * (SCREEN_WID / 2);
@@ -9082,11 +9273,21 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 #endif
 
 	/* TODO: copy dungeon_type flags to dun_level */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if ((in_irondeepdive(wpos) && (d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_FORGET))
+	|| (d_ptr && (d_ptr->flags1 & DF1_FORGET))) {
+#else
 	if (d_ptr && (d_ptr->flags1 & DF1_FORGET)) {
+#endif
 		dun->l_ptr->flags1 |= LF1_NO_MAP;
 		s_printf("FORGET\n");
 	}
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if ((in_irondeepdive(wpos) && (d_info[iddc[ABS(wpos->wz)].type].flags2 & DF2_NO_MAGIC_MAP))
+	|| (d_ptr && (d_ptr->flags2 & DF2_NO_MAGIC_MAP))) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
+#else
 	if (d_ptr && (d_ptr->flags2 & DF2_NO_MAGIC_MAP)) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
+#endif
 
 	/* Hack -- NO_MAP often comes with NO_MAGIC_MAP */
 	if ((dun->l_ptr->flags1 & LF1_NO_MAP) && magik(55))
@@ -9233,12 +9434,22 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 		magik(WATERY_BELT_CHANCE) : magik(DUN_RIVER_CHANCE - dun_lev * DUN_RIVER_REDUCE / 100));
 
 	maze = (!cavern && rand_int(DUN_MAZE_FACTOR) < dun_lev - 10) ? TRUE : FALSE;
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if ((in_irondeepdive(wpos) && (d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_MAZE))
+	|| (d_ptr->flags1 & DF1_MAZE)) maze = TRUE;
+#else
 	if (d_ptr->flags1 & DF1_MAZE) maze = TRUE;
+#endif
 
 	if (maze) permaze = magik(DUN_MAZE_PERMAWALL);
 
 	if (!maze && !cavern &&
-	    ((d_ptr->flags1 & (DF1_EMPTY)) || !rand_int(EMPTY_LEVEL)))
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	((in_irondeepdive(wpos) && ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_EMPTY) || !rand_int(EMPTY_LEVEL)))
+	|| ((d_ptr->flags1 & (DF1_EMPTY)) || !rand_int(EMPTY_LEVEL))))
+#else
+	((d_ptr->flags1 & (DF1_EMPTY)) || !rand_int(EMPTY_LEVEL)))
+#endif
 	{
 		empty_level = TRUE;
 		if ((randint(DARK_EMPTY)!=1 || (randint(100) > dun_lev)))
@@ -9303,7 +9514,12 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 			}
 		}
 	}
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (in_irondeepdive(wpos)) fill_level(wpos, empty_level, iddc[ABS(wpos->wz)].step ? 1+randint(3) : d_info[iddc[ABS(wpos->wz)].type].fill_method); //Kurzel - Random smooth!
 	else fill_level(wpos, empty_level, d_info[d_ptr->type].fill_method);
+#else
+	else fill_level(wpos, empty_level, d_info[d_ptr->type].fill_method);
+#endif
 #endif	/* 0 */
 
 	if (cavern) build_cavern(wpos);
@@ -9330,7 +9546,12 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	dun->cent_n = 0;
 if (!nether_bottom) {
 	/* Build some rooms */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if ((in_irondeepdive(wpos) && (!maze || !(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_MAZE)))
+	|| (!maze || !(d_ptr->flags1 & DF1_MAZE)))
+#else
 	if (!maze || !(d_ptr->flags1 & DF1_MAZE))
+#endif
 	for (i = 0; i < DUN_ROOMS; i++) {
 		/* Pick a block for the room */
 		y = rand_int(dun->row_rooms);
@@ -9414,7 +9635,12 @@ if (!nether_bottom) {
 			/* Type 9 -- Circular (10%) */
 			/* Hack - build standard rectangular rooms if needed */
 			if (k < 90) {
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+				if (((in_irondeepdive(wpos) && (((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_CIRCULAR_ROOMS) || magik(70))))
+				|| ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(70))) &&
+#else
 				if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(70)) &&
+#endif
 				    room_build(wpos, y, x, 1, p_ptr))
 					continue;
 				else if (room_build(wpos, y, x, 9, p_ptr)) continue;
@@ -9425,10 +9651,20 @@ if (!nether_bottom) {
 		}
 
 		/* Attempt a trivial room */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+		if ((in_irondeepdive(wpos) && ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_CAVE) || magik(50)))
+		|| ((d_ptr->flags1 & DF1_CAVE) || magik(50))) {
+#else
 		if ((d_ptr->flags1 & DF1_CAVE) || magik(50)) {
+#endif
 			if (room_build(wpos, y, x, 10, p_ptr)) continue;
 		} else {
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+			if (((in_irondeepdive(wpos) && (((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_CIRCULAR_ROOMS) || magik(30))))
+			|| ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(30))) &&
+#else
 			if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(30)) &&
+#endif
 			    room_build(wpos, y, x, 9, p_ptr))
 				continue;
 			else if (room_build(wpos, y, x, 1, p_ptr)) continue;
@@ -9452,8 +9688,13 @@ if (!nether_bottom) {
 #endif	/* 0 */
 
 	if (maze) {
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+		if (in_irondeepdive(wpos)) generate_maze(wpos, (d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_MAZE) ? 1 : randint(3));
+		else generate_maze(wpos, (d_ptr->flags1 & DF1_MAZE) ? 1 : randint(3));
+#else
 		generate_maze(wpos, (d_ptr->flags1 & DF1_MAZE) ? 1 : randint(3));
-	} else {
+#endif
+		} else {
 if (!nether_bottom) {
 		/* Hack -- Scramble the room order */
 		for (i = 0; i < dun->cent_n; i++) {
@@ -9510,26 +9751,53 @@ if (!nether_bottom) {
 			build_streamer(wpos, FEAT_QUARTZ, DUN_STR_QC, FALSE);
 
 		/* Add some sand streamers */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+		if (((in_irondeepdive(wpos) && ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_SAND_VEIN) && !rand_int(4)))
+		|| ((d_ptr->flags1 & DF1_SAND_VEIN) && !rand_int(4))) ||
+#else
 		if (((d_ptr->flags1 & DF1_SAND_VEIN) && !rand_int(4)) ||
+#endif
 		    magik(DUN_SANDWALL)) {
 			build_streamer(wpos, FEAT_SANDWALL, DUN_STR_SC, FALSE);
 		}
 
 		/* Hack -- Add some rivers if requested */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+		if (in_irondeepdive(wpos) && ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_WATER_RIVER) && !rand_int(4)))
+			add_river(wpos, FEAT_DEEP_WATER, FEAT_SHAL_WATER);
+		else if ((d_ptr->flags1 & DF1_WATER_RIVER) && !rand_int(4))
+			add_river(wpos, FEAT_DEEP_WATER, FEAT_SHAL_WATER);
+#else
 		if ((d_ptr->flags1 & DF1_WATER_RIVER) && !rand_int(4))
 			add_river(wpos, FEAT_DEEP_WATER, FEAT_SHAL_WATER);
+#endif
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+		if (in_irondeepdive(wpos) && ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_LAVA_RIVER) && !rand_int(4)))
+			add_river(wpos, FEAT_DEEP_LAVA, FEAT_SHAL_LAVA);
+		else if ((d_ptr->flags1 & DF1_LAVA_RIVER) && !rand_int(4))
+			add_river(wpos, FEAT_DEEP_LAVA, FEAT_SHAL_LAVA);
+#else
 		if ((d_ptr->flags1 & DF1_LAVA_RIVER) && !rand_int(4))
 			add_river(wpos, FEAT_DEEP_LAVA, FEAT_SHAL_LAVA);
-
+#endif
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+		if ((in_irondeepdive(wpos) && ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_WATER_RIVERS) || (dun->watery)))
+		|| ((d_ptr->flags1 & DF1_WATER_RIVERS) || (dun->watery))) {
+#else
 		if ((d_ptr->flags1 & DF1_WATER_RIVERS) || (dun->watery)) {
+#endif
 			int max = 3 + rand_int(2);
 
 			for(i = 0; i < max; i++) {
 				if(rand_int(3) == 0) add_river(wpos, FEAT_DEEP_WATER, FEAT_SHAL_WATER);
 			}
 		}
-
-		if (d_ptr->flags1 & DF1_LAVA_RIVERS) {
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+		if ((in_irondeepdive(wpos) && ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_LAVA_RIVERS) || (dun->watery)))
+		|| ((d_ptr->flags1 & DF1_LAVA_RIVERS) || (dun->watery))) {
+#else
+		if ((d_ptr->flags1 & DF1_LAVA_RIVERS) || (dun->watery)) {
+#endif
 			int max = 2 + rand_int(2);
 
 			for(i = 0; i < max; i++) {
@@ -9566,7 +9834,6 @@ if (!nether_bottom) {
 		/* Destroy the level if necessary */
 		if (destroyed) destroy_level(wpos);
 	}
-
 
 	if (!(dun->l_ptr->flags1 & LF1_NO_STAIR)) {
 		/* Place 3 or 4 down stairs near some walls */
@@ -9607,11 +9874,17 @@ if (!nether_bottom) {
 	/* Determine the character location */
 	new_player_spot(wpos);
 
-
 	/* Add streamers of trees, water, or lava -KMW- */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if ((in_irondeepdive(wpos) && (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
+	    !(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_NO_STREAMERS)))
+	|| (!(d_ptr->flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
+	    !(d_ptr->flags1 & DF1_NO_STREAMERS))) {
+#else
 	if (!(d_ptr->flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
 	    !(d_ptr->flags1 & DF1_NO_STREAMERS))
 	{
+#endif
 		int num;
 
 		/*
@@ -9619,7 +9892,12 @@ if (!nether_bottom) {
 		 *
 		 * Small trees (penetrate walls)
 		 */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+		if ((in_irondeepdive(wpos) && ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_FLAT) && (randint(20) > 15)))
+		|| ((d_ptr->flags1 & DF1_FLAT) && (randint(20) > 15))) {
+#else
 		if ((d_ptr->flags1 & DF1_FLAT) && (randint(20) > 15)) {
+#endif
 			num = randint(DUN_STR_QUA);
 
 			for (i = 0; i < num; i++)
@@ -9691,8 +9969,15 @@ if (!nether_bottom) {
 	/* Possibly create dungeon boss aka FINAL_GUARDIAN.
 	   Rarity 1 in r_info.txt for those bosses now means:
 	   1 in <rarity> chance to generate the boss. - C. Blue */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+	if (((in_irondeepdive(wpos) && ((k = d_info[iddc[ABS(wpos->wz)].type].final_guardian)
+	    && d_info[iddc[ABS(wpos->wz)].type].maxdepth == ABS(wpos->wz)))
+	|| ((k = d_info[d_ptr->type].final_guardian)
+	    && d_ptr->maxdepth == ABS(wpos->wz)))
+#else	   
 	if ((k = d_info[d_ptr->type].final_guardian)
 	    && d_ptr->maxdepth == ABS(wpos->wz)
+#endif
 	    && !rand_int(r_info[k].rarity)) {
 //		s_printf("Attempting to generate FINAL_GUARDIAN %d (1 in %d)\n", k, r_info[k].rarity);
 		summon_override_checks = SO_FORCE_DEPTH; /* allow >20 level OoD if desired */
@@ -10782,12 +11067,24 @@ static void town_gen_hack(struct worldpos *wpos)
 	for (y = 1; y < MAX_HGT - 1; y++) {
 		for (x = 1; x < MAX_WID - 1; x++) {
 			c_ptr = &zcave[y][x];
-
 			/* Clear all features, set to "empty floor" */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Perhaps account for transition levels in future?
+			if (in_irondeepdive(wpos)) {
+				c_ptr->feat = d_info[iddc[ABS(wpos->wz)].type].floor[4]; //avoid strange [0] dominant types (4 is transition safe)
+				if (rand_int(4)) c_ptr->feat = d_info[iddc[ABS(wpos->wz)].type].floor[0]; //strange types are OK if few?
+				else if (rand_int(100) < 15) c_ptr->feat = d_info[iddc[ABS(wpos->wz)].type].fill_type[0]; //basic "granite"
+			} else {
+				c_ptr->feat = FEAT_DIRT;
+
+				if (rand_int(4)) c_ptr->feat = FEAT_GRASS;
+				else if (rand_int(100) < 15) c_ptr->feat = FEAT_TREE; /* gotta add FEAT_BUSH without screwing up the rng seed */
+			}
+#else
 			c_ptr->feat = FEAT_DIRT;
 
 			if (rand_int(4)) c_ptr->feat = FEAT_GRASS;
 			else if (rand_int(100) < 15) c_ptr->feat = FEAT_TREE; /* gotta add FEAT_BUSH without screwing up the rng seed */
+#endif
 		}
 	}
 
