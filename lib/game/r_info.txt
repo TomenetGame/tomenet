@@ -20042,6 +20042,8 @@ F:NO_CONF | NO_SLEEP | NO_STUN | NO_FEAR | NO_CUT | IM_COLD | IM_ELEC | IM_POIS
 F:RES_TELE | RES_NEXU | IM_TELE | RES_LITE | RES_DARK | RES_SOUND
 #IM_LITE
 F:GENO_PERSIST | GENO_NO_THIN
+D:This thing seems to take infinite punishment just fine,
+D:assisting you without complaining in assessing your combat prowess.
 
 ##quick little hack to add santa:
 N:1102:Santa Claus
@@ -20428,6 +20430,8 @@ F:NO_CONF | NO_SLEEP | NO_STUN | NO_FEAR | NO_CUT | IM_COLD | IM_ELEC | IM_POIS
 F:RES_TELE | RES_NEXU | IM_TELE | RES_LITE | RES_DARK | RES_SOUND
 F:GENO_PERSIST | GENO_NO_THIN
 #IM_LITE
+D:This thing seems to take infinite punishment just fine,
+D:assisting you without complaining in assessing your combat prowess.
 
 #thoughs and monster ideas for hypothetical druid postking forms - C. Blue
 # some sort of lesser phoenix for fire immunity
