@@ -4037,6 +4037,64 @@ void check_experience(int Ind)
 			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou become more resistant to lightning!");
 #else
 			if (old_lev < 8 && p_ptr->lev >= 8) msg_print(Ind, "\374\377GYou learn how to breathe an element!");
+			switch (p_ptr->ptrait) {
+			case TRAIT_BLUE: /* Draconic Blue */
+				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYour attacks are branded by lightning!");
+				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou are enveloped in lightning!");
+				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear electricity!");
+				break;
+			case TRAIT_WHITE: /* Draconic White */
+				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou are enveloped by freezing air!");
+				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear cold!");
+				break;
+			case TRAIT_RED: /* Draconic Red */
+				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear fire!");
+				break;
+			case TRAIT_BLACK: /* Draconic Black */
+				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear acid!");
+				break;
+			case TRAIT_GREEN: /* Draconic Green */
+				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear poison!");
+				break;
+			case TRAIT_MULTI: /* Draconic Multi-hued */
+				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to electricity!");
+				if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou develop intrinsic resistance to cold!");
+				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to heat!");
+				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou develop intrinsic resistance to acid!");
+				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou develop intrinsic resistance to poison!");
+				break;
+			case TRAIT_BRONZE: /* Draconic Bronze */
+				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to confusion!");
+				if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou develop intrinsic resistance to paralysis!");
+				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
+				break;
+			case TRAIT_SILVER: /* Draconic Silver */
+				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to cold!");
+				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to poison!");
+				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
+			case TRAIT_GOLD: /* Draconic Gold */
+				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to acid!");
+				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to sound!");
+				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
+				break;
+			case TRAIT_LAW: /* Draconic Law */
+				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to shards!");
+				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to sound!");
+				break;
+			case TRAIT_CHAOS: /* Draconic Chaos */
+				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to confusion!");
+				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to chaos!");
+				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou develop intrinsic resistance to disenchantment!");
+				break;
+			case TRAIT_BALANCE: /* Draconic Balance */
+				if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou develop intrinsic resistance to disenchantment!");
+				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou develop intrinsic resistance to sound!");
+				break;
+			case TRAIT_POWER: /* Draconic Power */
+				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to blindness!");
+				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
+				break;
+			}
 #endif
 			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
 			break;
