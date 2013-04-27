@@ -1678,6 +1678,7 @@ destined_defeat:
 
 	if (p_ptr->warning_rest == 0
 //	    && p_ptr->max_plv < 15
+	    && p_ptr->max_plv >= 3
 	    && p_ptr->chp * 10 / p_ptr->mhp <= 5) {
 		msg_print(Ind, "\374\377oHINT: Press \377Rshift+r\377o to rest, so your hit points will");
 		msg_print(Ind, "\374\377o      regenerate faster. (Also true for mana and stamina.)");
