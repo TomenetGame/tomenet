@@ -3856,6 +3856,7 @@ void interact_macros(void)
 #define mw_quaff 'a'
 #define mw_read 'b'
 #define mw_fire 'c'
+#define mw_throw 'C'
 #define mw_schoolnt 'd'
 #define mw_mimicnt 'D'
 #define mw_schoolt 'e'
@@ -3900,7 +3901,7 @@ Chain_Macro:
 					Term_putstr( 5, 9, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
 					Term_putstr(10, 10, -1, TERM_L_GREEN, "a) Drink a potion");
 					Term_putstr(10, 11, -1, TERM_L_GREEN, "b) Read a scroll");
-					Term_putstr(10, 12, -1, TERM_L_GREEN, "c) Fire ranged weapon at closest enemy");
+					Term_putstr(10, 12, -1, TERM_L_GREEN, "c)/C) Fire ranged weapon/throw an item");
 					Term_putstr(10, 13, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
 					Term_putstr(10, 14, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell with target");
 					Term_putstr(10, 15, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (with and without target)");
@@ -3925,7 +3926,7 @@ Chain_Macro:
 							continue;
 						default:
 							/* invalid action -> exit wizard */
-							if ((choice < 'a' || choice > 'm') && choice != 'D' && choice != 'E' && choice != 'M') {
+							if ((choice < 'a' || choice > 'm') && choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M') {
 //								i = -1;
 								continue;
 							}
@@ -5094,6 +5095,14 @@ Chain_Macro:
 						Term_putstr(10, 12, -1, TERM_GREEN, "For example, enter:     \377GBreathe element");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact ability name:");
 						break;
+
+					case mw_throw:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription");
+						Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
+						Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377G{bad}");
+						Term_putstr(5, 13, -1, TERM_GREEN, "if you want to throw any item that is inscribed '{bad}'.");
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
+						break;
 					}
 
 					/* mw_mimicidx is special: it requires a number (1..n) */
@@ -5259,6 +5268,15 @@ Chain_Macro:
 							strcpy(buf, "*t");
 							strcat(buf2, buf);
 						}
+						break;
+					case mw_throw:
+						buf2[3] = 'v';
+						buf2[4] = '@';
+						strcpy(buf2 + 5, buf);
+						l = strlen(buf2);
+						buf2[l] = '*';
+						buf2[l + 1] = 't';
+						buf2[l + 2] = 0;
 						break;
 					}
 
