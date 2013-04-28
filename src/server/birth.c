@@ -2960,6 +2960,14 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 	}
 #endif
 
+#if 1 /* note that this allows use of WoR to get to IDDC :) */
+	if ((p_ptr->mode & MODE_DED_IDDC)) {
+		/* automatically know the location of IDDC dungeon */
+		p_ptr->wild_map[(WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) / 8] |=
+		    (1 << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
+	}
+#endif
+
 	/* admin hacks */
 	if (p_ptr->admin_wiz) {
 		/* the admin wizard can basically do what he wants */
