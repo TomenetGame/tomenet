@@ -7350,6 +7350,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		note = note_dies;
 	}
 
+
+	/* hack: No polymorphing in IDDC, because live-spawning isn't possible.
+	   So polymorphing would just remove the monsters completely everytime. */
+	if (do_poly && in_irondeepdive(wpos)) do_poly = FALSE;
+
 #ifndef DAMAGE_BEFORE_POLY
 	/* Mega-Hack -- Handle "polymorph" -- monsters get a saving throw */
 	if (do_poly && (randint(90) > r_ptr->level)) {
