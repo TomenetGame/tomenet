@@ -7769,9 +7769,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, clone, clone_summoning);
 
 			/* XXX XXX XXX Hack -- Assume success */
-			if (!quiet && c_ptr->m_idx == 0) {
-				msg_format(Ind, "%^s disappears!", m_name);
-				return (FALSE);
+			if (!quiet) {
+				if (c_ptr->m_idx == 0) {
+					msg_format(Ind, "%^s disappears!", m_name);
+					return (FALSE);
+				} else msg_format(Ind, "%^s changes!", m_name);
 			}
 		}
 	}
