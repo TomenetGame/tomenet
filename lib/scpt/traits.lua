@@ -79,7 +79,7 @@ __traits_diz = {
     "to cold (5) and poison (15)",
     "and its metallic scales have a chance to",
     "reflect bolts and arrows (20).",
-    "This lineage provides frost breath.",
+    "This lineage provides inertia breath.",
     "", "", "", "", "", "", "",},
 
 "Golden lineage",
