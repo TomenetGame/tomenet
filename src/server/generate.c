@@ -9176,7 +9176,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 #ifdef HACK_MONSTER_RARITIES
 	int hack_monster_rarity, hack_monster_idx = 0, hack_dun_idx; /* for Sandworm Lair/theme, sigh */
-	int hack_dun_table_idx, hack_dun_table_prob1, hack_dun_table_prob2, hack_dun_table_prob3;
+	int hack_dun_table_idx = -1, hack_dun_table_prob1, hack_dun_table_prob2, hack_dun_table_prob3;
 #endif
 
 
@@ -9581,7 +9581,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 				break;
 			}
 			i++;
-		} while (TRUE); /* freezes :D */
+		} while (i < max_r_idx); /* paranoia */
 	}
 #endif
 
@@ -10082,9 +10082,11 @@ if (!nether_bottom) {
 	/* unhack */
 	if (hack_monster_idx) {
 		alloc_entry *table = alloc_race_table_dun[27];
-		table[hack_dun_table_idx].prob1 = hack_dun_table_prob1;
-		table[hack_dun_table_idx].prob2 = hack_dun_table_prob2;
-		table[hack_dun_table_idx].prob3 = hack_dun_table_prob3;
+		if (hack_dun_table_idx != -1) {
+			table[hack_dun_table_idx].prob1 = hack_dun_table_prob1;
+			table[hack_dun_table_idx].prob2 = hack_dun_table_prob2;
+			table[hack_dun_table_idx].prob3 = hack_dun_table_prob3;
+		}
 		r_info[hack_monster_idx].rarity = hack_monster_rarity;
 	}
 #endif
