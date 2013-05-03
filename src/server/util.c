@@ -2769,8 +2769,9 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 }
 
 /* Censor swear words while keeping good words, and determining punishment level */
+//NOTE: EXEMPT_BROKEN_SWEARWORDS and HIGHLY_EFFECTIVE_CENSOR shouldn't really work togehter (because latter one kills spaces etc.)
 #define EXEMPT_BROKEN_SWEARWORDS	/* don't 'recognize' swear words that are broken up into 'innocent' parts */
-#define HIGHLY_EFFECTIVE_CENSOR		/* strip all kinds of non-alpha chars too? */
+//#define HIGHLY_EFFECTIVE_CENSOR		/* strip all kinds of non-alpha chars too? */
 #define CENSOR_PH_TO_F			/* (slightly picky) convert ph to f ?*/
 #define REDUCE_DUPLICATE_H		/* (slightly picky) reduce multiple h to just one? */
 #define REDUCE_H_CONSONANT		/* (slightly picky) drop h before consonants? */
@@ -2825,6 +2826,16 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 				    lcopy[i + 1] >= '0' && lcopy[i + 1] <= '9')
 					/* replace by, say 'x' (harmless^^) (Note: Capital character doesn't work, gets filtered out futher below */
 					lcopy[i] = 'x';
+				break;
+#else
+			default:
+				lcopy[i] = ' ';
+ #if 0 /* nonsense, because nonswearing isn't applied after this anymore, but was long before in censor() already! */
+				lcopy[i] = '~'; /* ' ' is usually in use in nonswearing.txt,
+				    so it would need to be removed there whenever we turn off HIGHLY_EFFECTIVE_CENSOR
+				    and put back in when we reenable it. Using a non-used character instead of SPACE
+				    is therefore a much more comfortable way. */
+ #endif
 				break;
 #endif
 			}
@@ -3151,7 +3162,17 @@ static int censor(char *line) {
 	/* check for legal words first */
 	//TODO: could be moved into censor_aux and after leet speek conversion, to allow leet speeking of non-swear words (eg "c00k")
 	strcpy(lcopy2, lcopy); /* use a 'working copy' to allow _overlapping_ nonswear words */
+	/*TODO!!! non-split swear words should take precedence over split-up non-swear words: "was shit" -> "as sh" is 'fine'.. BEEP!
+	  however, this can be done by disabling HIGHLY_EFFECTIVE_CENSORING and enabling EXEMPT_BROKEN_SWEARWORDS as a workaround. */
 	for (i = 0; nonswear[i][0]; i++) {
+#ifndef HIGHLY_EFFECTIVE_CENSOR
+		/* hack! If HIGHLY_EFFECTIVE_CENSOR is NOT enabled, skip all nonswearing-words that contain spaces!
+		   This is done because those nonswearing-words are usually supposed to counter wrong positives
+		   from HIGHLY_EFFECTIVE_CENSOR, and will lead to false negatives when it is disabled xD
+		   (eg: 'was shit' chat with "as sh" non-swear)  - C. Blue */
+		if (strchr(nonswear[i], ' ')) continue;
+#endif
+
 		offset = 0;
 		/* check for multiple occurrances of this nonswear word */
 		while ((word = strstr(lcopy + offset, nonswear[i]))) {
