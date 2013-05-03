@@ -9175,8 +9175,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	bool fountains_of_blood = FALSE; /* for vampires */
 
 #ifdef HACK_MONSTER_RARITIES
-	int hack_monster_rarity, hack_monster_idx = 0, hack_dun_idx; /* for Sandworm Lair/theme, sigh */
-	int hack_dun_table_idx = -1, hack_dun_table_prob1, hack_dun_table_prob2, hack_dun_table_prob3;
+	int hack_monster_idx = 0, hack_dun_idx; /* for Sandworm Lair/theme, sigh */
+	int hack_monster_rarity = 0; //silly compiler warnings
+	int hack_dun_table_idx = -1;
+	int hack_dun_table_prob1 = 0, hack_dun_table_prob2 = 0, hack_dun_table_prob3 = 0; //silly compiler warnings
 #endif
 
 
@@ -9565,7 +9567,6 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 		hack_monster_idx = 1031;
 		hack_monster_rarity = r_info[1031].rarity;
 		hack_dun_idx = 27;
-		s_printf("hacking rarity %d\n", hack_monster_rarity);
 
 		r_info[1031].rarity = 255;
 		i = 0;
