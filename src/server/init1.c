@@ -1780,6 +1780,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 	/* No version yet */
 	if (!okay) return (2);
 
+	max_v_idx = ++error_idx;
 
 	/* Success */
 	return (0);
@@ -2368,6 +2369,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 	/* No version yet */
 	if (!okay) return (2);
 
+	max_f_idx = ++error_idx;
 
 	/* Success */
 	return (0);
@@ -3156,6 +3158,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 	/* No version yet */
 	if (!okay) return (2);
 
+	max_a_idx = ++error_idx;
 
 	/* Success */
 	return (0);
@@ -3554,6 +3557,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 	/* No version yet */
 	if (!okay) return (2);
 
+	max_s_idx = ++error_idx;
 
 	/* Success */
 	return (0);
@@ -4011,6 +4015,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 	/* No version yet */
 	if (!okay) return (2);
 
+	max_e_idx = ++error_idx;
 
 	/* Success */
 	return (0);
@@ -4669,6 +4674,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 	/* No version yet */
 	if (!okay) return (2);
 
+	max_r_idx = ++error_idx;
 
 	/* Success */
 	return (0);
@@ -5461,6 +5467,8 @@ errr init_re_info_txt(FILE *fp, char *buf)
 	/* No version yet */
 	if (!okay) return (2);
 
+	max_re_idx = ++error_idx;
+
 	/* Success */
 	return (0);
 }
@@ -5714,6 +5722,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 	/* No version yet */
 	if (!okay) return (2);
 
+	max_t_idx = ++error_idx;
 
 	/* Success */
 	return (0);
@@ -7017,6 +7026,8 @@ errr init_ba_info_txt(FILE *fp, char *buf)
 	/* No version yet */
 	if (!okay) return (2);
 
+	max_ba_idx = ++error_idx;
+
 	/* Success */
 	return (0);
 }
@@ -7248,6 +7259,8 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 
 	/* No version yet */
 	if (!okay) return (2);
+
+	max_ow_idx = ++error_idx;
 
 	/* Success */
 	return (0);

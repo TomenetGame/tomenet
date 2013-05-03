@@ -291,6 +291,7 @@ extern s32b great_pumpkin_timer;	/* Keeps track of its generation (timeout), for
 extern bool night_surface;		/* Is it night outside? */
 extern u16b max_s_idx;
 extern u16b max_r_idx;
+extern u16b max_re_idx;
 extern u16b max_k_idx;
 extern u16b max_v_idx;
 extern u16b max_f_idx;
@@ -300,6 +301,8 @@ extern u16b max_d_idx;
 extern u16b max_o_idx;
 extern u16b max_m_idx;
 extern u16b max_t_idx;
+extern u16b max_st_idx;
+extern u16b max_ow_idx;
 
 /*
  * The monster race arrays
