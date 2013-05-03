@@ -9126,6 +9126,10 @@ static bool no_nearby_dungeontown(struct worldpos *wpos) {
  * Hrm, I know you wish to rebalance it -- but please implement
  * d_info stuffs first.. it's coded as such :)		- Jir -
  */
+/* bad hack - Modify monster rarities for a particular IDDC theme live,
+   and also in actual dungeons if desired (sandworm lair needs moar sandworms?) - C. Blue
+   TODO: Move this into a specific d_info flag that boosts a monster's rarity! */
+#define HACK_MONSTER_RARITIES
 static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 {
 	int i, k, y, x, y1 = 0, x1 = 0, dun_lev;
@@ -9169,6 +9173,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	bool town_static = FALSE;
 #endif
 	bool fountains_of_blood = FALSE; /* for vampires */
+
+#ifdef HACK_MONSTER_RARITIES
+	int hack_monster_rarity, hack_monster_idx = 0, hack_dun_idx; /* for Sandworm Lair/theme, sigh */
+	int hack_dun_table_idx, hack_dun_table_prob1, hack_dun_table_prob2, hack_dun_table_prob3;
+#endif
 
 
 	dun_lev = getlevel(wpos);
@@ -9541,6 +9550,40 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	/* No "crowded" rooms yet */
 	dun->crowded = FALSE;
 
+#ifdef HACK_MONSTER_RARITIES
+	/* bad hack: temporarily make sandworms very common in Sandworm Lair.
+	   I added this especially for themed IDDC, which would otherwise mean
+	   a bunch of pretty empty levels (or just lame worms mostly) - C. Blue */
+ #ifdef IRONDEEPDIVE_MIXED_TYPES
+	if ((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].type == 27) ||
+	    d_ptr->type == 27) {
+ #else
+	if (d_ptr->type == 27) {
+ #endif
+		alloc_entry *table = alloc_race_table_dun[27];
+
+		hack_monster_idx = 1031;
+		hack_monster_rarity = r_info[1031].rarity;
+		hack_dun_idx = 27;
+		s_printf("hacking rarity %d\n", hack_monster_rarity);
+
+		r_info[1031].rarity = 255;
+		i = 0;
+		do {
+			if (table[i].index == 1031) {
+				hack_dun_table_idx = i;
+				hack_dun_table_prob1 = table[i].prob1;
+				hack_dun_table_prob2 = table[i].prob2;
+				hack_dun_table_prob3 = table[i].prob3;
+				table[i].prob1 = 10000;
+				table[i].prob2 = 10000;
+				table[i].prob3 = 10000;
+				break;
+			}
+			i++;
+		} while (TRUE); /* freezes :D */
+	}
+#endif
 
 	/* No rooms yet */
 	dun->cent_n = 0;
@@ -10032,6 +10075,17 @@ if (!nether_bottom) {
 
 		if (rand_int(2) == 1) place_monster_one(wpos, y, x, 1104, FALSE, FALSE, FALSE, 0, 0);
 		else place_monster_one(wpos, y, x, 1105, FALSE, FALSE, FALSE, 0, 0);
+	}
+#endif
+
+#ifdef HACK_MONSTER_RARITIES
+	/* unhack */
+	if (hack_monster_idx) {
+		alloc_entry *table = alloc_race_table_dun[27];
+		table[hack_dun_table_idx].prob1 = hack_dun_table_prob1;
+		table[hack_dun_table_idx].prob2 = hack_dun_table_prob2;
+		table[hack_dun_table_idx].prob3 = hack_dun_table_prob3;
+		r_info[hack_monster_idx].rarity = hack_monster_rarity;
 	}
 #endif
 
