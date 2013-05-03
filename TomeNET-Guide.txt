@@ -5841,7 +5841,8 @@ Ironman Deep Dive Challenge (IDDC)
     you log on, which will prevent you from getting any experience, items or
     gold until you move on by taking a staircase to the next floor.
     Monsters cannot spawn 'live' in the IDDC, but only at the time of creation
-    of each dungeon floor. Summon staves cannot be recharged in the IDDC.
+    of each dungeon floor. Summon staves cannot be recharged in the IDDC and
+    polymorphing magic does not work.
 
     NOTE: If you use stolen enchant scrolls on an item while you are in a town,
     then the item will get a 100% off discount. If you want to use stolen
