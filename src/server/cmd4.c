@@ -2605,7 +2605,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 #endif	// 0
 
 	/* for each object kind */
-	for (i = 1; i <= max_k_idx; i++)
+	for (i = 1; i < max_k_idx; i++)
 	{
 		k_ptr = &k_info[i];
 		if (!k_ptr->name) continue;
@@ -2660,7 +2660,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 	total = 0;
 
 	/* for each object kind */
-	for (i = 1; i <= max_k_idx; i++)
+	for (i = 1; i < max_k_idx; i++)
 	{
 		k_ptr = &k_info[i];
 		if (!k_ptr->name) continue;
