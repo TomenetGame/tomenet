@@ -18617,7 +18617,7 @@ D:It is a cross between a human and a bull.
 
 N:1030:The Sandworm Queen
 G:w:v
-I:120:30d20:10:40:80
+I:120:30d20:20:40:80
 W:30:3:9000:800
 E:0:0:0:0:1:0
 O:30:60:0:10
@@ -18634,8 +18634,7 @@ D:Queen and Mother of the sandworms, fear her and her prolific children.
 
 N:1031:Sandworm
 G:w:y
-#I:115:20d15:10:40:80
-I:115:10d15:20:40:80
+I:115:20d15:20:40:80
 W:22:6:6500:80
 E:0:0:0:0:1:0
 O:0:0:0:0
