@@ -1733,8 +1733,9 @@ void do_cmd_open(int Ind, int dir)
 					struct dna_type *dna = cs_ptr->sc.ptr;
 					if (!strcmp(get_house_owner(cs_ptr), "nobody.")) {
 						int factor, price;
-						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
+						factor = (100 + adj_chr_gold[p_ptr->stat_ind[A_CHR]]) / 2;
 						price = dna->price / 100 * factor;
+						if (price < 100) price = 100;
 						msg_format(Ind, "\377oThat house costs %d gold.", price);
 					} else {
 #ifdef PLAYER_STORES
@@ -6324,14 +6325,6 @@ void do_cmd_purchase_house(int Ind, int dir)
 		}
 
 
-#if 0
-		/* Take player's CHR into account */
-		factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
-		/* Let's simply omit the fractions	- Jir - */
-		price = dna->price / 100 * factor;
-		if (price < 100) price = 100;
-//		price = dna->price * factor / 100;
-#endif
 		/* Take player's CHR into account somewhat */
 		factor = (100 + adj_chr_gold[p_ptr->stat_ind[A_CHR]]) / 2;
 
