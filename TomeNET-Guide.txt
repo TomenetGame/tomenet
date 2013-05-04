@@ -1661,6 +1661,12 @@ specific network (Freenode) and to join specific channels (#tomenet etc.)
 automatically on startup, so you don't have to do it manually each time you
 start the IRC client.
 
+Most clients also allow you to setup auto-reconnect, which is useful if you
+experience frequent disconnections from the IRC network. Although in that case
+you should rather check why that happens - make sure you aren't trying to
+connect to a very far away Freenode server but to one that is close to your
+location, compare:  http://freenode.net/irc_servers.shtml
+
 
 
 (1.2) What is a rogue-like game?
