@@ -6306,7 +6306,7 @@ void dungeon(void)
 #ifdef FLUENT_ARTIFACT_RESETS
 	/* handle in 1-minute resolution - assume we have less artifacts than 60*cfg.fps */
 	i = turn % (cfg.fps * 60);
-	if (i < MAX_A_IDX && a_info[i].timeout > 0) {
+	if (i < max_a_idx && a_info[i].timeout > 0) {
 		a_info[i].timeout--;
 		if (a_info[i].timeout == 0) erase_artifact(i);
 		else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING) {
