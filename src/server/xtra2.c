@@ -6161,7 +6161,10 @@ void player_death(int Ind) {
 			if (cfg.worldd_events) world_msg(buf);
 #endif
 		}
-		l_printf("%s \\{s%s (%d) reached floor %d in the Ironman Deep Dive challenge\n", showdate(), p_ptr->name, p_ptr->max_plv, ABS(p_ptr->wpos.wz));
+
+		if (ABS(p_ptr->wpos.wz >= 20))
+			l_printf("%s \\{s%s (%d) reached floor %d in the Ironman Deep Dive challenge\n",
+			    showdate(), p_ptr->name, p_ptr->max_plv, ABS(p_ptr->wpos.wz));
 	}
 
 	if (ge_special_sector &&
