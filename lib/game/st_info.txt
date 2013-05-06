@@ -1420,8 +1420,11 @@ W:36
 F:HARD_STEAL | GOOD
 
 N:76:Black Market
-# --- EXTRA: normal BM doesn't have this: more *Identify* scrolls for dungeon stores ---
+# --- EXTRA: normal BM doesn't have this: ---
+#            more *Identify* scrolls (for IDDC)
+#            more Sprigs of Athelas (for IDDC)
 T:30:70:13
+T:20:80:40
 #potion of Speed
 T:100:71:29
 T:100:71:29
