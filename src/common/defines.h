@@ -724,6 +724,9 @@
    (form party, trade items) while inside the Ironman Deep Dive Challenge? */
 #define IRONDEEPDIVE_ALLOW_INCOMPAT
 
+/* Give a crazy form learning boost inside Ironman Deep Dive Challenge? [9] */
+#define IDDC_MIMICRY_BOOST 9
+
 /* Show character icon with coloured '@' or 'b' in top score table
    of the Ironman Deep Dive Challenge? */
 #define IDDC_HISCORE_SHOWS_ICON

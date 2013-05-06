@@ -2858,9 +2858,16 @@ void recall_player(int Ind, char *message){
 
 			sprintf(buf, "\374\377s%s withdrew from the Ironman Deep Dive challenge.", p_ptr->name);
 			msg_broadcast(0, buf);
-#ifdef TOMENET_WORLDS
+ #ifdef TOMENET_WORLDS
 	                if (cfg.worldd_events) world_msg(buf);
-#endif
+ #endif
+
+			/* reduce his accumulated mimicry form knowledge somewhat
+			   (keep some of the benefits of IDDC hunting) */
+ #ifdef IDDC_MIMICRY_BOOST
+			j = ((IDDC_MIMICRY_BOOST * 2) + 1) / 3;
+			for (i = 1; i < max_r_idx; i++) p_ptr->r_killed[i] -= j;
+ #endif
 		}
 #endif
 	}
