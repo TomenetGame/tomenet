@@ -5822,8 +5822,11 @@ Ironman Deep Dive Challenge (IDDC)
     seconds during which it could be killed if in an unsafe place.
     Dungeon towns in general are free of any monster spawns.
 
-    Mimicry users gain +1 extra kill credit on each kill, effectively
-    learning forms twice as fast.
+    Mimicry users gain +9 extra kill credit on each kill, effectively
+    learning forms TEN TIMES as fast. (However, if that character decides to
+    withdraw from the challenge at a static town, it loses 2/3 of those extra
+    kill credits again, still not a bad deal.)
+
     Everlasting and non-everlasting characters can team up and trade items
     while they are inside the ironman deep dive dungeon.
     Level requirements on items are not in effect while inside the ironman deep
