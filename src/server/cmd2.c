@@ -52,6 +52,12 @@ void do_cmd_go_up(int Ind)
 	if (wpos->wz < 0) dungeon = TRUE;
 	if (wpos->wz == 0) surface = TRUE;
 
+	if ((p_ptr->mode & MODE_DED_IDDC) && surface &&
+	    (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || 1 != WPOS_IRONDEEPDIVE_Z)) {
+		msg_print(Ind, "\377yYou may not enter any other dungeon besides the Ironman Deep Dive Challenge!");
+		return;
+	}
+
 	/* Is this a one-way tower? */
 	if (tower) {
 		if (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
@@ -468,6 +474,12 @@ void do_cmd_go_down(int Ind)
 	if (wpos->wz > 0) tower = TRUE;
 	if (wpos->wz < 0) dungeon = TRUE;
 	if (wpos->wz == 0) surface = TRUE;
+
+	if ((p_ptr->mode & MODE_DED_IDDC) && surface &&
+	    (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || -1 != WPOS_IRONDEEPDIVE_Z)) {
+		msg_print(Ind, "\377yYou may not enter any other dungeon besides the Ironman Deep Dive Challenge!");
+		return;
+	}
 
 	/* Is this a one-way dungeon? */
 	if (dungeon) {
