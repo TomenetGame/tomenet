@@ -1695,7 +1695,7 @@ static void artifact_lore(void) {
 	selected = artifact_list_code[selected_list];
 	while (TRUE) {
 		clear_from(4);
-		Term_putstr(5, 5, -1, TERM_L_UMBER, artifact_list_name[selected_list]);
+		//Term_putstr(5, 5, -1, TERM_L_UMBER, artifact_list_name[selected_list]);
 		for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
 
 		if (show_lore) {
@@ -1812,13 +1812,13 @@ static void monster_lore(void) {
 				    (s[2] == 'M' && monster_list_breath[i]))) {
 		    			selected = monster_list_code[i];
 					selected_list = i;
-					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c)  %s",
+					    monster_list_code[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
 					list_idx[0] = i;
 					n++;
 					break;
 				}
 			}
-
 			/* check for more matches */
 			for (i = 1; i < MAX_R_IDX && n < MONSTER_LORE_LIST_SIZE; i++) {
 				/* direct match above already? */
@@ -1833,7 +1833,8 @@ static void monster_lore(void) {
 						selected = monster_list_code[i];
 						selected_list = i;
 					}
-					Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+					Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c)  %s",
+					    monster_list_code[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					list_idx[n] = i;
 					n++;
 				}
@@ -1851,18 +1852,20 @@ static void monster_lore(void) {
 				/* exact match? */
 				if (!strcmp(tmp, s)
 				    || (s[0] == '#' && atoi(s + 1) && monster_list_code[i] == atoi(s + 1))) { /* also allow typing in the monster's ridx directly! */
-	    				selected = monster_list_code[i];
+					selected = monster_list_code[i];
 					selected_list = i;
-					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c)  %s",
+					    monster_list_code[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
 					list_idx[0] = i;
 					n++;
 					break;
 				}
 				/* beginning of line match? */
 				else if (!strncmp(tmp, s, strlen(s))) {
-		    			selected = monster_list_code[i];
+					selected = monster_list_code[i];
 					selected_list = i;
-					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c)  %s",
+					    monster_list_code[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
 					list_idx[0] = i;
 					n++;
 					break;
@@ -1882,7 +1885,8 @@ static void monster_lore(void) {
 						selected = monster_list_code[i];
 						selected_list = i;
 					}
-					Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d)  %s", monster_list_code[i], monster_list_name[i]));
+					Term_putstr(5, 5 + n, -1, n == selected_line ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c)  %s",
+					    monster_list_code[i], monster_list_symbol[i][0], monster_list_symbol[i][1], n == selected_line ? 'y' : 'u', monster_list_name[i]));
 					list_idx[n] = i;
 					n++;
 				}
@@ -1893,8 +1897,9 @@ static void monster_lore(void) {
 		if (selected_line >= n) {
 			selected_line = n - 1;
 			if (selected_line < 0) selected_line = 0;
-			else Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d)  %s",
-			    monster_list_code[list_idx[selected_line]], monster_list_name[list_idx[selected_line]]));
+			else Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d, \377%c%c\377y)  %s",
+			    monster_list_code[list_idx[selected_line]], monster_list_symbol[list_idx[selected_line]][0],
+			    monster_list_symbol[list_idx[selected_line]][1], monster_list_name[list_idx[selected_line]]));
 		}
 
 		//Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
@@ -1964,7 +1969,7 @@ static void monster_lore(void) {
 	selected = monster_list_code[selected_list];
 	while (TRUE) {
 		clear_from(4);
-		Term_putstr(5, 5, -1, TERM_YELLOW, format("(%4d)  %s", monster_list_code[selected_list], monster_list_name[selected_list]));
+		//Term_putstr(5, 5, -1, TERM_YELLOW, format("(%4d)  %s", monster_list_code[selected_list], monster_list_name[selected_list]));
 		for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
 
 		if (show_lore) {
