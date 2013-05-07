@@ -8548,6 +8548,7 @@ void handle_art_d(int aidx) {
 		}
 	} else {
 		a_info[aidx].cur_num = 0;
+		a_info[aidx].known = FALSE;//semi-paranoia: fixes old arts from before fluent reset mechanism!
 #ifdef FLUENT_ARTIFACT_RESETS
 		a_info[aidx].timeout = 0;
 #endif
