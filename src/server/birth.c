@@ -1667,7 +1667,8 @@ static void player_outfit(int Ind)
 		do_player_outfit();
 	}
 	/* vampires feed off living prey, using their vampiric life leech *exclusively* */
-	else if (p_ptr->prace != RACE_ELF && p_ptr->prace != RACE_HALF_ELF && p_ptr->prace != RACE_HIGH_ELF) {
+	else if (p_ptr->prace != RACE_ELF && p_ptr->prace != RACE_HALF_ELF && p_ptr->prace != RACE_HIGH_ELF
+	    && p_ptr->prace != RACE_ENT) {
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
 		o_ptr->number = rand_range(3, 7);
 		do_player_outfit();
