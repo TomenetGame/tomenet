@@ -191,7 +191,7 @@ void cast_rune_spell (int Ind, int dir) {
 			elem_n = "poison";
 			break; 
 		case SV_RUNE2_WATER: 
-			elem = GF_WATER;
+			elem = GF_VAPOUR;
 			elem_n = "water";
 			break;
 		case SV_RUNE2_GRAV:

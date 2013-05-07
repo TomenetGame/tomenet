@@ -4447,6 +4447,8 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 			else if (r_ptr->flags9 & RF9_RES_POIS) dam /= 4;
 			break;
 		case GF_WATER:
+		case GF_VAPOUR:
+		case GF_WAVE:
 			if (r_ptr->flags9 & RF9_IM_WATER) dam = 0;
 			else if (r_ptr->flags7 & RF7_AQUATIC) dam /= 9;
 			else if (r_ptr->flags3 & RF3_RES_WATE) dam /= 4;

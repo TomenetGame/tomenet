@@ -1238,6 +1238,7 @@ byte spell_color(int type)
 		case GF_ARROW:		return (TERM_L_UMBER);
 		case GF_WATER:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 		case GF_WAVE:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+		case GF_VAPOUR:		return (randint(10)==1?TERM_BLUE:TERM_L_BLUE);
 		case GF_NETHER:		return (randint(4)==1?TERM_L_GREEN:TERM_L_DARK);
 		case GF_CHAOS:		return (TERM_MULTI);
 		case GF_DISENCHANT:	return (randint(4)!=1?TERM_ORANGE:TERM_BLUE);
@@ -1305,6 +1306,7 @@ bool spell_color_animation(int type)
 		case GF_ARROW:		return FALSE;
 		case GF_WATER:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 		case GF_WAVE:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+		case GF_VAPOUR:		return TRUE;
 		case GF_NETHER:		return TRUE;//(randint(4)==1?TERM_SLATE:TERM_L_DARK);
 		case GF_CHAOS:		return FALSE;
 		case GF_DISENCHANT:	return TRUE;//(randint(4)==1?TERM_ORANGE:TERM_BLUE;//TERM_L_BLUE:TERM_VIOLET);
@@ -1371,6 +1373,7 @@ byte spell_color(int type)
 		case GF_HELL_FIRE:	return (TERM_HELLFIRE);
 		case GF_MANA:		return (TERM_MANA);
 		case GF_ARROW:		return (TERM_L_UMBER);
+		case GF_VAPOUR:		return (TERM_L_BLUE);//animate with some dark blue maybe?
 		case GF_WATER:		return (TERM_WATE);
 		case GF_WAVE:		return (TERM_WATE);
 		case GF_NETHER:		return (TERM_NETH);
@@ -4106,8 +4109,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 		// GF_ROCKET and GF_DISINTEGRATE are handled in project()
 
-		case GF_WAVE:
 		case GF_WATER:
+		case GF_WAVE:
+		case GF_VAPOUR:
 		case GF_WATERPOISON:	//New druid stuff
 		{
 			if (!allow_terraforming(wpos, FEAT_SHAL_WATER)) break;
@@ -4153,7 +4157,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				p2 = 15; f2 = FEAT_FLOOR;
 			}
 //			else if ((c_ptr->feat == FEAT_SHAL_WATER) ||
-			else if (c_ptr->feat == FEAT_DARK_PIT)
+			else if (c_ptr->feat == FEAT_DARK_PIT && typ != GF_VAPOUR)
 			{
 				/* 10% chance to convert it to deep water */
 				p1 = 10; f1 = FEAT_DEEP_WATER;
@@ -4357,6 +4361,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Cold -- potions and flasks */
 		case GF_WATER:
+		case GF_WAVE:
+		//case GF_VAPOUR:
 		case GF_WATERPOISON:
 		{
 			if (hates_water(o_ptr))
@@ -5553,6 +5559,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Water (acid) damage -- Water spirits/elementals are immune */
 		case GF_WATER:
+		case GF_VAPOUR:
 		{
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags9 & RF9_IM_WATER)
@@ -8721,6 +8728,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Water -- stun/confuse */
 		case GF_WATER:
+		case GF_WAVE:
 		if (p_ptr->immune_water)
 		{
 			dam = 0;
@@ -8779,6 +8787,28 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					}
 				}
 			}
+		}
+		break;
+
+		case GF_VAPOUR:
+		if (p_ptr->immune_water) {
+			dam = 0;
+			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+			take_hit(Ind, dam, killer, -who);
+		} else {
+			if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
+				dam = (dam + 3) / 4;
+			else if (p_ptr->resist_water)
+				dam = (dam + 2) / 3;
+			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
+			/* no item damage */
+
+			take_hit(Ind, dam, killer, -who);
+
+			/* no stun/conf */
 		}
 		break;
 
@@ -11847,6 +11877,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_WATER:
+		case GF_VAPOUR:
 			if (r_ptr->flags9 & RF9_IM_WATER)
 				dam = 0;
 			else if (r_ptr->flags7 & RF7_AQUATIC)
