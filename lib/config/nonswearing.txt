@@ -57,6 +57,8 @@ bypass
 surpass
 pass
 cook
+coke
+coca
 again
 age
 agil
