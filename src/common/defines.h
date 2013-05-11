@@ -5516,7 +5516,11 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF3_LUCK_5		0x00000100L	/* Add +5 luck while inside this dungeon */
 #define DF3_LUCK_20		0x00000200L	/* Add +20 luck while inside this dungeon */
 #define DF3_LUCK_PROG_IDDC	0x00000400L	/* Add luck progressively while inside this dungeon, for Ironman Deep Dive Challenge */
+#define DF3_SHORT_IDDC		0x00000800L	/* As theme in IDDC, this dungeon only has half as many floors as usual */
 
+#define DF3_DERARE_MONSTERS	0x00001000L	/* Treat rarity of all monsters as '1' aka most common */
+#define DF3_MANY_MONSTERS	0x00002000L	/* Spawn 1.5x as many monsters as usual */
+#define DF3_VMANY_MONSTERS	0x00004000L	/* Spawn twice as many monsters as usual */
 
 
 /* level flags for dun_level */

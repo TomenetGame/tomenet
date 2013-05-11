@@ -2952,8 +2952,8 @@ struct dungeon_info_type
 	int max_m_alloc_chance;         /* There is a 1/max_m_alloc_chance chance per round of creating a new monster */
 
 	u32b flags1;                    /* Flags 1 */
-	u32b flags2;                    /* Flags 1 */
-	u32b flags3;                    /* Flags 1 */
+	u32b flags2;                    /* Flags 2 */
+	u32b flags3;                    /* Flags 3 */
 
 	byte rule_percents[100];        /* Flat rule percents */
 	rule_type rules[5];             /* Monster generation rules */

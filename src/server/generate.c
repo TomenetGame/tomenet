@@ -9563,11 +9563,12 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
  #endif
 		alloc_entry *table = alloc_race_table_dun[27];
 
-		hack_monster_idx = 1031;
-		hack_monster_rarity = r_info[1031].rarity;
 		hack_dun_idx = 27;
 
-		r_info[1031].rarity = 255;
+		hack_monster_idx = 1031;
+		hack_monster_rarity = r_info[1031].rarity;
+		r_info[1031].rarity = 1;
+
 		i = 0;
 		do {
 			if (table[i].index == 1031) {
@@ -10046,6 +10047,10 @@ if (!nether_bottom) {
 	/* Pick a base number of monsters */
 	i = MIN_M_ALLOC_LEVEL + randint(8);
 	i = i * dun->ratio / 100 + 1;
+
+	/* dungeon has especially many monsters? */
+	if ((d_ptr->flags3 & DF3_MANY_MONSTERS)) i = (i * 3) / 2;
+	if ((d_ptr->flags3 & DF3_VMANY_MONSTERS)) i *= 2;
 
 	/* Put some monsters in the dungeon */
 	for (i = i + k; i > 0; i--)

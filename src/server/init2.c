@@ -2523,17 +2523,21 @@ errr init_iddc() {
 	byte type = getiddctype(1, 0);
 	byte step = 0;
 	byte next = 0;
+	bool short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
+
 	for (i = 1; i < 128; i++) {
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
 		if (i == 41 || i == 81 || i == 121) { //immediate change
 			type = getiddctype(i, type);
+			short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
 			step = 0;
 			next = 0;
 		} else
-#endif		
+#endif
 		switch (step) {
 			case 2:
 				type = next;
+				short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
 				step = 0;
 				next = 0;
 			break;
@@ -2542,7 +2546,7 @@ errr init_iddc() {
 			break;
 			case 0:
 			default:
-			if (!indepthrange(i, type) || (n >= 6 && randint(25) < n)) {
+			if (!indepthrange(i, type) || (n >= (short_theme ? 3 : 6) && randint(short_theme ? 8 : 25) < n)) {
 				n = 0;
 				next = getiddctype(i, type);
 				if (next != type) step++;
@@ -2558,7 +2562,7 @@ errr init_iddc() {
 		//Debug Log; print to server? - Kurzel
 		//s_printf("IDDC %d -- Type: %d Step: %d Next: %d\n", i, iddc[i].type, iddc[i].step, iddc[i].next);
 	}
-	
+
 	return 0;
 }
 
@@ -2826,14 +2830,12 @@ static errr init_alloc(void)
 	}
 
 	/* Scan the monsters (not the ghost) */
-	for (i = 1; i < MAX_R_IDX - 1; i++)
-	{
+	for (i = 1; i < MAX_R_IDX - 1; i++) {
 		/* Get the i'th race */
 		r_ptr = &r_info[i];
 
 		/* Count valid pairs */
-		if (r_ptr->rarity)
-		{
+		if (r_ptr->rarity) {
 			int p, q, x, y, z;
 
 			/* Extract the base level */
@@ -2858,12 +2860,13 @@ static errr init_alloc(void)
 			z = y + aux[x];
 
 			/* Generate entries for each dungeon */
-			for (j = 0; j < MAX_D_IDX; j++)
-			{
+			for (j = 0; j < MAX_D_IDX; j++) {
 				table = alloc_race_table_dun[j];
 
-				if (table)
-				{
+				if (table) {
+					/* hack: make all monsters' base probability 'most common'? */
+					if (q && (d_info[j].flags3 & DF3_DERARE_MONSTERS)) q = 10000;
+
 					/* Adjust the base probability */
 					q = p * restrict_monster_to_dungeon(i, j) / 100;
 
