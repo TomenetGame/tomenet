@@ -2048,6 +2048,21 @@ void carry(int Ind, int pickup, int confirm)
 				}
 #endif	// CHEEZELOG_LEVEL
 
+#if CHEEZELOG_LEVEL > 2
+				/* for PRE_OWN_DROP_CHOSEN: */
+				else {
+					if (true_artifact_p(o_ptr))
+						s_printf("%s Artifact %d picked up by %s(lv %d) at %d,%d,%d%s%s: %s\n",
+						    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+ #if 0 /* pointless spam */
+					else if (o_ptr->name1 == ART_RANDART)
+						s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
+						    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+ #endif
+				}
+#endif
+
+
 				can_use(Ind, o_ptr);
 				/* for Ironman Deep Dive Challenge cross-trading */
 				o_ptr->mode = p_ptr->mode;
