@@ -7220,14 +7220,15 @@ void do_slash_cmd(int Ind, char *message)
 			}
 #ifdef IRONDEEPDIVE_MIXED_TYPES // Kurzel
 			/* Re-roll IDDC */
-			else if (prefix(message, "/riddc")) {
-				if (scan_iddc()) msg_print(Ind, "scan_iddc() succeeded.");
-				else msg_print(Ind, "scan_iddc() FAILED!");
-			        return;
-			}
-			/* list declared IDDC themes for current IDDC layout */
-			else if (prefix(message, "/liddc")) {
+			else if (prefix(message, "/riddc") || prefix(message, "/liddc")) {
 				int ft = -1, last = 1;
+
+				if (prefix(message, "/riddc")) {
+					if (scan_iddc()) msg_print(Ind, "scan_iddc() FAILED!");
+					else msg_print(Ind, "scan_iddc() succeeded.");
+				}
+
+				/* list declared IDDC themes for current IDDC layout */
 				for (i = 1; i <= 127; i++) {
 					if (ft != iddc[i].type) {
 						if (ft != -1) {
