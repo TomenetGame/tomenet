@@ -2499,12 +2499,12 @@ byte getiddctype(byte depth, byte last) {
 	for (i = 0; i < MAX_D_IDX; i++) {
 		//Disqualify some dungeons...
 		if (!indepthrange(depth, i) //Out of range
-		//Hardcoded exclusions from d_info.txt indices
-		|| (i == 0) //Wilderness
-		|| (i == 6) //Nether Realm (paranoia, too deep anyhow!)
-		|| (i == 28) //Death Fate
-		|| (i == 31) //Valinor (more paranoia)
-		|| (i == last)) //Exclude the previous dungeon type?
+		    //Hardcoded exclusions from d_info.txt indices:
+		    || (i == 0) //Wilderness
+		    || (i == 6) //Nether Realm (paranoia, too deep anyhow!)
+		    || (i == 28) //Death Fate
+		    || (i == 31) //Valinor (more paranoia)
+		    || (i == last)) //Exclude the previous dungeon type?
 			continue;
 		else {
 			pool[n] = i;
@@ -2532,21 +2532,22 @@ errr init_iddc() {
 			short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
 			step = 0;
 			next = 0;
+			n = 0;
 		} else
 #endif
 		switch (step) {
-			case 2:
-				type = next;
-				short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
-				step = 0;
-				next = 0;
+		case 2:
+			type = next;
+			short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
+			step = 0;
+			next = 0;
 			break;
-			case 1:
-				step++;
+		case 1:
+			step++;
 			break;
-			case 0:
-			default:
-			if (!indepthrange(i, type) || (n >= (short_theme ? 3 : 6) && randint(short_theme ? 8 : 25) < n)) {
+		case 0:
+		default:
+			if (!indepthrange(i, type) || (n >= (short_theme ? 3 : 6) && randint(short_theme ? 3 : 15) < n)) {
 				n = 0;
 				next = getiddctype(i, type);
 				if (next != type) step++;
