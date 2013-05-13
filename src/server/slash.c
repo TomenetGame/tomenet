@@ -7225,6 +7225,27 @@ void do_slash_cmd(int Ind, char *message)
 				else msg_print(Ind, "scan_iddc() FAILED!");
 			        return;
 			}
+			/* list declared IDDC themes for current IDDC layout */
+			else if (prefix(message, "/liddc")) {
+				int ft = -1, last = 1;
+				for (i = 1; i <= 127; i++) {
+					if (ft != iddc[i].type) {
+						if (ft != -1) {
+							msg_format(Ind, "%c%4d ft (%2d floors): %s", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ', last * 50, i - last, d_name + d_info[ft].name);
+
+							if (last < 40 && i >= 40)
+								msg_format(Ind, "%c2000 ft: \377yMenegroth", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ');
+							else if (last < 80 && i >= 80)
+								msg_format(Ind, "%c4000 ft: \377yNargothrond", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ');
+
+							last = i;
+						}
+						ft = iddc[i].type;
+					}
+				}
+				msg_format(Ind, "%c%4d ft (%2d floors): %s", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ', last * 50, i - last, d_name + d_info[ft].name);
+				return;
+			}
 #endif
 			/* Recall all players out of the dungeons, kick those who aren't eligible */
 			else if (prefix(message, "/allrec")) {
