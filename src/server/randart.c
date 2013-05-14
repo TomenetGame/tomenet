@@ -243,7 +243,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	case TV_LITE:
 //		p += 35;
 		p += 25;
-		if ((a_ptr->flags4 & ~TR4_FUEL_LITE) &&
+		if (!(a_ptr->flags4 & TR4_FUEL_LITE) &&
 		    (k_ptr->flags4 & TR4_FUEL_LITE))
 			p += 10;
 		break;
