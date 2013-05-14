@@ -6408,6 +6408,10 @@ void player_death(int Ind) {
 
 		if (instant_res_possible) {
 			int loss_factor, reduce;
+#ifndef FALLEN_WINNERSONLY
+			int i;
+			u32b dummy, f5;
+#endif
 
 			/* Log it */
 			s_printf("INSTA_RES: %s (%d) was defeated by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
@@ -6504,8 +6508,8 @@ void player_death(int Ind) {
 			p_ptr->exp -= reduce;
 
 			check_experience(Ind);
-			
-			/* Remove Massive Iron Crown of Morgoth */
+
+			/* Remove massive crown of Morgoth and Grond */
 			if (p_ptr->inventory[INVEN_HEAD].k_idx && p_ptr->inventory[INVEN_HEAD].name1 == ART_MORGOTH) {
 				char o_name[ONAME_LEN];
 
@@ -6517,6 +6521,29 @@ void player_death(int Ind) {
 				inven_item_increase(Ind, INVEN_HEAD, -(o_ptr->number));
 				inven_item_optimize(Ind, INVEN_HEAD);
 			}
+			if (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_WIELD].name1 == ART_GROND) {
+				char o_name[ONAME_LEN];
+
+				o_ptr = &p_ptr->inventory[INVEN_WIELD];
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				msg_format(Ind, "\376\377oYour %s was destroyed!", o_name);
+				handle_art_d(o_ptr->name1);
+
+				inven_item_increase(Ind, INVEN_WIELD, -(o_ptr->number));
+				inven_item_optimize(Ind, INVEN_WIELD);
+			}
+
+#ifndef FALLEN_WINNERSONLY
+			/* Take off winner artifacts and winner-only items */
+			for (i = INVEN_WIELD; i <= INVEN_TOTAL; i++) {
+				o_ptr = &p_ptr->inventory[i];
+				object_flags(o_ptr, &dummy, &dummy, &dummy, &dummy, &f5, &dummy);
+				if ((f5 & TR5_WINNERS_ONLY)) {
+					bypass_inscrption = TRUE;
+					inven_takeoff(Ind, i, 255, FALSE);
+				}
+			}
+#endif
 
 			/* update stats */
 			p_ptr->update |= PU_SANITY;
@@ -6662,7 +6689,7 @@ void player_death(int Ind) {
 		}
 
 		if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&
-		    /* Don't drop Morgoth's crown */
+		    /* Don't drop Morgoth's crown or Grond */
 		    !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND)) {
 #ifdef DEATH_ITEM_SCATTER
 			/* Apply penalty of death */
