@@ -9738,53 +9738,53 @@ if (!nether_bottom) {
 #else
 		generate_maze(wpos, (d_ptr->flags1 & DF1_MAZE) ? 1 : randint(3));
 #endif
-		} else {
-if (!nether_bottom) {
-		/* Hack -- Scramble the room order */
-		for (i = 0; i < dun->cent_n; i++) {
-			int pick1 = rand_int(dun->cent_n);
-			int pick2 = rand_int(dun->cent_n);
-			y1 = dun->cent[pick1].y;
-			x1 = dun->cent[pick1].x;
-			dun->cent[pick1].y = dun->cent[pick2].y;
-			dun->cent[pick1].x = dun->cent[pick2].x;
-			dun->cent[pick2].y = y1;
-			dun->cent[pick2].x = x1;
-		}
+	} else {
+		if (!nether_bottom) {
+			/* Hack -- Scramble the room order */
+			for (i = 0; i < dun->cent_n; i++) {
+				int pick1 = rand_int(dun->cent_n);
+				int pick2 = rand_int(dun->cent_n);
+				y1 = dun->cent[pick1].y;
+				x1 = dun->cent[pick1].x;
+				dun->cent[pick1].y = dun->cent[pick2].y;
+				dun->cent[pick1].x = dun->cent[pick2].x;
+				dun->cent[pick2].y = y1;
+				dun->cent[pick2].x = x1;
+			}
 
-		/* Start with no tunnel doors */
-		dun->door_n = 0;
+			/* Start with no tunnel doors */
+			dun->door_n = 0;
 
-		/* Hack -- connect the first room to the last room */
-		y = dun->cent[dun->cent_n-1].y;
-		x = dun->cent[dun->cent_n-1].x;
+			/* Hack -- connect the first room to the last room */
+			y = dun->cent[dun->cent_n-1].y;
+			x = dun->cent[dun->cent_n-1].x;
 
-		/* Connect all the rooms together */
-		for (i = 0; i < dun->cent_n; i++) {
-			/* Connect the room to the previous room */
-			build_tunnel(wpos, dun->cent[i].y, dun->cent[i].x, y, x);
+			/* Connect all the rooms together */
+			for (i = 0; i < dun->cent_n; i++) {
+				/* Connect the room to the previous room */
+				build_tunnel(wpos, dun->cent[i].y, dun->cent[i].x, y, x);
 
-			/* Remember the "previous" room */
-			y = dun->cent[i].y;
-			x = dun->cent[i].x;
-		}
+				/* Remember the "previous" room */
+				y = dun->cent[i].y;
+				x = dun->cent[i].x;
+			}
 
-		/* Place intersection doors	 */
-		for (i = 0; i < dun->door_n; i++) {
-			/* Extract junction location */
-			y = dun->door[i].y;
-			x = dun->door[i].x;
+			/* Place intersection doors	 */
+			for (i = 0; i < dun->door_n; i++) {
+				/* Extract junction location */
+				y = dun->door[i].y;
+				x = dun->door[i].x;
 
-			/* Try placing doors */
+				/* Try placing doors */
 #if 0
-			try_door(wpos, y, x - 1);
-			try_door(wpos, y, x + 1);
-			try_door(wpos, y - 1, x);
-			try_door(wpos, y + 1, x);
+				try_door(wpos, y, x - 1);
+				try_door(wpos, y, x + 1);
+				try_door(wpos, y - 1, x);
+				try_door(wpos, y + 1, x);
 #endif	/* 0 */
-			try_doors(wpos, y , x);
+				try_doors(wpos, y , x);
+			}
 		}
-}
 
 		/* Hack -- Add some magma streamers */
 		for (i = 0; i < DUN_STR_MAG; i++)
@@ -10095,50 +10095,50 @@ if (!nether_bottom) {
 #endif
 
 #ifndef ARCADE_SERVER
-if (!nether_bottom) {
-	/* Place some traps in the dungeon */
-	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
-	    randint(k * (bonus ? 3 : 1)), p_ptr);
+	if (!nether_bottom) {
+		/* Place some traps in the dungeon */
+		alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
+		    randint(k * (bonus ? 3 : 1)), p_ptr);
 
-	/* Put some rubble in corridors */
-	alloc_object(wpos, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k), p_ptr);
+		/* Put some rubble in corridors */
+		alloc_object(wpos, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k), p_ptr);
 
-	/* Put some objects in rooms */
-	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ROOM, 3) * dun->ratio / 100 + 1, p_ptr);
+		/* Put some objects in rooms */
+		alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ROOM, 3) * dun->ratio / 100 + 1, p_ptr);
 
-	/* Put some objects/gold in the dungeon */
-	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3) * dun->ratio / 100 + 1, p_ptr);
-	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3) * dun->ratio / 100 + 1, p_ptr);
+		/* Put some objects/gold in the dungeon */
+		alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3) * dun->ratio / 100 + 1, p_ptr);
+		alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3) * dun->ratio / 100 + 1, p_ptr);
 
-	/* Put some between gates */
-	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_BETWEEN, randnor(DUN_AMT_BETWEEN, 3) * dun->ratio / 100 + 1, p_ptr);
+		/* Put some between gates */
+		alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_BETWEEN, randnor(DUN_AMT_BETWEEN, 3) * dun->ratio / 100 + 1, p_ptr);
 
-	/* Put some fountains */
-	alloc_object(wpos, ALLOC_SET_ROOM, fountains_of_blood ? ALLOC_TYP_FOUNTAIN_OF_BLOOD : ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
-}
+		/* Put some fountains */
+		alloc_object(wpos, ALLOC_SET_ROOM, fountains_of_blood ? ALLOC_TYP_FOUNTAIN_OF_BLOOD : ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
+	}
 	/* It's done */
 #else
-if (!nether_bottom && wpos->wz < 0) {
-	/* Place some traps in the dungeon */
-	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
-	    randint(k * (bonus ? 3 : 1)), p_ptr);
+	if (!nether_bottom && wpos->wz < 0) {
+		/* Place some traps in the dungeon */
+		alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
+		    randint(k * (bonus ? 3 : 1)), p_ptr);
 
-	/* Put some rubble in corridors */
-	alloc_object(wpos, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k), p_ptr);
+		/* Put some rubble in corridors */
+		alloc_object(wpos, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k), p_ptr);
 
-	/* Put some objects in rooms */
-	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ROOM, 3) * dun->ratio / 100 + 1, p_ptr);
+		/* Put some objects in rooms */
+		alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ROOM, 3) * dun->ratio / 100 + 1, p_ptr);
 
-	/* Put some objects/gold in the dungeon */
-	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3) * dun->ratio / 100 + 1, p_ptr);
-	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3) * dun->ratio / 100 + 1, p_ptr);
+		/* Put some objects/gold in the dungeon */
+		alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3) * dun->ratio / 100 + 1, p_ptr);
+		alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3) * dun->ratio / 100 + 1, p_ptr);
 
-	/* Put some between gates */
-	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_BETWEEN, randnor(DUN_AMT_BETWEEN, 3) * dun->ratio / 100 + 1, p_ptr);
+		/* Put some between gates */
+		alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_BETWEEN, randnor(DUN_AMT_BETWEEN, 3) * dun->ratio / 100 + 1, p_ptr);
 
-	/* Put some fountains */
-	alloc_object(wpos, ALLOC_SET_ROOM, fountains_of_blood ? ALLOC_TYP_FOUNTAIN_OF_BLOOD : ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
-}
+		/* Put some fountains */
+		alloc_object(wpos, ALLOC_SET_ROOM, fountains_of_blood ? ALLOC_TYP_FOUNTAIN_OF_BLOOD : ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
+	}
 	/* It's done */
 #endif
 
@@ -10453,7 +10453,7 @@ for(mx = 1; mx < 131; mx++) {
 							} else {
 								cs_ptr->sc.omni = STORE_BTSUPPLY;
 							}
-s_printf("DUNGEON_STORE: %d (%d,%d,%d)\n", cs_ptr->sc.omni, wpos->wx, wpos->wy, wpos->wz);
+							s_printf("DUNGEON_STORE: %d (%d,%d,%d)\n", cs_ptr->sc.omni, wpos->wx, wpos->wy, wpos->wz);
 							return;
 						}
 					}
