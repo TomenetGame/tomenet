@@ -1295,7 +1295,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	if (object_known_p(Ind, o_ptr)) {
 #if 0 /* would prevent ppl from getting rid of unsellable artifacts */
 	    if (true_artifact_p(o_ptr) && !is_admin(p_ptr) &&
-	        ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) || (p_ptr->total_winner && !winner_artifact_p(o_ptr)))) {
+	        ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) || (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette))) {
 				msg_print(Ind, "\377yThis item is a true artifact and cannot be dropped!");
 				return;
 		}
