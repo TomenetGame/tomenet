@@ -7058,6 +7058,41 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "max_depth[] fixed for '%s':", Players[p]->name);
 				return;
 			}
+			else if (prefix(message, "/wipemd")) {
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /fixmd <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE, FALSE);
+				if (!p) return;
+
+				for (i = 0; i < MAX_D_IDX * 2; i++) {
+					Players[p]->max_depth_wx[i] = 0;
+					Players[p]->max_depth_wy[i] = 0;
+					Players[p]->max_depth[i] = 0;
+					Players[p]->max_depth_tower[i] = FALSE;
+				}
+
+				msg_format(Ind, "max_depth[] wiped for '%s':", Players[p]->name);
+				return;
+			}
+			/* new unfortunately: remove all non-existing dungeons that got added due
+			   to a bug that adds a 'dungeon' everytime on world-surface recall, ew */
+			else if (prefix(message, "/fix!md")) {
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /fix!md <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE, FALSE);
+				if (!p) return;
+
+				fix_max_depth_bug(Players[p]);
+
+				msg_format(Ind, "max_depth[] bug-fixed for '%s':", Players[p]->name);
+				return;
+			}
 			else if (prefix(message, "/fixjaildun")) {//adds DF3_JAIL_DUNGEON flag to a dungeon if on a jail grid
 				worldpos *tpos = &p_ptr->wpos;
 				cave_type **zcave, *c_ptr;

@@ -899,6 +899,7 @@ extern errr rd_savefile_new(int Ind);
 extern errr rd_server_savefile(void);
 extern bool wearable_p(object_type *o_ptr);
 extern void fix_max_depth(player_type *p_ptr);
+extern void fix_max_depth_bug(player_type *p_ptr);
 #ifdef SEAL_INVALID_OBJECTS
 extern bool seal_or_unseal_object(object_type *o_ptr);
 #endif
@@ -2050,6 +2051,7 @@ int swear_get_level(int i);
 void nonswear_set(int i, char *word);
 char *nonswear_get(int i);
 extern void lua_fix_max_depth(int Ind);
+extern void lua_fix_max_depth_bug(int Ind);
 extern void lua_forget_flavours(int Ind);
 extern void lua_forget_map(int Ind);
 extern void lua_forget_parties(void);

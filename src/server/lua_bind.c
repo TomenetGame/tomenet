@@ -1164,6 +1164,11 @@ void lua_fix_max_depth(int Ind) {
         fix_max_depth(p_ptr);
 }
 
+void lua_fix_max_depth_bug(int Ind) {
+	player_type *p_ptr = Players[Ind];
+        fix_max_depth_bug(p_ptr);
+}
+
 /* for use with flavour reset by '-f' */
 void lua_forget_flavours(int Ind) {
 	int i;

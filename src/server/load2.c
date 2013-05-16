@@ -3113,6 +3113,7 @@ void fix_max_depth(player_type *p_ptr) {
 		p_ptr->max_depth_wx[i] = 0;
 		p_ptr->max_depth_wy[i] = 0;
 		p_ptr->max_depth[i] = 0;
+		p_ptr->max_depth_tower[i] = FALSE;
 	}
 	/* attempt a fair translation */
 	for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
@@ -3140,6 +3141,29 @@ void fix_max_depth(player_type *p_ptr) {
 	}
 
 	s_printf("max_depth[] has been fixed/reset for '%s'.\n", p_ptr->name);
+}
+
+void fix_max_depth_bug(player_type *p_ptr) {
+	int i;
+
+	/* wipe (paranoia, should already be zeroed) */
+	for (i = 0; i < MAX_D_IDX * 2; i++) {
+#if 1 /* faster */
+		//if (p_ptr->max_depth[i]) continue; /* (all bugged entries have depth 0) */
+#else /* cleaner */
+		if (!p_ptr->max_depth_wx[i]) continue; /* entry doesn't exist? */
+		if (!p_ptr->max_depth_dungeon[i] || /* it's not a dungeon or it is and that dungeon actually exists? */
+		    wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].dungeon)
+			/* (all bugged entries are 'dungeons') */
+			continue;
+#endif
+		/* wipe */
+		p_ptr->max_depth_wx[i] = 0;
+		p_ptr->max_depth_wy[i] = 0;
+		//p_ptr->max_depth_tower[i] = FALSE; (redundant)
+	}
+
+	s_printf("max_depth[] has been bug-fixed for '%s'.\n", p_ptr->name);
 }
 
 #ifdef SEAL_INVALID_OBJECTS
