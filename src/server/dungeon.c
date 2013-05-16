@@ -8214,15 +8214,12 @@ void timed_shutdown(int k) {
 int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr) {
 	int j;
 
-	/* not recalling into dungeon/tower? */
-	if (!wpos->wz) return (-1);
-
 	/* cannot recall in 0,0? */
 	if (!wpos->wx && !wpos->wy) return (-1);
 
-	/* no dungeon here? */
+	/* no dungeon/tower here? */
 	if (wpos->wz > 0 && !wild_info[wpos->wy][wpos->wx].tower) return (-1);
-	if (wpos->wz < 0 && !wild_info[wpos->wy][wpos->wx].dungeon) return (-1);
+	if (wpos->wz <= 0 && !wild_info[wpos->wy][wpos->wx].dungeon) return (-1);/* assume basic recall prefers dungeon over tower */
 
 	for (j = 0; j < MAX_D_IDX * 2; j++) {
 		/* it's a dungeon that's new to us - add it! */
