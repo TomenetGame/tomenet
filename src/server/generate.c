@@ -9835,10 +9835,10 @@ if (!nether_bottom) {
 			}
 		}
 #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
-		if (in_irondeepdive(wpos) ? ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_LAVA_RIVERS) || (dun->watery)) :
-		    ((d_ptr->flags1 & DF1_LAVA_RIVERS) || (dun->watery))) {
+		if (in_irondeepdive(wpos) ? (d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_LAVA_RIVERS) :
+		    (d_ptr->flags1 & DF1_LAVA_RIVERS)) {
 #else
-		if ((d_ptr->flags1 & DF1_LAVA_RIVERS) || (dun->watery)) {
+		if ((d_ptr->flags1 & DF1_LAVA_RIVERS)) {
 #endif
 			int max = 2 + rand_int(2);
 

@@ -2517,17 +2517,17 @@ byte getiddctype(byte depth, byte last) {
 	else return last; //Use the previous dungeon type on error!
 }
 
-
+//We could de-hardcode the depths of static towns, and iddc length, perhaps? - Kurzel
 errr init_iddc() {
-	byte n = 0, i;
-	byte type = getiddctype(1, 0);
+	byte n = 0, i, j;
+	byte type = getiddctype(127, 0);
 	byte step = 0;
 	byte next = 0;
 	bool short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
 
-	for (i = 1; i < 128; i++) {
+	for (i = 127; i > 0; i--) {
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
-		if (i == 41 || i == 81 || i == 121) { //immediate change
+		if (i == 39 || i == 79 || i == 119) { //immediate change
 			type = getiddctype(i, type);
 			short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
 			step = 0;
@@ -2535,22 +2535,56 @@ errr init_iddc() {
 			n = 0;
 		} else
 #endif
+		
+
 		switch (step) {
 		case 2:
-			type = next;
+			step = 1;
 			short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
-			step = 0;
-			next = 0;
 			break;
 		case 1:
-			step++;
+			step = 0;
+			next = 0;
+			short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
 			break;
 		case 0:
 		default:
-			if (!indepthrange(i, type) || (n >= (short_theme ? 3 : 6) && randint(short_theme ? 3 : 15) < n)) {
+		
+#ifdef IRONDEEPDIVE_FIXED_TOWNS //Create pure types about towns for at least 3 floors (except when out of depth range for a dungeon)
+			if ((i < 41 && i > 37) || (i < 81 && i > 77) || (i < 121 && i > 117))
+			{n++; break;}
+#endif			
+
+			//Scan d_info[] for dungeon boss levels
+			if (i > 3) //Prevent icky transition at start
+			for (j = 0; j < MAX_D_IDX; j++) {
+				//Boss floor, not already transitioning, 33% flat chance, ignore lengths
+				if ((i == d_info[j].maxdepth + 2) && ((n >= (short_theme ? 3 : 6)) || (randint(3) == 1 && !step))
+				    //Hardcoded exclusions from d_info.txt indices:
+				    && (j != 0) //Wilderness
+				    && (j != 6) //Nether Realm (paranoia, too deep anyhow!)
+				    && (j != 28) //Death Fate
+				    && (j != 31)) //Valinor (more paranoia)
+				{
+					n = 0;
+					next = type;
+					type = j;
+					short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
+					if (next != type) step = 2;
+					else next = 0;
+				}
+			}
+			if (step) break;
+			
+			if (i > 3 && ((!indepthrange(i, type)
+			|| (n >= (short_theme ? 3 : 6)
+			&& randint(short_theme ? 3 : 15) < n)))) {
 				n = 0;
-				next = getiddctype(i, type);
-				if (next != type) step++;
+				next = type;
+				type = getiddctype(i, type);
+				short_theme = ((d_info[type].flags3 & DF3_SHORT_IDDC) != 0x0);
+				if (next != type) step = 2;
+				else next = 0;
 			} else n++;
 			break;
 		}
@@ -2561,13 +2595,14 @@ errr init_iddc() {
 		iddc[i].next = next;
 		
 		//Debug Log; print to server? - Kurzel
-		//s_printf("IDDC %d -- Type: %d Step: %d Next: %d\n", i, iddc[i].type, iddc[i].step, iddc[i].next);
+		//s_printf("IDDC %d -- Type: %d Step: %d Next: %d Boss: %s\n", i, iddc[i].type, iddc[i].step, iddc[i].next, (i == d_info[type].maxdepth) ? "yes" : "no");
 	}
 
 	return 0;
 }
 
 int scan_iddc() {
+	/*
 	struct worldpos wpos;
 	wpos.wx = WPOS_IRONDEEPDIVE_X;
 	wpos.wy = WPOS_IRONDEEPDIVE_Y;
@@ -2582,6 +2617,7 @@ int scan_iddc() {
 			return -1;
 		}
 	}
+	*/
 	(void)init_iddc();
 	s_printf("IDDC Scan Success!\n");
 	return 0;

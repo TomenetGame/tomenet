@@ -1099,6 +1099,12 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 		//drop_near(o_ptr, -1, wpos, y, x);
 		inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
 		
+		/* Combine and update the pack */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN);
+		
 		/* Cleanup */
 		cs_erase(c_ptr, cs_ptr);
 		return;
