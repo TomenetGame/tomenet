@@ -3150,7 +3150,7 @@ void fix_max_depth(player_type *p_ptr) {
 
 /* Note: there was still a 0,0 tower in my DM's list, but whatever.. */
 void fix_max_depth_bug(player_type *p_ptr) {
-	int i;
+	int i, j;
 
 	/* wipe (paranoia, should already be zeroed) */
 	for (i = 0; i < MAX_D_IDX * 2; i++) {
@@ -3167,6 +3167,20 @@ void fix_max_depth_bug(player_type *p_ptr) {
 		p_ptr->max_depth_wx[i] = 0;
 		p_ptr->max_depth_wy[i] = 0;
 		//p_ptr->max_depth_tower[i] = FALSE; (redundant)
+		
+		/* important: move the following dungeons in our personal list up one,
+		   so as to not leave any holes (breaks the get_recall_depth algo) */
+		for (j = i; j < MAX_D_IDX * 2 - 1; j++) {
+			p_ptr->max_depth[j] = p_ptr->max_depth[j + 1];
+			p_ptr->max_depth_wx[j] = p_ptr->max_depth_wx[j + 1];
+			p_ptr->max_depth_wy[j] = p_ptr->max_depth_wy[j + 1];
+			p_ptr->max_depth_tower[j] = p_ptr->max_depth_tower[j + 1];
+		}
+		/* wipe the last entry accordingly, since it has been moved up by one */
+		p_ptr->max_depth[j] = 0;
+		p_ptr->max_depth_wx[j] = 0;
+		p_ptr->max_depth_wy[j] = 0;
+		p_ptr->max_depth_tower[j] = FALSE;
 	}
 
 	s_printf("max_depth[] has been bug-fixed for '%s'.\n", p_ptr->name);
