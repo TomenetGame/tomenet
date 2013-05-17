@@ -3150,9 +3150,8 @@ void fix_max_depth(player_type *p_ptr) {
 
 /* Note: there was still a 0,0 tower in my DM's list, but whatever.. */
 void fix_max_depth_bug(player_type *p_ptr) {
-	int i, j;
+	int i, j, k;
 
-	/* wipe (paranoia, should already be zeroed) */
 	for (i = 0; i < MAX_D_IDX * 2; i++) {
 #if 0 /* faster */
 		if (p_ptr->max_depth[i]) continue; /* (all bugged entries have depth 0) */
@@ -3167,7 +3166,7 @@ void fix_max_depth_bug(player_type *p_ptr) {
 		p_ptr->max_depth_wx[i] = 0;
 		p_ptr->max_depth_wy[i] = 0;
 		//p_ptr->max_depth_tower[i] = FALSE; (redundant)
-		
+
 		/* important: move the following dungeons in our personal list up one,
 		   so as to not leave any holes (breaks the get_recall_depth algo) */
 		for (j = i; j < MAX_D_IDX * 2 - 1; j++) {
@@ -3181,6 +3180,29 @@ void fix_max_depth_bug(player_type *p_ptr) {
 		p_ptr->max_depth_wx[j] = 0;
 		p_ptr->max_depth_wy[j] = 0;
 		p_ptr->max_depth_tower[j] = FALSE;
+	}
+
+	/* moar fixing old bugginess: remove all 0,0,0 entries between valid entries
+	   (empty entries aka 0,0,0 should only occur tailing the other entries) */
+	for (i = 0; i < MAX_D_IDX * 2; i++) {
+		if (p_ptr->max_depth_wx[i] || p_ptr->max_depth_wy[i]) continue; /* entry is not empty? */
+		/* ..entry i is empty.. */
+		for (j = i + 1; j < MAX_D_IDX * 2; j++) {
+			if (!p_ptr->max_depth_wx[i] && !p_ptr->max_depth_wy[i]) continue; /* entry is correctly empty? */
+
+			/* move it down by one */
+			for (k = i; k < MAX_D_IDX * 2 - 1; k++) {
+				p_ptr->max_depth[k] = p_ptr->max_depth[k + 1];
+				p_ptr->max_depth_wx[k] = p_ptr->max_depth_wx[k + 1];
+				p_ptr->max_depth_wy[k] = p_ptr->max_depth_wy[k + 1];
+				p_ptr->max_depth_tower[k] = p_ptr->max_depth_tower[k + 1];
+			}
+			/* wipe the last entry accordingly, since it has been moved up by one */
+			p_ptr->max_depth[k] = 0;
+			p_ptr->max_depth_wx[k] = 0;
+			p_ptr->max_depth_wy[k] = 0;
+			p_ptr->max_depth_tower[k] = FALSE;
+		}
 	}
 
 	s_printf("max_depth[] has been bug-fixed for '%s'.\n", p_ptr->name);
