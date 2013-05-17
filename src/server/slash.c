@@ -7093,6 +7093,20 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "max_depth[] bug-fixed for '%s':", Players[p]->name);
 				return;
 			}
+			else if (prefix(message, "/fixcondmd")) {
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /fixcondmd <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE, FALSE);
+				if (!p) return;
+
+				condense_max_depth(Players[p]);
+
+				msg_format(Ind, "max_depth[] condensation-bug-fixed for '%s':", Players[p]->name);
+				return;
+			}
 			else if (prefix(message, "/fixjaildun")) {//adds DF3_JAIL_DUNGEON flag to a dungeon if on a jail grid
 				worldpos *tpos = &p_ptr->wpos;
 				cave_type **zcave, *c_ptr;
