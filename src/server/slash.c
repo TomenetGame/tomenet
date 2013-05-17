@@ -7265,9 +7265,12 @@ void do_slash_cmd(int Ind, char *message)
 
 				/* list declared IDDC themes for current IDDC layout */
 				for (i = 1; i <= 127; i++) {
-					if (ft != iddc[i].type) {
+					if (ft != iddc[i].type
+					    && i != 40 && i != 80) { /* added to fix the list visuals for the reverse approach (127..1) theme generation */
 						if (ft != -1) {
-							msg_format(Ind, "%c%4d ft (%2d floors): %s %s", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ', last * 50, i - last, d_name + d_info[ft].name, (last < d_info[ft].maxdepth && i >= d_info[ft].maxdepth) ? "\377y(Boss)" : "");
+							msg_format(Ind, "%c%4d ft (%2d floors): %s %s", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ',
+							    last * 50, i - last, d_name + d_info[ft].name, !(last < d_info[ft].maxdepth && i >= d_info[ft].maxdepth) ? "" :
+							    (d_info[ft].final_guardian ? "\377o(Boss)" : "\377D(Boss)"));
 
 							if (last < 40 && i >= 40)
 								msg_format(Ind, "%c2000 ft: \377yMenegroth", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ');
@@ -7279,7 +7282,9 @@ void do_slash_cmd(int Ind, char *message)
 						ft = iddc[i].type;
 					}
 				}
-				msg_format(Ind, "%c%4d ft (%2d floors): %s %s", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ', last * 50, i - last, d_name + d_info[ft].name, (last < d_info[ft].maxdepth && i >= d_info[ft].maxdepth) ? "\377y(Boss)" : "");
+				msg_format(Ind, "%c%4d ft (%2d floors): %s %s", WPOS_IRONDEEPDIVE_Z < 0 ? '-' : ' ',
+				    last * 50, i - last, d_name + d_info[ft].name, !(last < d_info[ft].maxdepth && i >= d_info[ft].maxdepth) ? "" :
+				    (d_info[ft].final_guardian ? "\377o(Boss)" : "\377D(Boss)"));
 				return;
 			}
 #endif
