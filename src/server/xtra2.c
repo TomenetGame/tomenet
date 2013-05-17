@@ -586,7 +586,8 @@ bool set_st_anchor(int Ind, int v)
 	/* Open */
 	if (v) {
 		if (!p_ptr->st_anchor) {
-			msg_print(Ind, "The Space/Time Continuum seems to solidify !");
+			//msg_print(Ind, "The Space/Time Continuum seems to solidify !");
+			msg_print(Ind, "The air feels very still.");
 			notice = TRUE;
 		}
 	}
@@ -594,7 +595,8 @@ bool set_st_anchor(int Ind, int v)
 	/* Shut */
 	else {
 		if (p_ptr->st_anchor) {
-			msg_print(Ind, "The Space/Time Continuum seems more flexible.");
+			//msg_print(Ind, "The Space/Time Continuum seems more flexible.");
+			msg_print(Ind, "The air feels fresh again.");
 			notice = TRUE;
 		}
 	}
@@ -674,16 +676,12 @@ bool set_brand(int Ind, int v, int t, int p)
 
 	bool notice = FALSE;
 
-	char weapons[20], dual[2];
+	char weapons[20];
 
-	//strcpy(weapons, "\377oYour weapon");
-	strcpy(weapons, "\377wYour weapon");
-	strcpy(dual, "s");
+	strcpy(weapons, "\377wYour weapon is");
 	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) {
-		//strcpy(weapons, "\377oYour weapons");
-		strcpy(weapons, "\377wYour weapons");
-		strcpy(dual, "");
+		strcpy(weapons, "\377wYour weapons are");
 	}
 
 	/* Hack -- Force good values */
@@ -693,45 +691,38 @@ bool set_brand(int Ind, int v, int t, int p)
 	if (v) {
 		if (!p_ptr->brand &&
 		    (p_ptr->inventory[INVEN_WIELD].k_idx || /* dual-wield..*/
-		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)))
-		{
+		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
 		  switch (t) {
 		    case BRAND_ELEC:
                     case BRAND_BALL_ELEC:
-		      //msg_format(Ind, "%s sparkle%s with lightning!", weapons, dual);
-		      msg_format(Ind, "%s glow%s with electricity!", weapons, dual);
+		      msg_format(Ind, "%s branded with lightning!", weapons);
 		      break;
                     case BRAND_BALL_COLD:
 		    case BRAND_COLD:
-		      //msg_format(Ind, "%s freeze%s!", weapons, dual);
-		      msg_format(Ind, "%s glow%s with cold!", weapons, dual);
+		      msg_format(Ind, "%s branded with frost!", weapons);
 		      break;
                     case BRAND_BALL_FIRE:
 		    case BRAND_FIRE:
-		      //msg_format(Ind, "%s burn%s!", weapons, dual);
-		      msg_format(Ind, "%s glow%s with fire!", weapons, dual);
+		      msg_format(Ind, "%s branded with fire!", weapons);
 		      break;
                     case BRAND_BALL_ACID:
 		    case BRAND_ACID:
-		      //msg_format(Ind, "%s look%s acidic!", weapons, dual);
-		      msg_format(Ind, "%s glow%s with acid!", weapons, dual);
+		      msg_format(Ind, "%s branded with acid!", weapons);
 		      break;
 		    case BRAND_POIS:
-		      //msg_format(Ind, "%s drip%s with venom!", weapons, dual);
-		      msg_format(Ind, "%s glow%s with poison!", weapons, dual);
+		      msg_format(Ind, "%s branded with poison!", weapons);
 		      break;
 		    case BRAND_MANA:
-		      msg_format(Ind, "% glow%s with power!", weapons, dual);
+		      msg_format(Ind, "%s branded with the elements!", weapons);
 		      break;
 		    case BRAND_CONF:
-		      msg_format(Ind, "%s glow%s many colors!", weapons, dual);
+		      msg_format(Ind, "%s branded with chaos!", weapons); //used experimentally - Kurzel
 		      break;
 		    case BRAND_VORP:
-		      //msg_format(Ind, "%s sharpen%s!", weapons, dual);
-		      msg_format(Ind, "%s take%s on a vorpal glow!", weapons, dual);
+		      msg_format(Ind, "%s vorpal!", weapons); //not used
 		      break;
                     case BRAND_BALL_SOUND:
-                      msg_format(Ind, "%s vibrate%s!", weapons, dual);
+                      msg_format(Ind, "%s sonic!", weapons); //not used
 		      break;
 		    }
 		  notice = TRUE;
@@ -742,7 +733,7 @@ bool set_brand(int Ind, int v, int t, int p)
 	else {
 		if (p_ptr->brand && p_ptr->inventory[INVEN_WIELD].k_idx) {
 			//msg_print(Ind, "\377oYour weapon seems normal again.");
-			msg_print(Ind, "\377sYour weapon seems normal again.");
+			msg_format(Ind, "%s no longer branded.", weapons);
 			notice = TRUE;
 			t = 0;
 			p = 0;

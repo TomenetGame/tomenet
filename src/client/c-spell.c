@@ -1810,28 +1810,47 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 	*dy = (byte)d2;
 	
 	/* Further modify for individual spells */
-	if (r_types[type].flag == T_SIGN) {
-		switch (projection) {				
-			case SV_R_WATE: { //regen
-				damage = rget_level(700) * r_imperatives[imperative].damage / 10;
-				if (damage > 700) damage = 700;
-				if (damage < 70) damage = 70;
-			break; }
-
-			case SV_R_TIME: { //speed
-				damage = rget_level(15) * r_imperatives[imperative].damage / 10;
-				if (damage > 10) damage = 10;
-				if (damage < 1) damage = 1;
-			break; }
-			
-			case SV_R_FORC: { //armor
-				damage = rget_level(20) * r_imperatives[imperative].damage / 10;
-				if (damage > 20) damage = 20;
-				if (damage < 1) damage = 1;
+	if (r_imperatives[imperative].flag == I_ENHA) {
+		if (r_types[type].flag == T_SIGN) {
+			switch (projection) {
+				case SV_R_TIME: { //stasis
+					damage = 50 + rget_level(50) * r_imperatives[imperative].damage / 10;
+					if (damage > 100) damage = 100;
+					if (damage < 50) damage = 50;
+				break; }
+				
+				case SV_R_CONF: { //recharging
+					damage = (50 + rget_level(50)) * r_imperatives[imperative].damage / 10;
+					if (damage > 100) damage = 100;
+					if (damage < 50) damage = 50;
+				break; }
 			}
+		}
+	} else {
+		if (r_types[type].flag == T_SIGN) {
+			switch (projection) {
+				
+				case SV_R_WATE: { //regen
+					damage = rget_level(700) * r_imperatives[imperative].damage / 10;
+					if (damage > 700) damage = 700;
+					if (damage < 70) damage = 70;
+				break; }
 
-			default: {
-			break; }
+				case SV_R_TIME: { //speed
+					damage = rget_level(15) * r_imperatives[imperative].damage / 10;
+					if (damage > 10) damage = 10;
+					if (damage < 1) damage = 1;
+				break; }
+				
+				case SV_R_FORC: { //armor
+					damage = rget_level(20) * r_imperatives[imperative].damage / 10;
+					if (damage > 20) damage = 20;
+					if (damage < 1) damage = 1;
+				}
+
+				default: {
+				break; }
+			}
 		}
 	}
 	
@@ -1847,20 +1866,21 @@ byte rspell_radius(byte imperative, byte type, byte skill, byte projection) {
 	/* Further modify for individual spells (not limited) */
 	if (r_types[type].flag == T_SIGN) {
 		switch (projection) {
-			case SV_R_NEXU: { //teleport
-				radius = rget_level(150) * radius / S_RADIUS_MAX;
-				if (radius > 150) radius = 150;
-				if (radius < 10) radius = 10;
-			break; }
-
-			case SV_R_INER: { //tele_away
-				radius = rget_level(10) * radius / S_RADIUS_MAX;
+			case SV_R_NEXU: { //blink
+				//radius = rget_level(150) * radius / S_RADIUS_MAX;
+				radius = rget_level(25) * radius / S_RADIUS_MAX;
+				if (radius > 25) radius = 25;
+				if (radius < 5) radius = 5;
 			break; }
 
 			case SV_R_GRAV: { //tele_to
 				radius = rget_level(10) * radius / S_RADIUS_MAX;
 			break; }
 
+			case SV_R_SHAR: { //earthquake
+				radius = rget_level(10) * radius / S_RADIUS_MAX;
+			break; }
+			
 			default: {
 			break; }
 		}
@@ -1874,27 +1894,52 @@ byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u1
 	duration = duration * r_imperatives[imperative].duration / 10;
 	
 	/* Further modify for individual spells (limited) */
-	if (r_types[type].flag == T_SIGN) {
-		switch (projection) {
-			
-			case SV_R_DARK: //invis
-			case SV_R_CONF: //reflect
-			case SV_R_FORC: //armor
-				duration = dice;
-			break;
-			
-			case SV_R_ELEC: //resist
-			case SV_R_FIRE:
-			case SV_R_COLD:
-			case SV_R_ACID:	
-			case SV_R_POIS:
-			case SV_R_TIME: //haste
-			case SV_R_PLAS: //resist (x2)
-				duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
-			break;
-			
-			default: {
-			break; }
+	if (r_imperatives[imperative].flag == I_ENHA) {
+		if (r_types[type].flag == T_SIGN) {
+			switch (projection) {
+				
+				case SV_R_DARK: //invis
+				case SV_R_FORC: //reflect
+					duration = dice;
+				break;
+				
+				case SV_R_CHAO: //brand
+				case SV_R_ELEC:
+				case SV_R_FIRE:
+				case SV_R_WATE: //regen
+				case SV_R_COLD:
+				case SV_R_ACID:	
+				case SV_R_POIS:
+				case SV_R_PLAS:
+					duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
+				break;
+				
+				default: {
+				break; }
+			}
+		}
+	} else {
+		if (r_types[type].flag == T_SIGN) {
+			switch (projection) {
+
+				case SV_R_INER: //anchor
+				case SV_R_FORC: //armor
+					duration = dice;
+				break;
+				
+				case SV_R_ELEC: //resist
+				case SV_R_FIRE:
+				case SV_R_COLD:
+				case SV_R_ACID:	
+				case SV_R_POIS:
+				case SV_R_TIME: //haste
+				case SV_R_PLAS:
+					duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
+				break;
+				
+				default: {
+				break; }
+			}
 		}
 	}
 	
@@ -2143,14 +2188,13 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							radius
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele %d Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% teleport",
 							color,
 							'a' + i,
 							r_types[i].name,
 							sdiff,
 							cost,
-							fail,
-							radius
+							fail
 							);
 						}
 					break; }
@@ -2179,7 +2223,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					
 					case SV_R_CHAO: {
 						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph self",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2188,13 +2232,16 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							fail
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% chaotic brand dur %d+%dd%d",
 							color,
 							'a' + i,
 							r_types[i].name,
 							sdiff,
 							cost,
-							fail
+							fail,
+							duration,
+							dx,
+							dy
 							);
 						}
 					break; }
@@ -2210,7 +2257,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							fail
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove heavy curses",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove *curses*",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2223,42 +2270,29 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					
 					case SV_R_CONF: {
 						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% reflect dur %dd%d",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% monster confusion",
 							color,
 							'a' + i,
 							r_types[i].name,
 							sdiff,
 							cost,
-							fail,
-							dx,
-							dy
+							fail
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% reflect dur %dd%d Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% recharging pow %d",
 							color,
 							'a' + i,
 							r_types[i].name,
 							sdiff,
 							cost,
 							fail,
-							dx,
-							dy
+							damage
 							);
 						}
 					break; }
 					
 					case SV_R_INER: {
 						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-away rad %d",
-							color,
-							'a' + i,
-							r_types[i].name,
-							sdiff,
-							cost,
-							fail,
-							radius
-							);
-						} else {
 							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% anchor dur %d",
 							color,
 							'a' + i,
@@ -2267,6 +2301,15 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							cost,
 							fail,
 							duration
+							);
+						} else {
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-forward",
+							color,
+							'a' + i,
+							r_types[i].name,
+							sdiff,
+							cost,
+							fail
 							);
 						}
 					break; }
@@ -2285,7 +2328,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							dy
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res electricity dur %d+%dd%d Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% lightning brand dur %d+%dd%d",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2313,7 +2356,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							dy
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire dur %d+%dd%d Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% fire brand dur %d+%dd%d",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2329,18 +2372,16 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					
 					case SV_R_WATE: {
 						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% regen pow %d dur %d",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% neutralize poison",
 							color,
 							'a' + i,
 							r_types[i].name,
 							sdiff,
 							cost,
-							fail,
-							damage,
-							duration
+							fail
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% regen pow %d dur %d Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% regen pow %d dur %d",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2390,7 +2431,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							dy
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res cold dur %d+%dd%d Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% frost brand dur %d+%dd%d",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2418,7 +2459,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							dy
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res acid dur %d+%dd%d Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% acid brand dur %d+%dd%d",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2446,7 +2487,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							dy
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res poison dur %d+%dd%d Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% poison brand dur %d+%dd%d",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2475,23 +2516,21 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							dy
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire/elec dur %d+%dd%d Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% stasis pow %d",
 							color,
 							'a' + i,
 							r_types[i].name,
 							sdiff,
 							cost,
 							fail,
-							duration,
-							dx,
-							dy
+							damage
 							);
 						}
 					break; }
 					
 					case SV_R_SOUN: {
 						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% shatter rad %d",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarm rad %d",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2501,7 +2540,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							radius
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% shatter beam",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarming",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2537,7 +2576,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					
 					case SV_R_DISE: {
 						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dispel",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% unmagic",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2546,7 +2585,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							fail
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dispel Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% cancellation",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2571,14 +2610,13 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							dy
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% +%d AC dur %dd%d Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% reflect dur %dd%d",
 							color,
 							'a' + i,
 							r_types[i].name,
 							sdiff,
 							cost,
 							fail,
-							damage,
 							dx,
 							dy
 							);
@@ -2587,7 +2625,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					
 					case SV_R_PLAS: {
 						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire/elec dur %d+%dd%d",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% resistance dur %d+%dd%d",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -2599,7 +2637,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							dy
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire/elec dur %d+%dd%d Pj 2",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% power brand dur %d+%dd%d",
 							color,
 							'a' + i,
 							r_types[i].name,
@@ -3138,6 +3176,7 @@ void do_runespell() {
 	 || (((m_flags & T_CLOU) == T_CLOU) && !((m_flags & I_ENHA) == I_ENHA))
 	 || ((m_flags & T_BALL) == T_BALL)
 	 || (((m_flags & T_SIGN) == T_SIGN) && (
+	 ((projection == SV_R_INER) && ((m_flags & I_ENHA) == I_ENHA)) ||
 	 ((projection == SV_R_GRAV) && ((m_flags & I_ENHA) == I_ENHA)) ||
 	 ((projection == SV_R_SOUN) && ((m_flags & I_ENHA) == I_ENHA)) ||
 	 ((projection == SV_R_SHAR) && ((m_flags & I_ENHA) == I_ENHA))

@@ -1221,15 +1221,6 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
 						if (!((*f5) & TR5_REGEN_MANA)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REGEN_MANA; flag_count++; }
 					break;
-					case TV_SHIELD:
-					case TV_CLOAK:
-					case TV_SOFT_ARMOR:
-					case TV_HARD_ARMOR:
-					case TV_DRAG_ARMOR:
-						if (!((((*f2) & TR2_RES_ACID) || ((*f2) & TR2_IM_ACID)) && (((*f2) & TR2_RES_ELEC) || ((*f2) & TR2_IM_ELEC)) &&
-						    (((*f2) & TR2_RES_FIRE) || ((*f2) & TR2_IM_FIRE)) && (((*f2) & TR2_RES_COLD) || ((*f2) & TR2_IM_COLD))))
-							{ flag_category[flag_count] = 2; flag_pool[flag_count] = TR5_ATTR_MULTI; flag_count++; } //Hack -- Base resist!
-					break;
 					default:
 					break;
 				}
@@ -1243,11 +1234,6 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					break;
 					case TV_GLOVES:
 						if (!((*f2) & TR2_FREE_ACT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_FREE_ACT; flag_count++; }
-					break;
-					case TV_SHIELD:
-					case TV_HARD_ARMOR:
-					case TV_DRAG_ARMOR:
-						if (!((*f5) & TR5_REFLECT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REFLECT; flag_count++; }
 					break;
 					default:
 					break;
@@ -1442,24 +1428,40 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				if (!((*f2) & TR2_SUST_DEX)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_DEX; flag_count++; }
 				if (!((*f2) & TR2_SUST_CON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CON; flag_count++; }
 				if (!((*f2) & TR2_SUST_CHR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CHR; flag_count++; }
-			} else if (sigil == SV_R_PLAS) {
-				if (!((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ELEC; flag_count++; }
-				if (!((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_FIRE; flag_count++; }
+				switch (o_ptr->tval) {
+					case TV_SHIELD:
+					case TV_HARD_ARMOR:
+					case TV_DRAG_ARMOR:
+						if (!((*f5) & TR5_REFLECT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REFLECT; flag_count++; }
+					break;
+					default:
+					break;
+				}
+			} else if (sigil == SV_R_PLAS) { //now full base resist rather than immunes
+				//if (!((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_ELEC; flag_count++; }
+				//if (!((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_FIRE; flag_count++; }
 				if (!((*f1) & TR1_DEX) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_DEX; flag_count++; }
 				if (!((*f1) & TR1_STR) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_STR; flag_count++; }
 				switch (o_ptr->tval) {
-					case TV_BLUNT:
-					case TV_POLEARM:
-					case TV_SWORD:
-					case TV_AXE:
-					case TV_BOOMERANG:
-					case TV_GLOVES:
-						if (!((*f1) & TR1_BRAND_ELEC)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_ELEC; flag_count++; }
-						if (!((*f1) & TR1_BRAND_FIRE)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_FIRE; flag_count++; }
-					break;
+					// case TV_BLUNT:
+					// case TV_POLEARM:
+					// case TV_SWORD:
+					// case TV_AXE:
+					// case TV_BOOMERANG:
+					// case TV_GLOVES:
+						// if (!((*f1) & TR1_BRAND_ELEC)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_ELEC; flag_count++; }
+						// if (!((*f1) & TR1_BRAND_FIRE)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_FIRE; flag_count++; }
+						// if (!((*f1) & TR1_BRAND_COLD)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_COLD; flag_count++; }
+						// if (!((*f1) & TR1_BRAND_ACID)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_ACID; flag_count++; }
+					// break;
+					case TV_SHIELD:
 					case TV_CLOAK:
-						if (!((*f3) & TR3_SH_ELEC)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SH_ELEC; flag_count++; }
-						if (!((*f3) & TR3_SH_FIRE)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SH_FIRE; flag_count++; }
+					case TV_SOFT_ARMOR:
+					case TV_HARD_ARMOR:
+					case TV_DRAG_ARMOR:
+						if (!((((*f2) & TR2_RES_ACID) || ((*f2) & TR2_IM_ACID)) && (((*f2) & TR2_RES_ELEC) || ((*f2) & TR2_IM_ELEC)) &&
+						    (((*f2) & TR2_RES_FIRE) || ((*f2) & TR2_IM_FIRE)) && (((*f2) & TR2_RES_COLD) || ((*f2) & TR2_IM_COLD))))
+							{ flag_category[flag_count] = 2; flag_pool[flag_count] = TR5_ATTR_MULTI; flag_count++; } //Hack -- Base resist!
 					break;
 					default:
 					break;

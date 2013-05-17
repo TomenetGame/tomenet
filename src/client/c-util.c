@@ -4286,7 +4286,7 @@ Chain_Macro:
 								
 								case T_SIGN: {
 									switch (projection) {
-									
+														
 										case SV_R_LITE: {
 											if (r_imperatives[imperative].flag != I_ENHA) {
 												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% call light dam %d rad %d",
@@ -4351,14 +4351,13 @@ Chain_Macro:
 												radius
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele %d Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% teleport",
 												color,
 												'a' + i,
 												r_types[i].name,
 												sdiff,
 												cost,
-												fail,
-												radius
+												fail
 												);
 											}
 										break; }
@@ -4387,7 +4386,7 @@ Chain_Macro:
 										
 										case SV_R_CHAO: {
 											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph self",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4396,13 +4395,16 @@ Chain_Macro:
 												fail
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% chaos brand dur %d+%dd%d",
 												color,
 												'a' + i,
 												r_types[i].name,
 												sdiff,
 												cost,
-												fail
+												fail,
+												duration,
+												dx,
+												dy
 												);
 											}
 										break; }
@@ -4418,7 +4420,7 @@ Chain_Macro:
 												fail
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove heavy curses",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove *curses*",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4431,42 +4433,29 @@ Chain_Macro:
 										
 										case SV_R_CONF: {
 											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% reflect dur %dd%d",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% monster confusion",
 												color,
 												'a' + i,
 												r_types[i].name,
 												sdiff,
 												cost,
-												fail,
-												dx,
-												dy
+												fail
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% reflect dur %dd%d Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% recharging pow %d",
 												color,
 												'a' + i,
 												r_types[i].name,
 												sdiff,
 												cost,
 												fail,
-												dx,
-												dy
+												damage
 												);
 											}
 										break; }
 										
 										case SV_R_INER: {
 											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-away rad %d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												radius
-												);
-											} else {
 												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% anchor dur %d",
 												color,
 												'a' + i,
@@ -4475,6 +4464,15 @@ Chain_Macro:
 												cost,
 												fail,
 												duration
+												);
+											} else {
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-forward",
+												color,
+												'a' + i,
+												r_types[i].name,
+												sdiff,
+												cost,
+												fail
 												);
 											}
 										break; }
@@ -4493,7 +4491,7 @@ Chain_Macro:
 												dy
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res electricity dur %d+%dd%d Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% lightning brand dur %d+%dd%d",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4521,7 +4519,7 @@ Chain_Macro:
 												dy
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire dur %d+%dd%d Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% fire brand dur %d+%dd%d",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4537,18 +4535,16 @@ Chain_Macro:
 										
 										case SV_R_WATE: {
 											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% regen pow %d dur %d",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% neutralize poison",
 												color,
 												'a' + i,
 												r_types[i].name,
 												sdiff,
 												cost,
-												fail,
-												damage,
-												duration
+												fail
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% regen pow %d dur %d Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% regen pow %d dur %d",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4598,7 +4594,7 @@ Chain_Macro:
 												dy
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res cold dur %d+%dd%d Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% frost brand dur %d+%dd%d",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4626,7 +4622,7 @@ Chain_Macro:
 												dy
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res acid dur %d+%dd%d Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% acid brand dur %d+%dd%d",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4654,7 +4650,7 @@ Chain_Macro:
 												dy
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res poison dur %d+%dd%d Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% poison brand dur %d+%dd%d",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4683,23 +4679,21 @@ Chain_Macro:
 												dy
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire/elec dur %d+%dd%d Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% stasis pow %d",
 												color,
 												'a' + i,
 												r_types[i].name,
 												sdiff,
 												cost,
 												fail,
-												duration,
-												dx,
-												dy
+												damage
 												);
 											}
 										break; }
 										
 										case SV_R_SOUN: {
 											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% shatter rad %d",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarm rad %d",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4709,7 +4703,7 @@ Chain_Macro:
 												radius
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% shatter beam",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarming",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4745,7 +4739,7 @@ Chain_Macro:
 										
 										case SV_R_DISE: {
 											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dispel",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% unmagic",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4754,7 +4748,7 @@ Chain_Macro:
 												fail
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dispel Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% cancellation",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4779,14 +4773,13 @@ Chain_Macro:
 												dy
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% +%d AC dur %dd%d Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% reflect dur %dd%d",
 												color,
 												'a' + i,
 												r_types[i].name,
 												sdiff,
 												cost,
 												fail,
-												damage,
 												dx,
 												dy
 												);
@@ -4795,7 +4788,7 @@ Chain_Macro:
 										
 										case SV_R_PLAS: {
 											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire/elec dur %d+%dd%d",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% resistance dur %d+%dd%d",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4807,7 +4800,7 @@ Chain_Macro:
 												dy
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire/elec dur %d+%dd%d Pj 2",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% power brand dur %d+%dd%d",
 												color,
 												'a' + i,
 												r_types[i].name,
@@ -4946,6 +4939,7 @@ Chain_Macro:
 						 || (((m_flags & T_CLOU) == T_CLOU) && !((m_flags & I_ENHA) == I_ENHA))
 						 || ((m_flags & T_BALL) == T_BALL)
 						 || (((m_flags & T_SIGN) == T_SIGN) && (
+						 ((projection == SV_R_INER) && ((m_flags & I_ENHA) == I_ENHA)) ||
 						 ((projection == SV_R_GRAV) && ((m_flags & I_ENHA) == I_ENHA)) ||
 						 ((projection == SV_R_SOUN) && ((m_flags & I_ENHA) == I_ENHA)) ||
 						 ((projection == SV_R_SHAR) && ((m_flags & I_ENHA) == I_ENHA))

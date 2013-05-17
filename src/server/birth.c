@@ -2636,6 +2636,19 @@ void disable_specific_warnings(player_type *p_ptr) {
 #endif
 }
 
+/* See do_Maia_skill() - Kurzel */
+/* Set up trait-dependant skill boni (at birth) */
+static void do_trait_skill(int Ind, int s, int m) {
+	int tmp_val = Players[Ind]->s_info[s].mod;
+	/* Modify skill, avoiding overflow (mod is u16b) */
+	tmp_val = (tmp_val * m) / 10;
+	/* Cap to 2.0 */
+	if (tmp_val > 2000) tmp_val = 2000;
+	Players[Ind]->s_info[s].mod = tmp_val;
+	/* Update it after the re-increasing has been finished */
+	Send_skill_info(Ind, s, FALSE);
+}
+
 /*
  * Create a character.  Then wait for a moment.
  *
@@ -3043,6 +3056,69 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 		}
 	}
 
+	/* Adjust birth trait based skills (only draconians currently) - Kurzel */
+	switch (p_ptr->ptrait) {
+		case TRAIT_BLUE: {
+			do_trait_skill(Ind, SKILL_R_LITE, 12);
+			do_trait_skill(Ind, SKILL_R_NETH, 12);
+		break; }
+		case TRAIT_WHITE: {
+			do_trait_skill(Ind, SKILL_R_LITE,  8);
+			do_trait_skill(Ind, SKILL_R_DARK, 13);
+			do_trait_skill(Ind, SKILL_R_NETH, 13);
+			do_trait_skill(Ind, SKILL_R_CHAO,  8);
+		break; }
+		case TRAIT_RED: {
+			do_trait_skill(Ind, SKILL_R_LITE, 13);
+			do_trait_skill(Ind, SKILL_R_DARK,  8);
+			do_trait_skill(Ind, SKILL_R_NETH,  8);
+			do_trait_skill(Ind, SKILL_R_CHAO, 13);	
+		break; }
+		case TRAIT_BLACK: {
+			do_trait_skill(Ind, SKILL_R_DARK, 12);
+			do_trait_skill(Ind, SKILL_R_CHAO, 12);
+		break; }
+		case TRAIT_GREEN: {
+			do_trait_skill(Ind, SKILL_R_DARK, 12);
+			do_trait_skill(Ind, SKILL_R_MANA, 12);
+		break; }
+		case TRAIT_MULTI: {
+			do_trait_skill(Ind, SKILL_R_LITE, 11);
+			do_trait_skill(Ind, SKILL_R_DARK, 11);
+			do_trait_skill(Ind, SKILL_R_NETH, 11);
+			do_trait_skill(Ind, SKILL_R_CHAO, 11);
+		break; }
+		case TRAIT_BRONZE: {
+			do_trait_skill(Ind, SKILL_R_LITE, 12);
+			do_trait_skill(Ind, SKILL_R_DARK, 12);
+		break; }
+		case TRAIT_SILVER: {
+			do_trait_skill(Ind, SKILL_R_LITE, 12);
+			do_trait_skill(Ind, SKILL_R_NEXU, 12);
+		break; }
+		case TRAIT_GOLD: {
+			do_trait_skill(Ind, SKILL_R_NEXU, 12);
+			do_trait_skill(Ind, SKILL_R_CHAO, 12);
+		break; }
+		case TRAIT_LAW: {
+			do_trait_skill(Ind, SKILL_R_NEXU, 12);
+			do_trait_skill(Ind, SKILL_R_CHAO, 11);
+			do_trait_skill(Ind, SKILL_R_MANA, 11);
+		break; }
+		case TRAIT_CHAOS: {
+			do_trait_skill(Ind, SKILL_R_NETH, 11);
+			do_trait_skill(Ind, SKILL_R_CHAO, 13);
+		break; }
+		case TRAIT_BALANCE: {
+			do_trait_skill(Ind, SKILL_R_NEXU, 11);
+			do_trait_skill(Ind, SKILL_R_NETH, 11);
+			do_trait_skill(Ind, SKILL_R_CHAO, 11);
+			do_trait_skill(Ind, SKILL_R_MANA, 11);
+		break; }
+		default:
+		break;
+	}
+	
 	/* Bards receive really random skills */
 #if 0
 	if (p_ptr->pclass == CLASS_BARD) {

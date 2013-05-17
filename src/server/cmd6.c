@@ -2045,7 +2045,7 @@ bool curse_an_item(int Ind, int slot)
  * 0x01 - Affect the equipments too
  * 0x02 - Turn scrolls/potions/wands/rods/staves into 'Nothing' kind
  */
-static bool do_cancellation(int Ind, int flags)
+bool do_cancellation(int Ind, int flags)
 {
 	player_type *p_ptr = Players[Ind];
 	int i;

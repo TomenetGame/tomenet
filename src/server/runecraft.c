@@ -195,28 +195,47 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 	*dy = (byte)d2;
 	
 	/* Further modify for individual spells */
-	if (r_types[type].flag == T_SIGN) {
-		switch (projection) {				
-			case SV_R_WATE: { //regen
-				damage = rget_level(700) * r_imperatives[imperative].damage / 10;
-				if (damage > 700) damage = 700;
-				if (damage < 70) damage = 70;
-			break; }
-
-			case SV_R_TIME: { //speed
-				damage = rget_level(15) * r_imperatives[imperative].damage / 10;
-				if (damage > 10) damage = 10;
-				if (damage < 1) damage = 1;
-			break; }
-			
-			case SV_R_FORC: { //armor
-				damage = rget_level(20) * r_imperatives[imperative].damage / 10;
-				if (damage > 20) damage = 20;
-				if (damage < 1) damage = 1;
+	if (r_imperatives[imperative].flag == I_ENHA) {
+		if (r_types[type].flag == T_SIGN) {
+			switch (projection) {
+				case SV_R_TIME: { //stasis
+					damage = 50 + rget_level(50) * r_imperatives[imperative].damage / 10;
+					if (damage > 100) damage = 100;
+					if (damage < 50) damage = 50;
+				break; }
+				
+				case SV_R_CONF: { //recharging
+					damage = (50 + rget_level(50)) * r_imperatives[imperative].damage / 10;
+					if (damage > 100) damage = 100;
+					if (damage < 50) damage = 50;
+				break; }
 			}
+		}
+	} else {
+		if (r_types[type].flag == T_SIGN) {
+			switch (projection) {
+				
+				case SV_R_WATE: { //regen
+					damage = rget_level(700) * r_imperatives[imperative].damage / 10;
+					if (damage > 700) damage = 700;
+					if (damage < 70) damage = 70;
+				break; }
 
-			default: {
-			break; }
+				case SV_R_TIME: { //speed
+					damage = rget_level(15) * r_imperatives[imperative].damage / 10;
+					if (damage > 10) damage = 10;
+					if (damage < 1) damage = 1;
+				break; }
+				
+				case SV_R_FORC: { //armor
+					damage = rget_level(20) * r_imperatives[imperative].damage / 10;
+					if (damage > 20) damage = 20;
+					if (damage < 1) damage = 1;
+				}
+
+				default: {
+				break; }
+			}
 		}
 	}
 	
@@ -232,20 +251,21 @@ byte rspell_radius(byte imperative, byte type, byte skill, byte projection) {
 	/* Further modify for individual spells (not limited) */
 	if (r_types[type].flag == T_SIGN) {
 		switch (projection) {
-			case SV_R_NEXU: { //teleport
-				radius = rget_level(150) * radius / S_RADIUS_MAX;
-				if (radius > 150) radius = 150;
-				if (radius < 10) radius = 10;
-			break; }
-
-			case SV_R_INER: { //tele_away
-				radius = rget_level(10) * radius / S_RADIUS_MAX;
+			case SV_R_NEXU: { //blink
+				//radius = rget_level(150) * radius / S_RADIUS_MAX;
+				radius = rget_level(25) * radius / S_RADIUS_MAX;
+				if (radius > 25) radius = 25;
+				if (radius < 5) radius = 5;
 			break; }
 
 			case SV_R_GRAV: { //tele_to
 				radius = rget_level(10) * radius / S_RADIUS_MAX;
 			break; }
 
+			case SV_R_SHAR: { //earthquake
+				radius = rget_level(10) * radius / S_RADIUS_MAX;
+			break; }
+			
 			default: {
 			break; }
 		}
@@ -259,30 +279,55 @@ byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u1
 	duration = duration * r_imperatives[imperative].duration / 10;
 	
 	/* Further modify for individual spells (limited) */
-	if (r_types[type].flag == T_SIGN) {
-		switch (projection) {
-			
-			case SV_R_DARK: //invis
-			case SV_R_CONF: //reflect
-			case SV_R_FORC: //armor
-				duration = dice;
-			break;
-			
-			case SV_R_ELEC: //resist
-			case SV_R_FIRE:
-			case SV_R_COLD:
-			case SV_R_ACID:	
-			case SV_R_POIS:
-			case SV_R_TIME: //haste
-			case SV_R_PLAS: //resist (x2)
-				duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
-			break;
-			
-			default: {
-			break; }
+	if (r_imperatives[imperative].flag == I_ENHA) {
+		if (r_types[type].flag == T_SIGN) {
+			switch (projection) {
+				
+				case SV_R_DARK: //invis
+				case SV_R_FORC: //reflect
+					duration = dice;
+				break;
+				
+				case SV_R_CHAO: //brand
+				case SV_R_ELEC:
+				case SV_R_FIRE:
+				case SV_R_WATE: //regen
+				case SV_R_COLD:
+				case SV_R_ACID:	
+				case SV_R_POIS:
+				case SV_R_PLAS:
+					duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
+				break;
+				
+				default: {
+				break; }
+			}
+		}
+	} else {
+		if (r_types[type].flag == T_SIGN) {
+			switch (projection) {
+
+				case SV_R_INER: //anchor
+				case SV_R_FORC: //armor
+					duration = dice;
+				break;
+				
+				case SV_R_ELEC: //resist
+				case SV_R_FIRE:
+				case SV_R_COLD:
+				case SV_R_ACID:	
+				case SV_R_POIS:
+				case SV_R_TIME: //haste
+				case SV_R_PLAS:
+					duration = duration + dice; //actually dice uses damage %s (future fix? - maximized > lengthened this way) - Kurzel
+				break;
+				
+				default: {
+				break; }
+			}
 		}
 	}
-	
+		
 	if (duration < S_DURATION_MIN) duration = S_DURATION_MIN;
 	if (duration > S_DURATION_MAX) duration = S_DURATION_MAX;
 	
@@ -761,7 +806,7 @@ s_printf("Duration: %d\n", duration);
 				
 				case SV_R_NEXU: {
 					if (r_imperatives[imperative].flag != I_ENHA) teleport_player(Ind, radius, FALSE); //FALSE -> reduced effect in pvp
-					else fire_ball(Ind, GF_TELEPORT_PLAYER, 0, radius, RCRAFT_PJ_RADIUS, ""); //Does this hit self too? :)
+					else teleport_player(Ind, 200, FALSE); //A full-range, standard-issue teleport.
 				break; }
 				
 				case SV_R_NETH: {
@@ -770,8 +815,8 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case SV_R_CHAO: {
-					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_OLD_POLY, 0, 0, 0, ""); //damage if ever there is power/resist
-					else fire_ball(Ind, GF_OLD_POLY, 0, 0, RCRAFT_PJ_RADIUS, ""); //self-hit? damage is again 0
+					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_OLD_POLY, 0, 0, 0, ""); //poly self
+					else set_brand(Ind, duration, BRAND_CONF, 0); //chaos brand
 				break; }
 				
 				case SV_R_MANA: {
@@ -780,39 +825,52 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case SV_R_CONF: {
-					if (r_imperatives[imperative].flag != I_ENHA) set_tim_deflect(Ind, duration);
-					else fire_ball(Ind, GF_DEFLECT_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, ""); //self-hit?
+					if (r_imperatives[imperative].flag != I_ENHA) { //monster confusion
+						msg_print(Ind, "Your hands begin to glow.");
+						p_ptr->confusing = TRUE;
+					} else recharge(Ind, damage);
 				break; }
 				
 				case SV_R_INER: {
-					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_AWAY_ALL, 0, damage, radius, "");
-					else set_st_anchor(Ind, duration); //always an area now?
+					if (r_imperatives[imperative].flag != I_ENHA) set_st_anchor(Ind, duration); //Future -- expanded, a small area anchor?
+					else {
+						int ty, tx;//, py = p_ptr->py, px = p_ptr->px;
+						if ((dir == 5) && target_okay(Ind)) { /* Use a target -- Fix this in wizard/mkey!! - Kurzel */
+							tx = p_ptr->target_col;
+							ty = p_ptr->target_row;
+							if (player_has_los_bold(Ind, ty, tx)) teleport_player_to(Ind, ty, tx); //Require LoS. (No jumping through walls!)
+						}
+					}
 				break; }
 				
 				case SV_R_ELEC: {
-					if (r_imperatives[imperative].flag != I_ENHA) set_oppose_elec(Ind, duration);
-					else fire_ball(Ind, GF_RESELEC_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+					if (r_imperatives[imperative].flag != I_ENHA) { 
+						set_oppose_elec(Ind, duration);
+						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_RESELEC_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+					} else set_brand(Ind, duration, BRAND_ELEC, 0);
 				break; }
 				
 				case SV_R_FIRE: {
-					if (r_imperatives[imperative].flag != I_ENHA) set_oppose_fire(Ind, duration);
-					else fire_ball(Ind, GF_RESFIRE_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+					if (r_imperatives[imperative].flag != I_ENHA) {
+						set_oppose_fire(Ind, duration);
+						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_RESFIRE_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+					} else set_brand(Ind, duration, BRAND_FIRE, 0);
 				break; }
 				
 				case SV_R_WATE: {
-					if (r_imperatives[imperative].flag != I_ENHA) set_tim_regen(Ind, duration, damage);
-					else fire_ball(Ind, GF_REGEN_PLAYER, 0, damage, RCRAFT_PJ_RADIUS, "");
+					if (r_imperatives[imperative].flag != I_ENHA) set_poisoned(Ind, 0, 0);
+					else set_tim_regen(Ind, duration, damage);
 				break; }
 				
 				case SV_R_GRAV: {
 					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_TELE_TO, 0, damage, radius, "");
 					else {
-						int ty, tx, py = p_ptr->py, px = p_ptr->px;
+						int ty, tx;//, py = p_ptr->py, px = p_ptr->px;
 						if ((dir == 5) && target_okay(Ind)) { /* Use a target -- Fix this in wizard/mkey!! - Kurzel */
 							tx = p_ptr->target_col;
 							ty = p_ptr->target_row;
 							if (player_has_los_bold(Ind, ty, tx)) teleport_player_to(Ind, ty, tx); //Require LoS. (No jumping through walls!)
-						} else { //Use a a direction...(Teleport in a direction until collision or max range. No thru-wall powers!)
+					/*	} else { //Use a a direction...(Teleport in a direction until collision or max range. No thru-wall powers!)
 							tx = px;
 							ty = py;
 							switch (dir) { //Kurzel -- Test to ensure spam doesn't overload!
@@ -846,55 +904,77 @@ s_printf("Duration: %d\n", duration);
 							}
 							if (ty == p_ptr->py && tx == p_ptr->px) teleport_player(Ind, 5, FALSE);
 							else teleport_player_to(Ind, ty, tx);
-						}
+					*/	}
 					}
 				break; }
 				
 				case SV_R_COLD: {
-					if (r_imperatives[imperative].flag != I_ENHA) set_oppose_cold(Ind, duration);
-					else fire_ball(Ind, GF_RESCOLD_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+					if (r_imperatives[imperative].flag != I_ENHA) {
+						set_oppose_cold(Ind, duration);
+						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_RESCOLD_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+					} else set_brand(Ind, duration, BRAND_COLD, 0);
 				break; }
 				
 				case SV_R_ACID: {
-					if (r_imperatives[imperative].flag != I_ENHA) set_oppose_acid(Ind, duration);
-					else fire_ball(Ind, GF_RESACID_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+					if (r_imperatives[imperative].flag != I_ENHA) {
+						set_oppose_acid(Ind, duration);
+						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_RESACID_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+					} else set_brand(Ind, duration, BRAND_ACID, 0);
 				break; }
 				
 				case SV_R_POIS: {
-					if (r_imperatives[imperative].flag != I_ENHA) set_oppose_pois(Ind, duration);
-					else fire_ball(Ind, GF_RESPOIS_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
-				break; }
+					if (r_imperatives[imperative].flag != I_ENHA) {
+						set_oppose_pois(Ind, duration);
+						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_RESPOIS_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+					} else set_brand(Ind, duration, BRAND_POIS, 0);
+					break; }
 				
 				case SV_R_TIME: {
-					if (r_imperatives[imperative].flag != I_ENHA) set_fast(Ind, duration, damage);
-					else fire_ball(Ind, GF_SPEED_PLAYER, 0, damage*2, RCRAFT_PJ_RADIUS, ""); //Hacked -- duration =P same for set_shield, full value when rad 1 (must not hit self!)
+					if (r_imperatives[imperative].flag != I_ENHA) {
+						set_fast(Ind, duration, damage);
+						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_SPEED_PLAYER, 0, damage*2, RCRAFT_PJ_RADIUS, ""); //Hacked -- duration =P same for set_shield, full value when rad 1 (must not hit self!)
+					} else project_los(Ind, GF_STASIS, damage, p_ptr->attacker);
 				break; }
 				
 				case SV_R_SOUN: {
 					sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_SHATTER, 0, damage, radius, p_ptr->attacker);
-					else fire_beam(Ind, GF_SHATTER, dir, dice, p_ptr->attacker);
+					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_KILL_TRAP, 0, damage, radius, p_ptr->attacker);
+					else fire_beam(Ind, GF_KILL_TRAP, dir, dice, p_ptr->attacker);
 				break; }
 				
 				case SV_R_SHAR: {
 					sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-					if (r_imperatives[imperative].flag != I_ENHA) earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, radius); //careful of PvP pwnage - Kurzel
+					if (r_imperatives[imperative].flag != I_ENHA) earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, radius);
 					else fire_bolt(Ind, GF_KILL_WALL, dir, dice, p_ptr->attacker);
 				break; }
 				
 				case SV_R_DISE: {
 					if (r_imperatives[imperative].flag != I_ENHA) unmagic(Ind);
-					else fire_ball(Ind, GF_UNMAGIC, 0, damage, RCRAFT_PJ_RADIUS, ""); //projected, unmagic monsters/glyphs in the future too! (damage to resist?)
+					else do_cancellation(Ind, 0);
 				break; }
 				
 				case SV_R_FORC: {
-					if (r_imperatives[imperative].flag != I_ENHA) set_shield(Ind, duration, damage, SHIELD_NONE, 0, 0);
-					else fire_ball(Ind, GF_SHIELD_PLAYER, 0, damage, RCRAFT_PJ_RADIUS, "");
+					if (r_imperatives[imperative].flag != I_ENHA) {
+						set_shield(Ind, duration, damage, SHIELD_NONE, 0, 0);
+						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_SHIELD_PLAYER, 0, damage, RCRAFT_PJ_RADIUS, "");
+					} else set_tim_deflect(Ind, duration);
 				break; }
 				
 				case SV_R_PLAS: {
-					if (r_imperatives[imperative].flag != I_ENHA) { set_oppose_fire(Ind, duration); set_oppose_elec(Ind, duration); }
-					else { fire_ball(Ind, GF_RESFIRE_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, ""); fire_ball(Ind, GF_RESELEC_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, ""); }
+					if (r_imperatives[imperative].flag != I_ENHA) {
+						set_oppose_acid(Ind, duration);
+						set_oppose_elec(Ind, duration);
+						set_oppose_fire(Ind, duration);
+						set_oppose_cold(Ind, duration);
+						//set_oppose_pois(Ind, duration); //For Holy Resistance ONLY
+						if (r_imperatives[imperative].flag == I_EXPA) {
+							fire_ball(Ind, GF_RESACID_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+							fire_ball(Ind, GF_RESELEC_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+							fire_ball(Ind, GF_RESFIRE_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+							fire_ball(Ind, GF_RESCOLD_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+							//fire_ball(Ind, GF_RESPOIS_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
+						}
+					} else set_brand(Ind, duration, BRAND_MANA, 0); //multibrand 'base' - Kurzel
 				break; }
 				
 				default: {

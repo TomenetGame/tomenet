@@ -690,6 +690,7 @@ extern void do_cmd_ghost_power_aux(int Ind, int dir);
 /* cmd6.c */
 extern bool curse_armor(int Ind);
 extern bool curse_weapon(int Ind);
+bool do_cancellation(int Ind, int flags);
 extern void do_cmd_eat_food(int Ind, int item);
 extern void do_cmd_quaff_potion(int Ind, int item);
 extern void do_cmd_read_scroll(int Ind, int item);

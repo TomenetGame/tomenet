@@ -4476,7 +4476,6 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 		case GF_TIME:
 		case GF_GRAVITY:
 		case GF_KILL_WALL:
-		case GF_SHATTER:
 		case GF_OLD_POLY:
 		case GF_OLD_SLOW:
 		case GF_OLD_CONF:

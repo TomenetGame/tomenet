@@ -4034,10 +4034,6 @@
 
 #define GF_THUNDER		189 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
 #define GF_ANNIHILATION		192 /* To differentiate drain effect from hacky non-drain effect for wands */
-#define GF_SHATTER		193 /* Runecraft 'disarm'; also breaks items as with meteor, deals damage to creatures susceptable to StM - Kurzel */
-#define GF_UNMAGIC		194 /* Projected dispel, players only for now */
-#define GF_REGEN_PLAYER		195 /* Projected tim_regen, for RC water */ 
-#define GF_DEFLECT_PLAYER		196
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200

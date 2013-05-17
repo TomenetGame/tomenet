@@ -1273,8 +1273,6 @@ byte spell_color(int type)
 		/* To remove some hacks? */
 		case GF_THUNDER:	return (randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
 		case GF_ANNIHILATION:	return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
-		/* Runecraft */
-		case GF_SHATTER:	return (TERM_SOUN);
 	}
 
 	/* Standard "color" */
@@ -1341,8 +1339,6 @@ bool spell_color_animation(int type)
 		/* To remove some hacks? */
 		case GF_THUNDER:	return TRUE;//(randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
 		case GF_ANNIHILATION:	return TRUE;//(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
-		/* Runecraft */
-		case GF_SHATTER:	return FALSE;
 	}
 
 	/* Standard "color" */
@@ -1410,8 +1406,6 @@ byte spell_color(int type)
 		/* To remove some hacks? */
 		case GF_THUNDER:	return (TERM_THUNDER);
 		case GF_ANNIHILATION:	return (TERM_ANNI);
-		/* Runecraft */
-		case GF_SHATTER:	return (TERM_SOUN);
 	}
 
 	/* Standard "color" */
@@ -3715,7 +3709,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Destroy Doors (and traps) */
-		case GF_SHATTER:
 		case GF_KILL_DOOR:
 		{
 			byte feat = twall_erosion(wpos, y, x);
@@ -4440,7 +4433,6 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_SHARDS:
 		case GF_FORCE:
-		case GF_SHATTER:
 		case GF_SOUND:
 		case GF_THUNDER:
 		{
@@ -4550,7 +4542,6 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		/* Unlock chests */
-		//case GF_SHATTER: //Possibly allow this or ruin chests? - Kurzel
 		case GF_KILL_TRAP:
 		case GF_KILL_DOOR:
 		{
@@ -6586,7 +6577,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		/* Stone to Mud */
-		case GF_SHATTER:
 		case GF_KILL_WALL:
 		{
 			/* Hurt by rock remover */
@@ -8046,7 +8036,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ == GF_HEALINGCLOUD) || /* Also not a hostile spell */
 		    (typ == GF_MINDBOOST_PLAYER) || (typ == GF_IDENTIFY) ||
 		    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
-		    (typ == GF_UNMAGIC) || (typ == GF_DEFLECT_PLAYER) || (typ == GF_REGEN_PLAYER) ||
 		    (typ == GF_OLD_POLY)) /* may (un)polymorph himself */
 			friendly_player = TRUE;
 	}
@@ -8084,7 +8073,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
-		    (typ != GF_UNMAGIC) && (typ != GF_DEFLECT_PLAYER) && (typ != GF_REGEN_PLAYER) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may (un)polymorph each other */
 		{ /* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind)) {
@@ -8196,8 +8184,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	    (typ == GF_HEALINGCLOUD) || /* shoo ghost, shoo */
-	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_UNMAGIC) || (typ == GF_DEFLECT_PLAYER) ||
-	    (typ == GF_REGEN_PLAYER) || (typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER)))
+	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) ||
+	    (typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER)))
 	    ||
 	    /* ADMIN CHECK */
 	    (is_admin(p_ptr) && ((typ == GF_HEAL_PLAYER) || (typ == GF_AWAY_ALL) ||
@@ -8221,7 +8209,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	    (typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
 	    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
-	    (typ == GF_UNMAGIC) || (typ == GF_DEFLECT_PLAYER) || (typ == GF_REGEN_PLAYER) ||
 	    (typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))
 	{ /* No effect on ghosts / admins */
 		/* Skip non-connected players */
@@ -9586,27 +9573,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_REGEN_PLAYER:
-		{
-			set_tim_regen(Ind, 25, dam); //Kurzel - Hacked duration?
-			break;
-		}
-		
-		case GF_DEFLECT_PLAYER:
-		{
-			set_tim_deflect(Ind, dam);
-			break;
-		}
-		
-		case GF_UNMAGIC:
-		{
-			if (fuzzy) msg_print(Ind, "Your magic is dispelled!");
-			else msg_format(Ind, "%^s dispels your magic!", killer);
-			
-			unmagic(Ind);
-			break;
-		}
-		
 		case GF_EXTRA_STATS:
 		{
 			do_xtra_stats(Ind, 10 + (dam * 5), (int)(dam/10));
@@ -10666,8 +10632,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		 (typ == GF_RESTORE_PLAYER) ||
 		 (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 		 (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
-		 (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) || 
-		 (typ == GF_REGEN_PLAYER) || (typ == GF_UNMAGIC) || (typ == GF_DEFLECT_PLAYER))
+		 (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER))
 		players_only = TRUE;
 
 
@@ -12253,7 +12218,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 			}
 			break;
 
-		case GF_SHATTER:
 		case GF_KILL_WALL:
 			if (!(r_ptr->flags3 & RF3_HURT_ROCK))
 				dam = 0;
