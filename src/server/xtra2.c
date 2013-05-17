@@ -5154,15 +5154,15 @@ if (cfg.unikill_format) {
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
-		if (((in_irondeepdive(wpos) && (a_idx = d_info[iddc[ABS(wpos->wz)].type].final_artifact))
-		|| (a_idx = d_info[d_ptr->type].final_artifact))
+		if ((in_irondeepdive(wpos) ? (a_idx = d_info[iddc[ABS(wpos->wz)].type].final_artifact) :
+		    (a_idx = d_info[d_ptr->type].final_artifact))
 #else
 		if ((a_idx = d_info[d_ptr->type].final_artifact)
 #endif
 		    /* hack: 0 rarity = always generate -- for Ring of Phasing! */
 #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
 		    && (in_irondeepdive(wpos) //Let's reward those brave IDDC participants?
-		    || (!a_info[a_idx].rarity || !rand_int(3)))
+		    || !a_info[a_idx].rarity || !rand_int(3))
 #else
 		    && (!a_info[a_idx].rarity || !rand_int(3))
 #endif
@@ -5220,8 +5220,8 @@ if (cfg.unikill_format) {
 				s_printf("..dropped.\n");
 			} else  s_printf("..failed.\n");
 #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
-		} else if ((in_irondeepdive(wpos) && (I_kind = d_info[iddc[ABS(wpos->wz)].type].final_object))
-		|| ((I_kind = d_info[d_ptr->type].final_object))) {
+		} else if (in_irondeepdive(wpos) ? (I_kind = d_info[iddc[ABS(wpos->wz)].type].final_object) :
+		    (I_kind = d_info[d_ptr->type].final_object)) {
 #else
 		} else if ((I_kind = d_info[d_ptr->type].final_object)) {
 #endif
