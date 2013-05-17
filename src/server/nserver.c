@@ -7008,12 +7008,13 @@ static int Receive_run(int ind)
 			return Receive_walk(ind);
 
 		/* Check for monsters in sight */
+		/* Not in Bree (for Santa Claus) - C. Blue (Note: This and below messes should get resolved in future) */
+		//if (!(p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz))
 		for (i = 0; i < m_max; i++) {
 			/* Check this monster */
-			if (((p_ptr->mon_los[i] && !m_list[i].csleep &&
-			    m_list[i].level && !m_list[i].special) &&
-			    /* Not in Bree (for Santa Claus) - C. Blue (Note: This and below messes should get resolved in future) */
-			    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))) {
+			if (p_ptr->mon_los[i] && !m_list[i].csleep && !m_list[i].special
+			    /* not for Bree townies, Santa, Halloween townies, Target dummy */
+			    && !(r_info[m_list[i].r_idx].flags8 & RF8_ALLOW_RUNNING)) {
 				// Treat this as a walk request
 				// Hack -- send the same connp->r "arguments" to Receive_walk
 				if (p_ptr->warning_run_monlos == 0) {

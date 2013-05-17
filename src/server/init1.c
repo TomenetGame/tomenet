@@ -468,7 +468,7 @@ static cptr r_info_flags8[] =
 	"NETHER_REALM",
 	"PLURAL",
 	"NO_BLOCK",
-	"XXX8X24",
+	"ALLOW_RUNNING",
 	"XXX8X25",
 	"XXX8X26",
 	"GENO_PERSIST",
