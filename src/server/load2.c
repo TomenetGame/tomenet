@@ -3117,6 +3117,9 @@ void fix_max_depth(player_type *p_ptr) {
 	}
 	/* attempt a fair translation */
 	for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
+		/* exempt 0,0 */
+		if (!x && !y) continue;
+
                 wpos.wx = x; wpos.wy = y;
 
 		/* skip if player has never visited this dungeon's worldmap sector even! */
@@ -3129,6 +3132,7 @@ void fix_max_depth(player_type *p_ptr) {
 			j = recall_depth_idx(&wpos, p_ptr);
 			i = p_ptr->max_dlv - d_ptr->baselevel + 1;
 			if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
+			if (x == WPOS_IRONDEEPDIVE_X && y == WPOS_IRONDEEPDIVE_Y && 1 == WPOS_IRONDEEPDIVE_Z) i = 0;
 			p_ptr->max_depth[j] = i;
 		}
 		if ((d_ptr = wild_info[y][x].dungeon)) {
@@ -3136,6 +3140,7 @@ void fix_max_depth(player_type *p_ptr) {
 			j = recall_depth_idx(&wpos, p_ptr);
 			i = p_ptr->max_dlv - d_ptr->baselevel + 1;
 			if (i > d_ptr->maxdepth) i = d_ptr->maxdepth;
+			if (x == WPOS_IRONDEEPDIVE_X && y == WPOS_IRONDEEPDIVE_Y && -1 == WPOS_IRONDEEPDIVE_Z) i = 0;
 			p_ptr->max_depth[j] = i;
 		}
 	}
@@ -3152,13 +3157,13 @@ void fix_max_depth_bug(player_type *p_ptr) {
 #if 0 /* faster */
 		if (p_ptr->max_depth[i]) continue; /* (all bugged entries have depth 0) */
 #else /* cleaner */
-		if (!p_ptr->max_depth_wx[i]) continue; /* entry doesn't exist? */
+		if (!p_ptr->max_depth_wx[i] && !p_ptr->max_depth_wy[i]) continue; /* entry doesn't exist? */
 		if (p_ptr->max_depth_tower[i] || /* it's not a dungeon or it is and that dungeon actually exists? */
 		    wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].dungeon)
 			/* (all bugged entries are 'dungeons') */
 			continue;
 #endif
-		/* wipe */
+		/* wipe: all "dungeons" that do not exist */
 		p_ptr->max_depth_wx[i] = 0;
 		p_ptr->max_depth_wy[i] = 0;
 		//p_ptr->max_depth_tower[i] = FALSE; (redundant)
