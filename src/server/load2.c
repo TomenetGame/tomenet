@@ -3143,6 +3143,7 @@ void fix_max_depth(player_type *p_ptr) {
 	s_printf("max_depth[] has been fixed/reset for '%s'.\n", p_ptr->name);
 }
 
+/* Note: there was still a 0,0 tower in my DM's list, but whatever.. */
 void fix_max_depth_bug(player_type *p_ptr) {
 	int i;
 

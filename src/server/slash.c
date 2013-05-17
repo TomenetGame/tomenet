@@ -7061,7 +7061,7 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/wipemd")) {
 				int p;
 				if (tk < 1) {
-					msg_print(Ind, "\377oUsage: /fixmd <player name>");
+					msg_print(Ind, "\377oUsage: /wipemd <player name>");
 					return;
 				}
 				p = name_lookup_loose(Ind, token[1], FALSE, FALSE);
