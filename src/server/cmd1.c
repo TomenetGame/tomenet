@@ -426,7 +426,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 				case BRAND_POIS:
 					f1 |= TR1_BRAND_POIS;
 					break;
-				case BRAND_MANA:
+				case BRAND_BASE:
 					f1 |= (TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID);
 					break;
 				case BRAND_CONF:
@@ -972,7 +972,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 				case BRAND_POIS:
 					f1 |= TR1_BRAND_POIS;
 					break;
-				case BRAND_MANA:
+				case BRAND_BASE:
 					f1 |= (TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID);
 					break;
 				case BRAND_CONF:

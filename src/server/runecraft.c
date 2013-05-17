@@ -974,7 +974,7 @@ s_printf("Duration: %d\n", duration);
 							fire_ball(Ind, GF_RESCOLD_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
 							//fire_ball(Ind, GF_RESPOIS_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
 						}
-					} else set_brand(Ind, duration, BRAND_MANA, 0); //multibrand 'base' - Kurzel
+					} else set_brand(Ind, duration, BRAND_BASE, 0); //multibrand 'base' - Kurzel
 				break; }
 				
 				default: {

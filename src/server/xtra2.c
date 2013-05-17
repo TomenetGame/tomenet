@@ -712,7 +712,7 @@ bool set_brand(int Ind, int v, int t, int p)
 		    case BRAND_POIS:
 		      msg_format(Ind, "%s branded with poison!", weapons);
 		      break;
-		    case BRAND_MANA:
+		    case BRAND_BASE:
 		      msg_format(Ind, "%s branded with the elements!", weapons);
 		      break;
 		    case BRAND_CONF:
@@ -797,7 +797,7 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 		    case BRAND_POIS:
 		      msg_print(Ind, "\377oYour ammo is covered with venom !");
 		      break;
-		    case BRAND_MANA:
+		    case BRAND_BASE:
 		      msg_print(Ind, "\377oYour ammo glows with power !");
 		      break;
 		    case BRAND_CONF:
