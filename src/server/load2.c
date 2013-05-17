@@ -3148,11 +3148,11 @@ void fix_max_depth_bug(player_type *p_ptr) {
 
 	/* wipe (paranoia, should already be zeroed) */
 	for (i = 0; i < MAX_D_IDX * 2; i++) {
-#if 1 /* faster */
-		//if (p_ptr->max_depth[i]) continue; /* (all bugged entries have depth 0) */
+#if 0 /* faster */
+		if (p_ptr->max_depth[i]) continue; /* (all bugged entries have depth 0) */
 #else /* cleaner */
 		if (!p_ptr->max_depth_wx[i]) continue; /* entry doesn't exist? */
-		if (!p_ptr->max_depth_dungeon[i] || /* it's not a dungeon or it is and that dungeon actually exists? */
+		if (p_ptr->max_depth_tower[i] || /* it's not a dungeon or it is and that dungeon actually exists? */
 		    wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].dungeon)
 			/* (all bugged entries are 'dungeons') */
 			continue;
