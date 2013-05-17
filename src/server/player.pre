@@ -1079,3 +1079,4 @@ extern void do_mimic_change(int Ind, int r_idx, bool force);
 extern void shape_Maia_skills(int Ind);
 
 extern void lua_fix_max_depth(int Ind);
+extern void lua_fix_max_depth_bug(int Ind);
