@@ -6564,7 +6564,7 @@ void player_death(int Ind) {
 			recall_player(Ind, "");
 
 			/* Tell him what happened */
-			msg_print(Ind, "\377oYou were defeated, but the priests have saved you.");
+			msg_format(Ind, "\377oYou were defeated by %s, but the priests have saved you.", p_ptr->died_from);
 			msg_format(Ind, "\377oThey have requested a fee of %d gold pieces.", instant_res_cost);
 
 #if 0
