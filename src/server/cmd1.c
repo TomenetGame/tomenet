@@ -5197,7 +5197,7 @@ bool player_can_enter(int Ind, byte feature)
 				return (TRUE);
 			else if (only_wall && (f_info[feature].flags1 & FF1_FLOOR))
 				return (FALSE);
-			else if ((p_ptr->feather_fall) &&
+			else if ((p_ptr->feather_fall || p_ptr->tim_wraith) &&
 					 (f_info[feature].flags1 & FF1_CAN_LEVITATE))
 				return (TRUE);
 			else if ((pass_wall || only_wall) &&
@@ -5305,7 +5305,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 		old_grid_sunlit = TRUE;
 
 	/* Slip on icy floor */
-	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->fly)) {
+	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->fly && !p_ptr->tim_wraith)) {
 		if (magik(70 - p_ptr->lev)) {
 			do {
 				i = randint(9);
@@ -5823,7 +5823,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 
 	/* XXX fly? */
 	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->feather_fall &&
-	    !p_ptr->fly && !p_ptr->admin_dm) {
+	    !p_ptr->fly && !p_ptr->tim_wraith && !p_ptr->admin_dm) {
 		msg_print(Ind, "You can't cross the chasm.");
 
 		disturb(Ind, 0, 0);
@@ -6633,7 +6633,7 @@ static bool run_test(int Ind)
 				case FEAT_ICE:
 				{
 					/* Ignore */
-					if (p_ptr->feather_fall || p_ptr->fly) notice = FALSE;
+					if (p_ptr->feather_fall || p_ptr->fly || p_ptr->tim_wraith) notice = FALSE;
 
 					/* Done */
 					break;

@@ -908,7 +908,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				break;
 			}
 			msg_print(Ind, "You fell through a trap door!");
-			if (p_ptr->feather_fall) {
+			if (p_ptr->feather_fall || p_ptr->tim_wraith) {
 				msg_print(Ind, "You float gently down to the next level.");
 			} else {
 				/* Inventory damage (Hack - use 'cold' type) */
@@ -1817,7 +1817,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				break;
 			}
 			msg_print(Ind, "You fell into a chasm!");
-			if (p_ptr->feather_fall)
+			if (p_ptr->feather_fall || p_ptr->tim_wraith)
 				msg_print(Ind, "You float gently down the chasm.");
 			else {
 				msg_print(Ind, "You fall head over heels!!");
@@ -1844,7 +1844,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				break;
 			}
 			msg_print(Ind, "You fell into a pit!");
-			if (p_ptr->feather_fall)
+			if (p_ptr->feather_fall || p_ptr->tim_wraith)
 				msg_print(Ind, "You float gently to the bottom of the pit.");
 			else {
 				l = damroll(1, 8);
