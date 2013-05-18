@@ -4060,6 +4060,7 @@ void check_experience(int Ind)
 				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to cold!");
 				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to poison!");
 				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
+				break;
 			case TRAIT_GOLD: /* Draconic Gold */
 				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to acid!");
 				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to sound!");
