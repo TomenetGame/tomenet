@@ -138,7 +138,7 @@ static cptr desc_moan_xmas[] = {
 	"hopes that you will be less naughty next year!",
 	"cheers \"Ho Ho ho!\"",
 	"has a present for you!",
-	"checks you against his cheeze list"
+	"checks you against his cheeze list."
 };
 
 /*
@@ -864,9 +864,9 @@ bool make_attack_melee(int Ind, int m_idx)
 				case RBM_SHOW:
 				{
 					if (randint(3)==1)
-						act = "sings 'We are a happy family.'";
+						act = "sings 'We are a happy family'.";
 					else
-						act = "sings 'I love you, you love me.'";
+						act = "sings 'I love you, you love me'.";
 #ifdef USE_SOUND_2010
 #else
 //					sound(SOUND_SHOW);
@@ -1063,7 +1063,9 @@ bool make_attack_melee(int Ind, int m_idx)
 						msg_format(Ind, "\377o%^s %s", m_name, act);
 					else
 						msg_format(Ind, "%^s %s", m_name, act);
-				} else /* trailing dot */
+				} else if (method == RBM_SHOW || method == RBM_WHISPER || method == RBM_INSULT)
+					msg_format(Ind, "%^s %s", m_name, act);
+				else /* trailing dot */
 					msg_format(Ind, "%^s %s.", m_name, act);
 				strcpy(dam_msg, ""); /* suppress 'bla hits you for x dam' message! */
 			}
