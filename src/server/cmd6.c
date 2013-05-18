@@ -8279,8 +8279,8 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 	        fire_ball(Ind, GF_CONFUSION, dir, ((p_ptr->chp / 3) > 350) ? 350 : (p_ptr->chp / 3), 2, p_ptr->attacker);
                 break;
         case TRAIT_SILVER: /* Draconic Silver */
-	        sprintf(p_ptr->attacker, " breathes frost for");
-	        msg_print(Ind, "You breathe frost.");
+	        sprintf(p_ptr->attacker, " breathes inertia for");
+	        msg_print(Ind, "You breathe inertia.");
 	        fire_ball(Ind, GF_INERTIA, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), 2, p_ptr->attacker);
                 break;
         case TRAIT_GOLD: /* Draconic Gold */
