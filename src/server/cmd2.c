@@ -235,6 +235,8 @@ void do_cmd_go_up(int Ind)
 			else msg_print(Ind, "\377DYou may not enter once you gained any experience!");
 			if (!is_admin(p_ptr)) return;
 		}
+		/* disable WoR hint */
+		p_ptr->warning_wor = 1;
 	}
 
 	/* S(he) is no longer afk */
@@ -692,6 +694,8 @@ void do_cmd_go_down(int Ind)
 			else msg_print(Ind, "\377DYou may not enter once you gained any experience!");
 			if (!is_admin(p_ptr)) return;
 		}
+		/* disable WoR hint */
+		p_ptr->warning_wor = 1;
 	}
 
 	/* S(he) is no longer afk */

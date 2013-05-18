@@ -2979,6 +2979,8 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 		/* automatically know the location of IDDC dungeon */
 		p_ptr->wild_map[(WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) / 8] |=
 		    (1 << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
+		/* disable WoR hint */
+		p_ptr->warning_wor = 1;
 	}
 #endif
 
