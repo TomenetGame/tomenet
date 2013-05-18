@@ -2618,9 +2618,12 @@ int scan_iddc() {
 		}
 	}
 	*/
-	(void)init_iddc();
-	s_printf("IDDC Scan Success!\n");
-	return 0;
+	if (!init_iddc()) {
+		s_printf("IDDC Scan Success!\n");
+		return 0;
+	}
+	s_printf("IDDC Scan Failure!\n");
+	return -1;
 }
 #endif
 
