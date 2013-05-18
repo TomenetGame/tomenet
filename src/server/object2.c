@@ -5593,6 +5593,8 @@ void determine_level_req(int level, object_type *o_ptr) {
 			base += 20 + o_ptr->bpval * 2;
 			break;
 		case SV_AMULET_TRICKERY:
+		case SV_AMULET_MAGI:
+		case SV_AMULET_DEVOTION:
 			base += 16 + o_ptr->bpval * 3;
 			break;
 		}
