@@ -3189,6 +3189,13 @@ void condense_max_depth(player_type *p_ptr) {
 	/* moar fixing old bugginess: remove all 0,0,0 entries between valid entries
 	   (empty entries aka 0,0,0 should only occur tailing the other entries) */
 	for (i = 0; i < MAX_D_IDX * 2; i++) {
+		/* hack: fix IDDC to zero */
+		if (p_ptr->max_depth_wx[i] == WPOS_IRONDEEPDIVE_X & p_ptr->max_depth_wy[i] == WPOS_IRONDEEPDIVE_Y
+		    && (p_ptr->max_depth_tower[i] ? 1 : -1) == WPOS_IRONDEEPDIVE_Z) {
+			p_ptr->max_depth[i] = 0;
+			continue;
+		}
+	
 		if (p_ptr->max_depth_wx[i] || p_ptr->max_depth_wy[i]) continue; /* entry is not empty? */
 		/* ..entry i is empty.. */
 		for (j = i + 1; j < MAX_D_IDX * 2; j++) {
