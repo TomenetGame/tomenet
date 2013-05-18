@@ -1852,6 +1852,7 @@ static char *object_desc_per(char *t, sint v)
  *        used in store inventory in case STORE_SHOWS_SINGLE_WAND_CHARGES isn't defined;
  *        (not used in player/home inventory, but used in player stores again.) - C. Blue
  *  +128 - Don't prefix "The"
+ *  +256 - Short name: Only the purely textual name, no stats/level/owner/status.
  *
  * If the strings created with mode 0-3 are too long, this function is called
  * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
@@ -2437,6 +2438,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_str(t, (a_name + a_ptr->name));
 		}
 
+		/* raw name only? */
+		if ((mode & 256)) return;
+
 		/* -TM- Hack -- Add false-artifact names */
 		/* Dagger inscribed {@w0#of Smell} will be named
 		 * Dagger of Smell {@w0} */
@@ -2462,7 +2466,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			}
 		}
 	}
-	
+
+	/* raw name only? */
+	if ((mode & 256)) return;
+
 	/* Sigil - Perhaps add colour for the '&' in the future. */
 	if (o_ptr->sigil) {
 		t = object_desc_chr(t, ' ');
@@ -2505,8 +2512,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 
 	/* No more details wanted */
-	if ((mode & 7) < 1)
-	{
+	if ((mode & 7) < 1) {
 		if (t - buf <= 65 || mode & 8) {
 			return;
 		} else {

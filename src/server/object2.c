@@ -8813,7 +8813,7 @@ void erase_artifact(int a_idx) {
 	int i, this_o_idx, next_o_idx;
 	monster_type *m_ptr;
 	object_type *o_ptr, *q_ptr;
-	char m_name[MNAME_LEN], o_name[ONAME_LEN];
+	char m_name[MNAME_LEN], o_name[ONAME_LEN], o_name_short[ONAME_LEN];
 
 	int slot;
 	hash_entry *ptr;
@@ -8823,19 +8823,19 @@ void erase_artifact(int a_idx) {
 	i = lookup_kind(a_info[a_idx].tval, a_info[a_idx].sval);
 	if (i) invcopy(&forge, i);
 	forge.name1 = a_idx;
-	object_desc(0, o_name, &forge, FALSE, 3);
+	object_desc(0, o_name, &forge, TRUE, 0);//fixed diz for admins
+	object_desc(0, o_name_short, &forge, TRUE, 256);//short name for telling people
 
 	/* objects on the floor/in monster inventories */
-        for (i = 0; i < o_max; i++) {
-                o_ptr = &o_list[i];
-                /* Skip dead objects */
-                if (!o_ptr->k_idx) continue;
-                /* Look for specific true artifact */
-                if (o_ptr->name1 != a_idx) continue;
-
+	for (i = 0; i < o_max; i++) {
+		o_ptr = &o_list[i];
+		/* Skip dead objects */
+		if (!o_ptr->k_idx) continue;
+		/* Look for specific true artifact */
+		if (o_ptr->name1 != a_idx) continue;
 
 		/* in monster inventory */
-                if (o_ptr->held_m_idx) {
+		if (o_ptr->held_m_idx) {
 			m_ptr = &m_list[o_ptr->held_m_idx];
 			/* 1st object held is the artifact? */
 			if (m_ptr->hold_o_idx == i) {
@@ -8843,6 +8843,7 @@ void erase_artifact(int a_idx) {
 				monster_desc(0, m_name, o_ptr->held_m_idx, 0);
 				s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #1)\n  '%s'\n", o_ptr->held_m_idx, m_name, o_name);
 				delete_object_idx(i, FALSE);
+				msg_broadcast_format(0, "\376\377U%s has been lost once more.", o_name_short);
 				return;
 			} else {
 				i = 1;
@@ -8853,6 +8854,7 @@ void erase_artifact(int a_idx) {
 						monster_desc(0, m_name, o_ptr->held_m_idx, 0);
 						s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #%d)\n  '%s'\n", o_ptr->held_m_idx, m_name, i, o_name);
 						delete_object_idx(this_o_idx, FALSE);
+						msg_broadcast_format(0, "\376\377U%s has been lost once more.", o_name_short);
 						return;
 					}
 					q_ptr = &o_list[this_o_idx];
@@ -8860,16 +8862,17 @@ void erase_artifact(int a_idx) {
 					i++;
 				}
 			}
-                }
+		}
 
 		s_printf("FLUENT_ARTIFACT_RESETS: floor '%s'\n", o_name);
-                delete_object_idx(i, FALSE);
-                return;
-        }
+		delete_object_idx(i, FALSE);
+		msg_broadcast_format(0, "\376\377U%s has been lost once more.", o_name_short);
+		return;
+	}
 
 	/* Players online */
 	for (this_o_idx = 1; this_o_idx <= NumPlayers; this_o_idx++) {
-	        p_ptr = Players[this_o_idx];
+		p_ptr = Players[this_o_idx];
 		/* scan his inventory */
 		for (i = 0; i < INVEN_TOTAL; i++) {
 			o_ptr = &p_ptr->inventory[i];
@@ -8877,12 +8880,13 @@ void erase_artifact(int a_idx) {
 
 			if (o_ptr->name1 == a_idx) {
 				s_printf("FLUENT_ARTIFACT_RESETS: player '%s'\n  '%s'\n", p_ptr->name, o_name);
-				object_desc(this_o_idx, o_name, o_ptr, FALSE, 3);
-				msg_format(this_o_idx, "\374\377R%s bids farewell to you...", o_name);
+				//object_desc(this_o_idx, o_name, o_ptr, FALSE, 3);
+				msg_format(this_o_idx, "\374\377R%s bids farewell to you...", o_name_short);
 				handle_art_d(a_idx);
 				inven_item_increase(this_o_idx, i, -99);
 				inven_item_describe(this_o_idx, i);
 				inven_item_optimize(this_o_idx, i);
+				msg_broadcast_format(this_o_idx, "\376\377U%s has been lost once more.", o_name_short);
 				return;
 			}
 		}
@@ -8916,10 +8920,10 @@ void erase_artifact(int a_idx) {
 			/* try to load him! */
 			if (!load_player(NumPlayers)) {
 				/* bad fail */
-				s_printf("FLUENT_ARTIFACT_RESETS: load_player '%s' failed\n  '%s'\n", p_ptr->name, o_name);
+				s_printf("FLUENT_ARTIFACT_RESETS_ERROR: load_player '%s' failed\n  '%s'\n", p_ptr->name, o_name);
 				/* unhack */
-			        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
-			        KILL(p_ptr, player_type);
+				C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(p_ptr, player_type);
 				NumPlayers--;
 				return;
 			}
@@ -8936,9 +8940,10 @@ void erase_artifact(int a_idx) {
 					/* write savegame back */
 					save_player(NumPlayers);
 					/* unhack */
-				        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
-				        KILL(p_ptr, player_type);
+					C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+					KILL(p_ptr, player_type);
 					NumPlayers--;
+					msg_broadcast_format(0, "\376\377U%s has been lost once more.", o_name_short);
 					return;
 				}
 			}
@@ -8954,5 +8959,5 @@ void erase_artifact(int a_idx) {
 	NumPlayers--;
 
 	/* Paranoia: Failed to locate the artifact. Shouldn't happen! */
-	s_printf("FLUENT_ARTIFACT_RESETS: not found '%s'\n", o_name);
+	s_printf("FLUENT_ARTIFACT_RESETS_ERROR: not found '%s'\n", o_name);
 }
