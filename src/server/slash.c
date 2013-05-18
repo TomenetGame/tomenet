@@ -3911,6 +3911,14 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377rItems on %s are cleared.", wpos_format(Ind, &wp));
 				return;
 			}
+			else if (prefix(message, "/mdelete")) { /* delete the monster currently looked at */
+				if (p_ptr->health_who <= 0) {//target_who
+					msg_print(Ind, "No monster looked at.");
+					return; /* no monster targetted */
+				}
+				delete_monster_idx(p_ptr->health_who, TRUE);
+				return;
+			}
 			else if(prefix(message, "/cp")){
 				party_check(Ind);
 				account_check(Ind);
