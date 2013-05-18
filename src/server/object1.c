@@ -3659,7 +3659,7 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1,
 	/* combine slay flags of ammo and bow */
 	f1 |= bow_f1;
 
-	fprintf(fff, "\nUsing it with your current shooter you would do an avarage damage per shot of:\n");
+	fprintf(fff, "\nUsing it with your current shooter you would do an average damage per shot of:\n");
 	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "animals", NULL);
 	if (f1 & TR1_SLAY_EVIL) output_ammo_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "evil creatures", NULL);
 	if (f1 & TR1_SLAY_ORC) output_ammo_dam(Ind, fff, o_ptr, FACTOR_SLAY, 0, "orcs", NULL);
@@ -3728,7 +3728,7 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff, u32b 
 	/* combine slay flags of ammo and bow */
 	f1 |= ammo_f1;
 
-	fprintf(fff, "\nUsing it with your current ammunition you would do an avarage damage per shot of:\n");
+	fprintf(fff, "\nUsing it with your current ammunition you would do an average damage per shot of:\n");
 	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_HURT, 0, "animals", NULL);
 	if (f1 & TR1_SLAY_EVIL) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_HURT, 0, "evil creatures", NULL);
 	if (f1 & TR1_SLAY_ORC) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_SLAY, 0, "orcs", NULL);
