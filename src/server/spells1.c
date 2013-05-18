@@ -5034,7 +5034,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			int res = 1;
 
 			/* No "real" damage */
-//			obvious = FALSE;
 			dam = 0;
 			quiet_dam = TRUE;
 
@@ -6179,18 +6178,20 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Speed Monster (Ignore "dam") */
 		case GF_OLD_SPEED:
-		{
-			if (seen) obvious = TRUE;
+			if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->mspeed >= 150) {
+				note = "is unaffected";
+			} else {
+				if (seen) obvious = TRUE;
 
-			/* Speed up */
-			if (m_ptr->mspeed < 150) m_ptr->mspeed += 10;
-			note = " starts moving faster";
+				/* Speed up */
+				m_ptr->mspeed += 10;
+				note = " starts moving faster";
+			}
 
 			/* No "real" damage */
 			dam = 0;
 			quiet_dam = TRUE;
 			break;
-		}
 
 
 		/* Slow Monster (Use "dam" as "power") */
