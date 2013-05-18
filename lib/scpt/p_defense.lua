@@ -13,22 +13,22 @@ HBLESSING = add_spell
 	["spell"] = 	function()
 		local dur
 		if get_level(Ind, HBLESSING, 50) < 15 then
-			if player.blessed_power <= 10 then
-				player.blessed_power = 10
+			if player.blessed_power <= 8 then
+				player.blessed_power = 8
 				dur = 9 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
 				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " recites a blessing.")
 			end
 		elseif get_level(Ind, HBLESSING, 50) < 30 then
-			if player.blessed_power <= 20 then
-				player.blessed_power = 20
+			if player.blessed_power <= 14 then
+				player.blessed_power = 14
 				dur = 17 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
 				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " chants.")
 			end
 		else
-			if player.blessed_power <= 30 then
-				player.blessed_power = 30
+			if player.blessed_power <= 20 then
+				player.blessed_power = 20
 				dur = 32 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
 				fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " speaks a holy prayer.")
@@ -37,11 +37,11 @@ HBLESSING = add_spell
 	end,
 	["info"] = 	function()
 		if get_level(Ind, HBLESSING, 50) < 15 then
-			return "AC+10  dur 9.."..get_level(Ind, HBLESSING, 25)+9
+			return "AC+8  dur 9.."..get_level(Ind, HBLESSING, 25)+9
 		elseif get_level(Ind, HBLESSING, 50) < 30 then
-			return "AC+20  dur 17.."..get_level(Ind, HBLESSING, 25)+17
+			return "AC+14  dur 17.."..get_level(Ind, HBLESSING, 25)+17
 		else
-			return "AC+30  dur 32.."..get_level(Ind, HBLESSING, 25)+32
+			return "AC+20  dur 32.."..get_level(Ind, HBLESSING, 25)+32
 		end
 	end,
 	["desc"] =	{
