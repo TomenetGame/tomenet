@@ -10121,8 +10121,8 @@ Warrior is strongly recommended.
     while polymorphed, except if the form is a reptile (including Hydras) or an
     actual dragon (including dragonriders).
     The resistances obtained from a trait stay, even while polymorphed.
-    Draconians receive a bonus on 'Thought Contact', 'Polearm-Mastery',
-    'Magic devices' and runemastery elements associated with their lineage.
+    Draconians receive a bonus on 'Thought Contact', 'Polearm-Mastery' and
+    'Magic devices'.
 
     Table of their traits:
     Lineage     Breath          Resistances/abilities
