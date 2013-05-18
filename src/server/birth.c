@@ -2636,6 +2636,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 #endif
 }
 
+#if 0
 /* See do_Maia_skill() - Kurzel */
 /* Set up trait-dependant skill boni (at birth) */
 static void do_trait_skill(int Ind, int s, int m) {
@@ -2648,6 +2649,7 @@ static void do_trait_skill(int Ind, int s, int m) {
 	/* Update it after the re-increasing has been finished */
 	Send_skill_info(Ind, s, FALSE);
 }
+#endif
 
 /*
  * Create a character.  Then wait for a moment.
@@ -3058,6 +3060,7 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 		}
 	}
 
+#if 0
 	/* Adjust birth trait based skills (only draconians currently) - Kurzel */
 	switch (p_ptr->ptrait) {
 		case TRAIT_BLUE: {
@@ -3120,7 +3123,8 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 		default:
 		break;
 	}
-	
+#endif
+
 	/* Bards receive really random skills */
 #if 0
 	if (p_ptr->pclass == CLASS_BARD) {

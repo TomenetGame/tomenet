@@ -7505,7 +7505,7 @@ Rumour          Makes a random rumour come to your character's (and everyone
                 else's characters') mind. Has no further effect and is not
                 necessarily true even.
 Blessing/Holy Chant/Holy Prayer
-                Increases your AC by 10/15/20, also increases your to-hit
+                Increases your AC by 8/14/20, also increases your to-hit
                 bonus. (Temporarily)
 Life            Resurrects another player's ghost if standing on a directly
                 adjacent field to you when you read it. Does not work inside
@@ -10141,22 +10141,6 @@ Warrior is strongly recommended.
     Chaos       Chaos           confusion (5), chaos (15), disenchantment (20)
     Balance     Disenchantment  disenchantment (10), sound (20)
     
-    Table of trait related runemastery skill boni:
-    Lineage     Skill (mod multiplier)
-    --------------------------------------------------------------------------
-    Blue        Light (x1.2), Nether (x1.2)
-    White       Light (x0.8), Dark (x1.3), Nether (x1.3), Chaos (x0.8)
-    Red         Light (x1.3), Dark (x0.8), Nether (x0.8), Chaos (x1.3)
-    Black       Dark (x1.2), Chaos (x1.2)
-    Green       Dark (x1.2), Mana (x1.2)
-    Multi-hued  Light (x1.1), Dark (x1.1), Nether (x1.1), Chaos (x1.1)
-    Bronze      Light (x1.2), Dark (x1.2)
-    Silver      Light (x1.2), Nexus (x1.2)
-    Gold        Nexus (x1.2), Chaos (x1.2)
-    Law         Nexus (x1.2), Chaos (x1.1), Mana (x1.1)
-    Chaos       Nether (x1.1), Chaos (x1.3)
-    Balance     Nexus (x1.1), Nether (x1.1), Chaos (x1.1), Mana (x1.1)
-
 - Kobold
     These somewhat smallish dog-faced humanoids resist poison intrinsically.
     They are able to take most roles, being somewhat better at archery than
