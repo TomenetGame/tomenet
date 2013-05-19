@@ -3996,9 +3996,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	object_type         throw_obj;
 	object_type             *o_ptr;
-
 	object_type             *j_ptr;
-
 	bool            hit_body = FALSE;
 
 	int                     missile_attr;
@@ -4026,6 +4024,11 @@ void do_cmd_fire(int Ind, int dir)
 	char            o_name[ONAME_LEN];
 	bool returning = FALSE, magic = FALSE, boomerang = FALSE, ethereal = FALSE;
 	bool target_ok = target_okay(Ind);
+#if 0 //DEBUG
+#ifdef USE_SOUND_2010
+	int otval;
+#endif
+#endif
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
@@ -4354,15 +4357,14 @@ void do_cmd_fire(int Ind, int dir)
 	if (get_skill(p_ptr, SKILL_RICOCHET) && !magic && !boomerang && !p_ptr->ranged_barrage)
 	{
 		num_ricochet = get_skill_scale(p_ptr, SKILL_RICOCHET, 6);
-		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
+		num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 		ricochet_chance = 45 + get_skill_scale(p_ptr, SKILL_RICOCHET, 50);
 	}
 #else	// 0
 	/* Sling mastery yields bullet ricochets */
-	if (archery == SKILL_SLING && !boomerang && !magic && !ethereal && !p_ptr->ranged_barrage)
-	{
+	if (archery == SKILL_SLING && !boomerang && !magic && !ethereal && !p_ptr->ranged_barrage) {
 		num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_SLING, 3));//6
-		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
+		num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
 		ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_SLING, 42);//45+(50)
 	}
 #endif
@@ -4372,6 +4374,13 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Use the missile object */
 	o_ptr = &throw_obj;
+
+#if 0 //DEBUG
+#ifdef USE_SOUND_2010
+	/* save for sfx later (after the missile object was maybe already destroyed) */
+	otval = o_ptr->tval;
+#endif
+#endif
 
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
@@ -4457,11 +4466,16 @@ void do_cmd_fire(int Ind, int dir)
 			}
 		}
 	}
-	if (sfx == 0) switch (o_ptr->tval) {
-	case TV_SHOT: sound(Ind, "fire_shot", NULL, SFX_TYPE_ATTACK, FALSE); break;
-	case TV_ARROW: sound(Ind, "fire_arrow", NULL, SFX_TYPE_ATTACK, FALSE); break;
-	case TV_BOLT: sound(Ind, "fire_bolt", NULL, SFX_TYPE_ATTACK, FALSE); break;
-	case TV_BOOMERANG: sound(Ind, "fire_boomerang", NULL, SFX_TYPE_ATTACK, FALSE); break;
+	if (sfx == 0)
+ #if 0 //DEBUG
+		switch (otval) {
+ #else
+		switch (o_ptr->tval) {
+ #endif
+		case TV_SHOT: sound(Ind, "fire_shot", NULL, SFX_TYPE_ATTACK, FALSE); break;
+		case TV_ARROW: sound(Ind, "fire_arrow", NULL, SFX_TYPE_ATTACK, FALSE); break;
+		case TV_BOLT: sound(Ind, "fire_bolt", NULL, SFX_TYPE_ATTACK, FALSE); break;
+		case TV_BOOMERANG: sound(Ind, "fire_boomerang", NULL, SFX_TYPE_ATTACK, FALSE); break;
 	}
 #endif
 
@@ -5168,48 +5182,44 @@ void do_cmd_fire(int Ind, int dir)
 		}
 
 		/* If no break and if Archer, the ammo can ricochet */
-//		if((num_ricochet) && (hit_body) && (magik(45 + p_ptr->lev)))
-//		if((num_ricochet) && (hit_body) && (magik(50 + p_ptr->lev)) && magik(95))
-		if((num_ricochet) && (hit_body) && (magik(ricochet_chance)) && !p_ptr->ranged_barrage)
-		{
+//		if ((num_ricochet) && (hit_body) && (magik(45 + p_ptr->lev)))
+//		if ((num_ricochet) && (hit_body) && (magik(50 + p_ptr->lev)) && magik(95))
+		if ((num_ricochet) && (hit_body) && (magik(ricochet_chance)) && !p_ptr->ranged_barrage) {
 			/* Some players do not want ricocheting shots as to not wake up other
 			 * monsters. How about we remove ricocheting shots for slingers, but
 			 * instead, adds a chance to do a double damage (than normal and/or crit)
 			 * shots (i.e., seperate than crit and stackable bonus)?  - the_sandman */
 			if (check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'R') ||
 			    check_guard_inscription(p_ptr->inventory[INVEN_BOW].note, 'R')) {
-				num_ricochet=0;
+				num_ricochet = 0;
 				break;
 			}
 
-			byte d;
-
-			num_ricochet--;
-			hit_body = FALSE;
-
-			/* New base location */
-			by = y;
-			bx = x;
+			byte d = 5;
 
 			/* New target location */
-			while (TRUE) {
+			while (d == 5 && tries--)
 				d = rand_int(10);
-				if(d != 5) break;
-				if (!tries--) {
-					d = 1;
-					break;
-				}
-			}
-#ifdef DOUBLE_LOS_SAFETY
-			/* remove dir 5, or we'll likely panic when we go through all 99 grids without blocking checks */
-			dir = d;
-#endif
-			tx = p_ptr->px + 99 * ddx[d];
-			ty = p_ptr->py + 99 * ddy[d];
 
-			msg_format(Ind, "The %s ricochets!", o_name);
-		}
-		else break;
+			if (d != 5) { /* extreme safety */
+#ifdef DOUBLE_LOS_SAFETY
+				/* remove dir 5, or we'll likely panic when we go through all 99 grids without blocking checks */
+				dir = d;
+#endif
+
+				num_ricochet--;
+				hit_body = FALSE;
+
+				/* New base location */
+				by = y;
+				bx = x;
+
+				tx = p_ptr->px + 99 * ddx[d];
+				ty = p_ptr->py + 99 * ddy[d];
+
+				msg_format(Ind, "The %s ricochets!", o_name);
+			} else break;
+		} else break;
 	}
 
 #ifndef OPTIMIZED_ANIMATIONS
