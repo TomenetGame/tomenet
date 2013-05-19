@@ -1087,7 +1087,7 @@ A:0:0:0:2:3:0
 #note: stealing is usually turned off for pstores anyway
 F:VHARD_STEAL
 
-#ariant of potion store, for ironman deep dive challenge
+# Variant of dungeon potion store, for Ironman Deep Dive Challenge towns
 N:67:Potion Store
 T:100:71:256
 A:0:0:1:2:3:0
@@ -1097,7 +1097,7 @@ W:24
 F:BUY67 | RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | NO_DISCOUNT2 | PRICE2
 F:VHARD_STEAL
 
-#or 'The Bridge Inn' maybe
+# ..or 'The Bridge Inn' maybe (IDDC towns)
 N:68:The Forsaken Inn
 I:100:& Ration~ of Food
 I:100:& Hard Biscuit~
