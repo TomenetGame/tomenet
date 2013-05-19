@@ -1200,7 +1200,7 @@
 #define STORE_SPEC_CLOSECOMBAT	64
 #define STORE_HIDDENLIBRARY	65
 //player store template is	66
-#define STORE_POTION2		67
+#define STORE_POTION_IDDC	67
 #define STORE_DUNGEON_INN	68
 
 /* Dungeon store clones of the normal town stores */

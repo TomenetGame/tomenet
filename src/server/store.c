@@ -1651,8 +1651,16 @@ static void store_create(store_type *st_ptr)
 //		if (o_ptr->tval == TV_CHEST || o_ptr->tval==8) continue;
 		if (o_ptr->tval == TV_CHEST) continue;
 
-		/* Hack - Anti-cheeze =p */
-		if ((o_ptr->tval == TV_POTION) && (o_ptr->sval == SV_POTION_EXPERIENCE)) continue;
+		/* In general forbid Experienace/Invulnerability/Learning potions in ANY store! */
+		if (o_ptr->tval == TV_POTION &&
+		    (o_ptr->sval == SV_POTION_EXPERIENCE || o_ptr->sval == SV_POTION_INVULNERABILITY
+#ifdef EXPAND_TV_POTION
+		    || o_ptr->sval == SV_POTION_LEARNING
+#endif
+		    ))
+			continue;
+		if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_LEARNING)
+			continue;
 
 		/* Prune the black market */
 		if (black_market) {
@@ -1675,7 +1683,6 @@ static void store_create(store_type *st_ptr)
 				case SV_POTION_CURE_SERIOUS_SANITY:
 				case SV_POTION_CURE_CRITICAL_SANITY:
 				case SV_POTION_CURE_SANITY:
-				case SV_POTION_LEARNING:
 				case SV_POTION_CHAUVE_SOURIS:
 					continue;
 				}
@@ -1712,39 +1719,74 @@ static void store_create(store_type *st_ptr)
 				continue;
 		}
 
-		/* Let's not allow 'Cure * Insanity', 'Augmentation', 'Learning', 'Experience',
-		 * and 'Invulnerability' potions - the_sandman */
+		/* Let's not allow 'Cure * Insanity' or 'Augmentation' potions - the_sandman */
 		if (st_ptr->st_idx == STORE_SPEC_POTION) {
 			switch (o_ptr->tval) {
-				case TV_POTION:
-					switch (o_ptr->sval) {
-						case SV_POTION_AUGMENTATION:
-						case SV_POTION_EXPERIENCE:
-						case SV_POTION_INVULNERABILITY:
+			case TV_POTION:
+				switch (o_ptr->sval) {
+				case SV_POTION_AUGMENTATION:
 #ifdef EXPAND_TV_POTION
-						case SV_POTION_CURE_LIGHT_SANITY:
-						case SV_POTION_CURE_SERIOUS_SANITY:
-						case SV_POTION_CURE_CRITICAL_SANITY:
-						case SV_POTION_CURE_SANITY:
-						case SV_POTION_LEARNING:
+				case SV_POTION_CURE_LIGHT_SANITY:
+				case SV_POTION_CURE_SERIOUS_SANITY:
+				case SV_POTION_CURE_CRITICAL_SANITY:
+				case SV_POTION_CURE_SANITY:
+				case SV_POTION_CHAUVE_SOURIS:
 #endif
-							continue;
-						default:
-							break;
-					} break;
-				case TV_POTION2:
-					switch (o_ptr->sval) {
-						case SV_POTION2_CURE_LIGHT_SANITY:
-						case SV_POTION2_CURE_SERIOUS_SANITY:
-						case SV_POTION2_CURE_CRITICAL_SANITY:
-						case SV_POTION2_CURE_SANITY:
-						case SV_POTION2_LEARNING:
-							continue;
-						default:
-							break;
-					} break;
-				default: break;	//shouldn't happen anyway
-			}//o_ptr->tval switch
+					continue;
+				default:
+					break;
+				}
+				break;
+			case TV_POTION2:
+				switch (o_ptr->sval) {
+				case SV_POTION2_CURE_LIGHT_SANITY:
+				case SV_POTION2_CURE_SERIOUS_SANITY:
+				case SV_POTION2_CURE_CRITICAL_SANITY:
+				case SV_POTION2_CURE_SANITY:
+				case SV_POTION2_CHAUVE_SOURIS:
+					continue;
+				default:
+					break;
+				}
+				break;
+			default:
+				break; //shouldn't happen anyway
+			} //o_ptr->tval switch
+		}
+
+		/* Similar to normal potion store, but maybe more lax */
+		if (st_ptr->st_idx == STORE_POTION_IDDC) {
+			switch (o_ptr->tval) {
+			case TV_POTION:
+				switch (o_ptr->sval) {
+				case SV_POTION_AUGMENTATION:
+#ifdef EXPAND_TV_POTION
+//				case SV_POTION_CURE_LIGHT_SANITY:
+				case SV_POTION_CURE_SERIOUS_SANITY:
+				case SV_POTION_CURE_CRITICAL_SANITY:
+				case SV_POTION_CURE_SANITY:
+//				case SV_POTION_CHAUVE_SOURIS:
+#endif
+					continue;
+				default:
+					break;
+				}
+				break;
+			case TV_POTION2:
+				switch (o_ptr->sval) {
+//				case SV_POTION2_CURE_LIGHT_SANITY:
+				case SV_POTION2_CURE_SERIOUS_SANITY:
+				case SV_POTION2_CURE_CRITICAL_SANITY:
+				case SV_POTION2_CURE_SANITY:
+//				case SV_POTION_CHAUVE_SOURIS:
+					continue;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
+			}
 		}
 
 		e_ptr = &e_info[o_ptr->name2];
