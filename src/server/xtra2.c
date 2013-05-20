@@ -5215,6 +5215,7 @@ if (cfg.unikill_format) {
 				qq_ptr->level = 0;
 				qq_ptr->owner = p_ptr->id;
 				qq_ptr->mode = p_ptr->mode;
+				determine_artifact_timeout(a_idx);
 #endif
 				art_created = TRUE;
 				drop_near(qq_ptr, -1, wpos, y, x);
@@ -5241,11 +5242,12 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 
-			/* Drop the objectt from heaven */
+			/* Drop the object from heaven */
 #ifdef PRE_OWN_DROP_CHOSEN
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
+			if (qq_ptr->name1) determine_artifact_timeout(qq_ptr->name1);
 #endif
 			drop_near(qq_ptr, -1, wpos, y, x);
 			s_printf("..dropped.\n");
@@ -5686,6 +5688,7 @@ if (cfg.unikill_format) {
 					qq_ptr->level = 0;
 					qq_ptr->owner = p_ptr->id;
 					qq_ptr->mode = p_ptr->mode;
+					determine_artifact_timeout(a_idx);
 #endif
 					drop_near(qq_ptr, -1, wpos, y, x);
 				}
