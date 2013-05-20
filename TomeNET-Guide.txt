@@ -10128,8 +10128,10 @@ Warrior is strongly recommended.
     Lineage     Breath          Resistances/abilities
     --------------------------------------------------------------------------
     Blue        Lightning       lightning, brand (5), aura (15), immune (25)
-    White       Frost           frost, aura (15), immune (25)
-    Red         Fire            fire, immune (25)
+    White       Frost           frost, aura (15), immune (25),
+                                susceptible to fire
+    Red         Fire            fire, immune (25),
+                                susceptible to cold
     Black       Acid            acid, immune (25)
     Green       Poison          poison, immune (25)
     Multi-hued  Random of       lightning (5), frost (10), fire (15),

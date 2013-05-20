@@ -3388,11 +3388,13 @@ void calc_boni(int Ind)
 		else p_ptr->immune_elec = TRUE;
 		break;
 	case TRAIT_WHITE: /* Draconic White */
+		p_ptr->suscep_fire = TRUE;
 		if (p_ptr->lev >= 15) p_ptr->sh_cold = TRUE;
 		if (p_ptr->lev < 25) p_ptr->resist_cold = TRUE;
 		else p_ptr->immune_cold = TRUE;
 		break;
 	case TRAIT_RED: /* Draconic Red */
+		p_ptr->suscep_cold = TRUE;
 		if (p_ptr->lev < 25) p_ptr->resist_fire = TRUE;
 		else p_ptr->immune_fire = TRUE;
 		break;
