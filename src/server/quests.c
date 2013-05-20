@@ -70,7 +70,9 @@ struct quest_info {
 	int dlevmin, dlevmax;				/*  eligible dungeon level or world sector level (0 for any) */
 
 	bool night, day;				/* Only available at night/day in general? */
-	bool morning, noon, afternoon, evening, midnight, deepnight; /* Only available at very specific night/day times? */
+	bool morning, noon, afternoon, evening, midnight, deepnight; /*  Only available at very specific night/day times? */
+
+	char t_pref[1024];				/* filename of map to load, or empty for none */
 
 	/* exact questor starting location */
 	struct worldpos start_wpos;			/* -1, -1 for random */
