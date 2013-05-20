@@ -1523,6 +1523,9 @@
  * Races' class flags, which races allow which classes for choice
  * (must be same order as according CLASS_.. constants!)
  */
+#define CF_NONE	0x0000
+#define CF_ALL	0xFFFF
+
 #define CFW	0x0001	/* Warrior */
 #define CFI	0x0002	/* Istar */
 #define CFP	0x0004	/* Priest */
@@ -1543,6 +1546,9 @@
 /*
  * Traits' class flags, which traits are allowed for which race for choice
  */
+#define RF_NONE	0x000000
+#define RF_ALL	0xFFFFFF
+
 #define RFU	0x000001	/* Human */
 #define RFL	0x000002	/* Half-Elf */
 #define RFE	0x000004	/* Elf */
