@@ -15331,6 +15331,10 @@ PROBLEM 40: I see black floor tiles that seem buggy. They can't be lit or they
 SOLUTION:   In a file explorer, navigate into the folder 'TomeNET/lib/user'
             and delete the file 'font-win.prf' in there.
 
+PROBLEM 41: Keyboard input on KDE/Linux is strangely laggy.
+SOLUTION:   This is a weird one, but what has worked is to use smaller text
+            fonts (at most 9X14).
+
 
 
 ==============================================================================
