@@ -1471,7 +1471,7 @@ void carry(int Ind, int pickup, int confirm)
 			return;
 		}
 
-		if (p_ptr->IDDC_logscum && o_ptr->owner != p_ptr->id) {
+		if (p_ptr->IDDC_logscum && !o_ptr->owner) {//o_ptr->owner != p_ptr->id) {
 			msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
 			return;
 		}
@@ -1612,7 +1612,7 @@ void carry(int Ind, int pickup, int confirm)
 			return;
 		}
 
-		if (p_ptr->IDDC_logscum && o_ptr->owner != p_ptr->id) {
+		if (p_ptr->IDDC_logscum && !o_ptr->owner) {//o_ptr->owner != p_ptr->id) {
 			msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
 			return;
 		}
