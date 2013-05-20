@@ -111,13 +111,16 @@ struct quest_info {
 	int change_stage[QI_MAX_STAGES];	/* automatically change to a different stage after handling everything that was to do in the current stage */
 
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
+	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
+	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
 	char talk[QI_MAX_STAGES][10][50];			/* n conversations a 10 lines a 50 characters */
 	char keywords[QI_MAX_STAGES][QI_MAX_KEYWORDS][30];	/* each convo may allow the player to reply with up to m keywords */
 	int keywords_stage[QI_MAX_STAGES][QI_MAX_KEYWORDS];	/*  ..which will bring the player to a different quest stage */
 	char yn[QI_MAX_STAGES];					/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
 	int y_stage[QI_MAX_STAGES], n_stage[QI_MAX_STAGES]	/*  ..which will bring the player to a different quest stage */
 
-	/* quest goals */
+	/* quest goals (Note: Usually OR'ed, except if 'xxx_random_pick' is set) */
+	bool kill_random_pick;						/* instead of demanding any of the eligible monster criteria, pick ONE randomly */
 	int kill_ridx[QI_MAX_STAGES][20];				/* kill certain monster(s) */
 	char kill_rchar[QI_MAX_STAGES][5];				/*  ..certain types */
 	byte kill_rattr[QI_MAX_STAGES][5];				/*  ..certain colours */
@@ -126,12 +129,14 @@ struct quest_info {
 	int kill_spawn[QI_MAX_STAGES], kill_spawn_loc[QI_MAX_STAGES];	/* actually spawn the monster(s) nearby! (QI_SPAWN_xxx) */
 	int kill_stage[QI_MAX_STAGES];					/* switch to a different quest stage on defeating the monsters */
 
-	int retrieve_otval[QI_MAX_STAGES], retrieve_osval[QI_MAX_STAGES];	/* retrieve certain item(s) */
-	int retrieve_opval[QI_MAX_STAGES], retrieve_obpval[QI_MAX_STAGES];
-	int retrieve_oname1[QI_MAX_STAGES], retrieve_oname2[QI_MAX_STAGES], retrieve_oname2b[QI_MAX_STAGES];
-	int retrieve_ovalue[QI_MAX_STAGES];
-	int retrieve_number[QI_MAX_STAGE];
-	int retrieve_stage[QI_MAX_STAGES];					/* switch to a different quest stage on retrieving the items */
+	bool retrieve_random_pick;							/* instead of demanding any of the eligible item criteria, pick ONE randomly */
+	int retrieve_otval[QI_MAX_STAGES][20], retrieve_osval[QI_MAX_STAGES][20];	/* retrieve certain item(s) */
+	int retrieve_opval[QI_MAX_STAGES][5], retrieve_obpval[QI_MAX_STAGES][5];
+	byte retrieve_oattr[QI_MAX_STAGES][5];						/*  ..certain colours (flavoured items only) */
+	int retrieve_oname1[QI_MAX_STAGES][20], retrieve_oname2[QI_MAX_STAGES][20], retrieve_oname2b[QI_MAX_STAGES][20];
+	int retrieve_ovalue[QI_MAX_STAGES][20];
+	int retrieve_number[QI_MAX_STAGE][20];
+	int retrieve_stage[QI_MAX_STAGES];						/* switch to a different quest stage on retrieving the items */
 
 	struct worldpos target_wpos;		/* kill/retrieve specifically at this world pos */
 	bool target_terrain_patch;		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
