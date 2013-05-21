@@ -2731,9 +2731,12 @@ static int Handle_login(int ind)
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (!is_admin(Players[i])) continue;
 
-			if (newly_created_msg)
-				msg_format(i, "\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name);
-			else
+			if (newly_created_msg) {
+				if (p_ptr->fruit_bat)
+					msg_format(i, "\374\377%c%s%s flaps wings into the world.", COLOUR_SERVER, title, p_ptr->name);
+				else
+					msg_format(i, "\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name);
+			} else
 				msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
 			if (namebuf1[0] && Players[i]->guild == p_ptr->guild) msg_print(i, namebuf1);
 		}
@@ -2747,9 +2750,12 @@ static int Handle_login(int ind)
 	/* Tell everyone about our new player */
 	for (i = 1; i < NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
-		if (newly_created_msg)
-			msg_format(i, "\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name);
-		else
+		if (newly_created_msg) {
+			if (p_ptr->fruit_bat)
+				msg_format(i, "\374\377%c%s%s flaps wings into the world.", COLOUR_SERVER, title, p_ptr->name);
+			else
+				msg_format(i, "\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name);
+		} else
 			msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
 
 		/* print notification message about guild-auto-add now */
@@ -2758,9 +2764,12 @@ static int Handle_login(int ind)
 
 #ifdef TOMENET_WORLDS
 	if (cfg.worldd_pjoin) {
-		if (newly_created_msg)
-			world_msg(format("\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name));
-		else
+		if (newly_created_msg) {
+			if (p_ptr->fruit_bat)
+				world_msg(format("\374\377%c%s%s flaps wings into the world.", COLOUR_SERVER, title, p_ptr->name));
+			else
+				world_msg(format("\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name));
+		} else
 			world_msg(format("\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name));
 	}
 #endif
