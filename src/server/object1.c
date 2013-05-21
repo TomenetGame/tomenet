@@ -2382,6 +2382,14 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_str(t, (k_name + k_ptr->name + 4));
 	}
 
+	if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY &&
+	    guilds[o_ptr->pval].members && !(mode & 256)) {
+		t = object_desc_str(t, " of ");
+		t = object_desc_chr(t, '\'');
+		t = object_desc_str(t, guilds[o_ptr->pval].name);
+		t = object_desc_chr(t, '\'');
+	}
+
 
 	/* Hack -- Append "Artifact" or "Special" names */
 	if (known) {
@@ -2551,7 +2559,6 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_str(t, ")");
 		}
 	}
-
 
 	/* Display the item like a weapon */
 	if (f3 & TR3_SHOW_MODS) show_weapon = TRUE;
