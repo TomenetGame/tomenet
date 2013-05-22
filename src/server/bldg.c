@@ -1916,9 +1916,9 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			}
 			break;
 		case BACT_BUYFIRESTONE:
-			amt = get_quantity("How many firestones (10 gold each)? ", 1000);
+			amt = get_quantity("How many firestones (2000 gold each)? ", 10);
 			if (amt > 0) {
-				bcost = amt * 10;
+				bcost = amt * 2000;
 				if(p_ptr->au >= bcost) {
 					paid = TRUE;
 					msg_print(Ind, "You have bought some firestones !");
