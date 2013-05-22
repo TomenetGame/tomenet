@@ -128,11 +128,11 @@ C:220:200:180
 I:21:0:c:128
 
 N:24:Enchant weapon
-C:3000:2800:2600
+C:30000:25000:20000
 I:23:0:w:0
 
 N:25:Enchant armour
-C:20000:17500:15000
+C:30000:25000:20000
 I:24:0:a:0
 
 N:26:Recharge item
@@ -156,12 +156,12 @@ N:30:Get share of stolen gold
 C:0:0:0
 I:7:2:g:0
 
-N:31:Enchant arrows
-C:2200:2000:1800
+N:31:Enchant ammo
+C:85000:75000:65000
 I:30:0:a:0
 
 N:32:Enchant bow
-C:4400:4000:3600
+C:35000:30000:25000
 I:31:0:b:0
 
 N:33:Recall to dungeon
@@ -245,18 +245,18 @@ C:5000:5000:5000
 I:37:0:r:0
 
 #for The Golden Flower
-N:50:Enchant arrows
-C:2200:2000:1600
+N:50:Enchant ammo
+C:80000:70000:60000
 I:30:0:a:0
 
 #for The Golden Flower
 N:51:Enchant bow
-C:4400:4000:1800
+C:32000:27000:22000
 I:31:0:b:0
 
 #for The Fountain
 N:52:Enchant armour
-C:24000:21000:18000
+C:32000:27000:22000
 I:24:0:a:0
 
 #for The Fountain

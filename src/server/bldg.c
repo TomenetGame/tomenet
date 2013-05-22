@@ -1168,14 +1168,11 @@ static bool compare_weapons(void)
  * sharpen arrows, repair armor, repair weapon
  * -KMW-
  */
-// static bool fix_item(int istart, int iend, int ispecific, bool iac, int ireward, bool set_reward)
 static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
                      int ireward, bool set_reward)
 {
 	player_type *p_ptr = Players[Ind];
 	int i;
-
-	//int j = 9;
 
 	/* Make it on par with scrolls at level 59 */
 	int maxenchant = (p_ptr->lev / 4), maxenchant_eff;
@@ -1183,8 +1180,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	if (maxenchant > 20) maxenchant = 20;
 
 	object_type *o_ptr;
-	char tmp_str[ONAME_LEN]; // , out_val[80];
-	bool repaired = FALSE;
+	char tmp_str[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, esp;
 
 #if 0
@@ -1195,96 +1191,63 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 		return (FALSE);
 	}
 #endif
+
 #if 0
-	clear_bldg(5,18);
-	strnfmt(tmp_str, 80,"  Based on your skill, we can improve up to +%d", maxenchant);
-	prt(tmp_str, 5, 0);
-	prt("Status", 7, 30);
-#endif
 	if (maxenchant <= 15) msg_format(Ind, "  Based on your skill, we can improve up to +%d", maxenchant);
 	else msg_format(Ind, "  Based on your skill, we can improve up to +%d (+15 for ammunition)", maxenchant);
+#endif
 
 	for (i = istart; i <= iend; i++) {
 		o_ptr = &p_ptr->inventory[i];
+
+		/* item in this equipment slot? */
+		if (!o_ptr->tval) continue;
+
+		if (ispecific > 0 && o_ptr->tval != ispecific) continue;
+
+		/* Artifacts cannot be enchanted. */
+		if (artifact_p(o_ptr)) continue;
+
+		/* Extract the flags */
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+		/* Unenchantable items always fail */
+		if (f5 & TR5_NO_ENCHANT) continue;
+
+		/* No easy fix for nothingness/morgul items */
+		if (cursed_p(o_ptr)) continue;
+
+		object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
+
 		maxenchant_eff = maxenchant;
 		if (is_ammo(o_ptr->tval) && (maxenchant_eff > 15)) maxenchant_eff = 15; /* CAP_ITEM_BONI */
 
-	        /* Unenchantable items always fail */
-	        if (f5 & TR5_NO_ENCHANT) continue;
-
-	        /* Artifacts cannot be enchanted. */
-	        if (artifact_p(o_ptr)) continue;
-
-		if (ispecific > 0) {
-			if (o_ptr->tval != ispecific)
-				continue;
-		}
-
-		if (o_ptr->tval) {
-			object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
-
-			/* Extract the flags */
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-			if ((o_ptr->name1 && (o_ptr->ident & ID_KNOWN)) ||
-					f5 & TR5_NO_ENCHANT)
-				msg_format(Ind, "%-40s: beyond our skills!", tmp_str);
-			else if (o_ptr->name1)
-				msg_format(Ind, "%-40s: in fine condition", tmp_str);
-			else
-			{
-				if ((iac) && (o_ptr->to_a <= -3))
-				{
-					msg_format(Ind, "%-40s: beyond repair, buy a new one", tmp_str);
-				}
-				else if ((iac) && (o_ptr->to_a < maxenchant))
-				{
-					o_ptr->to_a++;
-					msg_format(Ind, "%-40s: polished -> (%d)", tmp_str, o_ptr->to_a);
-					repaired = TRUE;
-				}
-				else if ((!iac) && ((o_ptr->to_h <= -3) || (o_ptr->to_d <= -3)))
-				{
-					msg_format(Ind, "%-40s: beyond repair, buy a new one", tmp_str);
-				}
-				/* Sharpen a weapon */
-				else if ((!iac) && ((o_ptr->to_h  < maxenchant_eff) ||
-					    (o_ptr->to_d < maxenchant_eff)))
-				{
-					if (o_ptr->to_h  < maxenchant_eff)
-						o_ptr->to_h++;
-					if (o_ptr->to_d < maxenchant_eff)
-						o_ptr->to_d++;
-					msg_format(Ind, "%-40s: sharpened -> (%d,%d)", tmp_str,
-					        o_ptr->to_h, o_ptr->to_d);
-					repaired = TRUE;
-				}
-				else
-					msg_format(Ind, "%-40s: in fine condition", tmp_str);
-			}
-//			prt(out_val,j++,0);
+		if (iac) {
+			if (!is_armour(o_ptr->tval)) continue;
+			if (o_ptr->to_a >= maxenchant_eff) continue;
+			o_ptr->to_a = maxenchant_eff;
+			msg_format(Ind, "Your %s has been enchanted to [+%d].", tmp_str, maxenchant_eff);
+			break;
+		} else {
+			if (!is_weapon(o_ptr->tval) && !is_ranged_weapon(o_ptr->tval) && !is_ammo(o_ptr->tval)) continue;
+			if (o_ptr->to_h >= maxenchant_eff && o_ptr->to_d >= maxenchant_eff) continue;
+			if (o_ptr->to_h < maxenchant_eff) o_ptr->to_h = maxenchant_eff;
+			if (o_ptr->to_d < maxenchant_eff) o_ptr->to_d = maxenchant_eff;
+			msg_format(Ind, "Your %s has been enchanted to (+%d,+%d).", tmp_str, maxenchant_eff, maxenchant_eff);
+			break;
 		}
 	}
 
-	if (!repaired) {
+	if (i > iend) {
 		msg_print(Ind, "You don't have anything appropriate.");
-//		msg_print(NULL);
-	} else {
-#if 0
-                if (set_reward)
-			p_ptr->rewards[ireward] = TRUE;
-#endif
-#if 0
-		msg_print("Press the spacebar to continue");
-		msg_print(NULL);
-#endif	// 0
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		return (FALSE);
 	}
-//	clear_bldg(5,18);
-
-	return (repaired);
+#if 0
+	if (set_reward) p_ptr->rewards[ireward] = TRUE;
+#endif
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	return (TRUE);
 }
 
 
@@ -1808,11 +1771,11 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 #endif	// 0
 
 		case BACT_ENCHANT_WEAPON:
-			paid = fix_item(Ind, INVEN_WIELD, INVEN_WIELD, 0, FALSE,
+			paid = fix_item(Ind, INVEN_WIELD, INVEN_BOW, 0, FALSE,
 					BACT_ENCHANT_WEAPON, set_reward);
 			break;
 		case BACT_ENCHANT_ARMOR:
-			paid = fix_item(Ind, INVEN_BODY, INVEN_FEET, 0, TRUE,
+			paid = fix_item(Ind, INVEN_ARM, INVEN_FEET, 0, TRUE,
 					BACT_ENCHANT_ARMOR, set_reward);
 			break;
 		/* needs work */
@@ -1895,7 +1858,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 #endif
 			break;
 		case BACT_ENCHANT_ARROWS:
-			paid = fix_item(Ind, INVEN_AMMO, INVEN_AMMO, TV_ARROW, FALSE,
+			paid = fix_item(Ind, INVEN_AMMO, INVEN_AMMO, 0, FALSE,
 					BACT_ENCHANT_ARROWS, set_reward);
 			break;
 		case BACT_ENCHANT_BOW:
