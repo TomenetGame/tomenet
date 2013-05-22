@@ -1178,10 +1178,10 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	//int j = 9;
 
 	/* XXX maxenchant can go up to +20 here, but maybe no pb :) */
-	int maxenchant = (p_ptr->lev / 5), maxenchant_eff;
+	int maxenchant = ((p_ptr->lev + 1) / 5), maxenchant_eff;
 
 	object_type *o_ptr;
-	char tmp_str[160]; // , out_val[80];
+	char tmp_str[ONAME_LEN]; // , out_val[80];
 	bool repaired = FALSE;
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -1218,8 +1218,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 		}
 
 		if (o_ptr->tval) {
-			object_desc(Ind, tmp_str, o_ptr, FALSE, 1);/* with long inscription, this will
-				crash if tmp_str is only [80], resulting in wrong items getting enchanted - C. Blue */
+			object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
 
 			/* Extract the flags */
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
