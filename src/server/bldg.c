@@ -1242,6 +1242,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 		msg_print(Ind, "You don't have anything appropriate.");
 		return (FALSE);
 	}
+s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
 #if 0
 	if (set_reward) p_ptr->rewards[ireward] = TRUE;
 #endif
