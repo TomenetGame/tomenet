@@ -8846,6 +8846,7 @@ Means of recharging:
 -Thingol artifact   (60..100 power, depending on magic device skill)
 -Shop service       (80 power)
 -Magic spell        (10..150 power)
+-Rune spell         (80..100 power)
 
 The power determines both, the chance of succeeding in recharging the item and
 the degree of recharging done to the item.
