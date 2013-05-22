@@ -5021,10 +5021,10 @@ Dol Guldur                   |  Shadow of Dol Guldur | Ring of the Durin
 Mount Doom                   |  -                    | -
 Nether Realm                 |  Zu-Aon               | Ring of Phasing
 
-(*) Angband does not have a designated final boss, but Tik'srvzllat actually
-does not appear before depth 127, so you can find him on the final floor of
-Angband, which ends at depth 127. In this light, Tik could be seen as Angband's
-final boss.
+(*) Angband does not have a designated final boss, but the unique monster
+Tik'srvzllat does not appear before depth 127. Since Angband ends at depth 127,
+you can find him on the final floor (if he actually spawns).
+In this light, Tik'srvzllat could be seen as Angband's final boss.
 
 
 
