@@ -1389,7 +1389,7 @@ struct store_action_type
 {
 	u32b name;                      /* Name (offset) */
 
-	s16b costs[3];                  /* Costs for liked people */
+	int costs[3];			/* Costs for hated/neutral/liked people */
 	char letter;                    /* Action letter */
 	s16b action;                    /* Action code */
 	s16b action_restr;              /* Action restriction */
@@ -1425,9 +1425,7 @@ typedef struct player_magic player_magic;
 struct player_magic
 {
 	s16b spell_book;		/* Tval of spell books (if any) */
-
 	s16b spell_stat;		/* Stat for spells (if any)  */
-
         magic_type info[64];	/* The available spells */
 };
 
