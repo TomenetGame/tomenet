@@ -4812,6 +4812,9 @@ The 1..9 are standard shops, namely..
         Enchant Services
                         These will enchant weapons, arrows, or all armour
                         parts you currently have equipped.
+                        The maximum enchantment bonus is actually your
+                        character level divided by 4, with the result capped
+                        at a maximum of +20 (therefore reached at level 80).
         Mining Supply Store
                         In the hazardous city of Khazad-Dum is a store that
                         offers some goods found to be useful by the miners
