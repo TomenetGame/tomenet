@@ -143,8 +143,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 			if (!true_artifact_p(o_ptr)) continue;
 
 			/* Ignore known items */
-//			if (object_known_p(Ind, o_ptr) && !admin) continue;
-			if (object_known_p(Ind, o_ptr)) continue;
+			if (object_known_p(Ind, o_ptr) && !admin) continue;
 
 			/* Skip "hidden" artifacts */
 			if (admin_artifact_p(o_ptr) && !admin) continue;
