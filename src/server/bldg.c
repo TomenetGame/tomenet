@@ -1177,8 +1177,10 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 
 	//int j = 9;
 
-	/* XXX maxenchant can go up to +20 here, but maybe no pb :) */
-	int maxenchant = ((p_ptr->lev + 1) / 5), maxenchant_eff;
+	/* Make it on par with scrolls at level 59 */
+	int maxenchant = (p_ptr->lev / 4), maxenchant_eff;
+	/* Avoid top level players getting pestered =P */
+	if (maxenchant > 20) maxenchant = 20;
 
 	object_type *o_ptr;
 	char tmp_str[ONAME_LEN]; // , out_val[80];
@@ -1198,8 +1200,9 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	strnfmt(tmp_str, 80,"  Based on your skill, we can improve up to +%d", maxenchant);
 	prt(tmp_str, 5, 0);
 	prt("Status", 7, 30);
-#endif	// 0
-	msg_format(Ind, "  Based on your skill, we can improve up to +%d", maxenchant);
+#endif
+	if (maxenchant <= 15) msg_format(Ind, "  Based on your skill, we can improve up to +%d", maxenchant);
+	else msg_format(Ind, "  Based on your skill, we can improve up to +%d (+15 for ammunition)", maxenchant);
 
 	for (i = istart; i <= iend; i++) {
 		o_ptr = &p_ptr->inventory[i];
