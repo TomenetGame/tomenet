@@ -4998,7 +4998,7 @@ The Training Tower           |  -                    | -
 Barrow-Downs                 |  Wight-King           | Stone of Lore
 Mordor                       |  -                    | -
 The Paths of the Dead        |  Feagwath             | Doomcaller
-Angband                      |  -                    | -
+Angband                      |  - (*)                | -
 ------Non-town dungeons------+-----------------------+-------------------------
 Death Fate                   |  -                    | -
 The Halls of Mandos          |  -                    | -
@@ -5020,6 +5020,11 @@ Erebor                       |  Smaug                | Nauglamir
 Dol Guldur                   |  Shadow of Dol Guldur | Ring of the Durin
 Mount Doom                   |  -                    | -
 Nether Realm                 |  Zu-Aon               | Ring of Phasing
+
+(*) Angband does not have a designated final boss, but Tik'srvzllat actually
+does not appear before depth 127, so you can find him on the final floor of
+Angband, which ends at depth 127. In this light, Tik could be seen as Angband's
+final boss.
 
 
 
