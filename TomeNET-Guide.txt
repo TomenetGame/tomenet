@@ -10142,7 +10142,7 @@ Warrior is strongly recommended.
     Multi-hued  Random of       lightning (5), frost (10), fire (15),
                 those above     acid (20), poison (25)
     Bronze      Confusion       confusion (5), paralysis (10), reflection (20)
-    Silver      Frost           cold (5), poison (10), reflection (20)
+    Silver      Inertia         cold (5), poison (10), reflection (20)
     Gold        Sound           acid (5), sound (10), reflection (20)
     Law         Shards          shards (5), sound (15)
     Chaos       Chaos           confusion (5), chaos (15), disenchantment (20)
