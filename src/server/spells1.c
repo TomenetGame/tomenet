@@ -912,6 +912,10 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 		}
 	}
 
+#ifdef ENABLE_SELF_HIGHLIGHTING
+	/* flicker player for a moment, to allow for easy location */
+	if (p_ptr->hilite_self >= 0) p_ptr->hilite_self = cfg.fps / 6;
+#endif
 
 	/* Redraw the new spot */
 	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
@@ -1041,6 +1045,11 @@ void teleport_player_to(int Ind, int ny, int nx)
 
 	/* Redraw the old spot */
 	everyone_lite_spot(wpos, oy, ox);
+
+#ifdef ENABLE_SELF_HIGHLIGHTING
+	/* flicker player for a moment, to allow for easy location */
+	if (p_ptr->hilite_self >= 0) p_ptr->hilite_self = cfg.fps / 8;
+#endif
 
 	/* Redraw the new spot */
 	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
