@@ -142,13 +142,10 @@ void display_inventory(void)
 static int get_stock(int *com_val, cptr pmt, int i, int j)
 {
         char    command;
-
         char    out_val[160];
 
-
         /* Paranoia XXX XXX XXX */
-        c_msg_print(NULL);
-
+        clear_topline_forced();
 
         /* Assume failure */
         *com_val = (-1);

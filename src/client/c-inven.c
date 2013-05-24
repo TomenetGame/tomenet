@@ -702,10 +702,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 
 
 	/* Fix the screen if necessary */
-	if (command_see)
-	{
-		Term_load();
-	}
+	if (command_see) Term_load();
 
 	/* Fix the top line */
 	topline_icky = FALSE;
@@ -715,6 +712,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 
 	/* Hack -- Cancel "display" */
 	command_see = FALSE;
+
 
 
 	/* Forget the item_tester_tval restriction */
@@ -729,7 +727,9 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 
 
 	/* Clear the prompt line */
-	clear_topline();
+	if (!item) clear_topline_forced(); //special case: ESCaped instead of specifying an item
+	else clear_topline();
+
 
 	/* Cease command macro exception */
 //	inkey_get_item = FALSE;

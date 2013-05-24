@@ -1333,7 +1333,7 @@ errr file_character(cptr name, bool full)
 	{
 		/* Message */
 		c_msg_print("Character dump failed!");
-		c_msg_print(NULL);
+		clear_topline_forced();
 
 		/* Error */
 		return (-1);
@@ -1464,7 +1464,7 @@ errr file_character(cptr name, bool full)
 
 	/* Message */
 	c_msg_print("Character dump successful.");
-	c_msg_print(NULL);
+	clear_topline_forced();
 
 	/* Success */
 	return (0);

@@ -557,6 +557,7 @@ extern void Send_paste_msg(char *msg);
 extern void check_immediate_options(int i, bool yes, bool playing);
 extern void prompt_topline(cptr prompt);
 extern void clear_topline(void);
+extern void clear_topline_forced(void);
 extern void restore_prompt(void); /* DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
 
 /* c-store.c */

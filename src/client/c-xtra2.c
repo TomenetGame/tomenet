@@ -705,7 +705,7 @@ errr dump_messages(cptr name, int lines, int mode)
 	{
 		/* Message */
 		c_msg_print(format("%s dump failed!", what));
-		c_msg_print(NULL);
+		clear_topline_forced();
 
 		/* Error */
 		return (-1);
@@ -726,7 +726,7 @@ errr dump_messages(cptr name, int lines, int mode)
 
 	/* Message */
 	c_msg_print(format("%s dump successful.", what));
-	c_msg_print(NULL);
+	clear_topline_forced();
 
 	/* Success */
 	return (0);

@@ -769,7 +769,7 @@ void cmd_locate(void)
 	Send_locate(0);
 
 	/* Clear */
-	c_msg_print(NULL);
+	clear_topline_forced();
 }
 
 void cmd_search(void)
@@ -2177,7 +2177,6 @@ void cmd_check_misc(void)
 			default:
 				bell();
 		}
-		c_msg_print(NULL);
 	}
 	Term_load();
 }
@@ -2437,7 +2436,7 @@ static void cmd_guild_options() {
 		}
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 
 	/* Reload screen */
@@ -2610,7 +2609,7 @@ void cmd_party(void)
 		}
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 
 	/* Reload screen */
@@ -2765,7 +2764,7 @@ static void cmd_house_chown(int dir)
 		default:
 			bell();
 		}
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 }
 
@@ -2874,7 +2873,7 @@ void cmd_purchase_house(void)
 			default:
 				bell();
 		}
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 	Term_load();
 }
@@ -3006,7 +3005,7 @@ static void cmd_master_aux_level(void)
 		}
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 }
 
@@ -3078,7 +3077,7 @@ static void cmd_master_aux_generate_vault(void)
 		Send_master(MASTER_GENERATE, buf);
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 }
 
@@ -3127,7 +3126,7 @@ static void cmd_master_aux_generate(void)
 		}
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 }
 
@@ -3224,7 +3223,7 @@ static void cmd_master_aux_build(void)
 		if (buf[0]) Send_master(MASTER_BUILD, buf);
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 }
 
@@ -3285,7 +3284,7 @@ static char * cmd_master_aux_summon_orcs(void)
 		if (buf[0]) return buf;
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 
 	/* escape was pressed, no valid orcs types specified */
@@ -3360,7 +3359,7 @@ static char * cmd_master_aux_summon_undead_low(void)
 		if (buf[0]) return buf;
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 
 	/* escape was pressed, no valid types specified */
@@ -3440,7 +3439,7 @@ static char * cmd_master_aux_summon_undead_high(void)
 		if (buf[0]) return buf;
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 
 	/* escape was pressed, no valid orcs types specified */
@@ -3660,7 +3659,7 @@ static void cmd_master_aux_summon(void)
 		}
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 }
 
@@ -3735,7 +3734,7 @@ static void cmd_master_aux_player()
 		if (buf[0]) Send_master(MASTER_PLAYER, buf);
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 }
 
@@ -3833,7 +3832,7 @@ static void cmd_master_aux_system()
 		}
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 }
 
@@ -3900,7 +3899,7 @@ static void cmd_master(void)
 		}
 
 		/* Flush messages */
-		c_msg_print(NULL);
+		clear_topline_forced();
 	}
 
 	/* Reload screen */

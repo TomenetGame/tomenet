@@ -2084,7 +2084,7 @@ int Receive_item(void) {
 			break;
 		}
 
-		c_msg_print(NULL);
+		clear_topline();
 		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN))) return 1;
 		Send_item(item);
 	} else {
@@ -2105,9 +2105,9 @@ int Receive_spell_request(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &item)) <= 0) return n;
 
 	if (!screen_icky && !topline_icky) {
-		c_msg_print(NULL);
-	       /* Ask for a spell, allow cancel */
-	        if ((spell = get_school_spell("choose", &item)) == -1) return 1;
+		clear_topline();
+		/* Ask for a spell, allow cancel */
+		if ((spell = get_school_spell("choose", &item)) == -1) return 1;
 		Send_spell(item, spell);
 	} else {
 		if ((n = Packet_printf(&qbuf, "%c%d", ch, item)) <= 0) return n;

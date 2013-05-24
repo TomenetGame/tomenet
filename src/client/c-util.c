@@ -1839,8 +1839,9 @@ bool get_string(cptr prompt, char *buf, int len)
 	res = askfor_aux(buf, len, askfor_mode);
 
 	/* Clear prompt */
-	if (askfor_mode & ASKFOR_CHATTING) prt("", 0, 0);
-	else clear_topline();
+	if (askfor_mode & ASKFOR_CHATTING) clear_topline_forced();
+	else if (res) clear_topline(); /* exited via confirming */
+	else clear_topline_forced(); /* exited via ESC */
 
 	/* restore responsiveness to hybrid macros */
 	inkey_msg = inkey_msg_old;
@@ -1920,7 +1921,7 @@ void request_command() {
 	if (!cmd) return;
 
 	msg_flag = FALSE;
-	c_msg_print(NULL);
+	clear_topline();
 
 #ifndef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 	/* Clear top line */
@@ -2785,25 +2786,25 @@ void c_message_add_msgnochat(cptr str)
  */
 void c_msg_print(cptr msg) {
 	int n, x, y;
-	char *t;
 	char buf[1024];
+	char *t;
+
+	/* using clear_topline() here prevents top-line clearing via c_msg_print(NULL) */
+	if (!topline_icky) clear_topline();
+
+	/* No message */
+	if (!msg) return;
 
 	/* Copy it */
-	if (msg) strcpy(buf, msg);
+	strcpy(buf, msg);
 	/* mark beginning of text to output */
 	t = buf;
 
 	/* Remember cursor position */
 	Term_locate(&x, &y);
 
-	/* using clear_topline() here sprevent top-line clearing via c_msg_print(NULL) */
-	if (!topline_icky) clear_topline();
-
 	/* Message length */
-	n = (msg ? strlen(msg) : 0);
-
-	/* No message */
-	if (!msg) return;
+	n = strlen(msg);
 
 	/* Paranoia */
 	if (n > 1000) return;
@@ -7330,6 +7331,10 @@ void clear_topline(void) {
 #endif
 	prt("", 0, 0);
 	//last_prompt_macro = parse_macro; not needed (it's just done in next prompt_topline call that follows)
+}
+void clear_topline_forced(void) {
+	last_prompt[0] = 0;
+	prt("", 0, 0);
 }
 #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 /* If a macro failed while waiting for input at topline prompt,
