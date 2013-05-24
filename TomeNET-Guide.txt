@@ -741,7 +741,8 @@ They all start with a slash '/' hence they're called slash commands:
             players, so they know why you are currently AFK or when you will
             be back.
 
-/bbs <text> Add a line of text to the in-game bulletin board system. Players
+/bbs <text>
+            Add a line of text to the in-game bulletin board system. Players
             can look at the board by pressing the '!' key.
             (You can verify or compare the date with the /time command.)
             If <text> is omitted, the current BBS contents will be shown, same
@@ -816,10 +817,12 @@ They all start with a slash '/' hence they're called slash commands:
 
 /evinfo     Displays information about all ongoing events.
 
-/evinfo <#> Displays information about the specific event number #.
+/evinfo <#>
+            Displays information about the specific event number #.
             Note: If you log out, your sign-up is cancelled automatically.
 
-/evsign <#> Signs you up for the event number #.
+/evsign <#>
+            Signs you up for the event number #.
             Depending on the event, you might need to specify additional
             parameters after the number. If that is the case, you'll see
             a message telling you so, and speficying details what's missing.
@@ -903,7 +906,8 @@ They all start with a slash '/' hence they're called slash commands:
             by pressing '@', indicating that this player currently cannot read
             normal chat messages.)
 
-/info <msg> Sets an informative message that is displayed to other players in
+/info <msg>
+            Sets an informative message that is displayed to other players in
             '@' screen, similar to an afk-message, except this message is
             displayed when you're not afk.
             For example do:  /info Want to team up for Mordor!
@@ -1094,9 +1098,10 @@ or shorter: /tym [rs]
 /at         Apply auto-inscription settings to current inventory.
  (/autotag)
 
-/undoskills Allows you to undo the skill points you assigned in 'G' menu last
-            time. Use this to correct points you accidentally put into a wrong
-            skill.
+/undoskills
+            A skill reset function, allowing you to undo the last couple of
+            skill points you assigned in 'G' menu. Use this to correct points
+            you accidentally put into a wrong skill.
             NOTE: Logging off or gaining another level will reset undoskills,
             making it impossible to undo points spent previously.
             Also, it can only be used ONCE per level, so make sure you get your
