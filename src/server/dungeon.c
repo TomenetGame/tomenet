@@ -1566,7 +1566,7 @@ static void init_day_and_night() {
 
 	hour = ((turn / HOUR) % 24);
 
-	if ((hour >= SUNRISE) && (hour <= NIGHTFALL) && !season_halloween) {
+	if ((hour >= SUNRISE) && (hour < NIGHTFALL) && !season_halloween) {
 		sun_rises();
 	} else {
 		night_falls();
