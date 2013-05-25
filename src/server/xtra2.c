@@ -2725,7 +2725,7 @@ bool set_stun(int Ind, int v)
 			/* Knocked out */
 			case 3:
 			msg_format_near(Ind, "%s has been knocked out.", p_ptr->name);
-			msg_print(Ind, "You have been knocked out.");
+			msg_print(Ind, "\377rYou have been knocked out.");
 			s_printf("%s EFFECT: Knockedout %s.\n", showtime(), p_ptr->name);
 			break;
 		}
