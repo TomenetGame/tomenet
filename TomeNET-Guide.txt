@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. May 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. May 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -2191,7 +2191,14 @@ create your own sound and music packs.
 
 All audio files are in the sub-folders 'sound' and 'music' in the folder
 TomeNET/lib/xtra/. You can just delete or replace the sound files and it'll
-apply as soon as you start/restart the game.
+apply as soon as you start/restart the game. To convert your own sound files
+to the appropriate format of already existing files, when you overwrite them,
+use an audio editor, for example:
+
+'Goldwave' is a good sound editor for Windows OS, which is free to use
+  (although it asks for registration, but that's just optional.)
+Alternatively, the free open source audio editor 'Audacity' is available
+  for Linux, OSX and Windows.
 
 For more specific editing, open the files 'sound.cfg' (in the sound folder) or
 'music.cfg' (in the music folder, if a music pack has been installed) in any
@@ -2200,11 +2207,41 @@ fine-tuning your audio. Both cfg files actually begin with some instructions
 on what file types are supported and about the structure of the files aka how
 to modify/add entries correctly.
 
-For example if you want to disable a certain sound effect, open sound.cfg in
-your text editor, locate the sound effect, and just put a '#' symbol at the
-beginning of the line - that will effectively disable the whole line.
+For example if you want to disable a certain sound effect temporarily, open
+sound.cfg in your text editor, locate the sound effect, and just put a '#'
+symbol at the beginning of the line - that will effectively disable the whole
+line. (Of course you could also just rename the actual sound file instead of
+editing the cfg file; that way it cannot be loaded by the game anymore.)
 
-Note: Do not modify the file audio.lua, it has nothing to do with editing your
+If you want to edit sound or music configuration files in detail, you will
+probably be starting off in one of these two situations:
+
+A) You already have the official sound/music packs installed.
+
+   In this case you can just happily edit the files sound.cfg and music.cfg
+   (found in sub-folder TomeNET/lib/xtra/sound and TomeNET/lib/xtra/music
+   respectively) if you want to change the actual filenames.
+
+B) You have no packs installed. In this case, you will have pretty bare example
+   configuration files in these two folders mentioned in 'A)', which are named
+   sound.cfg.default and music.cfg.default.
+   What you have to do in this case is:
+   1) Do not edit these default files. Instead, make a copy of each, and call
+      those copies 'sound.cfg' and 'music.cfg' respectively, and edit these!
+   2) Since they're still pretty empty, you will have no ideas of the sound and
+      music event names, save for the sound effects 'page', 'warning' and
+      'greeting' which are specified by default.
+      So to find out all the other event names, open the file 'audio.lua' in
+      any text editor. This file is found in folder TomeNET/lib/scpt/.
+      Now you can just add new lines to your sound.cfg and music.cfg files
+      using the event names you see in audio.lua, in the same manner as the
+      three already existing entries in sound.cfg.
+
+      MAKE SURE you read the instructions written in the beginning of the files
+      sound.cfg and music.cfg. They also tell you which audio formats you can
+      use.
+
+Note: Do not MODIFY the file audio.lua, it has nothing to do with editing your
       sound or music. Don't worry though if you accidentally modified it, it'll
       be automatically restored next time you log on to the server.
 
