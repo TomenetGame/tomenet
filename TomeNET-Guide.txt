@@ -11863,7 +11863,7 @@ Istar schools:
     Phase Door      Teleports you on a small scale range.           (project)
                     Required skill level for first spell level: 2.
 
-    Disarm          Destroys doors and traps around you.
+    Disarm          Destroys traps and visible doors around you.
                     Required skill level for first spell level: 5.
 
     Teleport        Teleports you within the level.                 (project)
@@ -12283,7 +12283,8 @@ Mindcraft schools:
                     damaging and stunning him.
                     Required skill level for first spell level: 1.
 
-    Psychokinesis   Destroys traps by psychokinetic manipulation.
+    Psychokinesis   Destroys traps and locks by psychokinetic manipulation,
+                    also revealing secret doors in the process.
                     Required skill level for first spell level: 3.
 
     Autokinesis I   Teleports you within a small range.
