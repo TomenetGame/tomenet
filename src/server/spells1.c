@@ -2351,18 +2351,24 @@ int equip_damage(int Ind, int typ) {
 	player_type	*p_ptr = Players[Ind];
 	object_type	*o_ptr = NULL;
 	char		o_name[ONAME_LEN];
+	int		shield_bonus = 0;
 
 	if (safe_area(Ind)) return(FALSE);
 	if (p_ptr->admin_dm) return(FALSE);
 
 	/* Pick a (possibly empty) inventory slot */
-	switch (randint(6)) {
-	case 1: o_ptr = &p_ptr->inventory[INVEN_BODY]; break;
-	case 2: o_ptr = &p_ptr->inventory[INVEN_ARM]; break;
-	case 3: o_ptr = &p_ptr->inventory[INVEN_OUTER]; break;
-	case 4: o_ptr = &p_ptr->inventory[INVEN_HANDS]; break;
-	case 5: o_ptr = &p_ptr->inventory[INVEN_HEAD]; break;
-	case 6: o_ptr = &p_ptr->inventory[INVEN_FEET]; break;
+//	switch (rand_int(is_weapon(p_ptr->inventory[INVEN_ARM].tval) ? 5 : 6)) { /* in case of DUAL_WIELD */
+	switch (rand_int(p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD ? 6 : 5)) { /* in case of DUAL_WIELD */
+	case 0: o_ptr = &p_ptr->inventory[INVEN_BODY]; break;
+	case 1: o_ptr = &p_ptr->inventory[INVEN_OUTER]; break;
+	case 2: o_ptr = &p_ptr->inventory[INVEN_HANDS]; break;
+	case 3: o_ptr = &p_ptr->inventory[INVEN_HEAD]; break;
+	case 4: o_ptr = &p_ptr->inventory[INVEN_FEET]; break;
+	case 5: o_ptr = &p_ptr->inventory[INVEN_ARM];
+#ifdef USE_NEW_SHIELDS
+		shield_bonus = o_ptr->to_a;
+#endif
+		break;
 	}
 
 	/* Nothing to damage */
@@ -2379,7 +2385,7 @@ int equip_damage(int Ind, int typ) {
 	}
 
 	/* No damage left to be done */
-	if (o_ptr->ac + o_ptr->to_a <= 0) return (FALSE);
+	if (o_ptr->ac + o_ptr->to_a + shield_bonus <= 0) return (FALSE);
 
 	/* Describe */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -2432,7 +2438,11 @@ int shield_takes_damage(int Ind, int typ) {
 	}
 
 	/* No damage left to be done */
+#ifdef USE_NEW_SHIELDS
+	if (o_ptr->ac + o_ptr->to_a * 2 <= 0) return (FALSE);
+#else
 	if (o_ptr->ac + o_ptr->to_a <= 0) return (FALSE);
+#endif
 
 	/* Describe */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
