@@ -39,7 +39,7 @@ DISARM = add_spell
                 	return "rad "..(1 + get_level(Ind, DISARM, 4, 0))
 	end,
         ["desc"] =	{
-        		"Destroys doors and traps",
+        		"Destroys traps and visible doors",
         }
 }
 

@@ -1725,6 +1725,7 @@ G:?:d
 I:70:39:0
 W:10:0:5:50
 A:10/1
+D:Destroys traps and visible doors.
 
 N:205:Artifact Creation
 G:?:d
@@ -2365,6 +2366,7 @@ I:65:5:0
 W:10:0:10:300
 A:10/1
 P:0:1d1:0:0:0
+D:Destroys traps and visible doors.
 
 N:282:Magic Missile
 G:-:d
@@ -2402,6 +2404,7 @@ I:65:4:0
 W:20:0:10:300
 A:20/1
 P:0:1d1:0:0:0
+D:Destroys traps and breaks locks, revealing secret doors.
 
 N:287:Lightning Balls
 G:-:d
@@ -3028,6 +3031,7 @@ I:66:14:50
 W:35:0:15:2100
 A:35/1
 P:0:1d1:0:0:0
+D:Destroys traps and breaks locks, revealing secret doors.
 
 N:366:Lightning Balls
 G:-:d

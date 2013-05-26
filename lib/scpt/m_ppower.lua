@@ -137,7 +137,8 @@ MDISARM = add_spell
 			return ""
 			end,
 	["desc"] =	{
-			"Destroys traps by psychokinetic manipulation",
+			"Destroys traps and locks by psychokinetic manipulation,",
+			"also revealing secret doors in the process.",
 	}
 }
 
