@@ -6148,14 +6148,16 @@ parry chance a good deal.
 (5.1a) Melee weapon types
 -------------------------
 As mentioned previously, there are four weapon classes:
-Swords, axes, blunt weapons, polearms.
+Swords, axes, blunt weapons (whips, hammers, morning stars etc.), polearms.
 
 You may wonder which one to choose and why. In general, if your character is
 especially skilled at one of the four masteries you might want to pick that one
 to save skill points.
 
 Also, priests cannot use edged weapons that aren't 'blessed' (a special magical
-property, ie ego-power), so they'll usually use blunt weapons only.
+property, ie ego-power), so if the player wants to make a melee-oriented priest,
+he will usually pick blunt weapons (or 'martial arts' instead, for weaponless
+combat, making more for a monk-style character).
 
 However, if you have a choice or don't care about a few skill points more, you
 may want to consider the following table to help you make a decision:
