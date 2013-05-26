@@ -9746,16 +9746,20 @@ Note that not every skill is available to every profession (class).
                                 a harder time to discover your traps.
                                 Last but not least you learn to optimize your
                                 traps for higher damage output.
-
                                 See (4.7) for details about monster traps.
-                                Trapping also improves your disarming ability,
-                                making it safer to disarm traps via the manual
-                                disarm command. (The experience you gain from
-                                manually disarming traps is not affected by the
-                                skill but only by the traps' level).
 
-                                Also gives you a chance to salvage a trap kit
-                                from any trap when you disarm it!
+                                Trapping also improves your disarming ability,
+                                making it safer to pick locks and to disarm
+                                traps via the manual disarm command. (The
+                                experience you gain from manually disarming
+                                traps is not affected by the skill but only by
+                                the traps' level).
+                                The chance to identify a trap on disarming it
+                                will also increase with higher Trapping skill.
+
+                                Last but not least Trapping gives you a chance
+                                to salvage a trap kit from any trap when you
+                                disarm it!
 
 +Health                         Increases your hit point regeneration rate:
                                 (skill_level * 2)% chance to regenerate 1.5x
