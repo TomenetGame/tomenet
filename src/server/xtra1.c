@@ -500,7 +500,7 @@ static void prt_bpr(int Ind)
 	case CLASS_RANGER:
 	case CLASS_ROGUE:
 	case CLASS_MINDCRAFTER:
-		if (p_ptr->num_blow == 1) attr = TERM_SLATE;
+		if (p_ptr->num_blow == 1) attr = TERM_ORANGE;
 		else if (p_ptr->num_blow == 2) attr = TERM_YELLOW;
 		break;
 	case CLASS_SHAMAN:
