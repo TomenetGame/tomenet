@@ -1721,6 +1721,10 @@ new ranks as their experience grows, allowing them to learn new abilities and
 to become stronger. Morgoth is said not to show up until his servant Sauron,
 the Sorceror has been killed. (See 1.5 for more information about Morgoth.)
 
+On their journey through wilderness and remote towns, towers and dungeons,
+characters will gain experience points that increase their level up to 50.
+After defeating Morgoth, they will be able to advance further up to level 99.
+
 Players who defeat Morgoth, become 'winners' and get the title of King and
 Queen respectively, or Emperor/Empress if their character is of unworldly or
 hellish mode.
