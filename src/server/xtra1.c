@@ -5019,14 +5019,14 @@ void calc_boni(int Ind)
 			if (!p_ptr->inventory[INVEN_ARM].k_idx) p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 25);
 			else p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 5);
 		} else if (k_info[o_ptr->k_idx].flags4 & TR4_COULD2H) {
-			if (!p_ptr->inventory[INVEN_ARM].k_idx) p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 20);
+			if (!p_ptr->inventory[INVEN_ARM].k_idx || !p_ptr->inventory[INVEN_WIELD].k_idx)
+				p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 20);
 			else p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 10);
 		} else {
 			p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 10);
 		}
 		/* for dual-wielders: */
-		if ((p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) &&
-		    !p_ptr->rogue_heavyarmor)
+		if ((p_ptr->dual_wield && p_ptr->dual_mode && !p_ptr->rogue_heavyarmor)
 			p_ptr->weapon_parry += get_skill_scale(p_ptr, SKILL_MASTERY, 10);
  #else /*..we add some base chance too (mainly for PvP!) */
 		if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) {
@@ -5042,7 +5042,7 @@ void calc_boni(int Ind)
 			p_ptr->weapon_parry = 5 + get_skill_scale(p_ptr, SKILL_MASTERY, 10);
 		}
 		/* for dual-wielders, get a parry bonus for second weapon: */
-		if (p_ptr->dual_wield && !p_ptr->rogue_heavyarmor)
+		if (p_ptr->dual_wield && p_ptr->dual_mode && !p_ptr->rogue_heavyarmor)
 			//p_ptr->weapon_parry += 5 + get_skill_scale(p_ptr, SKILL_MASTERY, 5);//was +0(+10)
 			p_ptr->weapon_parry += 10;//pretty high, because independent of mastery skill^^
  #endif
