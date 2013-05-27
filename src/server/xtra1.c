@@ -3322,6 +3322,8 @@ void calc_boni(int Ind)
 		p_ptr->resist_pois = TRUE;
 		p_ptr->hold_life = TRUE;
 
+		p_ptr->reduce_insanity = 1;
+
 		if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
 		/* sense surroundings without light source! (virtual lite / dark light) */
 		p_ptr->cur_vlite = 1 + p_ptr->lev / 10;
