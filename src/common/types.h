@@ -2498,6 +2498,9 @@ struct player_type
 
 	s16b ac;		/* Base ac */
 
+	/* just for easy LUA handling; not game-play relevant: */
+	s16b overall_tohit_r, overall_todam_r, overall_tohit_m, overall_todam_m;
+
 	s16b see_infra;		/* Infravision range */
 
 	s16b skill_dis;		/* Skill: Disarming */
