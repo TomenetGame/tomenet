@@ -4793,10 +4793,11 @@ The 1..9 are standard shops, namely..
 2       Armoury         Offers various basic armour. Rarely excellent pieces.
 3       Weapon Shop     Offers various basic weapons. Rarely excellent pieces.
 4       Temple          Player ghosts will be revived here, and receive some
-                        money. The temple also sells weapons for priests,
-                        and a selection of scrolls and potions.
+                        money. The temple also sells a selection of blunt
+                        weaponry, scrolls and potions.
                         The temple priest will also attempt to cure, heal or
                         feed you if you enter the temple in bad condition.
+
                         Since 4.4.9 the temple also offers you to toggle
                         'Instant Resurrection', a new feature that is only
                         available for everlasting players and will immediately
