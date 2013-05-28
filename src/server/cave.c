@@ -2905,7 +2905,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 				/* Handle "torch-lit" grids */
 				else if (((f_ptr->flags2 & FF2_LAMP_LITE) || lite_snow) &&
-				    (*w_ptr & CAVE_LITE)) {
+				    (c_ptr->info & CAVE_LITE)) {
 					/* Torch lite */
 					if (p_ptr->view_yellow_lite) {
 #ifdef CAVE_LITE_COLOURS
