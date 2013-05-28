@@ -5951,6 +5951,7 @@ void process_player_change_wpos(int Ind)
 	update_lite(Ind);
 	update_view(Ind);
 	update_monsters(TRUE);
+	update_players();
 
 	/* Tell him that he should beware */
 	if (wpos->wz == 0 && !istown(wpos)) {
