@@ -1012,6 +1012,8 @@ void prt_extra_status(cptr status)
    the user probably can't see.
    Note that this pseudo-packet loss displaying 10 '+'
    is same as if we had 450+ ms lag anyway, so no harm.*/
+/* Enable bright red colour for actual packet loss? */
+#define BRIGHTRED_PACKETLOSS
 void prt_lagometer(int lag) {
 	int attr = TERM_L_GREEN;
 	int num;
@@ -1027,6 +1029,20 @@ void prt_lagometer(int lag) {
 		return;
 	}
 
+#ifdef BRIGHTRED_PACKETLOSS
+	y = 0;
+	for (x = 0; x < 60; x++)
+		if (ping_times[x] == -1) y++;
+
+	/* Latest ping might not be lost yet */
+	if (ping_times[0] == -1) y--;
+
+	/* Real packet loss colours bright red */
+	if (y) {
+		attr = TERM_L_RED;
+		num = 10;
+	} else {
+#endif
 	num = lag / 50 + 1;
 	if (num > 10) num = 10;
 
@@ -1037,6 +1053,9 @@ void prt_lagometer(int lag) {
 	else if (num >= 7) attr = TERM_ORANGE;
 	else if (num >= 5) attr = TERM_YELLOW;
 	else if (num >= 3) attr = TERM_GREEN;
+#ifdef BRIGHTRED_PACKETLOSS
+	}
+#endif
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
