@@ -10177,8 +10177,8 @@ Warrior is strongly recommended.
     void jump gates and may get hurt by it when they travel through it,
     perceiving it as "cold" even if they resist or are immune to normal frost.
     Armour can help to mitigate this effect somewhat.
-    Draconians possess a certain trait from birth, depending on their lineage,
-    providing them specific intrinsic resistances and elemental breath, which
+    Draconians possess a certain lineage trait from birth, providing them with
+    intrinsic resistances and an elemental breath (learned at level 8) which
     they can use if they have sufficient stamina and which is a physical
     ability of theirs, not a magic spell. This breath weapon cannot be used
     while polymorphed, except if the form is a reptile (including Hydras) or an
