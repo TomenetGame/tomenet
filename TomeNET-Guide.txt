@@ -3546,7 +3546,7 @@ Here is a list of all available ability codes:
 (included in '6' now: 9       Create ammunition (for archery skill))
 10      Set a monster trap (for trapping skill, see (4.7))
 11      Cast a magic spell / recite a holy prayer
-12      Draw a rune (for runecraft).
+12      Draw a rune (for runecraft, see '(6.8b) Runes & Runemastery')
 13      Change combat stance (for combat stances skill)
 14      Check your chances of parrying and blocking (for melee fighters,
         see (6.11) for details about these abilities)
@@ -10722,7 +10722,7 @@ vary. For example a warrior cannot learn magic spells.
     use of runic 'sigils', applying some resistance or boni according to the
     applied element.
 
-    For more information about runecraft, see '(6.8c) Runespell tables'.
+    For more information about runecraft, see '(6.8b) Runes & Runemastery'.
     Note that runemasters don't need actual runes in their inventory to cast
     runespells. However, having the physical runes present can mitigate spell
     backlash and are required for the 'sigil' type runespell.
