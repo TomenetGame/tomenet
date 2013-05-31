@@ -108,6 +108,9 @@ void divine_vengeance(int Ind, int power) {
 			if (p_ptr->party != q_ptr->party) continue;
 
 			teleport_player_to(i, p_ptr->py, p_ptr->px);
+			
+			/* Have a present from the nether world for each player you teleport! */
+			summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 100, 0, 0, cfg.clone_summoning);
 		}
 		/* monsters TELE_TO */
 		project_los(Ind, GF_TELE_TO, 0, " commands return");
@@ -164,7 +167,10 @@ void divine_gateway(int Ind) {
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
 
 		//XXX call set_recall ?
-		if (istown(&p_ptr->wpos)) return;
+		if (istown(&p_ptr->wpos) || !p_ptr->wpos.wz) {
+			msg_format(Ind, "\377wThis spell has no effect here."); 
+			return;
+		}
 
 		set_recall_timer(Ind, 1);
 
@@ -185,9 +191,10 @@ void divine_gateway(int Ind) {
 		struct worldpos *wpos = &(p_ptr->wpos);
 		cave_type **zcave;
 
-		if (!wpos->wz) return;
-		if (!(zcave = getcave(wpos))) return;
-		if (!cave_clean_bold(zcave, p_ptr->py, p_ptr->px)) return;
+		if (!wpos->wz || !(zcave = getcave(wpos)) || !cave_clean_bold(zcave, p_ptr->py, p_ptr->px)) {
+			msg_format(Ind, "\377wThis spell has no effect here.");
+			return;
+		}
 
 		if (p_ptr->voidx && p_ptr->voidy) {
 			if (place_between_targetted(wpos, p_ptr->py, p_ptr->px, p_ptr->voidy, p_ptr->voidx)) {

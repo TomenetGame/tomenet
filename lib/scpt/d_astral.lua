@@ -203,7 +203,9 @@ VENGEANCE = add_spell
 	end,
 	["desc"] =	{
 			"Enlightened: summons party member on the same area to you",
-			"             (Also teleports all monsters in LOS to you!)",
+			"             (Also will teleport monsters in sight to you,",
+			"             as well as summoning additional monsters per ",
+			"             player you pull towards you.)",
 			"Corrupted: damages all monsters in sight"
 		}
 }
