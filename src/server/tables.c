@@ -59,6 +59,12 @@ s16b ddy_cyc[8] =
 s16b ddi_cyc[8] =
 { 4, 5, 6, 7, 0, 1, 2, 3};
 
+/* extra stuff for placing feats around wild dungeon/tower entrances -  C. Blue */
+s16b ddx_wide_cyc[16] =
+{ -2, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2 };
+s16b ddy_wide_cyc[16] =
+{ -2, -2, -2, -2, -2, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1 };
+
 
 /*
  * Global array for converting numbers to uppercase hecidecimal digit
@@ -2267,6 +2273,12 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 0,
                         },
+                        /* cannot train Light runecraft */
+                        {
+				SKILL_R_LITE,
+                                '+', 0,
+                                '%', 0,
+			},
 			/* Moderate bonus to Nether, being the undead... */
 			{
 				SKILL_R_NETH,
