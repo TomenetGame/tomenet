@@ -4510,7 +4510,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	}
 
 	/* Hack -- describe lite's */
-	if (o_ptr->tval == TV_LITE) {
+	if (o_ptr->tval == TV_LITE &&
+	    //(full || (!o_ptr->name1 && !o_ptr->name2 && !o_ptr->name2b))) {
+	    (full || !artifact_p(o_ptr))) {
 		int radius = 0;
 
 		if (f3 & TR3_LITE1) radius++;
