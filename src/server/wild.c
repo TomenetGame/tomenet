@@ -3435,12 +3435,12 @@ void wilderness_gen(struct worldpos *wpos)
 	    ) {
 		int j, k;
 		dungeon_info_type *di_ptr = &d_info[d_ptr->type];
-#ifdef TEST_SERVER
 		bool rand_old = Rand_quick; /* save rng */
 		u32b tmp_seed = Rand_value;
 		Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X) * 600; /* seed rng */
 		Rand_quick = TRUE;
 
+#ifdef TEST_SERVER
 		/* towers use granite walls that look a bit like a tower basement */
 		if (d_ptr == w_ptr->tower) {
 			for (k = 0; k < 16; k++) {
