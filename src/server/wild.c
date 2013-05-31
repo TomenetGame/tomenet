@@ -3435,35 +3435,62 @@ void wilderness_gen(struct worldpos *wpos)
 	    ) {
 		int j, k;
 		dungeon_info_type *di_ptr = &d_info[d_ptr->type];
-
+#ifdef TEST_SERVER
 		bool rand_old = Rand_quick; /* save rng */
 		u32b tmp_seed = Rand_value;
-		Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 600; /* seed rng */
+		Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X) * 600; /* seed rng */
 		Rand_quick = TRUE;
 
-		/* pick amount of floor feats to set */
-		j = rand_int(4) + 3;
-		/* pick a random starting direction */
-		i = randint(8);
-		if (i == 5) i++; /* 5 isn't a legal direction */
-		/* hack: avoid a bit silly-looking ones */
-		if (j == 3 && (i % 2) == 1) i++;
-		if (i == 10) i = 6; /* 10 isn't a legal direction */
-		/* cycle forward 'j' more grids and set them accordingly */
-		for (k = 0; k < j; k++) {
-			int zx, zy;
-			zx = x + ddx[cycle[chome[i] + k]];
-			zy = y + ddy[cycle[chome[i] + k]];
+		/* towers use granite walls that look a bit like a tower basement */
+		if (d_ptr == w_ptr->tower) {
+			for (k = 0; k < 16; k++) {
+				int zx, zy;
+				zx = x + ddx_wide_cyc[k];
+				zy = y + ddy_wide_cyc[k];
 
-			/* don't overwrite house walls if house contains a staircase
-			   (also see first check for this, further above)  */
-			if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
+				/* don't overwrite house walls if house contains a staircase
+				   (also see first check for this, further above)  */
+				if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
 
-			/* don't overwrite any perma walls (usually house walls) */
-			if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT)) continue;
+				/* don't overwrite any perma walls (usually house walls) */
+				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT)) continue;
 
-			zcave[zy][zx].feat = di_ptr->fill_type[0];//->inner_wall;
+				/* random holes */
+				if (!rand_int(4)) continue;
+
+				zcave[zy][zx].feat = di_ptr->fill_type[0];//->inner_wall;
+			}
 		}
+
+		/* dungeons use the inner_wall fill_type[0] somewhat scattered/clumped */
+		if (d_ptr == w_ptr->dungeon) {
+#endif
+			/* pick amount of floor feats to set */
+			j = rand_int(4) + 3;
+			/* pick a random starting direction */
+			i = randint(8);
+			if (i == 5) i++; /* 5 isn't a legal direction */
+			/* hack: avoid a bit silly-looking ones */
+			if (j == 3 && (i % 2) == 1) i++;
+			if (i == 10) i = 6; /* 10 isn't a legal direction */
+			/* cycle forward 'j' more grids and set them accordingly */
+			for (k = 0; k < j; k++) {
+				int zx, zy;
+				zx = x + ddx[cycle[chome[i] + k]];
+				zy = y + ddy[cycle[chome[i] + k]];
+
+				/* don't overwrite house walls if house contains a staircase
+				   (also see first check for this, further above)  */
+				if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
+
+				/* don't overwrite any perma walls (usually house walls) */
+				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT)) continue;
+
+				zcave[zy][zx].feat = di_ptr->fill_type[0];//->inner_wall;
+			}
+#ifdef TEST_SERVER
+		}
+#endif
 
 		/* restore rng */
 		Rand_quick = rand_old;

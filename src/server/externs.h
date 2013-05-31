@@ -82,6 +82,8 @@ extern s16b ddy_ddd[9];
 extern s16b ddx_cyc[8];
 extern s16b ddy_cyc[8];
 extern s16b ddi_cyc[8];
+extern s16b ddx_wide_cyc[16];
+extern s16b ddy_wide_cyc[16];
 extern char hexsym[16];
 extern byte adj_val_min[];
 extern byte adj_val_max[];
