@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. May 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 31. May 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10264,7 +10264,8 @@ Warrior is strongly recommended.
     but receive a bonus on 'Mental Intrusion' and a large bonus on 'Necromancy'
     and all aura skills and a small bonus on 'Traumaturgy'. They cannot use
     certain magic schools at all as described above. As undead, Vampires gain
-    a moderate bonus to evoking 'Nether' runes.
+    a moderate skill bonus for 'Nether' runes but in turn cannot improve in
+    'Light' runes.
 
 - Maia
     The Maiar are lesser spirits who are associated with one or more Valar, the
