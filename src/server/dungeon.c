@@ -2865,8 +2865,12 @@ void recall_player(int Ind, char *message){
 			/* reduce his accumulated mimicry form knowledge somewhat
 			   (keep some of the benefits of IDDC hunting) */
  #ifdef IDDC_MIMICRY_BOOST
-			j = ((IDDC_MIMICRY_BOOST * 2) + 1) / 3;
-			for (i = 1; i < max_r_idx; i++) p_ptr->r_killed[i] -= j;
+			if (IDDC_MIMICRY_BOOST <= 2) j = 5;
+			else if (IDDC_MIMICRY_BOOST == 3) j = 6;
+			else if (IDDC_MIMICRY_BOOST == 4) j = 7;
+			else if (IDDC_MIMICRY_BOOST <= 6) j = 10;
+			else j = 13;
+			for (i = 1; i < max_r_idx; i++) p_ptr->r_killed[i] = (p_ptr->r_killed[i] * 5) / j;
  #endif
 		}
 #endif
