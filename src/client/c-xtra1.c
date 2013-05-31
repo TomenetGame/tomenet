@@ -2526,7 +2526,11 @@ void do_weather() {
 					/* display raindrop */
 					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 					    PANEL_Y + weather_element_y[i] - weather_panel_y,
+#ifdef EXTENDED_BG_COLOURS
+					    rand_int(2) ? TERM2_BLUE : TERM_ORANGE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+#else
 					    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+#endif
 				} else if (weather_element_type[i] == 2) {
 					/* display snowflake */
 					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
@@ -2756,7 +2760,11 @@ void do_weather() {
 				/* display raindrop */
 				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 				    PANEL_Y + weather_element_y[i] - weather_panel_y,
+#ifdef EXTENDED_BG_COLOURS
+				    rand_int(2) ? TERM2_BLUE : TERM_ORANGE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+#else
 				    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+#endif
 			}
 		}
 		/* advance snowflakes - falling slowly (assumed weather_speed isn't

@@ -1211,8 +1211,11 @@ static infoclr *xor;
 /*
  * Color table
  */
+#ifndef EXTENDED_BG_COLOURS
 static infoclr *clr[16];
-
+#else
+static infoclr *clr[16 + 1];
+#endif
 
 /*
  * Forward declare
@@ -2014,7 +2017,12 @@ static errr Term_curs_x11(int x, int y)
 static errr Term_text_x11(int x, int y, int n, byte a, cptr s)
 {
 	/* Draw the text in Xor */
+#ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
+#else
+	if (a == TERM2_BLUE) a = 0xF + 1;
+	Infoclr_set(clr[a & 0x1F]);
+#endif
 
 	/* Draw the text */
 	Infofnt_text_std(x, y, s, n);
@@ -2262,6 +2270,12 @@ static cptr color_name[16] =
 	"#c79d55",      /* LIGHTBROWN */
 #endif
 };
+#ifdef EXTENDED_BG_COLOURS
+static cptr color_ext_name[1][2] =
+{
+	{"#0000ff", "#444444", },
+};
+#endif
 
 #ifdef USE_GRAPHICS
 
@@ -2549,7 +2563,19 @@ errr init_x11(void) {
 		else if (i) cname = color_name[1];
 		Infoclr_init_ccn (cname, "bg", "cpy", 0);
 	}
-
+#ifdef EXTENDED_BG_COLOURS
+	/* Prepare the colors (including "black") */
+	for (i = 0; i < 1; ++i) {
+		cptr cname = color_name[0], cname2 = color_name[0];
+		MAKE(clr[16 + i], infoclr);
+		Infoclr_set (clr[16 + i]);
+		if (Metadpy->color) {
+			cname = color_ext_name[i][0];
+			cname2 = color_ext_name[i][1];
+		}
+		Infoclr_init_ccn (cname, cname2, "cpy", 0);
+	}
+#endif
 
 { /* Main window is always visible */
 	/* Check environment for "screen" font */

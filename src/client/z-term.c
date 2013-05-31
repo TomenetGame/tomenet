@@ -705,7 +705,11 @@ void flicker() {
 		for(y = 0; y < y2; y++) {
 			for(x = 0; x < x2; x++) {
 				attr = tterm->scr->a[y][x];
+#ifdef EXTENDED_BG_COLOURS
+				if (attr < TERM_MULTI || attr == TERM2_BLUE) continue;
+#else
 				if (attr < TERM_MULTI) continue;
+#endif
 
 				ch = tterm->scr->c[y][x];
 				attr = flick_colour(attr);
@@ -879,7 +883,11 @@ static void Term_fresh_row_text_wipe(int y)
 				n = 0;
 			}
 			/* Save the new color */
+#ifdef EXTENDED_BG_COLOURS
+			if (na >= TERM_MULTI && na != TERM2_BLUE) {
+#else
 			if (na >= TERM_MULTI) {
+#endif
 				fa = flick_colour(na);
 			} else {
 				fa = na;
@@ -923,7 +931,11 @@ static void Term_fresh_row_text_wipe(int y)
 			}
 
 			/* Save the new color */
-			if(na >= TERM_MULTI) {
+#ifdef EXTENDED_BG_COLOURS
+			if (na >= TERM_MULTI && na != TERM2_BLUE) {
+#else
+			if (na >= TERM_MULTI) {
+#endif
 				fa = flick_colour(na);
 			} else {
 				fa = na;
@@ -1084,7 +1096,11 @@ static void Term_fresh_row_text_text(int y)
 			}
 
 			/* Save the new color */
-			if(na >= TERM_MULTI) {
+#ifdef EXTENDED_BG_COLOURS
+			if (na >= TERM_MULTI && na != TERM2_BLUE) {
+#else
+			if (na >= TERM_MULTI) {
+#endif
 				fa = flick_colour(na);
 			} else {
 				fa = na;
