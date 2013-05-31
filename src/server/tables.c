@@ -2273,11 +2273,11 @@ player_race race_info[MAX_RACE] =
                                 '+', 0,
                                 '%', 0,
                         },
-                        /* cannot train Light runecraft */
+                        /* cannot train Light runecraft well */
                         {
 				SKILL_R_LITE,
                                 '+', 0,
-                                '%', 0,
+                                '%', 50,
 			},
 			/* Moderate bonus to Nether, being the undead... */
 			{
