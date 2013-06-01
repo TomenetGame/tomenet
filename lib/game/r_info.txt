@@ -8694,7 +8694,7 @@ S:ARROW_2
 D:A rebel halfling who has rejected the halfling tradition of archery.  
 
 N:540:Gravity hound
-G:Z:W
+G:Z:U
 I:110:35d10:30:30:0
 W:35:2:700:700
 E:0:1:0:2:1:4
@@ -8750,7 +8750,7 @@ D:Bizarrely, this hound seems to be hardly moving at all, yet it approaches
 D:you with deadly menace. It makes you tired just to look at it. 
 
 N:543:Impact hound
-G:Z:u
+G:Z:W
 I:110:35d10:30:30:0
 W:35:2:700:500
 E:0:1:0:2:1:4
