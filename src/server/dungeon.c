@@ -5400,6 +5400,9 @@ static void process_various(void)
 
 			if (r_ptr->flags7 & RF7_NAZGUL) continue; /* No nazguls */
 
+			/* Dungeon bosses probably shouldn't respawn */
+			if (r_ptr->flags0 & RF0_FINAL_GUARDIAN) continue;
+
 			/* Special-dropping uniques too! */
 			/* if (r_ptr->flags1 & RF1_DROP_CHOSEN) continue; */
 
