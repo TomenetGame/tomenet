@@ -8795,6 +8795,15 @@ void determine_artifact_timeout(int a_idx) {
 
 	i = lookup_kind(a_info[a_idx].tval, a_info[a_idx].sval);
         if (i) invcopy(&forge, i);
+        else { /* paranoia */
+		s_printf("DETERMINE_ARTIFACT_TIMEOUT: Cannot find item %d,%d (aidx %d)!\n", a_info[a_idx].tval, a_info[a_idx].sval, a_idx);
+		/* try to hack it manually, really paranoid */
+		forge.k_idx = 0;
+		a_idx = 0; //artifact #0 has tval,sval = 0,0 - for the paranoid code below.. (side note: true_artifact_p() doesn't return true for aidx 0 ^^ but who cares..)
+		/* atm this code has no actual effect.. */
+		forge.tval = a_info[a_idx].tval;
+		forge.sval = a_info[a_idx].sval;
+	}
 	forge.name1 = a_idx;
 
 	if (multiple_artifact_p(&forge)) {
