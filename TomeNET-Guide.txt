@@ -4781,9 +4781,10 @@ don't go afk for a longer time or even a snaga archer might kill you with his
 ranged attacks. Always a nasty surprise..
 
 Despite the hazards of higher level towns, towns in general act as a safe zone,
-preventing PK attacks and stop your character's food consumption, meaning that
-you cannot die by starvation while in town. Towns also put experience drain on
-hold, which is important for players wearing Nazgul Rings Of Power for example.
+preventing PK/PvP attacks (ie attacks done by a player against another player)
+and stop your character's food consumption, meaning that you cannot die by
+starvation while in town. Towns also put experience drain on hold, which is
+important for players wearing Nazgul Rings Of Power for example.
 Dungeon towns behave like normal towns in these regards.
 
 
