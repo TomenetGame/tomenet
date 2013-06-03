@@ -8811,7 +8811,11 @@ void determine_artifact_timeout(int a_idx) {
 		return;
 	} else if (winner_artifact_p(&forge)) a_info[a_idx].timeout = 40320 * 3; /* ring of phasing/mirror of glory */
 	else if (a_idx != ART_RANDART) a_info[a_idx].timeout = 40320; /* minutes: 4 weeks */
-	else return;
+	else {
+		/* paranoia */
+		s_printf("DETERMINE_ARTIFACT_TIMEOUT: For some reason a randart was specified!\n");
+		return;
+	}
 
  #ifdef RPG_SERVER
 	a_info[a_idx].timeout *= 2;
