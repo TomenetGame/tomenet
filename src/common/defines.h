@@ -5548,8 +5548,11 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 #define LF1_WATER		0x01000000L	/* for DIGGING: water rivers or base grids are being used */
 #define LF1_LAVA		0x02000000L	/* for DIGGING: lava rivers or base grids are being used */
-#define LF1_NO_WATER		0x040000000L	/* for DIGGING: water rivers or base grids are being used */
-#define LF1_NO_LAVA		0x080000000L	/* for DIGGING: lava rivers or base grids are being used */
+#define LF1_NO_WATER		0x04000000L	/* for DIGGING: water rivers or base grids are being used */
+#define LF1_NO_LAVA		0x08000000L	/* for DIGGING: lava rivers or base grids are being used */
+
+#define LF1_DEEP_WATER		0x10000000L	/* Dungeon uses deep water as floor tile: Make all water streamers/rivers deep too */
+#define LF1_DEEP_LAVA		0x20000000L	/* Dungeon uses deep lava as floor tile: Make all lava streamers/rivers deep too */
 
 #define LF1_NO_MULTIPLY		0x80000000L /* for scrolls of vermin control */
 

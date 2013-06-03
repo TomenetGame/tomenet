@@ -2290,6 +2290,16 @@ static void add_river(worldpos *wpos, int feat1, int feat2)
 	cave_type **zcave;
 	if(!(zcave = getcave(wpos))) return;
 
+	/* hacks - don't build rivers that are shallower than the actual dungeon floor.. - C. Blue */
+	if (l_ptr->flags1 & LF1_DEEP_WATER) {
+		if (feat1 == FEAT_SHAL_WATER) feat1 = FEAT_DEEP_WATER;
+		if (feat2 == FEAT_SHAL_WATER) feat2 = FEAT_DEEP_WATER;
+	}
+	if (l_ptr->flags1 & LF1_DEEP_LAVA) {
+		if (feat1 == FEAT_SHAL_LAVA) feat1 = FEAT_DEEP_LAVA;
+		if (feat2 == FEAT_SHAL_LAVA) feat2 = FEAT_DEEP_LAVA;
+	}
+
 	/* for DIGGING */
 	if (feat1 == FEAT_SHAL_WATER || feat1 == FEAT_DEEP_WATER ||
 	    feat2 == FEAT_SHAL_WATER || feat2 == FEAT_DEEP_WATER)
@@ -8717,12 +8727,17 @@ static void init_feat_info(worldpos *wpos)
 #endif
 
 		floor_lim[i] = (i == 5 - 1 ? 100 : (i > 0 ? floor_lim[i - 1] : 0) + p1 + (p2 - p1) * cur_depth / max_depth);
-		/* for DIGGING */
+
 		if (p1 != 0 || p2 != 0) {
+			/* for DIGGING */
 			if (d_ptr->floor[i] == FEAT_SHAL_WATER || d_ptr->floor[i] == FEAT_DEEP_WATER)
 				l_ptr->flags1 |= LF1_WATER | LF1_NO_LAVA;
 			if (d_ptr->floor[i] == FEAT_SHAL_LAVA || d_ptr->floor[i] == FEAT_DEEP_LAVA)
 				l_ptr->flags1 |= LF1_LAVA | LF1_NO_WATER;
+
+			/* for streamer/river hack: don't build shallow ones if dungeon floor itself is deep */
+			if (d_ptr->floor[i] == FEAT_DEEP_WATER) l_ptr->flags1 |= LF1_DEEP_WATER;
+			if (d_ptr->floor[i] == FEAT_DEEP_LAVA) l_ptr->flags1 |= LF1_DEEP_LAVA;
 		}
 	}
 
@@ -9956,7 +9971,7 @@ if (!nether_bottom) {
 			num = randint(DUN_STR_QUA - 1);
 
 			for (i = 0; i < num; i++)
-				build_streamer2(wpos, FEAT_SHAL_WATER, 0);
+				build_streamer2(wpos, (dun->l_ptr->flags1 & LF1_DEEP_WATER) ? FEAT_DEEP_WATER : FEAT_SHAL_WATER, 0);
 
 			if (randint(20) > 15) {
 				num = randint(DUN_STR_QUA);
@@ -9978,7 +9993,7 @@ if (!nether_bottom) {
 				num = randint(DUN_STR_QUA);
 
 				for (i = 0; i < num; i++)
-					build_streamer2(wpos, FEAT_SHAL_LAVA, 0);
+					build_streamer2(wpos, (dun->l_ptr->flags1 & LF1_DEEP_LAVA) ? FEAT_DEEP_LAVA : FEAT_SHAL_LAVA, 0);
 
 				if (randint(20) > 15) {
 					num = randint(DUN_STR_QUA - 1);
@@ -9996,7 +10011,7 @@ if (!nether_bottom) {
 				num = randint(DUN_STR_QUA - 1);
 
 				for (i = 0; i < num; i++)
-					build_streamer2(wpos, FEAT_SHAL_WATER, 0);
+					build_streamer2(wpos, (dun->l_ptr->flags1 & LF1_DEEP_WATER) ? FEAT_DEEP_WATER : FEAT_SHAL_WATER, 0);
 
 				if (randint(20) > 15) {
 					num = randint(DUN_STR_QUA);
