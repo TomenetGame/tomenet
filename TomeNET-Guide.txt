@@ -12493,6 +12493,8 @@ though, as all other magic schools do, not the astral level.)
     Vengeance       Enlightened: Summons all party members on the same floor
                                  to you (as well as all monsters in line of
                                  sight) who have their mind opened.
+                                 Might summon additional monsters for each
+                                 player who got teleported.
                     Corrupted: Damages all monsters in line of sight.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 30.
