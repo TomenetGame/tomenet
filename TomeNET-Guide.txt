@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 31. May 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. June 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -938,10 +938,12 @@ They all start with a slash '/' hence they're called slash commands:
             Leave a note to another player. Note: You have to specify his
             ACCOUNT NAME, not a character name. That way, no matter which of
             his characters he chooses to logon, he always gets the note.
-
+/notec <character name>:<text>
+            Like /note command, except you specify a character name.
+            The receipient will actually get the note even if he logs on with
+            the 'wrong' character!
 /note <account name>
             Delete all pending notes that were addressed to that player.
-
 /notes      Display all pending notes that you wrote to other players.
 
 /pnote <text>
