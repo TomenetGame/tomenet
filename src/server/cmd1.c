@@ -2584,14 +2584,16 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 	/* If target isn't already hostile toward attacker, make it so */
 	if (!check_hostile(0 - c_ptr->m_idx, Ind)) {
+		bool result = FALSE;
+
 		/* Make hostile */
 		if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
-		add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE);
+			result = add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE);
 
 		/* Log it if no blood bond - mikaelh */
-		if (!player_list_find(p_ptr->blood_bond, Players[0 - c_ptr->m_idx]->id)) {
-			s_printf("%s attacked %s.\n", p_ptr->name, Players[0 - c_ptr->m_idx]->name);
-		}
+		if (!player_list_find(p_ptr->blood_bond, Players[0 - c_ptr->m_idx]->id)
+		    && !istown(wpos)) /* avoid logfile spam from Stormbringer in towns */
+			s_printf("%s attacked %s (melee; result %d).\n", p_ptr->name, Players[0 - c_ptr->m_idx]->name, result);
 	}
 	/* Hack -- divided turn for auto-retaliator */
 	if (!old) {

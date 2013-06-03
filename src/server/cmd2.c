@@ -4784,12 +4784,14 @@ void do_cmd_fire(int Ind, int dir)
 								if (check_hostile(Ind, 0 - c_ptr->m_idx)) {
 									/* Make target hostile if not already */
 									if (!check_hostile(0 - c_ptr->m_idx, Ind)) {
+										bool result = FALSE;
+
 										if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
-										add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE);
+											result = add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE);
 
 										/* Log it if no blood bond - mikaelh */
 										if (!player_list_find(p_ptr->blood_bond, Players[0 - c_ptr->m_idx]->id)) {
-											s_printf("%s attacked %s.\n", p_ptr->name, Players[0 - c_ptr->m_idx]->name);
+											s_printf("%s attacked %s (shot; result %d).\n", p_ptr->name, Players[0 - c_ptr->m_idx]->name, result);
 										}
 									}
 								}

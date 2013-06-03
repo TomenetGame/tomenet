@@ -8098,12 +8098,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (check_hostile(0 - who, Ind)) {
 				/* Make target hostile if not already */
 				if (!check_hostile(Ind, 0 - who)) {
+					bool result = FALSE;
+
 					if (Players[Ind]->pvpexception < 2)
-					add_hostility(Ind, killer, FALSE);
+						result = add_hostility(Ind, killer, FALSE);
 
 					/* Log it if no blood bond - mikaelh */
 					if (!player_list_find(p_ptr->blood_bond, Players[0 - who]->id)) {
-						s_printf("%s attacked %s.\n", p_ptr->name, Players[0 - who]->name);
+						s_printf("%s attacked %s (spell; result %d).\n", p_ptr->name, Players[0 - who]->name, result);
 					}
 				}
 			}
