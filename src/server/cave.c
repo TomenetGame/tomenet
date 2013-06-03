@@ -416,9 +416,8 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 #if DEBUG_LEVEL > 2
 		s_printf("new_players_on_depth.. %s  now:%d value:%d inc:%s\n", wpos_format(0, wpos), now, value, inc?"TRUE":"FALSE");
 #endif
-	if (getlevel(wpos) == 200) {
-		for (i = 1; i <= NumPlayers; i++)
-		{
+	if (in_valinor(wpos)) {
+		for (i = 1; i <= NumPlayers; i++) {
 			p_ptr = Players[i];
 			if (p_ptr->conn == NOT_CONNECTED) continue;
 			if (admin_p(i)) continue;
@@ -427,11 +426,11 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	}
 
         /* Page all dungeon masters to notify them of a Nether Realm breach >:) - C. Blue */
-	if ((value > 0) && (getlevel(wpos) >= 166) && (watch_nr))
-	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED) continue;
-		if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
-	}
+	if ((value > 0) && in_netherrealm(wpos) && (watch_nr))
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
+		}
 
 	if (wpos->wz) {
 		struct dungeon_type *d_ptr;
@@ -7180,7 +7179,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return;
 
 	/* in Nether Realm, floor is always nether mist (or lava)! */
-	if (getlevel(wpos) >= 166 && getlevel(wpos) < 200) switch (feat) {
+	if (in_netherrealm(wpos)) switch (feat) {
 		case FEAT_IVY:
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:
@@ -7328,7 +7327,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 		return;
 
 	/* in Nether Realm, floor is always nether mist (or lava)! */
-	if (getlevel(wpos) >= 166 && getlevel(wpos) < 200) switch (feat) {
+	if (in_netherrealm(wpos)) switch (feat) {
 		case FEAT_IVY:
 		case FEAT_SHAL_WATER:
 		case FEAT_DEEP_WATER:
@@ -8057,8 +8056,8 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool townarea = istownarea(wpos, MAX_TOWNAREA);
 //unused atm	bool dungeon_town = isdungeontown(wpos);
 	bool sector00 = (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z);
-	bool valinor = (getlevel(wpos) == 200);
-	bool netherrealm_bottom = (getlevel(wpos) == 166 + 30);
+	bool valinor = in_valinor(wpos);
+	bool netherrealm_bottom = in_netherrealm(wpos) && getlevel(wpos) == 166 + 30;
 	bool arena_pvp = (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z);
 	bool arena_monster = (ge_special_sector && wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z);
 

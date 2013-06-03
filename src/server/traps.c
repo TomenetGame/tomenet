@@ -2609,7 +2609,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	/* No traps in Bree - C. Blue */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) return;
 	/* Nor in Valinor */
-	if (getlevel(wpos) == 200) return;
+	if (in_valinor(wpos)) return;
 
 	/* No traps over traps/house doors etc */
 	/* TODO: allow traps on jumpgates/fountains etc -- no, doesn't make much sense */
@@ -2716,7 +2716,7 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 	/* No traps in Bree - C. Blue */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) return;
 	/* Nor in Valinor */
-	if (getlevel(wpos) == 200) return;
+	if (in_valinor(wpos)) return;
 
 	/* No traps over traps/house doors etc */
 	/* TODO: allow traps on jumpgates/fountains etc */

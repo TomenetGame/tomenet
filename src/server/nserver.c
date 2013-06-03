@@ -4844,7 +4844,7 @@ int Send_depth(int Ind, struct worldpos *wpos)
 	}
 
 	/* Hack for Valinor */
-	if (dlev == 200) {
+	if (in_valinor(wpos)) {
 		ville = TRUE;
 		desc = "Valinor";
 	}

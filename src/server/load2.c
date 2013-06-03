@@ -2914,13 +2914,17 @@ void new_rd_wild()
 				}
 #endif
 				rd_u16b(&d_ptr->type);
-#ifdef ALLOW_NR_CROSS_PARTIES
 				if (d_ptr->type == 6) {
 					netherrealm_wpos_x = x;
 					netherrealm_wpos_y = y;
 					netherrealm_wpos_z = -1;
 				}
-#endif
+				else if (d_ptr->type == 31) {
+					valinor_wpos_x = x;
+					valinor_wpos_y = y;
+					valinor_wpos_z = -1;
+				}
+
 				rd_u16b(&d_ptr->baselevel);
 				rd_u32b(&d_ptr->flags1);
 				rd_u32b(&d_ptr->flags2);
@@ -2965,13 +2969,16 @@ void new_rd_wild()
 				}
 #endif
 				rd_u16b(&d_ptr->type);
-#ifdef ALLOW_NR_CROSS_PARTIES
 				if (d_ptr->type == 6) {
 					netherrealm_wpos_x = x;
 					netherrealm_wpos_y = y;
 					netherrealm_wpos_z = 1;
 				}
-#endif
+				else if (d_ptr->type == 31) {
+					valinor_wpos_x = x;
+					valinor_wpos_y = y;
+					valinor_wpos_z = 1;
+				}
 				rd_u16b(&d_ptr->baselevel);
 				rd_u32b(&d_ptr->flags1);
 				rd_u32b(&d_ptr->flags2);

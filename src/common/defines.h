@@ -7695,16 +7695,13 @@ extern int PlayerUID;
  //#define HOUSE_PAINTING_HIDE_MUSEUM
 #endif
 
-/* check if a player is in the Nether Realms -- side effect: Works in Valinor too ;) */
-#ifdef ALLOW_NR_CROSS_PARTIES
- #if 0
-  /* allow partying only _inside_ the Nether Realm */
-  #define in_netherrealm(wpos) (getlevel(wpos) >= 166)
- #else
-  /* allow partying at 0ft above Nether Realm too: */
-  #define in_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z >= 0)
- #endif
-#endif
+/* check if a player is in the Nether Realms */
+//#define in_netherrealm(wpos) (getlevel(wpos) >= 166)
+#define in_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z > 0)
+#define at_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z >= 0)
+
+/* check if a player is in Valinor */
+#define in_valinor(wpos) ((wpos)->wx == valinor_wpos_x && (wpos)->wy == valinor_wpos_y && (wpos)->wz * valinor_wpos_z > 0)
 
 /* quickly check if a given wpos is within certain special dungeons */
 #define in_irondeepdive(wpos) \

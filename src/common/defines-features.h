@@ -121,6 +121,10 @@
 /* Allow kings/queens/emperors/empresses to team up for Nether Realm.
    Must be at the worldmap sector of NR entrance, or inside NR. */
 #define ALLOW_NR_CROSS_PARTIES
+/* Best to enable when ALLOW_NR_CROSS_PARTIES is enabled:
+   Allow kings/queens/emperors/empresses to trade items that were found in the
+   Nether Realm as long as the items weren't transported out of it once. */
+#define ALLOW_NR_CROSS_ITEMS
 
 /* expand TV_POTION svals to make TV_POTION2 obsolete? */
 #define EXPAND_TV_POTION

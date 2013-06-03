@@ -2928,7 +2928,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6\n");
 		}
 
 		/* Valinor - No monster spawn, except for.. */
-		if ((dlev == 200) &&
+		if (in_valinor(wpos) &&
 		    (r_idx != 1100 ) && (r_idx != 1098)) /* Brightlance, Orome */
 			return(FALSE);
 	}

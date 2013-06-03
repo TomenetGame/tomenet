@@ -500,8 +500,9 @@ bool censor_swearing;
 bool censor_swearing_identity;
 bool jails_enabled;
 bool allow_requesting_estate;
-#ifdef ALLOW_NR_CROSS_PARTIES
 int netherrealm_wpos_x;
 int netherrealm_wpos_y;
 int netherrealm_wpos_z;
-#endif
+int valinor_wpos_x;
+int valinor_wpos_y;
+int valinor_wpos_z;

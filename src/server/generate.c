@@ -9228,7 +9228,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	init_feat_info(wpos);
 
 	/* Are we in Nether Realm? Needed for shop creation later on */
-	if (dun_lev >= 166) nether_level = TRUE;
+	if (in_netherrealm(wpos)) nether_level = TRUE;
 
 	/* Note that Ultra-small levels (1/2 x 1/2 panel) actually result
 	   from the rand_int in 'Small level', not from 'Very small'! - C. Blue */
@@ -9467,7 +9467,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	}
 
 	/* Hack for bottom of Nether Realm */
-	if (dun_lev == 166 + 30) {
+	if (in_netherrealm(wpos) && dun_lev == 166 + 30) {
 		destroyed = FALSE;
 		empty_level = TRUE; dark_empty = TRUE;
 		cavern = FALSE;

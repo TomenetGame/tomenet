@@ -6105,7 +6105,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	if (!in_bounds(y, x)) return;
 
 	/* Hack - No l00t in Valinor */
-	if (dlev == 200) return;
+	if (in_valinor(wpos)) return;
 
 #ifdef RPG_SERVER /* no objects are generated in Training Tower */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && cave_set_quietly) return;
@@ -6309,7 +6309,7 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 	d_ptr = getdungeon(wpos);
 
 	/* Hack - No l00t in Valinor */
-	if (dlev == 200) return;
+	if (in_valinor(wpos)) return;
 
 	/* place_object_restrictor overrides resf */
 	resf |= place_object_restrictor;
@@ -7019,7 +7019,7 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus)
 	if (!in_bounds(y, x)) return;
 	
 	/* not in Valinor */
-	if (getlevel(wpos) == 200) return;
+	if (in_valinor(wpos)) return;
 
 	/* Require clean floor grid */
 //	if (!cave_clean_bold(zcave, y, x)) return;
@@ -7422,6 +7422,10 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			if (wpos->wz == WPOS_PVPARENA_Z && wpos->wy == WPOS_PVPARENA_Y && wpos->wx == WPOS_PVPARENA_X)
 				o_ptr->marked2 = ITEM_REMOVAL_QUICK;
 
+#ifdef ALLOW_NR_CROSS_ITEMS
+			/* Allow the item to be traded as long as it doesn't leave the Nether Realm - C. Blue */
+			if (!o_ptr->owner && in_netherrealm(wpos)) o_ptr->NR_tradable = TRUE;
+#endif
 
 			/* No monster */
 			o_ptr->held_m_idx = 0;

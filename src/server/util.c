@@ -1379,7 +1379,7 @@ void handle_music(int Ind) {
 		return;
 	}
 
-	if (getlevel(&p_ptr->wpos) == 200) {
+	if (in_valinor(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
 		Send_music(Ind, 8); //Valinor
@@ -4922,7 +4922,7 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling)
 	bool felt = FALSE;
 
 	/* Hack for Valinor - C. Blue */
-	if (getlevel(wpos) == 200) {
+	if (in_valinor(wpos)) {
 		msg_print(Ind, "\374\377gYou have a wonderful feeling of peace...");
 		return TRUE;
 	}
@@ -5431,26 +5431,27 @@ void my_memfrob(void *s, int n)
    Note: returns NULL if compatible.
    strict: Ignore IRONDEEPDIVE_ALLOW_INCOMPAT. */
 cptr compat_pmode(int Ind1, int Ind2, bool strict) {
+	player_type *p1_ptr = Players[Ind1], *p2_ptr = Players[Ind2];
+
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 	/* EXPERIMENTAL */
-	player_type *p1_ptr = Players[Ind1], *p2_ptr = Players[Ind2];
 	if (!strict &&
 	    in_irondeepdive(&p1_ptr->wpos) &&
 	    in_irondeepdive(&p2_ptr->wpos))
 		return NULL;
 #endif
 
-	if (Players[Ind1]->mode & MODE_PVP) {
-		if (!(Players[Ind2]->mode & MODE_PVP)) {
+	if (p1_ptr->mode & MODE_PVP) {
+		if (!(p2_ptr->mode & MODE_PVP)) {
 			return "non-pvp";
 		}
-	} else if (Players[Ind1]->mode & MODE_EVERLASTING) {
-		if (!(Players[Ind2]->mode & MODE_EVERLASTING)) {
+	} else if (p1_ptr->mode & MODE_EVERLASTING) {
+		if (!(p2_ptr->mode & MODE_EVERLASTING)) {
 			return "non-everlasting";
 		}
-	} else if (Players[Ind2]->mode & MODE_PVP) {
+	} else if (p2_ptr->mode & MODE_PVP) {
 		return "pvp";
-	} else if (Players[Ind2]->mode & MODE_EVERLASTING) {
+	} else if (p2_ptr->mode & MODE_EVERLASTING) {
 		return "everlasting";
 	}
 	return NULL; /* means "is compatible" */
@@ -5459,16 +5460,23 @@ cptr compat_pmode(int Ind1, int Ind2, bool strict) {
 /* compare object and player mode compatibility - C. Blue
    Note: returns NULL if compatible. */
 cptr compat_pomode(int Ind, object_type *o_ptr) {
+	player_type *p_ptr = Players[Ind];
+
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 	/* EXPERIMENTAL */
-	player_type *p_ptr = Players[Ind];
 	if (in_irondeepdive(&p_ptr->wpos) &&
 	    in_irondeepdive(&o_ptr->wpos))
 		return NULL;
 #endif
 
-	if (!o_ptr->owner || is_admin(Players[Ind])) return NULL; /* always compatible */
-	if (Players[Ind]->mode & MODE_PVP) {
+#ifdef ALLOW_NR_CROSS_ITEMS
+	if (o_ptr->NR_tradable &&
+	    in_netherrealm(&p_ptr->wpos))
+		return NULL;
+#endif
+
+	if (!o_ptr->owner || is_admin(p_ptr)) return NULL; /* always compatible */
+	if (p_ptr->mode & MODE_PVP) {
 		if (!(o_ptr->mode & MODE_PVP)) {
 			if (o_ptr->mode & MODE_EVERLASTING) {
 				if (!(cfg.charmode_trading_restrictions & 2)) {
@@ -5478,7 +5486,7 @@ cptr compat_pomode(int Ind, object_type *o_ptr) {
 				return "non-pvp";
 			}
 		}
-	} else if (Players[Ind]->mode & MODE_EVERLASTING) {
+	} else if (p_ptr->mode & MODE_EVERLASTING) {
 		if (o_ptr->mode & MODE_PVP) {
 			return "pvp";
 		} else if (!(o_ptr->mode & MODE_EVERLASTING)) {

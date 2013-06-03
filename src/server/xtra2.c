@@ -6381,44 +6381,36 @@ void player_death(int Ind) {
 		int instant_res_cost = dlvl * dlvl * 10 + 10;
 
 		/* Only everlasters */
-		if (!(p_ptr->mode & MODE_EVERLASTING)) {
+		if (!(p_ptr->mode & MODE_EVERLASTING))
 			instant_res_possible = FALSE;
-		}
 
 		/* If already a ghost, get destroyed */
-		if (p_ptr->ghost) {
+		if (p_ptr->ghost)
 			instant_res_possible = FALSE;
-		}
 
 		/* Insanity is a no-ghost death */
-		if (streq(p_ptr->died_from, "insanity")) {
+		if (streq(p_ptr->died_from, "insanity"))
 			instant_res_possible = FALSE;
-		}
 
 		/* Not on NO_GHOST levels */
-		if (hell) {
+		if (hell)
 			instant_res_possible = FALSE;
-		}
 
 		/* Not on suicides */
-		if (!p_ptr->alive) {
+		if (!p_ptr->alive)
 			instant_res_possible = FALSE;
-		}
 
 		/* Not in Nether Realm */
-		if (dlvl >= 166) {
+		if (in_netherrealm(&p_ptr->wpos))
 			instant_res_possible = FALSE;
-		}
 
 		/* Check that the player has enough money */
-		if (instant_res_cost > p_ptr->au + p_ptr->balance) {
+		if (instant_res_cost > p_ptr->au + p_ptr->balance)
 			instant_res_possible = FALSE;
-		}
 
 		/* Divine wrath is meant to kill people */
-		if (streq(p_ptr->died_from, "divine wrath")) {
+		if (streq(p_ptr->died_from, "divine wrath"))
 			instant_res_possible = FALSE;
-		}
 
 		if (instant_res_possible) {
 			int loss_factor, reduce;
@@ -6693,7 +6685,7 @@ void player_death(int Ind) {
 
 			/* Artifacts cannot be dropped after all */
 			/* Don't litter Valinor -- Ring of Phasing must be destroyed anyways */
-			if ((cfg.anti_arts_hoard) || (getlevel(&p_ptr->wpos) == 200)) {
+			if ((cfg.anti_arts_hoard) || in_valinor(&p_ptr->wpos)) {
 				/* set the artifact as unfound */
 				handle_art_d(o_ptr->name1);
 
@@ -7115,7 +7107,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		death_type = DEATH_QUIT;
 s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 	} else {
-		if (getlevel(&p_ptr->wpos) == 200) {
+		if (in_valinor(&p_ptr->wpos)) {
 			snprintf(buf, sizeof(buf), "\374\377vThe unbeatable %s has retired to the shores of valinor.", p_ptr->name);
 			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired to the shores of valinor\n", showdate(), p_ptr->name, p_ptr->lev);
 		} else {

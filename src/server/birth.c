@@ -2025,7 +2025,7 @@ static void player_setup(int Ind, bool new)
 			s_printf("Auto-recalled panic-saved player %s.\n", p_ptr->name);
 
  #ifdef ALLOW_NR_CROSS_PARTIES
-		        if (p_ptr->party && in_netherrealm(&p_ptr->wpos) && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) {
+		        if (p_ptr->party && at_netherrealm(&p_ptr->wpos) && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) {
     	        	/* need to leave party, since we might be teamed up with incompatible char mode players! */
 				/* party_leave(Ind, FALSE); */
 			        if (streq(p_ptr->name, parties[p_ptr->party].owner)) {

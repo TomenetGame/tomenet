@@ -2189,6 +2189,5 @@ extern int dungeon_bonus[MAX_D_IDX * 2];
 extern bool censor_swearing, censor_swearing_identity;
 extern bool jails_enabled;
 extern bool allow_requesting_estate;
-#ifdef ALLOW_NR_CROSS_PARTIES
 extern int netherrealm_wpos_x, netherrealm_wpos_y, netherrealm_wpos_z;
-#endif
+extern int valinor_wpos_x, valinor_wpos_y, valinor_wpos_z;

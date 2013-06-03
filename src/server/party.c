@@ -1429,7 +1429,7 @@ int party_add(int adder, cptr name) {
 	}
 
 #ifdef ALLOW_NR_CROSS_PARTIES
-	if (!in_netherrealm(&q_ptr->wpos) || !in_netherrealm(&p_ptr->wpos))
+	if (!at_netherrealm(&q_ptr->wpos) || !at_netherrealm(&p_ptr->wpos))
 #endif
 	/* Everlasting and other chars cannot be in the same party */
 	if (compat_pmode(adder, Ind, FALSE)) {
@@ -2250,7 +2250,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 
 #ifdef ALLOW_NR_CROSS_PARTIES
 	/* anti-cheeze (for if NR surface already allows partying up) */
-        if (in_netherrealm(wpos) && !wpos->wz) return;
+        if (at_netherrealm(wpos) && !wpos->wz) return;
 #endif
 
 #if 1

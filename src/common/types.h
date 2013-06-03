@@ -805,6 +805,8 @@ struct object_type
 	s16b cheeze_dlv, cheeze_plv, cheeze_plv_carry;	/* anti-cheeze */
 
 	bool changed;		/* dummy flag to refresh item if o_name changed, but memory copy didn't */
+
+	bool NR_tradable;		/* for ALLOW_NR_CROSS_ITEMS */
 };
 
 /*

@@ -983,6 +983,5 @@ int dungeon_bonus[MAX_D_IDX * 2];
 bool censor_swearing = TRUE, censor_swearing_identity = TRUE;
 bool jails_enabled = TRUE;
 bool allow_requesting_estate = FALSE;
-#ifdef ALLOW_NR_CROSS_PARTIES
 int netherrealm_wpos_x = 0, netherrealm_wpos_y = 0, netherrealm_wpos_z = 0;
-#endif
+int valinor_wpos_x = 0, valinor_wpos_y = 0, valinor_wpos_z = 0;

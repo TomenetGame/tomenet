@@ -5664,7 +5664,7 @@ void process_player_change_wpos(int Ind)
 #endif
 
 #ifdef ALLOW_NR_CROSS_PARTIES
-        if (p_ptr->party && in_netherrealm(&p_ptr->wpos_old) && !in_netherrealm(&p_ptr->wpos)
+        if (p_ptr->party && at_netherrealm(&p_ptr->wpos_old) && !at_netherrealm(&p_ptr->wpos)
     	    && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)
             /* actually preserve his nether realm cross party for this,
                so he can tell everyone involved about Valinor in party chat: */
@@ -5673,7 +5673,13 @@ void process_player_change_wpos(int Ind)
                 party_leave(Ind, FALSE);
 #endif
 
-#if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES)
+#ifdef ALLOW_NR_CROSS_ITEMS
+	if (in_netherrealm(&p_ptr->wpos_old) && !in_netherrealm(&p_ptr->wpos))
+		for (j = 1; j < INVEN_TOTAL; j++)
+			p_ptr->inventory[j].NR_tradable = FALSE;
+#endif
+
+#if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES) || defined(ALLOW_NR_CROSS_ITEMS)
 	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
 #endif
 
