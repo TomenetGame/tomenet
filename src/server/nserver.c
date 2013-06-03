@@ -2674,7 +2674,7 @@ static int Handle_login(int ind)
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth(NumPlayers);
 
-#if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES)
+#if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES) || defined(ALLOW_NR_CROSS_ITEMS)
 	wpcopy(&Players[NumPlayers]->wpos_old, &p_ptr->wpos);
 #endif
 

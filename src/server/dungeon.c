@@ -5672,7 +5672,6 @@ void process_player_change_wpos(int Ind)
                 /* need to leave party, since we might be teamed up with incompatible char mode players! */
                 party_leave(Ind, FALSE);
 #endif
-
 #ifdef ALLOW_NR_CROSS_ITEMS
 	if (in_netherrealm(&p_ptr->wpos_old) && !in_netherrealm(&p_ptr->wpos))
 		for (j = 1; j < INVEN_TOTAL; j++)

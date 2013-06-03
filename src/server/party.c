@@ -1429,7 +1429,8 @@ int party_add(int adder, cptr name) {
 	}
 
 #ifdef ALLOW_NR_CROSS_PARTIES
-	if (!at_netherrealm(&q_ptr->wpos) || !at_netherrealm(&p_ptr->wpos))
+	if (!q_ptr->total_winner || !p_ptr->total_winner ||
+	    !at_netherrealm(&q_ptr->wpos) || !at_netherrealm(&p_ptr->wpos))
 #endif
 	/* Everlasting and other chars cannot be in the same party */
 	if (compat_pmode(adder, Ind, FALSE)) {
