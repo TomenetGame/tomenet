@@ -9151,7 +9151,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #ifdef ARCADE_SERVER
 	int mx, my;
 #endif
-	bool nether_level = FALSE, nether_bottom = FALSE;
+	bool netherrealm_level = FALSE, netherrealm_bottom = FALSE;
 	int build_special_store = 0; /* 0 = don't build a dungeon store,
 					1 = build deep dungeon store,
 					2 = build low-level dungeon store,
@@ -9243,7 +9243,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	init_feat_info(wpos);
 
 	/* Are we in Nether Realm? Needed for shop creation later on */
-	if (in_netherrealm(wpos)) nether_level = TRUE;
+	if (in_netherrealm(wpos)) netherrealm_level = TRUE;
 
 	/* Note that Ultra-small levels (1/2 x 1/2 panel) actually result
 	   from the rand_int in 'Small level', not from 'Very small'! - C. Blue */
@@ -9487,7 +9487,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 		empty_level = TRUE; dark_empty = TRUE;
 		cavern = FALSE;
 		maze = FALSE; permaze = FALSE; bonus = FALSE;
-		nether_bottom = TRUE;
+		netherrealm_bottom = TRUE;
 	}
 
 	/* Hack -- Start with permawalls
@@ -9603,7 +9603,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 
 	/* No rooms yet */
 	dun->cent_n = 0;
-if (!nether_bottom) {
+if (!netherrealm_bottom) {
 	/* Build some rooms */
 #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
 	if (in_irondeepdive(wpos) ? (!maze || !(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_MAZE)) :
@@ -9754,7 +9754,7 @@ if (!nether_bottom) {
 		generate_maze(wpos, (d_ptr->flags1 & DF1_MAZE) ? 1 : randint(3));
 #endif
 	} else {
-		if (!nether_bottom) {
+		if (!netherrealm_bottom) {
 			/* Hack -- Scramble the room order */
 			for (i = 0; i < dun->cent_n; i++) {
 				int pick1 = rand_int(dun->cent_n);
@@ -10110,7 +10110,7 @@ if (!nether_bottom) {
 #endif
 
 #ifndef ARCADE_SERVER
-	if (!nether_bottom) {
+	if (!netherrealm_bottom) {
 		/* Place some traps in the dungeon */
 		alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
 		    randint(k * (bonus ? 3 : 1)), p_ptr);
@@ -10133,7 +10133,7 @@ if (!nether_bottom) {
 	}
 	/* It's done */
 #else
-	if (!nether_bottom && wpos->wz < 0) {
+	if (!netherrealm_bottom && wpos->wz < 0) {
 		/* Place some traps in the dungeon */
 		alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
 		    randint(k * (bonus ? 3 : 1)), p_ptr);
@@ -10252,7 +10252,7 @@ for(mx = 1; mx < 131; mx++) {
 
 	/* Create secret dungeon shop entrances (never on Morgoth's depth) -C. Blue */
 	/* Nether Realm has an overriding shop creation routing. */
-	if (!nether_level) {
+	if (!netherrealm_level) {
 		bool store_failed = FALSE; /* avoid checking for a different type of store if one already failed, warping probabilities around */
 
 		/* Check for building deep store (Rare & expensive stores) */
@@ -10309,7 +10309,7 @@ for(mx = 1; mx < 131; mx++) {
 	} else if (((dun_lev - 166) % 5 != 0) || (dun_lev == 166 + 30)) return;
 	/* Try to create a dungeon store */
 	if ((rand_int(1000) < cfg.dungeon_shop_chance) ||
-	    nether_level || (build_special_store == 3 || build_special_store == 4)) {
+	    netherrealm_level || (build_special_store == 3 || build_special_store == 4)) {
 		/* Try hard to place one */
 		for (i = 0; i < 300; i++) {
 			y = rand_int(dun->l_ptr->hgt-4)+2;
@@ -10435,7 +10435,7 @@ for(mx = 1; mx < 131; mx++) {
 							csbm_ptr->info |= CAVE_NOPK;
 							/* Declare this to be a room & illuminate */
 							csbm_ptr->info |= CAVE_ROOM | CAVE_GLOW;
-							if (!nether_level) {
+							if (!netherrealm_level) {
 								if (build_special_store == 1) {
 									if (cfg.dungeon_shop_type == 999){
 										switch (rand_int(3)) {
@@ -10478,7 +10478,7 @@ for(mx = 1; mx < 131; mx++) {
 
 		/* Creation failed because no spot was found! */
 		/* So let's allow it on the next level then.. */
-		if (!nether_level) {
+		if (!netherrealm_level) {
 			if (build_special_store == 1)
 				dungeon_store_timer = 0;
 			else

@@ -2774,6 +2774,8 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	/* for final guardians, finally! - C. Blue */
 	struct dungeon_type *d_ptr = getdungeon(wpos);
 	dungeon_info_type *dinfo_ptr;
+	bool netherrealm_level = in_netherrealm(wpos);
+	bool netherrealm_bottom;
 #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
 	if (in_irondeepdive(wpos)) dinfo_ptr = d_ptr ? &d_info[iddc[ABS(wpos->wz)].type] : NULL;
 	else dinfo_ptr = d_ptr ? &d_info[d_ptr->type] : NULL;
@@ -2796,7 +2798,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 0\n");
 	if (!r_ptr->name) return (FALSE);
 
 	dlev = getlevel(wpos);
-
+	netherrealm_bottom = netherrealm_level && dlev == 166 + 30;
 
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
@@ -2915,7 +2917,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6\n");
 #endif
 	if (!(summon_override_checks & SO_BOSS_LEVELS)) {
 		/* Nether Realm bottom */
-		if (dlev == (166 + 30)) {
+		if (netherrealm_bottom) {
 			/* No live spawns after initial spawn allowed */
 			if (!cave_set_quietly) return(FALSE);
 
@@ -2972,18 +2974,18 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 #endif
 
 		/* Couple of Nether Realm-only monsters hardcoded here */
-		if ((r_ptr->flags8 & RF8_NETHER_REALM) && (dlev < 166))
+		if ((r_ptr->flags8 & RF8_NETHER_REALM) && !netherrealm_level)
 			return (FALSE);
 
 		/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
-		if ((r_idx == 1067) && (dlev < (166 + 1))) return (FALSE);
+		if ((r_idx == 1067) && (!netherrealm_level || dlev < (166 + 1))) return (FALSE);
 
 		/* Dor may not occur on 'easier' (lol) NR levels */
-		if ((r_idx == 1085) && (dlev < (166 + 9))) return (FALSE);
+		if ((r_idx == 1085) && (!netherrealm_level || dlev < (166 + 9))) return (FALSE);
 
 #if 0 /* FINAL_GUARDIAN now */
 		/* Zu-Aon guards the bottom of the Nether Realm now */
-		if ((r_idx == 1097) && (dlev != (166 + 30))) return (FALSE);
+		if ((r_idx == 1097) && !netherrealm_bottom) return (FALSE);
 #endif
 
 		/* Nether Guard isn't a unique but there's only 1 guard per level */

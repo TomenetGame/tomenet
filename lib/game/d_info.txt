@@ -148,7 +148,7 @@ M:IM_FIRE
 # Nether Realm
 # Levels 166-196
 # guarded by Zu-Aon, w/ Ring of Phasing, which opens the last gate to Valinor
-# HARDCODING-WARNINGS: netherrealm_bottom and special NR shops depend on NR going from dlev 166 to 166 + 30
+# HARDCODING-WARNINGS: netherrealm_bottom/netherrealm_level/special stores depend on NR going from dlev 166 to 166 + 30
 N:6:Nether Realm
 D:Nth:a magical portal to the Nether Realm.
 #W:666:696:40:0:14:160
