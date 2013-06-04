@@ -9221,9 +9221,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	/* yay for hard-coding "The Paths of the Dead".. ;-|
 	   (it's the only affected dungeon anyway) */
 #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
-	if (in_irondeepdive(wpos) ? (iddc[ABS(wpos->wz)].type == 16) : (d_ptr->type == 16)) fountains_of_blood = TRUE;
+	if (in_irondeepdive(wpos) ? (iddc[ABS(wpos->wz)].type == DI_PATHS_DEAD) : (d_ptr->type == DI_PATHS_DEAD)) fountains_of_blood = TRUE;
 #else
-	if (d_ptr->type == 16) fountains_of_blood = TRUE;
+	if (d_ptr->type == DI_PATHS_DEAD) fountains_of_blood = TRUE;
 #endif
 #endif
 
@@ -9571,14 +9571,14 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	   I added this especially for themed IDDC, which would otherwise mean
 	   a bunch of pretty empty levels (or just lame worms mostly) - C. Blue */
  #ifdef IRONDEEPDIVE_MIXED_TYPES
-	if ((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].type == 27) ||
-	    d_ptr->type == 27) {
+	if ((in_irondeepdive(wpos) && iddc[ABS(wpos->wz)].type == DI_SANDWORM_LAIR) ||
+	    d_ptr->type == DI_SANDWORM_LAIR) {
  #else
-	if (d_ptr->type == 27) {
+	if (d_ptr->type == DI_SANDWORM_LAIR) {
  #endif
-		alloc_entry *table = alloc_race_table_dun[27];
+		alloc_entry *table = alloc_race_table_dun[DI_SANDWORM_LAIR];
 
-		hack_dun_idx = 27;
+		hack_dun_idx = DI_SANDWORM_LAIR;
 
 		hack_monster_idx = 1031;
 		hack_monster_rarity = r_info[1031].rarity;
@@ -10099,7 +10099,7 @@ if (!netherrealm_bottom) {
 #ifdef HACK_MONSTER_RARITIES
 	/* unhack */
 	if (hack_monster_idx) {
-		alloc_entry *table = alloc_race_table_dun[27];
+		alloc_entry *table = alloc_race_table_dun[DI_SANDWORM_LAIR];
 		if (hack_dun_table_idx != -1) {
 			table[hack_dun_table_idx].prob1 = hack_dun_table_prob1;
 			table[hack_dun_table_idx].prob2 = hack_dun_table_prob2;

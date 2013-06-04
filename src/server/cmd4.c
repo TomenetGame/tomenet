@@ -1685,7 +1685,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 
 			if ((d_ptr = wild_info[y][x].tower)) {
 				i = d_ptr->type;
-				if (!strcmp(d_info[i].name + d_name, "The Shores of Valinor") && !admin) continue;
+				if (i == DI_VALINOR && !admin) continue;
 				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, TRUE, d_ptr, 0));
 #ifndef SEPARATE_RECALL_DEPTHS
 				if (admin) {
@@ -1734,7 +1734,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 			}
 			if ((d_ptr = wild_info[y][x].dungeon)) {
 				i = d_ptr->type;
-				if (!strcmp(d_info[i].name + d_name, "The Shores of Valinor") && !admin) continue;
+				if (i == DI_VALINOR && !admin) continue;
 				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, FALSE, d_ptr, 0));
 #ifndef SEPARATE_RECALL_DEPTHS
 				if (admin) {

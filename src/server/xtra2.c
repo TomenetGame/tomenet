@@ -7924,7 +7924,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		if (p_ptr->wpos.wz != 0) {
 			/* Monsters in the Nether Realm give extra-high exp,
 			   +2% per floor! (C. Blue) */
-			if (dt_ptr2->type == 6) {
+			if (dt_ptr2->type == DI_NETHER_REALM) {
 				tmp_exp = ((((-p_ptr->wpos.wz) * 2) + 100) * tmp_exp) / 100;
 			}
 		}

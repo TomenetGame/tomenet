@@ -995,6 +995,12 @@
 #define	MASTER_SCRIPTB_A	'a'
 
 
+/* Dungeon indices (d_ptr->type) hardcoded from d_info.txt file: */
+#define DI_NETHER_REALM		6
+#define DI_PATHS_DEAD		16
+#define DI_SANDWORM_LAIR	27
+#define DI_VALINOR		31
+
 /* Summoning/spawning override flags for checks in monster placement routines */
 #define SO_NONE			0x0000	/* apply all checks (default) */
 #define SO_ALL			0xFFFF	/* ignore ALL checks (admin summmoning) */

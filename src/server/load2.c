@@ -2914,12 +2914,12 @@ void new_rd_wild()
 				}
 #endif
 				rd_u16b(&d_ptr->type);
-				if (d_ptr->type == 6) {
+				if (d_ptr->type == DI_NETHER_REALM) {
 					netherrealm_wpos_x = x;
 					netherrealm_wpos_y = y;
 					netherrealm_wpos_z = -1;
 				}
-				else if (d_ptr->type == 31) {
+				else if (d_ptr->type == DI_VALINOR) {
 					valinor_wpos_x = x;
 					valinor_wpos_y = y;
 					valinor_wpos_z = -1;
@@ -2969,12 +2969,12 @@ void new_rd_wild()
 				}
 #endif
 				rd_u16b(&d_ptr->type);
-				if (d_ptr->type == 6) {
+				if (d_ptr->type == DI_NETHER_REALM) {
 					netherrealm_wpos_x = x;
 					netherrealm_wpos_y = y;
 					netherrealm_wpos_z = 1;
 				}
-				else if (d_ptr->type == 31) {
+				else if (d_ptr->type == DI_VALINOR) {
 					valinor_wpos_x = x;
 					valinor_wpos_y = y;
 					valinor_wpos_z = 1;

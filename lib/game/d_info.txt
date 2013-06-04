@@ -11,7 +11,8 @@
 # Some store indexes are defined in "defines.h", and must not be
 # changed.
 
-# NOTE: Changed L and A to permille instead of percent after increasing arrays from 3 to 5 - C. Blue
+# NOTE: Changed L and A to permille instead of percent after increasing arrays from 3 to 5. - C. Blue
+# NOTE: Indices are hardcoded in defines.h, do not change.
 
 # N:<index>:<name>
 # D:<3 letter short name>:<long name>
