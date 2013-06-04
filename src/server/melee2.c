@@ -1284,7 +1284,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 if (season_halloween) {
 	/* Halloween event hack: The Great Pumpkin -C. Blue */
 	//if (!strcmp(r_ptr->name,"The Great Pumpkin"))
-	if ((m_ptr->r_idx == 1086) || (m_ptr->r_idx == 1087) || (m_ptr->r_idx == 1088))
+	if ((m_ptr->r_idx == RI_PUMPKIN1) || (m_ptr->r_idx == RI_PUMPKIN2) || (m_ptr->r_idx == RI_PUMPKIN3))
 	{
 		/* more than 1/3 HP: Moan much, tele rarely */
 		if (m_ptr->hp > (m_ptr->maxhp / 3))
@@ -2017,7 +2017,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 //	if (rad > 3 ||
 	summon_test = summon_possible(wpos, ys, xs);
 #ifdef SAURON_ANTI_GLYPH
-	if (m_ptr->r_idx == 860 && summon && !summon_test && m_ptr->hp < m_ptr->maxhp) {
+	if (m_ptr->r_idx == RI_SAURON && summon && !summon_test && m_ptr->hp < m_ptr->maxhp) {
 		base_r_ptr->freq_spell = base_r_ptr->freq_innate = SAURON_SPELL_BOOST;
 		if (!m_ptr->extra) s_printf("SAURON: boost (glyph/nospace summon).\n");
 		m_ptr->extra = 5; /* stay boosted for 5 turns at least */
@@ -6349,7 +6349,7 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist)
 		return(FALSE);
 	/* since RF1_QUESTOR is currently not used/completely implemented,
 	   I hard-code Morgoth and Sauron and Zu-Aon here - C. Blue */
-	if ((m_ptr->r_idx == 860) || (m_ptr->r_idx == 862) || (m_ptr->r_idx == 1097)) return(FALSE);
+	if ((m_ptr->r_idx == RI_SAURON) || (m_ptr->r_idx == RI_MORGOTH) || (m_ptr->r_idx == RI_ZU_AON)) return(FALSE);
 
 	/* Probably they detect things by non-optical means */
 	if (r_ptr->flags3 & RF3_NONLIVING && r_ptr->flags2 & RF2_EMPTY_MIND)
@@ -6544,7 +6544,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	inv = player_invis(Ind, m_ptr, m_ptr->cdis);
 
 #ifdef SAURON_ANTI_GLYPH
-	if (m_ptr->r_idx == 860 && m_ptr->extra) m_ptr->extra--;
+	if (m_ptr->r_idx == RI_SAURON && m_ptr->extra) m_ptr->extra--;
 #endif
 
 	/* Handle "sleep" */
@@ -6646,7 +6646,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	   monster is actually in combat, in most cases) - C. Blue */
 	else if (m_ptr->hp == m_ptr->maxhp) {
 		/* Ufthak of Cirith Ungol is mortally afraid of spiders */
-		if (m_ptr->r_idx == 260 &&
+		if (m_ptr->r_idx == RI_UFTHAK &&
 		    (r_info[p_ptr->body_monster].flags7 & RF7_SPIDER) &&
 		    m_ptr->monfear < 5)
 			m_ptr->monfear = 5;
@@ -6924,7 +6924,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #ifndef ARCADE_SERVER
 		get_moves(Ind, m_idx, mm);
 #else
-		if ((m_ptr->r_idx > 1114) && (m_ptr->r_idx < 1125)) {
+		if ((m_ptr->r_idx >= RI_ARCADE_START) && (m_ptr->r_idx <= RI_ARCADE_END)) {
 			for(n = 1; n <= NumPlayers; n++) {
 				player_type *p_ptr = Players[n];
 				if(p_ptr->game == 4 && p_ptr->team == 5) {
@@ -7424,11 +7424,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			}
 #ifdef SAURON_ANTI_GLYPH
 			/* Special power boost for Sauron if he gets hindered by glyphs */
-			else if (m_ptr->r_idx == 860 && base_r_ptr->freq_innate != SAURON_SPELL_BOOST) {
+			else if (m_ptr->r_idx == RI_SAURON && base_r_ptr->freq_innate != SAURON_SPELL_BOOST) {
 				base_r_ptr->freq_spell = base_r_ptr->freq_innate = SAURON_SPELL_BOOST;
 				s_printf("SAURON: boost (glyph move).\n");
 			}
-		} else if (do_move && m_ptr->r_idx == 860 &&
+		} else if (do_move && m_ptr->r_idx == RI_SAURON &&
 		    !m_ptr->extra && /* avoid oscillating too quickly from glyphs-prevent-summoning boost */
 		    base_r_ptr->freq_innate != 50) {
 			base_r_ptr->freq_spell = base_r_ptr->freq_innate = 50; /* hardcoded :| */
@@ -9157,12 +9157,12 @@ void process_monsters(void)
 		if (r_ptr->flags7 & RF7_NEVER_ACT) m_ptr->energy = 0;
 
 		/* Target dummy "snowiness" hack, checked once per second */
-		if (((m_ptr->r_idx == 1101) || (m_ptr->r_idx == 1126)) &&
+		if (((m_ptr->r_idx == RI_TARGET_DUMMY1) || (m_ptr->r_idx == RI_TARGET_DUMMY2)) &&
 		    (m_ptr->extra < 60) && (turn % cfg.fps == 0) &&
 		    (wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].weather_type == 2)) {
 			m_ptr->extra++;
-			if ((m_ptr->r_idx == 1101) && (m_ptr->extra == 30)) {
-				m_ptr->r_idx = 1126;
+			if ((m_ptr->r_idx == RI_TARGET_DUMMY1) && (m_ptr->extra == 30)) {
+				m_ptr->r_idx = RI_TARGET_DUMMY2;
 				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 			}
 		}
@@ -9256,17 +9256,13 @@ void process_monsters(void)
 						Send_music(pl, (p_ptr->music_monster = 42));
 					}
 				} else if (r_ptr->flags1 & RF1_UNIQUE) {
-					if (m_ptr->r_idx == 860) {
+					if (m_ptr->r_idx == RI_SAURON) {
 						//Sauron; overrides all others
 						Send_music(pl, (p_ptr->music_monster = 43));
 					}
 					//Dungeon boss or special unique? (can't override Sauron or Nazgul)
 					else if (p_ptr->music_monster != 43 && p_ptr->music_monster != 42) {
 						//Dungeon boss?
-#if 0
-						//Wight-King
-						if (m_ptr->r_idx == 971) {
-#endif
 						if (r_ptr->flags0 & RF0_FINAL_GUARDIAN)
 							Send_music(pl, (p_ptr->music_monster = 41));
 						//Special Unique (non-respawning)? Can't override dungeon boss..
@@ -9495,7 +9491,7 @@ void process_monsters(void)
 
 #ifdef SAURON_ANTI_MELEE
 		/* Special Sauron enhancements */
-		if (m_ptr->r_idx == 860) {
+		if (m_ptr->r_idx == RI_SAURON) {
 			/* is player a melee fighter mostly, or can intercept at least? */
 			if (p_ptr->s_info[SKILL_SWORD].value + p_ptr->s_info[SKILL_BLUNT].value +
 			    p_ptr->s_info[SKILL_AXE].value + p_ptr->s_info[SKILL_POLEARM].value +

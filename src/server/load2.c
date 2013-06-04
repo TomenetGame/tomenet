@@ -2483,7 +2483,7 @@ static errr rd_savefile_new_aux(int Ind)
 		}
 
 		/* hack - Sauron vs Shadow of Dol Guldur - just for consistency */
-		if (p_ptr->r_killed[860] == 1) p_ptr->r_killed[819] = 1;
+		if (p_ptr->r_killed[RI_SAURON] == 1) p_ptr->r_killed[RI_DOL_GULDUR] = 1;
 
 		/* init his max_depth[] array */
 		fix_max_depth(p_ptr);

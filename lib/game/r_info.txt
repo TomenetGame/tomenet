@@ -184,6 +184,8 @@
 
 # Note that monster zero is used for the "player" picture.
 
+# NOTE: Indices are hardcoded in defines.h, do not change.
+
 # Version stamp (required)
 
 V:3.4.1

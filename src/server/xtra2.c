@@ -4633,8 +4633,8 @@ void monster_death(int Ind, int m_idx)
 
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
-        bool is_Morgoth = (m_ptr->r_idx == 862);//(strcmp(r_name_get(m_ptr), "Morgoth, Lord of Darkness") == 0);
-        bool is_Sauron = (m_ptr->r_idx == 860);
+        bool is_Morgoth = (m_ptr->r_idx == RI_MORGOTH);//(strcmp(r_name_get(m_ptr), "Morgoth, Lord of Darkness") == 0);
+        bool is_Sauron = (m_ptr->r_idx == RI_SAURON);
 	int credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
 	bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
 
@@ -4708,13 +4708,13 @@ void monster_death(int Ind, int m_idx)
 
 	if (season_halloween) {
 		/* let everyone know, so they are prepared.. >:) */
-		if (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088) {
+		if (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3) {
 			msg_broadcast_format(0, "\374\377L**\377o%s has defeated a tasty halloween spirit!\377L**", p_ptr->name);
 			s_printf("HALLOWEEN: %s has defeated %s.\n", p_ptr->name, m_name);
 			great_pumpkin_timer = 15 + rand_int(45);
 		}
 	} else if (season_xmas) {
-		if (m_ptr->r_idx == 733 || m_ptr->r_idx == 1102) {
+		if (m_ptr->r_idx == RI_SANTA1 || m_ptr->r_idx == RI_SANTA2) {
 			msg_broadcast_format(0, "\374\377L**\377oSanta dropped the presents near %s!\377L**", p_ptr->name);
 			s_printf("XMAS: %s has defeated %s.\n", p_ptr->name, m_name);
 		}
@@ -5153,7 +5153,7 @@ if (cfg.unikill_format) {
 	/* If player killed Sauron, also mark the Shadow (formerly Necromancer) of Dol Guldur as killed!
 	   This is required since we now need a dungeon boss for Dol Guldur again =)
 	   So always kill the Shadow first, if you want his loot. - C. Blue */
-	if (is_Sauron) p_ptr->r_killed[819] = 1;
+	if (is_Sauron) p_ptr->r_killed[RI_DOL_GULDUR] = 1;
 
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {

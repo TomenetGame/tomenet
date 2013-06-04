@@ -2186,7 +2186,7 @@ static int auto_retaliate(int Ind)
 				target = i;
 			} else {
 				/* Target dummy should always be the last one to get attacked - mikaelh */
-				if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126) continue;
+				if (m_ptr->r_idx == RI_TARGET_DUMMY1 || m_ptr->r_idx == RI_TARGET_DUMMY2) continue;
 
 				r_ptr2 = r_ptr;
 				r_ptr = race_inf(m_ptr);
@@ -2561,11 +2561,11 @@ static void process_player_begin(int Ind)
 		everyone_lite_spot(&p_ptr->wpos, oy, ox);
 		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		/* Summon 'monsters' */
-		place_monster_one(&p_ptr->wpos, 7, 10, 1100, 0, 0, 0, 0, 0);
+		place_monster_one(&p_ptr->wpos, 7, 10, RI_BRIGHTLANCE, 0, 0, 0, 0, 0);
 		everyone_lite_spot(&p_ptr->wpos, 7, 10);
-		place_monster_one(&p_ptr->wpos, 7, 15, 1100, 0, 0, 0, 0, 0);
+		place_monster_one(&p_ptr->wpos, 7, 15, RI_BRIGHTLANCE, 0, 0, 0, 0, 0);
 		everyone_lite_spot(&p_ptr->wpos, 7, 15);
-		place_monster_one(&p_ptr->wpos, 10, 25, 1098, 0, 0, 0, 0, 0);
+		place_monster_one(&p_ptr->wpos, 10, 25, RI_OROME, 0, 0, 0, 0, 0);
 		everyone_lite_spot(&p_ptr->wpos, 10, 25);
 		p_ptr->update |= PU_LITE;
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
@@ -5395,7 +5395,6 @@ static void process_various(void)
 			   --- QUESTOR is currently NOT used!! - C. Blue */
 			if (r_ptr->flags1 & RF1_QUESTOR) continue;
 			/* ..hardcoding them instead: */
-//			if (i == 860 || i == 862 || i == 1032 || i == 1067 || i == 1085 || i == 1097) continue;
 			if (r_ptr->level >= 98) continue; /* Not Michael either */
 
 			if (r_ptr->flags7 & RF7_NAZGUL) continue; /* No nazguls */

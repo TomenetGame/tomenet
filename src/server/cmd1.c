@@ -4255,12 +4255,12 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 
 			/* target dummy */
-			if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126) {
+			if (m_ptr->r_idx == RI_TARGET_DUMMY1 || m_ptr->r_idx == RI_TARGET_DUMMY2) {
 				/* Hack: Reduce snow on it during winter season :) */
 				m_ptr->extra -= 5;
 				if (m_ptr->extra < 0) m_ptr->extra = 0;
-					if ((m_ptr->r_idx == 1126) && (m_ptr->extra < 30)) {
-					m_ptr->r_idx = 1101;
+					if ((m_ptr->r_idx == RI_TARGET_DUMMY2) && (m_ptr->extra < 30)) {
+					m_ptr->r_idx = RI_TARGET_DUMMY1;
 					everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 				}
 			}

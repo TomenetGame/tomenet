@@ -654,12 +654,12 @@ void check_Morgoth(int Ind)
 			if (is_admin(p_ptr)) continue;
 
 			if (inarea(&p_ptr->wpos, wpos) &&
-			    ((p_ptr->mode & MODE_PVP) || p_ptr->total_winner || (p_ptr->r_killed[860] != 1)))
+			    ((p_ptr->mode & MODE_PVP) || p_ptr->total_winner || (p_ptr->r_killed[RI_SAURON] != 1)))
 			{
 				/* Replace Morgoth with Sauron if Sauron is missing,
 				   the other two cases have no repercussions for now -- just allow - C. Blue */
 				if (in_irondeepdive(&p_ptr->wpos)) {
-					if (p_ptr->r_killed[860] != 1) {
+					if (p_ptr->r_killed[RI_SAURON] != 1) {
 						dun_level *l_ptr = getfloor(wpos);
 
 						/* remove morgy here */
@@ -680,7 +680,7 @@ void check_Morgoth(int Ind)
 
 						/* place Sauron so players can kill him first */
 						summon_override_checks = SO_ALL; /* (SO_IDDC?) */
-						place_monster_one(&p_ptr->wpos, y, x, 860, FALSE, FALSE, FALSE, 0, 0);
+						place_monster_one(&p_ptr->wpos, y, x, RI_SAURON, FALSE, FALSE, FALSE, 0, 0);
 						summon_override_checks = SO_NONE;
 
 	                        	    	/* Notice */

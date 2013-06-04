@@ -7263,7 +7263,7 @@ static void process_global_event(int ge_id) {
 			if ((!ge->state[3]) && ((turn - ge->start_turn) - ge->state[2] >= 600 * cfg.fps)) {
 				msg_broadcast(0, "\377aThe gods of highlands are displeased by the lack of blood flowing.");
 				summon_override_checks = SO_ALL & ~(SO_GRID_EMPTY);
-				while (!(summon_detailed_one_somewhere(&wpos, 1114, 0, FALSE, 101)) && (++tries < 1000));
+				while (!(summon_detailed_one_somewhere(&wpos, RI_BAD_LUCK_BAT, 0, FALSE, 101)) && (++tries < 1000));
 				summon_override_checks = SO_NONE;
 				ge->state[3] = 1; /* remember that we already spawned one so we don't keep spawning */
 					/* this actually serves if an admin /gefforward's too far, beyond the spawning

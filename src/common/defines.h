@@ -1001,6 +1001,33 @@
 #define DI_SANDWORM_LAIR	27
 #define DI_VALINOR		31
 
+/* Monster indices (r_idx) hardcoded from r_info.txt file:
+   (Note: Specific mimic forms aren't included (eg druids).) */
+#define RI_UFTHAK		260
+#define RI_SANTA1		733	/* terror santa from hell */
+#define RI_DOL_GULDUR		819	/* 'easy' version of sauron */
+#define RI_SAURON		860
+#define RI_MORGOTH		862
+#define RI_TIK_SRVZLLAT		1032
+#define RI_HELLRAISER		1067
+#define RI_NETHER_GUARD		1068
+#define RI_DOR			1085
+#define RI_PUMPKIN1		1086
+#define RI_PUMPKIN2		1087
+#define RI_PUMPKIN3		1088
+#define RI_ZU_AON		1097
+#define RI_OROME		1098
+#define RI_BRIGHTLANCE		1100
+#define RI_TARGET_DUMMY1	1101	/* normal version */
+#define RI_SANTA2		1102	/* normal version */
+#define RI_CANDLEBEARER		1104
+#define RI_DARKLING		1105
+#define RI_BAD_LUCK_BAT		1114
+#define RI_TARGET_DUMMY2	1126	/* snow-covered version */
+
+#define RI_ARCADE_START		1115	/* first arcade-specific monster; TODO: add ARCADE flag instead */
+#define RI_ARCADE_END		1124	/* last arcade-specific monster; TODO: add ARCADE flag instead */
+
 /* Summoning/spawning override flags for checks in monster placement routines */
 #define SO_NONE			0x0000	/* apply all checks (default) */
 #define SO_ALL			0xFFFF	/* ignore ALL checks (admin summmoning) */

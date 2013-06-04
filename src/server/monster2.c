@@ -29,7 +29,7 @@
 #define MAX_COMMENT 5
 
 /* Debug spawning of a particular monster */
-//#define PMO_DEBUG 860
+//#define PMO_DEBUG RI_SAURON
 
 static cptr horror_desc[MAX_HORROR] =
 {
@@ -633,7 +633,7 @@ void wipe_m_list(struct worldpos *wpos) {
 
 		if (inarea(&m_ptr->wpos,wpos)) {
                         if (season_halloween &&
-                	    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
+                	    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3))
                         	great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
 			delete_monster_idx(i, TRUE);
 		}
@@ -678,7 +678,7 @@ void thin_surface_spawns() {
 
 		/* if we erase the Great Pumpkin then reset its timer */
 		if (season_halloween &&
-		    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
+		    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3))
 			 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 
 		/* hack: don't affect non-townies in Bree at all */
@@ -704,7 +704,7 @@ void geno_towns() {
 		if (istown(&m_ptr->wpos) &&
 		    !(r_info[m_ptr->r_idx].flags8 & RF8_GENO_PERSIST)) {
 			if (season_halloween && /* hardcoded -_- */
-			    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
+			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3))
 				 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 			delete_monster_idx(i, TRUE);
 		}
@@ -2923,15 +2923,15 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6\n");
 
 #if 0 /* FINAL_GUARDIAN now */
 			/* Special hack - level is empty except for Zu-Aon */
-			r_idx = 1097;
+			r_idx = RI_ZU_AON;
 #else
-			if (r_idx != 1097) return (FALSE);
+			if (r_idx != RI_ZU_AON) return (FALSE);
 #endif
 		}
 
 		/* Valinor - No monster spawn, except for.. */
 		if (in_valinor(wpos) &&
-		    (r_idx != 1100 ) && (r_idx != 1098)) /* Brightlance, Orome */
+		    (r_idx != RI_BRIGHTLANCE ) && (r_idx != RI_OROME)) /* Brightlance, Orome */
 			return(FALSE);
 	}
 #ifdef PMO_DEBUG
@@ -2978,18 +2978,18 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 			return (FALSE);
 
 		/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
-		if ((r_idx == 1067) && (!netherrealm_level || dlev < (166 + 1))) return (FALSE);
+		if ((r_idx == RI_HELLRAISER) && (!netherrealm_level || dlev < (166 + 1))) return (FALSE);
 
 		/* Dor may not occur on 'easier' (lol) NR levels */
-		if ((r_idx == 1085) && (!netherrealm_level || dlev < (166 + 9))) return (FALSE);
+		if ((r_idx == RI_DOR) && (!netherrealm_level || dlev < (166 + 9))) return (FALSE);
 
 #if 0 /* FINAL_GUARDIAN now */
 		/* Zu-Aon guards the bottom of the Nether Realm now */
-		if ((r_idx == 1097) && !netherrealm_bottom) return (FALSE);
+		if ((r_idx == RI_ZU_AON) && !netherrealm_bottom) return (FALSE);
 #endif
 
 		/* Nether Guard isn't a unique but there's only 1 guard per level */
-		if (r_idx == 1068) {
+		if (r_idx == RI_NETHER_GUARD) {
 #if DEBUG_LEVEL > 2
 			s_printf("Checking for old Nether Guards\n");
 #endif
@@ -3000,14 +3000,14 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 					m_fast[i] = m_fast[--m_top];
 					continue;
 				}
-				if ((m_ptr->r_idx == 1068) && inarea(wpos, &m_ptr->wpos)) return(FALSE);
+				if ((m_ptr->r_idx == RI_NETHER_GUARD) && inarea(wpos, &m_ptr->wpos)) return(FALSE);
 			}
 		}
 
 		/* Morgoth may not spawn 'live' if the players on his level aren't prepared correctly */
 		/* Morgoth may not spawn 'live' at all (!) if MORGOTH_NO_TELE_VAULTS is defined!
 		   (works in conjunction with cave_gen in generate.c) */
-		if (r_idx == 862) {
+		if (r_idx == RI_MORGOTH) {
 #ifdef MORGOTH_NO_LIVE_SPAWN
 			/* is Morgoth not generated within a dungeon level's
 			   initialization (cave_gen in generate.c) ? */
@@ -3024,7 +3024,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 					p_ptr = Players[i];
 					if (is_admin(p_ptr)) continue;
 					if (inarea(&p_ptr->wpos, wpos) &&
-					    (p_ptr->total_winner || (p_ptr->r_killed[860] != 1))) {
+					    (p_ptr->total_winner || (p_ptr->r_killed[RI_SAURON] != 1))) {
 					        /* log */
  #if DEBUG_LEVEL > 2
 						if (cave_set_quietly) {
@@ -3346,12 +3346,12 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 
 	/* Success */
 	/* Report some very interesting monster creating: */
-	if (r_idx == 860) s_printf("Sauron was created on %d\n", dlev);
+	if (r_idx == RI_SAURON) s_printf("Sauron was created on %d\n", dlev);
 #ifdef ENABLE_MAIA
-	if (r_idx == 1104) s_printf("Candlebearer was created on %d\n", dlev);
-	if (r_idx == 1105) s_printf("Darkling was created on %d\n", dlev);
+	if (r_idx == RI_CANDLEBEARER) s_printf("Candlebearer was created on %d\n", dlev);
+	if (r_idx == RI_DARKLING) s_printf("Darkling was created on %d\n", dlev);
 #endif
-	if (r_idx == 862) {
+	if (r_idx == RI_MORGOTH) {
 		s_printf("Morgoth was created on %d\n", dlev);
 #ifdef MORGOTH_GHOST_DEATH_LEVEL
 		if (l_ptr) l_ptr->flags1 |= LF1_NO_GHOST;
@@ -3369,18 +3369,18 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		/* if it was a live spawn, adjust his power according to amount of players on his floor */
 		if (!cave_set_quietly) check_Morgoth(0);
 	}
-	if (r_idx == 1032) s_printf("Tik'Svrzllat was created on %d\n", dlev);
-	if (r_idx == 1067) s_printf("The Hellraiser was created on %d\n", dlev);
-	if (r_idx == 1085) s_printf("Dor was created on %d\n", dlev);
+	if (r_idx == RI_TIK_SRVZLLAT) s_printf("Tik'Svrzllat was created on %d\n", dlev);
+	if (r_idx == RI_HELLRAISER) s_printf("The Hellraiser was created on %d\n", dlev);
+	if (r_idx == RI_DOR) s_printf("Dor was created on %d\n", dlev);
 	/* no easy escape from Zu-Aon besides resigning by recalling! */
-	if (r_idx == 1097) {
+	if (r_idx == RI_ZU_AON) {
 		s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", dlev);
 		if (l_ptr) l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
 	}
 
 	/* Handle floor feelings */
 	/* Special events don't necessarily influence floor feelings */
-	if ((!season_halloween || (r_idx != 1088 && r_idx != 1087 && r_idx != 1086)) &&
+	if ((!season_halloween || (r_idx != RI_PUMPKIN1 && r_idx != RI_PUMPKIN2 && r_idx != RI_PUMPKIN3)) &&
 	    /* for now ignore live-spawns. maybe change that?: */
 	    (cave_set_quietly)) {
 		if ((r_ptr->flags1 & RF1_UNIQUE) && l_ptr) l_ptr->flags2 |= LF2_UNIQUE;
@@ -3691,24 +3691,24 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 		/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
 #ifndef RPG_SERVER
 		if ((great_pumpkin_timer == 0) && (lev < 40) && (wpos->wz != 0) && no_high_level_players) {
-			if (lev > 20) r_idx = 1088;//10k HP
+			if (lev > 20) r_idx = RI_PUMPKIN3;//10k HP
 			else {
-				if (lev > 10) r_idx = 1087;//6k HP
-				else r_idx = 1086;//3k HP, smallest version
+				if (lev > 10) r_idx = RI_PUMPKIN2;//6k HP
+				else r_idx = RI_PUMPKIN1;//3k HP, smallest version
 
-				if (magik(15)) r_idx = 1087; /* sometimes tougher */
-				else if (magik(15)) r_idx = 1088; /* sometimes tougher */
+				if (magik(15)) r_idx = RI_PUMPKIN2; /* sometimes tougher */
+				else if (magik(15)) r_idx = RI_PUMPKIN3; /* sometimes tougher */
 			}
 #else
 		if ((great_pumpkin_timer == 0) && (lev < 50) && (wpos->wz != 0) &&
 		    !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
-			if (lev > 30) r_idx = 1088;//6.6k HP
+			if (lev > 30) r_idx = RI_PUMPKIN3;//6.6k HP
 			else {
-				if (lev > 15) r_idx = 1087;//4k HP
-				else r_idx = 1086;//2k HP, smallest version
+				if (lev > 15) r_idx = RI_PUMPKIN2;//4k HP
+				else r_idx = RI_PUMPKIN1;//2k HP, smallest version
 
-				if (magik(15)) r_idx = 1087; /* sometimes tougher */
-				else if (magik(15)) r_idx = 1088; /* sometimes tougher */
+				if (magik(15)) r_idx = RI_PUMPKIN2; /* sometimes tougher */
+				else if (magik(15)) r_idx = RI_PUMPKIN3; /* sometimes tougher */
 			}
 #endif
 
@@ -4506,7 +4506,7 @@ void message_pain(int Ind, int m_idx, int dam)
 
 
 	/* Target Dummy */
-	if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126) {
+	if (m_ptr->r_idx == RI_TARGET_DUMMY1 || m_ptr->r_idx == RI_TARGET_DUMMY2) {
 		msg_format(Ind, "%^s reels from \377g%d \377wdamage.", m_name, dam);
 ////		msg_format_near(Ind, "%^s reels from \377g%d \377wdamage.", m_name, dam);
 //spammy	msg_format_near_site(m_ptr->fy, m_ptr->fx, &m_ptr->wpos, Ind, TRUE, "%^s reels from \377g%d \377wdamage.", m_name, dam);
@@ -4514,8 +4514,8 @@ void message_pain(int Ind, int m_idx, int dam)
 		/* Hack: Reduce snow on it during winter season :) */
 		m_ptr->extra -= 7;
 		if (m_ptr->extra < 0) m_ptr->extra = 0;
-		if ((m_ptr->r_idx == 1126) && (m_ptr->extra < 30)) {
-			m_ptr->r_idx = 1101;
+		if ((m_ptr->r_idx == RI_TARGET_DUMMY2) && (m_ptr->extra < 30)) {
+			m_ptr->r_idx = RI_TARGET_DUMMY1;
 			everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 		}
 		return;
@@ -5000,7 +5000,7 @@ int pick_ego_monster(int r_idx, int Level)
         if (!r_info[r_idx].level) return 0;
 
 	/* No Great Pumpkin ego (HALLOWEEN) */
-	if (r_idx == 1086 || r_idx == 1087 || r_idx == 1088) return 0;
+	if (r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3) return 0;
 
         /* First are we allowed to find an ego */
         if (!magik(MEGO_CHANCE)) return 0;

@@ -10091,8 +10091,8 @@ if (!netherrealm_bottom) {
 			y = y1;
 		}
 
-		if (rand_int(2) == 1) place_monster_one(wpos, y, x, 1104, FALSE, FALSE, FALSE, 0, 0);
-		else place_monster_one(wpos, y, x, 1105, FALSE, FALSE, FALSE, 0, 0);
+		if (rand_int(2) == 1) place_monster_one(wpos, y, x, RI_CANDLEBEARER, FALSE, FALSE, FALSE, 0, 0);
+		else place_monster_one(wpos, y, x, RI_DARKLING, FALSE, FALSE, FALSE, 0, 0);
 	}
 #endif
 
