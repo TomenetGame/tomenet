@@ -1113,7 +1113,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		break;
 		/* short and simple for all brands */
 		case 5:
-		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"hit by the elements");
+		strcat(brand_msg,"hit by the elements");
 		break;
 	}
 	strcat(brand_msg,"!");
