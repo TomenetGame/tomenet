@@ -778,6 +778,7 @@ void do_mimic_power_aux(int Ind, int dir)
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	int rad;
 	int rlev = (r_ptr->level + p_ptr->lev * 2 + 1) / 3;
+	int rlev_bonus;
 	magic_type *s_ptr = &innate_powers[p_ptr->current_spell];
 
 #if 1 /* Fire-till-kill */
@@ -788,6 +789,9 @@ void do_mimic_power_aux(int Ind, int dir)
                 if (dir == 5) p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
         }
 #endif
+
+	if (rlev > 50) rlev = 50;
+	rlev_bonus = (rlev * rlev) / 10; /* polynomially growing summand for bolt and ball spells */
 
 	/* Determine the radius of the blast */
 	rad = (r_ptr->flags2 & RF2_POWERFUL) ? 3 : 2;
@@ -815,12 +819,11 @@ void do_mimic_power_aux(int Ind, int dir)
 	break;
     case 4:
 	{
-//cool stuff, needs some testing:	int k;
-//		for (k = 0; k < 1 + rlev / 20; k++)
-//		{
+//cool stuff, needs some testing:
+//		int k;
+//		for (k = 0; k < 1 + rlev / 20; k++) {
 			sprintf(p_ptr->attacker, " fires an arrow for");
 			msg_print(Ind, "You fire an arrow.");
-//			fire_bolt(Ind, GF_ARROW, dir, damroll(1 + rlev / 8, 6), p_ptr->attacker);
 			fire_bolt(Ind, GF_ARROW, dir, damroll(1 + rlev / 8, 6), p_ptr->attacker);
 			break;
 //		}
@@ -990,25 +993,25 @@ void do_mimic_power_aux(int Ind, int dir)
     case 32:
         sprintf(p_ptr->attacker, " casts an acid ball for");
 	msg_print(Ind, "You cast an acid ball.");
-        fire_ball(Ind, GF_ACID, dir, randint(rlev * 3) + 15 , rad, p_ptr->attacker);
+        fire_ball(Ind, GF_ACID, dir, randint(rlev * 3) + 15 + rlev_bonus, rad, p_ptr->attacker);
         break;
 // RF5_BA_ELEC			0x00000002	/* Elec Ball */
     case 33:
         sprintf(p_ptr->attacker, " casts a lightning ball for");
 	msg_print(Ind, "You cast a lightning ball.");
-        fire_ball(Ind, GF_ELEC, dir, randint(rlev * 3 / 2) + 8 , rad, p_ptr->attacker);
+        fire_ball(Ind, GF_ELEC, dir, randint(rlev * 3 / 2) + 8 + rlev_bonus, rad, p_ptr->attacker);
         break;
 // RF5_BA_FIRE			0x00000004	/* Fire Ball */
     case 34:
         sprintf(p_ptr->attacker, " casts a fire ball for");
 	msg_print(Ind, "You cast a fire ball.");
-        fire_ball(Ind, GF_FIRE, dir, randint(rlev * 7 / 2) + 10 , rad, p_ptr->attacker);
+        fire_ball(Ind, GF_FIRE, dir, randint(rlev * 7 / 2) + 10 + rlev_bonus, rad, p_ptr->attacker);
         break;
 // RF5_BA_COLD			0x00000008	/* Cold Ball */
     case 35:
         sprintf(p_ptr->attacker, " casts a cold ball for");
 	msg_print(Ind, "You cast a cold ball.");
-        fire_ball(Ind, GF_COLD, dir, randint(rlev * 2) + 10 , rad, p_ptr->attacker);
+        fire_ball(Ind, GF_COLD, dir, randint(rlev * 2) + 10 + rlev_bonus, rad, p_ptr->attacker);
         break;
 // RF5_BA_POIS			0x00000010	/* Poison Ball */
     case 36:
@@ -1021,25 +1024,25 @@ void do_mimic_power_aux(int Ind, int dir)
     case 37:
 	sprintf(p_ptr->attacker, " casts a nether ball for");
 	msg_print(Ind, "You cast a nether ball.");
-        fire_ball(Ind, GF_NETHER, dir, 50  + damroll(10, 10) + rlev , rad, p_ptr->attacker);
+        fire_ball(Ind, GF_NETHER, dir, 50  + damroll(10, 10) + rlev + rlev_bonus, rad, p_ptr->attacker);
         break;
 // RF5_BA_WATE			0x00000040	/* Water Ball */
     case 38:
 	sprintf(p_ptr->attacker, " casts a water ball for");
 	msg_print(Ind, "You cast a water ball.");
-        fire_ball(Ind, GF_WATER, dir, randint(rlev * 5 / 2) + 50 , rad, p_ptr->attacker);
+        fire_ball(Ind, GF_WATER, dir, randint(rlev * 5 / 2) + 50 + rlev_bonus / 2, rad, p_ptr->attacker);
         break;
 // RF5_BA_MANA			0x00000080	/* Mana Storm */
     case 39:
         sprintf(p_ptr->attacker, " invokes a mana storm for");
 	msg_print(Ind, "You invoke a mana storm.");
-        fire_ball(Ind, GF_MANA, dir, damroll(10, 10) + (rlev * 2) , rad, p_ptr->attacker);
+        fire_ball(Ind, GF_MANA, dir, damroll(10, 10) + (rlev * 2) + rlev_bonus, rad, p_ptr->attacker);
         break;
 // RF5_BA_DARK			0x00000100	/* Darkness Storm */
     case 40:
 	sprintf(p_ptr->attacker, " invokes a darkness storm for");
 	msg_print(Ind, "You invoke a darkness storm.");
-        fire_ball(Ind, GF_DARK, dir, damroll(10, 10) + (rlev * 2) , rad, p_ptr->attacker);
+        fire_ball(Ind, GF_DARK, dir, damroll(10, 10) + (rlev * 2) + rlev_bonus, rad, p_ptr->attacker);
         break;
 // RF5_MIND_BLAST		0x00000400	/* Blast Mind */
     case 42:
@@ -1054,8 +1057,8 @@ void do_mimic_power_aux(int Ind, int dir)
         break;
 // RF5_CAUSE_1			0x00001000	/* Cause Wound */
     case 44:
-        sprintf(p_ptr->attacker, " casts a mana bolt for");
-	msg_print(Ind, "You cast a mana bolt.");
+        sprintf(p_ptr->attacker, " causes wounds for");
+	msg_print(Ind, "You cause wounds.");
         fire_bolt(Ind, GF_MANA, dir, damroll(3 + rlev / 4, 8), p_ptr->attacker);
         break;
 // RF5_CAUSE_2			0x00002000	/* XXX */
@@ -1065,79 +1068,79 @@ void do_mimic_power_aux(int Ind, int dir)
     case 32+14:
 	sprintf(p_ptr->attacker, " invokes radiation for");
 	msg_print(Ind, "You invoke radiation.");
-	fire_ball(Ind, GF_NUKE, dir, (rlev + damroll(10, 6)), 2, p_ptr->attacker);
+	fire_ball(Ind, GF_NUKE, dir, (rlev + damroll(10, 6)) + rlev_bonus, 2, p_ptr->attacker);
 	break;
 /* RF5_BA_CHAO */
     case 32+15:
 	sprintf(p_ptr->attacker, " invokes raw chaos for");
 	msg_print(Ind, "You invoke raw chaos.");
-	fire_ball(Ind, GF_CHAOS, dir, (rlev * 2) + damroll(10, 10), 4, p_ptr->attacker);
+	fire_ball(Ind, GF_CHAOS, dir, (rlev * 2) + damroll(10, 10) + rlev_bonus, 4, p_ptr->attacker);
 	break;
 // RF5_BO_ACID			0x00010000	/* Acid Bolt */
     case 48:
         sprintf(p_ptr->attacker, " casts an acid bolt for");
 	msg_print(Ind, "You cast an acid bolt.");
-        fire_bolt(Ind, GF_ACID, dir, damroll(7, 8) + (rlev / 3), p_ptr->attacker);
+        fire_bolt(Ind, GF_ACID, dir, damroll(7, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
         break;
 // RF5_BO_ELEC			0x00020000	/* Elec Bolt (unused) */
     case 49:
         sprintf(p_ptr->attacker, " casts a lightning bolt for");
 	msg_print(Ind, "You cast a lightning bolt.");
-        fire_bolt(Ind, GF_ELEC, dir, damroll(4, 8) + (rlev / 3), p_ptr->attacker);
+        fire_bolt(Ind, GF_ELEC, dir, damroll(4, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
         break;
 // RF5_BO_FIRE			0x00040000	/* Fire Bolt */
     case 50:
         sprintf(p_ptr->attacker, " casts a fire bolt for");
 	msg_print(Ind, "You cast a fire bolt.");
-        fire_bolt(Ind, GF_FIRE, dir, damroll(9, 8) + (rlev / 3), p_ptr->attacker);
+        fire_bolt(Ind, GF_FIRE, dir, damroll(9, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
         break;
 // RF5_BO_COLD			0x00080000	/* Cold Bolt */
     case 51:
         sprintf(p_ptr->attacker, " casts a frost bolt for");
 	msg_print(Ind, "You cast a frost bolt.");
-        fire_bolt(Ind, GF_COLD, dir, damroll(6, 8) + (rlev / 3), p_ptr->attacker);
+        fire_bolt(Ind, GF_COLD, dir, damroll(6, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
         break;
 // RF5_BO_POIS			0x00100000	/* Poison Bolt (unused) */
     case 52:
         sprintf(p_ptr->attacker, " casts a poison bolt for");
 	msg_print(Ind, "You cast a poison bolt.");
-        fire_bolt(Ind, GF_POIS, dir, damroll(3, 8) + (rlev / 3), p_ptr->attacker);
+        fire_bolt(Ind, GF_POIS, dir, damroll(3, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
         break;
 // RF5_BO_NETH			0x00200000	/* Nether Bolt */
     case 53:
         sprintf(p_ptr->attacker, " casts a nether bolt for");
 	msg_print(Ind, "You cast a nether bolt.");
-        fire_bolt(Ind, GF_NETHER, dir, 30 + damroll(5, 5) + (rlev * 3) / 2, p_ptr->attacker);
+        fire_bolt(Ind, GF_NETHER, dir, 30 + damroll(5, 5) + (rlev * 3) / 2 + rlev_bonus / 3, p_ptr->attacker);
         break;
 // RF5_BO_WATE			0x00400000	/* Water Bolt */
     case 54:
         sprintf(p_ptr->attacker, " casts a water bolt for");
 	msg_print(Ind, "You cast a water bolt.");
-        fire_bolt(Ind, GF_WATER, dir, damroll(10, 10) + (rlev), p_ptr->attacker);
+        fire_bolt(Ind, GF_WATER, dir, damroll(10, 10) + (rlev) + rlev_bonus / 3, p_ptr->attacker);
         break;
 // RF5_BO_MANA			0x00800000	/* Mana Bolt */
     case 55:
         sprintf(p_ptr->attacker, " casts a mana bolt for");
 	msg_print(Ind, "You cast a mana bolt.");
-        fire_bolt(Ind, GF_MANA, dir, randint(rlev * 7 / 4) + 50, p_ptr->attacker);
+        fire_bolt(Ind, GF_MANA, dir, randint(rlev * 7 / 4) + 50 + rlev_bonus / 3, p_ptr->attacker);
         break;
 // RF5_BO_PLAS			0x01000000	/* Plasma Bolt */
     case 56:
         sprintf(p_ptr->attacker, " casts a plasma bolt for");
 	msg_print(Ind, "You cast a plasma bolt.");
-        fire_bolt(Ind, GF_PLASMA, dir, 10 + damroll(8, 7) + (rlev), p_ptr->attacker);
+        fire_bolt(Ind, GF_PLASMA, dir, 10 + damroll(8, 7) + (rlev) + rlev_bonus / 3, p_ptr->attacker);
         break;
 // RF5_BO_ICEE			0x02000000	/* Ice Bolt */
     case 57:
         sprintf(p_ptr->attacker, " casts an ice bolt for");
 	msg_print(Ind, "You cast an ice bolt.");
-        fire_bolt(Ind, GF_ICE, dir, damroll(6, 6) + (rlev), p_ptr->attacker);
+        fire_bolt(Ind, GF_ICE, dir, damroll(6, 6) + (rlev) + rlev_bonus / 3, p_ptr->attacker);
         break;
 // RF5_MISSILE			0x04000000	/* Magic Missile */
     case 58:
         sprintf(p_ptr->attacker, " fires a magic missile for");
 	msg_print(Ind, "You fire a magic missile.");
-        fire_bolt(Ind, GF_MISSILE, dir, damroll(2, 6) + (rlev / 3), p_ptr->attacker);
+        fire_bolt(Ind, GF_MISSILE, dir, damroll(2, 6) + (rlev / 3) + rlev_bonus / 5, p_ptr->attacker);
         break;
 // RF5_SCARE			0x08000000	/* Frighten Player */
     case 59:
