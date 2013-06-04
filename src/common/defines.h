@@ -6399,13 +6399,13 @@ extern int PlayerUID;
 #define BRAND_ACID          3
 #define BRAND_POIS          4
 #define BRAND_BASE          5
-#define BRAND_CONF          6
+#define BRAND_CHAO          6
 #define BRAND_VORP          7
 #define BRAND_BALL_FIRE     8
 #define BRAND_BALL_COLD     9
 #define BRAND_BALL_ELEC     10
 #define BRAND_BALL_ACID     11
-#define BRAND_BALL_SOUND    12
+#define BRAND_BALL_SOUN     12
 
 /* Client modes (e) */
 #define CLIENT_NORMAL		0x0000

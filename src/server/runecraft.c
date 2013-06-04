@@ -816,7 +816,7 @@ s_printf("Duration: %d\n", duration);
 				
 				case SV_R_CHAO: {
 					if (r_imperatives[imperative].flag != I_ENHA) fire_ball(Ind, GF_OLD_POLY, 0, 0, 0, ""); //poly self
-					else set_brand(Ind, duration, BRAND_CONF, 0); //chaos brand
+					else set_brand(Ind, duration, BRAND_CHAO, 0); //chaos brand
 				break; }
 				
 				case SV_R_MANA: {

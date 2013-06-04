@@ -12849,43 +12849,43 @@ staves, boomerangs, and crowns (see (8.4) Artifact Creation).
 
 Non-enhanced sigils produce the projection's according resist.
 
-Abbreviations (in order of appearance):
-Gl - Glow (+1 light radius)
-Bl - Blind resist
-SI - See invisible
-If - Infravision (PVAL Required)
-In - Invisibility
-Su - Random sustain
-SK - Random slay/kill flag
-HL - Hold life
-Va - Vampirism
-RR - 1 Resist (acid/elec/fire/cold/pois/conf/blin/shar/soun/neth/nexu/disi)
-Ch - Chaotic
-Rm - Regen mana
-MP - Max mana increase (PVAL Required) [Helm -- Crowns ONLY]
-FA - Free action
-W+ - Wisdom bonus (PVAL Required)
-I+ - Intelligence bonus (PVAL Required)
-NT - Anti-teleportation (no-tele)
-Im - Immunity
-Br - Brand
+Abbreviations (in alphabetical order):
+AM - Anti-magic shell
 Au - Aura
-D+ - Dexterity bonus (PVAL Required)
-S+ - Strength bonus (PVAL Required)
-Rh - Regen health
-SD - Slow digestion
-Fl - Flying
+Ba - Base resist (acid/elec/fire/cold)
+Bl - Blind resist
+Br - Brand
 c+ - Charisma bonus (PVAL Required)
 C+ - Constitution bonus (PVAL Required)
-Sp - Speed (PVAL Required)
-EA - Extra attacks (PVAL Required)
-Sl - Stealth (PVAL required)
-Fe - Fear resist
+Ch - Chaotic
 Cr - Critical bonus (PVAL Required)
-Vo - Vorpal (Quaking if blunt)
-AM - Anti-magic shell
+D+ - Dexterity bonus (PVAL Required)
+EA - Extra attacks (PVAL Required)
+FA - Free action
+Fe - Fear resist
+Fl - Flying
+Gl - Glow (+1 light radius)
+HL - Hold life
+I+ - Intelligence bonus (PVAL Required)
+If - Infravision (PVAL Required)
+Im - Immunity
+In - Invisibility
+MP - Max mana increase (PVAL Required) [Helm -- Crowns ONLY]
+NT - Anti-teleportation (no-tele)
 Re - Reflection
-Ba - Base resist (acid/elec/fire/cold)
+Rh - Regen health
+Rm - Regen mana
+RR - 1 Resist (acid/elec/fire/cold/pois/conf/blin/shar/soun/neth/nexu/disi)
+S+ - Strength bonus (PVAL Required)
+SD - Slow digestion
+SI - See invisible
+SK - Random slay/kill flag
+Sl - Stealth (PVAL required)
+Sp - Speed (PVAL Required)
+Su - Random sustain
+Va - Vampirism
+Vo - Vorpal (Quaking if blunt)
+W+ - Wisdom bonus (PVAL Required)
 
 -------------------------------------------------------------------------------
 Element        | General | Weap | Shield | Armor | Cloak | Helm | Glove | Boot
