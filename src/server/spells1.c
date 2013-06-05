@@ -1480,19 +1480,6 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 		if (old_num >= 7) old_num = 10;
 	} */
 
-	/* Silyl admin games -- only in totally safe environment! */
-	if (p_ptr->admin_set_defeat &&
-	    -Ind_attacker != PROJECTOR_TERRAIN &&
-	    ge_special_sector &&
-	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y &&
-	    p_ptr->wpos.wz == WPOS_ARENA_Z)) {
-		p_ptr->admin_set_defeat--;
-		p_ptr->chp = -1;
-		p_ptr->deathblow = 1;
-		break_cloaking(Ind, 0);
-		goto destined_defeat;
-	}
-
 	/* towns are safe-zones from ALL hostile actions - except blood bond */
 	if (IS_PLAYER(Ind_attacker)) {
 		if ((istown(&p_ptr->wpos) || istown(&Players[Ind_attacker]->wpos)) &&
@@ -1514,9 +1501,22 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	/* Paranoia */
 	if (p_ptr->death) return;
 
-	/* Hack -- player is secured inside a store/house */
+	/* Hack -- player is secured inside a store/house except in dungeons */
 	/* XXX make sure it doesn't "leak"! */
-	if (p_ptr->store_num != -1) return;
+	if (p_ptr->store_num != -1 && !p_ptr->wpos.wz) return;
+
+	/* Silyl admin games -- only in totally safe environment! */
+	if (p_ptr->admin_set_defeat &&
+	    -Ind_attacker != PROJECTOR_TERRAIN &&
+	    ge_special_sector &&
+	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y &&
+	    p_ptr->wpos.wz == WPOS_ARENA_Z)) {
+		p_ptr->admin_set_defeat--;
+		p_ptr->chp = -1;
+		p_ptr->deathblow = 1;
+		break_cloaking(Ind, 0);
+		goto destined_defeat;
+	}
 
 	/* Disturb - except when in PvP! */
 	if (strcmp(hit_from, "life draining") &&
@@ -1581,6 +1581,11 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	}
 #endif
 
+	/* Admin silly stuff */
+	if (IS_PLAYER(Ind_attacker) && Players[Ind_attacker]->admin_godly_strike) {
+		Players[Ind_attacker]->admin_godly_strike--;
+		damage = p_ptr->chp + 1;
+	}
 
 	/* Hurt the player */
 	p_ptr->chp -= damage;
