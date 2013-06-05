@@ -4185,11 +4185,13 @@ player_class class_info[MAX_CLASS] =
 #if 1
 			{
 				SKILL_DRUID_ARCANE,
-				'+', 0, '+', 500, //was formerly 300 for SKILL_DRUID (combined skill)
+				'+', 0, 
+				'+', 500, //was formerly 300 for SKILL_DRUID (combined skill)
 			},
 	                {
 	                	SKILL_DRUID_PHYSICAL,
-	                	'+', 0, '+', 500,
+	                	'+', 0, 
+				'+', 500,
 	                },
 #else
 			{
@@ -4423,12 +4425,14 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1100, //900,
                         },
                         {
-                            SKILL_DRUID_ARCANE,
-                            '+', 1000, '+', 1200, //1500,
+				SKILL_DRUID_ARCANE,
+				'+', 1000, 
+				'+', 1200, //1500,
                         },
                         {
-                            SKILL_DRUID_PHYSICAL,
-                            '+', 1000, '+', 1200, //1500,
+				SKILL_DRUID_PHYSICAL,
+				'+', 1000, 
+				'+', 1200, //1500,
                         },
                         {
                                 SKILL_MIMIC,
