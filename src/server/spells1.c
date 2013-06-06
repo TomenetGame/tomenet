@@ -4245,8 +4245,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	object_type *o_ptr;
 	object_kind *k_ptr;
 
-	if(!(zcave=getcave(wpos))) return(FALSE);
-	c_ptr=&zcave[y][x];
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	c_ptr = &zcave[y][x];
 //	o_ptr = &o_list[c_ptr->o_idx];
 
 	/* Nothing here */
@@ -4604,12 +4604,15 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //			if (seen) obvious = TRUE;
 
 			do_smash_effect = TRUE;
+
+			/* no tricks to get stuff out of suspended guild halls ;> */
+			if ((c_ptr->info & CAVE_GUILD_SUS)) break;
+
 			note_kill = (plural ? " disappear!" : " disappears!");
 
-			for (j=0;j<10;j++)
-			{
-				s16b cx = x+dist-rand_int(dist * 2);
-				s16b cy = y+dist-rand_int(dist * 2);
+			for (j = 0; j < 10; j++) {
+				s16b cx = x + dist - rand_int(dist * 2);
+				s16b cy = y + dist - rand_int(dist * 2);
 				if (!in_bounds(cy, cx)) continue;
 				if (!cave_floor_bold(zcave, cy, cx) ||
 					cave_perma_bold(zcave, cy, cx)) continue;
@@ -4622,7 +4625,6 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					msg_format_near_site(y, x, wpos, 0, TRUE, "\377oThe %s%s", o_name, note_kill);
 
 				delete_object_idx(this_o_idx, FALSE);
-
 				break;
 			}
 			break;
