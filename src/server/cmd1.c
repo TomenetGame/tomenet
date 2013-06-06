@@ -2372,19 +2372,21 @@ void carry(int Ind, int pickup, int confirm)
 
 				/* guild key? */
 				if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY) {
-					if (o_ptr->pval == p_ptr->guild && !lookup_player_name(guilds[p_ptr->guild].master)
-					    && p_ptr->lev >= 30) {
-						int i;
-						/* set guild hall to 'no longer suspended' */
-						if ((i = guilds[p_ptr->guild].h_idx)) fill_house(&houses[i - 1], FILL_GUILD_SUS_UNDO, NULL);
-						guilds[p_ptr->guild].timeout = 0; /* phew */
+					if (o_ptr->pval == p_ptr->guild && !lookup_player_name(guilds[p_ptr->guild].master)) {
+						if (p_ptr->lev < 30) msg_print(Ind, "\377yYou need to be at least level 30 to become a guild master.");
+						else {
+							int i;
+							/* set guild hall to 'no longer suspended' */
+							if ((i = guilds[p_ptr->guild].h_idx)) fill_house(&houses[i - 1], FILL_GUILD_SUS_UNDO, NULL);
+							guilds[p_ptr->guild].timeout = 0; /* phew */
 
-						guild_msg_format(p_ptr->guild, "\374\377%c%s is the new guild master!", COLOUR_CHAT_GUILD, p_ptr->name);
-						guilds[p_ptr->guild].master = p_ptr->id;
-						/* hack: change guild hall creator id to him */
-						if (guilds[p_ptr->guild].h_idx) houses[guilds[p_ptr->guild].h_idx - 1].dna->creator = p_ptr->dna;
-						Send_guild(Ind, FALSE, FALSE);
-						Send_guild_config(p_ptr->guild);
+							guild_msg_format(p_ptr->guild, "\374\377%c%s is the new guild master!", COLOUR_CHAT_GUILD, p_ptr->name);
+							guilds[p_ptr->guild].master = p_ptr->id;
+							/* hack: change guild hall creator id to him */
+							if (guilds[p_ptr->guild].h_idx) houses[guilds[p_ptr->guild].h_idx - 1].dna->creator = p_ptr->dna;
+							Send_guild(Ind, FALSE, FALSE);
+							Send_guild_config(p_ptr->guild);
+						}
 					}
 				}
 
