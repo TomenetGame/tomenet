@@ -1279,10 +1279,10 @@ static bool wr_savefile_new(int Ind)
 	tmp32u = MAX_WILD_8;
 	wr_u32b(tmp32u);
 	for (i = 0; i < MAX_WILD_8; i++)
-	{
 		wr_byte(p_ptr->wild_map[i]);
-	}
+
 	wr_byte(p_ptr->guild);
+	wr_u32b(p_ptr->guild_dna);
 
 	wr_s16b(p_ptr->quest_id);
 	wr_s16b(p_ptr->quest_num);

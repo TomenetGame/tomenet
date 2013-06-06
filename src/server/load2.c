@@ -2496,6 +2496,8 @@ static errr rd_savefile_new_aux(int Ind)
 
 	/* read player guild membership */
 	rd_byte(&p_ptr->guild);
+	if (!older_than(4, 5, 8)) rd_u32b(&p_ptr->guild_dna);
+	else if (p_ptr->guild) p_ptr->guild_dna = guilds[p_ptr->guild].dna;
 	rd_u16b(&p_ptr->quest_id);
         rd_s16b(&p_ptr->quest_num);
 
