@@ -2667,7 +2667,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 static void do_trait_skill(int Ind, int s, int m) {
 	int tmp_val = Players[Ind]->s_info[s].mod;
 	/* Modify skill, avoiding overflow (mod is u16b) */
-	tmp_val = (tmp_val * m) / 10;
+	tmp_val = (tmp_val * m) / 100;
 	/* Cap to 2.0 */
 	if (tmp_val > 2000) tmp_val = 2000;
 	Players[Ind]->s_info[s].mod = tmp_val;
@@ -3089,61 +3089,61 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 	/* Adjust birth trait based skills (only draconians currently) - Kurzel */
 	switch (p_ptr->ptrait) {
 		case TRAIT_BLUE: {
-			do_trait_skill(Ind, SKILL_R_LITE, 12);
-			do_trait_skill(Ind, SKILL_R_NETH, 12);
+			do_trait_skill(Ind, SKILL_R_LITE, 105);
+			do_trait_skill(Ind, SKILL_R_NETH, 105);
 		break; }
 		case TRAIT_WHITE: {
-			do_trait_skill(Ind, SKILL_R_LITE,  8);
-			do_trait_skill(Ind, SKILL_R_DARK, 13);
-			do_trait_skill(Ind, SKILL_R_NETH, 13);
-			do_trait_skill(Ind, SKILL_R_CHAO,  8);
+			do_trait_skill(Ind, SKILL_R_LITE,  97);
+			do_trait_skill(Ind, SKILL_R_DARK, 108);
+			do_trait_skill(Ind, SKILL_R_NETH, 108);
+			do_trait_skill(Ind, SKILL_R_CHAO,  97);
 		break; }
 		case TRAIT_RED: {
-			do_trait_skill(Ind, SKILL_R_LITE, 13);
-			do_trait_skill(Ind, SKILL_R_DARK,  8);
-			do_trait_skill(Ind, SKILL_R_NETH,  8);
-			do_trait_skill(Ind, SKILL_R_CHAO, 13);	
+			do_trait_skill(Ind, SKILL_R_LITE, 108);
+			do_trait_skill(Ind, SKILL_R_DARK,  97);
+			do_trait_skill(Ind, SKILL_R_NETH,  97);
+			do_trait_skill(Ind, SKILL_R_CHAO, 108);
 		break; }
 		case TRAIT_BLACK: {
-			do_trait_skill(Ind, SKILL_R_DARK, 12);
-			do_trait_skill(Ind, SKILL_R_CHAO, 12);
+			do_trait_skill(Ind, SKILL_R_DARK, 105);
+			do_trait_skill(Ind, SKILL_R_CHAO, 105);
 		break; }
 		case TRAIT_GREEN: {
-			do_trait_skill(Ind, SKILL_R_DARK, 12);
-			do_trait_skill(Ind, SKILL_R_MANA, 12);
+			do_trait_skill(Ind, SKILL_R_DARK, 105);
+			do_trait_skill(Ind, SKILL_R_MANA, 105);
 		break; }
 		case TRAIT_MULTI: {
-			do_trait_skill(Ind, SKILL_R_LITE, 11);
-			do_trait_skill(Ind, SKILL_R_DARK, 11);
-			do_trait_skill(Ind, SKILL_R_NETH, 11);
-			do_trait_skill(Ind, SKILL_R_CHAO, 11);
+			do_trait_skill(Ind, SKILL_R_LITE, 103);
+			do_trait_skill(Ind, SKILL_R_DARK, 103);
+			do_trait_skill(Ind, SKILL_R_NETH, 103);
+			do_trait_skill(Ind, SKILL_R_CHAO, 103);
 		break; }
 		case TRAIT_BRONZE: {
-			do_trait_skill(Ind, SKILL_R_LITE, 12);
-			do_trait_skill(Ind, SKILL_R_DARK, 12);
+			do_trait_skill(Ind, SKILL_R_LITE, 105);
+			do_trait_skill(Ind, SKILL_R_DARK, 105);
 		break; }
 		case TRAIT_SILVER: {
-			do_trait_skill(Ind, SKILL_R_LITE, 12);
-			do_trait_skill(Ind, SKILL_R_NEXU, 12);
+			do_trait_skill(Ind, SKILL_R_LITE, 105);
+			do_trait_skill(Ind, SKILL_R_NEXU, 105);
 		break; }
 		case TRAIT_GOLD: {
-			do_trait_skill(Ind, SKILL_R_NEXU, 12);
-			do_trait_skill(Ind, SKILL_R_CHAO, 12);
+			do_trait_skill(Ind, SKILL_R_NEXU, 105);
+			do_trait_skill(Ind, SKILL_R_CHAO, 105);
 		break; }
 		case TRAIT_LAW: {
-			do_trait_skill(Ind, SKILL_R_NEXU, 12);
-			do_trait_skill(Ind, SKILL_R_CHAO, 11);
-			do_trait_skill(Ind, SKILL_R_MANA, 11);
+			do_trait_skill(Ind, SKILL_R_NEXU, 105);
+			do_trait_skill(Ind, SKILL_R_CHAO, 103);
+			do_trait_skill(Ind, SKILL_R_MANA, 103);
 		break; }
 		case TRAIT_CHAOS: {
-			do_trait_skill(Ind, SKILL_R_NETH, 11);
-			do_trait_skill(Ind, SKILL_R_CHAO, 13);
+			do_trait_skill(Ind, SKILL_R_NETH, 103);
+			do_trait_skill(Ind, SKILL_R_CHAO, 108);
 		break; }
 		case TRAIT_BALANCE: {
-			do_trait_skill(Ind, SKILL_R_NEXU, 11);
-			do_trait_skill(Ind, SKILL_R_NETH, 11);
-			do_trait_skill(Ind, SKILL_R_CHAO, 11);
-			do_trait_skill(Ind, SKILL_R_MANA, 11);
+			do_trait_skill(Ind, SKILL_R_NEXU, 103);
+			do_trait_skill(Ind, SKILL_R_NETH, 103);
+			do_trait_skill(Ind, SKILL_R_CHAO, 103);
+			do_trait_skill(Ind, SKILL_R_MANA, 103);
 		break; }
 		default:
 		break;
