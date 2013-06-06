@@ -13037,6 +13037,7 @@ Guilds:
     The guild creator will receive a 'Guild Key' which designates him as the
     guild master. In case the guild master dies, another guild member may
     fetch the key to become the new guild master.
+    Only one character per account can be a guild master.
 
     A guild offers a dedicated guild chat, so players in a guild can organize
     themselves in diving parties and still have a global chat if needed.
