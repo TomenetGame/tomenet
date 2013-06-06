@@ -1799,6 +1799,8 @@ static void del_guild(int id){
 		/* and in case it was suspended due to leaderlessness,
 		   so the next guild buying this house won't get a surprise.. */
 		fill_house(&houses[guilds[id].h_idx - 1], FILL_GUILD_SUS_UNDO, NULL);
+
+		guilds[id].h_idx = 0;//obsolete?
 	}
 #endif
 
@@ -2067,7 +2069,7 @@ void guild_leave(int Ind, bool voluntarily) {
 		guilds[guild_id].master = 0;
 
 		/* set guild hall to 'suspended' */
-		if ((i = guilds[guild_id].h_idx)) fill_house(&houses[i], FILL_GUILD_SUS, NULL);
+		if ((i = guilds[guild_id].h_idx)) fill_house(&houses[i - 1], FILL_GUILD_SUS, NULL);
 	}
 
 	/* Resend info */

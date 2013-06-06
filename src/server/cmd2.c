@@ -1230,7 +1230,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 
 		/* guild halls must be mang-style houses (technically too, for CAVE_GUILD_SUS flag to work!) */
 		if ((houses[h_idx].flags & HF_TRAD)) {
-			msg_print(Ind, "Guild halls must not be 'list' (store-like) houses.");
+			msg_print(Ind, "\377yGuild halls must not be list-type (store-like) houses.");
 			return FALSE;
 		}
 
