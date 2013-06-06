@@ -1227,10 +1227,11 @@ G:3:w
 W:36
 F:HARD_STEAL | GOOD
 
+# less etiquettes,rll,wor,rc so weapons show up more often in relation
 N:73:Temple
 T:100:111:56
-T:100:111:56
-T:100:111:56
+#T:100:111:56
+#T:100:111:56
 #I:100:& Nunchaku~
 #I:100:& Bo Staff~
 #I:100:& Lucerne Hammer~
@@ -1245,8 +1246,8 @@ I:100:Blessing
 I:100:Holy Chant
 I:100:Heroism
 I:100:Word of Recall
-I:100:Word of Recall
-I:100:Word of Recall
+#I:100:Word of Recall
+#I:100:Word of Recall
 #I:100:Cure Light Wounds
 T:100:71:34
 #I:100:Cure Serious Wounds
@@ -1257,21 +1258,21 @@ I:100:Cure Critical Wounds
 I:100:Cure Critical Wounds
 I:100:Restore Life Levels
 I:100:Restore Life Levels
-I:100:Restore Life Levels
+#I:100:Restore Life Levels
 I:100:& Whip~
 I:100:& Mace~
 I:100:& Ball-and-Chain~
 I:100:& War Hammer~
 I:100:Word of Recall
-I:100:Word of Recall
-I:100:Word of Recall
+#I:100:Word of Recall
+#I:100:Word of Recall
 I:100:Cure Critical Wounds
 I:100:Cure Critical Wounds
 I:100:Restore Life Levels
-I:100:Restore Life Levels
-I:100:Restore Life Levels
+#I:100:Restore Life Levels
+#I:100:Restore Life Levels
 I:100:Remove Curse
-I:100:Remove Curse
+#I:100:Remove Curse
 I:2:*Remove Curse*
 #I:100:*Remove Curse*
 I:100:Neutralize Poison
@@ -1358,7 +1359,10 @@ G:5:b
 W:36
 F:HARD_STEAL
 
+# less tele/perc/cantrips, more mage staves
 N:75:Magic shop
+T:100:6:1
+T:100:6:1
 T:100:6:1
 T:100:6:1
 I:100:Protection
@@ -1396,12 +1400,12 @@ T:100:55:15
 T:100:55:4
 T:100:55:4
 T:100:55:4
-T:100:55:4
+#T:100:55:4
 I:100:Perception
 I:100:Perception
 I:100:Perception
-I:100:Perception
-I:100:Perception
+#I:100:Perception
+#I:100:Perception
 #I:100:Remove Curse
 T:100:55:6
 #I:100:Cure Light Wounds
@@ -1409,7 +1413,7 @@ I:100:Probing
 # & Book~ of Beginner Cantrips
 T:100:111:50
 T:100:111:50
-T:100:111:50
+#T:100:111:50
 A:0:0:1:2:3:4
 #O:34:35:36:37:31:44 need more keepers first in ow_info
 #O:34:35:36:37:36:37
