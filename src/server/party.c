@@ -742,13 +742,16 @@ bool player_in_party(int party_id, int Ind) {
  */
 int guild_create(int Ind, cptr name){
 	player_type *p_ptr = Players[Ind];
-	int index = 0, i;
+	int index = 0, i, j;
 	object_type forge, *o_ptr = &forge;
 	char temp[160];
+	struct account *acc;
+	int *id_list, ids;
 
 	char *ptr, buf[NAME_LEN];
 	if (strlen(name) >= NAME_LEN) {
-		msg_format(Ind, "Guild name must not exceed %d characters!", NAME_LEN - 1);
+		msg_format(Ind, "\377yGuild name must not exceed %d characters!", NAME_LEN - 1);
+		return FALSE;
 	}
 	strncpy(buf, name, NAME_LEN);
 	buf[NAME_LEN - 1] = '\0';
@@ -770,6 +773,26 @@ int guild_create(int Ind, cptr name){
 		msg_print(Ind, "\377yPvP characters may not create a guild.");
 		return FALSE;
 	}
+
+	/* anti-cheeze: People could get an extra house on each character.
+	   So we allow only one guild master per player account to at least
+	   reduce the nonsense to 1 extra house per Account.. */
+	acc = GetAccount(p_ptr->accountname, NULL, FALSE);
+	/* paranoia */
+	if (!acc) {
+		/* uhh.. */
+		msg_print(Ind, "Sorry, guild creation has failed.");
+		return FALSE;
+	}
+	ids = player_id_list(&id_list, acc->id);
+	for (i = 0; i < ids; i++) {
+		if ((j = lookup_player_guild(id_list[i])) && /* one of his characters is in a guild.. */
+		    guilds[j].master == id_list[i]) { /* ..and he is actually the master of that guild? */
+			msg_print(Ind, "\377yOnly one character per account is allowed to be a guild master.");
+			return FALSE;
+		}
+	}
+
 	/* Make sure this guy isn't in some other guild already */
 	if (p_ptr->guild != 0) {
 		msg_print(Ind, "\377yYou already belong to a guild!");
@@ -964,7 +987,8 @@ int party_create(int Ind, cptr name)
 
 	char *ptr, buf[NAME_LEN];
 	if (strlen(name) >= NAME_LEN) {
-		msg_format(Ind, "Party name must not exceed %d characters!", NAME_LEN - 1);
+		msg_format(Ind, "\377yParty name must not exceed %d characters!", NAME_LEN - 1);
+		return FALSE;
 	}
 	strncpy(buf, name, NAME_LEN);
 	buf[NAME_LEN - 1] = '\0';
