@@ -526,7 +526,7 @@ W:0:1:3:0
 C:0:0:-50:0
 T:35:0:255
 R:100
-F:AGGRAVATE
+F:AGGRAVATE | CURSED
 
 #changed from suffix to prefix
 #N:47:of Irritation
@@ -1517,8 +1517,10 @@ T:38:0:99
 X:B:30:0
 W:0:1:2:0
 #C:0:0:-10:0
-C:0:0:-25:0
-
+#C:0:0:-25:0
+C:0:0:-15:0
+R:100
+F:NO_ENCHANT
 
 # Instruments
 
@@ -2021,7 +2023,7 @@ F:SPEED
 N:173:of Combat
 X:A:34:22
 W:50:1:15:7000
-C:10:10:-10:2
+C:10:10:0:2
 T:31:2:99
 R:100
 F:STR | CON | SHOW_MODS | HIDE_TYPE | IGNORE_ACID | RES_FEAR | IGNORE_WATER | 

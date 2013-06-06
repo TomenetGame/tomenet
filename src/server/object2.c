@@ -5321,7 +5321,8 @@ for (i = 0; i < 25; i++) {
 		o_ptr->ac += a_ptr->ac;
 		o_ptr->dd += a_ptr->dd;
 		o_ptr->ds += a_ptr->ds;
-		o_ptr->to_a += a_ptr->to_a;
+		if (a_ptr->to_a < 0) o_ptr->to_a = a_ptr->to_a; /* <- special for 'bad' ego powers, vs high-ac armour such as DSM */
+		else o_ptr->to_a += a_ptr->to_a;
 		o_ptr->to_h += a_ptr->to_h;
 		o_ptr->to_d += a_ptr->to_d;
 
