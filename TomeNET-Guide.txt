@@ -13116,6 +13116,8 @@ To get a guild hall, the current guild master must buy a house and transfer
 ownership to the guild. He does this by standing next to the house door,
 pressing 'h' key for house operations, and then choose '(2) Change house owner'
 followed by '(2) Guild'.
+Note that 'list' houses (store-like houses) are not allowed to become guild
+halls. You need to pick the other type of house (the one with open area inide).
 
 After the ownership has been changed to the guild, the house no longer counts
 to houses owned by the guild master. So it does not affect his house limit nor

@@ -1227,6 +1227,13 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 			msg_print(Ind, "The guild already has a guild hall.");
 			return FALSE;
 		}
+
+		/* guild halls must be mang-style houses (technically too, for CAVE_GUILD_SUS flag to work!) */
+		if ((houses[h_idx].flags & HF_TRAD)) {
+			msg_print(Ind, "Guild halls must not be 'list' (store-like) houses.");
+			return FALSE;
+		}
+
 		/* guild master 'loses' one own house */
 		if (dna->owner_type == OT_PLAYER) {
 			p_ptr->houses_owned--;
