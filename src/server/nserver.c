@@ -2354,6 +2354,12 @@ static int Handle_login(int ind)
 
 	/* Send party/guild information */
 	Send_party(NumPlayers, FALSE, FALSE);
+	/* Guild timed out meanwhile? (Leaderless for too long) */
+	if (p_ptr->guild &&
+	    (!guilds[p_ptr->guild].members || guilds[p_ptr->guild].dna != p_ptr->guild_dna)) {
+		p_ptr->guild = 0;
+		clockin(NumPlayers, 3);
+	}
 	Send_guild(NumPlayers, FALSE, FALSE);
 	Send_guild_config(p_ptr->guild);
 
@@ -2593,7 +2599,8 @@ static int Handle_login(int ind)
 #else
 			if (
 #endif
-			    guilds[i].members) { /* guild still exists? (TODO: could be a different guild by now :-p) */
+			    guilds[i].members /* guild still exists? */
+			    && guilds[i].dna == p_ptr->guild_dna) { /* and is still the SAME guild? */
 				/* auto-re-add him to the guild */
 				if (guild_auto_add(NumPlayers, i, namebuf1)) {
 					/* also restore his 'adder' status if he was one */

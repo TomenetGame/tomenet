@@ -1597,6 +1597,8 @@ typedef struct guild_type {
 	s16b minlev;		/* minimum level to join */
 	char adder[5][NAME_LEN];	/* Guild may have up to 5 people who can add besides the guild master */
 	s16b h_idx;		/* Guild Hall - house index */
+	u32b dna;		/* Remember the guild's identity - in case it times out and a new guild gets created of the same index */
+	int timeout;		/* Timer for removal of a guild that has been leaderless for too long */
 } guild_type;
 
 /* Save data work information for guild halls */
@@ -2024,6 +2026,7 @@ struct player_type
 	/* changed from byte to u16b - mikaelh */
 	u16b party;		/* The party he belongs to (or 0 if neutral) */
 	byte guild;		/* The guild he belongs to (0 if neutral)*/
+	u32b guild_dna;		/* Remember the guild, to avoid confusion it was disbanded while we were offline */
 
 	s16b target_who;
 	s16b target_col;	/* What position is targetted */

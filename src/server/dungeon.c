@@ -5263,7 +5263,7 @@ static void process_various(void)
 		}
 	}
 
-#if 0 /* might skip an hour if transition is unprecice, ie 1:59 -> 3:00 */
+#if 0 /* might skip an hour if transition is unprecise, ie 1:59 -> 3:00 */
 	/* Extra LUA function in custom.lua */
 	time(&now);
 	tmp = localtime(&now);
@@ -5319,6 +5319,7 @@ static void process_various(void)
 /*		bbs_add_line("--- new day line ---"); */
 	}
 
+	/* every 10 seconds */
 	if (!(turn % (cfg.fps * 10))) purge_old();
 
 #if 0 /* disable for now - mikaelh */
@@ -5327,6 +5328,19 @@ static void process_various(void)
 		update_check_file();
 	}
 #endif
+
+
+	/* Things handled once per hour */
+	if (!(turn % (cfg.fps * 3600))) {
+		/* Purge leaderless guilds after a while */
+		for (i = 0; i < MAX_GUILDS; i++) {
+			if (!guilds[i].members) continue;
+			if (!lookup_player_name(guilds[i].master) &&
+			    guilds[i].timeout++ >= 24 * 7)
+				guild_timeout(i);
+		}
+	}
+
 
 	/* Handle certain things once a minute */
 	if (!(turn % (cfg.fps * 60))) {

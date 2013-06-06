@@ -6527,6 +6527,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	bool		did_bash_door;
 	bool		did_take_item;
 	bool		did_kill_item;
+	bool		take_item_override = FALSE;
 	bool		did_move_body;
 	bool		did_kill_body;
 	bool		did_pass_wall;
@@ -7888,8 +7889,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				if (p_ptr->id != m_ptr->owner) disturb(Ind, 0, 0);
 			}
 
-
-			/* XXX XXX XXX Change for Angband 2.8.0 */
+			/* for leaderless guild halls */
+			if ((r_ptr->flags2 & RF2_TAKE_ITEM) && (zcave[ny][nx].info & CAVE_GUILD_SUS))
+				take_item_override = TRUE;
 
 			/* Take or Kill objects (not "gold") on the floor */
 			if (o_ptr->k_idx &&
@@ -7924,17 +7926,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				}
 
 				/* The object cannot be picked up by the monster */
-				else if (!monster_can_pickup(r_ptr, o_ptr))
-				{
+				else if (!monster_can_pickup(r_ptr, o_ptr)) {
 					/* Only give a message for "take_item" */
-					if (r_ptr->flags2 & RF2_TAKE_ITEM)
-					{
+					if (r_ptr->flags2 & RF2_TAKE_ITEM) {
 						/* Take note */
 						did_take_item = TRUE;
 
 						/* Describe observable situations */
-						if (p_ptr->mon_vis[m_idx] && player_has_los_bold(Ind, ny, nx))
-						{
+						if (p_ptr->mon_vis[m_idx] && player_has_los_bold(Ind, ny, nx)) {
 							/* Dump a message */
 							msg_format(Ind, "%^s tries to pick up %s, but fails.",
 							           m_name, o_name);
@@ -7945,7 +7944,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				/* Pick up the item */
 				else if ((r_ptr->flags2 & RF2_TAKE_ITEM)
 				    /* idea: don't carry valuable loot ouf ot no-tele vaults for the player's delight */
-				    && !(zcave[ny][nx].info & CAVE_STCK))
+				    && !(zcave[ny][nx].info & CAVE_STCK)
+				    && !take_item_override)
 				{
 					s16b this_o_idx = 0;
 
@@ -7958,8 +7958,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					if (o_ptr->owner) s_printf("ITEM_TAKEN: %s by %s\n", o_name, m_name_real);
 
 					/* Describe observable situations */
-					if (player_has_los_bold(Ind, ny, nx))
-					{
+					if (player_has_los_bold(Ind, ny, nx)) {
 						/* Dump a message */
 						msg_format(Ind, "%^s picks up %s.", m_name, o_name);
 					}
@@ -7968,12 +7967,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					this_o_idx = c_ptr->o_idx;
 
 #ifdef MONSTER_ITEM_CONSUME
-					if (magik(MONSTER_ITEM_CONSUME))
-					{
+					if (magik(MONSTER_ITEM_CONSUME)) {
 						/* Delete the object */
 						delete_object_idx(this_o_idx, TRUE);
-					}
-					else
+					} else
 #endif	// MONSTER_ITEM_CONSUME
 					{
 						/* paranoia */
@@ -8004,8 +8001,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				}
 
 				/* Destroy the item */
-				else if (r_ptr->flags2 & RF2_KILL_ITEM)
-				{
+				else if ((r_ptr->flags2 & RF2_KILL_ITEM) || take_item_override) {
 					/* Take note */
 					did_kill_item = TRUE;
 

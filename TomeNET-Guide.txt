@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. June 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. June 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -13088,6 +13088,11 @@ Guilds:
 
 A player of a leaderless guild who grabs the guild key becomes the new
 guild master. Keys are indestructible, they can be lost though..
+
+While a guild is leaderless, three restrictions apply:
+    1) No new members can be added to the guild.
+    2) Items and gold cannot be picked up from the guild hall anymore.
+    3) The guild will cease to exist if it is leaderless for more than a week!
 
 
 PvP outside of the dedicated 'PvP' character mode:

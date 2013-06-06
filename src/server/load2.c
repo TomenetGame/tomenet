@@ -1031,10 +1031,15 @@ static void rd_guilds() {
 		return;
 	}
 	for (i = 0; i < tmp16u; i++) {
+		if (!s_older_than(4, 5, 8)) rd_u32b(&guilds[i].dna);
+		else {
+			guilds[i].dna = rand_int(0xFFFF) << 16;
+			guilds[i].dna += rand_int(0xFFFF);
+		}
 		rd_string(guilds[i].name, 80);
 		rd_s32b(&guilds[i].master);
 		rd_s32b(&guilds[i].members);
-		if (!older_than(4, 5, 2)) rd_byte(&guilds[i].cmode);
+		if (!s_older_than(4, 5, 2)) rd_byte(&guilds[i].cmode);
 		else {
 			cptr name = NULL;
 			/* first entry is dummy anyway */
@@ -1051,12 +1056,12 @@ static void rd_guilds() {
 		}
 		rd_u32b(&guilds[i].flags);
 		rd_s16b(&guilds[i].minlev);
-		if (!older_than(4, 4, 20)) {
+		if (!s_older_than(4, 4, 20)) {
 			int j;
 			for (j = 0; j < 5; j++)
 				rd_string(guilds[i].adder[j], NAME_LEN);
 		}
-		if (!older_than(4, 5, 0)) rd_s16b(&guilds[i].h_idx);
+		if (!s_older_than(4, 5, 0)) rd_s16b(&guilds[i].h_idx);
 		else guilds[i].h_idx = 0;
 	}
 }
@@ -1088,7 +1093,7 @@ static void rd_party(int n)
 	else
 		party_ptr->mode = 0;
 
-	if (!older_than(4, 5, 2)) rd_byte(&party_ptr->cmode);
+	if (!s_older_than(4, 5, 2)) rd_byte(&party_ptr->cmode);
 	else {
 		/* first entry is dummy anyway; party in use at all? if not then we're done */
 		if (n == 0 || !party_ptr->members) party_ptr->cmode = 0;
@@ -1105,7 +1110,7 @@ static void rd_party(int n)
 		}
 	}
 
-	if (!older_than(4, 4, 19)) rd_u32b(&party_ptr->flags);
+	if (!s_older_than(4, 4, 19)) rd_u32b(&party_ptr->flags);
 
 	/* Hack -- repair dead parties 
 	   I THINK this line was causing some problems....

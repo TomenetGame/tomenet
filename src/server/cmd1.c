@@ -1417,11 +1417,15 @@ void carry(int Ind, int pickup, int confirm)
 	char    o_name[ONAME_LEN], o_name_real[ONAME_LEN];
 	u16b	old_note;
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type *c_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
-	c_ptr=&zcave[p_ptr->py][p_ptr->px];
+
+	bool forbidden = FALSE; /* for leaderless guild halls */
+
+
+	if (!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Hack -- nothing here to pick up */
 	if (!(c_ptr->o_idx)) return;
@@ -1440,6 +1444,13 @@ void carry(int Ind, int pickup, int confirm)
 	o_ptr = &o_list[c_ptr->o_idx];
 
 	if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py)) return;
+
+	/* Cannot pick up stuff in leaderless guild halls */
+	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_GUILD_SUS) &&
+	    /* exception: Guild Keys can always be picked up, since they make you the new guild master
+	       and therefore end the 'leaderless' status of a guild. */
+	    !(o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY))
+		 forbidden = TRUE;
 
 	/* Auto id ? */
 	if (p_ptr->auto_id) {
@@ -1461,7 +1472,7 @@ void carry(int Ind, int pickup, int confirm)
 
 		/* hack for cloaking: since picking up anything breaks it,
 		   we don't pickup gold except if the player really wants to */
-		if ((p_ptr->cloaked == 1 || p_ptr->shadow_running) && !pickup) {
+		if (((p_ptr->cloaked == 1 || p_ptr->shadow_running) && !pickup) || forbidden) {
 			if (p_ptr->blind || no_lite(Ind))
 				msg_format(Ind, "You feel %s%s here.", o_name, 
 						o_ptr->next_o_idx ? " on a pile" : "");
@@ -1585,7 +1596,7 @@ void carry(int Ind, int pickup, int confirm)
 		disturb(Ind, 0, 0);
 
 		/* Describe the object */
-		if (!pickup && !force_pickup) {
+		if ((!pickup && !force_pickup) || forbidden) {
 			char pseudoid[13];
 			strcpy(pseudoid, "");
 			/* felt an (non-changing!) object of same kind before via pseudo-id? then remember.
@@ -2360,10 +2371,15 @@ void carry(int Ind, int pickup, int confirm)
 				}
 
 				/* guild key? */
-				if(o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY){
-					if(o_ptr->pval == p_ptr->guild){
-						if(guilds[p_ptr->guild].master != p_ptr->id){
-							guild_msg_format(p_ptr->guild, "\374\377%c%s is the new guildmaster!", COLOUR_CHAT_GUILD, p_ptr->name);
+				if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY) {
+					if (o_ptr->pval == p_ptr->guild) {
+						if (guilds[p_ptr->guild].master != p_ptr->id) {
+							int i;
+							/* set guild hall to 'no longer suspended' */
+							if ((i = guilds[p_ptr->guild].h_idx)) fill_house(&houses[i - 1], FILL_GUILD_SUS_UNDO, NULL);
+							guilds[p_ptr->guild].timeout = 0; /* phew */
+
+							guild_msg_format(p_ptr->guild, "\374\377%c%s is the new guild master!", COLOUR_CHAT_GUILD, p_ptr->name);
 							guilds[p_ptr->guild].master = p_ptr->id;
 							/* hack: change guild hall creator id to him */
 							if (guilds[p_ptr->guild].h_idx) houses[guilds[p_ptr->guild].h_idx - 1].dna->creator = p_ptr->dna;

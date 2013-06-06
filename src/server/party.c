@@ -887,7 +887,12 @@ int guild_create(int Ind, cptr name){
 	object_aware(Ind, o_ptr);
 	(void)inven_carry(Ind, o_ptr);
 #endif
-	/* Set party name */
+
+	/* Set guild identity */
+	guilds[index].dna = rand_int(0xFFFF) << 16;
+	guilds[index].dna += rand_int(0xFFFF);
+
+	/* Set guild name */
 	strcpy(guilds[index].name, name);
 
 	/* Set guildmaster */
@@ -901,6 +906,7 @@ int guild_create(int Ind, cptr name){
 
 	/* Add the owner as a member */
 	p_ptr->guild = index;
+	p_ptr->guild_dna = guilds[index].dna;
 	clockin(Ind, 3);
 	guilds[index].members = 1;
 
@@ -1216,6 +1222,12 @@ int guild_add(int adder, cptr name) {
 		return FALSE;
 	}
 
+	/* Leaderless guilds do not allow addition of new members */
+	if (!lookup_player_name(guilds[guild_id].master)) {
+		msg_print(adder, "\377yNo new members can be added while the guild is leaderless.");
+		return FALSE;
+	}
+
 	/* Everlasting and other chars cannot be in the same guild */
 	if (compat_pmode(adder, Ind, TRUE)) {
 		msg_format(adder, "\377yYou cannot add %s characters to this guild.", compat_pmode(adder, Ind, TRUE));
@@ -1250,6 +1262,7 @@ int guild_add(int adder, cptr name) {
 
 	/* Set his guild number */
 	p_ptr->guild = guild_id;
+	p_ptr->guild_dna = guilds[guild_id].dna;
 	clockin(Ind, 3);
 
 	/* Resend info */
@@ -1782,11 +1795,31 @@ static void del_guild(int id){
 	        dna->creator = 0L;
 	        dna->a_flags = ACF_NONE;
 	        kill_house_contents(&houses[guilds[id].h_idx - 1]);
+
+		/* and in case it was suspended due to leaderlessness,
+		   so the next guild buying this house won't get a surprise.. */
+		fill_house(&houses[guilds[id].h_idx - 1], FILL_GUILD_SUS_UNDO, NULL);
 	}
 #endif
 
 	/* TODO: Find and destroy the guild key! */
 	erase_guild_key(id);
+}
+void guild_timeout(int id) {
+	int i;
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->guild && Players[i]->guild != id) continue;
+
+		Players[i]->guild = 0;
+		clockin(i, 3);
+
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		msg_print(i, "\377oYour guild has been deleted from being leaderless for too long.");
+		Send_guild(i, TRUE, FALSE);
+	}
+
+	guilds[id].members = 0;
+	del_guild(id);
 }
 
 /*
@@ -2032,6 +2065,9 @@ void guild_leave(int Ind, bool voluntarily) {
 	if (p_ptr->id == guilds[guild_id].master) {
 		guild_msg(guild_id, "\374\377yThe guild is currently leaderless");
 		guilds[guild_id].master = 0;
+
+		/* set guild hall to 'suspended' */
+		if ((i = guilds[guild_id].h_idx)) fill_house(&houses[i], FILL_GUILD_SUS, NULL);
 	}
 
 	/* Resend info */

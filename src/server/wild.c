@@ -2884,21 +2884,20 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 	cave_type *c_ptr;
 	struct c_special *cs_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
-	if(func == FILL_PLAYER || func==FILL_OBJECT)
+	if (func == FILL_PLAYER || func == FILL_OBJECT)
 		success = FALSE;
 
-	if(h_ptr->flags & HF_RECT){
-		for(x = 0; x < h_ptr->coords.rect.width; x++){
-			for(y = 0; y < h_ptr->coords.rect.height; y++){
+	if (h_ptr->flags & HF_RECT) {
+		for (x = 0; x < h_ptr->coords.rect.width; x++) {
+			for (y = 0; y < h_ptr->coords.rect.height; y++) {
  				c_ptr = &zcave[h_ptr->y + y][h_ptr->x + x];
-				if(func == FILL_GUILD){
+				if (func == FILL_GUILD) {
 					return(FALSE);	/* for now */
-					if(((struct guildsave*)data)->mode){
+					if (((struct guildsave*)data)->mode) {
 						fputc(c_ptr->feat, ((struct guildsave*)data)->fp);
-					}
-					else{
+					} else {
 						c_ptr->feat = fgetc(((struct guildsave*)data)->fp);
 //						if(c_ptr->feat>FEAT_INVIS)
 						if(!cave_plain_floor_grid(c_ptr))
@@ -2906,27 +2905,26 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					}
 					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
-				else if(func == FILL_OBJECT){ /* object in house */
+				else if (func == FILL_OBJECT) { /* object in house? */
 					object_type *o_ptr = (object_type*)data;
-					if(o_ptr->ix == h_ptr->x + x && o_ptr->iy == h_ptr->y + y){
+					if (o_ptr->ix == h_ptr->x + x && o_ptr->iy == h_ptr->y + y) {
 						success = TRUE;
 						break;
 					}
 				}
-				else if(func == FILL_PLAYER){ /* player in house? */
+				else if (func == FILL_PLAYER) { /* player in house? */
 					player_type *p_ptr = (player_type*)data;
-					if(p_ptr->px == h_ptr->x + x && p_ptr->py == h_ptr->y + y){
+					if (p_ptr->px == h_ptr->x + x && p_ptr->py == h_ptr->y + y) {
 						success = TRUE;
 						break;
 					}
 				}
-				else if(func == FILL_MAKEHOUSE){
-					if(x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1){
+				else if (func == FILL_MAKEHOUSE) {
+					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) {
 						if((pick_house(wpos, h_ptr->y, h_ptr->x)) != -1)
 							success = FALSE;
 						c_ptr->info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
-					}
-					else {
+					} else {
 						/* fix: also erase cs-special, or server will panic on restart
 						   if someone kept this area static and has the former door grid
 						   in his los -> will try to call access_door_colour() on it,
@@ -2940,15 +2938,15 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					}
 					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
-				else if(func == FILL_CLEAR){
+				else if (func == FILL_CLEAR) {
 					delete_object(wpos, y, x, TRUE);
 					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
-				else if(func == FILL_BUILD){
-					if(x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1){
- 						if(!(h_ptr->flags & HF_NOFLOOR))
+				else if (func == FILL_BUILD) {
+					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) {
+ 						if (!(h_ptr->flags & HF_NOFLOOR))
 							c_ptr->feat = FEAT_FLOOR;
-						if(h_ptr->flags & HF_JAIL){
+						if (h_ptr->flags & HF_JAIL) {
 							c_ptr->info |= (CAVE_STCK | CAVE_JAIL);
 						}
  						c_ptr->info |= (CAVE_ICKY | CAVE_ROOM);
@@ -2968,6 +2966,14 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
 #endif
+				else if (func == FILL_GUILD_SUS) {
+					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) //obsolete check
+ 						c_ptr->info |= CAVE_GUILD_SUS;
+				}
+				else if (func == FILL_GUILD_SUS_UNDO) {
+					if (x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1) //obsolete check
+ 						c_ptr->info &= ~CAVE_GUILD_SUS;
+				}
 				else s_printf("rect fill house (func: %d\n", func);
 			}
 		}
@@ -3026,27 +3032,27 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 	}
 
 	flood(matrix, 0, 0, mw, mh);
-	for(y=0;y<mh;y++){
-		for(x=0;x<mw;x++){
-			switch(matrix[x+y*mw]){
+	for (y=0;y<mh;y++) {
+		for (x=0;x<mw;x++) {
+			switch (matrix[x+y*mw]) {
 				case 2:	/* do nothing */
 				case 4:
 				case 6: /* outside of walls */
 					break;
 				case 0:	/* inside of walls */
-					if(func==FILL_GUILD){
+					if (func == FILL_GUILD) {
 						struct key_type *key;
 						u16b id;
-						FILE *gfp=((struct guildsave*)data)->fp;
-						c_ptr=&zcave[miny+(y-1)][minx+(x-1)];
-						if(((struct guildsave*)data)->mode){
+						FILE *gfp = ((struct guildsave*)data)->fp;
+						c_ptr = &zcave[miny+(y-1)][minx+(x-1)];
+						if (((struct guildsave*)data)->mode) {
 							fputc(c_ptr->feat, gfp);
-							if(c_ptr->feat==FEAT_HOME || c_ptr->feat==FEAT_HOME_OPEN){
-								id=0;
-								if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR)) && (key=cs_ptr->sc.ptr)){
+							if (c_ptr->feat==FEAT_HOME || c_ptr->feat==FEAT_HOME_OPEN) {
+								id = 0;
+								if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR)) && (key=cs_ptr->sc.ptr)) {
 									fseek(gfp, -1, SEEK_CUR);
 									fputc(FEAT_HOME_HEAD, gfp);
-									id=key->id;
+									id = key->id;
 									fputc((id>>8), gfp);
 									fputc(id&0xff, gfp);
 								}
@@ -3070,62 +3076,74 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 								key->id=id;
 							}
 						}
+						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}
-					if(func==FILL_PLAYER){
-						player_type *p_ptr=(player_type*)data;
-						if(p_ptr->px==minx+(x-1) && p_ptr->py==miny+(y-1)){
-							success=TRUE;
+					if (func == FILL_PLAYER) {
+						player_type *p_ptr = (player_type*)data;
+						if (p_ptr->px==minx+(x-1) && p_ptr->py==miny+(y-1)) {
+							success = TRUE;
 						}
 						break;
 					}
-					if(func==FILL_MAKEHOUSE){
-						if((pick_house(wpos,miny+(y-1),minx+(x-1))!=-1)){
-							success=FALSE;
+					if (func == FILL_MAKEHOUSE) {
+						if ((pick_house(wpos,miny+(y-1),minx+(x-1))!=-1)) {
+							success = FALSE;
 						}
 						zcave[miny + (y - 1)][minx + (x - 1)].info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
+						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}
-					if(func==FILL_OBJECT){ /* object in house */
-						object_type *o_ptr=(object_type*)data;
-						if(o_ptr->ix==minx+(x-1) && o_ptr->iy==miny+(y-1)){
-							success=TRUE;
+					if (func == FILL_OBJECT) { /* object in house */
+						object_type *o_ptr = (object_type*)data;
+						if (o_ptr->ix==minx+(x-1) && o_ptr->iy==miny+(y-1)) {
+							success = TRUE;
 						}
 						break;
 					}
-					if(func==FILL_CLEAR){
+					if (func == FILL_CLEAR) {
 						delete_object(wpos, miny+(y-1), minx+(x-1), TRUE);
+						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}
-					if(func == FILL_BUILD){
+					if (func == FILL_BUILD) {
 						c_ptr = &zcave[miny+(y-1)][minx+(x-1)];
-						if(!(h_ptr->flags & HF_NOFLOOR))
+						if (!(h_ptr->flags & HF_NOFLOOR))
 							c_ptr->feat = FEAT_FLOOR;
 							c_ptr->info |= (CAVE_ROOM | CAVE_ICKY);
-						if(h_ptr->flags & HF_JAIL){
+						if (h_ptr->flags & HF_JAIL) {
 							c_ptr->info |= (CAVE_STCK | CAVE_JAIL);
 						}
+						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}
 #ifdef HOUSE_PAINTING
 					else if (func == FILL_UNPAINT) {
 						zcave[miny + (y - 1)][minx + (x - 1)].colour = 0;
 						/* refresh player's view on the freshly applied paint */
-						//done below, for all FILL_ ops
+						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}
 #endif
+					else if (func == FILL_GUILD_SUS) {
+						zcave[miny + (y - 1)][minx + (x - 1)].info |= CAVE_GUILD_SUS;
+						break;
+					}
+					else if (func == FILL_GUILD_SUS_UNDO) {
+						zcave[miny + (y - 1)][minx + (x - 1)].info &= ~CAVE_GUILD_SUS;
+						break;
+					}
 					s_printf("poly fill house (func: %d)\n", func);
 					break;
 				case 1:	/* Actual walls */
-					if(func==FILL_CLEAR) break;
-					if(func==FILL_PLAYER){
-						player_type *p_ptr=(player_type*)data;
-						if(p_ptr->px==minx+(x-1) && p_ptr->py==miny+(y-1))
-							success=TRUE;
+					if (func == FILL_CLEAR) break;
+					if (func == FILL_PLAYER) {
+						player_type *p_ptr = (player_type*)data;
+						if (p_ptr->px==minx+(x-1) && p_ptr->py==miny+(y-1))
+							success = TRUE;
 						break;
 					}
-					if(func==FILL_MAKEHOUSE) {
+					if (func == FILL_MAKEHOUSE) {
 						c_ptr = &zcave[miny+(y-1)][minx+(x-1)];
 						if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) {
 							c_special *cs_ptr = GetCS(c_ptr, CS_DNADOOR);
@@ -3133,22 +3151,24 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						}
 						c_ptr->feat = FEAT_DIRT;
 						c_ptr->info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
+						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 					}
-					else if(func==FILL_BUILD)
+					else if (func == FILL_BUILD) {
 //						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
 						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_WALL_HOUSE;
 						if (h_ptr->flags & HF_JAIL) zcave[miny+(y-1)][minx+(x-1)].info |= CAVE_JAIL;
+						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
+					}
 #ifdef HOUSE_PAINTING
 					else if (func == FILL_UNPAINT) {
 						zcave[miny + (y - 1)][minx + (x - 1)].colour = 0;
 						/* refresh player's view on the freshly applied paint */
-						//done below, for all FILL_ ops
+						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}
 #endif
 					break;
 			}
-			everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 		}
 	}
 	C_KILL(matrix,mw*mh,char);

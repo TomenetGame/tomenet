@@ -1156,7 +1156,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 	   Changing the door access should be sufficient. */
 	if (!is_admin(p_ptr)) {
 		if (dna->creator != p_ptr->dna) return(FALSE);
-		/* maybe make guild leader only chown guild -> "guild hall" */
+		/* maybe make guild master only chown guild -> "guild hall" */
 	}
 	switch (args[1]) {
 	case '1':
@@ -3168,8 +3168,9 @@ void do_cmd_bash(int Ind, int dir)
 
 	bool            more = FALSE, water = FALSE, tiny_bash;
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return;
 
+
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot bash ; not in WRAITHFORM */
 	if (p_ptr->ghost || p_ptr->tim_wraith) {
@@ -3189,6 +3190,9 @@ void do_cmd_bash(int Ind, int dir)
 
 		/* Get grid */
 		c_ptr = &zcave[y][x];
+
+		/* for leaderless guild houses */
+		if ((zcave[y][x].info & CAVE_GUILD_SUS)) return;
 
 		if (c_ptr->feat == FEAT_DEEP_WATER ||
 		    c_ptr->feat == FEAT_SHAL_WATER)
@@ -6385,6 +6389,10 @@ void do_cmd_purchase_house(int Ind, int dir)
 				if (dna->owner_type == OT_GUILD) {
 					guilds[dna->owner].h_idx = 0;
 					Send_guild_config(dna->owner);
+
+					/* and in case it was suspended due to leaderlessness,
+					   so the next guild buying this house won't get a surprise.. */
+					fill_house(&houses[h_idx], FILL_GUILD_SUS_UNDO, NULL);
 				}
 				dna->creator = 0L;
 				dna->owner = 0L;

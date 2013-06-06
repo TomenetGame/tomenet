@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	7
+#define SF_VERSION_PATCH	8
 #define SF_VERSION_EXTRA	0
 
 
@@ -509,7 +509,8 @@
 #ifdef HOUSE_PAINTING
  #define FILL_UNPAINT	6
 #endif
-
+#define FILL_GUILD_SUS	7	/* for leaderless guild handling: no item/gold pickup possible */
+#define FILL_GUILD_SUS_UNDO	8
 
 /*
  * Number of entries in the player name hash table.
@@ -3638,7 +3639,7 @@
 
 #define CAVE_LITE_VAMP	0x00010000	/* lite flag for RACE_VAMPIRE 'light' */
 #define CAVE_LITE_WHITE	0x00020000	/* lite flag for non-fiery light sources */
-
+#define CAVE_GUILD_SUS	0x00040000	/* floor of a suspended guild hall, due to the guild's leaderlessnes */
 
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?

@@ -1259,6 +1259,7 @@ extern int guild_add_self(int Ind, cptr guild);
 extern int guild_auto_add(int Ind, int guild_id, char *message);
 extern int guild_remove(int remover, cptr name);
 extern void guild_leave(int Ind, bool voluntarily);
+extern void guild_timeout(int guild_id);
 extern void guild_msg(int guild_id, cptr msg);
 extern void guild_msg_format(int guild_id, cptr fmt, ...);
 extern bool add_hostility(int Ind, cptr name, bool initiator);

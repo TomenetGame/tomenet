@@ -453,6 +453,7 @@ static void wr_guilds(){
 
 	/* Dump the guilds */
 	for (i = 0; i < tmp16u; i++){
+		wr_u32b(guilds[i].dna);
 		wr_string(guilds[i].name);
 		wr_s32b(guilds[i].master);
 		wr_s32b(guilds[i].members);
