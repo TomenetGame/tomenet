@@ -620,9 +620,9 @@ byte flick_colour(byte attr){
 		 * TERM_DEEP_WATER would be nice for terrains  - Jir - */
 #ifdef EXTENDED_TERM_COLOURS /* C. Blue */
 		case TERM_CURSE:
-			return(randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+			return(randint(2)==1?(randint(5)>4?TERM_SLATE:TERM_L_DARK):TERM_L_DARK);//note (...) is TERM_DARKNESS
 		case TERM_ANNI:
-			return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+			return (randint(2)==1?(randint(5)>4?TERM_SLATE:TERM_L_DARK):TERM_L_DARK);//note (...) is TERM_DARKNESS
 		case TERM_PSI:
 			return (randint(5)!=1?(rand_int(2)?(rand_int(2)?TERM_YELLOW:TERM_L_BLUE):127):TERM_WHITE);
 		case TERM_NEXU:
@@ -664,7 +664,8 @@ byte flick_colour(byte attr){
 		case TERM_HELLFIRE:
 			return (randint(5)==1?TERM_RED:TERM_L_DARK);
 		case TERM_THUNDER:
-			return (randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
+			return (randint(3)!=1?(randint(7)>6?TERM_WHITE:(randint(4)==1?TERM_L_BLUE:TERM_BLUE))
+			    :(randint(2)==1?TERM_YELLOW:(randint(5)>3?TERM_ORANGE:TERM_YELLOW)));//note 1st (...) is TERM_ELEC, last (...) is TERM_LITE
 
 		case TERM_LAMP:
 			return (rand_term_lamp ? TERM_YELLOW:TERM_ORANGE);
