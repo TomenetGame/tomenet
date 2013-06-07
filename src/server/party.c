@@ -1774,6 +1774,9 @@ static void del_guild(int id){
 	/* erase guild bbs */
 	for (i = 0; i < BBS_LINES; i++) strcpy(gbbs_line[id][i], "");
 
+	/* log! (to track auto-disbanding of leaderless guilds) */
+	s_printf("DEL_GUILD: '%s' (%d)\n", guilds[id].name, id);
+
 	/* Tell everyone */
 	snprintf(temp, 160, "\374\377yThe guild '\377%c%s\377y' no longer exists.", COLOUR_CHAT_GUILD, guilds[id].name);
 	msg_broadcast(0, temp);
@@ -1798,6 +1801,7 @@ static void del_guild(int id){
 
 		/* and in case it was suspended due to leaderlessness,
 		   so the next guild buying this house won't get a surprise.. */
+		houses[guilds[id].h_idx - 1].flags &= ~HF_GUILD_SUS;
 		fill_house(&houses[guilds[id].h_idx - 1], FILL_GUILD_SUS_UNDO, NULL);
 
 		guilds[id].h_idx = 0;//obsolete?
@@ -2069,7 +2073,10 @@ void guild_leave(int Ind, bool voluntarily) {
 		guilds[guild_id].master = 0;
 
 		/* set guild hall to 'suspended' */
-		if ((i = guilds[guild_id].h_idx)) fill_house(&houses[i - 1], FILL_GUILD_SUS, NULL);
+		if ((i = guilds[guild_id].h_idx)) {
+			houses[i - 1].flags |= HF_GUILD_SUS;
+			fill_house(&houses[i - 1], FILL_GUILD_SUS, NULL);
+		}
 	}
 
 	/* Resend info */

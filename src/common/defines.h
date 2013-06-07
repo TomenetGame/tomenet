@@ -7637,6 +7637,7 @@ extern int PlayerUID;
 #define HF_TRAD		0x0040	/* Vanilla style house */
 #define HF_DELETED	0x0080	/* Ruined house - do not save/reload */
 #define HF_SELFBUILT	0x0100	/* Was constructed by "builders" (aka scroll of house creation) */
+#define HF_GUILD_SUS	0x0200	/* Guild hall of a currently leaderless guild: 'suspended' guild hall */
 
 #define MAXCOORD 200		/* Maximum vertices on non-rect house */
 

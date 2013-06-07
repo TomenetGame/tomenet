@@ -1329,7 +1329,9 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	bool trad = !magik(MANG_HOUSE_RATE);
 	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	u32b floor_info;
+
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Initialize drawbridge_x and drawbridge_y to make gcc happy */
 	drawbridge_x[0] = drawbridge_x[1] = drawbridge_x[2] = 0;
@@ -1704,6 +1706,20 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		}
 	}
 
+
+	/* set default floor info */
+	floor_info = CAVE_ICKY;
+
+	/* does house already exist (created at server start)
+	   or has it just been created for the first time? */
+	tmp = pick_house(wpos, door_y, door_x);
+
+	/* is it a 'suspended' guild hall? */
+	if (tmp != -1
+	    && houses[tmp].dna->owner && houses[tmp].dna->owner_type == OT_GUILD
+	    && !guilds[houses[tmp].dna->owner].master)
+		floor_info |= CAVE_GUILD_SUS;
+
 	/* TODO: use coloured roof, so that they look cute :) */
 #ifndef USE_MANG_HOUSE_ONLY
 	if (type != WILD_TOWN_HOME || !trad)
@@ -1717,10 +1733,11 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			/* Fill with floor */
 			c_ptr->feat = FEAT_FLOOR;
 
-			/* Make it "icky" */
-			c_ptr->info |= CAVE_ICKY;
+			/* Make it "icky" (and maybe more) */
+			c_ptr->info |= floor_info;
 		}
 	}
+
 
 	/* add the door */
 	c_ptr = &zcave[door_y][door_x];
@@ -1728,7 +1745,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 
 #ifdef HOUSE_PAINTING
 	/* Add colour if house is painted */
-	if ((tmp = pick_house(wpos, door_y, door_x)) != -1) {
+	if (tmp != -1) {
 		house_type *h_ptr = &houses[tmp];
 		cave_type *hc_ptr;
 		if (h_ptr->colour) {
@@ -1774,7 +1791,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		struct c_special *cs_ptr;
 		/* hack -- only add a house if it is not already in memory;
 		   Means: If it hasn't already been created on server startup. */
-		if ((tmp = pick_house(wpos, door_y, door_x)) == -1) {
+		if (tmp == -1) {
 			cs_ptr = AddCS(c_ptr, CS_DNADOOR);	/* XXX this can fail? */
 //			cs_ptr->type=CS_DNADOOR;
 			cs_ptr->sc.ptr=houses[num_houses].dna;
@@ -2936,6 +2953,10 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						c_ptr->feat = FEAT_DIRT;
 						c_ptr->info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
 					}
+
+					/* 'suspended' guild houses ( = of leaderless guilds) */
+					if ((h_ptr->flags & HF_GUILD_SUS)) c_ptr->info |= CAVE_GUILD_SUS;
+
 					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
 				else if (func == FILL_CLEAR) {
@@ -2956,6 +2977,10 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 //done above already				if (x > 0 && x < h_ptr->coords.rect.width - 1 && y > 0 && y < h_ptr->coords.rect.height)
  						if (h_ptr->dna->owner) c_ptr->info |= CAVE_GLOW;
 #endif
+
+						/* 'suspended' guild houses ( = of leaderless guilds) */
+						if ((h_ptr->flags & HF_GUILD_SUS)) c_ptr->info |= CAVE_GUILD_SUS;
+
 						everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 					}
 				}
@@ -3091,6 +3116,10 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 							success = FALSE;
 						}
 						zcave[miny + (y - 1)][minx + (x - 1)].info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
+
+						/* 'suspended' guild houses ( = of leaderless guilds) */
+						if ((h_ptr->flags & HF_GUILD_SUS)) c_ptr->info |= CAVE_GUILD_SUS;
+
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}
@@ -3114,6 +3143,10 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						if (h_ptr->flags & HF_JAIL) {
 							c_ptr->info |= (CAVE_STCK | CAVE_JAIL);
 						}
+
+						/* 'suspended' guild houses ( = of leaderless guilds) */
+						if ((h_ptr->flags & HF_GUILD_SUS)) c_ptr->info |= CAVE_GUILD_SUS;
+
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}

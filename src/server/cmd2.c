@@ -6399,6 +6399,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 
 					/* and in case it was suspended due to leaderlessness,
 					   so the next guild buying this house won't get a surprise.. */
+					houses[h_idx].flags &= ~HF_GUILD_SUS;
 					fill_house(&houses[h_idx], FILL_GUILD_SUS_UNDO, NULL);
 				}
 				dna->creator = 0L;

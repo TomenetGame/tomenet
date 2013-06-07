@@ -2377,7 +2377,10 @@ void carry(int Ind, int pickup, int confirm)
 						else {
 							int i;
 							/* set guild hall to 'no longer suspended' */
-							if ((i = guilds[p_ptr->guild].h_idx)) fill_house(&houses[i - 1], FILL_GUILD_SUS_UNDO, NULL);
+							if ((i = guilds[p_ptr->guild].h_idx)) {
+								houses[i - 1].flags &= ~HF_GUILD_SUS;
+								fill_house(&houses[i - 1], FILL_GUILD_SUS_UNDO, NULL);
+							}
 							guilds[p_ptr->guild].timeout = 0; /* phew */
 
 							guild_msg_format(p_ptr->guild, "\374\377%c%s is the new guild master!", COLOUR_CHAT_GUILD, p_ptr->name);
