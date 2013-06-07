@@ -469,7 +469,7 @@ static cptr r_info_flags8[] =
 	"PLURAL",
 	"NO_BLOCK",
 	"ALLOW_RUNNING",
-	"XXX8X25",
+	"AVOID_PERMAWALLS",
 	"XXX8X26",
 	"GENO_PERSIST",
 	"GENO_NO_THIN",

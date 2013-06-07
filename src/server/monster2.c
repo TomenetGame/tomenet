@@ -3153,8 +3153,28 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
 		}
 	}
 #ifdef PMO_DEBUG
+if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
+#endif
+
+	/* does monster require open area to be spawned in? */
+	if ((r_ptr->flags8 & RF8_AVOID_PERMAWALLS)
+	    && !(summon_override_checks & (SO_GRID_EMPTY | SO_GRID_TERRAIN))) {
+		/* Radius of open area should be same as max radius of player ball/cloud/etc. spells - assume 5.
+		   For simplicity we just check for box shape instead of using distance() for pseudo-ball shape. */
+		int x2, y2;
+		for (x2 = x - 5; x2 <= x + 5; x2++)
+		for (y2 = y - 5; y2 <= y + 5; y2++) {
+			if (!in_bounds(y2, x2)) continue;
+
+			/* open area means: No permawalls
+			   (anti vault-cheeze, but also for rough level border structures) */
+			if ((f_info[zcave[y2][x2].feat].flags1 & FF1_PERMANENT)) return FALSE;
+		}
+	}
+#ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 #endif
+
 
         /* Now could we generate an Ego Monster */
         r_ptr = race_info_idx(r_idx, ego, randuni);
