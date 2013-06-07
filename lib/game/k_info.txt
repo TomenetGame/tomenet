@@ -4398,7 +4398,6 @@ A:5/2:10/2:50/2
 F:SHOW_MODS
 
 N:550:Bolt
-#G:`:o
 G:`:R
 I:46:3:0
 W:20:0:30:70
@@ -4444,7 +4443,6 @@ F:SHOW_MODS
 ### Trapping Kits 
 
 N:555:Catapult
-#G:`:R
 G:`:o
 I:46:1:0
 W:1:0:20:40
@@ -4487,7 +4485,6 @@ F:IGNORE_WATER
 ### Trapping Kits 
 
 N:560:Fumes
-#G:`:G
 G:`:b
 I:46:4:0
 W:2:0:10:50
@@ -4506,7 +4503,6 @@ P:15:1d1:-1:0:0
 ### Trapping Kits 
 
 N:562:Magic
-#G:`:g
 G:`:v
 I:46:5:0
 W:5:0:10:50
@@ -4514,7 +4510,6 @@ A:5/2:15/2:40/2
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD | IGNORE_ELEC | IGNORE_WATER
 
 N:563:Device
-#G:`:v
 G:`:s
 I:46:6:0
 W:20:0:10:50
@@ -6132,13 +6127,13 @@ D:Removes all kinds of temporary magical effects.
 ##### Keys #####
 
 N:839:& Key~
-G:;:s
+G:`:W
 #I:4:1:0
 I:51:1:0
 W:0:0:1:10000
 
 N:840:& Guild Key~
-G:;:G
+G:`:U
 I:51:2:0
 W:0:0:1:10000
 
@@ -6587,7 +6582,6 @@ D:Protects your backpack from thieves.
 
 N:906:& Tarpaulin~
 G:`:D
-#G:`:B
 I:12:5:0
 W:15:0:60:1000
 A:15/5
