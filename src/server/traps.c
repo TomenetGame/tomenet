@@ -2676,6 +2676,9 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 		/* No special_gene traps */
 		if (t_ptr->flags & FTRAP_SPECIAL_GENE) continue;
 
+		/* Some traps can only spawn on level generation */
+		if ((t_ptr->flags & FTRAP_LEVEL_GEN) && !cave_set_quietly) continue;
+
 		/* hack, no trap door at the bottom of dungeon or in flat(non dungeon) places */
 //		if (((d_ptr->maxdepth == dlev) || (d_ptr->flags1 & DF1_FLAT)) && (trap == TRAP_OF_SINKING)) continue;
 
