@@ -2065,7 +2065,7 @@ void guild_leave(int Ind, bool voluntarily) {
 
 	/* If he's the guildmaster, set master to zero */
 	if (p_ptr->id == guilds[guild_id].master) {
-		guild_msg(guild_id, "\374\377yThe guild is currently leaderless");
+		guild_msg(guild_id, "\374\377yThe guild is now leaderless!");
 		guilds[guild_id].master = 0;
 
 		/* set guild hall to 'suspended' */
