@@ -6868,8 +6868,8 @@ void global_event_signup(int Ind, int n, cptr parm) {
 	/* currently no warning/error/solution if you try to sign on for multiple events at the same time :|
 	   However, player_type has MAX_GLOBAL_EVENTS sized data arrays for each event, so a player *could*
 	   theoretically participate in all events at once at this time.. */
-	msg_format(Ind, "\377c>>You signed up for %s!<<", ge->title);
-	msg_broadcast_format(Ind, "\377s%s signed up for %s", p_ptr->name, ge->title);
+	msg_format(Ind, "\374\377c>>You signed up for %s!<<", ge->title);
+	msg_broadcast_format(Ind, "\374\377s%s signed up for %s", p_ptr->name, ge->title);
 	ge->participant[p] = p_ptr->id;
 	p_ptr->global_event_type[n] = ge->getype;
 	time(&p_ptr->global_event_signup[n]);
