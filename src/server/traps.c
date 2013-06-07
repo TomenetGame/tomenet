@@ -248,7 +248,10 @@ static bool do_player_trap_call_out(int Ind)
                 if (!m_ptr->r_idx) continue;
 
                 if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
-                if (m_ptr->level>=h_level) {
+
+		if ((r_ptr->flags1 & RF1_UNIQUE)) continue;
+
+                if (m_ptr->level >= h_level) {
                         h_level = m_ptr->level;
                         h_index = i;
                 }
