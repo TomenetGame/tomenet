@@ -6185,7 +6185,7 @@ void dungeon(void)
 	/* Note -- this is the END of the last turn */
 
 	/* Do final end of turn processing for each player */
-	for (i = 1; i < NumPlayers + 1; i++) {
+	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
@@ -6267,6 +6267,11 @@ void dungeon(void)
 
 		/* process timed shutdown (/shutrec) */
 		if (shutdown_recall_timer) shutdown_recall_timer--;
+
+		/* process certain player-related timers */
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->redraw_cooldown) Players[i]->redraw_cooldown--;
+		}
 	}
 
 #ifndef CLIENT_SIDE_WEATHER
