@@ -3915,6 +3915,7 @@
 /* New stuff (RF0_) - C. Blue */
 #define SUMMON_HI_MONSTER		61
 #define SUMMON_HI_UNIQUE		62
+#define SUMMON_SPOOKY			63
 
 
 
@@ -5087,6 +5088,9 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 */
 #define RF0_RADIUS_SPELLS (RF0_BA_DISE)
 
+/* Special addition, since RF0_ mixes quite different types of flags.
+   This is to sort them out a bit. */
+#define RF0_ACTIVE_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_BO_DISE | RF0_BA_DISE)
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
 #define RF1_DISABLE_MASK	(0x0)
