@@ -3162,13 +3162,19 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 		/* Radius of open area should be same as max radius of player ball/cloud/etc. spells - assume 5.
 		   For simplicity we just check for box shape instead of using distance() for pseudo-ball shape. */
 		int x2, y2;
+		u32b flags;
+
 		for (x2 = x - 5; x2 <= x + 5; x2++)
 		for (y2 = y - 5; y2 <= y + 5; y2++) {
 			if (!in_bounds(y2, x2)) continue;
+			flags = f_info[zcave[y2][x2].feat].flags1;
+
+			/* only check for walls */
+			if (!(flags & FF1_WALL)) continue;
 
 			/* open area means: No permawalls
 			   (anti vault-cheeze, but also for rough level border structures) */
-			if ((f_info[zcave[y2][x2].feat].flags1 & FF1_PERMANENT)) return FALSE;
+			if ((flags & FF1_PERMANENT)) return FALSE;
 		}
 	}
 #ifdef PMO_DEBUG
