@@ -226,7 +226,7 @@
    currently (since 4.2.0):     0 = traditional random rolling (1 try)
                         	1 = player can set his stats manually */
 /* I'm using 0x02 for sending the server version - mikaelh */
-#define CHAR_CREATION_FLAGS     1
+#define CHAR_CREATION_FLAGS	1
 
 
 /* Does drinking from fountains bear the possibility of conjuring a guardian monster? */
@@ -467,7 +467,7 @@
 /*
  * Maximum number of player "class" types (see "table.c", etc)
  */
-#define MAX_CLASS       13
+#define MAX_CLASS	13
 
 
 /*
@@ -500,16 +500,16 @@
 #define HOUSE_KEY	0
 #define HOUSE_PASS	1
 
-#define FILL_BUILD	0
-#define FILL_CLEAR	1
-#define FILL_MAKEHOUSE	2
-#define FILL_PLAYER	3
-#define FILL_OBJECT	4
-#define FILL_GUILD	5
+#define FILL_BUILD		0
+#define FILL_CLEAR		1
+#define FILL_MAKEHOUSE		2
+#define FILL_PLAYER		3
+#define FILL_OBJECT		4
+#define FILL_GUILD		5
 #ifdef HOUSE_PAINTING
- #define FILL_UNPAINT	6
+ #define FILL_UNPAINT		6
 #endif
-#define FILL_GUILD_SUS	7	/* for leaderless guild handling: no item/gold pickup possible */
+#define FILL_GUILD_SUS		7	/* for leaderless guild handling: no item/gold pickup possible */
 #define FILL_GUILD_SUS_UNDO	8
 
 /*
@@ -547,7 +547,7 @@
 #define MAX_EGO_BASETYPES	10
 
 /* Client-side unique list */
-#define MAX_UNIQUES             300
+#define MAX_UNIQUES		300
 
 
 
@@ -583,7 +583,7 @@
 #define MAX_WILD_Y	64
 #define MAX_WILD	(MAX_WILD_X*MAX_WILD_Y)
 #define MAX_WILD_8	((MAX_WILD_X*MAX_WILD_Y)/8)
-#define MAX_DEPTH_OBJ   128 /* must be <= 128 */
+#define MAX_DEPTH_OBJ	128 /* must be <= 128 */
 #define MAX_DEPTH	255 /* should be <= 255? (Valinor at 200 is deepest level) */
 
 /* The 'generally acknowledged' max radius for a town's housing zone.
@@ -717,7 +717,7 @@
 #define INTERCEPT_CAP		80
 
 /* upper limit of dodging chance.       [90] */
-#define DODGE_MAX_CHANCE        80
+#define DODGE_MAX_CHANCE 	80
 
 
 /* EXPERIMENTAL:
@@ -885,7 +885,7 @@
 /* commented out due to monster AI improvements.
  * activate it if STUPID_MONSTER_SPELLS is defined!
  */
-#define ARROW_DIST_LIMIT        MAX_RANGE
+#define ARROW_DIST_LIMIT MAX_RANGE
 
 /* Reduce damage in PvP by this factor */
 #define PVP_MELEE_DAM_REDUCTION 3
@@ -929,10 +929,10 @@
 /* chance of walking in a random direction when confused and trying to climb,
  * in percent. [50]
  */
-#define STAIR_FAIL_IF_CONFUSED  50
+#define STAIR_FAIL_IF_CONFUSED 50
 
 /* duration of GoI when climbing stairs.        [2], must be 0<=n<=4. */
-#define STAIR_GOI_LENGTH        3
+#define STAIR_GOI_LENGTH 3
 
 /* when do rogues learn cloaking mode? */
 #define LEARN_CLOAKING_LEVEL 15
@@ -941,7 +941,7 @@
 //#define MINDLINK_STORE
 
 /* At which % should a char turn into a number? (10 = always, -1 = never) default: [6] */
-#define TURN_CHAR_INTO_NUMBER	7
+#define TURN_CHAR_INTO_NUMBER 7
 
 
 /* for PvP mode: */
@@ -953,12 +953,12 @@
 /*
  * Party commands
  */
-#define PARTY_CREATE	1
-#define PARTY_ADD	2
-#define PARTY_DELETE	3
-#define PARTY_REMOVE_ME	4
-#define PARTY_HOSTILE	5
-#define PARTY_PEACE	6
+#define PARTY_CREATE		1
+#define PARTY_ADD		2
+#define PARTY_DELETE		3
+#define PARTY_REMOVE_ME		4
+#define PARTY_HOSTILE		5
+#define PARTY_PEACE		6
 #define PARTY_CREATE_IRONTEAM	7
 
 /*
@@ -2008,208 +2008,208 @@
 #define ART_RANDART		999
 
 /* Lites */
-#define ART_GALADRIEL			1
-#define ART_ELENDIL                     2
-#define ART_THRAIN                      3
-#define ART_PALANTIR                    202
-#define ART_UNDEATH                     200
-#define ART_STONE_LORE                  15
-#define ART_PALANTIR_ITHIL              208
+#define ART_GALADRIEL		1
+#define ART_ELENDIL		2
+#define ART_THRAIN		3
+#define ART_PALANTIR		202
+#define ART_UNDEATH		200
+#define ART_STONE_LORE		15
+#define ART_PALANTIR_ITHIL	208
 
 /* Amulets */
-#define ART_CARLAMMAS           4
-#define ART_INGWE                       5
-#define ART_DWARVES                     6
-#define ART_ANCHOR                      14
-#define ART_ELESSAR                     206
-#define ART_EVENSTAR                    207
+#define ART_CARLAMMAS		4
+#define ART_INGWE		5
+#define ART_DWARVES		6
+#define ART_ANCHOR		14
+#define ART_ELESSAR		206
+#define ART_EVENSTAR		207
 
 /* Rings */
-#define ART_FLAR                        7
-#define ART_BARAHIR                     8
-#define ART_TULKAS                      9
-#define ART_NARYA                       10
-#define ART_NENYA                       11
-#define ART_VILYA                       12
-#define ART_POWER                       13
-#define ART_PHASING			203
+#define ART_FLAR		7
+#define ART_BARAHIR		8
+#define ART_TULKAS		9
+#define ART_NARYA		10
+#define ART_NENYA		11
+#define ART_VILYA		12
+#define ART_POWER		13
+#define ART_PHASING		203
 /* 14 used by the anchor of space-time */
 /* 15 used by the stone of lore */
 
 /* Dragon Scale */
-#define ART_RAZORBACK           16
-#define ART_BLADETURNER         17
-#define ART_MEDIATOR            166
+#define ART_RAZORBACK		16
+#define ART_BLADETURNER		17
+#define ART_MEDIATOR		166
 
 /* Hard Armour */
-#define ART_HIMRING             167
-#define ART_SOULKEEPER          19
-#define ART_ISILDUR                     20
-#define ART_ROHIRRIM            21
-#define ART_BELEGENNON          22
-#define ART_CELEBORN            23
-#define ART_ARVEDUI                     24
-#define ART_CASPANION           25
+#define ART_HIMRING		167
+#define ART_SOULKEEPER		19
+#define ART_ISILDUR		20
+#define ART_ROHIRRIM		21
+#define ART_BELEGENNON		22
+#define ART_CELEBORN		23
+#define ART_ARVEDUI		24
+#define ART_CASPANION		25
 
 /* DragonRider flying suit */
-#define ART_MARDRA              26
-#define ART_TRON                27
+#define ART_MARDRA		26
+#define ART_TRON		27
 
 /* Soft Armour */
-#define ART_THALKETTOTH         28
+#define ART_THALKETTOTH		28
 
 /* Shields */
-#define ART_THORIN                      30
-#define ART_CELEGORM            31
-#define ART_ANARION                     32
-#define ART_GILGALAD                    169
-#define ART_HARADRIM                    176
+#define ART_THORIN		30
+#define ART_CELEGORM		31
+#define ART_ANARION		32
+#define ART_GILGALAD		169
+#define ART_HARADRIM		176
 
 /* Helms and Crowns */
-#define ART_MORGOTH                     34
-#define ART_BERUTHIEL           35
-#define ART_THRANDUIL           36
-#define ART_THENGEL                     37
-#define ART_HAMMERHAND          38
-#define ART_DOR                         39
-#define ART_HOLHENNETH          40
-#define ART_GORLIM                      41
-#define ART_GONDOR                      42
-#define ART_KNOWLEDGE                   160
-#define ART_NUMENOR                     43
-#define ART_CELEBRIMBOR                 170
+#define ART_MORGOTH		34
+#define ART_BERUTHIEL		35
+#define ART_THRANDUIL		36
+#define ART_THENGEL		37
+#define ART_HAMMERHAND		38
+#define ART_DOR			39
+#define ART_HOLHENNETH		40
+#define ART_GORLIM		41
+#define ART_GONDOR		42
+#define ART_KNOWLEDGE		160
+#define ART_NUMENOR		43
+#define ART_CELEBRIMBOR		170
 
 /* Cloaks */
-#define ART_COLLUIN                     44
-#define ART_HOLCOLLETH          45
-#define ART_THINGOL                     46
-#define ART_THORONGIL           47
-#define ART_COLANNON            48
-#define ART_LUTHIEN                     49
-#define ART_TUOR                        50
+#define ART_COLLUIN		44
+#define ART_HOLCOLLETH		45
+#define ART_THINGOL		46
+#define ART_THORONGIL		47
+#define ART_COLANNON		48
+#define ART_LUTHIEN		49
+#define ART_TUOR		50
 #define ART_OCEANSOUL		217
 
 /* Gloves */
-#define ART_CAMBELEG            52
-#define ART_CAMMITHRIM          53
-#define ART_PAURHACH            54
-#define ART_PAURNIMMEN          55
-#define ART_PAURAEGEN           56
-#define ART_PAURNEN                     57
-#define ART_CAMLOST                     58
-#define ART_FINGOLFIN           59
-#define ART_EOL                 178
+#define ART_CAMBELEG		52
+#define ART_CAMMITHRIM		53
+#define ART_PAURHACH		54
+#define ART_PAURNIMMEN		55
+#define ART_PAURAEGEN		56
+#define ART_PAURNEN		57
+#define ART_CAMLOST		58
+#define ART_FINGOLFIN		59
+#define ART_EOL			178
 
 /* Boots */
-#define ART_FEANOR                      60
-#define ART_DAL                         61
-#define ART_THROR                       62
+#define ART_FEANOR		60
+#define ART_DAL			61
+#define ART_THROR		62
 
 /* Swords */
-#define ART_NARSIL              164
-#define ART_MAEDHROS            64
-#define ART_ANGRIST                     65
-#define ART_NARTHANC            66
-#define ART_NIMTHANC            67
-#define ART_DETHANC                     68
-#define ART_RILIA                       69
-#define ART_BELANGIL            70
-#define ART_CALRIS                      71
-#define ART_ARUNRUTH            72
-#define ART_GLAMDRING           73
-#define ART_AEGLIN                      74
-#define ART_ORCRIST                     75
-#define ART_GURTHANG            76
-#define ART_ZARCUTHRA           77
-#define ART_MORMEGIL            78
-#define ART_GONDRICAM           79
-#define ART_CRISDURIAN          80
-#define ART_AGLARANG            81
-#define ART_RINGIL                      82
-#define ART_ANDURIL                     83
-#define ART_ANGUIREL            84
-#define ART_ELVAGIL                     85
-#define ART_FORASGIL            86
-#define ART_CARETH                      87
-#define ART_STING                       88
-#define ART_HARADEKKET          89
-#define ART_GILETTAR            90
-#define ART_DOOMCALLER          91
-#define ART_VORPAL_BLADE        92
-#define ART_ERU                 147
+#define ART_NARSIL		164
+#define ART_MAEDHROS		64
+#define ART_ANGRIST		65
+#define ART_NARTHANC		66
+#define ART_NIMTHANC		67
+#define ART_DETHANC		68
+#define ART_RILIA		69
+#define ART_BELANGIL		70
+#define ART_CALRIS		71
+#define ART_ARUNRUTH		72
+#define ART_GLAMDRING		73
+#define ART_AEGLIN		74
+#define ART_ORCRIST		75
+#define ART_GURTHANG		76
+#define ART_ZARCUTHRA		77
+#define ART_MORMEGIL		78
+#define ART_GONDRICAM		79
+#define ART_CRISDURIAN		80
+#define ART_AGLARANG		81
+#define ART_RINGIL		82
+#define ART_ANDURIL		83
+#define ART_ANGUIREL		84
+#define ART_ELVAGIL		85
+#define ART_FORASGIL		86
+#define ART_CARETH		87
+#define ART_STING		88
+#define ART_HARADEKKET		89
+#define ART_GILETTAR		90
+#define ART_DOOMCALLER		91
+#define ART_VORPAL_BLADE	92
+#define ART_ERU			147
 
 /* Polearms */
-#define ART_THEODEN                     93
-#define ART_PAIN                        94
-#define ART_OSONDIR                     95
-#define ART_TIL                         96
-#define ART_AEGLOS                      97
-#define ART_OROME                       98
-#define ART_NIMLOTH                     99
-#define ART_EORLINGAS           	100
-#define ART_DURIN                       101
-#define ART_EONWE                       102
-#define ART_BALLI                       103
-#define ART_LOTHARANG           	104
-#define ART_MUNDWINE            	105
-#define ART_BARUKKHELED         1	06
-#define ART_WRATH                       107
-#define ART_ULMO                        108
-#define ART_AVAVIR                      109
-#define ART_FUNDIN                      175
+#define ART_THEODEN		93
+#define ART_PAIN		94
+#define ART_OSONDIR		95
+#define ART_TIL			96
+#define ART_AEGLOS		97
+#define ART_OROME		98
+#define ART_NIMLOTH		99
+#define ART_EORLINGAS		100
+#define ART_DURIN		101
+#define ART_EONWE		102
+#define ART_BALLI		103
+#define ART_LOTHARANG		104
+#define ART_MUNDWINE		105
+#define ART_BARUKKHELED		106
+#define ART_WRATH		107
+#define ART_ULMO		108
+#define ART_AVAVIR		109
+#define ART_FUNDIN		175
 
 /* The sword of the Dawn */
-#define ART_DAWN                	110
+#define ART_DAWN		110
 
 /* Blunt */
-#define ART_MELKOR                      18
-#define ART_HURIN                       33
-#define ART_GROND                       111
-#define ART_TOTILA                      112
-#define ART_THUNDERFIST         	113
-#define ART_BLOODSPIKE          	114
-#define ART_FIRESTAR            	115
-#define ART_TARATOL                     116
-#define ART_AULE                        117
-#define ART_NAR                         118
-#define ART_ERIRIL                      119
-#define ART_OLORIN                      120
-#define ART_DEATHWREAKER        	121
-#define ART_TURMIL                      122
-#define ART_GOTHMOG                     123
-#define ART_AXE_GOTHMOG                 145
-#define ART_SKULLCLEAVER                177
+#define ART_MELKOR		18
+#define ART_HURIN		33
+#define ART_GROND		111
+#define ART_TOTILA		112
+#define ART_THUNDERFIST		113
+#define ART_BLOODSPIKE		114
+#define ART_FIRESTAR		115
+#define ART_TARATOL		116
+#define ART_AULE		117
+#define ART_NAR			118
+#define ART_ERIRIL		119
+#define ART_OLORIN		120
+#define ART_DEATHWREAKER	121
+#define ART_TURMIL		122
+#define ART_GOTHMOG		123
+#define ART_AXE_GOTHMOG		145
+#define ART_SKULLCLEAVER	177
 
-#define ART_NAIN                        174
+#define ART_NAIN		174
 
 /* Bows */
-#define ART_BELTHRONDING        124
-#define ART_BARD                125
-#define ART_CUBRAGOL            126
-#define ART_UMBAR               171
+#define ART_BELTHRONDING	124
+#define ART_BARD		125
+#define ART_CUBRAGOL		126
+#define ART_UMBAR		171
 
 /* Mage Staffs */
-#define ART_GANDALF             127
+#define ART_GANDALF		127
 
 /* Boomerangs */
-#define ART_BEOR                128
-#define ART_GLIMDRIR            129
+#define ART_BEOR		128
+#define ART_GLIMDRIR		129
 
 /* Musical Instrument */
-#define ART_ROBINTON            137
-#define ART_PIEMUR              138
-#define ART_MENOLLY             139
-#define ART_DRUEDAIN            141
-#define ART_ROHAN               142
-#define ART_HELM                143
-#define ART_BOROMIR             144
+#define ART_ROBINTON		137
+#define ART_PIEMUR		138
+#define ART_MENOLLY		139
+#define ART_DRUEDAIN		141
+#define ART_ROHAN		142
+#define ART_HELM		143
+#define ART_BOROMIR		144
 
 /* Diggers */
-#define ART_EREBOR              140
+#define ART_EREBOR		140
 
-#define ART_ORCHAST             156
-#define ART_NIGHT               157
-#define ART_NATUREBANE          158
+#define ART_ORCHAST		156
+#define ART_NIGHT		157
+#define ART_NATUREBANE		158
 
 /* ToME-NET additions */
 #define ART_GIVEROFSLEEP	209
@@ -2275,7 +2275,7 @@
 #define ART_DAILIR		267
 #define ART_PIERCER		268
 #define ART_URUKHAI		269
-/* #define ART_ANGTIRCALAD		*/
+/* #define ART_ANGTIRCALAD	*/
 
 
 /*** Ego-Item indices (see "lib/edit/e_info.txt") ***/
@@ -3163,7 +3163,7 @@
 #define SV_STAFF_STAR_IDENTIFY		33
 
 /* jk - the first valuable staff */
-#define SV_STAFF_NASTY_STAFF              4
+#define SV_STAFF_NASTY_STAFF		4
 
 /* The "sval" codes for TV_WAND */
 #define SV_WAND_HEAL_MONSTER             0
@@ -4098,43 +4098,43 @@
 
 
 #if 0	/* Let's implement one by one.. */
-#define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
-#define GF_DISP_LIVING  71
-#define GF_NUKE         73
-#define GF_STASIS       75
-#define GF_STONE_WALL   76
-#define GF_DEATH_RAY    77
-#define GF_STUN         78
-#define GF_HOLY_FIRE    79
-#define GF_HELL_FIRE    80
-#define GF_DISINTEGRATE 81
-#define GF_CHARM        82
-#define GF_CONTROL_UNDEAD   83
-#define GF_CONTROL_ANIMAL   84
-#define GF_PSI         85
-#define GF_PSI_DRAIN   86
-#define GF_TELEKINESIS  87
-#define GF_JAM_DOOR     88
-#define GF_DOMINATION   89
-#define GF_DISP_GOOD    90
-#define GF_IDENTIFY     91
-#define GF_RAISE        92
-#define GF_STAR_IDENTIFY 93
-#define GF_DESTRUCTION  94
-#define GF_STUN_CONF    95
-#define GF_STUN_DAM     96
-#define GF_CONF_DAM     98
-#define GF_STAR_CHARM   99
-#define GF_IMPLOSION    100
-#define GF_LAVA_FLOW    101
-#define GF_FEAR         102
-#define GF_BETWEEN_GATE 103
-#define GF_WINDS_MANA   104
-#define GF_DEATH        105
-#define GF_CONTROL_DEMON 106
-#define GF_RAISE_DEMON 107
-#define GF_TRAP_DEMONSOUL 108
-#define GF_ATTACK       109
+#define GF_DISP_DEMON		70      /* New types for Zangband begin here... */
+#define GF_DISP_LIVING		71
+#define GF_NUKE			73
+#define GF_STASIS		75
+#define GF_STONE_WALL		76
+#define GF_DEATH_RAY		77
+#define GF_STUN			78
+#define GF_HOLY_FIRE		79
+#define GF_HELL_FIRE		80
+#define GF_DISINTEGRATE		81
+#define GF_CHARM		82
+#define GF_CONTROL_UNDEAD	83
+#define GF_CONTROL_ANIMAL	84
+#define GF_PSI			85
+#define GF_PSI_DRAIN		86
+#define GF_TELEKINESIS		87
+#define GF_JAM_DOOR		88
+#define GF_DOMINATION		89
+#define GF_DISP_GOOD		90
+#define GF_IDENTIFY		91
+#define GF_RAISE		92
+#define GF_STAR_IDENTIFY	93
+#define GF_DESTRUCTION		94
+#define GF_STUN_CONF		95
+#define GF_STUN_DAM		96
+#define GF_CONF_DAM		98
+#define GF_STAR_CHARM		99
+#define GF_IMPLOSION		100
+#define GF_LAVA_FLOW		101
+#define GF_FEAR			102
+#define GF_BETWEEN_GATE		103
+#define GF_WINDS_MANA		104
+#define GF_DEATH		105
+#define GF_CONTROL_DEMON	106
+#define GF_RAISE_DEMON		107
+#define GF_TRAP_DEMONSOUL	108
+#define GF_ATTACK		109
 /* Increased it (from 152) to 153 - the_sandman*/
 /* Increaing it again by ... 3-- to 156 :-) - the_sandman */
 #define MAX_GF			156	/* appearently unused, if 0'ed */
@@ -4649,7 +4649,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RBM_EXPLODE     16
 #define RBM_SHOW        24
 
-#define RBM_WHISPER		25
+#define RBM_WHISPER	25
 
 /*
  * New monster blow effects
@@ -6245,22 +6245,22 @@ extern int PlayerUID;
  * The "(R,G,B)" codes are given in "fourths" of the "maximal" value,
  * and should "gamma corrected" on most (non-Macintosh) machines.
  */
-#define TERM_DARK		0	/* 'd' */	/* 0,0,0 */
-#define TERM_WHITE		1	/* 'w' */	/* 4,4,4 */
-#define TERM_SLATE		2	/* 's' */	/* 2,2,2 */
-#define TERM_ORANGE		3	/* 'o' */	/* 4,2,0 */
-#define TERM_RED		4	/* 'r' */	/* 3,0,0 */
-#define TERM_GREEN		5	/* 'g' */	/* 0,2,1 */
-#define TERM_BLUE		6	/* 'b' */	/* 0,0,4 */
-#define TERM_UMBER		7	/* 'u' */	/* 2,1,0 */
-#define TERM_L_DARK		8	/* 'D' */	/* 1,1,1 */
-#define TERM_L_WHITE		9	/* 'W' */	/* 3,3,3 */
-#define TERM_VIOLET		10	/* 'v' */	/* 4,0,4 */
-#define TERM_YELLOW		11	/* 'y' */	/* 4,4,0 */
-#define TERM_L_RED		12	/* 'R' */	/* 4,0,0 */
-#define TERM_L_GREEN		13	/* 'G' */	/* 0,4,0 */
-#define TERM_L_BLUE		14	/* 'B' */	/* 0,4,4 */
-#define TERM_L_UMBER		15	/* 'U' */	/* 3,2,1 */
+#define TERM_DARK	0	/* 'd' */	/* 0,0,0 */
+#define TERM_WHITE	1	/* 'w' */	/* 4,4,4 */
+#define TERM_SLATE	2	/* 's' */	/* 2,2,2 */
+#define TERM_ORANGE	3	/* 'o' */	/* 4,2,0 */
+#define TERM_RED	4	/* 'r' */	/* 3,0,0 */
+#define TERM_GREEN	5	/* 'g' */	/* 0,2,1 */
+#define TERM_BLUE	6	/* 'b' */	/* 0,0,4 */
+#define TERM_UMBER	7	/* 'u' */	/* 2,1,0 */
+#define TERM_L_DARK	8	/* 'D' */	/* 1,1,1 */
+#define TERM_L_WHITE	9	/* 'W' */	/* 3,3,3 */
+#define TERM_VIOLET	10	/* 'v' */	/* 4,0,4 */
+#define TERM_YELLOW	11	/* 'y' */	/* 4,4,0 */
+#define TERM_L_RED	12	/* 'R' */	/* 4,0,0 */
+#define TERM_L_GREEN	13	/* 'G' */	/* 0,4,0 */
+#define TERM_L_BLUE	14	/* 'B' */	/* 0,4,4 */
+#define TERM_L_UMBER	15	/* 'U' */	/* 3,2,1 */
 
 /* Non encoded shimmer attributes */
 #define TERM_MULTI	16	/* all the main colours */
@@ -6509,38 +6509,38 @@ extern int PlayerUID;
  * Hats off to the precedent coders!	- Jir -
  */
 /* jk */
-#define FTRAP_CHEST      0x000000001 /* may appear on chests */
-#define FTRAP_DOOR       0x000000002 /* may appear on doors/floors */
-#define FTRAP_FLOOR      0x000000004 /* may appear on floor */
-#define FTRAP_CHANGE     0x000000008 /* Color changing */
-#define FTRAP_SPECIAL_GENE 0x000000010 /* Dont randomly generate */
-#define FTRAP_XXX6       0x000000020
-#define FTRAP_XXX7       0x000000040
-#define FTRAP_XXX8       0x000000080
-#define FTRAP_XXX9       0x000000100
-#define FTRAP_XXX10      0x000000200
-#define FTRAP_XXX11      0x000000400
-#define FTRAP_XXX12      0x000000800
-#define FTRAP_XXX13      0x000001000
-#define FTRAP_XXX14      0x000002000
-#define FTRAP_XXX15      0x000004000
-#define FTRAP_XXX16      0x000008000
-#define FTRAP_LEVEL1     0x000010000 /* low level ball/bolt trap */
-#define FTRAP_LEVEL2     0x000020000 /* medium level ball/bolt trap */
-#define FTRAP_LEVEL3     0x000040000 /* high level ball/bolt trap */
-#define FTRAP_LEVEL4     0x000080000 /* oops level ball/bolt trap */
-#define FTRAP_XXX21      0x000100000
-#define FTRAP_XXX22      0x000200000
-#define FTRAP_XXX23      0x000400000
-#define FTRAP_XXX24      0x000800000
-#define FTRAP_XXX25      0x001000000
-#define FTRAP_XXX26      0x002000000
-#define FTRAP_XXX27      0x004000000
-#define FTRAP_XXX28      0x008000000
-#define FTRAP_XXX29      0x010000000
-#define FTRAP_XXX30      0x020000000
-#define FTRAP_EASY_ID    0x040000000
-#define FTRAP_NO_ID      0x080000000	/* nominally implemented (but not used) */
+#define FTRAP_CHEST		0x000000001 /* may appear on chests */
+#define FTRAP_DOOR		0x000000002 /* may appear on doors/floors */
+#define FTRAP_FLOOR		0x000000004 /* may appear on floor */
+#define FTRAP_CHANGE		0x000000008 /* Color changing */
+#define FTRAP_SPECIAL_GENE	0x000000010 /* Dont randomly generate */
+#define FTRAP_LEVEL_GEN		0x000000020
+#define FTRAP_XXX7		0x000000040
+#define FTRAP_XXX8		0x000000080
+#define FTRAP_XXX9		0x000000100
+#define FTRAP_XXX10		0x000000200
+#define FTRAP_XXX11		0x000000400
+#define FTRAP_XXX12		0x000000800
+#define FTRAP_XXX13		0x000001000
+#define FTRAP_XXX14		0x000002000
+#define FTRAP_XXX15		0x000004000
+#define FTRAP_XXX16		0x000008000
+#define FTRAP_LEVEL1		0x000010000 /* low level ball/bolt trap */
+#define FTRAP_LEVEL2		0x000020000 /* medium level ball/bolt trap */
+#define FTRAP_LEVEL3		0x000040000 /* high level ball/bolt trap */
+#define FTRAP_LEVEL4		0x000080000 /* oops level ball/bolt trap */
+#define FTRAP_XXX21		0x000100000
+#define FTRAP_XXX22		0x000200000
+#define FTRAP_XXX23		0x000400000
+#define FTRAP_XXX24		0x000800000
+#define FTRAP_XXX25		0x001000000
+#define FTRAP_XXX26		0x002000000
+#define FTRAP_XXX27		0x004000000
+#define FTRAP_XXX28		0x008000000
+#define FTRAP_XXX29		0x010000000
+#define FTRAP_XXX30		0x020000000
+#define FTRAP_EASY_ID		0x040000000
+#define FTRAP_NO_ID		0x080000000	/* nominally implemented (but not used) */
 
 /* jk */
 #define STAT_DEC_TEMPORARY 1
@@ -6548,161 +6548,161 @@ extern int PlayerUID;
 #define STAT_DEC_PERMANENT 3
 
 /* jk - which trap is which number */
-#define TRAP_OF_WEAKNESS_I                  1
-#define TRAP_OF_WEAKNESS_II                 2
-#define TRAP_OF_WEAKNESS_III                3
-#define TRAP_OF_INTELLIGENCE_I              4
-#define TRAP_OF_INTELLIGENCE_II             5
-#define TRAP_OF_INTELLIGENCE_III            6
-#define TRAP_OF_WISDOM_I                    7
-#define TRAP_OF_WISDOM_II                   8
-#define TRAP_OF_WISDOM_III                  9
-#define TRAP_OF_FUMBLING_I                 10
-#define TRAP_OF_FUMBLING_II                11
-#define TRAP_OF_FUMBLING_III               12
-#define TRAP_OF_WASTING_I                  13
-#define TRAP_OF_WASTING_II                 14
-#define TRAP_OF_WASTING_III                15
-#define TRAP_OF_BEAUTY_I                   16
-#define TRAP_OF_BEAUTY_II                  17
-#define TRAP_OF_BEAUTY_III                 18
+#define TRAP_OF_WEAKNESS_I		1
+#define TRAP_OF_WEAKNESS_II		2
+#define TRAP_OF_WEAKNESS_III		3
+#define TRAP_OF_INTELLIGENCE_I		4
+#define TRAP_OF_INTELLIGENCE_II		5
+#define TRAP_OF_INTELLIGENCE_III	6
+#define TRAP_OF_WISDOM_I		7
+#define TRAP_OF_WISDOM_II		8
+#define TRAP_OF_WISDOM_III		9
+#define TRAP_OF_FUMBLING_I		10
+#define TRAP_OF_FUMBLING_II		11
+#define TRAP_OF_FUMBLING_III		12
+#define TRAP_OF_WASTING_I		13
+#define TRAP_OF_WASTING_II		14
+#define TRAP_OF_WASTING_III		15
+#define TRAP_OF_BEAUTY_I		16
+#define TRAP_OF_BEAUTY_II		17
+#define TRAP_OF_BEAUTY_III		18
 
-#define TRAP_OF_CURSE_WEAPON               20
-#define TRAP_OF_CURSE_ARMOR                21
-#define TRAP_OF_EARTHQUAKE                 22
-#define TRAP_OF_POISON_NEEDLE              23
-#define TRAP_OF_SUMMON_MONSTER             24
-#define TRAP_OF_SUMMON_UNDEAD              25
-#define TRAP_OF_SUMMON_GREATER_UNDEAD      26
-#define TRAP_OF_TELEPORT                   27
-#define TRAP_OF_PARALYZING                 28
-#define TRAP_OF_EXPLOSIVE_DEVICE           29
-#define TRAP_OF_TELEPORT_AWAY              30
-#define TRAP_OF_LOSE_MEMORY                31
-#define TRAP_OF_BITTER_REGRET              32
-#define TRAP_OF_BOWEL_CRAMPS               33
-#define TRAP_OF_BLINDNESS_CONFUSION        34
-#define TRAP_OF_AGGRAVATION                35
-#define TRAP_OF_MULTIPLICATION             36
-#define TRAP_OF_STEAL_ITEM                 37
-#define TRAP_OF_SUMMON_FAST_QUYLTHULGS     38
-#define TRAP_OF_SINKING                    39
-#define TRAP_OF_MANA_DRAIN                 40
-#define TRAP_OF_MISSING_MONEY              41
-#define TRAP_OF_NO_RETURN                  42
-#define TRAP_OF_SILENT_SWITCHING           43
-#define TRAP_OF_WALLS                      44
-#define TRAP_OF_CALLING_OUT                45
-#define TRAP_OF_SLIDING                    46
-#define TRAP_OF_CHARGES_DRAIN              47
-#define TRAP_OF_STAIR_MOVEMENT             48
-#define TRAP_OF_NEW                        49
-#define TRAP_OF_SCATTER_ITEMS              50
-#define TRAP_OF_DECAY                      51
-#define TRAP_OF_WASTING_WANDS              52
-#define TRAP_OF_FILLING                    53
-#define TRAP_OF_DRAIN_SPEED                54
+#define TRAP_OF_CURSE_WEAPON		20
+#define TRAP_OF_CURSE_ARMOR		21
+#define TRAP_OF_EARTHQUAKE		22
+#define TRAP_OF_POISON_NEEDLE		23
+#define TRAP_OF_SUMMON_MONSTER		24
+#define TRAP_OF_SUMMON_UNDEAD		25
+#define TRAP_OF_SUMMON_GREATER_UNDEAD	26
+#define TRAP_OF_TELEPORT		27
+#define TRAP_OF_PARALYZING		28
+#define TRAP_OF_EXPLOSIVE_DEVICE	29
+#define TRAP_OF_TELEPORT_AWAY		30
+#define TRAP_OF_LOSE_MEMORY		31
+#define TRAP_OF_BITTER_REGRET		32
+#define TRAP_OF_BOWEL_CRAMPS		33
+#define TRAP_OF_BLINDNESS_CONFUSION	34
+#define TRAP_OF_AGGRAVATION		35
+#define TRAP_OF_MULTIPLICATION		36
+#define TRAP_OF_STEAL_ITEM		37
+#define TRAP_OF_SUMMON_FAST_QUYLTHULGS	38
+#define TRAP_OF_SINKING			39
+#define TRAP_OF_MANA_DRAIN		40
+#define TRAP_OF_MISSING_MONEY		41
+#define TRAP_OF_NO_RETURN		42
+#define TRAP_OF_SILENT_SWITCHING	43
+#define TRAP_OF_WALLS			44
+#define TRAP_OF_CALLING_OUT		45
+#define TRAP_OF_SLIDING			46
+#define TRAP_OF_CHARGES_DRAIN		47
+#define TRAP_OF_STAIR_MOVEMENT		48
+#define TRAP_OF_NEW			49
+#define TRAP_OF_SCATTER_ITEMS		50
+#define TRAP_OF_DECAY			51
+#define TRAP_OF_WASTING_WANDS		52
+#define TRAP_OF_FILLING			53
+#define TRAP_OF_DRAIN_SPEED		54
 
-#define TRAP_OF_ELEC_BOLT                  60
-#define TRAP_OF_POIS_BOLT                  61
-#define TRAP_OF_ACID_BOLT                  62
-#define TRAP_OF_COLD_BOLT                  63
-#define TRAP_OF_FIRE_BOLT                  64
-#define TRAP_OF_PLASMA_BOLT                65
-#define TRAP_OF_WATER_BOLT                 66
-#define TRAP_OF_LITE_BOLT                  67
-#define TRAP_OF_DARK_BOLT                  68
-#define TRAP_OF_SHARDS_BOLT                69
-#define TRAP_OF_SOUND_BOLT                 70
-#define TRAP_OF_CONFUSION_BOLT             71
-#define TRAP_OF_FORCE_BOLT                 72
-#define TRAP_OF_INERTIA_BOLT               73
-#define TRAP_OF_MANA_BOLT                  74
-#define TRAP_OF_ICE_BOLT                   75
-#define TRAP_OF_CHAOS_BOLT                 76
-#define TRAP_OF_NETHER_BOLT                77
-#define TRAP_OF_DISENCHANT_BOLT            78
-#define TRAP_OF_NEXUS_BOLT                 79
-#define TRAP_OF_TIME_BOLT                  80
-#define TRAP_OF_GRAVITY_BOLT               81
+#define TRAP_OF_ELEC_BOLT		60
+#define TRAP_OF_POIS_BOLT		61
+#define TRAP_OF_ACID_BOLT		62
+#define TRAP_OF_COLD_BOLT		63
+#define TRAP_OF_FIRE_BOLT		64
+#define TRAP_OF_PLASMA_BOLT		65
+#define TRAP_OF_WATER_BOLT		66
+#define TRAP_OF_LITE_BOLT		67
+#define TRAP_OF_DARK_BOLT		68
+#define TRAP_OF_SHARDS_BOLT		69
+#define TRAP_OF_SOUND_BOLT		70
+#define TRAP_OF_CONFUSION_BOLT		71
+#define TRAP_OF_FORCE_BOLT		72
+#define TRAP_OF_INERTIA_BOLT		73
+#define TRAP_OF_MANA_BOLT		74
+#define TRAP_OF_ICE_BOLT		75
+#define TRAP_OF_CHAOS_BOLT		76
+#define TRAP_OF_NETHER_BOLT		77
+#define TRAP_OF_DISENCHANT_BOLT		78
+#define TRAP_OF_NEXUS_BOLT		79
+#define TRAP_OF_TIME_BOLT		80
+#define TRAP_OF_GRAVITY_BOLT		81
 
-#define TRAP_OF_ELEC_BALL                  82
-#define TRAP_OF_POIS_BALL                  83
-#define TRAP_OF_ACID_BALL                  84
-#define TRAP_OF_COLD_BALL                  85
-#define TRAP_OF_FIRE_BALL                  86
-#define TRAP_OF_PLASMA_BALL                87
-#define TRAP_OF_WATER_BALL                 88
-#define TRAP_OF_LITE_BALL                  89
-#define TRAP_OF_DARK_BALL                  90
-#define TRAP_OF_SHARDS_BALL                91
-#define TRAP_OF_SOUND_BALL                 92
-#define TRAP_OF_CONFUSION_BALL             93
-#define TRAP_OF_FORCE_BALL                 94
-#define TRAP_OF_INERTIA_BALL               95
-#define TRAP_OF_MANA_BALL                  96
-#define TRAP_OF_ICE_BALL                   97
-#define TRAP_OF_CHAOS_BALL                 98
-#define TRAP_OF_NETHER_BALL                99
-#define TRAP_OF_DISENCHANT_BALL           100
-#define TRAP_OF_NEXUS_BALL                101
-#define TRAP_OF_TIME_BALL                 102
-#define TRAP_OF_GRAVITY_BALL              103
+#define TRAP_OF_ELEC_BALL		82
+#define TRAP_OF_POIS_BALL		83
+#define TRAP_OF_ACID_BALL		84
+#define TRAP_OF_COLD_BALL		85
+#define TRAP_OF_FIRE_BALL		86
+#define TRAP_OF_PLASMA_BALL		87
+#define TRAP_OF_WATER_BALL		88
+#define TRAP_OF_LITE_BALL		89
+#define TRAP_OF_DARK_BALL		90
+#define TRAP_OF_SHARDS_BALL		91
+#define TRAP_OF_SOUND_BALL		92
+#define TRAP_OF_CONFUSION_BALL		93
+#define TRAP_OF_FORCE_BALL		94
+#define TRAP_OF_INERTIA_BALL		95
+#define TRAP_OF_MANA_BALL		96
+#define TRAP_OF_ICE_BALL		97
+#define TRAP_OF_CHAOS_BALL		98
+#define TRAP_OF_NETHER_BALL		99
+#define TRAP_OF_DISENCHANT_BALL		100
+#define TRAP_OF_NEXUS_BALL		101
+#define TRAP_OF_TIME_BALL		102
+#define TRAP_OF_GRAVITY_BALL		103
 
-#define TRAP_OF_ARROW_I                   110
-#define TRAP_OF_ARROW_II                  111
-#define TRAP_OF_ARROW_III                 112
-#define TRAP_OF_ARROW_IV                  113
-#define TRAP_OF_POISON_ARROW_I            114
-#define TRAP_OF_POISON_ARROW_II           115
-#define TRAP_OF_POISON_ARROW_III          116
-#define TRAP_OF_POISON_ARROW_IV           117
-#define TRAP_OF_DAGGER_I                  118
-#define TRAP_OF_DAGGER_II                 119
-#define TRAP_OF_POISON_DAGGER_I           120
-#define TRAP_OF_POISON_DAGGER_II          121
-#define TRAP_OF_ARROWS_I                  122
-#define TRAP_OF_ARROWS_II                 123
-#define TRAP_OF_ARROWS_III                124
-#define TRAP_OF_ARROWS_IV                 125
-#define TRAP_OF_POISON_ARROWS_I           126
-#define TRAP_OF_POISON_ARROWS_II          127
-#define TRAP_OF_POISON_ARROWS_III         128
-#define TRAP_OF_POISON_ARROWS_IV          129
-#define TRAP_OF_DAGGERS_I                 130
-#define TRAP_OF_DAGGERS_II                131
-#define TRAP_OF_POISON_DAGGERS_I          132
-#define TRAP_OF_POISON_DAGGERS_II         133
+#define TRAP_OF_ARROW_I			110
+#define TRAP_OF_ARROW_II		111
+#define TRAP_OF_ARROW_III		112
+#define TRAP_OF_ARROW_IV		113
+#define TRAP_OF_POISON_ARROW_I		114
+#define TRAP_OF_POISON_ARROW_II		115
+#define TRAP_OF_POISON_ARROW_III	116
+#define TRAP_OF_POISON_ARROW_IV		117
+#define TRAP_OF_DAGGER_I		118
+#define TRAP_OF_DAGGER_II		119
+#define TRAP_OF_POISON_DAGGER_I		120
+#define TRAP_OF_POISON_DAGGER_II	121
+#define TRAP_OF_ARROWS_I		122
+#define TRAP_OF_ARROWS_II		123
+#define TRAP_OF_ARROWS_III		124
+#define TRAP_OF_ARROWS_IV		125
+#define TRAP_OF_POISON_ARROWS_I		126
+#define TRAP_OF_POISON_ARROWS_II	127
+#define TRAP_OF_POISON_ARROWS_III	128
+#define TRAP_OF_POISON_ARROWS_IV	129
+#define TRAP_OF_DAGGERS_I		130
+#define TRAP_OF_DAGGERS_II		131
+#define TRAP_OF_POISON_DAGGERS_I	132
+#define TRAP_OF_POISON_DAGGERS_II	133
 
-#define TRAP_OF_DROP_ITEMS                140
-#define TRAP_OF_DROP_ALL_ITEMS            141
-#define TRAP_OF_DROP_EVERYTHING           142
+#define TRAP_OF_DROP_ITEMS		140
+#define TRAP_OF_DROP_ALL_ITEMS		141
+#define TRAP_OF_DROP_EVERYTHING		142
 
 /* -SC- */
-#define TRAP_OF_FEMINITY                  150
-#define TRAP_OF_MASCULINITY               151
-#define TRAP_OF_NEUTRALITY                152
-#define TRAP_OF_AGING                     153
-#define TRAP_OF_GROWING                   154
-#define TRAP_OF_SHRINKING                 155
-#define TRAP_OF_ELDRITCH_HORROR           156
-#define TRAP_OF_TANKER_DRAIN              157
-#define TRAP_OF_DIVINE_ANGER              158
-#define TRAP_OF_DIVINE_WRATH              159
-#define TRAP_OF_HALLUCINATION             160
+#define TRAP_OF_FEMINITY		150
+#define TRAP_OF_MASCULINITY		151
+#define TRAP_OF_NEUTRALITY		152
+#define TRAP_OF_AGING			153
+#define TRAP_OF_GROWING			154
+#define TRAP_OF_SHRINKING		155
+#define TRAP_OF_ELDRITCH_HORROR		156
+#define TRAP_OF_TANKER_DRAIN		157
+#define TRAP_OF_DIVINE_ANGER		158
+#define TRAP_OF_DIVINE_WRATH		159
+#define TRAP_OF_HALLUCINATION		160
 
-#define TRAP_OF_ROCKET                    161
-#define TRAP_OF_NUKE_BOLT                 162
-#define TRAP_OF_DEATH_RAY                 163
-#define TRAP_OF_HOLY_FIRE                 164
-#define TRAP_OF_HELL_FIRE                 165
-#define TRAP_OF_PSI_BOLT                  166
-#define TRAP_OF_PSI_DRAIN                 167
-#define TRAP_OF_NUKE_BALL                 168
-#define TRAP_OF_PSI_BALL                  169
+#define TRAP_OF_ROCKET			161
+#define TRAP_OF_NUKE_BOLT		162
+#define TRAP_OF_DEATH_RAY		163
+#define TRAP_OF_HOLY_FIRE		164
+#define TRAP_OF_HELL_FIRE		165
+#define TRAP_OF_PSI_BOLT		166
+#define TRAP_OF_PSI_DRAIN		167
+#define TRAP_OF_NUKE_BALL		168
+#define TRAP_OF_PSI_BALL		169
 
 /* DG */
-#define TRAP_OF_ACQUIREMENT               170
+#define TRAP_OF_ACQUIREMENT		170
 
 /* Jir */
 #define TRAP_OF_ALE			171
