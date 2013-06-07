@@ -761,6 +761,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 
 	char o_name[ONAME_LEN];
 	u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+	bool highlander = FALSE;
 
 
 	/* Restrict the choices */
@@ -775,6 +776,13 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 			return; /* item doesn't exist */
 
 		o_ptr = &o_list[0 - item];
+	}
+
+	/* erase any interrupting inscriptions on Highlander amulets */
+	if (o_ptr->tval == TV_AMULET &&
+	    (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS2)) {
+		o_ptr->note = 0;
+		highlander = TRUE;
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'w')) {
@@ -930,12 +938,18 @@ return;
 		}
 	}
 
+
 	x_ptr = &(p_ptr->inventory[slot]);
 
-	if (check_guard_inscription(x_ptr->note, 't')) {
+	if (x_ptr->tval != TV_AMULET ||
+	    (x_ptr->sval != SV_AMULET_HIGHLANDS && x_ptr->sval != SV_AMULET_HIGHLANDS2))
+		highlander = FALSE;
+
+	if (check_guard_inscription(x_ptr->note, 't') && !highlander) {
 		msg_print(Ind, "The inscription of your equipped item prevents it.");
 		return;
 	};
+
 
 #if 0
 	/* Verify potential overflow */
@@ -1022,10 +1036,13 @@ return;
 
 	/*** Could make procedure "inven_wield()" ***/
 	//no need to try to combine the non esp HL amulet?
-	//if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS && tmp_obj.tval == TV_AMULET && tmp_obj.sval == SV_AMULET_HIGHLANDS))
-	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS2 &&
-	    tmp_obj.tval == TV_AMULET && tmp_obj.sval == SV_AMULET_HIGHLANDS2)) {
-		o_ptr->bpval += tmp_obj.bpval;
+	if (highlander) {
+		o_ptr->to_h += tmp_obj.to_h;
+		o_ptr->to_d += tmp_obj.to_d;
+		o_ptr->to_a += tmp_obj.to_a;
+		o_ptr->bpval += tmp_obj.bpval; /* this is normal, when it is generated via invcopy() */
+		o_ptr->pval += tmp_obj.pval; /* unused, except if it was wished for */
+		msg_print(Ind, "\377GThe amulets merge into one!");
 	} else {
 
 #if 0

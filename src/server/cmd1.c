@@ -1667,10 +1667,8 @@ void carry(int Ind, int pickup, int confirm)
 					o_ptr->mode = p_ptr->mode;
 				}
 		        /* exception for amulet of the highlands for tournaments */
-    			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS) {
-				o_ptr->mode = p_ptr->mode;
-			// the one with esp
-    			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS2) {
+    			} else if (o_ptr->tval == TV_AMULET &&
+    			    (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS2)) {
 				o_ptr->mode = p_ptr->mode;
 			} else {
 				msg_format(Ind, "You cannot take items of %s players.", compat_pomode(Ind, o_ptr));
