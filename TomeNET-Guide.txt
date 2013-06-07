@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. June 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. June 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5809,10 +5809,49 @@ Highlander Tournament
     checks which skills you have trained to determine the item), or the deed
     can be turned in for a temporary luck boost. Usually you will want the
     item. However, you can trade the deed to someone else, who can then go and
-    redeem it for luck for that character of his.
+    redeem it for luck for that character of his (although the luck bonus he
+    gets will be somewhat lower than what the original owner would receive).
     All losers will also receive a deed on the next character they log in with
     which can be turned in for a small temporary luck bonus.
     For details about luck see LUCK flag in (5.8).
+
+    Detailed course of the event:
+
+    After signing up, players can kill townies for cash and go shopping.
+    They must not earn ANY experience though, or they won't be able to
+    participate when the event starts.
+
+    When the event starts, all players are teleported into a specific dungeon
+    that is reserved for Highlander Tournament participants exclusively.
+    All players receive an Amulet of the Highlands which they should not forget
+    to wear, because it gives the character considerable power.
+    They now have 10 minutes to level up in this dungeon.
+
+    After 10 minutes, everyone is teleported out of the dungeon and meets on a
+    battlefield where they have to kill each other, because it is well known
+    that THERE CAN ONLY BE ONE!
+
+    When a player is slain and drops his items, other players can pick up his
+    Amulet of the Highlands and 'w'ear it, which will make it fuse with an
+    already existing Amulet of the Highlands, increasing its power!
+
+    When only one player is left, he will be the designated winner, and
+    teleported back to Bree. He automatically receives a victory deed in his
+    inventory which he can exchange at the Mayor's office in the town hall.
+    It can be exchanged for eiter an item or a temporary luck bonus.
+    He can also give this deed to another character if he wishes, although in
+    that case it can only be exchanged for a luck bonus, not an item, and the
+    bonus will be somewhat lower than for the Highlander champion himself.
+
+    All losers will also receive a 'contenders deed' on the next character they
+    log on with, which can be exchanged at the Mayor's office for small
+    temporary luck bonus.
+
+    A note regarding turning in a deed for an item:
+    The item you get will be random but still depend on your character's skill
+    points spent. So you should not turn in the deed before you actually spent
+    your skill points. For example if you spend several points into
+    sword-mastery then _if_ you receive a weapon it will actually be a sword.
 
 Arena Monster Challenge
     The wizards of Arena Monster Challenge (tm) have prepared a spectacular

@@ -5932,6 +5932,7 @@ void reward_deed_blessing(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type *o2_ptr = &p_ptr->inventory[item];
+	bool traded_deed = FALSE;
 
 	if (o2_ptr->tval != TV_PARCHMENT || o2_ptr->sval < SV_DEED_HIGHLANDER) {
 		msg_print(Ind, "That's not a deed.");
@@ -5947,6 +5948,7 @@ void reward_deed_blessing(int Ind, int item)
 		/* not a contender's deed, but a winner's deed! */
 		default: 
 			msg_print(Ind, "\377yThe mayor frowns at the deed, but accepts it.");
+			traded_deed = TRUE;
 		}
 	}
 
@@ -5957,9 +5959,9 @@ void reward_deed_blessing(int Ind, int item)
 		/* it's inaccurate, due to hack-like process_player_end_aux call timing
 		   (about once every 31 turns on wz=0), but who cares :) */
 #ifdef RPG_SERVER /* longer duration since dungeons are all ironman; also you can hardly trade parchments on RPG */
-		bless_temp_luck(Ind, 4, (30 * 60 * cfg.fps) / 31); /* somewhere around 30 minutes */
+		bless_temp_luck(Ind, traded_deed ? 4 : 2, (30 * 60 * cfg.fps) / 31); /* somewhere around 30 minutes */
 #else
-		bless_temp_luck(Ind, 4, (20 * 60 * cfg.fps) / 31); /* somewhere around 20 minutes */
+		bless_temp_luck(Ind, traded_deed ? 4 : 2, (20 * 60 * cfg.fps) / 31); /* somewhere around 20 minutes */
 #endif
 		break;
 	case SV_DEED2_HIGHLANDER: /* participant's deed */
