@@ -3915,7 +3915,7 @@
 /* New stuff (RF0_) - C. Blue */
 #define SUMMON_HI_MONSTER		61
 #define SUMMON_HI_UNIQUE		62
-#define SUMMON_SPOOKY			63
+#define SUMMON_SPOOK			63
 
 
 
@@ -6752,6 +6752,7 @@ extern int PlayerUID;
 #define TRAP_OF_LASER 			211
 #define TRAP_OF_ROCKETS			212
 #define TRAP_OF_HEALING			213
+#define TRAP_OF_SPOOKINESS		214
 
 /*
  * Shield effect options

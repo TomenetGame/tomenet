@@ -1057,6 +1057,12 @@ I:10:0:0:10:24:0d0:G:20
 D:Makes you not hurt anymore.
 F:FLOOR | DOOR
 
+N:214:Spooky Trap
+I:3:25:20:1:8:0d0:v:100
+D:There's something strange in the neighbourhood.
+F:FLOOR | CHEST | DOOR
+
+
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
 # I:diff:prob:            :minlevel:      :color:vanish

@@ -4114,7 +4114,7 @@ static bool summon_specific_okay(int r_idx)
 			         (r_ptr->d_char == '=') ||
 			         (r_ptr->d_char == '$') ||
 			         (r_ptr->d_char == '|') ||
-					 (r_ptr->flags9 & (RF9_MIMIC)) ) &&
+				(r_ptr->flags9 & (RF9_MIMIC)) ) &&
 			        !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
                 case SUMMON_HI_DEMON:
@@ -4239,6 +4239,14 @@ static bool summon_specific_okay(int r_idx)
 		case SUMMON_HI_UNIQUE:
 			okay = ((r_ptr->flags1 & RF1_UNIQUE)
 				&& (r_ptr->level >= 60));
+			break;
+		case SUMMON_SPOOK:
+			okay = ((r_ptr->d_char == 'G')
+				&& (r_ptr->flags2 & RF2_INVISIBLE) /* hm, no phantom warriors (also excludes spectres) */
+#ifdef EXPLICITE_UNIQUE_SUMMONING
+			       && !(r_ptr->flags1 & RF1_UNIQUE)
+#endif
+				&& (r_ptr->level <= 31)); /* 31 for Ghost, 33 also allows Shade (somewhat nasty) */
 			break;
 	}
 

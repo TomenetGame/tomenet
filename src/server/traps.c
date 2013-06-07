@@ -1697,8 +1697,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			l = randint(20 + glev) + 30;/*let's give the player a decent chance to clean the mess
 						    over a reasonable amount of time.*/
 			for (k = 0; k < l; k++) {
-				s16b cx = x + 20 - rand_int(40);
-				s16b cy = y + 20 - rand_int(40);
+				s16b cx = x + 20 - rand_int(41);
+				s16b cy = y + 20 - rand_int(41);
 
 				if (!in_bounds(cy,cx)) {
 					cx = x;
@@ -2506,6 +2506,37 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				set_stun(Ind, p_ptr->stun + randint(50));
 			}
 #endif	// 0
+			break;
+
+		case TRAP_OF_SPOOKINESS:
+			l = randint(3) + 3;/*let's give the player a decent chance to clean the mess
+						    over a reasonable amount of time.*/
+			for (k = 0; k < l; k++) {
+				s16b cx, cy, tries = 10;
+
+				while (--tries) {
+					cy = rand_int(2) ? y + 3 + rand_int(8) : y - 3 - rand_int(8);
+					cx = rand_int(2) ? x + 3 + rand_int(8) : x - 3 - rand_int(8);
+
+					if (!in_bounds(cy, cx)) continue;
+
+					/* paranoia */
+					if (!cave_empty_bold(zcave, cy, cx)) continue;
+
+					break;
+				}
+				if (!tries) {
+					cx = x;
+					cy = y;
+					/* or maybe just
+					break; ? */
+				}
+
+				summon_override_checks = SO_IDDC;
+				ident |= summon_specific(wpos, cy, cx, glev, 0, SUMMON_SPOOK, 1, 0);
+				summon_override_checks = SO_NONE;
+			}
+			if (ident) msg_print(Ind, "There's something strange in the neighbourhood.");
 			break;
 
 
