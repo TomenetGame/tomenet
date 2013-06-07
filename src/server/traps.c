@@ -3705,11 +3705,11 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 			identify_mon_trap_load(who, o_ptr);
 			return(TRUE);
 		case SV_SCROLL_ACQUIREMENT:
-			acquirement(&wpos, y, x, 1, TRUE, (wpos.wz != 0), !Players[who]->total_winner);
+			acquirement(&wpos, y, x, 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
 			identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_SCROLL_STAR_ACQUIREMENT:
-			acquirement(&wpos, y, x, randint(2) + 1, TRUE, (wpos.wz != 0), !Players[who]->total_winner);
+			acquirement(&wpos, y, x, randint(2) + 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
 			identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_SCROLL_REMOVE_CURSE:

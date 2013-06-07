@@ -11132,7 +11132,7 @@ bool master_player(int Ind, char *parms){
 			if(Ind2)
 			{
 				player_type *p_ptr2 = Players[Ind2];
-				acquirement(&p_ptr2->wpos, p_ptr2->py, p_ptr2->px, 1, TRUE, TRUE, !p_ptr2->total_winner);
+				acquirement(&p_ptr2->wpos, p_ptr2->py, p_ptr2->px, 1, TRUE, TRUE, make_resf(p_ptr2));
 				msg_format(Ind, "%s is granted an item.", p_ptr2->name);
 				msg_print(Ind2, "You feel a divine favor!");
 				return(FALSE);
