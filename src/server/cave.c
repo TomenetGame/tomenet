@@ -7155,7 +7155,7 @@ extern int check_feat(worldpos *wpos, int y, int x)
  * Change the "feat" flag for a grid, and notice/redraw the grid
  * (Adapted from PernAngband)
  */
-bool cave_set_quietly = FALSE;
+bool level_generation_time = FALSE;
 void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 {
 	player_type *p_ptr;
@@ -7199,7 +7199,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	/* Change the feature */
 	c_ptr->feat = feat;
 
-	if (cave_set_quietly) return;
+	if (level_generation_time) return;
 
 	/* XXX it's not needed when called from generate.c */
 	for (i = 1; i <= NumPlayers; i++)

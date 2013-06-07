@@ -470,7 +470,7 @@ extern void disable_specific_warnings(player_type *p_ptr);
 extern void get_history(int Ind);
 
 /* cave.c */
-extern bool cave_set_quietly;
+extern bool level_generation_time;
 
 extern bool cave_valid_bold(cave_type **zcave, int y, int x);
 extern struct c_special *GetCS(cave_type *c_ptr, unsigned char type);

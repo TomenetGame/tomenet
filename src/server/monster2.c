@@ -2805,7 +2805,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 #endif
 	/* No live spawn inside IDDC -- except for breeder clones/summons */
 	if (!(summon_override_checks & SO_IDDC) &&
-	    !cave_set_quietly &&
+	    !level_generation_time &&
 	    in_irondeepdive(wpos)
 	    && !clo && !clone_summoning)
 		return (FALSE);
@@ -2905,7 +2905,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 5\n");
 #endif
 	if (!(summon_override_checks & SO_PRE_STAIRS)) {
 		/* No monster pre-spawns on staircases, to avoid 'pushing off' a player when he goes up/down. */
-		if (cave_set_quietly && (
+		if (level_generation_time && (
 		    zcave[y][x].feat == FEAT_WAY_LESS ||
 		    zcave[y][x].feat == FEAT_WAY_MORE ||
 		    zcave[y][x].feat == FEAT_LESS ||
@@ -2919,7 +2919,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6\n");
 		/* Nether Realm bottom */
 		if (netherrealm_bottom) {
 			/* No live spawns after initial spawn allowed */
-			if (!cave_set_quietly) return(FALSE);
+			if (!level_generation_time) return(FALSE);
 
 #if 0 /* FINAL_GUARDIAN now */
 			/* Special hack - level is empty except for Zu-Aon */
@@ -3011,8 +3011,8 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 #ifdef MORGOTH_NO_LIVE_SPAWN
 			/* is Morgoth not generated within a dungeon level's
 			   initialization (cave_gen in generate.c) ? */
-			if (!cave_set_quietly) {
-				/* No, it's a live spawn! (!cave_set_quietly) */
+			if (!level_generation_time) {
+				/* No, it's a live spawn! (!level_generation_time) */
  #if DEBUG_LEVEL > 2
 			        s_printf("Morgoth live spawn prevented (MORGOTH_NO_TELE_VAULTS)\n");
  #endif
@@ -3027,7 +3027,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 					    (p_ptr->total_winner || (p_ptr->r_killed[RI_SAURON] != 1))) {
 					        /* log */
  #if DEBUG_LEVEL > 2
-						if (cave_set_quietly) {
+						if (level_generation_time) {
 							if (p_ptr->total_winner) {
 					    		        s_printf("Morgoth generation prevented due to winner %s\n", p_ptr->name);
 							} else {
@@ -3367,7 +3367,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 				if (Players[Ind]->admin_dm && !(Players[Ind]->afk && !streq(Players[Ind]->afk_msg, "watch"))) Players[Ind]->paging = 4;
 			}
 		/* if it was a live spawn, adjust his power according to amount of players on his floor */
-		if (!cave_set_quietly) check_Morgoth(0);
+		if (!level_generation_time) check_Morgoth(0);
 	}
 	if (r_idx == RI_TIK_SRVZLLAT) s_printf("Tik'Svrzllat was created on %d\n", dlev);
 	if (r_idx == RI_HELLRAISER) s_printf("The Hellraiser was created on %d\n", dlev);
@@ -3382,7 +3382,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	/* Special events don't necessarily influence floor feelings */
 	if ((!season_halloween || (r_idx != RI_PUMPKIN1 && r_idx != RI_PUMPKIN2 && r_idx != RI_PUMPKIN3)) &&
 	    /* for now ignore live-spawns. maybe change that?: */
-	    (cave_set_quietly)) {
+	    (level_generation_time)) {
 		if ((r_ptr->flags1 & RF1_UNIQUE) && l_ptr) l_ptr->flags2 |= LF2_UNIQUE;
 		/* note: actually it could be "un-free" ie in vault :/
 		   however, checking for that distinction wouldnt pay off really,

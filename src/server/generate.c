@@ -1161,7 +1161,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num, playe
 	if(!(zcave = getcave(wpos))) return;
 
 #ifdef RPG_SERVER /* no objects are generated in Training Tower */
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && cave_set_quietly) return;
+	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && level_generation_time) return;
 #endif
 
 	/* Place some objects */
@@ -9237,7 +9237,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 
 	/* Hack -- Don't tell players about it (for efficiency) */
-	cave_set_quietly = TRUE;
+	level_generation_time = TRUE;
 
 	/* Fill the arrays of floors and walls in the good proportions */
 	init_feat_info(wpos);
@@ -10042,7 +10042,7 @@ if (!netherrealm_bottom) {
 		summon_override_checks = SO_NONE;
 #if 0
 		/* debug: break here? */
-		cave_set_quietly = FALSE;
+		level_generation_time = FALSE;
 		return;
 #endif
 	}
@@ -10212,7 +10212,7 @@ for(mx = 1; mx < 131; mx++) {
 
 #endif
 
-	cave_set_quietly = FALSE;
+	level_generation_time = FALSE;
 
 
 	/* A little evilness:

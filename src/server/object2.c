@@ -6109,7 +6109,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	if (in_valinor(wpos)) return;
 
 #ifdef RPG_SERVER /* no objects are generated in Training Tower */
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && cave_set_quietly) return;
+	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && level_generation_time) return;
 #endif
 
 	/* Require clean floor space */
@@ -6124,7 +6124,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	resf |= place_object_restrictor;
 
 	/* Luck does not affect items placed at level creation time */
-	if (!cave_set_quietly) {
+	if (!level_generation_time) {
 		luck += global_luck;
 		if (d_ptr) {
 			if ((d_ptr->flags3 & DF3_LUCK_PROG_IDDC)) {
@@ -6288,7 +6288,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	drop_near(&forge, -1, wpos, y, x);
 
 	/* for now ignore live-spawns. change that maybe? */
-	if (cave_set_quietly) {
+	if (level_generation_time) {
 		/* Check that we're in a dungeon */
 		if (l_ptr) {
 			if (forge.name1) l_ptr->flags2 |= LF2_ARTIFACT;
@@ -6316,7 +6316,7 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 	resf |= place_object_restrictor;
 
 	/* Luck does not affect items placed at level creation time */
-	if (!cave_set_quietly) {
+	if (!level_generation_time) {
 		luck += global_luck;
 		if (d_ptr) {
 			if ((d_ptr->flags3 & DF3_LUCK_PROG_IDDC)) {
