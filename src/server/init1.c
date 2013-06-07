@@ -574,7 +574,7 @@ static cptr t_info_flags[] =
         "FLOOR",
         "CHANGE",	// "XXX4",
         "SPECIAL_GENE",
-        "XXX6",
+        "LEVEL_GEN",
         "XXX7",
         "XXX8",
         "XXX9",
