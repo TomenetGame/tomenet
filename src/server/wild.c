@@ -2953,10 +2953,6 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						c_ptr->feat = FEAT_DIRT;
 						c_ptr->info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
 					}
-
-					/* 'suspended' guild houses ( = of leaderless guilds) */
-					if ((h_ptr->flags & HF_GUILD_SUS)) c_ptr->info |= CAVE_GUILD_SUS;
-
 					everyone_lite_spot(&h_ptr->wpos, h_ptr->y + y, h_ptr->x + x);
 				}
 				else if (func == FILL_CLEAR) {
@@ -3116,10 +3112,6 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 							success = FALSE;
 						}
 						zcave[miny + (y - 1)][minx + (x - 1)].info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
-
-						/* 'suspended' guild houses ( = of leaderless guilds) */
-						if ((h_ptr->flags & HF_GUILD_SUS)) c_ptr->info |= CAVE_GUILD_SUS;
-
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}
