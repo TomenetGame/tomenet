@@ -4199,7 +4199,7 @@ static bool summon_specific_okay(int r_idx)
                         okay = ((r_ptr->d_char == 'p') &&
 			        !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-		case SUMMON_SHADOWS:
+		case SUMMON_SHADOW:
 			okay = ((r_ptr->d_char == 'G') &&
 			        !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
@@ -4230,7 +4230,6 @@ static bool summon_specific_okay(int r_idx)
 #endif
 #endif
 		case SUMMON_HI_MONSTER:
-		case SUMMON_HI_MONSTERS:
 			okay = (r_ptr->level >= 60
 #ifdef EXPLICITE_UNIQUE_SUMMONING
 				&& !(r_ptr->flags1 & RF1_UNIQUE)
@@ -4323,7 +4322,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	for (i = 0; i < 10; i++) { /* try a couple of times */
 #if 0 /* incorporated it directly into summon_specific_type, as it should be */
 		/* Hack for RF0_S_HI_ flags */
-		if (type == SUMMON_HI_MONSTER || type == SUMMON_HI_MONSTERS || type == SUMMON_HI_UNIQUE) {
+		if (type == SUMMON_HI_MONSTER || type == SUMMON_HI_UNIQUE) {
 			/* Ok, now let them summon what they can */
 			r_idx = get_mon_num(100 + 5, 100);
 			if (r_info[r_idx].level < 60) {

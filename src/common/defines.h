@@ -3905,7 +3905,7 @@
 #define SUMMON_RNG			52
 #define SUMMON_IMMOBILE			53
 #define SUMMON_HUMAN			54
-#define SUMMON_SHADOWS			55
+#define SUMMON_SHADOW			55
 #define SUMMON_GHOST			56
 #define SUMMON_QUYLTHULG		57
 #define SUMMON_LUA			58
@@ -3914,8 +3914,7 @@
 #define SUMMON_PATIENT			60
 /* New stuff (RF0_) - C. Blue */
 #define SUMMON_HI_MONSTER		61
-#define SUMMON_HI_MONSTERS		62
-#define SUMMON_HI_UNIQUE		63
+#define SUMMON_HI_UNIQUE		62
 
 
 

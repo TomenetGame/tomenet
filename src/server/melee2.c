@@ -4077,7 +4077,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNIQUE, 1, clone_summoning);
 			m_ptr->clone_summoning = clone_summoning;
 			for (k = 0; k < 8; k++)
-				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many powerful things appear nearby.");
 			break;
