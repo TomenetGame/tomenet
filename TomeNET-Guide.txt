@@ -11308,7 +11308,7 @@ STR     Melee damage: -1..+4 (-1 won't apply if creature is very heavy though)
         Giants: +1
         Dragons (mature and higher): +1
 INT     Cast speed (1_IN_1 to 1_IN_3): +1..+5
-        (will also give up to +40% base mana)
+        (will also give up to +50% base mana)
         STUPID creatures: -2
         SMART creatures: +2
 DEX     Halfling forms when no boots are worn: +2
