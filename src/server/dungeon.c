@@ -6421,7 +6421,7 @@ void dungeon(void)
 				break;
 			}
 			if (!i) {
-				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			}
 		}
@@ -6449,7 +6449,7 @@ void dungeon(void)
 				break;
 			}
 			if (!i && (n <= 7)) {
-				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			}
 		}
@@ -6477,7 +6477,7 @@ void dungeon(void)
 				break;
 			}
 			if (!i && (n <= 4)) {
-				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			}
 		}
@@ -6491,7 +6491,7 @@ void dungeon(void)
 				n++;
 			}
 			if (!n) {
-				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			}
 		}
@@ -6526,7 +6526,7 @@ void dungeon(void)
 				break;
 			}
 			if (!i && (n <= 4)) {
-				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			}
 		}
@@ -6563,7 +6563,7 @@ void dungeon(void)
 						recall_player(i, "");
 					}
 				}
-				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			} else {
 				for (i = NumPlayers; i > 0 ;i--) {
@@ -6587,7 +6587,7 @@ void dungeon(void)
 					break;
 				}
 				if (!i) {
-					msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+					msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 					cfg.runlevel = 2049;
 				}
 			}
