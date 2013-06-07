@@ -276,8 +276,7 @@ N:45:Trap of Calling Out
 #I:10:100:100:5:15:0d0:v:10 make it less cheezy
 I:10:100:100:5:15:0d0:v:33
 D:You hear something coming closer, much closer.
-F:FLOOR | DOOR
-#CHEST
+F:FLOOR | DOOR | LEVEL_GEN
 
 N:46:Trap of Sliding
 I:8:50:50:4:8:0d0:r:10
