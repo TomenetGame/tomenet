@@ -4012,6 +4012,9 @@ static int summon_specific_type = 0;
 /*
  * Hack -- help decide if a monster race is "okay" to summon
  */
+/* Disallow summoning unique monsters except for
+   explicite SUMMON_UNIQUE/SUMMON_HI_UNIQUE calls? */
+#define EXPLICITE_UNIQUE_SUMMONING
 static bool summon_specific_okay(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
@@ -4019,8 +4022,9 @@ static bool summon_specific_okay(int r_idx)
 
 
 	/* Hack -- no specific type specified */
-	if (!summon_specific_type) return (TRUE);
+	if (!summon_specific_type) return TRUE;
 
+	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) return FALSE;
 
 	/* Check our requirements */
 	switch (summon_specific_type) {
@@ -4060,18 +4064,25 @@ static bool summon_specific_okay(int r_idx)
 			okay = (((r_ptr->d_char == 'L') ||
 				(r_ptr->d_char == 'V') ||
 				(r_ptr->d_char == 'W')) &&
-				(r_ptr->level >= 45));
+				(r_ptr->level >= 45)
+#ifdef EXPLICITE_UNIQUE_SUMMONING
+				&& (!(r_ptr->flags1 & RF1_UNIQUE)
+				    || (r_ptr->flags7 & RF7_NAZGUL)) /* exception: allow Nazgul! */
+#endif
+				);
 			break;
 		case SUMMON_HI_DRAGON:
-			okay = (r_ptr->d_char == 'D');
+			okay = (r_ptr->d_char == 'D'
+#ifdef EXPLICITE_UNIQUE_SUMMONING
+				&& !(r_ptr->flags1 & RF1_UNIQUE)
+#endif
+				);
 			break;
-		case SUMMON_WRAITH:
-			okay = ((r_ptr->d_char == 'W') &&
-				(r_ptr->flags1 & RF1_UNIQUE));
+		case SUMMON_NAZGUL:
+			okay = ((r_ptr->flags7 & RF7_NAZGUL));
 			break;
 		case SUMMON_UNIQUE:
-			okay = ((r_ptr->flags1 & RF1_UNIQUE) &&
-				!(r_ptr->flags0 & RF0_FINAL_GUARDIAN));
+			okay = ((r_ptr->flags1 & RF1_UNIQUE));
 			break;
 
 		/* PernA-addition
@@ -4159,7 +4170,11 @@ static bool summon_specific_okay(int r_idx)
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
                 case SUMMON_DRAGONRIDER:
-                        okay = (r_ptr->flags3 & RF3_DRAGONRIDER)?TRUE:FALSE;
+                        okay = ((r_ptr->flags3 & RF3_DRAGONRIDER) 
+#ifdef EXPLICITE_UNIQUE_SUMMONING
+			       && !(r_ptr->flags1 & RF1_UNIQUE)
+#endif
+				);
 			break;
 		case SUMMON_BLUE_HORROR:
 			okay = ((strstr((r_name + r_ptr->name),"lue horror")) &&
@@ -4173,8 +4188,12 @@ static bool summon_specific_okay(int r_idx)
                         okay = ((strstr((r_name + r_ptr->name),"Random Number Generator")) &&
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
-                case SUMMON_MINE:
-                        okay = (r_ptr->flags1 & RF1_NEVER_MOVE)?TRUE:FALSE;
+                case SUMMON_IMMOBILE:
+                        okay = ((r_ptr->flags1 & RF1_NEVER_MOVE)
+#ifdef EXPLICITE_UNIQUE_SUMMONING
+				&& !(r_ptr->flags1 & RF1_UNIQUE)
+#endif
+				);
 			break;
                 case SUMMON_HUMAN:
                         okay = ((r_ptr->d_char == 'p') &&
@@ -4189,11 +4208,19 @@ static bool summon_specific_okay(int r_idx)
 				!(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		case SUMMON_VERMIN:
-			okay = (r_ptr->flags7 & RF7_MULTIPLY)?TRUE:FALSE;
+			okay = ((r_ptr->flags7 & RF7_MULTIPLY)
+#ifdef EXPLICITE_UNIQUE_SUMMONING /* paranoia - there cannot be unique multiplying vermin, but whatever */
+			       && !(r_ptr->flags1 & RF1_UNIQUE)
+#endif
+				);
 			break;
-		case SUMMON_IMMOBILE:
-			okay = (r_ptr->flags1 & RF1_NEVER_MOVE) &&
-				!(r_ptr->flags4 && r_ptr->flags5 && r_ptr->flags6);
+		case SUMMON_PATIENT:
+			okay = ((r_ptr->flags1 & RF1_NEVER_MOVE) &&
+				!(r_ptr->flags4 && r_ptr->flags5 && r_ptr->flags6)
+#ifdef EXPLICITE_UNIQUE_SUMMONING
+				&& !(r_ptr->flags1 & RF1_UNIQUE)
+#endif
+				);
 			break;
 #ifdef USE_LUA
 #if 0	// let's leave it to DG :)
@@ -4204,11 +4231,14 @@ static bool summon_specific_okay(int r_idx)
 #endif
 		case SUMMON_HI_MONSTER:
 		case SUMMON_HI_MONSTERS:
-			okay = (r_ptr->level >= 60);
+			okay = (r_ptr->level >= 60
+#ifdef EXPLICITE_UNIQUE_SUMMONING
+				&& !(r_ptr->flags1 & RF1_UNIQUE)
+#endif
+				);
 			break;
 		case SUMMON_HI_UNIQUE:
 			okay = ((r_ptr->flags1 & RF1_UNIQUE)
-				&& !(r_ptr->flags0 & RF0_FINAL_GUARDIAN)
 				&& (r_ptr->level >= 60));
 			break;
 	}
@@ -4224,8 +4254,10 @@ static bool summon_specific_okay(int r_idx)
  *
  * We will attempt to place the monster up to 10 times before giving up.
  *
- * Note: SUMMON_UNIQUE and SUMMON_WRAITH (XXX) will summon Unique's
- * Note: SUMMON_HI_UNDEAD and SUMMON_HI_DRAGON may summon Unique's
+ * Note: SUMMON_UNIQUE, SUMMON_HI_UNIQUE and SUMMON_NAZGUL will summon Uniques
+ * Note: SUMMON_HI_UNDEAD, SUMMON_HI_DRAGON and SUMMON_HI_MONSTER(S) may summon
+ *       Unique's (depends on EXPLICITE_UNIQUE_SUMMONING - an exception is that
+ *       SUMMON_HI_UNDEAD may still summon Nazgul!)
  * Note: None of the other summon codes will ever summon Unique's.
  *
  * This function has been changed.  We now take the "monster level"

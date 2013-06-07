@@ -3880,7 +3880,7 @@
 #define SUMMON_DRAGON			18
 #define SUMMON_HI_UNDEAD		21
 #define SUMMON_HI_DRAGON		22
-#define SUMMON_WRAITH			31
+#define SUMMON_NAZGUL			31
 #define SUMMON_UNIQUE			32
 /* additions from ToME */
 #define SUMMON_BIZARRE1			33
@@ -3903,7 +3903,7 @@
 #define SUMMON_BLUE_HORROR		50
 #define SUMMON_BUG			51
 #define SUMMON_RNG			52
-#define SUMMON_MINE			53
+#define SUMMON_IMMOBILE			53
 #define SUMMON_HUMAN			54
 #define SUMMON_SHADOWS			55
 #define SUMMON_GHOST			56
@@ -3911,7 +3911,7 @@
 #define SUMMON_LUA			58
 /* Again, TomeNET one(s)	- Jir - */
 #define SUMMON_VERMIN			59
-#define SUMMON_IMMOBILE			60
+#define SUMMON_PATIENT			60
 /* New stuff (RF0_) - C. Blue */
 #define SUMMON_HI_MONSTER		61
 #define SUMMON_HI_MONSTERS		62
@@ -4933,7 +4933,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF6_S_DRAGON		0x08000000	/* Summon Dragon */
 #define RF6_S_HI_UNDEAD			0x10000000	/* Summon Greater Undead */
 #define RF6_S_HI_DRAGON			0x20000000	/* Summon Ancient Dragon */
-#define RF6_S_WRAITH			0x40000000	/* Summon Unique Wraith */
+#define RF6_S_NAZGUL			0x40000000	/* Summon Unique Wraith */
 #define RF6_S_UNIQUE			0x80000000	/* Summon Unique Monster */
 
 #define RF6_PLAYER_SPELLS (RF6_HASTE | RF6_HAND_DOOM | RF6_HEAL | \
@@ -5121,7 +5121,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
     RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | \
     RF6_S_ANT | RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | \
     RF6_S_ANGEL | RF6_S_DRAGON | RF6_S_UNDEAD | RF6_S_DEMON | \
-    RF6_S_HI_DRAGON | RF6_S_HI_UNDEAD | RF6_S_WRAITH | RF6_S_UNIQUE | \
+    RF6_S_HI_DRAGON | RF6_S_HI_UNDEAD | RF6_S_NAZGUL | RF6_S_UNIQUE | \
     RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG | RF6_S_ANIMALS)
 
 #define RF0_INT_MASK \
@@ -5193,7 +5193,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
     (RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
      RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_ANGEL | RF6_S_DEMON | \
      RF6_S_UNDEAD | RF6_S_DRAGON | RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | \
-     RF6_S_WRAITH | RF6_S_UNIQUE | RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG)
+     RF6_S_NAZGUL | RF6_S_UNIQUE | RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG)
 
 #define RF0_SUMMON_MASK \
     (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
@@ -5322,7 +5322,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 	RF6_RAISE_DEAD | RF6_S_BUG | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL | RF6_S_RNG | RF6_DARKNESS | \
 	RF6_S_DRAGONRIDER | RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
 	RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_ANGEL | RF6_S_DEMON | RF6_S_UNDEAD | RF6_S_DRAGON | \
-	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | RF6_S_WRAITH | RF6_S_UNIQUE)
+	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | RF6_S_NAZGUL | RF6_S_UNIQUE)
 #define RF0_SPELLCASTER_MASK \
 	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE)
 

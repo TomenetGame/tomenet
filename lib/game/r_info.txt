@@ -13926,7 +13926,7 @@ F:IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 S:1_IN_3 | 
 S:BLIND | HOLD | CONF | 
 S:BA_DARK | BA_NETH | 
-S:S_WRAITH | S_HI_UNDEAD | S_KIN
+S:S_NAZGUL | S_HI_UNDEAD | S_KIN
 D:This huge affront to existence twists and tears at the fabric of space. 
 D:Darkness itself recoils from the touch of Tselakus as he leaves a trail 
 D:of death and destruction. Mighty claws rend reality as he 
@@ -14611,7 +14611,7 @@ F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND
 # | S_LOWEXP
 S:1_IN_1 | 
 S:S_MONSTERS | S_ANGEL | S_HOUND | S_HYDRA | S_SPIDER | S_ANT | S_ANIMALS | 
-S:S_HI_UNDEAD | S_HI_DRAGON | S_HI_DEMON | S_WRAITH | S_UNIQUE | S_KIN | BLINK
+S:S_HI_UNDEAD | S_HI_DRAGON | S_HI_DEMON | S_NAZGUL | S_UNIQUE | S_KIN | BLINK
 D:A gigantic seething mass of flesh, Qlzqqlzuup changes colours in front 
 D:of your eyes.  Pulsating first one colour then the next, it knows only it 
 D:must bring help to protect itself. 
@@ -14678,7 +14678,7 @@ F:RES_FIRE | IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | SPECIAL_GENE |
 F:REGENERATE | REFLECTING | RES_MANA | DROP_SKELETON | DROP_CORPSE | BASEANGBAND
 F:HAS_LITE
 S:1_IN_6 | 
-S:S_MONSTERS | S_WRAITH | S_HI_UNDEAD | 
+S:S_MONSTERS | S_NAZGUL | S_HI_UNDEAD | 
 S:S_HI_DRAGON | S_HI_DEMON | S_UNIQUE | S_ANIMALS
 D:The son of Eol the Dark-Elf, Maeglin is every bit as evil as his father 
 D:and more.  His greed for gold led him to betray the Hidden Kingdom of 
@@ -15541,7 +15541,7 @@ S:1_IN_2 |
 #S:CONF | SCARE | BO_ICEE | BO_PLAS | <- silyl spells
 #S:BLIND | CURSE | <- not totally silyl, but curse is easily countered by saving throw :/
 S:TPORT | BA_MANA | BA_FIRE | BA_WATE | BA_NETH | BA_DARK | BA_CHAO | 
-S:S_HI_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | S_WRAITH | S_HI_UNIQUE
+S:S_HI_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | S_NAZGUL | S_HI_UNIQUE
 S:FORGET | BO_MANA | TELE_LEVEL | BRAIN_SMASH | RAISE_DEAD
 #S:HAND_DOOM | 
 D:Mighty in spells and enchantments,he created the One Ring. 
@@ -15605,7 +15605,7 @@ S:1_IN_3 |
 S:BRAIN_SMASH | 
 S:BA_MANA | BA_NETH | BA_CHAO | BA_DARK | RAISE_DEAD | 
 S:S_HI_MONSTERS | S_HI_UNIQUE | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | 
-S:ROCKET | BR_NETH | BR_DISI | S_WRAITH
+S:ROCKET | BR_NETH | BR_DISI | S_NAZGUL
 #S:BO_MANA
 #S:HAND_DOOM | 
 #S:UNMAGIC
@@ -17159,7 +17159,7 @@ F:EVIL | UNDEAD | DROP_CHOSEN |
 F:IM_COLD | IM_POIS | HURT_LITE | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 S:1_IN_2 | 
 S:TELE_AWAY | BLIND | HOLD | SCARE | CURSE | BRAIN_SMASH | 
-S:BO_MANA | BA_NETH | S_WRAITH | 
+S:BO_MANA | BA_NETH | S_NAZGUL | 
 S:S_KIN | S_HI_UNDEAD | S_HI_DRAGON | S_MONSTERS | RAISE_DEAD
 D:The Chief of the Ringwraiths. A fell being of devastating power. His 
 D:spells are lethal and his combat blows crushingly hard. He moves at 
@@ -18670,7 +18670,7 @@ F:IM_POIS | NO_CONF | NO_SLEEP | RES_NETH | BASEANGBAND | NO_CUT
 #F:AI_ANNOY
 S:1_IN_2 | 
 S:S_UNDEAD | S_DEMON | S_DRAGON | 
-S:S_UNIQUE | S_WRAITH | S_HI_DEMON | 
+S:S_UNIQUE | S_NAZGUL | S_HI_DEMON | 
 S:S_HI_UNDEAD | S_HI_DRAGON | S_KIN | 
 S:BR_DISE | BA_NETH
 D:A disembodied and barely sentient mind, Tik'srvzllat floated 

@@ -3997,7 +3997,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			break;
 		}
 
-		/* RF6_S_WRAITH */
+		/* RF6_S_NAZGUL */
 		case RF6_OFFSET+30:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
@@ -4006,7 +4006,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons mighty undead opponents!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_WRAITH, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_NAZGUL, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			for (k = 0; k < 8; k++)

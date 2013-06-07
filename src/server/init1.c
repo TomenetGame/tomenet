@@ -382,7 +382,7 @@ static cptr r_info_flags6[] =
 	"S_DRAGON",
 	"S_HI_UNDEAD",
 	"S_HI_DRAGON",
-	"S_WRAITH",
+	"S_NAZGUL",
 	"S_UNIQUE"
 };
 
