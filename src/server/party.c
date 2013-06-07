@@ -1824,6 +1824,7 @@ void guild_timeout(int id) {
 		Send_guild(i, TRUE, FALSE);
 	}
 
+	s_printf("GUILD_TIMEOUT: '%s' (%d)\n", guilds[id].name, id);
 	guilds[id].members = 0;
 	del_guild(id);
 }
