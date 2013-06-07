@@ -5959,17 +5959,17 @@ void reward_deed_blessing(int Ind, int item)
 		/* it's inaccurate, due to hack-like process_player_end_aux call timing
 		   (about once every 31 turns on wz=0), but who cares :) */
 #ifdef RPG_SERVER /* longer duration since dungeons are all ironman; also you can hardly trade parchments on RPG */
-		bless_temp_luck(Ind, traded_deed ? 4 : 2, (30 * 60 * cfg.fps) / 31); /* somewhere around 30 minutes */
+		bless_temp_luck(Ind, traded_deed ? 4 : 2, 60 * 30 * 2); /* somewhere around 30 minutes */
 #else
-		bless_temp_luck(Ind, traded_deed ? 4 : 2, (20 * 60 * cfg.fps) / 31); /* somewhere around 20 minutes */
+		bless_temp_luck(Ind, traded_deed ? 4 : 2, 60 * 20 * 2); /* somewhere around 20 minutes */
 #endif
 		break;
 	case SV_DEED2_HIGHLANDER: /* participant's deed */
 		msg_print(Ind, "\377GThe town priest speaks a blessing.");
 #ifdef RPG_SERVER /* longer duration since dungeons are all ironman; also you can hardly trade parchments on RPG */
-		bless_temp_luck(Ind, 1, (30 * 60 * cfg.fps) / 31); /* somewhere around 30 minutes */
+		bless_temp_luck(Ind, 1, 60 * 30 * 2); /* somewhat above 30 minutes on world surface */
 #else
-		bless_temp_luck(Ind, 1, (20 * 60 * cfg.fps) / 31); /* somewhere around 20 minutes */
+		bless_temp_luck(Ind, 1, 60 * 20 * 2); /* somewhat above 20 minutes on world surface */
 #endif
 		break;
 	default:
