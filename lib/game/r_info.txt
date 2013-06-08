@@ -11237,7 +11237,7 @@ D:of innumerable sailors!
 N:670:Jack of Shadows
 G:p:s
 I:150:30d100:70:150:4
-W:60:4:2300:10000
+W:60:4:2300:20000
 E:1:1:1:2:1:1
 O:20:80:0:0
 B:HIT:HURT:5d10
@@ -11521,7 +11521,7 @@ D:A frost giant chieftain, unusually smart for a giant.
 N:684:Quachil Uttaus, Treader of the Dust
 G:z:D
 I:120:50d66:30:80:15
-W:44:3:0:20000
+W:44:3:0:17000
 E:1:1:1:2:1:1
 O:0:0:100:0
 B:CLAW:HURT:50d1
@@ -12137,7 +12137,7 @@ D:evil surrounds it. Luckily for you, it can't move...
 N:712:Fafner the Dragon
 G:D:G
 I:120:25d110:30:130:80
-W:48:2:170000:25000
+W:48:2:170000:20000
 E:0:1:2:6:1:2
 O:50:50:0:0
 B:CLAW:HURT:4d12
@@ -12601,7 +12601,7 @@ D:of course!
 N:734:Eihort, the Thing in the Labyrinth
 G:j:R
 I:120:33d100:50:90:10
-W:53:3:0:45000
+W:53:3:0:25000
 E:0:0:0:0:0:0
 O:0:0:100:0
 B:BITE:PARALYZE:8d1
@@ -12624,7 +12624,7 @@ D:at him."
 N:735:The King in Yellow
 G:L:y
 I:120:32d100:90:100:10
-W:53:3:0:50000
+W:53:3:0:25000
 E:0:0:0:0:0:0
 O:50:0:40:10
 B:CRUSH:HURT:12d12
@@ -12804,7 +12804,7 @@ D:A lich who is partially immaterial, on its way to a new, ethereal form.
 N:743:The Phoenix
 G:B:f
 I:120:36d100:60:130:0
-W:54:3:6000:40000
+W:54:3:6000:20000
 #E:0:1:1:0:1:0
 #E:0:1:0:1:1:2
 E:0:1:0:2:1:2
@@ -13317,7 +13317,7 @@ D:against him and live.
 N:766:Ancalagon the Black
 G:D:D
 I:140:180d100:40:170:70
-W:90:1:330000:60000
+W:90:1:330000:55000
 E:0:1:2:6:1:2
 O:60:40:0:0
 B:CLAW:HURT:10d12
@@ -14389,7 +14389,7 @@ D:commanders of vast demon armies.
 N:813:The Serpent of Chaos
 G:J:v
 I:130:66d200:30:180:150
-W:75:2:0:25000
+W:75:2:0:45000
 E:0:0:0:0:1:0
 O:40:40:20:0
 B:CRUSH:SHATTER:15d10
@@ -14905,7 +14905,7 @@ D:humanoid made of ice.
 N:835:Loki, the Trickster
 G:P:D
 I:130:110d100:50:160:20
-W:85:2:0:75000
+W:85:2:0:50000
 E:1:1:1:2:1:1
 O:0:0:100:0
 B:HIT:BLIND:8d11
@@ -15388,7 +15388,7 @@ D:mortal men. It could grind even the gods into lifeless pulp.
 N:855:The Destroyer
 G:g:v
 I:130:140d140:100:200:0
-W:94:1:0:45000
+W:94:1:0:48000
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:HIT:HURT:30d9
@@ -15442,7 +15442,7 @@ D:saved his master from Ungoliant's rage.
 N:857:Great Cthulhu
 G:U:g
 I:140:100d100:100:140:40
-W:97:2:4000:62500
+W:97:2:4000:56000
 E:0:0:0:0:0:0
 O:0:50:50:0
 B:CRUSH:HURT:50d4
@@ -15475,7 +15475,7 @@ D:black doorway... A mountain shambled or walked."
 N:858:Sorka, rider of the Gold Faranth
 G:D:y
 I:145:99d111:100:165:0
-W:97:1:420000:65000
+W:97:1:420000:49000
 E:1:1:1:2:1:1
 O:50:50:0:0
 B:HIT:HURT:12d12
@@ -15500,7 +15500,7 @@ D:help you!
 N:859:The Unicorn of Order
 G:q:w
 I:130:66d100:30:170:150
-W:75:2:0:65000
+W:75:2:0:48000
 E:0:1:0:2:1:4
 O:25:50:25:0
 B:KICK:UN_POWER:13d13
@@ -15777,7 +15777,7 @@ N:872:The Balrog of Moria
 G:U:v
 I:130:30d100:20:100:40
 #level should be at least 50 (lesser balrog is 49) and up to 80 maybe.
-W:50:3:13000:30000 for FINAL_GUARDIAN:
+#W:50:3:13000:30000 for FINAL_GUARDIAN:
 W:50:1:13000:30000
 E:1:1:1:2:1:1
 O:0:50:50:0
@@ -17143,7 +17143,7 @@ D:combat awesome and his form twisted by evil cunning.
 N:954:The Witch-King of Angmar
 G:W:D
 I:130:120d100:90:120:10
-W:80:3:1800:60000
+W:80:3:1800:50000
 E:1:1:1:2:1:1
 O:30:30:30:10
 B:HIT:HURT:10d10
@@ -17450,7 +17450,7 @@ N:971:The Wight-King of the Barrow-downs
 #hard-code warning: It can only appear in Barrow-downs
 G:W:v
 I:120:38d22:30:45:0
-W:35:1:0:15000
+W:35:1:0:10000
 E:0:0:0:0:0:0
 #O:20:60:20:0
 O:15:65:20:0
@@ -18654,7 +18654,7 @@ D:Offbreed of the Sandworm Queen, they are harmless alone...
 N:1032:Tik'srvzllat
 G:G:v
 I:142:180d100:200:170:0
-W:127:2:0:350000
+W:127:2:0:150000
 E:1:1:1:2:1:1
 O:50:0:50:0
 B:GAZE:UN_BONUS:10d10
@@ -18683,7 +18683,7 @@ D:with its appearance alone.
 N:1033:The Glass Golem
 G:#:W
 I:130:100d15:200:170:0
-W:52:4:0:2000
+W:52:4:0:20000
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:HIT:INSANITY:4d6
@@ -18730,7 +18730,7 @@ N:1035:Golgarach, the Living Rock
 G:#:W
 I:120:50d30:20:100:40
 #W:45:2:0:1500 for FINAL_GUARDIAN:
-W:45:1:0:1500
+W:45:1:0:10000
 E:0:0:0:0:0:0
 O:60:0:40:0
 B:HIT:HURT:4d6
@@ -18837,7 +18837,7 @@ D:guests to find.
 N:1040:Emperor Mimic
 G:m:y
 I:120:50d50:30:60:100
-W:40:3:100:200
+W:40:3:100:9000
 E:0:0:0:0:0:0
 O:25:25:25:25
 B:HIT:POISON:5d5
@@ -19302,7 +19302,7 @@ D:opponent, her five heads breathing death to all who stand against her.
 N:1067:The Hellraiser
 G:x:r
 I:140:300d150:200:200:0
-W:127:4:0:500000
+W:127:4:0:350000
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:HIT:HURT:30d10
@@ -19501,7 +19501,7 @@ D:its perfect state.
 N:1075:Lord Jubei, The Legendary Swordsmaster
 G:p:u
 I:130:50d100:40:500:8
-W:72:3:2000:10000
+W:72:3:2000:20000
 E:1:1:1:2:1:1
 O:20:70:0:10
 B:HIT:HURT:30d4
@@ -19523,7 +19523,7 @@ D:weakness on this fighter.
 N:1076:Pirotessa, Succubus Empress
 G:U:v
 I:130:12d600:90:160:40
-W:82:3:3000:15000
+W:82:3:3000:20000
 E:1:1:1:2:1:1
 O:0:50:50:0
 B:CLAW:HURT:3d40
