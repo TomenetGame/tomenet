@@ -281,7 +281,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			break;
 		case SV_POTION_DEATH:
 //			dt = GF_DEATH_RAY;	/* !! */	/* not implemented yet. */
-			dt = GF_NETHER;		/* let's use mana damage for now.. */
+			dt = GF_NETHER_WEAK; /* special damage type solemnly for potion smash effect */
 			dam = damroll(30,30);
 			angry = TRUE;
 			radius = 2;
@@ -1248,6 +1248,7 @@ byte spell_color(int type)
 		case GF_WATER:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 		case GF_WAVE:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 		case GF_VAPOUR:		return (randint(10)==1?TERM_BLUE:TERM_L_BLUE);
+		case GF_NETHER_WEAK:
 		case GF_NETHER:		return (randint(4)==1?TERM_L_GREEN:TERM_L_DARK);
 		case GF_CHAOS:		return (TERM_MULTI);
 		case GF_DISENCHANT:	return (randint(4)!=1?TERM_ORANGE:TERM_BLUE);
@@ -1314,6 +1315,7 @@ bool spell_color_animation(int type)
 		case GF_WATER:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 		case GF_WAVE:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 		case GF_VAPOUR:		return TRUE;
+		case GF_NETHER_WEAK:
 		case GF_NETHER:		return TRUE;//(randint(4)==1?TERM_SLATE:TERM_L_DARK);
 		case GF_CHAOS:		return FALSE;
 		case GF_DISENCHANT:	return TRUE;//(randint(4)==1?TERM_ORANGE:TERM_BLUE;//TERM_L_BLUE:TERM_VIOLET);
@@ -1381,6 +1383,7 @@ byte spell_color(int type)
 		case GF_VAPOUR:		return (TERM_L_BLUE);//animate with some dark blue maybe?
 		case GF_WATER:		return (TERM_WATE);
 		case GF_WAVE:		return (TERM_WATE);
+		case GF_NETHER_WEAK:
 		case GF_NETHER:		return (TERM_NETH);
 		case GF_CHAOS:		return (TERM_MULTI);
 		case GF_DISENCHANT:	return (TERM_DISE);
@@ -5550,6 +5553,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		/* Nether -- see above */
+		case GF_NETHER_WEAK:
 		case GF_NETHER:
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_UNDEAD) {
@@ -8468,8 +8472,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Analyze the damage */
 	switch (typ) {
-		/* Psionics */
-		case GF_PSI:
+	/* Psionics */
+	case GF_PSI:
 		if (rand_int(100) < p_ptr->skill_sav) psi_resists++;
 		if (p_ptr->mindboost && magik(p_ptr->mindboost_power)) psi_resists++;
 		if ((p_ptr->shero || p_ptr->berserk) && (rand_int(100) >= p_ptr->skill_sav)) psi_resists--;
@@ -8512,32 +8516,32 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!IS_PVP) take_sanity_hit(Ind, dam / 8, killer); /* note: traps deal ~130..320 damage (depth 0..100) */
 		break;
 
-		/* Standard damage -- hurts inventory too */
-		case GF_ACID:
+	/* Standard damage -- hurts inventory too */
+	case GF_ACID:
 		dam = acid_dam(Ind, dam, killer, -who);
 		if (fuzzy) msg_format(Ind, "You are hit by acid for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
 
-		/* Standard damage -- hurts inventory too */
-		case GF_FIRE:
+	/* Standard damage -- hurts inventory too */
+	case GF_FIRE:
 		dam = fire_dam(Ind, dam, killer, -who);
 		if (fuzzy) msg_format(Ind, "You are hit by fire for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
 
-		/* Standard damage -- hurts inventory too */
-		case GF_COLD:
+	/* Standard damage -- hurts inventory too */
+	case GF_COLD:
 		dam = cold_dam(Ind, dam, killer, -who);
 		if (fuzzy) msg_format(Ind, "You are hit by cold for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
 
-		/* Standard damage -- hurts inventory too */
-		case GF_ELEC:
+	/* Standard damage -- hurts inventory too */
+	case GF_ELEC:
 		dam = elec_dam(Ind, dam, killer, -who);
 		apply_discharge(Ind, dam);
 		if (fuzzy) msg_format(Ind, "You are hit by lightning for \377%c%d \377wdamage!", damcol, dam);
@@ -8545,8 +8549,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		take_hit(Ind, dam, killer, -who);
 		break;
 
-		/* Standard damage -- also poisons player */
-		case GF_POIS:
+	/* Standard damage -- also poisons player */
+	case GF_POIS:
 		if (p_ptr->immune_poison)
 		{
 			dam = 0;
@@ -8572,7 +8576,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Standard damage */
-		case GF_MISSILE:
+	case GF_MISSILE:
 		if (p_ptr->biofeedback) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -8587,7 +8591,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 #endif
 
-		case GF_HELL_FIRE:
+	case GF_HELL_FIRE:
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam *= 2;
 		if (p_ptr->suscep_good) dam = (dam * 3) / 4;
 		if (p_ptr->suscep_evil) dam *= 2;
@@ -8603,7 +8607,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Holy Orb -- Player only takes partial damage */
-		case GF_HOLY_ORB:
+	case GF_HOLY_ORB:
 		if (p_ptr->suscep_evil) dam = (dam * 3) / 4;
 		if (p_ptr->suscep_good) dam *= 2;
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam /= 4;
@@ -8614,7 +8618,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		take_hit(Ind, dam, killer, -who);
 		break;
 
-		case GF_HOLY_FIRE:
+	case GF_HOLY_FIRE:
 		if (p_ptr->suscep_evil) dam = (dam * 3) / 4;
 		if (p_ptr->suscep_good) dam *= 2;
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam /= 4;
@@ -8632,7 +8636,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Arrow -- XXX no dodging */
-		case GF_ARROW:
+	case GF_ARROW:
 		if (p_ptr->biofeedback) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something sharp for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -8640,7 +8644,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Plasma -- Fire/Lightning/Force */
-		case GF_PLASMA:
+	case GF_PLASMA:
 		{
 			bool ignore_fire = p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire;
 			bool ignore_elec = p_ptr->oppose_elec || p_ptr->resist_elec || p_ptr->immune_elec;
@@ -8708,22 +8712,24 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Nether -- drain experience */
-		case GF_NETHER:
-		if (p_ptr->immune_neth)
-		{
+	case GF_NETHER_WEAK:
+		/* potion smash effect of a Potion of Death */
+		if (p_ptr->suscep_life) {
 			dam = 0;
 			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		}
-		else if (p_ptr->resist_neth)
-		{
+	case GF_NETHER:
+		if (p_ptr->immune_neth) {
+			dam = 0;
+			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		} else if (p_ptr->resist_neth) {
 			dam *= 6; dam /= (randint(6) + 6);
 			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who); /* Prevent going down to level 1 and then taking full damage -> instakill */
-		}
-		else
-		{
+		} else {
 			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who); /* Prevent going down to level 1 and then taking full damage -> instakill */
@@ -8743,8 +8749,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Water -- stun/confuse */
-		case GF_WATER:
-		case GF_WAVE:
+	case GF_WATER:
+	case GF_WAVE:
 		if (p_ptr->immune_water)
 		{
 			dam = 0;
@@ -8806,7 +8812,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		break;
 
-		case GF_VAPOUR:
+	case GF_VAPOUR:
 		if (p_ptr->immune_water) {
 			dam = 0;
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
@@ -8829,7 +8835,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Stun */
-		case GF_STUN:
+	case GF_STUN:
 		if (fuzzy) msg_print(Ind, "You are hit by something!");
 		if (!p_ptr->resist_sound)
 		{
@@ -8839,7 +8845,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Chaos -- many effects */
-		case GF_CHAOS:
+	case GF_CHAOS:
 		if (p_ptr->resist_chaos) {
 //			dam *= 6; dam /= (randint(7) + 8);
 			dam *= 6; dam /= (randint(6) + 6);
@@ -8869,7 +8875,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Shards -- mostly cutting */
-		case GF_SHARDS:
+	case GF_SHARDS:
 		if (p_ptr->biofeedback) dam /= 2;
 		if (p_ptr->resist_shard)
 			dam *= 6; dam /= (randint(6) + 6);
@@ -8881,7 +8887,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Sound -- mostly stunning */
-		case GF_SOUND:
+	case GF_SOUND:
 		/* Making the stun effect's power depend on body mass of the monster, giving gold dragons more respect again;
 		   or more dependant on the damage to better fit certain monstes - C. Blue
 		   body masses: 90k kavlax, 110k mature gold d, 170k mature d turtle / ancient d, 190k ancient d turtle / wyrms
@@ -8908,7 +8914,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Pure confusion */
-		case GF_CONFUSION:
+	case GF_CONFUSION:
 		if (p_ptr->resist_conf || p_ptr->resist_chaos)
 		{
 			dam *= 5; dam /= (randint(6) + 6);
@@ -8925,7 +8931,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Disenchantment -- see above */
-		case GF_DISENCHANT:
+	case GF_DISENCHANT:
 		if (p_ptr->resist_disen)
 		{
 			dam *= 6; dam /= (randint(6) + 6);
@@ -8942,7 +8948,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Nexus -- see above */
-		case GF_NEXUS:
+	case GF_NEXUS:
 		if (p_ptr->resist_nexus)
 		{
 			dam *= 6; dam /= (randint(6) + 6);
@@ -8959,7 +8965,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Force -- mostly stun */
-		case GF_FORCE:
+	case GF_FORCE:
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		if (!p_ptr->resist_sound)
@@ -8970,7 +8976,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Inertia -- slowness */
-		case GF_INERTIA:
+	case GF_INERTIA:
 		if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		if (p_ptr->mindboost && magik(p_ptr->mindboost_power))
@@ -8984,7 +8990,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Lite -- blinding */
-		case GF_LITE:
+	case GF_LITE:
 		if (p_ptr->suscep_lite) {
 			dam *= 2;
 		}
@@ -9000,7 +9006,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Dark -- blinding */
-		case GF_DARK:
+	case GF_DARK:
 		if (p_ptr->resist_dark) {
 			dam *= 4; dam /= (randint(6) + 6);
 		}
@@ -9013,7 +9019,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		/* Time -- bolt fewer effects XXX */
-		case GF_TIME:
+	case GF_TIME:
 			if (p_ptr->resist_time) {
 				dam *= 6;
 				dam /= (randint(6) + 6);
@@ -9065,7 +9071,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		/* Gravity -- stun plus slowness plus teleport */
-		case GF_GRAVITY:
+	case GF_GRAVITY:
 			/* Feather fall lets us resist gravity */
 			if (p_ptr->feather_fall) {
 				dam *= 6; dam /= (randint(6) + 6);
@@ -9083,7 +9089,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		/* Pure damage */
-		case GF_MANA:
+	case GF_MANA:
 			if (p_ptr->resist_mana) { dam *= 6; dam /= (randint(6) + 6); }
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -9091,7 +9097,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		/* Pure damage */
-		case GF_METEOR:
+	case GF_METEOR:
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who);
@@ -9099,7 +9105,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		/* Ice -- cold plus stun plus cuts */
-		case GF_ICE:
+	case GF_ICE:
 			k = dam;
 			dam = (k * 3) / 5;/* 60% COLD damage, total cold damage is saved in 'dam' */
 			k = (k * 2) / 5;/* 40% SHARDS damage, total shard damage is saved in 'k' */
@@ -9117,7 +9123,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		/* Thunder -- elec plus sound plus light */
-		case GF_THUNDER:
+	case GF_THUNDER:
 			k_elec = dam / 3; /* 33% ELEC damage, total elec damage is saved in 'k_elec' */
 			k_elec = elec_dam(Ind, k_elec, killer, -who);
 			k_sound = dam / 3; /* 33% SOUND damage, total sound damage is saved in 'k_sound' */
@@ -9145,7 +9151,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		/* Druid's early tox spell: 50% poison, 50% water. No side effects from the water attk */
-		case GF_WATERPOISON:
+	case GF_WATERPOISON:
 			switch (randint(2)) {
 				case 1: { // Poison!
 					if (p_ptr->immune_poison) {
@@ -9202,7 +9208,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		/* Druid's higher tox spell: 60%shards, 10%water, 10%poison. No side effects from water/shards. */
-		case GF_ICEPOISON: 
+	case GF_ICEPOISON: 
 			switch (randint(5)) {
 				case 1:  // Shards
 				case 3:
@@ -9275,7 +9281,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			} 
 			break;
 
-		case GF_CURSE: {
+	case GF_CURSE: {
 			int curse = randint(3);
 			if (curse == 1) { //Slow
 				if (fuzzy) msg_print(Ind, "Your body seems difficult to move!");
@@ -9313,7 +9319,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Teleport other -- Teleports */
-		case GF_AWAY_ALL:
+	case GF_AWAY_ALL:
 		{
 			if (p_ptr->martyr) break;
 
@@ -9343,7 +9349,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_WRAITH_PLAYER:
+	case GF_WRAITH_PLAYER:
 		{
 			if (fuzzy) msg_print(Ind, "You feel less constant!");
 			else msg_format(Ind, "%^s turns you into a wraith!", killer);
@@ -9351,7 +9357,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_BLESS_PLAYER:
+	case GF_BLESS_PLAYER:
 		{
 			if (dam < 18) p_ptr->blessed_power = 8;
 			else if (dam < 33) p_ptr->blessed_power = 14;
@@ -9361,19 +9367,19 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* a special family, actually cumulative.. hacky, yeah */
-		case GF_REMFEAR_PLAYER:		/* just fear */
+	case GF_REMFEAR_PLAYER:		/* just fear */
 			set_afraid(Ind, 0);
 			/* Stay bold for some turns */
 			(void)set_res_fear(Ind, dam);
 			break;
-		case GF_REMCONF_PLAYER:		/* confusion, and ALSO fear */
+	case GF_REMCONF_PLAYER:		/* confusion, and ALSO fear */
 			set_afraid(Ind, 0);
 			/* Stay bold for some turns */
 			(void)set_res_fear(Ind, dam);
 
 			set_confused(Ind, 0);
 			break;
-		case GF_REMIMAGE_PLAYER:	/* hallu, and ALSO conf/fear */
+	case GF_REMIMAGE_PLAYER:	/* hallu, and ALSO conf/fear */
 			set_afraid(Ind, 0);
 			/* Stay bold for some turns */
 			(void)set_res_fear(Ind, dam);
@@ -9383,25 +9389,25 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			set_image(Ind, 0);
 			break;
 
-		case GF_HPINCREASE_PLAYER:
+	case GF_HPINCREASE_PLAYER:
 		{
 			(void)hp_player(Ind, dam);
 			break;
 		}
 
-		case GF_HERO_PLAYER:
+	case GF_HERO_PLAYER:
 		{
 			(void)set_hero(Ind, dam); /* removed stacking */
 			break;
 		}
 
-		case GF_SHERO_PLAYER:
+	case GF_SHERO_PLAYER:
 		{
 			(void)set_shero(Ind, dam); /* removed stacking */
 			break;
 		}
 
-		case GF_SATHUNGER_PLAYER:
+	case GF_SATHUNGER_PLAYER:
 		{
 		    if (!p_ptr->suscep_life) {
 #if 0
@@ -9417,100 +9423,100 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_RESFIRE_PLAYER:
+	case GF_RESFIRE_PLAYER:
 		{
 			(void)set_oppose_fire(Ind, dam); /* removed stacking */
 			break;
 		}
 
-		case GF_RESELEC_PLAYER:
+	case GF_RESELEC_PLAYER:
 		{
 			(void)set_oppose_elec(Ind, dam); /* removed stacking */
 			break;
 		}
 
-		case GF_RESPOIS_PLAYER:
+	case GF_RESPOIS_PLAYER:
 		{
 			(void)set_oppose_pois(Ind, dam); /* removed stacking */
 			break;
 		}
 
-		case GF_RESACID_PLAYER:
+	case GF_RESACID_PLAYER:
 		{
 			(void)set_oppose_acid(Ind, dam); /* removed stacking */
 			break;
 		}
 
-		case GF_RESCOLD_PLAYER:
+	case GF_RESCOLD_PLAYER:
 		{
 			(void)set_oppose_cold(Ind, dam); /* removed stacking */
 			break;
 		}
 
-		case GF_CUREPOISON_PLAYER:
+	case GF_CUREPOISON_PLAYER:
 		{
 			(void)set_poisoned(Ind, 0, 0);
 			break;
 		}
 
-		case GF_SLOWPOISON_PLAYER:
+	case GF_SLOWPOISON_PLAYER:
 			if (p_ptr->poisoned && !p_ptr->slow_poison) p_ptr->slow_poison = 1;
 			break;
 
-		case GF_SEEINVIS_PLAYER:
+	case GF_SEEINVIS_PLAYER:
 		{
 			(void)set_tim_invis(Ind, dam); /* removed stacking */
 			break;
 		}
 
-		case GF_ZEAL_PLAYER:
+	case GF_ZEAL_PLAYER:
 		{
 			(void)set_zeal(Ind, dam, 9 + randint(5));
 			break;
 		}
-		case GF_SEEMAP_PLAYER:
+	case GF_SEEMAP_PLAYER:
 		{
 			map_area(Ind);
 			break;
 		}
-		case GF_DETECTCREATURE_PLAYER:
+	case GF_DETECTCREATURE_PLAYER:
 		{
  			(void)detect_creatures(Ind);
 			break;
 		}
 
-		case GF_CURESTUN_PLAYER:
+	case GF_CURESTUN_PLAYER:
 		{
 			(void)set_stun(Ind, p_ptr->stun - dam);
 			break;
 		}
 
-		case GF_DETECTDOOR_PLAYER:
+	case GF_DETECTDOOR_PLAYER:
 		{
 			(void)detect_sdoor(Ind, DEFAULT_RADIUS);
 			break;
 		}
 
-		case GF_DETECTTRAP_PLAYER:
+	case GF_DETECTTRAP_PLAYER:
 		{
 			(void)detect_trap(Ind, DEFAULT_RADIUS);
 			break;
 		}
 
-		case GF_CURECUT_PLAYER:
+	case GF_CURECUT_PLAYER:
 		{
 			(void)set_cut(Ind, p_ptr->cut - dam, -who);
 			break;
 		}
 
-		case GF_TELEPORTLVL_PLAYER:
+	case GF_TELEPORTLVL_PLAYER:
 		{
 			if (p_ptr->martyr) break;
 			teleport_player_level(Ind, FALSE);
 			break;
 		}
 
-		case GF_HEAL_PLAYER:
+	case GF_HEAL_PLAYER:
 		{
 			/* hacks */
 			if (hack_dam & 0x2000) /* CCW */
@@ -9554,7 +9560,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* The druid spell; Note that it _damages_ undead-players instead of healing :-) - the_sandman */
-		case GF_HEALINGCLOUD:
+	case GF_HEALINGCLOUD:
 		{
 			if (p_ptr->ghost || (r_ptr->flags3 & RF3_UNDEAD) || p_ptr->suscep_life) {
 				if (rand_int(100) < p_ptr->skill_sav)
@@ -9579,7 +9585,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_SPEED_PLAYER:
+	case GF_SPEED_PLAYER:
 		{
 			if (dam > 10) dam = 10; /* cap speed bonus for others */
 			if (dam > p_ptr->lev / 3) dam = p_ptr->lev / 3; /* works less well for low level targets */
@@ -9602,13 +9608,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_EXTRA_STATS:
+	case GF_EXTRA_STATS:
 		{
 			do_xtra_stats(Ind, 10 + (dam * 5), (int)(dam/10));
 			break;
 		}
 
-		case GF_EXTRA_SPR:
+	case GF_EXTRA_SPR:
 		{
 			dam = dam - 30;
 			if (dam < 0) break;
@@ -9616,7 +9622,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_SHIELD_PLAYER:
+	case GF_SHIELD_PLAYER:
 		{
 			if (dam > 10) dam = 10; /* cap AC bonus for others - Kurzel */
 			if (fuzzy) msg_print(Ind, "You feel protected!");
@@ -9633,7 +9639,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 		
-		case GF_TELEPORT_PLAYER:
+	case GF_TELEPORT_PLAYER:
 		{
 			if (p_ptr->martyr) break;
 
@@ -9664,7 +9670,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 		
-		case GF_RECALL_PLAYER:
+	case GF_RECALL_PLAYER:
 			dam = 0;
 			if (p_ptr->afk) break;
 
@@ -9691,7 +9697,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			p_ptr->redraw |= (PR_DEPTH);
 			break;
 
-		case GF_RESTORE_PLAYER:
+	case GF_RESTORE_PLAYER:
 			if (dam & 0x1) { /* Restore food */
 				set_food(Ind, PY_FOOD_MAX - 1);
 			}
@@ -9713,8 +9719,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 			}
 			break;
-		case GF_CURING:
-		case GF_CURE_PLAYER:
+	case GF_CURING:
+	case GF_CURE_PLAYER:
 			if (dam & 0x1) { /* Slow Poison */
 				if (p_ptr->poisoned && !p_ptr->slow_poison) p_ptr->slow_poison = 1;
 			}
@@ -9747,10 +9753,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				(void)restore_level(Ind);
 			}
 			break;
-		case GF_RESURRECT_PLAYER:
+	case GF_RESURRECT_PLAYER:
 			if (p_ptr->ghost) resurrect_player(Ind, dam);
 			break;
-		case GF_SANITY_PLAYER:
+	case GF_SANITY_PLAYER:
 			msg_format(Ind, "%s waves over your eyes, murmuring some words..", killer);
 			set_afraid(Ind, 0);
 			/* Stay bold for some turns */
@@ -9780,7 +9786,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (p_ptr->csane == p_ptr->msane) msg_format_near(Ind, "%s appears to be in full command of %s mental faculties.", p_ptr->name, p_ptr->male ? "his" : "her");
 			}
 			break;
-		case GF_SOULCURE_PLAYER:
+	case GF_SOULCURE_PLAYER:
 			/* priest variant hurts undead, druid tea is fine */
 			if (p_ptr->suscep_life) {
 				msg_print(Ind, "You feel a calming warmth touching your soul.");
@@ -9791,14 +9797,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				p_ptr->black_breath = FALSE;
 			}
 			break;
-		case GF_MINDBOOST_PLAYER:
+	case GF_MINDBOOST_PLAYER:
 		{
 			if (dam > 95) dam = 95;
 			set_mindboost(Ind, dam, 15 + randint(6));
 			break;
 		}
 
-		case GF_OLD_CONF:
+	case GF_OLD_CONF:
 
 		if (fuzzy || self) msg_print(Ind, "You hear puzzling noises!");
 		else msg_format(Ind, "%^s creates a mesmerising illusion!", killer);
@@ -9818,7 +9824,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
-		case GF_OLD_SLOW:
+	case GF_OLD_SLOW:
 
 		if (fuzzy || self) msg_print(Ind, "Something drains power from your muscles!");
 		else msg_format(Ind, "%^s drains power from your muscles!", killer);
@@ -9838,7 +9844,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
-		case GF_TURN_ALL:
+	case GF_TURN_ALL:
 
 		if (fuzzy || self) msg_print(Ind, "Something mumbles, and you hear scary noises!");
 		else msg_format(Ind, "%^s casts a fearful illusion!", killer);
@@ -9860,7 +9866,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
-		case GF_OLD_POLY:
+	case GF_OLD_POLY:
 			s_printf("PLAYER_POLY: %s -> %s ", Players[0 - who]->name, p_ptr->name);
 			if (p_ptr->afk) break;
 			if (fuzzy || self) msg_print(Ind, "You feel bizzare!");
@@ -9877,9 +9883,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* PernA ones */
 		/* Rocket -- stun, cut, fire, raw impact */
-		case GF_INFERNO:
-		case GF_DETONATION:
-		case GF_ROCKET:
+	case GF_INFERNO:
+	case GF_DETONATION:
+	case GF_ROCKET:
 		{
 			bool ignore_heat = (p_ptr->resist_fire && p_ptr->oppose_fire) || p_ptr->immune_fire;
 			if (p_ptr->resist_shard)
@@ -9919,7 +9925,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Standard damage -- also poisons / mutates player */
-		case GF_NUKE:
+	case GF_NUKE:
 		{
 			if (p_ptr->immune_poison)
 			{
@@ -9967,7 +9973,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Standard damage */
-		case GF_DISINTEGRATE:
+	case GF_DISINTEGRATE:
 		{
 			if (p_ptr->body_monster && (r_ptr->flags3 & RF3_HURT_ROCK)) dam = (dam * 3) / 2;
 			if (fuzzy) msg_format(Ind, "You are hit by pure energy for \377%c%d \377wdamage!", damcol, dam);
@@ -9977,7 +9983,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* GF_BLIND - C. Blue */
-		case GF_BLIND:
+	case GF_BLIND:
 		{
 			if (p_ptr->resist_blind)
 			{
@@ -9995,7 +10001,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* For shattering potions, but maybe work for wands too? */
-		case GF_OLD_HEAL:
+	case GF_OLD_HEAL:
 		{
 			if (fuzzy) msg_print(Ind, "You are hit by something invigorating!");
 			(void)hp_player(Ind, dam);
@@ -10003,7 +10009,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_OLD_SPEED:
+	case GF_OLD_SPEED:
 		{
 			if (fuzzy) msg_print(Ind, "You are hit by something!");
 			(void)set_fast(Ind, p_ptr->fast + randint(5), 10); /* not removed stacking */
@@ -10011,7 +10017,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_TELE_TO:
+	case GF_TELE_TO:
 		{
 //			bool resists_tele = FALSE;
 //			dun_level		*l_ptr = getfloor(wpos);
@@ -10068,7 +10074,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Hand of Doom */
-		case GF_HAND_DOOM:
+	case GF_HAND_DOOM:
 		{
 			/* Teleport to nowhere..? */
 			if (who >=0 || who <= PROJECTOR_UNUSUAL) break;
@@ -10093,7 +10099,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_AWAY_UNDEAD:
+	case GF_AWAY_UNDEAD:
 		{
 			if (p_ptr->martyr) break;
 
@@ -10139,7 +10145,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Teleport evil (Use "dam" as "power") */
-		case GF_AWAY_EVIL:
+	case GF_AWAY_EVIL:
 		{
 			if (p_ptr->martyr) break;
 
@@ -10176,7 +10182,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 #if 0	//already defined above for affecting ALL players!
 		/* Teleport monster (Use "dam" as "power") */
-		case GF_AWAY_ALL:
+	case GF_AWAY_ALL:
 		{
 			if (p_ptr->martyr) break;
 
@@ -10200,7 +10206,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 
 			/* Turn undead (Use "dam" as "power") */
-		case GF_TURN_UNDEAD:
+	case GF_TURN_UNDEAD:
 		{
 			if (p_ptr->body_monster){
 
@@ -10229,7 +10235,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 			/* Turn evil (Use "dam" as "power") */
-		case GF_TURN_EVIL:
+	case GF_TURN_EVIL:
 		{
 			/* Only affect evil */
 			if (p_ptr->suscep_good) {
@@ -10250,7 +10256,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #if 0	//already defined above for affecting ALL players!
 		/* Turn monster (Use "dam" as "power") */
-		case GF_TURN_ALL:
+	case GF_TURN_ALL:
 		{
 			if (p_ptr->body_monster){
 
@@ -10277,7 +10283,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 
 			/* Dispel undead */
-		case GF_DISP_UNDEAD:
+	case GF_DISP_UNDEAD:
 		{
 			if (p_ptr->body_monster){
 			/* Only affect undead */
@@ -10309,7 +10315,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 			/* Dispel evil */
-		case GF_DISP_EVIL:
+	case GF_DISP_EVIL:
 		{
 			/* Only affect evil */
 			if (p_ptr->suscep_good) {
@@ -10331,7 +10337,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		case GF_DISP_DEMON:
+	case GF_DISP_DEMON:
 		{
 			if (p_ptr->body_monster){
 			/* Only affect evil */
@@ -10361,7 +10367,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 			/* Dispel monster */
-		case GF_DISP_ALL:
+	case GF_DISP_ALL:
 		{
 			if (p_ptr->body_monster)
 			{
@@ -10643,25 +10649,25 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	/* Spells which never affect monsters, read:
 	   Spells which we want to exclude from merely _waking monsters up_!
 	   Note: Bolt spells will still be 'stopped' when hitting a monster. */
-	if((typ == GF_HEAL_PLAYER) || (typ == GF_WRAITH_PLAYER) ||
-		 (typ == GF_SPEED_PLAYER) || (typ == GF_SHIELD_PLAYER) ||
-		 (typ == GF_RECALL_PLAYER) || (typ == GF_BLESS_PLAYER) ||
-		 (typ == GF_REMFEAR_PLAYER) || (typ == GF_SATHUNGER_PLAYER) ||
-		 (typ == GF_REMCONF_PLAYER) || (typ == GF_REMIMAGE_PLAYER) ||
-		 (typ == GF_RESFIRE_PLAYER) || (typ == GF_RESCOLD_PLAYER) ||
-		 (typ == GF_CUREPOISON_PLAYER) || (typ == GF_SEEINVIS_PLAYER) ||
-		 (typ == GF_SEEMAP_PLAYER) || (typ == GF_CURECUT_PLAYER) ||
-		 (typ == GF_CURESTUN_PLAYER) || (typ == GF_DETECTCREATURE_PLAYER) ||
-		 (typ == GF_DETECTDOOR_PLAYER) || (typ == GF_DETECTTRAP_PLAYER) ||
-		 (typ == GF_TELEPORTLVL_PLAYER) || (typ == GF_RESPOIS_PLAYER) ||
-		 (typ == GF_RESELEC_PLAYER) || (typ == GF_RESACID_PLAYER) ||
-		 (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) ||
-		 (typ == GF_SHERO_PLAYER) || (typ == GF_TELEPORT_PLAYER) ||
-		 (typ == GF_ZEAL_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
-		 (typ == GF_RESTORE_PLAYER) ||
-		 (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
-		 (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
-		 (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER))
+	if ((typ == GF_HEAL_PLAYER) || (typ == GF_WRAITH_PLAYER) ||
+	    (typ == GF_SPEED_PLAYER) || (typ == GF_SHIELD_PLAYER) ||
+	    (typ == GF_RECALL_PLAYER) || (typ == GF_BLESS_PLAYER) ||
+	    (typ == GF_REMFEAR_PLAYER) || (typ == GF_SATHUNGER_PLAYER) ||
+	    (typ == GF_REMCONF_PLAYER) || (typ == GF_REMIMAGE_PLAYER) ||
+	    (typ == GF_RESFIRE_PLAYER) || (typ == GF_RESCOLD_PLAYER) ||
+	    (typ == GF_CUREPOISON_PLAYER) || (typ == GF_SEEINVIS_PLAYER) ||
+	    (typ == GF_SEEMAP_PLAYER) || (typ == GF_CURECUT_PLAYER) ||
+	    (typ == GF_CURESTUN_PLAYER) || (typ == GF_DETECTCREATURE_PLAYER) ||
+	    (typ == GF_DETECTDOOR_PLAYER) || (typ == GF_DETECTTRAP_PLAYER) ||
+	    (typ == GF_TELEPORTLVL_PLAYER) || (typ == GF_RESPOIS_PLAYER) ||
+	    (typ == GF_RESELEC_PLAYER) || (typ == GF_RESACID_PLAYER) ||
+	    (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) ||
+	    (typ == GF_SHERO_PLAYER) || (typ == GF_TELEPORT_PLAYER) ||
+	    (typ == GF_ZEAL_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
+	    (typ == GF_RESTORE_PLAYER) ||
+	    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
+	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
+	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER))
 		players_only = TRUE;
 
 
@@ -11857,6 +11863,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam = (dam * 3) / 5;
 			break;
 
+		case GF_NETHER_WEAK:
 		case GF_NETHER:
 			if (r_ptr->flags3 & RF3_UNDEAD)
 				dam = 0;

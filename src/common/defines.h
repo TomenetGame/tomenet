@@ -3987,6 +3987,7 @@
 #define GF_HOLY_FIRE		80
 #define GF_DISINTEGRATE		81
 #define GF_HELL_FIRE		82 /* was HOLY_ORB */
+#define GF_NETHER_WEAK		83 /* special version of GF_NETHER, solely for Vampires smashing Potions of Death */
 
 #define GF_MAKE_GLYPH		85
 

@@ -28,34 +28,34 @@ typedef unsigned int u32b;
 
 #define DEFAULT_RADIUS			18
 
-#define GF_ELEC         1
-#define GF_POIS         2
-#define GF_ACID         3
-#define GF_COLD         4
-#define GF_FIRE         5
-#define GF_MISSILE      10
-#define GF_ARROW        11
-#define GF_PLASMA       12
-#define GF_HOLY_ORB     13
-#define GF_WATER        14
-#define GF_LITE         15
-#define GF_DARK         16
+#define GF_ELEC		1
+#define GF_POIS		2
+#define GF_ACID		3
+#define GF_COLD		4
+#define GF_FIRE		5
+#define GF_MISSILE	10
+#define GF_ARROW	11
+#define GF_PLASMA	12
+#define GF_HOLY_ORB	13
+#define GF_WATER	14
+#define GF_LITE		15
+#define GF_DARK		16
 #define GF_LITE_WEAK	17
 #define GF_DARK_WEAK	18
-#define GF_SHARDS       20
-#define GF_SOUND        21
-#define GF_CONFUSION    22
-#define GF_FORCE        23
-#define GF_INERTIA      24
-#define GF_MANA         26
-#define GF_METEOR       27
-#define GF_ICE          28
-#define GF_CHAOS        30
-#define GF_NETHER       31
-#define GF_DISENCHANT   32
-#define GF_NEXUS        33
-#define GF_TIME         34
-#define GF_GRAVITY      35
+#define GF_SHARDS	20
+#define GF_SOUND	21
+#define GF_CONFUSION	22
+#define GF_FORCE	23
+#define GF_INERTIA	24
+#define GF_MANA		26
+#define GF_METEOR	27
+#define GF_ICE		28
+#define GF_CHAOS	30
+#define GF_NETHER	31
+#define GF_DISENCHANT	32
+#define GF_NEXUS	33
+#define GF_TIME		34
+#define GF_GRAVITY	35
 #define GF_KILL_WALL	40
 #define GF_KILL_DOOR	41
 #define GF_KILL_TRAP	42
@@ -83,25 +83,26 @@ typedef unsigned int u32b;
 #define	GF_HEAL_PLAYER	70
 #define	GF_STONE_WALL 	71
 #define	GF_EARTHQUAKE 	72
-#define	GF_WRAITH_PLAYER 73
-#define	GF_SPEED_PLAYER  74
-#define	GF_SHIELD_PLAYER 75
-#define GF_RECALL_PLAYER 76
-#define GF_STUN          77
-#define GF_IDENTIFY      78
-#define GF_PSI           79
+#define	GF_WRAITH_PLAYER	73
+#define	GF_SPEED_PLAYER	74
+#define	GF_SHIELD_PLAYER	75
+#define GF_RECALL_PLAYER	76
+#define GF_STUN		77
+#define GF_IDENTIFY	78
+#define GF_PSI		79
 
-#define GF_HOLY_FIRE    80
-#define GF_DISINTEGRATE 81
-#define GF_HELL_FIRE    82 /* was GF_HOLY_ORB */
+#define GF_HOLY_FIRE	80
+#define GF_DISINTEGRATE	81
+#define GF_HELL_FIRE	82 /* was GF_HOLY_ORB */
+#define GF_NETHER_WEAK	83
 
-#define GF_MAKE_GLYPH   85
+#define GF_MAKE_GLYPH	85
 
 #define GF_INFERNO	89
 #define GF_DETONATION	90
 #define GF_ROCKET	91
 
-#define GF_NUKE         110
+#define GF_NUKE		110
 #define GF_BLIND	111
 #define GF_HOLD		112	/* hold */
 #define GF_DOMINATE	113	/* dominate */
@@ -126,10 +127,10 @@ typedef unsigned int u32b;
 #define GF_HERO_PLAYER		132
 #define GF_SHERO_PLAYER		133
 
-#define GF_UNBREATH     134
-#define GF_WAVE         135
+#define GF_UNBREATH	134
+#define GF_WAVE		135
 
-#define GF_TELEPORT_PLAYER 136
+#define GF_TELEPORT_PLAYER	136
 
 #define GF_RESTORE_PLAYER	137	/* C. Blue changes */
 #define GF_VAPOUR		138
@@ -151,10 +152,10 @@ typedef unsigned int u32b;
 
 #define GF_CURSE	153		/* new priest spell - the_sandman */
 /* Here comes the druid stuff: - the_sandman */
-#define GF_HEALINGCLOUD 154
-#define GF_WATERPOISON  155
-#define GF_ICEPOISON    156
-#define GF_EXTRA_STATS  157
+#define GF_HEALINGCLOUD	154
+#define GF_WATERPOISON	155
+#define GF_ICEPOISON	156
+#define GF_EXTRA_STATS	157
 #define GF_EXTRA_SPR	158
 
 #define GF_PUSH 	159 	/* Moltor */
