@@ -1932,7 +1932,7 @@ int guild_remove(int remover, cptr name){
 
 		/* Messages */
 		msg_print(Ind, "\374\377yYou have been removed from the guild.");
-		guild_msg_format(guild_id, "\374\377y%s has been removed from the guild.", p_ptr->name);
+		if (!is_admin(p_ptr)) guild_msg_format(guild_id, "\374\377y%s has been removed from the guild.", p_ptr->name);
 
 		/* Last member deleted? */
 		if (guilds[guild_id].members == 0) {
@@ -2029,10 +2029,10 @@ int party_remove(int remover, cptr name)
 	/* Messages */
 	if (parties[party_id].mode == PA_IRONTEAM) {
 		msg_print(Ind, "\374\377yYou have been removed from your iron team.");
-		party_msg_format(party_id, "\374\377y%s has been removed from the iron team.", p_ptr->name);
+		if (!is_admin(p_ptr)) party_msg_format(party_id, "\374\377y%s has been removed from the iron team.", p_ptr->name);
 	} else {
 		msg_print(Ind, "\374\377yYou have been removed from your party.");
-		party_msg_format(party_id, "\374\377y%s has been removed from the party.", p_ptr->name);
+		if (!is_admin(p_ptr)) party_msg_format(party_id, "\374\377y%s has been removed from the party.", p_ptr->name);
 	}
 
 	return TRUE;
@@ -2062,10 +2062,10 @@ void guild_leave(int Ind, bool voluntarily) {
 	/* Inform people */
 	if (voluntarily) {
 		msg_print(Ind, "\374\377yYou have left your guild.");
-		guild_msg_format(guild_id, "\374\377y%s has left the guild.", p_ptr->name);
+		if (!is_admin(p_ptr)) guild_msg_format(guild_id, "\374\377y%s has left the guild.", p_ptr->name);
 	} else {
 		msg_print(Ind, "\374\377yYou have been removed from your guild.");
-		guild_msg_format(guild_id, "\374\377y%s has been removed from the guild.", p_ptr->name);
+		if (!is_admin(p_ptr)) guild_msg_format(guild_id, "\374\377y%s has been removed from the guild.", p_ptr->name);
 	}
 
 	/* If he's the guildmaster, set master to zero */
@@ -2126,18 +2126,18 @@ void party_leave(int Ind, bool voluntarily) {
 	if (voluntarily) {
 		if (parties[party_id].mode == PA_IRONTEAM) {
 			msg_print(Ind, "\374\377yYou have left your iron team.");
-			party_msg_format(party_id, "\374\377y%s has left the iron team.", p_ptr->name);
+			if (!is_admin(p_ptr)) party_msg_format(party_id, "\374\377y%s has left the iron team.", p_ptr->name);
 		} else {
 			msg_print(Ind, "\374\377yYou have left your party.");
-			party_msg_format(party_id, "\374\377y%s has left the party.", p_ptr->name);
+			if (!is_admin(p_ptr)) party_msg_format(party_id, "\374\377y%s has left the party.", p_ptr->name);
 		}
 	} else {
 		if (parties[party_id].mode == PA_IRONTEAM) {
 			msg_print(Ind, "\374\377yYou have been removed from your iron team.");
-			party_msg_format(party_id, "\374\377y%s has been removed from the iron team.", p_ptr->name);
+			if (!is_admin(p_ptr)) party_msg_format(party_id, "\374\377y%s has been removed from the iron team.", p_ptr->name);
 		} else {
 			msg_print(Ind, "\374\377yYou have been removed from your party.");
-			party_msg_format(party_id, "\374\377y%s has been removed from the party.", p_ptr->name);
+			if (!is_admin(p_ptr)) party_msg_format(party_id, "\374\377y%s has been removed from the party.", p_ptr->name);
 		}
 	}
 }
