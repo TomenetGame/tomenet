@@ -4476,14 +4476,13 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 					o_ptr->bpval = randint(5) + m_bonus(5, level);
 
 					/* Super-charge the ring */
-					while (rand_int(100) < 50) o_ptr->bpval++;
+					while (rand_int(100) < 50 && o_ptr->bpval < 15) o_ptr->bpval++;
 
-					/* Limit */
+					/* Paranoia - Limit */
 					if (o_ptr->bpval > 15) o_ptr->bpval = 15;
 
 					/* Cursed Ring */
-					if (power < 0)
-					{
+					if (power < 0) {
 						/* Cursed */
 						o_ptr->ident |= (ID_CURSED);
 
