@@ -9482,7 +9482,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	}
 
 	/* Hack for bottom of Nether Realm */
-	if (in_netherrealm(wpos) && dun_lev == 166 + 30) {
+	if (in_netherrealm(wpos) && dun_lev == netherrealm_start + 30) {
 		destroyed = FALSE;
 		empty_level = TRUE; dark_empty = TRUE;
 		cavern = FALSE;
@@ -10306,7 +10306,7 @@ for(mx = 1; mx < 131; mx++) {
 		if (build_special_store == 2)
 			dungeon_store2_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
 	/* build only one special shop in the Nether Realm */
-	} else if (((dun_lev - 166) % 5 != 0) || (dun_lev == 166 + 30)) return;
+	} else if (((dun_lev - 166) % 5 != 0) || (dun_lev == netherrealm_end)) return;
 	/* Try to create a dungeon store */
 	if ((rand_int(1000) < cfg.dungeon_shop_chance) ||
 	    netherrealm_level || (build_special_store == 3 || build_special_store == 4)) {

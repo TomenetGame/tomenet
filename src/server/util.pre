@@ -503,6 +503,8 @@ bool allow_requesting_estate;
 int netherrealm_wpos_x;
 int netherrealm_wpos_y;
 int netherrealm_wpos_z;
+int netherrealm_start;
+int netherrealm_end;
 int valinor_wpos_x;
 int valinor_wpos_y;
 int valinor_wpos_z;

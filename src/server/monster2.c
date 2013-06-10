@@ -2798,7 +2798,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 0\n");
 	if (!r_ptr->name) return (FALSE);
 
 	dlev = getlevel(wpos);
-	netherrealm_bottom = netherrealm_level && dlev == 166 + 30;
+	netherrealm_bottom = netherrealm_level && dlev == netherrealm_end;
 
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
@@ -2978,10 +2978,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 			return (FALSE);
 
 		/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
-		if ((r_idx == RI_HELLRAISER) && (!netherrealm_level || dlev < (166 + 1))) return (FALSE);
+		if ((r_idx == RI_HELLRAISER) && (!netherrealm_level || dlev < (netherrealm_start + 1))) return (FALSE);
 
 		/* Dor may not occur on 'easier' (lol) NR levels */
-		if ((r_idx == RI_DOR) && (!netherrealm_level || dlev < (166 + 9))) return (FALSE);
+		if ((r_idx == RI_DOR) && (!netherrealm_level || dlev < (netherrealm_start + 9))) return (FALSE);
 
 #if 0 /* FINAL_GUARDIAN now */
 		/* Zu-Aon guards the bottom of the Nether Realm now */

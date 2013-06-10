@@ -2902,15 +2902,22 @@ void new_rd_wild()
 	u32b tmp;
 	rd_u32b(&tmp);	/* MAX_WILD_Y */
 	rd_u32b(&tmp);	/* MAX_WILD_X */
-	for(y=0;y<MAX_WILD_Y;y++){
-		for(x=0;x<MAX_WILD_X;x++){
-			wptr=&wild_info[y][x];
+	for (y = 0; y < MAX_WILD_Y; y++) {
+		for (x = 0; x < MAX_WILD_X; x++) {
+			wptr = &wild_info[y][x];
 			rd_wild(wptr);
-			if(wptr->flags & WILD_F_DOWN){
+			if (wptr->flags & WILD_F_DOWN) {
 				MAKE(d_ptr, struct dungeon_type);
 				rd_byte(&wptr->up_x);
 				rd_byte(&wptr->up_y);
 				rd_u16b(&d_ptr->id);
+				rd_u16b(&d_ptr->type);
+				rd_u16b(&d_ptr->baselevel);
+				rd_u32b(&d_ptr->flags1);
+				rd_u32b(&d_ptr->flags2);
+				if (!s_older_than(4, 4, 24)) rd_u32b(&d_ptr->flags3);
+				rd_byte(&d_ptr->maxdepth);
+
 #ifdef DUNGEON_VISIT_BONUS
 				dungeons++;
 				if (d_ptr->id > dungeon_id_max) dungeon_id_max = d_ptr->id;
@@ -2920,11 +2927,12 @@ void new_rd_wild()
 					dungeon_tower[d_ptr->id] = FALSE;
 				}
 #endif
-				rd_u16b(&d_ptr->type);
 				if (d_ptr->type == DI_NETHER_REALM) {
 					netherrealm_wpos_x = x;
 					netherrealm_wpos_y = y;
 					netherrealm_wpos_z = -1;
+					netherrealm_start = d_ptr->baselevel;
+					netherrealm_end = d_ptr->baselevel + d_ptr->maxdepth - 1;
 				}
 				else if (d_ptr->type == DI_VALINOR) {
 					valinor_wpos_x = x;
@@ -2932,11 +2940,6 @@ void new_rd_wild()
 					valinor_wpos_z = -1;
 				}
 
-				rd_u16b(&d_ptr->baselevel);
-				rd_u32b(&d_ptr->flags1);
-				rd_u32b(&d_ptr->flags2);
-				if (!s_older_than(4, 4, 24)) rd_u32b(&d_ptr->flags3);
-				rd_byte(&d_ptr->maxdepth);
 #if 0
 				for (i = 0; i < 10; i++) {
 					rd_byte((byte*)&d_ptr->r_char[i]);
@@ -2966,6 +2969,13 @@ void new_rd_wild()
 				rd_byte(&wptr->dn_x);
 				rd_byte(&wptr->dn_y);
 				rd_u16b(&d_ptr->id);
+				rd_u16b(&d_ptr->type);
+				rd_u16b(&d_ptr->baselevel);
+				rd_u32b(&d_ptr->flags1);
+				rd_u32b(&d_ptr->flags2);
+				if (!s_older_than(4, 4, 24)) rd_u32b(&d_ptr->flags3);
+				rd_byte(&d_ptr->maxdepth);
+
 #ifdef DUNGEON_VISIT_BONUS
 				dungeons++;
 				if (d_ptr->id > dungeon_id_max) dungeon_id_max = d_ptr->id;
@@ -2975,22 +2985,19 @@ void new_rd_wild()
 					dungeon_tower[d_ptr->id] = TRUE;
 				}
 #endif
-				rd_u16b(&d_ptr->type);
 				if (d_ptr->type == DI_NETHER_REALM) {
 					netherrealm_wpos_x = x;
 					netherrealm_wpos_y = y;
 					netherrealm_wpos_z = 1;
+					netherrealm_start = d_ptr->baselevel;
+					netherrealm_end = d_ptr->baselevel + d_ptr->maxdepth - 1;
 				}
 				else if (d_ptr->type == DI_VALINOR) {
 					valinor_wpos_x = x;
 					valinor_wpos_y = y;
 					valinor_wpos_z = 1;
 				}
-				rd_u16b(&d_ptr->baselevel);
-				rd_u32b(&d_ptr->flags1);
-				rd_u32b(&d_ptr->flags2);
-				if (!s_older_than(4, 4, 24)) rd_u32b(&d_ptr->flags3);
-				rd_byte(&d_ptr->maxdepth);
+
 #if 0
 				for (i = 0; i < 10; i++) {
 					rd_byte((byte*)&d_ptr->r_char[i]);

@@ -7740,7 +7740,7 @@ extern int PlayerUID;
 #endif
 
 /* check if a player is in the Nether Realms */
-//#define in_netherrealm(wpos) (getlevel(wpos) >= 166)
+//#define in_netherrealm(wpos) (getlevel(wpos) >= netherrealm_start)
 #define in_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z > 0)
 #define at_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z >= 0)
 

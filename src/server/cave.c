@@ -8057,7 +8057,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 //unused atm	bool dungeon_town = isdungeontown(wpos);
 	bool sector00 = (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z);
 	bool valinor = in_valinor(wpos);
-	bool netherrealm_bottom = in_netherrealm(wpos) && getlevel(wpos) == 166 + 30;
+	bool netherrealm_bottom = in_netherrealm(wpos) && getlevel(wpos) == netherrealm_end;
 	bool arena_pvp = (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z);
 	bool arena_monster = (ge_special_sector && wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z);
 
