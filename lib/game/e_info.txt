@@ -30,7 +30,6 @@ V:3.4.0
 N:1:of Mana
 X:A:24:20
 T:6:0:255
-#W:5:3:9:10000
 W:5:3:12:10000
 C:-20:-20:0:4
 R:100
@@ -39,45 +38,31 @@ R:100
 F:R_HIGH
 R:50
 F:ABILITY
-#R:10
-#F:REGEN_MANA
-#pval was 4
 
 N:2:of Power
 X:A:24:30
 T:6:0:255
-#W:5:5:9:20000
 W:10:5:40:20000
 C:-30:-30:0:7
 R:100
 F:PVAL_M2 | NO_ENCHANT
-#SPELL | 
-#since SPELL doesn't work atm:
 F:MANA
-#pval was 3
 R:100
 F:R_HIGH
 R:75
 F:ABILITY
-#R:30
-#F:REGEN_MANA
 
 N:3:of Wizardry
 X:A:24:60
 T:6:0:255
-#W:10:1:9:40000
 W:20:3:50:40000
 C:-40:-40:0:10
 R:100
 F:MANA | PVAL_M2 | NO_ENCHANT
-#SPELL | 
-#since SPELL doesn't work atm: pval was 3
 R:100
 F:R_HIGH
 R:90
 F:ABILITY
-#R:50
-#F:REGEN_MANA
 
 #N:4:of Spell
 #T:6:0:255
@@ -141,7 +126,6 @@ N:10:Elven
 T:36:2:255
 T:37:2:255
 X:B:30:25
-#W:0:2:22:15000
 W:0:2:37:15000
 C:0:0:10:3
 R:100
@@ -193,7 +177,6 @@ F:R_IMMUNITY
 N:14:of Defense
 T:38:0:255
 X:A:30:5
-#W:20:40:100:1000
 W:20:40:100:10000
 C:0:0:10:0
 R:100
@@ -217,8 +200,6 @@ X:A:32:16
 W:0:5:30:1000
 R:100
 F:RES_ACID | IGNORE_ACID | IGNORE_WATER
-#R:2
-#F:IM_ACID
 
 N:17:of Resist Lightning
 T:34:0:5
@@ -227,8 +208,6 @@ X:A:32:10
 W:0:5:30:400
 R:100
 F:RES_ELEC | IGNORE_ELEC
-#R:2
-#F:IM_ELEC
 
 N:18:of Resist Fire
 T:34:0:5
@@ -237,8 +216,6 @@ X:A:32:14
 W:0:5:30:800
 R:100
 F:RES_FIRE | IGNORE_FIRE
-#R:2
-#F:IM_FIRE
 
 N:19:of Resist Cold
 T:34:0:5
@@ -247,8 +224,6 @@ X:A:32:12
 W:0:5:30:600
 R:100
 F:RES_COLD | IGNORE_COLD
-#R:2
-#F:IM_COLD
 
 N:20:of Resistance
 T:34:0:5
@@ -278,8 +253,6 @@ T:34:3:3
 T:34:5:5
 T:34:10:10
 X:A:32:10
-#W:0:2:22:400
-#W:0:2:30:4000
 W:0:2:30:3500
 R:100
 F:IGNORE_ELEC | SH_ELEC
@@ -338,8 +311,6 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER | 
 F:ABILITY | R_HIGH
 R:40
-#F:SPELL
-#since SPELL doesn't work atm:
 F:MANA
 R:20
 F:REGEN_MANA
@@ -374,10 +345,6 @@ R:100
 F:SEARCH | RES_BLIND | SEE_INVIS
 R:10
 F:R_ESP
-#F:ESP_UNIQUE
-#R:20
-#R:1
-#F:ESP_ALL
 
 N:31:of Infravision
 X:A:33:11
@@ -461,8 +428,6 @@ R:100
 F:STR | DEX | CON
 
 N:40:Dwarven
-#T:32:0:6
-#T:32:8:99
 T:32:3:6
 T:32:8:99
 X:B:33:13
@@ -500,18 +465,8 @@ F:STEALTH |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER | 
 F:OLD_RESIST
 
-#disabled, because it's now a suffix instead of prefix
-## Aura, Fire
-#N:44:of Immolation
-#X:A:31:16
-#W:0:2:30:4000
-#C:0:0:4:0
-#T:35:0:255
-#R:100
-#F:IGNORE_ACID | IGNORE_FIRE | SH_FIRE | RES_FIRE | IGNORE_WATER | ACTIVATE
+#N:44: -- unused
 
-#changed from suffix to prefix
-#N:45:of Enveloping
 N:45:Enveloping
 X:B:31:0
 W:0:1:3:0
@@ -528,8 +483,6 @@ T:35:0:255
 R:100
 F:AGGRAVATE | CURSED
 
-#changed from suffix to prefix
-#N:47:of Irritation
 N:47:Irritating
 X:B:31:0
 W:0:1:3:0
@@ -538,15 +491,7 @@ T:35:0:255
 R:100
 F:AGGRAVATE | SHOW_MODS
 
-#changed from suffix to prefix
-## Aura, Electricity
-#N:48:of Electricity
-#X:A:31:16
-#W:0:2:30:4000
-#C:0:0:4:0
-#T:35:0:255
-#R:100
-#F:IGNORE_ACID | IGNORE_ELEC | SH_ELEC | RES_ELEC | IGNORE_WATER | ACTIVATE
+#N:48:  -- unused
 
 ### Gloves ###
 
@@ -649,15 +594,11 @@ F:FREE_ACT
 
 N:60:of Speed
 X:A:35:25
-#W:0:1:30:200000
-#W:0:1:30:100000
 W:0:1:30:75000
 C:0:0:0:10
 T:30:0:99
 R:100
 F:SPEED | HIDE_TYPE
-#R:10
-#F:PVAL_M3
 
 # 61 Metal boots only
 
@@ -1137,15 +1078,11 @@ R:20
 F:RES_POIS
 
 N:97:Vampiric
-#Decided to remove LIFE till item system is rewritten (major mess-up) - C. Blue
-#T:125:0:255 <- typo?
 T:23:3:255
 X:B:24:25
 W:0:2:107:10000
-#C:0:0:0:-2
 C:0:0:0:0
 R:100
-#F:LIFE | VAMPIRIC | HOLD_LIFE
 F:VAMPIRIC | HOLD_LIFE | IGNORE_WATER
 
 N:98:(*Defender*)
@@ -1155,7 +1092,6 @@ T:23:3:255
 T:24:0:255
 X:A:24:35
 W:0:1:107:50000
-#C:-15:-15:20:3
 C:-15:-15:15:3
 R:100
 F:STEALTH | REGEN | FEATHER | SEE_INVIS | 
@@ -1170,7 +1106,6 @@ F:R_HIGH | SUSTAIN
 R:10
 F:R_IMMUNITY
 
-#N:99:of the Dragonriders
 N:99:of the Thunderlords
 T:15:0:255
 T:21:0:255
@@ -1178,22 +1113,16 @@ T:22:0:255
 T:23:3:255
 T:24:0:255
 X:A:24:22
-#W:0:1:107:7000 2x high res and useful shit, need higher value here^^
 W:0:1:107:20000
-#C:4:4:0:2
 C:4:4:0:0
 R:100
 F:SLAY_EVIL | KILL_DRAGON | ESP_DRAGON | TELEPORT
 F:REGEN | RES_NEXUS | ACTIVATE | FREE_ACT | R_HIGH | FLY
 F:IGNORE_FIRE | IGNORE_ACID | IGNORE_WATER |
-# | SEARCH | SLOW_DIGEST rather fast digestion, actually..
 R:12
 F:LOW_ABILITY
 R:10
 F:REGEN_MANA
-#note- this may give +speed/+EA, way too much and badly positioned for non-artifacts
-#R:2
-#F:R_P_ABILITY | PVAL_M3 | LIMIT_BLOWS
 
 N:100:of Gondolin
 T:15:0:255
@@ -1210,7 +1139,6 @@ F:SLAY_EVIL | SLAY_TROLL | SLAY_DRAGON | SLAY_DEMON |
 F:FREE_ACT | SEE_INVIS | LITE1 | RES_DARK | ABILITY | 
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_WATER | WHITE_LIGHT
 F:ESP_EVIL
-#F:ESP_DRAGON | ESP_DEMON
 R:33
 F:R_HIGH
 R:33
@@ -1238,7 +1166,6 @@ T:22:0:255
 T:23:3:255
 T:24:0:255
 X:B:24:30
-#W:0:8:8:2500
 W:0:1:30:5000
 R:100
 F:SLAY_UNDEAD | SEE_INVIS | HOLD_LIFE | DRAIN_HP | 
@@ -1253,7 +1180,6 @@ T:22:0:255
 T:23:0:255
 T:24:0:255
 X:A:24:0
-#W:0:1:1:0
 W:15:1:40:0
 C:-20:-20:-10:-10
 R:100
@@ -1508,16 +1434,11 @@ C:-5:-5:0:0
 # Destroyed Body Armour
 
 N:127:Blasted
-#T:16:0:99
-#T:17:0:99
-#T:18:0:99
 T:36:0:99
 T:37:0:99
 T:38:0:99
 X:B:30:0
 W:0:1:2:0
-#C:0:0:-10:0
-#C:0:0:-25:0
 C:0:0:-15:0
 R:100
 F:NO_ENCHANT
@@ -1578,8 +1499,6 @@ R:100
 F:FREE_ACT
 R:60
 F:INT
-#R:50
-#F:DEX
 
 #N:132:of Cheapness
 ##T:67:0:255
@@ -1616,7 +1535,6 @@ F:CON
 #F:FAST_CAST
 
 N:134:of Charging
-#T:67:0:255
 T:66:0:255
 X:A:51:15
 W:0:2:10:1500
@@ -1625,17 +1543,12 @@ R:100
 F:CHARGING
 
 N:135:of the Istari
-#N:135:the Istari of 
-#T:67:0:255
 T:66:0:255
 X:A:51:10
 W:0:1:10:10000
 C:0:0:0:0
 R:100
 F:CHARGING | EASY_USE
-#FAST_CAST
-#EASY_USE? hmm..
-#F:CAPACITY | CHARGING | CHEAPNESS | FAST_CAST
 
 ### Lights ###
 
@@ -1648,7 +1561,6 @@ F:CHARGING | EASY_USE
 
 N:137:of Boldness
 X:A:0:5
-#T:39:0:99
 T:39:0:2
 W:0:1:10:1500
 R:100
@@ -1678,7 +1590,6 @@ F:RES_DARK
 
 N:140:of *Brightness*
 X:A:0:9
-#T:39:0:99
 T:39:0:2
 W:0:1:40:7000
 R:100
@@ -1772,7 +1683,6 @@ T:111:22:50
 T:111:52:54
 T:111:57:255
 W:0:1:7:3000
-#W:0:1:5:3000
 C:0:0:0:0
 R:100
 F:IGNORE_FIRE
@@ -1991,7 +1901,6 @@ F:REGEN_MANA
 # Cloak of Invisibility
 N:170:of Invisibility
 X:A:31:20
-#W:40:1:18:3000
 W:40:1:30:30000
 C:0:0:10:4
 T:35:0:99
@@ -2027,7 +1936,6 @@ C:10:10:0:2
 T:31:2:99
 R:100
 F:STR | CON | SHOW_MODS | HIDE_TYPE | IGNORE_ACID | RES_FEAR | IGNORE_WATER | 
-#F:DRAIN_HP
 R:50
 F:BLOWS | AGGRAVATE
 
@@ -2042,14 +1950,11 @@ F:RES_NEXUS | FEATHER
 # Boots of Elvenkind (leather boots only)
 N:175:of Elvenkind
 X:A:35:30
-#W:60:1:30:200000 -- reduce rarity a bit, since they're so rare compared to speed boots:
 W:50:1:30:200000
-#C:0:0:0:5 -- boost them a bit too, compared to speed boots
 C:0:0:5:5
 T:30:2:4
 R:100
 F:STEALTH | SPEED | HIDE_TYPE | FEATHER | IGNORE_ACID | IGNORE_FIRE | IGNORE_WATER
-# +ABILITY competes with art boots too strongly. already extremly powerful.
 F:LOW_ABILITY
 R:70
 F:R_HIGH
@@ -2094,10 +1999,8 @@ F:PVAL_M2
 
 # Rod
 N:179:of Simplicity
-#T:67:0:255
 T:66:0:255
 X:A:51:8
-#W:3:2:8:1000
 W:3:2:8:5000
 C:0:0:0:0
 R:100
@@ -2107,8 +2010,6 @@ F:EASY_USE
 N:180:of Lordly Resistance
 T:35:0:255
 X:A:31:10
-#X:31:20
-#W:0:0:0:200000
 W:60:1:30:150000
 C:0:0:20:0
 R:100
@@ -2118,15 +2019,11 @@ R:30
 F:AC_M5
 R:10
 F:R_HIGH
-#too much, it's for arts
-#R:5
-#F:RES_POIS
 
 N:181:of the Teleri
 T:35:0:255
 X:A:31:20
 W:0:4:30:20000
-#W:0:0:0:20000
 C:0:0:10:0
 R:100
 F:HOLD_LIFE | FREE_ACT
@@ -2167,7 +2064,6 @@ F:OLD_RESIST
 
 N:185:of the Istari
 X:A:34:20
-#T:31:1:1
 T:31:0:99
 W:0:1:15:50000
 C:-5:-5:10:3
@@ -2181,7 +2077,6 @@ F:REGEN_MANA
 N:186:of the Magi
 X:A:34:20
 T:31:0:99
-#T:31:1:1
 W:0:1:15:40000
 C:-5:-5:10:10
 R:100
@@ -2200,17 +2095,12 @@ N:187:'Stormbringer'
 T:23:30:30
 X:A:24:0
 W:45:1:255:40000
-# sure it's bug
-#C:16:16:0:8
 C:20:20:0:2
 R:100
 F:VAMPIRIC | STR | CON | BLOWS | FREE_ACT | HOLD_LIFE | 
 F:RES_CHAOS | RES_NETHER | BRAND_ELEC | 
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER | 
 F:CURSED | HEAVY_CURSE | AUTO_CURSE
-#F:RES_NEXUS | NO_TELE
-#R:60
-#F:AUTO_CURSE
 R:50
 F:DRAIN_HP
 R:50
@@ -2225,7 +2115,6 @@ F:CURSE_NO_DROP
 N:188:'Budweiser'
 X:A:34:0
 T:80:38:38
-#T:31:1:1
 W:0:1:3:3
 C:0:0:0:0
 R:100
@@ -2234,7 +2123,6 @@ F:NO_SEED
 N:189:'Heineken'
 X:A:34:0
 T:80:38:38
-#T:31:1:1
 W:0:1:3:2
 C:0:0:0:0
 R:100
@@ -2257,7 +2145,6 @@ F:NO_SEED
 N:191:of Insulation
 T:34:2:2
 T:34:4:4
-#T:34:10:10
 X:A:32:10
 W:0:2:30:1000
 R:100
@@ -2289,7 +2176,6 @@ F:REGEN_MANA
 # Torch
 N:194:of Immunity
 X:A:0:25
-#T:39:0:99
 T:39:0:0
 T:39:2:2
 W:0:1:100:30000
@@ -2302,7 +2188,6 @@ F:RES_COLD
 
 N:195:of Perpetuity
 X:A:0:25
-#T:39:0:99
 T:39:2:2
 W:0:1:100:30000
 R:100
@@ -2316,7 +2201,6 @@ F:OLD_RESIST
 
 N:196:of Presentiment
 X:A:0:20
-#T:39:0:99
 T:39:0:0
 T:39:2:2
 W:0:1:60:5000
@@ -2342,7 +2226,6 @@ F:ESP_ALL
 N:198:'Guinness'
 X:A:34:0
 T:80:38:38
-#T:31:1:1
 W:0:1:3:2
 C:0:0:0:0
 R:100
@@ -2388,7 +2271,6 @@ F:NO_SEED
 #another spellbook mod
 N:202:Imbued
 X:B:0:1
-#T:70:8:255 not for scrolls
 T:111:0:18
 T:111:22:255
 W:60:1:255:1000
@@ -2424,7 +2306,6 @@ T:17:4:4
 T:18:0:2
 T:18:4:4
 X:B:37:2
-#W:45:1:10:50
 W:35:1:10:50
 C:0:0:0:0
 R:100
@@ -2435,7 +2316,6 @@ F:NO_SEED | NO_ENCHANT
 N:205:of Flying
 X:A:35:20
 W:20:2:30:5000
-#T:30:0:99
 T:30:2:4
 R:100
 F:FLY
@@ -2477,7 +2357,6 @@ W:90:30:100:30000
 C:0:0:10:1
 R:100
 F:LIFE | HOLD_LIFE | SUST_CON | RES_BLIND
-#F:FREE_ACT | REFLECT
 
 N:209:of Swiftness
 T:37:26:28
@@ -2502,7 +2381,6 @@ N:211:of Telepathy
 T:37:26:28
 T:37:31:33
 X:A:30:30
-#W:90:20:100:30000
 W:90:20:100:150000
 C:0:0:5:0
 R:100
@@ -2518,15 +2396,7 @@ R:100
 F:RES_FEAR | REGEN | IM_FIRE
 # | RES_COLD | RES_ELEC | RES_ACID | RES_POIS |
 
-#disabled, because it's now a suffix instead of prefix
-## Aura, Cold (finally! Why didn't we add it earlier^^ - C. Blue)
-#N:213:of Frostweaving
-#X:A:31:16
-#W:0:2:30:4000
-#C:0:0:4:0
-#T:35:0:255
-#R:100
-#F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD | SH_COLD | RES_COLD | IGNORE_WATER | ACTIVATE
+#N:213:  -- unused
 
 ##N:214:Retaining
 #N:214:Arcane
@@ -2546,7 +2416,6 @@ W:90:20:100:30000
 C:0:0:5:0
 R:100
 F:RES_MANA | IGNORE_DISEN | REGEN_MANA | REFLECT | FREE_ACT
-#F:RES_DISE
 
 # Spellbooks (scrolls see below)
 N:216:Waterproof
@@ -2592,8 +2461,6 @@ N:219:Waterproof
 X:B:0:1
 T:70:8:48
 T:70:50:255
-#T:70:51:51
-#T:70:53:255
 W:0:1:10:450
 C:0:0:0:0
 R:100
@@ -2605,9 +2472,6 @@ N:220:Fireproof
 X:B:0:1
 T:70:8:47
 T:70:49:255
-#T:70:49:49
-#T:70:51:51
-#T:70:53:255
 W:0:1:10:700
 C:0:0:0:0
 R:100
