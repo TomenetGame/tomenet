@@ -583,7 +583,7 @@ D:understanding.
 
 N:38:of Hammerhand
 I:32:6:3
-W:20:2:60:70000
+W:20:2:65:70000
 P:6:1d3:0:0:20
 F:STR | DEX | CON | HIDE_TYPE | SPECIAL_GENE | RES_FEAR | 
 F:SUST_STR | SUST_DEX | SUST_CON | 
@@ -598,8 +598,8 @@ D:blows of Helm, the Hammerhand!
 
 N:39:of Dor-Lomin
 I:32:7:4
-W:40:12:75:150000
-P:8:1d3:0:0:20
+W:40:12:50:150000
+P:5:1d3:0:0:20
 F:STR | DEX | CON | HIDE_TYPE | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_BLIND | REGEN | 
 F:LITE1 | SEE_INVIS | ESP_DRAGON | ESP_DRAGONRIDER | ACTIVATE | WHITE_LIGHT
@@ -2185,8 +2185,8 @@ D:delivers a chill of death to its victims.
 
 N:160:of Knowledge
 I:32:5:-3
-W:20:50:75:77000
-P:6:1d3:0:0:20
+W:20:50:60:77000
+P:5:1d3:0:0:20
 F:LITE1 | SPECIAL_GENE | LUCK | AUTO_ID | ACTIVATE | WHITE_LIGHT
 D:This helm, designed by Petty-Dwarves ages ago to act as the brain of a 
 D:long lost project, is made of finest glass. Its light banishes all secrets, 
@@ -2250,9 +2250,7 @@ D:The sword that was broken shall be reforged...
 
 N:165:'Lebohaum'
 I:32:6:0
-#W:20:15:15:99999
 W:20:15:40:55555
-#P:20:0d0:0:0:80
 P:20:0d0:0:0:40
 F:ACTIVATE
 F:FREE_ACT
@@ -2313,7 +2311,6 @@ D:gates of the Dark Tower, and with whom came light even to Gorgoroth.
 
 N:170:of Celebrimbor
 I:32:3:4
-#W:55:12:20:245000
 W:55:12:20:150000
 P:3:1d1:0:0:18
 F:INT | DEX | CHR | SEARCH | 
@@ -2798,9 +2795,8 @@ D:very end. Baruk Khazad!
 
 N:220:of the Durin
 I:32:10:3
-#W:40:40:60:100000
 W:40:20:60:100000
-P:9:0d0:0:0:23
+P:7:0d0:0:0:23
 F:STR | CON | HIDE_TYPE | RES_FEAR | SUST_STR | SUST_CON | 
 F:IM_FIRE | RES_CONF | SEARCH | SEE_INVIS | LITE1 | WHITE_LIGHT
 D:A helm wrought with the image of what Durin saw when he first gazed 
@@ -3314,7 +3310,7 @@ D:out evil spirits.
 N:264:'Veridis Quo'
 I:32:11:3
 W:90:15:75:100000
-P:8:1d3:0:0:17
+P:7:1d3:0:0:17
 F:RES_FEAR | RES_CHAOS | SEE_INVIS |
 F:SUST_INT | SUST_WIS | SUST_CHR | INT | WIS |
 F:AUTO_ID | SEARCH | LITE1 | IGNORE_MANA | WHITE_LIGHT
