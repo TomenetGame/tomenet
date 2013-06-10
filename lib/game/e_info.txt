@@ -2212,7 +2212,7 @@ F:R_ESP
 R:20
 F:R_ESP
 
-#Telepathic Awareness. Name must be split because it's an insta-ego (C. Blue)
+#Telepathic Awareness. It's name is an ugly hack because it's an 'instant ego-item'.
 N:197:
 X:A:40:20
 W:0:0:0:1000
