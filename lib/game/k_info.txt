@@ -3460,7 +3460,7 @@ N:413:& Dragon Helm~
 G:]:r
 I:32:7:0
 W:45:0:50:4000
-A:80/6
+A:60/6
 P:6:1d3:0:0:10
 F:IGNORE_ACID | IGNORE_WATER
 
