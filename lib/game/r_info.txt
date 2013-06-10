@@ -209,7 +209,6 @@ O:1:1:1:1
 B:BEG:*
 B:TOUCH:EAT_GOLD
 F:ALLOW_RUNNING | MALE | EVIL | WILD_TOWN | WILD_ONLY | 
-#F:RAND_25 |  FRIENDS | 
 F:RAND_25 |  FRIEND | 
 F:TAKE_ITEM | OPEN_DOOR | DROP_CORPSE | DROP_SKELETON | 
 F:MORTAL | BASEANGBAND | HAS_LITE
@@ -232,10 +231,8 @@ G:B:U
 I:110:1d1:30:1:10
 $HALLOWEEN!W:0:3:90:0
 $HALLOWEEN$W:127:3:90:0
-#E:0:1:1:0:1:0
 E:0:1:0:1:1:2
 O:0:0:0:0
-#B:BITE:HURT:1d1
 F:ALLOW_RUNNING | RAND_25 | CAN_FLY | WILD_TOWN | WILD_ONLY | 
 F:ANIMAL | DROP_SKELETON | HAS_EGG | IMPRESSED | 
 F:MORTAL | BASEANGBAND | NO_TARGET
@@ -248,7 +245,6 @@ $HALLOWEEN!W:0:3:80:0
 $HALLOWEEN$W:127:3:80:0
 E:0:1:0:1:1:2
 O:0:0:0:0
-#B:BITE:HURT:1d1
 F:ALLOW_RUNNING | RAND_25 | CAN_FLY | WILD_ONLY | WILD_WOOD | WILD_GRASS | 
 F:ANIMAL | DROP_SKELETON | HAS_EGG | IMPRESSED | 
 F:MORTAL | BASEANGBAND
@@ -262,7 +258,6 @@ $HALLOWEEN!W:0:3:100:0
 $HALLOWEEN$W:127:3:100:0
 E:0:1:0:2:1:2
 O:0:0:0:0
-#B:BITE:HURT:1d1
 F:ALLOW_RUNNING | RAND_50 | WILD_ONLY | WILD_GRASS | WILD_WOOD |
 F:ANIMAL | DROP_SKELETON | DROP_CORPSE | 
 F:MORTAL | BASEANGBAND
@@ -327,7 +322,6 @@ E:1:1:1:2:1:1
 O:0:0:0:0
 B:DROOL:*
 F:ALLOW_RUNNING | MALE | DROP_CORPSE | DROP_SKELETON | WILD_TOWN | WILD_ONLY
-#F:RAND_25 | DROP_1D2 | TAKE_ITEM | 
 F:RAND_25 | TAKE_ITEM | 
 F:MORTAL | BASEANGBAND | HAS_LITE
 D:He tends to blubber a lot. 
@@ -341,7 +335,6 @@ E:1:1:1:2:1:1
 O:0:0:0:0
 B:DROOL:*
 F:ALLOW_RUNNING | MALE | DROP_SKELETON | DROP_CORPSE | WILD_TOWN | WILD_ONLY |
-#F:RAND_25 | DROP_1D2 | 
 F:RAND_25 | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
 F:MORTAL | BASEANGBAND | HAS_LITE
@@ -356,7 +349,6 @@ E:1:1:1:2:1:1
 O:0:0:0:0
 B:DROOL:*
 F:ALLOW_RUNNING | MALE | DROP_CORPSE | DROP_SKELETON | WILD_TOWN | WILD_ONLY | 
-#F:RAND_25 | DROP_1D2 | TAKE_ITEM | 
 F:RAND_25 | TAKE_ITEM | 
 F:MORTAL | BASEANGBAND | HAS_LITE
 D:Drooling and comical, but then, what do you expect? 
@@ -370,7 +362,6 @@ E:1:1:1:2:1:1
 O:0:0:0:0
 B:BEG:*
 F:ALLOW_RUNNING | MALE | DROP_SKELETON | DROP_CORPSE | 
-#F:RAND_25 | WILD_TOWN | WILD_ONLY | DROP_1D2 | 
 F:RAND_25 | WILD_TOWN | WILD_ONLY | ONLY_GOLD | 
 F:TAKE_ITEM | OPEN_DOOR | 
 F:MORTAL | BASEANGBAND | HAS_LITE
@@ -386,7 +377,6 @@ O:0:0:0:0
 B:BEG:*
 B:TOUCH:DISEASE
 F:ALLOW_RUNNING | MALE | DROP_CORPSE | DROP_SKELETON | 
-#F:RAND_25 | WILD_TOWN | WILD_ONLY | DROP_1D2 | 
 F:RAND_25 | WILD_TOWN | WILD_ONLY | ONLY_GOLD | 
 F:TAKE_ITEM | OPEN_DOOR | 
 F:MORTAL | BASEANGBAND | HAS_LITE
@@ -404,7 +394,6 @@ B:TOUCH:EAT_ITEM
 B:INSULT:*
 F:ALLOW_RUNNING | MALE | DROP_CORPSE | DROP_SKELETON |
 F:DROP_90 | WILD_TOWN | WILD_ONLY | 
-#F:WILD_SWAMP | WILD_WOOD | WILD_GRASS | WILD_MOUNTAIN | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:EVIL | MORTAL | BASEANGBAND | HAS_LITE
 D:He 'finds' new wares for the Black Market. From unwary adventurers... 
@@ -446,7 +435,6 @@ $HALLOWEEN!W:0:4:1700:0
 $HALLOWEEN$W:127:3:1700:0
 E:1:1:1:2:1:1
 O:0:100:0:0
-#B:HIT:HURT:1d10
 B:HIT:HURT:1d6
 F:ALLOW_RUNNING | MALE | DROP_SKELETON | DROP_CORPSE | FORCE_SLEEP | 
 F:RAND_50 | DROP_60 | DROP_90 | WILD_GRASS | WILD_TOWN | WILD_WOOD | WILD_ONLY
@@ -461,7 +449,6 @@ $HALLOWEEN!W:0:6:1650:0
 $HALLOWEEN$W:127:5:1650:0
 E:1:1:1:2:1:1
 O:25:50:25:0
-#B:HIT:HURT:2d6
 B:HIT:HURT:2d3
 F:ALLOW_RUNNING | MALE | DROP_SKELETON | DROP_CORPSE | 
 F:RAND_50 | DROP_60 | DROP_90 | WILD_TOWN | WILD_ONLY | 
@@ -578,7 +565,6 @@ D:It is a smallish, slimy, icky, blobby creature.
 
 N:27:Giant white mouse
 G:r:w
-#I:110:1d3:8:4:20
 I:110:1d3:32:4:20
 W:1:1:600:1
 E:0:1:0:2:1:0
@@ -632,7 +618,6 @@ D:It is a squat and ugly dog-headed humanoid.
 
 N:31:White worm mass
 G:w:w
-#I:100:4d4:7:1:10
 I:100:4d4:28:1:10
 W:1:1:30:2
 E:0:0:0:0:0:0
@@ -648,7 +633,6 @@ D:It is a large slimy mass of worms.
 N:32:Floating eye
 G:e:o
 #make it easier for newbs?
-#I:110:3d6:2:6:10
 I:100:3d6:2:6:10
 W:1:1:500:1
 E:0:0:0:0:0:0
@@ -997,7 +981,6 @@ D:A striped housecat who enjoys hunting.
 
 N:58:Green worm mass
 G:w:g
-#I:100:6d4:7:3:10
 I:100:6d4:28:3:10
 W:2:1:40:3
 E:0:0:0:0:0:0
@@ -1147,7 +1130,6 @@ D:Larger than a crow, and pitch black.
 
 N:69:Giant white louse
 G:I:w
-#I:130:1d1:6:5:10
 I:130:1d1:24:5:10
 W:3:1:100:1
 E:0:0:0:0:0:0
@@ -1269,7 +1251,6 @@ D:It is about four feet long and carnivorous.
 
 N:78:Yellow worm mass
 G:w:y
-#I:100:4d8:7:4:10
 I:100:4d8:28:4:10
 W:3:2:200:4
 E:0:0:0:0:0:0
@@ -1284,7 +1265,6 @@ D:It is a large slimy mass of worms.
 
 N:79:Clear worm mass
 G:w:B
-#I:100:4d4:7:1:10
 I:100:4d4:28:1:10
 W:3:2:200:4
 E:0:0:0:0:0:0
@@ -1382,7 +1362,6 @@ D:on tiny legs.
 
 N:86:Giant white rat
 G:r:W
-#I:110:2d2:8:7:30
 I:110:2d2:32:7:30
 W:4:1:200:1
 E:0:1:0:2:1:0
@@ -1421,7 +1400,6 @@ D:A fish with a swordlike "beak".
 
 N:89:Blue worm mass
 G:w:b
-#I:100:5d8:7:12:10
 I:100:5d8:28:12:10
 W:4:1:40:5
 E:0:0:0:0:0:0
@@ -1630,7 +1608,6 @@ W:5:2:500:20
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:GAZE:UN_BONUS
-#F:ATTR_MULTI | 
 F:ATTR_ANY | RES_DISE | DROP_CORPSE | 
 F:NEVER_MOVE | CAN_FLY | 
 F:HURT_LITE | NO_FEAR | BASEANGBAND
@@ -1640,7 +1617,6 @@ D:A disembodied eye, crackling with magic.
 
 N:105:Red worm mass
 G:w:r
-#I:100:5d8:7:12:10
 I:100:5d8:28:12:10
 W:5:1:40:6
 E:0:0:0:0:0:0
@@ -2299,7 +2275,6 @@ N:151:Hunting hawk
 G:B:u
 I:120:8d8:30:25:10
 W:8:2:800:22
-#E:0:1:0:1:1:2
 E:0:1:0:2:1:2
 O:0:0:0:0
 B:CLAW:HURT:1d3
@@ -2339,7 +2314,6 @@ D:Don't feed them after midnight!
 
 N:154:Yeti
 G:Y:w
-#I:110:11d9:20:24:10 pimpin druid forms
 I:110:12d10:20:24:10
 W:9:3:3500:30
 E:1:1:1:2:1:1
@@ -2370,7 +2344,6 @@ D:It is a strange, slimy, icky creature.
 N:156:Giant grey rat
 G:r:s
 I:110:2d3:32:12:20
-#I:110:2d3:8:12:20
 W:9:1:250:2
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -2411,7 +2384,6 @@ D:serves chaos fervently and is greatly feared by others.
 
 N:159:The wounded bear
 G:q:r
-#I:110:10d10:10:35:10
 I:110:15d15:10:35:10
 W:12:1:3000:30
 E:0:1:0:2:1:0
@@ -2426,7 +2398,6 @@ D:A wounded bear, who has occasionally attacked humans.
 
 N:160:Cave bear
 G:q:u
-#I:110:8d8:10:35:10 pimpin druid forms
 I:110:12d12:10:35:10
 W:9:1:3000:25
 E:0:1:0:2:1:0
@@ -2456,8 +2427,6 @@ D:enough to bore through solid rock.
 N:162:Mindcrafter
 G:p:y
 I:110:9d8:20:15:20
-# temporarily moved deeper (till MIND_BLAST will be changed)
-#W:16:2:1700:50
 W:20:2:1700:50
 E:1:1:1:2:1:1
 O:30:40:30:0
@@ -2486,7 +2455,6 @@ F:FORCE_MAXHP | FORCE_SLEEP | DROP_CORPSE |
 F:ONLY_GOLD | DROP_60 | DROP_1D2 | HAS_EGG | IMPRESSED | 
 F:OPEN_DOOR | BASH_DOOR | CAN_FLY | RES_LITE
 F:EVIL | DRAGON | IM_ELEC | BASEANGBAND
-#F:ATTR_MULTI
 S:1_IN_12 | 
 S:BR_ELEC
 D:This hatchling dragon is still soft, its eyes unaccustomed to light and 
@@ -2505,7 +2473,6 @@ F:FORCE_MAXHP | FORCE_SLEEP | CAN_FLY | DROP_CORPSE |
 F:ONLY_GOLD | DROP_60 | DROP_1D2 | 
 F:OPEN_DOOR | BASH_DOOR
 F:EVIL | DRAGON | IM_COLD | SUSCEP_FIRE | HAS_EGG | IMPRESSED | BASEANGBAND
-#F:ATTR_MULTI
 S:1_IN_12 | 
 S:BR_COLD
 D:This hatchling dragon is still soft, its eyes unaccustomed to light and 
@@ -2562,7 +2529,6 @@ F:FORCE_MAXHP | FORCE_SLEEP | CAN_FLY | DROP_CORPSE | SUSCEP_COLD |
 F:ONLY_GOLD | DROP_60 | DROP_1D2 | 
 F:OPEN_DOOR | BASH_DOOR | RES_LITE
 F:EVIL | DRAGON | IM_FIRE | HAS_EGG | IMPRESSED | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_11 | 
 S:BR_FIRE
 D:This hatchling dragon is still soft, its eyes unaccustomed to light and 
@@ -2626,8 +2592,6 @@ N:172:Eagle
 G:B:u
 I:120:9d9:30:25:10
 W:12:2:600:22
-#E:0:1:1:0:1:0
-#E:0:1:0:1:1:2
 E:0:1:0:2:1:2
 O:0:0:0:0
 B:CLAW:HURT:1d3
@@ -2639,7 +2603,6 @@ D:A magnificent huge predatory bird.
 
 N:173:War bear
 G:q:u
-#I:110:10d10:10:35:10
 I:110:13d13:10:35:10
 W:9:1:2000:25
 E:0:1:0:2:1:0
@@ -2830,7 +2793,6 @@ D:Yum! It smells quite tasty.  If you could only see it...
 N:185:Quiver slot
 G:,:U
 I:120:1d1:4:1:0
-#W:10:2:60:3
 W:10:5:60:3
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -2918,7 +2880,6 @@ D:It is a strange hairy growth on the dungeon floor.
 
 N:191:Grizzly bear
 G:q:U
-#I:110:15d15:10:35:10 pimpin druid forms
 I:110:18d18:10:35:10
 W:16:2:2600:55
 E:0:1:0:2:1:0
@@ -2939,7 +2900,6 @@ W:10:1:40:40
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:SPORE:UN_BONUS:1d6
-#F:ATTR_MULTI
 F:NEVER_MOVE | 
 F:STUPID | EMPTY_MIND | RES_DISE |
 F:IM_POIS | CAN_SWIM |
@@ -3008,7 +2968,6 @@ D:It howls and snaps at you.
 
 N:197:Giant fruit fly
 G:I:G
-#I:120:2d2:8:14:10
 I:120:2d2:32:14:10
 W:10:3:100:4
 E:0:0:0:0:0:0
@@ -3252,7 +3211,6 @@ D:Yum! It looks quite tasty.  It is a pulsing mound of glowing flesh.
 
 N:213:Nether worm mass
 G:w:D
-#I:100:5d8:10:15:3
 I:100:5d8:40:15:3
 W:12:4:200:6
 E:0:0:0:0:0:0
@@ -3268,7 +3226,6 @@ D:the air, you...
 N:214:Abyss worm mass
 G:w:D
 I:100:5d8:40:15:3
-#I:100:5d8:10:15:3
 W:12:4:200:7
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -3306,7 +3263,6 @@ W:12:1:1800:40
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:3d5
-#B:HIT:HURT:3d5
 B:HIT:DISARM:3d5
 F:MALE | WILD_EASY |
 F:DROP_1D2 | DROP_SKELETON | DROP_CORPSE
@@ -3363,7 +3319,6 @@ F:FORCE_MAXHP | FORCE_SLEEP | CAN_FLY | DROP_CORPSE |
 F:ONLY_GOLD | DROP_60 | DROP_1D2 | 
 F:OPEN_DOOR | BASH_DOOR | RES_LITE
 F:EVIL | DRAGON | NO_STUN | HAS_EGG | IMPRESSED | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_12 | 
 S:BR_SOUN
 D:This hatchling dragon is still soft, its eyes unaccustomed to light and 
@@ -3965,7 +3920,6 @@ D:A merry little gnome.
 
 N:259:Giant flea
 G:I:s
-#I:120:1d2:6:7:10
 I:120:1d2:24:7:10
 W:14:3:90:3
 E:0:0:0:0:0:0
@@ -4309,7 +4263,6 @@ B:HIT:PARALYZE:1d2
 B:HIT:HURT:1d10
 F:OPEN_DOOR | BASH_DOOR | CAN_FLY | IM_POIS | 
 F:EVIL | DEMON | IM_FIRE | NO_FEAR | BASEANGBAND | HAS_LITE
-#F:NONLIVING
 D:It is a small demonic spirit full of malevolence. 
 
 N:281:Gnome mage
@@ -4446,7 +4399,6 @@ D:A glowing fourteen foot tall giant. Flames drip from its red skin.
 
 N:289:Hummerhorn
 G:I:y
-#I:120:2d2:8:14:10
 I:120:2d2:32:14:10
 W:16:4:100:4
 E:0:1:0:2:1:0
@@ -4494,7 +4446,6 @@ N:292:Crebain
 G:B:D
 I:120:3d5:40:12:0
 W:16:4:500:20
-#E:0:1:1:0:1:0
 E:0:1:0:1:1:2
 O:0:0:0:0
 B:CLAW:HURT:1d4
@@ -4633,7 +4584,6 @@ D:A crackling ball of energy, zooming about seemingly at random.
 
 N:301:2-headed hydra
 G:M:u
-#I:110:100d3:20:60:20 improving hydras slighty compared to wyvern
 I:110:100d3:20:75:20
 W:17:2:4000:80
 E:0:1:0:2:2:0
@@ -5066,7 +5016,6 @@ D:of them. It smells foul, and its bite carries a rotting disease.
 
 N:328:Neekerbreeker
 G:I:D
-#I:120:3d2:8:18:10
 I:120:3d2:32:18:10
 W:19:4:100:4
 B:BITE:POISON:2d2
@@ -5167,10 +5116,8 @@ D:It was left here to be used against intruders.
 
 N:334:Wyvern
 G:d:g
-#I:120:100d5:20:65:20 making it slightly worse compared to hydras
 I:120:90d5:20:65:20
 W:22:2:4500:250
-#E:0:1:1:0:1:0
 E:0:1:2:2:1:2
 O:0:0:0:0
 B:BITE:HURT:2d6
@@ -5186,16 +5133,8 @@ D:A fast-moving and deadly draconian animal. Beware its poisonous sting!
 
 N:335:Great eagle
 G:B:u
-#I:120:100d5:20:65:20 changed for druids
-#I:120:70d5:20:65:20
-#I:120:85d5:20:65:20 <- also has +3 more speed than werebear..
-#I:120:75d5:20:65:20 <- should be this probably..BUT then wyvern is overpowered again ;)
-#so..let's leave it at this for now:
-#I:120:85d5:20:65:20 +1spd for druids:
 I:122:85d5:20:65:20
 W:20:2:1000:150
-#E:0:1:1:0:1:0
-#E:0:1:0:1:1:2
 E:0:1:0:2:1:2
 O:0:0:0:0
 B:CLAW:HURT:6d3
@@ -5621,7 +5560,6 @@ D:This fish is among the most poisonous creatures there are.
 
 N:361:Giant firefly
 G:I:r
-#I:120:3d2:8:18:10
 I:120:3d2:32:18:10
 W:24:4:100:4
 B:BITE:LITE:1d2
@@ -5986,8 +5924,6 @@ N:384:Meneldor the Swift
 G:B:u
 I:140:80d10:20:65:20
 W:24:6:1200:360
-#E:0:1:1:0:1:0
-#E:0:1:0:1:1:2
 E:0:1:0:2:1:2
 O:0:0:0:0
 B:CLAW:HURT:7d3
@@ -6026,7 +5962,6 @@ D:A giant silver ant with a caustic bite.
 
 N:387:4-headed hydra
 G:M:y
-#I:120:100d6:20:70:20  improving hydras slighty compared to wyvern
 I:120:100d7:20:85:20
 W:24:2:5000:450
 E:0:1:0:2:4:0
@@ -6090,14 +6025,12 @@ D:It is a human form encased in mouldy wrappings.
 
 N:391:Vampire bat
 G:b:D
-#I:120:9d10:12:40:50 increased speed for Vampire race, more useful
 I:125:9d10:12:40:50
 W:24:2:50:150
 E:0:1:1:0:1:0
 O:0:0:0:0
 B:BITE:EXP_40:1d4
 B:BITE:EXP_40:1d4
-#F:RAND_50 changed to 25 for Vampire race, less annoying
 F:RAND_25 | COLD_BLOOD | REGENERATE | CAN_FLY |
 F:EVIL | ANIMAL | UNDEAD | IM_COLD | IM_POIS | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
@@ -6405,8 +6338,6 @@ N:410:Gwaihir the Windlord
 G:B:u
 I:130:85d10:20:65:20
 W:24:6:1200:360
-#E:0:1:1:0:1:0
-#E:0:1:0:1:1:2
 E:0:1:0:2:1:2
 O:0:0:0:0
 B:CLAW:HURT:15d2
@@ -6500,7 +6431,6 @@ N:416:White wraith
 G:W:w
 I:110:15d8:20:40:10
 W:26:1:0:175
-#E:0:0:0:0:0:0
 E:1:1:1:2:1:1
 O:0:50:50:0
 B:HIT:HURT:1d6
@@ -6530,8 +6460,6 @@ F:ONLY_ITEM | DROP_1D2 | GOOD | CAN_FLY |
 #F:WILD_MOUNTAIN | CAN_CLIMB | 
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | IM_PSI |
 F:RES_ACID | RES_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:KILL_ITEM
-#F:TAKE_ITEM
 S:1_IN_3 | 
 S:BLIND | CONF | SCARE | FORGET
 D:Who knows why you are now facing an angel as an enemy? Is it a punishment 
@@ -6918,7 +6846,6 @@ D:Often found in graveyards.
 
 N:440:5-headed hydra
 G:M:g
-#I:120:100d8:20:80:20 improving hydras slighty compared to wyvern
 I:120:100d10:20:95:20
 W:28:2:5500:650
 E:0:1:0:2:5:0
@@ -7132,7 +7059,6 @@ D:clean, and you are the biggest spot of dirt in sight.
 N:452:Deep one
 G:u:g
 I:120:35d12:20:50:20
-#W:28:5:4000:150
 W:28:4:4000:150
 E:1:1:1:2:1:1
 O:20:80:0:0
@@ -7220,8 +7146,6 @@ F:ONLY_ITEM | DROP_1D2 | CAN_FLY |
 F:SMART | OPEN_DOOR | BASH_DOOR | POWERFUL | RES_MANA | IM_PSI |
 F:RES_FIRE | RES_COLD | IM_POIS | NO_CONF | NO_SLEEP | RES_TELE | 
 F:BASEANGBAND | HAS_LITE
-#F:KILL_ITEM
-#F:TAKE_ITEM
 S:1_IN_3 | 
 S:HEAL | HASTE | BLIND | CONF | SCARE
 D:A lesser angel protected by an aura of holiness. Its muscular form looks 
@@ -7432,8 +7356,6 @@ N:468:Thorondor, Lord of Eagles
 G:B:u
 I:130:85d12:20:65:20
 W:30:6:1600:555
-#E:0:1:1:0:1:0
-#E:0:1:0:1:1:2
 E:0:1:0:2:1:2
 O:0:0:0:0
 B:CLAW:HURT:16d2
@@ -7639,7 +7561,6 @@ D:It is a very unstable, strange pulsing mound of flesh.
 N:481:Shelob, Spider of Darkness
 G:S:D
 I:120:35d100:30:120:80
-#W:55:3:1400:27000 for FINAL_GUARDIAN:
 W:55:2:1400:27000
 E:0:1:0:2:1:8
 O:20:30:40:0
@@ -7663,12 +7584,8 @@ D:pass through Cirith Ungol, but occasionally goes out foraging for food to
 D:feed her voracious appetite. 
 
 N:482:Giant squid
-#G:~:g  make it easier to spot for druids:
 G:~:U
-#I:110:80d10:8:80:80 changed for druids
-#I:120:150d10:8:80:80 +1spd for druids:
 I:122:150d10:8:80:80
-#W:32:3:3000:600
 W:41:3:3000:600
 E:3:0:3:6:1:0
 O:0:0:0:0
@@ -8195,7 +8112,6 @@ D:It is a towering inferno of flames.
 N:511:Cherub
 G:A:G
 I:120:100d10:30:68:255
-#W:39:4:0:2700
 W:39:4:0:2000
 E:1:1:1:2:1:1
 O:0:90:10:0
@@ -8209,8 +8125,6 @@ F:ONLY_ITEM | DROP_1D2 | REFLECTING  | RES_MANA | RES_TELE
 F:SMART | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | IM_POIS | IM_PSI |
 F:NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE | NO_STUN
-#F:KILL_ITEM
-#F:TAKE_ITEM
 S:1_IN_3 | 
 S:HEAL | HASTE | BLIND | SCARE | MIND_BLAST | BO_FIRE | 
 S:S_MONSTERS
@@ -8249,7 +8163,6 @@ F:FORCE_SLEEP |
 F:FRIENDS | 
 F:BASH_DOOR | ATTR_MULTI | DROP_SKELETON | DROP_CORPSE | 
 F:ANIMAL | NO_CONF | NO_SLEEP | 
-#F:RES_ELEC | RES_POIS | RES_ACID | RES_FIRE | RES_COLD | 
 F:IM_ELEC | IM_POIS | IM_ACID | IM_FIRE | IM_COLD | 
 F:MORTAL | BASEANGBAND | HAS_LITE | RES_LITE
 S:1_IN_5 | 
@@ -8379,7 +8292,6 @@ D:frame.
 N:521:Oriental vampire
 G:V:s
 I:110:40d30:20:60:10
-#W:40:3:0:750
 W:40:5:0:750
 E:1:1:1:2:1:1
 O:10:45:35:0
@@ -8430,8 +8342,6 @@ B:HIT:EXP_20:13d1
 F:FORCE_MAXHP | OPEN_DOOR | FRIENDS | DROP_60 | REGENERATE |
 F:ONLY_ITEM | NO_FEAR |
 F:EVIL | IM_POIS | RES_COLD | IM_FIRE | DEMON | ZANGBAND | HAS_LITE
-#F:DROP_CHOSEN
-#F:NONLIVING
 D:Slender, red-skinned demons twisting in nightmarish shapes. 
 D:They are armed with hellblades, which will suck the life from 
 D:your body. 
@@ -8955,7 +8865,6 @@ N:554:Grey wraith
 G:W:s
 I:110:19d10:20:50:10
 W:36:1:0:700
-#E:0:0:0:0:0:0
 E:1:1:1:2:1:1
 O:0:50:50:0
 B:HIT:HURT:1d10
@@ -9032,7 +8941,6 @@ D:A sentient arcane tome casting spells with malevolent intent.
 N:558:Colossus
 G:g:G
 I:110:30d100:15:150:10
-#W:36:4:35000:900
 W:36:4:35000:1400
 E:1:1:1:2:1:1
 O:0:0:0:0
@@ -9085,7 +8993,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY | RES_LITE
 F:DROP_4D2 | DROP_CORPSE
 F:BASH_DOOR | WILD_TOO | WILD_MOUNTAIN | WILD_WOOD |
 F:EVIL | DRAGON | IM_ELEC | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_9 | 
 S:SCARE | 
 S:BR_ELEC
@@ -9104,7 +9011,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY |
 F:DROP_4D2 | DROP_CORPSE | 
 F:BASH_DOOR | WILD_TOO | WILD_MOUNTAIN | WILD_WOOD |
 F:EVIL | DRAGON | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_9 | 
 S:SCARE | 
 S:BR_POIS
@@ -9225,7 +9131,6 @@ F:FORCE_SLEEP | PASS_WALL | INVISIBLE |
 F:IM_POIS | RES_COLD | IM_ACID | IM_FIRE |
 F:NO_SLEEP | NO_CONF | NO_STUN | 
 F:EVIL | DEMON | BASEANGBAND
-#F:NONLIVING
 S:1_IN_4 | 
 S:BLINK | DARKNESS | S_DEMON
 D:An ugly demon with insect-like extremities and large bulbous eyes. 
@@ -9243,7 +9148,6 @@ B:TOUCH:LOSE_WIS
 F:FORCE_SLEEP | OPEN_DOOR | BASH_DOOR | ELDRITCH_HORROR | 
 F:EVIL | DEMON | IM_POIS | RES_ACID | NO_CONF | NO_SLEEP | RES_TELE |
 F:CAN_SWIM | CTHANGBAND
-#F:NONLIVING
 S:1_IN_4 |
 S:SCARE | TELE_AWAY | BA_NUKE | CURSE | BA_POIS |
 S:CONF | S_DEMON | S_UNDEAD
@@ -9309,7 +9213,6 @@ F:RES_COLD | RES_NETH | RES_WATE | RES_PLAS | RES_DISE | SMART |
 F:RES_NEXU | RES_TELE | KILL_WALL | ELDRITCH_HORROR |
 F:BASH_DOOR | DEMON | COLD_BLOOD | ANIMAL | CAN_SWIM |
 F:DROP_GOOD | DROP_GREAT | ONLY_ITEM | DROP_2D2 | JOKEANGBAND | NO_CUT
-#F:NONLIVING
 S:1_IN_3 | 
 S:BLINK | SLOW | SCARE | DARKNESS | HEAL | RAISE_DEAD
 S:TPORT | TELE_AWAY | HASTE | S_MONSTER | DRAIN_MANA |
@@ -9460,7 +9363,6 @@ D:and of temporary lapses of visibility..."
 N:581:The Queen Ant
 G:a:v
 I:120:15d100:30:100:10
-#W:37:2:2000:1000  lvl 30 = army ant
 W:23:2:2000:1000
 E:0:1:0:2:1:0
 O:50:50:0:0
@@ -9617,7 +9519,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | WILD_TOO | WILD_MOUNTAIN | WILD_VOLCANO |
 F:DROP_1D2 | DROP_4D2 | CAN_FLY | DROP_CORPSE | SUSCEP_COLD |
 F:BASH_DOOR | RES_LITE
 F:EVIL | DRAGON | IM_FIRE | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_9 | 
 S:CONF | SCARE | 
 S:BR_FIRE
@@ -9848,7 +9749,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | RES_LITE
 F:DROP_3D2 | DROP_4D2 | DROP_CORPSE | WILD_MOUNTAIN | 
 F:SMART | BASH_DOOR | POWERFUL | MOVE_BODY | CAN_FLY |
 F:EVIL | DRAGON | IM_ELEC | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_6 | 
 S:BLIND | CONF | SCARE | 
 S:BR_ELEC
@@ -9915,7 +9815,6 @@ D:approaches.
 N:605:Seraph
 G:A:r
 I:120:150d10:30:68:255
-#W:45:4:3100:5000
 W:45:4:3100:3000
 E:1:1:1:2:1:1
 O:0:30:70:0
@@ -9929,8 +9828,6 @@ F:ONLY_ITEM | DROP_1D2 | REFLECTING | RES_MANA | RES_TELE
 F:SMART | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_LITE | IM_PSI |
 F:NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE | NO_STUN
-#F:KILL_ITEM
-#F:TAKE_ITEM
 S:1_IN_11 | 
 S:HEAL | HASTE | TELE_AWAY | CONF | BO_MANA | BO_PLAS | 
 S:S_MONSTERS | S_ANGEL
@@ -9961,7 +9858,6 @@ N:607:Black wraith
 G:W:D
 I:120:50d10:20:55:10
 W:38:2:0:1300
-#E:0:0:0:0:0:0
 E:1:1:1:2:1:1
 O:50:0:50:0
 B:HIT:HURT:1d12
@@ -9980,11 +9876,9 @@ D:shadow. It reaches out at you.
 
 N:608:Nightgaunt
 G:U:D
-#I:110:24d10:20:50:80 mimic+ac
 I:110:24d10:20:70:80
 W:38:2:0:1000
 E:0:1:0:2:1:2
-#E:0:0:0:0:0:0
 O:50:0:50:0
 B:STING:LOSE_STR:1d5
 B:TOUCH:PARALYZE:3d4
@@ -10009,8 +9903,6 @@ B:CLAW:HURT:22d1
 F:IM_POIS | OPEN_DOOR | BASH_DOOR | MALE | RES_PLAS | IM_FIRE | 
 F:IM_FIRE | NO_CONF | NO_SLEEP | EVIL | DEMON | FORCE_MAXHP | RES_TELE | 
 F:ZANGBAND | HAS_LITE
-#F:NONLIVING
-#S:1_IN_2 | reduced to avoid mad int/mana bonus compared to angels
 S:1_IN_3 |
 S:BO_PLAS
 D:A minor demon lord with a goat's head, tough to kill. 
@@ -10059,7 +9951,6 @@ N:612:Nether wraith
 G:W:G
 I:120:48d10:20:55:10
 W:39:2:0:1700
-#E:0:0:0:0:0:0
 E:1:1:1:2:1:1
 O:50:0:50:0
 B:HIT:HURT:1d12
@@ -10094,7 +9985,6 @@ D:It is a giant dog that glows with heat. Flames pour from its nostrils.
 
 N:614:7-headed hydra
 G:M:G
-#I:120:100d10:20:90:20  improving hydras slighty compared to wyvern
 I:120:100d12:20:100:20
 W:39:2:7000:2000
 E:0:1:0:2:7:0
@@ -10188,7 +10078,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | DROP_CORPSE |
 F:DROP_3D2 | DROP_4D2 | CAN_FLY |
 F:SMART | BASH_DOOR | POWERFUL | MOVE_BODY | 
 F:EVIL | DRAGON | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_6 | 
 S:BLIND | CONF | SCARE | 
 S:BR_POIS
@@ -10428,7 +10317,6 @@ D:A massive troll, equipped with a scimitar and heavy armour.
 
 N:632:Disenchanter worm mass
 G:w:I
-#I:100:10d8:7:5:10
 I:100:10d8:28:5:10
 W:40:3:50:30
 E:0:0:0:0:0:0
@@ -10451,7 +10339,6 @@ O:0:0:0:0
 F:FORCE_SLEEP | FORCE_MAXHP | NEVER_MOVE | NEVER_BLOW | 
 F:INVISIBLE | EMPTY_MIND | ANIMAL | IM_POIS
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND
-# | S_LOWEXP
 S:1_IN_2 | 
 S:BLINK | TPORT | 
 S:S_UNDEAD
@@ -10460,14 +10347,9 @@ D:It is a pulsing flesh mound that reeks of death and putrefaction.
 N:634:Lesser titan
 G:P:y
 I:120:24d100:30:120:15
-#I:120:24d100:30:140:15
 W:50:2:30000:6000
 E:1:1:1:2:1:1
 O:0:100:0:0
-#B:HIT:CONFUSE:11d9
-#B:HIT:CONFUSE:11d9
-#B:HIT:CONFUSE:11d9
-#B:HIT:CONFUSE:11d9
 B:HIT:HURT:11d9
 B:HIT:HURT:11d9
 B:HIT:HURT:11d9
@@ -10477,8 +10359,6 @@ F:DROP_GOOD | DROP_4D2 | DROP_SKELETON | DROP_CORPSE |
 F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR | NO_NEST | 
 F:EVIL | GIANT | MALE | BASEANGBAND | HAS_LITE | NO_CONF |
 F:RES_FIRE | RES_COLD | RES_ELEC | RES_ACID | RES_POIS
-#F:NO_SLEEP | RES_SHARDS
-#S:1_IN_3 | avoid getting angel-like spell boni
 S:1_IN_4
 S:HEAL | TELE_TO | SCARE | BOULDER
 S:S_MONSTERS
@@ -10487,7 +10367,6 @@ D:and hate.
 
 N:635:9-headed hydra
 G:M:r
-#I:120:100d15:20:95:20 improving hydras slighty compared to wyvern
 I:120:100d15:20:105:20
 W:40:2:8000:3000
 E:0:1:0:2:9:0
@@ -10542,7 +10421,6 @@ F:SMART | OPEN_DOOR | BASH_DOOR |
 F:NO_CONF | NO_SLEEP | RES_FIRE | RES_ELEC | RES_COLD | RES_POIS | 
 F:MORTAL | BASEANGBAND | HAS_LITE
 #F:AI_ANNOY
-#S:1_IN_4 | increased it for xtra_shots (mimics)
 S:1_IN_3 |
 S:S_MONSTERS |  
 S:ARROW_1 | ARROW_3 | MISSILE | BO_FIRE | BO_ELEC | BA_COLD | 
@@ -10595,12 +10473,8 @@ D:It is a tougher relative of the Xorn. Its hide glitters with metal ores.
 
 N:640:Giant roc
 G:B:u
-#I:110:80d13:20:70:10 improved for druid form
 I:120:80d13:20:80:10
-#W:40:3:6000:1000
 W:40:3:6000:1600
-#E:0:1:1:0:1:0
-#E:0:1:0:1:1:2
 E:0:1:0:2:1:2
 O:0:0:0:0
 B:CRUSH:HURT:8d12
@@ -10609,23 +10483,18 @@ B:HIT:ELEC:12d12
 F:BASH_DOOR | CAN_FLY | WILD_MOUNTAIN | WILD_DESERT | WILD_WOOD |
 F:ANIMAL | IM_ELEC | DROP_CORPSE | HAS_EGG
 F:MORTAL | BASEANGBAND
-# | SUSCEP_ACID  <- taken out for druid form
 F:NO_SLEEP | NO_CONF | NO_STUN | RES_SOUND
 D:A vast legendary bird, its iron talons rake the most impenetrable of 
 D:surfaces and its screech echoes through the many winding dungeon corridors. 
 
 N:641:Minotaur
 G:H:U
-#improved compared to 5-headed hydra, for druid forms
-#I:130:100d10:13:25:10
 I:130:100d12:13:40:10
 W:40:2:15000:2100
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:BUTT:HURT:4d6
 B:BUTT:HURT:4d6
-#B:BUTT:HURT:2d6
-#B:BUTT:HURT:2d6
 B:BUTT:HURT:3d6
 B:BUTT:HURT:3d6
 F:BASH_DOOR | DROP_SKELETON | DROP_CORPSE | 
@@ -10688,7 +10557,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | DROP_CORPSE
 F:DROP_3D2 | DROP_4D2 | CAN_FLY | SUSCEP_COLD | WILD_VOLCANO
 F:SMART | BASH_DOOR | POWERFUL | MOVE_BODY | RES_LITE
 F:EVIL | DRAGON | IM_FIRE | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_6 | 
 S:BLIND | CONF | SCARE | 
 S:BR_FIRE
@@ -10761,7 +10629,6 @@ D:really believe in witches, do you?
 N:648:Vrock
 G:U:s
 I:110:40d10:20:50:80
-#W:40:2:2700:2000
 W:40:2:2700:750
 E:1:1:1:2:1:1
 O:0:50:50:0
@@ -10833,7 +10700,6 @@ F:ONLY_ITEM | DROP_4D2 | DROP_GOOD |
 F:INVISIBLE | COLD_BLOOD | PASS_WALL | MOVE_BODY |
 F:OPEN_DOOR | BASH_DOOR | IM_POIS | IM_COLD | DEMON | EVIL | ZANGBAND
 #F:AI_ANNOY
-#F:NONLIVING
 S:1_IN_3 |
 S:CURSE | HOLD | SCARE | BLIND | BO_ACID | S_DEMON |
 S:FORGET | BO_NETH | MIND_BLAST | DARKNESS
@@ -10845,7 +10711,6 @@ D:extending far out behind it."
 N:652:Fallen angel
 G:A:s
 I:130:100d25:30:90:255
-#W:49:6:0:8000
 W:49:6:0:4000
 E:1:1:1:2:1:1
 O:0:50:50:0
@@ -10859,8 +10724,6 @@ F:SMART | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | RES_TIME
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_TELE | RES_NETH |
 F:CAN_FLY | BASEANGBAND | HAS_LITE | NO_STUN | IM_PSI |
 #F:WILD_MOUNTAIN | CAN_CLIMB | 
-#F:KILL_ITEM
-#F:TAKE_ITEM
 S:1_IN_3 | 
 S:TELE_TO | BLIND | SCARE | CURSE | CURSE | 
 S:S_DEMON | BO_NETH
@@ -10869,7 +10732,6 @@ D:An angelic being, who was mighty once, but dared defy its Creator.
 N:653:Giant headless
 G:H:u
 I:110:30d12:20:50:40
-#W:41:2:4000:900
 W:41:2:4000:500
 E:1:1:1:2:1:0
 O:0:100:0:0
@@ -10997,7 +10859,6 @@ D:bony fingers.
 N:659:Byakhee
 G:U:D
 I:110:40d10:20:40:80
-#W:41:3:1300:1500
 W:41:3:1300:750
 E:0:0:0:0:0:0
 O:0:50:50:0
@@ -11042,7 +10903,6 @@ D:countenance glares at you in disdain.
 N:661:Archon
 G:A:y
 I:130:100d35:30:140:255
-#W:55:5:3200:12000
 W:55:5:3200:5000
 E:1:1:1:2:1:1
 O:0:100:0:0
@@ -11057,7 +10917,6 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_TELE | CAN_FLY |
 #F:WILD_MOUNTAIN | CAN_CLIMB | 
 F:BASEANGBAND | HAS_LITE | NO_STUN | NO_CONF | NO_SLEEP | IM_PSI |
 F:KILL_ITEM
-#F:TAKE_ITEM
 S:1_IN_3 | 
 S:TELE_TO | BLIND | SCARE | CURSE | CURSE | BO_MANA | 
 S:S_ANGEL
@@ -11091,7 +10950,6 @@ N:663:Hunting horror
 G:U:D
 I:110:30d17:20:90:80
 W:42:2:0:2300
-#E:0:0:0:0:0:0
 E:0:0:0:2:1:0
 O:45:35:0:10
 B:BITE:LOSE_DEX:1d3
@@ -11293,7 +11151,6 @@ D:blood is fire. It charges at you ignoring everything else.
 N:673:Mumak
 G:q:s
 I:110:90d10:20:55:100
-#W:63:2:150000:2100
 W:63:2:150000:1200
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -11372,7 +11229,6 @@ N:677:Dark young of Shub-Niggurath
 G:U:g
 I:120:12d100:20:75:80
 W:43:2:0:5000
-#E:0:0:0:0:0:0
 E:0:0:4:6:1:0
 O:0:40:30:20
 B:CRUSH:HURT:5d6
@@ -11383,7 +11239,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | ELDRITCH_HORROR |
 F:ONLY_ITEM | DROP_1D2 | CAN_SWIM |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | HURT_LITE | IM_POIS | 
 F:EVIL | DEMON | IM_FIRE | NO_CONF | NO_SLEEP | RES_TELE | CTHANGBAND
-#F:NONLIVING
 S:1_IN_9 | 
 S:BLIND | CURSE | 
 S:S_DEMON | HEAL 
@@ -11612,7 +11467,6 @@ D:with her extreme speed.
 
 N:688:11-headed hydra
 G:M:R
-#I:120:100d18:20:100:20
 I:120:100d18:20:110:20
 W:44:2:8500:6000
 E:0:1:0:2:11:0
@@ -11690,7 +11544,6 @@ F:EMPTY_MIND | COLD_BLOOD | OPEN_DOOR | BASH_DOOR |
 F:DRAGON | IM_FIRE | IM_COLD | NO_STUN | 
 F:IM_ELEC | IM_POIS | CAN_SWIM |
 F:NO_CONF | NO_SLEEP | NO_FEAR | NONLIVING | BASEANGBAND | NO_CUT
-#F:ATTR_MULTI
 S:1_IN_6 | 
 S:BLIND | SLOW | CONF | ARROW_4 | 
 S:BR_POIS
@@ -11738,10 +11591,8 @@ D:out of nowhere to take his place.
 
 N:694:Lesser black reaver
 G:L:D
-#I:120:25d100:20:120:50 mimic+ac
 I:120:25d100:20:145:50
 W:45:3:2600:7000
-#E:0:0:0:0:0:0
 E:1:1:1:2:1:1
 O:0:0:100:0
 B:HIT:UN_BONUS:4d8
@@ -11807,16 +11658,10 @@ D:and he seems to have studied magic too, and is a master of setting traps.
 
 N:697:Smaug the Golden
 G:D:R
-#I:120:24d100:30:150:80
-#W:48:2:230000:23000 to become FINAL_GUARDIAN of Erebor....
 I:130:48d100:30:150:80
 W:70:2:230000:23000
 E:0:1:2:6:1:2
 O:50:50:0:0
-#B:CLAW:HURT:4d12
-#B:CLAW:HURT:4d12
-#B:BITE:FIRE:5d14
-#B:BITE:FIRE:5d14
 B:CLAW:HURT:5d12
 B:CLAW:HURT:5d12
 B:BITE:FIRE:7d14
@@ -11838,7 +11683,6 @@ D:surviving into the Third Age.
 
 N:698:The Stormbringer
 G:|:D
-#I:120:13d123:20:99:20
 I:120:13d123:20:99:0
 W:45:2:0:13333
 E:0:0:0:0:0:0
@@ -11899,7 +11743,6 @@ D:carrying explosives and making terrorist strikes...
 N:701:Dracolich
 G:D:G
 I:130:35d100:25:120:80
-#W:55:2:180000:18000
 W:55:2:180000:14000
 E:0:1:2:6:1:2
 O:10:50:40:0
@@ -11923,15 +11766,9 @@ D:prey to satisfy its hunger.
 N:702:Greater titan
 G:P:o
 I:120:38d100:30:130:15
-#I:120:38d100:30:150:15
-#W:58:2:50000:23500
 W:58:2:50000:10000
 E:1:1:1:2:1:1
 O:0:100:0:0
-#B:HIT:CONFUSE:14d12
-#B:HIT:CONFUSE:14d12
-#B:HIT:CONFUSE:14d12
-#B:HIT:CONFUSE:14d12
 B:HIT:HURT:14d12
 B:HIT:HURT:14d12
 B:HIT:HURT:14d12
@@ -11942,7 +11779,6 @@ F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR | NO_STUN | NO_NEST |
 F:EVIL | GIANT | MALE | BASEANGBAND | HAS_LITE | NO_CONF
 F:RES_FIRE | RES_COLD | RES_ELEC | RES_ACID | RES_POIS
 #F:NO_SLEEP | RES_SHARDS
-#S:1_IN_3 | avoid getting angel-like spell boni
 S:1_IN_4 | 
 S:HEAL | TELE_TO | BOULDER
 S:S_MONSTERS
@@ -11976,7 +11812,6 @@ N:704:Winged Horror
 G:B:D
 I:120:25d80:30:80:5
 W:48:3:4500:4000
-#E:0:1:0:1:1:2
 E:0:1:0:2:1:2
 O:0:0:0:0
 B:CLAW:HURT:3d8
@@ -12080,8 +11915,6 @@ D:split stones and even the very rock of Isengard with its roots.
 N:709:Hru
 G:P:s
 I:120:40d100:30:150:15
-#I:120:40d100:30:180:15
-#W:66:1:40000:14500
 W:66:2:40000:14500
 E:1:1:1:2:1:1
 O:0:0:0:0
@@ -12282,7 +12115,6 @@ D:A sentient, moving section of wall.
 
 N:719:Nycadaemon
 G:U:o
-#I:120:29d99:20:120:40 mimic+ac
 I:120:29d99:20:140:40
 W:51:3:0:10000
 E:1:1:1:2:1:1
@@ -12296,7 +12128,6 @@ F:REGENERATE | RES_ACID | IM_COLD | IM_FIRE | CAN_FLY |
 F:NO_SLEEP | NO_STUN | NO_CONF | EVIL | DEMON |
 F:INVISIBLE | KILL_WALL |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | BASEANGBAND
-#F:NONLIVING
 S:1_IN_4 | 
 S:HOLD | BLINK | CONF | S_DEMON | BRAIN_SMASH | BR_NETH
 D:A loathsome, sturdy, winged, horned demon, with talons that could tear 
@@ -12305,7 +12136,6 @@ D:a stone wall down.
 N:720:Barbazu
 G:U:G
 I:120:120d10:25:90:40
-#W:55:2:0:3000
 W:55:2:0:2000
 E:1:1:1:2:1:1
 O:20:40:20:20
@@ -12319,7 +12149,6 @@ F:OPEN_DOOR | BASH_DOOR | POWERFUL |
 F:EVIL | DEMON | IM_POIS | NO_CONF | NO_SLEEP
 S:1_IN_7 | 
 S:SCARE | S_DEMON
-#F:NONLIVING
 D:A foul, humanoid creature with a long tail, clawed hands and feet, 
 D:and a disgusting, wiry, snaky beard.  They are the elite shock troops 
 D:of the hells, capable of a terrifying berserk fury. 
@@ -12338,7 +12167,6 @@ F:EVIL | DEMON | FORCE_SLEEP | FORCE_MAXHP |
 F:ONLY_ITEM | DROP_2D2 | IM_POIS | 
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | SMART | 
 F:NO_CONF | NO_SLEEP | HURT_LITE | IM_FIRE | IM_COLD | ZANGBAND
-#F:NONLIVING
 S:1_IN_4 | 
 S:BLIND | CONF | BRAIN_SMASH | SCARE | RAISE_DEAD
 S:BA_NETH | FORGET | S_UNDEAD | DRAIN_MANA |
@@ -12348,7 +12176,6 @@ D:large black he-goat.
 
 N:722:Nightwing
 G:W:D
-#I:120:60d60:20:120:10
 I:120:60d60:20:140:10
 W:61:4:0:10000
 E:1:1:1:2:1:1
@@ -12412,7 +12239,6 @@ D:darkness in the shape of a large dog.
 
 N:725:Time hound
 G:Z:B
-#I:130:60d10:30:100:0 <- extra speed b/c they are 'Time' hounds maybe?
 I:120:60d10:30:100:0
 W:51:2:800:5000
 E:0:1:0:2:1:4
@@ -12483,7 +12309,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | AURA_ELEC | CAN_FLY | WILD_MOUNTAIN |
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | RES_LITE
 F:BASH_DOOR | POWERFUL | MOVE_BODY | DROP_CORPSE | DROP_CHOSEN |
 F:EVIL | DRAGON | IM_ELEC | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_4 | 
 S:BLIND | CONF | SCARE | 
 S:BR_ELEC
@@ -12581,7 +12406,6 @@ E:1:1:1:2:1:1
 O:20:20:20:20
 B:HIT:LOSE_CHR:5d5
 B:MOAN:*
-#B:TOUCH:LOSE_ALL:10d1 made room for MOAN
 B:TOUCH:LOSE_ALL:20d1
 B:CHARGE:EAT_GOLD
 F:ALLOW_RUNNING | UNIQUE | MALE | CAN_SPEAK | REFLECTING | RES_MANA
@@ -12661,7 +12485,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | ONLY_ITEM | DROP_2D2 | ELDRITCH_HORROR |
 F:OPEN_DOOR | BASH_DOOR | SMART | POWERFUL | DROP_GOOD | KILL_BODY |
 F:IM_ACID | RES_COLD | RES_ELEC | IM_POIS | NO_CONF | NO_SLEEP
 F:KILL_ITEM | ZANGBAND
-#F:NONLIVING
 S:1_IN_3
 S:BR_ACID | BR_POIS | BR_NUKE | SCARE | RAISE_DEAD 
 S:CURSE | CURSE | S_DEMON | S_UNDEAD 
@@ -12737,7 +12560,6 @@ D:hints at internal organs best left to the imagination.
 
 N:740:Lesser kraken
 G:~:G
-#I:120:30d100:30:150:80 toned down for druids
 I:120:30d100:30:100:80
 W:54:2:8000:20000
 E:3:0:3:0:1:0
@@ -12770,7 +12592,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY | AURA_COLD | WILD_MOUNTAIN |
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | SUSCEP_FIRE |
 F:BASH_DOOR | POWERFUL | MOVE_BODY | DROP_CORPSE | DROP_CHOSEN |
 F:EVIL | DRAGON | IM_COLD | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_4 | 
 S:BLIND | CONF | SCARE | 
 S:BR_COLD
@@ -12782,7 +12603,6 @@ N:742:Demilich
 G:L:U
 I:120:35d100:20:100:50
 W:54:2:3000:8000
-#E:0:0:0:0:0:0
 E:1:1:1:2:1:1
 O:0:0:100:0
 B:TOUCH:EXP_80
@@ -12805,8 +12625,6 @@ N:743:The Phoenix
 G:B:f
 I:120:36d100:60:130:0
 W:54:3:6000:20000
-#E:0:1:1:0:1:0
-#E:0:1:0:1:1:2
 E:0:1:0:2:1:2
 O:0:50:50:0
 B:BITE:FIRE:12d6
@@ -12821,7 +12639,6 @@ F:ANIMAL | IM_ACID | IM_FIRE | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP
 F:BASEANGBAND | HAS_LITE | REGENERATE
 #IM_LITE
 S:1_IN_3 | 
-#S:BO_FIRE | BO_PLAS | making it slightly tougher by removing these abilities
 S:BA_FIRE | BR_FIRE | BR_LITE | BR_PLAS
 D:A massive glowing eagle bathed in flames. The searing heat chars your 
 D:skin and melts your armour. 
@@ -12863,7 +12680,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | ONLY_ITEM | DROP_2D2 | ELDRITCH_HORROR |
 F:INVISIBLE | OPEN_DOOR | BASH_DOOR | SMART | POWERFUL | CAN_FLY |
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP | 
 F:ZANGBAND
-#F:NONLIVING
 S:1_IN_3
 S:MIND_BLAST | BA_CHAO | SCARE | BRAIN_SMASH | DRAIN_MANA |
 S:S_HOUND | S_DEMON | S_DRAGON | TPORT | HASTE | CONF | SCARE |
@@ -12886,7 +12702,6 @@ F:DEMON | EVIL | DROP_GOOD | CAN_SWIM | IM_POIS |
 F:FORCE_SLEEP | FORCE_MAXHP | ONLY_ITEM | DROP_2D2 | ELDRITCH_HORROR |
 F:OPEN_DOOR | BASH_DOOR | SMART | POWERFUL | MOVE_BODY |
 F:RES_ACID | RES_FIRE | RES_COLD | RES_POIS | NO_CONF | NO_SLEEP | ZANGBAND
-#F:NONLIVING
 S:1_IN_3
 S:SCARE | BRAIN_SMASH | DRAIN_MANA | 
 S:BR_CONF | S_DEMON | S_UNDEAD | TPORT | HEAL |
@@ -13094,7 +12909,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY | DROP_CORPSE | WILD_VOLCANO | RES_LITE
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | SUSCEP_COLD |
 F:BASH_DOOR | POWERFUL | MOVE_BODY | AURA_FIRE | NO_STUN | DROP_CHOSEN |
 F:EVIL | DRAGON | IM_FIRE | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_4 | 
 S:BLIND | CONF | SCARE | 
 S:BR_FIRE
@@ -13118,7 +12932,6 @@ F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD |
 F:COLD_BLOOD | OPEN_DOOR | BASH_DOOR | POWERFUL | SMART | 
 F:EVIL | DEMON | IM_COLD | IM_POIS | HURT_LITE | NO_CONF | NO_SLEEP | 
 F:RES_TELE | CTHANGBAND
-#F:NONLIVING
 S:1_IN_3 | 
 S:BLIND | HOLD | SCARE | CURSE | DRAIN_MANA | 
 S:BRAIN_SMASH | BA_WATE | S_DEMON | HASTE |
@@ -13140,7 +12953,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | ONLY_ITEM | DROP_2D2 | ELDRITCH_HORROR |
 F:OPEN_DOOR | BASH_DOOR | RES_NETH | RES_NEXU | RES_TELE | MOVE_BODY |
 F:RES_ACID | RES_FIRE | RES_COLD | IM_POIS | NO_CONF | NO_SLEEP | NO_FEAR
 F:CAN_FLY | ZANGBAND | HAS_LITE
-#F:NONLIVING
 D:Khorne's mightiest servant, a winged hound-demon walking on 
 D:two paws and wielding a mighty axe and a whip in the other 
 D:two. Intelligent, bloodthirsty eyes leer at you from inside 
@@ -13249,7 +13061,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | BASEANGBAND |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | 
 F:BASH_DOOR | POWERFUL |  
 F:EVIL | DEMON | IM_POIS | IM_ACID | NO_CONF | NO_SLEEP
-#F:NONLIVING
 S:1_IN_6 | 
 S:BR_POIS | BR_ACID | S_DEMON | BLIND | CONF | ARROW_4
 D:It's big.  It's fat.  It's red.  It's ugly.  It's got a severe attack of 
@@ -13275,7 +13086,6 @@ F:NO_STUN | NO_SLEEP | NO_CONF | NO_FEAR | IM_PSI | WILD_VOLCANO
 F:SMART | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | RES_LITE
 F:IM_ACID | IM_FIRE | IM_ELEC | IM_POIS | RES_TELE | BASEANGBAND | HAS_LITE
 F:KILL_ITEM
-#F:TAKE_ITEM
 S:1_IN_2 | 
 S:TELE_TO | BLIND | 
 S:BO_FIRE | BO_MANA | BA_FIRE | 
@@ -13301,9 +13111,7 @@ F:ONLY_ITEM | DROP_2D2 | DROP_GOOD | CAN_FLY | IM_PSI | NO_SLEEP | RES_TIME
 #F:WILD_MOUNTAIN | CAN_CLIMB | 
 F:SMART | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | NO_STUN | NO_CONF
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_TELE | BASEANGBAND
-F:HAS_LITE
-F:KILL_ITEM
-#F:TAKE_ITEM
+F:HAS_LITE | KILL_ITEM
 S:1_IN_2 | 
 S:TELE_TO | BLIND | 
 S:BO_MANA | BO_NETH | BA_NETH | 
@@ -13409,7 +13217,6 @@ F:ONLY_ITEM | DROP_3D2 | DROP_GOOD | DROP_GREAT |
 F:SMART | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | IM_PSI | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | BASEANGBAND | HAS_LITE
 F:KILL_ITEM
-#F:TAKE_ITEM
 S:1_IN_2 | 
 S:TELE_TO | BLIND | BO_MANA | 
 S:S_ANGEL | S_KIN
@@ -13488,7 +13295,6 @@ D:moves with blinding speed. Check your pockets!
 
 N:773:Osyluth
 G:U:W
-#I:130:40d100:20:125:40 mimic+ac
 I:130:40d100:20:145:40
 W:65:2:0:13000
 E:1:1:1:2:1:1
@@ -13534,8 +13340,6 @@ D:the stench of death.  Flee its hunger!
 
 N:775:Greater kraken
 G:~:G
-#I:120:40d100:30:160:80 toned down for druids
-#I:120:40d100:30:120:80 toned up again in jabberwock comparison
 I:120:40d100:30:145:80
 W:60:2:10000:25000
 E:3:0:3:0:1:0
@@ -13600,9 +13404,7 @@ D:Master of all things feline, the Cat Lord moves with catlike stealth.
 
 N:778:Jabberwock
 G:H:v
-#I:130:32d100:35:125:255
 I:130:32d100:35:135:255
-#I:130:32d100:35:150:255
 W:68:3:2300:19000
 E:0:1:0:2:1:0
 O:20:50:20:0
@@ -13792,7 +13594,6 @@ D:with a huge gaping maw instead of a head.
 
 N:787:Gelugon
 G:U:w
-#I:130:45d100:20:100:40 mimic+ac
 I:130:45d100:20:120:40
 W:69:3:0:14000
 E:2:1:2:0:0:1
@@ -13805,7 +13606,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | BASEANGBAND |
 F:ONLY_ITEM | DROP_GOOD | DROP_2D2 | CAN_FLY | IM_POIS | 
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | REGENERATE | 
 F:EVIL | DEMON | IM_COLD | NO_CONF | NO_SLEEP 
-#F:NONLIVING
 S:1_IN_6
 S:BR_COLD | BR_SHAR | BA_COLD | BO_ICEE | S_HI_DEMON | 
 S:SLOW | SCARE | HOLD
@@ -13980,7 +13780,6 @@ D:her magic to do his bidding.
 
 N:795:Horned Reaper
 G:U:B
-#I:130:50d100:40:120:40 mimic+ac
 I:130:50d100:40:140:40
 W:72:3:0:18000
 E:1:1:1:2:1:1
@@ -13994,7 +13793,6 @@ F:ONLY_ITEM | DROP_GOOD | DROP_3D2 | BASEANGBAND |
 F:OPEN_DOOR | BASH_DOOR | KILL_BODY | POWERFUL | 
 F:EVIL | DEMON | NO_CONF | NO_SLEEP | CAN_FLY | 
 F:IM_FIRE | RES_COLD | IM_POIS | IM_ACID | RES_ELEC
-#F:NONLIVING
 S:1_IN_5 | 
 S:HASTE | SLOW | SCARE | S_HI_DEMON 
 D:A giant humanoid demon wielding a massive, heavy and sharp scythe.  Feared 
@@ -14056,7 +13854,6 @@ N:798:Black reaver
 G:L:D
 I:120:50d100:20:170:50
 W:74:3:1900:20000
-#E:0:0:0:0:0:0
 E:1:1:1:2:1:1
 O:0:60:40:0
 B:HIT:UN_BONUS:6d8
@@ -14250,7 +14047,6 @@ F:ONLY_ITEM | DROP_2D2 | DROP_GOOD |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | SMART | 
 F:EVIL | DEMON | IM_FIRE | IM_POIS | NO_CONF | NO_SLEEP | KILL_WALL |
 F:RES_NETH | RES_PLAS | REGENERATE | BASEANGBAND | HAS_LITE
-#F:NONLIVING
 S:1_IN_3 |
 S:BLIND | CONF | BRAIN_SMASH | 
 S:BR_FIRE | BA_NETH | BA_FIRE | BR_PLAS | BO_PLAS |
@@ -14263,11 +14059,9 @@ N:808:Ungoliant, the Unlight
 G:S:D
 I:130:130d100:8:160:80
 W:75:1:1500:35000
-#W:80:1:1500:35000 maybe promote? dunno (slow digestion after eating the sprig)
 E:0:1:0:2:1:8
 O:20:0:80:0
 B:CLAW:POISON:8d6
-#B:CLAW:POISON:8d6
 B:CLAW:EAT_LITE:8d6
 B:BITE:PARALYZE:8d10
 B:STING:LOSE_STR:8d4
@@ -14278,7 +14072,6 @@ F:SMART | BASH_DOOR | IM_ACID | RES_DARK |
 F:ANIMAL | SPIDER | EVIL | IM_POIS | HURT_LITE | NO_CONF | NO_SLEEP
 F:BASEANGBAND
 S:1_IN_3 | 
-#S:HEAL | BLIND | SLOW | CONF | SCARE | DARKNESS | BA_DARK | make her a bit more effective :/
 S:HEAL | BLIND | DARKNESS | BA_DARK | 
 S:BR_POIS | BR_DARK | S_SPIDER
 D:This enormous, hideous spirit of void is in the form of a spider of 
@@ -14326,7 +14119,6 @@ F:FORCE_SLEEP | FORCE_MAXHP |
 F:ONLY_ITEM | DROP_4D2 | DROP_GOOD | RES_DARK |
 F:SMART | BASH_DOOR | MOVE_BODY | 
 F:EVIL | IM_POIS | NO_CONF | NO_SLEEP | CTHANGBAND
-#F:NONLIVING
 S:1_IN_3 |
 S:SCARE | BLIND | CONF | HOLD | HASTE | DRAIN_MANA | HASTE |
 S:CURSE | CURSE | DARKNESS | FORGET | S_DEMON | S_HOUND |
@@ -14364,7 +14156,6 @@ D:uncertain all of a sudden.
 
 N:812:Pit Fiend
 G:U:o
-#I:130:60d100:30:120:35 mimic+ac
 I:130:60d100:30:140:35
 W:77:3:0:22000
 E:1:1:1:2:1:1
@@ -14377,7 +14168,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | REGENERATE |
 F:ONLY_ITEM | DROP_GOOD | DROP_3D2 | BASEANGBAND | 
 F:OPEN_DOOR | BASH_DOOR | MOVE_BODY | POWERFUL | CAN_FLY | 
 F:EVIL | DEMON | IM_FIRE | IM_POIS | NO_CONF | NO_SLEEP
-#F:NONLIVING
 S:1_IN_5 | 
 S:S_HI_DEMON | S_HI_DRAGON | BR_FIRE | BR_POIS | BR_CHAO | BA_CHAO | 
 S:SCARE | BA_FIRE | CURSE 
@@ -14437,8 +14227,6 @@ D:devil."
 N:815:Unmaker
 G:E:v
 I:120:6d66:255:50:0
-#W:77:4:0:10000
-#W:77:3:0:10000
 W:77:3:0:300
 E:0:0:0:0:0:0
 O:20:50:20:0
@@ -14460,7 +14248,6 @@ D:spreading uncontrollably and destroying everything in its path.
 
 N:816:Cyberdemon
 G:U:u
-#I:120:70d101:90:135:55 mimic+ac
 I:120:70d101:90:155:55
 W:77:4:15000:30000
 E:1:1:1:2:1:1
@@ -14536,7 +14323,6 @@ D:spells.
 N:819:The Shadow of Dol Guldur
 G:p:v
 I:130:82d100:60:100:10
-#W:75:3:1900:40000 for FINAL_GUARDIAN:
 W:75:1:1900:40000
 E:1:1:1:2:1:1
 O:0:0:100:0
@@ -14751,7 +14537,6 @@ F:ONLY_ITEM | DROP_4D2 | DROP_GOOD | AURA_ELEC |
 F:INVISIBLE | OPEN_DOOR | BASH_DOOR | 
 F:EVIL | DEMON | RES_ACID | RES_FIRE | IM_COLD | IM_ELEC | 
 F:IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND
-#F:NONLIVING
 S:1_IN_3 | 
 S:BO_MANA | SCARE | BR_COLD | S_DEMON | BO_ELEC | BA_ELEC |
 S:MIND_BLAST | CURSE | BA_CHAO | BA_WATE | S_HI_UNDEAD | S_KIN
@@ -14762,10 +14547,7 @@ D:glowing eyes burning with hatred.
 N:829:Black Dog
 G:C:D
 I:130:58d50:140:100:0
-#W:78:2:1000:5000
-#W:78:2:1000:900
 W:78:4:1000:900
-#E:0:1:0:2:1:4
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:BITE:LOSE_ALL:6d12
@@ -14776,9 +14558,6 @@ F:AURA_ELEC | IM_COLD | RES_FIRE | IM_ELEC | IM_POIS | RES_ACID |
 F:BASH_DOOR | MOVE_BODY | NO_SLEEP | NO_FEAR | NO_CUT | NO_STUN | NO_CONF |
 F:EVIL | UNDEAD | BLUEBAND | HAS_LITE | NO_ESCORT | NO_NEST
 S:1_IN_5 | SCARE | HOLD
-#arjen claimed they occured in packs. in that case, maybe no nether breath.
-#ATTR_MULTI | 
-#S:1_IN_5 | BR_NETH | HOLD
 D:It is a giant nocturnal spectre, a portent of death, with large glowing eyes.
 
 N:830:Cantoras, the Skeletal Lord
@@ -14822,7 +14601,6 @@ F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT |
 F:IM_FIRE | RES_PLAS | RES_NETH | AURA_FIRE |
 F:NO_CONF | NO_SLEEP | EVIL | DEMON | RES_LITE
 F:ESCORTS | RES_COLD | IM_POIS | ZANGBAND | HAS_LITE
-#F:NONLIVING
 S:1_IN_3 |
 S:TELE_TO | SCARE | HOLD | BRAIN_SMASH |
 S:S_DEMON | S_HI_UNDEAD | S_UNDEAD |
@@ -14930,9 +14708,7 @@ D:giants and fight against the other gods of Asgard.
 N:836:Star-spawn of Cthulhu
 G:U:G
 I:140:75d100:90:135:40
-#W:86:2:0:44000 compare to Cyberdemon:
 W:86:2:0:30000
-#E:0:0:0:0:0:0
 E:0:0:2:0:1:0
 O:0:0:100:0
 B:CLAW:POISON:1d30
@@ -15411,7 +15187,6 @@ D:uses its power of complete disintegration, the day of Ragnarok is near.
 
 N:856:Gothmog, the High Captain of Balrogs
 G:U:v
-#might give him 40 instead of 0 sleep so he won't leave his pack behind..
 I:140:120d100:100:180:40
 W:95:1:17000:43000
 E:1:1:1:2:1:1
@@ -15428,8 +15203,6 @@ F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT |
 F:DROP_CHOSEN | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
 F:EVIL | DEMON | SMART | 
 F:IM_FIRE | IM_ELEC | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:AI_ANNOY
-#F:NONLIVING
 S:1_IN_3 | 
 S:BLIND | CONF | SCARE | 
 S:BR_FIRE | BA_NETH | S_KIN |
@@ -15536,10 +15309,7 @@ F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT |
 F:SMART | OPEN_DOOR | BASH_DOOR | MOVE_BODY | REGENERATE | 
 F:EVIL | RES_FIRE | RES_COLD | RES_ELEC | IM_POIS | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | RES_TELE | BASEANGBAND | HAS_LITE
-#F:AI_ANNOY
 S:1_IN_2 | 
-#S:CONF | SCARE | BO_ICEE | BO_PLAS | <- silyl spells
-#S:BLIND | CURSE | <- not totally silyl, but curse is easily countered by saving throw :/
 S:TPORT | BA_MANA | BA_FIRE | BA_WATE | BA_NETH | BA_DARK | BA_CHAO | 
 S:S_HI_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | S_NAZGUL | S_HI_UNIQUE
 S:FORGET | BO_MANA | TELE_LEVEL | BRAIN_SMASH | RAISE_DEAD
@@ -15583,7 +15353,6 @@ D:encounter him, pray your deity holds you in good stead.
 
 N:862:Morgoth, Lord of Darkness
 G:P:D
-#I:140:200d150:100:150:99
 I:140:200d150:200:175:0
 W:100:1:200000:60000
 E:1:1:1:2:1:1
@@ -15606,7 +15375,6 @@ S:BRAIN_SMASH |
 S:BA_MANA | BA_NETH | BA_CHAO | BA_DARK | RAISE_DEAD | 
 S:S_HI_MONSTERS | S_HI_UNIQUE | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | 
 S:ROCKET | BR_NETH | BR_DISI | S_NAZGUL
-#S:BO_MANA
 #S:HAND_DOOM | 
 #S:UNMAGIC
 D:He was the most powerful of the Valar, the equal of Manwe. 
@@ -15776,8 +15544,6 @@ D:It was left here to be used against intruders.
 N:872:The Balrog of Moria
 G:U:v
 I:130:30d100:20:100:40
-#level should be at least 50 (lesser balrog is 49) and up to 80 maybe.
-#W:50:3:13000:30000 for FINAL_GUARDIAN:
 W:50:1:13000:30000
 E:1:1:1:2:1:1
 O:0:50:50:0
@@ -15787,12 +15553,10 @@ B:CRUSH:HURT:5d12
 B:TOUCH:UN_POWER
 F:UNIQUE | MALE | SPECIAL_GENE | IM_POIS | 
 F:FORCE_SLEEP | FORCE_MAXHP | KILL_WALL | DROP_CORPSE |
-#F:ESCORT | ESCORTS | not anymore, since he's dungeon boss now (again..uhh)
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
 F:EVIL | DEMON | IM_FIRE | 
 F:NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:NONLIVING
 S:1_IN_4 | 
 S:CONF | SCARE | 
 S:BR_FIRE | 
@@ -15974,7 +15738,6 @@ D:of adventures losing their minds under the fearsome
 D:charms of mermaids. 
 
 N:883:Box jellyfish
-#G:~:B
 G:~:W
 I:110:10d10:20:30:75
 W:10:2:1000:25
@@ -16066,7 +15829,6 @@ D:Although it looks like a fish and lives in water, it is in fact
 D:a mammal. And it is huge! 
 
 N:890:Sand mite
-#G:~:B
 G:~:u
 I:110:3d10:5:25:80
 W:10:2:300:25
@@ -16074,7 +15836,6 @@ E:0:0:0:0:0:0
 O:0:0:0:0
 B:BITE:POISON:3d6
 B:BITE:POISON:3d6
-#F:CHAR_CLEAR | ATTR_CLEAR
 F:AQUATIC | ANIMAL | IM_POIS | FRIENDS |
 F:DROP_CORPSE | COLD_BLOOD | WEIRD_MIND | STUPID |
 F:MORTAL | BASEANGBAND
@@ -16250,8 +16011,6 @@ D:everybody in the water is in danger!
 N:902:Scrag
 G:T:B
 I:110:40d10:20:50:50
-#W:35:1:5000:440
-#W:37:1:5000:440
 W:37:1:5000:220
 E:1:1:1:2:1:1
 O:0:100:0:0
@@ -16423,7 +16182,6 @@ B:BITE:HURT:4d10
 F:FORCE_SLEEP | FORCE_MAXHP | DROP_CORPSE |
 F:DROP_4D2 | 
 F:EVIL | DRAGON | NO_CONF | NO_SLEEP | AQUATIC | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_9 | 
 S:SCARE | 
 S:BR_SOUN
@@ -16591,7 +16349,6 @@ D:It has a rubbery skin instead of fur.
 N:924:Water demon
 G:U:B
 I:110:35d20:30:50:10
-#W:40:1:0:1000
 W:40:1:0:500
 E:0:0:0:0:1:0
 O:20:60:20:0
@@ -16826,7 +16583,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY |
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | 
 F:BASH_DOOR | POWERFUL | MOVE_BODY | DROP_CORPSE | DROP_CHOSEN |
 F:EVIL | DRAGON | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_4 | 
 S:BLIND | CONF | SCARE | 
 S:BR_POIS
@@ -16848,7 +16604,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY |
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | 
 F:BASH_DOOR | POWERFUL | MOVE_BODY | DROP_CORPSE | DROP_CHOSEN |
 F:EVIL | DRAGON | IM_ACID | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_4 | 
 S:BLIND | CONF | SCARE | 
 S:BR_ACID
@@ -17350,7 +17105,6 @@ O:0:0:0:0
 B:CLAW:POISON:5d8
 B:CLAW:POISON:5d8
 B:BITE:HALLU:5d6
-#B:BITE:HALLU:5d6
 B:BITE:EAT_LITE:5d6
 F:DROP_SKELETON | FORCE_MAXHP | RES_DARK | NO_SLEEP | NO_CONF | 
 F:BASH_DOOR | HURT_LITE | SMART | REGENERATE | 
@@ -17452,7 +17206,6 @@ G:W:v
 I:120:38d22:30:45:0
 W:35:1:0:10000
 E:0:0:0:0:0:0
-#O:20:60:20:0
 O:15:65:20:0
 B:HIT:HURT:2d10
 B:WAIL:PARALYZE:2d6
@@ -17469,10 +17222,6 @@ D:He has lived in the Barrow-Downs for centuries after his first death at the
 D:hands of the Witch-King of Angmar.  A once loyal captain under the 
 D:Witch-King's command, he now awaits a time when his undead forces shall 
 D:rise again to avenge their deaths. 
-#was 46, but it's FORCE_DEPTH now so it appears
-#on the bottom of the barrow-downs always.
-#W:46:3:0:22000
-#F:DROP_4D2 | DROP_2D2 | DROP_GOOD | 
 
 N:972:Hurin Thalion, the Last Lord of Dor-Lomin
 G:@:U
@@ -17529,7 +17278,6 @@ D:A small, apparently unassuming orb which spawns death and destruction.
 
 N:976:Bronze dragon worm
 G:w:U
-#I:100:10d15:10:40:80
 I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
@@ -17551,7 +17299,6 @@ D:a multitude of perplexing and distracting ways.
 
 N:977:Gold dragon worm
 G:w:y
-#I:100:10d15:10:40:80
 I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
@@ -17609,7 +17356,6 @@ D:over elements of matter.
 N:980:Ar-Pharazon the Golden
 G:p:y
 I:130:50d100:30:45:255
-#W:55:1:0:2500  changed to high exp! (for FINAL_GUARDIAN especially)
 W:55:1:0:25000
 E:1:1:1:2:1:1
 O:20:70:10:0
@@ -17620,7 +17366,6 @@ B:HIT:HURT:8d12
 F:FORCE_SLEEP | FORCE_MAXHP | UNIQUE | CAN_SPEAK | SPECIAL_GENE | HAS_LITE |
 F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | DROP_GOOD | DROP_SKELETON | DROP_CORPSE | 
 F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR | MOVE_BODY | BASEANGBAND | 
-#added flying+drop_great for being FINAL_GUARDIAN in submerged ruins
 F:CAN_FLY | DROP_GREAT
 S:1_IN_6 |
 S:HEAL | HASTE | TELE_AWAY | S_MONSTERS | S_KIN
@@ -17732,7 +17477,6 @@ D:vigour. He can prove a troublesome opponent.
 
 N:986:3-headed hydra
 G:M:o
-#I:120:100d5:20:65:20 improving hydras slighty compared to wyvern
 I:120:100d5:20:80:20
 W:20:2:4500:350
 E:0:1:0:2:3:0
@@ -17859,12 +17603,9 @@ D:A figure twisted by evil standing in robes of deepest crimson.
 N:992:Hezrou
 G:U:g
 I:110:52d10:20:40:80
-#W:41:3:2100:2500
 W:41:3:2100:750
 E:1:1:1:2:1:1
 O:0:50:50:0
-#B:HIT:HURT:3d4
-#B:HIT:HURT:3d4
 B:HIT:HURT:3d15
 B:HIT:HURT:3d15
 F:FORCE_SLEEP | FORCE_MAXHP | FRIENDS
@@ -17872,7 +17613,6 @@ F:ONLY_ITEM | DROP_2D2 | IM_POIS |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | 
 F:EVIL | DEMON | IM_FIRE | NO_CONF | NO_SLEEP 
 F:BASEANGBAND
-#F:NONLIVING
 S:1_IN_9 | 
 S:BO_FIRE | 
 S:S_DEMON
@@ -17891,7 +17631,6 @@ F:ONLY_ITEM | DROP_90 | IM_POIS |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | 
 F:EVIL | DEMON | IM_FIRE | NO_CONF | NO_SLEEP
 F:BASEANGBAND
-#F:NONLIVING
 S:1_IN_9 | 
 S:BO_FIRE | 
 S:S_DEMON
@@ -17912,7 +17651,6 @@ F:OPEN_DOOR | BASH_DOOR | POWERFUL |
 F:EVIL | DEMON | RES_LITE
 F:IM_FIRE | NO_CONF | NO_SLEEP
 F:BASEANGBAND
-#F:NONLIVING
 S:1_IN_9 | 
 S:BLIND | CONF | 
 S:BR_FIRE | 
@@ -17936,7 +17674,6 @@ F:ONLY_ITEM | DROP_1D2 | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | IM_POIS | 
 F:EVIL | DEMON | IM_FIRE | NO_CONF | NO_SLEEP
 F:BASEANGBAND
-#F:NONLIVING
 S:1_IN_9 | 
 S:BLIND | CURSE | 
 S:S_DEMON
@@ -17944,7 +17681,6 @@ D:She is a demon of female form with many arms, each bearing deadly weapons.
 
 N:996:Lesser Balrog
 G:U:v
-#I:120:20d100:20:120:40 mimic+ac
 I:120:20d100:20:140:40
 W:49:2:9000:10000
 E:1:1:1:2:1:1
@@ -17958,7 +17694,6 @@ F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | IM_POIS |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
 F:EVIL | DEMON | IM_FIRE | NO_CONF | NO_SLEEP |
 F:BASEANGBAND | HAS_LITE
-#F:NONLIVING
 S:1_IN_4 | 
 S:BLIND | CONF | 
 S:BR_FIRE | 
@@ -18122,7 +17857,6 @@ F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY | WILD_MOUNTAIN | RES_LITE
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_CHOSEN |
 F:BASH_DOOR | POWERFUL | MOVE_BODY | DROP_CORPSE | SMART | REFLECTING | 
 F:EVIL | DRAGON | NO_CONF | NO_SLEEP | NO_STUN | BASEANGBAND | HAS_LITE
-#F:ATTR_MULTI
 S:1_IN_4 | 
 S:BLIND | CONF | SCARE | 
 S:BR_SOUN
@@ -18132,7 +17866,6 @@ D:enough to defend yourself adequately.
 
 N:1005:Silver mouse
 G:r:W
-#I:110:1d3:8:4:20
 I:110:1d3:32:4:20
 W:4:1:200:1
 E:0:1:0:2:1:0
@@ -18180,7 +17913,6 @@ D:wisest:  she is her tribe's chief shamaness.
 
 N:1008:Giant black louse
 G:I:D
-#I:130:1d2:6:7:10
 I:130:1d2:24:7:10
 W:14:1:100:3
 E:0:0:0:0:0:0
@@ -18246,7 +17978,6 @@ F:ONLY_ITEM | DROP_4D2 | DROP_GOOD |
 F:COLD_BLOOD | PASS_WALL | MOVE_BODY | 
 F:OPEN_DOOR | BASH_DOOR | IM_POIS | IM_COLD | DEMON | EVIL | 
 F:ZANGBAND
-#F:NONLIVING
 S:1_IN_3 |
 S:CURSE | HOLD | BLIND | BO_ACID | S_DEMON |
 S:FORGET | BO_NETH | MIND_BLAST | DARKNESS
@@ -18327,7 +18058,6 @@ N:1016:Dimensional shambler
 G:h:B
 I:120:40d10:30:68:255
 W:29:6:1100:400
-#E:0:0:0:0:0:0
 E:1:1:1:2:1:1
 O:20:40:40:0
 B:HIT:HURT:3d5
@@ -18477,7 +18207,6 @@ D:waving and poppy-crowned."
 
 N:1023:Blue dragon worm
 G:w:B
-#I:100:10d15:10:40:80
 I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
@@ -18498,7 +18227,6 @@ D:breath, and the fiery eyes, of a real Dragon. Sparks fly from its jaws.
 
 N:1024:White dragon worm
 G:w:W
-#I:100:10d15:10:40:80
 I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
@@ -18519,7 +18247,6 @@ D:breath, and the fiery eyes, of a real Dragon. Its breath condenses in the air.
 
 N:1025:Green dragon worm
 G:w:G
-#I:100:10d15:10:40:80
 I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
@@ -18541,7 +18268,6 @@ D:on its breath.
 
 N:1026:Black dragon worm
 G:w:D
-#I:100:10d15:10:40:80
 I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
@@ -18562,7 +18288,6 @@ D:breath, and the fiery eyes, of a real Dragon. Acidic drool drips from its jaws
 
 N:1027:Red dragon worm
 G:w:R
-#I:100:10d15:10:40:80
 I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
@@ -18583,7 +18308,6 @@ D:breath, and the fiery eyes, of a real Dragon. Smoke comes from its mouth.
 
 N:1028:Multi-hued dragon worm
 G:w:v
-#I:100:10d20:10:40:80
 I:100:10d20:20:40:80
 W:23:3:4500:12
 E:0:0:0:0:1:0
@@ -18667,7 +18391,6 @@ F:ONLY_ITEM | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | DROP_CHOSEN
 F:INVISIBLE | COLD_BLOOD | PASS_WALL | WEIRD_MIND | RES_NETH | RES_DARK |
 F:EVIL | UNDEAD | IM_COLD | IM_FIRE | IM_ACID | IM_ELEC | AURA_COLD |
 F:IM_POIS | NO_CONF | NO_SLEEP | RES_NETH | BASEANGBAND | NO_CUT
-#F:AI_ANNOY
 S:1_IN_2 | 
 S:S_UNDEAD | S_DEMON | S_DRAGON | 
 S:S_UNIQUE | S_NAZGUL | S_HI_DEMON | 
@@ -18687,7 +18410,6 @@ W:52:4:0:20000
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:HIT:INSANITY:4d6
-#B:HIT:INSANITY:2d6
 B:HIT:INSANITY:3d6
 B:HIT:INSANITY:4d6
 B:HIT:INSANITY:3d6
@@ -18719,7 +18441,6 @@ F:ONLY_ITEM | DROP_2D2 | DROP_GOOD | IM_POIS | KILL_WALL |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | SMART | 
 F:EVIL | DEMON | IM_COLD | NO_CONF | NO_SLEEP | KILL_WALL | BASEANGBAND | 
 F:HAS_LITE | SPECIAL_GENE
-#F:NONLIVING
 S:1_IN_4 | 
 S:BLIND | CONF | BRAIN_SMASH | 
 S:BR_COLD | BO_COLD | BA_NETH | S_UNDEAD | S_DEMON
@@ -18729,7 +18450,6 @@ D:pike in its hands.
 N:1035:Golgarach, the Living Rock
 G:#:W
 I:120:50d30:20:100:40
-#W:45:2:0:1500 for FINAL_GUARDIAN:
 W:45:1:0:10000
 E:0:0:0:0:0:0
 O:60:0:40:0
@@ -18790,7 +18510,6 @@ D:the nether hells to seek revenge on the world.
 
 # Not knowing why it's here etc..
 N:1038:Water hound
-#G:Z:r
 G:Z:s
 I:110:45d10:30:30:0
 W:43:2:600:1000
@@ -19072,7 +18791,6 @@ W:0:1:80:0
 I:110:1d1:30:4:10
 E:0:0:0:0:1:0
 O:0:0:0:0
-#B:BITE:HURT:1d2
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY  | RAND_50
 #F:WILD_LAKE
 F:AQUATIC | COLD_BLOOD | NO_SLEEP | AI_ANNOY
@@ -19085,11 +18803,9 @@ W:0:3:80:0
 I:105:2d4:70:6:10
 E:0:0:0:0:1:0
 O:0:0:0:0
-#B:BITE:HURT:1d4
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY 
 #F:WILD_LAKE
 F:AQUATIC | COLD_BLOOD | NO_SLEEP
-# | NO_TARGET
 F:MORTAL | BASEANGBAND
 D:Beautiful and expensive fish for ponds.
 
@@ -19113,7 +18829,6 @@ I:110:10d12:50:30:0
 W:22:2:1600:180
 E:1:1:1:2:1:0
 O:20:50:10:5
-#B:TOUCH:LOSE_WIS
 B:TOUCH:INSANITY:3d4
 B:TOUCH:CONFUSE
 B:TOUCH:PARALYZE
@@ -19331,11 +19046,6 @@ I:140:150d150:250:175:0
 W:98:3:0:100000
 E:0:0:0:0:0:0
 O:0:0:0:0
-#B:HIT:HURT:20d8
-#B:HIT:HURT:20d8
-#B:HIT:HURT:20d8
-#B:HIT:HURT:20d8
-# making damage more authentic for 'Arena Monster Challenge'. no effect on NR.
 B:HIT:HURT:39d8
 B:HIT:HURT:39d8
 B:HIT:HURT:39d8
@@ -19348,7 +19058,6 @@ F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD | SMART | REGENERATE
 F:KILL_ITEM | EMPTY_MIND | COLD_BLOOD | BASH_DOOR | BLUEBAND | NO_CUT
 S:1_IN_5
 S:BA_NETH | HEAL | TELE_TO
-#S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO
 D:Bound to guard the nether realm that no being that does not belong here would
 D:ever set foot in it. The metallic green skin of this tall humanoid creature
 D:is hard as adamantine, its four arms end in blades covered by intense plasma
@@ -19396,7 +19105,6 @@ D:the touch of hell where it steps.
 N:1071:Sky Blade
 G:A:B
 I:130:200d35:100:160:255
-#W:70:8:3200:15000
 W:70:8:3200:25000
 E:0:0:0:0:0:0
 O:0:70:30:0
@@ -19412,7 +19120,6 @@ F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | NO_CONF | HAS_LITE | BLUEBAND
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | ATTR_MULTI | IM_PSI
 S:1_IN_3
 S:TELE_TO | BA_MANA | BR_DISE | S_ANGEL
-#S:SCARE
 D:An undeviable presence, designated to watch the skies and maintain their balance.
 D:Its aura is pure beyond expression, its eyes reflect supreme laws beyond
 D:comprehension, daring to look at it will drive you insane, let alone fighting
@@ -19421,7 +19128,6 @@ D:it!
 N:1072:Solar Blade
 G:A:y
 I:130:300d35:150:180:255
-#W:80:8:3200:22500
 W:80:8:3200:30000
 E:0:0:0:0:0:0
 O:0:70:30:0
@@ -19437,7 +19143,6 @@ F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | NO_CONF | HAS_LITE | BLUEBAND
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | ATTR_MULTI | IM_PSI
 S:1_IN_3
 S:TELE_TO | BA_MANA | BR_DISE | S_ANGEL
-#S:BLIND
 D:An undeviable presence, designated to watch sun, earth and moon and maintain their
 D:balance. Its aura is pure beyond expression, its eyes reflect supreme laws
 D:beyond comprehension, daring to look at it will drive you insane, let alone
@@ -19446,7 +19151,6 @@ D:fighting it!
 N:1073:Star Blade
 G:A:v
 I:130:400d35:200:200:255
-#W:90:8:3200:30000
 W:90:8:3200:35000
 E:0:0:0:0:0:0
 O:0:70:30:0
@@ -19462,7 +19166,6 @@ F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | NO_CONF | HAS_LITE | BLUEBAND
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | ATTR_MULTI | IM_PSI
 S:1_IN_3
 S:TELE_TO | BA_MANA | BR_DISE | S_ANGEL
-#S:HOLD
 D:An undeviable presence, designated to watch the stars and the void  and maintain
 D:their balance. Its aura is pure beyond expression, its eyes reflect supreme
 D:laws beyond comprehension, daring to look at it will drive you insane,
@@ -19535,14 +19238,12 @@ F:FORCE_SLEEP | FORCE_MAXHP | DROP_GOOD | SMART |
 F:ONLY_ITEM | DROP_4D2 | DROP_GREAT | IM_FIRE | IM_ELEC | IM_ACID | 
 F:COLD_BLOOD | PASS_WALL | MOVE_BODY | RES_DARK | RES_NETH | 
 F:OPEN_DOOR | BASH_DOOR | IM_POIS | IM_COLD | DEMON | EVIL | ATTR_ANY | NO_CONF
-#F:NONLIVING
 S:1_IN_3 |
 S:CURSE | BA_NETH | S_HI_DEMON |
 S:FORGET | MIND_BLAST | DARKNESS | TELE_TO
 D:Direct descendant of Lucifer, mother of Glaryssa, all angels seeking
 D:to destroy her fell to her serpent kiss.
 
-#N:1077:C. Blue, The Mad Balancer
 N:1077:Mad Balancer
 G:p:b
 I:160:256d256:200:150:255
@@ -19660,15 +19361,12 @@ B:HIT:PARALYZE:3d3
 F:CHAR_MULTI | 
 F:FORCE_SLEEP | NEVER_MOVE | EMPTY_MIND | COLD_BLOOD | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | BLUEBAND | NO_CUT
-#S:1_IN_6 | 
-#S:BLIND | CONF | SCARE | CURSE | BO_COLD
 D:A strange creature that disguises itself as a void gate to lure 
 D:unsuspecting adventurers within reach of its venomous claws. 
 
 #Nether Realm only
 N:1083:Ironwing
 G:B:w
-#I:130:150d300:200:300:5
 I:130:150d300:200:300:0
 W:98:6:1800:50000
 E:0:0:0:0:0:0
@@ -19701,7 +19399,6 @@ F:NETHER_REALM | FORCE_SLEEP | RAND_50 | WILD_VOLCANO | WILD_TOO | BASH_DOOR
 F:POWERFUL | IM_POIS | IM_FIRE | IM_COLD | IM_ELEC | IM_ACID | CAN_FLY | NO_CUT
 F:NO_FEAR | NO_CONF | NO_SLEEP | NO_STUN | NONLIVING | BLUEBAND | EMPTY_MIND
 F:REFLECTING
-#S:1_IN_3 |
 S:1_IN_2 |
 S:BR_WALL
 D:A whirling maelstrom of force that will unleash powerful impact on you.
@@ -19747,7 +19444,6 @@ W:127:255:500:50
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:GAZE:PARALYZE
-#B:GAZE:*
 B:GAZE:TERRIFY
 B:MOAN:*
 F:RAND_50 | RAND_25 | STUPID | HAS_LITE | FORCE_MAXHP | CAN_SPEAK
@@ -19755,15 +19451,10 @@ F:ONLY_ITEM | DROP_4D2 | DROP_2D2 | DROP_GOOD | DROP_GREAT | RES_DISE
 F:IM_POIS | IM_COLD | RES_ACID | RES_ELEC | IM_FIRE | RES_WATE | RES_MANA
 F:NO_CONF | NO_SLEEP | NO_CUT | NO_FEAR | NO_STUN | RES_TIME | RES_DARK
 F:REGENERATE | UNDEAD | WEIRD_MIND | EVIL | GOOD | CAN_FLY
-# | COLD_BLOOD
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
 S:MOAN | SLOW | SCARE | HOLD | TPORT
-#S:MOAN | SLOW | SCARE | HOLD | HASTE | DRAIN_MANA | TPORT
-#BLINK | UNMAGIC
-#S:SLOW | SLOW | SCARE | SCARE | SCARE | HOLD | HOLD | HOLD | HOLD |
-#S:MOAN | MOAN | MOAN | MOAN | MOAN | MOAN | MOAN | MOAN | TPORT
 D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
@@ -19776,7 +19467,6 @@ W:127:255:500:50
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:GAZE:PARALYZE
-#B:GAZE:*
 B:GAZE:TERRIFY
 B:MOAN:*
 F:RAND_50 | RAND_25 | STUPID | HAS_LITE | FORCE_MAXHP | CAN_SPEAK
@@ -19784,7 +19474,6 @@ F:ONLY_ITEM | DROP_4D2 | DROP_2D2 | DROP_GOOD | DROP_GREAT | RES_DISE
 F:IM_POIS | IM_COLD | RES_ACID | RES_ELEC | IM_FIRE | RES_WATE | RES_MANA
 F:NO_CONF | NO_SLEEP | NO_CUT | NO_FEAR | NO_STUN | RES_TIME | RES_DARK
 F:REGENERATE | UNDEAD | WEIRD_MIND | EVIL | GOOD | CAN_FLY
-# | COLD_BLOOD
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
@@ -19801,7 +19490,6 @@ W:127:255:500:50
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:GAZE:PARALYZE
-#B:GAZE:*
 B:GAZE:TERRIFY
 B:MOAN:*
 F:RAND_50 | RAND_25 | STUPID | HAS_LITE | FORCE_MAXHP | CAN_SPEAK
@@ -19809,7 +19497,6 @@ F:ONLY_ITEM | DROP_4D2 | DROP_2D2 | DROP_GOOD | DROP_GREAT | RES_DISE
 F:IM_POIS | IM_COLD | RES_ACID | RES_ELEC | IM_FIRE | RES_WATE | RES_MANA
 F:NO_CONF | NO_SLEEP | NO_CUT | NO_FEAR | NO_STUN | RES_TIME | RES_DARK
 F:REGENERATE | UNDEAD | WEIRD_MIND | EVIL | GOOD | CAN_FLY
-# | COLD_BLOOD
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
@@ -19828,7 +19515,6 @@ B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
-#F:NO_DEATH | MORTAL | 
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
 
@@ -19843,7 +19529,6 @@ B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
-#F:NO_DEATH | MORTAL | 
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
 
@@ -19858,7 +19543,6 @@ B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
-#F:NO_DEATH | MORTAL | 
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
 
@@ -19873,7 +19557,6 @@ B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
-#F:NO_DEATH | MORTAL | 
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
 
@@ -19888,7 +19571,6 @@ B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
-#F:NO_DEATH | MORTAL | 
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
 
@@ -19903,7 +19585,6 @@ B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
-#F:NO_DEATH | MORTAL | 
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
 
@@ -19918,7 +19599,6 @@ B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
-#F:NO_DEATH | MORTAL | 
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
 
@@ -19933,7 +19613,6 @@ B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
 $HALLOWEEN$F:BLUEBAND
 $HALLOWEEN!F:JOKEANGBAND
-#F:NO_DEATH | MORTAL | 
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:The nightmare on Elmstreet.
 D:But it is just someone costumed for Halloween festival!
@@ -19960,7 +19639,6 @@ F:KILL_ITEM | EMPTY_MIND | COLD_BLOOD | BASH_DOOR | BLUEBAND | NO_CUT
 F:RES_MANA | RES_LITE | RES_DARK | RES_SOUND | RES_TIME
 S:1_IN_4
 S:BA_NETH | HEAL | TELE_TO | BA_MANA
-#S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO | BA_MANA
 D:Guarding the border between outer dimensions and the mundane cosmos
 D:this being has a clear mission. Its patience seems to be infinite,
 D:and its appearance doesn't reveal if this creature is actually alive
@@ -19977,7 +19655,7 @@ I:180:500d200:200:200:0
 W:200:255:0:2000000
 E:0:0:0:0:0:0
 O:0:0:0:0
-#F:UNIQUE | 
+#F:UNIQUE -- hack: He isn't technically one.
 F:GOOD | NO_FEAR | FORCE_MAXHP | PASS_WALL | ATTR_ANY
 F:REGENERATE | POWERFUL | MOVE_BODY
 F:BLUEBAND | NO_DEATH | NEVER_ACT | NO_AUTORET | NO_TARGET
@@ -20049,7 +19727,6 @@ D:assisting you without complaining in assessing your combat prowess.
 ##quick little hack to add santa:
 N:1102:Santa Claus
 G:h:r
-#I:140:70d100:90:100:10
 I:140:50d100:200:100:10
 W:127:255:2600:0
 E:1:1:1:2:1:1
@@ -20140,7 +19817,6 @@ F:ONLY_GOLD | DROP_60 | DROP_1D2 |
 F:OPEN_DOOR | BASH_DOOR | RES_LITE
 F:EVIL | DRAGON | HAS_EGG | IMPRESSED | BASEANGBAND | HAS_LITE
 F:NO_SLEEP | IM_COLD | RES_POIS | SUSCEP_FIRE
-#F:ATTR_MULTI
 S:1_IN_12 | 
 S:BR_COLD
 D:This hatchling dragon is still soft, its eyes unaccustomed to light and 
@@ -20218,7 +19894,6 @@ F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_CHOSEN |
 F:BASH_DOOR | POWERFUL | MOVE_BODY | DROP_CORPSE | SMART | 
 F:EVIL | DRAGON | NO_CONF | BASEANGBAND | HAS_LITE | RES_LITE
 F:NO_SLEEP | NO_STUN | IM_COLD | IM_POIS | REFLECTING
-#F:ATTR_MULTI
 S:1_IN_4 | 
 S:BLIND | CONF | SCARE | BR_COLD | BR_INER
 D:A dragon of great size and power.  Its polished silver scales reflect the 
@@ -20440,7 +20115,6 @@ N:1127:Firebird
 G:B:f
 I:120:29d100:60:80:0
 W:52:5:3000:3500
-#E:0:1:0:1:1:2
 E:0:1:0:2:1:2
 O:0:0:0:0
 B:BITE:FIRE:10d6
