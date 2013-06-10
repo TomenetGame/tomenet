@@ -1237,7 +1237,8 @@ int guild_add(int adder, cptr name) {
 	/* Make sure this added person is neutral */
 	if (p_ptr->guild != 0) {
 		/* Message */
-		msg_print(adder, "\377yThat player is already in a guild.");
+		if (p_ptr->guild != guild_id) msg_print(adder, "\377yThat player is already in a guild.");
+		else msg_print(adder, "\377yThat player is already in your guild.");
 
 		/* Abort */
 		return FALSE;
@@ -1459,7 +1460,8 @@ int party_add(int adder, cptr name) {
 	/* Make sure this added person is neutral */
 	if (p_ptr->party != 0) {
 		/* Message */
-		msg_print(adder, "\377yThat player is already in a party.");
+		if (p_ptr->party != party_id) msg_print(adder, "\377yThat player is already in a party.");
+		else msg_print(adder, "\377yThat player is already in your party.");
 
 		/* Abort */
 		return FALSE;
