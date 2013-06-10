@@ -9603,133 +9603,135 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 
 	/* No rooms yet */
 	dun->cent_n = 0;
-if (!netherrealm_bottom) {
-	/* Build some rooms */
+
+	if (!netherrealm_bottom) {
+		/* Build some rooms */
 #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
-	if (in_irondeepdive(wpos) ? (!maze || !(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_MAZE)) :
-	    (!maze || !(d_ptr->flags1 & DF1_MAZE)))
+		if (in_irondeepdive(wpos) ? (!maze || !(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_MAZE)) :
+		    (!maze || !(d_ptr->flags1 & DF1_MAZE)))
 #else
-	if (!maze || !(d_ptr->flags1 & DF1_MAZE))
+		if (!maze || !(d_ptr->flags1 & DF1_MAZE))
 #endif
-	for (i = 0; i < DUN_ROOMS; i++) {
-		/* Pick a block for the room */
-		y = rand_int(dun->row_rooms);
-		x = rand_int(dun->col_rooms);
+		for (i = 0; i < DUN_ROOMS; i++) {
+			/* Pick a block for the room */
+			y = rand_int(dun->row_rooms);
+			x = rand_int(dun->col_rooms);
 
-		/* Align dungeon rooms */
-		if (dungeon_align) {
-			/* Slide some rooms right */
-			if ((x % 3) == 0) x++;
+			/* Align dungeon rooms */
+			if (dungeon_align) {
+				/* Slide some rooms right */
+				if ((x % 3) == 0) x++;
 
-			/* Slide some rooms left */
-			if ((x % 3) == 2) x--;
-		}
+				/* Slide some rooms left */
+				if ((x % 3) == 2) x--;
+			}
 
-		/* Destroyed levels are boring */
-		if (destroyed) {
-			/* The deeper you are, the more cavelike the rooms are */
+			/* Destroyed levels are boring */
+			if (destroyed) {
+				/* The deeper you are, the more cavelike the rooms are */
 
-			/* no caves when cavern exists: they look bad */
-			k = randint(100);
+				/* no caves when cavern exists: they look bad */
+				k = randint(100);
 
-			if (!cavern && (k < dun_lev) && !tiny_level) {
-				/* Type 10 -- Fractal cave */
-				if (room_build(wpos, y, x, 10, p_ptr)) continue;
-			} else {
-				/* Attempt a "trivial" room */
+				if (!cavern && (k < dun_lev) && !tiny_level) {
+					/* Type 10 -- Fractal cave */
+					if (room_build(wpos, y, x, 10, p_ptr)) continue;
+				} else {
+					/* Attempt a "trivial" room */
 #if 0
-				if ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) &&
+					if ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) &&
 						room_build(y, x, 9, p_ptr)))
 #endif	/* 0 */
-				if (magik(30) && room_build(wpos, y, x, 9, p_ptr)) continue;
-				else if (room_build(wpos, y, x, 1, p_ptr)) continue;
-			}
+					if (magik(30) && room_build(wpos, y, x, 9, p_ptr)) continue;
+					else if (room_build(wpos, y, x, 1, p_ptr)) continue;
+				}
 
 #if 0
-			/* Attempt a "trivial" room */
-			if (room_build(wpos, y, x, 1, p_ptr)) continue;
+				/* Attempt a "trivial" room */
+				if (room_build(wpos, y, x, 1, p_ptr)) continue;
 #endif	/* 0 */
 
-			/* Never mind */
-			continue;
-		}
-
-		/* Attempt an "unusual" room */
-		if (rand_int(DUN_UNUSUAL) < dun_lev) {
-			/* Roll for room type */
-			k = rand_int(100);
-
-			/* Attempt a very unusual room */
-			if ((rand_int(DUN_UNUSUAL) < dun_lev) && !tiny_level) {
-				/* Type 8 -- Greater vault (10%) */
-				if ((k < 10) && room_build(wpos, y, x, 8, p_ptr)) continue;
-
-				/* Type 7 -- Lesser vault (15%) */
-				if ((k < 25) && room_build(wpos, y, x, 7, p_ptr)) continue;
-
-				/* Type 6 -- Monster pit (15%) */
-				if ((k < 40) && room_build(wpos, y, x, 6, p_ptr)) continue;
-
-				/* Type 5 -- Monster nest (10%) */
-				if ((k < 50) && room_build(wpos, y, x, 5, p_ptr)) continue;
-
-				/* Type 11 -- Random vault (10%) */
-				if ((k < 60) && room_build(wpos, y, x, 11, p_ptr)) continue;
-			}
-
-			if (!tiny_level) {
-				/* Type 4 -- Large room (25%) */
-				if ((k < 25) && room_build(wpos, y, x, 4, p_ptr)) continue;
-
-				/* Type 3 -- Cross room (20%) */
-				if ((k < 45) && room_build(wpos, y, x, 3, p_ptr)) continue;
-
-				/* Type 2 -- Overlapping (20%) */
-				if ((k < 65) && room_build(wpos, y, x, 2, p_ptr)) continue;
-			}
-
-			/* Type 10 -- Fractal cave (15%) */
-			if ((k < 80) && room_build(wpos, y, x, 10, p_ptr)) continue;
-
-			/* Type 9 -- Circular (10%) */
-			/* Hack - build standard rectangular rooms if needed */
-			if (k < 90) {
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
-				if ((in_irondeepdive(wpos) ? ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_CIRCULAR_ROOMS) || magik(70)) :
-				    ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(70))) &&
-#else
-				if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(70)) &&
-#endif
-				    room_build(wpos, y, x, 1, p_ptr))
-					continue;
-				else if (room_build(wpos, y, x, 9, p_ptr)) continue;
-			}
-
-			/* Type 12 -- Crypt (10%) */
-			if ((k < 100) && !tiny_level && room_build(wpos, y, x, 12, p_ptr)) continue;
-		}
-
-		/* Attempt a trivial room */
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
-		if (in_irondeepdive(wpos) ? ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_CAVE) || magik(50)) :
-		    ((d_ptr->flags1 & DF1_CAVE) || magik(50))) {
-#else
-		if ((d_ptr->flags1 & DF1_CAVE) || magik(50)) {
-#endif
-			if (room_build(wpos, y, x, 10, p_ptr)) continue;
-		} else {
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
-			if ((in_irondeepdive(wpos) ? (((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_CIRCULAR_ROOMS) || magik(30))) :
-			    ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(30))) &&
-#else
-			if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(30)) &&
-#endif
-			    room_build(wpos, y, x, 9, p_ptr))
+				/* Never mind */
 				continue;
-			else if (room_build(wpos, y, x, 1, p_ptr)) continue;
+			}
+
+			/* Attempt an "unusual" room */
+			if (rand_int(DUN_UNUSUAL) < dun_lev) {
+				/* Roll for room type */
+				k = rand_int(100);
+
+				/* Attempt a very unusual room */
+				if ((rand_int(DUN_UNUSUAL) < dun_lev) && !tiny_level) {
+					/* Type 8 -- Greater vault (10%) */
+					if ((k < 10) && room_build(wpos, y, x, 8, p_ptr)) continue;
+
+					/* Type 7 -- Lesser vault (15%) */
+					if ((k < 25) && room_build(wpos, y, x, 7, p_ptr)) continue;
+
+					/* Type 6 -- Monster pit (15%) */
+					if ((k < 40) && room_build(wpos, y, x, 6, p_ptr)) continue;
+
+					/* Type 5 -- Monster nest (10%) */
+					if ((k < 50) && room_build(wpos, y, x, 5, p_ptr)) continue;
+
+					/* Type 11 -- Random vault (10%) */
+					if ((k < 60) && room_build(wpos, y, x, 11, p_ptr)) continue;
+				}
+
+				if (!tiny_level) {
+					/* Type 4 -- Large room (25%) */
+					if ((k < 25) && room_build(wpos, y, x, 4, p_ptr)) continue;
+
+					/* Type 3 -- Cross room (20%) */
+					if ((k < 45) && room_build(wpos, y, x, 3, p_ptr)) continue;
+
+					/* Type 2 -- Overlapping (20%) */
+					if ((k < 65) && room_build(wpos, y, x, 2, p_ptr)) continue;
+				}
+
+				/* Type 10 -- Fractal cave (15%) */
+				if ((k < 80) && room_build(wpos, y, x, 10, p_ptr)) continue;
+
+				/* Type 9 -- Circular (10%) */
+				/* Hack - build standard rectangular rooms if needed */
+				if (k < 90) {
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+					if ((in_irondeepdive(wpos) ? ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_CIRCULAR_ROOMS) || magik(70)) :
+					    ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(70))) &&
+#else
+					if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(70)) &&
+#endif
+					    room_build(wpos, y, x, 1, p_ptr))
+						continue;
+					else if (room_build(wpos, y, x, 9, p_ptr)) continue;
+				}
+
+				/* Type 12 -- Crypt (10%) */
+				if ((k < 100) && !tiny_level && room_build(wpos, y, x, 12, p_ptr)) continue;
+			}
+
+			/* Attempt a trivial room */
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+			if (in_irondeepdive(wpos) ? ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_CAVE) || magik(50)) :
+			    ((d_ptr->flags1 & DF1_CAVE) || magik(50))) {
+#else
+			if ((d_ptr->flags1 & DF1_CAVE) || magik(50)) {
+#endif
+				if (room_build(wpos, y, x, 10, p_ptr)) continue;
+			} else {
+#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+				if ((in_irondeepdive(wpos) ? (((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_CIRCULAR_ROOMS) || magik(30))) :
+				    ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(30))) &&
+#else
+				if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(30)) &&
+#endif
+				    room_build(wpos, y, x, 9, p_ptr))
+					continue;
+				else if (room_build(wpos, y, x, 1, p_ptr)) continue;
+			}
 		}
 	}
-}
+
 #if 1
 	/* XXX the walls here should 'mimic' the surroundings,
 	 * however I omitted it to spare 522 c_special	- Jir */
