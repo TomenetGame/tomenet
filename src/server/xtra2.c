@@ -4126,8 +4126,8 @@ void check_experience(int Ind)
 			if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYour soul thirsts for shaping, either enlightenment or corruption!");
 			if (old_lev <= 19 && p_ptr->lev >= 15 && old_lev < p_ptr->lev) {
 				/* Killed none? nothing happens except if we reached the threshold level */
-				if (p_ptr->r_killed[MONSTER_RIDX_CANDLEBEARER] == 0
-				    && p_ptr->r_killed[MONSTER_RIDX_DARKLING] == 0) {
+				if (p_ptr->r_killed[RI_CANDLEBEARER] == 0
+				    && p_ptr->r_killed[RI_DARKLING] == 0) {
 					/* Threshold level has been overstepped -> die */
 					if (old_lev == 19) {
 //						msg_print(Ind, "\377RYou don't deserve to live.");
@@ -4141,8 +4141,8 @@ void check_experience(int Ind)
 				}
 
 				/* Killed both? -> you die */
-				if (p_ptr->r_killed[MONSTER_RIDX_CANDLEBEARER] != 0 &&
-				    p_ptr->r_killed[MONSTER_RIDX_DARKLING] != 0) {
+				if (p_ptr->r_killed[RI_CANDLEBEARER] != 0 &&
+				    p_ptr->r_killed[RI_DARKLING] != 0) {
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
 					strcpy(p_ptr->died_from, "indecisiveness");
 					p_ptr->deathblow = 0;
@@ -4155,7 +4155,7 @@ void check_experience(int Ind)
 				if (p_ptr->lev <= 19) break;
 
 				/* Modify skill tree */
-				if (p_ptr->r_killed[MONSTER_RIDX_CANDLEBEARER] != 0) {
+				if (p_ptr->r_killed[RI_CANDLEBEARER] != 0) {
 					//A demon appears!
 					msg_print(Ind, "\374\377p*** \377GYour corruption grows well within you. \377p***");
 					p_ptr->ptrait = TRAIT_CORRUPTED;
@@ -5403,6 +5403,7 @@ if (cfg.unikill_format) {
 
 			FREE(m_ptr->r_ptr, monster_race);
 			return;
+
 		} else if (strstr((r_name + r_ptr->name),"Smeagol")) {
 			/* Get local object */
 			qq_ptr = &forge;
@@ -5422,9 +5423,9 @@ if (cfg.unikill_format) {
 			qq_ptr->bpval = 5;
 			/* Drop it in the dungeon */
 			drop_near(qq_ptr, -1, wpos, y, x);
-		}
+
 	        /* finally made Robin Hood drop a Bow ;) */
-    	        else if (strstr((r_name + r_ptr->name),"Robin Hood, the Outlaw") && magik(50)) {
+    	        } else if (strstr((r_name + r_ptr->name),"Robin Hood, the Outlaw") && magik(50)) {
 			qq_ptr = &forge;
 			object_wipe(qq_ptr);
     		        invcopy(qq_ptr, lookup_kind(TV_BOW, SV_LONG_BOW));
@@ -5433,8 +5434,99 @@ if (cfg.unikill_format) {
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, make_resf(p_ptr));
 			drop_near(qq_ptr, -1, wpos, y, x);
-		}
-		else if (strstr((r_name + r_ptr->name),"The Hellraiser")) {
+
+		} else if (r_ptr->flags7 & RF7_NAZGUL) {
+			/* Get local object */
+			qq_ptr = &forge;
+
+			object_wipe(qq_ptr);
+
+			/* Mega-Hack -- Prepare to make a Ring of Power */
+			invcopy(qq_ptr, lookup_kind(TV_RING, SV_RING_SPECIAL));
+			qq_ptr->number = 1;
+
+			qq_ptr->name1 = ART_RANDART;
+
+			/* Piece together a 32-bit random seed */
+			qq_ptr->name3 = rand_int(0xFFFF) << 16;
+			qq_ptr->name3 += rand_int(0xFFFF);
+
+			/* Check the tval is allowed */
+//			if (randart_make(qq_ptr) != NULL)
+
+			apply_magic(wpos, qq_ptr, -1, FALSE, TRUE, FALSE, FALSE, FALSE);
+
+			/* Save the inscription */
+			/* (pfft, not so smart..) */
+			/*qq_ptr->note = quark_add(format("#of %s", r_name + r_ptr->name));*/
+			qq_ptr->bpval = m_ptr->r_idx;
+
+			/* Drop it in the dungeon */
+#ifdef PRE_OWN_DROP_CHOSEN
+			qq_ptr->level = 0;
+			qq_ptr->owner = p_ptr->id;
+			qq_ptr->mode = p_ptr->mode;
+#endif
+			drop_near(qq_ptr, -1, wpos, y, x);
+
+		/* Hack - the Dragonriders give some firestone */
+		} else if (r_ptr->flags3 & RF3_DRAGONRIDER) {
+			/* Get local object */
+			qq_ptr = &forge;
+
+			/* Prepare to make some Firestone */
+			if (magik(70)) invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRESTONE));
+			else invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
+			qq_ptr->number = (byte)rand_range(1,12);
+
+			/* Drop it in the dungeon */
+			drop_near(qq_ptr, -1, wpos, y, x);
+
+		/* PernAngband additions */
+		/* Mega^2-hack -- destroying the Stormbringer gives it us! */
+		} else if (strstr((r_name + r_ptr->name),"Stormbringer")) {
+			/* Get local object */
+			qq_ptr = &forge;
+
+			/* Prepare to make the Stormbringer */
+			invcopy(qq_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
+
+			/* Megahack -- specify the ego */
+	    		qq_ptr->name2 = EGO_STORMBRINGER;
+
+			/* Piece together a 32-bit random seed */
+			qq_ptr->name3 = rand_int(0xFFFF) << 16;
+			qq_ptr->name3 += rand_int(0xFFFF);
+
+			apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
+			qq_ptr->level = 0;
+
+			qq_ptr->ident |= ID_CURSED;
+
+			/* hack for a good result */
+			qq_ptr->to_h = 17 + rand_int(14);
+			qq_ptr->to_d = 17 + rand_int(14);
+
+			/* Drop it in the dungeon */
+			drop_near(qq_ptr, -1, wpos, y, x);
+
+#if 0 /* currently no such book */
+	        /* Raal's Tomes of Destruction drop a Raal's Tome of Destruction */
+//	        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (rand_int(100) < 20))
+        	} else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (magik(1))) {
+			/* Get local object */
+			qq_ptr = &forge;
+
+            		/* Prepare to make a Raal's Tome of Destruction */
+//                	invcopy(qq_ptr, lookup_kind(TV_MAGIC_BOOK, 8));
+			/* Make a Tome of the Hellflame (Udun) */
+	                invcopy(qq_ptr, lookup_kind(TV_BOOK, 11));
+
+			/* Drop it in the dungeon */
+            		drop_near(qq_ptr, -1, wpos, y, x);
+#endif
+
+		} else if (m_ptr->r_idx == RI_HELLRAISER) {
 			/* Get local object */
 			qq_ptr = &forge;
 
@@ -5473,96 +5565,32 @@ if (cfg.unikill_format) {
 			qq_ptr->mode = p_ptr->mode;
 #endif
 			drop_near(qq_ptr, -1, wpos, y, x);
-		} else if (r_ptr->flags7 & RF7_NAZGUL) {
+
+		} else if (m_ptr->r_idx == RI_DOR) {
 			/* Get local object */
 			qq_ptr = &forge;
 
+			/* super-charged wands of rockets */
 			object_wipe(qq_ptr);
+			invcopy(qq_ptr, lookup_kind(TV_WAND, SV_WAND_ROCKETS));
+			qq_ptr->number = 2 + rand_int(2);
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
+			qq_ptr->pval = qq_ptr->number * 5 + 3 + rand_int(4);
+			drop_near(qq_ptr, -1, wpos, y, x);
 
-			/* Mega-Hack -- Prepare to make a Ring of Power */
-			invcopy(qq_ptr, lookup_kind(TV_RING, SV_RING_SPECIAL));
+			/* a rod of havoc */
+			object_wipe(qq_ptr);
+			invcopy(qq_ptr, lookup_kind(TV_ROD, SV_ROD_HAVOC));
 			qq_ptr->number = 1;
-
-			qq_ptr->name1 = ART_RANDART;
-
-			/* Piece together a 32-bit random seed */
-			qq_ptr->name3 = rand_int(0xFFFF) << 16;
-			qq_ptr->name3 += rand_int(0xFFFF);
-
-			/* Check the tval is allowed */
-//			if (randart_make(qq_ptr) != NULL)
-
-			apply_magic(wpos, qq_ptr, -1, FALSE, TRUE, FALSE, FALSE, FALSE);
-
-			/* Save the inscription */
-			/* (pfft, not so smart..) */
-			/*qq_ptr->note = quark_add(format("#of %s", r_name + r_ptr->name));*/
-			qq_ptr->bpval = m_ptr->r_idx;
-
-			/* Drop it in the dungeon */
-#ifdef PRE_OWN_DROP_CHOSEN
-			qq_ptr->level = 0;
-			qq_ptr->owner = p_ptr->id;
-			qq_ptr->mode = p_ptr->mode;
-#endif
-
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
 			drop_near(qq_ptr, -1, wpos, y, x);
-		/* Hack - the Dragonriders give some firestone */
-		} else if (r_ptr->flags3 & RF3_DRAGONRIDER) {
-			/* Get local object */
-			qq_ptr = &forge;
 
-			/* Prepare to make some Firestone */
-			if (magik(70)) invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRESTONE));
-			else invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
-			qq_ptr->number = (byte)rand_range(1,12);
-
-			/* Drop it in the dungeon */
-			drop_near(qq_ptr, -1, wpos, y, x);
-		/* PernAngband additions */
-		/* Mega^2-hack -- destroying the Stormbringer gives it us! */
-		} else if (strstr((r_name + r_ptr->name),"Stormbringer")) {
-			/* Get local object */
-			qq_ptr = &forge;
-
-			/* Prepare to make the Stormbringer */
-			invcopy(qq_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
-
-			/* Megahack -- specify the ego */
-	    		qq_ptr->name2 = EGO_STORMBRINGER;
-
-			/* Piece together a 32-bit random seed */
-			qq_ptr->name3 = rand_int(0xFFFF) << 16;
-			qq_ptr->name3 += rand_int(0xFFFF);
-
-			apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
-			qq_ptr->level = 0;
-
-			qq_ptr->ident |= ID_CURSED;
-
-			/* hack for a good result */
-			qq_ptr->to_h = 17 + rand_int(14);
-			qq_ptr->to_d = 17 + rand_int(14);
-
-			/* Drop it in the dungeon */
-			drop_near(qq_ptr, -1, wpos, y, x);
-#if 0 /* currently no such book */
-	        /* Raal's Tomes of Destruction drop a Raal's Tome of Destruction */
-//	        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (rand_int(100) < 20))
-        	} else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (magik(1))) {
-			/* Get local object */
-			qq_ptr = &forge;
-
-            		/* Prepare to make a Raal's Tome of Destruction */
-//                	invcopy(qq_ptr, lookup_kind(TV_MAGIC_BOOK, 8));
-			/* Make a Tome of the Hellflame (Udun) */
-	                invcopy(qq_ptr, lookup_kind(TV_BOOK, 11));
-
-			/* Drop it in the dungeon */
-            		drop_near(qq_ptr, -1, wpos, y, x);
 		/* dungeon boss, but drops multiple items */
-#endif
-		} else if (strstr((r_name + r_ptr->name), "Zu-Aon, The Cosmic Border Guard")) {
+		} else if (m_ptr->r_idx == RI_ZU_AON) {
 #if 0
 			for (i = 1; i <= NumPlayers; i++) {
 				if (inarea(&Players[i]->wpos, &p_ptr->wpos)
@@ -5602,6 +5630,7 @@ if (cfg.unikill_format) {
 			qq_ptr->mode = p_ptr->mode;
 #endif
 			drop_near(qq_ptr, -1, wpos, y, x);
+
 		} else if (!pvp) {
 			a_idx = 0;
 			chance = 0;

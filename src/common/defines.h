@@ -1021,8 +1021,8 @@
 #define RI_BRIGHTLANCE		1100
 #define RI_TARGET_DUMMY1	1101	/* normal version */
 #define RI_SANTA2		1102	/* normal version */
-#define RI_CANDLEBEARER		1104
-#define RI_DARKLING		1105
+#define RI_CANDLEBEARER		1104	/* ENABLE_MAIA */
+#define RI_DARKLING		1105	/* ENABLE_MAIA */
 #define RI_BAD_LUCK_BAT		1114
 #define RI_TARGET_DUMMY2	1126	/* snow-covered version */
 
@@ -7374,11 +7374,6 @@ extern int PlayerUID;
 //#define BOOST_CRIT(xtra_crit)	(65 - (975 / ((xtra_crit) + 15))) /* 1:5, 2: 8, 3:11, 5:17, 7:21, 10:26, 15:33, 20:38 */
 //xtra_crit = 60 - (600 / (xtra_crit + 10)); /* 1:6, 2:10, 3:15, 5:20, 7:25, 10:30, 15:36, 20:40 */
 #define BOOST_CRIT(xtra_crit)	(66 - (1350 / ((xtra_crit) + 20))) /* 1:2, 2: 5, 3:8, 5:12, 7:16, 10:21, 15:28, 20:33 */
-
-//#ifdef ENABLE_MAIA  <- now always defined for important purpose of making savefiles uniform!
- #define MONSTER_RIDX_CANDLEBEARER 1104
- #define MONSTER_RIDX_DARKLING 1105
-//#endif
 
 
 /* Auction system - mikaelh */
