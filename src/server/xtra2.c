@@ -5570,6 +5570,7 @@ if (cfg.unikill_format) {
 			/* Get local object */
 			qq_ptr = &forge;
 
+#if 0
 			/* super-charged wands of rockets */
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_WAND, SV_WAND_ROCKETS));
@@ -5579,6 +5580,7 @@ if (cfg.unikill_format) {
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
 			qq_ptr->pval = qq_ptr->number * 5 + 3 + rand_int(4);
 			drop_near(qq_ptr, -1, wpos, y, x);
+#endif
 
 			/* a rod of havoc */
 			object_wipe(qq_ptr);
