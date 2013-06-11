@@ -13414,6 +13414,8 @@ The techniques are as follows:
     Barrage             9 stamina
         Prepares to fire a powerful multi-shot which will cost you half a
         turn. It stuns the target (if it doesn't resist stunning attacks).
+        Because 6 shots are fired at once you will need at least as many
+        projectiles in your quiver in order to use it.
 
     Note: The ability 'fire-till-kill' is available to any class and not
     considered to be a special shooting technique. It appears directly in the
