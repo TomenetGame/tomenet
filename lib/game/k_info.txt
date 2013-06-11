@@ -1628,6 +1628,7 @@ G:?:d
 I:70:52:0
 W:70:0:5:500000
 A:80/48
+F:IGNORE_ACID | IGNORE_FIRE | IGNORE_WATER
 D:Creates a random artifact from a basic item that must not possess ego-powers.
 
 N:206:Recharging
