@@ -5460,7 +5460,7 @@ if (cfg.unikill_format) {
 #else
 			invcopy(qq_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
 #endif
-			qq_ptr->number = randint(2);
+			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 
@@ -5591,7 +5591,7 @@ if (cfg.unikill_format) {
 #else
 			invcopy(qq_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
 #endif
-			qq_ptr->number = (a_info[ART_PHASING].cur_num == 0 || art_created) ? 1 : 2;
+			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
