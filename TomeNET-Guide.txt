@@ -8183,15 +8183,18 @@ Shots
 Slings              x               x
 Bows                x               x
 Crossbows           x               x
-Boomerangs          x               x
+Wooden boomerangs   x               x
+Metal boomerangs    x
 
 Swords              x
 Axes                x               x
 Blunt               x               x
 Polearms            x               x
 
-Helms               x
+Leather caps/Hats   x               x
+Metal caps/Helms    x
 Crowns              x
+Leather shields     x               x
 Shields             x
 
 Boots               x               x
@@ -8201,11 +8204,18 @@ Soft Armour         x               x
 Hard Armour         x
 DSM Armour
 
+                    Acid    Elec    Fire    Cold    Impact  Water
+-----------------------------------------------------------------
+
 Scrolls             x               x                       x
 Parchments          x               x
-Chests              x               x
-Skeletons           x
-Bottles             x                       x       x
+Potions/Flasks                      x       x       x
+Bottles                             x               x
+
+Lamps               x               x
+Wooden chests       x               x
+Metal chests        x
+Skeletons           x               x
 Junk                x
 
 Rings                       x
@@ -8213,10 +8223,6 @@ Amulets
 Wands                       x
 Staves              x               x
 Rods
-
-Lamps                               x
-Potions                             x       x       x
-Flasks                                      x       x
 
 Spell Scrolls       x               x                       x
 Spell Crystals      x

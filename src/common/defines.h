@@ -2738,8 +2738,14 @@
 /*
  * Special "sval" limit -- first "large" chest
  */
-#define SV_CHEST_MIN_LARGE	4
 #define SV_CHEST_RUINED		0
+#define SV_CHEST_SMALL_WOODEN	1
+#define SV_CHEST_SMALL_IRON	2
+#define SV_CHEST_SMALL_STEEL	3
+#define SV_CHEST_MIN_LARGE	4	/* marker */
+#define SV_CHEST_LARGE_WOODEN	5
+#define SV_CHEST_LARGE_IRON	6
+#define SV_CHEST_LARGE_STEEL	7
 
 /*
  * Special "sval" limit -- first "good" magic/prayer book

@@ -1963,6 +1963,8 @@ static bool hates_acid(object_type *o_ptr)
 	case TV_SOFT_ARMOR:
 	case TV_HARD_ARMOR:
 	case TV_DRAG_ARMOR:
+
+	case TV_LITE:
 		return (TRUE);
 
 	/* Staffs/Scrolls are wood/paper */
@@ -1978,7 +1980,6 @@ static bool hates_acid(object_type *o_ptr)
 
 	/* Junk is useless */
 	case TV_SKELETON:
-	case TV_BOTTLE:
 	case TV_JUNK:
 		return (TRUE);
 	}
@@ -2010,7 +2011,6 @@ bool hates_fire(object_type *o_ptr)
 	/* Analyze the type */
 	switch (o_ptr->tval) {
 	/* Wearable */
-	case TV_LITE:
 	case TV_ARROW:
 	case TV_BOW:
 	case TV_BLUNT:
@@ -2021,13 +2021,18 @@ bool hates_fire(object_type *o_ptr)
 	case TV_CLOAK:
 	case TV_SOFT_ARMOR:
 		return (TRUE);
+	case TV_HELM:
+		if (o_ptr->sval == SV_HARD_LEATHER_CAP || o_ptr->sval == SV_CLOTH_CAP) return TRUE;
+		return FALSE;
 	case TV_BOOMERANG:
 		if (o_ptr->sval == SV_BOOM_S_METAL || o_ptr->sval == SV_BOOM_METAL) return(FALSE);
 		return (TRUE);
 
 	/* Chests */
 	case TV_CHEST:
-		return (TRUE);
+		if (o_ptr->sval == SV_CHEST_RUINED ||
+		    o_ptr->sval == SV_CHEST_SMALL_WOODEN || o_ptr->sval == SV_CHEST_LARGE_WOODEN) return(TRUE);
+		return (FALSE);
 
 	/* Staffs/Scrolls burn */
 	case TV_STAFF:
@@ -2039,7 +2044,13 @@ bool hates_fire(object_type *o_ptr)
 	/* Potions evaporate */
 	case TV_POTION:
 	case TV_POTION2:
+	case TV_FLASK:
+	case TV_BOTTLE: //just melts
 		return (TRUE);
+
+	/* Junk, partially */
+	case TV_SKELETON:
+		return TRUE;
 	}
 
 	return (FALSE);
@@ -2054,7 +2065,7 @@ static bool hates_cold(object_type *o_ptr)
 	case TV_POTION:
 	case TV_POTION2:
 	case TV_FLASK:
-	case TV_BOTTLE:
+	//case TV_BOTTLE:  <- empty! unlike potions..
 		return (TRUE);
 	}
 
@@ -4240,7 +4251,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	u32b f1, f2, f3, f4, f5, esp;
 	char	o_name[ONAME_LEN];
 	int o_sval = 0;
-	bool is_potion = FALSE, is_basic_potion = FALSE;
+	bool is_potion = FALSE, is_basic_potion = FALSE, is_meltable = FALSE;
 
 	int		div;
 	cave_type **zcave;
@@ -4311,6 +4322,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	   For this reason, add is_basic_potion: It determines whether smash effect is applied. */
 	is_potion = ((k_info[o_ptr->k_idx].tval == TV_POTION) || (k_info[o_ptr->k_idx].tval == TV_POTION2));
 	is_basic_potion = (k_info[o_ptr->k_idx].tval == TV_POTION);
+	is_meltable = (k_info[o_ptr->k_idx].tval == TV_BOTTLE);
 
 	/* Analyze the type */
 	switch (typ) {
@@ -4328,8 +4340,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Acid -- Lots of things */
 		case GF_ACID:
 		{
-			if (hates_acid(o_ptr))
-			{
+			if (hates_acid(o_ptr)) {
 				do_kill = TRUE;
 				note_kill = (plural ? " melt!" : " melts!");
 				if (f3 & TR3_IGNORE_ACID) ignore = TRUE;
@@ -4354,11 +4365,14 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_FIRE:
 		{
 			do_smash_effect = TRUE;
-			if (hates_fire(o_ptr))
-			{
+			if (hates_fire(o_ptr)) {
 				do_kill = TRUE;
-				note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
-					: (plural ? " burn up!" : " burns up!");
+				if (is_meltable)
+					note_kill = (plural ? " melt!" : " melts!");
+				else if (is_potion)
+					note_kill = (plural ? " evaporate!" : " evaporates!");
+				else
+					note_kill = (plural ? " burn up!" : " burns up!");
 				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
 			}
 			break;
@@ -4367,8 +4381,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Cold -- potions and flasks */
 		case GF_COLD:
 		{
-			if (hates_cold(o_ptr))
-			{
+			if (hates_cold(o_ptr)) {
 				note_kill = (plural ? " shatter!" : " shatters!");
 				do_kill = TRUE;
 				if (f3 & TR3_IGNORE_COLD) ignore = TRUE;
@@ -4385,8 +4398,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		//case GF_VAPOUR:
 		case GF_WATERPOISON:
 		{
-			if (hates_water(o_ptr))
-			{
+			if (hates_water(o_ptr)) {
 				note_kill = (plural ? " are soaked!" : " is soaked!");
 				do_kill = TRUE;
 				if (f5 & TR5_IGNORE_WATER) ignore = TRUE;
@@ -4398,19 +4410,27 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_PLASMA:
 		{
 			do_smash_effect = TRUE;
-			if (hates_fire(o_ptr))
-			{
+			ignore = TRUE;
+
+			if (hates_fire(o_ptr)) {
 				do_kill = TRUE;
-				note_kill = (plural ? " burn up!" : " burns up!");
-				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
+				if (!(f3 & TR3_IGNORE_FIRE)) {
+					ignore = FALSE;
+					if (is_meltable)
+						note_kill = (plural ? " melt!" : " melts!");
+					else if (is_potion)
+						note_kill = (plural ? " evaporate!" : " evaporates!");
+					else
+						note_kill = (plural ? " burn up!" : " burns up!");
+				}
 			}
 
-			if (hates_elec(o_ptr))
-			{
-				ignore = FALSE;
+			if (hates_elec(o_ptr)) {
 				do_kill = TRUE;
-				note_kill = (plural ? " are destroyed!" : " is destroyed!");
-				if (f3 & TR3_IGNORE_ELEC) ignore = TRUE;
+				if (!(f3 & TR3_IGNORE_ELEC)) {
+					ignore = FALSE;
+					note_kill = (plural ? " are destroyed!" : " is destroyed!");
+				}
 			}
 			else apply_discharge_item(this_o_idx, dam / 2);
 
@@ -4424,21 +4444,28 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_METEOR:
 		{
 			do_smash_effect = TRUE;
-			if (hates_fire(o_ptr))
-			{
+			ignore = TRUE;
+			if (hates_fire(o_ptr)) {
 				do_kill = TRUE;
-				note_kill = (plural ? " burn up!" : " burns up!");
-				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
+				if (!(f3 & TR3_IGNORE_FIRE)) {
+					ignore = FALSE;
+					if (is_meltable)
+						note_kill = (plural ? " melt!" : " melts!");
+					else if (is_potion)
+						note_kill = (plural ? " evaporate!" : " evaporates!");
+					else
+						note_kill = (plural ? " burn up!" : " burns up!");
+				}
 			}
-			if (hates_impact(o_ptr))
-			{
-				ignore = FALSE;
+			if (hates_impact(o_ptr)) {
 				do_kill = TRUE;
-				note_kill = (plural ? " shatter!" : " shatters!");
-				if (f3 & TR3_IGNORE_COLD) ignore = TRUE;
+				if (!(f3 & TR3_IGNORE_COLD)) {
+					ignore = FALSE;
+					note_kill = (plural ? " shatter!" : " shatters!");
 #ifdef USE_SOUND_2010
-				else if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
+					if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
+				}
 			}
 			break;
 		}
@@ -4447,8 +4474,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_ICE:
 		case GF_ICEPOISON:
 		{
-			if (hates_cold(o_ptr) || hates_impact(o_ptr))
-			{
+			if (hates_cold(o_ptr) || hates_impact(o_ptr)) {
 				note_kill = (plural ? " shatter!" : " shatters!");
 				do_kill = TRUE;
 #ifdef USE_SOUND_2010
@@ -4463,8 +4489,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_SOUND:
 		case GF_THUNDER:
 		{
-			if (hates_impact(o_ptr))
-			{
+			if (hates_impact(o_ptr)) {
 				note_kill = (plural ? " shatter!" : " shatters!");
 				do_kill = TRUE;
 #ifdef USE_SOUND_2010
@@ -4554,15 +4579,16 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_HELL_FIRE:
 			do_smash_effect = TRUE;
-			if (hates_fire(o_ptr))
-			{
+			if (hates_fire(o_ptr)) {
 				do_kill = TRUE;
-				note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
-					: (plural ? " burn up!" : " burns up!");
+				if (is_meltable)
+					note_kill = (plural ? " melt!" : " melts!");
+				else if (is_potion)
+					note_kill = (plural ? " evaporate!" : " evaporates!");
+				else
+					note_kill = (plural ? " burn up!" : " burns up!");
 				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
-			}
-			else if (!cursed_p(o_ptr) && magik(10))
-			{
+			} else if (!cursed_p(o_ptr) && magik(10)) {
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 				do_kill = TRUE;
 			}
