@@ -14632,8 +14632,8 @@ item's base type.
 Items cannot give more than +11 to speed, crit or mana.
 Items that give two of speed, crit or mana cannot give more than +7.
 Items that give speed, crit and mana cannot give more than +5.
-Items that cannot give +speed via base-item enforced mod (eg Rings of Speed)
- cannot get more than +7 speed (which is already *extremely* rare).
+Items that give +speed via base-item enforced mod (eg Rings of Speed) cannot
+ get more than +7 speed (which is already *extremely* rare).
 Items cannot give more than +6 luck.
 Items cannot have more than +5 stealth, except for cloaks which can have +6.
 Items cannot give more than +5 to stats (STR/INT/WIS/DEX/CON/CHR).
