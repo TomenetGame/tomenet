@@ -140,6 +140,9 @@
 /* Allow an OT_GUILD house for each guild. - C. Blue */
 #define ENABLE_GUILD_HALL
 
+/* like BONE_AND_TREASURE_CHAMBERS, just for IDDC */
+#define IDDC_BONE_AND_TREASURE_CHAMBERS
+
 
 /* --------------------- Server-type dependant features -------------------- */
 

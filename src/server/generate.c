@@ -2945,7 +2945,11 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Inner room variations */
 #ifndef BONE_AND_TREASURE_CHAMBERS
+ #ifndef IDDC_BONE_AND_TREASURE_CHAMBERS
 	switch (randint(10)) {
+ #else
+	switch (randint(in_irondeepdive(wpos) ? 11 : 10)) {
+ #endif
 #else
 	switch (randint(11)) {
 #endif
