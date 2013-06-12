@@ -2593,56 +2593,58 @@ void check_parryblock(int Ind)
 #ifdef ENABLE_NEW_MELEE
 	char msg[80];
 	player_type *p_ptr = Players[Ind];
+	int apc = apply_parry_chance(p_ptr, p_ptr->weapon_parry), abc = apply_block_chance(p_ptr, p_ptr->shield_deflect);
+
 	if (is_admin(p_ptr)) {
 		msg_format(Ind, "You have exactly %d%%/%d%% base chance of parrying/blocking.", 
 			p_ptr->weapon_parry, p_ptr->shield_deflect);
 		msg_format(Ind, "You have exactly %d%%/%d%% real chance of parrying/blocking.", 
-			apply_parry_chance(p_ptr, p_ptr->weapon_parry), apply_block_chance(p_ptr, p_ptr->shield_deflect));
+			apc, abc);
 	} else {
-		if (!apply_parry_chance(p_ptr, p_ptr->weapon_parry))
+		if (!apc)
 			strcpy(msg, "You cannot parry at the moment. ");
 			//msg_print(Ind, "You cannot parry at the moment.");
  #if 0
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 5)
+		else if (apc < 5)
 			msg_print(Ind, "You have almost no chance of parrying.");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 10)
+		else if (apc < 10)
 			msg_print(Ind, "You have a slight chance of parrying.");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 20)
+		else if (apc < 20)
 			msg_print(Ind, "You have a significant chance of parrying.");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 30)
+		else if (apc < 30)
 			msg_print(Ind, "You have a good chance of parrying.");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 40)
+		else if (apc < 40)
 			msg_print(Ind, "You have a very good chance of parrying.");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 50)
+		else if (apc < 50)
 			msg_print(Ind, "You have an excellent chance of parrying.");
 		else
 			msg_print(Ind, "You have a superb chance of parrying.");
  #else
 		else strcpy(msg, format("You have a %d%% chance of parrying. ",
-			apply_parry_chance(p_ptr, p_ptr->weapon_parry)));
+			apc));
  #endif
 
-		if (!apply_block_chance(p_ptr, p_ptr->shield_deflect))
+		if (!abc)
 			strcat(msg, "You cannot block at the moment.");
 			//msg_print(Ind, "You cannot block at the moment.");
  #if 0
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 5)
+		else if (abc < 5)
 			msg_print(Ind, "You have almost no chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 14)
+		else if (abc < 14)
 			msg_print(Ind, "You have a slight chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 23)
+		else if (abc < 23)
 			msg_print(Ind, "You have a significant chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 33)
+		else if (abc < 33)
 			msg_print(Ind, "You have a good chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 43)
+		else if (abc < 43)
 			msg_print(Ind, "You have a very good chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 48)
+		else if (abc < 48)
 			msg_print(Ind, "You have an excellent chance of blocking.");
 		else
 			msg_print(Ind, "You have a superb chance of blocking.");
  #else
 		else strcat(msg, format("You have a %d%% chance of blocking.",
-			apply_block_chance(p_ptr, p_ptr->shield_deflect)));
+			abc));
  #endif
 		msg_print(Ind, msg);
 	}

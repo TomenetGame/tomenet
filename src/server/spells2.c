@@ -1373,36 +1373,6 @@ void self_knowledge(int Ind) {
 		else fprintf(fff, "You are surrounded by a feeble anti-magic field.\n");
 
 	}
-#if 0 /* done in util.c */
-#ifdef USE_BLOCKING
-	if (apply_block_chance(p_ptr, p_ptr->shield_deflect)) {
-		if (apply_block_chance(p_ptr, p_ptr->shield_deflect) >= 50)
-			fprintf(fff, "You are extremely good at blocking with your shield.\n");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) >= 30)
-			fprintf(fff, "You are very good at blocking with your shield.\n");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) >= 20)
-			fprintf(fff, "You are fairly good at blocking with your shield.\n");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) >= 15)
-			fprintf(fff, "You aren't that good at blocking with your shield.\n");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) > 0)
-			fprintf(fff, "You are rather bad at blocking with your shield.\n");
-	}
-#endif
-#ifdef USE_PARRING
-	if (p_ptr->weapon_parry) {
-		if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) >= 30)
-			fprintf(fff, "You are extremely good at parrying with your weapon.\n");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) >= 25)
-			fprintf(fff, "You are very good at parrying with your weapon\n");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) >= 20)
-			fprintf(fff, "You are fairly good at parrying with your weapon.\n");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) >= 10)
-			fprintf(fff, "You aren't that good at parrying with your weapon.\n");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) > 0)
-			fprintf(fff, "You are rather bad at parrying with your weapon.\n");
-	}
-#endif
-#endif
 #if 1
         if (p_ptr->anti_magic)	// newer (saving-throw boost)
                 fprintf(fff, "You are surrounded by an anti-magic shell.\n");
