@@ -5824,7 +5824,7 @@ void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1)
 bool lite_area(int Ind, int dam, int rad) {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODO | PROJECT_NODF;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) proj_dam_wraith(GF_LITE_WEAK, &dam);
@@ -5852,7 +5852,7 @@ bool unlite_area(int Ind, int dam, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODO | PROJECT_NODF;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) proj_dam_wraith(GF_DARK_WEAK, &dam);
@@ -5887,7 +5887,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 	char pattacker[80];
 	int tx, ty;
 
-	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
 
 	/* WRAITHFORM reduces damage/effect */
 	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
@@ -5940,8 +5940,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 
 	/* affect self + players + monsters AND give credit on kill */
-	if (typ == GF_HEAL_PLAYER) flg |= PROJECT_PLAY;
-
+	flg = mod_ball_spell_flags(typ, flg);
 	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
@@ -5956,7 +5955,7 @@ bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 	char pattacker[80];
 	int tx, ty;
 
-	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_FULL;
+	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_FULL | PROJECT_NODO;
 
 
 	/* WRAITHFORM reduces damage/effect! */
@@ -6010,8 +6009,7 @@ bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
        snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 
        /* affect self + players + monsters AND give credit on kill */
-       if (typ == GF_HEAL_PLAYER) flg |= PROJECT_PLAY;
-
+       flg = mod_ball_spell_flags(typ, flg);
        return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
@@ -6025,7 +6023,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 
-	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
+	int flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO;
 
 	char pattacker[80];
 
@@ -6059,18 +6057,8 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	else sound(Ind, "cast_cloud", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-	/* Hack: Make HEALINGCLOUD affect the caster too! */
-#if 0
-	/* Note: 'Ind' < 0 (eg PROJECTOR_EFFECT) disables projection on monsters,
-	   so HEALINGCLOUD wouldn't damage undeads - well, maybe it shouldn't. */
-	if (typ == GF_HEALINGCLOUD)
-		return (project(PROJECTOR_EFFECT, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
-	else
-		return (project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
-#else /* affect self + players + monsters AND give credit on kill */
-	if (typ == GF_HEALINGCLOUD) flg |= PROJECT_PLAY;
+	flg = mod_ball_spell_flags(typ, flg);
 	return (project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
-#endif
 }
 
 /*
@@ -6395,7 +6383,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_NODF | PROJECT_NODO;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
@@ -6440,7 +6428,7 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	char pattacker[80];
 	int tx, ty;
 
-	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_EVSG;
+	int flg = PROJECT_NORF | PROJECT_HIDE | PROJECT_STOP | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_EVSG | PROJECT_NODF | PROJECT_NODO;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
@@ -6463,9 +6451,7 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 
-	/* affect self + players + monsters AND give credit on kill */
-	if (typ == GF_HEAL_PLAYER) flg |= PROJECT_PLAY;
-
+	if (typ == GF_HEAL_PLAYER) flg |= PROJECT_PLAY; //mod_ball_spell_flags(typ, flg);
 	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
 
@@ -6477,7 +6463,7 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 	char pattacker[80];
 
 	// (project_grid is required for disarm beam! same for project_item, for chests!)
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
 //	flg |= PROJECT_STOP | PROJECT_HIDE;
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
@@ -6516,37 +6502,37 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 
 bool lite_line(int Ind, int dir, int dam)
 {
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_LITE_WEAK, dir, dam, flg, ""));
 }
 
 bool drain_life(int Ind, int dir, int dam)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return(project_hook(Ind, GF_OLD_DRAIN, dir, dam, flg, ""));
 }
 
 bool annihilate(int Ind, int dir, int dam)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return(project_hook(Ind, GF_ANNIHILATION, dir, dam, flg, ""));
 }
 
 bool wall_to_mud(int Ind, int dir)
 {
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, ""));
 }
 
 bool destroy_door(int Ind, int dir)
 {
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_KILL_DOOR, dir, 0, flg, ""));
 }
 
 bool disarm_trap(int Ind, int dir)
 {
-	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_KILL_TRAP, dir, 0, flg, ""));
 }
 
@@ -6561,25 +6547,25 @@ bool speed_monster(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_SPEED, dir, p_ptr->lev, flg, ""));
 }
 
 bool slow_monster(int Ind, int dir, int pow)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_SLOW, dir, pow, flg, ""));
 }
 
 bool sleep_monster(int Ind, int dir, int pow)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_SLEEP, dir, pow, flg, ""));
 }
 
 bool confuse_monster(int Ind, int dir, int pow)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_CONF, dir, pow, flg, ""));
 }
 
@@ -6587,52 +6573,52 @@ bool poly_monster(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_SELF | PROJECT_PLAY;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_SELF | PROJECT_PLAY | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_POLY, dir, p_ptr->lev, flg, ""));
 }
 
 bool clone_monster(int Ind, int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_OLD_CLONE, dir, 0, flg, ""));
 }
 
 bool fear_monster(int Ind, int dir, int pow)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_TURN_ALL, dir, pow, flg, ""));
 }
 
 bool teleport_monster(int Ind, int dir)
 {
-	int flg = PROJECT_BEAM | PROJECT_KILL;
+	int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_AWAY_ALL, dir, MAX_SIGHT * 5, flg, ""));
 }
 
 bool cure_light_wounds_proj(int Ind, int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(2, 10), flg, Players[Ind]->attacker));
 }
 
 bool cure_serious_wounds_proj(int Ind, int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(4, 10), flg, Players[Ind]->attacker));
 }
 
 bool cure_critical_wounds_proj(int Ind, int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(6, 10), flg, Players[Ind]->attacker));
 }
 
 bool heal_other_proj(int Ind, int dir)
 {
-	int flg = PROJECT_STOP | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
 	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, 100, flg, Players[Ind]->attacker));
 }
@@ -6647,7 +6633,7 @@ bool door_creation(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
 	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg, ""));
 }
 
@@ -6655,7 +6641,7 @@ bool trap_creation(int Ind, int mod, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
 	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, mod, GF_MAKE_TRAP, flg, ""));
 }
 
@@ -6663,7 +6649,7 @@ bool destroy_doors_touch(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
 	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg, ""));
 }
 
@@ -6671,7 +6657,7 @@ bool sleep_monsters_touch(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int flg = PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE;
+	int flg = PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
 	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg, ""));
 }
 
@@ -8028,4 +8014,35 @@ bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr) {
 		return TRUE;
 
 	return FALSE;
+}
+
+/* Add certain flags to a ball/breath/cloud projection depending on the damage type. */
+u32b mod_ball_spell_flags(int typ, u32b flags) {
+	switch (typ) {
+	/* stuff that also acts on the casting player himself */
+	case GF_HEAL_PLAYER:
+	case GF_HEALINGCLOUD:
+		return (flags | PROJECT_PLAY);
+	/* 'environmentally instant' stuff */
+	case GF_SOUND:
+	case GF_CONFUSION:
+	case GF_INERTIA:
+	case GF_TIME:
+	case GF_GRAVITY:
+	case GF_STUN:
+	case GF_PSI:
+	case GF_UNBREATH:
+	case GF_THUNDER:
+	case GF_ANNIHILATION:
+		return (flags | PROJECT_LODF);
+	/* very powerful 'force' stuff */
+	case GF_FORCE:
+	case GF_METEOR:
+	case GF_INFERNO:
+	case GF_DETONATION:
+	case GF_ROCKET:
+	case GF_WAVE:
+		return (flags | PROJECT_LODF);
+	}
+	return flags;
 }

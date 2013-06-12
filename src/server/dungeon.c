@@ -1011,15 +1011,15 @@ static void process_effects(void)
 			if (c_ptr->effect != k) /* Nothing */;
 			else {
 				if (e_ptr->time) {
+					int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP;
+						    //PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP
+
+					flg = mod_ball_spell_flags(e_ptr->type, flg);
+
 					/* Apply damage */
-					if (e_ptr->type == GF_HEALINGCLOUD)
-						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
-						    PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_PLAY, "");
-						    //PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_PLAY, "");
-					else //Effects should also hit grids, for runemaster EFF_WAVE/STOR functionality. - Kurzel!! - Rewrite for fire_wall() above...
-						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
-						    PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
-						    //PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
+					//Effects should also hit grids, for runemaster EFF_WAVE/STOR functionality. - Kurzel!! - Rewrite for fire_wall() above...
+					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+
 					/* Oh, destroyed? RIP */
 					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
 							Players[0 - who]->conn == NOT_CONNECTED)

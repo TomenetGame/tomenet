@@ -3683,6 +3683,10 @@
 #define PROJECT_FULL	0x00004000	/* Deal full damage over radius spread (May dehack many things with this! - Kurzel) */
 #define PROJECT_EVSG	0x00008000	/* 'Entity vs Grid': It's a bolt spell that can hit EITHER mon/py OR floor/item. */
 
+#define PROJECT_NODO	PROJECT_NORF	/* cannot be dodged (basically used in the same places as NORF) */
+#define PROJECT_LODF	0x00020000	/* can only partially be deflected by shield-blocking. */
+#define PROJECT_NODF	0x00040000	/* cannot be deflected by shield-blocking. */
+
 /* ToME expansions */
 #if 0	/* soon */
 #define PROJECT_VIEWABLE	0x00000100   /* Affect monsters in LOS */

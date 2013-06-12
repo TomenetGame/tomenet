@@ -3806,7 +3806,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
 	int x = m_ptr->fx;
 	cave_type **zcave;
 	zcave = getcave(&m_ptr->wpos);
-	u32b flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP;
+	u32b flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODF;
 
 	/* Depend on wand type */
 	switch ((o_ptr->sval == SV_WAND_WONDER) ? rand_int(SV_WAND_WONDER) : o_ptr->sval) {

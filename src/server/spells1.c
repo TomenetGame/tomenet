@@ -93,6 +93,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 	int	 dam = 0;
 	bool	ident = FALSE;
 	bool	angry = FALSE;
+	int	flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO);
 
 	switch (o_sval) {
 		case SV_POTION_SLIME_MOLD:
@@ -275,6 +276,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			aggravate_monsters_floorpos(wpos, y, x);
 			angry = TRUE;
 			ident = TRUE;
+			flg |= PROJECT_LODF; /* obsolete because of PROJECT_JUMP, but just in case */
 #ifdef USE_SOUND_2010
 			if (who < 0 && who > PROJECTOR_UNUSUAL) sound(-who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
 #endif
@@ -352,7 +354,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 	if (dt != GF_CURING) dam *= 2;
 
 	(void) project(who, radius, wpos, y, x, dam, dt,
-	    (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF), "");
+	    flg, "");
 
 	/* XXX	those potions that explode need to become "known" */
 	return angry;
@@ -4927,7 +4929,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* handle blocking (deflection) */
         if (strchr("hHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
             !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) &&
-	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP)) /* only for fire_bolt() */
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_NODF)) /* only for fire_bolt() */
             && !rand_int(52 - r_ptr->level / 3)) { /* small chance to block spells */
 		if (seen) {
 			char hit_desc[MAX_CHARS];
@@ -8287,7 +8289,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //	if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
 	/* Hack -- HIDE(direct) spell cannot be dodged */
 	if (!friendly_player &&
-	    get_skill(p_ptr, SKILL_DODGE) && !(flg & PROJECT_HIDE | PROJECT_NORF | PROJECT_JUMP))
+	    get_skill(p_ptr, SKILL_DODGE) && !(flg & PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO))
 	{
 		if ((!rad) && (who >= PROJECTOR_TRAP)) {
 			//		int chance = (p_ptr->dodge_level - ((r_info[who].level * 5) / 6)) / 3;
@@ -8315,7 +8317,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Bolt attack from a monster, a player or a trap */
 //	if (!p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_GRID | PROJECT_JUMP)) && magik(apply_dodge_chance(Ind, getlevel(wpos) + 1000))) { /* hack - more difficult to dodge ranged attacks */
 	if (!friendly_player &&
-	    !p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY)) && magik(apply_dodge_chance(Ind, getlevel(wpos)))) {
+	    !p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODO)) && magik(apply_dodge_chance(Ind, getlevel(wpos)))) {
 		if ((!rad) && (who >= PROJECTOR_TRAP)) {
 			msg_format(Ind, "\377%cYou dodge %s projectile!", COLOUR_DODGE_GOOD, m_name_gen);
 			return (TRUE);
@@ -8363,7 +8365,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (!friendly_player && p_ptr->kinetic_shield && (typ == GF_ARROW || typ == GF_MISSILE)
 	    && p_ptr->csp >= dam / 7 &&
 	    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY))) {
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF))) {
 		/* drain mana */
 		p_ptr->csp -= dam / 7;
 		p_ptr->redraw |= PR_MANA;
@@ -8378,13 +8380,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    /* reflect? */
 	    || (p_ptr->reflect &&
 	    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY)) &&
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF)) &&
 	    rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 3))
 #ifdef USE_BLOCKING
 	    /* using a shield? requires USE_BLOCKING */
 	    || (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect / 5)) &&
 	    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY)) &&
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF)) &&
 	    rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 3))
 #endif
 	    ))
@@ -8444,10 +8446,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (!friendly_player &&  /* cannot take cover from clouds or LOS projections (latter might be subject to change?) - C. Blue */
 	     /* jump for LOS projecting, stay for clouds; !norf was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
 	    !rad && (flg & PROJECT_KILL) &&
-	    !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY))
+	    !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF))
 	    ) /* requires stances to * 2 etc.. post-king -> best stance */
 	{
-		if (p_ptr->shield_deflect && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
+		if (p_ptr->shield_deflect && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect) / ((flg & PROJECT_LODF) ? 2 : 1))) {
 			if (blind) msg_format(Ind, "\377%cSomething glances off your shield!", COLOUR_BLOCK_GOOD);
 			else msg_format(Ind, "\377%cYou deflect %s attack!", COLOUR_BLOCK_GOOD, m_name_gen);
 #ifdef USE_SOUND_2010
@@ -8464,10 +8466,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Ball attacks: Took cover behind a shield? requires USE_BLOCKING */
 	else if (!friendly_player && /* cannot take cover from clouds or LOS projections (latter might be subject to change?) - C. Blue */
 	     /* jump for LOS projecting, stay for clouds; !norf was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
-	    (flg & PROJECT_KILL) && (flg & PROJECT_NORF) && !(flg & (PROJECT_JUMP | PROJECT_STAY))) /* PROJECT_STAY to exempt 'cloud' spells! */
+	    (flg & PROJECT_KILL) && (flg & PROJECT_NORF) && !(flg & (PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF))) /* PROJECT_STAY to exempt 'cloud' spells! */
 	    /* requires stances to * 2 etc.. post-king -> best stance */
 	{
-		if (p_ptr->shield_deflect && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
+		if (p_ptr->shield_deflect && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect) / ((flg & PROJECT_LODF) ? 4 : 2))) {
 			if (blind) msg_format(Ind, "\377%cSomething hurls along your shield!", COLOUR_BLOCK_GOOD);
 			else msg_format(Ind, "\377%cYou cover before %s attack!", COLOUR_BLOCK_GOOD, m_name_gen);
 

@@ -1545,6 +1545,7 @@ extern bool turn_monsters(int Ind, int dam);
 extern void wizard_lock(int Ind, int dir);
 extern void do_mstopcharm(int Ind);
 extern bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr);
+extern u32b mod_ball_spell_flags(int typ, u32b flags);
 
 
 /* store.c */
