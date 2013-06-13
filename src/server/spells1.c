@@ -4133,7 +4133,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
                 {
                         byte feat = twall_erosion(wpos, y, x);
                         if (!allow_terraforming(wpos, FEAT_TREE)) break;
-                        if (c_ptr->feat == FEAT_GLYPH)
+                        if (c_ptr->feat == FEAT_GLYPH || c_ptr->feat == FEAT_RUNE)
                         {
                                 cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
                         }
