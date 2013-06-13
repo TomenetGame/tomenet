@@ -7541,6 +7541,7 @@ void kill_quest(int Ind) {
 				guilds[temphash->guild].members++;
 				msg_format(Ind, "\374You've been added to '\377%c%s\377w'.", COLOUR_CHAT_GUILD, guilds[temphash->guild].name);
 				p_ptr->guild = temphash->guild;
+				p_ptr->guild_dna = guilds[p_ptr->guild].dna;
 				clockin(Ind, 3);	/* set in db */
 			}
 			else if (p_ptr->guild == temphash->guild) {

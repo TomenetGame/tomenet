@@ -1353,6 +1353,7 @@ int guild_add_self(int Ind, cptr guild) {
 
 	/* Set his guild number */
 	p_ptr->guild = guild_id;
+	p_ptr->guild_dna = guilds[guild_id].dna;
 	clockin(Ind, 3);
 
 	/* Resend info */
@@ -1405,6 +1406,7 @@ int guild_auto_add(int Ind, int guild_id, char *message) {
 
 	/* Set his guild number */
 	p_ptr->guild = guild_id;
+	p_ptr->guild_dna = guilds[guild_id].dna;
 	clockin(Ind, 3);
 
 	/* Resend info */
