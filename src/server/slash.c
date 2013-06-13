@@ -5905,6 +5905,7 @@ void do_slash_cmd(int Ind, char *message)
 						}
 					}
 					if (members != guilds[i].members) s_printf(" Fixed guild %d '%s': %d -> %d\n", i, guilds[i].name, guilds[i].members, members);
+					else s_printf(" (Guild %d '%s': %d is correct)\n", i, guilds[i].name, members);
 					guilds[i].members = members;
 					if (!members) del_guild(i);
 				}
