@@ -3808,7 +3808,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons help!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, ys, xs, rlev, s_clone, 0, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_MONSTER, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
@@ -3824,7 +3824,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons monsters!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, ys, xs, rlev, s_clone, 0, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_MONSTER, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");

@@ -4236,7 +4236,7 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->dg_curse && (rand_int(200) == 0) && !istown(&p_ptr->wpos) && !isdungeontown(&p_ptr->wpos) &&
 	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50) && magik(100 - p_ptr->antimagic)) {
 		msg_print(Ind, "An ancient morgothian curse calls out!");
-		summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev + 20, 100, 0, 0, 0);
+		summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev + 20, 100, SUMMON_MONSTER, 0, 0);
 	}
 
 	/* Handle experience draining.  In Oangband, the effect

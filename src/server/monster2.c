@@ -4015,7 +4015,7 @@ bool alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp)
 /*
  * Hack -- the "type" of the current "summon specific"
  */
-static int summon_specific_type = 0;
+static int summon_specific_type = 0; /* SUMMON_ALL */
 
 
 /*
@@ -4037,6 +4037,9 @@ static bool summon_specific_okay(int r_idx)
 
 	/* Check our requirements */
 	switch (summon_specific_type) {
+		case SUMMON_MONSTER:
+			okay = (!(r_ptr->flags1 & RF1_UNIQUE));
+			break;
 		case SUMMON_ANT:
 			okay = ((r_ptr->d_char == 'a') &&
 				!(r_ptr->flags1 & RF1_UNIQUE));

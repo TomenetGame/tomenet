@@ -109,7 +109,7 @@ void divine_vengeance(int Ind, int power) {
 				if (p_ptr->party != q_ptr->party) continue;
 				
 				/* Have a present from the nether world for each player you teleport! */
-				summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 100, 0, 0, cfg.clone_summoning);
+				summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 100, SUMMON_MONSTER, 0, cfg.clone_summoning);
 
 				teleport_player_to(i, p_ptr->py, p_ptr->px);
 			}

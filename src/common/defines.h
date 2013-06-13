@@ -3880,6 +3880,8 @@
 /*
  * Legal restrictions for "summon_specific()"
  */
+#define SUMMON_ALL			0	/* allows all, including uniques */
+#define SUMMON_MONSTER			1	/* all, but disallows uniques */
 #define SUMMON_ANT			11
 #define SUMMON_SPIDER			12
 #define SUMMON_HOUND			13

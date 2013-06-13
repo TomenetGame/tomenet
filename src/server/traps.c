@@ -661,7 +661,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			msg_print(Ind, "A spell hangs in the air.");
 			summon_override_checks = SO_IDDC;
 			//            for (k = 0; k < randint(3); k++) ident |= summon_specific(y, x, max_dlv[dungeon_type], 0, SUMMON_UNDEAD, 1);	// max?
-			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 100, 0, 1, 0);
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 100, SUMMON_ALL, 1, 0);
 			summon_override_checks = SO_NONE;
 			break;
 
@@ -2239,7 +2239,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			ident = player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap);
 			destroy_chest(i_ptr);
 			summon_override_checks = SO_IDDC;
-			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, 0, 1, 0);
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_ALL, 1, 0);
 			summon_override_checks = SO_NONE;
 			if (ident) msg_print(Ind, "You hear drums of battle!");
 			break;
@@ -3501,7 +3501,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr)
 			break;
 		case SV_STAFF_SUMMONING:
 			for (k = 0; k < randint(4) ; k++)
-				if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, 0, 1, 0))
+				if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL, 1, 0))
 					id = TRUE;
 			if (id) identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
@@ -3669,7 +3669,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 			return (FALSE);
 		case SV_SCROLL_SUMMON_MONSTER:
 			summon_override_checks = SO_IDDC;
-			for (k = 0; k < randint(3) ; k++) if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, 0, 1, 0)) id = TRUE;
+			for (k = 0; k < randint(3) ; k++) if (summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL, 1, 0)) id = TRUE;
 			summon_override_checks = SO_NONE;
 			if (id) identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
