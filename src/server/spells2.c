@@ -84,33 +84,35 @@ void divine_vengeance(int Ind, int power) {
 		/* players TELE_TO */
 		if (p_ptr->party == 0) {
 			msg_print(Ind, "You can only teleport to party members.");
-		}
-		for (i = 1; i <= NumPlayers; i++) {
-			/* Skip self */
-			if (i == Ind) continue;
+		} else {
+			fire_ball(Ind, GF_KILL_GLYPH, 0, 0, 2, "");
+			for (i = 1; i <= NumPlayers; i++) {
+				/* Skip self */
+				if (i == Ind) continue;
 
-			player_type *q_ptr = Players[i];
+				player_type *q_ptr = Players[i];
 
-			/* Skip disconnected players */
-			if (q_ptr->conn == NOT_CONNECTED) continue;
+				/* Skip disconnected players */
+				if (q_ptr->conn == NOT_CONNECTED) continue;
 
-			/* Skip players not on this depth */
-			if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) continue;
+				/* Skip players not on this depth */
+				if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) continue;
 
-			/* Skip DM if not DM himself */
-			if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
+				/* Skip DM if not DM himself */
+				if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
 
-			/* Skip players who haven't opened their mind */
-			if (!(q_ptr->esp_link_flags & LINKF_OPEN)) continue;
+				/* Skip players who haven't opened their mind */
+				if (!(q_ptr->esp_link_flags & LINKF_OPEN)) continue;
 
-			/* Skip players not in the same party */
-			if (q_ptr->party == 0 || p_ptr->party == 0) continue;
-			if (p_ptr->party != q_ptr->party) continue;
+				/* Skip players not in the same party */
+				if (q_ptr->party == 0 || p_ptr->party == 0) continue;
+				if (p_ptr->party != q_ptr->party) continue;
+				
+				/* Have a present from the nether world for each player you teleport! */
+				summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 100, 0, 0, cfg.clone_summoning);
 
-			teleport_player_to(i, p_ptr->py, p_ptr->px);
-			
-			/* Have a present from the nether world for each player you teleport! */
-			summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 100, 0, 0, cfg.clone_summoning);
+				teleport_player_to(i, p_ptr->py, p_ptr->px);
+			}
 		}
 		/* monsters TELE_TO */
 		project_los(Ind, GF_TELE_TO, 0, " commands return");

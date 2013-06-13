@@ -3999,7 +3999,7 @@
 #define GF_HELL_FIRE		82 /* was HOLY_ORB */
 #define GF_NETHER_WEAK		83 /* special version of GF_NETHER, solely for Vampires smashing Potions of Death */
 
-#define GF_MAKE_GLYPH		85
+#define GF_KILL_GLYPH		85
 
 #define GF_INFERNO		89 /* damage-wise like GF_ROCKET, but no special sfx and doesn't hurt terrain (could be changed, dunno) */
 #define GF_DETONATION		90 /* damage-wise like GF_ROCKET, but different sfx */

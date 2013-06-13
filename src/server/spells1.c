@@ -4129,6 +4129,16 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
+                case GF_KILL_GLYPH:
+                {
+                        byte feat = twall_erosion(wpos, y, x);
+                        if (!allow_terraforming(wpos, FEAT_TREE)) break;
+                        if (c_ptr->feat == FEAT_GLYPH)
+                        {
+                                cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
+                        }
+                }
+
 		/* from PernA	- Jir - */
 #if 0
 		case GF_MAKE_GLYPH:
