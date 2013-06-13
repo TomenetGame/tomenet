@@ -5889,6 +5889,28 @@ void do_slash_cmd(int Ind, char *message)
 		                s_printf("done.\n");
 				return;
 			}
+			else if (prefix(message, "/guildmemberfix")) {
+				int slot, members;
+				hash_entry *ptr;
+				/* fix wrongly too high # of guild members, caused by (now fixed) guild_dna bug */
+				s_printf("GUILDMEMBERFIX:\n");
+				for (i = 1; i < MAX_GUILDS; i++) {
+					if (!guilds[i].members) continue;
+					members = 0;
+					for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+						ptr = hash_table[slot];
+						while (ptr) {
+							if (ptr->guild == i) members++;
+							ptr = ptr->next;
+						}
+					}
+					if (members != guilds[i].members) s_printf(" Fixed guild %d '%s': %d -> %d\n", i, guilds[i].name, guilds[i].members, members);
+					guilds[i].members = members;
+					if (!members) del_guild(i);
+				}
+				s_printf("Done.\n");
+				return;
+			}
 			else if (prefix(message, "/meta"))
 			{
 				if (!strcmp(message3, "update")) {

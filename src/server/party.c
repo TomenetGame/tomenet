@@ -38,7 +38,6 @@
 
 static char *t_crypt(char *inbuf, cptr salt);
 static void del_party(int id);
-static void del_guild(int id);
 static u32b new_accid(void);
 
 /* The hash table itself */
@@ -1784,7 +1783,7 @@ static void erase_guild_key(int id) {
  *
  * In style of del_party.
  */
-static void del_guild(int id){
+void del_guild(int id) {
 	char temp[160];
 	int i;
 
