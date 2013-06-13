@@ -7536,7 +7536,7 @@ extern int PlayerUID;
 #define S_COST_MAX 75
 #define S_DIFF_MAX 15 //Maximum level difference between spell and skill levels
 #define S_RADIUS_MIN 1
-#define S_RADIUS_MAX 6
+#define S_RADIUS_MAX 5
 #define S_DURATION_MIN 3
 #define S_DURATION_MAX 50
 #define S_WEIGHT_LO 150 //refer common/tables.c
