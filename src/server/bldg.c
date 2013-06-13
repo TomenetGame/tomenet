@@ -1404,26 +1404,7 @@ static void sell_corpses(void)
  */
 static bool mon_hook_bounty(int r_idx)
 {
-	monster_race* r_ptr = &r_info[r_idx];
-
-	/* Reject 'non-spawning' monsters */
-	if (r_ptr->rarity == 255) return (FALSE);
-
-	/* Reject uniques */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
-
-	/* Reject those who cannot leave anything */
-	if (!(r_ptr->flags9 & RF9_DROP_CORPSE) &&
-	    !(r_ptr->flags9 & RF9_DROP_SKELETON)) return (FALSE);
-
-	/* Reject pets */
-	if (r_ptr->flags7 & RF7_PET) return (FALSE);
-
-	/* Reject friendly creatures */
-	if (r_ptr->flags7 & RF7_FRIENDLY) return (FALSE);
-
-	/* The rest are acceptable */
-	return (TRUE);
+	return (lua_moon_hook_bounty(r_idx));
 }
 
 

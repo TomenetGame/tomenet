@@ -1057,6 +1057,9 @@ bool mon_allowed(monster_race *r_ptr)
 	if ((r_ptr->flags7 & (RF7_PET | RF7_NEUTRAL)) && i > cfg.pet_monsters)
 		return(FALSE);
 
+	/* No quest NPCs - they are to be created explicitely by quest code */
+	if ((r_ptr->flags1 & RF1_QUESTOR)) return(FALSE);
+
 	/* Base monsters allowed ? or not ? */
 	if ((r_ptr->flags8 & RF8_ANGBAND) && i > cfg.vanilla_monsters) return(FALSE);
 
@@ -1082,6 +1085,9 @@ bool mon_allowed(monster_race *r_ptr)
 bool mon_allowed_chance(monster_race *r_ptr) {
 	/* Pet/neutral monsters allowed? */
 	if(r_ptr->flags7 & (RF7_PET | RF7_NEUTRAL)) return(cfg.pet_monsters);
+
+	/* No quest NPCs - they are to be created explicitely by quest code */
+	if ((r_ptr->flags1 & RF1_QUESTOR)) return(FALSE);
 
 	/* Base monsters allowed ? or not ? */
 	if (r_ptr->flags8 & RF8_ANGBAND) return(cfg.vanilla_monsters);
@@ -1112,6 +1118,9 @@ bool mon_allowed_view(monster_race *r_ptr)
 	/* Pet/neutral monsters allowed? */
 	if(i > cfg.pet_monsters && (r_ptr->flags7 & (RF7_PET | RF7_NEUTRAL)))
 		return(FALSE);
+
+	/* No quest NPCs - they are to be created explicitely by quest code */
+	if ((r_ptr->flags1 & RF1_QUESTOR)) return(FALSE);
 
 	/* Base monsters allowed ? or not ? */
 	if(i > cfg.vanilla_monsters && (r_ptr->flags8 & RF8_ANGBAND)) return(FALSE);

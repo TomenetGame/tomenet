@@ -440,35 +440,38 @@ static bool lua_mon_hook_bounty(int r_idx)
 	if (r_ptr->rarity == 255) return (FALSE);
 
 	/* Reject uniques */
-	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+	if ((r_ptr->flags1 & RF1_UNIQUE)) return (FALSE);
+
+	/* Reject quest NPCs */
+	if ((r_ptr->flags1 & RF1_QUESTOR)) return (FALSE);
 
 	/* Reject those who cannot leave anything */
 	if (!(r_ptr->flags9 & RF9_DROP_CORPSE)) return (FALSE);
 
 	/* Accept only monsters that can be generated */
-	if (r_ptr->flags9 & RF9_SPECIAL_GENE) return (FALSE);
-	if (r_ptr->flags9 & RF9_NEVER_GENE) return (FALSE);
+	if ((r_ptr->flags9 & RF9_SPECIAL_GENE)) return (FALSE);
+	if ((r_ptr->flags9 & RF9_NEVER_GENE)) return (FALSE);
 
 	/* Reject pets */
-	if (r_ptr->flags7 & RF7_PET) return (FALSE);
+	if ((r_ptr->flags7 & RF7_PET)) return (FALSE);
 
 	/* Reject friendly creatures */
-	if (r_ptr->flags7 & RF7_FRIENDLY) return (FALSE);
+	if ((r_ptr->flags7 & RF7_FRIENDLY)) return (FALSE);
 
 	/* Reject neutral creatures */
-	if (r_ptr->flags7 & RF7_NEUTRAL) return (FALSE);
+	if ((r_ptr->flags7 & RF7_NEUTRAL)) return (FALSE);
 
 	/* Accept only monsters that are not breeders */
-	if (r_ptr->flags4 & RF4_MULTIPLY) return (FALSE);
+	if ((r_ptr->flags4 & RF4_MULTIPLY)) return (FALSE);
 
 	/* Forbid joke monsters */
-	if (r_ptr->flags8 & RF8_JOKEANGBAND) return (FALSE);
+	if ((r_ptr->flags8 & RF8_JOKEANGBAND)) return (FALSE);
 
 	/* Forbid C. Blue's monsters */
-	if (r_ptr->flags8 & RF8_BLUEBAND) return (FALSE);
+	if ((r_ptr->flags8 & RF8_BLUEBAND)) return (FALSE);
 
 	/* Accept only monsters that are not good */
-	if (r_ptr->flags3 & RF3_GOOD) return (FALSE);
+	if ((r_ptr->flags3 & RF3_GOOD)) return (FALSE);
 
 	/* The rest are acceptable */
 	return (TRUE);

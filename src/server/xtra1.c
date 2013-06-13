@@ -6766,6 +6766,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 	                if (strstr(c, parm2)) {
 #endif
 				if (!((r_info[i].flags1 & RF1_UNIQUE) ||
+				    (r_info[i].flags1 & RF1_QUESTOR) ||
 				    (r_info[i].flags7 & RF7_NEVER_ACT) ||
 				    (r_info[i].flags7 & RF7_PET) ||
 				    (r_info[i].flags7 & RF7_NEUTRAL) ||
