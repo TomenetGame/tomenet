@@ -509,41 +509,20 @@ static bool update_acc_file_version(void) {
                         retval = fread(&c_acc_old, sizeof(struct account_old), 1, fp_old);
                         if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
 
-#if 1
 			/* copy unchanged structure parts: */
 			c_acc.id = c_acc_old.id;
+			c_acc.flags = c_acc_old.flags;
 			strcpy(c_acc.name, c_acc_old.name);
 			strcpy(c_acc.pass, c_acc_old.pass);
 			c_acc.acc_laston = c_acc_old.acc_laston;
 			c_acc.cheeze = c_acc_old.cheeze;
 			c_acc.cheeze_self = c_acc_old.cheeze_self;
-			c_acc.flags = c_acc_old.flags;
+			c_acc.deed_event = c_acc_old.deed_event;
+			c_acc.deed_achievement = c_acc_old.deed_achievement;
+			c_acc.guild_id = c_acc_old.guild_id;
 			/* changes/additions: */
-			c_acc.deed_event = c_acc.deed_achievement = c_acc.guild_id = 0;
-#endif
-#if 0
-			/* copy unchanged structure parts: */
-			c_acc.id = c_acc_old.id;
-			strcpy(c_acc.name, c_acc_old.name);
-			strcpy(c_acc.pass, c_acc_old.pass);
-			c_acc.acc_laston = 0;//c_acc_old.expiry;
-			c_acc.cheeze = c_acc_old.cheeze;
-			c_acc.cheeze_self = c_acc_old.cheeze_self;
-			/* changes/additions: */
-			c_acc.flags = (u32b)c_acc_old.flags;
-			c_acc.flags |= ACC_GREETED; /* avoid spamming everyone with the noob msg ;-p */
-#endif
-#if 0
-			/* copy unchanged structure parts: */
-			c_acc.id = c_acc_old.id;
-			c_acc.flags = c_acc_old.flags;
-			strcpy(c_acc.name, c_acc_old.name);//30
-			strcpy(c_acc.pass, c_acc_old.pass);//20
-			/* changes/additions: */
-			c_acc.expiry = 0;
-			c_acc.cheeze = 0;
-			c_acc.cheeze_self = 0;
-#endif
+			c_acc.guild_dna = c_acc.guild_id ? guilds[c_acc.guild_id].dna : 0;
+
 //                        fseek(fp, 0L, SEEK_END);
 			if (fwrite(&c_acc, sizeof(struct account), 1, fp) < 1) {
 				s_printf("Failed to write to new account file: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
@@ -2600,7 +2579,7 @@ static int Handle_login(int ind)
 			if (
 #endif
 			    guilds[i].members /* guild still exists? */
-			    && guilds[i].dna == p_ptr->guild_dna) { /* and is still the SAME guild? */
+			    && guilds[i].dna == acc_get_guild_dna(p_ptr->accountname)) { /* and is still the SAME guild? */
 				/* auto-re-add him to the guild */
 				if (guild_auto_add(NumPlayers, i, namebuf1)) {
 					/* also restore his 'adder' status if he was one */

@@ -251,6 +251,20 @@ int acc_set_guild(char *name, s32b id) {
 	KILL(c_acc, struct account);
 	return(1);
 }
+int acc_set_guild_dna(char *name, u32b dna) {
+	struct account *c_acc;
+
+	c_acc = GetAccount(name, NULL, TRUE);
+	if (!c_acc) return(0);
+
+	c_acc->guild_dna = dna;
+
+	WriteAccount(c_acc, FALSE);
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
+
+	KILL(c_acc, struct account);
+	return(1);
+}
 
 /* get account guild info */
 s32b acc_get_guild(char *name){
@@ -263,6 +277,17 @@ s32b acc_get_guild(char *name){
 	guild_id = c_acc->guild_id;
 	KILL(c_acc, struct account);
 	return guild_id;
+}
+u32b acc_get_guild_dna(char *name){
+	struct account *c_acc;
+	u32b dna;
+
+	c_acc = GetAccount(name, NULL, FALSE);
+	if (!c_acc) return(0);
+
+	dna = c_acc->guild_dna;
+	KILL(c_acc, struct account);
+	return dna;
 }
 
 int acc_set_deed_event(char *name, char deed_sval) {
