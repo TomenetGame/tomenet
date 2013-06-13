@@ -6355,6 +6355,7 @@ void do_cmd_activate(int Ind, int item, int dir)
 //				msg_print(Ind, "You hear a voice, saying 'Sorry, not yet implemented!'");
 				o_ptr->timeout = 1000;
 				p_ptr->auto_transport = AT_VALINOR;
+				//p_ptr->paralyzed = 1; /* Paranoia? In case there is a timing glitch, allowing to drop the Ring of Phasing before arriving in Valinor ;) */
 				break;
 			}
 		}
