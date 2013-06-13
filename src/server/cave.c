@@ -7306,7 +7306,6 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 	    (c_ptr->feat == FEAT_ASH) ||
 	    (c_ptr->feat == FEAT_MUD) ||
 	    (c_ptr->feat == FEAT_FLOWER) ||
-//	    (c_ptr->feat == FEAT_SHAL_LAVA) || maybe required, waiting for player input (2009/1/14) - C. Blue
 	    (c_ptr->feat == FEAT_NETHER_MIST))))
 		return;
 
