@@ -341,8 +341,13 @@ race_redraw:
 		if (hazard) j = rand_int(Setup.max_race);
 		else j = (islower(c) ? A2I(c) : -1);
 		
-		if (c == '#')
+		if (c == '#') {
 			if (valid_dna && (dna_race >= 0 && dna_race < Setup.max_race)) j = dna_race;
+			else {
+				valid_dna = 0;
+				continue;
+			}
+		}
 
 		if ((j < Setup.max_race) && (j >= 0)) {
 			rp_ptr = &race_info[j];
@@ -537,15 +542,20 @@ trait_redraw:
 		if (hazard) j = rand_int(shown_traits);
 		else j = (islower(c) ? A2I(c) : -1);
 		
-		if (c == '#')
+		if (c == '#') {
 			if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) j = dna_trait;
+			else {
+				valid_dna = 0;
+				continue;
+			}
+		} else {
+			/* Transform visible index back to real index */
+			for (i = 0; i <= j; i++)
+				if (!(trait_info[i].choice & BITS(race))) j++;
+		}
 
 		/* Paranoia */
 		if (j > shown_traits) continue;
-
-		/* Transform visible index back to real index */
-		for (i = 0; i <= j; i++)
-			if (!(trait_info[i].choice & BITS(race))) j++;
 
 		/* Verify if legal */
 		if ((j < Setup.max_trait) && (j >= 0)) {
@@ -719,8 +729,13 @@ class_redraw:
 		if (hazard) j = rand_int(Setup.max_class);
 		else j = (islower(c) ? A2I(c) : -1);
 		
-		if (c == '#')
+		if (c == '#') {
 			if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) j = dna_class;
+			else {
+				valid_dna = 0;
+				continue;
+			}
+		}
 
 		if ((j < Setup.max_class) && (j >= 0)) {
 #ifndef CLASS_BEFORE_RACE
