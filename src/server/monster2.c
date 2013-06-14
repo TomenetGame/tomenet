@@ -4039,11 +4039,11 @@ static bool summon_specific_okay(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 	bool okay = FALSE;
 
+	/* Dungeon bosses are never okay; they can only be generated on level creation time */
+	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) return FALSE;
 
 	/* Hack -- no specific type specified */
-	if (!summon_specific_type) return TRUE;
-
-	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) return FALSE;
+	if (!summon_specific_type) return TRUE; /* 'SUMMON_ALL' */
 
 	/* Check our requirements */
 	switch (summon_specific_type) {
