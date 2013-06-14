@@ -2949,7 +2949,15 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 
 	if (!(summon_override_checks & SO_BOSS_MONSTERS)) {
 		/* Dungeon boss? */
-		if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN) && d_ptr) {
+		if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
+			/* May only spawn when a floor is being generated */
+			if (!d_ptr || !level_generation_time) {
+#if DEBUG_LEVEL > 2
+				s_printf("rejected FINAL_GUARDIAN %d (LIVE)\n", r_idx);
+#endif
+				return FALSE;
+			}
+
 			/* wrong monster, or not at the bottom of the dungeon? */
 #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
 			if ((in_irondeepdive(wpos)
@@ -2962,7 +2970,9 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 			if (r_idx != dinfo_ptr->final_guardian ||
 			    d_ptr->maxdepth != ABS(wpos->wz)) {
 #endif
+#if DEBUG_LEVEL > 2
 				s_printf("rejected FINAL_GUARDIAN %d\n", r_idx);
+#endif
 				return FALSE;
 			}
 			/* generating the boss is ok. go on. */
