@@ -28,6 +28,9 @@
 #define DIZ_ROW 3
 #define DIZ_COL 29
 
+/* For character parameter list [15] */
+#define CHAR_COL 9
+
 /*
  * Choose the character's name
  */
@@ -151,11 +154,16 @@ static bool choose_sex(void)
 
 	put_str("m) Male", 21, parity ? 2 : 17);
 	put_str("f) Female", 21, parity ? 17 : 2);
-	put_str("      ", 4, 15);
+	put_str("      ", 4, CHAR_COL);
+	if (valid_dna) {
+		if (dna_sex % 2) c_put_str(TERM_SLATE, "Male", 4, CHAR_COL);
+		else c_put_str(TERM_SLATE, "Female", 4, CHAR_COL);
+	}
 
 	while (1)
 	{
-		c_put_str(TERM_SLATE, "Choose a sex (* for random, Q to Quit): ", 20, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a sex (* for random, # for previous, Q to Quit): ", 20, 2);
+		else c_put_str(TERM_SLATE, "Choose a sex (* for random, Q to Quit): ", 20, 2);
 
 	        Term->scr->cx = Term->wid;
 	        Term->scr->cu = 1;
@@ -165,13 +173,15 @@ static bool choose_sex(void)
 		if (c == 'm')
 		{
 			sex = 1;
-			c_put_str(TERM_L_BLUE, "Male", 4, 15);
+			put_str("      ", 4, CHAR_COL);
+			c_put_str(TERM_L_BLUE, "Male", 4, CHAR_COL);
 			break;
 		}
 		else if (c == 'f')
 		{
 			sex = 0;
-			c_put_str(TERM_L_BLUE, "Female", 4, 15);
+			put_str("      ", 4, CHAR_COL);
+			c_put_str(TERM_L_BLUE, "Female", 4, CHAR_COL);
 			break;
 		}
 		else if (c == '?')
@@ -188,6 +198,14 @@ static bool choose_sex(void)
 				case 1:
 					c = 'm';
 					break;
+			}
+			hazard = TRUE;
+		}
+		else if (c == '#')
+		{
+			if (valid_dna) {
+				if (dna_sex % 2) c = 'm';
+				else c = 'f';
 			}
 			hazard = TRUE;
 		}
@@ -262,13 +280,16 @@ race_redraw:
 		}
 	}
 #ifndef CLASS_BEFORE_RACE
-	c_put_str(TERM_L_BLUE, "                    ", 5, 15);
+	c_put_str(TERM_L_BLUE, "                    ", 5, CHAR_COL);
+	if (valid_dna && (dna_race >= 0 && dna_race < Setup.max_race)) c_put_str(TERM_SLATE, race_info[dna_race].title, 5, CHAR_COL);
 #else
-	c_put_str(TERM_L_BLUE, "                    ", 6, 15);
+	c_put_str(TERM_L_BLUE, "                    ", 6, CHAR_COL);
+	if (valid_dna && (dna_race >= 0 && dna_race < Setup.max_race)) c_put_str(TERM_SLATE, race_info[dna_race].title, 6, CHAR_COL);
 #endif
 
 	while (1) {
-		c_put_str(TERM_SLATE, "Choose a race (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8): ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a race (* random, # previous, Q Quit, BACKSPACE back, 2/4/6/8): ", n, 2);
+		else c_put_str(TERM_SLATE, "Choose a race (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8): ", n, 2);
 		display_race_diz(sel);
 
 	        Term->scr->cx = Term->wid;
@@ -315,10 +336,13 @@ race_redraw:
 			goto race_redraw;
 		}
 		if (c == '\r' || c == '\n') c = 'a' + sel;
-
+		
 		if (c == '*') hazard = TRUE;
 		if (hazard) j = rand_int(Setup.max_race);
 		else j = (islower(c) ? A2I(c) : -1);
+		
+		if (c == '#')
+			if (valid_dna && (dna_race >= 0 && dna_race < Setup.max_race)) j = dna_race;
 
 		if ((j < Setup.max_race) && (j >= 0)) {
 			rp_ptr = &race_info[j];
@@ -328,9 +352,11 @@ race_redraw:
 
 			race = j;
 #ifndef CLASS_BEFORE_RACE
-			c_put_str(TERM_L_BLUE, (char*)rp_ptr->title, 5, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 5, CHAR_COL);
+			c_put_str(TERM_L_BLUE, (char*)rp_ptr->title, 5, CHAR_COL);
 #else
-			c_put_str(TERM_L_BLUE, (char*)rp_ptr->title, 6, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 6, CHAR_COL);
+			c_put_str(TERM_L_BLUE, (char*)rp_ptr->title, 6, CHAR_COL);
 #endif
 			break;
 		} else if (c == '?') {
@@ -404,11 +430,11 @@ static bool choose_trait(void) {
 	if (trait_info[0].choice & BITS(race)) {
 #ifndef HIDE_UNAVAILABLE_TRAIT
  #ifdef CLASS_BEFORE_RACE
-		put_str("Trait       :                               ", 7, 1);
-		c_put_str(TERM_L_BLUE, trait_info[0].title, 7, 15);
+		put_str("Trait :                               ", 7, 1);
+		c_put_str(TERM_L_BLUE, trait_info[0].title, 7, CHAR_COL);
  #else
-		put_str("Trait       :                               ", 6, 1);
-		c_put_str(TERM_L_BLUE, trait_info[0].title, 6, 15);
+		put_str("Trait :                               ", 6, 1);
+		c_put_str(TERM_L_BLUE, trait_info[0].title, 6, CHAR_COL);
  #endif
 #endif
 		return TRUE;
@@ -416,9 +442,11 @@ static bool choose_trait(void) {
 
 	/* If we have traits available for the race chose, prepare to display them */
 #ifdef CLASS_BEFORE_RACE
-	put_str("Trait       :                               ", 7, 1);
+	put_str("Trait :                               ", 7, 1);
+	if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) c_put_str(TERM_SLATE, trait_info[dna_trait].title, 7, CHAR_COL);
 #else
-	put_str("Trait       :                               ", 6, 1);
+	put_str("Trait :                               ", 6, 1);
+	if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) c_put_str(TERM_SLATE, trait_info[dna_trait].title, 6, CHAR_COL);
 #endif
 
 	for (i = 18; i < 24; i++) Term_erase(1, i, 255);
@@ -455,7 +483,8 @@ trait_redraw:
 
 	/* Get a trait */
 	while (1) {
-		c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a trait (* random, # previous, Q Quit, BACKSPACE back, 2/4/6/8): ", n, 2);
+		else c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_trait_diz(sel);
 
 	        Term->scr->cx = Term->wid;
@@ -467,6 +496,19 @@ trait_redraw:
 		if (c == '\b') {
 			clear_diz();
 			clear_from(n);
+#ifdef CLASS_BEFORE_RACE
+			put_str("                                            ", 7, 1);
+			if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) {
+				put_str("Trait :                               ", 7, 1);
+				c_put_str(TERM_SLATE, trait_info[dna_trait].title, 7, CHAR_COL);
+			}
+#else
+			put_str("                                            ", 6, 1);
+			if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) {
+				put_str("Trait :                               ", 6, 1);
+				c_put_str(TERM_SLATE, trait_info[dna_trait].title, 6, CHAR_COL);
+			}
+#endif
 			return FALSE;
 		}
 
@@ -494,7 +536,9 @@ trait_redraw:
 		if (c == '*') hazard = TRUE;
 		if (hazard) j = rand_int(shown_traits);
 		else j = (islower(c) ? A2I(c) : -1);
-
+		
+		if (c == '#')
+			if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) j = dna_trait;
 
 		/* Paranoia */
 		if (j > shown_traits) continue;
@@ -520,10 +564,13 @@ trait_redraw:
 	clear_diz();
 	/* hack: Draw this _after_ clear_diz(), because lineage
 	   titles are too long -_- */
+	   //Kurzel -- Fixed this by removing the silly duplicate 'lineage' text. <,<"
 #ifndef CLASS_BEFORE_RACE
-	c_put_str(TERM_L_BLUE, (char*)trait_info[trait].title, 6, 15);
+	put_str("Trait :                               ", 6, 1);
+	c_put_str(TERM_L_BLUE, (char*)trait_info[trait].title, 6, CHAR_COL);
 #else
-	c_put_str(TERM_L_BLUE, (char*)trait_info[trait].title, 7, 15);
+	put_str("Trait :                               ", 7, 1);
+	c_put_str(TERM_L_BLUE, (char*)trait_info[trait].title, 7, CHAR_COL);
 #endif
 	clear_from(n);
 
@@ -602,14 +649,17 @@ class_redraw:
 		}
 	}
 #ifndef CLASS_BEFORE_RACE
-	c_put_str(TERM_L_BLUE, "                    ", 7, 15);
+	c_put_str(TERM_L_BLUE, "                    ", 7, CHAR_COL);
+	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, class_info[dna_class].title, 7, CHAR_COL);
 #else
-	c_put_str(TERM_L_BLUE, "                    ", 5, 15);
+	c_put_str(TERM_L_BLUE, "                    ", 5, CHAR_COL);
+	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, class_info[dna_class].title, 5, CHAR_COL);
 #endif
 
 	/* Get a class */
 	while (1) {
-		c_put_str(TERM_SLATE, "Choose a class (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a class (* random, # previous, Q Quit, BACKSPACE back, 2/4/6/8):  ", n, 2);
+		else c_put_str(TERM_SLATE, "Choose a class (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_class_diz(sel);
 
 	        Term->scr->cx = Term->wid;
@@ -668,6 +718,9 @@ class_redraw:
 		if (c == '*') hazard = TRUE;
 		if (hazard) j = rand_int(Setup.max_class);
 		else j = (islower(c) ? A2I(c) : -1);
+		
+		if (c == '#')
+			if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) j = dna_class;
 
 		if ((j < Setup.max_class) && (j >= 0)) {
 #ifndef CLASS_BEFORE_RACE
@@ -677,9 +730,11 @@ class_redraw:
 			class = j;
 			cp_ptr = &class_info[j];
 #ifndef CLASS_BEFORE_RACE
-			c_put_str(TERM_L_BLUE, (char*)cp_ptr->title, 7, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 7, CHAR_COL);
+			c_put_str(TERM_L_BLUE, (char*)cp_ptr->title, 7, CHAR_COL);
 #else
-			c_put_str(TERM_L_BLUE, (char*)cp_ptr->title, 5, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 5, CHAR_COL);
+			c_put_str(TERM_L_BLUE, (char*)cp_ptr->title, 5, CHAR_COL);
 #endif
 			break;
 		} else if (c == '?') {
@@ -700,7 +755,7 @@ static bool choose_stat_order(void)
 {
 	int i, j, k, avail[6], crb, maxed_stats = 0;
 	char c='\0';
-	char out_val[160], stats[6][4], buf[8], buf2[8];
+	char out_val[160], stats[6][4], buf[8], buf2[8], buf3[8];
 	bool hazard = FALSE;
 	s16b stat_order_tmp[6];
 
@@ -782,8 +837,10 @@ static bool choose_stat_order(void)
                 c_put_str(TERM_SLATE, "Distribute your attribute points (use them all!):", 13, col1);
                 c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
                 c_put_str(TERM_SLATE, "                         Min. recommended,", 14, col2);
-                c_put_str(TERM_SLATE, "Current:      (Base)     if possible:", 15, col2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Current:   (Base) (Prev) if possible:", 15, col2);
+		else c_put_str(TERM_SLATE, "Current:   (Base)        if possible:", 15, col2);
 
+		if (valid_dna) put_str("'#' to accept previous stats.", 15, col1);
                 put_str("Use keys '+', '-', 'RETURN'", 16, col1);
                 put_str("or 8/2/4/6 or arrow keys to", 17, col1);
                 put_str("modify and navigate.", 18, col1);
@@ -801,11 +858,16 @@ static bool choose_stat_order(void)
 
                 for (i = 0; i < 6; i++) {
                         stat_order[i] = 10;
-
 			strncpy(stats[i], stat_names[i], 3);
 			stats[i][3] = '\0';
+			if (valid_dna) {
+				if (dna_stat_order[i] > 7 || dna_stat_order[i] < 18) {
+					sprintf(buf3, "(%2d)", dna_stat_order[i]);
+					c_put_str(TERM_SLATE, buf3, 16 + i, col2 + 19);
+				}
+			}
 		}
-
+		
 		while (1) {
 			c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
 
@@ -814,7 +876,7 @@ static bool choose_stat_order(void)
 				if (crb > 18) crb = 18 + (crb - 18) * 10;
 				cnv_stat(crb, buf);
 				sprintf(buf2, "%2d", stat_order[i]);
-                        	sprintf(out_val, "%s: %s    (%s)", stats[i], buf, buf2);
+				sprintf(out_val, "%s: %s (%s)", stats[i], buf, buf2);
 
 				tmp_stat = cp_ptr->min_recommend[i];
 				if (tmp_stat >= 100) {
@@ -975,6 +1037,17 @@ static bool choose_stat_order(void)
 
 				return FALSE;
 			}
+			if (c == '#') {
+				if (valid_dna) {
+					for (i = 0; i < 6; i++) {
+						if (dna_stat_order[i] > 7 || dna_stat_order[i] < 18) stat_order[i] = dna_stat_order[i];
+						else stat_order[i] = 8;
+					}
+					for (i = 3; i < 12; i++) Term_erase(30, i, 255);
+					clear_from(13);
+					return TRUE;
+				}
+			}
 		}
 
 		for (i = 3; i < 12; i++) Term_erase(30, i, 255);
@@ -1005,10 +1078,19 @@ static bool choose_mode(void)
 	put_str("p) PvP", 21 - 1, 2);
 	c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21 - 1, 9);
 
-	c_put_str(TERM_L_BLUE, "                    ", 9, 15);
+	c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+	if (valid_dna) {
+		if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c_put_str(TERM_SLATE, "Hellish", 9, CHAR_COL);
+		else if ((dna_sex & MODE_HARD) == MODE_HARD) c_put_str(TERM_SLATE, "Hard", 9, CHAR_COL);
+		else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c_put_str(TERM_SLATE, "No Ghost", 9, CHAR_COL);
+		else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
+		else if ((dna_sex & MODE_PVP) == MODE_PVP) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
+		else c_put_str(TERM_SLATE, "Normal", 9, CHAR_COL);
+	}
 
 	while (1) {
-		c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to Quit, BACKSPACE to go back): ", 15, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, # previous, Q Quit, BACKSPACE back): ", 15, 2);
+		else c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to Quit, BACKSPACE to go back): ", 15, 2);
 
 	        Term->scr->cx = Term->wid;
 	        Term->scr->cu = 1;
@@ -1022,30 +1104,36 @@ static bool choose_mode(void)
 
 		if (c == 'p') {
 			sex += MODE_PVP;
-			c_put_str(TERM_L_BLUE, "PvP", 9, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+			c_put_str(TERM_L_BLUE, "PvP", 9, CHAR_COL);
 			break;
 		} else if (c == 'n') {
-			c_put_str(TERM_L_BLUE, "Normal", 9, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+			c_put_str(TERM_L_BLUE, "Normal", 9, CHAR_COL);
 			break;
 		} else if (c == 'g') {
 			sex += MODE_NO_GHOST;
-			c_put_str(TERM_L_BLUE, "No Ghost", 9, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+			c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
 			break;
 		}
 #if 0
 		else if (c == 'h') {
 			sex += (MODE_HARD);
-			c_put_str(TERM_L_BLUE, "Hard", 9, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+			c_put_str(TERM_L_BLUE, "Hard", 9, CHAR_COL);
 			break;
 		}
 #endif
 		else if (c == 'H') {
 			sex += (MODE_NO_GHOST + MODE_HARD);
-			c_put_str(TERM_L_BLUE, "Hellish", 9, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+			c_put_str(TERM_L_BLUE, "Hellish", 9, CHAR_COL);
 			break;
 		} else if (c == 'e') {
 			sex += MODE_EVERLASTING;
-			c_put_str(TERM_L_BLUE, "Everlasting", 9, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+			c_put_str(TERM_L_BLUE, "Everlasting", 9, CHAR_COL);
 			break;
 		} else if (c == '?') {
 			/*do_cmd_help("help.hlp");*/
@@ -1073,6 +1161,16 @@ static bool choose_mode(void)
 					break;
 			}
 			hazard = TRUE;
+		} else if (c == '#') {
+			if (valid_dna) {
+				if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
+				else if ((dna_sex & MODE_HARD) == MODE_HARD) c = 'h';
+				else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'g';
+				else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'e';
+				else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
+				else  c = 'n';
+				hazard = TRUE;
+			}
 		} else bell();
 	}
 
@@ -1090,10 +1188,15 @@ static bool choose_body_modification(void)
 	put_str("f) Fruit bat", 21, 2);
 	c_put_str(TERM_SLATE, "(Bats are faster and vampiric, but can't wear certain items)", 21, 15);
 
-	c_put_str(TERM_L_BLUE, "                    ", 8, 15);
+	c_put_str(TERM_L_BLUE, "                    ", 8, CHAR_COL);
+	if (valid_dna) {
+		if ((dna_sex & MODE_FRUIT_BAT) == MODE_FRUIT_BAT) c_put_str(TERM_SLATE, "Fruit bat", 8, CHAR_COL);
+		else c_put_str(TERM_SLATE, "Normal body", 8, CHAR_COL);
+	}
 
 	while (1) {
-		c_put_str(TERM_SLATE, "Choose a body modification (* for random, Q to Quit, BACKSPACE to go back): ", 19, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a body modification (* random, # previous, Q Quit, BACKSPACE back): ", 19, 2);
+		else c_put_str(TERM_SLATE, "Choose a body modification (* for random, Q to Quit, BACKSPACE to go back): ", 19, 2);
 
 	        Term->scr->cx = Term->wid;
 	        Term->scr->cu = 1;
@@ -1107,10 +1210,12 @@ static bool choose_body_modification(void)
 
 		if (c == 'f') {
 			sex += MODE_FRUIT_BAT;
-			c_put_str(TERM_L_BLUE, "Fruit bat", 8, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 8, CHAR_COL);
+			c_put_str(TERM_L_BLUE, "Fruit bat", 8, CHAR_COL);
 			break;
 		} else if (c == 'n') {
-			c_put_str(TERM_L_BLUE, "Normal body", 8, 15);
+			c_put_str(TERM_L_BLUE, "                    ", 8, CHAR_COL);
+			c_put_str(TERM_L_BLUE, "Normal body", 8, CHAR_COL);
 			break;
 		} else if (c == '?') {
 			/*do_cmd_help("help.hlp");*/
@@ -1122,6 +1227,12 @@ static bool choose_body_modification(void)
 				case 1:
 					c = 'f';
 					break;
+			}
+			hazard = TRUE;
+		} else if (c == '#') {
+			if (valid_dna) {
+				if ((dna_sex & MODE_FRUIT_BAT) == MODE_FRUIT_BAT) c = 'f';
+				else c = 'n';
 			}
 			hazard = TRUE;
 		} else bell();
@@ -1192,6 +1303,10 @@ void get_char_info(void)
 	bool ded = sex & (MODE_DED_PVP | MODE_DED_IDDC);
 	sex &= ~(MODE_DED_PVP | MODE_DED_IDDC);
 
+	/* Hack -- display the nick */
+	put_str("Name  :", 2, 1);
+	c_put_str(TERM_WHITE, cname, 2, CHAR_COL);
+
 	/* Load tables from LUA into memory --
 	   could just request it from LUA on demand instead. - C. Blue */
 	memset(race_diz, 0, sizeof(char) * MAX_RACE * 12 * 61);
@@ -1199,17 +1314,17 @@ void get_char_info(void)
 	memset(trait_diz, 0, sizeof(char) * MAX_TRAIT * 12 * 61);
 	if (is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) {
 		for (j = 0; j < 12; j++) {
-			for (i = 0; i < MAX_RACE; i++) {
+			for (i = 0; i < Setup.max_race; i++) {
 				if (!race_info[i].title) continue;
 				sprintf(out_val, "return get_race_diz(\"%s\", %d)", race_info[i].title, j);
 				strcpy(race_diz[i][j], string_exec_lua(0, out_val));
 			}
-			for (i = 0; i < MAX_CLASS; i++) {
+			for (i = 0; i < Setup.max_class; i++) {
 				if (!class_info[i].title) continue;
 				sprintf(out_val, "return get_class_diz(\"%s\", %d)", class_info[i].title, j);
 				strcpy(class_diz[i][j], string_exec_lua(0, out_val));
 			}
-			for (i = 0; i < MAX_TRAIT; i++) {
+			for (i = 0; i < Setup.max_trait; i++) {
 				if (!trait_info[i].title) continue;
 				sprintf(out_val, "return get_trait_diz(\"%s\", %d)", trait_info[i].title, j);
 				strcpy(trait_diz[i][j], string_exec_lua(0, out_val));
@@ -1217,29 +1332,69 @@ void get_char_info(void)
 		}
 	}
 
-	/* Title everything */
-	put_str("Sex         :", 4, 1);
-#ifndef CLASS_BEFORE_RACE
-	put_str("Race        :", 5, 1);
- #ifndef HIDE_UNAVAILABLE_TRAIT
-	/* If server doesn't support traits, or we only have the dummy
-	   'N/A' trait available, we don't want to display traits at all */
-	put_str("Trait       :", 6, 1);
- #endif
-	put_str("Class       :", 7, 1);
-	put_str("Body        :", 8, 1);
-#else
-	put_str("Class       :", 5, 1);
-	put_str("Race        :", 6, 1);
- #ifndef HIDE_UNAVAILABLE_TRAIT
-	/* If server doesn't support traits, or we only have the dummy
-	   'N/A' trait available, we don't want to display traits at all */
-	put_str("Trait       :", 7, 1);
- #endif
-	put_str("Body        :", 8, 1);
-#endif
-	put_str("Mode        :", 9, 1);
+	/* Did this character have a previous incarnation? -Kurzel */
+	load_birth_file(cname); //valid_dna if we have a valid one
 
+	/* Title everything */
+	put_str("Sex   :", 4, 1);
+	if (valid_dna) {
+		if (dna_sex % 2) c_put_str(TERM_SLATE, "Male", 4, CHAR_COL);
+		else c_put_str(TERM_SLATE, "Female", 4, CHAR_COL);
+	}
+#ifndef CLASS_BEFORE_RACE
+	put_str("Race  :", 5, 1);
+	if (valid_dna && (dna_race >= 0 && dna_race < Setup.max_race)) c_put_str(TERM_SLATE, race_info[dna_race].title, 5, CHAR_COL);
+ #ifndef HIDE_UNAVAILABLE_TRAIT
+	/* If server doesn't support traits, or we only have the dummy
+	   'N/A' trait available, we don't want to display traits at all */
+	put_str("Trait :                               ", 6, 1);
+	if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) c_put_str(TERM_SLATE, trait_info[dna_trait].title, 6, CHAR_COL);
+ #else
+	//Show the trait if we previously selected draconian
+	if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) {
+		put_str("Trait :                               ", 6, 1);
+		c_put_str(TERM_SLATE, trait_info[dna_trait].title, 6, CHAR_COL);
+	}
+ #endif
+	put_str("Class :", 7, 1);
+	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, class_info[dna_class].title, 7, CHAR_COL);
+	put_str("Body  :", 8, 1);
+	if (valid_dna) {
+		if ((dna_sex & MODE_FRUIT_BAT) == MODE_FRUIT_BAT) c_put_str(TERM_SLATE, "Fruit bat", 8, CHAR_COL);
+		else c_put_str(TERM_SLATE, "Normal body", 8, CHAR_COL);
+	}
+#else
+	put_str("Class :", 5, 1);
+	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, class_info[dna_class].title, 5, CHAR_COL);
+	put_str("Race  :", 6, 1);
+	if (valid_dna && (dna_race >= 0 && dna_race < Setup.max_race)) c_put_str(TERM_SLATE, race_info[dna_race].title, 6, CHAR_COL);
+ #ifndef HIDE_UNAVAILABLE_TRAIT
+	/* If server doesn't support traits, or we only have the dummy
+	   'N/A' trait available, we don't want to display traits at all */
+	put_str("Trait :                               ", 7, 1);
+	if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) c_put_str(TERM_SLATE, trait_info[dna_trait].title, 7, CHAR_COL);
+ #else
+	//Show the trait if we previously selected draconian
+	if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) {
+		put_str("Trait :                               ", 7, 1);
+		c_put_str(TERM_SLATE, trait_info[dna_trait].title, 7, CHAR_COL);
+	}
+ #endif
+	put_str("Body  :", 8, 1);
+	if (valid_dna) {
+		if ((dna_sex & MODE_FRUIT_BAT) == MODE_FRUIT_BAT) c_put_str(TERM_SLATE, "Fruit bat", 8, CHAR_COL);
+		else c_put_str(TERM_SLATE, "Normal body", 8, CHAR_COL);
+	}
+#endif
+	put_str("Mode  :", 9, 1);
+	if (valid_dna) {
+		if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c_put_str(TERM_SLATE, "Hellish", 9, CHAR_COL);
+		else if ((dna_sex & MODE_HARD) == MODE_HARD) c_put_str(TERM_SLATE, "Hard", 9, CHAR_COL);
+		else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c_put_str(TERM_SLATE, "No Ghost", 9, CHAR_COL);
+		else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
+		else if ((dna_sex & MODE_PVP) == MODE_PVP) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
+		else c_put_str(TERM_SLATE, "Normal", 9, CHAR_COL);
+	}
 	/* Clear bottom of screen */
 	clear_from(20);
 
@@ -1259,7 +1414,11 @@ csex:
 #ifndef CLASS_BEFORE_RACE
 crace:
 	/* Choose a race */
-	put_str("             ", 6, 1);
+	//Show the trait if we previously selected draconian
+	if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) {
+		put_str("Trait :                               ", 6, 1);
+		c_put_str(TERM_SLATE, trait_info[dna_trait].title, 6, CHAR_COL);
+	} else put_str("             ", 6, 1);
 	if (!choose_race()) goto csex;
 ctrait:
 	/* Choose a trait */
@@ -1286,7 +1445,11 @@ cclass:
 	if (!choose_class()) goto csex;
 crace:
 	/* Choose a race */
-	put_str("             ", 7, 1);
+	//Show the trait if we previously selected draconian
+	if (valid_dna && (dna_trait > 0 && dna_trait < Setup.max_trait)) {
+		put_str("Trait :                               ", 7, 1);
+		c_put_str(TERM_SLATE, trait_info[dna_trait].title, 7, CHAR_COL);
+	} else put_str("             ", 7, 1);
 	if (!choose_race()) goto cclass;
 ctrait:
 	/* Choose a trait */
@@ -1315,11 +1478,14 @@ cstats:
 	if (!s_RPG || s_RPG_ADMIN) {
 		if (!choose_mode()) goto cstats;
 	}
-	else c_put_str(TERM_L_BLUE, "No Ghost", 9, 15);
+	else c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
 
 	/* Clear */
 	clear_from(15);
 
+	/* Save Birth DNA */
+	save_birth_file(cname);
+	
 	/* Message */
 	put_str("Entering game...  [Hit any key]", 21, 1);
 

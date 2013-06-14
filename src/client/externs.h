@@ -245,17 +245,18 @@ extern byte keymap_dirs[128];
 extern s16b command_cmd;
 extern s16b command_dir;
 
-extern s16b race;
-extern s16b class;
-extern s16b sex;
-extern s16b mode;
-extern s16b trait;
+extern bool valid_dna; //Kurzel
+extern s16b race, dna_race;
+extern s16b class, dna_class;
+extern s16b sex, dna_sex;
+extern s16b mode; //c-birth.c uses sex instead. - Kurzel
+extern s16b trait, dna_trait;
 
 /* DEG Stuff for new party client */
 extern s16b client;
 extern s16b class_extra;
 
-extern s16b stat_order[6];
+extern s16b stat_order[6], dna_stat_order[6];
 
 extern bool topline_icky;
 extern short screen_icky;
@@ -476,6 +477,8 @@ extern errr get_safe_file(char *buf, cptr file);
 extern void xhtml_screenshot(cptr name);
 extern void save_auto_inscriptions(cptr name);
 extern void load_auto_inscriptions(cptr name);
+extern void save_birth_file(cptr name);
+extern void load_birth_file(cptr name);
 
 /* c-init.c */
 extern void init_schools(s16b new_size);

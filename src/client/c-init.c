@@ -2331,8 +2331,10 @@ void client_init(char *argv1, bool skip)
 
 	status = Net_login();
 
+#if 0 /* moved to get_char_info(), because of CHAR_COL */
 	/* Hack -- display the nick */
 	prt(format("Name        : %s", cname), 2, 1);
+#endif
 
 	/* Initialize the pref files */
 	initialize_main_pref_files();

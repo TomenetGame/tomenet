@@ -1875,3 +1875,113 @@ void load_auto_inscriptions(cptr name)
 	fclose(fp);
 #endif
 }
+
+/* Save Character-Birth file (*.dna) - Kurzel */
+void save_birth_file(cptr name)
+{
+	FILE *fp;
+	char buf[1024];
+	char real_name[256];
+
+	strncpy(real_name, name, 249);
+	real_name[249] = '\0';
+
+	/* add '.dna' extension if not already existing */
+	if (strlen(name) > 4) {
+		if (name[strlen(name) - 1] == 'a' &&
+		    name[strlen(name) - 2] == 'n' &&
+		    name[strlen(name) - 3] == 'd' &&
+		    name[strlen(name) - 4] == '.') {
+			/* fine */
+		} else strcat(real_name, ".dna");
+	} else strcat(real_name, ".dna");
+
+	path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+
+	fp = fopen(buf, "w");
+	if (!fp)
+	{
+		/* Couldn't write */
+		c_msg_print("Saving character birth dna failed!");
+		return;
+	}
+
+	/* Header (1 line) */
+	fprintf(fp, "Character birth file for TomeNET v%d.%d.%d%s\n",
+	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
+
+	/* Info */
+	fprintf(fp, "%d\n", sex); //Sex/Body/Mode
+	fprintf(fp, "%d\n", class); //Class
+	fprintf(fp, "%d\n", race); //Race
+	fprintf(fp, "%d\n", trait); //Trait
+	
+	/* Stats */
+	int i;
+	for (i = 0; i < 6; i++) {
+		fprintf(fp, "%d\n", stat_order[i]);
+	}
+
+	/* Done */
+	fclose(fp);
+}
+
+/* Load Character-Birth file (*.dna) - Kurzel */
+void load_birth_file(cptr name)
+{
+	FILE *fp;
+	char buf[1024];
+	char real_name[256];
+
+	strncpy(real_name, name, 249);
+	real_name[249] = '\0';
+
+	/* add '.dna' extension if not already existing */
+	if (strlen(name) > 4) {
+		if (name[strlen(name) - 1] == 'a' &&
+		    name[strlen(name) - 2] == 'n' &&
+		    name[strlen(name) - 3] == 'd' &&
+		    name[strlen(name) - 4] == '.') {
+			/* fine */
+		} else strcat(real_name, ".dna");
+	} else strcat(real_name, ".dna");
+
+	path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+
+	fp = fopen(buf, "r");
+	if (!fp)
+	{
+		/* Couldn't open */
+		return;
+	}
+
+	/* Header (1 line) */
+	if (fgets(buf, 80, fp) == NULL) {
+		fclose(fp);
+		return;
+	}
+
+	/* Info */
+	int tmp;
+	fscanf(fp, "\n%d", &tmp); //Sex/Body/Mode
+	dna_sex = (s16b)tmp;
+	fscanf(fp, "\n%d", &tmp); //Class
+	dna_class = (s16b)tmp;
+	fscanf(fp, "\n%d", &tmp); //Race
+	dna_race = (s16b)tmp;
+	fscanf(fp, "\n%d", &tmp); //Trait
+	dna_trait = (s16b)tmp;
+	
+	/* Stats */
+	int i;
+	for (i = 0; i < 6; i++) {
+		fscanf(fp, "\n%d", &tmp);
+		dna_stat_order[i] = (s16b)tmp;
+	}
+	
+	/* Validate */
+	valid_dna = 1; //Safety for mis-hacked dna files in future? - Kurzel
+	
+	/* Done */
+	fclose(fp);
+}
