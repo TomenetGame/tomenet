@@ -363,6 +363,10 @@ race_redraw:
 			c_put_str(TERM_L_BLUE, "                    ", 6, CHAR_COL);
 			c_put_str(TERM_L_BLUE, (char*)rp_ptr->title, 6, CHAR_COL);
 #endif
+
+			//Clear any dna Draconian trait being displayed
+			if (race != RACE_DRACONIAN) put_str("                                      ", 7, 1);
+
 			break;
 		} else if (c == '?') {
 			/*do_cmd_help("help.hlp");*/
@@ -1493,7 +1497,10 @@ cstats:
 	if (!s_RPG || s_RPG_ADMIN) {
 		if (!choose_mode()) goto cstats;
 	}
-	else c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
+	else {
+		c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+		c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
+	}
 
 	/* Clear */
 	clear_from(15);
