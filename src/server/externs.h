@@ -828,6 +828,7 @@ extern void regenerate_cave(struct worldpos *wpos);
 extern bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, player_type *p_ptr);
 extern void place_fountain(struct worldpos *wpos, int y, int x);
 extern bool place_between_targetted(struct worldpos *, int y, int x, int ty, int tx);
+extern bool place_between_dummy(struct worldpos *wpos, int y, int x);
 
 extern void place_floor(worldpos *wpos, int y, int x);
 extern void place_floor_live(worldpos *wpos, int y, int x);

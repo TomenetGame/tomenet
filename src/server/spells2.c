@@ -210,7 +210,6 @@ void divine_gateway(int Ind) {
 				msg_format_near(Ind, "\377v%s has successfully created a gateway!", p_ptr->name);
 			}
 		} else {
-
 			// Let's not have this in towns/houses; OK everywhere else
 			if (!allow_terraforming(wpos, FEAT_TREE)) return;
 
@@ -218,6 +217,8 @@ void divine_gateway(int Ind) {
 
 			p_ptr->voidx = p_ptr->px;
 			p_ptr->voidy = p_ptr->py;
+
+			place_between_dummy(wpos, p_ptr->py, p_ptr->px);
 		}
 	}
 }

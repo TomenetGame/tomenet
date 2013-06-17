@@ -5527,7 +5527,12 @@ void process_player_change_wpos(int Ind)
 
 #ifdef ENABLE_MAIA
 	/* reset void gate coordinates */
-	p_ptr->voidx = 0; p_ptr->voidy = 0;
+	if (p_ptr->voidx) {
+		if (getcave(&p_ptr->wpos_old))
+			cave_set_feat(&p_ptr->wpos_old, p_ptr->voidy, p_ptr->voidx, twall_erosion(&p_ptr->wpos_old, p_ptr->voidy, p_ptr->voidx));
+		p_ptr->voidx = 0;
+		p_ptr->voidy = 0;
+	}
 #endif
 
 	/* being on different floors destabilizes mind fusion */

@@ -1916,6 +1916,7 @@
 #define FEAT_NETHER_MIST	0x66
 #define FEAT_GLIT_WATER         0x67	/* For Valinor */
 #define FEAT_HIGH_MOUNT_SOLID	0x68	/* For Valinor */
+#define FEAT_BETWEEN_TEMP	0x69	/* Just a marker for divine_gateway() */
 
 /* Features 0x67 - 0x9F -- unused */
 
@@ -1929,7 +1930,7 @@
 /* Feature 0xAD -- Underground Tunnel */
 #define FEAT_TAINTED_WATER      0xAE /* 174 */
 #define FEAT_MON_TRAP           0xAF /* 175 */
-#define FEAT_BETWEEN2           0xB0 /* 176, appearently mostly unused (unlike 160) */
+#define FEAT_BETWEEN2           0xB0 /* 176, appearently effectively unused (unlike 160) */
 /* Feature 0xB1 -- lava wall */
 #define FEAT_GREAT_FIRE         0xB2 /* 178 */
 #define FEAT_WAY_MORE           0xB3 /* 179 */
