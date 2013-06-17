@@ -4047,6 +4047,10 @@ static bool summon_specific_okay(int r_idx)
 
 	/* Check our requirements */
 	switch (summon_specific_type) {
+		case SUMMON_ALL_U98:
+			okay = (r_ptr->level <= 98 ||
+			    !(r_ptr->flags1 & RF1_UNIQUE));
+			break;
 		case SUMMON_MONSTER:
 			okay = (!(r_ptr->flags1 & RF1_UNIQUE));
 			break;
