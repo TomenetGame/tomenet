@@ -3881,7 +3881,9 @@
  * Legal restrictions for "summon_specific()"
  */
 #define SUMMON_ALL			0	/* allows all, including uniques */
-#define SUMMON_MONSTER			1	/* all, but disallows uniques */
+#define SUMMON_ALL_U98			1	/* allows all, except uniques above race level 98 (No Sauron/NR uniques) */
+#define SUMMON_MONSTER			2	/* allows all, but disallows all uniques */
+/* the usual stuff */
 #define SUMMON_ANT			11
 #define SUMMON_SPIDER			12
 #define SUMMON_HOUND			13
