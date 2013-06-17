@@ -1341,7 +1341,7 @@ s32b player_exp[PY_MAX_LEVEL + 1] =
 
 	859000000L,//      380000000L,
 	927000000L,//      400000000L,
-	999000000L,//      420000000L,//99, PY_MAX_PLAYER_LEVEL
+	999000000L,//      420000000L,//99, PY_MAX_PLAYER_LEVEL (just 1M off, mathematically ideally it'd be 1G exp^^)
 	999999000L,//      440000000L,//100 PY_MAX_LEVEL
 	999999998L,//      460000000L,//<-not sure why 101 and the 'dummy' one for 102 are needed tho
 
