@@ -5124,7 +5124,7 @@ void calc_boni(int Ind)
 		if (lev2 == -1) lev2 = lev1;
 		/* average for dual-wield */
 		p_ptr->to_h_melee += ((lev1 + lev2) / 2);
-		p_ptr->to_d_melee += ((lev1 + lev2) / 4);
+		p_ptr->to_d_melee += ((lev1 + lev2) / 6);
 //		p_ptr->num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
 	}
 
@@ -5230,7 +5230,7 @@ void calc_boni(int Ind)
 		p_ptr->to_d += lev / 5;
 		p_ptr->dis_to_d += lev / 5;
 */		p_ptr->to_h_melee += lev / 3;
-		p_ptr->to_d_melee += lev / 5;
+		p_ptr->to_d_melee += lev / 10;
 	}
 
 	if (get_skill(p_ptr, SKILL_DODGE) && !p_ptr->rogue_heavyarmor)

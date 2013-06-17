@@ -853,8 +853,8 @@
 #endif
 /* Apply flat brand/slay +todam bonus too (for low-dice weapons)? - C. Blue */
 #define FLAT_HURT_BONUS		3
-#define FLAT_BRAND_BONUS	5	/* same for susceptible monsters, none for resisting monsters */
-#define FLAT_SLAY_BONUS		5
+#define FLAT_BRAND_BONUS	4	/* same for susceptible monsters, none for resisting monsters */
+#define FLAT_SLAY_BONUS		4
 #define FLAT_KILL_BONUS		5
 
 
