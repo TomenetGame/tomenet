@@ -101,6 +101,7 @@ extern byte adj_int_pow[];
 extern byte adj_dex_ta[];
 extern byte adj_str_td[];
 extern byte adj_dex_th[];
+extern byte adj_dex_th_mul[];
 extern byte adj_str_th[];
 extern byte adj_str_wgt[];
 extern byte adj_str_hold[];

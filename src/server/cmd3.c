@@ -2363,7 +2363,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	if (o_ptr->tval == TV_FLASK) {
 		j_ptr->timeout += o_ptr->pval;
 	} else {
-		spilled_fuel = (o_ptr->timeout * (randint(5) + (130 - adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 2)) / 100; /* spill some */
+		spilled_fuel = (o_ptr->timeout * (randint(5) + (130 - adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]) / 2)) / 100; /* spill some */
 		available_fuel = o_ptr->timeout - spilled_fuel;
 		j_ptr->timeout += available_fuel;
 	}

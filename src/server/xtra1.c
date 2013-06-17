@@ -3831,12 +3831,6 @@ void calc_boni(int Ind)
 		/* Affect speed */
 		if (f1 & TR1_SPEED) p_ptr->pspeed += pval;
 
-		/* Affect blows */
-#if 0 /* for dual-wield this is too much, it's done in calc_blows_obj() now */
-		if (f1 & TR1_BLOWS) p_ptr->extra_blows += pval;
-		if (f5 & TR5_CRIT) p_ptr->xtra_crit += pval;
-#endif
-
 		/* Affect spellss */
 //		if (f1 & TR1_SPELL_SPEED) extra_spells += pval;
 		if (f1 & TR1_SPELL) extra_spells += pval;
@@ -3933,20 +3927,7 @@ void calc_boni(int Ind)
 		}
 
 		/* powerful lights and anti-undead/evil items damage vampires */
-#if 0
-		if (p_ptr->prace == RACE_VAMPIRE && !cursed_p(o_ptr)) {
-			if (j) { /* light sources, or other items that provide light */
-				if ((j > 2) || o_ptr->name1 || (f3 & TR3_BLESSED) ||
-				    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD))
-					p_ptr->drain_life++;
-			} else {
-				if ((f3 & TR3_BLESSED) || (f1 & TR1_KILL_UNDEAD))
-					p_ptr->drain_life++;
-			}
-		}
-#else
 		if (p_ptr->prace == RACE_VAMPIRE && anti_undead(o_ptr)) p_ptr->drain_life++;
-#endif
 
 		/* Immunity flags */
 		if (f2 & TR2_IM_FIRE) p_ptr->immune_fire = TRUE;
@@ -4237,29 +4218,15 @@ void calc_boni(int Ind)
 
 	/* Apply temporary "stun" */
 	if (p_ptr->stun > 50) {
-#if 0
-		p_ptr->to_h -= 20;
-		p_ptr->dis_to_h -= 20;
-		p_ptr->to_d -= 20;
-		p_ptr->dis_to_d -= 20;
-#else
 		p_ptr->to_h /= 2;
 		p_ptr->dis_to_h /= 2;
 		p_ptr->to_d /= 2;
 		p_ptr->dis_to_d /= 2;
-#endif
 	} else if (p_ptr->stun) {
-#if 0
-		p_ptr->to_h -= 5;
-		p_ptr->dis_to_h -= 5;
-		p_ptr->to_d -= 5;
-		p_ptr->dis_to_d -= 5;
-#else
 		p_ptr->to_h = (p_ptr->to_h * 2) / 3;
 		p_ptr->dis_to_h = (p_ptr->dis_to_h * 2) / 3;
 		p_ptr->to_d = (p_ptr->to_d * 2) / 3;
 		p_ptr->dis_to_d = (p_ptr->dis_to_h * 2) / 3;
-#endif
 	}
 
 
@@ -4372,9 +4339,6 @@ void calc_boni(int Ind)
 	/* Temporary "fast" */
 	if (p_ptr->fast) p_ptr->pspeed += p_ptr->fast_mod;
 
-	/* Extra speed bonus from Zeal prayer */
-//	if (p_ptr->zeal) p_ptr->pspeed += (p_ptr->zeal_power / 6);
-
 	/* Temporary "slow" */
 	if (p_ptr->slow) p_ptr->pspeed -= 10;
 
@@ -4422,8 +4386,6 @@ void calc_boni(int Ind)
 		p_ptr->pspeed -= 10 - sneakiness / 7;
 #if 1
 		if (stealth >= 10) {
-//			p_ptr->skill_stl *= 3;
-//			p_ptr->skill_stl = p_ptr->skill_stl * stealth / 10;
 			p_ptr->skill_stl = p_ptr->skill_stl + stealth / 10;
 		}
 #endif
@@ -4557,27 +4519,6 @@ void calc_boni(int Ind)
 		}
 	}
 
-#if 0 // DGDGDGDG -- skill powa !
-	switch(p_ptr->pclass)
-	{
-		case CLASS_MONK:
-			/* Unencumbered Monks become faster every 10 levels */
-			if (!(monk_heavy_armor(Ind)))
-				p_ptr->pspeed += (p_ptr->lev) / 10;
-
-			/* Free action if unencumbered at level 25 */
-			if  ((p_ptr->lev > 24) && !(monk_heavy_armor(Ind)))
-				p_ptr->free_act = TRUE;
-			break;
-
-			/* -APD- Hack -- rogues +1 speed at 5,20,35,50.
-			 * this may be out of place, but.... */
-
-		case CLASS_ROGUE:
-			p_ptr->pspeed += p_ptr->lev / 6;
-			break;
-	}
-#else	/* 0 */
 	p_ptr->monk_heavyarmor = monk_heavy_armor(p_ptr);
 	if (p_ptr->old_monk_heavyarmor != p_ptr->monk_heavyarmor) {
 		if (p_ptr->monk_heavyarmor)
@@ -4631,21 +4572,11 @@ void calc_boni(int Ind)
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 49)
 					p_ptr->fly = TRUE;
 
-#if 0
-				if (((!p_ptr->inventory[INVEN_ARM].k_idx) ||
-				    (k_info[p_ptr->inventory[INVEN_ARM].k_idx].weight < 100)) &&
-				    ((!p_ptr->inventory[INVEN_BOW].k_idx) ||
-				    (k_info[p_ptr->inventory[INVEN_BOW].k_idx].weight < 150)) &&
-				    ((!p_ptr->inventory[INVEN_WIELD].k_idx) ||
-				    (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].weight < 150)))
-#else
 				w = 0; 
 				if (p_ptr->inventory[INVEN_ARM].k_idx) w += k_info[p_ptr->inventory[INVEN_ARM].k_idx].weight;
 				if (p_ptr->inventory[INVEN_BOW].k_idx) w += k_info[p_ptr->inventory[INVEN_BOW].k_idx].weight;
 				if (p_ptr->inventory[INVEN_WIELD].k_idx) w += k_info[p_ptr->inventory[INVEN_WIELD].k_idx].weight;
-				if (w < 150)
-#endif
-				{
+				if (w < 150) {
 					/* give a speed bonus */
 					p_ptr->pspeed += k;
 
@@ -4742,48 +4673,13 @@ void calc_boni(int Ind)
 		}
 	}
 
-#endif	// 0
-
-#if 0 // DGDGDGDGDG - no monks ffor the time being
-	/* Monks get extra ac for armour _not worn_ */
-//	if ((p_ptr->pclass == CLASS_MONK) && !(monk_heavy_armor(Ind)))
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !(monk_heavy_armor(p_ptr)) &&
-		!(p_ptr->inventory[INVEN_BOW].k_idx)) {
-		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
-		if (!(p_ptr->inventory[INVEN_BODY].k_idx)) {
-			p_ptr->to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-		if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15)) {
-			p_ptr->to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-		if (!(p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) && (marts > 10)) { /* for dual-wielders */
-			p_ptr->to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-		if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4)) {
-			p_ptr->to_a += (marts - 2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += (marts -2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-		if (!(p_ptr->inventory[INVEN_HANDS].k_idx)) {
-			p_ptr->to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-		if (!(p_ptr->inventory[INVEN_FEET].k_idx)) {
-			p_ptr->to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-	}
-#endif
-
 	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
 	p_ptr->to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
 	p_ptr->to_d_melee += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-#if 0 /* addition */
+#if 1 /* addition */
 	p_ptr->to_h_melee += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-#else /* multiplication (percent) */
-	p_ptr->to_h_melee = ((int)((p_ptr->to_h_melee * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
+#else /* multiplication (percent) -- TODO FIRST!!: would need to be before all penalties but after marts/etc +hit boni! */
+	p_ptr->to_h_melee = ((int)((p_ptr->to_h_melee * adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]) / 100));
 #endif
 //	p_ptr->to_h_melee += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128) / 2;
 //	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
@@ -4798,11 +4694,11 @@ void calc_boni(int Ind)
 
 	/* Modify ranged weapon boni. DEX now very important for to_hit */
 //	p_ptr->to_h_ranged += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
-#if 0 /* addition */
+#if 1 /* addition */
 	p_ptr->to_h_ranged += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-#else /* multiplication (percent) */
-	if (p_ptr->to_h_ranged > 0) p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
-	else p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * 100) / adj_dex_th[p_ptr->stat_ind[A_DEX]]));
+#else /* multiplication (percent) -- TODO FIRST!!: would need to be before all penalties but after marts/etc +hit boni! */
+	if (p_ptr->to_h_ranged > 0) p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]) / 100));
+	else p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * 100) / adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]));
 #endif
 
 	/* Evaluate monster AC (if skin or armor etc) */
@@ -4824,18 +4720,10 @@ void calc_boni(int Ind)
 		/* p_ptr->ac += toac;
 		p_ptr->dis_ac += toac; - similar to HP calculation: */
 		if (toac < (p_ptr->ac + p_ptr->to_a)) {
-#if 0
-			/* Vary between 3/4 + 1/4 (low monsters) to 2/3 + 1/3 (high monsters): */
-			p_ptr->ac = (p_ptr->ac * (100 - r_ptr->level + 200)) / (100 - r_ptr->level + 300);
-			p_ptr->to_a = ((p_ptr->to_a * (100 - r_ptr->level + 200)) + (toac * 100)) / (100 - r_ptr->level + 300);
-			p_ptr->dis_ac = (p_ptr->dis_ac * (100 - r_ptr->level + 200)) / (100 - r_ptr->level + 300);
-			p_ptr->dis_to_a = ((p_ptr->dis_to_a * (100 - r_ptr->level + 200)) + (toac * 100)) / (100 - r_ptr->level + 300);
-#else
 			p_ptr->ac = (p_ptr->ac * 3) / 4;
 			p_ptr->to_a = ((p_ptr->to_a * 3) + toac) / 4;
 			p_ptr->dis_ac = (p_ptr->dis_ac * 3) / 4;
 			p_ptr->dis_to_a = ((p_ptr->dis_to_a * 3) + toac) / 4;
-#endif
 		} else {
 			p_ptr->ac = (p_ptr->ac * 1) / 2;
 			p_ptr->to_a = ((p_ptr->to_a * 1) + (toac * 1)) / 2;
@@ -5020,23 +4908,6 @@ void calc_boni(int Ind)
 #ifdef USE_PARRYING
 	/* Do we have a weapon equipped at all? */
 	if (o_ptr->k_idx) {
- #if 0 /* instead of making it completely SKILL_MASTERY dependant,...*/
-		if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) {
-			p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 30);
-		} else if (k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) {
-			if (!p_ptr->inventory[INVEN_ARM].k_idx) p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 25);
-			else p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 5);
-		} else if (k_info[o_ptr->k_idx].flags4 & TR4_COULD2H) {
-			if (!p_ptr->inventory[INVEN_ARM].k_idx || !p_ptr->inventory[INVEN_WIELD].k_idx)
-				p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 20);
-			else p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 10);
-		} else {
-			p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 10);
-		}
-		/* for dual-wielders: */
-		if ((p_ptr->dual_wield && p_ptr->dual_mode && !p_ptr->rogue_heavyarmor)
-			p_ptr->weapon_parry += get_skill_scale(p_ptr, SKILL_MASTERY, 10);
- #else /*..we add some base chance too (mainly for PvP!) */
 		if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) {
 			p_ptr->weapon_parry = 10 + get_skill_scale(p_ptr, SKILL_MASTERY, 20);
 		} else if (k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) {
@@ -5053,7 +4924,7 @@ void calc_boni(int Ind)
 		if (p_ptr->dual_wield && p_ptr->dual_mode && !p_ptr->rogue_heavyarmor)
 			//p_ptr->weapon_parry += 5 + get_skill_scale(p_ptr, SKILL_MASTERY, 5);//was +0(+10)
 			p_ptr->weapon_parry += 10;//pretty high, because independent of mastery skill^^
- #endif
+
 		/* adjust class-dependantly! */
 		switch (p_ptr->pclass) {
 		case CLASS_ADVENTURER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 1) / 3; break;
@@ -5130,8 +5001,6 @@ void calc_boni(int Ind)
 
 
 	/* Different calculation for monks with empty hands */
-#if 1 // DGDGDGDG -- no more monks for the time being
-//	if (p_ptr->pclass == CLASS_MONK)
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx &&
 	    !(p_ptr->inventory[INVEN_BOW].k_idx)) {
 		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
@@ -5152,33 +5021,16 @@ void calc_boni(int Ind)
 		p_ptr->num_blow += 1 + p_ptr->extra_blows;
 
 		if (!monk_heavy_armor(p_ptr)) {
-/*			p_ptr->to_h += (marts / 3) * 2;
-			p_ptr->to_d += (marts / 3);
-
-			p_ptr->dis_to_h += (marts / 3) * 2;
-			p_ptr->dis_to_d += (marts / 3);
-*/
-			p_ptr->to_h_melee += marts*3/2; 	
-			/* the_sandman: needs to be played out properly.. */
-			/* the new addition. max dex (40) -> 90 to_h base.. decent imo */
-			/* DEX influence the to hit. lets make every 5 dex -> +1 toHit */
-			p_ptr->to_h_melee += (int)((p_ptr->stat_cur[A_DEX]) / 5);
-			p_ptr->to_d_melee += (marts / 3);/* was 3, experimental 
-							    was 4, too low w/o mimicry for decent forms -,- reverted back to 3. the_sandman */
+			p_ptr->to_h_melee += (marts * 8) / 5;
+			p_ptr->to_d_melee += (marts / 2); /* was 3 */
 			/* Testing: added a new bonus. No more single digit dmg at lvl 20, I hope, esp as warrior. the_sandman */
-			/* Lowered to marts/2 */
 			/* changed by C. Blue, so it's available to mimics too */
 			p_ptr->to_d_melee += 20 - (400 / (marts + 20)); /* get strong quickly and early - quite special ;-o */
 		}
 
-#if 0 /* already done further above! */		
-		/* At least +1, max. +3 */
-		if (p_ptr->zeal) p_ptr->num_blow += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
-#endif
 	} else { /* make cumber_armor have effect on to-hit for non-martial artists too - C. Blue */
 		if (p_ptr->cumber_armor && (p_ptr->to_h_melee > 0)) p_ptr->to_h_melee = (p_ptr->to_h_melee * 2) / 3;
 	}
-#endif
 
 //	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
 	if (p_ptr->cumber_armor) p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 4);
@@ -5202,36 +5054,10 @@ void calc_boni(int Ind)
 	    (!r_info[p_ptr->body_monster].body_parts[BODY_WEAPON]) &&
 	    (p_ptr->num_blow > 1)) p_ptr->num_blow = 1;
 
-#if 0 /* redundant mess: combat skill already increases all three skill_thX abilities */
-	/* Combat fighting bonus */
-	if (get_skill(p_ptr, SKILL_COMBAT)) {
-		int lev = get_skill_scale(p_ptr, SKILL_COMBAT, 10);
-
-#if 0
-		p_ptr->dis_to_h += lev;
-		p_ptr->to_h += lev;
-#else /* reason for this is that DEX has influence on combat +hit bonus! (only affects h_melee and h_ranged, not to_h */
-		p_ptr->to_h_melee += lev;
-		p_ptr->to_h_ranged += lev;
-#endif
-
-/*		if (o_ptr->k_idx) {
-			p_ptr->to_d += lev;
-			p_ptr->dis_to_d += lev;*/
-//			p_ptr->to_d_melee += lev;
-/*		}*/
-	}
-#endif
-
 	/* Weaponmastery bonus to damage - not for MA!- C. Blue */
 	if (get_skill(p_ptr, SKILL_MASTERY) && o_ptr->k_idx) {
 		int lev = get_skill(p_ptr, SKILL_MASTERY);
-
-/*		p_ptr->to_h += lev / 5;
-		p_ptr->dis_to_h += lev / 5;
-		p_ptr->to_d += lev / 5;
-		p_ptr->dis_to_d += lev / 5;
-*/		p_ptr->to_h_melee += lev / 3;
+		p_ptr->to_h_melee += lev / 3;
 		p_ptr->to_d_melee += lev / 10;
 	}
 
@@ -5256,7 +5082,6 @@ void calc_boni(int Ind)
 		if (temp_chance < 0) temp_chance = 0;
 		/* write long back to int */
 		p_ptr->dodge_level = temp_chance;
-
 #else /* reworking dodge here - C. Blue */
 		/* I think it's cool to have a skill which for once doesn't depend on friggin armour_weight,
 		   but on total weight for a change. Cool variation. - C. Blue */
@@ -5273,29 +5098,6 @@ void calc_boni(int Ind)
 		/* prevent any weird overflows if 'someone' collects gronds */
 		if (i >= 5000) i = 1;
 		else {
- #if 0
-//			/* 25..30 lb equip, 50..90 lb inven if lightly equipped (50..80 difference depending on books/potions/scrolls (ew)) */
-//			i = (p_ptr->total_weight / 10) + 50; /* 25>96% 50>92% 75>87% 100>80% 125>72% 150>62% */
-//			i = 102 - ((i * i) / 1000);
-
-//			i = (p_ptr->total_weight / 8) + 50; /* 25>95% 50>89% 75>81% 100>71% 125>59% 150>45% */
-//			i = 101 - ((i * i) / 1000);
-
-//			i = i / 8 + 50; /* 0:-0 25:-4 50:-10 75:-18 100:-28 125:-40 150:-54 */
-//			i = 2 - (i * i) / 1000;
-
-//			i = i / 7 + 50; /* 0:-0 25:-5 50:-12 75:-22 100:-34 125:-49 150:-67 */
-//			i = 2 - (i * i) / 1000;
-
-//			i = i / 10 + 0; /* 0:-0 25:-0 50:-3 75:-16 100:-40 125:-78 150:-135 */
-//			i = (i * i * i) / 25000;
-
-//			i = i / 20 + 0; /* 0:-0 25:-0 50:-3 75:-16 100:-40 125:-78 150:-135 */
-//			i = (i * i * i) / 25000;
-
-//			i = i / 7 + 20; /* 0:-0 25:-2 50:-7 75:-15 100:-25 125:-38 150:-53 */
-//			i = 1 - (i * i) / 1000;
- #endif
 			i = i / 5 + 10; /* 0:-0 25:-2 50:-8 75:-18 100:-31 125:-48 150:-68 */
 			i = (i * i) / 1400;
 
@@ -5312,12 +5114,6 @@ void calc_boni(int Ind)
 		if (i < 1) i = 1; /* minimum, everyone may dodge even if not skilled :) */
 		/* fix top limit (100) - just paranoia: if above calculations were correct we can't go above 100. */
 		if (i > 100) i = 100;
- #if 0 /* done in apply_dodge_chance()! */
-		i = (i * DODGE_MAX_CHANCE) / 100; /* Note how it's scaled, instead of capped! >:) */
-		/* reduce player's dodge level if (s)he neglected to train it alongside character level */
-		j = get_skill(p_ptr, SKILL_DODGE); /* note: training dodge skill +2 ahead (like other skills usually) won't help for dodging, sorry. See next line: */
-		i = (i * (j > p_ptr->lev ? p_ptr->lev : j)) / (p_ptr->lev >= 50 ? 50 : p_ptr->lev);
- #endif
 		/* write back to int */
 		p_ptr->dodge_level = i;
 #endif
@@ -5363,67 +5159,29 @@ void calc_boni(int Ind)
 	}
 
 	/* Equipment weight affects shooting */
-#if 0 /* adj_weight_tohr not yet implemented and maybe too distinct steps */
-	i = armour_weight(p_ptr) / 200;
-	if (i > 25) i = 25;
-	p_ptr->to_h_ranged = (p_ptr->to_h_ranged * adj_weight_tohr[i]) / 100;
-#endif
-#if 0
-	i = armour_weight(p_ptr) / 100;
-	i = (i * i * i) / 1000; /* 1500 */
-	if (i > 100) i = 100;
-	p_ptr->to_h_ranged = (p_ptr->to_h_ranged * (100 - i)) / 100;
-#endif
-#if 0 /* was used a lot, but somehow allows way too high weight? x10 factor? */
-	/* allow malus even */
-	/* examples: 200.0: -4, 300.0: -13, 400.0: -32 */
-	i = armour_weight(p_ptr) / 100;
-	i = (i * i * i) / 2000;
-	if (i > 50) i = 50; /* reached at 470.0 lb */
-	p_ptr->to_h_ranged -= i;
-#endif
-#if 1
 	/* allow malus even */
 	/* examples: 10.0: 0, 20.0: -4, 30.0: -13, 40.0: -32, 47.0: -50 cap */
 	i = armour_weight(p_ptr) / 10;
 	i = (i * i * i) / 2000;
 	if (i > 50) i = 50; /* reached at 470.0 lb */
 	p_ptr->to_h_ranged -= i;
-#endif
-#if 0 /* or.. other possibility (somewhat older): */
-	/* Apply ranged to-hit penalty depending on armour weight */
-	/* examples: 10.0: -10%, 20.0: -20%, 30.0: -30%, 40.0: -40%, 50.0: -50% */
-	p_ptr->to_h_ranged = (p_ptr->to_h_ranged * 100) / (100 + armour_weight(p_ptr) / 10);
-#endif
-
 
 	/* also: shield and ranged weapon = less accuracy for ranged weapon! */
 	/* dual-wield currently does not affect shooting (!) */
 	if (p_ptr->inventory[INVEN_BOW].k_idx && p_ptr->inventory[INVEN_ARM].k_idx
 	    && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
 		/* can't aim well while carrying a shield on the arm! */
-#if 0 /* the following part only punishes the +hit/+dam from trained skill - C. Blue */
-		p_ptr->to_h_ranged = 0;/* /= 4; need more severeness, it was nothing */
-		p_ptr->to_d_ranged = 0;/* bam */
-#else
+
 		/* the following part punishes all +hit/+dam for ranged weapons;
 		   trained fighters suffer more than untrained ones! - C. Blue */
 		if (p_ptr->to_h_ranged >= 25) p_ptr->to_h_ranged = 0;
 		else if (p_ptr->to_h_ranged >= 0) p_ptr->to_h_ranged -= 10 + (p_ptr->to_h_ranged * 3) / 5;
 		else p_ptr->to_h_ranged -= 10;
 
- #if 0 /* Moltor agrees it's a bit too harsh probably */
-		if (p_ptr->to_d_ranged >= 15) p_ptr->to_d_ranged = 0;
-		else if (p_ptr->to_d_ranged >= 0) p_ptr->to_d_ranged -= 5 + (p_ptr->to_d_ranged * 2) / 3;
-		else p_ptr->to_d_ranged -= 5;
- #endif
-#endif
 		p_ptr->awkward_shoot = TRUE;
 	}
 
 	/* Priest weapon penalty for non-blessed edged weapons */
-//	if ((p_ptr->pclass == 2) && (!p_ptr->bless_blade) &&
-//	if ((get_skill(p_ptr, SKILL_PRAY)) && (!p_ptr->bless_blade) &&
 	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    (p_ptr->pclass == CLASS_PRIEST) && (!p_ptr->bless_blade) &&
 	    ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM) ||
@@ -5484,19 +5242,7 @@ void calc_boni(int Ind)
 		/* GWoP: 63, GT: 91, GB: 37, GDR: 14 */
 
 		/* Cap the to-dam if it's too great */
-#if 0 /* OLD: */
-//too lame:	if (d > 0) d = (15000 / ((10000 / d) + 100)) + 1;
-//		if (d > 0) d = (15000 / ((15000 / d) + 65)) + 1;
-//perfect if this were FINAL +dam, but it'll be averaged: if (d > 0) d = (2500 / ((1000 / d) + 20)) + 1;
-		if (d > 0) d = (4000 / ((1500 / d) + 20)) + 1;
-//		if (d > 0) d = (12500 / ((12500 / d) + 65)) + 1;
-/*too powerful:	if (d > 0) d = (25000 / ((10000 / d) + 100)) + 1;
-		if (d > 0) d = (20000 / ((10000 / d) + 100)) + 1;*/
-#else /* super-low forms got too much +dam bonus! */
-//slightly too lame:		if (d > 0) d = (4160 / ((2000 / (d + 4)) + 20)) - 8;
-//slightly too powerful:	if (d > 0) d = (4000 / ((1500 / (d + 4)) + 20)) - 10;
 		if (d > 0) d = (4000 / ((1500 / (d + 4)) + 22)) - 10;
-#endif
 
 		/* Calculate new averaged to-dam bonus */
 		if (d < (p_ptr->to_d + p_ptr->to_d_melee)) {
@@ -5529,32 +5275,6 @@ void calc_boni(int Ind)
 		if ((p_ptr->combat_stance == 1) &&
 		    (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) switch (p_ptr->combat_stance_power) {
 			/* note that defensive stance also increases chance to actually prefer shield over parrying in melee.c */
-  #if 0 /* multiplicative */
-			case 0: p_ptr->shield_deflect = (p_ptr->shield_deflect * 11) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 5) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 5) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
-			case 1: p_ptr->shield_deflect = (p_ptr->shield_deflect * 12) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 6) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 6) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 6) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
-			case 2: p_ptr->shield_deflect = (p_ptr->shield_deflect * 13) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
-			case 3: p_ptr->shield_deflect = (p_ptr->shield_deflect * 20) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 8) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 8) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 8) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
-  #else /* additive: less disadvantage for low-block shields */
 			case 0: p_ptr->shield_deflect += 8;
 				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
 				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
@@ -5579,7 +5299,6 @@ void calc_boni(int Ind)
 				p_ptr->to_d_melee = (p_ptr->to_d_melee * 8) / 10;
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
-  #endif
 		}
  #endif
  #ifdef USE_PARRYING /* need parrying to make use of offensive stance */
@@ -5679,16 +5398,6 @@ void calc_boni(int Ind)
 	/* Affect Skill -- saving throw (Level, by Class) */
 	p_ptr->skill_sav += (p_ptr->cp_ptr->x_sav * p_ptr->lev / 10);
 
-#if 0	// doh, it's all zero!!
-	/* Affect Skill -- stealth (Level, by Class) */
-	p_ptr->skill_stl += (p_ptr->cp_ptr->x_stl * get_skill(p_ptr, SKILL_STEALTH) / 10);
-
-	/* Affect Skill -- search ability (Level, by Class) */
-	p_ptr->skill_srh += (p_ptr->cp_ptr->x_srh * get_skill(p_ptr, SKILL_SNEAKINESS) / 10);
-
-	/* Affect Skill -- search frequency (Level, by Class) */
-	p_ptr->skill_fos += (p_ptr->cp_ptr->x_fos * get_skill(p_ptr, SKILL_SNEAKINESS) / 10);
-#else
 	/* Affect Skill -- stealth (Level, by Class) */
 	p_ptr->skill_stl += (get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5)) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
 	
@@ -5697,9 +5406,6 @@ void calc_boni(int Ind)
 
 	/* Affect Skill -- search frequency (Level, by Class) */
 	p_ptr->skill_fos += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_fos * 2));// + get_skill(p_ptr, SKILL_SNEAKINESS);
-
-
-#endif	// 0
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
         p_ptr->skill_thn += (p_ptr->cp_ptr->x_thn * (((7 * get_skill(p_ptr, SKILL_MASTERY)) + (3 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
