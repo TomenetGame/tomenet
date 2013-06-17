@@ -1,18 +1,9 @@
-
 -- The astral school ///update-dummy-bytes
 
 function get_astral_lev(Ind)
 	return ((players(Ind).s_info[SKILL_ASTRAL + 1].value + 1) / 2000 + players(Ind).lev / 2)
 end
 
---[[
-manathrust does 3...53 d 1 .. 21 damage base
-powerbolt/beam doing 3 .. 53 d 1 .. 26 might be OK because:
-1. mana school on its own is severely lacking (manathrust as main nuke only really viable with spell power)
-2. reflection
-
-I'll let you know about #1 when Pikachu is higher level :)
-]]
 function get_astral_dam(Ind)
 	return (3 + ((get_astral_lev(Ind) * 3) / 5)), (1 + get_astral_lev(Ind) / 2)
 end
@@ -25,14 +16,6 @@ function get_veng_power(Ind)
 	else
         	return ((l * l) / 5)
         end
-end
---orb of draining (main nuke for priests) go from 20 + (0 .. 475)
---fireflash (main nuke for mages) go from 20 + (0 .. 500)
---PROPOSED: due to lack of SUSECP_MANA/NETHER, we should be able to at least average out to ~750 per nuke (similar to resisted FF on SUSCEPT and FIRE_IMM monsters (754, to be exact))
--- proposed: 40 + astral_lev*15  => 40 + (0 .. 750) at lvl 50
-function get_astral_dam_ball(Ind)
---	return 40 + get_astral_lev(Ind) * 12;
-	return (3 + ((get_astral_lev(Ind) * 2) / 5)), (3 + get_astral_lev(Ind) / 1)
 end
 
 function get_astral_bonus_hp(Ind)
@@ -136,22 +119,17 @@ POWERBALL = add_spell
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
-				fire_ball(Ind, GF_MANA, args.dir, damroll(get_astral_dam_ball(Ind)), 2 + get_level(Ind, POWERBALL, 2), " casts a mana ball for")
-				--fire_ball(Ind, GF_MANA, args.dir, get_astral_dam_ball(Ind), 2 + get_level(Ind, POWERBALL, 2), " casts a ball of mana for")
+				fire_ball(Ind, GF_MANA, args.dir, get_astral_lev(Ind)*9, 2 + get_level(Ind, POWERBALL, 2), " casts a mana ball for")
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				fire_ball(Ind, GF_NETHER, args.dir, damroll(get_astral_dam_ball(Ind)), 2 + get_level(Ind, POWERBALL, 2), " casts a nether ball for")
-				--fire_ball(Ind, GF_NETHER, args.dir, get_astral_dam_ball(Ind), 2 + get_level(Ind, POWERBALL, 2), " casts a ball of nether for")
+				fire_ball(Ind, GF_NETHER, args.dir, get_astral_lev(Ind)*9, 2 + get_level(Ind, POWERBALL, 2), " casts a nether ball for")
 			else
-				fire_ball(Ind, GF_ELEC, args.dir, damroll(get_astral_dam_ball(Ind)), 2 + get_level(Ind, POWERBALL, 2), " casts a lightning ball for")
-				--fire_ball(Ind, GF_ELEC, args.dir, get_astral_dam_ball(Ind), 2 + get_level(Ind, POWERBALL, 2), " casts a ball of lightning for")
+				fire_ball(Ind, GF_ELEC, args.dir, get_astral_lev(Ind)*9, 2 + get_level(Ind, POWERBALL, 2), " casts a lightning ball for")
 			end
 	end,
 	["info"] = 	function()
-			local xx, yy
-			--xx = get_astral_dam_ball(Ind)
-			xx, yy = get_astral_dam_ball(Ind)
-			return "dam "..xx.."d"..yy.." rad "..2 + get_level(Ind, POWERBALL, 2)
-			--return "dam "..xx.." rad "..2 + get_level(Ind, POWERBALL, 2);
+			local dam
+			dam = get_astral_lev(Ind)*9
+			return "dam "..dam.." rad "..2 + get_level(Ind, POWERBALL, 2)
 	end,
 	["desc"] =	{
 			"Enlightened: conjures up a powerful ball of mana",
@@ -172,15 +150,15 @@ RELOCATION = add_spell
 	["am"] =	67,
 	["blind"] =	0,
 	["spell"] =	function(args)
-		local dur = randint(21 - get_level(Ind, RECALL, 15)) + 15 - get_level(Ind, RECALL, 10)
-		if args.book < 0 then return end
-		set_recall(Ind, dur, player.inventory[1 + args.book])
+			local dur = randint(21 - get_level(Ind, RECALL, 15)) + 15 - get_level(Ind, RECALL, 10)
+			if args.book < 0 then return end
+			set_recall(Ind, dur, player.inventory[1 + args.book])
 	end,
 	["info"] =	function()
-		return "dur "..(15 - get_level(Ind, RECALL, 10)).."+d"..(21 - get_level(Ind, RECALL, 15))
+			return "dur "..(15 - get_level(Ind, RECALL, 10)).."+d"..(21 - get_level(Ind, RECALL, 15))
 	end,
 	["desc"] =	{
-		"Recalls into the dungeon, back to the surface or across the world.",
+			"Recalls into the dungeon, back to the surface or across the world.",
 	}
 }
 
@@ -223,15 +201,12 @@ EMPOWERMENT = add_spell
 	["am"] =	33,
 	["blind"] =	0,
 	["spell"] = 	function(args)
---				if (get_astral_lev(Ind) >= 40) then
-					divine_empowerment(Ind, get_astral_lev(Ind));
---				end
+				divine_empowerment(Ind, get_astral_lev(Ind));
 	end,
 	["info"] = 	function()
 				return "dur "..(20 + get_astral_lev(Ind) / 10)
 	end,
 	["desc"] =	{
---			"Requires astral level of 40",
 			"Enlightened: incite self fury",
 			"Corrupted: increases your hit points"
 		}
@@ -249,15 +224,12 @@ INTENSIFY = add_spell
 	["direction"] = FALSE,
 	["am"] =	67,
 	["spell"] = 	function(args)
---				if (get_astral_lev(Ind) >= 45) then
-					divine_intensify(Ind, get_astral_lev(Ind));
---				end
+				divine_intensify(Ind, get_astral_lev(Ind));
 	end,
 	["info"] = 	function()
 				return "dur "..(20 + get_astral_lev(Ind) / 10)
 	end,
 	["desc"] =	{
---			"Requires astral level of 45",
 			"Enlightened: slows down monsters in sight and",
 			"             grants temporary time resistance",
 			"Corrupted: increases your critical chance (+2 base",
@@ -277,21 +249,18 @@ POWERCLOUD = add_spell
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			local lev = get_astral_lev(Ind)
---			if (lev >= 50) then
 				if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
 					fire_cloud(Ind, GF_MANA, args.dir, (1 + lev * 2), 3, (5 + lev / 5), 9, " conjures up a mana storm of")
 				else
-					fire_cloud(Ind, GF_ANNIHILATION, args.dir, ((lev + 3) / 10) - 4, 3, (5 + lev / 5), 9, " conjures up an annihilating sphere of")
+					fire_cloud(Ind, GF_INFERNO, args.dir, (1 + lev * 2), 3, (5 + lev / 5), 9, " conjures up inferno of")
+					--fire_cloud(Ind, GF_ANNIHILATION, args.dir, ((lev + 3) / 10) - 4, 3, (5 + lev / 5), 9, " conjures up an annihilating sphere of")
 				end
---			end
 	end,
 	["info"] = 	function()
 			local lev = get_astral_lev(Ind)
-			--return "dam "..(1 + (lev * 2)).." rad 3 dur "..(5 + (lev / 5))
-			return "dam var rad 3 dur "..(5 + (lev / 5))
+			return "dam "..(1 + lev * 2).." rad 3 dur "..(5 + (lev / 5))
 	end,
 	["desc"] =	{
---			"Requires astral level of 50",
 			"Enlightened: conjures up a storm of mana",
 			"Corrupted: conjures up a sphere of annihilation"
 		}
