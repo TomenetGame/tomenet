@@ -5021,7 +5021,7 @@ void calc_boni(int Ind)
 		p_ptr->num_blow += 1 + p_ptr->extra_blows;
 
 		if (!monk_heavy_armor(p_ptr)) {
-			p_ptr->to_h_melee += (marts * 8) / 5;
+			p_ptr->to_h_melee += (marts * 3) / 2;
 			p_ptr->to_d_melee += (marts / 2); /* was 3 */
 			/* Testing: added a new bonus. No more single digit dmg at lvl 20, I hope, esp as warrior. the_sandman */
 			/* changed by C. Blue, so it's available to mimics too */
