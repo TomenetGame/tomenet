@@ -5202,7 +5202,8 @@ void calc_boni(int Ind)
 	    (!r_info[p_ptr->body_monster].body_parts[BODY_WEAPON]) &&
 	    (p_ptr->num_blow > 1)) p_ptr->num_blow = 1;
 
-	/* Combat bonus to damage */
+#if 0 /* redundant mess: combat skill already increases all three skill_thX abilities */
+	/* Combat fighting bonus */
 	if (get_skill(p_ptr, SKILL_COMBAT)) {
 		int lev = get_skill_scale(p_ptr, SKILL_COMBAT, 10);
 
@@ -5217,9 +5218,10 @@ void calc_boni(int Ind)
 /*		if (o_ptr->k_idx) {
 			p_ptr->to_d += lev;
 			p_ptr->dis_to_d += lev;*/
-			p_ptr->to_d_melee += lev;
+//			p_ptr->to_d_melee += lev;
 /*		}*/
 	}
+#endif
 
 	/* Weaponmastery bonus to damage - not for MA!- C. Blue */
 	if (get_skill(p_ptr, SKILL_MASTERY) && o_ptr->k_idx) {
