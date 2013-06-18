@@ -220,7 +220,7 @@ school_book[7] = {
 
 -- Create the book of the Time (39-42)
 school_book[8] = {
-        MAGELOCK, SLOWMONSTER, ESSENSESPEED, BANISHMENT,
+        MAGELOCK, SLOWMONSTER, ESSENSESPEED, MASSWARP,
 }
 
 -- Create the book of meta spells (43-45)
@@ -334,7 +334,7 @@ school_book[55] = {
 
 ---- Create the handbook to the underworld
 --school_book[55] = {
---	HELLFIRE, GENOCIDE, BANISHMENT, CONFUSE, FIERYAURA
+--	HELLFIRE, GENOCIDE, MASSWARP, CONFUSE, FIERYAURA
 --}
 
 -- Create the handbook of novice etiquette

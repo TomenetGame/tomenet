@@ -107,22 +107,22 @@ ESSENSESPEED = add_spell
 	}
 }
 
-BANISHMENT = add_spell
+MASSWARP = add_spell
 {
-	["name"] = 	"Banishment",
+	["name"] = 	"Mass Warp",
         ["school"] = 	{SCHOOL_TEMPORAL, SCHOOL_CONVEYANCE},
         ["level"] = 	30,
         ["mana"] = 	30,
         ["mana_max"] = 	40,
         ["fail"] = 	10,
         ["spell"] = 	function()
-                        project_los(Ind, GF_AWAY_ALL, 40 + get_level(Ind, BANISHMENT, 160), "casts a spell")
-                        if get_level(Ind, BANISHMENT, 50) >= 15 then
-                                project_los(Ind, GF_STASIS, 20 + get_level(Ind, BANISHMENT, 120), "casts a spell")
+                        project_los(Ind, GF_AWAY_ALL, 40 + get_level(Ind, MASSWARP, 160), "casts a spell")
+                        if get_level(Ind, MASSWARP, 50) >= 15 then
+                                project_los(Ind, GF_STASIS, 20 + get_level(Ind, MASSWARP, 120), "casts a spell")
                         end
 	end,
 	["info"] = 	function()
-                     	return "power "..(40 + get_level(Ind, BANISHMENT, 160))
+                     	return "power "..(40 + get_level(Ind, MASSWARP, 160))
 	end,
         ["desc"] =	{
         		"Disrupt the space/time continuum in your area and teleports all monsters away",

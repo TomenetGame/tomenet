@@ -11989,7 +11989,7 @@ Istar schools:
                     Hastes you for a while.                         (project)
                     Required skill level for first spell level: 15.
 
-    Banishment      Teleports away all monsters within sight.
+    Mass Warp      Teleports away all monsters within sight.
                     Lv15: Locks monsters in stasis for a while.
                     Required skill level for first spell level: 30.
                     Shared spell (see above): Temporal, Conveyance.
