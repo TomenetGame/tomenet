@@ -4681,7 +4681,6 @@ void calc_boni(int Ind)
 #else /* multiplication (percent) -- TODO FIRST!!: would need to be before all penalties but after marts/etc +hit boni! */
 	p_ptr->to_h_melee = ((int)((p_ptr->to_h_melee * adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]) / 100));
 #endif
-//	p_ptr->to_h_melee += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128) / 2;
 //	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
 //	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
 //	p_ptr->to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
@@ -4693,7 +4692,6 @@ void calc_boni(int Ind)
 //	p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
 
 	/* Modify ranged weapon boni. DEX now very important for to_hit */
-//	p_ptr->to_h_ranged += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
 #if 1 /* addition */
 	p_ptr->to_h_ranged += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
 #else /* multiplication (percent) -- TODO FIRST!!: would need to be before all penalties but after marts/etc +hit boni! */
