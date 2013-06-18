@@ -1466,7 +1466,7 @@ extern void taunt_monsters(int Ind);
 extern void distract_monsters(int Ind);
 extern bool genocide_aux(int Ind, worldpos *wpos, char typ);
 extern bool genocide(int Ind);
-extern bool mass_genocide(int Ind);
+extern bool obliteration(int who);
 extern bool probing(int Ind);
 extern bool project_los(int Ind, int typ, int dam, char *attacker);
 extern bool banish_evil(int Ind, int dist);

@@ -2726,9 +2726,9 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 				ident = TRUE;
 				break;
 
-			case SV_SCROLL_MASS_GENOCIDE:
-				msg_print(Ind, "This is a mass genocide scroll.");
-				(void)mass_genocide(Ind);
+			case SV_SCROLL_OBLITERATION:
+				msg_print(Ind, "This is a obliteration scroll.");
+				(void)obliteration(Ind);
 				ident = TRUE;
 				break;
 
@@ -5478,7 +5478,7 @@ void do_cmd_activate(int Ind, int item, int dir)
 			case ART_EONWE:
 			{
 				msg_print(Ind, "Your axe lets out a long, shrill note...");
-				(void)mass_genocide(Ind);
+				(void)obliteration(Ind);
 				o_ptr->timeout = 1000;
 				break;
 			}

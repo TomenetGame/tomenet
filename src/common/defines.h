@@ -3307,7 +3307,7 @@
 #define SV_SCROLL_DISPEL_UNDEAD         42
 #define SV_SCROLL_MASS_RESURECTION      43
 #define SV_SCROLL_GENOCIDE              44
-#define SV_SCROLL_MASS_GENOCIDE         45
+#define SV_SCROLL_OBLITERATION          45
 #define SV_SCROLL_ACQUIREMENT           46
 #define SV_SCROLL_STAR_ACQUIREMENT      47
 #define SV_SCROLL_FIRE                  48

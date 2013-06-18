@@ -3470,7 +3470,7 @@ static void cmd_master_aux_summon(void)
 		Term_putstr(5, 6, -1, TERM_WHITE, "(3) High Undead");
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Depth");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Specific");
-		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Mass Genocide");
+		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Obliteration");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Summoning mode off");
 
 

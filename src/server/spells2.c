@@ -4653,40 +4653,57 @@ bool genocide(int Ind)
 
 /*
  * Delete all nearby (non-unique) monsters
+ * Either Ind must be a player's index for use by a player,
+ * or Ind must be -m_idx for use by a monster trap.
  */
-bool mass_genocide(int Ind)
-{
-	player_type *p_ptr = Players[Ind];
+bool obliteration(int who) {
+	player_type *p_ptr;
+	int i, tmp, rad, x, y;
+	bool result = FALSE;
 
-	int		i, tmp;
-
-	bool	result = FALSE;
-
-	worldpos *wpos=&p_ptr->wpos;
-	dun_level		*l_ptr = getfloor(wpos);
+	worldpos *wpos;
+	dun_level *l_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
-	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
+
+	/* monster hit a monster trap? */
+	if (who < 0) {
+		rad = 1;
+		p_ptr = NULL;
+		wpos = &m_list[-who].wpos;
+		x = m_list[-who].fx;
+		y = m_list[-who].fy;
+	}
+	/* player cast it */
+	else {
+		rad = MAX_SIGHT;
+		p_ptr = Players[who];
+		wpos = &p_ptr->wpos;
+		x = p_ptr->px;
+		y = p_ptr->py;
+	}
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	l_ptr = getfloor(wpos);
+	if (l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
 	bypass_invuln = TRUE;
 
 	/* Delete the (nearby) monsters */
-	for (i = 1; i < m_max; i++)
-	{
-		monster_type	*m_ptr = &m_list[i];
-                monster_race    *r_ptr = race_inf(m_ptr);
+	for (i = 1; i < m_max; i++) {
+		monster_type *m_ptr = &m_list[i];
+                monster_race *r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
 
 		/* Skip monsters not on this depth */
-		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+		if (!inarea(wpos, &m_ptr->wpos)) continue;
 
 		/* Hack -- Skip unique monsters */
 		if (r_ptr->flags1 & RF1_UNIQUE) continue;
 
 		/* Skip distant monsters */
-		if(distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)>MAX_SIGHT)
+		if (distance(y, x, m_ptr->fy, m_ptr->fx) > rad)
 #if 0
 		if (m_ptr->cdis > MAX_SIGHT)
 #endif
@@ -4703,7 +4720,7 @@ bool mass_genocide(int Ind)
 
 #ifdef NO_GENO_ON_ICKY
 		/* Not valid inside a vault */
-		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY && !p_ptr->admin_dm)
+		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY && p_ptr && !p_ptr->admin_dm)
 			continue;
 #endif	// NO_GENO_ON_ICKY
 
@@ -4713,40 +4730,44 @@ bool mass_genocide(int Ind)
 		/* Hack -- visual feedback */
 		/* does not effect the dungeon master, because it disturbs his movement
 		 */
-		if (!p_ptr->admin_dm)
-			take_hit(Ind, randint(3 + (tmp >> 3)), "the strain of casting Genocide", 0);
+		if (p_ptr && !p_ptr->admin_dm) {
+			take_hit(who, randint(3 + (tmp >> 3)), "the strain of casting Genocide", 0);
 
-		/* Redraw */
-		p_ptr->redraw |= (PR_HP);
+			/* Redraw */
+			p_ptr->redraw |= (PR_HP);
 
-		/* Window stuff */
-		/* p_ptr->window |= (PW_PLAYER); */
+			/* Window stuff */
+			/* p_ptr->window |= (PW_PLAYER); */
 
-		/* Handle */
-		handle_stuff(Ind);
+			/* Handle */
+			handle_stuff(who);
 
-		/* Delay */
-//		Send_flush(Ind); /* I don't think a delay is really necessary - mikaelh */
+			/* Delay */
+			//Send_flush(who); /* I don't think a delay is really necessary - mikaelh */
+		}
 
 		/* Note effect */
 		result = TRUE;
 	}
 
+	if (p_ptr) {
 #ifdef SEVERE_GENO
-	if (!p_ptr->death && result && !p_ptr->admin_dm)
-			take_hit(Ind, p_ptr->chp >> 1, "the strain of casting Genocide", 0);
+		if (!p_ptr->death && result && !p_ptr->admin_dm) {
+			take_hit(who, p_ptr->chp >> 1, "the strain of casting Genocide", 0);
 
-	/* Redraw */
-	p_ptr->redraw |= (PR_HP);
+			/* Redraw */
+			p_ptr->redraw |= (PR_HP);
+		}
 #endif
 
+		/* Window stuff */
+		p_ptr->window |= (PW_PLAYER);
+
+		/* Handle */
+		handle_stuff(who);
+	}
+
 	bypass_invuln = FALSE;
-
-	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER);
-
-	/* Handle */
-	handle_stuff(Ind);
 
 	return (result);
 }

@@ -3732,10 +3732,8 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 //			return (!(r_ptr->flags1 & RF1_UNIQUE));
 			identify_mon_trap_load(who, o_ptr);
 			return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
-		case SV_SCROLL_MASS_GENOCIDE:	// Hrm uniques too?
-			for (k = 0; k < 8; k++)
-				delete_monster(&wpos, y+ddy[k], x+ddx[k], TRUE);
-			delete_monster(&wpos, y, x, TRUE);
+		case SV_SCROLL_OBLITERATION:
+			obliteration(-m_idx);
 			identify_mon_trap_load(who, o_ptr);
 			return(TRUE);
 		case SV_SCROLL_ACQUIREMENT:

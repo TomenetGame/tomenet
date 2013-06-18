@@ -79,7 +79,7 @@ GENOCIDE = add_spell
                                 genocide(Ind)
                         else
                                 if args.aux == TRUE then
-                                        mass_genocide(Ind)
+                                        obliteration(Ind)
                                 else
                                 	genocide(Ind)
                                 end
@@ -89,8 +89,9 @@ GENOCIDE = add_spell
 	                return ""
 	end,
         ["desc"] =	{
-                        "Genocides all monsters of a race on the level",
-                        "At level 15 it can genocide all monsters near you"
+                        "Casts 'Genocide' on all monsters of particular race on the level",
+                        "At level 15 it can be used as an 'Obliteration' spell instead,",
+                        "eradicating all monsters in your vincinity",
         }
 }
 

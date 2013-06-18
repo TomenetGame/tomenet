@@ -2201,7 +2201,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					
 					case SV_R_NETH: {
 						if (r_imperatives[imperative].flag != I_ENHA) {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% mass genocide",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% obliteration",
 							color,
 							'a' + i,
 							r_types[i].name,

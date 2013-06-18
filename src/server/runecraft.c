@@ -810,7 +810,7 @@ s_printf("Duration: %d\n", duration);
 				break; }
 				
 				case SV_R_NETH: {
-					if (r_imperatives[imperative].flag != I_ENHA) (void)mass_genocide(Ind); //Use a radius in the future?
+					if (r_imperatives[imperative].flag != I_ENHA) (void)obliteration(Ind); //Use a radius in the future?
 					else (void)genocide(Ind); //Maybe resist/power in the future as well?
 				break; }
 				

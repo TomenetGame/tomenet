@@ -1590,12 +1590,12 @@ W:60:0:5:100000
 A:60/16
 D:Creates 2 or 3 random great items, quality depending on depth where it's read.
 
-N:200:Mass Genocide
+N:200:Obliteration
 G:?:d
 I:70:45:0
 W:50:0:5:3000
 A:50/4:100/4
-D:Annihilates all monsters close to you, draining your hit points for each.
+D:Eradicates all monsters close to you, draining your hit points for each.
 
 N:201:Detect Invisible
 G:?:d
@@ -1643,7 +1643,7 @@ G:?:d
 I:70:44:0
 W:40:0:5:2000
 A:40/4:80/4
-D:Annihilates a certain type of monster on the level, determined by which monster
+D:Eradicates a certain type of monster on the level, determined by which monster
 D:is standing closest to you. It drains your hit points for each monster.
 
 N:208:Darkness

@@ -7688,7 +7688,7 @@ Genocide        Removes all monsters of a certain kind from the current level.
                 Monsters have a chance to resist genocide, depending on their
                 level. Monsters inside vaults, Uniques, and monsters that are
                 immune to teleportation attacks cannot be genocided.
-Mass Genocide   Removes all monsters that are close to you.
+Obliteration    Removes all monsters that are close to you.
                 Drains your HP.
                 All monsters within a radius (equal to your sight range)
                 around you are annihilated. For each monster you will suffer
@@ -12002,8 +12002,8 @@ Istar schools:
     Genocide        Genocides all monsters of a race on the level.
                     Lv15: Alternatively genocides all monsters near you ("mass
                             genocide", choose 'y'. 'n' will do a normal geno).
-                    For details on the effects "genocide" and "mass genocide"
-                    of this spell, please see (5.9) scroll of geno/mass geno.
+                    For details on the effects "genocide" and "obliteration"
+                    of this spell, please see (5.9) scroll of geno/oblit.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 25.
 
@@ -12825,7 +12825,7 @@ Rune     | Rune     | Element        | Sign Spell          | Enhanced Effect
 Light    | Light    | Light          | Call Light          | Starlight
 Darkness | Darkness | Darkness       | Call Darkness       | Invisibility
 Nexus    | Nexus    | Nexus          | Blink               | Teleportation
-Nether   | Nether   | Nether         | Mass Genocide       | Genocide
+Nether   | Nether   | Nether         | Obliteration        | Genocide
 Chaos    | Chaos    | Chaos          | Polymorph Self      | Chaos Brand
 Mana     | Mana     | Mana           | Remove Curses       | Remove *Curses*
 

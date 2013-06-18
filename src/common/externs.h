@@ -725,7 +725,7 @@ extern bool slow_monsters(int Ind);
 extern bool sleep_monsters(int Ind);
 extern void aggravate_monsters(int Ind, int who);
 extern bool genocide(int Ind);
-extern bool mass_genocide(int Ind);
+extern bool obliteration(int who);
 extern bool probing(int Ind);
 extern bool banish_evil(int Ind, int dist);
 extern bool dispel_evil(int Ind, int dam);

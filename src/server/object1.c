@@ -3176,7 +3176,7 @@ cptr item_activation(object_type *o_ptr) {
 //		return "probing, detection and full id every 1000 turns";
 		return "probing and detection every 20 turns";
 	case ART_EONWE:
-		return "mass genocide every 1000 turns";
+		return "obliteration every 1000 turns";
 	case ART_LOTHARANG:
 		return "cure wounds (4d7) every 3+d3 turns";
 	case ART_CUBRAGOL:
