@@ -9,7 +9,7 @@
 #include "party.h"
 
 static void new_wr_wild();
-static void new_wr_dungeons();
+static void new_wr_floors();
 void wr_towns();
 void wr_byte(byte v);
 void wr_u16b(u16b v);
@@ -941,7 +941,7 @@ static void wr_hostilities(int Ind)
  * -APD
  */
 
-static void wr_dungeon(struct worldpos *wpos)
+static void wr_floor(struct worldpos *wpos)
 {
 	int y, x, i;
 	byte prev_feature=0xff, n;
@@ -1959,7 +1959,7 @@ static bool wr_server_savefile()
 
 	wr_towns();		/* write town data */
 	new_wr_wild();		/* must alloc dungeons first on load! ;) */
-	new_wr_dungeons();	/* rename wr_dungeons(void) later */
+	new_wr_floors();	/* rename wr_floors(void) later */
 
 	/* Prepare to write the monsters */
 	compact_monsters(0, FALSE);
@@ -2097,7 +2097,7 @@ static void new_wr_wild(){
 }
 
 /* write the actual dungeons */
-static void new_wr_dungeons(){
+static void new_wr_floors(){
 	struct worldpos cwpos;
 	wilderness_type *w_ptr;
 	int x, y, z;
@@ -2113,13 +2113,13 @@ static void new_wr_dungeons(){
 			 * the surface is not static, stair/recall informations are lost
 			 * and cause crash/infinite-loop next time.		FIXME
 			 */
-			if (getcave(&cwpos) && players_on_depth(&cwpos)) wr_dungeon(&cwpos);
+			if (getcave(&cwpos) && players_on_depth(&cwpos)) wr_floor(&cwpos);
 			if (w_ptr->flags & WILD_F_DOWN) {
 				struct dungeon_type *d_ptr = w_ptr->dungeon;
 				for (z = 1; z <= d_ptr->maxdepth; z++) {
 					cwpos.wz = -z;
 					if(d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
-						wr_dungeon(&cwpos);
+						wr_floor(&cwpos);
 				}
 			}
 			if (w_ptr->flags & WILD_F_UP) {
@@ -2127,7 +2127,7 @@ static void new_wr_dungeons(){
 				for (z = 1; z <= d_ptr->maxdepth; z++) {
 					cwpos.wz = z;
 					if(d_ptr->level[z - 1].ondepth && d_ptr->level[z - 1].cave)
-						wr_dungeon(&cwpos);
+						wr_floor(&cwpos);
 				}
 			}
 			cwpos.wz = 0;

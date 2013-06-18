@@ -16,7 +16,7 @@
  *		byte type, {blabla written by csfunc} (x number)
  * this should be terminated by 255,255,255 or sth.
  * when loading, csfunc will load it to the c_ptr tossed.
- * [implemented - see rd_dungeon() and wr_dungeon() for details.]
+ * [implemented - see rd_floor() and wr_floor() for details.]
  *
  * 2. see
  * nice if csfunc is called from map_info(); otherwise we should add another

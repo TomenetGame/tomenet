@@ -8,7 +8,7 @@
 #include "angband.h"
 
 static void new_rd_wild();
-static void new_rd_dungeons();
+static void new_rd_floors();
 void rd_towns();
 void rd_byte(byte *ip);
 void rd_u16b(u16b *ip);
@@ -2066,7 +2066,7 @@ static errr rd_hostilities(int Ind)
  *
  */
 
-static errr rd_dungeon(void)
+static errr rd_floor(void)
 {
 	struct worldpos wpos;
 	s16b tmp16b;
@@ -2757,7 +2757,7 @@ errr rd_server_savefile()
 	/* read the number of levels to be loaded */
 	rd_towns();
 	new_rd_wild();
-	new_rd_dungeons();
+	new_rd_floors();
 
 	/* get the number of monsters to be loaded */
 	rd_u32b(&tmp32u);
@@ -3032,9 +3032,9 @@ void new_rd_wild()
 #endif
 }
 
-void new_rd_dungeons()
+void new_rd_floors()
 {
-	while(!rd_dungeon());
+	while(!rd_floor());
 }
 
 void rd_towns()
