@@ -5074,6 +5074,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	int i, rolls, chance1, chance2, power; //, j;
         char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, esp; /* for RESF checks */
+	bool already_applied = FALSE; /* for jewelry */
 
 	/* Fix for reasonable level reqs on DROP_CHOSEN/SPECIAL_GENE items -C. Blue */
 	if (lev == -2) lev = getlevel(wpos);
@@ -5135,6 +5136,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	if (!okay || o_ptr->name1) rolls = 0;
 
 
+	/* virgin */
+	o_ptr->owner = 0;
+
+
 	/* Hack for possible randarts, to be created in next for loop:
 	   Jewelry can keep +hit,+dam,+ac through artifying process!
 	   That means, it must be applied beforehand already, because the
@@ -5145,7 +5150,11 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* hack: if we apply_magic() again on _already created_ jewelry,
 		   we don't want to reset its hit/dam/ac, because we're also called
 		   when we create an artifact out of an item. */
-		if (!o_ptr->name1) a_m_aux_3(o_ptr, lev, power, resf);
+		if (!o_ptr->name1) {
+			object_copy(o_ptr_bak, o_ptr);
+			already_applied = TRUE;
+			a_m_aux_3(o_ptr, lev, power, resf);
+		}
 		o_ptr->name2 = o_ptr->name2b = 0; /* required? */
 	}
 	/* --------------------------------------------------------------------------------- */
@@ -5155,10 +5164,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Roll for an artifact */
 		if (make_artifact(wpos, o_ptr, resf)) break;
 	}
-
-	/* virgin */
-	o_ptr->owner = 0;
-
 	/* Hack -- analyze artifacts */
 	if (o_ptr->name1) {
 		artifact_type *a_ptr;
@@ -5169,9 +5174,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			a_ptr = randart_make(o_ptr);
 		}
 		/* Normal artifacts */
-		else {
-			a_ptr = &a_info[o_ptr->name1];
-		}
+		else a_ptr = &a_info[o_ptr->name1];
 
 		/* ?catch impossible randart types? */
 		if (a_ptr == (artifact_type*)NULL) {
@@ -5227,20 +5230,34 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		return;
 	}
 
+	/* If it wasn't an artifact ring/amulet, forget pre-application of magic and proceed as usual.
+	   If we don't do that, the 'o_ptr' could retain a curse for example, despite ending up with
+	   positive pval/boni in the upcoming a_m_aux3(). */
+	if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET) object_copy(o_ptr, o_ptr_bak);
+
 
 	/* In case we get an ego item, check "verygreat" flag and retry a few times if needed */
-if (verygreat) s_printf("verygreat apply_magic:\n");
-	object_copy(o_ptr_bak, o_ptr);
-	object_copy(o_ptr_highest, o_ptr);
+	if (verygreat) s_printf("verygreat apply_magic:\n");
+	/* for jewelry: */
+	if (already_applied) object_copy(o_ptr_highest, o_ptr_bak);
+	else { /* for other items: */
+		object_copy(o_ptr_bak, o_ptr);
+		object_copy(o_ptr_highest, o_ptr);
+	}
+
 	depth_value = (depth < 60 ? depth * 150 : 9000) + randint(depth) * 100;
-//  for (i = 0; i < (!is_ammo(o_ptr->tval) ? 2 + depth / 7 : 4 + depth / 5); i++) {
-//  for (i = 0; i < (!is_ammo(o_ptr->tval) ? 2 + depth / 5 : 4 + depth / 5); i++) {
-for (i = 0; i < 25; i++) {
-	object_copy(o_ptr, o_ptr_bak);
+	//  for (i = 0; i < (!is_ammo(o_ptr->tval) ? 2 + depth / 7 : 4 + depth / 5); i++) {
+	//  for (i = 0; i < (!is_ammo(o_ptr->tval) ? 2 + depth / 5 : 4 + depth / 5); i++) {
+	for (i = 0; i < 25; i++) {
+		if (already_applied) {
+			already_applied = FALSE;
+			goto already_applied_finish;
+		}
 
+		object_copy(o_ptr, o_ptr_bak);
 
-	/* Apply magic */
-	switch (o_ptr->tval) {
+		/* Apply magic */
+		switch (o_ptr->tval) {
 		case TV_TRAPKIT:
 			if (!is_firearm_trapkit(o_ptr->sval)) break;
 		case TV_DIGGING:
@@ -5288,125 +5305,118 @@ for (i = 0; i < 25; i++) {
 		default:
 			a_m_aux_4(o_ptr, lev, power, resf);
 			break;
-	}
-
-	/* Bad hack: Un-ego mindcrafter spell scrolls if they got fireproof/waterproof ego,
-	   since they (by another bad hack) already ignore those. */
-	if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK &&
-	    get_spellbook_name_colour(o_ptr->pval) == TERM_YELLOW) {
-	    if (o_ptr->name2 == EGO_FIREPROOF_BOOK || o_ptr->name2 == EGO_WATERPROOF_BOOK) o_ptr->name2 = 0;
-	    if (o_ptr->name2b == EGO_FIREPROOF_BOOK || o_ptr->name2b == EGO_WATERPROOF_BOOK) o_ptr->name2b = 0;
-	}
-
-#if 1	// tweaked pernA ego.. 
-	/* Hack -- analyze ego-items */
-//	else if (o_ptr->name2)
-	if (o_ptr->name2 && !o_ptr->name1) {
-		artifact_type *a_ptr;
-
-		a_ptr = ego_make(o_ptr);
-
-		/* Extract the other fields */
-
-		if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)
-		    || o_ptr->tval == TV_BOOK
-		    || is_ammo(o_ptr->tval))
-			; /* keep o_ptr->pval! */
-		else if (!is_magic_device(o_ptr->tval)) /* don't kill charges on EGO (of plenty) devices! */
-			o_ptr->pval = a_ptr->pval; /* paranoia?-> pval might've been limited in ego_make(), so set it here, instead of adding it */
-		else
-			o_ptr->pval += a_ptr->pval;
-
-		o_ptr->ac += a_ptr->ac;
-		o_ptr->dd += a_ptr->dd;
-		o_ptr->ds += a_ptr->ds;
-		if (a_ptr->to_a < 0) o_ptr->to_a = a_ptr->to_a; /* <- special for 'bad' ego powers, vs high-ac armour such as DSM */
-		else o_ptr->to_a += a_ptr->to_a;
-		o_ptr->to_h += a_ptr->to_h;
-		o_ptr->to_d += a_ptr->to_d;
-
-		apply_enchantment_limits(o_ptr); /* new: paranoia? worked fine without so far */
-
-		/* Reduce enchantment boni for ego Dark Swords - C. Blue
-		   (since they're no more (dis)enchantable, make work easier for unbelievers..) */
-		if ((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD)) {
-			/* Don't reduce negative boni, of *Defender*s for example */
-			if ((o_ptr->to_h > 0) && (o_ptr-> to_d > 0)) {
-				o_ptr->to_h /= 2;
-				o_ptr->to_d /= 2;
-			}
 		}
 
-		/* Hack -- acquire "cursed" flag */
-		//                if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
-		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
-	}
+		/* Bad hack: Un-ego mindcrafter spell scrolls if they got fireproof/waterproof ego,
+		   since they (by another bad hack) already ignore those. */
+		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK &&
+		    get_spellbook_name_colour(o_ptr->pval) == TERM_YELLOW) {
+			if (o_ptr->name2 == EGO_FIREPROOF_BOOK || o_ptr->name2 == EGO_WATERPROOF_BOOK) o_ptr->name2 = 0;
+		    if (o_ptr->name2b == EGO_FIREPROOF_BOOK || o_ptr->name2b == EGO_WATERPROOF_BOOK) o_ptr->name2b = 0;
+		}
+
+already_applied_finish:
+
+#if 1		// tweaked pernA ego.. 
+		/* Hack -- analyze ego-items */
+		//else if (o_ptr->name2)
+		if (o_ptr->name2 && !o_ptr->name1) {
+			artifact_type *a_ptr;
+			a_ptr = ego_make(o_ptr);
+
+			/* Extract the other fields */
+			if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)
+			    || o_ptr->tval == TV_BOOK
+			    || is_ammo(o_ptr->tval))
+				; /* keep o_ptr->pval! */
+			else if (!is_magic_device(o_ptr->tval)) /* don't kill charges on EGO (of plenty) devices! */
+				o_ptr->pval = a_ptr->pval; /* paranoia?-> pval might've been limited in ego_make(), so set it here, instead of adding it */
+			else
+				o_ptr->pval += a_ptr->pval;
+
+			o_ptr->ac += a_ptr->ac;
+			o_ptr->dd += a_ptr->dd;
+			o_ptr->ds += a_ptr->ds;
+			if (a_ptr->to_a < 0) o_ptr->to_a = a_ptr->to_a; /* <- special for 'bad' ego powers, vs high-ac armour such as DSM */
+			else o_ptr->to_a += a_ptr->to_a;
+			o_ptr->to_h += a_ptr->to_h;
+			o_ptr->to_d += a_ptr->to_d;
+
+			apply_enchantment_limits(o_ptr); /* new: paranoia? worked fine without so far */
+
+			/* Reduce enchantment boni for ego Dark Swords - C. Blue
+			   (since they're no more (dis)enchantable, make work easier for unbelievers..) */
+			if ((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD)) {
+				/* Don't reduce negative boni, of *Defender*s for example */
+				if ((o_ptr->to_h > 0) && (o_ptr-> to_d > 0)) {
+					o_ptr->to_h /= 2;
+					o_ptr->to_d /= 2;
+				}
+			}
+
+			/* Hack -- acquire "cursed" flag */
+			//                if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
+			if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
+		}
 #endif	// 1
 
-	/* Hack: determine level-requirement - here AGAIN because ego-item
-	   routine wasnt called before we called det_l_r the first time */
-	determine_level_req(lev, o_ptr);
+		/* Hack: determine level-requirement - here AGAIN because ego-item
+		   routine wasnt called before we called det_l_r the first time */
+		determine_level_req(lev, o_ptr);
 
-	/* Examine real objects */
-	if (o_ptr->k_idx) {
-		object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
-		/* Hack -- acquire "broken" flag */
-		if (!k_ptr->cost) o_ptr->ident |= ID_BROKEN;
-
-		/* Hack -- acquire "cursed" flag */
-		if (k_ptr->flags3 & TR3_CURSED) o_ptr->ident |= ID_CURSED;
-	}
-
-	/* Pick the lowest value item */
-	if (i == 0) {
-		object_copy(o_ptr_lowest, o_ptr);
-	} else {
-		if (object_value_real(0, o_ptr) < object_value_real(0, o_ptr_lowest)) {
-			object_copy(o_ptr_lowest, o_ptr);
+		/* Examine real objects */
+		if (o_ptr->k_idx) {
+			object_kind *k_ptr = &k_info[o_ptr->k_idx];
+			/* Hack -- acquire "broken" flag */
+			if (!k_ptr->cost) o_ptr->ident |= ID_BROKEN;
+			/* Hack -- acquire "cursed" flag */
+			if (k_ptr->flags3 & TR3_CURSED) o_ptr->ident |= ID_CURSED;
 		}
-	}
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-	if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 35000)) continue;
-	if ((resf & RESF_MIDVALUE) && (object_value_real(0, o_ptr) > 50000)) continue;
-	if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 100000)) continue;
-	if ((resf & RESF_LOWSPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 4 || o_ptr->pval > 4)) continue;
-	if ((resf & RESF_NOHISPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 6 || o_ptr->pval > 6)) continue;
+		/* Pick the lowest value item */
+		if (i == 0)
+			object_copy(o_ptr_lowest, o_ptr);
+		else if (object_value_real(0, o_ptr) < object_value_real(0, o_ptr_lowest))
+			object_copy(o_ptr_lowest, o_ptr);
 
-	/* "verygreat" check: */
-	/* 2000 to exclude res, light, reg, etc */
-	/* 5000+objval to exclude brands/slays */
-//NO:	if (!verygreat || object_value_real(0, o_ptr) >= 7000) break; <- arrows (+36,+42) -> lol. - C. Blue
-	if (!verygreat) break;
-	if (o_ptr->name2) ego_value1 = e_info[o_ptr->name2].cost; else ego_value1 = 0;
-	if (o_ptr->name2b) ego_value2 = e_info[o_ptr->name2b].cost; else ego_value2 = 0;
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 35000)) continue;
+		if ((resf & RESF_MIDVALUE) && (object_value_real(0, o_ptr) > 50000)) continue;
+		if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 100000)) continue;
+		if ((resf & RESF_LOWSPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 4 || o_ptr->pval > 4)) continue;
+		if ((resf & RESF_NOHISPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 6 || o_ptr->pval > 6)) continue;
 
-        object_desc(0, o_name, o_ptr, FALSE, 3);
-	ovr = object_value_real(0, o_ptr);
-	fc = flag_cost(o_ptr, o_ptr->pval);
+		/* "verygreat" check: */
+		/* 2000 to exclude res, light, reg, etc */
+		/* 5000+objval to exclude brands/slays */
+		//NO:	if (!verygreat || object_value_real(0, o_ptr) >= 7000) break; <- arrows (+36,+42) -> lol. - C. Blue
+		if (!verygreat) break;
 
-	/* remember most expensive object we rolled, in case we don't find any better we can fallback to it */
-	if (ovr > object_value_real(0, o_ptr_highest)) {
-		object_copy(o_ptr_highest, o_ptr);
+		if (o_ptr->name2) ego_value1 = e_info[o_ptr->name2].cost; else ego_value1 = 0;
+		if (o_ptr->name2b) ego_value2 = e_info[o_ptr->name2b].cost; else ego_value2 = 0;
 
-		/* No fallback because of resf necessary */
-		resf_fallback = FALSE;
-	}
-	else
-		continue;
+	        object_desc(0, o_name, o_ptr, FALSE, 3);
+		ovr = object_value_real(0, o_ptr);
+		fc = flag_cost(o_ptr, o_ptr->pval);
 
-	s_printf("dpt %d, dptval %d, egoval %d / %d, realval %d, flags %d (%s)\n", 
-		depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name);
+		/* remember most expensive object we rolled, in case we don't find any better we can fallback to it */
+		if (ovr > object_value_real(0, o_ptr_highest)) {
+			object_copy(o_ptr_highest, o_ptr);
+			/* No fallback because of resf necessary */
+			resf_fallback = FALSE;
+		} else continue;
 
-	if (!is_ammo(o_ptr->tval)) {
-		if ((ego_value1 >= depth_value) || (ego_value2 >= depth_value) ||
-		    (object_value_real(0, o_ptr) >= depth * 300)) break;
-	} else {
-		/* Ammo amount is increased in place_object */
-		if (object_value_real(0, o_ptr) >= depth + 150) break;
-	}
-    } /* verygreat-loop end */
+		s_printf("dpt %d, dptval %d, egoval %d / %d, realval %d, flags %d (%s)\n", 
+		    depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name);
+
+		if (!is_ammo(o_ptr->tval)) {
+			if ((ego_value1 >= depth_value) || (ego_value2 >= depth_value) ||
+			    (object_value_real(0, o_ptr) >= depth * 300)) break;
+		} else {
+			/* Ammo amount is increased in place_object */
+			if (object_value_real(0, o_ptr) >= depth + 150) break;
+		}
+	} /* verygreat-loop end */
 
 	if (verygreat) {
 		if (resf_fallback) {
@@ -5427,8 +5437,7 @@ for (i = 0; i < 25; i++) {
 			depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name);
 
 			s_printf("taken\n");
-		}
-		else {
+		} else {
 		        s_printf("taken\n");
 			object_copy(o_ptr, o_ptr_highest);
 		}
