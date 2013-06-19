@@ -2127,6 +2127,7 @@ struct player_type
 	bool newbie_hints;
 	bool censor_swearing;
 	bool warn_unique_credit;
+	bool uniques_alive;
 
 	s16b max_panel_rows, max_panel_cols;
 	s16b panel_row, panel_col;
@@ -3131,7 +3132,7 @@ struct client_opts
 	bool newb_suicide;
 	bool stack_allow_items;
 	bool stack_allow_wands;
-	bool expand_look;
+	bool uniques_alive;//expand_look;
 	bool expand_list;
 	bool view_perma_grids;
 	bool view_torch_grids;

@@ -301,7 +301,7 @@ void do_cmd_check_uniques(int Ind, int line)
 
 	char file_name[MAX_PATH_LENGTH];
 
-	player_type *q_ptr = Players[Ind];
+	player_type *q_ptr = Players[Ind], *p_ptr = q_ptr;
 	bool admin = is_admin(q_ptr);
 	s16b idx[MAX_R_IDX];
 
@@ -337,7 +337,8 @@ void do_cmd_check_uniques(int Ind, int line)
 	}
 
 	if (!own_highest)
-		fprintf(fff, "\377U  (you haven't killed any unique monster so far)\n");
+		if (!(p_ptr->uniques_alive))
+			fprintf(fff, "\377U  (you haven't killed any unique monster so far)\n");
 
 	if (total) {
 		/* Setup the sorter */
@@ -356,8 +357,11 @@ void do_cmd_check_uniques(int Ind, int line)
 			k = idx[l];
 			r_ptr = &r_info[k];
 
+			/* Compact list */
+			if (p_ptr->uniques_alive && p_ptr->r_killed[k] == 1) continue; //Skip slain uniques if option is set.
+			
 			/* Output color byte */
-			fprintf(fff, "\377%c", Players[Ind]->r_killed[k] == 1 ? 'w' : 'D');
+			fprintf(fff, "\377%c", p_ptr->r_killed[k] == 1 ? 'w' : 'D');
 
 			/* Hack -- Show the ID for admin -- and also the level */
 			if (admin) fprintf(fff, "(%4d, L%d) ", k, r_ptr->level);
@@ -366,14 +370,19 @@ void do_cmd_check_uniques(int Ind, int line)
 //			fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
 			/* different colour for uniques higher than Morgoth (the 'boss') */
 //			if (r_ptr->level > 100) fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name); else
-			if (r_ptr->level == 100) fprintf(fff, "\377v%s was slain by", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
-			else fprintf(fff, "%s was slain by", r_name + r_ptr->name);
-
+			if (!(p_ptr->uniques_alive)) {
+				if (r_ptr->level == 100) fprintf(fff, "\377v%s was slain by", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
+				else fprintf(fff, "%s was slain by", r_name + r_ptr->name);
+			} else {
+				if (r_ptr->level == 100) fprintf(fff, "\377v%s", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
+				else fprintf(fff, "%s", r_name + r_ptr->name);
+			}
+			if (!(p_ptr->uniques_alive))
 			for (i = 1; i <= NumPlayers; i++) {
 				q_ptr = Players[i];
 
 				/* don't display dungeon master to players */
-				if (q_ptr->admin_dm && !Players[Ind]->admin_dm) continue;
+				if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
 
 				if (q_ptr->r_killed[k] == 1) {
 					/* killed it himself */
@@ -438,9 +447,11 @@ void do_cmd_check_uniques(int Ind, int line)
 			}
 
 			/* not killed by anybody yet? */
-			if (!ok) {
-				if (r_ptr->r_tkills) fprintf(fff, " somebody.");
-				else fprintf(fff, " \377Dnobody.");
+			if (!(p_ptr->uniques_alive)) {
+				if (!ok) {
+					if (r_ptr->r_tkills) fprintf(fff, " somebody.");
+					else fprintf(fff, " \377Dnobody.");
+				}
 			}
 
 			/* Terminate line */
@@ -454,8 +465,10 @@ void do_cmd_check_uniques(int Ind, int line)
 			}
 		}
 	} else {
-		fprintf(fff, "\377w");
-		fprintf(fff, "No uniques were witnessed so far.\n");
+		if (!(p_ptr->uniques_alive)) {
+			fprintf(fff, "\377w");
+			fprintf(fff, "No uniques were witnessed so far.\n");
+		}
 	}
 
 	/* finally.. */

@@ -2142,6 +2142,7 @@ static void sync_options(int Ind, bool *options)
 
 	// bool speak_unique;
 
+	p_ptr->uniques_alive = options[32];
 	p_ptr->page_on_privmsg = options[40];
 	p_ptr->page_on_afk_privmsg = options[41];
 	p_ptr->auto_untag = options[42];

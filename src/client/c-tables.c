@@ -331,8 +331,13 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.stack_allow_wands,	TRUE,	2,	1, 3, TRUE,
 	"stack_allow_wands",		"Allow wands/staffs/rods to stack" },
 
+#if 0
 	{ &c_cfg.expand_look,		FALSE,	1,	1, 4, FALSE,
 	"expand_look",			"(broken) Expand the power of the look command" },
+#else
+	{ &c_cfg.uniques_alive,		FALSE,	4,	1, 24, TRUE,
+	"uniques_alive",		"Unique monster list only shows foes not yet slain" },
+#endif
 
 	{ &c_cfg.expand_list,		FALSE,	1,	1, 5, FALSE,
 	"expand_list",			"(broken) Expand the power of the list commands" },
