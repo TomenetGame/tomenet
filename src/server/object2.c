@@ -5230,12 +5230,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		return;
 	}
 
-	/* If it wasn't an artifact ring/amulet, forget pre-application of magic and proceed as usual.
-	   If we don't do that, the 'o_ptr' could retain a curse for example, despite ending up with
-	   positive pval/boni in the upcoming a_m_aux3(). */
-	if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET) object_copy(o_ptr, o_ptr_bak);
-
-
 	/* In case we get an ego item, check "verygreat" flag and retry a few times if needed */
 	if (verygreat) s_printf("verygreat apply_magic:\n");
 	/* for jewelry: */
