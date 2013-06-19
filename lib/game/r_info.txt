@@ -20353,6 +20353,37 @@ S:1_IN_2 |
 S:BR_NETH
 D:A whirling anomaly of nether mists that will drain your life force.
 
+# for the town, or wherever. Just for fun, and for testing one's macros - C. Blue
+# note: there's a snowed up version 1126 for SEASON_WINTER.
+N:1144:Armoured target dummy
+G:p:D
+I:110:10d2:0:170:0
+W:50:255:500:0
+E:1:1:1:2:1:1
+O:0:0:0:0
+F:BLUEBAND | NEVER_ACT | NO_DEATH | NONLIVING | EMPTY_MIND | COLD_BLOOD | 
+F:NO_CONF | NO_SLEEP | NO_STUN | NO_FEAR | NO_CUT | IM_COLD | IM_ELEC | IM_POIS
+F:RES_TELE | RES_NEXU | IM_TELE | RES_LITE | RES_DARK | RES_SOUND
+#IM_LITE
+F:ALLOW_RUNNING | GENO_PERSIST | GENO_NO_THIN
+D:This thing seems to take infinite punishment just fine,
+D:assisting you without complaining in assessing your combat prowess.
+
+#a snowed up version for new SEASON_WINTER (1101 is normal version)
+N:1145:Snow-covered armoured target dummy
+G:p:W
+I:110:10d2:0:170:0
+W:50:255:500:0
+E:1:1:1:2:1:1
+O:0:0:0:0
+F:BLUEBAND | NEVER_ACT | NO_DEATH | NONLIVING | EMPTY_MIND | COLD_BLOOD | 
+F:NO_CONF | NO_SLEEP | NO_STUN | NO_FEAR | NO_CUT | IM_COLD | IM_ELEC | IM_POIS
+F:RES_TELE | RES_NEXU | IM_TELE | RES_LITE | RES_DARK | RES_SOUND
+F:ALLOW_RUNNING | GENO_PERSIST | GENO_NO_THIN
+#IM_LITE
+D:This thing seems to take infinite punishment just fine,
+D:assisting you without complaining in assessing your combat prowess.
+
 
 
 # N: serial number : monster name

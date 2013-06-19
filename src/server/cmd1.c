@@ -4282,6 +4282,15 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 				}
 			}
+			if (m_ptr->r_idx == RI_TARGET_DUMMYA1 || m_ptr->r_idx == RI_TARGET_DUMMYA2) {
+				/* Hack: Reduce snow on it during winter season :) */
+				m_ptr->extra -= 5;
+				if (m_ptr->extra < 0) m_ptr->extra = 0;
+					if ((m_ptr->r_idx == RI_TARGET_DUMMYA2) && (m_ptr->extra < 30)) {
+					m_ptr->r_idx = RI_TARGET_DUMMYA1;
+					everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+				}
+			}
 
 			/* Damage, check for fear and death */
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) {

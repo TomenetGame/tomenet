@@ -2186,7 +2186,9 @@ static int auto_retaliate(int Ind)
 				target = i;
 			} else {
 				/* Target dummy should always be the last one to get attacked - mikaelh */
-				if (m_ptr->r_idx == RI_TARGET_DUMMY1 || m_ptr->r_idx == RI_TARGET_DUMMY2) continue;
+				if (m_ptr->r_idx == RI_TARGET_DUMMY1 || m_ptr->r_idx == RI_TARGET_DUMMY2 ||
+				    m_ptr->r_idx == RI_TARGET_DUMMYA1 || m_ptr->r_idx == RI_TARGET_DUMMYA2)
+					continue;
 
 				r_ptr2 = r_ptr;
 				r_ptr = race_inf(m_ptr);

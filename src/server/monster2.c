@@ -4597,7 +4597,8 @@ void message_pain(int Ind, int m_idx, int dam)
 
 
 	/* Target Dummy */
-	if (m_ptr->r_idx == RI_TARGET_DUMMY1 || m_ptr->r_idx == RI_TARGET_DUMMY2) {
+	if (m_ptr->r_idx == RI_TARGET_DUMMY1 || m_ptr->r_idx == RI_TARGET_DUMMY2 ||
+	    m_ptr->r_idx == RI_TARGET_DUMMYA1 || m_ptr->r_idx == RI_TARGET_DUMMYA2) {
 		msg_format(Ind, "%^s reels from \377g%d \377wdamage.", m_name, dam);
 ////		msg_format_near(Ind, "%^s reels from \377g%d \377wdamage.", m_name, dam);
 //spammy	msg_format_near_site(m_ptr->fy, m_ptr->fx, &m_ptr->wpos, Ind, TRUE, "%^s reels from \377g%d \377wdamage.", m_name, dam);
@@ -4607,6 +4608,10 @@ void message_pain(int Ind, int m_idx, int dam)
 		if (m_ptr->extra < 0) m_ptr->extra = 0;
 		if ((m_ptr->r_idx == RI_TARGET_DUMMY2) && (m_ptr->extra < 30)) {
 			m_ptr->r_idx = RI_TARGET_DUMMY1;
+			everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+		}
+		if ((m_ptr->r_idx == RI_TARGET_DUMMYA2) && (m_ptr->extra < 30)) {
+			m_ptr->r_idx = RI_TARGET_DUMMYA1;
 			everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 		}
 		return;

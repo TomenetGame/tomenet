@@ -9162,6 +9162,15 @@ void process_monsters(void)
 				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 			}
 		}
+		if (((m_ptr->r_idx == RI_TARGET_DUMMYA1) || (m_ptr->r_idx == RI_TARGET_DUMMYA2)) &&
+		    (m_ptr->extra < 60) && (turn % cfg.fps == 0) &&
+		    (wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].weather_type == 2)) {
+			m_ptr->extra++;
+			if ((m_ptr->r_idx == RI_TARGET_DUMMYA1) && (m_ptr->extra == 30)) {
+				m_ptr->r_idx = RI_TARGET_DUMMYA2;
+				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+			}
+		}
 
 		/* Not enough energy to move */
 		if (m_ptr->energy < tmp) continue;
