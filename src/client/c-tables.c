@@ -240,6 +240,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.stack_force_costs,	TRUE,	2,	0, 9, TRUE,
 	"stack_force_costs",		"Merge discounts when stacking" },
 
+	//10
+
 #if 0
 	{ &c_cfg.show_labels,		TRUE,	1,	0, 10, FALSE,
 	"show_labels",			"(broken) Show labels in object listings" },
@@ -287,6 +289,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.find_examine,		TRUE,	2,	0, 19, TRUE,
 	"find_examine",			"Run into potential corners" },
 
+	//20
+
 	{ &c_cfg.disturb_move,		FALSE,	2,	0, 20, TRUE,
 	"disturb_move",			"Disturb whenever any monster moves" },
 
@@ -318,6 +322,8 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.newb_suicide,		TRUE,	1,	1, 1, TRUE,	/* former auto_scum */
 	"newb_suicide",			"Display newbie suicides" },
+
+	//30
 
 	{ &c_cfg.stack_allow_items,	TRUE,	2,	1, 2, TRUE,
 	"stack_allow_items",		"Allow weapons and armor to stack" },
@@ -351,6 +357,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.time_stamp_chat,	FALSE,	4,	0, 11, TRUE,
 	"time_stamp_chat",		"Add hourly time stamps to chat window" },
 
+	//40
+
 	{ &c_cfg.page_on_privmsg,	FALSE,	4,	1, 12, TRUE,
 	"page_on_privmsg",		"Beep when receiving a private message" },
 
@@ -381,6 +389,8 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.flush_disturb,		FALSE,	1,	1, 21, FALSE,
 	"flush_disturb",		"(broken) Flush input whenever disturbed" },
+
+	//50
 
 	{ &c_cfg.player_list,		FALSE,	4,	1, 22, TRUE,
 	"player_list",			"Show a more compact player list in @ screen" },//flush_command
@@ -423,6 +433,7 @@ option_type option_info[OPT_MAX] =
 	"view_special_lite",		"Use special colors for lit floor grids" },
 
 
+	//60
 
 	{ &c_cfg.easy_open,		TRUE,	3,	9, 60, TRUE, //#24 on page 2
 	"easy_open",			"Automatically open doors" },
@@ -464,6 +475,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.auto_target,		FALSE,	3,	9, 69, TRUE,
 	"auto_target",			"Automatically set target to the nearest enemy" },
 
+	//70
+
 	{ &c_cfg.autooff_retaliator,	FALSE,	3,	9, 70, TRUE,
 	"autooff_retaliator",		"Stop the retaliator when protected by GoI etc" },
 
@@ -497,12 +510,11 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.speak_unique,		TRUE,	1,	13, xx, TRUE,
 	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
 #endif
-#if 0
-	{ NULL,			def, pg, set, ?, TRUE,
-	NULL,			NULL }
-#endif
+
 	{ &c_cfg.hide_unusable_skills,	TRUE,	4,	0, 79, TRUE,
 	"hide_unusable_skills",		"Hide unusable skills" },
+
+	//80
 
 	{ &c_cfg.allow_paging,		TRUE,	4,	0, 80, TRUE,
 	"allow_paging",			"Allow users to page you (recommended!)" },
@@ -533,6 +545,8 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.ovl_sfx_misc,		TRUE,	5,	0, 89, TRUE,
 	"ovl_sfx_misc",			"Allow overlapping misc sounds of same type" },
+
+	//90
 
 	{ &c_cfg.ovl_sfx_mon_attack,	TRUE,	5,	0, 90, TRUE,
 	"ovl_sfx_mon_attack",		"Allow overlapping monster attack sfx of same type" },
