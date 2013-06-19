@@ -6455,7 +6455,7 @@ void dungeon(void)
 				}
 				break;
 			}
-			if (!i && (n <= 7)) {
+			if (!i && (n <= 5)) {
 				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			}
@@ -6483,7 +6483,7 @@ void dungeon(void)
 				}
 				break;
 			}
-			if (!i && (n <= 4)) {
+			if (!i && (n <= 3)) {
 				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
 				cfg.runlevel = 2049;
 			}
