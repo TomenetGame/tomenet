@@ -5101,8 +5101,11 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	/* Assume normal */
 	power = 0;
 
+	/* ESP amulets are always ego items */
+	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_ESP) power = 2;
+
 	/* Roll for "good" */
-	if (good || magik(chance1)) {
+	else if (good || magik(chance1)) {
 		/* Assume "good" */
 		power = 1;
 
