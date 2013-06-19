@@ -3187,9 +3187,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				teleport_player(0 - c_ptr->m_idx, 400, TRUE);
 			}
 
+			p_ptr->vamp_fed_midx = -c_ptr->m_idx;
 			take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
-
-			if (!c_ptr->m_idx) break;
 
 			/* Check for death */
 			if (q_ptr->death) {
@@ -3210,6 +3209,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				/* end of our fight */
 				break;
 			}
+
+			if (!c_ptr->m_idx) break;
 
 			py_touch_zap_player(Ind, -c_ptr->m_idx);
 
@@ -3552,6 +3553,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	int		drain_result = 0, drain_heal = 0;
 	int		drain_left = MAX_VAMPIRIC_DRAIN;
 	bool		drainable = TRUE, backstab_feed = FALSE;
+	int		feed;
 	bool		mon_slept, uniq_bell = FALSE;
 	char		uniq = 'w';
 
@@ -4293,11 +4295,12 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 
 			/* Damage, check for fear and death */
+			feed = m_ptr->maxhp + 100;
+			p_ptr->vamp_fed_midx = c_ptr->m_idx;
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) {
 				/* Vampires feed off the life force! (if any) */
 				// mimic forms for vampires/bats: 432, 520, 521, 623, 989
 				if (p_ptr->prace == RACE_VAMPIRE && drainable) {
-					int feed = m_ptr->maxhp + 100;
 //					feed = (4 - (300 / feed)) * 1000;//1000..4000
 					feed = (6 - (300 / feed)) * 100;//300..600
 					if (r_ptr->flags3 & RF3_DEMON) feed /= 2;

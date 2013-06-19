@@ -10316,7 +10316,8 @@ Warrior is strongly recommended.
     Vampirism' for more information).
     At level 20 they become able to turn into a bat.
     Vampires cannot eat normal food, instead they need to feed off living
-    creatures. This means that you need to kill monsters in melee combat in
+    creatures. This means that you need to kill monsters in melee range (though
+    not necessarily by using melee attacks - spells or arrows work fine too) in
     order to satisfy your hunger, which might be quite easy for melee classes
     but sometimes a hassle for ranged/caster classes.
     At level 40 they will need less and less food to sustain themselves.

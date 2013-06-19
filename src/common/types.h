@@ -2598,6 +2598,7 @@ struct player_type
 	bool stormbringer;	/* Attack friends? */
 	int vampiric_melee;		/* vampiric in close combat? */
 	int vampiric_ranged;		/* shots have vampiric effects? */
+	int vamp_fed_midx;	/* monster we fed from */
 
 	bool ty_curse;		/* :-o */
 	bool dg_curse;

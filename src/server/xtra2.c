@@ -8065,6 +8065,27 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			}
 		}
 
+		/* RANGED ATTACKS ONLY vampire feeding! */
+		/* Vampires feed off the life force! (if any) */
+		// mimic forms for vampires/bats: 432, 520, 521, 623, 989
+		if (p_ptr->vamp_fed_midx == m_idx) p_ptr->vamp_fed_midx = 0;
+		else if (p_ptr->prace == RACE_VAMPIRE &&
+		    !((r_ptr->flags3 & RF3_UNDEAD) ||
+		    //(r_ptr->flags3 & RF3_DEMON) ||
+		    (r_ptr->flags3 & RF3_NONLIVING) ||
+		    (strchr("Egv", r_ptr->d_char)))
+		    /* not too far away? */
+		    && (ABS(m_ptr->fx - p_ptr->px <= 1) && ABS(m_ptr->fy - p_ptr->py <= 1))) {
+			int feed = m_ptr->maxhp + 100;
+			feed = (6 - (300 / feed)) * 100;//300..600
+			if (r_ptr->flags3 & RF3_DEMON) feed /= 2;
+			if (r_ptr->d_char == 'A') feed /= 3;
+			/* Never get gorged */
+			feed += p_ptr->food;
+			if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
+			set_food(Ind, feed);
+		}
+
 		monster_death(Ind, m_idx);
 		/* Generate treasure */
 		if (!m_ptr->clone) {
