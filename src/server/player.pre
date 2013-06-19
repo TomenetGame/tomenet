@@ -660,7 +660,8 @@ struct player_type
 	u16b pkill;
 	s16b tim_meditation;	/* Timed -- Meditation */
 	s16b tim_invisibility;		/* Timed -- Invisibility */
-	s16b tim_invis_power;	/* Timed -- Invisibility Power */
+	s16b tim_invis_power;	/* Timed -- Invisibility Power (perm) */
+	s16b tim_invis_power2;	/* Timed -- Invisibility Power (temp) */
 	s16b tim_traps; 	/* Timed -- Avoid traps */
 	s16b tim_manashield;    /* Timed -- Mana Shield */
 	s16b tim_mimic; 	/* Timed -- Mimicry */

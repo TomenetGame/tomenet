@@ -1573,6 +1573,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 
 	rd_s16b(&p_ptr->tim_invisibility);
 	rd_s16b(&p_ptr->tim_invis_power);
+	if (!older_than(4, 5, 9)) rd_s16b(&p_ptr->tim_invis_power2);
 
 	rd_s16b(&p_ptr->fury);
 

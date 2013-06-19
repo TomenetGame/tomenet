@@ -2353,8 +2353,8 @@ static void calc_body_bonus(int Ind)
 	if (r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 2;
 	if (r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 2;
 	if (r_ptr->flags2 & RF2_INVISIBLE) {
-		//		p_ptr->tim_invisibility = 100;
-		p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
+		d = ((r_ptr->level > 100 ? 50 : r_ptr->level / 2) + (p_ptr->lev > 50 ? 50 : p_ptr->lev)) / 2;
+		p_ptr->tim_invis_power = d * 4 / 5;
 	}
 	if (r_ptr->flags2 & RF2_REGENERATE) p_ptr->regenerate = TRUE;
 	/* Immaterial forms (WRAITH / PASS_WALL) drain the mimic's HP! */
@@ -3094,7 +3094,7 @@ void calc_boni(int Ind)
 
 	/* Invisibility */
 	p_ptr->invis = 0;
-	if (!p_ptr->tim_invisibility) p_ptr->tim_invis_power = 0;
+	p_ptr->tim_invis_power = 0;
 
 	p_ptr->immune_neth = FALSE;
 	p_ptr->anti_tele = FALSE;
@@ -3888,9 +3888,9 @@ void calc_boni(int Ind)
 		if (f5 & (TR5_DRAIN_MANA)) p_ptr->drain_mana++;
 		if (f5 & (TR5_DRAIN_HP)) p_ptr->drain_life++;
 		if (f5 & (TR5_INVIS)) {
-//			p_ptr->tim_invisibility = 100;
-			p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
-//			p_ptr->invis = p_ptr->tim_invis_power;
+			j = (p_ptr->lev > 50 ? 50 : p_ptr->lev) * 4 / 5;
+			/* better than invis from monster form we're using? */
+			if (j > p_ptr->tim_invis_power) p_ptr->tim_invis_power = j;
 		}
 		if (f3 & TR3_BLESSED) p_ptr->bless_blade = TRUE;
 		if (f3 & TR3_XTRA_MIGHT) p_ptr->xtra_might++;
@@ -4281,8 +4281,10 @@ void calc_boni(int Ind)
 	}
 
 	/* Temporary invisibility */
-//	if (p_ptr->tim_invisibility)
+	if (p_ptr->tim_invis_power > p_ptr->tim_invis_power2)
 		p_ptr->invis = p_ptr->tim_invis_power;
+	else
+		p_ptr->invis = p_ptr->tim_invis_power2;
 
 	/* Temporary shield */
 	if (p_ptr->shield) {

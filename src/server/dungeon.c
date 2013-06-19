@@ -3740,7 +3740,7 @@ static bool process_player_end_aux(int Ind)
 			msg_print(Ind, "Your invisibility shield is broken by your aggravation.");
 			(void)set_invis(Ind, 0, 0);
 		} else {
-			(void)set_invis(Ind, p_ptr->tim_invisibility - minus_magic, p_ptr->tim_invis_power);
+			(void)set_invis(Ind, p_ptr->tim_invisibility - minus_magic, p_ptr->tim_invis_power2);
 		}
 	}
 

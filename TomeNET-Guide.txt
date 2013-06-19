@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. June 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. June 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7399,8 +7399,7 @@ INVIS   ('It makes you invisible.')
         Turns you invisible. Items 'of Invisibility' often have a +mod,
         which gives you additional stealth. Note that this +mod does not
         qualify or affect your invisibility in any way, but is purely for an
-        extra stealth bonus. Invisibility is binary: Either you are invisible
-        or you are not. Also see '(5.16) Invisibility'.
+        extra stealth bonus. See '(5.16) Invisibility' for details.
 BLOWS   ('It affects your attack speed.')
         This item adds EA (extra attacks) to your number of blows per round.
 'of Plenty' wands and staves.
@@ -8587,23 +8586,39 @@ The best source overrides all weaker ones, which simply get ignored:
 
 (5.16) Invisibility
 -------------------
-Invisibility (for monsters as for players) is binary: Either you are invisible
-or you are not - possible +mods on items that grant invisibility don't affect
-the invisibility itself, but are usually just extra +stealth boni.
-While characters either having or not having 'invisible' property is a binary
-choice, the actual effect it has on gameplay will be affected by player/monster
-level, the ability to see invisible, and shadow cloaks, as follows here:
+Invisibility on monsters is binary, either they are invisible or they aren't.
+For players it depends:
+-Invisibility from spells has a certain power shown in the spell's info.
+-Invisibility from items uses 4/5 of the player's level for power
+ (player level is capped at 50).
+-Invisiblity from monster form (mimicry users) is similar to invisibility from
+ items, except that its power is the average of monsterlevel/2 and playerlevel,
+ with monsterlevel capping at 100 and playerlevel capping at 50.
+Invisibility powers from different sources do not stack, the best one overrides
+the weaker ones.
+Some items that grant invisibility also have +mods on them (for example '+3'),
+these don't affect the invisibility itself, but are usually just an extra
++stealth bonus or some completely different kind of bonus that item also
+happens to grant (use *Identify* to find out).
+
+The actual effect invisibility has on gameplay will also be affected by player
+and monster level, the ability to see invisible, and shadow cloaks, as follows
+here:
 
 A player who is invisible is harder to spot for monsters in the way that they
 only have a certain chance to see the player on each turn, making them move
 erratically instead of directly targetting the player. This also helps against
 casters, archers or breathers who won't be able to target you as well (often)
-as they usually could. Being invisible costs your body a lot of effort,
-resulting in getting hungry quickly.
+as they usually could. Your invisibility power is continously compared to the
+monster's level, causing an internal 'dice roll' that determines whether or not
+the monster will see you on each turn.
+
+Being invisible costs your body a lot of effort, resulting in getting hungry
+quickly.
 
 Invisibility won't work at all on monsters that are..
         -invisible too.
-        -special quest monsters (Sauron, Morgoth).
+        -game bosses (Sauron, Morgoth, Zu-Aon).
         -Dragonriders, they have ESP.
         -nonliving monsters with empty mind (not using optical senses).
         -able to see through the rogue-specific 'cloaking' ability,
@@ -11187,7 +11202,7 @@ F: flag list
     WILD_TOO without any other WILD_xxx flags:
                 Combines all WILD_xxx effects (such as WILD_WOOD and
                 WILD_MOUNTAIN)!
-    INVISIBLE   The player becomes invisible.
+    INVISIBLE   The player becomes invisible (see (5.16) for details).
     AURA_FIRE or AURA_ELEC
                 The player receives an aura.
     SUSCEP_FIRE/SUSCEP_COLD/SUSCEP_ELEC/SUSCEP_ACID/SUSCEP_POIS

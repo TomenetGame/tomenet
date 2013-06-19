@@ -1044,7 +1044,7 @@ bool set_invis(int Ind, int v, int p)
 
 	/* Use the value */
 	p_ptr->tim_invisibility = v;
-	p_ptr->tim_invis_power = p;
+	p_ptr->tim_invis_power2 = p;
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);

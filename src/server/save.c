@@ -760,6 +760,7 @@ static void wr_extra(int Ind)
 
 	wr_s16b(p_ptr->tim_invisibility);
 	wr_s16b(p_ptr->tim_invis_power);
+	wr_s16b(p_ptr->tim_invis_power2);
 
 	wr_s16b(p_ptr->fury);
 
