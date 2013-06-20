@@ -6883,6 +6883,7 @@ static void process_global_event(int ge_id) {
 			/* remember time stamp when we entered deathmatch phase (for spawning a baddy) */
 			ge->state[2] = turn - ge->start_turn; /* this keeps it /gefforward friendly */
 			ge->state[3] = 0;
+			sector00music = 47; /* death match theme */
 
 			/* got a staircase to remove? */
 			if (ge->extra[5]) {
@@ -6936,6 +6937,7 @@ static void process_global_event(int ge_id) {
 
 				p_ptr->global_event_progress[ge_id][0] = 4; /* now before deathmatch */
 				msg_print(i, "\377fThe bloodshed begins!");
+				handle_music(i);
 			}
 
 			ge->state[0] = 4;
@@ -7205,6 +7207,7 @@ static void process_global_event(int ge_id) {
 		case 0: /* prepare level, gather everyone, begin */
 			ge->cleanup = 1;
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
+			sector00music = 46; /* terrifying (notele) music */
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
@@ -7219,7 +7222,7 @@ static void process_global_event(int ge_id) {
 			for (x = 1; x < MAX_WID - 1; x++)
 			for (y = 1; y < MAX_HGT - 1; y++) {
 				zcave[y][x].feat = FEAT_ASH; /* scary ;) */
-				zcave[y][x].info |= CAVE_GLOW;
+				zcave[y][x].info |= CAVE_GLOW | CAVE_STCK;
 			}
 
 			/* add perma wall borders and basic labyrinth grid (rooms) */
@@ -7529,6 +7532,7 @@ static void process_global_event(int ge_id) {
 				s_printf("..placed Horned Reaper\n");
 			}
 
+			/* teleport the players in */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
 
@@ -7546,8 +7550,11 @@ static void process_global_event(int ge_id) {
 					}
 
 					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0 sector */
+
 					/* make sure they stop running (not really needed though..) */
 					disturb(i, 0, 0);
+
+					handle_music(i);
 				}
 			}
 
@@ -7567,6 +7574,10 @@ static void process_global_event(int ge_id) {
 
 			/* timeout not yet reached? proceed normally */
 			if (elapsed - ge->announcement_time < 300) break;//start after 300s
+
+			sector00music = 47; /* death match music */
+			for (i = 1; i <= NumPlayers; i++)
+				handle_music(i);
 
 			/* fill the labyrinth with more and more lava ^^- */
 			if (turn % (cfg.fps * 5)) break; //every 5s

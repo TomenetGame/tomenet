@@ -1396,11 +1396,11 @@ void handle_music(int Ind) {
 		p_ptr->music_monster = -2;
 		Send_music(Ind, 48); //Monster Arena Challenge
 		return;
-	} else if (sector00separation && p_ptr->wpos.wx == WPOS_HIGHLANDER_X &&
-	    p_ptr->wpos.wy == WPOS_HIGHLANDER_Y && p_ptr->wpos.wz == WPOS_HIGHLANDER_Z) {
+	} else if (sector00separation && p_ptr->wpos.wx == WPOS_SECTOR00_X &&
+	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == WPOS_SECTOR00_Z) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 47); //Highlander Tournament (death match phase)
+		Send_music(Ind, sector00music);
 		return;
 	}
 
