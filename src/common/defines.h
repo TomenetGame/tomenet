@@ -7386,6 +7386,7 @@ extern int PlayerUID;
 #define PEVF_SEPDUN_00		0x00000010 /* unable to leave dungeon or tower in 0,0 via stairs */
 #define PEVF_WALK_00		0x00000020 /* can only walk but not run in 0,0 */
 #define PEVF_NOTELE_00		0x00000040 /* cannot use phasing/teleportation in 0,0 */
+#define PEVF_INDOORS_00		0x00000080 /* the 0,0 event is classified as indoors, so vampires don't get sun burn */
 
 /* for achievements (top PvP mode rank) - C. Blue */
 #define ACHV_PVP_MAX		1

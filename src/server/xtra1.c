@@ -4145,7 +4145,7 @@ void calc_boni(int Ind)
 	p_ptr->sun_burn = FALSE;
 	if ((p_ptr->prace == RACE_VAMPIRE ||
 	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
-	    && !p_ptr->ghost) {
+	    && !p_ptr->ghost && !(p_ptr->global_event_temp & PEVF_INDOORS_00)) {
 		/* damage from sun light */
 		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
 		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) &&
@@ -7318,7 +7318,7 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wx = 0;
 						p_ptr->recall_pos.wy = 0;
 						p_ptr->recall_pos.wz = 0;
-						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_WALK_00 | PEVF_NOTELE_00;
+						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_WALK_00 | PEVF_NOTELE_00 | PEVF_INDOORS_00;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						recall_player(i, "");
 					}
