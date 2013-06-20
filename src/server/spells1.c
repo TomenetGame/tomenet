@@ -8073,13 +8073,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		   remaining nox cloud after he killed him ;). - C. Blue */
 		return FALSE;
 	}
-	/* hack -- by shattering potion */
-	else if (who <= PROJECTOR_UNUSUAL) {
-		/* TODO: add potion name */
-		sprintf(killer, "something weird");
-		sprintf(m_name, "something");
-		sprintf(m_name_gen, "some");
-	}
 #if 1
 	else if (who == PROJECTOR_TERRAIN) {
 		/* TODO: implement me! */
@@ -8088,6 +8081,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		sprintf(m_name_gen, "the");
 	}
 #endif
+	/* hack -- by shattering potion */
+	else if (who <= PROJECTOR_UNUSUAL) {
+		/* TODO: add potion name */
+		sprintf(killer, "something weird");
+		sprintf(m_name, "something");
+		sprintf(m_name_gen, "some");
+	}
 	else if (self) {
 		sprintf(killer, p_ptr->male ? "himself" : "herself");
 		sprintf(m_name, "It's yourself who");
