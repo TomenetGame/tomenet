@@ -496,8 +496,8 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 				s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, d + 1, ge->title);
 				//l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
 
-				/* may only take part in one Labyrinth race per char */
-				if (!p_ptr->max_exp) gain_exp(Ind, 1);
+				/* may only take part in one Labyrinth race per char -- boost him to level 2 */
+				if (!p_ptr->max_exp) gain_exp(Ind, (10 * p_ptr->expfact) / 100);
 
 				/* create reward parchment */
 				k = lookup_kind(TV_PARCHMENT, SV_DEED_DUNGEONKEEPER);
