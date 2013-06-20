@@ -5845,7 +5845,7 @@ Highlander Tournament
 
     All losers will also receive a 'contenders deed' on the next character they
     log on with, which can be exchanged at the Mayor's office for small
-    temporary luck bonus.
+    temporary luck bonus (note that it vanishes when you log off).
 
     A note regarding turning in a deed for an item:
     The item you get will be random but still depend on your character's skill
