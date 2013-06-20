@@ -3621,6 +3621,10 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 	cave_type **zcave;
 	if(!(zcave = getcave(&p_ptr->wpos))) return;
 
+	if (!p_ptr->warning_numpadmove &&
+	    (dir == 1 || dir == 3 || dir == 7 || dir == 9))
+		p_ptr->warning_numpadmove = 1;
+
 	/* Make sure he hasn't just switched levels */
 	if (p_ptr->new_level_flag) return;
 
@@ -3724,6 +3728,10 @@ int do_cmd_run(int Ind, int dir)
 	int real_speed = cfg.running_speed;
 	if(!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	if (!p_ptr->warning_numpadmove &&
+	    (dir == 1 || dir == 3 || dir == 7 || dir == 9))
+		p_ptr->warning_numpadmove = 1;
 
 	eff_running_speed(&real_speed, p_ptr, c_ptr);
 #if 1 /* NEW_RUNNING_FEAT */

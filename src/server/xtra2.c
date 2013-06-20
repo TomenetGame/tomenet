@@ -3934,6 +3934,13 @@ void check_experience(int Ind)
 			s_printf("warning_chat: %s\n", p_ptr->name);
 		}
 
+		/* Tell player to use numpad to move diagonally */
+		if (old_lev < 4 && p_ptr->lev >= 4 && p_ptr->warning_numpadmove == 0) {
+			msg_print(Ind, "\374\377yHINT: Use the number pad keys to move, that way you can move \377odiagonally\377y too!");
+			s_printf("warning_numpadmove: %s\n", p_ptr->name);
+			p_ptr->warning_numpadmove = 1;
+		}
+
 		/* Give warning message to use word-of-recall, aimed at newbies */
 		if (old_lev < 8 && p_ptr->lev >= 8 && p_ptr->warning_wor == 0) {
 			/* scan inventory for any potions */
