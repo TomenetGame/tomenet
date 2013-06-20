@@ -7375,6 +7375,22 @@ A:5/50
 P:0:1d1:0:0:0
 F:IGNORE_WATER
 
+N:1038:Dungeon Escaper's Deed
+G:?:v
+I:8:66:0
+W:127:255:5:0
+A:127/255
+F:EASY_KNOW
+D:This deed can be turned in at the mayor's office in Bree.
+
+N:1039:Dungeon Victim's Deed
+G:?:b
+I:8:67:0
+W:127:255:5:0
+A:127/255
+F:EASY_KNOW
+D:This deed can be turned in at the mayor's office in Bree.
+
 
 
 #N:(No.):(name)

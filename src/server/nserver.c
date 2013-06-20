@@ -6997,6 +6997,11 @@ static int Receive_run(int ind)
 
 	if (p_ptr->command_rep) p_ptr->command_rep =- 1;
 
+	if ((p_ptr->global_event_temp & PEVF_WALK_00) &&
+	    p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y && 
+	    p_ptr->wpos.wz == WPOS_SECTOR00_Z)
+		return Receive_walk(ind);
+
 	/* If not the dungeon master, who can always run */
 	if (!p_ptr->admin_dm) {
 		/* check for status impairments (lack of light is checked in run_test()) */

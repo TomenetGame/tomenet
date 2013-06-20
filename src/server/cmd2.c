@@ -472,9 +472,10 @@ static bool between_effect(int Ind, cave_type *c_ptr)
    and [successfully] terminates all global events for him. */
 static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	player_type *p_ptr = Players[Ind];
-	int d;
+	int d, k;
 	char buf[1024];
 	global_event_type *ge;
+	object_type forge, *o_ptr = &forge;
 
 #ifdef USE_SOUND_2010
 //	sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, TRUE);
@@ -489,10 +490,29 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 
 			switch (p_ptr->global_event_type[d]) {
 			case GE_DUNGEON_KEEPER:
+				/* tell everyone + himself that he won */
 				sprintf(buf, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
 				msg_broadcast_format(0, buf);
 				s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, d + 1, ge->title);
 				//l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
+
+				/* may only take part in one Labyrinth race per char */
+				if (!p_ptr->max_exp) gain_exp(Ind, 1);
+
+				/* create reward parchment */
+				k = lookup_kind(TV_PARCHMENT, SV_DEED_DUNGEONKEEPER);
+				invcopy(o_ptr, k);
+				o_ptr->number = 1;
+				object_aware(Ind, o_ptr);
+				object_known(o_ptr);
+				o_ptr->discount = 0;
+				o_ptr->level = 0;
+				o_ptr->ident |= ID_MENTAL;
+				o_ptr->note = quark_add("Dungeon Keeper reward");
+				inven_carry(Ind, o_ptr);
+				break;
+			case GE_NONE:
+			default:
 				break;
 			}
 

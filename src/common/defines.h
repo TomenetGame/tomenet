@@ -3553,6 +3553,8 @@
 #define SV_DEED_PVP_MID		63 /* reaching top level in pvp mode */
 #define SV_DEED_PVP_MASS	64 /* killing a lot of opponents in pvp mode */
 #define SV_DEED_PVP_START	65 /* birth item for pvp mode chars */
+#define SV_DEED_DUNGEONKEEPER	66 /* for winner */
+#define SV_DEED2_DUNGEONKEEPER	67 /* for participant */
 
 	/* Inheritances given as consolidation for deaths of high chars */
 #define SV_INHERIT_KNOW		70	/* flavour knowledge */
@@ -7382,6 +7384,7 @@ extern int PlayerUID;
 #define PEVF_SAFEDUN_00		0x00000004 /* won't die in dungeon/tower in 0,0 */
 #define PEVF_AUTOPVP_00		0x00000008 /* will always be hostile to others in 0,0 */
 #define PEVF_SEPDUN_00		0x00000010 /* unable to leave dungeon or tower in 0,0 via stairs */
+#define PEVF_WALK_00		0x00000020 /* can only walk but not run in 0,0 */
 
 /* for achievements (top PvP mode rank) - C. Blue */
 #define ACHV_PVP_MAX		1

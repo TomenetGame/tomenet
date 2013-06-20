@@ -8255,6 +8255,17 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 		return;
 	}
 
+	/* no weather in sector00 during events */
+	if (sector00separation && p_ptr->wpos.wx == WPOS_SECTOR00_X &&
+	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == WPOS_SECTOR00_Z) {
+		if (!entered_level) return;
+		/* erase weather */
+		Send_weather(Ind, -1, 0, WEATHER_GEN_TICKS,
+		    WEATHER_GEN_TICKS, WEATHER_GEN_TICKS,
+		    FALSE, TRUE);
+		return;
+	}
+
 #ifdef CLIENT_WEATHER_GLOBAL /* use global weather instead of sector-specific? */
 	w = ((entered_level) ? ((weather) ? 200 : -1) : 0);
 	Send_weather(Ind,

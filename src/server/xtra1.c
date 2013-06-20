@@ -7219,16 +7219,50 @@ static void process_global_event(int ge_id) {
 			}
 
 			/* add perma wall borders and basic labyrinth grid (rooms) */
-			for (x = 0; x < MAX_WID; x++)
-			for (y = 1; y < MAX_HGT - 1; y += 4)
-				zcave[0][x].feat = zcave[MAX_HGT - 1][x].feat = FEAT_WALL_EXTRA;
-			for (y = 0; y < MAX_HGT; y++)
-			for (x = 0; x < MAX_WID; x += 4)
-				zcave[y][0].feat = zcave[y][MAX_WID - 1].feat = FEAT_WALL_EXTRA;
+			for (x = 0; x < MAX_WID; x++) {
+				for (y = 4; y <= MAX_HGT - 4; y += 4) {
+					if (x < MAX_WID - 1) {
+						zcave[y][x].feat = FEAT_PERM_INNER;
+						zcave[y][x].info |= CAVE_GLOW;
+					}
+				}
+				zcave[0][x].feat = FEAT_PERM_CLEAR;
+				zcave[MAX_HGT - 1][x].feat = FEAT_PERM_CLEAR;
+			}
+			for (y = 0; y < MAX_HGT; y++) {
+				for (x = 4; x <= MAX_WID - 4; x += 4) {
+					if (y < MAX_HGT - 1) {
+						zcave[y][x].feat = FEAT_PERM_INNER;
+						zcave[y][x].info |= CAVE_GLOW;
+					}
+				}
+				zcave[y][0].feat = FEAT_PERM_CLEAR;
+				zcave[y][MAX_WID - 1].feat = FEAT_PERM_CLEAR;
+			}
 
 			/* randomly add doors, vertically and horizontally */
-			
-			cave_set_feat_live(&wpos, y, x, FEAT_BEACON);
+			for (x = 2; x < MAX_WID - 1; x += 4) {
+				for (y = 4; y <= MAX_HGT - 4; y += 4) {
+					if (zcave[y][x].feat != FEAT_PERM_INNER || rand_int(3)) continue;
+#if 1
+					zcave[y][x].feat = FEAT_DOOR_HEAD;
+#else
+					if (rand_int(4)) zcave[y][x].feat = FEAT_DOOR_HEAD;
+					else zcave[y][x].feat = FEAT_DOOR;
+#endif
+				}
+			}
+			for (y = 2; y < MAX_HGT - 1; y += 4) {
+				for (x = 4; x <= MAX_WID - 4; x += 4) {
+					if (zcave[y][x].feat != FEAT_PERM_INNER || rand_int(3)) continue;
+#if 1
+					zcave[y][x].feat = FEAT_DOOR_HEAD;
+#else
+					if (rand_int(4)) zcave[y][x].feat = FEAT_DOOR_HEAD;
+					else zcave[y][x].feat = FEAT_DOOR;
+#endif
+				}
+			}
 
 			/* maybe - randomly add void gate pairs */
 #if 1
@@ -7280,12 +7314,14 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wx = 0;
 						p_ptr->recall_pos.wy = 0;
 						p_ptr->recall_pos.wz = 0;
-						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00;
+						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_WALK_00;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						recall_player(i, "");
 					}
 
 					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0 sector */
+					/* make sure they stop running (not really needed though..) */
+					disturb(i, 0, 0);
 				}
 			}
 
@@ -7304,10 +7340,10 @@ static void process_global_event(int ge_id) {
 			}
 
 			/* timeout not yet reached? proceed normally */
-			if (elapsed - ge->announcement_time < 30) break;//start after 600s
+			if (elapsed - ge->announcement_time < 300) break;//start after 300s
 
 			/* fill the labyrinth with more and more lava ^^- */
-			if (turn % (cfg.fps * 5)) break; //every 10s
+			if (turn % (cfg.fps * 5)) break; //every 5s
 			zcave = getcave(&wpos);
 			for (i = 0; i < 20; i++) {
 				n = 100;

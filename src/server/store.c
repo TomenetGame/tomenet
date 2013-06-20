@@ -5873,7 +5873,14 @@ void reward_deed_item(int Ind, int item)
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applaudes!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
 		break;
+	case SV_DEED_DUNGEONKEEPER: /* winner's deed */
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW2, 3000);
+		o_ptr->note = quark_add("Dungeon Keeper reward");
+		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applaudes!");
+		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
+		break;
 	case SV_DEED2_HIGHLANDER: /* participant's deed */
+	case SV_DEED2_DUNGEONKEEPER:
 		msg_print(Ind, "\377yAfter examining the deed, the mayor tells you that they don't have any");
 		msg_print(Ind, "\377yitems for rewards, but he suggests that you get a blessing instead!");
 		return;
@@ -5943,6 +5950,7 @@ void reward_deed_blessing(int Ind, int item)
 		switch (o2_ptr->sval) {
 		/* all contender's deeds: */
 		case SV_DEED2_HIGHLANDER:
+		case SV_DEED2_DUNGEONKEEPER:
 			msg_print(Ind, "\377oYou can only redeem your own contender's deeds.");
 			return;
 		/* not a contender's deed, but a winner's deed! */
@@ -5953,6 +5961,7 @@ void reward_deed_blessing(int Ind, int item)
 	}
 
 	switch (o2_ptr->sval) {
+	case SV_DEED_DUNGEONKEEPER:
 	case SV_DEED_HIGHLANDER: /* winner's deed */
 		msg_print(Ind, "\377GThe town priest speaks a blessing, while everyone applaudes!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
@@ -5964,6 +5973,7 @@ void reward_deed_blessing(int Ind, int item)
 		bless_temp_luck(Ind, traded_deed ? 4 : 2, 60 * 20 * 2); /* somewhere around 20 minutes */
 #endif
 		break;
+	case SV_DEED2_DUNGEONKEEPER:
 	case SV_DEED2_HIGHLANDER: /* participant's deed */
 		msg_print(Ind, "\377GThe town priest speaks a blessing.");
 #ifdef RPG_SERVER /* longer duration since dungeons are all ironman; also you can hardly trade parchments on RPG */

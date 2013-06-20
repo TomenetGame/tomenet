@@ -801,7 +801,7 @@ G:;:v
 F:FLOOR
 
 N:176:Transport beacon
-G:>:v
+G:>:G
 F:FLOOR | REMEMBER | NOTICE | PERMANENT | CAN_RUN
 D:0:A teleporter beacon.
 
