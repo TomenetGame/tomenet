@@ -6691,7 +6691,7 @@ static bool run_test(int Ind)
 				case FEAT_SHAFT_DOWN:
 				/* XXX */
 				case FEAT_BETWEEN:
-				case FEAT_BETWEEN2:
+				case FEAT_BEACON:
 				{
 					/* Option -- ignore */
 					if (p_ptr->find_ignore_stairs) notice = FALSE;

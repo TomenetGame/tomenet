@@ -384,7 +384,7 @@ struct sfunc csfunc[]={
 	{ insc_load, insc_save, defsee, insc_hit },	/* CS_INSCRIP */
 	{ fountload, fountsave, fountsee, defhit },	/* CS_FOUNTAIN */
 	{ betweenload, betweensave, defsee, betweenhit },	/* CS_BETWEEN */
-	{ defload, defsave, defsee, defhit },	/* CS_BETWEEN2 */
+	{ defload, defsave, defsee, defhit },	/* CS_BETWEEN2 (nowadays renamed to CS_BEACON) */
 	{ montrapload, montrapsave, defsee, defhit },	/* CS_MON_TRAP */
 	/* CS_FOUNTAIN, CS_BETWEEN, CS_BETWEEN2 to come */
 	{ s32bload, s32bsave, defsee, defhit },	/* CS_SHOP */

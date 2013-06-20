@@ -6308,6 +6308,19 @@ int start_global_event(int Ind, int getype, char *parm) {
 		ge->signup_time = 60 * 30;
 		ge->min_participants = 0;
 		break;
+	case GE_DUNGEON_KEEPER:	/* 'Dungeon Keeper' Labyrinth */
+		strcpy(ge->title, "Dungeon Keeper");
+		strcpy(ge->description[0], " Create a new level 1 character, then sign him on for this race for    ");
+		strcpy(ge->description[1], " your life, through a labyrinth that is guarded by the Horned Reaper!  ");
+		strcpy(ge->description[6], " Rules: Make sure that you don't gain ANY experience until it starts.  ");
+		strcpy(ge->description[7], "        Also, you aren't allowed to pick up ANY gold/items from another");
+		strcpy(ge->description[8], "        player before the tournament begins!                           ");
+		ge->end_turn = ge->start_turn + cfg.fps * 60 * 60 ; /* 60 minutes max. duration,
+								most of the time is just for announcing it
+								so players will sign on via /evsign <n> */
+		ge->extra[0] = 95; /* there are no objects of lvl 96..99 anyways */
+		ge->min_participants = 1; /* EXPERIMENTAL */
+		break;
 	}
 
 	/* Fix limits */
@@ -6420,6 +6433,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 	/* check individual event restrictions against player */
 	switch (ge->getype) {
 	case GE_HIGHLANDER:	/* Highlander Tournament */
+	case GE_DUNGEON_KEEPER:	/* 'Dungeon Keeper' labyrinth race */
 		if (p_ptr->mode & MODE_DED_IDDC) {
 			msg_print(Ind, "\377ySorry, as a dedicated ironman deep diver you may not participate.");
 			if (!is_admin(p_ptr)) return;
@@ -6648,6 +6662,7 @@ static void process_global_event(int ge_id) {
 					/* Check that he still fulfils requirements, if any */
 					switch (ge->getype) {
 					case GE_HIGHLANDER:
+					case GE_DUNGEON_KEEPER:
 						if ((p_ptr->max_exp || p_ptr->max_plv > 1) && !is_admin(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
 							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
@@ -6664,14 +6679,14 @@ static void process_global_event(int ge_id) {
 				/* enough participants? Don't hand out reward for free to someone. */
 				if (ge->min_participants && (participants < ge->min_participants)) {
 					msg_broadcast_format(0, "\377y%s needs at least %d participants.", ge->title, ge->min_participants);
-					s_printf("%s EVENT_NOPLAYERS: %d (%s) has only %d/%d participants.\n", showtime(), ge_id+1, ge->title, participants, ge->min_participants);
+					s_printf("%s EVENT_NOPLAYERS: %d (%s) has only %d/%d participants.\n", showtime(), ge_id + 1, ge->title, participants, ge->min_participants);
 					/* remove players who DID sign up from being 'participants' */
 					for (j = 1; j <= NumPlayers; j++)
 						if (Players[j]->global_event_type[ge_id] == ge->getype)
 							Players[j]->global_event_type[ge_id] = GE_NONE;
 					ge->getype = GE_NONE;
 				} else {
-					s_printf("%s EVENT_STARTS: %d (%s) has %d participants.\n", showtime(), ge_id+1, ge->title, participants);
+					s_printf("%s EVENT_STARTS: %d (%s) has %d participants.\n", showtime(), ge_id + 1, ge->title, participants);
 					msg_broadcast_format(0, "\374\377C[>>%s (%d) starts now!<<]", ge->title, ge_id + 1);
 				}
 			}
@@ -6688,7 +6703,7 @@ static void process_global_event(int ge_id) {
 			timeout = TRUE; /* d'oh */
 			ge->state[0] = 255; /* state[0] is used as indicator for clean-up phase of any event */
 			msg_broadcast_format(0, "\377y>>%s ends due to time limit!<<", ge->title);
-			s_printf("%s EVENT_TIMEOUT: %d - %s.\n", showtime(), ge_id+1, ge->title);
+			s_printf("%s EVENT_TIMEOUT: %d - %s.\n", showtime(), ge_id + 1, ge->title);
 		}
 		/* Time warning at T-5minutes! (only if the whole event lasts MORE THAN 10 minutes) */
 		/* Note: paused turns will be added to the running time, IF the event end is given in "turns" */
@@ -7012,7 +7027,7 @@ static void process_global_event(int ge_id) {
 			o_ptr->note = quark_add("Tournament reward");
 			inven_carry(j, o_ptr);
 
-			s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, ge_id+1, ge->title);
+			s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, ge_id + 1, ge->title);
 			l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
 
 			/* avoid him dying */
@@ -7082,7 +7097,7 @@ static void process_global_event(int ge_id) {
 	case GE_ARENA_MONSTER:
 		wpos.wx = cfg.town_x;
 		wpos.wy = cfg.town_y;
-		wild=&wild_info[wpos.wy][wpos.wx];
+		wild = &wild_info[wpos.wy][wpos.wx];
 		d_ptr = wild->tower;
 		if (!d_ptr) {
 			s_printf("FATAL_ERROR: global_event 'Arena Monster Challenge': Bree has no Training Tower.\n");
@@ -7122,7 +7137,7 @@ static void process_global_event(int ge_id) {
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			ge->state[0] = 1;
-			msg_broadcast_format(0, "\377WType '/evinfo %d' and '/evsign %d' to learn more or to sign up.", ge_id+1, ge_id+1);
+			msg_broadcast_format(0, "\377WType '/evinfo %d' and '/evsign %d' to learn more or to sign up.", ge_id + 1, ge_id + 1);
 			break;
 		case 1: /* running - not much to do here actually :) it's all handled by global_event_signup */
 			if (ge->extra[1]) { /* new challenge to process? */
@@ -7180,6 +7195,151 @@ static void process_global_event(int ge_id) {
 		}
 		break;
 
+	/* Dungeon Keeper labyrinth race */
+	case GE_DUNGEON_KEEPER:
+		switch (ge->state[0]) {
+		case 0: /* prepare level, gather everyone, begin */
+			ge->cleanup = 1;
+			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
+			wipe_m_list(&wpos); /* clear any (powerful) spawns */
+			wipe_o_list_safely(&wpos); /* and objects too */
+			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
+
+			if (!getcave(&wpos)) alloc_dungeon_level(&wpos);
+			s_printf("EVENT_LAYOUT: Generating labyrinth at %d,%d,%d\n", wpos.wx, wpos.wy, wpos.wz);
+			/* make it static */
+			new_players_on_depth(&wpos, 1, FALSE);
+			zcave = getcave(&wpos);
+
+			/* wipe level with floor tiles */
+			for (x = 1; x < MAX_WID - 1; x++)
+			for (y = 1; y < MAX_HGT - 1; y++) {
+				zcave[y][x].feat = FEAT_ASH; /* scary ;) */
+				zcave[y][x].info |= CAVE_GLOW;
+			}
+
+			/* add perma wall borders and basic labyrinth grid (rooms) */
+			for (x = 0; x < MAX_WID; x++)
+			for (y = 1; y < MAX_HGT - 1; y += 4)
+				zcave[0][x].feat = zcave[MAX_HGT - 1][x].feat = FEAT_WALL_EXTRA;
+			for (y = 0; y < MAX_HGT; y++)
+			for (x = 0; x < MAX_WID; x += 4)
+				zcave[y][0].feat = zcave[y][MAX_WID - 1].feat = FEAT_WALL_EXTRA;
+
+			/* randomly add doors, vertically and horizontally */
+			
+			cave_set_feat_live(&wpos, y, x, FEAT_BEACON);
+
+			/* maybe - randomly add void gate pairs */
+#if 1
+			for (i = 0; i < 3; i++) {
+				n = 1000;
+				while (--n) {
+					x = rand_int(MAX_WID - 1) + 1;
+					y = rand_int(MAX_HGT - 1) + 1;
+					if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
+					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
+						break;
+				}
+				place_between_ext(&wpos, y, x, MAX_HGT, MAX_WID);
+			}
+#endif
+
+			/* place exit beacons */
+			for (i = 0; i < 3; i++) {
+				n = 1000;
+				while (--n) {
+					x = rand_int(MAX_WID - 1) + 1;
+					y = rand_int(MAX_HGT - 1) + 1;
+					if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
+					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
+						break;
+				}
+				cave_set_feat_live(&wpos, y, x, FEAT_BEACON);
+			}
+
+			/* place Horned Reaper :D */
+			n = 10000;
+			while (--n) {
+				x = rand_int(MAX_WID - 1) + 1;
+				y = rand_int(MAX_HGT - 1) + 1;
+				if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
+				    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
+					break;
+			}
+			place_monster_one(&wpos, y, x, RI_HORNED_REAPER_GE, FALSE, FALSE, FALSE, 0, 0);
+
+			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
+				if (!ge->participant[j]) continue;
+
+				for (i = 1; i <= NumPlayers; i++) {
+					if (Players[i]->id != ge->participant[j]) continue;
+					p_ptr = Players[i];
+
+					if (p_ptr->wpos.wx || p_ptr->wpos.wy) {
+						p_ptr->recall_pos.wx = 0;
+						p_ptr->recall_pos.wy = 0;
+						p_ptr->recall_pos.wz = 0;
+						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00;
+						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						recall_player(i, "");
+					}
+
+					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0 sector */
+				}
+			}
+
+			ge->state[0] = 1;
+			break;
+		case 1: /* hunt/race phase - end if all players escape or die or after a timeout */
+			/* everyone has escaped or died? */
+			n = 0;
+			for (i = 1; i <= NumPlayers; i++)
+				if (//!Players[i]->admin_dm && 
+				    !Players[i]->wpos.wx && !Players[i]->wpos.wy)
+					n++;
+			if (!n) {
+				ge->state[0] = 255;
+				break;
+			}
+
+			/* timeout not yet reached? proceed normally */
+			if (elapsed - ge->announcement_time < 30) break;//start after 600s
+
+			/* fill the labyrinth with more and more lava ^^- */
+			if (turn % (cfg.fps * 5)) break; //every 10s
+			zcave = getcave(&wpos);
+			for (i = 0; i < 20; i++) {
+				n = 100;
+				while (--n) {
+					x = rand_int(MAX_WID - 1) + 1;
+					y = rand_int(MAX_HGT - 1) + 1;
+					if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
+					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR) &&
+					    zcave[y][x].feat != FEAT_DEEP_LAVA)
+						break;
+				}
+				if (!n) continue;
+				cave_set_feat_live(&wpos, y, x, FEAT_DEEP_LAVA);
+			}
+			break;
+		case 255: /* clean-up */
+			if (!ge->cleanup) {
+				ge->getype = GE_NONE; /* end of event */
+				break;
+			}
+
+			sector00separation--;
+
+			wipe_m_list(&wpos); /* clear any (powerful) spawns */
+			wipe_o_list_safely(&wpos); /* and objects too */
+			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
+
+			ge->getype = GE_NONE; /* end of event */
+			break;
+		}
+		break;
+
 	default: /* generic clean-up routine for untitled events */
 		switch (ge->state[0]) {
 		case 255: /* remove an untitled event that has been stopped */
@@ -7191,7 +7351,7 @@ static void process_global_event(int ge_id) {
 	/* Check for end of event */
 	if (ge->getype == GE_NONE) {
 		msg_broadcast_format(0, "\377s[%s has ended]", ge->title);
-		s_printf("%s EVENT_END: %d - '%s'.\n", showtime(), ge_id+1, ge->title);
+		s_printf("%s EVENT_END: %d - '%s'.\n", showtime(), ge_id + 1, ge->title);
 	}
 }
 

@@ -8116,7 +8116,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	case FEAT_WAY_MORE:
 	case FEAT_WAY_LESS:
 	case FEAT_BETWEEN:
-	case FEAT_BETWEEN2:
+	case FEAT_BEACON:
 		break;
 
 	/* forgot any? just paranoia */

@@ -777,12 +777,22 @@ bool place_between_targetted(struct worldpos *wpos, int y, int x, int ty, int tx
 /*
  * Place a between gate at the given location
  */
-static void place_between(struct worldpos *wpos, int y, int x)
-{
+static void place_between(struct worldpos *wpos, int y, int x) {
 	int gx, gy, tries = 1000;
 	while (TRUE) {
 		gy = rand_int(dun->l_ptr->hgt);
 		gx = rand_int(dun->l_ptr->wid);
+		if (place_between_targetted(wpos, y, x, gy, gx)) break;
+
+		if (tries-- == 0) return;
+	}
+}
+/* external variant for use from elsewhere */
+void place_between_ext(struct worldpos *wpos, int y, int x, int hgt, int wid) {
+	int gx, gy, tries = 1000;
+	while (TRUE) {
+		gy = rand_int(hgt);
+		gx = rand_int(wid);
 		if (place_between_targetted(wpos, y, x, gy, gx)) break;
 
 		if (tries-- == 0) return;

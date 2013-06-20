@@ -1027,6 +1027,7 @@
 #define RI_TARGET_DUMMY2	1126	/* snow-covered version */
 #define RI_TARGET_DUMMYA1	1144	/* normal armoured version */
 #define RI_TARGET_DUMMYA2	1145	/* snow-covered armoured version */
+#define RI_HORNED_REAPER_GE	1146	/* low-power Horned Reaper for 'Dungeon Keeper' event */
 
 #define RI_ARCADE_START		1115	/* first arcade-specific monster; TODO: add ARCADE flag instead */
 #define RI_ARCADE_END		1124	/* last arcade-specific monster; TODO: add ARCADE flag instead */
@@ -1932,7 +1933,7 @@
 /* Feature 0xAD -- Underground Tunnel */
 #define FEAT_TAINTED_WATER      0xAE /* 174 */
 #define FEAT_MON_TRAP           0xAF /* 175 */
-#define FEAT_BETWEEN2           0xB0 /* 176, appearently effectively unused (unlike 160) */
+#define FEAT_BEACON	0xB0 /* 176, formerly FEAT_BETWEEN2, finally in use: for Dungeon Keeper event */
 /* Feature 0xB1 -- lava wall */
 #define FEAT_GREAT_FIRE         0xB2 /* 178 */
 #define FEAT_WAY_MORE           0xB3 /* 179 */
@@ -1980,7 +1981,7 @@
 
 #define is_stair(feat) \
 	((feat) == FEAT_MORE || (feat) == FEAT_LESS || (feat) == FEAT_WAY_MORE || (feat) == FEAT_WAY_LESS || \
-	(feat) == FEAT_BETWEEN || (feat) == FEAT_BETWEEN2 || \
+	(feat) == FEAT_BETWEEN || (feat) == FEAT_BEACON || \
 	(feat) == FEAT_FOUNTAIN || (feat) == FEAT_EMPTY_FOUNTAIN || (feat) == FEAT_FOUNTAIN_BLOOD)
 
 
@@ -7369,10 +7370,10 @@ extern int PlayerUID;
 /* types of global events: */
 #define GE_NONE			0	/* <disabled> ie no event running */
 #define GE_HIGHLANDER		1	/* Highlander Tournament */
-#define GE_HIGHLANDER_NEW	2	/* not yet implemented (with highlander town and set-up cash+items etc) */
+#define GE_HIGHLANDER_NEW	2	/* [NOT YET IMPLEMENTED] (with highlander town and set-up cash+items etc) */
 #define GE_ARENA_MONSTER	3	/* Areana Monster Challenge */
-#define GE_GAME_RUGBY		4	/* Evileye's good ole game of rugby, now in event-form ;) */
-#define GE_IRONMAN_COMPO	5	/* Ironman deep-dive event (dlev 1-99) */
+#define GE_GAME_RUGBY		4	/* [NOT YET IMPLEMENTED] Evileye's good ole game of rugby, now in event-form ;) */
+#define GE_DUNGEON_KEEPER	5	/* 'Dungeon Keeper' Labyrinth */
 
 /* player flags while participating in global events (p_ptr->global_event_temp) */
 #define PEVF_NONE		0x00000000
@@ -7710,7 +7711,7 @@ extern int PlayerUID;
 #define CS_INSCRIP	4	/* ok ;) i'll follow that from now */
 #define CS_FOUNTAIN	5
 #define CS_BETWEEN	6	/* petit jump type */
-#define CS_BETWEEN2	7	/* world traveller type */
+#define CS_BEACON	7	/* now used for events */
 #define CS_MON_TRAP	8	/* monster traps */
 #define CS_SHOP		9	/* shop/building */
 #define CS_MIMIC	10	/* mimic-ing feature (eg. secret door) */

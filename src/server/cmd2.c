@@ -422,14 +422,24 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 	byte bx, by;
 	struct c_special *cs_ptr;
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	int wid, hgt;
 
 	if (!(cs_ptr = GetCS(c_ptr, CS_BETWEEN))) return (FALSE);
+
+	/* allow void gates on surface levels (for 0,0 events) */
+	if (l_ptr) {
+		wid = l_ptr->wid - 1;
+		hgt = l_ptr->hgt - 1;
+	} else {
+		wid = MAX_WID;
+		hgt = MAX_HGT;
+	}
 
 	by = cs_ptr->sc.between.fy;
 	bx = cs_ptr->sc.between.fx;
 
 	/* (HACK) sanity check to cover cut-off vaults with missing void gate end-points! - C. Blue */
-	if (bx < 1 || by < 1 || bx >= l_ptr->wid - 1 || by >= l_ptr->hgt - 1) {
+	if (bx < 1 || by < 1 || bx >= wid || by >= hgt) {
 		msg_print(Ind, "The gate seems broken.");
 		return(TRUE);
 	}
@@ -455,7 +465,51 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	return (TRUE);
+}
 
+/* for special gates (event: Dungeon Keeper) - C. Blue
+   Taking a transport beacon usually teleports the player to Bree
+   and [successfully] terminates all global events for him. */
+static bool beacon_effect(int Ind, cave_type *c_ptr) {
+	player_type *p_ptr = Players[Ind];
+	int d;
+	char buf[1024];
+	global_event_type *ge;
+
+#ifdef USE_SOUND_2010
+//	sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+
+	/* Beacons in sector00 lead to Bree transportation */
+	if (p_ptr->wpos.wx == WPOS_SECTOR00_X &&
+	    p_ptr->wpos.wy == WPOS_SECTOR00_Y &&
+	    p_ptr->wpos.wz == WPOS_SECTOR00_Z) {
+		for (d = 0; d < MAX_GLOBAL_EVENTS; d++) {
+			ge = &global_event[d];
+
+			switch (p_ptr->global_event_type[d]) {
+			case GE_DUNGEON_KEEPER:
+				sprintf(buf, "\374\377a>>%s wins %s!<<", p_ptr->name, ge->title);
+				msg_broadcast_format(0, buf);
+				s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, d + 1, ge->title);
+				//l_printf("%s \\{s%s has won %s\n", showdate(), p_ptr->name, ge->title);
+				break;
+			}
+
+			p_ptr->global_event_type[d] = GE_NONE; /* no longer participant */
+		}
+
+		msg_print(Ind, "\377GYou are transported out of here and far away!");
+		p_ptr->recall_pos.wx = cfg.town_x;
+		p_ptr->recall_pos.wy = cfg.town_y;
+		p_ptr->recall_pos.wz = 0;
+		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+		p_ptr->global_event_temp = PEVF_PASS_00; /* clear all other flags, allow a final recall out */
+		recall_player(Ind, "");
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /*
@@ -540,9 +594,7 @@ void do_cmd_go_down(int Ind)
 		return;
 	}
 
-	if (c_ptr->feat == FEAT_BETWEEN)
-//		|| c_ptr->feat == FEAT_BETWEEN2)
-	{
+	if (c_ptr->feat == FEAT_BETWEEN) {
 		/* Hack -- take a turn */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -551,6 +603,17 @@ void do_cmd_go_down(int Ind)
 
 		if (between_effect(Ind, c_ptr)) return;
 		/* not jumped? strange.. */
+	}
+
+	if (c_ptr->feat == FEAT_BEACON) {
+		/* Hack -- take a turn */
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+		/* Check interference */
+		if (interfere(Ind, 20)) return; /* beacon interference chance */
+
+		if (beacon_effect(Ind, c_ptr)) return;
+		/* not transported? strange.. */
 	}
 
 

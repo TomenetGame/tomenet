@@ -2005,21 +2005,24 @@ static void player_setup(int Ind, bool new)
                 wpos->wy = cfg.town_y;
 #endif
 		wpos->wz = 0;
+
 		/* Remove him from the event and strip quest items off him */
 		for (d = 0; d < MAX_GLOBAL_EVENTS; d++)
-		if (p_ptr->global_event_type[d] != GE_NONE) {
 			switch (p_ptr->global_event_type[d]) {
+			case GE_NONE:
+				/* everything is fine */
+				break;
 			case GE_HIGHLANDER:
-				p_ptr->global_event_type[d] = GE_NONE;
 				p_ptr->global_event_temp = PEVF_NONE;
 				for (i = 0; i < INVEN_TOTAL; i++) /* Erase the highlander amulets */
-                    			if (p_ptr->inventory[i].tval == TV_AMULET && 
+					if (p_ptr->inventory[i].tval == TV_AMULET && 
 					    (p_ptr->inventory[i].sval == SV_AMULET_HIGHLANDS || p_ptr->inventory[i].sval == SV_AMULET_HIGHLANDS2)) {
-					        inven_item_increase(Ind, i, -p_ptr->inventory[i].number);
-					        inven_item_optimize(Ind, i);
-    		                	}
+					    inven_item_increase(Ind, i, -p_ptr->inventory[i].number);
+						inven_item_optimize(Ind, i);
+					}
+				break;
 			}
-		}
+			p_ptr->global_event_type[d] = GE_NONE;
 	}
 
 #if 0 /* not really useful? */

@@ -800,11 +800,10 @@ N:175:monster trap
 G:;:v
 F:FLOOR
 
-N:176:Void Jumpgate
-G:+:v
+N:176:Transport beacon
+G:>:v
 F:FLOOR | REMEMBER | NOTICE | PERMANENT | CAN_RUN
-D:0:A dark rift opens to the void here.
-#appearently mostly unused, unlike 160
+D:0:A teleporter beacon.
 
 N:177:lava wall
 G:#:R
