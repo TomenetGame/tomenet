@@ -5830,6 +5830,38 @@ void do_slash_cmd(int Ind, char *message)
 					global_event[k-1].end_turn = global_event[k-1].end_turn - cfg.fps * t;
 				return;
 			}
+			else if (prefix(message, "/gesign")) { /* admin debug command - sign up for a global event and start it right the next turn */
+				global_event_type *ge;
+				for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {
+					ge = &global_event[i];
+					if (ge->getype == GE_NONE) continue;
+					if (ge->signup_time == -1) continue;
+					if (ge->signup_time &&
+					    (!ge->announcement_time ||
+					    (ge->announcement_time - (turn - ge->start_turn) / cfg.fps <= 0)))
+						continue;
+					if (ge->signup_time &&
+					    (ge->signup_time - (turn - ge->start_turn) / cfg.fps <= 0))
+						continue;
+					break;
+				}
+				if (i == MAX_GLOBAL_EVENTS) {
+					msg_print(Ind, "no eligible events running");
+					return;
+				}
+
+				if (tk < 1) global_event_signup(Ind, i, NULL);
+				else global_event_signup(Ind, i, message3 + 1 + strlen(format("%d", k)));
+
+				if (ge->announcement_time) {
+					s32b elapsed_time = turn - ge->start_turn - ge->paused_turns;
+					s32b diff = ge->announcement_time * cfg.fps - elapsed_time - 1;
+					msg_format(Ind, "forwarding %d turns", diff);
+					global_event[i].start_turn -= diff;
+					if (ge->end_turn) global_event[i].end_turn -= diff;
+				}
+				return;
+			}
 			else if (prefix(message, "/partydebug"))
 			{
 				FILE *fp;
