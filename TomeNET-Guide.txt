@@ -5874,7 +5874,42 @@ Arena Monster Challenge
     disenchanted in this event.
 
 Dungeon Keeper:
-    
+    Character who want to participate must be level 1 and have gained no
+    experience points at all. Fruit bats or PvP-mode characters are not
+    eligible to join. Items are not required in this event.
+
+    When the event starts, all participants are transported into a labyrinth of
+    rooms made of impenetrable walls but connected by doors or even void jump
+    gates.
+    The goal is to find an escape beacon, which is a light green '>'.
+    Everyone who steps on an escape beacon and presses the '>' key will be
+    teleported to Bree and has thereby successfully escaped the maze and
+    qualified as a winner.
+    It does not matter who the first or last is to leave, everyone who manages
+    to get out, wins, and gets a parchment for reward that can be turned in at
+    the mayor's office.
+    After about 5 minutes, the dungeon floor however will crackle, and be
+    flooded more and more with lava. Time is running out. Now the players who
+    haven't escaped yet should hurry, before the maze is completely submerged
+    in lava.
+    However, it seems the former keeper of this abandoned maze left behind a
+    horrible guardian, the Horned Reaper. It can sense your presence and if it
+    manages to catch you, there is no hope of survival.
+
+    Players who do not manage to escape, but die, still get a small reward. It
+    is again a parchment that can be turned in at the mayor's office. The next
+    character a player logs on with after losing in the event will receive it.
+
+    Winner parchments can be turned in for either an item or a temporary luck
+    buff (about 30 minutes duration). The item will depend on how you have
+    spent your skill points, so make sure to distribute some skill points first
+    before turning in a parchment for an item reward.
+    The winner parchments can also be given to other characters, but those will
+    only be able to exchange them for a luck buff, not for an item-
+
+    Loser parchments are not tradable and can only be turned in for a small
+    temporary luck buff (about 30 minutes duration).
+    For details about luck see LUCK flag in (5.8).
 
 
 Miscellaneous challenges
