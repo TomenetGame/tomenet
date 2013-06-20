@@ -595,7 +595,6 @@ void teleport_to_player(int Ind, int m_idx)
 	player_type *p_ptr = Players[Ind];
 	int ny = 0, nx = 0, oy, ox, d, i, min;
 	int dis = 2;
-
 	bool look = TRUE;
 
 	monster_type *m_ptr = &m_list[m_idx];
@@ -604,7 +603,6 @@ void teleport_to_player(int Ind, int m_idx)
 
 	struct worldpos *wpos=&m_ptr->wpos;
 //	dun_level		*l_ptr = getfloor(wpos);
-
 	cave_type **zcave;
 //		if(p_ptr->resist_continuum) {msg_print("The space-time continuum can't be disrupted."); return;}
 
@@ -988,6 +986,10 @@ void teleport_player_to(int Ind, int ny, int nx)
 	dun_level *l_ptr;
 	cave_type **zcave;
 
+	if ((p_ptr->global_event_temp & PEVF_NOTELE_00) && p_ptr->wpos.wx == WPOS_SECTOR00_X &&
+	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == WPOS_SECTOR00_Z)
+		return;
+
 	if(!(zcave=getcave(wpos))) return;
 	if (p_ptr->anti_tele) return;
 	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
@@ -1123,6 +1125,11 @@ void teleport_player_level(int Ind, bool force) {
 //	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char *msg = "\377rCritical bug!";
 	cave_type **zcave;
+
+	if ((p_ptr->global_event_temp & PEVF_NOTELE_00) && p_ptr->wpos.wx == WPOS_SECTOR00_X &&
+	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == WPOS_SECTOR00_Z)
+		return;
+
 	if (!(zcave = getcave(wpos))) return;
 	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) && !force) return;
 //	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
