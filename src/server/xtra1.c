@@ -7205,6 +7205,7 @@ static void process_global_event(int ge_id) {
 	case GE_DUNGEON_KEEPER:
 		switch (ge->state[0]) {
 		case 0: /* prepare level, gather everyone, begin */
+			ge->state[1] = 0;
 			ge->cleanup = 1;
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
 			sector00music = 46; /* terrifying (notele) music */
@@ -7579,21 +7580,44 @@ static void process_global_event(int ge_id) {
 			for (i = 1; i <= NumPlayers; i++)
 				handle_music(i);
 
-			/* fill the labyrinth with more and more lava ^^- */
-			if (turn % (cfg.fps * 5)) break; //every 5s
-			zcave = getcave(&wpos);
-			k = (elapsed - ge->announcement_time) / 5 - 40;
-			/* fill EVERYTHING? -> terminate the event (everyone will die <(* *)>)*/
-			if (k > 80) { /* after 10 minutes */
-				for (x = 1; x < MAX_WID - 1; x++)
-				for (y = 1; y < MAX_HGT - 1; y++)
-					if (zcave[y][x].feat == FEAT_ASH)
-						zcave[y][x].feat = FEAT_DEEP_LAVA;
+			ge->state[0] = 2;
+			break;
+		case 2: /* fill the labyrinth with more and more lava ^^- */
+			/* everyone has escaped or died? */
+			n = 0;
+			for (i = 1; i <= NumPlayers; i++)
+				if (//!Players[i]->admin_dm && 
+				    !Players[i]->wpos.wx && !Players[i]->wpos.wy)
+					n++;
+			if (!n) {
+				ge->state[0] = 255;
 				break;
 			}
-			for (i = 0; i < k; i++) {
-				n = 100;
-				while (--n) {
+
+			n = elapsed; /* for how long is the event already up? */
+			n -= ge->announcement_time; /* dont factor in the announcement time */
+			n -= 300; /* don't factor in the duration of 1st phase */
+			n /= 5; /* from here on, act in 5 second intervals */
+			if (ge->state[1] >= n || /* next 5s interval is not yet up? */
+			    n > 180 / 5) /* we're already 3 min into this phase and termination is imminent */
+				break;
+			ge->state[1] = n; /* advance into another lava-filling step (lock time interval semaphore) */
+
+			zcave = getcave(&wpos);
+			/* after 3 min in pase 2, fill EVERYTHING -> everyone will die <(* *)> */
+			if (n == 180 / 5) {
+				for (x = 1; x < MAX_WID - 1; x++)
+				for (y = 1; y < MAX_HGT - 1; y++)
+					if (zcave[y][x].feat != FEAT_PERM_INNER)
+						//cave_set_feat_live(&wpos, y, x, FEAT_DEEP_LAVA);
+						zcave[y][x].feat = FEAT_DEEP_LAVA;
+						everyone_lite_spot(&wpos, y, x);
+				break;
+			}
+			/* if it's not that late yet, just fill some lava.. */
+			for (i = 0; i < 50 + n * 5; i++) {
+				j = 100;
+				while (--j) {
 					x = rand_int(MAX_WID - 1) + 1;
 					y = rand_int(MAX_HGT - 1) + 1;
 					if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
@@ -7601,8 +7625,10 @@ static void process_global_event(int ge_id) {
 					    zcave[y][x].feat != FEAT_DEEP_LAVA)
 						break;
 				}
-				if (!n) continue;
-				cave_set_feat_live(&wpos, y, x, FEAT_DEEP_LAVA);
+				if (!j) continue;
+				//cave_set_feat_live(&wpos, y, x, FEAT_DEEP_LAVA);
+				zcave[y][x].feat = FEAT_DEEP_LAVA;
+				everyone_lite_spot(&wpos, y, x);
 			}
 			break;
 		case 255: /* clean-up */
