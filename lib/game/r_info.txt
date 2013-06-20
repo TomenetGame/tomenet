@@ -15296,7 +15296,7 @@ D:and thus is attempting to eliminate you.
 N:860:Sauron, the Sorcerer
 G:p:v
 I:130:100d225:100:160:0
-W:99:1:2300:50000
+W:99:1:2300:58000
 E:1:1:1:2:1:1
 O:0:0:100:0
 B:HIT:UN_BONUS:10d12
@@ -19174,7 +19174,7 @@ D:let alone fighting it!
 N:1074:Michael, The Guardian Overlord
 G:A:U
 I:140:400d70:250:200:255
-W:98:8:3200:50000
+W:98:8:3200:58000
 E:1:1:1:2:1:1
 O:0:70:30:0
 B:GAZE:TERRIFY:10d4
