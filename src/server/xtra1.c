@@ -6316,9 +6316,9 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[3], "        Also, you aren't allowed to pick up ANY gold/items from another");
 		strcpy(ge->description[4], "        player before the tournament begins!                           ");
 		strcpy(ge->description[5], " Running, phasing and teleportation do NOT WORK!                       ");
-		strcpy(ge->description[6], "");
-		strcpy(ge->description[7], "");
-		strcpy(ge->description[8], "");
+		strcpy(ge->description[6], " Your goal is to find one of the escape beacons (light green '>') in   ");
+		strcpy(ge->description[7], " time, before the dungeon gets flooded with lava or the horned reaper  ");
+		strcpy(ge->description[8], " finds you!");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 60 ; /* 60 minutes max. duration,
 								most of the time is just for announcing it
 								so players will sign on via /evsign <n> */
