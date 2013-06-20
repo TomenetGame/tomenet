@@ -5500,11 +5500,12 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Trickster", "Trickster", "Trickster", "Trickster", },
 		{"Illusionist", "Illusionist", "Illusionist", "Illusionist", },
 		{"Spellbinder", "Spellbinder", "Spellbinder", "Spellbinder", },
+		{"Spellweaver", "Spellweaver", "Spellweaver", "Spellweaver", },
 		{"Evoker", "Evokeress", "Evoker", "Evokeress", },
 		{"Conjurer", "Conjuress", "Conjurer", "Conjuress", },
 		{"Sorcerer", "Sorceress", "Sorcerer", "Sorceress", },
 		{"Warlock", "Warlock", "Warlock", "Warlock", },
-		{"Mage", "Mage", "Mage", "Mage", },
+		//{"Mage", "Mage", "Mage", "Mage", },
 		{"Arch-Mage", "Arch-Mage", "Arch-Mage", "Arch-Mage", },
 	},
 
@@ -5610,12 +5611,13 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Tripper", "Tripper", "Tripper", "Tripper", },
 		{"Tourist", "Tourist", "Tourist", "Tourist", },
 		{"Strider", "Strider", "Strider", "Strider", },
-		{"Voyager", "Voyager", "Voyager", "Voyager", },
 		{"Traveller", "Traveller", "Traveller", "Traveller", },
+		{"Discoverer", "Discoverer", "Discoverer", "Discoverer", },
 		{"Spelunker", "Spelunker", "Spelunker", "Spelunker"},
-		{"Explorer", "Explorer", "Explorer", "Explorer", },
+		{"Voyager", "Voyager", "Voyager", "Voyager", },
 		{"Navigator", "Navigatress", "Navigator", "Navigatress", },
-		{"Adventurer", "Adventuress", "Adventurer", "Adventuress", },
+		{"Explorer", "Explorer", "Explorer", "Explorer", },
+		//Adventurer", "Adventuress", "Adventurer", "Adventuress", },
 	},
 
 	/* Druid */
@@ -5705,13 +5707,13 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Bombardier", "Bombardier", },
 		{"Chief Marshal", "Chief Marshal", },
 		{"Field Strategist", "Field Strategist", },
-		{"Chief Admiral", "Chief Admiral", },
+		{"Chief Admiral", "Chief Admiral", },//Fleet Admiral is probably the correct term
 #endif
 	},
 
 	/* Istar */
 	{
-		{"Istar", "Istar", "Istar", "Istar", },
+		{"Grand Wizard", "Grand Wizard", "Gr.Wizard", "Gr.Wizard", },
 		{"Dragon Lord", "Dragon Lady", "Dragon Lord", "Dragon Lady", },/* explanation about all the 'Dragon..' stuff: I was out of ideas and
 						    just thought of 'Earthsea Quartet' from Ursula LeGuin - C. Blue */
 		{"Dragon Highlord", "Dragon Highlady", "Dragon HLord", "Dragon HLady", },//yolady
@@ -5721,11 +5723,12 @@ cptr player_title_special[MAX_CLASS][5][4] =
 
 	/* Priest */
 	{
-		{"Old Patriarch", "Old Matriarch", "Old Patriar.", "Old Matriar.", },
+		{"Venerable Patriarch", "Venerable Matriarch", "V.Patriarch", "V.Matriarch", },
 		{"Saint", "Saint", "Saint", "Saint", },
 		{"Ascended", "Ascended", "Ascended", "Ascended", },
 		{"Demi", "Demi", "Demi", "Demi", }, //Pope? :)
-		{"Holy Diver", "Holy Diver", "Holy Diver", "Holy Diver", }, //w00t!
+		{"Divine", "Divine", "Divine", "Divine", },
+		//^^{"Holy Diver", "Holy Diver", "Holy Diver", "Holy Diver", }, //w00t!
 	},
 
 	/* Rogues */
@@ -5766,7 +5769,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 	/* Paladin */
 	{
 	        {"Sacred Defender", "Sacred Defender", "Sac.Defender", "Sac.Defender", },
-		{"Sacred Avenger", "Sacred Avenger", "Sacr.Avenger", "Sacr.Avenger", },
+		{"Avenger", "Avenger", "Avenger", "Avenger", },
 		{"Holy Avenger", "Holy Avenger", "Holy Avenger", "Holy Avenger", },
 //		{"Holy Defender", "Holy Defender", }, defender comes before avenger if at all;
 //							DF and HA are old 'good' ego mods from predecessors.
