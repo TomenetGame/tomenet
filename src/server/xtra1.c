@@ -7282,7 +7282,7 @@ static void process_global_event(int ge_id) {
 						doors++;
 					}
 				}
-				if (x < MAX_WID - 1 - (MAX_WID - 1) % 4 - 1) { /* skip E door when at right border */
+				if (x < MAX_WID - 1 - (MAX_WID - 1) % 4 - 3) { /* skip E door when at right border */
 					/* check for already existing door */
 					if (zcave[y + 2 * ddy[6]][x + 2 * ddx[6]].feat == FEAT_DOOR_HEAD) doors_exist++;
 					else {
@@ -7290,7 +7290,7 @@ static void process_global_event(int ge_id) {
 						doors++;
 					}
 				}
-				if (y < MAX_HGT - (MAX_HGT - 1) % 4 - 1) { /* skip S door when at bottom border */
+				if (y < MAX_HGT - (MAX_HGT - 1) % 4 - 3) { /* skip S door when at bottom border */
 					/* check for already existing door */
 					if (zcave[y + 2 * ddy[2]][x + 2 * ddx[2]].feat == FEAT_DOOR_HEAD) doors_exist++;
 					else {
