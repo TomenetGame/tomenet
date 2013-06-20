@@ -160,11 +160,13 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type)
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_HIGHLANDER;
 			return;
+#if 1 /* since everyone can win, this is not that important */
 		case GE_DUNGEON_KEEPER:
 			if (death_type >= DEATH_QUIT) break; /* no reward for suiciding! */
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_DUNGEONKEEPER;
 			return;
+#endif
 		case GE_NONE:
 		default:
 			break;
