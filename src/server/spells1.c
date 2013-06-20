@@ -728,6 +728,10 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 
 	bool look = TRUE;
 
+	if ((p_ptr->global_event_temp & PEVF_NOTELE_00) && p_ptr->wpos.wx == WPOS_SECTOR00_X &&
+	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == WPOS_SECTOR00_Z)
+		return FALSE;
+
 	/* Space/Time Anchor */
 	cave_type **zcave;
 	if(!(zcave = getcave(wpos))) return FALSE;

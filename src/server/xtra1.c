@@ -6312,9 +6312,13 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->title, "Dungeon Keeper");
 		strcpy(ge->description[0], " Create a new level 1 character, then sign him on for this race for    ");
 		strcpy(ge->description[1], " your life, through a labyrinth that is guarded by the Horned Reaper!  ");
-		strcpy(ge->description[6], " Rules: Make sure that you don't gain ANY experience until it starts.  ");
-		strcpy(ge->description[7], "        Also, you aren't allowed to pick up ANY gold/items from another");
-		strcpy(ge->description[8], "        player before the tournament begins!                           ");
+		strcpy(ge->description[2], " Rules: Make sure that you don't gain ANY experience until it starts.  ");
+		strcpy(ge->description[3], "        Also, you aren't allowed to pick up ANY gold/items from another");
+		strcpy(ge->description[4], "        player before the tournament begins!                           ");
+		strcpy(ge->description[5], " Phasing/teleportation does NOT WORK!                                  ");
+		strcpy(ge->description[6], "");
+		strcpy(ge->description[7], "");
+		strcpy(ge->description[8], "");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 60 ; /* 60 minutes max. duration,
 								most of the time is just for announcing it
 								so players will sign on via /evsign <n> */
@@ -7243,7 +7247,7 @@ static void process_global_event(int ge_id) {
 			/* randomly add doors, vertically and horizontally */
 			for (x = 2; x < MAX_WID - 1; x += 4) {
 				for (y = 4; y <= MAX_HGT - 4; y += 4) {
-					if (zcave[y][x].feat != FEAT_PERM_INNER || rand_int(3)) continue;
+					if (zcave[y][x].feat != FEAT_PERM_INNER || rand_int(2)) continue;
 #if 1
 					zcave[y][x].feat = FEAT_DOOR_HEAD;
 #else
@@ -7254,7 +7258,7 @@ static void process_global_event(int ge_id) {
 			}
 			for (y = 2; y < MAX_HGT - 1; y += 4) {
 				for (x = 4; x <= MAX_WID - 4; x += 4) {
-					if (zcave[y][x].feat != FEAT_PERM_INNER || rand_int(3)) continue;
+					if (zcave[y][x].feat != FEAT_PERM_INNER || rand_int(2)) continue;
 #if 1
 					zcave[y][x].feat = FEAT_DOOR_HEAD;
 #else
@@ -7266,7 +7270,7 @@ static void process_global_event(int ge_id) {
 
 			/* maybe - randomly add void gate pairs */
 #if 1
-			for (i = 0; i < 3; i++) {
+			for (i = 0; i < 5; i++) {
 				n = 1000;
 				while (--n) {
 					x = rand_int(MAX_WID - 1) + 1;
@@ -7281,7 +7285,7 @@ static void process_global_event(int ge_id) {
 
 			/* place exit beacons */
 			for (i = 0; i < 3; i++) {
-				n = 1000;
+				n = 10000;
 				while (--n) {
 					x = rand_int(MAX_WID - 1) + 1;
 					y = rand_int(MAX_HGT - 1) + 1;
@@ -7314,7 +7318,7 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wx = 0;
 						p_ptr->recall_pos.wy = 0;
 						p_ptr->recall_pos.wz = 0;
-						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_WALK_00;
+						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_WALK_00 | PEVF_NOTELE_00;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						recall_player(i, "");
 					}
@@ -7345,7 +7349,16 @@ static void process_global_event(int ge_id) {
 			/* fill the labyrinth with more and more lava ^^- */
 			if (turn % (cfg.fps * 5)) break; //every 5s
 			zcave = getcave(&wpos);
-			for (i = 0; i < 20; i++) {
+			k = (elapsed - ge->announcement_time) / 5 - 40;
+			/* fill EVERYTHING? -> terminate the event (everyone will die <(* *)>)*/
+			if (k > 80) { /* after 10 minutes */
+				for (x = 1; x < MAX_WID - 1; x++)
+				for (y = 1; y < MAX_HGT - 1; y++)
+					if (zcave[y][x].feat == FEAT_ASH)
+						zcave[y][x].feat = FEAT_DEEP_LAVA;
+				break;
+			}
+			for (i = 0; i < k; i++) {
 				n = 100;
 				while (--n) {
 					x = rand_int(MAX_WID - 1) + 1;
