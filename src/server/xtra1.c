@@ -7244,33 +7244,122 @@ static void process_global_event(int ge_id) {
 				zcave[y][MAX_WID - 1].feat = FEAT_PERM_CLEAR;
 			}
 
+#if 0 /* random way, iterating over the walls */
 			/* randomly add doors, vertically and horizontally */
 			for (x = 2; x < MAX_WID - 1; x += 4) {
 				for (y = 4; y <= MAX_HGT - 4; y += 4) {
 					if (zcave[y][x].feat != FEAT_PERM_INNER || rand_int(2)) continue;
-#if 1
+ #if 1
 					zcave[y][x].feat = FEAT_DOOR_HEAD;
-#else
+ #else
 					if (rand_int(4)) zcave[y][x].feat = FEAT_DOOR_HEAD;
 					else zcave[y][x].feat = FEAT_DOOR;
-#endif
+ #endif
 				}
 			}
 			for (y = 2; y < MAX_HGT - 1; y += 4) {
 				for (x = 4; x <= MAX_WID - 4; x += 4) {
 					if (zcave[y][x].feat != FEAT_PERM_INNER || rand_int(2)) continue;
-#if 1
+ #if 1
 					zcave[y][x].feat = FEAT_DOOR_HEAD;
-#else
+ #else
 					if (rand_int(4)) zcave[y][x].feat = FEAT_DOOR_HEAD;
 					else zcave[y][x].feat = FEAT_DOOR;
-#endif
+ #endif
 				}
 			}
+#else /* random, but guarantee # of open doors, iterating over the 'rooms' */
+			for (x = 2; x < MAX_WID - 1; x += 4)
+			for (y = 2; y < MAX_HGT - 1; y += 4) {
+				int door_pos[4], doors = 0, doors_exist = 0; /* door_pos are same as dd arrays, ie numpad dirs */
 
-			/* maybe - randomly add void gate pairs */
+				/* we're at room centre. Process N/E/S/W doors. */
+				if (y > 2) { /* skip N door when at top border */
+					/* check for already existing door */
+					if (zcave[y + 2 * ddy[8]][x + 2 * ddx[8]].feat == FEAT_DOOR_HEAD) doors_exist++;
+					else {
+						door_pos[doors] = 8;
+						doors++;
+					}
+				}
+				if (x < MAX_WID - 1 - (MAX_WID - 1) % 4 - 1) { /* skip E door when at right border */
+					/* check for already existing door */
+					if (zcave[y + 2 * ddy[6]][x + 2 * ddx[6]].feat == FEAT_DOOR_HEAD) doors_exist++;
+					else {
+						door_pos[doors] = 6;
+						doors++;
+					}
+				}
+				if (y < MAX_HGT - (MAX_HGT - 1) % 4 - 1) { /* skip S door when at bottom border */
+					/* check for already existing door */
+					if (zcave[y + 2 * ddy[2]][x + 2 * ddx[2]].feat == FEAT_DOOR_HEAD) doors_exist++;
+					else {
+						door_pos[doors] = 2;
+						doors++;
+					}
+				}
+				if (x > 2) { /* skip W door when at left border */
+					/* check for already existing door */
+					if (zcave[y + 2 * ddy[4]][x + 2 * ddx[4]].feat == FEAT_DOOR_HEAD) doors_exist++;
+					else {
+						door_pos[doors] = 4;
+						doors++;
+					}
+				}
+
+				/* we already have all doors we need? (created by the adjacent rooms) */
+				if (!doors || /* max # of doors created (corner rooms) */
+				    (doors_exist == 2 && doors == 1) || /* sufficient # of doors for a room along the edge (2 out of 3) */
+				    doors_exist == 3) /* sufficient # of doors created (3 out of 4) */
+					continue;
+
+				/* create sufficient number of missing doors */
+				if (doors == 1) {
+					/* scenario: corner or edge with 1 more door required */
+					zcave[y + 2 * ddy[door_pos[0]]][x + 2 * ddx[door_pos[0]]].feat = FEAT_DOOR_HEAD;
+				} else if (doors == 2) {
+					if (!doors_exist) {
+						/* scenario: corner room, need both doors to be created */
+						zcave[y + 2 * ddy[door_pos[0]]][x + 2 * ddx[door_pos[0]]].feat = FEAT_DOOR_HEAD;
+						zcave[y + 2 * ddy[door_pos[1]]][x + 2 * ddx[door_pos[1]]].feat = FEAT_DOOR_HEAD;
+					} else if (doors_exist == 1) {
+						/* scenario: edge room, 1 door created, need 1 more */
+						if (rand_int(2)) zcave[y + 2 * ddy[door_pos[0]]][x + 2 * ddx[door_pos[0]]].feat = FEAT_DOOR_HEAD;
+						else zcave[y + 2 * ddy[door_pos[1]]][x + 2 * ddx[door_pos[1]]].feat = FEAT_DOOR_HEAD;
+					} else { /* doors_exist == 2 */
+						/* scenario: centre room, 2 doors created, need 1 more */
+						if (rand_int(2)) zcave[y + 2 * ddy[door_pos[0]]][x + 2 * ddx[door_pos[0]]].feat = FEAT_DOOR_HEAD;
+						else zcave[y + 2 * ddy[door_pos[1]]][x + 2 * ddx[door_pos[1]]].feat = FEAT_DOOR_HEAD;
+					}
+				} else if (doors == 3) {
+					if (!doors_exist) {
+						/* scenario: edge room, need 2 out of 3 doors to be created */
+						k = rand_int(3);
+						if (k != 0) zcave[y + 2 * ddy[door_pos[0]]][x + 2 * ddx[door_pos[0]]].feat = FEAT_DOOR_HEAD;
+						if (k != 1) zcave[y + 2 * ddy[door_pos[1]]][x + 2 * ddx[door_pos[1]]].feat = FEAT_DOOR_HEAD;
+						if (k != 2) zcave[y + 2 * ddy[door_pos[2]]][x + 2 * ddx[door_pos[2]]].feat = FEAT_DOOR_HEAD;
+					} else { /* doors_exist == 1 */
+						/* scenario: centre room, we need 2 more doors so we have 3 out of 4 */
+						k = rand_int(3);
+						if (k != 0) zcave[y + 2 * ddy[door_pos[0]]][x + 2 * ddx[door_pos[0]]].feat = FEAT_DOOR_HEAD;
+						if (k != 1) zcave[y + 2 * ddy[door_pos[1]]][x + 2 * ddx[door_pos[1]]].feat = FEAT_DOOR_HEAD;
+						if (k != 2) zcave[y + 2 * ddy[door_pos[2]]][x + 2 * ddx[door_pos[2]]].feat = FEAT_DOOR_HEAD;
+					}
+				} else {
+					/* scenario: centre room, no door created yet, we need to create 3 out of the four directions */
+					k = rand_int(4);
+					if (k != 0) zcave[y + 2 * ddy[door_pos[0]]][x + 2 * ddx[door_pos[0]]].feat = FEAT_DOOR_HEAD;
+					if (k != 1) zcave[y + 2 * ddy[door_pos[1]]][x + 2 * ddx[door_pos[1]]].feat = FEAT_DOOR_HEAD;
+					if (k != 2) zcave[y + 2 * ddy[door_pos[2]]][x + 2 * ddx[door_pos[2]]].feat = FEAT_DOOR_HEAD;
+					if (k != 3) zcave[y + 2 * ddy[door_pos[3]]][x + 2 * ddx[door_pos[3]]].feat = FEAT_DOOR_HEAD;
+				}
+			}
+#endif
+
 #if 1
-			for (i = 0; i < 5; i++) {
+			/* maybe - randomly add void gate pairs */
+			k = 0;
+			for (i = 0; i < 6; i++) {
 				n = 1000;
 				while (--n) {
 					x = rand_int(MAX_WID - 1) + 1;
@@ -7279,11 +7368,16 @@ static void process_global_event(int ge_id) {
 					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
 						break;
 				}
+				if (!n) continue;
 				place_between_ext(&wpos, y, x, MAX_HGT, MAX_WID);
+				k++;
 			}
+			if (!k) s_printf("..COULDN'T PLACE void jump gates\n");
+			else s_printf("..placed %d/6 void jump gates\n", k);
 #endif
 
 			/* place exit beacons */
+			k = 0;
 			for (i = 0; i < 3; i++) {
 				n = 10000;
 				while (--n) {
@@ -7293,8 +7387,12 @@ static void process_global_event(int ge_id) {
 					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
 						break;
 				}
+				if (!n) continue;
 				cave_set_feat_live(&wpos, y, x, FEAT_BEACON);
+				k++;
 			}
+			if (!k) s_printf("..COULDN'T PLACE exit beacons\n");
+			else s_printf("..placed %d/3 exit beacons\n", k);
 
 			/* place Horned Reaper :D */
 			n = 10000;
@@ -7305,7 +7403,13 @@ static void process_global_event(int ge_id) {
 				    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
 					break;
 			}
-			place_monster_one(&wpos, y, x, RI_HORNED_REAPER_GE, FALSE, FALSE, FALSE, 0, 0);
+			if (!n) s_printf("..COULDN'T PLACE Horned Reaper\n");
+			else {
+				summon_override_checks = SO_ALL;
+				place_monster_one(&wpos, y, x, RI_HORNED_REAPER_GE, FALSE, FALSE, FALSE, 0, 0);
+				summon_override_checks = SO_NONE;
+				s_printf("..placed Horned Reaper\n");
+			}
 
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
