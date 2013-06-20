@@ -1498,6 +1498,7 @@ static void sun_rises() {
 		wrpos.wx = wx;
 		wrpos.wy = wy;
 		if (!getcave(&wrpos)) continue;
+		if (sector00separation && !wx && !wy) continue;
 		world_surface_day(&wrpos);
 	}
 
@@ -1505,6 +1506,9 @@ static void sun_rises() {
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (Players[i]->wpos.wz) continue;
+		if (sector00separation && Players[i]->wpos.wx == WPOS_SECTOR00_X &&
+		    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
+			continue;
 		msg_print(i, "The sun has risen.");
 
 		player_day(i);
@@ -1525,6 +1529,7 @@ static void night_falls() {
 		wrpos.wx = wx;
 		wrpos.wy = wy;
 		if (!getcave(&wrpos)) continue;
+		if (sector00separation && !wx && !wy) continue;
 		world_surface_night(&wrpos);
 	}
 
@@ -1532,6 +1537,9 @@ static void night_falls() {
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (Players[i]->wpos.wz) continue;
+		if (sector00separation && Players[i]->wpos.wx == WPOS_SECTOR00_X &&
+		    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
+			continue;
 		msg_print(i, "The sun has fallen.");
 
 		player_night(i);
