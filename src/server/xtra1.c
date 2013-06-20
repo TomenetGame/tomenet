@@ -6629,7 +6629,10 @@ static void process_global_event(int ge_id) {
 	    on the game's FPS for timining ..strange tho :s */
 	elapsed_turns = turn - ge->start_turn - ge->paused_turns;
 	elapsed = elapsed_turns / cfg.fps;
-	wpos.wx = 0; wpos.wy = 0; wpos.wz = 0; /* sector 0,0 by default, for 'sector00separation' */
+
+	wpos.wx = WPOS_SECTOR00_X; /* sector 0,0 by default, for 'sector00separation' */
+	wpos.wy = WPOS_SECTOR00_Y;
+	wpos.wz = WPOS_SECTOR00_Z;
 
 	/* catch absurdities (happens on turn overflow) */
 	if (elapsed_turns > 100000 * cfg.fps) {
@@ -6807,8 +6810,8 @@ static void process_global_event(int ge_id) {
 					}
 #endif
 					if (p_ptr->wpos.wx || p_ptr->wpos.wy) {
-						p_ptr->recall_pos.wx = 0;
-						p_ptr->recall_pos.wy = 0;
+						p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
+						p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
 						p_ptr->recall_pos.wz = -1;
 						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 |
 						    PEVF_SAFEDUN_00 | PEVF_SEPDUN_00;
@@ -6840,7 +6843,7 @@ static void process_global_event(int ge_id) {
 			n = 0;
 			k = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->admin_dm && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
+				if (!Players[i]->admin_dm && Players[i]->wpos.wx == WPOS_SECTOR00_X && Players[i]->wpos.wy == WPOS_SECTOR00_Y) {
 					n++;
 					j = i;
 					/* count players who have already been kicked out of the dungeon by pseudo-dying */
@@ -6857,7 +6860,8 @@ static void process_global_event(int ge_id) {
 										and there's no staircase to re-enter the dungeon.. */
 			else if (elapsed - ge->announcement_time >= 600 - 45) { /* give a warning, peace ends soon */
 				for (i = 1; i <= NumPlayers; i++)
-					if (!Players[i]->wpos.wx && !Players[i]->wpos.wy) msg_print(i, "\377f[The slaughter will begin soon!]");
+					if (Players[i]->wpos.wx == WPOS_SECTOR00_X && Players[i]->wpos.wy == WPOS_SECTOR00_Y)
+						msg_print(i, "\377f[The slaughter will begin soon!]");
 				ge->state[0] = 2;
 			}
 			break;
@@ -6865,7 +6869,7 @@ static void process_global_event(int ge_id) {
 			n = 0;
 			k = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->admin_dm && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
+				if (!Players[i]->admin_dm && Players[i]->wpos.wx == WPOS_SECTOR00_X && Players[i]->wpos.wy == WPOS_SECTOR00_Y) {
 					n++;
 					j = i;
 					if (!Players[i]->wpos.wz) k++;
@@ -6896,12 +6900,12 @@ static void process_global_event(int ge_id) {
 
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
-				if (p_ptr->admin_dm || p_ptr->wpos.wx || p_ptr->wpos.wy) continue;
+				if (p_ptr->admin_dm || p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y) continue;
 
 				if (p_ptr->party) {
 					for (j = 1; j <= NumPlayers; j++) {
 						if (j == i) continue;
-						if (Players[j]->wpos.wx || Players[j]->wpos.wy) continue;
+						if (Players[j]->wpos.wx != WPOS_SECTOR00_X || Players[j]->wpos.wy != WPOS_SECTOR00_Y) continue;
 						/* leave party */
 						if (Players[j]->party == p_ptr->party) party_leave(i, FALSE);
 					}
@@ -6928,8 +6932,8 @@ static void process_global_event(int ge_id) {
 				p_ptr->global_event_temp |= PEVF_AUTOPVP_00;
 
 				if (Players[i]->wpos.wz) {
-					p_ptr->recall_pos.wx = 0;
-					p_ptr->recall_pos.wy = 0;
+					p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
+					p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
 					p_ptr->recall_pos.wz = 0;
 					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 					recall_player(i, "");
@@ -7009,7 +7013,8 @@ static void process_global_event(int ge_id) {
 			}
 
 			p_ptr = Players[j];
-			if (p_ptr->wpos.wx || p_ptr->wpos.wy) { /* not ok.. */
+			if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y
+			    || p_ptr->wpos.wz != 0) { /* not ok.. */
 				ge->state[0] = 255; /* no winner, d'oh */
 				break;
 			}
@@ -7056,7 +7061,8 @@ static void process_global_event(int ge_id) {
 
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
-				if (!p_ptr->wpos.wx && !p_ptr->wpos.wy) {
+				if (p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y
+				    && p_ptr->wpos.wz == 0) {
 					for (j = INVEN_TOTAL; j >= 0; j--) /* Erase the highlander amulets */
 						if (p_ptr->inventory[j].tval == TV_AMULET &&
 						    ((p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) ||
@@ -7541,10 +7547,11 @@ static void process_global_event(int ge_id) {
 					if (Players[i]->id != ge->participant[j]) continue;
 					p_ptr = Players[i];
 
-					if (p_ptr->wpos.wx || p_ptr->wpos.wy) {
-						p_ptr->recall_pos.wx = 0;
-						p_ptr->recall_pos.wy = 0;
-						p_ptr->recall_pos.wz = 0;
+					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y
+					    || p_ptr->wpos.wz != WPOS_SECTOR00_Z) {
+						p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
+						p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
+						p_ptr->recall_pos.wz = WPOS_SECTOR00_Z;
 						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_WALK_00 | PEVF_NOTELE_00 | PEVF_INDOORS_00;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						recall_player(i, "");
@@ -7565,8 +7572,8 @@ static void process_global_event(int ge_id) {
 			/* everyone has escaped or died? */
 			n = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (//!Players[i]->admin_dm && 
-				    !Players[i]->wpos.wx && !Players[i]->wpos.wy)
+				if (!Players[i]->admin_dm && Players[i]->wpos.wx == WPOS_SECTOR00_X &&
+				    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
 					n++;
 			if (!n) {
 				ge->state[0] = 255;
@@ -7586,8 +7593,8 @@ static void process_global_event(int ge_id) {
 			/* everyone has escaped or died? */
 			n = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (//!Players[i]->admin_dm && 
-				    !Players[i]->wpos.wx && !Players[i]->wpos.wy)
+				if (!Players[i]->admin_dm && Players[i]->wpos.wx == WPOS_SECTOR00_X &&
+				    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
 					n++;
 			if (!n) {
 				ge->state[0] = 255;
