@@ -20387,7 +20387,7 @@ D:assisting you without complaining in assessing your combat prowess.
 # a low-power version for the 'Dungeon Keeper' labyrinth event - C. Blue
 N:1146:Horned Reaper
 G:U:B
-I:110:50d100:40:140:0
+I:120:50d100:200:140:0
 W:72:3:0:18000
 E:1:1:1:2:1:1
 O:0:100:0:0
