@@ -2007,7 +2007,7 @@ static void player_setup(int Ind, bool new)
 		wpos->wz = 0;
 
 		/* Remove him from the event and strip quest items off him */
-		for (d = 0; d < MAX_GLOBAL_EVENTS; d++)
+		for (d = 0; d < MAX_GLOBAL_EVENTS; d++) {
 			switch (p_ptr->global_event_type[d]) {
 			case GE_NONE:
 				/* everything is fine */
@@ -2023,6 +2023,7 @@ static void player_setup(int Ind, bool new)
 				break;
 			}
 			p_ptr->global_event_type[d] = GE_NONE;
+		}
 	}
 
 #if 0 /* not really useful? */
