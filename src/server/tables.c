@@ -5580,8 +5580,8 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Defender", "Defender", "Defender", "Defender", },
 		{"Crusader", "Crusader", "Crusader", "Crusader", },
 		{"Knight", "Knight", "Knight", "Knight", },
-		{"Blessed Knight", "Blessed Knight", "Bless.Knight", "Bless.Knight", },
-		{"Sacred Knight", "Sacred Knight", "Sacr.Knight", "Sacr.Knight", },
+		{"Banneret", "Banneret", "Banneret", "Banneret", },//Knight Banneret
+		{"Venerable Knight", "Venerable Knight", "V.Knight", "V.Knight", },
 		{"Paladin", "Paladin", "Paladin", "Paladin", },
 	        {"Knight Commander", "Knight Commander", "Knight Cmdr.", "Knight Cmdr.", },
         },
