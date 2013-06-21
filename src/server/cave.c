@@ -6726,6 +6726,7 @@ void map_area(int Ind)
 	if (!(zcave=getcave(wpos))) return;
 /*	if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
 	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC_MAP)) return;
+	if (in_sector00(wpos) && (sector00flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* Pick an area to map */
 	y1 = TRADPANEL_ROW_MIN - randint(10);
@@ -6796,6 +6797,7 @@ void mind_map_level(int Ind)
 
 	/* for mindcrafters too (NR requires) */
 	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
+	if (in_sector00(wpos) && (sector00flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* build list of players to share the vision with */
 	/* oneself too */
@@ -6985,6 +6987,7 @@ void wiz_lite(int Ind)
 
 /*	if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
 	if (l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
+	if (in_sector00(wpos) && (sector00flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* Scan all normal grids */
 	for (y = 1; y < p_ptr->cur_hgt-1; y++) {

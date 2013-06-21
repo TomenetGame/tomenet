@@ -721,19 +721,19 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 #endif
 	int d, i, min, ox, oy, x = p_ptr->py, y = p_ptr->px;
 	int xx , yy, m_idx, tries = 3000;
-	worldpos *wpos=&p_ptr->wpos;
+	worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr;
 
 	bool look = TRUE;
-
-	if ((p_ptr->global_event_temp & PEVF_NOTELE_00) && p_ptr->wpos.wx == WPOS_SECTOR00_X &&
-	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == WPOS_SECTOR00_Z)
-		return FALSE;
 
 	/* Space/Time Anchor */
 	cave_type **zcave;
 	if(!(zcave = getcave(wpos))) return FALSE;
 	l_ptr = getfloor(wpos);
+
+	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return FALSE;
 
 	/* Hack -- Teleportation when died is always allowed */
 	if (!p_ptr->death) {
@@ -986,14 +986,14 @@ void teleport_player_to(int Ind, int ny, int nx)
 	dun_level *l_ptr;
 	cave_type **zcave;
 
-	if ((p_ptr->global_event_temp & PEVF_NOTELE_00) && p_ptr->wpos.wx == WPOS_SECTOR00_X &&
-	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == WPOS_SECTOR00_Z)
-		return;
-
 	if(!(zcave=getcave(wpos))) return;
 	if (p_ptr->anti_tele) return;
 	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 	l_ptr = getfloor(wpos);
+
+	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return;
 //	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 
 	if (ny < 1) ny = 1;
@@ -1122,17 +1122,17 @@ void teleport_player_level(int Ind, bool force) {
 	wilderness_type *w_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 	struct worldpos new_depth, old_wpos;
-//	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char *msg = "\377rCritical bug!";
 	cave_type **zcave;
-
-	if ((p_ptr->global_event_temp & PEVF_NOTELE_00) && p_ptr->wpos.wx == WPOS_SECTOR00_X &&
-	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == WPOS_SECTOR00_Z)
-		return;
 
 	if (!(zcave = getcave(wpos))) return;
 	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) && !force) return;
 //	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
+
+	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return;
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return;
 
 	/* Space/Time Anchor */
 	if (p_ptr->anti_tele && !force) return;

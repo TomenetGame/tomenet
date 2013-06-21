@@ -6985,11 +6985,13 @@ static int Receive_run(int ind)
 	char ch;
 	int i, n, player = -1;
 	char dir;
+	dun_level *l_ptr = NULL;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
 		use_esp_link(&player, LINKF_MOV);
 		p_ptr = Players[player];
+		l_ptr = getfloor(&p_ptr->wpos);
 	}
 
 	/* paranoia? */
@@ -6997,10 +6999,9 @@ static int Receive_run(int ind)
 
 	if (p_ptr->command_rep) p_ptr->command_rep =- 1;
 
-	if ((p_ptr->global_event_temp & PEVF_WALK_00) &&
-	    p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y && 
-	    p_ptr->wpos.wz == WPOS_SECTOR00_Z)
-		return Receive_walk(ind);
+	if ((p_ptr->global_event_temp & PEVF_NO_RUN_00)) return Receive_walk(player);
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) return Receive_walk(player);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RUN)) return Receive_walk(player);
 
 	/* If not the dungeon master, who can always run */
 	if (!p_ptr->admin_dm) {

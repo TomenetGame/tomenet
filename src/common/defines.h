@@ -5634,13 +5634,22 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define LF2_OOD		0x00000002L	/* a freely roaming ood has been generated */
 #define LF2_OOD_FREE	0x00000004L	/* a freely roaming ood has been generated */
 #define LF2_OOD_HI	0x00000008L	/* a freely roaming ood has been generated */
+
 #define LF2_VAULT	0x00000010L	/* a vault has been generated */
 #define LF2_VAULT_OPEN	0x00000020L	/* a non-closed vault has been generated (ew) */
 #define LF2_VAULT_HI	0x00000040L	/* a highly ood in vault been generated */
 #define LF2_PITNEST	0x00000080L	/* pit/nest on level */
+
 #define LF2_PITNEST_HI	0x00000100L	/* high threat pit/nest on level */
 #define LF2_ITEM_OOD	0x00000200L	/* ood item on level */
 #define LF2_ARTIFACT	0x00000400L	/* artifact on level */
+#define LF2_INDOORS	0x00000800L	/* world surface (sector00 usually) is treated like a dungeon floor, causing no sun burn to vampires */
+
+#define LF2_NO_RUN	0x00001000L	/* Cannot run on this level, walk only */
+#define LF2_NO_TELE	0x00002000L	/* Cannot use phase/tele/recall on this level */
+#define LF2_NO_DETECT	0x00004000L	/* Cannot use detection on this level */
+#define LF2_NO_ESP	0x00008000L	/* ESP is disabled on this level */
+
 /* minimum time required to stay on current floor in order to get an extra feeling on next floor */
 #define TURNS_FOR_EXTRA_FEELING		(cfg.fps * 120)
 
@@ -7384,7 +7393,7 @@ extern int PlayerUID;
 #define PEVF_SAFEDUN_00		0x00000004 /* won't die in dungeon/tower in 0,0 */
 #define PEVF_AUTOPVP_00		0x00000008 /* will always be hostile to others in 0,0 */
 #define PEVF_SEPDUN_00		0x00000010 /* unable to leave dungeon or tower in 0,0 via stairs */
-#define PEVF_WALK_00		0x00000020 /* can only walk but not run in 0,0 */
+#define PEVF_NO_RUN_00		0x00000020 /* can only walk but not run in 0,0 */
 #define PEVF_NOTELE_00		0x00000040 /* cannot use phasing/teleportation in 0,0 */
 #define PEVF_INDOORS_00		0x00000080 /* the 0,0 event is classified as indoors, so vampires don't get sun burn */
 #define PEVF_ICKY_OK		0x00000100 /* allow wpos changes onto CAVE_ICKY grid */
@@ -7770,6 +7779,10 @@ extern int PlayerUID;
 /* quickly check if a given wpos is within certain special dungeons */
 #define in_irondeepdive(wpos) \
 	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && (wpos)->wz * WPOS_IRONDEEPDIVE_Z > 0)
+
+/* in sector00, and it is active (separated)? */
+#define in_sector00(wpos) \
+	(sector00separation && (wpos)->wx == WPOS_SECTOR00_X && (wpos)->wy == WPOS_SECTOR00_Y && (wpos)->wz == WPOS_SECTOR00_Z)
 
 /* Is given wpos-pointer one of the two fixed towns, Menegroth or Nargothrond
    at dlvl 40 and 80 respectively, in the Ironman Deep Dive Challenge dungeon? */

@@ -4145,7 +4145,9 @@ void calc_boni(int Ind)
 	p_ptr->sun_burn = FALSE;
 	if ((p_ptr->prace == RACE_VAMPIRE ||
 	    (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'V'))
-	    && !p_ptr->ghost && !(p_ptr->global_event_temp & PEVF_INDOORS_00)) {
+	    && !p_ptr->ghost && !(p_ptr->global_event_temp & PEVF_INDOORS_00)
+	    && !(l_ptr && (l_ptr->flags2 & LF2_INDOORS))
+	    && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS))) {
 		/* damage from sun light */
 		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
 		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) &&
@@ -6315,7 +6317,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[2], " Rules: Make sure that you don't gain ANY experience until it starts.  ");
 		strcpy(ge->description[3], "        Also, you aren't allowed to pick up ANY gold/items from another");
 		strcpy(ge->description[4], "        player before the tournament begins!                           ");
-		strcpy(ge->description[5], " Running/phasing/teleport does not work. Make sure you buy a lantern!  ");
+		strcpy(ge->description[5], " Running/teleport/detection do not work. Make sure you buy a lantern!  ");
 		strcpy(ge->description[6], " Your goal is to find one of the escape beacons (light green '>') in   ");
 		strcpy(ge->description[7], " time, before the dungeon gets flooded with lava or the horned reaper  ");
 		strcpy(ge->description[8], " finds you!");
@@ -6729,6 +6731,7 @@ static void process_global_event(int ge_id) {
 		case 0: /* prepare level, gather everyone, start exp'ing */
 			ge->cleanup = 1;
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
+			sector00flags1 = sector00flags2 = 0x0;
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
@@ -6810,7 +6813,7 @@ static void process_global_event(int ge_id) {
 						continue;
 					}
 #endif
-					if (p_ptr->wpos.wx || p_ptr->wpos.wy) {
+					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y) {
 						p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
 						p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
 						p_ptr->recall_pos.wz = -1;
@@ -7083,6 +7086,7 @@ static void process_global_event(int ge_id) {
 				}
 			}
 
+			sector00flags1 = sector00flags2 = 0x0;
 			sector00separation--;
 
 			/* still got a staircase to remove? */
@@ -7220,6 +7224,8 @@ static void process_global_event(int ge_id) {
 			ge->cleanup = 1;
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
 			sector00music = 46; /* terrifying (notele) music */
+			sector00flags1 = LF1_NO_MAGIC_MAP;
+			sector00flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP;
 			sector00wall = FEAT_PERM_INNER; //FEAT_PERM_SOLID gets shaded to slate :/
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
@@ -7556,7 +7562,7 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
 						p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
 						p_ptr->recall_pos.wz = WPOS_SECTOR00_Z;
-						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_WALK_00 | PEVF_NOTELE_00 | PEVF_INDOORS_00 | PEVF_STCK_OK;
+						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_NO_RUN_00 | PEVF_NOTELE_00 | PEVF_INDOORS_00 | PEVF_STCK_OK;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						/* don't spawn them too close to a beacon */
 						p_ptr->avoid_loc = k;
@@ -7658,6 +7664,7 @@ static void process_global_event(int ge_id) {
 				break;
 			}
 
+			sector00flags1 = sector00flags2 = 0x0;
 			sector00separation--;
 
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */

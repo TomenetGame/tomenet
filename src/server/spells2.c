@@ -1623,7 +1623,7 @@ bool detect_treasure(int Ind, int rad)
 	player_type *p_ptr = Players[Ind];
 
 	struct worldpos *wpos=&p_ptr->wpos;
-	dun_level		*l_ptr;
+	dun_level *l_ptr;
 	int		py = p_ptr->py, px = p_ptr->px;
 
 	int		y, x;
@@ -1636,6 +1636,9 @@ bool detect_treasure(int Ind, int rad)
 	cave_type **zcave;
 	if(!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
+
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
 	/* Scan the current panel */
 //	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
@@ -1727,6 +1730,9 @@ bool floor_detect_treasure(int Ind)
 	if(!(zcave = getcave(wpos))) return(FALSE);
 	if(!(l_ptr = getfloor(wpos))) return(FALSE); /* doesn't work on surface levels (wpos.wz == 0) */
 
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+
 	/* Scan the whole level */
 	for (y = 0; y < l_ptr->hgt; y++) {
 		for (x = 0; x < l_ptr->wid; x++) {
@@ -1810,6 +1816,9 @@ bool detect_magic(int Ind, int rad)
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+
 	/* Scan the current panel */
 //	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
 	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
@@ -1873,6 +1882,10 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 	int  i, y, x;
 	bool flag = FALSE;
 	cptr desc_monsters = "weird monsters";
+
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
@@ -1977,6 +1990,10 @@ bool detect_invisible(int Ind)
 
 	int		i;
 	bool	flag = FALSE;
+
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
@@ -2100,6 +2117,10 @@ bool detect_evil(int Ind)
 	int		i;
 	bool	flag = FALSE;
 
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
 
@@ -2185,6 +2206,10 @@ bool detect_creatures(int Ind)
 
 	int	i;
 	bool	flag = FALSE;
+
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
@@ -2308,6 +2333,10 @@ void detect_monsters_forced(int Ind)
 	player_type *p_ptr = Players[Ind];
 	int	i;
 
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return;
+
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
 
@@ -2375,10 +2404,10 @@ bool detect_bounty(int Ind, int rad)
 	// 10 ... 60 % of auto-detecting "stuff"
 	int chance = (p_ptr->lev) + 10;
 
-	struct worldpos *wpos=&p_ptr->wpos;
-	dun_level		*l_ptr;
+	struct worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr;
 
-	int		i, j, t_idx = 0;
+	int i, j, t_idx = 0;
 
 	bool	detect = FALSE;
 	bool	detect_trap = FALSE;
@@ -2390,9 +2419,12 @@ bool detect_bounty(int Ind, int rad)
 
 	object_type	*o_ptr;
 
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if(!(zcave = getcave(wpos))) return(FALSE);
 
 	l_ptr = getfloor(wpos);
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+
 
 	/* Scan the current panel */
 	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
@@ -2523,6 +2555,9 @@ bool detect_object(int Ind, int rad)
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+
 	/* Scan the current panel */
 //	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
 	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
@@ -2589,8 +2624,10 @@ bool detect_trap(int Ind, int rad)
 	object_type	*o_ptr;
 
 	if(!(zcave=getcave(wpos))) return(FALSE);
-
 	l_ptr = getfloor(wpos);
+
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
@@ -2702,6 +2739,9 @@ bool detect_sdoor(int Ind, int rad)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
+
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
 	/* Scan the panel */
 //	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)

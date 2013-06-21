@@ -5886,6 +5886,8 @@ Dungeon Keeper:
     Everyone who steps on an escape beacon and presses the '>' key will be
     teleported to Bree and has thereby successfully escaped the maze and
     qualified as a winner.
+    Running, phasing, teleporting, magic mappping, detection and ESP are
+    disabled in the event.
     It does not matter who the first or last is to leave, everyone who manages
     to get out, wins, and gets a parchment for reward that can be turned in at
     the mayor's office.
