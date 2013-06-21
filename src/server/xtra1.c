@@ -6685,7 +6685,7 @@ static void process_global_event(int ge_id) {
 
 				/* enough participants? Don't hand out reward for free to someone. */
 				if (ge->min_participants && (participants < ge->min_participants)) {
-					msg_broadcast_format(0, "\377y%s needs at least %d participants.", ge->title, ge->min_participants);
+					msg_broadcast_format(0, "\377y%s needs at least %d participant%s.", ge->title, ge->min_participants, ge->min_participants == 1 ? "" : "s");
 					s_printf("%s EVENT_NOPLAYERS: %d (%s) has only %d/%d participants.\n", showtime(), ge_id + 1, ge->title, participants, ge->min_participants);
 					/* remove players who DID sign up from being 'participants' */
 					for (j = 1; j <= NumPlayers; j++)
