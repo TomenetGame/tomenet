@@ -4443,7 +4443,7 @@ player_class class_info[MAX_CLASS] =
  *   HD, Exp*/
 		30, 35, 30, 4, 25, 25, 50, 44,
 		8, 11, 10, 0, 10,  5, 20, 25,
-		5, 40,//5, 50
+		5, 35,//5, 40
                 {
                         {
                                 SKILL_COMBAT,
@@ -4586,7 +4586,7 @@ player_class class_info[MAX_CLASS] =
  *   HD, Exp*/
 		10, 30, 30,  4, 20, 30, 45, 23,
 		 0, 11, 10,  0,  3,  5, 20, 12,
-		3, 45, //4, 30
+		3, 40, //3, 45
                 {
 #if 0 /* mimicmage/mimicpriest/mimicmagepriest pure caster shaman as actually intended */
                         {
