@@ -1675,7 +1675,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 2000L);//1500
 				} else {
 //					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
-					if (f1 & TR1_BLOWS) value += 10000 + pval * 20000L;
+					if (f1 & TR1_BLOWS) value += pval * (pval + 2) * 5000L;
 				}
 
 				/* Give credit for extra casting */
@@ -2529,7 +2529,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 2000L);//1500
 				} else {
 //					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
-					if (f1 & TR1_BLOWS) value += pval * 20000L;
+					if (f1 & TR1_BLOWS) value += pval * (pval + 2) * 5000L;
 				}
 
 				/* Give credit for extra casting */
