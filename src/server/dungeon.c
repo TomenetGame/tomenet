@@ -5870,7 +5870,18 @@ void process_player_change_wpos(int Ind)
 		if (x < 1 || y < 1 || x > p_ptr->cur_wid - 2 || y > p_ptr->cur_hgt - 2)
 			continue;
 
+		/* should somewhat stay away from certain locations? */
+		if (p_ptr->avoid_loc)
+			for (d = 0; d < p_ptr->avoid_loc; d++)
+				if (distance(y, x, p_ptr->avoid_loc_y[d], p_ptr->avoid_loc_x[d]) < 8)
+					continue;
+
 		break;
+	}
+	/* this is required to make sense, isn't it.. */
+	if (j == 5000) {
+		x = startx;
+		y = starty;
 	}
 
 #if 0

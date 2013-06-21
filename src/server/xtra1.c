@@ -7213,7 +7213,9 @@ static void process_global_event(int ge_id) {
 	/* Dungeon Keeper labyrinth race */
 	case GE_DUNGEON_KEEPER:
 		switch (ge->state[0]) {
-		case 0: /* prepare level, gather everyone, begin */
+		case 0: { /* prepare level, gather everyone, begin */
+			int bx[3], by[3];
+
 			ge->state[1] = 0;
 			ge->cleanup = 1;
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
@@ -7518,6 +7520,7 @@ static void process_global_event(int ge_id) {
 				}
 				if (!n) continue;
 				cave_set_feat_live(&wpos, y, x, FEAT_BEACON);
+				bx[k] = x; by[k] = y;
 				k++;
 			}
 			if (!k) s_printf("..COULDN'T PLACE exit beacons\n");
@@ -7555,7 +7558,12 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wz = WPOS_SECTOR00_Z;
 						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_WALK_00 | PEVF_NOTELE_00 | PEVF_INDOORS_00 | PEVF_STCK_OK;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						/* don't spawn them too close to a beacon */
+						p_ptr->avoid_loc = k;
+						p_ptr->avoid_loc_x = bx;
+						p_ptr->avoid_loc_y = by;
 						recall_player(i, "");
+						p_ptr->avoid_loc = 0;
 					}
 
 					/* may only take part in one tournament per char */
@@ -7572,6 +7580,7 @@ static void process_global_event(int ge_id) {
 
 			ge->state[0] = 1;
 			break;
+			}
 		case 1: /* hunt/race phase - end if all players escape or die or after a timeout */
 			/* everyone has escaped or died? */
 			n = 0;

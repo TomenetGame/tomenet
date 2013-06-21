@@ -1979,6 +1979,9 @@ struct player_type
 	worldpos recall_pos;	/* what position to recall to */
 	u16b town_x, town_y;
 
+	int avoid_loc;		/* array size of locations to avoid when changing wpos (recalling) */
+	int *avoid_loc_x, *avoid_loc_y;
+
 	s16b stat_max[6];	/* Current "maximal" stat values */
 	s16b stat_cur[6];	/* Current "natural" stat values */
 
