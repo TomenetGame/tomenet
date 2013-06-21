@@ -1498,8 +1498,8 @@ int party_add(int adder, cptr name) {
 	    !at_netherrealm(&q_ptr->wpos) || !at_netherrealm(&p_ptr->wpos))
 #endif
 	/* Everlasting and other chars cannot be in the same party */
-	if (compat_pmode(parties[party_id].cmode, Ind, FALSE)) {
-		msg_format(adder, "\377yYou cannot form a party with %s characters.", compat_pmode(adder, Ind, FALSE));
+	if (compat_mode(parties[party_id].cmode, p_ptr->mode)) {
+		msg_format(adder, "\377yYou cannot form a party with %s characters.", compat_mode(parties[party_id].cmode, p_ptr->mode));
 		return FALSE;
 	}
 
