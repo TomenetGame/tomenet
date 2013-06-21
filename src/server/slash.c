@@ -3936,15 +3936,17 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/mkill-level") ||
 					prefix(message, "/mkill"))
 			{
-			        /* Kill all the monsters */
-			        for (i = m_max - 1; i >= 1; i--)
-			        {
-			                monster_type *m_ptr = &m_list[i];
-			                if (inarea(&m_ptr->wpos,&p_ptr->wpos))
-			                        monster_death(Ind, i);
-			        }
-				wipe_m_list(&wp);
-				msg_format(Ind, "\377rMonsters on %s were killed.", wpos_format(Ind, &wp));
+				bool fear;
+				/* Kill all the monsters */
+				for (i = m_max - 1; i >= 1; i--) {
+					monster_type *m_ptr = &m_list[i];
+					if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+					fear = FALSE;
+					if (tk) mon_take_hit(Ind, i, m_ptr->hp + 1, &fear, " dies from a bolt from the blue");
+					else monster_death(Ind, i);
+				}
+				//wipe_m_list(&wp);
+				msg_format(Ind, "\377rMonsters on %s were killed.", wpos_format(Ind, &p_ptr->wpos));
 				return;
 			}
 			else if (prefix(message, "/game")){
