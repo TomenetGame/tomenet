@@ -5511,12 +5511,13 @@ cptr player_title[MAX_CLASS][11][4] =
 
 	/* Priest */
 	{
-		{"Believer", "Believer", "Believer", "Believer", },
+//		{"Believer", "Believer", "Believer", "Believer", },
 		{"Acolyte", "Acolyte", "Acolyte", "Acolyte", },
 		{"Adept", "Adept", "Adept", "Adept", },
 		{"Curate", "Curate", "Curate", "Curate", },
 		{"Canon", "Canon", "Canon", "Canon", },
 		{"Priest", "Priestess", "Priest", "Priestess", },
+		{"Exorcist", "Exorcist", "Exorcist", "Exorcist", },
 		{"Bishop", "Bishop", "Bishop", "Bishop", },
 		{"Arch-Bishop", "Arch-Bishop", "Arch-Bishop", "Arch-Bishop", },
 		{"Cardinal", "Cardinal", "Cardinal", "Cardinal", },
@@ -5574,14 +5575,15 @@ cptr player_title[MAX_CLASS][11][4] =
 	{
 		{"Page", "Page", "Page", "Page", },
 		{"Squire", "Squiress", "Squire", "Squiress", },
-//		{"Acolyte", "Acolyte", "Acolyte", "Acolyte", },
 		{"Faithful", "Faithful", "Faithful", "Faithful", },
 		{"Zealot", "Zealot", "Zealot", "Zealot", },
+		{"Chaplain", "Chaplain", "Chaplain", "Chaplain", },
 		{"Defender", "Defender", "Defender", "Defender", },
 		{"Crusader", "Crusader", "Crusader", "Crusader", },
+		//Knight Seargent
 		{"Knight", "Knight", "Knight", "Knight", },
 		{"Banneret", "Banneret", "Banneret", "Banneret", },//Knight Banneret
-		{"Venerable Knight", "Venerable Knight", "V.Knight", "V.Knight", },
+		//{"Venerable Knight", "Venerable Knight", "V.Knight", "V.Knight", },
 		{"Paladin", "Paladin", "Paladin", "Paladin", },
 	        {"Knight Commander", "Knight Commander", "Knight Cmdr.", "Knight Cmdr.", },
         },
@@ -5723,7 +5725,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 
 	/* Priest */
 	{
-		{"Venerable Patriarch", "Venerable Matriarch", "V.Patriarch", "V.Matriarch", },
+		{"Protonotary", "Protonotary", "Protonotary", "Protonotary", },
 		{"Saint", "Saint", "Saint", "Saint", },
 		{"Ascended", "Ascended", "Ascended", "Ascended", },
 		{"Demi", "Demi", "Demi", "Demi", }, //Pope? :)
@@ -5768,8 +5770,9 @@ cptr player_title_special[MAX_CLASS][5][4] =
 
 	/* Paladin */
 	{
-	        {"Sacred Defender", "Sacred Defender", "Sac.Defender", "Sac.Defender", },
-		{"Avenger", "Avenger", "Avenger", "Avenger", },
+	        {"Sacred Defender", "Sacred Defender", "S.Defender", "S.Defender", },
+	        {"Venerable Templar", "Venerable Templar", "V.Templar", "V.Templar", },
+//		{"Avenger", "Avenger", "Avenger", "Avenger", },
 		{"Holy Avenger", "Holy Avenger", "Holy Avenger", "Holy Avenger", },
 //		{"Holy Defender", "Holy Defender", }, defender comes before avenger if at all;
 //							DF and HA are old 'good' ego mods from predecessors.
