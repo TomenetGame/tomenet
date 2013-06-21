@@ -10510,6 +10510,24 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	bool flat = FALSE, trad = FALSE;
 	struct c_special *cs_ptr;
 
+	/* turn ponds into lava pools if floor is usually lava, maybe change other feats too */
+	bool lava_floor = FALSE;
+	dungeon_type *d_ptr = getdungeon(wpos);
+	int dun_type = 0;
+	if (d_ptr) {
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+		if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+		else dun_type = d_ptr->type;
+#else
+		dun_type = d_ptr->type;
+#endif
+		for (i = 0; i < 5; i++)
+			if (d_info[dun_type].floor[i] == FEAT_SHAL_LAVA ||
+			    d_info[dun_type].floor[i] == FEAT_DEEP_LAVA)
+				lava_floor = TRUE;
+		//d_info[iddc[ABS(wpos->wz)].next].floor[i];
+	}
+
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return; /*multitowns*/
 
@@ -10615,7 +10633,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 			c_ptr = &zcave[y][x];
 
-			c_ptr->feat = FEAT_TREE;
+			c_ptr->feat = lava_floor ? FEAT_DEAD_TREE: FEAT_TREE;
 		}
 
 		return;
@@ -10629,7 +10647,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				c_ptr = &zcave[y][x];
 
 				/* Fill with water */
-				c_ptr->feat = FEAT_DEEP_WATER;
+				c_ptr->feat = lava_floor ? FEAT_DEEP_LAVA : FEAT_DEEP_WATER;
 			}
 		}
 
@@ -10712,7 +10730,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 				/* Put some trees */
 				if (randint(100) < chance)
-					c_ptr->feat = FEAT_TREE;
+					c_ptr->feat = lava_floor ? FEAT_DEAD_TREE : FEAT_TREE;
 			}
 		}
 
