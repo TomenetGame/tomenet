@@ -3117,12 +3117,13 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 400,//800
                         },
-						/* let's give them some skills for non-swords */
+#if 0 /* unusable: depends on BLESSED too much - just confuses newbies anyway */
                         {
                                 SKILL_SWORD,
                                 '+', 0,
                                 '+', 500,
                         },
+#endif
                         {
                                 SKILL_BLUNT,
                                 '+', 0,
@@ -3756,15 +3757,17 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 750,
                         },
+#if 1 /* offer it at all? */
                         {
                                 SKILL_AXE,
                                 '+', 0,
-                                '+', 700,
+                                '+', 600,//savage^^
                         },
+#endif
                         {
                                 SKILL_BLUNT,
                                 '+', 0,
-                                '+', 800,
+                                '+', 750,
                         },
                         {
                                 SKILL_POLEARM,
@@ -5186,7 +5189,7 @@ player_class class_info[MAX_CLASS] =
 //                                '+', 650,
                                 '+', 750,
                         },
-#if 1 /* gory and brutal axes distract their mind..well, or maybe not? */
+#if 1 /* savage axes distract their mind..well, or maybe not? */
                         {
                                 SKILL_AXE,
                                 '+', 0,

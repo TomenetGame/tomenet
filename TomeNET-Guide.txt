@@ -10561,13 +10561,12 @@ vary. For example a warrior cannot learn magic spells.
     They are very good with magical devices, preferring to call them
     instruments of their god, but are not as good as istari in their use.
     Priests also have excellent saving throws due to divine intervention.
-    Priests make decent fighters, preferring blunt weapons over edged ones.
-    Wisdom is the priest's primary stat.
-    Note that priests get a penalty for wielding non-blunt weapons, except
-    for BLESSED weapons which priests can use without problems independently
-    of their type.
+    Although weak in the beginning, they can make decent fighters who strongly
+    prefer blunt weapons over edged ones. If they wield an edged weapon that
+    isn't blessed, they receive an additional severe penalty.
     Priests are especially adept at sensing curses on any sort of item, an
     ability that grows with their character level.
+    Wisdom is the priest's primary stat.
 
     Hint: Note that their spell Holy Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
