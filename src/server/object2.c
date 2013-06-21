@@ -2735,6 +2735,13 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 #ifdef RANDART_PRICE_BONUS /* just disable in case some randarts end up with outrageous value */
 	/* OPTIONAL/EXPERIMENTAL: Add extra bonus for ranged weapon that has absolute top damage */
 	if (o_ptr->tval == TV_BOW && (i = o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
+ #if 1
+		int ultraboost = i * (o_ptr->to_h + 10);
+		/* boost excessively for 'end game' dam/usability */
+		if ((f3 & TR3_XTRA_SHOTS) && (f3 & TR3_XTRA_MIGHT) &&
+		    o_ptr->to_d >= 24) value += (o_ptr->to_d - 23) * ultraboost * 10;
+ #endif
+
 		i = i - 30;
 		if (f3 & TR3_XTRA_SHOTS) i *= 2;
 		if (f3 & TR3_XTRA_MIGHT) i *= 4;
@@ -2750,9 +2757,9 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 		i = artifact_flag_rating_weapon(o_ptr) * 4;
 		if (i >= 24) {
  #if 1 /* ultraboost for top-end stats? This can result in x2.5 prices for those, up to ~1M Au! */
-			int ultraboost = (i - 14) * (o_ptr->to_h + 10);
+			int ultraboost = i * (o_ptr->to_h + 10);
 			/* boost excessively for 'end game' dam/usability */
-			if (o_ptr->to_d > 25) value += (o_ptr->to_d - 25) * ultraboost * 30;
+			if (o_ptr->to_d > 25) value += (o_ptr->to_d - 25) * ultraboost * 25;
 			/* boost even further for being vampiric in addition to being awesome */
 			if ((f1 & TR1_VAMPIRIC) && o_ptr->to_d >= 20) value += (o_ptr->to_d - 20) * ultraboost * 15;
  #endif
