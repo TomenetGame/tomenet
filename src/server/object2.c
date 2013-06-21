@@ -2749,7 +2749,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 	else if (is_weapon(o_ptr->tval) && (i = o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
 		i = artifact_flag_rating_weapon(o_ptr) * 4;
 		if (i >= 24) {
- #if 0 /* ultraboost for top-end stats? This can result in x2.5 prices for those, up to ~1M Au! */
+ #if 1 /* ultraboost for top-end stats? This can result in x2.5 prices for those, up to ~1M Au! */
 			int ultraboost = (i - 14) * (o_ptr->to_h + 10);
 			/* boost excessively for 'end game' dam/usability */
 			if (o_ptr->to_d > 25) value += (o_ptr->to_d - 25) * ultraboost * 30;
