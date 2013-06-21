@@ -5158,7 +5158,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			already_applied = TRUE;
 			a_m_aux_3(o_ptr, lev, power, resf);
 		}
-		o_ptr->name2 = o_ptr->name2b = 0; /* required? */
+		//o_ptr->name2 = o_ptr->name2b = 0; /* required? */
 	}
 	/* --------------------------------------------------------------------------------- */
 
