@@ -5808,8 +5808,8 @@ void process_player_change_wpos(int Ind)
 
 	/* Highlander Tournament hack: pseudo-teleport the player
 	   after he took a staircase inside the highlander dungeon */
-//	if (sector00separation &&
-	if (p_ptr->wpos.wx == WPOS_HIGHLANDER_DUN_X &&
+	if (sector00separation &&
+	    p_ptr->wpos.wx == WPOS_HIGHLANDER_DUN_X &&
 	    p_ptr->wpos.wy == WPOS_HIGHLANDER_DUN_Y &&
 	    (p_ptr->wpos.wz * WPOS_HIGHLANDER_DUN_Z) > 0
 	    && l_ptr)
@@ -5850,16 +5850,17 @@ void process_player_change_wpos(int Ind)
 		if (!cave_empty_bold(zcave, y, x)) continue;
 
 		/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-		if (wpos->wz == 0) {
+		if (wpos->wz == 0 && !(p_ptr->global_event_temp & PEVF_ICKY_OK)) {
 			if((zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method != LEVEL_HOUSE)) continue;
 			if(!(zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method == LEVEL_HOUSE)) continue;
 		}
 
 		/* Prevent recalling or prob-travelling into no-tele vaults and monster nests! - C. Blue */
-	        if((zcave[y][x].info & (CAVE_STCK | CAVE_NEST_PIT)) &&
+	        if ((zcave[y][x].info & (CAVE_STCK | CAVE_NEST_PIT)) &&
 		    (p_ptr->new_level_method == LEVEL_RECALL_UP || p_ptr->new_level_method == LEVEL_RECALL_DOWN ||
 		    p_ptr->new_level_method == LEVEL_RAND || p_ptr->new_level_method == LEVEL_OUTSIDE_RAND ||
-		    p_ptr->new_level_method == LEVEL_PROB_TRAVEL))
+		    p_ptr->new_level_method == LEVEL_PROB_TRAVEL)
+		    && !(p_ptr->global_event_temp & PEVF_STCK_OK))
 			continue;
 
 		/* Prevent landing onto a store entrance */

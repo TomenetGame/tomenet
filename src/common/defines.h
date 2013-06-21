@@ -7387,6 +7387,8 @@ extern int PlayerUID;
 #define PEVF_WALK_00		0x00000020 /* can only walk but not run in 0,0 */
 #define PEVF_NOTELE_00		0x00000040 /* cannot use phasing/teleportation in 0,0 */
 #define PEVF_INDOORS_00		0x00000080 /* the 0,0 event is classified as indoors, so vampires don't get sun burn */
+#define PEVF_ICKY_OK		0x00000100 /* allow wpos changes onto CAVE_ICKY grid */
+#define PEVF_STCK_OK		0x00000200 /* allow wpos changes onto CAVE_STCK grid */
 
 /* for achievements (top PvP mode rank) - C. Blue */
 #define ACHV_PVP_MAX		1

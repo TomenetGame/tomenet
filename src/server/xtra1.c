@@ -7552,7 +7552,7 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
 						p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
 						p_ptr->recall_pos.wz = WPOS_SECTOR00_Z;
-						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_WALK_00 | PEVF_NOTELE_00 | PEVF_INDOORS_00;
+						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_WALK_00 | PEVF_NOTELE_00 | PEVF_INDOORS_00 | PEVF_STCK_OK;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						recall_player(i, "");
 					}
