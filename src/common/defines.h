@@ -5650,6 +5650,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define LF2_NO_DETECT	0x00004000L	/* Cannot use detection on this level */
 #define LF2_NO_ESP	0x00008000L	/* ESP is disabled on this level */
 
+#define LF2_ESP		0x00010000L	/* Everyone on the level automatically gains full ESP */
+
 /* minimum time required to stay on current floor in order to get an extra feeling on next floor */
 #define TURNS_FOR_EXTRA_FEELING		(cfg.fps * 120)
 

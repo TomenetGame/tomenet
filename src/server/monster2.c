@@ -2103,20 +2103,19 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 void update_mon(int m_idx, bool dist)
 {
 	monster_type *m_ptr = &m_list[m_idx];
-
         monster_race *r_ptr = race_inf(m_ptr);
-
 	player_type *p_ptr;
 
 	/* The current monster location */
 	int fy = m_ptr->fy;
 	int fx = m_ptr->fx;
 
-	struct worldpos *wpos=&m_ptr->wpos;
+	struct worldpos *wpos = &m_ptr->wpos;
 	cave_type **zcave;
 
 	int Ind = m_ptr->closest_player;
 	int n;
+	dun_level *l_ptr = getfloor(wpos);
 
 	/* Local copy for speed - mikaelh */
 	player_type **_Players = Players;
@@ -2218,7 +2217,9 @@ void update_mon(int m_idx, bool dist)
 			}
 
 			/* Telepathy can see all "nearby" monsters with "minds" */
-			if (p_ptr->telepathy || (p_ptr->prace == RACE_DRACONIAN)) {
+			if ((p_ptr->telepathy || (p_ptr->prace == RACE_DRACONIAN)) &&
+			    !(in_sector00(wpos) && (sector00flags2 & LF2_NO_ESP)) &&
+			    !(l_ptr && (l_ptr->flags2 & LF2_NO_ESP))) {
 				bool see = FALSE, drsee = FALSE;
 
 				/* Different ESP */
@@ -2286,6 +2287,10 @@ void update_mon(int m_idx, bool dist)
 
 			/* Arena Monster Challenge event provides wizard-esp too */
 			if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z)
+				flag = TRUE;
+
+			if ((in_sector00(wpos) && (sector00flags2 & LF2_ESP)) ||
+			    (l_ptr && (l_ptr->flags2 & LF2_ESP)))
 				flag = TRUE;
 		}
 
