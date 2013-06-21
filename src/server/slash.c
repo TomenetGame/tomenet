@@ -4954,6 +4954,7 @@ void do_slash_cmd(int Ind, char *message)
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 					if (FALSE
 					    //|| !(f1 & TR1_VAMPIRIC) || !(f1 & TR1_BLOWS)
+					    //|| !(f3 & TR3_XTRA_MIGHT) || !(f3 & TR3_XTRA_SHOTS)
 					    ) {
 						tries--;
 						continue;
