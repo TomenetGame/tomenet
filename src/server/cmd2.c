@@ -509,7 +509,7 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 				o_ptr->discount = 0;
 				o_ptr->level = 0;
 				o_ptr->ident |= ID_MENTAL;
-				o_ptr->note = quark_add("Dungeon Keeper reward");
+				//o_ptr->note = quark_add("Dungeon Keeper reward");
 				inven_carry(Ind, o_ptr);
 				break;
 			case GE_NONE:

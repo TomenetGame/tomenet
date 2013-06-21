@@ -7041,7 +7041,7 @@ static void process_global_event(int ge_id) {
 			o_ptr->discount = 0;
 			o_ptr->level = 0;
 			o_ptr->ident |= ID_MENTAL;
-			o_ptr->note = quark_add("Tournament reward");
+			//o_ptr->note = quark_add("Tournament reward");
 			inven_carry(j, o_ptr);
 
 			s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, ge_id + 1, ge->title);
