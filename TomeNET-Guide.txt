@@ -5876,7 +5876,8 @@ Arena Monster Challenge
 Dungeon Keeper:
     Character who want to participate must be level 1 and have gained no
     experience points at all. Fruit bats or PvP-mode characters are not
-    eligible to join. Items are not required in this event.
+    eligible to join. Except for a brass lantern which you can buy from town
+    store '1' (general store), no items are required for this event.
 
     When the event starts, all participants are transported into a labyrinth of
     rooms made of impenetrable walls but connected by doors or even void jump
