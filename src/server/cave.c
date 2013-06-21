@@ -2646,6 +2646,31 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	/* Feature code */
 	feat = c_ptr->feat;
 
+#if 0
+	/* bad hack to display visible wall instead of clear wall in sector00 events */
+	if (sector00separation &&
+	    *cp == ' ' && feat == FEAT_PERM_CLEAR &&
+	    p_ptr->wpos.wx == WPOS_SECTOR00_X &&
+	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == 0
+	    && sector00wall) {
+		if (!p_ptr->font_map_solid_walls) {
+			*cp = p_ptr->f_char[sector00wall];
+			a = p_ptr->f_attr[sector00wall];
+		} else { /* hack */
+			*cp = p_ptr->f_char_solid[sector00wall];
+			a = p_ptr->f_attr_solid[sector00wall];
+		}
+	}
+#else
+	/* bad hack to display visible wall instead of clear wall in sector00 events */
+	if (sector00separation &&
+	    feat == FEAT_PERM_CLEAR &&
+	    p_ptr->wpos.wx == WPOS_SECTOR00_X &&
+	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == 0
+	    && sector00wall)
+		feat = sector00wall;
+#endif
+
 	/* Access floor */
 	f_ptr = &f_info[feat];
 

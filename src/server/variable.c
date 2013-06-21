@@ -854,6 +854,7 @@ int sector00separation = 0; /* some events separate sector 0,0 from the worldmap
 			 to use it in a special way - WoR won't work either */
 int sector00downstairs = 0; /* remember that sector 0,0 contains staircases downwards at the moment */
 int sector00music = 0; /* special event music */
+int sector00wall = 0; /* outer wall tile around the sector to be displayed instead of FEAT_PERM_CLEAR */
 int ge_special_sector = 0; /* to make it known that a certain sector (or multiple sectors, given in
 			    defines.h as WPOS_ constants) are now in special use for global events. */
 u32b ge_contender_buffer_ID[128]; /* Remember account IDs of players who are supposed to receive */

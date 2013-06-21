@@ -7218,6 +7218,7 @@ static void process_global_event(int ge_id) {
 			ge->cleanup = 1;
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
 			sector00music = 46; /* terrifying (notele) music */
+			sector00wall = FEAT_PERM_INNER; //FEAT_PERM_SOLID gets shaded to slate :/
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
@@ -7229,30 +7230,27 @@ static void process_global_event(int ge_id) {
 			zcave = getcave(&wpos);
 
 			/* wipe level with floor tiles */
-			for (x = 1; x < MAX_WID - 1; x++)
-			for (y = 1; y < MAX_HGT - 1; y++) {
+			for (x = 0; x < MAX_WID; x++)
+			for (y = 0; y < MAX_HGT; y++) {
 				zcave[y][x].feat = FEAT_ASH; /* scary ;) */
-				zcave[y][x].info |= CAVE_GLOW | CAVE_STCK;
+				zcave[y][x].info |= CAVE_STCK;//| CAVE_GLOW;
+				zcave[y][x].info &= ~CAVE_GLOW; /* scarier! */
 			}
 
 			/* add perma wall borders and basic labyrinth grid (rooms) */
 			for (x = 0; x < MAX_WID; x++) {
 				for (y = 4; y <= MAX_HGT - 4; y += 4) {
-					if (x < MAX_WID - 1) {
-						zcave[y][x].feat = FEAT_PERM_INNER;
-						zcave[y][x].info |= CAVE_GLOW;
-					}
+					if (x < MAX_WID - 1) zcave[y][x].feat = FEAT_PERM_INNER;
 				}
+				/* comply with wilderness generation scheme (or crash when approaching) */
 				zcave[0][x].feat = FEAT_PERM_CLEAR;
 				zcave[MAX_HGT - 1][x].feat = FEAT_PERM_CLEAR;
 			}
 			for (y = 0; y < MAX_HGT; y++) {
 				for (x = 4; x <= MAX_WID - 4; x += 4) {
-					if (y < MAX_HGT - 1) {
-						zcave[y][x].feat = FEAT_PERM_INNER;
-						zcave[y][x].info |= CAVE_GLOW;
-					}
+					if (y < MAX_HGT - 1) zcave[y][x].feat = FEAT_PERM_INNER;
 				}
+				/* comply with wilderness generation scheme (or crash when approaching) */
 				zcave[y][0].feat = FEAT_PERM_CLEAR;
 				zcave[y][MAX_WID - 1].feat = FEAT_PERM_CLEAR;
 			}
@@ -7578,7 +7576,8 @@ static void process_global_event(int ge_id) {
 			/* everyone has escaped or died? */
 			n = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->admin_dm && Players[i]->wpos.wx == WPOS_SECTOR00_X &&
+				if (//!Players[i]->admin_dm &&
+				    Players[i]->wpos.wx == WPOS_SECTOR00_X &&
 				    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
 					n++;
 			if (!n) {
