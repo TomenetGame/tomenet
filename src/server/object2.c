@@ -1657,7 +1657,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 
 //				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
 //				if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
-				if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 2000L;/* was 20k, but speed is only 10k */
+				if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 1500L;/* was 20k, but speed is only 10k */
 				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
 
 				/* Give credit for stealth and searching */
@@ -1709,7 +1709,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 				}
 //				else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
 //				else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
-				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 7000L;
+				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 5000L;//7000
 
 				pval = o_ptr->pval;
 
@@ -2273,8 +2273,9 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
 
 	/* 'The' weapon mods */
 	if (f1 & TR1_VAMPIRIC) total += 3;
-	if (f1 & TR1_BLOWS) total += o_ptr->pval * 2;
-	if (f5 & TR5_CRIT) total += (o_ptr->pval + 4) / 2;
+//	if (f1 & TR1_BLOWS) total += o_ptr->pval * 2;
+	if (f1 & TR1_BLOWS) total += (o_ptr->pval * (o_ptr->pval + 1));
+	if (f5 & TR5_CRIT) total += (o_ptr->pval + 5) / 3;
 	else if (f5 & TR5_VORPAL) total += 2;
 
 	if (f1 & TR1_KILL_DEMON) slay++;
@@ -2511,7 +2512,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 
 //				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
 //				if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
-				if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 2000L;/* was 20k, but speed is only 10k */
+				if (f5 & (TR5_CRIT)) value += (pval + 2) * (pval + 2) * 1500L;/* was 20k, but speed is only 10k */
 				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
 
 				/* Give credit for stealth and searching */
@@ -2559,7 +2560,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 				}
 //				else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
 //				else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
-				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 7000L;
+				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 5000L;//7000
 
 				pval = o_ptr->pval;
 
@@ -2747,7 +2748,18 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 	/* OPTIONAL/EXPERIMENTAL: Add extra bonus for weapon that has both, top hit/_dam_ and ea/crit/vamp */
 	else if (is_weapon(o_ptr->tval) && (i = o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
 		i = artifact_flag_rating_weapon(o_ptr) * 4;
-		if (i >= 24) value += (o_ptr->to_h + o_ptr->to_d * 2 + i - 70) * 2000;
+		if (i >= 24) {
+ #if 0 /* ultraboost for top-end stats? This can result in x2.5 prices for those, up to ~1M Au! */
+			int ultraboost = (i - 14) * (o_ptr->to_h + 10);
+			/* boost excessively for 'end game' dam/usability */
+			if (o_ptr->to_d > 25) value += (o_ptr->to_d - 25) * ultraboost * 30;
+			/* boost even further for being vampiric in addition to being awesome */
+			if ((f1 & TR1_VAMPIRIC) && o_ptr->to_d >= 20) value += (o_ptr->to_d - 20) * ultraboost * 15;
+ #endif
+
+			/* boost the value for especially good rating */
+			value += (o_ptr->to_h + o_ptr->to_d * 2 + i - 70) * 2000;
+		}
 	}
 #endif
 
