@@ -6794,6 +6794,7 @@ static void process_global_event(int ge_id) {
 				s_printf("EVENT_LAYOUT: Dungeon already in place.\n");
 			}
 
+			/* teleport the participants into the dungeon */
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
 				if (!ge->participant[j]) continue;
 
@@ -6829,6 +6830,8 @@ static void process_global_event(int ge_id) {
 					object_aware(i, o_ptr);
 					object_known(o_ptr);
 					inven_carry(i, o_ptr);
+					/* may only take part in one tournament per char */
+					gain_exp(i, 1);
 					/* give some safe time for exp'ing */
 					if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 						p_ptr->pkill &= ~PKILL_KILLABLE;
@@ -7556,6 +7559,9 @@ static void process_global_event(int ge_id) {
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						recall_player(i, "");
 					}
+
+					/* may only take part in one tournament per char */
+					gain_exp(i, 1);
 
 					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0 sector */
 
