@@ -6999,9 +6999,9 @@ static int Receive_run(int ind)
 
 	if (p_ptr->command_rep) p_ptr->command_rep =- 1;
 
-	if ((p_ptr->global_event_temp & PEVF_NO_RUN_00)) return Receive_walk(player);
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) return Receive_walk(player);
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RUN)) return Receive_walk(player);
+	if ((p_ptr->global_event_temp & PEVF_NO_RUN_00)) return Receive_walk(ind);
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) return Receive_walk(ind);
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RUN)) return Receive_walk(ind);
 
 	/* If not the dungeon master, who can always run */
 	if (!p_ptr->admin_dm) {
