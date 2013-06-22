@@ -1749,7 +1749,16 @@ if (p_ptr->updated_savegame == 0) {
 			for (j = 0; j < 4; j++) rd_u32b(&p_ptr->global_event_progress[i][j]);
 		}
 	}
-	
+
+	if (!older_than(4, 5, 10))
+		for (i = 0; i < MAX_GLOBAL_EVENT_TYPES; i++) {
+			rd_s16b(&tmp16s);
+			p_ptr->global_event_participated[i] = tmp16s;
+		}
+	else
+		for (i = 0; i < MAX_GLOBAL_EVENT_TYPES; i++)
+			p_ptr->global_event_participated[i] = 0;
+
 	if (!older_than(4, 3, 3)) {
 		rd_s16b(&tmp16s);
 		p_ptr->combat_stance = tmp16s;

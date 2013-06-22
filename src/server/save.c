@@ -845,6 +845,9 @@ static void wr_extra(int Ind)
                 for (j = 0; j < 4; j++) wr_u32b(p_ptr->global_event_progress[i][j]);
         }
 
+	for (i = 0; i < MAX_GLOBAL_EVENT_TYPES; i++)
+		wr_s16b(p_ptr->global_event_participated[i]);
+
         wr_s16b(p_ptr->combat_stance);
         wr_s16b(p_ptr->combat_stance_power);
 	wr_byte(p_ptr->cloaked);

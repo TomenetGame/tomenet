@@ -6444,7 +6444,6 @@ void global_event_signup(int Ind, int n, cptr parm) {
 	/* check individual event restrictions against player */
 	switch (ge->getype) {
 	case GE_HIGHLANDER:	/* Highlander Tournament */
-	case GE_DUNGEON_KEEPER:	/* 'Dungeon Keeper' labyrinth race */
 		if (p_ptr->mode & MODE_DED_IDDC) {
 			msg_print(Ind, "\377ySorry, as a dedicated ironman deep diver you may not participate.");
 			if (!is_admin(p_ptr)) return;
@@ -6593,6 +6592,28 @@ void global_event_signup(int Ind, int n, cptr parm) {
 //		msg_format(Ind, "\377yCouldn't find that monster, do upper/lowercase letters match?", n);
 		msg_format(Ind, "\377yCouldn't find base monster (punctuation and name must be exact).", n);
 		return;
+	case GE_DUNGEON_KEEPER:	/* 'Dungeon Keeper' labyrinth race */
+		if (p_ptr->mode & MODE_DED_IDDC) {
+			msg_print(Ind, "\377ySorry, as a dedicated ironman deep diver you may not participate.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->mode & MODE_PVP) {
+			msg_print(Ind, "\377ySorry, PvP characters may not participate.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->max_plv > 15) {
+			msg_print(Ind, "\377ySorry, you must be at most level 15 to sign up for this event.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->fruit_bat == 1) { /* 1 = native bat, 2 = from chauve-souris */
+			msg_print(Ind, "\377ySorry, native fruit bats are not eligible to join this event.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->global_event_participated[ge->getype]) {
+			msg_print(Ind, "\377ySorry, a character may participate only once in this event.");
+			if (!is_admin(p_ptr)) return;
+		}
+		break;
 	}
 
 	if (parm_log[0]) s_printf("%s EVENT_SIGNUP: %d (%s): %s (%s).\n", showtime(), n + 1, ge->title, p_ptr->name, parm_log);
@@ -6676,7 +6697,6 @@ static void process_global_event(int ge_id) {
 					/* Check that he still fulfils requirements, if any */
 					switch (ge->getype) {
 					case GE_HIGHLANDER:
-					case GE_DUNGEON_KEEPER:
 						if ((p_ptr->max_exp || p_ptr->max_plv > 1) && !is_admin(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
 							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
@@ -6684,6 +6704,16 @@ static void process_global_event(int ge_id) {
 							ge->participant[i] = 0;
 							continue;
 						}
+						break;
+					case GE_DUNGEON_KEEPER:
+						if ((p_ptr->max_plv > 15) && !is_admin(p_ptr)) {
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
+							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
+							p_ptr->global_event_type[ge_id] = GE_NONE;
+							ge->participant[i] = 0;
+							continue;
+						}
+						break;
 					}
 
 					/* Player is valid for entering */
@@ -7466,7 +7496,8 @@ static void process_global_event(int ge_id) {
 					}
 
 					/* may only take part in one tournament per char */
-					gain_exp(i, 1);
+					//gain_exp(i, 1);
+					p_ptr->global_event_participated[ge->getype]++;
 
 					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0 sector */
 

@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	9
+#define SF_VERSION_PATCH	10
 #define SF_VERSION_EXTRA	0
 
 
@@ -7378,7 +7378,8 @@ extern int PlayerUID;
 
 
 /* for global_event - C. Blue */
-#define MAX_GLOBAL_EVENTS	16
+#define MAX_GLOBAL_EVENT_TYPES	16	/* amount of different event types */
+#define MAX_GLOBAL_EVENTS	16	/* max # of concurrently running events */
 #define MAX_GE_PARTICIPANTS	64
 
 /* types of global events: */

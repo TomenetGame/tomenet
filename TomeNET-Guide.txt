@@ -5874,9 +5874,10 @@ Arena Monster Challenge
     disenchanted in this event.
 
 Dungeon Keeper:
-    Character who want to participate must be level 1 and have gained no
-    experience points at all. Fruit bats or PvP-mode characters are not
-    eligible to join. Except for a brass lantern which you can buy from town
+    Character who want to participate must not be of higher level than 15.
+    A character can participate only once in this event.
+    Fruit bats or PvP-mode characters are not eligible to join.
+    Except for a brass lantern which you can buy from town
     store '1' (general store), no items are required for this event.
 
     When the event starts, all participants are transported into a labyrinth of

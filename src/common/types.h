@@ -2692,6 +2692,7 @@ struct player_type
 	time_t global_event_started[MAX_GLOBAL_EVENTS];
 	u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
 	u32b global_event_temp; /* not saved. see defines.h for details */
+	int global_event_participated[MAX_GLOBAL_EVENT_TYPES];
 
 #ifdef ENABLE_MAIA
 	int voidx; int voidy; //for the void jumpgate creation spell; reset on every recall/levelchange/relogins
