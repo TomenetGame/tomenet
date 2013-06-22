@@ -5654,6 +5654,35 @@ void calc_boni(int Ind)
 	    && p_ptr->pspeed > 110)
 		p_ptr->pspeed = 110;
 
+	if ((l_ptr && (l_ptr->flags2 & LF2_NO_RES)) ||
+	    (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RES))) {
+		p_ptr->resist_acid = FALSE;
+		p_ptr->resist_elec = FALSE;
+		p_ptr->resist_fire = FALSE;
+		p_ptr->resist_cold = FALSE;
+		p_ptr->resist_pois = FALSE;
+		p_ptr->resist_conf = FALSE;
+		p_ptr->resist_sound = FALSE;
+		p_ptr->resist_lite = FALSE;
+		p_ptr->resist_dark = FALSE;
+		p_ptr->resist_chaos = FALSE;
+		p_ptr->resist_disen = FALSE;
+		p_ptr->resist_shard = FALSE;
+		p_ptr->resist_nexus = FALSE;
+		p_ptr->resist_neth = FALSE;
+		p_ptr->resist_plasma = FALSE;
+		p_ptr->resist_water = FALSE;
+		p_ptr->resist_time = FALSE;
+		p_ptr->resist_mana = FALSE;
+		p_ptr->immune_acid = FALSE;
+		p_ptr->immune_elec = FALSE;
+		p_ptr->immune_fire = FALSE;
+		p_ptr->immune_cold = FALSE;
+		p_ptr->immune_poison = FALSE;
+		p_ptr->immune_water = FALSE;
+		p_ptr->immune_neth = FALSE;
+	}
+
 	/* Limit mana capacity bonus */
 	if ((p_ptr->to_m > 300) && !is_admin(p_ptr)) p_ptr->to_m = 300;
 
@@ -7260,7 +7289,7 @@ static void process_global_event(int ge_id) {
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
 			sector00music = 46; /* terrifying (notele) music */
 			sector00flags1 = LF1_NO_MAGIC_MAP;
-			sector00flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SPEED;
+			sector00flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SPEED | LF2_NO_RES;
 			sector00wall = FEAT_PERM_INNER; //FEAT_PERM_SOLID gets shaded to slate :/
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
@@ -7485,7 +7514,7 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
 						p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
 						p_ptr->recall_pos.wz = WPOS_SECTOR00_Z;
-						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 | PEVF_NO_RUN_00 | PEVF_NOTELE_00 | PEVF_INDOORS_00 | PEVF_STCK_OK;
+						p_ptr->global_event_temp = PEVF_PASS_00;
 						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						/* don't spawn them too close to a beacon */
 						p_ptr->avoid_loc = k;
@@ -7494,16 +7523,16 @@ static void process_global_event(int ge_id) {
 						recall_player(i, "");
 						p_ptr->avoid_loc = 0;
 					}
+					p_ptr->global_event_temp |= PEVF_NOGHOST_00 | PEVF_NO_RUN_00 | PEVF_NOTELE_00 | PEVF_INDOORS_00 | PEVF_STCK_OK;
+					p_ptr->update |= PU_BONUS;
+					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0 sector */
 
 					/* may only take part in one tournament per char */
 					//gain_exp(i, 1);
 					p_ptr->global_event_participated[ge->getype]++;
 
-					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0 sector */
-
 					/* make sure they stop running (not really needed though..) */
 					disturb(i, 0, 0);
-
 					handle_music(i);
 				}
 			}
