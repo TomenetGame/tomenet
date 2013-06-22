@@ -5649,6 +5649,11 @@ void calc_boni(int Ind)
 	}
 #endif
 
+	if (((l_ptr && (l_ptr->flags2 & LF2_NO_SPEED)) ||
+	    (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_SPEED)))
+	    && p_ptr->pspeed > 110)
+		p_ptr->pspeed = 110;
+
 	/* Limit mana capacity bonus */
 	if ((p_ptr->to_m > 300) && !is_admin(p_ptr)) p_ptr->to_m = 300;
 
@@ -7225,7 +7230,7 @@ static void process_global_event(int ge_id) {
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
 			sector00music = 46; /* terrifying (notele) music */
 			sector00flags1 = LF1_NO_MAGIC_MAP;
-			sector00flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP;
+			sector00flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SPEED;
 			sector00wall = FEAT_PERM_INNER; //FEAT_PERM_SOLID gets shaded to slate :/
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
