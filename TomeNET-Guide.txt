@@ -5165,6 +5165,8 @@ Trap symbols ('^') come in different colours. Here's an overview:
 About trap kits:
 ----------------
 The 'Trapping' skill allows a player to set up 'monster traps'.
+The ability to set up a trap can be accessed by pressing the 'm' key
+or by utilizing the macro wizard (press % and z to start it).
 
 A monster trap consists of
 -a trap kit
