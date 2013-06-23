@@ -1365,7 +1365,7 @@ static void Delete_player(int Ind)
 			cptr title = "";
 			if (p_ptr->total_winner) {
 				if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {
-					title = (p_ptr->male)?"Emperor ":"Empress ";
+					title = (p_ptr->male)?"Emperor ":((!strcmp(p_ptr->name,"Tina"))?"Tiny ":"Empress ");
 				} else {
 					title = (p_ptr->male)?"King ":"Queen ";
 				}
