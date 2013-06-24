@@ -5920,6 +5920,11 @@ Dungeon Keeper:
     temporary luck buff (about 30 minutes duration).
     For details about luck see LUCK flag in (5.8).
 
+    Hints: The Horned Reaper in this maze bashes doors instead of opening them.
+    If you stand still for a turn, you can 'jump' over one adjacent floor grid
+    as quickly as you can double-tap a movement key (or make a macro for that).
+    Players usually do not start next to rooms that have escape beacons.
+
 
 Miscellaneous challenges
 ------------------------
