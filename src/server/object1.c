@@ -3315,7 +3315,7 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_BILBO:
 		return "destroy doors and traps every 30+d30 turns";
 	case ART_SOULCURE:
-		return "holy prayer (+30 AC) every 150+d200 turns";
+		return "holy prayer (+20 AC) every 150+d200 turns";
 	case ART_AMUGROM:
 		return "temporary resistance boost every 250+d200 turns";
 	case ART_HELLFIRE:
