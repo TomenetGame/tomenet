@@ -6346,7 +6346,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		break;
 	case GE_DUNGEON_KEEPER:	/* 'Dungeon Keeper' Labyrinth */
 		strcpy(ge->title, "Dungeon Keeper");
-		strcpy(ge->description[0], " Create a new level 1 character, then sign him on for this race for    ");
+		strcpy(ge->description[0], " Characters up to level 15 are eligible to sign up for this race for   ");
 		strcpy(ge->description[1], " your life, through a labyrinth that is guarded by the Horned Reaper!  ");
 		strcpy(ge->description[2], " Rules: Make sure that you don't gain ANY experience until it starts.  ");
 		strcpy(ge->description[3], "        Also, you aren't allowed to pick up ANY gold/items from another");
