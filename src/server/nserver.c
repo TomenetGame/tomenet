@@ -2753,7 +2753,7 @@ static int Handle_login(int ind)
 	if (cfg.worldd_pjoin) {
 		if (newly_created_msg) {
 			if (p_ptr->fruit_bat)
-				msg_format(i, "\374\377%c%s%s flaps %s wings into the world.", COLOUR_SERVER, title, p_ptr->name, (p_ptr->male?"his":"her"));
+				world_msg(format("\374\377%c%s%s flaps %s wings into the world.", COLOUR_SERVER, title, p_ptr->name, (p_ptr->male?"his":"her")));
 			else
 				world_msg(format("\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name));
 		} else
