@@ -3945,7 +3945,7 @@ void do_slash_cmd(int Ind, char *message)
 					if (tk) mon_take_hit(Ind, i, m_ptr->hp + 1, &fear, " dies from a bolt from the blue");
 					else monster_death(Ind, i);
 				}
-				//wipe_m_list(&wp);
+				wipe_m_list(&wp);
 				msg_format(Ind, "\377rMonsters on %s were killed.", wpos_format(Ind, &p_ptr->wpos));
 				return;
 			}
