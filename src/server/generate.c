@@ -9472,7 +9472,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	}
 
 	/* Hack for bottom of Nether Realm */
-	if (in_netherrealm(wpos) && dun_lev == netherrealm_start + 30) {
+	if (in_netherrealm(wpos) && dun_lev == netherrealm_end) {
 		destroyed = FALSE;
 		empty_level = TRUE; dark_empty = TRUE;
 		cavern = FALSE;
