@@ -10865,38 +10865,38 @@ vary. For example a warrior cannot learn magic spells.
 - Mindcrafter
     Mindcrafters are great melee fighters who additionally train the use of
     telepathy to unleash spells formed by their psychic powers.
-    Their intellect is supreme compared to primitive warriors, making them calm
-    and silent fighters who are hard to read and dangerously sharp.
+    Their intellect is superior compared to primitive warriors, making them calm
+    and silent fighters who are hard to read and are dangerously sharp.
     They have a lot of possibilities to positively or negatively influence the
-    minds of others, their repertoire being somewhat more limited only if they
-    are up against creatures of little or no intelligence.
-    Their primary stat attribute is intelligence, which determines their spell
-    fail rates as well as the most part of their mana pool. Also somewhat
-    affecting the mana pool are charisma and wisdom, although especially wisdom
-    is hardly of any importance to become an able telepathy user.
+    minds of others. However, their repertoire is more limited against
+    creatures of little or no intelligence.
+    Their primary attribute is intelligence, which determines their spell
+    fail rates as well as the majority of their mana pool. Also somewhat
+    affecting their mana pool are charisma and wisdom, although they are 
+    of no importance to become an able telepathy user.
     Aside from intelligence as primary spell-casting stat they will also want
     decent strength for engaging in close combat.
-    They don't lack stealth and are adept at wearing decent armour, except that
-    putting on too heavy head gear (above 4.0 lb) might negatively impact
-    their amount of psychic energy.
+    Putting on heavy head gear (above 4.0 lb) will negatively impact their
+    amount of psychic energy.
     Mindcrafters will learn to resist sanity-draining effects a bit at level
     10, and somewhat better even at level 20.
-    A lot of their spells can actually be cast while blind (or even confused),
-    and their targetted spells often do not require a clean line of fire, since
-    they manifest whereever their mind is focussed on (eg Psionic Blast) and
-    also cannot be reflected by monsters for that same reason.
-    Some of the mindcrafter's spells that interact with friendly targets,
-    mostly his team mates, will require those to prepare and open their mind
-    to become especially sensitive to telepathic contact. This is done by
-    pressing 'p'. Pressing it again will return one's mind to normal.
-    The effects of some necromancy skills are somewhat distracting to
-    mindcrafters, so training them may require somewhat more effort.
+    A lot of their spells can actually be cast while blinded (or even
+    confused), and their targetted spells often do not require a clean line of
+    sight, since they manifest whereever their mind is focussed on (e.g.
+    Psionic Blast).
+    Their spells also cannot be reflected by monsters for that same reason.
+    Some of the mindcrafters' spells that interact with party members
+    will require them to prepare and open their mind for telepathic
+    for telepathic contact. This is done by the party members by
+    pressing 'p'. Pressing it again will disable further telepathic attempts.
+    The effects of some necromancy skills are distracting to mindcrafters, so
+    training them will require more effort.
     They are able to detect 'Telepath' ego monsters via ESP which usually are
-    able to conceal their presence telepathically vs all other classes.
-    Also they are able to resist malicious mind-affecting effects better than
-    other classes, for example such as mind-blanking or psionic attacks.
+    able to conceal their presence telepathically versus all other classes.
+    Mindcrafters are also able to resist malicious mind-affecting effects better
+    than others, for example, mind-blanking or psionic attacks.
     Mindcrafters learn to judge their own sanity much more accurately as they
-    level up, getting a more detailed sanity display at level 10, 20 and 40
+    gain levels, getting a more detailed sanity display at level 10, 20 and 40
     (same as other characters get when they actually train 'Health' skill to
     10, 20 or 40).
 
@@ -10907,7 +10907,7 @@ vary. For example a warrior cannot learn magic spells.
     Arts if you don't want to use weapons, and always keep it maximized.
 
 
-If you raise in levels, you will get new titles. These are displayed between
+As you gain levels, you will get new titles. These are displayed between
 your class name and your character level in the main window. If you die and
 become a ghost, the title will change to 'Ghost' until you get revived.
 Titles change every 5 levels, the final Title is received on level 50.
