@@ -1365,7 +1365,7 @@ void handle_music(int Ind) {
 	}
 #endif
 
-	if (getlevel(&p_ptr->wpos) == 196) {
+	if (in_netherrealm(&p_ptr->wpos) && getlevel(&p_ptr->wpos) == netherrealm_end) {
 		//Zu-Aon
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
