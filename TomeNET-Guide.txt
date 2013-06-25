@@ -5068,7 +5068,7 @@ Submerged Ruins              |  Ar-Pharazon          | Toris Mejistos
 The Illusory Castle          |  King in Yellow       | Helm of Knowledge
 The Sacred Land Of Mountains |  T'ron                | Coat of T'ron
 Erebor                       |  Smaug                | Nauglamir
-Dol Guldur                   |  Shadow of Dol Guldur | Ring of the Durin
+Dol Guldur                   |  Shadow of Dol Guldur | Ring of Durin
 Mount Doom                   |  -                    | -
 Nether Realm                 |  Zu-Aon               | Ring of Phasing
 
