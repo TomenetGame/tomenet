@@ -269,7 +269,6 @@ void world_comm(int fd, int arg){
 							if (x >= 10) buf[0] = '0' + x / 10;
 							buf[1] = '0' + x % 10;
 						}
-						msg_broadcast_format(0, "\374[test] %s", buf);
 						msg_to_irc(buf);
 					}
 				}
