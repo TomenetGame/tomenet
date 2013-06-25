@@ -7903,7 +7903,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	int k = 0;
 	int div, k_elec, k_sound, k_lite;
 	bool kinetic_shield = FALSE;
-
 	/* Hack -- assume obvious */
 	bool obvious = TRUE;
 	/* Player blind-ness */
@@ -7917,21 +7916,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	monster_type *m_ptr = NULL;
 	/* Monster name (for attacks) */
 	char m_name[MNAME_LEN], m_name_gen[MNAME_LEN];
-
 	/* Monster name (for damage) */
 	char killer[MNAME_LEN];
-
 	/* Colour of the damage, either r (standard) or e (unique monster) */
 	char damcol = 'o';
-
 	int psi_resists = 0, hack_dam = 0;
-
 	/* Hack -- messages */
 //	cptr act = NULL;
-
 	/* For resist_time: Limit randomization of effect */
 	int time_influence_choices;
-
 	/* Another player casting attack spell on us? */
 	bool friendly_player = FALSE;
 
@@ -8073,14 +8066,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		   remaining nox cloud after he killed him ;). - C. Blue */
 		return FALSE;
 	}
-#if 1
 	else if (who == PROJECTOR_TERRAIN) {
-		/* TODO: implement me! */
+		dun_level *l_ptr = getfloor(wpos);
+		if ((l_ptr && (l_ptr->flags2 & LF2_FAIR_TERRAIN_DAM)) ||
+		    (in_sector00(wpos) && (sector00flags2 & LF2_FAIR_TERRAIN_DAM)))
+			dam = (p_ptr->mhp * (8 + rand_int(5))) / 15 + 1;
+			/* (4hp is lvl 1 char's min); maybe TODO: give high level players a slight advantage (cause higher loss if they die) */
+
 		sprintf(killer, "hazardous environment");
 		sprintf(m_name, "hazardous environment");
 		sprintf(m_name_gen, "the");
 	}
-#endif
 	/* hack -- by shattering potion */
 	else if (who <= PROJECTOR_UNUSUAL) {
 		/* TODO: add potion name */
