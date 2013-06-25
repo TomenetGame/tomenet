@@ -167,7 +167,7 @@ void wproto(struct client *ccl){
 
 			/* Integrate chat/private chat */
 			case WP_CHAT:
-			case WP_CHAT_TO_IRC:
+			case WP_MSG_TO_IRC:
                                 /* only relay all for now */
 				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
 					char msg[MSG_LEN], *p = wpk->d.chat.ctxt;
@@ -316,12 +316,14 @@ void relay(struct wpacket *wpk, struct client *talker){
 
 		if (ccl == talker) continue;
 
-		if (wpk->type == WP_CHAT_TO_IRC) {
+#if 1
+		if (wpk->type == WP_MSG_TO_IRC) {
 			if (ccl->authed <= 0 || strcmp(slist[ccl->authed - 1].name, "Relay_server"))
 				continue;
-			/* hack: convert to normal chat type, since we've now picked the IRC server as exclusive receipient */
-			wpk->type = WP_CHAT;
+			/* hack: convert to normal message type, since we've now picked the IRC server as exclusive receipient */
+			wpk->type = WP_MESSAGE;
 		}
+#endif
 
 		/* Check the packet relay mask for authed servers - mikaelh */
 		if (ccl->authed > 0) {
@@ -329,8 +331,8 @@ void relay(struct wpacket *wpk, struct client *talker){
 				continue; /* don't relay */
 			}
 
-			/* Filter messages */
-			if (wpk->type == WP_MESSAGE) {
+			/* Filter messages (except special replies to IRC channel) */
+			if (wpk->type == WP_MESSAGE && morph != WP_MSG_TO_IRC) {
 				if (!(slist[ccl->authed - 1].mflags & get_message_type(wpk->d.smsg.stxt))) {
 					continue; /* don't relay */
 				}

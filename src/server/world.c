@@ -270,7 +270,7 @@ void world_comm(int fd, int arg){
 							buf[1] = '0' + x % 10;
 						}
 						msg_broadcast_format(0, "\374[test] %s", buf);
-						chat_to_irc(0, buf);
+						msg_to_irc(buf);
 					}
 				}
 #endif
@@ -468,16 +468,6 @@ void world_chat(uint32_t id, char *text){
 	x=send(WorldSocket, &spk, len, 0);
 }
 
-void chat_to_irc(uint32_t id, char *text){
-	int x, len;
-	if(WorldSocket==-1) return;
-	spk.type=WP_CHAT_TO_IRC;
-	len=sizeof(struct wpacket);
-	snprintf(spk.d.chat.ctxt, MSG_LEN, "%s", text);
-	spk.d.chat.id=id;
-	x=send(WorldSocket, &spk, len, 0);
-}
-
 void world_reboot(){
 	int x, len;
 	if(WorldSocket==-1) return;
@@ -490,6 +480,15 @@ void world_msg(char *text){
 	int x, len;
 	if(WorldSocket==-1) return;
 	spk.type=WP_MESSAGE;
+	len=sizeof(struct wpacket);
+	snprintf(spk.d.smsg.stxt, MSG_LEN, "%s", text);
+	x=send(WorldSocket, &spk, len, 0);
+}
+
+void msg_to_irc(char *text){
+	int x, len;
+	if(WorldSocket==-1) return;
+	spk.type=WP_MSG_TO_IRC;
 	len=sizeof(struct wpacket);
 	snprintf(spk.d.smsg.stxt, MSG_LEN, "%s", text);
 	x=send(WorldSocket, &spk, len, 0);
