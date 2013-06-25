@@ -307,16 +307,21 @@ void wproto(struct client *ccl){
 void relay(struct wpacket *wpk, struct client *talker){
 	struct list *lp;
 	struct client *ccl;
+	int morph = wpk->type;
 
 	wpk->serverid = talker->authed;
 
 	for(lp = clist; lp; lp = lp->next){
 		ccl = (struct client*)lp->data;
 
-		if (wpk->type == WP_CHAT_TO_IRC && 
-		    (ccl->authed <= 0 || strcmp(slist[ccl->authed - 1].name, "Relay_server")))
-			continue;
 		if (ccl == talker) continue;
+
+		if (wpk->type == WP_CHAT_TO_IRC) {
+			if (ccl->authed <= 0 || strcmp(slist[ccl->authed - 1].name, "Relay_server"))
+				continue;
+			/* hack: convert to normal chat type, since we've now picked the IRC server as exclusive receipient */
+			wpk->type = WP_CHAT;
+		}
 
 		/* Check the packet relay mask for authed servers - mikaelh */
 		if (ccl->authed > 0) {
@@ -335,7 +340,8 @@ void relay(struct wpacket *wpk, struct client *talker){
 		/* Specialty: Abuse chat.id for determining destination server. */
 		if (wpk->type == WP_IRCCHAT && wpk->d.chat.id != ccl->authed) continue;
 
-		send(ccl->fd, wpk, sizeof(struct wpacket), 0); 
+		send(ccl->fd, wpk, sizeof(struct wpacket), 0);
+		wpk->type = morph; /* unhack */
 
 		/* Temporary stderr output */
 		if (bpipe) {
