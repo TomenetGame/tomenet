@@ -316,17 +316,12 @@ void relay(struct wpacket *wpk, struct client *talker){
 
 		if (ccl == talker) continue;
 
-#if 1
 		if (wpk->type == WP_MSG_TO_IRC) {
- #if 0
-			if (ccl->authed <= 0 || strcmp(slist[ccl->authed - 1].name, "Relay_server"))
+			if (ccl->authed <= 0 || !strstr(slist[ccl->authed - 1].name, "Relay_server")) /* usually trailing spaces */
 				continue;
- #endif
 			/* hack: convert to normal message type, since we've now picked the IRC server as exclusive receipient */
 			wpk->type = WP_MESSAGE;
-			fprintf(stderr, "sent WP_MSG_TO_IRC\n");
 		}
-#endif
 
 		/* Check the packet relay mask for authed servers - mikaelh */
 		if (ccl->authed > 0) {
