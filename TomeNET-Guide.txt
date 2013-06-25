@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. June 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. June 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -114,6 +114,7 @@ Contents
     (5.9a)  Activatable items
     (5.9b)  Artifacts and artifact resets
     (5.10)  Destruction of items by elemental attacks
+    (5.10a) Equipment damage from elemental attacks
     (5.11)  Monster attack mechanism, Armour Class, damage caps
     (5.12)  Monster attack types and brands
     (5.13)  Earthquakes
@@ -8288,6 +8289,50 @@ powers, for example a leather shield of resist fire will ignore fire.
 
 Some tomes or spellbooks will resist certain elements, for example a
 Tome of the Eternal Flame cannot be harmed by fire.
+
+
+(5.10a) Equipment damage from elemental attacks
+-----------------------------------------------
+Armour can get damaged when an elemental monster attacks you or when you get
+hit by elemental magic. Blocking an attack with a shield may damage it in the
+same manner. Weapons may take damage if you hit an elemental monster with them.
+Armour might also rust from moving through water without a tarpaulin equipped.
+
+Armour/shields getting damage means a reduction of their +AC bonus by 1 point
+each time, while weapons getting damaged means a reduction of their +damage
+bonus by 1 point each time.
+AC bonus won't drop lower than half the negative amount of the base AC.
+Damage bonus won't drop lower than -10.
+
+To prevent any damage, you need to become immune to the element, or the weapon
+needs to ignore or resist the element.
+
+The following table lists the elemental damage taken by various item types.
+
+                    Acid    Fire    Water
+-----------------------------------------------------------------
+Wooden boomerangs   x       x
+Metal boomerangs    x               x
+
+Swords              x               x
+Axes                x               x
+Blunt                       x
+Polearms                    x
+
+Leather caps/Hats   x       x
+Metal caps/Helms    x               x
+Iron crowns         x               x
+Crowns
+Leather shields     x       x
+Shields             x               x
+
+Boots               x       x
+Gloves              x       x
+Cloaks              x       x
+Soft Armour         x       x
+Metal/steel Armour  x               x
+Mithril/adamantite
+DSM Armour
 
 
 
