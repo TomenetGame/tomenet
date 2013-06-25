@@ -167,7 +167,6 @@ void wproto(struct client *ccl){
 
 			/* Integrate chat/private chat */
 			case WP_CHAT:
-			case WP_MSG_TO_IRC:
                                 /* only relay all for now */
 				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
 					char msg[MSG_LEN], *p = wpk->d.chat.ctxt;
@@ -256,6 +255,7 @@ void wproto(struct client *ccl){
 				}
 				break;
 			case WP_MESSAGE:
+			case WP_MSG_TO_IRC:
 				/* simple relay message */
 				client_all = client_chat = client_ctrlo = 0;
 				if(ccl->authed && (ccl->authed>0 || secure.msgs)){
