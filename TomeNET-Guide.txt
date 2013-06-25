@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. June 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. June 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -30,6 +30,7 @@ Contents
 (0) Quickstart (If you don't like to read much :)
     (0.1)   Start & play
     (0.2)   Command reference & key sets
+    (0.2a)  IRC bot commands
     (0.3)   Important inscriptions
     (0.3a)  The auto-inscription feature
     (0.4)   Typical slang/abbreviations
@@ -1114,6 +1115,15 @@ or shorter: /tym [rs]
  (/ver)
 
 
+(0.2a) IRC bot commands
+-----------------------
+When in an IRC channel where the 'TomeNET' bot relays chat to and from a
+game server, you may enter these commands:
+(See (1.1b) on how to set up IRC chat.)
+
+?players        Will reply with a list of players online on this server.
+
+
 
 (0.3) Important inscriptions
 ----------------------------
@@ -1631,6 +1641,7 @@ with other players and developers via the following media:
       and to the main/ironman/arcade server, allowing you to read what's going
       on in-game, and to chat with players simply with any IRC client.
       See below (1.1b) for how to set up IRC chat in detail.
+      See (0.2a) for commands you can send to the TomeNET IRC bot.
 -Voice chat via mumble, get it from http://mumble.sourceforge.net/.
       IP is 'europe.tomenet.net', port is '23348', password is 'tomenet'.
       For details see "(2.4) Installing voice chat".
@@ -1663,6 +1674,7 @@ Joining a channel will relay chat from and to the respective TomeNET server,
 allowing you to read what's going on in-game, and to chat with the players.
 (Note that not all kinds of messages are actually relayed, for example AFK
 messages are not.)
+See (0.2a) for commands you can send to the TomeNET IRC bot.
 
 Usually all IRC clients offer a possibility to configure them to connect a
 specific network (Freenode) and to join specific channels (#tomenet etc.)
