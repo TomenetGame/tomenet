@@ -251,7 +251,7 @@ void world_comm(int fd, int arg){
 				/* Allow certain status commands from IRC to TomeNET server */
 				if ((p = strchr(wpk->d.chat.ctxt, ']')) && *(p += 2) == '!') {
 					/* list number + character names of players online */
-					if (!strcmp(p, "!players")) {
+					if (!strcmp(p, "?players")) {
 						char buf[MSG_LEN];
 						strcpy(buf, " 0 Players: ");
 						x = 0;
