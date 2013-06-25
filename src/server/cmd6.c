@@ -821,8 +821,6 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				}
 			case SV_POTION_INVIS:
 				{
-/* too low to allow a pot of invis given as startup eq to have any effect:
-					set_invis(Ind, 30 + randint(40), p_ptr->lev * 4 / 5); */
 					set_invis(Ind, 15 + randint(10), p_ptr->lev < 30 ? 24 : p_ptr->lev * 4 / 5);
 					ident = TRUE;
 				}
@@ -3302,15 +3300,7 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_SPEED:
 		{
-			if (!p_ptr->fast)
-			{
-				if (set_fast(Ind, randint(30) + 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 10)) ident = TRUE;
-			}
-			else
-			{
-				(void)set_fast(Ind, p_ptr->fast + 5, 10);
-				 /* not removed stacking due to interesting effect */
-			}
+			if (set_fast(Ind, randint(30) + 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 10)) ident = TRUE; /* removed stacking */
 			break;
 		}
 
@@ -4221,15 +4211,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 
 		case SV_ROD_SPEED:
 		{
-			if (!p_ptr->fast)
-			{
-				if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE;
-			}
-			else
-			{
-				(void)set_fast(Ind, p_ptr->fast + 5, 10);
-				 /* not removed stacking due to interesting effect */
-			}
+			if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE; /* removed stacking */
 			o_ptr->pval = 99;
 			break;
 		}
@@ -4703,15 +4685,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 		case SV_ROD_SPEED:
 		{
-			if (!p_ptr->fast)
-			{
-				if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE;
-			}
-			else
-			{
-				(void)set_fast(Ind, p_ptr->fast + 5, 10);
-				 /* not removed stacking due to interesting effect */
-			}
+			if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE; /* removed stacking */
 			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
 			break;
 		}
@@ -5404,13 +5378,7 @@ void do_cmd_activate(int Ind, int item, int dir)
 
 			case ART_FEANOR:
 			{
-				if (!p_ptr->fast)
-				{
-					(void)set_fast(Ind, randint(20) + 20, 15); /* was +20! */
-				} else {
-					(void)set_fast(Ind, p_ptr->fast + 5, 15);
-					 /* not removed stacking due to interesting effect */
-				}
+				(void)set_fast(Ind, randint(20) + 20, 15); /* removed stacking */
 				o_ptr->timeout = 200;
 				break;
 			}
@@ -5448,12 +5416,7 @@ void do_cmd_activate(int Ind, int item, int dir)
 
 			case ART_TARATOL:
 			{
-				if (!p_ptr->fast) {
-					(void)set_fast(Ind, randint(20) + 20, 15);
-				} else {
-					(void)set_fast(Ind, p_ptr->fast + 5, 15);
-					 /* not removed stacking due to interesting effect */
-				}
+				(void)set_fast(Ind, randint(20) + 20, 15); /* removed stacking */
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
 			}
@@ -5738,12 +5701,7 @@ void do_cmd_activate(int Ind, int item, int dir)
 			case ART_CARLAMMAS:
 			{
 				msg_print(Ind, "The amulet lets out a shrill wail...");
-#if 0
-				k = 3 * p_ptr->lev;
-				(void)set_protevil(Ind, randint(25) + k); /* removed stacking */
-#else
 				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
-#endif
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -5752,13 +5710,7 @@ void do_cmd_activate(int Ind, int item, int dir)
 			case ART_TULKAS:
 			{
 				msg_print(Ind, "The ring glows brightly...");
-				if (!p_ptr->fast) {
-					(void)set_fast(Ind, randint(75) + 75, 15);
-				}
-				else {
-					(void)set_fast(Ind, p_ptr->fast + 5, 15);
-					 /* not removed stacking due to interesting effect */
-				}
+				(void)set_fast(Ind, randint(75) + 75, 15); /* removed stacking */
 				o_ptr->timeout = rand_int(150) + 150;
 				break;
 			}
@@ -5935,12 +5887,7 @@ void do_cmd_activate(int Ind, int item, int dir)
 
 			case ART_HIMRING:
 			{
-#if 0
-				k = 3 * p_ptr->lev;
-				(void)set_protevil(Ind, randint(25) + k); /* removed stacking */
-#else
 				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
-#endif
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -6250,15 +6197,7 @@ void do_cmd_activate(int Ind, int item, int dir)
 #endif	// 0
 			case ART_HURIN:
 			{
-				if (!p_ptr->fast)
-				{
-					(void)set_fast(Ind, randint(50) + 50, 10);
-				}
-				else
-				{
-					(void)set_fast(Ind, p_ptr->fast + 5, 10);
-					 /* not removed stacking due to interesting effect */
-				}
+				(void)set_fast(Ind, randint(50) + 50, 10); /* removed stacking */
 				hp_player(Ind, 30);
 				set_afraid(Ind, 0);
 				set_shero(Ind, randint(50) + 50); /* removed stacking */

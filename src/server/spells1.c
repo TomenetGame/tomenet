@@ -9455,14 +9455,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_SATHUNGER_PLAYER:
 		{
 		    if (!p_ptr->suscep_life) {
-#if 0
-			msg_format_near(Ind, "\377y%s doesn't look hungry any longer.", p_ptr->name);
-#else
 			if (p_ptr->male)
 			msg_format_near(Ind, "\377y%s looks like he is going to explode.", p_ptr->name);
 			else
 			msg_format_near(Ind, "\377y%s looks like she is going to explode.", p_ptr->name);
-#endif
 			(void)set_food(Ind, PY_FOOD_MAX - 1);
 		    }
 			break;
@@ -9638,18 +9634,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if (fuzzy) msg_print(Ind, "You feel faster!");
 			else msg_format(Ind, "%^s speeds you up!", killer);
-#if 0 /* removed stacking */
-			if (!p_ptr->fast)
-			{
-				(void)set_fast(Ind, 10 + (dam * 5), dam);
-			}
-			else
-			{
-				(void)set_fast(Ind, p_ptr->fast + 10 + dam, dam);
-			}
-#else
-			(void)set_fast(Ind, 10 + (dam * 5), dam);
-#endif
+			(void)set_fast(Ind, 10 + (dam * 5), dam); /* removed stacking */
 			break;
 		}
 
@@ -9673,14 +9658,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (fuzzy) msg_print(Ind, "You feel protected!");
 			else msg_format(Ind, "%^s shields you!", killer);
 
-#if 0 /* removed stacking */
-			if (!p_ptr->shield)
-				(void)set_shield(Ind, dam, 50, SHIELD_NONE, 0, 0);
-		 	else
-				(void)set_shield(Ind, p_ptr->shield + (dam / 5), 50, SHIELD_NONE, 0, 0);
-#else
-				(void)set_shield(Ind, 10 + (dam * 5), dam, SHIELD_NONE, 0, 0);
-#endif
+			(void)set_shield(Ind, 10 + (dam * 5), dam, SHIELD_NONE, 0, 0); /* removed stacking */
 			break;
 		}
 		
