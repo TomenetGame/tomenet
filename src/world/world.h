@@ -25,6 +25,7 @@
 #define WP_PMSG		12	/* private message */
 #define WP_SINFO	13	/* server info */
 #define WP_IRCCHAT	14	/* chat message directed to a particular server (irc-relay) */
+#define WP_CHAT_TO_IRC	15	/* chat message to IRC channel only (not to other game servers) */
 
 /* World packet flags */
 #define WPF_CHAT	0x0001	/* chat message - C */

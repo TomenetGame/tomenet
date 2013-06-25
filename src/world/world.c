@@ -167,6 +167,7 @@ void wproto(struct client *ccl){
 
 			/* Integrate chat/private chat */
 			case WP_CHAT:
+			case WP_CHAT_TO_IRC:
                                 /* only relay all for now */
 				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
 					char msg[MSG_LEN], *p = wpk->d.chat.ctxt;
@@ -311,31 +312,35 @@ void relay(struct wpacket *wpk, struct client *talker){
 
 	for(lp = clist; lp; lp = lp->next){
 		ccl = (struct client*)lp->data;
-		if (ccl != talker) {
-			/* Check the packet relay mask for authed servers - mikaelh */
-			if (ccl->authed > 0) {
-				if (!(slist[ccl->authed - 1].rflags & (1 << (wpk->type - 1)))) {
+
+		if (wpk->type == WP_CHAT_TO_IRC && 
+		    (ccl->authed <= 0 || strcmp(slist[ccl->authed - 1].name, "Relay_server")))
+			continue;
+		if (ccl == talker) continue;
+
+		/* Check the packet relay mask for authed servers - mikaelh */
+		if (ccl->authed > 0) {
+			if (!(slist[ccl->authed - 1].rflags & (1 << (wpk->type - 1)))) {
+				continue; /* don't relay */
+			}
+
+			/* Filter messages */
+			if (wpk->type == WP_MESSAGE) {
+				if (!(slist[ccl->authed - 1].mflags & get_message_type(wpk->d.smsg.stxt))) {
 					continue; /* don't relay */
 				}
-
-				/* Filter messages */
-				if (wpk->type == WP_MESSAGE) {
-					if (!(slist[ccl->authed - 1].mflags & get_message_type(wpk->d.smsg.stxt))) {
-						continue; /* don't relay */
-					}
-				}
 			}
+		}
 
-			/* Specialty: Abuse chat.id for determining destination server. */
-			if (wpk->type == WP_IRCCHAT && wpk->d.chat.id != ccl->authed) continue;
+		/* Specialty: Abuse chat.id for determining destination server. */
+		if (wpk->type == WP_IRCCHAT && wpk->d.chat.id != ccl->authed) continue;
 
-			send(ccl->fd, wpk, sizeof(struct wpacket), 0); 
+		send(ccl->fd, wpk, sizeof(struct wpacket), 0); 
 
-			/* Temporary stderr output */
-			if (bpipe) {
-				fprintf(stderr, "SIGPIPE from relay (fd: %d)\n", ccl->fd);
-				bpipe = 0;
-			}
+		/* Temporary stderr output */
+		if (bpipe) {
+			fprintf(stderr, "SIGPIPE from relay (fd: %d)\n", ccl->fd);
+			bpipe = 0;
 		}
 	}
 }

@@ -248,6 +248,34 @@ void world_comm(int fd, int arg){
 				}
 
 #if 1
+				/* Allow certain status commands from IRC to TomeNET server */
+				if ((p = strchr(wpk->d.chat.ctxt, ']')) && *(p += 2) == '!') {
+					/* list number + character names of players online */
+					if (!strcmp(p, "!players")) {
+						char buf[MSG_LEN];
+						strcpy(buf, " 0 Players: ");
+						x = 0;
+						for (i = 1; i <= NumPlayers; i++) {
+							if (Players[i]->conn == NOT_CONNECTED) continue;
+							if (Players[i]->admin_dm && cfg.secret_dungeon_master) continue;
+
+							x++;
+							if (strlen(buf) + strlen(Players[i]->name) + 2 >= MSG_LEN - 20) continue; /* paranoia reserved */
+							if (x != 1) strcat(buf, ", ");
+							strcat(buf, Players[i]->name);
+						}
+						if (!x) strcpy(buf, "No players online");
+						else {
+							if (x >= 10) buf[0] = '0' + x / 10;
+							buf[1] = '0' + x % 10;
+						}
+						msg_broadcast_format(0, "\374[test] %s", buf);
+						chat_to_irc(0, buf);
+					}
+				}
+#endif
+
+#if 1
 				/* log */
 				strcpy(msg, "[IRC]");
 				wmsg_ptr = wpk->d.chat.ctxt;
@@ -434,6 +462,16 @@ void world_chat(uint32_t id, char *text){
 	int x, len;
 	if(WorldSocket==-1) return;
 	spk.type=WP_CHAT;
+	len=sizeof(struct wpacket);
+	snprintf(spk.d.chat.ctxt, MSG_LEN, "%s", text);
+	spk.d.chat.id=id;
+	x=send(WorldSocket, &spk, len, 0);
+}
+
+void chat_to_irc(uint32_t id, char *text){
+	int x, len;
+	if(WorldSocket==-1) return;
+	spk.type=WP_CHAT_TO_IRC;
 	len=sizeof(struct wpacket);
 	snprintf(spk.d.chat.ctxt, MSG_LEN, "%s", text);
 	spk.d.chat.id=id;
