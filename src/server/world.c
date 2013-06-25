@@ -269,6 +269,7 @@ void world_comm(int fd, int arg){
 							if (x >= 10) buf[0] = '0' + x / 10;
 							buf[1] = '0' + x % 10;
 						}
+						if (x == 1) buf[9] = ' '; /* Player_s_ */
 						msg_to_irc(buf);
 					}
 				}
