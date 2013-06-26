@@ -2768,6 +2768,8 @@ struct player_type
 	int kills, kills_lower, kills_higher, kills_equal, kills_own;
 	int free_mimic, pvp_prevent_tele, pvp_prevent_phase;
 	long heal_effect;
+	/* for special events */
+	bool no_heal;
 
 	/* for client-side weather */
 	bool panel_changed;

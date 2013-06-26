@@ -5653,6 +5653,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define LF2_ESP		0x00010000L	/* Everyone on the level automatically gains full ESP */
 #define LF2_NO_SPEED	0x00020000L	/* Everyone on the level moves at at most +0 speed */
 #define LF2_NO_RES	0x00040000L	/* Players on the level will have no elemental resistances/immunities */
+#define LF2_NO_HEAL	0x00080000L	/* Players on the level will be unable to utilize healing magic or potions */
 #define LF2_FAIR_TERRAIN_DAM	0x00080000L	/* Terain damage each player takes is roughly a fixed percentage of his max HP */
 
 /* minimum time required to stay on current floor in order to get an extra feeling on next floor */

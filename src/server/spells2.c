@@ -561,8 +561,9 @@ bool hp_player(int Ind, int num) {
 	// The "number" that the character is displayed as before healing
 	int old_num, new_num;
 	long eff_num; /* actual amount of HP gain */
-
 	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
+
+	if (p_ptr->no_heal) return FALSE;
 
 	p_ptr->test_heal += num;
 
@@ -653,8 +654,9 @@ bool hp_player_quiet(int Ind, int num, bool autoeffect) {
 	// The "number" that the character is displayed as before healing
 	int old_num, new_num;
 	long eff_num; /* actual amount of HP gain */
-
 	long e = PVP_DIMINISHING_HEALING_CAP(p_ptr);
+
+	if (p_ptr->no_heal && !autoeffect) return FALSE;
 
 	p_ptr->test_heal += num;
 

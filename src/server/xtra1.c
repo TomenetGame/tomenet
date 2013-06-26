@@ -3160,9 +3160,17 @@ void calc_boni(int Ind)
 	/* Base skill -- digging */
 	p_ptr->skill_dig = 0;
 
-
 	/* Special admin items */
 	p_ptr->admin_invuln = p_ptr->admin_invinc = FALSE;
+
+	p_ptr->no_heal = FALSE;
+
+
+	/* Not a limit, but good place maybe */
+	if ((l_ptr && (l_ptr->flags2 & LF2_NO_HEAL)) ||
+	    (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_HEAL)))
+		p_ptr->no_heal = TRUE;
+
 
 	/* Calc bonus body */
 	if (p_ptr->body_monster) calc_body_bonus(Ind);
@@ -6348,13 +6356,13 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->title, "Dungeon Keeper");
 		strcpy(ge->description[0], " Characters up to level 15 are eligible to sign up for this race for   ");
 		strcpy(ge->description[1], " your life, through a labyrinth that is guarded by the Horned Reaper!  ");
-		strcpy(ge->description[2], " Rules: Make sure that you don't gain ANY experience until it starts.  ");
-		strcpy(ge->description[3], "        Also, you aren't allowed to pick up ANY gold/items from another");
-		strcpy(ge->description[4], "        player before the tournament begins!                           ");
-		strcpy(ge->description[5], " Running/teleport/detection do not work. Make sure you buy a lantern!  ");
-		strcpy(ge->description[6], " Your goal is to find one of the escape beacons (light green '>') in   ");
-		strcpy(ge->description[7], " time, before the dungeon gets flooded with lava or the horned reaper  ");
-		strcpy(ge->description[8], " finds you!");
+		strcpy(ge->description[2], " Rules: Running, teleporting, healing, detection, maps and speed boni  ");
+		strcpy(ge->description[3], "        do NOT work. You don't need any items for this event, except   ");
+		strcpy(ge->description[4], "        for a brass lantern which you can buy from town store '1'.     ");
+		strcpy(ge->description[5], " Your goal is to find one of the escape beacons (light green '>') in   ");
+		strcpy(ge->description[6], " time, before the horned reaper finds you or the dungeon is flooded    ");
+		strcpy(ge->description[7], " with lava (begins after 5 minutes, after 8 minutes it is submerged    ");
+		strcpy(ge->description[8], " which will mean certain death, even if you are immune to fire).       ");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 60 ; /* 60 minutes max. duration,
 								most of the time is just for announcing it
 								so players will sign on via /evsign <n> */
@@ -7289,7 +7297,7 @@ static void process_global_event(int ge_id) {
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
 			sector00music = 46; /* terrifying (notele) music */
 			sector00flags1 = LF1_NO_MAGIC_MAP;
-			sector00flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SPEED | LF2_NO_RES | LF2_FAIR_TERRAIN_DAM;
+			sector00flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SPEED | LF2_NO_RES | LF2_FAIR_TERRAIN_DAM | LF2_NO_HEAL;
 			sector00wall = FEAT_PERM_INNER; //FEAT_PERM_SOLID gets shaded to slate :/
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
