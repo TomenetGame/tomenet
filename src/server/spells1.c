@@ -6648,7 +6648,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Get blinded later */
 			do_blind = damroll(3, (dam / 20)) + 1;
 
-			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)) {
+			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
+			    || (r_ptr->flags3 & RF3_UNDEAD)) {
 				note = " resists";
 				dam *= 2; dam /= (randint(6) + 6);
 				do_blind = 0;
@@ -12271,7 +12272,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 		case GF_DARK:
 			do_blind = damroll(3, (dam / 20)) + 1;
-			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)) {
+			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
+			    || (r_ptr->flags3 & RF3_UNDEAD)) {
 				dam /= 4;
 				do_blind = 0;
 			}
