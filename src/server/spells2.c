@@ -174,6 +174,9 @@ void divine_gateway(int Ind) {
 			return;
 		}
 
+		// Send some audio feedback
+		Send_beep(Ind);
+
 		set_recall_timer(Ind, 1);
 
 		int i;
