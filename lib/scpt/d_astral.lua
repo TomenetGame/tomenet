@@ -55,7 +55,7 @@ POWERBOLT = add_spell
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
 				fire_bolt(Ind, GF_MANA, args.dir, damroll(get_astral_dam(Ind)), " casts a mana bolt for")
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				fire_bolt(Ind, GF_DISP_ALL, args.dir, damroll(get_astral_dam(Ind)), " casts a nether bolt for")
+				fire_bolt(Ind, GF_DISP_ALL, args.dir, damroll(get_astral_dam(Ind)), " casts a power bolt for")
 			else
 				fire_bolt(Ind, GF_ELEC, args.dir, damroll(get_astral_dam(Ind)), " casts a lightning bolt for")
 			end
@@ -67,7 +67,7 @@ POWERBOLT = add_spell
 	end,
 	["desc"] = 	{
 			"Enlightened: conjures up a powerful bolt of mana",
-			"Corrupted: conjures up a powerful bolt of nether",
+			"Corrupted: conjures up a powerful bolt of power",
 			"Neutral: conjures up a bolt of lightning"
 		}
 }
@@ -121,7 +121,7 @@ POWERBALL = add_spell
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
 				fire_ball(Ind, GF_MANA, args.dir, get_astral_lev(Ind)*9, 2 + get_level(Ind, POWERBALL, 2), " casts a mana ball for")
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_lev(Ind)*9, 2 + get_level(Ind, POWERBALL, 2), " casts a nether ball for")
+				fire_ball(Ind, GF_DISP_ALL, args.dir, get_astral_lev(Ind)*9, 2 + get_level(Ind, POWERBALL, 2), " casts a power ball for")
 			else
 				fire_ball(Ind, GF_ELEC, args.dir, get_astral_lev(Ind)*9, 2 + get_level(Ind, POWERBALL, 2), " casts a lightning ball for")
 			end
@@ -133,7 +133,7 @@ POWERBALL = add_spell
 	end,
 	["desc"] =	{
 			"Enlightened: conjures up a powerful ball of mana",
-			"Corrupted: conjures up a powerful ball of nether",
+			"Corrupted: conjures up a powerful ball of power",
 			"Neutral: conjures up a ball of lightning"
 		}
 }
