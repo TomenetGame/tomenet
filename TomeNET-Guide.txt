@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. June 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 27. June 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -14477,60 +14477,90 @@ It doesn't matter where you are, what level you are, or whether your character
 has 'luck' or not when you read the scroll, the resulting artifact's power is
 always determined randomly.
 
+
 Here is some advice how to use these most valuable scrolls wisely:
 
 DOESN'T ENCHANT WHOLE STACKS:
+
 -Don't use scrolls of artifact creation on item stacks, it would
 reduce the stack to 1.
 
 ONLY WORKS ON STANDARD EQUIPMENT:
+
 -Artifact creation only works on items that can be equipped - with the
 exception of tool items like diggers, picklock, money belt, device of theft
 prevention, tarpaulin, flint, mummy wrapping, climbing set. These won't work!
 
 DOESN'T WORK ON EGOS / ARTS:
+
 -Don't use them on ego items or artifacts, or you will lose the scroll!
-Watch out: 'Indestructible' and 'Cursed' rings are ego items too, so are
+
+-Watch out: 'Indestructible' and 'Cursed' rings are ego items too, so are
 'Amulets of Telepathic Awareness', 'Rings of Polymorphing' and
 Dragon Scale Mails 'of Defense'!
 
 HOW IT WORKS ON JEWELRY:
+
 -In general, it's not always a good idea to try to turn a ring or amulet that
 has high bonus numbers into an artifact, like for example a ring of speed
 (+11) because these numbers will get erased and randomly re-rolled.
-On jewelry (+to-hit,+to-dam) and [+AC] will stay the same (for example a ring
+
+-On jewelry (+to-hit,+to-dam) and [+AC] will stay the same (for example a ring
 of slaying (+10,+15) will keep the (+10,+15)).
 (Any dice (xdy) as well as _base_ AC [x,+0] on jewelry will always become 0.)
 
 HOW IT WORKS ON NON-JEWELRY:
+
 -All boni, to-hit/to-dam/to-ac and the pval/bpval (those (+x) bonus) are
 randomly rerolled. So it won't matter what stats the item has, only its
 base type is important.
 
 ITEMS THAT ALREADY HAVE ONE OR MORE ABILITIES:
+
 -Some items already possess certain abilities even without ego powers.
 For example dragon scale mails or jewelry. Important: The abilities of these
 items will be added to the randart abilities when it comes to determining the
 total power of that random artifact. That means that you're less likely to see
 many additonal abilities on an item which already has several abilities in
-it's usual form.
+it's basic form.
 For example it's hard to get extra mods on a Multi-hued Dragon Scale Mail, and
 in fact impossible to get any extra mod on a Power Dragon Scale Mail, so don't
 waste a scroll on this one.
-However, IGNORE_ flags on items are an exception and do not count into this.
+
+-However, IGNORE_ flags on items are an exception and do not count into this.
 Also, when selecting randart mods, the game will not check if that mod already
 existed on the base item (example: 'everburning' mod being added to a feanorian
 lamp, which already has that by default ie needs no fuel), so if unlucky it
 might seem as if an item did not gain any mods, but in fact it just did not
 gain any NEW mods it didn't already possess.
-Note that any mod the base item type already possesses will definitely also be
-in the final randart. Examples: Shadow Blades and Witan Boots will always
-modify stealth, Demon Hammers will always have at least SLAY_DEMON mod (but can
-also end up 'upgraded' in case they randomly receive a KILL_DEMON mod from the
-artifact creation process).
+
+-Note that any mod the base item type already possesses will definitely also be
+in the final randart.
+Examples: Shadow Blades and Witan Boots will modify stealth, Demon Hammers
+will always have SLAY_DEMON mod.
+However, there are certain exceptions:
+1) if an item gains AGGRAVATE flag in the artifying process, it will lose any
+   stealth or invisibility. This allows more than +5 speed on Witan Boots for
+   example.
+2) Slay flags can be upgraded to kill flags. So a Demon Hammer will lose its
+   granted SLAY_DEMON flag if it gets KILL_DEMON instead.
+3) -Resistances can be upgraded to immunities. So a Serpent Scale Mail will
+    lose its acid resistance if it gets acid immunity.
+   -Confusion resistance is overwritten by chaos resistance.
+4) Minor ESP base flags can be removed from the item in these ways:
+   -Dragons replaces Dragonriders
+   -Evil replaces Orc/Troll/Giant/Undead/Demon
+   -Full ESP removes all other ESP flags
+5) If the item ends up cursed, certain granted base flags can be removed too:
+   -Curse removes blessing
+   -Experience drain removes hold-life
+   -attribute mali remove the according sustenance (STR/INT/WIS/DEX/CON/CHR)
+
 
 DISCOUNTED ITEMS:
-Items will lose any discount tag when they are artified.
+
+-Items will lose any discount tag when they are artified.
+
 
 Also note that randarts cannot get more than two immunities in total.
 
@@ -14574,7 +14604,7 @@ aren't allowed to give more than +5 to any character stat (str, int, etc).
 Similarly, stealth is limited to +5 on most items except for cloaks, so you
 cannot get Witan Boots that give more than +5 to speed, since they also always
 modify stealth (because the base item type modifies stealth), and stealth is
-capped at +5.
+capped at +5. (Exception: If they get aggravation flag.)
 
 On boots, +speed mod takes precedence over most other limiting mods, which
 means that speed-limiting mods will be erased from the boots in most cases if
@@ -14708,7 +14738,7 @@ Body Armour (except for Dragon Scale Mails)
     (these mods may spawn additionally to body armour specific mods above)
         Reflection
         Mana resistance
-        somewhat increased chance to spawn immunities or +LIFE.
+        somewhat increased chance to spawn base immunities or +LIFE.
 Dragon Scale Mails
         Hold life
         Strength bonus (has a chance to include strength sustenance)
