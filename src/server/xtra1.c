@@ -776,7 +776,7 @@ static void health_redraw(int Ind)
 		}
 
 		/* Tracking an unseen player */
-		else if (!p_ptr->play_vis[0 - p_ptr->health_who]) {
+		else if (!p_ptr->play_vis[0 - p_ptr->health_who] && !is_admin(p_ptr)) {
 			/* Indicate that the player health is "unknown" */
 			Send_monster_health(Ind, 0, TERM_WHITE);
 		}
@@ -824,7 +824,7 @@ static void health_redraw(int Ind)
 	}
 
 	/* Tracking an unseen monster */
-	else if (!p_ptr->mon_vis[p_ptr->health_who]) {
+	else if (!p_ptr->mon_vis[p_ptr->health_who] && !is_admin(p_ptr)) {
 		/* Indicate that the monster health is "unknown" */
 		Send_monster_health(Ind, 0, TERM_WHITE);
 	}

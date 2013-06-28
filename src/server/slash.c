@@ -7448,6 +7448,27 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
+			else if (prefix(message, "/mtrack")) { /* track monster health of someone's current target */
+				char m_name[MNAME_LEN];
+				int p;
+
+				if (!tk) {
+					msg_print(Ind, "No player specified.");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE, FALSE);
+				if (!p) return;
+				if (Players[p]->health_who <= 0) {//target_who
+					msg_print(Ind, "No monster looked at.");
+					return;
+				}
+
+				p_ptr->health_who = Players[p]->health_who;
+				monster_desc(0, m_name, p_ptr->health_who, 0);
+				msg_format(Ind, "Tracking %s.", m_name);
+				p_ptr->redraw |= PR_HEALTH;
+				return;
+			}
 		}
 	}
 
