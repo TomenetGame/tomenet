@@ -2056,7 +2056,7 @@ void do_cmd_check_server_settings(int Ind)
 
 	fprintf(fff, "The floor will be erased about %d~%d seconds after you left.\n", cfg.anti_scum, cfg.anti_scum + 10);
 	if ((k=cfg.level_unstatic_chance))
-		fprintf(fff, "When saving in dungeon, the floor is kept for %dx(level) minutes.\n", k);
+		fprintf(fff, "Leaving/ghostdying in dungeon keeps the floor static for %d*dunlevel minutes.\n", k);
 
 	if ((k=cfg.min_unstatic_level) > 0) 
 		fprintf(fff, "Shallow dungeon (before level %d) will never be static. Save in town!\n", k);
