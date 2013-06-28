@@ -262,7 +262,7 @@ POWERCLOUD = add_spell
 	end,
 	["desc"] =	{
 			"Enlightened: conjures up a storm of mana",
-			"Corrupted: conjures up a sphere of annihilation"
+			"Corrupted: conjures up a raging inferno"
 		}
 }
 GATEWAY = add_spell
