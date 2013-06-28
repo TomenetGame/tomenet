@@ -1876,7 +1876,7 @@ void load_auto_inscriptions(cptr name)
 #endif
 }
 
-/* Save Character-Birth file (*.dna) - Kurzel */
+/* Save Character-Birth file (*.dna) */
 void save_birth_file(cptr name)
 {
 	FILE *fp;
@@ -1926,7 +1926,7 @@ void save_birth_file(cptr name)
 	fclose(fp);
 }
 
-/* Load Character-Birth file (*.dna) - Kurzel */
+/* Load Character-Birth file (*.dna) */
 void load_birth_file(cptr name)
 {
 	FILE *fp;

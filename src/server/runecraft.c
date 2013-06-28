@@ -198,13 +198,7 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 	if (r_imperatives[imperative].flag == I_ENHA) {
 		if (r_types[type].flag == T_SIGN) {
 			switch (projection) {
-				case SV_R_TIME: { //stasis
-					damage = 50 + rget_level(50) * r_imperatives[imperative].damage / 10;
-					if (damage > 100) damage = 100;
-					if (damage < 50) damage = 50;
-				break; }
-				
-				case SV_R_CONF: { //recharging
+				case SV_R_TIME: { //recharging
 					damage = (50 + rget_level(50)) * r_imperatives[imperative].damage / 10;
 					if (damage > 100) damage = 100;
 					if (damage < 50) damage = 50;
@@ -828,7 +822,7 @@ s_printf("Duration: %d\n", duration);
 					if (r_imperatives[imperative].flag != I_ENHA) { //monster confusion
 						msg_print(Ind, "Your hands begin to glow.");
 						p_ptr->confusing = TRUE;
-					} else recharge(Ind, damage);
+					} else (void)ident_spell(Ind); //identify
 				break; }
 				
 				case SV_R_INER: {
@@ -870,41 +864,7 @@ s_printf("Duration: %d\n", duration);
 							tx = p_ptr->target_col;
 							ty = p_ptr->target_row;
 							if (player_has_los_bold(Ind, ty, tx)) teleport_player_to(Ind, ty, tx); //Require LoS. (No jumping through walls!)
-					/*	} else { //Use a a direction...(Teleport in a direction until collision or max range. No thru-wall powers!)
-							tx = px;
-							ty = py;
-							switch (dir) { //Kurzel -- Test to ensure spam doesn't overload!
-								case 1:
-								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) { ty++; tx--; }
-								break;
-								case 2:
-								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) ty++;
-								break;
-								case 3:
-								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) { ty++; tx++; }
-								break;
-								case 4:
-								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) tx--;
-								break;
-								case 6:
-								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) tx++;
-								break;
-								case 7:
-								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) { ty--; tx--; }
-								break;
-								case 8:
-								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) ty--;
-								break;
-								case 9:
-								while (player_has_los_bold(Ind, ty, tx) && distance(py, px, ty, tx) < MAX_RANGE) { ty--; tx++; }
-								break;
-								default:
-									msg_print(Ind, "Gravity warps around you.");
-								break;
-							}
-							if (ty == p_ptr->py && tx == p_ptr->px) teleport_player(Ind, 5, FALSE);
-							else teleport_player_to(Ind, ty, tx);
-					*/	}
+						}
 					}
 				break; }
 				
@@ -933,7 +893,7 @@ s_printf("Duration: %d\n", duration);
 					if (r_imperatives[imperative].flag != I_ENHA) {
 						set_fast(Ind, duration, damage);
 						if (r_imperatives[imperative].flag == I_EXPA) fire_ball(Ind, GF_SPEED_PLAYER, 0, damage*2, RCRAFT_PJ_RADIUS, ""); //Hacked -- duration =P same for set_shield, full value when rad 1 (must not hit self!)
-					} else project_los(Ind, GF_STASIS, damage, p_ptr->attacker);
+					} else recharge(Ind, damage);
 				break; }
 				
 				case SV_R_SOUN: {
@@ -974,7 +934,7 @@ s_printf("Duration: %d\n", duration);
 							fire_ball(Ind, GF_RESCOLD_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
 							//fire_ball(Ind, GF_RESPOIS_PLAYER, 0, duration, RCRAFT_PJ_RADIUS, "");
 						}
-					} else set_brand(Ind, duration, BRAND_BASE, 0); //multibrand 'base' - Kurzel
+					} else set_brand(Ind, duration, BRAND_BASE, 0);
 				break; }
 				
 				default: {

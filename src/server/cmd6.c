@@ -2065,6 +2065,7 @@ bool do_cancellation(int Ind, int flags)
 			ident = TRUE;
 			o_ptr->name2b = 0;
 		}
+		if (o_ptr->name3) o_ptr->name3 = 0; //Kurzel - Fix stacking, see object2.c
 		if (o_ptr->timeout) {
 			ident = TRUE;
 			if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)

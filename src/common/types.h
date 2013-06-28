@@ -2906,7 +2906,7 @@ struct rule_type
 	char r_char[5];			/* Monster race allowed */
 };
 
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 typedef struct iddc_type iddc_type;
 struct iddc_type {
 	byte type; //d_info[] index

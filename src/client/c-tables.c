@@ -336,7 +336,7 @@ option_type option_info[OPT_MAX] =
 	"expand_look",			"(broken) Expand the power of the look command" },
 #else
 	{ &c_cfg.uniques_alive,		FALSE,	4,	1, 24, TRUE,
-	"uniques_alive",		"Unique monster list only shows foes not yet slain" },
+	"uniques_alive",		"List only unslain uniques for your local party" },
 #endif
 
 	{ &c_cfg.expand_list,		FALSE,	1,	1, 5, FALSE,

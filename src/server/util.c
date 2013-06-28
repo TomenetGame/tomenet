@@ -1337,7 +1337,7 @@ void handle_music(int Ind) {
 	}
 #endif
 
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 	if (in_irondeepdive(&p_ptr->wpos)) {
 		l_ptr = getfloor(&p_ptr->wpos);
  #if 0 /* kinda annoying to have 2 floors of 'unspecified' music - C. Blue */

@@ -1813,13 +1813,7 @@ u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, b
 	if (r_imperatives[imperative].flag == I_ENHA) {
 		if (r_types[type].flag == T_SIGN) {
 			switch (projection) {
-				case SV_R_TIME: { //stasis
-					damage = 50 + rget_level(50) * r_imperatives[imperative].damage / 10;
-					if (damage > 100) damage = 100;
-					if (damage < 50) damage = 50;
-				break; }
-				
-				case SV_R_CONF: { //recharging
+				case SV_R_TIME: { //recharging
 					damage = (50 + rget_level(50)) * r_imperatives[imperative].damage / 10;
 					if (damage > 100) damage = 100;
 					if (damage < 50) damage = 50;
@@ -2081,7 +2075,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 			break; }
 			
 			case T_CLOU: {
-				if (r_imperatives[imperative].flag == I_ENHA) {
+				if (r_imperatives[imperative].flag != I_ENHA) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
 					color,
 					'a' + i,
@@ -2279,14 +2273,13 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							fail
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% recharging pow %d",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% identify",
 							color,
 							'a' + i,
 							r_types[i].name,
 							sdiff,
 							cost,
-							fail,
-							damage
+							fail
 							);
 						}
 					break; }
@@ -2516,7 +2509,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 							dy
 							);
 						} else {
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% stasis pow %d",
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% recharging pow %d",
 							color,
 							'a' + i,
 							r_types[i].name,

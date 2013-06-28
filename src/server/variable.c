@@ -255,7 +255,7 @@ guild_type guilds[MAX_GUILDS];
 
 struct quest_type quests[20];	/* server quest data */
 
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 struct iddc_type iddc[128]; //(hardcode, ew)
 #endif
 

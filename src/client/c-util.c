@@ -4245,7 +4245,7 @@ Chain_Macro:
 								break; }
 								
 								case T_CLOU: {
-									if (r_imperatives[imperative].flag == I_ENHA) {
+									if (r_imperatives[imperative].flag != I_ENHA) {
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
 										color,
 										'a' + i,
@@ -4443,14 +4443,13 @@ Chain_Macro:
 												fail
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% recharging pow %d",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% identify",
 												color,
 												'a' + i,
 												r_types[i].name,
 												sdiff,
 												cost,
-												fail,
-												damage
+												fail
 												);
 											}
 										break; }
@@ -4680,7 +4679,7 @@ Chain_Macro:
 												dy
 												);
 											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% stasis pow %d",
+												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% recharging pow %d",
 												color,
 												'a' + i,
 												r_types[i].name,

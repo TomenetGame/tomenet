@@ -2485,7 +2485,7 @@ static errr init_other(void)
 	return (0);
 }
 
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 bool indepthrange(byte depth, byte type) {
 	if (depth < d_info[type].mindepth || depth > d_info[type].maxdepth) return FALSE;
 	return TRUE;
@@ -2594,7 +2594,7 @@ errr init_iddc() {
 		iddc[i].step = step;
 		iddc[i].next = next;
 		
-		//Debug Log; print to server? - Kurzel
+		//Debug Log; print to server?
 		//s_printf("IDDC %d -- Type: %d Step: %d Next: %d Boss: %s\n", i, iddc[i].type, iddc[i].step, iddc[i].next, (i == d_info[type].maxdepth) ? "yes" : "no");
 	}
 
@@ -3409,7 +3409,7 @@ void init_some_arrays(void)
 	s_printf("[Initializing arrays... (alloc)]\n");
 	if (init_alloc()) quit("Cannot initialize alloc stuff");
 
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 	/* Initialize some other arrays */
 	s_printf("[Initializing arrays... (iddc)]\n");
 	if (init_iddc()) quit("Cannot initialize iddc stuff");

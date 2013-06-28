@@ -486,7 +486,7 @@ extern int swear_get_level(int i);
 extern void nonswear_set(int i, char *word);
 extern char *nonswear_get(int i);
 extern void init_swearing(void);
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 extern int scan_iddc(void);
 #endif
 

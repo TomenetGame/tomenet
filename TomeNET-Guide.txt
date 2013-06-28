@@ -12971,7 +12971,7 @@ their associated sign spell type effects, and enhanced sign spell effects:
 -------------------------------------------------------------------------------
 Rune     | Rune     | Element        | Sign Spell          | Enhanced Effect    
 -------------------------------------------------------------------------------
-Light    | Darkness | Confusion      | Monster Confusion   | Recharging
+Light    | Darkness | Confusion      | Monster Confusion   | Identify
 Light    | Nexus    | Inertia        | Anchor              | Reverse Tele-To
 Light    | Nether   | Lightning      | Resist Electricity  | Lightning Brand
 Light    | Chaos    | Fire           | Resist Fire         | Fire Brand
@@ -12980,7 +12980,7 @@ Darkness | Nexus    | Gravity        | Area Teleport-To    | Reverse Tele-To
 Darkness | Nether   | Frost          | Resist Cold         | Frost Brand
 Darkness | Chaos    | Acid           | Resist Acid         | Acid Brand
 Darkness | Mana     | Poison         | Resist Poison       | Poison Brand
-Nexus    | Nether   | Time           | Haste               | Stasis
+Nexus    | Nether   | Time           | Haste               | Recharging
 Nexus    | Chaos    | Sound          | Disarm              | Disarming
 Nexus    | Mana     | Shards         | Earthquake          | Dig
 Nether   | Chaos    | Disenchantment | Unmagic             | Cancellation

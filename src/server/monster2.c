@@ -2790,7 +2790,7 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	dungeon_info_type *dinfo_ptr;
 	bool netherrealm_level = in_netherrealm(wpos);
 	bool netherrealm_bottom;
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 	if (in_irondeepdive(wpos)) dinfo_ptr = d_ptr ? &d_info[iddc[ABS(wpos->wz)].type] : NULL;
 	else dinfo_ptr = d_ptr ? &d_info[d_ptr->type] : NULL;
 #else
@@ -2964,7 +2964,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 			}
 
 			/* wrong monster, or not at the bottom of the dungeon? */
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 			if ((in_irondeepdive(wpos)
 			&& (r_idx != dinfo_ptr->final_guardian ||
 			    d_info[iddc[ABS(wpos->wz)].type].maxdepth != ABS(wpos->wz)))
@@ -2985,7 +2985,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 		}
 
 		/* Also use for DUN_xx dungeon-restricted monsters */
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 		if (in_irondeepdive(wpos)) {
 			if (r_ptr->restrict_dun && (!d_ptr || r_ptr->restrict_dun != iddc[ABS(wpos->wz)].type))
 				return FALSE;
@@ -3639,7 +3639,7 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	if (r_ptr->flags1 & RF1_ESCORT) {
 		dungeon_type *dt_ptr = getdungeon(wpos);
 		int dun_type = 0;
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 		if (in_irondeepdive(wpos)) {
 			dun_type = iddc[ABS(wpos->wz)].type;
 		} else if (dt_ptr) dun_type = dt_ptr->type;
@@ -3815,7 +3815,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 		cave_type **zcave;
 		dungeon_type *dt_ptr = getdungeon(wpos);
 		int dun_type = 0;
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 		if (in_irondeepdive(wpos)) {
 			dun_type = iddc[ABS(wpos->wz)].type;
 		} else if (dt_ptr) dun_type = dt_ptr->type;

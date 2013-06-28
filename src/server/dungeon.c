@@ -1017,7 +1017,6 @@ static void process_effects(void)
 					flg = mod_ball_spell_flags(e_ptr->type, flg);
 
 					/* Apply damage */
-					//Effects should also hit grids, for runemaster EFF_WAVE/STOR functionality. - Kurzel!! - Rewrite for fire_wall() above...
 					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 
 					/* Oh, destroyed? RIP */
@@ -1936,7 +1935,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
 			/* Validate Form */
 			if (*inscription != '\0') {
 				m_index = *inscription - 'a';
-				if (m_index < 0 || m_index > RCRAFT_MAX_TYPES || r_types[m_index].flag == T_SIGN || r_types[m_index].flag == T_RUNE || r_types[m_index].flag == T_ENCH) m_flags |= T_BOLT; //Hack -- Disallow 'self' types. - Kurzel
+				if (m_index < 0 || m_index > RCRAFT_MAX_TYPES || r_types[m_index].flag == T_SIGN || r_types[m_index].flag == T_RUNE || r_types[m_index].flag == T_ENCH) m_flags |= T_BOLT; //Hack -- Disallow 'self' types...
 				else m_flags |= r_types[m_index].flag;
 			}
 			else {
@@ -5306,7 +5305,7 @@ static void process_various(void)
 		scan_players();
 		scan_accounts();
 		scan_houses();
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 		(void)scan_iddc();
 #endif
 		if (cfg.auto_purge) {

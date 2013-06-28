@@ -7343,7 +7343,7 @@ void do_slash_cmd(int Ind, char *message)
                                 p_ptr->auto_transport = AT_VALINOR;
 			        return;
 			}
-#ifdef IRONDEEPDIVE_MIXED_TYPES // Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 			/* Re-roll IDDC */
 			else if (prefix(message, "/riddc") || prefix(message, "/liddc")) {
 				int ft = -1, last = 1;

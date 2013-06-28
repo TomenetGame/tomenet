@@ -728,8 +728,8 @@ bool set_brand(int Ind, int v, int t, int p)
                         else msg_format(Ind, "%s glows in many colours!", weapons);
 		      break;
 		    case BRAND_CHAO:
-		        if (plural) msg_format(Ind, "%s seem to twist and warp!", weapons); //used experimentally - Kurzel
-                        else msg_format(Ind, "%s seems to twist and warp!", weapons); //used experimentally - Kurzel
+		        if (plural) msg_format(Ind, "%s seem to twist and warp!", weapons); //used experimentally
+                        else msg_format(Ind, "%s seems to twist and warp!", weapons); //used experimentally
 		      break;
 		    case BRAND_VORP:
 		        if (plural) msg_format(Ind, "%s sharpen!", weapons); //not used
@@ -5180,14 +5180,14 @@ if (cfg.unikill_format) {
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 		if ((in_irondeepdive(wpos) ? (a_idx = d_info[iddc[ABS(wpos->wz)].type].final_artifact) :
 		    (a_idx = d_info[d_ptr->type].final_artifact))
 #else
 		if ((a_idx = d_info[d_ptr->type].final_artifact)
 #endif
 		    /* hack: 0 rarity = always generate -- for Ring of Phasing! */
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 		    && (in_irondeepdive(wpos) //Let's reward those brave IDDC participants?
 		    || !a_info[a_idx].rarity || !rand_int(3))
 #else
@@ -5247,7 +5247,7 @@ if (cfg.unikill_format) {
 				drop_near(qq_ptr, -1, wpos, y, x);
 				s_printf("..dropped.\n");
 			} else  s_printf("..failed.\n");
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel
+#ifdef IRONDEEPDIVE_MIXED_TYPES
 		} else if (in_irondeepdive(wpos) ? (I_kind = d_info[iddc[ABS(wpos->wz)].type].final_object) :
 		    (I_kind = d_info[d_ptr->type].final_object)) {
 #else

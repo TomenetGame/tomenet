@@ -578,7 +578,6 @@ trait_redraw:
 	clear_diz();
 	/* hack: Draw this _after_ clear_diz(), because lineage
 	   titles are too long -_- */
-	   //Kurzel -- Fixed this by removing the silly duplicate 'lineage' text. <,<"
 #ifndef CLASS_BEFORE_RACE
 	put_str("Trait :                               ", 6, 1);
 	c_put_str(TERM_L_BLUE, (char*)trait_info[trait].title, 6, CHAR_COL);
@@ -1351,7 +1350,7 @@ void get_char_info(void)
 		}
 	}
 
-	/* Did this character have a previous incarnation? -Kurzel */
+	/* Did this character have a previous incarnation? */
 	load_birth_file(cname); //valid_dna if we have a valid one
 
 	/* Title everything */

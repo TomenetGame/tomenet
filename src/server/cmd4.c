@@ -290,7 +290,7 @@ void do_cmd_check_uniques(int Ind, int line)
 {
 	monster_race *r_ptr;
 
-	int i, j;
+	int i, j, kk;
 	byte ok;
 	bool full;
 
@@ -358,10 +358,21 @@ void do_cmd_check_uniques(int Ind, int line)
 			r_ptr = &r_info[k];
 
 			/* Compact list */
-			if (p_ptr->uniques_alive && p_ptr->r_killed[k] == 1) continue; //Skip slain uniques if option is set.
+			kk = 0;
+			if (p_ptr->uniques_alive && p_ptr->r_killed[k] == 1) {
+				if (!p_ptr->party) continue; //No party. (._. )
+				for (i = 1; i <= NumPlayers; i++) {
+					q_ptr = Players[i];
+					if (q_ptr->r_killed[k] == 1) continue;
+					if (p_ptr->party != q_ptr->party) continue;
+					if ((p_ptr->wpos.wx != q_ptr->wpos.wx) || (p_ptr->wpos.wy != q_ptr->wpos.wy) || (p_ptr->wpos.wz != q_ptr->wpos.wz)) continue;
+					kk = 1; break;
+				}
+				if (!kk) continue;
+			}
 			
 			/* Output color byte */
-			fprintf(fff, "\377%c", p_ptr->r_killed[k] == 1 ? 'w' : 'D');
+			fprintf(fff, "\377%c", (p_ptr->r_killed[k] == 1 || kk) ? 'w' : 'D');
 
 			/* Hack -- Show the ID for admin -- and also the level */
 			if (admin) fprintf(fff, "(%4d, L%d) ", k, r_ptr->level);
@@ -377,14 +388,44 @@ void do_cmd_check_uniques(int Ind, int line)
 				if (r_ptr->level == 100) fprintf(fff, "\377v%s", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
 				else fprintf(fff, "%s", r_name + r_ptr->name);
 			}
-			if (!(p_ptr->uniques_alive))
+			
 			for (i = 1; i <= NumPlayers; i++) {
 				q_ptr = Players[i];
 
 				/* don't display dungeon master to players */
 				if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
+				
+				if (p_ptr->uniques_alive) {
+					if (p_ptr->id == q_ptr->id) continue;
+					if (!q_ptr->party) continue;
+					if (q_ptr->r_killed[k] == 1) continue;
+					if (p_ptr->party != q_ptr->party) continue;
+					if ((p_ptr->wpos.wx != q_ptr->wpos.wx) || (p_ptr->wpos.wy != q_ptr->wpos.wy) || (p_ptr->wpos.wz != q_ptr->wpos.wz)) continue;
+					attr = 'D';
+					
+					/* first player name entry for this unique? add ':' and go to next line */
+					if (!ok) {
+						fprintf(fff, ":\n");
+						ok = TRUE;
+					}
 
-				if (q_ptr->r_killed[k] == 1) {
+					/* add this player name as entry */
+					fprintf(fff, "\377%c", attr);
+					sprintf(buf, "(%.14s)", q_ptr->name);
+					fprintf(fff, "  %-16.16s", buf);
+
+					/* after 4 entries per line go to next line */
+					j++;
+					full = FALSE;
+					if (j == 4) {
+						fprintf(fff, "\n");
+						j = 0;
+						full = TRUE;
+					}
+					
+					continue;
+				}
+				else if (q_ptr->r_killed[k] == 1) {
 					/* killed it himself */
 
 					attr = 'B';
@@ -458,6 +499,7 @@ void do_cmd_check_uniques(int Ind, int line)
 			if (!full) fprintf(fff, "\n");
 
 			/* extra marker line to show where our glory ends for the moment */
+			if (!(p_ptr->uniques_alive))
 			if (own_highest && own_highest == k) {
 				fprintf(fff, "\377U  (strongest unique monster you killed)\n");
 				/* only display this marker once */

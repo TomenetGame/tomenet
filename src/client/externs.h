@@ -245,11 +245,11 @@ extern byte keymap_dirs[128];
 extern s16b command_cmd;
 extern s16b command_dir;
 
-extern bool valid_dna; //Kurzel
+extern bool valid_dna;
 extern s16b race, dna_race;
 extern s16b class, dna_class;
 extern s16b sex, dna_sex;
-extern s16b mode; //c-birth.c uses sex instead. - Kurzel
+extern s16b mode;
 extern s16b trait, dna_trait;
 
 /* DEG Stuff for new party client */
