@@ -1123,6 +1123,28 @@ return;
 	}
 #endif
 
+	/* Only warn about wrong ammo type at the very beginning (for archers, who carry one of each type) */
+	if (p_ptr->max_plv == 1 &&
+	    !p_ptr->warning_ammotype && slot == INVEN_AMMO
+	    && p_ptr->inventory[INVEN_BOW].tval == TV_BOW) {
+		switch (o_ptr->tval) {
+		case TV_SHOT:
+			if (p_ptr->inventory[INVEN_BOW].sval != SV_SLING)
+				msg_print(Ind, "\377yYou need a sling to fire pebbles or shots.");
+			break;
+		case TV_ARROW:
+			if (p_ptr->inventory[INVEN_BOW].sval != SV_SHORT_BOW &&
+			    p_ptr->inventory[INVEN_BOW].sval != SV_LONG_BOW)
+				msg_print(Ind, "\377yYou need a bow to fire arrows.");
+			break;
+		case TV_BOLT:
+			if (p_ptr->inventory[INVEN_BOW].sval != SV_LIGHT_XBOW &&
+			    p_ptr->inventory[INVEN_BOW].sval != SV_HEAVY_XBOW)
+				msg_print(Ind, "\377yYou need a crossbow to fire bolts.");
+			break;
+		}
+	}
+
 	/* Give additional warning messages if item prevents a certain ability */
 	if (o_ptr->tval == TV_SHIELD) {
 		if (get_skill(p_ptr, SKILL_DODGE))

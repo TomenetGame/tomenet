@@ -2819,6 +2819,7 @@ struct player_type
 	char warning_hungry, warning_autopickup, warning_ranged_autoret;
 	/* note: a sort of "warning_skills" is already implemented, in a different manner */
 	char warning_cloak, warning_macros, warning_numpadmove;
+	char warning_ammotype;
 
 	/* For the 4.4.8.1.0.0 lua update crash bug */
 	char warning_lua_update, warning_lua_count;

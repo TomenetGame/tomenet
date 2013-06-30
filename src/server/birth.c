@@ -2577,6 +2577,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_cloak = 1;
 		p_ptr->warning_macros = 1;
 		p_ptr->warning_numpadmove = 1;
+		p_ptr->warning_ammotype = 1;
 		return;
 	}
 
