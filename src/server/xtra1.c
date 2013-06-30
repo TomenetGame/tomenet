@@ -5769,12 +5769,28 @@ void calc_boni(int Ind)
 		    /* and don't spam Martial Arts users or mage-staff wielders ;) */
 		    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 			p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
-			msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE melee attack per round.");
-			msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
-			msg_print(Ind, "\374\377y    get AT LEAST TWO blows/round (press shift+c to check the #).");
-			msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
-			msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
-			msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
+			msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
+			msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
+			msg_print(Ind, "\374\377yPossible reasons: Weapon is too heavy or your strength is too low.");
+			if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
+				msg_print(Ind, "\374\377y    Try taking off your shield ('t' key) and see if that helps.");
+			switch (p_ptr->pclass) {
+			case CLASS_WARRIOR:
+				msg_print(Ind, "\374\377y    Warriors should try either a dagger, whip, spear or hatchet.");
+				break;
+			case CLASS_PALADIN:
+				msg_print(Ind, "\374\377y    Paladins should try either a dagger, whip, spear or hatchet.");
+				break;
+			case CLASS_MIMIC:
+				msg_print(Ind, "\374\377y    Mimics should try either a dagger, whip, spear or hatchet.");
+				break;
+			case CLASS_ROGUE:
+				msg_print(Ind, "\374\377y    Rogues should try dual-wielding two daggers or main gauches.");
+				break;
+			case CLASS_RANGER:
+				msg_print(Ind, "\374\377y    Rangers should try dual-wielding two daggers or sword & dagger.");
+				break;
+			}
 			s_printf("warning_bpr23: %s\n", p_ptr->name);
 		}
 	} /* suppress_message */
