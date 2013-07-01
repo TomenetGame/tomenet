@@ -10036,7 +10036,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	if ((k = d_info[d_ptr->type].final_guardian)
 	    && d_ptr->maxdepth == ABS(wpos->wz)
 #endif
-	    && !rand_int(r_info[k].rarity)) {
+	    && (!rand_int(r_info[k].rarity) || k == RI_SAURON)) { /* Sauron has 100% probability of being generated */
 //		s_printf("Attempting to generate FINAL_GUARDIAN %d (1 in %d)\n", k, r_info[k].rarity);
 		summon_override_checks = SO_FORCE_DEPTH; /* allow >20 level OoD if desired */
 		alloc_monster_specific(wpos, k, 20, TRUE);
