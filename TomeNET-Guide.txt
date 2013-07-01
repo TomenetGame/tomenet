@@ -10435,7 +10435,9 @@ Warrior is strongly recommended.
     time, nether, poison, and it's hard to drain their life force.
     They also have partially life leeching (vampiric) attacks (see '(5.15)
     Vampirism' for more information).
-    At level 20 they become able to turn into a bat.
+    At level 20 they become able to turn into a bat. Vampire bats are fast, can
+    fly, and are more resistant to sun burn than the humanoid vampire form,
+    making them useful for travelling, although they move slightly erratically.
     Vampires cannot eat normal food, instead they need to feed off living
     creatures. This means that you need to kill monsters in melee range (though
     not necessarily by using melee attacks - spells or arrows work fine too) in
