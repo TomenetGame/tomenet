@@ -5307,13 +5307,26 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 
 	/* Find the result of moving */
 
+	/* Vampires turning into bats only get very slightly erratic movement */
+	if (p_ptr->prace == RACE_VAMPIRE) {
+		if (p_ptr->body_monster == RI_VAMPIRE_BAT && magik(5)) {
+			do {
+				i = randint(9);
+				y = p_ptr->py + ddy[i];
+				x = p_ptr->px + ddx[i];
+			} while (i == 5);
+		} else {
+			y = p_ptr->py + ddy[dir];
+			x = p_ptr->px + ddx[dir];
+		}
+	}
 	/* -C. Blue- I toned down monster RAND_50 and RAND_25 for a mimicking player,
 	assuming that the mimic does not use the monster mind but its own to control
 	the body, on the other hand the body still carries reflexes from the monster ;)
 	- technical reason was to make more forms useful, especially RAND_50 forms */
 /*	if (((p_ptr->pclass != CLASS_SHAMAN) || ((r_ptr->d_char != 'E') && (r_ptr->d_char != 'G'))) && */
 	/* And now shamans gain advantage by linking to the being's mind instead of copying it..or something..err ^^ */
-	if ((p_ptr->pclass != CLASS_SHAMAN) &&
+	else if ((p_ptr->pclass != CLASS_SHAMAN) &&
 	    (((r_ptr->flags5 & RF5_RAND_100) && magik(40)) ||
 	    ((r_ptr->flags1 & RF1_RAND_50) && (r_ptr->flags1 & RF1_RAND_25) && magik(30)) ||
 	    ((r_ptr->flags1 & RF1_RAND_50) && (!(r_ptr->flags1 & RF1_RAND_25)) && magik(20)) ||
