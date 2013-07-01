@@ -1005,6 +1005,7 @@
 /* Monster indices (r_idx) hardcoded from r_info.txt file:
    (Note: Specific mimic forms aren't included (eg druids).) */
 #define RI_UFTHAK		260
+#define RI_VAMPIRE_BAT		391
 #define RI_SANTA1		733	/* terror santa from hell */
 #define RI_DOL_GULDUR		819	/* 'easy' version of sauron */
 #define RI_SAURON		860

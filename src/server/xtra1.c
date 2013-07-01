@@ -4162,8 +4162,12 @@ void calc_boni(int Ind)
 //		    !(p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_HIGHLANDS2) &&
 		    !(zcave[p_ptr->py][p_ptr->px].info & CAVE_PROT) &&
 		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED)) {
-			p_ptr->drain_life++;
 			p_ptr->sun_burn = TRUE;
+			/* vampire bats can stay longer under the sun light than actual vampire form */
+			if (p_ptr->body_monster != RI_VAMPIRE_BAT) {
+				i = (turn % DAY) / HOUR;
+				p_ptr->drain_life += 5 - ABS(i - (SUNRISE + (NIGHTFALL - SUNRISE) / 2)) / 2; /* for calculate day time distance to noon -> max burn! */
+			} else p_ptr->drain_life++;
 		}
 	}
 
