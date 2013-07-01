@@ -6125,6 +6125,110 @@ static void do_cmd_options_win(void)
 	window_stuff();
 }
 
+#ifdef TEST_CLIENT
+static void do_cmd_options_fonts(void) {
+	int j, d, vertikal_offset = 3;
+	int y = 0;
+	char ch;
+	bool go = TRUE;
+
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Interact */
+	while (go) {
+		/* Prompt XXX XXX XXX */
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w>, \377yv\377w (visibility), \377y-\377w/\377y+\377w (smaller/bigger), \377yENTER\377w (enter font name), \377yESC\377w)");
+
+		/* Display the windows */
+		for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+			byte a = TERM_WHITE;
+			cptr s = ang_term_name[j];
+
+			/* Use color */
+			if (c_cfg.use_color && (j == y)) a = TERM_L_BLUE;
+
+			/* Window name, staggered, centered */
+			Term_putstr(2, vertikal_offset + j, -1, a, (char*)s);
+		}
+#if 0
+		/* Display the options */
+		for (i = 0; i < NR_OPTIONS_SHOWN; i++) {
+			byte a = TERM_WHITE;
+			cptr str = window_flag_desc[i];
+
+			/* Use color */
+			if (c_cfg.use_color && (i == y)) a = TERM_L_BLUE;
+
+			/* Unused option */
+			if (!str) str = "\377D(Unused option)\377w";
+
+			/* Flag name */
+			Term_putstr(0, i + vertikal_offset + 2, -1, a, (char*)str);
+
+			/* Display the windows */
+			for (j = 1; j < ANGBAND_TERM_MAX; j++) {
+				byte a = TERM_SLATE;
+				char c = '.';
+
+				/* Use color */
+				if (c_cfg.use_color && (i == y) && (j == x)) a = TERM_L_BLUE;
+
+				/* Active flag */
+				if (window_flag[j] & (1L << i)) {
+					a = TERM_L_GREEN;
+					c = 'X';
+				}
+
+				/* Flag value */
+				Term_putch(35 + j * 5, i + vertikal_offset + 2, a, c);
+			}
+		}
+#endif
+		/* Place Cursor */
+		Term_gotoxy(2, vertikal_offset + y);
+
+		/* Get key */
+		ch = inkey();
+
+		/* Analyze */
+		switch (ch) {
+		case ESCAPE:
+			go = FALSE;
+			break;
+
+		case KTRL('T'):
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????");
+			break;
+
+		case 'v':
+			break;
+
+		case '+':
+			break;
+
+		case '-':
+			break;
+
+		case '\r':
+			break;
+
+		default:
+			d = keymap_dirs[ch & 0x7F];
+			y = (y + ddy[d] + NR_OPTIONS_SHOWN) % NR_OPTIONS_SHOWN;
+			if (!d) bell();
+		}
+	}
+
+	/* Notice changes */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+		/* Dead window */
+		if (!ang_term[j]) continue;
+	}
+}
+#endif
 
 errr options_dump(cptr fname)
 {
@@ -6547,15 +6651,20 @@ void do_cmd_options(void) {
 		Term_putstr(5,  7, -1, TERM_WHITE, "(\377y4\377w) Game-Play Options 1");
 		Term_putstr(5,  8, -1, TERM_WHITE, "(\377y5\377w) Game-Play Options 2");
 		Term_putstr(5,  9, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
+#if defined(WINDOWS) || defined(USE_X11)
+ #ifdef TEST_CLIENT
+		Term_putstr(5, 10, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
+ #endif
+#endif
 
-		Term_putstr(5, 11, -1, TERM_WHITE, "(\377ys\377w) Save Options");
-		Term_putstr(5, 12, -1, TERM_WHITE, "(\377yl\377w) Load Options");
+		Term_putstr(5, 12, -1, TERM_WHITE, "(\377ys\377w) Save Options");
+		Term_putstr(5, 13, -1, TERM_WHITE, "(\377yl\377w) Load Options");
 
 #if defined(WINDOWS) || defined(USE_X11) /* CHANGE_FONTS_X11 */
-		Term_putstr(5, 15, -1, TERM_WHITE, "(\377Uf\377w) Change font size (tap to cycle)");
+		Term_putstr(5, 16, -1, TERM_WHITE, "(\377Uc\377w) Cycle all font sizes (tap multiple times)");
 #endif
-		Term_putstr(5, 16, -1, TERM_WHITE, "(\377UA\377w) Account Options");
-		Term_putstr(5, 17, -1, TERM_WHITE, "(\377Uv\377w) Check Server Options");
+		Term_putstr(5, 17, -1, TERM_WHITE, "(\377UA\377w) Account Options");
+		Term_putstr(5, 18, -1, TERM_WHITE, "(\377Uv\377w) Check Server Options");
 		Term_putstr(5, 19, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from file");
 
 		/* Prompt */
@@ -6630,7 +6739,12 @@ void do_cmd_options(void) {
 		}
 
 #if defined(WINDOWS) || defined(USE_X11)
-		else if (k == 'f') change_font(-1);
+ #ifdef TEST_CLIENT
+		/* Change fonts separately and manually */
+		else if (k == 'f') do_cmd_options_fonts();
+ #endif
+		/* Cycle all fonts */
+		else if (k == 'c') change_font(-1);
 #endif
 
 		else if (k == 'I') do_cmd_options_install_audio_packs();
