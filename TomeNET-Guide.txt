@@ -4139,7 +4139,7 @@ All characters start the game at level 1. At level 50 they are supposed to
 fight the bad boss of the game, Morgoth, Lord of Darkness.
 Depending on race and class, characters need to kill a different amount of
 monsters in order to reach the next level. Yeeks get experience fastest,
-while Draconians (and Maiar) are slowest. (See (6.4) and (6.5).)
+while Maiar are slowest. (See (6.4) and (6.5).)
 
 Each time your character gains a new level, (s)he also gains 5 skill
 points that you can distribute on your character's skills, press 'G' to invoke
@@ -4983,7 +4983,7 @@ The Illusory Castle            |  1750..2600/ 35..52   |       10
 The Sacred Land Of Mountains   |  2000..2250/ 40..45   |       20
 Erebor                         |  2500..3050/ 50..61   |       35
 Dol Guldur                     |  2850..3550/ 57..71   |       28
-Mount Doom                     |  4250..5000/ 85..100  |       38
+Mount Doom                     |  4250..5000/ 85..99   |       38
 Nether Realm                   |  8300..9800/166..196  |       40 (****)
 
 (**) Minimum level requirements are usually disabled, so you can actually
@@ -5081,13 +5081,20 @@ The Illusory Castle          |  King in Yellow       | Helm of Knowledge
 The Sacred Land Of Mountains |  T'ron                | Coat of T'ron
 Erebor                       |  Smaug                | Nauglamir
 Dol Guldur                   |  Shadow of Dol Guldur | Ring of Durin
-Mount Doom                   |  -                    | -
+Mount Doom                   |  Sauron, the Sorceror | - (**)
 Nether Realm                 |  Zu-Aon               | Ring of Phasing
 
 (*) Angband does not have a designated final boss, but the unique monster
 Tik'srvzllat does not appear before depth 127. Since Angband ends at depth 127,
 you can find him on the final floor (if he actually spawns).
 In this light, Tik'srvzllat could be seen as Angband's final boss.
+
+Also, Morgoth, the Lord of Darkness is encountered in Angband at -1700 ft or
+deeper. See (1.3), (1.3a) and (1.3b) for more information.
+
+(**) While Sauron, the Sorceror, boss of Mount Doom, does not drop any specific
+artifact, he is still a required kill before you are able to encounter Morgoth,
+the Lord of Darkness (compare (1.3), (1.3a) and (1.3b)).
 
 
 

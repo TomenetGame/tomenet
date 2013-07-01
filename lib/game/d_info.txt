@@ -127,9 +127,10 @@ R:75:0
 
 # Mount Doom
 # Levels 85-99
+# finally meet Sauron here, now exclusively
 N:5:Mount Doom
 D:MDm:a way to the top of the Mount Doom.
-W:85:100:38:0:14:160
+W:85:99:38:0:14:160
 #L:86:900:205:100:1:0:0:0:0:0
 #IDDC
 L:86:900:205:100:1:0:86:300:86:300
@@ -143,6 +144,7 @@ O:10:10:30:30
 E:2d10:10:FIRE
 F:CAVE | LAVA_RIVER | NO_RECALL | NO_STREAMERS
 F:FILL_METHOD_0
+F:FINAL_GUARDIAN_860
 R:100:1
 M:IM_FIRE
 
