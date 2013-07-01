@@ -1847,7 +1847,7 @@ player_race race_info[MAX_RACE] =
                         {
                                 SKILL_CRITS,
                                 '+', 0,
-                                '%', 80,
+                                '%', 70,
                         },
                         /* Not banned, but *hard* */
                         {
