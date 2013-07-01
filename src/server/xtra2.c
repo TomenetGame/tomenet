@@ -5171,11 +5171,21 @@ if (cfg.unikill_format) {
 			floor_msg_format(&p_ptr->wpos, "\377gYou don't sense a magic barrier here!");
 		}
 	}
+	if (is_Sauron) {
+		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
-	/* If player killed Sauron, also mark the Shadow (formerly Necromancer) of Dol Guldur as killed!
-	   This is required since we now need a dungeon boss for Dol Guldur again =)
-	   So always kill the Shadow first, if you want his loot. - C. Blue */
-	if (is_Sauron) p_ptr->r_killed[RI_DOL_GULDUR] = 1;
+		/* If player killed Sauron, also mark the Shadow (formerly Necromancer) of Dol Guldur as killed!
+		   This is required since we now need a dungeon boss for Dol Guldur again =)
+		   So always kill the Shadow first, if you want his loot. - C. Blue */
+		p_ptr->r_killed[RI_DOL_GULDUR] = 1;
+
+		/* If Sauron is killed in Mt Doom, allow the player to recall! */
+		if (d_ptr->type == DI_MT_DOOM) {
+			l_ptr->flags1 |= LF1_IRON_RECALL;
+			floor_msg_format(&p_ptr->wpos, "\377gYou don't sense a magic barrier here!");
+		}
+	}
 
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {

@@ -997,6 +997,7 @@
 
 
 /* Dungeon indices (d_ptr->type) hardcoded from d_info.txt file: */
+#define DI_MT_DOOM		5
 #define DI_NETHER_REALM		6
 #define DI_PATHS_DEAD		16
 #define DI_SANDWORM_LAIR	27
