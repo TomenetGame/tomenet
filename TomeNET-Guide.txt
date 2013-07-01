@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. June 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. July 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5953,6 +5953,20 @@ Ironman Deep Dive Challenge (IDDC)
     the leaderboard that can be viewed at the mayor's office in Bree.
     (Note that 'IDDC-exclusive' characters can NOT recall out at static towns.
     If they try, they are just 'killed by indetermnation' and erased.)
+    Monsters cannot spawn in the wilderness sector of the dungeon, so you can
+    just idle at the entrance, waiting for team mates.
+
+    Players in the IDDC receive a 20% experience gain bonus in addition to the
+    usual 15% experience bonus all ironman dungeons provide, so overall you
+    gain +35% more experience in IDDC than in a normal, generic dungeon.
+    You could decide to 'abuse' IDDC to level up your character, and then leave
+    the dungeon when you reach -2000 ft. This might be especially interesting
+    for mimicry users (see further below).
+    On average the experience gained in IDDC is high enough, that even a
+    character of a highly penalized race/class combination can still obtain at
+    least level 46 before he reaches Nargothrond at -4000 ft, even if he skips
+    all floors that give a "terrifying" feeling - if he clears out all other
+    floors completely. This number is an average and may therefore vary.
 
     Since you cannot recall out aside from these two towns, except if you reach
     the 127th floor of the dungeon, it is extremely likely that you will die
@@ -5970,25 +5984,22 @@ Ironman Deep Dive Challenge (IDDC)
     Random towns cannot spawn before dungeon level 18 and not after dungeon
     level 99. They remain static for only 5 minutes after logging out or dying.
     All other floors will remain static for at most 10 minutes.
+
     Also, starting at dungeon level 8, a hidden library may appear randomly
     (that's a book store with a red '9' for entrance), allowing you to purchase
     magic spells you might be missing.
+
     Inside the challenge dungeon you can acquire a kill quest via /quest
     command at level 1 already, instead of the usual minimum level of 5.
-    Players in the IDDC receive a 20% experience gain bonus in addition to the
-    usual experience bonus all ironman dungeons provide.
-
-    Since you cannot recall out before reaching the 127th floor (or in one of
-    the static towns), in case you need to go offline you'll just have to log
-    out inside the dungeon.
-    Keep in mind that your character will stay in the game for about 30 more
-    seconds during which it could be killed if in an unsafe place.
-    Dungeon towns in general are free of any monster spawns.
 
     Mimicry users gain +9 extra kill credit on each kill, effectively
     learning forms TEN TIMES as fast. (However, if that character decides to
     withdraw from the challenge at a static town, it loses 2/3 of those extra
     kill credits again, still not a bad deal.)
+
+    After the first fixed town at -2000 ft, Menegroth, all further floors you
+    enter will give you a progressively increasing (with floor depth) luck
+    bonus, making it more and more likely to obtain better items.
 
     Everlasting and non-everlasting characters can team up and trade items
     while they are inside the ironman deep dive dungeon.
@@ -5999,13 +6010,10 @@ Ironman Deep Dive Challenge (IDDC)
     ownership of the party is transferred to another party member. (Same as on
     Ironman server.)
 
-    NOTE: The Deep Dive dungeon requires your character to have zero experience
-    points in order to be eligible to enter.
-    To fulfil that requirement you may not collect more than 300 Au (gold
-    pieces) or pick up any items or money of other players. Also, if you eat a
-    ration of food and you are unlucky enough that it's gone bad you will get
-    1 xp for that.
-    Use the /ex command to see how much more gold you may pick up.
+    In case you need to go offline you'll just have to log out inside the
+    dungeon. Keep in mind that your character will stay in the game for about
+    30 more seconds during which it could be killed if in an unsafe place.
+    Dungeon towns in general are free of any monster spawns.
 
     If you log out in the IDDC and log back on before the level has changed,
     you can continue business as usual. However, if you log off and wait until
@@ -6016,19 +6024,23 @@ Ironman Deep Dive Challenge (IDDC)
     of each dungeon floor. Summon staves cannot be recharged in the IDDC and
     polymorphing magic does not work.
 
-    NOTE: If you use stolen enchant scrolls on an item while you are in a town,
-    then the item will get a 100% off discount. If you want to use stolen
-    scrolls to enchant your items and keep the items sellable, then you have
-    to take the staircase to leave the town, and read the scrolls in an actual
-    dungeon level instead.
-
+    NOTE: The Deep Dive dungeon requires your character to have zero experience
+    points in order to be eligible to enter.
+    To fulfil that requirement you may not collect more than 300 Au (gold
+    pieces) or pick up any items or money of other players. Also, if you eat a
+    ration of food and you are unlucky enough that it's gone bad you will get
+    1 xp for that.
+    Use the /ex command to see how much more gold you may pick up.
     If you make a 'slot-exclusive' IDDC character, it will start out with 300
     extra gold, and in turn automatically be unable to pick up any more gold or
     items of other players, and it won't get experience from eating bad food
     either.
 
-    Monsters cannot spawn in the wilderness sector of the dungeon, so you can
-    just idle at the entrance, waiting for team mates.
+    NOTE: If you use stolen enchant scrolls on an item while you are in a town,
+    then the item will get a 100% off discount. If you want to use stolen
+    scrolls to enchant your items and keep the items sellable, then you have
+    to take the staircase to leave the town, and read the scrolls in an actual
+    dungeon level instead.
 
 
 Seasonal events
