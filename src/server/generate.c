@@ -2277,11 +2277,11 @@ static void add_river(worldpos *wpos, int feat1, int feat2)
 	if(!(zcave = getcave(wpos))) return;
 
 	/* hacks - don't build rivers that are shallower than the actual dungeon floor.. - C. Blue */
-	if (l_ptr->flags1 & LF1_DEEP_WATER) {
+	if ((l_ptr->flags1 & LF1_DEEP_WATER)) {
 		if (feat1 == FEAT_SHAL_WATER) feat1 = FEAT_DEEP_WATER;
 		if (feat2 == FEAT_SHAL_WATER) feat2 = FEAT_DEEP_WATER;
 	}
-	if (l_ptr->flags1 & LF1_DEEP_LAVA) {
+	if ((l_ptr->flags1 & LF1_DEEP_LAVA)) {
 		if (feat1 == FEAT_SHAL_LAVA) feat1 = FEAT_DEEP_LAVA;
 		if (feat2 == FEAT_SHAL_LAVA) feat2 = FEAT_DEEP_LAVA;
 	}
@@ -2293,6 +2293,8 @@ static void add_river(worldpos *wpos, int feat1, int feat2)
 	if (feat1 == FEAT_SHAL_LAVA || feat1 == FEAT_DEEP_LAVA ||
 	    feat2 == FEAT_SHAL_LAVA || feat2 == FEAT_DEEP_LAVA)
 		l_ptr->flags1 |= LF1_LAVA;
+s_printf("adding river (%d) %d,%d\n", (l_ptr->flags1 & LF1_DEEP_LAVA) ? 1 : 0, feat1, feat2);
+feat1 = feat2 = FEAT_DEEP_LAVA;
 
 	/* Hack -- Choose starting point */
 	y2 = randint(cur_hgt / 2 - 2) + cur_hgt / 2;
@@ -8726,8 +8728,15 @@ static void init_feat_info(worldpos *wpos)
 				l_ptr->flags1 |= LF1_LAVA | LF1_NO_WATER;
 
 			/* for streamer/river hack: don't build shallow ones if dungeon floor itself is deep */
-			if (d_ptr->floor[i] == FEAT_DEEP_WATER) l_ptr->flags1 |= LF1_DEEP_WATER;
-			if (d_ptr->floor[i] == FEAT_DEEP_LAVA) l_ptr->flags1 |= LF1_DEEP_LAVA;
+			if (d_ptr->floor[i] == FEAT_DEEP_WATER
+			    || d_ptr->floor[i] == FEAT_SHAL_WATER) /* also build deep rivers on shallow base floor! */
+				l_ptr->flags1 |= LF1_DEEP_WATER;
+			if (d_ptr->floor[i] == FEAT_DEEP_LAVA
+			    || d_ptr->floor[i] == FEAT_SHAL_LAVA) /* also build deep rivers on shallow base floor! */
+{
+				l_ptr->flags1 |= LF1_DEEP_LAVA;
+s_printf("deep-lava (%d,%d,%d)\n", wpos->wx, wpos->wy, wpos->wz);
+}
 		}
 	}
 
