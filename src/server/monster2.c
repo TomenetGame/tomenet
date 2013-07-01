@@ -986,7 +986,10 @@ errr get_mon_num_prep(int dun_type, char *reject_monsters)
 			r_idx = entry->index;
 
 			/* for more efficiency: no dungeon bosses, done now in level-generation routine - C. Blue */
-			if (r_info[r_idx].flags0 & RF0_FINAL_GUARDIAN) continue;
+			if (r_info[r_idx].flags0 & RF0_FINAL_GUARDIAN) {
+				/* exception: Sauron in the IDDC (real check is done in place_monster_one() anyway..) */
+				if (r_idx != RI_SAURON) continue;
+			}
 
 			/* Check the monster rejection array provided */
 			if (reject_monsters && reject_monsters[entry->index])
@@ -1020,7 +1023,10 @@ errr get_mon_num_prep(int dun_type, char *reject_monsters)
 			r_idx = entry->index;
 
 			/* for more efficiency: no dungeon bosses, done now in level-generation routine - C. Blue */
-			if (r_info[r_idx].flags0 & RF0_FINAL_GUARDIAN) continue;
+			if (r_info[r_idx].flags0 & RF0_FINAL_GUARDIAN) {
+				/* exception: Sauron in the IDDC (real check is done in place_monster_one() anyway..) */
+				if (r_idx != RI_SAURON) continue;
+			}
 
 			/* Check the monster rejection array provided */
 			if (reject_monsters && reject_monsters[entry->index])
@@ -2975,10 +2981,13 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 			if (r_idx != dinfo_ptr->final_guardian ||
 			    d_ptr->maxdepth != ABS(wpos->wz)) {
 #endif
+				/* allow Sauron in any dungeon in IDDC */
+				if (r_idx != RI_SAURON || !in_irondeepdive(wpos)) {
 #if DEBUG_LEVEL > 2
-				s_printf("rejected FINAL_GUARDIAN %d\n", r_idx);
+					s_printf("rejected FINAL_GUARDIAN %d\n", r_idx);
 #endif
-				return FALSE;
+					return FALSE;
+				}
 			}
 			/* generating the boss is ok. go on. */
 //			s_printf("allowed FINAL_GUARDIAN %d\n", r_idx);
