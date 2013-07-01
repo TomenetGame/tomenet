@@ -5306,6 +5306,26 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "%s has houses: Player %d, Party %d, Guild %d.", message2 + 12, cp, cy, cg);
 				return;
 			}
+			/* display a player's hit dice dna */
+			else if (prefix(message, "/pyhpdbg")) {
+				char buf[MSG_LEN];
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /pyhpdbg <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				if (!p) return;
+				for (i = 1; i <= 100; i += 10) {
+					sprintf(buf, "Lv %d-%d:", i, i + 10 - 1);
+					for (j = 0; j < 10; j++) {
+						if (i + j >= 100) strcat(buf, " -");
+						else strcat(buf, format(" %d", p_ptr->player_hp[i + j]));
+					}
+					msg_print(Ind, buf);
+				}
+				return;
+			}
 			/* Reroll a player's birth hitdice to test major changes - C. Blue */
 			else if (prefix(message, "/rollchar")) {
 				int p;
