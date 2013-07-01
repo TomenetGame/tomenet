@@ -9316,7 +9316,7 @@ static int Receive_redraw(int ind)
 	}
 
 	if (player && !p_ptr->redraw_cooldown) {
-		p_ptr->redraw_cooldown = 3;
+		if (!is_admin(p_ptr)) p_ptr->redraw_cooldown = 3;
 
 //		p_ptr->store_num = -1;
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
