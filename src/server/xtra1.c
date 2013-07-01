@@ -1117,7 +1117,9 @@ void calc_mana(int Ind)
 	}
 
 	/* Extract "effective" player level */
-	levels = p_ptr->lev;
+	if (p_ptr->lev <= 50) levels = p_ptr->lev;
+	/* Less additional mana gain for each further post-king level */
+	else levels = 50 + (p_ptr->lev - 50) / 2;
 
 	/* Hack -- no negative mana */
 	if (levels < 0) levels = 0;
@@ -1183,24 +1185,16 @@ void calc_mana(int Ind)
 		break;
 	case CLASS_MINDCRAFTER:
 		/* much Int, some Chr (yeah!), little Wis */
-#if 0 /* too much CHR drastically reduced the amount of viable races, basically only humans and elves remained */
-		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + /* <- disabled maybe even, in tables.c? */
-			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 75 * levels / (400)) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_CHR]] * 20 * levels / (400)) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 5 * levels / (400));
-		break;
-#else
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + /* <- seems this might be important actually */
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels / (400)) +
 			    (adj_mag_mana[p_ptr->stat_ind[A_CHR]] * 10 * levels / (400)) +
 			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 5 * levels / (400));
 		break;
-#endif
 
 	case CLASS_ADVENTURER:
-//	case CLASS_BARD:	
+//	case CLASS_BARD:
 	default:
-	    	/* 50% Int, 50% Wis */
+		/* 50% Int, 50% Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 		(adj_mag_mana[p_ptr->stat_ind[A_INT]] * 50 * levels / (550)) +
 		(adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 50 * levels / (550));
@@ -1257,32 +1251,7 @@ void calc_mana(int Ind)
 		}
 	}
 
-#if 0 // C. Blue - Taken out again since polymorphing ability of DSMs was
-// removed instead. Mimics and mimic-sorcs were punished too much.
-	/* Forms that don't have proper 'hands' (arms) have mana penalty.
-	   this will hopefully stop the masses of D form Istar :/ */
-	if (p_ptr->body_monster) {
-		monster_race *r_ptr = &r_info[p_ptr->body_monster];
-		if (!r_ptr->body_parts[BODY_ARMS]) new_mana = (new_mana * 1) / 2;
-	}
-#endif
-
 	if (new_mana <= 0) new_mana = 1;
-
-	/* Sorcery helps mana */
-#if 0 // C. Blue - If sorcery gives HP penalty, that will be nullified by
-// mana bonus because of disruption shield. Instead, base mana for istari is raised.
-	if (get_skill(p_ptr, SKILL_SORCERY)) {
-		new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 200;
-	}
-#endif
-#if 0 // DGDGDGDG
-	/* Mimic really need that */
-	if (p_ptr->pclass == CLASS_MIMIC) {
-		new_mana = (new_mana * 7) / 10;
-		if (new_mana < 1) new_mana = 1;
-        }
-#endif
 
 	/* adjustment so paladins won't become OoD sentry guns and
 	   rangers won't become invulnerable manashield tanks, and
@@ -1494,6 +1463,7 @@ void calc_mana(int Ind)
 void calc_hitpoints(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL; /* silence the warning */
+	int player_hp_eff; /* replacement for accessing player_hp[] directly */
 
 //	object_type *o_ptr;
 //	u32b f1, f2, f3, f4, f5, esp;
@@ -1506,14 +1476,23 @@ void calc_hitpoints(int Ind)
 	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
 	}
 
+	/* do not increase a character's hit points too high post-king.
+	   They will just become immortal and that's no fun either. */
+	if (p_ptr->lev <= 50) player_hp_eff = p_ptr->player_hp[p_ptr->lev - 1]; /* the usual way */
+	else {
+		/* reduce post-king gain */
+		player_hp_eff = p_ptr->player_hp[50 - 1];
+		player_hp_eff += (p_ptr->player_hp[p_ptr->lev - 1] - p_ptr->player_hp[50 - 1]) / 2;
+	}
+
 	/* Un-inflate "half-hitpoint bonus per level" value */
 	bonus = ((int)(adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128);
 
 	/* Calculate hitpoints */
 	if (!cfg.bonus_calc_type) {
 		/* The traditional way.. */
-/*		if (p_ptr->fruit_bat) mhp = (p_ptr->player_hp[p_ptr->lev-1] / 4) + (bonus * p_ptr->lev); //the_sandman: removed hp penalty
-		else */ mhp = p_ptr->player_hp[p_ptr->lev-1] + (bonus * p_ptr->lev / 2);
+/*		if (p_ptr->fruit_bat) mhp = (player_hp_eff / 4) + (bonus * p_ptr->lev); //the_sandman: removed hp penalty
+		else */ mhp = player_hp_eff + (bonus * p_ptr->lev / 2);
 	} else {
 #if 1
 		/* Don't exaggerate with HP on low levels (especially Ents) (bonus range is -5..+25) */
@@ -1540,9 +1519,9 @@ void calc_hitpoints(int Ind)
 		   tougher than Istari, even without sorcery, while keeping in account
 		   the relation to all stronger classes as well. - C. Blue */
 /*		if (p_ptr->fruit_bat)
-			mhp = ((p_ptr->player_hp[p_ptr->lev-1] * 4) * (20 + bonus)) / (45 * 3);
+			mhp = ((player_hp_eff * 4) * (20 + bonus)) / (45 * 3);
 		else */ // removed hp penalty -- the_sandman
-			mhp = (p_ptr->player_hp[p_ptr->lev-1] * 2 * (20 + bonus)) / 45;
+			mhp = (player_hp_eff * 2 * (20 + bonus)) / 45;
 
 /* I think it might be better to dimish the boost for yeeks after level 50 slowly towards level 100 
    while granting the full boost at the critical level 50 instead of just a minor boost. Reason is:
