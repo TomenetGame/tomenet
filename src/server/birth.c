@@ -752,7 +752,7 @@ static void get_extra(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int i, j, min_value, max_value, min_value_king = 0, max_value_king = 9999;
-	int tries = 300;
+	int tries = 500;
 
 	/* Experience factor */
 /* This one is too harsh for TLs and too easy on yeeks
@@ -775,7 +775,8 @@ static void get_extra(int Ind)
 	/* Maximum hitpoints at highest level */
 	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 5) / 8;
 	max_value += PY_MAX_LEVEL;
-#else /* narrow HP range */
+#endif
+#if 0 /* narrow HP range - 300 tries */
 	/* Minimum hitpoints at kinging level */
 	min_value_king = (50 * (p_ptr->hitdie - 1) * 15) / 32;
 	min_value_king += 50;
@@ -790,16 +791,29 @@ static void get_extra(int Ind)
 	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 17) / 32;
 	max_value += PY_MAX_LEVEL;
 #endif
+#if 1 /* narrower HP range */
+	/* Minimum hitpoints at kinging level */
+	min_value_king = (50 * (p_ptr->hitdie - 1) * 31) / 64;
+	min_value_king += 50;
+	/* Maximum hitpoints at kinging level */
+	max_value_king = (50 * (p_ptr->hitdie - 1) * 33) / 64;
+	max_value_king += 50;
+
+	/* Minimum hitpoints at highest level */
+	min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 31) / 64;
+	min_value += PY_MAX_LEVEL;
+	/* Maximum hitpoints at highest level */
+	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 33) / 64;
+	max_value += PY_MAX_LEVEL;
+#endif
 
 	/* Pre-calculate level 1 hitdice */
 	p_ptr->player_hp[0] = p_ptr->hitdie;
 
 	/* Roll out the hitpoints */
-	while (--tries)
-	{
+	while (--tries) {
 		/* Roll the hitpoint values */
-		for (i = 1; i < PY_MAX_LEVEL; i++)
-		{
+		for (i = 1; i < PY_MAX_LEVEL; i++) {
 			/* Maybe this is too random, let's give some
 			   smaller random range - C. Blue
 			j = randint(p_ptr->hitdie);*/
@@ -820,7 +834,7 @@ static void get_extra(int Ind)
 	}
 
 	/* warn in case char should be invalid.. */
-	if (!tries) s_printf("CHAR_CREATION: %s exceeded 300 tries for HP rolling.\n", p_ptr->name);
+	if (!tries) s_printf("CHAR_CREATION: %s exceeded 500 tries for HP rolling.\n", p_ptr->name);
 }
 
 

@@ -1491,14 +1491,11 @@ void calc_hitpoints(int Ind)
 	/* Calculate hitpoints */
 	if (!cfg.bonus_calc_type) {
 		/* The traditional way.. */
-/*		if (p_ptr->fruit_bat) mhp = (player_hp_eff / 4) + (bonus * p_ptr->lev); //the_sandman: removed hp penalty
-		else */ mhp = player_hp_eff + (bonus * p_ptr->lev / 2);
+		mhp = player_hp_eff + (bonus * p_ptr->lev / 2);
 	} else {
-#if 1
 		/* Don't exaggerate with HP on low levels (especially Ents) (bonus range is -5..+25) */
 		bonus_cap = ((p_ptr->lev + 5) * (p_ptr->lev + 5)) / 100;
 		if (bonus > bonus_cap) bonus = bonus_cap;
-#endif
 
 		/* And here I made the formula slightly more complex to fit better :> - C. Blue -
 		   Explanation why I made If-clauses for Istari (Mage) and Yeeks:
@@ -1518,86 +1515,44 @@ void calc_hitpoints(int Ind)
 		   - The penalty is finely tuned to make Yeek Priests still a deal
 		   tougher than Istari, even without sorcery, while keeping in account
 		   the relation to all stronger classes as well. - C. Blue */
-/*		if (p_ptr->fruit_bat)
-			mhp = ((player_hp_eff * 4) * (20 + bonus)) / (45 * 3);
-		else */ // removed hp penalty -- the_sandman
-			mhp = (player_hp_eff * 2 * (20 + bonus)) / 45;
+		mhp = (player_hp_eff * 2 * (20 + bonus)) / 45;
 
-/* I think it might be better to dimish the boost for yeeks after level 50 slowly towards level 100 
-   while granting the full boost at the critical level 50 instead of just a minor boost. Reason is:
-   They don't have Morgoth's crown yet so they are unlikely to reach *** CON, but after winning
-   they will be way stronger! On the other hand yeeks are already so weak that ultra-high Yeek
-   Istari could still be instakilled (max. sorcery skill) if the boost is diminished,
-   so only Yeek Mimics whose HP greatly reduces the low hitdice effect should be affected,
-   as well as Adventurer-Mimics.. since it cannot be skill-based (might change anytime) nor
-   class-based, we just punish all Yeeks, that's what they're for after all >;) */
-#if 0 /* Reduced boost? */
-		if (p_ptr->pclass == CLASS_MAGE || p_ptr->prace != RACE_YEEK)
-			weakling_boost = ((p_ptr->lev < 50) ?
-					(((p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2500) * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20 :
-					(50 * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20); /* Don't grow further above level 50 */
-		else
-			weakling_boost = ((p_ptr->lev < 50) ?
-					((((p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2500) * (6 - p_ptr->cp_ptr->c_mhp * 2)) / 3) :
-					((50 * (6 - p_ptr->cp_ptr->c_mhp * 2)) / 3)); /* Don't grow further above level 50 */
-#endif
-#if 1 /* Slowly diminishing boost? */
-    #if 0
-		weakling_boost = ((p_ptr->lev < 50) ?
-				(((p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2500) * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20 : /* <- full bonus */
-/*					(p_ptr->pclass == CLASS_MAGE || p_ptr->prace != RACE_YEEK) ?*/
-/*					(p_ptr->pclass != CLASS_MIMIC || p_ptr->prace != RACE_YEEK) ?*/
-					((p_ptr->prace != RACE_YEEK) ?
-					(50 * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20 : /* <- full bonus */
-					((100 - p_ptr->lev) * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20)); /* <- full bonus, slowly diminishing */
-					/* Note that the diminishing ends at level 100 ;) So it's not that bad */
-    #else /* new (July 2008): take class+race hit dice into account, not just class hit dice */
+		/* I think it might be better to dimish the boost for yeeks after level 50 slowly towards level 100 
+		   while granting the full boost at the critical level 50 instead of just a minor boost. Reason is:
+		   They don't have Morgoth's crown yet so they are unlikely to reach *** CON, but after winning
+		   they will be way stronger! On the other hand yeeks are already so weak that ultra-high Yeek
+		   Istari could still be instakilled (max. sorcery skill) if the boost is diminished,
+		   so only Yeek Mimics whose HP greatly reduces the low hitdice effect should be affected,
+		   as well as Adventurer-Mimics.. since it cannot be skill-based (might change anytime) nor
+		   class-based, we just punish all Yeeks, that's what they're for after all >;) */
+		/* Slowly diminishing boost? */
+		/* new (July 2008): take class+race hit dice into account, not just class hit dice */
 		weakling_boost = (p_ptr->lev <= 50) ?
-				(((p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2500) * ((576 - cr_mhp * cr_mhp) + 105)) / 105 : /* <- full bonus */
-	#if 1
-				/* this #if 1 is needed, because otherwise hdice differences would be too big in end-game :/
-				In fact this is but a bad hack - what should be done is adjusting hdice tables for races/classes instead. */
-				(50 * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- keep (!) full bonus for the rest of career up to level 99 */
-	#else
-				/* currently discrepancies between yeek/human priest and ent warrior would be TOO big at end-game (>> level 50) */
-				((100 - p_ptr->lev) * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- above 50, bonus is slowly diminishing again towards level 99 (PY_MAX_PLAYER_LEVEL) */
-	#endif
-    #endif
+			(((p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2500) * ((576 - cr_mhp * cr_mhp) + 105)) / 105 : /* <- full bonus */
+#if 1
+			/* this #if 1 is needed, because otherwise hdice differences would be too big in end-game :/
+			In fact this is but a bad hack - what should be done is adjusting hdice tables for races/classes instead. */
+			(50 * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- keep (!) full bonus for the rest of career up to level 99 */
+#else
+			/* currently discrepancies between yeek/human priest and ent warrior would be TOO big at end-game (>> level 50) */
+			((100 - p_ptr->lev) * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- above 50, bonus is slowly diminishing again towards level 99 (PY_MAX_PLAYER_LEVEL) */
 #endif
 
 		/* Help very weak characters close to level 50 to avoid instakill on trying to win */
 		mhp += weakling_boost;
 	}
 
-#if 0 // DGDGDGDG why ?
-	/* Option : give mages a bonus hitpoint / lvl */
-	if (cfg.mage_hp_bonus)
-		if (p_ptr->pclass == CLASS_MAGE) mhp += p_ptr->lev;
-#endif
-
-#ifndef RPG_SERVER /* already greatly reduced Sorcery Skill ratio in tables.c */
-#endif
-#if 0 /* tables.c count for all servers now, not just RPG_SERVER */
-	/* Sorcery reduces hp */
-	if (get_skill(p_ptr, SKILL_SORCERY))
-	{
-		// mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 20)) / 100;
-		mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 33)) / 100;
-	}
-#endif
-
-
 	/* instead let's make it an option to weak chars, instead of further buffing chars with don't
-         need it at all (warriors, druids, mimics, etc). However, now chars can get this AND +LIFE items.
-	 So in total it might be even more. A scale to 100 is hopefully ok. *experimental* */
-        mhp += get_skill_scale(p_ptr, SKILL_HEALTH, 100);
+	   need it at all (warriors, druids, mimics, etc). However, now chars can get this AND +LIFE items.
+	   So in total it might be even more. A scale to 100 is hopefully ok. *experimental* */
+	mhp += get_skill_scale(p_ptr, SKILL_HEALTH, 100);
 
- #ifdef ENABLE_MAIA
+#ifdef ENABLE_MAIA
 	/* Extra bonus hp (2 per level) for the evil path */
 	if (p_ptr->prace == RACE_MAIA && (p_ptr->ptrait == TRAIT_CORRUPTED) && p_ptr->lev >= 20) {
 		mhp += (p_ptr->lev - 20) * 2;
 	}
- #endif
+#endif
 
 	/* Now we calculated the base player form mhp. Save it for use with
 	   +LIFE bonus. This will prevent mimics from total uber HP,
@@ -1609,62 +1564,25 @@ void calc_hitpoints(int Ind)
 	if (p_ptr->body_monster) {
 		long rhp = ((long)(r_info[p_ptr->body_monster].hdice)) * ((long)(r_info[p_ptr->body_monster].hside));
 
-#if 0 /* this gives bad HP if your race has high HD and you don't use an uber-form */
-		/* pre-cap monster HP against ~3500 (5000) */
-/*	 	mHPLim = (100000 / ((100000 / rhp) + 18)); this was for non RPG_SERVER originally */
-		mHPLim = (50000 / ((50000 / rhp) + 20));/*18*/ /* for the new RPG_SERVER originally */
-		/* average with player HP */
-		finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
-		/* cap final HP against ~2300 */
-//		finalHP = (100000 / ((100000 / finalHP) + 20));
-#endif
-#if 0 /* fairer for using non-uber forms; still bad for races with high HD (Draconian) */
-		mHPLim = (50000 / ((50000 / rhp) + 20));
-		if (mHPLim < mhp) {
-			levD = p_ptr->lev - r_ptr->level;
-			hpD = mhp - mHPLim;
-			if (levD < 0) levD = 0;
-			mHPLim = mhp - hpD * levD / 20; /* When your form is 20 or more levels below your charlevel,
-							   you receive the full HP difference in the formula below. */
-		}
-		finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
-#endif
-#if 0 /* assume human mimic HP for calculation; afterwards, add up our 'extra' hit points if we're a stronger race */
-		long levD, hpD, raceHPbonus;
-		mHPLim = (50000 / ((50000 / rhp) + 20));
-
-		raceHPbonus = mhp - ((mhp * 15) / p_ptr->hitdie); /* 10 human + 5 mimic */
-		mhp -= raceHPbonus;
-		if (mHPLim < mhp) {
-			levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
-			if (levD < 0) levD = 0;
-			if (levD > 20) levD = 20;
-			hpD = mhp - mHPLim;
-			mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
-							   you receive the full HP difference in the formula below. */
-		}
-		finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
-		finalHP += raceHPbonus;
-#endif
-#if 1 /* assume human mimic HP for calculation; afterwards, add up our 'extra' hit points if we're a stronger race */
-	/* additionally, scale form HP better with very high character levels */
+		/* assume human mimic HP for calculation; afterwards, add up our 'extra' hit points if we're a stronger race */
+		/* additionally, scale form HP better with very high character levels */
 		/* Reduce the effect of racial hit dice when in monster form? [3..6]
 		   3 = no reduction, 6 = high reduction */
 		#define FORM_REDUCES_RACE_DICE_INFLUENCE 6
 		long levD, hpD, raceHPbonus;
 		mHPLim = (50000 / ((50000 / rhp) + 20));
 
- #if 0 /* done below */
+#if 0 /* done below */
 		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
 		mHPLim += p_ptr->lev > 50 ? (((p_ptr->lev - 50) * (r_info[p_ptr->body_monster].level + 30)) / 100) * 20 : 0;
- #endif
+#endif
 
 		raceHPbonus = mhp - ((mhp * 16) / p_ptr->hitdie); /* 10 human + 6 mimic */
 		mhp -= (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE;
-  #if 0 /* nonsense^^ */
+#if 0 /* nonsense^^ */
 		/* compensate overall HP gain for values > 3 */
 		mhp -= ((raceHPbonus - (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE) * 5) / 3;
-  #endif
+#endif
 		if (mHPLim < mhp) {
 			levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
 			if (levD < 0) levD = 0;
@@ -1672,10 +1590,9 @@ void calc_hitpoints(int Ind)
 			hpD = mhp - mHPLim;
 		        mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
 							   you receive the full HP difference in the formula below. */
-	        }
-	        finalHP = (mHPLim < mhp) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
-	        finalHP += (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE;
-#endif
+		}
+		finalHP = (mHPLim < mhp) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
+		finalHP += (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE;
 
 		/* done */
 		mhp = finalHP;
@@ -1721,7 +1638,13 @@ void calc_hitpoints(int Ind)
 		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
 		mhp += p_ptr->lev > 50 ?
 		    (((p_ptr->lev - 50) * ((r_info[p_ptr->body_monster].level > 80 ? 80 :
-		    r_info[p_ptr->body_monster].level) + 30)) / 100) * 8 : 0;
+ #if 0 /* for 15..17/32 hp birth calc */
+		    /* was '*8' (before post-king HP reduction); *6 : 10% bonus over Warrior max; *5 : +200 more than warrior max */
+		    r_info[p_ptr->body_monster].level) + 30)) / 100) * 5 : 0;
+ #else /* for 31..33/64 hp birth calc */
+		    /* *4 : +210 more than warrior avg; +180 more than warrior max */
+		    r_info[p_ptr->body_monster].level) + 30)) / 100) * 4 : 0;
+ #endif 
 	}
 #endif
 
@@ -1760,16 +1683,8 @@ void calc_hitpoints(int Ind)
 		mhp = mhp * 3 / 5;
 	}
 
-	/* Disruption Shield */
-	if (p_ptr->tim_manashield)
-	{
-	/* commented out (evileye for power) */
-	/*	mhp += p_ptr->msp * 2 / 3; */
-	}
-
 	/* New maximum hitpoints */
-	if (mhp != p_ptr->mhp)
-	{
+	if (mhp != p_ptr->mhp) {
 		s32b value;
 
 		/* change current hit points proportionately to change of mhp */

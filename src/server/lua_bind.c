@@ -548,7 +548,7 @@ void lua_count_houses(int Ind) {
 void lua_recalc_char(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, min_value, max_value, min_value_king = 0, max_value_king = 9999;
-	int tries = 300;
+	int tries = 500;
 
 	/* Hitdice */
 	p_ptr->hitdie = p_ptr->rp_ptr->r_mhp + p_ptr->cp_ptr->c_mhp;
@@ -562,7 +562,8 @@ void lua_recalc_char(int Ind) {
 	/* Maximum hitpoints at highest level */
 	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 5) / 8;
 	max_value += PY_MAX_LEVEL;
-#else
+#endif
+#if 0 /* 300 tries */
 	/* Minimum hitpoints at kinging level */
         min_value_king = (50 * (p_ptr->hitdie - 1) * 15) / 32;
 	min_value_king += 50;
@@ -575,6 +576,21 @@ void lua_recalc_char(int Ind) {
 	min_value += PY_MAX_LEVEL;
 	/* Maximum hitpoints at highest level */
 	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 17) / 32;
+	max_value += PY_MAX_LEVEL;
+#endif
+#if 1
+	/* Minimum hitpoints at kinging level */
+	min_value_king = (50 * (p_ptr->hitdie - 1) * 31) / 64;
+	min_value_king += 50;
+	/* Maximum hitpoints at kinging level */
+	max_value_king = (50 * (p_ptr->hitdie - 1) * 33) / 64;
+	max_value_king += 50;
+
+	/* Minimum hitpoints at highest level */
+	min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 31) / 64;
+	min_value += PY_MAX_LEVEL;
+	/* Maximum hitpoints at highest level */
+	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 33) / 64;
 	max_value += PY_MAX_LEVEL;
 #endif
 
@@ -603,7 +619,7 @@ void lua_recalc_char(int Ind) {
 		break;
 	}
 
-	if (!tries) s_printf("CHAR_REROLLING: %s exceeded 300 tries for HP rolling.\n", p_ptr->name);
+	if (!tries) s_printf("CHAR_REROLLING: %s exceeded 500 tries for HP rolling.\n", p_ptr->name);
 
 	p_ptr->update |= PU_HP;
 	update_stuff(Ind);
