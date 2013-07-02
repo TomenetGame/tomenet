@@ -2291,10 +2291,11 @@ static void add_river(worldpos *wpos, int feat1, int feat2)
 	    feat2 == FEAT_SHAL_WATER || feat2 == FEAT_DEEP_WATER)
 		l_ptr->flags1 |= LF1_WATER;
 	if (feat1 == FEAT_SHAL_LAVA || feat1 == FEAT_DEEP_LAVA ||
-	    feat2 == FEAT_SHAL_LAVA || feat2 == FEAT_DEEP_LAVA)
+	    feat2 == FEAT_SHAL_LAVA || feat2 == FEAT_DEEP_LAVA) {
 		l_ptr->flags1 |= LF1_LAVA;
 s_printf("adding river (%d) %d,%d\n", (l_ptr->flags1 & LF1_DEEP_LAVA) ? 1 : 0, feat1, feat2);
-feat1 = feat2 = FEAT_DEEP_LAVA;
+//		feat1 = feat2 = FEAT_DEEP_LAVA;
+	}
 
 	/* Hack -- Choose starting point */
 	y2 = randint(cur_hgt / 2 - 2) + cur_hgt / 2;
