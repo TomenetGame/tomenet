@@ -8760,10 +8760,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Nether -- drain experience */
 	case GF_NETHER_WEAK:
 		/* potion smash effect of a Potion of Death */
-		if (p_ptr->suscep_life) {
+		if (p_ptr->suscep_life || p_ptr->ghost) {
 			dam = 0;
 			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+			break;
 		}
 	case GF_NETHER:
 		if (p_ptr->immune_neth) {
