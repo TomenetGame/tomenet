@@ -7395,12 +7395,15 @@ NO_MAGIC ('Antimagic shell')
         you from using any magic device or casting spells.
 ANTIMAGIC ('Antimagic field')
         Prevents you from using any magic device or casting spells, also
-        applies to nearby enemy spellcasters and other players. The
-        field has less influence on _party members_ who try to cast.
+        prevents nearby monsters and other players from casting spells (but
+        not from using magic devices).
+        The field has less influence on _party members_ who try to cast.
         The radius is approximately the field power / 9, and is cumulative
         to the 'Antimagic' skill. The field power is the chance of
         suppressing a spell. It caps at 75% and is cumulative to the
         'Antimagic' skill. Make sure to read up on antimagic skill at (6.2).
+        The chance to interrupt spells is quartered for your party members,
+        so they are not affected much by your antimagic field.
 BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed weapons
         without penalties, even if they are not blunt.
@@ -7511,12 +7514,15 @@ For more information about items and especially ego items see (7.4).
 Weapons & Armour
 ----------------
 Dark Sword      Dark Swords have a so-called 'antimagic field', which
-                prevents the user from using magic items or casting spells,
-                but also has a chance to interrupt enemy spellcasters.
+                prevents the user from using magic devices or casting spells,
+                and also has a chance to interrupt nearby monsters and players
+                who try to cast spells but doesn't affect their magic devices.
                 The chance to interrupt spellcasters is 30% minus 3/5 of the
                 to-hit and to-dam values of the dark sword. Example:
                 A Dark Sword (+3,+7) has 30 - (3+7) * 3/5 = 24% chance of
-                interrupting spellcasters.
+                interrupting spellcasters. The chance is further quartered for
+                party members, so they are hardly affected by your antimagic
+                field.
                 The radius of the antimagic field is several fields (chance
                 to interrupt spells, divided by 9), getting smaller if the
                 chance is smaller than 30%.
@@ -9714,12 +9720,16 @@ Note that not every skill is available to every profession (class).
 
 .Antimagic                      Generated from your strong disbelief in magic
                                 an anti-magic field surrounds you, preventing
-                                attempts from other casters to cast spells or
-                                summon monsters. This effect is cumulative
-                                with the anti-magic field of a Dark Sword.
-                                (See 5.9 for more info about dark swords.)
+                                nearby monsters and players from casting
+                                spells (but does not prevent them from using
+                                magic devices).
+                                This effect is cumulative with the anti-magic
+                                field of a Dark Sword. (See 5.9 for more info
+                                about dark swords.)
                                 It's capped at 75% chance of interrupting
-                                enemy spells.
+                                enemy spells. The capped chance is further
+                                quartered for party members, so they are hardly
+                                affected by your antimagic field.
                                 Each point in Antimagic adds 1% to your
                                 AM chance, so the max gain is +50% from skill.
                                 Note: While ball/bolt attacks are spells,
@@ -9729,13 +9739,9 @@ Note that not every skill is available to every profession (class).
                                 result from their strong disbelief in magic).
 
                                 Note that as soon as you invest a point into
-                                this skill you won't be able to use any magic
-                                wands,staves or rods anymore!
-
-                                This skill also slightly affects your fellow
-                                party members (casters) chance to successfully
-                                cast their spells, if they're standing close to
-                                you.
+                                this skill you won't be able to use any spells
+                                or magic devices (wands, staves, rods, items
+                                that can be activated) anymore!
 
                                 An antimagic field will also shorten the
                                 duration of certain magical temporary buffs
