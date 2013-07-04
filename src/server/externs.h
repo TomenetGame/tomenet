@@ -288,7 +288,7 @@ extern bool view_reduce_lite;
 extern bool view_reduce_view;
 extern bool auto_scum;
 extern bool expand_look;
-extern bool expand_list;
+extern bool expand_list;//Kurzel - server externs obselete, see common
 extern bool dungeon_align;
 extern bool dungeon_stair;
 extern bool smart_learn;
@@ -1063,6 +1063,7 @@ extern int Send_sound(int ind, int sound, int alternative, int type, int vol, s3
 #ifdef USE_SOUND_2010
 extern int Send_music(int ind, int music);
 #endif
+extern int Send_boni_col(int ind, boni_col c);
 extern int Send_beep(int ind);
 extern int Send_warning_beep(int ind);
 extern int Send_AFK(int ind, byte afk);

@@ -144,6 +144,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_ACCOUNT_INFO]	= Receive_account_info;
 	receive_tbl[PKT_STORE_WIDE]	= Receive_store_wide;
 	receive_tbl[PKT_MUSIC]		= Receive_music;
+	receive_tbl[PKT_BONI_COL]	= Receive_boni_col;
 
 	receive_tbl[PKT_REQUEST_KEY]	= Receive_request_key;
 	receive_tbl[PKT_REQUEST_NUM]	= Receive_request_num;
@@ -2639,6 +2640,54 @@ int Receive_music(void) {
 	/* Play background music (if enabled) */
 	if (use_sound) music(m);
 #endif
+
+	return 1;
+}
+
+int Receive_boni_col(void) {
+	int	n, j;
+	
+	byte	ch, i;
+	char spd, slth, srch, infr, lite, dig, blow, crit, shot, migh, mxhp, mxmp, luck, pstr, pint, pwis, pdex, pcon, pchr; 
+	byte cb[13];
+	char color, symbol;
+	
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, //1+20+13+2 bytes in total
+	&i, &spd, &slth, &srch, &infr, &lite, &dig, &blow, &crit, &shot, 
+	&migh, &mxhp, &mxmp, &luck, &pstr, &pint, &pwis, &pdex, &pcon, &pchr, 
+	&cb[0], &cb[1], &cb[2], &cb[3], &cb[4], &cb[5], &cb[6], &cb[7], &cb[8], &cb[9], 
+	&cb[10], &cb[11], &cb[12], &color, &symbol)) <= 0) return n;
+
+	/* Store the boni global variables */
+	csheet_boni[i].spd = spd;
+	csheet_boni[i].slth = slth;
+	csheet_boni[i].srch = srch;
+	csheet_boni[i].infr = infr;
+	csheet_boni[i].lite = lite;
+	csheet_boni[i].dig = dig;
+	csheet_boni[i].blow = blow;
+	csheet_boni[i].crit = crit;
+	csheet_boni[i].shot = shot;
+	csheet_boni[i].migh = migh;
+	csheet_boni[i].mxhp = mxhp;
+	csheet_boni[i].mxmp = mxmp;
+	csheet_boni[i].luck = luck;
+	csheet_boni[i].pstr = pstr;
+	csheet_boni[i].pint = pint;
+	csheet_boni[i].pwis = pwis;
+	csheet_boni[i].pdex = pdex;
+	csheet_boni[i].pcon = pcon;
+	csheet_boni[i].pchr = pchr;
+	for (j=0;j<13;j++)
+	csheet_boni[i].cb[j] = cb[j];
+	csheet_boni[i].color = color;
+	csheet_boni[i].symbol = symbol;
+	
+	/* Window Display */
+	if (csheet_page == 2) { //Hardcode - Kurzel
+		p_ptr->window |= PW_PLAYER;
+		window_stuff();
+	}
 
 	return 1;
 }

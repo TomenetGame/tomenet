@@ -2349,6 +2349,9 @@ void client_init(char *argv1, bool skip)
         }
 #endif
 
+	/* Character Overview Resist/Boni/Abilities Page on Startup? - Kurzel */
+	if (c_cfg.overview_startup) csheet_page = 2;
+
 	if (status == E_NEED_INFO) {
 		/* Get sex/race/class */
 		/* XXX this function sends PKT_KEEPALIVE */

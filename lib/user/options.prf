@@ -41,7 +41,8 @@ Y:stack_allow_items
 Y:stack_allow_wands
 #X:expand_look
 X:uniques_alive
-X:expand_list
+#X:expand_list
+X:overview_startup
 Y:view_perma_grids
 X:view_torch_grids
 X:no_verify_destroy

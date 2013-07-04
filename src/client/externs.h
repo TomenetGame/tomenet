@@ -245,6 +245,8 @@ extern byte keymap_dirs[128];
 extern s16b command_cmd;
 extern s16b command_dir;
 
+extern boni_col csheet_boni[15];
+extern byte csheet_page;
 extern bool valid_dna;
 extern s16b race, dna_race;
 extern s16b class, dna_class;

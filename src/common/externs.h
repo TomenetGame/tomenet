@@ -204,7 +204,7 @@ extern bool view_reduce_view;
 extern bool auto_haggle;
 extern bool auto_scum;
 extern bool uniques_alive;//expand_look;
-extern bool expand_list;
+extern bool overview_startup;//expand_list;
 extern bool dungeon_align;
 extern bool dungeon_stair;
 extern bool smart_learn;

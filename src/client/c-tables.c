@@ -339,9 +339,13 @@ option_type option_info[OPT_MAX] =
 	"uniques_alive",		"List only unslain uniques for your local party" },
 #endif
 
+#if 0
 	{ &c_cfg.expand_list,		FALSE,	1,	1, 5, FALSE,
 	"expand_list",			"(broken) Expand the power of the list commands" },
-
+#else
+	{ &c_cfg.overview_startup,	FALSE,	4,	1, 5, TRUE,
+	"overview_startup",		"Display overview resistance/boni page at startup" },
+#endif
 	{ &c_cfg.view_perma_grids,	TRUE,	2,	1, 6, TRUE,
 	"view_perma_grids",		"Map remembers all perma-lit grids" },
 

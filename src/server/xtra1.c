@@ -1802,7 +1802,7 @@ static int weight_limit(int Ind) /* max. 3000 atm */
 
 
 /* Should be called by every calc_bonus call */
-static void calc_body_bonus(int Ind)
+static void calc_body_bonus(int Ind, boni_col * csheet_boni)
 {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
@@ -1848,35 +1848,49 @@ static void calc_body_bonus(int Ind)
 			case RBE_EXP_40:
 			case RBE_EXP_80:
 				p_ptr->hold_life = TRUE;
+				csheet_boni->cb[5] |= CB6_RLIFE;
 				break;
 			case RBE_SHATTER:
 				p_ptr->stat_add[A_STR]++;
+				csheet_boni->pstr++;
 				break;
 			case RBE_LOSE_STR:
 				p_ptr->sustain_str = TRUE;
+				csheet_boni->cb[11] |= CB12_RSSTR;
 				break;
 			case RBE_LOSE_INT:
 				p_ptr->sustain_int = TRUE;
+				csheet_boni->cb[11] |= CB12_RSINT;
 				break;
 			case RBE_LOSE_WIS:
 				p_ptr->sustain_wis = TRUE;
+				csheet_boni->cb[11] |= CB12_RSWIS;
 				break;
 			case RBE_LOSE_DEX:
 				p_ptr->sustain_dex = TRUE;
+				csheet_boni->cb[11] |= CB12_RSDEX;
 				break;
 			case RBE_LOSE_CON:
 				p_ptr->sustain_con = TRUE;
+				csheet_boni->cb[11] |= CB12_RSCON;
 				break;
 			case RBE_LOSE_CHR:
 				p_ptr->sustain_chr = TRUE;
+				csheet_boni->cb[11] |= CB12_RSCHR;
 				break;
 			case RBE_LOSE_ALL:
 				p_ptr->sustain_str = TRUE;
+				csheet_boni->cb[11] |= CB12_RSSTR;
 				p_ptr->sustain_int = TRUE;
+				csheet_boni->cb[11] |= CB12_RSINT;
 				p_ptr->sustain_wis = TRUE;
+				csheet_boni->cb[11] |= CB12_RSWIS;
 				p_ptr->sustain_dex = TRUE;
+				csheet_boni->cb[11] |= CB12_RSDEX;
 				p_ptr->sustain_con = TRUE;
+				csheet_boni->cb[11] |= CB12_RSCON;
 				p_ptr->sustain_chr = TRUE;
+				csheet_boni->cb[11] |= CB12_RSCHR;
 				break;
 		}
 
@@ -1910,19 +1924,20 @@ static void calc_body_bonus(int Ind)
 	    (r_ptr->d_char == 'D')))
 		i += 1; /* only +1 since more bonus is coming from its damage already */
 	p_ptr->stat_add[A_STR] += i;
+	csheet_boni->pstr += i;
 
 	/* Cats, rogues, martial artists (mystics/ninjas) and skilled warriors are very agile */
-	if (r_ptr->d_char == 'f') p_ptr->stat_add[A_DEX] += 2; /* Cats! */
+	if (r_ptr->d_char == 'f') { p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2; }/* Cats! */
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE) { /* Rogues and master rogues */
-		if (r_ptr->level >= 23) p_ptr->stat_add[A_DEX] += 2;
-		else p_ptr->stat_add[A_DEX]++;
+		if (r_ptr->level >= 23) { p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2; }
+		else { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }
 	}
-	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && strstr(mname, "master")) p_ptr->stat_add[A_DEX]++; /* Skilled warriors */
-	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_ORANGE) p_ptr->stat_add[A_DEX] += 2; /* Mystics */
-	if (p_ptr->body_monster == 370) p_ptr->stat_add[A_DEX]++; /* Jade Monk */
-	if (p_ptr->body_monster == 492) p_ptr->stat_add[A_DEX]++; /* Ivory Monk */
-	if (p_ptr->body_monster == 532) p_ptr->stat_add[A_DEX]++; /* Dagashi */
-	if (p_ptr->body_monster == 485) p_ptr->stat_add[A_DEX] += 2; /* Ninja */
+	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && strstr(mname, "master")) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; } /* Skilled warriors */
+	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_ORANGE) { p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2; } /* Mystics */
+	if (p_ptr->body_monster == 370) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Jade Monk */
+	if (p_ptr->body_monster == 492) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Ivory Monk */
+	if (p_ptr->body_monster == 532) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Dagashi */
+	if (p_ptr->body_monster == 485) { p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2; } /* Ninja */
 
 #if 0
 	if (n == 0) n = 1;
@@ -1978,6 +1993,7 @@ static void calc_body_bonus(int Ind)
 		//should be able to keep their climbing ability past 30 when mimicked, TLs could fly, etc etc =/
 		p_ptr->pspeed = (((r_ptr->speed - 110 - (p_ptr->prace == RACE_ENT ? 2 : 0) ) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
 	}
+	csheet_boni->spd = p_ptr->pspeed - 110;
 
 #if 0 /* Should forms affect your searching/perception skills? Probably not. */
  #if 0
@@ -1998,14 +2014,14 @@ static void calc_body_bonus(int Ind)
 #endif
 
 	/* Stealth ability is influenced by weight (-> size) of the monster */
-	if (r_ptr->weight <= 500) p_ptr->skill_stl += 2;
-	else if (r_ptr->weight <= 500) p_ptr->skill_stl += 2;
-	else if (r_ptr->weight <= 1000) p_ptr->skill_stl += 1;
-	else if (r_ptr->weight <= 1500) p_ptr->skill_stl += 0;
-	else if (r_ptr->weight <= 4500) p_ptr->skill_stl -= 1;
-	else if (r_ptr->weight <= 20000) p_ptr->skill_stl -= 2;
-	else if (r_ptr->weight <= 100000) p_ptr->skill_stl -= 3;
-	else p_ptr->skill_stl -= 4;
+	if (r_ptr->weight <= 500) { p_ptr->skill_stl += 2; csheet_boni->slth += 2; }
+	else if (r_ptr->weight <= 500) { p_ptr->skill_stl += 2; csheet_boni->slth += 2; }
+	else if (r_ptr->weight <= 1000) { p_ptr->skill_stl += 1; csheet_boni->slth += 1; }
+	else if (r_ptr->weight <= 1500) { p_ptr->skill_stl += 0; csheet_boni->slth += 0; }
+	else if (r_ptr->weight <= 4500) { p_ptr->skill_stl -= 1; csheet_boni->slth -= 1; }
+	else if (r_ptr->weight <= 20000) { p_ptr->skill_stl -= 2; csheet_boni->slth -= 2; }
+	else if (r_ptr->weight <= 100000) { p_ptr->skill_stl -= 3; csheet_boni->slth -= 3; }
+	else { p_ptr->skill_stl -= 4; csheet_boni->slth -= 4; }
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
 
 	/* Extra fire if good archer */
@@ -2033,9 +2049,9 @@ static void calc_body_bonus(int Ind)
 #else /* xbows only get +1ES from fast shooters, not already from slower ARROW_ shooters */
 		if ((p_ptr->inventory[INVEN_BOW].sval == SV_SLING) ||
 		    (p_ptr->inventory[INVEN_BOW].sval == SV_SHORT_BOW) ||
-		    (p_ptr->inventory[INVEN_BOW].sval == SV_LONG_BOW)) p_ptr->num_fire++;
+		    (p_ptr->inventory[INVEN_BOW].sval == SV_LONG_BOW)) { p_ptr->num_fire++; csheet_boni->shot++; }
 		if (r_ptr->freq_innate > 30)
-			p_ptr->num_fire++; /* this time for crossbows too */
+			{ p_ptr->num_fire++; csheet_boni->shot++; } /* this time for crossbows too */
 #endif
 	}
 
@@ -2045,18 +2061,18 @@ static void calc_body_bonus(int Ind)
 	    (r_ptr->flags6 & RF6_SPELLCASTER_MASK)) {
 		if (r_ptr->freq_innate > 30) {
 			p_ptr->num_spell++;	// 1_IN_3
-			p_ptr->stat_add[A_INT] += 1;
-			p_ptr->to_m += 20;
+			p_ptr->stat_add[A_INT] += 1; csheet_boni->pint += 1;
+			p_ptr->to_m += 20; csheet_boni->mxmp += 2; //Kurzel - The values here don't match the guide, seem strange too!
 		}
 		if (r_ptr->freq_innate >= 50) {
 			p_ptr->num_spell++;	// 1_IN_2
-			p_ptr->stat_add[A_INT] += 2;
-			p_ptr->to_m += 15;
+			p_ptr->stat_add[A_INT] += 2; csheet_boni->pint += 2;
+			p_ptr->to_m += 15; csheet_boni->mxmp += 1; //'+1' MP? - Kurzel
 		}
 		if (r_ptr->freq_innate == 100) { /* well, drujs and quylthulgs >_> */
 			p_ptr->num_spell++;	// 1_IN_1
-			p_ptr->stat_add[A_INT] += 1;
-			p_ptr->to_m += 15;
+			p_ptr->stat_add[A_INT] += 1;  csheet_boni->pint += 1;
+			p_ptr->to_m += 15; csheet_boni->mxmp += 2; //This shoud be more, +1/2/3 for 1_in_x? - Kurzel
 		}
 	}
 
@@ -2067,64 +2083,65 @@ static void calc_body_bonus(int Ind)
 		case 37:	case 114:	case 187:	case 235:	case 351:
 		case 377:	case 391:	case 406:	case 484:	case 968:
 			p_ptr->feather_fall = TRUE;
+			csheet_boni->cb[4] |= CB5_RFALL;
 			/* Vampire bats are vampiric */
-			if (p_ptr->body_monster == 391) p_ptr->vampiric_melee = 100;
+			if (p_ptr->body_monster == 391) { p_ptr->vampiric_melee = 100; csheet_boni->cb[6] |= CB7_RVAMP; }
 			break;
 
 		case 365: /* Vampiric mist is vampiric */
-			p_ptr->vampiric_melee = 100;
+			p_ptr->vampiric_melee = 100; csheet_boni->cb[6] |= CB7_RVAMP;
 			break;
 		case 927: /* Vampiric ixitxachitl is vampiric */
-			if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50;
+			if (p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni->cb[6] |= CB7_RVAMP; }
 			break;
 
 		/* Elves get resist_lite, Dark-Elves get resist_dark */
 		case 122:	case 400:	case 178:	case 182:	case 226:
 		case 234:	case 348:	case 375:	case 564:	case 657:
-			p_ptr->resist_dark = TRUE;
+			p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK;
 			break;
 		case 864:
-			p_ptr->resist_lite = TRUE;
+			p_ptr->resist_lite = TRUE; csheet_boni->cb[2] |= CB3_RLITE;
 			break;
 
 		/* Hobbits/Halflings get the no-shoes-bonus */
 		case 74:	case 539:
 			if (!p_ptr->inventory[INVEN_FEET].k_idx)
-				p_ptr->stat_add[A_DEX] += 2;
+				{ p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2; }
 			break;
 
 		/* Gnomes get free_act */
 		case 258:	case 281:
-			p_ptr->free_act = TRUE;
+			p_ptr->free_act = TRUE; csheet_boni->cb[4] |= CB5_RPARA;
 			break;
 
 		/* Dwarves get res_blind & climbing ability */
 		case 111:	case 865:
-			p_ptr->resist_blind = TRUE;
-			if (p_ptr->lev >= 30) p_ptr->climb = TRUE;
+			p_ptr->resist_blind = TRUE; csheet_boni->cb[4] |= CB5_RBLND;
+			if (p_ptr->lev >= 30) { p_ptr->climb = TRUE; csheet_boni->cb[6] |= CB7_RCLMB; }
 			break;
 
 		/* High-elves resist_lite & see_inv */
 		case 945:
-			p_ptr->resist_lite = TRUE;
-			p_ptr->see_inv = TRUE;
+			p_ptr->resist_lite = TRUE; csheet_boni->cb[2] |= CB3_RLITE;
+			p_ptr->see_inv = TRUE; csheet_boni->cb[5] |= CB6_RSINV;
 			break;
 
 		/* Yeeks get feather_fall */
 		case 52:	case 141:	case 179:	case 224:
-			p_ptr->feather_fall = TRUE;
+			p_ptr->feather_fall = TRUE; csheet_boni->cb[4] |= CB5_RFALL;
 			break;
 
 		/* Ents */
 		case 708:
-			p_ptr->slow_digest = TRUE;
+			p_ptr->slow_digest = TRUE; csheet_boni->cb[4] |= CB5_RFOOD;
 			//if (p_ptr->prace != RACE_ENT) 
 			p_ptr->pspeed -= 2;
-			p_ptr->suscep_fire = TRUE;
-			p_ptr->resist_water = TRUE;
+			p_ptr->suscep_fire = TRUE; csheet_boni->cb[0] |= CB1_SFIRE;
+			p_ptr->resist_water = TRUE; csheet_boni->cb[2] |= CB3_RWATR;
 /* not form-dependant:			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE; */
-			p_ptr->can_swim = TRUE; /* wood? */
-			p_ptr->pass_trees = TRUE;
+			p_ptr->can_swim = TRUE; csheet_boni->cb[12] |= CB13_XSWIM; /* wood? */
+			p_ptr->pass_trees = TRUE; csheet_boni->cb[12] |= CB13_XTREE;
 			break;
 
 		/* Ghosts get additional boni - undead see below */
@@ -2136,24 +2153,24 @@ static void calc_body_bonus(int Ind)
 		case 967:	case 973:	case 974:
 			/* I'd prefer ghosts having a radius of awareness, like a 'pseudo-light source',
 			since atm ghosts are completely blind in the dark :( -C. Blue */
-			p_ptr->see_inv = TRUE;
-			p_ptr->see_infra += 3;
+			p_ptr->see_inv = TRUE; csheet_boni->cb[5] |= CB6_RSINV;
+			p_ptr->see_infra += 3; csheet_boni->infr += 3;
 	//		p_ptr->invis += 5; */ /* No. */
 			break;
 
 		/* Vampires have VAMPIRIC attacks */
 		case 432:	case 520:	case 521:	case 623:	case 989:
-			if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50;
-			p_ptr->suscep_lite = TRUE;
+			if (p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni->cb[6] |= CB7_RVAMP; }
+			p_ptr->suscep_lite = TRUE; csheet_boni->cb[1] |= CB2_SLITE;
 			break;
 
 		/* Angels resist light, blindness and poison (usually immunity) */
 		case 417:	case 456:	case 511:	case 605:
 		case 661:	case 1071:	case 1072:	case 1073:
-			p_ptr->see_inv = TRUE;
+			p_ptr->see_inv = TRUE; csheet_boni->cb[5] |= CB6_RSINV;
 		/* Fallen Angel */
 		case 652:
-			p_ptr->resist_blind = TRUE;
+			p_ptr->resist_blind = TRUE; csheet_boni->cb[4] |= CB5_RBLND;
 			break;
 	}
 
@@ -2162,29 +2179,29 @@ static void calc_body_bonus(int Ind)
 	   hound), add to the player's light radius! */
 	if ((r_ptr->flags9 & RF9_HAS_LITE) &&
 	     ((!r_ptr->body_parts[BODY_TORSO]) || (r_ptr->flags4 & RF4_BR_LITE)))
-		p_ptr->cur_lite += 1;
+		{ p_ptr->cur_lite += 1; csheet_boni->lite += 1; }
 
 	/* Forms that occur in the woods are able to pass them, so are animals */	
 	if ((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL))
-		p_ptr->pass_trees = TRUE;
+		{ p_ptr->pass_trees = TRUE; csheet_boni->cb[12] |= CB13_XTREE; }
 
 	/* Forms that occur in the mountains are able to pass them */
 	if (r_ptr->flags8 & (RF8_WILD_MOUNTAIN | RF8_WILD_VOLCANO))
-		p_ptr->climb = TRUE;
+		{ p_ptr->climb = TRUE; csheet_boni->cb[6] |= CB7_RCLMB; }
 	/* Spiders can always climb */
-	if (r_ptr->flags7 & RF7_SPIDER) p_ptr->climb = TRUE;
+	if (r_ptr->flags7 & RF7_SPIDER) { p_ptr->climb = TRUE; csheet_boni->cb[6] |= CB7_RCLMB; }
 
 	/* Orcs get resist_dark */
-	if(r_ptr->flags3 & RF3_ORC) p_ptr->resist_dark = TRUE;
+	if(r_ptr->flags3 & RF3_ORC) { p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK; }
 
 	/* Trolls/Giants get sustain_str */
-	if ((r_ptr->flags3 & RF3_TROLL) || (r_ptr->flags3 & RF3_GIANT)) p_ptr->sustain_str = TRUE;
+	if ((r_ptr->flags3 & RF3_TROLL) || (r_ptr->flags3 & RF3_GIANT)) { p_ptr->sustain_str = TRUE; csheet_boni->cb[11] |= CB12_RSSTR; }
 
 	/* Draconian get feather_fall, ESP_DRAGON */
 	if (r_ptr->flags3 & RF3_DRAGONRIDER) {
-		p_ptr->feather_fall = TRUE;
-		if (p_ptr->lev >= 5) p_ptr->telepathy |= ESP_DRAGON;
-		if (p_ptr->lev >= 30) p_ptr->fly = TRUE;
+		p_ptr->feather_fall = TRUE; csheet_boni->cb[4] |= CB5_RFALL;
+		if (p_ptr->lev >= 5) { p_ptr->telepathy |= ESP_DRAGON; csheet_boni->cb[8] |= CB9_EDRGN; }
+		if (p_ptr->lev >= 30) { p_ptr->fly = TRUE; csheet_boni->cb[6] |= CB7_RRFLY; }
 	}
 
 	/* Undead get lots of stuff similar to player ghosts */
@@ -2199,23 +2216,23 @@ static void calc_body_bonus(int Ind)
 		/* p_ptr->resist_pois = TRUE; */ /* instead of immune */
 		/* p_ptr->resist_cold = TRUE; */
 
-		p_ptr->resist_pois = TRUE;
-		p_ptr->resist_dark = TRUE;
-		p_ptr->resist_blind = TRUE;
-		p_ptr->no_cut = TRUE;
-		p_ptr->reduce_insanity = 1;
-		p_ptr->see_infra += 1;
+		p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS;
+		p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK;
+		p_ptr->resist_blind = TRUE; csheet_boni->cb[4] |= CB5_RBLND;
+		p_ptr->no_cut = TRUE; csheet_boni->cb[12] |= CB13_XNCUT;
+		p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND;
+		p_ptr->see_infra += 1; csheet_boni->infr += 1;
 	}
 
 	/* Non-living got a nice ability set too ;) */
 	if (r_ptr->flags3 & RF3_NONLIVING) {
-		p_ptr->resist_pois = TRUE;
-		p_ptr->resist_fear = TRUE;
-		p_ptr->reduce_insanity = 2;
+		p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS;
+		p_ptr->resist_fear = TRUE; csheet_boni->cb[4] |= CB5_RFEAR;
+		p_ptr->reduce_insanity = 2; csheet_boni->cb[3] |= CB4_RMIND;
 	}
 
 	/* Greater demons resist poison (monsters are immune) */
-	if ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) p_ptr->resist_pois = TRUE;
+	if ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) { p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS; }
 
 	/* Affect charisma by appearance */
 	d = 0;
@@ -2240,51 +2257,51 @@ static void calc_body_bonus(int Ind)
 
 	if (r_ptr->flags3 & RF3_GOOD) d += 2;
 
-	p_ptr->stat_add[A_CHR] += d;
+	p_ptr->stat_add[A_CHR] += d; csheet_boni->pchr += d;
 
 
 	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
-	if (r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 2;
-	if (r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 2;
+	if (r_ptr->flags2 & RF2_STUPID) { p_ptr->stat_add[A_INT] -= 2; csheet_boni->pint -= 2; }
+	if (r_ptr->flags2 & RF2_SMART) { p_ptr->stat_add[A_INT] += 2; csheet_boni->pint += 2; }
 	if (r_ptr->flags2 & RF2_INVISIBLE) {
 		d = ((r_ptr->level > 100 ? 50 : r_ptr->level / 2) + (p_ptr->lev > 50 ? 50 : p_ptr->lev)) / 2;
-		p_ptr->tim_invis_power = d * 4 / 5;
+		p_ptr->tim_invis_power = d * 4 / 5; csheet_boni->cb[6] |= CB7_RINVS;
 	}
-	if (r_ptr->flags2 & RF2_REGENERATE) p_ptr->regenerate = TRUE;
+	if (r_ptr->flags2 & RF2_REGENERATE) { p_ptr->regenerate = TRUE; csheet_boni->cb[5] |= CB6_RRGHP; }
 	/* Immaterial forms (WRAITH / PASS_WALL) drain the mimic's HP! */
 	if (r_ptr->flags2 & RF2_PASS_WALL) {
 		if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
 		    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
 		{
 //BAD!(recursion)			set_tim_wraith(Ind, 30000);
-			p_ptr->tim_wraith = 30000;
+			p_ptr->tim_wraith = 30000; csheet_boni->cb[5] |= CB6_RWRTH;
 		}
-		p_ptr->drain_life++;
+		p_ptr->drain_life++; csheet_boni->cb[5] |= CB6_SRGHP;
 	}
-	if (r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = TRUE;
-	if (r_ptr->flags2 & RF2_AURA_FIRE) p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE;
-	if (r_ptr->flags2 & RF2_AURA_ELEC) p_ptr->sh_elec = p_ptr->sh_elec_fix = TRUE;
-	if (r_ptr->flags2 & RF3_AURA_COLD) p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE;
+	if (r_ptr->flags2 & RF2_KILL_WALL) { p_ptr->auto_tunnel = TRUE; csheet_boni->cb[12] |= CB13_XWALL; }
+	if (r_ptr->flags2 & RF2_AURA_FIRE) { p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE; csheet_boni->cb[10] |= CB11_AFIRE; }
+	if (r_ptr->flags2 & RF2_AURA_ELEC) { p_ptr->sh_elec = p_ptr->sh_elec_fix = TRUE; csheet_boni->cb[10] |= CB11_ACOLD; }
+	if (r_ptr->flags2 & RF3_AURA_COLD) { p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE; csheet_boni->cb[10] |= CB11_AELEC; }
 
-	if (r_ptr->flags5 & RF5_MIND_BLAST) p_ptr->reduce_insanity = 1;
-	if (r_ptr->flags5 & RF5_BRAIN_SMASH) p_ptr->reduce_insanity = 2;
+	if (r_ptr->flags5 & RF5_MIND_BLAST) { p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND; }
+	if (r_ptr->flags5 & RF5_BRAIN_SMASH) { p_ptr->reduce_insanity = 2; csheet_boni->cb[3] |= CB4_RMIND; }
 
-	if (r_ptr->flags3 & RF3_SUSCEP_FIRE) p_ptr->suscep_fire = TRUE;
-	if (r_ptr->flags3 & RF3_SUSCEP_COLD) p_ptr->suscep_cold = TRUE;
+	if (r_ptr->flags3 & RF3_SUSCEP_FIRE) { p_ptr->suscep_fire = TRUE; csheet_boni->cb[0] |= CB1_SFIRE; }
+	if (r_ptr->flags3 & RF3_SUSCEP_COLD) { p_ptr->suscep_cold = TRUE; csheet_boni->cb[0] |= CB1_SCOLD; }
 /* Imho, there should be only suspec fire and cold since these two are opposites.
 Something which is fire-related will usually be suspectible to cold and vice versa.
 Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C. Blue) */
-	if (r_ptr->flags9 & RF9_SUSCEP_ELEC) p_ptr->suscep_elec = TRUE;
-	if (r_ptr->flags9 & RF9_SUSCEP_ACID) p_ptr->suscep_acid = TRUE;
-	if (r_ptr->flags9 & RF9_SUSCEP_POIS) p_ptr->suscep_pois = TRUE;
+	if (r_ptr->flags9 & RF9_SUSCEP_ELEC) { p_ptr->suscep_elec = TRUE; csheet_boni->cb[0] |= CB1_SELEC; }
+	if (r_ptr->flags9 & RF9_SUSCEP_ACID) { p_ptr->suscep_acid = TRUE; csheet_boni->cb[1] |= CB2_SACID; }
+	if (r_ptr->flags9 & RF9_SUSCEP_POIS) { p_ptr->suscep_pois = TRUE; csheet_boni->cb[1] |= CB2_SPOIS; }
 
-	if (r_ptr->flags9 & RF9_RES_ACID) p_ptr->resist_acid = TRUE;
-	if (r_ptr->flags9 & RF9_RES_ELEC) p_ptr->resist_elec = TRUE;
-	if (r_ptr->flags9 & RF9_RES_FIRE) p_ptr->resist_fire = TRUE;
-	if (r_ptr->flags9 & RF9_RES_COLD) p_ptr->resist_cold = TRUE;
-	if (r_ptr->flags9 & RF9_RES_POIS) p_ptr->resist_pois = TRUE;
+	if (r_ptr->flags9 & RF9_RES_ACID) { p_ptr->resist_acid = TRUE; csheet_boni->cb[1] |= CB2_RACID; }
+	if (r_ptr->flags9 & RF9_RES_ELEC) { p_ptr->resist_elec = TRUE; csheet_boni->cb[0] |= CB1_RELEC; }
+	if (r_ptr->flags9 & RF9_RES_FIRE) { p_ptr->resist_fire = TRUE; csheet_boni->cb[0] |= CB1_RFIRE; }
+	if (r_ptr->flags9 & RF9_RES_COLD) { p_ptr->resist_cold = TRUE; csheet_boni->cb[0] |= CB1_RCOLD; }
+	if (r_ptr->flags9 & RF9_RES_POIS) { p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS; }
 
-	if (r_ptr->flags3 & RF3_HURT_LITE) p_ptr->suscep_lite = TRUE;
+	if (r_ptr->flags3 & RF3_HURT_LITE) { p_ptr->suscep_lite = TRUE; csheet_boni->cb[1] |= CB2_SLITE; }
 #if 0 /* for now let's say EVIL is a state of mind, so the mimic isn't necessarily evil */
 	if (r_ptr->flags3 & RF3_EVIL) p_ptr->suscep_good = TRUE;
 #else /* the appearance is important for damage though - let's keep it restricted to demon/undead for now */
@@ -2298,42 +2315,42 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if (r_ptr->flags3 & RF3_IM_ACID) {
 		immunities += 1;
 		immunity[immunities] = 1;
-		p_ptr->resist_acid = TRUE;
+		p_ptr->resist_acid = TRUE; csheet_boni->cb[1] |= CB2_RACID;
 	}
 	if (r_ptr->flags3 & RF3_IM_ELEC) {
 		immunities += 1;
 		immunity[immunities] = 2;
-		p_ptr->resist_elec = TRUE;
+		p_ptr->resist_elec = TRUE; csheet_boni->cb[0] |= CB1_RELEC;
 	}
 	if (r_ptr->flags3 & RF3_IM_FIRE) {
 		immunities += 1;
 		immunity[immunities] = 3;
-		p_ptr->resist_fire = TRUE;
+		p_ptr->resist_fire = TRUE; csheet_boni->cb[0] |= CB1_RFIRE;
 	}
 	if (r_ptr->flags3 & RF3_IM_COLD) {
 		immunities += 1;
 		immunity[immunities] = 4;
-		p_ptr->resist_cold = TRUE;
+		p_ptr->resist_cold = TRUE; csheet_boni->cb[0] |= CB1_RCOLD;
 	}
 	if (r_ptr->flags3 & RF3_IM_POIS) {
 		immunities += 1;
 		immunity[immunities] = 5;
-		p_ptr->resist_pois = TRUE;
+		p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS;
 	}
 	if (r_ptr->flags9 & RF9_IM_WATER) {
 		immunities += 1;
 		immunity[immunities] = 6;
-		p_ptr->resist_water = TRUE;
+		p_ptr->resist_water = TRUE; csheet_boni->cb[2] |= CB3_RWATR;
 	}
 
 	/* gain not more than 1 immunities at the same time from a form */
 	if (immunities == 1) {
-		if (r_ptr->flags3 & RF3_IM_ACID) p_ptr->immune_acid = TRUE;
-		if (r_ptr->flags3 & RF3_IM_ELEC) p_ptr->immune_elec = TRUE;
-		if (r_ptr->flags3 & RF3_IM_FIRE) p_ptr->immune_fire = TRUE;
-		if (r_ptr->flags3 & RF3_IM_COLD) p_ptr->immune_cold = TRUE;
-		if (r_ptr->flags3 & RF3_IM_POIS) p_ptr->immune_poison = TRUE;
-		if (r_ptr->flags9 & RF9_IM_WATER) p_ptr->immune_water = TRUE;
+		if (r_ptr->flags3 & RF3_IM_ACID) { p_ptr->immune_acid = TRUE; csheet_boni->cb[1] |= CB2_IACID; }
+		if (r_ptr->flags3 & RF3_IM_ELEC) { p_ptr->immune_elec = TRUE; csheet_boni->cb[1] |= CB2_IELEC; }
+		if (r_ptr->flags3 & RF3_IM_FIRE) { p_ptr->immune_fire = TRUE; csheet_boni->cb[0] |= CB1_IFIRE; }
+		if (r_ptr->flags3 & RF3_IM_COLD) { p_ptr->immune_cold = TRUE; csheet_boni->cb[0] |= CB1_ICOLD; }
+		if (r_ptr->flags3 & RF3_IM_POIS) { p_ptr->immune_poison = TRUE; csheet_boni->cb[1] |= CB2_IACID; }
+		if (r_ptr->flags9 & RF9_IM_WATER) { p_ptr->immune_water = TRUE; csheet_boni->cb[2] |= CB3_IWATR; }
 	} else {
 		immrand = 1 + rand_int(immunities);
 
@@ -2358,43 +2375,43 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 			break;
 		}
 
-		if (immunity[immrand] == 1) p_ptr->immune_acid = TRUE;
-		if (immunity[immrand] == 2) p_ptr->immune_elec = TRUE;
-		if (immunity[immrand] == 3) p_ptr->immune_fire = TRUE;
-		if (immunity[immrand] == 4) p_ptr->immune_cold = TRUE;
-		if (immunity[immrand] == 5) p_ptr->immune_poison = TRUE;
-		if (immunity[immrand] == 6) p_ptr->immune_water = TRUE;
+		if (immunity[immrand] == 1) { p_ptr->immune_acid = TRUE; csheet_boni->cb[1] |= CB2_IACID; }
+		if (immunity[immrand] == 2) { p_ptr->immune_elec = TRUE; csheet_boni->cb[1] |= CB2_IELEC; }
+		if (immunity[immrand] == 3) { p_ptr->immune_fire = TRUE; csheet_boni->cb[0] |= CB1_IFIRE; }
+		if (immunity[immrand] == 4) { p_ptr->immune_cold = TRUE; csheet_boni->cb[0] |= CB1_ICOLD; }
+		if (immunity[immrand] == 5) { p_ptr->immune_poison = TRUE; csheet_boni->cb[1] |= CB2_IPOIS; }
+		if (immunity[immrand] == 6) { p_ptr->immune_water = TRUE; csheet_boni->cb[2] |= CB3_IWATR; }
 	}
 
-	if (r_ptr->flags9 & RF9_RES_LITE) p_ptr->resist_lite = TRUE;
-	if (r_ptr->flags9 & RF9_RES_DARK) p_ptr->resist_dark = TRUE;
-	if (r_ptr->flags9 & RF9_RES_BLIND) p_ptr->resist_blind = TRUE;
-	if (r_ptr->flags9 & RF9_RES_SOUND) p_ptr->resist_sound = TRUE;
-	if (r_ptr->flags3 & RF3_RES_PLAS) p_ptr->resist_plasma = TRUE;
-	if (r_ptr->flags9 & RF9_RES_CHAOS) p_ptr->resist_chaos = TRUE;
-	if (r_ptr->flags9 & RF9_RES_TIME) p_ptr->resist_time = TRUE;
-	if (r_ptr->flags9 & RF9_RES_MANA) p_ptr->resist_mana = TRUE;
+	if (r_ptr->flags9 & RF9_RES_LITE) { p_ptr->resist_lite = TRUE; csheet_boni->cb[2] |= CB3_RLITE; }
+	if (r_ptr->flags9 & RF9_RES_DARK) { p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK; }
+	if (r_ptr->flags9 & RF9_RES_BLIND) { p_ptr->resist_blind = TRUE; csheet_boni->cb[4] |= CB5_RBLND; }
+	if (r_ptr->flags9 & RF9_RES_SOUND) { p_ptr->resist_sound = TRUE; csheet_boni->cb[2] |= CB3_RSOUN; }
+	if (r_ptr->flags3 & RF3_RES_PLAS) { p_ptr->resist_plasma = TRUE; csheet_boni->cb[2] |= CB3_RPLAS; }
+	if (r_ptr->flags9 & RF9_RES_CHAOS) { p_ptr->resist_chaos = TRUE; csheet_boni->cb[3] |= CB4_RCHAO; }
+	if (r_ptr->flags9 & RF9_RES_TIME) { p_ptr->resist_time = TRUE; csheet_boni->cb[3] |= CB4_RTIME; }
+	if (r_ptr->flags9 & RF9_RES_MANA) { p_ptr->resist_mana = TRUE; csheet_boni->cb[3] |= CB4_RMANA; }
 	if ((r_ptr->flags9 & RF9_RES_SHARDS) || (r_ptr->flags3 & RF3_HURT_ROCK))
-		p_ptr->resist_shard = TRUE;
+		{ p_ptr->resist_shard = TRUE;  csheet_boni->cb[2] |= CB3_RSHRD; }
 
-	if (r_ptr->flags3 & RF3_RES_TELE) p_ptr->res_tele = TRUE;
-	if (r_ptr->flags9 & RF9_IM_TELE) p_ptr->res_tele = TRUE;
+	if (r_ptr->flags3 & RF3_RES_TELE) { p_ptr->res_tele = TRUE; csheet_boni->cb[4] |= CB5_RTELE; }
+	if (r_ptr->flags9 & RF9_IM_TELE) { p_ptr->res_tele = TRUE; csheet_boni->cb[4] |= CB5_RTELE; }
 	if (r_ptr->flags3 & RF3_RES_PLAS) {
-	    p_ptr->resist_fire = TRUE;
+	    p_ptr->resist_fire = TRUE; csheet_boni->cb[0] |= CB1_RFIRE;
 	    /* p_ptr->oppose_fire = TRUE; */
 	}
-	if (r_ptr->flags3 & RF3_RES_WATE) p_ptr->resist_water = TRUE;
-	if (r_ptr->flags3 & RF3_RES_NETH) p_ptr->resist_neth = TRUE;
-	if (r_ptr->flags3 & RF3_RES_NEXU) p_ptr->resist_nexus = TRUE;
-	if (r_ptr->flags3 & RF3_RES_DISE) p_ptr->resist_disen = TRUE;
-	if (r_ptr->flags3 & RF3_NO_FEAR) p_ptr->resist_fear = TRUE;
-	if (r_ptr->flags3 & RF3_NO_SLEEP) p_ptr->free_act = TRUE;
-	if (r_ptr->flags3 & RF3_NO_CONF) p_ptr->resist_conf = TRUE;
-	if (r_ptr->flags3 & RF3_NO_STUN) p_ptr->resist_sound = TRUE;
-	if (r_ptr->flags8 & RF8_NO_CUT) p_ptr->no_cut = TRUE;
-	if (r_ptr->flags7 & RF7_CAN_FLY) p_ptr->fly = TRUE;
-	if (r_ptr->flags7 & RF7_CAN_SWIM) p_ptr->can_swim = TRUE;
-	if (r_ptr->flags2 & RF2_REFLECTING) p_ptr->reflect = TRUE;
+	if (r_ptr->flags3 & RF3_RES_WATE) { p_ptr->resist_water = TRUE; csheet_boni->cb[2] |= CB3_RWATR; }
+	if (r_ptr->flags3 & RF3_RES_NETH) { p_ptr->resist_neth = TRUE; csheet_boni->cb[3] |= CB4_RNETH; }
+	if (r_ptr->flags3 & RF3_RES_NEXU) { p_ptr->resist_nexus = TRUE; csheet_boni->cb[3] |= CB4_RNEXU; }
+	if (r_ptr->flags3 & RF3_RES_DISE) { p_ptr->resist_disen = TRUE; csheet_boni->cb[3] |= CB4_RDISE; }
+	if (r_ptr->flags3 & RF3_NO_FEAR) { p_ptr->resist_fear = TRUE; csheet_boni->cb[4] |= CB5_RFEAR; }
+	if (r_ptr->flags3 & RF3_NO_SLEEP) { p_ptr->free_act = TRUE; csheet_boni->cb[4] |= CB5_RPARA; }
+	if (r_ptr->flags3 & RF3_NO_CONF) { p_ptr->resist_conf = TRUE; csheet_boni->cb[2] |= CB3_RCONF; }
+	if (r_ptr->flags3 & RF3_NO_STUN) { p_ptr->resist_sound = TRUE; csheet_boni->cb[2] |= CB3_RSOUN; }
+	if (r_ptr->flags8 & RF8_NO_CUT) { p_ptr->no_cut = TRUE; csheet_boni->cb[12] |= CB13_XNCUT; }
+	if (r_ptr->flags7 & RF7_CAN_FLY) { p_ptr->fly = TRUE; csheet_boni->cb[6] |= CB7_RRFLY; }
+	if (r_ptr->flags7 & RF7_CAN_SWIM) { p_ptr->can_swim = TRUE; csheet_boni->cb[12] |= CB13_XSWIM; }
+	if (r_ptr->flags2 & RF2_REFLECTING) { p_ptr->reflect = TRUE; csheet_boni->cb[6] |= CB7_RREFL; }
 	if (r_ptr->flags7 & RF7_DISBELIEVE) {
 #if 0
 		p_ptr->antimagic += r_ptr->level / 2 + 20;
@@ -2407,34 +2424,34 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 
 	if ((r_ptr->flags2 & RF2_WEIRD_MIND) ||
 	    (r_ptr->flags9 & RF9_RES_PSI))
-		p_ptr->reduce_insanity = 1;
+		{ p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND; }
 	if ((r_ptr->flags2 & RF2_EMPTY_MIND) ||
 	    (r_ptr->flags9 & RF9_IM_PSI))
-		p_ptr->reduce_insanity = 2;
+		{ p_ptr->reduce_insanity = 2; csheet_boni->cb[3] |= CB4_RMIND; }
 
 	/* as long as not all resistances are implemented in r_info, use workaround via breaths */
-	if (r_ptr->flags4 & RF4_BR_LITE) p_ptr->resist_lite = TRUE;
-	if (r_ptr->flags4 & RF4_BR_DARK) p_ptr->resist_dark = TRUE;
+	if (r_ptr->flags4 & RF4_BR_LITE) { p_ptr->resist_lite = TRUE; csheet_boni->cb[2] |= CB3_RLITE; }
+	if (r_ptr->flags4 & RF4_BR_DARK) { p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK; }
 	/* if (r_ptr->flags & RF__) p_ptr->resist_blind = TRUE; */
-	if (r_ptr->flags4 & RF4_BR_SOUN) p_ptr->resist_sound = TRUE;
-	if (r_ptr->flags4 & RF4_BR_SHAR) p_ptr->resist_shard = TRUE;
-	if (r_ptr->flags4 & RF4_BR_CHAO) p_ptr->resist_chaos = TRUE;
-	if (r_ptr->flags4 & RF4_BR_TIME) p_ptr->resist_time = TRUE;
-	if (r_ptr->flags4 & RF4_BR_MANA) p_ptr->resist_mana = TRUE;
+	if (r_ptr->flags4 & RF4_BR_SOUN) { p_ptr->resist_sound = TRUE; csheet_boni->cb[2] |= CB3_RSOUN; }
+	if (r_ptr->flags4 & RF4_BR_SHAR) { p_ptr->resist_shard = TRUE; csheet_boni->cb[2] |= CB3_RSHRD; }
+	if (r_ptr->flags4 & RF4_BR_CHAO) { p_ptr->resist_chaos = TRUE; csheet_boni->cb[3] |= CB4_RCHAO; }
+	if (r_ptr->flags4 & RF4_BR_TIME) { p_ptr->resist_time = TRUE; csheet_boni->cb[3] |= CB4_RTIME; }
+	if (r_ptr->flags4 & RF4_BR_MANA) { p_ptr->resist_mana = TRUE; csheet_boni->cb[3] |= CB4_RMANA; }
 	if (r_ptr->flags4 & RF4_BR_PLAS) {
-	    p_ptr->resist_fire = TRUE;
+	    p_ptr->resist_fire = TRUE; csheet_boni->cb[0] |= CB1_RFIRE;
 	    /* p_ptr->oppose_fire = TRUE; */
 	}
 	/* if ((r_ptr->flags4 & RF4_BR_WATE) || <- does not exist */
-	if (r_ptr->flags7 & RF7_AQUATIC) p_ptr->resist_water = TRUE;
-	if (r_ptr->flags4 & RF4_BR_NETH) p_ptr->resist_neth = TRUE;
+	if (r_ptr->flags7 & RF7_AQUATIC) { p_ptr->resist_water = TRUE; csheet_boni->cb[2] |= CB3_RWATR; }
+	if (r_ptr->flags4 & RF4_BR_NETH) { p_ptr->resist_neth = TRUE; csheet_boni->cb[3] |= CB4_RNETH; }
 	/* res_neth_somewhat: (r_ptr->flags3 & RF3_EVIL) */
-	if (r_ptr->flags4 & RF4_BR_NEXU) p_ptr->resist_nexus = TRUE;
-	if (r_ptr->flags4 & RF4_BR_DISE) p_ptr->resist_disen = TRUE;
+	if (r_ptr->flags4 & RF4_BR_NEXU) { p_ptr->resist_nexus = TRUE; csheet_boni->cb[3] |= CB4_RNEXU; }
+	if (r_ptr->flags4 & RF4_BR_DISE) { p_ptr->resist_disen = TRUE; csheet_boni->cb[3] |= CB4_RDISE; }
 
 	/* The following BR-to-RES will be needed even with all of above RES implemented: */
-	if (r_ptr->flags4 & RF4_BR_GRAV) p_ptr->feather_fall = TRUE;
-	if (r_ptr->flags4 & RF4_BR_INER) p_ptr->free_act = TRUE;
+	if (r_ptr->flags4 & RF4_BR_GRAV) { p_ptr->feather_fall = TRUE; csheet_boni->cb[4] |= CB5_RFALL; }
+	if (r_ptr->flags4 & RF4_BR_INER) { p_ptr->free_act = TRUE; csheet_boni->cb[4] |= CB5_RPARA; }
 
 	/* If not changed, spells didnt changed too, no need to send them */
 	if (!p_ptr->body_changed) {
@@ -2803,7 +2820,38 @@ void calc_boni(int Ind)
 		p_ptr->update |= PU_BONUS;
 		return;
 	}
-
+	
+	int kk, jj;
+	boni_col csheet_boni[15]; //Kurzel - If syncing here is not bad for bandwidth reasosns, this is ideal...
+	/* Wipe the boni column data */
+	for (kk = 0; kk < 15; kk++) {
+		csheet_boni[kk].i = kk;
+		csheet_boni[kk].spd = 0;
+		csheet_boni[kk].slth = 0;
+		csheet_boni[kk].srch = 0;
+		csheet_boni[kk].infr = 0;
+		csheet_boni[kk].lite = 0;
+		csheet_boni[kk].dig = 0;
+		csheet_boni[kk].blow = 0;
+		csheet_boni[kk].crit = 0;
+		csheet_boni[kk].shot = 0;
+		csheet_boni[kk].migh = 0;
+		csheet_boni[kk].mxhp = 0;
+		csheet_boni[kk].mxmp = 0;
+		csheet_boni[kk].luck = 0;
+		csheet_boni[kk].pstr = 0;
+		csheet_boni[kk].pint = 0;
+		csheet_boni[kk].pwis = 0;
+		csheet_boni[kk].pdex = 0;
+		csheet_boni[kk].pcon = 0;
+		csheet_boni[kk].pchr = 0;
+		/* Clear the byte flags */
+		for (jj = 0; jj < 13; jj++)
+			csheet_boni[kk].cb[jj] = 0;
+		csheet_boni[kk].color = TERM_DARK;
+		csheet_boni[kk].symbol = ' '; //Empty item / form slot.
+	}
+	
 	int			j, hold, minus, am_bonus = 0, am_temp;
 	long			w, i;
 
@@ -3031,6 +3079,7 @@ void calc_boni(int Ind)
 
 	/* Base infravision (purely racial) */
 	p_ptr->see_infra = p_ptr->rp_ptr->infra;
+	//csheet_boni[14].infr = p_ptr->see_infra;
 
 	/* Base skill -- disarming */
 	p_ptr->skill_dis = p_ptr->rp_ptr->r_dis + p_ptr->cp_ptr->c_dis;
@@ -3040,8 +3089,10 @@ void calc_boni(int Ind)
 	p_ptr->skill_sav = p_ptr->rp_ptr->r_sav + p_ptr->cp_ptr->c_sav;
 	/* Base skill -- stealth */
 	p_ptr->skill_stl = p_ptr->rp_ptr->r_stl + p_ptr->cp_ptr->c_stl;
+	//csheet_boni[14].slth = p_ptr->skill_stl;
 	/* Base skill -- searching ability */
 	p_ptr->skill_srh = p_ptr->rp_ptr->r_srh + p_ptr->cp_ptr->c_srh;
+	//csheet_boni[14].srch = p_ptr->skill_srh;
 	/* Base skill -- searching frequency */
 	p_ptr->skill_fos = p_ptr->rp_ptr->r_fos + p_ptr->cp_ptr->c_fos;
 	/* Base skill -- combat (normal) */
@@ -3067,7 +3118,16 @@ void calc_boni(int Ind)
 
 
 	/* Calc bonus body */
-	if (p_ptr->body_monster) calc_body_bonus(Ind);
+	if (!p_ptr->body_monster) {
+		/* Show the '@' with class colour for the boni page - Kurzel */
+		csheet_boni[14].symbol = (p_ptr->fruit_bat) ? 'b' : '@';
+		csheet_boni[14].color = class_info[p_ptr->pclass].color;
+	} else {
+		/* Show the monster! - Kurzel */
+		csheet_boni[14].symbol = r_info[p_ptr->body_monster].d_char;
+		csheet_boni[14].color = r_info[p_ptr->body_monster].d_attr;
+	}
+	if (p_ptr->body_monster) calc_body_bonus(Ind, &csheet_boni[14]); //Kurzel - Mimicry form boni calc must be done here..?
 	else {	// if if or switch to switch, that is the problem :)
 			/* I vote for p_info ;) */
 		/* Update the innate spells */
@@ -3093,70 +3153,72 @@ void calc_boni(int Ind)
 //				p_ptr->pspeed += (3 + (p_ptr->lev > 35 ? 7 : p_ptr->lev / 5)); // +10 eventually.
 			else
 				p_ptr->pspeed += 3;
-			p_ptr->fly = TRUE;
-			p_ptr->feather_fall = TRUE;
+			p_ptr->fly = TRUE; csheet_boni[14].cb[6] |= CB7_RRFLY;
+			p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
 		}
+		
+		csheet_boni[14].spd = p_ptr->pspeed - 110;
 	/* Choosing a race just for its HP or low exp% shouldn't be what we want -C. Blue- */
 	}
 
 
 	/* Half-Elf */
 	if (p_ptr->prace == RACE_HALF_ELF) {
-		p_ptr->resist_lite = TRUE;
+		p_ptr->resist_lite = TRUE; csheet_boni[14].cb[2] |= CB3_RLITE;
 	}
 
 	/* Elf */
 	else if (p_ptr->prace == RACE_ELF) {
-		p_ptr->see_inv = TRUE;
-		p_ptr->resist_lite = TRUE;
+		p_ptr->see_inv = TRUE; csheet_boni[14].cb[5] |= CB6_RSINV;
+		p_ptr->resist_lite = TRUE; csheet_boni[14].cb[2] |= CB3_RLITE;
 	}
 
 	/* Hobbit */
 	else if (p_ptr->prace == RACE_HOBBIT) {
-		p_ptr->sustain_dex = TRUE;
+		p_ptr->sustain_dex = TRUE; csheet_boni[14].cb[11] |= CB12_RSDEX;
 
 		/* DEX bonus for NOT wearing shoes */
 		/* not while in mimicried form */
 		if (!p_ptr->body_monster && !p_ptr->inventory[INVEN_FEET].k_idx)
-			p_ptr->stat_add[A_DEX] += 2;
+			{ p_ptr->stat_add[A_DEX] += 2;  csheet_boni[14].pdex += 2; }
 	}
 
 	/* Gnome */
-	else if (p_ptr->prace == RACE_GNOME) p_ptr->free_act = TRUE;
+	else if (p_ptr->prace == RACE_GNOME) { p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA; }
 
 	/* Dwarf */
 	else if (p_ptr->prace == RACE_DWARF) {
-		p_ptr->resist_blind = TRUE;
+		p_ptr->resist_blind = TRUE; csheet_boni[14].cb[4] |= CB5_RBLND;
 		/* not while in mimicried form */
-		if (!p_ptr->body_monster && p_ptr->lev >= 30) p_ptr->climb = TRUE;
+		if (!p_ptr->body_monster && p_ptr->lev >= 30) { p_ptr->climb = TRUE; csheet_boni[14].cb[6] |= CB7_RCLMB; }
 	}
 
 	/* Half-Orc */
-	else if (p_ptr->prace == RACE_HALF_ORC) p_ptr->resist_dark = TRUE;
+	else if (p_ptr->prace == RACE_HALF_ORC) { p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK; }
 
 	/* Half-Troll */
-	else if (p_ptr->prace == RACE_HALF_TROLL) p_ptr->sustain_str = TRUE;
+	else if (p_ptr->prace == RACE_HALF_TROLL) { p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR; }
 
 	/* Dunadan */
-	else if (p_ptr->prace == RACE_DUNADAN) p_ptr->sustain_con = TRUE;
+	else if (p_ptr->prace == RACE_DUNADAN) { p_ptr->sustain_con = TRUE;  csheet_boni[14].cb[11] |= CB12_RSCON; }
 
 	/* High Elf */
 	else if (p_ptr->prace == RACE_HIGH_ELF) {
-		p_ptr->resist_lite = TRUE;
-		p_ptr->see_inv = TRUE;
-		p_ptr->resist_time = TRUE;
+		p_ptr->resist_lite = TRUE; csheet_boni[14].cb[2] |= CB3_RLITE;
+		p_ptr->see_inv = TRUE; csheet_boni[14].cb[5] |= CB6_RSINV;
+		p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME;
 	}
 
 	/* Yeek */
 	else if (p_ptr->prace == RACE_YEEK) {
-		p_ptr->feather_fall = TRUE;
+		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
 		/* not while in mimicried form */
-		if (!p_ptr->body_monster) p_ptr->pass_trees = TRUE;
+		if (!p_ptr->body_monster) p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE;
 	}
 
 	/* Goblin */
 	else if (p_ptr->prace == RACE_GOBLIN) {
-		p_ptr->resist_dark = TRUE;
+		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
 		/* not while in mimicried form */
 		/*if (!p_ptr->body_monster) p_ptr->feather_fall = TRUE;*/
 	}
@@ -3164,125 +3226,130 @@ void calc_boni(int Ind)
 	/* Ent */
 	else if (p_ptr->prace == RACE_ENT) {
 		/* always a bit slowish */
-		p_ptr->slow_digest = TRUE;
+		p_ptr->slow_digest = TRUE; csheet_boni[14].cb[4] |= CB5_RFOOD;
 		/* even while in different form? */
-		p_ptr->suscep_fire = TRUE;
-		p_ptr->resist_water = TRUE;
+		p_ptr->suscep_fire = TRUE; csheet_boni[14].cb[0] |= CB1_SFIRE;
+		p_ptr->resist_water = TRUE; csheet_boni[14].cb[2] |= CB3_RWATR;
 
 		/* not while in mimicried form */
 		if (!p_ptr->body_monster) {
-			p_ptr->pspeed -= 2;
-			p_ptr->can_swim = TRUE; /* wood? */
-			p_ptr->pass_trees = TRUE;
-		} else p_ptr->pspeed -= 1; /* it's cost of ent's power, isn't it? */
+			p_ptr->pspeed -= 2; csheet_boni[14].spd -= 2;
+			p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; /* wood? */
+			p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE;
+		} else { p_ptr->pspeed -= 1; csheet_boni[14].spd -= 1; } /* it's cost of ent's power, isn't it? */
 
-		if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
+		if (p_ptr->lev >= 4) { p_ptr->see_inv = TRUE; csheet_boni[14].cb[5] |= CB6_RSINV; }
 
-		if (p_ptr->lev >= 10) p_ptr->telepathy |= ESP_ANIMAL;
-		if (p_ptr->lev >= 15) p_ptr->telepathy |= ESP_ORC;
-		if (p_ptr->lev >= 20) p_ptr->telepathy |= ESP_TROLL;
-		if (p_ptr->lev >= 25) p_ptr->telepathy |= ESP_GIANT;
-		if (p_ptr->lev >= 30) p_ptr->telepathy |= ESP_DRAGON;
-		if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_DEMON;
-		if (p_ptr->lev >= 50) p_ptr->telepathy |= ESP_EVIL;
+		if (p_ptr->lev >= 10) { p_ptr->telepathy |= ESP_ANIMAL; csheet_boni[14].cb[7] |= CB8_EANIM; }
+		if (p_ptr->lev >= 15) { p_ptr->telepathy |= ESP_ORC; csheet_boni[14].cb[7] |= CB8_EORCS; }
+		if (p_ptr->lev >= 20) { p_ptr->telepathy |= ESP_TROLL; csheet_boni[14].cb[7] |= CB8_ETROL; }
+		if (p_ptr->lev >= 25) { p_ptr->telepathy |= ESP_GIANT; csheet_boni[14].cb[7] |= CB8_EGIAN; }
+		if (p_ptr->lev >= 30) { p_ptr->telepathy |= ESP_DRAGON; csheet_boni[14].cb[8] |= CB9_EDRGN; }
+		if (p_ptr->lev >= 40) { p_ptr->telepathy |= ESP_DEMON; csheet_boni[14].cb[8] |= CB9_EDEMN; }
+		if (p_ptr->lev >= 50) { p_ptr->telepathy |= ESP_EVIL; csheet_boni[14].cb[9] |= CB10_EEVIL; }
 	}
 
 	/* Draconian (former Dragonrider, Thunderlord) */
 	else if (p_ptr->prace == RACE_DRACONIAN) {
 		/* not while in mimicried form */
-		if (!p_ptr->body_monster) p_ptr->feather_fall = TRUE;
+		if (!p_ptr->body_monster) { p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL; }
 
-		if (p_ptr->lev >= 5) p_ptr->telepathy |= ESP_DRAGON;
+		if (p_ptr->lev >= 5) { p_ptr->telepathy |= ESP_DRAGON; csheet_boni[14].cb[8] |= CB9_EDRGN; }
 #ifndef ENABLE_DRACONIAN_TRAITS
-		if (p_ptr->lev >= 10) p_ptr->resist_fire = TRUE;
-		if (p_ptr->lev >= 15) p_ptr->resist_cold = TRUE;
-		if (p_ptr->lev >= 20) p_ptr->resist_acid = TRUE;
-		if (p_ptr->lev >= 25) p_ptr->resist_elec = TRUE;
+		if (p_ptr->lev >= 10) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
+		if (p_ptr->lev >= 15) { p_ptr->resist_cold = TRUE; csheet_boni[14].cb[0] |= CB1_RCOLD; }
+		if (p_ptr->lev >= 20) { p_ptr->resist_acid = TRUE; csheet_boni[14].cb[1] |= CB2_RACID; }
+		if (p_ptr->lev >= 25) { p_ptr->resist_elec = TRUE; csheet_boni[14].cb[0] |= CB1_RELEC; }
 #endif
 		/* not while in mimicried form */
 		if (!p_ptr->body_monster)
-		    if (p_ptr->lev >= 30) p_ptr->fly = TRUE;
+		    if (p_ptr->lev >= 30) { p_ptr->fly = TRUE; csheet_boni[14].cb[6] |= CB7_RRFLY; }
 	}
 
 	/* Dark-Elves */
 	else if (p_ptr->prace == RACE_DARK_ELF) {
-		p_ptr->suscep_lite = TRUE;
+		p_ptr->suscep_lite = TRUE; csheet_boni[14].cb[1] |= CB2_SLITE;
 //		p_ptr->suscep_good = TRUE;//maybe too harsh
-		p_ptr->resist_dark = TRUE;
-		if (p_ptr->lev >= 20) p_ptr->see_inv = TRUE;
+		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
+		if (p_ptr->lev >= 20) { p_ptr->see_inv = TRUE; csheet_boni[14].cb[5] |= CB6_RSINV; }
 	}
 
 	/* Vampires */
 	else if (p_ptr->prace == RACE_VAMPIRE) {
-		p_ptr->suscep_lite = TRUE;
+		p_ptr->suscep_lite = TRUE; csheet_boni[14].cb[1] |= CB2_SLITE;
 		p_ptr->suscep_good = TRUE;
 		p_ptr->suscep_life = TRUE;
 
-		p_ptr->resist_time = TRUE;
-		p_ptr->resist_dark = TRUE;
-		p_ptr->resist_neth = TRUE;
-		p_ptr->resist_pois = TRUE;
-		p_ptr->hold_life = TRUE;
+		p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME;
+		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
+		p_ptr->resist_neth = TRUE; csheet_boni[14].cb[3] |= CB4_RNETH;
+		p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS;
+		p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE;
 
-		p_ptr->reduce_insanity = 1;
+		p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND;
 
-		if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
+		if (p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni[14].cb[6] |= CB7_RVAMP; } /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
 		/* sense surroundings without light source! (virtual lite / dark light) */
-		p_ptr->cur_vlite = 1 + p_ptr->lev / 10;
+		p_ptr->cur_vlite = 1 + p_ptr->lev / 10; csheet_boni[14].lite = 1 + p_ptr->lev / 10;
+		csheet_boni[14].cb[12] |= CB13_XLITE;
 //		if (p_ptr->lev >= 30) p_ptr->fly = TRUE; can poly into bat instead
 	}
 #ifdef ENABLE_MAIA
 	else if (p_ptr->prace == RACE_MAIA) {
 		//Help em out a little.. (to locate candlebearer/darkling)
-		p_ptr->telepathy |= ESP_DEMON;
-		p_ptr->telepathy |= ESP_GOOD;
+		p_ptr->telepathy |= ESP_DEMON; csheet_boni[14].cb[8] |= CB9_EDEMN;
+		p_ptr->telepathy |= ESP_GOOD; csheet_boni[14].cb[9] |= CB10_EGOOD;
 
 		if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
+			if (p_ptr->lev >= 20) csheet_boni[14].cb[5] |= CB6_IFOOD; //Kurzel - level 20 req?
+			if (p_ptr->lev >= 50)  csheet_boni[14].cb[9] |= CB10_SEVIL;
 			p_ptr->suscep_evil = TRUE;
 
-			p_ptr->see_inv = TRUE;
-			p_ptr->resist_lite = TRUE;
+			p_ptr->see_inv = TRUE; csheet_boni[14].cb[5] |= CB6_RSINV;
+			p_ptr->resist_lite = TRUE; csheet_boni[14].cb[2] |= CB3_RLITE;
 			if (p_ptr->lev >= 20) {
-				p_ptr->cur_lite += 1 + (p_ptr->lev - 20) / 6; //REAL light!
+				p_ptr->cur_lite += 1 + (p_ptr->lev - 20) / 6; csheet_boni[14].lite = 1 + p_ptr->lev / 10; //REAL light!
+				csheet_boni[14].cb[12] |= CB13_XLITE;
 				lite_inc_white += 1 + (p_ptr->lev - 20) / 6;
 				p_ptr->to_a += (p_ptr->lev - 20)/2;
 				p_ptr->dis_to_a += (p_ptr->lev - 20)/2;
 			}
 
 			if (p_ptr->lev >= 50) {
-				p_ptr->resist_pois = TRUE;
-				p_ptr->resist_elec = TRUE;
-				p_ptr->sh_elec = TRUE;
-				p_ptr->resist_cold = TRUE;
-				p_ptr->sh_cold = TRUE;
-				p_ptr->fly = TRUE;
+				p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS;
+				p_ptr->resist_elec = TRUE; csheet_boni[14].cb[0] |= CB1_RELEC;
+				p_ptr->sh_elec = TRUE; csheet_boni[14].cb[10] |= CB11_AELEC;
+				p_ptr->resist_cold = TRUE; csheet_boni[14].cb[0] |= CB1_RCOLD;
+				p_ptr->sh_cold = TRUE; csheet_boni[14].cb[10] |= CB11_ACOLD;
+				p_ptr->fly = TRUE; csheet_boni[14].cb[6] |= CB7_RRFLY;
 			}
 
 			/* Bonus resistance for the good side */
 			if (p_ptr->divine_xtra_res_time > 0)
 				p_ptr->resist_time = TRUE;
 		} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
+			if (p_ptr->lev >= 20) csheet_boni[14].cb[5] |= CB6_IFOOD; //Kurzel
 			p_ptr->suscep_good = TRUE;
 
-			p_ptr->resist_fire = TRUE;
-			p_ptr->resist_dark = TRUE;
+			p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE;
+			p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
 
 			if (p_ptr->lev >= 50) {
-				p_ptr->resist_pois = TRUE;
-				p_ptr->immune_fire = TRUE;
-				p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE;
+				p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS;
+				p_ptr->immune_fire = TRUE; csheet_boni[14].cb[0] |= CB1_IFIRE;
+				p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE; csheet_boni[14].cb[10] |= CB11_AFIRE;
 			}
 
 			/* Bonus crit for the bad side */
 			if (p_ptr->divine_crit > 0)
 				p_ptr->xtra_crit = p_ptr->divine_crit_mod;
-		} else p_ptr->slow_digest = TRUE;
+		} else { p_ptr->slow_digest = TRUE; csheet_boni[14].cb[4] |= CB5_RFOOD; }
 	}
 #endif
 #ifdef ENABLE_KOBOLD
 	/* Kobolds */
 	else if (p_ptr->prace == RACE_KOBOLD)
-		p_ptr->resist_pois = TRUE;
+		{ p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
 #endif
 
 	/* Apply boni from racial special traits */
@@ -3292,95 +3359,95 @@ void calc_boni(int Ind)
 		break;
 #ifdef ENABLE_DRACONIAN_TRAITS
 	case TRAIT_BLUE: /* Draconic Blue */
-		if (p_ptr->lev >= 5) p_ptr->brand_elec = TRUE;
-		if (p_ptr->lev >= 15) p_ptr->sh_elec = TRUE;
-		if (p_ptr->lev < 25) p_ptr->resist_elec = TRUE;
-		else p_ptr->immune_elec = TRUE;
+		if (p_ptr->lev >= 5) { p_ptr->brand_elec = TRUE; csheet_boni[14].cb[10] |= CB11_BELEC; }
+		if (p_ptr->lev >= 15) { p_ptr->sh_elec = TRUE; csheet_boni[14].cb[10] |= CB11_AELEC; }
+		if (p_ptr->lev < 25) { p_ptr->resist_elec = TRUE; csheet_boni[14].cb[0] |= CB1_RELEC; }
+		else { p_ptr->immune_elec = TRUE; csheet_boni[14].cb[1] |= CB2_IELEC; }
 		break;
 	case TRAIT_WHITE: /* Draconic White */
-		p_ptr->suscep_fire = TRUE;
-		if (p_ptr->lev >= 15) p_ptr->sh_cold = TRUE;
-		if (p_ptr->lev < 25) p_ptr->resist_cold = TRUE;
-		else p_ptr->immune_cold = TRUE;
+		p_ptr->suscep_fire = TRUE; csheet_boni[14].cb[0] |= CB1_SFIRE;
+		if (p_ptr->lev >= 15) { p_ptr->sh_cold = TRUE; csheet_boni[14].cb[10] |= CB11_ACOLD; }
+		if (p_ptr->lev < 25) { p_ptr->resist_cold = TRUE; csheet_boni[14].cb[0] |= CB1_RCOLD; }
+		else { p_ptr->immune_cold = TRUE; csheet_boni[14].cb[0] |= CB1_ICOLD; }
 		break;
 	case TRAIT_RED: /* Draconic Red */
-		p_ptr->suscep_cold = TRUE;
-		if (p_ptr->lev < 25) p_ptr->resist_fire = TRUE;
-		else p_ptr->immune_fire = TRUE;
+		p_ptr->suscep_cold = TRUE; csheet_boni[14].cb[0] |= CB1_SCOLD;
+		if (p_ptr->lev < 25) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
+		else { p_ptr->immune_fire = TRUE; csheet_boni[14].cb[0] |= CB1_IFIRE; }
 		break;
 	case TRAIT_BLACK: /* Draconic Black */
-		if (p_ptr->lev < 25) p_ptr->resist_acid = TRUE;
-		else p_ptr->immune_acid = TRUE;
+		if (p_ptr->lev < 25) { p_ptr->resist_acid = TRUE; csheet_boni[14].cb[1] |= CB2_RACID; }
+		else { p_ptr->immune_acid = TRUE; csheet_boni[14].cb[1] |= CB2_IACID; }
 		break;
 	case TRAIT_GREEN: /* Draconic Green */
-		if (p_ptr->lev < 25) p_ptr->resist_pois = TRUE;
-		else p_ptr->immune_poison = TRUE;
+		if (p_ptr->lev < 25) { p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
+		else { p_ptr->immune_poison = TRUE; csheet_boni[14].cb[1] |= CB2_IPOIS; }
 		break;
 	case TRAIT_MULTI: /* Draconic Multi-hued */
-		if (p_ptr->lev >= 5) p_ptr->resist_elec = TRUE;
-		if (p_ptr->lev >= 10) p_ptr->resist_cold = TRUE;
-		if (p_ptr->lev >= 15) p_ptr->resist_fire = TRUE;
-		if (p_ptr->lev >= 20) p_ptr->resist_acid = TRUE;
-		if (p_ptr->lev >= 25) p_ptr->resist_pois = TRUE;
+		if (p_ptr->lev >= 5) { p_ptr->resist_elec = TRUE; csheet_boni[14].cb[0] |= CB1_RELEC; }
+		if (p_ptr->lev >= 10) { p_ptr->resist_cold = TRUE; csheet_boni[14].cb[0] |= CB1_RCOLD; }
+		if (p_ptr->lev >= 15) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
+		if (p_ptr->lev >= 20) { p_ptr->resist_acid = TRUE; csheet_boni[14].cb[1] |= CB2_RACID; }
+		if (p_ptr->lev >= 25) { p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
 		break;
 	case TRAIT_BRONZE: /* Draconic Bronze */
-		if (p_ptr->lev >= 5) p_ptr->resist_conf = TRUE;
-		if (p_ptr->lev >= 10) p_ptr->free_act = TRUE;
-		if (p_ptr->lev >= 20) p_ptr->reflect = TRUE;
+		if (p_ptr->lev >= 5) { p_ptr->resist_conf = TRUE; csheet_boni[14].cb[2] |= CB3_RCONF; }
+		if (p_ptr->lev >= 10) { p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA; }
+		if (p_ptr->lev >= 20) { p_ptr->reflect = TRUE; csheet_boni[14].cb[6] |= CB7_RREFL; }
 		break;
 	case TRAIT_SILVER: /* Draconic Silver */
-		if (p_ptr->lev >= 5) p_ptr->resist_cold = TRUE;
-		if (p_ptr->lev >= 15) p_ptr->resist_pois = TRUE;
-		if (p_ptr->lev >= 20) p_ptr->reflect = TRUE;
+		if (p_ptr->lev >= 5) { p_ptr->resist_cold = TRUE; csheet_boni[14].cb[0] |= CB1_RCOLD; }
+		if (p_ptr->lev >= 15) { p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
+		if (p_ptr->lev >= 20) { p_ptr->reflect = TRUE; csheet_boni[14].cb[6] |= CB7_RREFL; }
 		break;
 	case TRAIT_GOLD: /* Draconic Gold */
-		if (p_ptr->lev >= 5) p_ptr->resist_acid = TRUE;
-		if (p_ptr->lev >= 15) p_ptr->resist_sound = TRUE;
-		if (p_ptr->lev >= 20) p_ptr->reflect = TRUE;
+		if (p_ptr->lev >= 5) { p_ptr->resist_acid = TRUE; csheet_boni[14].cb[1] |= CB2_RACID; }
+		if (p_ptr->lev >= 15) { p_ptr->resist_sound = TRUE; csheet_boni[14].cb[2] |= CB3_RSOUN; }
+		if (p_ptr->lev >= 20) { p_ptr->reflect = TRUE; csheet_boni[14].cb[6] |= CB7_RREFL; }
 		break;
 	case TRAIT_LAW: /* Draconic Law */
-		if (p_ptr->lev >= 5) p_ptr->resist_shard = TRUE;
-		if (p_ptr->lev >= 15) p_ptr->resist_sound = TRUE;
+		if (p_ptr->lev >= 5) { p_ptr->resist_shard = TRUE; csheet_boni[14].cb[2] |= CB3_RSHRD; }
+		if (p_ptr->lev >= 15) { p_ptr->resist_sound = TRUE; csheet_boni[14].cb[2] |= CB3_RSOUN; }
 		break;
 	case TRAIT_CHAOS: /* Draconic Chaos */
-		if (p_ptr->lev >= 5) p_ptr->resist_conf = TRUE;
-		if (p_ptr->lev >= 15) p_ptr->resist_chaos = TRUE;
-		if (p_ptr->lev >= 20) p_ptr->resist_disen = TRUE;
+		if (p_ptr->lev >= 5) { p_ptr->resist_conf = TRUE; csheet_boni[14].cb[2] |= CB3_RCONF; }
+		if (p_ptr->lev >= 15) { p_ptr->resist_chaos = TRUE; csheet_boni[14].cb[3] |= CB4_RCHAO; }
+		if (p_ptr->lev >= 20) { p_ptr->resist_disen = TRUE; csheet_boni[14].cb[3] |= CB4_RDISE; }
 		break;
 	case TRAIT_BALANCE: /* Draconic Balance */
-		if (p_ptr->lev >= 10) p_ptr->resist_disen = TRUE;
-		if (p_ptr->lev >= 20) p_ptr->resist_sound = TRUE;
+		if (p_ptr->lev >= 10) { p_ptr->resist_disen = TRUE; csheet_boni[14].cb[3] |= CB4_RDISE; }
+		if (p_ptr->lev >= 20) { p_ptr->resist_sound = TRUE; csheet_boni[14].cb[2] |= CB3_RSOUN; }
 		break;
 	case TRAIT_POWER: /* Draconic Power */
-		p_ptr->resist_fear = TRUE;
-		if (p_ptr->lev >= 5) p_ptr->resist_blind = TRUE;
-		if (p_ptr->lev >= 20) p_ptr->reflect = TRUE;
+		p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR;
+		if (p_ptr->lev >= 5) { p_ptr->resist_blind = TRUE; csheet_boni[14].cb[4] |= CB5_RBLND; }
+		if (p_ptr->lev >= 20) { p_ptr->reflect = TRUE; csheet_boni[14].cb[6] |= CB7_RREFL; }
 		break;
 #endif
 	}
 
 	if (p_ptr->pclass == CLASS_RANGER) {
-		if (p_ptr->lev >= 15) p_ptr->pass_trees = TRUE;
-		if (p_ptr->lev >= 25) p_ptr->can_swim = TRUE;
+		if (p_ptr->lev >= 15) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
+		if (p_ptr->lev >= 25) { p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
 	}
 
 	if (p_ptr->pclass == CLASS_SHAMAN)
-		if (p_ptr->lev >= 20) p_ptr->see_inv = TRUE;
+		if (p_ptr->lev >= 20) { p_ptr->see_inv = TRUE; csheet_boni[14].cb[5] |= CB6_RSINV; }
 
 	if (p_ptr->pclass == CLASS_DRUID)
-		if (p_ptr->lev >= 10) p_ptr->pass_trees = TRUE;
+		if (p_ptr->lev >= 10) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
 
 	if (p_ptr->pclass == CLASS_MINDCRAFTER) {
-		if (p_ptr->lev >= 20) p_ptr->reduce_insanity = 2;
-		else if (p_ptr->lev >= 10) p_ptr->reduce_insanity = 1;
+		if (p_ptr->lev >= 20) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[3] |= CB4_RMIND; }
+		else if (p_ptr->lev >= 10) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
 	}
 
 
 	/* Check ability skills */
-	if (get_skill(p_ptr, SKILL_CLIMB) >= 1) p_ptr->climb = TRUE;
-	if (get_skill(p_ptr, SKILL_FLY) >= 1) p_ptr->fly = TRUE;
-	if (get_skill(p_ptr, SKILL_FREEACT) >= 1) p_ptr->free_act = TRUE;
-	if (get_skill(p_ptr, SKILL_RESCONF) >= 1) p_ptr->resist_conf = TRUE;
+	if (get_skill(p_ptr, SKILL_CLIMB) >= 1) { p_ptr->climb = TRUE; csheet_boni[14].cb[6] |= CB7_RCLMB; }
+	if (get_skill(p_ptr, SKILL_FLY) >= 1) { p_ptr->fly = TRUE; csheet_boni[14].cb[6] |= CB7_RRFLY; }
+	if (get_skill(p_ptr, SKILL_FREEACT) >= 1) { p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA; }
+	if (get_skill(p_ptr, SKILL_RESCONF) >= 1) { p_ptr->resist_conf = TRUE; csheet_boni[14].cb[2] |= CB3_RCONF; }
 
 
 	/* Compute antimagic */
@@ -3397,25 +3464,24 @@ void calc_boni(int Ind)
 
 	/* Ghost */
 	if (p_ptr->ghost) {
-		p_ptr->see_inv = TRUE;
+		p_ptr->see_inv = TRUE; csheet_boni[14].cb[5] |= CB6_RSINV;
 		/* p_ptr->resist_neth = TRUE;
 		p_ptr->hold_life = TRUE; */
-		p_ptr->free_act = TRUE;
-		p_ptr->see_infra += 3;
-		p_ptr->resist_dark = TRUE;
-		p_ptr->resist_blind = TRUE;
-		p_ptr->immune_poison = TRUE;
-		p_ptr->resist_cold = TRUE;
-		p_ptr->resist_fear = TRUE;
-		p_ptr->resist_conf = TRUE;
-		p_ptr->no_cut = TRUE;
-		p_ptr->reduce_insanity = 1;
-		p_ptr->fly = TRUE; /* redundant */
-		p_ptr->feather_fall = TRUE;
+		p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA;
+		p_ptr->see_infra += 3; csheet_boni[14].infr += 3;
+		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
+		p_ptr->resist_blind = TRUE; csheet_boni[14].cb[4] |= CB5_RBLND;
+		p_ptr->immune_poison = TRUE; csheet_boni[14].cb[1] |= CB2_IPOIS;
+		p_ptr->resist_cold = TRUE; csheet_boni[14].cb[0] |= CB1_RCOLD;
+		p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR;
+		p_ptr->resist_conf = TRUE; csheet_boni[14].cb[2] |= CB3_RCONF;
+		p_ptr->no_cut = TRUE; csheet_boni[14].cb[12] |= CB13_XNCUT;
+		p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND;
+		p_ptr->fly = TRUE; csheet_boni[14].cb[6] |= CB7_RRFLY; /* redundant */
+		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
 		/*p_ptr->tim_wraith = 30000; redundant*/
 //		p_ptr->invis += 5; */ /* No. */
 	}
-
 
 	/* Hack -- apply racial/class stat maxes */
 	if (p_ptr->maximize) {
@@ -3441,8 +3507,12 @@ void calc_boni(int Ind)
 
 	/* Hack -- the dungeon master gets +50 speed. */
 	if (p_ptr->admin_dm) {
-		p_ptr->pspeed += 50;
+		p_ptr->pspeed += 50; //csheet_boni[14].spd += 50; //Don't show these for the admin/tester
 		p_ptr->telepathy |= ESP_ALL;
+		/* Flag all the ESPs for ESP_ALL - Kurzel */
+		//csheet_boni[14].cb[7] |= (CB8_ESPID | CB8_EANIM | CB8_EORCS | CB8_ETROL | CB8_EGIAN);
+		//csheet_boni[14].cb[8] |= (CB9_EDRGN | CB9_EDEMN | CB9_EUNDD);
+		//csheet_boni[14].cb[9] |= (CB10_EEVIL | CB10_EDGRI | CB10_EGOOD | CB10_ENONL | CB10_EUNIQ);
 	}
 
 	/* Hack -- recalculate inventory weight and count */
@@ -3473,9 +3543,15 @@ void calc_boni(int Ind)
 		pval = o_ptr->pval;
 
 		/* Skip missing items */
-		if (!o_ptr->k_idx) continue;
+		if (!o_ptr->k_idx) {
+			csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XNOEQ; //Nothing equipped, grey out the table column. - Kurzel
+			continue;
+		}
 
-
+		/* Set item display info - Kurzel */
+		csheet_boni[i-INVEN_WIELD].color = k_info[o_ptr->k_idx].d_attr;
+		csheet_boni[i-INVEN_WIELD].symbol = k_info[o_ptr->k_idx].d_char;
+		
 		/* Special admin items */
 		if (o_ptr->tval == TV_AMULET) {
 			switch (o_ptr->sval) {
@@ -3543,6 +3619,10 @@ void calc_boni(int Ind)
 		/* Extract the item flags */
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
+		/* Kurzel - Note cursed/hidden status... */
+		if ((f3 & TR3_CURSED) || (f3 & TR3_HEAVY_CURSE) || (f3 & TR3_PERMA_CURSE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XCRSE;
+		if (!object_fully_known_p(Ind, o_ptr)) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_XHIDD;
+		
 		/* Not-burning light source does nothing, good or bad */
 		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) continue;
 
@@ -3578,32 +3658,32 @@ void calc_boni(int Ind)
 		/* If we have any base bonuses to add, add them */
 		if (k_ptr->flags1 & TR1_PVAL_MASK) {
 			/* Affect stats */
-			if (k_ptr->flags1 & TR1_STR) p_ptr->stat_add[A_STR] += o_ptr->bpval;
-			if (k_ptr->flags1 & TR1_INT) p_ptr->stat_add[A_INT] += o_ptr->bpval;
-			if (k_ptr->flags1 & TR1_WIS) p_ptr->stat_add[A_WIS] += o_ptr->bpval;
-			if (k_ptr->flags1 & TR1_DEX) p_ptr->stat_add[A_DEX] += o_ptr->bpval;
-			if (k_ptr->flags1 & TR1_CON) p_ptr->stat_add[A_CON] += o_ptr->bpval;
-			if (k_ptr->flags1 & TR1_CHR) p_ptr->stat_add[A_CHR] += o_ptr->bpval;
+			if (k_ptr->flags1 & TR1_STR) { p_ptr->stat_add[A_STR] += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].pstr += o_ptr->bpval; }
+			if (k_ptr->flags1 & TR1_INT) { p_ptr->stat_add[A_INT] += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].pint += o_ptr->bpval; }
+			if (k_ptr->flags1 & TR1_WIS) { p_ptr->stat_add[A_WIS] += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].pwis += o_ptr->bpval; }
+			if (k_ptr->flags1 & TR1_DEX) { p_ptr->stat_add[A_DEX] += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].pdex += o_ptr->bpval; }
+			if (k_ptr->flags1 & TR1_CON) { p_ptr->stat_add[A_CON] += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].pcon += o_ptr->bpval; }
+			if (k_ptr->flags1 & TR1_CHR) { p_ptr->stat_add[A_CHR] += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].pchr += o_ptr->bpval; }
 
 			/* Affect stealth */
-			if (k_ptr->flags1 & TR1_STEALTH) p_ptr->skill_stl += o_ptr->bpval;
+			if (k_ptr->flags1 & TR1_STEALTH) { p_ptr->skill_stl += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].slth += o_ptr->bpval; }
 			/* Affect searching ability (factor of five) */
-			if (k_ptr->flags1 & TR1_SEARCH) p_ptr->skill_srh += (o_ptr->bpval * 5);
+			if (k_ptr->flags1 & TR1_SEARCH) { p_ptr->skill_srh += (o_ptr->bpval * 5); csheet_boni[i-INVEN_WIELD].srch += o_ptr->bpval; }
 			/* Affect searching frequency (factor of five) */
 			if (k_ptr->flags1 & TR1_SEARCH) p_ptr->skill_fos += (o_ptr->bpval * 3);
 			/* Affect infravision */
-			if (k_ptr->flags1 & TR1_INFRA) p_ptr->see_infra += o_ptr->bpval;
+			if (k_ptr->flags1 & TR1_INFRA) { p_ptr->see_infra += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].infr += o_ptr->bpval; }
 
 			/* Affect digging (factor of 20) */
-			if (k_ptr->flags1 & TR1_TUNNEL) p_ptr->skill_dig += (o_ptr->bpval * 20);
+			if (k_ptr->flags1 & TR1_TUNNEL) { p_ptr->skill_dig += (o_ptr->bpval * 20); csheet_boni[i-INVEN_WIELD].dig += o_ptr->bpval; }
 
 			/* Affect speed */
-			if (k_ptr->flags1 & TR1_SPEED) p_ptr->pspeed += o_ptr->bpval;
+			if (k_ptr->flags1 & TR1_SPEED) { p_ptr->pspeed += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].spd += o_ptr->bpval; }
 
 			/* Affect blows */
 #if 1 /* for dual-wield this is too much, it's done in calc_blows_obj() now */
 /* There are no known weapons so far that adds bpr intrinsically. Need this for e.g., ring of EA */
-			if (k_ptr->flags1 & TR1_BLOWS) p_ptr->extra_blows += o_ptr->bpval;
+			if (k_ptr->flags1 & TR1_BLOWS) { p_ptr->extra_blows += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].blow += o_ptr->bpval; }
 #endif
 			/* Affect spells */
 			if (k_ptr->flags1 & TR1_SPELL) extra_spells += o_ptr->bpval;
@@ -3613,9 +3693,9 @@ void calc_boni(int Ind)
 			if (f1 & (TR1_MANA)) {
 				if ((f4 & TR4_SHOULD2H) &&
 				    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
-					p_ptr->to_m += (o_ptr->bpval * 20) / 3;
+					{ p_ptr->to_m += (o_ptr->bpval * 20) / 3; csheet_boni[i-INVEN_WIELD].mxmp += o_ptr->bpval; }
 				else
-					p_ptr->to_m += o_ptr->bpval * 10;
+					{ p_ptr->to_m += o_ptr->bpval * 10; csheet_boni[i-INVEN_WIELD].mxmp += o_ptr->bpval; }
 			}
 
 			/* Affect life capacity */
@@ -3623,15 +3703,15 @@ void calc_boni(int Ind)
 			    ((o_ptr->name1 != ART_RANDART) ||
 			    (make_resf(p_ptr) & RESF_LIFE) ||
 			    o_ptr->bpval < 0))
-				p_ptr->to_l += o_ptr->bpval;
+				{ p_ptr->to_l += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].mxhp += o_ptr->bpval; }
 		}
 
 		if (k_ptr->flags5 & TR5_PVAL_MASK) {
 			if (f5 & TR5_DISARM) p_ptr->skill_dis += (o_ptr->bpval) * 5;
-			if (f5 & TR5_LUCK) p_ptr->luck += o_ptr->bpval;
+			if (f5 & TR5_LUCK) { p_ptr->luck += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].luck += o_ptr->bpval; }
 #if 1 /* this is too much for dual-wield, done in calc_blows_obj() now */
 /* There are no known weapons so far that adds to crit intrinsically. */
-			if (f5 & TR5_CRIT) p_ptr->xtra_crit += o_ptr->bpval;
+			if (f5 & TR5_CRIT) { p_ptr->xtra_crit += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].crit += o_ptr->bpval; }
 #endif
 		}
 
@@ -3689,15 +3769,15 @@ void calc_boni(int Ind)
 
 
 		/* Affect stats */
-		if (f1 & TR1_STR) p_ptr->stat_add[A_STR] += pval;
-		if (f1 & TR1_INT) p_ptr->stat_add[A_INT] += pval;
-		if (f1 & TR1_WIS) p_ptr->stat_add[A_WIS] += pval;
-		if (f1 & TR1_DEX) p_ptr->stat_add[A_DEX] += pval;
-		if (f1 & TR1_CON) p_ptr->stat_add[A_CON] += pval;
-		if (f1 & TR1_CHR) p_ptr->stat_add[A_CHR] += pval;
+		if (f1 & TR1_STR) { p_ptr->stat_add[A_STR] += pval; csheet_boni[i-INVEN_WIELD].pstr += o_ptr->pval; }
+		if (f1 & TR1_INT) { p_ptr->stat_add[A_INT] += pval; csheet_boni[i-INVEN_WIELD].pint += o_ptr->pval; }
+		if (f1 & TR1_WIS) { p_ptr->stat_add[A_WIS] += pval; csheet_boni[i-INVEN_WIELD].pwis += o_ptr->pval; }
+		if (f1 & TR1_DEX) { p_ptr->stat_add[A_DEX] += pval; csheet_boni[i-INVEN_WIELD].pdex += o_ptr->pval; }
+		if (f1 & TR1_CON) { p_ptr->stat_add[A_CON] += pval; csheet_boni[i-INVEN_WIELD].pcon += o_ptr->pval; }
+		if (f1 & TR1_CHR) { p_ptr->stat_add[A_CHR] += pval; csheet_boni[i-INVEN_WIELD].pchr += o_ptr->pval; }
 
 		/* Affect luck */
-		if (f5 & (TR5_LUCK)) p_ptr->luck += pval;
+		if (f5 & (TR5_LUCK)) { p_ptr->luck += pval; csheet_boni[i-INVEN_WIELD].luck += o_ptr->pval; }
 
 		/* Affect spell power */
 //		if (f1 & (TR1_SPELL)) p_ptr->to_s += pval;
@@ -3706,9 +3786,9 @@ void calc_boni(int Ind)
 		if (f1 & (TR1_MANA)) {
 			if ((f4 & TR4_SHOULD2H) &&
 			    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
-				p_ptr->to_m += (pval * 20) / 3;
+				{ p_ptr->to_m += (pval * 20) / 3; csheet_boni[i-INVEN_WIELD].mxmp += o_ptr->pval; }
 			else
-				p_ptr->to_m += pval * 10;
+				{ p_ptr->to_m += pval * 10; csheet_boni[i-INVEN_WIELD].mxmp += o_ptr->pval; }
 		}
 
 		/* Affect life capacity */
@@ -3716,22 +3796,22 @@ void calc_boni(int Ind)
 		    (o_ptr->name1 != ART_RANDART ||
 		    (make_resf(p_ptr) & RESF_LIFE) ||
 		    o_ptr->pval < 0))
-			p_ptr->to_l += o_ptr->pval;
+			{ p_ptr->to_l += o_ptr->pval; csheet_boni[i-INVEN_WIELD].mxhp += o_ptr->pval; }
 
 		/* Affect stealth */
-		if (f1 & TR1_STEALTH) p_ptr->skill_stl += pval;
+		if (f1 & TR1_STEALTH) { p_ptr->skill_stl += pval; csheet_boni[i-INVEN_WIELD].slth += o_ptr->pval; }
 		/* Affect searching ability (factor of five) */
-		if (f1 & TR1_SEARCH) p_ptr->skill_srh += (pval * 5);
+		if (f1 & TR1_SEARCH) { p_ptr->skill_srh += (pval * 5); csheet_boni[i-INVEN_WIELD].srch += o_ptr->pval; }
 		/* Affect searching frequency (factor of five) */
 		if (f1 & TR1_SEARCH) p_ptr->skill_fos += (pval * 3);
 		/* Affect infravision */
-		if (f1 & TR1_INFRA) p_ptr->see_infra += pval;
+		if (f1 & TR1_INFRA) { p_ptr->see_infra += pval; csheet_boni[i-INVEN_WIELD].infr += o_ptr->pval; }
 
 		/* Affect digging (factor of 20) */
-		if (f1 & TR1_TUNNEL) p_ptr->skill_dig += (pval * 20);
+		if (f1 & TR1_TUNNEL) { p_ptr->skill_dig += (pval * 20); csheet_boni[i-INVEN_WIELD].dig += o_ptr->pval; }
 
 		/* Affect speed */
-		if (f1 & TR1_SPEED) p_ptr->pspeed += pval;
+		if (f1 & TR1_SPEED) { p_ptr->pspeed += pval; csheet_boni[i-INVEN_WIELD].spd += o_ptr->pval; }
 
 		/* Affect spellss */
 //		if (f1 & TR1_SPELL_SPEED) extra_spells += pval;
@@ -3750,10 +3830,10 @@ void calc_boni(int Ind)
 
 		/* Boost shots */
 //		if (f3 & TR3_KNOWLEDGE) p_ptr->auto_id = TRUE;
-		if (f4 & TR4_AUTO_ID) p_ptr->auto_id = TRUE;
+		if (f4 & TR4_AUTO_ID) { p_ptr->auto_id = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RIDNT; }
 
 		/* Boost shots */
-		if (f3 & TR3_XTRA_SHOTS) extra_shots++;
+		if (f3 & TR3_XTRA_SHOTS) { extra_shots++; csheet_boni[i-INVEN_WIELD].shot += o_ptr->pval; }
 
 		/* Make the 'useless' curses interesting >:) - C. Blue */
 		if ((f3 & TR3_TY_CURSE) && (o_ptr->ident & ID_CURSED)) p_ptr->ty_curse = TRUE;
@@ -3761,12 +3841,12 @@ void calc_boni(int Ind)
 
 		/* Various flags */
 		if (f3 & TR3_AGGRAVATE) {
-			p_ptr->aggravate = TRUE;
+			p_ptr->aggravate = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RAGGR;
 			break_cloaking(Ind, 0);
 		}
 //		if (f3 & TR3_TELEPORT) p_ptr->teleport = TRUE;
 		if (f3 & TR3_TELEPORT) {
-			p_ptr->teleport = TRUE;
+			p_ptr->teleport = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_STELE;
 			//inscription = (unsigned char *) quark_str(o_ptr->note);
 			inscription = quark_str(p_ptr->inventory[i].note);
 			/* check for a valid inscription */
@@ -3778,7 +3858,7 @@ void calc_boni(int Ind)
 						/* a valid .. has been located */
 						if (*inscription == '.') {
 							inscription++;
-							p_ptr->teleport = FALSE;
+							p_ptr->teleport = FALSE; csheet_boni[i-INVEN_WIELD].cb[4] &= (~CB5_STELE);
 							break;
 						}
 					}
@@ -3787,32 +3867,54 @@ void calc_boni(int Ind)
 			}
 		}
 		if (f3 & TR3_DRAIN_EXP) p_ptr->drain_exp++;
-		if (f5 & (TR5_DRAIN_MANA)) p_ptr->drain_mana++;
-		if (f5 & (TR5_DRAIN_HP)) p_ptr->drain_life++;
+		if (f5 & (TR5_DRAIN_MANA)) { p_ptr->drain_mana++; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_SRGMP; }
+		if (f5 & (TR5_DRAIN_HP)) { p_ptr->drain_life++; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_SRGHP; }
 		if (f5 & (TR5_INVIS)) {
 			j = (p_ptr->lev > 50 ? 50 : p_ptr->lev) * 4 / 5;
 			/* better than invis from monster form we're using? */
 			if (j > p_ptr->tim_invis_power) p_ptr->tim_invis_power = j;
 		}
 		if (f3 & TR3_BLESSED) p_ptr->bless_blade = TRUE;
-		if (f3 & TR3_XTRA_MIGHT) p_ptr->xtra_might++;
-		if (f3 & TR3_SLOW_DIGEST) p_ptr->slow_digest = TRUE;
-		if (f3 & TR3_REGEN) p_ptr->regenerate = TRUE;
-		if (f5 & TR5_RES_PLASMA) p_ptr->resist_plasma = TRUE;
-		if (f5 & TR5_RES_TIME) p_ptr->resist_time = TRUE;
-		if (f5 & TR5_RES_MANA) p_ptr->resist_mana = TRUE;
-		if (f5 & TR5_IM_POISON) p_ptr->immune_poison = TRUE;
-		if (f5 & TR5_IM_WATER) p_ptr->immune_water = TRUE;
-		if (f5 & TR5_RES_WATER) p_ptr->resist_water = TRUE;
-		if (f5 & TR5_PASS_WATER) p_ptr->can_swim = TRUE;
-		if (f5 & TR5_REGEN_MANA) p_ptr->regen_mana = TRUE;
-		if (esp) p_ptr->telepathy |= esp;
+		if (f3 & TR3_XTRA_MIGHT) { p_ptr->xtra_might++; csheet_boni[i-INVEN_WIELD].migh++; }
+		if (f3 & TR3_SLOW_DIGEST) { p_ptr->slow_digest = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RFOOD; }
+		if (f3 & TR3_REGEN) { p_ptr->regenerate = TRUE; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RRGHP; }
+		if (f5 & TR5_RES_PLASMA) { p_ptr->resist_plasma = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_RPLAS; }
+		if (f5 & TR5_RES_TIME) { p_ptr->resist_time = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RTIME; }
+		if (f5 & TR5_RES_MANA) { p_ptr->resist_mana = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RMANA; }
+		if (f5 & TR5_IM_POISON) { p_ptr->immune_poison = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IPOIS; }
+		if (f5 & TR5_IM_WATER) { p_ptr->immune_water = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_IWATR; }
+		if (f5 & TR5_RES_WATER) { p_ptr->resist_water = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_RWATR; }
+		if (f5 & TR5_PASS_WATER) { p_ptr->can_swim = TRUE; csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XSWIM; }
+		if (f5 & TR5_REGEN_MANA) { p_ptr->regen_mana = TRUE; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RRGMP; }
+		if (esp) {
+			p_ptr->telepathy |= esp;
+			/* Flag all the ESPs for ESP_ALL - Kurzel */
+			if (esp & ESP_ALL) {
+				csheet_boni[i-INVEN_WIELD].cb[7] |= (CB8_ESPID | CB8_EANIM | CB8_EORCS | CB8_ETROL | CB8_EGIAN);
+				csheet_boni[i-INVEN_WIELD].cb[8] |= (CB9_EDRGN | CB9_EDEMN | CB9_EUNDD);
+				csheet_boni[i-INVEN_WIELD].cb[9] |= (CB10_EEVIL | CB10_EDGRI | CB10_EGOOD | CB10_ENONL | CB10_EUNIQ);
+			} else {
+				if (esp & ESP_SPIDER) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_ESPID;
+				if (esp & ESP_ANIMAL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_EANIM;
+				if (esp & ESP_ORC) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_EORCS;
+				if (esp & ESP_TROLL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_ETROL;
+				if (esp & ESP_GIANT) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_EGIAN;
+				if (esp & ESP_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_EDRGN;
+				if (esp & ESP_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_EDEMN;
+				if (esp & ESP_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_EUNDD;
+				if (esp & ESP_EVIL) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_EEVIL;
+				if (esp & ESP_DRAGONRIDER) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_EDGRI;
+				if (esp & ESP_GOOD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_EGOOD;
+				if (esp & ESP_NONLIVING) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_ENONL;
+				if (esp & ESP_UNIQUE) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_EUNIQ;
+			}
+		}
 //		if (f3 & TR3_TELEPATHY) p_ptr->telepathy = TRUE;
 //		if (f3 & TR3_LITE1) p_ptr->lite += 1;
-		if (f3 & TR3_SEE_INVIS) p_ptr->see_inv = TRUE;
-		if (f3 & TR3_FEATHER) p_ptr->feather_fall = TRUE;
-		if (f2 & TR2_FREE_ACT) p_ptr->free_act = TRUE;
-		if (f2 & TR2_HOLD_LIFE) p_ptr->hold_life = TRUE;
+		if (f3 & TR3_SEE_INVIS) { p_ptr->see_inv = TRUE; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RSINV; }
+		if (f3 & TR3_FEATHER) { p_ptr->feather_fall = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RFALL; }
+		if (f2 & TR2_FREE_ACT) { p_ptr->free_act = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RPARA; }
+		if (f2 & TR2_HOLD_LIFE) { p_ptr->hold_life = TRUE; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RLIFE; }
 
 		/* Light(consider doing it on calc_torch) */
 //		if (((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0)) || (!(f4 & TR4_FUEL_LITE)))
@@ -3826,16 +3928,20 @@ void calc_boni(int Ind)
 			if (f5 & TR5_WHITE_LIGHT) lite_inc_white += j;
 			else lite_inc_norm += j;
 			if (j && !(f4 & TR4_FUEL_LITE)) p_ptr->lite = TRUE;
+			
+			/* Permanent lite gets the 'sustain' colour - Kurzel */
+			csheet_boni[i-INVEN_WIELD].lite += j;
+			if (j) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XLITE;
 		}
 
 		/* powerful lights and anti-undead/evil items damage vampires */
 		if (p_ptr->prace == RACE_VAMPIRE && anti_undead(o_ptr)) p_ptr->drain_life++;
 
 		/* Immunity flags */
-		if (f2 & TR2_IM_FIRE) p_ptr->immune_fire = TRUE;
-		if (f2 & TR2_IM_ACID) p_ptr->immune_acid = TRUE;
-		if (f2 & TR2_IM_COLD) p_ptr->immune_cold = TRUE;
-		if (f2 & TR2_IM_ELEC) p_ptr->immune_elec = TRUE;
+		if (f2 & TR2_IM_FIRE) { p_ptr->immune_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_IFIRE; }
+		if (f2 & TR2_IM_ACID) { p_ptr->immune_acid = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IACID; }
+		if (f2 & TR2_IM_COLD) { p_ptr->immune_cold = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_ICOLD; }
+		if (f2 & TR2_IM_ELEC) { p_ptr->immune_elec = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IELEC; }
 
 		if (f2 & TR2_REDUC_FIRE) p_ptr->reduc_fire += 5 * o_ptr->to_a;
 		if (f2 & TR2_REDUC_COLD) p_ptr->reduc_cold += 5 * o_ptr->to_a;
@@ -3843,32 +3949,32 @@ void calc_boni(int Ind)
 		if (f2 & TR2_REDUC_ACID) p_ptr->reduc_acid += 5 * o_ptr->to_a;
 
 		/* Resistance flags */
-		if (f2 & TR2_RES_ACID) p_ptr->resist_acid = TRUE;
-		if (f2 & TR2_RES_ELEC) p_ptr->resist_elec = TRUE;
-		if (f2 & TR2_RES_FIRE) p_ptr->resist_fire = TRUE;
-		if (f2 & TR2_RES_COLD) p_ptr->resist_cold = TRUE;
-		if (f2 & TR2_RES_POIS) p_ptr->resist_pois = TRUE;
-		if (f2 & TR2_RES_FEAR) p_ptr->resist_fear = TRUE;
-		if (f2 & TR2_RES_CONF) p_ptr->resist_conf = TRUE;
-		if (f2 & TR2_RES_SOUND) p_ptr->resist_sound = TRUE;
-		if (f2 & TR2_RES_LITE) p_ptr->resist_lite = TRUE;
-		if (f2 & TR2_RES_DARK) p_ptr->resist_dark = TRUE;
-		if (f2 & TR2_RES_CHAOS) p_ptr->resist_chaos = TRUE;
-		if (f2 & TR2_RES_DISEN) p_ptr->resist_disen = TRUE;
-		if (f2 & TR2_RES_SHARDS) p_ptr->resist_shard = TRUE;
-		if (f2 & TR2_RES_NEXUS) p_ptr->resist_nexus = TRUE;
-		if (f5 & TR5_RES_TELE) p_ptr->res_tele = TRUE;
-		if (f2 & TR2_RES_BLIND) p_ptr->resist_blind = TRUE;
-		if (f2 & TR2_RES_NETHER) p_ptr->resist_neth = TRUE;
+		if (f2 & TR2_RES_ACID) { p_ptr->resist_acid = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_RACID; }
+		if (f2 & TR2_RES_ELEC) { p_ptr->resist_elec = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_RELEC; }
+		if (f2 & TR2_RES_FIRE) { p_ptr->resist_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_RFIRE; }
+		if (f2 & TR2_RES_COLD) { p_ptr->resist_cold = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_RCOLD; }
+		if (f2 & TR2_RES_POIS) { p_ptr->resist_pois = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_RPOIS; }
+		if (f2 & TR2_RES_FEAR) { p_ptr->resist_fear = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RFEAR; }
+		if (f2 & TR2_RES_CONF) { p_ptr->resist_conf = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_RCONF; }
+		if (f2 & TR2_RES_SOUND) { p_ptr->resist_sound = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_RSOUN; }
+		if (f2 & TR2_RES_LITE) { p_ptr->resist_lite = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_RLITE; }
+		if (f2 & TR2_RES_DARK) { p_ptr->resist_dark = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_RDARK; }
+		if (f2 & TR2_RES_CHAOS) { p_ptr->resist_chaos = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RCHAO; }
+		if (f2 & TR2_RES_DISEN) { p_ptr->resist_disen = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RDISE; }
+		if (f2 & TR2_RES_SHARDS) { p_ptr->resist_shard = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_RSHRD; }
+		if (f2 & TR2_RES_NEXUS) { p_ptr->resist_nexus = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RNEXU; }
+		if (f5 & TR5_RES_TELE) { p_ptr->res_tele = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RTELE; }
+		if (f2 & TR2_RES_BLIND) { p_ptr->resist_blind = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RBLND; }
+		if (f2 & TR2_RES_NETHER) { p_ptr->resist_neth = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RNETH; }
 //		if (f2 & TR2_ANTI_MAGIC) p_ptr->anti_magic = TRUE;
 
 		/* Sustain flags */
-		if (f2 & TR2_SUST_STR) p_ptr->sustain_str = TRUE;
-		if (f2 & TR2_SUST_INT) p_ptr->sustain_int = TRUE;
-		if (f2 & TR2_SUST_WIS) p_ptr->sustain_wis = TRUE;
-		if (f2 & TR2_SUST_DEX) p_ptr->sustain_dex = TRUE;
-		if (f2 & TR2_SUST_CON) p_ptr->sustain_con = TRUE;
-		if (f2 & TR2_SUST_CHR) p_ptr->sustain_chr = TRUE;
+		if (f2 & TR2_SUST_STR) { p_ptr->sustain_str = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSSTR; }
+		if (f2 & TR2_SUST_INT) { p_ptr->sustain_int = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSINT; }
+		if (f2 & TR2_SUST_WIS) { p_ptr->sustain_wis = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSWIS; }
+		if (f2 & TR2_SUST_DEX) { p_ptr->sustain_dex = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSDEX; }
+		if (f2 & TR2_SUST_CON) { p_ptr->sustain_con = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSCON; }
+		if (f2 & TR2_SUST_CHR) { p_ptr->sustain_chr = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSCHR; }
 
 		/* PernA flags */
 		if (f3 & (TR3_WRAITH)) {
@@ -3876,36 +3982,36 @@ void calc_boni(int Ind)
 			if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
 			    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC))) {
 //BAD!(recursion)				set_tim_wraith(Ind, 30000);
-				p_ptr->tim_wraith = 30000;
+				p_ptr->tim_wraith = 30000; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RWRTH;
 			}
 		}
-		if (f4 & (TR4_FLY)) p_ptr->fly = TRUE;
+		if (f4 & (TR4_FLY)) { p_ptr->fly = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RRFLY; }
 		if (f4 & (TR4_CLIMB)) {
 			/* hack: climbing kit is made for humanoids, so it won't work for other forms! */
 			if (o_ptr->tval != TV_TOOL || o_ptr->sval != SV_TOOL_CLIMB || !p_ptr->body_monster)
-				p_ptr->climb = TRUE; /* item isn't a climbing kit or player is in normal @ form */
+				{ p_ptr->climb = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RCLMB; } /* item isn't a climbing kit or player is in normal @ form */
 #if 0
 			else if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_DRAGONRIDER)) || (strchr("hkptyuVsLW", r_ptr->d_char)))
-				p_ptr->climb = TRUE; /* only for normal-sized humanoids (well..trolls, would be unfair to half-trolls) */
+				{ p_ptr->climb = TRUE;  csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RCLMB; } /* only for normal-sized humanoids (well..trolls, would be unfair to half-trolls) */
 #else
 			else if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS])
-				p_ptr->climb = TRUE; /* everyone with arms and fingers may use it. ok? */
+				{ p_ptr->climb = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RCLMB; } /* everyone with arms and fingers may use it. ok? */
 #endif
 		}
 		/* The Ring of Phasing, exclusively */
-		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
+		if (f4 & (TR4_IM_NETHER)) { p_ptr->immune_neth = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_INETH; }
 		if ((f5 & (TR5_REFLECT)) &&
 		    (o_ptr->tval != TV_SHIELD || !p_ptr->heavy_shield))
-			p_ptr->reflect = TRUE;
-		if (f3 & (TR3_SH_FIRE)) p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE;
-		if (f5 & (TR5_SH_COLD)) p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE;
-		if (f3 & (TR3_SH_ELEC)) p_ptr->sh_elec = p_ptr->sh_elec_fix = TRUE;
-		if (f3 & (TR3_NO_MAGIC)) p_ptr->anti_magic = TRUE;
-		if (f3 & (TR3_NO_TELE)) p_ptr->anti_tele = TRUE;
+			{ p_ptr->reflect = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RREFL; }
+		if (f3 & (TR3_SH_FIRE)) { p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_AFIRE; }
+		if (f5 & (TR5_SH_COLD)) { p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_ACOLD; }
+		if (f3 & (TR3_SH_ELEC)) { p_ptr->sh_elec = p_ptr->sh_elec_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_AELEC; }
+		if (f3 & (TR3_NO_MAGIC)) { p_ptr->anti_magic = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RAMSH; }
+		if (f3 & (TR3_NO_TELE)) { p_ptr->anti_tele = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_ITELE; }
 
 		/* Additional flags from PernAngband */
 
-		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
+		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE; //Kurzel - redundant line?
 
 		/* Limit use of disenchanted DarkSword for non-unbe */
 		minus = o_ptr->to_h + o_ptr->to_d; // + pval;// + (o_ptr->to_a / 4);
@@ -3974,31 +4080,51 @@ void calc_boni(int Ind)
 		if (i == INVEN_WIELD) continue;
 		if (i == INVEN_ARM && o_ptr->tval != TV_SHIELD) continue; /*..and for dual-wield */
 		if (i == INVEN_AMMO || i == INVEN_BOW) {
-			if (f1 & TR1_VAMPIRIC) p_ptr->vampiric_ranged = 100;
+			if (f1 & TR1_VAMPIRIC) { p_ptr->vampiric_ranged = 100; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; }
 			continue;
 		}
 		if (i == INVEN_TOOL) continue;
 
 
-		if (f1 & TR1_BLOWS) p_ptr->extra_blows += pval;
-		if (f5 & TR5_CRIT) p_ptr->xtra_crit += pval;
+		if (f1 & TR1_BLOWS) { p_ptr->extra_blows += pval; csheet_boni[i-INVEN_WIELD].blow += o_ptr->pval; }
+		if (f5 & TR5_CRIT) { p_ptr->xtra_crit += pval; csheet_boni[i-INVEN_WIELD].crit += o_ptr->pval; }
 
 		/* Hack -- cause earthquakes */
 		if (f5 & TR5_IMPACT) p_ptr->impact = TRUE;
+		if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP;
 
 		/* Generally vampiric? */
 		if (f1 & TR1_VAMPIRIC) {
-			if (p_ptr->vampiric_melee < NON_WEAPON_VAMPIRIC_CHANCE) p_ptr->vampiric_melee = NON_WEAPON_VAMPIRIC_CHANCE;
-			if (p_ptr->vampiric_ranged < NON_WEAPON_VAMPIRIC_CHANCE_RANGED) p_ptr->vampiric_ranged = NON_WEAPON_VAMPIRIC_CHANCE_RANGED;
+			if (p_ptr->vampiric_melee < NON_WEAPON_VAMPIRIC_CHANCE) { p_ptr->vampiric_melee = NON_WEAPON_VAMPIRIC_CHANCE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; }
+			if (p_ptr->vampiric_ranged < NON_WEAPON_VAMPIRIC_CHANCE_RANGED) { p_ptr->vampiric_ranged = NON_WEAPON_VAMPIRIC_CHANCE_RANGED; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; }
 		}
 
+		/* Kurzel -- Brands/slays display */
+		if (f1 & TR1_SLAY_ANIMAL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM;
+		if (f1 & TR1_SLAY_EVIL) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL;
+		if (f1 & TR1_SLAY_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD;
+		if (f1 & TR1_SLAY_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN;
+		if (f1 & TR1_SLAY_ORC) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS;
+		if (f1 & TR1_SLAY_TROLL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL;
+		if (f1 & TR1_SLAY_GIANT) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN;
+		if (f1 & TR1_SLAY_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN;
+		if (f1 & TR1_KILL_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN;
+		if (f1 & TR1_KILL_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN;
+		if (f1 & TR1_KILL_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD;
+		if (f1 & TR1_BRAND_POIS) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS;
+		if (f1 & TR1_BRAND_ACID) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID;
+		if (f1 & TR1_BRAND_ELEC) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC;
+		if (f1 & TR1_BRAND_FIRE) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE;
+		if (f1 & TR1_BRAND_COLD) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD;
+		
+		
 		/* Hack MHDSM: */
 		if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
-			if (o_ptr->xtra2 & 0x01) p_ptr->immune_fire = TRUE;
-			if (o_ptr->xtra2 & 0x02) p_ptr->immune_cold = TRUE;
-			if (o_ptr->xtra2 & 0x04) p_ptr->immune_elec = TRUE;
-			if (o_ptr->xtra2 & 0x08) p_ptr->immune_acid = TRUE;
-			if (o_ptr->xtra2 & 0x10) p_ptr->immune_poison = TRUE;
+			if (o_ptr->xtra2 & 0x01) { p_ptr->immune_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_IFIRE; }
+			if (o_ptr->xtra2 & 0x02) { p_ptr->immune_cold = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_ICOLD; }
+			if (o_ptr->xtra2 & 0x04) { p_ptr->immune_elec = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IELEC; }
+			if (o_ptr->xtra2 & 0x08) { p_ptr->immune_acid = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IACID; }
+			if (o_ptr->xtra2 & 0x10) { p_ptr->immune_poison = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IPOIS; }
 		}
 
 		/* Apply the bonuses to hit/damage */
@@ -4025,12 +4151,15 @@ void calc_boni(int Ind)
 	if (p_ptr->bless_temp_luck) p_ptr->luck += p_ptr->bless_temp_luck_power;
 
 #ifdef EQUIPMENT_SET_BONUS
-	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) {
+	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) { 
 		if (!equipment_set[i]) continue;
 		if (equipment_set_amount[i] > equipment_set_bonus)
 			equipment_set_bonus = equipment_set_amount[i];
 	}
 	if (equipment_set_bonus >= 2) {
+		/* Kurzel - Display the luck boni on each involved item */
+		for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++)
+			if (equipment_set_amount[i]) csheet_boni[i].luck += equipment_set_bonus;
 //		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus) / 2;
 		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus);
 //		equipment_set_bonus = (equipment_set_bonus - 1) * 4;
@@ -4456,31 +4585,31 @@ void calc_boni(int Ind)
 			if (k > 0) {
 				/* Feather Falling if unencumbered at level 10 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 9)
-					p_ptr->feather_fall = TRUE;
+					{ p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL; }
 
 				/* Fear Resistance if unencumbered at level 15 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 14)
-					p_ptr->resist_fear = TRUE;
+					{ p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR; }
 
 				/* Confusion Resistance if unencumbered at level 20 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 19)
-					p_ptr->resist_conf = TRUE;
+					{ p_ptr->resist_conf = TRUE; csheet_boni[14].cb[2] |= CB3_RCONF; }
 
 				/* Free action if unencumbered at level 25 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
-					p_ptr->free_act = TRUE;
+					{ p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA; }
 
 				/* Swimming if unencumbered at level 30 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 29)
-					p_ptr->can_swim = TRUE;
+					{ p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
 
 				/* Climbing if unencumbered at level 40 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 39)
-					p_ptr->climb = TRUE;
+					{ p_ptr->climb = TRUE; csheet_boni[14].cb[6] |= CB7_RCLMB; }
 
 				/* Flying if unencumbered at level 50 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 49)
-					p_ptr->fly = TRUE;
+					{ p_ptr->fly = TRUE; csheet_boni[14].cb[6] |= CB7_RRFLY; }
 
 				w = 0; 
 				if (p_ptr->inventory[INVEN_ARM].k_idx) w += k_info[p_ptr->inventory[INVEN_ARM].k_idx].weight;
@@ -4488,10 +4617,10 @@ void calc_boni(int Ind)
 				if (p_ptr->inventory[INVEN_WIELD].k_idx) w += k_info[p_ptr->inventory[INVEN_WIELD].k_idx].weight;
 				if (w < 150) {
 					/* give a speed bonus */
-					p_ptr->pspeed += k;
+					p_ptr->pspeed += k; csheet_boni[14].spd += k;
 
 					/* give a stealth bonus */
-					p_ptr->skill_stl += k;
+					p_ptr->skill_stl += k; csheet_boni[14].slth += k;
 				}
 			}
 			else p_ptr->cumber_weight = TRUE;
@@ -4703,18 +4832,22 @@ void calc_boni(int Ind)
 			switch (archery) {
 			case SKILL_SLING:
 				p_ptr->num_fire += get_skill_scale(p_ptr, archery, 500) / 100;
+				csheet_boni[14].shot += get_skill_scale(p_ptr, archery, 500) / 100;
 				break;
 			case SKILL_BOW:
 				p_ptr->num_fire += get_skill_scale(p_ptr, archery, 500) / 125;
+				csheet_boni[14].shot += get_skill_scale(p_ptr, archery, 500) / 125;
 				break;
 			case SKILL_XBOW:
 				p_ptr->num_fire += get_skill_scale(p_ptr, archery, 500) / 250;
+				csheet_boni[14].shot += get_skill_scale(p_ptr, archery, 500) / 250;
 				p_ptr->xtra_might += get_skill_scale(p_ptr, archery, 500) / 250;
+				csheet_boni[14].migh += get_skill_scale(p_ptr, archery, 500) / 250;
 				break;
 			case SKILL_BOOMERANG:
-				if (get_skill_scale(p_ptr, archery, 500) >= 500) p_ptr->num_fire++;
-				if (get_skill_scale(p_ptr, archery, 500) >= 333) p_ptr->num_fire++;
-				if (get_skill_scale(p_ptr, archery, 500) >= 166) p_ptr->num_fire++;
+				if (get_skill_scale(p_ptr, archery, 500) >= 500) { p_ptr->num_fire++; csheet_boni[14].shot++; }
+				if (get_skill_scale(p_ptr, archery, 500) >= 333) { p_ptr->num_fire++; csheet_boni[14].shot++; }
+				if (get_skill_scale(p_ptr, archery, 500) >= 166) { p_ptr->num_fire++; csheet_boni[14].shot++; }
 
 				/* Boomerang-mastery directly increases damage! - C. Blue */
 				p_ptr->to_d_ranged += get_skill_scale(p_ptr, archery, 20);
@@ -4888,6 +5021,11 @@ void calc_boni(int Ind)
 	if ((o_ptr->k_idx || (o2_ptr->k_idx && o2_ptr->tval != TV_SHIELD)) && !p_ptr->heavy_wield) {
 		int lev1 = -1, lev2 = -1;
 		p_ptr->num_blow = calc_blows_weapons(Ind);
+
+		/* Kurzel - Get intrinsic blow boni for column display (so everything adds up) */
+		if (get_weaponmastery_skill(p_ptr, o_ptr) != -1)
+			csheet_boni[14].blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr, o_ptr), 2);
+		
 		p_ptr->num_blow += p_ptr->extra_blows;
 		/* Boost blows with masteries */
 		/* note for dual-wield: instead of using two different p_ptr->to_h/d_melee for each
@@ -4915,14 +5053,14 @@ void calc_boni(int Ind)
 		p_ptr->num_blow = 0;
 
 		/*the_sandman for the RPG server (might as well stay for all servers ^^ - C. Blue) */
-		if (marts >  0) p_ptr->num_blow++;
-		if (marts >  9) p_ptr->num_blow++;
-		if (marts > 19) p_ptr->num_blow++;
-		if (marts > 29) p_ptr->num_blow++;
+		if (marts >  0) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts >  9) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts > 19) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts > 29) { p_ptr->num_blow++; csheet_boni[14].blow++; }
 //		if (marts > 34) p_ptr->num_blow++; /* this is 'marts > 0' now */
-		if (marts > 39) p_ptr->num_blow++;
-		if (marts > 44) p_ptr->num_blow++;
-		if (marts > 49) p_ptr->num_blow++;	/* Do we want 9ea from MA? certainly not. */
+		if (marts > 39) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts > 44) { p_ptr->num_blow++; csheet_boni[14].blow++; }
+		if (marts > 49) { p_ptr->num_blow++; csheet_boni[14].blow++; }	/* Do we want 9ea from MA? certainly not. */
 
 		if (monk_heavy_armor(p_ptr)) p_ptr->num_blow /= 2;
 
@@ -5329,27 +5467,27 @@ void calc_boni(int Ind)
 
 	/* Knowledge in magic schools can give permanent extra boni */
 	/* - SKILL_EARTH gives resistance in earthquake() */
-	if (get_skill(p_ptr, SKILL_EARTH) >= 30) p_ptr->resist_shard = TRUE;
-	if (get_skill(p_ptr, SKILL_AIR) >= 30) p_ptr->feather_fall = TRUE;
-	if (get_skill(p_ptr, SKILL_AIR) >= 40) p_ptr->resist_pois = TRUE;
-	if (get_skill(p_ptr, SKILL_AIR) >= 50) p_ptr->fly = TRUE;
-	if (get_skill(p_ptr, SKILL_WATER) >= 30) p_ptr->resist_water = TRUE;
-	if (get_skill(p_ptr, SKILL_WATER) >= 40) p_ptr->can_swim = TRUE;
-	if (get_skill(p_ptr, SKILL_WATER) >= 50) p_ptr->immune_water = TRUE;
-	if (get_skill(p_ptr, SKILL_FIRE) >= 30) p_ptr->resist_fire = TRUE;
-	if (get_skill(p_ptr, SKILL_FIRE) >= 50) p_ptr->immune_fire = TRUE;
-	if (get_skill(p_ptr, SKILL_MANA) >= 40) p_ptr->resist_mana = TRUE;
-	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= 30) p_ptr->res_tele = TRUE;
-	if (get_skill(p_ptr, SKILL_DIVINATION) >= 50) p_ptr->auto_id = TRUE;
-	if (get_skill(p_ptr, SKILL_NATURE) >= 30) p_ptr->regenerate = TRUE;
-	if (get_skill(p_ptr, SKILL_NATURE) >= 30) p_ptr->pass_trees = TRUE;
-	if (get_skill(p_ptr, SKILL_NATURE) >= 40) p_ptr->can_swim = TRUE;
+	if (get_skill(p_ptr, SKILL_EARTH) >= 30) { p_ptr->resist_shard = TRUE; csheet_boni[14].cb[2] |= CB3_RSHRD; }
+	if (get_skill(p_ptr, SKILL_AIR) >= 30) { p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL; }
+	if (get_skill(p_ptr, SKILL_AIR) >= 40) { p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
+	if (get_skill(p_ptr, SKILL_AIR) >= 50) { p_ptr->fly = TRUE; csheet_boni[14].cb[6] |= CB7_RRFLY; }
+	if (get_skill(p_ptr, SKILL_WATER) >= 30) { p_ptr->resist_water = TRUE; csheet_boni[14].cb[2] |= CB3_RWATR; }
+	if (get_skill(p_ptr, SKILL_WATER) >= 40) { p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
+	if (get_skill(p_ptr, SKILL_WATER) >= 50) { p_ptr->immune_water = TRUE; csheet_boni[14].cb[2] |= CB3_IWATR; }
+	if (get_skill(p_ptr, SKILL_FIRE) >= 30) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
+	if (get_skill(p_ptr, SKILL_FIRE) >= 50) { p_ptr->immune_fire = TRUE; csheet_boni[14].cb[0] |= CB1_IFIRE; }
+	if (get_skill(p_ptr, SKILL_MANA) >= 40) { p_ptr->resist_mana = TRUE; csheet_boni[14].cb[3] |= CB4_RMANA; }
+	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= 30) { p_ptr->res_tele = TRUE; csheet_boni[14].cb[4] |= CB5_RTELE; }
+	if (get_skill(p_ptr, SKILL_DIVINATION) >= 50) { p_ptr->auto_id = TRUE; csheet_boni[14].cb[6] |= CB7_RIDNT; }
+	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP; }
+	if (get_skill(p_ptr, SKILL_NATURE) >= 30) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
+	if (get_skill(p_ptr, SKILL_NATURE) >= 40) { p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
 	/* - SKILL_MIND also helps to reduce hallucination time in set_image() */
-	if (get_skill(p_ptr, SKILL_MIND) >= 40 && !p_ptr->reduce_insanity) p_ptr->reduce_insanity = 1;
-	if (get_skill(p_ptr, SKILL_MIND) >= 50) p_ptr->reduce_insanity = 2;
-	if (get_skill(p_ptr, SKILL_TEMPORAL) >= 50) p_ptr->resist_time = TRUE;
-	if (get_skill(p_ptr, SKILL_UDUN) >= 30) p_ptr->res_tele = TRUE;
-	if (get_skill(p_ptr, SKILL_UDUN) >= 40) p_ptr->hold_life = TRUE;
+	if (get_skill(p_ptr, SKILL_MIND) >= 40 && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
+	if (get_skill(p_ptr, SKILL_MIND) >= 50) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[3] |= CB4_RMIND; }
+	if (get_skill(p_ptr, SKILL_TEMPORAL) >= 50) { p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME; }
+	if (get_skill(p_ptr, SKILL_UDUN) >= 30) { p_ptr->res_tele = TRUE; csheet_boni[14].cb[4] |= CB5_RTELE; }
+	if (get_skill(p_ptr, SKILL_UDUN) >= 40) { p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE; }
 	if (get_skill(p_ptr, SKILL_META) >= 20) p_ptr->skill_sav += get_skill(p_ptr, SKILL_META) - 20;
 	/* - SKILL_HOFFENSE gives slay mods in brand/slay function tot_dam_aux() */
 	/* - SKILL_HDEFENSE gives auto protection-from-evil */
@@ -5357,7 +5495,13 @@ void calc_boni(int Ind)
 	/* - SKILL_HCURING gives extra high regeneration in regen function, and reduces various effects */
 //	if (get_skill(p_ptr, SKILL_HCURING) >= 50) p_ptr->reduce_insanity = 1;
 	/* - SKILL_HSUPPORT renders DG/TY_CURSE effectless and prevents hunger */
-
+	
+	if (get_skill(p_ptr, SKILL_HSUPPORT) >= 40) csheet_boni[14].cb[5] |= CB6_IFOOD; //Kurzel
+	
+	/* Kurzel - slay/brand boni check here... */
+	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 50) csheet_boni[14].cb[9] |= CB10_SEVIL;
+	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 40) csheet_boni[14].cb[8] |= CB9_SDEMN;
+	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 30) csheet_boni[14].cb[9] |= CB10_SUNDD;
 
 	/* Take note when "heavy bow" changes */
 	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot) {
@@ -5645,6 +5789,51 @@ void calc_boni(int Ind)
 		/* Redraw BpR */
 		p_ptr->redraw |= PR_BPR;
 
+	/* Send all the columns - Kurzel */
+	if (is_newer_than(&p_ptr->version, 4, 5, 3, 2, 0, 0))
+		for (i = 0; i < 15; i++) {
+			if (csheet_boni[i].cb[11] & CB12_XHIDD) { //hide the item data (for now, see part 2 below) - Kurzel
+				/* Wipe the boni column data */
+				csheet_boni[i].i = i;
+				csheet_boni[i].spd = 0;
+				csheet_boni[i].slth = 0;
+				csheet_boni[i].srch = 0;
+				csheet_boni[i].infr = 0;
+				csheet_boni[i].lite = 0;
+				csheet_boni[i].dig = 0;
+				csheet_boni[i].blow = 0;
+				csheet_boni[i].crit = 0;
+				csheet_boni[i].shot = 0;
+				csheet_boni[i].migh = 0;
+				csheet_boni[i].mxhp = 0;
+				csheet_boni[i].mxmp = 0;
+				csheet_boni[i].luck = 0;
+				csheet_boni[i].pstr = 0;
+				csheet_boni[i].pint = 0;
+				csheet_boni[i].pwis = 0;
+				csheet_boni[i].pdex = 0;
+				csheet_boni[i].pcon = 0;
+				csheet_boni[i].pchr = 0;
+				/* Clear the byte flags */
+				for (jj = 0; jj < 13; jj++)
+					csheet_boni[i].cb[jj] = 0;
+				//Actually, keep the item representation :)
+				//csheet_boni[i].color = TERM_DARK;
+				//csheet_boni[i].symbol = ' '; //Empty item / form slot.
+				
+#ifdef NEW_ID_SCREEN //Actually give the basic item data instead of hiding it all... (future, part 2, update?) - Kurzel!!
+
+				/* Build the 'hidden' item */
+				
+				/* Rebuild the boni column based on these flags */
+				
+#endif
+				
+				/* Make sure we know it needs *id* */
+				csheet_boni[i].cb[11] |= CB12_XHIDD;
+			}
+			Send_boni_col(Ind, csheet_boni[i]);
+		}
 
 	/* Don't kill warnings by inspecting weapons/armour in stores! */
 	if (!suppress_message) {

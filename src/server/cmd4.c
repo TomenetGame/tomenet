@@ -401,7 +401,7 @@ void do_cmd_check_uniques(int Ind, int line)
 					if (q_ptr->r_killed[k] == 1) continue;
 					if (p_ptr->party != q_ptr->party) continue;
 					if ((p_ptr->wpos.wx != q_ptr->wpos.wx) || (p_ptr->wpos.wy != q_ptr->wpos.wy) || (p_ptr->wpos.wz != q_ptr->wpos.wz)) continue;
-					attr = 'D';
+					attr = 'B';
 					
 					/* first player name entry for this unique? add ':' and go to next line */
 					if (!ok) {
@@ -411,7 +411,7 @@ void do_cmd_check_uniques(int Ind, int line)
 
 					/* add this player name as entry */
 					fprintf(fff, "\377%c", attr);
-					sprintf(buf, "(%.14s)", q_ptr->name);
+					sprintf(buf, "%.14s", q_ptr->name);
 					fprintf(fff, "  %-16.16s", buf);
 
 					/* after 4 entries per line go to next line */

@@ -1441,7 +1441,7 @@ void cmd_look(void)
 void cmd_character(void)
 {
 	char ch = 0;
-        int hist = 0, done = 0;
+	int done = 0;
         char tmp[80];
 
 	/* Save screen */
@@ -1449,10 +1449,14 @@ void cmd_character(void)
 
 	while (!done) {
 		/* Display player info */
-		display_player(hist);
+		display_player(csheet_page);
 
+		/* Window Display */
+		p_ptr->window |= PW_PLAYER;
+		window_stuff();
+		
 		/* Display message */
-		prt("[ESC to quit, f to make a chardump, h to toggle history]", 22, 10);
+		prt("[ESC to quit, f to make a chardump, h to toggle history / abilities]", 22, 1);
 
 		/* Wait for key */
 		ch = inkey();
@@ -1466,7 +1470,7 @@ void cmd_character(void)
 		/* Check for "display history" */
 		if (ch == 'h' || ch == 'H') {
 			/* Toggle */
-			hist = !hist;
+			csheet_page++; if (csheet_page == 3) csheet_page = 0; //loop
 		}
 
 		/* Dump */

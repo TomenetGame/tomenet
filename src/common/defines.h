@@ -41,7 +41,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		5
 #define VERSION_PATCH		3
-#define VERSION_EXTRA		2
+#define VERSION_EXTRA		3
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -4481,6 +4481,124 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define TR6_EVENT_HALLOWEEN	0x00000001L
 #define TR6_EVENT_XMAS		0x00000002L
 */
+
+/* Character Sheet Boni Data Flags for Char/Byte PKT Transfer - Kurzel */
+#define CB1_SFIRE	0x01
+#define CB1_RFIRE	0x02
+#define CB1_IFIRE	0x04
+#define CB1_SCOLD	0x08
+#define CB1_RCOLD	0x10
+#define CB1_ICOLD	0x20
+#define CB1_SELEC	0x40
+#define CB1_RELEC	0x80
+
+#define CB2_IELEC	0x01
+#define CB2_SACID	0x02
+#define CB2_RACID	0x04
+#define CB2_IACID	0x08
+#define CB2_SPOIS	0x10
+#define CB2_RPOIS	0x20
+#define CB2_IPOIS	0x40
+#define CB2_SLITE	0x80
+
+#define CB3_RLITE	0x01
+#define CB3_RDARK	0x02
+#define CB3_RCONF	0x04
+#define CB3_RPLAS	0x08
+#define CB3_RSOUN	0x10
+#define CB3_RSHRD	0x20
+#define CB3_RWATR	0x40
+#define CB3_IWATR	0x80
+
+#define CB4_RNEXU	0x01
+#define CB4_RNETH	0x02
+#define CB4_INETH	0x04
+#define CB4_RCHAO	0x08
+#define CB4_RDISE	0x10
+#define CB4_RTIME	0x20
+#define CB4_RMANA	0x40
+#define CB4_RMIND	0x80
+
+#define CB5_RFEAR	0x01
+#define CB5_RPARA	0x02
+#define CB5_RBLND	0x04
+#define CB5_STELE	0x08
+#define CB5_RTELE	0x10
+#define CB5_ITELE	0x20
+#define CB5_RFALL	0x40
+#define CB5_RFOOD	0x80
+
+#define CB6_IFOOD	0x01
+#define CB6_RLIFE	0x02
+#define CB6_SRGHP	0x04
+#define CB6_RRGHP	0x08
+#define CB6_SRGMP	0x10
+#define CB6_RRGMP	0x20
+#define CB6_RSINV	0x40
+#define CB6_RWRTH	0x80
+
+#define CB7_RREFL	0x01
+#define CB7_RINVS	0x02
+#define CB7_RVAMP	0x04
+#define CB7_RIDNT	0x08
+#define CB7_RRFLY	0x10
+#define CB7_RCLMB	0x20
+#define CB7_RAMSH	0x40
+#define CB7_RAGGR	0x80
+
+#define CB8_ESPID	0x01
+#define CB8_EANIM	0x02
+#define CB8_SANIM	0x04
+#define CB8_EORCS	0x08
+#define CB8_SORCS	0x10
+#define CB8_ETROL	0x20
+#define CB8_STROL	0x40
+#define CB8_EGIAN	0x80
+
+#define CB9_SGIAN	0x01
+#define CB9_EDRGN	0x02
+#define CB9_SDRGN	0x04
+#define CB9_KDRGN	0x08
+#define CB9_EDEMN	0x10
+#define CB9_SDEMN	0x20
+#define CB9_KDEMN	0x40
+#define CB9_EUNDD	0x80
+
+#define CB10_SUNDD	0x01
+#define CB10_KUNDD	0x02
+#define CB10_EEVIL	0x04
+#define CB10_SEVIL	0x08
+#define CB10_EDGRI	0x10
+#define CB10_EGOOD	0x20
+#define CB10_ENONL	0x40
+#define CB10_EUNIQ	0x80
+
+#define CB11_BFIRE	0x01
+#define CB11_AFIRE	0x02
+#define CB11_BCOLD	0x04
+#define CB11_ACOLD	0x08
+#define CB11_BELEC	0x10
+#define CB11_AELEC	0x20
+#define CB11_BACID	0x40
+#define CB11_BPOIS	0x80
+
+#define CB12_BVORP	0x01
+#define CB12_RSSTR	0x02
+#define CB12_RSINT	0x04
+#define CB12_RSWIS	0x08
+#define CB12_RSDEX	0x10
+#define CB12_RSCON	0x20
+#define CB12_RSCHR	0x40
+#define CB12_XHIDD	0x80
+
+#define CB13_XSTAR	0x01
+#define CB13_XCRSE	0x02
+#define CB13_XNOEQ	0x04
+#define CB13_XSWIM	0x08
+#define CB13_XTREE	0x10
+#define CB13_XWALL	0x20
+#define CB13_XNCUT	0x40
+#define CB13_XLITE	0x80
 
 
 /* Allow fallen winners to wear/wield WINNERS_ONLY items? */

@@ -2143,6 +2143,7 @@ static void sync_options(int Ind, bool *options)
 	// bool speak_unique;
 
 	p_ptr->uniques_alive = options[32];
+	p_ptr->overview_startup = options[33];
 	p_ptr->page_on_privmsg = options[40];
 	p_ptr->page_on_afk_privmsg = options[41];
 	p_ptr->auto_untag = options[42];
@@ -6053,6 +6054,23 @@ int Send_music(int Ind, int music) {
 	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
 }
 #endif
+
+int Send_boni_col(int Ind, boni_col c) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for boni_col (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (!is_newer_than(&connp->version, 4, 5, 3, 2, 0, 0)) return(-1);
+	return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+20+13+2 bytes in total
+	c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot, 
+	c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, 
+	c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9], 
+	c.cb[10], c.cb[11], c.cb[12], c.color, c.symbol);
+}
 
 int Send_beep(int Ind)
 {

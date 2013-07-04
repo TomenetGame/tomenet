@@ -2131,6 +2131,7 @@ struct player_type
 	bool censor_swearing;
 	bool warn_unique_credit;
 	bool uniques_alive;
+	bool overview_startup;
 
 	s16b max_panel_rows, max_panel_cols;
 	s16b panel_row, panel_col;
@@ -2872,6 +2873,20 @@ struct player_type
 	char redraw_cooldown;
 };
 
+typedef struct boni_col boni_col;
+
+struct boni_col
+{
+	/* Index */
+	byte i;
+	/* Hack signed char/byte values */
+	char spd, slth, srch, infr, lite, dig, blow, crit, shot, migh, mxhp, mxmp, luck, pstr, pint, pwis, pdex, pcon, pchr; 
+	/* Flags in char/byte chunks for PKT transfer */
+	byte cb[13]; //13 so far, hardcode - Kurzel
+	/* Attr + Char */
+	char color; char symbol;
+};
+
 /* For Monk martial arts */
 
 typedef struct martial_arts martial_arts;
@@ -3140,7 +3155,7 @@ struct client_opts
 	bool stack_allow_items;
 	bool stack_allow_wands;
 	bool uniques_alive;//expand_look;
-	bool expand_list;
+	bool overview_startup;//expand_list;
 	bool view_perma_grids;
 	bool view_torch_grids;
 	bool newbie_hints;

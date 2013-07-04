@@ -132,6 +132,8 @@ byte keymap_dirs[128];
 s16b command_cmd;
 s16b command_dir;
 
+boni_col csheet_boni[15]; /* a-n inventory slots + @ column -- Hardcode - Kurzel */
+byte csheet_page = 0;
 bool valid_dna = 0;
 s16b race, dna_race;
 s16b class, dna_class;
