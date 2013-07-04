@@ -2384,6 +2384,7 @@ int equip_damage(int Ind, int typ) {
 	object_type	*o_ptr = NULL;
 	char		o_name[ONAME_LEN];
 	int		shield_bonus = 0;
+	u32b dummy, f2, f5;
 
 	if (safe_area(Ind)) return(FALSE);
 	if (p_ptr->admin_dm) return(FALSE);
@@ -2416,6 +2417,10 @@ int equip_damage(int Ind, int typ) {
 	default: return(FALSE);
 	}
 
+	/* hack: not disenchantable -> cannot be damaged either */
+	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy);
+	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return FALSE;
+
 	/* No damage left to be done */
 	if (o_ptr->ac + o_ptr->to_a + shield_bonus <= 0) return (FALSE);
 
@@ -2446,6 +2451,7 @@ int shield_takes_damage(int Ind, int typ) {
 	player_type	*p_ptr = Players[Ind];
 	object_type	*o_ptr = &p_ptr->inventory[INVEN_ARM];
 	char		o_name[ONAME_LEN];
+	u32b dummy, f2, f5;
 
 	if (safe_area(Ind)) return(FALSE);
 	if (p_ptr->admin_dm) return(FALSE);
@@ -2468,6 +2474,10 @@ int shield_takes_damage(int Ind, int typ) {
 		else break;
 	default: return(FALSE);
 	}
+
+	/* hack: not disenchantable -> cannot be damaged either */
+	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy);
+	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return FALSE;
 
 	/* No damage left to be done */
 #ifdef USE_NEW_SHIELDS
@@ -2499,6 +2509,7 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 	player_type	*p_ptr = Players[Ind];
 	object_type	*o_ptr = &p_ptr->inventory[slot];
 	char		o_name[ONAME_LEN];
+	u32b dummy, f2, f5;
 
 	if (safe_area(Ind)) return(FALSE);
 	if (p_ptr->admin_dm) return(FALSE);
@@ -2530,6 +2541,10 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 		break;
 	default: return(FALSE);
 	}
+
+	/* hack: not disenchantable -> cannot be damaged either */
+	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy);
+	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return FALSE;
 
 	/* No damage left to be done */
 	if (o_ptr->to_d <= -10) return (FALSE);
