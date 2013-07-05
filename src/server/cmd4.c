@@ -145,9 +145,10 @@ void do_cmd_check_artifacts(int Ind, int line)
 			/* Ignore known items */
 			if (object_known_p(Ind, o_ptr) || admin) continue;
 
+ #if 0 //wrong
 			/* Skip "hidden" artifacts */
-			if (admin_artifact_p(o_ptr) && !admin) continue;
-
+			if (admin_artifact_p(o_ptr) && admin) continue;
+ #endif
 			/* Note the artifact */
 			okay[o_ptr->name1] = FALSE;
 		}
