@@ -2259,7 +2259,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				ident |= (place_monster_aux(wpos, cy, cx,
 				    race_index(trap == TRAP_OF_DEATH_MOLDS ?
-				    "Death mold" : "Death sword"), FALSE, FALSE, FALSE, 0) &&
+				    "Death mold" : "Death sword"), FALSE, FALSE, FALSE, 0) == 0 &&
 				    player_has_los_bold(Ind, cy, cx));
 			}
 			if (ident) msg_print(Ind, "You suddenly see a siege of malice!");

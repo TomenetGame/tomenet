@@ -2781,8 +2781,7 @@ static int get_prison_monster(void) {
  * the "preserve" mode, and to make the "what artifacts" flag more useful.
  */
 /* lots of hard-coded stuff in here -C. Blue */
-bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning)
-{
+int place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning) {
 	int		i, Ind, j, m_idx, dlev;
 	bool		already_on_level = FALSE;
 	cave_type	*c_ptr;
@@ -2807,15 +2806,15 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 0\n");
 #endif
-	if (!(zcave = getcave(wpos))) return (FALSE);
+	if (!(zcave = getcave(wpos))) return 1;
 	/* Verify location */
-	if (!in_bounds(y, x)) return (FALSE);
+	if (!in_bounds(y, x)) return 2;
 	/* Require empty space */
-	if (!cave_empty_bold(zcave, y, x)) return (FALSE);
+	if (!cave_empty_bold(zcave, y, x)) return 3;
 	/* Paranoia */
-	if (!r_idx) return (FALSE);
+	if (!r_idx) return 4;
 	/* Paranoia */
-	if (!r_ptr->name) return (FALSE);
+	if (!r_ptr->name) return 5;
 
 	dlev = getlevel(wpos);
 	netherrealm_bottom = netherrealm_level && dlev == netherrealm_end;
@@ -2828,7 +2827,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 	    !level_generation_time &&
 	    in_irondeepdive(wpos)
 	    && !clo && !clone_summoning)
-		return (FALSE);
+		return 6;
 
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
@@ -2839,20 +2838,20 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 		    1) use feature 210 for predefined map setups (which is a "protected brown '.' floor tile")
 		    2) use CAVE_PROT which can be toggled on runtime as required
 		*/
-		if (zcave[y][x].info & CAVE_PROT) return (FALSE);
-		if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) return (FALSE);
+		if (zcave[y][x].info & CAVE_PROT) return 7;
+		if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) return 8;
 
 #if 0 /* instead: no spawns in any dungeon town! */
  #ifdef IRONDEEPDIVE_FIXED_TOWNS
 		/* hack: use for static deep dive dungeon towns too */
-		if (is_fixed_irondeepdive_town(wpos, dlev)) return (FALSE);
+		if (is_fixed_irondeepdive_town(wpos, dlev)) return 9;
  #endif
 #else
-		if (isdungeontown(wpos)) return FALSE;
+		if (isdungeontown(wpos)) return 10;
 #endif
 		/* Keep Ironman Deep Dive Challenge entrance sector clean too */
 		if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y && !wpos->wz)
-			return FALSE;
+			return 11;
 	}
 
 	if (!(summon_override_checks & SO_GRID_EMPTY)) {
@@ -2861,7 +2860,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 		    (cave_empty_mountain(zcave, y, x) &&
 		    ((r_ptr->flags2 && RF2_PASS_WALL) ||
 		     (r_ptr->flags8 && RF8_WILD_MOUNTAIN) ||
-		     (r_ptr->flags8 && RF8_WILD_VOLCANO))))) return (FALSE);
+		     (r_ptr->flags8 && RF8_WILD_VOLCANO))))) return 12;
 #endif
 	}
 
@@ -2875,14 +2874,14 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 			/* Better debugging */
 			/* s_printf("place_monster_one refused monster (terrain): r_idx = %d, feat = %d at (%d, %d, %d), y = %d, x = %d\n",
 				 r_idx, zcave[y][x].feat, wpos->wx, wpos->wy, wpos->wz, y, x); */
-			return (FALSE);
+			return 13;
 		}
 	}
 
 	if (!(summon_override_checks & SO_GRID_GLYPH)) {
 		/* Hack -- no creation on glyph of warding */
-		if (zcave[y][x].feat == FEAT_GLYPH) return (FALSE);
-		if (zcave[y][x].feat == FEAT_RUNE) return (FALSE);
+		if (zcave[y][x].feat == FEAT_GLYPH) return 14;
+		if (zcave[y][x].feat == FEAT_RUNE) return 15;
 	}
 
 #ifdef PMO_DEBUG
@@ -2894,7 +2893,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 3\n");
 		if (istownarea(wpos, MAX_TOWNAREA) && (zcave[y][x].info & CAVE_ICKY)) {
 			/* exception: spawn certain vermin in prisons :) */
 			if (zcave[y][x].info & CAVE_STCK) r_idx = get_prison_monster();
-			else return(FALSE);
+			else return 16;
 		}
 	}
 
@@ -2903,7 +2902,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 4\n");
 #endif
 #ifdef RPG_SERVER /* no spawns in Training Tower at all */
 	if (!(summon_override_checks & SO_TT_RPG)) {
-		if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return(FALSE);
+		if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return 17;
 	}
 #endif
 
@@ -2912,10 +2911,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 4\n");
 		if (ge_special_sector &&
 		    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y &&
 		    wpos->wz == WPOS_ARENA_Z)
-			return(FALSE);
+			return 18;
 
 		/* No spawns in 0,0 pvp arena tower */
-		if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z) return(FALSE);
+		if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z) return 19;
 
 		/* Note: Spawns in 0,0 surface during events are caught in wild_add_monster() */
 	}
@@ -2929,7 +2928,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 5\n");
 		    zcave[y][x].feat == FEAT_WAY_LESS ||
 		    zcave[y][x].feat == FEAT_WAY_MORE ||
 		    zcave[y][x].feat == FEAT_LESS ||
-		    zcave[y][x].feat == FEAT_MORE)) return(FALSE);
+		    zcave[y][x].feat == FEAT_MORE)) return 20;
 	}
 
 #ifdef PMO_DEBUG
@@ -2939,20 +2938,20 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6\n");
 		/* Nether Realm bottom */
 		if (netherrealm_bottom) {
 			/* No live spawns after initial spawn allowed */
-			if (!level_generation_time) return(FALSE);
+			if (!level_generation_time) return 21;
 
 #if 0 /* FINAL_GUARDIAN now */
 			/* Special hack - level is empty except for Zu-Aon */
 			r_idx = RI_ZU_AON;
 #else
-			if (r_idx != RI_ZU_AON) return (FALSE);
+			if (r_idx != RI_ZU_AON) return 22;
 #endif
 		}
 
 		/* Valinor - No monster spawn, except for.. */
 		if (in_valinor(wpos) &&
 		    (r_idx != RI_BRIGHTLANCE ) && (r_idx != RI_OROME)) /* Brightlance, Orome */
-			return(FALSE);
+			return 23;
 	}
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
@@ -2966,7 +2965,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 #if DEBUG_LEVEL > 2
 				s_printf("rejected FINAL_GUARDIAN %d (LIVE)\n", r_idx);
 #endif
-				return FALSE;
+				return 24;
 			}
 
 			/* wrong monster, or not at the bottom of the dungeon? */
@@ -2986,7 +2985,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 #if DEBUG_LEVEL > 2
 					s_printf("rejected FINAL_GUARDIAN %d\n", r_idx);
 #endif
-					return FALSE;
+					return 25;
 				}
 			}
 			/* generating the boss is ok. go on. */
@@ -2997,28 +2996,28 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 		if (in_irondeepdive(wpos)) {
 			if (r_ptr->restrict_dun && (!d_ptr || r_ptr->restrict_dun != iddc[ABS(wpos->wz)].type))
-				return FALSE;
+				return 26;
 		} else {
 			if (r_ptr->restrict_dun && (!d_ptr || r_ptr->restrict_dun != d_ptr->type))
-				return FALSE;
+				return 27;
 		}
 #else
-		if (r_ptr->restrict_dun && (!d_ptr || r_ptr->restrict_dun != d_ptr->type)) return FALSE;
+		if (r_ptr->restrict_dun && (!d_ptr || r_ptr->restrict_dun != d_ptr->type)) return 28;
 #endif
 
 		/* Couple of Nether Realm-only monsters hardcoded here */
 		if ((r_ptr->flags8 & RF8_NETHER_REALM) && !netherrealm_level)
-			return (FALSE);
+			return 29;
 
 		/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
-		if ((r_idx == RI_HELLRAISER) && dlev < (netherrealm_start + 1)) return (FALSE);
+		if ((r_idx == RI_HELLRAISER) && dlev < (netherrealm_start + 1)) return 30;
 
 		/* Dor may not occur on 'easier' (lol) NR levels */
-		if ((r_idx == RI_DOR) && dlev < (netherrealm_start + 9)) return (FALSE);
+		if ((r_idx == RI_DOR) && dlev < (netherrealm_start + 9)) return 31;
 
 #if 0 /* FINAL_GUARDIAN now */
 		/* Zu-Aon guards the bottom of the Nether Realm now */
-		if ((r_idx == RI_ZU_AON) && !netherrealm_bottom) return (FALSE);
+		if ((r_idx == RI_ZU_AON) && !netherrealm_bottom) return 32;
 #endif
 
 		/* Nether Guard isn't a unique but there's only 1 guard per level */
@@ -3033,7 +3032,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 					m_fast[i] = m_fast[--m_top];
 					continue;
 				}
-				if ((m_ptr->r_idx == RI_NETHER_GUARD) && inarea(wpos, &m_ptr->wpos)) return(FALSE);
+				if ((m_ptr->r_idx == RI_NETHER_GUARD) && inarea(wpos, &m_ptr->wpos)) return 33;
 			}
 		}
 
@@ -3050,7 +3049,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 			        s_printf("Morgoth live spawn prevented (MORGOTH_NO_TELE_VAULTS)\n");
  #endif
 				/* Prevent that. */
-				return (FALSE);
+				return 34;
 			} else {
 #endif
 				for (i = 1; i <= NumPlayers; i++) {
@@ -3074,7 +3073,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 							}
 						}
  #endif
-						return (FALSE);
+						return 35;
 					}
 				}
 #ifdef MORGOTH_NO_LIVE_SPAWN
@@ -3091,7 +3090,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6b\n");
 		/* "unique" monsters.. */
 		if (r_ptr->flags1 & RF1_UNIQUE) {
 			/* Disallow unique spawns in dungeon towns? */
-			if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) return(FALSE);
+			if (l_ptr && (l_ptr->flags1 & LF1_DUNGEON_TOWN)) return 36;
 
 			/* If the monster is unique and all players on this level already killed
 			   the monster, don't spawn it. (For Morgoth, especially) -C. Blue */
@@ -3112,17 +3111,17 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6b\n");
 			/* If all of them already killed it it must not be spawned */
 			/* If players are on the level, they exclusively determine the unique summonability. */
 			if ((on_level > 0) && (on_level <= who_killed)) {
-				return(FALSE); /* should be '==', but for now lets be tolerant */
+				return 37; /* should be '==', but for now lets be tolerant */
 			}
 			/* If only admins are on the level, allow unique creation
 			   if it fits the admins' unique masks */
 			if ((on_level == 0) && (admin_on_level <= admin_who_killed)) {
-				return(FALSE);
+				return 38;
 			}
 
 			/* are allowed to appear at all? */
 			if (!allow_unique_level(r_idx, wpos)) {
-				return(FALSE);
+				return 39;
 			}
 		}
 	}
@@ -3134,7 +3133,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 7\n");
 	if ((r_ptr->flags1 & RF1_UNIQUE) &&
 	    !(summon_override_checks & (SO_BOSS_MONSTERS | SO_SURFACE))) {
 		/* may not appear on the world surface */
-		if (wpos->wz == 0) return(FALSE);
+		if (wpos->wz == 0) return 40;
 	}
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 8\n");
@@ -3144,18 +3143,18 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 8\n");
 		/* Depth monsters may NOT be created out of depth */
 		if ((r_ptr->flags1 & RF1_FORCE_DEPTH) && (dlev < r_ptr->level)) {
 			/* Cannot create */
-			return (FALSE);
+			return 41;
 		}
 		if ((r_ptr->flags9 & RF9_ONLY_DEPTH) && (dlev != r_ptr->level)) {
 			/* Cannot create */
-			return (FALSE);
+			return 42;
 		}
 		if ((r_ptr->flags7 & RF7_OOD_10) && (dlev + 10 < r_ptr->level))
-			return (FALSE);
+			return 43;
 		if ((r_ptr->flags7 & RF7_OOD_15) && (dlev + 15 < r_ptr->level))
-			return (FALSE);
+			return 44;
 		if ((r_ptr->flags7 & RF7_OOD_20) && (dlev + 20 < r_ptr->level))
-			return (FALSE);
+			return 45;
 	}
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
@@ -3165,7 +3164,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
 	/* Uniques monster consistency - stuff that is exempt from overriding really */
 	if (r_ptr->flags1 & RF1_UNIQUE) {
 		/* Ego Uniques are NOT to be created */
-		if (ego || randuni) return FALSE;
+		if (ego || randuni) return 46;
 
 		/* prevent duplicate uniques on a floor */
 		for(i = 0; i < m_max; i++) {
@@ -3182,7 +3181,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
 		if ((r_ptr->cur_num >= r_ptr->max_num && !in_irondeepdive(wpos))
 		    || already_on_level) {
 			/* Cannot create */
-			return (FALSE);
+			return 47;
 		}
 	}
 #ifdef PMO_DEBUG
@@ -3207,7 +3206,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 
 			/* open area means: No permawalls
 			   (anti vault-cheeze, but also for rough level border structures) */
-			if ((flags & FF1_PERMANENT)) return FALSE;
+			if ((flags & FF1_PERMANENT)) return 48;
 		}
 	}
 #ifdef PMO_DEBUG
@@ -3225,7 +3224,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	c_ptr->m_idx = m_pop();
 
 	/* Mega-Hack -- catch "failure" */
-	if (!c_ptr->m_idx) return (FALSE);
+	if (!c_ptr->m_idx) return 49;
 
 	/* Get a new monster record */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -3455,7 +3454,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	}
 
 	/* monster creation attempt passed! */
-	return (TRUE);
+	return 0;
 }
 
 /*
@@ -3537,8 +3536,7 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 			if (!cave_empty_bold(zcave, my, mx)) continue;
 #endif
 			/* Attempt to place another monster */
-			if (place_monster_one(wpos, my, mx, r_idx, pick_ego_monster(r_idx, getlevel(wpos)), 0, slp, s_clone, clone_summoning))
-			{
+			if (place_monster_one(wpos, my, mx, r_idx, pick_ego_monster(r_idx, getlevel(wpos)), 0, slp, s_clone, clone_summoning) == 0) {
 				/* Add it to the "hack" set */
 				hack_y[hack_n] = my;
 				hack_x[hack_n] = mx;
@@ -3603,33 +3601,33 @@ static bool place_monster_okay_escort(int r_idx)
  * Note the use of the new "monster allocation table" code to restrict
  * the "get_mon_num()" function to "legal" escort types.
  */
-bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo, int clone_summoning)
+int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo, int clone_summoning)
 {
 	int i;
 	monster_race *r_ptr = &r_info[r_idx];
 	cave_type **zcave;
-	int level = getlevel(wpos);
-	if(!(zcave = getcave(wpos))) return(FALSE);
+	int level = getlevel(wpos), res;
+	if(!(zcave = getcave(wpos))) return -1;
 
 #ifdef ARCADE_SERVER
-	if(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return(FALSE);
+	if(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return -2;
 #endif
 
 	if (!(summon_override_checks & SO_SURFACE)) {
 		/* Do not allow breeders to spawn in the wilderness - the_sandman */
-		if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return (FALSE);
+		if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return -3;
 	}
 
 	/* Place one monster, or fail */
-	if (!place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, level), 0, slp, clo, clone_summoning)) {
+	if ((res = place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, level), 0, slp, clo, clone_summoning)) != 0) {
 		// DEBUG
 		/* s_printf("place_monster_one failed at (%d, %d, %d), y = %d, x = %d, r_idx = %d, feat = %d\n",
 			wpos->wx, wpos->wy, wpos->wz, y, x, r_idx, zcave[y][x].feat); */
-		return (FALSE);
+		return res;
 	}
 
 	/* Require the "group" flag */
-	if (!grp) return (TRUE);
+	if (!grp) return 0;
 
 	/* Friend for certain monsters */
 	if (r_ptr->flags1 & RF1_FRIEND) {
@@ -3708,7 +3706,7 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 
 
 	/* Success */
-	return (TRUE);
+	return 0;
 }
 
 
@@ -3771,7 +3769,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 			}
 #endif
 
-			if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0)) {
+			if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0) == 0) {
 //				great_pumpkin_timer = 15 + rand_int(45);  <- now done in monster_death() ! So no more duplicate pumpkins.
 				/* log */
 //spam				s_printf("%s HALLOWEEN: Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, lev);
@@ -3851,7 +3849,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster */
-	if (place_monster_aux(wpos, y, x, r_idx, slp, grp, FALSE, 0)) return (TRUE);
+	if (place_monster_aux(wpos, y, x, r_idx, slp, grp, FALSE, 0) == 0) return (TRUE);
 
 	/* Oops */
 	return (FALSE);
@@ -3978,7 +3976,7 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp)
 /* Used for dungeon bosses, aka FINAL_GUARDIAN - C. Blue */
 bool alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp)
 {
-	int y, x, i, d, min_dis = 999, org_dis = dis;
+	int y, x, i, d, min_dis = 999, org_dis = dis, res;
 	int tries = 0;
 	player_type *p_ptr;
 	cave_type **zcave;
@@ -4029,10 +4027,10 @@ bool alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp)
 	}
 
 	/* Attempt to place the monster, allow groups */
-        if (place_monster_aux(wpos, y, x, r_idx, slp, TRUE, FALSE, 0)) return (TRUE);
+        if ((res = place_monster_aux(wpos, y, x, r_idx, slp, TRUE, FALSE, 0)) == 0) return (TRUE);
 
 	/* Nope */
-	s_printf("allocate_monster_specific()->place_monster_aux() failed for r_idx %d on %s.\n", r_idx, wpos_format(0, wpos));
+	s_printf("allocate_monster_specific()->place_monster_aux() failed for r_idx %d on %s (%d).\n", r_idx, wpos_format(0, wpos), res);
 	return (FALSE);
 }
 
@@ -4398,7 +4396,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster (awake, allow groups) */
-	if (!place_monster_aux(wpos, y, x, r_idx, FALSE, allow_sidekicks ? TRUE : FALSE, s_clone, clone_summoning)) return (FALSE);
+	if (place_monster_aux(wpos, y, x, r_idx, FALSE, allow_sidekicks ? TRUE : FALSE, s_clone, clone_summoning) != 0) return (FALSE);
 
 	/* Success */
 	return (TRUE);
@@ -4440,8 +4438,8 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 		if (i == 20) return (FALSE);
 
 		/* Attempt to place the monster (awake, don't allow groups) */
-		if (!place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE,
-		    s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0))
+		if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE,
+		    s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0) != 0)
 			return (FALSE);
 
 	}
@@ -4526,7 +4524,7 @@ int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, boo
 		break;
 	}
 
-	if (!place_monster_one(wpos, y, x, r_idx, ego, FALSE, slp, s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0))
+	if (place_monster_one(wpos, y, x, r_idx, ego, FALSE, slp, s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0) != 0)
 		return (FALSE);
 
 	/* Success */
@@ -4571,7 +4569,7 @@ bool multiply_monster(int m_idx)
 		result = place_monster_one(&m_ptr->wpos, y, x, m_ptr->r_idx,
 		    (m_ptr->ego && magik(CLONE_EGO_CHANCE)) ? m_ptr->ego :
 		    pick_ego_monster(m_ptr->r_idx, getlevel(&m_ptr->wpos)),
-		    0, FALSE, m_ptr->clone + 10, m_ptr->clone_summoning + 1);
+		    0, FALSE, m_ptr->clone + 10, m_ptr->clone_summoning + 1) == 0;
 		/* Done */
 		break;
 	}
