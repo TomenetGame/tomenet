@@ -3977,18 +3977,14 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp)
 bool alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp)
 {
 	int y, x, i, d, min_dis = 999, org_dis = dis, res;
-	int tries = 0;
+	int tries = 2000;
 	player_type *p_ptr;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return (FALSE);
 	dun_level *l_ptr = getfloor(wpos);
 
 	/* Find a legal, distant, unoccupied, space */
-	while (tries < 1100) /* try especially hard to succeed */
-	{
-		/* Increase the counter */
-		tries++;
-
+	while (--tries) { /* try especially hard to succeed */
 		/* Pick a location */
 		y = rand_int(l_ptr->hgt);
 		x = rand_int(l_ptr->wid);
@@ -3997,8 +3993,7 @@ bool alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp)
 		if (!cave_naked_bold(zcave, y, x)) continue;
 
 		/* Accept far away grids */
-		for (i = 1; i < NumPlayers + 1; i++)
-		{
+		for (i = 1; i < NumPlayers + 1; i++) {
 			p_ptr = Players[i];
 
 			/* Skip him if he's not playing */
@@ -4020,9 +4015,9 @@ bool alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp)
 	}
 
 	/* Abort */
-	if (tries >= 1100) {
+	if (!tries) {
 		/* fun stuff. it STILL fails here "relatively" often.. -_- */
-		s_printf("allocate_monster_specific() failed for r_idx %d on %s.\n", r_idx, wpos_format(0, wpos));
+		s_printf("allocate_monster_specific() out of tries for r_idx %d on %s.\n", r_idx, wpos_format(0, wpos));
 		return (FALSE);
 	}
 
