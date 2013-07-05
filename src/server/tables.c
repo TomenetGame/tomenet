@@ -4805,7 +4805,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,
-                                '+', 700,//600
+                                '+', 1000,
                         },
                         {
                                 SKILL_FIRE,
