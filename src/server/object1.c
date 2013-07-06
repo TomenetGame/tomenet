@@ -4211,6 +4211,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
 	bool aware = object_aware_p(Ind, o_ptr);
+	bool aware_cursed = id || (o_ptr->ident & ID_SENSE);
 	object_type forge;
 #endif
 	player_type *p_ptr = Players[Ind];
@@ -4892,7 +4893,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	if (f4 & (TR4_CLONE))
 		fprintf(fff, "\377DIt can clone monsters.\n");
 
-	if (cursed_p(o_ptr)) {
+	if (cursed_p(o_ptr) && aware_cursed) {
 		if (f3 & (TR3_PERMA_CURSE))
 			fprintf(fff, "\377DIt is permanently cursed.\n");
 		else if (f3 & (TR3_HEAVY_CURSE))
