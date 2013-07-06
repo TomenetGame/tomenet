@@ -3342,7 +3342,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 1000,
-                                '+', 800,//1200,
+                                '+', 900,//1200,
                         },
                         {
                                 SKILL_STEALTH,
