@@ -4025,7 +4025,8 @@ bool alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp)
         if ((res = place_monster_aux(wpos, y, x, r_idx, slp, TRUE, FALSE, 0)) == 0) return (TRUE);
 
 	/* Nope */
-	s_printf("allocate_monster_specific()->place_monster_aux() failed for r_idx %d on %s (%d).\n", r_idx, wpos_format(0, wpos), res);
+	if (res != 37) /* no spam for players who have killed the boss already */
+		s_printf("allocate_monster_specific()->place_monster_aux() failed for r_idx %d on %s (%d).\n", r_idx, wpos_format(0, wpos), res);
 	return (FALSE);
 }
 
