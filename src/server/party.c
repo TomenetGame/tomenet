@@ -1493,12 +1493,16 @@ int party_add(int adder, cptr name) {
 		return FALSE;
 	}
 
+	if (
 #ifdef ALLOW_NR_CROSS_PARTIES
-	if (!q_ptr->total_winner || !p_ptr->total_winner ||
-	    !at_netherrealm(&q_ptr->wpos) || !at_netherrealm(&p_ptr->wpos))
+	    (!q_ptr->total_winner || !p_ptr->total_winner ||
+	    !at_netherrealm(&q_ptr->wpos) || !at_netherrealm(&p_ptr->wpos)) &&
+#endif
+#ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
+	    (!in_irondeepdive(&q_ptr->wpos) || !in_irondeepdive(&p_ptr->wpos)) &&
 #endif
 	/* Everlasting and other chars cannot be in the same party */
-	if (compat_mode(parties[party_id].cmode, p_ptr->mode)) {
+	    (compat_mode(parties[party_id].cmode, p_ptr->mode))) {
 		msg_format(adder, "\377yYou cannot form a party with %s characters.", compat_mode(parties[party_id].cmode, p_ptr->mode));
 		return FALSE;
 	}
