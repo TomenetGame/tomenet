@@ -2239,6 +2239,7 @@ static void player_setup(int Ind, bool new)
 					p_ptr->cave_flag[y][x] = 0;
 				}
 			}
+
 			/* Player now starts mapping this dungeon (as far as its flags allow) */
 			p_ptr->dlev_id = l_ptr->id;
 
@@ -2446,6 +2447,21 @@ static void player_setup(int Ind, bool new)
 		p_ptr->guild = 0;
 		clockin(Ind, 3);
 	}
+
+
+#if 1 /* fix problem that player logging on on regenerated level cant see himself at the beginning */
+ #if 0
+	/* allow to instantly determine the terrain type we start _in_ (could be walls/trees) */
+  #if 0 /* panic saves at this stage, if this code happens in if(alloc).. stuff above already -- DOESNT WORK? */
+	note_spot(Ind, p_ptr->py, p_ptr->px);
+  #else /* so we'd have to do it manually if this code is up there instead (sigh) */
+	p_ptr->cave_flag[p_ptr->py][p_ptr->px] |= CAVE_MARK;
+  #endif
+ #endif
+	/* make sure he sees himself on the (possibly dark) map */
+	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+#endif
+
 
 	/* Tell the server to redraw the player's display */
 	p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS;
