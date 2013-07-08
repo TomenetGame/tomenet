@@ -363,6 +363,7 @@ struct player_type
 	bool v_outdated;
 	bool v_latest;
 	bool v_test;
+	bool v_test_latest;
 	bool v_unknown;
 
 	s32b id;		/* Unique ID to each player */

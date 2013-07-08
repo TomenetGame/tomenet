@@ -927,13 +927,15 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	/* 2nd line */
 	if (q_ptr->inval) {
 		if (q_ptr->v_unknown && admin) strcpy(flag_str, "\377yI\377rU");
-		else if (q_ptr->v_test && admin) strcpy(flag_str, "\377yI\377oT");
+		else if (q_ptr->v_test_latest && admin) strcpy(flag_str, "\377yI\377oT");
+		else if (q_ptr->v_test && admin) strcpy(flag_str, "\377yI\377ot");
 		else if (q_ptr->v_outdated) strcpy(flag_str, "\377yI\377DO");
 		else if (!q_ptr->v_latest && admin) strcpy(flag_str, "\377yI\377sL");
 		else strcpy(flag_str, "\377yI ");
 	} else {
 		if (q_ptr->v_unknown && admin) strcpy(flag_str, "\377rU ");
-		else if (q_ptr->v_test && admin) strcpy(flag_str, "\377oT ");
+		else if (q_ptr->v_test_latest && admin) strcpy(flag_str, "\377oT ");
+		else if (q_ptr->v_test && admin) strcpy(flag_str, "\377ot ");
 		else if (q_ptr->v_outdated) strcpy(flag_str, "\377DO ");
 		else if (!q_ptr->v_latest && admin) strcpy(flag_str, "\377sL ");
 		else strcpy(flag_str, "  ");
@@ -1275,7 +1277,8 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #else
 		if (q_ptr->inval) strcpy(flag_str, "\377yI");
 		if (q_ptr->v_unknown && is_admin(p_ptr)) strcat(flag_str, "\377rU");
-		else if (q_ptr->v_test && is_admin(p_ptr)) strcat(flag_str, "\377oT");
+		else if (q_ptr->v_test_latest && is_admin(p_ptr)) strcat(flag_str, "\377oT");
+		else if (q_ptr->v_test && is_admin(p_ptr)) strcat(flag_str, "\377ot");
 		else if (q_ptr->v_outdated) strcat(flag_str, "\377DO");
 		else if (!q_ptr->v_latest && is_admin(p_ptr)) strcat(flag_str, "\377sL");
 		if (flag_str[0]) strcat(flag_str, " ");
@@ -1336,13 +1339,15 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #else
 		if (q_ptr->inval) {
 			if (q_ptr->v_unknown && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377rU");
-			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377oT");
+			else if (q_ptr->v_test_latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377oT");
+			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377ot");
 			else if (q_ptr->v_outdated) strcpy(flag_str, "\377yI\377U+\377DO");
 			else if (!q_ptr->v_latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377sL");
 			else strcpy(flag_str, "\377y(I)");
 		} else {
 			if (q_ptr->v_unknown && is_admin(p_ptr)) strcpy(flag_str, "\377r(U)");
-			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377o(T)");
+			else if (q_ptr->v_test_latest && is_admin(p_ptr)) strcpy(flag_str, "\377o(T)");
+			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377o(t)");
 			else if (q_ptr->v_outdated) strcpy(flag_str, "\377D(O)");
 			else if (!q_ptr->v_latest && is_admin(p_ptr)) strcpy(flag_str, "\377s(L)");
 		}
@@ -1435,13 +1440,15 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #else
 		if (q_ptr->inval) {
 			if (q_ptr->v_unknown && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377rU");
-			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377oT");
+			else if (q_ptr->v_test_latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377oT");
+			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377ot");
 			else if (q_ptr->v_outdated) strcpy(flag_str, "\377yI\377U+\377DO");
 			else if (!q_ptr->v_latest && is_admin(p_ptr)) strcpy(flag_str, "\377yI\377U+\377sL");
 			else strcpy(flag_str, "\377y(I)");
 		} else {
 			if (q_ptr->v_unknown && is_admin(p_ptr)) strcpy(flag_str, "\377r(U)");
-			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377o(T)");
+			else if (q_ptr->v_test_latest && is_admin(p_ptr)) strcpy(flag_str, "\377o(T)");
+			else if (q_ptr->v_test && is_admin(p_ptr)) strcpy(flag_str, "\377o(t)");
 			else if (q_ptr->v_outdated) strcpy(flag_str, "\377D(O)");
 			else if (!q_ptr->v_latest && is_admin(p_ptr)) strcpy(flag_str, "\377s(L)");
 			else strcpy(flag_str, "   ");
