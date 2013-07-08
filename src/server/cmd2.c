@@ -2168,8 +2168,9 @@ bool twall(int Ind, int y, int x)
  * accomplished by strong players using heavy weapons.
  */
 /* XXX possibly wrong */
-void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
-{
+/* Reveal a secret door if tunnelling triggered a trap on it? */
+#define TRAP_REVEALS_DOOR
+void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -2727,7 +2728,27 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer)
 #endif
 
 				/* Set off trap */
-				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
+				if (GetCS(c_ptr, CS_TRAPS)) {
+#ifdef TRAP_REVEALS_DOOR
+					struct c_special *cs_ptr;
+#endif
+					player_activate_door_trap(Ind, y, x);
+					/* got disturbed! */
+					more = FALSE;
+#ifdef TRAP_REVEALS_DOOR
+					/* Message */
+					msg_print(Ind, "You have found a secret door.");
+					/* Pick a door XXX XXX XXX */
+					c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+					/* Clear mimic feature */
+					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
+
+					/* Notice */
+					note_spot_depth(wpos, y, x);
+					/* Redraw */
+					everyone_lite_spot(wpos, y, x);
+#endif
+				}
 
 				/* Hack -- Search */
 				if (more) search(Ind);
