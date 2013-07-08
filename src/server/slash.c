@@ -4322,6 +4322,10 @@ void do_slash_cmd(int Ind, char *message)
 				wiz_lite(Ind);
 				return;
 			}
+			else if (prefix(message, "/wizdark")) {
+				wiz_dark(Ind);
+				return;
+			}
 			else if (prefix(message, "/equip") ||
 					prefix(message, "/eq"))
 			{
