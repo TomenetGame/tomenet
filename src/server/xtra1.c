@@ -2092,7 +2092,8 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni)
 			p_ptr->vampiric_melee = 100; csheet_boni->cb[6] |= CB7_RVAMP;
 			break;
 		case 927: /* Vampiric ixitxachitl is vampiric */
-			if (p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni->cb[6] |= CB7_RVAMP; }
+			if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50;
+			csheet_boni->cb[6] |= CB7_RVAMP;
 			break;
 
 		/* Elves get resist_lite, Dark-Elves get resist_dark */
@@ -3288,7 +3289,8 @@ void calc_boni(int Ind)
 
 		p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND;
 
-		if (p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni[14].cb[6] |= CB7_RVAMP; } /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
+		if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
+		csheet_boni[14].cb[6] |= CB7_RVAMP;
 		/* sense surroundings without light source! (virtual lite / dark light) */
 		p_ptr->cur_vlite = 1 + p_ptr->lev / 10; csheet_boni[14].lite = 1 + p_ptr->lev / 10;
 		csheet_boni[14].cb[12] |= CB13_XLITE;
@@ -3769,15 +3771,15 @@ void calc_boni(int Ind)
 
 
 		/* Affect stats */
-		if (f1 & TR1_STR) { p_ptr->stat_add[A_STR] += pval; csheet_boni[i-INVEN_WIELD].pstr += o_ptr->pval; }
-		if (f1 & TR1_INT) { p_ptr->stat_add[A_INT] += pval; csheet_boni[i-INVEN_WIELD].pint += o_ptr->pval; }
-		if (f1 & TR1_WIS) { p_ptr->stat_add[A_WIS] += pval; csheet_boni[i-INVEN_WIELD].pwis += o_ptr->pval; }
-		if (f1 & TR1_DEX) { p_ptr->stat_add[A_DEX] += pval; csheet_boni[i-INVEN_WIELD].pdex += o_ptr->pval; }
-		if (f1 & TR1_CON) { p_ptr->stat_add[A_CON] += pval; csheet_boni[i-INVEN_WIELD].pcon += o_ptr->pval; }
-		if (f1 & TR1_CHR) { p_ptr->stat_add[A_CHR] += pval; csheet_boni[i-INVEN_WIELD].pchr += o_ptr->pval; }
+		if (f1 & TR1_STR) { p_ptr->stat_add[A_STR] += pval; csheet_boni[i-INVEN_WIELD].pstr += pval; }
+		if (f1 & TR1_INT) { p_ptr->stat_add[A_INT] += pval; csheet_boni[i-INVEN_WIELD].pint += pval; }
+		if (f1 & TR1_WIS) { p_ptr->stat_add[A_WIS] += pval; csheet_boni[i-INVEN_WIELD].pwis += pval; }
+		if (f1 & TR1_DEX) { p_ptr->stat_add[A_DEX] += pval; csheet_boni[i-INVEN_WIELD].pdex += pval; }
+		if (f1 & TR1_CON) { p_ptr->stat_add[A_CON] += pval; csheet_boni[i-INVEN_WIELD].pcon += pval; }
+		if (f1 & TR1_CHR) { p_ptr->stat_add[A_CHR] += pval; csheet_boni[i-INVEN_WIELD].pchr += pval; }
 
 		/* Affect luck */
-		if (f5 & (TR5_LUCK)) { p_ptr->luck += pval; csheet_boni[i-INVEN_WIELD].luck += o_ptr->pval; }
+		if (f5 & (TR5_LUCK)) { p_ptr->luck += pval; csheet_boni[i-INVEN_WIELD].luck += pval; }
 
 		/* Affect spell power */
 //		if (f1 & (TR1_SPELL)) p_ptr->to_s += pval;
@@ -3786,9 +3788,9 @@ void calc_boni(int Ind)
 		if (f1 & (TR1_MANA)) {
 			if ((f4 & TR4_SHOULD2H) &&
 			    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
-				{ p_ptr->to_m += (pval * 20) / 3; csheet_boni[i-INVEN_WIELD].mxmp += o_ptr->pval; }
+				{ p_ptr->to_m += (pval * 20) / 3; csheet_boni[i-INVEN_WIELD].mxmp += pval; }
 			else
-				{ p_ptr->to_m += pval * 10; csheet_boni[i-INVEN_WIELD].mxmp += o_ptr->pval; }
+				{ p_ptr->to_m += pval * 10; csheet_boni[i-INVEN_WIELD].mxmp += pval; }
 		}
 
 		/* Affect life capacity */
@@ -3799,19 +3801,19 @@ void calc_boni(int Ind)
 			{ p_ptr->to_l += o_ptr->pval; csheet_boni[i-INVEN_WIELD].mxhp += o_ptr->pval; }
 
 		/* Affect stealth */
-		if (f1 & TR1_STEALTH) { p_ptr->skill_stl += pval; csheet_boni[i-INVEN_WIELD].slth += o_ptr->pval; }
+		if (f1 & TR1_STEALTH) { p_ptr->skill_stl += pval; csheet_boni[i-INVEN_WIELD].slth += pval; }
 		/* Affect searching ability (factor of five) */
-		if (f1 & TR1_SEARCH) { p_ptr->skill_srh += (pval * 5); csheet_boni[i-INVEN_WIELD].srch += o_ptr->pval; }
+		if (f1 & TR1_SEARCH) { p_ptr->skill_srh += (pval * 5); csheet_boni[i-INVEN_WIELD].srch += pval; }
 		/* Affect searching frequency (factor of five) */
 		if (f1 & TR1_SEARCH) p_ptr->skill_fos += (pval * 3);
 		/* Affect infravision */
-		if (f1 & TR1_INFRA) { p_ptr->see_infra += pval; csheet_boni[i-INVEN_WIELD].infr += o_ptr->pval; }
+		if (f1 & TR1_INFRA) { p_ptr->see_infra += pval; csheet_boni[i-INVEN_WIELD].infr += pval; }
 
 		/* Affect digging (factor of 20) */
-		if (f1 & TR1_TUNNEL) { p_ptr->skill_dig += (pval * 20); csheet_boni[i-INVEN_WIELD].dig += o_ptr->pval; }
+		if (f1 & TR1_TUNNEL) { p_ptr->skill_dig += (pval * 20); csheet_boni[i-INVEN_WIELD].dig += pval; }
 
 		/* Affect speed */
-		if (f1 & TR1_SPEED) { p_ptr->pspeed += pval; csheet_boni[i-INVEN_WIELD].spd += o_ptr->pval; }
+		if (f1 & TR1_SPEED) { p_ptr->pspeed += pval; csheet_boni[i-INVEN_WIELD].spd += pval; }
 
 		/* Affect spellss */
 //		if (f1 & TR1_SPELL_SPEED) extra_spells += pval;
@@ -3833,7 +3835,7 @@ void calc_boni(int Ind)
 		if (f4 & TR4_AUTO_ID) { p_ptr->auto_id = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RIDNT; }
 
 		/* Boost shots */
-		if (f3 & TR3_XTRA_SHOTS) { extra_shots++; csheet_boni[i-INVEN_WIELD].shot += o_ptr->pval; }
+		if (f3 & TR3_XTRA_SHOTS) { extra_shots++; csheet_boni[i-INVEN_WIELD].shot++; }
 
 		/* Make the 'useless' curses interesting >:) - C. Blue */
 		if ((f3 & TR3_TY_CURSE) && (o_ptr->ident & ID_CURSED)) p_ptr->ty_curse = TRUE;
@@ -3931,7 +3933,7 @@ void calc_boni(int Ind)
 			
 			/* Permanent lite gets the 'sustain' colour - Kurzel */
 			csheet_boni[i-INVEN_WIELD].lite += j;
-			if (j) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XLITE;
+			if (!(f4 & TR4_FUEL_LITE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XLITE;
 		}
 
 		/* powerful lights and anti-undead/evil items damage vampires */
@@ -4077,17 +4079,65 @@ void calc_boni(int Ind)
 
 
 		/* Hack -- do not apply "weapon", "bow", "ammo", or "tool"  boni */
-		if (i == INVEN_WIELD) continue;
-		if (i == INVEN_ARM && o_ptr->tval != TV_SHIELD) continue; /*..and for dual-wield */
+		if (i == INVEN_WIELD) { 
+			/* Kurzel -- Brands/slays display */
+			if (f1 & TR1_SLAY_ANIMAL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM;
+			if (f1 & TR1_SLAY_EVIL) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL;
+			if (f1 & TR1_SLAY_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD;
+			if (f1 & TR1_SLAY_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN;
+			if (f1 & TR1_SLAY_ORC) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS;
+			if (f1 & TR1_SLAY_TROLL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL;
+			if (f1 & TR1_SLAY_GIANT) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN;
+			if (f1 & TR1_SLAY_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN;
+			if (f1 & TR1_KILL_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN;
+			if (f1 & TR1_KILL_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN;
+			if (f1 & TR1_KILL_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD;
+			if (f1 & TR1_BRAND_POIS) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS;
+			if (f1 & TR1_BRAND_ACID) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID;
+			if (f1 & TR1_BRAND_ELEC) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC;
+			if (f1 & TR1_BRAND_FIRE) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE;
+			if (f1 & TR1_BRAND_COLD) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD;
+			if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP;
+			
+			if (f1 & TR1_BLOWS) csheet_boni[i-INVEN_WIELD].blow += pval;
+			if (f5 & TR5_CRIT) csheet_boni[i-INVEN_WIELD].crit += pval;
+			if (f1 & TR1_VAMPIRIC) csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP;
+			continue;
+		}
+		if (i == INVEN_ARM && o_ptr->tval != TV_SHIELD) {
+			/* Kurzel -- Brands/slays display */
+			if (f1 & TR1_SLAY_ANIMAL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM;
+			if (f1 & TR1_SLAY_EVIL) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL;
+			if (f1 & TR1_SLAY_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD;
+			if (f1 & TR1_SLAY_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN;
+			if (f1 & TR1_SLAY_ORC) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS;
+			if (f1 & TR1_SLAY_TROLL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL;
+			if (f1 & TR1_SLAY_GIANT) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN;
+			if (f1 & TR1_SLAY_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN;
+			if (f1 & TR1_KILL_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN;
+			if (f1 & TR1_KILL_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN;
+			if (f1 & TR1_KILL_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD;
+			if (f1 & TR1_BRAND_POIS) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS;
+			if (f1 & TR1_BRAND_ACID) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID;
+			if (f1 & TR1_BRAND_ELEC) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC;
+			if (f1 & TR1_BRAND_FIRE) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE;
+			if (f1 & TR1_BRAND_COLD) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD;
+			if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP;
+			
+			if (f1 & TR1_BLOWS) csheet_boni[i-INVEN_WIELD].blow += pval;
+			if (f5 & TR5_CRIT) csheet_boni[i-INVEN_WIELD].crit += pval;
+			if (f1 & TR1_VAMPIRIC) csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP;
+			
+			continue; /*..and for dual-wield */
+		}
 		if (i == INVEN_AMMO || i == INVEN_BOW) {
 			if (f1 & TR1_VAMPIRIC) { p_ptr->vampiric_ranged = 100; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; }
 			continue;
 		}
 		if (i == INVEN_TOOL) continue;
 
-
-		if (f1 & TR1_BLOWS) { p_ptr->extra_blows += pval; csheet_boni[i-INVEN_WIELD].blow += o_ptr->pval; }
-		if (f5 & TR5_CRIT) { p_ptr->xtra_crit += pval; csheet_boni[i-INVEN_WIELD].crit += o_ptr->pval; }
+		if (f1 & TR1_BLOWS) { p_ptr->extra_blows += pval; csheet_boni[i-INVEN_WIELD].blow += pval; }
+		if (f5 & TR5_CRIT) { p_ptr->xtra_crit += pval; csheet_boni[i-INVEN_WIELD].crit += pval; }
 
 		/* Hack -- cause earthquakes */
 		if (f5 & TR5_IMPACT) p_ptr->impact = TRUE;
@@ -4095,28 +4145,10 @@ void calc_boni(int Ind)
 
 		/* Generally vampiric? */
 		if (f1 & TR1_VAMPIRIC) {
-			if (p_ptr->vampiric_melee < NON_WEAPON_VAMPIRIC_CHANCE) { p_ptr->vampiric_melee = NON_WEAPON_VAMPIRIC_CHANCE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; }
-			if (p_ptr->vampiric_ranged < NON_WEAPON_VAMPIRIC_CHANCE_RANGED) { p_ptr->vampiric_ranged = NON_WEAPON_VAMPIRIC_CHANCE_RANGED; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; }
+			csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RVAMP; //Display the flag always...
+			if (p_ptr->vampiric_melee < NON_WEAPON_VAMPIRIC_CHANCE) p_ptr->vampiric_melee = NON_WEAPON_VAMPIRIC_CHANCE;
+			if (p_ptr->vampiric_ranged < NON_WEAPON_VAMPIRIC_CHANCE_RANGED) p_ptr->vampiric_ranged = NON_WEAPON_VAMPIRIC_CHANCE_RANGED;
 		}
-
-		/* Kurzel -- Brands/slays display */
-		if (f1 & TR1_SLAY_ANIMAL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM;
-		if (f1 & TR1_SLAY_EVIL) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL;
-		if (f1 & TR1_SLAY_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD;
-		if (f1 & TR1_SLAY_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN;
-		if (f1 & TR1_SLAY_ORC) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS;
-		if (f1 & TR1_SLAY_TROLL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL;
-		if (f1 & TR1_SLAY_GIANT) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN;
-		if (f1 & TR1_SLAY_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN;
-		if (f1 & TR1_KILL_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN;
-		if (f1 & TR1_KILL_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN;
-		if (f1 & TR1_KILL_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD;
-		if (f1 & TR1_BRAND_POIS) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS;
-		if (f1 & TR1_BRAND_ACID) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID;
-		if (f1 & TR1_BRAND_ELEC) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC;
-		if (f1 & TR1_BRAND_FIRE) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE;
-		if (f1 & TR1_BRAND_COLD) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD;
-		
 		
 		/* Hack MHDSM: */
 		if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {

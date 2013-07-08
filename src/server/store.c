@@ -5208,6 +5208,13 @@ void home_sell(int Ind, int item, int amt)
 	/* Get the inventory item */
 	o_ptr = &p_ptr->inventory[item];
 
+	/* Sigil (reset it) - Kurzel (fix the list house exploit) */
+	if (o_ptr->sigil) {
+		msg_print(Ind, "The sigil fades away.");
+		o_ptr->sigil = 0;
+		o_ptr->sseed = 0;
+	}
+	
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
