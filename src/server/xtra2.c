@@ -3707,6 +3707,7 @@ static void check_training(int Ind)
 void check_experience(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	char str[160];
 
 	bool newlv = FALSE;
 	int old_lev;
@@ -3714,6 +3715,7 @@ void check_experience(int Ind)
 #ifdef LEVEL_GAINING_LIMIT
 	int limit;
 #endif	// LEVEL_GAINING_LIMIT
+
 
 	/* paranoia -- fix the max level first */
 	if (p_ptr->lev > p_ptr->max_plv)
@@ -3858,15 +3860,6 @@ void check_experience(int Ind)
 			s_printf("%s has regained level %d.\n", p_ptr->name, p_ptr->lev);
 		}
 
-		/* Make a new copy of the skills - mikaelh */
-		if (newlv) {
-			memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
-			p_ptr->skill_points_old = p_ptr->skill_points;
-		}
-
-		/* Reskilling is now possible */
-		p_ptr->reskill_possible = TRUE;
-
 #ifdef USE_SOUND_2010
 		/* see further below! */
 #else
@@ -3905,446 +3898,458 @@ void check_experience(int Ind)
 	        p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	}
 
-	/* Handle stuff */
-	handle_stuff(Ind);
+	if (!newlv) {
+		/* Handle stuff */
+		handle_stuff(Ind);
 
-	if (newlv) {
-		char str[160];
-		/* Message */
-		msg_format(Ind, "\374\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
-		if (old_lev < 70 && p_ptr->lev >= 70) l_printf("%s \\{g%s has attained level 70.\n", showdate(), p_ptr->name);
-		if (old_lev < 80 && p_ptr->lev >= 80) l_printf("%s \\{g%s has attained level 80.\n", showdate(), p_ptr->name);
-		if (old_lev < 90 && p_ptr->lev >= 90) l_printf("%s \\{g%s has attained level 90.\n", showdate(), p_ptr->name);
-		if (old_lev < 99 && p_ptr->lev >= 99) l_printf("%s \\{g%s has attained level 99.\n", showdate(), p_ptr->name);
+		return;
+	}
+
+
+	/* Message */
+	msg_format(Ind, "\374\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
+	if (old_lev < 70 && p_ptr->lev >= 70) l_printf("%s \\{g%s has attained level 70.\n", showdate(), p_ptr->name);
+	if (old_lev < 80 && p_ptr->lev >= 80) l_printf("%s \\{g%s has attained level 80.\n", showdate(), p_ptr->name);
+	if (old_lev < 90 && p_ptr->lev >= 90) l_printf("%s \\{g%s has attained level 90.\n", showdate(), p_ptr->name);
+	if (old_lev < 99 && p_ptr->lev >= 99) l_printf("%s \\{g%s has attained level 99.\n", showdate(), p_ptr->name);
 #ifdef USE_SOUND_2010
-		sound(Ind, "levelup", NULL, SFX_TYPE_MISC, FALSE);
+	sound(Ind, "levelup", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
-		/* Give helpful msg about how to distribute skill points at first level-up */
-		if (p_ptr->newbie_hints && (old_lev == 1 || (p_ptr->skill_points == (p_ptr->max_plv - 1) * 5))) {
-		    // && p_ptr->inval) /* (p_ptr->warning_skills) */
-			msg_print(Ind, "\374\377GHINT: Press \377gSHIFT + g\377G to distribute your skill points!");
-		}
+	snprintf(str, 160, "\374\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
+	s_printf("%s has attained level %d.\n", p_ptr->name, p_ptr->lev);
+	clockin(Ind, 1);	/* Set player level */
+#ifdef TOMENET_WORLDS
+	if (cfg.worldd_lvlup) world_msg(str);
+#endif
+	msg_broadcast(Ind, str);
 
-		if (p_ptr->warning_cloak == 2 && p_ptr->lev >= 15)
-			msg_print(Ind, "\374\377GHINT: You can press \377gSHIFT + v\377G to cloak your appearance.");
 
-		/* Remind how to send chat messages */
-		if (old_lev < 3 && p_ptr->lev >= 3 && p_ptr->warning_chat == 0) {
-			p_ptr->warning_chat = 1;
-			msg_print(Ind, "\374\377oHINT: You can press '\377R:\377o' key to chat with other players, eg greet them!");
-			s_printf("warning_chat: %s\n", p_ptr->name);
-		}
+	/* Give helpful msg about how to distribute skill points at first level-up */
+	if (p_ptr->newbie_hints && (old_lev == 1 || (p_ptr->skill_points == (p_ptr->max_plv - 1) * 5))) {
+	    // && p_ptr->inval) /* (p_ptr->warning_skills) */
+		msg_print(Ind, "\374\377GHINT: Press \377gSHIFT + g\377G to distribute your skill points!");
+	}
 
-		/* Tell player to use numpad to move diagonally */
-		if (old_lev < 4 && p_ptr->lev >= 4 && p_ptr->warning_numpadmove == 0) {
-			msg_print(Ind, "\374\377yHINT: Use the number pad keys to move, that way you can move \377odiagonally\377y too!");
-			s_printf("warning_numpadmove: %s\n", p_ptr->name);
-			p_ptr->warning_numpadmove = 1;
-		}
+	if (p_ptr->warning_cloak == 2 && p_ptr->lev >= 15)
+		msg_print(Ind, "\374\377GHINT: You can press \377gSHIFT + v\377G to cloak your appearance.");
+
+	/* Remind how to send chat messages */
+	if (old_lev < 3 && p_ptr->lev >= 3 && p_ptr->warning_chat == 0) {
+		p_ptr->warning_chat = 1;
+		msg_print(Ind, "\374\377oHINT: You can press '\377R:\377o' key to chat with other players, eg greet them!");
+		s_printf("warning_chat: %s\n", p_ptr->name);
+	}
+
+	/* Tell player to use numpad to move diagonally */
+	if (old_lev < 4 && p_ptr->lev >= 4 && p_ptr->warning_numpadmove == 0) {
+		msg_print(Ind, "\374\377yHINT: Use the number pad keys to move, that way you can move \377odiagonally\377y too!");
+		s_printf("warning_numpadmove: %s\n", p_ptr->name);
+		p_ptr->warning_numpadmove = 1;
+	}
 
 		/* Give warning message to use word-of-recall, aimed at newbies */
-		if (old_lev < 8 && p_ptr->lev >= 8 && p_ptr->warning_wor == 0) {
-			/* scan inventory for any potions */
-			bool found_items = FALSE;
-			int i;
-			for (i = 0; i < INVEN_PACK; i++) {
-				if (!p_ptr->inventory[i].k_idx) continue;
-				if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
-				if (p_ptr->inventory[i].tval == TV_SCROLL &&
-				    p_ptr->inventory[i].sval == SV_SCROLL_WORD_OF_RECALL)
-					found_items = TRUE;
-			}
-			if (!found_items) {
-				msg_print(Ind, "\374\377yHINT: You can use scrolls of \377Rword-of-recall\377y to teleport out of a dungeon");
-				msg_print(Ind, "\374\377y      or back into it, making the tedious search for stairs obsolete!");
-				s_printf("warning_wor: %s\n", p_ptr->name);
-			}
-			p_ptr->warning_wor = 1;
+	if (old_lev < 8 && p_ptr->lev >= 8 && p_ptr->warning_wor == 0) {
+		/* scan inventory for any potions */
+		bool found_items = FALSE;
+		int i;
+		for (i = 0; i < INVEN_PACK; i++) {
+			if (!p_ptr->inventory[i].k_idx) continue;
+			if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
+			if (p_ptr->inventory[i].tval == TV_SCROLL &&
+			    p_ptr->inventory[i].sval == SV_SCROLL_WORD_OF_RECALL)
+				found_items = TRUE;
 		}
-
-		/* Give warning message to get involved with macros, aimed at newbies */
-		if (old_lev < 10 && p_ptr->lev >= 10 && !p_ptr->warning_macros) {
-			/* scan inventory for any macroish inscriptions */
-			bool found_macroishness = FALSE;
-			int i;
-			for (i = 0; i < INVEN_PACK; i++)
-				if (p_ptr->inventory[i].k_idx &&
-				    p_ptr->inventory[i].note &&
-				    strstr(quark_str(p_ptr->inventory[i].note), "@"))
-					found_macroishness = TRUE;
-			/* give a warning if it seems as if this character doesn't use any macros ;) */
-			if (!found_macroishness) {
-				msg_print(Ind, "\374\377oHINT: Start getting the hang of '\377Rmacros\377o' ('%' key) in order to ensure");
-				msg_print(Ind, "\374\377o      survival in critical combat situations. \377RPress '%' and 'z'\377o to start the");
-				msg_print(Ind, "\374\377o      macro wizard and/or read the guide (text file 'TomeNET-Guide.txt').");
-				s_printf("warning_macros: %s\n", p_ptr->name);
-			}
+		if (!found_items) {
+			msg_print(Ind, "\374\377yHINT: You can use scrolls of \377Rword-of-recall\377y to teleport out of a dungeon");
+			msg_print(Ind, "\374\377y      or back into it, making the tedious search for stairs obsolete!");
+			s_printf("warning_wor: %s\n", p_ptr->name);
 		}
+		p_ptr->warning_wor = 1;
+	}
 
-		/* Give warning message to stock wound curing potions, aimed at newbies */
-		if (old_lev < 12 && p_ptr->lev >= 12 && p_ptr->warning_potions == 0) {
+	/* Give warning message to get involved with macros, aimed at newbies */
+	if (old_lev < 10 && p_ptr->lev >= 10 && !p_ptr->warning_macros) {
+		/* scan inventory for any macroish inscriptions */
+		bool found_macroishness = FALSE;
+		int i;
+		for (i = 0; i < INVEN_PACK; i++)
+			if (p_ptr->inventory[i].k_idx &&
+			    p_ptr->inventory[i].note &&
+			    strstr(quark_str(p_ptr->inventory[i].note), "@"))
+				found_macroishness = TRUE;
+		/* give a warning if it seems as if this character doesn't use any macros ;) */
+		if (!found_macroishness) {
+			msg_print(Ind, "\374\377oHINT: Start getting the hang of '\377Rmacros\377o' ('%' key) in order to ensure");
+			msg_print(Ind, "\374\377o      survival in critical combat situations. \377RPress '%' and 'z'\377o to start the");
+			msg_print(Ind, "\374\377o      macro wizard and/or read the guide (text file 'TomeNET-Guide.txt').");
+			s_printf("warning_macros: %s\n", p_ptr->name);
+		}
+	}
+
+	/* Give warning message to stock wound curing potions, aimed at newbies */
+	if (old_lev < 12 && p_ptr->lev >= 12 && p_ptr->warning_potions == 0) {
 #if 1
-			/* scan inventory for any potions */
-			bool found_items = FALSE;
-			int i;
-			for (i = 0; i < INVEN_PACK; i++) {
-				if (!p_ptr->inventory[i].k_idx) continue;
-				if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
-				if (p_ptr->inventory[i].tval == TV_POTION && (
+		/* scan inventory for any potions */
+		bool found_items = FALSE;
+		int i;
+		for (i = 0; i < INVEN_PACK; i++) {
+			if (!p_ptr->inventory[i].k_idx) continue;
+			if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
+			if (p_ptr->inventory[i].tval == TV_POTION && (
 //				    p_ptr->inventory[i].sval == SV_POTION_CURE_LIGHT ||
-				    p_ptr->inventory[i].sval == SV_POTION_CURE_SERIOUS ||
-				    p_ptr->inventory[i].sval == SV_POTION_CURE_CRITICAL))
-					found_items = TRUE;
-			}
-			if (!found_items)
+			    p_ptr->inventory[i].sval == SV_POTION_CURE_SERIOUS ||
+			    p_ptr->inventory[i].sval == SV_POTION_CURE_CRITICAL))
+				found_items = TRUE;
+		}
+		if (!found_items)
 #endif
-			{
-				msg_print(Ind, "\374\377oHINT: Buy potions of cure wounds from the \377Rtemple\377o in Bree. They will");
-				msg_print(Ind, "\374\377o      restore your hit points, ensuring your survival in critical situations.");
-				msg_print(Ind, "\374\377o      Ideally, create a \377Rmacro\377o for using them by a single key press!");
-				s_printf("warning_potions: %s\n", p_ptr->name);
-			}
-			p_ptr->warning_potions = 1;
+		{
+			msg_print(Ind, "\374\377oHINT: Buy potions of cure wounds from the \377Rtemple\377o in Bree. They will");
+			msg_print(Ind, "\374\377o      restore your hit points, ensuring your survival in critical situations.");
+			msg_print(Ind, "\374\377o      Ideally, create a \377Rmacro\377o for using them by a single key press!");
+			s_printf("warning_potions: %s\n", p_ptr->name);
 		}
+		p_ptr->warning_potions = 1;
+	}
 
-		/* Give warning message to utilize techniques */
-		if (old_lev < 15 && p_ptr->lev >= 15) {
-			if (p_ptr->warning_technique_melee == 0 && p_ptr->warning_technique_ranged == 0) {
-				msg_print(Ind, "\374\377yHINT: Press 'm' to access 'Fighting Techniques' and 'Shooting Techniques'!");
-				msg_print(Ind, "\374\377y      You can also create macros for these. See the TomeNET guide for details.");
-				s_printf("warning_techniques: %s\n", p_ptr->name);
-			} else if (p_ptr->warning_technique_melee == 0) {
-				msg_print(Ind, "\374\377yHINT: Press 'm' to access 'Fighting Techniques'!");
-				msg_print(Ind, "\374\377y      You can also create macros for these. See the TomeNET guide for details.");
-				s_printf("warning_technique_melee: %s\n", p_ptr->name);
-			} else if (p_ptr->warning_technique_ranged == 0) {
-				msg_print(Ind, "\374\377yHINT: Press 'm' to access 'Shooting Techniques'!");
-				msg_print(Ind, "\374\377y      You can also create macros for these. See the TomeNET guide for details.");
-				s_printf("warning_technique_ranged: %s\n", p_ptr->name);
-			}
-			p_ptr->warning_technique_melee = p_ptr->warning_technique_ranged = 1;
+	/* Give warning message to utilize techniques */
+	if (old_lev < 15 && p_ptr->lev >= 15) {
+		if (p_ptr->warning_technique_melee == 0 && p_ptr->warning_technique_ranged == 0) {
+			msg_print(Ind, "\374\377yHINT: Press 'm' to access 'Fighting Techniques' and 'Shooting Techniques'!");
+			msg_print(Ind, "\374\377y      You can also create macros for these. See the TomeNET guide for details.");
+			s_printf("warning_techniques: %s\n", p_ptr->name);
+		} else if (p_ptr->warning_technique_melee == 0) {
+			msg_print(Ind, "\374\377yHINT: Press 'm' to access 'Fighting Techniques'!");
+			msg_print(Ind, "\374\377y      You can also create macros for these. See the TomeNET guide for details.");
+			s_printf("warning_technique_melee: %s\n", p_ptr->name);
+		} else if (p_ptr->warning_technique_ranged == 0) {
+			msg_print(Ind, "\374\377yHINT: Press 'm' to access 'Shooting Techniques'!");
+			msg_print(Ind, "\374\377y      You can also create macros for these. See the TomeNET guide for details.");
+			s_printf("warning_technique_ranged: %s\n", p_ptr->name);
 		}
+		p_ptr->warning_technique_melee = p_ptr->warning_technique_ranged = 1;
+	}
 
-		/* Introduce newly learned abilities (that depend on char level) */
-		/* those that depend on a race */
-		switch (p_ptr->prace) {
-		case RACE_DWARF:
-			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn to climb mountains easily!");
-			break;
-		case RACE_ENT:
-			if (old_lev < 4 && p_ptr->lev >= 4) msg_print(Ind, "\374\377GYou learn to see the invisible!");
-			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou learn to telepathically sense animals!");
-			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn to telepathically sense orcs!");
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to telepathically sense trolls!");
-		if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou learn to telepathically sense giants!");
-			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn to telepathically sense dragons!");
-			if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYou learn to telepathically sense demons!");
-			if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn to telepathically sense evil!");
+	/* Introduce newly learned abilities (that depend on char level) */
+	/* those that depend on a race */
+	switch (p_ptr->prace) {
+	case RACE_DWARF:
+		if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn to climb mountains easily!");
 		break;
-		case RACE_DRACONIAN:
-			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou learn to telepathically sense dragons!");
+	case RACE_ENT:
+		if (old_lev < 4 && p_ptr->lev >= 4) msg_print(Ind, "\374\377GYou learn to see the invisible!");
+		if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou learn to telepathically sense animals!");
+		if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn to telepathically sense orcs!");
+		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to telepathically sense trolls!");
+	if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou learn to telepathically sense giants!");
+		if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn to telepathically sense dragons!");
+		if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYou learn to telepathically sense demons!");
+		if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn to telepathically sense evil!");
+	break;
+	case RACE_DRACONIAN:
+		if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou learn to telepathically sense dragons!");
 #ifndef ENABLE_DRACONIAN_TRAITS
-			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou become more resistant to fire!");
-			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou become more resistant to cold!");
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou become more resistant to acid!");
-			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou become more resistant to lightning!");
+		if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou become more resistant to fire!");
+		if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou become more resistant to cold!");
+		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou become more resistant to acid!");
+		if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou become more resistant to lightning!");
 #else
-			if (old_lev < 8 && p_ptr->lev >= 8) msg_print(Ind, "\374\377GYou learn how to breathe an element!");
-			switch (p_ptr->ptrait) {
-			case TRAIT_BLUE: /* Draconic Blue */
-				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYour attacks are branded by lightning!");
-				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou are enveloped in lightning!");
-				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear electricity!");
-				break;
-			case TRAIT_WHITE: /* Draconic White */
-				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou are enveloped by freezing air!");
-				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear cold!");
-				break;
-			case TRAIT_RED: /* Draconic Red */
-				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear fire!");
-				break;
-			case TRAIT_BLACK: /* Draconic Black */
-				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear acid!");
-				break;
-			case TRAIT_GREEN: /* Draconic Green */
-				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear poison!");
-				break;
-			case TRAIT_MULTI: /* Draconic Multi-hued */
-				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to electricity!");
-				if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou develop intrinsic resistance to cold!");
-				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to heat!");
-				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou develop intrinsic resistance to acid!");
-				if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou develop intrinsic resistance to poison!");
-				break;
-			case TRAIT_BRONZE: /* Draconic Bronze */
-				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to confusion!");
-				if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou develop intrinsic resistance to paralysis!");
-				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
-				break;
-			case TRAIT_SILVER: /* Draconic Silver */
-				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to cold!");
-				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to poison!");
-				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
-				break;
-			case TRAIT_GOLD: /* Draconic Gold */
-				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to acid!");
-				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to sound!");
-				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
-				break;
-			case TRAIT_LAW: /* Draconic Law */
-				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to shards!");
-				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to sound!");
-				break;
-			case TRAIT_CHAOS: /* Draconic Chaos */
-				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to confusion!");
-				if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to chaos!");
-				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou develop intrinsic resistance to disenchantment!");
-				break;
-			case TRAIT_BALANCE: /* Draconic Balance */
-				if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou develop intrinsic resistance to disenchantment!");
-				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou develop intrinsic resistance to sound!");
-				break;
-			case TRAIT_POWER: /* Draconic Power */
-				if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to blindness!");
-				if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
-				break;
-			}
+		if (old_lev < 8 && p_ptr->lev >= 8) msg_print(Ind, "\374\377GYou learn how to breathe an element!");
+		switch (p_ptr->ptrait) {
+		case TRAIT_BLUE: /* Draconic Blue */
+			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYour attacks are branded by lightning!");
+			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou are enveloped in lightning!");
+			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear electricity!");
+			break;
+		case TRAIT_WHITE: /* Draconic White */
+			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou are enveloped by freezing air!");
+			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear cold!");
+			break;
+		case TRAIT_RED: /* Draconic Red */
+			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear fire!");
+			break;
+		case TRAIT_BLACK: /* Draconic Black */
+			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear acid!");
+			break;
+		case TRAIT_GREEN: /* Draconic Green */
+			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou no longer fear poison!");
+			break;
+		case TRAIT_MULTI: /* Draconic Multi-hued */
+			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to electricity!");
+			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou develop intrinsic resistance to cold!");
+			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to heat!");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou develop intrinsic resistance to acid!");
+			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou develop intrinsic resistance to poison!");
+			break;
+		case TRAIT_BRONZE: /* Draconic Bronze */
+			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to confusion!");
+			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou develop intrinsic resistance to paralysis!");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
+			break;
+		case TRAIT_SILVER: /* Draconic Silver */
+			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to cold!");
+			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to poison!");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
+			break;
+		case TRAIT_GOLD: /* Draconic Gold */
+			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to acid!");
+			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to sound!");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
+			break;
+		case TRAIT_LAW: /* Draconic Law */
+			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to shards!");
+			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to sound!");
+			break;
+		case TRAIT_CHAOS: /* Draconic Chaos */
+			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to confusion!");
+			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou develop intrinsic resistance to chaos!");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou develop intrinsic resistance to disenchantment!");
+			break;
+		case TRAIT_BALANCE: /* Draconic Balance */
+			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou develop intrinsic resistance to disenchantment!");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou develop intrinsic resistance to sound!");
+			break;
+		case TRAIT_POWER: /* Draconic Power */
+			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou develop intrinsic resistance to blindness!");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour scales have grown metallic enough to reflect attacks!");
+			break;
+		}
 #endif
-			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
-			break;
-		case RACE_DARK_ELF:
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to see the invisible!");
-			break;
-		case RACE_VAMPIRE:
-			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYour vision extends.");
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour vision extends.");
-			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYour vision extends.");
-			if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYour vision extends.");
-			if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYour vision extends.");
-			if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\374\377GYour vision extends.");
-			if (old_lev < 70 && p_ptr->lev >= 70) msg_print(Ind, "\374\377GYour vision extends.");
-			if (old_lev < 80 && p_ptr->lev >= 80) msg_print(Ind, "\374\377GYour vision extends.");
-			if (old_lev < 90 && p_ptr->lev >= 90) msg_print(Ind, "\374\377GYour vision extends.");
+		if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
+		break;
+	case RACE_DARK_ELF:
+		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to see the invisible!");
+		break;
+	case RACE_VAMPIRE:
+		if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYour vision extends.");
+		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYour vision extends.");
+		if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYour vision extends.");
+		if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYour vision extends.");
+		if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYour vision extends.");
+		if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\374\377GYour vision extends.");
+		if (old_lev < 70 && p_ptr->lev >= 70) msg_print(Ind, "\374\377GYour vision extends.");
+		if (old_lev < 80 && p_ptr->lev >= 80) msg_print(Ind, "\374\377GYour vision extends.");
+		if (old_lev < 90 && p_ptr->lev >= 90) msg_print(Ind, "\374\377GYour vision extends.");
 //			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
-			if (old_lev < 20 && p_ptr->lev >= 20) {
-				msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
-				msg_print(Ind, "\374\377G(Press 'm' key, and choose 'use innate power', to do so.)");
-			}
-			break;
+		if (old_lev < 20 && p_ptr->lev >= 20) {
+			msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
+			msg_print(Ind, "\374\377G(Press 'm' key, and choose 'use innate power', to do so.)");
+		}
+		break;
 #ifdef ENABLE_MAIA
-		case RACE_MAIA:
-			if (p_ptr->ptrait) break; /* In case we got *bad* exp drain for some unfathomable reason ;) */
-			if (old_lev < 12 && p_ptr->lev >= 12) msg_print(Ind, "\374\377GWe all have to pick our own path some time...");
+	case RACE_MAIA:
+		if (p_ptr->ptrait) break; /* In case we got *bad* exp drain for some unfathomable reason ;) */
+		if (old_lev < 12 && p_ptr->lev >= 12) msg_print(Ind, "\374\377GWe all have to pick our own path some time...");
 //			if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYou are thirsty for blood: be it good or evil");
-			if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYour soul thirsts for shaping, either enlightenment or corruption!");
-			if (old_lev <= 19 && p_ptr->lev >= 15 && old_lev < p_ptr->lev) {
-				/* Killed none? nothing happens except if we reached the threshold level */
-				if (p_ptr->r_killed[RI_CANDLEBEARER] == 0
-				    && p_ptr->r_killed[RI_DARKLING] == 0) {
-					/* Threshold level has been overstepped -> die */
-					if (old_lev == 19) {
+		if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYour soul thirsts for shaping, either enlightenment or corruption!");
+		if (old_lev <= 19 && p_ptr->lev >= 15 && old_lev < p_ptr->lev) {
+			/* Killed none? nothing happens except if we reached the threshold level */
+			if (p_ptr->r_killed[RI_CANDLEBEARER] == 0
+			    && p_ptr->r_killed[RI_DARKLING] == 0) {
+				/* Threshold level has been overstepped -> die */
+				if (old_lev == 19) {
 //						msg_print(Ind, "\377RYou don't deserve to live.");
-						msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
-						strcpy(p_ptr->died_from, "indecisiveness");
-						p_ptr->deathblow = 0;
-						p_ptr->death = TRUE;
-					}
-					/* We're done here.. */
-					break;
-				}
-
-				/* Killed both? -> you die */
-				if (p_ptr->r_killed[RI_CANDLEBEARER] != 0 &&
-				    p_ptr->r_killed[RI_DARKLING] != 0) {
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
 					strcpy(p_ptr->died_from, "indecisiveness");
 					p_ptr->deathblow = 0;
 					p_ptr->death = TRUE;
-					/* End of story, next.. */
-					break;
 				}
-
-				/* Don't initiate earlier than at threshold level, it's a ceremony ^^ */
-				if (p_ptr->lev <= 19) break;
-
-				/* Modify skill tree */
-				if (p_ptr->r_killed[RI_CANDLEBEARER] != 0) {
-					//A demon appears!
-					msg_print(Ind, "\374\377p*** \377GYour corruption grows well within you. \377p***");
-					p_ptr->ptrait = TRAIT_CORRUPTED;
-				} else {
-					//An angel appears!
-					msg_print(Ind, "\374\377p*** \377sYou have been ordained to be order in presence of chaos. \377p***");
-					p_ptr->ptrait = TRAIT_ENLIGHTENED;
-				}
-
-				shape_Maia_skills(Ind);
-				calc_techniques(Ind);
-
-				/* Reset /undoskills info before reshaping skills, to prevent odd bugging-out */
-				memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
-				p_ptr->skill_points_old = p_ptr->skill_points;
-
-				p_ptr->redraw |= PR_SKILLS | PR_MISC;
-				p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
+				/* We're done here.. */
+				break;
 			}
-			break;
-#endif
-		}
 
-		/* those that depend on a class */
-		switch (p_ptr->pclass) {
-		case CLASS_ADVENTURER:
-			if (old_lev < 6 && p_ptr->lev >= 6)
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
-			if (old_lev < 15 && p_ptr->lev >= 15)
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'!");
-			/* Also update the client's 'm' menu for fighting techniques */
+			/* Killed both? -> you die */
+			if (p_ptr->r_killed[RI_CANDLEBEARER] != 0 &&
+			    p_ptr->r_killed[RI_DARKLING] != 0) {
+				msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
+				strcpy(p_ptr->died_from, "indecisiveness");
+				p_ptr->deathblow = 0;
+				p_ptr->death = TRUE;
+				/* End of story, next.. */
+				break;
+			}
+
+			/* Don't initiate earlier than at threshold level, it's a ceremony ^^ */
+			if (p_ptr->lev <= 19) break;
+
+			/* Modify skill tree */
+			if (p_ptr->r_killed[RI_CANDLEBEARER] != 0) {
+				//A demon appears!
+				msg_print(Ind, "\374\377p*** \377GYour corruption grows well within you. \377p***");
+				p_ptr->ptrait = TRAIT_CORRUPTED;
+			} else {
+				//An angel appears!
+				msg_print(Ind, "\374\377p*** \377sYou have been ordained to be order in presence of chaos. \377p***");
+				p_ptr->ptrait = TRAIT_ENLIGHTENED;
+			}
+
+			shape_Maia_skills(Ind);
 			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
-			break;
-		case CLASS_ROGUE:
+
+			p_ptr->redraw |= PR_SKILLS | PR_MISC;
+			p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
+		}
+		break;
+#endif
+	}
+
+	/* those that depend on a class */
+	switch (p_ptr->pclass) {
+	case CLASS_ADVENTURER:
+		if (old_lev < 6 && p_ptr->lev >= 6)
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
+		if (old_lev < 15 && p_ptr->lev >= 15)
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'!");
+		/* Also update the client's 'm' menu for fighting techniques */
+		calc_techniques(Ind);
+		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
+		break;
+	case CLASS_ROGUE:
 #ifdef ENABLE_CLOAKING
-			if (old_lev < LEARN_CLOAKING_LEVEL && p_ptr->lev >= LEARN_CLOAKING_LEVEL) {
-				msg_print(Ind, "\374\377GYou learn how to cloak yourself to pass unnoticed (press 'V').");
-				if (!p_ptr->warning_cloak) p_ptr->warning_cloak = 2;
-			}
-#endif
-			if (old_lev < 3 && p_ptr->lev >= 3)
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
-			if (old_lev < 6 && p_ptr->lev >= 6)
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
-			if (old_lev < 9 && p_ptr->lev >= 9)
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'");
-			if (old_lev < 12 && p_ptr->lev >= 12)
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Flash bomb'");
-#ifdef ENABLE_ASSASSINATE
-			if (old_lev < 35 && p_ptr->lev >= 35)
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Assasinate'");
-#endif
-			if (old_lev < 50 && p_ptr->lev >= 50 && p_ptr->total_winner)
-				msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow run'");
-			/* Also update the client's 'm' menu for fighting techniques */
-			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
-			break;
-		case CLASS_RANGER:
-			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn how to move through dense forests easily.");
-			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou learn how to swim well, with heavy backpack even.");
-			break;
-		case CLASS_DRUID: /* Forms gained by Druids */
-			/* compare mimic_druid in defines.h */
-			if (old_lev < 5 && p_ptr->lev >= 5) {
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
-				msg_print(Ind, "\374\377GYou learn how to change into a Cave Bear (#160) and Panther (#198)");
-				msg_print(Ind, "\374\377G(Press 'm' key, and choose 'use innate power', to do so.)");
-			}
-			if (old_lev < 10 && p_ptr->lev >= 10) {
-				msg_print(Ind, "\374\377GYou learn how to change into a Grizzly Bear (#191) and Yeti (#154)");
-				msg_print(Ind, "\374\377GYou learn how to walk among your brothers through deep forest.");
-			}
-			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn how to change into a Griffon (#279) and Sasquatch (#343)");
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn how to change into a Werebear (#414), Great Eagle (#335), Aranea (#963) and Great White Shark (#898)");
-			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou learn how to change into a Wyvern (#334) and Multi-hued Hound (#513)");
-			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to change into a 5-h-Hydra (#440), Minotaur (#641) and Giant Squid (#482)");
-			if (old_lev < 35 && p_ptr->lev >= 35) msg_print(Ind, "\374\377GYou learn how to change into a 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726)");
-			if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYou learn how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (#740)");
-			if (old_lev < 45 && p_ptr->lev >= 45) msg_print(Ind, "\374\377GYou learn how to change into a Maulotaur (#723) and Winged Horror (#704)");// and Behemoth (#716)");
-			if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (775)");//Leviathan (#782)");
-			if (old_lev < 55 && p_ptr->lev >= 55) msg_print(Ind, "\374\377GYou learn how to change into a Horned Serpent (#1131)");
-			if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\374\377GYou learn how to change into a Firebird (#1127)");
-			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
-			break;
-		case CLASS_SHAMAN:
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to see the invisible!");
-			break;
-		case CLASS_RUNEMASTER:
-			if (old_lev < 4 && p_ptr->lev >= 4)
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
-			if (old_lev < 9 && p_ptr->lev >= 9)
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
-			/* Also update the client's 'm' menu for fighting techniques */
-			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
-			break;
-		case CLASS_MINDCRAFTER:
-			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou learn to keep hold of your sanity!");
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity!");
-			if (old_lev < 8 && p_ptr->lev >= 8)
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt' (press 'm')");
-			if (old_lev < 12 && p_ptr->lev >= 12)
-				msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'");
-			/* Also update the client's 'm' menu for fighting techniques */
-			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
-			break;
+		if (old_lev < LEARN_CLOAKING_LEVEL && p_ptr->lev >= LEARN_CLOAKING_LEVEL) {
+			msg_print(Ind, "\374\377GYou learn how to cloak yourself to pass unnoticed (press 'V').");
+			if (!p_ptr->warning_cloak) p_ptr->warning_cloak = 2;
 		}
+#endif
+		if (old_lev < 3 && p_ptr->lev >= 3)
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
+		if (old_lev < 6 && p_ptr->lev >= 6)
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
+		if (old_lev < 9 && p_ptr->lev >= 9)
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'");
+		if (old_lev < 12 && p_ptr->lev >= 12)
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Flash bomb'");
+#ifdef ENABLE_ASSASSINATE
+		if (old_lev < 35 && p_ptr->lev >= 35)
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Assasinate'");
+#endif
+		if (old_lev < 50 && p_ptr->lev >= 50 && p_ptr->total_winner)
+			msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow run'");
+		/* Also update the client's 'm' menu for fighting techniques */
+		calc_techniques(Ind);
+		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
+		break;
+	case CLASS_RANGER:
+		if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn how to move through dense forests easily.");
+		if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou learn how to swim well, with heavy backpack even.");
+		break;
+	case CLASS_DRUID: /* Forms gained by Druids */
+		/* compare mimic_druid in defines.h */
+		if (old_lev < 5 && p_ptr->lev >= 5) {
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
+			msg_print(Ind, "\374\377GYou learn how to change into a Cave Bear (#160) and Panther (#198)");
+			msg_print(Ind, "\374\377G(Press 'm' key, and choose 'use innate power', to do so.)");
+		}
+		if (old_lev < 10 && p_ptr->lev >= 10) {
+			msg_print(Ind, "\374\377GYou learn how to change into a Grizzly Bear (#191) and Yeti (#154)");
+			msg_print(Ind, "\374\377GYou learn how to walk among your brothers through deep forest.");
+		}
+		if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn how to change into a Griffon (#279) and Sasquatch (#343)");
+		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn how to change into a Werebear (#414), Great Eagle (#335), Aranea (#963) and Great White Shark (#898)");
+		if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou learn how to change into a Wyvern (#334) and Multi-hued Hound (#513)");
+		if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to change into a 5-h-Hydra (#440), Minotaur (#641) and Giant Squid (#482)");
+		if (old_lev < 35 && p_ptr->lev >= 35) msg_print(Ind, "\374\377GYou learn how to change into a 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726)");
+		if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYou learn how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (#740)");
+		if (old_lev < 45 && p_ptr->lev >= 45) msg_print(Ind, "\374\377GYou learn how to change into a Maulotaur (#723) and Winged Horror (#704)");// and Behemoth (#716)");
+		if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (775)");//Leviathan (#782)");
+		if (old_lev < 55 && p_ptr->lev >= 55) msg_print(Ind, "\374\377GYou learn how to change into a Horned Serpent (#1131)");
+		if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\374\377GYou learn how to change into a Firebird (#1127)");
+		calc_techniques(Ind);
+		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
+		break;
+	case CLASS_SHAMAN:
+		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to see the invisible!");
+		break;
+	case CLASS_RUNEMASTER:
+		if (old_lev < 4 && p_ptr->lev >= 4)
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
+		if (old_lev < 9 && p_ptr->lev >= 9)
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
+		/* Also update the client's 'm' menu for fighting techniques */
+		calc_techniques(Ind);
+		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
+		break;
+	case CLASS_MINDCRAFTER:
+		if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou learn to keep hold of your sanity!");
+		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity!");
+		if (old_lev < 8 && p_ptr->lev >= 8)
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt' (press 'm')");
+		if (old_lev < 12 && p_ptr->lev >= 12)
+			msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'");
+		/* Also update the client's 'm' menu for fighting techniques */
+		calc_techniques(Ind);
+		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
+		break;
+	}
 
 #ifdef ENABLE_STANCES
-		/* increase SKILL_STANCE by +1 automatically (just for show :-p) if we actually have that skill */
-		if (get_skill(p_ptr, SKILL_STANCE) && p_ptr->lev <= 50) {
-			p_ptr->s_info[SKILL_STANCE].value = p_ptr->lev * 1000;
-			/* Update the client */
-			Send_skill_info(Ind, SKILL_STANCE, TRUE);
-			/* Also update the client's 'm' menu for fighting techniques */
-			calc_techniques(Ind);
-			Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
-			/* give message if we learn a new stance (compare cmd6.c! keep it synchronized */
-		        /* take care of message about fighting techniques too: */
-			msg_gained_abilities(Ind, (p_ptr-> lev - 1) * 10, SKILL_STANCE);
-		}
+	/* increase SKILL_STANCE by +1 automatically (just for show :-p) if we actually have that skill */
+	if (get_skill(p_ptr, SKILL_STANCE) && p_ptr->lev <= 50) {
+		p_ptr->s_info[SKILL_STANCE].value = p_ptr->lev * 1000;
+		/* Update the client */
+		Send_skill_info(Ind, SKILL_STANCE, TRUE);
+		/* Also update the client's 'm' menu for fighting techniques */
+		calc_techniques(Ind);
+		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
+		/* give message if we learn a new stance (compare cmd6.c! keep it synchronized */
+	        /* take care of message about fighting techniques too: */
+		msg_gained_abilities(Ind, (p_ptr-> lev - 1) * 10, SKILL_STANCE);
+	}
 #endif
 
 #if 0		/* Make fruit bat gain speed on levelling up, instead of starting out with full +10 speed bonus? */
-		if (p_ptr->fruit_bat == 1 && old_lev < p_ptr->lev) {
-			if (p_ptr->lev % 5 == 0 && p_ptr->lev <= 35) msg_print(Ind, "\374\377GYour flying abilities have improved, you have gained some speed.");
-		}
+	if (p_ptr->fruit_bat == 1 && old_lev < p_ptr->lev) {
+		if (p_ptr->lev % 5 == 0 && p_ptr->lev <= 35) msg_print(Ind, "\374\377GYour flying abilities have improved, you have gained some speed.");
+	}
 #endif
 
 #ifdef KINGCAP_LEV
-		/* Added a check that (s)he's not already a king - mikaelh */
+	/* Added a check that (s)he's not already a king - mikaelh */
 //		if(p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377GYou can't gain more levels until you defeat Morgoth, Lord of Darkness!");
-		if(p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377G* To level up further, you need to defeat Morgoth, Lord of Darkness! *");
+	if (p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377G* To level up further, you need to defeat Morgoth, Lord of Darkness! *");
 #endif
 
-		/* pvp mode cant go higher, but receives a reward maybe */
-		if(p_ptr->mode & MODE_PVP) {
-			if (get_skill(p_ptr, SKILL_MIMIC) &&
-			    p_ptr->pclass != CLASS_DRUID &&
-			    p_ptr->prace != RACE_VAMPIRE) {
-				msg_print(Ind, "\375\377GYou gain one free mimicry transformation of your choice!");
-				p_ptr->free_mimic = 1;
-			}
-			if(p_ptr->lev == MID_PVP_LEVEL) {
-				msg_broadcast_format(Ind, "\374\377G* %s has raised in ranks greatly! *", p_ptr->name);
-				msg_print(Ind, "\375\377G* You have raised quite a bit in ranks of PvP characters!         *");
-				msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
-				msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
-		                give_reward(Ind, RESF_MID, "Gladiator's reward", 1, 0);
-			}
-			if(p_ptr->lev == MAX_PVP_LEVEL) {
-				msg_broadcast_format(Ind, "\374\377G* %s has reached the highest level available to PvP characters! *", p_ptr->name);
-				msg_print(Ind, "\375\377G* You have reached the highest level available to PvP characters! *");
-				msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
-				msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
-//				buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MAX);
-		                give_reward(Ind, RESF_HIGH, "Gladiator's reward", 1, 0);
-			}
+	/* pvp mode cant go higher, but receives a reward maybe */
+	if (p_ptr->mode & MODE_PVP) {
+		if (get_skill(p_ptr, SKILL_MIMIC) &&
+		    p_ptr->pclass != CLASS_DRUID &&
+		    p_ptr->prace != RACE_VAMPIRE) {
+			msg_print(Ind, "\375\377GYou gain one free mimicry transformation of your choice!");
+			p_ptr->free_mimic = 1;
 		}
-
-		snprintf(str, 160, "\374\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
-		s_printf("%s has attained level %d.\n", p_ptr->name, p_ptr->lev);
-		clockin(Ind, 1);	/* Set player level */
-#ifdef TOMENET_WORLDS
-		if (cfg.worldd_lvlup) world_msg(str);
-#endif
-		msg_broadcast(Ind, str);
-
-		/* Update the skill points info on the client */
-		Send_skill_info(Ind, 0, TRUE);
+		if (p_ptr->lev == MID_PVP_LEVEL) {
+			msg_broadcast_format(Ind, "\374\377G* %s has raised in ranks greatly! *", p_ptr->name);
+			msg_print(Ind, "\375\377G* You have raised quite a bit in ranks of PvP characters!         *");
+			msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
+			msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
+	                give_reward(Ind, RESF_MID, "Gladiator's reward", 1, 0);
+		}
+		if (p_ptr->lev == MAX_PVP_LEVEL) {
+			msg_broadcast_format(Ind, "\374\377G* %s has reached the highest level available to PvP characters! *", p_ptr->name);
+			msg_print(Ind, "\375\377G* You have reached the highest level available to PvP characters! *");
+			msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
+			msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
+//				buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MAX);
+	                give_reward(Ind, RESF_HIGH, "Gladiator's reward", 1, 0);
+		}
 	}
+
+
+	/* Make a new copy of the skills - mikaelh */
+	memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
+	p_ptr->skill_points_old = p_ptr->skill_points;
+
+
+	/* Reskilling is now possible */
+	p_ptr->reskill_possible = TRUE;
+
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Update the skill points info on the client */
+	Send_skill_info(Ind, 0, TRUE);
 }
 
 
