@@ -4191,7 +4191,7 @@ void calc_boni(int Ind)
 	if (equipment_set_bonus >= 2) {
 		/* Kurzel - Display the luck boni on each involved item */
 		for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++)
-			if (equipment_set_amount[i]) csheet_boni[i].luck += equipment_set_bonus;
+			if (equipment_set_amount[i]) csheet_boni[i].luck += equipment_set_bonus; //Kurzel!! - Do multiple EQ sets stack or only take highest?
 //		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus) / 2;
 		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus);
 //		equipment_set_bonus = (equipment_set_bonus - 1) * 4;
@@ -5853,16 +5853,246 @@ void calc_boni(int Ind)
 				//csheet_boni[i].color = TERM_DARK;
 				//csheet_boni[i].symbol = ' '; //Empty item / form slot.
 				
-#ifdef NEW_ID_SCREEN //Actually give the basic item data instead of hiding it all... (future, part 2, update?) - Kurzel!!
+				 //Actually give the basic item data instead of hiding it all. See object1.c - Kurzel
+				bool can_have_hidden_powers = TRUE;
+#ifdef NEW_ID_SCREEN
+				can_have_hidden_powers = FALSE;
+//				bool not_identified_at_all = TRUE;
+				if (i != 14) {
+					o_ptr = &p_ptr->inventory[i+INVEN_WIELD];
+					k_ptr = &k_info[o_ptr->k_idx];
+					/* Build the flags */
+					//object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+					if (object_aware_p(Ind, o_ptr)) {
+						f1 = k_info[o_ptr->k_idx].flags1;
+						f2 = k_info[o_ptr->k_idx].flags2;
+						f3 = k_info[o_ptr->k_idx].flags3;
+						f4 = k_info[o_ptr->k_idx].flags4;
+						f5 = k_info[o_ptr->k_idx].flags5;
+						esp = k_info[o_ptr->k_idx].esp;
+					} else can_have_hidden_powers = TRUE; //unknown jewelry type
+					
+					ego_item_type *e_ptr;
+					if (object_known_p(Ind, o_ptr)) {
+						if (o_ptr->name2) {
+							e_ptr = &e_info[o_ptr->name2];
+							for (j = 0; j < 5; j++) {
+								if (e_ptr->rar[j] != 100) {
+									/* hack: can *identifying* actually make a difference at all? */
+									if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
+									continue;
+								}
+								if ((e_ptr->fego[j] & ETR4_R_MASK) ||
+								    (e_ptr->esp[j] & ESP_R_MASK)) {
+									can_have_hidden_powers = TRUE;
+								}
+								f1 |= e_ptr->flags1[j];
+								f2 |= e_ptr->flags2[j];
+								f3 |= e_ptr->flags3[j];
+								f4 |= e_ptr->flags4[j];
+								f5 |= e_ptr->flags5[j];
+								esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
+							    }
+						}
+						if (o_ptr->name2b) {
+							e_ptr = &e_info[o_ptr->name2b];
+							for (j = 0; j < 5; j++) {
+								if (e_ptr->rar[j] != 100) {
+									/* hack: can *identifying* actually make a difference at all? */
+									if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
+									continue;
+								}
+								if ((e_ptr->fego[j] & ETR4_R_MASK) ||
+								    (e_ptr->esp[j] & ESP_R_MASK)) {
+									can_have_hidden_powers = TRUE;
+								}
+								f1 |= e_ptr->flags1[j];
+								f2 |= e_ptr->flags2[j];
+								f3 |= e_ptr->flags3[j];
+								f4 |= e_ptr->flags4[j];
+								f5 |= e_ptr->flags5[j];
+								esp |= (e_ptr->esp[j] & ~ESP_R_MASK);
+							}
+						}
+					} else can_have_hidden_powers = TRUE; //not identified
 
-				/* Build the 'hidden' item */
-				
-				/* Rebuild the boni column based on these flags */
-				
+					//Translate item flags to PKT data
+					if (object_aware_p(Ind, o_ptr)) { //must know base item type to see anything
+						/* Table A - Skip impossible flags for items... */
+						if (f2 & TR2_RES_FIRE) csheet_boni[i].cb[0] |= CB1_RFIRE;
+						if (f2 & TR2_IM_FIRE) csheet_boni[i].cb[0] |= CB1_IFIRE;
+						if (f2 & TR2_RES_COLD) csheet_boni[i].cb[0] |= CB1_RCOLD;
+						if (f2 & TR2_IM_COLD) csheet_boni[i].cb[0] |= CB1_ICOLD;
+						if (f2 & TR2_RES_ELEC) csheet_boni[i].cb[0] |= CB1_RELEC;
+						if (f2 & TR2_IM_ELEC) csheet_boni[i].cb[1] |= CB2_IELEC;
+						if (f2 & TR2_RES_ACID) csheet_boni[i].cb[1] |= CB2_RACID;
+						if (f2 & TR2_IM_ACID) csheet_boni[i].cb[1] |= CB2_IACID;
+						if (f2 & TR2_RES_POIS) csheet_boni[i].cb[1] |= CB2_RPOIS;
+						if (f5 & TR5_IM_POISON) csheet_boni[i].cb[1] |= CB2_IPOIS;
+						if (f2 & TR2_RES_LITE) csheet_boni[i].cb[2] |= CB3_RLITE;
+						if (f2 & TR2_RES_DARK) csheet_boni[i].cb[2] |= CB3_RDARK;
+						if (f2 & TR2_RES_CONF) csheet_boni[i].cb[2] |= CB3_RCONF;
+						if (f5 & TR5_RES_PLASMA) csheet_boni[i].cb[2] |= CB3_RPLAS; //runecraft sigil
+						if (f2 & TR2_RES_SOUND) csheet_boni[i].cb[2] |= CB3_RSOUN;
+						if (f2 & TR2_RES_SHARDS) csheet_boni[i].cb[2] |= CB3_RSHRD;
+						if (f5 & TR5_RES_WATER) csheet_boni[i].cb[2] |= CB3_RWATR;
+						if (f5 & TR5_IM_WATER) csheet_boni[i].cb[2] |= CB3_IWATR; //ocean soul
+						if (f2 & TR2_RES_NEXUS) csheet_boni[i].cb[3] |= CB4_RNEXU;
+						if (f2 & TR2_RES_NETHER) csheet_boni[i].cb[3] |= CB4_RNETH;
+						if (f4 & TR4_IM_NETHER) csheet_boni[i].cb[3] |= CB4_INETH; //ring of phasing
+						if (f2 & TR2_RES_CHAOS) csheet_boni[i].cb[3] |= CB4_RCHAO;
+						if (f2 & TR2_RES_DISEN) csheet_boni[i].cb[3] |= CB4_RDISE;
+						if (f5 & TR5_RES_TIME) csheet_boni[i].cb[3] |= CB4_RTIME;
+						if (f5 & TR5_RES_MANA) csheet_boni[i].cb[3] |= CB4_RMANA;
+						
+						/* Table B */
+						if (f2 & TR2_RES_FEAR) csheet_boni[i].cb[4] |= CB5_RFEAR;
+						if (f2 & TR2_FREE_ACT) csheet_boni[i].cb[4] |= CB5_RPARA;
+						if (f2 & TR2_RES_BLIND) csheet_boni[i].cb[4] |= CB5_RBLND;
+						if (f3 & TR3_TELEPORT) {
+							csheet_boni[i].cb[4] |= CB5_STELE;
+							//inscription = (unsigned char *) quark_str(o_ptr->note);
+							inscription = quark_str(p_ptr->inventory[i].note);
+							/* check for a valid inscription */
+							if ((inscription != NULL) && (!(o_ptr->ident & ID_CURSED))) {
+								/* scan the inscription for .. */
+								while (*inscription != '\0') {
+									if (*inscription == '.') {
+										inscription++;
+										/* a valid .. has been located */
+										if (*inscription == '.') {
+											inscription++;
+											csheet_boni[i].cb[4] &= (~CB5_STELE);
+											break;
+										}
+									}
+									inscription++;
+								}
+							}
+						}
+						if (f5 & TR5_RES_TELE) csheet_boni[i].cb[4] |= CB5_RTELE;
+						if (f3 & TR3_NO_TELE) csheet_boni[i].cb[4] |= CB5_ITELE;
+						if (f3 & TR3_FEATHER) csheet_boni[i].cb[4] |= CB5_RFALL;
+						if (f3 & TR3_SLOW_DIGEST) csheet_boni[i].cb[4] |= CB5_RFOOD;
+						if (f2 & TR2_HOLD_LIFE) csheet_boni[i].cb[5] |= CB6_RLIFE;				
+						if (f5 & TR5_DRAIN_HP) csheet_boni[i].cb[5] |= CB6_SRGHP;
+						if (f3 & TR3_REGEN) csheet_boni[i].cb[5] |= CB6_RRGHP;
+						if (f5 & TR5_DRAIN_MANA) csheet_boni[i].cb[5] |= CB6_SRGMP;
+						if (f5 & TR5_REGEN_MANA) csheet_boni[i].cb[5] |= CB6_RRGMP;
+						if (f3 & TR3_SEE_INVIS) csheet_boni[i].cb[5] |= CB6_RSINV;
+						if (f3 & (TR3_WRAITH)) csheet_boni[i].cb[5] |= CB6_RWRTH;
+						if (f5 & TR5_REFLECT) csheet_boni[i].cb[6] |= CB7_RREFL;
+						if (f5 & TR5_INVIS) csheet_boni[i].cb[6] |= CB7_RINVS;
+						if (f1 & TR1_VAMPIRIC) csheet_boni[i].cb[6] |= CB7_RVAMP;
+						if (f4 & TR4_AUTO_ID) csheet_boni[i].cb[6] |= CB7_RIDNT; //no such thing, unless helm of knowledge gets glass type (obvious) - Kurzel
+						if (f4 & TR4_FLY) csheet_boni[i].cb[6] |= CB7_RRFLY;
+						if (f4 & TR4_CLIMB) csheet_boni[i].cb[6] |= CB7_RCLMB; //climbing kit
+						if (f3 & TR3_NO_MAGIC) csheet_boni[i].cb[6] |= CB7_RAMSH;
+						if (f3 & TR3_AGGRAVATE) csheet_boni[i].cb[6] |= CB7_RAGGR;
+						
+						/* Table C */
+						if (object_known_p(Ind, o_ptr)) { //must be identified to see PVAL
+							pval = o_ptr->pval; //faster? - Kurzel
+							if (f1 & TR1_SPEED) csheet_boni[i].spd += pval;
+							if (f1 & TR1_STEALTH) csheet_boni[i].slth += pval;
+							if (f1 & TR1_SEARCH) csheet_boni[i].srch += pval;
+							if (f1 & TR1_INFRA) csheet_boni[i].infr += pval;
+							{ //lite
+								j = 0;
+								if (f3 & TR3_LITE1) j++;
+								if (f4 & TR4_LITE2) j += 2;
+								if (f4 & TR4_LITE3) j += 3;
+								csheet_boni[i].lite += j;
+								if (!(f4 & TR4_FUEL_LITE)) csheet_boni[i].cb[12] |= CB13_XLITE;
+							}
+							if (f1 & TR1_TUNNEL) csheet_boni[i].dig += pval;
+							if (f1 & TR1_BLOWS) csheet_boni[i].blow += pval;
+							if (f5 & TR5_CRIT) csheet_boni[i].crit += pval;
+							if (f3 & TR3_XTRA_SHOTS) csheet_boni[i].shot++;
+							if (f3 & TR3_XTRA_MIGHT) csheet_boni[i].migh++;
+							if (f1 & TR1_MANA) csheet_boni[i].mxmp += pval;
+							if (f1 & TR1_LIFE) csheet_boni[i].mxhp += pval;
+							if (f5 & TR5_LUCK) csheet_boni[i].luck += pval;
+							if (f1 & TR1_STR) csheet_boni[i].pstr += pval;
+							if (f1 & TR1_INT) csheet_boni[i].pint += pval;
+							if (f1 & TR1_WIS) csheet_boni[i].pwis += pval;
+							if (f1 & TR1_DEX) csheet_boni[i].pdex += pval;
+							if (f1 & TR1_CON) csheet_boni[i].pcon += pval;
+							if (f1 & TR1_CHR) csheet_boni[i].pchr += pval;
+							if (f2 & TR2_SUST_STR) csheet_boni[i].cb[11] |= CB12_RSSTR;
+							if (f2 & TR2_SUST_INT) csheet_boni[i].cb[11] |= CB12_RSINT;
+							if (f2 & TR2_SUST_WIS) csheet_boni[i].cb[11] |= CB12_RSWIS;
+							if (f2 & TR2_SUST_DEX) csheet_boni[i].cb[11] |= CB12_RSDEX;
+							if (f2 & TR2_SUST_CON) csheet_boni[i].cb[11] |= CB12_RSCON;
+							if (f2 & TR2_SUST_CHR) csheet_boni[i].cb[11] |= CB12_RSCHR;
+							
+							/* And now the base PVAL of the item... semi-hard code, copy/sync above >_> - Kurzel */
+							if (k_ptr->flags1 & TR1_PVAL_MASK) {
+								if (k_ptr->flags1 & TR1_STR) csheet_boni[i].pstr += o_ptr->bpval;
+								if (k_ptr->flags1 & TR1_INT) csheet_boni[i].pint += o_ptr->bpval;
+								if (k_ptr->flags1 & TR1_WIS) csheet_boni[i].pwis += o_ptr->bpval;
+								if (k_ptr->flags1 & TR1_DEX) csheet_boni[i].pdex += o_ptr->bpval;
+								if (k_ptr->flags1 & TR1_CON) csheet_boni[i].pcon += o_ptr->bpval;
+								if (k_ptr->flags1 & TR1_CHR) csheet_boni[i].pchr += o_ptr->bpval;
+
+								if (k_ptr->flags1 & TR1_STEALTH) csheet_boni[i].slth += o_ptr->bpval;
+								if (k_ptr->flags1 & TR1_SEARCH) csheet_boni[i].srch += o_ptr->bpval;
+								if (k_ptr->flags1 & TR1_INFRA) csheet_boni[i].infr += o_ptr->bpval;
+								if (k_ptr->flags1 & TR1_TUNNEL) csheet_boni[i].dig += o_ptr->bpval;
+								if (k_ptr->flags1 & TR1_SPEED) csheet_boni[i].spd += o_ptr->bpval;
+								if (k_ptr->flags1 & TR1_BLOWS) csheet_boni[i].blow += o_ptr->bpval;
+							}
+							if (k_ptr->flags5 & TR5_PVAL_MASK) {
+								if (f5 & TR5_LUCK) csheet_boni[i].luck += o_ptr->bpval;
+								if (f5 & TR5_CRIT) csheet_boni[i].crit += o_ptr->bpval;
+							}
+						}
+						
+						/* Table D */
+						if (f1 & TR1_SLAY_ANIMAL) csheet_boni[i].cb[7] |= CB8_SANIM;
+						if (f1 & TR1_SLAY_EVIL) csheet_boni[i].cb[9] |= CB10_SEVIL;
+						if (f1 & TR1_SLAY_UNDEAD) csheet_boni[i].cb[9] |= CB10_SUNDD;
+						if (f1 & TR1_SLAY_DEMON) csheet_boni[i].cb[8] |= CB9_SDEMN;
+						if (f1 & TR1_SLAY_ORC) csheet_boni[i].cb[7] |= CB8_SORCS;
+						if (f1 & TR1_SLAY_TROLL) csheet_boni[i].cb[7] |= CB8_STROL;
+						if (f1 & TR1_SLAY_GIANT) csheet_boni[i].cb[8] |= CB9_SGIAN;
+						if (f1 & TR1_SLAY_DRAGON) csheet_boni[i].cb[8] |= CB9_SDRGN;
+						if (f1 & TR1_KILL_DRAGON) csheet_boni[i].cb[8] |= CB9_KDRGN;
+						if (f1 & TR1_KILL_DEMON) csheet_boni[i].cb[8] |= CB9_KDEMN;
+						if (f1 & TR1_KILL_UNDEAD) csheet_boni[i].cb[9] |= CB10_KUNDD;
+						if (esp & ESP_ALL) { //did we even need these? all ESP items are hidden, no? What of artifacts? - Kurzel
+							csheet_boni[i].cb[7] |= (CB8_ESPID | CB8_EANIM | CB8_EORCS | CB8_ETROL | CB8_EGIAN);
+							csheet_boni[i].cb[8] |= (CB9_EDRGN | CB9_EDEMN | CB9_EUNDD);
+							csheet_boni[i].cb[9] |= (CB10_EEVIL | CB10_EDGRI | CB10_EGOOD | CB10_ENONL | CB10_EUNIQ);
+						} else {
+							if (esp & ESP_SPIDER) csheet_boni[i].cb[7] |= CB8_ESPID;
+							if (esp & ESP_ANIMAL) csheet_boni[i].cb[7] |= CB8_EANIM;
+							if (esp & ESP_ORC) csheet_boni[i].cb[7] |= CB8_EORCS;
+							if (esp & ESP_TROLL) csheet_boni[i].cb[7] |= CB8_ETROL;
+							if (esp & ESP_GIANT) csheet_boni[i].cb[7] |= CB8_EGIAN;
+							if (esp & ESP_DRAGON) csheet_boni[i].cb[8] |= CB9_EDRGN;
+							if (esp & ESP_DEMON) csheet_boni[i].cb[8] |= CB9_EDEMN;
+							if (esp & ESP_UNDEAD) csheet_boni[i].cb[8] |= CB9_EUNDD;
+							if (esp & ESP_EVIL) csheet_boni[i].cb[9] |= CB10_EEVIL;
+							if (esp & ESP_DRAGONRIDER) csheet_boni[i].cb[9] |= CB10_EDGRI;
+							if (esp & ESP_GOOD) csheet_boni[i].cb[9] |= CB10_EGOOD;
+							if (esp & ESP_NONLIVING) csheet_boni[i].cb[9] |= CB10_ENONL;
+							if (esp & ESP_UNIQUE) csheet_boni[i].cb[9] |= CB10_EUNIQ;
+						}
+						if (f1 & TR1_BRAND_FIRE) csheet_boni[i].cb[10] |= CB11_BFIRE;
+						if (f3 & TR3_SH_FIRE) csheet_boni[i].cb[10] |= CB11_AFIRE;
+						if (f1 & TR1_BRAND_COLD) csheet_boni[i].cb[10] |= CB11_BCOLD;
+						if (f5 & TR5_SH_COLD) csheet_boni[i].cb[10] |= CB11_ACOLD;
+						if (f1 & TR1_BRAND_ELEC) csheet_boni[i].cb[10] |= CB11_BELEC;
+						if (f3 & TR3_SH_ELEC) csheet_boni[i].cb[10] |= CB11_AELEC;
+						if (f1 & TR1_BRAND_ACID) csheet_boni[i].cb[10] |= CB11_BACID;
+						if (f1 & TR1_BRAND_POIS) csheet_boni[i].cb[10] |= CB11_BPOIS;
+						if (f5 & TR5_VORPAL) csheet_boni[i].cb[11] |= CB12_BVORP;
+					}
+				}
 #endif
-				
-				/* Make sure we know it needs *id* */
-				csheet_boni[i].cb[11] |= CB12_XHIDD;
+				/* conclude hack: can *identifying* actually make a difference at all? */
+				if (can_have_hidden_powers) csheet_boni[i].cb[11] |= CB12_XHIDD; //could perhaps add R_TYPE boni flags for each class of random boni in the future for specific '?' grids - Kurzel!!
 			}
 			Send_boni_col(Ind, csheet_boni[i]);
 		}

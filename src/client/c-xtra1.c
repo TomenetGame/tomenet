@@ -2511,9 +2511,9 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		if (csheet_boni[i].cb[4] & CB5_RPARA) { c_put_str(TERM_WHITE, "+", 2, 25+i); header_color[1][1] = TERM_WHITE; }
 		if (csheet_boni[i].cb[4] & CB5_RBLND) { c_put_str(TERM_WHITE, "+", 3, 25+i); header_color[1][2] = TERM_WHITE; }
 			/* SINV actually, here - Kurzel */
-			/* Moving down to REFL */ if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "-", 10, 25+i); if (header_color[1][9] != TERM_L_RED) header_color[1][9] = TERM_RED; } //this overrides the resist, doesn't it? ;)
+			/* Moving down to REFL */ if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "-", 10, 25+i); if (header_color[1][9] == TERM_L_DARK || header_color[1][9] == TERM_WHITE) header_color[1][9] = TERM_RED; } //this overrides the resist, doesn't it? ;)
 			/* Moving down to REFL */ if (csheet_boni[i].cb[4] & CB5_RTELE) { c_put_str(TERM_WHITE, "+", 10, 25+i); if (header_color[1][9] == TERM_L_DARK) header_color[1][9] = TERM_WHITE; }
-			/* Moving down to REFL */ if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_RED, "*", 10, 25+i); if (header_color[1][9] != TERM_RED) header_color[1][9] = TERM_RED; } //red instead of gold, this isn't st-anchor, to stop all tele (gravity)
+			/* Moving down to REFL */ if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_YELLOW, "*", 10, 25+i); if (header_color[1][9] != TERM_YELLOW) header_color[1][9] = TERM_YELLOW; } //red instead of gold, this isn't st-anchor, to stop all tele (gravity)
 		if (csheet_boni[i].cb[4] & CB5_RFALL) { c_put_str(TERM_WHITE, "+", 5, 25+i); header_color[1][4] = TERM_WHITE; }
 		if (csheet_boni[i].cb[4] & CB5_RFOOD) { c_put_str(TERM_WHITE, "+", 6, 25+i); if (header_color[1][5] == TERM_L_DARK) header_color[1][5] = TERM_WHITE; }
 		
@@ -2675,7 +2675,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 			c_put_str(color, tmp, 13, 45+i);
 		}
 		if (csheet_boni[i].pstr != 0) {
-			header_color[2][13] = TERM_WHITE;
+			if (header_color[2][13] == TERM_L_DARK) header_color[2][13] = TERM_WHITE;
 			color = TERM_L_GREEN;
 			if (csheet_boni[i].cb[11] & CB12_RSSTR) { color = TERM_L_UMBER; header_color[2][13] = TERM_L_UMBER; }
 			if (csheet_boni[i].pstr > 9) { color = TERM_GREEN; if (csheet_boni[i].cb[11] & CB12_RSSTR) color = TERM_UMBER; }
@@ -2686,7 +2686,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 			c_put_str(color, tmp, 14, 45+i);
 		} else if (csheet_boni[i].cb[11] & CB12_RSSTR) { c_put_str(TERM_L_UMBER, "s", 14, 45+i); header_color[2][13] = TERM_L_UMBER; }
 		if (csheet_boni[i].pint != 0) {
-			header_color[2][14] = TERM_WHITE;
+			if (header_color[2][14] == TERM_L_DARK) header_color[2][14] = TERM_WHITE;
 			color = TERM_L_GREEN;
 			if (csheet_boni[i].cb[11] & CB12_RSINT) { color = TERM_L_UMBER; header_color[2][14] = TERM_L_UMBER; }
 			if (csheet_boni[i].pint > 9) { color = TERM_GREEN; if (csheet_boni[i].cb[11] & CB12_RSINT) color = TERM_UMBER; }
@@ -2697,7 +2697,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 			c_put_str(color, tmp, 15, 45+i);
 		} else if (csheet_boni[i].cb[11] & CB12_RSINT) { c_put_str(TERM_L_UMBER, "s", 15, 45+i); header_color[2][14] = TERM_L_UMBER; }
 		if (csheet_boni[i].pwis != 0) {
-			header_color[2][15] = TERM_WHITE;
+			if (header_color[2][15] == TERM_L_DARK) header_color[2][15] = TERM_WHITE;
 			color = TERM_L_GREEN;
 			if (csheet_boni[i].cb[11] & CB12_RSWIS) { color = TERM_L_UMBER; header_color[2][15] = TERM_L_UMBER; }
 			if (csheet_boni[i].pwis > 9) { color = TERM_GREEN; if (csheet_boni[i].cb[11] & CB12_RSWIS) color = TERM_UMBER; }
@@ -2708,7 +2708,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 			c_put_str(color, tmp, 16, 45+i);
 		} else if (csheet_boni[i].cb[11] & CB12_RSWIS) { c_put_str(TERM_L_UMBER, "s", 16, 45+i); header_color[2][15] = TERM_L_UMBER; }
 		if (csheet_boni[i].pdex != 0) {
-			header_color[2][16] = TERM_WHITE;
+			if (header_color[2][16] == TERM_L_DARK) header_color[2][16] = TERM_WHITE;
 			color = TERM_L_GREEN;
 			if (csheet_boni[i].cb[11] & CB12_RSDEX) { color = TERM_L_UMBER; header_color[2][16] = TERM_L_UMBER; }
 			if (csheet_boni[i].pdex > 9) { color = TERM_GREEN; if (csheet_boni[i].cb[11] & CB12_RSDEX) color = TERM_UMBER; }
@@ -2719,7 +2719,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 			c_put_str(color, tmp, 17, 45+i);
 		} else if (csheet_boni[i].cb[11] & CB12_RSDEX) { c_put_str(TERM_L_UMBER, "s", 17, 45+i); header_color[2][16] = TERM_L_UMBER; }
 		if (csheet_boni[i].pcon != 0) {
-			header_color[2][17] = TERM_WHITE;
+			if (header_color[2][17] == TERM_L_DARK) header_color[2][17] = TERM_WHITE;
 			color = TERM_L_GREEN;
 			if (csheet_boni[i].cb[11] & CB12_RSCON) { color = TERM_L_UMBER; header_color[2][17] = TERM_L_UMBER; }
 			if (csheet_boni[i].pcon > 9) { color = TERM_GREEN; if (csheet_boni[i].cb[11] & CB12_RSCON) color = TERM_UMBER; }
@@ -2730,7 +2730,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 			c_put_str(color, tmp, 18, 45+i);
 		} else if (csheet_boni[i].cb[11] & CB12_RSCON) { c_put_str(TERM_L_UMBER, "s", 18, 45+i); header_color[2][17] = TERM_L_UMBER; }
 		if (csheet_boni[i].pchr != 0) {
-			header_color[2][18] = TERM_WHITE;
+			if (header_color[2][18] == TERM_L_DARK) header_color[2][18] = TERM_WHITE;
 			color = TERM_L_GREEN;
 			if (csheet_boni[i].cb[11] & CB12_RSCHR) { color = TERM_L_UMBER; header_color[2][18] = TERM_L_UMBER; }
 			if (csheet_boni[i].pchr > 9) { color = TERM_GREEN; if (csheet_boni[i].cb[11] & CB12_RSCHR) color = TERM_UMBER; }
