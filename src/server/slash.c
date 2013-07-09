@@ -1095,6 +1095,11 @@ void do_slash_cmd(int Ind, char *message)
 					extract_energy[p_ptr->pspeed]
 					- (extract_energy[p_ptr->pspeed] / 10) * 10);
 
+			/* show parry/block chance if we're using weapon or shield */
+			if (is_weapon(p_ptr->inventory[INVEN_WIELD].tval) ||
+			    p_ptr->inventory[INVEN_ARM].tval) /* dual-wield or shield */
+				check_parryblock(Ind);
+			/* show dodge chance if we have dodge skill */
 			if (get_skill(p_ptr, SKILL_DODGE)) use_ability_blade(Ind);
 
 #if 0 /* this is already displayed to the left */
