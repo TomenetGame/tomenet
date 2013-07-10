@@ -10840,8 +10840,8 @@ vary. For example a warrior cannot learn magic spells.
     If you're planning to make use of ranged weapons, the first thing you
     should do when you created your character is making a macro for firing your
     bow. Press % and then z to start the macro wizard, and then c to create a
-    firing macro. Buy arrows in store 1 or store 3 in town and put them in your
-    quiver (w key).
+    firing macro. Buy arrows (to use with a bow) in store 1 or store 3 in town
+    and put them in your quiver (w key). Crossbows require bolts, slings shots.
 
     Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
