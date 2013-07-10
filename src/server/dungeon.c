@@ -6133,7 +6133,7 @@ void process_player_change_wpos(int Ind)
 	}
 
 	/* Hack: Allow players to pass trees always, while in town */
-	if (istown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
+	if (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
 	else p_ptr->town_pass_trees = FALSE;
 
 #if 0 /* since digging is pretty awesome now, this is too much, and we should be glad that treasure detection items have some use now actually! */

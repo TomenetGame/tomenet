@@ -2840,7 +2840,7 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 		}
 
 		/* hack: if he's in town, get him pseudo tree-passing */
-		if (istown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
+		if (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
 
 #if 0
 		/* Don't allow players to save in houses they don't own -> teleport them */
@@ -3219,7 +3219,7 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 	p_ptr->turns_on_floor = TURNS_FOR_EXTRA_FEELING;
 
 	/* hack: if he's in town, get him pseudo tree-passing */
-	if (istown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
+	if (istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
 
 	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
 	   (Can be used for different purpose, usually in conjuction with custom.lua) */
