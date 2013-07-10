@@ -4031,6 +4031,11 @@ void check_experience(int Ind)
 		p_ptr->warning_technique_melee = p_ptr->warning_technique_ranged = 1;
 	}
 
+#if 1 /* todo: remember in savegame actually */
+	if (old_lev < 25 && p_ptr->lev >= 25)
+		p_ptr->warning_ai_annoy = 1; /* mimics, as the latest learners, learn sprint at 15 and taunt at 20 */
+#endif
+
 	/* Introduce newly learned abilities (that depend on char level) */
 	/* those that depend on a race */
 	switch (p_ptr->prace) {
@@ -4318,7 +4323,7 @@ void check_experience(int Ind)
 			msg_print(Ind, "\375\377GYou gain one free mimicry transformation of your choice!");
 			p_ptr->free_mimic = 1;
 		}
-		if (p_ptr->lev == MID_PVP_LEVEL) {
+		if (old_lev < MID_PVP_LEVEL && p_ptr->lev >= MID_PVP_LEVEL) {
 			msg_broadcast_format(Ind, "\374\377G* %s has raised in ranks greatly! *", p_ptr->name);
 			msg_print(Ind, "\375\377G* You have raised quite a bit in ranks of PvP characters!         *");
 			msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");

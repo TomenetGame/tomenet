@@ -5201,6 +5201,14 @@ static void get_moves(int Ind, int m_idx, int *mm)
 			/* so that they never get reversed again */
 			done = TRUE;
 			m_ptr->last_target = 0;
+
+			/* do we have sprint or taunt? */
+			if (p_ptr->warning_ai_annoy == 0 && (p_ptr->melee_techniques & 0x0003)) {
+				p_ptr->warning_ai_annoy = 1;
+				msg_print(Ind, "\377yHint: Use fighting techniques '\377osprint\377y' or '\377otaunt\377y' to catch monsters that try to");
+				msg_print(Ind, "\377y      keep their distance from you. (Press keys \377o% z i\377y to set up a macro.)");
+				msg_print(Ind, "\377y      Some monsters might need multiple taunts, some never fall for it.");
+			}
 		}
 	}
 	
