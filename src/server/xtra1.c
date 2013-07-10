@@ -6801,7 +6801,7 @@ void announce_global_event(int ge_id) {
 
 	/* display additional commands on first advertisement */
 	if (ge->first_announcement) {
-		msg_broadcast_format(0, "\377WType '/evinfo %d' and '/evsign %d' to learn more or to sign up.", ge_id + 1, ge_id + 1);
+		msg_broadcast_format(0, "\377WType '/evinfo %d' or '/evsign %d' to learn more or to sign up.", ge_id + 1, ge_id + 1);
 		ge->first_announcement = FALSE;
 	}
 }
@@ -7593,7 +7593,7 @@ static void process_global_event(int ge_id) {
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			ge->state[0] = 1;
-			msg_broadcast_format(0, "\377WType '/evinfo %d' and '/evsign %d' to learn more or to sign up.", ge_id + 1, ge_id + 1);
+			msg_broadcast_format(0, "\377WType '/evinfo %d' or '/evsign %d' to learn more or to sign up.", ge_id + 1, ge_id + 1);
 			break;
 		case 1: /* running - not much to do here actually :) it's all handled by global_event_signup */
 			if (ge->extra[1]) { /* new challenge to process? */
