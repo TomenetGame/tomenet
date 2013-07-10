@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. July 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. July 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10780,6 +10780,13 @@ vary. For example a warrior cannot learn magic spells.
     a target asleep or how to create ammunition from rubble or from the bones
     of their opponents (see (6.12)), accessible via 'm' key or macro wizard.
 
+    The first thing you should do when you created your character is making
+    a macro for firing your bow. Press % and then z to start the macro wizard,
+    and then c to create a firing macro.
+    Archers start with all 3 types of magic ammo. Pick the one that fits your
+    ranged weapon (magic arrow for bow, magic bolt for crossbow, magic shot
+    for sling) and place it in your quiver (w key).
+
     Hint: Enchanting your ranged weapon to-damage is especially effective,
     because the enchantment will be multiplied by the weapons multiplier, so
     buy enchant to-dam scrolls from the alchemy store as soon as you can afford
@@ -10829,6 +10836,12 @@ vary. For example a warrior cannot learn magic spells.
     have good dexterity if they aim at training ranged weapons.
     At level 15 rangers learn to find paths passing thick woods, and at 25 they
     have become very able swimmers as well.
+
+    If you're planning to make use of ranged weapons, the first thing you
+    should do when you created your character is making a macro for firing your
+    bow. Press % and then z to start the macro wizard, and then c to create a
+    firing macro. Buy arrows in store 1 or store 3 in town and put them in your
+    quiver (w key).
 
     Hint: Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
