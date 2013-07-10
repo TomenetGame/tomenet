@@ -3431,7 +3431,9 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* don't log spammy slash commands */
-	if (prefix(message, "/untag ")) log = FALSE;
+	if (prefix(message, "/untag ")
+	    || prefix(message, "/dis"))
+		log = FALSE;
 
 	/* no big brother */
 //	if(cfg.log_u && (!colon || message[0] != '#' || message[0] != '/')){ /* message[0] != '#' || message[0] != '/' is always true -> big brother mode - mikaelh */
