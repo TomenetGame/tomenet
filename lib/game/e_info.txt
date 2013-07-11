@@ -862,10 +862,12 @@ W:0:1:107:5000
 R:100
 F:VORPAL | IGNORE_WATER
 
+#heavy diggers (picks, mattocks), no shovels
+#two-handed heavy blunts
 N:80:of Earthquakes
 T:125:0:255
-T:21:0:255
-T:20:0:99
+T:21:18:22
+T:20:4:99
 X:A:24:20
 W:0:1:107:4000
 C:10:10:0:5
