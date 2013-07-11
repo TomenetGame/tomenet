@@ -657,7 +657,6 @@ R:1
 F:PVAL_M1
 
 N:66:(Defender)
-T:125:0:255
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -719,7 +718,6 @@ R:33
 F:RES_FEAR
 
 N:70:of Extra Attacks
-T:125:0:255
 T:21:0:255
 T:22:0:255
 T:23:3:255
@@ -731,7 +729,6 @@ R:100
 F:BLOWS
 
 N:71:of Slaying
-T:125:0:255
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -745,7 +742,6 @@ F:SLAY_WEAP
 #currently no effect! | WOUNDING
 
 N:72:of Spinning
-T:125:0:255
 T:22:3:3
 T:22:6:6
 T:22:9:9
@@ -763,7 +759,6 @@ F:DEX | STR | VORPAL | ACTIVATE
 # The "Elemental" brands (4) (6)
 
 N:73:Acidic
-T:125:0:255
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -778,7 +773,6 @@ R:2
 F:IM_ACID
 
 N:74:Shocking
-T:125:0:255
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -794,7 +788,6 @@ R:2
 F:IM_ELEC
 
 N:75:Fiery
-T:125:0:255
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -809,7 +802,6 @@ R:2
 F:IM_FIRE
 
 N:76:Frozen
-T:125:0:255
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -824,7 +816,6 @@ R:2
 F:IM_COLD
 
 N:77:Venomous
-T:125:0:255
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -865,7 +856,6 @@ F:VORPAL | IGNORE_WATER
 #heavy diggers (picks, mattocks), no shovels
 #two-handed heavy blunts
 N:80:of Earthquakes
-T:125:0:255
 T:21:18:22
 T:20:4:99
 X:A:24:20
@@ -892,7 +882,6 @@ F:SLAY_ANIMAL
 
 N:82:of Slay Evil
 T:15:0:255
-T:125:0:255
 T:21:0:255
 T:22:0:255
 T:23:3:255
@@ -917,7 +906,6 @@ F:SLAY_UNDEAD
 
 N:84:of Slay Demon
 T:15:0:255
-T:125:0:255
 T:21:0:21
 T:21:23:255
 T:22:0:255
@@ -989,7 +977,6 @@ R:100
 F:INT | SLAY_ANIMAL | SLOW_DIGEST | STEALTH | ESP_ANIMAL | HIDE_TYPE
 
 N:90:of *Slay Evil*
-T:125:0:255
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -1002,7 +989,6 @@ R:100
 F:WIS | SLAY_EVIL | BLESSED | ESP_EVIL | RES_FEAR | ABILITY | IGNORE_FIRE | IGNORE_ACID
 
 N:91:of *Slay Undead*
-T:125:0:255
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -1015,7 +1001,6 @@ R:100
 F:WIS | KILL_UNDEAD | SEE_INVIS | ESP_UNDEAD | RES_NETHER
 
 N:92:of *Slay Demon*
-T:125:0:255
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -1162,7 +1147,6 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 # More weapons
 
 N:102:Spectral
-T:125:0:255
 T:21:0:255
 T:22:0:255
 T:23:3:255
@@ -1176,7 +1160,6 @@ F:ACTIVATE
 # they are rarer now, so that auto and non-drop curse won't
 # annoy players too much.
 N:103:of Morgul
-T:125:0:255
 T:21:0:255
 T:22:0:255
 T:23:0:255
@@ -1193,7 +1176,6 @@ F:AUTO_CURSE | CURSE_NO_DROP
 # They are more common now, since they can relatively 'lessen' the chance
 # for Morgul wep.
 N:104:of Nothingness
-T:125:0:255
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -1971,7 +1953,6 @@ T:21:12:99
 T:22:10:99
 T:23:16:99
 T:24:8:99
-T:125:0:99
 C:-15:15:-20:3
 R:100
 F:STR | BLOWS | SPEED | AGGRAVATE | RES_FEAR | HIDE_TYPE | FREE_ACT | 
