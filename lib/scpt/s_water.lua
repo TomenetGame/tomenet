@@ -38,7 +38,7 @@ TIDALWAVE = add_spell
         ["spell"] = 	function()
 --		        fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 200), 0, 6 + get_level(Ind, TIDALWAVE, 10), 10, EFF_WAVE, " casts a tidal wave for")
 --1.5		        fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 140), 0, 6 + get_level(Ind, TIDALWAVE, 6), 5, EFF_WAVE, " casts a tidal wave for")
-		        fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 200), 0, 6 + get_level(Ind, TIDALWAVE, 6), 5, EFF_WAVE, " casts a tidal wave for")
+		        fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 200), 1, 6 + get_level(Ind, TIDALWAVE, 6), 5, EFF_WAVE, " casts a tidal wave for")
 	end,
 	["info"] = 	function()
 			return "dam "..(40 + get_level(Ind, TIDALWAVE,  200)).." rad "..(6 + get_level(Ind, TIDALWAVE, 6))

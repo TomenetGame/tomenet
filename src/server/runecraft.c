@@ -448,7 +448,7 @@ bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
 	/* Store the info */
 	o_ptr = &p_ptr->inventory[item];
 	o_ptr->sigil = projection + 1; //Hack -- 0 is an item WITHOUT a sigil. Subtract 1 later...
-	if (r_imperatives[imperative].flag == I_ENHA) o_ptr->sseed = Rand_value; /* Save RNG */
+	if (r_imperatives[imperative].flag == I_ENHA) o_ptr->sseed = Rand_value * 1103515245 + 12345 + turn; /* Save RNG with a fresh cycle, see LCRNG() */
 
 	/* Give a message */
 	char o_name[ONAME_LEN];
@@ -953,7 +953,7 @@ s_printf("Duration: %d\n", duration);
 		
 		case T_WAVE: {
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
-			if (r_imperatives[imperative].flag != I_ENHA) fire_wave(Ind, gf_type, 0, damage, 0, duration, 2, EFF_WAVE, p_ptr->attacker);
+			if (r_imperatives[imperative].flag != I_ENHA) fire_wave(Ind, gf_type, 0, damage, 1, duration, 2, EFF_WAVE, p_ptr->attacker);
 			else project_los(Ind, gf_type, damage, p_ptr->attacker);
 		break; }
 		
@@ -1055,6 +1055,7 @@ void warding_rune(int Ind, byte projection, byte imperative, byte skill)
 		o_ptr->discount = cs_ptr->sc.rune.discount;
 		o_ptr->level = cs_ptr->sc.rune.level;
 		o_ptr->owner = cs_ptr->sc.rune.id;
+		o_ptr->mode = p_ptr->mode;
 		o_ptr->note = cs_ptr->sc.rune.note;
 		//drop_near(o_ptr, -1, wpos, y, x);
 		inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
@@ -1210,6 +1211,8 @@ bool warding_rune_break(int m_idx)
 	o_ptr->discount = cs_ptr->sc.rune.discount;
 	o_ptr->level = cs_ptr->sc.rune.level;
 	o_ptr->owner = cs_ptr->sc.rune.id;
+	p_ptr = Players[cs_ptr->sc.rune.id];
+	o_ptr->mode = p_ptr->mode;
 	o_ptr->note = cs_ptr->sc.rune.note;
 	drop_near(o_ptr, -1, wpos, my, mx);
 	

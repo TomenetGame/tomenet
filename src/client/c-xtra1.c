@@ -2501,7 +2501,8 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		if (csheet_boni[i].cb[3] & CB4_RNETH) { c_put_str(TERM_WHITE, "+", 14, 5+i); if (header_color[0][13] == TERM_L_DARK) header_color[0][13] = TERM_WHITE; }
 		if (csheet_boni[i].cb[3] & CB4_INETH) { c_put_str(TERM_L_UMBER, "*", 14, 5+i); if (header_color[0][13] != TERM_L_UMBER) header_color[0][13] = TERM_L_UMBER; }
 		if (csheet_boni[i].cb[3] & CB4_RCHAO) { c_put_str(TERM_WHITE, "+", 15, 5+i); header_color[0][14] = TERM_WHITE;
-			if (csheet_boni[i].cb[2] & ~(CB3_RCONF)) { c_put_str(TERM_YELLOW, "+", 8, 5+i); if (header_color[0][14] == TERM_L_DARK) header_color[0][14] = TERM_YELLOW; } } //Chaos covers confusion...
+			if (!(csheet_boni[i].cb[2] & CB3_RCONF)) { c_put_str(TERM_YELLOW, "+", 8, 5+i); if (header_color[0][7] == TERM_L_DARK) header_color[0][7] = TERM_YELLOW; }
+			} //Chaos covers confusion... Don't override the actual boni though, in case we care that the item has both boni. - Kurzel
 		if (csheet_boni[i].cb[3] & CB4_RDISE) { c_put_str(TERM_WHITE, "+", 16, 5+i); header_color[0][15] = TERM_WHITE; }
 		if (csheet_boni[i].cb[3] & CB4_RTIME) { c_put_str(TERM_WHITE, "+", 17, 5+i); header_color[0][16] = TERM_WHITE; }
 		if (csheet_boni[i].cb[3] & CB4_RMANA) { c_put_str(TERM_WHITE, "+", 18, 5+i); header_color[0][17] = TERM_WHITE; }

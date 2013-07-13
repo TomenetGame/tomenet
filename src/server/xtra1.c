@@ -4190,8 +4190,8 @@ void calc_boni(int Ind)
 	}
 	if (equipment_set_bonus >= 2) {
 		/* Kurzel - Display the luck boni on each involved item */
-		for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++)
-			if (equipment_set_amount[i]) csheet_boni[i].luck += equipment_set_bonus; //Kurzel!! - Do multiple EQ sets stack or only take highest?
+		//for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) //Mh, this doesn't really always work, needs better tracking in the luck calculation code?
+			//if (equipment_set_amount[i]) csheet_boni[i].luck += equipment_set_bonus; //Kurzel!! - Do multiple EQ sets stack or only take highest?
 //		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus) / 2;
 		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus);
 //		equipment_set_bonus = (equipment_set_bonus - 1) * 4;
@@ -5871,7 +5871,8 @@ void calc_boni(int Ind)
 						f5 = k_info[o_ptr->k_idx].flags5;
 						esp = k_info[o_ptr->k_idx].esp;
 					} else can_have_hidden_powers = TRUE; //unknown jewelry type
-					
+					/* Assume we must *id* (just once) to learn sigil powers - Kurzel */
+					if (o_ptr->sigil && !object_fully_known_p(Ind, o_ptr)) can_have_hidden_powers = TRUE;
 					ego_item_type *e_ptr;
 					if (object_known_p(Ind, o_ptr)) {
 						if (o_ptr->name2) {

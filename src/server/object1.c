@@ -4265,6 +4265,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 			esp = k_info[o_ptr->k_idx].esp;
 		}
 
+		/* Assume we must *id* (just once) to learn sigil powers - Kurzel */
+		if (o_ptr->sigil) can_have_hidden_powers = TRUE;
+		
 		/* Just add the fixed ego flags that we know to be on the item */
 		if (id) {
 		        if (o_ptr->name2) {
