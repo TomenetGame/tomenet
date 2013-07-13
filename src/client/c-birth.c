@@ -1116,7 +1116,6 @@ static bool choose_mode(void)
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 		if (c == '\b') {
-			//if ((sex & MODE_FRUIT_BAT) == MODE_FRUIT_BAT) sex -= MODE_FRUIT_BAT; //Clear any batty mode from previous selections, mh, fix not working.. - Kurzel
 			clear_from(15);
 			return FALSE;
 		}
@@ -1202,6 +1201,9 @@ static bool choose_body_modification(void)
 {
 	char c = '\0';
 	bool hazard = FALSE;
+
+	/* normal mode is the default */
+	sex &= ~MODE_FRUIT_BAT;
 
 	put_str("n) Normal body", 20, 2);
 	put_str("f) Fruit bat", 21, 2);
