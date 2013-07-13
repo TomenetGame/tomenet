@@ -615,12 +615,14 @@ void do_cmd_go_down(int Ind)
 		return;
 	}
 
-	if (c_ptr->feat == FEAT_BETWEEN) {
-		/* Hack -- take a turn */
-		p_ptr->energy -= level_speed(&p_ptr->wpos);
-
+	if (c_ptr->feat == FEAT_BETWEEN) { 
 		/* Check interference */
-		if (interfere(Ind, 20)) return; /* between gate interference chance */
+		if (interfere(Ind, 20)) { /* between gate interference chance */
+			/* Take a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+			return;
+		}
 
 		if (between_effect(Ind, c_ptr)) return;
 		/* not jumped? strange.. */
@@ -944,7 +946,8 @@ void do_cmd_go_down(int Ind)
 
 	p_ptr->new_level_flag = TRUE;
 
-    forget_view(Ind); //the_sandman
+	forget_view(Ind); //the_sandman
+
 	/* He'll be safe for 2 turns */
 	set_invuln_short(Ind, STAIR_GOI_LENGTH);
 
