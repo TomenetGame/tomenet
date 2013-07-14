@@ -672,7 +672,7 @@ static void default_set(void)
 
 	/* Initial defaults */
 	strcpy(nick, "PLAYER");
-	strcpy(pass, "passwd");
+	strcpy(pass, ""); //was passwd, but players should really be forced to make up different passwords
 	strcpy(real_name, "PLAYER");
 
 
