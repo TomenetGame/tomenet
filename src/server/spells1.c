@@ -1037,7 +1037,10 @@ void teleport_player_to(int Ind, int ny, int nx)
 	store_exit(Ind);
 
 	/* Log, to distinguish MOVE_BODY vs TELE_TO related kills just in case */
-	s_printf("TELE_TO: '%s' was teleported to %d,%d.", p_ptr->name, x, y);
+	s_printf("TELE_TO: '%s' was teleported to %d,%d", p_ptr->name, x, y);
+	if ((zcave[y][x].info & CAVE_ICKY)) s_printf(" (ICKY)");
+	if ((zcave[y][x].info & CAVE_STCK)) s_printf(" (STCK)");
+	s_printf(".\n");
 
 	/* Save the old location */
 	oy = p_ptr->py;
