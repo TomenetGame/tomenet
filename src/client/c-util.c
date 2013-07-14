@@ -5,6 +5,9 @@
 #include "angband.h"
 
 #include <sys/time.h>
+#ifdef TEST_CLIENT
+ #include <dirent.h>
+#endif
 
 #define MACRO_USE_CMD	0x01
 #define MACRO_USE_STD	0x02
@@ -6126,11 +6129,60 @@ static void do_cmd_options_win(void)
 }
 
 #ifdef TEST_CLIENT
+#define MAX_FONTS 50
+static int font_name_cmp(const void *a, const void *b) {
+#if 0 /* simple way */
+	return strcmp((const char*)a, (const char*)b);
+#else /* sort in single-digit numbers before double-digit ones */
+	char at[256], bt[256];
+	at[0] = '0';
+	bt[0] = '0';
+	if (atoi((char*)a) < 10) strcpy(at + 1, (char *)a);
+	else strcpy(at, (char *)a);
+	if (atoi((char*)b) < 10) strcpy(bt + 1, (char *)b);
+	else strcpy(bt, (char *)b);
+	return strcmp(at, bt);
+#endif
+}
 static void do_cmd_options_fonts(void) {
 	int j, d, vertikal_offset = 3;
 	int y = 0;
 	char ch;
 	bool go = TRUE;
+
+	char font_name[MAX_FONTS][256], tmp_name[256], path[1024];
+	int fonts = 0;
+
+	DIR *dir;
+	struct dirent *ent;
+
+
+	/* read all locally available fonts */
+	memset(font_name, 0, sizeof(char) * (MAX_FONTS * 256));
+
+	path_build(path, 1024, ANGBAND_DIR_XTRA, "font");
+	if (!(dir = opendir(path))) {
+		c_msg_format("Couldn't open fonts directory (%s).", path);
+		return;
+	}
+
+	while ((ent = readdir(dir))) {
+		strcpy(tmp_name, ent->d_name);
+		j = -1;
+		while(tmp_name[++j]) tmp_name[j] = tolower(tmp_name[j]);
+		if (strstr(tmp_name, ".fon")) {
+			strcpy(font_name[fonts], ent->d_name);
+			fonts++;
+		}
+	}
+	closedir(dir);
+
+	if (!fonts) {
+		c_msg_format("No .fon font files found in directory (%s).", path);
+		return;
+	}
+
+	qsort(font_name, fonts, sizeof(char[256]), font_name_cmp);
 
 
 	/* Clear screen */
@@ -6145,47 +6197,19 @@ static void do_cmd_options_fonts(void) {
 		for (j = 0; j < ANGBAND_TERM_MAX; j++) {
 			byte a = TERM_WHITE;
 			cptr s = ang_term_name[j];
+			char buf[256];
 
 			/* Use color */
 			if (c_cfg.use_color && (j == y)) a = TERM_L_BLUE;
 
 			/* Window name, staggered, centered */
-			Term_putstr(2, vertikal_offset + j, -1, a, (char*)s);
+			Term_putstr(1, vertikal_offset + j, -1, a, (char*)s);
+
+			/* Display the font of this window */
+			strcpy(buf, get_font_name(j));
+			Term_putstr(20, vertikal_offset + j, -1, a, buf);
 		}
-#if 0
-		/* Display the options */
-		for (i = 0; i < NR_OPTIONS_SHOWN; i++) {
-			byte a = TERM_WHITE;
-			cptr str = window_flag_desc[i];
 
-			/* Use color */
-			if (c_cfg.use_color && (i == y)) a = TERM_L_BLUE;
-
-			/* Unused option */
-			if (!str) str = "\377D(Unused option)\377w";
-
-			/* Flag name */
-			Term_putstr(0, i + vertikal_offset + 2, -1, a, (char*)str);
-
-			/* Display the windows */
-			for (j = 1; j < ANGBAND_TERM_MAX; j++) {
-				byte a = TERM_SLATE;
-				char c = '.';
-
-				/* Use color */
-				if (c_cfg.use_color && (i == y) && (j == x)) a = TERM_L_BLUE;
-
-				/* Active flag */
-				if (window_flag[j] & (1L << i)) {
-					a = TERM_L_GREEN;
-					c = 'X';
-				}
-
-				/* Flag value */
-				Term_putch(35 + j * 5, i + vertikal_offset + 2, a, c);
-			}
-		}
-#endif
 		/* Place Cursor */
 		Term_gotoxy(2, vertikal_offset + y);
 

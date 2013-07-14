@@ -3020,6 +3020,10 @@ bool ask_for_bigmap(void) {
 	return ask_for_bigmap_generic();
 }
 
-/* SHUT: main-x11.c */
+const char* get_font_name(int term) {
+	term_data *td = term_idx_to_term_data(term);
+	if (td->fnt) return td->fnt->name;
+	else return DEFAULT_X11_FONT;
+}
 
 #endif

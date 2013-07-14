@@ -4103,4 +4103,9 @@ bool ask_for_bigmap(void) {
 #endif
 }
 
+const char* get_font_name(int term) {
+	if (data[term].font_file) return(data[term].font_file);
+	else return DEFAULT_FONTNAME;
+}
+
 #endif /* _Windows */
