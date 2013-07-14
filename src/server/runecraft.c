@@ -1211,8 +1211,7 @@ bool warding_rune_break(int m_idx)
 	o_ptr->discount = cs_ptr->sc.rune.discount;
 	o_ptr->level = cs_ptr->sc.rune.level;
 	o_ptr->owner = cs_ptr->sc.rune.id;
-	p_ptr = Players[cs_ptr->sc.rune.id];
-	o_ptr->mode = p_ptr->mode;
+	o_ptr->mode = lookup_player_mode(cs_ptr->sc.rune.id);
 	o_ptr->note = cs_ptr->sc.rune.note;
 	drop_near(o_ptr, -1, wpos, my, mx);
 	
