@@ -7674,13 +7674,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
 //				    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
 				    (cave_floor_bold(zcave, oy, ox)) &&
-				    magik(10) &&
+				    magik(10) && !p_ptr->martyr &&
 				    (r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5)))
 				{
 					/* Allow movement */
 					do_move = TRUE;
 
-					/* Monster pushed past another monster */
+					/* Monster pushed past the player */
 					did_move_body = TRUE;
 
 					/* XXX XXX XXX Message */
