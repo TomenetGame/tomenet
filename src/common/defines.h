@@ -7921,6 +7921,7 @@ extern int PlayerUID;
 #define irondeepdive_bottom(wpos) \
 	((wpos)->wx == WPOS_IRONDEEPDIVE_X && (wpos)->wy == WPOS_IRONDEEPDIVE_Y && (wpos)->wz * WPOS_IRONDEEPDIVE_Z == 127)
 
+
 /* constants for get_item() to be transmitted to the client for choosing an item_tester_hook */
 #define ITH_NONE	0
 #define ITH_RECHARGE	1
@@ -7928,3 +7929,69 @@ extern int PlayerUID;
 #define ITH_ENCH_WEAP	3
 #define ITH_CUSTOM_TOME	4
 #define ITH_RUNE	5
+
+
+/* Macros for less direct hard-coding of melee/ranged techniques */
+/* Melee techniques */
+#define MT_NONE		0x0000
+
+#define MT_SPRINT	0x0001
+#define MT_TAUNT	0x0002
+#define MT_JUMP		0x0004
+#define MT_DISTRACT	0x0008
+
+#if 0
+ #define MT_STAB	0x0010
+ #define MT_SLICE	0x0020
+ #define MT_QUAKE	0x0040
+ #define MT_SWEEP	0x0080
+
+ #define MT_BASH	0x0100
+ #define MT_KNOCK	0x0200
+ #define MT_CHARGE	0x0400
+ #define MT_FLASH	0x0800
+
+ #define MT_SPIN	0x1000
+ #define MT_BERSERK	0x2000
+ #define MT_SJUMP	0x4000
+ #define MT_ICLOAK	0x8000
+#else
+ #define MT_BASH	0x0010
+ #define MT_KNOCK	0x0020
+ #define MT_CHARGE	0x0040
+ #define MT_FLASH	0x0080
+
+ #define MT_CLOAK	0x0100
+ #define MT_SPIN	0x0200
+ #define MT_ASSA	0x0400
+ #define MT_BERSERK	0x0800
+
+ #define MT_XXX1000	0x1000
+ #define MT_SJUMP	0x2000
+ #define MT_SRUN	0x4000
+ #define MT_ICLOAK	0x8000
+#endif
+
+/* Ranged techniques */
+#define RT_NONE		0x0000
+
+#define RT_FLARE	0x0001
+#define RT_PRECS	0x0002
+#define RT_CRAFT	0x0004
+#define RT_DOUBLE	0x0008
+  
+#define RT_BARRAGE	0x0010
+#define RT_XXX0020	0x0020
+#define RT_XXX0040	0x0040
+#define RT_XXX0080	0x0080
+  
+#define RT_XXX0100	0x0100
+#define RT_XXX0200	0x0200
+#define RT_XXX0400	0x0400
+#define RT_XXX0800	0x0800
+
+#define RT_XXX1000	0x1000
+#define RT_XXX2000	0x2000
+#define RT_XXX4000	0x4000
+#define RT_XXX8000	0x8000
+

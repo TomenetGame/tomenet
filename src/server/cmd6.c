@@ -7787,7 +7787,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 	disturb(Ind, 1, 0); /* stop resting, searching and running */
 
 	switch (technique) {
-	case 0:	if (!(p_ptr->melee_techniques & 0x0001)) return; /* Sprint */
+	case 0:	if (!(p_ptr->melee_techniques & MT_SPRINT)) return; /* Sprint */
 		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 7;
 		un_afk_idle(Ind);
@@ -7795,7 +7795,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
-	case 1:	if (!(p_ptr->melee_techniques & 0x0002)) return; /* Taunt */
+	case 1:	if (!(p_ptr->melee_techniques & MT_TAUNT)) return; /* Taunt */
 		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
 //		if (p_ptr->energy < level_speed(&p_ptr->wpos) / 4) return;
 		if (p_ptr->energy <= 0) return;
@@ -7806,7 +7806,7 @@ s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
-	case 3:	if (!(p_ptr->melee_techniques & 0x0008)) return; /* Distract */
+	case 3:	if (!(p_ptr->melee_techniques & MT_DISTRACT)) return; /* Distract */
 		if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 1;
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2; /* just a quick grimace and mimicking ;) */
@@ -7815,7 +7815,7 @@ s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
-	case 7:	if (!(p_ptr->melee_techniques & 0x0080)) return; /* Flash bomb */
+	case 7:	if (!(p_ptr->melee_techniques & MT_FLASH)) return; /* Flash bomb */
 		if (p_ptr->cst < 4) { msg_print(Ind, "Not enough stamina!"); return; }
 //		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 		if (p_ptr->energy <= 0) return;
@@ -7826,7 +7826,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
-	case 9:	if (!(p_ptr->melee_techniques & 0x0200)) return; /* Spin */
+	case 9:	if (!(p_ptr->melee_techniques & MT_SPIN)) return; /* Spin */
 		if (p_ptr->cst < 8) { msg_print(Ind, "Not enough stamina!"); return; }
 		if (p_ptr->afraid) {
 			msg_print(Ind, "You are too afraid to attack!");
@@ -7841,7 +7841,7 @@ s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 #ifdef ENABLE_ASSASSINATE
-	case 10:if (!(p_ptr->melee_techniques & 0x0400)) return; /* Assassinate */
+	case 10:if (!(p_ptr->melee_techniques & MT_ASSA)) return; /* Assassinate */
 		if (p_ptr->piercing_charged) {
 			msg_print(Ind, "You drop your preparations for assassination.");
 			p_ptr->piercing_charged = FALSE;
@@ -7860,7 +7860,7 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 #endif
-	case 11:if (!(p_ptr->melee_techniques & 0x0800)) return; /* Berserk */
+	case 11:if (!(p_ptr->melee_techniques & MT_BERSERK)) return; /* Berserk */
 		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 10;
 		un_afk_idle(Ind);
@@ -7870,7 +7870,7 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
-	case 14:if (!(p_ptr->melee_techniques & 0x4000)) return; /* Shadow Run */
+	case 14:if (!(p_ptr->melee_techniques & MT_SRUN)) return; /* Shadow Run */
 		shadow_run(Ind);
 s_printf("TECHNIQUE_MELEE: %s - shadow run\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
@@ -7928,7 +7928,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 	disturb(Ind, 1, 0); /* stop things like running, resting.. */
 
 	switch (technique) {
-	case 0:	if (!(p_ptr->ranged_techniques & 0x0001)) return; /* Flare missile */
+	case 0:	if (!(p_ptr->ranged_techniques & RT_FLARE)) return; /* Flare missile */
 		if (p_ptr->ranged_flare) {
 			msg_print(Ind, "You dispose of the flare missile.");
 			p_ptr->ranged_flare = FALSE;
@@ -7967,7 +7967,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 s_printf("TECHNIQUE_RANGED: %s - flare missile\n", p_ptr->name);
 		p_ptr->warning_technique_ranged = 1;
 		break;
-	case 1:	if (!(p_ptr->ranged_techniques & 0x0002)) return; /* Precision shot */
+	case 1:	if (!(p_ptr->ranged_techniques & RT_PRECS)) return; /* Precision shot */
 		if (p_ptr->ranged_precision) {
 			msg_print(Ind, "You stop aiming overly precisely.");
 			p_ptr->ranged_precision = FALSE;
@@ -7982,12 +7982,12 @@ s_printf("TECHNIQUE_RANGED: %s - flare missile\n", p_ptr->name);
 s_printf("TECHNIQUE_RANGED: %s - precision\n", p_ptr->name);
 		p_ptr->warning_technique_ranged = 1;
 		break;
-	case 2:	if (!(p_ptr->ranged_techniques & 0x0004)) return; /* Craft some ammunition */
+	case 2:	if (!(p_ptr->ranged_techniques & RT_CRAFT)) return; /* Craft some ammunition */
 s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		p_ptr->warning_technique_ranged = 1;
 		do_cmd_fletchery(Ind); /* was previously MKEY_FLETCHERY (9) */
 		return;
-	case 3:	if (!(p_ptr->ranged_techniques & 0x0008)) return; /* Double-shot */
+	case 3:	if (!(p_ptr->ranged_techniques & RT_DOUBLE)) return; /* Double-shot */
 		if (!p_ptr->ranged_double) {
 //			if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 			if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 2) {
@@ -8003,7 +8003,7 @@ s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 		p_ptr->warning_technique_ranged = 1;
 		break;
-	case 4:	if (!(p_ptr->ranged_techniques & 0x0010)) return; /* Barrage */
+	case 4:	if (!(p_ptr->ranged_techniques & RT_BARRAGE)) return; /* Barrage */
 		if (p_ptr->ranged_barrage) {
 			msg_print(Ind, "You cancel preparations for barrage.");
 			p_ptr->ranged_barrage = FALSE;

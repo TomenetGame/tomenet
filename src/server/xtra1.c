@@ -8077,67 +8077,67 @@ void calc_techniques(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int m = 20; /* default, actually unused since no other classes have SKILL_STANCE */
 
-	p_ptr->melee_techniques = 0x0000;
-	p_ptr->ranged_techniques = 0x0000;
+	p_ptr->melee_techniques = MT_NONE;
+	p_ptr->ranged_techniques = RT_NONE;
 
 	/* Send accessible melee & ranged techniques (hard-coded on client-side, so no defines here :/) */
 	switch (p_ptr->pclass) {
 
 	/* Classes that get some selected/special techniques: */
 	case CLASS_ADVENTURER:
-		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0001; /* Sprint */
-		if (p_ptr->lev >= 15) p_ptr->melee_techniques |= 0x0002; /* Taunt */
-//		if (p_ptr->lev >= 22) p_ptr->melee_techniques |= 0x0004; /* Jump */
+		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= MT_SPRINT; /* Sprint */
+		if (p_ptr->lev >= 15) p_ptr->melee_techniques |= MT_TAUNT; /* Taunt */
+//		if (p_ptr->lev >= 22) p_ptr->melee_techniques |= MT_JUMP; /* Jump */
 		Send_technique_info(Ind);
 		return;
 	case CLASS_ROGUE:
-		if (p_ptr->lev >= 3) p_ptr->melee_techniques |= 0x0001; /* Sprint - Rogues know how to get away! */
-		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0002; /* Taunt - Rogues are bad-mouthed ;) */
-		if (p_ptr->lev >= 9) p_ptr->melee_techniques |= 0x0008; /* Distract */
-		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= 0x0080; /* Flash bomb */
-//		if (p_ptr->lev >= 18) p_ptr->melee_techniques |= 0x0004; /* Jump */
+		if (p_ptr->lev >= 3) p_ptr->melee_techniques |= MT_SPRINT; /* Sprint - Rogues know how to get away! */
+		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= MT_TAUNT; /* Taunt - Rogues are bad-mouthed ;) */
+		if (p_ptr->lev >= 9) p_ptr->melee_techniques |= MT_DISTRACT; /* Distract */
+		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= MT_FLASH; /* Flash bomb */
+//		if (p_ptr->lev >= 18) p_ptr->melee_techniques |= MT_JUMP; /* Jump */
 #ifdef ENABLE_ASSASSINATE
-		if (p_ptr->lev >= 35) p_ptr->melee_techniques |= 0x0400; /* Assassinate */
+		if (p_ptr->lev >= 35) p_ptr->melee_techniques |= MT_ASSA; /* Assassinate */
 #endif
-		if (p_ptr->lev >= 50 && p_ptr->total_winner) p_ptr->melee_techniques |= 0x4000; /* Shadow run */
+		if (p_ptr->lev >= 50 && p_ptr->total_winner) p_ptr->melee_techniques |= MT_SRUN; /* Shadow run */
 		Send_technique_info(Ind);
 		return;
 	case CLASS_RUNEMASTER:
-		if (p_ptr->lev >= 4) p_ptr->melee_techniques |= 0x0001; /* Sprint - Rogues know how to get away! */
-		if (p_ptr->lev >= 9) p_ptr->melee_techniques |= 0x0002; /* Taunt - Rogues are bad-mouthed ;) */
+		if (p_ptr->lev >= 4) p_ptr->melee_techniques |= MT_SPRINT; /* Sprint - Rogues know how to get away! */
+		if (p_ptr->lev >= 9) p_ptr->melee_techniques |= MT_TAUNT; /* Taunt - Rogues are bad-mouthed ;) */
 		Send_technique_info(Ind);
 		return;
 	case CLASS_MINDCRAFTER:
-		if (p_ptr->lev >= 8) p_ptr->melee_techniques |= 0x0002; /* Taunt */
-		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= 0x0008; /* Distract */
+		if (p_ptr->lev >= 8) p_ptr->melee_techniques |= MT_TAUNT; /* Taunt */
+		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= MT_DISTRACT; /* Distract */
 		Send_technique_info(Ind);
 		return;
 	case CLASS_DRUID:
-		if (p_ptr->lev >= 5) p_ptr->melee_techniques |= 0x0001; /* Sprint - Especially in animal forms */
+		if (p_ptr->lev >= 5) p_ptr->melee_techniques |= MT_SPRINT; /* Sprint - Especially in animal forms */
 		Send_technique_info(Ind);
 		return;
 
 	/* Classes that get all standard techniques */
 	case CLASS_WARRIOR:
-//		if (p_ptr->lev >= 24) p_ptr->melee_techniques |= 0x0004; /* Jump */
+//		if (p_ptr->lev >= 24) p_ptr->melee_techniques |= MT_JUMP; /* Jump */
 		m = 0; break;
 	case CLASS_RANGER:
-//		if (p_ptr->lev >= 24) p_ptr->melee_techniques |= 0x0004; /* Jump */
+//		if (p_ptr->lev >= 24) p_ptr->melee_techniques |= MT_JUMP; /* Jump */
 		m = 4; break;
 	case CLASS_PALADIN: m = 7; break;
 	case CLASS_MIMIC: m = 11; break;
 	}
 
-	if (get_skill(p_ptr, SKILL_STANCE) >= 4 + m) p_ptr->melee_techniques |= 0x0001; /* Sprint */
-	if (get_skill(p_ptr, SKILL_STANCE) >= 9 + m) p_ptr->melee_techniques |= 0x0002; /* Taunt */
-	if (get_skill(p_ptr, SKILL_STANCE) >= 16 + m) p_ptr->melee_techniques |= 0x0200; /* Spin */
-	if (get_skill(p_ptr, SKILL_STANCE) >= 33 + m) p_ptr->melee_techniques |= 0x0800; /* Berserk */
+	if (get_skill(p_ptr, SKILL_STANCE) >= 4 + m) p_ptr->melee_techniques |= MT_SPRINT; /* Sprint */
+	if (get_skill(p_ptr, SKILL_STANCE) >= 9 + m) p_ptr->melee_techniques |= MT_TAUNT; /* Taunt */
+	if (get_skill(p_ptr, SKILL_STANCE) >= 16 + m) p_ptr->melee_techniques |= MT_SPIN; /* Spin */
+	if (get_skill(p_ptr, SKILL_STANCE) >= 33 + m) p_ptr->melee_techniques |= MT_BERSERK; /* Berserk */
 
-	if (get_skill(p_ptr, SKILL_ARCHERY) >= 4) p_ptr->ranged_techniques |= 0x0001; /* Flare missile */
-	if (get_skill(p_ptr, SKILL_ARCHERY) >= 8) p_ptr->ranged_techniques |= 0x0002; /* Precision shot */
-	if (get_skill(p_ptr, SKILL_ARCHERY) >= 10) p_ptr->ranged_techniques |= 0x0004; /* Craft some ammunition */
-	if (get_skill(p_ptr, SKILL_ARCHERY) >= 16) p_ptr->ranged_techniques |= 0x0008; /* Double-shot */
-	if (get_skill(p_ptr, SKILL_ARCHERY) >= 25) p_ptr->ranged_techniques |= 0x0010; /* Barrage */
+	if (get_skill(p_ptr, SKILL_ARCHERY) >= 4) p_ptr->ranged_techniques |= RT_FLARE; /* Flare missile */
+	if (get_skill(p_ptr, SKILL_ARCHERY) >= 8) p_ptr->ranged_techniques |= RT_PRECS; /* Precision shot */
+	if (get_skill(p_ptr, SKILL_ARCHERY) >= 10) p_ptr->ranged_techniques |= RT_CRAFT; /* Craft some ammunition */
+	if (get_skill(p_ptr, SKILL_ARCHERY) >= 16) p_ptr->ranged_techniques |= RT_DOUBLE; /* Double-shot */
+	if (get_skill(p_ptr, SKILL_ARCHERY) >= 25) p_ptr->ranged_techniques |= RT_BARRAGE; /* Barrage */
 
 	Send_technique_info(Ind);
 }
