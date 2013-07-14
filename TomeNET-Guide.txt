@@ -9548,7 +9548,8 @@ Note that not every skill is available to every profession (class).
                                 factored in, at the very end of calculation).
 
     +Archery                    Improves ranged to-damage bonus.
-                                Allows you to learn some shooting techniques,
+                                Allows you to learn some shooting techniques
+                                and the ability to create ammunition,
                                 accessible via 'm', see (6.12) for details.
                                 Increases your chance to score critical hits.
                                 At 20 the quality of your handmade ammunition
