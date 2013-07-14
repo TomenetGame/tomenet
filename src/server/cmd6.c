@@ -135,8 +135,7 @@ void do_cmd_eat_food(int Ind, int item)
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
 
-	if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE)
-	{
+	if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to eat non-food!");
 		return;
 	}
@@ -144,9 +143,8 @@ void do_cmd_eat_food(int Ind, int item)
 	if (p_ptr->prace == RACE_ENT && !p_ptr->body_monster) {
 		/* Let them drink :) */
 		if (o_ptr->tval != TV_FOOD ||
-				(o_ptr->sval != SV_FOOD_PINT_OF_ALE &&
-				 o_ptr->sval != SV_FOOD_PINT_OF_WINE))
-		{
+		    (o_ptr->sval != SV_FOOD_PINT_OF_ALE &&
+		    o_ptr->sval != SV_FOOD_PINT_OF_WINE)) {
 			msg_print(Ind, "You cannot eat food.");
 			return;
 		}
@@ -170,409 +168,329 @@ void do_cmd_eat_food(int Ind, int item)
 	lev = k_info[o_ptr->k_idx].level;
 
 	/* (not quite) Normal foods */
-	if (o_ptr->tval == TV_FOOD)
-	{
+	if (o_ptr->tval == TV_FOOD) {
 		/* Analyze the food */
-		switch (o_ptr->sval)
-		{
-			case SV_FOOD_POISON:
-			{
-				if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
-				{
-					if (set_poisoned(Ind, p_ptr->poisoned + rand_int(10) + 10, Ind))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
+		switch (o_ptr->sval) {
+		case SV_FOOD_POISON:
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
+				if (set_poisoned(Ind, p_ptr->poisoned + rand_int(10) + 10, Ind))
+					ident = TRUE;
 			}
+			break;
 
-			case SV_FOOD_BLINDNESS:
-			{
-				if (!p_ptr->resist_blind)
-				{
-					if (set_blind(Ind, p_ptr->blind + rand_int(200) + 200))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
+		case SV_FOOD_BLINDNESS:
+			if (!p_ptr->resist_blind) {
+				if (set_blind(Ind, p_ptr->blind + rand_int(200) + 200))
+					ident = TRUE;
 			}
+			break;
 
-			case SV_FOOD_PARANOIA:
-			{
-				if (!p_ptr->resist_fear)
-				{
-					if (set_afraid(Ind, p_ptr->afraid + rand_int(10) + 10) ||
-					    set_image(Ind, p_ptr->image + 20))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
+		case SV_FOOD_PARANOIA:
+			if (!p_ptr->resist_fear) {
+				if (set_afraid(Ind, p_ptr->afraid + rand_int(10) + 10) ||
+				    set_image(Ind, p_ptr->image + 20))
+					ident = TRUE;
 			}
+			break;
 
-			case SV_FOOD_CONFUSION:
-			{
-				if (!p_ptr->resist_conf)
-				{
-					if (set_confused(Ind, p_ptr->confused + rand_int(10) + 10))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
+		case SV_FOOD_CONFUSION:
+			if (!p_ptr->resist_conf) {
+				if (set_confused(Ind, p_ptr->confused + rand_int(10) + 10))
+					ident = TRUE;
 			}
+			break;
 
-			case SV_FOOD_HALLUCINATION:
-			{
-				if (!p_ptr->resist_chaos)
-				{
-					take_sanity_hit(Ind, 2, "drugs");
-					if (set_image(Ind, p_ptr->image + rand_int(250) + 250))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
+		case SV_FOOD_HALLUCINATION:
+			if (!p_ptr->resist_chaos) {
+				take_sanity_hit(Ind, 2, "drugs");
+				if (set_image(Ind, p_ptr->image + rand_int(250) + 250))
+					ident = TRUE;
 			}
+			break;
 
-			case SV_FOOD_PARALYSIS:
-			{
-				if (!p_ptr->free_act)
-				{
-					if (set_paralyzed(Ind, p_ptr->paralyzed + rand_int(10) + 10))
-					{
-						ident = TRUE;
-					}
-				}
-				break;
+		case SV_FOOD_PARALYSIS:
+			if (!p_ptr->free_act) {
+				if (set_paralyzed(Ind, p_ptr->paralyzed + rand_int(10) + 10))
+					ident = TRUE;
 			}
+			break;
 
-			case SV_FOOD_WEAKNESS:
-			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food", 0);
-				(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
-				ident = TRUE;
-				break;
-			}
+		case SV_FOOD_WEAKNESS:
+			if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food", 0);
+			(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
+			ident = TRUE;
+			break;
 
-			case SV_FOOD_SICKNESS:
-			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food", 0);
-				(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
-				ident = TRUE;
-				break;
-			}
+		case SV_FOOD_SICKNESS:
+			if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food", 0);
+			(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
+			ident = TRUE;
+			break;
 
-			case SV_FOOD_STUPIDITY:
-			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food", 0);
-				(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);
-				ident = TRUE;
-				break;
-			}
+		case SV_FOOD_STUPIDITY:
+			if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food", 0);
+			(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);
+			ident = TRUE;
+			break;
 
-			case SV_FOOD_NAIVETY:
-			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food", 0);
-				(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
-				ident = TRUE;
-				break;
-			}
+		case SV_FOOD_NAIVETY:
+			if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food", 0);
+			(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
+			ident = TRUE;
+			break;
 
-			case SV_FOOD_UNHEALTH:
-			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food", 0);
-				(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
-				ident = TRUE;
-				break;
-			}
+		case SV_FOOD_UNHEALTH:
+			if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food", 0);
+			(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
+			ident = TRUE;
+			break;
 
-			case SV_FOOD_DISEASE:
-			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food", 0);
-				(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
-				ident = TRUE;
-				break;
-			}
+		case SV_FOOD_DISEASE:
+			if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food", 0);
+			(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
+			ident = TRUE;
+			break;
 
-			case SV_FOOD_CURE_POISON:
-			{
-				if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-				break;
-			}
+		case SV_FOOD_CURE_POISON:
+			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+			break;
 
-			case SV_FOOD_CURE_BLINDNESS:
-			{
-				if (set_blind(Ind, 0)) ident = TRUE;
-				break;
-			}
+		case SV_FOOD_CURE_BLINDNESS:
+			if (set_blind(Ind, 0)) ident = TRUE;
+			break;
 
-			case SV_FOOD_CURE_PARANOIA:
-			{
-				if (set_afraid(Ind, 0)) ident = TRUE;
+		case SV_FOOD_CURE_PARANOIA:
+			if (set_afraid(Ind, 0)) ident = TRUE;
 //				if (set_image(Ind, p_ptr->image / 2)) ident = TRUE;
-				if (set_image(Ind, 0)) ident = TRUE;
+			if (set_image(Ind, 0)) ident = TRUE;
+			break;
+
+		case SV_FOOD_CURE_CONFUSION:
+			if (set_confused(Ind, 0)) ident = TRUE;
+			break;
+
+		case SV_FOOD_CURE_SERIOUS:
+			if (set_blind(Ind, 0)) ident = TRUE;
+			if (set_confused(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
+//			(void)set_poisoned(Ind, 0, 0);
+//			(void)set_image(Ind, 0);	// ok?
+			if (hp_player(Ind, damroll(6, 8))) ident = TRUE;
+			break;
+
+		case SV_FOOD_RESTORE_STR:
+			if (do_res_stat(Ind, A_STR)) ident = TRUE;
+			break;
+
+		case SV_FOOD_RESTORE_CON:
+			if (do_res_stat(Ind, A_CON)) ident = TRUE;
+			break;
+
+		case SV_FOOD_RESTORING:
+			if (do_res_stat(Ind, A_STR)) ident = TRUE;
+			if (do_res_stat(Ind, A_INT)) ident = TRUE;
+			if (do_res_stat(Ind, A_WIS)) ident = TRUE;
+			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
+			if (do_res_stat(Ind, A_CON)) ident = TRUE;
+			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
+			if (restore_level(Ind)) ident = TRUE; /* <- new (for RPG_SERVER) */
+			break;
+
+		case SV_FOOD_FORTUNE_COOKIE:
+			if (!p_ptr->suscep_life)
+				msg_print(Ind, "That tastes good.");
+			if (p_ptr->blind || no_lite(Ind)) {
+				msg_print(Ind, "You feel some paper in it - what a pity you cannot see!");
+			} else {
+				msg_print(Ind, "There is message in the cookie. It says:");
+				fortune(Ind, FALSE);
+			}
+			ident = TRUE;
+			break;
+
+		case SV_FOOD_ATHELAS:
+			msg_print(Ind, "A fresh, clean essence rises, driving away wounds and poison.");
+			ident = set_poisoned(Ind, 0, 0) |
+				set_stun(Ind, 0) |
+				set_cut(Ind, 0, 0);
+			if (p_ptr->black_breath) {
+				msg_print(Ind, "The hold of the Black Breath on you is broken!");
+				p_ptr->black_breath = FALSE;
+			}
+			if (p_ptr->suscep_life) take_hit(Ind, 250, "a sprig of athelas", 0);
+			ident = TRUE;
+			break;
+
+		case SV_FOOD_RATION:
+			/* 'Rogue' tribute :) */
+			if (magik(10)) {
+				msg_print(Ind, "Yuk, that food tasted awful.");
+				if (p_ptr->max_lev < 2 &&
+				    !((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)))
+					gain_exp(Ind, 1);
 				break;
 			}
+			/* Fall through */
+		case SV_FOOD_BISCUIT:
+		case SV_FOOD_JERKY:
+		case SV_FOOD_SLIME_MOLD:
+			if (!p_ptr->suscep_life || o_ptr->sval == SV_FOOD_SLIME_MOLD)
+				msg_print(Ind, "That tastes good.");
+			ident = TRUE;
+			break;
 
-			case SV_FOOD_CURE_CONFUSION:
-			{
-				if (set_confused(Ind, 0)) ident = TRUE;
-				break;
-			}
+		case SV_FOOD_WAYBREAD:
+		    if (!p_ptr->suscep_life) {
+			msg_print(Ind, "That tastes very good.");
+			(void)set_poisoned(Ind, 0, 0);
+			(void)set_image(Ind, 0);	// ok?
+			(void)hp_player(Ind, damroll(5, 8));
+			set_food(Ind, PY_FOOD_MAX - 1);
+			ident = TRUE;
+		    } else {
+			msg_print(Ind, "Doesn't taste very special.");
+		    }
+			break;
 
-			case SV_FOOD_CURE_SERIOUS:
-			{
-				if (set_blind(Ind, 0)) ident = TRUE;
-				if (set_confused(Ind, 0)) ident = TRUE;
-				if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
-//				(void)set_poisoned(Ind, 0, 0);
-//				(void)set_image(Ind, 0);	// ok?
-				if (hp_player(Ind, damroll(6, 8))) ident = TRUE;
-				break;
-			}
+		case SV_FOOD_PINT_OF_ALE:
+		case SV_FOOD_PINT_OF_WINE:
+		    if (!p_ptr->suscep_life) {
+			/* Let's make this usable... - the_sandman */
+			if (o_ptr->name1 == ART_DWARVEN_ALE) {
+				msg_print(Ind, "\377gYou drank the liquior of the gods");
+				msg_format_near(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
+				switch (randint(10)) {
+				case 1:
+				case 2:
+				case 3:	// 3 in 10 for Hero effect
+					set_hero(Ind, 20 + randint(10)); break;
+				case 4:
+				case 5:
+				case 6:	// 3 in 10 for Speed
+					set_fast(Ind, 20 + randint(10), 10); break;
+				case 7:
+				case 8:
+				case 9: // 3 in 10 for Berserk
+					set_shero(Ind, 20 + randint(10)); break;
+				case 10:// 1 in 10 for confusion ;)
+				default:
+					if (!(p_ptr->resist_conf)) {
+						set_confused(Ind, randint(10));
+					} break;
+				}
+				p_ptr->food = PY_FOOD_FULL;	// A quaff will bring you to the norm sustenance level!
+			} else if (magik(o_ptr->name2? 50 : 20)) {
+				msg_format(Ind, "\377%c*HIC*", random_colour());
+				msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);
 
-			case SV_FOOD_RESTORE_STR:
-			{
-				if (do_res_stat(Ind, A_STR)) ident = TRUE;
-				break;
-			}
+				if (magik(o_ptr->name2? 60 : 30))
+					set_confused(Ind, p_ptr->confused + 20 + randint(20));
+				if (magik(o_ptr->name2? 50 : 20))
+					set_stun(Ind, p_ptr->stun + 10 + randint(10));
 
-			case SV_FOOD_RESTORE_CON:
-			{
-				if (do_res_stat(Ind, A_CON)) ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_RESTORING:
-			{
-				if (do_res_stat(Ind, A_STR)) ident = TRUE;
-				if (do_res_stat(Ind, A_INT)) ident = TRUE;
-				if (do_res_stat(Ind, A_WIS)) ident = TRUE;
-				if (do_res_stat(Ind, A_DEX)) ident = TRUE;
-				if (do_res_stat(Ind, A_CON)) ident = TRUE;
-				if (do_res_stat(Ind, A_CHR)) ident = TRUE;
-				if (restore_level(Ind)) ident = TRUE; /* <- new (for RPG_SERVER) */
-				break;
-			}
-
-			case SV_FOOD_FORTUNE_COOKIE:
-			{
-				if (!p_ptr->suscep_life)
-					msg_print(Ind, "That tastes good.");
-				if (p_ptr->blind || no_lite(Ind))
+				if (magik(o_ptr->name2? 50 : 10)){
+					set_image(Ind, p_ptr->image + 10 + randint(10));
+					take_sanity_hit(Ind, 1, "ale");
+				}
+				if (magik(o_ptr->name2? 10 : 20))
+					set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(10));
+				if (magik(o_ptr->name2? 50 : 10))
+					set_hero(Ind, 10 + randint(10)); /* removed stacking */
+				if (magik(o_ptr->name2? 20 : 5))
+					set_shero(Ind, 5 + randint(10)); /* removed stacking */
+				if (magik(o_ptr->name2? 5 : 10))
+					set_afraid(Ind, p_ptr->afraid + 15 + randint(10));
+				if (magik(o_ptr->name2? 5 : 10))
+					set_slow(Ind, p_ptr->slow + 10 + randint(10));
+				else if (magik(o_ptr->name2? 20 : 5))
+					set_fast(Ind, 10 + randint(10), 10); /* removed stacking */
+				/* Methyl! */
+				if (magik(o_ptr->name2? 0 : 3))
+					set_blind(Ind, p_ptr->blind + 10 + randint(10));
+				if (rand_int(100) < p_ptr->food * magik(o_ptr->name2? 40 : 60) / PY_FOOD_MAX)
 				{
-					msg_print(Ind, "You feel some paper in it - what a pity you cannot see!");
+					msg_print(Ind, "You become nauseous and vomit!");
+					msg_format_near(Ind, "%s vomits!", p_ptr->name);
+					/* made salt water less deadly -APD */
+					(void)set_food(Ind, (p_ptr->food/2));
+					(void)set_poisoned(Ind, 0, 0);
+					(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
 				}
-				else
-				{
-					msg_print(Ind, "There is message in the cookie. It says:");
-					fortune(Ind, FALSE);
-				}
-				ident = TRUE;
-				break;
+				if (magik(o_ptr->name2? 2 : 3))
+					(void)dec_stat(Ind, A_DEX, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 2 : 3))
+					(void)dec_stat(Ind, A_WIS, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 0 : 1))
+					(void)dec_stat(Ind, A_CON, 1, STAT_DEC_TEMPORARY);
+				//			(void)dec_stat(Ind, A_STR, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 3 : 5))
+					(void)dec_stat(Ind, A_CHR, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 2 : 3))
+					(void)dec_stat(Ind, A_INT, 1, STAT_DEC_TEMPORARY);
 			}
+			else msg_print(Ind, "That tastes good.");
+		    } else {
+			msg_print(Ind, "That tastes fair but has no effect.");
+		    }
+			if (o_ptr->name1 == ART_DWARVEN_ALE) keep = TRUE;
 
-			case SV_FOOD_ATHELAS:
-				msg_print(Ind, "A fresh, clean essence rises, driving away wounds and poison.");
-				ident = set_poisoned(Ind, 0, 0) |
-					set_stun(Ind, 0) |
-					set_cut(Ind, 0, 0);
-				if (p_ptr->black_breath)
-				{
-					msg_print(Ind, "The hold of the Black Breath on you is broken!");
-					p_ptr->black_breath = FALSE;
-				}
-				if (p_ptr->suscep_life) take_hit(Ind, 250, "a sprig of athelas", 0);
-				ident = TRUE;
-				break;
+			ident = TRUE;
+			break;
 
-			case SV_FOOD_RATION:
-				/* 'Rogue' tribute :) */
-				if (magik(10)) {
-					msg_print(Ind, "Yuk, that food tasted awful.");
-					if (p_ptr->max_lev < 2 &&
-					    !((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)))
-						gain_exp(Ind, 1);
-					break;
-				}
-				/* Fall through */
-			case SV_FOOD_BISCUIT:
-			case SV_FOOD_JERKY:
-			case SV_FOOD_SLIME_MOLD:
-				if (!p_ptr->suscep_life || o_ptr->sval == SV_FOOD_SLIME_MOLD)
-					msg_print(Ind, "That tastes good.");
-				ident = TRUE;
-				break;
-
-			case SV_FOOD_WAYBREAD:
-			    if (!p_ptr->suscep_life) {
-				msg_print(Ind, "That tastes very good.");
-				(void)set_poisoned(Ind, 0, 0);
-				(void)set_image(Ind, 0);	// ok?
-				(void)hp_player(Ind, damroll(5, 8));
-				set_food(Ind, PY_FOOD_MAX - 1);
-				ident = TRUE;
-			    } else {
-				msg_print(Ind, "Doesn't taste very special.");
-			    }
-				break;
-
-			case SV_FOOD_PINT_OF_ALE:
-			case SV_FOOD_PINT_OF_WINE:
-			{
-			    if (!p_ptr->suscep_life) {
-				/* Let's make this usable... - the_sandman */
-				if (o_ptr->name1 == ART_DWARVEN_ALE) {
-					msg_print(Ind, "\377gYou drank the liquior of the gods");
-					msg_format_near(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
-					switch (randint(10)) {
-						case 1:
-						case 2:
-						case 3:	// 3 in 10 for Hero effect
-							set_hero(Ind, 20 + randint(10)); break;
-						case 4:
-						case 5:
-						case 6:	// 3 in 10 for Speed
-							set_fast(Ind, 20 + randint(10), 10); break;
-						case 7:
-						case 8:
-						case 9: // 3 in 10 for Berserk
-							set_shero(Ind, 20 + randint(10)); break;
-						case 10:// 1 in 10 for confusion ;)
-						default:
-							if (!(p_ptr->resist_conf)) {
-								set_confused(Ind, randint(10));
-							} break;
-					}
-					p_ptr->food = PY_FOOD_FULL;	// A quaff will bring you to the norm sustenance level!
-				} else if (magik(o_ptr->name2? 50 : 20))
-				{
-					msg_format(Ind, "\377%c*HIC*", random_colour());
-					msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);
-
-					if (magik(o_ptr->name2? 60 : 30))
-						set_confused(Ind, p_ptr->confused + 20 + randint(20));
-					if (magik(o_ptr->name2? 50 : 20))
-						set_stun(Ind, p_ptr->stun + 10 + randint(10));
-
-					if (magik(o_ptr->name2? 50 : 10)){
-						set_image(Ind, p_ptr->image + 10 + randint(10));
-						take_sanity_hit(Ind, 1, "ale");
-					}
-					if (magik(o_ptr->name2? 10 : 20))
-						set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(10));
-					if (magik(o_ptr->name2? 50 : 10))
-						set_hero(Ind, 10 + randint(10)); /* removed stacking */
-					if (magik(o_ptr->name2? 20 : 5))
-						set_shero(Ind, 5 + randint(10)); /* removed stacking */
-					if (magik(o_ptr->name2? 5 : 10))
-						set_afraid(Ind, p_ptr->afraid + 15 + randint(10));
-					if (magik(o_ptr->name2? 5 : 10))
-						set_slow(Ind, p_ptr->slow + 10 + randint(10));
-					else if (magik(o_ptr->name2? 20 : 5))
-						set_fast(Ind, 10 + randint(10), 10); /* removed stacking */
-					/* Methyl! */
-					if (magik(o_ptr->name2? 0 : 3))
-						set_blind(Ind, p_ptr->blind + 10 + randint(10));
-					if (rand_int(100) < p_ptr->food * magik(o_ptr->name2? 40 : 60) / PY_FOOD_MAX)
-					{
-						msg_print(Ind, "You become nauseous and vomit!");
-						msg_format_near(Ind, "%s vomits!", p_ptr->name);
-						/* made salt water less deadly -APD */
-						(void)set_food(Ind, (p_ptr->food/2));
-						(void)set_poisoned(Ind, 0, 0);
-						(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
-					}
-					if (magik(o_ptr->name2? 2 : 3))
-						(void)dec_stat(Ind, A_DEX, 1, STAT_DEC_TEMPORARY);
-					if (magik(o_ptr->name2? 2 : 3))
-						(void)dec_stat(Ind, A_WIS, 1, STAT_DEC_TEMPORARY);
-					if (magik(o_ptr->name2? 0 : 1))
-						(void)dec_stat(Ind, A_CON, 1, STAT_DEC_TEMPORARY);
-					//			(void)dec_stat(Ind, A_STR, 1, STAT_DEC_TEMPORARY);
-					if (magik(o_ptr->name2? 3 : 5))
-						(void)dec_stat(Ind, A_CHR, 1, STAT_DEC_TEMPORARY);
-					if (magik(o_ptr->name2? 2 : 3))
-						(void)dec_stat(Ind, A_INT, 1, STAT_DEC_TEMPORARY);
-				}
-				else msg_print(Ind, "That tastes good.");
-			    } else {
-				msg_print(Ind, "That tastes fair but has no effect.");
-			    }
-				if (o_ptr->name1 == ART_DWARVEN_ALE) keep = TRUE;
-
-				ident = TRUE;
-				break;
-			}
-
-			case SV_FOOD_UNMAGIC:
-			{
-				ident = unmagic(Ind);
-				break;
-			}
+		case SV_FOOD_UNMAGIC:
+			ident = unmagic(Ind);
+			break;
 		}
 	}
 	/* Firestones */
-	else if (o_ptr->tval == TV_FIRESTONE)
-	{
+	else if (o_ptr->tval == TV_FIRESTONE) {
 		bool dragon = FALSE;
-		if (p_ptr->body_monster)
-		{
+		if (p_ptr->body_monster) {
 			monster_race *r_ptr = &r_info[p_ptr->body_monster];
 			if (strchr("dD", r_ptr->d_char)) dragon = TRUE;
 		}
-		/* Analyse the firestone */
-		if (!ident)
-		{
-//			if (p_ptr->prace == RACE_DRACONIAN || dragon)
-			if (p_ptr->prace == RACE_DRACONIAN)
-			{
-				switch (o_ptr->sval)
-				{
-					case SV_FIRE_SMALL:
-					{
-						//				if (p_ptr->ctp < p_ptr->mtp)
-						{
-							msg_print(Ind, "Grrrmfff ...");
-#if 0
-							p_ptr->ctp += 4;
-							if (p_ptr->ctp > p_ptr->mtp) p_ptr->ctp = p_ptr->mtp;
-#endif	// 0
-							do_tank(Ind, 10);
+		if (p_ptr->prace == RACE_DRACONIAN) {
+			switch (o_ptr->sval) {
+			case SV_FIRE_SMALL:
+				msg_print(Ind, "Grrrmfff ...");
+				do_tank(Ind, 10);
+				ident = TRUE;
+				break;
 
-							ident = TRUE;
-						}
-						//				else msg_print(Ind, "You can't eat more firestones, you vomit!");
-
-						break;
-					}
-
-					case SV_FIRESTONE:
-					{
-						//				if (p_ptr->ctp < p_ptr->mtp)
-						{
-							msg_print(Ind, "Grrrrmmmmmmfffffff ...");
-#if 0
-							p_ptr->ctp += 10;
-							if (p_ptr->ctp > p_ptr->mtp) p_ptr->ctp=p_ptr->mtp;
-#endif	// 0
-
-							do_tank(Ind, 25);
-							do_tank(Ind, 25);	// twice
-
-							ident = TRUE;
-						}
-
-						break;
-					}
-				}
+			case SV_FIRESTONE:
+				msg_print(Ind, "Grrrrmmmmmmfffffff ...");
+				do_tank(Ind, 25);
+				do_tank(Ind, 25);	// twice
+				ident = TRUE;
+				break;
 			}
-//			else msg_print(Ind, "Yikes, you cannot eat this, you vomit!");
-			else if (!dragon) msg_print(Ind, "Yikes, you cannot eat this, you vomit!");
-			else msg_print(Ind, "That tastes weird..");
+		}
+		else if (!dragon) msg_print(Ind, "Yikes, you cannot eat this, you vomit!");
+		else {
+			msg_print(Ind, "That tastes weird..");
+			switch (o_ptr->sval) {
+			case SV_FIRE_SMALL:
+				if (p_ptr->csp < p_ptr->msp) {
+					p_ptr->csp += 30;
+					if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+					msg_print(Ind, "You feel your head clearing.");
+					p_ptr->redraw |= (PR_MANA);
+					p_ptr->window |= (PW_PLAYER);
+					ident = TRUE;
+				}
+				break;
+
+			case SV_FIRESTONE:
+				if (p_ptr->csp < p_ptr->msp) {
+					p_ptr->csp += 100;
+					if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+					msg_print(Ind, "You feel your head clearing.");
+					p_ptr->redraw |= (PR_MANA);
+					p_ptr->window |= (PW_PLAYER);
+					ident = TRUE;
+				}
+				break;
+			}
 		}
 	}
 
@@ -584,8 +502,7 @@ void do_cmd_eat_food(int Ind, int item)
 	object_tried(Ind, o_ptr);
 
 	/* The player is now aware of the object */
-	if (ident && !object_aware_p(Ind, o_ptr))
-	{
+	if (ident && !object_aware_p(Ind, o_ptr)) {
 		object_aware(Ind, o_ptr);
 		gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
@@ -606,16 +523,13 @@ void do_cmd_eat_food(int Ind, int item)
 
 
 	/* Destroy a food in the pack */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		inven_item_increase(Ind, item, -1);
 		inven_item_describe(Ind, item);
 		inven_item_optimize(Ind, item);
 	}
-
 	/* Destroy a food on the floor */
-	else
-	{
+	else {
 		floor_item_increase(0 - item, -1);
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
