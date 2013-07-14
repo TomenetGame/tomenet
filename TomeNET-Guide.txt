@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. July 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. July 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -554,7 +554,7 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         Void jump gates teleport you to their counterpart and vice versa giving
         you a message "You fall into the void. Brrrr! It's deadly cold.".
         Draconians can get harmed by using void jump gates, see (6.4).
-        If you take staircases up/down, you'll receive the stair-GoI buff,
+        If you take staircases up/down, you'll receive the 'stair GoI' buff,
         see (0.4) for details on that.
 
 {       inscribe an item.
@@ -1363,7 +1363,7 @@ FA          Free Action (immunity to paralysis).
 
 FF          Feather falling (Levitation).
 
-GoI         Globe of invulnerability. This only exists as 'Stair-GoI', see
+GoI         Globe of invulnerability. This only exists as 'Stair GoI', see
             further below.
 
 Gorth       Room in the dungeon, divided into 4 chambers, similar to a pit.
@@ -1518,7 +1518,7 @@ Static      A level that is static will not change if you leave it but stay
 
 Static Art  See 'Art' at the top of this section.
 
-Stair-GoI   Stair-globe of invulnerability. This describes the magical
+Stair GoI   Stair-globe of invulnerability. This describes the magical
             protection that any player who takes a staircase up or down or uses
             word-of-recall will receive: A temporary buff of +100 armour class
             and 40% chance to deflect any attacks that hit him. Attacks that
@@ -4474,7 +4474,7 @@ it yourself. It's usually in Bree, to the lower right of the town centre.
 In general, when you take a staircase or use word-of-recall, your character
 will temporarily get a high Armour bonus (+100) and a chance to deflect enemy
 attacks and to reduce their damage, for a very short duration.
-This is an extra protection (called 'stair-GoI', compare (0.4)) to help
+This is an extra protection (called 'stair GoI', compare (0.4)) to help
 surviving nasty surprises when entering a new dungeon level.
 Keep your scrolls of teleportation ready anyway!
 
@@ -4668,7 +4668,7 @@ ranger or druid. Trees can also be burned up. Dead trees and bushes are '*' symb
 Staircases-
 '<' and '>' are staircases leading upwards or downwards into towers or
 dungeons. (Press the according key to walk the staircase. Whenever you take a
-staircase, you'll receive the stair-GoI buff, see (0.4) for details on that.)
+staircase, you'll receive the 'stair GoI' buff, see (0.4) for details on that.)
 
 Doors-
 Light brown '+' are closed doors, ' are open or broken doors.
@@ -7720,7 +7720,7 @@ Word of Recall  Use it to quickly travel from the town or the wilderness into a
                 spot a monster you want to kill just after you read a WoR.
                 Word-of-Recall scrolls can be exchanged between an everlasting
                 and a non-everlasting player!
-                After being recalled the player will receive 'stair-goi' (a
+                After being recalled the player will receive 'stair goi' (a
                 temporary extra protection from taking damage) for a short
                 amount of time, see (0.4) for details.
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
