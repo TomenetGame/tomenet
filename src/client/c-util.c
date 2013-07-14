@@ -6129,6 +6129,7 @@ static void do_cmd_options_win(void)
 }
 
 #ifdef TEST_CLIENT
+#if defined(WINDOWS) || defined(USE_X11)
 #define MAX_FONTS 50
 static int font_name_cmp(const void *a, const void *b) {
 #if 0 /* simple way */
@@ -6152,12 +6153,11 @@ static void do_cmd_options_fonts(void) {
 
 	char font_name[MAX_FONTS][256], path[1024];
 	int fonts = 0;
+	char tmp_name[256];
 
 #ifdef WINDOWS /* Windows uses the .FON files */
 	DIR *dir;
 	struct dirent *ent;
-
-	char tmp_name[256];
 
 	/* read all locally available fonts */
 	memset(font_name, 0, sizeof(char) * (MAX_FONTS * 256));
@@ -6180,7 +6180,7 @@ static void do_cmd_options_fonts(void) {
 	closedir(dir);
 #endif
 
-#if defined(USE_X11) || defined(USE_GCU) /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) */
+#ifdef USE_X11 /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) */
 	/* we boldly assume that these exist by default! */
 	strcpy(font_name[0], "5x8");
 	strcpy(font_name[1], "6x9");
@@ -6240,6 +6240,7 @@ static void do_cmd_options_fonts(void) {
 			Term_putstr(1, vertikal_offset + j, -1, a, (char*)s);
 
 			/* Display the font of this window */
+			if (c_cfg.use_color && !term_get_visibility(j)) a = TERM_L_DARK;
 			strcpy(buf, get_font_name(j));
 			buf[59] = 0;
 			while(strlen(buf) < 59) strcat(buf, " ");
@@ -6267,6 +6268,9 @@ static void do_cmd_options_fonts(void) {
 			break;
 
 		case 'v':
+			if (y == 0) break; /* main window cannot be invisible */
+			term_toggle_visibility(y);
+			Term_putstr(0, 15, -1, TERM_YELLOW, "-- Changes to window visibilities require a restart of the client --");
 			break;
 
 		case '+':
@@ -6292,6 +6296,16 @@ static void do_cmd_options_fonts(void) {
 			break;
 
 		case '\r':
+			Term_putstr(0, 20, -1, TERM_L_GREEN, "Enter a font name:");
+			Term_gotoxy(0, 21);
+			strcpy(tmp_name, "");
+			if (!askfor_aux(tmp_name, 159, 0)) {
+				clear_from(20);
+				break;
+			}
+			clear_from(20);
+			if (!tmp_name[0]) break;
+			set_font_name(y, tmp_name);
 			break;
 
 		default:
@@ -6301,6 +6315,7 @@ static void do_cmd_options_fonts(void) {
 		}
 	}
 }
+#endif
 #endif
 
 errr options_dump(cptr fname)

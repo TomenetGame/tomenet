@@ -2878,6 +2878,12 @@ static void term_force_font(int term_idx, char fnt_name[256]) {
 	/* non-visible window has no fnt-> .. */
 	if (!term_prefs[term_idx].visible) return;
 
+
+	/* special hack: this window was invisible, but we just toggled
+	   it to become visible on next client start. - C. Blue */
+	if (!td->fnt) return;
+
+
 	/* Detemine "proper" number of rows/cols */
 	cols = ((Infowin->w - 2) / td->fnt->wid);
 	rows = ((Infowin->h - 2) / td->fnt->hgt);
@@ -2935,6 +2941,15 @@ void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name
 		*x = *y = *c = *r = 0;
 		return;
 	}
+
+
+	/* special hack: this window was invisible, but we just toggled
+	   it to become visible on next client start. - C. Blue */
+	if (!td->fnt) {
+		*x = *y = *c = *r = 0;
+		return;
+	}
+
 
 	strcpy(fnt_name, td->fnt->name);
 
@@ -3020,13 +3035,22 @@ bool ask_for_bigmap(void) {
 	return ask_for_bigmap_generic();
 }
 
-const char* get_font_name(int term) {
-	term_data *td = term_idx_to_term_data(term);
+const char* get_font_name(int term_idx) {
+	term_data *td = term_idx_to_term_data(term_idx);
 	if (td->fnt) return td->fnt->name;
 	else return DEFAULT_X11_FONT;
 }
-void set_font_name(int term, char* fnt) {
-	term_force_font(term, fnt);
+void set_font_name(int term_idx, char* fnt) {
+	term_force_font(term_idx, fnt);
+}
+void term_toggle_visibility(int term_idx) {
+	term_prefs[term_idx].visible = !term_prefs[term_idx].visible;
+	/* NOTE: toggling visible flag of a window during runtime is dangerous:
+	   Two "special hack"s were added in term_force_font() and x11win_getinfo()
+	   to accomodate for this and to continue to treat the window as invisible. */
+}
+bool term_get_visibility(int term_idx) {
+	return term_prefs[term_idx].visible;
 }
 
 #endif

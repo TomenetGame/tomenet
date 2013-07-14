@@ -419,7 +419,9 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 	int x, y, c, r;
 
 	x11win_getinfo(t, &x, &y, &c, &r, font_name);
+#if 0 /* we still want to save at least the new visibility state, if it was toggled via in-game menu */
 	if (!c) return; /* invisible window? */
+#endif
 
 	/* no line that gets modified? then keep original! */
 	strcpy(buf, buf_org);
@@ -430,18 +432,18 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 	} else if (!strncmp(ter_name, "_Visible", 8)) {
 		if (t != 0)
 			sprintf(buf, "%s_Visible\t%c\n", sec_name, term_prefs[t].visible ? '1' : '0');
-	} else if (!strncmp(ter_name, "_X", 2)) {
+	} else if (c && !strncmp(ter_name, "_X", 2)) {
 		if (x != -32000) /* don't save windows in minimized state */
 			sprintf(buf, "%s_X\t\t%d\n", sec_name, x);
 //			sprintf(buf, "%s_X\t\t%d\n", sec_name, term_prefs[t].x);
-	} else if (!strncmp(ter_name, "_Y", 2)) {
+	} else if (c && !strncmp(ter_name, "_Y", 2)) {
 		if (y != -32000) /* don't save windows in minimized state */
 			sprintf(buf, "%s_Y\t\t%d\n", sec_name, y);
 //			sprintf(buf, "%s_Y\t\t%d\n", sec_name, term_prefs[t].y);
-	} else if (!strncmp(ter_name, "_Columns", 8)) {
+	} else if (c && !strncmp(ter_name, "_Columns", 8)) {
 		if (t != 0)
 			sprintf(buf, "%s_Columns\t%d\n", sec_name, c);
-	} else if (!strncmp(ter_name, "_Lines", 6)) {
+	} else if (c && !strncmp(ter_name, "_Lines", 6)) {
 		if (t != 0)
 			sprintf(buf, "%s_Lines\t%d\n", sec_name, r);
 		else {

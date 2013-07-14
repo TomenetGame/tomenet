@@ -4103,15 +4103,21 @@ bool ask_for_bigmap(void) {
 #endif
 }
 
-const char* get_font_name(int term) {
-	if (data[term].font_file) return(data[term].font_file);
+const char* get_font_name(int term_idx) {
+	if (data[term_idx].font_file) return(data[term_idx].font_file);
 	else return DEFAULT_FONTNAME;
 }
-void set_font_name(int term, char* fnt) {
+void set_font_name(int term_idx, char* fnt) {
 	char fnt2[256], *fnt_ptr = fnt;
 	while (strchr(fnt_ptr, '\\')) fnt_ptr = strchr(fnt_ptr, '\\') + 1;
 	strcpy(fnt2, fnt_ptr);
-	term_force_font(&data[term], fnt2);
+	term_force_font(&data[term_idx], fnt2);
+}
+void term_toggle_visibility(int term_idx) {
+	data[term_idx].visible = !data[term_idx].visible;
+}
+bool term_get_visibility(int term_idx) {
+	return data[term_idx].visible;
 }
 
 #endif /* _Windows */
