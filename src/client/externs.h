@@ -21,6 +21,7 @@ extern void turn_off_numlock_X11(void);
 #if 1 /* CHANGE_FONTS_X11 */
 extern void change_font(int s);
 extern const char* get_font_name(int t);
+extern void set_font_name(int t, char* fnt);
 #endif
 extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name);
 extern void resize_main_window_x11(int cols, int rows);
@@ -846,6 +847,7 @@ extern int stricmp(cptr a, cptr b);
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 extern void change_font(int s);
 extern const char* get_font_name(int t);
+extern void set_font_name(int t, char* fnt);
 extern void resize_main_window_win(int cols, int rows);
 extern bool ask_for_bigmap(void);
 #endif

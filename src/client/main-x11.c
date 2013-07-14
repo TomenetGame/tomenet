@@ -3025,5 +3025,8 @@ const char* get_font_name(int term) {
 	if (td->fnt) return td->fnt->name;
 	else return DEFAULT_X11_FONT;
 }
+void set_font_name(int term, char* fnt) {
+	term_force_font(term, fnt);
+}
 
 #endif

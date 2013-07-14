@@ -4107,5 +4107,11 @@ const char* get_font_name(int term) {
 	if (data[term].font_file) return(data[term].font_file);
 	else return DEFAULT_FONTNAME;
 }
+void set_font_name(int term, char* fnt) {
+	char fnt2[256], *fnt_ptr = fnt;
+	while (strchr(fnt_ptr, '\\')) fnt_ptr = strchr(fnt_ptr, '\\') + 1;
+	strcpy(fnt2, fnt_ptr);
+	term_force_font(&data[term], fnt2);
+}
 
 #endif /* _Windows */

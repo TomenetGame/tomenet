@@ -6150,12 +6150,14 @@ static void do_cmd_options_fonts(void) {
 	char ch;
 	bool go = TRUE;
 
-	char font_name[MAX_FONTS][256], tmp_name[256], path[1024];
+	char font_name[MAX_FONTS][256], path[1024];
 	int fonts = 0;
 
+#ifdef WINDOWS /* Windows uses the .FON files */
 	DIR *dir;
 	struct dirent *ent;
 
+	char tmp_name[256];
 
 	/* read all locally available fonts */
 	memset(font_name, 0, sizeof(char) * (MAX_FONTS * 256));
@@ -6176,6 +6178,26 @@ static void do_cmd_options_fonts(void) {
 		}
 	}
 	closedir(dir);
+#endif
+
+#if defined(USE_X11) || defined(USE_GCU) /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) */
+	/* we boldly assume that these exist by default! */
+	strcpy(font_name[0], "5x8");
+	strcpy(font_name[1], "6x9");
+	strcpy(font_name[2], "8x13");
+	strcpy(font_name[3], "9x15");
+	strcpy(font_name[4], "10x20");
+	strcpy(font_name[5], "12x24");
+	fonts = 6;
+	//todo: test for more available, good fonts
+	/*
+	    lucidasanstypewriter-8/10/12/18
+	    -misc-fixed-medium-r-normal--15-140-75-75-c-90-iso8859-1
+	    -sony-fixed-medium-r-normal--16-*-*-*-*-*-jisx0201.1976-0
+	    -misc-fixed-medium-r-normal--20-200-75-75-c-100-iso8859-1
+	    -sony-fixed-medium-r-normal--24-170-100-100-c-120-jisx0201.1976-0
+	*/
+#endif
 
 	if (!fonts) {
 		c_msg_format("No .fon font files found in directory (%s).", path);
@@ -6183,6 +6205,18 @@ static void do_cmd_options_fonts(void) {
 	}
 
 	qsort(font_name, fonts, sizeof(char[256]), font_name_cmp);
+//	for (j = 0; j < fonts; j++) c_msg_format("'%s'", font_name[j]);
+
+#ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
+	for (j = 0; j < fonts; j++) {
+		strcpy(tmp_name, font_name[j]);
+		//path_build(font_name[j], 1024, path, font_name[j]);
+		strcpy(font_name[j], ".\\");
+		strcat(font_name[j], path);
+		strcat(font_name[j], "\\");
+		strcat(font_name[j], tmp_name);
+	}
+#endif
 
 
 	/* Clear screen */
@@ -6207,11 +6241,16 @@ static void do_cmd_options_fonts(void) {
 
 			/* Display the font of this window */
 			strcpy(buf, get_font_name(j));
+			buf[59] = 0;
+			while(strlen(buf) < 59) strcat(buf, " ");
 			Term_putstr(20, vertikal_offset + j, -1, a, buf);
 		}
 
 		/* Place Cursor */
-		Term_gotoxy(2, vertikal_offset + y);
+		//Term_gotoxy(20, vertikal_offset + y);
+		/* hack: hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		/* Get key */
 		ch = inkey();
@@ -6231,9 +6270,25 @@ static void do_cmd_options_fonts(void) {
 			break;
 
 		case '+':
+			/* find out which of the fonts in lib/xtra/fonts we're currently using */
+			for (j = 0; j < fonts - 1; j++) {
+				if (!strcmp(font_name[j], get_font_name(y))) {
+					/* advance to next font file in lib/xtra/font */
+					set_font_name(y, font_name[j + 1]);
+					break;
+				}
+			}
 			break;
 
 		case '-':
+			/* find out which of the fonts in lib/xtra/fonts we're currently using */
+			for (j = 1; j < fonts; j++) {
+				if (!strcmp(font_name[j], get_font_name(y))) {
+					/* retreat to previous font file in lib/xtra/font */
+					set_font_name(y, font_name[j - 1]);
+					break;
+				}
+			}
 			break;
 
 		case '\r':
@@ -6244,12 +6299,6 @@ static void do_cmd_options_fonts(void) {
 			y = (y + ddy[d] + NR_OPTIONS_SHOWN) % NR_OPTIONS_SHOWN;
 			if (!d) bell();
 		}
-	}
-
-	/* Notice changes */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-		/* Dead window */
-		if (!ang_term[j]) continue;
 	}
 }
 #endif
