@@ -7677,13 +7677,17 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				    magik(10) && !p_ptr->martyr &&
 				    (r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5)))
 				{
+					char m_name[MNAME_LEN];
+					monster_desc(0, m_name, m_idx, 0);
+
 					/* Allow movement */
 					do_move = TRUE;
 
 					/* Monster pushed past the player */
 					did_move_body = TRUE;
 
-					/* XXX XXX XXX Message */
+					/* Log this to be safe about MOVE_BODY vs TELE_TO related kills */
+					s_printf("MOVE_BODY: '%s' got switched by '%s'.", q_ptr->name, m_name);
 				}
 				else
 				{
