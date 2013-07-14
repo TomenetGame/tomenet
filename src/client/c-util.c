@@ -1462,7 +1462,8 @@ bool askfor_aux(char *buf, int len, char mode)
 
 	/* Display the default answer */
 	Term_erase(x, y, len);
-	if (mode & ASKFOR_PRIVATE) c_ptr_last(x, y, vis_len, TERM_YELLOW, "(default)");
+fprintf(stderr, "%s", buf);
+	if (mode & ASKFOR_PRIVATE) c_ptr_last(x, y, vis_len, TERM_YELLOW, buf[0] ? "(default)" : "");
 	else c_ptr_last(x, y, vis_len, TERM_YELLOW, buf);
 
 	if (mode & ASKFOR_CHATTING) {
@@ -5692,8 +5693,9 @@ static void do_cmd_options_aux(int page, cptr info)
 	while (TRUE)
 	{
 		/* Prompt XXX XXX XXX */
-		sprintf(buf, "%s (RET advances, y/n sets, t toggles, ESC accepts)", info);
-		prompt_topline(buf);
+		sprintf(buf, "%s (\377yUp/Down\377w moves, \377yy\377w/\377yn\377w sets, \377yt\377w toggles, \377yESC\377w accepts)", info);
+		//prompt_topline(buf);
+		Term_putstr(0, 0, -1, TERM_WHITE, buf);
 
 		/* Display the options */
 		for (i = 0; i < n; i++)
@@ -5805,12 +5807,12 @@ void display_account_information(void) {
 	if (acc_opt_screen) {
 		if (acc_got_info) {
 			if (acc_flags & ACC_TRIAL) {
-				prt("Your account hasn't been validated.", 3, 2);
+				c_prt(TERM_YELLOW, "Your account hasn't been validated.", 3, 2);
 			} else {
-				prt("Your account is valid.", 3, 2);
+				c_prt(TERM_L_GREEN, "Your account is valid.", 3, 2);
 			}
 		} else {
-			prt("Waiting...", 3, 2);
+			c_prt(TERM_SLATE, "Retrieving data...", 3, 2);
 		}
 	}
 }
@@ -5843,14 +5845,20 @@ static void do_cmd_options_acc(void)
 		if (change_pass) {
 			prt("Change password", 1, 0);
 			prt("Maximum length is 15 characters", 3, 2);
-			prt("Old password:", 6, 2);
-			prt("New password:", 8, 2);
-			prt("Confirm:", 10, 2);
+			c_prt(TERM_L_WHITE, "Old password:", 6, 2);
+			c_prt(TERM_L_WHITE, "New password:", 8, 2);
+			c_prt(TERM_L_WHITE, "Confirm:", 10, 2);
+			c_prt(TERM_L_WHITE, "(by typing the new password once more)", 11, 3);
 
 			/* Ask for old password */
 			move_cursor(6, 16);
 			tmp[0] = '\0';
 			if (!askfor_aux(tmp, 15, ASKFOR_PRIVATE)) {
+				change_pass = FALSE;
+				continue;
+			}
+			if (!tmp[0]) {
+				c_prt(TERM_YELLOW, "Password must not be empty", 8, 2);
 				change_pass = FALSE;
 				continue;
 			}
@@ -5872,6 +5880,7 @@ static void do_cmd_options_acc(void)
 
 				/* Ask for the confirmation */
 				move_cursor(10, 16);
+				tmp[0] = '\0'; 
 				if (!askfor_aux(tmp, 15, ASKFOR_PRIVATE)) {
 					change_pass = FALSE;
 					break;
@@ -5882,7 +5891,7 @@ static void do_cmd_options_acc(void)
 
 				/* Compare */
 				if (strcmp(new_pass, con_pass)) {
-					prt("Passwords don't match!", 8, 2);
+					c_prt(TERM_YELLOW, "Passwords don't match!", 8, 2);
 					Term_erase(16, 8, 255);
 					Term_erase(16, 10, 255);
 				} else break;
@@ -5892,9 +5901,9 @@ static void do_cmd_options_acc(void)
 
 			/* Send the request */
 			if (Send_change_password(old_pass, new_pass) == 1) {
-				c_msg_print("Attempting to change password...");
+				c_msg_print("\377gPassword change has been submitted.");
 			} else {
-				c_msg_print("Failed to send request!");
+				c_msg_print("\377yFailed to send password change request.");
 			}
 
 			/* Wipe the passwords from memory */
@@ -5908,7 +5917,7 @@ static void do_cmd_options_acc(void)
 		} else {
 			prt("Account information", 1, 0);
 			display_account_information();
-			prt("(C) Change account password", 19, 2);
+			Term_putstr(2, 19, -1, TERM_WHITE, "(\377yC\377w) Change account password");
 		}
 
 		ch = inkey();
