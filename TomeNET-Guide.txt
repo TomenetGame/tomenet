@@ -396,7 +396,7 @@ q       q       quaff a potion.
 r       r       read a scroll.
 
 E       E       eat. (Draconians can eat firestones to gain temporary special
-                abilities, see (5.9).)
+                abilities, see (5.9). Players in dragon form can eat them too.)
 
 F       F       fuel your light source.
                 Use oil for lanterns, and torches to fuel another torch.
