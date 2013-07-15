@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. July 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 15. July 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1382,6 +1382,20 @@ Iron Team   A special type of party which can only be formed with newly
             created characters. Its members only gain experience if all
             members are online and on the same dungeon level.
 
+kinging     The process of beating Morgoth, the game boss, and thereby
+            acquiring a royal title (king/queen/emperor/empress).
+            Such player characters are also referred to as 'winners'.
+            A player must be at least level 40 to get credit for beating
+            Morgoth.
+
+ rekinging  Fallen winners, ie players who beat Morgoth but later on died and
+            thereby lost their royal title again, can attempt to regain it by
+            teaming up with someone who has not yet killed Morgoth.
+            If that person lands the killing blow, everyone in her/his party
+            on the same floor will gain winner status again, even fallen kings.
+            A player must be at least level 40 to get credit for beating
+            Morgoth.
+
 klevel, olevel
             Somewhat more technical terms, these stand for the exact type of
             item level that is meant in a certain context:
@@ -1742,7 +1756,8 @@ After defeating Morgoth, they will be able to advance further up to level 99.
 
 Players who defeat Morgoth, become 'winners' and get the title of King and
 Queen respectively, or Emperor/Empress if their character is of unworldly or
-hellish mode.
+hellish mode. A player must be at least level 40 to get credit for this.
+
 When you win the game, an automatic chardump is generated in /lib/user called
 '<charname>-victory.txt' (see 8.2) which you can view with any text editor.
 Also, a screenshot is made automatically, displaying your situation, saved
@@ -1760,9 +1775,9 @@ Khamul the Black Easterling and The Witch-King of Angmar.
 Morgoth has the ability to summon these, so you should destroy them all
 before facing him.
 
-Morgoth is also able to summon all other unique beings, so one of your tasks
-to prevail against him will be to kill off as many of the powerful unique foes
-as you can before facing him.
+Morgoth is also able to summon other powerful unique beings, so one of your
+tasks to prevail against him will be to kill off as many of the powerful unique
+foes as you can before facing him.
 
 Morgoth, the god of destruction, has reinforced his surroundings to be
 especially devastating to all living beings:
@@ -1773,6 +1788,18 @@ If you team up against him, he will grow stronger for every additional player
 who enters his dungeon level. Growing stronger in fact means that he gains a
 hit point and speed bonus. If a player leaves his level, he will weaken again.
 See the following paragraph (1.6) for more information.
+
+When a player lands the killing blow on Morgoth, everyone else who is in her or
+his party and also on the same dungeon floor will get credit for winning the
+game too and receive a royal title accordingly. Even 'fallen winners' (players
+who have beaten Morgoth already but lost their royal title to death) can
+regain their title this way - by teaming up with someone who hasn't killed
+Morgoth yet and making sure that that player lands the killing blow.
+Each player must be at least level 40 to get credit for beating Morgoth.
+
+Morgoth always drops his crown and hammer. If he is defeated by a party, those
+two items will drop multiple times so that everyone can actually pick up one of
+each.
 
 A very dangerous thing about Nazgul is that weapons get quickly destroyed if
 they come in contact with these corrupted beings.
@@ -1825,10 +1852,10 @@ at close quarters combat. In general, do not underestimate Sauron's power!
 (1.3b) How to encounter the final boss: Morgoth, Lord of Darkness
 -----------------------------------------------------------------
 -Morgoth is found only at dungeon level 100 or deeper.
--He won't show up until you killed Sauron, the Sorceror (who usually appears
- at dungeon level 99).
--Morgoth and Sauron do not neccessarily spawn on each fitting dungeon level,
- sometimes you have to search for them, like for all other monsters/uniques.
+-He won't show up until you killed Sauron, the Sorceror, who is found at the
+ bottom of Mt Doom (which is dungeon level 99).
+-Morgoth does not neccessarily spawn on each fitting dungeon level,
+ sometimes you have to search for him, like for all other monsters/uniques.
 -If a player who hasn't killed Sauron yet or who has already beaten Morgoth
  enters a dungeon level where Morgoth is currently on, Morgoth will instantly
  teleport to a different dungeon level.
@@ -1840,6 +1867,9 @@ at close quarters combat. In general, do not underestimate Sauron's power!
  In details, for each additional player besides the first player joining his
  level, Morgoth gains +20000 hit points and +6 speed. So if a team of three
  challenges him, he will have 30000+2*20000 = 70000 HP and 30+2*6 = 42 speed.
+ Everyone who is at least level 40 and on the same dungeon floor and in the
+ same party as the player who lands the killing blow will get credit for
+ winning the game and receive a royal title accordingly.
 -There are no obstacles that can hold Morgoth back for long.
 
 See (1.3a) for more information about Morgoth.
