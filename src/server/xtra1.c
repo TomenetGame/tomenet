@@ -1107,7 +1107,7 @@ void calc_mana(int Ind)
 	player_type *p_ptr2 = NULL; /* silence the warning */
 	int Ind2;
 
-	int levels, cur_wgt, max_wgt;
+	int levels, cur_wgt, max_wgt, tmp_lev;
 	s32b new_mana = 0;
 
 	object_type *o_ptr;
@@ -1117,9 +1117,12 @@ void calc_mana(int Ind)
 	}
 
 	/* Extract "effective" player level */
-	if (p_ptr->lev <= 50) levels = p_ptr->lev;
+	tmp_lev = p_ptr->lev * 10;
+	if (p_ptr->lev <= 50) levels = tmp_lev;
 	/* Less additional mana gain for each further post-king level */
-	else levels = 50 + (p_ptr->lev - 50) / 2;
+	else if (p_ptr->lev <= 70) levels = 500 + (tmp_lev - 500) / 2;
+	else if (p_ptr->lev <= 85) levels = 500 + 100 + (tmp_lev - 700) / 3;
+	else levels = 500 + 100 + 50 + (tmp_lev - 850) / 4;
 
 	/* Hack -- no negative mana */
 	if (levels < 0) levels = 0;
@@ -1129,35 +1132,35 @@ void calc_mana(int Ind)
 	case CLASS_MAGE:
 		/* much Int, few Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels / (300)) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels / (300));
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels  +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels) / 3000;
 		break;
 	case CLASS_RANGER:
 //	case CLASS_DRUID: -- moved
 		/* much Int, few Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels / (500)) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels / (500));
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels) / 5000;
 		break;
 	case CLASS_PRIEST:
 	case CLASS_DRUID:
 		/* few Int, much Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels / (400)) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels / (400));
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels) / 4000;
 		break;
 	case CLASS_PALADIN:
 		/* few Int, much Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels / (500)) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels / (500));
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels) / 5000;
 		break;
 	case CLASS_ROGUE:
 	case CLASS_MIMIC:
 		/* much Int, few Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels / (550)) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels / (550));
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels) / 5500;
 		break;
 	case CLASS_ARCHER:
 	case CLASS_WARRIOR:
@@ -1167,28 +1170,28 @@ void calc_mana(int Ind)
 #if 0
 		/* more Wis than Int */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 35 * levels / (400)) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 65 * levels / (400));
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 35 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 65 * levels) / 4000;
 #else
 		/* Depends on what's better, his WIS or INT */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 			    ((p_ptr->stat_ind[A_INT] > p_ptr->stat_ind[A_WIS]) ?
-			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 100 * levels / (400)) :
-			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 100 * levels / (400)));
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 100 * levels) :
+			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 100 * levels)) / 4000;
 #endif
 		break; 
 	case CLASS_RUNEMASTER:
 		//Spells are now much closer in cost to mage spells. Returning to a similar mode
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
-		    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 65 * levels / (300)) +
-		    (adj_mag_mana[p_ptr->stat_ind[A_DEX]] * 35 * levels / (300));
+		    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 65 * levels +
+		    adj_mag_mana[p_ptr->stat_ind[A_DEX]] * 35 * levels) / 3000;
 		break;
 	case CLASS_MINDCRAFTER:
 		/* much Int, some Chr (yeah!), little Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + /* <- seems this might be important actually */
-			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels / (400)) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_CHR]] * 10 * levels / (400)) +
-			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 5 * levels / (400));
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_CHR]] * 10 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 5 * levels) / 4000;
 		break;
 
 	case CLASS_ADVENTURER:
@@ -1196,8 +1199,8 @@ void calc_mana(int Ind)
 	default:
 		/* 50% Int, 50% Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
-		(adj_mag_mana[p_ptr->stat_ind[A_INT]] * 50 * levels / (550)) +
-		(adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 50 * levels / (550));
+		(adj_mag_mana[p_ptr->stat_ind[A_INT]] * 50 * levels +
+		adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 50 * levels) / 5500;
 		break;
 	}
 
@@ -1482,7 +1485,15 @@ void calc_hitpoints(int Ind)
 	else {
 		/* reduce post-king gain */
 		player_hp_eff = p_ptr->player_hp[50 - 1];
-		player_hp_eff += (p_ptr->player_hp[p_ptr->lev - 1] - p_ptr->player_hp[50 - 1]) / 2;
+		if (p_ptr->lev <= 70) player_hp_eff += (p_ptr->player_hp[p_ptr->lev - 1] - p_ptr->player_hp[50 - 1]) / 2;
+		else {
+			player_hp_eff += (p_ptr->player_hp[70 - 1] - p_ptr->player_hp[50 - 1]) / 2;
+			if (p_ptr->lev <= 85) player_hp_eff += (p_ptr->player_hp[p_ptr->lev - 1] - p_ptr->player_hp[70 - 1]) / 3;
+			else {
+				player_hp_eff += (p_ptr->player_hp[85 - 1] - p_ptr->player_hp[70 - 1]) / 3;
+				player_hp_eff += (p_ptr->player_hp[p_ptr->lev - 1] - p_ptr->player_hp[85 - 1]) / 4;
+			}
+		}
 	}
 
 	/* Un-inflate "half-hitpoint bonus per level" value */
@@ -1539,7 +1550,11 @@ void calc_hitpoints(int Ind)
 #endif
 
 		/* Help very weak characters close to level 50 to avoid instakill on trying to win */
+#if 0 /* not possible, because a weak character would LOSE HP when going from 50 -> 51 */
+		mhp += (weakling_boost * 50) / ((p_ptr->pclass == CLASS_MAGE && p_ptr->lev > 50) ? p_ptr->lev : 50); /* Istari have disruption shield, they don't need HP for 'tanking' */
+#else
 		mhp += weakling_boost;
+#endif
 	}
 
 	/* instead let's make it an option to weak chars, instead of further buffing chars with don't
@@ -1636,14 +1651,12 @@ void calc_hitpoints(int Ind)
 #if 1
 	if (p_ptr->body_monster) {
 		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
-		mhp += p_ptr->lev > 50 ?
+		mhp += (p_ptr->lev > 50) ?
 		    (((p_ptr->lev - 50) * ((r_info[p_ptr->body_monster].level > 80 ? 80 :
  #if 0 /* for 15..17/32 hp birth calc */
-		    /* was '*8' (before post-king HP reduction); *6 : 10% bonus over Warrior max; *5 : +200 more than warrior max */
 		    r_info[p_ptr->body_monster].level) + 30)) / 100) * 5 : 0;
  #else /* for 31..33/64 hp birth calc */
-		    /* *4 : +210 more than warrior avg; +180 more than warrior max */
-		    r_info[p_ptr->body_monster].level) + 30)) / 100) * 4 : 0;
+		    r_info[p_ptr->body_monster].level) + 30)) / 25) : 0;
  #endif 
 	}
 #endif
