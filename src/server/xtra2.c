@@ -3381,6 +3381,13 @@ bool set_food(int Ind, int v)
 	    p_ptr->food = PY_FOOD_FULL - 1;
 	    return (FALSE);
 	}
+
+	/* Ents will never get gorged, but can still go hungry/thirsty */
+	if (p_ptr->prace == RACE_ENT && v >= PY_FOOD_MAX) {
+		p_ptr->food = PY_FOOD_MAX - 1;
+		return (FALSE);
+	}
+
 	/* Warrior does not need food badly */
 #ifdef ARCADE_SERVER
 	p_ptr->food = PY_FOOD_FULL - 1;
@@ -3487,8 +3494,8 @@ bool set_food(int Ind, int v)
 					msg_print(Ind, "\374\377oWARNING: Your character is 'hungry'. Drink some blood by killing some");
 					msg_print(Ind, "\374\377o         monsters in melee (close combat). Town monsters will work too.");
 				} else if (p_ptr->prace == RACE_ENT) {
-					msg_print(Ind, "\374\377oWARNING: Your character is 'hungry'. Read a scroll of satisfy hunger or");
-					msg_print(Ind, "\374\377o         rest (SHIFT+R) on earth/dirt/grass/water floor tiles for a while.");
+					msg_print(Ind, "\374\377oWARNING: Your character is 'hungry'. Find something to drink or rest ");
+					msg_print(Ind, "\374\377o         (SHIFT+R) on earth/dirt/grass/water floor tiles for a while.");
 				} else {
 					msg_print(Ind, "\374\377oWARNING: Your character is 'hungry'. Press SHIFT+E to eat something");
 					msg_print(Ind, "\374\377o         or read a 'scroll of satisfy hunger' if you have one.");

@@ -1647,9 +1647,9 @@ static void player_outfit(int Ind)
 
 	body = (p_ptr->mode & MODE_FRUIT_BAT) ? 1 : 0;
 
-	/* Hack -- Give the player some food */
+	/* Hack -- Give the player some water */
 	if (p_ptr->prace == RACE_ENT) {
-		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
+		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_WATER));
 		o_ptr->number = rand_range(3, 7);
 		do_player_outfit();
 	}

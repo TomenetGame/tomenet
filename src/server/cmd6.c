@@ -1313,6 +1313,8 @@ void do_cmd_quaff_potion(int Ind, int item)
 #else /* until then.. */
 	if (p_ptr->prace == RACE_VAMPIRE) {
 		/* nothing */
+	} else if (p_ptr->prace == RACE_ENT) {
+		(void)set_food(Ind, p_ptr->food + (o_ptr->pval * 10));
 	} else if (p_ptr->suscep_life) {
 		(void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2) / 3);
 	} else
@@ -2561,8 +2563,10 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 
 			case SV_SCROLL_SATISFY_HUNGER:
 				//if (!p_ptr->suscep_life)
-				if (p_ptr->prace != RACE_VAMPIRE)
+				if (p_ptr->prace != RACE_VAMPIRE && p_ptr->prace != RACE_ENT) {
 					if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+				} else
+					msg_print(Ind, "The scroll has no effect on you.");
 				break;
 
 			case SV_SCROLL_BLESSING:
