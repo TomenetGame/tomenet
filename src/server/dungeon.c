@@ -3413,12 +3413,14 @@ static bool process_player_end_aux(int Ind)
 		} else if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_DIRT) {
 			i = 100;
 		} else if (c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_TREE) {
-			i = 75;
+			i = 70;
+		} else {
+			i = 0;
 		}
-		if (set_food(Ind, p_ptr->food + i)) {
+		if (i > 0 && set_food(Ind, p_ptr->food + i)) {
 			msg_print(Ind, "You gain some nourishment from around you.");
 			switch(i) {
-				case 75:
+				case 70:
 					msg_format_near(Ind, "\374\377wYou hear strange sounds coming from the direction of %s.", p_ptr->name);
 					break;
 				case 100:

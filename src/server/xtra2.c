@@ -3382,20 +3382,18 @@ bool set_food(int Ind, int v)
 	    return (FALSE);
 	}
 
-	/* Ents will never get gorged, but can still go hungry/thirsty */
-	if (p_ptr->prace == RACE_ENT && v >= PY_FOOD_MAX) {
-		p_ptr->food = PY_FOOD_MAX - 1;
-		return (FALSE);
-	}
-
 	/* Warrior does not need food badly */
 #ifdef ARCADE_SERVER
 	p_ptr->food = PY_FOOD_FULL - 1;
 	return (FALSE);
-#endif
-
+#endif 
 	/* Hack -- Force good values */
 	v = (v > 20000) ? 20000 : (v < 0) ? 0 : v;
+
+	/* Ents will never get gorged, but can still go hungry/thirsty */
+	if (p_ptr->prace == RACE_ENT && v >= PY_FOOD_MAX ) {
+		v = PY_FOOD_MAX - 1;
+	}
 
 	/* Fainting / Starving */
 	if (p_ptr->food < PY_FOOD_FAINT) old_aux = 0;
