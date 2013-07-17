@@ -5861,6 +5861,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 /* desc, min_lv, rchance, dd, ds, effect */
 martial_arts ma_blows[MAX_MA] =
 {
+#ifndef RPG_SERVER 
 	{ "You punch %s",                          1, 0, 1, 4, 0 },
 	{ "You kick %s",                           2, 0, 1, 6, 0 },
 	{ "You strike %s",                         3, 0, 1, 7, 0 },
@@ -5881,6 +5882,28 @@ martial_arts ma_blows[MAX_MA] =
 	/* Kings only (for NR:) */
 	{ "You bash %s with a Titan's Fist",       48, 45, 8, 5, 20 },
 	{ "You strike %s with a Phoenix Claw",     48, 45, 5, 9, MA_ROYAL_SLOW },
+#else //let's align the text so monster names are readable even when the messages are passing by
+	{ "You damage %s with a punch",          1, 0, 1, 4, 0 },
+	{ "You damage %s with a kick",           2, 0, 1, 6, 0 },
+	{ "You damage %s with a strike",         3, 0, 1, 7, 0 },
+	{ "You damage %s with your knee",        5, 5, 2, 3, MA_KNEE },
+	{ "You strike %s with your elbow",       7, 5, 1, 8, 0 },
+	{ "You damage %s with a thrust",         9, 10, 2, 5, 0 },
+	{ "You damage %s with a kick",           11, 10, 2, 5, MA_SLOW },
+	{ "You strike %s with an uppercut",      13, 12, 4, 3, 4 },
+	{ "You damage %s with a double-kick",    16, 15, 4, 4, 0 },
+	{ "You strike %s with a Cat's Claw",     20, 20, 6, 3, 0 },
+	{ "You damage %s with a jump kick",      25, 25, 3, 9, 6 },
+	{ "You strike %s with an Eagle's Claw",  29, 25, 7, 4, 0 },
+	{ "You damage %s with a circle kick",    33, 30, 4, 9, 0 },
+	{ "You pummel %s with an Iron Fist",     37, 35, 6, 6, 8 },
+	{ "You damage %s with a flying kick",    41, 35, 5, 8, 0 },
+	{ "You pummel %s with a Dragon Fist",    45, 35, 6, 8, 10 },
+	{ "You damage %s with a Crushing Blow",  48, 35, 8, 7, 12 },
+	/* Kings only (for NR:) */
+	{ "You pummel %s with a Titan's Fist",   48, 45, 8, 5, 20 },
+	{ "You strike %s with a Phoenix Claw",   48, 45, 5, 9, MA_ROYAL_SLOW },
+#endif
 };
 
 /*
