@@ -1888,6 +1888,8 @@ the mundane world.
 
 (2.1) Installing TomeNET
 ------------------------
+(Covered are Windows, Linux, OSX, FreeBSD.)
+
 Go to http://www.tomenet.net/ (or one of our personal pages) to download the
 latest client. Extract it to a new directory, preserving the pathnames.
 
@@ -2149,6 +2151,15 @@ game windows with the mouse, and do not require manual editing.
 See 'Configure TomeNET on Linux' above, it's basically the same.
 Mac OS X also uses the ".tomenetrc" configuration file which should be in your
 home folder, same as Linux.
+
+
+TomeNET on FreeBSD:
+-------------------
+Should be same as on Linux, except that the "8x13" standard font might not get
+found, preventing TomeNET from starting. A fix according to "N der Fuenfte":
+  root% cd /usr/ports/x11-fonts/xorg-fonts
+  root% make install clean
+  root% # restart X server, if in doubt, just reboot PC.
 
 
 (2.1a) Installing sound and music packs
