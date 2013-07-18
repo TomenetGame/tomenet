@@ -9283,7 +9283,7 @@ Strength (STR)
      weapon that is too heavy for you.
     -How heavy may your armour be? You will lose mana, boni or combat abilties
      if it's too heavy for you.
-    -How much damage do you inflict on enemies? (to-dam bonus)
+    -How much damage do you inflict on enemies in melee combat? (to-mdam bonus)
     -Are you able to deliver several blows per round with your weapon?
      (For details, also see (6.5).)
     -How much can you carry in your backpack without getting slowed down?
