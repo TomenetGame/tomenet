@@ -5928,6 +5928,9 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 	(T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || \
 	(T)->name1 == ART_PHASING || (T)->name1 == ART_MIRROROFGLORY)
 
+/* allow Ring of Phasing to be permanent until someone else beats Zu-Aon */
+#define RING_OF_PHASING_NO_TIMEOUT
+
 /* artifacts that cannot be deposited on an empty/deallocated dun/wild floor,
    nor being dropped inside houses (if cfg.anti_arts_hoard is on.) */
 #define undepositable_artifact_p(T) \

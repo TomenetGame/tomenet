@@ -8824,6 +8824,12 @@ void determine_artifact_timeout(int a_idx) {
 	}
 	forge.name1 = a_idx;
 
+#ifdef RING_OF_PHASING_NO_TIMEOUT
+	if (a_idx == ART_PHASING) {
+		/* special treatment: it's pseudo-permanent, but gets erased when someone else kills Zu-Aon */
+		a_info[a_idx].timeout = -1;
+	} else
+#endif
 	if (multiple_artifact_p(&forge)) {
 		a_info[a_idx].timeout = -1; /* grond/crown don't expire */
 		return;

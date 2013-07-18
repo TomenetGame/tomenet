@@ -5218,7 +5218,19 @@ if (cfg.unikill_format) {
 #else
 		    && (!a_info[a_idx].rarity || !rand_int(3))
 #endif
-		    && !cfg.arts_disabled && a_info[a_idx].cur_num == 0) {
+		    && !cfg.arts_disabled &&
+#ifdef RING_OF_PHASING_NO_TIMEOUT
+		    (
+#endif
+		    a_info[a_idx].cur_num == 0
+#ifdef RING_OF_PHASING_NO_TIMEOUT
+		    || a_idx == ART_PHASING)
+#endif
+		    ) {
+#ifdef RING_OF_PHASING_NO_TIMEOUT
+			/* remove current ring of phasing, so it can be dropped anew */
+			if (a_info[a_idx].cur_num) erase_artifact(a_idx);
+#endif
 			s_printf("preparing FINAL_ARTIFACT %d", a_idx);
 			a_ptr = &a_info[a_idx];
 			qq_ptr = &forge;
