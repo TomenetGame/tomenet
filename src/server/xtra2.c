@@ -5263,10 +5263,12 @@ if (cfg.unikill_format) {
 
 				/* Drop the artifact from heaven */
 #ifdef PRE_OWN_DROP_CHOSEN
-				qq_ptr->level = 0;
-				qq_ptr->owner = p_ptr->id;
-				qq_ptr->mode = p_ptr->mode;
-				determine_artifact_timeout(a_idx);
+				else { /* ring of phasing is never 0'ed */
+					qq_ptr->level = 0;
+					qq_ptr->owner = p_ptr->id;
+					qq_ptr->mode = p_ptr->mode;
+					determine_artifact_timeout(a_idx);
+				}
 #endif
 				art_created = TRUE;
 				drop_near(qq_ptr, -1, wpos, y, x);
@@ -5643,7 +5645,7 @@ if (cfg.unikill_format) {
 			/* Get local object */
 			qq_ptr = &forge;
 			object_wipe(qq_ptr);
-			/* Drop Scroll Of Artifact Creation if Ring Of Phasing already exists */
+			/* Drop Scroll Of Artifact Creation (extra, if Ring Of Phasing already exists?) */
 			invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
 			qq_ptr->number = 1; /*(a_info[a_idx].cur_num == 0 || art_created) ? 1 : 2;*/
 			qq_ptr->note = local_quark;
