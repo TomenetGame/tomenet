@@ -5018,7 +5018,7 @@ void monster_death(int Ind, int m_idx)
 		   who haven't explicitely killed it yet - C. Blue */
 		for (i = 1; i <= NumPlayers; i++) {
 			if (i == Ind) continue;
-//for testing		if (is_admin(Players[i])) continue;
+			if (is_admin(Players[i])) continue;
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			/* it's sufficient to just be on the same dungeon floor to get credit */
 			if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
