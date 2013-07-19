@@ -3698,7 +3698,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 {
 	int i = 0, j, n;
 	int *ok_ego, ok_num = 0;
-	bool ret = FALSE;
+	bool ret = FALSE, double_ok = !(resf & RESF_NODOUBLEEGO);
 	byte tval = o_ptr->tval;
 #if 0 /* make_ego_item() is called BEFORE the book is set to a specific school spell! */
 	bool crystal =
@@ -3792,6 +3792,8 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 			o_ptr->name3 += rand_int(0xFFFF);
 		}
 
+		if ((e_ptr->fego[0] & ETR4_NO_DOUBLE_EGO)) double_ok = FALSE;
+
 		/* Success */
 		ret = TRUE;
 		break;
@@ -3803,7 +3805,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 	 */
 	/* try only when it's already ego	- Jir - */
 //	if (magik(7 + luck(-7, 7)) && (!o_ptr->name2b))
-	if (ret && magik(7) && (!o_ptr->name2b) && !(resf & RESF_NODOUBLEEGO)) {
+	if (ret && double_ok && magik(7) && (!o_ptr->name2b)) {
 		/* Now test them a few times */
 		for (j = 0; j < ok_num * 10; j++) {
 			ego_item_type *e_ptr;
@@ -3812,6 +3814,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 			e_ptr = &e_info[i];
 
 			if (i == EGO_ETHEREAL && (resf & RESF_NOETHEREAL)) continue;
+			if ((e_ptr->fego[0] & ETR4_NO_DOUBLE_EGO)) continue;
 
 			/* Cannot be a double ego of the same ego type */
 			if (i == o_ptr->name2) continue;

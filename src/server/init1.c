@@ -904,7 +904,7 @@ static cptr ego_flags[] =
         "PVAL_M5",
         "AC_M5",
 
-        "XXX1",
+        "NO_DOUBLE_EGO",
         "XXX2",
         "XXX3",
         "XXXH1",

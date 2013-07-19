@@ -1581,18 +1581,13 @@ F:LITE1 | LITE2 | RES_DARK
 R:40
 F:RES_LITE
 
-#N:141:of the Shadows
-#X:A:0:6
-##T:39:0:99
-#T:39:0:1
-#W:0:1:20:40000
-#C:0:0:0:2
-#R:100
-#F:INVIS
-#R:70
-#F:RES_DARK
-#R:50
-#F:RES_LITE
+N:141:Enchanted
+X:B:0:20
+T:39:2:2
+W:0:3:10:6000
+C:0:0:0:4
+R:100
+F:SEARCH | NO_DOUBLE_EGO
 
 N:142:of Infravision
 X:A:0:3

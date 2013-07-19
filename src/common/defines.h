@@ -4706,19 +4706,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define ETR4_PVAL_M3           0x00002000L     /* Item has +(up to 3) to pval */
 #define ETR4_PVAL_M5           0x00004000L     /* Item has +(up to 5) to pval */
 #define ETR4_AC_M5             0x00008000L     /* Item has +(up to 5) to AC */
-#if 0
-#define ETR4_AC_M1             0x00008000L     /* Item has +1 to AC */
-#define ETR4_AC_M2             0x00010000L     /* Item has +(up to 2) to AC */
-#define ETR4_AC_M3             0x00020000L     /* Item has +(up to 3) to AC */
-#define ETR4_TH_M1             0x00080000L     /* Item has +1 to hit */
-#define ETR4_TH_M2             0x00100000L     /* Item has +(up to 2) to hit */
-#define ETR4_TH_M3             0x00200000L     /* Item has +(up to 3) to hit */
-#define ETR4_TH_M5             0x00400000L     /* Item has +(up to 5) to hit */
-#define ETR4_TD_M1             0x00800000L     /* Item has +1 to dam */
-#define ETR4_TD_M2             0x01000000L     /* Item has +(up to 2) to dam */
-#define ETR4_TD_M3             0x02000000L     /* Item has +(up to 3) to dam */
-#define ETR4_TD_M5             0x04000000L     /* Item has +(up to 5) to dam */
-#endif
+#define ETR4_NO_DOUBLE_EGO     0x00010000L     /* Item may not have two ego powers */
 #define ETR4_R_ESP             0x01000000L     /* Item has a random ESP */
 #define ETR4_NO_SEED           0x02000000L     /* Item doesn't have random seed */
 #define ETR4_LOW_ABILITY       0x04000000L     /* like ABILITY without top esp */
