@@ -728,6 +728,9 @@
 /* Give a crazy form learning boost inside Ironman Deep Dive Challenge? [9] */
 #define IDDC_MIMICRY_BOOST 9
 
+/* Make true artifacts pass their rarity roll more easily in IDDC? */
+#define IDDC_EASY_TRUE_ARTIFACTS
+
 /* Show character icon with coloured '@' or 'b' in top score table
    of the Ironman Deep Dive Challenge? */
 #define IDDC_HISCORE_SHOWS_ICON

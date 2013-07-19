@@ -3453,6 +3453,9 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 {
 	int	i, d, dlev = getlevel(wpos);
 	int	k_idx = 0;
+#ifdef IDDC_EASY_TRUE_ARTIFACTS
+	int	difficulty = in_irondeepdive(wpos) ? 2 : 1;
+#endif
 
 	/* Check if artifact generation is currently disabled -
 	   added this for maintenance reasons -C. Blue */
@@ -3500,7 +3503,11 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		if ((dlev >= 40) && (d > 0) && !magik(350 / (d + 3))) continue;
 
 		/* Artifact "rarity roll" */
+#ifdef IDDC_EASY_TRUE_ARTIFACTS
+		if (rand_int(a_ptr->rarity >> difficulty) != 0) return (FALSE);
+#else
 		if (rand_int(a_ptr->rarity) != 0) return (FALSE);
+#endif
 
 		/* Find the base object */
 		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
@@ -3553,6 +3560,9 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 {
 	int i, tries = 0, d, dlev = getlevel(wpos);
 	artifact_type *a_ptr;
+#ifdef IDDC_EASY_TRUE_ARTIFACTS
+	int difficulty = in_irondeepdive(wpos) ? 2 : 1;
+#endif
 
 	/* No artifacts in the town */
 	if (istown(wpos)) return (FALSE);
@@ -3605,7 +3615,11 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 			if ((dlev >= 40) && (d > 0) && !magik(350 / (d + 3))) continue;
 
 			/* We must make the "rarity roll" */
+#ifdef IDDC_EASY_TRUE_ARTIFACTS
+			if (rand_int(a_ptr->rarity >> difficulty) != 0) continue;
+#else
 			if (rand_int(a_ptr->rarity) != 0) continue;
+#endif
 
 			/* swallow true artifacts if true_art isn't allowed
 			   (meaning that a king/queen did the monster kill!) */
