@@ -3454,7 +3454,7 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 	int	i, d, dlev = getlevel(wpos);
 	int	k_idx = 0;
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
-	int	difficulty = in_irondeepdive(wpos) ? 2 : 1;
+	int	difficulty = in_irondeepdive(wpos) ? 1 : 0;
 #endif
 
 	/* Check if artifact generation is currently disabled -
@@ -3561,7 +3561,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 	int i, tries = 0, d, dlev = getlevel(wpos);
 	artifact_type *a_ptr;
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
-	int difficulty = in_irondeepdive(wpos) ? 2 : 1;
+	int difficulty = in_irondeepdive(wpos) ? 1 : 0;
 #endif
 
 	/* No artifacts in the town */
