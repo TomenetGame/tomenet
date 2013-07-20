@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. July 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. July 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9758,8 +9758,9 @@ Note that not every skill is available to every profession (class).
                                 press  ~ 7  in game or consult a spoiler file.
                                 (See (7.4) for more info about spoiler files.)
 
-    .Magic device               Ability to use magic devices (wands,rods,etc.)
-                                without failing. Also increases their power.
+    .Magic device               Ability to use magic devices (wands, staves,
+                                rods, activatable items) without failing.
+                                Also increases their power.
                                 Speeds up recharging of rods you carry.
                                 See (6.10) for more information.
 
@@ -13479,6 +13480,9 @@ The magic device skill does the following...
 -increases the power of magic devices.
 -makes it easier to recharge items provided you don't use scrolls to do that,
  but a real magic device (some artifacts can be activated for recharging).
+ 
+Magic device skill and ability have no effect on the damage output of traps
+loaded with a magic device.
 
 
 
