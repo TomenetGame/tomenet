@@ -10518,7 +10518,9 @@ Warrior is strongly recommended.
 - Vampire
     These powerful undead creatues move out in the night to hunt living prey
     and suck its blood to sustain themselves. Vampires resist darkness, but
-    are susceptible to light and certain purifying and anti-evil effects.
+    are susceptible to light and certain purifying and anti-evil effects, be it
+    on items such as scrolls, on magic devices, or on equipment such as weapons
+    and light sources (which may drain their hit points if equipped).
     They fear the sun light and any other kind of blessed light source, since
     it burns them, draining their hit points.
     They don't actually need a light source, since they are able to determine
