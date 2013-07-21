@@ -128,11 +128,11 @@ C:220:200:180
 I:21:0:c:128
 
 N:24:Enchant weapon
-C:30000:25000:20000
+C:38000:34000:30000
 I:23:0:w:0
 
 N:25:Enchant armour
-C:30000:25000:20000
+C:31000:27000:23000
 I:24:0:a:0
 
 N:26:Recharge item
@@ -161,7 +161,7 @@ C:85000:75000:65000
 I:30:0:a:0
 
 N:32:Enchant bow
-C:35000:30000:25000
+C:38000:34000:30000
 I:31:0:b:0
 
 N:33:Recall to dungeon
@@ -251,12 +251,12 @@ I:30:0:a:0
 
 #for The Golden Flower
 N:51:Enchant bow
-C:32000:27000:22000
+C:35000:31000:27000
 I:31:0:b:0
 
 #for The Fountain
 N:52:Enchant armour
-C:32000:27000:22000
+C:33000:29000:25000
 I:24:0:a:0
 
 #for The Fountain
