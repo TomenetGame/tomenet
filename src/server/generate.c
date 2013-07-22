@@ -266,9 +266,12 @@ static void town_gen_hack(struct worldpos *wpos);
 
 #define DUN_SANDWALL   10   /* percentage for Sandwall being generated [10] */
 
-
 /* specify behaviour/possibility of vaults/rooms in 'maze' levels */
 #define VAULTS_OVERRIDE_MAZE	/* make vault walls override maze emptiness. otherwise, mazes can 'unwall' vaults! */
+
+/* Prevent staircases from being generated on inner/outer ring of pits and nests? */
+//#define NEST_PIT_NO_STAIRS_INNER
+#define NEST_PIT_NO_STAIRS_OUTER	/* implies NEST_PIT_NO_STAIRS_INNER */
 
 
 /*
@@ -3715,10 +3718,17 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	}
 
 	/* Prevent teleportation into the nest (experimental, 2008-05-26) */
-	for (y = yval - 2; y <= yval + 2; y++)
-		for (x = xval - 9; x <= xval + 9; x++)
+#ifdef NEST_PIT_NO_STAIRS_OUTER
+	for (y = yval - 4; y <= yval + 4; y++)
+		for (x = xval - 11; x <= xval + 11; x++)
 			zcave[y][x].info |= CAVE_NEST_PIT;
-
+#else
+ #ifdef NEST_PIT_NO_STAIRS_INNER
+	for (y = yval - 2; y <= yval + 2; y++)
+		for (x = xval - 9; x <= xval + 92; x++)
+			zcave[y][x].info |= CAVE_NEST_PIT;
+ #endif
+#endif
 
 	/* Hack -- Choose a nest type */
 	tmp = randint(dun_lev);
@@ -4072,9 +4082,17 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 
 	/* Prevent teleportation into the nest (experimental, 2008-05-26) */
-	for (y = yval - 2; y <= yval + 2; y++)
-		for (x = xval - 9; x <= xval + 9; x++)
+#ifdef NEST_PIT_NO_STAIRS_OUTER
+	for (y = yval - 4; y <= yval + 4; y++)
+		for (x = xval - 11; x <= xval + 11; x++)
 			zcave[y][x].info |= CAVE_NEST_PIT;
+#else
+ #ifdef NEST_PIT_NO_STAIRS_INNER
+	for (y = yval - 2; y <= yval + 2; y++)
+		for (x = xval - 9; x <= xval + 92; x++)
+			zcave[y][x].info |= CAVE_NEST_PIT;
+ #endif
+#endif
 
 
 	/* Choose a pit type */
@@ -8736,7 +8754,9 @@ static void init_feat_info(worldpos *wpos)
 			    || d_ptr->floor[i] == FEAT_SHAL_LAVA) /* also build deep rivers on shallow base floor! */
 {
 				l_ptr->flags1 |= LF1_DEEP_LAVA;
+#ifdef TEST_SERVER /* debug */
 s_printf("deep-lava (%d,%d,%d)\n", wpos->wx, wpos->wy, wpos->wz);
+#endif
 }
 		}
 	}
