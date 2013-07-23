@@ -712,9 +712,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				/* and now new... :) */
 				case TV_TRAPKIT:
 				case TV_BOOMERANG:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
@@ -723,6 +723,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 		case STORE_ARMOURY_DUN:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
+				case TV_GOLEM:
+					/* Buy massive pieces of wood/metal for forging/fletching! */
+					if (o_ptr->sval > 7) return FALSE;
 				case TV_BOOTS:
 				case TV_GLOVES:
 				case TV_CROWN:
@@ -732,9 +735,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_SOFT_ARMOR:
 				case TV_HARD_ARMOR:
 				case TV_DRAG_ARMOR:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
@@ -743,6 +746,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 		case STORE_WEAPON_DUN:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
+				case TV_GOLEM:
+					/* Buy massive pieces of wood/metal for forging/fletching! */
+					if (o_ptr->sval > 7) return FALSE;
 				case TV_SHOT:
 				case TV_BOLT:
 				case TV_ARROW:
@@ -753,9 +759,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_AXE:
 //				case TV_MSTAFF:
 				case TV_BOOMERANG:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
@@ -772,9 +778,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_POTION:
 				case TV_POTION2:
 				case TV_BLUNT:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
@@ -786,9 +792,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_SCROLL:
 				case TV_POTION:
 				case TV_POTION2:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
@@ -810,9 +816,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_POTION:
 				case TV_POTION2:
 				case TV_MSTAFF:	/* naturally? */
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
@@ -852,9 +858,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 				case TV_BOOTS:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
@@ -864,9 +870,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			switch (o_ptr->tval) {
 				case TV_AMULET:
 				case TV_RING:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
@@ -879,7 +885,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_WAND: if (o_ptr->sval != SV_WAND_STONE_TO_MUD) return(FALSE); else break;
 				case TV_POTION: if (o_ptr->sval != SV_POTION_DETONATIONS) return(FALSE); else break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 		/* Bordertravel supplies */
@@ -893,14 +899,14 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_LITE:
 				case TV_FLASK:
 				case TV_TRAPKIT:
-				break;
+					break;
 				case TV_RING:
 					if ((o_ptr->sval != SV_RING_RES_NETHER) &&
 					    (o_ptr->sval != SV_RING_FLAMES) &&
 					    (o_ptr->sval != SV_RING_RESIST_FIRE)) return(FALSE);
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
@@ -916,7 +922,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 					    (o_ptr->sval != SV_POTION_SLIME_MOLD)) return(FALSE);
 					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
@@ -925,23 +931,26 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			switch (o_ptr->tval) {
 				case TV_POTION:
 				case TV_POTION2:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 		case STORE_SPEC_SCROLL:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 				case TV_SCROLL:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 		case STORE_SPEC_CLOSECOMBAT:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
+				case TV_GOLEM:
+					/* Buy massive pieces of wood/metal for forging/fletching! */
+					if (o_ptr->sval > 7) return FALSE;
 				case TV_BOOTS:
 				case TV_GLOVES:
 				case TV_CROWN:
@@ -960,23 +969,26 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_SWORD:
 				case TV_AXE:
 				case TV_MSTAFF:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
 		case STORE_SPEC_ARCHER:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
+				case TV_GOLEM:
+					/* Buy massive pieces of wood/metal for forging/fletching! */
+					if (o_ptr->sval > 7) return FALSE;
 				case TV_SHOT:
 				case TV_BOLT:
 				case TV_ARROW:
 				case TV_BOW:
 				case TV_BOOMERANG:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
@@ -984,9 +996,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 				case TV_BOOK:
-				break;
+					break;
 				default:
-				return (FALSE);
+					return (FALSE);
 			}
 			break;
 
