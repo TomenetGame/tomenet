@@ -7850,7 +7850,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				/* Update the old monster */
 				update_mon(c_ptr->m_idx, TRUE);
 			}
-			else if (c_ptr->m_idx < 0)
+			else if (c_ptr->m_idx < 0) /* SHOULD HAPPEN ONLY FOR PETS */
 			{
 				player_type *q_ptr = Players[0 - c_ptr->m_idx];
 				char m_name[MNAME_LEN];
