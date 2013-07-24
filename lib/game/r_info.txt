@@ -20385,6 +20385,7 @@ D:This thing seems to take infinite punishment just fine,
 D:assisting you without complaining in assessing your combat prowess.
 
 # a low-power version for the 'Dungeon Keeper' labyrinth event - C. Blue
+# Differences: Unkillable, slower, never sleeps, bashes doors, has light source
 N:1146:Horned Reaper
 G:U:B
 I:120:50d100:200:140:0
@@ -20396,8 +20397,7 @@ B:HIT:HURT:11d11
 B:HIT:HURT:11d11
 B:HIT:HURT:11d11
 F:BLUEBAND | NO_DEATH | FORCE_MAXHP | BASH_DOOR | KILL_BODY | POWERFUL | 
-#F:OPEN_DOOR |
-F:EVIL | DEMON | NO_CONF | NO_SLEEP | CAN_FLY | 
+F:EVIL | DEMON | NO_CONF | NO_SLEEP | CAN_FLY | HAS_LITE
 F:IM_FIRE | RES_COLD | IM_POIS | IM_ACID | RES_ELEC
 D:A giant humanoid demon wielding a massive, heavy and sharp scythe.  Feared 
 D:by foes and friends alike when it flies into one of its berserk rages, the 

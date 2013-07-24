@@ -1846,6 +1846,7 @@ extern bool set_recall(int Ind, int v, object_type * o_ptr);
 extern void check_experience(int Ind);
 extern void gain_exp(int Ind, s64b amount);
 extern void lose_exp(int Ind, s32b amount);
+extern void gain_exp_to_level(int Ind, int level);
 extern bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note);
 extern void monster_death_mon(int am_idx, int m_idx);
 extern void monster_death(int Ind, int m_idx);

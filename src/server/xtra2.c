@@ -4599,6 +4599,14 @@ void lose_exp(int Ind, s32b amount)
 }
 
 
+/* helper function to boost a character to a specific level (for Dungeon Keeper event) */
+void gain_exp_to_level(int Ind, int level) {
+	u32b k = 0;
+	if (level <= 1) return;
+	k = player_exp[level - 2];
+	if (Players[Ind]->max_exp < k) gain_exp(Ind, ((k - Players[Ind]->max_exp) * Players[Ind]->expfact) / 100);
+}
+
 
 
 /*
