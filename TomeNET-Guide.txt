@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. July 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. July 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.3b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -998,7 +998,7 @@ They all start with a slash '/' hence they're called slash commands:
 
 /que        gives a quest! It needs to be fulfilled before a certain period
  (/quest)   of time passes (continues to expire even while not logged on).
-            The player who completes it gets a great item as reward. It will
+            The player who completes it gets a random item as reward. It will
             appear in your inventory and carry an inscription indicating
             it's the quest reward. (See (4.13) for more info.)
 
@@ -5893,7 +5893,7 @@ Kill quest
     There is a certain time limit which in most cases is easily sufficient,
     especially if you have the according ESP ability.
     The time limit is actually two 'in-game days', which in real time lasts
-    somewhat above two hour. (See (4.14) for more information about the
+    somewhat over two hours. (See (4.14) for more information about the
     in-game time system.)
     The time will continue to run out even while you're not logged on.
     If you fulfil the kill quest you received, you will be rewarded with a
@@ -5902,6 +5902,9 @@ Kill quest
     it's completely random.
     If you fail to complete your quest, the quest will be dropped and you can
     just get a new one if you want to. There is no penalty.
+
+    On Ironman server or within the Ironman Deep Dive Challenge dungeon, the
+    quality of the items rewarded is boosted somewhat.
 
 
 Events (use /evinfo and /evsign commands to get information and to sign up)

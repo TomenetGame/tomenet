@@ -7575,10 +7575,11 @@ void rem_quest(u16b id){
 
 void kill_quest(int Ind) {
 	int i;
-	bool great = FALSE, verygreat = FALSE;
 	u16b id, pos = 9999;
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	char temp[160];
+	bool great, verygreat = FALSE;
+	u32b resf;
 
 	id = p_ptr->quest_id;
 	for (i = 0; i < 20; i++) {
@@ -7587,8 +7588,8 @@ void kill_quest(int Ind) {
 			break;
 		}
 	}
-//	if(pos == -1) return;	/* it's UNsigned :) */
-	if(pos == 9999) return;
+//	if (pos == -1) return;	/* it's UNsigned :) */
+	if (pos == 9999) return;
 
 	process_hooks(HOOK_QUEST_FINISH, "d", Ind);
 
@@ -7612,47 +7613,50 @@ void kill_quest(int Ind) {
 			}
 		}
 	} else{
-//#ifdef RPG_SERVER
 		object_type forge, *o_ptr = &forge;
-//#endif
-		int avg = ((r_info[quests[pos].type].level * 2) + (p_ptr->lev * 4)) / 2;
-		avg = avg > 100 ? 100 : avg;
+		int avg;
+
 		msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[quests[pos].type].name);
 		s_printf("r_info quest: %s won the %s quest\n", p_ptr->name, r_name + r_info[quests[pos].type].name);
-		/*
-		   Temporary prize ... Too good perhaps...
-		   it will do for now though
-		   - I toned it down a bit via magik() -C. Blue
-		*/
 		strcpy(temp, r_name + r_info[quests[pos].type].name);
 		strcat(temp, " quest");
 		unique_quark = quark_add(temp);
-		great = magik(50 + p_ptr->lev * 2);
-//		if (great && p_ptr->lev >= 30) verygreat = magik((p_ptr->lev - 25) * 4);
-//		if (great && p_ptr->lev >= 25) verygreat = magik(r_info[quests[pos].type].level - 5);
+
+		/* grant verygreat rerolls for better value? */
+		avg = ((r_info[quests[pos].type].level * 2) + (p_ptr->lev * 4)) / 2;
+		avg = avg > 100 ? 100 : avg;
 //		if (great && p_ptr->lev >= 25) verygreat = magik(r_info[quests[pos].type].level - (5 - (p_ptr->lev / 5)));
-//		if (great) verygreat = magik(r_info[quests[pos].type].level + (p_ptr->lev / 2) - 15);
 //		if (great) verygreat = magik(((r_info[quests[pos].type].level * 2) + (p_ptr->lev * 4)) / 5);
-//		avg /= 2; avg = 540 / (58 - avg) + 20; /* same as exp calculation ;) */
-//		avg /= 2; avg = 540 / (58 - avg) + 20; /* same as exp calculation ;) */
-		avg /= 2; avg = 540 / (57 - avg) + 5; /* same as exp calculation ;) phew, Heureka.. */
-		if (great) verygreat = magik(avg);
+		avg /= 2; avg = 540 / (57 - avg) + 5; /* same as exp calculation ;) phew, Heureka.. (14..75) */
+
+		/* boost quest rewards for the iron price */
+#ifndef RPG_SERVER
+		if (in_irondeepdive(&p_ptr->wpos)) {
+#endif
+			great = TRUE;
+			verygreat = magik(avg);
+			resf = RESF_LOW2;
+#ifndef RPG_SERVER
+		} else {
+			great = magik(50 + p_ptr->lev * 2);
+			if (great) verygreat = magik(avg);
+			resf = RESF_LOW;
+		}
+#endif
+
 #if 0 /* needs more care, otherwise acquirement could even be BETTER than create_reward, depending on RESF.. */
-//#ifdef RPG_SERVER
-		create_reward(Ind, o_ptr, getlevel(&p_ptr->wpos), getlevel(&p_ptr->wpos), great, verygreat, RESF_LOW, 3000);
-//		o_ptr->discount = 100;
+		create_reward(Ind, o_ptr, getlevel(&p_ptr->wpos), getlevel(&p_ptr->wpos), great, verygreat, resf, 3000);
 		o_ptr->note = quark_add(temp);
 		o_ptr->note_utag = strlen(temp);
 		inven_carry(Ind, o_ptr);
-//		drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 #else
-//		acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, great, verygreat, RESF_LOW);
-		acquirement_direct(o_ptr, &p_ptr->wpos, great, verygreat, RESF_LOW);
-//s_printf("object rewarded %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
+		acquirement_direct(o_ptr, &p_ptr->wpos, great, verygreat, resf);
+		//s_printf("object rewarded %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
 		inven_carry(Ind, o_ptr);
 #endif
 		unique_quark = 0;
 	}
+
 	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
 		if (q_ptr && q_ptr->quest_id == id) {
