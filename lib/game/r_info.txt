@@ -20385,7 +20385,7 @@ D:This thing seems to take infinite punishment just fine,
 D:assisting you without complaining in assessing your combat prowess.
 
 # a low-power version for the 'Dungeon Keeper' labyrinth event - C. Blue
-# Differences: Unkillable, slower, never sleeps, bashes doors, has light source
+# Differences: no-death, slower, awake, bashes doors, has light, no spells
 N:1146:Horned Reaper
 G:U:B
 I:120:50d100:200:140:0
