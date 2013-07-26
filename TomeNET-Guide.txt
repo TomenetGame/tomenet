@@ -15013,7 +15013,8 @@ The differences between Ironman ruleset and normal servers are as follows:
    (Note that this also works 'in advance', ie while you have not yet the
    required mimicry skill to actually see the learn-message show up.)
   -Item level restrictions are disabled and have no effect.
-  -Quests can be acquired as early as at level 3 instead of level 5.
+  -Quests can be acquired as early as at level 3 instead of level 5,
+   and the quality of the rewarded items is somewhat boosted on average.
   -Quests usually require you to find fewer specimen.
   -Temporary luck bonus from deeds is somewhat longer.
   -Usually, scheduled artifact resets happen less frequently (if at all).
