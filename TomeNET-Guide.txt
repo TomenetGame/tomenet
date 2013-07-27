@@ -5904,7 +5904,9 @@ Kill quest
     just get a new one if you want to. There is no penalty.
 
     On Ironman server or within the Ironman Deep Dive Challenge dungeon, the
-    quality of the items rewarded is boosted somewhat.
+    quality of the items rewarded is boosted somewhat, while the amount of
+    monsters that need to be slain is somewhat lower (especially for low level
+    quests).
 
 
 Events (use /evinfo and /evsign commands to get information and to sign up)
@@ -6087,6 +6089,8 @@ Ironman Deep Dive Challenge (IDDC)
 
     Inside the challenge dungeon you can acquire a kill quest via /quest
     command at level 1 already, instead of the usual minimum level of 5.
+    On average, quests in here require less monsters to be slain yet provide
+    slightly boosted item quality.
 
     Mimicry users gain +9 extra kill credit on each kill, effectively
     learning forms TEN TIMES as fast. (However, if that character decides to
@@ -15014,8 +15018,8 @@ The differences between Ironman ruleset and normal servers are as follows:
    required mimicry skill to actually see the learn-message show up.)
   -Item level restrictions are disabled and have no effect.
   -Quests can be acquired as early as at level 3 instead of level 5,
-   and the quality of the rewarded items is somewhat boosted on average.
-  -Quests usually require you to find fewer specimen.
+   and the quality of the rewarded items is somewhat boosted on average,
+   while the amount of monsters that needs to be slain is even somewhat lower.
   -Temporary luck bonus from deeds is somewhat longer.
   -Usually, scheduled artifact resets happen less frequently (if at all).
    (See (5.9b) for more information about artifact resets.)

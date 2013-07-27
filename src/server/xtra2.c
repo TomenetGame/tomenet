@@ -7771,22 +7771,24 @@ bool prepare_quest(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num
 	    (r_info[r].flags1 & RF1_UNIQUE) ||
 	    (r_info[r].flags7 & RF7_MULTIPLY) ||
 	    r_info[r].level <= 2); /* no Training Tower quests */
-#ifndef RPG_SERVER
-	if (r_info[r].flags1 & RF1_FRIENDS) i = i + 11 + randint(7);
-#else /* very hard in the beginning in ironman dungeons */
-	if (lev < 40) {
-		if (r_info[r].flags1 & RF1_FRIENDS) i = i * 2;
-		else i = (i + 1) / 2;
-	} else {
-		if (r_info[r].flags1 & RF1_FRIENDS) i = i + 11 + randint(7);
-	}
-#endif
 
-	/* Slightly easier in IDDC */
+	/* easier in Ironman environments */
+#ifndef RPG_SERVER
 	if (in_irondeepdive(&Players[j]->wpos)) {
-		if (i > 6) i--;
-		if (i > 4) i--;
-	}
+#endif
+		if (lev < 40) {
+			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 3 + randint(4);
+			/* very easy for very low level non-friends quests */
+			else if (lev < 20) i = (i + 1) / 2;
+		} else {
+			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 9 + randint(5);
+			if (i > 6) i--;
+			if (i > 4) i--;
+		}
+#ifndef RPG_SERVER
+	/* pack monsters require a high number, so 2-3 packs must be located */
+	} else if (r_info[r].flags1 & RF1_FRIENDS) i = i + 11 + randint(7);
+#endif
 
 	/* Hack: If (non-)FRIENDS variant exists, use the first one (usually the non-FRIENDS one) */
 	if (r_info[r].dup_idx) r = r_info[r].dup_idx;
