@@ -3473,8 +3473,8 @@ bool set_food(int Ind, int v)
 					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Drink some blood by killing monsters");
 					msg_print(Ind, "\374\377R         monsters in melee (close combat). Town monsters will work too.");
 				} else if (p_ptr->prace == RACE_ENT) {
-					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Read a scroll of satisfy hunger or");
-					msg_print(Ind, "\374\377R         rest (SHIFT+R) on earth/dirt/grass/water floor tiles for a while.");
+					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Find something to drink or rest");
+					msg_print(Ind, "\374\377R         (SHIFT+R) on earth/dirt/grass/water floor tiles for a while.");
 				} else {
 					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Press SHIFT+E to eat something");
 					msg_print(Ind, "\374\377R         or read a 'scroll of satisfy hunger' if you have one.");
