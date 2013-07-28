@@ -2731,6 +2731,10 @@ weapon, or even with your starting weapon. If your starting weapon already
 gives 2 bpr you could still examine even lighter weapons in stores to find one
 that gives you one more bpr i.e. 3 bpr and just discard your starting weapon.
 
+Note: The stat points you distribute have no effect on the maximum value your
+character can get by quaffing stat potions. These points to distribute are
+basically just "free stat potions".
+
 
 Now you can choose a difficulty level you wish to play on. Options are
 n) Normal  g) no Ghost  H) Hellish  e) Everlasting
