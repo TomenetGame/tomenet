@@ -2448,7 +2448,7 @@ static errr init_other(void)
 	(void)quark_add("@q4");
 	(void)quark_add("@r1");
 	(void)quark_add("@r2");
-	(void)quark_add("@r5!X");
+	(void)quark_add("@r5");//@r5!X
 	(void)quark_add("@r8");
 	(void)quark_add("@r9");
 	(void)quark_add("@r0");
