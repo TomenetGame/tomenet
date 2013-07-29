@@ -10993,7 +10993,10 @@ vary. For example a warrior cannot learn magic spells.
     casting spells. Apart from the druidic schools, the other magic schools
     available to druids use intelligence for determining spell success chance.
     Druids fight using Martial Arts, which is the only melee skill they are
-    able to train, as well as a variety of magic spells.
+    able to train, as well as a variety of magic spells. Martial Arts means
+    weaponless combats, not even ranged weapons, and only light armour, if any
+    at all. (Martial artists actually get bonus armour class for each slot of
+    armour that has no item equipped in it.)
     Druids can shapechange into several forms (mostly animals) without having
     to fight or kill them in order to learn those forms. Instead they learn
     one or more new forms automatically every five character levels.
