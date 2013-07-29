@@ -5503,6 +5503,15 @@ it'll remain to feel like a boring place, despite the new monster that might
 actually make it pretty non-boring now..
 
 
+If you are in the Ironman Deep Dive Challenge dungeon, you will get a feeling
+informing you about the presence of a dungeon boss monster that belongs to the
+dungeon theme in your current IDDC section.
+This feeling appears in addition to the yellow floor feelings listed above:
+
+  "You feel a commanding presence.."
+      means that the dungeon boss of the current IDDC theme has been spawned.
+
+
 Vault feelings:
 ---------------
 Vaults can also bear a very dangerous feature that is displayed as dark grey
