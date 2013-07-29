@@ -3661,11 +3661,12 @@ static bool process_player_end_aux(int Ind)
 		(void)set_tim_traps(Ind, p_ptr->tim_traps - minus_magic);
 
 	/* Temporary Mimicry from a Ring of Polymorphing */
-	if (p_ptr->tim_mimic) {
+	if (p_ptr->tim_mimic && p_ptr->body_monster == p_ptr->tim_mimic_what) {
 		/* hack - on hold while in town */
-		if (!istown(&p_ptr->wpos) && !isdungeontown(&p_ptr->wpos))
+		if (!istownarea(&p_ptr->wpos, 3) && !isdungeontown(&p_ptr->wpos)) {
 			/* decrease time left of being polymorphed */
 			(void)set_mimic(Ind, p_ptr->tim_mimic - 1, p_ptr->tim_mimic_what);
+		}
 	}
 
 	/* Hack -- Timed manashield */

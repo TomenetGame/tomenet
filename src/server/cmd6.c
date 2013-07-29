@@ -2132,8 +2132,9 @@ static int check_self_summon(player_type *p_ptr){
 	cave_type **zcave, *c_ptr;
 
 	if (is_admin(p_ptr)) return(TRUE);
-
-	if ((!cfg.surface_summoning) && (p_ptr->wpos.wz == 0)) return(FALSE);
+	if (((!cfg.surface_summoning) && (p_ptr->wpos.wz == 0))
+	    || istownarea(&p_ptr->wpos, 3)) /* poly ring anticheeze (those don't run out in town area) */
+		return(FALSE);
 
 	zcave=getcave(&p_ptr->wpos);
 	if(zcave){

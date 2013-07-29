@@ -2367,7 +2367,9 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 		/* Hack -- always show townie */
 		// if (num < 1 && r_ptr->level) continue;
 
-		if ((num < 1) && !druid_form && !vampire_form) continue;
+		if ((num < 1) && !druid_form && !vampire_form
+		    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == i)) /* for poly rings */
+			continue;
 		if (!r_ptr->name) continue;
 
 		/* Let's not show uniques here */
@@ -2396,10 +2398,20 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 		{
 			j = r_ptr->level - num;
 
-			if ((j > 0) && !druid_form && !vampire_form)
-				fprintf(fff, "\377w%-30s : %4d slain  (%d more to go)\n",
-						r_name + r_ptr->name, num, j);
-			else {
+			if ((j > 0) && !druid_form && !vampire_form) {
+				/* via polymorph ring */
+				if (p_ptr->body_monster == i)
+					fprintf(fff, "\377B%-30s : %4d slain  \377** Infused %d turns **\n",
+							r_name + r_ptr->name, num, p_ptr->tim_mimic);
+				/* stored form off polymorph ring */
+				else if (p_ptr->tim_mimic && i == p_ptr->tim_mimic_what)
+					fprintf(fff, "\377w%-30s : %4d slain  \377(infused %d turns)\n",
+						r_name + r_ptr->name, num, p_ptr->tim_mimic);
+				/* normal */
+				else
+					fprintf(fff, "\377w%-30s : %4d slain  (%d more to go)\n",
+					    r_name + r_ptr->name, num, j);
+			} else {
 				if (p_ptr->body_monster == i)
 					fprintf(fff, "\377B%-30s : %4d slain  ** Your current form **\n",
 							r_name + r_ptr->name, num);

@@ -1678,17 +1678,23 @@ void do_slash_cmd(int Ind, char *message)
 			    !((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(r_idx)))
 			{
 				i = r_ptr->level - num;
-
-				if ((i > 0)
-				    && !((p_ptr->pclass == CLASS_DRUID) && mimic_druid(r_idx, p_ptr->lev))
-				    && !((p_ptr->prace == RACE_VAMPIRE) && mimic_vampire(r_idx, p_ptr->lev)))
-					msg_format(Ind, "%s : %4d slain (%d more to go)",
-							r_name + r_ptr->name, num, i);
-				else
-					msg_format(Ind, "%s : %4d slain (learnt)", r_name + r_ptr->name, num);
-			} else {
-				msg_format(Ind, "%s : %4d slain.", r_name + r_ptr->name, num);
-			}
+				if (p_ptr->tim_mimic && r_idx == p_ptr->tim_mimic_what) {
+					if (r_idx == p_ptr->body_monster)
+						msg_format(Ind, "%s : %4d slain (%d more to go)  ** Infused %d turns **",
+						    r_name + r_ptr->name, num, i, p_ptr->tim_mimic);
+					else
+						msg_format(Ind, "%s : %4d slain (%d more to go)  (infused %d turns)",
+						    r_name + r_ptr->name, num, i, p_ptr->tim_mimic);
+				} else if (!((p_ptr->pclass == CLASS_DRUID) && mimic_druid(r_idx, p_ptr->lev))
+				    && !((p_ptr->prace == RACE_VAMPIRE) && mimic_vampire(r_idx, p_ptr->lev))) {
+					if (i > 0) msg_format(Ind, "%s : %4d slain (%d more to go)", r_name + r_ptr->name, num, i);
+					else if (p_ptr->body_monster == r_idx) msg_format(Ind, "%s : %4d slain  ** Your current form **", r_name + r_ptr->name, num);
+					else msg_format(Ind, "%s : %4d slain  (learnt)", r_name + r_ptr->name, num);
+				} else {
+					if (r_idx == p_ptr->body_monster) msg_format(Ind, "%s : %4d slain  ** Your current form **", r_name + r_ptr->name, num, i);
+					else msg_format(Ind, "%s : %4d slain  (learnt)", r_name + r_ptr->name, num);
+				}
+			} else msg_format(Ind, "%s : %4d slain.", r_name + r_ptr->name, num);
 
 			/* TODO: show monster description */
 

@@ -1346,10 +1346,12 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
+#if 0 /* 0'ed - keep form 'saved' instead! */
 #if POLY_RING_METHOD == 1
 	/* clear temporary mimicking from polymorph ring */
 	p_ptr->tim_mimic = 0;
 	p_ptr->tim_mimic_what = 0;
+#endif
 #endif
 }
 
@@ -1491,14 +1493,18 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		} else if (r_info[j].flags1 & RF1_UNIQUE){
 			msg_print(Ind, "That form is unique!");
 			return;
-		} else if (j && p_ptr->r_killed[j] < 1 && !admin) {
+		} else if (j && p_ptr->r_killed[j] < 1
+		    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == j)
+		    && !admin) {
 			if (!p_ptr->free_mimic) {
 				msg_print(Ind, "You have no experience with that form at all!");
 				return;
 			} else {
 				using_free_mimic = TRUE;
 			}
-		} else if (p_ptr->r_killed[j] < r_info[j].level && !admin) {
+		} else if (p_ptr->r_killed[j] < r_info[j].level
+		    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == j)
+		    && !admin) {
 			if (!p_ptr->free_mimic) {
 				msg_print(Ind, "You have not yet learned that form!");
 				return;

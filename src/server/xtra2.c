@@ -5096,6 +5096,8 @@ void monster_death(int Ind, int m_idx)
 			    (p_ptr->prace == RACE_VAMPIRE))) {
 				msg_format(Ind, "\374\377UYou have learned the form of %s! (%d)",
 				    r_info[credit_idx].name + r_name, credit_idx);
+				/* smooth transition from poly ring form to known form */
+				if (p_ptr->body_monster == credit_idx) p_ptr->tim_mimic = p_ptr->tim_mimic_what = 0;
 				if (!p_ptr->warning_mimic) {
 					p_ptr->warning_mimic = 1;
 					if (p_ptr->max_plv < 10) {
