@@ -10050,7 +10050,7 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	   1 in <rarity> chance to generate the boss. - C. Blue */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 	i = r_info[k].rarity;
-	if ((in_irondeepdive(wpos) ?
+	if (in_irondeepdive(wpos) ?
 	    ((k = d_info[iddc[ABS(wpos->wz)].type].final_guardian)
 	     && d_info[iddc[ABS(wpos->wz)].type].maxdepth == ABS(wpos->wz)
 	     && !rand_int((r_info[k].rarity + 2) / 2)) :
