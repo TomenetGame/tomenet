@@ -3733,6 +3733,12 @@ static int Receive_play(int ind)
 			}
 		}
 
+		/* Dedicated IDDC characters are always no-ghost */
+		if (sex & MODE_DED_IDDC) {
+			sex &= ~MODE_EVERLASTING;
+			sex |= MODE_NO_GHOST;
+		}
+
 		if (sex & MODE_DED_PVP) sex |= MODE_PVP;
 
 		/* Set his character info */
