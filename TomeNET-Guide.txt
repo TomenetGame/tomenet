@@ -8623,6 +8623,8 @@ UN_BONUS        disenchantment.
 UN_POWER        none.(drains charges/energy from your items)
                 Magic Device skill helps to prevent draining though.
                 See (6.10) for more information about the Magic Device skill.
+                Also drains the duration of a polymorph ring form the player is
+                currently mimicking.
 TIME            time.
 DISEASE         poison. This attack can also decrease your constitution.
 INSANITY        none. (mimics using WEIRD_MIND/EMPTY_MIND form resist slightly)
@@ -13510,8 +13512,9 @@ In detail, the magic device ability does this...
   which means +100% recharge rate (approximately).
 
 The magic device skill does the following...
--helps to reduce effects of UN_POWER attacks,
--helps to increase the power of forged polymorph-rings.
+-helps to reduce effects of UN_POWER attacks (does not protect the remaining
+ duration of a form gained from a ring of polymorphing).
+-helps to increase the duration on polymorph-rings when they are forged.
 -increases the power of magic devices.
 -makes it easier to recharge items provided you don't use scrolls to do that,
  but a real magic device (some artifacts can be activated for recharging).
