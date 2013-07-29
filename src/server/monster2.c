@@ -2246,14 +2246,11 @@ void update_mon(int m_idx, bool dist)
 				if ((p_ptr->telepathy & ESP_UNIQUE) && ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags3 & RF3_UNIQUE_4))) see = TRUE;
 				if (p_ptr->telepathy & ESP_ALL) see = TRUE;
 
-//				if (p_ptr->mode == MODE_NORMAL) see = TRUE;
 				if (see && (p_ptr->mode & MODE_HARD) && (m_ptr->cdis > MAX_SIGHT)) see = FALSE;
-//				if (see && !p_ptr->telepathy && (p_ptr->prace == RACE_DRACONIAN) && (m_ptr->cdis > (p_ptr->lev / 2))) see = FALSE;
-				if (drsee && !see) {
-//					if (p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/2)) see = TRUE;
-					/* They receive 'fly' instead */
-					if (p_ptr->lev >= 6 && m_ptr->cdis <= (3 + p_ptr->lev / 3)) see = TRUE;
-				}
+				/* Draconian ESP */
+				if (drsee && !see &&
+				    p_ptr->lev >= 6 && m_ptr->cdis <= (5 + p_ptr->lev / 2))
+					see = TRUE;// 3+lev/3
 
 				if (see) {
 					/* Empty mind, no telepathy */
@@ -2527,45 +2524,43 @@ void update_player(int Ind)
 			   members who are out of line of sight */
 			/* if ((*w_ptr & CAVE_VIEW) && (!p_ptr->blind)) */
 
-			if (!p_ptr->blind)
-			{
-			if ((player_in_party(q_ptr->party, i)) && (q_ptr->party)) easy = flag = TRUE;
+			if (!p_ptr->blind) {
+				if ((player_in_party(q_ptr->party, i)) && (q_ptr->party)) easy = flag = TRUE;
 
-			if (*w_ptr & CAVE_VIEW) {
-				/* Check infravision */
-				if (dis <= (byte)(p_ptr->see_infra)) {
-					/* Visible */
-					easy = flag = TRUE;
-				}
-
-				/* Check illumination */
-				if ((c_ptr->info & CAVE_LITE) || (c_ptr->info & CAVE_GLOW)) {
-					/* Check for invisibility */
-					if (!q_ptr->ghost || p_ptr->see_inv)
-					{
+				if (*w_ptr & CAVE_VIEW) {
+					/* Check infravision */
+					if (dis <= (byte)(p_ptr->see_infra)) {
 						/* Visible */
 						easy = flag = TRUE;
 					}
-				}
+
+					/* Check illumination */
+					if ((c_ptr->info & CAVE_LITE) || (c_ptr->info & CAVE_GLOW)) {
+						/* Check for invisibility */
+						if (!q_ptr->ghost || p_ptr->see_inv) {
+							/* Visible */
+							easy = flag = TRUE;
+						}
+					}
 
 				} /* end yucky hack */
 			}
 
 			/* Telepathy can see all players */
 			if ((p_ptr->telepathy & ESP_ALL) || (p_ptr->prace == RACE_DRACONIAN)) {
-			  bool see = FALSE;
+				bool see = FALSE;
 
-			  if (!(p_ptr->mode & MODE_HARD)) see = TRUE;
-			  if ((p_ptr->mode & MODE_HARD) && (dis < MAX_SIGHT)) see = TRUE;
-			  if (!(p_ptr->telepathy & ESP_ALL) && (p_ptr->prace == RACE_DRACONIAN) &&
-			    (p_ptr->lev < 6 || (dis > (3 + p_ptr->lev / 3))))
+				if (!(p_ptr->mode & MODE_HARD)) see = TRUE;
+				if ((p_ptr->mode & MODE_HARD) && (dis < MAX_SIGHT)) see = TRUE;
+				/* Draconian ESP */
+				if (!(p_ptr->telepathy & ESP_ALL) && (p_ptr->prace == RACE_DRACONIAN) &&
+				    (p_ptr->lev < 6 || (dis > (5 + p_ptr->lev / 2)))) // 3+lev/3
+			
 				see = FALSE;
-
-			  if (see)
-			    {
-				/* Visible */
-				hard = flag = TRUE;
-			    }
+				if (see) {
+					/* Visible */
+					hard = flag = TRUE;
+				}
 			}
 
 			/* Can we see invisible players ? */
