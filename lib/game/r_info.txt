@@ -3108,7 +3108,7 @@ D:ominously as it jumps at your throat!
 N:206:Old Man Willow
 G:#:s
 I:110:30d30:20:20:20
-W:25:5:3000:150
+W:25:4:3000:150
 E:1:1:1:2:1:1
 O:0:50:50:0
 B:TOUCH:PARALYZE:1d12
@@ -5735,7 +5735,7 @@ D:A scarred warrior who moves with confidence.
 N:373:Azog, King of the Uruk-Hai
 G:o:v
 I:120:90d10:20:80:20
-W:23:5:2700:1111
+W:23:4:2700:1111
 E:1:1:1:2:1:1
 O:10:90:0:0
 B:HIT:HURT:5d5
@@ -17562,7 +17562,7 @@ D:come enslaved to its aid.
 N:990:Ulfang the Black
 G:p:U
 I:120:25d100:20:90:40
-W:44:5:2100:1200
+W:44:4:2100:1200
 E:1:1:1:2:1:1
 O:10:90:0:0
 B:HIT:HURT:5d8
@@ -18361,7 +18361,7 @@ D:Queen and Mother of the sandworms, fear her and her prolific children.
 N:1031:Sandworm
 G:w:y
 I:115:20d15:20:40:80
-W:22:6:6500:80
+W:22:5:6500:80
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:CLAW:POISON:4d4
