@@ -4998,6 +4998,12 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling)
 	}
 #endif
 
+	/* Special feeling for dungeon bosses in IDDC */
+	if ((p_ptr->distinct_floor_feeling || is_admin(p_ptr)) &&
+	    in_irondeepdive(wpos) && (l_ptr->flags2 & LF2_DUN_BOSS))
+		msg_print(Ind, "\374\377vYou feel a commanding presence..");
+
+
 	/* Hack^2 -- display the 'feeling' */
 	if (l_ptr->flags1 & LF1_NO_MAGIC) {
 		msg_print(Ind, "\377oYou feel a suppressive air.");

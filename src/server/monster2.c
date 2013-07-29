@@ -2966,10 +2966,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 			/* wrong monster, or not at the bottom of the dungeon? */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 			if ((in_irondeepdive(wpos)
-			&& (r_idx != dinfo_ptr->final_guardian ||
+			    && (r_idx != dinfo_ptr->final_guardian ||
 			    d_info[iddc[ABS(wpos->wz)].type].maxdepth != ABS(wpos->wz)))
-			|| (!in_irondeepdive(wpos)
-			&& (r_idx != dinfo_ptr->final_guardian ||
+			    || (!in_irondeepdive(wpos)
+			    && (r_idx != dinfo_ptr->final_guardian ||
 			    d_ptr->maxdepth != ABS(wpos->wz)))) {
 #else
 			if (r_idx != dinfo_ptr->final_guardian ||
@@ -3395,7 +3395,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	}
 #endif
 
-	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) s_printf("FINAL_GUARDIAN %d spawned\n", r_idx);
+	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
+		s_printf("FINAL_GUARDIAN %d spawned\n", r_idx);
+		if (level_generation_time && l_ptr) l_ptr->flags2 |= LF2_DUN_BOSS; /* Floor feeling (IDDC) */
+	}
 
 	/* Success */
 	/* Report some very interesting monster creating: */

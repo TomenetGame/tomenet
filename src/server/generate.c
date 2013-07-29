@@ -10049,15 +10049,21 @@ dun->l_ptr->flags1 |= LF1_NO_MAP;
 	   Rarity 1 in r_info.txt for those bosses now means:
 	   1 in <rarity> chance to generate the boss. - C. Blue */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-	if ((in_irondeepdive(wpos) ? ((k = d_info[iddc[ABS(wpos->wz)].type].final_guardian)
-	    && d_info[iddc[ABS(wpos->wz)].type].maxdepth == ABS(wpos->wz)) :
+	i = r_info[k].rarity;
+	if ((in_irondeepdive(wpos) ?
+	    ((k = d_info[iddc[ABS(wpos->wz)].type].final_guardian)
+	     && d_info[iddc[ABS(wpos->wz)].type].maxdepth == ABS(wpos->wz)
+	     && !rand_int((r_info[k].rarity + 2) / 2)) :
 	    ((k = d_info[d_ptr->type].final_guardian)
-	    && d_ptr->maxdepth == ABS(wpos->wz)))
+	     && d_ptr->maxdepth == ABS(wpos->wz)
+	     && !rand_int(r_info[k].rarity)))
+	    
 #else	   
 	if ((k = d_info[d_ptr->type].final_guardian)
 	    && d_ptr->maxdepth == ABS(wpos->wz)
+	    && !rand_int(r_info[k].rarity))
 #endif
-	    && (!rand_int(r_info[k].rarity) || k == RI_SAURON)) { /* Sauron has 100% probability of being generated */
+	 {
 //		s_printf("Attempting to generate FINAL_GUARDIAN %d (1 in %d)\n", k, r_info[k].rarity);
 		summon_override_checks = SO_FORCE_DEPTH; /* allow >20 level OoD if desired */
 		alloc_monster_specific(wpos, k, 20, TRUE);
