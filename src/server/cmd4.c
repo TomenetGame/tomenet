@@ -84,14 +84,13 @@ void do_cmd_check_artifacts(int Ind, int line)
 	int radix_buf[MAX_A_IDX][10], radix_buf_cnt[10], radix_buf_idx[MAX_A_IDX][10];
 #endif
 
-	player_type *q_ptr = Players[Ind];
-	bool admin = is_admin(q_ptr);
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	bool admin = is_admin(p_ptr);
 	bool shown = FALSE;
 
 	object_type forge, *o_ptr;
-	player_type *p_ptr;
 	artifact_type *a_ptr;
-	char fmt[10];
+	char fmt[10], a = 'U';
 
 
 	/* Temporary file */
@@ -130,11 +129,11 @@ void do_cmd_check_artifacts(int Ind, int line)
 
 	/* Check the inventories */
 	for (i = 1; i <= NumPlayers; i++) {
-		p_ptr = Players[i];
+		q_ptr = Players[i];
 
 		/* Check this guy's */
 		for (j = 0; j < INVEN_PACK; j++) {
-			o_ptr = &p_ptr->inventory[j];
+			o_ptr = &q_ptr->inventory[j];
 
 			/* Ignore non-objects */
 			if (!o_ptr->k_idx) continue;
@@ -247,14 +246,32 @@ void do_cmd_check_artifacts(int Ind, int line)
 				fprintf(fff, "%3d/%d %s\377%c", radix_idx[i], a_ptr->cur_num, timeleft, c);
 #endif
 			}
-			fprintf(fff, "%sThe %s", admin ? " " : "     ", base_name);
+			fprintf(fff, "\377%c%sThe %s", a, admin ? " " : "     ", base_name);
 			if (admin) {
-				sprintf(fmt, "%%%ds%%s\n", (int)(45 - strlen(base_name)));
+				sprintf(fmt, "%%%ds\377w%%s\n", (int)(45 - strlen(base_name)));
 				if (!a_ptr->known) fprintf(fff, fmt, "", "(unknown)");
 				else if (multiple_artifact_p(&forge)) fprintf(fff, "\n");
 				else if (a_ptr->carrier) fprintf(fff, fmt, "", lookup_player_name(a_ptr->carrier) ? lookup_player_name(a_ptr->carrier) : "(dead player)");
 				else fprintf(fff, fmt, "", "???");
-			} else fprintf(fff, "\n");
+			} else {
+#ifdef FLUENT_ARTIFACT_RESETS
+				/* actually show him timeouts of those artifacts the player owns.
+				   Todo: Should only show timeout if *ID*ed (ID_MENTAL), but not practical :/ */
+				if (p_ptr->id == a_ptr->carrier) {
+					sprintf(fmt, "%%%ds\377w", (int)(45 - strlen(base_name)));
+					fprintf(fff, fmt, "");
+ #ifdef RING_OF_PHASING_NO_TIMEOUT
+					if (forge.name1 == ART_PHASING) fprintf(fff, " (Resets with Zu-Aon)");
+					else
+ #endif
+					if (a_ptr->timeout <= 0) ;
+					else if (a_ptr->timeout < 60 * 2) fprintf(fff, " (\377r%d minutes\377w till reset)", a_ptr->timeout);
+					else if (a_ptr->timeout < 60 * 24 * 2) fprintf(fff, " (\377y%d hours\377w till reset)", a_ptr->timeout / 60);
+					else fprintf(fff, " (%d days till reset)", a_ptr->timeout / 60 / 24);
+				}
+#endif
+				fprintf(fff, "\n");
+			}
 #ifdef ART_DIZ
 //	                fprintf(fff, "%s", a_text + a_info[forge.name1].text);
 #endif
