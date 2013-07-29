@@ -2148,7 +2148,7 @@ if (hist != 2) {
 	c_put_str(TERM_L_BLUE, c_p_ptr->body_name, y_row1 + 4, 15);
 	if (p_ptr->mode & MODE_PVP)
 		c_put_str(TERM_L_BLUE, "PvP (one life)", y_rowmode, 15);
-	if (p_ptr->mode & MODE_EVERLASTING)
+	else if (p_ptr->mode & MODE_EVERLASTING)
 		c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", y_rowmode, 15);
 	else if ((p_ptr->mode & MODE_NO_GHOST) && (p_ptr->mode & MODE_HARD))
 		c_put_str(TERM_L_BLUE, "Hellish (one life, extra hard)", y_rowmode, 15);
