@@ -3541,6 +3541,14 @@ void lite_spot(int Ind, int y, int x)
 			/* see oneself burning in the sun */
 			if (p_ptr->sun_burn && magik(33)) a = TERM_FIRE;
 
+			/* Polymorph ring power running out */
+			if (p_ptr->tim_mimic && p_ptr->tim_mimic <= 100) {
+				if (!rand_int(10)) {
+					a = TERM_DISE;
+					c = '@';
+				}
+			}
+
 			/* Holy Martyr */
 			/* Admin wizards sometimes flicker black & white (TERM_BNW) */
 			if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz)
