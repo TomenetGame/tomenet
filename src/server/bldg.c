@@ -2116,6 +2116,9 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			msg_print(Ind, "\377oInstant resurrection has not been enabled on this server");
 #endif
 			break;
+		case BACT_EXPLORATIONS:
+			view_exploration_records(Ind);
+			break;
 		default:
 #if 0
 			if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact)) {

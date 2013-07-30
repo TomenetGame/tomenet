@@ -663,6 +663,7 @@ extern void do_cmd_knowledge_dungeons(int Ind);
 extern void do_cmd_time(int Ind);
 extern void do_cmd_check_other(int Ind, int line);
 extern void do_cmd_check_other_prepare(int Ind, char *path, char *title);
+extern void do_cmd_check_extra_info(int Ind, bool admin);
 
 /* cmd5.c */
 extern bool check_antimagic(int Ind, int percentage);
@@ -1583,6 +1584,7 @@ extern void store_examine(int Ind, int item);
 extern void store_exec_command(int Ind, int action, int item, int item2, int amt, int gold);
 extern void home_extend(int Ind);
 extern void view_cheeze_list(int Ind);
+extern void view_exploration_records(int Ind);
 extern void reward_deed_item(int Ind, int item);
 extern void reward_deed_blessing(int Ind, int item);
 
@@ -1724,7 +1726,7 @@ extern void strip_control_codes(char *ss, char *s);
 extern cptr flags_str(u32b flags);
 extern int handle_censor(char *message);
 extern void handle_punish(int Ind, int level);
-extern char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type);
+extern char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool extra);
 extern bool gain_au(int Ind, u32b amt, bool quiet, bool exempt);
 extern bool backup_estate(void);
 extern void restore_estate(int Ind);

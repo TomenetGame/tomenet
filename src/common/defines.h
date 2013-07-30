@@ -7347,8 +7347,9 @@ extern int PlayerUID;
 #define BACT_DEED_BLESSING		59
 #define BACT_GO				60
 #define BACT_INSTANT_RES		61
+#define BACT_EXPLORATIONS		62
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
-/* MAX_BA_INFO for TomeNET	- Jir - */
+/* MAX_BA_IDX for TomeNET	- Jir - */
 
 
 #define BACT_F_NOTHING		0x00

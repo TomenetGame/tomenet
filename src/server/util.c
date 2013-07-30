@@ -4810,7 +4810,7 @@ char *wpos_format(int Ind, worldpos *wpos)
 			return (format("%dft of (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
 		} else
 			if (!ville)
-				return (format("%dft %s", wpos->wz * 50, get_dun_name(wpos->wx, wpos->wy, (wpos->wz > 0), d_ptr, 0)));
+				return (format("%dft %s", wpos->wz * 50, get_dun_name(wpos->wx, wpos->wy, (wpos->wz > 0), d_ptr, 0, FALSE)));
 			else
 				return (format("%s", desc));
 	} else {
@@ -4818,7 +4818,7 @@ char *wpos_format(int Ind, worldpos *wpos)
 			return (format("Lv %d of (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
 		} else
 			if (!ville)
-				return (format("Lv %d %s", wpos->wz, get_dun_name(wpos->wx, wpos->wy, (wpos->wz > 0), d_ptr, 0)));
+				return (format("Lv %d %s", wpos->wz, get_dun_name(wpos->wx, wpos->wy, (wpos->wz > 0), d_ptr, 0, FALSE)));
 			else
 				return (format("%s", desc));
 	}
@@ -5965,17 +5965,30 @@ void intshuffle(int *array, int size) {
 }
 
 /* for all the dungeons/towers that are special, yet use the type 0 dungeon template - C. Blue
-   todo: actually create own types for these. would also make DF3_JAIL_DUNGEON obsolete. */
-char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type) {
+   todo: actually create own types for these. would also make DF3_JAIL_DUNGEON obsolete.
+   If 'extra' is set, special info is added: Town name, to keep the two Angbands apart. */
+char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool extra) {
 	static char *jail = "Jail Dungeon";
 	static char *pvp_arena = "PvP Arena";
 	static char *highlander = "Highlands";
 	static char *irondeepdive = "Ironman Deep Dive Challenge";
 
+	/* hacks for 'extra' info, ugh */
+	static char *angband_lothlorien = "Angband (Lothlorien)";
+	static char *angband_khazaddum = "Angband (Khazad-dum)";
+
 	if (d_ptr) type = d_ptr->type;
 
 	/* normal dungeon */
-	if (type) return (d_name + d_info[type].name);
+	if (type) {
+		/* hack for the two Angbands - so much hardcoding.... */
+		if (extra && !strcmp(d_name + d_info[type].name, "Angband")) {
+			if (town[TOWN_LORIEN].x == x && town[TOWN_LORIEN].y == y)
+				return angband_lothlorien;
+			else return angband_khazaddum;
+		} else /* default */
+			return (d_name + d_info[type].name);
+	}
 
 	/* special type 0 (yet) dungeons */
 	if (x == WPOS_PVPARENA_X &&

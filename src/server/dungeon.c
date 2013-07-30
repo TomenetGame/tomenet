@@ -2973,7 +2973,7 @@ static void do_recall(int Ind, bool bypass)
 			}
 		}
 		if (recall_ok) {
-			msg_format(Ind, "\377%cYou are transported out of %s..", COLOUR_DUNGEON, get_dun_name(p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz > 0, d_ptr, 0));
+			msg_format(Ind, "\377%cYou are transported out of %s..", COLOUR_DUNGEON, get_dun_name(p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz > 0, d_ptr, 0, FALSE));
 			if (p_ptr->wpos.wz > 0) {
 				message = "You feel yourself yanked downwards!";
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
@@ -3085,7 +3085,7 @@ static void do_recall(int Ind, bool bypass)
 				p_ptr->recall_pos.wz = 0;
 			} else {
 				message = "You feel yourself yanked downwards!";
-		                msg_format(Ind, "\377%cYou are transported into %s..", COLOUR_DUNGEON, get_dun_name(p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, FALSE, d_ptr, 0));
+		                msg_format(Ind, "\377%cYou are transported into %s..", COLOUR_DUNGEON, get_dun_name(p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, FALSE, d_ptr, 0, FALSE));
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
 			}
 		}
@@ -3135,7 +3135,7 @@ static void do_recall(int Ind, bool bypass)
 				p_ptr->recall_pos.wz = 0;
 			} else {
 				message = "You feel yourself yanked upwards!";
-		                msg_format(Ind, "\377%cYou are transported into %s..", COLOUR_DUNGEON, get_dun_name(p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, TRUE, d_ptr, 0));
+		                msg_format(Ind, "\377%cYou are transported into %s..", COLOUR_DUNGEON, get_dun_name(p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, TRUE, d_ptr, 0, FALSE));
 				msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
 			}
 		} else {

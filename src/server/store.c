@@ -5866,6 +5866,31 @@ void view_cheeze_list(int Ind) {
 	do_cmd_check_other_prepare(Ind, path, "Top Guilty Cheezers");
 }
 
+void view_exploration_records(int Ind) {
+	int i;
+	FILE *fff;
+	char file_name[MAX_PATH_LENGTH];
+
+	/* Temporary file */
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
+	fff = my_fopen(file_name, "wb");
+
+	/* output the actual list */
+	for (i = 1; i <= dungeon_id_max; i++) {
+		/* only show those dungeons that have been well-explored! */
+		if (dungeon_bonus[i] >= 2) continue;
+
+		fprintf(fff, "             \377u%-30s %s\n",
+		    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
+		    getdungeon(&((struct worldpos){dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, TRUE),
+		    dungeon_bonus[i] == 0 ? "(many explorations)" : "(a few explorations)");
+	}
+
+	my_fclose(fff);
+	/* Display the file contents */
+	do_cmd_check_other_prepare(Ind, file_name, "Recent Dungeon Exploration Reports");
+}
+
 void reward_deed_item(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];

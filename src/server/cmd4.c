@@ -1766,7 +1766,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 			if ((d_ptr = wild_info[y][x].tower)) {
 				i = d_ptr->type;
 				if (i == DI_VALINOR && !admin) continue;
-				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, TRUE, d_ptr, 0));
+				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
 #ifndef SEPARATE_RECALL_DEPTHS
 				if (admin) {
 					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
@@ -1815,7 +1815,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 			if ((d_ptr = wild_info[y][x].dungeon)) {
 				i = d_ptr->type;
 				if (i == DI_VALINOR && !admin) continue;
-				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, FALSE, d_ptr, 0));
+				fprintf(fff, " \377u(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
 #ifndef SEPARATE_RECALL_DEPTHS
 				if (admin) {
 					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
@@ -3122,3 +3122,238 @@ void do_cmd_check_other(int Ind, s32b line)
 	fd_kill(file_name);
 }
 #endif	// 0
+
+void do_cmd_check_extra_info(int Ind, bool admin) {
+	player_type *p_ptr = Players[Ind];
+
+	msg_print(Ind, " ");
+
+	if (admin) msg_format(Ind, "The game turn: %d", turn);
+
+	do_cmd_time(Ind);
+
+	if (!(p_ptr->mode & (MODE_EVERLASTING | MODE_PVP | MODE_NO_GHOST)))
+		msg_format(Ind, "You have %d %s left.", p_ptr->lives-1-1, p_ptr->lives-1-1 > 1 ? "resurrections" : "resurrection");
+
+#if 0 /* already displayed to the left */
+ #ifdef ENABLE_STANCES
+	if (get_skill(p_ptr, SKILL_STANCE)) {
+		switch (p_ptr->combat_stance) {
+		case 0: msg_print(Ind, "You are currently in balanced combat stance."); break;
+		case 1: switch (p_ptr->combat_stance_power) {
+			case 0: msg_print(Ind, "You are currently in defensive combat stance rank I."); break;
+			case 1: msg_print(Ind, "You are currently in defensive combat stance rank II."); break;
+			case 2: msg_print(Ind, "You are currently in defensive combat stance rank III."); break;
+			case 3: msg_print(Ind, "You are currently in Royal Rank defensive combat stance."); break;
+			} break;
+		case 2: switch (p_ptr->combat_stance_power) {
+			case 0: msg_print(Ind, "You are currently in offensive combat stance rank I."); break;
+			case 1: msg_print(Ind, "You are currently in offensive combat stance rank II."); break;
+			case 2: msg_print(Ind, "You are currently in offensive combat stance rank III."); break;
+			case 3: msg_print(Ind, "You are currently in Royal Rank offensive combat stance."); break;
+			} break;
+		}
+	}
+ #endif
+#endif
+
+#ifdef AUTO_RET_CMD
+	if (p_ptr->autoret) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
+#endif
+
+	if (get_skill(p_ptr, SKILL_AURA_FEAR)) check_aura(Ind, 0); /* MAX_AURAS */
+	if (get_skill(p_ptr, SKILL_AURA_SHIVER)) check_aura(Ind, 1);
+	if (get_skill(p_ptr, SKILL_AURA_DEATH)) check_aura(Ind, 2);
+
+	//do_cmd_knowledge_dungeons(Ind);
+	//if (p_ptr->depth_in_feet) msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
+	//else msg_format(Ind, "The deepest point you've reached: Lev \377G-%d", p_ptr->max_dlv);
+
+	msg_format(Ind, "You can move %d.%d times each turn.",
+	    extract_energy[p_ptr->pspeed] / 10,
+	    extract_energy[p_ptr->pspeed]
+	    - (extract_energy[p_ptr->pspeed] / 10) * 10);
+
+	/* show parry/block chance if we're using weapon or shield */
+	if (is_weapon(p_ptr->inventory[INVEN_WIELD].tval) ||
+	    p_ptr->inventory[INVEN_ARM].tval) /* dual-wield or shield */
+		check_parryblock(Ind);
+	/* show dodge chance if we have dodge skill */
+	if (get_skill(p_ptr, SKILL_DODGE)) use_ability_blade(Ind);
+
+#if 0 /* this is already displayed to the left */
+	/* Insanity warning (better message needed!) */
+	if (p_ptr->csane < p_ptr->msane / 8)
+		msg_print(Ind, "\377rYou can hardly resist the temptation to cry out!");
+	else if (p_ptr->csane < p_ptr->msane / 4)
+		msg_print(Ind, "\377yYou feel insanity about to grasp your mind..");
+	else if (p_ptr->csane < p_ptr->msane / 2)
+		msg_print(Ind, "\377yYou feel insanity creep into your mind..");
+	else
+		msg_print(Ind, "\377wYou are sane.");
+#endif
+
+#if 0 /* deprecated, new one below.. */
+	if (p_ptr->body_monster) {
+		monster_race *r_ptr = &r_info[p_ptr->body_monster];
+		msg_format(Ind, "You %shave a head.", r_ptr->body_parts[BODY_HEAD] ? "" : "don't ");
+		msg_format(Ind, "You %shave arms.", r_ptr->body_parts[BODY_ARMS] ? "" : "don't ");
+		msg_format(Ind, "You can %s use weapons.", r_ptr->body_parts[BODY_WEAPON] ? "" : "not");
+		msg_format(Ind, "You can %s wear %s.", r_ptr->body_parts[BODY_FINGER] ? "" : "not", r_ptr->body_parts[BODY_FINGER] == 1 ? "a ring" : "rings");
+		msg_format(Ind, "You %shave a torso.", r_ptr->body_parts[BODY_TORSO] ? "" : "don't ");
+		msg_format(Ind, "You %shave legs/suitable feet for shoes.", r_ptr->body_parts[BODY_LEGS] ? "" : "don't ");
+	} else if (p_ptr->fruit_bat) {
+		msg_print(Ind, "You have a head.");
+		msg_print(Ind, "You can wear rings.");
+		msg_print(Ind, "You don't have a torso, but you can wear cloaks.");
+	}
+#endif
+#if 0 /* another one.. */
+	bool i_ringr = TRUE, i_ringl = TRUE, i_neck = TRUE, i_head = TRUE, i_outer = TRUE;
+	bool i_light = TRUE, i_arms = TRUE, i_tool = TRUE, i_wield = TRUE, i_bow = TRUE;
+	bool i_ammo = TRUE, i_hands = TRUE, i_feet = TRUE, i_body = TRUE;
+
+	if (p_ptr->fruit_bat) {
+		i_wield = i_bow = i_ammo = i_hands i_feet = i_body = FALSE;
+	}
+	if (p_ptr->body_monster) {
+		if (!r_ptr->body_parts[BODY_WEAPON]) i_wield = i_bow = FALSE;
+		if (r_ptr->body_parts[BODY_FINGER] <= 1) i_ringl = FALSE;
+		if (!r_ptr->body_parts[BODY_FINGER]) i_ringr = FALSE;
+		if (!r_ptr->body_parts[BODY_HEAD]) i_neck = i_head = FALSE;
+		if (!r_ptr->body_parts[BODY_WEAPON] &&
+		    !r_ptr->body_parts[BODY_FINGER] &&
+		    !r_ptr->body_parts[BODY_HEAD] &&
+		    !r_ptr->body_parts[BODY_ARMS])
+			i_light = FALSE;
+		if (!r_ptr->body_parts[BODY_TORSO]) i_body = i_outer = i_ammo = FALSE;
+		if (!r_ptr->body_parts[BODY_ARMS]) i_arms = FALSE;
+		if (!r_ptr->body_parts[BODY_WEAPON] &&
+		    !r_ptr->body_parts[BODY_ARMS])
+			i_tool = FALSE;
+		if (!r_ptr->body_parts[BODY_FINGER] &&
+		    !r_ptr->body_parts[BODY_ARMS])
+			i_hands = FALSE;
+		if (!r_ptr->body_parts[BODY_LEGS]) i_feet = FALSE;
+	}
+#endif
+#if 1 /* just use item_tester_hook_wear() to prevent duplicate stuff.. */
+	if (p_ptr->body_monster &&
+	    p_ptr->pclass != CLASS_DRUID && p_ptr->prace != RACE_VAMPIRE &&
+	    (p_ptr->pclass != CLASS_SHAMAN || !mimic_shaman_fulleq(r_info[p_ptr->body_monster].d_char))) {
+		msg_print(Ind, "In your current form...");
+		if (item_tester_hook_wear(Ind, INVEN_WIELD)) msg_print(Ind, "  you are able to wield a weapon.");
+		else msg_print(Ind, "  you cannot wield weapons.");
+		if (item_tester_hook_wear(Ind, INVEN_ARM)) msg_print(Ind, "  you are able to wield a shield.");
+		else msg_print(Ind, "  you cannot wield shields.");
+		if (item_tester_hook_wear(Ind, INVEN_BOW)) msg_print(Ind, "  you are able to wield a ranged weapon.");
+		else msg_print(Ind, "  you cannot wield ranged weapons.");
+		if (item_tester_hook_wear(Ind, INVEN_LEFT)) msg_print(Ind, "  you are able to wear rings.");
+		else if (item_tester_hook_wear(Ind, INVEN_RIGHT)) msg_print(Ind, "  you are able to wear a ring.");
+		else msg_print(Ind, "  you cannot wear rings.");
+		if (item_tester_hook_wear(Ind, INVEN_NECK)) msg_print(Ind, "  you are able to wear an amulet.");
+		else msg_print(Ind, "  you cannot wear amulets.");
+		if (item_tester_hook_wear(Ind, INVEN_LITE)) msg_print(Ind, "  you are able to wield a light source.");
+		else msg_print(Ind, "  you cannot wield light sources.");
+		if (item_tester_hook_wear(Ind, INVEN_BODY)) msg_print(Ind, "  you are able to wear body armour.");
+		else msg_print(Ind, "  you cannot wear body armour.");
+		if (item_tester_hook_wear(Ind, INVEN_OUTER)) msg_print(Ind, "  you are able to wear a cloak.");
+		else msg_print(Ind, "  you cannot wear cloaks.");
+		if (item_tester_hook_wear(Ind, INVEN_HEAD)) msg_print(Ind, "  you are able to wear head gear.");
+		else msg_print(Ind, "  you cannot wear head gear.");
+		if (item_tester_hook_wear(Ind, INVEN_HANDS)) msg_print(Ind, "  you are able to wear gloves.");
+		else msg_print(Ind, "  you cannot wear gloves.");
+		if (item_tester_hook_wear(Ind, INVEN_FEET)) msg_print(Ind, "  you are able to wear boots.");
+		else msg_print(Ind, "  you cannot wear boots.");
+		if (item_tester_hook_wear(Ind, INVEN_AMMO)) msg_print(Ind, "  you are able to carry ammunition.");
+		else msg_print(Ind, "  you cannot carry ammunition.");
+		if (item_tester_hook_wear(Ind, INVEN_TOOL)) msg_print(Ind, "  you are able to use tools.");
+		else msg_print(Ind, "  you cannot use tools.");
+	} else if (p_ptr->fruit_bat) {
+		msg_print(Ind, "As a fruit bat..");
+		if (!item_tester_hook_wear(Ind, INVEN_WIELD)) msg_print(Ind, "  you cannot wield weapons.");
+		if (!item_tester_hook_wear(Ind, INVEN_ARM)) msg_print(Ind, "  you cannot wield shields.");
+		if (!item_tester_hook_wear(Ind, INVEN_BOW)) msg_print(Ind, "  you cannot wield ranged weapons.");
+		if (!item_tester_hook_wear(Ind, INVEN_RIGHT)) msg_print(Ind, "  you cannot wear rings.");
+		if (!item_tester_hook_wear(Ind, INVEN_NECK)) msg_print(Ind, "  you cannot wear amulets.");
+		if (!item_tester_hook_wear(Ind, INVEN_LITE)) msg_print(Ind, "  you cannot wield light sources.");
+		if (!item_tester_hook_wear(Ind, INVEN_BODY)) msg_print(Ind, "  you cannot wear body armour.");
+		if (!item_tester_hook_wear(Ind, INVEN_OUTER)) msg_print(Ind, "  you cannot wear cloaks.");
+		if (!item_tester_hook_wear(Ind, INVEN_HEAD)) msg_print(Ind, "  you cannot wear head gear.");
+		if (!item_tester_hook_wear(Ind, INVEN_HANDS)) msg_print(Ind, "  you cannot wear gloves.");
+		if (!item_tester_hook_wear(Ind, INVEN_FEET)) msg_print(Ind, "  you cannot wear boots.");
+		if (!item_tester_hook_wear(Ind, INVEN_AMMO)) msg_print(Ind, "  you cannot carry ammunition.");
+		if (!item_tester_hook_wear(Ind, INVEN_TOOL)) msg_print(Ind, "  you cannot use tools.");
+	}
+#endif
+
+	if (admin) {
+		cave_type **zcave;
+		cave_type *c_ptr;
+
+		//msg_format(Ind, "your sanity: %d/%d", p_ptr->csane, p_ptr->msane);
+		msg_format(Ind, "server status: m_max(%d) o_max(%d)",
+		    m_max, o_max);
+
+		msg_print(Ind, "Colour test - \377ddark \377wwhite \377sslate \377oorange \377rred \377ggreen \377bblue \377uumber");
+		msg_print(Ind, "\377Dl_dark \377Wl_white \377vviolet \377yyellow \377Rl_red \377Gl_green \377Bl_blue \377Ul_umber");
+		if (!(zcave = getcave(&p_ptr->wpos))) {
+			msg_print(Ind, "\377rOops, the cave's not allocated!!");
+			return;
+		}
+		c_ptr = &zcave[p_ptr->py][p_ptr->px];
+		msg_format(Ind, "(x:%d y:%d) info:%d feat:%d o_idx:%d m_idx:%d effect:%d",
+		    p_ptr->px, p_ptr->py,
+		    c_ptr->info, c_ptr->feat, c_ptr->o_idx, c_ptr->m_idx, c_ptr->effect);
+
+		switch (cfg.runlevel) {
+		case 2048: msg_print(Ind, "\377y* Empty-server-shutdown command pending *"); break;
+		case 2047: msg_print(Ind, "\377y* Low-server-shutdown command pending *"); break;
+		case 2046: msg_print(Ind, "\377y* VeryLow-server-shutdown command pending *");; break;
+		case 2045: msg_print(Ind, "\377y* None-server-shutdown command pending *"); break;
+		case 2044: msg_print(Ind, "\377y* ActiveVeryLow-server-shutdown command pending *"); break;
+		case 2043:
+		//msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
+		if (shutdown_recall_timer >= 120)
+			msg_format(Ind, "\374\377I*** \377RServer-shutdown in max %d minutes (auto-recall). \377I***", shutdown_recall_timer / 60);
+		else
+			msg_format(Ind, "\374\377I*** \377RServer-shutdown in max %d seconds (auto-recall). \377I***", shutdown_recall_timer);
+		break;
+		}
+	}
+
+	int lev = p_ptr->lev;
+
+	if (p_ptr->pclass == CLASS_DRUID) { /* compare mimic_druid in defines.h */
+		if (lev >= 5) msg_print(Ind, "\377GYou know how to change into a Cave Bear (#160) and Panther (#198)");
+		if (lev >= 10) msg_print(Ind, "\377GYou know how to change into a Grizzly Bear (#191) and Yeti (#154)");
+		if (lev >= 15) msg_print(Ind, "\377GYou know how to change into a Griffon (#279) and Sasquatch (#343)");
+		if (lev >= 20) msg_print(Ind, "\377GYou know how to change into a Werebear (#414), Great Eagle (#335), Aranea (#963) and Great White Shark (#898)");
+		if (lev >= 25) msg_print(Ind, "\377GYou know how to change into a Wyvern (#334) and Multi-hued Hound (#513)");
+		if (lev >= 30) msg_print(Ind, "\377GYou know how to change into a 5-h-Hydra (#440), Minotaur (#641) and Giant Squid (#482)");
+		if (lev >= 35) msg_print(Ind, "\377GYou know how to change into a 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726)");
+		if (lev >= 40) msg_print(Ind, "\377GYou know how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (740)");
+		if (lev >= 45) msg_print(Ind, "\377GYou know how to change into a Maulotaur (#723) and Winged Horror (#704)");// and Behemoth (#716)");
+		if (lev >= 50) msg_print(Ind, "\377GYou know how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (#775)");// and Leviathan (#782)");
+		if (lev >= 55) msg_print(Ind, "\377GYou know how to change into a Horned Serpent (#1131)");
+		if (lev >= 60) msg_print(Ind, "\377GYou know how to change into a Firebird (#1127)");
+	}
+
+	if (p_ptr->prace == RACE_VAMPIRE) {
+		if (lev >= 20) msg_print(Ind, "\377GYou are able to turn into a vampire bat (#391).");
+	}
+
+#ifdef EVENT_TOWNIE_GOLD_LIMIT
+	if (!p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1) {
+		if (EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up)
+			msg_format(Ind, "You may still collect \377y%d Au\377w before receiving 1 experience point.",
+			    EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up);
+		else msg_print(Ind, "You may not collect \377yany more gold\377w or you will gain 1 experience point.");
+	}
+#endif
+
+	/* display PvP kills */
+	if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills);
+
+	msg_print(Ind, " ");
+}
