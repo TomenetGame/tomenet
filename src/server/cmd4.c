@@ -90,7 +90,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 
 	object_type forge, *o_ptr;
 	artifact_type *a_ptr;
-	char fmt[10], a = 'U';
+	char fmt[10];
 
 
 	/* Temporary file */
@@ -245,8 +245,8 @@ void do_cmd_check_artifacts(int Ind, int line)
 #else
 				fprintf(fff, "%3d/%d %s\377%c", radix_idx[i], a_ptr->cur_num, timeleft, c);
 #endif
-			}
-			fprintf(fff, "\377%c%sThe %s", a, admin ? " " : "     ", base_name);
+			} else fprintf(fff, "\377%c", a_ptr->carrier == p_ptr->id ? 'U' : 'w');
+			fprintf(fff, "%sThe %s", admin ? " " : "     ", base_name);
 			if (admin) {
 				sprintf(fmt, "%%%ds\377w%%s\n", (int)(45 - strlen(base_name)));
 				if (!a_ptr->known) fprintf(fff, fmt, "", "(unknown)");
@@ -258,15 +258,15 @@ void do_cmd_check_artifacts(int Ind, int line)
 				/* actually show him timeouts of those artifacts the player owns.
 				   Todo: Should only show timeout if *ID*ed (ID_MENTAL), but not practical :/ */
 				if (p_ptr->id == a_ptr->carrier) {
-					sprintf(fmt, "%%%ds\377w", (int)(45 - strlen(base_name)));
+					sprintf(fmt, "%%%ds\377U", (int)(45 - strlen(base_name)));
 					fprintf(fff, fmt, "");
  #ifdef RING_OF_PHASING_NO_TIMEOUT
 					if (forge.name1 == ART_PHASING) fprintf(fff, " (Resets with Zu-Aon)");
 					else
  #endif
 					if (a_ptr->timeout <= 0) ;
-					else if (a_ptr->timeout < 60 * 2) fprintf(fff, " (\377r%d minutes\377w till reset)", a_ptr->timeout);
-					else if (a_ptr->timeout < 60 * 24 * 2) fprintf(fff, " (\377y%d hours\377w till reset)", a_ptr->timeout / 60);
+					else if (a_ptr->timeout < 60 * 2) fprintf(fff, " (\377r%d minutes\377U till reset)", a_ptr->timeout);
+					else if (a_ptr->timeout < 60 * 24 * 2) fprintf(fff, " (\377y%d hours\377U till reset)", a_ptr->timeout / 60);
 					else fprintf(fff, " (%d days till reset)", a_ptr->timeout / 60 / 24);
 				}
 #endif
