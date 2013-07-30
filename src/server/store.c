@@ -5879,6 +5879,11 @@ void view_exploration_records(int Ind) {
 	for (i = 1; i <= dungeon_id_max; i++) {
 		/* only show those dungeons that have been well-explored! */
 		if (dungeon_bonus[i] >= 2) continue;
+		/* exclude IDDC */
+		if (dungeon_x[i] == WPOS_IRONDEEPDIVE_X &&
+		    dungeon_y[i] == WPOS_IRONDEEPDIVE_Y &&
+		    dungeon_tower[i] == (WPOS_IRONDEEPDIVE_Z > 0))
+			continue;
 
 		fprintf(fff, "             \377u%-30s %s\n",
 		    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
