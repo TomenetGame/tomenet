@@ -2085,6 +2085,7 @@ void cmd_check_misc(void)
 	Term_putstr(40, second + 3, -1, TERM_WHITE, "(\377yi\377w) Chat history");
 	Term_putstr(40, second + 4, -1, TERM_WHITE, "(\377yl\377w) Lag-o-meter");
 	Term_putstr( 5, 17, -1, TERM_WHITE, "(\377y?\377w) Help");
+	Term_putstr(20, 16, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat to view extra character information)");
 
 	Term_putstr(0, 22, -1, TERM_BLUE, "Command: ");
 
