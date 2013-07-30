@@ -2530,23 +2530,23 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 			}
 		}
 		switch (type) {
-		case 1:
+		case TOWN_BREE:
 			wild_info[bleed_from_y][bleed_from_x].type = WILD_GRASSLAND;
 			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
 			break;
-		case 2:
+		case TOWN_GONDOLIN:
 			wild_info[bleed_from_y][bleed_from_x].type = WILD_GRASSLAND;
 			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
 			break;
-		case 3:
+		case TOWN_MINAS_ANOR:
 			wild_info[bleed_from_y][bleed_from_x].type = WILD_MOUNTAIN;
 			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
 			break;
-		case 4:
+		case TOWN_LOTHLORIEN:
 			wild_info[bleed_from_y][bleed_from_x].type = WILD_OCEAN;
 			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
 			break;
-		case 5:
+		case TOWN_KHAZADDUM:
 			wild_info[bleed_from_y][bleed_from_x].type = WILD_VOLCANO;
 			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
 			break;

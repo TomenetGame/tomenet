@@ -7358,12 +7358,20 @@ extern int PlayerUID;
 #define BACT_F_GOLD		0x04
 #define BACT_F_HARDCODE		0x80
 
+/* Town types, not to be confused with town default indices */
 #define TOWN_VANILLA	0
 #define TOWN_BREE	1
-#define TOWN_GONDLIN	2
+#define TOWN_GONDOLIN	2
 #define TOWN_MINAS_ANOR	3
-#define TOWN_LORIEN	4
-#define TOWN_KHAZAD	5	/* this town seems to be under construction in ToME */
+#define TOWN_LOTHLORIEN	4
+#define TOWN_KHAZADDUM	5	/* this town seems to be under construction in ToME */
+
+/* Town default indices (hard-coding is ok since the order of allocation is fixed) */
+#define TIDX_BREE	0
+#define TIDX_GONDLIN	1
+#define TIDX_MINAS_ANOR	2
+#define TIDX_LORIEN	3
+#define TIDX_KHAZAD	4
 
 /* Town defines */
 /* defines for random towns in the dungeon. (will be implemented in v5?)

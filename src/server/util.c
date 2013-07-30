@@ -1425,21 +1425,21 @@ void handle_music(int Ind) {
 
 			if (night_surface) switch (town[i].type) {
 			default:
-			case 0: tmus = 49; tmus_inverse = 1; break; //default town
-			case 1: tmus = 50; tmus_inverse = 3; break; //Bree
-			case 2: tmus = 51; tmus_inverse = 4; break; //Gondo
-			case 3: tmus = 52; tmus_inverse = 5; break; //Minas
-			case 4:	tmus = 53; tmus_inverse = 6; break; //Loth
-			case 5: tmus = 54; tmus_inverse = 7; break; //Khaz
+			case TOWN_VANILLA: tmus = 49; tmus_inverse = 1; break; //default town
+			case TOWN_BREE: tmus = 50; tmus_inverse = 3; break; //Bree
+			case TOWN_GONDOLIN: tmus = 51; tmus_inverse = 4; break; //Gondo
+			case TOWN_MINAS_ANOR: tmus = 52; tmus_inverse = 5; break; //Minas
+			case TOWN_LOTHLORIEN:	tmus = 53; tmus_inverse = 6; break; //Loth
+			case TOWN_KHAZADDUM: tmus = 54; tmus_inverse = 7; break; //Khaz
 			}
 			else switch (town[i].type) {
 			default:
-			case 0: tmus = 1; tmus_inverse = 49; break; //default town
-			case 1: tmus = 3; tmus_inverse = 50; break; //Bree
-			case 2: tmus = 4; tmus_inverse = 51; break; //Gondo
-			case 3: tmus = 5; tmus_inverse = 52; break; //Minas
-			case 4: tmus = 6; tmus_inverse = 53; break; //Loth
-			case 5: tmus = 7; tmus_inverse = 54; break; //Khaz
+			case TOWN_VANILLA: tmus = 1; tmus_inverse = 49; break; //default town
+			case TOWN_BREE: tmus = 3; tmus_inverse = 50; break; //Bree
+			case TOWN_GONDOLIN: tmus = 4; tmus_inverse = 51; break; //Gondo
+			case TOWN_MINAS_ANOR: tmus = 5; tmus_inverse = 52; break; //Minas
+			case TOWN_LOTHLORIEN: tmus = 6; tmus_inverse = 53; break; //Loth
+			case TOWN_KHAZADDUM: tmus = 7; tmus_inverse = 54; break; //Khaz
 			}
 
 			/* now the specialty: If we're coming from elsewhere,
@@ -5983,7 +5983,7 @@ char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool
 	if (type) {
 		/* hack for the two Angbands - so much hardcoding.... */
 		if (extra && !strcmp(d_name + d_info[type].name, "Angband")) {
-			if (town[TOWN_LORIEN].x == x && town[TOWN_LORIEN].y == y)
+			if (town[TIDX_LORIEN].x == x && town[TIDX_LORIEN].y == y)
 				return angband_lothlorien;
 			else return angband_khazaddum;
 		} else /* default */

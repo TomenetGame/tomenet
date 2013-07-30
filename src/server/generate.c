@@ -11580,7 +11580,7 @@ static void town_gen(struct worldpos *wpos)
 				MAX_HGT, MAX_WID, TRUE);
  #endif	// 0
 		switch(type) {
-			case 1:
+			case TOWN_BREE:
 #ifndef ARCADE_SERVER
 				process_dungeon_file("t_bree.txt", wpos, &ystart, &xstart,
 						MAX_HGT, MAX_WID, TRUE);
@@ -11589,19 +11589,19 @@ static void town_gen(struct worldpos *wpos)
 						MAX_HGT, MAX_WID, TRUE);
 #endif
 				break;
-			case 2:
+			case TOWN_GONDOLIN:
 				process_dungeon_file("t_gondol.txt", wpos, &ystart, &xstart,
 						MAX_HGT, MAX_WID, TRUE);
 				break;
-			case 3:
+			case TOWN_MINAS_ANOR:
 				process_dungeon_file("t_minas.txt", wpos, &ystart, &xstart,
 						MAX_HGT, MAX_WID, TRUE);
 				break;
-			case 4:
+			case TOWN_LOTHLORIEN:
 				process_dungeon_file("t_lorien.txt", wpos, &ystart, &xstart,
 						MAX_HGT, MAX_WID, TRUE);
 				break;
-			case 5:
+			case TOWN_KHAZADDUM:
 				process_dungeon_file("t_khazad.txt", wpos, &ystart, &xstart,
 						MAX_HGT, MAX_WID, TRUE);
 				break;
