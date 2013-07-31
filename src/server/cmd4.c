@@ -232,7 +232,8 @@ void do_cmd_check_artifacts(int Ind, int line)
 				if (a_ptr->timeout <= 0) sprintf(timeleft, "\377s  - ");
 				else if (a_ptr->timeout < 60 * 2) sprintf(timeleft, "\377r%3dm", a_ptr->timeout);
 				else if (a_ptr->timeout < 60 * 24 * 2) sprintf(timeleft, "\377y%3dh", a_ptr->timeout / 60);
-				else sprintf(timeleft, "\377s%3dd", a_ptr->timeout / 60 / 24);
+				else if (a_ptr->timeout < 60 * 24 * 27) sprintf(timeleft, "\377s%3dd", a_ptr->timeout / 60 / 24);
+				else sprintf(timeleft, "\377G%3dd", a_ptr->timeout / 60 / 24); /* indicate very recently found arts */
 
 				if (a_ptr->cur_num != 1 && !multiple_artifact_p(&forge)) c = 'r';
 				else if (admin_artifact_p(&forge)) c = 'y';
