@@ -2733,6 +2733,10 @@ void recall_player(int Ind, char *message){
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
+#ifdef USE_SOUND_2010
+	sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 	/* Remove the player */
 	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
 
