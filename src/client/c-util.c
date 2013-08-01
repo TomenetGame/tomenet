@@ -1462,7 +1462,6 @@ bool askfor_aux(char *buf, int len, char mode)
 
 	/* Display the default answer */
 	Term_erase(x, y, len);
-fprintf(stderr, "%s", buf);
 	if (mode & ASKFOR_PRIVATE) c_ptr_last(x, y, vis_len, TERM_YELLOW, buf[0] ? "(default)" : "");
 	else c_ptr_last(x, y, vis_len, TERM_YELLOW, buf);
 
@@ -5666,20 +5665,16 @@ void auto_inscriptions(void)
 static void do_cmd_options_aux(int page, cptr info)
 {
 	char	ch;
-
-	int		i, k = 0, n = 0;
-
-	int		opt[24];
-
-	char	buf[81];
+	int	i, k = 0, n = 0;
+	int	opt[24];
+	char	buf[256];
 
 
 	/* Lookup the options */
 	for (i = 0; i < 24; i++) opt[i] = 0;
 
 	/* Scan the options */
-	for (i = 0; option_info[i].o_desc; i++)
-	{
+	for (i = 0; option_info[i].o_desc; i++) {
 		/* Notice options on this "page" */
 		if (option_info[i].o_page == page &&
 		    option_info[i].o_enabled) opt[n++] = i;
@@ -5690,16 +5685,14 @@ static void do_cmd_options_aux(int page, cptr info)
 	Term_clear();
 
 	/* Interact with the player */
-	while (TRUE)
-	{
+	while (TRUE) {
 		/* Prompt XXX XXX XXX */
 		sprintf(buf, "%s (\377yUp/Down\377w moves, \377yy\377w/\377yn\377w sets, \377yt\377w toggles, \377yESC\377w accepts)", info);
 		//prompt_topline(buf);
 		Term_putstr(0, 0, -1, TERM_WHITE, buf);
 
 		/* Display the options */
-		for (i = 0; i < n; i++)
-		{
+		for (i = 0; i < n; i++) {
 			byte a = TERM_WHITE;
 
 			/* Color current option */
@@ -5724,8 +5717,7 @@ static void do_cmd_options_aux(int page, cptr info)
 		ch = inkey();
 
 		/* Analyze */
-		switch (ch)
-		{
+		switch (ch) {
 			case ESCAPE:
 			case KTRL('X'):
 			{
