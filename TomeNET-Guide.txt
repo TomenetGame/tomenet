@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. July 2013 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.3b - official websites are:
+| Latest update: 2. August 2013 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -10247,8 +10247,12 @@ Fighting
     How well you can fight (hit chance; further boni like skills or +hit from
     equipment are added to the ability) or how easily you get disarmed
     ("You lose the grip of your weapon!").
+    (Note that any +tohit bonus increases the displayed Fighting ability:
+    The displayed value is the sum of your actual ability and your hit boni.)
 Bows/Throw
     How well you can shoot/throw.
+    (Note that any +tohit bonus increases the displayed Bows/Throw ability:
+    The displayed value is the sum of your actual ability and your hit boni.)
 Saving Throw
     How well you can resist attacks that have influence on your status
     other than just hit points. For example poisoning, confusion or

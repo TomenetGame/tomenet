@@ -6518,6 +6518,7 @@ int Send_skills(int Ind)
 	}
 #endif
 
+#if 1 /* since Fighting and Bows/Throws have other effects, don't confuse players with this weird sum */
 	tmp += p_ptr->to_h + p_ptr->to_h_melee;
 	skills[0] = p_ptr->skill_thn + (tmp * BTH_PLUS_ADJ);
 
@@ -6525,6 +6526,10 @@ int Send_skills(int Ind)
 	o_ptr = &p_ptr->inventory[INVEN_BOW];
 	tmp = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_ranged;
 	skills[1] = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
+#else /* looks silly for a warrior who has maxed skills yet is only "good" or something */
+	skills[0] = p_ptr->skill_thn;
+	skills[1] = p_ptr->skill_thb;
+#endif
 
 	/* Basic abilities */
 	skills[2] = p_ptr->skill_sav;
