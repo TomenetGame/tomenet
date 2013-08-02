@@ -1356,28 +1356,6 @@ static void store_delete(store_type *st_ptr)
 		}
 	}
 
-#if 0
-#ifndef TEST_SERVER
-	/* keep track of artifact creation scrolls in log */
-	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
-	    && o_ptr->number == num) {
-		char o_name[ONAME_LEN];
-		cptr s_name = st_name + st_info[st_ptr->st_idx].name;
-		object_desc(0, o_name, o_ptr, TRUE, 3);
-		s_printf("%s: STORE_DELETE: %d/%d - %d, %s (%s).\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
-	}
-#else
-	/* keep track of artifact creation scrolls in log */
-	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
-	    && o_ptr->number == num) {
-		char o_name[ONAME_LEN];
-		cptr s_name = st_name + st_info[st_ptr->st_idx].name;
-		object_desc(0, o_name, o_ptr, TRUE, 3);
-		s_printf("%s: STORE_DELETE: %d/%d - %d, %s (%s).\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
-	}
-#endif
-#endif
-
 	/* Actually destroy (part of) the item */
 	store_item_increase(st_ptr, what, -num);
 	store_item_optimize(st_ptr, what);
@@ -1465,12 +1443,6 @@ static void store_create(store_type *st_ptr)
 	obj_theme theme;
 	bool black_market = (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM);
 	bool carry_ok;
-
-#if 0 /* see below where they're used */
-	int boots_witan_idx = lookup_kind(TV_BOOTS, SV_PAIR_OF_WITAN_BOOTS);
-	int boots_soft_idx = lookup_kind(TV_BOOTS, SV_PAIR_OF_SOFT_LEATHER_BOOTS);
-	int boots_hard_idx = lookup_kind(TV_BOOTS, SV_PAIR_OF_HARD_LEATHER_BOOTS);
-#endif
 
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->stock_size) return;
@@ -1600,16 +1572,6 @@ static void store_create(store_type *st_ptr)
 
 				/* Invalidate the cached allocation table */
 //				alloc_kind_table_valid = FALSE;
-
-#if 0 /* done in st_info.txt instead by specifying boots probabilities directly */
-				/* Mad hack for Rare Footwear Store (STORE_SHOESX): Less Witans */
-				if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE_EGO) &&
-				    (st_info[st_ptr->st_idx].flags1 & SF1_DEEP_LEVEL) &&
-				    i == boots_witan_idx && rand_int(2)) {
-					if (rand_int(2)) i = boots_soft_idx;
-					else i = boots_hard_idx;
-				}
-#endif
 			}
 
 			if (!i) continue;
@@ -1920,19 +1882,6 @@ static void store_create(store_type *st_ptr)
 			}
 		}
 
-#if 0
-/* MEDIUM_LEVEL and DEEP_LEVEL are used in return_level() */
-		/* Deep enough? */
-		if ((st_info[st_ptr->st_idx].flags1 & SF1_DEEP_LEVEL) &&
-		    ((k_ptr->locale[0] < 50) && (k_ptr->locale[1] < 50) &&
-		    (k_ptr->locale[2] < 50) && (k_ptr->locale[3] < 50)))
-			continue;
-		else if ((st_info[st_ptr->st_idx].flags1 & SF1_MEDIUM_LEVEL) &&
-		    ((k_ptr->locale[0] < 25) && (k_ptr->locale[1] < 25) &&
-		    (k_ptr->locale[2] < 25) && (k_ptr->locale[3] < 25)))
-			continue;
-#endif
-
 		/* Mass produce and/or Apply discount */
 		mass_produce(o_ptr, st_ptr);
 
@@ -1998,52 +1947,6 @@ static void store_create(store_type *st_ptr)
 
 		/* Attempt to carry the (known) item */
 		carry_ok = (store_carry(st_ptr, o_ptr) != -1);
-
-#if 0 /* debug herbalist store */
-		if (st_ptr->st_idx == STORE_HERBALIST) {
-			char o_name[ONAME_LEN];
-			cptr s_name;
- #if 0
-			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_name = st_name + st_info[st_ptr->st_idx].name;
-			s_printf("%s: STORE_CARRY: %d/%d - %d, %s (%s)", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
-			if (carry_ok) s_printf(" OK.\n");
-			else s_printf(" FAILED.\n");
- #else
-			if (!carry_ok) {
-				object_desc(0, o_name, o_ptr, TRUE, 3);
-				s_name = st_name + st_info[st_ptr->st_idx].name;
-				s_printf("%s: STORE_CARRY_FAILED: %d/%d - %d, %s (%s)\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
-			}
- #endif
-		}
-#endif
-
-#if 0
-		/* Log occurances of special items */
- #ifndef TEST_SERVER
-//		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
-		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) ||
-		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
-  #if 0
-		    (o_ptr->tval == TV_BOOK && st_ptr->st_idx == 48) ||
-  #endif
-		    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && st_ptr->st_idx != 60)) {
- #else
-//		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
-		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) ||
-		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
-		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI))) {
- #endif
-			char o_name[ONAME_LEN];
-			cptr s_name;
-			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_name = st_name + st_info[st_ptr->st_idx].name;
-			s_printf("%s: STORE_CARRY: %d/%d - %d, %s (%s)", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
-			if (carry_ok) s_printf(" OK.\n");
-			else s_printf(" FAILED.\n");
-		}
-#endif
 
 		/* Definitely done */
 		break;
@@ -2218,22 +2121,8 @@ static void display_entry(int Ind, int pos)
 	/* Get the item */
 	o_ptr = &st_ptr->stock[pos];
 
-#if 0
-	/* Get the "offset" */
-	i = (pos % 12);
-
-	/* Label it, clear the line --(-- */
-	(void)snprintf(out_val, sizeof(out_val), "%c) ", I2A(i));
-	prt(out_val, i+6, 0);
-#endif
-
 	/* Describe an item in the home */
 	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) {
-//		maxwid = 75;
-
-		/* Leave room for weights, if necessary -DRS- */
-		/*if (show_weights) maxwid -= 10;*/
-
 		/* Describe the object */
 #ifdef STORE_SHOWS_SINGLE_WAND_CHARGES
 		/* hack for wand charges to not get displayed accumulated (less comfortable) */
@@ -2779,19 +2668,6 @@ void store_stole(int Ind, int item)
 		sound(Ind, "bash_door_hold", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
-#if 0
-		/* increase/set player's blacklist timer */
-		if (p_ptr->tim_blacklist < 10000000)	/* 10 million turns is LONG ENOUGH */
-			p_ptr->tim_blacklist += 1000;	/* add a little */
-//			p_ptr->tim_watchlist += 1;	/* add a little (a day/night period) */
-			p_ptr->tim_watchlist += 1000;
-
- #if 0
-		/* increase owner's extra attentiveness timer */
-		st_ptr->tim_watch += 100;
-		if (st_ptr->tim_watch > 300) st_ptr->tim_watch = 300;
- #endif
-#endif
 		/* player gets kicked out */
 		store_kick(Ind, FALSE);
 		return;
@@ -3032,32 +2908,8 @@ s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->na
 		p_ptr->tim_blacklist += i;
 
 		/* watchlist - the more known a character is, the longer he remains on it */
-#if 1
-//		p_ptr->tim_watchlist += i * 2;
+
 		p_ptr->tim_watchlist += i + 50; //300?
-#endif
-#if 0 /* use normal turns */
-		if (p_ptr->max_lev <= 20)
-		    i = 0;// seconds (fps % 60)
-		else if (p_ptr->max_lev <= 34)
-		    i = 250;
-		else if (p_ptr->max_lev <= 43)
-		    i = 500;
-		else
-		    i = 750;
-		p_ptr->tim_watchlist += i;
-#endif
-#if 0 /* use day/night cycles */
-		if (p_ptr->max_lev <= 20)
-		    i = 0;
-		else if (p_ptr->max_lev <= 34)
-		    i = 1;
-		else if (p_ptr->max_lev <= 43)
-		    i = 2;
-		else
-		    i = 3;
-		p_ptr->tim_watchlist += i;
-#endif
 
 		/* store owner is more careful from now on, for a while */
 #if 0 /* not that urgent anymore after Minas' XBM was set to NO_STEAL */
@@ -3143,24 +2995,6 @@ void store_purchase(int Ind, int item, int amt)
 		return;
 	}
 
-
-#if 0
-	/* Find the number of objects on this and following pages */
-	i = (st_ptr->stock_num - store_top);
-
-	/* And then restrict it to the current page */
-	if (i > 12) i = 12;
-
-	/* Prompt */
-	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) {
-		snprintf(out_val, sizeof(out_val), "Which item do you want to take? ");
-	} else {
-		snprintf(out_val, sizeof(out_val), "Which item are you interested in? ");
-	}
-
-	/* Get the item number to be bought */
-	if (!get_stock(&item, out_val, 0, i-1)) return;
-#endif
 
 	/* Sanity check - mikaelh */
 	if (item < 0 || item >= st_ptr->stock_size)
@@ -3322,23 +3156,6 @@ void store_purchase(int Ind, int item, int amt)
 	else
 #endif
 	best = price_item(Ind, &sell_obj, ot_ptr->min_inflate, FALSE);
-
-#if 0
-	/* Find out how many the player wants */
-	if (o_ptr->number > 1) {
-		/* Hack -- note cost of "fixed" items */
-		if ((p_ptr->store_num != STORE_HOME) && (o_ptr->ident & ID_FIXED))
-		{
-			msg_format("That costs %d gold per item.", (int)best);
-		}
-
-		/* Get a quantity */
-		amt = get_quantity(NULL, o_ptr->number);
-
-		/* Allow user abort */
-		if (amt <= 0) return;
-	}
-#endif
 
 	/* Attempt to buy it */
 	if (p_ptr->store_num != STORE_HOME) {
@@ -3644,17 +3461,6 @@ void store_sell(int Ind, int item, int amt)
 	/* Museum */
 //	if (p_ptr->store_num == STORE_MATHOM_HOUSE)
 	if (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) {
-#if 0
-		/* Describe the transaction */
-		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
-
-		/* Haggle for it */
-		choice = sell_haggle(Ind, &sold_obj, &price);
-
-		/* Tell the client about the price */
-		Send_store_sell(Ind, price);
-#endif	// 0
-
 		/* Save the info for the confirmation */
 		p_ptr->current_selling = item;
 		p_ptr->current_sell_amt = amt;
@@ -3687,34 +3493,6 @@ void store_sell(int Ind, int item, int amt)
 		/* Wait for confirmation before actually selling */
 		return;
 	}
-
-
-#if 0
-	/* Player is at home */
-	else
-	{
-		/* Describe */
-		msg_format(Ind, "You drop %s.", o_name);
-
-		/* Take it from the players inventory */
-		inven_item_increase(Ind, item, -amt);
-		inven_item_describe(Ind, item);
-		inven_item_optimize(Ind, item);
-
-		/* Handle stuff */
-		handle_stuff(Ind);
-
-		/* Let the store (home) carry it */
-		item_pos = home_carry(&sold_obj);
-
-		/* Update store display */
-		if (item_pos >= 0)
-		{
-			store_top = (item_pos / 12) * 12;
-			display_inventory(Ind);
-		}
-	}
-#endif
 }
 
 
@@ -3784,11 +3562,6 @@ void store_confirm(int Ind)
 		}
 	}
 	/* -------------------------------------------------------------------------------------- */
-
-#if 0 /* done above already */
-	/* Get the inventory item */
-	o_ptr = &p_ptr->inventory[item];
-#endif
 
 	/* Server-side exploit checks - C. Blue */
 	if (amt <= 0) {
@@ -4092,41 +3865,7 @@ void do_cmd_store(int Ind)
 	/* No automatic command */
 	/*command_new = 0;*/
 
-#if 0 /* This assumes that the same store index does not occur in both town and dungeon at once! */
-	if (gettown(Ind) != -1) {
-		st_ptr = &town[i].townstore[which];
-
-		/* Make sure if someone is already in */
-		for (i = 1; i <= NumPlayers; i++) {
-			/* Check this player */
-			j = gettown(i);
-			if (j != -1) {
-				if (st_ptr == &town[j].townstore[Players[i]->store_num]) {
-					msg_print(Ind, "The store is full.");
-					store_kick(Ind, FALSE);
-					return;
-				}
-			}
-		}
-	} else {
-		//DUNGEON STORES
-//		st_ptr =
-		st_ptr = &town[i].townstore[which];
-
-		/* Make sure if someone is already in */
-		for (i = 1; i <= NumPlayers; i++) {
-			/* Check this player */
-			j = gettown(i);
-			if (j == -1) {
-				if (st_ptr == &town[gettown_dun(i)].townstore[Players[i]->store_num]) {
-					msg_print(Ind, "The store is full.");
-					store_kick(Ind, FALSE);
-					return;
-				}
-			}
-		}
-	}
-#else /* This assumes that the same store index could occur in both town and dungeon at once! */
+	/* This assumes that the same store index could occur in both town and dungeon at once! */
 	st_ptr = &town[i].townstore[which];
 
 	/* Make sure if someone is already in */
@@ -4149,7 +3888,6 @@ void do_cmd_store(int Ind)
 			}
 		}
 	}
-#endif
 
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
@@ -4595,7 +4333,7 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 		return;
 	}
 
-#if 0	/* Sanity checks - not possible since item could be
+#if 0	/* Sanity checks - not possible since item could be \
 	   either from player or from store inventory - C. Blue */
 	if (item < 0 || item >= st_ptr->stock_size) return;
 	if (!st_ptr->stock[item].tval) return;
@@ -4810,15 +4548,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	case TV_LITE:
 	case TV_TOOL:
 	case TV_BOOK:	/* Books can be 'fireproof' */
-#if 0 /* custom tomes which aren't blank can't be stacked */
-		/* hack: 'used' custom tomes can't be stacked */
-		if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval) &&
-		    o_ptr->xtra1) /* not 'empty' anymore, ie already written into? */
-			return(FALSE);
-		if (j_ptr->tval == TV_BOOK && is_custom_tome(j_ptr->sval) &&
-		    j_ptr->xtra1) /* not 'empty' anymore, ie already written into? */
-			return(FALSE);
-#else /* custom tomes which appear identical, spell-wise too, may stack */
+		/* custom tomes which appear identical, spell-wise too, may stack */
 		if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval) &&
 		    ((o_ptr->xtra1 != j_ptr->xtra1) ||
 		    (o_ptr->xtra2 != j_ptr->xtra2) ||
@@ -4830,7 +4560,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 		    (o_ptr->xtra8 != j_ptr->xtra8) ||
 		    (o_ptr->xtra9 != j_ptr->xtra9)))
 			return(FALSE);
-#endif
+
 		/* Require full knowledge of both items */
 //			if (o_ptr->tval == TV_BOOK) {
 		if (!Ind || !object_known_p(Ind, o_ptr) ||
@@ -4868,17 +4598,12 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 		/* Require identical "ego-item" names.
 		Allow swapped ego powers: Ie Arrow (SlayDragon,Ethereal) combines with Arrow (Ethereal,SlayDragon).
 		Note: This code assumes there's no ego power which can be both prefix and postfix. */
-#if 0
-		/* This is buggy, it allows stacking of normal items with items that only have one ego power - mikaelh */
-		if ((o_ptr->name2 != j_ptr->name2) && (o_ptr->name2 != j_ptr->name2b)) return (FALSE);
-		if ((o_ptr->name2b != j_ptr->name2) && (o_ptr->name2b != j_ptr->name2b)) return (FALSE);
-#else
-		/* This one only allows name2 and name2b to be swapped */
+
+		/* allow name2 and name2b to be swapped */
 		if (! ((o_ptr->name2 == j_ptr->name2b) && (o_ptr->name2b == j_ptr->name2))) {
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
 		}
-#endif
 
 		/* Require identical random seeds */
 		if (o_ptr->name3 != j_ptr->name3) return (FALSE);
@@ -5600,14 +5325,6 @@ void home_examine(int Ind, int item)
 	/* Describe it fully */
 	else if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
 
-#if 0
-	if (o_ptr->tval < TV_BOOK) {
-		if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
-	} else { /* Books are read */
-		do_cmd_browse_aux(o_ptr);
-	}
-#endif
-
 	return;
 }
 
@@ -5675,28 +5392,16 @@ static void display_house_entry(int Ind, int pos, house_type *h_ptr)
 	byte		attr;
 	int		wgt;
 
-//	int maxwid = 75;
 
 	/* This should never happen */
 	if (p_ptr->store_num != STORE_HOME) return;
 
-
 	/* Get the item */
 	o_ptr = &h_ptr->stock[pos];
-
-#if 0
-	/* Get the "offset" */
-	i = (pos % 12);
-
-	/* Label it, clear the line --(-- */
-	(void)snprintf(out_val, sizeof(out_val), "%c) ", I2A(i));
-	prt(out_val, i+6, 0);
-#endif
 
 
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
-//	o_name[maxwid] = '\0';
 	o_name[ONAME_LEN - 1] = '\0';
 
 	attr = get_attr_from_tval(o_ptr);
@@ -6104,22 +5809,6 @@ void store_debug_stock()
 				/* hack: mention items only once, after they were generated for this store */			
 				if (o_ptr->xtra1 != 222) continue;
 				o_ptr->xtra1 = 0;
-
-#if 0
-				/* Log occurances of special items */
-				if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
-				    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
- #if 0
-				    (o_ptr->tval == TV_BOOK && st_ptr->st_idx == 48) ||
- #endif
-				    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && st_ptr->st_idx != 60)) {
-					char o_name[ONAME_LEN];
-					cptr s_name;
-					object_desc(0, o_name, o_ptr, TRUE, 3);
-					s_name = st_name + st_info[st_ptr->st_idx].name;
-					s_printf("%s: REAL_STORE_CARRY: %d/%d - %d, %s (%s).\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
-				}
-#endif
 			}
 		}
 	}
