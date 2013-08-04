@@ -14104,6 +14104,11 @@ Very high characters (36 and above)
   Notorious for k.o. are Water Hounds, Impact Hounds, to some extent Gravity
   Hounds, and *especially* Plasma Hounds.
   Note that "Feather Falling", also known as "Levitation" provides resistance
+  Nether and Chaos "only" drain your experience if not resisted (can be cured
+  with a potion of restore life levels or according magic). The great thing
+  about chaos resistance is that it includes confusion resistance! So if you
+  were wearing a ring of confusion resistance, just replace it with a ring of
+  chaos resistance and you are set.
   to gravity damage.
 + Get "See Invisible", various nasty monsters are invisible.
 + Get items that sustain your stats, for example a Robe of Permanence.
