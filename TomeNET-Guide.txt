@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. August 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. August 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -14010,13 +14010,16 @@ Beginners (level 1)
   proceed quickly. Enchant the bow to (+hit,+dam) where +dam helps a lot to
   increase the total damage you inflict on enemies, since it's multiplied by
   the bow's power factor.
-+ An appropriate melee weapon
++ An appropriate melee weapon (except if using martial arts, eg Druids!)
   Check out how many blows per round you get with a light Dagger, Whip,
-  Hatchet or Sickle, depending on your favourite weapon class.
-  If your character has only one hit per round even with light weapons, choose
+  Hatchet or Spear, depending on your favourite weapon class.
+  If your character has only one blow per round even with light weapons, choose
   a heavy weapon that can deal more damage in one blow. If your character is
   low on strength, pay attention that you don't buy a weapon that is too heavy
   to use at all.
+  If you have only 1 bpr, make sure to dual-wield if your character can do that
+  because that will give you a bonus bpr. Don't forget that you cannot dual-
+  wield with heavy armour. Rogues should always be dual-wielding.
 
 
 Low level character (up to 15)
@@ -14036,7 +14039,8 @@ Low level character (up to 15)
 Medium level character (up to 25)
 ---------------------------------
 + Enchant your melee and ranged weapons to at least +8 to damage! Best would
-  be (+9,+9) or maybe even (+10,+10)
+  be (+9,+9) or maybe even (+10,+10). Going over +10 is not feasible with
+  normal enchant scrolls, you can use *enchant* scrolls later on.
   You might ask a very powerful priest or paladin to assist you, that way you
   might save a great deal of money.... (This pala/priest thing is outdated,
   sorry. However, you can ask a high level character if he/she helps you by
@@ -14067,12 +14071,13 @@ Higher characters (up to 35)
 + Get Poison Resistance! For example Boots of Mirkwood provide poison
   resistance. Also Elven Armors often provide it. If you are trained in the
   art of mimicry, you could try to use the form of a monster which has poison
-  resistance intrinsically.
-+ Try to Get Confusion Resistance
+  resistance intrinsically. Drolems and other monsters might insta-kill you
+  without poison resistance.
++ Try to Get Confusion Resistance, so you can always read teleport scrolls!
   Note that chaos resistance also provides confusion resistance.
 + Get Nexus Resistance. Nexus attacks can scramble your body, swapping your
-  stats, which can be very annoying. (See 5.6.)
-+ Try to get Blindness Resistance
+  stats, which can mess up your character. (See 5.6.)
++ Try to get Blindness Resistance, so you can always read teleport scrolls!
   Helms or Caps of seeing give this!
 + Try to get Hold Life.
   This prevents your life force from being drained, making you lose experience
@@ -14090,10 +14095,17 @@ Very high characters (36 and above)
 + A fighter should have at least 90 AC. He might also have already 130 AC at
   level 36 if he is lucky.
 + Get as many high resistances as you can.. You will want Nether, Nexus,
-  Disenchantment, Chaos for example.
+  Disenchantment, Chaos, Sound for example. Note that for example Saruman and
+  many high undead monsters (L and W) have disenchanting melee attacks that
+  waste your equipment pretty badly if you don't resist disenchantment.
+  Sound resistance will prevent stun effects, which if they accumulate can even
+  knock you out completely, leaving you unable to do anything at all!
+  Also, your damage and spell casting chance are reduced while stunned.
+  Notorious for k.o. are Water Hounds, Impact Hounds, to some extent Gravity
+  Hounds, and *especially* Plasma Hounds.
   Note that "Feather Falling", also known as "Levitation" provides resistance
-  to gravity.
-+ Get "See Invisible".
+  to gravity damage.
++ Get "See Invisible", various nasty monsters are invisible.
 + Get items that sustain your stats, for example a Robe of Permanence.
 + Get Randarts (randomly generated artifacts) or Artifacts (predefined
   artifacts / static artifacts) as melee weapon
@@ -14106,7 +14118,10 @@ Very high characters (36 and above)
 + You will want items that permanently increase your speed!
   +10 speed or +20 speed will make you approximately twice or three times as
   fast as you usually are. Note that the curve will become flatter the higher
-  your speed is, so moving at more than +40 will hardly make a difference.
+  your speed is, so moving at more than +40 will not make that much of a
+  difference anymore, it migh tbe better to get +3 attacks or +10 critical hits
+  instead, if you have the possibility to acquire those (use the target dummy
+  in town to test your actual damage output and compare).
 
 
 
