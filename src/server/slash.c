@@ -5597,7 +5597,7 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/geretime")) /* skip the announcements, start NOW */
 				/* (or optionally specfiy new remaining announce time in seconds) */
 			{
-				int t = 60;
+				int t = 10;
 				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
 					msg_format(Ind, "Usage: /geretime 1..%d [<new T-x>]", MAX_GLOBAL_EVENTS);
 					return;
