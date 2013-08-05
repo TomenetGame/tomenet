@@ -5065,6 +5065,7 @@ void calc_boni(int Ind)
 	o2_ptr = &p_ptr->inventory[INVEN_ARM];
 	if ((o_ptr->k_idx || (o2_ptr->k_idx && o2_ptr->tval != TV_SHIELD)) && !p_ptr->heavy_wield) {
 		int lev1 = -1, lev2 = -1;
+
 		p_ptr->num_blow = calc_blows_weapons(Ind);
 
 		/* Kurzel - Get intrinsic blow boni for column display (so everything adds up) */
@@ -5085,9 +5086,13 @@ void calc_boni(int Ind)
 		if (lev1 == -1) lev1 = lev2;
 		if (lev2 == -1) lev2 = lev1;
 		/* average for dual-wield */
-		p_ptr->to_h_melee += ((lev1 + lev2) / 2);
-		p_ptr->to_d_melee += ((lev1 + lev2) / 6);
-//		p_ptr->num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
+		if (p_ptr->dual_mode) {
+			p_ptr->to_h_melee += ((lev1 + lev2) / 2);
+			p_ptr->to_d_melee += ((lev1 + lev2) / 6);
+		} else { /* treat main-hand mode basically like weapon+shield, in terms of accuracy/damage (ie no loss) */
+			p_ptr->to_h_melee += lev1;
+			p_ptr->to_d_melee += lev1 / 3;
+		}
 	}
 
 
