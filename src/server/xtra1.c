@@ -7851,15 +7851,22 @@ static void process_global_event(int ge_id) {
 			else s_printf("..placed %d/6 void jump gates\n", k);
 #endif
 
-			/* place exit beacons */
+			/* place exit beacons [3 -> ~25% win?] */
 			k = 0;
-			for (i = 0; i < 3; i++) {
+			for (i = 0; i < 4; i++) {
 				n = 10000;
 				while (--n) {
+#if 0 /* place them anywhere in a chamber */
 					x = rand_int(MAX_WID - 1) + 1;
 					y = rand_int(MAX_HGT - 1) + 1;
+#else /* place them in the center of a chamber */
+					x = rand_int(MAX_WID / 4) * 4 + 2;
+					y = rand_int(MAX_HGT / 4) * 4 + 2;
+#endif
+					/* only place it on floor (that hasn't got a gate/beacon on it yet) */
 					if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
-					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
+					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR) &&
+					    !(f_info[zcave[y][x].feat].flags1 & FF1_PERMANENT))
 						break;
 				}
 				if (!n) continue;
@@ -7869,7 +7876,7 @@ static void process_global_event(int ge_id) {
 				k++;
 			}
 			if (!k) s_printf("..COULDN'T PLACE exit beacons\n");
-			else s_printf("..placed %d/3 exit beacons\n", k);
+			else s_printf("..placed %d/4 exit beacons\n", k);
 
 			/* place Horned Reaper :D */
 			n = 10000;
