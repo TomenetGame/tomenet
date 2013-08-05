@@ -2032,7 +2032,7 @@ void do_cmd_check_server_settings(int Ind)
 	if (cfg.no_ghost)
 		fprintf(fff, "You disappear the moment you die, without becoming a ghost.\n");
 	if (cfg.lifes)
-		fprintf(fff, "Players with ghosts can be resurrected up to %d times until their soul\n will escape and their bodies will be permanently destroyed.\n", cfg.lifes);
+		fprintf(fff, "Normal mode players can be resurrected up to %d times until their soul\n will escape and their bodies will be permanently destroyed.\n", cfg.lifes);
 	if (cfg.houses_per_player) {
 		fprintf(fff, "Players may own up to level/%d houses (caps at level 50) at once", cfg.houses_per_player);
 		if (cfg.castles_per_player == 1) {
