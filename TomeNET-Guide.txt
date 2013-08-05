@@ -5924,7 +5924,7 @@ Kill quest
 
 Events (use /evinfo and /evsign commands to get information and to sign up)
 ---------------------------------------------------------------------------
-Highlander Tournament
+Highlander Tournament (pvp, only one can win, 2+ participants)
     This is an event rather than a quest. When you see a message, announcing
     a Highlander Tournament, type "/evinfo" in the chat to find out more, and
     use "/evsign" followed by the event number to sign up for participation.
@@ -5979,7 +5979,7 @@ Highlander Tournament
     your skill points. For example if you spend several points into
     sword-mastery then _if_ you receive a weapon it will actually be a sword.
 
-Arena Monster Challenge
+Arena Monster Challenge (no losses or gains, for testing your abilities)
     The wizards of Arena Monster Challenge (tm) have prepared a spectacular
     event on the top floor of Bree's training tower, which will allow any Joe
     and Jane to experience top-notch fights against creatures that usually
@@ -5999,7 +5999,7 @@ Arena Monster Challenge
     Apart from that, inventory and equipment cannot be damaged/destroyed or
     disenchanted in this event.
 
-Dungeon Keeper:
+Dungeon Keeper (everyone can win, 1+ participants)
     Character who want to participate must not be of higher level than 15.
     A character can participate only once in this event.
     Fruit bats or PvP-mode characters are not eligible to join.
