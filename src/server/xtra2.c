@@ -4604,7 +4604,9 @@ void gain_exp_to_level(int Ind, int level) {
 	u32b k = 0;
 	if (level <= 1) return;
 	k = player_exp[level - 2];
-	if (Players[Ind]->max_exp < k) gain_exp(Ind, ((k - Players[Ind]->max_exp) * Players[Ind]->expfact) / 100);
+	if (Players[Ind]->max_exp < k)
+		/* make up for rounding error (+99) */
+		gain_exp(Ind, ((k - Players[Ind]->max_exp) * Players[Ind]->expfact + 99) / 100);
 }
 
 
