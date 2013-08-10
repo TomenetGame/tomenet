@@ -2245,6 +2245,7 @@ try_an_other_ego:
 			a_ptr->pval -= randint(a_ptr->pval - 2);
 	}
 
+
 	/* --- Obtain granted minimum pval --- */
 	granted_pval = 0;
 	/* Mage staves have pvals minima */
@@ -2254,6 +2255,9 @@ try_an_other_ego:
 	}
 	/* Elvenkind boots are more likely to get good pval, ugh */
 	if (e_idx == EGO_ELVENKIND2) granted_pval = rand_int(e_ptr->max_pval - 2);
+	/* Enchanted lanterns shouldn't be terrible */
+	if (e_idx == EGO_ENCHANTED) granted_pval = 2;
+
 
 	/* Hack -- obtain pval */
 	if (e_ptr->max_pval > 0) a_ptr->pval += granted_pval + randint(e_ptr->max_pval - granted_pval);
