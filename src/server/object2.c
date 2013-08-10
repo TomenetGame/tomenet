@@ -6737,9 +6737,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	if (ranged_choice && !final_choice && (!armor_choice || magik(50))) final_choice = 2;
 	if (melee_choice == 5) final_choice = 3;
 	if (armor_choice && !final_choice) final_choice = 3;
-/*	if (final_choice == 3 && magik(25)) final_choice = 4; <- no misc items for now, won't be good if not (rand)arts anyway! */
-	/* to catch cases where NO result has been chose at all (paranoia): */
-	if (!final_choice) final_choice = 3;
+/*	if (final_choice == 3 && magik(25)) final_choice = 5; <- no misc items for now, won't be good if not (rand)arts anyway! */
+	/* to catch cases where NO result has been chosen at all (paranoia): */
+	if (!final_choice) final_choice = 5;
 
 	/* Generate TV_ from raw final choice, and choose an appropriate SV_ sub-type now */
 	switch (final_choice) {
@@ -6921,9 +6921,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Don't generate mage-only benefitting reward if we don't use magic */
 		if (!spell_choice) {
 			switch (o_ptr->name2) {
-			case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
-			case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
-			case EGO_CONCENTRATION:
+			//case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
+			//case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
 			case EGO_INTELLIGENCE:
 			case EGO_WISDOM:
 			case EGO_BRILLIANCE:
@@ -6931,9 +6930,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			case EGO_OFTHEMAGI: continue;
 			}
 			switch (o_ptr->name2b) {
-			case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
-			case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
-			case EGO_CONCENTRATION:
+			//case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
+			//case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
 			case EGO_INTELLIGENCE:
 			case EGO_WISDOM:
 			case EGO_BRILLIANCE:
@@ -6978,11 +6976,13 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 
 		/* Don't generate (possibly expensive due to high bpval, hence passed up till here) crap */
-		switch (o_ptr->name2) {
-		case EGO_INFRAVISION:
-		case EGO_BEAUTY:
-		case EGO_CHARMING: continue;
-		default: break;
+		if (!o_ptr->name2b)
+			switch (o_ptr->name2) {
+			case EGO_CONCENTRATION:
+			case EGO_INFRAVISION:
+			case EGO_BEAUTY:
+			case EGO_CHARMING: continue;
+			default: break;
 		}
 
 		/* a reward should have some value: */

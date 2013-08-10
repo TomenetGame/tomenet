@@ -6060,8 +6060,8 @@ void do_slash_cmd(int Ind, char *message)
 				if (!j) return;
 			        msg_print(j, "\377GYou have been rewarded by the gods!");
 
-//				create_reward(Ind, o_ptr, 1, 100, TRUE, TRUE, make_resf(Players[j]) | RESF_NOHIDSM, 5000);
-				give_reward(Ind, RESF_LOW2, NULL, 0, 100);
+//				create_reward(j, o_ptr, 1, 100, TRUE, TRUE, make_resf(Players[j]) | RESF_NOHIDSM, 5000);
+				give_reward(j, RESF_LOW2, NULL, 0, 100);
 				return;
 			}
 			else if (prefix(message, "/debug1")) { /* debug an issue at hand */
