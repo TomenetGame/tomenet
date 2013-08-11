@@ -2363,7 +2363,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 		if (r_ptr->flags3 & RF3_IM_ELEC) { p_ptr->immune_elec = TRUE; csheet_boni->cb[1] |= CB2_IELEC; }
 		if (r_ptr->flags3 & RF3_IM_FIRE) { p_ptr->immune_fire = TRUE; csheet_boni->cb[0] |= CB1_IFIRE; }
 		if (r_ptr->flags3 & RF3_IM_COLD) { p_ptr->immune_cold = TRUE; csheet_boni->cb[0] |= CB1_ICOLD; }
-		if (r_ptr->flags3 & RF3_IM_POIS) { p_ptr->immune_poison = TRUE; csheet_boni->cb[1] |= CB2_IACID; }
+		if (r_ptr->flags3 & RF3_IM_POIS) { p_ptr->immune_poison = TRUE; csheet_boni->cb[1] |= CB2_IPOIS; }
 		if (r_ptr->flags9 & RF9_IM_WATER) { p_ptr->immune_water = TRUE; csheet_boni->cb[2] |= CB3_IWATR; }
 	} else {
 		immrand = 1 + rand_int(immunities);
@@ -3888,6 +3888,7 @@ void calc_boni(int Ind)
 			j = (p_ptr->lev > 50 ? 50 : p_ptr->lev) * 4 / 5;
 			/* better than invis from monster form we're using? */
 			if (j > p_ptr->tim_invis_power) p_ptr->tim_invis_power = j;
+			csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RINVS;
 		}
 		if (f3 & TR3_BLESSED) p_ptr->bless_blade = TRUE;
 		if (f3 & TR3_XTRA_MIGHT) { p_ptr->xtra_might++; csheet_boni[i-INVEN_WIELD].migh++; }
