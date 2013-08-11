@@ -2553,6 +2553,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		}
 		if (csheet_boni[i].slth != 0) {
 			header_color[2][1] = TERM_WHITE;
+			if (p_ptr->skill_stl >= 30) header_color[2][1] = TERM_L_UMBER; //show off max stealth (since it can be reached) - Kurzel
 			color = TERM_L_GREEN;
 			if (csheet_boni[i].slth > 9) color = TERM_GREEN;
 			if (csheet_boni[i].slth > 19) color = TERM_L_UMBER; //admin items
