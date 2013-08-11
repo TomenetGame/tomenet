@@ -5512,6 +5512,30 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Check complete.");
 				return;
 			}
+			/* remove a (nothing) the admin is standing on - C. Blue */
+			else if (prefix(message, "/rmnothing")) {
+				cave_type **zcave = getcave(&p_ptr->wpos);
+				object_type *o_ptr;
+
+				if (!zcave) return; /* paranoia */
+				if (!zcave[p_ptr->py][p_ptr->px].o_idx) {
+					msg_print(Ind, "\377oNo object found here.");
+					return;
+				}
+				o_ptr = &o_list[zcave[p_ptr->py][p_ptr->px].o_idx];
+				if (!nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+					msg_print(Ind, "\377yObject here is not a (nothing).");
+					return;
+				}
+
+				zcave[p_ptr->py][p_ptr->px].o_idx = 0;
+				/* Redraw the old grid */
+				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+				s_printf("Erased (nothing) via slash-command: %s\n.", p_ptr->name);
+				msg_print(Ind, "\377RErased (nothing).");
+				return;
+			}
 			/* erase a certain player character file */
 			else if (prefix(message, "/erasechar"))
 			{
