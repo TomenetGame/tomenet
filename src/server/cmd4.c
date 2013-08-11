@@ -382,6 +382,7 @@ void do_cmd_check_uniques(int Ind, int line)
 				if (!p_ptr->party) continue; //No party. (._. )
 				for (i = 1; i <= NumPlayers; i++) {
 					q_ptr = Players[i];
+					if (!admin && is_admin(q_ptr)) continue; //Non-admins don't see admins, ever. - Kurzel
 					if (q_ptr->r_killed[k] == 1) continue;
 					if (p_ptr->party != q_ptr->party) continue;
 					if ((p_ptr->wpos.wx != q_ptr->wpos.wx) || (p_ptr->wpos.wy != q_ptr->wpos.wy) || (p_ptr->wpos.wz != q_ptr->wpos.wz)) continue;
