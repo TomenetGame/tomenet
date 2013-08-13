@@ -5531,6 +5531,7 @@ void process_player_change_wpos(int Ind)
 	//worldpos twpos;
 	dun_level *l_ptr;
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
+	char o_name_short[ONAME_LEN];
 
 	/* Decide whether we stayed long enough on the previous
 	   floor to get distinct floor feelings here, and also
@@ -5605,6 +5606,7 @@ void process_player_change_wpos(int Ind)
 
 			/* Describe the object */
 			object_desc(Ind, o_name, o_ptr, TRUE, 0);
+			object_desc(0, o_name_short, o_ptr, TRUE, 256);
 
 			/* Message */
 			msg_format(Ind, "\377y%s bids farewell to you...", o_name);
@@ -5614,6 +5616,9 @@ void process_player_change_wpos(int Ind)
 			inven_item_increase(Ind, j, -99);
 			inven_item_describe(Ind, j);
 			inven_item_optimize(Ind, j);
+
+			/* Tell everyone */
+			msg_broadcast_format(Ind, "\376\377M* \377U%s has been lost once more. \377M*", o_name_short);
 
 			j--;
 		}
