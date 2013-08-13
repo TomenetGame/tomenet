@@ -5,7 +5,9 @@
 #include "angband.h"
 
 #include <sys/time.h>
-#ifdef TEST_CLIENT
+
+#define ENABLE_SUBWINDOW_MENU /* allow =f menu function for setting fonts/visibility of term windows */
+#ifdef ENABLE_SUBWINDOW_MENU
  #include <dirent.h>
 #endif
 
@@ -6129,7 +6131,7 @@ static void do_cmd_options_win(void)
 	window_stuff();
 }
 
-#ifdef TEST_CLIENT
+#ifdef ENABLE_SUBWINDOW_MENU
 #if defined(WINDOWS) || defined(USE_X11)
 #define MAX_FONTS 50
 static int font_name_cmp(const void *a, const void *b) {
@@ -6741,7 +6743,7 @@ void do_cmd_options(void) {
 		Term_putstr(5,  8, -1, TERM_WHITE, "(\377y5\377w) Game-Play Options 2");
 		Term_putstr(5,  9, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
 #if defined(WINDOWS) || defined(USE_X11)
- #ifdef TEST_CLIENT
+ #ifdef ENABLE_SUBWINDOW_MENU
 		Term_putstr(5, 10, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
 #endif
@@ -6828,7 +6830,7 @@ void do_cmd_options(void) {
 		}
 
 #if defined(WINDOWS) || defined(USE_X11)
- #ifdef TEST_CLIENT
+ #ifdef ENABLE_SUBWINDOW_MENU
 		/* Change fonts separately and manually */
 		else if (k == 'f') do_cmd_options_fonts();
  #endif
