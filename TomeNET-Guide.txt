@@ -6000,7 +6000,8 @@ Arena Monster Challenge (no losses or gains, for testing your abilities)
     disenchanted in this event.
 
 Dungeon Keeper (everyone can win, 1+ participants)
-    (You should enable 'easy_open' option in  = 5  for this event!)
+    (You should enable 'easy_open' option in  = 5  for this event, which is
+    enabled by default, and lets you open doors simply be moving into them.)
 
     Characters who want to participate must not be of higher level than 15.
     A character can participate only once in this event.
