@@ -37,4 +37,5 @@ struct account{
 	char deed_event;        /* receive a deed for a global event participation? */
 	char deed_achievement;  /* receive a deed for a (currently PvP) achievement? */
 	s32b guild_id;  /* auto-rejoin its guild after a char perma-died */
+	u32b guild_dna;	/* auto-rejoin its guild after a char perma-died */
 };
