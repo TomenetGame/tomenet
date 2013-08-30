@@ -7687,7 +7687,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					did_move_body = TRUE;
 
 					/* Log this to be safe about MOVE_BODY vs TELE_TO related kills */
-					s_printf("MOVE_BODY: '%s' got switched by '%s'.", q_ptr->name, m_name);
+					s_printf("MOVE_BODY: '%s' got switched by '%s'.\n", q_ptr->name, m_name);
 				}
 				else
 				{
