@@ -844,11 +844,13 @@ static void health_redraw(int Ind)
 		/* Default to almost dead */
 		byte attr = TERM_RED;
 
-		/* Crash once occurred here, m_ptr->hp -296, m_ptr->maxhp 0 - C. Blue */
+		/* Crash once occurred here, m_ptr->hp -296, m_ptr->maxhp 0 - C. Blue
+		   --also occurred in xtra2.c:8237, mon_take_hit() */
 		if (m_ptr->maxhp == 0) {
 			Send_monster_health(Ind, 0, 0);
+			s_printf("DBG_MAXHP_4 %d,%d\n", m_ptr->r_idx, m_ptr->ego);
 			return;
-		} else
+		}
 
 		/* Extract the "percent" of health */
 		pct = 100L * m_ptr->hp / m_ptr->maxhp;

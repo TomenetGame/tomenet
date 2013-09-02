@@ -8233,6 +8233,13 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	else if (!m_ptr->monfear && !(r_ptr->flags3 & RF3_NO_FEAR)) {
 		int percentage;
 
+		/* prevent crash bug that happened in line 8237 (mon_take_hit),
+		   apparently maxhp can extremely rarely be 0 - C. Blue */
+		if (m_ptr->maxhp == 0) {
+			s_printf("DBG_MAXHP_1 %d,%d\n", m_ptr->r_idx, m_ptr->ego);
+			return FALSE;
+		}
+
 		/* Percentage of fully healthy */
 		percentage = (100L * m_ptr->hp) / m_ptr->maxhp;
 
@@ -8434,6 +8441,13 @@ case SV_GOLEM_ADAM:
 	/* Sometimes a monster gets scared by damage */
 	else if (!m_ptr->monfear && !(r_ptr->flags3 & RF3_NO_FEAR)) {
 		int percentage;
+
+		/* prevent crash bug that happened in line 8237 (mon_take_hit),
+		   apparently maxhp can extremely rarely be 0 - C. Blue */
+		if (m_ptr->maxhp == 0) {
+			s_printf("DBG_MAXHP_2 %d,%d\n", m_ptr->r_idx, m_ptr->ego);
+			return FALSE;
+		}
 
 		/* Percentage of fully healthy */
 		percentage = (100L * m_ptr->hp) / m_ptr->maxhp;
@@ -8668,6 +8682,13 @@ cptr look_mon_desc(int m_idx)
 		return (living ? "unhurt" : "undamaged");
 	}
 
+
+	/* prevent crash bug that happened in line 8237 (mon_take_hit),
+	   apparently maxhp can extremely rarely be 0 - C. Blue */
+	if (m_ptr->maxhp == 0) {
+		s_printf("DBG_MAXHP_3 %d,%d\n", m_ptr->r_idx, m_ptr->ego);
+		return "awake"; /* some excuse string ;) */
+	}
 
 	/* Calculate a health "percentage" */
 	perc = 100L * m_ptr->hp / m_ptr->maxhp;
