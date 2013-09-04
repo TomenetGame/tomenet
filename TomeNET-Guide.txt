@@ -15827,6 +15827,11 @@ PROBLEM 41: Keyboard input on KDE/Linux is strangely laggy.
 SOLUTION:   This is a weird one, but what has worked is to use smaller text
             fonts (at most 9X14).
 
+PROBLEM 42: Aww, the ego power "Holy Avenger" that I'm so fond of does not
+            exist in TomeNET anymore.
+SOLUTION:   It does. It has just been renamed to "Aman", it does the same (and
+            a little bit more even) as (Holy Avenger) items in other variants.
+
 
 
 ==============================================================================
