@@ -3946,7 +3946,8 @@ void do_cmd_store(int Ind)
 	}
 
 	/* Temple cures some maladies and gives some bread if starving ;-o */
-	if (!p_ptr->tim_blacklist && (which == STORE_TEMPLE || which == STORE_TEMPLE_DUN) && !p_ptr->suscep_life) {
+	if (!p_ptr->ghost &&
+	    !p_ptr->tim_blacklist && (which == STORE_TEMPLE || which == STORE_TEMPLE_DUN) && !p_ptr->suscep_life) {
 		if (p_ptr->food < PY_FOOD_ALERT) {
 			msg_print(Ind, "The temple priest hands you a slice of bread.");
 			set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);

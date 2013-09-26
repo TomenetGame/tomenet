@@ -2596,6 +2596,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_potions = 1;
 		p_ptr->warning_wor = 1;
 		p_ptr->warning_ghost = 1;
+		p_ptr->warning_instares = 1;
 		p_ptr->warning_autoret = 99;//p_ptr->warning_autoret_ok = ;
 		//p_ptr->warning_ma_weapon = 1; leave enabled
 		//p_ptr->warning_ma_shield = 1; leave enabled
@@ -2696,6 +2697,9 @@ void disable_specific_warnings(player_type *p_ptr) {
 	/* No need for WoR hints in an all-Ironman environment */
 	p_ptr->warning_wor = 1;
 #endif
+
+	if (!(p_ptr->mode & MODE_EVERLASTING))
+		p_ptr->warning_instares = 1;
 }
 
 #if 0

@@ -1009,6 +1009,7 @@ struct player_type
 	char warning_potions;
 	char warning_wor;
 	char warning_ghost;
+	char warning_instares;
 	char warning_ma_weapon;
 	char warning_ma_shield;
 
