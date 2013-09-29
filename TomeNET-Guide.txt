@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. September 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 29. September 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -13815,6 +13815,7 @@ by an opponent! The special rules that apply are as follows:
 -diminishing effect on healing: if you spam heal pots, the effect will lessen
  more and more. over time, it returns to normal. entering a town will reset it
  too.
+-temporary speed buffs (potions, mimic powers, spells) have no effect.
 -teleportation will be suppressed during combat, phase door is allowed though.
 -while in a fight with another pvp-char, you cannot teleport away easily
  (takes about 30 seconds to wear off, or just enter a town to reset).
