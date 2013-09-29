@@ -7515,6 +7515,14 @@ void resurrect_player(int Ind, int loss_reduction) {
 
 	/* Update */
 	p_ptr->update |= (PU_BONUS);
+
+	/* Inform him of instant resurrection option */
+	if (p_ptr->lev <= 30 && p_ptr->warning_instares == 0) {
+		p_ptr->warning_instares = 1;
+		msg_print(Ind, "\375\377yHint: You can turn on \377oinstant resurrection\377y in the temple by pressing '\377or\377y'.");
+		msg_print(Ind, "\375\377y      Make sure to read up on it in the \377oguide\377y to understand pros and cons!");
+		s_printf("warning_instares: %s\n", p_ptr->name);
+	}
 }
 
 void check_quests(){

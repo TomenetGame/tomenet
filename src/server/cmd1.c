@@ -6001,15 +6001,6 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 					msg_format(Ind, "The temple priest gives you %d gold pieces for your revival!", i);
 					gain_au(Ind, i, FALSE, FALSE);
 				}
-
-				/* Inform him of instant resurrection option */
-				if (p_ptr->lev <= 30 && p_ptr->warning_instares == 0) {
-					p_ptr->warning_instares = 1;
-					msg_print(Ind, "\375\377yHint: You can turn on \377oinstant resurrection\377y in the temple by pressing '\377or\377y'.");
-					msg_print(Ind, "\375\377y      Make sure to read up on it in the \377oguide\377y to understand pros and cons!");
-					s_printf("warning_instares: %s\n", p_ptr->name);
-				}
-
 			}
 			else msg_print(Ind, "\377rThe temple priest turns you away!");
 		}
