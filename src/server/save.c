@@ -856,6 +856,7 @@ static void wr_extra(int Ind)
 	wr_byte(p_ptr->dual_mode);
 
         wr_s16b(p_ptr->kills);
+        wr_s16b(p_ptr->kills_own);
         wr_s16b(p_ptr->kills_lower);
         wr_s16b(p_ptr->kills_higher);
         wr_s16b(p_ptr->kills_equal);

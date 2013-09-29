@@ -3355,7 +3355,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 #endif
 
 	/* display PvP kills */
-	if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills);
+	if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills_own);
 
 	msg_print(Ind, " ");
 }

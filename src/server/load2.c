@@ -1773,6 +1773,10 @@ if (p_ptr->updated_savegame == 0) {
 	if (!older_than(4, 3, 11)) {
 		rd_s16b(&tmp16s);
 		p_ptr->kills = tmp16s;
+		if (!older_than(4, 5, 11)) {
+			rd_s16b(&tmp16s);
+			p_ptr->kills_own = tmp16s;
+		}
 		rd_s16b(&tmp16s);
 		p_ptr->kills_lower = tmp16s;
 		rd_s16b(&tmp16s);

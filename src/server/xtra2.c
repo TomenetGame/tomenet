@@ -5992,7 +5992,10 @@ static void check_killing_reward(int Ind) {
 
 	/* reward top gladiators */
 	if (p_ptr->kills >= 10) {
-		p_ptr->kills -= 10; /* reset! */
+		/* reset! */
+		//p_ptr->kills -= 10;
+		p_ptr->kills = 0;
+
 		msg_broadcast_format(Ind, "\374\377y** %s vanquished 10 opponents! **", p_ptr->name);
 		msg_print(Ind, "\375\377G* Another 10 aggressors have fallen by your hands! *");
 		msg_print(Ind, "\375\377G* You received a reward! *");
@@ -7051,11 +7054,12 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 #endif
 
 				/* get victim's kills credited as own ones >:) */
-				Players[killer]->kills += p_ptr->kills;
+//wrong code: used for rewards	Players[killer]->kills += p_ptr->kills;
+#if 0 /* disabled since it doesn't make much sense */
 				Players[killer]->kills_lower += p_ptr->kills_lower;
 				Players[killer]->kills_equal += p_ptr->kills_equal;
 				Players[killer]->kills_higher += p_ptr->kills_higher;
-
+#endif
 				Players[killer]->kills++;
 				Players[killer]->kills_own++;
 
@@ -7086,7 +7090,11 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 						if (Players[i]->conn == NOT_CONNECTED) continue;
 						if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
 						if (!(Players[i]->mode & MODE_PVP)) continue;
+#if 0 /* wrong code (rewards) */
 						Players[i]->kills += avg_kills;
+#else
+						if (avg_kills) Players[i]->kills++;
+#endif
 						check_killing_reward(i);
 					}
 				}
@@ -7098,12 +7106,16 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 				if (Players[killer]->max_plv > p_ptr->max_plv) Players[killer]->kills_lower++;
 				else if (Players[killer]->max_plv < p_ptr->max_plv) Players[killer]->kills_higher++;
 				else Players[killer]->kills_equal++;
-				Players[killer]->kills += p_ptr->kills;
+				//wrong code (rewards)	Players[killer]->kills += p_ptr->kills;
+#if 0 /* not much sense */
 				Players[killer]->kills_lower += p_ptr->kills_lower;
 				Players[killer]->kills_equal += p_ptr->kills_equal;
 				Players[killer]->kills_higher += p_ptr->kills_higher;
+#endif
 				Players[killer]->kills++;
 				Players[killer]->kills_own++;
+
+				/* no reward outside of PvP xD */
 			}
 		}
 
