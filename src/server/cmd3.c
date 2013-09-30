@@ -1944,7 +1944,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 			max_point = (o_list[item].weight / 2) + (m_ptr->level * 10);
 
 			/* Randomise it a bit, with half a max guaranteed */
-			gain_exp((max_point / 2) + (randint(max_point) / 2));
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp((max_point / 2) + (randint(max_point) / 2));
 
 			/* Allow escape */
 			if (get_check("Phase door?")) teleport_player(Ind, 10, TRUE);

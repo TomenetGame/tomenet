@@ -3298,7 +3298,7 @@ static void identify_mon_trap_load(int who, object_type *o_ptr) {
 	if (!object_aware_p(who, o_ptr)) {
 		object_aware(who, o_ptr);
 		//object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
-		gain_exp(who, (k_info[o_ptr->k_idx].level + (Players[who]->lev >> 1)) / Players[who]->lev);
+		if (!(Players[who]->mode & MODE_PVP)) gain_exp(who, (k_info[o_ptr->k_idx].level + (Players[who]->lev >> 1)) / Players[who]->lev);
 	}
 	/* Window stuff */
 	//p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);

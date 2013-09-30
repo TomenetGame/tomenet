@@ -1702,7 +1702,7 @@ void do_cmd_open(int Ind, int dir)
 					sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 					/* opening it uses only 1x trdifficulty instead of 3x */
-					gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)) / 3);
+					if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)) / 3);
 				}
 
 				/* Failure -- Keep trying */
@@ -1788,7 +1788,7 @@ void do_cmd_open(int Ind, int dir)
 						take_xp_hit(Ind, 1, "botting", TRUE, FALSE, TRUE);
 					} else {
 						/* Experience */
-						gain_exp(Ind, 1);
+						if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, 1);
 					}
 				}
 
@@ -2924,7 +2924,7 @@ static void do_id_trap(int Ind, int t_idx)
 
 	/* Fair reward; so it's double exp when disarming AND
 	   for the first time also IDing - C. Blue */
-	gain_exp(Ind, TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)));
+	if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)));
 }
 
 /*
@@ -3049,7 +3049,7 @@ void do_cmd_disarm(int Ind, int dir)
 #ifdef USE_SOUND_2010
 				sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-				gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
+				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
 				o_ptr->pval = (0 - o_ptr->pval);
 				do_id_trap(Ind, o_ptr->pval);
 				done = TRUE;
@@ -3185,7 +3185,7 @@ void do_cmd_disarm(int Ind, int dir)
 				}
 
 				/* Reward */
-				gain_exp(Ind, TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)));
+				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)));
 
 				/* Try to identify it */
 				do_id_trap(Ind, t_idx);

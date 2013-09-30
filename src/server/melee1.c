@@ -463,7 +463,7 @@ static bool do_seduce(int Ind, int m_idx)
 
 			case 6:
 				msg_print(Ind, "You feel it was not so bad an experience.");
-				gain_exp(Ind, r_ptr->mexp / 2);
+				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, r_ptr->mexp / 2);
 				done = TRUE;
 				break;
 

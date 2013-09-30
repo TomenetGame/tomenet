@@ -504,7 +504,7 @@ void do_cmd_eat_food(int Ind, int item)
 	/* The player is now aware of the object */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		object_aware(Ind, o_ptr);
-		gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
 	/* Window stuff */
@@ -1045,8 +1045,10 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 #ifdef ALT_EXPRATIO
 						ee = (ee * (s64b)p_ptr->expfact) / 100L; /* give same amount to anyone */
 #endif
-						msg_print(Ind, "\377GYou feel more experienced.");
-						gain_exp(Ind, ee);
+						if (!(p_ptr->mode & MODE_PVP)) {
+							msg_print(Ind, "\377GYou feel more experienced.");
+							gain_exp(Ind, ee);
+						}
 						ident = TRUE;
 					}
 					break;
@@ -1300,7 +1302,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 	{
 		object_aware(Ind, o_ptr);
 //		object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
-		gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
 	/* Window stuff */
@@ -2854,7 +2856,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	/* An identification was made */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		object_aware(Ind, o_ptr);
-		gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
 	/* Window stuff */
@@ -3305,10 +3307,9 @@ void do_cmd_use_staff(int Ind, int item)
 	object_tried(Ind, o_ptr);
 
 	/* An identification was made */
-	if (ident && !object_aware_p(Ind, o_ptr))
-	{
+	if (ident && !object_aware_p(Ind, o_ptr)) {
 		object_aware(Ind, o_ptr);
-		gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
 	/* Window stuff */
@@ -3840,7 +3841,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	if (ident && !object_aware_p(Ind, o_ptr))
 	{
 		object_aware(Ind, o_ptr);
-		gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
 	/* Window stuff */
@@ -4165,7 +4166,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 	if (ident && !object_aware_p(Ind, o_ptr))
 	{
 		object_aware(Ind, o_ptr);
-		gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
 	/* Window stuff */
@@ -4656,7 +4657,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	/* Successfully determined the object function */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		object_aware(Ind, o_ptr);
-		gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
 	/* Window stuff */
