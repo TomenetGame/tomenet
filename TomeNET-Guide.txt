@@ -13792,35 +13792,33 @@ by an opponent! The special rules that apply are as follows:
 
 -PVP chars have only one life and no ghost, ie are erased on death same as
  no-ghost chars. However, they play more fast-paced and are quickly brought up
- again. The purpose of PVP chars is to fight other players to the death
+ again. The purpose of PvP chars is to fight other players to the death
  without remorse, which would otherwise be an unacceptable loss if done with
  regular characters (who can at least use Blood Bond scrolls for friendly duels
  though).
 -yellow name in chat, yellow * marker in @-list, completely yellow entry
- in @-list if viewed by another PVP mode char.
+ in @-list if viewed by another PvP mode char.
 -start at level 10 and with about 10000 Au.
 -reach level 30 at most.
--gain no exp from monsters, no credit for killing uniques (hence cannot become
- king/queen), cannot use static artifacts, can gain loot and money from
- killing monsters though.
 -cannot team up or exchange goods with non-PVP chars.
 -will automatically be hostile to all other PVP chars, except for towns which
  are safe zones!
--will always ESP all other PVP chars as well as see their location in @-list.
--gains exp (enough for advancing up to 2 levels at once even!) from killing
- another PVP char. Lower level opponents will give less exp than equal/higher.
--if a pvp char dies to a monster or trap, all nearby pvp chars will receive a
- share of his kill count, which currently even gets rounded up(!).
--gets number of kills of a victim credited as his own kills :) (useful for
- reward, see below).
+-will always ESP all other PvP chars as well as see their location in @-list.
+-get no credit for killing uniques (hence cannot become king/queen), cannot use
+ static artifacts, can gain loot and money from killing monsters but no exp.
+-gain no exp from any other source except killing other PvP characters.
+ Lower level PvP opponents will give less exp than equal/higher.
+-if a pvp char dies to a monster or trap, all nearby pvp chars may receive a
+ kill credited depending on the number of kills that character had.
 -walk faster by default, similar to 'sprint' fighting technique.
--cannot chase PVP chars _much_ lower then himself by entering their dungeon
+-cannot chase PvP chars _much_ lower then himself by entering their dungeon
  level, because he will get auto-recalled then (anti-chicken).
 -will get rewards (similar to highlander tournament) for reaching high/top
  level or killing an amount of opposing gladiators (other PVP chars).
--will get deed when killed at high level for his next PVP character, which can
- be exchanged for an extra item. Highest level deed can be received by non-pvp
- char.
+-when killed at high level, the player will get a deed on his next PvP
+ character he logs on with, which can be exchanged for an extra item.
+ The highest level deed (obtained when dying at level 30) can be received on a
+ non-pvp char too.
 -mimicry users gain one free transformation of their choice on (multiple)
  levelup, and also learn forms 3x as fast as regular characters.
 -diminishing effect on healing: if you spam heal pots, the effect will lessen
