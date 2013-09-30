@@ -2563,7 +2563,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 	}
 
 #if 1
-	if (!(bb = check_blood_bond(Ind, i)) && !istown(&p_ptr->wpos)) {
+	if (initiator && !(bb = check_blood_bond(Ind, i)) && !istown(&p_ptr->wpos)) {
 		msg_print(Ind, "\377yYou need to be in town to declare war.");
 		return FALSE;
 	}
