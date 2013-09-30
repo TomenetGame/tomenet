@@ -7896,6 +7896,7 @@ Genocide        Removes all monsters of a certain kind from the current level.
                 Monsters have a chance to resist genocide, depending on their
                 level. Monsters inside vaults, Uniques, and monsters that are
                 immune to teleportation attacks cannot be genocided.
+                (Genocide-type spells do not yield experience or loot.)
 Obliteration    Removes all monsters that are close to you.
                 Drains your HP.
                 All monsters within a radius (equal to your sight range)
@@ -7908,6 +7909,7 @@ Obliteration    Removes all monsters that are close to you.
                 Monsters have a chance to resist genocide, depending on their
                 level. Monsters inside vaults, Uniques, and monsters that are
                 immune to teleportation attacks cannot be genocided.
+                (Genocide-type spells do not yield experience or loot.)
 Acquirement     Gives you a great item, generated randomly (may sometimes be
                 very great and sometimes less great).
                 Reading it on deeper dungeon levels produces better results in
@@ -12300,7 +12302,7 @@ Istar schools:
                     Hastes you for a while.                         (project)
                     Required skill level for first spell level: 15.
 
-    Mass Warp      Teleports away all monsters within sight.
+    Mass Warp       Teleports away all monsters within sight.
                     Lv15: Locks monsters in stasis for a while.
                     Required skill level for first spell level: 30.
                     Shared spell (see above): Temporal, Conveyance.
@@ -12311,11 +12313,12 @@ Istar schools:
 - Udun
 
     Genocide        Genocides all monsters of a race on the level.
-                    Lv15: Alternatively genocides all monsters near you ("mass
-                            genocide", choose 'y'. 'n' will do a normal geno).
+                    Lv15: Alternatively genocides all monsters near you
+                          ("obliterarion", choose 'y' when prompted).
                     For details on the effects "genocide" and "obliteration"
                     of this spell, please see (5.9) scroll of geno/oblit.
-                    (This spell uses WISDOM to determine fail-rates!)
+                    (This spell uses WISDOM to determine fail-rates!
+                    Genocide-type spells do not yield experience or loot.)
                     Required skill level for first spell level: 25.
 
     Wraithform      Turns your form immaterial.                     (project)
