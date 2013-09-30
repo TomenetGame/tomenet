@@ -3451,6 +3451,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		}
 	}
 
+	/* for obtaining statistical IDDC information: */
+	if (level_generation_time) l_ptr->monsters_generated++;
+	else l_ptr->monsters_spawned++;
+
 	/* monster creation attempt passed! */
 	return 0;
 }

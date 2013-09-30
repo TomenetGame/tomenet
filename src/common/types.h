@@ -1251,6 +1251,9 @@ struct dun_level
 	cave_type **cave;	/* Leave this the last entry (for aesthetic reason) */
 
 	int fake_town_num;	/* for dungeon stores: which town we abuse the stores from */
+
+	/* for obtaining statistical IDDC information: */
+	int monsters_generated, monsters_spawned, monsters_killed;
 };
 
 /* dungeon_type structure

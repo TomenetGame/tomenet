@@ -7974,6 +7974,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		if (m_ptr->level == 0) tmp_exp = r_ptr->mexp;
 		else tmp_exp = r_ptr->mexp * m_ptr->level;
 
+		/* for obtaining statistical IDDC information: */
+		if (l_ptr) l_ptr->monsters_killed++;
+
 		/* Hack -- remove possible suppress flag */
 		suppress_message = FALSE;
 

@@ -11665,6 +11665,16 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 	   will already call dealloc_dungeon_level, so -> NULL pointer. */
 	if (!(zcave = getcave(wpos))) return;
 
+	/* for obtaining statistical IDDC information: */
+	if (l_ptr && in_irondeepdive(wpos)) {
+		if (l_ptr->monsters_generated + l_ptr->monsters_spawned == 0)
+			s_printf("CVRG-IDDC: %3d, g:--- s:--- k:---, --%%\n", wpos->wz);
+		else
+			s_printf("CVRG-IDDC: %3d, g:%3d s:%3d k:%3d, %2d%%\n", wpos->wz,
+			    l_ptr->monsters_generated, l_ptr->monsters_spawned, l_ptr->monsters_killed,
+			    (l_ptr->monsters_killed * 100) / (l_ptr->monsters_generated + l_ptr->monsters_spawned));
+	}
+
 #if DEBUG_LEVEL > 1
 	s_printf("deallocating %s\n", wpos_format(0, wpos));
 #endif
