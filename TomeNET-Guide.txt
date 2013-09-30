@@ -8465,8 +8465,8 @@ bonus by 1 point each time.
 AC bonus won't drop lower than half the negative amount of the base AC.
 Damage bonus won't drop lower than -10.
 
-To prevent any damage, you need to become immune to the element, or the weapon
-needs to ignore or resist the element.
+To prevent any damage, you need to become immune to the element, or the
+equipped item needs to ignore or resist the element.
 
 The following table lists the elemental damage taken by various item types.
 
