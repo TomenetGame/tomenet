@@ -8489,6 +8489,8 @@ Shields             x               x
 
 Boots               x       x
 Gloves              x       x
+Gauntlets           x               x
+Cesti               x       x       x
 Cloaks              x       x
 Soft Armour         x       x
 Metal/steel Armour  x               x

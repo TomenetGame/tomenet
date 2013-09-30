@@ -2030,13 +2030,14 @@ bool hates_fire(object_type *o_ptr)
 	/* Analyze the type */
 	switch (o_ptr->tval) {
 	/* Wearable */
+	case TV_GLOVES:
+		if (o_ptr->sval == SV_SET_OF_GAUNTLETS) return FALSE;
 	case TV_ARROW:
 	case TV_BOW:
 	case TV_BLUNT:
 	case TV_POLEARM:
 	case TV_AXE:
 	case TV_BOOTS:
-	case TV_GLOVES:
 	case TV_CLOAK:
 	case TV_SOFT_ARMOR:
 		return (TRUE);
@@ -2131,12 +2132,14 @@ static bool can_rust(object_type *o_ptr)
 {
 	switch (o_ptr->tval) {
 #if 0
+	case TV_GLOVES: if (o_ptr->sval == SV_LEATHER_GLOVES || o_ptr->sval == SV_SET_OF_ELVEN_GLOVES) return FALSE;
 	case TV_BOOMERANG: if (o_ptr->sval == SV_BOOM_WOOD || o_ptr->sval == SV_BOOM_S_WOOD) return(FALSE); else return(TRUE);
 	case TV_CROWN: if (o_ptr->sval == SV_IRON_CROWN) return(TRUE); else return(FALSE);
 	case TV_SHIELD: if (o_ptr->sval == SV_SMALL_LEATHER_SHIELD || o_ptr->sval == SV_LARGE_LEATHER_SHIELD) return(FALSE); else return(TRUE);
 	case TV_HARD_ARMOR: if (o_ptr->sval == SV_MITHRIL_CHAIN_MAIL || o_ptr->sval == SV_MITHRIL_PLATE_MAIL || o_ptr->sval == SV_ADAMANTITE_PLATE_MAIL) return (FALSE); else return(TRUE);
 	case TV_HELM: if (o_ptr->sval == SV_HARD_LEATHER_CAP) return(FALSE); else return(TRUE);
 #else
+	case TV_GLOVES:
 	case TV_BOOMERANG:
 	case TV_CROWN:
 	case TV_SHIELD:
