@@ -5100,6 +5100,7 @@ die to monsters (unlikely) or starvation (very likely).
  flags.)
 -Note that the amount of experience is already very high even without this
  depth-bonus, since creatures in the Nether Realm are of a very high level.
+-Instant resurrection does not work in the Nether Realm.
 
 
 (4.5c2) Eample dungeon depth relations
