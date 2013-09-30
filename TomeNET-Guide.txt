@@ -7883,6 +7883,8 @@ Protection from evil    Repels evil creatures that try to attack you.
                 It will also fail on dungeon floors that do not allow
                 *destruction* magic explicitely (orange floor feeling saying
                 "The walls here seem very solid.", also see (4.8)).
+                (You do not get experience, loot or credit for monsters erased
+                by *destruction*, same as for genocide-type spells.)
 Genocide        Removes all monsters of a certain kind from the current level.
                 Drains your HP for each one removed.
                 The race will be determined by the monster which stands
@@ -8708,6 +8710,9 @@ and take much less damage or even none at all. Earthquakes can also stun you.
 
 Items will usually be destroyed/lost, only very rarely you'll be able to grab
 one before it falls into a chasm and vanishes forever.
+
+Monsters killed by earthquakes do not yield experience, loot or other credit,
+same as goes for monsters erased by *destruction* or genocide.
 
 
 
@@ -13996,9 +14001,6 @@ Very high characters (36 and above)
 + maybe a Rod of Illumination and a Rod of Disarming or Trap/Door Destruction
   for clearing Vaults.
 + Sprigs of Athelas
-+ Later on (character level 40+) scrolls of *destruction*. These annihilate
-  all monsters around you instantly (not giving any experience), removing
-  otherwise deadly threats.
 
 
 
