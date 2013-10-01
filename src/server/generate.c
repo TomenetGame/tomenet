@@ -11668,8 +11668,7 @@ void alloc_dungeon_level(struct worldpos *wpos)
 /*
  * Deallocate the space needed for a dungeon level
  */
-void dealloc_dungeon_level(struct worldpos *wpos)
-{
+void dealloc_dungeon_level(struct worldpos *wpos) {
 	int i, j;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
@@ -11684,12 +11683,25 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 
 	/* for obtaining statistical IDDC information: */
 	if (l_ptr && in_irondeepdive(wpos)) {
+		cptr feel;
+		if (l_ptr->flags2 & LF2_OOD_HI) feel = "terrifying";
+		else if ((l_ptr->flags2 & LF2_VAULT_HI) &&
+		    (l_ptr->flags2 & LF2_OOD)) feel = "terrifying";
+		else if ((l_ptr->flags2 & LF2_VAULT_OPEN) || // <- TODO: implement :/
+		     ((l_ptr->flags2 & LF2_VAULT) && (l_ptr->flags2 & LF2_OOD_FREE))) feel = "danger";
+		else if (l_ptr->flags2 & LF2_VAULT) feel = "dangerous";
+		else if (l_ptr->flags2 & LF2_PITNEST_HI) feel = "dangerous";
+		else if (l_ptr->flags2 & LF2_OOD_FREE) feel = "challenge";
+		else if (l_ptr->flags2 & LF2_UNIQUE) feel = "special";
+		else feel = "boring";
+
 		if (l_ptr->monsters_generated + l_ptr->monsters_spawned == 0)
-			s_printf("CVRG-IDDC: %3d, g:--- s:--- k:---, --%%\n", wpos->wz);
+			s_printf("CVRG-IDDC: %3d, g:--- s:--- k:---, --%% (%s)\n", wpos->wz, feel);
 		else
-			s_printf("CVRG-IDDC: %3d, g:%3d s:%3d k:%3d, %2d%%\n", wpos->wz,
+			s_printf("CVRG-IDDC: %3d, g:%3d s:%3d k:%3d, %2d%% (%s)\n", wpos->wz,
 			    l_ptr->monsters_generated, l_ptr->monsters_spawned, l_ptr->monsters_killed,
-			    (l_ptr->monsters_killed * 100) / (l_ptr->monsters_generated + l_ptr->monsters_spawned));
+			    (l_ptr->monsters_killed * 100) / (l_ptr->monsters_generated + l_ptr->monsters_spawned),
+			    feel);
 	}
 
 #if DEBUG_LEVEL > 1

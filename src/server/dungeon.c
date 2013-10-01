@@ -5533,6 +5533,9 @@ void process_player_change_wpos(int Ind)
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
 	char o_name_short[ONAME_LEN];
 
+	/* for obtaining statistical IDDC information: */
+	if (in_irondeepdive(wpos)) s_printf("CVRG-IDDC: '%s' leaves floor %d.\n", p_ptr->name, wpos->wz);
+
 	/* Decide whether we stayed long enough on the previous
 	   floor to get distinct floor feelings here, and also
 	   start counting turns we spend on this floor. */
