@@ -273,6 +273,11 @@ static void town_gen_hack(struct worldpos *wpos);
 //#define NEST_PIT_NO_STAIRS_INNER
 #define NEST_PIT_NO_STAIRS_OUTER	/* implies NEST_PIT_NO_STAIRS_INNER */
 
+/* Ironman Deep Dive Challenge levels should always be big, unless the dungeon theme dictates otherwise? */
+#define IRONDEEPDIVE_BIG_IF_POSSIBLE
+/* Ironman Deep Dive Challenge levels of SMALL or SMALLEST theme should actually be enlarged for better exp gain? */
+#define IRONDEEPDIVE_EXPAND_SMALL
+
 
 /*
  * Simple structure to hold a map location
@@ -9216,6 +9221,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	int hack_dun_table_prob1 = 0, hack_dun_table_prob2 = 0, hack_dun_table_prob3 = 0; //silly compiler warnings
 #endif
 
+	u32b df1_small = DF1_SMALL, df1_smallest = DF1_SMALLEST;
+#ifdef IRONDEEPDIVE_EXPAND_SMALL
+	if (in_irondeepdive(wpos)) {
+		/* expand small to normal and smallest to small */
+		df1_small = DF1_SMALLEST;
+		df1_smallest = 0x0;
+	}
+#endif
 
 	dun_lev = getlevel(wpos);
 	/* Global data */
@@ -9270,7 +9283,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 	/* Very small (1 x 1 panel) level */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-	if (in_irondeepdive(wpos) ? (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_BIG) && (d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_SMALLEST)) :
+	if (in_irondeepdive(wpos) ? (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_BIG) && (d_info[iddc[ABS(wpos->wz)].type].flags1 & df1_smallest)) :
 	    (!(d_ptr->flags1 & DF1_BIG) && (d_ptr->flags1 & DF1_SMALLEST))) {
 #else
 	if (!(d_ptr->flags1 & DF1_BIG) && (d_ptr->flags1 & DF1_SMALLEST)) {
@@ -9280,7 +9293,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	}
 	/* Small level */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-	else if (in_irondeepdive(wpos) ? (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_BIG) && ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_SMALL) || (!rand_int(SMALL_LEVEL * 2)))) : /* rarely small */
+ #ifdef IRONDEEPDIVE_BIG_IF_POSSIBLE
+	else if (in_irondeepdive(wpos) ? (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_BIG) && (d_info[iddc[ABS(wpos->wz)].type].flags1 & df1_small)) : /* rarely small */
+ #else
+	else if (in_irondeepdive(wpos) ? (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_BIG) && ((d_info[iddc[ABS(wpos->wz)].type].flags1 & df1_small) || (!rand_int(SMALL_LEVEL * 2)))) : /* rarely small */
+ #endif
 	    (!(d_ptr->flags1 & DF1_BIG) && ((d_ptr->flags1 & DF1_SMALL) || (!rand_int(SMALL_LEVEL)))))
 #else
 	else if (!(d_ptr->flags1 & DF1_BIG) && ( (d_ptr->flags1 & DF1_SMALL) || (!rand_int(SMALL_LEVEL))))
@@ -9303,10 +9320,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #ifdef ARCADE_SERVER
 	dun->l_ptr->hgt = SCREEN_HGT*2;
 	dun->l_ptr->wid = SCREEN_WID*2;
-if(tron_dark && wpos->wz == 11)
-dun->l_ptr->flags1 |= DF1_FORGET;
-if(tron_forget && wpos->wz == 11)
-dun->l_ptr->flags1 |= LF1_NO_MAP;
+	if(tron_dark && wpos->wz == 11)
+		dun->l_ptr->flags1 |= DF1_FORGET;
+	if(tron_forget && wpos->wz == 11)
+		dun->l_ptr->flags1 |= LF1_NO_MAP;
 #else
 
 	dun->l_ptr->flags1 = 0;
