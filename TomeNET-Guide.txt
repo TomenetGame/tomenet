@@ -778,6 +778,7 @@ They all start with a slash '/' hence they're called slash commands:
 /dice       Roll some dice, you must specify a number of dice from 1 to 100.
             The result is random and can be seen by other players who stand
             nearby.
+/d          Rolls two dice, shortcut for "/dice 2".
 
 /dis        DESTROYS every item in your inventory that has one of these
  (/dispose) inscriptions: terrible, cursed, uncursed, broken, worthless,
