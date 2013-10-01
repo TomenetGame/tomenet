@@ -1175,7 +1175,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	int i;
 
 	/* Make it on par with scrolls at level 59 */
-	int maxenchant = (p_ptr->lev / 4), maxenchant_eff;
+	int maxenchant = (p_ptr->lev / 5) + 5, maxenchant_eff;
 	/* Avoid top level players getting pestered =P */
 	if (maxenchant > 20) maxenchant = 20;
 
@@ -1753,7 +1753,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 #endif	// 0
 
 		case BACT_ENCHANT_WEAPON:
-			paid = fix_item(Ind, INVEN_WIELD, INVEN_BOW, 0, FALSE,
+			paid = fix_item(Ind, INVEN_WIELD, INVEN_ARM, 0, FALSE,
 					BACT_ENCHANT_WEAPON, set_reward);
 			break;
 		case BACT_ENCHANT_ARMOR:

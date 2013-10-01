@@ -4962,12 +4962,28 @@ The 1..9 are standard shops, namely..
                         Restores your form to normal in case you were
                         polymorphed (for example by a potion of Chauve-Souris).
         Enchant Services
-                        These will enchant weapons, arrows, or all armour
-                        parts you currently have equipped.
-                        The maximum enchantment bonus is actually your
-                        character level divided by 4, with the result capped
-                        at a maximum of +20 (therefore reached at level 80).
-                        Ammunition can never be enchanted above (+15,+15)!
+                        These will enchant weapons, arrows, or armour you have
+                        equipped.
+                        For weapons, this will attempt to enchant a main-hand or
+                        off-hand (if dual-wielding) weapon, for armour this will
+                        look through all armour slots. When an eligible item is
+                        found, it will be enchanted.
+                        Cursed items, artifacts and items that cannot be
+                        enchanted are not eligible and will be skipped.
+
+                        Only one item is enchanted at a time, so if you have
+                        three enchantable pieces of armour that aren't in
+                        perfect state, you'll have to take the enchant service
+                        three times.
+
+                        The resulting enchantment bonus of the item is your
+                        character level divided by 5 and 5 added to that, with
+                        the result capped at a maximum of +20, therefore
+                        reached at level 75.
+                        At level 50 the enchantment would be 50/5 + 5 = 10 + 5
+                        = 15, which is the maximum enchantment reachable by
+                        using *enchant* scrolls.
+                        Ammunition can never be enchanted above (+15,+15).
         Mining Supply Store
                         In the hazardous city of Khazad-Dum is a store that
                         offers some goods found to be useful by the miners
