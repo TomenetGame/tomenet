@@ -1539,26 +1539,26 @@ void do_slash_cmd(int Ind, char *message)
 			do_cmd_empty_potion(Ind, slot - 65);
 			return;
 		}
-		else if (prefix(message, "/dice")) {
-			int rn;
-			if (tk < 1)
-			{
-				msg_print(Ind, "\377oUsage: /dice (number of dice)");
-				return;
+		else if (prefix(message, "/dice") || !strcmp(message, "/d")) {
+			int rn = 0;
+
+			if (!strcmp(message, "/d")) k = 2;
+			else {
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage:  /dice <number of dice>");
+					msg_print(Ind, "\377oShortcut to throw 2 dice:  /d");
+					return;
+				}
+				if ((k < 1) || (k > 100)) {
+					msg_print(Ind, "\377oNumber of dice must be between 1 and 100!");
+					return;
+				}
 			}
-			if ((k < 1) || (k > 100))
-			{
-				msg_print(Ind, "\377oNumber of dice must be between 1 and 100!");
-				return;
-			}
+
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			rn = 0;
-			for (i = 0; i < k; i++)
-			{
-			    rn += randint(6);
-			}
+			for (i = 0; i < k; i++) rn += randint(6);
 			msg_format(Ind, "\374\377%cYou throw %d dice and get a %d", COLOUR_GAMBLE, k, rn);
 			msg_format_near(Ind, "\374\377%c%s throws %d dice and gets a %d", COLOUR_GAMBLE, p_ptr->name, k, rn);
 			return;
