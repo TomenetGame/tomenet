@@ -16,18 +16,18 @@ int store_top = 0;
 void display_store_action()
 {
 	int i;
+	/* BIG_MAP leads to big shops */
+	int spacer = (screen_hgt > SCREEN_HGT) ? 14 : 0;
 
-	for (i = 0; i < 6; i++)
-	{
+	for (i = 0; i < 6; i++) {
 		if (!c_store.actions[i]) continue;
 
 		c_put_str(c_store.action_attr[i], c_store.action_name[i],
-				21 + (i / 2), 20 + (30 * (i % 2)));
+				21 + spacer + (i / 2), 20 + (30 * (i % 2)));
 	}
 }
 
-static void display_entry(int pos)
-{
+static void display_entry(int pos, int entries) {
 	object_type *o_ptr;
 	int i, x;
 	char o_name[ONAME_LEN];
@@ -39,11 +39,11 @@ static void display_entry(int pos)
 	o_ptr = &store.stock[pos];
 
         /* Get the "offset" */
-        i = (pos % 12);
+        i = (pos % entries);
 
         /* Label it, clear the line --(-- */
         (void)sprintf(out_val, "%c) ", I2A(i));
-        prt(out_val, i+6, 0);
+        prt(out_val, i + 6, 0);
 
         /* Describe an item in the home */
         if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
@@ -55,19 +55,16 @@ static void display_entry(int pos)
                 /* Describe the object */
 		strcpy(o_name, store_names[pos]);
                 o_name[maxwid] = '\0';
-                c_put_str(o_ptr->attr, o_name, i+6, 3);
+                c_put_str(o_ptr->attr, o_name, i + 6, 3);
 
                 /* Show weights */
-                if (c_cfg.show_weights)
-                {
+                if (c_cfg.show_weights) {
                         /* Only show the weight of an individual item */
                         int wgt = o_ptr->weight;
                         (void)sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
-                        put_str(out_val, i+6, 68);
+                        put_str(out_val, i + 6, 68);
                 }
-        }
-
-        else {
+        } else {
                 /* Must leave room for the "price" */
                 maxwid = 65;
 
@@ -77,57 +74,56 @@ static void display_entry(int pos)
                 /* Describe the object (fully) */
 		strcpy(o_name, store_names[pos]);
                 o_name[maxwid] = '\0';
-                c_put_str(o_ptr->attr, o_name, i+6, 3);
+                c_put_str(o_ptr->attr, o_name, i + 6, 3);
 
                 /* Show weights */
-                if (c_cfg.show_weights)
-                {
+                if (c_cfg.show_weights) {
                         /* Only show the weight of an individual item */
                         int wgt = o_ptr->weight;
                         (void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
-                        put_str(out_val, i+6, 61);
-				}
+                        put_str(out_val, i + 6, 61);
+		}
 
-			x = store_prices[pos];
-            if (x >= 0) {
-				/* Actually draw the price (not fixed) */
-				(void)sprintf(out_val, "%9d  ", x);
-				c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i+6, 68);
-			}
+		x = store_prices[pos];
+		if (x >= 0) {
+			/* Actually draw the price (not fixed) */
+			(void)sprintf(out_val, "%9d  ", x);
+			c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i + 6, 68);
+		}
         }
 }
 
 
 
-void display_inventory(void)
-{
-	int i, k;
+void display_inventory(void) {
+	int i, k, entries = 12;
 
-	for (k = 0; k < 12; k++)
-	{
+	/* BIG_MAP leads to big shops */
+	if (screen_hgt > SCREEN_HGT) entries = 26; /* we don't have 34 letters in the alphabet =p */
+
+	for (k = 0; k < entries; k++) {
 		/* Do not display "dead" items */
 		if (store_top + k >= store.stock_num) break;
 
 		/* Display that one */
-		display_entry(store_top + k);
+		display_entry(store_top + k, entries);
 	}
 
 	/* Erase the extra lines and the "more" prompt */
-	for (i = k; i < 13; i++) prt("", i + 6, 0);
+	for (i = k; i <= entries; i++) prt("", i + 6, 0);
 
 	/* Assume "no current page" */
 	put_str("             ", 5, 20);
 
 	/* Visual reminder of "more items" */
-	if (store.stock_num > 12)
-	{
+	if (store.stock_num > entries) {
 		/* Show "more" reminder (after the last item) */
 		prt("-more-", k + 6, 3);
 
 		/* Indicate the "current page" */
 		put_str(format("(Page %d of %d)%s%s",
-		    store_top / 12 + 1, store.stock_num == 0 ? 1 : (store.stock_num + 11) / 12,
-		    store_top / 12 + 1 >= 10 ? "" : " ", (store.stock_num + 11) / 12 >= 10 ? "" : " "),
+		    store_top / entries + 1, store.stock_num == 0 ? 1 : (store.stock_num + entries - 1) / entries,
+		    store_top / entries + 1 >= 10 ? "" : " ", (store.stock_num + entries - 1) / entries >= 10 ? "" : " "),
 		    5, 20);
 	}
 
@@ -196,13 +192,14 @@ static void store_examine(void)
 	int                     item;
 
 	object_type             *o_ptr;
-
 	char            out_val[160];
+
+	/* BIG_MAP leads to big shops */
+	int entries = (screen_hgt > SCREEN_HGT) ? 26 : 12;
 
 
 	/* Empty? */
-	if (store.stock_num <= 0)
-	{
+	if (store.stock_num <= 0) {
 		if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
 			c_msg_print("Your home is empty.");
 		else c_msg_print("I am currently out of stock.");
@@ -213,7 +210,7 @@ static void store_examine(void)
 	i = (store.stock_num - store_top);
 
 	/* And then restrict it to the current page */
-	if (i > 12) i = 12;
+	if (i > entries) i = entries;
 
 	/* Prompt */
 	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
@@ -239,19 +236,19 @@ static void store_examine(void)
 }
 
 
-static void store_purchase(void)
-{
+static void store_purchase(void) {
         int                     i, amt, amt_afford;
         int                     item;
 
         object_type             *o_ptr;
-
         char            out_val[160];
+
+	/* BIG_MAP leads to big shops */
+	int entries = (screen_hgt > SCREEN_HGT) ? 26 : 12;
 
 
         /* Empty? */
-        if (store.stock_num <= 0)
-        {
+        if (store.stock_num <= 0) {
                 if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
             		c_msg_print("Your home is empty.");
                 else c_msg_print("I am currently out of stock.");
@@ -263,7 +260,7 @@ static void store_purchase(void)
         i = (store.stock_num - store_top);
 
         /* And then restrict it to the current page */
-        if (i > 12) i = 12;
+        if (i > entries) i = entries;
 
         /* Prompt */
         if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
@@ -354,12 +351,14 @@ void store_paste_item(char *out_val, int item) {
 	}
 }
 
-static void store_chat(void)
-{
+static void store_chat(void) {
 	int	i, item;
 
 	char	out_val[MSG_LEN], buf[MSG_LEN];
 	char	where[17];
+
+	/* BIG_MAP leads to big shops */
+	int entries = (screen_hgt > SCREEN_HGT) ? 26 : 12;
 
 
 	/* Empty? */
@@ -375,7 +374,7 @@ static void store_chat(void)
 	i = (store.stock_num - store_top);
 
 	/* And then restrict it to the current page */
-	if (i > 12) i = 12;
+	if (i > entries) i = entries;
 
 	/* Prompt */
 	if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
@@ -435,20 +434,20 @@ static void store_sell(void)
 	Send_store_sell(item, amt);
 }
 
-static void store_do_command(int num)
-{
+static void store_do_command(int num) {
 	int                     i, amt, gold;
 	int                     item, item2;
 	u16b action = c_store.actions[num];
 	u16b bact = c_store.bact[num];
+	/* BIG_MAP leads to big shops */
+	int entries = (screen_hgt > SCREEN_HGT) ? 26 : 12;
 
 	char            out_val[160];
 
 	i = amt = gold = item = item2 = 0;
 
 	/* lazy job for 'older' commands */
-	switch (bact)
-	{
+	switch (bact) {
 		case BACT_SELL:
 			store_sell();
 			return;
@@ -463,11 +462,9 @@ static void store_do_command(int num)
 			break;
 	}
 
-	if (c_store.flags[num] & BACT_F_STORE_ITEM)
-	{
+	if (c_store.flags[num] & BACT_F_STORE_ITEM) {
 		/* Empty? */
-		if (store.stock_num <= 0)
-		{
+		if (store.stock_num <= 0) {
 			if (store_num == STORE_HOME || store_num == STORE_HOME_DUN)
 				c_msg_print("Your home is empty.");
 			else c_msg_print("I am currently out of stock.");
@@ -479,7 +476,7 @@ static void store_do_command(int num)
 		i = (store.stock_num - store_top);
 
 		/* And then restrict it to the current page */
-		if (i > 12) i = 12;
+		if (i > entries) i = entries;
 
 		/* Prompt */
 		sprintf(out_val, "Which item? ");
@@ -491,16 +488,12 @@ static void store_do_command(int num)
 		item = item + store_top;
 	}
 
-	if (c_store.flags[num] & BACT_F_INVENTORY)
-	{
+	if (c_store.flags[num] & BACT_F_INVENTORY) {
 		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN)))
-		{
 			return;
-		}
 	}
 
-	if (c_store.flags[num] & BACT_F_GOLD)
-	{
+	if (c_store.flags[num] & BACT_F_GOLD) {
 		/* Get how much */
 		gold = c_get_quantity("How much gold (any letter = all)? ", -1);
 
@@ -508,17 +501,18 @@ static void store_do_command(int num)
 		if (!gold) return;
 	}
 
-	if (c_store.flags[num] & BACT_F_HARDCODE)
-	{
+	if (c_store.flags[num] & BACT_F_HARDCODE) {
 		/* Nothing for now */
 	}
 
 	Send_store_command(action, item, item2, amt, gold);
 }
 
-static void store_process_command(int cmd)
-{
+static void store_process_command(int cmd) {
 	int i;
+	/* BIG_MAP leads to big shops */
+	int entries = (screen_hgt > SCREEN_HGT) ? 26 : 12;
+
 	for (i = 0; i < 6; i++) {
 		if (!c_store.actions[i]) continue;
 		if (c_store.letter[i] == cmd) {
@@ -566,28 +560,21 @@ static void store_process_command(int cmd)
 
 	/* Parse the command */
 	i = 0; /* for jumping to page 1/2/3/4 */
-	switch (cmd)
-	{
+	switch (cmd) {
 		/* Leave */
 		case ESCAPE:
 		case KTRL('X'):
-		{
 			leave_store = TRUE;
 			break;
-		}
 
 		case KTRL('T'):
-		{
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
 			break;
-		}
 
 		/* Browse */
 		case ' ':
-		{
-			if (store.stock_num <= 12)
-			{
+			if (store.stock_num <= entries) {
 				if (store_top) {
 					/*
 					 * Hack - Allowing going back to first page after buying
@@ -597,20 +584,16 @@ static void store_process_command(int cmd)
 				} else {
 					c_msg_print("Entire inventory is shown.");
 				}
-			}
-			else
-			{
-				store_top += 12;
+			} else {
+				store_top += entries;
 				if (store_top >= store.stock_num) store_top = 0;
 				display_inventory();
 			}
 			break;
-		}
 
 		/* Allow to browse backwards via BACKSPACE */
 		case '\b':
-			if (store.stock_num <= 12)
-			{
+			if (store.stock_num <= entries) {
 				if (store_top) {
 					/* see above - C. Blue */
 					store_top = 0;
@@ -618,11 +601,9 @@ static void store_process_command(int cmd)
 				} else {
 					c_msg_print("Entire inventory is shown.");
 				}
-			}
-			else
-			{
-				store_top -= 12;
-				if (store_top < 0) store_top = ((store.stock_num - 1) / 12) * 12;
+			} else {
+				store_top -= entries;
+				if (store_top < 0) store_top = ((store.stock_num - 1) / entries) * entries;
 				display_inventory();
 			}
 			break;
@@ -638,8 +619,8 @@ static void store_process_command(int cmd)
 		case '3': i++;
 		case '2': i++;
 		case '1':
-			if (store.stock_num > 12 * i) {
-				store_top = 12 * i;
+			if (store.stock_num > entries * i) {
+				store_top = entries * i;
 				display_inventory();
 			}
 #if 0 /* suppress message, in case STORE_INVEN_MAX doesn't actually support all 10 pages. It'd look silyl. */
@@ -649,10 +630,8 @@ static void store_process_command(int cmd)
 
 		/* Paste on Chat */
 		case 'c':
-		{
 			store_chat();
 			break;
-		}
 
 		/* allow to actually chat from within a store, might be cool for
 		   notifying others of items other than just pasting into chat */
@@ -662,36 +641,28 @@ static void store_process_command(int cmd)
 
 		/* Ignore return */
 		case '\r':
-		{
 			break;
-		}
 
 		/* Equipment list */
 		case 'e':
-		{
 			cmd_equip();
 			break;
-		}
 
 		/* Inventory list */
 		case 'i':
-		{
 			cmd_inven();
 			break;
-		}
-
 
 		default:
-		{
 			cmd_raw_key(cmd);
 			break;
-		}
 	}
 }
 
-void c_store_prt_gold(void)
-{
+void c_store_prt_gold(void) {
 	char out_val[64];
+	/* BIG_MAP leads to big shops */
+	int spacer = (screen_hgt > SCREEN_HGT) ? 14 : 0;
 
 	prt("Gold Remaining: ", 19, 53);
 
@@ -699,22 +670,18 @@ void c_store_prt_gold(void)
 	prt(out_val, 19, 68);
 
 	/* Hack -- show balance (if not 0) */
-	if (store_num == STORE_MERCHANTS_GUILD && p_ptr->balance)
-	{
-		prt("Your balance  : ", 20, 53);
+	if (store_num == STORE_MERCHANTS_GUILD && p_ptr->balance) {
+		prt("Your balance  : ", 20 + spacer, 53);
 
 		sprintf(out_val, "%9d", p_ptr->balance);
-		prt(out_val, 20, 68);
-	}
-	else
-	{
+		prt(out_val, 20 + spacer, 68);
+	} else {
 		/* Erase part of the screen */
-		Term_erase(0, 20, 255);
+		Term_erase(0, 20 + spacer, 255);
 	}
 }
 
-void do_redraw_store(void)
-{
+void do_redraw_store(void) {
 	redraw_store = FALSE;
 
 	if (shopping) {
@@ -729,10 +696,11 @@ void do_redraw_store(void)
 	}
 }
 
-void display_store(void)
-{
+void display_store(void) {
 	int i;
 	char buf[1024];
+	/* BIG_MAP leads to big shops */
+	int spacer = (screen_hgt > SCREEN_HGT) ? 14 : 0;
 
 	/* Save the term */
 	Term_save();
@@ -808,32 +776,32 @@ void display_store(void)
 		prt("", 1, 0);
 
 		/* Clear */
-		clear_from(21);
+		clear_from(21 + spacer);
 
 		/* Prompt */
 #if 0
-		prt("You may: ", 21, 0);
+		prt("You may: ", 21 + spacer, 0);
 
 		/* Basic commands */
-		prt(" ESC) Exit.", 22, 0);
+		prt(" ESC) Exit.", 22 + spacer, 0);
 
 		/* Browse if necessary */
-		if (store.stock_num > 12) prt(" SPACE) Next page", 23, 0);
+		if (store.stock_num > 12 + spacer) prt(" SPACE) Next page", 23 + spacer, 0);
 #else /* new: also show 1..n for jumping directly to a page */
-		prt("ESC)   Exit store", 21, 0);
-		if (store.stock_num > 12) {
-			prt("SPACE) Next page", 22, 0);
-			prt(format("1-%d)%s  Go to page", (store.stock_num - 1) / 12 + 1, (store.stock_num - 1) / 12 + 1 >= 10 ? "" : " "), 23, 0);
+		prt("ESC)   Exit store", 21 + spacer, 0);
+		if (store.stock_num > 12 + spacer) {
+			prt("SPACE) Next page", 22 + spacer, 0);
+			prt(format("1-%d)%s  Go to page", (store.stock_num - 1) / (12 + spacer) + 1, (store.stock_num - 1) / (12 + spacer) + 1 >= 10 ? "" : " "), 23 + spacer, 0);
 		}
 #endif
 
 #if 0
 		/* Home commands */
 		if ((store_num == STORE_HOME || store_num == STORE_HOME_DUN) && FALSE) {
-			prt(" g) Get an item.", 22, 30);
-			prt(" d) Drop an item.", 23, 30);
+			prt(" g) Get an item.", 22 + spacer, 30);
+			prt(" d) Drop an item.", 23 + spacer, 30);
 
-			prt(" x) eXamine an item.", 22, 60);
+			prt(" x) eXamine an item.", 22 + spacer, 60);
 		}
 		/* Shop commands XXX XXX XXX */
 		else
@@ -873,6 +841,8 @@ void display_store(void)
 void display_store_special(void) {
 	int i;
 	char buf[1024];
+	/* BIG_MAP leads to big shops */
+	int spacer = (screen_hgt > SCREEN_HGT) ? 14 : 0;
 
 	/* Save the term */
 	Term_save();
@@ -905,21 +875,21 @@ void display_store_special(void) {
 		prt("", 1, 0);
 
 		/* Clear */
-		clear_from(21);
+		clear_from(21 + spacer);
 
 		/* Prompt */
 #if 0 /* keep consistent with display_store() */
-		prt("You may: ", 21, 0);
+		prt("You may: ", 21 + spacer, 0);
 
 		/* Basic commands */
-		prt(" ESC) Exit.", 22, 0);
+		prt(" ESC) Exit.", 22 + spacer, 0);
 #else
-		prt("ESC)   Exit store", 21, 0);
+		prt("ESC)   Exit store", 21 + spacer, 0);
 #endif
 
 #if 0
 		/* Browse if necessary */
-		if (store.stock_num > 12) prt(" SPACE) Next page", 23, 0);
+		if (store.stock_num > 12 + spacer) prt(" SPACE) Next page", 23 + spacer, 0);
 #endif
 
 		/* Shop commands XXX XXX XXX */
