@@ -1782,7 +1782,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 
 	/* Hack - make nazgul rings of power more useful: */
 	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_SPECIAL)) {
-		power = 60 + rand_int(20) + RANDART_QUALITY; /* 60..rnd(20)+RQ should be maximum */
+		power = 65 + rand_int(15) + RANDART_QUALITY; /* 60+rnd(20)+RQ should be maximum */
 	} else if (!rand_int(10) || (k_ptr->flags3 & TR3_CURSED)) { /* 10% are cursed */
 		power = rand_int(40) - (2 * RANDART_QUALITY);
 	} else if (k_ptr->flags5 & TR5_WINNERS_ONLY) {
