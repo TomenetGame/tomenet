@@ -664,10 +664,10 @@ void c_store_prt_gold(void) {
 	/* BIG_MAP leads to big shops */
 	int spacer = (screen_hgt > SCREEN_HGT) ? 14 : 0;
 
-	prt("Gold Remaining: ", 19, 53);
+	prt("Gold Remaining: ", 19 + spacer, 53);
 
 	sprintf(out_val, "%9d", p_ptr->au);
-	prt(out_val, 19, 68);
+	prt(out_val, 19 + spacer, 68);
 
 	/* Hack -- show balance (if not 0) */
 	if (store_num == STORE_MERCHANTS_GUILD && p_ptr->balance) {
