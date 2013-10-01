@@ -1730,6 +1730,7 @@ extern char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int typ
 extern bool gain_au(int Ind, u32b amt, bool quiet, bool exempt);
 extern bool backup_estate(void);
 extern void restore_estate(int Ind);
+extern void log_floor_coverage(dun_level *l_ptr, struct worldpos *wpos);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);

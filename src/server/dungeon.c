@@ -5534,7 +5534,8 @@ void process_player_change_wpos(int Ind)
 	char o_name_short[ONAME_LEN];
 
 	/* for obtaining statistical IDDC information: */
-	if (in_irondeepdive(wpos)) s_printf("CVRG-IDDC: '%s' leaves floor %d.\n", p_ptr->name, wpos->wz);
+	if (in_irondeepdive(&p_ptr->wpos_old)) s_printf("CVRG-IDDC: '%s' leaves floor %d:\n", p_ptr->name, p_ptr->wpos_old.wz);
+	log_floor_coverage(getfloor(&p_ptr->wpos_old), &p_ptr->wpos_old);
 
 	/* Decide whether we stayed long enough on the previous
 	   floor to get distinct floor feelings here, and also

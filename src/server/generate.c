@@ -9235,6 +9235,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	dun = &dun_body;
 	dun->l_ptr = getfloor(wpos);
 	dun->l_ptr->flags1 = dun->l_ptr->flags2 = 0;
+	dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
 
 	/* Random seed for checking if a player logs back in on the same
 	   [static] floor that he logged out, or if it has changed. - C. Blue */
@@ -11682,27 +11683,7 @@ void dealloc_dungeon_level(struct worldpos *wpos) {
 	if (!(zcave = getcave(wpos))) return;
 
 	/* for obtaining statistical IDDC information: */
-	if (l_ptr && in_irondeepdive(wpos)) {
-		cptr feel;
-		if (l_ptr->flags2 & LF2_OOD_HI) feel = "terrifying";
-		else if ((l_ptr->flags2 & LF2_VAULT_HI) &&
-		    (l_ptr->flags2 & LF2_OOD)) feel = "terrifying";
-		else if ((l_ptr->flags2 & LF2_VAULT_OPEN) || // <- TODO: implement :/
-		     ((l_ptr->flags2 & LF2_VAULT) && (l_ptr->flags2 & LF2_OOD_FREE))) feel = "danger";
-		else if (l_ptr->flags2 & LF2_VAULT) feel = "dangerous";
-		else if (l_ptr->flags2 & LF2_PITNEST_HI) feel = "dangerous";
-		else if (l_ptr->flags2 & LF2_OOD_FREE) feel = "challenge";
-		else if (l_ptr->flags2 & LF2_UNIQUE) feel = "special";
-		else feel = "boring";
-
-		if (l_ptr->monsters_generated + l_ptr->monsters_spawned == 0)
-			s_printf("CVRG-IDDC: %3d, g:--- s:--- k:---, --%% (%s)\n", wpos->wz, feel);
-		else
-			s_printf("CVRG-IDDC: %3d, g:%3d s:%3d k:%3d, %2d%% (%s)\n", wpos->wz,
-			    l_ptr->monsters_generated, l_ptr->monsters_spawned, l_ptr->monsters_killed,
-			    (l_ptr->monsters_killed * 100) / (l_ptr->monsters_generated + l_ptr->monsters_spawned),
-			    feel);
-	}
+	//log_floor_coverage(l_ptr, wpos);
 
 #if DEBUG_LEVEL > 1
 	s_printf("deallocating %s\n", wpos_format(0, wpos));
