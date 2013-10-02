@@ -5619,7 +5619,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 #define DF1_ADJUST_LEVEL_1      0x10000000L	/* Minimum monster level will be equal to dungeon level */
 #define DF1_ADJUST_LEVEL_2      0x20000000L	/* Minimum monster level will be double the dungeon level */
-#define DF1_NO_RECALL           0x40000000L	/* No recall allowed; note: this also prevents probability travel while inside! */
+#define DF1_NO_RECALL           0x40000000L	/* No recall allowed; also includes everything NO_RECALL_INTO does! */
 #define DF1_NO_STREAMERS        0x80000000L	/* No streamers */
 
 /* dungeon flags for dungeon_type 
@@ -5638,7 +5638,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 /*#define DF2_NO_MAP		0x00000008L *//* player never gains level knowledge */
 #define DF2_NO_RECALL_INTO	0x00000008L /* Player may not recall downwards into this dungeon \
 					       upwards into this tower. Added it especially for Nether Realm - C. Blue \
-					       Note: this also prevents probability travel while inside! */
+					       Note: this also prevents probability travel while inside, \
+					             floating into it, and sending items via telekinesis. */
 #define DF2_NO_MAGIC_MAP	0x00000010L /* non magic-mappable */
 #define DF2_MISC_STORES		0x00000020L /* spawn low-level dungeon stores such as under "RPG Server" rules */
 #define DF2_TOWNS_IRONRECALL	0x00000040L /* DF2_IRON: if level allows premature recalling then it has a town */
@@ -5655,7 +5656,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF2_IRONRND4		0x00008000L /* DF2_IRON: but each dlvl has 5% chance of allowing recall */
 
 #define DF2_NO_ENTRY_STAIR	0x00010000L /* Can't be entered by staircases */
-#define DF2_NO_ENTRY_WOR	0x00020000L /* Can't be entered by word-of-recall */
+#define DF2_NO_ENTRY_WOR	0x00020000L /* Can't be entered by word-of-recall (plain and less restrictive than NO_RECALL_INTO) */
 #define DF2_NO_ENTRY_PROB	0x00040000L /* Can't be entered by probability travel */
 #define DF2_NO_ENTRY_FLOAT	0x00080000L /* Can't be entered by floating */
 

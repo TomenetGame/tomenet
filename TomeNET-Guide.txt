@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. September 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. October 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1881,7 +1881,7 @@ Kings and Queens who seek new challenges shall try to enter the Nether Realm,
 a dungeon with dangers beyond imagination. Only those who destroyed Morgoth
 may enter. The Nether Realm can be very rewarding in terms of experience but
 also very deadly. Terrible foes are said to dwell there which aren't seen in
-the mundane world.
+the mundane world. See (4.5c) for more information about the Nether Realm.
 
 
 
@@ -4214,7 +4214,7 @@ If you are below the optimum depth, your experience gain will decrease.
 The experience gained will be multiplied by 2 / (2 + leveldifference).
 So for 1 level missing to optimum depth you would get 2 / (2 + 1) = 67% of
 the optimum experience, at 2 levels difference you'd get 50%, 40% at 3, etc.
-At level 64 and higher, no dungeon except for the Nether Realm (see (4.5))
+At level 64 and higher, no dungeon except for the Nether Realm (see (4.5c))
 will be deep enough to deliver optimal experience and your experience gain
 will slowly start to decrease while you further rise in character levels.
 The Nether Realm is by far the deepest dungeon in the game and allows players
@@ -5115,6 +5115,9 @@ die to monsters (unlikely) or starvation (very likely).
  is actually multiplied by the usual floor boni, instead of added. So you will
  get even much more exp when hunting on a floor with a lot of 'bad' special
  flags.)
+ To any floor experience boni that might occur, an additional 5% bonus is added
+ because the whole dungeon is flagged NO_RECALL_INTO, meaning it cannot be
+ entered via word-of-recall (you may recall out of it though).
 -Note that the amount of experience is already very high even without this
  depth-bonus, since creatures in the Nether Realm are of a very high level.
 -Instant resurrection does not work in the Nether Realm.
