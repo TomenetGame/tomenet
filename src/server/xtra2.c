@@ -4739,8 +4739,8 @@ void monster_death(int Ind, int m_idx)
 	/* Get the location */
 	y = m_ptr->fy;
 	x = m_ptr->fx;
-	wpos=&m_ptr->wpos;
-	if(!(zcave=getcave(wpos))) return;
+	wpos = &m_ptr->wpos;
+	if (!(zcave = getcave(wpos))) return;
 
 	if (ge_special_sector && /* training tower event running? and we are there? */
 	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y &&
@@ -4887,12 +4887,26 @@ void monster_death(int Ind, int m_idx)
 
 	/* Log-scumming in IDDC is like fighting clones */
 	if (p_ptr->IDDC_logscum) return;
-        /* enforce dedicated Ironman Deep Dive Challenge character slot usage */
-        if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
-    	    && r_ptr->mexp) /* Allow kills in Bree */
-    		return;
+	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
+	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+	    && r_ptr->mexp) /* Allow kills in Bree */
+		return;
 	/* clones don't drop treasure or complete quests.. */
-	if (m_ptr->clone) return;
+	if (m_ptr->clone) {
+		/* Specialty - even for non-creditable Sauron:
+		   If Sauron is killed in Mt Doom, allow the player to recall! */
+		if (is_Sauron) {
+			dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+			if (d_ptr->type == DI_MT_DOOM) {
+				dun_level *l_ptr = getfloor(&p_ptr->wpos);
+				l_ptr->flags1 |= LF1_IRON_RECALL;
+				floor_msg_format(&p_ptr->wpos, "\377gYou don't sense a magic barrier here!");
+			}
+		}
+
+		/* no credit/loot for clones */
+		return;
+	}
 	/* ..neither do cheezed kills */
 	if (henc_cheezed &&
 	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
@@ -5202,7 +5216,6 @@ if (cfg.unikill_format) {
 	}
 	if (is_Sauron) {
 		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
-		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 		/* If player killed Sauron, also mark the Shadow (formerly Necromancer) of Dol Guldur as killed!
 		   This is required since we now need a dungeon boss for Dol Guldur again =)
@@ -5211,6 +5224,8 @@ if (cfg.unikill_format) {
 
 		/* If Sauron is killed in Mt Doom, allow the player to recall! */
 		if (d_ptr->type == DI_MT_DOOM) {
+			dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 			l_ptr->flags1 |= LF1_IRON_RECALL;
 			floor_msg_format(&p_ptr->wpos, "\377gYou don't sense a magic barrier here!");
 		}
