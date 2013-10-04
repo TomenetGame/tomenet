@@ -897,6 +897,15 @@ void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 	/* in case we changed mimicry skill */
 	if (polymorph) do_mimic_change(Ind, 0, TRUE);
 
+	/* hack - fix SKILL_STANCE skill */
+	if (i == SKILL_STANCE && get_skill(p_ptr, SKILL_STANCE)) {
+		if (p_ptr->max_plv < 50) p_ptr->s_info[SKILL_STANCE].value = p_ptr->max_plv * 1000;
+		else p_ptr->s_info[SKILL_STANCE].value = 50000;
+		/* Update the client */
+		Send_skill_info(Ind, SKILL_STANCE, TRUE);
+		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
+	}
+
 	/* Update the client */
 	calc_techniques(Ind);
 	Send_skill_info(Ind, i, FALSE);
@@ -941,6 +950,15 @@ void respec_skills(int Ind, bool update_skills) {
 
 	/* in case we changed mimicry skill */
 	do_mimic_change(Ind, 0, TRUE);
+
+	/* hack - fix SKILL_STANCE skill */
+	if (get_skill(p_ptr, SKILL_STANCE)) {
+		if (p_ptr->max_plv < 50) p_ptr->s_info[SKILL_STANCE].value = p_ptr->max_plv * 1000;
+		else p_ptr->s_info[SKILL_STANCE].value = 50000;
+		/* Update the client */
+		Send_skill_info(Ind, SKILL_STANCE, TRUE);
+		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
+	}
 
 	/* Update the client */
 	calc_techniques(Ind);

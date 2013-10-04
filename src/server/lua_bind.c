@@ -1109,8 +1109,9 @@ void lua_fix_skill_chart(int Ind) {
 	}
 
 	/* hack - fix SKILL_STANCE skill */
-	if (get_skill(p_ptr, SKILL_STANCE) && p_ptr->lev <= 50) {
-		p_ptr->s_info[SKILL_STANCE].value = p_ptr->lev * 1000;
+	if (get_skill(p_ptr, SKILL_STANCE)) {
+		if (p_ptr->max_plv < 50) p_ptr->s_info[SKILL_STANCE].value = p_ptr->max_plv * 1000;
+		else p_ptr->s_info[SKILL_STANCE].value = 50000;
 		/* Update the client */
 		Send_skill_info(Ind, SKILL_STANCE, TRUE);
 		/* Also update the client's 'm' menu for fighting techniques */
