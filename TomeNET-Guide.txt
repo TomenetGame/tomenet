@@ -1536,9 +1536,10 @@ Static      A level that is static will not change if you leave it but stay
 
 Static Art  See 'Art' at the top of this section.
 
-Stair GoI   Stair-globe of invulnerability. This describes the magical
-            protection that any player who takes a staircase up or down or uses
-            word-of-recall will receive: A temporary buff of +100 armour class
+Stair GoI   Stair-Goi is a very short-lasting globe of invulnerability (usually
+            2 to 3 turns). It is a magical protection effect that any player
+            who takes a staircase up or down or uses word-of-recall will
+            automatically receive: A temporary buff of +100 armour class
             and 40% chance to deflect any attacks that hit him. Attacks that
             aren't deflected still get their damage halved.
 

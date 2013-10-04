@@ -32,6 +32,14 @@
    c)  [0] same as [1], it's a hack that means 'level 1 AND 0 max_exp'. <- RECOMMENDED */
 #define IRONDEEPDIVE_MAXLEV 0
 
+/* chance of walking in a random direction when confused and trying to climb,
+ * in percent. [50]
+ */
+#define STAIR_FAIL_IF_CONFUSED 50
+
+/* duration of GoI when climbing stairs.	[2], must be 0<=n<=4. */
+#define STAIR_GOI_LENGTH 3
+
 
 /*
  * Go up one level                                      -RAK-

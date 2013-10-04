@@ -1549,7 +1549,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	if (p_ptr->invuln && (!bypass_invuln) && !p_ptr->invuln_applied) {
 		/* 1 in 2 chance to fully deflect the damage */
 		if (magik(40)) {
-			msg_print(Ind, "The attack is fully deflected by the magic shield.");
+			msg_print(Ind, "The attack is fully deflected by a magic shield.");
 			if (-Ind_attacker != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
 			return;
 		}
@@ -1764,7 +1764,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	if (p_ptr->invuln && (!bypass_invuln) && !p_ptr->invuln_applied) {
 		/* 1 in 2 chance to fully deflect the damage */
 		if (magik(40)) {
-			msg_print(Ind, "The attack is fully deflected by the magic shield.");
+			msg_print(Ind, "The attack is fully deflected by a magic shield.");
 			return;
 		}
 
@@ -8529,7 +8529,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (!friendly_player && p_ptr->invuln && (!bypass_invuln)) {
 		/* 1 in 2 chance to fully deflect the damage */
 		if (magik(40)) {
-			msg_print(Ind, "The attack is fully deflected by the magic shield.");
+			msg_print(Ind, "The attack is fully deflected by a magic shield.");
 			if (who != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
 			return(TRUE);
 		}

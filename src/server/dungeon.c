@@ -35,7 +35,7 @@
  * TODO: Add another method to allow wilderness travels */
 #define RECALL_MAX_RANGE	24
 
-/* duration of GoI when getting recalled.        [2] */
+/* duration of GoI when getting recalled.        [2] (Must be 0<=n<=4) */
 #define RECALL_GOI_LENGTH        3
 
 
@@ -3857,7 +3857,7 @@ static bool process_player_end_aux(int Ind)
 			if (p_ptr->invuln_dur >= 5) (void)set_invuln(Ind, p_ptr->invuln - minus_magic);
 			else (void)set_invuln(Ind, p_ptr->invuln - 1);
 		}
-		if (p_ptr->invuln == 5) msg_print(Ind, "\377vThe invulnerability shield starts to fade...");
+		//if (p_ptr->invuln == 5) msg_print(Ind, "\377vThe invulnerability shield starts to fade...");
 	}
 
 	/* Heroism */

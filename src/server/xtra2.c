@@ -138,6 +138,7 @@
 #define DEATH_GHOST	2
 #define DEATH_QUIT	3 /* suicide/retirement */
 
+
 /* If during certain events, remember his/her account ID, for handing out a reward
    to a different character which he chooses on next login! - C. Blue
 */
@@ -2339,6 +2340,7 @@ bool set_invuln_short(int Ind, int v)
 
 	/* Use the value */
 	p_ptr->invuln = v;
+	p_ptr->invuln_dur = v;
 
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);

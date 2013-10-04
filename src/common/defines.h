@@ -929,14 +929,6 @@
  */
 #define WRAITH_THROUGH_TOWNWALL
 
-/* chance of walking in a random direction when confused and trying to climb,
- * in percent. [50]
- */
-#define STAIR_FAIL_IF_CONFUSED 50
-
-/* duration of GoI when climbing stairs.        [2], must be 0<=n<=4. */
-#define STAIR_GOI_LENGTH 3
-
 /* when do rogues learn cloaking mode? */
 #define LEARN_CLOAKING_LEVEL 15
 

@@ -562,13 +562,15 @@ bool make_attack_melee(int Ind, int m_idx)
 	blinked = FALSE;
 
 	/* Scan through all four blows */
-	for (ap_cnt = 0; ap_cnt < 4; ap_cnt++)
-	{
+	for (ap_cnt = 0; ap_cnt < 4; ap_cnt++) {
 		bool visible = FALSE;
 		bool obvious = FALSE;
 		bool bypass_ac = FALSE;
 		bool bypass_shield = FALSE;
 		bool bypass_weapon = FALSE;
+
+		bool bypass_protection = FALSE;
+		bool invuln_applied = FALSE;
 
 		int power = 0;
 		int damage = 0, dam_ele = 0;
@@ -597,8 +599,7 @@ bool make_attack_melee(int Ind, int m_idx)
 
 
 		/* Extract the attack "power" */
-		switch (effect)
-		{
+		switch (effect) {
 			case RBE_HURT:  	power = 60; break;
 			case RBE_POISON:        power =  5; break;
 			case RBE_UN_BONUS:      power = 20; break;
@@ -637,16 +638,16 @@ bool make_attack_melee(int Ind, int m_idx)
 			case RBE_SEDUCE:	power = 80; break;
 		}
 
-		switch (method)
-		{
+		switch (method) {
 			case RBM_GAZE: if (p_ptr->blind) continue; /* :-D */
 			case RBM_WAIL:
-			case RBM_SPORE:
 			case RBM_BEG:
 			case RBM_INSULT:
 			case RBM_MOAN:
 			case RBM_SHOW:
 			case RBM_WHISPER:
+				bypass_protection = TRUE; /* mystic shield doesn't block light/sound waves */
+			case RBM_SPORE:
 				bypass_shield = TRUE; /* can't be blocked */
 			case RBM_EXPLODE:
 				bypass_ac = TRUE; /* means it always hits and can't be dodged or parried either.
@@ -657,18 +658,15 @@ bool make_attack_melee(int Ind, int m_idx)
 		}
 
 		/* Monster hits player */
-		if (!effect || check_hit(Ind, power, rlev * factor / 100, bypass_ac))
-		{
+		if (!effect || check_hit(Ind, power, rlev * factor / 100, bypass_ac)) {
 			/* Always disturbing */
 			disturb(Ind, 1, 0);
 			/* Assume no cut or stun */
 			do_cut = do_stun = 0;
 
 			/* Describe the attack method */
-			switch (method)
-			{
+			switch (method) {
 				case RBM_HIT:
-				{
 					act = "hits you";
 #ifdef NORMAL_HIT_NO_STUN
 					do_cut = 1;
@@ -677,92 +675,68 @@ bool make_attack_melee(int Ind, int m_idx)
 #endif	// NORMAL_HIT_NO_STUN
 					touched = TRUE;
 					break;
-				}
 
 				case RBM_TOUCH:
-				{
 					act = "touches you";
 					touched = TRUE;
 					break;
-				}
 
 				case RBM_PUNCH:
-				{
 					act = "punches you";
 					do_stun = 1;
 					touched = TRUE;
 					break;
-				}
 
 				case RBM_KICK:
-				{
 					act = "kicks you";
 					do_stun = 1;
 					touched = TRUE;
 					break;
-				}
 
 				case RBM_CLAW:
-				{
 					act = "claws you";
 					do_cut = 1;
 					touched = TRUE;
 					break;
-				}
 
 				case RBM_BITE:
-				{
 					act = "bites you";
 					do_cut = 1;
 					touched = TRUE;
 					break;
-				}
 
 				case RBM_STING:
-				{
 					act = "stings you";
 					touched = TRUE;
 					break;
-				}
 
 				case RBM_XXX1:
-				{
 					act = "XXX1's you";
 					break;
-				}
 
 				case RBM_BUTT:
-				{
 					act = "butts you";
 					do_stun = 1;
 					touched = TRUE;
 					break;
-				}
 
 				case RBM_CRUSH:
-				{
 					act = "crushes you";
 					do_stun = 1;
 					touched = TRUE;
 					break;
-				}
 
 				case RBM_ENGULF:
-				{
 					act = "engulfs you";
 					touched = TRUE;
 					break;
-				}
 #if 0
 				case RBM_XXX2:
-				{
 					act = "XXX2's you";
 					break;
-				}
 #endif	// 0
 
 				case RBM_CHARGE:
-				{
 					act = "charges you";
 					touched = TRUE;
 #ifdef USE_SOUND_2010
@@ -770,80 +744,55 @@ bool make_attack_melee(int Ind, int m_idx)
 //					sound(SOUND_BUY); /* Note! This is "charges", not "charges at". */
 #endif
 					break;
-				}
 
 				case RBM_CRAWL:
-				{
 					act = "crawls on you";
 					touched = TRUE;
 					break;
-				}
 
 				case RBM_DROOL:
-				{
 					act = "drools on you";
 					break;
-				}
 
 				case RBM_SPIT:
-				{
 					act = "spits on you";
 					break;
-				}
 
 #if 0
 				case RBM_XXX3:
-				{
 					act = "XXX3's on you";
 					break;
-				}
 #endif	// 0
 				case RBM_EXPLODE:
-				{
 					act = "explodes";
 					explode = TRUE;
 					break;
-				}
-
 
 				case RBM_GAZE:
-				{
 					act = "gazes at you";
 					break;
-				}
 
 				case RBM_WAIL:
-				{
 					act = "wails at you";
 					break;
-				}
 
 				case RBM_SPORE:
-				{
 					act = "releases spores at you";
 					break;
-				}
 
 				case RBM_XXX4:
-				{
 					act = "projects XXX4's at you";
 					break;
-				}
 
 				case RBM_BEG:
-				{
 					act = "begs you for money.";
 					break;
-				}
 
 				case RBM_INSULT:
-				{
 					act = desc_insult[rand_int(8)];
 					break;
-				}
 
 				case RBM_MOAN:
-				{
 					if (season_halloween)
 						act = desc_moan_halloween[rand_int(4)];
 					else if (season_xmas)
@@ -851,19 +800,15 @@ bool make_attack_melee(int Ind, int m_idx)
 					else
 						act = desc_moan[rand_int(4)];
 					break;
-				}
 
 #if 0
 				case RBM_XXX5:
-				{
 					act = "XXX5's you";
 					break;
-				}
 #endif	// 0
 
 				case RBM_SHOW:
-				{
-					if (randint(3)==1)
+					if (randint(3) == 1)
 						act = "sings 'We are a happy family'.";
 					else
 						act = "sings 'I love you, you love me'.";
@@ -872,14 +817,20 @@ bool make_attack_melee(int Ind, int m_idx)
 //					sound(SOUND_SHOW);
 #endif
 					break;
-				}
 
 				case RBM_WHISPER:
-				{
 					act = desc_whisper[rand_int(MAX_WHISPERS)];
 					break;
-				}
+			}
 
+			/* Stair-GoI now also works on physical attacks! */
+			if (p_ptr->invuln && (!bypass_invuln)) {// && !p_ptr->invuln_applied) {
+				if (magik(40)) {
+					msg_print(Ind, "The attack is fully deflected by a magic shield.");
+					//if (who != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
+					continue;
+				}
+				invuln_applied = TRUE;
 			}
 
 			/* Hack -- Apply "protection from evil" as well as "kinetic shield" */
@@ -948,8 +899,7 @@ bool make_attack_melee(int Ind, int m_idx)
 //						- UNAWARENESS(p_ptr) * 2;
 			/* always 10% chance to hit */
 			if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;
-			if ((chance > 0) && !bypass_ac && magik(chance))
-			{
+			if ((chance > 0) && !bypass_ac && magik(chance)) {
 				msg_format(Ind, "\377%cYou dodge %s attack!", COLOUR_DODGE_GOOD, m_name_gen);
 				continue;
 			}
@@ -1046,6 +996,7 @@ bool make_attack_melee(int Ind, int m_idx)
 
 			/* Roll out the damage */
 			damage = damroll(d_dice, d_side);
+			if (invuln_applied) damage = (damage + 1) / 2;
 
 #if 0			
 			/* to prevent cloaking mode from breaking (break_cloaking) if an attack didn't do damage */
@@ -1055,8 +1006,7 @@ bool make_attack_melee(int Ind, int m_idx)
 			/* Message */
 			/* DEG Modified to give damage number */
 			
-			if ((act) && (damage < 1))
-			{
+			if ((act) && (damage < 1)) {
 				if (method == RBM_MOAN) { /* no trailing dot */
 					/* Colour change for ranged MOAN for Halloween event -C. Blue */
 					if (season_halloween)
@@ -1068,15 +1018,11 @@ bool make_attack_melee(int Ind, int m_idx)
 				else /* trailing dot */
 					msg_format(Ind, "%^s %s.", m_name, act);
 				strcpy(dam_msg, ""); /* suppress 'bla hits you for x dam' message! */
-			}
-			else if ((act) && (r_ptr->flags1 & (RF1_UNIQUE)))
-			{
+			} else if ((act) && (r_ptr->flags1 & (RF1_UNIQUE))) {
 //				msg_format(Ind, "%^s %s for \377f%d \377wdamage.", m_name, act, damage);
 //				sprintf(dam_msg, "%^s %s for \377f%%d \377wdamage.", m_name, act);
 				sprintf(dam_msg, "%s %s for \377f%%d \377wdamage.", m_name, act);
-			}
-			else if (act)
-			{		
+			} else if (act) {
 //				msg_format(Ind, "%^s %s for \377r%d \377wdamage.", m_name, act, damage);
 //				sprintf(dam_msg, "%^s %s for \377r%%d \377wdamage.", m_name, act);
 				sprintf(dam_msg, "%s %s for \377r%%d \377wdamage.", m_name, act);
@@ -1120,10 +1066,8 @@ bool make_attack_melee(int Ind, int m_idx)
 			obvious = TRUE;
 
 			/* Apply appropriate damage */
-			switch (effect)
-			{
+			switch (effect) {
 				case 0:
-				{
 					/* Hack -- Assume obvious */
 					obvious = TRUE;
 
@@ -1131,10 +1075,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					damage = 0;
 
 					break;
-				}
 
 				case RBE_HURT:
-				{
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1146,10 +1088,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc, 0);
 
 					break;
-				}
 
 				case RBE_POISON:
-				{
 					/* Special damage */
 					switch (method) {
 					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
@@ -1171,29 +1111,23 @@ bool make_attack_melee(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Take "poison" effect */
-					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
-					{
+					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison)) {
 						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, 0))
-						{
 							obvious = TRUE;
-						}
 					}
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_POIS);
 
 					break;
-				}
 
 				case RBE_UN_BONUS:
-				{
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Allow complete resist */
-					if (!p_ptr->resist_disen)
-					{
+					if (!p_ptr->resist_disen) {
 						/* Apply disenchantment */
 						if (apply_disenchant(Ind, 0)) obvious = TRUE;
 					}
@@ -1202,10 +1136,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					update_smart_learn(m_idx, DRS_DISEN);
 
 					break;
-				}
 
 				case RBE_UN_POWER:
-				{
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1229,8 +1161,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (magik(117 - (2160 / (20 + get_skill_scale(p_ptr, SKILL_DEVICE, 100))))) break;
 
 					/* Find an item */
-					for (k = 0; k < 20; k++)
-					{
+					for (k = 0; k < 20; k++) {
 						/* Pick an item */
 #if POLY_RING_METHOD == 0
 						i = rand_int(INVEN_PACK + 2);
@@ -1309,12 +1240,9 @@ bool make_attack_melee(int Ind, int m_idx)
 							break;
 						}
 					}
-
 					break;
-				}
 
 				case RBE_EAT_GOLD:
-				{
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1359,10 +1287,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					else blinked = do_eat_gold(Ind, m_idx);
 
 					break;
-				}
 
 				case RBE_EAT_ITEM:
-				{
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1415,10 +1341,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					else blinked = obvious = do_eat_item(Ind, m_idx);
 
 					break;
-				}
 
 				case RBE_EAT_FOOD:
-				{
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1460,10 +1384,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					}
 
 					break;
-				}
 
 				case RBE_EAT_LITE:
-				{
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1493,10 +1415,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					}
 
 					break;
-				}
 
 				case RBE_ACID:
-				{
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1527,10 +1447,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					update_smart_learn(m_idx, DRS_ACID);
 
 					break;
-				}
 
 				case RBE_ELEC:
-				{
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1565,10 +1483,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					update_smart_learn(m_idx, DRS_ELEC);
 
 					break;
-				}
 
 				case RBE_FIRE:
-				{
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1599,10 +1515,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					update_smart_learn(m_idx, DRS_FIRE);
 
 					break;
-				}
 
 				case RBE_COLD:
-				{
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1633,10 +1547,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					update_smart_learn(m_idx, DRS_COLD);
 
 					break;
-				}
 
 				case RBE_BLIND:
-				{
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1654,10 +1566,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					update_smart_learn(m_idx, DRS_BLIND);
 
 					break;
-				}
 
 				case RBE_CONFUSE:
-				{
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1675,10 +1585,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					update_smart_learn(m_idx, DRS_CONF);
 
 					break;
-				}
 
 				case RBE_TERRIFY:
-				{
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1706,10 +1614,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					update_smart_learn(m_idx, DRS_FEAR);
 
 					break;
-				}
 
 				case RBE_PARALYZE:
-				{
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1737,10 +1643,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					update_smart_learn(m_idx, DRS_FREE);
 
 					break;
-				}
 
 				case RBE_LOSE_STR:
-				{
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1749,10 +1653,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
-				}
 
 				case RBE_LOSE_INT:
-				{
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1761,10 +1663,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
-				}
 
 				case RBE_LOSE_WIS:
-				{
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1773,10 +1673,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
-				}
 
 				case RBE_LOSE_DEX:
-				{
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1785,10 +1683,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (do_dec_stat(Ind, A_DEX, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
-				}
 
 				case RBE_LOSE_CON:
-				{
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1797,10 +1693,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
-				}
 
 				case RBE_LOSE_CHR:
-				{
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1809,10 +1703,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
-				}
 
 				case RBE_LOSE_ALL:
-				{
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1826,10 +1718,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
-				}
 
 				case RBE_SHATTER:
-				{
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1847,10 +1737,8 @@ bool make_attack_melee(int Ind, int m_idx)
 						earthquake(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, 8);
 					}
 					break;
-				}
 
 				case RBE_EXP_10:
-				{
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1875,10 +1763,8 @@ bool make_attack_melee(int Ind, int m_idx)
 						}
 					}
 					break;
-				}
 
 				case RBE_EXP_20:
-				{
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1903,10 +1789,8 @@ bool make_attack_melee(int Ind, int m_idx)
 						}
 					}
 					break;
-				}
 
 				case RBE_EXP_40:
-				{
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1931,10 +1815,8 @@ bool make_attack_melee(int Ind, int m_idx)
 						}
 					}
 					break;
-				}
 
 				case RBE_EXP_80:
-				{
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1959,46 +1841,36 @@ bool make_attack_melee(int Ind, int m_idx)
 						}
 					}
 					break;
-				}
 
 				/* Additisons from PernAngband	- Jir - */
 				case RBE_DISEASE:
-				{
 					/* Take some damage */
 					//                                        carried_monster_hit = TRUE;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Take "poison" effect */
-					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
-					{
+					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison)) {
 						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, 0))
-						{
 							obvious = TRUE;
-						}
 					}
 
 					/* Damage CON (10% chance)*/
-					if (randint(100) < 11)
-					{
+					if (randint(100) < 11) {
 						/* 1% chance for perm. damage (pernA one was buggie? */
 						bool perm = (randint(10) == 1);
 						if (dec_stat(Ind, A_CON, randint(10), perm + 1)) obvious = TRUE;
 					}
 
 					break;
-				}
 				case RBE_PARASITE:
-				{
 					/* Obvious */
 					obvious = TRUE;
 
 					//                                        if (!p_ptr->parasite) set_parasite(damage, r_idx);
 
 					break;
-				}
 				case RBE_HALLU:
-				{
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -2013,9 +1885,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					}
 					break;
 
-				}
 				case RBE_TIME:
-				{
 					switch (p_ptr->resist_time?randint(9):randint(10))
 					{
 						case 1: case 2: case 3: case 4: case 5:
@@ -2069,10 +1939,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 					break;
-				}
 
 				case RBE_SANITY:
-				{
 					obvious = TRUE;
 					msg_print(Ind, "\377RYou shiver in madness..");
 					
@@ -2085,7 +1953,6 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					take_sanity_hit(Ind, damage, ddesc);
 					break;
-				}
 
 				case RBE_DISARM: /* Note: Shields cannot be disarmed, only weapons can */
 				{
@@ -2201,7 +2068,6 @@ bool make_attack_melee(int Ind, int m_idx)
 				}
 
 				case RBE_FAMINE:
-				{
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -2214,10 +2080,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					obvious = TRUE;
 
 					break;
-				}
 
 				case RBE_SEDUCE:
-				{
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -2230,7 +2094,6 @@ bool make_attack_melee(int Ind, int m_idx)
 					obvious = TRUE;
 
 					break;
-				}
 				case RBE_LITE:
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -2528,16 +2391,12 @@ bool make_attack_melee(int Ind, int m_idx)
 
 #ifdef OLD_MONSTER_LORE
 		/* Analyze "visible" monsters only */
-		if (visible)
-		{
+		if (visible) {
 			/* Count "obvious" attacks (and ones that cause damage) */
-			if (obvious || damage || (r_ptr->r_blows[ap_cnt] > 10))
-			{
+			if (obvious || damage || (r_ptr->r_blows[ap_cnt] > 10)) {
 				/* Count attacks of this type */
 				if (r_ptr->r_blows[ap_cnt] < MAX_UCHAR)
-				{
 					r_ptr->r_blows[ap_cnt]++;
-				}
 			}
 		}
 #endif
@@ -2548,8 +2407,7 @@ bool make_attack_melee(int Ind, int m_idx)
 
 
 	/* Blink away */
-	if (blinked)
-	{
+	if (blinked) {
 		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5)) {
 			msg_print(Ind, "There is a puff of smoke!");
 #ifdef USE_SOUND_2010
