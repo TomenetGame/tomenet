@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. October 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. October 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10224,6 +10224,15 @@ depending on their alignment (enlightened vs corrupted) on initiation.
 (Low-profile means that their "good" and "evil" skills - the four holy schools,
 necromancy, traumaturgy and the three auras - are all reduced to 70% of the
 character classes' usual ratio.)
+
+When a skill's ratio has been modified on initiation, the skill will
+automatically be set as close as possible to its previous value, and the extra
+skill points will be refunded, so the character does not "lose" any skill points
+by training skills prior to initiation.
+
+Skills that become disabled on initiation will not be nulled and hence will
+continue to have effect, although the character won't be able to increase them
+any further after that.
 
 Modifications for becoming 'enlightened':
     Necromancy, traumaturgy and aura of death become disabled.
