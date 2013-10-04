@@ -470,17 +470,17 @@ static int get_mimic_spell(int *sn)
 			for (i = 0; i < num; i++) {
 				c = corresp[i];
 				if (c >= 64 + 4) {
-					if (!strcmp(buf, monster_spells6[c - 64 - 4].name)) {
+					if (!strcasecmp(buf, monster_spells6[c - 64 - 4].name)) {
 						flag = TRUE;
 						break;
 					}
 				} else if (c >= 32 + 4) {
-					if (!strcmp(buf, monster_spells5[c - 32 - 4].name)) {
+					if (!strcasecmp(buf, monster_spells5[c - 32 - 4].name)) {
 						flag = TRUE;
 						break;
 					}
 				} else if (c >= 4) { /* checkin for >=4 is paranoia */
-					if (!strcmp(buf, monster_spells4[c - 4].name)) {
+					if (!strcasecmp(buf, monster_spells4[c - 4].name)) {
 						flag = TRUE;
 						break;
 					}
@@ -626,14 +626,13 @@ void do_mimic()
 			}
 
 			for (j = 0; j < monster_list_idx; j++) {
-				if (streq(monster_list_name[j], out_val)) {
+				if (!strcasecmp(monster_list_name[j], out_val)) {
 					spell = 20000 + monster_list_code[j];
 					break;
 				}
 			}
 			if (j == monster_list_idx) {
-				c_msg_print("Form not found. Make sure of correct case sensitivity");
-				c_msg_print(" and that your file lib/game/r_info.txt is up to date.");
+				c_msg_print("Form not found. Make sure the file lib/game/r_info.txt is up to date.");
 				return;
 			}
 		}
@@ -706,14 +705,14 @@ void do_mimic()
 				buf[49] = 0;
 
 				/* Find the power it is related to */
-				if (!strcmp(buf, "Check")) c = 1;
-				else if (!strcmp(buf, "None")) c = 2;
-				else if (!strcmp(buf, "Lightning")) c = 3;
-				else if (!strcmp(buf, "Frost")) c = 4;
-				else if (!strcmp(buf, "Acid")) c = 5;
-				else if (!strcmp(buf, "Fire")) c = 6;
-				else if (!strcmp(buf, "Poison")) c = 7;
-				else if (!strcmp(buf, "Water")) c = 8;
+				if (!strcasecmp(buf, "Check")) c = 1;
+				else if (!strcasecmp(buf, "None")) c = 2;
+				else if (!strcasecmp(buf, "Lightning")) c = 3;
+				else if (!strcasecmp(buf, "Frost")) c = 4;
+				else if (!strcasecmp(buf, "Acid")) c = 5;
+				else if (!strcasecmp(buf, "Fire")) c = 6;
+				else if (!strcasecmp(buf, "Poison")) c = 7;
+				else if (!strcasecmp(buf, "Water")) c = 8;
 				if (c) break;
 			} else if (choice >= 'a' && choice <= 'h') {
 				/* extract request */
@@ -836,12 +835,12 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 
 	if (strlen(buf) >= 4) {
 		bufptr = buf + strlen(buf);
-		if (streq(bufptr - 2, " I") ||
-		    streq(bufptr - 3, " II") ||
-		    streq(bufptr - 4, " III") ||
-		    streq(bufptr - 3, " IV") ||
-		    streq(bufptr - 2, " V") ||
-		    streq(bufptr - 3, " VI"))
+		if (!strcasecmp(bufptr - 2, " I") ||
+		    !strcasecmp(bufptr - 3, " II") ||
+		    !strcasecmp(bufptr - 4, " III") ||
+		    !strcasecmp(bufptr - 3, " IV") ||
+		    !strcasecmp(bufptr - 2, " V") ||
+		    !strcasecmp(bufptr - 3, " VI"))
 			exact_match = TRUE;
 	}
 
@@ -861,20 +860,20 @@ bool get_item_hook_find_spell(int *item, bool inven_first) {
 			current = 0;
 			if (strlen(sname) >= 4) {
 				bufptr = sname + strlen(sname);
-				if (streq(bufptr - 2, " I")) current = 1;
-				if (streq(bufptr - 3, " II")) current = 2;
-				if (streq(bufptr - 4, " III")) current = 3;
-				if (streq(bufptr - 3, " IV")) current = 4;
-				if (streq(bufptr - 2, " V")) current = 5;
-				if (streq(bufptr - 3, " VI")) current = 6;
+				if (!strcasecmp(bufptr - 2, " I")) current = 1;
+				if (!strcasecmp(bufptr - 3, " II")) current = 2;
+				if (!strcasecmp(bufptr - 4, " III")) current = 3;
+				if (!strcasecmp(bufptr - 3, " IV")) current = 4;
+				if (!strcasecmp(bufptr - 2, " V")) current = 5;
+				if (!strcasecmp(bufptr - 3, " VI")) current = 6;
 				if (current) combo_spell = TRUE;
 			}
 
 			/* Only allow testing for partial match if it's a combo spell */
 			if (exact_match || !combo_spell) {
-				if (strcmp(buf, sname)) continue;
+				if (strcasecmp(buf, sname)) continue;
 			} else {
-				if (strncmp(buf, sname, strlen(buf))) continue;
+				if (strncasecmp(buf, sname, strlen(buf))) continue;
 			}
 
 			/* get the spell's spell array index */
@@ -1459,7 +1458,7 @@ static int get_melee_technique(int *sn)
 
                         /* Find the skill it is related to */
                         for (i = 0; i < num; i++) {
-                    		if (!strcmp(buf, melee_techniques[corresp[i]])) {
+                    		if (!strcasecmp(buf, melee_techniques[corresp[i]])) {
 					flag = TRUE;
 					break;
 				}
@@ -1638,7 +1637,7 @@ static int get_ranged_technique(int *sn)
 
                         /* Find the skill it is related to */
                         for (i = 0; i < num; i++) {
-                    		if (!strcmp(buf, ranged_techniques[corresp[i]])) {
+                    		if (!strcasecmp(buf, ranged_techniques[corresp[i]])) {
 					flag = TRUE;
 					break;
 				}

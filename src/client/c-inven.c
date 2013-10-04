@@ -230,7 +230,7 @@ bool get_item_hook_find_obj(int *item, bool inven_first)
 
 		if (!item_tester_okay(o_ptr)) continue;
 
-		if (strstr(inventory_name[i], buf)) {
+		if (strcasestr(inventory_name[i], buf)) {
 			*item = i;
 			return TRUE;
 		}
