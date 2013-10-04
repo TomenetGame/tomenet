@@ -591,9 +591,9 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         Press SHIFT+P for party menu. One of you has to create the party and
         add the other one.
 
-%       edit your macros.
+%       edit your macros (see from (3.6) to (3.9b)).
 
-&       edit your auto-inscriptions.
+&       edit your auto-inscriptions (see (0.3a)).
 
 =       edit your preferences.
         Most important entries here are..
@@ -1313,6 +1313,9 @@ same manner as macro files, if the filename matches your race, class, account
 or character name.
 If multiple matching files are found, the game will attempt to merge them
 accordingly.
+
+To immediately apply an auto-inscription that you just added or modified,
+use the  /at  command.
 
 NOTE: In addition to this user-defined client-side auto-inscription list, there
       is also a server-side auto-inscription feature that can be enabled via
