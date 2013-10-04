@@ -1542,6 +1542,8 @@ Stair GoI   Stair-Goi is a very short-lasting globe of invulnerability (usually
             automatically receive: A temporary buff of +100 armour class
             and 40% chance to deflect any attacks that hit him. Attacks that
             aren't deflected still get their damage halved.
+            When an attack is deflected, you get a message saying:
+            "The attack is fully deflected by a magic shield."
 
 True Art    See 'Art' at the top of this section.
 
