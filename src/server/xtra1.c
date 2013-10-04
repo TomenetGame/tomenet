@@ -1138,31 +1138,39 @@ void calc_mana(int Ind)
 			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels) / 3000;
 		break;
 	case CLASS_RANGER:
-//	case CLASS_DRUID: -- moved
-		/* much Int, few Wis */
+		/* much Int, few Wis --180 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels +
 			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels) / 5000;
 		break;
 	case CLASS_PRIEST:
+		/* few Int, much Wis --170 */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels) / 3750;
+		break;
 	case CLASS_DRUID:
-		/* few Int, much Wis */
+		/* few Int, much Wis --170 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels +
 			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels) / 4000;
 		break;
 	case CLASS_PALADIN:
-		/* few Int, much Wis */
+		/* few Int, much Wis --140 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels +
-			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels) / 5000;
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels) / 5500;
 		break;
 	case CLASS_ROGUE:
-	case CLASS_MIMIC:
-		/* much Int, few Wis */
+		/* much Int, few Wis --160 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels +
 			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels) / 5500;
+	case CLASS_MIMIC:
+		/* much Int, few Wis --160 */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels) / 5000;
 		break;
 	case CLASS_ARCHER:
 	case CLASS_WARRIOR:
@@ -1170,12 +1178,12 @@ void calc_mana(int Ind)
 		break;
 	case CLASS_SHAMAN:
 #if 0
-		/* more Wis than Int */
+		/* more Wis than Int --180 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 35 * levels +
 			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 65 * levels) / 4000;
 #else
-		/* Depends on what's better, his WIS or INT */
+		/* Depends on what's better, his WIS or INT --180 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 			    ((p_ptr->stat_ind[A_INT] > p_ptr->stat_ind[A_WIS]) ?
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 100 * levels) :
@@ -1199,7 +1207,7 @@ void calc_mana(int Ind)
 	case CLASS_ADVENTURER:
 //	case CLASS_BARD:
 	default:
-		/* 50% Int, 50% Wis */
+		/* 50% Int, 50% Wis --160 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 		(adj_mag_mana[p_ptr->stat_ind[A_INT]] * 50 * levels +
 		adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 50 * levels) / 5500;
@@ -1266,11 +1274,15 @@ void calc_mana(int Ind)
 	switch(p_ptr->pclass) {
 	case CLASS_MAGE:
 	case CLASS_RANGER:
-	case CLASS_DRUID:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
 		break;
+	case CLASS_ADVENTURER:
+	case CLASS_SHAMAN:
+	case CLASS_DRUID:
 	/* in theory these actually don't use 'magic mana' at all?: */
 	case CLASS_PRIEST: /* maybe Shamans are treated too good in comparison here */
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 130;
+		break;
 	case CLASS_PALADIN:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
 		break;
@@ -1278,14 +1290,12 @@ void calc_mana(int Ind)
 	case CLASS_MIMIC:
 	case CLASS_ROGUE:
 #if 0
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 150;
 #else /* why not.. */
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
 #endif
 		break;
 	/* hybrids & more */
-	case CLASS_SHAMAN:
-	case CLASS_ADVENTURER:
 	case CLASS_MINDCRAFTER:
 	case CLASS_RUNEMASTER:
 	default:

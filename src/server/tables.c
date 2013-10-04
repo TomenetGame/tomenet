@@ -3167,7 +3167,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HCURING,
                                 '+', 1000,
-                                '+', 1500,
+                                '+', 1700,
                         },
                         {
                                 SKILL_HSUPPORT,
@@ -3288,7 +3288,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MAGIC,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 600,
                         },
 						/* They can be changed */
                         {
@@ -3794,7 +3794,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MAGIC,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 600,
                         },
                         {
                                 SKILL_SPELL,
@@ -3824,7 +3824,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HCURING,
                                 '+', 0,
-                                '+', 800,
+                                '+', 700,
                         },
                         {
                                 SKILL_HSUPPORT,
@@ -3980,7 +3980,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MAGIC,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 800,
                         },
                         {
                                 SKILL_SPELL,
