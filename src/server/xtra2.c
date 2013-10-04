@@ -6903,9 +6903,10 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 #endif	// CHATTERBOX_LEVEL
 
 			death_type = DEATH_INSANITY;
-			if (p_ptr->ghost) death_type = DEATH_GHOST;
-
-			Send_chardump(Ind, "-death");
+			if (p_ptr->ghost) {
+				death_type = DEATH_GHOST;
+				Send_chardump(Ind, "-ghost");
+			} else Send_chardump(Ind, "-death");
 			Net_output1(Ind);
 		} else if (p_ptr->ghost) {
 			/* Tell him */
@@ -7315,6 +7316,22 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		return;
 	}
 
+	/* Tell him */
+	msg_print(Ind, "\374\377RYou die.");
+//	msg_print(Ind, NULL);
+#if CHATTERBOX_LEVEL > 2
+	if (p_ptr->last_words) {
+		char death_message[80];
+
+		(void)get_rnd_line("death.txt", 0, death_message, 80);
+		msg_print(Ind, death_message);
+	}
+#endif	// CHATTERBOX_LEVEL
+
+	/* Paranoia - ghosts getting destroyed are already caught above */
+	if (p_ptr->ghost) Send_chardump(Ind, "-ghost"); else
+	Send_chardump(Ind, "-death");
+
 	/* Polymorph back to player */
 	if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
 
@@ -7336,9 +7353,6 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	update_stuff(Ind);
 	p_ptr->safe_sane = FALSE;
 
-	/* Tell him */
-	msg_print(Ind, "\374\377RYou die.");
-//	msg_print(Ind, NULL);
 	if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
 #ifdef ENABLE_MAIA
 	    || (streq(p_ptr->died_from, "indecisiveness"))
@@ -7354,15 +7368,6 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		msg_format(Ind, "\374\377RYou have been vaporized by %s.", p_ptr->died_from);
 	}
 
-#if CHATTERBOX_LEVEL > 2
-	if (p_ptr->last_words) {
-		char death_message[80];
-
-		(void)get_rnd_line("death.txt", 0, death_message, 80);
-		msg_print(Ind, death_message);
-	}
-#endif	// CHATTERBOX_LEVEL
-
 #if (MAX_PING_RECVS_LOGGED > 0)
 	/* Print last ping reception times */
 	struct timeval now;
@@ -7377,8 +7382,6 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	}
 	s_printf("\n");
 #endif
-
-	Send_chardump(Ind, "-death");
 
 	/* Turn him into a ghost */
 	p_ptr->ghost = 1;
