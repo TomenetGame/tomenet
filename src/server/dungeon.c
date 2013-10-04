@@ -3676,7 +3676,7 @@ static bool process_player_end_aux(int Ind)
 	/* Hack -- Timed manashield */
 	if (p_ptr->tim_manashield)
 		set_tim_manashield(Ind, p_ptr->tim_manashield - minus_magic);
-
+#ifndef KURZEL_PK
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		if (p_ptr->tim_pkill) {
 			p_ptr->tim_pkill--;
@@ -3691,6 +3691,7 @@ static bool process_player_end_aux(int Ind)
 			}
 		}
 	}
+#endif
 	if (p_ptr->tim_jail && !p_ptr->wpos.wz) {
 		p_ptr->tim_jail--;
 		if (!p_ptr->tim_jail) {

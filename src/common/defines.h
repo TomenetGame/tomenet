@@ -1074,6 +1074,7 @@
 #define PK_RULES_NEVER		2
 
 #define PKILL_SET	1	/* On/off */
+/* KURZEL_PK -- We now just use a single (PK) flag (above) now. */
 #define PKILL_KILLABLE	2	/* Can be killed */
 #define PKILL_KILLER	4	/* Can kill */
 

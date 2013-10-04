@@ -2950,7 +2950,11 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 	p_ptr->align_law = 0x7fff;
 	p_ptr->prace = race;
 	p_ptr->ptrait = trait;
-	p_ptr->pkill=(PKILL_KILLABLE);
+#ifndef KURZEL_PK
+	p_ptr->pkill = (PKILL_KILLABLE);
+#else
+	p_ptr->pkill = 0; //Flag default OFF
+#endif
 
 	s_printf("CHARACTER_CREATION: race=%s ; class=%s ; trait=%s ; mode=%u\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->mode);
 

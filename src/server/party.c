@@ -2543,13 +2543,14 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		else s_printf("HOSTILITY: %s attempts to declare war in return (%d).\n", p_ptr->name, i);
 	}
 
-
+#ifndef KURZEL_PK
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		if(!(p_ptr->pkill & PKILL_KILLER) && (p_ptr->pvpexception != 1)){
 			msg_print(Ind, "\377yYou may not be hostile to other players.");
 			return FALSE;
 		}
 	}
+#endif
 
 	if (cfg.use_pk_rules == PK_RULES_NEVER && (p_ptr->pvpexception != 1)) {
 		msg_print(Ind, "\377yYou may not be hostile to other players.");
@@ -2758,8 +2759,12 @@ bool check_hostile(int attacker, int target) {
 	     p_ptr->afk || q_ptr->afk))
 		return(FALSE);
 	/* outside of towns, PvP-mode means auto-hostility! */
-	else if ((q_ptr->mode & MODE_PVP) &&
-	    (p_ptr->mode & MODE_PVP)) return(TRUE);
+	else if (((q_ptr->mode & MODE_PVP) && (p_ptr->mode & MODE_PVP))
+#ifdef KURZEL_PK
+	    || (((q_ptr->pkill & PKILL_SET) && (p_ptr->pkill & PKILL_SET)) && ((!p_ptr->party && !q_ptr->party) || !(q_ptr->party == p_ptr->party)))
+#endif
+	    )
+		return(TRUE);
 
 	/* Scan list */
 	for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next) {
@@ -4037,13 +4042,29 @@ void set_pkill(int Ind, int delay)
 	player_type *p_ptr = Players[Ind];
 	//bool admin = is_admin(p_ptr);
 
-	if (cfg.use_pk_rules != PK_RULES_DECLARE)
-	{
+	if (cfg.use_pk_rules != PK_RULES_DECLARE) {
 		msg_print(Ind, "\377o/pkill is not available on this server. Be pacifist.");
-		p_ptr->tim_pkill= 0;
-		p_ptr->pkill= 0;
+		p_ptr->tim_pkill = 0;
+		p_ptr->pkill = 0;
 		return;
 	}
+#ifdef KURZEL_PK
+	else {
+		if (is_admin(p_ptr)) {
+			p_ptr->pkill ^= PKILL_SET; //Flag TOGGLE
+			if (p_ptr->pkill & PKILL_SET) msg_print(Ind, "\377RYou may now kill (and be killed by) other PK enabled players.");
+			else msg_print(Ind, "\377RPK Mode toggled OFF. (Admin ONLY)");
+		} else {
+			if (!(p_ptr->pkill & PKILL_SET)) {
+				p_ptr->pkill |= PKILL_SET; //Flag ON
+				msg_print(Ind, "\377RYou may now kill (and be killed by) other PK enabled players.");
+			} else {
+				msg_print(Ind, "\377RThere is no going back! (Party members are pacifist, however.)");
+			}
+		}
+		return;
+	}
+#endif
 
 //	p_ptr->tim_pkill= admin ? 10 : 200;	/* so many turns */
 	p_ptr->tim_pkill= delay;

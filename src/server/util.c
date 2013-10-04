@@ -3805,13 +3805,25 @@ static void player_talk_aux(int Ind, char *message)
 		else if (p_ptr->mode & MODE_NO_GHOST) c_n = 'D';
 		else if (p_ptr->mode & MODE_HARD) c_n = 's';
 		else c_n = 'W'; /* normal mode */
+		
+		/* Color the brackets of some players... (Enabled for PK) */
+#ifdef KURZEL_PK
+		c_b = c_n;
+		if ((p_ptr->mode & MODE_HARD) && (p_ptr->mode & MODE_NO_GHOST))
+			c_b = 'r'; /* hellish mode */
+		else if (p_ptr->pkill & PKILL_SET) c_b = 'R'; //KURZEL_PK
+#else
 		if ((p_ptr->mode & MODE_HARD) && (p_ptr->mode & MODE_NO_GHOST))
 			c_b = 'r'; /* hellish mode */
 		else c_b = c_n;
+#endif
 	}
 
 	/* Admins have exclusive colour - the_sandman */
 	if (c_n == 'b' && !admin) return;
+#ifdef KURZEL_PK
+	if (admin) c_b = 'b';
+#endif
 
 
 	censor_message = TRUE;
@@ -3821,7 +3833,7 @@ static void player_talk_aux(int Ind, char *message)
 		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
 		censor_length = strlen(message + 11);
 	} else if (!me) {
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message + mycolor);
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message + mycolor);
 		censor_length = strlen(message + mycolor);
 	} else {
 		/* Why not... */
@@ -3831,7 +3843,7 @@ static void player_talk_aux(int Ind, char *message)
 			return;
 		}
 		if (mycolor) c_n = message[5];
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4 + mycolor);
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message + 4 + mycolor, c_b);
 		censor_length = strlen(message + 4 + mycolor) + 1;
 	}
 
@@ -3885,7 +3897,7 @@ static void player_talk_aux(int Ind, char *message)
 			msg_format(i, "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
 		} else if (!me) {
 			censor_length = strlen(message + mycolor);
-			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message + mycolor);
+			msg_format(i, "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message + mycolor);
 			/* msg_format(i, "\375\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
 		}
 		else {
@@ -3908,7 +3920,7 @@ static void console_talk_aux(char *message)
  	int i;
 	cptr sender = "Server Admin";
 	bool me = FALSE, log = TRUE;
-	char c_n = 'y'; /* colours of sender name and of brackets (unused atm) around this name */
+	char c_n = 'y', c_b = 'y'; /* colours of sender name and of brackets (unused atm) around this name */
 	bool broadcast = FALSE;
 
 #ifdef TOMENET_WORLDS
@@ -3950,10 +3962,10 @@ static void console_talk_aux(char *message)
 		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
 		censor_length = strlen(message + 11);
 	} else if (!me) {
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message);
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message);
 		censor_length = strlen(message);
 	} else {
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4);
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message + 4, c_b);
 		censor_length = strlen(message + 4);
 	}
 
@@ -3968,7 +3980,7 @@ static void console_talk_aux(char *message)
 			msg_format(i, "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
 		} else if (!me) {
 			censor_length = strlen(message);
-			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message);
+			msg_format(i, "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message);
 		}
 		else {
 			censor_length = strlen(message + 4);

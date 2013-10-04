@@ -8218,9 +8218,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* XXX Reduce damage by 1/3 */
 				dam = (dam + PVP_SPELL_DAM_REDUCTION - 1) / PVP_SPELL_DAM_REDUCTION;
 #endif
+#ifdef KURZEL_PK
+				if (!magik(NEUTRAL_FIRE_CHANCE))
+#else
 				if ((cfg.use_pk_rules == PK_RULES_DECLARE &&
 				    !(p_ptr->pkill & PKILL_KILLER)) &&
 				    !magik(NEUTRAL_FIRE_CHANCE))
+#endif
 //#endif (<- use this endif, if above #if 0 becomes #if 1 again)			/* Just return without harming: */
 					return(FALSE);
 			} else { return(FALSE); }

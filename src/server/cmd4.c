@@ -635,6 +635,10 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		text_pk = TRUE;
+#ifdef KURZEL_PK
+		if (q_ptr->pkill & PKILL_SET) fprintf(fff, "\377R  (PK");
+		else text_pk = FALSE;
+#else
 		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, "  (PK");
 		else if(!(q_ptr->pkill & PKILL_KILLABLE))
@@ -643,6 +647,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			fprintf(fff, q_ptr->lev < 5 ? "  (Newbie" : "  (Killable");
 		else
 			text_pk = FALSE;
+#endif
 	}
 	if (q_ptr->limit_chat) {
 		text_silent = TRUE;
@@ -760,6 +765,10 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		text_pk = TRUE;
+#ifdef KURZEL_PK
+		if (q_ptr->pkill & PKILL_SET) fprintf(fff, "\377R  (PK");
+		else text_pk = FALSE;
+#else
 		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, "  (PK");
 		else if(!(q_ptr->pkill & PKILL_KILLABLE))
@@ -768,6 +777,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			fprintf(fff, q_ptr->lev < 5 ? "  (Newbie" : "  (Killable");
 		else
 			text_pk = FALSE;
+#endif
 	}
 	if (q_ptr->limit_chat) {
 		text_silent = TRUE;
@@ -898,6 +908,10 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		text_pk = TRUE;
+#ifdef KURZEL_PK
+		if (q_ptr->pkill & PKILL_SET) fprintf(fff, "\377R (PK");
+		else text_pk = FALSE;
+#else
 		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, " (PK");
 		else if(!(q_ptr->pkill & PKILL_KILLABLE))
@@ -906,6 +920,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			fprintf(fff, q_ptr->lev < 5 ? " (New" : " (Kill");
 		else
 			text_pk = FALSE;
+#endif
 	}
 	if (q_ptr->limit_chat) {
 		text_silent = TRUE;
@@ -1111,6 +1126,10 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		text_pk = TRUE;
+#ifdef KURZEL_PK
+		if (q_ptr->pkill & PKILL_SET) fprintf(fff, "\377R   (PK");
+		else text_pk = FALSE;
+#else
 		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			fprintf(fff, "   (PK");
 		else if(!(q_ptr->pkill & PKILL_KILLABLE))
@@ -1119,6 +1138,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			fprintf(fff, q_ptr->lev < 5 ? "   (Newbie" : "   (Killable");
 		else
 			text_pk = FALSE;
+#endif
 	}
 	if (q_ptr->limit_chat) {
 		text_silent = TRUE;
@@ -1305,7 +1325,11 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #endif
 
 		/* Print location if both players are PvP-Mode */
-		if (((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) && !admin) {
+		if ((((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP))
+#ifdef KURZEL_PK
+		     || ((p_ptr->pkill & PKILL_SET) && (q_ptr->pkill & PKILL_SET))
+#endif
+		    ) && !admin) {
 			fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 		}
 		/* Print extra info if these people are in the same party or if viewer is DM */
@@ -1375,7 +1399,11 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #endif
 
 		/* Print location if both players are PvP-Mode */
-		if (((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) && !admin) {
+		if ((((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP))
+#ifdef KURZEL_PK
+		    || ((p_ptr->pkill & PKILL_SET) && (q_ptr->pkill & PKILL_SET))
+#endif
+		    ) && !admin) {
 			fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 		}
 		/* Print extra info if these people are in the same party or if viewer is DM */
@@ -1476,7 +1504,11 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 #endif
 
 		/* Print location if both players are PvP-Mode */
-		if (((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) && !admin) {
+		if ((((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP))
+#ifdef KURZEL_PK
+		    || ((p_ptr->pkill & PKILL_SET) && (q_ptr->pkill & PKILL_SET))
+#endif
+		    ) && !admin) {
 			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 		}
 		/* Print extra info if these people are in the same party */

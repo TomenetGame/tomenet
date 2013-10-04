@@ -4755,7 +4755,11 @@ void do_cmd_fire(int Ind, int dir)
 					q_ptr = Players[0 - c_ptr->m_idx];
 
 					/* AD hack -- "pass over" players in same party */
+#ifdef KURZEL_PK
+					if ((
+#else
 					if ((p_ptr->pkill & PKILL_KILLER ||
+#endif
 					    check_hostile(Ind, 0 - c_ptr->m_idx) ||
 					    magik(NEUTRAL_FIRE_CHANCE)) &&
 					    (check_blood_bond(Ind, 0 - c_ptr->m_idx) ||
@@ -4770,6 +4774,7 @@ void do_cmd_fire(int Ind, int dir)
 						/* Note the collision */
 						hit_body = TRUE;
 
+#ifndef KURZEL_PK
 						if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 							if (zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK) {
 								if (visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))) {
@@ -4779,6 +4784,7 @@ void do_cmd_fire(int Ind, int dir)
 								}
 							}
 						}
+#endif
 
 						/* Did we hit it (penalize range) */
 

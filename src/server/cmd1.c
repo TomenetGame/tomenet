@@ -2641,7 +2641,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	stop_shooting_till_kill(Ind);
 	/* Disturb the player */
 //	q_ptr->sleep = 0;
-
+#ifndef KURZEL_PK
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		if (!(q_ptr->pkill & PKILL_KILLABLE)) {
 			char string[30];
@@ -2658,7 +2658,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			else return;
 		}
 	}
-
+#endif
 	k = drain_left / p_ptr->num_blow;
 	/* ..and make up for rounding errors :) */
 	drain_left = k + (magik(((drain_left - (k * p_ptr->num_blow)) * 100) / p_ptr->num_blow) ? 1 : 0);

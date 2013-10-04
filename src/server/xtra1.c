@@ -3777,10 +3777,14 @@ void calc_boni(int Ind)
 				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-					p_ptr->pkill|=PKILL_KILLABLE;
+#ifndef KURZEL_PK
+					p_ptr->pkill |= PKILL_KILLABLE;
 					if (!(p_ptr->pkill & PKILL_KILLER) &&
 							!(p_ptr->pkill & PKILL_SET))
 						set_pkill(Ind, 50);
+#else
+					p_ptr->pkill |= PKILL_SET; //Flag ON
+#endif
 				}
 			}
 		}
@@ -7305,9 +7309,11 @@ static void process_global_event(int ge_id) {
 					/* may only take part in one tournament per char */
 					gain_exp(i, 1);
 					/* give some safe time for exp'ing */
+#ifndef KURZEL_PK
 					if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 						p_ptr->pkill &= ~PKILL_KILLABLE;
 					}
+#endif
 					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0-dungeon! */
 				}
 			}
