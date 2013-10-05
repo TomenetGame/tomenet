@@ -13,9 +13,6 @@
  */
 /* #define RPG_SERVER */
 
-/* Do we want to use Kurzel's PvE/P when mode 1 PK is configured? */
-#define KURZEL_PK
-
 /* Server is Moltor's Arcade server?
    (allows additional definition of RPG_SERVER if desired!) */
 /* #define ARCADE_SERVER */
