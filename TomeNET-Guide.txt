@@ -15887,6 +15887,17 @@ PROBLEM 42: Aww, the ego power "Holy Avenger" that I'm so fond of does not
 SOLUTION:   It does. It has just been renamed to "Aman", it does the same (and
             a little bit more even) as (Holy Avenger) items in other variants.
 
+PROBLEM 43: When trying to connect to the meta server I get an error message:
+            "No setup info received" and the game terminates.
+
+SOLUTION:   This can happen on really bad/slow internet connections such as via
+            mobile modems operating on arbitrarily (by the ISP) reduced
+            bandwidth. There is no solution really, except retrying a few times
+            until your connection attempt eventually "gets through". Make sure
+            that no downloads or other bandwidth-using applications are running
+            in parallel to increase your chances of successfully establishing a
+            connection.
+
 
 
 ==============================================================================
