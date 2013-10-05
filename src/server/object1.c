@@ -4923,7 +4923,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	if (o_ptr->name2 == EGO_STORMBRINGER)
 		fprintf(fff, "\377DIt's possessed by mad wrath!\n");
 
-	if ((f5 & TR5_NO_ENCHANT) || o_ptr->name1)
+	if (((f5 & TR5_NO_ENCHANT) || o_ptr->name1)
+	    && is_enchantable(o_ptr))
 		fprintf(fff, "\377WIt cannot be enchanted by any means.\n");
 
 	strcpy(buf_tmp, "\377WUnaffected by ");

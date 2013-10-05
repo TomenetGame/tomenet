@@ -2667,6 +2667,10 @@
 	((o_ptr)->tval == TV_ROD && rod_requires_direction(Ind, o_ptr)))
 #define is_firearm_trapkit(sval) \
 	((sval) == SV_TRAPKIT_SLING || (sval) == SV_TRAPKIT_BOW || (sval) == SV_TRAPKIT_XBOW)
+#define is_enchantable(o_ptr) \
+	(is_weapon((o_ptr)->tval) || is_ranged_weapon((o_ptr)->tval) || is_ammo((o_ptr)->tval) || \
+	((o_ptr)->tval == TV_TRAPKIT && is_firearm_trapkit((o_ptr)->sval)) || \
+	is_armour((o_ptr)->tval) || (o_ptr)->tval == TV_DIGGING)
 /* more possibilities: is_potion, is_rune, is_jewelry, is_rare_armour(tval,sval) */
 
 
