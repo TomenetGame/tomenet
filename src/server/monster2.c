@@ -3340,8 +3340,8 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		Players[Ind]->mon_vis[c_ptr->m_idx] = FALSE;
 	}
 
-	if (dlev > (m_ptr->level + 7)) {
-	    int l = m_ptr->level + ((dlev - (m_ptr->level + 7)) / 3);
+	if (dlev >= (m_ptr->level + 8)) {
+	    int l = m_ptr->level + ((dlev - m_ptr->level - 5) / 3);
 	    m_ptr->exp = MONSTER_EXP(l);
 	    monster_check_experience(c_ptr->m_idx, TRUE);
 	}

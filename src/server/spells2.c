@@ -7273,8 +7273,8 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 		Players[Ind]->mon_vis[c_ptr->m_idx] = 0;
 	}
 
-	if (getlevel(wpos) > (m_ptr->level + 7)) {
-	    int l = m_ptr->level + ((getlevel(wpos) - (m_ptr->level + 7)) / 3);
+	if (getlevel(wpos) >= (m_ptr->level + 8)) {
+	    int l = m_ptr->level + ((getlevel(wpos) - m_ptr->level - 5) / 3);
 	    m_ptr->exp = MONSTER_EXP(l);
 	    monster_check_experience(c_ptr->m_idx, TRUE);
 	}

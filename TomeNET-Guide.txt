@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. October 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. October 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1431,22 +1431,33 @@ mlevel, rlevel
             and therefore be higher than you'd expect. This happens when you
             meet the monster on a floor that is far deeper than the level the
             monster usually starts to occur on.
-            r-level is the base monster level, which you can see in game if you
-            press  ~ 7  and search for a particular monster.
+            r-level is the base monster level (race level), which you can see
+            in game if you press  ~ 7  and search for a particular monster.
             It describes the minimum floor level a monster is usually found on
             (although 'out-of-depth' occurances may be possible).
+
             Example: According to ~7, Ancient Red Dragons have a base level of
             41. That means you'll usually start seeing them on dungeon floors
             of level 41 (2050 ft) and deeper, although there's always a slim
             chance that you meet a monster earlier than its base level (called
-            OoD encounter). So we know now that the r-level of Ancient Red
-            Dragons is 41. However, if you meet an Ancient Red Dragon on a
-            much deeper dungeon floor, say 2400 ft, which would be the
-            equivalent to level 48, when you look at the dragon you'll see it
-            says level 42 instead of the expected 41. This means the dragon's
-            level was actually slightly boosted because the dungeon floor's
-            level was that much higher than the dragon's. So while the rlev
-            of this dragon is still 41, its real level, the mlev, is 42.
+            OoD encounter, "Out of Depth").
+            So we know now that the r-level of Ancient Red Dragons is 41.
+            However, if you meet an Ancient Red Dragon on a much deeper dungeon
+            floor, say 2450 ft, which would be the equivalent to level 49, when
+            you look at the dragon you'll see it says level 42 instead of the
+            expected 41. This means the dragon's level was actually slightly
+            boosted because the dungeon floor's level was that much higher than
+            the dragon's. So while the rlev of this dragon is still 41, its
+            real level, the mlev, is 42.
+
+            Monsters that are on dungeon floors 8 levels or higher above their
+            base level will get an increase in levels of +1 for every 3 floors,
+            so +1 level at 8 dungeon levels above their r-level, +2 at 11,
+            +3 at 14 etc..
+            Monsters randomly gain hit points, speed, AC or damage dice/sides
+            for their melee attacks on each level-up. To find out in what way a
+            particular monster has been boosted you can use a rod of probing.
+
             Some formulas used by the game use mlev, some use rlev.
             (Note: This is similar to klevel vs olevel for items.)
 
