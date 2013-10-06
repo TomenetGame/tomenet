@@ -10414,7 +10414,7 @@ static int Receive_raw_key(int ind)
 				case '!':
 				case 'p':
 					msg_print(player, "\377RYour client is outdated (probably version 4.4.0).");
-					msg_print(player, "\377RPlease download latest client from www.c-blue.de/rogue");
+					msg_print(player, "\377RPlease download latest client from www.tomenet.net");
 					break;
 #endif
 				default:
