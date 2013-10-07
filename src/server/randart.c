@@ -2830,15 +2830,15 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
     }
     else if (artifact_bias == BIAS_WARRIOR)
     {
-	if (randint(3)!=1 && (!(a_ptr->flags2 & TR2_RES_FEAR)))
+	if (randint(3) != 1 && (!(a_ptr->flags2 & TR2_RES_FEAR)))
 	{
 	    a_ptr->flags2 |= TR2_RES_FEAR;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
-    if ((randint(3)==1) && (!(a_ptr->flags3 & TR3_NO_MAGIC)))
+    if ((randint(3) == 1) && (!(a_ptr->flags3 & TR3_NO_MAGIC)))
     {
         a_ptr->flags3 |= TR3_NO_MAGIC;
-        if (randint(2)==1) return;
+        if (randint(2) == 1) return;
     }
     }
     else if (artifact_bias == BIAS_NECROMANTIC)
@@ -2846,17 +2846,17 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
 	if (!(a_ptr->flags2 & TR2_RES_NETHER))
 	{
 	    a_ptr->flags2 |= TR2_RES_NETHER;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
 	if (!(a_ptr->flags2 & TR2_RES_POIS))
 	{
 	    a_ptr->flags2 |= TR2_RES_POIS;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
 	if (!(a_ptr->flags2 & TR2_RES_DARK))
 	{
 	    a_ptr->flags2 |= TR2_RES_DARK;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
     }
     else if (artifact_bias == BIAS_CHAOS)
@@ -2864,25 +2864,25 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
 	if (!(a_ptr->flags2 & TR2_RES_CHAOS))
 	{
 	    a_ptr->flags2 |= TR2_RES_CHAOS;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
 	if (!(a_ptr->flags2 & TR2_RES_CONF))
 	{
 	    a_ptr->flags2 |= TR2_RES_CONF;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
 	if (!(a_ptr->flags2 & TR2_RES_DISEN))
 	{
 	    a_ptr->flags2 |= TR2_RES_DISEN;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
     }
   }
 
-    switch (specific?specific:randint(41))
+    switch (specific ? specific : randint(41))
     {
     case 1:
-    if (randint(WEIRD_LUCK)!=1)
+    if (randint(WEIRD_LUCK) != 1)
         random_resistance(a_ptr, is_scroll, specific);
 	else
 	{
@@ -2893,7 +2893,7 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
 	}
 	break;
     case 2:
-    if (randint(WEIRD_LUCK)!=1)
+    if (randint(WEIRD_LUCK) != 1)
 	    random_resistance(a_ptr, is_scroll, specific);
 	else
 	{
@@ -2904,7 +2904,7 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
 	}
 	break;
     case 3:
-    if (randint(WEIRD_LUCK)!=1)
+    if (randint(WEIRD_LUCK) != 1)
 	    random_resistance(a_ptr, is_scroll, specific);
 	else
 	{
@@ -2915,7 +2915,7 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
 	}
 	break;
     case 4:
-    if (randint(WEIRD_LUCK)!=1)
+    if (randint(WEIRD_LUCK) != 1)
 	    random_resistance(a_ptr, is_scroll, specific);
 	else
 	{
@@ -2952,17 +2952,17 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
     case 17: case 18:
 	a_ptr->flags2 |= TR2_RES_POIS;
 /*  if (is_scroll) msg_print("It makes breathing easier for you."); */
-	if (!(artifact_bias) && randint(4)!=1)
+	if (!(artifact_bias) && randint(4) != 1)
 	    artifact_bias = BIAS_POIS;
-	else if (!(artifact_bias) && randint(2)==1)
+	else if (!(artifact_bias) && randint(2) == 1)
 	    artifact_bias = BIAS_NECROMANTIC;
-	else if (!(artifact_bias) && randint(2)==1)
+	else if (!(artifact_bias) && randint(2) == 1)
 	    artifact_bias = BIAS_ROGUE;
 	break;
     case 19: case 20:
 	a_ptr->flags2 |= TR2_RES_FEAR;
 /*  if (is_scroll) msg_print("It makes you feel brave!"); */
-	if (!(artifact_bias) && randint(3)==1)
+	if (!(artifact_bias) && randint(3) == 1)
 	    artifact_bias = BIAS_WARRIOR;
 	break;
     case 21:
@@ -2980,7 +2980,7 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
     case 25: case 26:
 	a_ptr->flags2 |= TR2_RES_CONF;
 /*  if (is_scroll) msg_print("It makes you feel very determined.");*/
-	if (!(artifact_bias) && randint(6)==1)
+	if (!(artifact_bias) && randint(6) == 1)
 	    artifact_bias = BIAS_CHAOS;
 	break;
     case 27: case 28:
@@ -2994,7 +2994,7 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
     case 31: case 32:
 	a_ptr->flags2 |= TR2_RES_NETHER;
 /*  if (is_scroll) msg_print("It makes you feel like visiting a graveyard!");*/
-	if (!(artifact_bias) && randint(3)==1)
+	if (!(artifact_bias) && randint(3) == 1)
 	    artifact_bias = BIAS_NECROMANTIC;
 	break;
     case 33: case 34:
@@ -3004,7 +3004,7 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
     case 35: case 36:
 	a_ptr->flags2 |= TR2_RES_CHAOS;
 /*  if (is_scroll) msg_print("It makes you feel very firm.");*/
-	if (!(artifact_bias) && randint(2)==1)
+	if (!(artifact_bias) && randint(2) == 1)
 	    artifact_bias = BIAS_CHAOS;
 	break;
     case 37: case 38:
@@ -3053,7 +3053,7 @@ void dragon_resist(artifact_type * a_ptr) {
 	do {
 		artifact_bias = 0;
 
-		if (randint(4)==1)
+		if (randint(4) == 1)
 			random_resistance(a_ptr, FALSE, ((randint(14)) + 4));
 		else
 			random_resistance(a_ptr, FALSE, ((randint(22)) + 16));

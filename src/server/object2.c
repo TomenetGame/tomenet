@@ -110,7 +110,7 @@ void excise_object_idx(int o_idx)
 		int x = j_ptr->ix;
 
 		/* Grid */
-		if (!(zcave=getcave(&j_ptr->wpos))) return;
+		if (!(zcave = getcave(&j_ptr->wpos))) return;
 
 		/* Somewhere out of this world */
 		if (!in_bounds2(&j_ptr->wpos, y, x)) return;
@@ -225,11 +225,10 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) /* may
 	/* Refuse "illegal" locations */
 	if (!in_bounds(y, x)) return;
 
-	if((zcave=getcave(wpos)))
-	{
+	if ((zcave = getcave(wpos))) {
 		u16b this_o_idx, next_o_idx = 0;
 
-		c_ptr=&zcave[y][x];
+		c_ptr = &zcave[y][x];
 #if 0
 	/* Refuse "illegal" locations */
 	if (!in_bounds(Depth, y, x)) return;
@@ -264,11 +263,11 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) /* may
 	}
 	else{			/* Cave depth not static (houses etc) - do slow method */
 		int i;
-		for(i=0;i<o_max;i++){
+		for (i = 0; i < o_max; i++) {
 			object_type *o_ptr = &o_list[i];
-			if(o_ptr->k_idx && inarea(wpos, &o_ptr->wpos))
+			if (o_ptr->k_idx && inarea(wpos, &o_ptr->wpos))
 			{
-				if(y==o_ptr->iy && x==o_ptr->ix){
+				if (y == o_ptr->iy && x == o_ptr->ix) {
 					delete_object_idx(i, unfound_art);
 				}
 			}
@@ -306,12 +305,11 @@ void compact_objects(int size, bool purge)
 //	object_type *q_ptr;
 	cave_type *c_ptr;
 
-	int tmp_max=o_max;
+	int tmp_max = o_max;
 
 
 	/* Compact */
-	if (size)
-	{
+	if (size) {
 		/* Message */
 		s_printf("Compacting objects...\n");
 	}
@@ -362,9 +360,8 @@ void compact_objects(int size, bool purge)
 			if (!o_ptr->wpos.wz)
 			{
 				cave_type **zcave;
-				zcave=getcave(&o_ptr->wpos);
-				if (zcave[y][x].info & CAVE_ICKY)
-				{
+				zcave = getcave(&o_ptr->wpos);
+				if (zcave[y][x].info & CAVE_ICKY) {
 					/* Grant immunity except in emergencies */
 					if (cnt < 1000) chance = 100;
 				}
@@ -413,7 +410,7 @@ void compact_objects(int size, bool purge)
 	/* were any removed? */
 	if (o_max != tmp_max) {
 		int *old_idx;
-		int z=1;
+		int z = 1;
 		monster_type *m_ptr;
 		object_type *o_ptr;
 
@@ -476,7 +473,7 @@ void compact_objects(int size, bool purge)
 			x = o_ptr->ix;
 			y = o_ptr->iy;
 
-			if ((zcave=getcave(wpos))) {
+			if ((zcave = getcave(wpos))) {
 				c_ptr = &zcave[y][x];
 				if (in_bounds2(wpos, y, x)) {
 					if (old_idx[c_ptr->o_idx] == i) {
@@ -532,7 +529,7 @@ void wipe_o_list(struct worldpos *wpos)
 	monster_type *m_ptr;
 	bool flag = FALSE;
 
-	if((zcave=getcave(wpos))) flag = TRUE;
+	if((zcave = getcave(wpos))) flag = TRUE;
 
 
 	/* Delete the existing objects */
@@ -575,7 +572,7 @@ void wipe_o_list(struct worldpos *wpos)
 #endif	// MONSTER_INVENTORY
 //		if (flag && in_bounds2(wpos, o_ptr->iy, o_ptr->ix))
 		if (flag && in_bounds_array(o_ptr->iy, o_ptr->ix))
-			zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
+			zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
 
 		/* Wipe the object */
 		WIPE(o_ptr, object_type);
@@ -600,7 +597,7 @@ void wipe_o_list_safely(struct worldpos *wpos)
 	cave_type **zcave;
 	monster_type *m_ptr;
 
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Delete the existing objects */
 	for (i = 1; i < o_max; i++)
@@ -648,7 +645,7 @@ void wipe_o_list_safely(struct worldpos *wpos)
 		else if (in_bounds_array(o_ptr->iy, o_ptr->ix))
 #endif	// MONSTER_INVENTORY
 		{
-			zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
+			zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
 		}
 
 		/* Wipe the object */
@@ -6128,7 +6125,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	dun_level *l_ptr = getfloor(wpos);
 	dungeon_type *d_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	dlev = getlevel(wpos);
 	d_ptr = getdungeon(wpos);
 
@@ -6335,7 +6332,7 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 	dungeon_type *d_ptr;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	dlev = getlevel(wpos);
 	d_ptr = getdungeon(wpos);
 
@@ -6515,7 +6512,7 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 {
 //	int        y, x, i, d;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Scatter some objects */
 	for (; num > 0; --num) {
@@ -6534,7 +6531,7 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 void acquirement_direct(object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u32b resf)
 {
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Place a good (or great) object */
 	place_object_restrictor = RESF_NONE;
@@ -7044,7 +7041,7 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus)
 	object_type	forge;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Paranoia -- check bounds */
 	if (!in_bounds(y, x)) return;
@@ -7519,7 +7516,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
 {
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
 
 	/* Items dropped by admins never disappear by 'time out' */
 	if (is_admin(p_ptr)) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
@@ -7559,11 +7556,11 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 	cave_type **zcave;
 	cave_type *c_ptr;
 	struct c_special *cs_ptr;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
 	/* Paranoia */
-	if (!(cs_ptr=GetCS(c_ptr, CS_TRAPS))) return;
+	if (!(cs_ptr = GetCS(c_ptr, CS_TRAPS))) return;
 
 	cs_ptr->sc.trap.found = TRUE;
 
@@ -8434,7 +8431,7 @@ void setup_objects(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip objects on depths that aren't allocated */
-		if (!(zcave=getcave(&o_ptr->wpos))) continue;
+		if (!(zcave = getcave(&o_ptr->wpos))) continue;
 
 		/* Skip carried objects */
 		if (o_ptr->held_m_idx) continue;
@@ -8461,7 +8458,7 @@ void setup_objects(void)
  */
 void object_wipe(object_type *o_ptr) {
 	/* Wipe the structure */
-	o_ptr=WIPE(o_ptr, object_type);
+	o_ptr = WIPE(o_ptr, object_type);
 }
 
 

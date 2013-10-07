@@ -21,10 +21,10 @@ void transform_level(int Ind, byte feat, int chance) {
 	cave_type **zcave;
 
 	wpos  = &(p_ptr->wpos);
-	if(!(zcave=getcave(wpos))) return; 
+	if (!(zcave = getcave(wpos))) return; 
 
 	/* Don't hurt the main town or surrounding areas */
-	if(!allow_terraforming(wpos, feat) || istownarea(wpos, MAX_TOWNAREA)) {
+	if (!allow_terraforming(wpos, feat) || istownarea(wpos, MAX_TOWNAREA)) {
 		msg_print(Ind, "\377rYou can't do that here!"); 
 		return;
 	}
@@ -34,7 +34,7 @@ void transform_level(int Ind, byte feat, int chance) {
 		c_ptr = &zcave[y][x];
 		
 		if (c_ptr->info & CAVE_ICKY) continue; 
-		if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue; 
+		if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue; 
 		if (cave_valid_bold(zcave, y, x))
 		{
 			if (magik(chance)) {

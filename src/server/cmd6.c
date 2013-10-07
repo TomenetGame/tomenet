@@ -1359,7 +1359,7 @@ void do_cmd_drink_fountain(int Ind)
 	bool ident;
 	int tval, sval, pval = 0, k_idx;
 
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 
@@ -1550,7 +1550,7 @@ void do_cmd_fill_bottle(int Ind)
 	//cptr q, s;
 
 
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN) {
@@ -1569,7 +1569,7 @@ void do_cmd_fill_bottle(int Ind)
 	}
 
 	/* Oops! */
-	if (!(cs_ptr=GetCS(c_ptr, CS_FOUNTAIN))) {
+	if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN))) {
 //		msg_print(Ind, "You quenched the thirst.");
 		return;
 	}
@@ -2138,12 +2138,12 @@ static int check_self_summon(player_type *p_ptr){
 	    || istownarea(&p_ptr->wpos, 3)) /* poly ring anticheeze (those don't run out in town area) */
 		return(FALSE);
 
-	zcave=getcave(&p_ptr->wpos);
-	if(zcave){
+	zcave = getcave(&p_ptr->wpos);
+	if (zcave) {
 		c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 		/* not on wilderness edge */
-		if(p_ptr->wpos.wz || in_bounds(p_ptr->py, p_ptr->px)){
+		if (p_ptr->wpos.wz || in_bounds(p_ptr->py, p_ptr->px)) {
 			/* and not sitting on the stairs */
 			if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE &&
 			    c_ptr->feat != FEAT_WAY_LESS && c_ptr->feat != FEAT_WAY_MORE &&
@@ -2295,21 +2295,21 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 				 * w/o my fix, this scroll causes crash when finishing house
 				 * creation.  Pfft
 				 */
-				//unsigned char *ins=quark_str(o_ptr->note);
-				cptr ins=quark_str(o_ptr->note);
-				bool floor=TRUE;
-				bool jail=FALSE;
+				//unsigned char *ins = quark_str(o_ptr->note);
+				cptr ins = quark_str(o_ptr->note);
+				bool floor = TRUE;
+				bool jail = FALSE;
 				msg_print(Ind, "This is a house creation scroll.");
 				ident = TRUE;
 				if(ins){
-					while((*ins!='\0')){
-						if(*ins=='@'){
+					while ((*ins != '\0')) {
+						if (*ins == '@') {
 							ins++;
-							if(*ins=='F'){
-								floor=FALSE;
+							if (*ins == 'F') {
+								floor = FALSE;
 							}
-							if(*ins=='J'){
-								jail=TRUE;
+							if (*ins == 'J') {
+								jail = TRUE;
 							}
 						}
 						ins++;
@@ -7243,7 +7243,7 @@ static int fletchery_items(int Ind)
 void do_cmd_fletchery(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int ext=0, tlev = 0, raw_materials, raw_amount;
+	int ext = 0, tlev = 0, raw_materials, raw_amount;
 	//char ch;
 
 	object_type	forge;
@@ -7254,7 +7254,7 @@ void do_cmd_fletchery(int Ind)
 	bool done = FALSE;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 
 	if (p_ptr->confused)

@@ -1104,8 +1104,8 @@ static void get_money(int Ind)
         }
   #else
         switch(p_ptr->pclass){
-        case CLASS_MAGE:        p_ptr->au +=1000; break;
-	case CLASS_SHAMAN:	p_ptr->au +=1000; break;
+        case CLASS_MAGE:        p_ptr->au += 1000; break;
+	case CLASS_SHAMAN:	p_ptr->au += 1000; break;
 	case CLASS_MINDCRAFTER:	p_ptr->au += 900; break;
         case CLASS_PRIEST:      p_ptr->au += 800; break;
 	case CLASS_RUNEMASTER:  p_ptr->au += 800; break;
@@ -1131,7 +1131,7 @@ static void get_money(int Ind)
 #endif
 
 	/* Since it's not a king/queen */
-	p_ptr->own1.wx=p_ptr->own1.wy=p_ptr->own1.wz=0;
+	p_ptr->own1.wx = p_ptr->own1.wy = p_ptr->own1.wz = 0;
 	wpcopy(&p_ptr->own2, &p_ptr->own1);
 }
 
@@ -1199,7 +1199,7 @@ static void player_wipe(int Ind)
 		p_ptr->wild_map[i] = 0;
 
 	/* Hack -- assume the player has an initial knowledge of the area close to town */
-	p_ptr->wild_map[(cfg.town_x+cfg.town_y*MAX_WILD_X)/8]|=1<<((cfg.town_x+cfg.town_y*MAX_WILD_X)%8);
+	p_ptr->wild_map[(cfg.town_x + cfg.town_y * MAX_WILD_X) / 8] |= 1 << ((cfg.town_x + cfg.town_y * MAX_WILD_X) % 8);
 
 	/* Esp link */
 	p_ptr->esp_link_end = 0;
@@ -1912,9 +1912,9 @@ static void player_outfit(int Ind)
 	do_player_outfit();
 #else
 	if (p_ptr->pclass == CLASS_ARCHER)
-	p_ptr->au+=100;
+	p_ptr->au += 100;
 	else
-	p_ptr->au+=50;
+	p_ptr->au += 50;
 #endif
 #endif
 
@@ -3260,7 +3260,7 @@ bool confirm_admin(int Ind)
 {
 	struct account *c_acc;
 	player_type *p_ptr = Players[Ind];
-	bool admin=FALSE;
+	bool admin = FALSE;
 
 	c_acc = GetAccountID(p_ptr->account, FALSE);
 	if (!c_acc) return(FALSE);

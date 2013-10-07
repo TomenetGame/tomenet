@@ -678,9 +678,9 @@ static void rd_item(object_type *o_ptr)
 
 #if 0
 		/* UnHack. pffft! */
-		if ((o_ptr->ac < old_ac)) o_ptr->ac=old_ac;
-		if ((o_ptr->dd < old_dd)) o_ptr->dd=old_dd;
-		if ((o_ptr->ds < old_ds)) o_ptr->ds=old_ds;
+		if ((o_ptr->ac < old_ac)) o_ptr->ac = old_ac;
+		if ((o_ptr->dd < old_dd)) o_ptr->dd = old_dd;
+		if ((o_ptr->ds < old_ds)) o_ptr->ds = old_ds;
 #else
 		a_ptr = ego_make(o_ptr);
 		o_ptr->ac += a_ptr->ac;
@@ -1012,7 +1012,7 @@ static void rd_notes() {
 static void rd_quests(){
 	int i;
 	rd_s16b(&questid);
-	for(i=0; i<20; i++){
+	for (i = 0; i < 20; i++) {
 		rd_u16b(&quests[i].active);
 		rd_u16b(&quests[i].id);
 		rd_s16b(&quests[i].type);
@@ -1167,19 +1167,18 @@ static void rd_house(int n)
 		struct c_special *cs_ptr;
 		if (house_ptr->flags & HF_STOCK) {
 			/* add dna to static levels even though town-generated */
-			if((cs_ptr=GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
-				cs_ptr->sc.ptr=house_ptr->dna;
-			else if ((cs_ptr=AddCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
-
-				cs_ptr->sc.ptr=house_ptr->dna;
+			if ((cs_ptr = GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
+				cs_ptr->sc.ptr = house_ptr->dna;
+			else if ((cs_ptr = AddCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
+				cs_ptr->sc.ptr = house_ptr->dna;
 		}
 		else
 		{
 			/* add dna to static levels */
-			if((cs_ptr=GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
-				cs_ptr->sc.ptr=house_ptr->dna;
-			else if ((cs_ptr=AddCS(&zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx], CS_DNADOOR)))
-				cs_ptr->sc.ptr=house_ptr->dna;
+			if ((cs_ptr = GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
+				cs_ptr->sc.ptr = house_ptr->dna;
+			else if ((cs_ptr = AddCS(&zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx], CS_DNADOOR)))
+				cs_ptr->sc.ptr = house_ptr->dna;
 		}
 	}
 	if (house_ptr->flags&HF_RECT){
@@ -1190,11 +1189,11 @@ static void rd_house(int n)
 		i =- 2;
 		C_MAKE(house_ptr->coords.poly, MAXCOORD, char);
 		do {
-			i+=2;
+			i += 2;
 			rd_byte((byte*)&house_ptr->coords.poly[i]);
-			rd_byte((byte*)&house_ptr->coords.poly[i+1]);
-		} while(house_ptr->coords.poly[i] || house_ptr->coords.poly[i+1]);
-		GROW(house_ptr->coords.poly, MAXCOORD, i+2, byte);
+			rd_byte((byte*)&house_ptr->coords.poly[i + 1]);
+		} while(house_ptr->coords.poly[i] || house_ptr->coords.poly[i + 1]);
+		GROW(house_ptr->coords.poly, MAXCOORD, i + 2, byte);
 	}
 
 	if (!s_older_than(4, 4, 13)) {
@@ -2135,8 +2134,8 @@ static errr rd_floor(void)
 
 	if (l_ptr) {
 		time_t now;
-		now=time(&now);
-		l_ptr->lastused=now;
+		now = time(&now);
+		l_ptr->lastused = now;
 
 		rd_u32b(&l_ptr->flags1);
 		rd_byte(&l_ptr->hgt);
@@ -2226,7 +2225,7 @@ static errr rd_floor(void)
 			c_ptr = &zcave[y][x];
 			while(n--){
 				rd_byte(&k);
-				cs_ptr=ReplaceCS(c_ptr, k);
+				cs_ptr = ReplaceCS(c_ptr, k);
 				csfunc[k].load(cs_ptr);
 			}
 		}
@@ -2976,7 +2975,7 @@ void new_rd_wild()
 				for (i = 0; i < d_ptr->maxdepth; i++) {
 					C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
 				}
-				wptr->dungeon=d_ptr;
+				wptr->dungeon = d_ptr;
 			}
 			if (wptr->flags & WILD_F_UP) {
 				MAKE(d_ptr, struct dungeon_type);
@@ -3034,7 +3033,7 @@ void new_rd_wild()
 				for (i = 0; i < d_ptr->maxdepth; i++) {
 					C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
 				}
-				wptr->tower=d_ptr;
+				wptr->tower = d_ptr;
 			}
 		}
 	}
@@ -3055,7 +3054,7 @@ void rd_towns()
 {
 	int i, j;
 	struct worldpos twpos;
-	twpos.wz=0;
+	twpos.wz = 0;
 
 	/* Dealloc stores first - mikaelh */
 	for (i = 0; i < numtowns; i++) dealloc_stores(i);
@@ -3063,7 +3062,7 @@ void rd_towns()
 
 	rd_u16b(&numtowns);
 	C_MAKE(town, numtowns, struct town_type);
-	for(i=0; i<numtowns; i++){
+	for (i = 0; i < numtowns; i++) {
 		rd_u16b(&town[i].x);
 		rd_u16b(&town[i].y);
 		rd_u16b(&town[i].baselevel);
@@ -3073,10 +3072,10 @@ void rd_towns()
 		wild_info[town[i].y][town[i].x].type = WILD_TOWN;
 		wild_info[town[i].y][town[i].x].radius = town[i].baselevel;
 		wild_info[town[i].y][town[i].x].town_idx = i;
-		twpos.wx=town[i].x;
-		twpos.wy=town[i].y;
+		twpos.wx = town[i].x;
+		twpos.wy = town[i].y;
 		alloc_stores(i);
-		for(j = 0; j < town[i].num_stores; j++){
+		for (j = 0; j < town[i].num_stores; j++) {
 			rd_store(&town[i].townstore[j]);
 		}
 	}
@@ -3088,19 +3087,19 @@ void load_guildhalls(struct worldpos *wpos){
 	struct guildsave data;
 	char buf[1024];
 	char fname[30];
-	data.mode=0;
-	for(i=0; i<num_houses; i++){
-		if((houses[i].dna->owner_type == OT_GUILD) && (inarea(wpos, &houses[i].wpos))){
-			if(!houses[i].dna->owner) continue;
+	data.mode = 0;
+	for (i = 0; i < num_houses; i++) {
+		if ((houses[i].dna->owner_type == OT_GUILD) && (inarea(wpos, &houses[i].wpos))) {
+			if (!houses[i].dna->owner) continue;
 #if DEBUG_LEVEL > 2
 			s_printf("load guildhall %d\n", i);
 #endif
 			sprintf(fname, "guild%.4d.data", i);
 //			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
 			path_build(buf, 1024, ANGBAND_DIR_SAVE, fname);/* moved this 'file spam' over to save... C. Blue */
-			gfp=fopen(buf, "rb");
-			if(gfp==(FILE*)NULL) continue;
-			data.fp=gfp;
+			gfp = fopen(buf, "rb");
+			if (gfp == (FILE*)NULL) continue;
+			data.fp = gfp;
 			fill_house(&houses[i], FILL_GUILD, (void*)&data);
 			fclose(gfp);
 		}
@@ -3113,23 +3112,23 @@ void save_guildhalls(struct worldpos *wpos){
 	struct guildsave data;
 	char buf[1024];
 	char fname[30];
-	data.mode=1;
-	for(i=0; i<num_houses; i++){
-		if((houses[i].dna->owner_type==OT_GUILD) && (inarea(wpos, &houses[i].wpos))){
-			if(!houses[i].dna->owner) continue;
+	data.mode = 1;
+	for (i = 0; i < num_houses; i++) {
+		if ((houses[i].dna->owner_type == OT_GUILD) && (inarea(wpos, &houses[i].wpos))) {
+			if (!houses[i].dna->owner) continue;
 #if DEBUG_LEVEL > 2
 			s_printf("save guildhall %d\n", i);
 #endif
 			sprintf(fname, "guild%.4d.data", i);
 //			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
 			path_build(buf, 1024, ANGBAND_DIR_SAVE, fname); /* moved this 'file spam' over to save... C. Blue */
-			gfp=fopen(buf, "rb+");
-			if(gfp==(FILE*)NULL){
-				gfp=fopen(buf, "wb");
-				if(gfp==(FILE*)NULL)
+			gfp = fopen(buf, "rb+");
+			if (gfp == (FILE*)NULL) {
+				gfp = fopen(buf, "wb");
+				if (gfp == (FILE*)NULL)
 					continue;
 			}
-			data.fp=gfp;
+			data.fp = gfp;
 			fill_house(&houses[i], FILL_GUILD, (void*)&data);
 			fclose(gfp);
 		}

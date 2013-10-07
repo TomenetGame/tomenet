@@ -38,7 +38,7 @@ void sc_wish(int Ind, void *argp);
 void sc_shout(int Ind, void *string);
 
 /* the commands structure */
-struct scmd scmd[]={
+struct scmd scmd[] = {
 	{ "shutdown",	1,	0,	1,	sc_shutdown	, NULL		},
 
 	{ "bug",	0,	0,	0,	sc_report,	"\377oUsage: /rfe (message)"	},
@@ -59,71 +59,68 @@ void do_slash_cmd(int Ind, char *message){
 	int i, j;
 	player_type *p_ptr;
 
-	p_ptr=Players[Ind];
-	if(!p_ptr) return;
+	p_ptr = Players[Ind];
+	if (!p_ptr) return;
 
 	/* check for idiots */
-	if(!message[1]) return;
+	if (!message[1]) return;
 
-	for(i=0; scmd[i].cmd; i++){
-		if(!strncmp(scmd[i].cmd, &message[1], strlen(scmd[i].cmd))){
-			if(scmd[i].admin && !is_admin(p_ptr)) break;
+	for (i = 0; scmd[i].cmd; i++) {
+		if (!strncmp(scmd[i].cmd, &message[1], strlen(scmd[i].cmd))) {
+			if (scmd[i].admin && !is_admin(p_ptr)) break;
 
-			if(scmd[i].minargs==-1){
+			if (scmd[i].minargs==-1){
 				/* no string required */
 				scmd[i].func(Ind, NULL);
 				return;
 			}
 
-			for(j=strlen(scmd[i].cmd)+1; message[j]; j++){
-				if(message[j]!=' '){
+			for (j = strlen(scmd[i].cmd) + 1; message[j]; j++) {
+				if (message[j] != ' ') {
 					break;
 				}
 			}
-			if(!message[j] && scmd[i].minargs){
-				if(scmd[i].errorhlp) msg_print(Ind, scmd[i].errorhlp);
+			if (!message[j] && scmd[i].minargs) {
+				if (scmd[i].errorhlp) msg_print(Ind, scmd[i].errorhlp);
 				return;
 			}
 
-			if(!scmd[i].minargs && !scmd[i].maxargs){
+			if (!scmd[i].minargs && !scmd[i].maxargs) {
 				/* a line arg */
-				scmd[i].func(Ind, &message[strlen(scmd[i].cmd)+1]);
-			}
-			else{
+				scmd[i].func(Ind, &message[strlen(scmd[i].cmd) + 1]);
+			} else {
 				char **args;
-				char *cp=&message[strlen(scmd[i].cmd)+1];
+				char *cp = &message[strlen(scmd[i].cmd) + 1];
 
 				/* allocate args array */
-				args=(char**)malloc(sizeof(char*) * (scmd[i].maxargs+1));
-				if(args==(char**)NULL){
+				args = (char**)malloc(sizeof(char*) * (scmd[i].maxargs + 1));
+				if (args == (char**)NULL) {
 					/* unlikely - best to check */
 					msg_print(Ind, "\377uError. Please try later.");
 					return;
 				}
 
 				/* simple tokenize into args */
-				j=0;
-				while(j <= scmd[i].maxargs){
-					while(*cp==' '){
-						*cp='\0';
+				j = 0;
+				while (j <= scmd[i].maxargs) {
+					while (*cp == ' ') {
+						*cp = '\0';
 						cp++;
 					}
-					if(*cp=='\0') break;
-					args[j++]=cp;
+					if (*cp == '\0') break;
+					args[j++] = cp;
 
-					while(*cp!=' ') cp++;
-					if(*cp=='\0') break;
+					while (*cp != ' ') cp++;
+					if (*cp == '\0') break;
 				}
 
-				if(j < scmd[i].minargs || j > scmd[i].maxargs){
-					if(scmd[i].errorhlp) msg_print(Ind, scmd[i].errorhlp);
+				if (j < scmd[i].minargs || j > scmd[i].maxargs) {
+					if (scmd[i].errorhlp) msg_print(Ind, scmd[i].errorhlp);
 					return;
 				}
 
-				args[j]=NULL;
-				if(scmd[i].maxargs==1){
-					scmd[i].func(Ind, args[0]);
-				}
+				args[j] = NULL;
+				if (scmd[i].maxargs == 1) scmd[i].func(Ind, args[0]);
 				else scmd[i].func(Ind, args);
 			}
 			return;
@@ -133,7 +130,7 @@ void do_slash_cmd(int Ind, char *message){
 }
 
 void sc_shout(int Ind, void *string){
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
 
 	aggravate_monsters(Ind, 1);
 	if(string)
@@ -149,9 +146,9 @@ void sc_shutdown(int Ind, void *value){
 	int val;
 
 	if((char*)value)
-		val=atoi((char*)value);
+		val = atoi((char*)value);
 	else
-		val=(cfg.runlevel < 6 || kick) ? 6 : 5;
+		val = (cfg.runlevel < 6 || kick) ? 6 : 5;
 
 	set_runlevel(val);
 
@@ -179,7 +176,7 @@ void sc_shutdown(int Ind, void *value){
 }
 
 void sc_wish(int Ind, void *argp){
-	char **args=(args);
+	char **args = (args);
 #if 0
 	object_type	forge;
 	object_type	*o_ptr = &forge;
@@ -237,7 +234,7 @@ void sc_wish(int Ind, void *argp){
 
 
 void sc_report(int Ind, void *string){
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
 	rfe_printf("[%s]%s\n", p_ptr->name, (char*)string);
 	msg_print(Ind, "\377GThank you for sending us a message!");
 }
@@ -459,13 +456,11 @@ void do_slash_cmd(int Ind, char *message)
 	else
 	{
 		/* cut tokens off (thx Asclep(DEG)) */
-		if ((token[0]=strtok(message," ")))
-		{
+		if ((token[0] = strtok(message," "))) {
 //			s_printf("%d : %s", tk, token[0]);
-			for (i=1;i<9;i++)
-			{
-				token[i]=strtok(NULL," ");
-				if (token[i]==NULL)
+			for (i = 1 ;i < 9; i++) {
+				token[i] = strtok(NULL," ");
+				if (token[i] == NULL)
 					break;
 				tk = i;
 			}
@@ -475,10 +470,7 @@ void do_slash_cmd(int Ind, char *message)
 		//		strcpy(search, "");
 
 		/* Form a search string if we found a colon */
-		if (tk)
-		{
-			k = atoi(token[1]);
-		}
+		if (tk) k = atoi(token[1]);
 
 		/* User commands */
 		if (prefix(message, "/ignore") ||
@@ -816,17 +808,17 @@ void do_slash_cmd(int Ind, char *message)
                         int book, whichplayer, whichspell;
 			bool ami = FALSE;
   #if 0
-			token[0]=strtok(message," ");
-			if (token[0]==NULL)
+			token[0] = strtok(message," ");
+			if (token[0] == NULL)
 			{
 				msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Playername]");
 				return;
 			}
 
-			for (i=1;i<50;i++)
+			for (i = 1; i < 50; i++)
 			{
-				token[i]=strtok(NULL," ");
-				if (token[i]==NULL)
+				token[i] = strtok(NULL, " ");
+				if (token[i] == NULL)
 					break;
 			}
   #endif
@@ -838,7 +830,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
-			if(*token[1]>='1' && *token[1]<='9')
+			if (*token[1] >= '1' && *token[1] <= '9')
 			{
 				object_type *o_ptr;
 				char c[4] = "@";
@@ -873,35 +865,32 @@ void do_slash_cmd(int Ind, char *message)
 			else
 			{
 				*token[1] &= ~(0x20);
-				if(*token[1]>='A' && *token[1]<='W')
-				{
-					book = (int)(*token[1]-'A');
-				}
-				else 
-				{
+				if (*token[1] >= 'A' && *token[1] <= 'W')
+					book = (int)(*token[1] - 'A');
+				else {
 					msg_print(Ind,"\377oBook variable was out of range (a-i) or (1-9)");
 					return;
 				}
 			}
 
-			if(*token[2]>='1' && *token[2]<='9')
+			if(*token[2] >= '1' && *token[2] <= '9')
 			{
 				//					whichspell = atoi(token[2]+'A'-1);
 				whichspell = atoi(token[2]) - 1;
 			}
-			else if(*token[2]>='a' && *token[2]<='i')
+			else if(*token[2] >= 'a' && *token[2] <= 'i')
 			{
-				whichspell = (int)(*token[2]-'a');
+				whichspell = (int)(*token[2] - 'a');
 			}
 			/* if Capital letter, it's for friends */
-			else if(*token[2]>='A' && *token[2]<='I')
+			else if(*token[2] >= 'A' && *token[2] <= 'I')
 			{
-				whichspell = (int)(*token[2]-'A');
+				whichspell = (int)(*token[2] - 'A');
 				//					*token[2] &= 0xdf;
 				//					whichspell = *token[2]-1;
 				ami = TRUE;
 			}
-			else 
+			else
 			{
 				msg_print(Ind,"\377oSpell out of range [A-I].");
 				return;
@@ -1342,15 +1331,15 @@ void do_slash_cmd(int Ind, char *message)
 			j = Ind; //k=0;
 			u16b r, num;
 			int lev;
-			u16b flags=(QUEST_MONSTER|QUEST_RANDOM);
+			u16b flags = (QUEST_MONSTER|QUEST_RANDOM);
 
 			if (tk && !strcmp(token[1], "reset")) {
 				int qn;
 				if (!admin) return;
 				for (qn = 0; qn < 20; qn++) {
-					quests[qn].active=0;
-					quests[qn].type=0;
-					quests[qn].id=0;
+					quests[qn].active = 0;
+					quests[qn].type = 0;
+					quests[qn].id = 0;
 				}
 				msg_broadcast(0, "\377yQuests are reset");
 				for (i = 1; i <= NumPlayers; i++) {
@@ -3738,22 +3727,21 @@ void do_slash_cmd(int Ind, char *message)
 
 					invcopy(o_ptr, lookup_kind(1, 9));
 					o_ptr->number = 1;
-					o_ptr->name1=0;
-					o_ptr->name2=0;
-					o_ptr->name3=0;
+					o_ptr->name1 = 0;
+					o_ptr->name2 = 0;
+					o_ptr->name3 = 0;
 					o_ptr->pval = 0;
 					o_ptr->level = 1;
 					(void)inven_carry(Ind, o_ptr);
 
-					teamscore[0]=0;
-					teamscore[1]=0;
-					teams[0]=0;
-					teams[1]=0;
-					gametype=EEGAME_RUGBY;
+					teamscore[0] = 0;
+					teamscore[1] = 0;
+					teams[0] = 0;
+					teams[1] = 0;
+					gametype = EEGAME_RUGBY;
 					msg_broadcast(0, "\377pA new game of rugby has started!");
-					for(k=1; k<=NumPlayers; k++){
-						Players[k]->team=0;
-					}
+					for (k = 1; k <= NumPlayers; k++)
+						Players[k]->team = 0;
 				} else if (!strcmp(token[1], "stop")) { /* stop all games - mikaelh */
 					char sstr[80];
 					msg_broadcast(0, "\377pThe game has been stopped!");
@@ -4167,7 +4155,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "\377oUsage: /stnew <store#>");
 					return;
 				}
-				for(i=0;i<numtowns;i++)
+				for (i = 0; i < numtowns; i++)
 				{
 					int what, num;
 					object_type *o_ptr;
@@ -4182,7 +4170,7 @@ void do_slash_cmd(int Ind, char *message)
 
 //					store_item_increase(st_ptr, what, -num);
 //					store_item_optimize(st_ptr, what);
-//					st_ptr->stock[what].num=0;
+//					st_ptr->stock[what].num = 0;
 				}
 				msg_print(Ind, "\377oStores were emptied!");
 				return;
@@ -4556,7 +4544,7 @@ void do_slash_cmd(int Ind, char *message)
 				   startup positions in Bree (px, py) */
 				new_level_rand_x(&p_ptr->wpos, atoi(token[1]));
 				new_level_rand_y(&p_ptr->wpos, atoi(token[2]));
-				msg_format(Ind, "Set x=%d, y=%d for this wpos.",atoi(token[1]),atoi(token[2]));
+				msg_format(Ind, "Set x=%d, y=%d for this wpos.", atoi(token[1]), atoi(token[2]));
 				return;
 			}
 			else if (prefix(message, "/anotes"))
@@ -4820,7 +4808,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
-				o_ptr->timeout=0;
+				o_ptr->timeout = 0;
 				return;/* see create_reward for proper loop */
 				apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, TRUE, TRUE, TRUE, FALSE, FALSE);
 
@@ -5023,7 +5011,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				msg_format(Ind, "Changing house owner of all %s to %s...", token[1], token[2]);
 				for (i = 0; i < num_houses; i++) {
-					struct dna_type *dna=houses[i].dna;
+					struct dna_type *dna = houses[i].dna;
 #if 0
                                         if (((dna->owner_type == OT_PARTY) && (!strcmp(parties[dna->owner].name, token[1]))) ||
 					     ((dna->owner_type == OT_GUILD) && (!strcmp(guilds[dna->owner].name, token[1]))))
@@ -5062,7 +5050,7 @@ void do_slash_cmd(int Ind, char *message)
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
 				msg_format(Ind, "Fixing house owner %s...", token[1]);
 				for (i = 0; i < num_houses; i++) {
-					struct dna_type *dna=houses[i].dna;
+					struct dna_type *dna = houses[i].dna;
 //                                        if ((dna->owner_type == OT_PLAYER) && (!strcmp(lookup_player_name(dna->owner), token[1])))
                                         if ((dna->owner_type == OT_PLAYER) && (dna->owner == lookup_player_id_messy(message3)))
 					{
@@ -5082,7 +5070,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				for (i = 0; i < num_houses; i++) {
-					struct dna_type *dna=houses[i].dna;
+					struct dna_type *dna = houses[i].dna;
 					if (!dna->owner) ;
 						/* not owned */
                                         else if ((dna->owner_type == OT_PLAYER) && (dna->owner == lookup_player_id(message2 + 12)))

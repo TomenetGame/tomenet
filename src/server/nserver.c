@@ -697,23 +697,22 @@ void setup_contact_socket(void)
 void world_connect(int Ind){
 	/* evileye testing only */
 	/* really, server should DIE if this happens */
-	if(WorldSocket!=-1){
-		if(Ind!=-1) msg_print(Ind, "\377oAlready connected to the world server");
+	if (WorldSocket != -1) {
+		if (Ind != -1) msg_print(Ind, "\377oAlready connected to the world server");
 		return;
 	}
 
 	block_timer();
-	if((WorldSocket=CreateClientSocket(cfg.wserver, 18360))==-1){
+	if ((WorldSocket = CreateClientSocket(cfg.wserver, 18360)) == -1) {
 #ifdef WIN32
 		s_printf("Unable to connect to world server %d\n", errno);
 #else
 		s_printf("Unable to connect to world server %d %d\n", errno, sl_errno);
 #endif
-		if(Ind!=-1) msg_print(Ind, "\377rFailed to connect to the world server");
-	}
-	else{
+		if (Ind != -1) msg_print(Ind, "\377rFailed to connect to the world server");
+	} else {
 		install_input(world_comm, WorldSocket, 0);
-		if(Ind!=-1) msg_print(Ind, "\377gSuccessfully connected to the world server");
+		if (Ind != -1) msg_print(Ind, "\377gSuccessfully connected to the world server");
 	}
 	allow_timer();
 }
@@ -737,19 +736,19 @@ static int Reply(char *host_addr, int fd)
 static bool player_allowed(char *name){
 	FILE *sfp;
 	char buffer[80];
-	bool success=FALSE;
+	bool success = FALSE;
 	/* Hack -- allow 'guest' account */
 	/* if (!strcmp("Guest", name)) return TRUE; */
 
-	sfp=fopen("allowlist", "r");
-	if(sfp==(FILE*)NULL)
+	sfp = fopen("allowlist", "r");
+	if (sfp == (FILE*)NULL)
 		return TRUE;
-	else{
-		while(fgets(buffer, 80, sfp)){
+	else {
+		while (fgets(buffer, 80, sfp)) {
 			/* allow for \n */
-			if((strlen(name)+1)!=strlen(buffer)) continue;
-			if(!strncmp(buffer,name, strlen(name))){
-				success=TRUE;
+			if ((strlen(name) + 1) != strlen(buffer)) continue;
+			if (!strncmp(buffer,name, strlen(name))) {
+				success = TRUE;
 				break;
 			}
 		}
@@ -817,7 +816,7 @@ static bool forbidden_name(char *cname) {
 			/* allow for \n */
 			if ((strlen(name) + 1) != strlen(buffer)) continue;
 			if (!strncmp(buffer,name, strlen(name))) {
-				success=TRUE;
+				success = TRUE;
 				break;
 			}
 		}
@@ -1257,7 +1256,7 @@ static void Delete_player(int Ind)
 
 	/* Be paranoid */
 	cave_type **zcave;
-	if ((zcave=getcave(&p_ptr->wpos)))
+	if ((zcave = getcave(&p_ptr->wpos)))
 	{
 		/* There's nobody on this space anymore */
 		zcave[p_ptr->py][p_ptr->px].m_idx = 0;
@@ -1434,7 +1433,7 @@ static void Delete_player(int Ind)
 		cave_type **zcave;
 		worldpos *wpos = &Players[NumPlayers]->wpos;
 		p_ptr			= Players[NumPlayers];
-		if((zcave=getcave(&p_ptr->wpos)))
+		if ((zcave = getcave(&p_ptr->wpos)))
 			zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
 		Players[NumPlayers]	= Players[Ind];
 		Players[Ind]		= p_ptr;
@@ -1858,24 +1857,24 @@ static int Handle_setup(int ind)
 #if 0
 static bool validstrings(char *nick, char *real, char *host){
 	int i;
-	int rval=1;
+	int rval = 1;
 
-	for(i=0; nick[i]; i++){
-		if(nick[i]<32 || nick[i]>'z'){
-			nick[i]='\0';
-			rval=0;
+	for (i = 0; nick[i]; i++) {
+		if (nick[i] < 32 || nick[i] > 'z') {
+			nick[i] = '\0';
+			rval = 0;
 		}
 	}
-	for(i=0; real[i]; i++){
-		if(real[i]<32 || real[i]>'z'){
-			real[i]='\0';
-			rval=0;
+	for (i = 0; real[i]; i++) {
+		if (real[i] < 32 || real[i] > 'z') {
+			real[i] = '\0';
+			rval = 0;
 		}
 	}
-	for(i=0; host[i]; i++){
-		if(host[i]<32 || host[i]>'z'){
-			host[i]='\0';
-			rval=0;
+	for (i = 0; host[i]; i++) {
+		if (host[i] < 32 || host[i] > 'z') {
+			host[i] = '\0';
+			rval = 0;
 		}
 	}
 	return(rval);
@@ -3318,7 +3317,7 @@ void do_quit(int ind, bool tellclient)
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
-		p_ptr=Players[player];
+		p_ptr = Players[player];
 	}
 	if (!tellclient) {
 		/* Close the socket */
@@ -3623,7 +3622,7 @@ static int Receive_login(int ind){
 			return(-1);
 		}
 		Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);
-		connp->c_name=strdup(choice);
+		connp->c_name = strdup(choice);
 	} else {
 		/* fail login due to missing password */
 		s_printf("EXPLOIT: Missing password of player %s.\n", connp->nick);
@@ -3947,31 +3946,30 @@ static int Receive_file(int ind){
 				Packet_scanf(&connp->r, "%s", fname);
 				if(!is_admin(p_ptr)){
 					msg_print(Ind, "\377rFile transfer refused");
-					x=0; 
+					x = 0; 
 				}
 				else{
 					msg_print(Ind, "\377gAttempting file transfer");
-					x=local_file_init(ind, fnum, fname);
+					x = local_file_init(ind, fnum, fname);
 				}
 				break;
 			case PKT_FILE_DATA:
 				Packet_scanf(&connp->r, "%hd", &len);
-				x=local_file_write(ind, fnum, len);
+				x = local_file_write(ind, fnum, len);
 				break;
 			case PKT_FILE_END:
-				x=local_file_close(ind, fnum);
+				x = local_file_close(ind, fnum);
 				msg_format(Ind, "\377oFile transfer %s.", x? "successful":"failed");
 				break;
 			case PKT_FILE_CHECK:
 				/* Admin to do this only !!! */
 				Packet_scanf(&connp->r, "%s", fname);
-				if(!is_admin(p_ptr)){
+				if (!is_admin(p_ptr)) {
 					msg_print(Ind, "\377rFile check refused");
-					x=0; 
-				}
-				else{
+					x = 0; 
+				} else {
 					msg_print(Ind, "\377yChecking file");
-					x=local_file_check(fname, &csum);
+					x = local_file_check(fname, &csum);
 					Packet_printf(&connp->w, "%c%c%hd%d", PKT_FILE, PKT_FILE_SUM, fnum, csum);
 					return(1);
 				}
@@ -4001,7 +3999,7 @@ static int Receive_file(int ind){
 				break;
 			default:
 				printf("unknown file transfer packet\n");
-				x=0;
+				x = 0;
 		}
 		Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
 	}
@@ -4011,7 +4009,7 @@ static int Receive_file(int ind){
 int Receive_file_data(int ind, unsigned short len, char *buffer){
 	connection_t *connp = Conn[ind];
 	memcpy(buffer, connp->r.ptr, len);
-	connp->r.ptr+=len;
+	connp->r.ptr += len;
 	return(1);
 }
 
@@ -4083,20 +4081,16 @@ int Send_reliable_old(int ind)
 	const int max_packet_size = MAX_RELIABLE_DATA_PACKET_SIZE,
 		min_send_size = 1;
 
-	if (connp->c.len <=0 || connp->last_send_loops == turn)
-	{
+	if (connp->c.len <= 0 || connp->last_send_loops == turn) {
 		connp->last_send_loops = turn;
 		return 0;
 	}
 	read_buf = connp->c.buf;
 	max_todo = connp->c.len;
 	rel_off = connp->reliable_offset;
-	if (connp->w.len > 0)
-	{
+	if (connp->w.len > 0) {
 		if (connp->w.len >= max_packet_size - min_send_size)
-		{
 			return 0;
-		}
 		if (max_todo > max_packet_size - connp->w.len)
 			max_todo = max_packet_size - connp->w.len;
 	}

@@ -105,7 +105,7 @@ bool do_player_scatter_items(int Ind, int chance, int rad)
 	s16b i,j;
 	bool message = FALSE;
 	cave_type **zcave;
-	zcave=getcave(&p_ptr->wpos);
+	zcave = getcave(&p_ptr->wpos);
 
 	if (p_ptr->inval) return (FALSE);
 
@@ -151,8 +151,8 @@ bool do_player_scatter_items(int Ind, int chance, int rad)
 				object_desc(Ind, i_name, &tmp_obj, TRUE, 3);
 				note_spot(Ind, cy, cx);
 				lite_spot(Ind, cy, cx);
-				message=TRUE;
-				msg_format(Ind, "Suddenly %s appear%s!",i_name, (tmp_obj.number>1)?"":"s");
+				message = TRUE;
+				msg_format(Ind, "Suddenly %s appear%s!", i_name, (tmp_obj.number > 1) ? "" : "s");
 			}
 			break;
 		}
@@ -235,7 +235,7 @@ static bool do_player_trap_call_out(int Ind)
         char          m_name[MNAME_LEN];
         bool          ident = FALSE;
         cave_type **zcave;
-        zcave=getcave(&p_ptr->wpos);
+        zcave = getcave(&p_ptr->wpos);
 	int           old_x, old_y;
 
         if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return(FALSE);
@@ -275,8 +275,8 @@ static bool do_player_trap_call_out(int Ind)
                 sn++;
                 /* Randomize choice */
                 if (rand_int(sn) > 0) continue;
-                zcave[cy][cx].m_idx=h_index;
-                zcave[m_ptr->fy][m_ptr->fx].m_idx=0;
+                zcave[cy][cx].m_idx = h_index;
+                zcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
 		old_x = m_ptr->fx;
 		old_y = m_ptr->fy;
                 m_ptr->fx = cx;
@@ -1885,7 +1885,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			object_type *o_ptr;
 			int i, j;
 
-			for (i=0;i<INVEN_PACK;i++) {
+			for (i = 0; i < INVEN_PACK; i++) {
 				if (!p_ptr->inventory[i].k_idx) continue;
 				if (rand_int(999) < p_ptr->skill_sav) continue;
 
@@ -2185,7 +2185,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					msg_format(Ind, "You suddenly don't see the %s anymore!", o_name);
 				}
 
-//				if (zcave) zcave[iy][ix].o_idx=0;
+//				if (zcave) zcave[iy][ix].o_idx = 0;
 				delete_object_idx(k, TRUE);
 
 				/* Wipe the object */
@@ -2575,7 +2575,7 @@ void player_activate_door_trap(int Ind, s16b y, s16b x)
 	/* Paranoia */
 	cave_type **zcave;
 	if (!in_bounds(y, x)) return;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	c_ptr = &zcave[y][x];
 	cs_ptr = GetCS(c_ptr, CS_TRAPS);
@@ -2675,7 +2675,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 
 
 	/* no traps in town or on first level */
-	//   if (dlev<=1) return;
+	//   if (dlev <= 1) return;
 
 	/* traps only appears on empty floor */
 	//   if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
@@ -2746,7 +2746,7 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 	/* Paranoia -- verify location */
 	cave_type **zcave;
 
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
 	c_ptr = &zcave[y][x];
 
@@ -2778,7 +2778,7 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 
 
 	/* no traps in town or on first level */
-	//   if (dlev<=1) return;
+	//   if (dlev <= 1) return;
 
 	/* traps only appears on empty floor */
 	//   if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
@@ -2821,7 +2821,7 @@ void place_trap_object(object_type *o_ptr)
         s16b           cnt        = 0;
 
         /* no traps in town or on first level */
-        //   if (dlev<=1) return;
+        //   if (dlev <= 1) return;
 
         /* try 100 times */
         while ((more) && (cnt++) < 100) {
@@ -2869,7 +2869,7 @@ void wiz_place_trap(int Ind, int trap)
 	/* Paranoia -- verify location */
 	cave_type **zcave;
 
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
 	c_ptr = &zcave[y][x];
 
@@ -2902,7 +2902,7 @@ void wiz_place_trap(int Ind, int trap)
 
 
 	/* no traps in town or on first level */
-	//   if (dlev<=1) return;
+	//   if (dlev <= 1) return;
 
 	/* traps only appears on empty floor */
 	//   if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
@@ -3252,7 +3252,7 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x)
 	cave_type               *c_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	c_ptr = &zcave[y][x];
 	cs_ptr = GetCS(c_ptr, CS_MON_TRAP);

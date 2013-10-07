@@ -1257,51 +1257,51 @@ byte spell_color(int type)
 		case GF_FIRE:		return (TERM_FIRE);
 		case GF_COLD:		return (TERM_COLD);
 		case GF_POIS:		return (TERM_POIS);
-		case GF_UNBREATH:	return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
+		case GF_UNBREATH:	return (randint(7) < 3 ? TERM_L_GREEN : TERM_GREEN);
 //		case GF_HOLY_ORB:	return (TERM_L_DARK);
-		case GF_HOLY_ORB:	return (randint(6)==1?TERM_ORANGE:TERM_L_DARK);
-		case GF_HOLY_FIRE:	return (randint(3)!=1?TERM_ORANGE:(randint(2)==1?TERM_YELLOW:TERM_WHITE));
-		case GF_HELL_FIRE:	return (randint(5)==1?TERM_RED:TERM_L_DARK);
-		case GF_MANA:		return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
+		case GF_HOLY_ORB:	return (randint(6) == 1 ? TERM_ORANGE : TERM_L_DARK);
+		case GF_HOLY_FIRE:	return (randint(3) != 1 ? TERM_ORANGE : (randint(2) == 1 ? TERM_YELLOW : TERM_WHITE));
+		case GF_HELL_FIRE:	return (randint(5) == 1 ? TERM_RED : TERM_L_DARK);
+		case GF_MANA:		return (randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
 		case GF_ARROW:		return (TERM_L_UMBER);
-		case GF_WATER:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
-		case GF_WAVE:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
-		case GF_VAPOUR:		return (randint(10)==1?TERM_BLUE:TERM_L_BLUE);
+		case GF_WATER:		return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
+		case GF_WAVE:		return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
+		case GF_VAPOUR:		return (randint(10) == 1 ? TERM_BLUE : TERM_L_BLUE);
 		case GF_NETHER_WEAK:
-		case GF_NETHER:		return (randint(4)==1?TERM_L_GREEN:TERM_L_DARK);
+		case GF_NETHER:		return (randint(4) == 1 ? TERM_L_GREEN : TERM_L_DARK);
 		case GF_CHAOS:		return (TERM_MULTI);
-		case GF_DISENCHANT:	return (randint(4)!=1?TERM_ORANGE:TERM_BLUE);
-		case GF_NEXUS:		return (randint(5)<3?TERM_L_RED:TERM_VIOLET);
+		case GF_DISENCHANT:	return (randint(4) != 1 ? TERM_ORANGE : TERM_BLUE);
+		case GF_NEXUS:		return (randint(5) < 3 ? TERM_L_RED : TERM_VIOLET);
 		case GF_CONFUSION:	return (TERM_CONF);
 		case GF_SOUND:		return (TERM_SOUN);
 		case GF_SHARDS:		return (TERM_SHAR);
-		case GF_FORCE:		return (randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
-		case GF_INERTIA:	return (randint(5)<3?TERM_SLATE:TERM_L_WHITE);
-		case GF_GRAVITY:	return (randint(3)==1?TERM_L_UMBER:TERM_UMBER);
-		case GF_TIME:		return (randint(3)==1?TERM_GREEN:TERM_L_BLUE);
+		case GF_FORCE:		return (randint(5) < 3 ? TERM_L_WHITE : TERM_ORANGE);
+		case GF_INERTIA:	return (randint(5) < 3 ? TERM_SLATE : TERM_L_WHITE);
+		case GF_GRAVITY:	return (randint(3) == 1? TERM_L_UMBER : TERM_UMBER);
+		case GF_TIME:		return (randint(3) == 1? TERM_GREEN : TERM_L_BLUE);
 		case GF_LITE_WEAK:	return (TERM_LITE);
 		case GF_LITE:		return (TERM_LITE);
 		case GF_DARK_WEAK:	return (TERM_DARKNESS);
 		case GF_DARK:		return (TERM_DARKNESS);
-		case GF_PLASMA:		return (randint(5)==1?TERM_RED:TERM_L_RED);
-		case GF_METEOR:		return (randint(3)==1?TERM_RED:TERM_UMBER);
-		case GF_ICE:		return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
+		case GF_PLASMA:		return (randint(5) == 1? TERM_RED : TERM_L_RED);
+		case GF_METEOR:		return (randint(3) == 1? TERM_RED : TERM_UMBER);
+		case GF_ICE:		return (randint(4) == 1? TERM_L_BLUE : TERM_WHITE);
 		case GF_INFERNO:
 		case GF_DETONATION:
-		case GF_ROCKET:		return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
+		case GF_ROCKET:		return (randint(6) < 4 ? TERM_L_RED : (randint(4) == 1 ? TERM_RED : TERM_L_UMBER));
 		case GF_NUKE:		return (mh_attr(2));
-		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_VIOLET));
-		case GF_PSI:		return (randint(5)!=1?(rand_int(2)?(rand_int(2)?TERM_YELLOW:TERM_L_BLUE):127):TERM_WHITE);
+		case GF_DISINTEGRATE:   return (randint(3) != 1 ? TERM_L_DARK : (randint(2) == 1 ? TERM_ORANGE : TERM_VIOLET));
+		case GF_PSI:		return (randint(5) != 1 ? (rand_int(2) ? (rand_int(2) ? TERM_YELLOW : TERM_L_BLUE) : 127) : TERM_WHITE);
 		/* new spell - the_sandman */
-		case GF_CURSE:		return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+		case GF_CURSE:		return (randint(2) == 1 ? TERM_DARKNESS : TERM_L_DARK);
 		case GF_OLD_DRAIN:	return (TERM_DARKNESS);
 		/* Druids stuff */
-		case GF_HEALINGCLOUD:	return (TERM_LITE);//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
-		case GF_WATERPOISON:	return (TERM_COLD);//return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
-		case GF_ICEPOISON:	return (TERM_SHAR);//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
+		case GF_HEALINGCLOUD:	return (TERM_LITE);//return (randint(5) > 1 ? TERM_WHITE : TERM_L_BLUE);
+		case GF_WATERPOISON:	return (TERM_COLD);//return (randint(2) == 1 ? TERM_L_BLUE : (randint(2) == 1 ? TERM_BLUE : (randint(2) == 1 ? TERM_GREEN : TERM_L_GREEN)));
+		case GF_ICEPOISON:	return (TERM_SHAR);//return (randint(3) > 1 ? TERM_UMBER : (randint(2) == 1 ? TERM_GREEN : TERM_SLATE));
 		/* To remove some hacks? */
-		case GF_THUNDER:	return (randint(3)!=1?TERM_ELEC:(randint(2)==1?TERM_YELLOW:TERM_LITE));
-		case GF_ANNIHILATION:	return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+		case GF_THUNDER:	return (randint(3) != 1 ? TERM_ELEC : (randint(2) == 1 ? TERM_YELLOW : TERM_LITE));
+		case GF_ANNIHILATION:	return (randint(2) == 1 ? TERM_DARKNESS : TERM_L_DARK);
 	}
 
 	/* Standard "color" */
@@ -10125,10 +10125,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_HAND_DOOM:
 		{
 			/* Teleport to nowhere..? */
-			if (who >=0 || who <= PROJECTOR_UNUSUAL) break;
+			if (who >= 0 || who <= PROJECTOR_UNUSUAL) break;
 
 			msg_format(Ind, "%^s invokes the Hand of Doom!",
-					Players[0-who]->name);
+					Players[0 - who]->name);
 
 			if (rand_int(100) < p_ptr->skill_sav)
 			{

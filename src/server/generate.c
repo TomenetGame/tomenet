@@ -2408,19 +2408,15 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	x2 = xval + (xsize + 1) / 2;
 
 /* evileye - exceeds MAX_WID... causes efence crash */
-	if((x2+1)>=MAX_WID){
-		x2=MAX_WID-2;
-	}
-	if((y2+1)>=MAX_HGT){
-		y2=MAX_HGT-2;
-	}
+	if ((x2 + 1) >= MAX_WID)
+		x2 = MAX_WID - 2;
+	if ((y2 + 1) >= MAX_HGT)
+		y2 = MAX_HGT - 2;
 
 
 	/* Place a full floor under the room */
-	for (y = y1 - 1; y <= y2 + 1; y++)
-	{
-		for (x = x1 - 1; x <= x2 + 1; x++)
-		{
+	for (y = y1 - 1; y <= y2 + 1; y++) {
+		for (x = x1 - 1; x <= x2 + 1; x++) {
 			c_ptr = &zcave[y][x];
 			place_floor(wpos, y, x);
 			c_ptr->info |= CAVE_ROOM;
@@ -2429,15 +2425,13 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	}
 
 	/* Walls around the room */
-	for (y = y1 - 1; y <= y2 + 1; y++)
-	{
+	for (y = y1 - 1; y <= y2 + 1; y++) {
 		c_ptr = &zcave[y][x1-1];
 		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y][x2+1];
 		c_ptr->feat = feat_wall_outer;
 	}
-	for (x = x1 - 1; x <= x2 + 1; x++)
-	{
+	for (x = x1 - 1; x <= x2 + 1; x++) {
 		c_ptr = &zcave[y1-1][x];
 		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y2+1][x];
@@ -2446,12 +2440,9 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 
 	/* Hack -- Occasional pillar room */
-	if (rand_int(20) == 0)
-	{
-		for (y = y1; y <= y2; y += 2)
-		{
-			for (x = x1; x <= x2; x += 2)
-			{
+	if (rand_int(20) == 0) {
+		for (y = y1; y <= y2; y += 2) {
+			for (x = x1; x <= x2; x += 2) {
 				c_ptr = &zcave[y][x];
 				c_ptr->feat = feat_wall_inner;
 			}
@@ -2459,17 +2450,14 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	}
 
 	/* Hack -- Occasional ragged-edge room */
-	else if (rand_int(50) == 0)
-	{
-		for (y = y1 + 2; y <= y2 - 2; y += 2)
-		{
+	else if (rand_int(50) == 0) {
+		for (y = y1 + 2; y <= y2 - 2; y += 2) {
 			c_ptr = &zcave[y][x1];
 			c_ptr->feat = feat_wall_inner;
 			c_ptr = &zcave[y][x2];
 			c_ptr->feat = feat_wall_inner;
 		}
-		for (x = x1 + 2; x <= x2 - 2; x += 2)
-		{
+		for (x = x1 + 2; x <= x2 - 2; x += 2) {
 			c_ptr = &zcave[y1][x];
 			c_ptr->feat = feat_wall_inner;
 			c_ptr = &zcave[y2][x];
@@ -3407,11 +3395,9 @@ static bool vault_aux_treasure(int r_idx)
 
 	/* Require Object form */
 	if (!((r_ptr->d_char == '!') || (r_ptr->d_char == '|') ||
-		(r_ptr->d_char == '$') || (r_ptr->d_char == '?') ||
-		(r_ptr->d_char == '=')))
-	{
+	    (r_ptr->d_char == '$') || (r_ptr->d_char == '?') ||
+	    (r_ptr->d_char == '=')))
 		return (FALSE);
-	}
 
 	/* Okay */
 	return (TRUE);
@@ -4163,8 +4149,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	else if (tmp < 70)
 	{
-		if (randint(4)!=1)
-		{
+		if (randint(4) != 1) {
 			/* Message */
 			name = "ordered clones";
 
@@ -5563,15 +5548,11 @@ static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysiz
 		{
 			cave_set_feat(wpos, 0+y0-yhsize, i+x0-xhsize, feat_wall_outer);
 
-			if (light) c_ptr->info|=(CAVE_GLOW);
+			if (light) c_ptr->info |= (CAVE_GLOW);
 			if (room)
-			{
 				c_ptr->info |= (CAVE_ROOM);
-			}
 			else
-			{
 				place_filler(wpos, 0+y0-yhsize, i+x0-xhsize);
-			}
 		}
 
 		/* Outside of the room -- set to be normal granite */
@@ -5593,13 +5574,9 @@ static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysiz
 			cave_set_feat(wpos, ysize+y0-yhsize, i+x0-xhsize, feat_wall_outer);
 			if (light) c_ptr->info |= (CAVE_GLOW);
 			if (room)
-			{
 				c_ptr->info |= (CAVE_ROOM);
-			}
 			else
-			{
 				place_filler(wpos, ysize+y0-yhsize, i+x0-xhsize);
-			}
 		}
 
 		/* Outside of the room -- set to be normal granite */
@@ -8469,7 +8446,7 @@ static void try_doors(worldpos *wpos, int y, int x)
 		if (zcave[y][x].info & CAVE_ROOM) continue;
 
 		/* Not a doorway */
-		if ((dir_next[i]=possible_doorway(wpos, yy, xx)) < 0) continue;
+		if ((dir_next[i] = possible_doorway(wpos, yy, xx)) < 0) continue;
 
 		/* Accept the direction */
 		dir_ok[i] = TRUE;
@@ -9505,7 +9482,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #endif
 	{
 		empty_level = TRUE;
-		if ((randint(DARK_EMPTY)!=1 || (randint(100) > dun_lev)))
+		if ((randint(DARK_EMPTY) != 1 || (randint(100) > dun_lev)))
 			dark_empty = FALSE;
 	}
 

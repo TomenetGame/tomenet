@@ -16,36 +16,36 @@
 #if 0
 /* Server gateway stuff */
 void SGWHit(int read_fd, int arg){
-	int newsock=0;
+	int newsock = 0;
 	char *sdb;
-	int size=0;
+	int size = 0;
 	time_t now;
 
 	/* read_fd always the main socket, because we
 	   never install_input on any others. */
 	/* Order: connection, s->send, s->shutdown socket */
 
-	if ((newsock = SocketAccept(read_fd)) != -1){
+	if ((newsock = SocketAccept(read_fd)) != -1) {
 		/* Send some crap here */
 		sdb = C_NEW(4096, char);
-		if(sdb!=(char*)NULL){
+		if (sdb != (char*)NULL) {
 			int i;
 			time(&now);
-			size+=sprintf(sdb,"runtime=%d\n", (int)(now-cfg.runtime));
-			size+=sprintf(&sdb[size], "turn=%d\n", turn);
-			size+=sprintf(&sdb[size], "day=%d\n", DAY); /* day const */
-			size+=sprintf(&sdb[size], "year=%d\n", bst(YEAR, turn)); /* starting year const */
+			size += sprintf(sdb, "runtime=%d\n", (int)(now - cfg.runtime));
+			size += sprintf(&sdb[size], "turn=%d\n", turn);
+			size += sprintf(&sdb[size], "day=%d\n", DAY); /* day const */
+			size += sprintf(&sdb[size], "year=%d\n", bst(YEAR, turn)); /* starting year const */
 			/* let the script count or we'll give away
 			   the dungeon masters. */
 			/* size+=sprintf(&sdb[size],"num=%d\n", NumPlayers);*/
-			for(i=1; i<=NumPlayers; i++){
-				if(Players[i]->admin_dm && cfg.secret_dungeon_master) continue;
-				size+=sprintf(&sdb[size], "player=%s\n", Players[i]->name);
-				size+=sprintf(&sdb[size], "level=%d\n", Players[i]->lev);
-				size+=sprintf(&sdb[size], "race=%s\n", race_info[Players[i]->prace].title);
-				size+=sprintf(&sdb[size], "born=%d\n", Players[i]->turn);
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->admin_dm && cfg.secret_dungeon_master) continue;
+				size += sprintf(&sdb[size], "player=%s\n", Players[i]->name);
+				size += sprintf(&sdb[size], "level=%d\n", Players[i]->lev);
+				size += sprintf(&sdb[size], "race=%s\n", race_info[Players[i]->prace].title);
+				size += sprintf(&sdb[size], "born=%d\n", Players[i]->turn);
 			}
-			size+=highscore_send(&sdb[size], 4096-size);
+			size += highscore_send(&sdb[size], 4096 - size);
 			DgramWrite(newsock, sdb, size);
 			C_FREE(sdb, 4096, char);
 		}
@@ -716,7 +716,7 @@ void NewConsole(int read_fd, int arg)
 		if ((newsock = SocketAccept(read_fd)) == -1)
 		{
 			/* Clear socket if it failed */
-			newsock=0;
+			newsock = 0;
 			quit("Couldn't accept console TCP connection.\n");
 		}
 		console_buf.sock = newsock;
