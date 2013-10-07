@@ -376,8 +376,8 @@ void wild_spawn_towns()
 			new_level_up_x(&wpos, 2 + rand_int(MAX_WID - 4));
 		}
 #if 0
-		if((zcave=getcave(&p_ptr->wpos))){
-			zcave[p_ptr->py][p_ptr->px].feat=FEAT_MORE;
+		if ((zcave = getcave(&p_ptr->wpos))) {
+			zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
 		}
 #endif	// 0
 
@@ -716,7 +716,7 @@ void wild_add_monster(struct worldpos *wpos)
 	int monst_x, monst_y, r_idx;
 	int tries = 0;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Don't spawn during highlander tournament or global events in general (ancient D vs lvl 10 is silyl) */
 	if (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) return;
@@ -762,7 +762,7 @@ static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *
 {
 	int x,y, attempts = 0, plot_clear;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 #ifdef DEVEL_TOWN_COMPATIBILITY
 	while (attempts < 200)
@@ -1031,7 +1031,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	u32b old_seed = Rand_value;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	trys = cash = num_food = num_objects = num_bones = 0;
 	inhabited = at_home = taken_over = FALSE;
@@ -1230,7 +1230,7 @@ static bool dwelling_check_entrance(worldpos *wpos, int y, int x)
 	int i;
 	cave_type *c_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	for (i = 1; i < tdi[1]; i++) {
 		c_ptr = &zcave[y + tdy[i]][x + tdx[i]];
@@ -1327,7 +1327,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	cave_type *c_ptr;
 	bool rand_old = Rand_quick;
 	bool trad = !magik(MANG_HOUSE_RATE);
-	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
+	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 	u32b floor_info;
 
@@ -1793,8 +1793,8 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		   Means: If it hasn't already been created on server startup. */
 		if (tmp == -1) {
 			cs_ptr = AddCS(c_ptr, CS_DNADOOR);	/* XXX this can fail? */
-//			cs_ptr->type=CS_DNADOOR;
-			cs_ptr->sc.ptr=houses[num_houses].dna;
+//			cs_ptr->type = CS_DNADOOR;
+			cs_ptr->sc.ptr = houses[num_houses].dna;
 			houses[num_houses].dx = door_x;
 			houses[num_houses].dy = door_y;
 			houses[num_houses].dna->creator = 0L;
@@ -1824,7 +1824,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			num_houses++;
 			if((house_alloc-num_houses)<32){
 				GROW(houses, house_alloc, house_alloc+512, house_type);
-				house_alloc+=512;
+				house_alloc += 512;
 			}
 		} else {
 			cs_ptr = AddCS(c_ptr, CS_DNADOOR);
@@ -1836,7 +1836,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 /* end evileye fix */
 			/* malloc madness otherwise */
 			KILL(houses[num_houses].dna, struct dna_type);
-//			cs_ptr->type=CS_DNADOOR;
+//			cs_ptr->type = CS_DNADOOR;
 			cs_ptr->sc.ptr = houses[tmp].dna;
 		}
 	}
@@ -1893,14 +1893,14 @@ static int wild_clone_closed_loop_total(struct worldpos *wpos)
 				case 3:
 					neigh.wy--;
 			}
-		}while((neigh.wx<0 || neigh.wy<0 || neigh.wx>=MAX_WILD_X || neigh.wy>=MAX_WILD_Y));
+		} while ((neigh.wx < 0 || neigh.wy < 0 || neigh.wx >= MAX_WILD_X || neigh.wy >= MAX_WILD_Y));
 		/* move to this new location */
 		wpcopy(&curr, &neigh);
 
 		/* increase our loop total depth */
-		total_depth += (curr.wx+curr.wy*MAX_WILD_X);
+		total_depth += (curr.wx + curr.wy * MAX_WILD_X);
 		iter++;
-	} while (!inarea(&curr, &start) && iter<50);
+	} while (!inarea(&curr, &start) && iter < 50);
 	return total_depth;
 }
 
@@ -1979,14 +1979,14 @@ int determine_wilderness_type(struct worldpos *wpos)
 
 	/* if a "clone", copy the terrain type from a neighbor, and recurse if neccecary. */
 	if (w_ptr->type == WILD_CLONE) {
-		neighbor.wx=wpos->wx;
-		neighbor.wy=wpos->wy;
-		neighbor.wz=wpos->wz; /* just for inarea */
+		neighbor.wx = wpos->wx;
+		neighbor.wy = wpos->wy;
+		neighbor.wz = wpos->wz; /* just for inarea */
 
 		/* get a legal neighbor index */
 		/* illegal locations -- the town and off the edge */
 
-		while((istown(&neighbor) || (neighbor.wx<0 || neighbor.wy<0 || neighbor.wx>=MAX_WILD_X || neighbor.wy>=MAX_WILD_Y))){
+		while ((istown(&neighbor) || (neighbor.wx < 0 || neighbor.wy < 0 || neighbor.wx >= MAX_WILD_X || neighbor.wy >= MAX_WILD_Y))) {
 			switch (rand_int(4)) {
 				case 0:
 					neighbor.wx++;
@@ -2001,7 +2001,7 @@ int determine_wilderness_type(struct worldpos *wpos)
 					neighbor.wy--;
 			}
 		}
-		w_ptr->type=determine_wilderness_type(&neighbor);
+		w_ptr->type = determine_wilderness_type(&neighbor);
 
 #ifndef	DEVEL_TOWN_COMPATIBILITY
 		if (w_ptr->radius <= 2)
@@ -2254,9 +2254,9 @@ static void wild_add_hotspot(struct worldpos *wpos)
 	int x_cen,y_cen, max_mag, magnitude, magsqr, chopiness, x, y;
 	terrain_type hot_terrain;
 	bool add_dwelling = FALSE;
-	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
+	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	magnitude = 0;
 	/* set the terrain features to 0 by default */
@@ -2875,12 +2875,12 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 #endif
 
 static void flood(char *buf, int x, int y, int w, int h) {
-	if (x>=0 && x<w && y>=0 && y<h && buf[x+y*w] == 0) {
-		buf[x+y*w]=6;
-		flood(buf, x+1, y, w, h);
-		flood(buf, x-1, y, w, h);
-		flood(buf, x, y+1, w, h);
-		flood(buf, x, y-1, w, h);
+	if (x >= 0 && x < w && y >= 0 && y < h && buf[x + y * w] == 0) {
+		buf[x + y * w] = 6;
+		flood(buf, x + 1, y, w, h);
+		flood(buf, x - 1, y, w, h);
+		flood(buf, x, y + 1, w, h);
+		flood(buf, x, y - 1, w, h);
 	}
 }
 
@@ -3001,61 +3001,58 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 		return(success);
 	}
 
-	maxx=minx=h_ptr->x;
-	maxy=miny=h_ptr->y;
-	x=h_ptr->x;
-	y=h_ptr->y;
+	maxx = minx = h_ptr->x;
+	maxy = miny = h_ptr->y;
+	x = h_ptr->x;
+	y = h_ptr->y;
 
-	while(ptr[0] || ptr[1]){
-		x+=ptr[0];
-		y+=ptr[1];
-		minx=MIN(x, minx);
-		miny=MIN(y, miny);
-		maxx=MAX(x, maxx);
-		maxy=MAX(y, maxy);
-		ptr+=2;
+	while (ptr[0] || ptr[1]) {
+		x += ptr[0];
+		y += ptr[1];
+		minx = MIN(x, minx);
+		miny = MIN(y, miny);
+		maxx = MAX(x, maxx);
+		maxy = MAX(y, maxy);
+		ptr += 2;
 	}
-	mw=maxx+3-minx;
-	mh=maxy+3-miny;
-	C_MAKE(matrix,mw*mh,char);
-	ptr=coord;
+	mw = maxx + 3 - minx;
+	mh = maxy + 3 - miny;
+	C_MAKE(matrix, mw * mh, char);
+	ptr = coord;
 
-	while(ptr[0] || ptr[1]){
-		dx=ptr[0];
-		dy=ptr[1];
-		if(dx){		/* dx/dy mutually exclusive */
-			if(dx<0){
-				for(x=sx;x>(sx+dx);x--){
-					matrix[(x+1-minx)+(y+1-miny)*mw]=1;
+	while (ptr[0] || ptr[1]) {
+		dx = ptr[0];
+		dy = ptr[1];
+		if (dx) {		/* dx/dy mutually exclusive */
+			if (dx < 0) {
+				for (x = sx; x > (sx + dx); x--) {
+					matrix[(x + 1 - minx) + (y + 1 - miny) * mw] = 1;
+				}
+			} else {
+				for (x = sx; x < (sx + dx); x++) {
+					matrix[(x + 1 - minx) + (y + 1 - miny) * mw] = 1;
 				}
 			}
-			else{
-				for(x=sx;x<(sx+dx);x++){
-					matrix[(x+1-minx)+(y+1-miny)*mw]=1;
+			sx = x;
+		} else {
+			if (dy < 0) {
+				for (y = sy; y > (sy + dy); y--) {
+					matrix[(x + 1 - minx) + (y + 1 - miny) * mw] = 1;
+				}
+			} else {
+				for (y = sy; y < (sy + dy); y++) {
+					matrix[(x + 1 - minx) + (y + 1 - miny) * mw] = 1;
 				}
 			}
-			sx=x;
+			sy = y;
 		}
-		else{
-			if(dy<0){
-				for(y=sy;y>(sy+dy);y--){
-					matrix[(x+1-minx)+(y+1-miny)*mw]=1;
-				}
-			}
-			else{
-				for(y=sy;y<(sy+dy);y++){
-					matrix[(x+1-minx)+(y+1-miny)*mw]=1;
-				}
-			}
-			sy=y;
-		}
-		ptr+=2;
+		ptr += 2;
 	}
 
 	flood(matrix, 0, 0, mw, mh);
-	for (y=0;y<mh;y++) {
-		for (x=0;x<mw;x++) {
-			switch (matrix[x+y*mw]) {
+	for (y = 0; y < mh; y++) {
+		for (x = 0; x < mw; x++) {
+			switch (matrix[x + y * mw]) {
 				case 2:	/* do nothing */
 				case 4:
 				case 6: /* outside of walls */
@@ -3065,36 +3062,36 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						struct key_type *key;
 						u16b id;
 						FILE *gfp = ((struct guildsave*)data)->fp;
-						c_ptr = &zcave[miny+(y-1)][minx+(x-1)];
+						c_ptr = &zcave[miny + (y - 1)][minx + (x - 1)];
 						if (((struct guildsave*)data)->mode) {
 							fputc(c_ptr->feat, gfp);
-							if (c_ptr->feat==FEAT_HOME || c_ptr->feat==FEAT_HOME_OPEN) {
+							if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) {
 								id = 0;
-								if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR)) && (key=cs_ptr->sc.ptr)) {
+								if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR)) && (key = cs_ptr->sc.ptr)) {
 									fseek(gfp, -1, SEEK_CUR);
 									fputc(FEAT_HOME_HEAD, gfp);
 									id = key->id;
-									fputc((id>>8), gfp);
-									fputc(id&0xff, gfp);
+									fputc((id >> 8), gfp);
+									fputc(id & 0xff, gfp);
 								}
 							}
 						}
 						else{
-							c_ptr->feat=fgetc(((struct guildsave*)data)->fp);
-//							if(c_ptr->feat>FEAT_INVIS)
-							if(!cave_plain_floor_grid(c_ptr))
+							c_ptr->feat = fgetc(((struct guildsave*)data)->fp);
+//							if (c_ptr->feat > FEAT_INVIS)
+							if (!cave_plain_floor_grid(c_ptr))
 								c_ptr->info &= ~(CAVE_ROOM);
-							if(c_ptr->feat==FEAT_HOME){
-								id=(fgetc(gfp)<<8);
-								id|=fgetc(gfp);
+							if (c_ptr->feat == FEAT_HOME){
+								id = (fgetc(gfp) << 8);
+								id |= fgetc(gfp);
 								/* XXX it's double check */
-								if(!(cs_ptr=GetCS(c_ptr, CS_KEYDOOR))){	/* no, not really. - evileye */
-									cs_ptr=AddCS(c_ptr, CS_KEYDOOR);
+								if (!(cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) {	/* no, not really. - evileye */
+									cs_ptr = AddCS(c_ptr, CS_KEYDOOR);
 									MAKE(cs_ptr->sc.ptr, struct key_type);
-//									cs_ptr->type=CS_KEYDOOR;
+//									cs_ptr->type = CS_KEYDOOR;
 								}
-								key=cs_ptr->sc.ptr;	/* isn't it dangerous? -Jir */
-								key->id=id;
+								key = cs_ptr->sc.ptr;	/* isn't it dangerous? -Jir */
+								key->id = id;
 							}
 						}
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
@@ -3102,13 +3099,13 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					}
 					if (func == FILL_PLAYER) {
 						player_type *p_ptr = (player_type*)data;
-						if (p_ptr->px==minx+(x-1) && p_ptr->py==miny+(y-1)) {
+						if (p_ptr->px == minx + (x - 1) && p_ptr->py == miny + (y - 1)) {
 							success = TRUE;
 						}
 						break;
 					}
 					if (func == FILL_MAKEHOUSE) {
-						if ((pick_house(wpos,miny+(y-1),minx+(x-1))!=-1)) {
+						if ((pick_house(wpos,miny + (y - 1), minx + (x - 1)) != -1)) {
 							success = FALSE;
 						}
 						zcave[miny + (y - 1)][minx + (x - 1)].info &= ~(CAVE_ICKY | CAVE_ROOM | CAVE_STCK | CAVE_JAIL);
@@ -3117,18 +3114,18 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					}
 					if (func == FILL_OBJECT) { /* object in house */
 						object_type *o_ptr = (object_type*)data;
-						if (o_ptr->ix==minx+(x-1) && o_ptr->iy==miny+(y-1)) {
+						if (o_ptr->ix == minx + (x - 1) && o_ptr->iy == miny + (y - 1)) {
 							success = TRUE;
 						}
 						break;
 					}
 					if (func == FILL_CLEAR) {
-						delete_object(wpos, miny+(y-1), minx+(x-1), TRUE);
+						delete_object(wpos, miny + (y - 1), minx + (x - 1), TRUE);
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 						break;
 					}
 					if (func == FILL_BUILD) {
-						c_ptr = &zcave[miny+(y-1)][minx+(x-1)];
+						c_ptr = &zcave[miny + (y - 1)][minx + (x - 1)];
 						if (!(h_ptr->flags & HF_NOFLOOR))
 							c_ptr->feat = FEAT_FLOOR;
 							c_ptr->info |= (CAVE_ROOM | CAVE_ICKY);
@@ -3164,12 +3161,12 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					if (func == FILL_CLEAR) break;
 					if (func == FILL_PLAYER) {
 						player_type *p_ptr = (player_type*)data;
-						if (p_ptr->px==minx+(x-1) && p_ptr->py==miny+(y-1))
+						if (p_ptr->px == minx + (x - 1) && p_ptr->py == miny + (y - 1))
 							success = TRUE;
 						break;
 					}
 					if (func == FILL_MAKEHOUSE) {
-						c_ptr = &zcave[miny+(y-1)][minx+(x-1)];
+						c_ptr = &zcave[miny + (y - 1)][minx + (x - 1)];
 						if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) {
 							c_special *cs_ptr = GetCS(c_ptr, CS_DNADOOR);
 							if (cs_ptr) cs_erase(c_ptr, cs_ptr);
@@ -3179,9 +3176,9 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 					}
 					else if (func == FILL_BUILD) {
-//						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
-						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_WALL_HOUSE;
-						if (h_ptr->flags & HF_JAIL) zcave[miny+(y-1)][minx+(x-1)].info |= CAVE_JAIL;
+//						zcave[miny + (y - 1)][minx + (x - 1)].feat = FEAT_PERM_EXTRA;
+						zcave[miny + (y - 1)][minx + (x - 1)].feat = FEAT_WALL_HOUSE;
+						if (h_ptr->flags & HF_JAIL) zcave[miny + (y - 1)][minx + (x - 1)].info |= CAVE_JAIL;
 						everyone_lite_spot(&h_ptr->wpos, miny + (y - 1), minx + (x - 1));
 					}
 #ifdef HOUSE_PAINTING
@@ -3707,7 +3704,7 @@ static bool addhills() {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
-	p=(MAX_WILD_Y * MAX_WILD_X) / ROCKY;
+	p = (MAX_WILD_Y * MAX_WILD_X) / ROCKY;
 	for(i = 0; i < p; i++){
 		do{
 			x = rand_int(MAX_WILD_X - 1);
