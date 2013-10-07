@@ -17,8 +17,8 @@ struct svlist{
 	char name[30];
 };
 
-struct list *rpmlist=NULL;
-struct list *svlist=NULL;
+struct list *rpmlist = NULL;
+struct list *svlist = NULL;
 
 struct wpacket spk;
 
@@ -35,14 +35,14 @@ struct list *remlist(struct list **head, struct list *dlp);
 void world_reboot();
 
 /* Generic list handling function */
-struct list *addlist(struct list **head, int dsize){
+struct list *addlist(struct list **head, int dsize) {
 	struct list *newlp;
-	newlp=malloc(sizeof(struct list));
-	if(newlp){
-		newlp->data=malloc(dsize);
-		if(newlp->data!=NULL){
-			newlp->next=*head;
-			*head=newlp;
+	newlp = malloc(sizeof(struct list));
+	if (newlp) {
+		newlp->data = malloc(dsize);
+		if (newlp->data != NULL) {
+			newlp->next = *head;
+			*head = newlp;
 			return(newlp);
 		}
 		free(newlp);
@@ -53,56 +53,56 @@ struct list *addlist(struct list **head, int dsize){
 /* Generic list handling function */
 struct list *remlist(struct list **head, struct list *dlp){
 	struct list *lp;
-	lp=*head;
-	if(!lp || !dlp) return(NULL);
-	if(dlp==*head){
-		*head=lp->next;
+	lp = *head;
+	if (!lp || !dlp) return(NULL);
+	if (dlp == *head) {
+		*head = lp->next;
 		free(dlp->data);
 		free(dlp);
 		return(*head);
 	}
-	while(lp){
-		if(lp->next==dlp){
-			lp->next=dlp->next;
+	while (lp) {
+		if (lp->next == dlp) {
+			lp->next = dlp->next;
 			free(dlp->data);
 			free(dlp);
 			return(lp->next);
 		}
-		lp=lp->next;
+		lp = lp->next;
 	}
 	return(dlp->next);
 }
 
 void world_update_players(){
 	int i;
-	for(i=1; i<=NumPlayers; i++){
-		if(Players[i]->conn!=NOT_CONNECTED){
-			if(!Players[i]->admin_dm)
+	for (i = 1; i <= NumPlayers; i++) {
+		if(Players[i]->conn != NOT_CONNECTED){
+			if (!Players[i]->admin_dm)
 				world_player(Players[i]->id, Players[i]->name, 1, 0);
 		}
 	}
 }
 
-bool world_check_ignore(int Ind, uint32_t id, int16_t server){
+bool world_check_ignore(int Ind, uint32_t id, int16_t server) {
 	struct remote_ignore *curr;
-	curr=Players[Ind]->w_ignore;
-	while(curr){
-		if(curr->serverid==server && curr->id==id)
+	curr = Players[Ind]->w_ignore;
+	while (curr) {
+		if (curr->serverid == server && curr->id == id)
 			return(TRUE);
-		curr=curr->next;
+		curr = curr->next;
 	}
 	return(FALSE);
 }
 
-void world_comm(int fd, int arg){
+void world_comm(int fd, int arg) {
 	static char buffer[1024], msg[MSG_LEN], *msg_ptr, *wmsg_ptr, *wmsg_ptr2;
 	char cbuf[sizeof(struct wpacket)], *p;
-	static short bpos=0;
-	static short blen=0;
+	static short bpos = 0;
+	static short blen = 0;
 	int x, i;
 	struct wpacket *wpk;
-	x=recv(fd, buffer+(bpos+blen), 1024-(bpos+blen), 0);
-	if(x==0){
+	x = recv(fd, buffer + (bpos + blen), 1024 - (bpos + blen), 0);
+	if (x == 0) {
 		//struct rplist *c_pl, *n_pl;
 		/* This happens... we are screwed (fortunately SIGPIPE isnt handled) */
 		s_printf("pfft. world server closed\n");
@@ -111,20 +111,20 @@ void world_comm(int fd, int arg){
 		/* Clear all the world players quietly */
 		while(remlist(&rpmlist, rpmlist));
 #if 0
-		c_pl=rpmlist;
-		while(c_pl){
-			n_pl=c_pl->next;
+		c_pl = rpmlist;
+		while (c_pl) {
+			n_pl = c_pl->next;
 			free(c_pl);
-			c_pl=n_pl;
+			c_pl = n_pl;
 		}
-		rpmlist=NULL;
+		rpmlist = NULL;
 #endif
-		WorldSocket=-1;
+		WorldSocket =- 1;
 	}
-	blen+=x;
-	while(blen>=sizeof(struct wpacket)){
-		wpk=(struct wpacket*)(buffer+bpos);
-		switch(wpk->type){
+	blen += x;
+	while (blen >= sizeof(struct wpacket)) {
+		wpk = (struct wpacket*)(buffer + bpos);
+		switch (wpk->type) {
 			case WP_SINFO:
 				/* Server login information */
 				add_server(&wpk->d.sinfo);
@@ -143,10 +143,10 @@ void world_comm(int fd, int arg){
 #else /* Consistency: Let world's 'server' flags decide about filtering our incoming messages */
 #endif
 
-				for(i=1; i<=NumPlayers; i++){
-					if(Players[i]->conn!=NOT_CONNECTED){
+				for (i = 1; i <= NumPlayers; i++) {
+					if (Players[i]->conn != NOT_CONNECTED) {
 						/* lame method just now */
-						if(world_check_ignore(i, wpk->d.chat.id, wpk->serverid))
+						if (world_check_ignore(i, wpk->d.chat.id, wpk->serverid))
 							continue;
 						msg_print(i, wpk->d.chat.ctxt);
 					}
@@ -182,9 +182,9 @@ void world_comm(int fd, int arg){
 				break;
 			case WP_PMSG:
 				/* private message from afar -authed */
-				for(i=1; i<=NumPlayers; i++){
-					if(!strcmp(Players[i]->name, wpk->d.pmsg.victim)){
-						if(!world_check_ignore(i, wpk->d.pmsg.id, wpk->serverid)) {
+				for (i = 1; i <= NumPlayers; i++) {
+					if (!strcmp(Players[i]->name, wpk->d.pmsg.victim)) {
+						if (!world_check_ignore(i, wpk->d.pmsg.id, wpk->serverid)) {
 							msg_format(i, "\375\377s[%s:%s] %s", wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
 							/* Remember sender for quick replying */
 							strcpy(Players[i]->reply_name, wpk->d.pmsg.player);
@@ -224,9 +224,9 @@ void world_comm(int fd, int arg){
 				break;
 			case WP_AUTH:
 				/* Authentication request */
-				wpk->d.auth.val=chk(cfg.pass, wpk->d.auth.pass);
-				x=sizeof(struct wpacket);
-				x=send(WorldSocket, wpk, x, 0);
+				wpk->d.auth.val = chk(cfg.pass, wpk->d.auth.pass);
+				x = sizeof(struct wpacket);
+				x = send(WorldSocket, wpk, x, 0);
 				world_update_players();
 				break;
 			case WP_SQUIT:
@@ -295,241 +295,241 @@ void world_comm(int fd, int arg){
 				s_printf("unknown packet from world: %d\n", wpk->type);
 		}
 		/* update buffer position and remaining data size */
-		bpos+=sizeof(struct wpacket);
-		blen-=sizeof(struct wpacket);
+		bpos += sizeof(struct wpacket);
+		blen -= sizeof(struct wpacket);
 	}
-	if(blen){
+	if (blen) {
 		/* copy it back */
-		memcpy(cbuf, buffer+bpos, blen);
+		memcpy(cbuf, buffer + bpos, blen);
 		memcpy(buffer, cbuf, blen);
 	}
-	bpos=0;
+	bpos = 0;
 }
 
 /* returns authed server id or 0 */
-int world_find_server(char *pname){
+int world_find_server(char *pname) {
 	struct list *lp;
 	struct rplist *c_pl;
-	lp=rpmlist;
+	lp = rpmlist;
 
-	while(lp){
-		c_pl=(struct rplist*)lp->data;
-		if(!strcmp(c_pl->name, pname)){
+	while (lp) {
+		c_pl = (struct rplist*)lp->data;
+		if (!strcmp(c_pl->name, pname)) {
 			return(c_pl->server);
 		}
-		lp=lp->next;
+		lp = lp->next;
 	}
 	return(0);
 }
 
 /* returns list entry, or NULL */
-struct rplist *world_find_player(char *pname, int16_t server){
+struct rplist *world_find_player(char *pname, int16_t server) {
 	struct list *lp;
 	struct rplist *c_pl;
-	lp=rpmlist;
+	lp = rpmlist;
 
-	while(lp){
-		c_pl=(struct rplist*)lp->data;
-		if(!stricmp(c_pl->name, pname) && (!server || server==c_pl->server)){
+	while (lp) {
+		c_pl = (struct rplist*)lp->data;
+		if (!stricmp(c_pl->name, pname) && (!server || server == c_pl->server)) {
 			return(c_pl);
 		}
-		lp=lp->next;
+		lp = lp->next;
 	}
 	return(NULL);
 }
 
 /* proper data will come with merge.
    Returns number of remote players. */
-int world_remote_players(FILE *fff){
+int world_remote_players(FILE *fff) {
 	int num = 0;
 	struct list *lp, *slp;
 	struct rplist *c_pl;
 	struct svlist *c_sv;
 	char servername[30];
-	lp=rpmlist;
-	if(lp){
+	lp = rpmlist;
+	if (lp) {
 		fprintf(fff, "\n\377y Remote players on different servers:\n\n");
 	}
-	while(lp){
-		c_pl=(struct rplist*)lp->data;
-		slp=svlist;
+	while (lp) {
+		c_pl = (struct rplist*)lp->data;
+		slp = svlist;
 		sprintf(servername, "%d", c_pl->server);
-		while(slp){
-			c_sv=(struct svlist*)slp->data;
-			if(c_sv->sid==c_pl->server){
+		while (slp) {
+			c_sv = (struct svlist*)slp->data;
+			if (c_sv->sid == c_pl->server) {
 				strncpy(servername, c_sv->name, 30);
 				break;
 			}
-			slp=slp->next;
+			slp = slp->next;
 		}
 		
 //		fprintf(fff, "\377%c  %s\377s on '%s'\n", c_pl->server ? 'w' : 'W', c_pl->name, servername);
 		fprintf(fff, "\377s %s\377%c %s\n", servername, c_pl->server ? 'w' : 'W', c_pl->name);
 		num++;
-		lp=lp->next;
+		lp = lp->next;
 	}
 	return (num);
 }
 
 /* When a server logs in, we get information about it */
-void add_server(struct sinfo *sinfo){
+void add_server(struct sinfo *sinfo) {
 	struct list *lp;
 	struct svlist *c_sr;
 /*
-	c_sr=malloc(sizeof(struct svlist));
+	c_sr = malloc(sizeof(struct svlist));
 */
-	lp=addlist(&svlist, sizeof(struct svlist));
-	if(lp){
-		c_sr=(struct svlist*)lp->data;
+	lp = addlist(&svlist, sizeof(struct svlist));
+	if (lp) {
+		c_sr = (struct svlist*)lp->data;
 		strncpy(c_sr->name, sinfo->name, 30);
-		c_sr->sid=sinfo->sid;
+		c_sr->sid = sinfo->sid;
 	}
 }
 
 /* This is called when a remote server disconnects */
-void rem_server(int16_t id){
+void rem_server(int16_t id) {
 	struct rplist *c_pl;
 	struct svlist *c_sr;
 
 	struct list *lp;
 
 	/* remove all the old players */
-	lp=rpmlist;
-	while(lp){
-		c_pl=(struct rplist*)lp->data;
-		if(c_pl->server==id){
-			lp=remlist(&rpmlist, lp);
+	lp = rpmlist;
+	while (lp) {
+		c_pl = (struct rplist*)lp->data;
+		if (c_pl->server == id) {
+			lp = remlist(&rpmlist, lp);
 		}
-		else lp=lp->next;
+		else lp = lp->next;
 	}
 
 	/* Delete the server info */
-	lp=svlist;
-	while(lp){
-		c_sr=(struct svlist*)lp->data;
-		if(c_sr->sid==id){
-			lp=remlist(&svlist, lp);
+	lp = svlist;
+	while (lp) {
+		c_sr = (struct svlist*)lp->data;
+		if (c_sr->sid == id) {
+			lp = remlist(&svlist, lp);
 		}
-		else lp=lp->next;
+		else lp = lp->next;
 	}
 }
 
-void add_rplayer(struct wpacket *wpk){
+void add_rplayer(struct wpacket *wpk) {
 	struct list *lp;
 	struct rplist *n_pl, *c_pl;
-	unsigned char found=0;
-	if(!wpk->d.play.silent)
-		msg_broadcast_format(0, "\374\377s%s has %s the game on another server.", wpk->d.play.name, (wpk->type==WP_NPLAYER ? "entered" : "left"));
+	unsigned char found = 0;
+	if (!wpk->d.play.silent)
+		msg_broadcast_format(0, "\374\377s%s has %s the game on another server.", wpk->d.play.name, (wpk->type == WP_NPLAYER ? "entered" : "left"));
 
-	if(wpk->type==WP_NPLAYER && !wpk->d.play.server) return;
-	lp=rpmlist;
-	while(lp){
-		c_pl=(struct rplist*)lp->data;
-//		if(/* c_pl->id==wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))){
-		if(c_pl->server==wpk->d.play.server && !(strcmp(c_pl->name, wpk->d.play.name))){
-			found=1;
+	if (wpk->type == WP_NPLAYER && !wpk->d.play.server) return;
+	lp = rpmlist;
+	while (lp) {
+		c_pl = (struct rplist*)lp->data;
+//		if (/* c_pl->id == wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))) {
+		if (c_pl->server == wpk->d.play.server && !(strcmp(c_pl->name, wpk->d.play.name))) {
+			found = 1;
 			break;
 		}
-		lp=lp->next;
+		lp = lp->next;
 	}
-	if(wpk->type==WP_NPLAYER && !found){
-		lp=addlist(&rpmlist, sizeof(struct rplist));
-		if(lp){
-			n_pl=(struct rplist*)lp->data;
-			n_pl->id=wpk->d.play.id;
-			n_pl->server=wpk->d.play.server;
+	if (wpk->type == WP_NPLAYER && !found) {
+		lp = addlist(&rpmlist, sizeof(struct rplist));
+		if (lp) {
+			n_pl = (struct rplist*)lp->data;
+			n_pl->id = wpk->d.play.id;
+			n_pl->server = wpk->d.play.server;
 			strncpy(n_pl->name, wpk->d.play.name, 30);
 		}
 	}
-	else if(wpk->type==WP_QPLAYER && found)
+	else if (wpk->type == WP_QPLAYER && found)
 		remlist(&rpmlist, lp);
 }
 
-void world_pmsg_send(uint32_t id, char *name, char *pname, char *text){
+void world_pmsg_send(uint32_t id, char *name, char *pname, char *text) {
 	int x, len;
-	if(WorldSocket==-1) return;
-	spk.type=WP_PMSG;
-	len=sizeof(struct wpacket);
+	if (WorldSocket == -1) return;
+	spk.type = WP_PMSG;
+	len = sizeof(struct wpacket);
 	snprintf(spk.d.pmsg.ctxt, MSG_LEN, "%s", text);
-	spk.d.pmsg.id=id;
-	spk.d.pmsg.sid=world_find_server(pname);
+	spk.d.pmsg.id = id;
+	spk.d.pmsg.sid = world_find_server(pname);
 	snprintf(spk.d.pmsg.player, 80, "%s", name);
 	snprintf(spk.d.pmsg.victim, 80, "%s", pname);
-	x=send(WorldSocket, &spk, len, 0);
+	x = send(WorldSocket, &spk, len, 0);
 }
 
-void world_chat(uint32_t id, char *text){
+void world_chat(uint32_t id, char *text) {
 	int x, len;
-	if(WorldSocket==-1) return;
-	spk.type=WP_CHAT;
-	len=sizeof(struct wpacket);
+	if (WorldSocket == -1) return;
+	spk.type = WP_CHAT;
+	len = sizeof(struct wpacket);
 	snprintf(spk.d.chat.ctxt, MSG_LEN, "%s", text);
-	spk.d.chat.id=id;
-	x=send(WorldSocket, &spk, len, 0);
+	spk.d.chat.id = id;
+	x = send(WorldSocket, &spk, len, 0);
 }
 
-void world_reboot(){
+void world_reboot() {
 	int x, len;
-	if(WorldSocket==-1) return;
-	spk.type=WP_RESTART;
-	len=sizeof(struct wpacket);
-	x=send(WorldSocket, &spk, len, 0);
+	if (WorldSocket == -1) return;
+	spk.type = WP_RESTART;
+	len = sizeof(struct wpacket);
+	x = send(WorldSocket, &spk, len, 0);
 }
 
-void world_msg(char *text){
+void world_msg(char *text) {
 	int x, len;
-	if(WorldSocket==-1) return;
-	spk.type=WP_MESSAGE;
-	len=sizeof(struct wpacket);
+	if (WorldSocket == -1) return;
+	spk.type = WP_MESSAGE;
+	len = sizeof(struct wpacket);
 	snprintf(spk.d.smsg.stxt, MSG_LEN, "%s", text);
-	x=send(WorldSocket, &spk, len, 0);
+	x = send(WorldSocket, &spk, len, 0);
 }
 
-void msg_to_irc(char *text){
+void msg_to_irc(char *text) {
 	int x, len;
-	if(WorldSocket==-1) return;
-	spk.type=WP_MSG_TO_IRC;
-	len=sizeof(struct wpacket);
+	if (WorldSocket == -1) return;
+	spk.type = WP_MSG_TO_IRC;
+	len = sizeof(struct wpacket);
 	snprintf(spk.d.smsg.stxt, MSG_LEN, "%s", text);
-	x=send(WorldSocket, &spk, len, 0);
+	x = send(WorldSocket, &spk, len, 0);
 }
 
 /* we can rely on ID alone when we merge data */
-void world_player(uint32_t id, char *name, uint16_t enter, byte quiet){
+void world_player(uint32_t id, char *name, uint16_t enter, byte quiet) {
 	int x, len;
-	if(WorldSocket==-1) return;
-	spk.type=(enter ? WP_NPLAYER : WP_QPLAYER);
-	len=sizeof(struct wpacket);
+	if (WorldSocket == -1) return;
+	spk.type = (enter ? WP_NPLAYER : WP_QPLAYER);
+	len = sizeof(struct wpacket);
 	strncpy(spk.d.play.name, name, 30);
-	spk.d.play.id=id;
-	spk.d.play.silent=quiet;
-	x=send(WorldSocket, &spk, len, 0);
+	spk.d.play.id = id;
+	spk.d.play.silent = quiet;
+	x = send(WorldSocket, &spk, len, 0);
 }
 
 /* unified, hopefully unique password check function */
-uint32_t chk(char *s1, char *s2){
-	unsigned int i, j=0;
+uint32_t chk(char *s1, char *s2) {
+	unsigned int i, j = 0;
 	int m1, m2;
-	static uint32_t rval[2]={0, 0};
-	rval[0]=0L;
-	rval[1]=0L;
-	m1=strlen(s1);
-	m2=strlen(s2);
-	for(i=0; i<m1; i++){
-		rval[0]+=s1[i];
-		rval[0]<<=5;
+	static uint32_t rval[2] = {0, 0};
+	rval[0] = 0L;
+	rval[1] = 0L;
+	m1 = strlen(s1);
+	m2 = strlen(s2);
+	for (i = 0; i < m1; i++) {
+		rval[0] += s1[i];
+		rval[0] <<= 5;
 	}
-	for(j=0; j<m2; j++){
-		rval[1]+=s2[j];
-		rval[1]<<=3;
+	for (j = 0; j < m2; j++) {
+		rval[1] += s2[j];
+		rval[1] <<= 3;
 	}
-	for(i=0; i<m1; i++){
-		rval[1]+=s1[i];
-		rval[1]<<=(3+rval[0]%5);
-		rval[0]+=s2[j];
-		j=rval[0]%m2;
-		rval[0]<<=(3+rval[1]%3);
+	for (i = 0; i < m1; i++) {
+		rval[1] += s1[i];
+		rval[1] <<= (3 + rval[0] % 5);
+		rval[0] += s2[j];
+		j = rval[0] % m2;
+		rval[0] <<= (3 + rval[1] % 3);
 	}
-	return(rval[0]+rval[1]);
+	return(rval[0] + rval[1]);
 }
 #endif
