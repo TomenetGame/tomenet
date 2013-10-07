@@ -1882,22 +1882,18 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 
 
 		/* Pet eldritch horrors are safe most of the time */
-		//                if ((is_friend(m_ptr) > 0) && (randint(8)!=1)) return;
+		//                if ((is_friend(m_ptr) > 0) && (randint(8) != 1)) return;
 
 
-		if (randint(power)<p_ptr->skill_sav)
-		{
+		if (randint(power) < p_ptr->skill_sav)
 			return; /* Save, no adverse effects */
-		}
 
 
-		if (p_ptr->image)
-		{
+		if (p_ptr->image) {
 			/* Something silly happens... */
 			msg_format(Ind, "You behold the %s visage of %s!",
 					funny_desc[(randint(MAX_FUNNY))-1], m_name);
-			if (randint(3)==1)
-			{
+			if (randint(3) == 1) {
 				msg_print(Ind, funny_comments[randint(MAX_COMMENT)-1]);
 				p_ptr->image = (p_ptr->image + randint(m_ptr->level));
 			}
@@ -1915,27 +1911,19 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 
 		/* Undead characters are 50% likely to be unaffected */
 #if 0
-		if ((PRACE_FLAG(PR1_UNDEAD))||(p_ptr->mimic_form == MIMIC_VAMPIRE))
-		{
+		if ((PRACE_FLAG(PR1_UNDEAD))||(p_ptr->mimic_form == MIMIC_VAMPIRE)) {
 			if (randint(100) < (25 + (p_ptr->lev))) return;
 		}
 #endif	// 0
 	}
-	else
-	{
-		msg_print(Ind, "Your sanity is shaken by reading the Necronomicon!");
-	}
+	else msg_print(Ind, "Your sanity is shaken by reading the Necronomicon!");
 
 	if (randint(power)<p_ptr->skill_sav) /* Mind blast */
 	{
 		if (!p_ptr->resist_conf)
-		{
 			(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
-		}
-		if ((!p_ptr->resist_chaos) && (randint(3)==1))
-		{
+		if ((!p_ptr->resist_chaos) && (randint(3) == 1))
 			(void) set_image(Ind, p_ptr->image + rand_int(250) + 150);
-		}
 		return;
 	}
 
@@ -1947,28 +1935,22 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 	}
 
 
-	if (randint(power)<p_ptr->skill_sav) /* Brain smash */
+	if (randint(power) < p_ptr->skill_sav) /* Brain smash */
 	{
 		if (!p_ptr->resist_conf)
-		{
 			(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
-		}
 		if (!p_ptr->free_act)
-		{
 			(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(4) + 4);
-		}
-		while (rand_int(100) > p_ptr->skill_sav)
+		while (rand_int(100) > p_ptr->skill_sav && p_ptr->stat_cur[A_INT] > 3)
 			(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);
-		while (rand_int(100) > p_ptr->skill_sav)
+		while (rand_int(100) > p_ptr->skill_sav && p_ptr->stat_cur[A_WIS] > 3)
 			(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
 		if (!p_ptr->resist_chaos)
-		{
 			(void) set_image(Ind, p_ptr->image + rand_int(250) + 150);
-		}
 		return;
 	}
 
-	if (randint(power)<p_ptr->skill_sav) /* Permanent lose int & wis */
+	if (randint(power) < p_ptr->skill_sav) /* Permanent lose int & wis */
 	{
 		if (dec_stat(Ind, A_INT, 10, TRUE)) happened = TRUE;
 		if (dec_stat(Ind, A_WIS, 10, TRUE)) happened = TRUE;
