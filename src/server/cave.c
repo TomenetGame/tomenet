@@ -152,9 +152,9 @@ byte level_up_y(struct worldpos *wpos)
 byte level_down_x(struct worldpos *wpos)
 {
 	struct wilderness_type *wild;
-	wild=&wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz==0) return(wild->dn_x);
-	return(wpos->wz>0?wild->tower->level[wpos->wz-1].dn_x:wild->dungeon->level[ABS(wpos->wz)-1].dn_x);
+	wild = &wild_info[wpos->wy][wpos->wx];
+	if (wpos->wz == 0) return (wild->dn_x);
+	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].dn_x : wild->dungeon->level[ABS(wpos->wz) - 1].dn_x);
 }
 byte level_down_y(struct worldpos *wpos)
 {
@@ -234,7 +234,7 @@ static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
    Mode: 1 stairs, (doesn't make sense? 2 wor,) (handled in cmd2.c, can't handle here actually: 4 probtravel, 8 ghostfloating) */
 bool can_go_up(struct worldpos *wpos, byte mode)
 {
-        struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
+        struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
 
         struct dungeon_type *d_ptr = wild->tower;
 	if (wpos->wz < 0) d_ptr = wild->dungeon;
@@ -273,7 +273,7 @@ bool can_go_up(struct worldpos *wpos, byte mode)
    Mode: 1 stairs, (doesn't make sense? 2 wor,) (handled in cmd2.c, can't handle here actually: 4 probtravel, 8 ghostfloating) */
 bool can_go_down(struct worldpos *wpos, byte mode)
 {
-        struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
+        struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
 
         struct dungeon_type *d_ptr = wild->dungeon;
         if (wpos->wz > 0) d_ptr = wild->tower;
@@ -310,25 +310,25 @@ bool can_go_down(struct worldpos *wpos, byte mode)
 /* ignore all dungeon/floor flags */
 bool can_go_up_simple(struct worldpos *wpos)
 {
-        struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz<0) return(TRUE);
-	if (wpos->wz>0) return(wpos->wz < wild->tower->maxdepth);
-	return((wild->flags&WILD_F_UP)?TRUE:FALSE);
+        struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+	if (wpos->wz < 0) return(TRUE);
+	if (wpos->wz > 0) return(wpos->wz < wild->tower->maxdepth);
+	return ((wild->flags & WILD_F_UP) ? TRUE : FALSE);
 }
 /* ignore all dungeon/floor flags */
 bool can_go_down_simple(struct worldpos *wpos)
 {
-        struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
-	if (wpos->wz>0) return(TRUE);
-	if (wpos->wz<0) return(ABS(wpos->wz) < wild->dungeon->maxdepth);
-	return((wild->flags&WILD_F_DOWN)?TRUE:FALSE);
+        struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+	if (wpos->wz > 0) return(TRUE);
+	if (wpos->wz < 0) return(ABS(wpos->wz) < wild->dungeon->maxdepth);
+	return ((wild->flags & WILD_F_DOWN) ? TRUE : FALSE);
 }
 
 void wpcopy(struct worldpos *dest, struct worldpos *src)
 {
-	dest->wx=src->wx;
-	dest->wy=src->wy;
-	dest->wz=src->wz;
+	dest->wx = src->wx;
+	dest->wy = src->wy;
+	dest->wz = src->wz;
 }
 
 static void update_uniques_killed(struct worldpos *wpos)
@@ -412,7 +412,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 
 	now = time(&now);
 
-	w_ptr=&wild_info[wpos->wy][wpos->wx];
+	w_ptr = &wild_info[wpos->wy][wpos->wx];
 #if DEBUG_LEVEL > 2
 		s_printf("new_players_on_depth.. %s  now:%d value:%d inc:%s\n", wpos_format(0, wpos), now, value, inc?"TRUE":"FALSE");
 #endif
@@ -443,13 +443,13 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 
 		l_ptr = &d_ptr->level[ABS(wpos->wz)-1];
 
-		l_ptr->ondepth=(inc?l_ptr->ondepth+value:value);
+		l_ptr->ondepth = (inc ? l_ptr->ondepth + value : value);
 		if (l_ptr->ondepth < 0) l_ptr->ondepth = 0;
 #if 1
 		if (!l_ptr->ondepth) l_ptr->lastused = 0;
 		if (value > 0) l_ptr->lastused = now;
 #endif
-/*		l_ptr->lastused=now; */
+/*		l_ptr->lastused = now; */
 	} else {
 		w_ptr->ondepth = (inc?w_ptr->ondepth+value:value);
 		if (w_ptr->ondepth < 0) w_ptr->ondepth = 0;
@@ -467,7 +467,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 					    o_name, lookup_player_name(o_ptr->owner), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
 					handle_art_d(o_ptr->name1);
 					if (flag && in_bounds_array(o_ptr->iy, o_ptr->ix))
-						zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
+						zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
 					WIPE(o_ptr, object_type);
 				}
 			}
@@ -793,32 +793,29 @@ int players_on_depth(struct worldpos *wpos)
 	{
 		struct dungeon_type *d_ptr;
 		if (wpos->wz>0)
-			d_ptr=wild_info[wpos->wy][wpos->wx].tower;
+			d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 		else
-			d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
+			d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
 
-		return(d_ptr->level[ABS(wpos->wz)-1].ondepth);
+		return(d_ptr->level[ABS(wpos->wz) - 1].ondepth);
 	}
 }
 
 int getlevel(struct worldpos *wpos)
 {
-	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
+	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 
-	if (wpos->wz==0)
-	{
+	if (wpos->wz == 0) {
 		/* ground level */
 		return(w_ptr->radius);
-	}
-	else
-	{
+	} else {
 		struct dungeon_type *d_ptr;
 		int base;
-		if (wpos->wz>0)
-			d_ptr=w_ptr->tower;
+		if (wpos->wz > 0)
+			d_ptr = w_ptr->tower;
 		else
-			d_ptr=w_ptr->dungeon;
-		base=d_ptr->baselevel+ABS(wpos->wz)-1;
+			d_ptr = w_ptr->dungeon;
+		base = d_ptr->baselevel + ABS(wpos->wz) - 1;
 		return(base);
 	}
 }
@@ -845,8 +842,8 @@ struct c_special *AddCS(cave_type *c_ptr, byte type) {
 	}
 	MAKE(cs_ptr, struct c_special);
 	if (!cs_ptr) return(NULL);
-	cs_ptr->next=c_ptr->special;
-	c_ptr->special=cs_ptr;
+	cs_ptr->next = c_ptr->special;
+	c_ptr->special = cs_ptr;
 	cs_ptr->type = type;
 	return(cs_ptr);
 }
@@ -855,12 +852,12 @@ struct c_special *AddCS(cave_type *c_ptr, byte type) {
 c_special *ReplaceCS(cave_type *c_ptr, byte type)
 {
 	struct c_special *cs_ptr;
-	if (!(cs_ptr=GetCS(c_ptr, type)))
+	if (!(cs_ptr = GetCS(c_ptr, type)))
 	{
 		MAKE(cs_ptr, struct c_special);
 		if (!cs_ptr) return(NULL);
-		cs_ptr->next=c_ptr->special;
-		c_ptr->special=cs_ptr;
+		cs_ptr->next = c_ptr->special;
+		c_ptr->special = cs_ptr;
 	}
 	cs_ptr->type = type;
 	return(cs_ptr);
@@ -1009,7 +1006,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	int m;
 
 	cave_type **zcave;
-	if (!(zcave=getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return FALSE;
 
 	/* Extract the offset */
 	dy = y2 - y1;
@@ -1241,7 +1238,7 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
 	int m;
 
 	cave_type **zcave;
-	if (!(zcave=getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return FALSE;
 
 	/* Extract the offset */
 	dy = y2 - y1;
@@ -2995,7 +2992,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* The attr */
 			(*ap) = a;
 
-			for (cs_ptr=c_ptr->special; cs_ptr; cs_ptr=cs_ptr->next) {
+			for (cs_ptr = c_ptr->special; cs_ptr; cs_ptr = cs_ptr->next) {
 				/* testing only - need c/a PRIORITIES!!! */
 				csfunc[cs_ptr->type].see(cs_ptr, cp, ap, Ind);
 			}
@@ -3054,7 +3051,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		    (c_ptr->feat == FEAT_WAY_LESS) || (c_ptr->feat == FEAT_LESS)) {
 		    struct dungeon_type *d_ptr;
 		    worldpos *tpos = &p_ptr->wpos;
-		    wilderness_type *wild=&wild_info[tpos->wy][tpos->wx];
+		    wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
 
 		    if (!tpos->wz) {
 			if ((c_ptr->feat == FEAT_MORE) || (c_ptr->feat == FEAT_WAY_MORE)) d_ptr = wild->dungeon;
@@ -3351,7 +3348,7 @@ void note_spot(int Ind, int y, int x)
 
 	cave_type **zcave;
 	cave_type *c_ptr;
-	if (!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[y][x];
 
 	/* Hack -- memorize objects */
@@ -4007,7 +4004,7 @@ void display_map(int Ind, int *cy, int *cx)
 					if (p_ptr->chp < 0) tc = '-';
 					else {
 						int num;
-						num=(p_ptr->chp * 95) / (p_ptr->mhp * 10);
+						num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
 						tc = '0' + num;
 					}
 				}
@@ -4572,8 +4569,8 @@ void forget_lite(int Ind)
 	int i, x, y;
 
 	cave_type **zcave;
-	struct worldpos *wpos=&p_ptr->wpos;
-	if (!(zcave=getcave(&p_ptr->wpos))) return;
+	struct worldpos *wpos = &p_ptr->wpos;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 
 	/* None to forget */
@@ -4680,9 +4677,9 @@ void update_lite(int Ind)
 	player_type *p_ptr = Players[Ind];
 	int i, x, y, min_x, max_x, min_y, max_y;
 
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	if (!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/*** Special case ***/
 
@@ -5011,11 +5008,11 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 	byte *g1_w_ptr;
 	byte *g2_w_ptr;
 
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	if (!(zcave=getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return FALSE;
 
-	if (y<0 || y>=MAX_HGT || x<0 || x>=MAX_WID) return(FALSE);
+	if (y < 0 || y >= MAX_HGT || x < 0 || x >= MAX_WID) return(FALSE);
 
 	/* Access the grids */
 	g1_c_ptr = &zcave[y1][x1];
@@ -5229,7 +5226,7 @@ void update_view(int Ind)
 
 	cave_type *c_ptr;
 	byte *w_ptr;
-	bool unmap=FALSE;
+	bool unmap = FALSE;
 
 	cave_type **zcave;
 	struct worldpos *wpos;
@@ -6156,7 +6153,7 @@ void update_view(int Ind)
 
 	cave_type *c_ptr;
 	byte *w_ptr;
-	bool unmap=FALSE;
+	bool unmap = FALSE;
 
 	cave_type **zcave;
 	struct worldpos *wpos;
@@ -6729,9 +6726,9 @@ void map_area(int Ind)
 
 /*	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos); */
 	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
-	worldpos *wpos=&p_ptr->wpos;
+	worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	if (!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 /*	if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
 	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC_MAP)) return;
 	if (in_sector00(wpos) && (sector00flags1 & LF1_NO_MAGIC_MAP)) return;
@@ -7111,8 +7108,8 @@ void wiz_dark(int Ind)
 	int y, x, i;
 	object_type *o_ptr;
 
-	wpos=&q_ptr->wpos;
-	if (!(zcave=getcave(wpos))) return;
+	wpos = &q_ptr->wpos;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Check for every other player */
 
@@ -7178,7 +7175,7 @@ extern int check_feat(worldpos *wpos, int y, int x)
         cave_type **zcave;
         cave_type *c_ptr;
 
-        if (!(zcave=getcave(wpos))) return(0);
+        if (!(zcave = getcave(wpos))) return(0);
 
         if (!in_bounds(y, x)) return(0);
 
@@ -7200,7 +7197,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 //	struct c_special *cs_ptr;
 	int i;
 
-	if (!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
 	c_ptr = &zcave[y][x];
 
@@ -7390,10 +7387,8 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 		feat = FEAT_DEAD_TREE;
 
 	/* Clear mimic feature left by a secret door - mikaelh */
-	if ((cs_ptr=GetCS(c_ptr, CS_MIMIC)))
-	{
+	if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 		cs_erase(c_ptr, cs_ptr);
-	}
 
 	/* Change the feature */
 	if (c_ptr->feat != feat) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
@@ -7827,7 +7822,7 @@ void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m
 	long tries = 10000;
 
         cave_type **zcave;
-        if (!(zcave=getcave(wpos))) {
+        if (!(zcave = getcave(wpos))) {
 		(*yp) = y;
 		(*xp) = x;
 		return;

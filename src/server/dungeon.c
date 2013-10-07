@@ -825,7 +825,7 @@ static void erase_effects(int effect)
 	e_ptr->cy = 0;
 	e_ptr->rad = 0;
 
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* XXX +1 is needed.. */
 	for (l = 0; l < tdi[rad + 0]; l++)
@@ -1588,7 +1588,7 @@ static void process_world(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int	i;
-//	int	regen_amount, NumPlayers_old=NumPlayers;
+//	int	regen_amount, NumPlayers_old = NumPlayers;
 
 
 	/*** Process the monsters ***/
@@ -2051,7 +2051,7 @@ static int auto_retaliate(int Ind)
 	bool no_melee = FALSE, fallback = FALSE;
 	bool skip_monsters = (p_ptr->cloaked || p_ptr->shadow_running) && !p_ptr->stormbringer;
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	if (p_ptr->new_level_flag) return 0;
 
@@ -2663,7 +2663,7 @@ static void apply_effect(int Ind)
 	feature_type *f_ptr;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	c_ptr = &zcave[y][x];
 	f_ptr = &f_info[c_ptr->feat];
@@ -3030,7 +3030,7 @@ static void do_recall(int Ind, bool bypass)
 		new_pos.wz = 0;
 
 		/* Messages */
-		message="You feel yourself yanked sideways!";
+		message = "You feel yourself yanked sideways!";
 		msg_format_near(Ind, "%s is yanked sideways!", p_ptr->name);
 
 		/* New location */
@@ -3199,7 +3199,7 @@ static bool process_player_end_aux(int Ind)
 	cave_type		*c_ptr;
 	object_type		*o_ptr;
 	int		i, j;
-	int		regen_amount; //, NumPlayers_old=NumPlayers;
+	int		regen_amount; //, NumPlayers_old = NumPlayers;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	/* Unbelievers "resist" magic */
@@ -3210,7 +3210,7 @@ static bool process_player_end_aux(int Ind)
 	int minus_combat = get_skill_scale_fine(p_ptr, SKILL_COMBAT, 3);
 
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -3254,7 +3254,7 @@ static bool process_player_end_aux(int Ind)
 					int hit = p_ptr->mhp>>6;
 					int swim = get_skill_scale(p_ptr, SKILL_SWIM, 4500);
 					hit += randint(p_ptr->mhp>>5);
-					if(!hit) hit=1;
+					if (!hit) hit = 1;
 
 					/* Take CON into consideration(max 30%) */
 					hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
@@ -3262,7 +3262,7 @@ static bool process_player_end_aux(int Ind)
 					/* temporary abs weight calc */
 					if(p_ptr->wt+p_ptr->total_weight/10 > 170 + swim * 2)	// 190
 					{
-						long factor=(p_ptr->wt+p_ptr->total_weight/10)-150-swim * 2;	// 170
+						long factor = (p_ptr->wt + p_ptr->total_weight / 10) - 150 - swim * 2;	// 170
 						/* too heavy, always drown? */
 						if (factor < 300) {
 							if (randint(factor) < 20) hit = 0;
@@ -3314,7 +3314,7 @@ static bool process_player_end_aux(int Ind)
 			hit += randint(p_ptr->chp>>5);
 			/* Take CON into consideration(max 30%) */
 			hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
-			if(!hit) hit=1;
+			if (!hit) hit = 1;
 
 			if (hit) {
 				if (c_ptr->feat != FEAT_SHAL_WATER)
@@ -4500,34 +4500,34 @@ static void process_games(int Ind) {
 		switch(gametype){
 			/* rugby type game */
 			case EEGAME_RUGBY:
-				if((ball=has_ball(p_ptr))==-1) break;
+				if ((ball = has_ball(p_ptr)) == -1) break;
 
-				if(p_ptr->team==1 && c_ptr->feat==FEAT_BGOAL){
+				if (p_ptr->team == 1 && c_ptr->feat == FEAT_BGOAL){
 					teamscore[0]++;
 					msg_format_near(Ind, "\377R%s scored a goal!!!", p_ptr->name);
 					msg_print(Ind, "\377rYou scored a goal!!!");
-					score=1;
+					score = 1;
 				}
-				if(p_ptr->team==2 && c_ptr->feat==FEAT_AGOAL){
+				if (p_ptr->team == 2 && c_ptr->feat == FEAT_AGOAL){
 					teamscore[1]++;
 					msg_format_near(Ind, "\377B%s scored a goal!!!", p_ptr->name);
 					msg_print(Ind, "\377gYou scored a goal!!!");
-					score=1;
+					score = 1;
 				}
-				if(score){
+				if (score) {
 					object_type tmp_obj;
 					s16b ox, oy;
 					int try;
-					p_ptr->energy=0;
+					p_ptr->energy = 0;
 					snprintf(sstr, 80, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]); 
 					msg_broadcast(0, sstr);
 
-					for(try=0; try<1000; try++){
-						ox=p_ptr->px+5-rand_int(10);
-						oy=p_ptr->py+5-rand_int(10);
-						if(!in_bounds(oy, ox)) continue;
-						if(!cave_floor_bold(zcave, oy, ox)) continue;
-						tmp_obj=p_ptr->inventory[ball];
+					for (try = 0; try < 1000; try++) {
+						ox = p_ptr->px + 5 - rand_int(10);
+						oy = p_ptr->py + 5 - rand_int(10);
+						if (!in_bounds(oy, ox)) continue;
+						if (!cave_floor_bold(zcave, oy, ox)) continue;
+						tmp_obj = p_ptr->inventory[ball];
 						tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
 						drop_near(&tmp_obj, -1, &p_ptr->wpos, oy, ox);
 						printf("dropping at %d %d (%d)\n", ox, oy, try);
@@ -4556,7 +4556,7 @@ static void process_player_end(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 //	int		x, y, i, j, new_depth, new_world_x, new_world_y;
-//	int		regen_amount, NumPlayers_old=NumPlayers;
+//	int		regen_amount, NumPlayers_old = NumPlayers;
 	char		attackstatus;
 
 //	byte			*w_ptr;
@@ -6146,7 +6146,7 @@ void process_player_change_wpos(int Ind)
 			if (!(Players[j]->mode & MODE_PVP)) continue;
 			if (!inarea(&Players[j]->wpos, &p_ptr->wpos)) continue;
 			if (Players[j]->max_plv < p_ptr->max_plv - 5) {
-				p_ptr->new_level_method=(p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+				p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 				p_ptr->recall_pos.wz = 0;
 				p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 				p_ptr->recall_pos.wy = p_ptr->wpos.wy;
@@ -7063,10 +7063,10 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 	                numtowns = 0;
 
 			/* free old dungeon/tower info */
-		        for(y=0;y<MAX_WILD_Y;y++){
-		                for(x=0;x<MAX_WILD_X;x++){
+		        for (y = 0 ;y < MAX_WILD_Y; y++) {
+		                for (x = 0; x < MAX_WILD_X; x++) {
 		            		w_ptr = &wild_info[y][x];
-		                        if(w_ptr->flags & WILD_F_DOWN){
+		                        if (w_ptr->flags & WILD_F_DOWN) {
 		                    		d_ptr = w_ptr->dungeon;
         	        	                for (i = 0; i < d_ptr->maxdepth; i++) {
 	        	                                C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
@@ -7074,7 +7074,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 				                C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 						KILL(d_ptr, struct dungeon_type);
 				        }
-		                        if(w_ptr->flags & WILD_F_UP){
+		                        if (w_ptr->flags & WILD_F_UP) {
 		                    		d_ptr = w_ptr->tower;
         	        	                for (i = 0; i < d_ptr->maxdepth; i++) {
 	        	                                C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);

@@ -2160,9 +2160,9 @@ void kingly(int Ind, int type)
 
 #if 0	// No, this makes Delete_player fail!
 	/* Hack -- retire in town */
-	p_ptr->wpos.wx=0;	// pfft, not 0 maybe
-	p_ptr->wpos.wy=0;
-	p_ptr->wpos.wz=0;
+	p_ptr->wpos.wx = 0;	// pfft, not 0 maybe
+	p_ptr->wpos.wy = 0;
+	p_ptr->wpos.wz = 0;
 #endif	// 0
 
 	/* Fake death */
@@ -2468,26 +2468,26 @@ void wipeout_needless_objects()
 	struct worldpos wpos;
 	struct wilderness_type *wild;
 
-	for(i=0;i<MAX_WILD_X;i++){
-		wpos.wx=i;
-		for(j=0;j<MAX_WILD_Y;j++){
-			wpos.wy=j;
-			wild=&wild_info[j][i];
+	for (i = 0; i < MAX_WILD_X; i++) {
+		wpos.wx = i;
+		for (j = 0; j < MAX_WILD_Y; j++) {
+			wpos.wy = j;
+			wild = &wild_info[j][i];
 
-			wpos.wz=0;
+			wpos.wz = 0;
 			if(getcave(&wpos) && !players_on_depth(&wpos)) wipe_o_list(&wpos);
 
 			if (wild->flags&WILD_F_UP)
 				for (k = 0;k < wild->tower->maxdepth; k++)
 				{
-					wpos.wz=k;
+					wpos.wz = k;
 					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
 				}
 
 			if (wild->flags&WILD_F_DOWN)
 				for (k = 0;k < wild->dungeon->maxdepth; k++)
 				{
-					wpos.wz=-k;
+					wpos.wz = -k;
 					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
 				}
 		}
@@ -2498,25 +2498,25 @@ void wipeout_needless_objects()
 	wilderness_type *w_ptr;
 	int x,y,z;
 
-	for(y=0;y<MAX_WILD_Y;y++){
-		cwpos.wy=y;
-		for(x=0;x<MAX_WILD_X;x++){
-			cwpos.wx=x;
-			cwpos.wz=0;
-			w_ptr=&wild_info[y][x];
+	for (y = 0; y < MAX_WILD_Y; y++) {
+		cwpos.wy = y;
+		for (x = 0; x < MAX_WILD_X; x++) {
+			cwpos.wx = x;
+			cwpos.wz = 0;
+			w_ptr = &wild_info[y][x];
 //			if(getcave(&cwpos) && !players_on_depth(&cwpos)) wipe_o_list(&cwpos);
 			if(w_ptr->flags & WILD_F_DOWN){
-				d_ptr=w_ptr->dungeon;
-				for(z=1;z<=d_ptr->maxdepth;z++){
-					cwpos.wz=-z;
+				d_ptr = w_ptr->dungeon;
+				for (z = 1; z <= d_ptr->maxdepth; z++) {
+					cwpos.wz = -z;
 					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
 						wipe_o_list(&cwpos);
 				}
 			}
 			if(w_ptr->flags & WILD_F_UP){
-				d_ptr=w_ptr->tower;
-				for(z=1;z<=d_ptr->maxdepth;z++){
-					cwpos.wz=z;
+				d_ptr = w_ptr->tower;
+				for (z = 1; z <= d_ptr->maxdepth; z++) {
+					cwpos.wz = z;
 					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
 						wipe_o_list(&cwpos);
 				}

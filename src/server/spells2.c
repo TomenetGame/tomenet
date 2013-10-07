@@ -746,7 +746,7 @@ void warding_glyph(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	if (!allow_terraforming(&p_ptr->wpos, FEAT_GLYPH) && !is_admin(p_ptr)) return;
 
@@ -1627,7 +1627,7 @@ bool detect_treasure(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr;
 	int		py = p_ptr->py, px = p_ptr->px;
 
@@ -1807,18 +1807,18 @@ bool detect_magic(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
-	struct worldpos *wpos=&p_ptr->wpos;
-	dun_level		*l_ptr;
-//	int		py = p_ptr->py, px = p_ptr->px;
+	struct worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr;
+//	int py = p_ptr->py, px = p_ptr->px;
 
-	int		i, j, tv;
+	int	i, j, tv;
 	bool	detect = FALSE;
 
 	cave_type	*c_ptr;
 	object_type	*o_ptr;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
@@ -2464,7 +2464,7 @@ bool detect_bounty(int Ind, int rad)
 			}
 
 			/* Detect invisible traps */
-			if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && magik(chance)) {
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && magik(chance)) {
 				t_idx = cs_ptr->sc.trap.t_idx;
 
 				if (!cs_ptr->sc.trap.found)
@@ -2486,10 +2486,8 @@ bool detect_bounty(int Ind, int rad)
 				struct c_special *cs_ptr;
 
 				/* Clear mimic feature */
-				if((cs_ptr=GetCS(c_ptr, CS_MIMIC)))
-				{
+				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 					cs_erase(c_ptr, cs_ptr);
-				}
 
 				/* Find the door XXX XXX XXX */
 				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
@@ -2546,18 +2544,19 @@ bool detect_object(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
-	struct worldpos *wpos=&p_ptr->wpos;
-	dun_level		*l_ptr;
-	//int		py = p_ptr->py, px = p_ptr->px;
+	struct worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr;
+	//int py = p_ptr->py, px = p_ptr->px;
 
-	int		i, j;
+	int	i, j;
 	bool	detect = FALSE;
 
 	cave_type	*c_ptr;
-
 	object_type	*o_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
@@ -2613,12 +2612,11 @@ bool detect_trap(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
-	struct worldpos *wpos=&p_ptr->wpos;
-	dun_level		*l_ptr;
-//	int		py = p_ptr->py, px = p_ptr->px;
+	struct worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr;
+//	int	py = p_ptr->py, px = p_ptr->px;
 
-	int		i, j, t_idx;
-
+	int	i, j, t_idx;
 	bool	detect = FALSE;
 
 	cave_type  *c_ptr;
@@ -2628,7 +2626,8 @@ bool detect_trap(int Ind, int rad)
 
 	object_type	*o_ptr;
 
-	if(!(zcave=getcave(wpos))) return(FALSE);
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
@@ -2732,9 +2731,9 @@ bool detect_sdoor(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
-	struct worldpos *wpos=&p_ptr->wpos;
-	dun_level		*l_ptr;
-	//int		py = p_ptr->py, px = p_ptr->px;
+	struct worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr;
+	//int py = p_ptr->py, px = p_ptr->px;
 
 	int		i, j;
 	bool	detect = FALSE;
@@ -2742,7 +2741,7 @@ bool detect_sdoor(int Ind, int rad)
 	cave_type *c_ptr;
 	byte *w_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
@@ -2771,10 +2770,8 @@ bool detect_sdoor(int Ind, int rad)
 				struct c_special *cs_ptr;
 
 				/* Clear mimic feature */
-				if((cs_ptr=GetCS(c_ptr, CS_MIMIC)))
-				{
+				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 					cs_erase(c_ptr, cs_ptr);
-				}
 
 				/* Find the door XXX XXX XXX */
 				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
@@ -2835,9 +2832,9 @@ void stair_creation(int Ind)
 	/* Access the grid */
 	cave_type *c_ptr;
 
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Access the player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -3229,9 +3226,9 @@ bool curse_spell(int Ind) {	// could be void
 
 bool curse_spell_aux(int Ind, int item)
 {
-	player_type *p_ptr=Players[Ind];
-	object_type *o_ptr=&p_ptr->inventory[item];
-	char		o_name[ONAME_LEN];
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[item];
+	char o_name[ONAME_LEN];
 
 	p_ptr->current_curse = FALSE;
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -3887,7 +3884,7 @@ bool recharge_aux(int Ind, int item, int pow) {
  */
 bool project_los(int Ind, int typ, int dam, char *attacker) {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	int		i, x, y;
 	int		flg = PROJECT_NORF | PROJECT_JUMP | PROJECT_KILL | PROJECT_HIDE;
 	bool		obvious = FALSE;
@@ -4553,7 +4550,7 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
 
 	dun_level		*l_ptr = getfloor(wpos);
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
 	bypass_invuln = TRUE;
@@ -4647,17 +4644,14 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
 bool genocide(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	int	i;
+	char	typ = -1;
+	int	d = 999, tmp;
 
-	int		i;
-
-	char	typ=-1;
-
-	int d = 999, tmp;
-
-	worldpos *wpos=&p_ptr->wpos;
-	dun_level		*l_ptr = getfloor(wpos);
+	worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr = getfloor(wpos);
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);	// double check..
 
 	/* Search all monsters and find the closest */
@@ -4828,7 +4822,7 @@ bool probing(int Ind)
 	monster_race *r_ptr;
 	int            i;
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	bool	probe = FALSE;
 
 	/* Probe all (nearby) monsters */
@@ -4915,7 +4909,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 	struct c_special *cs_ptr;       /* for special key doors */
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	if(l_ptr && l_ptr->flags1 & LF1_NO_DESTROY) return;
 
 	/* among others, make sure town areas aren't affected.. */
@@ -4951,7 +4945,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			if (c_ptr->info & CAVE_ICKY) continue;
 
 			/* Special key doors are protected -C. Blue */
-			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue;
+			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
 
 			/* Lose room and nest */
 			/* Hack -- don't do this to houses/rooms outside the dungeon,
@@ -5027,7 +5021,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 				/* Wall (or floor) type */
 				t = rand_int(200);
 
-				if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+				if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 					/* Destroy the trap */
 					if (t < 100) cs_erase(c_ptr, cs_ptr);
 					else cs_ptr->sc.trap.found = FALSE;
@@ -5104,7 +5098,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 	struct c_special *cs_ptr;	/* for special key doors */
 	cave_type **zcave;
 
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	if(l_ptr && (l_ptr->flags1 & LF1_NO_DESTROY) && !override_LF1_NO_DESTROY) return;
 	override_LF1_NO_DESTROY = FALSE;
 
@@ -5606,9 +5600,9 @@ static void cave_temp_room_lite(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int i;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Clear them all */
 	for (i = 0; i < p_ptr->temp_n; i++)
@@ -5693,9 +5687,9 @@ static void cave_temp_room_unlite(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int i;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Clear them all */
 	for (i = 0; i < p_ptr->temp_n; i++)
@@ -5749,7 +5743,7 @@ static void cave_temp_room_aux(int Ind, struct worldpos *wpos, int y, int x)
 
 	cave_type *c_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
 	/* Avoid infinite recursion */
@@ -5783,7 +5777,7 @@ void lite_room(int Ind, struct worldpos *wpos, int y1, int x1)
 	int i, x, y;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Add the initial grid */
 	cave_temp_room_aux(Ind, wpos, y1, x1);
@@ -5824,7 +5818,7 @@ void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1)
 	int i, x, y;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Add the initial grid */
 	cave_temp_room_aux(Ind, wpos, y1, x1);
@@ -6749,8 +6743,8 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 /* multi builder stuff - move when complete */
 struct builder{
 	int player;
-	int lx,ly,dx,dy,minx,miny,maxx,maxy;
-	int sx,sy;
+	int lx, ly, dx, dy, minx, miny, maxx, maxy;
+	int sx, sy;
 	int odir;
 	int moves;
 	int cvert;
@@ -6768,189 +6762,187 @@ struct builder{
 
 static bool poly_build(int Ind, char *args)
 {
-	static struct builder *builders=NULL;
-	static int num_build=0;
+	static struct builder *builders = NULL;
+	static int num_build = 0;
 
-	player_type *p_ptr=Players[Ind];
-	struct builder *curr=builders;
-	int x,y;
-	int dir=0;
+	player_type *p_ptr = Players[Ind];
+	struct builder *curr = builders;
+	int x, y;
+	int dir = 0;
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
-	while(curr){
-		struct builder *prev=NULL;
-		bool kill=FALSE;
-		if(curr->player==p_ptr->id) break;
-		if(!lookup_player_name(curr->player)){	/* disconnect or free builders */
-			if(prev)
-				prev->next=curr->next;
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
+	while (curr) {
+		struct builder *prev = NULL;
+		bool kill = FALSE;
+		if (curr->player == p_ptr->id) break;
+		if (!lookup_player_name(curr->player)) {	/* disconnect or free builders */
+			if (prev)
+				prev->next = curr->next;
 			else
-				builders=curr->next;
-			kill=TRUE;
+				builders = curr->next;
+			kill = TRUE;
 		}
-		prev=curr;
-		curr=curr->next;
-		if(kill){
+		prev = curr;
+		curr = curr->next;
+		if (kill) {
 			KILL(prev, struct builder);
 		}
 	}
 
-	if(!curr){			/* new builder */
+	if (!curr) {			/* new builder */
 #ifdef MAX_BUILDERS
-		if(num_build==MAX_BUILDERS){
+		if (num_build == MAX_BUILDERS){
 			msg_print(Ind,"The builders are on strike!");
 			return FALSE;
 		}
 #endif
 		MAKE(curr, struct builder);
-		curr->next=builders;	/* insert is fastest */
-		curr->player=p_ptr->id;	/* set him up */
+		curr->next = builders;	/* insert is fastest */
+		curr->player = p_ptr->id;	/* set him up */
 		C_MAKE(curr->vert, MAXCOORD, char);
 		MAKE(curr->dna, struct dna_type);
-		curr->dna->creator=p_ptr->dna;
-		curr->dna->owner=p_ptr->id;
-		curr->dna->owner_type=OT_PLAYER;
-		curr->dna->a_flags=ACF_NONE;
-		curr->dna->min_level=ACF_NONE;
-		curr->dna->price=5;	/* so work out */
-		curr->odir=0;
-		curr->cvert=0;
-		curr->nofloor=(args[0]=='N');
-		curr->jail=(args[1]=='Y');
-		curr->sx=p_ptr->px;
-		curr->sy=p_ptr->py;
-		curr->minx=curr->maxx=curr->sx;
-		curr->miny=curr->maxy=curr->sy;
-		curr->dx=curr->lx=curr->sx;
-		curr->dy=curr->ly=curr->sy;
-		curr->moves=25;	/* always new */
+		curr->dna->creator = p_ptr->dna;
+		curr->dna->owner = p_ptr->id;
+		curr->dna->owner_type = OT_PLAYER;
+		curr->dna->a_flags = ACF_NONE;
+		curr->dna->min_level = ACF_NONE;
+		curr->dna->price = 5;	/* so work out */
+		curr->odir = 0;
+		curr->cvert = 0;
+		curr->nofloor = (args[0] == 'N');
+		curr->jail = (args[1] == 'Y');
+		curr->sx = p_ptr->px;
+		curr->sy = p_ptr->py;
+		curr->minx = curr->maxx = curr->sx;
+		curr->miny = curr->maxy = curr->sy;
+		curr->dx = curr->lx = curr->sx;
+		curr->dy = curr->ly = curr->sy;
+		curr->moves = 25;	/* always new */
 		wpcopy(&curr->wpos, &p_ptr->wpos);
-//		if(zcave[curr->sy][curr->sx].feat==FEAT_PERM_EXTRA){
-		if(zcave[curr->sy][curr->sx].feat==FEAT_WALL_HOUSE){
+//		if (zcave[curr->sy][curr->sx].feat == FEAT_PERM_EXTRA){
+		if (zcave[curr->sy][curr->sx].feat == FEAT_WALL_HOUSE){
 #if 0	/* not necessary? - evileye */
-			zcave[curr->sy][curr->sx].special.sc.ptr=NULL;
+			zcave[curr->sy][curr->sx].special.sc.ptr = NULL;
 #endif
 			msg_print(Ind, "Your foundations were laid insecurely");
 			KILL(curr->dna, struct dna_type);
 			C_KILL(curr->vert, MAXCOORD, char);
-			p_ptr->master_move_hook=NULL;
+			p_ptr->master_move_hook = NULL;
 			KILL(curr, struct builder);	/* Sack the builders! */
 			return FALSE;
 		}
-		zcave[curr->sy][curr->sx].feat=FEAT_HOME_OPEN;
+		zcave[curr->sy][curr->sx].feat = FEAT_HOME_OPEN;
 		/* CS_DNADOOR seems to be added twice (wild_add_uhouse)..
 		 * please correct it, Evileye?	- Jir -
 		 */
 #if 0
-		if((curr->cs=AddCS(&zcave[curr->sy][curr->sx], CS_DNADOOR))){
-			curr->cs->sc.ptr=curr->dna;
+		if ((curr->cs = AddCS(&zcave[curr->sy][curr->sx], CS_DNADOOR))) {
+			curr->cs->sc.ptr = curr->dna;
 		}
 #endif
-		builders=curr;
+		builders = curr;
 		return TRUE;
 	}
 
-	if(args){
-		curr->moves+=25;
+	if (args) {
+		curr->moves += 25;
 		return TRUE;
 	}
-	x=p_ptr->px;
-	y=p_ptr->py;
-	curr->minx=MIN(x,curr->minx);
-	curr->maxx=MAX(x,curr->maxx);
-	curr->miny=MIN(y,curr->miny);
-	curr->maxy=MAX(y,curr->maxy);
-	if(x!=curr->dx){
-		if(x>curr->dx) dir=1;
-		else dir=2;
+	x = p_ptr->px;
+	y = p_ptr->py;
+	curr->minx = MIN(x, curr->minx);
+	curr->maxx = MAX(x, curr->maxx);
+	curr->miny = MIN(y, curr->miny);
+	curr->maxy = MAX(y, curr->maxy);
+	if (x != curr->dx) {
+		if (x > curr->dx) dir = 1;
+		else dir = 2;
 	}
-	if(y!=curr->dy){
-		if(dir){
-			curr->moves=0;
+	if (y != curr->dy) {
+		if (dir) {
+			curr->moves = 0;
 			/* diagonal! house building failed */
 		}
-		if(y>curr->dy) dir|=4;
-		else dir|=8;
+		if(y > curr->dy) dir |= 4;
+		else dir |= 8;
 	}
-	if(curr->odir!=dir){
-		if(curr->odir){		/* first move not new vertex */
-			curr->vert[curr->cvert++]=curr->dx-curr->lx;
-			curr->vert[curr->cvert++]=curr->dy-curr->ly;
+	if (curr->odir != dir) {
+		if (curr->odir) {		/* first move not new vertex */
+			curr->vert[curr->cvert++] = curr->dx-curr->lx;
+			curr->vert[curr->cvert++] = curr->dy-curr->ly;
 		}
-		curr->lx=curr->dx;
-		curr->ly=curr->dy;
-		curr->odir=dir;		/* change direction, add vertex */
+		curr->lx = curr->dx;
+		curr->ly = curr->dy;
+		curr->odir = dir;		/* change direction, add vertex */
 	}
-	curr->dx=x;
-	curr->dy=y;
+	curr->dx = x;
+	curr->dy = y;
 
-	if(p_ptr->px==curr->sx && p_ptr->py==curr->sy && curr->moves){	/* check for close */
-		curr->vert[curr->cvert++]=curr->dx-curr->lx;			/* last vertex */
-		curr->vert[curr->cvert++]=curr->dy-curr->ly;
-		if(curr->cvert==10 || curr->cvert==8){
+	if (p_ptr->px == curr->sx && p_ptr->py == curr->sy && curr->moves) {	/* check for close */
+		curr->vert[curr->cvert++] = curr->dx-curr->lx;			/* last vertex */
+		curr->vert[curr->cvert++] = curr->dy-curr->ly;
+		if (curr->cvert == 10 || curr->cvert == 8) {
 			/* rectangle! */
-			houses[num_houses].flags=HF_RECT;
-			houses[num_houses].x=curr->minx;
-			houses[num_houses].y=curr->miny;
-			houses[num_houses].coords.rect.width=curr->maxx+1-curr->minx;
-			houses[num_houses].coords.rect.height=curr->maxy+1-curr->miny;
-			houses[num_houses].dx=curr->sx-curr->minx;
-			houses[num_houses].dy=curr->sy-curr->miny;
+			houses[num_houses].flags = HF_RECT;
+			houses[num_houses].x = curr->minx;
+			houses[num_houses].y = curr->miny;
+			houses[num_houses].coords.rect.width = curr->maxx + 1 - curr->minx;
+			houses[num_houses].coords.rect.height = curr->maxy + 1 - curr->miny;
+			houses[num_houses].dx = curr->sx-curr->minx;
+			houses[num_houses].dy = curr->sy-curr->miny;
 			C_KILL(curr->vert, MAXCOORD, char);
+		} else {
+			houses[num_houses].flags = HF_NONE;	/* polygonal */
+			houses[num_houses].x = curr->sx;
+			houses[num_houses].y = curr->sy;
+			houses[num_houses].coords.poly = curr->vert;
 		}
-		else{
-			houses[num_houses].flags=HF_NONE;	/* polygonal */
-			houses[num_houses].x=curr->sx;
-			houses[num_houses].y=curr->sy;
-			houses[num_houses].coords.poly=curr->vert;
-		}
-		if(curr->nofloor) houses[num_houses].flags|=HF_NOFLOOR;
-		if(curr->jail) houses[num_houses].flags|=HF_JAIL;
+		if (curr->nofloor) houses[num_houses].flags |= HF_NOFLOOR;
+		if (curr->jail) houses[num_houses].flags |= HF_JAIL;
 /* Moat testing */
 #if 0
-		houses[num_houses].flags|=HF_MOAT;
+		houses[num_houses].flags |= HF_MOAT;
 #endif
 /* Do not commit! */
 		wpcopy(&houses[num_houses].wpos, &p_ptr->wpos);
-		houses[num_houses].dna=curr->dna;
-		if(curr->cvert>=8 && fill_house(&houses[num_houses], FILL_MAKEHOUSE, NULL)){
-			int area=(curr->maxx-curr->minx)*(curr->maxy-curr->miny);
+		houses[num_houses].dna = curr->dna;
+		if (curr->cvert >= 8 && fill_house(&houses[num_houses], FILL_MAKEHOUSE, NULL)){
+			int area = (curr->maxx-curr->minx) * (curr->maxy-curr->miny);
 			houses[num_houses].flags |= HF_SELFBUILT;
 			curr->dna->price = area * area * 400; //initial_house_price(&houses[num_houses])
 			wild_add_uhouse(&houses[num_houses]);
 			msg_print(Ind,"You have completed your house");
 			num_houses++;
-		}
-		else{
+		} else {
 			msg_print(Ind,"Your house was built unsoundly");
 			if(curr->vert) C_KILL(curr->vert, MAXCOORD, char);
 			KILL(curr->dna, struct dna_type);
 		}
-		curr->player=0;		/* send the builders home */
-		p_ptr->master_move_hook=NULL;
-		p_ptr->update|=PU_VIEW;
+		curr->player = 0;		/* send the builders home */
+		p_ptr->master_move_hook = NULL;
+		p_ptr->update |= PU_VIEW;
 		return TRUE;
 	}
 	/* no going off depth, and no spoiling moats */
 	if(inarea(&curr->wpos, &p_ptr->wpos) && !(zcave[curr->dy][curr->dx].info&CAVE_ICKY && zcave[curr->dy][curr->dx].feat==FEAT_DEEP_WATER)){
-		zcave[curr->dy][curr->dx].feat=FEAT_WALL_EXTRA;
-//		zcave[curr->dy][curr->dx].feat=FEAT_WALL_HOUSE;
-		if(curr->cvert<MAXCOORD && (--curr->moves)>0) return TRUE;
-		p_ptr->update|=PU_VIEW;
+		zcave[curr->dy][curr->dx].feat = FEAT_WALL_EXTRA;
+//		zcave[curr->dy][curr->dx].feat = FEAT_WALL_HOUSE;
+		if (curr->cvert < MAXCOORD && (--curr->moves) > 0) return TRUE;
+		p_ptr->update |= PU_VIEW;
 	}
 	msg_print(Ind,"Your house building attempt has failed");
 	cs_erase(&zcave[curr->sy][curr->sx], curr->cs);
 	KILL(curr->dna, struct dna_type);
 	C_KILL(curr->vert, MAXCOORD, char);
-	curr->player=0;		/* send the builders home */
-	p_ptr->master_move_hook=NULL;
+	curr->player = 0;		/* send the builders home */
+	p_ptr->master_move_hook = NULL;
 	return FALSE;
 }
 
 void house_creation(int Ind, bool floor, bool jail)
 {
-	player_type *p_ptr=Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	player_type *p_ptr = Players[Ind];
+	struct worldpos *wpos = &p_ptr->wpos;
 	char buildargs[3];
 
 	/* set master_move_hook : a bit like a setuid really ;) */
@@ -6969,11 +6961,11 @@ void house_creation(int Ind, bool floor, bool jail)
 		GROW(houses, house_alloc, house_alloc + 512, house_type);
 		house_alloc += 512;
 	}
-	p_ptr->master_move_hook=poly_build;
+	p_ptr->master_move_hook = poly_build;
 
-	buildargs[0]=(floor ? 'Y' : 'N');
-	buildargs[1]=(jail ? 'Y' : 'N');
-	buildargs[2]='\0';
+	buildargs[0] = (floor ? 'Y' : 'N');
+	buildargs[1] = (jail ? 'Y' : 'N');
+	buildargs[2] = '\0';
 
 	poly_build(Ind, (char*)&buildargs);	/* Its a (char*) ;( */
 }
@@ -6990,7 +6982,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	char buf[80];
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return (0);
+	if (!(zcave = getcave(wpos))) return (0);
 	/* Verify location */
 	if (!in_bounds(y, x)) return (0);
 	/* Require empty space */
@@ -7167,7 +7159,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 	char buf[80];
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return (0);
+	if (!(zcave = getcave(wpos))) return (0);
 
 
 	/* Verify location */
@@ -7338,7 +7330,7 @@ void golem_creation(int Ind, int max)
 	int x, y, k, g_cnt = 0;
 	bool okay = FALSE;
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* Process the monsters */
 	for (k = m_top - 1; k >= 0; k--)

@@ -341,7 +341,7 @@ static bool do_seduce(int Ind, int m_idx)
 
 	cave_type **zcave;
 	cave_type *c_ptr;
-	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	for (d = 1; d <= 9; d++)
 	{
@@ -352,7 +352,7 @@ static bool do_seduce(int Ind, int m_idx)
 
 		if (!in_bounds(ty, tx)) continue;
 
-		c_ptr=&zcave[ty][tx];
+		c_ptr = &zcave[ty][tx];
 		if (c_ptr->m_idx) crowd++;
 	}
 

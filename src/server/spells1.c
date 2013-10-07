@@ -468,7 +468,7 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x)
 bool teleport_away(int m_idx, int dis)
 {
 	int		oy, ox, d, i, min;
-	int		ny=0, nx=0, tries = 5000;
+	int		ny = 0, nx = 0, tries = 5000;
 #if 0 /* see below */
 #ifdef USE_SOUND_2010
 	int org_dis = dis;
@@ -601,8 +601,8 @@ void teleport_to_player(int Ind, int m_idx)
 //	int attempts = 200;
 	int attempts = 5000;
 
-	struct worldpos *wpos=&m_ptr->wpos;
-//	dun_level		*l_ptr = getfloor(wpos);
+	struct worldpos *wpos = &m_ptr->wpos;
+//	dun_level *l_ptr = getfloor(wpos);
 	cave_type **zcave;
 //		if(p_ptr->resist_continuum) {msg_print("The space-time continuum can't be disrupted."); return;}
 
@@ -981,14 +981,14 @@ void teleport_player_to(int Ind, int ny, int nx)
 	player_type *p_ptr = Players[Ind];
 
 	int y, x, oy, ox, dis = 1, ctr = 0;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	int tries = 3000;
 	dun_level *l_ptr;
 	cave_type **zcave;
 
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	if (p_ptr->anti_tele) return;
-	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+	if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 	l_ptr = getfloor(wpos);
 
 	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return;
@@ -3416,7 +3416,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker)
 				if (ii > 50) ii = 50;
 			}
 			else
-				ii=25;
+				ii = 25;
 
 			do_player_scatter_items(Ind, 5, ii);
 
@@ -3572,8 +3572,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	byte *w_ptr = (quiet ? NULL : &p_ptr->cave_flag[y][x]);
 	cave_type *c_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
-	c_ptr=&zcave[y][x];
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	c_ptr = &zcave[y][x];
 
 
 	/* Extract radius */
@@ -3717,10 +3717,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			struct c_special *cs_ptr;
 			/* Destroy invisible traps */
 //			if (c_ptr->feat == FEAT_INVIS)
-			if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 				/* Hack -- special message */
-				if (!quiet && player_can_see_bold(Ind, y, x))
-				{
+				if (!quiet && player_can_see_bold(Ind, y, x)) {
 					msg_print(Ind, "There is a bright flash of light!");
 					obvious = TRUE;
 				}
@@ -3729,8 +3728,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //				c_ptr->feat = FEAT_FLOOR;
 				cs_erase(c_ptr, cs_ptr);
 
-				if (!quiet)
-				{
+				if (!quiet) {
 					/* Notice */
 					note_spot(Ind, y, x);
 
@@ -3760,13 +3758,10 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 
 				/* Clear mimic feature */
-				if((cs_ptr=GetCS(c_ptr, CS_MIMIC)))
-				{
+				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 					cs_erase(c_ptr, cs_ptr);
-				}
 
-				if (!quiet)
-				{
+				if (!quiet) {
 					/* Notice */
 					note_spot(Ind, y, x);
 
@@ -4291,7 +4286,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
  */
 static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ)
 {
-	player_type *p_ptr=NULL;
+	player_type *p_ptr = NULL;
 	u16b this_o_idx, next_o_idx = 0;
 	bool	obvious = FALSE;
 	bool quiet = ((Ind <= 0 || Ind >= 0 - PROJECTOR_UNUSUAL) ? TRUE : FALSE);

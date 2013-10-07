@@ -1306,10 +1306,8 @@ void search(int Ind)
 					c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 
 					/* Clear mimic feature */
-					if((cs_ptr=GetCS(c_ptr, CS_MIMIC)))
-					{
+					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 						cs_erase(c_ptr, cs_ptr);
-					}
 
 					/* Notice */
 					note_spot_depth(wpos, y, x);
@@ -1322,7 +1320,7 @@ void search(int Ind)
 
 				/* Invisible trap */
 //				if (c_ptr->feat == FEAT_INVIS)
-				if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+				if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 					if (!cs_ptr->sc.trap.found)
 					{
 						/* Pick a trap */
@@ -1375,11 +1373,11 @@ void whats_under_your_feet(int Ind) {
 
 	char    o_name[ONAME_LEN];
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type *c_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
-	c_ptr=&zcave[p_ptr->py][p_ptr->px];
+	if (!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	if (!c_ptr->o_idx) return;
 
@@ -2473,11 +2471,11 @@ void hit_trap(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int t_idx;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
 	cave_type               *c_ptr;
-	bool ident=FALSE;
+	bool ident = FALSE;
 
 	/* Ghosts ignore traps */
 	if ((p_ptr->ghost) || (p_ptr->tim_traps)) return;
@@ -2486,10 +2484,10 @@ void hit_trap(int Ind)
 	disturb(Ind, 0, 0);
 
 	/* Get the cave grid */
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	if(!(cs_ptr=GetCS(c_ptr, CS_TRAPS))) return;
+	if (!(cs_ptr = GetCS(c_ptr, CS_TRAPS))) return;
 	t_idx = cs_ptr->sc.trap.t_idx;
 
 	if (t_idx) {
@@ -2515,7 +2513,7 @@ void hit_trap(int Ind)
  *
  * Note: old == TRUE if not auto-retaliating actually
  *       (important for dual-backstab treatment) - C. Blue
- */
+ */ 
 /* TODO: q_ptr/p_ptr->name should be replaced by strings made by player_desc */
 static void py_attack_player(int Ind, int y, int x, bool old)
 {
@@ -3631,9 +3629,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		msg_format(Ind, "You swap positions with %s.", m_name);
 
 		/* Update the new location */
-		zcave[ny][nx].m_idx=c_ptr->m_idx;
+		zcave[ny][nx].m_idx = c_ptr->m_idx;
 		/* Update the old location */
-		zcave[oy][ox].m_idx=-Ind;
+		zcave[oy][ox].m_idx = -Ind;
 
 		/* Move the monster */
 		m_ptr->fy = ny;
@@ -4990,10 +4988,10 @@ void do_prob_travel(int Ind, int dir)
   player_type *p_ptr = Players[Ind];
   int x = p_ptr->px, y = p_ptr->py, tries = 0;
   bool do_move = TRUE;
-  struct worldpos *wpos=&p_ptr->wpos;
+  struct worldpos *wpos = &p_ptr->wpos;
   cave_type **zcave;
   dun_level *l_ptr = getfloor(&p_ptr->wpos);
-  if(!(zcave=getcave(wpos))) return;
+  if (!(zcave = getcave(wpos))) return;
 
   /* Paranoia */
   if (dir == 5) return;
@@ -5102,7 +5100,7 @@ bool wraith_access(int Ind) {
  */
 static bool wraith_access_virtual(int Ind, int y, int x)
 {
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
 	int oy = p_ptr->py, ox = p_ptr->px;
 	bool result;
 
@@ -5718,18 +5716,18 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 	}
 
 	/* now this is temp while i redesign!!! - do not change  <- ok and who wrote this and when? =p */
-	if (!(cs_ptr=GetCS(c_ptr, CS_RUNE))) //fix for walking-over-rune panic save, maybe cleanup this code? - Kurzel
+	if (!(cs_ptr = GetCS(c_ptr, CS_RUNE))) //fix for walking-over-rune panic save, maybe cleanup this code? - Kurzel
 	{
-	cs_ptr = c_ptr->special;
-	while (cs_ptr) {
-		int tcv;
-		tcv = csfunc[cs_ptr->type].activate(cs_ptr, y, x, Ind);
-		cs_ptr = cs_ptr->next;
-		if (!tcv) {
-			csmove = FALSE;
-			printf("csmove is false\n");
+		cs_ptr = c_ptr->special;
+		while (cs_ptr) {
+			int tcv;
+			tcv = csfunc[cs_ptr->type].activate(cs_ptr, y, x, Ind);
+			cs_ptr = cs_ptr->next;
+			if (!tcv) {
+				csmove = FALSE;
+				printf("csmove is false\n");
+			}
 		}
-	}
 	}
 
 	/* Player can not walk through "walls", but ghosts can */
@@ -6082,9 +6080,9 @@ void black_breath_infection(int Ind, int Ind2)
 int see_wall(int Ind, int dir, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Get the new location */
 	y += ddy[dir];
@@ -6170,9 +6168,9 @@ int see_wall(int Ind, int dir, int y, int x)
 static int see_nothing(int dir, int Ind, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Get the new location */
 	y += ddy[dir];
@@ -6594,7 +6592,7 @@ static bool run_test(int Ind)
 		}
 
 		/* Visible traps abort running */
-		if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found) return TRUE;
+		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found) return TRUE;
 
 		/* Hack -- basically stop in water */
 		if (c_ptr->feat == FEAT_DEEP_WATER && !aqua)

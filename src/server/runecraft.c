@@ -1159,7 +1159,7 @@ bool warding_rune_break(int m_idx)
 
 	/* XXX Hack -- Owner online? */
 	int i, who = PROJECTOR_MON_TRAP;
-	player_type *p_ptr=(player_type*)NULL;
+	player_type *p_ptr = (player_type*)NULL;
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 		if (p_ptr->conn == NOT_CONNECTED) continue;

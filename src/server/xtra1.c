@@ -222,7 +222,7 @@ static void prt_ac(int Ind)
 static void prt_sanity(int Ind)
 {
 #ifdef SHOW_SANITY	// No.
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
 #if 0
 	Send_sanity(Ind, p_ptr->msane, p_ptr->csane);
 #else	// 0
@@ -1832,7 +1832,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni)
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	int n, d, immunities = 0, immunity[7], immrand;
 	int i, j;

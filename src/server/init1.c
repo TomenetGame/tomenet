@@ -7328,7 +7328,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 	int dun_level = getlevel(wpos);
 	c_special *cs_ptr;
 	cave_type **zcave;
-	zcave=getcave(wpos);
+	zcave = getcave(wpos);
 
 	if (!zcave) return (-1);	/* maybe SIGSEGV soon anyway */
 
@@ -7839,8 +7839,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				/* MEGAHACK -- let's just make stores available */
 				if (letter[idx].feature == FEAT_SHOP)
 				{
-					if((cs_ptr=AddCS(c_ptr, CS_SHOP)))
-					{
+					if ((cs_ptr = AddCS(c_ptr, CS_SHOP))) {
 						/* MEGAHACK till st_info is implemented */
 						// int y1, x1;
 						int store = letter[idx].special;

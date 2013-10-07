@@ -11250,7 +11250,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 	p_ptr->px = houses[i].x;
 
 	/* that messes it up */
-	/* nzcave[p_ptr->py][p_ptr->px].m_idx=(0-Ind); */
+	/* nzcave[p_ptr->py][p_ptr->px].m_idx = (0-Ind); */
 	new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 
 	p_ptr->new_level_flag = TRUE;
@@ -11293,23 +11293,22 @@ static void player_edit(char *name){
 }
 
 bool master_player(int Ind, char *parms){
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr;
-	int Ind2=0;
+	int Ind2 = 0;
 	int i;
 	struct account *d_acc;
 	int *id_list, n;
 	char buf[MSG_LEN];
 
-	if (!is_admin(p_ptr))
-	{
+	if (!is_admin(p_ptr)) {
 		msg_print(Ind,"You need to be the dungeon master to use this command.");
 		return FALSE;
 	}
-	switch(parms[0]){
+	switch (parms[0]) {
 		case 'E':	/* offline editor */
-			for(i=1;i<=NumPlayers;i++){
-				if(!strcmp(Players[i]->name,&parms[1])){
+			for (i = 1; i <= NumPlayers; i++){
+				if (!strcmp(Players[i]->name, &parms[1])){
 					msg_format(Ind,"%s is currently playing",&parms[1]);
 					return(FALSE);
 				}
@@ -11396,9 +11395,8 @@ static vault_type *get_vault(char *name)
 {
 	int i;
 
-	for(i=0; i<MAX_V_IDX; i++)
-	{
-		if(strstr(v_name + v_info[i].name, name))
+	for (i = 0; i < MAX_V_IDX; i++) {
+		if (strstr(v_name + v_info[i].name, name))
 			return &v_info[i];
 	}
 

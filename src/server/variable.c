@@ -215,7 +215,7 @@ server_opts cfg =
 	TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,	/* types of messages which will be transmitted through the world server (if available). */
 };
 
-struct ip_ban *banlist=NULL;
+struct ip_ban *banlist = NULL;
 struct swear_info swear[MAX_SWEAR];
 char nonswear[MAX_NONSWEAR][NAME_LEN];
 
@@ -327,12 +327,12 @@ s16b m_fast[MAX_M_IDX];
    is, return the wilderness cave_type array pointer. Otherwise
    select the correct dungeon pointer and lookup the dungeon level
    you want. Then return its cave_type array pointer. Of course, 
-   use (cave_type**)zcave=getcave(struct worldpos *).
+   use (cave_type**)zcave = getcave(struct worldpos *).
     Evileye
  */
 wilderness_type wild_info[MAX_WILD_Y][MAX_WILD_X];   /* seems my world may be a bit bigger */
-struct town_type *town=NULL;
-u16b numtowns=0;
+struct town_type *town = NULL;
+u16b numtowns = 0;
 
 /*
  * The array of dungeon items [MAX_O_IDX]

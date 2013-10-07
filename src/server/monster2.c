@@ -119,10 +119,9 @@ int monster_check_experience(int m_idx, bool silent)
 #if 0 /* Check the return code now for level ups */
 		if(m_ptr->owner ) {
 			int i;
-			for(i=1; i<=NumPlayers; i++){
-				if(Players[i]->id==m_ptr->owner){
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->id == m_ptr->owner)
 					msg_print(i, "\377UYour pet looks more experienced!");
-				}
 			}
 		}
 #endif
@@ -349,7 +348,7 @@ void delete_monster_idx(int i, bool unfound_arts)
 #ifdef RPG_SERVER
 		if (Players[Ind]->id == m_ptr->owner && m_ptr->pet) {
 			msg_print(Ind, "\377RYour pet has died! You feel sad.");
-			Players[Ind]->has_pet=0;
+			Players[Ind]->has_pet = 0;
 		}
 #endif 
 		Players[Ind]->mon_vis[i] = FALSE;
@@ -367,9 +366,9 @@ void delete_monster_idx(int i, bool unfound_arts)
 	/* Make sure the level is allocated, it won't be if we are
 	 * clearing an abandoned wilderness level of monsters
 	 */
-	if((zcave = getcave(wpos))){
+	if ((zcave = getcave(wpos)))
 		zcave[y][x].m_idx = 0;
-	}
+
 	/* Visual update */
 	everyone_lite_spot(wpos, y, x);
 
@@ -3363,7 +3362,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 
 /*	if(m_ptr->hold_o_idx){
 		s_printf("AHA! monster created with an object in hand!\n");
-		m_ptr->hold_o_idx=0;
+		m_ptr->hold_o_idx = 0;
 	}*/
 
 	/* Remember this monster's starting values in case they get temporarily decreased (by traps!) */
@@ -3482,7 +3481,7 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 	byte hack_y[GROUP_MAX];
 	byte hack_x[GROUP_MAX];
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Pick a group size */
 	total = randint(13);
@@ -3928,7 +3927,7 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp)
 	int                     tries = 0;
 	player_type *p_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Find a legal, distant, unoccupied, space */
 	while (tries < 50)
@@ -4456,7 +4455,7 @@ bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clon
 	int                     tries = 0;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Find a legal, distant, unoccupied, space */
 	while (tries < 50)
@@ -4492,7 +4491,7 @@ int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, boo
 	int                     tries = 0;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Find a legal, distant, unoccupied, space */
 	while (tries < 50)
@@ -4925,7 +4924,7 @@ void setup_monsters(void)
 		/* setup the cave m_idx if the level has been 
 		 * allocated.
 		 */
-		if((zcave=getcave(&r_ptr->wpos)))
+		if ((zcave = getcave(&r_ptr->wpos)))
 			zcave[r_ptr->fy][r_ptr->fx].m_idx = i;
 	}
 }
