@@ -1987,7 +1987,7 @@ void do_cmd_steal(int Ind, int dir)
 	bool caught = FALSE;
 	cave_type **zcave;
 	u16b dal;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* Ghosts cannot steal */
 #if 0 /* changed since RPG_SERVER */
@@ -2239,7 +2239,7 @@ void do_cmd_steal(int Ind, int dir)
 
 		/* Purge this traitor */
 		if (player_in_party(q_ptr->party, Ind)) {
-			int party=p_ptr->party;
+			int party = p_ptr->party;
 
 			/* Temporary leave for the message */
 			p_ptr->party = 0;
@@ -2266,7 +2266,7 @@ void do_cmd_steal(int Ind, int dir)
 		set_stun(Ind, p_ptr->stun + randint(50));
 		set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
 		if (cfg.use_pk_rules == PK_RULES_DECLARE)
-			p_ptr->pkill|=PKILL_KILLABLE;
+			p_ptr->pkill |= PKILL_KILLABLE;
 
 		/* Thief drops some items from the shock of blow */
 		if (cfg.newbies_cannot_drop <= p_ptr->lev && !p_ptr->inval) {
@@ -2708,14 +2708,14 @@ void do_cmd_target_friendly(int Ind, int dir)
 static bool do_cmd_look_accept(int Ind, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 
 	cave_type *c_ptr;
 	byte *w_ptr;
 	struct c_special *cs_ptr;
 
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* Examine the grid */
 	c_ptr = &zcave[y][x];
@@ -2723,7 +2723,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 
 	/* Player grids */
 	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx]) {
-		player_type *q_ptr=Players[0-c_ptr->m_idx];
+		player_type *q_ptr = Players[0-c_ptr->m_idx];
 		if ((!q_ptr->admin_dm || player_sees_dm(Ind)) && 
 		    (player_has_los_bold(Ind, y, x) || p_ptr->telepathy))
 			return (TRUE);
@@ -2742,7 +2742,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	}
 
 	/* Traps */
-	if ((cs_ptr=GetCS(c_ptr, CS_TRAPS))) {
+	if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 		/* Revealed trap */
 		if (cs_ptr->sc.trap.found) return (TRUE);
 	}
@@ -2807,7 +2807,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 void do_cmd_look(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	int		y, x, i;
 
@@ -2955,7 +2955,7 @@ void do_cmd_look(int Ind, int dir) {
 
 	/* Paranoia */
 	/* thats extreme paranoia */
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
 	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx] &&
@@ -3012,7 +3012,7 @@ void do_cmd_look(int Ind, int dir) {
 		    compat_pomode(Ind, o_ptr) ? "\377D" : "", o_name, o_ptr->next_o_idx ? " on a pile" : "");
 
 		/* Check if the object is on a detected trap */
-		if ((cs_ptr=GetCS(c_ptr, CS_TRAPS))) {
+		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 			int t_idx = cs_ptr->sc.trap.t_idx;
 			if (cs_ptr->sc.trap.found) {
 				if (p_ptr->trap_ident[t_idx])
@@ -3038,7 +3038,7 @@ void do_cmd_look(int Ind, int dir) {
 		if (is_a_vowel(name[0])) p1 = "An ";
 
 		/* Hack -- add trap description */
-		if ((cs_ptr=GetCS(c_ptr, CS_TRAPS))) {
+		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 			int t_idx = cs_ptr->sc.trap.t_idx;
 			if (cs_ptr->sc.trap.found) {
 				if (p_ptr->trap_ident[t_idx])
@@ -3056,14 +3056,14 @@ void do_cmd_look(int Ind, int dir) {
 			p1 = "The entrance to ";
 
 			/* TODO: store name! */
-			if ((cs_ptr=GetCS(c_ptr, CS_SHOP))) {
+			if ((cs_ptr = GetCS(c_ptr, CS_SHOP))) {
 				name = st_name + st_info[cs_ptr->sc.omni].name;
 			}
 
 		}
 
 		if ((feat == FEAT_FOUNTAIN) &&
-		    (cs_ptr=GetCS(c_ptr, CS_FOUNTAIN)) &&
+		    (cs_ptr = GetCS(c_ptr, CS_FOUNTAIN)) &&
 		    cs_ptr->sc.fountain.known) {
 			object_kind *k_ptr;
 			int tval, sval;

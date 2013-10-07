@@ -748,7 +748,7 @@ void do_cmd_go_down(int Ind)
 
 #ifndef ARCADE_SERVER
 	if(surface){
-		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
+		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
 #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2 ||
@@ -1053,14 +1053,14 @@ void do_cmd_toggle_search(int Ind)
 static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 
 //	int             i, d, ny, nx;
 	int             number, little;
 	long		cash;
 
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Must be a chest */
 	if (o_ptr->tval != TV_CHEST) return;
@@ -1625,7 +1625,7 @@ cptr get_house_owner(struct c_special *cs_ptr)
 void do_cmd_open(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
@@ -1968,14 +1968,14 @@ void do_cmd_close(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 
 	int                     y, x, i;
 	cave_type               *c_ptr;
 
 	bool more = FALSE;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 
 	/* Ghosts cannot close ; not in WRAITHFORM */
@@ -2946,7 +2946,7 @@ static void do_id_trap(int Ind, int t_idx)
 void do_cmd_disarm(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 
 	int                 y, x, i, j, power;
 
@@ -3094,7 +3094,7 @@ void do_cmd_disarm(int Ind, int dir)
 
 			/* XXX hrm it's ugly */
 			if ((!t_idx || !cs_ptr->sc.trap.found) &&
-					!(cs_ptr=GetCS(c_ptr, CS_MON_TRAP)))
+					!(cs_ptr = GetCS(c_ptr, CS_MON_TRAP)))
 				done = TRUE;
 		}
 
@@ -3283,7 +3283,7 @@ void do_cmd_disarm(int Ind, int dir)
 void do_cmd_bash(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
 	int                 y, x;
@@ -3563,7 +3563,7 @@ bool get_something_tval(int Ind, int tval, int *ip)
 void do_cmd_spike(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 
 	int                  y, x, item;
 
@@ -3683,7 +3683,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 			/* This should be cfg.trap_bump_disarm? */
 			if (cfg.door_bump_open & BUMP_OPEN_TRAP &&
 			    p_ptr->easy_disarm &&
-			    (cs_ptr=GetCS(c_ptr, CS_TRAPS)) &&
+			    (cs_ptr = GetCS(c_ptr, CS_TRAPS)) &&
 			    cs_ptr->sc.trap.found &&
 			    !c_ptr->o_idx &&
 			    !UNAWARENESS(p_ptr) &&
@@ -3845,10 +3845,10 @@ int do_cmd_run(int Ind, int dir)
 void do_cmd_stay(int Ind, int pickup)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type *c_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	
 	if (p_ptr->new_level_flag) return;
 
@@ -4117,7 +4117,7 @@ bool retaliating_cmd = FALSE;
 void do_cmd_fire(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 
 	int                     i, j, y, x, ny, nx, ty, tx, bx, by;
 #ifdef PY_FIRE_ON_WALL
@@ -5566,7 +5566,7 @@ bool interfere(int Ind, int chance)
 	int d, i, tx, ty, x = p_ptr->px, y = p_ptr->py;
 	int calmness = get_skill_scale(p_ptr, SKILL_CALMNESS, 80);
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	/* monster doesn't know the player is actually next to it?
 	   (ignore cloak_neutralized for the time being) */
@@ -5702,7 +5702,7 @@ bool interfere(int Ind, int chance)
 void do_cmd_throw(int Ind, int dir, int item, char bashing)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 
 	int                     i, j, y, x, ny, nx, ty, tx;
 	int                     chance, tdam, tdis;
@@ -5733,7 +5733,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 	char brand_msg[80] = { '\0' };
 
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* New '+' feat in 4.4.6.2 */
 	if (dir == 11) {
@@ -5781,7 +5781,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 		/* Handle the newbies_cannot_drop option */
 #if (STARTEQ_TREATMENT == 1)
 		if ((p_ptr->max_plv < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr)
-		    && !(o_ptr->tval==1 && o_ptr->sval>=9 /* rugby ball, chess pieces */)) // && (object_value(0, o_ptr) > 0))
+		    && !(o_ptr->tval == 1 && o_ptr->sval >= 9 /* rugby ball, chess pieces */)) // && (object_value(0, o_ptr) > 0))
 		{
 /*			msg_format(Ind, "Please don't litter the %s.",
 			    istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
@@ -6374,10 +6374,10 @@ static void destroy_house(int Ind, struct dna_type *dna) {
 }
 
 void house_admin(int Ind, int dir, char *args){
-	player_type *p_ptr=Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	player_type *p_ptr = Players[Ind];
+	struct worldpos *wpos = &p_ptr->wpos;
 	int x,y;
-	int success=0;
+	int success = 0;
 	cave_type *c_ptr;
 	struct dna_type *dna;
 	cave_type **zcave;
@@ -6404,10 +6404,10 @@ void house_admin(int Ind, int dir, char *args){
 				if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
 					switch (args[0]) {
 						case 'O':
-							success=chown_door(Ind, dna, args, x, y);
+							success = chown_door(Ind, dna, args, x, y);
 							break;
 						case 'M':
-							success=chmod_door(Ind, dna, args);
+							success = chmod_door(Ind, dna, args);
 							break;
 						case 'K':
 							destroy_house(Ind, dna);
@@ -6438,7 +6438,7 @@ void house_admin(int Ind, int dir, char *args){
 void do_cmd_purchase_house(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 
 	int y, x, h_idx;
 	int factor;

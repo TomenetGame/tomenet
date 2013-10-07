@@ -66,33 +66,32 @@ int stricmp(cptr a, cptr b)
 
 bool in_banlist(char *addr){
 	struct ip_ban *ptr;
-	for(ptr=banlist; ptr!=(struct ip_ban*)NULL; ptr=ptr->next){
-		if(!strcmp(addr, ptr->ip)) return(TRUE);
+	for (ptr = banlist; ptr != (struct ip_ban*)NULL; ptr = ptr->next) {
+		if (!strcmp(addr, ptr->ip)) return(TRUE);
 	}
-	return(FALSE);
+	return (FALSE);
 }
 
-void check_banlist(){
-	struct ip_ban *ptr, *new, *old=(struct ip_ban*)NULL;
-	ptr=banlist;
-	while(ptr!=(struct ip_ban*)NULL){
-		if(ptr->time){
-			if(!(--ptr->time)){
+void check_banlist() {
+	struct ip_ban *ptr, *new, *old = (struct ip_ban*)NULL;
+	ptr = banlist;
+	while (ptr != (struct ip_ban*)NULL) {
+		if (ptr->time) {
+			if (!(--ptr->time)) {
 				s_printf("Unbanning connections from %s\n", ptr->ip);
-				if(!old){
-					banlist=ptr->next;
-					new=banlist;
-				}
-				else{
-					old->next=ptr->next;
-					new=old->next;
+				if (!old) {
+					banlist = ptr->next;
+					new = banlist;
+				} else {
+					old->next = ptr->next;
+					new = old->next;
 				}
 				free(ptr);
-				ptr=new;
+				ptr = new;
 				continue;
 			}
 		}
-		ptr=ptr->next;
+		ptr = ptr->next;
 	}
 }
 
@@ -426,11 +425,11 @@ errr my_fgets(FILE *fff, char *buf, huge n, bool conv)
 			}
 
 			/* Handle printables */
-			else if (isprint(*s) || *s=='\377')
+			else if (isprint(*s) || *s == '\377')
 			{
 				/* easier to edit perma files */
-				if(conv && *s=='{' && *(s+1)!='{')
-					*s='\377';
+				if (conv && *s == '{' && *(s + 1) != '{')
+					*s = '\377';
 				/* Copy */
 				buf[i++] = *s;
 
@@ -1665,7 +1664,7 @@ bool check_guard_inscription( s16b quark, char what ) {
 	const char *ax;
 	ax = quark_str(quark);
 	if (ax == NULL) { return FALSE; };
-	while ((ax=strchr(ax, '!')) != NULL) {
+	while ((ax = strchr(ax, '!')) != NULL) {
 		while (ax++ != NULL) {
 			if (*ax == 0)  {
 				return FALSE; /* end of quark, stop */
@@ -2235,16 +2234,15 @@ void msg_print_near(int Ind, cptr msg)
 	player_type *p_ptr = Players[Ind];
 	int y, x, i;
 	struct worldpos *wpos;
-	wpos=&p_ptr->wpos;
+	wpos = &p_ptr->wpos;
 
-	if(p_ptr->admin_dm) return;
+	if (p_ptr->admin_dm) return;
 
 	y = p_ptr->py;
 	x = p_ptr->px;
 
 	/* Check each player */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Check this player */
 		p_ptr = Players[i];
 
@@ -2272,7 +2270,7 @@ void msg_print_verynear(int Ind, cptr msg)
 	player_type *p_ptr = Players[Ind];
 	int y, x, i;
 	struct worldpos *wpos;
-	wpos=&p_ptr->wpos;
+	wpos = &p_ptr->wpos;
 
 //	if(p_ptr->admin_dm) return;
 
@@ -2280,8 +2278,7 @@ void msg_print_verynear(int Ind, cptr msg)
 	x = p_ptr->px;
 
 	/* Check each player */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Check this player */
 		p_ptr = Players[i];
 
@@ -2420,14 +2417,13 @@ void msg_print_near_monster(int m_idx, cptr msg)
 	char m_name[MNAME_LEN];
 
 	monster_type	*m_ptr = &m_list[m_idx];
-	worldpos *wpos=&m_ptr->wpos;
+	worldpos *wpos = &m_ptr->wpos;
 
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 
 	/* Check each player */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		/* Check this player */
 		p_ptr = Players[i];
 
@@ -3379,7 +3375,7 @@ static void player_talk_aux(int Ind, char *message)
 			if (message == colon || colon[-1] == ' ') {
 				i = (int) (colon - message);
 				do message[i] = message[i+1];
-				while(message[i++]!='\0');
+				while (message[i++] != '\0');
 				colon = NULL;
 				break;
 			}
@@ -3415,7 +3411,7 @@ static void player_talk_aux(int Ind, char *message)
 			/* Pretend colon wasn't there */
 			i = (int) (colon - message);
 			do message[i] = message[i+1];
-			while(message[i++]!='\0');
+			while (message[i++] != '\0');
 			colon = NULL;
 			break;
 		case '\0':
@@ -3423,7 +3419,7 @@ static void player_talk_aux(int Ind, char *message)
 #if 0 /* disabled this 'feature', might be more convenient - C. Blue */
 			colon = NULL;
 #else
-			if (colon[-1]!='!' && colon[-1]!='#' && colon[-1]!='%' && colon[-1]!='$' && colon[-1]!='+')
+			if (colon[-1] != '!' && colon[-1] != '#' && colon[-1] != '%' && colon[-1] != '$' && colon[-1] != '+')
 				colon = NULL;
 #endif
 			break;
@@ -4246,10 +4242,10 @@ int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names
 	cptr problem = "";
 	bool party_online;
 
-	p_ptr=Players[Ind];
+	p_ptr = Players[Ind];
 
 	/* don't waste time */
-	if(p_ptr==(player_type*)NULL) return(0);
+	if (p_ptr == (player_type*)NULL) return(0);
 
 	/* Acquire length of search string */
 	len = strlen(name);
@@ -4815,8 +4811,8 @@ void bracer_ff(char *buf)
 {
 	int i, len = strlen(buf);
 
-	for(i=0;i<len;i++){
-		if(buf[i]=='{') buf[i]='\377';
+	for (i = 0; i < len; i++) {
+		if (buf[i] == '{') buf[i] = '\377';
 	}
 }
 

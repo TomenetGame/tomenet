@@ -3440,7 +3440,7 @@ void store_sell(int Ind, int item, int amt)
 	}
 
 	/* Access the store */
-//	i=gettown(Ind);
+//	i = gettown(Ind);
 //	store_type *st_ptr = &town[townval].townstore[i];
 
 	/* Is there room in the store (or the home?) */
@@ -3690,7 +3690,7 @@ void store_confirm(int Ind)
 	}
 
 	/* The store gets that (known) item */
-//	if(sold_obj.tval!=8)	// What was it for.. ?
+//	if (sold_obj.tval != 8)	// What was it for.. ?
 	if (gettown(Ind) != -1) //DUNGEON STORES
 		item_pos = store_carry(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj);
 #if 0 /* have dungeon shops eat the item to prevent cheezy transfers */
@@ -4996,7 +4996,7 @@ void home_sell(int Ind, int item, int amt)
 	}
 
 	/* The store gets that (known) item */
-//	if(sold_obj.tval!=8)	// What was it for.. ?
+//	if (sold_obj.tval != 8)	// What was it for.. ?
 	item_pos = home_carry(Ind, h_ptr, &sold_obj);
 //		item_pos = store_carry(p_ptr->store_num, &sold_obj);
 

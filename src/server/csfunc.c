@@ -122,29 +122,29 @@ void keyload(c_special *cs_ptr){
 	struct key_type *key;
 	MAKE(key, struct key_type);
 	rd_u16b(&key->id);
-	cs_ptr->sc.ptr=key;
+	cs_ptr->sc.ptr = key;
 }
 void keysave(c_special *cs_ptr){
 	struct key_type *key;
-	key=cs_ptr->sc.ptr;
+	key = cs_ptr->sc.ptr;
 	wr_u16b(key->id);
 }
 int keyhit(c_special *cs_ptr, int y, int x, int Ind){
 	struct player_type *p_ptr;
 	int j;
 	struct cave_type **zcave, *c_ptr;
-	struct key_type *key=cs_ptr->sc.ptr;
+	struct key_type *key = cs_ptr->sc.ptr;
 
-	p_ptr=Players[Ind];
-	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
-	c_ptr=&zcave[y][x];
+	p_ptr = Players[Ind];
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
+	c_ptr = &zcave[y][x];
 
-	if(c_ptr->feat==FEAT_HOME_OPEN) return(TRUE);
+	if (c_ptr->feat == FEAT_HOME_OPEN) return(TRUE);
 	if (!(cfg.door_bump_open && p_ptr->easy_open)) return(FALSE);
-	if(p_ptr==(struct player_type*)NULL) return(FALSE);
-	for(j=0; j<INVEN_PACK; j++){
-		object_type *o_ptr=&p_ptr->inventory[j];
-		if(o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id){
+	if (p_ptr == (struct player_type*)NULL) return(FALSE);
+	for (j = 0; j < INVEN_PACK; j++) {
+		object_type *o_ptr = &p_ptr->inventory[j];
+		if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id) {
 			c_ptr->feat = FEAT_HOME_OPEN;
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 			note_spot_depth(&p_ptr->wpos, y, x);
@@ -188,7 +188,7 @@ void tload(c_special *cs_ptr)
 	byte tmp8u;
 	rd_byte(&cs_ptr->sc.trap.t_idx);
 	rd_byte(&tmp8u);
-	cs_ptr->sc.trap.found=tmp8u;
+	cs_ptr->sc.trap.found = tmp8u;
 }
 
 void tsave(c_special *cs_ptr)
@@ -202,15 +202,13 @@ void tsee(c_special *cs_ptr, char *c, byte *a, int Ind){
 
 int thit(c_special *cs_ptr, int y, int x, int Ind){
 #if 0	/* temporary while csfunc->activate() is changed */
-	if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost)
-	{
+	if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost) {
 		bool hit = TRUE;
 
 		/* Disturb */
 		disturb(Ind, 0, 0);
 
-		if (!cs_ptr->sc.trap.found)
-		{
+		if (!cs_ptr->sc.trap.found) {
 			/* Message */
 			msg_print(Ind, "You triggered a trap!");
 
@@ -237,19 +235,19 @@ int thit(c_special *cs_ptr, int y, int x, int Ind){
 void insc_load(c_special *cs_ptr){
 	struct floor_insc *insc;
 	MAKE(insc, struct floor_insc);
-	cs_ptr->sc.ptr=insc;
+	cs_ptr->sc.ptr = insc;
 	rd_string(insc->text, 80);
 	rd_u16b(&insc->found);
 }
 
 void insc_save(c_special *cs_ptr){
-	struct floor_insc *insc=cs_ptr->sc.ptr;
+	struct floor_insc *insc = cs_ptr->sc.ptr;
 	wr_string(insc->text);
 	wr_u16b(insc->found);
 }
 
 int insc_hit(c_special *cs_ptr, int y, int x, int Ind){
-	struct floor_insc *sptr=cs_ptr->sc.ptr;
+	struct floor_insc *sptr = cs_ptr->sc.ptr;
 	char sign_text[MAX_CHARS], *s = sign_text, *p = NULL;
 	strcpy(s, sptr->text);
 
@@ -297,7 +295,7 @@ void fountload(c_special *cs_ptr)
 	rd_byte(&cs_ptr->sc.fountain.type);
 	rd_byte(&cs_ptr->sc.fountain.rest);
 	rd_byte(&tmp8u);
-	cs_ptr->sc.fountain.known=tmp8u;
+	cs_ptr->sc.fountain.known = tmp8u;
 }
 void fountsave(c_special *cs_ptr)
 {
@@ -355,28 +353,27 @@ void s32bsave(c_special *cs_ptr)
 	wr_s32b(cs_ptr->sc.omni);
 }
 
-void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
-{
+void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr) {
 	struct c_special *trav, *prev;
 	bool flag = FALSE;
 	if (!c_ptr) return;
 
-	prev=trav=c_ptr->special;
-	while(trav){
-		if(trav==cs_ptr){
-			if (flag) prev->next=trav->next;
+	prev = trav = c_ptr->special;
+	while (trav) {
+		if (trav == cs_ptr) {
+			if (flag) prev->next = trav->next;
 			else c_ptr->special = trav->next;
 
 			KILL(trav, struct c_special);
 			return;
 		}
 		flag = TRUE;
-		prev=trav;
-		trav=trav->next;
+		prev = trav;
+		trav = trav->next;
 	}
 }
 
-struct sfunc csfunc[]={
+struct sfunc csfunc[] = {
 	{ defload, defsave, defsee, defhit },	/* CS_NONE */
 	{ dnaload, dnasave, defsee, dnahit },	/* CS_DNADOOR */
 	{ keyload, keysave, keysee, keyhit },	/* CS_KEYDOOR */

@@ -642,11 +642,10 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
 	int y, x, i;
 	cave_type **zcave;
 
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	
 	/* Start with adjacent locations, spread further */
-	for (i = 1; i <= tdi[2]; i++)
-	{
+	for (i = 1; i <= tdi[2]; i++) {
 		y = y1 + tdy[i];
 		x = x1 + tdx[i];
 
@@ -680,8 +679,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
 	/* Start at the player's location, and check 2 grids in each dir */
 	for (y= y1-2; y<= y1+2; y++)
 	{
-		for (x = x1-2; x<=x1+2; x++)
-		{
+		for (x = x1 - 2; x <= x1 + 2; x++) {
 			/* Ignore illegal locations */
 			if (!in_bounds(y,x)) continue;
 			
@@ -733,7 +731,7 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range
 	int dist, y, x;
 	cave_type **zcave;
 
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	
 	/* Start at the initial location */
 	y = y1, x = x1;
@@ -1492,7 +1490,7 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 	int i, x2 = m_ptr->fx, y2 = m_ptr->fy;
 	int antichance = 0, highest_antichance = 0, anti_Ind = 0;	// , dis, antidis;
 
-	if (!(zcave=getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* bad hack: Also abuse this function to check for silence-effect - C. Blue */
 	if (m_ptr->silenced > 0 && magik(ANTIMAGIC_CAP)) { //could also use INTERCEPT_CAP instead
@@ -1566,7 +1564,7 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 			/* Ignore "illegal" locations */
 			if (!in_bounds2(wpos, y, x)) continue;
 
-			if ((m_idx = zcave[y][x].m_idx)<=0) continue;
+			if ((m_idx = zcave[y][x].m_idx) <= 0) continue;
 
 			/* Enforce a "circular" explosion */
 			if ((dis = distance(y2, x2, y, x)) > MONSTER_ANTIDIS) continue;
@@ -1639,7 +1637,7 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 	if (rad < 1) return 99;
 
 	/* paranoia */
-	if(!(zcave=getcave(&m_ptr->wpos))) return 99;
+	if (!(zcave = getcave(&m_ptr->wpos))) return 99;
 
 	for (i = 1; i <= tdi[rad]; i++)
 	{
@@ -1677,10 +1675,10 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 
 		/* Check nearby locations */
 		for (y = py - d; y <= py + d; y++)
-//		for (y = py - d*vy; y <= py + d*vy; y+=vy)
+//		for (y = py - d * vy; y <= py + d * vy; y += vy)
 		{
 			for (x = px - d; x <= px + d; x++)
-//			for (x = px - d*vx; x <= px + d*vx; x+=vx)
+//			for (x = px - d * vx; x <= px + d * vx; x += vx)
 			{
 				/* Skip illegal locations */
 				if (!in_bounds(y, x)) continue;
@@ -1770,7 +1768,7 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
  */
 bool make_attack_spell(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 //	dun_level		*l_ptr = getfloor(wpos);
 	int			k, chance, thrown_spell, rlev; // , failrate;
 //	byte		spell[96], num = 0;
@@ -3486,7 +3484,7 @@ if (season_halloween) {
 			if (monst_check_antimagic(Ind, m_idx)) break;
 
 			/* No teleporting within no-tele vaults and such */
-			if(!(zcave=getcave(wpos))) break;
+			if (!(zcave = getcave(wpos))) break;
 			if (zcave[oy][ox].info & CAVE_STCK)
 			{
 //				msg_format(Ind, "%^s fails to blink.", m_name);
@@ -3518,7 +3516,7 @@ if (season_halloween) {
 			if (monst_check_antimagic(Ind, m_idx)) break;
 
 			/* No teleporting within no-tele vaults and such */
-			if(!(zcave=getcave(wpos))) break;
+			if (!(zcave = getcave(wpos))) break;
 			if (zcave[oy][ox].info & CAVE_STCK)
 			{
 //				msg_format(Ind, "%^s fails to teleport.", m_name);
@@ -3574,7 +3572,7 @@ if (season_halloween) {
 			if (p_ptr->martyr) break;
 
 			/* No teleporting within no-tele vaults and such */
-			if(!(zcave=getcave(wpos))) break;
+			if (!(zcave = getcave(wpos))) break;
 			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK))
 			{
 				msg_format(Ind, "%^s fails to command you to return.", m_name);
@@ -3613,7 +3611,7 @@ if (season_halloween) {
 			if (p_ptr->martyr) break;
 
 			/* No teleporting within no-tele vaults and such */
-			if(!(zcave=getcave(wpos))) break;
+			if (!(zcave = getcave(wpos))) break;
 			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK))
 			{
 				msg_format(Ind, "%^s fails to teleport you away.", m_name);
@@ -3645,7 +3643,7 @@ if (season_halloween) {
 			if (p_ptr->martyr) break;
 
 			/* No teleporting within no-tele vaults and such */
-			if(!(zcave=getcave(wpos))) break;
+			if (!(zcave = getcave(wpos))) break;
 			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK))
 			{
 				msg_format(Ind, "%^s fails to teleport you away.", m_name);
@@ -4662,7 +4660,7 @@ static bool find_terrain(int m_idx, int *yp, int *xp)
 
 	cave_type **zcave;
 	/* paranoia */
-	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 
 #if 0
 	/* What do you want? */
@@ -4762,7 +4760,7 @@ static bool find_safety(int Ind, int m_idx, int *yp, int *xp)
 
 	cave_type **zcave;
 	/* paranoia */
-	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 
 	/* Start with adjacent locations, spread further */
 	for (i = 1; i <= tdi[SAFETY_RADIUS]; i++)
@@ -4916,12 +4914,12 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	int y, x, d=1, dis, i;
+	int y, x, d = 1, dis, i;
 	int gy = 0, gx = 0, gdis = 999, min;
 
 	cave_type **zcave;
 	/* paranoia */
-	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(&m_ptr->wpos))) return(FALSE);
 
 	/* Closest distance to get */
 	min = distance(py, px, fy, fx) * 3 / 4 + 2;
@@ -5318,7 +5316,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		int tx = x2, ty = y2;
 		cave_type **zcave;
 		/* paranoia */
-		if(!(zcave=getcave(&m_ptr->wpos))) return;
+		if (!(zcave = getcave(&m_ptr->wpos))) return;
 #ifdef	MONSTERS_HIDE_HEADS
 		/*
 		 * Animal packs try to get the player out of corridors
@@ -5881,7 +5879,7 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm)
 			/* no point if there are no players on depth */
 			/* and it would crash anyway ;) */
 
-			if(!(zcave=getcave(&m_ptr->wpos))) return FALSE;
+			if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
                         c_ptr = &zcave[sy][sx];
 
 			if(!c_ptr->m_idx) continue;
@@ -6135,7 +6133,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
 			/* no point if there are no players on depth */
 			/* and it would crash anyway ;) */
 
-			if(!(zcave=getcave(&m_ptr->wpos))) return FALSE;
+			if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
                         c_ptr = &zcave[sy][sx];
 
 			if(!c_ptr->m_idx) continue;
@@ -6372,7 +6370,7 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist)
 
 	inv = p_ptr->invis;
 
-	if(p_ptr->ghost) inv+=10;
+	if (p_ptr->ghost) inv += 10;
 
 	/* Bad conditions */
 	if (p_ptr->cur_lite) inv /= 2;
@@ -6460,9 +6458,9 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist)
 void process_npcs(){
 #if 0
 	struct cave_type **zcave;
-	zcave=getcave(&Npcs[0].wpos);
-	if(!Npcs[0].active) return;
-	if(zcave!=(cave_type**)NULL){
+	zcave = getcave(&Npcs[0].wpos);
+	if (!Npcs[0].active) return;
+	if (zcave != (cave_type**)NULL) {
 		process_hooks(HOOK_NPCTEST, "d", &Npcs[0]);
 	}
 #endif
@@ -7749,7 +7747,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		/* restrict aquatic life to the pond */
 		if(do_move && (r_ptr->flags7 & RF7_AQUATIC)){
 			if((c_ptr->feat != FEAT_DEEP_WATER) &&
-				(zcave[oy][ox].feat == FEAT_DEEP_WATER)) do_move=FALSE;
+				(zcave[oy][ox].feat == FEAT_DEEP_WATER)) do_move = FALSE;
 		}
 
 		/* Hack -- those that hate water */
@@ -8167,7 +8165,7 @@ static void process_monster_pet(int Ind, int m_idx)
 	player_type *p_ptr; 
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
-	struct worldpos *wpos=&m_ptr->wpos;
+	struct worldpos *wpos = &m_ptr->wpos;
    
 	int			i, d, oy, ox, ny, nx;
 
@@ -8195,11 +8193,12 @@ static void process_monster_pet(int Ind, int m_idx)
     * been regenerated yet.
 	*/
    cave_type **zcave;
-   if(!(zcave=getcave(wpos))) return;
+   if (!(zcave = getcave(wpos))) return;
 
    if (Ind > 0) p_ptr = Players[Ind];
    else p_ptr = NULL;
-   m_ptr->mind|=(GOLEM_ATTACK|GOLEM_GUARD|GOLEM_FOLLOW);
+   m_ptr->mind |= (GOLEM_ATTACK|GOLEM_GUARD|GOLEM_FOLLOW);
+
 	/* handle "stun" */
 	if (m_ptr->stunned)
 	{
@@ -8612,7 +8611,7 @@ static void process_monster_golem(int Ind, int m_idx)
 
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
-	struct worldpos *wpos=&m_ptr->wpos;
+	struct worldpos *wpos = &m_ptr->wpos;
 
 	int			i, d, oy, ox, ny, nx;
 
@@ -8640,7 +8639,7 @@ static void process_monster_golem(int Ind, int m_idx)
 	   been regenerated yet.
 	*/
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
         if (Ind > 0) p_ptr = Players[Ind];
         else p_ptr = NULL;
@@ -9125,7 +9124,7 @@ void process_monsters(void)
 	/* Process the monsters */
 	for (k = m_top - 1; k >= 0; k--) {
 /*		int closest = -1, dis_to_closest = 9999, lowhp = 9999;
-		bool blos=FALSE, new_los;	*/
+		bool blos = FALSE, new_los;	*/
 
 		/* Access the index */
 		i = _m_fast[k];

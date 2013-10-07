@@ -465,7 +465,7 @@ static void prt_speed(int Ind)
 #if 0	/* methinks we'd better tell it to players.. - Jir - */
 	/* Hack -- Visually "undo" the Search Mode Slowdown */
 	/* And this formula can be wrong for hellish */
-//	if (p_ptr->searching) i+=(p_ptr->mode&MODE_HARD ? 5 : 10);
+//	if (p_ptr->searching) i += (p_ptr->mode & MODE_HARD ? 5 : 10);
 	if (p_ptr->searching) i += 10;
 #endif	// 0
 
@@ -3763,7 +3763,7 @@ void calc_boni(int Ind)
 		 * bonus but not the ego bonus so we don't add them twice.
 		*/
 #if 1
-//		if (o_ptr->name2 && o_ptr->tval!=TV_RING) // pls see apply_magic ;)
+//		if (o_ptr->name2 && o_ptr->tval != TV_RING) // pls see apply_magic ;)
 		if (o_ptr->name2) {
 			artifact_type *a_ptr;
 
@@ -4412,8 +4412,8 @@ void calc_boni(int Ind)
 
 	/* Temporary "Berserk" */
 	if (p_ptr->berserk) {
-		p_ptr->to_h -=5;
-		p_ptr->dis_to_h -=5;
+		p_ptr->to_h -= 5;
+		p_ptr->dis_to_h -= 5;
 		p_ptr->to_d += 15;
 		p_ptr->dis_to_d += 15;
 		p_ptr->to_a -= 10;
@@ -6778,15 +6778,15 @@ int start_global_event(int Ind, int getype, char *parm) {
 	/* give feedback to the creator; tell all admins if this was called from a script */
 /*	if (Ind) {
 		msg_format(Ind, "Reward item level = %d.", ge->extra[0]);
-		msg_format(Ind, "Created new event #%d of type %d parms='%s'.", n+1, getype, parm);
+		msg_format(Ind, "Created new event #%d of type %d parms='%s'.", n + 1, getype, parm);
 	} else */{
 		for (i = 1;i <= NumPlayers; i++)
 		    if (is_admin(Players[i])) {
 			msg_format(i, "Reward item level = %d.", ge->extra[0]);
-			msg_format(i, "Created new event #%d of type %d parms='%s'.", n+1, getype, parm);
+			msg_format(i, "Created new event #%d of type %d parms='%s'.", n + 1, getype, parm);
 		}
 	}
-	s_printf("%s EVENT_CREATE: #%d of type %d parms='%s'\n", showtime(), n+1, getype, parm);
+	s_printf("%s EVENT_CREATE: #%d of type %d parms='%s'\n", showtime(), n + 1, getype, parm);
 
 	/* extra announcement if announcement time isn't the usual multiple of announcement intervals */
 #if 1 /* this is ok, and leaving it for now */

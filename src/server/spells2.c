@@ -1527,7 +1527,7 @@ void self_knowledge(int Ind) {
 		else if (f1 & TR1_SLAY_DRAGON) fprintf(fff, "Your weapon is especially deadly against dragons.\n");
 		if (f1 & TR1_SLAY_EVIL) fprintf(fff, "Your weapon strikes at evil with extra force.\n");
 	}
-//	info[i]=NULL;
+//	info[i] = NULL;
 
 	/* Close the file */
 	my_fclose(fff);

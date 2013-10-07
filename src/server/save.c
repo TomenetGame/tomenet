@@ -434,7 +434,7 @@ static void wr_notes() {
 static void wr_quests(){
 	int i;
 	wr_s16b(questid);
-	for(i=0; i<20; i++){
+	for (i = 0; i < 20; i++) {
 		wr_s16b(quests[i].active);
 		wr_s16b(quests[i].id);
 		wr_s16b(quests[i].type);
@@ -949,14 +949,14 @@ static void wr_hostilities(int Ind)
 static void wr_floor(struct worldpos *wpos)
 {
 	int y, x, i;
-	byte prev_feature=0xff, n;
-	u16b prev_info=0xffff;
+	byte prev_feature = 0xff, n;
+	u16b prev_info = 0xffff;
 	unsigned char runlength;
 	struct c_special *cs_ptr;
 
 	cave_type *c_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 #if DEBUG_LEVEL > 1
 //#if 1 > 0
 	s_printf("%d players on %s.\n", players_on_depth(wpos), wpos_format(0, wpos));
@@ -1035,25 +1035,25 @@ static void wr_floor(struct worldpos *wpos)
 	for (y = 0; y < MAX_HGT; y++) {
 		/* break the row down into runs */
 		for (x = 0; x < MAX_WID; x++) {
-			n=0;
+			n = 0;
 			c_ptr = &zcave[y][x];
-			cs_ptr=c_ptr->special;
+			cs_ptr = c_ptr->special;
 			/* count the number of cs_things */
-			while(cs_ptr){
+			while (cs_ptr) {
 				n++;
-				cs_ptr=cs_ptr->next;
+				cs_ptr = cs_ptr->next;
 			}
 			/* write them */
-			if(n){
+			if (n) {
 				wr_byte(x);
 				wr_byte(y);
 				wr_byte(n);
-				cs_ptr=c_ptr->special;
-				while(cs_ptr){
+				cs_ptr = c_ptr->special;
+				while (cs_ptr) {
 					i = cs_ptr->type;
 					wr_byte(i);
 					csfunc[i].save(cs_ptr);
-					cs_ptr=cs_ptr->next;
+					cs_ptr = cs_ptr->next;
 				}
 			}
 #if 0
@@ -1092,7 +1092,7 @@ static void wr_cave_memory(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int y,x;
-	char prev_flag=-1;	/* just for definedness. */
+	char prev_flag = -1;	/* just for definedness. */
 	unsigned char runlength = 0;
 
 	/* Remember unique ID of the old floor */
@@ -1569,8 +1569,8 @@ bool load_player(int Ind)
 		s_printf("Savefile does not exist for player %s.\n", p_ptr->name);
 		s_printf("(%s) %d\n", p_ptr->savefile, errno);
 
-		if(errno!=ENOENT && errno!=EIO){	/* EMFILE for example */
-			if(cfg.runlevel>1){
+		if (errno != ENOENT && errno != EIO) {	/* EMFILE for example */
+			if (cfg.runlevel > 1) {
 				s_printf("Automatic shutdown\n");
 				msg_broadcast(0, "\377r* SERVER EMERGENCY SHUTDOWN *");
 				set_runlevel(1);
@@ -1807,8 +1807,8 @@ static void wr_player_names(void)
 	for (i = 0; i < num; i++)
 	{
 		/* Store the ID */
-		ptr=lookup_player(id_list[i]);
-		if(ptr){
+		ptr = lookup_player(id_list[i]);
+		if (ptr) {
 			wr_s32b(id_list[i]);
 			wr_u32b(ptr->account);
 			wr_s32b(ptr->laston);

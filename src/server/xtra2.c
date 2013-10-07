@@ -1177,7 +1177,7 @@ bool set_tim_wraith(int Ind, int v)
 	bool notice = FALSE;
 	cave_type **zcave;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-	if(!(zcave=getcave(&p_ptr->wpos))) return FALSE;
+	if (!(zcave = getcave(&p_ptr->wpos))) return FALSE;
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -1213,7 +1213,7 @@ bool set_tim_wraith(int Ind, int v)
 			 * To prevent breaking into houses */
 			/* important! check for illegal spaces */
 			cave_type **zcave;
-			zcave=getcave(&p_ptr->wpos);
+			zcave = getcave(&p_ptr->wpos);
 
 			if (zcave && in_bounds(p_ptr->py, p_ptr->px)) {
 				/* if a worn item grants wraith form, don't let it run out */
@@ -4722,7 +4722,7 @@ void monster_death(int Ind, int m_idx)
 			if (m_ptr->owner == Players[i]->id) {
 				msg_format(i, "\374\377R%s has killed your pet!", Players[Ind]->name);
 				msg_format(Ind, "\374\377RYou have killed %s's pet!", Players[i]->name);
-				Players[i]->has_pet=0;
+				Players[i]->has_pet = 0;
 				FREE(m_ptr->r_ptr, monster_race); //no drop, no exp.
 				return;
 			}
@@ -5882,20 +5882,20 @@ if (cfg.unikill_format) {
 /* FIXME: this function is known to be bypassable by nominally
  * 'party-owning'.
  */
-void kill_house_contents(house_type *h_ptr){
+void kill_house_contents(house_type *h_ptr) {
 	struct worldpos *wpos = &h_ptr->wpos;
 	object_type *o_ptr;
 	int i;
 
 #ifdef USE_MANG_HOUSE
-	if(h_ptr->flags&HF_RECT){
-		int sy,sx,ey,ex,x,y;
-		sy=h_ptr->y+1;
-		sx=h_ptr->x+1;
-		ey=h_ptr->y+h_ptr->coords.rect.height-1;
-		ex=h_ptr->x+h_ptr->coords.rect.width-1;
-		for(y=sy;y<ey;y++){
-			for(x=sx;x<ex;x++){
+	if (h_ptr->flags & HF_RECT) {
+		int sy, sx, ey, ex, x, y;
+		sy = h_ptr->y + 1;
+		sx = h_ptr->x + 1;
+		ey = h_ptr->y + h_ptr->coords.rect.height - 1;
+		ex = h_ptr->x + h_ptr->coords.rect.width - 1;
+		for (y = sy; y < ey; y++) {
+			for (x = sx; x < ex; x++) {
 				delete_object(wpos,y,x, TRUE);
 			}
 		}
@@ -5941,14 +5941,14 @@ void kill_house_contents(house_type *h_ptr){
         }
 }
 
-void kill_houses(int id, byte type){
+void kill_houses(int id, byte type) {
 	int i;
-	for(i=0;i<num_houses;i++){
-		struct dna_type *dna=houses[i].dna;
-		if(dna->owner==id && dna->owner_type==type){
-			dna->owner=0L;
-			dna->creator=0L;
-			dna->a_flags=ACF_NONE;
+	for (i = 0; i < num_houses; i++) {
+		struct dna_type *dna = houses[i].dna;
+		if (dna->owner == id && dna->owner_type == type) {
+			dna->owner = 0L;
+			dna->creator = 0L;
+			dna->a_flags = ACF_NONE;
 			kill_house_contents(&houses[i]);
 		}
 	}
@@ -5960,11 +5960,11 @@ void kill_houses(int id, byte type){
 void kill_objs(int id){
 	int i;
 	object_type *o_ptr;
-	for(i=0;i<o_max;i++){
-		o_ptr=&o_list[i];
-		if(!o_ptr->k_idx) continue;
-		if(o_ptr->owner==id){
-			o_ptr->owner=MAX_ID+1;
+	for (i = 0; i < o_max; i++) {
+		o_ptr = &o_list[i];
+		if (!o_ptr->k_idx) continue;
+		if (o_ptr->owner == id) {
+			o_ptr->owner = MAX_ID + 1;
 			/* o_ptr->mode = 0; <- makes everlasting items usable! bad! */
 		}
 	}
@@ -7599,17 +7599,17 @@ void rem_quest(u16b id){
 
 	if(!id) return;
 
-	for(i=0;i<20;i++){
-		if(quests[i].id==id){
+	for (i = 0; i < 20; i++) {
+		if (quests[i].id == id) {
 			break;
 		}
 	}
-	if(i==20) return;
+	if (i == 20) return;
 	s_printf("Quest found in slot %d\n",i);
-	if(quests[i].active){
+	if (quests[i].active) {
 		quests[i].active--;
 		s_printf("Remaining active: %d\n", quests[i].active);
-		if(!quests[i].active){
+		if (!quests[i].active) {
 			process_hooks(HOOK_QUEST_FAIL, "d", id);
 			s_printf("delete call\n");
 			del_quest(id);
@@ -7959,7 +7959,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 			int i, head, arm, leg, part, ok;
 			head = arm = leg = part = 0;
-			for(i=1; i < 5; i++) {
+			for (i = 1; i < 5; i++) {
 			        ok = 0;
 				while(ok == 0) {
 					ok = 1;
@@ -9204,7 +9204,7 @@ bool target_able(int Ind, int m_idx)
 		/* Acquire pointer */
 		q_ptr = Players[0 - m_idx];
 
-		if ((0 - m_idx) > NumPlayers) q_ptr=NULL;
+		if ((0 - m_idx) > NumPlayers) q_ptr = NULL;
 
 		/* Paranoia check -- require a valid player */
 		if (!q_ptr || q_ptr->conn == NOT_CONNECTED){
@@ -9364,7 +9364,7 @@ static bool autotarget = FALSE;
 bool target_set(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	int		i, m, idx;
 	int		y;
 	int		x;
@@ -9620,7 +9620,7 @@ bool target_set_friendly(int Ind, int dir, ...)
 {
 	va_list ap;
 	player_type *p_ptr = Players[Ind], *q_ptr;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	int		i, m, castplayer, idx;
 	int		y;
@@ -10291,7 +10291,7 @@ int get_player(int Ind, object_type *o_ptr)
 int get_monster(int Ind, object_type *o_ptr)
 {
         bool ok1 = TRUE, ok2 = TRUE;
-	int r_idx=0;
+	int r_idx = 0;
 
 	unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
 
@@ -10478,30 +10478,26 @@ bool do_scroll_life(int Ind)
 	player_type * p_ptr = Players[Ind], *q_ptr;
 	cave_type * c_ptr;
 	cave_type **zcave;
-	zcave=getcave(&p_ptr->wpos);
-	if(!zcave) return(FALSE);
+	zcave = getcave(&p_ptr->wpos);
+	if (!zcave) return(FALSE);
 
-	for (y = -1; y <= 1; y++)
-	{
-		for (x = -1; x <= 1; x++)
-	 	{
+	for (y = -1; y <= 1; y++) {
+		for (x = -1; x <= 1; x++) {
 	   		c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
-	  		if (c_ptr->m_idx < 0)
-	   		{
-				q_ptr=Players[0 - c_ptr->m_idx];
-   				if (q_ptr->ghost)
-   				{
-					if (cave_floor_bold(zcave, p_ptr->py+y, p_ptr->px+x) &&
+	  		if (c_ptr->m_idx < 0) {
+				q_ptr = Players[0 - c_ptr->m_idx];
+   				if (q_ptr->ghost) {
+					if (cave_floor_bold(zcave, p_ptr->py + y, p_ptr->px + x) &&
 					    !(c_ptr->info & CAVE_ICKY))
 					{
     						resurrect_player(0 - c_ptr->m_idx, 0);
 	/* if player is not in town and resurrected on *TRUE* death level
 	   then this is a GOOD action. Reward the player */
-						if(!istown(&p_ptr->wpos) && getlevel(&p_ptr->wpos)==q_ptr->died_from_depth){
-							u16b dal=1+((2*q_ptr->lev)/p_ptr->lev);
-							if(p_ptr->align_good>dal)
-								p_ptr->align_good-=dal;
-							else p_ptr->align_good=0;
+						if (!istown(&p_ptr->wpos) && getlevel(&p_ptr->wpos) == q_ptr->died_from_depth) {
+							u16b dal = 1 + ((2 * q_ptr->lev) / p_ptr->lev);
+							if (p_ptr->align_good > dal)
+								p_ptr->align_good -= dal;
+							else p_ptr->align_good = 0;
 						}
 	   			        	return TRUE;
 					} else {
@@ -10524,18 +10520,14 @@ bool do_restoreXP_other(int Ind)
 	player_type * p_ptr = Players[Ind];
 	cave_type * c_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
-	for (y = -1; y <= 1; y++)
-	{
-		for (x = -1; x <= 1; x++)
-	 	{
+	for (y = -1; y <= 1; y++) {
+		for (x = -1; x <= 1; x++) {
 	   		c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
 
-	  		if (c_ptr->m_idx < 0)
-	   		{
-   				if (Players[0 - c_ptr->m_idx]->exp < Players[0 - c_ptr->m_idx]->max_exp)
-   				{
+	  		if (c_ptr->m_idx < 0) {
+   				if (Players[0 - c_ptr->m_idx]->exp < Players[0 - c_ptr->m_idx]->max_exp) {
     					restore_level(0 - c_ptr->m_idx);
    			        	return TRUE;
       				}
@@ -10715,9 +10707,9 @@ bool master_level(int Ind, char * parms)
 //			wipe_t_list(&p_ptr->wpos);
 
 			/* dont do this where there are houses! */
-			for(i=0;i<num_houses;i++){
-				if(inarea(&p_ptr->wpos, &houses[i].wpos)){
-					houses[i].flags|=HF_DELETED;
+			for (i = 0; i < num_houses; i++) {
+				if (inarea(&p_ptr->wpos, &houses[i].wpos)) {
+					houses[i].flags |= HF_DELETED;
 				}
 			}
 			addtown(p_ptr->wpos.wy, p_ptr->wpos.wx, parms[1], 0, TOWN_VANILLA);
@@ -10779,18 +10771,17 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms)
  */
 //static bool guild_build(int Ind){
 bool guild_build(int Ind){
-	player_type *p_ptr=Players[Ind];
+	player_type *p_ptr = Players[Ind];
 	int i;
 
-	for(i=0;i<num_houses;i++){
-		if(inarea(&houses[i].wpos, &p_ptr->wpos))
-		{
-			if(fill_house(&houses[i], FILL_PLAYER, p_ptr)){
-				if(access_door(Ind, houses[i].dna, FALSE) || admin_p(Ind)){
-					if(houses[i].dna->owner_type == OT_GUILD &&
+	for (i = 0; i < num_houses; i++) {
+		if (inarea(&houses[i].wpos, &p_ptr->wpos)) {
+			if (fill_house(&houses[i], FILL_PLAYER, p_ptr)) {
+				if (access_door(Ind, houses[i].dna, FALSE) || admin_p(Ind)) {
+					if (houses[i].dna->owner_type == OT_GUILD &&
 					    p_ptr->guild == houses[i].dna->owner &&
-					    guilds[p_ptr->guild].master == p_ptr->id){
-						if(p_ptr->au > 1000){
+					    guilds[p_ptr->guild].master == p_ptr->id) {
+						if (p_ptr->au > 1000) {
 							p_ptr->au -= 1000;
 							p_ptr->redraw |= PR_GOLD;
 							return(TRUE);
@@ -11379,7 +11370,7 @@ bool master_player(int Ind, char *parms){
 					sf_delete(name);
 				}
 				if (n) C_KILL(id_list, n, int);
-				d_acc->flags|=ACC_DELD;
+				d_acc->flags |= ACC_DELD;
 				/* stamp in the deleted account */
 				WriteAccount(d_acc, FALSE);
 				KILL(d_acc, struct account);

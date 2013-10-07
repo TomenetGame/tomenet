@@ -497,7 +497,7 @@ static char *t_crypt(char *inbuf, cptr salt){
 #ifdef HAVE_CRYPT
 	static char out[64];
 	char setting[9];
-	setting[0]='_';
+	setting[0] = '_';
 	strncpy(&setting[1], salt, 8);
 	strcpy(out, (char*)crypt(inbuf, salt));
 	return(out);
@@ -974,7 +974,7 @@ void account_check(int Ind) { /* Temporary Ind */
 	hash_entry *ptr;
 	int i, del;
 	struct account *c_acc;
-//	player_type *p_ptr=Players[Ind];
+//	player_type *p_ptr = Players[Ind];
 
 	/* Search in each array slot */
 	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
@@ -1927,7 +1927,7 @@ int guild_remove(int remover, cptr name){
 	}
 
 	/* Make sure this is the owner */
-	if (guilds[guild_id].master!=q_ptr->id && !is_admin(q_ptr)) {
+	if (guilds[guild_id].master != q_ptr->id && !is_admin(q_ptr)) {
 		/* Message */
 		msg_print(remover, "\377yYou must be the owner to delete someone.");
 
@@ -2793,7 +2793,7 @@ bool add_ignore(int Ind, cptr name) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	hostile_type *h_ptr, *i_ptr;
 	int i;
-	int snum=0;
+	int snum = 0;
 	cptr p, q = NULL;
 	char search[80], *pname;
 
@@ -3242,30 +3242,29 @@ int lookup_player_id_messy(cptr name)
 	return 0;
 }
 
-u32b lookup_player_account(int id)
-{
+u32b lookup_player_account(int id) {
 	hash_entry *ptr;
-	if((ptr=lookup_player(id)))
+	if ((ptr = lookup_player(id)))
 		return ptr->account;
 
 	/* Not found */
 	return -1L;
 }
 
-void stat_player(char *name, bool on){
+void stat_player(char *name, bool on) {
 	int id;
 	int slot;
 	hash_entry *ptr;
 
-	id=lookup_player_id(name);
-	if(id){
+	id = lookup_player_id(name);
+	if (id) {
 		slot = hash_slot(id);
 		ptr = hash_table[slot];
-		while (ptr){
-			if (ptr->id == id){
-				ptr->laston=on ? 0L : time(&ptr->laston);
+		while (ptr) {
+			if (ptr->id == id) {
+				ptr->laston = on ? 0L : time(&ptr->laston);
 			}
-			ptr=ptr->next;
+			ptr = ptr->next;
 		}
 	}
 }
@@ -3320,39 +3319,38 @@ int newid(){
 /* there should be no need to do player_id > MAX_ID check
    as it should cycle just fine */
 
-	for(id=player_id;id<=MAX_ID;id++){
+	for (id = player_id; id <= MAX_ID; id++) {
 		slot = hash_slot(id);
 		ptr = hash_table[slot];
 
 		while (ptr){
 			if (ptr->id == id) break;
-			ptr=ptr->next;
+			ptr = ptr->next;
 		}
-		if(ptr) continue;	/* its on a valid one */
-		player_id=id+1;	/* new cycle counter */
+		if (ptr) continue;	/* its on a valid one */
+		player_id = id + 1;	/* new cycle counter */
 		return(id);
 	}
-	for(id=1;id<player_id;id++){
+	for (id = 1; id < player_id; id++) {
 		slot = hash_slot(id);
 		ptr = hash_table[slot];
 
-		while (ptr){
+		while (ptr) {
 			if (ptr->id == id) break;
-			ptr=ptr->next;
+			ptr = ptr->next;
 		}
 		if(ptr) continue;	/* its on a valid one */
-		player_id=id+1;	/* new cycle counter */
+		player_id = id + 1;	/* new cycle counter */
 		return(id);
 	}
 	return(0);	/* no user IDs available - not likely */
 }
 
 void sf_delete(const char *name){
-	int i,k=0;
+	int i, k = 0;
 	char temp[128],fname[MAX_PATH_LENGTH];
 	/* Extract "useful" letters */
-	for (i = 0; name[i]; i++)
-	{
+	for (i = 0; name[i]; i++) {
 		char c = name[i];
 
 		/* Accept some letters */
@@ -3375,7 +3373,7 @@ static bool *account_active = NULL;
 void scan_players(){
 	int slot, amt = 0;
 	int i, j;
-	hash_entry *ptr, *pptr=NULL;
+	hash_entry *ptr, *pptr = NULL;
 	time_t now;
 	object_type *o_ptr;
 
@@ -3694,21 +3692,21 @@ void rename_character(char *pnames){
  */
 void erase_player_name(char *pname){
 	int slot;
-	hash_entry *ptr, *pptr=NULL;
+	hash_entry *ptr, *pptr = NULL;
 	object_type *o_ptr;
 
-	for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
-		pptr=NULL;
-		ptr=hash_table[slot];
-		while(ptr){
-			if(!strcmp(ptr->name, pname)){
+	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+		pptr = NULL;
+		ptr = hash_table[slot];
+		while (ptr) {
+			if (!strcmp(ptr->name, pname)) {
 				int i,j;
 				hash_entry *dptr;
 
 				s_printf("Removing player: %s\n", ptr->name);
 
-				for(i=1; i<MAX_PARTIES; i++){ /* was i = 0 but real parties start from i = 1 - mikaelh */
-					if(streq(parties[i].owner, ptr->name)){
+				for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
+					if (streq(parties[i].owner, ptr->name)) {
 						s_printf("Disbanding party: %s\n",parties[i].name);
 						del_party(i);
 	        				/* remove pending notes to his party -C. Blue */
@@ -3739,9 +3737,9 @@ void erase_player_name(char *pname){
 
 				sf_delete(ptr->name);	/* a sad day ;( */
 				if (!pptr)
-					hash_table[slot]=ptr->next;
+					hash_table[slot] = ptr->next;
 				else
-					pptr->next=ptr->next;
+					pptr->next = ptr->next;
 				/* Free the memory in the player name */
 				free((char *)(ptr->name));
 
@@ -4068,19 +4066,18 @@ void set_pkill(int Ind, int delay)
 
 //	p_ptr->tim_pkill= admin ? 10 : 200;	/* so many turns */
 	p_ptr->tim_pkill= delay;
-	p_ptr->pkill^=PKILL_SET; /* Toggle value */
-	if(p_ptr->pkill&PKILL_SET){
+	p_ptr->pkill ^= PKILL_SET; /* Toggle value */
+	if (p_ptr->pkill & PKILL_SET) {
 		msg_print(Ind, "\377rYou wish to kill other players");
-		p_ptr->pkill|=PKILL_KILLABLE;
-	}
-	else{
+		p_ptr->pkill |= PKILL_KILLABLE;
+	} else {
 		hostile_type *t_host;
 		msg_print(Ind, "\377gYou do not wish to kill other players");
-		p_ptr->pkill&=~PKILL_KILLER;
+		p_ptr->pkill &= ~PKILL_KILLER;
 		/* Remove all hostilities */
-		while(p_ptr->hostile){
-			t_host=p_ptr->hostile;
-			p_ptr->hostile=t_host->next;
+		while (p_ptr->hostile) {
+			t_host = p_ptr->hostile;
+			p_ptr->hostile = t_host->next;
 			KILL(t_host, hostile_type);
 		}
 	}
@@ -4173,11 +4170,11 @@ void strip_true_arts_from_hashed_players(){
         object_type *o_ptr;
 
         s_printf("Starting player true artifact stripping\n");
-        for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
+        for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 		j++;
 //		if (j > 5) break;/*only check for 5 players right now */
 
-		ptr=hash_table[slot];
+		ptr = hash_table[slot];
 		if (!ptr) continue;
 		s_printf("Stripping player: %s\n", ptr->name);
 		/* Wipe Artifacts (s)he had  -C. Blue */

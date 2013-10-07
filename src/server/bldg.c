@@ -402,7 +402,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 	s32b oldgold;
 
 #if 0
-	static const char *fruit[6]={"Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry"};
+	static const char *fruit[6] = {"Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry"};
 	char out_val[160], tmp_str[80], again;
 	cptr p;
 #endif	// 0

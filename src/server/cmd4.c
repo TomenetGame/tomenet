@@ -1029,14 +1029,14 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
  } else { //#else
 	/* Check for special character */
 	/* Uncomment these as you feel it's needed ;) */
-	//if(!strcmp(q_ptr->name,"")) modify_number=1; //wussy Cheezer
-	//if(!strcmp(q_ptr->name,"")) modify_number=2; //silyl Slacker
-	//if(!strcmp(q_ptr->name,"Duncan McLeod")) modify_number=3; //Highlander games Judge ;) Bread and games to them!!
-	//if(!strcmp(q_ptr->name,"Tomenet")) modify_number=4;//Server-specific Dungeon Masters
-	//if(!strcmp(q_ptr->name,"C. Blue")) modify_number=4;//Server-specific Dungeon Masters
-	//if(!strcmp(q_ptr->name,"C.Blue")) modify_number=4;//Server-specific Dungeon Masters
-	if(q_ptr->admin_dm) modify_number=4;
-	if(q_ptr->admin_wiz) modify_number=5;
+	//if (!strcmp(q_ptr->name, "")) modify_number = 1; //wussy Cheezer
+	//if (!strcmp(q_ptr->name, "")) modify_number = 2; //silyl Slacker
+	//if (!strcmp(q_ptr->name, "Duncan McLeod")) modify_number = 3; //Highlander games Judge ;) Bread and games to them!!
+	//if (!strcmp(q_ptr->name, "Tomenet")) modify_number = 4;//Server-specific Dungeon Masters
+	//if (!strcmp(q_ptr->name, "C. Blue")) modify_number = 4;//Server-specific Dungeon Masters
+	//if (!strcmp(q_ptr->name, "C.Blue")) modify_number = 4;//Server-specific Dungeon Masters
+	if (q_ptr->admin_dm) modify_number = 4;
+	if (q_ptr->admin_wiz) modify_number = 5;
 
 	/* Print a message */
   #if 0
@@ -1998,7 +1998,7 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff, "Players' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
 	fprintf(fff, "While 'resting', HP/MP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
 
-	if ((k=cfg.party_xp_boost))
+	if ((k = cfg.party_xp_boost))
 		fprintf(fff, "Party members get boosted exp(factor %d).\n", k);
 
 	switch (cfg.replace_hiscore & 0x7) {
@@ -2025,13 +2025,13 @@ void do_cmd_check_server_settings(int Ind)
 
 	fprintf(fff,"\n");
 
-	if ((k=cfg.newbies_cannot_drop))
+	if ((k = cfg.newbies_cannot_drop))
 		fprintf(fff, "Players under exp.level %d are not allowed to drop items/gold.\n", k);
 
-	if ((k=cfg.spell_interfere))
+	if ((k = cfg.spell_interfere))
 		fprintf(fff, "Monsters adjacent to you have %d%% chance of interfering your spellcasting.\n", k);
 
-	if ((k=cfg.spell_stack_limit))
+	if ((k = cfg.spell_stack_limit))
 		fprintf(fff, "Duration of assistance spells is limited to %d turns.\n", k);
 
 	if (cfg.clone_summoning != 999)
@@ -2044,9 +2044,8 @@ void do_cmd_check_server_settings(int Ind)
 #endif
 
 	fprintf(fff,"\n");
-	k=cfg.use_pk_rules;
-	switch (k)
-	{
+	k = cfg.use_pk_rules;
+	switch (k) {
 		case PK_RULES_DECLARE:
 			fprintf(fff, "You should use /pk first to attack other players.\n");
 			break;
@@ -2114,13 +2113,13 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff,"\n");
 
 	fprintf(fff, "The floor will be erased about %d~%d seconds after you left.\n", cfg.anti_scum, cfg.anti_scum + 10);
-	if ((k=cfg.level_unstatic_chance))
+	if ((k = cfg.level_unstatic_chance))
 		fprintf(fff, "Leaving/ghostdying in dungeon keeps the floor static for %d*dunlevel minutes.\n", k);
 
-	if ((k=cfg.min_unstatic_level) > 0) 
+	if ((k = cfg.min_unstatic_level) > 0) 
 		fprintf(fff, "Shallow dungeon (before level %d) will never be static. Save in town!\n", k);
 
-	if ((k=cfg.preserve_death_level) < 201)
+	if ((k = cfg.preserve_death_level) < 201)
 		fprintf(fff, "Site of death under level %d will be static, allowing others to loot it.\n", k);
 
 
@@ -2167,17 +2166,17 @@ void do_cmd_check_server_settings(int Ind)
 	if (cfg.anti_arts_send)
 		fprintf(fff, "Artifacts cannot be sent via telekinesis.\n");
 
-	if ((k=cfg.retire_timer) > 0)
+	if ((k = cfg.retire_timer) > 0)
 		fprintf(fff, "The winner will automatically retire after %d minutes.\n", k);
 	else if (k == 0)
 		fprintf(fff, "The game ends the moment you beat the final foe, Morgoth.\n");
 
-	if (k !=0) {
+	if (k != 0) {
 		player_type p_dummy;
 		u32b resf_all, resf_win, resf_owin, resf_howin;
 		bool found = FALSE;
 
-		if ((k=cfg.unique_respawn_time))
+		if ((k = cfg.unique_respawn_time))
 			fprintf(fff, "After winning the game, unique monsters will resurrect randomly.(%d)\n", k);
 
 		if (cfg.kings_etiquette)

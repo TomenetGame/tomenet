@@ -3016,9 +3016,9 @@ static void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"META_PORT"))
                 cfg.meta_port = atoi(value);
 	else if (!strcmp(option,"WORLDSERVER"))
-		cfg.wserver=strdup(value);
+		cfg.wserver = strdup(value);
 	else if (!strcmp(option,"WORLDPASS"))
-		cfg.pass=strdup(value);
+		cfg.pass = strdup(value);
 	else if (!strcmp(option,"BIND_NAME"))
 		cfg.bind_name = strdup(value);
 	else if (!strcmp(option,"CONSOLE_PASSWORD"))
@@ -3266,7 +3266,7 @@ static void load_server_cfg_aux(FILE * cfg)
 				value = newword;
 				/* Hack -- ignore "" around values */
 				if (value[0] == '"') value++;
-				if (value[strlen(value)-1] == '"') value[strlen(value)-1] = '\0';
+				if (value[strlen(value) - 1] == '"') value[strlen(value) - 1] = '\0';
 			}
 
 			// If we have a completed option and value, then try to set it
