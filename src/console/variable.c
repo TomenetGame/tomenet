@@ -16,7 +16,7 @@ u32b window_flag[8];
 byte color_table[256][4];
 
 /* hack - evileye (common files) */
-bool screen_icky=FALSE;
+bool screen_icky = FALSE;
 
 cptr ANGBAND_SYS;
 

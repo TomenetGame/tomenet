@@ -608,20 +608,20 @@ void flicker(){
 	char ch, attr;
 	term *tterm, *old;
 
-	old=Term;
-	for(i=0; i<8; i++){
-		tterm=ang_term[i];
-		if(!tterm) continue;
+	old = Term;
+	for (i = 0; i < 8; i++) {
+		tterm = ang_term[i];
+		if (!tterm) continue;
 		Term_activate(tterm);
-		for(y=0; y<tterm->hgt; y++){
-			for(x=0; x<tterm->wid; x++){
-				if(tterm->scr->a[y][x]<TERM_MULTI) continue;
-				ch=tterm->scr->c[y][x];
-				attr=flick_colour(tterm->scr->a[y][x]);
+		for (y = 0; y < tterm->hgt; y++) {
+			for (x = 0; x < tterm->wid; x++) {
+				if (tterm->scr->a[y][x] < TERM_MULTI) continue;
+				ch = tterm->scr->c[y][x];
+				attr = flick_colour(tterm->scr->a[y][x]);
 				(void)((*tterm->text_hook)(x, y, 1, attr, &ch));
 			}
 		}
-		if(!c_cfg.recall_flicker) break;
+		if (!c_cfg.recall_flicker) break;
 	}
 	Term_activate(old);
 }
@@ -774,8 +774,8 @@ static void Term_fresh_row_text_wipe(int y)
 				n = 0;
 			}
 			/* Save the new color */
-			if(na>=TERM_MULTI)
-				fa=flick_colour(na);
+			if (na >= TERM_MULTI)
+				fa = flick_colour(na);
 			else
 				fa = na;
 		}
@@ -1820,8 +1820,8 @@ errr Term_putstr(int x, int y, int n, byte a, char *s)
 	/* Move first */
 	if ((res = Term_gotoxy(x, y)) != 0) return (res);
 
-	ptr=strchr(s,'\377');
-	if(!ptr){
+	ptr = strchr(s,'\377');
+	if (!ptr) {
 		/* Then add the string */
 		if ((res = Term_addstr(n, a, s)) != 0) return (res);
 		return(0);
@@ -1830,20 +1830,19 @@ errr Term_putstr(int x, int y, int n, byte a, char *s)
 	while(ptr){
 		strncpy(tmp,s,ptr-s);
 		if(ptr-s){
-			tmp[ptr-s]='\0';
-			if((res=Term_addstr(ptr-s, a, tmp))!=0) return(res);
+			tmp[ptr-s] = '\0';
+			if ((res = Term_addstr(ptr - s, a, tmp)) != 0) return(res);
 		}
-		else if(*(s+1)=='\0') break;
-		s=ptr+1;
-		if((b=color_char_to_attr(*s))!=-1){
-			a=b;
-		}
-		else{
-			if(*s=='\377') *s='{';
+		else if (*(s + 1) == '\0') break;
+		s = ptr + 1;
+		if ((b = color_char_to_attr(*s)) != -1) {
+			a = b;
+		} else {
+			if (*s == '\377') *s = '{';
 			Term_addstr(1, a, s);
 		}
 		s++;
-		ptr=strchr(s,'\377');
+		ptr = strchr(s,'\377');
 	}
 	if(strlen(s)) Term_addstr(strlen(s),a,s);
 
@@ -2503,7 +2502,7 @@ errr Term_resize(int w, int h)
 	/* Save old window */
 	hold_scr = Term->scr;
 
-	for(i=0;i<4;i++){
+	for (i = 0; i < 4; i++) {
 		/* Save old window */
 		hold_mem[i] = Term->mem[i];
 	}
@@ -2534,7 +2533,7 @@ errr Term_resize(int w, int h)
 	/* Save the contents */
 	term_win_copy(Term->scr, hold_scr, wid, hgt);
 
-	for(i=0;i<4;i++){
+	for (i = 0; i < 4; i++) {
 		/* Create new window */
 		MAKE(Term->mem[i], term_win);
 
@@ -2566,7 +2565,7 @@ errr Term_resize(int w, int h)
 	KILL(hold_scr, term_win);
 
 
-	for(i=0;i<4;i++){
+	for (i = 0; i < 4; i++) {
 		/* Nuke */
 		term_win_nuke(hold_mem[i], Term->wid, Term->hgt);
 
@@ -2582,7 +2581,7 @@ errr Term_resize(int w, int h)
 	if (Term->scr->cx >= w) Term->scr->cu = 1;
 	if (Term->scr->cy >= h) Term->scr->cu = 1;
 
-	for(i=0;i<4;i++){
+	for (i = 0; i < 4; i++) {
 		/* Illegal cursor */
 		if (Term->mem[i]->cx >= w) Term->mem[i]->cu = 1;
 		if (Term->mem[i]->cy >= h) Term->mem[i]->cu = 1;
@@ -2692,7 +2691,7 @@ errr term_nuke(term *t)
 	/* Kill "requested" */
 	KILL(t->scr, term_win);
 
-	for(i=0;i<4;i++){
+	for (i = 0; i < 4; i++) {
 		/* Nuke "memorized" */
 		term_win_nuke(t->mem[i], w, h);
 
@@ -2760,7 +2759,7 @@ errr term_init(term *t, int w, int h, int k)
 	term_win_init(t->scr, w, h);
 
 
-	for(y=0;y<4;y++){
+	for (y = 0; y < 4; y++) {
 		/* Allocate "memorized" */
 		MAKE(t->mem[y], term_win);
 
