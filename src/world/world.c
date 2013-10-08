@@ -21,7 +21,7 @@ extern int bpipe;
 
 struct secure secure;
 struct serverinfo slist[MAX_SERVERS];
-int snum=0;
+int snum = 0;
 
 void handle(struct client *ccl);
 void relay(struct wpacket *wpk, struct client *talker);
@@ -31,9 +31,9 @@ void remclient(struct list *dlp);
 struct list *remlist(struct list **head, struct list *dlp);
 uint32_t get_message_type(char *msg);
 
-struct list *clist=NULL;	/* struct client */
+struct list *clist = NULL;	/* struct client */
 
-void world(int ser){
+void world(int ser) {
 	int sl;
 	struct sockaddr_in cl_in;
 	socklen_t length = sizeof(struct sockaddr_in);
@@ -41,26 +41,26 @@ void world(int ser){
 	fd_set fds;
 
 /* Adding some commentary here -.- Also note that gameservers are referred to as 'clients' (c_cl)  - C. Blue */
-	secure.secure=1;	/* 1 = don't allow unauth'ed gameservers to connect! */
-	secure.chat=0;		/* 1 = relay chat from unauth'ed gameservers */
-	secure.msgs=0;		/* 1 = relay messages from unauth'ed gameservers */
-	secure.play=0;		/* 1 = add players from unauth'ed gameservers */
+	secure.secure = 1;	/* 1 = don't allow unauth'ed gameservers to connect! */
+	secure.chat = 0;	/* 1 = relay chat from unauth'ed gameservers */
+	secure.msgs = 0;	/* 1 = relay messages from unauth'ed gameservers */
+	secure.play = 0;	/* 1 = add players from unauth'ed gameservers */
 
-	while(1){
-		int mfd=ser;
+	while (1) {
+		int mfd = ser;
 		struct client *c_cl;
 		struct list *lp;
 
 		FD_ZERO(&fds);
 		FD_SET(ser, &fds);
 
-		for(lp=clist; lp; lp=lp->next){
-			c_cl=(struct client*)lp->data;
-			mfd=MAX(mfd, c_cl->fd);
+		for (lp = clist; lp; lp = lp->next) {
+			c_cl = (struct client*)lp->data;
+			mfd = MAX(mfd, c_cl->fd);
 			FD_SET(c_cl->fd, &fds);
 		}
 
-		sl = select(mfd+1, &fds, NULL, NULL, NULL);
+		sl = select(mfd + 1, &fds, NULL, NULL, NULL);
 		if (sl == -1) {
 			/* Don't care about signal interruptions */
 			if (errno != EINTR) {
@@ -70,19 +70,17 @@ void world(int ser){
 			}
 		}
 		if (FD_ISSET(ser, &fds)) {
-			sl=accept(ser, (struct sockaddr*)&cl_in, &length);
-			if(sl==-1){
+			sl = accept(ser, (struct sockaddr*)&cl_in, &length);
+			if (sl == -1) {
 				fprintf(stderr, "accept broke\n");
 				return;
 			}
 #if 0
-			check=(char*)inet_ntop(AF_INET, &cl_in.sin_addr, &buff, 40);
-			if(check){
-				if(cl_in.sin_len){
+			check = (char*)inet_ntop(AF_INET, &cl_in.sin_addr, &buff, 40);
+			if (check) {
+				if (cl_in.sin_len)
 					printf("accepted connect from %s\n", buff);
-				}
-			}
-			else{
+			} else {
 				fprintf(stderr, "Got connection. unable to display remote host. errno %d\n", errno);
 			}
 #endif
@@ -90,64 +88,60 @@ void world(int ser){
                         fprintf(stderr, "added!\n");
 		}
 
-		for(lp=clist; lp; lp=lp->next) {
-			if(FD_ISSET(((struct client*)lp->data)->fd, &fds)) handle((struct client*)lp->data);
+		for (lp = clist; lp; lp = lp->next) {
+			if (FD_ISSET(((struct client*)lp->data)->fd, &fds)) handle((struct client*)lp->data);
 		}
 
-		lp=clist;
-		while(lp){
-			c_cl=(struct client*)lp->data;
-			if(c_cl->flags & CL_QUIT || (c_cl->authed==-1 && secure.secure)){
+		lp = clist;
+		while (lp) {
+			c_cl = (struct client*)lp->data;
+			if (c_cl->flags & CL_QUIT || (c_cl->authed == -1 && secure.secure)) {
 				remclient(lp);
-				lp=remlist(&clist, lp);
+				lp = remlist(&clist, lp);
 			}
-			else lp=lp->next;
+			else lp = lp->next;
 		}
 	}
 }
 
-void handle(struct client *ccl){
+void handle(struct client *ccl) {
 	int x;
         fprintf(stderr, "handling\n");
-        x=recv(ccl->fd, ccl->buf+ccl->blen, 1024-ccl->blen, 0);
+        x = recv(ccl->fd, ccl->buf + ccl->blen, 1024 - ccl->blen, 0);
 
 	/* Error condition */
-	if(x==-1){
+	if (x == -1) {
 		fprintf(stderr, "Error. killing client %d\n", errno);
-		ccl->flags|=CL_QUIT;
+		ccl->flags |= CL_QUIT;
 		return;
 	}
 
 	/* Connection death most likely */
-	if(x==0){
+	if (x == 0) {
 		fprintf(stderr, "Client quit %d\n", errno);
-		ccl->flags|=CL_QUIT;
+		ccl->flags |= CL_QUIT;
 		return;
 	}
-	ccl->blen+=x;
+	ccl->blen += x;
 	wproto(ccl);
 }
 
-void wproto(struct client *ccl){
+void wproto(struct client *ccl) {
 	int client_chat, client_all, client_ctrlo;
-	struct wpacket *wpk=(struct wpacket*)ccl->buf;
-        while(ccl->blen>=sizeof(struct wpacket)){
+	struct wpacket *wpk = (struct wpacket*)ccl->buf;
+        while (ccl->blen >= sizeof(struct wpacket)) {
                 fprintf(stderr, "protoing... type %d\n", wpk->type);
 		client_chat = client_all = client_ctrlo = 0;
-                switch(wpk->type){
+                switch (wpk->type) {
 			case WP_LACCOUNT:
 				/* ignore unauthed servers
 				   only legitimate servers should
 				   ever send this */
-				if (ccl->authed > 0) {
-					l_account(wpk, ccl);
-				}
+				if (ccl->authed > 0) l_account(wpk, ccl);
 				break;
 			case WP_RESTART:
 				/* mass restart */
-				if(ccl->authed>0){
-					relay(wpk, ccl);
-				}
+				if (ccl->authed > 0) relay(wpk, ccl);
 				break;
 			case WP_AUTH:
 			/* method - plaintext password on server.
@@ -159,8 +153,8 @@ void wproto(struct client *ccl){
 			   and other data are shared. Some machines may
 			   use a dynamic IP, so this is made *more* necessary */
 
-				ccl->authed=pwcheck(wpk->d.auth.pass, wpk->d.auth.val);
-				if(ccl->authed) send_sinfo(ccl, NULL);
+				ccl->authed = pwcheck(wpk->d.auth.pass, wpk->d.auth.val);
+				if (ccl->authed) send_sinfo(ccl, NULL);
 				/* Send it the current players */
 				send_rplay(ccl);
 				break;
@@ -168,7 +162,7 @@ void wproto(struct client *ccl){
 			/* Integrate chat/private chat */
 			case WP_CHAT:
                                 /* only relay all for now */
-				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
+				if (ccl->authed && ((ccl->authed>0) || secure.chat)) {
 					char msg[MSG_LEN], *p = wpk->d.chat.ctxt;
 					client_all = client_chat = client_ctrlo = 0;
 					/* strip chat codes and reinsert them at the beginning */
@@ -196,7 +190,7 @@ void wproto(struct client *ccl){
 			/* Integrate server-directed chat */
 			case WP_IRCCHAT:
                                 /* only relay all for now */
-				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
+				if (ccl->authed && ((ccl->authed>0) || secure.chat)) {
 					char msg[MSG_LEN], *p = wpk->d.chat.ctxt;
 					client_all = client_chat = client_ctrlo = 0;
 					/* strip chat codes and reinsert them at the beginning */
@@ -215,7 +209,7 @@ void wproto(struct client *ccl){
 					snprintf(msg, MSG_LEN, "%s%s\377%c(IRC)\377w %s%c",
 					    client_all ? "\374" : (client_chat ? "\375" : ""),
 					    client_ctrlo ? "\376" : "",
-					    (ccl->authed>0 ? 'g' : 'r'), p, '\0');
+					    (ccl->authed > 0 ? 'g' : 'r'), p, '\0');
 //					msg[MSG_LEN - 1] = '\0';
 					strncpy(wpk->d.chat.ctxt, msg, MSG_LEN);
 					relay(wpk, ccl);
@@ -223,7 +217,7 @@ void wproto(struct client *ccl){
 				break;
 			case WP_PMSG:
 				/* MUST be authed for private messages */
-				if(ccl->authed>0){
+				if (ccl->authed > 0) {
 
 					/* add same code in front as for WP_CHAT */
 //					char msg[MSG_LEN];
@@ -235,11 +229,11 @@ void wproto(struct client *ccl){
 
 					struct list *lp;
 					struct client *dcl;
-					wpk->serverid=ccl->authed;
+					wpk->serverid = ccl->authed;
 
-					for(lp=clist; lp; lp=lp->next){
-						dcl=(struct client*)lp->data;
-						if(dcl->authed==wpk->d.pmsg.sid){
+					for (lp = clist; lp; lp = lp->next) {
+						dcl = (struct client*)lp->data;
+						if (dcl->authed == wpk->d.pmsg.sid) {
 							send(dcl->fd, wpk, sizeof(struct wpacket), 0); 
 						}
 					}
@@ -248,8 +242,8 @@ void wproto(struct client *ccl){
 			case WP_NPLAYER:
 			case WP_QPLAYER:
 				/* STORE players here */
-				if(ccl->authed && (ccl->authed>0 || secure.play)){
-					wpk->d.play.server=ccl->authed;
+				if (ccl->authed && (ccl->authed > 0 || secure.play)) {
+					wpk->d.play.server = ccl->authed;
 					add_rplayer(wpk);
 					relay(wpk, ccl);
 				}
@@ -258,7 +252,7 @@ void wproto(struct client *ccl){
 			case WP_MSG_TO_IRC:
 				/* simple relay message */
 				client_all = client_chat = client_ctrlo = 0;
-				if(ccl->authed && (ccl->authed>0 || secure.msgs)){
+				if (ccl->authed && (ccl->authed>0 || secure.msgs)) {
 					/* add same code in front as for WP_CHAT */
 					char msg[MSG_LEN], *p = wpk->d.smsg.stxt;
 					/* strip chat codes and reinsert them at the beginning */
@@ -296,10 +290,10 @@ void wproto(struct client *ccl){
 			default:
 				fprintf(stderr, "ignoring undefined packet %d\n", wpk->type);
 		}
-		if(ccl->blen>sizeof(struct wpacket)){
+		if (ccl->blen>sizeof(struct wpacket)) {
 			memcpy(ccl->buf, ccl->buf+sizeof(struct wpacket), ccl->blen-sizeof(struct wpacket));
 		}
-		ccl->blen-=sizeof(struct wpacket);
+		ccl->blen -= sizeof(struct wpacket);
 	}
 }
 
@@ -362,12 +356,12 @@ void reply(struct wpacket *wpk, struct client *ccl) {
 /* Generic list handling function */
 struct list *addlist(struct list **head, int dsize){
 	struct list *newlp;
-	newlp=malloc(sizeof(struct list));
-	if(newlp){
-		newlp->data=malloc(dsize);
-		if(newlp->data!=NULL){
-			newlp->next=*head;
-			*head=newlp;
+	newlp = malloc(sizeof(struct list));
+	if (newlp) {
+		newlp->data = malloc(dsize);
+		if (newlp->data != NULL) {
+			newlp->next = *head;
+			*head = newlp;
 			return(newlp);
 		}
 		free(newlp);
@@ -376,16 +370,16 @@ struct list *addlist(struct list **head, int dsize){
 }
 
 /* add a new client to the server's list */
-void addclient(int fd){
+void addclient(int fd) {
 	struct list *lp;
 	struct client *ncl;
 
-	lp=addlist(&clist, sizeof(struct client));
-	if(lp!=(struct list*)NULL){
-		ncl=(struct client*)lp->data;
+	lp = addlist(&clist, sizeof(struct client));
+	if (lp != (struct list*)NULL) {
+		ncl = (struct client*)lp->data;
 		memset(ncl, 0, sizeof(struct client));
-		ncl->fd=fd;
-		ncl->authed=0;
+		ncl->fd = fd;
+		ncl->authed = 0;
 		initauth(ncl);
 	}
 }
@@ -393,34 +387,34 @@ void addclient(int fd){
 /* Generic list handling function */
 struct list *remlist(struct list **head, struct list *dlp){
 	struct list *lp;
-	lp=*head;
-	if(dlp==*head){
-		*head=lp->next;
+	lp = *head;
+	if (dlp == *head) {
+		*head = lp->next;
 		free(dlp->data);
 		free(dlp);
 		return(*head);
 	}
-	while(lp){
-		if(lp->next==dlp){
-			lp->next=dlp->next;
+	while (lp) {
+		if (lp->next == dlp) {
+			lp->next = dlp->next;
 			free(dlp->data);
 			free(dlp);
 			return(lp->next);
 		}
-		lp=lp->next;
+		lp = lp->next;
 	}
 	return(dlp->next);
 }
 
 void remclient(struct list *dlp){
 	struct client *ccl;
-	ccl=(struct client *)dlp->data;
-	if(ccl->authed>0){
+	ccl = (struct client *)dlp->data;
+	if (ccl->authed > 0) {
 		/* Tell other servers if an authed server goes down */
 		struct wpacket spk;
 		rem_players(ccl->authed);
-		spk.type=WP_SQUIT;
-		spk.d.sid=ccl->authed;
+		spk.type = WP_SQUIT;
+		spk.d.sid = ccl->authed;
 		relay(&spk, ccl);
 	}
 	/* Close the socket - mikaelh */
