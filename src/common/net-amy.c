@@ -809,7 +809,7 @@ int SocketReadable(int fd){
     FD_ZERO(&readfds);
     FD_SET(fd, &readfds);
 
-    sig=SIGBREAKF_CTRL_C;
+    sig = SIGBREAKF_CTRL_C;
 
     if (WaitSelect(fd + 1, &readfds, NULL, NULL, &timeout, &sig) == -1)
 	return ((errno == EINTR) ? 0 : -1); /* this probably wont occur */
@@ -1883,7 +1883,7 @@ void DgramClose(int fd){
 void GetLocalHostName(char *name, unsigned size){
     struct hostent	*he;
 
-    if((GetVar("tomenet_host",name,size,0L))!=-1){
+    if ((GetVar("tomenet_host",name,size,0L)) != -1) {
       return;
     }
 

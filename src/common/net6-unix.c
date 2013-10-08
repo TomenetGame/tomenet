@@ -188,7 +188,7 @@ int s, us;
 #ifdef UNIX_SOCKETS
 #define MAX_BOUND_SOCKETS 10
 static char bound_socket[MAX_BOUND_SOCKETS][80];
-static int num_bound_sockets=0;
+static int num_bound_sockets = 0;
 
 void
 add_bound_socket(char *path)
@@ -201,7 +201,7 @@ delete_bound_socket(char *path)
 {
    register int i;
 
-   for (i=0; i<num_bound_sockets; i++)
+   for (i = 0; i < num_bound_sockets; i++)
       if (!strcmp(bound_socket[i], path))
          strcpy(bound_socket[i], bound_socket[--num_bound_sockets]);
 }
@@ -211,7 +211,7 @@ SocketCloseAll()
 {
    register int i;
 
-   for (i=0; i<num_bound_sockets; i++)
+   for (i = 0; i < num_bound_sockets; i++)
       unlink(bound_socket[i]);
 }
 #endif
@@ -259,7 +259,7 @@ int	port;
 {
     int			fd;
     int			retval;
-    int			option=1;
+    int			option = 1;
 
 #ifdef UNIX_SOCKETS     
     struct sockaddr_un  addr_in;
@@ -277,7 +277,7 @@ int	port;
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
-       for (port=getpid(); port > 0; port--) {
+       for (port = getpid(); port > 0; port--) {
           sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
@@ -300,7 +300,7 @@ int	port;
     /* Set this so we don't wait forever on startups */
     setsockopt(fd, SOL_SOCKET, SO_REUSEADDR , (void*)&option, sizeof(int)); 
     /* Allow binding on IPv4 port if not in use */
-    option=0;
+    option = 0;
     setsockopt(fd, IPPROTO_IPV6, IPV6_BINDV6ONLY, (void*)&option, sizeof(int)); 
     if (fd < 0)
     {
@@ -585,14 +585,14 @@ int	port;
 	if (hp == NULL)
 	{
 	    printf("1 No IP6 address for %s\n", host);
-	    hp=gethostbyname2(host, AF_INET);
-	    if(hp==NULL){
+	    hp = gethostbyname2(host, AF_INET);
+	    if (hp == NULL) {
 	   	sl_errno = SL_EHOSTNAME;
 	    	return (-1);
 	    }
 	    else{
 		/* I dont like this really */
-		*((u_int32_t*)&peer.sin6_addr.s6_addr[8])=ntohl(0x0000ffff);
+		*((u_int32_t*)&peer.sin6_addr.s6_addr[8]) = ntohl(0x0000ffff);
 	    	*((struct in_addr*)(&peer.sin6_addr.s6_addr[12])) = *((struct in_addr*)(hp->h_addr));
 
 	    }
@@ -662,7 +662,7 @@ int	fd;
 #endif /* __STDC__ */
 {
     int		retval;
-    socklen_t	socklen=sizeof(struct sockaddr_in6);
+    socklen_t	socklen = sizeof(struct sockaddr_in6);
     char temp[INET6_ADDRSTRLEN];
 
     cmw_priv_assert_netaccess();
@@ -1429,7 +1429,7 @@ int	port;
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
-       for (port=getpid(); port > 0; port--) {
+       for (port = getpid(); port > 0; port--) {
           sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
@@ -1536,7 +1536,7 @@ int	port;
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
-       for (port=getpid(); port > 0; port--) {
+       for (port = getpid(); port > 0; port--) {
           sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
@@ -1634,7 +1634,7 @@ int	port;
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
-       for (port=getpid(); port > 0; port--) {
+       for (port = getpid(); port > 0; port--) {
           sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
@@ -1732,14 +1732,14 @@ int	port;
 	if (hp == NULL)
 	{
 	    printf("2 No IP6 address for %s\n", host);
-	    hp=gethostbyname2(host, AF_INET);
-	    if(hp==NULL){
+	    hp = gethostbyname2(host, AF_INET);
+	    if (hp == NULL) {
 	   	sl_errno = SL_EHOSTNAME;
 	    	return (-1);
 	    }
 	    else{
 		/* I dont like this really */
-		*((u_int32_t*)&addr_in.sin6_addr.s6_addr[8])=ntohl(0x0000ffff);
+		*((u_int32_t*)&addr_in.sin6_addr.s6_addr[8]) = ntohl(0x0000ffff);
 	    	*((struct in_addr*)(&addr_in.sin6_addr.s6_addr[12])) = *((struct in_addr*)(hp->h_addr));
 
 	    }
@@ -1850,14 +1850,14 @@ char	*host, *sbuf;
 	    if (hp == NULL)
 	    { 
 	        printf("3 No IP6 address for %s\n", host);
-	        hp=gethostbyname2(host, AF_INET);
-	        if(hp==NULL){
+	        hp = gethostbyname2(host, AF_INET);
+	        if (hp == NULL) {
 	   	    sl_errno = SL_EHOSTNAME;
 	    	    return (-1);
 	        }
-	        else{
+	        else {
 		    /* I dont like this really */
-		    *((u_int32_t*)&the_addr.sin6_addr.s6_addr[8])=ntohl(0x0000ffff);
+		    *((u_int32_t*)&the_addr.sin6_addr.s6_addr[8]) = ntohl(0x0000ffff);
 	    	    *((struct in_addr*)(&the_addr.sin6_addr.s6_addr[12])) = *((struct in_addr*)(hp->h_addr));
 
 	        }
@@ -1994,14 +1994,14 @@ char	*rbuf;
 	if (hp == NULL)
 	{
 	    printf("4 No IP6 address for %s\n", from);
-	    hp=gethostbyname2(from, AF_INET);
-	    if(hp==NULL){
+	    hp = gethostbyname2(from, AF_INET);
+	    if (hp == NULL) {
 	   	sl_errno = SL_EHOSTNAME;
 	    	return (-1);
 	    }
-	    else{
+	    else {
 		/* I dont like this really */
-		*((u_int32_t*)&tmp_addr.sin6_addr.s6_addr[8])=ntohl(0x0000ffff);
+		*((u_int32_t*)&tmp_addr.sin6_addr.s6_addr[8]) = ntohl(0x0000ffff);
 	    	*((struct in_addr*)(&tmp_addr.sin6_addr.s6_addr[12])) = *((struct in_addr*)(hp->h_addr));
 
 	    }
@@ -2344,7 +2344,7 @@ DgramLastaddr(int fd)
     return "localhost";
 #else
     static char addbuff[INET6_ADDRSTRLEN];
-    socklen_t len=sizeof(struct sockaddr_in6);
+    socklen_t len = sizeof(struct sockaddr_in6);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return ((char*)inet_ntop(AF_INET6, &sl_dgram_lastaddr.sin6_addr, (char*)&addbuff, INET6_ADDRSTRLEN));
 #endif
@@ -2393,7 +2393,7 @@ DgramLastname(int fd)
     struct hostent	*he;
     char		*str;
     static char addbuff[INET6_ADDRSTRLEN];
-    socklen_t len=sizeof(struct sockaddr_in6);
+    socklen_t len = sizeof(struct sockaddr_in6);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
 
     he = gethostbyaddr((char *)&sl_dgram_lastaddr.sin6_addr,
@@ -2447,7 +2447,7 @@ DgramLastport(int fd)
         return (-1);
     return port;
 #else
-    socklen_t len=sizeof(struct sockaddr_in6);
+    socklen_t len = sizeof(struct sockaddr_in6);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return (ntohs((int)sl_dgram_lastaddr.sin6_port));
 #endif
@@ -2555,8 +2555,8 @@ void GetLocalHostName(name, size)
     int                 namelen;
 #endif
 
-    temp=getenv("ANGBAND_HOST");
-    if(temp){
+    temp = getenv("ANGBAND_HOST");
+    if (temp) {
 	strncpy(name, temp, size);
         name[size - 1] = '\0';
 	return;
@@ -2565,8 +2565,8 @@ void GetLocalHostName(name, size)
     gethostname(name, size);
     if ((he = gethostbyname2(name, AF_INET6)) == NULL) {
 	printf("5 No IP6 address for %s\n", name);
-	he=gethostbyname2(name, AF_INET);
-	if(he==NULL){
+	he = gethostbyname2(name, AF_INET);
+	if (he == NULL) {
 	    return;
 	}
     }

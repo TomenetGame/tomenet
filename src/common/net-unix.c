@@ -187,7 +187,7 @@ int s, us;
 #ifdef UNIX_SOCKETS
 #define MAX_BOUND_SOCKETS 10
 static char bound_socket[MAX_BOUND_SOCKETS][80];
-static int num_bound_sockets=0;
+static int num_bound_sockets = 0;
 
 void
 add_bound_socket(char *path)
@@ -200,7 +200,7 @@ delete_bound_socket(char *path)
 {
    register int i;
 
-   for (i=0; i<num_bound_sockets; i++)
+   for (i = 0; i < num_bound_sockets; i++)
       if (!strcmp(bound_socket[i], path))
          strcpy(bound_socket[i], bound_socket[--num_bound_sockets]);
 }
@@ -210,7 +210,7 @@ SocketCloseAll()
 {
    register int i;
 
-   for (i=0; i<num_bound_sockets; i++)
+   for (i = 0; i < num_bound_sockets; i++)
       unlink(bound_socket[i]);
 }
 #endif
@@ -258,7 +258,7 @@ int	port;
 {
     int			fd;
     int			retval;
-    int			option=1;
+    int			option = 1;
 
 #ifdef UNIX_SOCKETS     
     struct sockaddr_un  addr_in;
@@ -276,7 +276,7 @@ int	port;
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
-       for (port=getpid(); port > 0; port--) {
+       for (port = getpid(); port > 0; port--) {
           sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
@@ -643,7 +643,7 @@ int	fd;
 #endif /* __STDC__ */
 {
     int		retval;
-    socklen_t	socklen=sizeof(struct sockaddr_in);
+    socklen_t	socklen = sizeof(struct sockaddr_in);
 
     cmw_priv_assert_netaccess();
     retval = accept(fd, (struct sockaddr*)&sl_dgram_lastaddr, &socklen);
@@ -1419,7 +1419,7 @@ int	port;
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
-       for (port=getpid(); port > 0; port--) {
+       for (port = getpid(); port > 0; port--) {
           sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
@@ -1526,7 +1526,7 @@ int	port;
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
-       for (port=getpid(); port > 0; port--) {
+       for (port = getpid(); port > 0; port--) {
           sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
@@ -1624,7 +1624,7 @@ int	port;
        sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
        retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     } else {
-       for (port=getpid(); port > 0; port--) {
+       for (port = getpid(); port > 0; port--) {
           sprintf(addr_in.sun_path, "/tmp/tomenet%d", port);
           retval = bind(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
           if (!retval)
@@ -2297,7 +2297,7 @@ DgramLastaddr(int fd)
 #ifdef UNIX_SOCKETS
     return "localhost";
 #else
-    socklen_t len=sizeof(struct sockaddr_in);
+    socklen_t len = sizeof(struct sockaddr_in);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return (inet_ntoa(sl_dgram_lastaddr.sin_addr));
 #endif
@@ -2345,7 +2345,7 @@ DgramLastname(int fd)
 #else
     struct hostent	*he;
     char		*str;
-    socklen_t len=sizeof(struct sockaddr_in);
+    socklen_t len = sizeof(struct sockaddr_in);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
 
     he = gethostbyaddr((char *)&sl_dgram_lastaddr.sin_addr,
@@ -2399,7 +2399,7 @@ DgramLastport(int fd)
         return (-1);
     return port;
 #else
-    socklen_t len=sizeof(struct sockaddr_in);
+    socklen_t len = sizeof(struct sockaddr_in);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return (ntohs((int)sl_dgram_lastaddr.sin_port));
 #endif
@@ -2507,8 +2507,8 @@ void GetLocalHostName(name, size)
     int                 namelen;
 #endif
 
-    temp=getenv("TOMENET_HOST");
-    if(temp){
+    temp = getenv("TOMENET_HOST");
+    if (temp) {
 	strncpy(name, temp, size);
         name[size - 1] = '\0';
 	return;

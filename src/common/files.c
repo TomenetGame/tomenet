@@ -50,65 +50,65 @@ struct ft_data{
 	char buffer[MAX_TNF_SEND];
 };
 
-struct ft_data *fdata=NULL;	/* our pointer to the transfer data */
+struct ft_data *fdata = NULL;	/* our pointer to the transfer data */
 
 static struct ft_data *getfile(int ind, unsigned short fnum){
 	struct ft_data *trav, *new_ft;
-	if(fnum==0){
-		new_ft=(struct ft_data*)malloc(sizeof(struct ft_data));
-		if(new_ft==(struct ft_data*)NULL) return(NULL);
+	if (fnum == 0) {
+		new_ft = (struct ft_data*)malloc(sizeof(struct ft_data));
+		if (new_ft == (struct ft_data*)NULL) return(NULL);
 		memset(new_ft, 0, sizeof(struct ft_data));
-		new_ft->next=fdata;
-		fdata=new_ft;
+		new_ft->next = fdata;
+		fdata = new_ft;
 		return(new_ft);
 	}
-	trav=fdata;
-	while(trav){
-		if(trav->id==fnum && trav->ind==ind){
+	trav = fdata;
+	while (trav) {
+		if (trav->id == fnum && trav->ind == ind) {
 			return(trav);
 		}
-		trav=trav->next;
+		trav = trav->next;
 	}
 	return(NULL);
 }
 
-static void remove_ft(struct ft_data *d_ft){
+static void remove_ft(struct ft_data *d_ft) {
 	struct ft_data *trav;
-	trav=fdata;
-	if(trav==d_ft){
-		fdata=trav->next;
+	trav = fdata;
+	if (trav == d_ft) {
+		fdata = trav->next;
 		free(trav);
 		return;
 	}
-	while(trav){
-		if(trav->next==d_ft){
-			trav->next=d_ft->next;
+	while (trav) {
+		if (trav->next == d_ft) {
+			trav->next = d_ft->next;
 			free(d_ft);
 			return;
 		}
-		trav=trav->next;
+		trav = trav->next;
 	}
 }
 
 /* server and client need to be synchronised on this
    but for now, clashes are UNLIKELY in the extreme
    so they can generate their own. */
-static int new_fileid(){
-	static int c_id=0;
+static int new_fileid() {
+	static int c_id = 0;
 	c_id++;
-	if(!c_id) c_id=1;
+	if (!c_id) c_id = 1;
 	return(c_id);
 }
 
 /* acknowledge recipient ready to receive more */
-int local_file_ack(int ind, unsigned short fnum){
+int local_file_ack(int ind, unsigned short fnum) {
 	struct ft_data *c_fd;
-	c_fd=getfile(ind, fnum);
-	if(c_fd==(struct ft_data*)NULL) return(0);
-	if(c_fd->state&FS_SEND){
-		c_fd->state|=FS_READY;
+	c_fd = getfile(ind, fnum);
+	if (c_fd == (struct ft_data*)NULL) return(0);
+	if (c_fd->state&FS_SEND) {
+		c_fd->state |= FS_READY;
 	}
-	if(c_fd->state&FS_DONE){
+	if (c_fd->state & FS_DONE) {
 		fclose(c_fd->fp);
 		remove_ft(c_fd);
 	}
@@ -116,43 +116,43 @@ int local_file_ack(int ind, unsigned short fnum){
 }
 
 /* for now, just kill the connection completely */
-int local_file_err(int ind, unsigned short fnum){
+int local_file_err(int ind, unsigned short fnum) {
 	struct ft_data *c_fd;
-	c_fd=getfile(ind, fnum);
-	if(c_fd==(struct ft_data*)NULL) return(0);
+	c_fd = getfile(ind, fnum);
+	if (c_fd == (struct ft_data*)NULL) return(0);
 	fclose(c_fd->fp);	/* close the file */
 	remove_ft(c_fd);
 	return(1);
 }
 
 /* initialise an file to send */
-int local_file_send(int ind, char *fname){
+int local_file_send(int ind, char *fname) {
 	struct ft_data *c_fd;
 	FILE* fp;
 	char buf[256];
 
-	c_fd=getfile(ind, 0);
-	if(c_fd==(struct ft_data*)NULL) return(0);
+	c_fd = getfile(ind, 0);
+	if (c_fd == (struct ft_data*)NULL) return(0);
 	path_build(buf, 256, ANGBAND_DIR, fname);
-	fp=fopen(buf, "rb");
-	if(!fp) return(0);
-	c_fd->fp=fp;
-	c_fd->ind=ind;
-	c_fd->id=new_fileid();	/* ALWAYS succeed */
-	c_fd->state=(FS_SEND|FS_NEW);
+	fp = fopen(buf, "rb");
+	if (!fp) return(0);
+	c_fd->fp = fp;
+	c_fd->ind = ind;
+	c_fd->id = new_fileid();	/* ALWAYS succeed */
+	c_fd->state = (FS_SEND|FS_NEW);
 	strncpy(c_fd->fname, fname, 255);
 	Send_file_init(c_fd->ind, c_fd->id, c_fd->fname);
 	return(1);
 }
 
 /* request checksum of remote file */
-int remote_update(int ind, char *fname){
+int remote_update(int ind, char *fname) {
 	struct ft_data *c_fd;
-	c_fd=getfile(ind, 0);
-	if(c_fd==(struct ft_data*)NULL) return(0);
-	c_fd->ind=ind;
-	c_fd->id=new_fileid();	/* ALWAYS succeed */
-	c_fd->state=(FS_CHECK);
+	c_fd = getfile(ind, 0);
+	if (c_fd == (struct ft_data*)NULL) return(0);
+	c_fd->ind = ind;
+	c_fd->id = new_fileid();	/* ALWAYS succeed */
+	c_fd->state = (FS_CHECK);
 	strncpy(c_fd->fname, fname, 255);
 	Send_file_check(c_fd->ind, c_fd->id, c_fd->fname);
 	return(1);
@@ -160,7 +160,7 @@ int remote_update(int ind, char *fname){
 
 /* compare checksums of local/remote files - update if
    necessary */
-int check_return(int ind, unsigned short fnum, u32b sum, int Ind){
+int check_return(int ind, unsigned short fnum, u32b sum, int Ind) {
 	struct ft_data *c_fd;
 	FILE* fp;
 	u32b lsum;
@@ -169,15 +169,15 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind){
 	/* check how many LUA files were already checked (for 4.4.8.1.0.0 crash bug) */
 	if (Ind) Players[Ind]->warning_lua_count--;
 
-	c_fd=getfile(ind, fnum);
-	if(c_fd==(struct ft_data*)NULL){
+	c_fd = getfile(ind, fnum);
+	if (c_fd == (struct ft_data*)NULL) {
 		return(0);
 	}
 	local_file_check(c_fd->fname, &lsum);
 	if (!(c_fd->state & FS_CHECK)) {
 		return(0);
 	}
-	if(lsum!=sum){
+	if (lsum != sum) {
 		/* Hack: Client 4.4.8.1 apparently was compiled by a MinGW version
 		   that broke lua updating, resulting in a client crash on logon.
 		   So skip any lua updates for players using that version.
@@ -195,14 +195,14 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind){
 		}
 
 		path_build(buf, 256, ANGBAND_DIR, c_fd->fname);
-		fp=fopen(buf, "rb");
-		if(!fp) {
+		fp = fopen(buf, "rb");
+		if (!fp) {
 			remove_ft(c_fd);
 			return(0);
 		}
-		c_fd->fp=fp;
-		c_fd->ind=ind;
-		c_fd->state=(FS_SEND|FS_NEW);
+		c_fd->fp = fp;
+		c_fd->ind = ind;
+		c_fd->state = (FS_SEND | FS_NEW);
 		Send_file_init(c_fd->ind, c_fd->id, c_fd->fname);
 		return(1);
 	}
@@ -212,11 +212,11 @@ int check_return(int ind, unsigned short fnum, u32b sum, int Ind){
 
 void kill_xfers(int ind){
 	struct ft_data *trav, *next;
-	trav=fdata;
-	for(; trav; trav=next){
-		next=trav->next;
-		if(!trav->id) continue;
-		if(trav->ind==ind){
+	trav = fdata;
+	for (; trav; trav = next) {
+		next = trav->next;
+		if (!trav->id) continue;
+		if (trav->ind == ind) {
 			if (trav->fp) fclose(trav->fp);
 			remove_ft(trav);
 		}
@@ -228,24 +228,24 @@ void kill_xfers(int ind){
 void do_xfers(){
 	int x;
 	struct ft_data *trav;
-	trav=fdata;
-	for(; trav; trav=trav->next){
-		if(!trav->id) continue;	/* non existent */
-		if(!(trav->state&FS_SEND)) continue; /* wrong type */
-		if(!(trav->state&FS_READY)) continue; /* not ready */
-		x=fread(trav->buffer, 1, MAX_TNF_SEND, trav->fp);
-		if(!(trav->state&FS_DONE)){
-			if(x==0){
-				trav->state|=FS_DONE;
+	trav = fdata;
+	for (; trav; trav = trav->next) {
+		if (!trav->id) continue;	/* non existent */
+		if (!(trav->state & FS_SEND)) continue; /* wrong type */
+		if (!(trav->state & FS_READY)) continue; /* not ready */
+		x = fread(trav->buffer, 1, MAX_TNF_SEND, trav->fp);
+		if (!(trav->state & FS_DONE)) {
+			if (x == 0) {
+				trav->state |= FS_DONE;
 			}
-			else{
+			else {
 				Send_file_data(trav->ind, trav->id, trav->buffer, x);
-				trav->state&=~(FS_READY);
+				trav->state &= ~(FS_READY);
 			}
 		}
-		else{
+		else {
 			Send_file_end(trav->ind, trav->id);
-			trav->state&=~(FS_READY);
+			trav->state &= ~(FS_READY);
 		}
 	}
 }
@@ -268,8 +268,7 @@ int get_xfers_num() {
 /*
  * Create a temporary file on Windows. Code borrowed from ToME.
  */
-FILE *ftmpopen(char *template)
-{
+FILE *ftmpopen(char *template) {
 	static u32b tmp_counter;
 	static char valid_characters[] =
 			"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -291,31 +290,31 @@ FILE *ftmpopen(char *template)
 #endif
 
 /* Open file for receive/writing */
-int local_file_init(int ind, unsigned short fnum, char *fname){
+int local_file_init(int ind, unsigned short fnum, char *fname) {
 	struct ft_data *c_fd;
 #ifndef WIN32
 	int fd;
 #endif
 	char tname[256] = "tomexfer.XXXXXX";
-	c_fd=getfile(ind, 0);		/* get empty space */
-	if(c_fd==(struct ft_data*)NULL) return(0);
+	c_fd = getfile(ind, 0);		/* get empty space */
+	if (c_fd == (struct ft_data*)NULL) return(0);
 
-	if(fname[0]=='/') return(0);	/* lame security */
-	if(strstr(fname, "..")) return(0);
+	if (fname[0] == '/') return(0);	/* lame security */
+	if (strstr(fname, "..")) return(0);
 
 #ifndef WIN32
-	fd=mkstemp(tname);
-	c_fd->fp=fdopen(fd, "wb+");
+	fd = mkstemp(tname);
+	c_fd->fp = fdopen(fd, "wb+");
 #else
-	c_fd->fp=ftmpopen(tname);
+	c_fd->fp = ftmpopen(tname);
 #endif
-	c_fd->state=FS_READY;
-	if(c_fd->fp){
+	c_fd->state = FS_READY;
+	if (c_fd->fp) {
 #ifndef __MINGW32__
 		unlink(tname);		/* don't fill up /tmp */
 #endif
-		c_fd->id=fnum;
-		c_fd->ind=ind;	/* not really needed for client */
+		c_fd->id = fnum;
+		c_fd->ind = ind;	/* not really needed for client */
 		strncpy(c_fd->fname, fname, 255);
 		strncpy(c_fd->tname, tname, 255);
 		return(1);
@@ -327,10 +326,10 @@ int local_file_init(int ind, unsigned short fnum, char *fname){
 
 
 /* Write received data to temporary file */
-int local_file_write(int ind, unsigned short fnum, unsigned long len){
+int local_file_write(int ind, unsigned short fnum, unsigned long len) {
 	struct ft_data *c_fd;
 	c_fd = getfile(ind, fnum);
-	if(c_fd == (struct ft_data*) NULL) return(0);
+	if (c_fd == (struct ft_data*) NULL) return(0);
 	if (Receive_file_data(ind, len, c_fd->buffer) == 0) {
 		/* Not enough data available */
 		return -1;
@@ -400,9 +399,9 @@ static void do_sum(unsigned char *buffer, int size) {
 	s2 = (total >> 16) & 0xffff;
 
 #if 0
-	for(n=0; n<size; n++){
-		s1=(s1+buffer[n]) % 65521;
-		s2=(s1+s1) % 65521; /* This is WRONG - mikaelh */
+	for (n = 0; n < size; n++) {
+		s1 = (s1 + buffer[n]) % 65521;
+		s2 = (s1 + s1) % 65521; /* This is WRONG - mikaelh */
 	}
 #else
 	/* Optimized version of the broken implementation above - mikaelh */
@@ -432,9 +431,7 @@ int local_file_check(char *fname, u32b *sum) {
 
 	fp = fopen(buf, "rb");	/* b for windows.. */
 
-	if (!fp) {
-		return(0);
-	}
+	if (!fp) return(0);
 
 	buffer = (unsigned char*) malloc(size);
 

@@ -1374,7 +1374,7 @@ DgramLastaddr(int fd)
 #ifdef UNIX_SOCKETS
     return "localhost";
 #else
-    int len=sizeof(struct sockaddr_in);
+    int len = sizeof(struct sockaddr_in);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return (inet_ntoa(sl_dgram_lastaddr.sin_addr));
 #endif
@@ -1421,7 +1421,7 @@ DgramLastname(int fd)
 #else
     struct hostent	*he;
     char		*str;
-    int len=sizeof(struct sockaddr_in);
+    int len = sizeof(struct sockaddr_in);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
 
     he = gethostbyaddr((char *)&sl_dgram_lastaddr.sin_addr,
@@ -1474,7 +1474,7 @@ DgramLastport(int fd)
         return (-1);
     return port;
 #else
-    int len=sizeof(struct sockaddr_in);
+    int len = sizeof(struct sockaddr_in);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return (ntohs((int)sl_dgram_lastaddr.sin_port));
 #endif
