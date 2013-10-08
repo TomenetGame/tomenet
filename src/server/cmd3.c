@@ -2039,10 +2039,16 @@ void do_cmd_steal(int Ind, int dir)
                 return;
         }
 
-#if 0
+#ifdef TOWN_NO_STEALING
 	/* no stealing in town since town-pvp is diabled */
 	if (istown(&p_ptr->wpos)) {
-		msg_print(Ind, "\337rYou may not steal in town.");
+		msg_print(Ind, "\377oYou may not steal in town.");
+		return;
+	}
+#endif
+#ifdef PROTECTED_NO_STEALING
+	if ((c_ptr->info & CAVE_PROT) || (f_info[c_ptr->feat].flags1 & FF1_PROTECTED)) {
+		msg_print(Ind, "\377oThis location is protected and does not allow stealing.");
 		return;
 	}
 #endif
