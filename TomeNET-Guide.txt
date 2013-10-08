@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. October 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 8. October 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -11738,6 +11738,16 @@ in a town and surrounding area, so you don't have to hurry while shopping.
 If a character activates a poly ring and then manually polymorphs into another
 form, the remaining form duration is saved so he can turn back into the ring's
 form later. Only one ring form can be saved at a time.
+
+NOTE: 'Unmagic' as well as UN_POWER attacks can deplete the temporary form!
+      An Unmagic attack will instantly deplete it, causing the player to
+      polymorph back into his normal form, while UN_POWER attacks instead drain
+      the temporary form each time, reducing the remaining time it lasts.
+
+At around 100 turns (or less if there isn't more time left) before a form runs
+out the player will receive a warning message about this, and his appearance
+will start to flicker between the temporary form and his normal form, to
+indicate visually that it won't last very much longer.
 
 Players can also create monster rings out of 'polymorph player' rings, by
 mimicking the according form, then wearing the ring and activating it.
