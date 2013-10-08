@@ -2678,7 +2678,7 @@ int Receive_boni_col(void) {
 	csheet_boni[i].pdex = pdex;
 	csheet_boni[i].pcon = pcon;
 	csheet_boni[i].pchr = pchr;
-	for (j=0;j<13;j++)
+	for (j = 0; j < 13; j++)
 	csheet_boni[i].cb[j] = cb[j];
 	csheet_boni[i].color = color;
 	csheet_boni[i].symbol = symbol;
@@ -4156,7 +4156,7 @@ void do_flicker() {
 void do_mail() {
 #ifdef CHECK_MAIL
  #ifdef SET_UID
-	static int mailticks=0;
+	static int mailticks = 0;
 	static struct timespec lm;
 	char mpath[160],buffer[160];
 

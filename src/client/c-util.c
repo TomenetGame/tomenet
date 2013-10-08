@@ -1692,7 +1692,7 @@ bool askfor_aux(char *buf, int len, char mode)
 			case KTRL('W'):
 			{
 				bool tail = FALSE;
-				for (--k; k>=0; k--)
+				for (--k; k >= 0; k--)
 				{
 					if ((buf[k] == ' ' || buf[k] == ':' || buf[k] == ',') && tail)
 					{

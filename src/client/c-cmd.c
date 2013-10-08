@@ -2773,10 +2773,10 @@ static void cmd_house_chown(int dir)
 	}
 }
 
-static void cmd_house_chmod(int dir){
+static void cmd_house_chmod(int dir) {
 	char buf[80];
-	char mod=ACF_NONE;
-	u16b minlev=0;
+	char mod = ACF_NONE;
+	u16b minlev = 0;
 	Term_clear();
 	Term_putstr(0, 2, -1, TERM_BLUE, "Set new permissions");
 	if (get_check("Allow party access? ")) mod |= ACF_PARTY;
@@ -2785,24 +2785,24 @@ static void cmd_house_chmod(int dir){
 	if (get_check("Restrict access to winners? ")) mod |= ACF_WINNER;
 	if (get_check("Restrict access to fallen winners? ")) mod |= ACF_FALLENWINNER;
 	if (get_check("Restrict access to no-ghost players? ")) mod |= ACF_NOGHOST;
-	minlev=c_get_quantity("Minimum level: ", 127);
-	if(minlev>1) mod |= ACF_LEVEL;
-	buf[0]='M';
-	if((buf[1]=mod))
-		sprintf(&buf[2],"%hd",minlev);
-	Send_admin_house(dir,buf);
+	minlev = c_get_quantity("Minimum level: ", 127);
+	if (minlev > 1) mod |= ACF_LEVEL;
+	buf[0] = 'M';
+	if ((buf[1] = mod))
+		sprintf(&buf[2], "%hd", minlev);
+	Send_admin_house(dir, buf);
 }
 
-static void cmd_house_kill(int dir){
+static void cmd_house_kill(int dir) {
 	if (get_check("Are you sure you really want to destroy the house?"))
 		Send_admin_house(dir, "K");
 }
 
-static void cmd_house_store(int dir){
+static void cmd_house_store(int dir) {
 	Send_admin_house(dir, "S");
 }
 
-static void cmd_house_paint(int dir){
+static void cmd_house_paint(int dir) {
 	char buf[80];
 	int item;
 
@@ -2821,7 +2821,7 @@ static void cmd_house_paint(int dir){
 
 void cmd_purchase_house(void)
 {
-	char i=0;
+	char i = 0;
 	int dir;
 
 	if (!get_dir(&dir)) return;
@@ -2838,36 +2838,36 @@ void cmd_purchase_house(void)
 	Term_putstr(5, 8, -1, TERM_WHITE, "(5) Enter player store");
 	Term_putstr(5, 9, -1, TERM_WHITE, "(6) Paint house");
 
-	while(i!=ESCAPE){
-		i=inkey();
-		switch(i){
+	while (i != ESCAPE) {
+		i = inkey();
+		switch (i) {
 			case '1':
 				/* Confirm */
 				if (get_check("Are you sure you really want to buy or sell the house?")) {
 					/* Send it */
 					Send_purchase_house(dir);
-					i=ESCAPE;
+					i = ESCAPE;
 				}
 				break;
 			case '2':
 				cmd_house_chown(dir);
-				i=ESCAPE;
+				i = ESCAPE;
 				break;
 			case '3':
 				cmd_house_chmod(dir);
-				i=ESCAPE;
+				i = ESCAPE;
 				break;
 			case '4':
 				cmd_house_kill(dir);
-				i=ESCAPE;
+				i = ESCAPE;
 				break;
 			case '5':
 				cmd_house_store(dir);
-				i=ESCAPE;
+				i = ESCAPE;
 				break;
 			case '6':
 				cmd_house_paint(dir);
-				i=ESCAPE;
+				i = ESCAPE;
 				break;
 			case ESCAPE:
 			case KTRL('X'):
@@ -3205,8 +3205,8 @@ static void cmd_master_aux_build(void)
 				buf[0] = FEAT_HOME_HEAD;
 				{
 					u16b keyid;
-					keyid=c_get_quantity("Enter key pval:",0xffff);
-					sprintf(&buf[2],"%d",keyid);
+					keyid = c_get_quantity("Enter key pval:", 0xffff);
+					sprintf(&buf[2], "%d", keyid);
 				}
 				break;
 			/* Sign post */
@@ -3670,7 +3670,7 @@ static void cmd_master_aux_summon(void)
 
 static void cmd_master_aux_player()
 {
-	char i=0;
+	char i = 0;
 	static char buf[80];
 	Term_clear();
 	Term_putstr(0, 2, -1, TERM_BLUE, "Player commands");
@@ -3685,50 +3685,50 @@ static void cmd_master_aux_player()
 
 	Term_putstr(0, 13, -1, TERM_WHITE, "Command: ");
 
-	while(i!=ESCAPE){
+	while (i != ESCAPE) {
 		/* Get a key */
 		i = inkey();
 		buf[0] = '\0';
-		switch(i){
+		switch (i) {
 			case KTRL('T'):
 				xhtml_screenshot("screenshot????");
 				break;
 			case '1':
-				buf[0]='E';
-				get_string("Enter player name:",&buf[1],15);
+				buf[0] = 'E';
+				get_string("Enter player name:", &buf[1], 15);
 				break;
 			case '2':
-				buf[0]='A';
-				get_string("Enter player name:",&buf[1],15);
+				buf[0] = 'A';
+				get_string("Enter player name:", &buf[1], 15);
 				break;
 			case '3':
-				buf[0]='k';
-				get_string("Enter player name:",&buf[1],15);
+				buf[0] = 'k';
+				get_string("Enter player name:", &buf[1], 15);
 				break;
 			case '4':
-				buf[0]='S';
-				get_string("Enter player name:",&buf[1],15);
+				buf[0] = 'S';
+				get_string("Enter player name:", &buf[1], 15);
 				break;
 			case '5':
-				buf[0]='U';
-				get_string("Enter player name:",&buf[1],15);
+				buf[0] = 'U';
+				get_string("Enter player name:", &buf[1], 15);
 				break;
 			case '6':
-				buf[0]='r';
-				get_string("Enter player name:",&buf[1],15);
+				buf[0] = 'r';
+				get_string("Enter player name:", &buf[1], 15);
 				break;
 			case '7':
 				/* DM to player telekinesis */
-				buf[0]='t';
-				get_string("Enter player name:",&buf[1],15);
+				buf[0] = 't';
+				get_string("Enter player name:", &buf[1], 15);
 				break;
 			case '8':
 				{
 					int j;
-					buf[0]='B';
-					get_string("Message:",&buf[1],69);
-					for(j=0;j<60;j++)
-						if(buf[j]=='{') buf[j]='\377';
+					buf[0] = 'B';
+					get_string("Message:", &buf[1], 69);
+					for (j = 0; j < 60; j++)
+						if (buf[j] == '{') buf[j] = '\377';
 				}
 				break;
 			case ESCAPE:
@@ -3751,7 +3751,7 @@ static void cmd_script_upload()
 {
 	char name[81];
 
-	name[0]='\0';
+	name[0] = '\0';
 
 	if (!get_string("Script name: ", name, 30)) return;
 
@@ -3765,7 +3765,7 @@ static void cmd_script_exec()
 {
 	char buf[81];
 
-	buf[0]='\0';
+	buf[0] = '\0';
 	if (!get_string("Script> ", buf, 80)) return;
 
 	Send_master(MASTER_SCRIPTS, buf);
@@ -3775,7 +3775,7 @@ static void cmd_script_exec_local()
 {
 	char buf[81];
 
-	buf[0]='\0';
+	buf[0] = '\0';
 	if (!get_string("Script> ", buf, 80)) return;
 
 	exec_lua(0, buf);
@@ -3785,9 +3785,9 @@ static void cmd_script_exec_local()
 /* Dirty implementation.. FIXME		- Jir - */
 static void cmd_master_aux_system()
 {
-	char i=0;
+	char i = 0;
 
-	while(i!=ESCAPE){
+	while (i != ESCAPE) {
 		Term_clear();
 		Term_putstr(0, 2, -1, TERM_BLUE, "System commands");
 		Term_putstr(5, 4, -1, TERM_WHITE, "(1) View tomenet.log");
@@ -3800,7 +3800,7 @@ static void cmd_master_aux_system()
 
 		/* Get a key */
 		i = inkey();
-		switch(i){
+		switch (i) {
 			case KTRL('T'):
 				xhtml_screenshot("screenshot????");
 				break;
@@ -3844,7 +3844,7 @@ static void cmd_master_aux_system()
 /* Dungeon Master commands */
 static void cmd_master(void)
 {
-	char i=0;
+	char i = 0;
 
 	party_mode = TRUE;
 
@@ -3852,8 +3852,7 @@ static void cmd_master(void)
 	Term_save();
 
 	/* Process requests until done */
-	while (i!=ESCAPE)
-	{
+	while (i != ESCAPE) {
 		/* Clear screen */
 		Term_clear();
 

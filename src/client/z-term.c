@@ -624,51 +624,51 @@ byte flick_colour(byte attr){
 		case TERM_ANNI:
 			return (randint(2)==1?(randint(5)>4?TERM_SLATE:TERM_L_DARK):TERM_L_DARK);//note (...) is TERM_DARKNESS
 		case TERM_PSI:
-			return (randint(5)!=1?(rand_int(2)?(rand_int(2)?TERM_YELLOW:TERM_L_BLUE):127):TERM_WHITE);
+			return (randint(5) != 1 ? (rand_int(2) ? (rand_int(2) ? TERM_YELLOW : TERM_L_BLUE) : 127) : TERM_WHITE);
 		case TERM_NEXU:
-			return (randint(5)<3?TERM_L_RED:TERM_VIOLET);
+			return (randint(5) < 3 ? TERM_L_RED : TERM_VIOLET);
 		case TERM_NETH:
-			return (randint(4)==1?TERM_L_GREEN:TERM_L_DARK);
+			return (randint(4) == 1 ? TERM_L_GREEN : TERM_L_DARK);
 		case TERM_DISE:
-			return (randint(4)!=1?TERM_ORANGE:TERM_BLUE);
+			return (randint(4) != 1 ? TERM_ORANGE : TERM_BLUE);
 		case TERM_INER:
-			return (randint(5)<3?TERM_SLATE:TERM_L_WHITE);
+			return (randint(5) < 3 ? TERM_SLATE : TERM_L_WHITE);
 		case TERM_FORC:
-			return (randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
+			return (randint(5) < 3 ? TERM_L_WHITE : TERM_ORANGE);
 		case TERM_GRAV:
-			return (randint(3)==1?TERM_L_UMBER:TERM_SLATE);//was L_UMBER+UMBER
+			return (randint(3) == 1 ? TERM_L_UMBER : TERM_SLATE);//was L_UMBER+UMBER
 		case TERM_TIME:
-			return (randint(3)==1?TERM_GREEN:TERM_L_BLUE);
+			return (randint(3) == 1 ? TERM_GREEN : TERM_L_BLUE);
 		case TERM_METEOR:
-			return (randint(3)==1?TERM_RED:TERM_UMBER);
+			return (randint(3) == 1 ? TERM_RED : TERM_UMBER);
                 case TERM_MANA:
-            		return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
+            		return (randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
 		case TERM_WATE:
-			return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+			return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
 		case TERM_ICE:
-			return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
+			return (randint(4) == 1 ? TERM_L_BLUE : TERM_WHITE);
 		case TERM_PLAS:
-			return (randint(5)==1?TERM_RED:TERM_L_RED);
+			return (randint(5) == 1 ? TERM_RED : TERM_L_RED);
 		case TERM_DETO:
-			return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
+			return (randint(6) < 4 ? TERM_L_RED : (randint(4) == 1 ? TERM_RED : TERM_L_UMBER));
 		case TERM_DISI:
-			return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_VIOLET));
+			return (randint(3) != 1 ? TERM_L_DARK : (randint(2) == 1 ? TERM_ORANGE : TERM_VIOLET));
 		case TERM_NUKE:
 			return (mh_attr(2));
 		case TERM_UNBREATH:
-			return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
+			return (randint(7) < 3 ? TERM_L_GREEN : TERM_GREEN);
 		case TERM_HOLYORB:
-			return (randint(6)==1?TERM_ORANGE:TERM_L_DARK);
+			return (randint(6) == 1 ? TERM_ORANGE : TERM_L_DARK);
 		case TERM_HOLYFIRE:
-			return (randint(3)!=1?TERM_ORANGE:(randint(2)==1?TERM_YELLOW:TERM_WHITE));
+			return (randint(3) != 1 ? TERM_ORANGE : (randint(2) == 1 ? TERM_YELLOW : TERM_WHITE));
 		case TERM_HELLFIRE:
-			return (randint(5)==1?TERM_RED:TERM_L_DARK);
+			return (randint(5) == 1 ? TERM_RED : TERM_L_DARK);
 		case TERM_THUNDER:
-			return (randint(3)!=1?(randint(7)>6?TERM_WHITE:(randint(4)==1?TERM_L_BLUE:TERM_BLUE))
-			    :(randint(2)==1?TERM_YELLOW:(randint(5)>3?TERM_ORANGE:TERM_YELLOW)));//note 1st (...) is TERM_ELEC, last (...) is TERM_LITE
+			return (randint(3) != 1 ? (randint(7) > 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE))
+			    : (randint(2) == 1 ? TERM_YELLOW : (randint(5) > 3 ? TERM_ORANGE : TERM_YELLOW)));//note 1st (...) is TERM_ELEC, last (...) is TERM_LITE
 
 		case TERM_LAMP:
-			return (rand_term_lamp ? TERM_YELLOW:TERM_ORANGE);
+			return (rand_term_lamp ? TERM_YELLOW : TERM_ORANGE);
 #endif
 		default:
 			return(attr);
@@ -2868,7 +2868,7 @@ errr Term_resize(int w, int h)
 	/* Save old window */
 	hold_scr = Term->scr;
 
-	for(i=0;i<4;i++){
+	for (i = 0; i < 4; i++) {
 		/* Save old window */
 		hold_mem[i] = Term->mem[i];
 	}
@@ -2899,7 +2899,7 @@ errr Term_resize(int w, int h)
 	/* Save the contents */
 	term_win_copy(Term->scr, hold_scr, wid, hgt);
 
-	for(i=0;i<4;i++){
+	for (i = 0; i < 4; i++) {
 		/* Create new window */
 		MAKE(Term->mem[i], term_win);
 
@@ -2931,7 +2931,7 @@ errr Term_resize(int w, int h)
 	KILL(hold_scr, term_win);
 
 
-	for(i=0;i<4;i++){
+	for (i = 0; i < 4; i++) {
 		/* Nuke */
 		term_win_nuke(hold_mem[i], Term->wid, Term->hgt);
 
@@ -2947,7 +2947,7 @@ errr Term_resize(int w, int h)
 	if (Term->scr->cx >= w) Term->scr->cu = 1;
 	if (Term->scr->cy >= h) Term->scr->cu = 1;
 
-	for(i=0;i<4;i++){
+	for (i = 0; i < 4; i++) {
 		/* Illegal cursor */
 		if (Term->mem[i]->cx >= w) Term->mem[i]->cu = 1;
 		if (Term->mem[i]->cy >= h) Term->mem[i]->cu = 1;
@@ -3057,7 +3057,7 @@ errr term_nuke(term *t)
 	/* Kill "requested" */
 	KILL(t->scr, term_win);
 
-	for(i=0;i<4;i++){
+	for (i = 0; i < 4; i++) {
 		/* Nuke "memorized" */
 		term_win_nuke(t->mem[i], w, h);
 
@@ -3127,7 +3127,7 @@ errr term_init(term *t, int w, int h, int k)
 	term_win_init(t->scr, w, h);
 
 
-	for(y=0;y<4;y++){
+	for (y = 0 ;y < 4; y++) {
 		/* Allocate "memorized" */
 		MAKE(t->mem[y], term_win);
 

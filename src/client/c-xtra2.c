@@ -22,7 +22,7 @@
  */
 void do_cmd_messages(void)
 {
-	int i, j, k, n, nn, q, r, s, t=0;
+	int i, j, k, n, nn, q, r, s, t = 0;
 
 	char shower[80] = "";
 	char finder[80] = "";
@@ -568,7 +568,7 @@ void do_cmd_messages_chatonly(void)
 /* chatonly if mode != 0 */
 void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 {
-	int i, j, k, n, nn, q, r, s, t=0;
+	int i, j, k, n, nn, q, r, s, t = 0;
 
 	cptr message_recall[MESSAGE_MAX] = {0};
 	cptr msg = "", msg2;
@@ -651,11 +651,11 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 		fprintf(fff, "\n");
 		if (k) break;
 
-		q=0;
-		for(t=0; t<(int)strlen(msg); t++){
-                        if(msg[t]=='\377'){
+		q = 0;
+		for (t = 0; t < (int)strlen(msg); t++) {
+                        if (msg[t] == '\377') {
                                 if (!ignore_color)
-                                        buf[q++]='{';
+                                        buf[q++] = '{';
                                 else
                                 {
                                         t++;
@@ -664,17 +664,17 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
                                 }
 				continue;
 			}
-			if(msg[t]=='\n'){
-				buf[q++]='\n';
+			if (msg[t] == '\n') {
+				buf[q++] = '\n';
 				continue;
 			}
-			if(msg[t]=='\r'){
-                                buf[q++]='\n';
+			if (msg[t] == '\r') {
+                                buf[q++] = '\n';
 				continue;
 			}
-			buf[q++]=msg[t];
+			buf[q++] = msg[t];
 		}
-		buf[q]='\0';
+		buf[q] = '\0';
 
 		/* Dump the messages, bottom to top */
 		fputs(buf, fff);

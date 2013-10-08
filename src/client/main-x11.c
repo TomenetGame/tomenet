@@ -2325,58 +2325,49 @@ static XImage *ReadBMP(Display *disp, char Name[])
 	BITMAPINFOHEADER infoheader;
 
 	XImage *Res = NULL;
-
 	char *Data,cname[8];
-
 	int ncol,depth,x,y;
-
 	RGB clrg;
-
 	Pixell clr_Pixells[256];
 
 	f = fopen(Name, "r");
 
-	if (f != NULL)
-	{
-		fread((vptr)((int)&fileheader + 2),sizeof(fileheader)-2,1,f);
-		fread(&infoheader,sizeof(infoheader),1,f);
-		if((fileheader.bfType != 19778) || (infoheader.biSize != 40)) {
+	if (f != NULL) {
+		fread((vptr)((int)&fileheader + 2), sizeof(fileheader) - 2, 1, f);
+		fread(&infoheader,sizeof(infoheader), 1, f);
+		if ((fileheader.bfType != 19778) || (infoheader.biSize != 40)) {
 				plog_fmt("Incorrect file format %s",Name);
 				quit("Bad BMP format");};
 
 		/* Compute number of colors recorded */
 		ncol = (fileheader.bfOffBits - 54) / 4;
 
-		for(x=0;x<ncol;++x) {
-		   fread(&clrg,4,1,f);
-		   sprintf(cname,"#%02x%02x%02x",clrg.r,clrg.g,clrg.b);
+		for (x = 0; x < ncol; ++x) {
+		   fread(&clrg, 4, 1, f);
+		   sprintf(cname, "#%02x%02x%02x", clrg.r, clrg.g, clrg.b);
 		   clr_Pixells[x] = Infoclr_Pixell(cname); }
 
 		depth = DefaultDepth(disp, DefaultScreen(disp));
 
 		x = 1;
 		y = (depth-1) >> 2;
-		while (y>>=1) x<<=1;
+		while (y >>= 1) x <<= 1;
 
 		Data = (char *)malloc(infoheader.biSizeImage*x);
 
-		if (Data != NULL)
-		{
+		if (Data != NULL) {
 			Res = XCreateImage(disp,
 			                   DefaultVisual(disp, DefaultScreen(disp)),
 			                   depth, ZPixmap, 0, Data,
 			                   infoheader.biWidth, infoheader.biHeight, 8, 0);
 
-			if (Res != NULL)
-			{
-			   for(y=0 ; y<infoheader.biHeight; ++y){
-			       for(x=0; x<infoheader.biWidth; ++x){
-				    XPutPixel(Res, x, infoheader.biHeight - y -1, clr_Pixells[getc(f)]);
+			if (Res != NULL) {
+			   for (y = 0 ; y < infoheader.biHeight; ++y) {
+			       for (x = 0; x < infoheader.biWidth; ++x) {
+				    XPutPixel(Res, x, infoheader.biHeight - y - 1, clr_Pixells[getc(f)]);
 			       }
 			   }
-			}
-			else
-			{
+			} else {
 				free(Data);
 			}
 		}
@@ -2453,11 +2444,11 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 
 	Ty = *dy1;
 
-	for (y1=0, y2=0; (y1 < height1) && (y2 < height2); )
+	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); )
 	{
 		Tx = *dx1;
 
-		for (x1=0, x2=0; (x1 < width1) && (x2 < width2); )
+		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); )
 		{
 			XPutPixel(Tmp, x2, y2, XGetPixel(Im, x1, y1));
 
@@ -2530,7 +2521,7 @@ errr init_x11(void) {
 
 		printf("Trying for graphics file: %s\n", filename);
 		/* Use graphics if bitmap file exists */
-		if ((gfd=open(filename, 0, O_RDONLY))!=-1)
+		if ((gfd = open(filename, 0, O_RDONLY)) != -1)
 		{
 			printf("Got graphics file\n");
 			close(gfd);
@@ -2592,7 +2583,7 @@ errr init_x11(void) {
 	/* allow resizing, for font changes */
 	term_data_init(0, &screen, FALSE, ang_term_name[0], fnt_name);
 	term_screen = Term;
-	ang_term[0]=Term;
+	ang_term[0] = Term;
 }
 #ifdef USE_GRAPHICS
 	/* Load graphics */
@@ -2623,7 +2614,7 @@ if (term_prefs[1].visible) {
 	/* Initialize the recall window */
 	term_data_init(1, &mirror, FALSE, ang_term_name[1], fnt_name);
 	term_mirror = Term;
-	ang_term[1]=Term;
+	ang_term[1] = Term;
 
 }
 #endif
@@ -2642,7 +2633,7 @@ if (term_prefs[2].visible) {
 	/* Initialize the recall window */
 	term_data_init(2, &recall, FALSE, ang_term_name[2], fnt_name);
 	term_recall = Term;
-	ang_term[2]=Term;
+	ang_term[2] = Term;
 
 }
 #endif
@@ -2661,7 +2652,7 @@ if (term_prefs[3].visible) {
 	/* Initialize the choice window */
 	term_data_init(3, &choice, FALSE, ang_term_name[3], fnt_name);
 	term_choice = Term;
-	ang_term[3]=Term;
+	ang_term[3] = Term;
 }
 #endif
 
@@ -2679,7 +2670,7 @@ if (term_prefs[4].visible) {
 	/* Initialize the choice window */
 	term_data_init(4, &term_4, FALSE, ang_term_name[4], fnt_name);
 	term_term_4 = Term;
-	ang_term[4]=Term;
+	ang_term[4] = Term;
 
 }
 #endif
@@ -2698,7 +2689,7 @@ if (term_prefs[5].visible) {
 	/* Initialize the choice window */
 	term_data_init(5, &term_5, FALSE, ang_term_name[5], fnt_name);
 	term_term_5 = Term;
-	ang_term[5]=Term;
+	ang_term[5] = Term;
 
 }
 #endif
@@ -2717,7 +2708,7 @@ if (term_prefs[6].visible) {
 	/* Initialize the choice window */
 	term_data_init(6, &term_6, FALSE, ang_term_name[6], fnt_name);
 	term_term_6 = Term;
-	ang_term[6]=Term;
+	ang_term[6] = Term;
 
 }
 #endif
@@ -2736,7 +2727,7 @@ if (term_prefs[7].visible) {
 	/* Initialize the choice window */
 	term_data_init(7, &term_7, FALSE, ang_term_name[7], fnt_name);
 	term_term_7 = Term;
-	ang_term[7]=Term;
+	ang_term[7] = Term;
 
 }
 #endif

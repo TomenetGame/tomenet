@@ -919,8 +919,8 @@ errr init_gcu(void)
 	can_use_color = ((start_color() != ERR) && has_colors() &&
 	                 (COLORS >= 8) && (COLOR_PAIRS >= 8));
 
-	COLORS=16;
-	COLOR_PAIRS=16;
+	COLORS = 16;
+	COLOR_PAIRS = 16;
 #define REDEFINE_COLORS
 #ifdef REDEFINE_COLORS
 	/* Can we change colors? */

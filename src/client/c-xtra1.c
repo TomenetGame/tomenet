@@ -922,7 +922,7 @@ void prt_stun(int stun)
  */
 void prt_basic(void)
 {
-	cptr r=NULL, c=NULL;
+	cptr r = NULL, c = NULL;
 
         r = p_ptr->rp_ptr->title;
 

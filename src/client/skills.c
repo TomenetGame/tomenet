@@ -187,7 +187,7 @@ void dump_skills(FILE *fff)
 		fprintf(fff, "\n");
 
 /*		sprintf(buf, "");		*/
-		buf[0]='\0';
+		buf[0] = '\0';
 
 		for (z = 0; z < table[j][1]; z++) strcat(buf, "    ");
 
@@ -842,7 +842,7 @@ void do_activate_skill(int x_idx, int item)
 		}
 		return;
 	} else if (s_info[x_idx].action_mkey == MKEY_SCHOOL) {
-		int item_obj = -1, aux=0;
+		int item_obj = -1, aux = 0;
 
 		/* Ask for a spell, allow cancel */
 		if ((spell = get_school_spell("cast", &item)) == -1) {

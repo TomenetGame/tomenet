@@ -148,7 +148,7 @@ static void enter_password(void)
  */
 static bool choose_sex(void)
 {
-	char        c='\0';		/* pfft redesign while(1) */
+	char        c = '\0';		/* pfft redesign while(1) */
 	bool hazard = FALSE;
 	bool parity = magik(50);
 
@@ -772,7 +772,7 @@ class_redraw:
 static bool choose_stat_order(void)
 {
 	int i, j, k, avail[6], crb, maxed_stats = 0;
-	char c='\0';
+	char c = '\0';
 	char out_val[160], stats[6][4], buf[8], buf2[8], buf3[8];
 	bool hazard = FALSE;
 	s16b stat_order_tmp[6];
@@ -944,15 +944,15 @@ static bool choose_stat_order(void)
 					} else if (stat_order[j] <= 14) {
 						/* high */
 						stat_order[j]--;
-						k+=2;
+						k += 2;
 					} else if (stat_order[j] <= 16) {
 						/* nearly max */
 						stat_order[j]--;
-						k+=3;
+						k += 3;
 					} else {
 						/* max! */
 						stat_order[j]--;
-						k+=4;
+						k += 4;
 						maxed_stats--;
 					}
 				}
@@ -966,15 +966,15 @@ static bool choose_stat_order(void)
 					} else if (stat_order[j] < 14 && k >= 2) {
 						/* high */
 						stat_order[j]++;
-						k-=2;
+						k -= 2;
 					} else if (stat_order[j] < 16 && k >= 3) {
 						/* nearly max */
 						stat_order[j]++;
-						k-=3;
+						k -= 3;
 					} else if (k >= 4 && !maxed_stats) { /* only 1 maxed stat is allowed */
 						/* max! */
 						stat_order[j]++;
-						k-=4;
+						k -= 4;
 						maxed_stats++;
 					}
 				}
@@ -1655,19 +1655,19 @@ bool get_server_name(void)
 
 		/* Strip off offending characters */
 		out_val[j - 1] = '\0';
-		out_val[j]='\0';
+		out_val[j] = '\0';
 
-		k=0;
-		while(j){
-			l=strlen(&out_val[k]);
-			if(j > 75){
-				l=75;
-				while(out_val[k+l]!=' ') l--;
-				out_val[l]='\0';
+		k = 0;
+		while (j) {
+			l = strlen(&out_val[k]);
+			if (j > 75) {
+				l = 75;
+				while (out_val[k + l] != ' ') l--;
+				out_val[l] = '\0';
 			}
-			prt(out_val+k, lines++, (k ? 4 : 1));
-			k+=(l+1);
-			j=strlen(&out_val[k]);
+			prt(out_val + k, lines++, (k ? 4 : 1));
+			k += (l + 1);
+			j = strlen(&out_val[k]);
 		}
 
 		/* Go to next metaserver entry */

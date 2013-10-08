@@ -1998,13 +1998,13 @@ static void quit_hook(cptr s)
 		    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
 		strcat(buf, ".txt");
 
-		i=message_num();
+		i = message_num();
 		if (!save_chat) get_string("Filename:", buf, 79);
 		/* maybe one day we'll get a Mac client */
 		FILE_TYPE(FILE_TYPE_TEXT);
 		path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
-		fp=my_fopen(buf2, "w");
-		if(fp!=(FILE*)NULL){
+		fp = my_fopen(buf2, "w");
+		if (fp != (FILE*)NULL) {
 			dump_messages_aux(fp, i, 1, FALSE);//FALSE
 			fclose(fp);
 		}

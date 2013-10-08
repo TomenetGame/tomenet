@@ -2,19 +2,19 @@
 
 /* Client global variables */
 
-bool c_quit=FALSE;
+bool c_quit = FALSE;
 
-char meta_address[MAX_CHARS]="";
-char nick[MAX_CHARS]="";
-char pass[MAX_CHARS]="";
-char svname[MAX_CHARS]="";
-char path[1024]="";
-char real_name[MAX_CHARS]="";
-char server_name[MAX_CHARS]="";
+char meta_address[MAX_CHARS] = "";
+char nick[MAX_CHARS] = "";
+char pass[MAX_CHARS] = "";
+char svname[MAX_CHARS] = "";
+char path[1024] = "";
+char real_name[MAX_CHARS] = "";
+char server_name[MAX_CHARS] = "";
 s32b server_port;
-char cname[MAX_CHARS]="";
+char cname[MAX_CHARS] = "";
 
-s32b char_creation_flags=1;	/* 0 = traditional stats rolling, 1 = player-definable stats - C. Blue */
+s32b char_creation_flags = 1;	/* 0 = traditional stats rolling, 1 = player-definable stats - C. Blue */
 
 char message_history[MSG_HISTORY_MAX][MSG_LEN];			/* history for chat, slash-cmd etc. */
 char message_history_chat[MSG_HISTORY_MAX][MSG_LEN];		/* history for chat, slash-cmd etc. */
