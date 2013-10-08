@@ -11715,8 +11715,8 @@ Draconian:
     Feather falling, flying.
 
 
-(6.7a) Polymorph rings:
------------------------
+(6.7a) Polymorph rings ('Ring of Polymorphing of <form>'):
+----------------------------------------------------------
 There are two types of polymorph rings, those which already provide a monster
 form and those which can still be forged by a mimic. Latter ones are named
 'Rings of Polymorphing of Player', while the first ones are named after the
