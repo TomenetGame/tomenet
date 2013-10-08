@@ -887,7 +887,7 @@ bool set_mimic(int Ind, int v, int p)
 
 	/* Shut */
 	else {
-		if (p_ptr->tim_mimic) {
+		if (p_ptr->tim_mimic && p_ptr->body_monster == p_ptr->tim_mimic_what) {
 			msg_print(Ind, "\376\377LYour image changes back to normality.");
 			do_mimic_change(Ind, 0, TRUE);
 			notice = TRUE;
