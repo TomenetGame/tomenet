@@ -10854,11 +10854,13 @@ vary. For example a warrior cannot learn magic spells.
     instruments of their god, but are not as good as istari in their use.
     Priests also have excellent saving throws due to divine intervention.
     Although weak in the beginning, they can make decent fighters who strongly
-    prefer blunt weapons over edged ones. If they wield an edged weapon that
-    isn't blessed, they receive an additional severe penalty.
+    prefer blunt weapons over edged ones. They are not able to train in edged
+    weapons, and if they wield one that isn't blessed, they receive an
+    additional severe penalty.
     Priests are especially adept at sensing curses on any sort of item, an
     ability that grows with their character level.
-    Wisdom is the priest's primary stat.
+    Wisdom is the priest's primary stat and they get a slight bonus on
+    'Holy Curing'.
 
     Hint: Note that their spell Holy Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
@@ -10989,7 +10991,11 @@ vary. For example a warrior cannot learn magic spells.
     Paladins however are not very good at missile weapons. They are poor at
     stealth, perception, and searching. They are better than warriors with
     magical devices and have an outstanding saving throw due to divine
-    protection.
+    protection. On the downside they lack the proficiency of warriors when it
+    comes to handling ranged weapons and they do not benefit as much from
+    equipment that increases their mana pool as priests do.
+    While they may train in all sorts of holy schools, they are slightly less
+    adept at 'Holy Curing'.
 
     Hint: Note that the spell Holy Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
