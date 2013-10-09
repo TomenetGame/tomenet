@@ -339,7 +339,7 @@ school_book[55] = {
 
 -- Create the handbook of novice etiquette
 school_book[56] = {
-        HDELFEAR, HBLESSING, HGLOBELIGHT, HHEALING, HCURING
+        HDELFEAR, HBLESSING, HGLOBELIGHT, HSENSEMON, HHEALING, HCURING
 }
 
 ---- Create the handbook for rogues (of shadows)
