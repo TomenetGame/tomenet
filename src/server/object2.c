@@ -7861,59 +7861,59 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 	    strcmp(quark_str(o_ptr->note), "stolen"))
 		return;
 
-	if (p_ptr->obj_aware[o_ptr->k_idx]) {
-		if (o_ptr->tval == TV_SCROLL &&
-		    o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) {
-			o_ptr->note = quark_add("@r3@R");
-			return;
-		} else if (o_ptr->tval == TV_ROD &&
-		    o_ptr->sval == SV_ROD_RECALL) {
-			o_ptr->note = quark_add("@z3@R");
+	if (!p_ptr->obj_aware[o_ptr->k_idx]) return;
+
+	if (o_ptr->tval == TV_SCROLL &&
+	    o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) {
+		o_ptr->note = quark_add("@r3@R");
+		return;
+	} else if (o_ptr->tval == TV_ROD &&
+	    o_ptr->sval == SV_ROD_RECALL) {
+		o_ptr->note = quark_add("@z3@R");
+		return;
+	}
+	else if (o_ptr->tval == TV_SCROLL) {
+		if (o_ptr->sval == SV_SCROLL_PHASE_DOOR) {
+			o_ptr->note = quark_add("@r1");
 			return;
 		}
-		else if (o_ptr->tval == TV_SCROLL) {
-			if (o_ptr->sval == SV_SCROLL_PHASE_DOOR) {
-				o_ptr->note = quark_add("@r1");
-				return;
-			}
-			if (o_ptr->sval == SV_SCROLL_TELEPORT) {
-				o_ptr->note = quark_add("@r2");
-				return;
-			}
-			if (o_ptr->sval == SV_SCROLL_IDENTIFY) {
-				o_ptr->note = quark_add("@r5");//@r5!X
-				return;
-			}
-			if (o_ptr->sval == SV_SCROLL_TRAP_DOOR_DESTRUCTION) {
-				o_ptr->note = quark_add("@r8");
-				return;
-			}
-			if (o_ptr->sval == SV_SCROLL_MAPPING) {
-				o_ptr->note = quark_add("@r9");
-				return;
-			}
-			if (o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) {
-				o_ptr->note = quark_add("@r0");
-				return;
-			}
+		if (o_ptr->sval == SV_SCROLL_TELEPORT) {
+			o_ptr->note = quark_add("@r2");
+			return;
 		}
-		else if (o_ptr->tval == TV_POTION) {
-			if (o_ptr->sval == SV_POTION_HEALING) {
-				o_ptr->note = quark_add("@q1");
-				return;
-			}
-			if (o_ptr->sval == SV_POTION_SPEED) {
-				o_ptr->note = quark_add("@q2");
-				return;
-			}
-			if (o_ptr->sval == SV_POTION_RESISTANCE) {
-				o_ptr->note = quark_add("@q3");
-				return;
-			}
-			if (o_ptr->sval == SV_POTION_RESTORE_EXP) {
-				o_ptr->note = quark_add("@q4");
-				return;
-			}
+		if (o_ptr->sval == SV_SCROLL_IDENTIFY) {
+			o_ptr->note = quark_add("@r5");//@r5!X
+			return;
+		}
+		if (o_ptr->sval == SV_SCROLL_TRAP_DOOR_DESTRUCTION) {
+			o_ptr->note = quark_add("@r8");
+			return;
+		}
+		if (o_ptr->sval == SV_SCROLL_MAPPING) {
+			o_ptr->note = quark_add("@r9");
+			return;
+		}
+		if (o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) {
+			o_ptr->note = quark_add("@r0");
+			return;
+		}
+	}
+	else if (o_ptr->tval == TV_POTION) {
+		if (o_ptr->sval == SV_POTION_HEALING) {
+			o_ptr->note = quark_add("@q1");
+			return;
+		}
+		if (o_ptr->sval == SV_POTION_SPEED) {
+			o_ptr->note = quark_add("@q2");
+			return;
+		}
+		if (o_ptr->sval == SV_POTION_RESISTANCE) {
+			o_ptr->note = quark_add("@q3");
+			return;
+		}
+		if (o_ptr->sval == SV_POTION_RESTORE_EXP) {
+			o_ptr->note = quark_add("@q4");
+			return;
 		}
 	}
 
