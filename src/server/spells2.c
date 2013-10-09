@@ -1944,6 +1944,9 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 
 	switch (match_flag)
 	{
+		case RF3_EVIL:
+			desc_monsters = "evil";
+			break;
 		case RF3_DEMON:
 			desc_monsters = "demons";
 			break;
