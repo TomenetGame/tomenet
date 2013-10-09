@@ -4146,7 +4146,7 @@ void check_experience(int Ind)
 //			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
 		if (old_lev < 20 && p_ptr->lev >= 20) {
 			msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
-			msg_print(Ind, "\374\377G(Press 'm' key, and choose 'use innate power', to do so.)");
+			msg_print(Ind, "\374\377G(Press 'm' key and choose 'use innate power' to polymorph.)");
 		}
 		break;
 #ifdef ENABLE_MAIA
@@ -4251,7 +4251,7 @@ void check_experience(int Ind)
 		if (old_lev < 5 && p_ptr->lev >= 5) {
 			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
 			msg_print(Ind, "\374\377GYou learn how to change into a Cave Bear (#160) and Panther (#198)");
-			msg_print(Ind, "\374\377G(Press 'm' key, and choose 'use innate power', to do so.)");
+			msg_print(Ind, "\374\377G(Press 'm' key and choose 'use innate power' to polymorph.)");
 		}
 		if (old_lev < 10 && p_ptr->lev >= 10) {
 			msg_print(Ind, "\374\377GYou learn how to change into a Grizzly Bear (#191) and Yeti (#154)");
@@ -5119,7 +5119,7 @@ void monster_death(int Ind, int m_idx)
 				if (!p_ptr->warning_mimic) {
 					p_ptr->warning_mimic = 1;
 					if (p_ptr->max_plv < 10) {
-						msg_print(Ind, "\374\377U(Press '\377ym\377U' key, and choose 'use innate power', to do so.)");
+						msg_print(Ind, "\374\377U(Press '\377ym\377U' key and choose 'use innate power' to polymorph.)");
 						s_printf("warning_mimic: %s\n", p_ptr->name);
 					}
 				}
