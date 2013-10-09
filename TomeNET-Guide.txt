@@ -10859,8 +10859,7 @@ vary. For example a warrior cannot learn magic spells.
     additional severe penalty.
     Priests are especially adept at sensing curses on any sort of item, an
     ability that grows with their character level.
-    Wisdom is the priest's primary stat and they get a slight bonus on
-    'Holy Curing'.
+    Wisdom is the priest's primary stat and they get a bonus on 'Holy Curing'.
 
     Hint: Note that their spell Holy Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
