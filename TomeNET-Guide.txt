@@ -6229,7 +6229,7 @@ Halloween
     spells at its disposal. It is level 127 and therefore can drop any item in
     the game, and usually drops very good. Please share fairly. ;)
     When a player defeats the Great Pumpkin, everyone will get a message about
-    it. The Great Pumpkin will start randomly respawning again some time later.
+    it. The Great Pumpkin will randomly respawn again some time later.
     Also it will stay night on the world's surface until Halloween ends.
 
 Christmas
