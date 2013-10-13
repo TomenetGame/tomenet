@@ -10866,6 +10866,8 @@ vary. For example a warrior cannot learn magic spells.
     Priests aren't easy to play in the beginning, since they don't deal much
     damage and also can't take a lot of punishment, so they aren't recommended
     for beginners.
+    If you're a team player and want to support your team right from the
+    beginning, get the spell 'Cure Wounds' as soon as possible and macro it.
 
 - Rogue
     A Rogue is a character that prefers to live by cunning, but is capable of
