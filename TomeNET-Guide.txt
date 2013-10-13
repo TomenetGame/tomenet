@@ -6213,7 +6213,7 @@ days each. The exact time of the day when they start can vary depending on your
 time zone, even a date difference of +/-1 day is possible for that reason:
 
 Halloween
-    Running from 30th October to the end of 1st November.
+    Running from 29th October to the end of 2nd November.
     The server will recall all players (20 minutes ahead warning will be
     displayed) and restart. After that, Halloween is live and costumes can be
     found and stored costumes can be worn again.
