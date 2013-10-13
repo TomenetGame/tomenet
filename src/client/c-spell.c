@@ -663,7 +663,7 @@ void do_mimic()
 		}
 
 		/* Get a spell from the user */
-		while (get_com("(Immunities a-f, *=List, @=Name, ESC=exit) Prefer which immunity? ", &choice)) {
+		while (get_com("(Immunities a-h, *=List, @=Name, ESC=exit) Prefer which immunity? ", &choice)) {
 			/* Request redraw */
 			if ((choice == ' ') || (choice == '*') || (choice == '?')) {
 				/* Show the list */
