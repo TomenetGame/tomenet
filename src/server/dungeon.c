@@ -6093,7 +6093,7 @@ void process_player_change_wpos(int Ind)
 	    && p_ptr->warning_lite == 0) {
 		if (p_ptr->wpos.wz < 0) p_ptr->warning_lite = 1;
 		msg_print(Ind, "\374\377yHINT: You don't wield any light source at the moment!");
-		msg_print(Ind, "\374\377y      Press '\377Rw\377y'. It lets you wield a torch or lantern (and other items).");
+		msg_print(Ind, "\374\377y      Press '\377Rw\377y' to wield a torch or lantern (or other items).");
 		s_printf("warning_lite: %s\n", p_ptr->name);
 	}
 
