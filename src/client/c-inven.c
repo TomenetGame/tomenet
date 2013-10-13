@@ -213,6 +213,8 @@ bool get_item_hook_find_obj(int *item, bool inven_first)
 	int i, j;
 	char buf[80];
 
+	char buf1[80], buf2[80], *ptr; /* for manual strcasestr() */
+
 	strcpy(buf, "");
 	if (!get_string(get_item_hook_find_obj_what, buf, 79))
 		return FALSE;
@@ -230,7 +232,17 @@ bool get_item_hook_find_obj(int *item, bool inven_first)
 
 		if (!item_tester_okay(o_ptr)) continue;
 
+#if 0		/* strcasestr() is _GNU_SOURCE specific -_- */
 		if (strcasestr(inventory_name[i], buf)) {
+#else
+		strcpy(buf1, inventory_name[i]);
+		strcpy(buf2, buf);
+		ptr = buf1;
+		while (*ptr) { *ptr = tolower(*ptr); ptr++; }
+		ptr = buf2;
+		while (*ptr) { *ptr = tolower(*ptr); ptr++; }
+		if (strstr(buf1, buf2)) {
+#endif
 			*item = i;
 			return TRUE;
 		}
