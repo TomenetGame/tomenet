@@ -11524,6 +11524,9 @@ F: flag list
                 Note that you can set the desired immunity in 'm' menu ->
                 'Use innate power' -> 'Set preferred immunity'. It will be
                 picked if the form you polymorph into can provide it.
+                If you are already using a form that can provide the immunity
+                that you switch to, that immunity will become the active one
+                immediately without the need to re-polymorphing.
     PASS_WALL   Will allow the mimic to pass walls like a ghost.
                 These immaterial forms also drain the hit points of their
                 user.
