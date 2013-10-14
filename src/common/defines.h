@@ -1176,7 +1176,8 @@
 #define SF1_DEEP_LEVEL          0x00000008L	/* Add much to minimum item level */
 #define SF1_RARE                0x00000010L
 #define SF1_VERY_RARE           0x00000020L
-#define SF1_COMMON              0x00000040L	/* Currently no effect */
+//#define SF1_COMMON              0x00000040L	/* Currently no effect */
+#define SF1_FLAT_BASE		0x00000040L	/* a) prevent rare base item types, b) give all base item types same probability */
 #define SF1_ALL_ITEM            0x00000080L	/* Works as the BM */
 #define SF1_RANDOM              0x00000100L	/* Sets level to 0 for apply_magic() if it isn't increased by ..._LEVEL store flags anyway. */
 #define SF1_FORCE_LEVEL         0x00000200L	/* Prevent items of much lower kind level than store level. Applies to T-256 wildcard only. */
@@ -2629,7 +2630,18 @@
 /* some masks (originally just is_armour for XBM control) - C. Blue */
 #define is_ammo(tval)	(((tval) == TV_SHOT) || ((tval) == TV_ARROW) || ((tval) == TV_BOLT))
 #define is_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
+#define is_rare_weapon(tval,sval) ( \
+	(((tval) == TV_SWORD) && ((sval) >= SV_BLADE_OF_CHAOS)) || /* blade of chaos, dark sword, bluesteel, shadow */ \
+	(((tval) == TV_BLUNT) && ((sval) == SV_MACE_OF_DISRUPTION || (sval) == SV_DEMON_HAMMER || (sval) == SV_SCOURGE_OF_REPENTANCE)) || \
+	(((tval) == TV_AXE) && ((sval) == SV_THUNDER_AXE)) || \
+	(((tval) == TV_POLEARM) && (sval) == SV_SCYTHE_OF_SLICING) )
 #define is_magic_device(tval)	(((tval) == TV_WAND) || ((tval) == TV_STAFF) || ((tval) == TV_ROD))
+#define is_rare_magic_device(tval,sval) ( \
+	((tval) == TV_WAND && ((sval) == SV_WAND_ANNIHILATION || (sval) == SV_WAND_ROCKETS || (sval) == SV_WAND_WALL_CREATION || (sval) == SV_WAND_TELEPORT_TO)) || \
+	/* allowing +perception+, healing, magi/power/holiness */ \
+	((tval) == TV_STAFF && ((sval) == SV_STAFF_EARTHQUAKES || (sval) == SV_STAFF_DESTRUCTION || (sval) == SV_STAFF_SPEED || (sval) == SV_STAFF_GENOCIDE)) || \
+	/* not allowing Speed so people aren't "forced" to train MD */ \
+	((tval) == TV_ROD && ((sval) == SV_ROD_HAVOC || (sval) == SV_ROD_IDENTIFY || (sval) == SV_ROD_MAPPING || (sval) == SV_ROD_CURING || (sval) == SV_ROD_RESTORATION || (sval) == SV_ROD_SPEED)) )
 #define is_armour(tval)	\
 	(((tval) == TV_BOOTS) || ((tval) == TV_GLOVES) || \
 	((tval) == TV_HELM) || ((tval) == TV_CROWN) || \
@@ -2637,11 +2649,16 @@
 	((tval) == TV_SOFT_ARMOR) || ((tval) == TV_HARD_ARMOR) || \
 	((tval) == TV_DRAG_ARMOR))
 #define is_rare_armour(tval,sval) ( \
-	(((tval) == TV_HELM) && ((sval) == SV_DRAGON_HELM || (sval) == SV_MITHRIL_HELM)) || \
-	(((tval) == TV_SHIELD) && (((sval) == SV_ORCISH_SHIELD) || ((sval) == SV_DRAGON_SHIELD) || ((sval) == SV_SHIELD_OF_DEFLECTION))) || \
+	(((tval) == TV_HELM) && ((sval) == SV_DRAGON_HELM || (sval) == SV_MITHRIL_HELM || (sval) == SV_ADAMANTITE_HELM)) || \
+	((tval) == TV_CROWN) || /* for telepathy crowns in Ironman dungeon stores (IDDC -2k especially) */ \
+	(((tval) == TV_SHIELD) && (((sval) == SV_ORCISH_SHIELD) || ((sval) == SV_DRAGON_SHIELD) || ((sval) == SV_SHIELD_OF_DEFLECTION) \
+	    || ((sval) == SV_MITHRIL_ANCILE) || ((sval) == SV_ADAMANTITE_AEGIS))) || \
+	(((tval) == TV_GLOVES) && ((sval) == SV_SET_OF_ELVEN_GLOVES)) || \
 	(((tval) == TV_CLOAK) && ((sval) == SV_KOLLA)) || \
-	(((tval) == TV_HARD_ARMOR) && (((sval) == SV_MITHRIL_CHAIN_MAIL) || ((sval) == SV_MITHRIL_PLATE_MAIL) || ((sval) == SV_ADAMANTITE_PLATE_MAIL))) || \
+	(((tval) == TV_HARD_ARMOR) && (sval) >= SV_MITHRIL_CHAIN_MAIL) || \
 	((tval) == TV_DRAG_ARMOR) )
+/* doesn't include WINNERS_ONLY armour: */
+//	(((tval) == TV_HARD_ARMOR) && (((sval) == SV_MITHRIL_CHAIN_MAIL) || ((sval) == SV_MITHRIL_PLATE_MAIL) || ((sval) == SV_ADAMANTITE_PLATE_MAIL))) ||
 #define is_top_armour(tval,sval) \
 	(((tval) == TV_DRAG_ARMOR) && \
 	((sval) == SV_DRAGON_POWER || (sval) == SV_DRAGON_SKY || \
@@ -2856,9 +2873,10 @@
 #define SV_TWO_HANDED_FLAIL             18	/* 3d6  */
 #define SV_GREAT_HAMMER                 19	/* 4d6  */
 #define SV_MACE_OF_DISRUPTION           20	/* 5d8  */
+#define SV_SCOURGE			21	/* 4d2  */
+#define SV_DEMON_HAMMER			22	/* 6d6  */
+#define SV_SCOURGE_OF_REPENTANCE	23	/* 4d3	*/
 #define SV_GROND                        50	/* 3d4  */
-
-#define SV_SCOURGE						21	/* 4d2  */
 
 /* The "sval" values for TV_AXE */
 #define SV_HATCHET                       1	/* 1d5 */
@@ -2929,6 +2947,8 @@
 #define SV_DRAGON_SHIELD                 6
 #define SV_ORCISH_SHIELD		 7
 #define SV_SHIELD_OF_DEFLECTION         10
+#define SV_MITHRIL_ANCILE		11
+#define SV_ADAMANTITE_AEGIS		12
 
 /* The "sval" codes for TV_HELM */
 #define SV_CLOTH_CAP			 1
@@ -2938,6 +2958,7 @@
 #define SV_STEEL_HELM                    6
 #define SV_DRAGON_HELM                   7
 #define SV_MITHRIL_HELM			10
+#define SV_ADAMANTITE_HELM		11
 #define SV_GOGGLES_DM			15 /* artifact goggles of the dungeon master */
 
 /* The "sval" codes for TV_CROWN */
@@ -4635,6 +4656,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 #define RESF_LIFE		0x00010000	/* allow +LIFE randarts */
 #define RESF_DEBUG_ITEM		0x00020000	/* generate a certain item (k_idx) for debugging purpose */
+#define RESF_STOREFLAT		0x00040000	/* generate all base item types with same probability */
 
 #define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
 #define RESF_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */

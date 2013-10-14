@@ -425,7 +425,7 @@ O:46:47:48:46:47:48
 G:+:B
 F:MEDIUM_LEVEL
 F:VHARD_STEAL
-W:12
+W:24
 
 N:10:Mayor's Office
 A:16:64:35:65:63:68
@@ -694,7 +694,8 @@ A:0:0:1:2:3:4
 O:8:9:10:11:38:20
 G:2:r
 F:RANDOM | MEDIUM_LEVEL
-F:COMMON | VHARD_STEAL
+F:VHARD_STEAL
+#COMMON | 
 W:0
 #UNUSED W:12
 
@@ -857,7 +858,8 @@ I:100:Word of Recall
 A:33:0:1:2:3:0
 O:67:64:61:58:57:56
 G:+:b
-F:RANDOM | COMMON | HARD_STEAL
+F:RANDOM | HARD_STEAL
+#COMMON | 
 W:2
 
 N:55:Master Archer
@@ -1112,6 +1114,7 @@ W:8
 
 ##################################################################################################
 # A copy of the standard town shops to be used as pseudo-town stores for dungeon towns - C. Blue #
+#   NOTE: These are buffed and only supposed to appear in deep/hard-to-leave Ironman dungeons!   #
 ##################################################################################################
 
 N:70:General Store
@@ -1156,76 +1159,102 @@ W:24
 F:HARD_STEAL | GOOD
 
 N:71:Armoury
-I:70:& Pair~ of Soft Leather Boots
-I:60:& Pair~ of Hard Leather Boots
-I:80:& Hard Leather Cap~
-I:70:& Metal Cap~
-I:65:& Iron Helm~
-I:100:& Robe~
-I:90:Soft Leather Armour~
-I:90:Soft Studded Leather~
-I:90:Hard Leather Armour~
-I:85:Hard Studded Leather~
-I:90:Leather Scale Mail~
-I:80:Metal Scale Mail~
-I:70:Double Chain Mail~
-I:70:Ring Mail~
-I:70:Double Ring Mail~
-I:75:Chain Mail~
-I:80:Augmented Chain Mail~
-I:75:Metal Brigandine Armour~
-I:68:Bar Chain Mail~
-I:100:& Set~ of Leather Gloves
-I:80:& Set~ of Gauntlets
-I:100:& Small Leather Shield~
-I:90:& Large Leather Shield~
-I:80:& Small Metal Shield~
+#I:70:& Pair~ of Soft Leather Boots
+#I:60:& Pair~ of Hard Leather Boots
+#I:80:& Hard Leather Cap~
+#I:70:& Metal Cap~
+#I:65:& Iron Helm~
+#I:100:& Robe~
+#I:90:Soft Leather Armour~
+#I:90:Soft Studded Leather~
+#I:90:Hard Leather Armour~
+#I:85:Hard Studded Leather~
+#I:90:Leather Scale Mail~
+#I:80:Metal Scale Mail~
+#I:70:Double Chain Mail~
+#I:70:Ring Mail~
+#I:70:Double Ring Mail~
+#I:75:Chain Mail~
+#I:80:Augmented Chain Mail~
+#I:75:Metal Brigandine Armour~
+#I:68:Bar Chain Mail~
+#I:100:& Set~ of Leather Gloves
+#I:80:& Set~ of Gauntlets
+#I:100:& Small Leather Shield~
+#I:90:& Large Leather Shield~
+#I:80:& Small Metal Shield~
+# Offer ALL armour, except rare base types
+T:100:30:256
+T:100:31:256
+T:100:32:256
+T:100:33:256
+T:100:34:256
+T:100:35:256
+T:100:36:256
+T:100:37:256
 A:0:0:1:2:3:4
 O:8:9:10:11:38:20
 G:2:s
 #W:24
-W:36
-F:HARD_STEAL | GOOD
+W:72
+F:HARD_STEAL | GOOD | FLAT_BASE
 
 N:72:Weaponsmith
-I:100:& Dagger~
-I:100:& Main Gauche~
-I:100:& Rapier~
-I:100:& Small Sword~
-I:100:& Short Sword~
-I:100:& Sabre~
-I:100:& Cutlass~
-I:100:& Tulwar~
-I:100:& Broad Sword~
-I:100:& Long Sword~
-I:100:& Scimitar~
-I:100:& Katana~
-I:100:& Bastard Sword~
-I:100:& Spear~
-I:100:& Awl-Pike~
-I:100:& Trident~
-I:100:& Pike~
-I:100:& Halberd~
-I:100:& Lance~
-I:100:& Beaked Axe~
-I:100:& Broad Axe~
-I:100:& Battle Axe~
-I:100:& Hatchet~
-I:100:& Cleaver~
-I:100:& Sling~
-I:100:& Short Bow~
-I:100:& Long Bow~
-I:100:& Light Crossbow~
-I:100:& Iron Shot~
-I:100:& Arrow~
-I:100:& Bolt~
-I:100:& Whip~
+#I:100:& Dagger~
+#I:100:& Main Gauche~
+#I:100:& Rapier~
+#I:100:& Small Sword~
+#I:100:& Short Sword~
+#I:100:& Sabre~
+#I:100:& Cutlass~
+#I:100:& Tulwar~
+#I:100:& Broad Sword~
+#I:100:& Long Sword~
+#I:100:& Scimitar~
+#I:100:& Katana~
+#I:100:& Bastard Sword~
+#I:100:& Spear~
+#I:100:& Awl-Pike~
+#I:100:& Trident~
+#I:100:& Pike~
+#I:100:& Halberd~
+#I:100:& Lance~
+#I:100:& Beaked Axe~
+#I:100:& Broad Axe~
+#I:100:& Battle Axe~
+#I:100:& Hatchet~
+#I:100:& Cleaver~
+#I:100:& Sling~
+#I:100:& Short Bow~
+#I:100:& Long Bow~
+#I:100:& Light Crossbow~
+#I:100:& Iron Shot~
+#I:100:& Arrow~
+#I:100:& Bolt~
+#I:100:& Whip~
+# Offer ALL weapons, except rare base types
+T:100:19:2
+T:50:19:12
+T:100:19:13
+T:50:19:23
+T:100:19:24
+T:10:16:256
+T:10:17:256
+T:10:18:256
+T:100:21:256
+T:100:22:256
+T:100:23:256
+T:100:24:256
+T:100:21:256
+T:100:22:256
+T:100:23:256
+T:100:24:256
 A:0:0:1:2:3:4
 O:12:13:14:15:44:68
 G:3:w
 #W:24
-W:36
-F:HARD_STEAL | GOOD
+W:72
+F:HARD_STEAL | GOOD | FLAT_BASE
 
 # less etiquettes,rll,wor,rc so weapons show up more often in relation
 N:73:Temple
@@ -1361,67 +1390,114 @@ F:HARD_STEAL
 
 # less tele/perc/cantrips, more mage staves
 N:75:Magic shop
+#T:100:6:1
+#T:100:6:1
+#T:100:6:1
+#T:100:6:1
+#I:100:Protection
+#I:100:Levitation
+#I:100:Protection
+#I:100:Fire Resistance
+#I:100:Cold Resistance
+#I:100:Charisma
+##I:100:Slow Digestion
+#T:100:40:3
+#I:100:Acid Resistance
+#I:100:Lightning Resistance
+#I:100:Searching
+#I:100:Slow Monster
+#I:100:Confuse Monster
+#I:100:Sleep Monster
+#I:100:Magic Missile
+#I:100:Stinking Cloud
+#I:100:Wonder
+#I:100:Disarming
+##I:100:Light
+#T:100:65:7
+##I:100:Enlightenment
+#T:100:55:9
+#I:100:Trap Location
+##I:100:Door/Stair Location
+#T:100:55:13
+#I:100:Treasure Location
+#I:100:Object Location
+##I:100:Detect Invisible
+#T:100:55:14
+##I:100:Detect Evil
+#T:100:55:15
+##Staff of Teleportation
+#T:100:55:4
+#T:100:55:4
+#T:100:55:4
+##T:100:55:4
+#I:100:Perception
+#I:100:Perception
+#I:100:Perception
+##I:100:Perception
+##I:100:Perception
+##I:100:Remove Curse
+#T:100:55:6
+##I:100:Cure Light Wounds
+#I:100:Probing
+## & Book~ of Beginner Cantrips
+#T:100:111:50
+#T:100:111:50
+##T:100:111:50
+# Offer ALL devices, except rare base types
 T:100:6:1
 T:100:6:1
 T:100:6:1
 T:100:6:1
+T:100:6:1
+T:100:111:50
+T:100:55:256
+T:100:65:256
+T:100:66:256
+T:100:55:256
+T:100:65:256
+T:100:66:256
+T:100:55:256
+T:100:65:256
+T:100:66:256
+T:100:55:256
+T:100:65:256
+T:100:66:256
+T:100:55:256
+T:100:65:256
+T:100:66:256
+T:100:55:256
+T:100:65:256
+T:100:66:256
+T:100:55:256
+T:100:65:256
+T:100:66:256
+T:100:55:256
+T:100:65:256
+T:100:66:256
+T:100:55:256
+T:100:65:256
+T:100:66:256
+#T:100:40:256
+#T:100:45:256
+# slow digestion:
+T:100:40:3
+T:100:45:6
 I:100:Protection
-I:100:Levitation
-I:100:Protection
+I:100:Free Action
 I:100:Fire Resistance
 I:100:Cold Resistance
-I:100:Charisma
-#I:100:Slow Digestion
-T:100:40:3
 I:100:Acid Resistance
 I:100:Lightning Resistance
-I:100:Searching
-I:100:Slow Monster
-I:100:Confuse Monster
-I:100:Sleep Monster
-I:100:Magic Missile
-I:100:Stinking Cloud
-I:100:Wonder
-I:100:Disarming
-#I:100:Light
-T:100:65:7
-#I:100:Enlightenment
-T:100:55:9
-I:100:Trap Location
-#I:100:Door/Stair Location
-T:100:55:13
-I:100:Treasure Location
-I:100:Object Location
-#I:100:Detect Invisible
-T:100:55:14
-#I:100:Detect Evil
-T:100:55:15
-#Staff of Teleportation
-T:100:55:4
-T:100:55:4
-T:100:55:4
-#T:100:55:4
-I:100:Perception
-I:100:Perception
-I:100:Perception
-#I:100:Perception
-#I:100:Perception
-#I:100:Remove Curse
-T:100:55:6
-#I:100:Cure Light Wounds
-I:100:Probing
-# & Book~ of Beginner Cantrips
-T:100:111:50
-T:100:111:50
-#T:100:111:50
+I:100:Charisma
+I:100:Serpents
 A:0:0:1:2:3:4
 #O:34:35:36:37:31:44 need more keepers first in ow_info
 #O:34:35:36:37:36:37
 O:34:35:36:37:46:49
 G:6:r
 #W:24
-W:36
-F:HARD_STEAL | GOOD | MEDIUM_LEVEL
+W:48
+F:HARD_STEAL | GOOD | MEDIUM_LEVEL | FLAT_BASE
 
 N:76:Black Market
 # --- EXTRA: normal BM doesn't have this: ---
@@ -1529,7 +1605,7 @@ O:46:47:48:46:47:48
 G:+:B
 F:MEDIUM_LEVEL
 F:HARD_STEAL
-W:12
+W:24
 
 # End of pseudo town stores
 ##################################################################################################

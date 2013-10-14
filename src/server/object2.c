@@ -750,8 +750,11 @@ errr get_obj_num_prep(u32b resf)
 			/* Get the entry */
 			alloc_entry *entry = &table[i];
 
-			/* Obtain the base probability */
-			p = entry->prob1;
+			if ((resf & RESF_STOREFLAT))
+				p = 100;
+			else
+				/* Obtain the base probability */
+				p = entry->prob1;
 
 			/* Default probability for this pass */
 			entry->prob2 = 0;
@@ -773,8 +776,11 @@ errr get_obj_num_prep(u32b resf)
 			/* Get the entry */
 			alloc_entry *entry = &table[i];
 
-			/* Obtain the base probability */
-			p = entry->prob1;
+			if ((resf & RESF_STOREFLAT))
+				p = 100;
+			else
+				/* Obtain the base probability */
+				p = entry->prob1;
 
 			/* Default probability for this pass */
 			entry->prob2 = 0;
@@ -886,22 +892,17 @@ errr get_obj_num_prep_tval(int tval, u32b resf)
 s16b get_obj_num(int max_level, u32b resf)
 {
 	long		i, j, n, p;
-
 	long		value, total;
-
 	long		k_idx;
 
 	object_kind	*k_ptr;
-
 	alloc_entry	*table = alloc_kind_table;
 
 
 	/* Boost level */
-	if (max_level > 0)
-	{
+	if (max_level > 0) {
 		/* Occasional "boost" */
-		if (rand_int(GREAT_OBJ) == 0)
-		{
+		if (rand_int(GREAT_OBJ) == 0) {
 			/* What a bizarre calculation */
                         max_level = 1 + ((max_level * MAX_DEPTH_OBJ) / randint(MAX_DEPTH_OBJ));
 		}
@@ -912,18 +913,16 @@ s16b get_obj_num(int max_level, u32b resf)
 	total = 0L;
 
 	/* Cap maximum level */
-	if (max_level > 254)
-	{
-		max_level = 254;
-	}
+	if (max_level > 254) max_level = 254;
+
+	if ((resf & RESF_STOREFLAT)) max_level = 254;
 
 	/* Calculate loop bounds */
 	n = alloc_kind_index_level[max_level + 1];
 
-	if (opening_chest) {		
+	if (opening_chest) {
 		/* Process probabilities */
-		for (i = 0; i < n; i++)
-		{
+		for (i = 0; i < n; i++) {
 			/* Default */
 			table[i].prob3 = 0;
 
@@ -965,8 +964,7 @@ s16b get_obj_num(int max_level, u32b resf)
 	value = rand_int(total);
 
 	/* Find the object */
-	for (i = 0; i < n; i++)
-	{
+	for (i = 0; i < n; i++) {
 		/* Found the entry */
 		if (value < table[i].prob3) break;
 
@@ -979,8 +977,7 @@ s16b get_obj_num(int max_level, u32b resf)
 	p = rand_int(100);
 
 	/* Try for a "better" object once (50%) or twice (10%) */
-	if (p < 60)
-	{
+	if (p < 60) {
 		/* Save old */
 		j = i;
 
@@ -1002,8 +999,7 @@ s16b get_obj_num(int max_level, u32b resf)
 	}
 
 	/* Try for a "better" object twice (10%) */
-	if (p < 10)
-	{
+	if (p < 10) {
 		/* Save old */
 		j = i;
 
@@ -1011,8 +1007,7 @@ s16b get_obj_num(int max_level, u32b resf)
 		value = rand_int(total);
 
 		/* Find the object */
-		for (i = 0; i < n; i++)
-		{
+		for (i = 0; i < n; i++) {
 			/* Found the entry */
 			if (value < table[i].prob3) break;
 

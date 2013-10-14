@@ -1448,6 +1448,7 @@ static void store_create(store_type *st_ptr)
 	if (st_ptr->stock_num >= st_ptr->stock_size) return;
 
 	if (black_market) resf = RESF_STOREBM;
+	if ((st_info[st_ptr->st_idx].flags1 & SF1_FLAT_BASE)) resf |= RESF_STOREFLAT;
 
 	/* Hack -- consider up to n items */
 	for (tries = 0; tries < (black_market ? 60 : 4); tries++) /* 20:4, 40:4, 60:4, 100:4 !
@@ -1793,6 +1794,12 @@ static void store_create(store_type *st_ptr)
 			continue;
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS4) && (object_value(0, o_ptr) < 25000))//20000
 			continue;
+
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_FLAT_BASE)) {
+			if (is_rare_weapon(k_ptr->tval, k_ptr->sval)) continue;
+			if (is_rare_armour(k_ptr->tval, k_ptr->sval)) continue;
+			if (is_rare_magic_device(k_ptr->tval, k_ptr->sval)) continue;
+		}
 
 		/* Further store flag checks */
 		/* Rare enough? */

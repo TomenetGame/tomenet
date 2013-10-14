@@ -856,7 +856,7 @@ F:IGNORE_WATER
 N:102:Filthy Rags
 G:(:D
 I:36:1:0
-W:0:0:10:1
+W:0:0:10:0
 A:0/1
 P:1:0d0:0:0:-1
 F:IGNORE_WATER
