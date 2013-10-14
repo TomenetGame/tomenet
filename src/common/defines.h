@@ -2640,8 +2640,10 @@
 	((tval) == TV_WAND && ((sval) == SV_WAND_ANNIHILATION || (sval) == SV_WAND_ROCKETS || (sval) == SV_WAND_WALL_CREATION || (sval) == SV_WAND_TELEPORT_TO)) || \
 	/* allowing +perception+, healing, magi/power/holiness */ \
 	((tval) == TV_STAFF && ((sval) == SV_STAFF_EARTHQUAKES || (sval) == SV_STAFF_DESTRUCTION || (sval) == SV_STAFF_SPEED || (sval) == SV_STAFF_GENOCIDE)) || \
-	/* not allowing Speed so people aren't "forced" to train MD */ \
-	((tval) == TV_ROD && ((sval) == SV_ROD_HAVOC || (sval) == SV_ROD_IDENTIFY || (sval) == SV_ROD_MAPPING || (sval) == SV_ROD_CURING || (sval) == SV_ROD_RESTORATION || (sval) == SV_ROD_SPEED)) )
+	/* not allowing Speed/Healing so people aren't "forced" to train MD */ \
+	((tval) == TV_ROD && ((sval) == SV_ROD_HAVOC || (sval) == SV_ROD_IDENTIFY || \
+	    (sval) == SV_ROD_MAPPING || (sval) == SV_ROD_CURING || (sval) == SV_ROD_RESTORATION \
+	    || (sval) == SV_ROD_SPEED || (sval) == SV_ROD_HEALING)) )
 #define is_armour(tval)	\
 	(((tval) == TV_BOOTS) || ((tval) == TV_GLOVES) || \
 	((tval) == TV_HELM) || ((tval) == TV_CROWN) || \
