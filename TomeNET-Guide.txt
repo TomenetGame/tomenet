@@ -805,7 +805,8 @@ They all start with a slash '/' hence they're called slash commands:
             It also skips exploding ammo, although it isn't really an ego item.
 
 /dr [tag]   Without tag it equips all items in your inventory that are: not
-(/dress)    cursed, not {worthless}, not {terrible}, known to you.
+(/dress)    cursed, not {worthless}, not {broken}, not {terrible}, and that are
+            known to you.
             With tag it just equips all items that contain that tag in their
             name or inscription somewhere (even if they are cursed).
 
@@ -7426,7 +7427,12 @@ Items display the following pseudo-id tags:
 -Artifacts (random & static)    {special}
 -Cursed items                   {cursed}
 -Useless items (often cursed)   {worthless}
+-Useless items (not cursed)     {broken}
 -Cursed artifacts / egos        {terrible}
+
+('worthless' and 'broken' sort of overlap, depending on item base type.
+For example rods without value will be worthless instead of broken, while
+armour will be broken, and ego armour without value will be worthless again.)
 
 Terrible doesn't need to equal useless. Some cursed artifacts can be very
 powerful, rings of power dropped by Nazgul especially.

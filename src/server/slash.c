@@ -1005,6 +1005,7 @@ void do_slash_cmd(int Ind, char *message)
 						if (o_ptr->note &&
 						    (!strcmp(quark_str(o_ptr->note), "cursed") ||
 						    !strcmp(quark_str(o_ptr->note), "terrible") ||
+						    !strcmp(quark_str(o_ptr->note), "broken") ||
 						    !strcmp(quark_str(o_ptr->note), "worthless") ||
 						    check_guard_inscription(o_ptr->note, 'w')))
 						        continue;
