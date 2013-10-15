@@ -4867,9 +4867,9 @@ int Send_depth(int Ind, struct worldpos *wpos)
 		/* in a town? ignore town level */
 		else if (ville) colour = TERM_WHITE;
 		/* way too low to get good exp? */
-		else if (dlev < det_exp_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
+		else if (dlev < det_req_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
 		/* too low to get 100% exp? */
-		else if (dlev < det_exp_level(p_ptr->lev)) colour = TERM_YELLOW;
+		else if (dlev < det_req_level(p_ptr->lev)) colour = TERM_YELLOW;
 		/* normal exp depth or deeper (default) */
 		else colour = TERM_WHITE;
 	} else {
@@ -4929,9 +4929,9 @@ int Send_depth_hack(int Ind, struct worldpos *wpos, bool town, cptr desc)
 			/* in a town? ignore town level */
 			else if (town) colour2 = TERM_WHITE;
 			/* way too low to get good exp? */
-			else if (getlevel(wpos) < det_exp_level(p_ptr2->lev) - 5) colour2 = TERM_L_DARK;
+			else if (getlevel(wpos) < det_req_level(p_ptr2->lev) - 5) colour2 = TERM_L_DARK;
 			/* too low to get 100% exp? */
-			else if (getlevel(wpos) < det_exp_level(p_ptr2->lev)) colour2 = TERM_YELLOW;
+			else if (getlevel(wpos) < det_req_level(p_ptr2->lev)) colour2 = TERM_YELLOW;
 			/* normal exp depth or deeper (default) */
 			else colour2 = TERM_WHITE;
 		} else {
@@ -4957,9 +4957,9 @@ int Send_depth_hack(int Ind, struct worldpos *wpos, bool town, cptr desc)
 		/* in a town? ignore town level */
 		else if (town) colour = TERM_WHITE;
 		/* way too low to get good exp? */
-		else if (getlevel(wpos) < det_exp_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
+		else if (getlevel(wpos) < det_req_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
 		/* too low to get 100% exp? */
-		else if (getlevel(wpos) < det_exp_level(p_ptr->lev)) colour = TERM_YELLOW;
+		else if (getlevel(wpos) < det_req_level(p_ptr->lev)) colour = TERM_YELLOW;
 		/* normal exp depth or deeper (default) */
 		else colour = TERM_WHITE;
 	} else {

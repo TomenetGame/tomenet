@@ -7880,7 +7880,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	monster_race    *r_ptr = race_inf(m_ptr);
 
 	s64b		new_exp, new_exp_frac;
-	s64b 		tmp_exp, req_lvl;
+	s64b 		tmp_exp;
 	long skill_trauma = get_skill(p_ptr, SKILL_TRAUMATURGY) * SKILL_STEP;
 	long scale_trauma = 0;
 	bool old_tacit = suppress_message;
@@ -8094,10 +8094,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			}
 
 			/* Higher characters who farm monsters on low levels compared to
-			   their clvl will gain less exp.
-			   (note: this formula also occurs in party_gain_exp) */
-			req_lvl = det_exp_level(p_ptr->lev);
-			if (getlevel(&p_ptr->wpos) < req_lvl) tmp_exp = tmp_exp * 2 / (2 + req_lvl - getlevel(&p_ptr->wpos));
+			   their clvl will gain less exp. */
+			tmp_exp = det_exp_level(tmp_exp, p_ptr->lev, getlevel(&p_ptr->wpos));
 
 			/* Give some experience */
 			new_exp = tmp_exp / p_ptr->lev;
@@ -11575,9 +11573,19 @@ void check_aura(int Ind, int aura) {
 	msg_print(Ind, buf);
 }
 
-int det_exp_level(int lev) {
-	if (lev < 20) return(0);
-        else if (lev < 30) return(375 / (45 - lev));
-        else if (lev < 50) return(650 / (56 - lev));
-        else return(lev * 2);
+/* determine minimum dungeon level required for a player of a particular
+   character level to obtain optimum experience. */
+int det_req_level(int plev) {
+	if (plev < 20) return (0);
+        else if (plev < 30) return (375 / (45 - plev));
+        else if (plev < 50) return (650 / (56 - plev));
+        else if (plev < 65) return (plev * 2);
+        else if (plev < 75) return ((plev - 65) * 4 + 130);
+        else return ((plev - 75) + 170);
+}
+/* calculate actual experience gain based on det_req_level */
+s64b det_exp_level(s64b exp, int plev, int dlev) {
+	int req_dlvl = det_req_level(plev);
+	if (dlev < req_dlvl) return (exp * 2 / (2 + req_dlvl - dlev));
+	else return (exp);
 }

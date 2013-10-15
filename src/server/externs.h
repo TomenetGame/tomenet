@@ -1923,7 +1923,8 @@ extern void check_quests(void);
 extern bool master_level_specific(int Ind, struct worldpos *wpos, char * parms);
 extern void unstatic_level(struct worldpos *wpos);
 
-extern int det_exp_level(int lev);
+extern int det_req_level(int plev);
+extern s64b det_exp_level(s64b exp, int plev, int dlev);
 extern void shape_Maia_skills(int Ind);
 
 /*

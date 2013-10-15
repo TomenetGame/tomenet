@@ -2345,7 +2345,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 	int i, eff_henc;
 	struct worldpos *wpos = &Players[Ind]->wpos;
 	s64b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount;
-	s64b modified_level, req_lvl;
+	s64b modified_level;
 	int dlev;
 #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
 	int soft_max_plv;
@@ -2456,12 +2456,8 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
    #endif
   #endif
  #endif
-			if (eff_henc >= 20) {
-				if (eff_henc < 30) req_lvl = 375 / (45 - eff_henc);
-				else if (eff_henc < 50) req_lvl = 650 / (56 - eff_henc);
-				else req_lvl = (eff_henc * 2);
-				if (dlev < req_lvl) new_amount = new_amount * 2 / (2 + req_lvl - dlev);
-			}
+			/* dungeon floor specific reduction if too shallow */
+			new_amount = det_exp_level(new_amount, eff_henc, dlev);
 
 			/* Don't allow cheap support from super-high level characters */
 			if (cfg.henc_strictness && !p_ptr->total_winner) {

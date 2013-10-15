@@ -4193,38 +4193,38 @@ On the minimum required depth or deeper, it's white.
 it's also used as a word-of-recall indicator this way.)
 
     Character level     |     Dungeon level
--------------------------------------------------
+------------------------------------------------
         1..19                 decent exp is
                             gained everywhere
-        20                           15
-        23                           17
-        25                           18
-        28                           22
-        30                           25
-        35                           30
-        38                           36
-        40                           40
-        41                           43
-        42                           46
-        43                           50
-        44                           54
-        45                           59
-        46                           65
-        47                           72
-        48                           81
-        49                           92
-------  50                          100   ------
-        55                          110
-        60                          120
-        65                          130
-        70                          140
-        75                          150
-        80                          160
-        85                          170
-        90                          180
-        95                          190
-        98                          196
-        99                    no exp gained
+         20                         15
+         23                         17
+         25                         18
+         28                         22
+         30                         25
+         35                         30
+         38                         36
+         40                         40
+         41                         43
+         42                         46
+         43                         50
+         44                         54
+         45                         59
+         46                         65
+         47                         72
+         48                         81
+         49                         92
+ ------  50                        100  ------
+         55                        110
+         60                        120
+      /  65                        130  \
+      |  74                        166  |
+      \  75                        170  /
+         80                        175
+         85                        180
+         90                        185
+         95                        190
+         98                        193
+         99                   no exp gained
 
 If you are below the optimum depth, your experience gain will decrease.
 The experience gained will be multiplied by 2 / (2 + leveldifference).
@@ -4232,7 +4232,7 @@ So for 1 level missing to optimum depth you would get 2 / (2 + 1) = 67% of
 the optimum experience, at 2 levels difference you'd get 50%, 40% at 3, etc.
 At level 64 and higher, no dungeon except for the Nether Realm (see (4.5c))
 will be deep enough to deliver optimal experience and your experience gain
-will slowly start to decrease while you further rise in character levels.
+after attaining level 66 will sharply decrease outside of the Nether Realm.
 The Nether Realm is by far the deepest dungeon in the game and allows players
 of very high character levels to accumulate excellent experience.
 
