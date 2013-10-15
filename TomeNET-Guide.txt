@@ -11993,7 +11993,7 @@ Note: Nearly all of these actually occur in packs (although some of them might
       also sometimes appear on their own) making them even easier to attain.
 
 Small kobold     1  Actually very weak, but it has poison resistance. This way
-(or other kobolds)  this form may help you to kill Rotting corpses (see below)
+(or normal kobold)  this form may help you to kill Rotting corpses (see below)
                     which have poisonous melee attacks. ;)
                     Not really useful other than that.
 Novice mage      2  Sort of weak but has 'blink' spell (aka phase door) and
@@ -12009,6 +12009,8 @@ Novice ranger    4  Can pass trees easily. Gives an extra shot with ranged
 N. mindcrafter   4  Free action, resists confusion and slightly insanity too.
                     Can cast blind/slow/confuse/fear spells.
                     It occurs solo at depth 4, but in packs at depth 8!
+Large kobold     5  As all kobolds it has poison resistance. It also has a lot
+                    of hit points and very good AC for its level.
 Rotting corpse   8  Free action, resists confusion/fear/cold, poison immunity,
                     brands melee attacks with poison, decent AC.
 Phantom warrior  8  Useful only for shamans because it has no limbs:
@@ -12048,8 +12050,8 @@ Umber hulk      16  Shamans can use full equipment in this form, others cannot.
                     digging tool.
                     Also it is immune to poison, paralysis and confusion, you
                     won't bleed if you get cut, and its melee attacks may have
-                    a slight confusion-effect (which can make fighting it a bit
-                    dangerous sometimes).
+                    a confusion effect (which makes fighting it in close combat
+                    a bit dangerous).
                     (Does not occur in packs.)
 Forest troll    17  High HP, good AC, can pass trees, gives 'HP regeneration'.
 Elite uruk      20  Good HP, very high melee damage, good AC, +1 extra shot,
