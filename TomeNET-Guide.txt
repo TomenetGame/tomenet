@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. October 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 15. October 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -4217,6 +4217,7 @@ it's also used as a word-of-recall indicator this way.)
          55                        110
          60                        120
       /  65                        130  \
+      |  66                        134  |
       |  74                        166  |
       \  75                        170  /
          80                        175
