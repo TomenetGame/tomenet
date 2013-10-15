@@ -1313,10 +1313,10 @@ static byte player_init[2][MAX_CLASS][5][3] =
 
 	{
 		/* Druid */
+		{ TV_POTION, SV_POTION_HEROISM, 0 },
 		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
 		{ TV_POTION, SV_POTION_INVIS, 0 },
 		{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
-		{ 255, 255, 0 },
 		{ 255, 255, 0 },
 	},
 
@@ -1332,7 +1332,7 @@ static byte player_init[2][MAX_CLASS][5][3] =
 		/* Runemaster */
 		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
-		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 30 },
+		{ TV_STAFF, SV_STAFF_DETECT_ITEM, 20 },
 		{ TV_DIGGING, SV_PICK, 0 },
 		{ TV_BOOMERANG, SV_BOOM_S_METAL, 0 },
 	},
@@ -1434,10 +1434,10 @@ static byte player_init[2][MAX_CLASS][5][3] =
 
 	{
 		/* Druid */
+		{ TV_POTION, SV_POTION_HEROISM, 0 },
 		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
 		{ TV_POTION, SV_POTION_INVIS, 0 },
 		{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
-		{ 255, 255, 0 },
 		{ 255, 255, 0 },
 	},
 
@@ -1453,8 +1453,8 @@ static byte player_init[2][MAX_CLASS][5][3] =
 		/* Runemaster */
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 30 },
-		{ 255, 255, 0 },
+		{ TV_STAFF, SV_STAFF_DETECT_ITEM, 20 },
+		{ TV_DIGGING, SV_PICK, 0 },
 		{ 255, 255, 0 },
 	},
 	{
@@ -1668,9 +1668,9 @@ static void player_outfit(int Ind)
 	}
 	/* Dwarves like to collect treasures */
 	else if (p_ptr->prace == RACE_DWARF) {
-		invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_DETECT_ITEM));
+		invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_DETECT_GOLD));
 		o_ptr->number = 1;
-		o_ptr->pval = 20;
+		o_ptr->pval = 30;
 		do_player_outfit();
 	}
 
