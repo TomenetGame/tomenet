@@ -2705,6 +2705,9 @@ void disable_specific_warnings(player_type *p_ptr) {
 
 	if (!(p_ptr->mode & MODE_EVERLASTING))
 		p_ptr->warning_instares = 1;
+
+	if ((p_ptr->mode & (MODE_DED_IDDC | MODE_PVP)))
+		p_ptr->warning_dungeon = 1;
 }
 
 #if 0
