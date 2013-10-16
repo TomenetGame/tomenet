@@ -31,6 +31,9 @@
    outrageous prices. - C. Blue */
 #define RANDART_PRICE_BONUS
 
+/* Prevent Weapons of Morgul from dropping in Ironman Deep Dive Challenge? - C. Blue */
+#define NO_MORGUL_IN_IDDC
+
 
 /*
  * Excise a dungeon object from any stacks
@@ -3767,6 +3770,9 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 		e_ptr = &e_info[i];
 
 		if (i == EGO_ETHEREAL && (resf & RESF_NOETHEREAL)) continue;
+#ifdef NO_MORGUL_IN_IDDC
+		if (i == EGO_MORGUL && in_irondeepdive(&o_ptr->wpos)) continue;
+#endif
 
 		/* XXX XXX Enforce minimum "depth" (loosely) */
 		if (e_ptr->level > level) {
@@ -3820,6 +3826,9 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 			e_ptr = &e_info[i];
 
 			if (i == EGO_ETHEREAL && (resf & RESF_NOETHEREAL)) continue;
+#ifdef NO_MORGUL_IN_IDDC
+			if (i == EGO_MORGUL && in_irondeepdive(&o_ptr->wpos)) continue;
+#endif
 			if ((e_ptr->fego[0] & ETR4_NO_DOUBLE_EGO)) continue;
 
 			/* Cannot be a double ego of the same ego type */
