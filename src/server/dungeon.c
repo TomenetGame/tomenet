@@ -6051,7 +6051,7 @@ void process_player_change_wpos(int Ind)
 		p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
 		msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
 		msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
-		msg_print(Ind, "\374\377yPossible reasons: Weapon is too heavy or your strength is too low.");
+		msg_print(Ind, "\374\377y    Possible reasons: Weapon is too heavy or your strength is too low.");
 		if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
 			msg_print(Ind, "\374\377y    Try taking off your shield ('t' key) and see if that helps.");
 		switch (p_ptr->pclass) {
@@ -6095,6 +6095,22 @@ void process_player_change_wpos(int Ind)
 		msg_print(Ind, "\374\377yHINT: You don't wield any light source at the moment!");
 		msg_print(Ind, "\374\377y      Press '\377Rw\377y' to wield a torch or lantern (or other items).");
 		s_printf("warning_lite: %s\n", p_ptr->name);
+	}
+
+	if (!p_ptr->warning_worldmap && p_ptr->wpos.wz == 0 &&
+	    (ABS(p_ptr->wpos.wx - 32) >= 2 || ABS(p_ptr->wpos.wy - 32) >= 2)) {
+		msg_print(Ind, "\374\377yHINT: You can press '\377oM\377y' to browse a worldmap.");
+		msg_print(Ind, "\374\377y      Towns, for example Bree, are denoted as yellow 'T'.");
+		s_printf("warning_worldmap: %s\n", p_ptr->name);
+		p_ptr->warning_worldmap = 1;
+	}
+
+	if (!p_ptr->warning_dungeon && p_ptr->wpos.wz == 0 &&
+	    (ABS(p_ptr->wpos.wx - 32) >= 3 || ABS(p_ptr->wpos.wy - 32) >= 3)) {
+		msg_print(Ind, "\374\377yHINT: Consider going to the Training Tower first, to gain some levels.");
+		msg_print(Ind, "\374\377y      After that, seek out a dungeon. The tower is located in Bree.");
+		s_printf("warning_dungeon: %s\n", p_ptr->name);
+		p_ptr->warning_dungeon = 1;
 	}
 
 	/* Hack -- jail her/him */

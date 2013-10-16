@@ -3941,6 +3941,13 @@ void check_experience(int Ind)
 	if (p_ptr->warning_cloak == 2 && p_ptr->lev >= 15)
 		msg_print(Ind, "\374\377GHINT: You can press \377gSHIFT + v\377G to cloak your appearance.");
 
+	/* Tell player to use numpad to move diagonally */
+	if (old_lev < 2 && p_ptr->lev >= 2 && p_ptr->warning_numpadmove == 0) {
+		msg_print(Ind, "\374\377yHINT: Use the number pad keys to move, that way you can move \377odiagonally\377y too!");
+		s_printf("warning_numpadmove: %s\n", p_ptr->name);
+		p_ptr->warning_numpadmove = 1;
+	}
+
 	/* Remind how to send chat messages */
 	if (old_lev < 3 && p_ptr->lev >= 3 && p_ptr->warning_chat == 0) {
 		p_ptr->warning_chat = 1;
@@ -3948,14 +3955,10 @@ void check_experience(int Ind)
 		s_printf("warning_chat: %s\n", p_ptr->name);
 	}
 
-	/* Tell player to use numpad to move diagonally */
-	if (old_lev < 4 && p_ptr->lev >= 4 && p_ptr->warning_numpadmove == 0) {
-		msg_print(Ind, "\374\377yHINT: Use the number pad keys to move, that way you can move \377odiagonally\377y too!");
-		s_printf("warning_numpadmove: %s\n", p_ptr->name);
-		p_ptr->warning_numpadmove = 1;
-	}
+	//if (old_lev < 6 && p_ptr->lev >= 6) p_ptr->warning_worldmap = 1;
+	//if (old_lev < 6 && p_ptr->lev >= 6) p_ptr->warning_dungeon = 1;
 
-		/* Give warning message to use word-of-recall, aimed at newbies */
+	/* Give warning message to use word-of-recall, aimed at newbies */
 	if (old_lev < 8 && p_ptr->lev >= 8 && p_ptr->warning_wor == 0) {
 		/* scan inventory for any potions */
 		bool found_items = FALSE;

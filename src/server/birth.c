@@ -2610,6 +2610,11 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_numpadmove = 1;
 		p_ptr->warning_ammotype = 1;
 		p_ptr->warning_ai_annoy = 1;
+		p_ptr->warning_fountain = 1;
+		p_ptr->warning_voidjumpgate = 1;
+		p_ptr->warning_staircase = 1;
+		p_ptr->warning_worldmap = 1;
+		p_ptr->warning_dungeon = 1;
 		return;
 	}
 

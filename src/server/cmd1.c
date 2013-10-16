@@ -5981,7 +5981,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 			(cs_ptr = GetCS(c_ptr, CS_SHOP)) && cs_ptr->sc.omni == 3)
 
 		{
-			if(p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)/8] & (1<<((p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)%8))){
+			if (p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] & (1 << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8))) {
 				/* Resurrect him */
 				resurrect_player(Ind, 0);
 
@@ -6012,6 +6012,25 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 		}
 #endif	// USE_MANG_HOUSE_ONLY
 
+		if (!p_ptr->warning_staircase &&
+		    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE ||
+		    c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
+			msg_print(Ind, "\374\377yHINT: You found a staircase. Press the according key '<' or '>' to enter!");
+			s_printf("warning_staircase: %s\n", p_ptr->name);
+			p_ptr->warning_staircase = 1;
+		}
+
+		if (!p_ptr->warning_voidjumpgate && c_ptr->feat == FEAT_BETWEEN) {
+			msg_print(Ind, "\374\377yHINT: You found a void jump gate. You may press '>' to teleport!");
+			s_printf("warning_voidjumpgate: %s\n", p_ptr->name);
+			p_ptr->warning_voidjumpgate = 1;
+		}
+
+		if (!p_ptr->warning_fountain && c_ptr->feat == FEAT_FOUNTAIN) {
+			msg_print(Ind, "\374\377yHINT: You found a fountain. Press '_' if you want to drink from it!");
+			s_printf("warning_fountain: %s\n", p_ptr->name);
+			p_ptr->warning_fountain = 1;
+		}
 
 		/* Discover invisible traps */
 //		else if (c_ptr->feat == FEAT_INVIS)

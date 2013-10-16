@@ -6156,9 +6156,9 @@ void calc_boni(int Ind)
 			p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
 			msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
 			msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
-			msg_print(Ind, "\374\377yPossible reasons: Weapon is too heavy or your strength is too low.");
+			msg_print(Ind, "\374\377y    Possible reasons: Weapon is too heavy or your strength is too low.");
 			if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
-				msg_print(Ind, "\374\377y    Try taking off your shield ('t' key) and see if that helps.");
+				msg_print(Ind, "\374\377y    Try taking off your shield ('\377ot\377y' key) and see if that helps.");
 			switch (p_ptr->pclass) {
 			case CLASS_WARRIOR:
 				msg_print(Ind, "\374\377y    Warriors should try either a dagger, whip, spear or hatchet.");

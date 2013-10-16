@@ -3654,7 +3654,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 
 	bool more = FALSE;
 	cave_type **zcave;
-	if(!(zcave = getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	if (!p_ptr->warning_numpadmove &&
 	    (dir == 1 || dir == 3 || dir == 7 || dir == 9))
