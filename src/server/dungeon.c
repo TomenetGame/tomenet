@@ -4140,9 +4140,9 @@ static bool process_player_end_aux(int Ind)
 				if (!refilled) {
 					msg_print(Ind, "Your light has gone out!");
 					/* Calculate torch radius */
-					p_ptr->update |= (PU_TORCH|PU_BONUS);
+					p_ptr->update |= (PU_TORCH | PU_BONUS);
 
-					if (p_ptr->max_plv <= 20 && !p_ptr->warning_lite_refill) {
+					if (!p_ptr->warning_lite_refill) {
 						p_ptr->warning_lite_refill = 1;
 						msg_print(Ind, "\374\377yHINT: Press SHIFT+F to refill your light source. You will need a flask of");
 						msg_print(Ind, "\374\377y      oil for lanterns, or another torch to combine with an extinct torch.");
@@ -6044,8 +6044,7 @@ void process_player_change_wpos(int Ind)
 
 	/* warning messages, mostly for newbies */
 	if (p_ptr->ghost) ; /* don't warn ghosts */
-	else if (p_ptr->max_plv == 1 &&
-	    p_ptr->num_blow == 1 && p_ptr->warning_bpr2 != 1 &&
+	else if (p_ptr->warning_bpr2 != 1 && p_ptr->num_blow == 1 && 
 	    /* and don't spam Martial Arts users or mage-staff wielders ;) */
 	    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 		p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
@@ -6072,9 +6071,8 @@ void process_player_change_wpos(int Ind)
 			break;
 		}
 		s_printf("warning_bpr23: %s\n", p_ptr->name);
-	} else if (p_ptr->max_plv == 1 &&
-	    p_ptr->num_blow == 1 && !p_ptr->inventory[INVEN_WIELD].k_idx &&
-	    p_ptr->warning_wield == 0) {
+	} else if (p_ptr->warning_wield == 0 &&
+	    p_ptr->num_blow == 1 && !p_ptr->inventory[INVEN_WIELD].k_idx) {
 		p_ptr->warning_wield = 1;
 		msg_print(Ind, "\374\377yWARNING: You don't wield a weapon at the moment!");
 		msg_print(Ind, "\374\377y    Press '\377Rw\377y' key. It lets you pick a weapon (as well as other items)");
@@ -6082,15 +6080,14 @@ void process_player_change_wpos(int Ind)
 		msg_print(Ind, "\374\377y    (If you plan to train 'Martial Arts' skill, ignore this warning.)");
 		s_printf("warning_wield: %s\n", p_ptr->name);
 	}
-	else if (p_ptr->max_plv <= 3 && p_ptr->warning_run == 0) {
+	else if (p_ptr->warning_run == 0) {
 		p_ptr->warning_run = 1;
 		msg_print(Ind, "\374\377yHINT: To run fast, use \377RSHIFT + direction\377y keys.");
 		msg_print(Ind, "\374\377y      For that, Numlock key must be OFF and no awake monster in sight!");
 		s_printf("warning_run: %s\n", p_ptr->name);
 	}
-	else if (p_ptr->max_plv <= 5 && p_ptr->cur_lite == 0 &&
-	    (p_ptr->wpos.wz < 0 || (p_ptr->wpos.wz == 0 && night_surface)) //Training Tower currently exempt
-	    && p_ptr->warning_lite == 0) {
+	else if (p_ptr->warning_lite == 0 && p_ptr->cur_lite == 0 &&
+	    (p_ptr->wpos.wz < 0 || (p_ptr->wpos.wz == 0 && night_surface))) { //Training Tower currently exempt
 		if (p_ptr->wpos.wz < 0) p_ptr->warning_lite = 1;
 		msg_print(Ind, "\374\377yHINT: You don't wield any light source at the moment!");
 		msg_print(Ind, "\374\377y      Press '\377Rw\377y' to wield a torch or lantern (or other items).");

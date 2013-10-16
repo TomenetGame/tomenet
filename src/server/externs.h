@@ -469,6 +469,7 @@ extern bool confirm_admin(int Ind);
 extern void server_birth(void);
 extern void admin_outfit(int Ind, int realm);
 extern void disable_specific_warnings(player_type *p_ptr);
+extern void disable_lowlevel_warnings(player_type *p_ptr);
 extern void get_history(int Ind);
 
 /* cave.c */

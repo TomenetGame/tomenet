@@ -1124,8 +1124,7 @@ return;
 #endif
 
 	/* Only warn about wrong ammo type at the very beginning (for archers, who carry one of each type) */
-	if (p_ptr->max_plv == 1 &&
-	    !p_ptr->warning_ammotype && slot == INVEN_AMMO
+	if (!p_ptr->warning_ammotype && slot == INVEN_AMMO
 	    && p_ptr->inventory[INVEN_BOW].tval == TV_BOW) {
 		switch (o_ptr->tval) {
 		case TV_SHOT:

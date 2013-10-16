@@ -3051,7 +3051,7 @@ void calc_boni(int Ind)
 		p_ptr->dual_wield = TRUE;
 		/* Don't kill warnings by inspecting weapons/armour in stores! */
 		if (!suppress_message)
-		if (!old_dual_wield && !p_ptr->dual_mode && p_ptr->lev <= 20 && p_ptr->warning_dual_mode == 0) {
+		if (p_ptr->warning_dual_mode == 0 && !old_dual_wield && !p_ptr->dual_mode) {
 			msg_print(Ind, "\374\377yHINT: Dual-wield mode isn't enabled! Press 'm' to toggle it!");
 			s_printf("warning_dual_mode: %s\n", p_ptr->name);
 			p_ptr->warning_dual_mode = 1;
@@ -4554,7 +4554,7 @@ void calc_boni(int Ind)
 				msg_print(Ind, "\377RThe weight of your armour strains your flexibility and awareness.");
 				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
-				if (p_ptr->dual_wield && !p_ptr->warning_dual && p_ptr->pclass != CLASS_ROGUE && p_ptr->max_plv <= 10) {
+				if (!p_ptr->warning_dual && p_ptr->dual_wield && p_ptr->pclass != CLASS_ROGUE) {
 					p_ptr->warning_dual = 1;
 					msg_print(Ind, "\374\377yHINT: You won't get any benefits from dual-wielding if your armour is");
 					msg_print(Ind, "\374\377y      too heavy; in that case, consider using one weapon together with");
@@ -6136,9 +6136,8 @@ void calc_boni(int Ind)
 	/* Don't kill warnings by inspecting weapons/armour in stores! */
 	if (!suppress_message) {
 		/* warning messages, mostly for newbies */
-		if (p_ptr->max_plv <= 15 && /* limit, so it won't annoy priests anymore who use zeal spell */
+		if (p_ptr->warning_bpr == 0 && /* limit, so it won't annoy priests anymore who use zeal spell */
 		    p_ptr->num_blow == 1 && old_num_blow > 1 &&
-		    p_ptr->warning_bpr == 0 &&
 		    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 			p_ptr->warning_bpr = 1;
 			msg_print(Ind, "\374\377yWARNING! Your number of melee attacks per round has just dropped to ONE.");
@@ -6149,8 +6148,8 @@ void calc_boni(int Ind)
 			msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
 			s_printf("warning_bpr: %s\n", p_ptr->name);
 		}
-		if (p_ptr->max_plv == 1 &&
-		    p_ptr->num_blow == 1 && old_num_blow == 1 && p_ptr->warning_bpr3 == 2 &&
+		if (p_ptr->warning_bpr3 == 2 &&
+		    p_ptr->num_blow == 1 && old_num_blow == 1 && 
 		    /* and don't spam Martial Arts users or mage-staff wielders ;) */
 		    p_ptr->inventory[INVEN_WIELD].k_idx && is_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 			p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;

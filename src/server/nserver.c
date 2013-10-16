@@ -6968,7 +6968,7 @@ static int Receive_walk(int ind)
 	if (p_ptr->command_rep) p_ptr->command_rep =- 1;
 
 	if (player && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
-		if (p_ptr->warning_run == 0 && p_ptr->max_plv <= 5) {
+		if (p_ptr->warning_run == 0) {
 			p_ptr->warning_run_steps++;
 			/* Give a warning after first 10 walked steps, then every 50 walked steps. */
 			if (p_ptr->warning_run_steps == 60) p_ptr->warning_run_steps = 10;
@@ -7047,11 +7047,9 @@ static int Receive_run(int ind)
 				// Hack -- send the same connp->r "arguments" to Receive_walk
 				if (p_ptr->warning_run_monlos == 0) {
 					p_ptr->warning_run_monlos = 1;
-					if (p_ptr->max_plv <= 3) {
-						msg_print(player, "\374\377yNote: You cannot initiate running while you are within line-of-sight");
-						msg_print(player, "\374\377y      of an awake monster. The town of Bree is excepted from this.");
-						s_printf("warning_run_monlos: %s\n", p_ptr->name);
-					}
+					msg_print(player, "\374\377yNote: You cannot initiate running while you are within line-of-sight");
+					msg_print(player, "\374\377y      of an awake monster. The town of Bree is excepted from this.");
+					s_printf("warning_run_monlos: %s\n", p_ptr->name);
 				}
 				return Receive_walk(ind);
 			}

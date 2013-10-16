@@ -4684,10 +4684,8 @@ void py_attack(int Ind, int y, int x, bool old)
 
 	if (p_ptr->warning_ranged_autoret == 0) {
 		p_ptr->warning_ranged_autoret = 1;
-		if (p_ptr->max_plv <= 10) {
-			msg_print(Ind, "\374\377yHINT: Inscribe your ranged weapon '\377R@O\377y' to use it for auto-retaliation!");
-			s_printf("warning_ranged_autoret: %s\n", p_ptr->name);
-		}
+		msg_print(Ind, "\374\377yHINT: Inscribe your ranged weapon '\377R@O\377y' to use it for auto-retaliation!");
+		s_printf("warning_ranged_autoret: %s\n", p_ptr->name);
 	}
 }
 
@@ -6575,7 +6573,7 @@ static bool run_test(int Ind)
 
 		/* unlit grids abort running */
 		if (!(c_ptr->info & (CAVE_LITE | CAVE_GLOW))) {
-			if (!p_ptr->warning_run_lite && p_ptr->lev <= 10) {
+			if (!p_ptr->warning_run_lite) {
 				msg_print(Ind, "\374\377yHINT: You cannot run in the dark. Press 'w' to equip a light source!");
 				p_ptr->warning_run_lite = TRUE;
 				s_printf("warning_run_lite: %s\n", p_ptr->name);

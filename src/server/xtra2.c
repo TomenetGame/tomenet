@@ -3469,7 +3469,7 @@ bool set_food(int Ind, int v)
 			/* Weak */
 			case 1:
 			msg_print(Ind, "You are getting weak from hunger!");
-			if (p_ptr->warning_hungry <= 1 && p_ptr->max_plv <= 20) {
+			if (p_ptr->warning_hungry != 2) {
 				p_ptr->warning_hungry = 2;
 				if (p_ptr->prace == RACE_VAMPIRE) {
 					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Drink some blood by killing monsters");
@@ -3488,7 +3488,7 @@ bool set_food(int Ind, int v)
 			/* Hungry */
 			case 2:
 			msg_print(Ind, "You are getting hungry.");
-			if (p_ptr->warning_hungry == 0 && p_ptr->max_plv <= 15) {
+			if (p_ptr->warning_hungry == 0) {
 				p_ptr->warning_hungry = 1;
 				if (p_ptr->prace == RACE_VAMPIRE) {
 					msg_print(Ind, "\374\377oWARNING: Your character is 'hungry'. Drink some blood by killing some");
@@ -3932,6 +3932,9 @@ void check_experience(int Ind)
 	msg_broadcast(Ind, str);
 
 
+	/* Disable certain warnings on reaching certain levels */
+	disable_lowlevel_warnings(p_ptr);
+
 	/* Give helpful msg about how to distribute skill points at first level-up */
 	if (p_ptr->newbie_hints && (old_lev == 1 || (p_ptr->skill_points == (p_ptr->max_plv - 1) * 5))) {
 	    // && p_ptr->inval) /* (p_ptr->warning_skills) */
@@ -3954,9 +3957,6 @@ void check_experience(int Ind)
 		msg_print(Ind, "\374\377oHINT: You can press '\377R:\377o' key to chat with other players, eg greet them!");
 		s_printf("warning_chat: %s\n", p_ptr->name);
 	}
-
-	//if (old_lev < 6 && p_ptr->lev >= 6) p_ptr->warning_worldmap = 1;
-	//if (old_lev < 6 && p_ptr->lev >= 6) p_ptr->warning_dungeon = 1;
 
 	/* Give warning message to use word-of-recall, aimed at newbies */
 	if (old_lev < 8 && p_ptr->lev >= 8 && p_ptr->warning_wor == 0) {
@@ -7462,7 +7462,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
 	/* Possibly tell him what to do now */
-	if (p_ptr->lev <= 10 && p_ptr->warning_ghost == 0) {
+	if (p_ptr->warning_ghost == 0) {
 		p_ptr->warning_ghost = 1;
 		msg_print(Ind, "\375\377RHINT: You died! You can wait for someone to revive you or use \377o<\377R or \377o>");
 		msg_print(Ind, "\375\377R      keys to float back to town and revive yourself in the temple (the \377g4\377R).");
@@ -7552,7 +7552,7 @@ void resurrect_player(int Ind, int loss_reduction) {
 	p_ptr->update |= (PU_BONUS);
 
 	/* Inform him of instant resurrection option */
-	if (p_ptr->lev <= 30 && p_ptr->warning_instares == 0) {
+	if (p_ptr->warning_instares == 0) {
 		p_ptr->warning_instares = 1;
 		msg_print(Ind, "\375\377yHint: You can turn on \377oinstant resurrection\377y in the temple by pressing '\377or\377y'.");
 		msg_print(Ind, "\375\377y      Make sure to read up on it in the \377oguide\377y to understand pros and cons!");

@@ -2708,6 +2708,59 @@ void disable_specific_warnings(player_type *p_ptr) {
 
 	if ((p_ptr->mode & (MODE_DED_IDDC | MODE_PVP)))
 		p_ptr->warning_dungeon = 1;
+
+	if ((p_ptr->mode & MODE_DED_IDDC))
+		p_ptr->warning_wor = 1;
+
+	/* Some warnings cease at certain levels */
+	disable_lowlevel_warnings(p_ptr);
+}
+
+/* Disable warnings when player reaches certain levels */
+void disable_lowlevel_warnings(player_type *p_ptr) {
+	if (p_ptr->max_plv > 1) {
+		p_ptr->warning_bpr2 = 1;
+		p_ptr->warning_bpr3 = 1;
+		p_ptr->warning_ammotype = 1;
+		p_ptr->warning_wield = 1;
+	}
+	if (p_ptr->max_plv > 2) {
+		p_ptr->warning_wield_combat = 1;
+	}
+	if (p_ptr->max_plv > 3) {
+		p_ptr->warning_worldmap = 1;
+		p_ptr->warning_dungeon = 1;
+		p_ptr->warning_run_monlos = 1;
+	}
+	if (p_ptr->max_plv > 4) {
+		p_ptr->warning_fountain = 1;
+		p_ptr->warning_voidjumpgate = 1;
+		p_ptr->warning_staircase = 1;
+		p_ptr->warning_autoret = 99;//p_ptr->warning_autoret_ok = ;
+	}
+	if (p_ptr->max_plv > 5) {
+		p_ptr->warning_run = 1;
+		p_ptr->warning_lite = 1;
+	}
+	if (p_ptr->max_plv > 10) {
+		p_ptr->warning_ghost = 1;
+		p_ptr->warning_dual = 1;
+		p_ptr->warning_run_lite = 1;
+		p_ptr->warning_ranged_autoret = 1;
+	}
+	if (p_ptr->max_plv > 15) {
+		p_ptr->warning_bpr = 1;
+		p_ptr->warning_rest = 1;
+		p_ptr->warning_hungry = 1;
+	}
+	if (p_ptr->max_plv > 20) {
+		p_ptr->warning_dual_mode = 1;
+		p_ptr->warning_hungry = 2;
+		p_ptr->warning_lite_refill = 1;
+	}
+	if (p_ptr->max_plv > 30) {
+		p_ptr->warning_instares = 1;
+	}
 }
 
 #if 0
@@ -3059,8 +3112,6 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 		/* automatically know the location of IDDC dungeon */
 		p_ptr->wild_map[(WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) / 8] |=
 		    (1 << ((WPOS_IRONDEEPDIVE_X + WPOS_IRONDEEPDIVE_Y * MAX_WILD_X) % 8));
-		/* disable WoR hint */
-		p_ptr->warning_wor = 1;
 	}
 #endif
 

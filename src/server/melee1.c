@@ -2420,8 +2420,8 @@ bool make_attack_melee(int Ind, int m_idx)
 	/* manage warning_autoret for melee-dependant chars, which gives newbies
 	   a hint that they don't need to try and "run into" a monster to attack
 	   it, but should rather stand still to conserve energy. - C. Blue */
-	if (!(r_ptr->flags8 & RF8_NO_AUTORET) &&
-	    p_ptr->max_plv <= 4 && p_ptr->warning_autoret != 99 && p_ptr->warning_autoret_ok == 0 &&
+	if (p_ptr->warning_autoret != 99 && p_ptr->warning_autoret_ok == 0 &&
+	    !(r_ptr->flags8 & RF8_NO_AUTORET) &&
 	    !p_ptr->paralyzed && p_ptr->stun < 100 &&
 	    !p_ptr->blind && !p_ptr->confused && !p_ptr->afraid) {
 		p_ptr->warning_autoret++;
@@ -2434,7 +2434,7 @@ bool make_attack_melee(int Ind, int m_idx)
 		}
 	}
 
-	if (p_ptr->max_plv <= 2 && p_ptr->warning_wield_combat == 0 &&
+	if (p_ptr->warning_wield_combat == 0 &&
 	    p_ptr->inventory[INVEN_WIELD].k_idx == 0 &&
 	    p_ptr->inventory[INVEN_ARM].k_idx == 0 &&
 	    p_ptr->inventory[INVEN_BOW].k_idx == 0
