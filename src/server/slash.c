@@ -4663,10 +4663,10 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				object_type *o_ptr;
 				u32b f1, f2, f3, f4, f5, esp;
-				int min_pval = -999, min_ap = -999, tries = 1000;
+				int min_pval = -999, min_ap = -999, tries = 1000, min_todam = -999;
 				int th ,td ,ta; //for retaining jewelry properties in case they get inverted by cursing
-				if (tk < 1) {
-					msg_print(Ind, "\377oUsage: /reart <inventory-slot> [<+min pval>|<min artifact power>]");
+				if (tk < 1 || tk > 4) {
+					msg_print(Ind, "\377oUsage: /reart <inventory-slot> [+<min pval>] [<min artifact power>] [D<dam>]");
 					return;
 				}
 
@@ -4688,15 +4688,28 @@ void do_slash_cmd(int Ind, char *message)
 
 				if (tk > 1) {
 					if (token[2][0] == '+') min_pval = atoi(token[2]);
+					else if (token[2][0] == 'D') min_todam = atoi(token[2] + 1);
 					else min_ap = atoi(token[2]);
 				}
+				if (tk > 2) {
+					if (token[3][0] == '+') min_pval = atoi(token[3]);
+					else if (token[3][0] == 'D') min_todam = atoi(token[3] + 1);
+					else min_ap = atoi(token[3]);
+				}
+				if (tk > 3) {
+					if (token[4][0] == '+') min_pval = atoi(token[4]);
+					else if (token[4][0] == 'D') min_todam = atoi(token[4] + 1);
+					else min_ap = atoi(token[4]);
+				}
 
-				if (min_ap > -999 && min_pval > -999)
-					msg_format(Ind, "\377wrerolling for at least +%d pval and %d ap.", min_pval, min_ap);
-				else if (min_pval > -999)
-					msg_format(Ind, "\377wrerolling for at least +%d pval.", min_pval);
-				else if (min_ap > -999)
-					msg_format(Ind, "\377wrerolling for at least %d ap.", min_ap);
+				if (min_ap > -999 || min_pval > -999 || min_todam > -999)
+					msg_print(Ind, "\377wrerolling for at least..");
+				if (min_pval > -999)
+					msg_format(Ind, "\377w +%d pval.", min_pval);
+				if (min_ap > -999)
+					msg_format(Ind, "\377w %d ap.", min_ap);
+				if (min_todam > -999)
+					msg_format(Ind, "\377w +%d todam.", min_todam);
 
 
 				th = o_ptr->to_h; td = o_ptr->to_d; ta = o_ptr->to_a; //for jewelry
@@ -4732,7 +4745,7 @@ void do_slash_cmd(int Ind, char *message)
 						continue;
 					}
 
-					if (o_ptr->pval >= min_pval && artifact_power(randart_make(o_ptr)) >= min_ap) break;
+					if (o_ptr->pval >= min_pval && artifact_power(randart_make(o_ptr)) >= min_ap && o_ptr->to_d >= min_todam) break;
 					tries--;
 				}
 				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries (1000))!");
