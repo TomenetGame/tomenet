@@ -1486,6 +1486,8 @@ void do_cmd_drink_fountain(int Ind)
 	sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
+	s_printf("FOUNTAIN: %s: %s\n", p_ptr->name, k_name + k_info[k_idx].name);
+
 	ident = quaff_potion(Ind, tval, sval, pval);
 	if (ident) cs_ptr->sc.fountain.known = TRUE;
 	else msg_print(Ind, "You quenched your thirst.");
