@@ -1331,10 +1331,10 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	/* Never more than +3 EA, +2 on gloves (also done below in pval-fixing limits */
         if (a_ptr->flags1 & TR1_BLOWS) {
 		if (a_ptr->tval == TV_GLOVES) {
-			if (a_ptr->pval > 2) a_ptr->pval /= 3;
+			//if (a_ptr->pval > 2) a_ptr->pval /= 3;
 	                if (a_ptr->pval > 2) a_ptr->pval = 2;
 		} else {
-			if (a_ptr->pval > 3) a_ptr->pval /= 2;
+			//if (a_ptr->pval > 3) a_ptr->pval /= 2;
 	                if (a_ptr->pval > 3) a_ptr->pval = 3;
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
@@ -1566,10 +1566,10 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	/* Never more than +3 EA, +2 on gloves */
         if (a_ptr->flags1 & TR1_BLOWS) {
 		if (a_ptr->tval == TV_GLOVES) {
-			if (a_ptr->pval > 2) a_ptr->pval /= 3;
+			//if (a_ptr->pval > 2) a_ptr->pval /= 3;
 	                if (a_ptr->pval > 2) a_ptr->pval = 2;
 		} else {
-			if (a_ptr->pval > 3) a_ptr->pval /= 2;
+			//if (a_ptr->pval > 3) a_ptr->pval /= 2;
 	                if (a_ptr->pval > 3) a_ptr->pval = 3;
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
@@ -1581,11 +1581,11 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 		   never more than +3 on amulets */
 		/* Items with only 1 stat may greatly increase it */
 		if ((a_ptr->tval == TV_AMULET) || (c > 3)) {
-			if (a_ptr->pval > 3) a_ptr->pval /= 2;
+			if (a_ptr->pval > 3) a_ptr->pval = (a_ptr->pval + 1) / 2;
 			if (a_ptr->pval > 3) a_ptr->pval = 3;
 			if (a_ptr->pval == 0) a_ptr->pval = 1 + rand_int(2);
 		} else {
-			if (a_ptr->pval > 5) a_ptr->pval /= 2;
+			if (a_ptr->pval > 5) a_ptr->pval = (a_ptr->pval + 2) / 2;
 			if (a_ptr->pval > 5) a_ptr->pval = 5;
 			if (a_ptr->pval == 0) a_ptr->pval = 1 + rand_int(3);
 		}
@@ -2347,11 +2347,11 @@ try_an_other_ego:
 	/* +Attribute caps */
 	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR)) {
 		if (a_ptr->tval == TV_AMULET) {
-			if (a_ptr->pval > 3) a_ptr->pval /= 2;
+			if (a_ptr->pval > 3) a_ptr->pval = (a_ptr->pval + 1) / 2;
 			if (a_ptr->pval > 3) a_ptr->pval = 3;
 			if (a_ptr->pval == 0) a_ptr->pval = 1;
 		} else {
-			if (a_ptr->pval > 5) a_ptr->pval /= 2;
+			if (a_ptr->pval > 5) a_ptr->pval = (a_ptr->pval + 2) / 2;
 			if (a_ptr->pval > 5) a_ptr->pval = 5;
 			if (a_ptr->pval == 0) a_ptr->pval = 1;
 		}
@@ -2359,10 +2359,10 @@ try_an_other_ego:
 	/* +EA caps */
         if (a_ptr->flags1 & TR1_BLOWS) {
 		if (o_ptr->tval == TV_GLOVES) {
-			if (a_ptr->pval > 2) a_ptr->pval /= 3;
+			//if (a_ptr->pval > 2) a_ptr->pval /= 3;
 	                if (a_ptr->pval > 2) a_ptr->pval = 2;
 		} else {
-			if (a_ptr->pval > 3) a_ptr->pval /= 2;
+			//if (a_ptr->pval > 3) a_ptr->pval /= 2;
 	                if (a_ptr->pval > 3) a_ptr->pval = 3;
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
