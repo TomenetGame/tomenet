@@ -2747,7 +2747,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_dual = 1;
 		p_ptr->warning_run_lite = 1;
 		p_ptr->warning_ranged_autoret = 1;
-		p_ptr->warning_mimic;
+		p_ptr->warning_mimic = 1;
 	}
 	if (p_ptr->max_plv > 15) {
 		p_ptr->warning_bpr = 1;
