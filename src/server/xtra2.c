@@ -5121,10 +5121,8 @@ void monster_death(int Ind, int m_idx)
 				if (p_ptr->body_monster == credit_idx) p_ptr->tim_mimic = p_ptr->tim_mimic_what = 0;
 				if (!p_ptr->warning_mimic) {
 					p_ptr->warning_mimic = 1;
-					if (p_ptr->max_plv < 10) {
-						msg_print(Ind, "\374\377U(Press '\377ym\377U' key and choose 'use innate power' to polymorph.)");
-						s_printf("warning_mimic: %s\n", p_ptr->name);
-					}
+					msg_print(Ind, "\374\377U(Press '\377ym\377U' key and choose 'use innate power' to polymorph.)");
+					s_printf("warning_mimic: %s\n", p_ptr->name);
 				}
 			}
 		}
