@@ -4023,6 +4023,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 		case SV_ROD_DETECT_TRAP:
 		{
 			if (detect_trap(Ind, rad)) ident = TRUE;
+			//o_ptr->pval = 50;
+			/* up to 50% faster with maxed MD - the_sandman */
 			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		}
@@ -4030,6 +4032,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 		case SV_ROD_DETECT_DOOR:
 		{
 			if (detect_sdoor(Ind, rad)) ident = TRUE;
+			//o_ptr->pval = 70;
+			/* up to 50% faster with maxed MD - the_sandman */
 			o_ptr->pval = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
 			break;
 		}
@@ -4038,6 +4042,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 		{
 			ident = TRUE;
 			if (!ident_spell(Ind)) use_charge = FALSE;
+			//o_ptr->pval = 10;
+			/* up to 50% faster with maxed MD - the_sandman */
 //at 0 skill, this is like auto-id	o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 			o_ptr->pval = 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
 			break;
@@ -4047,6 +4053,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 		{
 			set_recall(Ind, rand_int(20) + 15, o_ptr);
 			ident = TRUE;
+			//o_ptr->pval = 60;
+			/* up to a 50% faster with maxed MD - the_sandman */
 			o_ptr->pval = 60 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
 			break;
 		}
@@ -4054,9 +4062,11 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 		case SV_ROD_ILLUMINATION:
 		{
 			msg_format_near(Ind, "%s calls light.", p_ptr->name);
-			if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
+			if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
 			if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
                     	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+			//o_ptr->pval = 30;
+			/* up to a 50% faster with maxed MD - the_sandman */
 			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 			break;
 		}
@@ -4065,6 +4075,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 		{
 			map_area(Ind);
 			ident = TRUE;
+			//o_ptr->pval = 99;
+			/* up to a 50% faster with maxed MD - the_sandman */
 			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
 			break;
 		}
@@ -4073,6 +4085,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 		{
 			detection(Ind, rad);
 			ident = TRUE;
+			//o_ptr->pval = 99;
+			/* up to a 50% faster with maxed MD - the_sandman */
 			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
 			break;
 		}
@@ -4081,6 +4095,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 		{
 			probing(Ind);
 			ident = TRUE;
+			//o_ptr->pval = 50;
+			/* up to a 50% faster with maxed MD - the_sandman */
 			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		}
@@ -4092,11 +4108,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
-                        if (p_ptr->food >= PY_FOOD_MAX)
-                        if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
-			//o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
-			//Keep with the trend, only upto 50% faster =)
-			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
+			if (p_ptr->food >= PY_FOOD_MAX)
+			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
 			break;
 		}
 
@@ -4107,8 +4121,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
-#else
-//scale moar?		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+			break;
+#else /* how about... */
+//scale moar!		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 250))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
@@ -4127,15 +4142,14 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
 			if (do_res_stat(Ind, A_CON)) ident = TRUE;
 			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
-			//o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
-			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);//adjusted it here too..
 			break;
 		}
 
 		case SV_ROD_SPEED:
 		{
 			if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE; /* removed stacking */
-			o_ptr->pval = 99;
+			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
 			break;
 		}
 
