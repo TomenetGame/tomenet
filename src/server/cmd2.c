@@ -1299,7 +1299,10 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 		}
 
 		/* Finally change the owner */
-		if (dna->owner_type == OT_GUILD) {
+		if (dna->owner_type == OT_PLAYER) {
+			p_ptr->houses_owned--;
+			if (houses[h_idx].flags & HF_MOAT) p_ptr->castles_owned--;
+		} else if (dna->owner_type == OT_GUILD) {
 			guilds[dna->owner].h_idx = 0;
 			Send_guild_config(dna->owner);
 		}
