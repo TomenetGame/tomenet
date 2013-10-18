@@ -1309,17 +1309,15 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 	dir = ddd[rand_int(8)];
 
 	/* Place streamer into dungeon */
-	while (TRUE)
-	{
+	while (TRUE) {
 		/* One grid per density */
-		for (i = 0; i < DUN_STR_DEN; i++)
-		{
+		for (i = 0; i < DUN_STR_DEN; i++) {
+
 			int d = DUN_STR_RNG;
 
 			/* Pick a nearby grid */
 			tries = 1000;
-			while (TRUE)
-			{
+			while (TRUE) {
 				ty = rand_spread(y, d);
 				tx = rand_spread(x, d);
 				if (in_bounds4(dun->l_ptr, ty, tx)) break;
@@ -1358,9 +1356,7 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 
 			/* Clear mimic feature to avoid nasty consequences */
 			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
-			{
 				cs_erase(c_ptr, cs_ptr);
-			}
 
 			/* Clear previous contents, add proper vein type */
 			c_ptr->feat = feat;
@@ -1368,7 +1364,8 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			/* Hack -- Add some (known) treasure */
 			/* XXX seemingly it was ToME bug */
 			if (chance && rand_int(chance) == 0)
-				c_ptr->feat += (feat == FEAT_SANDWALL ? 0x02 : 0x04);//FEAT_MAGMA_K, FEAT_QUARTZ_K, FEAT_SANDWALL_K
+				/* turn into FEAT_SANDWALL_K / FEAT_MAGMA_K / FEAT_QUARTZ_K: */
+				c_ptr->feat += (c_ptr->feat == FEAT_SANDWALL ? 0x2 : 0x4);
 		}
 
 #if 0
@@ -1418,8 +1415,7 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall)
 	poolchance = randint(10);
 
 	/* Hack -- Choose starting point */
-	while (TRUE)
-	{
+	while (TRUE) {
 		y = rand_spread(dun->l_ptr->hgt / 2, 10);
 		x = rand_spread(dun->l_ptr->wid / 2, 15);
 
@@ -1431,19 +1427,16 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall)
 	dir = ddd[rand_int(8)];
 
 	/* Place streamer into dungeon */
-	if (poolchance > 2)
-	{
-		while (TRUE)
-		{
+	if (poolchance > 2) {
+		while (TRUE) {
 			/* One grid per density */
-			for (i = 0; i < (DUN_STR_DWLW + 1); i++)
-			{
+			for (i = 0; i < (DUN_STR_DWLW + 1); i++) {
+
 				int d = DUN_STR_WLW;
 
 				/* Pick a nearby grid */
 				tries = 1000;
-				while (TRUE)
-				{
+				while (TRUE) {
 					ty = rand_spread(y, d);
 					tx = rand_spread(x, d);
 					if (in_bounds4(dun->l_ptr, ty, tx)) break;
@@ -1462,9 +1455,7 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall)
 
 				/* Avoid converting walls when told so */
 				if (killwall == 0)
-				{
 					if (f_info[c_ptr->feat].flags1 & FF1_WALL) continue;
-				}
 
 				/* Clear mimic feature to avoid nasty consequences */
 				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
@@ -1487,30 +1478,23 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall)
 	}
 
 	/* Create pool */
-	else if ((feat == FEAT_DEEP_WATER) || (feat == FEAT_DEEP_LAVA))
-	{
+	else if ((feat == FEAT_DEEP_WATER) || (feat == FEAT_DEEP_LAVA)) {
 		poolsize = 5 + randint(10);
 		mid = poolsize / 2;
 
 		/* One grid per density */
-		for (i = 0; i < poolsize; i++)
-		{
-			for (j = 0; j < poolsize; j++)
-			{
+		for (i = 0; i < poolsize; i++) {
+			for (j = 0; j < poolsize; j++) {
 				tx = x + j;
 				ty = y + i;
 
 				if (!in_bounds4(dun->l_ptr, ty, tx)) continue;
 
-				if (i < mid)
-				{
-					if (j < mid)
-					{
-						if ((i + j + 1) < mid)
-							continue;
+				if (i < mid) {
+					if (j < mid) {
+						if ((i + j + 1) < mid) continue;
 					}
-					else if (j > (mid+ i))
-						continue;
+					else if (j > (mid+ i)) continue;
 				}
 				else if (j < mid)
 				{
@@ -1648,8 +1632,7 @@ static void lake_level(struct worldpos *wpos)
 /*
  * Build a destroyed level
  */
-static void destroy_level(struct worldpos *wpos)
-{
+static void destroy_level(struct worldpos *wpos) {
 	int y1, x1, y, x, k, t, n;
 	cave_type *c_ptr;
 
@@ -1657,17 +1640,14 @@ static void destroy_level(struct worldpos *wpos)
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Drop a few epi-centers (usually about two) */
-	for (n = 0; n < randint(5); n++)
-	{
+	for (n = 0; n < randint(5); n++) {
 		/* Pick an epi-center */
 		y1 = rand_range(5, dun->l_ptr->hgt - 6);
 		x1 = rand_range(5, dun->l_ptr->wid - 6);
 
 		/* Big area of affect */
-		for (y = (y1 - 15); y <= (y1 + 15); y++)
-		{
-			for (x = (x1 - 15); x <= (x1 + 15); x++)
-			{
+		for (y = (y1 - 15); y <= (y1 + 15); y++) {
+			for (x = (x1 - 15); x <= (x1 + 15); x++) {
 				/* Skip illegal grids */
 				if (!in_bounds(y, x)) continue;
 
@@ -1681,8 +1661,7 @@ static void destroy_level(struct worldpos *wpos)
 				delete_monster(wpos, y, x, TRUE);
 
 				/* Destroy valid grids */
-				if (cave_valid_bold(zcave, y, x))
-				{
+				if (cave_valid_bold(zcave, y, x)) {
 					/* Delete the object (if any) */
 					delete_object(wpos, y, x, TRUE);
 
@@ -1694,31 +1673,23 @@ static void destroy_level(struct worldpos *wpos)
 
 					/* Granite */
 					if (t < 20)
-					{
 						/* Create granite wall */
 						c_ptr->feat = FEAT_WALL_EXTRA;
-					}
 
 					/* Quartz */
 					else if (t < 70)
-					{
 						/* Create quartz vein */
 						c_ptr->feat = FEAT_QUARTZ;
-					}
 
 					/* Magma */
 					else if (t < 100)
-					{
 						/* Create magma vein */
 						c_ptr->feat = FEAT_MAGMA;
-					}
 
 					/* Floor */
 					else
-					{
 						/* Create floor */
 						place_floor(wpos, y, x);
-					}
 
 					/* No longer part of a room or vault */
 					c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
@@ -1737,22 +1708,18 @@ static void destroy_level(struct worldpos *wpos)
  * Create up to "num" objects near the given coordinates
  * Only really called by some of the "vault" routines.
  */
-static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_type *p_ptr)
-{
+static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_type *p_ptr) {
 	int        i, j, k, tries = 1000;
 	cave_type **zcave;
 	u32b resf = make_resf(p_ptr);
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Attempt to place 'num' objects */
-	for (; num > 0; --num)
-	{
+	for (; num > 0; --num) {
 		/* Try up to 11 spots looking for empty space */
-		for (i = 0; i < 11; ++i)
-		{
+		for (i = 0; i < 11; ++i) {
 			/* Pick a random location */
-			while (TRUE)
-			{
+			while (TRUE) {
 				j = rand_spread(y, 2);
 				k = rand_spread(x, 3);
 				if (!in_bounds(j, k)) continue;
@@ -1765,15 +1732,11 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_t
 
 			/* Place an item */
 			if (rand_int(100) < 75)
-			{
 				place_object(wpos, j, k, FALSE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
-			}
 
 			/* Place gold */
 			else
-			{
 				place_gold(wpos, j, k, 0);
-			}
 
 			/* Placement accomplished */
 			break;
@@ -1785,18 +1748,15 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_t
 /*
  * Place a trap with a given displacement of point
  */
-static void vault_trap_aux(struct worldpos *wpos, int y, int x, int yd, int xd)
-{
+static void vault_trap_aux(struct worldpos *wpos, int y, int x, int yd, int xd) {
 	int		count, y1, x1, tries = 1000;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Place traps */
-	for (count = 0; count <= 5; count++)
-	{
+	for (count = 0; count <= 5; count++) {
 		/* Get a location */
-		while (TRUE)
-		{
+		while (TRUE) {
 			y1 = rand_spread(y, yd);
 			x1 = rand_spread(x, xd);
 			if (!in_bounds(y1, x1)) continue;
@@ -1816,14 +1776,11 @@ static void vault_trap_aux(struct worldpos *wpos, int y, int x, int yd, int xd)
 /*
  * Place some traps with a given displacement of given location
  */
-static void vault_traps(struct worldpos *wpos, int y, int x, int yd, int xd, int num)
-{
+static void vault_traps(struct worldpos *wpos, int y, int x, int yd, int xd, int num) {
 	int i;
 
 	for (i = 0; i < num; i++)
-	{
 		vault_trap_aux(wpos, y, x, yd, xd);
-	}
 }
 
 
