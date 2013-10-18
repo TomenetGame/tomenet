@@ -1714,8 +1714,14 @@ int Receive_char(void) {
 	char	x, y;
 	byte	a;
 	char	c;
+	bool is_us = FALSE;
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
+
+	if ((c & 0x80)) {
+		c &= 0x7F;
+		is_us = TRUE;
+	}
 
 	/* remember map_info in client-side buffer */
 	if (x >= PANEL_X && x < PANEL_X + screen_wid &&
@@ -1725,6 +1731,24 @@ int Receive_char(void) {
 	}
 
 	if (screen_icky) Term_switch(0);
+	if (is_us) {
+		/* Mark our own position via special cursor */
+#if 0
+		/* save previous cursor vis/loc? -- not necessary? */
+		Term_get_cursor(&v);
+		Term_locate(&x, &y);
+#endif
+		//for gcu: Term_xtra(TERM_XTRA_SHAPE, 2);
+
+		Term_set_cursor(1);
+		Term_gotoxy(x, y);
+
+		/* for X11:
+		Term_curs_x11() ->
+		Infofnt_text_non() : draw cursor XRectangle
+		*/
+		
+	}
 	Term_draw(x, y, a, c);
 	if (screen_icky) Term_switch(0);
 	return 1;

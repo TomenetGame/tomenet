@@ -1960,6 +1960,14 @@ static errr Term_xtra_x11(int n, int v)
 
 		/* Delay for some milliseconds */
 		case TERM_XTRA_DELAY: usleep(1000 * v); return (0);
+
+//#ifdef USE_CURS_SET
+		/* Change the cursor visibility */
+		case TERM_XTRA_SHAPE:
+			//this was for curses: curs_set(v);
+			XRecolorCursor(Metadpy->dpy, NULL, 0, v); //how to get 'cursor'? trying NULL
+			return (0);
+//#endif
 	}
 
 	/* Unknown */

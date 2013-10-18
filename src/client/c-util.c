@@ -766,7 +766,9 @@ static char inkey_aux(void)
  *
  * Normally, this function will show the cursor, and will process all normal
  * macros, but if "inkey_flag" is TRUE, then we will only show the cursor if
- * "hilite_player" is TRUE, and also, we will only process "command" macros.
+ * "hilite_player" is TRUE (--possibly deprecated info here-- after
+ * hilite_player was always broken, a new implementation is tested in 2013),
+ * and also, we will only process "command" macros.
  *
  * Note that the "flush()" function does not actually flush the input queue,
  * but waits until "inkey()" is called to perform the "flush".

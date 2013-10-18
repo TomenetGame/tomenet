@@ -3474,6 +3474,7 @@ void everyone_forget_spot(struct worldpos *wpos, int y, int x)
 void lite_spot(int Ind, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
+	bool is_us = FALSE;
 
 	/* Redraw if on screen */
 	if (panel_contains(y, x)) {
@@ -3592,11 +3593,13 @@ void lite_spot(int Ind, int y, int x)
 					c = '0' + num;
 				}
 			}
+
+			/* >4.5.4: Mark that it is the player himself */
+			if (p_ptr->hilite_player) is_us = TRUE;
 		}
 
-		/* Normal */
-		else
-		{
+		/* Normal (not player coords) */
+		else {
 			/* Examine the grid */
 			map_info(Ind, y, x, &a, &c);
 		}
@@ -3621,6 +3624,7 @@ void lite_spot(int Ind, int y, int x)
 			    (p_ptr->ovl_info[dispy][dispx].a != a))
 			{
 				/* Tell client to redraw this grid */
+				if (is_us && is_newer_than(&p_ptr->version, 4, 5, 4, 0, 0, 0)) c |= 0x80;
 				Send_char(Ind, dispx, dispy, a, c);
 			}
 
