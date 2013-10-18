@@ -148,12 +148,12 @@ void divine_empowerment(int Ind, int level) {
  */
 void divine_intensify(int Ind, int level) {
 	player_type *p_ptr = Players[Ind];
-	if (p_ptr->ptrait==TRAIT_ENLIGHTENED) {
+	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
 		//aoe divine_xtra_res_time
 		project_los(Ind, GF_OLD_SLOW, level * 3, "");
 		(void)do_divine_xtra_res_time(Ind, (level * 3) / 2);
 		return;
-	} else if (p_ptr->ptrait==TRAIT_CORRUPTED) {
+	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
 		int bonus = 2 + ((level - 45) / 5) * 2;
 		(void)do_divine_crit(Ind, (level * 3) / 2, bonus);
 	}
@@ -6927,7 +6927,7 @@ static bool poly_build(int Ind, char *args)
 		return TRUE;
 	}
 	/* no going off depth, and no spoiling moats */
-	if(inarea(&curr->wpos, &p_ptr->wpos) && !(zcave[curr->dy][curr->dx].info&CAVE_ICKY && zcave[curr->dy][curr->dx].feat==FEAT_DEEP_WATER)){
+	if (inarea(&curr->wpos, &p_ptr->wpos) && !(zcave[curr->dy][curr->dx].info&CAVE_ICKY && zcave[curr->dy][curr->dx].feat == FEAT_DEEP_WATER)) {
 		zcave[curr->dy][curr->dx].feat = FEAT_WALL_EXTRA;
 //		zcave[curr->dy][curr->dx].feat = FEAT_WALL_HOUSE;
 		if (curr->cvert < MAXCOORD && (--curr->moves) > 0) return TRUE;
@@ -7413,46 +7413,38 @@ void golem_creation(int Ind, int max)
 	msg_print(Ind, "Some of your items begins to consume in roaring flames.");
 
 	/* Find items used for "golemification" */
-	for (i = 0; i < INVEN_WIELD; i++)
-	{
+	for (i = 0; i < INVEN_WIELD; i++) {
 		object_type *o_ptr = &p_ptr->inventory[i];
 
-		if (o_ptr->tval == TV_GOLEM)
-		{
-			if (o_ptr->sval <= SV_GOLEM_ADAM)
-			{
+		if (o_ptr->tval == TV_GOLEM) {
+			if (o_ptr->sval <= SV_GOLEM_ADAM) {
 				golem_type = o_ptr->sval;
-				inven_item_increase(Ind,i,-1);
-				inven_item_optimize(Ind,i);
+				inven_item_increase(Ind, i, -1);
+				inven_item_optimize(Ind, i);
 				i--;
 				continue;
 			}
-			if (o_ptr->sval == SV_GOLEM_ARM)
-			{
+			if (o_ptr->sval == SV_GOLEM_ARM) {
 				while (o_ptr->number) {
-					if(golem_m_arms==4) break;
+					if (golem_m_arms == 4) break;
 					golem_arms[golem_m_arms++] = o_ptr->pval;
-					inven_item_increase(Ind,i,-1);
+					inven_item_increase(Ind, i, -1);
 				}
-				inven_item_optimize(Ind,i);
+				inven_item_optimize(Ind, i);
 				i--;
 				continue;
 			}
-			if (o_ptr->sval == SV_GOLEM_LEG)
-			{
+			if (o_ptr->sval == SV_GOLEM_LEG) {
 				while (o_ptr->number) {
-					if(golem_m_legs==30) break;
+					if (golem_m_legs == 30) break;
 					golem_legs[golem_m_legs++] = o_ptr->pval;
-					inven_item_increase(Ind,i,-1);
+					inven_item_increase(Ind, i, -1);
 				}
-				inven_item_optimize(Ind,i);
+				inven_item_optimize(Ind, i);
 				i--;
 				continue;
 			}
-			else
-			{
-				golem_flags |= 1 << (o_ptr->sval - 200);
-			}
+			else golem_flags |= 1 << (o_ptr->sval - 200);
 		}
 		/* Combine / Reorder the pack (later) */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -7462,8 +7454,7 @@ void golem_creation(int Ind, int max)
 	}
 
 	/* Ahah FAIL !!! */
-	if ((golem_type == -1) || (golem_m_legs < 2))
-	{
+	if ((golem_type == -1) || (golem_m_legs < 2)) {
 		msg_print(Ind, "The spell fails! You lose all your material.");
 		delete_monster_idx(c_ptr->m_idx, TRUE);
 		return;
@@ -7475,9 +7466,7 @@ void golem_creation(int Ind, int max)
 	r_ptr->aaf = 20;
 	r_ptr->speed = 110;
 	for (i = 0; i < golem_m_legs; i++)
-	{
 		r_ptr->speed += golem_legs[i];
-	}
 	r_ptr->mexp = 1;
 
 	r_ptr->d_attr = TERM_YELLOW;
@@ -7491,8 +7480,7 @@ void golem_creation(int Ind, int max)
 	r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY;
 	r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF9_IM_TELE;
 
-	switch (golem_type)
-	{
+	switch (golem_type) {
 		case SV_GOLEM_WOOD:
 			r_ptr->hdice = 10;
 			r_ptr->hside = 10;
@@ -7538,25 +7526,19 @@ void golem_creation(int Ind, int max)
 	r_ptr->extra = golem_flags;
 	//#if 0
 	/* Find items used for "golemification" */
-	for (i = 0; i < INVEN_WIELD; i++)
-	{
+	for (i = 0; i < INVEN_WIELD; i++) {
 		object_type *o_ptr = &p_ptr->inventory[i];
 		unsigned char *inscription = (unsigned char *) quark_str(o_ptr->note);
 
 		/* Additionnal items ? */
-		if (inscription != NULL)
-		{
+		if (inscription != NULL) {
 			/* scan the inscription for @G */
-			while ((*inscription != '\0'))
-			{
-
-				if (*inscription == '@')
-				{
+			while ((*inscription != '\0')) {
+				if (*inscription == '@') {
 					inscription++;
 
 					/* a valid @G has been located */
-					if (*inscription == 'G')
-					{
+					if (*inscription == 'G') {
 						inscription++;
 
 						scan_golem_flags(o_ptr, r_ptr);
@@ -7581,8 +7563,7 @@ void golem_creation(int Ind, int max)
 	m_ptr->hp = maxroll(r_ptr->hdice, r_ptr->hside);
 	m_ptr->clone = 100;
 
-	for (i = 0; i < golem_m_arms; i++)
-	{
+	for (i = 0; i < golem_m_arms; i++) {
 		m_ptr->blow[i].method = r_ptr->blow[i].method = RBM_HIT;
 		m_ptr->blow[i].effect = r_ptr->blow[i].effect = RBE_HURT;
 		m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = (golem_type + 1) * 3;
@@ -7646,12 +7627,9 @@ void call_chaos(int Ind, int dir, int extra_damage)
 	while (Chaos_type > GF_GRAVITY && Chaos_type < GF_ROCKET);
 #endif
 
-	if (randint(6) == 1)
-	{
-		for (dummy = 1; dummy < 10; dummy++)
-		{
-			if (dummy-5)
-			{
+	if (randint(6) == 1) {
+		for (dummy = 1; dummy < 10; dummy++) {
+			if (dummy - 5) {
 				if (line_chaos) {
 //					fire_beam(Ind, Chaos_type, dummy, 1500 + extra_damage, p_ptr->attacker);
 					fire_beam(Ind, Chaos_type, dummy, 675 + extra_damage, p_ptr->attacker);
@@ -7662,13 +7640,10 @@ void call_chaos(int Ind, int dir, int extra_damage)
 			}
 		}
 	}
-	else if (randint(3)==1)
-	{
+	else if (randint(3) == 1) {
 //		fire_ball(Ind, Chaos_type, 0, 1500 + extra_damage, 8, p_ptr->attacker);
 		fire_ball(Ind, Chaos_type, 0, 675 + extra_damage, 8, p_ptr->attacker);
-	}
-	else
-	{
+	} else {
 //		if (!get_aim_dir(Ind) return;
 		if (line_chaos) {
 //			fire_beam(Ind, Chaos_type, dir, 1500 + extra_damage, p_ptr->attacker);
@@ -7687,9 +7662,7 @@ void summon_cyber(int Ind, int s_clone, int clone_summoning)
 	int max_cyber = (getlevel(&p_ptr->wpos)/ 50) + randint(6);
 
 	for (i = 0; i < max_cyber; i++)
-	{
 		(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, 100, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
-	}
 }
 
 /* Heal insanity. */
@@ -7727,8 +7700,7 @@ bool heal_insanity(int Ind, int val)
 
 bool do_vermin_control(int Ind) {
         dun_level *l_ptr = getfloor(&Players[Ind]->wpos);
-        if(l_ptr && !(l_ptr->flags1 & LF1_NO_MULTIPLY))
-        {
+        if (l_ptr && !(l_ptr->flags1 & LF1_NO_MULTIPLY)) {
                 l_ptr->flags1 |= LF1_NO_MULTIPLY;
                 msg_print(Ind, "You feel less itchy.");
                 return TRUE;

@@ -536,7 +536,7 @@ void lua_count_houses(int Ind) {
 	Players[Ind]->houses_owned = 0;
 	Players[Ind]->castles_owned = 0;
 	for (i = 0; i < num_houses; i++)
-		if ((houses[i].dna->owner_type==OT_PLAYER) &&
+		if ((houses[i].dna->owner_type == OT_PLAYER) &&
 		    (houses[i].dna->owner == Players[Ind]->id)) {
 			Players[Ind]->houses_owned++;
 			if (houses[i].flags & HF_MOAT) Players[Ind]->castles_owned++;

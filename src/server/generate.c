@@ -8964,10 +8964,8 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth)
 	 * Fill starting positions -- every 'step' grids horizontally and
 	 * vertically
 	 */
-	for (y = 0; y < cur_hgt; y += ((step==9)?2:step))
-	{
-		for (x = 0; x < cur_wid; x += ((step==9)?2:step))
-		{
+	for (y = 0; y < cur_hgt; y += ((step == 9) ? 2 : step)) {
+		for (x = 0; x < cur_wid; x += ((step == 9) ? 2 : step)) {
 			/*
 			 * Place randomly selected terrain feature using the prebuilt
 			 * probability table

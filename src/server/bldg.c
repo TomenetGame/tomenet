@@ -665,7 +665,7 @@ static bool inn_comm(int Ind, int cmd)
 
 #if 0
 	/* Extract race info */
-	vampire = ((PRACE_FLAG(PR1_VAMPIRE)) || (p_ptr->mimic_form==MIMIC_VAMPIRE));
+	vampire = ((PRACE_FLAG(PR1_VAMPIRE)) || (p_ptr->mimic_form == MIMIC_VAMPIRE));
 #endif	// 0
 	vampire = p_ptr->suscep_life;
 

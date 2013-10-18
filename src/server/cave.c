@@ -787,12 +787,11 @@ void check_Morgoth(int Ind)
 int players_on_depth(struct worldpos *wpos)
 {
 	if (wpos->wx>MAX_WILD_X || wpos->wx<0 || wpos->wy>MAX_WILD_Y || wpos->wy<0) return(0);
-	if (wpos->wz==0)
+	if (wpos->wz == 0)
 		return(wild_info[wpos->wy][wpos->wx].ondepth);
-	else
-	{
+	else {
 		struct dungeon_type *d_ptr;
-		if (wpos->wz>0)
+		if (wpos->wz > 0)
 			d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 		else
 			d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
@@ -3611,7 +3610,7 @@ void lite_spot(int Ind, int y, int x)
 		/* Only draw if different than buffered */
 		if (p_ptr->scr_info[dispy][dispx].c != c ||
 		    p_ptr->scr_info[dispy][dispx].a != a ||
-		    (x == p_ptr->px && y==p_ptr->py && !p_ptr->afk)) /* let's try disabling this when AFK to save bandwidth - mikaelh */
+		    (x == p_ptr->px && y == p_ptr->py && !p_ptr->afk)) /* let's try disabling this when AFK to save bandwidth - mikaelh */
 		{
 			/* Modify screen buffer */
 			p_ptr->scr_info[dispy][dispx].c = c;

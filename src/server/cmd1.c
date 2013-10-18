@@ -6127,7 +6127,7 @@ int see_wall(int Ind, int dir, int y, int x)
 
 #if 0
 	/* Do wilderness hack, keep running from one outside level to another */
-	if ((!in_bounds(y, x)) && (wpos->wz==0)) return FALSE;
+	if ((!in_bounds(y, x)) && (wpos->wz == 0)) return FALSE;
 #else
 	/* replacing the above hack by simply using DONT_NOTICE_RUNNING | FLOOR | CAN_RUN
 	   flags in f_info for feat FEAT_PERM_CLEAR (0x16, the invisible level border).
@@ -6566,7 +6566,7 @@ static bool run_test(int Ind)
 //		if (!in_bounds(row, col)) continue; /* RUNNING_FIX_DEBUG */
 /* next line is actually doing the trick (allow running transitions of wilderness levels)
    but it's a bad hack, so just for debugging: */
-//		if ((!in_bounds(row, col)) && (wpos->wz==0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
+//		if ((!in_bounds(row, col)) && (wpos->wz == 0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
 
 		c_ptr = &zcave[row][col];
 		w_ptr = &p_ptr->cave_flag[row][col];
@@ -6758,7 +6758,7 @@ static bool run_test(int Ind)
 
 		/* Analyze unknown grids and floors */
 		/* wilderness hack to run from one level to the next */
-		if (inv || ((!in_bounds(row, col)) && (wpos->wz==0))  || 
+		if (inv || ((!in_bounds(row, col)) && (wpos->wz == 0))  || 
 		    (cave_running_bold(p_ptr, zcave, row, col)
 		    /* If player is running on floor grids right now, don't treat tree grids as "passable" even if he could pass them: */
 		    && !(cave_running_bold_notrees(p_ptr, zcave, p_ptr->py, p_ptr->px)
@@ -6841,7 +6841,7 @@ static bool run_test(int Ind)
 			row = p_ptr->py + ddy[new_dir];
 			col = p_ptr->px + ddx[new_dir];
 
-//			if ((!in_bounds(row, col)) && (wpos->wz==0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
+//			if ((!in_bounds(row, col)) && (wpos->wz == 0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
 
 			/* Unknown grid or floor */
 			if  (!(p_ptr->cave_flag[row][col] & CAVE_MARK) ||
@@ -6878,7 +6878,7 @@ static bool run_test(int Ind)
 			row = p_ptr->py + ddy[new_dir];
 			col = p_ptr->px + ddx[new_dir];
 
-//			if ((!in_bounds(row, col)) && (wpos->wz==0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
+//			if ((!in_bounds(row, col)) && (wpos->wz == 0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
 
 			/* Unknown grid or floor */
 			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) ||

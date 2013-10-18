@@ -757,7 +757,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		/* Hack -- stop searching */
 		find = NULL;
 
-		if(buf[0]=='\n') continue;
+		if (buf[0] == '\n') continue;
 
 #if 0	// This will now be done by \377? codes! - C. Blue
 		/* Extract color */
@@ -1730,7 +1730,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 
 	/* Open the temp file */
 	fff = my_fopen(file_name, "wb");
-	if(fff==(FILE*)NULL) return;
+	if (fff == (FILE*)NULL) return;
 
 	/* Assume we will show the first 20 */
 	from = 0;

@@ -69,7 +69,7 @@ void do_slash_cmd(int Ind, char *message){
 		if (!strncmp(scmd[i].cmd, &message[1], strlen(scmd[i].cmd))) {
 			if (scmd[i].admin && !is_admin(p_ptr)) break;
 
-			if (scmd[i].minargs==-1){
+			if (scmd[i].minargs == -1) {
 				/* no string required */
 				scmd[i].func(Ind, NULL);
 				return;
@@ -2181,7 +2181,7 @@ void do_slash_cmd(int Ind, char *message)
 			bool found = FALSE;
 			if (tk < 1) {
 				msg_print(Ind, "\377d ");
-				for (i = 0; i<MAX_GLOBAL_EVENTS; i++) if ((global_event[i].getype != GE_NONE) && (global_event[i].hidden==FALSE || admin)) {
+				for (i = 0; i < MAX_GLOBAL_EVENTS; i++) if ((global_event[i].getype != GE_NONE) && (global_event[i].hidden == FALSE || admin)) {
 					n++;
 					if (n == 1) msg_print(Ind, "\377sCurrently ongoing events:");
 					/* Event still in announcement phase? */
@@ -2198,7 +2198,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377d ");
 			} else if ((k < 1) || (k > MAX_GLOBAL_EVENTS)) {
 				msg_format(Ind, "Usage: /evinfo    or    /evinfo 1..%d", MAX_GLOBAL_EVENTS);
-			} else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden==FALSE || admin)) {
+			} else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden == FALSE || admin)) {
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
 			} else {
 				msg_format(Ind, "\377sInfo on event #%d '\377s%s\377s':", k, global_event[k-1].title);
@@ -2234,7 +2234,7 @@ void do_slash_cmd(int Ind, char *message)
 		{
 			if ((tk < 1) || (k < 1) || (k > MAX_GLOBAL_EVENTS))
 				msg_format(Ind, "Usage: /evsign 1..%d [options..]    -- Also try: /evinfo", MAX_GLOBAL_EVENTS);
-			else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden==FALSE || admin))
+			else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden == FALSE || admin))
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
 			else if (global_event[k-1].signup_time == -1)
 				msg_print(Ind, "\377yThat event doesn't offer to sign up.");

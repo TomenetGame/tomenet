@@ -4495,20 +4495,20 @@ static void process_games(int Ind) {
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	if(c_ptr->feat==FEAT_AGOAL || c_ptr->feat==FEAT_BGOAL){
+	if (c_ptr->feat == FEAT_AGOAL || c_ptr->feat == FEAT_BGOAL) {
 		int ball;
 		switch(gametype){
 			/* rugby type game */
 			case EEGAME_RUGBY:
 				if ((ball = has_ball(p_ptr)) == -1) break;
 
-				if (p_ptr->team == 1 && c_ptr->feat == FEAT_BGOAL){
+				if (p_ptr->team == 1 && c_ptr->feat == FEAT_BGOAL) {
 					teamscore[0]++;
 					msg_format_near(Ind, "\377R%s scored a goal!!!", p_ptr->name);
 					msg_print(Ind, "\377rYou scored a goal!!!");
 					score = 1;
 				}
-				if (p_ptr->team == 2 && c_ptr->feat == FEAT_AGOAL){
+				if (p_ptr->team == 2 && c_ptr->feat == FEAT_AGOAL) {
 					teamscore[1]++;
 					msg_format_near(Ind, "\377B%s scored a goal!!!", p_ptr->name);
 					msg_print(Ind, "\377gYou scored a goal!!!");
@@ -5793,7 +5793,7 @@ void process_player_change_wpos(int Ind)
 			}
 		}
 		while (  ((zcave[starty][startx].info & CAVE_ICKY)
-			|| (zcave[starty][startx].feat==FEAT_DEEP_WATER)
+			|| (zcave[starty][startx].feat == FEAT_DEEP_WATER)
 			|| (!cave_floor_bold(zcave, starty, startx)))
 			&& (++tries < 10000) );
 		if (tries == 10000 && emergency_x) {
@@ -5921,7 +5921,7 @@ void process_player_change_wpos(int Ind)
 		if (!cave_empty_bold(zcave, y, x)) continue;
 
 		/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-		if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY))
+		if ((wpos->wz == 0) && (zcave[y][x].info & CAVE_ICKY))
 			break;
 	}
 #endif /*0*/

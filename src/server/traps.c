@@ -271,7 +271,7 @@ static bool do_player_trap_call_out(int Ind)
 		if (!cave_empty_bold(zcave, cy, cx)) continue; /* better added this one;) -C. Blue */
                 if (zcave[cy][cx].feat == FEAT_GLYPH) continue;
 		if (zcave[cy][cx].feat == FEAT_RUNE) continue;
-                if ((cx==p_ptr->px) && (cy==p_ptr->py)) continue;
+                if ((cx == p_ptr->px) && (cy == p_ptr->py)) continue;
                 sn++;
                 /* Randomize choice */
                 if (rand_int(sn) > 0) continue;
@@ -532,7 +532,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	if (item < 0) trap = GetCS(c_ptr, CS_TRAPS)->sc.trap.t_idx;
 
 	if (i_ptr == NULL) {
-		if (c_ptr->o_idx==0) i_ptr = NULL;
+		if (c_ptr->o_idx == 0) i_ptr = NULL;
 		else i_ptr = &o_list[c_ptr->o_idx];
 	} else trap = i_ptr->pval;
 
@@ -976,8 +976,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			for (j = 0; j < INVEN_WIELD; j++) {
 				if (!p_ptr->inventory[j].k_idx) continue;
 				j_ptr = &p_ptr->inventory[j];
-				if ((j_ptr->tval==TV_SCROLL)
-				    && (j_ptr->sval==SV_SCROLL_WORD_OF_RECALL)) {
+				if ((j_ptr->tval == TV_SCROLL)
+				    && (j_ptr->sval == SV_SCROLL_WORD_OF_RECALL)) {
 					/* handle 'fireproof' scrolls */
 					object_flags(j_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 					if (f3 & TR3_IGNORE_FIRE) continue;
@@ -992,9 +992,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 						msg_print(Ind, "The fire hasn't finished.");
 					ident = TRUE;
 				}
-				//               else if ((j_ptr->tval==TV_ROD_MAIN) && (j_ptr->sval == SV_ROD_RECALL))
-				else if ((j_ptr->tval==TV_ROD) && (j_ptr->sval == SV_ROD_RECALL)) {
-					//                  j_ptr->timeout = 0; /* a long time */
+				//else if ((j_ptr->tval == TV_ROD_MAIN) && (j_ptr->sval == SV_ROD_RECALL))
+				else if ((j_ptr->tval == TV_ROD) && (j_ptr->sval == SV_ROD_RECALL)) {
+					//j_ptr->timeout = 0; /* a long time */
 					j_ptr->pval = 999; /* a long time */
 					if (!ident) msg_print(Ind, "You feel the air stabilize around you.");
 					ident = TRUE;

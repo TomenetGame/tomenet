@@ -528,7 +528,7 @@ byte flick_colour(byte attr){
 
 	if (attr == TERM_SHIELDM) {
 /*	if ((attr >= TERM_SHIELDM) && (attr < TERM_SHIELDI)){
-		if (randint(2)==1) return (attr - TERM_SHIELDM);
+		if (randint(2) == 1) return (attr - TERM_SHIELDM);
 		if ((attr - TERM_SHIELDM) != TERM_VIOLET)
 		return((randint(2) == 1) ? TERM_VIOLET : TERM_ORANGE);
 		else
@@ -541,7 +541,7 @@ byte flick_colour(byte attr){
 	}
 	if (attr == TERM_SHIELDI) {
 /*	if ((attr >= TERM_SHIELDI) && (attr <= 0xFF)){
-		if (randint(4)==1) return (attr - TERM_SHIELDI);
+		if (randint(4) == 1) return (attr - TERM_SHIELDI);
 */		switch(randint(5)) {
 		case 1: return (TERM_L_RED);
 		case 2: return (TERM_L_GREEN);
@@ -569,28 +569,28 @@ byte flick_colour(byte attr){
 			return(randint(5)>3?TERM_WHITE:TERM_L_WHITE);
 			break;
 		case TERM_ELEC:
-			return(randint(7)>6?TERM_WHITE:(randint(4)==1?TERM_L_BLUE:TERM_BLUE));
+			return(randint(7) > 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE));
 			break;
 		case TERM_HALF:
 			return(get_shimmer_color());
 			break;
 		case TERM_ACID:
-			return(randint(5)>4?TERM_L_DARK:TERM_SLATE);
+			return(randint(5) > 4 ? TERM_L_DARK : TERM_SLATE);
 			break;
 		case TERM_CONF:
-			return(randint(5)>3?TERM_UMBER:TERM_L_UMBER);
+			return(randint(5) > 3 ? TERM_UMBER : TERM_L_UMBER);
 			break;
 		case TERM_SOUN:
-			return(randint(5)>3?TERM_L_UMBER:TERM_YELLOW);
+			return(randint(5) > 3 ? TERM_L_UMBER : TERM_YELLOW);
 			break;
 		case TERM_SHAR:
-			return(randint(5)>3?TERM_UMBER:TERM_SLATE);
+			return(randint(5) > 3 ? TERM_UMBER : TERM_SLATE);
 			break;
 		case TERM_LITE:
-			return(randint(5)>3?TERM_ORANGE:TERM_YELLOW);
+			return(randint(5) > 3 ? TERM_ORANGE : TERM_YELLOW);
 			break;
 		case TERM_DARKNESS:
-			return(randint(5)>4?TERM_SLATE:TERM_L_DARK);
+			return(randint(5) > 4 ? TERM_SLATE : TERM_L_DARK);
 			break;
 		/* NOTE: TERM_SHAL_LAVA, TERM_DEEP_LAVA, TERM_SHAL_WATER,
 		 * TERM_DEEP_WATER would be nice for terrains  - Jir - */

@@ -1040,7 +1040,7 @@ static void Contact(int fd, int arg)
 	}
 #else
 	strcpy(host_addr, DgramLastaddr(fd));
-	if(errno==ENOTCONN){	/* will be "0.0.0.0" probably */
+	if (errno == ENOTCONN) {	/* will be "0.0.0.0" probably */
 		s_printf("Lost connection from unknown peer\n");
 		close(fd);
 		remove_input(fd);
@@ -1050,14 +1050,12 @@ static void Contact(int fd, int arg)
 
 	/*if (Check_address(host_addr)) return;*/
 
-	if (Packet_scanf(&ibuf, "%u", &magic) <= 0)
-	{
+	if (Packet_scanf(&ibuf, "%u", &magic) <= 0) {
 		plog(format("Incompatible packet from %s", host_addr));
 		return;
 	}
 
-	if (Packet_scanf(&ibuf, "%s%hu%c", real_name, &port, &ch) <= 0)
-	{
+	if (Packet_scanf(&ibuf, "%s%hu%c", real_name, &port, &ch) <= 0) {
 		plog(format("Incomplete packet from %s", host_addr));
 		return;
 	}
@@ -1065,13 +1063,11 @@ static void Contact(int fd, int arg)
 
 	port = DgramLastport(fd);
 
-	if (Packet_scanf(&ibuf, "%s%s%hu", nick_name, host_name, &version) <= 0)
-	{
+	if (Packet_scanf(&ibuf, "%s%s%hu", nick_name, host_name, &version) <= 0) {
 		plog(format("Incomplete login from %s", host_addr));
 		return;
 	}
-	if (version == 0xFFFFU)
-	{
+	if (version == 0xFFFFU) {
 		/* Extended version support */
 		if (Packet_scanf(&ibuf, "%d%d%d%d%d%d", &version_ext.major, &version_ext.minor, &version_ext.patch, &version_ext.extra, &version_ext.branch, &version_ext.build) <= 0)
 		{
@@ -1090,9 +1086,7 @@ static void Contact(int fd, int arg)
 			version_ext.os = version_ext.build / 1000000;
 			version_ext.build %= 1000000;
 		}
-	}
-	else
-	{
+	} else {
 		version_ext.major = version >> 12;
 		version_ext.minor = (version >> 8) & 0xF;
 		version_ext.patch = (version >> 4) & 0xF;
@@ -3371,7 +3365,7 @@ static int Receive_login(int ind){
 	struct account *l_acc;
 
 	n = Sockbuf_read(&connp->r);
-	if(n==0 && !(errno==EAGAIN || errno==EWOULDBLOCK)){
+	if (n == 0 && !(errno == EAGAIN || errno == EWOULDBLOCK)) {
 		/* avoid SIGPIPE in zero read - it was closed */
 		close(connp->w.sock);
 		remove_input(connp->w.sock);
@@ -3380,8 +3374,7 @@ static int Receive_login(int ind){
 		return(-1);
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%s", choice)) != 1)
-	{
+	if ((n = Packet_scanf(&connp->r, "%s", choice)) != 1) {
 		errno = 0;
 		printf("%d\n",n);
 		plog("Failed reading login packet");
@@ -3645,8 +3638,7 @@ static int Receive_play(int ind)
 
 	/* XXX */
 	n = Sockbuf_read(&connp->r);
-	if(n==0 && !(errno==EAGAIN || errno==EWOULDBLOCK)){
-
+	if (n == 0 && !(errno == EAGAIN || errno == EWOULDBLOCK)) {
 		/* avoid SIGPIPE in zero read */
 		close(connp->w.sock);
 		remove_input(connp->w.sock);
@@ -3655,8 +3647,7 @@ static int Receive_play(int ind)
 		return(-1);
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) != 1)
-	{
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) != 1) {
 		errno = 0;
 		plog("Cannot receive play packet");
 		Destroy_connection(ind, "receive error in play");
@@ -3665,12 +3656,11 @@ static int Receive_play(int ind)
 
 	/* Do not tell me how much this sucks. I didn't do the design
 	   evileye */
-	if (ch == PKT_LOGIN){
+	if (ch == PKT_LOGIN) {
 		Receive_login(ind);
 		return(0);
 	}
-	if (ch != PKT_PLAY)
-	{
+	if (ch != PKT_PLAY) {
 	  //		errno = 0;
 #if DEBUG_LEVEL > 1
 #if DEBUG_LEVEL < 3

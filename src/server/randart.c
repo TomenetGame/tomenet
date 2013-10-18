@@ -2755,12 +2755,12 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
 	if (!(a_ptr->flags2 & TR2_RES_ACID))
 	{
 	    a_ptr->flags2 |= TR2_RES_ACID;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
-    if (randint(BIAS_LUCK)==1 && !(a_ptr->flags2 & TR2_IM_ACID))
+    if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_ACID))
 	{
 	    a_ptr->flags2 |= TR2_IM_ACID;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
     }
     else if (artifact_bias == BIAS_ELEC)
@@ -2768,18 +2768,18 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
 	if (!(a_ptr->flags2 & TR2_RES_ELEC))
 	{
 	    a_ptr->flags2 |= TR2_RES_ELEC;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
 	if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
     	    ! (a_ptr->flags3 & TR3_SH_ELEC))
         {
             a_ptr->flags3 |= TR3_SH_ELEC;
-            if (randint(2)==1) return;
+            if (randint(2) == 1) return;
         }
-    if (randint(BIAS_LUCK)==1 && !(a_ptr->flags2 & TR2_IM_ELEC))
+    if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_ELEC))
 	{
 	    a_ptr->flags2 |= TR2_IM_ELEC;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
     }
     else if (artifact_bias == BIAS_FIRE)
@@ -2787,18 +2787,18 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
 	if (!(a_ptr->flags2 & TR2_RES_FIRE))
 	{
 	    a_ptr->flags2 |= TR2_RES_FIRE;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
 	if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
     	    ! (a_ptr->flags3 & TR3_SH_FIRE))
         {
             a_ptr->flags3 |= TR3_SH_FIRE;
-            if (randint(2)==1) return;
+            if (randint(2) == 1) return;
         }
-    if (randint(BIAS_LUCK)==1 && !(a_ptr->flags2 & TR2_IM_FIRE))
+    if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_FIRE))
 	{
 	    a_ptr->flags2 |= TR2_IM_FIRE;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
     }
     else if (artifact_bias == BIAS_COLD)
@@ -2806,18 +2806,18 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
 	if (!(a_ptr->flags2 & TR2_RES_COLD))
 	{
 	    a_ptr->flags2 |= TR2_RES_COLD;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
         if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
     	    ! (a_ptr->flags5 & TR5_SH_COLD))
         {
             a_ptr->flags5 |= TR5_SH_COLD;
-            if (randint(2)==1) return;
+            if (randint(2) == 1) return;
         }
-    if (randint(BIAS_LUCK)==1 && !(a_ptr->flags2 & TR2_IM_COLD))
+    if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_COLD))
 	{
 	    a_ptr->flags2 |= TR2_IM_COLD;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
     }
     else if (artifact_bias == BIAS_POIS)
@@ -2825,7 +2825,7 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
 	if (!(a_ptr->flags2 & TR2_RES_POIS))
 	{
 	    a_ptr->flags2 |= TR2_RES_POIS;
-	    if (randint(2)==1) return;
+	    if (randint(2) == 1) return;
 	}
     }
     else if (artifact_bias == BIAS_WARRIOR)

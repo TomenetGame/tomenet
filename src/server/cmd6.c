@@ -1974,9 +1974,9 @@ bool do_cancellation(int Ind, int flags)
 		object_type *o_ptr = &p_ptr->inventory[i];
 		if (!o_ptr->k_idx) continue;
 		if (like_artifact_p(o_ptr)) continue;
-		if (o_ptr->tval==TV_KEY) continue;
-		if (o_ptr->tval==TV_FOOD) continue;
-		if (o_ptr->tval==TV_FLASK) continue;
+		if (o_ptr->tval == TV_KEY) continue;
+		if (o_ptr->tval == TV_FOOD) continue;
+		if (o_ptr->tval == TV_FLASK) continue;
 		if (o_ptr->name2 && o_ptr->name2 != EGO_SHATTERED && o_ptr->name2 != EGO_BLASTED) {
 			ident = TRUE;
 			o_ptr->name2 = 0;
@@ -6558,7 +6558,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
-	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY && !o_ptr->name1) {
+	if (o_ptr->tval == TV_DRAG_ARMOR && item == INVEN_BODY && !o_ptr->name1) {
 		switch (o_ptr->sval) {
 		case SV_DRAGON_BLACK:
 			msg_print(Ind, "You breathe acid.");

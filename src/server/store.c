@@ -1623,7 +1623,7 @@ static void store_create(store_type *st_ptr)
 		object_known(o_ptr);
 
 		/* Mega-Hack -- no chests in stores */
-//		if (o_ptr->tval == TV_CHEST || o_ptr->tval==8) continue;
+//		if (o_ptr->tval == TV_CHEST || o_ptr->tval == 8) continue;
 		if (o_ptr->tval == TV_CHEST) continue;
 
 		/* In general forbid Experienace/Invulnerability/Learning potions in ANY store! */

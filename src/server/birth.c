@@ -2108,7 +2108,7 @@ static void player_setup(int Ind, bool new)
 	p_ptr->spam = 0;
 
 	/* Default location if just starting */
-//	if (wpos->wz == 0 && wpos->wy == 0 && wpos->wx == 0 && p_ptr->py==0 && p_ptr->px==0){
+//	if (wpos->wz == 0 && wpos->wy == 0 && wpos->wx == 0 && p_ptr->py == 0 && p_ptr->px == 0) {
 	if (new) {
 		p_ptr->wpos.wx = cfg.town_x;
 		p_ptr->wpos.wy = cfg.town_y;

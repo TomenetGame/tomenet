@@ -2827,11 +2827,8 @@ if (season_halloween) {
 					(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
 				}
 
-				if ((!p_ptr->resist_chaos) && (randint(3)==1))
-				{
+				if ((!p_ptr->resist_chaos) && (randint(3) == 1))
 					(void) set_image(Ind, p_ptr->image + rand_int(250) + 150);
-				}
-
 
 				take_sanity_hit(Ind, damroll(6, 6), ddesc);/* 8,8 was too powerful */
 				//				take_hit(Ind, damroll(8, 8), ddesc, 0);
@@ -5884,7 +5881,7 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm)
                         if (!in_bounds(sy, sx)) continue;
 
 			/* ignore ourself */
-			if(sx==m_ptr->fx && sy==m_ptr->fy) continue;
+			if (sx == m_ptr->fx && sy == m_ptr->fy) continue;
 
 			/* no point if there are no players on depth */
 			/* and it would crash anyway ;) */
@@ -6138,7 +6135,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
                         if (!in_bounds(sy, sx)) continue;
 
 			/* ignore ourself */
-			if(sx==m_ptr->fx && sy==m_ptr->fy) continue;
+			if (sx == m_ptr->fx && sy == m_ptr->fy) continue;
 
 			/* no point if there are no players on depth */
 			/* and it would crash anyway ;) */
@@ -7137,7 +7134,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		}
 
 		/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */
-		//else if ((c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE ||
+		//else if ((c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_EVIL_TREE ||
 		else if ((c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_TREE ||
 			c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_IVY) &&
 			((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL) ||
@@ -7236,7 +7233,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		else if ((r_ptr->flags2 & RF2_KILL_WALL) ||
 			/* POWERFUL monsters can hack down trees */
 			((base_r_ptr->flags2 & RF2_POWERFUL) &&
-			//c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE ||
+			//c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_EVIL_TREE ||
 			(c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_TREE ||
 			c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_IVY)))
 #endif

@@ -2301,10 +2301,10 @@ void c_message_add(cptr str)
 
 		/* Redraw - assume that all chat messages start with '[' */
 #if 0
-		if (str[0]=='[')
-                p_ptr->window |= (PW_MESSAGE | PW_CHAT);
+		if (str[0] == '[')
+	                p_ptr->window |= (PW_MESSAGE | PW_CHAT);
                 else
-                p_ptr->window |= (PW_MESSAGE | PW_MSGNOCHAT);
+		        p_ptr->window |= (PW_MESSAGE | PW_MSGNOCHAT);
 #endif
 		p_ptr->window |= (PW_MESSAGE);
 
@@ -2411,11 +2411,11 @@ void c_message_add(cptr str)
 #if 0
 //deprecated?:
 	/* Window stuff - assume that all chat messages start with '[' */
-        if (str[0]=='[')
-        p_ptr->window |= (PW_MESSAGE | PW_CHAT);
+        if (str[0] == '[')
+	        p_ptr->window |= (PW_MESSAGE | PW_CHAT);
         else
-        p_ptr->window |= (PW_MESSAGE | PW_MSGNOCHAT);
-//      p_ptr->window |= PW_MESSAGE;
+	        p_ptr->window |= (PW_MESSAGE | PW_MSGNOCHAT);
+//      	p_ptr->window |= PW_MESSAGE;
 #else
 	p_ptr->window |= PW_MESSAGE;
 #endif

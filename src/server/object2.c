@@ -4540,7 +4540,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 					{
 						random_resistance(o_ptr, FALSE, ((randint(20))+18));
 					}
-					while(randint(4)==1);
+					while (randint(4) == 1);
 #endif
 
 					/* Bonus to armor class */
@@ -4704,7 +4704,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 
 				/* Amulet of the Magi -- never cursed */
 				case SV_AMULET_THE_MAGI:
-//					if (randint(3)==1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
+//					if (randint(3) == 1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
 				case SV_AMULET_TRICKERY:
 				case SV_AMULET_DEVOTION:
 				{
@@ -4774,8 +4774,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 				case SV_AMULET_RESISTANCE:
 				{
 #if 0
-					if (randint(3)==1) random_resistance(o_ptr, FALSE, ((randint(34))+4));
-					if (randint(5)==1) o_ptr->art_flags2 |= TR2_RES_POIS;
+					if (randint(3) == 1) random_resistance(o_ptr, FALSE, ((randint(34)) + 4));
+					if (randint(5) == 1) o_ptr->art_flags2 |= TR2_RES_POIS;
 #endif	// 0
 				}
 				break;

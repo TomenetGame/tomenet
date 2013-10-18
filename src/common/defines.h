@@ -7037,7 +7037,7 @@ extern int PlayerUID;
 #endif
 
 #define inarea(apos, bpos) \
-	((apos)->wx==(bpos)->wx && (apos)->wy==(bpos)->wy && (apos)->wz==(bpos)->wz)
+	((apos)->wx == (bpos)->wx && (apos)->wy == (bpos)->wy && (apos)->wz == (bpos)->wz)
 
 /* alias */
 #define wpcmp(apos, bpos) (inarea(apos, bpos))

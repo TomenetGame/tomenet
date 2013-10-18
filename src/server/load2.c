@@ -2102,7 +2102,7 @@ static errr rd_floor(void)
 	rd_s16b(&wpos.wx);
 	rd_s16b(&wpos.wy);
 	rd_s16b(&wpos.wz);
-	if(wpos.wx==0x7fff && wpos.wy==0x7fff && wpos.wz==0x7fff)
+	if (wpos.wx == 0x7fff && wpos.wy == 0x7fff && wpos.wz == 0x7fff)
 		return(1);
 	rd_u16b(&max_y);
 	rd_u16b(&max_x);

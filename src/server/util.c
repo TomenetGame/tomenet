@@ -3382,7 +3382,8 @@ static void player_talk_aux(int Ind, char *message)
 
 			/* new hack: ..but only if the previous two chars aren't  !:  (party chat),
 			   and if it's appearently meant to be a smiley. */
-			if ((colon - message == 1) && (colon[-1]=='!' || colon[-1]=='#' || colon[-1]=='%' || colon[-1]=='$' || colon[-1]=='+'))
+			if ((colon - message == 1) && (colon[-1] == '!' || colon[-1] == '#'
+			    || colon[-1] == '%' || colon[-1] == '$' || colon[-1] == '+'))
 			switch (*(colon + 2)) {
 			case '(': case ')':
 			case '[': case ']':

@@ -2612,7 +2612,7 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	}
 
 	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) &&
-		randint(HURT_CHANCE)==1 && breakable)
+		randint(HURT_CHANCE) == 1 && breakable)
 		(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE(inv));
 
 	/* If any armor gets hit, defend the player */
@@ -2663,7 +2663,7 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	}
 
 	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) &&
-		randint(HURT_CHANCE)==1 && breakable)
+		randint(HURT_CHANCE) == 1 && breakable)
 		(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
@@ -2710,7 +2710,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	}
 
 	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) &&
-		randint(HURT_CHANCE)==1 && breakable)
+		randint(HURT_CHANCE) == 1 && breakable)
 		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
 	if (magik(hurt_eq) && breakable) equip_damage(Ind, GF_FIRE);
@@ -2755,7 +2755,7 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	}
 
 	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) &&
-		randint(HURT_CHANCE)==1 && breakable)
+		randint(HURT_CHANCE) == 1 && breakable)
 		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
@@ -7030,7 +7030,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (seen) r_ptr->r_flags9 |= (RF9_RES_POIS);
 #endif
 			}
-			else if (randint(3)==1) do_poly = TRUE;
+			else if (randint(3) == 1) do_poly = TRUE;
 			break;
 		}
 
@@ -8034,7 +8034,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if((cs_ptr = GetCS(c_ptr, CS_TRAPS)))
 				t_idx = cs_ptr->sc.trap.t_idx;
 
-			//if(t_idx && t_idx==typ){
+			//if (t_idx && t_idx == typ) {
 			if (t_idx) {
 				/* huh? */
 				// t_ptr = zcave[p_ptr->py][p_ptr->px].special.sc.ptr;
@@ -8374,8 +8374,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Reflection */
 #if 0
 	/* Effects done by the plane cannot bounce */
-	if (!friendly_player && p_ptr->reflect && !a_rad && !(randint(10)==1) && ((who != -101) && (who != -100)))
-	{
+	if (!friendly_player && p_ptr->reflect && !a_rad && !(randint(10) == 1) && ((who != -101) && (who != -100))) {
 				int t_y, t_x;
 		int max_attempts = 10;
 
@@ -8749,15 +8748,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Reduce stats */
 			if (!ignore_fire && !ignore_elec) {
-				if (randint(HURT_CHANCE)==1) {
+				if (randint(HURT_CHANCE) == 1) {
 					if (rand_int(3)) (void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
 					else (void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
 				}
 			} else if (ignore_elec) {
-				if (randint(HURT_CHANCE)==1)
+				if (randint(HURT_CHANCE) == 1)
 					(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
 			} else if (ignore_fire) {
-				if (randint(HURT_CHANCE)==1)
+				if (randint(HURT_CHANCE) == 1)
 					(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
 			}
 
@@ -9993,8 +9992,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
 
 #if 0	// dang, later..
-					if (randint(5)==1) /* 6 */
-					{
+					if (randint(5) == 1) { /* 6 */
 						msg_print("You undergo a freakish metamorphosis!");
 						if (randint(4)==1) /* 4 */
 							do_poly_self();
@@ -10003,14 +10001,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					}
 #endif	// 0
 
-					if (randint(6)==1)
-					{
+					if (randint(6) == 1) {
 						/* Don't kill inventory in bloodbond... */
 						int breakable = 1;
 						if (IS_PVP) {
-							if (check_blood_bond(Ind, -who)) {
+							if (check_blood_bond(Ind, -who))
 								breakable = 0;
-							}
 						}
 						if (breakable) inven_damage(Ind, set_acid_destroy, 2);
 					}
