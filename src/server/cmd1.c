@@ -6539,7 +6539,7 @@ static bool run_test(int Ind)
 	byte                    *w_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
-	if(!(zcave = getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* XXX -- Ghosts never stop running */
 	if (p_ptr->ghost || p_ptr->tim_wraith) return (FALSE);
@@ -6619,13 +6619,11 @@ static bool run_test(int Ind)
 		inv = TRUE;
 
 		/* Check memorized grids */
-		if (*w_ptr & CAVE_MARK)
-		{
+		if (*w_ptr & CAVE_MARK) {
 			bool notice = TRUE;
 
 			/* Examine the terrain */
-			switch (c_ptr->feat)
-			{
+			switch (c_ptr->feat) {
 #if 0
 				/* Floors */
 				case FEAT_FLOOR:
@@ -6639,10 +6637,12 @@ static bool run_test(int Ind)
 				/* Normal veins */
 				case FEAT_MAGMA:
 				case FEAT_QUARTZ:
+				case FEAT_SANDWALL:
 
 				/* Hidden treasure */
 				case FEAT_MAGMA_H:
 				case FEAT_QUARTZ_H:
+				case FEAT_SANDWALL_H:
 
 				/* Grass, trees, and dirt */
 				case FEAT_GRASS:

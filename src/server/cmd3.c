@@ -2789,6 +2789,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 		/* Notice veins with treasure */
 		if (c_ptr->feat == FEAT_MAGMA_K) return (TRUE);
 		if (c_ptr->feat == FEAT_QUARTZ_K) return (TRUE);
+		if (c_ptr->feat == FEAT_SANDWALL_K) return (TRUE);
 #endif	// 0
 
 		/* Accept 'naturally' interesting features */
