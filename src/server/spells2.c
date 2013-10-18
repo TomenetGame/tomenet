@@ -1623,10 +1623,8 @@ bool lose_all_info(int Ind)
  * 1. allow to display gold carried by monsters
  * 2. make this a ranged spell
  */
-bool detect_treasure(int Ind, int rad)
-{
+bool detect_treasure(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
-
 	struct worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr;
 	int		py = p_ptr->py, px = p_ptr->px;
@@ -1636,10 +1634,10 @@ bool detect_treasure(int Ind, int rad)
 
 	cave_type	*c_ptr;
 	byte		*w_ptr;
-
 	object_type	*o_ptr;
 	cave_type **zcave;
-	if(!(zcave = getcave(wpos))) return(FALSE);
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
@@ -1647,11 +1645,9 @@ bool detect_treasure(int Ind, int rad)
 
 	/* Scan the current panel */
 //	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
-	for (y = py - rad; y <= py + rad; y++)
-	{
+	for (y = py - rad; y <= py + rad; y++) {
 //		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
-		for (x = px - rad; x <= px + rad; x++)
-		{
+		for (x = px - rad; x <= px + rad; x++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds4(l_ptr, y, x)) continue;
 
@@ -1665,11 +1661,11 @@ bool detect_treasure(int Ind, int rad)
 
 			/* Magma/Quartz + Known Gold */
 			if ((c_ptr->feat == FEAT_MAGMA_K) ||
-			    (c_ptr->feat == FEAT_QUARTZ_K))
+			    (c_ptr->feat == FEAT_QUARTZ_K) ||
+			    (c_ptr->feat == FEAT_SANDWALL_K))
 			{
 				/* Notice detected gold */
-				if (!(*w_ptr & CAVE_MARK))
-				{
+				if (!(*w_ptr & CAVE_MARK)) {
 					/* Detect */
 					detect = TRUE;
 
@@ -1683,7 +1679,8 @@ bool detect_treasure(int Ind, int rad)
 
 			/* Notice embedded gold */
 			if ((c_ptr->feat == FEAT_MAGMA_H) ||
-			    (c_ptr->feat == FEAT_QUARTZ_H))
+			    (c_ptr->feat == FEAT_QUARTZ_H) ||
+			    (c_ptr->feat == FEAT_SANDWALL_H))
 			{
 				/* Expose the gold */
 				c_ptr->feat += 0x02;
@@ -1699,11 +1696,9 @@ bool detect_treasure(int Ind, int rad)
 			}
 
 			/* Notice gold */
-			if (o_ptr->tval == TV_GOLD)
-			{
+			if (o_ptr->tval == TV_GOLD) {
 				/* Notice new items */
-				if (!(p_ptr->obj_vis[c_ptr->o_idx]))
-				{
+				if (!(p_ptr->obj_vis[c_ptr->o_idx])) {
 					/* Detect */
 					detect = TRUE;
 
@@ -1720,10 +1715,8 @@ bool detect_treasure(int Ind, int rad)
 	return (detect);
 }
 /* detect treasures level-wide, for DIGGING skill */
-bool floor_detect_treasure(int Ind)
-{
+bool floor_detect_treasure(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	struct worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr;
 	int y, x;
@@ -1732,8 +1725,9 @@ bool floor_detect_treasure(int Ind)
 	byte *w_ptr;
 	object_type *o_ptr;
 	cave_type **zcave;
-	if(!(zcave = getcave(wpos))) return(FALSE);
-	if(!(l_ptr = getfloor(wpos))) return(FALSE); /* doesn't work on surface levels (wpos.wz == 0) */
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	if (!(l_ptr = getfloor(wpos))) return(FALSE); /* doesn't work on surface levels (wpos.wz == 0) */
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
@@ -1750,7 +1744,8 @@ bool floor_detect_treasure(int Ind)
 
 			/* Magma/Quartz + Known Gold */
 			if ((c_ptr->feat == FEAT_MAGMA_K) ||
-			    (c_ptr->feat == FEAT_QUARTZ_K)) {
+			    (c_ptr->feat == FEAT_QUARTZ_K) ||
+			    (c_ptr->feat == FEAT_SANDWALL_K)) {
 				/* Notice detected gold */
 				if (!(*w_ptr & CAVE_MARK)) {
 					/* Detect */
@@ -1764,7 +1759,8 @@ bool floor_detect_treasure(int Ind)
 
 			/* Notice embedded gold */
 			if ((c_ptr->feat == FEAT_MAGMA_H) ||
-			    (c_ptr->feat == FEAT_QUARTZ_H)) {
+			    (c_ptr->feat == FEAT_QUARTZ_H) ||
+			    (c_ptr->feat == FEAT_SANDWALL_H)) {
 				/* Expose the gold */
 				c_ptr->feat += 0x02;
 				/* Detect */
@@ -1803,8 +1799,7 @@ bool floor_detect_treasure(int Ind)
  *
  * It can probably be argued that this function is now too powerful.
  */
-bool detect_magic(int Ind, int rad)
-{
+bool detect_magic(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -1818,6 +1813,7 @@ bool detect_magic(int Ind, int rad)
 	object_type	*o_ptr;
 
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
@@ -1826,11 +1822,9 @@ bool detect_magic(int Ind, int rad)
 
 	/* Scan the current panel */
 //	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
-	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
-	{
+	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++) {
 //		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
-		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++)
-		{
+		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds4(l_ptr, i, j)) continue;
 
@@ -1881,8 +1875,7 @@ bool detect_magic(int Ind, int rad)
  * A "generic" detect monsters routine, tagged to flags3
  */
 //bool detect_monsters_xxx(u32b match_flag, int rad)
-bool detect_monsters_xxx(int Ind, u32b match_flag)
-{
+bool detect_monsters_xxx(int Ind, u32b match_flag) {
 	player_type *p_ptr = Players[Ind];
 	int  i, y, x;
 	bool flag = FALSE;
@@ -1896,8 +1889,7 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 	clear_ovl(Ind);
 
 	/* Scan monsters */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
 		monster_race *r_ptr = race_inf(m_ptr);
 
@@ -1921,8 +1913,7 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 		if (!panel_contains(y, x)) continue;
 
 		/* Detect evil monsters */
-		if (r_ptr->flags3 & (match_flag))
-		{
+		if (r_ptr->flags3 & (match_flag)) {
 			byte a;
 			char c;
 
@@ -1942,8 +1933,7 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 		}
 	}
 
-	switch (match_flag)
-	{
+	switch (match_flag) {
 		case RF3_EVIL:
 			desc_monsters = "evil";
 			break;
@@ -1963,8 +1953,7 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 	}
 
 	/* Describe */
-	if (flag)
-	{
+	if (flag) {
 		/* Describe result */
 		msg_format(Ind, "You sense the presence of %s!", desc_monsters);
 		//msg_print(NULL);
@@ -1976,9 +1965,7 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 		/* Mega-Hack -- Fix the monsters */
 		update_monsters(FALSE);
 #endif
-	}
-	else
-	{
+	} else {
 		/* Describe result */
 		msg_format(Ind, "You sense the absence of %s.", desc_monsters);
 	}
@@ -1992,8 +1979,7 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 /*
  * Locates and displays all invisible creatures on current panel -RAK-
  */
-bool detect_invisible(int Ind)
-{
+bool detect_invisible(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int		i;
@@ -2118,8 +2104,7 @@ bool detect_invisible(int Ind)
  * Display evil creatures on current panel		-RAK-
  */
 #if 0
-bool detect_evil(int Ind)
-{
+bool detect_evil(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int		i;
@@ -2133,8 +2118,7 @@ bool detect_evil(int Ind)
 	clear_ovl(Ind);
 
 	/* Display all the evil monsters */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
                 monster_race *r_ptr = race_inf(m_ptr);
 
@@ -2151,8 +2135,7 @@ bool detect_evil(int Ind)
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 
 		/* Detect evil monsters */
-		if (panel_contains(fy, fx) && (r_ptr->flags3 & RF3_EVIL))
-		{
+		if (panel_contains(fy, fx) && (r_ptr->flags3 & RF3_EVIL)) {
 			byte a;
 			char c;
 
@@ -2173,8 +2156,7 @@ bool detect_evil(int Ind)
 	}
 
 	/* Note effects and clean up */
-	if (flag)
-	{
+	if (flag) {
 		/* Describe, and wait for acknowledgement */
 		msg_print(Ind, "You sense the presence of evil!");
 		msg_print(Ind, NULL);
@@ -2187,8 +2169,7 @@ bool detect_evil(int Ind)
 		update_monsters(FALSE);
 #endif
 	}
-    else
-    {
+    else {
         msg_print(Ind, "You sense the absence of evil.");
         msg_print(Ind, NULL);
     }
@@ -2196,9 +2177,8 @@ bool detect_evil(int Ind)
 	/* Result */
 	return (flag);
 }
-#else	// 0
-bool detect_evil(int Ind)
-{
+#else
+bool detect_evil(int Ind) {
 	return(detect_monsters_xxx(Ind, RF3_EVIL));
 }
 #endif	// 0
@@ -2208,8 +2188,7 @@ bool detect_evil(int Ind)
 /*
  * Display all non-invisible monsters/players on the current panel
  */
-bool detect_creatures(int Ind)
-{
+bool detect_creatures(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int	i;
@@ -2223,8 +2202,7 @@ bool detect_creatures(int Ind)
 	clear_ovl(Ind);
 
 	/* Detect non-invisible monsters */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
 		monster_race *r_ptr = race_inf(m_ptr);
 
@@ -2241,8 +2219,7 @@ bool detect_creatures(int Ind)
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 
 		/* Detect all non-invisible monsters */
-		if (panel_contains(fy, fx) && (!(r_ptr->flags2 & RF2_INVISIBLE)))
-		{
+		if (panel_contains(fy, fx) && (!(r_ptr->flags2 & RF2_INVISIBLE))) {
 			byte a;
 			char c;
 
@@ -2263,8 +2240,7 @@ bool detect_creatures(int Ind)
 	}
 
 	/* Detect non-invisible players */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		player_type *q_ptr = Players[i];
 
 		int py = q_ptr->py;
@@ -2286,8 +2262,7 @@ bool detect_creatures(int Ind)
 		if (i == Ind) continue;
 
 		/* Detect all non-invisible players */
-		if (panel_contains(py, px) && !q_ptr->ghost)
-		{
+		if (panel_contains(py, px) && !q_ptr->ghost) {
 			byte a;
 			char c;
 
@@ -2308,8 +2283,7 @@ bool detect_creatures(int Ind)
 	}
 
 	/* Describe and clean up */
-	if (flag)
-	{
+	if (flag) {
 		/* Describe, and wait for acknowledgement */
 		msg_print(Ind, "You sense the presence of creatures!");
 		msg_print(Ind, NULL);
@@ -2322,9 +2296,7 @@ bool detect_creatures(int Ind)
 		update_monsters(FALSE);
 		update_players();
 #endif
-	}
-	else
-	{
+	} else {
 		msg_print(Ind, "You sense the absence of creatures.");
 		msg_print(Ind, NULL);
 	}
@@ -2336,8 +2308,7 @@ bool detect_creatures(int Ind)
 /*
  * Display all monsters on the current panel
  */
-void detect_monsters_forced(int Ind)
-{
+void detect_monsters_forced(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int	i;
 
@@ -2348,8 +2319,7 @@ void detect_monsters_forced(int Ind)
 	/* Clear previously detected stuff */
 	clear_ovl(Ind);
 
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
 //		monster_race *r_ptr = race_inf(m_ptr);
 
@@ -2386,8 +2356,7 @@ void detect_monsters_forced(int Ind)
 /*
  * Detect everything
  */
-bool detection(int Ind, int rad)
-{
+bool detection(int Ind, int rad) {
 	bool	detect = FALSE;
 
 	/* Detect the easy things */
@@ -2405,8 +2374,7 @@ bool detection(int Ind, int rad)
 /*
  * Detect bounty, a rogue's skill
  */
-bool detect_bounty(int Ind, int rad)
-{
+bool detect_bounty(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 	// 10 ... 60 % of auto-detecting "stuff"
@@ -2427,7 +2395,7 @@ bool detect_bounty(int Ind, int rad)
 
 	object_type	*o_ptr;
 
-	if(!(zcave = getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	l_ptr = getfloor(wpos);
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
@@ -2435,10 +2403,8 @@ bool detect_bounty(int Ind, int rad)
 
 
 	/* Scan the current panel */
-	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
-	{
-		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++)
-		{
+	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++) {
+		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds4(l_ptr, i, j)) continue;
 
@@ -2470,8 +2436,7 @@ bool detect_bounty(int Ind, int rad)
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && magik(chance)) {
 				t_idx = cs_ptr->sc.trap.t_idx;
 
-				if (!cs_ptr->sc.trap.found)
-				{
+				if (!cs_ptr->sc.trap.found) {
 					/* Pick a trap */
 					pick_trap(wpos, i, j);
 				}
@@ -2543,8 +2508,7 @@ bool detect_bounty(int Ind, int rad)
 /*
  * Detect all objects on the current panel		-RAK-
  */
-bool detect_object(int Ind, int rad)
-{
+bool detect_object(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -2567,11 +2531,9 @@ bool detect_object(int Ind, int rad)
 
 	/* Scan the current panel */
 //	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
-	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
-	{
+	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++) {
 //		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
-		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++)
-		{
+		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds4(l_ptr, i, j)) continue;
 
@@ -2589,8 +2551,7 @@ bool detect_object(int Ind, int rad)
 			if (o_ptr->tval == TV_GOLD) continue;
 
 			/* Note new objects */
-			if (!(p_ptr->obj_vis[c_ptr->o_idx]))
-			{
+			if (!(p_ptr->obj_vis[c_ptr->o_idx])) {
 				/* Detect */
 				detect = TRUE;
 
@@ -2611,8 +2572,7 @@ bool detect_object(int Ind, int rad)
  * Locates and displays traps on current panel
  */
 //bool detect_trap(int Ind)
-bool detect_trap(int Ind, int rad)
-{
+bool detect_trap(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -2641,11 +2601,9 @@ bool detect_trap(int Ind, int rad)
 
 	/* Scan the current panel */
 //	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
-	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
-	{
+	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++) {
 //		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
-		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++)
-		{
+		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds4(l_ptr, i, j)) continue;
 
@@ -2673,8 +2631,7 @@ bool detect_trap(int Ind, int rad)
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 				t_idx = cs_ptr->sc.trap.t_idx;
 
-				if (!cs_ptr->sc.trap.found)
-				{
+				if (!cs_ptr->sc.trap.found) {
 					/* Pick a trap */
 					pick_trap(wpos, i, j);
 
@@ -2700,8 +2657,7 @@ bool detect_trap(int Ind, int rad)
 
 #if 0
 				/* Already seen traps */
-				else if (c_ptr->feat >= FEAT_TRAP_HEAD && c_ptr->feat <= FEAT_TRAP_TAIL)
-				{
+				else if (c_ptr->feat >= FEAT_TRAP_HEAD && c_ptr->feat <= FEAT_TRAP_TAIL) {
 					/* Memorize it */
 					*w_ptr |= CAVE_MARK;
 
@@ -2730,8 +2686,7 @@ bool detect_trap(int Ind, int rad)
 /*
  * Locates and displays all stairs and secret doors on current panel -RAK-
  */
-bool detect_sdoor(int Ind, int rad)
-{
+bool detect_sdoor(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -2752,11 +2707,9 @@ bool detect_sdoor(int Ind, int rad)
 
 	/* Scan the panel */
 //	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
-	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
-	{
+	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++) {
 //		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
-		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++)
-		{
+		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds4(l_ptr, i, j)) continue;
 
@@ -2768,8 +2721,7 @@ bool detect_sdoor(int Ind, int rad)
 			w_ptr = &p_ptr->cave_flag[i][j];
 
 			/* Hack -- detect secret doors */
-			if (c_ptr->feat == FEAT_SECRET)
-			{
+			if (c_ptr->feat == FEAT_SECRET) {
 				struct c_special *cs_ptr;
 
 				/* Clear mimic feature */
@@ -2807,8 +2759,7 @@ bool detect_sdoor(int Ind, int rad)
 			}
 
 			/* Hack -- detect dungeon shops */
-			if (c_ptr->feat == FEAT_SHOP)
-			{
+			if (c_ptr->feat == FEAT_SHOP) {
 				/* Memorize the stairs */
 				*w_ptr |= CAVE_MARK;
 
@@ -2828,8 +2779,7 @@ bool detect_sdoor(int Ind, int rad)
 /*
  * Create stairs at the player location
  */
-void stair_creation(int Ind)
-{
+void stair_creation(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Access the grid */
@@ -2843,8 +2793,7 @@ void stair_creation(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* XXX XXX XXX */
-	if (!cave_valid_bold(zcave, p_ptr->py, p_ptr->px))
-	{
+	if (!cave_valid_bold(zcave, p_ptr->py, p_ptr->px)) {
 		msg_print(Ind, "The object resists the spell.");
 		return;
 	}
@@ -2853,24 +2802,15 @@ void stair_creation(int Ind)
 	delete_object(wpos, p_ptr->py, p_ptr->px, TRUE);
 
 	/* Create a staircase */
-	if (!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1))
-	{
+	if (!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)) {
 		/* special..? */
-	}
-	else if (can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1))
-	{
+	} else if (can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)) {
 		c_ptr->feat = FEAT_MORE;
-	}
-	else if(can_go_up(wpos, 0x1) && !can_go_down(wpos, 0x1))
-	{
+	} else if(can_go_up(wpos, 0x1) && !can_go_down(wpos, 0x1)) {
 		c_ptr->feat = FEAT_LESS;
-	}
-	else if (rand_int(100) < 50)
-	{
+	} else if (rand_int(100) < 50) {
 		c_ptr->feat = FEAT_MORE;
-	}
-	else
-	{
+	} else {
 		c_ptr->feat = FEAT_LESS;
 	}
 
@@ -2887,8 +2827,7 @@ void stair_creation(int Ind)
 /*
  * Hook to specify "weapon"
  */
-static bool item_tester_hook_weapon(object_type *o_ptr)
-{
+static bool item_tester_hook_weapon(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	/* and now new.. :) */
 	case TV_TRAPKIT:
@@ -2914,8 +2853,7 @@ static bool item_tester_hook_weapon(object_type *o_ptr)
 /*
  * Hook to specify "armour"
  */
-static bool item_tester_hook_armour(object_type *o_ptr)
-{
+static bool item_tester_hook_armour(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	case TV_DRAG_ARMOR:
 	case TV_HARD_ARMOR:
@@ -2951,8 +2889,7 @@ static bool item_tester_hook_armour(object_type *o_ptr)
  * Note that this function can now be used on "piles" of items, and
  * the larger the pile, the lower the chance of success.
  */
-bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
-{
+bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 	player_type *p_ptr = Players[Ind];
 	int i, chance, prob;
 	bool res = FALSE;
@@ -3013,8 +2950,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 		}
 
 		/* Enchant to damage, but not that easily multiple times over 9 */
-		if ((eflag & ENCH_TODAM) && (magik(30) || !(did_todam && o_ptr->to_d > 9)))
-		{
+		if ((eflag & ENCH_TODAM) && (magik(30) || !(did_todam && o_ptr->to_d > 9))) {
 			if (o_ptr->to_d < 0) chance = 0;
 			else if (o_ptr->to_d > 14) chance = 1000;
 			else {
@@ -3023,8 +2959,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 				if (n > 1) chance = ((chance * 1) / 3);
 			}
 
-			if ((randint(1000) > chance) && (!a || (rand_int(100) < 50)))
-			{
+			if ((randint(1000) > chance) && (!a || (rand_int(100) < 50))) {
 				o_ptr->to_d++;
 				res = TRUE;
 				did_todam = TRUE;
@@ -3044,8 +2979,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 		}
 
 		/* Enchant to armor class, but not that easily multiple times over 9 */
-		if ((eflag & ENCH_TOAC) && (magik(30) || !(did_toac && o_ptr->to_a > 9)))
-		{
+		if ((eflag & ENCH_TOAC) && (magik(30) || !(did_toac && o_ptr->to_a > 9))) {
 			if (o_ptr->to_a < 0) chance = 0;
 			else if (o_ptr->to_a > 14) chance = 1000;
 			else {
@@ -3054,8 +2988,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 				if (n > 1) chance = ((chance * 1) / 3);
 			}
 
-			if ((randint(1000) > chance) && (!a || (rand_int(100) < 50)))
-			{
+			if ((randint(1000) > chance) && (!a || (rand_int(100) < 50))) {
 				o_ptr->to_a++;
 				res = TRUE;
 				did_toac = TRUE;
@@ -3063,8 +2996,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
 				    (!(f3 & TR3_PERMA_CURSE)) &&
-				    (o_ptr->to_a >= 0) && (rand_int(100) < 25))
-				{
+				    (o_ptr->to_a >= 0) && (rand_int(100) < 25)) {
 					msg_print(Ind, "The curse is broken!");
 					o_ptr->ident &= ~ID_CURSED;
 					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
@@ -4819,8 +4751,7 @@ bool obliteration(int who) {
 /*
  * Probe nearby monsters
  */
-bool probing(int Ind)
-{
+bool probing(int Ind) {
 	monster_type *m_ptr;
 	monster_race *r_ptr;
 	int            i;
@@ -4829,8 +4760,7 @@ bool probing(int Ind)
 	bool	probe = FALSE;
 
 	/* Probe all (nearby) monsters */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		m_ptr = &m_list[i];
 		r_ptr = race_inf(m_ptr);
 
@@ -4844,8 +4774,7 @@ bool probing(int Ind)
 		if (!player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx)) continue;
 
 		/* Probe visible monsters */
-		if (p_ptr->mon_vis[i])
-		{
+		if (p_ptr->mon_vis[i]) {
 			char m_name[MNAME_LEN];
                         char buf[80];
                         int j;
@@ -4858,9 +4787,7 @@ bool probing(int Ind)
                         sprintf(buf, "blows");
 
                         for (j = 0; j < 4; j++)
-                        {
                                 if (m_ptr->blow[j].d_dice) strcat(buf, format(" %dd%d", m_ptr->blow[j].d_dice, m_ptr->blow[j].d_side));
-                        }
 
 			/* Describe the monster */
 			if (r_ptr->flags7 & RF7_NO_DEATH)
@@ -4878,10 +4805,7 @@ bool probing(int Ind)
 	}
 
 	/* Done */
-	if (probe)
-	{
-		msg_print(Ind, "That's all.");
-	}
+	if (probe) msg_print(Ind, "That's all.");
 
 	/* Result */
 	return (probe);
@@ -4897,21 +4821,16 @@ bool probing(int Ind)
  * Later we may use one function for both "destruction" and
  * "earthquake" by using the "full" to select "destruction".
  */
-void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte feat, int stun)
-{
+void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte feat, int stun) {
 	int y, x, k, t, Ind;
-
 	player_type *p_ptr;
-
 	cave_type *c_ptr;
-
 	/*bool flag = FALSE;*/
 
 	dun_level *l_ptr = getfloor(wpos);
-
 	struct c_special *cs_ptr;       /* for special key doors */
-
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return;
 	if(l_ptr && l_ptr->flags1 & LF1_NO_DESTROY) return;
 
@@ -4928,10 +4847,8 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 	if (zcave[y1][x1].info & CAVE_ICKY) return;
 
 	/* Big area of affect */
-	for (y = (y1 - r); y <= (y1 + r); y++)
-	{
-		for (x = (x1 - r); x <= (x1 + r); x++)
-		{
+	for (y = (y1 - r); y <= (y1 + r); y++) {
+		for (x = (x1 - r); x <= (x1 + r); x++) {
 			/* Skip illegal grids */
 			if (!in_bounds(y, x)) continue;
 
@@ -4954,8 +4871,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			/* Hack -- don't do this to houses/rooms outside the dungeon,
 			 * this will protect hosues outside town.
 			 */
-			if(wpos->wz)
-			{
+			if(wpos->wz) {
 				/* Lose room and nest */
 				c_ptr->info &= ~(CAVE_ROOM | CAVE_NEST_PIT);
 			}
@@ -4965,8 +4881,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			everyone_forget_spot(wpos, y, x);
 
 			/* Hack -- Notice player affect */
-			if (c_ptr->m_idx < 0)
-			{
+			if (c_ptr->m_idx < 0) {
 				Ind = 0 - c_ptr->m_idx;
 				p_ptr = Players[Ind];
 
@@ -4977,8 +4892,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 #endif
 
 				/* Blind the player */
-				if (!p_ptr->resist_blind && !p_ptr->resist_lite)
-				{
+				if (!p_ptr->resist_blind && !p_ptr->resist_lite) {
 					/* Become blind */
 					(void)set_blind(Ind, p_ptr->blind + 20 + randint(10));
 				}
@@ -5007,8 +4921,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			if ((y == y1) && (x == x1)) continue;
 
 			/* Delete the monster (if any) */
-                        if (c_ptr->m_idx > 0)
-                        {
+                        if (c_ptr->m_idx > 0) {
                                 monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
                                 if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, y, x, TRUE);
                                 else continue;
@@ -5087,8 +5000,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
  * for a single turn, unless that monster can pass_walls or kill_walls.
  * This has allowed massive simplification of the "monster" code.
  */
-void earthquake(struct worldpos *wpos, int cy, int cx, int r)
-{
+void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 	int		i, t, y, x, yy, xx, dy, dx, oy, ox;
 	int		damage = 0;
 	int		sn = 0, sy = 0, sx = 0;
@@ -5249,49 +5161,36 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 						case -1:
 						case 0:
 						case 1:
-						{
 							damage = 0;
 							msg_format(Ind, "\377%cYou nimbly dodge the blast and take no damage!", COLOUR_DODGE_GOOD);
 							break;
-						}
 						case 2:
-						{
 							damage = damroll(10, 4);
 							if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 2;
 							/* Cap the damage - mikaelh */
 							if (damage + p_ptr->total_damage > 300)
-							{
 								damage = 300 - p_ptr->total_damage;
-							}
 							if (damage)
-							{
 								msg_format(Ind, "You are bashed by rubble for \377o%d\377w damage!", damage);
-							}
 
 							/* Stun only once - mikaelh */
 							if (p_ptr->total_damage == 0) {
 								(void)set_stun(Ind, p_ptr->stun + randint(33));
 							}
 							break;
-						}
 						case 3:
-						{
 							damage = damroll(30, 4);
 							if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 2;
 							/* Cap the damage - mikaelh */
-							if (damage + p_ptr->total_damage > 300) {
+							if (damage + p_ptr->total_damage > 300)
 								damage = 300 - p_ptr->total_damage;
-							}
-							if (damage) {
+							if (damage)
 								msg_format(Ind, "You are crushed between the floor and ceiling for \377o%d\377w damage!", damage);
-							}
 
 							/* Stun only once - mikaelh */
-							if (p_ptr->total_damage == 0) {
+							if (p_ptr->total_damage == 0)
 								(void)set_stun(Ind, p_ptr->stun + randint(33));
-							}
 							break;
-						}
 					}
 
 					/* Save the old location */
@@ -5318,7 +5217,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				}
 
 				/* Important -- no wall on player */
-				map[16+p_ptr->py-cy][16+p_ptr->px-cx] = FALSE;
+				map[16 + p_ptr->py - cy][16 + p_ptr->px - cx] = FALSE;
 
 				/* Take some damage */
 				if (damage) {
@@ -5351,39 +5250,33 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 
 
 	/* Examine the quaked region */
-	for (dy = -r; dy <= r; dy++)
-	{
-		for (dx = -r; dx <= r; dx++)
-		{
+	for (dy = -r; dy <= r; dy++) {
+		for (dx = -r; dx <= r; dx++) {
 			/* Extract the location */
 			yy = cy + dy;
 			xx = cx + dx;
 
 			/* Skip unaffected grids */
-			if (!map[16+yy-cy][16+xx-cx]) continue;
+			if (!map[16 + yy - cy][16 + xx - cx]) continue;
 
 			/* Access the grid */
 			c_ptr = &zcave[yy][xx];
 
 			/* Process monsters */
-			if (c_ptr->m_idx > 0)
-			{
+			if (c_ptr->m_idx > 0) {
 				monster_type *m_ptr = &m_list[c_ptr->m_idx];
                                 monster_race *r_ptr = race_inf(m_ptr);
 
 				/* Most monsters cannot co-exist with rock */
 				if (!(r_ptr->flags2 & RF2_KILL_WALL) &&
-				    !(r_ptr->flags2 & RF2_PASS_WALL))
-				{
+				    !(r_ptr->flags2 & RF2_PASS_WALL)) {
 					/* Assume not safe */
 					sn = 0;
 
 					/* Monster can move to escape the wall */
-					if (!(r_ptr->flags1 & RF1_NEVER_MOVE))
-					{
+					if (!(r_ptr->flags1 & RF1_NEVER_MOVE)) {
 						/* Look for safety */
-						for (i = 0; i < 8; i++)
-						{
+						for (i = 0; i < 8; i++) {
 							/* Access the grid */
 							y = yy + ddy[i];
 							x = xx + ddx[i];
@@ -5396,7 +5289,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 							if (zcave[y][x].feat == FEAT_RUNE) continue;
 
 							/* Important -- Skip "quake" grids */
-							if (map[16+y-cy][16+x-cx]) continue;
+							if (map[16 + y - cy][16 + x - cx]) continue;
 
 							/* Count "safe" grids */
 							sn++;
@@ -5425,8 +5318,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 					m_ptr->hp -= damage;
 
 					/* Delete (not kill) "dead" monsters */
-					if (m_ptr->hp < 0)
-					{
+					if (m_ptr->hp < 0) {
 						/* Message */
 						/*msg_format("%^s is embedded in the rock!", m_name);*/
 
@@ -5438,8 +5330,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 					}
 
 					/* Hack -- Escape from the rock */
-					if (sn)
-					{
+					if (sn) {
 						int m_idx = zcave[yy][xx].m_idx;
 
 						/* Update the new location */
@@ -5468,10 +5359,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 
 
 	/* Examine the quaked region */
-	for (dy = -r; dy <= r; dy++)
-	{
-		for (dx = -r; dx <= r; dx++)
-		{
+	for (dy = -r; dy <= r; dy++) {
+		for (dx = -r; dx <= r; dx++) {
 			/* Extract the location */
 			yy = cy + dy;
 			xx = cx + dx;
@@ -5486,8 +5375,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 			if (c_ptr->m_idx < 0) continue;
 
 			/* Destroy location (if valid) */
-			if (cave_valid_bold(zcave, yy, xx))
-			{
+			if (cave_valid_bold(zcave, yy, xx)) {
 				bool floor = cave_floor_bold(zcave, yy, xx);
 
 				/* Delete any object that is still there */
@@ -5498,40 +5386,31 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 
 				/* Granite */
 				if (t < 20)
-				{
 					/* Create granite wall */
 					cave_set_feat_live(wpos, yy, xx, FEAT_WALL_EXTRA);
-				}
 
 				/* Quartz */
 				else if (t < 70)
-				{
 					/* Create quartz vein */
 					cave_set_feat_live(wpos, yy, xx, FEAT_QUARTZ);
-				}
 
 				/* Magma */
 				else if (t < 100)
-				{
 					/* Create magma vein */
 					cave_set_feat_live(wpos, yy, xx, FEAT_MAGMA);
-				}
 
 				/* Floor */
 				else
-				{
 					/* Create floor */
 //uses static array set in generate.c, fix!	place_floor_live(wpos, yy, xx);
 					cave_set_feat_live(wpos, yy, xx, FEAT_FLOOR);
-				}
 			}
 		}
 	}
 }
 
 /* Wipe everything */
-void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
-{
+void wipe_spell(struct worldpos *wpos, int cy, int cx, int r) {
 	int		yy, xx, dy, dx;
 	cave_type	*c_ptr;
 
@@ -5544,7 +5423,7 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 	if (r > 12) r = 12;
 
 	/* Check around the epicenter */
-	for (dy = -r; dy <= r; dy++){
+	for (dy = -r; dy <= r; dy++) {
 		for (dx = -r; dx <= r; dx++) {
 			/* Extract the location */
 			yy = cy + dy;
