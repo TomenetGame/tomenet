@@ -2588,17 +2588,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				if ((c_ptr->feat - FEAT_MAGMA) & 0x01) hard = TRUE;
 
 				/* Quartz */
-				if (hard) {
+				if (hard)
 					okay = (power > 20 + rand_int(800)); /* 800 */
-				}
 				/* Sandwall */
-				else if (soft) {
+				else if (soft)
 					okay = (power > 5 + rand_int(250));
-				}
 				/* Magma */
-				else {
+				else
 					okay = (power > 10 + rand_int(400)); /* 400 */
-				}
 
 				if (istown(wpos)) gold = FALSE;
 

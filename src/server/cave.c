@@ -7260,7 +7260,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 	player_type *p_ptr;
 	cave_type **zcave;
 	cave_type *c_ptr;
-    struct c_special *cs_ptr;
+	struct c_special *cs_ptr;
 	int i;
 //	struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
 
