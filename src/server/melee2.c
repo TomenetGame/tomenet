@@ -6658,7 +6658,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	}
 	/* Hack: Handle hard-coded fluff specialties (get serious if
 	   monster is actually in combat, in most cases) - C. Blue */
-	else if (m_ptr->hp == m_ptr->maxhp) {
+	else if (m_ptr->hp >= (m_ptr->maxhp * 7) / 10) {
 		/* Ufthak of Cirith Ungol is mortally afraid of spiders */
 		if (m_ptr->r_idx == RI_UFTHAK &&
 		    (r_info[p_ptr->body_monster].flags7 & RF7_SPIDER) &&
@@ -8122,7 +8122,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	if (!do_turn && !do_move && m_ptr->monfear) {
 		/* No longer afraid */
 		m_ptr->monfear = 0;
-		m_ptr->monfear_gone = 1;
+		//m_ptr->monfear_gone = 1;
 
 		/* Message if seen */
 		if (p_ptr->mon_vis[m_idx]) {
@@ -8612,7 +8612,7 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 	if (!do_turn && !do_move && m_ptr->monfear) {
 		/* no longer afraid */
 		m_ptr->monfear = 0;
-		m_ptr->monfear_gone = 1;
+		//m_ptr->monfear_gone = 1;
 	}
 }
 #endif
@@ -9055,7 +9055,7 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 	if (!do_turn && !do_move && m_ptr->monfear) {
 		/* No longer afraid */
 		m_ptr->monfear = 0;
-		m_ptr->monfear_gone = 1;
+		//m_ptr->monfear_gone = 1;
 	}
 }
 
