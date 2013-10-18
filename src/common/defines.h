@@ -1860,8 +1860,8 @@
 /* Seams */
 #define FEAT_MAGMA              0x32
 #define FEAT_QUARTZ             0x33
-#define FEAT_MAGMA_H            0x34	/* hidden treasure */
-#define FEAT_QUARTZ_H           0x35	/* hidden treasure */
+#define FEAT_MAGMA_H            0x34	/* hidden treasure -- not generated atm */
+#define FEAT_QUARTZ_H           0x35	/* hidden treasure -- not generated atm */
 #define FEAT_MAGMA_K            0x36	/* known treasure */
 #define FEAT_QUARTZ_K           0x37	/* known treasure */
 
@@ -1920,7 +1920,7 @@
 #define FEAT_TREE               0x60
 #define FEAT_MOUNTAIN           0x61
 #define FEAT_SANDWALL           0x62
-#define FEAT_SANDWALL_H         0x63	/* hidden treasure */
+#define FEAT_SANDWALL_H         0x63	/* hidden treasure -- not generated atm */
 #define FEAT_SANDWALL_K         0x64	/* known treasure */
 #define FEAT_HIGH_MOUNTAIN	0x65
 #define FEAT_NETHER_MIST	0x66
