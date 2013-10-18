@@ -6662,8 +6662,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		/* Ufthak of Cirith Ungol is mortally afraid of spiders */
 		if (m_ptr->r_idx == RI_UFTHAK &&
 		    (r_info[p_ptr->body_monster].flags7 & RF7_SPIDER) &&
-		    m_ptr->monfear < 5)
-			m_ptr->monfear = 5;
+		    m_ptr->monfear < 20 && !m_ptr->monfear_gone)
+			m_ptr->monfear = 20; /* he recovers at 2 per turn */
 	}
 
 
@@ -6783,11 +6783,16 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #if 0	// too bad hack!
 	/* Hack -- aquatic life outa water */
 	if (zcave[oy][ox].feat != FEAT_WATER) {
-		if (r_ptr->flags7 & RF7_AQUATIC) m_ptr->monfear = 50;
+		if (r_ptr->flags7 & RF7_AQUATIC) {
+			m_ptr->monfear = 50;
+			m_ptr->monfear_gone = 0;
+		}
 	} else {
 		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
-				!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ))
+		    !(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) )) {
 			m_ptr->monfear = 50;
+			m_ptr->monfear_gone = 0;
+		}
 	}
 #endif	// 0
 
@@ -8114,14 +8119,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 	/* Hack -- get "bold" if out of options */
-	if (!do_turn && !do_move && m_ptr->monfear)
-	{
+	if (!do_turn && !do_move && m_ptr->monfear) {
 		/* No longer afraid */
 		m_ptr->monfear = 0;
+		m_ptr->monfear_gone = 1;
 
 		/* Message if seen */
-		if (p_ptr->mon_vis[m_idx])
-		{
+		if (p_ptr->mon_vis[m_idx]) {
 			char m_name[MNAME_LEN];
 
 			/* Acquire the monster name */
@@ -8605,10 +8609,10 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 	}
 
 	/* hack -- get "bold" if out of options */
-	if (!do_turn && !do_move && m_ptr->monfear)
-	{
+	if (!do_turn && !do_move && m_ptr->monfear) {
 		/* no longer afraid */
 		m_ptr->monfear = 0;
+		m_ptr->monfear_gone = 1;
 	}
 }
 #endif
@@ -9048,10 +9052,10 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 #endif
 
 	/* Hack -- get "bold" if out of options */
-	if (!do_turn && !do_move && m_ptr->monfear)
-	{
+	if (!do_turn && !do_move && m_ptr->monfear) {
 		/* No longer afraid */
 		m_ptr->monfear = 0;
+		m_ptr->monfear_gone = 1;
 	}
 }
 

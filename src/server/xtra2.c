@@ -8299,6 +8299,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			m_ptr->monfear = (randint(10) +
 			                  (((dam >= m_ptr->hp) && (percentage > 7)) ?
 			                   20 : ((11 - percentage) * 5)));
+			m_ptr->monfear_gone = 0;
 		}
 	}
 
@@ -8507,6 +8508,7 @@ case SV_GOLEM_ADAM:
 			m_ptr->monfear = (randint(10) +
 			    (((dam >= m_ptr->hp) && (percentage > 7)) ?
 			    20 : ((11 - percentage) * 5)));
+			m_ptr->monfear_gone = 0;
 		}
 	}
 

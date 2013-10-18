@@ -2292,6 +2292,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						fear = TRUE;
 						/* Set fear */
 						m_ptr->monfear = (tmp < 200) ? tmp : 200;
+						m_ptr->monfear_gone = 0;
 					}
 				}
 
@@ -2310,6 +2311,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (!(r_ptr->flags3 & RF3_NO_FEAR) && magik(chance)) {
 						msg_format(Ind, "%^s appears afraid.", m_name);
 						m_ptr->monfear = 3;//get_skill_scale(p_ptr, SKILL_AURA_POWER, 10) + 2;
+						m_ptr->monfear_gone = 0;
 					}
 				}
 				/* Shivering Aura is affected by the monster level */

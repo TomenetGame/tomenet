@@ -7640,6 +7640,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Set fear */
 		m_ptr->monfear = (i < 200) ? i : 200;
+		m_ptr->monfear_gone = 0;
 	}
 
 

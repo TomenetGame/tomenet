@@ -4361,6 +4361,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						if (!(r_ptr->flags3 & RF3_NO_FEAR) && rand_int(100) < fear_chance) {
 							msg_format(Ind, "%^s appears afraid.", m_name);
 							m_ptr->monfear = m_ptr->monfear + 4 + rand_int(p_ptr->lev) / 5 + rand_int(get_skill_scale(p_ptr, SKILL_COMBAT, 5));
+							m_ptr->monfear_gone = 0;
 						}
 						break;
 					case RBE_PARALYZE:
@@ -4548,6 +4549,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				if (!(r_ptr->flags3 & RF3_NO_FEAR) && rand_int(100) < fear_chance) {
 					msg_format(Ind, "%^s appears afraid.", m_name);
 					m_ptr->monfear = m_ptr->monfear + 4 + rand_int(p_ptr->lev) / 5 + rand_int(get_skill_scale(p_ptr, SKILL_COMBAT, 5));
+					m_ptr->monfear_gone = 0;
 				}
 			}
 

@@ -873,6 +873,7 @@ struct monster_type
    s16b energy;		/* Monster "energy" */
 
    byte monfear;		/* Monster is afraid */
+   byte monfear_gone;		/* Monster is no longer afraid because it has no other options or is temporarily immune */
    byte confused;		/* Monster is confused */
    byte stunned;		/* Monster is stunned */
    byte paralyzed;		/* Monster is paralyzed (unused) */
