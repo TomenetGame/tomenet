@@ -3915,10 +3915,12 @@ void check_experience(int Ind)
 
 	/* Message */
 	msg_format(Ind, "\374\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
-	if (old_lev < 70 && p_ptr->lev >= 70) l_printf("%s \\{g%s has attained level 70.\n", showdate(), p_ptr->name);
-	if (old_lev < 80 && p_ptr->lev >= 80) l_printf("%s \\{g%s has attained level 80.\n", showdate(), p_ptr->name);
-	if (old_lev < 90 && p_ptr->lev >= 90) l_printf("%s \\{g%s has attained level 90.\n", showdate(), p_ptr->name);
-	if (old_lev < 99 && p_ptr->lev >= 99) l_printf("%s \\{g%s has attained level 99.\n", showdate(), p_ptr->name);
+	if (!is_admin(p_ptr)) {
+		if (old_lev < 70 && p_ptr->lev >= 70) l_printf("%s \\{g%s has attained level 70\n", showdate(), p_ptr->name);
+		if (old_lev < 80 && p_ptr->lev >= 80) l_printf("%s \\{g%s has attained level 80\n", showdate(), p_ptr->name);
+		if (old_lev < 90 && p_ptr->lev >= 90) l_printf("%s \\{g%s has attained level 90\n", showdate(), p_ptr->name);
+		if (old_lev < 99 && p_ptr->lev >= 99) l_printf("%s \\{U*** {g%s has attained level 99 {U***\n", showdate(), p_ptr->name);
+	}
 #ifdef USE_SOUND_2010
 	sound(Ind, "levelup", NULL, SFX_TYPE_MISC, FALSE);
 #endif
