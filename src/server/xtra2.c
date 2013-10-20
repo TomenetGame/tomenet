@@ -6550,6 +6550,8 @@ void player_death(int Ind) {
 
 			/* Log it */
 			s_printf("INSTA_RES: %s (%d) was defeated by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
+				s_printf("(%s was really defeated by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
 #ifdef USE_SOUND_2010
 			/* Play the death sound */
