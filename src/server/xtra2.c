@@ -6302,7 +6302,7 @@ void player_death(int Ind) {
 #endif
 		}
 
-		if (ABS(p_ptr->wpos.wz) >= 20)
+		if (ABS(p_ptr->wpos.wz) >= 30)
 			l_printf("%s \\{s%s (%d) reached floor %d in the Ironman Deep Dive challenge\n",
 			    showdate(), p_ptr->name, p_ptr->max_plv, ABS(p_ptr->wpos.wz));
 	}
