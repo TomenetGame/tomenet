@@ -2559,6 +2559,19 @@ static int Handle_login(int ind)
 		msg_print(NumPlayers, "\374\377yA store of yours has sold something meanwhile!");
 	}
 
+
+	/* display some warnings if an item will severely conflict with Martial Arts skill */
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) {
+		if (!p_ptr->warning_ma_weapon &&
+		    (p_ptr->inventory[INVEN_WIELD].k_idx ||
+		    is_weapon(p_ptr->inventory[INVEN_ARM].tval) || /* for dual-wielders */
+		    p_ptr->inventory[INVEN_BOW].k_idx))
+			msg_print(NumPlayers, "\374\377RWarning: Using any sort of weapon renders Martial Arts skill effectless.");
+		else if (!p_ptr->warning_ma_shield &&
+		    p_ptr->inventory[INVEN_ARM].k_idx)
+			msg_print(NumPlayers, "\374\377RWarning: Using a shield will prevent Martial Arts combat styles.");
+	}
+
 	/* automatically re-add him to the guild of his last character? */
 	namebuf1[0] = '\0'; //abuse namebuf1
 	if ((i = acc_get_guild(p_ptr->accountname))) {
