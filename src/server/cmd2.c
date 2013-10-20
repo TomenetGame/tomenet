@@ -54,7 +54,8 @@ void do_cmd_go_up(int Ind)
 	cave_type **zcave;
 	bool one_way = FALSE;
 	int i;
-	if(!(zcave = getcave(wpos))) return;
+
+	if (!(zcave = getcave(wpos))) return;
 
 	if (wpos->wz > 0) tower = TRUE;
 	if (wpos->wz < 0) dungeon = TRUE;
@@ -267,6 +268,7 @@ void do_cmd_go_up(int Ind)
 	if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS) {
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (surface) {
+			p_ptr->warning_staircase = 1;
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
@@ -814,6 +816,7 @@ void do_cmd_go_down(int Ind)
 	if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE) {
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (surface) {
+			p_ptr->warning_staircase = 1;
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)

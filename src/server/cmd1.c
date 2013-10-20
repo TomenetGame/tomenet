@@ -6017,7 +6017,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 		    c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
 			msg_print(Ind, "\374\377yHINT: You found a staircase. Press the according key '<' or '>' to enter!");
 			s_printf("warning_staircase: %s\n", p_ptr->name);
-			p_ptr->warning_staircase = 1;
+			//p_ptr->warning_staircase = 1;
 		}
 
 		if (!p_ptr->warning_voidjumpgate && c_ptr->feat == FEAT_BETWEEN) {
