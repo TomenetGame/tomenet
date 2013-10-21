@@ -1192,21 +1192,24 @@ N:71:Armoury
 #I:90:& Large Leather Shield~
 #I:80:& Small Metal Shield~
 # Offer ALL armour, except rare base types
-#boots
+#boots -- relatively many
 T:100:30:256
-#gloves
+#gloves -- a lot
 T:100:31:256
-#helm
+#helm -- needs x2?	!
+T:100:32:256
 T:100:32:256
 #T:100:33:256 -crowns, cannot appear anyway since they're is_rare_armour()
-#shield
+#shield --needs x2?
+T:100:34:256
 T:100:34:256
 #T:100:35:256 -cloaks -> shop 1
 #soft armour
 T:100:36:256
 T:100:36:256
 T:100:36:256
-#heavy armour
+#heavy armour --could need more
+T:100:37:256
 T:100:37:256
 T:100:37:256
 A:0:0:1:2:3:4
