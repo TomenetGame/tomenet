@@ -2781,9 +2781,9 @@ F:DRAIN_MANA | DRAIN_EXP | DRAIN_HP | CURSED | HEAVY_CURSE | AGGRAVATE |
 F:SHOW_MODS | HIDE_TYPE | KILL_UNDEAD | SLAY_EVIL | VAMPIRIC | CHR | VORPAL |
 F:IM_COLD | RES_DARK | RES_NETHER | RES_CHAOS | RES_DISEN | RES_TIME
 D:Created by tainted arts this scythe, black as the night, cuts souls apart
-D:from their bodies, lingering for more. Which warrior dares to wield it and
-D:resist its corruption. Merely looking at this scythe causes terror to grip
-D:your very heart and soul.
+D:from their bodies. Which champion dares to wield it trying to resist its
+D:corruption? Merely looking at this otherworldly artifact fills your heart
+D:with terror.
 
 
 # The Fauchard of the Guardian
