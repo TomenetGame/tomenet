@@ -10280,9 +10280,27 @@ void end_mind(int Ind, bool update)
 #endif
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) p_ptr->update |= PU_MUSIC;
 
-	if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
-		msg_print(Ind, "\377REnding mind link.");
+#if 1 /* in addition, end link on viewee's side -- at least if it's a hidden link, for now */
+	if (p_ptr->esp_link_type &&
+	    p_ptr->esp_link &&
+	    (p_ptr->esp_link_flags & LINKF_HIDDEN)) { //add LINKF_VIEW too?
+		int Ind2 = find_player(p_ptr->esp_link);
+		if (Ind2) {
+			player_type *p2_ptr = Players[Ind2];
+
+			if (!(p2_ptr->esp_link_flags & LINKF_HIDDEN)) msg_print(Ind2, "\377REnding mind link.");
+
+			p2_ptr->esp_link = 0;
+			p2_ptr->esp_link_type = 0;
+			//p2_ptr->esp_link_flags = 0;
+			p2_ptr->esp_link_flags &= ~(LINKF_VIEW | LINKF_HIDDEN);
+			p2_ptr->esp_link_end = 0; //obsolete? (not saved anyway)
+		}
 	}
+#endif
+
+	/* end link on viewer's side */
+	if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) msg_print(Ind, "\377REnding mind link.");
 	p_ptr->esp_link = 0;
 	p_ptr->esp_link_type = 0;
 	p_ptr->esp_link_flags = 0;
