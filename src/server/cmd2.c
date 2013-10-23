@@ -3458,6 +3458,9 @@ void do_cmd_bash(int Ind, int dir)
 				sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
+				/* reduce sleep of nearby monsters */
+				wakeup_monsters_somewhat(Ind, -1);
+
 				/* Set off trap */
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
