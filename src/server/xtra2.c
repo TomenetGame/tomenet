@@ -5678,11 +5678,11 @@ if (cfg.unikill_format) {
 
 		/* dungeon boss, but drops multiple items */
 		} else if (m_ptr->r_idx == RI_ZU_AON) {
-#if 0
+#if 1
 			for (i = 1; i <= NumPlayers; i++) {
 				if (inarea(&Players[i]->wpos, &p_ptr->wpos)
 				    && !is_admin(Players[i]))
-					l_printf("%s \\{U%s made it through Nether Realm.\n", showdate(), Players[i]->name);
+					l_printf("%s \\{U%s made it through the Nether Realm\n", showdate(), Players[i]->name);
 			}
 #endif
 
