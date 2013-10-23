@@ -514,7 +514,7 @@ static void do_mimic_power(int Ind, int power, int dir)
 	/* allow us to annoy others ;) */
 	sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
-	aggravate_monsters(Ind, 1);
+	aggravate_monsters(Ind, -1);
 	break;
 //#define RF4_UNMAGIC                     0x00000002      /* Cancel player's timed spell */ 
     case 1:

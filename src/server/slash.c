@@ -129,23 +129,22 @@ void do_slash_cmd(int Ind, char *message){
 	do_slash_brief_help(Ind);
 }
 
-void sc_shout(int Ind, void *string){
+void sc_shout(int Ind, void *string) {
 	player_type *p_ptr = Players[Ind];
 
-	aggravate_monsters(Ind, 1);
-	if(string)
+	aggravate_monsters(Ind, -1);
+	if (string)
 		msg_format_near(Ind, "\377%c%^s shouts:%s", COLOUR_CHAT, p_ptr->name, (char*)string);
 	else
 		msg_format_near(Ind, "\377%cYou hear %s shout!", COLOUR_CHAT, p_ptr->name);
 	msg_format(Ind, "\377%cYou shout %s", COLOUR_CHAT, (char*)string);
 }
 
-void sc_shutdown(int Ind, void *value){
+void sc_shutdown(int Ind, void *value) {
 	bool kick = (cfg.runlevel == 1024);
-
 	int val;
 
-	if((char*)value)
+	if ((char*)value)
 		val = atoi((char*)value);
 	else
 		val = (cfg.runlevel < 6 || kick) ? 6 : 5;
@@ -155,14 +154,12 @@ void sc_shutdown(int Ind, void *value){
 	msg_format(Ind, "Runlevel set to %d", cfg.runlevel);
 
 	/* Hack -- character edit mode */
-	if (val == 1024 || kick)
-	{
+	if (val == 1024 || kick) {
 		int i;
 		if (val == 1024) msg_print(Ind, "\377rEntering edit mode!");
 		else msg_print(Ind, "\377rLeaving edit mode!");
 
-		for (i = NumPlayers; i > 0; i--)
-		{
+		for (i = NumPlayers; i > 0; i--) {
 			/* Check connection first */
 			if (Players[i]->conn == NOT_CONNECTED)
 				continue;
@@ -181,8 +178,7 @@ void sc_wish(int Ind, void *argp){
 	object_type	forge;
 	object_type	*o_ptr = &forge;
 
-	if (tk < 1 || !k)
-	{
+	if (tk < 1 || !k) {
 		msg_print(Ind, "\377oUsage: /wish (tval) (sval) (pval) [discount] [name] or /wish (o_idx)");
 		return;
 	}
@@ -190,14 +186,12 @@ void sc_wish(int Ind, void *argp){
 	invcopy(o_ptr, tk > 1 ? lookup_kind(k, atoi(token[2])) : k);
 
 	/* Wish arts out! */
-	if (tk > 4)
-	{
+	if (tk > 4) {
 		int nom = atoi(token[5]);
 		o_ptr->number = 1;
 
 		if (nom > 0) o_ptr->name1 = nom;
-		else
-		{
+		else {
 			/* It's ego or randarts */
 			if (nom) {
 				o_ptr->name2 = 0 - nom;
@@ -209,22 +203,19 @@ void sc_wish(int Ind, void *argp){
 			o_ptr->name3 = rand_int(0xFFFF) << 16;
 			o_ptr->name3 += rand_int(0xFFFF);
 		}
-	}
-	else
-	{
+	} else {
 		o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 	}
 
 	apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-	if (tk > 3){
+	if (tk > 3) {
 		o_ptr->discount = atoi(token[4]);
-	}
-	else{
+	} else {
 		o_ptr->discount = 100;
 	}
 	object_known(o_ptr);
 	o_ptr->owner = 0;
-	if(tk > 2)
+	if (tk > 2)
 		o_ptr->pval = atoi(token[3]);
 	//o_ptr->owner = p_ptr->id;
 	o_ptr->level = 1;
@@ -235,6 +226,7 @@ void sc_wish(int Ind, void *argp){
 
 void sc_report(int Ind, void *string){
 	player_type *p_ptr = Players[Ind];
+
 	rfe_printf("[%s]%s\n", p_ptr->name, (char*)string);
 	msg_print(Ind, "\377GThank you for sending us a message!");
 }
@@ -381,7 +373,7 @@ void do_slash_cmd(int Ind, char *message)
 		break_cloaking(Ind, 4);
 		msg_format_near(Ind, "\377%c%^s coughs noisily.", COLOUR_CHAT, p_ptr->name);
 		msg_format(Ind, "\377%cYou cough noisily..", COLOUR_CHAT);
-		wakeup_monsters_somewhat(Ind, 1);
+		wakeup_monsters_somewhat(Ind, -1);
 		return;
 	}
 	else if (prefix(message, "/shout") ||
@@ -399,7 +391,7 @@ void do_slash_cmd(int Ind, char *message)
 			msg_format_near(Ind, "\377%cYou hear %s shout!", COLOUR_CHAT, p_ptr->name);
 			msg_format(Ind, "\377%cYou shout!", COLOUR_CHAT);
 		}
-		wakeup_monsters(Ind, 1);
+		wakeup_monsters(Ind, -1);
 		return;
 	}
 	else if (prefix(message, "/scream") ||
@@ -417,7 +409,7 @@ void do_slash_cmd(int Ind, char *message)
 			msg_format_near(Ind, "\377%cYou hear %s scream!", COLOUR_CHAT, p_ptr->name);
 			msg_format(Ind, "\377%cYou scream!", COLOUR_CHAT);
 		}
-		aggravate_monsters(Ind, 1);
+		aggravate_monsters(Ind, -1);
 		return;
 	}
 	/* RPG-style talking to people who are nearby, instead of global chat. - C. Blue */

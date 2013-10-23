@@ -814,7 +814,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			msg_print(Ind, "\377RYou hear a hollow noise echoing through the dungeons.");
 			msg_print_near(Ind, "\377RYou hear a hollow noise echoing through the dungeons.");
 #endif
-			aggravate_monsters(Ind, 1);
+			aggravate_monsters(Ind, -1);
 			break;
 
 		/* Multiplication Trap */

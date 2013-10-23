@@ -2357,7 +2357,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 #endif
  				msg_print(Ind, "\377RThere is a high-pitched humming noise.");
  				msg_print_near(Ind, "\377RThere is a high-pitched humming noise.");
-				aggravate_monsters(Ind, 1);
+				aggravate_monsters(Ind, -1);
 				ident = TRUE;
 				break;
 
