@@ -3999,8 +3999,7 @@ bool dispel_monsters(int Ind, int dam)
 /*
  * Wake up all monsters, and speed up "los" monsters.
  */
-void aggravate_monsters(int Ind, int who)
-{
+void aggravate_monsters(int Ind, int who) {
 	player_type *p_ptr = Players[Ind];
 
 	int i;
@@ -4009,28 +4008,26 @@ void aggravate_monsters(int Ind, int who)
 	bool speed = FALSE;
 
 	/* Aggravate everyone nearby */
-	for (i = 1; i < m_max; i++)
-	{
-		monster_type	*m_ptr = &m_list[i];
+	for (i = 1; i < m_max; i++) {
+		monster_type *m_ptr = &m_list[i];
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
 
 		/* Skip monsters not on this depth */
-		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		/* Skip aggravating monster (or player) */
 		if (i == who) continue;
 
 		/* Wake up nearby sleeping monsters */
-		if(distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)<MAX_SIGHT*2)
+		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)<MAX_SIGHT*2)
 #if 0
 		if (m_ptr->cdis < MAX_SIGHT * 2)
 #endif
 		{
 			/* Wake up */
-			if (m_ptr->csleep)
-			{
+			if (m_ptr->csleep) {
 				/* Wake up */
 				m_ptr->csleep = 0;
 				sleep = TRUE;
@@ -4038,11 +4035,9 @@ void aggravate_monsters(int Ind, int who)
 		}
 
 		/* Speed up monsters in line of sight */
-		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx))
-		{
+		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx)) {
 			/* Speed up (instantly) to racial base + 10 */
-                        if (m_ptr->mspeed < m_ptr->speed + 10)
-			{
+                        if (m_ptr->mspeed < m_ptr->speed + 10) {
 				/* Speed up */
                                 m_ptr->mspeed = m_ptr->speed + 10;
 				speed = TRUE;
@@ -4064,37 +4059,32 @@ void aggravate_monsters(int Ind, int who)
 /*
  * Wake up all monsters
  */
-void wakeup_monsters(int Ind, int who)
-{
+void wakeup_monsters(int Ind, int who) {
 	player_type *p_ptr = Players[Ind];
-
 	int i;
-
 	bool sleep = FALSE;
 
 	/* Aggravate everyone nearby */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		monster_type	*m_ptr = &m_list[i];
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
 
 		/* Skip monsters not on this depth */
-		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		/* Skip aggravating monster (or player) */
 		if (i == who) continue;
 
 		/* Wake up nearby sleeping monsters */
-		if(distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)<MAX_SIGHT*2)
+		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) < MAX_SIGHT * 2)
 #if 0
 		if (m_ptr->cdis < MAX_SIGHT * 2)
 #endif
 		{
 			/* Wake up */
-			if (m_ptr->csleep)
-			{
+			if (m_ptr->csleep) {
 				/* Wake up */
 				m_ptr->csleep = 0;
 				sleep = TRUE;
@@ -4110,37 +4100,32 @@ void wakeup_monsters(int Ind, int who)
 	}
 }
 
-void wakeup_monsters_somewhat(int Ind, int who)
-{
+void wakeup_monsters_somewhat(int Ind, int who) {
 	player_type *p_ptr = Players[Ind];
-
 	int i;
-
 	bool sleep = FALSE;
 
 	/* Aggravate everyone nearby */
-	for (i = 1; i < m_max; i++)
-	{
-		monster_type	*m_ptr = &m_list[i];
+	for (i = 1; i < m_max; i++) {
+		monster_type *m_ptr = &m_list[i];
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
 
 		/* Skip monsters not on this depth */
-		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		/* Skip aggravating monster (or player) */
 		if (i == who) continue;
 
 		/* Wake up nearby sleeping monsters */
-		if(distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)<MAX_SIGHT*2)
+		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) < MAX_SIGHT * 2)
 #if 0
 		if (m_ptr->cdis < MAX_SIGHT * 2)
 #endif
 		{
 			/* Disturb sleep somewhat */
-			if (m_ptr->csleep)
-			{
+			if (m_ptr->csleep) {
 				m_ptr->csleep = (m_ptr->csleep * 3) / 5;
 				m_ptr->csleep -= 10 + rand_int(6); //10
 				if (m_ptr->csleep <= 0) {
@@ -4151,16 +4136,17 @@ void wakeup_monsters_somewhat(int Ind, int who)
 		}
 	}
 
+#if 0 /* better style, not to have this msg? */
 	/* Messages */
 	/* the_sandman: added _near so other players can hear too */
 	if (sleep) {
 		msg_print(Ind, "You hear a sudden stirring in the distance!");
 		msg_print_near(Ind, "You hear a sudden stirring in the distance!");
 	}
+#endif
 }
 
-void distract_monsters(int Ind)
-{
+void distract_monsters(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	monster_type	*m_ptr;
 	monster_race *r_ptr;
@@ -4175,14 +4161,13 @@ void distract_monsters(int Ind)
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		m_ptr = &m_list[i];
 		r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
-		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
             	    (strchr("hHkptn", r_ptr->d_char))) tauntable = TRUE;
@@ -4239,8 +4224,7 @@ void taunt_monsters(int Ind)
 	break_cloaking(Ind, 0);
 	stop_precision(Ind);
 
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		m_ptr = &m_list[i];
 		r_ptr = race_inf(m_ptr);
 
@@ -4295,8 +4279,7 @@ void taunt_monsters(int Ind)
 
 		if (!tauntable) continue;
 
-		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx))
-		{
+		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx)) {
 #if 0
 			/* wake up */
 			if (m_ptr->csleep) {
@@ -4313,9 +4296,7 @@ void taunt_monsters(int Ind)
 
 		/* monster stands right next to this player? */
 		if (ABS(m_ptr->fy - p_ptr->py) <= 1 && ABS(m_ptr->fx - p_ptr->px) <= 1)
-		{
 			m_ptr->last_target_melee = Ind;
-		}
 	}
 
 	if (sleep) {
@@ -4328,30 +4309,27 @@ void taunt_monsters(int Ind)
 void aggravate_monsters_floorpos(worldpos *wpos, int x, int y)
 {
 	int i;
-
 	bool sleep = FALSE;
 //	bool speed = FALSE;
 
 	/* Aggravate everyone nearby */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		monster_type	*m_ptr = &m_list[i];
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
 
 		/* Skip monsters not on this depth */
-		if(!inarea(wpos, &m_ptr->wpos)) continue;
+		if (!inarea(wpos, &m_ptr->wpos)) continue;
 
 		/* Wake up nearby sleeping monsters */
-		if(distance(y, x, m_ptr->fy, m_ptr->fx)<MAX_SIGHT*2)
+		if (distance(y, x, m_ptr->fy, m_ptr->fx) < MAX_SIGHT * 2)
 #if 0
 		if (m_ptr->cdis < MAX_SIGHT * 2)
 #endif
 		{
 			/* Wake up */
-			if (m_ptr->csleep)
-			{
+			if (m_ptr->csleep) {
 				/* Wake up */
 				m_ptr->csleep = 0;
 				sleep = TRUE;
@@ -4366,8 +4344,7 @@ void aggravate_monsters_floorpos(worldpos *wpos, int x, int y)
  * Wake up minions (escorts/friends). May be used by a pack monster or unique.
  * As soon as a monster is hit by a player or has a LOS to him. - C. Blue
  */
-void wake_minions(int Ind, int who)
-{
+void wake_minions(int Ind, int who) {
 	player_type *p_ptr = Players[Ind];
 
 	monster_type	*mw_ptr = &m_list[who], *m_ptr = NULL;
@@ -4382,8 +4359,7 @@ void wake_minions(int Ind, int who)
 	monster_desc(Ind, mw_name, who, 0x00);
 
 	/* Aggravate everyone nearby */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		m_ptr = &m_list[i];
 		r_ptr = race_inf(m_ptr);
 
@@ -4391,7 +4367,7 @@ void wake_minions(int Ind, int who)
 		if (!m_ptr->r_idx) continue;
 
 		/* Skip monsters not on this depth */
-		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		/* Skip aggravating monster (or player) */
 		if (i == who) continue;
@@ -4435,8 +4411,7 @@ void wake_minions(int Ind, int who)
 #endif
 		{
 			/* Wake up */
-			if (m_ptr->csleep)
-			{
+			if (m_ptr->csleep) {
 				/* Wake up */
 				m_ptr->csleep = 0;
 				sleep = TRUE;
@@ -4444,11 +4419,9 @@ void wake_minions(int Ind, int who)
 		}
 #if 0
 		/* Speed up monsters in line of sight */
-		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx))
-		{
+		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx)) {
 			/* Speed up (instantly) to racial base + 10 */
-                        if (m_ptr->mspeed < m_ptr->speed + 10)
-			{
+                        if (m_ptr->mspeed < m_ptr->speed + 10) {
 				/* Speed up */
                                 m_ptr->mspeed = m_ptr->speed + 10;
 				speed = TRUE;
