@@ -7169,6 +7169,17 @@ static void process_global_event(int ge_id) {
 				} else {
 					s_printf("%s EVENT_STARTS: %d (%s) has %d participants.\n", showtime(), ge_id + 1, ge->title, participants);
 					msg_broadcast_format(0, "\374\377C[>>%s (%d) starts now!<<]", ge->title, ge_id + 1);
+					
+					/* memorize each character's participation */
+					for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
+						if (!ge->participant[j]) continue;
+
+						for (i = 1; i <= NumPlayers; i++) {
+							if (Players[i]->id != ge->participant[j]) continue;
+
+							Players[i]->global_event_participated[ge->getype]++;
+						}
+					}
 				}
 			}
 		} else {
@@ -7277,14 +7288,7 @@ static void process_global_event(int ge_id) {
 					if (Players[i]->id != ge->participant[j]) continue;
 
 					p_ptr = Players[i];
-#if 0 /* moved upwards */
-					if ((p_ptr->max_exp || p_ptr->max_plv > 1) && !is_admin(p_ptr)) {
-						msg_print(i, "\377oCharacters need to have 0 experience to be eligible.");
-						ge->participant[j] = 0;
-						p_ptr->global_event_type[ge_id] = GE_NONE;
-						continue;
-					}
-#endif
+
 					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y) {
 						p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
 						p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
@@ -7943,10 +7947,6 @@ static void process_global_event(int ge_id) {
 					p_ptr->global_event_temp |= PEVF_NOGHOST_00 | PEVF_NO_RUN_00 | PEVF_NOTELE_00 | PEVF_INDOORS_00 | PEVF_STCK_OK;
 					p_ptr->update |= PU_BONUS;
 					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0 sector */
-
-					/* may only take part in one tournament per char */
-					//gain_exp(i, 1);
-					p_ptr->global_event_participated[ge->getype]++;
 
 					/* make sure they stop running (not really needed though..) */
 					disturb(i, 0, 0);
