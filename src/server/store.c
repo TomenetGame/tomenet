@@ -1676,6 +1676,23 @@ static void store_create(store_type *st_ptr)
 			/* No "worthless" items */
 			if (object_value(0, o_ptr) <= 0) continue;
 
+			/* No pseudo-broken items (broken dagger/sword, rusty chain mail, filthy rags).
+			   Alternatively, change their base value to 0 in k_info. As a side effect,
+			   stores would no longer buy unidentified versions of those though (and they
+			   will pseudo-id as 'broken').
+			   The reason for actually adding this check at all is for IDDC dungeon stores,
+			   which can sell almost all armour/weapon types, so they don't sell these.
+			    - C. Blue */
+			if (object_value(0, o_ptr) == 1) {
+				if (is_weapon(o_ptr->tval) &&
+				    k_info[o_ptr->k_idx].to_h < 0 &&
+				    k_info[o_ptr->k_idx].to_d < 0)
+					continue;
+				else if (is_armour(o_ptr->tval) &&
+				    k_info[o_ptr->k_idx].to_a < 0)
+					continue;
+			}
+
 			/* ego rarity control for normal stores */
 			if (o_ptr->name2) {
 				if ((!(st_info[st_ptr->st_idx].flags1 & SF1_EGO)) &&
