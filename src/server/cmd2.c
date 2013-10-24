@@ -266,9 +266,9 @@ void do_cmd_go_up(int Ind)
 
 	/* Success */
 	if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS) {
+		p_ptr->warning_staircase = 1;
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (surface) {
-			p_ptr->warning_staircase = 1;
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
@@ -814,9 +814,9 @@ void do_cmd_go_down(int Ind)
 
 	/* Success */
 	if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE) {
+		p_ptr->warning_staircase = 1;
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (surface) {
-			p_ptr->warning_staircase = 1;
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
 #ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
 			if (p_ptr->party)
