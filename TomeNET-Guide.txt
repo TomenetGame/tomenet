@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. October 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. October 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6573,26 +6573,27 @@ Combat Type | Dice multiplier for brands (fire/cold/acid/lightning/poison)
             | Monster..
             | ..is immune   | ..resists | ..doesn't resist  | ..is susceptible
 ------------|-----------------------------------------------------------------
-Melee Weapon|       1             2               2                   4
-Ranged Weap.|       1             1.4             1.4                 2.2
-Martial Arts|       1             1.33            1.33                2
+Melee Weapon|       1             1.5             2                   4
+Ranged Weap.|       1             1.2             1.4                 2.2
+Martial Arts|       1             1.17            1.33                2
 
 Slaying     | Dice multiplier | Description
 ------------|-----------------------------------------------------------------
-Slay Animal |       2         | It is esp. deadly against natural creatures.
+Slay Animal |       1.5       | It is esp. deadly against natural creatures.
 Slay Giant  |       2         | It is especially deadly against giants.
 Slay Undead |       2         | It strikes at undead with holy wrath.
 Slay Troll  |       2         | It is especially deadly against trolls.
 Slay Orc    |       2         | It is especially deadly against orcs.
 Slay Dragon |       2         | It is especially deadly against dragons.
 Slay Demon  |       2         | It strikes at undead with holy wrath.
-Slay Evil   |       2         | It fights against evil with holy fury.
+Slay Evil   |       1.5       | It fights against evil with holy fury.
 Kill Undead |       3         | It is a great bane of undead.
 Kill Dragon |       3         | It is a great bane of dragons.
 Kill Demon  |       3         | It is a great bane of demons.
 
-Same as in the 'brands' table, x2 will become x1.4 for ranged weapons and
-x1.33 for martial arts, while x3 will become x1.8 and x1.67 respectively.
+Same as in the 'brands' table, x1.5 will become x1.2 for ranged weapons and
+x1.17 for martial arts, x2 becomes x1.4 and x1.33 and x3 will become x1.8
+and x1.67 respectively.
 
 Giants, Undead, Trolls, Orcs, Dragons, Demons are all 'Evil'.
 
