@@ -6889,6 +6889,10 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			msg_print(Ind, "\377ySorry, PvP characters may not participate.");
 			if (!is_admin(p_ptr)) return;
 		}
+		if (p_ptr->global_event_participated[ge->getype]) {
+			msg_print(Ind, "\377ySorry, a character may participate only once in this event.");
+			if (!is_admin(p_ptr)) return;
+		}
 		if (p_ptr->max_exp > 0 || p_ptr->max_plv > 1) {
 			msg_print(Ind, "\377ySorry, only newly created characters may sign up for this event.");
 			if (!is_admin(p_ptr)) return;
