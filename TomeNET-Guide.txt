@@ -8044,7 +8044,10 @@ Dragon's Breath These wands fire a ball of dragon odem (more powerful than
 Restoration     Restores experience points (aka live levels) and drained stats,
                 ie STR/INT/WIS/DEX/CON/CHR.
 Havoc           Fires balls or beams of random type, the exact outcome is hard
-                to tell.. it's very powerful though.
+                to tell.. it's very powerful though. Beams may be fired either
+                at your target or in all directions, balls might be fired
+                either on your own position, at your target, or in all
+                directions.
 
 
 Jewelry
