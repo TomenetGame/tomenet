@@ -7023,6 +7023,9 @@ extern int PlayerUID;
 	 (armour_weight(p_ptr) > \
 	 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 60)))
 
+/* maximum weapon weight to allow dual-wielding, 999 for no limit	[999] */
+#define DUAL_MAX_WEIGHT 999
+
 
 /* replacement of helper functions in cave.c */
 /* prolly compilers will do this job anyway..? */

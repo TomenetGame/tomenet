@@ -4141,15 +4141,16 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		msg_print(Ind, "\377s  It's an axe-type weapon."); break;
 	}
 
-	if (f4 & TR4_SHOULD2H) msg_print(Ind, "\377s  It should be wielded two-handed.");
+	if (f4 & TR4_SHOULD2H) msg_print(Ind, "\377s  It can be wielded-one-handed, but should be wielded two-handed.");
 	else if (f4 & TR4_MUST2H) msg_print(Ind, "\377s  It must be wielded two-handed.");
 	else if (f4 & TR4_COULD2H) {
-	if (o_ptr->weight <= 999)
-		msg_print(Ind, "\377s  It may be wielded two-handed or dual.");
-	else
-		msg_print(Ind, "\377s  It may be wielded two-handed.");
+		if (o_ptr->weight <= DUAL_MAX_WEIGHT)
+			msg_print(Ind, "\377s  It can be wielded one-handed, two-handed or dual.");
+		else
+			msg_print(Ind, "\377s  It can be wielded one-handed or two-handed.");
 	}
-	else if (is_weapon(o_ptr->tval) && o_ptr->weight <= 80) msg_print(Ind, "\377s  It may be dual-wielded.");
+	else if (is_weapon(o_ptr->tval) && o_ptr->weight <= DUAL_MAX_WEIGHT) msg_print(Ind, "\377s  It can be wielded one-handed or dual.");
+	else msg_print(Ind, "\377s  It is wielded one-handed.");
 
 	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, NULL);
 	else if (is_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, NULL);
@@ -4442,15 +4443,16 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		break;
 	}
 
-	if (f4 & TR4_SHOULD2H) fprintf(fff, "It should be wielded two-handed.\n");
+	if (f4 & TR4_SHOULD2H) fprintf(fff, "It can be wielded-one-handed, but should be wielded two-handed.\n");
 	else if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
 	else if (f4 & TR4_COULD2H) {
-		if (o_ptr->weight <= 999)
-			fprintf(fff, "It may be wielded two-handed or dual.\n");
+		if (o_ptr->weight <= DUAL_MAX_WEIGHT)
+			fprintf(fff, "It can be wielded one-handed, two-handed or dual.\n");
 		else
-			fprintf(fff, "It may be wielded two-handed.\n");
+			fprintf(fff, "It can be wielded one-handed or two-handed.\n");
 	}
-	else if (is_weapon(o_ptr->tval) && o_ptr->weight <= 80) fprintf(fff, "It may be dual-wielded.\n");
+	else if (is_weapon(o_ptr->tval) && o_ptr->weight <= DUAL_MAX_WEIGHT) fprintf(fff, "It can be wielded one-handed or dual.\n");
+	else fprintf(fff, "It is wielded one-handed.\n");
 
 	/* Kings/Queens only warning */
 	if (f5 & TR5_WINNERS_ONLY) fprintf(fff, "\377vIt is to be used by royalties exclusively.\377w\n");

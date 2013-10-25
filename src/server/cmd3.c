@@ -812,7 +812,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* check whether the item to wield is fit for dual-wielding */
-	if ((o_ptr->weight <= 999) && /* <- no hard-coded weight limit for now */
+	if ((o_ptr->weight <= DUAL_MAX_WEIGHT) &&
 	    !(f4 & (TR4_MUST2H | TR4_SHOULD2H))) item_fits_dual = TRUE;
 	/* check whether our current equipment allows a dual-wield setup with the new item */
 	if (slot1 && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H)))
