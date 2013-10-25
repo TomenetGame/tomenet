@@ -2786,6 +2786,8 @@ I:66:28:90
 W:95:0:15:150000
 A:100/16
 P:0:1d1:0:0:0
+D:Fires powerful balls or beams of random type,
+D:either at your target, on yourself, or in all directions.
 
 N:351:Door/Stair Location
 G:-:d
@@ -2953,6 +2955,7 @@ I:66:8:35
 W:65:0:15:15000
 A:65/8
 P:0:1d1:0:0:0
+D:Removes gorged, blindness, confusion and stun, cures poison and cuts.
 
 N:374:Healing
 G:-:d
@@ -2969,6 +2972,7 @@ I:66:6:80
 W:30:0:15:5000
 A:30/8
 P:0:1d1:0:0:0
+D:Detects treasures, objects, traps, secret doors, and non-invisible creatures.
 
 N:376:Restoration
 G:-:d
