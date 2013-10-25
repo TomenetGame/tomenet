@@ -4656,9 +4656,10 @@ void do_slash_cmd(int Ind, char *message)
 				object_type *o_ptr;
 				u32b f1, f2, f3, f4, f5, esp;
 				int min_pval = -999, min_ap = -999, tries = 1000, min_todam = -999;
+				bool no_am = FALSE, no_aggr = FALSE;
 				int th ,td ,ta; //for retaining jewelry properties in case they get inverted by cursing
 				if (tk < 1 || tk > 4) {
-					msg_print(Ind, "\377oUsage: /reart <inventory-slot> [+<min pval>] [<min artifact power>] [D<dam>]");
+					msg_print(Ind, "\377oUsage: /reart <inventory-slot> [+<min pval>] [<min artifact power>] [D<dam>] [A] [R]");
 					return;
 				}
 
@@ -4678,20 +4679,12 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 
-				if (tk > 1) {
-					if (token[2][0] == '+') min_pval = atoi(token[2]);
-					else if (token[2][0] == 'D') min_todam = atoi(token[2] + 1);
-					else min_ap = atoi(token[2]);
-				}
-				if (tk > 2) {
-					if (token[3][0] == '+') min_pval = atoi(token[3]);
-					else if (token[3][0] == 'D') min_todam = atoi(token[3] + 1);
-					else min_ap = atoi(token[3]);
-				}
-				if (tk > 3) {
-					if (token[4][0] == '+') min_pval = atoi(token[4]);
-					else if (token[4][0] == 'D') min_todam = atoi(token[4] + 1);
-					else min_ap = atoi(token[4]);
+				for (i = tk; i > 1; i--) {
+					if (token[i][0] == '+') min_pval = atoi(token[i]);
+					else if (token[i][0] == 'D') min_todam = atoi(token[i] + 1);
+					else if (token[i][0] == 'A') no_am = TRUE;
+					else if (token[i][0] == 'R') no_aggr = TRUE;
+					else min_ap = atoi(token[i]);
 				}
 
 				if (min_ap > -999 || min_pval > -999 || min_todam > -999)
