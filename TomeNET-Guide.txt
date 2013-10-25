@@ -6826,8 +6826,8 @@ on head (helmet), body, hands, feet, and your cloak. Note that the weight of
 a possibly equipped shield does not matter here (experimental).
 
 
-Armour weight (concerning combat)
----------------------------------
+Armour weight (concerning sneakiness boni)
+------------------------------------------
 Wearing armour which is too heavy for you will reduce your to-hit bonus and
 speed bonus from 'Sneakiness' skill.
 You will receieve a warning message, telling you:
@@ -6839,6 +6839,8 @@ find your str_hold). So the top weight limit is
 10.0 + 0.6 * 50 (combat) + 0.6 * 100 (str_hold) = 100.0 lb.
 
 
+Armour weight (concerning flexibility boni and abilities)
+---------------------------------------------------------
 Some special abilities depend on armour weight too. Those are..
 -dodge chance from 'Dodging' skill.
 -critical hit bonus from 'Critical-strike' skill.
