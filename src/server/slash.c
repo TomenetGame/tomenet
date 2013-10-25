@@ -4687,7 +4687,7 @@ void do_slash_cmd(int Ind, char *message)
 					else min_ap = atoi(token[i]);
 				}
 
-				if (min_ap > -999 || min_pval > -999 || min_todam > -999)
+				if (min_ap > -999 || min_pval > -999 || min_todam > -999 || no_am || no_aggr)
 					msg_print(Ind, "\377wrerolling for at least..");
 				if (min_pval > -999)
 					msg_format(Ind, "\377w +%d pval.", min_pval);
@@ -4695,6 +4695,10 @@ void do_slash_cmd(int Ind, char *message)
 					msg_format(Ind, "\377w %d ap.", min_ap);
 				if (min_todam > -999)
 					msg_format(Ind, "\377w +%d todam.", min_todam);
+				if (no_am)
+					msg_print(Ind, "\377w no Anti-Magic Shell.");
+				if (no_aggr)
+					msg_print(Ind, "\377w no AGGRAVATE.");
 
 
 				th = o_ptr->to_h; td = o_ptr->to_d; ta = o_ptr->to_a; //for jewelry
