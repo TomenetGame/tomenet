@@ -502,6 +502,8 @@ k       CTRL+D  destroy an item. (Note that artifacts are indestructible.)
 G       G       skills screen.
 
 B       f       bash/force something (ie a stuck door).
+                If the door crashes open, it softens the sleep of nearby asleep
+                monsters somewhat (similar in effect to the /cough command).
 
 l       x       look at a player/monster/object (use direction keys for
                 targetting). Similar to targetting, while looking you can press
