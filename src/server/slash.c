@@ -4730,7 +4730,11 @@ void do_slash_cmd(int Ind, char *message)
 						continue;
 					}
 
-					if (o_ptr->pval >= min_pval && artifact_power(randart_make(o_ptr)) >= min_ap && o_ptr->to_d >= min_todam) break;
+					if (o_ptr->pval >= min_pval &&
+					    artifact_power(randart_make(o_ptr)) >= min_ap &&
+					    o_ptr->to_d >= min_todam &&
+					    (!no_aggr || !(f3 & TR3_AGGRAVATE)) &&
+					    (!no_am || !(f3 & TR3_NO_MAGIC))) break;
 					tries--;
 				}
 				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries (1000))!");
