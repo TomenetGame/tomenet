@@ -5268,6 +5268,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		return;
 	}
 
+	/* Hack - for NO_MORGUL_IN_IDDC check in a_m_aux_1().  - C. Blue
+	   (Usually, o_ptr->wpos is only set in drop_near(), which happens _afterwards_.) */
+	wpcopy(&o_ptr->wpos, wpos);
+
 	/* In case we get an ego item, check "verygreat" flag and retry a few times if needed */
 	if (verygreat) s_printf("verygreat apply_magic:\n");
 	/* for other items: */
