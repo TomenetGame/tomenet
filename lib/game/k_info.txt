@@ -3970,13 +3970,14 @@ F:INSTA_ART
 ### Room for new objects added after 511 (Zangband 2.1.0): 512-575
 
 #521 and 522 cannot have EASY_KNOW because they may be cursed
+# ^ atm Anti-Magic amulet is never cursed, so EASY_KNOW now
 
 N:521:Anti-Magic
 G:":d
 I:40:13:0
 W:30:0:3:5000
 A:30/4
-F:NO_MAGIC
+F:NO_MAGIC | EASY_KNOW
 F:IGNORE_MANA
 
 N:522:Anti-Teleportation
