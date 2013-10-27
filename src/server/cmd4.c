@@ -2359,8 +2359,7 @@ void do_cmd_check_server_settings(int Ind)
 /*
  * Tell players of the # of monsters killed, using temporary file. - Jir -
  */
-void do_cmd_show_monster_killed_letter(int Ind, char *letter)
-{
+void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 	player_type *p_ptr = Players[Ind];
 
 	int		i, j, num, total = 0;
@@ -2389,19 +2388,20 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 	fprintf(fff, "\377D");
 
 	if (letter && *letter) fprintf(fff, "======== Killed List for Monster Group '%c' ========\n", *letter);
-	else
-	{
+	else {
 		all = TRUE;
 		fprintf(fff, "======== Killed List ========\n");
 	}
 
 	/* for each monster race */
 	/* XXX I'm not sure if this list should be sorted.. */
-	for (i = 1; i <= MAX_R_IDX; i++)
-	{
+	for (i = 1; i <= MAX_R_IDX; i++) {
 		r_ptr = &r_info[i];
+
 //		if (letter && *letter != r_ptr->d_char) continue;
 		if (!all && !strchr(letter, r_ptr->d_char)) continue;
+		if (r_ptr->level < minlev) continue;
+
 		num = p_ptr->r_killed[i];
 
 		/* Hack for druid */

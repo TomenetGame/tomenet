@@ -9566,7 +9566,10 @@ static int Receive_special_line(int ind)
 	}
 
 	if (player) {
-		char kludge[2] = "";
+		char kludge[2] = "", minlev = 0;
+		/* abuse 'line' to encode both, type and minlev (for monster knowledge) */
+		minlev = line / 100000;
+		line = line % 100000;
 		kludge[0] = (char) line;
 		kludge[1] = '\0';
 		switch (type) {
@@ -9618,7 +9621,7 @@ static int Receive_special_line(int ind)
 			do_cmd_check_server_settings(player);
 			break;
 		case SPECIAL_FILE_MONSTER:
-			do_cmd_show_monster_killed_letter(player, kludge);
+			do_cmd_show_monster_killed_letter(player, kludge, minlev);
  			break;
 		case SPECIAL_FILE_OBJECT:
 			do_cmd_show_known_item_letter(player, kludge);

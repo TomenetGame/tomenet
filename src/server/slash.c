@@ -1395,21 +1395,22 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377DThe air in here feels very still.");
 			return;
 		}
-		else if (prefix(message, "/monster") ||
-				prefix(message, "/mon"))
-		{
+		else if (prefix(message, "/monster") ||	/* syntax: /mon [<char>] [+minlev] */
+		    prefix(message, "/mon")) {
 			int r_idx, num;
 			monster_race *r_ptr;
-			if (!tk)
-			{
-				do_cmd_show_monster_killed_letter(Ind, NULL);
+			if (!tk) {
+				do_cmd_show_monster_killed_letter(Ind, NULL, 0);
 				return;
 			}
 
 			/* Handle specification like 'D', 'k' */
-			if (strlen(token[1]) == 1)
-			{
-				do_cmd_show_monster_killed_letter(Ind, token[1]);
+			if (strlen(token[1]) == 1) {
+				if (tk == 2) do_cmd_show_monster_killed_letter(Ind, token[1], atoi(token[2]));
+				else do_cmd_show_monster_killed_letter(Ind, token[1], 0);
+				return;
+			} else if (token[1][0] == '+') {
+				do_cmd_show_monster_killed_letter(Ind, NULL, atoi(token[1]));
 				return;
 			}
 

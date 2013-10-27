@@ -2052,8 +2052,7 @@ static void monster_lore(void) {
  * NOTE: the usage of Send_special_line is quite a hack;
  * it sends a letter in place of cur_line...		- Jir -
  */
-void cmd_check_misc(void)
-{
+void cmd_check_misc(void) {
 	char i = 0, choice;
 	int second = 10;
         /* suppress hybrid macros in some submenus */
@@ -2094,7 +2093,7 @@ void cmd_check_misc(void)
 
 		i = inkey();
 		choice = 0;
-		switch(i) {
+		switch (i) {
 			case '3':
 				/* Send it */
 				cmd_uniques();
@@ -2108,7 +2107,13 @@ void cmd_check_misc(void)
 				get_com("What kind of monsters? (ESC for all):", &choice);
 			        inkey_msg = inkey_msg_old;
 				if (choice <= ESCAPE) choice = 0;
-				Send_special_line(SPECIAL_FILE_MONSTER, choice);
+
+				/* allow specifying minlev? */
+				if (is_newer_than(&server_version, 4, 5, 4, 0, 0, 0)) {
+					second = c_get_quantity("Specify minimum level? (ESC for none): ", -1);
+					Send_special_line(SPECIAL_FILE_MONSTER, choice + second * 100000);
+				} else
+					Send_special_line(SPECIAL_FILE_MONSTER, choice);
 				break;
 			case '4':
 			        inkey_msg_old = inkey_msg;
