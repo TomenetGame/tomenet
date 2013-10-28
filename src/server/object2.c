@@ -5719,7 +5719,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 		case EGO_KILL_EVIL:
 		case EGO_HA: /* 'Aman' */
 		case EGO_GONDOLIN:
-			base += 30;
+			base += 25;
 			break;
 
 		case EGO_ELVENKIND:
