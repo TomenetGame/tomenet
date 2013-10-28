@@ -292,6 +292,9 @@ static bool do_player_trap_call_out(int Ind)
 		/* Make sure everyone sees it now - mikaelh */
 		everyone_lite_spot(&p_ptr->wpos, cy, cx);
 
+		/* Actually wake it up... */
+		m_ptr->csleep = 0;
+
                 monster_desc(Ind, m_name, h_index, 0x08);
                 msg_format(Ind, "You hear a rapid-shifting wail, and %s appears!",m_name);
                 break;
