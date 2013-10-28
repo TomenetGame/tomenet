@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. October 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. October 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10072,6 +10072,11 @@ Note that not every skill is available to every profession (class).
                                 flexibility warning (compare (5.5)).
                                 Also, you must not be using a shield.
 
+                                A low dodging skill will already help greatly
+                                against monsters of similarly low level, so it
+                                is helpful right from the beginning of your
+                                character's career.
+
                                 There are various attacks that can be dodged:
                                 Melee attacks mostly, bolts, arrows and the
                                 likes (both magical and physical) shot by
@@ -10119,6 +10124,17 @@ Note that not every skill is available to every profession (class).
                                 Dodging also gets slightly increased by the
                                 "Martial Arts" skill (see above in this skill
                                 table).
+
+                                Dodging improves in a linear manner, for
+                                example your chance to dodge any monster (of
+                                similar or higher level than yourself) is
+                                pretty much half as high at 25.000 dodging as
+                                at 50.000 dodging.
+
+                                As a rule of thumb, your dodge chance will
+                                usually cap at 35% for monsters of equal level
+                                and at 26% chance for monsters of twice your
+                                level.
 
     .Calmness                   Ability to not get hindered by enemies.
                                 Adjacent foes can interfere if you try to..
