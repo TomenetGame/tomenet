@@ -306,6 +306,8 @@ audio_bgm = {
     "MinasAnor_night",
     "Lothlorien_night",
     "Khazaddum_night",
+
+    "event_Halloween",
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end

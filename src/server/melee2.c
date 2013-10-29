@@ -9278,8 +9278,8 @@ void process_monsters(void)
 			   special music when we're actively engaging them. - C. Blue */
 			if (new_los && p_ptr->music_monster != -2 && p_ptr->mon_vis[i]) { // && !m_ptr->csleep
 				if (r_ptr->flags7 & RF7_NAZGUL) {
-					//Nazgul; doesn't override Sauron
-					if (p_ptr->music_monster != 43) {
+					//Nazgul; doesn't override Sauron or Halloween (The Great Pumpkin)
+					if (p_ptr->music_monster != 43 && p_ptr->music_monster != 55) {
 						Send_music(pl, (p_ptr->music_monster = 42));
 					}
 				} else if (r_ptr->flags1 & RF1_UNIQUE) {
@@ -9287,8 +9287,8 @@ void process_monsters(void)
 						//Sauron; overrides all others
 						Send_music(pl, (p_ptr->music_monster = 43));
 					}
-					//Dungeon boss or special unique? (can't override Sauron or Nazgul)
-					else if (p_ptr->music_monster != 43 && p_ptr->music_monster != 42) {
+					//Dungeon boss or special unique? (can't override Sauron, Nazgul or Halloween)
+					else if (p_ptr->music_monster != 43 && p_ptr->music_monster != 42 && p_ptr->music_monster != 55) {
 						//Dungeon boss?
 						if (r_ptr->flags0 & RF0_FINAL_GUARDIAN)
 							Send_music(pl, (p_ptr->music_monster = 41));
@@ -9298,6 +9298,10 @@ void process_monsters(void)
 							Send_music(pl, (p_ptr->music_monster = 40));
 						}
 					}
+				} else if ((m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)
+				    && (p_ptr->music_monster != 43)) {
+					//The Great Pumpkin; overrides Nazgul, Dungeon Bosses and even Special Uniques ^^
+					Send_music(pl, (p_ptr->music_monster = 55));
 				}
 			}
 #endif
