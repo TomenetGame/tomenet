@@ -1523,7 +1523,7 @@ void handle_music(int Ind) {
 
 void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos) {
 	player_type *p_ptr = Players[Ind];
-s_printf("has\n");
+
 	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos))
 		Send_sfx_ambient(Ind, SFX_AMBIENT_FIREPLACE);
 	else if (p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE && ((!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED)) || !istown(wpos)))
