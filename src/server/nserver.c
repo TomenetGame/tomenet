@@ -2693,6 +2693,8 @@ static int Handle_login(int ind)
 		p_ptr->music_start = 20; /* wait for this # of turns until starting the music */
 	else
 		handle_music(NumPlayers); /* start music normally (instantly) */
+
+	handle_ambient_sfx(NumPlayers, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos);
 #endif
 
 	/* Initialize the client's unique list;
