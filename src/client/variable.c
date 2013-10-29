@@ -299,14 +299,15 @@ int audio_sfx = 0, audio_music = 0;
 #ifdef USE_SOUND_2010
 void (*mixing_hook)(void);
 bool (*sound_hook)(int sound, int type, int vol, s32b player_id);
+void (*sound_ambient_hook)(int sound_ambient);
 void (*sound_weather_hook)(int sound);
 void (*sound_weather_hook_vol)(int sound, int vol);
 void (*music_hook)(int music);
 int cfg_audio_rate = 44100, cfg_max_channels = 32, cfg_audio_buffer = 1024;
-int music_cur = -1, music_cur_song = -1, music_next = -1, weather_channel = -1, weather_current;
-int weather_particles_seen, weather_sound_change, weather_fading;
+int music_cur = -1, music_cur_song = -1, music_next = -1, weather_channel = -1, weather_current, ambient_channel = -1, ambient_current;
+int weather_particles_seen, weather_sound_change, weather_fading, ambient_fading;
 bool wind_noticable = FALSE;
-bool cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE, weather_resume = FALSE;
+bool cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE, weather_resume = FALSE, ambient_resume = FALSE;
 int cfg_audio_master_volume = 100, cfg_audio_music_volume = 100, cfg_audio_sound_volume = 100, cfg_audio_weather_volume = 100;
 #if 1 /* WEATHER_VOL_PARTICLES */
 int weather_vol_smooth, weather_vol_smooth_anti_oscill, weather_smooth_avg[20];

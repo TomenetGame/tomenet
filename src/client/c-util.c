@@ -7245,6 +7245,13 @@ void music(int val) {
 	if (music_hook) music_hook(val);
 }
 
+void sound_ambient(int val) {
+	if (!use_sound) return;
+puts(format("received sound_ambient %d", val));
+	/* play a sound */
+	if (sound_ambient_hook) sound_ambient_hook(val);
+}
+
 void set_mixing(void) {
 	if (!use_sound) return;
 

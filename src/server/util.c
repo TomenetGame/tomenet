@@ -1521,6 +1521,15 @@ void handle_music(int Ind) {
 	Send_music(Ind, 0);
 }
 
+void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos) {
+	player_type *p_ptr = Players[Ind];
+s_printf("has\n");
+	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos))
+		Send_sfx_ambient(Ind, SFX_AMBIENT_FIREPLACE);
+	else if (p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE && ((!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED)) || !istown(wpos)))
+		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE);
+}
+
 /* generate an item-type specific sound, depending on the action applied to it
    action: 0 = pickup, 1 = drop, 2 = wear/wield, 3 = takeoff, 4 = throw, 5 = destroy */
 void sound_item(int Ind, int tval, int sval, cptr action) {

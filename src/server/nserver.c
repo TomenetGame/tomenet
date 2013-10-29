@@ -2685,6 +2685,7 @@ static int Handle_login(int ind)
 #ifdef USE_SOUND_2010
 	/* Initialize his background music */
 	p_ptr->music_current = -1; //hack-init: since 0 is used too..
+	p_ptr->sound_ambient = -1; //hack-init: since 0 is used too..
 	p_ptr->music_monster = -1; //hack-init: since 0 is used too.. (boss-specific music)
 
 	/* Keep music quiet for a moment to allow player to hear the introduction speech? */
@@ -6056,6 +6057,60 @@ int Send_music(int Ind, int music) {
 	if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0)) return(-1);
 //	s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, Players[Ind]->name, Ind);//debug
 	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
+}
+int Send_sfx_ambient(int Ind, int sfx_ambient) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+
+	/* translate: ambient sfx index -> sound index */
+	int i;
+	cptr name = NULL;
+
+	switch (sfx_ambient) {
+	case SFX_AMBIENT_NONE:		i = -1; break;
+	case SFX_AMBIENT_FIREPLACE:	name = "ambient_fireplace"; break;
+	}
+
+	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) {
+			i = -1;
+			break;
+		}
+		if (!strcmp(audio_sfx[i], name)) break;
+	}
+	/* paranoia */
+	if (i == SOUND_MAX_2010) i = -2;
+
+
+	/* Mind-linked to someone? Send him our sound too! */
+	player_type *p_ptr2 = NULL;
+	connection_t *connp2 = NULL;
+	/* If we're the target, we won't hear our own sfx */
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	/* Get target player */
+	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
+	/* Send same info to target player, if available */
+	if (connp2) {
+		if (p_ptr2->sound_ambient != sfx_ambient) {
+			p_ptr2->sound_ambient = sfx_ambient;
+			if (is_newer_than(&connp2->version, 4, 5, 4, 0, 0, 0))
+				Packet_printf(&connp2->c, "%c%d", PKT_SFX_AMBIENT, i);
+		}
+	}
+
+	if (Players[Ind]->sound_ambient == sfx_ambient) return(-1);
+	Players[Ind]->sound_ambient = sfx_ambient;
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for ambient sfx (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (!is_newer_than(&connp->version, 4, 5, 4, 0, 0, 0)) return(-1);
+	//s_printf("USE_SOUND_2010: ambient sfx %d sent to player %s (%d).\n", i, Players[Ind]->name, Ind);//debug
+	return Packet_printf(&connp->c, "%c%d", PKT_SFX_AMBIENT, i);
 }
 #endif
 

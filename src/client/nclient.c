@@ -88,7 +88,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_TITLE]		= Receive_title;
 	receive_tbl[PKT_DEPTH]		= Receive_depth;
 	receive_tbl[PKT_CONFUSED]	= Receive_confused;
-	receive_tbl[PKT_POISON]	= Receive_poison;
+	receive_tbl[PKT_POISON]		= Receive_poison;
 	receive_tbl[PKT_STUDY]		= Receive_study;
 	receive_tbl[PKT_BPR]		= Receive_bpr;
 	receive_tbl[PKT_FOOD]		= Receive_food;
@@ -145,6 +145,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_STORE_WIDE]	= Receive_store_wide;
 	receive_tbl[PKT_MUSIC]		= Receive_music;
 	receive_tbl[PKT_BONI_COL]	= Receive_boni_col;
+	receive_tbl[PKT_SFX_AMBIENT]	= Receive_sfx_ambient;
 
 	receive_tbl[PKT_REQUEST_KEY]	= Receive_request_key;
 	receive_tbl[PKT_REQUEST_NUM]	= Receive_request_num;
@@ -2668,6 +2669,20 @@ int Receive_music(void) {
 	return 1;
 }
 
+int Receive_sfx_ambient(void) {
+	int	n, a;
+	char	ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &a)) <= 0) return n;
+
+#ifdef USE_SOUND_2010
+	/* Play background ambient sound effect (if enabled) */
+	if (use_sound) sound_ambient(a);
+#endif
+
+	return 1;
+}
+
 int Receive_boni_col(void) {
 	int	n, j;
 	
@@ -4331,6 +4346,8 @@ void do_ping() {
  #endif
 #endif
     }
+
+	if (ambient_fading) ambient_handle_fading();
 
 	/* Handle chat time-stamping too - C. Blue */
 	if (c_cfg.time_stamp_chat) {

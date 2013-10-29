@@ -154,7 +154,9 @@
 #define PKT_SCREEN_DIM		131	/* client's screen dimensions */
 #define PKT_GUILD_CFG		132
 #define PKT_BONI_COL		133	/* client csheet boni tracking */
+
 //XXX 134-149
+#define PKT_SFX_AMBIENT		149	/* background ambient sfx */
 
 /* Packet types 150- are hacks */
 #define PKT_FLUSH		150

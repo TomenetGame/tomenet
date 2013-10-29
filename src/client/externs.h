@@ -863,21 +863,24 @@ extern int audio_sfx, audio_music;
 //externs.h:
 extern void (*mixing_hook)(void);
 extern bool (*sound_hook)(int, int, int, s32b);
+extern void (*sound_ambient_hook)(int);
 extern void (*sound_weather_hook)(int);
 extern void (*sound_weather_hook_vol)(int, int);
 extern void (*music_hook)(int);
 extern bool sound(int val, int type, int vol, s32b player_id);
 extern void music(int val);
+extern void sound_ambient(int val);
 extern void sound_weather(int val);
 extern void sound_weather_vol(int val, int vol);
 extern void set_mixing(void);
 extern void weather_handle_fading(void);
+extern void ambient_handle_fading(void);
 extern void mixer_fadeall(void);
-extern int music_cur, music_cur_song, music_next, weather_channel, weather_current;
-extern int weather_particles_seen, weather_sound_change, weather_fading;
+extern int music_cur, music_cur_song, music_next, weather_channel, weather_current, ambient_channel, ambient_current;
+extern int weather_particles_seen, weather_sound_change, weather_fading, ambient_fading;
 extern bool wind_noticable;
 extern int cfg_audio_rate, cfg_max_channels, cfg_audio_buffer;
-extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather, no_cache_audio, weather_resume;
+extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather, no_cache_audio, weather_resume, ambient_resume;
 extern int cfg_audio_master_volume, cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume;
 #if 1 /* WEATHER_VOL_PARTICLES */
 extern int weather_vol_smooth, weather_vol_smooth_anti_oscill, weather_smooth_avg[20];

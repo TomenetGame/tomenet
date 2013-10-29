@@ -6555,6 +6555,10 @@ extern int PlayerUID;
  #define SFX_TYPE_MON_SPELL	4
  #define SFX_TYPE_MON_MISC	5
  #define SFX_TYPE_NO_OVERLAP	6
+
+ /* new in 2013: for ambient sfx (inn fireplace!) */
+ #define SFX_AMBIENT_NONE	-1
+ #define SFX_AMBIENT_FIREPLACE	0
 #endif
 
 

@@ -5546,6 +5546,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 				p_ptr->py = y;
 				p_ptr->px = x;
 				if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);
+#ifdef USE_SOUND_2010
+				handle_ambient_sfx(Ind, c_ptr, &p_ptr->wpos);
+#endif
 
 				cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
 				cave_midx_debug(wpos, q_ptr->py, q_ptr->px, -Ind2);
@@ -5681,6 +5684,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 			p_ptr->px = m_list[c_ptr->m_idx].fx;
 			p_ptr->py = m_list[c_ptr->m_idx].fy;
 			if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);
+#ifdef USE_SOUND_2010
+			handle_ambient_sfx(Ind, c_ptr, &p_ptr->wpos);
+#endif
 			/* update monster location */
 			m_list[c_ptr->m_idx].fx = oldx;
 			m_list[c_ptr->m_idx].fy = oldy;
@@ -5888,6 +5894,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 		p_ptr->py = y;
 		p_ptr->px = x;
 		if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);
+#ifdef USE_SOUND_2010
+		handle_ambient_sfx(Ind, &zcave[y][x], &p_ptr->wpos);
+#endif
 
 		if (zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK)) {
 			msg_print(Ind, "\377DThe air in here feels very still.");

@@ -52,7 +52,7 @@
 bool on_demand_loading = FALSE;
 
 /* output various status messages about initializing audio */
-//#define DEBUG_SOUND
+#define DEBUG_SOUND
 
 /* Path to sound files */
 static const char *ANGBAND_DIR_XTRA_SOUND;
@@ -813,6 +813,11 @@ static void clear_channel(int c) {
 		return;
 	}
 
+	if (c == ambient_channel) {
+		ambient_channel = -1;
+		return;
+	}
+
 	/* a sample has finished playing, so allow this kind to be played again */
 	/* hack: if the sample was the 'paging' sound, reset the channel's volume to be on the safe side */
 	if (channel_sample[c] == page_sound_idx || channel_sample[c] == warning_sound_idx) {
@@ -1133,6 +1138,156 @@ void weather_handle_fading(void) {
 	}
 }
 
+/* Overlay an ambient sound effect */
+static void play_sound_ambient(int event) {
+	Mix_Chunk *wave = NULL;
+	int s, new_ac;
+
+#ifdef DEBUG_SOUND
+	puts(format("psa: ch %d, ev %d", ambient_channel, event));
+#endif
+
+#ifdef DISABLE_MUTED_AUDIO
+	if (!cfg_audio_master || !cfg_audio_sound) return;
+#endif
+
+	if (event == -2 && ambient_channel != -1) {
+#ifdef DEBUG_SOUND
+		puts(format("w-2: wco %d, ev %d", ambient_channel, event));
+#endif
+		Mix_HaltChannel(ambient_channel);
+		return;
+	}
+	else if (event == -1 && ambient_channel != -1) {
+#ifdef DEBUG_SOUND
+		puts(format("w-1: wco %d, ev %d", ambient_channel, event));
+#endif
+		if (Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
+			Mix_FadeOutChannel(ambient_channel, 2000);
+		return;
+	}
+
+	/* we're already in this ambient? */
+	if (ambient_channel != -1 && ambient_current == event &&
+	    Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
+		return;
+
+	/* Paranoia */
+	if (event < 0 || event >= SOUND_MAX_2010) return;
+
+	/* Check there are samples for this event */
+	if (!samples[event].num) {
+		/* stop previous ambient sound */
+#if 0 /* stop apruptly */
+		if (ambient_channel != -1) Mix_HaltChannel(ambient_channel);
+#else /* fade out */
+		if (ambient_channel != -1 &&
+		    Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
+			Mix_FadeOutChannel(ambient_channel, 2000);
+#endif
+		return;
+	}
+
+	/* Choose a random event */
+	s = rand_int(samples[event].num);
+	wave = samples[event].wavs[s];
+
+	/* Try loading it, if it's not cached */
+	if (!wave) {
+		if (on_demand_loading || no_cache_audio) {
+			if (!(wave = load_sample(event, s))) {
+				/* we really failed to load it */
+				plog(format("SDL sound load failed (%d, %d).", event, s));
+				return;
+			}
+		} else {
+			/* Fail silently */
+			return;
+		}
+	}
+
+	/* Actually play the thing */
+#if 1 /* volume glitch paranoia (first fade-in seems to move volume to 100% instead of designated cfg_audio_... */
+	new_ac = Mix_PlayChannel(ambient_channel, wave, -1);
+	if (new_ac != -1) {
+		Mix_Volume(new_ac, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+		if (!ambient_resume) new_ac = Mix_FadeInChannel(new_ac, wave, -1, 500);
+	}
+#else
+	if (!ambient_resume) new_ac = Mix_FadeInChannel(ambient_channel, wave, -1, 500);
+#endif
+
+	if (!ambient_resume) ambient_fading = 1;
+	else ambient_resume = FALSE;
+
+#ifdef DEBUG_SOUND
+	puts(format("old: %d, new: %d, ev: %d", ambient_channel, new_ac, event));
+#endif
+
+#if 1
+	/* added this <if> after ambient seemed to glitch sometimes,
+	   with its channel becoming unmutable */
+	//we didn't play ambient so far?
+	if (ambient_channel == -1) {
+		//failed to start playing?
+		if (new_ac == -1) return;
+
+		//successfully started playing the first ambient
+		ambient_channel = new_ac;
+		ambient_current = event;
+		Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+	} else {
+		//failed to start playing?
+		if (new_ac == -1) {
+			Mix_HaltChannel(ambient_channel);
+			return;
+		//successfully started playing a follow-up ambient
+		} else {
+			//same channel?
+			if (new_ac == ambient_channel) {
+				ambient_current = event;
+			//different channel?
+			} else {
+				Mix_HaltChannel(ambient_channel);
+				ambient_channel = new_ac;
+				ambient_current = event;
+				Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+			}
+		}
+	}
+#endif
+#if 0
+	/* added this <if> after ambient seemed to glitch sometimes,
+	   with its channel becoming unmutable */
+	if (new_ac != ambient_channel) {
+		if (ambient_channel != -1) Mix_HaltChannel(ambient_channel);
+		ambient_channel = new_ac;
+	}
+	if (ambient_channel != -1) { //paranoia? should always be != -1 at this point
+		ambient_current = event;
+		Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+	}
+#endif
+
+#ifdef DEBUG_SOUND
+	puts(format("now: %d, oev: %d, ev: %d", ambient_channel, event, ambient_current));
+#endif
+}
+
+/* make sure volume is set correct after fading-in has been completed (might be just paranoia) */
+void ambient_handle_fading(void) {
+	if (ambient_channel == -1) { //paranoia
+		ambient_fading = 0;
+		return;
+	}
+
+	if (Mix_FadingChannel(ambient_channel) == MIX_NO_FADING) {
+		Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+		ambient_fading = 0;
+		return;
+	}
+}
+
 
 /*
  * Play a music of type "event".
@@ -1221,6 +1376,7 @@ static void set_mixing_sdl(void) {
 	int n;
 	for (n = 0; n < cfg_max_channels; n++) {
 		if (n == weather_channel) continue;
+		if (n == ambient_channel) continue;
 
 		/* Note: Linear scaling is used here to allow more precise control at the server end */
 		Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100));
@@ -1244,11 +1400,21 @@ static void set_mixing_sdl(void) {
 		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
  #endif
 	}
+
+	if (ambient_channel != -1 && Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
+		Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_weather) {
 		weather_resume = TRUE;
 		if (weather_channel != -1 && Mix_Playing(weather_channel))
 			Mix_HaltChannel(weather_channel);
+	}
+
+	if (!cfg_audio_master || !cfg_audio_sound) {
+		ambient_resume = TRUE;
+		if (ambient_channel != -1 && Mix_Playing(ambient_channel))
+			Mix_HaltChannel(ambient_channel);
 	}
 #endif
 }
@@ -1296,6 +1462,9 @@ errr init_sound_sdl(int argc, char **argv) {
 	/* Enable weather noise overlay */
 	sound_weather_hook = play_sound_weather;
 	sound_weather_hook_vol = play_sound_weather_vol;
+
+	/* Enable ambient sfx overlay */
+	sound_ambient_hook = play_sound_ambient;
 
 	/* clean-up hook */
 	atexit(close_audio);

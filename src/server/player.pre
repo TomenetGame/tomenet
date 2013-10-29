@@ -1018,6 +1018,7 @@ struct player_type
 	int music_monster;
 	int audio_sfx;
 	int audio_mus;
+	int sound_ambient;
 #endif
 
 	int admin_stasis;
