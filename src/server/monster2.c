@@ -632,8 +632,10 @@ void wipe_m_list(struct worldpos *wpos) {
 
 		if (inarea(&m_ptr->wpos,wpos)) {
                         if (season_halloween &&
-                	    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3))
+                	    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
                         	great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
+				s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
+                        }
 			delete_monster_idx(i, TRUE);
 		}
 	}
@@ -677,8 +679,10 @@ void thin_surface_spawns() {
 
 		/* if we erase the Great Pumpkin then reset its timer */
 		if (season_halloween &&
-		    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3))
-			 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+		    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+			great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+			s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
+		}
 
 		/* hack: don't affect non-townies in Bree at all */
 		if (m_ptr->wpos.wx == cfg.town_x && m_ptr->wpos.wy == cfg.town_y && !m_ptr->wpos.wz
@@ -703,8 +707,10 @@ void geno_towns() {
 		if (istown(&m_ptr->wpos) &&
 		    !(r_info[m_ptr->r_idx].flags8 & RF8_GENO_PERSIST)) {
 			if (season_halloween && /* hardcoded -_- */
-			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3))
-				 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+				s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
+			}
 			delete_monster_idx(i, TRUE);
 		}
 	}
@@ -3414,10 +3420,12 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", dlev);
 		if (l_ptr) l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
 	}
+	if (r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3)
+		s_printf("HALLOWEEN: The Great Pumpkin (%d) was created on %d\n", r_idx, dlev);
 
 	/* Handle floor feelings */
 	/* Special events don't necessarily influence floor feelings */
-	if ((!season_halloween || (r_idx != RI_PUMPKIN1 && r_idx != RI_PUMPKIN2 && r_idx != RI_PUMPKIN3)) &&
+	if ((r_idx != RI_PUMPKIN1 && r_idx != RI_PUMPKIN2 && r_idx != RI_PUMPKIN3) &&
 	    /* for now ignore live-spawns. maybe change that?: */
 	    (level_generation_time)) {
 		if ((r_ptr->flags1 & RF1_UNIQUE) && l_ptr) l_ptr->flags2 |= LF2_UNIQUE;
@@ -3592,10 +3600,10 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 	monster_race *r_ptr = &r_info[r_idx];
 	cave_type **zcave;
 	int level = getlevel(wpos), res;
-	if(!(zcave = getcave(wpos))) return -1;
+	if (!(zcave = getcave(wpos))) return -1;
 
 #ifdef ARCADE_SERVER
-	if(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return -2;
+	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return -2;
 #endif
 
 	if (!(summon_override_checks & SO_SURFACE)) {
