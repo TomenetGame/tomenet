@@ -1554,13 +1554,12 @@ static void process_day_and_night() {
 	bool sunrise, nightfall;
 
 	/* Check for sunrise or nightfall */
-	sunrise = ((turn / HOUR) % 24) == SUNRISE;
-	nightfall = ((turn / HOUR) % 24) == NIGHTFALL;
+	sunrise = (((turn / HOUR) % 24) == SUNRISE) && IS_DAY; /* IS_DAY checks for events, that's why it's here. - C. Blue */
+	nightfall = (((turn / HOUR) % 24) == NIGHTFALL) && IS_NIGHT; /* IS_NIGHT is pointless at the time of coding this, just for consistencies sake with IS_DAY above. */
 
-	/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks)! */
-	if (sunrise && !fireworks && !season_halloween)
+	/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks)! -- covered by IS_DAY now. */
+	if (sunrise)
 		sun_rises();
-
 	/* Night falls - but only if it was actually day so far:
 	   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
 	else if (nightfall && !night_surface)
@@ -1569,15 +1568,10 @@ static void process_day_and_night() {
 
 /* Called when the server starts up */
 static void init_day_and_night() {
-	int hour;
-
-	hour = ((turn / HOUR) % 24);
-
-	if ((hour >= SUNRISE) && (hour < NIGHTFALL) && !season_halloween) {
+	if (IS_DAY)
 		sun_rises();
-	} else {
+	else /* assume IS_NIGHT ;) */
 		night_falls();
-	}
 }
 
 /*

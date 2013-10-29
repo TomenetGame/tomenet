@@ -1353,16 +1353,6 @@
 #define MIN_M_ALLOC_TN		8
 
 
-/* Macros for determing if it is night or day */
-
-#if 0
- #define		IS_DAY	 ((turn % (10L * TOWN_DAWN)) <= (10L * TOWN_DAWN / 2))
- #define		IS_NIGHT ((turn % (10L * TOWN_DAWN)) > (10L * TOWN_DAWN / 2))	
-#else	/* 0 */
- #define		IS_NIGHT	((bst(HOUR, turn) < SUNRISE) || (bst(HOUR, turn) >= NIGHTFALL))
- #define		IS_DAY		(!IS_NIGHT)	
-#endif	/* 0 */
-
 /*
  * Misc constants ( see bst(), do_cmd_time() )
  */
@@ -1373,6 +1363,21 @@
 
 #define SUNRISE			6			/* Sunrise */
 #define NIGHTFALL		20			/* Nightfall */
+
+/* Macros for determing if it is night or day */
+
+#if 0
+ #define	IS_DAY	 ((turn % (10L * TOWN_DAWN)) <= (10L * TOWN_DAWN / 2))
+ #define	IS_NIGHT ((turn % (10L * TOWN_DAWN)) > (10L * TOWN_DAWN / 2))	
+#else	/* 0 */
+ #define	IS_NIGHT_RAW	((bst(HOUR, turn) < SUNRISE) || (bst(HOUR, turn) >= NIGHTFALL))
+ /* Certain events keep the world dark - Halloween and fireworks during season_new_years_eve: */
+ #define	IS_NIGHT	(IS_NIGHT_RAW || season_halloween || fireworks)
+ #define	IS_DAY		(!IS_NIGHT)
+#endif	/* 0 */
+
+
+/* More time macros */
 
 #define START_YEAR              2890                    /* Bilbo birthday year */
 #define START_DAY               265			/* Bilbo birthday (22. Sept.) */
