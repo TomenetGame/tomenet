@@ -19,6 +19,8 @@ audio_sfx = {
     "snow_soft", --nothing really
     "snow_storm",
 
+    "thunder",
+
     --[player]
     --combat
     "hit",

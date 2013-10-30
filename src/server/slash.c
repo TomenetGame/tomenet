@@ -6629,6 +6629,15 @@ void do_slash_cmd(int Ind, char *message)
 				Players[Ind]->esp_link_flags = f;
 				return;
 			}
+			else if (prefix(message, "/psfx")) { /* set own music according to the location of someone else */
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /psfx <sound name>");
+					return;
+				}
+				msg_format(Ind, "Playing <%s>.", token[1]);
+				sound(Ind, token[1], NULL, SFX_TYPE_COMMAND, TRUE);
+				return;
+			}
 #endif
 			else if (prefix(message, "/towea")) { /* teleport player to a sector with weather going */
 				int x, y;
