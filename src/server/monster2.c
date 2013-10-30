@@ -3712,15 +3712,19 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 {
 	int r_idx, i;
 	player_type *p_ptr;
-	int lev = getlevel(wpos); /* HALLOWEEN; and new: anti-double-OOD */
-	bool no_high_level_players = TRUE;
+	int lev = getlevel(wpos); /* HALLOWEEN; and 
+	new: anti-double-OOD */
 #ifdef RPG_SERVER
 	struct dungeon_type *d_ptr = getdungeon(wpos);
 #endif
 	struct dun_level *l_ptr = getfloor(wpos);
 
 
-	if (season_halloween) {
+	if (season_halloween && great_pumpkin_timer == 0 && wpos->wz != 0 &&
+	    /* Don't waste Great Pumpkins on low-level IDDC floors */
+	    (!in_irondeepdive(wpos) || wpos->wz >= 20)) {
+		bool no_high_level_players = TRUE;
+
 		/* Verify that no high-level player is on this level! */
 	        for (i = 1; i <= NumPlayers; i++) {
 	                p_ptr = Players[i];
@@ -3740,7 +3744,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 
 		/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
 #ifndef RPG_SERVER
-		if ((great_pumpkin_timer == 0) && (lev < 40) && (wpos->wz != 0) && no_high_level_players) {
+		if (no_high_level_players && (lev < 40)) {
 			if (lev > 20) r_idx = RI_PUMPKIN3;//10k HP
 			else {
 				if (lev > 10) r_idx = RI_PUMPKIN2;//6k HP
@@ -3750,8 +3754,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 				else if (magik(15)) r_idx = RI_PUMPKIN3; /* sometimes tougher */
 			}
 #else
-		if ((great_pumpkin_timer == 0) && (lev < 50) && (wpos->wz != 0) &&
-		    !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
+		if (no_high_level_players && (lev < 50) && !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
 			if (lev > 30) r_idx = RI_PUMPKIN3;//6.6k HP
 			else {
 				if (lev > 15) r_idx = RI_PUMPKIN2;//4k HP
@@ -3763,8 +3766,6 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 #endif
 
 			if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0) == 0) {
-//				great_pumpkin_timer = 15 + rand_int(45);  <- now done in monster_death() ! So no more duplicate pumpkins.
-				/* log */
 //spam				s_printf("%s HALLOWEEN: Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, lev);
 				great_pumpkin_timer = -1; /* put generation on hold */
 
