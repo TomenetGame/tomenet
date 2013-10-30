@@ -2231,6 +2231,13 @@ static errr rd_floor(void)
 		}
 	}
 
+	/* fix possibly no longer correct lighting regarding time of the day */
+	if (wpos.wz == 0) {
+		/* hack this particular sector */
+		if (IS_DAY) world_surface_day(&wpos);
+		else world_surface_night(&wpos);
+	}
+
 	/* Success */
 	return (0);
 }
