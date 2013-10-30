@@ -6629,13 +6629,22 @@ void do_slash_cmd(int Ind, char *message)
 				Players[Ind]->esp_link_flags = f;
 				return;
 			}
-			else if (prefix(message, "/psfx")) { /* set own music according to the location of someone else */
+			else if (prefix(message, "/psfx")) { /* play specific music */
 				if (tk < 1) {
-					msg_print(Ind, "Usage: /psfx <sound name>");
+					msg_print(Ind, "Usage: /pmus <music number>");
 					return;
 				}
 				msg_format(Ind, "Playing <%s>.", token[1]);
 				sound(Ind, token[1], NULL, SFX_TYPE_COMMAND, TRUE);
+				return;
+			}
+			else if (prefix(message, "/pmus")) { /* play specific sound */
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /psfx <sound name>");
+					return;
+				}
+				msg_format(Ind, "Playing <%d>.", k);
+				Send_music(Ind, k);
 				return;
 			}
 #endif
