@@ -2972,7 +2972,9 @@ void do_cmd_look(int Ind, int dir) {
 		health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
-		if (q_ptr->body_monster) {
+		if ((q_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (q_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
+			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->inventory[INVEN_BODY].bpval].name, get_ptitle(q_ptr, FALSE));
+		} else if (q_ptr->body_monster) {
 			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE));
 		} else {
 #if 0 /* use normal race_info.title */
