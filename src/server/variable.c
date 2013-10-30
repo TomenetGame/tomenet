@@ -239,7 +239,7 @@ bool dungeon_align;                     /* Generate dungeons with aligned rooms 
 
 /* Option Set 4 -- Efficiency */
 
-bool avoid_other;                       /* Avoid processing special colors */
+bool avoid_other = FALSE;	/* Avoid processing special colors */
 
 /* Special options */
 
