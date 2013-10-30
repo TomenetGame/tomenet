@@ -6335,10 +6335,16 @@ void update_stuff(int Ind)
 			f = Players[Ind2]->esp_link_flags;
 			Players[Ind2]->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
 			Send_music(Ind2, Players[Ind]->music_current);
+			/* ultra hack-- abuse this for ambient sfx too ^^ */
+			Send_sfx_ambient(Ind2, Players[Ind]->sound_ambient);
 			Players[Ind2]->esp_link_flags = f;
 		}
 		/* we just broke a link (and we were receiver) */
-		else handle_music(Ind); /* restore music after a mind-link has been broken */
+		else {
+			handle_music(Ind); /* restore music after a mind-link has been broken */
+			/* ultra hack-- abuse this for ambient sfx too ^^ */
+			handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos);
+		}
 	}
 #endif
 
