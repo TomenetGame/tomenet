@@ -2457,6 +2457,8 @@ static int Handle_login(int ind)
 #if 1
 	if (p_ptr->audio_mus == 49) /* problem: cannot take into account if the player purposefully removed some songs */
 		msg_print(NumPlayers, "\374\377D --- Your music pack is outdated. ---");
+	else if (p_ptr->audio_mus == 55) /* problem: cannot take into account if the player purposefully removed some songs */
+		msg_print(NumPlayers, "\374\377D --- Your music pack is outdated. ---");
 #endif
 
 	/* Admin messages */
