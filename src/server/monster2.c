@@ -634,7 +634,7 @@ void wipe_m_list(struct worldpos *wpos) {
                         if (season_halloween &&
                 	    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
                         	great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
-				s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
+				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
                         }
 			delete_monster_idx(i, TRUE);
 		}
@@ -681,7 +681,7 @@ void thin_surface_spawns() {
 		if (season_halloween &&
 		    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
 			great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
-			s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
+			//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 		}
 
 		/* hack: don't affect non-townies in Bree at all */
@@ -709,7 +709,7 @@ void geno_towns() {
 			if (season_halloween && /* hardcoded -_- */
 			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
 				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
-				s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
+				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
 			}
 			delete_monster_idx(i, TRUE);
 		}
