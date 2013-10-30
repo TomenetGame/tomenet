@@ -1952,14 +1952,13 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 
 #ifdef M_EGO_NEW_FLICKER
 	/* Hack -- Unique/Ego 'glitters' sometimes */
-	else if (m_ptr && ((
-	    ((r_ptr->flags1 & RF1_UNIQUE) && magik(30)) ||
-	    (m_ptr->ego &&
+	else if ((((r_ptr->flags1 & RF1_UNIQUE) && magik(30)) ||
+	    (m_ptr && m_ptr->ego &&
 	    ((re_info[m_ptr->ego].d_attr != MEGO_CHAR_ANY) ?
 	    magik(85) : magik(5)))
 	    ) &&
 	    (!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)) &&
-	     !(r_ptr->flags2 & (RF2_SHAPECHANGER)))))
+	     !(r_ptr->flags2 & (RF2_SHAPECHANGER))))
 	{
 		(*cp) = c;
 
@@ -1989,10 +1988,10 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	}
 #else
 	/* Hack -- Unique/Ego 'glitters' sometimes */
-	else if (m_ptr && ((((r_ptr->flags1 & RF1_UNIQUE) && magik(30)) ||
-		(m_ptr->ego && magik(5)) ) &&
+	else if ((((r_ptr->flags1 & RF1_UNIQUE) && magik(30)) ||
+		(m_ptr && m_ptr->ego && magik(5)) ) &&
 		(!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)) &&
-		 !(r_ptr->flags2 & (RF2_SHAPECHANGER)))))
+		 !(r_ptr->flags2 & (RF2_SHAPECHANGER))))
 	{
 		(*cp) = c;
 
