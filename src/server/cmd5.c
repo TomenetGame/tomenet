@@ -1272,6 +1272,9 @@ void do_mimic_power_aux(int Ind, int dir)
                 /* we're now indeed ftk */
                 p_ptr->shooting_till_kill = TRUE;
                 p_ptr->shoot_till_kill_mimic = cs + 1;
+		/* disable other ftk types */
+		p_ptr->shoot_till_kill_spell = FALSE;
+		p_ptr->shoot_till_kill_rcraft = FALSE;
         }
 #endif
 }
@@ -1663,6 +1666,9 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 			p_ptr->shooting_till_kill = TRUE;
 			p_ptr->shoot_till_kill_book = book;
 			p_ptr->shoot_till_kill_spell = spell + 1;
+			/* disable other ftk types */
+			p_ptr->shoot_till_kill_mimic = FALSE;
+			p_ptr->shoot_till_kill_rcraft = FALSE;
 		}
 #endif
 	}

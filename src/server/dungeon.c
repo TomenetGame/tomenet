@@ -4603,7 +4603,7 @@ static void process_player_end(int Ind)
 		if (p_ptr->shooting_till_kill) {
 			if (target_okay(Ind)) {
 				/* spells always require 1 turn: */
-				if (p_ptr->shoot_till_kill_spell);
+				if (p_ptr->shoot_till_kill_spell || p_ptr->shoot_till_kill_mimic);
 				/* runespells excepted (for 'brief' modifier)*/
 				else if (p_ptr->shoot_till_kill_rcraft) energy = p_ptr->FTK_energy;
 				/* shooting with ranged weapon: */
@@ -4638,9 +4638,11 @@ static void process_player_end(int Ind)
 						do_cmd_mimic(Ind, p_ptr->shoot_till_kill_mimic - 1 + 3, 5);
 					} else {
 						do_cmd_fire(Ind, 5);
+#if 1 //what was the point of this hack again?..
+						p_ptr->auto_retaliating = !p_ptr->auto_retaliating; /* hack, it's unset in do_cmd_fire IF it WAS successfull, ie reverse */
+#endif
 					}
 
-					p_ptr->auto_retaliating = !p_ptr->auto_retaliating; /* hack, it's unset in do_cmd_fire IF it WAS successfull, ie reverse */
 					//not required really	if (p_ptr->ranged_double && p_ptr->shooting_till_kill) do_cmd_fire(Ind, 5);
 					p_ptr->shooty_till_kill = FALSE; /* if we didn't succeed shooting till kill, then we don't intend it anymore */
 				} else {

@@ -564,6 +564,9 @@ s_printf("Type: %s\n", r_types[type].name);
 			if (dir == 5) {
 				p_ptr->shooting_till_kill = TRUE;
 				p_ptr->shoot_till_kill_rcraft = TRUE;
+				/* disable other ftk types */
+				p_ptr->shoot_till_kill_spell = FALSE;
+				p_ptr->shoot_till_kill_mimic = FALSE;
 			}
 		}
 	}

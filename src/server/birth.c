@@ -2398,8 +2398,13 @@ static void player_setup(int Ind, bool new)
 	p_ptr->current_throw = -1;
 	p_ptr->current_breath = 0;
 
+#if 0 //it's zero'ed anyway..
 	/* Runecraft */
-	p_ptr->shoot_till_kill_rcraft = 0;
+	p_ptr->shoot_till_kill_rcraft = FALSE;
+	/* disable other ftk types */
+	p_ptr->shoot_till_kill_mimic = FALSE;
+	p_ptr->shoot_till_kill_rcraft = FALSE;
+#endif
 
 	/* No item being used up */
 	p_ptr->using_up_item = -1;

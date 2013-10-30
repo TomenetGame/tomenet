@@ -4470,7 +4470,13 @@ void do_cmd_fire(int Ind, int dir)
 	/* if we intended to shoot till kill, then we did succeed now,
 	   passed all tests that might return() instead, and ARE shooting
 	   to kill. Note: Cursed arrow failure is exempt a.t.m. - C. Blue */
-	if (p_ptr->shooty_till_kill) p_ptr->shooting_till_kill = TRUE;
+	if (p_ptr->shooty_till_kill) {
+		p_ptr->shooting_till_kill = TRUE;
+		/* disable other ftk types */
+		p_ptr->shoot_till_kill_spell = FALSE;
+		p_ptr->shoot_till_kill_mimic = FALSE;
+		p_ptr->shoot_till_kill_rcraft = FALSE;
+	}
 
 	if (!boomerang && cursed_p(o_ptr) && magik(50)) {
 		msg_print(Ind, "You somehow failed to fire!");
@@ -5556,9 +5562,11 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	suppress_message = FALSE;
-	
+
+#if 1 //what was the point of this hack again?..
 	/* hack for auto-retaliator hack in dungeon.c fire_till_kill-related call of do_cmd_fire() */
 	p_ptr->auto_retaliating = FALSE;
+#endif
 }
 
 /*
@@ -6879,6 +6887,8 @@ void stop_shooting_till_kill(int Ind) {
 	Players[Ind]->shooting_till_kill = FALSE;
 	Players[Ind]->shoot_till_kill_book = 0;
 	Players[Ind]->shoot_till_kill_spell = 0;
+	Players[Ind]->shoot_till_kill_rcraft = FALSE;
+	Players[Ind]->shoot_till_kill_mimic = 0;
 	if (Players[Ind]->shoot_till_kill_rcraft) {
 		Players[Ind]->FTK_e_flags = 0;
 		Players[Ind]->FTK_m_flags = 0;
