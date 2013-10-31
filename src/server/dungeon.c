@@ -8217,7 +8217,7 @@ void local_weather_update(void) {
 	   for consistency. :) */
 	int thunderstorm, thunderclap = 999;
 	thunderstorm = (turn / (cfg.fps * 3600)) % 6; /* n out of every 6 world map sector clusters have thunderstorms going */
-	if (!(turn % (cfg.fps * 5))) thunderclap = rand_int(5); /* every 5 s there is a 1 in 5 chance of thunderclap (in a thunderstorm area) */
+	if (!(turn % (cfg.fps * 10))) thunderclap = rand_int(5); /* every 10s there is a 1 in 5 chance of thunderclap (in a thunderstorm area) */
 
 	/* update players' local client-side weather if required */
 	for (i = 1; i <= NumPlayers; i++) {
