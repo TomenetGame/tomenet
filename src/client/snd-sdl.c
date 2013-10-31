@@ -708,7 +708,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 
 		/* HACK - use weather volume for thunder sfx */
 		if (channel_sample[s] == thunder_sound_idx)
-			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
 		else
 
 		/* Note: Linear scaling is used here to allow more precise control at the server end */
@@ -1398,7 +1398,7 @@ static void set_mixing_sdl(void) {
 
 		/* HACK - use weather volume for thunder sfx */
 		if (thunder_sound_idx != -1 && channel_sample[n] == thunder_sound_idx) {
-			Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+			Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * channel_volume[n]) / 100));
 			continue;
 		} else
 
