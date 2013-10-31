@@ -219,10 +219,10 @@ static bool open_audio(void) {
 
 	/* Initialize the SDL library */
 	if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-#ifdef DEBUG_SOUND
+//#ifdef DEBUG_SOUND
 		plog_fmt("Couldn't initialize SDL: %s", SDL_GetError());
-		puts(format("Couldn't initialize SDL: %s", SDL_GetError()));
-#endif
+//		puts(format("Couldn't initialize SDL: %s", SDL_GetError()));
+//#endif
 		return FALSE;
 	}
 
@@ -230,10 +230,10 @@ static bool open_audio(void) {
 	if (cfg_audio_buffer < 128) cfg_audio_buffer = 128;
 	if (cfg_audio_buffer > 8192) cfg_audio_buffer = 8192;
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, cfg_audio_buffer) < 0) {
-#ifdef DEBUG_SOUND
+//#ifdef DEBUG_SOUND
 		plog_fmt("Couldn't open mixer: %s", SDL_GetError());
-		puts(format("Couldn't open mixer: %s", SDL_GetError()));
-#endif
+//		puts(format("Couldn't open mixer: %s", SDL_GetError()));
+//#endif
 		return FALSE;
 	}
 
