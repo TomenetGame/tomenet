@@ -7743,6 +7743,11 @@ Weapons of Nothingness  Similarly terribly cursed as weapons of Morgul. You
                         move it between equipment and inventory, so when you
                         uncursed it drop it to the ground right away!
 
+Weapons of Slaying      These weapons can have greatly boosted damage dice
+                        and sometimes poison brand.
+                        If it's a sword, axe or slice-type polearm it could
+                        also get a 'vorpal' effect - see 'VORPAL' under (5.8).
+
 Magic ammunition (Magic Arrows, Magic Bolts, Magic Shots).
                 Those will return into your quiver magically, so just having
                 one will already serve, as long as it isn't destroyed by some
