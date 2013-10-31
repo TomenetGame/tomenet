@@ -8204,9 +8204,17 @@ void cloud_create(int i, int cx, int cy) {
 }
 
 
-/* update players' local client-side weather if required */
+/* update players' local client-side weather if required.
+   called each time by process_wild_weather, aka 1/s. */
 void local_weather_update(void) {
 	int i;
+
+	/* HACK part 1: play random thunderclaps if player is receiving harsh weather.
+	   Note: this is synched to all players in the same worldmap sector,
+	   for consistency. :) */
+	int thunderstorm, thunderclap = 999;
+	thunderstorm = (turn / (cfg.fps * 3600)) % 6; /* n out of every 6 world map sector clusters have thunderstorms going */
+	if (!(turn % (cfg.fps * 5))) thunderclap = rand_int(5); /* every 5 s there is a 1 in 5 chance of thunderclap (in a thunderstorm area) */
 
 	/* update players' local client-side weather if required */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -8214,6 +8222,23 @@ void local_weather_update(void) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		/* Skip players not on world surface - player_weather() actually checks this too though */
 		if (Players[i]->wpos.wz) continue;
+
+		/* HACK part 2: if harsh weather, play random world-sector-synched thunderclaps */
+#if 0 /* debug */
+		if (thunderclap == 0) {
+			s_printf("p %d - w %d, t %d\n",
+			    ((Players[i]->wpos.wy + Players[i]->wpos.wx) / 5) % 6,
+			    thunderstorm,
+			    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type);
+		}
+#endif
+		if (thunderclap == 0 &&
+		    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type == 1 && /* no blizzards for now, just rainstorms */
+		    //wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_wind && 
+		    ((Players[i]->wpos.wy + Players[i]->wpos.wx) / 5) % 6 == thunderstorm) {
+			sound(i, "thunder", NULL, SFX_TYPE_MISC, FALSE);
+		}
+
 		/* no change in local situation? nothing to do then */
 		if (!wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_updated) continue;
 		/* update player's local weather */
