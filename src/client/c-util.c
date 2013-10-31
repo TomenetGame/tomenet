@@ -7247,7 +7247,7 @@ void music(int val) {
 
 void sound_ambient(int val) {
 	if (!use_sound) return;
-puts(format("received sound_ambient %d", val));
+
 	/* play a sound */
 	if (sound_ambient_hook) sound_ambient_hook(val);
 }
