@@ -230,6 +230,7 @@ audio_sfx = {
     --[ambient]
     "ambient_fireplace",
     "ambient_shore",
+    "ambient_lake",
 }
 function get_sound_name(idx)
     if audio_sfx[idx + 1] == nil then return "" end

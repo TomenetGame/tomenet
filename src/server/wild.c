@@ -389,8 +389,9 @@ void wild_spawn_towns()
 	}
 }
 
-void init_wild_info()
-{
+void init_wild_info() {
+	int x, y;
+
 	memset(&wild_info[0][0],0,sizeof(wilderness_type)*(MAX_WILD_Y*MAX_WILD_X));
 
 	/* evileye test new wilderness map */
@@ -401,6 +402,12 @@ void init_wild_info()
 	//if (new) wild_spawn_towns();
 
 	//init_wild_info_aux(0,0);
+
+	for (x = 0; x < MAX_WILD_X; x++) {
+		for (y = 0; y < MAX_WILD_Y; y++) {
+			wild_info[y][x].bled = WILD_GRASSLAND;
+		}
+	}
 }
 
 
@@ -2635,8 +2642,7 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 	   sector would trigger.
 	   idea: WILD_COAST should trigger the WILD_OCEAN ambient sfx, if there
 	   are actually some visible ocean feat grids bled onto it. */
-#if 1
- #if 1
+
 	/* need to use a priority list, if several different ambient-sfx-
 	   causing terrain types are bled into this sector: */
 	switch (wild_info[bleed_from_y][bleed_from_x].type) {
@@ -2647,23 +2653,14 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 		if (wild_info[bleed_to_y][bleed_to_x].bled != WILD_OCEAN)
 			wild_info[bleed_to_y][bleed_to_x].bled = WILD_LAKE;
 		break;
-  #if 0
+#if 0
 	case WILD_VOLCANO: //dunno oO
 		if (wild_info[bleed_to_y][bleed_to_x].bled != WILD_OCEAN &&
 		    wild_info[bleed_to_y][bleed_to_x].bled != WILD_LAKE)
 			wild_info[bleed_to_y][bleed_to_x].bled = WILD_VOLCANO;
 		break;
-  #endif
-	}
- #else
-	/* simple way, but gets overwritten for each bleeding sector, so basically worthless: */
-	wild_info[bleed_to_y][bleed_to_x].bled = 
-	    wild_info[bleed_from_y][bleed_from_x].type;
- #endif
-#else /* o_o' */
-	wild_info[bleed_from_y][bleed_from_x].bled =
-	    wild_info[bleed_to_y][bleed_to_x].type;
 #endif
+	}
 }
 
 /* determines whether or not to bleed from a given depth in a given direction.
