@@ -52,7 +52,7 @@
 bool on_demand_loading = FALSE;
 
 /* output various status messages about initializing audio */
-#define DEBUG_SOUND
+//#define DEBUG_SOUND
 
 /* Path to sound files */
 static const char *ANGBAND_DIR_XTRA_SOUND;
@@ -1194,16 +1194,24 @@ static void play_sound_ambient(int event) {
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
+#if 0 /* for ambient sounds. we don't drop them as we'd do for "normal " sfx, \
+	 because they ought to be looped, so we'd completely lose them. - C. Blue */
 		if (on_demand_loading || no_cache_audio) {
+#endif
 			if (!(wave = load_sample(event, s))) {
 				/* we really failed to load it */
 				plog(format("SDL sound load failed (%d, %d).", event, s));
 				return;
 			}
+#if 0 /* see above */
 		} else {
+#ifdef DEBUG_SOUND
+			puts(format("on_demand_loading %d, no_cache_audio %d", on_demand_loading, no_cache_audio));
+#endif
 			/* Fail silently */
 			return;
 		}
+#endif
 	}
 
 	/* Actually play the thing */
