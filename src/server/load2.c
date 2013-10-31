@@ -1221,6 +1221,11 @@ static void rd_wild(wilderness_type *w_ptr)
 	/* terrain type */
 	rd_u16b(&w_ptr->type);
 
+	/* this needs to be loaded or it'll be lost until this piece of
+	   wilderness is unstaticed again. - C. Blue */
+	if (!s_older_than(4, 5, 12)) rd_u16b(&w_ptr->bled);
+	else w_ptr->bled = WILD_GRASSLAND; /* init */
+
 	/* the flags */
 	rd_u32b(&w_ptr->flags);
 
@@ -1261,9 +1266,8 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->died_from_depth);
 
 	for (i = 0; i < 4; i++)
-	{
 		rd_string(p_ptr->history[i], 60);
-	}
+
 	if (older_than(4, 2, 7)) {
 		p_ptr->has_pet = 0; //assume no pet
 	} else {
