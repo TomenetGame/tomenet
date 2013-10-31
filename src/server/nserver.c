@@ -6070,8 +6070,9 @@ int Send_sfx_ambient(int Ind, int sfx_ambient) {
 	int i;
 	cptr name = NULL;
 
+	//-1: smooth (poor with WoR, otherwise great :/), -2: sudden
 	switch (sfx_ambient) {
-	case SFX_AMBIENT_NONE:		i = -1; break;
+	case SFX_AMBIENT_NONE:		i = -2; break;//-1
 	case SFX_AMBIENT_FIREPLACE:	name = "ambient_fireplace"; break;
 	case SFX_AMBIENT_SHORE:		name = "ambient_shore"; break;
 	case SFX_AMBIENT_LAKE:		name = "ambient_lake"; break;
@@ -6079,7 +6080,7 @@ int Send_sfx_ambient(int Ind, int sfx_ambient) {
 
 	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
 		if (!audio_sfx[i][0]) {
-			i = -1;
+			i = -2;
 			break;
 		}
 		if (!strcmp(audio_sfx[i], name)) break;

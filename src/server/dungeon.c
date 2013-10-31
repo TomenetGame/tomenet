@@ -1346,6 +1346,7 @@ void player_day(int Ind) {
 
 #ifdef USE_SOUND_2010
 	handle_music(Ind);
+	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos);
 #endif
 }
 /* update a particular player's view to night, assuming he's on world surface */
@@ -1386,6 +1387,7 @@ void player_night(int Ind) {
 
 #ifdef USE_SOUND_2010
 	handle_music(Ind);
+	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos);
 #endif
 }
 
@@ -6189,6 +6191,7 @@ void process_player_change_wpos(int Ind)
 	/* clear boss/floor-specific music */
 	p_ptr->music_monster = -1;
 	handle_music(Ind);
+	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos);
 #endif
 
 #ifdef ENABLE_SELF_HIGHLIGHTING
