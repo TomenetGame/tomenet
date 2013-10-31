@@ -6585,7 +6585,7 @@ static bool run_test(int Ind)
 		/* unlit grids abort running */
 		if (!(c_ptr->info & (CAVE_LITE | CAVE_GLOW))) {
 			if (!p_ptr->warning_run_lite) {
-				msg_print(Ind, "\374\377yHINT: You cannot run in the dark. Press 'w' to equip a light source!");
+				msg_print(Ind, "\374\377yHINT: You cannot run in the dark. Press 'w' and equip a light source!");
 				p_ptr->warning_run_lite = TRUE;
 				s_printf("warning_run_lite: %s\n", p_ptr->name);
 			}
