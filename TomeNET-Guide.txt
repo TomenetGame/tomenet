@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. October 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 31. October 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9824,7 +9824,8 @@ Note that not every skill is available to every profession (class).
                                 (It won't raise the level of spells which you
                                 haven't learned yet.)
                                 Note that Spell-power does not affect magic of
-                                druids, mindcrafters, runemasters or maiar.
+                                druids, mindcrafters, runemasters, or the
+                                astral school that maiar can learn.
 
     +Druidic Schools
         .Arcane Lore            Learn druid magic tought by arcane lore.
