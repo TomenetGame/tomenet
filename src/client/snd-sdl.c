@@ -705,8 +705,15 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 		channel_sample[s] = event;
 		channel_volume[s] = vol;
 		channel_player_id[s] = player_id;
+
+		/* HACK - use weather volume for thunder sfx */
+		if (channel_sample[s] == thunder_sound_idx)
+			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+		else
+
 		/* Note: Linear scaling is used here to allow more precise control at the server end */
 		Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100));
+
 //puts(format("playing sample %d at vol %d.\n", event, (cfg_audio_sound_volume * vol) / 100));
 	}
 	samples[event].current_channel = s;
@@ -820,9 +827,12 @@ static void clear_channel(int c) {
 
 	/* a sample has finished playing, so allow this kind to be played again */
 	/* hack: if the sample was the 'paging' sound, reset the channel's volume to be on the safe side */
-	if (channel_sample[c] == page_sound_idx || channel_sample[c] == warning_sound_idx) {
+	if (channel_sample[c] == page_sound_idx || channel_sample[c] == warning_sound_idx)
 		Mix_Volume(c, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
-	}
+
+	/* HACK - if the sample was a weather sample, which would be thunder, reset the vol too, paranoia */
+	if (channel_sample[c] == thunder_sound_idx)
+		Mix_Volume(c, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
 
 	samples[channel_sample[c]].current_channel = -1;
 	channel_sample[c] = -1;
@@ -1386,6 +1396,12 @@ static void set_mixing_sdl(void) {
 		if (n == weather_channel) continue;
 		if (n == ambient_channel) continue;
 
+		/* HACK - use weather volume for thunder sfx */
+		if (thunder_sound_idx != -1 && channel_sample[n] == thunder_sound_idx) {
+			Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+			continue;
+		} else
+
 		/* Note: Linear scaling is used here to allow more precise control at the server end */
 		Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100));
 #ifdef DISABLE_MUTED_AUDIO
@@ -1417,6 +1433,12 @@ static void set_mixing_sdl(void) {
 		weather_resume = TRUE;
 		if (weather_channel != -1 && Mix_Playing(weather_channel))
 			Mix_HaltChannel(weather_channel);
+
+		/* HACK - use weather volume for thunder sfx */
+		if (thunder_sound_idx != -1)
+			for (n = 0; n < cfg_max_channels; n++)
+				if (channel_sample[n] == thunder_sound_idx)
+					Mix_HaltChannel(n);
 	}
 
 	if (!cfg_audio_master || !cfg_audio_sound) {

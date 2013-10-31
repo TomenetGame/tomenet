@@ -2075,6 +2075,7 @@ static void init_sound() {
 	snow2_sound_idx = exec_lua(0, "return get_sound_index(\"snow_storm\")");
 	browse_sound_idx = exec_lua(0, "return get_sound_index(\"browse\")");
 	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
+	thunder_sound_idx = exec_lua(0, "return get_sound_index(\"thunder\")");
 #endif
 }
 
