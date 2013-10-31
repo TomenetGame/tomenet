@@ -6978,8 +6978,7 @@ void mind_map_level(int Ind)
  * since this would prevent the use of "view_torch_grids" as a method to
  * keep track of what grids have been observed directly.
  */
-void wiz_lite(int Ind)
-{
+void wiz_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int             y, x, i;
 
@@ -6990,6 +6989,10 @@ void wiz_lite(int Ind)
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
+
+	/* don't ruin the mood ^^ */
+	if (wpos->wz == 0 && (season_halloween || season_newyearseve)) return;
+
 	if (!(zcave = getcave(wpos))) return;
 
 /*	if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
@@ -7064,6 +7067,9 @@ void wiz_lite_extra(int Ind)
 //	dun_level *l_ptr = getfloor(wpos);
 	cave_type **zcave;
 	cave_type *c_ptr;
+
+	if (wpos->wz == 0 && (season_halloween || season_newyearseve)) return;
+
 	if (!(zcave = getcave(wpos))) return;
 
 /*	if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */

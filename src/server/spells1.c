@@ -4097,12 +4097,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Lite up the grid */
 		case GF_LITE_WEAK:
 		case GF_LITE:
-		{
-			/* Turn on the light */
-			c_ptr->info |= CAVE_GLOW;
+			/* don't ruin the mood :> */
+			if (!(wpos->wz == 0 && (season_halloween || season_newyearseve)))
+				/* Turn on the light */
+				c_ptr->info |= CAVE_GLOW;
 
-			if (!quiet)
-			{
+			if (!quiet) {
 				/* Notice */
 				note_spot_depth(wpos, y, x);
 
@@ -4118,7 +4118,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
 
 			break;
-		}
 
 		/* Darken the grid */
 		case GF_DARK_WEAK:
