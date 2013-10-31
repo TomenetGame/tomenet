@@ -4043,11 +4043,6 @@ void check_experience(int Ind)
 		p_ptr->warning_technique_melee = p_ptr->warning_technique_ranged = 1;
 	}
 
-#if 1 /* todo: remember in savegame actually */
-	if (old_lev < 25 && p_ptr->lev >= 25)
-		p_ptr->warning_ai_annoy = 1; /* mimics, as the latest learners, learn sprint at 15 and taunt at 20 */
-#endif
-
 	/* Introduce newly learned abilities (that depend on char level) */
 	/* those that depend on a race */
 	switch (p_ptr->prace) {

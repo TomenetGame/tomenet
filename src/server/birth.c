@@ -2764,6 +2764,10 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_hungry = 2;
 		p_ptr->warning_lite_refill = 1;
 	}
+	if (p_ptr->max_plv >= 25) {
+		/* mimics, as the latest learners, learn sprint at 15 and taunt at 20 */
+		p_ptr->warning_ai_annoy = 1;
+	}
 	if (p_ptr->max_plv > 30) {
 		p_ptr->warning_instares = 1;
 	}
