@@ -8239,7 +8239,8 @@ void local_weather_update(void) {
 		    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type == 1 && /* no blizzards for now, just rainstorms */
 		    //wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_wind && 
 		    ((Players[i]->wpos.wy + Players[i]->wpos.wx) / 5) % 6 == thunderstorm) {
-			sound_vol(i, "thunder", NULL, SFX_TYPE_MISC, FALSE, 15 + (vol + Players[i]->wpos.wy + Players[i]->wpos.wx) % 86);
+			/* a little hack: client recognizes 'double' thunder sample as weather-related thunder */
+			sound_vol(i, "thunder", "thunder", SFX_TYPE_MISC, FALSE, 15 + (vol + Players[i]->wpos.wy + Players[i]->wpos.wx) % 86);
 		}
 
 		/* no change in local situation? nothing to do then */
