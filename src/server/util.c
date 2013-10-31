@@ -1144,6 +1144,64 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 
 	Send_sound(Ind, val, val2, type, 100, Players[Ind]->id);
 }
+void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int vol) {
+	int val = -1, val2 = -1, i, d;
+
+	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], name)) {
+			val = i;
+			break;
+		}
+	}
+
+	if (alternative) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], alternative)) {
+			val2 = i;
+			break;
+		}
+	}
+
+
+//	if (is_admin(Players[Ind])) s_printf("USE_SOUND_2010: looking up sound %s -> %d.\n", name, val);
+
+	if (val == -1) {
+		if (val2 != -1) {
+			/* Use the alternative instead */
+			val = val2;
+			val2 = -1;
+		} else {
+			return;
+		}
+	}
+
+	/* also send sounds to nearby players, depending on sound or sound type */
+	if (nearby) {
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (!inarea(&Players[i]->wpos, &Players[Ind]->wpos)) continue;
+			if (Ind == i) continue;
+
+			d = distance(Players[Ind]->py, Players[Ind]->px, Players[i]->py, Players[i]->px);
+#if 0
+			if (d > 10) continue;
+			if (d == 0) d = 1; //paranoia oO
+
+			Send_sound(i, val, val2, type, vol / d, Players[Ind]->id);
+//			Send_sound(i, val, val2, type, vol... (6 - d) * 20, Players[Ind]->id);  hm or this?
+#else
+			if (d > MAX_SIGHT) continue;
+			d += 3;
+			d /= 2;
+
+			Send_sound(i, val, val2, type, vol / d, Players[Ind]->id);
+#endif
+		}
+	}
+s_printf("sending sound %d at %d\n", val, vol);
+	Send_sound(Ind, val, val2, type, vol, Players[Ind]->id);
+}
 /* send sound to player and everyone nearby at full volume, similar to
    msg_..._near(), except it also sends to the player himself.
    This is used for highly important and *loud* sounds such as 'shriek' - C. Blue */

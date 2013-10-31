@@ -8215,7 +8215,7 @@ void local_weather_update(void) {
 	/* HACK part 1: play random thunderclaps if player is receiving harsh weather.
 	   Note: this is synched to all players in the same worldmap sector,
 	   for consistency. :) */
-	int thunderstorm, thunderclap = 999;
+	int thunderstorm, thunderclap = 999, vol = rand_int(86);
 	thunderstorm = (turn / (cfg.fps * 3600)) % 6; /* n out of every 6 world map sector clusters have thunderstorms going */
 	if (!(turn % (cfg.fps * 10))) thunderclap = rand_int(5); /* every 10s there is a 1 in 5 chance of thunderclap (in a thunderstorm area) */
 
@@ -8239,7 +8239,7 @@ void local_weather_update(void) {
 		    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type == 1 && /* no blizzards for now, just rainstorms */
 		    //wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_wind && 
 		    ((Players[i]->wpos.wy + Players[i]->wpos.wx) / 5) % 6 == thunderstorm) {
-			sound(i, "thunder", NULL, SFX_TYPE_MISC, FALSE);
+			sound_vol(i, "thunder", NULL, SFX_TYPE_MISC, FALSE, 15 + (vol + Players[i]->wpos.wy + Players[i]->wpos.wx) % 86);
 		}
 
 		/* no change in local situation? nothing to do then */

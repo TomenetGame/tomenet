@@ -6630,12 +6630,19 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/psfx")) { /* play specific sound */
+				int vol = 100;
 				if (tk < 1) {
-					msg_print(Ind, "Usage: /psfx <sound name>");
+					msg_print(Ind, "Usage: /psfx <sound name> [vol]");
 					return;
 				}
-				msg_format(Ind, "Playing <%s>.", token[1]);
-				sound(Ind, token[1], NULL, SFX_TYPE_COMMAND, TRUE);
+				if (tk == 2) {
+					vol = atoi(token[2]);
+					msg_format(Ind, "Playing <%s> at volume %d%%.", token[1], vol);
+					sound_vol(Ind, token[1], NULL, SFX_TYPE_COMMAND, FALSE, vol);
+				} else {
+					msg_format(Ind, "Playing <%s>.", token[1]);
+					sound(Ind, token[1], NULL, SFX_TYPE_COMMAND, FALSE);
+				}
 				return;
 			}
 			else if (prefix(message, "/pmus")) { /* play specific music */

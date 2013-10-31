@@ -1651,6 +1651,7 @@ extern errr fd_close(int fd);
 extern void bell(void);
 #ifdef USE_SOUND_2010
 extern void sound(int Ind, cptr name, cptr alternative, int type, bool nearby);
+extern void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int vol);
 extern void sound_near(int Ind, cptr name, cptr alternative, int type);
 extern void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type, bool viewable);
 extern void sound_near_monster(int m_idx, cptr name, cptr alternative, int type);
