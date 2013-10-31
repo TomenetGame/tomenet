@@ -1524,9 +1524,22 @@ void handle_music(int Ind) {
 void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos) {
 	player_type *p_ptr = Players[Ind];
 
+	/* enable/switch to certain ambient loops */
 	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos))
 		Send_sfx_ambient(Ind, SFX_AMBIENT_FIREPLACE);
+	//else if (p_ptr->sound_ambient != SFX_AMBIENT_SHORE && wpos->wz == 0 && (wild_info[wpos->wy][wpos->wx].type == WILD_SHORE1 || wild_info[wpos->wy][wpos->wx].type == WILD_SHORE2))
+	//else if (p_ptr->sound_ambient != SFX_AMBIENT_SHORE && wpos->wz == 0 && wild_info[wpos->wy][wpos->wx].type == WILD_COAST)
+	//else if (p_ptr->sound_ambient != SFX_AMBIENT_SHORE && wpos->wz == 0 && (wild_info[wpos->wy][wpos->wx].type == WILD_COAST || wild_info[wpos->wy][wpos->wx].type == WILD_OCEAN))
+	else if (p_ptr->sound_ambient != SFX_AMBIENT_SHORE && wpos->wz == 0 && (wild_info[wpos->wy][wpos->wx].type == WILD_OCEAN || wild_info[wpos->wy][wpos->wx].bled == WILD_OCEAN))
+		Send_sfx_ambient(Ind, SFX_AMBIENT_SHORE);
+
+	/* disable certain ambient sounds if they shouldn't be up here */
 	else if (p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE && ((!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED)) || !istown(wpos)))
+		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE);
+	//else if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE && (wpos->wz != 0 || (wild_info[wpos->wy][wpos->wx].type != WILD_SHORE1 && wild_info[wpos->wy][wpos->wx].type != WILD_SHORE2)))
+	//else if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE && (wpos->wz != 0 || wild_info[wpos->wy][wpos->wx].type != WILD_COAST))
+	//else if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE && (wpos->wz != 0 || (wild_info[wpos->wy][wpos->wx].type != WILD_COAST && wild_info[wpos->wy][wpos->wx].type != WILD_OCEAN)))
+	else if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE && (wpos->wz != 0 || (wild_info[wpos->wy][wpos->wx].type != WILD_OCEAN && wild_info[wpos->wy][wpos->wx].bled != WILD_OCEAN)))
 		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE);
 }
 

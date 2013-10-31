@@ -6073,6 +6073,7 @@ int Send_sfx_ambient(int Ind, int sfx_ambient) {
 	switch (sfx_ambient) {
 	case SFX_AMBIENT_NONE:		i = -1; break;
 	case SFX_AMBIENT_FIREPLACE:	name = "ambient_fireplace"; break;
+	case SFX_AMBIENT_SHORE:		name = "ambient_shore"; break;
 	}
 
 	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {

@@ -1309,6 +1309,7 @@ struct wilderness_type
 {
 	u16b radius;	/* the distance from the town */
 	u16b type;	/* what kind of terrain we are in */
+	u16b bled;	/* type that was bled into this sector (USE_SOUND_2010: ambient sfx) */
 	signed char town_idx;	/* Which town resides exactly in this sector? */
 
 	u32b flags;	/* various */

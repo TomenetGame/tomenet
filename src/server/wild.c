@@ -2627,6 +2627,43 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 #ifdef BLEED_ENHANCED_TOWN
 	if (type != -1) wild_info[bleed_from_y][bleed_from_x].type = WILD_TOWN;
 #endif
+
+
+	/* USE_SOUND_2010 - hack for ambient sound fx (sea waves):   - C. Blue
+	   the 'to' wilderness sector gets a marker so that it will trigger the
+	   ambient sfx too, that the terrain type of the 'from' wilderness
+	   sector would trigger.
+	   idea: WILD_COAST should trigger the WILD_OCEAN ambient sfx, if there
+	   are actually some visible ocean feat grids bled onto it. */
+#if 1
+ #if 1
+	/* need to use a priority list, if several different ambient-sfx-
+	   causing terrain types are bled into this sector: */
+	switch (wild_info[bleed_from_y][bleed_from_x].type) {
+	case WILD_OCEAN: //sea waves
+		wild_info[bleed_to_y][bleed_to_x].bled = WILD_OCEAN;
+		break;
+	case WILD_LAKE: case WILD_SWAMP: //crickets^^
+		if (wild_info[bleed_to_y][bleed_to_x].bled != WILD_OCEAN)
+			wild_info[bleed_to_y][bleed_to_x].bled = WILD_LAKE;
+		break;
+  #if 0
+	case WILD_VOLCANO: //dunno oO
+		if (wild_info[bleed_to_y][bleed_to_x].bled != WILD_OCEAN &&
+		    wild_info[bleed_to_y][bleed_to_x].bled != WILD_LAKE)
+			wild_info[bleed_to_y][bleed_to_x].bled = WILD_VOLCANO;
+		break;
+  #endif
+	}
+ #else
+	/* simple way, but gets overwritten for each bleeding sector, so basically worthless: */
+	wild_info[bleed_to_y][bleed_to_x].bled = 
+	    wild_info[bleed_from_y][bleed_from_x].type;
+ #endif
+#else /* o_o' */
+	wild_info[bleed_from_y][bleed_from_x].bled =
+	    wild_info[bleed_to_y][bleed_to_x].type;
+#endif
 }
 
 /* determines whether or not to bleed from a given depth in a given direction.
