@@ -169,6 +169,7 @@ int Receive_file(void){
 	unsigned short len;
 	u32b csum = 0;
 	int n, bytes_read;
+	static bool updated_audio = FALSE;
 
 	/* NOTE: The amount of data read is stored in n so that the socket
 	 * buffer can be rolled back if the packet isn't complete. - mikaelh */
@@ -196,6 +197,8 @@ int Receive_file(void){
 				if (x) {
 					sprintf(outbuf, "\377oReceiving updated file %s [%d]", fname, fnum);
 					c_msg_print(outbuf);
+
+					if (strstr(fname, "audio.lua")) updated_audio = TRUE;
 				} else {
 					if (errno == EACCES) c_msg_print("\377rNo access to update files");
 				}
@@ -239,9 +242,15 @@ int Receive_file(void){
 				}
 
 				/* HACK - If this was the last file, reinitialize Lua on the fly - mikaelh */
-				if (!get_xfers_num())
+				if (!get_xfers_num()) {
 					c_msg_print("\377GReinitializing Lua");
 					reopen_lua();
+
+					if (updated_audio) {
+						c_msg_print("\377R* Audio information was updated - restarting the game is recommended! *");
+						c_msg_print("\377R   Without a restart, you might be hearing the wrong sound effects.");
+					}
+				}
 
 				break;
 			case PKT_FILE_CHECK:
