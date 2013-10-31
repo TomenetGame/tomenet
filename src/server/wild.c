@@ -2394,6 +2394,15 @@ static void wild_add_hotspot(struct worldpos *wpos)
 		default: hot_terrain.deadtree = rand_int(800)+100;
 	}
 
+#if 0
+	/* hack for ambient sound fx -- crickets at every little pond :-p */
+	if (hot_terrain.water == 1000) {
+		/* maybe add SFX_AMBIENT_LAKE, if not overriden by SFX_AMBIENT_SHORE */
+		if (wild_info[wpos->wy][wpos->wx].bled != WILD_OCEAN)
+			wild_info[wpos->wy][wpos->wx].bled = WILD_LAKE;
+	}
+#endif
+
 	/* create the hotspot */
 	for (y = y_cen - magnitude; y <= y_cen + magnitude; y++) {
 		for (x = x_cen - magnitude; x <= x_cen + magnitude; x++) {
