@@ -1199,7 +1199,6 @@ void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int 
 #endif
 		}
 	}
-s_printf("sending sound %d at %d\n", val, vol);
 	Send_sound(Ind, val, val2, type, vol, Players[Ind]->id);
 }
 /* send sound to player and everyone nearby at full volume, similar to
