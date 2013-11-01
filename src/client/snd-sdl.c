@@ -1408,7 +1408,7 @@ static void set_mixing_sdl(void) {
 		if (n == ambient_channel) continue;
 
 		/* HACK - use weather volume for thunder sfx */
-		if (channel_type[n] == SFX_TYPE_WEATHER) {
+		if (channel_sample[n] != -1 && channel_type[n] == SFX_TYPE_WEATHER) {
 			Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * channel_volume[n]) / 100));
 			continue;
 		} else
