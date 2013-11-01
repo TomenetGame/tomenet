@@ -6087,7 +6087,6 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 	}
 	/* paranoia */
 	if (i == SOUND_MAX_2010) i = -2;
-s_printf("smooth %d, i %d\n", smooth, i);
 
 	/* Mind-linked to someone? Send him our sound too! */
 	player_type *p_ptr2 = NULL;

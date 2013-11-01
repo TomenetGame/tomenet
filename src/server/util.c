@@ -1582,7 +1582,6 @@ void handle_music(int Ind) {
 void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool smooth) {
 	player_type *p_ptr = Players[Ind];
 
-s_printf("handle_smooth %d\n", smooth);
 	/* disable certain ambient sounds if they shouldn't be up here */
 	if (p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE && ((!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED)) || !istown(wpos))) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, smooth);
