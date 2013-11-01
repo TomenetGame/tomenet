@@ -6067,7 +6067,7 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 
 
 	/* translate: ambient sfx index -> sound index */
-	int i;
+	int i = -1;
 	cptr name = NULL;
 
 	//-1: smooth (poor with WoR, otherwise great), -2: sudden (needed for WoR/staircases)
