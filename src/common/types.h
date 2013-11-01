@@ -2835,6 +2835,9 @@ struct player_type
 	int music_current, music_monster; //background music currently playing for him/her; an overriding monster music
 	int audio_sfx, audio_mus, music_start;
 	int sound_ambient;
+	/* added for ambient-sfx-handling, so it does not do smooth transition
+	   on every wilderness wpos change even though we used WoR instead of walking: */
+	bool is_day;
 #endif
 	bool cut_sfx_attack;
 	int count_cut_sfx_attack;

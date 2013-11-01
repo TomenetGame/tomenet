@@ -6555,8 +6555,13 @@ extern int PlayerUID;
  #define SFX_TYPE_MON_SPELL	4
  #define SFX_TYPE_MON_MISC	5
  #define SFX_TYPE_NO_OVERLAP	6
+ /* special sound fx that "belong" to the looped background channel for
+    'weather' or for 'ambient' sounds, yet use the normal sfx channels
+    because they're one-time only: */
+ #define SFX_TYPE_WEATHER	7	/* sfx uses 'weather' mixer settings instead of 'sound' */
+ #define SFX_TYPE_AMBIENT	8
 
- /* new in 2013: for ambient sfx (inn fireplace!) */
+ /* new in 2013: for ambient sound fx channel (inn fireplace!) */
  #define SFX_AMBIENT_NONE	-1
  #define SFX_AMBIENT_FIREPLACE	0
  #define SFX_AMBIENT_SHORE	1

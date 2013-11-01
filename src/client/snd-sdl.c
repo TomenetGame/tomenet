@@ -145,6 +145,7 @@ static sample_list samples[SOUND_MAX_2010];
 /* Array of potential channels, for managing that only one
    sound of a kind is played simultaneously, for efficiency - C. Blue */
 static int channel_sample[MAX_CHANNELS];
+static int channel_type[MAX_CHANNELS];
 static int channel_volume[MAX_CHANNELS];
 static s32b channel_player_id[MAX_CHANNELS];
 
@@ -662,6 +663,13 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 	case SFX_TYPE_MON_MISC: if (c_cfg.ovl_sfx_mon_misc) break; else test = TRUE;
 		break;
 	case SFX_TYPE_NO_OVERLAP: /* never overlap! (eg tunnelling) */
+		test = TRUE;
+		break;
+	case SFX_TYPE_WEATHER:
+	case SFX_TYPE_AMBIENT:
+		/* always allow overlapping, since these should be sent by the
+		   server in a completely sensibly timed manner anyway. */
+		break;
 	default:
 		test = TRUE;
 	}
@@ -703,11 +711,12 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 	s = Mix_PlayChannel(-1, wave, 0);
 	if (s != -1) {
 		channel_sample[s] = event;
+		channel_type[s] = type;
 		channel_volume[s] = vol;
 		channel_player_id[s] = player_id;
 
 		/* HACK - use weather volume for thunder sfx */
-		if (channel_sample[s] == thunder_sound_idx)
+		if (type == SFX_TYPE_WEATHER)
 			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
 		else
 
@@ -755,6 +764,7 @@ extern bool sound_page(void) {
 	s = Mix_PlayChannel(-1, wave, 0);
 	if (s != -1) {
 		channel_sample[s] = page_sound_idx;
+		channel_type[s] = SFX_TYPE_AMBIENT; /* whatever (just so overlapping is possible) */
 		if (c_cfg.paging_max_volume) {
 			Mix_Volume(s, MIX_MAX_VOLUME);
 		} else if (c_cfg.paging_master_volume) {
@@ -799,6 +809,7 @@ extern bool sound_warning(void) {
 	s = Mix_PlayChannel(-1, wave, 0);
 	if (s != -1) {
 		channel_sample[s] = warning_sound_idx;
+		channel_type[s] = SFX_TYPE_AMBIENT; /* whatever (just so overlapping is possible) */
 		/* use 'page' sound volume settings for warning too */
 		if (c_cfg.paging_max_volume) {
 			Mix_Volume(s, MIX_MAX_VOLUME);
@@ -831,7 +842,7 @@ static void clear_channel(int c) {
 		Mix_Volume(c, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
 
 	/* HACK - if the sample was a weather sample, which would be thunder, reset the vol too, paranoia */
-	if (channel_sample[c] == thunder_sound_idx)
+	if (channel_type[c] == SFX_TYPE_WEATHER)
 		Mix_Volume(c, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
 
 	samples[channel_sample[c]].current_channel = -1;
@@ -1397,7 +1408,7 @@ static void set_mixing_sdl(void) {
 		if (n == ambient_channel) continue;
 
 		/* HACK - use weather volume for thunder sfx */
-		if (thunder_sound_idx != -1 && channel_sample[n] == thunder_sound_idx) {
+		if (channel_type[n] == SFX_TYPE_WEATHER) {
 			Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * channel_volume[n]) / 100));
 			continue;
 		} else
@@ -1435,10 +1446,9 @@ static void set_mixing_sdl(void) {
 			Mix_HaltChannel(weather_channel);
 
 		/* HACK - use weather volume for thunder sfx */
-		if (thunder_sound_idx != -1)
-			for (n = 0; n < cfg_max_channels; n++)
-				if (channel_sample[n] == thunder_sound_idx)
-					Mix_HaltChannel(n);
+		for (n = 0; n < cfg_max_channels; n++)
+			if (channel_type[n] == SFX_TYPE_WEATHER)
+				Mix_HaltChannel(n);
 	}
 
 	if (!cfg_audio_master || !cfg_audio_sound) {

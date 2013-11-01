@@ -2696,7 +2696,7 @@ static int Handle_login(int ind)
 	else
 		handle_music(NumPlayers); /* start music normally (instantly) */
 
-	handle_ambient_sfx(NumPlayers, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos);
+	handle_ambient_sfx(NumPlayers, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
 #endif
 
 	/* Initialize the client's unique list;
@@ -6062,7 +6062,7 @@ int Send_music(int Ind, int music) {
 //	s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, Players[Ind]->name, Ind);//debug
 	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
 }
-int Send_sfx_ambient(int Ind, int sfx_ambient) {
+int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
 
@@ -6070,9 +6070,9 @@ int Send_sfx_ambient(int Ind, int sfx_ambient) {
 	int i;
 	cptr name = NULL;
 
-	//-1: smooth (poor with WoR, otherwise great :/), -2: sudden
+	//-1: smooth (poor with WoR, otherwise great), -2: sudden (needed for WoR/staircases)
 	switch (sfx_ambient) {
-	case SFX_AMBIENT_NONE:		i = -2; break;//-1
+	case SFX_AMBIENT_NONE:		i = (smooth ? -1 : -2); break;
 	case SFX_AMBIENT_FIREPLACE:	name = "ambient_fireplace"; break;
 	case SFX_AMBIENT_SHORE:		name = "ambient_shore"; break;
 	case SFX_AMBIENT_LAKE:		name = "ambient_lake"; break;
@@ -6087,7 +6087,7 @@ int Send_sfx_ambient(int Ind, int sfx_ambient) {
 	}
 	/* paranoia */
 	if (i == SOUND_MAX_2010) i = -2;
-
+s_printf("smooth %d, i %d\n", smooth, i);
 
 	/* Mind-linked to someone? Send him our sound too! */
 	player_type *p_ptr2 = NULL;

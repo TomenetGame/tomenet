@@ -2646,8 +2646,7 @@ int Receive_sound(void) {
 
 	/* Make a sound (if allowed) */
 	if (use_sound) {
-		/* HACK - double "thunder" sfx uses weather settings */
-		if (s1 == thunder_sound_idx && s2 == thunder_sound_idx && noweather_mode) return 1;
+		if (t == SFX_TYPE_WEATHER && noweather_mode) return 1;
 
 #ifndef USE_SOUND_2010
 		Term_xtra(TERM_XTRA_SOUND, s1);

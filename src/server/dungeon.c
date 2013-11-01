@@ -1345,8 +1345,10 @@ void player_day(int Ind) {
 	p_ptr->window |= (PW_OVERHEAD);
 
 #ifdef USE_SOUND_2010
+	if (p_ptr->is_day) return;
+	p_ptr->is_day = TRUE;
 	handle_music(Ind);
-	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos);
+	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, TRUE);
 #endif
 }
 /* update a particular player's view to night, assuming he's on world surface */
@@ -1386,8 +1388,10 @@ void player_night(int Ind) {
 	p_ptr->window |= (PW_OVERHEAD);
 
 #ifdef USE_SOUND_2010
+	if (!p_ptr->is_day) return;
+	p_ptr->is_day = FALSE;
 	handle_music(Ind);
-	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos);
+	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, TRUE);
 #endif
 }
 
@@ -5531,6 +5535,7 @@ void process_player_change_wpos(int Ind)
 	dun_level *l_ptr;
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
 	char o_name_short[ONAME_LEN];
+	bool smooth_ambient = FALSE;
 
 	/* for obtaining statistical IDDC information: */
 	if (in_irondeepdive(&p_ptr->wpos_old)) s_printf("CVRG-IDDC: '%s' leaves floor %d:\n", p_ptr->name, p_ptr->wpos_old.wz);
@@ -5768,6 +5773,7 @@ void process_player_change_wpos(int Ind)
 
 	/* Over the river and through the woods */
 	case LEVEL_OUTSIDE:
+					smooth_ambient = TRUE; /* normal wilderness running */
 	case LEVEL_HOUSE:
 					starty = p_ptr->py;
 					startx = p_ptr->px;
@@ -6191,7 +6197,7 @@ void process_player_change_wpos(int Ind)
 	/* clear boss/floor-specific music */
 	p_ptr->music_monster = -1;
 	handle_music(Ind);
-	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos);
+	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, smooth_ambient);
 #endif
 
 #ifdef ENABLE_SELF_HIGHLIGHTING
@@ -8239,8 +8245,7 @@ void local_weather_update(void) {
 		    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type == 1 && /* no blizzards for now, just rainstorms */
 		    //wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_wind && 
 		    ((Players[i]->wpos.wy + Players[i]->wpos.wx) / 5) % 6 == thunderstorm) {
-			/* a little hack: client recognizes 'double' thunder sample as weather-related thunder */
-			sound_vol(i, "thunder", "thunder", SFX_TYPE_MISC, FALSE, 15 + (vol + Players[i]->wpos.wy + Players[i]->wpos.wx) % 86);
+			sound_vol(i, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, 15 + (vol + Players[i]->wpos.wy + Players[i]->wpos.wx) % 86);
 		}
 
 		/* no change in local situation? nothing to do then */

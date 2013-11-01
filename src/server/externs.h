@@ -1064,7 +1064,7 @@ extern int Send_target_info(int ind, int x, int y, cptr buf);
 extern int Send_sound(int ind, int sound, int alternative, int type, int vol, s32b player_id);
 #ifdef USE_SOUND_2010
 extern int Send_music(int ind, int music);
-extern int Send_sfx_ambient(int ind, int sfx_ambient);
+extern int Send_sfx_ambient(int ind, int sfx_ambient, bool smooth);
 #endif
 extern int Send_boni_col(int ind, boni_col c);
 extern int Send_beep(int ind);
@@ -1656,7 +1656,7 @@ extern void sound_near(int Ind, cptr name, cptr alternative, int type);
 extern void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type, bool viewable);
 extern void sound_near_monster(int m_idx, cptr name, cptr alternative, int type);
 extern void handle_music(int Ind);
-extern void handle_ambient_sfx(int Ind, cave_type *cptr, struct worldpos *wpos);
+extern void handle_ambient_sfx(int Ind, cave_type *cptr, struct worldpos *wpos, bool smooth);
 extern void sound_item(int Ind, int tval, int sval, cptr action);
 #else
 extern void sound(int Ind, int num);
