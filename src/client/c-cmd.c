@@ -1487,7 +1487,7 @@ void cmd_character(void)
 			xhtml_screenshot("screenshot????");
 
 		/* Check for quit */
-		if (ch == 'q' || ch == 'Q' || ch == ESCAPE) {
+		if (ch == 'q' || ch == 'Q' || ch == ESCAPE || ch == 'C') {
 			/* Quit */
 			done = 1;
 		}
