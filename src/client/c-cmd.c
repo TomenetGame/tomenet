@@ -2203,6 +2203,9 @@ void cmd_message(void)
 	char where[17], item[MSG_LEN];
 	bool store_item = FALSE;
 
+	/* BIG_MAP leads to big shops */
+	bool big_shop = (screen_hgt > SCREEN_HGT);//14 more lines, so alphabet is fully used a)..z)
+
 	/* Wipe the whole buffer to stop valgrind from complaining about the color code conversion - mikaelh */
 	C_WIPE(buf, sizeof(buf), char);
 
@@ -2277,7 +2280,7 @@ void cmd_message(void)
 			}
 			/* paste store item:  \\\<slot>  */
 			else if (buf[i] == '\\' && buf[i + 1] == '\\' && buf[i + 2] == '\\' &&
-			    buf[i + 3] >= 'a' && buf[i + 3] <= 'l') {
+			    buf[i + 3] >= 'a' && buf[i + 3] <= (big_shop ? 'z' : 'l')) {
 				j = buf[i + 3] - 'a' + store_top;
     	                	store_paste_item(item, j);
                         	store_paste_where(where);
