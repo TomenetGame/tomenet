@@ -1069,9 +1069,11 @@ static void process_effects(void) {
 				} else if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
+ #if 0 /* no need to erase inbetween, while effect is still expanding - at the same time this fixes ugly tile flickering from redrawing (lava!) */
 				} else if (e_ptr->flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3)) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
+ #endif
 				}
 			}
 #endif	// 0
@@ -6641,6 +6643,25 @@ void dungeon(void)
 		/* process certain player-related timers */
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->redraw_cooldown) Players[i]->redraw_cooldown--;
+		}
+	}
+
+	/* process every 1/5th second */
+	if (!(turn % (cfg.fps / 5))) {
+		if (nether_realm_collapsing && !rand_int(8)) {
+			struct worldpos wpos = {netherrealm_wpos_x, netherrealm_wpos_y, netherrealm_wpos_z * netherrealm_end_wz};
+			int x = nrc_x, y = nrc_y - 5; /* start somewhat 'above' Zu-Aon's death spot */
+
+			/* stay in bounds */
+			if (x < 20) x = rand_int(41);
+			else if (x >= MAX_WID - 20) x = MAX_WID - 40 + rand_int(40);
+			else x = x - 20 + rand_int(41);
+			if (y < 15) y = rand_int(16);
+			else if (y >= MAX_HGT - 15) y = MAX_HGT - 30 + rand_int(30);
+			else y = y - 15 + rand_int(31);
+
+			//cast_lightning(&wpos, rand_int(MAX_WID - 20) + 10, rand_int(MAX_HGT - 15) + 5);
+			cast_lightning(&wpos, x, y);
 		}
 	}
 

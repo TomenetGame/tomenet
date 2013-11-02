@@ -5673,6 +5673,13 @@ if (cfg.unikill_format) {
 
 		/* dungeon boss, but drops multiple items */
 		} else if (m_ptr->r_idx == RI_ZU_AON) {
+			dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+			l_ptr->flags2 |= LF2_COLLAPSING;
+			nether_realm_collapsing = TRUE;
+			nrc_x = m_ptr->fx;
+			nrc_y = m_ptr->fy;
+
 #if 1
 			for (i = 1; i <= NumPlayers; i++) {
 				if (inarea(&Players[i]->wpos, &p_ptr->wpos)

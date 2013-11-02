@@ -988,3 +988,5 @@ bool jails_enabled = TRUE;
 bool allow_requesting_estate = FALSE;
 int netherrealm_wpos_x = 0, netherrealm_wpos_y = 0, netherrealm_wpos_z = 0, netherrealm_start = 0, netherrealm_end = 0;
 int valinor_wpos_x = 0, valinor_wpos_y = 0, valinor_wpos_z = 0;
+bool nether_realm_collapsing = FALSE;
+int nrc_x, nrc_y, netherrealm_end_wz;

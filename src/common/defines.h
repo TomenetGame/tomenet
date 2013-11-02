@@ -5806,6 +5806,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 #define LF2_FAIR_TERRAIN_DAM	0x00100000L	/* Terain damage each player takes is roughly a fixed percentage of his max HP */
 #define LF2_DUN_BOSS	0x00200000L
+#define LF2_COLLAPSING	0x00400000L	/* audiovisual show when Zu-Aon is defeated ;) - C. Blue */
 
 /* minimum time required to stay on current floor in order to get an extra feeling on next floor */
 #define TURNS_FOR_EXTRA_FEELING		(cfg.fps * 120)

@@ -2957,6 +2957,7 @@ void new_rd_wild()
 					netherrealm_wpos_z = -1;
 					netherrealm_start = d_ptr->baselevel;
 					netherrealm_end = d_ptr->baselevel + d_ptr->maxdepth - 1;
+					netherrealm_end_wz = d_ptr->maxdepth;
 				}
 				else if (d_ptr->type == DI_VALINOR) {
 					valinor_wpos_x = x;
@@ -3015,6 +3016,7 @@ void new_rd_wild()
 					netherrealm_wpos_z = 1;
 					netherrealm_start = d_ptr->baselevel;
 					netherrealm_end = d_ptr->baselevel + d_ptr->maxdepth - 1;
+					netherrealm_end_wz = d_ptr->maxdepth;
 				}
 				else if (d_ptr->type == DI_VALINOR) {
 					valinor_wpos_x = x;
