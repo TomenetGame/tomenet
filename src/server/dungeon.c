@@ -1287,6 +1287,168 @@ static void process_effects(void) {
 							everyone_lite_spot(wpos, j, i);
 						}
 					}
+				} else if ((e_ptr->flags & EFF_LIGHTNING2)) {
+					int stage = e_ptr->rad;
+
+					if (stage > 8) stage = 8; /* afterglow */
+
+					switch (stage) {
+					case 8:
+						if (i == e_ptr->cx + mirrored * 6 && j == e_ptr->cy + 5) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 7:
+						if (i == e_ptr->cx + mirrored * 6 && j == e_ptr->cy + 4) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = -mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 6:
+						if (i == e_ptr->cx + mirrored * 5 && j == e_ptr->cy + 3) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * (4+1) && j == e_ptr->cy + 3) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 5:
+						if (i == e_ptr->cx + mirrored * 4 && j == e_ptr->cy + 3) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = -mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * (3+1) && j == e_ptr->cy + 3) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 4:
+						if (i == e_ptr->cx + mirrored * 3 && j == e_ptr->cy + 2) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * (2+1) && j == e_ptr->cy + 3) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 3:
+						if (i == e_ptr->cx + mirrored * 2 && j == e_ptr->cy + 2) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = -mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * 2 && j == e_ptr->cy + 2) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 0;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 2:
+						if (i == e_ptr->cx + mirrored * 1 && j == e_ptr->cy + 1) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = -mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * 1 && j == e_ptr->cy + 1) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 1:
+						if (i == e_ptr->cx && j == e_ptr->cy) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 0;
+							everyone_lite_spot(wpos, j, i);
+						}
+					}
+				} else if ((e_ptr->flags & EFF_LIGHTNING3)) {
+					int stage = e_ptr->rad;
+
+					if (stage > 10) stage = 10; /* afterglow */
+
+					switch (stage) {
+					case 10:
+						if (i == e_ptr->cx - mirrored * 8 && j == e_ptr->cy + 6) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 0;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 9:
+						if (i == e_ptr->cx - mirrored * 7 && j == e_ptr->cy + 5) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 8:
+						if (i == e_ptr->cx - mirrored * 6 && j == e_ptr->cy + 4) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 7:
+						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 3) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 0;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 6:
+						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 2) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored && j == e_ptr->cy + 4) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 0;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 5:
+						if (i == e_ptr->cx - mirrored * 4 && j == e_ptr->cy + 1) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * 2 && j == e_ptr->cy + 3) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = -mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 4:
+						if (i == e_ptr->cx - mirrored * 3 && j == e_ptr->cy + 1) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * 3 && j == e_ptr->cy + 2) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 0;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 3:
+						if (i == e_ptr->cx - mirrored * 2 && j == e_ptr->cy + 1) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 2:
+						if (i == e_ptr->cx - mirrored * 1 && j == e_ptr->cy) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 1:
+						if (i == e_ptr->cx && j == e_ptr->cy) {
+							c_ptr->effect = k;
+							c_ptr->effect_xtra = mirrored;
+							everyone_lite_spot(wpos, j, i);
+						}
+					}
 				}
 			}
 		}

@@ -6049,7 +6049,7 @@ bool cast_fireworks(worldpos *wpos, int x, int y) {
 bool cast_lightning(worldpos *wpos, int x, int y) {
 	char pattacker[80];
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
-	int typ = rand_int(1 * 2); /* style / mirrored direction? */
+	int typ = rand_int(3 * 2); /* style / mirrored direction? */
 
         strcpy(pattacker, "");
 
@@ -6068,6 +6068,10 @@ bool cast_lightning(worldpos *wpos, int x, int y) {
 
 	project_interval = 1;
 	project_time += 10; /* afterglow */
+
+#ifdef USE_SOUND_2010
+	sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_AMBIENT, 100);
+#endif
 
 	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, typ, GF_SHOW_LIGHTNING, flg, pattacker));
 }

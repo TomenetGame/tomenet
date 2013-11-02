@@ -1201,6 +1201,42 @@ void sound_vol(int Ind, cptr name, cptr alternative, int type, bool nearby, int 
 	}
 	Send_sound(Ind, val, val2, type, vol, Players[Ind]->id);
 }
+/* Send sound to everyone on a particular wpos sector/dungeon floor */
+void sound_floor_vol(struct worldpos *wpos, cptr name, cptr alternative, int type, int vol) {
+	int val = -1, val2 = -1, i;
+
+	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], name)) {
+			val = i;
+			break;
+		}
+	}
+
+	if (alternative) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], alternative)) {
+			val2 = i;
+			break;
+		}
+	}
+
+	if (val == -1) {
+		if (val2 != -1) {
+			/* Use the alternative instead */
+			val = val2;
+			val2 = -1;
+		} else {
+			return;
+		}
+	}
+
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (!inarea(&Players[i]->wpos, wpos)) continue;
+		Send_sound(i, val, val2, type, vol, Players[i]->id);
+	}
+}
 /* send sound to player and everyone nearby at full volume, similar to
    msg_..._near(), except it also sends to the player himself.
    This is used for highly important and *loud* sounds such as 'shriek' - C. Blue */
