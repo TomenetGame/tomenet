@@ -6223,6 +6223,10 @@ void do_slash_cmd(int Ind, char *message)
 				else fireworks = 1;
 				return;
 			}
+			else if (prefix(message, "/lightning")) {
+				cast_lightning(&p_ptr->wpos, p_ptr->px, p_ptr->py);
+				return;
+			}
 			else if (prefix(message, "/hostilities")) {
 				player_list_type *ptr;
 

@@ -2009,12 +2009,14 @@
 #define EFF_CROSSHAIR_A		0x00000010
 #define EFF_CROSSHAIR_B		0x00000020
 #define EFF_CROSSHAIR_C		0x00000040
+#define EFF_LIGHTNING1		0x01000000	/* For Nether Realm finishing */
+#define EFF_LIGHTNING2		0x02000000	/* For Nether Realm finishing */
+#define EFF_LIGHTNING3		0x04000000	/* For Nether Realm finishing */
 #define EFF_RAINING		0x08000000	/* New ideas for pushing the edge of Rogue-like gaming ^^ */
 #define EFF_FIREWORKS1		0x10000000	/* For NEW_YEARS_EVE =) - C. Blue*/
 #define EFF_FIREWORKS2		0x20000000	/* For new year's eve too. */
 #define EFF_FIREWORKS3		0x40000000	/* For new year's eve too. */
 #define EFF_SNOWING		0x80000000	/* For WINTER_SEASON */
-
 
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
@@ -4152,6 +4154,14 @@
 /* full-screen warnings or other important notifications that players oughtn't overlook - C. Blue */
 //ugly though, since they are wpos-bound -..
 // #define GF_TEXT_UPDATE	210 /* 'your game version is outdated..' */
+#if 0
+ #define GF_LIGHTNING_DOWN	211
+ #define GF_LIGHTNING_LEFT	212
+ #define GF_LIGHTNING_RIGHT	213
+ #define GF_LIGHTNING_HORIZ	214
+#else
+ #define GF_SHOW_LIGHTNING	211
+#endif
 
 #define GF_CROSSHAIR 		250 /* what's this for? appearently unused; moved it to 250 */
 

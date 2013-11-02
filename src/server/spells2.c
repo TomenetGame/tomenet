@@ -5967,8 +5967,7 @@ bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interv
 /*
  * Singing in the rain :-o
  */
-bool cast_raindrop(worldpos *wpos, int x)
-{
+bool cast_raindrop(worldpos *wpos, int x) {
 	char pattacker[80];
         strcpy(pattacker, "");
         int pseudo_y_start;
@@ -5990,9 +5989,9 @@ bool cast_raindrop(worldpos *wpos, int x)
 
 /*
  * Let it snow, let it snow, let it snow... (WINTER_SEASON)
+ * 'interval' is movement speed
  */
-bool cast_snowflake(worldpos *wpos, int x, int interval) /* interval is movement speed */
-{
+bool cast_snowflake(worldpos *wpos, int x, int interval) {
 	char pattacker[80];
         strcpy(pattacker, "");
 
@@ -6008,8 +6007,7 @@ bool cast_snowflake(worldpos *wpos, int x, int interval) /* interval is movement
 /*
  * Fireworks! (NEW_YEARS_EVE)
  */
-bool cast_fireworks(worldpos *wpos, int x, int y)
-{
+bool cast_fireworks(worldpos *wpos, int x, int y) {
 	char pattacker[80];
         strcpy(pattacker, "");
 
@@ -6046,6 +6044,32 @@ bool cast_fireworks(worldpos *wpos, int x, int y)
 #endif
 
 	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, typ, flg, pattacker)); /* typ -> colour */
+}
+
+bool cast_lightning(worldpos *wpos, int x, int y) {
+	char pattacker[80];
+	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
+	int typ = rand_int(1 * 2); /* style / mirrored direction? */
+
+        strcpy(pattacker, "");
+
+	if (typ < 2) {
+		project_time_effect = EFF_LIGHTNING1;
+		project_time = 14;
+	} else if (typ < 2 * 2) {
+		project_time_effect = EFF_LIGHTNING2;
+		project_time = 8;
+		typ -= 2;
+	} else {
+		project_time_effect = EFF_LIGHTNING3;
+		project_time = 10;
+		typ -= 2 * 2;
+	}
+
+	project_interval = 1;
+	project_time += 10; /* afterglow */
+
+	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, typ, GF_SHOW_LIGHTNING, flg, pattacker));
 }
 
 

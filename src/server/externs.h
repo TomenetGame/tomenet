@@ -1496,6 +1496,7 @@ extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int
 extern bool cast_raindrop(worldpos *wpos, int x);
 extern bool cast_snowflake(worldpos *wpos, int x, int interval);
 extern bool cast_fireworks(worldpos *wpos, int x, int y);
+extern bool cast_lightning(worldpos *wpos, int x, int y);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker);

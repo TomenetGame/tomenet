@@ -866,8 +866,7 @@ static void erase_effects(int effect)
    in spell_color(). - C. Blue */
 #define ANIMATE_EFFECTS /* animates spell_color() randomness, costs more bandwidth */
 #define FREQUENT_EFFECT_ANIMATION /* costs even more bandwidth */
-static void process_effects(void)
-{
+static void process_effects(void) {
 	int i, j, k, l;
 	worldpos *wpos;
 	cave_type **zcave;
@@ -898,17 +897,13 @@ static void process_effects(void)
 
 #ifdef ARCADE_SERVER
  #if 0
-                if(e_ptr->flags & EFF_CROSSHAIR_A || e_ptr->flags & EFF_CROSSHAIR_B || e_ptr->flags & EFF_CROSSHAIR_C)
-                {
+                if ((e_ptr->flags & EFF_CROSSHAIR_A) || (e_ptr->flags & EFF_CROSSHAIR_B) || (e_ptr->flags & EFF_CROSSHAIR_C)) {
 
                         /* e_ptr->interval is player who controls it */
-                        if(e_ptr->interval >= NumPlayers)
-                        {
+                        if (e_ptr->interval >= NumPlayers) {
                                 p_ptr = Players[e_ptr->interval];
-                                if(k == p_ptr->e)
-                                {
-                                        if(e_ptr->cy != p_ptr->arc_b || e_ptr->cx != p_ptr->arc_a)
-                                        {
+                                if (k == p_ptr->e) {
+                                        if (e_ptr->cy != p_ptr->arc_b || e_ptr->cx != p_ptr->arc_a) {
                                                 if (!in_bounds2(wpos, e_ptr->cy, e_ptr->cx)) continue;
                                                 c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
                                                 c_ptr->effect = 0;
@@ -921,17 +916,13 @@ static void process_effects(void)
                                                 everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
                                         }
 
+                                } else {
+	                                erase_effects(k);
                                 }
-                                else
-                                {
-                                erase_effects(k);
-                                }
+                        } else {
+	                        erase_effects(k);
                         }
-                        else
-                        {
-                        erase_effects(k);
-                        }
-                continue;
+			continue;
                 }
  #endif
 #endif
@@ -982,8 +973,7 @@ static void process_effects(void)
 		}
 
 		/* Storm ends if the cause is gone */
-		if (e_ptr->flags & EFF_STORM && (who == PROJECTOR_EFFECT || who == PROJECTOR_PLAYER))
-		{
+		if (e_ptr->flags & EFF_STORM && (who == PROJECTOR_EFFECT || who == PROJECTOR_PLAYER)) {
 			erase_effects(k);
 			continue;
 		}
@@ -1047,8 +1037,7 @@ static void process_effects(void)
 				//	if (!alive || death) return;
 				/* Storm ends if the cause is gone */
 				if (e_ptr->flags & EFF_STORM &&
-				    (who == PROJECTOR_PLAYER || Players[0 - who]->death))
-				{
+				    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
 					erase_effects(k);
 					break;
 				}
@@ -1056,40 +1045,31 @@ static void process_effects(void)
 
 
 #if 0
-			if (((e_ptr->flags & EFF_WAVE) && !(e_ptr->flags & EFF_LAST)) || ((e_ptr->flags & EFF_STORM) && !(e_ptr->flags & EFF_LAST)))
-			{
+			if (((e_ptr->flags & EFF_WAVE) && !(e_ptr->flags & EFF_LAST)) || ((e_ptr->flags & EFF_STORM) && !(e_ptr->flags & EFF_LAST))) {
 				if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2)
 					c_ptr->effect = 0;
 			}
 #else	// 0
 
-			if (!(e_ptr->flags & EFF_LAST))
-			{
-				if ((e_ptr->flags & EFF_WAVE))
-				{
-					if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2)
-					{
+			if (!(e_ptr->flags & EFF_LAST)) {
+				if ((e_ptr->flags & EFF_WAVE)) {
+					if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2) {
 						c_ptr->effect = 0;
 						everyone_lite_spot(wpos, j, i);
 					}
-				}
-				else if ((e_ptr->flags & EFF_STORM))
-				{
+				} else if ((e_ptr->flags & EFF_STORM)) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
-				}
-				else if ((e_ptr->flags & EFF_SNOWING))
-				{
+				} else if ((e_ptr->flags & EFF_SNOWING)) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
-				}
-				else if ((e_ptr->flags & EFF_RAINING))
-				{
+				} else if ((e_ptr->flags & EFF_RAINING)) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
-				}
-				else if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3))
-				{
+				} else if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
+					c_ptr->effect = 0;
+					everyone_lite_spot(wpos, j, i);
+				} else if (e_ptr->flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3)) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
 				}
@@ -1097,11 +1077,9 @@ static void process_effects(void)
 #endif	// 0
 
 			/* Creates a "wave" effect*/
-			if (e_ptr->flags & EFF_WAVE)
-			{
+			if (e_ptr->flags & EFF_WAVE) {
 				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) &&
-						(distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad))
-				{
+				    (distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad)) {
 					c_ptr->effect = k;
 					everyone_lite_spot(wpos, j, i);
 				}
@@ -1172,6 +1150,123 @@ static void process_effects(void)
 					}
 				}
 			}
+
+                        /* Generate lightning effects */
+			if (e_ptr->flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3)) {
+				int mirrored = (e_ptr->dam == 0) ? 1 : -1;
+
+				if ((e_ptr->flags & EFF_LIGHTNING1)) {
+					int stage = e_ptr->rad;
+
+					if (stage > 15) stage = 15; /* afterglow */
+
+					switch (stage) {
+					case 15:
+						if (i == e_ptr->cx - mirrored * 14 && j == e_ptr->cy + 4) {///
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 14:
+						if (i == e_ptr->cx - mirrored * 13 && j == e_ptr->cy + 3) {//_
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 13:
+						if (i == e_ptr->cx - mirrored * 12 && j == e_ptr->cy + 3) {///
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * 6 && j == e_ptr->cy + 5) {//_
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 12:
+						if (i == e_ptr->cx - mirrored * 11 && j == e_ptr->cy + 2) {//_
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 5) {//_
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 11:
+						if (i == e_ptr->cx - mirrored * 10 && j == e_ptr->cy + 2) {//_
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * 4 && j == e_ptr->cy + 5) {///
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 10:
+						if (i == e_ptr->cx - mirrored * 9 && j == e_ptr->cy + 2) {//_
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * 3 && j == e_ptr->cy + 4) {///#
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 9:
+						if (i == e_ptr->cx - mirrored * 8 && j == e_ptr->cy + 2) {///
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * 3 && j == e_ptr->cy + 3) {//_
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 8:
+						if (i == e_ptr->cx - mirrored * 7 && j == e_ptr->cy + 1) {//_
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * 4 && j == e_ptr->cy + 3) {//`
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 7:
+						if (i == e_ptr->cx - mirrored * 6 && j == e_ptr->cy + 1) {//_
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 2) {//`
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 6:
+						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 1) {//_
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 5:
+						if (i == e_ptr->cx - mirrored * 4 && j == e_ptr->cy + 1) {///
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 4:
+						if (i == e_ptr->cx - mirrored * 3 && j == e_ptr->cy) {
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 3:
+						if (i == e_ptr->cx - mirrored * 2 && j == e_ptr->cy) {
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 2:
+						if (i == e_ptr->cx - mirrored * 1 && j == e_ptr->cy) {
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					case 1:
+						if (i == e_ptr->cx && j == e_ptr->cy) {//_
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					}
+				}
+			}
 		}
 
 		if (e_ptr->flags & EFF_WAVE) e_ptr->rad++;
@@ -1233,6 +1328,12 @@ static void process_effects(void)
 		/* fireworks */
 		else if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
 			e_ptr->rad++; /* while radius < time/2 -> "rise into the air", otherwise "explode" */
+		}
+
+		/* lightning */
+		else if ((e_ptr->flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3))
+		    && e_ptr->rad < 15) {
+			e_ptr->rad++;
 		}
 	}
 

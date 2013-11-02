@@ -3273,8 +3273,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		}
 	}
 
+
+	if (!c_ptr->effect) return;
+
 	/* display blue raindrops */
-	if (c_ptr->effect && (effects[c_ptr->effect].flags & EFF_RAINING)) {
+	if ((effects[c_ptr->effect].flags & EFF_RAINING)) {
 		(*ap) = TERM_BLUE;
 		if (wind_gust > 0) (*cp) = '/';
 		else if (wind_gust < 0) (*cp) = '\\';
@@ -3282,13 +3285,13 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	}
 	/* for WINTER_SEASON */
 	/* display white snowflakes */
-	if (c_ptr->effect && (effects[c_ptr->effect].flags & EFF_SNOWING)) {
+	if ((effects[c_ptr->effect].flags & EFF_SNOWING)) {
 		(*ap) = TERM_WHITE;
 		(*cp) = '*'; /* a little bit large maybe, but '.' won't be noticed on the other hand? */
 	}
 	/* for NEW_YEARS_EVE */
 	/* display fireworks */
-	if (c_ptr->effect && (effects[c_ptr->effect].flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3))) {
+	if ((effects[c_ptr->effect].flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3))) {
 		switch (effects[c_ptr->effect].type) {
 		case GF_FW_FIRE: (*ap) = TERM_FIRE; break;
 		case GF_FW_ELEC: (*ap) = TERM_ELEC; break;
@@ -3300,15 +3303,25 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		}
 		(*cp) = '*'; /* a little bit large maybe, but '.' won't be noticed on the other hand? */
 	}
+	/* for Nether Realm finishing */
+	if ((effects[c_ptr->effect].flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3))) {
+		(*ap) = TERM_LITE;
+		(*cp) = '*';
+#if 0
+		switch (effects[c_ptr->effect].type) {
+		case GF_LIGHTNING_DOWN: (*cp) = '|'; break;
+		case GF_LIGHTNING_LEFT: (*cp) = '/'; break;
+		case GF_LIGHTNING_RIGHT: (*cp) = '\\'; break;
+		case GF_LIGHTNING_HORIZ: (*cp) = '_'; break;
+		}
+#endif
+	}
 
 /* #ifdef ARCADE_SERVER
-        if (c_ptr->effect)
+        if ((effects[c_ptr->effect].flags & EFF_CROSSHAIR_A) || (effects[c_ptr->effect].flags & EFF_CROSSHAIR_B) || (effects[c_ptr->effect].flags & EFF_CROSSHAIR_C))
         {
-                if (effects[c_ptr->effect].flags & EFF_CROSSHAIR_A || effects[c_ptr->effect].flags & EFF_CROSSHAIR_B || effects[c_ptr->effect].flags & EFF_CROSSHAIR_C)
-                {
-                (*ap) = TERM_L_UMBER;
-                (*cp) = '+';
-                }
+	        (*ap) = TERM_L_UMBER;
+	        (*cp) = '+';
         }
 #endif */
 }
