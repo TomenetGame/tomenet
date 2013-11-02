@@ -7957,6 +7957,7 @@ extern int PlayerUID;
 //#define in_netherrealm(wpos) (getlevel(wpos) >= netherrealm_start)
 #define in_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z > 0)
 #define at_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z >= 0)
+#define netherrealm_bottom(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz == netherrealm_end_wz)
 
 /* check if a player is in Valinor */
 #define in_valinor(wpos) ((wpos)->wx == valinor_wpos_x && (wpos)->wy == valinor_wpos_y && (wpos)->wz * valinor_wpos_z > 0)

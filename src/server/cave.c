@@ -8106,12 +8106,12 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 //unused atm	bool dungeon_town = isdungeontown(wpos);
 	bool sector00 = (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z);
 	bool valinor = in_valinor(wpos);
-	bool netherrealm_bottom = in_netherrealm(wpos) && getlevel(wpos) == netherrealm_end;
+	bool nr_bottom = in_netherrealm(wpos) && getlevel(wpos) == netherrealm_end;
 	bool arena_pvp = (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z);
 	bool arena_monster = (ge_special_sector && wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z);
 
 	/* usually allow all changes (normal dungeons and town-unrelated world map) */
-	if (!arena_monster && !arena_pvp && !bree && !town && !townarea && !sector00 && !valinor && !netherrealm_bottom) return(TRUE);
+	if (!arena_monster && !arena_pvp && !bree && !town && !townarea && !sector00 && !valinor && !nr_bottom) return(TRUE);
 
 	/* preserve arenas; disallow trees for balancing (pvp-arena) */
 	if (arena_pvp || arena_monster) return(FALSE);
@@ -8127,24 +8127,24 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	case FEAT_IVY:
 	case FEAT_DEAD_TREE:
         case FEAT_ICE:
-		if (town || sector00 || valinor || netherrealm_bottom) return(FALSE);
+		if (town || sector00 || valinor || nr_bottom) return(FALSE);
 		break;
 
 	case FEAT_WALL_EXTRA: /* tested by earthquake() and destroy_area() */
 	case FEAT_SHAL_LAVA:
 	case FEAT_DEEP_LAVA:
-		if (town || townarea || sector00 || valinor || netherrealm_bottom) return(FALSE);
+		if (town || townarea || sector00 || valinor || nr_bottom) return(FALSE);
 		break;
 
 	case FEAT_TREE: /* also for 'digging' and 'stone2mud' */
 	case FEAT_BUSH: /* just moved here because FEAT_TREE is also here */
-		if (town || sector00 || valinor || netherrealm_bottom) return(FALSE);
+		if (town || sector00 || valinor || nr_bottom) return(FALSE);
 		break;
 
 	case FEAT_GLYPH:
 	case FEAT_RUNE:
 		/* generally allow in town, restrictions are applied in cave_set_feat_live().) */
-		if (sector00 || valinor || netherrealm_bottom) return(FALSE);
+		if (sector00 || valinor || nr_bottom) return(FALSE);
 		break;
 
 	/* don't allow any changes at all to preserve the visuals 100% */
@@ -8157,7 +8157,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
         case FEAT_MUD:
         case FEAT_FLOWER:
 /*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-		if (town || valinor || netherrealm_bottom) return(FALSE);
+		if (town || valinor || nr_bottom) return(FALSE);
 		break;
 
 	/* generate.c uses these for staircases in towns */

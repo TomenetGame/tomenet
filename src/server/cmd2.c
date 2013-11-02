@@ -177,8 +177,12 @@ void do_cmd_go_up(int Ind)
 	/* probability travel restrictions */
 	if (dungeon) {
 		if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS) {
+			if (!p_ptr->ghost && netherrealm_bottom(wpos)) {
+				msg_print(Ind,"\377rA magical force prevents you from travelling upwards.");
+				if (!is_admin(p_ptr)) return;
+			}
 			if (!p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN))) {
-				msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
+				msg_print(Ind,"\377rA magical force prevents you from travelling upwards.");
 				if (!is_admin(p_ptr)) return;
 			}
 			if (wpos->wz == -1 && p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_EXIT_FLOAT) {
@@ -723,6 +727,10 @@ void do_cmd_go_down(int Ind)
 	/* probability travel restrictions */
 	if (tower) {
 		if ((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE)) {
+			if (!p_ptr->ghost && netherrealm_bottom(wpos)) {
+				msg_print(Ind,"\377rA magical force prevents you from travelling downwards.");
+				if (!is_admin(p_ptr)) return;
+			}
 			if ((!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN))) {
 				msg_print(Ind,"\377rA magical force prevents you from travelling downwards.");
 				if (!is_admin(p_ptr)) return;

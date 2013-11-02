@@ -868,10 +868,7 @@ static void place_random_stairs(struct worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 
-	if (wpos->wx == netherrealm_wpos_x &&
-	    wpos->wy == netherrealm_wpos_y &&
-	    wpos->wz == netherrealm_end_wz)
-		return;
+	if (netherrealm_bottom(wpos)) return;
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -1042,10 +1039,7 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 
 	if (!(zcave = getcave(wpos))) return;
 
-	if (wpos->wx == netherrealm_wpos_x &&
-	    wpos->wy == netherrealm_wpos_y &&
-	    wpos->wz == netherrealm_end_wz)
-		return;
+	if (netherrealm_bottom(wpos)) return;
 
 	/* Town -- must go down */
 	if (!can_go_up_simple(wpos)) {
@@ -9102,7 +9096,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #ifdef ARCADE_SERVER
 	int mx, my;
 #endif
-	bool netherrealm_level = FALSE, netherrealm_bottom = FALSE;
+	bool netherrealm_level = FALSE, nr_bottom = FALSE;
 	int build_special_store = 0; /* 0 = don't build a dungeon store,
 					1 = build deep dungeon store,
 					2 = build low-level dungeon store,
@@ -9451,7 +9445,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		empty_level = TRUE; dark_empty = TRUE;
 		cavern = FALSE;
 		maze = FALSE; permaze = FALSE; bonus = FALSE;
-		netherrealm_bottom = TRUE;
+		nr_bottom = TRUE;
 	}
 
 	/* Hack -- Start with permawalls
@@ -9568,7 +9562,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	/* No rooms yet */
 	dun->cent_n = 0;
 
-	if (!netherrealm_bottom) {
+	if (!nr_bottom) {
 		/* Build some rooms */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 		if (in_irondeepdive(wpos) ? (!maze || !(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_MAZE)) :
@@ -9720,7 +9714,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		generate_maze(wpos, (d_ptr->flags1 & DF1_MAZE) ? 1 : randint(3));
 #endif
 	} else {
-		if (!netherrealm_bottom) {
+		if (!nr_bottom) {
 			/* Hack -- Scramble the room order */
 			for (i = 0; i < dun->cent_n; i++) {
 				int pick1 = rand_int(dun->cent_n);
@@ -10082,7 +10076,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #endif
 
 #ifndef ARCADE_SERVER
-	if (!netherrealm_bottom) {
+	if (!nr_bottom) {
 		/* Place some traps in the dungeon */
 		alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
 		    randint(k * (bonus ? 3 : 1)), p_ptr);
@@ -10105,7 +10099,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	}
 	/* It's done */
 #else
-	if (!netherrealm_bottom && wpos->wz < 0) {
+	if (!nr_bottom && wpos->wz < 0) {
 		/* Place some traps in the dungeon */
 		alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
 		    randint(k * (bonus ? 3 : 1)), p_ptr);
