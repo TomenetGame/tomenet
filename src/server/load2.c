@@ -2835,6 +2835,7 @@ errr rd_server_savefile()
 		u32b acct, guild_flags;
 		u16b party;
 		u16b quest;
+		byte admin;
 
 		rd_u32b(&tmp32u);
 
@@ -2861,12 +2862,13 @@ errr rd_server_savefile()
 			rd_byte(&guild);
 		        if (!s_older_than(4, 5, 1)) rd_u32b(&guild_flags); else guild_flags = 0;
 			rd_u16b(&quest);
+		        if (!s_older_than(4, 5, 13)) rd_byte(&admin); else admin = 0;
 
 			/* Read the player name */
 			rd_string(name, 80);
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, quest, laston);
+			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, quest, laston, admin);
 		}
 	}
 

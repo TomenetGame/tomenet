@@ -3191,7 +3191,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (ok == -4 || ok == -9 || ok == -6 || ok == -7) {
 					p_ptr->mode |= MODE_DED_PVP;
 					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0);
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0, 0);//assume NO ADMIN!
 //					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 					return;
 				}
@@ -3208,7 +3208,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (ok == -5 || ok == -8 || ok == -6 || ok == -7) {
 					p_ptr->mode |= MODE_DED_IDDC;
 					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0);
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0, 0);//assume NO ADMIN!
 //					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 					return;
 				}
@@ -3340,6 +3340,62 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			return;
 #endif
+		} else if (prefix(message, "/partymembers")) {
+			int slot, p = p_ptr->party, members = 0;
+			hash_entry *ptr;
+
+			if (!p) {
+				msg_print(Ind, "You are not in a party.");
+				return;
+			}
+
+			msg_format(Ind, "-- Players in your party '%s' --", parties[p].name);
+			for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+				ptr = hash_table[slot];
+				while (ptr) {
+					if (ptr->party == p) {
+						if (ptr->admin == 1) {
+							if (is_admin(p_ptr)) msg_format(Ind, "    \377r%s", ptr->name);
+							else {
+								ptr = ptr->next;
+								continue;
+							}
+						} else msg_format(Ind, "    %s", ptr->name);
+						members++;
+					}
+					ptr = ptr->next;
+				}
+			}
+			msg_format(Ind, "  %d member%s total.", members, members == 1 ? "" : "s");
+			return;
+		} else if (prefix(message, "/guildmembers")) {
+			int slot, g = p_ptr->guild, members = 0;
+			hash_entry *ptr;
+
+			if (!g) {
+				msg_print(Ind, "You are not in a guild.");
+				return;
+			}
+
+			msg_format(Ind, "-- Players in your guild '%s' --", guilds[g].name);
+			for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+				ptr = hash_table[slot];
+				while (ptr) {
+					if (ptr->guild == g) {
+						if (ptr->admin == 1) {
+							if (is_admin(p_ptr)) msg_format(Ind, "    \377r%s", ptr->name);
+							else {
+								ptr = ptr->next;
+								continue;
+							}
+						} else msg_format(Ind, "    %s", ptr->name);
+						members++;
+					}
+					ptr = ptr->next;
+				}
+			}
+			msg_format(Ind, "  %d member%s total.", members, members == 1 ? "" : "s");
+			return;
 		}
 
 
@@ -7340,6 +7396,18 @@ void do_slash_cmd(int Ind, char *message)
 				monster_desc(0, m_name, p_ptr->health_who, 0);
 				msg_format(Ind, "Tracking %s.", m_name);
 				p_ptr->redraw |= PR_HEALTH;
+				return;
+			}
+			/* fix hash table entry in particular aspect(s) */
+			else if (prefix(message, "/fixhash")) {
+				int p;
+				if (!tk) {
+					msg_print(Ind, "No player specified.");
+					return;
+				}
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				if (!p) return;
+				clockin(p, 6);
 				return;
 			}
 		}

@@ -1822,6 +1822,7 @@ static void wr_player_names(void)
 			wr_byte(ptr->guild);
 			wr_u32b(ptr->guild_flags);
 			wr_u16b(ptr->quest);
+			wr_byte(ptr->admin);
 			/* Store the player name */
 			wr_string(ptr->name);
 		}

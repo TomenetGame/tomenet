@@ -2368,13 +2368,13 @@ static void player_setup(int Ind, bool new)
 	if (!lookup_player_name(p_ptr->id)) {
 		time_t ttime;
 		/* Add */
-		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, time(&ttime));
+		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0));
 	} else {
 	/* Verify his data - only needed for 4.2.0 -> 4.2.2 savegame conversion :) - C. Blue */
 	/* Now also needed for 4.5.2 -> 4.5.3 again ^^ To stamp guild info into hash table, for self-adding */
 		time_t ttime;
 		/* Verify mode */
-		verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime));
+		verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0));
 	}
 
 	/* Set his "current activities" variables */

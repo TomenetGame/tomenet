@@ -3299,6 +3299,9 @@ void clockin(int Ind, int type) {
 				ptr->balance = p_ptr->balance;
 				break;
 #endif
+			case 6:
+				ptr->admin = p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0);
+				break;
 			}
 			break;
 		}
@@ -3817,7 +3820,7 @@ void account_checkexpiry(int Ind)
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston)
+void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin)
 {
 	int slot;
 	hash_entry *ptr;
@@ -3843,6 +3846,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 	ptr->race = race;
 	ptr->class = class;
 	ptr->mode = mode;
+	ptr->admin = admin;
 
 	/* Add the rest of the chain to this entry */
 	ptr->next = hash_table[slot];
@@ -3854,7 +3858,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 /*
  * Verify a player's data against the hash table. - C. Blue
  */
-void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston)
+void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin)
 {
 	hash_entry *ptr = lookup_player(id);
 
@@ -3875,6 +3879,10 @@ void verify_player(cptr name, int id, u32b account, byte race, byte class, byte 
 	if (ptr->guild_flags != guild_flags) {
 		s_printf("hash_entry: fixing guild_flags of %s.\n", ptr->name);
 		ptr->guild_flags = guild_flags;
+	}
+	if (ptr->admin != admin) {
+		s_printf("hash_entry: fixing admin state of %s.\n", ptr->name);
+		ptr->admin = admin;
 	}
 }
 
@@ -4332,7 +4340,7 @@ void restore_acclists(void) {
 			time_t ttime;
 			//s_printf("  adding: '%s' (id %d, acc %d)\n", ptr->name, ptr->id, ptr->account);
 			/* Add backed-up entry again */
-			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, 0, time(&ttime));
+			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, 0, time(&ttime), ptr->admin);
 		} else s_printf("  already exists: '%s' (id %d, acc %d)\n", name_forge, ptr->id, ptr->account);
 	}
 
