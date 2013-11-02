@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 31. October 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. November 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6208,6 +6208,12 @@ Ironman Deep Dive Challenge (IDDC)
     scrolls to enchant your items and keep the items sellable, then you have
     to take the staircase to leave the town, and read the scrolls in an actual
     dungeon level instead.
+
+    NOTE: You can use the command '/convertexclusive' to convert one of your
+    characters into a dedicated IDDC character, moving it to the specific
+    IDDC-only-character slot and freeing up the generic character slot.
+    This of course only works if you don't have an IDDC-exclusive character
+    already.
 
 
 Seasonal events
