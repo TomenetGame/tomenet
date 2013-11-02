@@ -864,28 +864,29 @@ static void place_down_stairs(worldpos *wpos, int y, int x)
 /*
  * Place an up/down staircase at given location
  */
-static void place_random_stairs(struct worldpos *wpos, int y, int x)
-{
+static void place_random_stairs(struct worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
+
+	if (wpos->wx == netherrealm_wpos_x &&
+	    wpos->wy == netherrealm_wpos_y &&
+	    wpos->wz == netherrealm_end_wz)
+		return;
+
 	if (!(zcave = getcave(wpos))) return;
+
 	c_ptr = &zcave[y][x];
-	if(!cave_clean_bold(zcave, y, x)) return;
-	if(!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)){
+	if (!cave_clean_bold(zcave, y, x)) return;
+
+	if (!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)){
 		/* special or what? */
-	}
-	else if(!can_go_down(wpos, 0x1) && can_go_up(wpos, 0x1)){
+	} else if(!can_go_down(wpos, 0x1) && can_go_up(wpos, 0x1)){
 		place_up_stairs(wpos, y, x);
-	}
-	else if(!can_go_up(wpos, 0x1) && can_go_down(wpos, 0x1)){
+	} else if(!can_go_up(wpos, 0x1) && can_go_down(wpos, 0x1)){
 		place_down_stairs(wpos, y, x);
-	}
-	else if (rand_int(100) < 50)
-	{
+	} else if (rand_int(100) < 50) {
 		place_down_stairs(wpos, y, x);
-	}
-	else
-	{
+	} else {
 		place_up_stairs(wpos, y, x);
 	}
 }
@@ -1038,7 +1039,13 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 	int starty, startx;
 	cave_type *c_ptr;
 	cave_type **zcave;
-	if(!(zcave = getcave(wpos))) return;
+
+	if (!(zcave = getcave(wpos))) return;
+
+	if (wpos->wx == netherrealm_wpos_x &&
+	    wpos->wy == netherrealm_wpos_y &&
+	    wpos->wz == netherrealm_end_wz)
+		return;
 
 	/* Town -- must go down */
 	if (!can_go_up_simple(wpos)) {
@@ -2945,15 +2952,12 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			place_object(wpos, yval, xval, FALSE, FALSE, FALSE, resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 
 		/* Stairs (20%) */
-		else
-		{
+		else {
 #ifndef ARCADE_SERVER
 			place_random_stairs(wpos, yval, xval);
 #else
-			if(wpos->wz < 0)
-			place_random_stairs(wpos, yval, xval);
+			if (wpos->wz < 0) place_random_stairs(wpos, yval, xval);
 #endif
-        
 		}
 
 		/* Traps to protect the treasure */

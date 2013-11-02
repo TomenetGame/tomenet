@@ -6649,7 +6649,7 @@ void dungeon(void)
 	/* process every 1/5th second */
 	if (!(turn % (cfg.fps / 5))) {
 		if (nether_realm_collapsing && !rand_int(8)) {
-			struct worldpos wpos = {netherrealm_wpos_x, netherrealm_wpos_y, netherrealm_wpos_z * netherrealm_end_wz};
+			struct worldpos wpos = {netherrealm_wpos_x, netherrealm_wpos_y, netherrealm_end_wz};
 			int x = nrc_x, y = nrc_y - 5; /* start somewhat 'above' Zu-Aon's death spot */
 
 			/* stay in bounds */
@@ -6657,7 +6657,7 @@ void dungeon(void)
 			else if (x >= MAX_WID - 20) x = MAX_WID - 40 + rand_int(40);
 			else x = x - 20 + rand_int(41);
 			if (y < 15) y = rand_int(16);
-			else if (y >= MAX_HGT - 15) y = MAX_HGT - 30 + rand_int(30);
+			else if (y >= MAX_HGT - 15) y = MAX_HGT - 30 + rand_int(23);//don't cut them off at the bottom border too much
 			else y = y - 15 + rand_int(31);
 
 			//cast_lightning(&wpos, rand_int(MAX_WID - 20) + 10, rand_int(MAX_HGT - 15) + 5);
