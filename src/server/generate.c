@@ -868,7 +868,9 @@ static void place_random_stairs(struct worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 
+#ifdef NETHERREALM_BOTTOM_RESTRICT
 	if (netherrealm_bottom(wpos)) return;
+#endif
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -1037,9 +1039,11 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 	cave_type *c_ptr;
 	cave_type **zcave;
 
-	if (!(zcave = getcave(wpos))) return;
-
+#ifdef NETHERREALM_BOTTOM_RESTRICT
 	if (netherrealm_bottom(wpos)) return;
+#endif
+
+	if (!(zcave = getcave(wpos))) return;
 
 	/* Town -- must go down */
 	if (!can_go_up_simple(wpos)) {
@@ -9253,6 +9257,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
  	if (magik(NO_MAP_CHANCE) && dun_lev >= 5) dun->l_ptr->flags1 |= LF1_NO_MAP;
 	if (magik(NO_MAGIC_MAP_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 	if (magik(NO_DESTROY_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_DESTROY;
+#endif
+
+#ifdef NETHERREALM_BOTTOM_RESTRICT
+	/* no probability travel out of Zu-Aon's floor */
+	if (netherrealm_bottom(wpos)) {
+		/* removing other bad flags though, to make it fair */
+		dun->l_ptr->flags1 = LF1_NO_MAGIC;
+	}
 #endif
 
 	/* TODO: copy dungeon_type flags to dun_level */

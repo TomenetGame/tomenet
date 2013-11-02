@@ -54,8 +54,10 @@ void do_cmd_go_up(int Ind)
 	cave_type **zcave;
 	bool one_way = FALSE;
 	int i;
+	struct dun_level *l_ptr;
 
 	if (!(zcave = getcave(wpos))) return;
+	l_ptr = getfloor(wpos);
 
 	if (wpos->wz > 0) tower = TRUE;
 	if (wpos->wz < 0) dungeon = TRUE;
@@ -174,13 +176,20 @@ void do_cmd_go_up(int Ind)
 		if (!is_admin(p_ptr)) return;
 	}
 #if 1
-	/* probability travel restrictions */
+	/* probability travel/ghost floating restrictions */
 	if (dungeon) {
 		if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS) {
+			if (l_ptr && p_ptr->prob_travel && !p_ptr->ghost && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+				if (!is_admin(p_ptr)) return;
+			}
+#if 0 /* done via NO_MAGIC */
+#ifdef NETHERREALM_BOTTOM_RESTRICT
 			if (!p_ptr->ghost && netherrealm_bottom(wpos)) {
 				msg_print(Ind,"\377rA magical force prevents you from travelling upwards.");
 				if (!is_admin(p_ptr)) return;
 			}
+#endif
+#endif
 			if (!p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN))) {
 				msg_print(Ind,"\377rA magical force prevents you from travelling upwards.");
 				if (!is_admin(p_ptr)) return;
@@ -195,18 +204,27 @@ void do_cmd_go_up(int Ind)
 			}
 		}
 	} else {
-		if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
-		    !p_ptr->ghost &&
-		    ((wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL) ||
-		    (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO) ||
-		    (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))) {
-			msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
-			if (!is_admin(p_ptr)) return;
+		if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS) {
+			if (l_ptr && p_ptr->prob_travel && !p_ptr->ghost && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+				if (!is_admin(p_ptr)) return;
+			}
+			/* for Nether Realm: No ghost diving! */
+			if ((wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO)) {
+				msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (!p_ptr->ghost &&
+			    ((wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL) ||
+			    //(wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO) ||  //redundant, see above
+			    (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))) {
+				msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
+				if (!is_admin(p_ptr)) return;
+			}
 		}
 	}
 #endif
 #ifndef ARCADE_SERVER
-	if(surface){
+	if (surface) {
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
@@ -222,8 +240,7 @@ void do_cmd_go_up(int Ind)
 		}
 #endif
 		/* Nether Realm only for Kings/Queens*/
-		if ((d_ptr->type == DI_NETHER_REALM) && !p_ptr->total_winner)
-		{
+		if ((d_ptr->type == DI_NETHER_REALM) && !p_ptr->total_winner) {
 			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
@@ -562,7 +579,10 @@ void do_cmd_go_down(int Ind)
 	cave_type **zcave;
 	bool one_way = FALSE; //ironman, no_up, force_down
 	int i;
-	if(!(zcave = getcave(wpos))) return;
+	struct dun_level *l_ptr;
+
+	if (!(zcave = getcave(wpos))) return;
+	l_ptr = getfloor(wpos);
 
 	if (wpos->wz > 0) tower = TRUE;
 	if (wpos->wz < 0) dungeon = TRUE;
@@ -724,13 +744,20 @@ void do_cmd_go_down(int Ind)
 		if (!is_admin(p_ptr)) return;
 	}
 #if 1
-	/* probability travel restrictions */
+	/* probability travel/ghost floating restrictions */
 	if (tower) {
 		if ((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE)) {
+			if (l_ptr && p_ptr->prob_travel && !p_ptr->ghost && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+				if (!is_admin(p_ptr)) return;
+			}
+#if 0 /* done via NO_MAGIC */
+#ifdef NETHERREALM_BOTTOM_RESTRICT
 			if (!p_ptr->ghost && netherrealm_bottom(wpos)) {
 				msg_print(Ind,"\377rA magical force prevents you from travelling downwards.");
 				if (!is_admin(p_ptr)) return;
 			}
+#endif
+#endif
 			if ((!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN))) {
 				msg_print(Ind,"\377rA magical force prevents you from travelling downwards.");
 				if (!is_admin(p_ptr)) return;
@@ -745,19 +772,28 @@ void do_cmd_go_down(int Ind)
 			}
 		}
 	} else {
-		if ((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
-		    !p_ptr->ghost &&
-		    ((wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL) ||
-		    (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_INTO) ||
-		    (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON))) {
-			msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
-			if (!is_admin(p_ptr)) return;
+		if ((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE)) {
+			if (l_ptr && p_ptr->prob_travel && !p_ptr->ghost && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+				if (!is_admin(p_ptr)) return;
+			}
+			/* for Nether Realm: No ghost diving! */
+			if ((wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO)) {
+				msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (!p_ptr->ghost &&
+			    ((wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL) ||
+			    //(wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_INTO) ||  //redundant, see above
+			    (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON))) {
+				msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
+				if (!is_admin(p_ptr)) return;
+			}
 		}
 	}
 #endif
 
 #ifndef ARCADE_SERVER
-	if(surface){
+	if (surface) {
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
 #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){

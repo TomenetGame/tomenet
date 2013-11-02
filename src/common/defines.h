@@ -5676,7 +5676,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF2_NO_RECALL_INTO	0x00000008L /* Player may not recall downwards into this dungeon \
 					       upwards into this tower. Added it especially for Nether Realm - C. Blue \
 					       Note: this also prevents probability travel while inside, \
-					             floating into it, and sending items via telekinesis. */
+					             floating into it, and sending items via telekinesis, \
+					             and it prevents ghost-floating deeper into it. */
 #define DF2_NO_MAGIC_MAP	0x00000010L /* non magic-mappable */
 #define DF2_MISC_STORES		0x00000020L /* spawn low-level dungeon stores such as under "RPG Server" rules */
 #define DF2_TOWNS_IRONRECALL	0x00000040L /* DF2_IRON: if level allows premature recalling then it has a town */
@@ -7958,6 +7959,9 @@ extern int PlayerUID;
 #define in_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z > 0)
 #define at_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z >= 0)
 #define netherrealm_bottom(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz == netherrealm_end_wz)
+
+/* Restrict escape from final Nether Realm level to WoR + ghost floating? */
+#define NETHERREALM_BOTTOM_RESTRICT
 
 /* check if a player is in Valinor */
 #define in_valinor(wpos) ((wpos)->wx == valinor_wpos_x && (wpos)->wy == valinor_wpos_y && (wpos)->wz * valinor_wpos_z > 0)
