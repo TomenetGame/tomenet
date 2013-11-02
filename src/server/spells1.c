@@ -11399,9 +11399,11 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			 *			  +pseudo 'centre'
 			 */
 			if (rad == 0) {
-				// effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
-						// (y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
-						// project_time_effect);
+#if 1 /* Kurzel's patch commented this out - but this is required for fireworks! */
+				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
+				    (y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
+				    project_time_effect);
+#endif
 #ifdef ARCADE_SERVER
 #if 0
                                                 if (project_time_effect & EFF_CROSSHAIR_A || project_time_effect & EFF_CROSSHAIR_B ||
