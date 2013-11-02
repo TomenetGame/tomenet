@@ -1151,9 +1151,9 @@ static void process_effects(void) {
 				}
 			}
 
-                        /* Generate lightning effects */
+                        /* Generate lightning effects -- effect_xtra: -1\ 0| 1/ 2_ */
 			if (e_ptr->flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3)) {
-				int mirrored = (e_ptr->dam == 0) ? 1 : -1;
+				int mirrored = (e_ptr->dam == 0) ? -1 : 1;
 
 				if ((e_ptr->flags & EFF_LIGHTNING1)) {
 					int stage = e_ptr->rad;
@@ -1162,106 +1162,128 @@ static void process_effects(void) {
 
 					switch (stage) {
 					case 15:
-						if (i == e_ptr->cx - mirrored * 14 && j == e_ptr->cy + 4) {///
+						if (i == e_ptr->cx + mirrored * 14 && j == e_ptr->cy + 4) {///
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = -mirrored;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 14:
-						if (i == e_ptr->cx - mirrored * 13 && j == e_ptr->cy + 3) {//_
+						if (i == e_ptr->cx + mirrored * 13 && j == e_ptr->cy + 3) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 13:
-						if (i == e_ptr->cx - mirrored * 12 && j == e_ptr->cy + 3) {///
+						if (i == e_ptr->cx + mirrored * 12 && j == e_ptr->cy + 3) {///
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = -mirrored;
 							everyone_lite_spot(wpos, j, i);
 						}
-						if (i == e_ptr->cx - mirrored * 6 && j == e_ptr->cy + 5) {//_
+						if (i == e_ptr->cx + mirrored * 6 && j == e_ptr->cy + 5) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 12:
-						if (i == e_ptr->cx - mirrored * 11 && j == e_ptr->cy + 2) {//_
+						if (i == e_ptr->cx + mirrored * 11 && j == e_ptr->cy + 2) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
-						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 5) {//_
+						if (i == e_ptr->cx + mirrored * 5 && j == e_ptr->cy + 5) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 11:
-						if (i == e_ptr->cx - mirrored * 10 && j == e_ptr->cy + 2) {//_
+						if (i == e_ptr->cx + mirrored * 10 && j == e_ptr->cy + 2) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
-						if (i == e_ptr->cx - mirrored * 4 && j == e_ptr->cy + 5) {///
+						if (i == e_ptr->cx + mirrored * 4 && j == e_ptr->cy + 5) {///
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = -mirrored;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 10:
-						if (i == e_ptr->cx - mirrored * 9 && j == e_ptr->cy + 2) {//_
+						if (i == e_ptr->cx + mirrored * 9 && j == e_ptr->cy + 2) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
-						if (i == e_ptr->cx - mirrored * 3 && j == e_ptr->cy + 4) {///#
+						if (i == e_ptr->cx + mirrored * 3 && j == e_ptr->cy + 4) {///
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = -mirrored;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 9:
-						if (i == e_ptr->cx - mirrored * 8 && j == e_ptr->cy + 2) {///
+						if (i == e_ptr->cx + mirrored * 8 && j == e_ptr->cy + 2) {///
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = -mirrored;
 							everyone_lite_spot(wpos, j, i);
 						}
-						if (i == e_ptr->cx - mirrored * 3 && j == e_ptr->cy + 3) {//_
+						if (i == e_ptr->cx + mirrored * 3 && j == e_ptr->cy + 3) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 8:
-						if (i == e_ptr->cx - mirrored * 7 && j == e_ptr->cy + 1) {//_
+						if (i == e_ptr->cx + mirrored * 7 && j == e_ptr->cy + 1) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
-						if (i == e_ptr->cx - mirrored * 4 && j == e_ptr->cy + 3) {//`
+						if (i == e_ptr->cx + mirrored * 4 && j == e_ptr->cy + 3) {//`
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = mirrored;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 7:
-						if (i == e_ptr->cx - mirrored * 6 && j == e_ptr->cy + 1) {//_
+						if (i == e_ptr->cx + mirrored * 6 && j == e_ptr->cy + 1) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
-						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 2) {//`
+						if (i == e_ptr->cx + mirrored * 5 && j == e_ptr->cy + 2) {//`
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = mirrored;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 6:
-						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 1) {//_
+						if (i == e_ptr->cx + mirrored * 5 && j == e_ptr->cy + 1) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 5:
-						if (i == e_ptr->cx - mirrored * 4 && j == e_ptr->cy + 1) {///
+						if (i == e_ptr->cx + mirrored * 4 && j == e_ptr->cy + 1) {///
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = -mirrored;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 4:
-						if (i == e_ptr->cx - mirrored * 3 && j == e_ptr->cy) {
+						if (i == e_ptr->cx + mirrored * 3 && j == e_ptr->cy) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 3:
-						if (i == e_ptr->cx - mirrored * 2 && j == e_ptr->cy) {
+						if (i == e_ptr->cx + mirrored * 2 && j == e_ptr->cy) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 2:
-						if (i == e_ptr->cx - mirrored * 1 && j == e_ptr->cy) {
+						if (i == e_ptr->cx + mirrored * 1 && j == e_ptr->cy) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
 					case 1:
 						if (i == e_ptr->cx && j == e_ptr->cy) {//_
 							c_ptr->effect = k;
+							c_ptr->effect_xtra = 2;
 							everyone_lite_spot(wpos, j, i);
 						}
 					}

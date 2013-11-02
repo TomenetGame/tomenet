@@ -3306,15 +3306,13 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	/* for Nether Realm finishing */
 	if ((effects[c_ptr->effect].flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3))) {
 		(*ap) = TERM_LITE;
-		(*cp) = '*';
-#if 0
-		switch (effects[c_ptr->effect].type) {
-		case GF_LIGHTNING_DOWN: (*cp) = '|'; break;
-		case GF_LIGHTNING_LEFT: (*cp) = '/'; break;
-		case GF_LIGHTNING_RIGHT: (*cp) = '\\'; break;
-		case GF_LIGHTNING_HORIZ: (*cp) = '_'; break;
+		switch (c_ptr->effect_xtra) {
+		case 0: (*cp) = '|'; break;
+		case 1: (*cp) = '/'; break;
+		case -1: (*cp) = '\\'; break;
+		case 2: (*cp) = '_'; break;
+		default: (*cp) = '*';
 		}
-#endif
 	}
 
 /* #ifdef ARCADE_SERVER

@@ -4154,14 +4154,7 @@
 /* full-screen warnings or other important notifications that players oughtn't overlook - C. Blue */
 //ugly though, since they are wpos-bound -..
 // #define GF_TEXT_UPDATE	210 /* 'your game version is outdated..' */
-#if 0
- #define GF_LIGHTNING_DOWN	211
- #define GF_LIGHTNING_LEFT	212
- #define GF_LIGHTNING_RIGHT	213
- #define GF_LIGHTNING_HORIZ	214
-#else
- #define GF_SHOW_LIGHTNING	211
-#endif
+#define GF_SHOW_LIGHTNING	211
 
 #define GF_CROSSHAIR 		250 /* what's this for? appearently unused; moved it to 250 */
 
