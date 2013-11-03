@@ -1224,10 +1224,18 @@ int party_create_ironteam(int Ind, cptr name)
 /*
  * Add player to a guild
  */
+/* Allow the guild master or an added to use any other character on their
+   account too, as long as they are guild members, to add other players? */
+#define GUILD_ELIGIBLE_ACCOUNT_CAN_ADD
 int guild_add(int adder, cptr name) {
 	player_type *p_ptr;
 	player_type *q_ptr = Players[adder];
 	int guild_id = q_ptr->guild, Ind = 0, i;
+#ifdef GUILD_ELIGIBLE_ACCOUNT_CAN_ADD
+	int *id_list, ids;
+	struct account *acc;
+	bool far_success = FALSE;
+#endif
 
 	if (!guild_id) {
 		msg_print(adder, "\377yYou are not in a guild");
@@ -1237,14 +1245,6 @@ int guild_add(int adder, cptr name) {
 	Ind = name_lookup_loose(adder, name, FALSE, TRUE);
 	if (Ind <= 0) return FALSE;
 	p_ptr = Players[Ind];
-
-	/* Make sure this isn't an impostor */
-	if (!((guilds[guild_id].flags & GFLG_ALLOW_ADDERS) && (q_ptr->guild_flags & PGF_ADDER))
-	    && guilds[guild_id].master != q_ptr->id
-	    && !is_admin(q_ptr)) {
-		msg_print(adder, "\377yYou cannot add new members.");
-		return FALSE;
-	}
 
 	/* Leaderless guilds do not allow addition of new members */
 	if (!lookup_player_name(guilds[guild_id].master)) {
@@ -1273,8 +1273,43 @@ int guild_add(int adder, cptr name) {
 		return FALSE;
 	}
 
+#ifdef GUILD_ELIGIBLE_ACCOUNT_CAN_ADD
+	/* check if he has a character in there already, to be eligible to self-add */
+	acc = GetAccount(q_ptr->accountname, NULL, FALSE);
+	/* paranoia */
+	if (!acc) {
+		/* uhh.. */
+		msg_print(Ind, "Sorry, self-adding has failed.");
+		return FALSE;
+	}
+	ids = player_id_list(&id_list, acc->id);
+	for (i = 0; i < ids; i++) {
+                if (lookup_player_guild(id_list[i]) != guild_id) continue;
+
+		if (id_list[i] != guilds[guild_id].master &&
+		    (!(guilds[guild_id].flags & GFLG_ALLOW_ADDERS) ||
+		    !(lookup_player_guildflags(id_list[i]) & PGF_ADDER)))
+			continue;
+
+		/* Log - security */
+		s_printf("GUILD_ADD_FAR: %s has been added to %s by %s.\n", p_ptr->name, guilds[guild_id].name, q_ptr->name);
+		far_success = TRUE;
+		break;
+        }
+        /* failure? */
+        if (!far_success)
+#endif
+
+	/* Make sure this isn't an impostor */
+	if (!((guilds[guild_id].flags & GFLG_ALLOW_ADDERS) && (q_ptr->guild_flags & PGF_ADDER))
+	    && guilds[guild_id].master != q_ptr->id
+	    && !is_admin(q_ptr)) {
+		msg_print(adder, "\377yYou cannot add new members.");
+		return FALSE;
+	}
+
 	/* Log - security */
-	s_printf("GUILD_ADD: %s has been added to %s by %s.\n", p_ptr->name, guilds[guild_id].name, q_ptr->name);
+	if (!far_success) s_printf("GUILD_ADD: %s has been added to %s by %s.\n", p_ptr->name, guilds[guild_id].name, q_ptr->name);
 
 	/* Tell the guild about its new member */
 	guild_msg_format(guild_id, "\374\377y%s has been added to %s.", p_ptr->name, guilds[guild_id].name);
