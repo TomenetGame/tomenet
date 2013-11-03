@@ -31,6 +31,9 @@
 /* Experimental and also silly ;) - reward players for wearing arts of similar name - C. Blue */
 #define EQUIPMENT_SET_BONUS
 
+/* Do not lower HP of mimics if the monster form has lower HP than their @ form. - C. Blue 
+   Could be extended onto AC, to-dam and even Speed maybe. */
+#define MIMICRY_BOOST_WEAK_FORM
 
 
 /*
@@ -1041,8 +1044,7 @@ static void fix_monster(int Ind)
  * Calculate the player's sanity
  */
 
-static void calc_sanity(int Ind)
-{
+static void calc_sanity(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int bonus, msane;
 	/* Don't make the capacity too large */
@@ -1103,8 +1105,7 @@ static void calc_sanity(int Ind)
  * This function induces status messages.
  */
 //static void calc_mana(int Ind)
-void calc_mana(int Ind)
-{
+void calc_mana(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	player_type *p_ptr2 = NULL; /* silence the warning */
 	int Ind2;
@@ -1475,8 +1476,7 @@ void calc_mana(int Ind)
  * 30.
  */
 
-void calc_hitpoints(int Ind)
-{
+void calc_hitpoints(int Ind) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL; /* silence the warning */
 	int player_hp_eff; /* replacement for accessing player_hp[] directly */
 
@@ -1596,7 +1596,10 @@ void calc_hitpoints(int Ind)
 		/* Reduce the effect of racial hit dice when in monster form? [3..6]
 		   3 = no reduction, 6 = high reduction */
 		#define FORM_REDUCES_RACE_DICE_INFLUENCE 6
-		long levD, hpD, raceHPbonus;
+		long raceHPbonus;
+#ifndef MIMICRY_BOOST_WEAK_FORM
+		long levD, hpD;
+#endif
 		mHPLim = (50000 / ((50000 / rhp) + 20));
 
 #if 0 /* done below */
@@ -1611,13 +1614,18 @@ void calc_hitpoints(int Ind)
 		mhp -= ((raceHPbonus - (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE) * 5) / 3;
 #endif
 		if (mHPLim < mhp) {
+#ifdef MIMICRY_BOOST_WEAK_FORM
+			mHPLim = mhp;
+#else
 			levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
 			if (levD < 0) levD = 0;
 			if (levD > 20) levD = 20;
 			hpD = mhp - mHPLim;
 		        mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
 							   you receive the full HP difference in the formula below. */
+#endif
 		}
+
 		finalHP = (mHPLim < mhp) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
 		finalHP += (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE;
 
@@ -1703,10 +1711,7 @@ void calc_hitpoints(int Ind)
 #endif
 
 	/* Meditation increase mana at the cost of hp */
-	if (p_ptr->tim_meditation)
-	{
-		mhp = mhp * 3 / 5;
-	}
+	if (p_ptr->tim_meditation) mhp = mhp * 3 / 5;
 
 	/* New maximum hitpoints */
 	if (mhp != p_ptr->mhp) {
@@ -1742,8 +1747,7 @@ void calc_hitpoints(int Ind)
  * XXX currently, this function does almost nothing; if lite radius
  * should be changed, call calc_boni too.
  */
-static void calc_torch(int Ind)
-{
+static void calc_torch(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	
 #if 0
@@ -1753,31 +1757,22 @@ static void calc_torch(int Ind)
 	p_ptr->cur_lite = p_ptr->lite;
 
 	/* Examine actual lites */
-	if (o_ptr->tval == TV_LITE)
-	{
+	if (o_ptr->tval == TV_LITE) {
 		/* Torches (with fuel) provide some lite */
 		if ((o_ptr->sval == SV_LITE_TORCH) && (o_ptr->pval > 0))
-		{
 			p_ptr->cur_lite += 1;
-		}
 
 		/* Lanterns (with fuel) provide more lite */
 		if ((o_ptr->sval == SV_LITE_LANTERN) && (o_ptr->pval > 0))
-		{
 			p_ptr->cur_lite += 2;
-		}
 
 		/* Dwarven lanterns provide permanent radius 2 lite */
 		if (o_ptr->sval == SV_LITE_DWARVEN)
-		{
 			p_ptr->cur_lite += 2;
-		}
 
 		/* Feanorian lanterns provide permanent, bright, lite */
 		if (o_ptr->sval == SV_LITE_FEANOR)
-		{
 			p_ptr->cur_lite += 3;
-		}
 
 		/* Artifact Lites provide permanent, bright, lite */
 		if (artifact_p(o_ptr)) p_ptr->cur_lite += 3;
@@ -1785,16 +1780,14 @@ static void calc_torch(int Ind)
 #endif	// 0
 
 	/* Reduce lite when running if requested */
-	if (p_ptr->running && p_ptr->view_reduce_lite)
-	{
+	if (p_ptr->running && p_ptr->view_reduce_lite) {
 		/* Reduce the lite radius if needed */
 		if (p_ptr->cur_lite > 1) p_ptr->cur_lite = 1;
 		if (p_ptr->cur_vlite > 1) p_ptr->cur_vlite = 1;
 	}
 
 	/* Notice changes in the "lite radius" */
-	if ((p_ptr->old_lite != p_ptr->cur_lite) || (p_ptr->old_vlite != p_ptr->cur_vlite))
-	{
+	if ((p_ptr->old_lite != p_ptr->cur_lite) || (p_ptr->old_vlite != p_ptr->cur_vlite)) {
 		/* Update the lite */
 		p_ptr->update |= (PU_LITE);
 
@@ -1827,16 +1820,14 @@ static int weight_limit(int Ind) /* max. 3000 atm */
 
 
 /* Should be called by every calc_bonus call */
-static void calc_body_bonus(int Ind, boni_col * csheet_boni)
-{
+static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	cave_type **zcave;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
-	int n, d, immunities = 0, immunity[7], immrand;
+	int d, immunities = 0, immunity[7], immrand;
 	int i, j;
-	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	char mname[MNAME_LEN];
 
@@ -1855,17 +1846,11 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni)
 	Rand_value = p_ptr->mimic_seed;
 	Rand_quick = TRUE;
 
-	if (!r_ptr->body_parts[BODY_WEAPON]) {
-		wepless = TRUE;
-//		p_ptr->num_blow = 0;
-		p_ptr->num_blow = 1;
-	}
+	if (!r_ptr->body_parts[BODY_WEAPON]) p_ptr->num_blow = 1;
 
-	d = 0; n = 0;
+	d = 0;
 	for (i = 0; i < 4; i++) {
 		j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
-
-		if (j) n++;
 
 		switch (r_ptr->blow[i].effect) {
 			case RBE_EXP_10:
@@ -1919,13 +1904,6 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni)
 				break;
 		}
 
-		/* Hack -- weaponless combat */
-		if (wepless && j) {
-//MA overrides this anyways:
-//			p_ptr->num_blow++;
-//			j *= 2;
-		}
-
 		d += (j * 2);
 	}
 	d /= 4;
@@ -1964,49 +1942,6 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni)
 	if (p_ptr->body_monster == 532) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Dagashi */
 	if (p_ptr->body_monster == 485) { p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2; } /* Ninja */
 
-#if 0
-	if (n == 0) n = 1;
-	/*d = (d / 2) / n;	// 8 // 7
-	p_ptr->to_d += d;
-	p_ptr->dis_to_d += d; - similar to HP: */
-	d = d / n;
-	if (d < (p_ptr->to_d + p_ptr->to_d_melee)) {
-		p_ptr->to_d = ((p_ptr->to_d * 2) + (d * 1)) / 3;
-		p_ptr->to_d_melee = (p_ptr->to_d_melee * 2) / 3;
-		p_ptr->dis_to_d = ((p_ptr->dis_to_d * 2) + (d * 1)) / 3;
-	} else {
-		p_ptr->to_d = ((p_ptr->to_d * 1) + (d * 1)) / 2;
-		p_ptr->to_d_melee = (p_ptr->to_d_melee * 1) / 2;
-		p_ptr->dis_to_d = ((p_ptr->dis_to_d * 1) + (d * 1)) / 2;
-	}
-/*	p_ptr->dis_to_d = (d < p_ptr->dis_to_d) ?
-		    (((p_ptr->dis_to_d * 2) + (d * 1)) / 3) :
-		    (((p_ptr->dis_to_d * 1) + (d * 1)) / 2);*/
-#endif
-#if 0 /* moved to calc_boni() */
-	/* Evaluate monster AC (if skin or armor etc) */
-	body = (r_ptr->body_parts[BODY_HEAD] ? 1 : 0)
-		+ (r_ptr->body_parts[BODY_TORSO] ? 3 : 0)
-		+ (r_ptr->body_parts[BODY_ARMS] ? 2 : 0)
-		+ (r_ptr->body_parts[BODY_LEGS] ? 1 : 0);
-
-	toac = r_ptr->ac * 14 / (7 + body);
-	/* p_ptr->ac += toac;
-	p_ptr->dis_ac += toac; - similar to HP calculation: */
-	if (toac < (p_ptr->ac + p_ptr->to_a)) {
-		/* Vary between 3/4 + 1/4 (low monsters) to 2/3 + 1/3 (high monsters): */
-		p_ptr->ac = (p_ptr->ac * (100 - r_ptr->level + 200)) / (100 - r_ptr->level + 300);
-		p_ptr->to_a = ((p_ptr->to_a * (100 - r_ptr->level + 200)) + (toac * 100)) / (100 - r_ptr->level + 300);
-		p_ptr->dis_ac = ((p_ptr->dis_ac * (100 - r_ptr->level + 200)) + (toac * 100)) / (100 - r_ptr->level + 300);
-	} else {
-		p_ptr->ac = (p_ptr->ac * 1) / 2;
-		p_ptr->to_a = ((p_ptr->to_a * 1) + (toac * 1)) / 2;
-		p_ptr->dis_ac = ((p_ptr->dis_ac * 1) + (toac * 1)) / 2;
-	}
-/*	p_ptr->dis_ac = (toac < p_ptr->dis_ac) ?
-		    (((p_ptr->dis_ac * 2) + (toac * 1)) / 3) :
-		    (((p_ptr->dis_ac * 1) + (toac * 1)) / 2);*/
-#endif
 	if (r_ptr->speed < 110) {
 		/* let slowdown not be that large that players will never try that form */
 		p_ptr->pspeed = 110 - (((110 - r_ptr->speed) * 20) / 100);
@@ -2900,8 +2835,7 @@ void calc_boni(int Ind)
 	object_type		*o_ptr, *o2_ptr;
 	object_kind		*k_ptr;
 
-	long int n, d, toac = 0, body = 0;
-	bool wepless = FALSE;
+	long int d, toac = 0, body = 0;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
 	u32b f1, f2, f3, f4, f5, esp;
@@ -4818,12 +4752,18 @@ void calc_boni(int Ind)
 		toac = r_ptr->ac * 14 / (7 + body);
 		/* p_ptr->ac += toac;
 		p_ptr->dis_ac += toac; - similar to HP calculation: */
-		if (toac < (p_ptr->ac + p_ptr->to_a)) {
+		if (toac < (p_ptr->ac + p_ptr->to_a))
+#ifndef MIMICRY_BOOST_WEAK_FORM
+		{
 			p_ptr->ac = (p_ptr->ac * 3) / 4;
 			p_ptr->to_a = ((p_ptr->to_a * 3) + toac) / 4;
 			p_ptr->dis_ac = (p_ptr->dis_ac * 3) / 4;
 			p_ptr->dis_to_a = ((p_ptr->dis_to_a * 3) + toac) / 4;
-		} else {
+		} else
+#else
+			toac = p_ptr->ac + p_ptr->to_a;
+#endif
+		{
 			p_ptr->ac = (p_ptr->ac * 1) / 2;
 			p_ptr->to_a = ((p_ptr->to_a * 1) + (toac * 1)) / 2;
 			p_ptr->dis_ac = (p_ptr->dis_ac * 1) / 2;
@@ -5318,34 +5258,14 @@ void calc_boni(int Ind)
 	}
 
 	if (p_ptr->body_monster) {
-		if (!r_ptr->body_parts[BODY_WEAPON]) wepless = TRUE;
-
-		d = 0; n = 0;
+		d = 0;
 		for (i = 0; i < 4; i++) {
 			j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
 			j += r_ptr->blow[i].d_dice;
 			j /= 2;
-			if (j) n++;
 
-			/* Hack -- weaponless combat */
-/*			if (wepless && j)
-			{
-				j *= 2;
-			}
-*/
 			d += j; /* adding up average monster damage per round */
 		}
-		/* At least have 1 blow (although this line is not needed anymore) */
-		if (n == 0) n = 1;
-
-		/*d = (d / 2) / n;	// 8 // 7
-		p_ptr->to_d += d;
-		p_ptr->dis_to_d += d; - similar to HP: */
-
-		/* Divide by player blow number instead of
-		monster blow number :
-		//d /= n;*/
-		//d /= ((p_ptr->num_blow > 0) ? p_ptr->num_blow : 1);
 
 		/* GWoP: 472, GB: 270, Green DR: 96 */
 		/* GWoP: 254, GT: 364, GB: 149, GDR: 56 */
@@ -5358,11 +5278,17 @@ void calc_boni(int Ind)
 		if (d > 0) d = (4000 / ((1500 / (d + 4)) + 22)) - 10;
 
 		/* Calculate new averaged to-dam bonus */
-		if (d < (p_ptr->to_d + p_ptr->to_d_melee)) {
+		if (d < (p_ptr->to_d + p_ptr->to_d_melee))
+#ifndef MIMICRY_BOOST_WEAK_FORM
+		{
 			p_ptr->to_d = ((p_ptr->to_d * 5) + (d * 2)) / 7;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 7;
 			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 5) + (d * 2)) / 7;
-		} else {
+		} else
+#else
+			d = p_ptr->to_d + p_ptr->to_d_melee;
+#endif
+		{
 			p_ptr->to_d = ((p_ptr->to_d * 1) + (d * 1)) / 2;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 1) / 2;
 			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 1) + (d * 1)) / 2;
