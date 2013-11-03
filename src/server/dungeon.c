@@ -6653,8 +6653,8 @@ void dungeon(void)
 			int x = nrc_x, y = nrc_y - 5; /* start somewhat 'above' Zu-Aon's death spot */
 
 			/* stay in bounds */
-			if (x < 20) x = rand_int(41);
-			else if (x >= MAX_WID - 20) x = MAX_WID - 40 + rand_int(40);
+			if (x < 20) x = rand_int(37) + 4;//don't cut them off too much
+			else if (x >= MAX_WID - 20) x = MAX_WID - 40 + rand_int(36);//don't cut them off too much
 			else x = x - 20 + rand_int(41);
 			if (y < 15) y = rand_int(16);
 			else if (y >= MAX_HGT - 15) y = MAX_HGT - 30 + rand_int(23);//don't cut them off at the bottom border too much
