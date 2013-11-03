@@ -1339,7 +1339,7 @@ D:clear-eyed in barrows fell, wielding a halberd glowing ruby red.
 
 N:96:'Til-i-arc'
 I:22:8:3
-W:20:15:160:77000
+W:20:15:160:97000
 P:0:2d9:10:25:0
 F:INT | HIDE_TYPE | 
 F:BRAND_COLD | BRAND_FIRE | SLAY_DEMON | SLAY_TROLL | SLAY_GIANT | ESP_GIANT |
