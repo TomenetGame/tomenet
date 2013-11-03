@@ -469,6 +469,7 @@ struct player_type
 	/* changed from byte to u16b - mikaelh */
 	u16b party;		/* The party he belongs to (or 0 if neutral) */
 	byte guild;		/* The guild he belongs to (or 0 if neutral) */
+	u32b guild_dna;
 
 	s16b target_who;
 	s16b target_col;	/* What position is targetted */
