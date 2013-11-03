@@ -3107,7 +3107,9 @@ void recall_player(int Ind, char *message){
 
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 		/* need to leave party, since we might be teamed up with incompatible char mode players! */
-		if (p_ptr->party && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) party_leave(Ind, FALSE);
+		if (p_ptr->party && !p_ptr->admin_dm &&
+		    compat_mode(p_ptr->mode, parties[p_ptr->party].cmode))
+			party_leave(Ind, FALSE);
 #endif
 
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
@@ -6013,7 +6015,8 @@ void process_player_change_wpos(int Ind)
     	    && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)
             /* actually preserve his nether realm cross party for this,
                so he can tell everyone involved about Valinor in party chat: */
-    	    && p_ptr->auto_transport != AT_VALINOR)
+    	    && p_ptr->auto_transport != AT_VALINOR
+    	    && !p_ptr->admin_dm)
                 /* need to leave party, since we might be teamed up with incompatible char mode players! */
                 party_leave(Ind, FALSE);
 #endif

@@ -1984,7 +1984,8 @@ static void player_setup(int Ind, bool new)
 			p_ptr->inventory[i].NR_tradable = FALSE;
 #endif
 #ifdef ALLOW_NR_CROSS_PARTIES
-		if (p_ptr->party && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) {
+		if (p_ptr->party && !p_ptr->admin_dm &&
+		    compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) {
 			/* need to leave party, since we might be teamed up with incompatible char mode players! */
 			/* party_leave(Ind, FALSE); */
 			if (streq(p_ptr->name, parties[p_ptr->party].owner)) {
@@ -2063,12 +2064,13 @@ static void player_setup(int Ind, bool new)
 			s_printf("Auto-recalled panic-saved player %s.\n", p_ptr->name);
 
  #ifdef ALLOW_NR_CROSS_PARTIES
-		        if (p_ptr->party && at_netherrealm(wpos) && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) {
-    	        	/* need to leave party, since we might be teamed up with incompatible char mode players! */
+			if (p_ptr->party && !p_ptr->admin_dm &&
+			    at_netherrealm(wpos) && compat_mode(p_ptr->mode, parties[p_ptr->party].cmode)) {
+				/* need to leave party, since we might be teamed up with incompatible char mode players! */
 				/* party_leave(Ind, FALSE); */
 			        if (streq(p_ptr->name, parties[p_ptr->party].owner)) {
-            				/* impossible, because the owner always has the same mode as the party's cmode */
-            				/* party_remove(Ind, p_ptr->name); */
+					/* impossible, because the owner always has the same mode as the party's cmode */
+					/* party_remove(Ind, p_ptr->name); */
 			        } else {
 				        parties[p_ptr->party].members--;
 				        Send_party(Ind, TRUE, FALSE);
