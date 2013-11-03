@@ -777,7 +777,7 @@ void do_cmd_go_down(int Ind)
 				if (!is_admin(p_ptr)) return;
 			}
 			/* for Nether Realm: No ghost diving! */
-			if ((wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO)) {
+			if ((wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_INTO)) {
 				msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
 				if (!is_admin(p_ptr)) return;
 			}
