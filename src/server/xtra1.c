@@ -32,7 +32,7 @@
 #define EQUIPMENT_SET_BONUS
 
 /* Do not lower HP of mimics if the monster form has lower HP than their @ form. - C. Blue 
-   Could be extended onto AC, to-dam and even Speed maybe. */
+   Could be extended onto to-dam and even Speed maybe. Shouldn't be extended onto AC. */
 #define MIMICRY_BOOST_WEAK_FORM
 
 
@@ -4752,18 +4752,12 @@ void calc_boni(int Ind)
 		toac = r_ptr->ac * 14 / (7 + body);
 		/* p_ptr->ac += toac;
 		p_ptr->dis_ac += toac; - similar to HP calculation: */
-		if (toac < (p_ptr->ac + p_ptr->to_a))
-#ifndef MIMICRY_BOOST_WEAK_FORM
-		{
+		if (toac < (p_ptr->ac + p_ptr->to_a)) {
 			p_ptr->ac = (p_ptr->ac * 3) / 4;
 			p_ptr->to_a = ((p_ptr->to_a * 3) + toac) / 4;
 			p_ptr->dis_ac = (p_ptr->dis_ac * 3) / 4;
 			p_ptr->dis_to_a = ((p_ptr->dis_to_a * 3) + toac) / 4;
-		} else
-#else
-			toac = p_ptr->ac + p_ptr->to_a;
-#endif
-		{
+		} else {
 			p_ptr->ac = (p_ptr->ac * 1) / 2;
 			p_ptr->to_a = ((p_ptr->to_a * 1) + (toac * 1)) / 2;
 			p_ptr->dis_ac = (p_ptr->dis_ac * 1) / 2;
