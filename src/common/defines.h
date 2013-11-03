@@ -7960,8 +7960,8 @@ extern int PlayerUID;
 #define at_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z >= 0)
 #define netherrealm_bottom(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz == netherrealm_end_wz)
 
-/* Restrict escape from final Nether Realm level to WoR + ghost floating? */
-#define NETHERREALM_BOTTOM_RESTRICT
+/* Restrict escape from final Nether Realm level to WoR + ghost floating? (no stairs+no probtrav!) */
+//#define NETHERREALM_BOTTOM_RESTRICT
 
 /* check if a player is in Valinor */
 #define in_valinor(wpos) ((wpos)->wx == valinor_wpos_x && (wpos)->wy == valinor_wpos_y && (wpos)->wz * valinor_wpos_z > 0)

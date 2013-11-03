@@ -868,9 +868,10 @@ static void place_random_stairs(struct worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 
-#ifdef NETHERREALM_BOTTOM_RESTRICT
+    /* no staircase spam anyway, one is sufficient */
+//#ifdef NETHERREALM_BOTTOM_RESTRICT
 	if (netherrealm_bottom(wpos)) return;
-#endif
+//#endif
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -1031,8 +1032,7 @@ static void place_random_door(struct worldpos *wpos, int y, int x)
 /*
  * Places some staircases near walls
  */
-static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
-{
+static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls) {
 	int y, x, i, j, flag, tries = 0;
 	int emergency_flag = TRUE, new_feat = -1, nlev_down = FALSE, nlev_up = FALSE;
 	int starty, startx;
@@ -1049,7 +1049,7 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 	if (!can_go_up_simple(wpos)) {
 		/* Clear previous contents, add down stairs */
 		if (can_go_down(wpos, 0x1)) new_feat = FEAT_MORE;
-		if(!istown(wpos)) nlev_up = TRUE;
+		if (!istown(wpos)) nlev_up = TRUE;
 	}
 	/* Quest -- must go up */
 	else if (is_quest(wpos) || !can_go_down_simple(wpos)) {
@@ -1076,16 +1076,13 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 	}
 
 	/* Place "num" stairs */
-	for (i = 0; i < num; i++)
-	{
+	for (i = 0; i < num; i++) {
 		tries = 1000; /* don't hang again. extremely rare though. wonder what the situation was like. */
 
 		/* Place some stairs */
-		for (flag = FALSE; !flag && tries; tries--)
-		{
+		for (flag = FALSE; !flag && tries; tries--) {
 			/* Try several times, then decrease "walls" */
-			for (j = 0; !flag && j <= 3000; j++)
-			{
+			for (j = 0; !flag && j <= 3000; j++) {
 				/* Pick a random grid */
 				y = 1 + rand_int(dun->l_ptr->hgt - 2);
 				x = 1 + rand_int(dun->l_ptr->wid - 2);
@@ -1120,6 +1117,10 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 			/* Require fewer walls */
 			if (walls) walls--;
 		}
+#if 0 /* taken are of in cave_gen(), calling this function */
+		/* no staircase spam in general, one per alloc_stairs() is enough */
+		if (flag && netherrealm_bottom(wpos)) return;
+#endif
 	}
 
 	if (!emergency_flag) return;
@@ -9259,13 +9260,13 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	if (magik(NO_DESTROY_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_DESTROY;
 #endif
 
-#ifdef NETHERREALM_BOTTOM_RESTRICT
+//#ifdef NETHERREALM_BOTTOM_RESTRICT
 	/* no probability travel out of Zu-Aon's floor */
 	if (netherrealm_bottom(wpos)) {
 		/* removing other bad flags though, to make it fair */
 		dun->l_ptr->flags1 = LF1_NO_MAGIC;
 	}
-#endif
+//#endif
 
 	/* TODO: copy dungeon_type flags to dun_level */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
@@ -9865,11 +9866,19 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	}
 
 	if (!(dun->l_ptr->flags1 & LF1_NO_STAIR)) {
-		/* Place 3 or 4 down stairs near some walls */
-		alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(3, 4) * dun->ratio / 100 + 1, 3);
+		if (!netherrealm_bottom(wpos)) {
+			/* Place 3 or 4 down stairs near some walls */
+			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(3, 4) * dun->ratio / 100 + 1, 3);
 
-		/* Place 1 or 2 up stairs near some walls */
-		alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, rand_range(1, 2), 3);
+			/* Place 1 or 2 up stairs near some walls */
+			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, rand_range(1, 2), 3);
+		} else {
+			/* place 1 staircase */
+			if (netherrealm_wpos_z < 1)
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, 1, 2);
+			else
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, 1, 2);
+		}
 
 #if 0	/* we need a way to create the way back */
 		/* Place 1 or 2 (typo of '0 or 1'?) down shafts near some walls */
