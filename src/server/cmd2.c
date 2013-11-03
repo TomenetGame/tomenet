@@ -179,9 +179,11 @@ void do_cmd_go_up(int Ind)
 	/* probability travel/ghost floating restrictions */
 	if (dungeon) {
 		if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS) {
+#ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 			if (l_ptr && p_ptr->prob_travel && !p_ptr->ghost && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 				if (!is_admin(p_ptr)) return;
 			}
+#endif
 #if 0 /* done via NO_MAGIC */
 #ifdef NETHERREALM_BOTTOM_RESTRICT
 			if (!p_ptr->ghost && netherrealm_bottom(wpos)) {
@@ -205,9 +207,11 @@ void do_cmd_go_up(int Ind)
 		}
 	} else {
 		if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS) {
+#ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 			if (l_ptr && p_ptr->prob_travel && !p_ptr->ghost && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 				if (!is_admin(p_ptr)) return;
 			}
+#endif
 			/* for Nether Realm: No ghost diving! */
 			if ((wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO)) {
 				msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
@@ -747,9 +751,11 @@ void do_cmd_go_down(int Ind)
 	/* probability travel/ghost floating restrictions */
 	if (tower) {
 		if ((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE)) {
+#ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 			if (l_ptr && p_ptr->prob_travel && !p_ptr->ghost && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 				if (!is_admin(p_ptr)) return;
 			}
+#endif
 #if 0 /* done via NO_MAGIC */
 #ifdef NETHERREALM_BOTTOM_RESTRICT
 			if (!p_ptr->ghost && netherrealm_bottom(wpos)) {
@@ -773,9 +779,11 @@ void do_cmd_go_down(int Ind)
 		}
 	} else {
 		if ((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE)) {
+#ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 			if (l_ptr && p_ptr->prob_travel && !p_ptr->ghost && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 				if (!is_admin(p_ptr)) return;
 			}
+#endif
 			/* for Nether Realm: No ghost diving! */
 			if ((wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_INTO)) {
 				msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
