@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. November 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. November 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -746,20 +746,15 @@ They all start with a slash '/' hence they're called slash commands:
             players, so they know why you are currently AFK or when you will
             be back.
 
+/bed        Opposite of /dress.
+ (/naked)
+
 /bbs <text>
             Add a line of text to the in-game bulletin board system. Players
             can look at the board by pressing the '!' key.
             (You can verify or compare the date with the /time command.)
             If <text> is omitted, the current BBS contents will be shown, same
             as using the '!' key.
-
-/pbbs <text>    Same usage as /bbs, but only readable/writable for party
-                members. So it's a party-internal BBS.
-                To read its contents, type /pbbs without any <text>.
-
-/gbbs <text>    Same usage as /bbs, but only readable/writable for guild
-                members. So it's a guild-internal BBS.
-                To read its contents, type /gbbs without any <text>.
 
 /convertexclusive    Attempts to convert your current character into a
                      slot-exclusive character (either PvP-mode or IDDC aka
@@ -811,9 +806,6 @@ They all start with a slash '/' hence they're called slash commands:
             known to you.
             With tag it just equips all items that contain that tag in their
             name or inscription somewhere (even if they are cursed).
-
-/bed        Opposite of /dress.
- (/naked)
 
 (The /empty function is currently disabled)
 /empty <inventory slot>
@@ -888,8 +880,17 @@ They all start with a slash '/' hence they're called slash commands:
             Enables or disables fire-till-kill mode (see (5.2a)).
             Alternatively, you can toggle it in 'm' menu.
 
+/gbbs <text>    Same usage as /bbs, but only readable/writable for guild
+                members. So it's a guild-internal BBS.
+                To read its contents, type /gbbs without any <text>.
+
 /gleave     Leaves your guild. Same as pressing 'SHIFT+P' and 'd'.
  or /gquit
+
+/gnote <text>
+            Leave a note to the guild you own.
+            If <text> is omitted, it will display the current note.
+            If <text> is just an '*' char, it will erase the current note.
 
 /guild_adder <name of another player>
             Allows that player permanently to add other players to the guild
@@ -898,6 +899,8 @@ They all start with a slash '/' hence they're called slash commands:
 /guild_cfg [<flag> [<value]]
             Shows you your current guild configuration and allows you to change
             it.
+
+/guildmembers   Displays a list of all members of your guild.
 
 /hou        Displays your houses, same as ~6.
  (/house)
@@ -952,16 +955,6 @@ They all start with a slash '/' hence they're called slash commands:
             Delete all pending notes that were addressed to that player.
 /notes      Display all pending notes that you wrote to other players.
 
-/pnote <text>
-            Leave a note to the party you own.
-            If <text> is omitted, it will display the current note.
-            If <text> is just an '*' char, it will erase the current note.
-
-/gnote <text>
-            Leave a note to the guild you own.
-            If <text> is omitted, it will display the current note.
-            If <text> is just an '*' char, it will erase the current note.
-
 /obj        Displays all objects known to you, same as ~4.
  (/object)
 
@@ -983,12 +976,23 @@ They all start with a slash '/' hence they're called slash commands:
             non-everlasting) won't see each other's house paint.
             (See (4.10a) for more information about player stores.)
 
+/partymembers   Displays a list of all members of your party.
+
+/pbbs <text>    Same usage as /bbs, but only readable/writable for party
+                members. So it's a party-internal BBS.
+                To read its contents, type /pbbs without any <text>.
+
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
             Will at some point in the future be absorbed by /evsign and
             thereby become obsolete.
 
 /pleave     Leaves your party. Same as pressing 'SHIFT+P' and '5'.
  or /pquit
+
+/pnote <text>
+            Leave a note to the party you own.
+            If <text> is omitted, it will display the current note.
+            If <text> is just an '*' char, it will erase the current note.
 
 /pstore     (Also available by pressing 'h' for house menu.)
             Attempts to enter a player store next to you, even if it's your own
