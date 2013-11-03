@@ -2895,7 +2895,7 @@ D:Sacred gloves of an arch priest whose name is not remembered.
 
 N:233:of Grom, the Wyrm Hunter
 I:40:38:0
-W:40:40:3:125000
+W:40:40:3:60000
 F:HIDE_TYPE | INSTA_ART | ACTIVATE | SPECIAL_GENE |
 F:RES_FIRE | RES_COLD | RES_ACID | RES_ELEC | RES_POIS | 
 F:ESP_DRAGON | SLAY_DRAGON
