@@ -7118,8 +7118,7 @@ void wiz_lite_extra(int Ind)
 /*
  * Forget the dungeon map (ala "Thinking of Maud...").
  */
-void wiz_dark(int Ind)
-{
+void wiz_dark(int Ind) {
 	player_type *p_ptr, *q_ptr = Players[Ind];
 	struct worldpos *wpos;
 	cave_type **zcave;
@@ -7141,8 +7140,22 @@ void wiz_dark(int Ind)
 		o_ptr = &p_ptr->inventory[INVEN_LITE];
 
 		/* Bye bye light */
-		if (o_ptr->k_idx) {
-			if (((o_ptr->sval == SV_LITE_TORCH) || (o_ptr->sval == SV_LITE_LANTERN)) && (!o_ptr->name1)) {
+		if (o_ptr->k_idx &&
+		    ((o_ptr->sval == SV_LITE_TORCH) || (o_ptr->sval == SV_LITE_LANTERN))
+		    && (!o_ptr->name1) && o_ptr->timeout) {
+			bool refilled = FALSE;
+
+			disturb(Ind, 0, 0);
+
+			/* If flint is ready, refill at once */
+			if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_FLINT &&
+			    !p_ptr->paralyzed) {
+				msg_print(Ind, "You prepare a flint...");
+				refilled = do_auto_refill(Ind);
+				if (!refilled) msg_print(Ind, "Oops, you're out of fuel!");
+			}
+
+			if (!refilled) {
 				msg_print(i, "Your light suddenly empties.");
 
 				/* No more light, it's Rogues day today :) */
@@ -7151,10 +7164,8 @@ void wiz_dark(int Ind)
 		}
 
 		/* Forget every grid */
-		for (y = 0; y < p_ptr->cur_hgt; y++)
-		{
-			for (x = 0; x < p_ptr->cur_wid; x++)
-			{
+		for (y = 0; y < p_ptr->cur_hgt; y++) {
+			for (x = 0; x < p_ptr->cur_wid; x++) {
 				byte *w_ptr = &p_ptr->cave_flag[y][x];
 				c_ptr = &zcave[y][x];
 
