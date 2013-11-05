@@ -476,7 +476,7 @@ D:this little metal shield is proof against the Element of Earth.
 
 N:31:of Celegorm
 I:34:4:0
-W:18:5:60:50000
+W:18:5:60:40000
 $USE_NEW_SHIELDS!P:4:1d2:0:0:20
 $USE_NEW_SHIELDS$P:19:1d2:0:0:15
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_DARK
