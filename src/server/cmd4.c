@@ -2168,17 +2168,6 @@ void do_cmd_check_server_settings(int Ind)
 
 	fprintf(fff, "\n");
 
-	if ((cfg.morgoth_bigteam_reward & 0x1))
-		fprintf(fff, "Killing Morgoth with a team of 4 or more players will cause him to drop one\n" \
-			     " semi-random, skill-dependant personal reward item for each player.\n");
-	if ((cfg.morgoth_bigteam_reward & 0x2))
-		fprintf(fff, "Killing Morgoth with a team of 4 or more players will cause him to drop one\n" \
-			     " random, very great bonus item for every player more than 3.\n");
-	if ((cfg.morgoth_bigteam_reward & 0x4))
-		fprintf(fff, "Killing Morgoth with a team of 4 or more players will cause him to drop one\n" \
-			     " Scroll of Artifact Creation for every player more than 3.\n");
-	if (cfg.morgoth_bigteam_reward) fprintf(fff, "\n");
-
 	if ((k = cfg.retire_timer) > 0)
 		fprintf(fff, "The winner will automatically retire after %d minutes.\n", k);
 	else if (k == 0)

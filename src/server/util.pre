@@ -185,8 +185,6 @@ struct server_opts
 	bool worldd_plist;
 /*	bool worldd_ircchat; */
 	bool worldd_events;
-
-	byte morgoth_bigteam_reward;
 };
 
 extern s32b turn;

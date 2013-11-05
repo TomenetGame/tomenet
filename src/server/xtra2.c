@@ -5470,41 +5470,14 @@ if (cfg.unikill_format) {
 			else prize.marked2 = ITEM_REMOVAL_DEATH_WILD;
 			drop_near(&prize, -1, wpos, y, x);
 
-		    } /* Paranoia tag */
 
-			/* Special rewards when killed him with a large team of players */
-			if (cfg.morgoth_bigteam_reward && num >= 4) {
-				/* a reward for everyone */
-				if ((cfg.morgoth_bigteam_reward & 0x1)) {
-					qq_ptr = &forge;
-					for (i = 1; i <= NumPlayers; i++) {
-						q_ptr = Players[i];
-						if (q_ptr->ghost) continue;
-						if ((((p_ptr->party) && (q_ptr->party == p_ptr->party)) ||
-						    (q_ptr == p_ptr) ) && q_ptr->lev >= 40 && inarea(&p_ptr->wpos,&q_ptr->wpos)) {
-							object_wipe(qq_ptr);
-							create_reward(i, qq_ptr, 127, 127, TRUE, TRUE, RESF_WINNER | RESF_LIFE | RESF_NOTRUEART | RESF_EGOHI, 3000);
-							drop_near(qq_ptr, -1, wpos, y, x);
-						}
-					}
-				}
-				/* +1 (additional) reward for each more player above 3 */
-				if ((cfg.morgoth_bigteam_reward & 0x2)) {
-					object_level = 127;
-					acquirement(wpos, y, x, num - 3, TRUE, TRUE, RESF_WINNER | RESF_LIFE | RESF_NOTRUEART | RESF_EGOHI);
-				}
-				/* +1 art scroll for each more player above 3 */
-				if ((cfg.morgoth_bigteam_reward & 0x4)) {
-					qq_ptr = &forge;
-					object_wipe(qq_ptr);
-					invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
-					qq_ptr->number = num - 3;
-					qq_ptr->note = local_quark;
-					qq_ptr->note_utag = strlen(quark_str(local_quark));
-					apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
-					drop_near(qq_ptr, -1, wpos, y, x);
-				}
-			}
+			/* Special reward: 1 *great* acquirement item per player. */
+			i = object_level;
+			object_level = 127;
+			acquirement(wpos, y, x, num, TRUE, TRUE, RESF_WINNER | RESF_LIFE | RESF_NOTRUEART | RESF_EGOHI);
+			object_level = i;
+
+		    } /* Paranoia tag */
 
 			/* Hack -- instantly retire any new winners if neccecary */
 			if (cfg.retire_timer == 0) {
