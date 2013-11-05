@@ -3692,6 +3692,7 @@
 #define CAVE_LITE_VAMP	0x00010000	/* lite flag for RACE_VAMPIRE 'light' */
 #define CAVE_LITE_WHITE	0x00020000	/* lite flag for non-fiery light sources */
 #define CAVE_GUILD_SUS	0x00040000	/* floor of a suspended guild hall, due to the guild's leaderlessnes */
+#define CAVE_WATERY	0x00080000	/* For doors/stairs: Are they adjacent to water grids? */
 
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?

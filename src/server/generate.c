@@ -829,32 +829,56 @@ bool place_between_dummy(struct worldpos *wpos, int y, int x) {
 /*
  * Convert existing terrain type to "up stairs"
  */
-extern void place_up_stairs(struct worldpos *wpos, int y, int x)
-{
-    cave_type **zcave;
+extern void place_up_stairs(struct worldpos *wpos, int y, int x) {
+	cave_type **zcave;
 	cave_type *c_ptr;
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
 	/* Create up stairs */
-	if (can_go_up(wpos, 0x1))
-	c_ptr->feat = FEAT_LESS;
+	if (can_go_up(wpos, 0x1)) {
+		int d, xx, yy;
+		dun_level *l_ptr = getfloor(wpos);
+
+		c_ptr->feat = FEAT_LESS;
+
+		/* aquatic monster hack */
+		if (l_ptr) for (d = 1; d <= 9; d++) {
+			if (d == 5) continue;
+			xx = x + ddx[d];
+			yy = y + ddy[d];
+			if (!in_bounds4(l_ptr, yy, xx)) continue;
+			if (zcave[yy][xx].feat == FEAT_DEEP_WATER) c_ptr->info |= CAVE_WATERY;
+		}
+	}
 }
 
 
 /*
  * Convert existing terrain type to "down stairs"
  */
-static void place_down_stairs(worldpos *wpos, int y, int x)
-{
+static void place_down_stairs(worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
 	/* Create down stairs */
-	if (can_go_down(wpos, 0x1))
-	c_ptr->feat = FEAT_MORE;
+	if (can_go_down(wpos, 0x1)) {
+		int d, xx, yy;
+		dun_level *l_ptr = getfloor(wpos);
+
+		c_ptr->feat = FEAT_MORE;
+
+		/* aquatic monster hack */
+		if (l_ptr) for (d = 1; d <= 9; d++) {
+			if (d == 5) continue;
+			xx = x + ddx[d];
+			yy = y + ddy[d];
+			if (!in_bounds4(l_ptr, yy, xx)) continue;
+			if (zcave[yy][xx].feat == FEAT_DEEP_WATER) c_ptr->info |= CAVE_WATERY;
+		}
+	}
 }
 
 
@@ -1099,7 +1123,21 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls) {
 				/* Access the grid */
 				c_ptr = &zcave[y][x];
 
-				if (new_feat != -1) c_ptr->feat = new_feat;
+				if (new_feat != -1) {
+					int d, xx, yy;
+					dun_level *l_ptr = getfloor(wpos);
+
+					c_ptr->feat = new_feat;
+
+					/* aquatic monster hack */
+					if (l_ptr) for (d = 1; d <= 9; d++) {
+						if (d == 5) continue;
+						xx = x + ddx[d];
+						yy = y + ddy[d];
+						if (!in_bounds4(l_ptr, yy, xx)) continue;
+						if (zcave[yy][xx].feat == FEAT_DEEP_WATER) c_ptr->info |= CAVE_WATERY;
+					}
+				}
 				if (nlev_up) {
 					new_level_up_y(wpos, y);
 					new_level_up_x(wpos, x);

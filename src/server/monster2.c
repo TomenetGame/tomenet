@@ -2849,7 +2849,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 	if (!(summon_override_checks & SO_GRID_TERRAIN)) {
 		/* This usually shouldn't happen */
 		/* but can happen when monsters group */
-		if (!monster_can_cross_terrain(zcave[y][x].feat, r_ptr, TRUE)) {
+		if (!monster_can_cross_terrain(zcave[y][x].feat, r_ptr, TRUE, zcave[y][x].info)) {
 #if DEBUG_LEVEL > 2
 			s_printf("WARNING: Refused monster: cannot cross terrain\n");
 #endif	// DEBUG_LEVEL
@@ -5437,9 +5437,10 @@ static bool monster_ground(int r_idx)
  * generated on this kind of terrain. Added for is_door/is_stair
  * checks regarding aquatic monsters, otherwise we have them spawn
  * on doors/stairs, which is silly. - C. Blue
+ * Added 'info' too, since aquatic monsters would seek out doors/stairs
+ * and then get stuck on them if the surrounding floor wasnt watery.
  */
-bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn)
-{
+bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn, u32b info) {
 	/* Deep water */
 	if (feat == FEAT_DEEP_WATER) {
 		if ((r_ptr->flags7 & RF7_AQUATIC) ||
@@ -5462,7 +5463,7 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn)
 	    !(r_ptr->flags7 & RF7_CAN_FLY)) {
 		/* MAY pass all sorts of doors, so they don't get stuck
 		   in water-filled rooms all the time, waiting to get shot - C. Blue */
-		if (!spawn && (is_door(feat) || is_stair(feat))) return TRUE;
+		if (!spawn && (is_door(feat) || is_stair(feat)) && (info & CAVE_WATERY)) return TRUE;
 		else return FALSE;
 	}
 	/* Lava */
