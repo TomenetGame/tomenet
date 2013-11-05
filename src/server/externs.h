@@ -553,6 +553,8 @@ extern void everyone_lite_later_spot(struct worldpos *wpos, int y, int x);
 extern void season_change(int s, bool force);
 extern void player_weather(int Ind, bool entered_level, bool weather_changed, bool panel_redraw);
 
+extern void aquatic_terrain_hack(cave_type **zcave, int x, int y);
+
 /* cmd1.c */
 extern byte cycle[], chome[];
 extern bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y);

@@ -837,19 +837,8 @@ extern void place_up_stairs(struct worldpos *wpos, int y, int x) {
 
 	/* Create up stairs */
 	if (can_go_up(wpos, 0x1)) {
-		int d, xx, yy;
-		dun_level *l_ptr = getfloor(wpos);
-
 		c_ptr->feat = FEAT_LESS;
-
-		/* aquatic monster hack */
-		if (l_ptr) for (d = 1; d <= 9; d++) {
-			if (d == 5) continue;
-			xx = x + ddx[d];
-			yy = y + ddy[d];
-			if (!in_bounds4(l_ptr, yy, xx)) continue;
-			if (zcave[yy][xx].feat == FEAT_DEEP_WATER) c_ptr->info |= CAVE_WATERY;
-		}
+		aquatic_terrain_hack(zcave, x, y);
 	}
 }
 
@@ -865,24 +854,10 @@ static void place_down_stairs(worldpos *wpos, int y, int x) {
 
 	/* Create down stairs */
 	if (can_go_down(wpos, 0x1)) {
-		int d, xx, yy;
-		dun_level *l_ptr = getfloor(wpos);
-
 		c_ptr->feat = FEAT_MORE;
-
-		/* aquatic monster hack */
-		if (l_ptr) for (d = 1; d <= 9; d++) {
-			if (d == 5) continue;
-			xx = x + ddx[d];
-			yy = y + ddy[d];
-			if (!in_bounds4(l_ptr, yy, xx)) continue;
-			if (zcave[yy][xx].feat == FEAT_DEEP_WATER) c_ptr->info |= CAVE_WATERY;
-		}
+		aquatic_terrain_hack(zcave, x, y);
 	}
 }
-
-
-
 
 
 /*
@@ -919,8 +894,7 @@ static void place_random_stairs(struct worldpos *wpos, int y, int x) {
 /*
  * Place a locked door at the given location
  */
-static void place_locked_door(struct worldpos *wpos, int y, int x)
-{
+static void place_locked_door(struct worldpos *wpos, int y, int x) {
 	int tmp;
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -929,6 +903,7 @@ static void place_locked_door(struct worldpos *wpos, int y, int x)
 
 	/* Create locked door */
 	c_ptr->feat = FEAT_DOOR_HEAD + randint(7);
+	aquatic_terrain_hack(zcave, x, y);
 
 	/* let's trap this ;) */
 	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
@@ -940,8 +915,7 @@ static void place_locked_door(struct worldpos *wpos, int y, int x)
 /*
  * Place a secret door at the given location
  */
-static void place_secret_door(struct worldpos *wpos, int y, int x)
-{
+static void place_secret_door(struct worldpos *wpos, int y, int x) {
 	int tmp;
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -949,38 +923,31 @@ static void place_secret_door(struct worldpos *wpos, int y, int x)
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
-	if ((cs_ptr = AddCS(c_ptr, CS_MIMIC)))
-	{
+	if ((cs_ptr = AddCS(c_ptr, CS_MIMIC))) {
 		/* Vaults */
 		if (c_ptr->info & CAVE_ICKY)
-		{
 			cs_ptr->sc.omni = FEAT_WALL_INNER;
-		}
 
 		/* Ordinary room -- use current outer or inner wall */
-		else if (c_ptr->info & CAVE_ROOM)
-		{
+		else if (c_ptr->info & CAVE_ROOM) {
 			/* Determine if it's inner or outer XXX XXX XXX */
 			if ((zcave[y - 1][x].info & CAVE_ROOM) &&
-					(zcave[y + 1][x].info & CAVE_ROOM) &&
-					(zcave[y][x - 1].info & CAVE_ROOM) &&
-					(zcave[y][x + 1].info & CAVE_ROOM))
+			    (zcave[y + 1][x].info & CAVE_ROOM) &&
+			    (zcave[y][x - 1].info & CAVE_ROOM) &&
+			    (zcave[y][x + 1].info & CAVE_ROOM))
 			{
 				cs_ptr->sc.omni = feat_wall_inner;
-			}
-			else
-			{
+			} else {
 				cs_ptr->sc.omni = feat_wall_outer;
 			}
-		}
-		else
-		{
+		} else {
 			cs_ptr->sc.omni = fill_type[rand_int(1000)];
 		}
 	}
 
 	/* Create secret door */
 	c_ptr->feat = FEAT_SECRET;
+	aquatic_terrain_hack(zcave, x, y);
 
 	/* let's trap this ;) */
 	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
@@ -992,8 +959,7 @@ static void place_secret_door(struct worldpos *wpos, int y, int x)
 /*
  * Place a random type of door at the given location
  */
-static void place_random_door(struct worldpos *wpos, int y, int x)
-{
+static void place_random_door(struct worldpos *wpos, int y, int x) {
 	int tmp;
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -1004,46 +970,42 @@ static void place_random_door(struct worldpos *wpos, int y, int x)
 	tmp = rand_int(1000);
 
 	/* Open doors (300/1000) */
-	if (tmp < 300)
-	{
+	if (tmp < 300) {
 		/* Create open door */
 		c_ptr->feat = FEAT_OPEN;
 	}
 
 	/* Broken doors (100/1000) */
-	else if (tmp < 400)
-	{
+	else if (tmp < 400) {
 		/* Create broken door */
 		c_ptr->feat = FEAT_BROKEN;
 	}
 
 	/* Secret doors (200/1000) */
-	else if (tmp < 600)
-	{
+	else if (tmp < 600) {
 		/* Create secret door */
 		c_ptr->feat = FEAT_SECRET;
 	}
 
 	/* Closed doors (300/1000) */
-	else if (tmp < 900)
-	{
+	else if (tmp < 900) {
 		/* Create closed door */
 		c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 	}
 
 	/* Locked doors (99/1000) */
-	else if (tmp < 999)
-	{
+	else if (tmp < 999) {
 		/* Create locked door */
 		c_ptr->feat = FEAT_DOOR_HEAD + randint(7);
 	}
 
 	/* Stuck doors (1/1000) */
-	else
-	{
+	else {
 		/* Create jammed door */
 		c_ptr->feat = FEAT_DOOR_HEAD + 0x08 + rand_int(8);
 	}
+
+	aquatic_terrain_hack(zcave, x, y);
 
 	/* let's trap this ;) */
 	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
@@ -1124,19 +1086,8 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls) {
 				c_ptr = &zcave[y][x];
 
 				if (new_feat != -1) {
-					int d, xx, yy;
-					dun_level *l_ptr = getfloor(wpos);
-
 					c_ptr->feat = new_feat;
-
-					/* aquatic monster hack */
-					if (l_ptr) for (d = 1; d <= 9; d++) {
-						if (d == 5) continue;
-						xx = x + ddx[d];
-						yy = y + ddy[d];
-						if (!in_bounds4(l_ptr, yy, xx)) continue;
-						if (zcave[yy][xx].feat == FEAT_DEEP_WATER) c_ptr->info |= CAVE_WATERY;
-					}
+					aquatic_terrain_hack(zcave, x, y);
 				}
 				if (nlev_up) {
 					new_level_up_y(wpos, y);

@@ -7261,12 +7261,12 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 
 	/* Change the feature */
 	c_ptr->feat = feat;
+	aquatic_terrain_hack(zcave, x, y);
 
 	if (level_generation_time) return;
 
 	/* XXX it's not needed when called from generate.c */
-	for (i = 1; i <= NumPlayers; i++)
-	{
+	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
 		/* Only works for players on the level */
@@ -8380,3 +8380,24 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 }
 
 
+/* The is_stairs/is_doors hack in monster_can_cross_terrain() that allows
+   aquatic monsters to cross doors and stairs in 'underwater' levels had the
+   bad side effect of causing aquatic monsters on normal levels to seek out
+   stairs/doors and get stuck on them. To fix this in turn, I added CAVE_WATERY
+   and this hack that applies it. - C. Blue */
+void aquatic_terrain_hack(cave_type **zcave, int x, int y) {
+	int d, xx, yy;
+
+	if (!is_stair(zcave[y][x].feat) && !is_door(zcave[y][x].feat)) return;
+
+	for (d = 1; d <= 9; d++) {
+		if (d == 5) continue;
+		xx = x + ddx[d];
+		yy = y + ddy[d];
+		if (!in_bounds(yy, xx)) continue;
+		if (zcave[yy][xx].feat == FEAT_DEEP_WATER) {
+			zcave[y][x].info |= CAVE_WATERY;
+			return;
+		}
+	}
+}
