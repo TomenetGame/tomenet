@@ -5280,6 +5280,7 @@ void calc_boni(int Ind)
 			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 5) + (d * 2)) / 7;
 		} else
 #else
+			/* (rounding error of -1 total to-dam may still occur) */
 			d = p_ptr->to_d + p_ptr->to_d_melee;
 #endif
 		{
