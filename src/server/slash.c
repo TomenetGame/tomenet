@@ -2990,10 +2990,9 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 #ifdef USE_SOUND_2010
-			sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "drop_gold", NULL, SFX_TYPE_COMMAND, TRUE);
+			sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, TRUE);
+			sound(j, "drop_gold", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
-
-
 			p_ptr->au -= tip;
 			q_ptr->au += tip;
 			p_ptr->redraw |= PR_GOLD;
