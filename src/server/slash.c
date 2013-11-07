@@ -2820,7 +2820,11 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
+				msg_print(Ind, "You don't see anyone of that name.");
+				return;
+			}
+
 			for (i = 1; i <= 9; i++) {
 //				if (i == 5) continue;
 				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
@@ -2852,7 +2856,10 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
+				msg_print(Ind, "You don't see anyone of that name.");
+				return;
+			}
 
 			for (i = 1; i <= 9; i++) {
 //				if (i == 5) continue;
@@ -2882,7 +2889,10 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
+				msg_print(Ind, "You don't see anyone of that name.");
+				return;
+			}
 
 			for (i = 1; i <= 9; i++) {
 //				if (i == 5) continue;
@@ -2912,7 +2922,10 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
+				msg_print(Ind, "You don't see anyone of that name.");
+				return;
+			}
 
 			for (i = 1; i <= 9; i++) {
 //				if (i == 5) continue;
@@ -2930,6 +2943,66 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(j, "\377oYou poke yourself.");
 				msg_format_near(j, "\377y%s pokes %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
 			}
+			return;
+		}
+		else if (prefix(message, "/tip")) { /* put some cash (level ^ 2) in player's waistcoat pocket~ */
+			cave_type **zcave = getcave(&p_ptr->wpos);
+			u32b tip;
+			player_type *q_ptr;
+
+			if (!tk) {
+				msg_print(Ind, "Usage: /tip <player name>");
+				return;
+			}
+			//if (p_ptr->au < p_ptr->lev * p_ptr->lev) {
+			if (!p_ptr->au) {
+				msg_print(Ind, "You don't have any money with you.");
+				return;
+			}
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+			j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
+				msg_print(Ind, "You don't see anyone of that name.");
+				return;
+			}
+			for (i = 1; i <= 9; i++) {
+//				if (i == 5) continue;
+				if (zcave[p_ptr->py + ddy[i]][p_ptr->px + ddx[i]].m_idx == -j) break;
+			}
+			if (i == 10) {
+				msg_print(Ind, "Player is not standing next to you.");
+				return;
+			}
+			if (Ind == j) {
+				msg_print(Ind, "You cannot tip yourself.");
+				return;
+			}
+			q_ptr = Players[j];
+
+			if (p_ptr->au < p_ptr->lev * p_ptr->lev) tip = p_ptr->au;
+			else tip = p_ptr->lev * p_ptr->lev;
+
+			if (2000000000 - tip < q_ptr->au) {
+				msg_format(Ind, "%s's pockets are already bulging from money, you cannot tip this filthy rich bastard.", q_ptr->name);
+				return;
+			}
+
+#ifdef USE_SOUND_2010
+			sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "drop_gold", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+
+
+			p_ptr->au -= tip;
+			q_ptr->au += tip;
+			p_ptr->redraw |= PR_GOLD;
+			q_ptr->redraw |= PR_GOLD;
+
+			msg_format(Ind, "\377oYou tip %s for %d Au!", q_ptr->name, tip);
+			msg_format(j, "\377o%s tips you for %d Au!", p_ptr->name, tip);
+//			msg_format_near(j, "\377y%s tips %s!", p_ptr->name, Players[j]->name);
+
 			return;
 		}
 		else if (prefix(message, "/guild_adder")) {
