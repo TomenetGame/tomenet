@@ -2979,6 +2979,11 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "You cannot tip yourself.");
 				return;
 			}
+			if (compat_pmode(Ind, j, FALSE)) {
+				msg_format(Ind, "You may not tip %s players.", compat_pmode(Ind, j, FALSE));
+				return;
+			}
+
 			q_ptr = Players[j];
 
 			if (p_ptr->au < p_ptr->lev * p_ptr->lev) tip = p_ptr->au;
