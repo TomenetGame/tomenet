@@ -2658,7 +2658,7 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 	case WILD_OCEAN: //sea waves
 		wild_info[bleed_to_y][bleed_to_x].bled = WILD_OCEAN;
 		break;
-	case WILD_LAKE: case WILD_SWAMP: //crickets^^
+	case WILD_RIVER: case WILD_LAKE: case WILD_SWAMP: //crickets^^
 		if (wild_info[bleed_to_y][bleed_to_x].bled != WILD_OCEAN)
 			wild_info[bleed_to_y][bleed_to_x].bled = WILD_LAKE;
 		break;

@@ -11598,6 +11598,7 @@ void alloc_dungeon_level(struct worldpos *wpos)
 
 		/* init ambient sfx */
 		switch (w_ptr->type) { /* ---- ensure consistency with process_ambient_sfx() ---- */
+		case WILD_RIVER:
 		case WILD_LAKE:
 		case WILD_SWAMP:
 			w_ptr->ambient_sfx_timer = 4 + rand_int(4);

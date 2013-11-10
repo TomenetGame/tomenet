@@ -1630,6 +1630,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, smooth);
 	} else if (p_ptr->sound_ambient == SFX_AMBIENT_LAKE && (wpos->wz != 0 ||
 	    (wild_info[wpos->wy][wpos->wx].type != WILD_LAKE && wild_info[wpos->wy][wpos->wx].bled != WILD_LAKE &&
+	    wild_info[wpos->wy][wpos->wx].type != WILD_RIVER && wild_info[wpos->wy][wpos->wx].bled != WILD_RIVER &&
 	    wild_info[wpos->wy][wpos->wx].type != WILD_SWAMP && wild_info[wpos->wy][wpos->wx].bled != WILD_SWAMP))) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, smooth);
 	}
@@ -1643,6 +1644,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	} else if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && p_ptr->sound_ambient != SFX_AMBIENT_SHORE && 
 	    p_ptr->sound_ambient != SFX_AMBIENT_LAKE && wpos->wz == 0 &&
 	    (wild_info[wpos->wy][wpos->wx].type == WILD_LAKE || wild_info[wpos->wy][wpos->wx].bled == WILD_LAKE ||
+	    wild_info[wpos->wy][wpos->wx].type == WILD_RIVER || wild_info[wpos->wy][wpos->wx].bled == WILD_RIVER ||
 	    wild_info[wpos->wy][wpos->wx].type == WILD_SWAMP || wild_info[wpos->wy][wpos->wx].bled == WILD_SWAMP)) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_LAKE, smooth);
 	}
@@ -1668,6 +1670,7 @@ void process_ambient_sfx(void) {
 		}
 
 		switch (w_ptr->type) { /* ---- ensure consistency with alloc_dungeon_level() ---- */
+		case WILD_RIVER:
 		case WILD_LAKE:
 		case WILD_SWAMP:
 			sound_floor_vol(&p_ptr->wpos, "animal_toad", NULL, SFX_TYPE_AMBIENT, 100);
