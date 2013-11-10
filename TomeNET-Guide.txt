@@ -6250,9 +6250,13 @@ Halloween
     The Great Pumpkin does not cause any damage but still has a few annoying
     spells at its disposal. It is level 127 and therefore can drop any item in
     the game, and usually drops very good. Please share fairly. ;)
+    The pumpkin can spawn on any dungeon floor in any dungeon that is shallower
+    than level 40 (or 50 on Ironman server), except it won't show up on the
+    first 19 floors in the Ironman Deep Dive Challenge.
     When a player defeats the Great Pumpkin, everyone will get a message about
     it. The Great Pumpkin will randomly respawn again some time later.
-    Also it will stay night on the world's surface until Halloween ends.
+    Also it will stay night on the world's surface until Halloween ends and
+    magic that lights up the world surface won't work.
 
 Christmas
     Running from 24th December to 25th December.
@@ -6265,6 +6269,8 @@ Christmas
 New year's eve
     Running from 31st December to 1st January.
     Fireworks will be launched into the sky of the town of Bree.
+    While it's night and fireworks are being launched, magic that lights up the
+    world surface will not work.
 
 
 
