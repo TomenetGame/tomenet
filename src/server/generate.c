@@ -11618,7 +11618,7 @@ void alloc_dungeon_level(struct worldpos *wpos)
 			else w_ptr->ambient_sfx_timer = 20 + rand_int(40);
 			break;
 		default: //compromise for wilderness-travel ambient sfx hacking
-			w_ptr->ambient_sfx_timer = 30 + rand_int(5);
+			w_ptr->ambient_sfx_timer = 30 + rand_int(5); //should be > than time required for travelling across 1 wilderness sector
 			w_ptr->ambient_sfx_dummy = TRUE;
 			break;
 		}

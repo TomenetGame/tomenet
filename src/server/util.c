@@ -1706,7 +1706,7 @@ void process_ambient_sfx(void) {
 		   This is ok for towns but not cool for fast wilderness travel where terrain is mixed a lot.
 		   For that reason we give default terrain a "pseudo-timeout" to compromise a bit. */
 		default:
-			w_ptr->ambient_sfx_timer = 30 + rand_int(5);
+			w_ptr->ambient_sfx_timer = 30 + rand_int(5); //should be > than time required for travelling across 1 wilderness sector
 			break;
 		}
 
