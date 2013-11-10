@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. November 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. November 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1086,6 +1086,14 @@ or shorter: /tym [rs]
                   It however counts ALL attacks, for example aura hits too.
 
 /time       Tells you the current in-game time, same as /ex does.
+
+/tip <player>
+            Tips a player who must be standing next to you:
+            You give him (yourlevel * yourlevel) gold pieces. Eg if you are
+            level 10, you'll give him 10*10 = 100 Au. If you are level 50, you
+            would give him 2500 Au.
+            If you carry less gold than that in your purse, then you only tip
+            as much gold as you actually carry.
 
 /trait      Allows outdated Draconian characters to acquire a lineage trait.
             This cannot be reversed, so the player should pick carefully.
