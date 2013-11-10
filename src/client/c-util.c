@@ -6738,27 +6738,25 @@ void do_cmd_options(void) {
 		c_prt(TERM_L_GREEN, "TomeNET options", 2, 0);
 
 		/* Give some choices */
-		Term_putstr(5,  4, -1, TERM_WHITE, "(\377y1\377w) User Interface Options 1");
-		Term_putstr(5,  5, -1, TERM_WHITE, "(\377y2\377w) User Interface Options 2");
-		Term_putstr(5,  6, -1, TERM_WHITE, "(\377y3\377w) Audio Options");
-		Term_putstr(5,  7, -1, TERM_WHITE, "(\377y4\377w) Game-Play Options 1");
-		Term_putstr(5,  8, -1, TERM_WHITE, "(\377y5\377w) Game-Play Options 2");
-		Term_putstr(5,  9, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
+		Term_putstr(3, 4, -1, TERM_WHITE, "(\377y1\377w) User Interface Options 1");
+		Term_putstr(3, 5, -1, TERM_WHITE, "(\377y2\377w) User Interface Options 2");
+		Term_putstr(3, 6, -1, TERM_WHITE, "(\377y3\377w) Audio Options");
+		Term_putstr(3, 7, -1, TERM_WHITE, "(\377y4\377w) Game-Play Options 1");
+		Term_putstr(3, 8, -1, TERM_WHITE, "(\377y5\377w) Game-Play Options 2");
+		Term_putstr(3, 9, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
 #if defined(WINDOWS) || defined(USE_X11)
  #ifdef ENABLE_SUBWINDOW_MENU
-		Term_putstr(5, 10, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
+		Term_putstr(3,10, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
+		/* CHANGE_FONTS_X11 */
+		Term_putstr(3,11, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (tap multiple times)");
 #endif
 
-		Term_putstr(5, 12, -1, TERM_WHITE, "(\377ys\377w) Save Options");
-		Term_putstr(5, 13, -1, TERM_WHITE, "(\377yl\377w) Load Options");
+		Term_putstr(3,13, -1, TERM_WHITE, "(\377ys\377w) Save Options");
+		Term_putstr(3,14, -1, TERM_WHITE, "(\377yl\377w) Load Options");
 
-#if defined(WINDOWS) || defined(USE_X11) /* CHANGE_FONTS_X11 */
-		Term_putstr(5, 16, -1, TERM_WHITE, "(\377Uc\377w) Cycle all font sizes (tap multiple times)");
-#endif
-		Term_putstr(5, 17, -1, TERM_WHITE, "(\377UA\377w) Account Options");
-		Term_putstr(5, 18, -1, TERM_WHITE, "(\377Uv\377w) Check Server Options");
-		Term_putstr(5, 19, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from file");
+		Term_putstr(3,18, -1, TERM_WHITE, "(\377UA\377w) Account Options");
+		Term_putstr(3,19, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
 
 		/* Prompt */
 		c_prt(TERM_L_GREEN, "Command: ", 21, 0);
@@ -6783,9 +6781,6 @@ void do_cmd_options(void) {
 		} else if (k == '5') {
 			do_cmd_options_aux(3, "Game-Play Options 2");
 		}
-
-		/* Server Options */
-		else if (k == 'v') Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0);
 
 		/* Save a 'option' file */
 		else if (k == 's') {
