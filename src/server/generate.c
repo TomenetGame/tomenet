@@ -11597,6 +11597,7 @@ void alloc_dungeon_level(struct worldpos *wpos)
 		w_ptr->cave = zcave;
 
 		/* init ambient sfx */
+		w_ptr->ambient_sfx_dummy = FALSE;
 		switch (w_ptr->type) { /* ---- ensure consistency with process_ambient_sfx() ---- */
 		case WILD_RIVER:
 		case WILD_LAKE:
@@ -11615,6 +11616,10 @@ void alloc_dungeon_level(struct worldpos *wpos)
 		case WILD_DENSEFOREST:
 			if (IS_DAY) w_ptr->ambient_sfx_timer = 10 + rand_int(20);
 			else w_ptr->ambient_sfx_timer = 20 + rand_int(40);
+			break;
+		default: //compromise for wilderness-travel ambient sfx hacking
+			w_ptr->ambient_sfx_timer = 30 + rand_int(5);
+			w_ptr->ambient_sfx_dummy = TRUE;
 			break;
 		}
 	}

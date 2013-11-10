@@ -1662,10 +1662,16 @@ void process_ambient_sfx(void) {
 		if (p_ptr->wpos.wz) continue;
 
 		w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-		if (w_ptr->ambient_sfx) continue;
+		if (w_ptr->ambient_sfx_counteddown) continue;
+		if (w_ptr->ambient_sfx) {
+			p_ptr->ambient_sfx_timer = 0;
+			continue;
+		}
 		if (w_ptr->ambient_sfx_timer) {
-			w_ptr->ambient_sfx_timer--;
-			w_ptr->ambient_sfx = TRUE; //hack: semaphore */
+			if (!w_ptr->ambient_sfx_counteddown) {
+				w_ptr->ambient_sfx_timer--;
+				w_ptr->ambient_sfx_counteddown = TRUE; //semaphore
+			}
 			continue;
 		}
 
@@ -1696,15 +1702,23 @@ void process_ambient_sfx(void) {
 				w_ptr->ambient_sfx_timer = 20 + rand_int(40);
 			}
 			break;
+		/* Note: Default terrain that doesn't have ambient sfx will automatically clear people's ambient_sfx_timer too.
+		   This is ok for towns but not cool for fast wilderness travel where terrain is mixed a lot.
+		   For that reason we give default terrain a "pseudo-timeout" to compromise a bit. */
+		default:
+			w_ptr->ambient_sfx_timer = 30 + rand_int(5);
+			break;
 		}
 
 		w_ptr->ambient_sfx = TRUE;
+		p_ptr->ambient_sfx_timer = 0;
 	}
 
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (Players[i]->wpos.wz) continue;
 		wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].ambient_sfx = FALSE;
+		wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].ambient_sfx_counteddown = FALSE;
 	}
 }
 

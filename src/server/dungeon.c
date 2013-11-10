@@ -5824,7 +5824,7 @@ void process_player_change_wpos(int Ind)
 	dun_level *l_ptr;
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
 	char o_name_short[ONAME_LEN];
-	bool smooth_ambient = FALSE;
+	bool smooth_ambient = FALSE, travel_ambient = FALSE;
 
 	/* for obtaining statistical IDDC information: */
 	if (in_irondeepdive(&p_ptr->wpos_old)) s_printf("CVRG-IDDC: '%s' leaves floor %d:\n", p_ptr->name, p_ptr->wpos_old.wz);
@@ -5941,7 +5941,29 @@ void process_player_change_wpos(int Ind)
 	        s_printf("EVENT_LAYOUT: Generating arena_tt at %d,%d,%d\n", wpos.wx, wpos.wy, wpos.wz);
 	        process_dungeon_file("t_arena_tt.txt", &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
 #endif
+
+		/* allow non-normal (interval-timed) ambient sfx, but depend on our own fast-travel-induced rythm */
+		travel_ambient = TRUE;
+	} else if (players_on_depth(wpos) == 1) travel_ambient = TRUE; /* exception - if we're the only one here we won't mess up someone else's ambient sfx rythm, so it's ok */
+
+#ifdef USE_SOUND_2010
+	if (travel_ambient) {
+		/* hack for single ambient sfx while speed-travelling the wild.
+		   (Random info: Travelling a sector horizontally at +4 spd takes ~20s if no obstacles.) */
+		if (!wpos->wz && !p_ptr->wpos_old.wz) {
+			wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
+ #if 0 /* require to travel lots of the same type of terrain to play hacked-rythem ambient sfx? */
+			if (w_ptr->type != w_ptr->type)
+				p_ptr->ambient_sfx_timer = 0;
+			else
+ #endif
+			if (p_ptr->ambient_sfx_timer >= w_ptr->ambient_sfx_timer && !w_ptr->ambient_sfx_dummy) {
+				p_ptr->ambient_sfx_timer = 0;
+				w_ptr->ambient_sfx_timer = 0;
+			}
+		} else p_ptr->ambient_sfx_timer = 0;
 	}
+#endif
 
 	zcave = getcave(wpos);
 	l_ptr = getfloor(wpos);
@@ -6650,6 +6672,12 @@ void dungeon(void)
 		/* process certain player-related timers */
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->redraw_cooldown) Players[i]->redraw_cooldown--;
+
+			/* Arbitrary max number, just to prevent integer overflow.
+			   Should just be higher than the longest interval of any ambient sfx type. */
+			if (!Players[i]->wpos.wz && /* <- redundant check sort of, caught in process_player_change_wpos() anyway */
+			    Players[i]->ambient_sfx_timer < 200)
+				Players[i]->ambient_sfx_timer++;
 		}
 	}
 

@@ -1332,7 +1332,7 @@ struct wilderness_type
 	int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10], cloud_xm100[10], cloud_ym100[10], cloud_idx[10];
 
 	u16b bled;	/* type that was bled into this sector (USE_SOUND_2010: ambient sfx) */
-	bool ambient_sfx; /* for synchronizing ambient sfx (USE_SOUND_2010) */
+	bool ambient_sfx, ambient_sfx_counteddown, ambient_sfx_dummy; /* for synchronizing ambient sfx (USE_SOUND_2010) */
 	int ambient_sfx_timer;
 };
 
@@ -2841,6 +2841,7 @@ struct player_type
 	/* added for ambient-sfx-handling, so it does not do smooth transition
 	   on every wilderness wpos change even though we used WoR instead of walking: */
 	bool is_day;
+	int ambient_sfx_timer; /* hack for running through wilderness too quickly for normal ambient sfx to get played */
 #endif
 	bool cut_sfx_attack;
 	int count_cut_sfx_attack;
