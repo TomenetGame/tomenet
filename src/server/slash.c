@@ -3003,8 +3003,8 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->redraw |= PR_GOLD;
 			q_ptr->redraw |= PR_GOLD;
 
-			msg_format(Ind, "\377oYou tip %s for %d Au!", q_ptr->name, tip);
-			msg_format(j, "\377o%s tips you for %d Au!", p_ptr->name, tip);
+			msg_format(Ind, "\377yYou tip %s for %d Au!", q_ptr->name, tip);
+			msg_format(j, "\377y%s tips you for %d Au!", p_ptr->name, tip);
 //			msg_format_near(j, "\377y%s tips %s!", p_ptr->name, Players[j]->name);
 
 			return;
