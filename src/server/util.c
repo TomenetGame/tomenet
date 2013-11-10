@@ -1648,6 +1648,63 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	}
 }
 
+/* play single ambient sfx, synched for all players, depending on worldmap terrain - C. Blue */
+void process_ambient_sfx(void) {
+	int i;
+	player_type *p_ptr;
+	wilderness_type *w_ptr;
+
+	for (i = 1; i <= NumPlayers; i++) {
+		p_ptr = Players[i];
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+		if (p_ptr->wpos.wz) continue;
+
+		w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+		if (w_ptr->ambient_sfx) continue;
+		if (w_ptr->ambient_sfx_timer) {
+			w_ptr->ambient_sfx_timer--;
+			w_ptr->ambient_sfx = TRUE; //hack: semaphore */
+			continue;
+		}
+
+		switch (w_ptr->type) { /* ---- ensure consistency with alloc_dungeon_level() ---- */
+		case WILD_LAKE:
+		case WILD_SWAMP:
+			sound_floor_vol(&p_ptr->wpos, "animal_toad", NULL, SFX_TYPE_AMBIENT, 100);
+			w_ptr->ambient_sfx_timer = 4 + rand_int(4);
+			break;
+		case WILD_MOUNTAIN:
+		case WILD_WASTELAND:
+			if (IS_NIGHT) sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, 100);
+			w_ptr->ambient_sfx_timer = 30 + rand_int(60);
+			break;
+		//case WILD_SHORE:
+		case WILD_OCEAN:
+			if (IS_DAY) sound_floor_vol(&p_ptr->wpos, "animal_seagull", NULL, SFX_TYPE_AMBIENT, 100);
+			w_ptr->ambient_sfx_timer = 30 + rand_int(60);
+			break;
+		case WILD_FOREST:
+		case WILD_DENSEFOREST:
+			if (IS_DAY) {
+				sound_floor_vol(&p_ptr->wpos, "animal_bird", NULL, SFX_TYPE_AMBIENT, 100);
+				w_ptr->ambient_sfx_timer = 10 + rand_int(20);
+			} else {
+				sound_floor_vol(&p_ptr->wpos, "animal_owl", NULL, SFX_TYPE_AMBIENT, 100);
+				w_ptr->ambient_sfx_timer = 20 + rand_int(40);
+			}
+			break;
+		}
+
+		w_ptr->ambient_sfx = TRUE;
+	}
+
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (Players[i]->wpos.wz) continue;
+		wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].ambient_sfx = FALSE;
+	}
+}
+
 /* generate an item-type specific sound, depending on the action applied to it
    action: 0 = pickup, 1 = drop, 2 = wear/wield, 3 = takeoff, 4 = throw, 5 = destroy */
 void sound_item(int Ind, int tval, int sval, cptr action) {

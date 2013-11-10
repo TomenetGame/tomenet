@@ -1309,7 +1309,6 @@ struct wilderness_type
 {
 	u16b radius;	/* the distance from the town */
 	u16b type;	/* what kind of terrain we are in */
-	u16b bled;	/* type that was bled into this sector (USE_SOUND_2010: ambient sfx) */
 	signed char town_idx;	/* Which town resides exactly in this sector? */
 
 	u32b flags;	/* various */
@@ -1331,6 +1330,10 @@ struct wilderness_type
 	int clouds_to_update; /* number of clouds that were changed since last update (for efficiency) */
 	bool cloud_updated[10]; /* 'has cloud been changed?' */
 	int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10], cloud_xm100[10], cloud_ym100[10], cloud_idx[10];
+
+	u16b bled;	/* type that was bled into this sector (USE_SOUND_2010: ambient sfx) */
+	bool ambient_sfx; /* for synchronizing ambient sfx (USE_SOUND_2010) */
+	int ambient_sfx_timer;
 };
 
 

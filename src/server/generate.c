@@ -11578,22 +11578,45 @@ void alloc_dungeon_level(struct worldpos *wpos)
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	struct dungeon_type *d_ptr;
 	cave_type **zcave;
+
 	/* Allocate the array of rows */
 	zcave = C_NEW(MAX_HGT, cave_type*);
 
 	/* Allocate each row */
-	for (i = 0; i < MAX_HGT; i++)
-	{
+	for (i = 0; i < MAX_HGT; i++) {
 		/* Allocate it */
 		C_MAKE(zcave[i], MAX_WID, cave_type);
 	}
-	if(wpos->wz){
+
+	if (wpos->wz) {
 		struct dun_level *dlp;
 		d_ptr = (wpos->wz > 0 ? w_ptr->tower : w_ptr->dungeon);
 		dlp = &d_ptr->level[ABS(wpos->wz) - 1];
 		dlp->cave = zcave;
+	} else {
+		w_ptr->cave = zcave;
+
+		/* init ambient sfx */
+		switch (w_ptr->type) { /* ---- ensure consistency with process_ambient_sfx() ---- */
+		case WILD_LAKE:
+		case WILD_SWAMP:
+			w_ptr->ambient_sfx_timer = 4 + rand_int(4);
+			break;
+		case WILD_MOUNTAIN:
+		case WILD_WASTELAND:
+			w_ptr->ambient_sfx_timer = 30 + rand_int(60);
+			break;
+		//case WILD_SHORE:
+		case WILD_OCEAN:
+			w_ptr->ambient_sfx_timer = 30 + rand_int(60);
+			break;
+		case WILD_FOREST:
+		case WILD_DENSEFOREST:
+			if (IS_DAY) w_ptr->ambient_sfx_timer = 10 + rand_int(20);
+			else w_ptr->ambient_sfx_timer = 20 + rand_int(40);
+			break;
+		}
 	}
-	else w_ptr->cave = zcave;
 }
 
 /*

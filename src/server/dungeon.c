@@ -6640,6 +6640,10 @@ void dungeon(void)
 		process_auctions();
 #endif
 
+#ifdef USE_SOUND_2010
+		process_ambient_sfx();
+#endif
+
 		/* process timed shutdown (/shutrec) */
 		if (shutdown_recall_timer) shutdown_recall_timer--;
 

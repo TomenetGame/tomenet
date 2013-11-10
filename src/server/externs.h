@@ -1661,6 +1661,9 @@ extern void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cp
 extern void sound_near_monster(int m_idx, cptr name, cptr alternative, int type);
 extern void handle_music(int Ind);
 extern void handle_ambient_sfx(int Ind, cave_type *cptr, struct worldpos *wpos, bool smooth);
+#ifdef USE_SOUND_2010
+extern void process_ambient_sfx(void);
+#endif
 extern void sound_item(int Ind, int tval, int sval, cptr action);
 #else
 extern void sound(int Ind, int num);
