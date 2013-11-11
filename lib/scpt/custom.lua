@@ -122,7 +122,7 @@ function cron_1h(timestamp, h, m, s)
 		lua_start_global_event(0, 1, ">")
 	end
 	if mod(h,2)==1 then
-		lua_start_global_event(0, 1, ">")
+		lua_start_global_event(0, 5, ">")
 	end
 
 	if mod(h,3)==0 then
