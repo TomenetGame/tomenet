@@ -9383,7 +9383,7 @@ S:S_KIN
 D:She's upset because you hurt her children. 
 
 N:582:Will o' the wisp
-G:E:W
+G:E:c
 I:130:20d10:30:150:0
 W:38:4:0:500
 E:0:0:0:0:0:0
