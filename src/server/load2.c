@@ -1954,8 +1954,7 @@ static errr rd_inventory(int Ind)
 	p_ptr->equip_cnt = 0;
 
 	/* Read until done */
-	while (TRUE)
-	{
+	while (TRUE) {
 		u16b n;
 
 		/* Get the next item index */
@@ -1968,11 +1967,19 @@ static errr rd_inventory(int Ind)
 		rd_item(&forge);
 
 		/* Hack -- verify item */
-		if (!forge.k_idx)
-		{
-			s_printf("Warning! Non-existing item detected(erased).\n");
+		if (!forge.k_idx) {
+			s_printf("Warning! Non-existing item detected (erased).\n");
 			continue;
 		}
+
+#ifdef FLUENT_ARTIFACT_RESETS
+		/* hack: If an artifact wasn't successfully erased when it should have been
+		   (happens if the save file was temporarily removed), fix it now. */
+		if (!a_info[forge.name1].cur_num || a_info[forge.name1].carrier != p_ptr->id) {
+			s_printf("Warning! Already redistributed artifact %d detected (erased).\n", forge.name1);
+			continue;
+		}
+#endif
 
 #if 0
 		/* Mega-Hack -- Handle artifacts that aren't yet "created" */

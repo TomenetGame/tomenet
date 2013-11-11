@@ -9022,4 +9022,11 @@ void erase_artifact(int a_idx) {
 
 	/* Paranoia: Failed to locate the artifact. Shouldn't happen! */
 	s_printf("FLUENT_ARTIFACT_RESETS_ERROR: not found '%s'\n", o_name);
+
+	/* It can actually happen if the savegame was deleted manually.
+	   In such cases, free the artifact again. This might cause problems
+	   with duplicate artifacts if the savegames are reinstantiated, so
+	   on loading a character, the artifact owner should be compared. */
+	handle_art_d(a_idx);
+	msg_broadcast_format(0, "\376\377M* \377U%s has been lost once more. \377M*", o_name_short);
 }
