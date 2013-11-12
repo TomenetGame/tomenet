@@ -2611,7 +2611,7 @@ if (term_prefs[1].visible) {
 	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_MIRROR;
 
-	/* Initialize the recall window */
+	/* Initialize the mirror window */
 	term_data_init(1, &mirror, FALSE, ang_term_name[1], fnt_name);
 	term_mirror = Term;
 	ang_term[1] = Term;
@@ -2667,7 +2667,7 @@ if (term_prefs[4].visible) {
 	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_4;
 
-	/* Initialize the choice window */
+	/* Initialize the term_4 window */
 	term_data_init(4, &term_4, FALSE, ang_term_name[4], fnt_name);
 	term_term_4 = Term;
 	ang_term[4] = Term;
@@ -2686,7 +2686,7 @@ if (term_prefs[5].visible) {
 	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_5;
 
-	/* Initialize the choice window */
+	/* Initialize the term_5 window */
 	term_data_init(5, &term_5, FALSE, ang_term_name[5], fnt_name);
 	term_term_5 = Term;
 	ang_term[5] = Term;
@@ -2705,7 +2705,7 @@ if (term_prefs[6].visible) {
 	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_6;
 
-	/* Initialize the choice window */
+	/* Initialize the term_6 window */
 	term_data_init(6, &term_6, FALSE, ang_term_name[6], fnt_name);
 	term_term_6 = Term;
 	ang_term[6] = Term;
@@ -2724,7 +2724,7 @@ if (term_prefs[7].visible) {
 	/* paranoia; use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_7;
 
-	/* Initialize the choice window */
+	/* Initialize the term_7 window */
 	term_data_init(7, &term_7, FALSE, ang_term_name[7], fnt_name);
 	term_term_7 = Term;
 	ang_term[7] = Term;
