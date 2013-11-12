@@ -1475,8 +1475,7 @@ static void react_keypress(XEvent *xev)
 /*
  * Process events
  */
-static errr CheckEvent(bool wait)
-{
+static errr CheckEvent(bool wait) {
 	term_data *old_td = (term_data*)(Term->data);
 
 	XEvent xev_body, *xev = &xev_body;
@@ -1498,168 +1497,129 @@ static errr CheckEvent(bool wait)
 
 
 	/* Notice new keymaps */
-	if (xev->type == MappingNotify)
-	{
+	if (xev->type == MappingNotify) {
 		XRefreshKeyboardMapping(&xev->xmapping);
 		return 0;
 	}
 
 
 	/* Main screen, inner window */
-	if (xev->xany.window == screen.inner->win)
-	{
+	if (xev->xany.window == screen.inner->win) {
 		td = &screen;
 		iwin = td->inner;
 		t_idx = 0;
 	}
-
 	/* Main screen, outer window */
-	else if (xev->xany.window == screen.outer->win)
-	{
+	else if (xev->xany.window == screen.outer->win) {
 		td = &screen;
 		iwin = td->outer;
 		t_idx = 0;
 	}
-
 
 //#ifdef GRAPHIC_MIRROR
-
 	/* Mirror window, inner window */
-	else if (xev->xany.window == mirror.inner->win)
-	{
+	else if (term_mirror && xev->xany.window == mirror.inner->win) {
 		td = &mirror;
 		iwin = td->inner;
 		t_idx = 1;
 	}
-
 	/* Mirror window, outer window */
-	else if (xev->xany.window == mirror.outer->win)
+	else if (term_mirror && xev->xany.window == mirror.outer->win)
 	{
 		td = &mirror;
 		iwin = td->outer;
 		t_idx = 1;
 	}
-
 //#endif
 
 //#ifdef GRAPHIC_RECALL
-
 	/* Recall window, inner window */
-	else if (xev->xany.window == recall.inner->win)
-	{
+	else if (term_recall && xev->xany.window == recall.inner->win) {
 		td = &recall;
 		iwin = td->inner;
 		t_idx = 2;
 	}
-
 	/* Recall Window, outer window */
-	else if (xev->xany.window == recall.outer->win)
-	{
+	else if (term_recall && xev->xany.window == recall.outer->win) {
 		td = &recall;
 		iwin = td->outer;
 		t_idx = 2;
 	}
-
 //#endif
 
 //#ifdef GRAPHIC_CHOICE
-
 	/* Choice window, inner window */
-	else if (xev->xany.window == choice.inner->win)
-	{
+	else if (term_choice && xev->xany.window == choice.inner->win) {
 		td = &choice;
 		iwin = td->inner;
 		t_idx = 3;
 	}
-
 	/* Choice Window, outer window */
-	else if (xev->xany.window == choice.outer->win)
-	{
+	else if (term_choice && xev->xany.window == choice.outer->win) {
 		td = &choice;
 		iwin = td->outer;
 		t_idx = 3;
 	}
-
 //#endif
 
 //#ifdef GRAPHIC_TERM_4
-
 	/* Choice window, inner window */
-	else if (xev->xany.window == term_4.inner->win)
-	{
+	else if (term_term_4 && xev->xany.window == term_4.inner->win) {
 		td = &term_4;
 		iwin = td->inner;
 		t_idx = 4;
 	}
-
 	/* Choice Window, outer window */
-	else if (xev->xany.window == term_4.outer->win)
-	{
+	else if (term_term_4 && xev->xany.window == term_4.outer->win) {
 		td = &term_4;
 		iwin = td->outer;
 		t_idx = 4;
 	}
-
 //#endif
 
 //#ifdef GRAPHIC_TERM_5
-
 	/* Choice window, inner window */
-	else if (xev->xany.window == term_5.inner->win)
-	{
+	else if (term_term_5 && xev->xany.window == term_5.inner->win) {
 		td = &term_5;
 		iwin = td->inner;
 		t_idx = 5;
 	}
-
 	/* Choice Window, outer window */
-	else if (xev->xany.window == term_5.outer->win)
-	{
+	else if (term_term_5 && xev->xany.window == term_5.outer->win) {
 		td = &term_5;
 		iwin = td->outer;
 		t_idx = 5;
 	}
-
 //#endif
 
 //#ifdef GRAPHIC_TERM_6
-
 	/* Choice window, inner window */
-	else if (xev->xany.window == term_6.inner->win)
-	{
+	else if (term_term_6 && xev->xany.window == term_6.inner->win) {
 		td = &term_6;
 		iwin = td->inner;
 		t_idx = 6;
 	}
-
 	/* Choice Window, outer window */
-	else if (xev->xany.window == term_6.outer->win)
-	{
+	else if (term_term_6 && xev->xany.window == term_6.outer->win) {
 		td = &term_6;
 		iwin = td->outer;
 		t_idx = 6;
 	}
-
 //#endif
 
 //#ifdef GRAPHIC_TERM_7
-
 	/* Choice window, inner window */
-	else if (xev->xany.window == term_7.inner->win)
-	{
+	else if (term_term_7 && xev->xany.window == term_7.inner->win) {
 		td = &term_7;
 		iwin = td->inner;
 		t_idx = 7;
 	}
-
 	/* Choice Window, outer window */
-	else if (xev->xany.window == term_7.outer->win)
-	{
+	else if (term_term_7 && xev->xany.window == term_7.outer->win) {
 		td = &term_7;
 		iwin = td->outer;
 		t_idx = 7;
 	}
-
 //#endif
 
 
