@@ -854,10 +854,7 @@ static void play_sound_weather(int event) {
 	Mix_Chunk *wave = NULL;
 	int s, new_wc;
 
-#ifdef DISABLE_MUTED_AUDIO
-	if (!cfg_audio_master || !cfg_audio_weather) return;
-#endif
-
+	/* allow halting a muted yet playing sound, before checking for DISABLE_MUTED_AUDIO */
 	if (event == -2 && weather_channel != -1) {
 #ifdef DEBUG_SOUND
 		puts(format("w-2: wco %d, ev %d", weather_channel, event));
@@ -865,14 +862,30 @@ static void play_sound_weather(int event) {
 		Mix_HaltChannel(weather_channel);
 		return;
 	}
-	else if (event == -1 && weather_channel != -1) {
+
+	if (event == -1 && weather_channel != -1) {
 #ifdef DEBUG_SOUND
 		puts(format("w-1: wco %d, ev %d", weather_channel, event));
 #endif
+
+		/* if channel is muted anyway, no need to fade out, just halt it instead.
+		   HACK: The reason for this is actually to fix this bug:
+		   There was a bug where ambient channel wasn't faded out if it was actually
+		   muted at the same time, and so it'd continue being active when unmuted
+		   again, instead of having been terminated by the fade-out.  */
+		if (!cfg_audio_master || !cfg_audio_weather || !cfg_audio_weather_volume) {
+			Mix_HaltChannel(weather_channel);
+			return;
+		}
+
 		if (Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
 			Mix_FadeOutChannel(weather_channel, 2000);
 		return;
 	}
+
+#ifdef DISABLE_MUTED_AUDIO
+	if (!cfg_audio_master || !cfg_audio_weather) return;
+#endif
 
 	/* we're already in this weather? */
 	if (weather_channel != -1 && weather_current == event &&
@@ -987,10 +1000,7 @@ static void play_sound_weather_vol(int event, int vol) {
 	Mix_Chunk *wave = NULL;
 	int s, new_wc;
 
-#ifdef DISABLE_MUTED_AUDIO
-	if (!cfg_audio_master || !cfg_audio_weather) return;
-#endif
-
+	/* allow halting a muted yet playing sound, before checking for DISABLE_MUTED_AUDIO */
 	if (event == -2 && weather_channel != -1) {
 #ifdef DEBUG_SOUND
 		puts(format("w-2: wco %d, ev %d", weather_channel, event));
@@ -998,14 +1008,30 @@ static void play_sound_weather_vol(int event, int vol) {
 		Mix_HaltChannel(weather_channel);
 		return;
 	}
-	else if (event == -1 && weather_channel != -1) {
+
+	if (event == -1 && weather_channel != -1) {
 #ifdef DEBUG_SOUND
 		puts(format("w-1: wco %d, ev %d", weather_channel, event));
 #endif
+
+		/* if channel is muted anyway, no need to fade out, just halt it instead.
+		   HACK: The reason for this is actually to fix this bug:
+		   There was a bug where ambient channel wasn't faded out if it was actually
+		   muted at the same time, and so it'd continue being active when unmuted
+		   again, instead of having been terminated by the fade-out.  */
+		if (!cfg_audio_master || !cfg_audio_weather || !cfg_audio_weather_volume) {
+			Mix_HaltChannel(weather_channel);
+			return;
+		}
+
 		if (Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
 			Mix_FadeOutChannel(weather_channel, 2000);
 		return;
 	}
+
+#ifdef DISABLE_MUTED_AUDIO
+	if (!cfg_audio_master || !cfg_audio_weather) return;
+#endif
 
 	/* we're already in this weather? */
 	if (weather_channel != -1 && weather_current == event &&
@@ -1168,10 +1194,7 @@ static void play_sound_ambient(int event) {
 	puts(format("psa: ch %d, ev %d", ambient_channel, event));
 #endif
 
-#ifdef DISABLE_MUTED_AUDIO
-	if (!cfg_audio_master || !cfg_audio_sound) return;
-#endif
-
+	/* allow halting a muted yet playing sound, before checking for DISABLE_MUTED_AUDIO */
 	if (event == -2 && ambient_channel != -1) {
 #ifdef DEBUG_SOUND
 		puts(format("w-2: wco %d, ev %d", ambient_channel, event));
@@ -1179,14 +1202,30 @@ static void play_sound_ambient(int event) {
 		Mix_HaltChannel(ambient_channel);
 		return;
 	}
-	else if (event == -1 && ambient_channel != -1) {
+
+	if (event == -1 && ambient_channel != -1) {
 #ifdef DEBUG_SOUND
 		puts(format("w-1: wco %d, ev %d", ambient_channel, event));
 #endif
+
+		/* if channel is muted anyway, no need to fade out, just halt it instead.
+		   HACK: The reason for this is actually to fix this bug:
+		   There was a bug where ambient channel wasn't faded out if it was actually
+		   muted at the same time, and so it'd continue being active when unmuted
+		   again, instead of having been terminated by the fade-out.  */
+		if (!cfg_audio_master || !cfg_audio_sound || !cfg_audio_sound_volume) {
+			Mix_HaltChannel(ambient_channel);
+			return;
+		}
+
 		if (Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
 			Mix_FadeOutChannel(ambient_channel, 2000);
 		return;
 	}
+
+#ifdef DISABLE_MUTED_AUDIO
+	if (!cfg_audio_master || !cfg_audio_sound) return;
+#endif
 
 	/* we're already in this ambient? */
 	if (ambient_channel != -1 && ambient_current == event &&
@@ -1436,8 +1475,14 @@ static void set_mixing_sdl(void) {
  #endif
 	}
 
-	if (ambient_channel != -1 && Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
-		Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+	if (ambient_channel != -1) {
+		if (Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
+			Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+#ifdef DISABLE_MUTED_AUDIO
+		if ((!cfg_audio_master || !cfg_audio_sound) && Mix_Playing(ambient_channel))
+			Mix_HaltChannel(ambient_channel);
+#endif
+	}
 
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_weather) {
