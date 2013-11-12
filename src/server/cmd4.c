@@ -3170,6 +3170,14 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	if (!(p_ptr->mode & (MODE_EVERLASTING | MODE_PVP | MODE_NO_GHOST)))
 		msg_format(Ind, "You have %d %s left.", p_ptr->lives-1-1, p_ptr->lives-1-1 > 1 ? "resurrections" : "resurrection");
 
+	if (p_ptr->castles_owned) {
+		if (p_ptr->houses_owned == 1) msg_print(Ind, "You own a castle.");
+		else if (p_ptr->houses_owned == 2) msg_print(Ind, "You own a castle and a house.");
+		else msg_format(Ind, "You own a castle and %d houses.", p_ptr->houses_owned - 1);
+	} else if (p_ptr->houses_owned == 0) msg_print(Ind, "You are currently homeless.");
+	else if (p_ptr->houses_owned == 1) msg_print(Ind, "You own a house.");
+	else msg_format(Ind, "You own %d houses.", p_ptr->houses_owned);
+
 #if 0 /* already displayed to the left */
  #ifdef ENABLE_STANCES
 	if (get_skill(p_ptr, SKILL_STANCE)) {
