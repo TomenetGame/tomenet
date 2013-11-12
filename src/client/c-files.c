@@ -1765,7 +1765,7 @@ void load_auto_inscriptions(cptr name)
 	FILE *fp;
 	char buf[1024];
 	char real_name[256];
-	int i, c, j;
+	int i, c, j, c_eff;
 	bool replaced;
 
 	strncpy(real_name, name, 249);
@@ -1784,8 +1784,7 @@ void load_auto_inscriptions(cptr name)
 	path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
 
 	fp = fopen(buf, "r");
-	if (!fp)
-	{
+	if (!fp) {
 		/* Couldn't open */
 		return;
 	}
@@ -1810,7 +1809,8 @@ void load_auto_inscriptions(cptr name)
 
 	fclose(fp);
 //	c_msg_print("Auto-inscriptions loaded.");
-#else /* attempt to merge current auto-inscriptions somewhat */
+#endif
+#if 0 /* attempt to merge current auto-inscriptions somewhat */
 	/* load inscriptions (2 lines each) */
 	c = -1; /* current internal auto-inscription slot to set */
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
@@ -1870,6 +1870,75 @@ void load_auto_inscriptions(cptr name)
 		}
 		if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
 		strcpy(auto_inscription_tag[c], buf);
+	}
+//	c_msg_print("Auto-inscriptions loaded/merged.");
+	fclose(fp);
+#endif
+#if 1 /* attempt to merge current auto-inscriptions, and give priority to those we want to load here */
+	/* load inscriptions (2 lines each) */
+	c = 0; /* current internal auto-inscription slot to set */
+	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+		replaced = FALSE;
+
+		/* try to read a match */
+		if (fgets(buf, 40, fp) == NULL) {
+			fclose(fp);
+			return;
+		}
+		if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
+
+		/* skip empty matches */
+		if (buf[0] == '\0') {
+			/* try to read according tag */
+			if (fgets(buf, 20, fp) == NULL) {
+				fclose(fp);
+				return;
+			}
+			continue;
+		}
+
+		/* check for duplicate entry (if it already exists)
+		   and replace older entry simply */
+		for (j = 0; j < MAX_AUTO_INSCRIPTIONS; j++) {
+			if (!strcmp(buf, auto_inscription_match[j])) {
+				/* try to read according tag */
+				if (fgets(buf, 20, fp) == NULL) {
+					fclose(fp);
+					return;
+				}
+				if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
+				strcpy(auto_inscription_tag[j], buf);
+
+				replaced = TRUE;
+				break;
+			}
+		}
+		if (replaced) continue;
+
+		/* search for free match-slot */
+		if (c >= 0) {
+			while (strlen(auto_inscription_match[c]) && c < MAX_AUTO_INSCRIPTIONS) c++;
+			if (c == MAX_AUTO_INSCRIPTIONS) {
+				c = -1;
+				c_eff = 0;
+			} else c_eff = c;
+		} else {
+			/* if all slots are full, overwrite them starting with the first slot */
+			c--;
+			c_eff = -c - 1;
+		}
+		/* set slot */
+		strcpy(auto_inscription_match[c_eff], buf);
+
+		/* load according tag */
+		if (fgets(buf, 20, fp) == NULL) {
+			fclose(fp);
+			return;
+		}
+		if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
+		strcpy(auto_inscription_tag[c_eff], buf);
+
+		if (c >= 0) c++;
 	}
 //	c_msg_print("Auto-inscriptions loaded/merged.");
 	fclose(fp);
