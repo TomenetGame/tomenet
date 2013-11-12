@@ -8905,7 +8905,7 @@ void erase_artifact(int a_idx) {
 				monster_desc(0, m_name, o_ptr->held_m_idx, 0);
 				s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #1)\n  '%s'\n", o_ptr->held_m_idx, m_name, o_name);
 				delete_object_idx(i, FALSE);
-				msg_broadcast_format(0, "\376\377M* \377U%s has been lost once more. \377M*", o_name_short);
+				msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 				return;
 			} else {
 				i = 1;
@@ -8916,7 +8916,7 @@ void erase_artifact(int a_idx) {
 						monster_desc(0, m_name, o_ptr->held_m_idx, 0);
 						s_printf("FLUENT_ARTIFACT_RESETS: monster inventory (%d, '%s', #%d)\n  '%s'\n", o_ptr->held_m_idx, m_name, i, o_name);
 						delete_object_idx(this_o_idx, FALSE);
-						msg_broadcast_format(0, "\376\377M* \377U%s has been lost once more. \377M*", o_name_short);
+						msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 						return;
 					}
 					q_ptr = &o_list[this_o_idx];
@@ -8928,7 +8928,7 @@ void erase_artifact(int a_idx) {
 
 		s_printf("FLUENT_ARTIFACT_RESETS: floor '%s'\n", o_name);
 		delete_object_idx(i, FALSE);
-		msg_broadcast_format(0, "\376\377M* \377U%s has been lost once more. \377M*", o_name_short);
+		msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 		return;
 	}
 
@@ -8948,7 +8948,7 @@ void erase_artifact(int a_idx) {
 				inven_item_increase(this_o_idx, i, -99);
 				inven_item_describe(this_o_idx, i);
 				inven_item_optimize(this_o_idx, i);
-				msg_broadcast_format(this_o_idx, "\376\377M* \377U%s has been lost once more. \377M*", o_name_short);
+				msg_broadcast_format(this_o_idx, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 				return;
 			}
 		}
@@ -9005,7 +9005,7 @@ void erase_artifact(int a_idx) {
 					C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
 					KILL(p_ptr, player_type);
 					NumPlayers--;
-					msg_broadcast_format(0, "\376\377M* \377U%s has been lost once more. \377M*", o_name_short);
+					msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 					return;
 				}
 			}
@@ -9028,5 +9028,5 @@ void erase_artifact(int a_idx) {
 	   with duplicate artifacts if the savegames are reinstantiated, so
 	   on loading a character, the artifact owner should be compared. */
 	handle_art_d(a_idx);
-	msg_broadcast_format(0, "\376\377M* \377U%s has been lost once more. \377M*", o_name_short);
+	msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 }

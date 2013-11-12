@@ -5915,7 +5915,7 @@ void process_player_change_wpos(int Ind)
 			inven_item_optimize(Ind, j);
 
 			/* Tell everyone */
-			msg_broadcast_format(Ind, "\376\377M* \377U%s has been lost once more. \377M*", o_name_short);
+			msg_broadcast_format(Ind, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 
 			j--;
 		}
