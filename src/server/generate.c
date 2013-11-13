@@ -11604,6 +11604,7 @@ void alloc_dungeon_level(struct worldpos *wpos)
 		case WILD_SWAMP:
 			w_ptr->ambient_sfx_timer = 4 + rand_int(4);
 			break;
+		case WILD_ICE:
 		case WILD_MOUNTAIN:
 		case WILD_WASTELAND:
 			w_ptr->ambient_sfx_timer = 30 + rand_int(60);

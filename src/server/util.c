@@ -1683,6 +1683,7 @@ void process_ambient_sfx(void) {
 			sound_floor_vol(&p_ptr->wpos, "animal_toad", NULL, SFX_TYPE_AMBIENT, 100);
 			w_ptr->ambient_sfx_timer = 4 + rand_int(4);
 			break;
+		case WILD_ICE:
 		case WILD_MOUNTAIN:
 		case WILD_WASTELAND:
 			if (IS_NIGHT) sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, 100);
