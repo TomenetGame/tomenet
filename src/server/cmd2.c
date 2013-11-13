@@ -4666,7 +4666,7 @@ void do_cmd_fire(int Ind, int dir)
 			}
 		}
 	}
-	if (sfx == 0)
+	if (sfx == 0 && p_ptr->sfx_combat)
  #if 0 //DEBUG
 		switch (otval) {
  #else
@@ -4901,7 +4901,7 @@ void do_cmd_fire(int Ind, int dir)
 									if (visible) msg_format(Ind, "\377%c%s blocks %s!", COLOUR_BLOCK_PLY, p_name, o_name);
 									msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
 #ifdef USE_SOUND_2010
-					                                if (sfx == 0) sound(Ind, "block_shield_projectile", NULL, SFX_TYPE_ATTACK, FALSE);
+					                                if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "block_shield_projectile", NULL, SFX_TYPE_ATTACK, FALSE);
 #endif
 									continue;
 								}
@@ -4915,7 +4915,7 @@ void do_cmd_fire(int Ind, int dir)
 									msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
 									if (visible) msg_format(Ind, "\377%c%s parries %s!", COLOUR_PARRY_PLY, p_name, o_name);
 #ifdef USE_SOUND_2010
-					                                if (sfx == 0) sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
+					                                if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
 #endif
 									continue;
 								}

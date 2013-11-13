@@ -2149,6 +2149,20 @@ static void sync_options(int Ind, bool *options)
 		p_ptr->player_list2 = options[51];
 	}
 	p_ptr->cut_sfx_attack = options[87];
+
+	if (is_older_than(&p_ptr->version, 4, 5, 5, 0, 0, 1)) {
+		p_ptr->sfx_combat = FALSE;
+		p_ptr->sfx_magicattack = FALSE;
+		p_ptr->sfx_defense = FALSE;
+		p_ptr->sfx_monsterattack = FALSE;
+		p_ptr->sfx_shriek = FALSE;
+	} else {
+		p_ptr->sfx_combat = !options[47];
+		p_ptr->sfx_magicattack = !options[48];
+		p_ptr->sfx_defense = !options[49];
+		p_ptr->sfx_monsterattack = !options[93];
+		p_ptr->sfx_shriek = !options[94];
+	}
 }
 
 /*

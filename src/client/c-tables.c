@@ -390,14 +390,29 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.safe_float,		FALSE,	3,	1, 18, TRUE, /* was avoid_abort (obsolete) */
 	"safe_float",			"Prevent floating for a short while after death" },
 
+#if 0
 	{ &c_cfg.avoid_other,		FALSE,	1,	1, 19, FALSE,
 	"avoid_other",			"(broken) Avoid processing special colors" },
+#else
+	{ &c_cfg.no_combat_sfx,		FALSE,	5,	1, 19, TRUE,
+	"no_combat_sfx",		"Don't play melee/launcher attack/miss sound fx" },
+#endif
 
+#if 0
 	{ &c_cfg.flush_failure,		TRUE,	1,	1, 20, FALSE, /* (resurrect me?) */
 	"flush_failure",		"(broken) Flush input on various failures" },
+#else
+	{ &c_cfg.no_magicattack_sfx,	FALSE,	5,	1, 21, TRUE,
+	"no_magicattack_sfx",		"Don't play basic attack-spell/device sound fx" },
+#endif
 
+#if 0
 	{ &c_cfg.flush_disturb,		FALSE,	1,	1, 21, FALSE,
 	"flush_disturb",		"(broken) Flush input whenever disturbed" },
+#else
+	{ &c_cfg.no_defense_sfx,	FALSE,	5,	1, 20, TRUE,
+	"no_defense_sfx",		"Don't play attack-avoiding/neutralizing sound fx" },
+#endif
 
 	//50
 
@@ -565,6 +580,12 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.ovl_sfx_mon_misc,	TRUE,	5,	0, 92, TRUE,
 	"ovl_sfx_mon_misc",		"Allow overlapping misc monster sfx of same type" },
+
+	{ &c_cfg.no_monsterattack_sfx,	FALSE,	5,	1, 93, TRUE,
+	"no_monsterattack_sfx",		"Don't play basic monster attack sound fx" },
+
+	{ &c_cfg.no_shriek_sfx,		FALSE,	5,	1, 94, TRUE,
+	"no_shriek_sfx",		"Don't play shriek (monster hasting) sound fx" },
 };
 
 

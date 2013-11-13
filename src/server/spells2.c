@@ -5820,7 +5820,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
-			sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
+			if (p_ptr->sfx_magicattack) sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
 	}
 #endif
 #endif
@@ -5889,7 +5889,7 @@ bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
-			sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
+			if (p_ptr->sfx_magicattack) sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
 	}
 #endif
 #endif
@@ -5942,7 +5942,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	else if (typ == GF_DETONATION) sound(Ind, "detonation", NULL, SFX_TYPE_COMMAND, FALSE);
 	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_COMMAND, FALSE);
 	/* only this one needed really */
-	else sound(Ind, "cast_cloud", NULL, SFX_TYPE_COMMAND, FALSE);
+	else if (p_ptr->sfx_magicattack) sound(Ind, "cast_cloud", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	flg = mod_ball_spell_flags(typ, flg);
@@ -6264,7 +6264,7 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
 	snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "cast_bolt", NULL, SFX_TYPE_COMMAND, FALSE);
+	if (Players[Ind]->sfx_magicattack) sound(Ind, "cast_bolt", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
@@ -6282,7 +6282,7 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
         snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "cast_beam", NULL, SFX_TYPE_COMMAND, FALSE);
+	if (Players[Ind]->sfx_magicattack) sound(Ind, "cast_beam", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
@@ -6361,7 +6361,7 @@ bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	}
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "cast_bolt", NULL, SFX_TYPE_COMMAND, FALSE);
+	if (p_ptr->sfx_magicattack) sound(Ind, "cast_bolt", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
@@ -6386,7 +6386,7 @@ bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "cast_beam", NULL, SFX_TYPE_COMMAND, FALSE);
+	if (p_ptr->sfx_magicattack) sound(Ind, "cast_beam", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
 #if 0 /* why needed for beam? */

@@ -2810,7 +2810,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				msg_format(Ind, "\377c%s dodges your attack!", COLOUR_DODGE_PLY, q_name);
 				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name); 
   #ifdef USE_SOUND_2010
-				if (sfx == 0) {
+				if (sfx == 0 && p_ptr->sfx_combat) {
 					if (o_ptr->k_idx && is_weapon(o_ptr->tval)
 						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 					else
@@ -2825,7 +2825,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				msg_format(Ind, "\377%c%s dodges your attack!", COLOUR_DODGE_PLY, q_name);
 				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
  #ifdef USE_SOUND_2010
-				if (sfx == 0) {
+				if (sfx == 0 && p_ptr->sfx_combat) {
 					if (o_ptr->k_idx && is_weapon(o_ptr->tval))
 						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 					else
@@ -2846,7 +2846,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 					msg_format(Ind, "\377%c%s blocks your attack!", COLOUR_BLOCK_PLY, q_name);
 					msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
  #ifdef USE_SOUND_2010
-					if (sfx == 0) {
+					if (sfx == 0 && p_ptr->sfx_defense) {
 						sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
 					}
  #endif
@@ -2865,7 +2865,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 					msg_format(Ind, "\377%c%s parries your attack!", COLOUR_PARRY_PLY, q_name);
 					msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
  #ifdef USE_SOUND_2010
-					if (sfx == 0) {
+					if (sfx == 0 && p_ptr->sfx_defense) {
 						sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
 					}
  #endif
@@ -2875,19 +2875,19 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #endif
 
 #ifdef USE_SOUND_2010
-			if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
-				switch(o_ptr->tval) {
-				case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
-				case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
-						else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
-				case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
-				case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
-				case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
-				}
-			else
-				if (sfx == 0) {
+			if (p_ptr->sfx_combat) {
+				if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
+					switch(o_ptr->tval) {
+					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_BLUNT: if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_ATTACK, FALSE);
+							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+					case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
+					}
+				else if (sfx == 0)
 					sound(Ind, "hit", NULL, SFX_TYPE_ATTACK, FALSE);
-				}
+			}
 #else
 			sound(Ind, SOUND_HIT);
 #endif
@@ -3461,7 +3461,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			backstab = stab_fleeing = FALSE;
 
 #ifdef USE_SOUND_2010
-			if (sfx == 0) {
+			if (sfx == 0 && p_ptr->sfx_combat) {
 				if (o_ptr->k_idx && is_weapon(o_ptr->tval))
 					sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 				else
@@ -3839,7 +3839,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 
 #ifdef USE_SOUND_2010
-			if (sfx == 0) {
+			if (sfx == 0 && p_ptr->sfx_combat) {
 				if (o_ptr->k_idx && (is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF))
 					switch(o_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_ATTACK, FALSE); break;
@@ -4575,19 +4575,19 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				hit_desc[0] = toupper(hit_desc[0]);
 				msg_print(Ind, hit_desc);
 #ifdef USE_SOUND_2010
-				if (sfx == 0) sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
+				if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
 #endif
 			} else if (parry) {
 				sprintf(hit_desc, "\377%c%s parries.", COLOUR_PARRY_MON, m_name);
 				hit_desc[0] = toupper(hit_desc[0]);
 				msg_print(Ind, hit_desc);
 #ifdef USE_SOUND_2010
-				if (sfx == 0) sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
+				if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
 #endif
 			} else {
 				msg_format(Ind, "You miss %s.", m_name);
 #ifdef USE_SOUND_2010
-				if (sfx == 0) {
+				if (sfx == 0 && p_ptr->sfx_combat) {
 					if (o_ptr->k_idx && is_weapon(o_ptr->tval))
 						sound(Ind, "miss_weapon", "miss", SFX_TYPE_ATTACK, FALSE);
 					else

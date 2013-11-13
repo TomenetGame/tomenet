@@ -518,7 +518,7 @@ static void bolt(int Ind, int m_idx, int typ, int dam_hp)
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "monster_bolt", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_bolt", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	/* Target the player with a bolt attack */
@@ -536,7 +536,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int ra
 	player_type *p_ptr = Players[Ind];
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "monster_breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -560,7 +560,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
 	if (rad < 1) rad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "monster_breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	if (p_ptr->sfx_monsterattack) sound(Ind, "monster_breath", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	/* Target the player with a ball attack */
@@ -583,7 +583,7 @@ static void ball(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
 		sound_near_site(m_list[m_idx].fy, m_list[m_idx].fx, &m_list[m_idx].wpos, Ind, "detonation", NULL, SFX_TYPE_MON_SPELL, FALSE);
 	}
 	else if (typ == GF_STONE_WALL) sound(Ind, "stone_wall", NULL, SFX_TYPE_MON_SPELL, TRUE);
-	else sound(Ind, "monster_cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
+	else if (p_ptr->sfx_monsterattack) sound(Ind, "monster_cast_ball", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -2884,7 +2884,7 @@ if (season_halloween) {
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses.", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2900,7 +2900,7 @@ if (season_halloween) {
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2916,7 +2916,7 @@ if (season_halloween) {
 				if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 				else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2932,7 +2932,7 @@ if (season_halloween) {
 				if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 				else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+				if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 				if (rand_int(100) < p_ptr->skill_sav) {
 					msg_print(Ind, "You resist the effects!");
@@ -2953,7 +2953,7 @@ if (season_halloween) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s points at you and curses.", m_name);
 #ifdef USE_SOUND_2010
-			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -2972,7 +2972,7 @@ if (season_halloween) {
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
 #ifdef USE_SOUND_2010
-			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -2991,7 +2991,7 @@ if (season_halloween) {
 			if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 			else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
 #ifdef USE_SOUND_2010
-			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");
@@ -3010,7 +3010,7 @@ if (season_halloween) {
 			if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 			else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
 #ifdef USE_SOUND_2010
-			sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			if (p_ptr->sfx_monsterattack) sound(Ind, "monster_curse", NULL, SFX_TYPE_MON_SPELL, FALSE);
 #endif
 			if (rand_int(100) < p_ptr->skill_sav) {
 				msg_print(Ind, "You resist the effects!");

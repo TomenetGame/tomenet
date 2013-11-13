@@ -58,9 +58,12 @@ X:big_map
 X:view_reduce_lite
 X:view_reduce_view
 X:safe_float
-X:avoid_other
-Y:flush_failure
-X:flush_disturb
+#X:avoid_other
+X:no_melee_sfx
+#Y:flush_failure
+X:no_magicattack_sfx
+#X:flush_disturb
+X:no_defense_sfx
 X:player_list
 X:player_list2
 X:view_animated_lite
@@ -107,3 +110,4 @@ Y:ovl_sfx_misc
 Y:ovl_sfx_mon_attack
 Y:ovl_sfx_mon_spell
 Y:ovl_sfx_mon_misc
+X:no_monsterattack_sfx

@@ -1253,7 +1253,8 @@ void sound_near(int Ind, cptr name, cptr alternative, int type) {
 		d = distance(Players[Ind]->py, Players[Ind]->px, Players[i]->py, Players[i]->px);
 		if (d > MAX_SIGHT) continue;
 
-		sound(i, name, alternative, type, FALSE);
+		if (strcmp(name, "monster_shriek") || Players[i]->sfx_shriek)
+			sound(i, name, alternative, type, FALSE);
 	}
 }
 /* send sound to all players nearby a certain location, and allow to specify
