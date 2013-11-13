@@ -20,8 +20,7 @@
  */
 /* TODO: those functions should be bandled in one or two generic function(s).
  */
-void do_cmd_messages(void)
-{
+void do_cmd_messages(void) {
 	int i, j, k, n, nn, q, r, s, t = 0;
 
 	char shower[80] = "";
@@ -46,8 +45,7 @@ void do_cmd_messages(void)
 
 	j = 0;
 	msg = NULL;
-	for (i = 0; i < n; i++)
-	{
+	for (i = 0; i < n; i++) {
 		msg = message_str(i);
 
 		if (strstr(msg, nomsg_target) ||
@@ -72,8 +70,7 @@ void do_cmd_messages(void)
 	Term_save();
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
@@ -84,16 +81,14 @@ void do_cmd_messages(void)
 
 
 		/* Dump up to 20 lines of messages */
-		for (j = 0; (j < 20 + HGT_PLUS) && (i + j + s < n); j++)
-		{
+		for (j = 0; (j < 20 + HGT_PLUS) && (i + j + s < n); j++) {
 			byte a = TERM_WHITE;
 
 			msg2 = msg;
 			msg = message_recall[i+j+s];
 
 			/* Handle repeated messages */
-			if (msg == msg2)
-			{
+			if (msg == msg2) {
 				r++;
 				j--;
 				s++;
@@ -101,8 +96,7 @@ void do_cmd_messages(void)
 				k = 1;
 			}
 
-			if (r)
-			{
+			if (r) {
 				Term_putstr(t < 72 ? t : 72, 21 + HGT_PLUS-j+1-k, -1, a, format(" (x%d)", r + 1));
 				r = 0;
 			}
@@ -135,21 +129,18 @@ void do_cmd_messages(void)
 		j = i;
 
 		/* Hack -- go to a specific line */
-		if (k == '#')
-		{
+		if (k == '#') {
 			char tmp[80];
 			prt(format("Goto Line(max %d): ", n), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
-			if (askfor_aux(tmp, 80, 0))
-			{
+			if (askfor_aux(tmp, 80, 0)) {
 				i = atoi(tmp);
 				i = i > 0 ? (i < n ? i : n - 1) : 0;
 			}
 		}
 
 		/* Horizontal scroll */
-		if (k == '4' || k == '<' || k == 'h')
-		{
+		if (k == '4' || k == '<' || k == 'h') {
 			/* Scroll left */
 			q = (q >= 40) ? (q - 40) : 0;
 
@@ -158,8 +149,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Horizontal scroll */
-		if (k == '6' || k == '>' || k == 'l')
-		{
+		if (k == '6' || k == '>' || k == 'l') {
 			/* Scroll right */
 			q = q + 40;
 
@@ -168,8 +158,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Hack -- handle show */
-		if (k == '=')
-		{
+		if (k == '=') {
 			/* Prompt */
 			prt("Show: ", 23 + HGT_PLUS, 0);
 
@@ -182,8 +171,7 @@ void do_cmd_messages(void)
 
 		/* Hack -- handle find */
 		/* FIXME -- (x4) compressing seems to ruin it */
-		if (k == '/')
-		{
+		if (k == '/') {
 			int z;
 
 			/* Prompt */
@@ -193,13 +181,11 @@ void do_cmd_messages(void)
 			if (!askfor_aux(finder, 80, 0)) continue;
 
 			/* Scan messages */
-			for (z = i + 1; z < n; z++)
-			{
+			for (z = i + 1; z < n; z++) {
 				cptr str = message_str(z);
 
 				/* Handle "shower" */
-				if (strstr(str, finder))
-				{
+				if (strstr(str, finder)) {
 					/* New location */
 					i = z;
 
@@ -213,81 +199,76 @@ void do_cmd_messages(void)
 		}
 
 		/* Recall 1 older message */
-		if ((k == '8') || (k == '\b') || k == 'k')
-		{
+		if ((k == '8') || (k == '\b') || k == 'k') {
 			/* Go newer if legal */
 			if (i + 1 < n) i += 1;
 		}
 
 		/* Recall 10 older messages */
-		if (k == '+')
-		{
+		if (k == '+') {
 			/* Go older if legal */
 			if (i + 10 < n) i += 10;
 		}
 
 		/* Recall 20 older messages */
-		if ((k == 'p') || (k == KTRL('P')) || (k == 'b') || k == KTRL('U'))
-		{
+		if ((k == 'p') || (k == KTRL('P')) || (k == 'b') || k == KTRL('U')) {
 			/* Go older if legal */
 			if (i + 20 + HGT_PLUS < n) i += 20 + HGT_PLUS;
 		}
 
 		/* Recall 20 newer messages */
-		if ((k == 'n') || (k == KTRL('N')) || k == ' ')
-		{
+		if ((k == 'n') || (k == KTRL('N')) || k == ' ') {
 			/* Go newer (if able) */
 			i = (i >= 20 + HGT_PLUS) ? (i - (20 + HGT_PLUS)) : 0;
 		}
 
 		/* Recall 10 newer messages */
-		if (k == '-')
-		{
+		if (k == '-') {
 			/* Go newer (if able) */
 			i = (i >= 10) ? (i - 10) : 0;
 		}
 
 		/* Recall 1 newer messages */
-		if (k == '2' || k == 'j' || (k == '\n') || (k == '\r'))
-		{
+		if (k == '2' || k == 'j' || (k == '\n') || (k == '\r')) {
 			/* Go newer (if able) */
 			i = (i >= 1) ? (i - 1) : 0;
 		}
 
 		/* Recall the oldest messages */
-		if (k == 'g')
-		{
+		if (k == 'g') {
 			/* Go oldest */
 			i = n - (20 + HGT_PLUS);
 			if (i < 0) i = 0;
 		}
 
 		/* Recall the newest messages */
-		if (k == 'G')
-		{
+		if (k == 'G') {
 			/* Go newest */
 			i = 0;
 		}
 
 		/* Dump */
-		if ((k == 'f') || (k == 'F'))
-		{
+		if ((k == 'f') || (k == 'F')) {
 			char tmp[80];
 			strnfmt(tmp, 79, "%s-msg.txt", cname);
-			if (get_string("Filename: ", tmp, 79))
-			{
-				if (tmp[0] && (tmp[0] != ' '))
-				{
+			if (get_string("Filename: ", tmp, 79)) {
+				if (tmp[0] && (tmp[0] != ' ')) {
 					dump_messages(tmp, MESSAGE_MAX, 0);
 					continue;
 				}
 			}
 		}
 
-		if (k == KTRL('T'))
-		{
+		if (k == KTRL('T')) {
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
+			continue;
+		}
+
+		/* helpful for replying bit by bit to stuff in
+		   chat that happened while you were afk.. */
+		if (k == ':') {
+			cmd_message();
 			continue;
 		}
 
@@ -307,8 +288,7 @@ void do_cmd_messages(void)
    Note that nowadays the name 'chatonly' is slightly misleading:
    It simply is a buffer of 'very important' messages, as already
    stated above by Zz ;) - C. Blue */
-void do_cmd_messages_chatonly(void)
-{
+void do_cmd_messages_chatonly(void) {
 	int i, j, k, n, nn, q;
 
 	char shower[80] = "";
@@ -328,8 +308,7 @@ void do_cmd_messages_chatonly(void)
 
 	/* Filter message buffer for "important messages" add to message_chat*/
 //	for (i = 0; i < n; i++)
-	for (i = n - 1; i >= 0; i--) /* traverse from oldest to newest message */
-	{
+	for (i = n - 1; i >= 0; i--) { /* traverse from oldest to newest message */
 		cptr msg = message_str(i);
 
 		if (msg[0] == '\376') {
@@ -351,16 +330,14 @@ void do_cmd_messages_chatonly(void)
 	Term_save();
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		/* Clear screen */
 		Term_clear();
 
 		/* Use last element in message_chat as  message_num() */
 		n = nn;
 		/* Dump up to 20 lines of messages */
-		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++)
-		{
+		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
 			byte a = TERM_WHITE;
 			cptr msg = message_chat[nn - 1 - (i+j)]; /* because of inverted traversal direction, see further above */
 //			cptr msg = message_chat[i+j];
@@ -392,21 +369,18 @@ void do_cmd_messages_chatonly(void)
 		j = i;
 
 		/* Hack -- go to a specific line */
-		if (k == '#')
-		{
+		if (k == '#') {
 			char tmp[80];
 			prt(format("Goto Line(max %d): ", n), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
-			if (askfor_aux(tmp, 80, 0))
-			{
+			if (askfor_aux(tmp, 80, 0)) {
 				i = atoi(tmp);
 				i = i > 0 ? (i < n ? i : n - 1) : 0;
 			}
 		}
 
 		/* Horizontal scroll */
-		if (k == '4' || k == '<' || k == 'h')
-		{
+		if (k == '4' || k == '<' || k == 'h') {
 			/* Scroll left */
 			q = (q >= 40) ? (q - 40) : 0;
 
@@ -415,8 +389,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Horizontal scroll */
-		if (k == '6' || k == '>' || k == 'l')
-		{
+		if (k == '6' || k == '>' || k == 'l') {
 			/* Scroll right */
 			q = q + 40;
 
@@ -425,8 +398,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Hack -- handle show */
-		if (k == '=')
-		{
+		if (k == '=') {
 			/* Prompt */
 			prt("Show: ", 23 + HGT_PLUS, 0);
 
@@ -438,8 +410,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Hack -- handle find */
-		if (k == '/')
-		{
+		if (k == '/') {
 			int z;
 
 			/* Prompt */
@@ -449,13 +420,11 @@ void do_cmd_messages_chatonly(void)
 			if (!askfor_aux(finder, 80, 0)) continue;
 
 			/* Scan messages */
-			for (z = i + 1; z < n; z++)
-			{
+			for (z = i + 1; z < n; z++) {
 				cptr str = message_str(z);
 
 				/* Handle "shower" */
-				if (strstr(str, finder))
-				{
+				if (strstr(str, finder)) {
 					/* New location */
 					i = z;
 
@@ -469,82 +438,77 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Recall 1 older message */
-		if ((k == '8') || (k == '\b') || k == 'k')
-		{
+		if ((k == '8') || (k == '\b') || k == 'k') {
 			/* Go newer if legal */
 			if (i + 1 < n) i += 1;
 		}
 
 		/* Recall 10 older messages */
-		if (k == '+')
-		{
+		if (k == '+') {
 			/* Go older if legal */
 			if (i + 10 < n) i += 10;
 		}
 
 		/* Recall 20 older messages */
 		if ((k == 'p') || (k == KTRL('P')) || (k == 'b') || (k == KTRL('O')) ||
-				k == KTRL('U'))
-		{
+		    k == KTRL('U')) {
 			/* Go older if legal */
 			if (i + 20 + HGT_PLUS < n) i += 20 + HGT_PLUS;
 		}
 
 		/* Recall 20 newer messages */
-		if ((k == 'n') || (k == KTRL('N')) || k == ' ')
-		{
+		if ((k == 'n') || (k == KTRL('N')) || k == ' ') {
 			/* Go newer (if able) */
 			i = (i >= 20 + HGT_PLUS) ? (i - (20 + HGT_PLUS)) : 0;
 		}
 
 		/* Recall 10 newer messages */
-		if (k == '-')
-		{
+		if (k == '-') {
 			/* Go newer (if able) */
 			i = (i >= 10) ? (i - 10) : 0;
 		}
 
 		/* Recall 1 newer messages */
-		if (k == '2' || k == 'j' || (k == '\n') || (k == '\r'))
-		{
+		if (k == '2' || k == 'j' || (k == '\n') || (k == '\r')) {
 			/* Go newer (if able) */
 			i = (i >= 1) ? (i - 1) : 0;
 		}
 
 		/* Recall the oldest messages */
-		if (k == 'g')
-		{
+		if (k == 'g') {
 			/* Go oldest */
 			i = n - (20 + HGT_PLUS);
 			if (i < 0) i = 0;
 		}
 
 		/* Recall the newest messages */
-		if (k == 'G')
-		{
+		if (k == 'G') {
 			/* Go newest */
 			i = 0;
 		}
 
 		/* Dump */
-		if ((k == 'f') || (k == 'F'))
-		{
+		if ((k == 'f') || (k == 'F')) {
 			char tmp[80];
 			strnfmt(tmp, 79, "%s-chat.txt", cname);
-			if (get_string("Filename: ", tmp, 79))
-			{
-				if (tmp[0] && (tmp[0] != ' '))
-				{
+			if (get_string("Filename: ", tmp, 79)) {
+				if (tmp[0] && (tmp[0] != ' ')) {
 					dump_messages(tmp, MESSAGE_MAX, 1);
 					continue;
 				}
 			}
 		}
 
-		if (k == KTRL('T'))
-		{
+		if (k == KTRL('T')) {
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
+			continue;
+		}
+
+		/* helpful for replying bit by bit to stuff in
+		   chat that happened while you were afk.. */
+		if (k == ':') {
+			cmd_message();
 			continue;
 		}
 
@@ -566,8 +530,7 @@ void do_cmd_messages_chatonly(void)
  */
 /* FIXME: result can be garbled if contains '%' */
 /* chatonly if mode != 0 */
-void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
-{
+void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color) {
 	int i, j, k, n, nn, q, r, s, t = 0;
 
 	cptr message_recall[MESSAGE_MAX] = {0};
@@ -589,8 +552,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 
 	j = 0;
 	msg = NULL;
-	for (i = 0; i < n; i++)
-	{
+	for (i = 0; i < n; i++) {
 		msg = message_str(i);
 
 		if (strstr(msg, nomsg_target) || strstr(msg, nomsg_map))
@@ -628,14 +590,12 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 
 
 	/* Dump up to 20 lines of messages */
-	for (j = 0; j + s < MIN(n, lines); j++)
-	{
+	for (j = 0; j + s < MIN(n, lines); j++) {
 		msg2 = msg;
 		msg = message_recall[MIN(n, lines) - (j+s) - 1];
 
 		/* Handle repeated messages */
-		if (msg == msg2)
-		{
+		if (msg == msg2) {
 			r++;
 			j--;
 			s++;
@@ -643,8 +603,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 			k = 1;
 		}
 
-		if (r)
-		{
+		if (r) {
 			fprintf(fff, " (x%d)", r + 1);
 			r = 0;
 		}
@@ -656,8 +615,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
                         if (msg[t] == '\377') {
                                 if (!ignore_color)
                                         buf[q++] = '{';
-                                else
-                                {
+                                else {
                                         t++;
                                         if (msg[t] == '\0')
                                                 break;
@@ -682,8 +640,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 	fprintf(fff, "\n\n");
 }
 
-errr dump_messages(cptr name, int lines, int mode)
-{
+errr dump_messages(cptr name, int lines, int mode) {
 	int			fd = -1;
 	FILE		*fff = NULL;
 	char		buf[1024];
@@ -701,8 +658,7 @@ errr dump_messages(cptr name, int lines, int mode)
 
 
 	/* Invalid file */
-	if (!fff)
-	{
+	if (!fff) {
 		/* Message */
 		c_msg_print(format("%s dump failed!", what));
 		clear_topline_forced();
