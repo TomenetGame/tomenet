@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. November 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 13. November 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.5 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8828,7 +8828,8 @@ HEAVY_CURSE     requires a strong '*remove curse*' to be broken.
 PERMA_CURSE     This curse can never be broken.
                 Item can never be taken off or otherwise removed again!
                 Mimics polymorphing into a form that cannot wear the specific
-                item won't succeed either.
+                item won't succeed getting rid of it either, instead they will
+                still have the item equipped!
                 There is absolutely no way to get rid of this item. If you
                 find a way then you found a bug =).
 CURSE_NO_DROP   these items cannot be dropped from inventory as long as the
