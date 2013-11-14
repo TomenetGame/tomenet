@@ -8234,13 +8234,13 @@ void season_change(int s, bool force) {
 	/* adjust weather somewhat according to season! (client-side non-global weather) */
 	switch (s) {
 	case SEASON_SPRING: /* rain relatively often */
-		max_clouds_seasonal = MAX_CLOUDS / 8; break;
+		max_clouds_seasonal = MAX_CLOUDS / 10; break;
 	case SEASON_SUMMER: /* rain rarely */
 		max_clouds_seasonal = MAX_CLOUDS / 14; break;
 	case SEASON_AUTUMN: /* rain very often */
-		max_clouds_seasonal = MAX_CLOUDS / 5; break;
+		max_clouds_seasonal = MAX_CLOUDS / 7; break;
 	case SEASON_WINTER: /* snow pretty often */
-		max_clouds_seasonal = MAX_CLOUDS / 6; break;
+		max_clouds_seasonal = MAX_CLOUDS / 8; break;
 	}
 #endif
 
