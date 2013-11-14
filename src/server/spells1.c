@@ -1542,7 +1542,9 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 
 	/* Disturb - except when in PvP! */
 	if (strcmp(hit_from, "life draining") &&
-	    !IS_PLAYER(Ind_attacker))
+	    !IS_PLAYER(Ind_attacker)
+	    /* hack: no longer disturb on crossing terrain that we're immune to: */
+	    && (damage || -Ind_attacker != PROJECTOR_TERRAIN))
 		disturb(Ind, 1, 0);
 
 	/* Mega-Hack -- Apply "invulnerability" */
@@ -8312,12 +8314,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
 	    (typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))
 	{ /* No effect on ghosts / admins */
+#if 0 //redundant?
 		/* Skip non-connected players */
-		if (!p_ptr->conn == NOT_CONNECTED) {
+		if (p_ptr->conn != NOT_CONNECTED) {
 			/* Disturb */
 			disturb(Ind, 1, 0);
 		}
-
+#endif
 		/* Return "Anything seen?" */
 		return (obvious);
 	}
@@ -10450,12 +10453,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Player was hit - mikaelh */
 	p_ptr->got_hit = TRUE;
 
+#if 0 //redundant?
 	/* Skip non-connected players */
-	if (!p_ptr->conn == NOT_CONNECTED)
-	{
+	if (p_ptr->conn != NOT_CONNECTED && (dam || who != PROJECTOR_TERRAIN)) {
 		/* Disturb */
 		disturb(Ind, 1, 0);
 	}
+#endif
 
 	/* Return "Anything seen?" */
 	return (obvious);
