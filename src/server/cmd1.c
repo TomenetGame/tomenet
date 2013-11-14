@@ -2096,8 +2096,10 @@ void carry(int Ind, int pickup, int confirm)
 
 					/* check activatable items we have equipped */
 					for (index = INVEN_WIELD; index < INVEN_TOTAL; index++) {
-						 i_ptr = &(p_ptr->inventory[index]);
-						 if (!i_ptr->k_idx) continue;
+						bool flipped = FALSE;
+
+						i_ptr = &(p_ptr->inventory[index]);
+						if (!i_ptr->k_idx) continue;
 
 						/* Check if the player does want this feature (!X - for now :) ) */
 						if (!check_guard_inscription(i_ptr->note, 'X')) continue;
@@ -2146,8 +2148,8 @@ void carry(int Ind, int pickup, int confirm)
 						object_known(o_ptr);
 
 						p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-						object_tried(Ind, i_ptr);
-						if (!object_aware_p(Ind, i_ptr)) object_aware(Ind, i_ptr);
+						if (!object_aware_p(Ind, i_ptr)) flipped = object_aware(Ind, i_ptr);
+						object_tried(Ind, i_ptr, flipped);
 						p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 						/* activate the item -- copy/pasted from cmd6.c - KEEP CONSISTENT! */
@@ -2188,6 +2190,8 @@ void carry(int Ind, int pickup, int confirm)
 						if (can_use(Ind, i_ptr) &&
 						    ((i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY && !i_ptr->pval) ||
 						    (i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY && i_ptr->pval > 0))) {
+							bool flipped = FALSE;
+
 							ID_item_found = TRUE;
 
 							if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
@@ -2225,8 +2229,8 @@ void carry(int Ind, int pickup, int confirm)
 							object_known(o_ptr);
 
 							p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-							object_tried(Ind, i_ptr);
-							if (!object_aware_p(Ind, i_ptr)) object_aware(Ind, i_ptr);
+							if (!object_aware_p(Ind, i_ptr)) flipped = object_aware(Ind, i_ptr);
+							object_tried(Ind, i_ptr, flipped);
 							p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 							if (i_ptr->tval == TV_ROD) {

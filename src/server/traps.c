@@ -3291,18 +3291,19 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x)
 
 /* hack: Identify the load? */
 static void identify_mon_trap_load(int who, object_type *o_ptr) {
+	bool flipped = FALSE;
 	if (who <= 0) return;
 
 	/* Combine / Reorder the pack (later) */
 	//Players[who]->notice |= (PN_COMBINE | PN_REORDER);
-	/* The item has been tried */
-	object_tried(who, o_ptr);
 	/* An identification was made */
 	if (!object_aware_p(who, o_ptr)) {
-		object_aware(who, o_ptr);
+		flipped = object_aware(who, o_ptr);
 		//object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
 		if (!(Players[who]->mode & MODE_PVP)) gain_exp(who, (k_info[o_ptr->k_idx].level + (Players[who]->lev >> 1)) / Players[who]->lev);
 	}
+	/* The item has been tried */
+	object_tried(who, o_ptr, flipped);
 	/* Window stuff */
 	//p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 }

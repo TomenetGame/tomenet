@@ -1174,8 +1174,8 @@ extern errr get_obj_num_prep(u32b resf);
 extern errr get_obj_num_prep_tval(int tval, u32b resf); /* was written for create_reward(..) */
 extern s16b get_obj_num(int max_level, u32b resf);
 extern void object_known(object_type *o_ptr);
-extern void object_aware(int Ind, object_type *o_ptr);
-extern void object_tried(int Ind, object_type *o_ptr);
+extern bool object_aware(int Ind, object_type *o_ptr);
+extern void object_tried(int Ind, object_type *o_ptr, bool flipped);
 extern s64b object_value(int Ind, object_type *o_ptr);
 extern bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance);
 extern void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr);

@@ -106,14 +106,13 @@ static void do_tank(int Ind, int power)
 /*
  * Eat some food (from the pack or floor)
  */
-void do_cmd_eat_food(int Ind, int item)
-{
+void do_cmd_eat_food(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 
 	int			ident, lev;
 
 	object_type		*o_ptr;
-	bool keep = FALSE;
+	bool keep = FALSE, flipped = FALSE;
 
 
 	/* Restrict choices to food */
@@ -498,14 +497,14 @@ void do_cmd_eat_food(int Ind, int item)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* We have tried it */
-	object_tried(Ind, o_ptr);
-
 	/* The player is now aware of the object */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
-		object_aware(Ind, o_ptr);
+		flipped = object_aware(Ind, o_ptr);
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
+
+	/* We have tried it */
+	object_tried(Ind, o_ptr, flipped);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -1228,10 +1227,9 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 void do_cmd_quaff_potion(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
-
 	int		ident, lev;
-
 	object_type	*o_ptr;
+	bool flipped = FALSE;
 
 
 	/* Restrict choices to potions (apparently meanless) */
@@ -1294,16 +1292,16 @@ void do_cmd_quaff_potion(int Ind, int item)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* The item has been tried */
-	object_tried(Ind, o_ptr);
-
 	/* An identification was made */
 	if (ident && !object_aware_p(Ind, o_ptr))
 	{
-		object_aware(Ind, o_ptr);
+		flipped = object_aware(Ind, o_ptr);
 //		object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
+
+	/* The item has been tried */
+	object_tried(Ind, o_ptr, flipped);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -2170,7 +2168,7 @@ void do_cmd_read_scroll(int Ind, int item)
 	//cave_type * c_ptr;
 
 	int	k, ident, lev, d_no, d_tries, x, y; //, antichance;
-	bool	used_up, keep = FALSE;
+	bool	used_up, keep = FALSE, flipped = FALSE;
 	char	m_name[MNAME_LEN];
 
 	object_type	*o_ptr;
@@ -2852,14 +2850,14 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* The item was tried */
-	object_tried(Ind, o_ptr);
-
 	/* An identification was made */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
-		object_aware(Ind, o_ptr);
+		flipped = object_aware(Ind, o_ptr);
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
+
+	/* The item was tried */
+	object_tried(Ind, o_ptr, flipped);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -2914,7 +2912,7 @@ void do_cmd_use_staff(int Ind, int item)
 	object_type		*o_ptr;
 
 	/* Hack -- let staffs of identify get aborted */
-	bool use_charge = TRUE;
+	bool use_charge = TRUE, flipped = FALSE;
 
 	/* Break goi/manashield */
 #if 0
@@ -3305,14 +3303,14 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* Tried the item */
-	object_tried(Ind, o_ptr);
-
 	/* An identification was made */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
-		object_aware(Ind, o_ptr);
+		flipped = object_aware(Ind, o_ptr);
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
+
+	/* Tried the item */
+	object_tried(Ind, o_ptr, flipped);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -3389,6 +3387,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	player_type *p_ptr = Players[Ind];
 	int lev, ident, chance, sval;
 	object_type *o_ptr;
+	bool flipped = FALSE;
 
 	/* Break goi/manashield */
 #if 0
@@ -3836,15 +3835,15 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
-	/* Mark it as tried */
-	object_tried(Ind, o_ptr);
-
 	/* Apply identification */
 	if (ident && !object_aware_p(Ind, o_ptr))
 	{
-		object_aware(Ind, o_ptr);
+		flipped = object_aware(Ind, o_ptr);
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
+
+	/* Mark it as tried */
+	object_tried(Ind, o_ptr, flipped);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -3888,7 +3887,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 	object_type		*o_ptr;
 
 	/* Hack -- let perception get aborted */
-	bool use_charge = TRUE;
+	bool use_charge = TRUE, flipped = FALSE;
 
 	/* Break goi/manashield */
 #if 0
@@ -4175,15 +4174,15 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* Tried the object */
-	object_tried(Ind, o_ptr);
-
 	/* Successfully determined the object function */
 	if (ident && !object_aware_p(Ind, o_ptr))
 	{
-		object_aware(Ind, o_ptr);
+		flipped = object_aware(Ind, o_ptr);
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
+
+	/* Tried the object */
+	object_tried(Ind, o_ptr, flipped);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -4234,7 +4233,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	int item, ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
 	object_type *o_ptr;
 	/* Hack -- let perception get aborted */
-	bool use_charge = TRUE;
+	bool use_charge = TRUE, flipped = FALSE;
 
 	item = p_ptr->current_rod;
 
@@ -4667,14 +4666,14 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* Tried the object */
-	object_tried(Ind, o_ptr);
-
 	/* Successfully determined the object function */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
-		object_aware(Ind, o_ptr);
+		flipped = object_aware(Ind, o_ptr);
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
+
+	/* Tried the object */
+	object_tried(Ind, o_ptr, flipped);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);

@@ -1092,10 +1092,10 @@ void object_known(object_type *o_ptr)
 /*
  * The player is now aware of the effects of the given object.
  */
-void object_aware(int Ind, object_type *o_ptr) {
+bool object_aware(int Ind, object_type *o_ptr) {
 	int i;
 
-	if (object_aware_p(Ind, o_ptr)) return;
+	if (object_aware_p(Ind, o_ptr)) return FALSE;
 
 	/* Fully aware of the effects */
 	Players[Ind]->obj_aware[o_ptr->k_idx] = TRUE;
@@ -1104,6 +1104,7 @@ void object_aware(int Ind, object_type *o_ptr) {
 	for (i = 0; i < INVEN_TOTAL; i++)
 		if (Players[Ind]->inventory[i].k_idx == o_ptr->k_idx)
 			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
+	return TRUE;
 }
 
 
@@ -1111,7 +1112,7 @@ void object_aware(int Ind, object_type *o_ptr) {
 /*
  * Something has been "sampled"
  */
-void object_tried(int Ind, object_type *o_ptr) {
+void object_tried(int Ind, object_type *o_ptr, bool flipped) {
 	int i;
 
 	if (object_tried_p(Ind, o_ptr)) return;
@@ -1120,9 +1121,12 @@ void object_tried(int Ind, object_type *o_ptr) {
 	Players[Ind]->obj_tried[o_ptr->k_idx] = TRUE;
 
 	/* Make it refresh, although the object mem structure didn't change */
+	if (flipped) return; /* already changed by object_aware()? don't cancel out! */
 	for (i = 0; i < INVEN_TOTAL; i++)
 		if (Players[Ind]->inventory[i].k_idx == o_ptr->k_idx)
 			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
+
+	return;
 }
 
 
