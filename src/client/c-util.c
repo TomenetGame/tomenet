@@ -3761,7 +3761,9 @@ void interact_macros(void)
 				//[normal macros: F-keys (only keys that aren't used for any text input)]
 				//command macros: / * a..w (all keys that are used in important standard prompts)
 				//hybrid macros: all others, maybe even also normal-macro-keys
-				if (!strcmp(buf, "/") || !strcmp(buf, "*") || (*buf >= 'a' && *buf <= 'w')) {
+				if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
+				    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
+				    (*buf >= 'a' && *buf <= 'w')) {
 					/* make it a command macro */
 					/* Link the macro */
 					macro_add(buf, macro__buf, TRUE, FALSE);
@@ -5445,7 +5447,9 @@ Chain_Macro:
 					//[normal macros: F-keys (only keys that aren't used for any text input)]
 					//command macros: / * a..w (all keys that are used in important standard prompts)
 					//hybrid macros: all others, maybe even also normal-macro-keys
-					if (!strcmp(buf, "/") || !strcmp(buf, "*") || (*buf >= 'a' && *buf <= 'w')) {
+					if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
+					    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
+					    (*buf >= 'a' && *buf <= 'w')) {
 						/* make it a command macro */
 						/* Link the macro */
 						macro_add(buf, macro__buf, TRUE, FALSE);
