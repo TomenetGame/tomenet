@@ -2381,7 +2381,9 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 	struct worldpos *wpos = &Players[Ind]->wpos;
 	s64b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount;
 	s64b modified_level;
-	int dlev;
+	int dlev = getlevel(wpos);
+	bool not_in_iddc = !in_irondeepdive(wpos);
+
 #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
 	int soft_max_plv;
 #endif
@@ -2437,7 +2439,6 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 	/* Now, distribute the experience */
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
-		dlev = getlevel(&p_ptr->wpos);
 
 		if (p_ptr->conn == NOT_CONNECTED)
 			continue;
@@ -2492,7 +2493,8 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
   #endif
  #endif
 			/* dungeon floor specific reduction if too shallow */
-			new_amount = det_exp_level(new_amount, eff_henc, dlev);
+			if (not_in_iddc)
+				new_amount = det_exp_level(new_amount, eff_henc, dlev);
 
 			/* Don't allow cheap support from super-high level characters */
 			if (cfg.henc_strictness && !p_ptr->total_winner) {

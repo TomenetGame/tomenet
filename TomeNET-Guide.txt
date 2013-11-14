@@ -6135,6 +6135,8 @@ Ironman Deep Dive Challenge (IDDC)
     You could decide to 'abuse' IDDC to level up your character, and then leave
     the dungeon when you reach -2000 ft. This might be especially interesting
     for mimicry users (see further below).
+    The IDDC does not enforce a minimum depth in regards to player level in
+    order to gain optimal experience.
     On average the experience gained in IDDC is high enough, that even a
     character of a highly penalized race/class combination can still obtain at
     least level 46 before he reaches Nargothrond at -4000 ft, even if he skips
