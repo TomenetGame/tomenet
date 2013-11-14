@@ -473,6 +473,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_DIVINATION:
 		if (old_value < 500 && new_value >= 500) {
 			msg_print(Ind, "\374\377GYou find identifying items ridiculously easy.");
+			identify_pack(Ind);
 		}
 		break;
 	case SKILL_NATURE:
