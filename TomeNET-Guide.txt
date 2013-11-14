@@ -578,9 +578,10 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         call-by-name instead so you won't need any inscriptions at all (3.9b) !
 
 ~       display further information of your character.
-        Point (3) here is especially helpful for mimics:
-        The number shown in round brackets before each monster name is the
-        number they have to enter for their 'Polymorph self into..' ability!
+        Point (2) and (7) here are especially helpful for mimics:
+        In ~2, the number shown in round brackets before each monster name is
+        the same they have to enter for their 'Polymorph self into..' ability!
+        In ~7 you can check out all features of a monster.
 
 @       displays a list of players currently on the server.
         Note that a yellow '(I)' before a name stands for 'invalid', and means
@@ -4890,10 +4891,14 @@ Icy waste       white '.'
 
 (4.5) Towns, shops, the dungeons and dungeon bosses
 ---------------------------------------------------
+To view a list of all towns and dungeons you have discovered, press ~ 8 .
+Dungeons which have a dedicated final boss will indicate at the end of the
+line whether you have "conquered" them yet (aka slain that boss) or not.
+
 If you create a new character, it will start in 'Bree', a town located at
 position 32,32 on the world map (same position on all servers!).
 
-The world map however, ranging from 0,0 (bottom left corner) to 63,63
+The world map, ranging from 0,0 (bottom left corner) to 63,63
 (top right corner), bears several other towns that you can find and
 explore. These towns often contain different shops (some are said to offer
 *Identify* service or even a cure to Black Breath) and harder dungeons.
@@ -4902,7 +4907,7 @@ However, they might also be a very dangerous place to stay, compared to Bree.
 In general you can say the harder the local dungeon entrance of a town the
 more dangerous monsters can spawn within the town! Bree is the only town that
 contains just more or less harmless townsfolk.
-The worst are Khazad-dum and Lothlorien, if you go here be _very_ cautious.
+The worst are Khazad-dum and Lothlorien, if you go there be _very_ cautious.
 Monsters that appear here might look like harmless novice paladins or snagas
 but are in fact of a higher level and more powerful. Also, dangerous monsters
 can spawn in those towns: While Gondolin and Minas Anor can already have nasty
@@ -10995,7 +11000,9 @@ vary. For example a warrior cannot learn magic spells.
     (Forms that have DISBELIEVE ability are skipped when using the normal
     'Polymorph Self' spell. You have to use 'Polymorph Self Into..' if you
     want to use these forms.)
-    To find out the special abilities of a monster form, see section (6.7).
+    To find out the special abilities of a monster form, press '~' followed by
+    '7' and look it up, then consult section (6.7) for how the monster details
+    translate into mimic abilities.
     A list of useful low-level humanoid forms for weapon-using mimics is given
     in (6.7c) because weapon-using mimics have a somewhat harder time to find
     usable forms early on than martial artists who might just utilize
