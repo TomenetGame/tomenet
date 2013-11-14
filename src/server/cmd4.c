@@ -1752,9 +1752,8 @@ void do_cmd_check_player_equip(int Ind, int line)
  */
 /* Allow non-admins to see starting/max level of dungeons? */
 //#define SHOW_DLVL_TO_NONADMIN
-/* Also list slain dungeon bosses - requires SHOW_DLVL_TO_NONADMIN to be
-   undefined, or we don't have enough room ;-p */
-#define SHOW_DUNGEONBOSS_IF_ROOM
+/* Also indicate slain dungeon bosses (no room for full name though) */
+#define INDICATE_DUNGEONBOSSES_SLAIN
 void do_cmd_knowledge_dungeons(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1817,8 +1816,16 @@ void do_cmd_knowledge_dungeons(int Ind)
 							d_info[i].min_plev, i);
  #ifdef SHOW_DLVL_TO_NONADMIN
 				} else {
+  #ifndef INDICATE_DUNGEONBOSSES_SLAIN
 					fprintf(fff, "  \377sLev\377w %3d - %3d\377s",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1);
+  #else
+					fprintf(fff, "  \377sLev\377w %3d - %3d\377s    %s",
+							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+							(i && d_info[i].final_guardian) ?
+							(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
+							"\377U*" : "nc") : "");
+  #endif
  #endif
 				}
 #else
@@ -1834,6 +1841,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 								d_info[i].min_plev, i, get_recall_depth(&wpos, p_ptr));
 				} else {
  #ifdef SHOW_DLVL_TO_NONADMIN
+  #ifndef INDICATE_DUNGEONBOSSES_SLAIN
 					if (p_ptr->depth_in_feet)
 						fprintf(fff, "  %3d - %3d          %6dft",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
@@ -1842,8 +1850,24 @@ void do_cmd_knowledge_dungeons(int Ind)
 						fprintf(fff, "  %3d - %3d          Lv%4d",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								get_recall_depth(&wpos, p_ptr));
+  #else
+					if (p_ptr->depth_in_feet)
+						fprintf(fff, "  %3d - %3d          %6dft    %s",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								50 * get_recall_depth(&wpos, p_ptr),
+								(i && d_info[i].final_guardian) ?
+								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
+								"\377U*" : "nc") : "");
+					else
+						fprintf(fff, "  %3d - %3d          Lv%4d    %s",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								get_recall_depth(&wpos, p_ptr),
+								(i && d_info[i].final_guardian) ?
+								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
+								"\377U*" : "nc") : "");
+  #endif
  #else
-  #ifndef SHOW_DUNGEONBOSS_IF_ROOM
+  #ifndef INDICATE_DUNGEONBOSSES_SLAIN
 					if (p_ptr->depth_in_feet)
 						fprintf(fff, "  %6dft",
 								50 * get_recall_depth(&wpos, p_ptr));
@@ -1852,7 +1876,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 								get_recall_depth(&wpos, p_ptr));
   #else
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %5dft     %s",
+						fprintf(fff, "  %6dft     %s",
 								50 * get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
@@ -1881,8 +1905,16 @@ void do_cmd_knowledge_dungeons(int Ind)
 							d_info[i].min_plev, i);
  #ifdef SHOW_DLVL_TO_NONADMIN
 				} else {
+  #ifndef INDICATE_DUNGEONBOSSES_SLAIN
 					fprintf(fff, "  \377sLev\377w %3d - %3d",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1);
+  #else
+					fprintf(fff, "  \377sLev\377w %3d - %3d",
+							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+							(i && d_info[i].final_guardian) ?
+							(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
+							"\377U*" : "nc") : "");
+  #endif
  #endif
 				}
 #else
@@ -1898,6 +1930,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 								d_info[i].min_plev, i, (p_ptr->depth_in_feet ? -50 : -1) * get_recall_depth(&wpos, p_ptr));
 				} else {
  #ifdef SHOW_DLVL_TO_NONADMIN
+  #ifndef INDICATE_DUNGEONBOSSES_SLAIN
 					if (p_ptr->depth_in_feet)
 						fprintf(fff, "  %3d - %3d          %6dft",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
@@ -1906,17 +1939,33 @@ void do_cmd_knowledge_dungeons(int Ind)
 						fprintf(fff, "  %3d - %3d          Lv%4dft",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								-get_recall_depth(&wpos, p_ptr));
- #else
-  #ifndef SHOW_DUNGEONBOSS_IF_ROOM
+  #else
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %5dft",
+						fprintf(fff, "  %3d - %3d          %6dft    %s",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								-50 * get_recall_depth(&wpos, p_ptr),
+								(i && d_info[i].final_guardian) ?
+								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
+								"\377U*" : "nc") : "");
+					else
+						fprintf(fff, "  %3d - %3d          Lv%4dft    %s",
+								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								-get_recall_depth(&wpos, p_ptr),
+								(i && d_info[i].final_guardian) ?
+								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
+								"\377U*" : "nc") : "");
+  #endif
+ #else
+  #ifndef INDICATE_DUNGEONBOSSES_SLAIN
+					if (p_ptr->depth_in_feet)
+						fprintf(fff, "  %6dft",
 								-50 * get_recall_depth(&wpos, p_ptr));
 					else
 						fprintf(fff, "  Lv%4d",
 								-get_recall_depth(&wpos, p_ptr));
   #else
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %5dft     %s",
+						fprintf(fff, "  %6dft     %s",
 								-50 * get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
@@ -1935,8 +1984,15 @@ void do_cmd_knowledge_dungeons(int Ind)
 			}
 		}
 	}
-
 	fprintf(fff,"\n");
+#ifdef INDICATE_DUNGEONBOSSES_SLAIN
+ #ifdef SHOW_DLVL_TO_NONADMIN
+	fprintf(fff,"\377s  ('\377U*\377s' = conquered - dungeon boss has been slain. 'nc' = not conquered yet.)\n");
+ #else
+	//commented out because it's not an 'immersive' text, should just go to the guide, if at all.
+	//fprintf(fff,"\377s('Conquered' means that you have slain the dungeon's final boss.)\n");
+ #endif
+#endif
 
 
 
