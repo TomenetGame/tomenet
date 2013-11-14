@@ -699,9 +699,22 @@ void do_slash_cmd(int Ind, char *message)
 				if (!o_ptr->tval) break;
 
 				/* skip inscribed items */
-				if (o_ptr->note) continue;
+				if (o_ptr->note &&
+				    strcmp(quark_str(o_ptr->note), "terrible") &&
+				    strcmp(quark_str(o_ptr->note), "cursed") &&
+				    strcmp(quark_str(o_ptr->note), "uncursed") &&
+				    strcmp(quark_str(o_ptr->note), "broken") &&
+				    strcmp(quark_str(o_ptr->note), "average") &&
+				    strcmp(quark_str(o_ptr->note), "good") &&
+				    strcmp(quark_str(o_ptr->note), "worthless"))
+					continue;
 
-				o_ptr->note = quark_add(tk < 2 ? "!k" : token[2]);
+				if (!o_ptr->note)
+					o_ptr->note = quark_add(tk < 2 ? "!k" : token[2]);
+				else
+					o_ptr->note = quark_add(tk < 2 ?
+					    format("%s-!k", quark_str(o_ptr->note)) :
+					    format("%s-%s", quark_str(o_ptr->note), token[2]));
 			}
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
