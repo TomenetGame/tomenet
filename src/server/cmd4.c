@@ -1931,7 +1931,6 @@ void do_cmd_knowledge_dungeons(int Ind)
  #endif
 				}
 #endif
-if (i == 4) s_printf("%d,%d,%d,%s\n", i, d_info[i].final_guardian,p_ptr->r_killed[d_info[i].final_guardian],r_name + r_info[d_info[i].final_guardian].name);
 				fprintf(fff,"\n");
 			}
 		}
