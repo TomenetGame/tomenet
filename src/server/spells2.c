@@ -1016,8 +1016,7 @@ bool do_inc_stat(int Ind, int stat)
  * Identify everything being carried.
  * Done by a potion of "self knowledge".
  */
-void identify_pack(int Ind)
-{
+void identify_pack(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int                 i;
@@ -1043,6 +1042,10 @@ void identify_pack(int Ind)
 
 	/* Handle stuff */
 	handle_stuff(Ind);
+
+	/* hack: trigger client-side auto-inscriptions for convenience,
+	   if it isn't due anyway.  */
+	if (!p_ptr->inventory_changes) Send_inventory_revision(Ind);
 }
 
 
