@@ -360,6 +360,8 @@ void do_cmd_check_uniques(int Ind, int line)
 			fprintf(fff, "\377U  (you haven't killed any unique monster so far)\n");
 
 	if (total) {
+		byte c_out;
+
 		/* Setup the sorter */
 		ang_sort_comp = ang_sort_comp_mon_lev;
 		ang_sort_swap = ang_sort_swap_s16b;
@@ -392,7 +394,8 @@ void do_cmd_check_uniques(int Ind, int line)
 			}
 			
 			/* Output color byte */
-			fprintf(fff, "\377%c", (p_ptr->r_killed[k] == 1 || kk) ? 'w' : 'D');
+			c_out = (p_ptr->r_killed[k] == 1 || kk) ? 'w' : 'D';
+			fprintf(fff, "\377%c", c_out);
 
 			/* Hack -- Show the ID for admin -- and also the level */
 			if (admin) fprintf(fff, "(%4d, L%d) ", k, r_ptr->level);
@@ -402,10 +405,12 @@ void do_cmd_check_uniques(int Ind, int line)
 			/* different colour for uniques higher than Morgoth (the 'boss') */
 //			if (r_ptr->level > 100) fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name); else
 			if (!(p_ptr->uniques_alive)) {
-				if (r_ptr->level == 100) fprintf(fff, "\377v%s was slain by", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
+				if (k == RI_MORGOTH) fprintf(fff, "\377v%s\377%c was slain by", r_name + r_ptr->name, c_out);
+				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s\377%c was slain by", r_name + r_ptr->name, c_out);
 				else fprintf(fff, "%s was slain by", r_name + r_ptr->name);
 			} else {
-				if (r_ptr->level == 100) fprintf(fff, "\377v%s", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
+				if (k == RI_MORGOTH) fprintf(fff, "\377v%s\377%c", r_name + r_ptr->name, c_out);
+				else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) fprintf(fff, "\377y%s\377%c", r_name + r_ptr->name, c_out);
 				else fprintf(fff, "%s", r_name + r_ptr->name);
 			}
 			
@@ -1747,6 +1752,9 @@ void do_cmd_check_player_equip(int Ind, int line)
  */
 /* Allow non-admins to see starting/max level of dungeons? */
 //#define SHOW_DLVL_TO_NONADMIN
+/* Also list slain dungeon bosses - requires SHOW_DLVL_TO_NONADMIN to be
+   undefined, or we don't have enough room ;-p */
+#define SHOW_DUNGEONBOSS_IF_ROOM
 void do_cmd_knowledge_dungeons(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1835,12 +1843,27 @@ void do_cmd_knowledge_dungeons(int Ind)
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								get_recall_depth(&wpos, p_ptr));
  #else
+  #ifndef SHOW_DUNGEONBOSS_IF_ROOM
 					if (p_ptr->depth_in_feet)
 						fprintf(fff, "  %6dft",
 								50 * get_recall_depth(&wpos, p_ptr));
 					else
 						fprintf(fff, "  Lv%4d",
 								get_recall_depth(&wpos, p_ptr));
+  #else
+					if (p_ptr->depth_in_feet)
+						fprintf(fff, "  %5dft     %s",
+								50 * get_recall_depth(&wpos, p_ptr),
+								(i && d_info[i].final_guardian) ?
+								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
+								"\377Uconquered" : "not conquered yet") : "");
+					else
+						fprintf(fff, "  Lv%4d     %s",
+								get_recall_depth(&wpos, p_ptr),
+								(i && d_info[i].final_guardian) ?
+								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
+								"\377Uconquered" : "not conquered yet") : "");
+  #endif
  #endif
 				}
 #endif
@@ -1884,15 +1907,31 @@ void do_cmd_knowledge_dungeons(int Ind)
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								-get_recall_depth(&wpos, p_ptr));
  #else
+  #ifndef SHOW_DUNGEONBOSS_IF_ROOM
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %6dft",
+						fprintf(fff, "  %5dft",
 								-50 * get_recall_depth(&wpos, p_ptr));
 					else
 						fprintf(fff, "  Lv%4d",
 								-get_recall_depth(&wpos, p_ptr));
+  #else
+					if (p_ptr->depth_in_feet)
+						fprintf(fff, "  %5dft     %s",
+								-50 * get_recall_depth(&wpos, p_ptr),
+								(i && d_info[i].final_guardian) ?
+								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
+								"\377Uconquered" : "not conquered yet") : "");
+					else
+						fprintf(fff, "  Lv%4d     %s",
+								-get_recall_depth(&wpos, p_ptr),
+								(i && d_info[i].final_guardian) ?
+								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
+								"\377Uconquered" : "not conquered yet") : "");
+  #endif
  #endif
 				}
 #endif
+if (i == 4) s_printf("%d,%d,%d,%s\n", i, d_info[i].final_guardian,p_ptr->r_killed[d_info[i].final_guardian],r_name + r_info[d_info[i].final_guardian].name);
 				fprintf(fff,"\n");
 			}
 		}
