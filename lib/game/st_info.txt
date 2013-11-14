@@ -1511,6 +1511,7 @@ I:100:Acid Resistance
 I:100:Lightning Resistance
 I:100:Charisma
 I:100:Serpents
+I:100:Mana-charging
 A:0:0:1:2:3:4
 #O:34:35:36:37:31:44 need more keepers first in ow_info
 #O:34:35:36:37:36:37
