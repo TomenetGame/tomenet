@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. November 2013 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.5 - official websites are:
+| Latest update: 14. November 2013 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.5a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -12971,19 +12971,19 @@ though, as all other magic schools do, not the astral level.)
 
 - Astral Knowledge
 
-    Power Bolt      Casts a bolt of electricity/mana/nether depending on your
-                    alignment:
+    Power Bolt      Casts a bolt of electricity/mana/dispelling depending on
+                    your alignment:
                     Still neutral -> electricity,
                     enlightened -> mana,
-                    corrupted -> nether.
+                    corrupted -> dispel.
                     Required skill level for first spell level: 1.
 
     Power Ray       Casts a beam of electricity/light/darkness depending on
                     your alignment (see Power Bolt spell above).
                     Required skill level for first spell level: 5.
 
-    Power Blast     Casts a ball of electricity/mana/nether depending on your
-                    alignment (see Power Bolt spell above).
+    Power Blast     Casts a ball of electricity/mana/dispelling depending on
+                    your alignment (see Power Bolt spell above).
                     Required skill level for first spell level: 10.
 
     Relocation      Same as word-of-recall.
