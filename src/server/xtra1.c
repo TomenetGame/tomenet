@@ -5668,12 +5668,16 @@ void calc_boni(int Ind)
 
 
 	/* swapping in AUTO_ID items will instantly ID inventory and equipment */
-	if (p_ptr->auto_id && !old_auto_id && !suppress_boni)
+	if (p_ptr->auto_id && !old_auto_id && !suppress_boni) {
 		for (i = 0; i < INVEN_TOTAL; i++) {
 			o_ptr = &p_ptr->inventory[i];
 			object_aware(Ind, o_ptr);
 			object_known(o_ptr);
 		}
+		/* hack: trigger client-side auto-inscriptions for convenience,
+		   if it isn't due anyway.  */
+		if (!p_ptr->inventory_changes) Send_inventory_revision(Ind);
+	}
 
 
 /* -------------------- Limits -------------------- */
