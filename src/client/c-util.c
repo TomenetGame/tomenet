@@ -5491,8 +5491,7 @@ Chain_Macro:
 }
 
 
-void auto_inscriptions(void)
-{
+void auto_inscriptions(void) {
 	int i, cur_line = 0;
 	bool redraw = TRUE, quit = FALSE;
 
@@ -5508,8 +5507,7 @@ void auto_inscriptions(void)
 	inkey_msg = TRUE;
 
 	/* Process requests until done */
-	while (1)
-	{
+	while (1) {
 		if (redraw) {
 			/* Clear screen */
 			Term_clear();
@@ -5580,6 +5578,7 @@ void auto_inscriptions(void)
 
 			/* Process the given filename */
 			load_auto_inscriptions(tmp);
+			for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i);
 			break;
 		case 's':
 			/* Prompt */
@@ -5623,9 +5622,10 @@ void auto_inscriptions(void)
 			/* Go to the correct location */
 			Term_gotoxy(55, cur_line + 1);
 			strcpy(buf, auto_inscription_tag[cur_line]);
-			/* Get a new matching string */
+			/* Get a new tag string */
 			if (!askfor_aux(buf, 20, 0)) continue;
 			strcpy(auto_inscription_tag[cur_line], buf);
+			for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i);
 
 			/* comfort hack - fake advancing ;) */
 			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");
