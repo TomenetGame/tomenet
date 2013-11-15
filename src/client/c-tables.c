@@ -403,7 +403,7 @@ option_type option_info[OPT_MAX] =
 	"flush_failure",		"(broken) Flush input on various failures" },
 #else
 	{ &c_cfg.no_magicattack_sfx,	FALSE,	5,	1, 21, TRUE,
-	"no_magicattack_sfx",		"Don't play basic attack-spell/device sound fx" },
+	"no_magicattack_sfx",		"Don't play basic spell/device attack sound fx" },
 #endif
 
 #if 0
