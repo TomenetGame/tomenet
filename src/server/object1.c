@@ -5111,6 +5111,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	}
 	my_fclose(fff);
 
+	/* hack: apply client-side auto-inscriptions */
+	if (!p_ptr->inventory_changes) Send_inventory_revision(Ind);
+
 	/* Let the client know it's about to get some info */
 	strcpy(p_ptr->cur_file_title, "Item Details");
 	Send_special_other(Ind);
@@ -5488,6 +5491,9 @@ void display_inven(int Ind)
 		Send_inventory_revision(Ind);
 		p_ptr->inventory_changed = FALSE;
 	}
+
+	/* hack: apply client-side auto-inscriptions */
+	else if (!p_ptr->inventory_changes) Send_inventory_revision(Ind);
 }
 
 
