@@ -2345,7 +2345,8 @@ void client_init(char *argv1, bool skip)
 	        c_cfg.big_map = TRUE;
 		Client_setup.options[43] = TRUE;
 		check_immediate_options(43, TRUE, FALSE);
-		(void)options_dump("global.opt");
+		//(void)options_dump("global.opt");
+		(void)options_dump(format("%s.opt", cname));
         }
 #endif
 

@@ -6795,7 +6795,8 @@ void do_cmd_options(void) {
 			Term_putstr(0, 21, -1, TERM_YELLOW, "File: ");
 
 			/* Default filename */
-			sprintf(tmp, "global.opt");
+			//sprintf(tmp, "global.opt");
+			sprintf(tmp, "%s.opt", cname);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
@@ -6812,7 +6813,8 @@ void do_cmd_options(void) {
 			Term_putstr(0, 21, -1, TERM_YELLOW, "File: ");
 
 			/* Default filename */
-			sprintf(tmp, "global.opt");
+			//sprintf(tmp, "global.opt");
+			sprintf(tmp, "%s.opt", cname);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
