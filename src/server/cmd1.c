@@ -2320,6 +2320,7 @@ void carry(int Ind, int pickup, int confirm)
 
 				/* Carry the item */
 				slot = inven_carry(Ind, o_ptr);
+				p_ptr->apply_auto_insc = slot + 1;
 
 				/* Get the item again */
 				o_ptr = &(p_ptr->inventory[slot]);

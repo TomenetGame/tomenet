@@ -7984,8 +7984,7 @@ bool inven_carry_okay(int Ind, object_type *o_ptr)
  * before the pack is reordered, but (optionally) after the pack is
  * combined.  This may be tricky.  See "dungeon.c" for info.
  */
-s16b inven_carry(int Ind, object_type *o_ptr)
-{
+s16b inven_carry(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	int         i, j, k;
@@ -8176,8 +8175,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
  *
  * Note special handling of the "overflow" slot
  */
-void combine_pack(int Ind)
-{
+void combine_pack(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int		i, j, k;
@@ -8189,8 +8187,7 @@ void combine_pack(int Ind)
 
 
 	/* Combine the pack (backwards) */
-	for (i = INVEN_PACK; i > 0; i--)
-	{
+	for (i = INVEN_PACK; i > 0; i--) {
 		/* Get the item */
 		o_ptr = &p_ptr->inventory[i];
 
@@ -8199,18 +8196,16 @@ void combine_pack(int Ind)
 
 
 		/* Auto id ? */
-		if (p_ptr->auto_id)
-		  {
-		    object_aware(Ind, o_ptr);
-		    object_known(o_ptr);
+		if (p_ptr->auto_id) {
+			object_aware(Ind, o_ptr);
+			object_known(o_ptr);
 
-		    /* Window stuff */
-		    p_ptr->window |= (PW_INVEN | PW_EQUIP);
-		  }
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		}
 
 		/* Scan the items above that item */
-		for (j = 0; j < i; j++)
-		{
+		for (j = 0; j < i; j++) {
 			/* Get the item */
 			j_ptr = &p_ptr->inventory[j];
 
@@ -8218,8 +8213,7 @@ void combine_pack(int Ind)
 			if (!j_ptr->k_idx) continue;
 
 			/* Can we drop "o_ptr" onto "j_ptr"? */
-			if (object_similar(Ind, j_ptr, o_ptr, p_ptr->current_force_stack - 1 == i ? 0x2 : 0x0))
-			{
+			if (object_similar(Ind, j_ptr, o_ptr, p_ptr->current_force_stack - 1 == i ? 0x2 : 0x0)) {
 				/* clear if used */
 				if (p_ptr->current_force_stack - 1 == i) p_ptr->current_force_stack = 0;
 
@@ -8233,8 +8227,7 @@ void combine_pack(int Ind)
 				p_ptr->inven_cnt--;
 
 				/* Slide everything down */
-				for (k = i; k < INVEN_PACK; k++)
-				{
+				for (k = i; k < INVEN_PACK; k++) {
 					/* Structure copy */
 					p_ptr->inventory[k] = p_ptr->inventory[k+1];
 				}
@@ -8248,6 +8241,8 @@ void combine_pack(int Ind)
 
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+				if (j + 1 == p_ptr->apply_auto_insc) p_ptr->apply_auto_insc = i + 1;
 
 				/* Done */
 				break;
@@ -8273,8 +8268,7 @@ void combine_pack(int Ind)
  *
  * Note special handling of empty slots  XXX XXX XXX XXX
  */
-void reorder_pack(int Ind)
-{
+void reorder_pack(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int		i, j, k;
@@ -8291,8 +8285,7 @@ void reorder_pack(int Ind)
 
 
 	/* Re-order the pack (forwards) */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
+	for (i = 0; i < INVEN_PACK; i++) {
 		/* Mega-Hack -- allow "proper" over-flow */
 		if ((i == INVEN_PACK) && (p_ptr->inven_cnt == INVEN_PACK)) break;
 
@@ -8306,8 +8299,7 @@ void reorder_pack(int Ind)
 		o_value = object_value(Ind, o_ptr);
 
 		/* Scan every occupied slot */
-		for (j = 0; j < INVEN_PACK; j++)
-		{
+		for (j = 0; j < INVEN_PACK; j++) {
 			/* Get the item already there */
 			j_ptr = &p_ptr->inventory[j];
 
@@ -8360,8 +8352,7 @@ void reorder_pack(int Ind)
 		temp = p_ptr->inventory[i];
 
 		/* Structure slide (make room) */
-		for (k = i; k > j; k--)
-		{
+		for (k = i; k > j; k--) {
 			/* Slide the item */
 			p_ptr->inventory[k] = p_ptr->inventory[k-1];
 		}
@@ -8375,6 +8366,8 @@ void reorder_pack(int Ind)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+		if (i + 1 == p_ptr->apply_auto_insc) p_ptr->apply_auto_insc = j + 1;
 	}
 
 	/* Message */

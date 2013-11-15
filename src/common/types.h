@@ -2891,6 +2891,7 @@ struct player_type
 	bool hilite_player; /* possible resurrection of long since broken c_cfg.hilite_player: Draw cursor around us at all times. */
 
 	char redraw_cooldown;
+	int apply_auto_insc;
 };
 
 typedef struct boni_col boni_col;

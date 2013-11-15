@@ -6951,6 +6951,20 @@ int Send_request_abort(int Ind) {
 	return Packet_printf(&connp->c, "%c", PKT_REQUEST_ABORT);
 }
 
+int Send_apply_auto_insc(int Ind, int slot) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) return(0);
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for request_apply_auto_insc (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	return Packet_printf(&connp->c, "%c%c", PKT_AUTO_INSC, (char)slot);
+}
+
 /*
  * Return codes for the "Receive_XXX" functions are as follows:
  *
@@ -10141,52 +10155,35 @@ void Handle_direction(int Ind, int dir)
 		do_cmd_breathe_aux(Ind, dir);
 }
 
-void Handle_item(int Ind, int item)
-{
+void Handle_item(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
 	if ((p_ptr->current_enchant_h > 0) || (p_ptr->current_enchant_d > 0) ||
-             (p_ptr->current_enchant_a > 0))
-	{
+             (p_ptr->current_enchant_a > 0)) {
 		enchant_spell_aux(Ind, item, p_ptr->current_enchant_h,
 			p_ptr->current_enchant_d, p_ptr->current_enchant_a,
 			p_ptr->current_enchant_flag);
-	}
-	else if (p_ptr->current_identify)
-	{
+	} else if (p_ptr->current_identify) {
 		ident_spell_aux(Ind, item);
-	}
-	else if (p_ptr->current_star_identify)
-	{
+	} else if (p_ptr->current_star_identify) {
 		identify_fully_item(Ind, item);
-	}
-	else if (p_ptr->current_recharge)
-	{
+		p_ptr->apply_auto_insc = item + 1;
+	} else if (p_ptr->current_recharge) {
 		recharge_aux(Ind, item, p_ptr->current_recharge);
-	}
-	else if (p_ptr->current_artifact)
-	  {
+	} else if (p_ptr->current_artifact) {
 	    create_artifact_aux(Ind, item);
-	  }
-	else if (p_ptr->current_telekinesis != NULL)
-	{
+	} else if (p_ptr->current_telekinesis != NULL) {
 		telekinesis_aux(Ind, item);
-	}
-	else if (p_ptr->current_curse != 0)
-	{
+	} else if (p_ptr->current_curse != 0) {
 		curse_spell_aux(Ind, item);
-	}
-	else if (p_ptr->current_tome_creation)
-	{
+	} else if (p_ptr->current_tome_creation) {
 		/* swap-hack: activating a custom tome uses up
 		   the TARGET item, not the tome, of course */
 		i = p_ptr->using_up_item;
 		p_ptr->using_up_item = item;
 		tome_creation_aux(Ind, i);
-	}
-	else if (p_ptr->current_rune)
-	{
+	} else if (p_ptr->current_rune) {
 		rune_combine_aux(Ind, item);
 	}
 

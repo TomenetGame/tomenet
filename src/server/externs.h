@@ -1107,6 +1107,7 @@ extern int is_inactive(int Ind);
 
 extern int Send_extra_status(int Ind, cptr status);
 extern void change_mind(int Ind, bool open_or_close);
+extern int Send_apply_auto_insc(int Ind, int slot);
 
 
 

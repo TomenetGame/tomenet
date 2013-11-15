@@ -145,6 +145,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_STORE_WIDE]	= Receive_store_wide;
 	receive_tbl[PKT_MUSIC]		= Receive_music;
 	receive_tbl[PKT_BONI_COL]	= Receive_boni_col;
+	receive_tbl[PKT_AUTO_INSC]	= Receive_apply_auto_insc;
 	receive_tbl[PKT_SFX_AMBIENT]	= Receive_sfx_ambient;
 
 	receive_tbl[PKT_REQUEST_KEY]	= Receive_request_key;
@@ -1257,6 +1258,16 @@ int Receive_ac(void) {
 	return 1;
 }
 
+int Receive_apply_auto_insc(void) {
+	int n;
+	char ch, slot;
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &slot)) <= 0) return n;
+
+	apply_auto_inscriptions((int)slot);
+
+	return 1;
+}
+
 int Receive_inven(void) {
 	int	n;
 	char	ch;
@@ -1309,8 +1320,6 @@ int Receive_inven(void) {
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
-
-	apply_auto_inscriptions(pos - 'a');
 
 	return 1;
 }
@@ -1378,8 +1387,6 @@ int Receive_inven_wide(void) {
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
-
-	apply_auto_inscriptions(pos - 'a');
 
 	return 1;
 }
@@ -1456,8 +1463,6 @@ int Receive_equip(void) {
 
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP);
-
-	//apply_auto_inscriptions(pos - 'a');
 
 	return 1;
 }
