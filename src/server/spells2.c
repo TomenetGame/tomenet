@@ -1043,9 +1043,11 @@ void identify_pack(int Ind) {
 	/* Handle stuff */
 	handle_stuff(Ind);
 
+#if 0 /* moved to client-side, clean! */
 	/* hack: trigger client-side auto-inscriptions for convenience,
 	   if it isn't due anyway.  */
 	if (!p_ptr->inventory_changes) Send_inventory_revision(Ind);
+#endif
 }
 
 

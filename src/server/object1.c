@@ -5111,8 +5111,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	}
 	my_fclose(fff);
 
+#if 0 /* moved to client-side, clean! */
 	/* hack: apply client-side auto-inscriptions */
 	if (!p_ptr->inventory_changes) Send_inventory_revision(Ind);
+#endif
 
 	/* Let the client know it's about to get some info */
 	strcpy(p_ptr->cur_file_title, "Item Details");
@@ -5486,14 +5488,15 @@ void display_inven(int Ind)
 	}
 
 	/* Send the new inventory revision if the inventory has changed - mikaelh */
-	if (p_ptr->inventory_changed)
-	{
+	if (p_ptr->inventory_changed) {
 		Send_inventory_revision(Ind);
 		p_ptr->inventory_changed = FALSE;
 	}
 
+#if 0 /* moved to client-side, clean! */
 	/* hack: apply client-side auto-inscriptions */
 	else if (!p_ptr->inventory_changes) Send_inventory_revision(Ind);
+#endif
 }
 
 

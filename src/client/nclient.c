@@ -1310,6 +1310,8 @@ int Receive_inven(void) {
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
 
+	apply_auto_inscriptions(pos - 'a');
+
 	return 1;
 }
 
@@ -1376,6 +1378,8 @@ int Receive_inven_wide(void) {
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
+
+	apply_auto_inscriptions(pos - 'a');
 
 	return 1;
 }
@@ -1452,6 +1456,8 @@ int Receive_equip(void) {
 
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP);
+
+	//apply_auto_inscriptions(pos - 'a');
 
 	return 1;
 }
@@ -3416,145 +3422,149 @@ int Receive_inventory_revision(void) {
 	char ch;
 	int revision;
 
-	int i, v;
-	char *ex, ex_buf[ONAME_LEN];
-	char *ex2, ex_buf2[ONAME_LEN];
-	char *match, tag_buf[ONAME_LEN];
-	bool auto_inscribe, found;
-
 	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &revision)) <= 0) return n;
 
 	p_ptr->inventory_revision = revision;
 	Send_inventory_revision(revision);
 
-#if 1 /* AUTOINSCRIBE - moved to Receive_inventory_revision() */
-	/* apply auto-inscriptions - C. Blue */
-	for (v = 0; v <= INVEN_PACK; v++) {
-		/* skip empty item */
-		if (!strlen(inventory_name[v])) continue;
-
-		/* haaaaack: check for existing inscription! */
-		auto_inscribe = FALSE;
-		/* look for 1st '{' which must be level requirements on ANY item */
-		ex = strstr(inventory_name[v], "{");
-		if (ex == NULL) continue; /* paranoia - should always be FALSE */
-		strcpy(ex_buf, ex + 1);
-		/* look for 2nd '{' which MUST be an inscription */
-		ex = strstr(ex_buf, "{");
-
-		/* Add "fake-artifact" inscriptions using '#' */
-		if (inventory_inscription[v]) {
-			if (ex == NULL) {
-				strcat(ex_buf, "{#"); /* create a 'real' inscription from this fake-name inscription */
-				/* hack 'ex' to make this special inscription known */
-				ex = ex_buf + strlen(ex_buf) - 2;
-				/* add the fake-name inscription */
-				i = strlen(ex_buf);
-				strncat(ex_buf, inventory_name[v] + inventory_inscription[v], inventory_inscription_len[v]);
-				ex_buf[i + inventory_inscription_len[v]] = '\0'; /* terminate string after strncat() */
-				strcat(ex_buf, "}");
-			} else {
-				ex_buf[strlen(ex_buf) - 1] = '\0'; /* cut off final '}' */
-				strcat(ex_buf, "#"); /* add the fake-name inscription */
-				i = strlen(ex_buf);
-				strncat(ex_buf, inventory_name[v] + inventory_inscription[v], inventory_inscription_len[v]);
-				ex_buf[i + inventory_inscription_len[v]] = '\0'; /* terminate string after strncat() */
-				strcat(ex_buf, "}"); /* restore final '}' */
-			}
-		}
-
-		/* no inscription? inscribe it then automatically */
-		if (ex == NULL) auto_inscribe = TRUE;
-		/* check whether inscription is just a discount/stolen tag */
-		else if (strstr(ex, "% off}") ||
-		    !strcmp(ex, "{on sale}") ||
-		    !strcmp(ex, "{stolen}")) {
-			/* if so, auto-inscribe it instead */
-			auto_inscribe = TRUE;
-		}
- #if 0 /* is '!' UNavailable? */
-		/* already has a real inscription? -> can't auto-inscribe */
-		if (!auto_inscribe) continue;
- #else
-		/* save for checking for already existing target inscription */
-		if (ex && strlen(ex) > 2) {
-			strncpy(tag_buf, ex + 1, strlen(ex) - 2);
-			tag_buf[strlen(ex) - 2] = '\0'; /* terminate */
-		}
-		else strcpy(tag_buf, ""); /* initialise as empty */
- #endif
-
-		/* look for matching auto-inscription */
-		for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-			match = auto_inscription_match[i];
-			/* skip empty auto-inscriptions */
-			if (!strlen(match)) continue;
- #if 0 /* disallow empty inscription? */
-			if (!strlen(auto_inscription_tag[i])) continue;
- #endif
-
- #if 1 /* is '!' available? */
-			/* if item already has an inscription, only allow to overwrite it
-			    if auto-inscription begins with '!', which stands for 'always overwrite' */
-			if (!auto_inscribe) {
-				if (match[0] != '!') continue;
-				else match++;
-				/* already carrying this very inscription? don't need to inscribe it AGAIN then */
-				if (!strcmp(auto_inscription_tag[i], tag_buf)) continue;
-			} else if (match[0] == '!') match++;
- #endif
-
-			/* found a matching inscription? */
- #if 0 /* no '?' wildcard allowed */
-			if (strstr(inventory_name[v], match)) break;
- #else /* '?' wildcard allowed: a random number (including 0) of random chars */
-			/* prepare */
-			strcpy(ex_buf, match);
-			ex2 = inventory_name[v];
-			found = FALSE;
-
-			do {
- 				ex = strstr(ex_buf, "?");
- 				if (ex == NULL) {
-	 				if (strstr(ex2, ex_buf)) found = TRUE;
- 					break;
-	 			} else {
-	 				/* get partial string up to before the '?' */
-	 				strncpy(ex_buf2, ex_buf, ex - ex_buf);
- 					ex_buf2[ex - ex_buf] = '\0';
- 					/* test partial string for match */
- 					ex2 = strstr(ex2, ex_buf2);
- 					if (ex2 == NULL) break; /* no match! */
- 					/* this partial string matched, discard and continue with next part */
- 					/* advance searching position in the item name */
- 					ex2 += strlen(ex_buf2);
- 					/* get next part of search string */
- 					strcpy(ex_buf, ex + 1);
- 					/* no more search string left? exit */
-					if (!strlen(ex_buf)) break;
- 					/* no more item name left although search string is finished? exit with negative result */
-					if (!strlen(ex2)) {
-						found = FALSE;
-						break;
-					}
-				}
-			} while (TRUE);
-			if (found) break;
- #endif
-		}
-		/* no match found? */
-		if (i == MAX_AUTO_INSCRIPTIONS) continue;
-
-		/* send the new inscription */
-		/* security hack: avoid infinite looping */
-		if (strstr(auto_inscription_tag[i], "% off") == NULL &&
-		    strcmp(auto_inscription_tag[i], "on sale") &&
-		    strcmp(auto_inscription_tag[i], "stolen"))
-			Send_inscribe(v, auto_inscription_tag[i]);
-	}
+#if 0 /* moved to Receive_inven...() - cleaner and works much better (ID and *ID*) */
+	/* AUTOINSCRIBE - moved to Receive_inventory_revision() */
+	for (v = 0; v <= INVEN_PACK; v++)
+		apply_auto_inscriptions(v);
 #endif
 
 	return 1;
+}
+
+/* Apply client-side auto-inscriptions - C. Blue */
+void apply_auto_inscriptions(int slot) {
+	int i;
+	char *ex, ex_buf[ONAME_LEN];
+	char *ex2, ex_buf2[ONAME_LEN];
+	char *match, tag_buf[ONAME_LEN];
+	bool auto_inscribe, found;
+
+	/* skip empty items */
+	if (!strlen(inventory_name[slot])) return;
+
+	/* haaaaack: check for existing inscription! */
+	auto_inscribe = FALSE;
+	/* look for 1st '{' which must be level requirements on ANY item */
+	ex = strstr(inventory_name[slot], "{");
+	if (ex == NULL) return; /* paranoia - should always be FALSE */
+	strcpy(ex_buf, ex + 1);
+	/* look for 2nd '{' which MUST be an inscription */
+	ex = strstr(ex_buf, "{");
+
+	/* Add "fake-artifact" inscriptions using '#' */
+	if (inventory_inscription[slot]) {
+		if (ex == NULL) {
+			strcat(ex_buf, "{#"); /* create a 'real' inscription from this fake-name inscription */
+			/* hack 'ex' to make this special inscription known */
+			ex = ex_buf + strlen(ex_buf) - 2;
+			/* add the fake-name inscription */
+			i = strlen(ex_buf);
+			strncat(ex_buf, inventory_name[slot] + inventory_inscription[slot], inventory_inscription_len[slot]);
+			ex_buf[i + inventory_inscription_len[slot]] = '\0'; /* terminate string after strncat() */
+			strcat(ex_buf, "}");
+		} else {
+			ex_buf[strlen(ex_buf) - 1] = '\0'; /* cut off final '}' */
+			strcat(ex_buf, "#"); /* add the fake-name inscription */
+			i = strlen(ex_buf);
+			strncat(ex_buf, inventory_name[slot] + inventory_inscription[slot], inventory_inscription_len[slot]);
+			ex_buf[i + inventory_inscription_len[slot]] = '\0'; /* terminate string after strncat() */
+			strcat(ex_buf, "}"); /* restore final '}' */
+		}
+	}
+
+	/* no inscription? inscribe it then automatically */
+	if (ex == NULL) auto_inscribe = TRUE;
+	/* check whether inscription is just a discount/stolen tag */
+	else if (strstr(ex, "% off}") ||
+	    !strcmp(ex, "{on sale}") ||
+	    !strcmp(ex, "{stolen}")) {
+		/* if so, auto-inscribe it instead */
+		auto_inscribe = TRUE;
+	}
+ #if 0 /* is '!' UNavailable? */
+	/* already has a real inscription? -> can't auto-inscribe */
+	if (!auto_inscribe) return;
+ #else
+	/* save for checking for already existing target inscription */
+	if (ex && strlen(ex) > 2) {
+		strncpy(tag_buf, ex + 1, strlen(ex) - 2);
+		tag_buf[strlen(ex) - 2] = '\0'; /* terminate */
+	}
+	else strcpy(tag_buf, ""); /* initialise as empty */
+ #endif
+
+	/* look for matching auto-inscription */
+	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+		match = auto_inscription_match[i];
+		/* skip empty auto-inscriptions */
+		if (!strlen(match)) return;
+ #if 0 /* disallow empty inscription? */
+		if (!strlen(auto_inscription_tag[i])) return;
+ #endif
+
+ #if 1 /* is '!' available? */
+		/* if item already has an inscription, only allow to overwrite it
+		    if auto-inscription begins with '!', which stands for 'always overwrite' */
+		if (!auto_inscribe) {
+			if (match[0] != '!') return;
+			else match++;
+			/* already carrying this very inscription? don't need to inscribe it AGAIN then */
+			if (!strcmp(auto_inscription_tag[i], tag_buf)) return;
+		} else if (match[0] == '!') match++;
+ #endif
+
+		/* found a matching inscription? */
+ #if 0 /* no '?' wildcard allowed */
+		if (strstr(inventory_name[slot], match)) break;
+ #else /* '?' wildcard allowed: a random number (including 0) of random chars */
+		/* prepare */
+		strcpy(ex_buf, match);
+		ex2 = inventory_name[slot];
+		found = FALSE;
+
+		do {
+			ex = strstr(ex_buf, "?");
+			if (ex == NULL) {
+			if (strstr(ex2, ex_buf)) found = TRUE;
+				break;
+		} else {
+			/* get partial string up to before the '?' */
+			strncpy(ex_buf2, ex_buf, ex - ex_buf);
+				ex_buf2[ex - ex_buf] = '\0';
+				/* test partial string for match */
+				ex2 = strstr(ex2, ex_buf2);
+				if (ex2 == NULL) break; /* no match! */
+				/* this partial string matched, discard and continue with next part */
+				/* advance searching position in the item name */
+				ex2 += strlen(ex_buf2);
+				/* get next part of search string */
+				strcpy(ex_buf, ex + 1);
+				/* no more search string left? exit */
+				if (!strlen(ex_buf)) break;
+				/* no more item name left although search string is finished? exit with negative result */
+				if (!strlen(ex2)) {
+					found = FALSE;
+					break;
+				}
+			}
+		} while (TRUE);
+		if (found) break;
+ #endif
+	}
+	/* no match found? */
+	if (i == MAX_AUTO_INSCRIPTIONS) return;
+
+	/* send the new inscription */
+	/* security hack: avoid infinite looping */
+	if (strstr(auto_inscription_tag[i], "% off") == NULL &&
+	    strcmp(auto_inscription_tag[i], "on sale") &&
+	    strcmp(auto_inscription_tag[i], "stolen"))
+		Send_inscribe(slot, auto_inscription_tag[i]);
 }
 
 int Receive_account_info(void) {
