@@ -5926,8 +5926,33 @@ void do_slash_cmd(int Ind, char *message)
 				s_printf("Done.\n");
 				return;
 			}
-			else if (prefix(message, "/meta"))
-			{
+			else if (prefix(message, "/guildrename")) {
+				int i, g;
+				char old_name[MAX_CHARS], new_name[MAX_CHARS];
+
+				if (tk < 1 || !strchr(message3, ':')) {
+					msg_print(Ind, "Usage: /guildrename <old name>:<new name>");
+					return;
+				}
+
+				strcpy(old_name, message3);
+				*(strchr(old_name, ':')) = 0;
+				strcpy(new_name, strchr(message3, ':') + 1);
+
+				if ((g = guild_lookup(old_name)) == -1) {
+					msg_format(Ind, "\377yGuild '%s' does not exist.", old_name);
+					return;
+				}
+
+				for (i = 0; i < MAX_GUILDNOTES; i++)
+					if (!strcmp(guild_note_target[i], old_name))
+						strcpy(guild_note_target[i], new_name);
+
+				strcpy(guilds[g].name, new_name);
+				msg_broadcast_format(0, "\377U(Server-Administration) Guild '%s' has been renamed to '%s'.", old_name, new_name);
+				return;
+			}
+			else if (prefix(message, "/meta")) {
 				if (!strcmp(message3, "update")) {
 					msg_print(Ind, "Sending updated info to the metaserver");
 					Report_to_meta(META_UPDATE);
