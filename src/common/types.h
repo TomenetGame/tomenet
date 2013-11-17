@@ -2850,6 +2850,7 @@ struct player_type
 	bool sfx_defense;
 	bool sfx_monsterattack;
 	bool sfx_shriek;
+	bool sfx_store;
 
 	/* various flags/counters to check if a character is 'freshly made' and/or has already interacted in certain ways.
 	   Mostly to test if he/she is eglibile to join events. */
@@ -3137,8 +3138,7 @@ struct server_opts
 /* Consider separate it into client/types.h and server/types.h */
 typedef struct client_opts client_opts;
 
-struct client_opts
-{
+struct client_opts {
 	bool rogue_like_commands;
 	bool warn_unique_credit;//quick_messages;
 	bool other_query_flag;
@@ -3246,6 +3246,7 @@ struct client_opts
 	bool no_shriek_sfx;
 
 	bool keep_topline;
+	bool no_store_sfx;
 };
 
 /*

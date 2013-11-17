@@ -587,8 +587,11 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.no_shriek_sfx,		FALSE,	5,	1, 94, TRUE,
 	"no_shriek_sfx",		"Don't play shriek (monster hasting) sound fx" },
 
-	{ &c_cfg.keep_topline,		FALSE,	4,	0, 3, TRUE,
+	{ &c_cfg.keep_topline,		FALSE,	4,	0, 95, TRUE,
 	"keep_topline",			"Don't clear messages in the top line if avoidable" },
+
+	{ &c_cfg.no_store_sfx,		TRUE,	5,	1, 96, TRUE,
+	"no_store_sfx",			"Don't play sound fx when entering/leaving a store" },
 };
 
 

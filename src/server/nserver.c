@@ -2151,17 +2151,19 @@ static void sync_options(int Ind, bool *options)
 	p_ptr->cut_sfx_attack = options[87];
 
 	if (is_older_than(&p_ptr->version, 4, 5, 5, 0, 0, 1)) {
-		p_ptr->sfx_combat = FALSE;
-		p_ptr->sfx_magicattack = FALSE;
-		p_ptr->sfx_defense = FALSE;
-		p_ptr->sfx_monsterattack = FALSE;
-		p_ptr->sfx_shriek = FALSE;
+		p_ptr->sfx_combat = TRUE;
+		p_ptr->sfx_magicattack = TRUE;
+		p_ptr->sfx_defense = TRUE;
+		p_ptr->sfx_monsterattack = TRUE;
+		p_ptr->sfx_shriek = TRUE;
+		p_ptr->sfx_store = FALSE;
 	} else {
 		p_ptr->sfx_combat = !options[47];
 		p_ptr->sfx_magicattack = !options[48];
 		p_ptr->sfx_defense = !options[49];
 		p_ptr->sfx_monsterattack = !options[93];
 		p_ptr->sfx_shriek = !options[94];
+		p_ptr->sfx_store = !options[96];
 	}
 }
 
@@ -3660,6 +3662,7 @@ static int Receive_login(int ind){
 }
 
 #define RECEIVE_PLAY_SIZE (2*6+OPT_MAX+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
+#define RECEIVE_PLAY_SIZE_OPTMAXOLD (2*6+OPT_MAX_OLD+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
 //#define STRICT_RECEIVE_PLAY
 static int Receive_play(int ind)
 {
@@ -3769,8 +3772,9 @@ static int Receive_play(int ind)
 		connp->trait = trait;
 
 //		if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
-		if (RECEIVE_PLAY_SIZE > connp->r.len - (connp->r.ptr - connp->r.buf))
-		{
+		if ((is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0) ?
+		    RECEIVE_PLAY_SIZE : RECEIVE_PLAY_SIZE_OPTMAXOLD)
+		    > connp->r.len - (connp->r.ptr - connp->r.buf)) {
 #if DEBUG_LEVEL > 2
 			plog(format("Play packet is not large enough yet (%d)",
 						connp->r.len - (connp->r.ptr - connp->r.buf)));
@@ -3809,15 +3813,26 @@ static int Receive_play(int ind)
 #endif	// 0
 
 		/* Read the options */
-		for (i = 0; i < OPT_MAX; i++)
-		{
-			n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
+		if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) {
+			for (i = 0; i < OPT_MAX; i++) {
+				n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
 
-			if (n <= 0)
-			{
-				Destroy_connection(ind, "Misread options");
-				return -1;
+				if (n <= 0) {
+					Destroy_connection(ind, "Misread options");
+					return -1;
+				}
 			}
+		} else {
+			for (i = 0; i < OPT_MAX_OLD; i++) {
+				n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
+
+				if (n <= 0) {
+					Destroy_connection(ind, "Misread options");
+					return -1;
+				}
+			}
+			/* use default values for skipped, new options */
+			connp->Client_setup.options[96] = TRUE;
 		}
 
 		/* Read screen dimensions */
@@ -9752,13 +9767,26 @@ static int Receive_options(int ind)
 
 	if (player) {
 		bool options[OPT_MAX];
-		for (i = 0; i < OPT_MAX; i++) {
-			n = Packet_scanf(&connp->r, "%c", &options[i]);
+		if (is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) {
+			for (i = 0; i < OPT_MAX; i++) {
+				n = Packet_scanf(&connp->r, "%c", &options[i]);
 
-			if (n <= 0) {
-				Destroy_connection(ind, "read error");
-				return n;
+				if (n <= 0) {
+					Destroy_connection(ind, "read error");
+					return n;
+				}
 			}
+		} else {
+			for (i = 0; i < OPT_MAX_OLD; i++) {
+				n = Packet_scanf(&connp->r, "%c", &options[i]);
+
+				if (n <= 0) {
+					Destroy_connection(ind, "read error");
+					return n;
+				}
+			}
+			/* use default values for skipped, new options */
+			connp->Client_setup.options[96] = TRUE;
 		}
 
 		/* Sync named options */

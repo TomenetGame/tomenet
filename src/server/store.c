@@ -3919,12 +3919,13 @@ void do_cmd_store(int Ind) {
 	handle_stuff(Ind); /* update stealth/search display now */
 
 #ifdef USE_SOUND_2010
-	for (i = 0; i < 6; i++)
-		if (st_info[st_ptr->st_idx].actions[i] == 1 ||
-		    st_info[st_ptr->st_idx].actions[i] == 2) {
-			sound(Ind, "store_doorbell_enter", NULL, SFX_TYPE_MISC, FALSE);
-			break;
-		}
+	if (p_ptr->sfx_store)
+		for (i = 0; i < 6; i++)
+			if (st_info[st_ptr->st_idx].actions[i] == 1 ||
+			    st_info[st_ptr->st_idx].actions[i] == 2) {
+				sound(Ind, "store_doorbell_enter", NULL, SFX_TYPE_MISC, FALSE);
+				break;
+			}
 #endif
 
 	/* process theft watch list of the store owner */
@@ -4308,16 +4309,18 @@ void store_kick(int Ind, bool say)
 	//store_leave(Ind);
 
 #ifdef USE_SOUND_2010
-	store_info_type *st_ptr;
-	i = gettown(Ind);
-	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-	if (i == -1) i = gettown_dun(Ind);
-	st_ptr = &st_info[town[i].townstore[Players[Ind]->store_num].st_idx];
-	for (i = 0; i < 6; i++)
-		if (st_ptr->actions[i] == 1 || st_ptr->actions[i] == 2) {
-			sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
-			break;
-		}
+	if (Players[Ind]->sfx_store) {
+		store_info_type *st_ptr;
+		i = gettown(Ind);
+		/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+		if (i == -1) i = gettown_dun(Ind);
+		st_ptr = &st_info[town[i].townstore[Players[Ind]->store_num].st_idx];
+		for (i = 0; i < 6; i++)
+			if (st_ptr->actions[i] == 1 || st_ptr->actions[i] == 2) {
+				sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+				break;
+			}
+	}
 #endif
 
 	handle_store_leave(Ind);
@@ -4337,17 +4340,19 @@ void store_exit(int Ind) {
 	if (Players[Ind]->store_num == -1) return;
 
 #ifdef USE_SOUND_2010
-	int i;
-	store_info_type *st_ptr;
-	i = gettown(Ind);
-	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
-	if (i == -1) i = gettown_dun(Ind);
-	st_ptr = &st_info[town[i].townstore[Players[Ind]->store_num].st_idx];
-	for (i = 0; i < 6; i++)
-		if (st_ptr->actions[i] == 1 || st_ptr->actions[i] == 2) {
-			sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
-			break;
-		}
+	if (Players[Ind]->sfx_store) {
+		int i;
+		store_info_type *st_ptr;
+		i = gettown(Ind);
+		/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+		if (i == -1) i = gettown_dun(Ind);
+		st_ptr = &st_info[town[i].townstore[Players[Ind]->store_num].st_idx];
+		for (i = 0; i < 6; i++)
+			if (st_ptr->actions[i] == 1 || st_ptr->actions[i] == 2) {
+				sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+				break;
+			}
+	}
 #endif
 
         handle_store_leave(Ind);
