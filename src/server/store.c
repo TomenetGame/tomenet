@@ -3820,8 +3820,7 @@ static bool leave_store = FALSE;
  * into other commands, normally, we convert "p" (pray) and "m"
  * (cast magic) into "g" (get), and "s" (search) into "d" (drop).
  */
-void do_cmd_store(int Ind)
-{
+void do_cmd_store(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
 	int which;
@@ -3918,6 +3917,15 @@ void do_cmd_store(int Ind)
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 	handle_stuff(Ind); /* update stealth/search display now */
+
+#ifdef USE_SOUND_2010
+	for (i = 0; i < 6; i++)
+		if (st_info[st_ptr->st_idx].actions[i] == 1 ||
+		    st_info[st_ptr->st_idx].actions[i] == 2) {
+			sound(Ind, "store_doorbell_enter", NULL, SFX_TYPE_MISC, FALSE);
+			break;
+		}
+#endif
 
 	/* process theft watch list of the store owner */
 	if (st_ptr->tim_watch) {
@@ -4292,15 +4300,31 @@ void store_init(store_type *st_ptr)
 /* Assumes we ARE in a store. Get kicked out of it and teleported. */
 void store_kick(int Ind, bool say)
 {
-	int i = Players[Ind]->store_num; /* (handle_store_leave() erases p_ptr->store_num) */
+#if defined(PLAYER_STORES) || defined(USE_SOUND_2010)
+	int i;
+#endif
 
 	if (say) msg_print(Ind, "The shopkeeper asks you to leave the store once.");
 	//store_leave(Ind);
+
+#ifdef USE_SOUND_2010
+	store_info_type *st_ptr;
+	i = gettown(Ind);
+	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+	if (i == -1) i = gettown_dun(Ind);
+	st_ptr = &st_info[town[i].townstore[Players[Ind]->store_num].st_idx];
+	for (i = 0; i < 6; i++)
+		if (st_ptr->actions[i] == 1 || st_ptr->actions[i] == 2) {
+			sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+			break;
+		}
+#endif
 
 	handle_store_leave(Ind);
 	Send_store_kick(Ind);
 
 #ifdef PLAYER_STORES
+	i = Players[Ind]->store_num; /* (handle_store_leave() erases p_ptr->store_num) */
         /* Player stores aren't entered such as normal stores,
            instead, the customer just stays in front of it. */
 	if (i > -2)
@@ -4311,6 +4335,20 @@ void store_kick(int Ind, bool say)
    No teleportation needed because we're only called if player wants to move anyway. */
 void store_exit(int Ind) {
 	if (Players[Ind]->store_num == -1) return;
+
+#ifdef USE_SOUND_2010
+	int i;
+	store_info_type *st_ptr;
+	i = gettown(Ind);
+	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+	if (i == -1) i = gettown_dun(Ind);
+	st_ptr = &st_info[town[i].townstore[Players[Ind]->store_num].st_idx];
+	for (i = 0; i < 6; i++)
+		if (st_ptr->actions[i] == 1 || st_ptr->actions[i] == 2) {
+			sound(Ind, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
+			break;
+		}
+#endif
 
         handle_store_leave(Ind);
         Send_store_kick(Ind);

@@ -217,7 +217,7 @@ audio_sfx = {
     "monster_teleport",
     "monster_puff",
 
-    --[grid]
+    --[misc]
     "destruction",
     "detonation",
     "earthquake",
@@ -226,6 +226,8 @@ audio_sfx = {
     "hollow_noise",
     "stirring",
     "shatter_potion",
+    "store_doorbell_enter",
+    "store_doorbell_leave",
 
     --[ambient]
     "ambient_fireplace",
