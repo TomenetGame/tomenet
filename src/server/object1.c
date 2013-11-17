@@ -3359,9 +3359,17 @@ cptr item_activation(object_type *o_ptr) {
 		case SV_RING_TELEPORTATION:
 			return "teleportation and destruction of the ring";
 		case SV_RING_POLYMORPH:
-				if (o_ptr->pval)
-					return format("polymorph into %s", r_info[o_ptr->pval].name + r_name);
-				else
+				if (o_ptr->pval) {
+					char m_name[MNAME_LEN];
+					m_name[0] = 0;
+					if (!(r_info[o_ptr->pval].flags8 & RF8_PLURAL)) {
+						if (is_a_vowel(*(r_info[o_ptr->pval].name + r_name)))
+							strcpy(m_name, "an ");
+						else strcpy(m_name, "a ");
+					}
+					strcat(m_name, r_info[o_ptr->pval].name + r_name);
+					return format("polymorph into %s", m_name);
+				} else
 					return "memorize the form you are mimicing";
 			default:
 				return NULL;
