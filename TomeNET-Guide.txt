@@ -15905,6 +15905,10 @@ SOLUTION:   Since TomeNET 4.5.0a a hack has been added to work with Xfce4's
             For example run tomenet with this command (assumed you're inside
             the same folder as the executable binary 'tomenet'):
               TERM=xterm-16color ./tomenet -c
+            Or export it first:
+              export TERM=xterm-16color
+              ./tomenet -c
+            You can also try xterm-256color instead of xterm-16color.
 
 PROBLEM 35: When running the client in terminal-mode, messages like
             "ALSA lib pcm.c...:(snd_pcm_recover) underrun occurred"
