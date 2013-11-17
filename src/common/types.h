@@ -3244,6 +3244,8 @@ struct client_opts
 	bool ovl_sfx_mon_misc;
 	bool no_monsterattack_sfx;
 	bool no_shriek_sfx;
+
+	bool keep_topline;
 };
 
 /*

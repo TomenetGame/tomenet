@@ -23,7 +23,7 @@
 
 /* This should be extended onto all top-line clearing/message prompting during macro execution,
    to avoid erasing %:bla lines coming from the macro, by overwriting them with useless prompts: */
-#define DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+//#define DONT_CLEAR_TOPLINE_IF_AVOIDABLE -- turned into an option instead: c_cfg.keep_topline
 
 
 
@@ -122,9 +122,10 @@ void flush_now(void)
 	flush_later = FALSE;
 
 	/* Cancel "macro" info */
-#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+//#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+if (c_cfg.keep_topline)
 	restore_prompt();
-#endif
+//#endif
 	parse_macro = after_macro = FALSE;
 
 	/* Cancel "sequence" info */
@@ -554,9 +555,10 @@ static char inkey_aux(void)
 
 	/* End of internal macro */
 	if (ch == 29) {
-#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+//#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+if (c_cfg.keep_topline)
 		restore_prompt();
-#endif
+//#endif
 		parse_macro = FALSE;
 	}
 
@@ -825,9 +827,10 @@ char inkey(void)
                 flush_later = FALSE;
 
                 /* Cancel "macro" info */
-#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+//#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+if (c_cfg.keep_topline)
 		restore_prompt();
-#endif
+//#endif
                 parse_macro = after_macro = FALSE;
 
                 /* Cancel "sequence" info */
@@ -1930,17 +1933,19 @@ void request_command() {
 	msg_flag = FALSE;
 	clear_topline();
 
-#ifndef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+//#ifndef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+if (!c_cfg.keep_topline)
 	/* Clear top line */
 	clear_topline();
-#endif
+//#endif
 
 	/* Bypass "keymap" */
 	if (cmd == '\\') {
-#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+//#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+if (c_cfg.keep_topline)
 		/* Clear top line */
 		clear_topline();
-#endif
+//#endif
 
 		/* Get a char to use without casting */
 		(void)(get_com("Command: ", &cmd));
@@ -1954,20 +1959,22 @@ void request_command() {
 			cmd = KTRL(cmd);
 		}
 
-#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+//#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+if (c_cfg.keep_topline)
 		/* Clear top line */
 		clear_topline();
-#endif
+//#endif
 
 		/* Use the key directly */
 		command_cmd = cmd;
 	} else {
 		/* Hack -- allow "control chars" to be entered */
 		if (cmd == '^') {
-#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+//#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+if (c_cfg.keep_topline)
 			/* Clear top line */
 			clear_topline();
-#endif
+//#endif
 
 			/* Get a char to "cast" into a control char */
 			(void)(get_com("Control: ", &cmd));
@@ -1975,10 +1982,11 @@ void request_command() {
 			/* Convert */
 			cmd = KTRL(cmd);
 
-#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+//#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+if (c_cfg.keep_topline)
 			/* Clear top line */
 			clear_topline();
-#endif
+//#endif
 		}
 
 		/* Access the array info */
@@ -1989,10 +1997,11 @@ void request_command() {
 	/* Paranoia */
 	if (!command_cmd) command_cmd = ESCAPE;
 
-#ifndef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+//#ifndef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+if (!c_cfg.keep_topline)
 	/* Hack -- erase the message line. */
 	clear_topline();
-#endif
+//#endif
 }
 
 bool get_dir(int *dp)
@@ -7529,28 +7538,49 @@ void check_immediate_options(int i, bool yes, bool playing) {
 
 /* Helper functions for DONT_CLEAR_TOPLINE_IF_AVOIDABLE - C. Blue */
 void prompt_topline(cptr prompt) {
-#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+#if 0
+ #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 	/* store prompt in case macro fails at an item prompt etc */
 	strcpy(last_prompt, prompt);
 	last_prompt_macro = parse_macro;
 	if (!parse_macro)
-#endif
+ #endif
 	prt(prompt, 0, 0);
+#else
+ if (c_cfg.keep_topline) {
+	/* store prompt in case macro fails at an item prompt etc */
+	strcpy(last_prompt, prompt);
+	last_prompt_macro = parse_macro;
+	if (!parse_macro)
+		prt(prompt, 0, 0);
+ } else
+	prt(prompt, 0, 0);
+#endif
 }
 void clear_topline(void) {
-#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+#if 0
+ #ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 	/* clear stored prompt */
 	last_prompt[0] = 0;
 	if (!parse_macro || !last_prompt_macro)
-#endif
+ #endif
 	prt("", 0, 0);
 	//last_prompt_macro = parse_macro; not needed (it's just done in next prompt_topline call that follows)
+#else
+ if (c_cfg.keep_topline) {
+	/* clear stored prompt */
+	last_prompt[0] = 0;
+	if (!parse_macro || !last_prompt_macro)
+		prt("", 0, 0);
+ } else
+	prt("", 0, 0);
+#endif
 }
 void clear_topline_forced(void) {
 	last_prompt[0] = 0;
 	prt("", 0, 0);
 }
-#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
+//#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
 /* If a macro failed while waiting for input at topline prompt,
    then restore the prompt, so the user can manually respond. */
 void restore_prompt(void) {
@@ -7559,4 +7589,4 @@ void restore_prompt(void) {
 	/* clear for next time (paranoia) */
 	last_prompt[0] = 0;
 }
-#endif
+//#endif

@@ -586,6 +586,9 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.no_shriek_sfx,		FALSE,	5,	1, 94, TRUE,
 	"no_shriek_sfx",		"Don't play shriek (monster hasting) sound fx" },
+
+	{ &c_cfg.keep_topline,		FALSE,	4,	0, 3, TRUE,
+	"keep_topline",			"Don't clear messages in the top line if avoidable" },
 };
 
 
