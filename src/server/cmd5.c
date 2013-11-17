@@ -429,8 +429,7 @@ void do_spin(int Ind)
 	}
 }
 
-static void do_mimic_power(int Ind, int power, int dir)
-{
+static void do_mimic_power(int Ind, int power, int dir) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	int rlev = (r_ptr->level + p_ptr->lev * 2 + 1) / 3;
@@ -440,6 +439,16 @@ static void do_mimic_power(int Ind, int power, int dir)
 //	j = power;
 
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+        /* No magic */
+	if (p_ptr->anti_magic) {
+	        msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+	        return;
+	}
+	if (p_ptr->antimagic) {
+	        msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+	        return;
+	}
 
 	/* Not when confused */
 	if (p_ptr->confused) {
@@ -1279,24 +1288,20 @@ void do_mimic_power_aux(int Ind, int dir)
 #endif
 }
 
-void do_mimic_change(int Ind, int r_idx, bool force)
-{
+void do_mimic_change(int Ind, int r_idx, bool force) {
 	player_type *p_ptr = Players[Ind];
 
-	if (!force && r_info[r_idx].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
-	{
+	if (!force && r_info[r_idx].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) {
 		msg_print(Ind, "You do need a higher mimicry skill to use that shape.");
 		return;
 	}
 
         /* No magic */
-	if (p_ptr->anti_magic && !force)
-	{
+	if (p_ptr->anti_magic && !force) {
 	        msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
 	        return;
 	}
-	if (p_ptr->antimagic && !force)
-	{
+	if (p_ptr->antimagic && !force) {
 	        msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 	        return;
 	}
