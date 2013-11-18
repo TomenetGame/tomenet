@@ -1408,12 +1408,12 @@ void whats_under_your_feet(int Ind) {
  * Note that we ONLY handle things that can be picked up.
  * See "move_player()" for handling of other things.
  */
-void carry(int Ind, int pickup, int confirm)
-{
+void carry(int Ind, int pickup, int confirm) {
 	object_type *o_ptr;
 
 	char    o_name[ONAME_LEN], o_name_real[ONAME_LEN];
 	u16b	old_note;
+	char	old_note_utag;
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type *c_ptr;
@@ -1745,6 +1745,7 @@ void carry(int Ind, int pickup, int confirm)
 #endif
 		/* Save old inscription in case pickup fails */
 		old_note = o_ptr->note;
+		old_note_utag = o_ptr->note_utag;
 
 		/* Remove dangerous inscriptions when picking up items owned by other players - mikaelh */
 		if (p_ptr->id != o_ptr->owner && o_ptr->note && p_ptr->clear_inscr) {
@@ -1965,6 +1966,7 @@ void carry(int Ind, int pickup, int confirm)
 
 			/* Restore old inscription */
 			o_ptr->note = old_note;
+			o_ptr->note_utag = old_note_utag;
 
 			return;
 		}
