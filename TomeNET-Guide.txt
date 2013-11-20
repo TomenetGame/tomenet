@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. November 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. November 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.5a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1061,6 +1061,9 @@ They all start with a slash '/' hence they're called slash commands:
             death, neither one of detonations, so you won't get instakilled.
             (It's easier to press '_' instead of using the /sip command.
             Also see '_' key above, for additional information.)
+
+/snbar      Cycles through available types of sanity bars to display.
+            Which types are available depends on the 'Health' skill.
 
 /stime      Tells you the current date and time (of the server, not of your
             local timezone).
