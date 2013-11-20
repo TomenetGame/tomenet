@@ -1636,7 +1636,15 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		p_ptr->fluent_artifact_reset = FALSE;
 	}
 
-	rd_byte(&p_ptr->sanity_gui);
+	if (!older_than(4, 5, 14)) rd_byte(&p_ptr->sanity_gui);
+	else {
+		int skill = get_skill(p_ptr, SKILL_HEALTH);
+		strip_bytes(1);
+		if (skill >= 40) p_ptr->sanity_gui = 3;
+		else if (skill >= 20) p_ptr->sanity_gui = 2;
+		else if (skill >= 10) p_ptr->sanity_gui = 1;
+		else p_ptr->sanity_gui = 0;
+	}
 
 	/* Future use */
 	strip_bytes(33);
