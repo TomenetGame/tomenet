@@ -3487,7 +3487,7 @@ void do_slash_cmd(int Ind, char *message)
 			msg_format(Ind, "  %d member%s total.", members, members == 1 ? "" : "s");
 			return;
 		}
-		else if (prefix(message, "/sngui")) {
+		else if (prefix(message, "/snbar")) {
 			int skill = get_skill(p_ptr, SKILL_HEALTH), guis;
 
 			if (skill >= 40) guis = 4;
@@ -3495,8 +3495,8 @@ void do_slash_cmd(int Ind, char *message)
 			else if (skill >= 10) guis = 2;
 			else guis = 1;
 
-			p_ptr->sanity_gui = (p_ptr->sanity_gui + 1) % guis;
-			switch (p_ptr->sanity_gui) {
+			p_ptr->sanity_bar = (p_ptr->sanity_bar + 1) % guis;
+			switch (p_ptr->sanity_bar) {
 			case 0: msg_print(Ind, "Sanity is now displayed as label."); break;
 			case 1: msg_print(Ind, "Sanity is now displayed as bar."); break;
 			case 2: msg_print(Ind, "Sanity is now displayed as percentage."); break;

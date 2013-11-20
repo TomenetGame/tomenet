@@ -781,7 +781,7 @@ static void wr_extra(int Ind)
 	wr_byte(p_ptr->castles_owned);
 	wr_s16b(p_ptr->hilite_self);
 	wr_byte(p_ptr->fluent_artifact_reset); /* for automatic artifact resets */
-	wr_byte(p_ptr->sanity_gui);
+	wr_byte(p_ptr->sanity_bar);
 
 	/* Future use */
 	for (i = 0; i < 33; i++) wr_byte(0);

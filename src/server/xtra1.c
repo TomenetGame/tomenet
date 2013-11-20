@@ -266,7 +266,7 @@ static void prt_sanity(int Ind)
 		strcpy(buf, "    Sound");
 	}
 
-	switch (p_ptr->sanity_gui) {
+	switch (p_ptr->sanity_bar) {
 	case 3: /* Full */
 		snprintf(buf, sizeof(buf), "%4d/%4d", p_ptr->csane, p_ptr->msane);
 		break;
