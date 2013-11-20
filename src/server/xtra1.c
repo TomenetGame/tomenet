@@ -241,62 +241,46 @@ static void prt_sanity(int Ind)
 		skill = p_ptr->lev;
 
 	/* Vague */
-	if (ratio < 0)
-	{
+	if (ratio < 0) {
 		/* This guy should be dead - for tombstone */
 		attr = TERM_RED;
 		strcpy(buf, "Vegetable");
-	}
-	else if (ratio < 10)
-	{
+	} else if (ratio < 10) {
 //		attr = TERM_RED;
 		attr = TERM_MULTI;
 		strcpy(buf, "      MAD");
-	}
-	else if (ratio < 25)
-	{
+	} else if (ratio < 25) {
 		attr = TERM_SHIELDI;
 		strcpy(buf, "   Insane");
-	}
-	else if (ratio < 50)
-	{
+	} else if (ratio < 50) {
 		attr = TERM_ORANGE;
 		strcpy(buf, "   Crazy");
-	}
-	else if (ratio < 75)
-	{
+	} else if (ratio < 75) {
 		attr = TERM_YELLOW;
 		strcpy(buf, "    Weird");
-	}
-	else if (ratio < 90)
-	{
+	} else if (ratio < 90) {
 		attr = TERM_GREEN;
 		strcpy(buf, "     Sane");
-	}
-	else
-	{
+	} else {
 		attr = TERM_L_GREEN;
 		strcpy(buf, "    Sound");
 	}
 
-	/* Full */
-	if (skill >= 40)
-	{
+	switch (p_ptr->sanity_gui) {
+	case 3: /* Full */
 		snprintf(buf, sizeof(buf), "%4d/%4d", p_ptr->csane, p_ptr->msane);
-	}
-	/* Percentile */
-	else if (skill >= 20)
-	{
+		break;
+	case 2: /* Percentile */
 		snprintf(buf, sizeof(buf), "     %3d%%", ratio);
+		break;
+	case 1: /* Sanity Bar */
+		{
+			int tmp = ratio / 11;
+			strcpy(buf, "---------");
+			if (tmp > 0) strncpy(buf, "*********", tmp);
+			break;
+		}
 	}
-	/* Sanity Bar */
-	else if (skill >= 10)
-	{
-		int tmp = ratio / 11;
-		strcpy(buf, "---------");
-		if (tmp > 0) strncpy(buf, "*********", tmp);
-	}
-
 	/* Terminate */
 	buf[9] = '\0';
 

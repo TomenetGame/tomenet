@@ -585,6 +585,11 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		}
 		break;
 #endif
+	case SKILL_HEALTH:
+		if (old_value < 100 && new_value >= 100) p_ptr->sanity_gui = 1;
+		else if (old_value < 200 && new_value >= 200) p_ptr->sanity_gui = 2;
+		else if (old_value < 400 && new_value >= 400) p_ptr->sanity_gui = 3;
+		break;
 	}
 }
 

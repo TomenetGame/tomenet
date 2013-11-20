@@ -1408,7 +1408,7 @@ static bool rd_extra(int Ind)
 	if (!p_ptr->id)
 		p_ptr->id = newid();
 
-	strip_bytes(20);	/* oops */
+	strip_bytes(20);	/* transient stats - these get ignored by both save and load atm. */
 
 	rd_s32b(&p_ptr->au);
 
@@ -1636,8 +1636,10 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		p_ptr->fluent_artifact_reset = FALSE;
 	}
 
+	rd_byte(&p_ptr->sanity_gui);
+
 	/* Future use */
-	strip_bytes(34);
+	strip_bytes(33);
 
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */
@@ -1667,7 +1669,7 @@ if (p_ptr->updated_savegame == 0) {
 	/* for automatic artifact resets (similar to updated_savegame) */
 	if (!older_than(4, 3, 22)) rd_byte(&p_ptr->artifact_reset);
 
-	/* Skip the flags */
+	/* Skip the flags -- these are currently not written either */
 	strip_bytes(12);
 
 

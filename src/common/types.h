@@ -2552,6 +2552,7 @@ struct player_type
 	s16b msane;                   /* Max sanity */
 	s16b csane;                   /* Cur sanity */
 	u16b csane_frac;              /* Cur sanity frac */
+	byte sanity_gui;	/* preferred type of SN: bar, if player has sufficient Health skill */
 
 	/* elements under this line won't be saved...for now. - Jir - */
 	player_list_type	*ignore;  /* List of players whose chat we wish to ignore */
