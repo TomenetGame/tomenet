@@ -10961,8 +10961,8 @@ static int Receive_request_key(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
-	char ch, id, key;
-	int n, player = -1;
+	char ch, key;
+	int n, id, player = -1;
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
 //		use_esp_link(&player, LINKF_OBJ);
@@ -10982,8 +10982,8 @@ static int Receive_request_num(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
-	char ch, id;
-	int n, player = -1, num;
+	char ch;
+	int n, id, player = -1, num;
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
 //		use_esp_link(&player, LINKF_OBJ);
@@ -11003,8 +11003,8 @@ static int Receive_request_str(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
-	char ch, id, str[MSG_LEN];
-	int n, player = -1;
+	char ch, str[MSG_LEN];
+	int n, id, player = -1;
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
 //		use_esp_link(&player, LINKF_OBJ);
@@ -11024,8 +11024,8 @@ static int Receive_request_cfr(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
-	char ch, id;
-	int n, player = -1, cfr;
+	char ch;
+	int n, id, player = -1, cfr;
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
 //		use_esp_link(&player, LINKF_OBJ);
