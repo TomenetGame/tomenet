@@ -5776,7 +5776,9 @@ house and combines all sales of partial piles of items.
 While normal cheques are inscribed with details of the item that was sold, mass
 cheques only say 'various piled items' or something similar.
 So if you offer piles, make sure that you have at least one free space in your
-house, or you will lose the cheque!
+house, or the cheque cannot be generated! In that case the purchase will be
+cancelled and the customer will see a message:
+"Sorry, the store is currently not open for sale. Please contact .. the owner!"
 
 Usually, player stores may only pop up if a player doesn't have access to that
 house door. If you want to test your own player store though, you can just
