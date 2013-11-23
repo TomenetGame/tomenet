@@ -3668,8 +3668,9 @@ static int Receive_play(int ind)
 {
 	connection_t *connp = Conn[ind];
 	unsigned char ch;
-	int i, n, sfx = -1, mus = -1;
+	int i, n;
 	s16b sex, race, class, trait = 0;
+        short int sfx = -1, mus = -1;
 
 	/* XXX */
 	n = Sockbuf_read(&connp->r);
@@ -7551,10 +7552,12 @@ static int Receive_look(int ind)
 	}
 
 	if (is_older_than(&p_ptr->version, 4, 4, 9, 4, 0, 0)) {
-		if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
+		char old_dir;
+		if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &old_dir)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
 			return n;
 		}
+		dir = old_dir;
 	} else { /* for 'p' feature (manual ground-targetting) */
 		if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &dir)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
@@ -9078,7 +9081,8 @@ static int Receive_message(int ind)
 
 static int Receive_admin_house(int ind){
 	connection_t *connp = Conn[ind];
-	char ch, dir;
+	char ch;
+	s16b dir;
 	int n,player = -1;
 	char buf[MAX_CHARS];
 	player_type *p_ptr = NULL;
@@ -9662,11 +9666,13 @@ static int Receive_special_line(int ind)
 			return n;
 		}
 	} else {
-		if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &type, &line)) <= 0) {
+		s16b old_line;
+		if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &type, &old_line)) <= 0) {
 			if (n == -1)
 				Destroy_connection(ind, "read error");
 			return n;
 		}
+		line = old_line;
 	}
 
 	if (player) {
@@ -10017,7 +10023,7 @@ static int Receive_guild_config(int ind) {
 	connection_t *connp = Conn[ind];
 	int player = 0, n, j;
 	char ch, adder[MAX_CHARS];
-	s16b command;
+	int command;
 	u32b flags;
 	guild_type *guild;
 	player_type *p_ptr, *q_ptr;
