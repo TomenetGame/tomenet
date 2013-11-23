@@ -51,7 +51,7 @@ static void display_trad_house(int Ind, house_type *h_ptr);
 void home_extend(int Ind);
 #ifdef PLAYER_STORES
 static s64b player_store_inscribed(object_type *o_ptr, u32b price);
-static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_type *s_ptr, u32b value);
+static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_type *s_ptr, u32b value);
 #endif
 
 
@@ -3222,6 +3222,18 @@ void store_purchase(int Ind, int item, int amt)
 			if (p_ptr->au >= price) {
 				if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
+				/* Hack -- clear the "fixed" flag from the item */
+				sell_obj.ident &= ~ID_FIXED;
+
+#ifdef PLAYER_STORES
+				/* If we buy from a player store, erase the item inscription! */
+				if (p_ptr->store_num <= -2) {
+					sell_obj.note = 0;
+					/* handle the original items and cheque processing */
+					if (!player_store_handle_purchase(Ind, o_ptr, &sell_obj, price)) return;
+				}
+#endif
+
 				/* Say "okay" */
 				say_comment_1(Ind);
 
@@ -3244,18 +3256,6 @@ void store_purchase(int Ind, int item, int amt)
 					/* Hack -- buying an item makes you aware of it */
 					object_aware(Ind, &sell_obj);
 				}
-
-				/* Hack -- clear the "fixed" flag from the item */
-				sell_obj.ident &= ~ID_FIXED;
-
-#ifdef PLAYER_STORES
-				/* If we buy from a player store, erase the item inscription! */
-				if (p_ptr->store_num <= -2) {
-					sell_obj.note = 0;
-					/* handle the original items and cheque processing */
-					player_store_handle_purchase(Ind, o_ptr, &sell_obj, price);
-				}
-#endif
 
 				/* Describe the transaction */
 				object_desc(Ind, o_name, &sell_obj, TRUE, 3);
@@ -3311,8 +3311,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 			}
 
 			/* Player cannot afford it */
-			else
-			{
+			else {
 				/* Simple message (no insult) */
 				msg_print(Ind, "You do not have enough gold.");
 			}
@@ -6205,7 +6204,7 @@ static void ps_set_cheque_value(object_type *o_ptr, u32b value) {
    Note: Since we might run out of space easily if we create cheques for
          every potion that is sold off a stack, we will create one special
          cheque, dubbed 'mass cheque' that handles all stacked items. - C. Blue */
-static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_type *s_ptr, u32b value) {
+static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_type *s_ptr, u32b value) {
 	player_type *p_ptr = Players[Ind];
 	object_type cheque, *cheque_ptr = &cheque;
 	bool mass_cheque = FALSE;
@@ -6218,7 +6217,7 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	char owner_name[MAX_CHARS];
 
 	/* paranoia */
-	if (!o_ptr->number || !s_ptr->number) return;
+	if (!o_ptr->number || !s_ptr->number) return FALSE;
 
 	/* create a blanco cheque ;) */
 	invcopy(&cheque, lookup_kind(TV_SCROLL, SV_SCROLL_CHEQUE));
@@ -6242,7 +6241,7 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	h_idx = pick_house(&p_ptr->wpos, p_ptr->ps_house_y, p_ptr->ps_house_x);
 	if (h_idx == -1) {
 		s_printf("PLAYER_STORE_ERROR: NO HOUSE! (value %d, buyer %s)\n", value, p_ptr->name);
-		return; /* oops? */
+		return FALSE; /* oops? */
 	}
 	h_ptr = &houses[h_idx];
 
@@ -6256,7 +6255,15 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	if (!(zcave = getcave(&p_ptr->wpos))) {
 		s_printf("PLAYER_STORE_ERROR: NO ZCAVE! (owner %s (%d), value %d, buyer %s)\n",
 		    owner_name, h_ptr->dna->owner, value, p_ptr->name);
-		return; /* oops? */
+		return FALSE; /* oops? */
+	}
+
+	/* paranoia: non-rectangular non-trad stores are currently not supported
+	   (and don't exist in the game anyway, so this check might as well be removed) */
+	if (!(h_ptr->flags & HF_TRAD) && !(h_ptr->flags & HF_RECT)) {
+		msg_print(Ind, "\377ySorry, the store is currently not open for sale.");
+		msg_format(Ind, "\377y Please contact %s, the owner!", owner_name);
+		return FALSE;
 	}
 
 	/* If it was completely bought out (ie the whole stack), we create a
@@ -6266,6 +6273,39 @@ static void player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	   keep 1 slot free for this or his money goes poof! */
 	if (s_ptr->number < o_ptr->number) mass_cheque = TRUE;
 	object_desc(0, o0_name, s_ptr, TRUE, 3);
+
+
+#if 1
+	/* Test for free space to generate a mass-cheque, if required.
+	   If we need it but don't have free space then cancel the purchase! */
+	if (mass_cheque && p_ptr->ps_mcheque_x == -1) {
+		/* trad house */
+		if (h_ptr->flags & HF_TRAD) {
+			if (h_ptr->stock_num >= h_ptr->stock_size) {
+				/* ouch, no room for dropping a cheque */
+				s_printf("PLAYER_STORE_CANCEL: NO SLOT! (owner %s (%d), value %d, buyer %s)\n",
+				    owner_name, h_ptr->dna->owner, value, p_ptr->name);
+				msg_print(Ind, "\377ySorry, the store is currently not open for sale.");
+				msg_format(Ind, "\377y Please contact %s, the owner!", owner_name);
+				return FALSE;
+			}
+		}
+		/* non-trad house */
+		else {
+			if (h_ptr->flags & HF_RECT) {
+				/* ouch, no room for dropping a cheque,
+				   money goes poof :( */
+				s_printf("PLAYER_STORE_CANCEL: NO ROOM! (owner %s (%d), value %d, buyer %s)\n",
+				    owner_name, h_ptr->dna->owner, value, p_ptr->name);
+				s_printf("debug: hidx %d; wpos %d,%d; o_ptr x,y %d,%d.\n",
+				    h_idx, p_ptr->wpos.wx, p_ptr->wpos.wy, o_ptr->ps_idx_x, o_ptr->ps_idx_y);
+				msg_print(Ind, "\377ySorry, the store is currently not open for sale.");
+				msg_format(Ind, "\377y Please contact %s, the owner!", owner_name);
+				return FALSE;
+			}
+		}
+	}
+#endif
 
 
 	/* -----------------------------------------------------------------------------------------------
@@ -6327,7 +6367,7 @@ s_printf("PLAYER_STORE_HANDLE: mass-add, mang, owner %s (%d), %s, value %d, buye
 					   money goes poof :( */
 					s_printf("PLAYER_STORE_ERROR: NO SLOT! (owner %s (%d), value %d, buyer %s)\n",
 					    owner_name, h_ptr->dna->owner, value, p_ptr->name);
-					return;
+					return FALSE;
 				}
 				/* add it to the stock and point to it.
 				   Note: Admitted Ind should be the owner and not the
@@ -6351,7 +6391,7 @@ s_printf("PLAYER_STORE_HANDLE: new mass, trad, owner %s (%d), %s, value %d, buye
 						    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 						s_printf("debug: hidx %d; wpos %d,%d; o_ptr x,y %d,%d.\n",
 						    h_idx, p_ptr->wpos.wx, p_ptr->wpos.wy, o_ptr->ps_idx_x, o_ptr->ps_idx_y);
-						return;
+						return FALSE;
 					}
 					/* Access free spot and verify its freeness.. */
 					x = -2 - p_ptr->ps_mcheque_x;
@@ -6364,7 +6404,7 @@ s_printf("PLAYER_STORE_HANDLE: new mass, trad, owner %s (%d), %s, value %d, buye
 						    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 						s_printf("debug: hidx %d; wpos %d,%d; o_ptr x,y %d,%d; mcheque x,y %d,%d.\n",
 						    h_idx, p_ptr->wpos.wx, p_ptr->wpos.wy, o_ptr->ps_idx_x, o_ptr->ps_idx_y, x, y);
-						return;
+						return FALSE;
 					}
 					/* Drop the cheque there */
 					drop_near(cheque_ptr, -1, &p_ptr->wpos, y, x);
@@ -6444,6 +6484,9 @@ s_printf("PLAYER_STORE_HANDLE: full, mang, owner %s (%d), %s, value %d, buyer %s
 		/* If he's not online, store account notification for later */
 		if (i > NumPlayers) acc_set_flags_id(h_ptr->dna->owner, ACC_WARN_SALE, TRUE);
 	}
+
+	/* successful purchase */
+	return TRUE;
 }
 #endif
 
