@@ -4661,7 +4661,7 @@ void do_cmd_fire(int Ind, int dir)
 			p_ptr->count_cut_sfx_attack += 10000 / sfx;
 			if (p_ptr->count_cut_sfx_attack >= 200) { /* 5 attacks per turn */
 				p_ptr->count_cut_sfx_attack -= 200;
-				p_ptr->count_cut_sfx_attack = 0;
+				if (p_ptr->count_cut_sfx_attack >= 200) p_ptr->count_cut_sfx_attack = 0;
 				sfx = 0;
 			}
 		}
