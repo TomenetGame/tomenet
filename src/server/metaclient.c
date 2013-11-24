@@ -215,7 +215,7 @@ static int meta_write(int flag) {
 	}
 	
 	/* Send data to metaserver */
-	if (write(meta_fd, buf_meta, strlen(buf_meta)) == -1) {
+	if (send(meta_fd, buf_meta, strlen(buf_meta), 0) == -1) {
 #ifdef WINDOWS
 		int errval = WSAGetLastError();
 		if (errval != WSAEWOULDBLOCK) {
