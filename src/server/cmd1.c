@@ -2717,7 +2717,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				p_ptr->count_cut_sfx_attack += 10000 / sfx;
 				if (p_ptr->count_cut_sfx_attack >= 250) { /* 100 / 25 = 4 blows per turn */
 					p_ptr->count_cut_sfx_attack -= 250;
-					if (p_ptr->count_cut_sfx_attack >= 250) p_ptr->count_cut_sfx_attack = 0;
+					p_ptr->count_cut_sfx_attack = 0;
 					sfx = 0;
 				}
 			}
@@ -3760,7 +3760,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				p_ptr->count_cut_sfx_attack += 10000 / sfx;
 				if (p_ptr->count_cut_sfx_attack >= 250) { /* 100 / 25 = 4 blows per turn */
 					p_ptr->count_cut_sfx_attack -= 250;
-					if (p_ptr->count_cut_sfx_attack >= 250) p_ptr->count_cut_sfx_attack = 0;
+					p_ptr->count_cut_sfx_attack = 0;
 					sfx = 0;
 				}
 			}
