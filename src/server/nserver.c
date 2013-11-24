@@ -2148,6 +2148,7 @@ static void sync_options(int Ind, bool *options)
 		p_ptr->player_list = options[50];
 		p_ptr->player_list2 = options[51];
 	}
+	p_ptr->half_sfx_attack = options[86];
 	p_ptr->cut_sfx_attack = options[87];
 
 	if (is_older_than(&p_ptr->version, 4, 5, 5, 0, 0, 1)) {
@@ -2713,6 +2714,9 @@ static int Handle_login(int ind)
 		handle_music(NumPlayers); /* start music normally (instantly) */
 
 	handle_ambient_sfx(NumPlayers, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
+
+	/* Don't skip the first attack sfx (in case player enabled half_sfx_attack or cut_sfx_attack) */
+	p_ptr->count_cut_sfx_attack = 500;
 #endif
 
 	/* Initialize the client's unique list;

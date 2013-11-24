@@ -4961,6 +4961,12 @@ static void process_player_end(int Ind)
 		} else {
 			p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
 		}
+
+		/* Reset attack sfx counter in case player enabled half_sfx_attack or cut_sfx_attack. */
+		if (!p_ptr->shooting_till_kill && !p_ptr->auto_retaliating) {
+			p_ptr->count_cut_sfx_attack = 500;
+			p_ptr->half_sfx_attack_state = FALSE;
+		}
 	}
 
 

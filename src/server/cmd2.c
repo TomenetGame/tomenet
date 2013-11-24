@@ -4666,6 +4666,10 @@ void do_cmd_fire(int Ind, int dir)
 			}
 		}
 	}
+	if (p_ptr->half_sfx_attack && sfx == 0) {
+		if (p_ptr->half_sfx_attack_state) sfx = -1;
+		p_ptr->half_sfx_attack_state = !p_ptr->half_sfx_attack_state;
+	}
 	if (sfx == 0 && p_ptr->sfx_combat)
  #if 0 //DEBUG
 		switch (otval) {

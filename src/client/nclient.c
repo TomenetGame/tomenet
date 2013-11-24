@@ -2667,15 +2667,7 @@ int Receive_sound(void) {
 #ifndef USE_SOUND_2010
 		Term_xtra(TERM_XTRA_SOUND, s1);
 #else
-		/* discard every 2nd attack sfx? */
-		if (t == SFX_TYPE_ATTACK && c_cfg.half_sfx_attack) {
-			count_half_sfx_attack = !count_half_sfx_attack;
-			if (count_half_sfx_attack) return 1;
-		}
-
-		if (!sound(s1, t, v, id)) {
-			sound(s2, t, v, id);
-		}
+		if (!sound(s1, t, v, id)) sound(s2, t, v, id);
 #endif
 	}
 
@@ -4281,7 +4273,7 @@ void do_mail() {
 
 /* Ping the server once a second when enabled - mikaelh */
 void do_ping() {
-	static int last_ping = 0, last_sfx = 0;
+	static int last_ping = 0;
 	static int time_stamp_hour = -1;
 
 	if (lagometer_enabled && (ticks - last_ping >= 10)) {
@@ -4293,95 +4285,84 @@ void do_ping() {
 		Send_ping();
 	}
 
-#ifdef USE_SOUND_2010
-	/* Abuse it for resetting sound skip counter too */
-	if (ticks - last_sfx < 0 || /* ticks-overflow-paranoia */
-	    ticks - last_sfx >= 5) {
-		last_sfx = ticks;
-
-		/* reset */
-		count_half_sfx_attack = TRUE;
-	}
-#endif
-
 	/* abusing it for weather for now - C. Blue */
-    if (!noweather_mode) {
-	do_weather();
+	if (!noweather_mode) {
+		do_weather();
 
 #if 1 /* old method: Many weather particles turn on the sfx, few turn it off again. */
-	/* handle audio output -- avoid easy oscillating */
-	if (weather_particles_seen >= 7) {
-		wind_noticable = TRUE;
+		/* handle audio output -- avoid easy oscillating */
+		if (weather_particles_seen >= 7) {
+			wind_noticable = TRUE;
  #ifdef USE_SOUND_2010
-		weather_sound_change = 0;
-
-		//in case the below method is active code-wise, also add this hack here:
-		//weather_vol_smooth = cfg_audio_weather_volume;
-
-		if (weather_type != -1) {
-			if (weather_type % 10 == 1) { //rain
-				if (weather_wind >= 1 && weather_wind <= 2) sound_weather(rain2_sound_idx);
-				else sound_weather(rain1_sound_idx);
-			} else if (weather_type % 10 == 2) { //snow
-				if (weather_wind >= 1 && weather_wind <= 2) sound_weather(snow2_sound_idx);
-				else sound_weather(snow1_sound_idx);
-			}
-		}
- #endif
-	} else if (weather_particles_seen <= 4) {
-		wind_noticable = FALSE;
- #ifdef USE_SOUND_2010
-		weather_sound_change++;
-		if (weather_sound_change == (cfg_client_fps > 100 ? 100 : cfg_client_fps)) {
 			weather_sound_change = 0;
-			sound_weather(-1); //fade out, insufficient particles to support the noise ;)
-		}
-	} else {
-		weather_sound_change = 0;
- #endif
-	}
-#else /* WEATHER_VOL_PARTICLES -- new method: Amount of weather particles determines the sfx volume. */
-	/* handle audio output -- avoid easy oscillating */
-	if (weather_particles_seen >= 1) {
-		wind_noticable = TRUE;
- #ifdef USE_SOUND_2010
-		weather_sound_change = 0; /* for delaying, and then fading out, further below */
-		if (weather_type != -1) {
-			if (weather_type % 10 == 1) { //rain
-				if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(rain2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
-				else sound_weather_vol(rain1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
-			} else if (weather_type % 10 == 2) { //snow
-				if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
-				else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+
+			//in case the below method is active code-wise, also add this hack here:
+			//weather_vol_smooth = cfg_audio_weather_volume;
+
+			if (weather_type != -1) {
+				if (weather_type % 10 == 1) { //rain
+					if (weather_wind >= 1 && weather_wind <= 2) sound_weather(rain2_sound_idx);
+					else sound_weather(rain1_sound_idx);
+				} else if (weather_type % 10 == 2) { //snow
+					if (weather_wind >= 1 && weather_wind <= 2) sound_weather(snow2_sound_idx);
+					else sound_weather(snow1_sound_idx);
+				}
 			}
-		}
  #endif
-	} else {
-		wind_noticable = FALSE;
+		} else if (weather_particles_seen <= 4) {
+			wind_noticable = FALSE;
+ #ifdef USE_SOUND_2010
+			weather_sound_change++;
+			if (weather_sound_change == (cfg_client_fps > 100 ? 100 : cfg_client_fps)) {
+				weather_sound_change = 0;
+				sound_weather(-1); //fade out, insufficient particles to support the noise ;)
+			}
+		} else {
+			weather_sound_change = 0;
+ #endif
+		}
+#else /* WEATHER_VOL_PARTICLES -- new method: Amount of weather particles determines the sfx volume. */
+		/* handle audio output -- avoid easy oscillating */
+		if (weather_particles_seen >= 1) {
+			wind_noticable = TRUE;
+ #ifdef USE_SOUND_2010
+			weather_sound_change = 0; /* for delaying, and then fading out, further below */
+			if (weather_type != -1) {
+				if (weather_type % 10 == 1) { //rain
+					if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(rain2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+					else sound_weather_vol(rain1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+				} else if (weather_type % 10 == 2) { //snow
+					if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+					else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+				}
+			}
+ #endif
+		} else {
+			wind_noticable = FALSE;
  #ifdef USE_SOUND_2010
   #if 0
-		sound_weather(-2); //turn off
+			sound_weather(-2); //turn off
   #else /* make it smoother: delay and then fade */
    #if 0
-		weather_sound_change++;
-		if (weather_sound_change == (cfg_client_fps > 100 ? 100 : cfg_client_fps)) {
-			weather_sound_change = 0;
-			sound_weather(-1); //fade out
-		}
+			weather_sound_change++;
+			if (weather_sound_change == (cfg_client_fps > 100 ? 100 : cfg_client_fps)) {
+				weather_sound_change = 0;
+				sound_weather(-1); //fade out
+			}
    #else /* just fade, no delay */
-		sound_weather(-1); //fade out
+			sound_weather(-1); //fade out
    #endif
   #endif
  #endif
-	}
+		}
 
  #ifdef USE_SOUND_2010
   #ifdef SOUND_SDL
-	if (weather_fading) weather_handle_fading();
+		if (weather_fading) weather_handle_fading();
   #endif
  #endif
 #endif
-    }
+	}
 
 	if (ambient_fading) ambient_handle_fading();
 

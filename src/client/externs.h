@@ -886,7 +886,7 @@ extern int cfg_audio_master_volume, cfg_audio_music_volume, cfg_audio_sound_volu
 #if 1 /* WEATHER_VOL_PARTICLES */
 extern int weather_vol_smooth, weather_vol_smooth_anti_oscill, weather_smooth_avg[20];
 #endif
-extern bool count_half_sfx_attack, sound_hint;
+extern bool sound_hint;
 
 extern const struct module sound_modules[];
 extern errr init_sound_sdl(int argc, char **argv);

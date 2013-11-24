@@ -2844,14 +2844,9 @@ struct player_type
 	bool is_day;
 	int ambient_sfx_timer; /* hack for running through wilderness too quickly for normal ambient sfx to get played */
 #endif
-	bool cut_sfx_attack;
+	bool cut_sfx_attack, half_sfx_attack, half_sfx_attack_state;
 	int count_cut_sfx_attack;
-	bool sfx_combat;
-	bool sfx_magicattack;
-	bool sfx_defense;
-	bool sfx_monsterattack;
-	bool sfx_shriek;
-	bool sfx_store;
+	bool sfx_combat, sfx_magicattack, sfx_defense, sfx_monsterattack, sfx_shriek, sfx_store;
 
 	/* various flags/counters to check if a character is 'freshly made' and/or has already interacted in certain ways.
 	   Mostly to test if he/she is eglibile to join events. */

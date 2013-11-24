@@ -2722,6 +2722,10 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				}
 			}
 		}
+		if (p_ptr->half_sfx_attack && sfx == 0) {
+			if (p_ptr->half_sfx_attack_state) sfx = -1;
+			p_ptr->half_sfx_attack_state = !p_ptr->half_sfx_attack_state;
+		}
 #endif
 
 		/* Access the weapon. Added dual-mode check:
@@ -3760,6 +3764,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					sfx = 0;
 				}
 			}
+		}
+		if (p_ptr->half_sfx_attack && sfx == 0) {
+			if (p_ptr->half_sfx_attack_state) sfx = -1;
+			p_ptr->half_sfx_attack_state = !p_ptr->half_sfx_attack_state;
 		}
 #endif
 
