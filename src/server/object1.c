@@ -4415,7 +4415,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 				ca_ptr = " true artifact";
 #ifdef FLUENT_ARTIFACT_RESETS
  #ifdef RING_OF_PHASING_NO_TIMEOUT
-				if (o_ptr->name1 == ART_PHASING) sprintf(timeleft, " (It will reset when Zu-Aon is defeated once more)");
+				if (o_ptr->name1 == ART_PHASING) strcpy(timeleft, " (It will reset when Zu-Aon is defeated once more)");
 				else
  #endif
 				if (a_info[o_ptr->name1].timeout <= 0) ;
