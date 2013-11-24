@@ -4231,7 +4231,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	char *ca_ptr = "", a = (id && artifact_p(o_ptr)) ? 'U' : 'w';
 	char buf_tmp[90];
 	int buf_tmp_i, buf_tmp_n;
-	char timeleft[26] = { 0 };
+	char timeleft[51] = { 0 };//[26]
 
 
 	/* Open a new file */
