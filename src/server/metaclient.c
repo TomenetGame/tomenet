@@ -228,6 +228,8 @@ static int meta_write(int flag) {
 			s_printf("Writing to meta socket would block!\n");
 		}
 		
+		/* Failed to connect or send data */
+		meta_needs_update = FALSE;
 		return FALSE;
 	}
 	
