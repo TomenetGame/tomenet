@@ -141,7 +141,10 @@ int invalidate(char *name, bool admin) {
 	c_acc = GetAccount(name, NULL, TRUE);
 	if (!c_acc) return(0);
 
-	if (!admin && (c_acc->flags & ACC_ADMIN)) return 2;
+	if (!admin && (c_acc->flags & ACC_ADMIN)) {
+		KILL(c_acc, struct account);
+		return 2;
+	}
 
 	if (!(c_acc->flags & ACC_TRIAL)) {
 		effect = TRUE;
@@ -534,8 +537,11 @@ int check_account(char *accname, char *c_name) {
 			if (!strcmp(c_name, lookup_player_name(id_list[i]))) break;
                 if (i == chars)
             		return 0; /* 'name already in use' */
-	} else if (!l_acc && l2_acc)
+	} else if (!l_acc && l2_acc) {
+		KILL(l2_acc, struct account);
 		return 0; /* we don't even have an account yet? 'name already in use' for sure */
+	}
+	KILL(l2_acc, struct account);
 
 	if ((l_acc = GetAccount(accname, NULL, FALSE))) {
 		int *id_list, chars;
@@ -550,6 +556,7 @@ int check_account(char *accname, char *c_name) {
 		/* allow multiple chars for admins, even on RPG server */
 		if ((chars > 0) && strcmp(c_name, lookup_player_name(id_list[0])) && !(l_acc->flags & ACC_ADMIN)) {
 			if (chars) C_KILL(id_list, chars, int);
+			KILL(l_acc, struct account);
 			return(-1);
 		}
 #else
@@ -588,6 +595,7 @@ int check_account(char *accname, char *c_name) {
 			/* We're out of free character slots: Char creation failed! */
 			if (i == chars) {
 				if (chars) C_KILL(id_list, chars, int);
+				KILL(l_acc, struct account);
 				return(-3);
 			}
 		/* only exclusive char slots left */
@@ -596,6 +604,7 @@ int check_account(char *accname, char *c_name) {
 			if (ded_iddc && ded_pvp) {
 				/* out of character slots */
 				if (chars) C_KILL(id_list, chars, int);
+				KILL(l_acc, struct account);
 				return(-3);
 			}
 			if (ded_iddc) success = -4; /* set char mode to MODE_DED_PVP */
@@ -816,6 +825,7 @@ int guild_create(int Ind, cptr name){
 			return FALSE;
 		}
 	}
+	KILL(acc, struct account);
 
 	/* Make sure this guy isn't in some other guild already */
 	if (p_ptr->guild != 0) {
@@ -1296,6 +1306,7 @@ int guild_add(int adder, cptr name) {
 		far_success = TRUE;
 		break;
         }
+        KILL(acc, struct account);
         /* failure? */
         if (!far_success)
 #endif
@@ -1372,6 +1383,7 @@ int guild_add_self(int Ind, cptr guild) {
 			/* Everlasting and other chars cannot be in the same guild */
 			if (compat_mode(p_ptr->mode, lookup_player_mode(id_list[i]))) {
 				msg_format(Ind, "\377yYou cannot join %s guilds.", compat_mode(p_ptr->mode, lookup_player_mode(id_list[i])));
+				KILL(acc, struct account);
 				return FALSE;
 			}
 
@@ -1394,6 +1406,7 @@ int guild_add_self(int Ind, cptr guild) {
 			break;
                 }
         }
+        KILL(acc, struct account);
         /* failure? */
         if (i == ids) {
 		if (!member) msg_print(Ind, "You do not have any character that is member of that guild.");
@@ -1619,6 +1632,7 @@ int party_add_self(int Ind, cptr party) {
 			break;
                 }
         }
+	KILL(acc, struct account);
         /* failure? */
         if (i == ids) {
 		msg_print(Ind, "You do not have any character that is member of that party.");
@@ -3481,9 +3495,11 @@ void scan_players(){
 				   keeping the account 'active' - see scan_accounts() - C. Blue */
 				c_acc = GetAccountID(ptr->account, TRUE);
 				/* avoid tagging multi-char accounts again for each char - once is sufficient */
-				if (c_acc && c_acc->acc_laston != now) {
-					c_acc->acc_laston = now;
-					WriteAccount(c_acc, FALSE);
+				if (c_acc) {
+					if (c_acc->acc_laston != now) {
+						c_acc->acc_laston = now;
+						WriteAccount(c_acc, FALSE);
+					}
 					KILL(c_acc, struct account);
 				}
 #else
@@ -4250,6 +4266,7 @@ void account_change_password(int Ind, char *old_pass, char *new_pass) {
 	strcpy(c_acc->pass, t_crypt(new_pass, c_acc->name));
 
 	if (!(WriteAccount(c_acc, FALSE))) {
+		KILL(c_acc, struct account);
 		msg_print(Ind, "Failed to write to account file!");
 		return;
 	}

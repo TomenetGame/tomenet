@@ -3424,6 +3424,7 @@ static int Receive_login(int ind){
 		u32b p_id;
 		bool censor_swearing_tmp = censor_swearing;
 		char tmp_name[NAME_LEN];
+		struct account *acc;
 
 		/* Check if player tries to create an account of the same name as
 		   an already existing character - give an error message.
@@ -3432,11 +3433,12 @@ static int Receive_login(int ind){
 			/* That character doesn't belong to our account? Forbid creating an account of this name then. */
 			if (strcmp(lookup_accountname(p_id), connp->nick)) {
 				/* However, if our account already exists then allow it to continue existing. */
-				if (!Admin_GetAccount(connp->nick)) {
+				if (!(acc = Admin_GetAccount(connp->nick))) {
 					Destroy_connection(ind, "Name already in use.");
 					Sockbuf_flush(&connp->w);
 					return(0);
 				}
+				KILL(acc, struct account);
 			}
 		}
 

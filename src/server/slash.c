@@ -2026,6 +2026,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377oThat account does not exist.");
 				return;
 			}
+			KILL(c_acc, struct account);
 
 			/* Check whether player has his notes quota exceeded */
 			for (i = 0; i < MAX_NOTES; i++) {
@@ -5580,7 +5581,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
-			else if (prefix(message, "/characc")) { /* returns account name to which the given character name belongs */
+			else if (prefix(message, "/characc")) { /* and /characcl; returns account name to which the given character name belongs */
 				u32b p_id;
 				cptr acc;
 				struct account *l_acc;
@@ -5624,8 +5625,8 @@ void do_slash_cmd(int Ind, char *message)
 						msg_format(Ind, "Character #%d: %s%s (%d) (ID: %d)", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i]);
 					}
 					if (n) C_KILL(id_list, n, int);
-					KILL(l_acc, struct account);
                                 }
+				KILL(l_acc, struct account);
                                 return;
 
 			}
