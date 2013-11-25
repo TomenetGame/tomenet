@@ -394,7 +394,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 	o_ptr = &forge;
 	invcopy(o_ptr, k_idx);
 	o_ptr->number = num;
-	apply_magic(&p_ptr->wpos, o_ptr, getlevel(&p_ptr->wpos), FALSE, FALSE, FALSE, FALSE, FALSE);
+	apply_magic(&p_ptr->wpos, o_ptr, getlevel(&p_ptr->wpos), FALSE, FALSE, FALSE, FALSE, make_resf(p_ptr));
 
 	/* No more perfection / EA / and other nice daggers from this one -C. Blue */
 	/* If weapon has good boni, remove all ego abilities */

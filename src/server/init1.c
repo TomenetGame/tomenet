@@ -7743,7 +7743,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				object_prep(o_ptr, object_index);
 
 				/* Apply magic (no messages, no artifacts) */
-				apply_magic(wpos, o_ptr, dun_level, FALSE, TRUE, FALSE, FALSE, TRUE);
+				apply_magic(wpos, o_ptr, dun_level, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
 
 				k_allow_special[object_index] = FALSE;
 

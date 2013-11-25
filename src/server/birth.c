@@ -1530,7 +1530,7 @@ void admin_outfit(int Ind, int realm)
 		if (!k_idx) continue;
 		invcopy(o_ptr, k_idx);
 		o_ptr->number = 1;
-		apply_magic(&p_ptr->wpos, o_ptr, 1, TRUE, FALSE, FALSE, FALSE, FALSE);
+		apply_magic(&p_ptr->wpos, o_ptr, 1, TRUE, FALSE, FALSE, FALSE, RESF_NONE);
 		do_admin_outfit();
 	}
 #endif
@@ -1541,35 +1541,35 @@ void admin_outfit(int Ind, int realm)
 
 //	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_DWARVEN)); /* more subtile ;) */
-	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
 	o_ptr->number = 1;
 	do_admin_outfit();
 
 	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_INVINCIBILITY));
-	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
 	o_ptr->number = 1;
 	do_admin_outfit();
 
 	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_INVULNERABILITY));
-	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
 	o_ptr->number = 1;
 	do_admin_outfit();
 
 	invcopy(o_ptr, lookup_kind(TV_CLOAK, SV_SHADOW_CLOAK));
 	o_ptr->name1 = ART_CLOAK_DM;
-	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
 	o_ptr->number = 1;
 	do_admin_outfit();
 
 	invcopy(o_ptr, lookup_kind(TV_BOW, SV_LONG_BOW));
-	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
 	o_ptr->to_h = 200;
 	o_ptr->to_d = 200;
 	o_ptr->number = 1;
 	do_admin_outfit();
 
 	invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
-	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
 	o_ptr->number = 1;
 	do_admin_outfit();
 
@@ -1581,14 +1581,14 @@ void admin_outfit(int Ind, int realm)
 
 	invcopy(o_ptr, lookup_kind(TV_HELM, SV_GOGGLES_DM));
 	o_ptr->name1 = ART_GOGGLES_DM;
-	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
 	o_ptr->number = 1;
 	do_admin_outfit();
 
 	/* either to inscribe @Ox or to one-hit-kill */
 	invcopy(o_ptr, lookup_kind(TV_POLEARM, SV_SCYTHE));
 	o_ptr->name1 = ART_SCYTHE_DM;
-	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, RESF_NONE);
 	o_ptr->number = 1;
 	do_admin_outfit();
 
@@ -1701,7 +1701,7 @@ static void player_outfit(int Ind)
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
 		o_ptr->name2 = 188;	// Bud ;)
 		o_ptr->number = 9;
-		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
+		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 		o_ptr->discount = 72;
 		o_ptr->owner = p_ptr->id;
                 o_ptr->mode = p_ptr->mode;
@@ -1846,7 +1846,7 @@ static void player_outfit(int Ind)
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->name2 = 139;
-			apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
+			apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
 			object_flags(o_ptr,&f1,&f2,&f3,&f4,&f5,&f6);
 		} while (f2 & TR2_RES_DARK);
 		do_player_outfit();
@@ -1875,7 +1875,7 @@ static void player_outfit(int Ind)
 		o_ptr->number = 1;
 		o_ptr->discount = 100;
  #if 0 /* random */
-		apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
+		apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
  #else /* predefined, or else people might reroll like crazy.... */
 		switch (randint(7)) {
 		case 1: pv = 125; break;//z (rotting corpse)

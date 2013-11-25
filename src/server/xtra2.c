@@ -5289,7 +5289,7 @@ if (cfg.unikill_format) {
 				if (a_ptr->flags3 & (TR3_CURSED)) qq_ptr->ident |= (ID_CURSED);
 
 				/* Complete generation, especially level requirements check */
-				apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, TRUE);
+				apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, resf_chosen);
 
 				qq_ptr->note = local_quark;
 				qq_ptr->note_utag = strlen(quark_str(local_quark));
@@ -5327,7 +5327,7 @@ if (cfg.unikill_format) {
 			invcopy(qq_ptr, I_kind + 1); /* weirdness, why is it actually 1 too low? */
 
 			/* Complete generation, especially level requirements check */
-			apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, TRUE);
+			apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, resf_chosen);
 
 		    	object_desc(Ind, o_name, qq_ptr, TRUE, 3);
 			s_printf(" '%s'", o_name);
@@ -5442,7 +5442,7 @@ if (cfg.unikill_format) {
 			/* Mega-Hack -- Mark this item as "Grond" */
 			prize.name1 = ART_GROND;
 			/* Mega-Hack -- Actually create "Grond" */
-			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
+			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, resf_chosen);
 
 			prize.number = num;
 			prize.level = 45;
@@ -5459,7 +5459,7 @@ if (cfg.unikill_format) {
 			/* Mega-Hack -- Mark this item as "Morgoth" */
 			prize.name1 = ART_MORGOTH;
 			/* Mega-Hack -- Actually create "Morgoth" */
-			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
+			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, resf_chosen);
 
 			prize.number = num;
 			prize.level = 45;
@@ -5506,7 +5506,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 
-			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 
 			qq_ptr->bpval = 5;
 			/* Drop it in the dungeon */
@@ -5542,7 +5542,7 @@ if (cfg.unikill_format) {
 			/* Check the tval is allowed */
 //			if (randart_make(qq_ptr) != NULL)
 
-			apply_magic(wpos, qq_ptr, -1, FALSE, TRUE, FALSE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, -1, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
 
 			/* Save the inscription */
 			/* (pfft, not so smart..) */
@@ -5586,7 +5586,7 @@ if (cfg.unikill_format) {
 			qq_ptr->name3 = rand_int(0xFFFF) << 16;
 			qq_ptr->name3 += rand_int(0xFFFF);
 
-			apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
 			qq_ptr->level = 0;
 
 			qq_ptr->ident |= ID_CURSED;
@@ -5626,7 +5626,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 
-			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 
 			/* Drop it in the dungeon */
 			drop_near(qq_ptr, -1, wpos, y, x);
@@ -5644,7 +5644,7 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 
-			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 
 			/* Drop it in the dungeon */
 #ifdef PRE_OWN_DROP_CHOSEN
@@ -5665,7 +5665,7 @@ if (cfg.unikill_format) {
 			qq_ptr->number = 2 + rand_int(2);
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
-			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
 			qq_ptr->pval = qq_ptr->number * 5 + 3 + rand_int(4);
 			drop_near(qq_ptr, -1, wpos, y, x);
 #endif
@@ -5676,7 +5676,7 @@ if (cfg.unikill_format) {
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
-			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
 			drop_near(qq_ptr, -1, wpos, y, x);
 
 		/* dungeon boss, but drops multiple items */
@@ -5704,7 +5704,7 @@ if (cfg.unikill_format) {
 			qq_ptr->number = 1; /*(a_info[a_idx].cur_num == 0 || art_created) ? 1 : 2;*/
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
-			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 			/* Drop it in the dungeon */
 			drop_near(qq_ptr, -1, wpos, y, x);
 
@@ -5719,7 +5719,7 @@ if (cfg.unikill_format) {
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
-			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 			/* Drop it in the dungeon */
 #ifdef PRE_OWN_DROP_CHOSEN
 			qq_ptr->level = 0;
@@ -5812,7 +5812,7 @@ if (cfg.unikill_format) {
 					if (a_ptr->flags3 & (TR3_CURSED)) qq_ptr->ident |= (ID_CURSED);
 
 					/* Complete generation, especially level requirements check */
-					apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, TRUE);
+					apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, resf_chosen);
 
 					/* Little sanity hack for level requirements
 					   of the Ring of Phasing - would be 92 otherwise */

@@ -3122,7 +3122,7 @@ bool create_artifact_aux(int Ind, int item) {
 
 	/* apply magic (which resets owner) and manually restore ownership again afterwards;
 	   apply_magic() is used to set level requirements, and copy the a_ptr to o_ptr. */
-	apply_magic(&p_ptr->wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, FALSE);
+	apply_magic(&p_ptr->wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
 	o_ptr->owner = old_owner;
 
 	/* Hack - lose discount on item, looks bad/silly */

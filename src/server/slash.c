@@ -2164,13 +2164,9 @@ void do_slash_cmd(int Ind, char *message)
 				o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 			}
 
-			apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, TRUE);
-			if (tk > 3){
-				o_ptr->discount = atoi(token[4]);
-			}
-			else{
-				o_ptr->discount = 100;
-			}
+			apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
+			if (tk > 3) o_ptr->discount = atoi(token[4]);
+			else o_ptr->discount = 100;
 			object_known(o_ptr);
 			o_ptr->owner = 0;
 //			if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
@@ -4158,8 +4154,7 @@ void do_slash_cmd(int Ind, char *message)
 				object_type	*o_ptr = &forge;
 				WIPE(o_ptr, object_type);
 
-				if (tk < 1 || !k)
-				{
+				if (tk < 1 || !k) {
 					msg_print(Ind, "\377oUsage: /wish (tval) (sval) (pval) [discount] [name] [name2b]  --or /wish (o_idx)");
 					return;
 				}
@@ -4167,8 +4162,7 @@ void do_slash_cmd(int Ind, char *message)
 				invcopy(o_ptr, tk > 1 ? lookup_kind(k, atoi(token[2])) : k);
 
 				/* Wish arts out! */
-				if (tk > 4)
-				{
+				if (tk > 4) {
 					int nom = atoi(token[5]);
 					o_ptr->number = 1;
 
@@ -4189,23 +4183,17 @@ void do_slash_cmd(int Ind, char *message)
 						o_ptr->name3 = rand_int(0xFFFF) << 16;
 						o_ptr->name3 += rand_int(0xFFFF);
 					}
-				}
-				else
-				{
+				} else {
 					o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 				}
 
-//				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, TRUE);
-				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, TRUE);
-				if (tk > 3){
-					o_ptr->discount = atoi(token[4]);
-				}
-				else{
-					o_ptr->discount = 100;
-				}
+//				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
+				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+				if (tk > 3) o_ptr->discount = atoi(token[4]);
+				else o_ptr->discount = 100;
 				object_known(o_ptr);
 				o_ptr->owner = 0;
-				if(tk>2)
+				if (tk > 2)
 					o_ptr->pval = atoi(token[3]);
 				//o_ptr->owner = p_ptr->id;
 				o_ptr->level = 1;
@@ -4888,7 +4876,7 @@ void do_slash_cmd(int Ind, char *message)
 						return;
 					}
 					o_ptr->timeout = 0;
-					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
+					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
 
 					/* restrictions? */
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -4952,7 +4940,7 @@ void do_slash_cmd(int Ind, char *message)
 						return;
 					}
 					o_ptr->timeout = 0;
-					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
+					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
 
 					if (o_ptr->to_a > 35) break;
 					tries++;
@@ -4983,7 +4971,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				o_ptr->timeout = 0;
 				return;/* see create_reward for proper loop */
-				apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, TRUE, TRUE, TRUE, FALSE, FALSE);
+				apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, TRUE, TRUE, TRUE, FALSE, RESF_NOART);
 
 				msg_format(Ind, "Re-rolled ego in inventory slot %d!", atoi(token[1]));
 				/* Window stuff */
@@ -6900,7 +6888,7 @@ void do_slash_cmd(int Ind, char *message)
 						return;
 					}
 					o_ptr->timeout = 0;
-					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
+					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
 				} while	(
 				    o_ptr->to_h < 30 ||
 				    o_ptr->to_d < 29 ||

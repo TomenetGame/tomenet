@@ -2469,7 +2469,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							}
 						} else if (special_k_idx && tval != TV_GOLEM) {
 							invcopy(&forge, special_k_idx);
-							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
+							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 							forge.number = 1;
 //							forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
@@ -2527,7 +2527,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 					if (special_k_idx && tval == TV_GOLEM && sval == SV_GOLEM_WOOD) {
 						invcopy(&forge, special_k_idx);
-						apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
+						apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 						forge.number = 1;
 //						forge.level = ;
 						forge.marked2 = ITEM_REMOVAL_NORMAL;
@@ -2665,7 +2665,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					if (gold) {
 						if (special_k_idx && tval == TV_GOLEM && sval != SV_GOLEM_WOOD) {
 							invcopy(&forge, special_k_idx);
-							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
+							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 							forge.number = 1;
 //							forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
@@ -2704,7 +2704,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 						}
 					} else if (!rand_int(10) && special_k_idx && (tval == TV_RUNE)) {
 							invcopy(&forge, special_k_idx);
-							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
+							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 							forge.number = 1;
 //							forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
@@ -2849,7 +2849,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							}
 						} else if (!rand_int(20) && special_k_idx && (tval == TV_RUNE)) {
 							invcopy(&forge, special_k_idx);
-							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
+							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 							forge.number = 1;
 //							forge.level = ;
 							forge.marked2 = ITEM_REMOVAL_NORMAL;
@@ -3237,11 +3237,11 @@ void do_cmd_disarm(int Ind, int dir)
 					   Since the trap appears ~50% of the time at max trapping, 
 					   the total chance for this is about 3% */
 					if (magik((sdis/10)+1)) {
-						apply_magic(&p_ptr->wpos, yay, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
+						apply_magic(&p_ptr->wpos, yay, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 						drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 						msg_print(Ind, "You have created a wonderful trapkit using pieces of the disarmed trap.");
 					} else {
-						apply_magic(&p_ptr->wpos, yay, -2, TRUE, FALSE, FALSE, FALSE, TRUE);
+						apply_magic(&p_ptr->wpos, yay, -2, TRUE, FALSE, FALSE, FALSE, make_resf(p_ptr));
 						drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 						msg_print(Ind, "You have fashioned a trapkit of a sort from the disarmed trap.");
 					}
