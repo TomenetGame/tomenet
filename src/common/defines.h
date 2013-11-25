@@ -4669,6 +4669,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RESF_LIFE		0x00010000	/* allow +LIFE randarts */
 #define RESF_DEBUG_ITEM		0x00020000	/* generate a certain item (k_idx) for debugging purpose */
 #define RESF_STOREFLAT		0x00040000	/* generate all base item types with same probability */
+#define RESF_FORCERANDART	0x00080000	/* generate a random artifact */
 
 #define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
 #define RESF_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */

@@ -3652,9 +3652,9 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 	if (resf & RESF_NORANDART) return (FALSE);
 
 	/* An extra chance at being a randart. XXX RANDART */
-	if (!rand_int(RANDART_RARITY)) {
+	if (!rand_int(RANDART_RARITY) || (resf & RESF_FORCERANDART)) {
 		/* Randart ammo should be very rare! */
-		if (is_ammo(o_ptr->tval) && magik(80)) return(FALSE); /* was 95 */
+		if (!(resf & RESF_FORCERANDART) && is_ammo(o_ptr->tval) && magik(80)) return(FALSE); /* was 95 */
 
 		/* We turn this item into a randart! */
 		o_ptr->name1 = ART_RANDART;
@@ -5196,6 +5196,8 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	}
 	/* --------------------------------------------------------------------------------- */
 
+	if ((resf & RESF_FORCERANDART)) rolls = 2;
+
 	/* Roll for artifacts if allowed */
 	for (i = 0; i < rolls; i++) {
 		/* Roll for an artifact -
@@ -5270,7 +5272,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 		/* Done */
 		return;
-	}
+	} else if ((resf & RESF_FORCERANDART)) return; /* failed to generate */
 
 	/* Hack - for NO_MORGUL_IN_IDDC check in a_m_aux_1().  - C. Blue
 	   (Usually, o_ptr->wpos is only set in drop_near(), which happens _afterwards_.) */

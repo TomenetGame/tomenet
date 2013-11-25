@@ -4707,7 +4707,13 @@ void monster_death(int Ind, int m_idx)
 	artifact_type *a_ptr;
 
 	bool henc_cheezed = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
-	u32b resf_tmp = RESF_NONE;
+	u32b resf_drops = make_resf(p_ptr), resf_chosen = resf_drops;
+
+
+	/* experimental: Zu-Aon drops only randarts */
+	if (m_ptr->r_idx == RI_ZU_AON) resf_drops |= (RESF_FORCERANDART | RESF_NOTRUEART);
+	/* Morgoth never drops true artifacts */
+	if (is_Morgoth) resf_drops |= RESF_NOTRUEART;
 
 	/* terminate mindcrafter charm effect */
 	if (m_ptr->charmedignore) {
@@ -4987,11 +4993,6 @@ void monster_death(int Ind, int m_idx)
 			/* Place Object */
 			else {
 				place_object_restrictor = RESF_NONE;
-				/* prepare restriction flags for loot */
-				resf_tmp = make_resf(p_ptr);
-
-				/* Morgoth never drops true artifacts */
-				if (is_Morgoth) resf_tmp |= RESF_NOTRUEART;
 
 				/* hack to allow custom test l00t drop for admins: */
 				if (is_admin(p_ptr)) {
@@ -5002,17 +5003,17 @@ void monster_death(int Ind, int m_idx)
 					    (k_tval = strchr(quark_str(p_ptr->inventory[INVEN_WIELD].note), '%')) &&
 					    (k_sval = strchr(k_tval, ':'))
 					    ) {
-						resf_tmp |= RESF_DEBUG_ITEM;
+						resf_drops |= RESF_DEBUG_ITEM;
 						/* extract tval:sval */
 						/* abuse luck parameter for this */
 						tmp_luck = lookup_kind(atoi(k_tval + 1), atoi(k_sval + 1));
 						/* catch invalid items */
-						if (!tmp_luck) resf_tmp &= ~RESF_DEBUG_ITEM;
+						if (!tmp_luck) resf_drops &= ~RESF_DEBUG_ITEM;
 					}
 				}
 
 				/* generate an object and place it */
-				place_object(wpos, y, x, good, great, FALSE, resf_tmp, r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
+				place_object(wpos, y, x, good, great, FALSE, resf_drops, r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
 
 //				if (player_can_see_bold(Ind, ny, nx)) dump_item++;
 			}
@@ -5267,8 +5268,8 @@ if (cfg.unikill_format) {
 			invcopy(qq_ptr, I_kind);
 			qq_ptr->name1 = a_idx;
 
-			if (!(make_resf(p_ptr) & RESF_NOTRUEART) ||
-			    ((make_resf(p_ptr) & RESF_WINNER) && winner_artifact_p(qq_ptr))) {
+			if (!(resf_chosen & RESF_NOTRUEART) ||
+			    ((resf_chosen & RESF_WINNER) && winner_artifact_p(qq_ptr))) {
 				/* Extract the fields */
 				qq_ptr->pval = a_ptr->pval;
 				qq_ptr->ac = a_ptr->ac;
@@ -5519,7 +5520,7 @@ if (cfg.unikill_format) {
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
-			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, make_resf(p_ptr));
+			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_drops);
 			drop_near(qq_ptr, -1, wpos, y, x);
 
 		} else if (r_ptr->flags7 & RF7_NAZGUL) {
@@ -5784,8 +5785,8 @@ if (cfg.unikill_format) {
 				/* Save the name */
 				qq_ptr->name1 = a_idx;
 
-				if (!(make_resf(p_ptr) & RESF_NOTRUEART) ||
-				    ((make_resf(p_ptr) & RESF_WINNER) && winner_artifact_p(qq_ptr))) {
+				if (!(resf_chosen & RESF_NOTRUEART) ||
+				    ((resf_chosen & RESF_WINNER) && winner_artifact_p(qq_ptr))) {
 					/* Extract the fields */
 					qq_ptr->pval = a_ptr->pval;
 					qq_ptr->ac = a_ptr->ac;
