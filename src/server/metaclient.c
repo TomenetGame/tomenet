@@ -215,7 +215,7 @@ static int meta_write(int flag) {
 	}
 	
 	/* Send data to metaserver */
-	if (write(meta_fd, buf_meta, strlen(buf_meta)) == -1) {
+	if (send(meta_fd, buf_meta, strlen(buf_meta), 0) == -1) {
 #ifdef WINDOWS
 		int errval = WSAGetLastError();
 		if (errval != WSAEWOULDBLOCK) {
@@ -228,6 +228,8 @@ static int meta_write(int flag) {
 			s_printf("Writing to meta socket would block!\n");
 		}
 		
+		/* Failed to connect or send data */
+		meta_needs_update = FALSE;
 		return FALSE;
 	}
 	
