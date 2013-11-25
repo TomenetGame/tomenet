@@ -535,8 +535,8 @@ int check_account(char *accname, char *c_name) {
                 chars = player_id_list(&id_list, l_acc->id);
 		for (i = 0; i < chars; i++)
 			if (!strcmp(c_name, lookup_player_name(id_list[i]))) break;
-                if (i == chars)
-            		return 0; /* 'name already in use' */
+		if (chars) C_KILL(id_list, chars, int);
+                if (i == chars) return 0; /* 'name already in use' */
 	} else if (!l_acc && l2_acc) {
 		KILL(l2_acc, struct account);
 		return 0; /* we don't even have an account yet? 'name already in use' for sure */
@@ -555,7 +555,7 @@ int check_account(char *accname, char *c_name) {
 		   (To restrict players to only 1 character per account! - C. Blue) */
 		/* allow multiple chars for admins, even on RPG server */
 		if ((chars > 0) && strcmp(c_name, lookup_player_name(id_list[0])) && !(l_acc->flags & ACC_ADMIN)) {
-			if (chars) C_KILL(id_list, chars, int);
+			C_KILL(id_list, chars, int);
 			KILL(l_acc, struct account);
 			return(-1);
 		}
@@ -619,11 +619,12 @@ int check_account(char *accname, char *c_name) {
 			} else if (!ded_pvp) success = -9; /* allow willing creating of pvp-exclusive slot */
 		}
 #endif
-		if (chars) C_KILL(id_list, chars, int);
-
 		a_id = l_acc->id;
 		flags = l_acc->flags;
+
+		if (chars) C_KILL(id_list, chars, int);
 		KILL(l_acc, struct account);
+
 		id = lookup_player_id(c_name);
 		ptr = lookup_player(id);
 		if (!ptr || ptr->account == a_id) {
@@ -825,6 +826,7 @@ int guild_create(int Ind, cptr name){
 			return FALSE;
 		}
 	}
+	if (ids) C_KILL(id_list, ids, int);
 	KILL(acc, struct account);
 
 	/* Make sure this guy isn't in some other guild already */
@@ -1306,6 +1308,7 @@ int guild_add(int adder, cptr name) {
 		far_success = TRUE;
 		break;
         }
+        if (ids) C_KILL(id_list, ids, int);
         KILL(acc, struct account);
         /* failure? */
         if (!far_success)
@@ -1406,6 +1409,7 @@ int guild_add_self(int Ind, cptr guild) {
 			break;
                 }
         }
+        if (ids) C_KILL(id_list, ids, int);
         KILL(acc, struct account);
         /* failure? */
         if (i == ids) {
@@ -1632,6 +1636,7 @@ int party_add_self(int Ind, cptr party) {
 			break;
                 }
         }
+        if (ids) C_KILL(id_list, ids, int);
 	KILL(acc, struct account);
         /* failure? */
         if (i == ids) {
