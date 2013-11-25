@@ -396,7 +396,7 @@ bool set_adrenaline(int Ind, int v)
 {
 	player_type *p_ptr = Players[Ind];
 
-	bool notice = FALSE, sudden = FALSE, crash = FALSE;
+	bool notice = FALSE;
 
         int i;
 
@@ -421,8 +421,6 @@ bool set_adrenaline(int Ind, int v)
 			if (!rand_int(500) && (p_ptr->adrenaline >= v)) {
 				msg_print(Ind, "Your adrenaline suddenly runs out!");
 				v = 0;
-				sudden = TRUE;
-				if (!rand_int(2)) crash = TRUE;
 			}
 		}
 
@@ -437,9 +435,9 @@ bool set_adrenaline(int Ind, int v)
 	/* Shut */
 	else {
 		if (p_ptr->adrenaline) {
-			if (!rand_int(3)) {
-				crash = TRUE;
+			if (!rand_int(5)) {
 				msg_print(Ind, "Your adrenaline runs out, leaving you tired and weak.");
+				do_dec_stat(Ind, A_CON, STAT_DEC_TEMPORARY);
 			} else {
 				msg_print(Ind, "Your heart slows down to normal.");
 			}
@@ -4693,8 +4691,6 @@ void monster_death(int Ind, int m_idx)
 	bool do_gold = (!(r_ptr->flags1 & RF1_ONLY_ITEM));
 	bool do_item = (!(r_ptr->flags1 & RF1_ONLY_GOLD));
 
-	bool art_created = FALSE;
-
 	int force_coin = get_coin_type(r_ptr);
 	s16b local_quark = 0;
 	object_type forge;
@@ -5310,7 +5306,6 @@ if (cfg.unikill_format) {
 					determine_artifact_timeout(a_idx);
 				}
 #endif
-				art_created = TRUE;
 				drop_near(qq_ptr, -1, wpos, y, x);
 				s_printf("..dropped.\n");
 			} else  s_printf("..failed.\n");
@@ -5699,9 +5694,9 @@ if (cfg.unikill_format) {
 			/* Get local object */
 			qq_ptr = &forge;
 			object_wipe(qq_ptr);
-			/* Drop Scroll Of Artifact Creation (extra, if Ring Of Phasing already exists?) */
+			/* Drop Scroll Of Artifact Creation */
 			invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
-			qq_ptr->number = 1; /*(a_info[a_idx].cur_num == 0 || art_created) ? 1 : 2;*/
+			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
@@ -7731,11 +7726,8 @@ s16b questid = 1;
 bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags) {
 	int i, j;
 	bool added = FALSE;
-	int midlevel;
 	player_type *p_ptr = Players[target], *q_ptr;
 	if (!p_ptr) return(FALSE);
-
-	midlevel = p_ptr->lev;
 
 	process_hooks(HOOK_GEN_QUEST, "d", Ind);
 
@@ -9389,7 +9381,6 @@ bool target_set(int Ind, int dir)
 	char	out_val[160];
 	cave_type		*c_ptr;
 	monster_type	*m_ptr;
-	monster_race	*r_ptr;
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
@@ -9462,8 +9453,7 @@ bool target_set(int Ind, int dir)
 
 		/* Collect indices */
 		for (i = 0; i < p_ptr->target_n; i++) {
-			cave_type *c_ptr = &zcave[p_ptr->target_y[i]][p_ptr->target_x[i]];
-
+			c_ptr = &zcave[p_ptr->target_y[i]][p_ptr->target_x[i]];
 			p_ptr->target_idx[i] = c_ptr->m_idx;
 		}
 
@@ -9553,10 +9543,7 @@ bool target_set(int Ind, int dir)
 		x = p_ptr->target_x[m];
 		idx = p_ptr->target_idx[m];
 
-		c_ptr = &zcave[y][x];
-
 		m_ptr = &m_list[idx];
-		r_ptr = race_inf(m_ptr);
 
 		/* Hack -- Track that monster race */
 		recent_track(m_ptr->r_idx);
@@ -9580,8 +9567,6 @@ bool target_set(int Ind, int dir)
 		y = p_ptr->target_y[m];
 		x = p_ptr->target_x[m];
 		idx = p_ptr->target_idx[m];
-
-		c_ptr = &zcave[y][x];
 
 		q_ptr = Players[0 - idx];
 
@@ -9772,7 +9757,6 @@ bool target_set_friendly(int Ind, int dir)
 	int		y;
 	int		x;
 	char	out_val[160];
-	cave_type	*c_ptr;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
@@ -9833,8 +9817,6 @@ bool target_set_friendly(int Ind, int dir)
 		y = p_ptr->target_y[m];
 		x = p_ptr->target_x[m];
 		idx = p_ptr->target_idx[m];
-
-		c_ptr = &zcave[y][x];
 
 		/* Hack -- Track that player */
 		health_track(Ind, 0 - idx);

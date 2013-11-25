@@ -551,20 +551,13 @@ static void console_uniques()
 	}
 }
 
-static void console_change_artifact(int artifact, int status)
-{
-	artifact_type *a_ptr;
-
+static void console_change_artifact(int artifact, int status) {
 	/* Check bounds */
 	if (artifact <= 0 || artifact > MAX_A_IDX) {
 		/* Failed */
 		Packet_printf(&console_buf, "%c%c", CONSOLE_CHANGE_ARTIFACT, 0);
-
 		return;
 	}
-
-	/* Set pointer */
-	a_ptr = &a_info[artifact];
 
 	/* Set the artifact's status */
 	if (status) {

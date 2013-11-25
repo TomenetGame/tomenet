@@ -1942,7 +1942,7 @@ void msg_print(int Ind, cptr msg_raw)
 	bool client_ctrlo = FALSE, client_chat = FALSE, client_all = FALSE;
 
 	/* for {- feature */
-	char prev_colour_code = 'w', first_colour_code = 'w';
+	char first_colour_code = 'w';
 	bool first_colour_code_set = FALSE;
 
 	/* backward msg window width hack for windows clients (non-x11 clients rather) */
@@ -2047,9 +2047,9 @@ void msg_print(int Ind, cptr msg_raw)
 
 						/* needed for new '\377-' feature in multi-line messages: resolve it to actual colour */
 						if (msg[msg_scan] == '-') {
-							msg[msg_scan] = colour_code = first_colour_code; //prev_colour_code
+							msg[msg_scan] = colour_code = first_colour_code;
 						} else {
-							prev_colour_code = colour_code = msg[msg_scan];
+							colour_code = msg[msg_scan];
 							if (!first_colour_code_set) {
 								first_colour_code_set = TRUE;
 								first_colour_code = colour_code;
@@ -2989,11 +2989,16 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 
 	/* replace certain non-alpha chars by alpha chars (leet speak detection)? */
 	if (leet) {
-		bool is_num = FALSE, prev_num;
+#ifdef HIGHLY_EFFECTIVE_CENSOR
+		bool is_num = FALSE;
+		bool prev_num;
+#endif
 		i = 0;
 		while (lcopy[i]) {
+#ifdef HIGHLY_EFFECTIVE_CENSOR
 			prev_num = is_num;
 			is_num = FALSE;
+#endif
 
 			switch (lcopy[i]) {
 			case '@': lcopy[i] = 'a'; break;
@@ -3006,6 +3011,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 //			case '\\': lcopy[i] = 'i'; break;
 			case '$': lcopy[i] = 's'; break;
 			case '+': lcopy[i] = 't'; break;
+#ifdef HIGHLY_EFFECTIVE_CENSOR
 			case '1': lcopy[i] = 'i'; is_num = TRUE; break;
 			case '3': lcopy[i] = 'e'; is_num = TRUE; break;
 			case '4': lcopy[i] = 'a'; is_num = TRUE; break;
@@ -3013,6 +3019,15 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			case '7': lcopy[i] = 't'; is_num = TRUE; break;
 			case '8': lcopy[i] = 'b'; is_num = TRUE; break;
 			case '0': lcopy[i] = 'o'; is_num = TRUE; break;
+#else
+			case '1': lcopy[i] = 'i'; break;
+			case '3': lcopy[i] = 'e'; break;
+			case '4': lcopy[i] = 'a'; break;
+			case '5': lcopy[i] = 's'; break;
+			case '7': lcopy[i] = 't'; break;
+			case '8': lcopy[i] = 'b'; break;
+			case '0': lcopy[i] = 'o'; break;
+#endif
 #ifdef HIGHLY_EFFECTIVE_CENSOR
 			/* hack: Actually _counter_ the capabilities of highly-effective
 			   censoring being done further below after this. Reason:
@@ -3452,7 +3467,10 @@ static void player_talk_aux(int Ind, char *message)
 	player_type *p_ptr = NULL, *q_ptr;
  	char *colon;
 	bool me = FALSE, log = TRUE;
-	char c_n = 'B', c_b = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
+	char c_n = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
+#ifdef KURZEL_PK
+	char c_b = 'B';
+#endif
 	int mycolor = 0;
 	bool admin = FALSE;
 	bool broadcast = FALSE;
@@ -4008,13 +4026,9 @@ static void player_talk_aux(int Ind, char *message)
 		
 		/* Color the brackets of some players... (Enabled for PK) */
 #ifdef KURZEL_PK
-		c_b = c_n;
 		if ((p_ptr->mode & MODE_HARD) && (p_ptr->mode & MODE_NO_GHOST))
 			c_b = 'r'; /* hellish mode */
 		else if (p_ptr->pkill & PKILL_SET) c_b = 'R'; //KURZEL_PK
-#else
-		if ((p_ptr->mode & MODE_HARD) && (p_ptr->mode & MODE_NO_GHOST))
-			c_b = 'r'; /* hellish mode */
 		else c_b = c_n;
 #endif
 	}
@@ -5025,7 +5039,7 @@ void bracer_ff(char *buf)
  */
 char *wpos_format(int Ind, worldpos *wpos)
 {
-	int i = Ind, d = 0, n;
+	int i = Ind, n, d = 0;
 	cptr desc = "";
 	bool ville = istown(wpos) && !isdungeontown(wpos);
 	dungeon_type *d_ptr = NULL;
@@ -5064,15 +5078,10 @@ char *wpos_format(int Ind, worldpos *wpos)
 }
 char *wpos_format_compact(int Ind, worldpos *wpos)
 {
-	int d = 0, n;
+	int n;
 	cptr desc = "";
 	bool ville = istown(wpos) && !isdungeontown(wpos);
-	dungeon_type *d_ptr;
 
-	if (wpos->wz > 0 && (d_ptr = wild_info[wpos->wy][wpos->wx].tower))
-		d = d_ptr->type;
-	if (wpos->wz < 0 && (d_ptr = wild_info[wpos->wy][wpos->wx].dungeon))
-		d = d_ptr->type;
 	if (!wpos->wz && ville)
 		for (n = 0; n < numtowns; n++)
 			if (town[n].x == wpos->wx && town[n].y == wpos->wy) {

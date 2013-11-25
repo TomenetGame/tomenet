@@ -4138,7 +4138,7 @@ void wakeup_monsters_somewhat(int Ind, int who) {
 		}
 	}
 
-#if 0 /* better style, not to have this msg? */
+#if 1 /* better style, not to display a msg maybe? */
 	/* Messages */
 	/* the_sandman: added _near so other players can hear too */
 	if (sleep) {
@@ -4308,11 +4308,8 @@ void taunt_monsters(int Ind)
 }
 
 /* Need it for detonation pots in potion_smash_effect - C. Blue */
-void aggravate_monsters_floorpos(worldpos *wpos, int x, int y)
-{
+void aggravate_monsters_floorpos(worldpos *wpos, int x, int y) {
 	int i;
-	bool sleep = FALSE;
-//	bool speed = FALSE;
 
 	/* Aggravate everyone nearby */
 	for (i = 1; i < m_max; i++) {
@@ -4334,10 +4331,8 @@ void aggravate_monsters_floorpos(worldpos *wpos, int x, int y)
 			if (m_ptr->csleep) {
 				/* Wake up */
 				m_ptr->csleep = 0;
-				sleep = TRUE;
 			}
 		}
-
 	}
 }
 
@@ -4357,6 +4352,7 @@ void wake_minions(int Ind, int who) {
 
 	bool sleep = FALSE;
 //	bool speed = FALSE;
+
 
 	monster_desc(Ind, mw_name, who, 0x00);
 
@@ -4433,6 +4429,7 @@ void wake_minions(int Ind, int who) {
 	}
 
 	/* Messages */
+	if (!sleep) return;
 //	if (speed) msg_print(Ind, "You feel a sudden stirring nearby!");
 //	else if (sleep) msg_print(Ind, "You hear a sudden stirring in the distance!");
 	if ((r_ptr->flags2 & RF2_EMPTY_MIND) || (r_ptr->flags3 & RF3_NONLIVING)) ;
@@ -4440,8 +4437,10 @@ void wake_minions(int Ind, int who) {
 	else if (r_ptr->flags3 & RF3_UNDEAD) msg_format(Ind, "%s moans loudly!", mw_name);
 	else if (r_ptr->flags3 & RF3_ANIMAL) msg_format(Ind, "%s makes an alerting sound!", mw_name);
 	else if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON | RF3_DRAGONRIDER)) ||
-		(strchr("AhHJkpPty", r_ptr->d_char)))
+	    (strchr("AhHJkpPty", r_ptr->d_char))) {
 		msg_format(Ind, "%s shouts a command!", mw_name);
+		msg_format_near(Ind, "%s shouts a command!", mw_name);
+	}
 }
 
 

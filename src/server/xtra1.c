@@ -2466,12 +2466,8 @@ bool monk_heavy_armor(int Ind)
 #endif	// 0
 
 /* Are all the weapons wielded of the right type ? */
-int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr)
-{
-	int i, skill = 0;
-//	object_type *o_ptr = &p_ptr->inventory[slot];
-
-	i = 0;
+int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr) {
+	int skill = 0;
 
 	if (!o_ptr->k_idx || o_ptr->tval == TV_SHIELD) return -1;
 
@@ -6998,7 +6994,6 @@ static void process_global_event(int ge_id) {
 	global_event_type *ge = &global_event[ge_id];
 	player_type *p_ptr;
 	object_type forge, *o_ptr = &forge; /* for creating a reward, for example */
-	bool timeout = FALSE;
 	worldpos wpos;
         struct wilderness_type *wild;
 	struct dungeon_type *d_ptr;
@@ -7114,7 +7109,6 @@ static void process_global_event(int ge_id) {
 		/* Time Over? :( */
 		if ((ge->end_turn && turn >= ge->end_turn) ||
 		    (ge->ending && now >= ge->ending)) {
-			timeout = TRUE; /* d'oh */
 			ge->state[0] = 255; /* state[0] is used as indicator for clean-up phase of any event */
 			msg_broadcast_format(0, "\377y>>%s ends due to time limit!<<", ge->title);
 			s_printf("%s EVENT_TIMEOUT: %d - %s.\n", showtime(), ge_id + 1, ge->title);
