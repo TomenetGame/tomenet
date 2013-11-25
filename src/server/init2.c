@@ -2905,7 +2905,7 @@ static errr init_alloc(void)
 
 				if (table) {
 					/* hack: make all monsters' base probability 'most common'? */
-					if (q && (d_info[j].flags3 & DF3_DERARE_MONSTERS)) q = 10000;
+					if ((d_info[j].flags3 & DF3_DERARE_MONSTERS)) q = 10000;
 
 					/* Adjust the base probability */
 					q = p * restrict_monster_to_dungeon(i, j) / 100;
