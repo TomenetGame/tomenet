@@ -35,6 +35,7 @@ void l_account(struct wpacket *wpk, struct client *ccl){
 	/* always reset this */
 	memset(login->pass, '\0', sizeof(login->pass));
 	reply(wpk, ccl);
+	KILL(acc, struct account);
 }
 
 static struct account *GetAccount(unsigned char *name, char *pass) {
