@@ -4202,7 +4202,7 @@ void do_cmd_fire(int Ind, int dir)
 	int path_num = 0;
 #endif
 	
-	char brand_msg[MAX_CHARS] = { '\0' };
+	char brand_msg[MAX_CHARS_WIDE] = { '\0' };
 
         bool            drain_msg = TRUE;
         int             drain_result = 0, drain_heal = 0;
@@ -5799,7 +5799,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 	char            o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, esp;
 
-	char brand_msg[80] = { '\0' };
+	char brand_msg[MAX_CHARS_WIDE] = { '\0' };
 
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
