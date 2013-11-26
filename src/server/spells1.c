@@ -356,6 +356,27 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 	(void) project(who, radius, wpos, y, x, dam, dt,
 	    flg, "");
 
+	if (ident && who < 0 && who > PROJECTOR_UNUSUAL) {
+		player_type *p_ptr = Players[-who];
+		object_type forge;
+		int lev;
+		
+		invcopy(&forge, lookup_kind(TV_POTION, o_sval));
+		lev = k_info[forge.k_idx].level;
+
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+		/* The player is now aware of the object */
+		if (!object_aware_p(-who, &forge)) {
+			object_aware(-who, &forge);
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp(-who, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		}
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	}
+
 	/* XXX	those potions that explode need to become "known" */
 	return angry;
 }
@@ -1125,7 +1146,6 @@ void teleport_player_to_force(int Ind, int ny, int nx)
   */
 void teleport_player_level(int Ind, bool force) {
 	player_type *p_ptr = Players[Ind];
-	wilderness_type *w_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 	struct worldpos new_depth, old_wpos;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
@@ -1169,7 +1189,6 @@ void teleport_player_level(int Ind, bool force) {
 
 	/* If in the wilderness, teleport to a random neighboring level */
 	else if (wpos->wz == 0 && new_depth.wz == 0) {
-		w_ptr = &wild_info[wpos->wy][wpos->wx];
 		/* get a valid neighbor */
 		wpcopy(&new_depth, wpos);
 		do {
@@ -3022,7 +3041,6 @@ bool apply_disenchant(int Ind, int mode)
 	player_type *p_ptr = Players[Ind];
 	int			t = mode;
 	object_type		*o_ptr;
-	object_kind 		*k_ptr;
 	char		o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -3052,8 +3070,6 @@ bool apply_disenchant(int Ind, int mode)
 
 	/* No item, nothing happens */
 	if (!o_ptr->k_idx) return (FALSE);
-
-	k_ptr = &k_info[o_ptr->k_idx];
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
@@ -3106,21 +3122,18 @@ bool apply_disenchant(int Ind, int mode)
 
 	/* Disenchant tohit */
 	if (o_ptr->to_h > 0) {
-//	if (o_ptr->to_h > k_ptr->to_h) {
 		if (o_ptr->to_h > 0) o_ptr->to_h--;
 		if ((o_ptr->to_h > 7) && (rand_int(100) < 33)) o_ptr->to_h--;
 		if ((o_ptr->to_h > 15) && (rand_int(100) < 25)) o_ptr->to_h--;
 	}
 	/* Disenchant todam */
 	if (o_ptr->to_d > 0) {
-//	if (o_ptr->to_d > k_ptr->to_d) {
 		if (o_ptr->to_d > 0) o_ptr->to_d--;
 		if ((o_ptr->to_d > 7) && (rand_int(100) < 33)) o_ptr->to_d--;
 		if ((o_ptr->to_d > 15) && (rand_int(100) < 25)) o_ptr->to_d--;
 	}
 	/* Disenchant toac */
 	if (o_ptr->to_a > 0) {
-//	if (o_ptr->to_a > k_ptr->to_a) {
 		if (o_ptr->to_a > 0) o_ptr->to_a--;
 		if ((o_ptr->to_a > 7) && (rand_int(100) < 33)) o_ptr->to_a--;
 		if ((o_ptr->to_a > 15) && (rand_int(100) < 25)) o_ptr->to_a--;
@@ -8764,11 +8777,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			/* Don't kill inventory in bloodbond... */
-			int breakable = 1;
-			if (IS_PVP && check_blood_bond(Ind, -who)) {
-				breakable = 0;
-				break;
-			}
+			if (IS_PVP && check_blood_bond(Ind, -who)) break;
 
 			/* Inventory damage */
 			if (inven_fire && inven_elec) break;
@@ -10635,7 +10644,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	int	i, j, t;
 	int	 y1, x1, y2, x2;
 	int	/*y0, x0,*/ y9, x9;
-	int	y_saver, x_saver; /* For reflecting monsters */
 	int	dist, dist_hack = 0, true_dist = 0;
 	int	who_can_see[26], num_can_see = 0;
 	int	terrain_resistance = -1, terrain_damage = -1;
@@ -10756,9 +10764,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		y1 = y;
 	}
 #endif	/* 0 */
-
-	y_saver = y1;
-	x_saver = x1;
 
 	/* Default "destination" */
 	y2 = y; x2 = x;
@@ -11715,6 +11720,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 	if (dam == 9999 && typ == GF_OLD_DRAIN) dam = 2; /* Priest drain-life spell hack */
 
+#if 0
 	int do_poly = 0;
 	int do_dist = 0;
 	int do_blind = 0;
@@ -11722,6 +11728,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 	int do_stun = 0;
 	int do_sleep = 0;
 //	int do_fear = 0;
+#endif
 
 	bool resist = FALSE;
 
@@ -11763,13 +11770,13 @@ int approx_damage(int m_idx, int dam, int typ) {
 			} else if ((r_ptr->flags2 & RF2_STUPID) ||
 			    ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags2 & RF2_CAN_SPEAK))) {
 				resist = TRUE;
-			} else if (r_ptr->flags2 & RF2_WEIRD_MIND) {
+			} else if (r_ptr->flags2 & RF2_WEIRD_MIND)
 				dam = (dam * 3 + 1) / 4;
 
 			if ((r_ptr->flags2 & RF2_SMART) && !resist) dam += dam / 2;
 
 			if (resist) dam /= 2;
-  			break;
+			break;
 
 		case GF_CHARMIGNORE:
 			dam = 0;
@@ -11944,15 +11951,16 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags3 & RF3_RES_WATE)
 				dam /= 4;
 			else
-				do_stun = 7;
+				//do_stun = 7;
 			break;
 
 		case GF_CHAOS:
-			if (r_ptr->level / 2 < 15) do_poly = TRUE;
-			do_conf = 10;
+			if (r_ptr->level / 2 < 15) ;//do_poly = TRUE;
+			//do_conf = 10;
 			if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
 				dam /= 3;
-				do_poly = FALSE;
+				//do_conf = 0;
+				//do_poly = FALSE;
 			}
 			break;
 
@@ -11960,7 +11968,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				dam /= 3;
 			break;
-
 		case GF_INFERNO:
 		case GF_DETONATION:
 		case GF_ROCKET:
@@ -11992,20 +11999,20 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_STUN:
-			do_stun = 18;
-			if (r_ptr->flags9 & RF9_RES_SOUND) do_stun /= 4;
+			//do_stun = 18;
+			if (r_ptr->flags9 & RF9_RES_SOUND) ;//do_stun /= 4;
 			break;
 
 		case GF_SOUND:
-			do_stun = 18;
+			//do_stun = 18;
 			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
 				dam /= 4;
-				do_stun = 0;
+				//do_stun = 0;
 			}
 			break;
 
 		case GF_CONFUSION:
-			do_conf = 18;
+			//do_conf = 18;
 			if ((r_ptr->flags4 & RF4_BR_CONF) ||
 				(r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
 				dam /= 3;
@@ -12028,7 +12035,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_FORCE:
-			do_stun = 8;
+			//do_stun = 8;
 			if (r_ptr->flags4 & RF4_BR_WALL) dam /= 3;
 			break;
 
@@ -12051,12 +12058,12 @@ int approx_damage(int m_idx, int dam, int typ) {
 					resist_tele = TRUE;
 			}
 
-			if (!resist_tele) do_dist = 10;
-			else do_dist = 0;
+			if (!resist_tele) ;//do_dist = 10;
+			else ;//do_dist = 0;
 
 			if (r_ptr->flags4 & RF4_BR_GRAV) {
 				dam /= 3;
-				do_dist = 0;
+				//do_dist = 0;
 			}
 			break;
 		}
@@ -12072,7 +12079,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_ICE:
-			do_stun = 8;
+			//do_stun = 8;
 			k = dam;
 
 			dam = (k * 3) / 5;/* 60% COLD damage */
@@ -12099,20 +12106,20 @@ int approx_damage(int m_idx, int dam, int typ) {
 				k_elec *= 2;
 
 			k_sound = dam / 3; /* 33% SOUND damage */
-			do_stun = 8;
-			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
-			{
+			//do_stun = 8;
+			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
 				k_sound /= 4;
-				do_stun = 0;
+				//do_stun = 0;
 			}
 
 			k_lite = dam / 3; /* 33% LIGHT damage */
-			do_blind = damroll(3, (k_lite / 20)) + 1;
+			//do_blind = damroll(3, (k_lite / 20)) + 1;
 			if (r_ptr->d_char == 'A') {
-				k_lite = do_blind = 0;
+				k_lite = 0;
+				//do_blind = 0;
 			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
 				k_lite /= 4;
-				do_blind = 0;
+				//do_blind = 0;
 			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 				k_lite *= 2;
 			}
@@ -12136,7 +12143,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				dam = 0;
 			break;
 			
-		case GF_ANNIHILATION: {
+		case GF_ANNIHILATION:
 			j = dam - 1;
 			if (m_ptr->hp > 9362)
 				dam = (m_ptr->hp / 100) * dam;
@@ -12148,28 +12155,28 @@ int approx_damage(int m_idx, int dam, int typ) {
 			if (dam > j * 200) {
 				dam = j * 200;
 				if ((r_ptr->flags1 & RF1_UNIQUE) ||
-				(r_ptr->flags3 & RF3_UNDEAD) ||
-				(r_ptr->flags3 & RF3_NONLIVING)) {
-				dam /= 3;
+				    (r_ptr->flags3 & RF3_UNDEAD) ||
+				    (r_ptr->flags3 & RF3_NONLIVING)) {
+					dam /= 3;
 				}
 			}
 			
 			if (dam < j * 10 + 100) {
 				dam = j * 10 + 100;
 				if ((r_ptr->flags1 & RF1_UNIQUE) ||
-				(r_ptr->flags3 & RF3_UNDEAD) ||
-				(r_ptr->flags3 & RF3_NONLIVING)) {
-				dam /= 3;
+				    (r_ptr->flags3 & RF3_UNDEAD) ||
+				    (r_ptr->flags3 & RF3_NONLIVING)) {
+					dam /= 3;
 				}
 			}
 			
-		break; }
+			break; 
 
 		case GF_OLD_POLY:
-			do_poly = TRUE;
+			//do_poly = TRUE;
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))
-				do_poly = FALSE;
+				;//do_poly = FALSE;
 
 			dam = 0;
 			break;
@@ -12194,32 +12201,31 @@ int approx_damage(int m_idx, int dam, int typ) {
 			if (!((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags3 & RF3_NO_SLEEP) ||
 			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))) /* RES_OLD() */
-				do_sleep = GF_OLD_SLEEP_DUR;
-			}
+				;//do_sleep = GF_OLD_SLEEP_DUR;
 			dam = 0;
 			break;
 
 		case GF_OLD_CONF:
-			do_conf = damroll(3, (dam / 2)) + 1;
+			//do_conf = damroll(3, (dam / 2)) + 1;
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags3 & RF3_NO_CONF) ||
 			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10)) /* RES_OLD() */
-				do_conf = 0;
+				;//do_conf = 0;
 			dam = 0;
 			break;
 
 		case GF_BLIND:
-			do_blind = dam;
+			//do_blind = dam;
 			dam = 0;
 			break;
 
 		case GF_CURSE:
-			do_conf = (damroll(3, (dam / 2)) + 1) / 3;
-			do_blind = dam / 3;
+			//do_conf = (damroll(3, (dam / 2)) + 1) / 3;
+			//do_blind = dam / 3;
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->level > ((dam / 3 - 10) < 1 ? 1 : (dam / 3 - 10)) / 2 + 10)) /* RES_OLD */
-				do_blind = do_conf = 0;
-			if (r_ptr->flags3 & RF3_NO_CONF) do_conf = 0;
+				;//do_blind = do_conf = 0;
+			if (r_ptr->flags3 & RF3_NO_CONF) ;//do_conf = 0;
 			dam /= 3;
 			break;
 
@@ -12283,24 +12289,25 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 
 		case GF_LITE:
-			do_blind = damroll(3, (dam / 20)) + 1;
+			//do_blind = damroll(3, (dam / 20)) + 1;
 
 			if (r_ptr->d_char == 'A') {
-				dam = do_blind = 0;
+				dam = 0;
+				//do_blind = 0;
 			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
 				dam /= 4;
-				do_blind = 0;
+				//do_blind = 0;
 			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 				dam *= 2;
 			}
 			break;
 
 		case GF_DARK:
-			do_blind = damroll(3, (dam / 20)) + 1;
+			//do_blind = damroll(3, (dam / 20)) + 1;
 			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
 			    || (r_ptr->flags3 & RF3_UNDEAD)) {
 				dam /= 4;
-				do_blind = 0;
+				//do_blind = 0;
 			}
 			break;
 
