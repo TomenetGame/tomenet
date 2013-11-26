@@ -772,9 +772,8 @@ void lua_towns_treset(void) {
 }
 
 /* To do some connection magik ! */
-long lua_player_exp(int level, int expfact)
-{
-	s32b adv_exp;
+long lua_player_exp(int level, int expfact) {
+	//s32b adv_exp;
 	s64b adv;
 	if ((level > 1) && (level < 100))
 #ifndef ALT_EXPRATIO
@@ -784,7 +783,8 @@ long lua_player_exp(int level, int expfact)
 #endif
 	else
 		adv = 0;
-	adv_exp = (s32b)(adv);		
+
+	//adv_exp = (s32b)(adv);
 	return adv;
 }
 

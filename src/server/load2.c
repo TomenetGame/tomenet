@@ -2734,13 +2734,8 @@ errr rd_server_savefile()
 
 	/* Read the available records */
 	for (i = 0; i < tmp16u; i++) {
-		monster_race *r_ptr;
-
 		/* Read the monster race information */
 		rd_global_lore(i);
-
-		/* Access the monster race */
-		r_ptr = &r_info[i];
 	}
 
 	/* Load the Artifacts */
@@ -3083,11 +3078,8 @@ void new_rd_floors()
 	while(!rd_floor());
 }
 
-void rd_towns()
-{
+void rd_towns() {
 	int i, j;
-	struct worldpos twpos;
-	twpos.wz = 0;
 
 	/* Dealloc stores first - mikaelh */
 	for (i = 0; i < numtowns; i++) dealloc_stores(i);
@@ -3105,12 +3097,9 @@ void rd_towns()
 		wild_info[town[i].y][town[i].x].type = WILD_TOWN;
 		wild_info[town[i].y][town[i].x].radius = town[i].baselevel;
 		wild_info[town[i].y][town[i].x].town_idx = i;
-		twpos.wx = town[i].x;
-		twpos.wy = town[i].y;
 		alloc_stores(i);
-		for (j = 0; j < town[i].num_stores; j++) {
+		for (j = 0; j < town[i].num_stores; j++)
 			rd_store(&town[i].townstore[j]);
-		}
 	}
 }
 

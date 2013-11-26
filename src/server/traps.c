@@ -2735,13 +2735,12 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 }
 
 /* Unused appearently */
-void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found)
-{
-	s16b           trap, lv;
-	trap_kind	*t_ptr;
+void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found) {
+	s16b           trap;//, lv;
+	//trap_kind	*t_ptr;
 
 //	s16b           cnt        = 0;
-	u32b flags;
+	//u32b flags;
 	cave_type *c_ptr;
 	//	dungeon_info_type *d_ptr = &d_info[dungeon_type];
 	struct c_special *cs_ptr;
@@ -2764,11 +2763,16 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 
 	/* Require empty, clean, floor grid */
 	/* Hack - '+1' for secret doors */
+#if 0
 	if (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_DEEP_WATER) flags = FTRAP_FLOOR;
 	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
 			(c_ptr->feat <= FEAT_DOOR_TAIL + 1))
 		flags = FTRAP_DOOR;
 	else return;
+#else
+	if (!(cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat >= FEAT_DOOR_HEAD))
+		return;
+#endif
 
 	/* no traps on treasure veins */
 	if (c_ptr->feat == FEAT_QUARTZ_H || c_ptr->feat == FEAT_QUARTZ_K ||
@@ -2797,9 +2801,9 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 	else flags = FTRAP_FLOOR;
 #endif	// 0
 
-	lv = getlevel(wpos);
+	//lv = getlevel(wpos);
         trap = mod;
-        t_ptr = &t_info[trap];
+        //t_ptr = &t_info[trap];
         if (!(cs_ptr = AddCS(c_ptr, CS_TRAPS))) return;
         cs_ptr->sc.trap.t_idx = trap;
         cs_ptr->sc.trap.found = FALSE;
@@ -2816,8 +2820,7 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
  *
  * The object must be a valid chest.
  */
-void place_trap_object(object_type *o_ptr)
-{
+void place_trap_object(object_type *o_ptr) {
         bool           more       = TRUE;
         s16b           trap;
         trap_kind	*t_ptr;
@@ -3313,8 +3316,7 @@ static void identify_mon_trap_load(int who, object_type *o_ptr) {
  *
  * Return TRUE if the monster died
  */ 
-static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
-{
+static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 	int dam = 0, typ = 0, rad = 0;//unused huh, cloud = 0, cloudi = 0;
 	monster_type *m_ptr = &m_list[m_idx];
 //	monster_race    *r_ptr = race_inf(m_ptr);
@@ -3456,8 +3458,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
  *
  * Return TRUE if the monster died
  */ 
-static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr)
-{
+static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
 //	monster_race    *r_ptr = race_inf(m_ptr);
 	worldpos wpos = m_ptr->wpos;
@@ -3803,7 +3804,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr)
 static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
 {
 	monster_type *m_ptr = &m_list[m_idx];
-	int dam = 0, typ = 0, rad = 0, cloud = 0, cloudi = 0;
+	int dam = 0, typ = 0, rad = 0;//, cloud = 0, cloudi = 0;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	cave_type **zcave;
@@ -3867,8 +3868,8 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
 			typ = GF_POIS;
 			dam = 4;
 			rad = 2;
-			cloud = 4;
-			cloudi = 9;
+			//cloud = 4;
+			//cloudi = 9;
 			break;
 		case SV_WAND_MAGIC_MISSILE:
 			typ = GF_MISSILE;
@@ -3991,11 +3992,10 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
  *
  * Return TRUE if the monster died
  */ 
-static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
-{
+static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
 //	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-        int dam = 0, typ = 0, rad = 1, cloud = 0, cloudi = 0;
+        int dam = 0, typ = 0, rad = 1;//, cloud = 0, cloudi = 0;
 //	int i;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
@@ -4105,8 +4105,8 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 				typ = GF_POIS;
 				dam = damroll(8, 6);
 				rad = 3;
-				cloud = 3;
-				cloudi = 5;
+				//cloud = 3;
+				//cloudi = 5;
 				break;
 			case SV_POTION_CONFUSION:
 				rad = 3;

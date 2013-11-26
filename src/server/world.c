@@ -446,7 +446,7 @@ void add_rplayer(struct wpacket *wpk) {
 }
 
 void world_pmsg_send(uint32_t id, char *name, char *pname, char *text) {
-	int x, len;
+	int len;
 	if (WorldSocket == -1) return;
 	spk.type = WP_PMSG;
 	len = sizeof(struct wpacket);
@@ -455,55 +455,55 @@ void world_pmsg_send(uint32_t id, char *name, char *pname, char *text) {
 	spk.d.pmsg.sid = world_find_server(pname);
 	snprintf(spk.d.pmsg.player, 80, "%s", name);
 	snprintf(spk.d.pmsg.victim, 80, "%s", pname);
-	x = send(WorldSocket, &spk, len, 0);
+	send(WorldSocket, &spk, len, 0);
 }
 
 void world_chat(uint32_t id, char *text) {
-	int x, len;
+	int len;
 	if (WorldSocket == -1) return;
 	spk.type = WP_CHAT;
 	len = sizeof(struct wpacket);
 	snprintf(spk.d.chat.ctxt, MSG_LEN, "%s", text);
 	spk.d.chat.id = id;
-	x = send(WorldSocket, &spk, len, 0);
+	send(WorldSocket, &spk, len, 0);
 }
 
 void world_reboot() {
-	int x, len;
+	int len;
 	if (WorldSocket == -1) return;
 	spk.type = WP_RESTART;
 	len = sizeof(struct wpacket);
-	x = send(WorldSocket, &spk, len, 0);
+	send(WorldSocket, &spk, len, 0);
 }
 
 void world_msg(char *text) {
-	int x, len;
+	int len;
 	if (WorldSocket == -1) return;
 	spk.type = WP_MESSAGE;
 	len = sizeof(struct wpacket);
 	snprintf(spk.d.smsg.stxt, MSG_LEN, "%s", text);
-	x = send(WorldSocket, &spk, len, 0);
+	send(WorldSocket, &spk, len, 0);
 }
 
 void msg_to_irc(char *text) {
-	int x, len;
+	int len;
 	if (WorldSocket == -1) return;
 	spk.type = WP_MSG_TO_IRC;
 	len = sizeof(struct wpacket);
 	snprintf(spk.d.smsg.stxt, MSG_LEN, "%s", text);
-	x = send(WorldSocket, &spk, len, 0);
+	send(WorldSocket, &spk, len, 0);
 }
 
 /* we can rely on ID alone when we merge data */
 void world_player(uint32_t id, char *name, uint16_t enter, byte quiet) {
-	int x, len;
+	int len;
 	if (WorldSocket == -1) return;
 	spk.type = (enter ? WP_NPLAYER : WP_QPLAYER);
 	len = sizeof(struct wpacket);
 	strncpy(spk.d.play.name, name, 30);
 	spk.d.play.id = id;
 	spk.d.play.silent = quiet;
-	x = send(WorldSocket, &spk, len, 0);
+	send(WorldSocket, &spk, len, 0);
 }
 
 /* unified, hopefully unique password check function */

@@ -44,8 +44,7 @@
 /*
  * Go up one level                                      -RAK-
  */
-void do_cmd_go_up(int Ind)
-{
+void do_cmd_go_up(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
@@ -54,10 +53,14 @@ void do_cmd_go_up(int Ind)
 	cave_type **zcave;
 	bool one_way = FALSE;
 	int i;
+#ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	struct dun_level *l_ptr;
+#endif
 
 	if (!(zcave = getcave(wpos))) return;
+#ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	l_ptr = getfloor(wpos);
+#endif
 
 	if (wpos->wz > 0) tower = TRUE;
 	if (wpos->wz < 0) dungeon = TRUE;
@@ -583,10 +586,14 @@ void do_cmd_go_down(int Ind)
 	cave_type **zcave;
 	bool one_way = FALSE; //ironman, no_up, force_down
 	int i;
+#ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	struct dun_level *l_ptr;
+#endif
 
 	if (!(zcave = getcave(wpos))) return;
+#ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	l_ptr = getfloor(wpos);
+#endif
 
 	if (wpos->wz > 0) tower = TRUE;
 	if (wpos->wz < 0) dungeon = TRUE;
@@ -2028,7 +2035,7 @@ void do_cmd_close(int Ind, int dir)
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	struct worldpos *wpos = &p_ptr->wpos;
 
-	int                     y, x, i;
+	int                     y, x;
 	cave_type               *c_ptr;
 
 	bool more = FALSE;
@@ -2091,9 +2098,6 @@ void do_cmd_close(int Ind, int dir)
 		else if (c_ptr->feat == FEAT_HOME_OPEN) {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
-
-			/* Find this house */
-			i = pick_house(wpos, y, x);
 
 			break_cloaking(Ind, 2);
 			break_shadow_running(Ind); 
@@ -2208,16 +2212,12 @@ bool twall(int Ind, int y, int x)
 	byte *w_ptr = &p_ptr->cave_flag[y][x];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	cave_type *c_ptr;
 	if(!(zcave = getcave(wpos))) return(FALSE);
-	c_ptr = &zcave[y][x];
 
 	/* Paranoia -- Require a wall or door or some such */
 	if (cave_floor_bold(zcave, y, x)) return (FALSE);
 
 	/* Remove the feature */
-//	c_ptr->feat = FEAT_FLOOR;
-//	c_ptr->feat = twall_erosion(wpos, y, x);
 	cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x));
 
 	/* Forget the "field mark" */
@@ -2998,21 +2998,21 @@ static void do_id_trap(int Ind, int t_idx)
  * Disarming a trap will have a disarm_skill% chance of dropping a 
  * random trap kit? =) - the_sandman
  */
-void do_cmd_disarm(int Ind, int dir)
-{
+void do_cmd_disarm(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 
 	int                 y, x, i, j, power;
 
 	cave_type               *c_ptr;
-	byte                    *w_ptr;
 	object_type             *o_ptr;
 	trap_kind *t_ptr;
 	int t_idx = 0;
 
 	bool more = FALSE, done = FALSE;
 	cave_type **zcave;
+
+
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot disarm ; not in WRAITHFORM */
@@ -3032,7 +3032,6 @@ void do_cmd_disarm(int Ind, int dir)
 
 		/* Get grid and contents */
 		c_ptr = &zcave[y][x];
-		w_ptr = &p_ptr->cave_flag[y][x];
 
 		/* Access the item */
 		o_ptr = &o_list[c_ptr->o_idx];

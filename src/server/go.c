@@ -1172,7 +1172,6 @@ static void go_engine_move_CPU() {
    to a player move. Evaluates result and further proceeding from that. */
 static int verify_move_human(void) {
 	int Ind;
-	player_type *p_ptr;
 	char clock[6];
 
 	if (go_err(DOWN, DOWN, "verify_move_human")) return -2;
@@ -1182,13 +1181,12 @@ static int verify_move_human(void) {
 		go_challenge_cleanup(FALSE);
 		return -1;
 	}
-	p_ptr = Players[Ind];
 
 #ifdef ENGINE_FUEGO
 	/* Catch timeout! Oops. */
 	if (!strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
  #ifdef GO_DEBUGLOG
-		s_printf("GO_GAME: timeout %s\n", p_ptr->name);
+		s_printf("GO_GAME: timeout %s\n", Players[Ind]->name);
  #endif
 		return 2; //time over (py)
 	}
@@ -2323,7 +2321,6 @@ static void go_engine_board(void) {
 	int n, x;
 	char nline[30];
 	int Ind;
-	player_type *p_ptr;
 
 	if (go_err(DOWN, DOWN, "go_engine_board")) return;
 
@@ -2332,7 +2329,6 @@ static void go_engine_board(void) {
 		go_challenge_cleanup(FALSE);
 		return;
 	}
-	p_ptr = Players[Ind];
 
 	for (n = 0; n < 9; n++) {
 		/* line hasn't been changed? */

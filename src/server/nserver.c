@@ -2976,36 +2976,32 @@ void Handle_input(int fd, int arg)
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	//int type, result, (**receive_tbl)(int ind);
-	int (**receive_tbl)(int ind);
+	//int (**receive_tbl)(int ind);
 
 	/* Check that the pointer is valid - mikaelh */
 	if (!connp) return;
 
 	if (connp->state & (CONN_PLAYING | CONN_READY))
-		receive_tbl = &playing_receive[0];
+		;//receive_tbl = &playing_receive[0];
 	else if (connp->state & (CONN_LOGIN/* | CONN_SETUP */))
 #if 0
 		receive_tbl = &login_receive[0];
 #else
 	{
-		receive_tbl = &login_receive[0];
+		//receive_tbl = &login_receive[0];
 		Receive_play(ind);
 		return;
 	}
-#endif	// 0
+#endif
 	else if (connp->state & (CONN_DRAIN/* | CONN_SETUP */))
-		receive_tbl = &drain_receive[0];
-	else if (connp->state == CONN_LISTENING)
-	{
+		;//receive_tbl = &drain_receive[0];
+	else if (connp->state == CONN_LISTENING) {
 		Handle_listening(ind);
 		return;
-	}
-	else if (connp->state == CONN_SETUP)
-	{
+	} else if (connp->state == CONN_SETUP) {
 		Handle_setup(ind);
 		return;
-	}
-	else {
+	} else {
 		if (connp->state != CONN_FREE)
 			Destroy_connection(ind, "not input");
 		return;
@@ -3016,12 +3012,10 @@ void Handle_input(int fd, int arg)
 	Sockbuf_clear(&connp->r);
 
 	/* Put any old commands at the beginning of the new queue we are reading into */
-	if (connp->q.len > 0)
-	{
+	if (connp->q.len > 0) {
 		if (connp->r.ptr > connp->r.buf)
 			Sockbuf_advance(&connp->r, connp->r.ptr - connp->r.buf);
-		if (Sockbuf_write(&connp->r, connp->q.ptr, connp->q.len) != connp->q.len)
-		{
+		if (Sockbuf_write(&connp->r, connp->q.ptr, connp->q.len) != connp->q.len) {
 			errno = 0;
 			Destroy_connection(ind, "Can't copy queued data to buffer");
 			return;
@@ -3033,8 +3027,7 @@ void Handle_input(int fd, int arg)
 	Sockbuf_clear(&connp->q);
 #endif
 
-	if (connp->id != -1)
-	{
+	if (connp->id != -1) {
 		player = GetInd[connp->id];
 		p_ptr = Players[player];
 	}
@@ -3046,13 +3039,11 @@ void Handle_input(int fd, int arg)
 	Sockbuf_clear(&connp->r);
 
 	// Read in the data
-	if (Sockbuf_read(&connp->r) <= 0)
-	{
+	if (Sockbuf_read(&connp->r) <= 0) {
 		// Check to make sure that an EAGAIN error didn't occur.  Sometimes on
 		// Linux when receiving a lot of traffic EAGAIN will occur on recv and
 		// Sockbuf_read will return 0.
-		if (errno != EAGAIN)
-		{
+		if (errno != EAGAIN) {
 			// If this happens, the the client has probably closed his TCP connection.
 			do_quit(ind, 0);
 		}
@@ -3062,8 +3053,7 @@ void Handle_input(int fd, int arg)
 	}
 
 	// Add this new data to the command queue
-	if (Sockbuf_write(&connp->q, connp->r.ptr, connp->r.len) != connp->r.len)
-	{
+	if (Sockbuf_write(&connp->q, connp->r.ptr, connp->r.len) != connp->r.len) {
 		errno = 0;
 		Destroy_connection(ind, "Can't copy queued data to buffer");
 		return;
@@ -3074,9 +3064,7 @@ void Handle_input(int fd, int arg)
 	if (!p_ptr || !p_ptr->death) process_pending_commands(ind);
 
 	/* Check that the player wasn't disconnected - mikaelh */
-	if (!Conn[ind]) {
-		return;
-	}
+	if (!Conn[ind]) return;
 
 	/* Experimental hack -- to reduce perceived latency, flush our network
 	 * info right now so the player sees the results of his actions as soon
@@ -3088,11 +3076,9 @@ void Handle_input(int fd, int arg)
 	 * the beginning of this function call has changed, which might indicate
 	 * that our player has left the game.
 	 */
-	if ((old_numplayers == NumPlayers) && (connp->state == CONN_PLAYING))
-	{
+	if ((old_numplayers == NumPlayers) && (connp->state == CONN_PLAYING)) {
 		// Update the players display if neccecary and possobile
-		if (p_ptr)
-		{
+		if (p_ptr) {
 			/* Notice stuff */
 			if (p_ptr->notice) notice_stuff(player);
 
@@ -3107,10 +3093,8 @@ void Handle_input(int fd, int arg)
 		}
 	}
 
-	if (connp->c.len > 0)
-	{
-		if (Packet_printf(&connp->c, "%c", PKT_END) <= 0)
-		{
+	if (connp->c.len > 0) {
+		if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
 			Destroy_connection(ind, "write error");
 			return;
 		}
@@ -3373,18 +3357,12 @@ void do_quit(int ind, bool tellclient)
 }
 
 
-static int Receive_quit(int ind)
-{
-	int player = -1, n;
+static int Receive_quit(int ind) {
+	int n;
 	connection_t *connp = Conn[ind];
 	char ch;
 
-	if (connp->id != -1) 
-	{
-		player = GetInd[connp->id];
-	}
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) != 1)
-	{
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) != 1) {
 		errno = 0;
 		Destroy_connection(ind, "receive error in quit");
 		return -1;
@@ -9091,12 +9069,10 @@ static int Receive_admin_house(int ind){
 	s16b dir;
 	int n,player = -1;
 	char buf[MAX_CHARS];
-	player_type *p_ptr = NULL;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
 //		use_esp_link(&player, LINKF_OBJ);
-		p_ptr = Players[player];
 	}
 	else player = 0;
 
@@ -9148,12 +9124,10 @@ static int Receive_sell(int ind)
 	char ch;
 	int n, player = -1;
 	s16b item, amt;
-	player_type *p_ptr = NULL;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
 //		use_esp_link(&player, LINKF_OBJ);
-		p_ptr = Players[player];
 	}
 	else player = 0;
 
@@ -9242,17 +9216,14 @@ static int Receive_store_leave(int ind)
 	return 1;
 }
 
-static int Receive_store_confirm(int ind)
-{
+static int Receive_store_confirm(int ind) {
 	connection_t *connp = Conn[ind];
 	char ch;
 	int n, player = -1;
-	player_type *p_ptr = NULL;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
 //		use_esp_link(&player, LINKF_OBJ);
-		p_ptr = Players[player];
 	}
 	else player = 0;
 
@@ -9264,7 +9235,6 @@ static int Receive_store_confirm(int ind)
 	if (!player) return -1;
 
 	store_confirm(player);
-
 	return 1;
 }
 
@@ -9601,52 +9571,40 @@ static void Handle_clear_actions(int Ind)
 	disturb(Ind, 0, 0);
 }
 
-static int Receive_clear_buffer(int ind)
-{
+static int Receive_clear_buffer(int ind) {
 	connection_t *connp = Conn[ind];
-	player_type *p_ptr = NULL;
 	int player = -1, n;
 	char ch;
 
-	if (connp->id != -1)
-	{
+	if (connp->id != -1) {
 		player = GetInd[connp->id];
 //		use_esp_link(&player, LINKF_OBJ);
-		p_ptr = Players[player];
 	}
 	else player = 0;
 
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
-	if(player) Handle_clear_buffer(player);
+	if (player) Handle_clear_buffer(player);
 
 	return 1;
 }
 
-static int Receive_clear_actions(int ind)
-{
+static int Receive_clear_actions(int ind) {
 	connection_t *connp = Conn[ind];
-	player_type *p_ptr = NULL;
 	int player = -1, n;
 	char ch;
 
-	if (connp->id != -1)
-	{
+	if (connp->id != -1) {
 		player = GetInd[connp->id];
 //		use_esp_link(&player, LINKF_OBJ);
-		p_ptr = Players[player];
 	}
 	else player = 0;
 
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
@@ -9757,19 +9715,15 @@ static int Receive_special_line(int ind)
 	return 1;
 }
 
-static int Receive_options(int ind)
-{
+static int Receive_options(int ind) {
 	connection_t *connp = Conn[ind];
-	player_type *p_ptr = NULL;
 	int player = -1, i, n;
 	char ch;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
-		p_ptr = Players[player];
 	} else {
 		player = 0;
-		p_ptr = NULL;
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
@@ -10136,10 +10090,9 @@ static int Receive_guild_config(int ind) {
 	return 1;
 }
 
-void Handle_direction(int Ind, int dir)
-{
-	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
-	int Ind2;
+void Handle_direction(int Ind, int dir) {
+	player_type *p_ptr = Players[Ind];//, *p_ptr2 = NULL;
+	//int Ind2;
 //s_printf("hd dir,current_spell,current_realm=%d,%d,%d\n", dir, p_ptr->current_spell, p_ptr->current_realm);
 
 	/* New '+' feat in 4.4.6.2 */
@@ -10166,7 +10119,7 @@ void Handle_direction(int Ind, int dir)
 		return;
 	}
 
-	Ind2 = get_esp_link(Ind, LINKF_MISC, &p_ptr2);
+	//Ind2 = get_esp_link(Ind, LINKF_MISC, &p_ptr2);
 
 	if (p_ptr->current_spell != -1) {
 //		if (p_ptr->current_realm == REALM_GHOST)
@@ -10232,24 +10185,20 @@ void Handle_item(int Ind, int item) {
 }
 
 /* Is it a king and on his land ? */
-bool player_is_king(int Ind)
-{
+bool player_is_king(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	return FALSE;
 
 	if (p_ptr->total_winner && ((inarea(&p_ptr->own1, &p_ptr->wpos)) || (inarea(&p_ptr->own2, &p_ptr->wpos))))
-	{
 		return TRUE;
-	}
 
 	/* Assume false */
 	return FALSE;
 }
 
 /* receive a dungeon master command */
-static int Receive_master(int ind)
-{
+static int Receive_master(int ind) {
 	connection_t *connp = Conn[ind];
 	int player = -1, n;
 	char ch, buf[MAX_CHARS];
@@ -10265,8 +10214,7 @@ static int Receive_master(int ind)
 
 	/* Is this necessary here? Maybe (evileye) */
 	if (!admin_p(player) &&
-		!player_is_king(player) && !guild_build(player))
-	{
+	    !player_is_king(player) && !guild_build(player)) {
 		/* Hack -- clear the receive and queue buffers since we won't be
 		 * reading in the dungeon master parameters that were sent.
 		 */
@@ -10275,70 +10223,40 @@ static int Receive_master(int ind)
 		return 2;
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
+	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
-	if (player)
-	{
-		switch (command)
-		{
+	if (player) {
+		switch (command) {
 			case MASTER_LEVEL:
-			{
 				master_level(player, buf);
 				break;
-			}
-
 			case MASTER_BUILD:
-			{
 				master_build(player, buf);
 				break;
-			}
-
 			case MASTER_SUMMON:
-			{
 				master_summon(player, buf);
 				break;
-			}
-
 			case MASTER_GENERATE:
-			{
 				master_generate(player, buf);
 				break;
-			}
-
 			case MASTER_PLAYER:
-			{
 				master_player(player, buf);
 				break;
-			}
-
 			case MASTER_SCRIPTS:
-			{
 				master_script_exec(player, buf);
 				break;
-			}
-
 			case MASTER_SCRIPTB:
-			{
 				master_script_begin(buf + 1, *buf);
 				break;
-			}
-
 			case MASTER_SCRIPTE:
-			{
 				master_script_end();
 				break;
-			}
-
 			case MASTER_SCRIPTL:
-			{
 				master_script_line(buf);
 				break;
-			}
 		}
 	}
 
@@ -10352,8 +10270,7 @@ static int Receive_master(int ind)
  * doing a basic version for now.
  */
 
-static int Receive_autophase(int ind)
-{
+static int Receive_autophase(int ind) {
 	player_type *p_ptr = NULL;
 	connection_t *connp = Conn[ind];
 	object_type *o_ptr;
@@ -10363,16 +10280,13 @@ static int Receive_autophase(int ind)
 		else player = 0;
 
 	/* a valid player was found, try to do the autophase */
-	if (player)
-	{
+	if (player) {
 		p_ptr = Players[player];
 		/* first, check the inventory for phase scrolls */
 		/* check every item of his inventory */
-		for (n = 0; n < INVEN_PACK; n++)
-		{
+		for (n = 0; n < INVEN_PACK; n++) {
 			o_ptr = &p_ptr->inventory[n];
-			if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_PHASE_DOOR))
-			{
+			if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_PHASE_DOOR)) {
 				/* found a phase scroll, read it! */
 				do_cmd_read_scroll(player, n);
 				return 1;
@@ -10385,8 +10299,7 @@ static int Receive_autophase(int ind)
 	return -1;
 }
 
-void end_mind(int Ind, bool update)
-{
+void end_mind(int Ind, bool update) {
 //	int Ind2;
 	player_type *p_ptr = Players[Ind];//, *p_ptr2;
 
@@ -10426,39 +10339,30 @@ void end_mind(int Ind, bool update)
 	}
 }
 
-static int Receive_spike(int ind)
-{
+static int Receive_spike(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch, dir;
-
 	int n, player = -1;
 
-	if (connp->id != -1)
-	{
+	if (connp->id != -1) {
 		player = GetInd[connp->id];
 		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
+	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
 
 	/* Sanity check */
 	if (bad_dir(dir)) return 1;
 
-	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos))
-	{
+	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_spike(player, dir);
 		return 2;
-	}
-	else if (p_ptr)
-	{
+	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%c", ch, dir);
 		return 0;
 	}

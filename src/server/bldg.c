@@ -399,7 +399,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 
 	s32b wager;
 	s32b maxbet;
-	s32b oldgold;
+	//s32b oldgold;
 
 #if 0
 	static const char *fruit[6] = {"Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry"};
@@ -459,9 +459,8 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 		//msg_print(Ind, NULL);
 		win = FALSE;
 		odds = 0;
-		oldgold = p_ptr->au;
-
 #if 0
+		oldgold = p_ptr->au;
 		strnfmt(tmp_str, 80, "Gold before game: %10d", oldgold);
 		prt(tmp_str,20,2);
 
