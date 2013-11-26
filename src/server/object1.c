@@ -5424,7 +5424,7 @@ bool item_tester_okay(object_type *o_ptr)
 void display_inven(int Ind)
 {
 	player_type	*p_ptr = Players[Ind];
-	register	int i, n, z = 0;
+	register	int i, z = 0;//n
 	object_type	*o_ptr;
 	byte		attr = TERM_WHITE;
 	char		tmp_val[80];
@@ -5462,7 +5462,7 @@ void display_inven(int Ind)
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 		/* Obtain the length of the description */
-		n = strlen(o_name);
+		//n = strlen(o_name);
 
 		/* Get a color */
 		if (p_ptr->admin_dm) {
@@ -5520,7 +5520,7 @@ void display_inven(int Ind)
 void display_equip(int Ind)
 {
 	player_type	*p_ptr = Players[Ind];
-	register	int i, n;
+	register	int i;//, n;
 	object_type	*o_ptr;
 	byte		attr = TERM_WHITE;
 	char		tmp_val[80];
@@ -5551,7 +5551,7 @@ void display_equip(int Ind)
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 		/* Obtain the length of the description */
-		n = strlen(o_name);
+		//n = strlen(o_name);
 
 		/* Get the color */
 		attr = get_attr_from_tval(o_ptr);

@@ -298,11 +298,14 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) /* may
  * you are, by definition, not smart enough to debug it.
  * -- Brian W. Kernighan
  */
-void compact_objects(int size, bool purge)
-{
+//#define DONT_COMPACT_NEARBY
+void compact_objects(int size, bool purge) {
 	int i, y, x, num, cnt, Ind; //, j, ny, nx;
 
-	s32b cur_val, cur_lev, cur_dis, chance;
+	s32b cur_val, cur_lev, chance;
+#ifdef DONT_COMPACT_NEARBY
+	s32b cur_dis;
+#endif
 	struct worldpos *wpos;
 	cave_type **zcave;
 //	object_type *q_ptr;
@@ -319,20 +322,20 @@ void compact_objects(int size, bool purge)
 
 
 	/* Compact at least 'size' objects */
-	for (num = 0, cnt = 1; num < size; cnt++)
-	{
+	for (num = 0, cnt = 1; num < size; cnt++) {
 		/* Get more vicious each iteration */
 		cur_lev = 5 * cnt;
 
 		/* Destroy more valuable items each iteration */
 		cur_val = 500 * (cnt - 1);
 
+#ifdef DONT_COMPACT_NEARBY
 		/* Get closer each iteration */
 		cur_dis = 5 * (20 - cnt);
+#endif
 
 		/* Examine the objects */
-		for (i = 1; i < o_max; i++)
-		{
+		for (i = 1; i < o_max; i++) {
 			object_type *o_ptr = &o_list[i];
 
 			object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -347,8 +350,10 @@ void compact_objects(int size, bool purge)
 			y = o_ptr->iy;
 			x = o_ptr->ix;
 
+#ifdef DONT_COMPACT_NEARBY
 			/* Nearby objects start out "immune" */
-			/*if ((cur_dis > 0) && (distance(py, px, y, x) < cur_dis)) continue;*/
+			if ((cur_dis > 0) && (distance(py, px, y, x) < cur_dis)) continue;
+#endif
 
 			/* Valuable objects start out "immune" */
 			if (object_value(0, &o_list[i]) > cur_val) continue;
@@ -360,8 +365,7 @@ void compact_objects(int size, bool purge)
 			if (artifact_p(o_ptr) && (cnt < 1000)) chance = 100;
 
 			/* Hack -- only compact items in houses or vaults in emergencies */
-			if (!o_ptr->wpos.wz)
-			{
+			if (!o_ptr->wpos.wz) {
 				cave_type **zcave;
 				zcave = getcave(&o_ptr->wpos);
 				if (zcave[y][x].info & CAVE_ICKY) {
@@ -383,8 +387,7 @@ void compact_objects(int size, bool purge)
 
 
 	/* Excise dead objects (backwards!) */
-	for (i = o_max - 1; i >= 1; i--)
-	{
+	for (i = o_max - 1; i >= 1; i--) {
 		/* Get the i'th object */
 		object_type *o_ptr = &o_list[i];
 
@@ -392,8 +395,7 @@ void compact_objects(int size, bool purge)
 		/* real objects in unreal location are not skipped. */
 		/* hack -- items on wilderness are preserved, since
 		 * they can be house contents. */
-		if (o_ptr->k_idx)
-		{
+		if (o_ptr->k_idx) {
 			if ((!o_ptr->wpos.wz && (!purge || o_ptr->owner)) ||
 					getcave(&o_ptr->wpos)) continue;
 
@@ -511,8 +513,7 @@ void compact_objects(int size, bool purge)
 	o_top = 0;
 
 	/* Collect "live" objects */
-	for (i = 0; i < o_max; i++)
-	{
+	for (i = 0; i < o_max; i++) {
 		/* Collect indexes */
 		o_fast[o_top++] = i;
 	}
@@ -7111,8 +7112,8 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus)
  * XXX XXX XXX Consider allowing objects to combine on the ground.
  */
 /* XXX XXX XXX DIRTY! DIRTY! DIRTY!		- Jir - */
-s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
-{
+//#define DROP_KILL_NOTE /* todo: needs adjustments - see below */
+s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
 	int k, d, ny, nx, i, s;	// , y1, x1
 	int bs, bn;
 	int by, bx;
@@ -7123,15 +7124,18 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	cave_type	*c_ptr;
 
 	/* for destruction checks */
-	bool is_potion = FALSE, do_kill = FALSE, plural = FALSE;
+	bool do_kill = FALSE;
+#ifdef DROP_KILL_NOTE
+	bool is_potion = FALSE, plural = FALSE;
 	cptr note_kill = NULL;
+#endif
 	u32b f1, f2, f3, f4, f5, esp;
 
-
-	bool arts = artifact_p(o_ptr), crash, done = FALSE;
+	bool arts = artifact_p(o_ptr), crash;
 	u16b this_o_idx, next_o_idx = 0;
 
 	cave_type **zcave;
+
 
 	if (!(zcave = getcave(wpos))) return(-1);
 
@@ -7266,8 +7270,10 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 	/* some objects get destroyed by falling on certain floor type - C. Blue */
         object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+#ifdef DROP_KILL_NOTE
 	if (o_ptr->tval == TV_POTION) is_potion = TRUE;
 	if (o_ptr->number > 1) plural = TRUE;
+#endif
 	switch (c_ptr->feat) {
 	case FEAT_SHAL_WATER:
 	case FEAT_DEEP_WATER:
@@ -7276,7 +7282,9 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 //	case FEAT_TAINTET_WATER:
 		if (hates_water(o_ptr)) {
 			do_kill = TRUE;
+#ifdef DROP_KILL_NOTE
 			note_kill = (plural ? " are soaked!" : " is soaked!");
+#endif
 			if (f5 & TR5_IGNORE_WATER) do_kill = FALSE;
 		}
 		break;
@@ -7286,14 +7294,16 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	case FEAT_GREAT_FIRE:
 		if (hates_fire(o_ptr)) {
 			do_kill = TRUE;
+#ifdef DROP_KILL_NOTE
 			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!") : (plural ? " burn up!" : " burns up!");
+#endif
 			if (f3 & TR3_IGNORE_FIRE) do_kill = FALSE;
 		}
 		break;
 	}
 
 	if (do_kill) {
-#if 0 //needs adjustments
+#ifdef DROP_KILL_NOTE //needs adjustments
 		/* Effect "observed" */
 		if (!quiet && p_ptr->obj_vis[this_o_idx]) obvious = TRUE;
 		/* Artifacts, and other objects, get to resist */
@@ -7343,9 +7353,6 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		if (object_similar(0, q_ptr, o_ptr, 0x0)) {
 			/* Combine the items */
 			object_absorb(0, q_ptr, o_ptr);
-
-			/* Success */
-			done = TRUE;
 
 			/* for player-store 'offer' check */
 			o_idx = this_o_idx;

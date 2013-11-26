@@ -4106,8 +4106,8 @@ static void wild_display_map(int Ind, char mode)
 	player_type *p_ptr = Players[Ind];
 
 	int x, y, type;
-	int offset_x, max_wx;
-	int offset_y, max_wy;
+	int max_wx, offset_x;
+	int max_wy;//, offset_y;
 
 	byte ta;
 	char tc;
@@ -4136,10 +4136,10 @@ static void wild_display_map(int Ind, char mode)
 		max_wx = CL_WINDOW_WID;
 	}
 	if (CL_WINDOW_HGT > MAX_WILD_Y + 2) {//+ 2 for border
-		offset_y = (CL_WINDOW_HGT - MAX_WILD_Y) / 2 - 1;//-1 for border
+		//offset_y = (CL_WINDOW_HGT - MAX_WILD_Y) / 2 - 1;//-1 for border
 		max_wy = MAX_WILD_Y + 2;
 	} else {
-		offset_y = 0;
+		//offset_y = 0;
 		max_wy = CL_WINDOW_HGT;
 	}
 

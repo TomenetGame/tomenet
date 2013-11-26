@@ -2122,10 +2122,12 @@ void update_mon(int m_idx, bool dist)
 	/* Seen by telepathy */
 	bool hard = FALSE;
 
+#ifdef OLD_MONSTER_LORE
 	/* Various extra flags */
 	bool do_no_esp = FALSE;
 	bool do_empty_mind = FALSE;
 	bool do_weird_mind = FALSE;
+#endif
 	bool do_invisible = FALSE;
 	bool do_cold_blood = FALSE;
 
@@ -2242,17 +2244,23 @@ void update_mon(int m_idx, bool dist)
 				if (see) {
 					/* Empty mind, no telepathy */
 					if (r_ptr->flags2 & RF2_EMPTY_MIND) {
+#ifdef OLD_MONSTER_LORE
 						do_empty_mind = TRUE;
+#endif
 					}
 					/* possesses powers to hide from ESP? */
 					else if ((r_ptr->flags7 & RF7_NO_ESP)
 					    && p_ptr->pclass != CLASS_MINDCRAFTER) {
+#ifdef OLD_MONSTER_LORE
 						do_no_esp = TRUE;
+#endif
 					}
 
 					/* Weird mind, occasional telepathy */
 					else if (r_ptr->flags2 & RF2_WEIRD_MIND) {
+#ifdef OLD_MONSTER_LORE
 						do_weird_mind = TRUE;
+#endif
 						if (!m_ptr->no_esp_phase) hard = flag = TRUE;
 					}
 

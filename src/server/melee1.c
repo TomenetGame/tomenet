@@ -563,13 +563,15 @@ bool make_attack_melee(int Ind, int m_idx)
 
 	/* Scan through all four blows */
 	for (ap_cnt = 0; ap_cnt < 4; ap_cnt++) {
+#ifdef OLD_MONSTER_LORE
 		bool visible = FALSE;
+#endif
 		bool obvious = FALSE;
 		bool bypass_ac = FALSE;
 		bool bypass_shield = FALSE;
 		bool bypass_weapon = FALSE;
 
-		bool bypass_protection = FALSE;
+		//bool bypass_protection = FALSE; //covered by bypass_ac and touched
 		bool invuln_applied = FALSE;
 
 		int power = 0;
@@ -593,9 +595,10 @@ bool make_attack_melee(int Ind, int m_idx)
 		if (!p_ptr->alive || p_ptr->death || p_ptr->new_level_flag) break;
 
 
+#ifdef OLD_MONSTER_LORE
 		/* Extract visibility (before blink) */
 		if (p_ptr->mon_vis[m_idx]) visible = TRUE;
-
+#endif
 
 
 		/* Extract the attack "power" */
@@ -646,7 +649,7 @@ bool make_attack_melee(int Ind, int m_idx)
 			case RBM_MOAN:
 			case RBM_SHOW:
 			case RBM_WHISPER:
-				bypass_protection = TRUE; /* mystic shield doesn't block light/sound waves */
+				//bypass_protection = TRUE; /* mystic shield doesn't block light/sound waves */
 			case RBM_SPORE:
 				bypass_shield = TRUE; /* can't be blocked */
 			case RBM_EXPLODE:
@@ -2506,8 +2509,6 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 
 	bool dead = FALSE;
 
-	bool            blinked;
-
 
 	/* Not allowed to attack */
 	if (r_ptr->flags1 & RF1_NEVER_BLOW) return (FALSE);
@@ -2521,18 +2522,12 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 	exp_gain = race_inf(tm_ptr)->level;
 #endif
 
-	/* Assume no blink */
-	blinked = FALSE;
-
 	/* Scan through all four blows */
-	for (ap_cnt = 0; ap_cnt < 4; ap_cnt++)
-	{
-		bool obvious = FALSE;
+	for (ap_cnt = 0; ap_cnt < 4; ap_cnt++) {
+		//bool obvious = FALSE; //currently not used
 
 		int power = 0;
 		int damage = 0;
-
-		cptr act = NULL;
 
 		/* Extract the attack infomation */
 		int effect = m_ptr->blow[ap_cnt].effect;
@@ -2563,7 +2558,6 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 			{
 				case RBM_HIT:
 				{
-					act = "hits you";
 #ifdef NORMAL_HIT_NO_STUN
 					do_cut = 1;
 #else
@@ -2574,7 +2568,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 			}
 
 			/* Hack -- assume all attacks are obvious */
-			obvious = TRUE;
+			//obvious = TRUE;
 
 			/* Roll out the damage */
 			damage = damroll(d_dice, d_side);
@@ -2585,7 +2579,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 				case 0:
 				{
 					/* Hack -- Assume obvious */
-					obvious = TRUE;
+					//obvious = TRUE;
 
 					/* Hack -- No damage */
 					damage = 0;
@@ -2598,7 +2592,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 					bool fear;
 
 					/* Obvious */
-					obvious = TRUE;
+					//obvious = TRUE;
 
 					/* Hack -- Monster armor reduces total damage */
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / AC_CAP_DIV);

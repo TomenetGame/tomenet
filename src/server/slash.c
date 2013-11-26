@@ -4295,6 +4295,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				return;
 			}
+#if 0
 			/* Empty a store */
 			else if (prefix(message, "/stnew"))
 			{
@@ -4302,8 +4303,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "\377oUsage: /stnew <store#>");
 					return;
 				}
-				for (i = 0; i < numtowns; i++)
-				{
+				for (i = 0; i < numtowns; i++) {
 					int what, num;
 					object_type *o_ptr;
 					store_type *st_ptr;
@@ -4315,13 +4315,14 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr = &st_ptr->stock[what];
 					num = o_ptr->number;
 
-//					store_item_increase(st_ptr, what, -num);
-//					store_item_optimize(st_ptr, what);
-//					st_ptr->stock[what].num = 0;
+					store_item_increase(st_ptr, what, -num);
+					store_item_optimize(st_ptr, what);
+					st_ptr->stock[what].num = 0;
 				}
 				msg_print(Ind, "\377oStores were emptied!");
 				return;
 			}
+#endif
 			/* take 'cheezelog'
 			 * result is output to the logfile */
 			else if (prefix(message, "/cheeze")) {
