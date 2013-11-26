@@ -4318,9 +4318,9 @@ void backup_acclists(void) {
 			if ((c_acc = GetAccountID(ptr->account, FALSE))) {
 				/* back him up */
 				fprintf(fp, "%d\n", (int)strlen(ptr->name));
-				fwrite(ptr->name, sizeof(char), strlen(ptr->name), fp);
+				(void)fwrite(ptr->name, sizeof(char), strlen(ptr->name), fp);
 #if 0
-				fprintf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
+				(void)fprintf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 				    ptr->laston, ptr->id, ptr->account,
     				    ptr->level, ptr->party, ptr->guild,
 				    ptr->quest, ptr->race, ptr->class, ptr->mode);
@@ -4328,7 +4328,7 @@ void backup_acclists(void) {
 				fprintf(fp, "%d%d", ptr->au, ptr->balance);
 #endif
 #else
-				fwrite(ptr, sizeof(hash_entry), 1, fp);
+				(void)fwrite(ptr, sizeof(hash_entry), 1, fp);
 #endif
 
 				/* cleanup (?) */
@@ -4374,22 +4374,22 @@ void restore_acclists(void) {
 		return;
 	}
 	/* begin with a version tag */
-	fscanf(fp, "%s\n", tmp);
+	(void)fscanf(fp, "%s\n", tmp);
 
 	while (!feof(fp)) {
-		fscanf(fp, "%d\n", &name_len);
-		fread(name_forge, sizeof(char), name_len, fp);
+		(void)fscanf(fp, "%d\n", &name_len);
+		(void)fread(name_forge, sizeof(char), name_len, fp);
 		name_forge[name_len] = '\0';
 #if 0
-		fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
+		(void)fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 		    &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
 		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode);
 #ifdef AUCTION_SYSTEM
-		fscanf(fp, "%d%d", &ptr->au, &ptr->balance);
+		(void)fscanf(fp, "%d%d", &ptr->au, &ptr->balance);
 #endif
 #else
-		fread(ptr, sizeof(hash_entry), 1, fp);
+		(void)fread(ptr, sizeof(hash_entry), 1, fp);
 		ptr->name = NULL;//just to be clean
 #endif
 
