@@ -2684,18 +2684,12 @@ void init_swearing() {
 /*
  * Initialize some other arrays
  */
-static errr init_alloc(void)
-{
+static errr init_alloc(void) {
 	int i, j;
-
 	object_kind *k_ptr;
-
 	monster_race *r_ptr;
-
 	alloc_entry *table;
-
 	s16b num[256];
-
 	s16b aux[256];
 
 	/*** Analyze object allocation info ***/
@@ -2710,16 +2704,13 @@ static errr init_alloc(void)
 	alloc_kind_size = 0;
 
 	/* Scan the objects */
-	for (i = 1; i < max_k_idx; i++)
-	{
+	for (i = 1; i < max_k_idx; i++) {
 		k_ptr = &k_info[i];
 
 		/* Scan allocation pairs */
-		for (j = 0; j < 4; j++)
-		{
+		for (j = 0; j < 4; j++) {
 			/* Count the "legal" entries */
-			if (k_ptr->chance[j])
-			{
+			if (k_ptr->chance[j]) {
 				/* Hack - Don't include zero probability entries in the table */
 				if (k_ptr->chance[j] == 255) continue;
 
@@ -2733,8 +2724,7 @@ static errr init_alloc(void)
 	}
 
 	/* Collect the level indexes */
-	for (i = 1; i < 256; i++)
-	{
+	for (i = 1; i < 256; i++) {
 		/* Group by level */
 		num[i] += num[i-1];
 	}
@@ -2752,16 +2742,13 @@ static errr init_alloc(void)
 	table = alloc_kind_table;
 
 	/* Scan the objects */
-	for (i = 1; i < max_k_idx; i++)
-	{
+	for (i = 1; i < max_k_idx; i++) {
 		k_ptr = &k_info[i];
 
 		/* Scan allocation pairs */
-		for (j = 0; j < 4; j++)
-		{
+		for (j = 0; j < 4; j++) {
 			/* Count the "legal" entries */
-			if (k_ptr->chance[j])
-			{
+			if (k_ptr->chance[j]) {
 				int p, x, y, z;
 
 				/* Hack - 255 means zero probability */
@@ -2795,9 +2782,8 @@ static errr init_alloc(void)
 	C_MAKE(alloc_kind_index_level, 256, s16b);
 
 	/* Store index numbers for the first entry of each level */
-	for (i = 1; i < 256; i++) {
+	for (i = 1; i < 256; i++)
 		alloc_kind_index_level[i] = num[i - 1];
-	}
 
 
 	/*** Analyze monster allocation info ***/
@@ -2812,18 +2798,13 @@ static errr init_alloc(void)
 	alloc_race_size = 0;
 
 	/* Scan the monsters (not the ghost) */
-	for (i = 1; i < MAX_R_IDX - 1; i++)
-	{
+	for (i = 1; i < MAX_R_IDX - 1; i++) {
 		/* Get the i'th race */
 		r_ptr = &r_info[i];
 
 		/* Legal monsters */
-		if (r_ptr->rarity)
-		{
-			int p, x;
-
-			/* Extract the base level */
-			x = r_ptr->level;
+		if (r_ptr->rarity) {
+			int p;
 
 			/* Extract the base probability */
 			p = (10000 / r_ptr->rarity);
@@ -2846,8 +2827,7 @@ static errr init_alloc(void)
 	}
 
 	/* Collect the level indexes */
-	for (i = 1; i < 256; i++)
-	{
+	for (i = 1; i < 256; i++) {
 		/* Group by level */
 		num[i] += num[i-1];
 	}
@@ -2860,13 +2840,11 @@ static errr init_alloc(void)
 
 	/* Allocate allocation tables for all dungeon types */
 	C_MAKE(alloc_race_table_dun, MAX_D_IDX, alloc_entry *);
-	for (i = 0; i < MAX_D_IDX; i++)
-	{
+	for (i = 0; i < MAX_D_IDX; i++) {
 		dungeon_info_type *d_ptr = &d_info[i];
 
-		if (d_ptr->name) {
+		if (d_ptr->name)
 			C_MAKE(alloc_race_table_dun[i], alloc_race_size, alloc_entry);
-		}
 	}
 
 	/* Scan the monsters (not the ghost) */
@@ -2927,9 +2905,8 @@ static errr init_alloc(void)
 	C_MAKE(alloc_race_index_level, 256, s16b);
 
 	/* Store index numbers for the first entry of each level */
-	for (i = 1; i < 256; i++) {
+	for (i = 1; i < 256; i++)
 		alloc_race_index_level[i] = num[i - 1];
-	}
 
 
 	/*** Create unique monster mask arrays ***/
@@ -2940,9 +2917,8 @@ static errr init_alloc(void)
 		/* Get the i'th race */
 		r_ptr = &r_info[i];
 
-		if (r_ptr->flags1 & RF1_UNIQUE) {
+		if (r_ptr->flags1 & RF1_UNIQUE)
 			reject_uniques[i] = TRUE;
-		}
 	}
 
 	/* Success */

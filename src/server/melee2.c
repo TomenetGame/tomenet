@@ -4334,7 +4334,7 @@ static bool get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
 	player_type *p_ptr = Players[Ind];
-	cave_type **zcave, *c_ptr;
+	cave_type **zcave;//, *c_ptr;
 
 #if 0 /* just disabled while unused, to prevent compiler warnings */
 	astar_list_open *ao = &astar_info_open[m_ptr->astar_idx];
@@ -4358,7 +4358,7 @@ return (FALSE);
 	x1 = m_ptr->fx;
 
 	/* Monster grid */
-	c_ptr = &zcave[y1][x1];
+	//c_ptr = &zcave[y1][x1];
 
 	
 
@@ -4397,7 +4397,7 @@ return (FALSE);
 static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr)
 {
 	effect_type *e_ptr;
-	cptr name;
+	//cptr name;
 	int dam;
 
 #if 1	/* moved for efficiency */
@@ -4411,7 +4411,7 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 	if (e_ptr->who == m_idx) return (TRUE);
 
 	dam = e_ptr->dam;
-	name = r_name_get(m_ptr);
+	//name = r_name_get(m_ptr);
 
 #if 0
 	/* XXX Make sure to add whatever might be needed!
@@ -6538,14 +6538,15 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 	bool		did_open_door;
 	bool		did_bash_door;
+	bool		take_item_override = FALSE;
+#ifdef OLD_MONSTER_LORE
 	bool		did_take_item;
 	bool		did_kill_item;
-	bool		take_item_override = FALSE;
 	bool		did_move_body;
 	bool		did_kill_body;
 	bool		did_pass_wall;
 	bool		did_kill_wall;
-
+#endif
 	bool		inv;
 
 
@@ -7057,13 +7058,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	/* Assume nothing */
 	did_open_door = FALSE;
 	did_bash_door = FALSE;
+#ifdef OLD_MONSTER_LORE
 	did_take_item = FALSE;
 	did_kill_item = FALSE;
 	did_move_body = FALSE;
 	did_kill_body = FALSE;
 	did_pass_wall = FALSE;
 	did_kill_wall = FALSE;
-
+#endif
 
 	/* Take a zero-terminated array of "directions" */
 	for (i = 0; mm[i]; i++) {
@@ -7204,8 +7206,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			/* Pass through walls/doors/rubble */
 			do_move = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 			/* Monster went through a wall */
 			did_pass_wall = TRUE;
+#endif
 		}
 
 		/* Permanent wall */
@@ -7246,9 +7250,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			/* Eat through walls/doors/rubble */
 			do_move = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 			/* Monster destroyed a wall */
 #if 0 /* if ever used, gotta fix: only if RF2_KILL_WALL !*/
 			did_kill_wall = TRUE;
+#endif
 #endif
 
 			/* Create floor */
@@ -7271,13 +7277,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 		/* Monster moves through walls (and doors) */
 //		else if (r_ptr->flags2 & RF2_PASS_WALL)
-		else if ((f_info[c_ptr->feat].flags1 & FF1_CAN_PASS) && (r_ptr->flags2 & (RF2_PASS_WALL)))
-		{
+		else if ((f_info[c_ptr->feat].flags1 & FF1_CAN_PASS) && (r_ptr->flags2 & (RF2_PASS_WALL))) {
 			/* Pass through walls/doors/rubble */
 			do_move = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 			/* Monster went through a wall */
 			did_pass_wall = TRUE;
+#endif
 		}
 
 		/* Handle doors and secret doors */
@@ -7288,8 +7295,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			bool may_bash = TRUE;
 
 			/* Creature can open doors. */
-			if (r_ptr->flags2 & RF2_OPEN_DOOR)
-			{
+			if (r_ptr->flags2 & RF2_OPEN_DOOR) {
 				/* Take a turn */
 				do_turn = TRUE;
 
@@ -7307,8 +7313,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				}
 
 				/* Locked doors (not jammed) */
-				else if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08)
-				{
+				else if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08) {
 					int k;
 
 					/* Door power */
@@ -7321,8 +7326,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #endif
 
 					/* Try to unlock it XXX XXX XXX */
-					if (rand_int(m_ptr->hp / 10) > k)
-					{
+					if (rand_int(m_ptr->hp / 10) > k) {
 						/* Unlock the door */
 						c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 #ifdef USE_SOUND_2010
@@ -7335,8 +7339,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			}
 
 			/* Stuck doors -- attempt to bash them down if allowed */
-			if (may_bash && (r_ptr->flags2 & RF2_BASH_DOOR))
-			{
+			if (may_bash && (r_ptr->flags2 & RF2_BASH_DOOR)) {
 				int k;
 
 				/* Take a turn */
@@ -7377,19 +7380,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 			/* Deal with doors in the way */
-			if (did_open_door || did_bash_door)
-			{
+			if (did_open_door || did_bash_door) {
 				/* Break down the door */
 				if (did_bash_door && (rand_int(100) < 50))
-				{
 					c_ptr->feat = FEAT_BROKEN;
-				}
-
 				/* Open the door */
 				else
-				{
 					c_ptr->feat = FEAT_OPEN;
-				}
 
 				/* Notice */
 				note_spot_depth(wpos, ny, nx);
@@ -7402,8 +7399,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			}
 		}
 		/* Floor is trapped? */
-		else if (c_ptr->feat == FEAT_MON_TRAP)
-		{
+		else if (c_ptr->feat == FEAT_MON_TRAP) {
 			/* Go ahead and move */
 			do_move = TRUE;
 		}
@@ -7483,7 +7479,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			bool keeping_previous_target = FALSE;
 			int i, p_idx_chosen = 0 - c_ptr->m_idx, reason;
 			int p_idx[9], targets = 0;
-			int p_idx_weak[9], p_idx_medium[9], p_idx_strong[9], weak_targets = 0, medium_targets = 0, strong_targets = 0;
+			int p_idx_weak[9], p_idx_medium[9];//, p_idx_strong[9];
+			int weak_targets = 0, medium_targets = 0, strong_targets = 0;
 			int p_idx_low[9], low_targets = 0, lowest_target_level = 100, highest_target_level = 0;
 			cave_type *cd_ptr;
 			player_type *pd_ptr;
@@ -7536,7 +7533,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					case CLASS_MINDCRAFTER: /* rather tough? */
 					case CLASS_ROGUE: /* todo maybe: might be medium target if not crit-hitter/intercepter? */
 						strong_targets++;
-						p_idx_strong[strong_targets] = -cd_ptr->m_idx;
+						//p_idx_strong[strong_targets] = -cd_ptr->m_idx;
 						break;
 
 					case CLASS_ADVENTURER: /* todo maybe: depends on mimic form */
@@ -7693,14 +7690,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					/* Allow movement */
 					do_move = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 					/* Monster pushed past the player */
 					did_move_body = TRUE;
+#endif
 
 					/* Log this to be safe about MOVE_BODY vs TELE_TO related kills */
 					s_printf("MOVE_BODY: '%s' got switched by '%s'.\n", q_ptr->name, m_name);
-				}
-				else
-				{
+				} else {
 					/* Do the attack */
 					(void)make_attack_melee(p_idx_target, m_idx);
 
@@ -7710,9 +7707,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					/* Do not move */
 					do_move = FALSE;
 				}
-			}
-			else
-			{
+			} else {
 				/* Do not move */
 				do_move = FALSE;
 			}
@@ -7720,8 +7715,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 		/* Some monsters never move */
-		if (do_move && (r_ptr->flags1 & RF1_NEVER_MOVE))
-		{
+		if (do_move && (r_ptr->flags1 & RF1_NEVER_MOVE)) {
 #ifdef OLD_MONSTER_LORE
 			/* Hack -- memorize lack of attacks */
 			/* if (m_ptr->ml) r_ptr->r_flags1 |= RF1_NEVER_MOVE; */
@@ -7761,8 +7755,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		}
 
 		/* Hack -- those that hate water */
-		if (do_move && c_ptr->feat == FEAT_DEEP_WATER)
-		{
+		if (do_move && c_ptr->feat == FEAT_DEEP_WATER) {
 			if (!(r_ptr->flags3 & RF3_UNDEAD) &&
 				!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ) &&
 				(zcave[oy][ox].feat != FEAT_DEEP_WATER))
@@ -7771,15 +7764,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #endif	// 0
 
 		/* A monster is in the way */
-		if (do_move && c_ptr->m_idx > 0)
-		{
+		if (do_move && c_ptr->m_idx > 0) {
                         monster_race *z_ptr = race_inf(y_ptr);
 
 			/* Assume no movement */
 			do_move = FALSE;
 
-			if (m_list[c_ptr->m_idx].pet)
-			{
+			if (m_list[c_ptr->m_idx].pet) {
 				/* Do the attack */
 				(void)monster_attack_normal(c_ptr->m_idx, m_idx);
 
@@ -7796,8 +7787,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					/* Allow movement */
 					do_move = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 					/* Monster ate another monster */
 					did_kill_body = TRUE;
+#endif
 
 					/* XXX XXX XXX Message */
 
@@ -7816,8 +7809,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					/* Allow movement */
 					do_move = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 					/* Monster pushed past another monster */
 					did_move_body = TRUE;
+#endif
 
 					/* XXX XXX XXX Message */
 				}
@@ -7825,8 +7820,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		}
 
 		/* Hack -- player hinders its movement */
-		if (do_move && monst_check_grab(m_idx, 85, "run"))
-		{
+		if (do_move && monst_check_grab(m_idx, 85, "run")) {
 			/* Take a turn */
 			do_turn = TRUE;
 
@@ -7835,8 +7829,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 		/* Creature has been allowed to move */
-		if (do_move)
-		{
+		if (do_move) {
 #ifdef ANTI_SEVEN_EXPLOIT /* code part: 'pick up here, after having just overridden a movement step: remember the step direction' */
 			if (!random_move && m_ptr->previous_direction != 0) {
 				m_ptr->previous_direction = d;
@@ -7849,17 +7842,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			zcave[oy][ox].m_idx = c_ptr->m_idx;
 
 			/* Mega-Hack -- move the old monster, if any */
-			if (c_ptr->m_idx > 0)
-			{
+			if (c_ptr->m_idx > 0) {
 				/* Move the old monster */
 				y_ptr->fy = oy;
 				y_ptr->fx = ox;
 
 				/* Update the old monster */
 				update_mon(c_ptr->m_idx, TRUE);
-			}
-			else if (c_ptr->m_idx < 0) /* SHOULD HAPPEN ONLY FOR PETS */
-			{
+			} else if (c_ptr->m_idx < 0) { /* SHOULD HAPPEN ONLY FOR PETS */
 				player_type *q_ptr = Players[0 - c_ptr->m_idx];
 				char m_name[MNAME_LEN];
 
@@ -7949,8 +7939,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				else if (!monster_can_pickup(r_ptr, o_ptr)) {
 					/* Only give a message for "take_item" */
 					if (r_ptr->flags2 & RF2_TAKE_ITEM) {
+#ifdef OLD_MONSTER_LORE
 						/* Take note */
 						did_take_item = TRUE;
+#endif
 
 						/* Describe observable situations */
 						if (p_ptr->mon_vis[m_idx] && player_has_los_bold(Ind, ny, nx)) {
@@ -7969,8 +7961,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				{
 					s16b this_o_idx = 0;
 
+#ifdef OLD_MONSTER_LORE
 					/* Take note */
 					did_take_item = TRUE;
+#endif
 
 					/* the_sandman - logs monsters pick_up? :S (to track items going poof
 					 * without any explanation(s)... To reduce the amount of spammage, lets
@@ -8022,15 +8016,16 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 				/* Destroy the item */
 				else if ((r_ptr->flags2 & RF2_KILL_ITEM) || take_item_override) {
+#ifdef OLD_MONSTER_LORE
 					/* Take note */
 					did_kill_item = TRUE;
+#endif
 
 					/* C. Blue - added logging for KILL_ITEM monsters (see above TAKE_ITEM) */
 					if (o_ptr->owner) s_printf("ITEM_KILLED: %s by %s\n", o_name, m_name_real);
 
 					/* Describe observable situations */
-					if (player_has_los_bold(Ind, ny, nx))
-					{
+					if (player_has_los_bold(Ind, ny, nx)) {
 						/* Dump a message */
 						msg_format(Ind, "%^s crushes %s.", m_name, o_name);
 					}
@@ -8041,16 +8036,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 #if 0	// XXX
 					/* Scan all objects in the grid */
-					for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
-					{
+					for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
 						/* Acquire object */
 						o_ptr = &o_list[this_o_idx];
 
 						/* Acquire next object */
 						next_o_idx = o_ptr->next_o_idx;
 
-						if (artifact_p(o_ptr))
-						{
+						if (artifact_p(o_ptr)) {
 							c_ptr->o_idx = this_o_idx;
 							break;
 						}
@@ -8070,16 +8063,14 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		}
 
 		/* Stop when done */
-		if (do_turn) 
-		{
+		if (do_turn)  {
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
 			break;
 		}
 	}
 
 	/* Notice changes in view */
-	if (do_view)
-	{
+	if (do_view) {
 		/* Update some things */
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 	}
@@ -8087,8 +8078,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 #ifdef OLD_MONSTER_LORE
 	/* Learn things from observable monster */
-	if (p_ptr->mon_vis[m_idx])
-	{
+	if (p_ptr->mon_vis[m_idx]) {
 		/* Monster opened a door */
 		if (did_open_door) r_ptr->r_flags2 |= RF2_OPEN_DOOR;
 
@@ -8169,8 +8159,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
  * the golem handler. (i have plans for the pet system)
  * - the_sandman
  */
-static void process_monster_pet(int Ind, int m_idx)
-{
+static void process_monster_pet(int Ind, int m_idx) {
 	player_type *p_ptr; 
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
@@ -8190,12 +8179,14 @@ static void process_monster_pet(int Ind, int m_idx)
 
 	bool		did_open_door;
 	bool		did_bash_door;
+#ifdef OLD_MONSTER_LORE
 	bool		did_take_item;
 	bool		did_kill_item;
 	bool		did_move_body;
 	bool		did_kill_body;
 	bool		did_pass_wall;
 	bool		did_kill_wall;
+#endif
 
 
    /* hack -- don't process monsters on wilderness levels that have not
@@ -8209,55 +8200,45 @@ static void process_monster_pet(int Ind, int m_idx)
    m_ptr->mind |= (GOLEM_ATTACK|GOLEM_GUARD|GOLEM_FOLLOW);
 
 	/* handle "stun" */
-	if (m_ptr->stunned)
-	{
+	if (m_ptr->stunned) {
 		int d = 1;
 
 		/* make a "saving throw" against stun */
-		if (rand_int(5000) <= r_ptr->level * r_ptr->level)
-		{
+		if (rand_int(5000) <= r_ptr->level * r_ptr->level) {
 			/* recover fully */
 			d = m_ptr->stunned;
 		}
 
 		/* hack -- recover from stun */
-		if (m_ptr->stunned > d)
-		{
+		if (m_ptr->stunned > d) {
 			/* recover somewhat */
 			m_ptr->stunned -= d;
 		}
-
 		/* fully recover */
-		else
-		{
+		else {
 			/* recover fully */
 			m_ptr->stunned = 0;
 		}
 
 		/* still stunned */
-		if (m_ptr->stunned) 
-		{
+		if (m_ptr->stunned)  {
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
 			return;
 		}
 	}
 
 	/* handle confusion */
-	if (m_ptr->confused && !(r_ptr->flags3&RF3_NO_CONF))
-	{
+	if (m_ptr->confused && !(r_ptr->flags3&RF3_NO_CONF)) {
 		/* amount of "boldness" */
 		int d = randint(r_ptr->level / 10 + 1);
 
 		/* still confused */
-		if (m_ptr->confused > d)
-		{
+		if (m_ptr->confused > d) {
 			/* reduce the confusion */
 			m_ptr->confused -= d;
 		}
-
 		/* recovered */
-		else
-		{
+		else {
 			/* no longer confused */
 			m_ptr->confused = 0;
 		}
@@ -8273,14 +8254,12 @@ static void process_monster_pet(int Ind, int m_idx)
 
 
 	/* confused -- 100% random */
-	if (m_ptr->confused)
-	{
+	if (m_ptr->confused) {
 		/* try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 	}
 	/* normal movement */
-	else
-	{
+	else {
 		/* logical moves */
 		if (!get_moves_pet(Ind, m_idx, mm)) return;
 	}
@@ -8294,17 +8273,17 @@ static void process_monster_pet(int Ind, int m_idx)
 	/* assume nothing */
 	did_open_door = FALSE;
 	did_bash_door = FALSE;
+#ifdef OLD_MONSTER_LORE
 	did_take_item = FALSE;
 	did_kill_item = FALSE;
 	did_move_body = FALSE;
 	did_kill_body = FALSE;
 	did_pass_wall = FALSE;
 	did_kill_wall = FALSE;
-
+#endif
 
 	/* take a zero-terminated array of "directions" */
-	for (i = 0; mm[i]; i++)
-	{
+	for (i = 0; mm[i]; i++) {
 		/* get the direction */
 		d = mm[i];
 
@@ -8326,33 +8305,25 @@ static void process_monster_pet(int Ind, int m_idx)
 
 		/* Tavern entrance? */
 		if (c_ptr->feat == FEAT_SHOP)
-		{
 			do_move = TRUE;
-		}
-
 #if 0
 		/* Floor is open? */
-		else if (cave_floor_bold(zcave, ny, nx))
-		{
+		else if (cave_floor_bold(zcave, ny, nx)) {
 			/* Go ahead and move */
 			do_move = TRUE;
 		}
 #else
 		/* Floor is open? */
-		else if (creature_can_enter(r_ptr, c_ptr))
-		{
+		else if (creature_can_enter(r_ptr, c_ptr)) {
 			/* Go ahead and move */
 			do_move = TRUE;
 		}
 #endif
-
 		/* Player ghost in wall XXX */
-		else if (c_ptr->m_idx < 0)
-		{
+		else if (c_ptr->m_idx < 0) {
 			/* Move into player */
 			do_move = TRUE;
 		}
-
 		/* Permanent wall / permanently wanted structure */
 		else if (((c_ptr->feat >= FEAT_PERM_EXTRA) ||
 			(c_ptr->feat == FEAT_PERM_CLEAR) ||
@@ -8381,23 +8352,24 @@ static void process_monster_pet(int Ind, int m_idx)
 				do_move = TRUE;
 		}
 		/* Monster moves through walls (and doors) */
-		else if (r_ptr->flags2 & RF2_PASS_WALL)
-		{
+		else if (r_ptr->flags2 & RF2_PASS_WALL) {
 			/* Pass through walls/doors/rubble */
 			do_move = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 			/* Monster went through a wall */
 			did_pass_wall = TRUE;
+#endif
 		}
-
 		/* Monster destroys walls (and doors) */
-		else if (r_ptr->flags2 & RF2_KILL_WALL)
-		{
+		else if (r_ptr->flags2 & RF2_KILL_WALL) {
 			/* Eat through walls/doors/rubble */
 			do_move = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 			/* Monster destroyed a wall */
 			did_kill_wall = TRUE;
+#endif
 
 			/* Create floor */
 //			c_ptr->feat = FEAT_FLOOR;
@@ -8415,7 +8387,6 @@ static void process_monster_pet(int Ind, int m_idx)
 			/* Note changes to viewable region */
 			if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
 		}
-
 		/* Handle doors and secret doors */
 		else if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 		          (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
@@ -8427,8 +8398,7 @@ static void process_monster_pet(int Ind, int m_idx)
 			do_turn = TRUE;
 
 			/* Creature can open doors. */
-			if (r_ptr->flags2 & RF2_OPEN_DOOR)
-			{
+			if (r_ptr->flags2 & RF2_OPEN_DOOR) {
 				/* Closed doors and secret doors */
 				if ((c_ptr->feat == FEAT_DOOR_HEAD) ||
 				    (c_ptr->feat == FEAT_SECRET))
@@ -8441,8 +8411,7 @@ static void process_monster_pet(int Ind, int m_idx)
 				}
 
 				/* Locked doors (not jammed) */
-				else if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08)
-				{
+				else if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08) {
 					int k;
 
 					/* Door power */
@@ -8467,8 +8436,7 @@ static void process_monster_pet(int Ind, int m_idx)
 			}
 
 			/* Stuck doors -- attempt to bash them down if allowed */
-			if (may_bash && (r_ptr->flags2 & RF2_BASH_DOOR))
-			{
+			if (may_bash && (r_ptr->flags2 & RF2_BASH_DOOR)) {
 				int k;
 
 				/* Door power */
@@ -8481,8 +8449,7 @@ static void process_monster_pet(int Ind, int m_idx)
 #endif
 
 				/* Attempt to Bash XXX XXX XXX */
-				if (rand_int(m_ptr->hp / 10) > k)
-				{
+				if (rand_int(m_ptr->hp / 10) > k) {
 					/* The door was bashed open */
 					did_bash_door = TRUE;
 
@@ -8491,22 +8458,14 @@ static void process_monster_pet(int Ind, int m_idx)
 				}
 			}
 
-
 			/* Deal with doors in the way */
-			if (did_open_door || did_bash_door)
-			{
+			if (did_open_door || did_bash_door) {
 				/* Break down the door */
 				if (did_bash_door && (rand_int(100) < 50))
-				{
 					c_ptr->feat = FEAT_BROKEN;
-				}
-
 				/* Open the door */
 				else
-				{
 					c_ptr->feat = FEAT_OPEN;
-				}
-
 
 				/* notice */
 				note_spot_depth(wpos, ny, nx);
@@ -8517,8 +8476,7 @@ static void process_monster_pet(int Ind, int m_idx)
 		}
 		if (!find_player(m_ptr->owner)) return; //hack: the owner must be online please. taking this out -> panic()
 		/* the player is in the way.  attack him. */
-		if (do_move && (c_ptr->m_idx < 0) ) //
-		{
+		if (do_move && (c_ptr->m_idx < 0) ) {
 			/* sanity check */
 			if (Players[0-c_ptr->m_idx]->id != m_ptr->owner && 
 			   (find_player(m_ptr->owner) == 0 || 
@@ -8562,8 +8520,7 @@ static void process_monster_pet(int Ind, int m_idx)
 
 
 		/* creature has been allowed move */
-		if (do_move)
-		{
+		if (do_move) {
 			/* take a turn */
 			do_turn = TRUE;
 
@@ -8571,8 +8528,7 @@ static void process_monster_pet(int Ind, int m_idx)
 			zcave[oy][ox].m_idx = c_ptr->m_idx;
 
 			/* mega-hack -- move the old monster, if any */
-			if (c_ptr->m_idx > 0)
-			{
+			if (c_ptr->m_idx > 0) {
 				/* move the old monster */
 				y_ptr->fy = oy;
 				y_ptr->fx = ox;
@@ -8599,8 +8555,7 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 		}
 
 		/* stop when done */
-		if (do_turn) 
-		{
+		if (do_turn) {
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
 			break;
 		}
@@ -8614,9 +8569,8 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 	}
 }
 #endif
-static void process_monster_golem(int Ind, int m_idx)
-{
-        player_type *p_ptr;
+static void process_monster_golem(int Ind, int m_idx) {
+        //player_type *p_ptr;
 
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
@@ -8627,21 +8581,23 @@ static void process_monster_golem(int Ind, int m_idx)
 	int			mm[8];
 
 	cave_type    	*c_ptr;
-	object_type 	*o_ptr;
+	//object_type 	*o_ptr;
 	monster_type	*y_ptr;
 
 	bool		do_turn;
 	bool		do_move;
-	bool		do_view;
+	//bool		do_view;
 
 	bool		did_open_door;
 	bool		did_bash_door;
+#ifdef OLD_MONSTER_LORE
 	bool		did_take_item;
 	bool		did_kill_item;
 	bool		did_move_body;
 	bool		did_kill_body;
 	bool		did_pass_wall;
 	bool		did_kill_wall;
+#endif
 
 
         /* Hack -- don't process monsters on wilderness levels that have not
@@ -8650,38 +8606,32 @@ static void process_monster_golem(int Ind, int m_idx)
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
-        if (Ind > 0) p_ptr = Players[Ind];
-        else p_ptr = NULL;
+        //if (Ind > 0) p_ptr = Players[Ind];
+        //else p_ptr = NULL;
 
 	/* Handle "stun" */
-	if (m_ptr->stunned)
-	{
+	if (m_ptr->stunned) {
 		int d = 1;
 
 		/* Make a "saving throw" against stun */
-		if (rand_int(5000) <= r_ptr->level * r_ptr->level)
-		{
+		if (rand_int(5000) <= r_ptr->level * r_ptr->level) {
 			/* Recover fully */
 			d = m_ptr->stunned;
 		}
 
 		/* Hack -- Recover from stun */
-		if (m_ptr->stunned > d)
-		{
+		if (m_ptr->stunned > d) {
 			/* Recover somewhat */
 			m_ptr->stunned -= d;
 		}
-
 		/* Fully recover */
-		else
-		{
+		else {
 			/* Recover fully */
 			m_ptr->stunned = 0;
 		}
 
 		/* Still stunned */
-		if (m_ptr->stunned) 
-		{
+		if (m_ptr->stunned) {
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
 			return;
 		}
@@ -8689,21 +8639,17 @@ static void process_monster_golem(int Ind, int m_idx)
 
 
 	/* Handle confusion */
-	if (m_ptr->confused)
-	{
+	if (m_ptr->confused) {
 		/* Amount of "boldness" */
 		int d = randint(r_ptr->level / 10 + 1);
 
 		/* Still confused */
-		if (m_ptr->confused > d)
-		{
+		if (m_ptr->confused > d) {
 			/* Reduce the confusion */
 			m_ptr->confused -= d;
 		}
-
 		/* Recovered */
-		else
-		{
+		else {
 			/* No longer confused */
 			m_ptr->confused = 0;
 		}
@@ -8715,8 +8661,7 @@ static void process_monster_golem(int Ind, int m_idx)
 	
 #if 0 /* No golem spells -- yet */
 	/* Attempt to cast a spell */
-	if (make_attack_spell(Ind, m_idx)) 
-	{
+	if (make_attack_spell(Ind, m_idx)) {
 		m_ptr->energy -= level_speed(&m_ptr->wpos);
 		return;
 	}
@@ -8728,14 +8673,12 @@ static void process_monster_golem(int Ind, int m_idx)
 
 
 	/* Confused -- 100% random */
-	if (m_ptr->confused)
-	{
+	if (m_ptr->confused) {
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 	}
 	/* Normal movement */
-	else
-	{
+	else {
 		/* Logical moves */
                 if (!get_moves_golem(Ind, m_idx, mm)) return;
 	}
@@ -8744,22 +8687,22 @@ static void process_monster_golem(int Ind, int m_idx)
 	/* Assume nothing */
 	do_turn = FALSE;
 	do_move = FALSE;
-	do_view = FALSE;
+	//do_view = FALSE;
 
 	/* Assume nothing */
 	did_open_door = FALSE;
 	did_bash_door = FALSE;
+#ifdef OLD_MONSTER_LORE
 	did_take_item = FALSE;
 	did_kill_item = FALSE;
 	did_move_body = FALSE;
 	did_kill_body = FALSE;
 	did_pass_wall = FALSE;
 	did_kill_wall = FALSE;
-
+#endif
 
 	/* Take a zero-terminated array of "directions" */
-	for (i = 0; mm[i]; i++)
-	{
+	for (i = 0; mm[i]; i++) {
 		/* Get the direction */
 		d = mm[i];
 
@@ -8774,7 +8717,7 @@ static void process_monster_golem(int Ind, int m_idx)
 		c_ptr = &zcave[ny][nx];
 
 		/* Access that cave grid's contents */
-		o_ptr = &o_list[c_ptr->o_idx];
+		//o_ptr = &o_list[c_ptr->o_idx];
 
 		/* Access that cave grid's contents */
 		y_ptr = &m_list[c_ptr->m_idx];
@@ -8786,28 +8729,23 @@ static void process_monster_golem(int Ind, int m_idx)
 		{
 			/* Nothing */
 		}
-
 #if 0
 		/* Floor is open? */
-		else if (cave_floor_bold(zcave, ny, nx))
-		{
+		else if (cave_floor_bold(zcave, ny, nx)) {
 			/* Go ahead and move */
 			do_move = TRUE;
 		}
 #else
-		else if (creature_can_enter(r_ptr, c_ptr))
-		{
+		else if (creature_can_enter(r_ptr, c_ptr)) {
 			/* Go ahead and move */
 			do_move = TRUE;
 		}
 #endif
 		/* Player ghost in wall XXX */
-		else if (c_ptr->m_idx < 0)
-		{
+		else if (c_ptr->m_idx < 0) {
 			/* Move into player */
 			do_move = TRUE;
 		}
-
 		/* Permanent wall / permanently wanted structure */
 		else if (((c_ptr->feat >= FEAT_PERM_EXTRA) ||
 			(c_ptr->feat == FEAT_PERM_CLEAR) ||
@@ -8832,25 +8770,25 @@ static void process_monster_golem(int Ind, int m_idx)
 		{
 			/* Nothing */
 		}
-
 		/* Monster moves through walls (and doors) */
-		else if (r_ptr->flags2 & RF2_PASS_WALL)
-		{
+		else if (r_ptr->flags2 & RF2_PASS_WALL) {
 			/* Pass through walls/doors/rubble */
 			do_move = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 			/* Monster went through a wall */
 			did_pass_wall = TRUE;
+#endif
 		}
-
 		/* Monster destroys walls (and doors) */
-		else if (r_ptr->flags2 & RF2_KILL_WALL)
-		{
+		else if (r_ptr->flags2 & RF2_KILL_WALL) {
 			/* Eat through walls/doors/rubble */
 			do_move = TRUE;
 
+#ifdef OLD_MONSTER_LORE
 			/* Monster destroyed a wall */
 			did_kill_wall = TRUE;
+#endif
 
 			/* Create floor */
 //			c_ptr->feat = FEAT_FLOOR;
@@ -8866,9 +8804,8 @@ static void process_monster_golem(int Ind, int m_idx)
 			everyone_lite_spot(wpos, ny, nx);
 
 			/* Note changes to viewable region */
-			if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
+			//if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
 		}
-
 		/* Handle doors and secret doors */
 		else if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 		          (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
@@ -8880,22 +8817,18 @@ static void process_monster_golem(int Ind, int m_idx)
 			do_turn = TRUE;
 
 			/* Creature can open doors. */
-			if (r_ptr->flags2 & RF2_OPEN_DOOR)
-			{
+			if (r_ptr->flags2 & RF2_OPEN_DOOR) {
 				/* Closed doors and secret doors */
 				if ((c_ptr->feat == FEAT_DOOR_HEAD) ||
-				    (c_ptr->feat == FEAT_SECRET))
-				{
+				    (c_ptr->feat == FEAT_SECRET)) {
 					/* The door is open */
 					did_open_door = TRUE;
 
 					/* Do not bash the door */
 					may_bash = FALSE;
 				}
-
 				/* Locked doors (not jammed) */
-				else if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08)
-				{
+				else if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08) {
 					int k;
 
 					/* Door power */
@@ -8908,8 +8841,7 @@ static void process_monster_golem(int Ind, int m_idx)
 #endif
 
 					/* Try to unlock it XXX XXX XXX */
-					if (rand_int(m_ptr->hp / 10) > k)
-					{
+					if (rand_int(m_ptr->hp / 10) > k) {
 						/* Unlock the door */
 						c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 
@@ -8920,8 +8852,7 @@ static void process_monster_golem(int Ind, int m_idx)
 			}
 
 			/* Stuck doors -- attempt to bash them down if allowed */
-			if (may_bash && (r_ptr->flags2 & RF2_BASH_DOOR))
-			{
+			if (may_bash && (r_ptr->flags2 & RF2_BASH_DOOR)) {
 				int k;
 
 				/* Door power */
@@ -8934,8 +8865,7 @@ static void process_monster_golem(int Ind, int m_idx)
 #endif
 
 				/* Attempt to Bash XXX XXX XXX */
-				if (rand_int(m_ptr->hp / 10) > k)
-				{
+				if (rand_int(m_ptr->hp / 10) > k) {
 					/* The door was bashed open */
 					did_bash_door = TRUE;
 
@@ -8946,19 +8876,13 @@ static void process_monster_golem(int Ind, int m_idx)
 
 
 			/* Deal with doors in the way */
-			if (did_open_door || did_bash_door)
-			{
+			if (did_open_door || did_bash_door) {
 				/* Break down the door */
 				if (did_bash_door && (rand_int(100) < 50))
-				{
 					c_ptr->feat = FEAT_BROKEN;
-				}
-
 				/* Open the door */
 				else
-				{
 					c_ptr->feat = FEAT_OPEN;
-				}
 
 				/* Notice */
 				note_spot_depth(wpos, ny, nx);
@@ -8969,8 +8893,7 @@ static void process_monster_golem(int Ind, int m_idx)
 		}
 
 		/* The player is in the way.  Attack him. */
-                if (do_move && (c_ptr->m_idx < 0))
-		{
+                if (do_move && (c_ptr->m_idx < 0)) {
 			/* Do the attack */
                         if (Players[0-c_ptr->m_idx]->id != m_ptr->owner) (void)make_attack_melee(0 - c_ptr->m_idx, m_idx);
 
@@ -8982,8 +8905,7 @@ static void process_monster_golem(int Ind, int m_idx)
 		}
 
 		/* A monster is in the way */
-		if (do_move && c_ptr->m_idx > 0)
-		{
+		if (do_move && c_ptr->m_idx > 0) {
                         /* Attack it ! */
                         if (m_ptr->owner != y_ptr->owner) monster_attack_normal(c_ptr->m_idx, m_idx);
 
@@ -8996,8 +8918,7 @@ static void process_monster_golem(int Ind, int m_idx)
 
 
 		/* Creature has been allowed move */
-		if (do_move)
-		{
+		if (do_move) {
 			/* Take a turn */
 			do_turn = TRUE;
 
@@ -9005,8 +8926,7 @@ static void process_monster_golem(int Ind, int m_idx)
 			zcave[oy][ox].m_idx = c_ptr->m_idx;
 
 			/* Mega-Hack -- move the old monster, if any */
-			if (c_ptr->m_idx > 0)
-			{
+			if (c_ptr->m_idx > 0) {
 				/* Move the old monster */
 				y_ptr->fy = oy;
 				y_ptr->fx = ox;
@@ -9033,8 +8953,7 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 		}
 
 		/* Stop when done */
-		if (do_turn) 
-		{
+		if (do_turn) {
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
 			break;
 		}
@@ -9042,8 +8961,7 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 
 #if 0
 	/* Notice changes in view */
-	if (do_view)
-	{
+	if (do_view) {
 		/* Update some things */
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 	}
@@ -9091,8 +9009,7 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 
 /* FIXME */
 
-void process_monsters(void)
-{
+void process_monsters(void) {
 	int		k, i, e, pl, tmp, j, n;
 	int		fx, fy;
 
@@ -9119,10 +9036,10 @@ void process_monsters(void)
 
 	/* Reset projection counts */
 	if (count_project_times >= PROJECTION_FLUSH_LIMIT_TURNS) {
-#if DEBUG_LEVEL > 2
+ #if DEBUG_LEVEL > 2
 		if (count_project > PROJECTION_FLUSH_LIMIT)
 			s_printf("project() flush suppressed(%d)\n", count_project);
-#endif	// DEBUG_LEVEL
+ #endif	// DEBUG_LEVEL
 		count_project = 0;
 		count_project_times = 0;
 	}
@@ -9152,6 +9069,10 @@ void process_monsters(void)
 
 		r_ptr = race_inf(m_ptr);
 
+		/* Access the location */
+		fx = m_ptr->fx;
+		fy = m_ptr->fy;
+
 		/* Efficiency */
 //		if (!(getcave(m_ptr->wpos))) return(FALSE);
 //		if (!Players_on_depth(&m_ptr->wpos)) continue;
@@ -9179,7 +9100,7 @@ void process_monsters(void)
 			m_ptr->extra++;
 			if ((m_ptr->r_idx == RI_TARGET_DUMMY1) && (m_ptr->extra == 30)) {
 				m_ptr->r_idx = RI_TARGET_DUMMY2;
-				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+				everyone_lite_spot(&m_ptr->wpos, fy, fx);
 			}
 		}
 		if (((m_ptr->r_idx == RI_TARGET_DUMMYA1) || (m_ptr->r_idx == RI_TARGET_DUMMYA2)) &&
@@ -9188,7 +9109,7 @@ void process_monsters(void)
 			m_ptr->extra++;
 			if ((m_ptr->r_idx == RI_TARGET_DUMMYA1) && (m_ptr->extra == 30)) {
 				m_ptr->r_idx = RI_TARGET_DUMMYA2;
-				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+				everyone_lite_spot(&m_ptr->wpos, fy, fx);
 			}
 		}
 
@@ -9253,7 +9174,7 @@ void process_monsters(void)
 			// if (player_is_king(pl)) continue;
 
 			/* Compute distance */
-			j = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx);
+			j = distance(p_ptr->py, p_ptr->px, fy, fx);
 
 			/* Change monster's highest player encounter - mode 3: monster is awake and player is within its area of awareness */
 			if (cfg.henc_strictness == 3 && !m_ptr->csleep) {
@@ -9268,7 +9189,7 @@ void process_monsters(void)
 //			if (player_invis(pl, m_ptr, j)) continue;	/* moved */
 
 			/* Glaur. Check if monster has LOS to the player */
-			new_los = los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx);
+			new_los = los(&p_ptr->wpos, p_ptr->py, p_ptr->px, fy, fx);
 
 #ifdef USE_SOUND_2010
 			/* USE_SOUND_2010 -- temporary-boss-monster checks:
@@ -9309,7 +9230,7 @@ void process_monsters(void)
 			   if monster stands right behind a corner and player is still further away.
 			   In that case the player who doesn't check los() may still be able to cast
 			   while the monster couldn't. So double check via projectable..() here: */
-			new_los |= projectable_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx, MAX_RANGE);
+			new_los |= projectable_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, fy, fx, MAX_RANGE);
 #endif
 
 			/*	if (p_ptr->ghost)
@@ -9320,7 +9241,7 @@ void process_monsters(void)
 			/* Hack: If monster can ignore walls, we don't need 'air los', but can instead
 			   use a 'wall los' which just gets hindered by perma-walls ;) - C. Blue */
 			if ((r_ptr->flags2 & (RF2_KILL_WALL | RF2_PASS_WALL)) &&
-			    los_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx))
+			    los_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, fy, fx))
 	/* add a distance check here, or they'll have full level los */
 				new_los = TRUE;
 #endif
@@ -9429,14 +9350,6 @@ void process_monsters(void)
 		noise = (1L << (30 - p_ptr->skill_stl));
 
 
-		/* Access the race */
-                r_ptr = race_inf(m_ptr);
-
-		/* Access the location */
-		fx = m_ptr->fx;
-		fy = m_ptr->fy;
-
-
 		/* Assume no move */
 		test = FALSE;
 
@@ -9454,11 +9367,11 @@ void process_monsters(void)
 #else
 		else if (
 //		    (player_has_los_bold(closest, fy, fx)) ||
-#ifndef REDUCED_AGGRAVATION
+ #ifndef REDUCED_AGGRAVATION
 		    (p_ptr->aggravate && m_ptr->cdis <= MAX_SIGHT))
-#else
+ #else
 		    (p_ptr->aggravate && m_ptr->cdis <= 50))
-#endif
+ #endif
 
 #endif	// 0
 		{
@@ -9472,8 +9385,7 @@ void process_monsters(void)
 		else if (flow_by_sound &&
 		    (cave[py][px].when == cave[fy][fx].when) &&
 		    (cave[fy][fx].cost < MONSTER_FLOW_DEPTH) &&
-		    (cave[fy][fx].cost < r_ptr->aaf))
-		{
+		    (cave[fy][fx].cost < r_ptr->aaf)) {
 			/* We can "smell" the player */
 			test = TRUE;
 		}
@@ -9507,13 +9419,12 @@ void process_monsters(void)
 			suppress_message = FALSE;
 		}
 #ifdef RPG_SERVER
-		else if (m_ptr->pet) {  //pet
+		else if (m_ptr->pet) { //pet
 			int p = find_player(m_ptr->owner);
 			process_monster_pet(p, i);
 		}
 #endif
-		else //golem
-		{
+		else { //golem
 			int p = find_player(m_ptr->owner);
 			process_monster_golem(p, i);
 		}

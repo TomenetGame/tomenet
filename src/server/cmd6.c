@@ -1689,12 +1689,11 @@ void do_cmd_fill_bottle(int Ind)
 /*
  * Empty a potion in the backpack
  */
-void do_cmd_empty_potion(int Ind, int slot)
-{
+void do_cmd_empty_potion(int Ind, int slot) {
 	player_type *p_ptr = Players[Ind];
 
 	//bool ident;
-	int tval, sval; //, k_idx, item;
+	int tval;//, k_idx, item;
 
 	object_type *o_ptr, *q_ptr, forge;
 	//cptr q, s;
@@ -1703,9 +1702,7 @@ void do_cmd_empty_potion(int Ind, int slot)
 	if (!o_ptr->k_idx) return;
 
 	tval = o_ptr->tval;
-	sval = o_ptr->sval;
-	if (tval != TV_POTION && tval != TV_POTION2)
-	{
+	if (tval != TV_POTION && tval != TV_POTION2) {
 		msg_print(Ind, "\377oThat's not a potion!");
 		return;
 	}
@@ -1714,7 +1711,7 @@ void do_cmd_empty_potion(int Ind, int slot)
 	q_ptr = &forge;
 	object_wipe(q_ptr);
 	q_ptr->number = 1;
-	invcopy(q_ptr, lookup_kind(TV_BOTTLE, 1));//no SVAL defined??
+	invcopy(q_ptr, lookup_kind(TV_BOTTLE, SV_EMPTY_BOTTLE));
 	q_ptr->level = o_ptr->level;
 
 	/* Destroy a potion in the pack */

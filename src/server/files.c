@@ -557,7 +557,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 	/* Backup value for "line" */
 	s32b back = 0;
 	/* This screen has sub-screens */
-	bool menu = FALSE;
+	//bool menu = FALSE;
 	/* Current help file */
 	FILE *fff = NULL;
 	/* Find this string (if any) */
@@ -575,11 +575,15 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 	/* Sub-menu information */
 	char hook[10][32];
 	/* Stationary title bar, derived from 1st line of the file or from 'what' parm. */
+#ifdef HELP_AUX_GRABS_TITLE
 	bool use_title = FALSE;
+#endif
 
 	if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0)) {
 		/* use first line in the file as stationary title */
+#ifdef HELP_AUX_GRABS_TITLE
 		use_title = TRUE;
+#endif
 
 		if (divl) {
 			if (is_older_than(&Players[Ind]->version, 4, 4, 9, 4, 0, 0)) {
@@ -670,7 +674,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 			    (buf[8] == b2) && (buf[9] == ' '))
 			{
 				/* This is a menu file */
-				menu = TRUE;
+				//menu = TRUE;
 
 				/* Extract the menu item */
 				k = buf[7] - '0';
@@ -1578,8 +1582,7 @@ static int highscore_where(high_score *score, int *erased_slot)
  * Actually place an entry into the high score file
  * Return the location (0 is best) or -1 on "failure"
  */
-static int highscore_add(high_score *score)
-{
+static int highscore_add(high_score *score) {
 	int             i, slot;
 	high_score      the_score, tmpscore;
 	bool            done = FALSE;
@@ -1607,47 +1610,43 @@ static int highscore_add(high_score *score)
 
 #ifndef NEW_HISCORE
 	if (!move_down) {
-	/* Slide all the scores down one */
-	for (i = slot; !done && (i < MAX_HISCORES); i++)
-	{
-		/* Read the old guy, note errors */
-		if (highscore_seek(i)) return (-1);
-		if (highscore_read(&tmpscore)) done = TRUE;
+		/* Slide all the scores down one */
+		for (i = slot; !done && (i < MAX_HISCORES); i++) {
+			/* Read the old guy, note errors */
+			if (highscore_seek(i)) return (-1);
+			if (highscore_read(&tmpscore)) done = TRUE;
 
-		/* Back up and dump the score we were holding */
-		if (highscore_seek(i)) return (-1);
-		if (highscore_write(&the_score)) return (-1);
+			/* Back up and dump the score we were holding */
+			if (highscore_seek(i)) return (-1);
+			if (highscore_write(&the_score)) return (-1);
 
-		if (move_up && !strcmp(score->who, tmpscore.who))
-		{
-			/* If older score is to be removed, we can stop here */
-			return(slot);
+			if (move_up && !strcmp(score->who, tmpscore.who)) {
+				/* If older score is to be removed, we can stop here */
+				return(slot);
+			}
+
+			/* Hack -- Save the old score, for the next pass */
+			the_score = tmpscore;
 		}
-		
-		/* Hack -- Save the old score, for the next pass */
-		the_score = tmpscore;
-	}
 	} else {
-	/* Move upwards through the score board */
-	for (i = slot; !done && (i >= 0); i--)
-	{
-		/* Read the old guy, note errors */
-		if (highscore_seek(i)) return (-1);
-		if (highscore_read(&tmpscore)) done = TRUE;
+		/* Move upwards through the score board */
+		for (i = slot; !done && (i >= 0); i--) {
+			/* Read the old guy, note errors */
+			if (highscore_seek(i)) return (-1);
+			if (highscore_read(&tmpscore)) done = TRUE;
 
-		/* Back up and dump the score we were holding */
-		if (highscore_seek(i)) return (-1);
-		if (highscore_write(&the_score)) return (-1);
+			/* Back up and dump the score we were holding */
+			if (highscore_seek(i)) return (-1);
+			if (highscore_write(&the_score)) return (-1);
 
-		if (!strcmp(score->who, tmpscore.who))
-		{
-			/* If older score is to be removed, we can stop here */
-			return(slot);
+			if (!strcmp(score->who, tmpscore.who)) {
+				/* If older score is to be removed, we can stop here */
+				return(slot);
+			}
+
+			/* Hack -- Save the old score, for the next pass */
+			the_score = tmpscore;
 		}
-		
-		/* Hack -- Save the old score, for the next pass */
-		the_score = tmpscore;
-	}
 	}
 #else
 	/* Erase one old entry first? */
@@ -1706,7 +1705,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 static void display_scores_aux(int Ind, int line, int note, int erased_slot, high_score *score)
 #endif
 {
-	int             i, j, from, to, attr, place;
+	int             i, j, from, to, place;//, attr
 	char attrc[3];
 
 	high_score      the_score;
@@ -1746,9 +1745,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 
 	/* Hack -- Count the high scores */
 	for (i = 0; i < MAX_HISCORES; i++)
-	{
 		if (highscore_read(&the_score)) break;
-	}
 
 #ifndef NEW_HISCORE
 	/* Hack -- allow "fake" entry to be last */
@@ -1762,8 +1759,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 	if (i > to) i = to;
 
 	/* Show 5 per page, until "done" */
-	for (j = from, place = j+1; j < i; j++, place++)
-	{
+	for (j = from, place = j+1; j < i; j++, place++) {
 		int pr, pc, clev, mlev, cdun, mdun;
 		byte modebuf;
 		char modestr[20], modecol[5];
@@ -1771,15 +1767,14 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 
 
 		/* Hack -- indicate death in yellow */
-		attr = (j == note) ? TERM_YELLOW : TERM_WHITE;
+		//attr = (j == note) ? TERM_YELLOW : TERM_WHITE;
 
 
 		/* Mega-Hack -- insert a "fake" record */
-		if ((note == j) && score)
-		{
+		if ((note == j) && score) {
 			sprintf(attrc, "\377G");
 			the_score = (*score);
-			attr = TERM_L_GREEN;
+			//attr = TERM_L_GREEN;
 			score = NULL;
 			note = -1;
 			j--;
@@ -1787,8 +1782,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		}
 
 		/* Read a normal record */
-		else
-		{
+		else {
 			sprintf(attrc, "\377w");
 #ifdef NEW_HISCORE
 			/* unwrap display hack part 2 */
@@ -1945,10 +1939,9 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
  *
  * Assumes "signals_ignore_tstp()" has been called.
  */
-static errr top_twenty(int Ind)
-{
+static errr top_twenty(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int          j;
+	//int          j;
 
 	high_score   the_score;
 
@@ -1957,23 +1950,20 @@ static errr top_twenty(int Ind)
 	if (is_admin(p_ptr)) return 0;
 
 	/* No score file */
-	if (highscore_fd < 0)
-	{
+	if (highscore_fd < 0) {
 		s_printf("Score file unavailable.\n");
 		return (0);
 	}
 
 	/* Interupted */
-	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Interrupting"))
-	{
+	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Interrupting")) {
 		msg_print(Ind, "Score not registered due to interruption.");
 		/* display_scores_aux(0, 10, -1, NULL); */
 		return (0);
 	}
 
 	/* Quitter */
-	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Quitting"))
-	{
+	if (!p_ptr->total_winner && streq(p_ptr->died_from, "Quitting")) {
 		msg_print(Ind, "Score not registered due to quitting.");
 		/* display_scores_aux(0, 10, -1, NULL); */
 		return (0);
@@ -2037,7 +2027,8 @@ static errr top_twenty(int Ind)
 	if (fd_lock(highscore_fd, F_WRLCK)) return (1);
 
 	/* Add a new entry to the score list, see where it went */
-	j = highscore_add(&the_score);
+	//j = highscore_add(&the_score);
+	highscore_add(&the_score);
 
 	/* Unlock the highscore file, or fail */
 	if (fd_lock(highscore_fd, F_UNLCK)) return (1);
@@ -2045,14 +2036,9 @@ static errr top_twenty(int Ind)
 
 #if 0
 	/* Hack -- Display the top fifteen scores */
-	if (j < 10)
-	{
-		display_scores_aux(0, 15, j, NULL);
-	}
-
+	if (j < 10) display_scores_aux(0, 15, j, NULL);
 	/* Display the scores surrounding the player */
-	else
-	{
+	else {
 		display_scores_aux(0, 5, j, NULL);
 		display_scores_aux(j - 2, j + 7, j, NULL);
 	}
@@ -2326,13 +2312,12 @@ void display_scores(int Ind, int line)
  * Get a random line from a file
  * Based on the monster speech patch by Matt Graham,
  */
-errr get_rnd_line(cptr file_name, int entry, char *output, int max_len)
-{
+errr get_rnd_line(cptr file_name, int entry, char *output, int max_len) {
 	FILE    *fp;
 	char    buf[1024];
 	int     line = 0, counter, test, numentries;
 	int     line_num = 0;
-	bool    found = FALSE;
+	//bool    found = FALSE;
 
 
 	/* Build the filename */
@@ -2345,43 +2330,33 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len)
 	if (!fp) return (-1);
 
 	/* Find the entry of the monster */
-	while (TRUE)
-	{
+	while (TRUE) {
 		/* Get a line from the file */
-		if (my_fgets(fp, buf, 1024, FALSE) == 0)
-		{
+		if (my_fgets(fp, buf, 1024, FALSE) == 0) {
 			/* Count the lines */
 			line_num++;
 
 			/* Look for lines starting with 'N:' */
-			if ((buf[0] == 'N') && (buf[1] == ':'))
-			{
+			if ((buf[0] == 'N') && (buf[1] == ':')) {
 				/* Allow default lines */
-				if (buf[2] == '*')
-				{
+				if (buf[2] == '*') {
 					/* Default lines */
-					found = TRUE;
+					//found = TRUE;
 					break;
 				}
 				/* Get the monster number */
-				else if (sscanf(&(buf[2]), "%d", &test) != EOF)
-				{
+				else if (sscanf(&(buf[2]), "%d", &test) != EOF) {
 					/* Is it the right monster? */
-					if (test == entry)
-					{
-						found = TRUE;
+					if (test == entry) {
+						//found = TRUE;
 						break;
 					}
-				}
-				else
-				{
+				} else {
 					my_fclose(fp);
 					return (-1);
 				}
 			}
-		}
-		else
-		{
+		} else {
 			/* Reached end of file */
 			my_fclose(fp);
 			return (-1);
@@ -2390,24 +2365,19 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len)
 	}
 
 	/* Get the number of entries */
-	while (TRUE)
-	{
+	while (TRUE) {
 		/* Get the line */
-		if (my_fgets(fp, buf, 1024, FALSE) == 0)
-		{
+		if (my_fgets(fp, buf, 1024, FALSE) == 0) {
 			/* Count the lines */
 			line_num++;
 
 			/* Look for the number of entries */
-			if (isdigit(buf[0]))
-			{
+			if (isdigit(buf[0])) {
 				/* Get the number of entries */
 				numentries = atoi(buf);
 				break;
 			}
-		}
-		else
-		{
+		} else {
 			/* Count the lines */
 			line_num++;
 
@@ -2416,25 +2386,20 @@ errr get_rnd_line(cptr file_name, int entry, char *output, int max_len)
 		}
 	}
 
-	if (numentries > 0)
-	{
+	if (numentries > 0) {
 		/* Grab an appropriate line number */
 		line = rand_int(numentries);
 
 		/* Get the random line */
-		for (counter = 0; counter <= line; counter++)
-		{
+		for (counter = 0; counter <= line; counter++) {
 			/* Count the lines */
 			line_num++;
 
 			/* Try to read the line */
-			if (my_fgets(fp, buf, 1024, FALSE) == 0)
-			{
+			if (my_fgets(fp, buf, 1024, FALSE) == 0) {
 				/* Found the line */
 				if (counter == line) break;
-			}
-			else
-			{
+			} else {
 				my_fclose(fp);
 				return (-1);
 			}

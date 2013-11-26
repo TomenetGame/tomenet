@@ -1943,13 +1943,12 @@ static void player_create_tmpfile(int Ind)
 	strcpy(p_ptr->infofile, file_name);
 }
 
-static void player_setup(int Ind, bool new)
-{
+static void player_setup(int Ind, bool new) {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i, d, count = 0;
 	dun_level *l_ptr;
 
-	bool unstaticed = FALSE;
+	//bool unstaticed = FALSE;
 	bool panic = p_ptr->panic;
 
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -2160,7 +2159,7 @@ static void player_setup(int Ind, bool new)
 		/* Set the unstaticed variable to true so we know to do a non-LOS requiring
 		 * scatter when we place the player.  See below.
 		 */
-		unstaticed = TRUE; /* seems unused atm! */
+		//unstaticed = TRUE; /* seems unused atm! */
 	}
 
 	/* Rebuild the level if necessary */

@@ -7219,7 +7219,7 @@ void dungeon(void)
 }
 
 void set_runlevel(int val) {
-	static bool meta = TRUE;
+	//static bool meta = TRUE;
 
 	switch(val) {
 		case -1:
@@ -7240,7 +7240,7 @@ void set_runlevel(int val) {
 		case 3:
 			/* Hide from the meta - server socket still open */
 			Report_to_meta(META_DIE);
-			meta = FALSE;
+			//meta = FALSE;
 			msg_broadcast(0, "\377rServer will close soon.");
 			break;
 		case 4:
@@ -7254,7 +7254,7 @@ void set_runlevel(int val) {
 			break;
 		case 1024:
 			Report_to_meta(META_DIE);
-			meta = FALSE;
+			//meta = FALSE;
 			break;
 			/* Hack -- character edit (possessor) mode */
 		case 2043:
@@ -7276,7 +7276,7 @@ void set_runlevel(int val) {
 			if (cfg.runlevel != 6)
 				msg_broadcast(0, "\377GServer shutdown cancelled.");
 			Report_to_meta(META_START);
-			meta = TRUE;
+			//meta = TRUE;
 			val = 6;
 			break;
 	}

@@ -39,6 +39,7 @@
 /* Artifact/ego item return structure */
 static artifact_type randart;
 
+#if 0 /*unused*/
 /*
  * Calculate the multiplier we'll get with a given bow type.
  * This is done differently in 2.8.2 than it was in 2.8.1.
@@ -52,7 +53,7 @@ static int bow_multiplier (int sval) {
 	}
 	return 0;
 }
-
+#endif
 
 /*
  * We've just added an ability which uses the pval bonus.
@@ -121,7 +122,7 @@ static void do_curse (artifact_type *a_ptr)
 s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	object_kind *k_ptr = &k_info[lookup_kind(a_ptr->tval, a_ptr->sval)];
 	s32b p = 1;
-	int immunities = 0, i, mult;
+	int immunities = 0, i;//, mult;
 
 	/* Hack: MHDSMs don't get their k_ptr imms added up because they don't
 	   use normal flags but xtra2 instead. Fix that here: */
@@ -136,7 +137,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	/* Evaluate certain abilities based on type of object. */
 	switch (a_ptr->tval) {
 	case TV_BOW:
-		mult = bow_multiplier (a_ptr->sval);
+		//mult = bow_multiplier (a_ptr->sval);
 		if (a_ptr->flags3 & TR3_XTRA_MIGHT) p += 30;
 		if (a_ptr->flags3 & TR3_XTRA_SHOTS) p += 20;
 

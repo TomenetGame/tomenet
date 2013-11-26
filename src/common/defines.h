@@ -2727,6 +2727,9 @@
 #define MAX_SYLLABLES 164       /* Used with scrolls (see below) */ 
 
 
+/* sval for TV_BOTTLE */
+#define SV_EMPTY_BOTTLE		1
+
 /* svals for TV_KEY */
 #define SV_HOUSE_KEY		1
 #define SV_GUILD_KEY		2

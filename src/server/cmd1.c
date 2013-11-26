@@ -3527,11 +3527,13 @@ static void py_attack_player(int Ind, int y, int x, bool old)
  * Note: old == TRUE if not auto-retaliating actually
  *       (important for dual-backstab treatment) - C. Blue
  */
-static void py_attack_mon(int Ind, int y, int x, bool old)
-{
+static void py_attack_mon(int Ind, int y, int x, bool old) {
 	player_type	*p_ptr = Players[Ind];
 	int		num = 0, bonus, chance, slot, owner_Ind = 0, sfx = 0;
-	int		k, k2, k3, bs_multiplier;
+	int		k, k3, bs_multiplier;
+#ifdef CRIT_VS_VORPAL
+	int		k2;
+#endif
 	long int	kl;
 	object_type	*o_ptr = NULL;
 	bool		do_quake = FALSE;
@@ -3550,7 +3552,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	bool		secondary_wield = (p_ptr->inventory[INVEN_ARM].k_idx != 0 && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD);
 	bool		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode; /* Note: primary_wield && secondary_wield == p_ptr->dual_wield (from xtra1.c) actually. */
 	int		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
-	bool		nolite, nolite2, martial = FALSE, did_stun, did_knee, did_slow;
+	bool		martial = FALSE, did_stun, did_knee, did_slow;
 	int		block, parry;
 
 	int		vorpal_cut = 0;
@@ -3592,11 +3594,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	    (r_ptr->flags3 & RF3_NONLIVING) ||
 	    (strchr("Egv", r_ptr->d_char)))
 		drainable = FALSE;
-
-	nolite = !((c_ptr->info & (CAVE_LITE | CAVE_GLOW)) ||
-	    (r_ptr->flags4 & RF4_BR_DARK) ||
-	    (r_ptr->flags6 & RF6_DARKNESS));
-	nolite2 = nolite && !(r_ptr->flags9 & RF9_HAS_LITE);
 
 	/* is it a unique we already got kill credit for? */
 	if ((r_ptr->flags1 & RF1_UNIQUE) &&
@@ -3968,7 +3965,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+#ifdef CRIT_VS_VORPAL
 				k2 = k; /* remember damage before crit */
+#endif
 				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
 #ifdef CRIT_VS_BACKSTAB
 				if (!backstab && !stab_fleeing)
@@ -4150,7 +4149,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* Critical strike moved here, since it works best
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
+#ifdef CRIT_VS_VORPAL
 				k2 = k; /* remember damage before crit */
+#endif
 				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
 #ifdef CRIT_VS_BACKSTAB
 				if (!backstab && !stab_fleeing)
@@ -4226,17 +4227,13 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				backstab = FALSE;
 			   if (martial) {
 				if (r_ptr->flags1 & RF1_UNIQUE) {
-/*					msg_format(Ind, "You %s twist the neck of the sleeping %s for \377e%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
-				        else msg_format(Ind, "You %s twist the neck of the sleeping %s for \377p%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
-*/					msg_format(Ind, "\377%cYou twist the neck of the sleeping %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
+					msg_format(Ind, "\377%cYou twist the neck of the sleeping %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
 					if (uniq_bell) Send_beep(Ind);
 				}
 				else msg_format(Ind, "You twist the neck of the sleeping %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
 			   } else {
 				if (r_ptr->flags1 & RF1_UNIQUE) {
-/*					msg_format(Ind, "You %s stab the helpless, sleeping %s for \377e%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
-					else msg_format(Ind, "You %s stab the helpless, sleeping %s for \377p%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
-*/					msg_format(Ind, "\377%cYou stab the helpless, sleeping %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
+					msg_format(Ind, "\377%cYou stab the helpless, sleeping %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
 					if (uniq_bell) Send_beep(Ind);
 				}
 				else msg_format(Ind, "You stab the helpless, sleeping %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
@@ -4246,17 +4243,13 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				stab_fleeing = FALSE;
 			   if (martial) {
 				if (r_ptr->flags1 & RF1_UNIQUE) {
-/*					msg_format(Ind, "You landed a %s hit on the fleeing %s's back for \377e%d \377wdamage.", nolite2 ? "terrible" : "bitter", r_name_get(m_ptr), k);
-					else msg_format(Ind, "You landed a %s hit on the fleeing %s's back for \377g%d \377wdamage.", nolite2 ? "terrible" : "bitter", r_name_get(m_ptr), k);
-*/					msg_format(Ind, "\377%cYou strike the back of %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
+					msg_format(Ind, "\377%cYou strike the back of %s for \377e%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
 					if (uniq_bell) Send_beep(Ind);
 				}
 				else msg_format(Ind, "You strike the back of %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
 			   } else {
 				if (r_ptr->flags1 & RF1_UNIQUE) {
-/*					msg_format(Ind, "You %s the fleeing %s for \377e%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
-					else msg_format(Ind, "You %s the fleeing %s for \377g%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
-*/					msg_format(Ind, "You backstab the fleeing %s for \377e%d \377wdamage.", r_name_get(m_ptr), k);
+					msg_format(Ind, "You backstab the fleeing %s for \377e%d \377wdamage.", r_name_get(m_ptr), k);
 					if (uniq_bell) Send_beep(Ind);
 				}
 				else msg_format(Ind, "\377%cYou backstab the fleeing %s for \377p%d \377%cdamage.", uniq, r_name_get(m_ptr), k, uniq);
@@ -5279,8 +5272,7 @@ bool player_can_enter(int Ind, byte feature)
     -APD-
  */
 
-void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
-{
+void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos, nwpos, old_wpos;
 
@@ -5290,8 +5282,6 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 
 	cave_type               *c_ptr;
 	struct c_special	*cs_ptr;
-	object_type             *o_ptr;
-	monster_type            *m_ptr;
 	byte                    *w_ptr;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type **zcave;
@@ -5474,12 +5464,6 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy)
 		new_grid_sunlit = TRUE;
 
 	w_ptr = &p_ptr->cave_flag[y][x];
-
-	/* Get the object */
-	o_ptr = &o_list[c_ptr->o_idx];
-
-	/* Get the monster */
-	m_ptr = &m_list[c_ptr->m_idx];
 
 	/* Save "last direction moved" */
 	p_ptr->last_dir = dir;
