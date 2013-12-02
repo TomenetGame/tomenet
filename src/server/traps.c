@@ -4393,7 +4393,7 @@ bool mon_hit_trap(int m_idx)
 	int smartness;
 
 	char m_name[MNAME_LEN];
-	char brand_msg[80] = { '\0' };
+	char brand_msg[MAX_CHARS_WIDE] = { '\0' };
 
 	bool notice = FALSE;
 	bool disarm = FALSE;

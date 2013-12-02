@@ -2530,7 +2530,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	long int kl;
 	player_type *q_ptr;
 	object_type *o_ptr = NULL;
-	char q_name[NAME_LEN], brand_msg[MAX_CHARS] = { '\0' }, hit_desc[MAX_CHARS_WIDE];
+	char q_name[NAME_LEN], brand_msg[MAX_CHARS_WIDE] = { '\0' }, hit_desc[MAX_CHARS_WIDE];
 	bool do_quake = FALSE;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -3538,7 +3538,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 	object_type	*o_ptr = NULL;
 	bool		do_quake = FALSE;
 
-	char		m_name[MNAME_LEN], brand_msg[MAX_CHARS] = { '\0' }, hit_desc[MAX_CHARS_WIDE], mbname[MNAME_LEN];
+	char		m_name[MNAME_LEN], brand_msg[MAX_CHARS_WIDE] = { '\0' }, hit_desc[MAX_CHARS_WIDE], mbname[MNAME_LEN];
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
 
