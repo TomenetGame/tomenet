@@ -4364,7 +4364,11 @@ void do_ping() {
 #endif
 	}
 
+#ifdef USE_SOUND_2010
+ #ifdef SOUND_SDL
 	if (ambient_fading) ambient_handle_fading();
+ #endif
+#endif
 
 	/* Handle chat time-stamping too - C. Blue */
 	if (c_cfg.time_stamp_chat) {
