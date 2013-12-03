@@ -5684,6 +5684,36 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc)
 	return 1;
 }
 
+int Send_mini_map_pos(int Ind, int x, int y, byte a, char c) {
+	player_type *p_ptr = Players[Ind];
+	connection_t *connp = Conn[p_ptr->conn];
+
+	//int Ind2 = 0;
+	//player_type *p_ptr2 = NULL;
+	//connection_t *connp2 = NULL;
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for minimap_pos (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
+
+	/* Sending this packet to a mind-linked person is bad - mikaelh */
+#if 0
+	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2)))
+		connp2 = Conn[p_ptr2->conn];
+#endif
+
+	/* Packet header */
+	Packet_printf(&connp->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, x, y, a, c);
+	//if (Ind2) Packet_printf(&connp2->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, x, y, a, c);
+
+	return 1;
+}
+
 //int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name)
 int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval)
 {

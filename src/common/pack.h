@@ -154,8 +154,9 @@
 #define PKT_SCREEN_DIM		131	/* client's screen dimensions */
 #define PKT_GUILD_CFG		132
 #define PKT_BONI_COL		133	/* client csheet boni tracking */
+#define PKT_MINI_MAP_POS	134
 
-//XXX 134-149
+//XXX 135-149
 #define PKT_AUTO_INSC		148	/* Tell client to apply auto-inscriptions to an item */
 #define PKT_SFX_AMBIENT		149	/* background ambient sfx */
 

@@ -493,6 +493,14 @@ static char inkey_aux(void)
 			/* Flush output - maintain flickering/multi-hued characters */
 			do_flicker();
 
+			/* Animate things: Minimap '@' denoting our own position */
+			if (minimap_posx != -1 && screen_icky) {
+				if ((ticks % 6) < 3)
+					Term_draw(minimap_posx, minimap_posy, TERM_WHITE, '@');
+				else
+					Term_draw(minimap_posx, minimap_posy, minimap_attr, minimap_char);
+			}
+
 			/* Look for a keypress */
 			(void)(Term_inkey(&ch, FALSE, TRUE));
 
@@ -990,7 +998,6 @@ if (c_cfg.keep_topline)
 			/* Continue */
 			continue;
 		}
-
 
 		/* Get a key (see above) */
 		kk = ch = inkey_aux();

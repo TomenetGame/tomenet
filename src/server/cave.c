@@ -4101,8 +4101,7 @@ void display_map(int Ind, int *cy, int *cx)
 
 
 #define WILDMAP_SHOWS_STAIRS
-static void wild_display_map(int Ind, char mode)
-{
+static void wild_display_map(int Ind, char mode) {
 	player_type *p_ptr = Players[Ind];
 
 	int x, y, type;
@@ -4125,8 +4124,9 @@ static void wild_display_map(int Ind, char mode)
 	twpos.wz = 0;
 
 	byte c_dun, c_tow;
-	int c_dun_diff, c_tow_diff;
-	bool admin = is_admin(p_ptr);
+	int c_dun_diff, c_tow_diff, mmpx, mmpy;
+	bool admin = is_admin(p_ptr), sent_pos = FALSE;
+
 
 	if (CL_WINDOW_WID > MAX_WILD_X + 2) {//+ 2 for border
 		offset_x = (CL_WINDOW_WID - MAX_WILD_X) / 2 - 1;//-1 for border
@@ -4188,8 +4188,8 @@ static void wild_display_map(int Ind, char mode)
 		/* for each column */
 		for (x = 0; x < max_wx; x++) {
 			/* Location */
-			twpos.wy = p_ptr->tmp_y + (max_wy)/2 - y;
-			twpos.wx = p_ptr->tmp_x - (max_wx)/2 + x;
+			twpos.wy = p_ptr->tmp_y + (max_wy) / 2 - y;
+			twpos.wx = p_ptr->tmp_x - (max_wx) / 2 + x;
 
 			if (twpos.wy >= 0 && twpos.wy < MAX_WILD_Y && twpos.wx >= 0 && twpos.wx < MAX_WILD_X)
 				type = determine_wilderness_type(&twpos);
@@ -4247,15 +4247,27 @@ static void wild_display_map(int Ind, char mode)
 
 #if 0
 			/* put the @ in the center */
-			if ((y == (MAP_HGT+2)/2) && (x == (MAP_WID+2)/2)) {
+			if ((y == (MAP_HGT + 2) / 2) && (x == (MAP_WID + 2) / 2)) {
 				tc = '@';
 				ta = TERM_WHITE;
 			}
 #else
 			/* since map is navigatable, only put @ if we are there */
 			if (twpos.wx == p_ptr->wpos.wx && twpos.wy == p_ptr->wpos.wy) {
-				tc = '@';
-				ta = TERM_WHITE;
+				if (is_older_than(&p_ptr->version, 4, 5, 5, 1, 0, 0)) {
+					/* directly "hard-sub" it ;) */
+					tc = '@';
+					ta = TERM_WHITE;
+				} else {
+					/* overlay a blinking '@' */
+					mmpx = x;
+					mmpy = y;
+					sent_pos = TRUE;
+				}
+			} else if (!sent_pos) {
+				/* allow overlay on map borders, as indicator */
+				if (twpos.wx == p_ptr->wpos.wx) mmpx = x;
+				if (twpos.wy == p_ptr->wpos.wy) mmpy = y;
 			}
 #endif
 
@@ -4266,7 +4278,6 @@ static void wild_display_map(int Ind, char mode)
 			ma[y][x] = ta;
 		}
 	}
-
 
 	/* Corners */
 	x = max_wx - 1;
@@ -4280,6 +4291,28 @@ static void wild_display_map(int Ind, char mode)
 
 	/* Draw the vertical edges */
 	for (y = 1; y < max_wy; y++) mc[y][0] = mc[y][x] = '|';
+
+
+	/* If we are off-screen, don't draw the usual '@' icon */
+	if (!sent_pos) {
+#if 0
+		/* Don't draw it at all */
+		Send_mini_map_pos(Ind, -1, 0, 0, 0);
+#else
+		/* Draw it on the map border as indicator:
+		     max_wx/wy - 2 (border size of 1 in each direction).
+		   Note: Does currently ignore left/right borders, since they don't exist atm. */
+
+		int yy = p_ptr->tmp_y + max_wy / 2;
+
+		/* On bottom border? */
+		if (p_ptr->wpos.wy < yy - (max_wy - 2)) Send_mini_map_pos(Ind, mmpx + offset_x, max_wy - 1, ma[max_wy - 1][mmpx], '-');
+		/* On top border? */
+		else if (p_ptr->wpos.wy > yy) Send_mini_map_pos(Ind, mmpx + offset_x, 0, ma[0][mmpx], '-');
+		/* On pfft? */
+		else Send_mini_map_pos(Ind, -1, 0, 0, 0); /* paranoia */
+#endif
+	} else Send_mini_map_pos(Ind, mmpx + offset_x, mmpy, ma[mmpy][mmpx], mc[mmpy][mmpx]);
 
 
 	/* Display each map line in order */

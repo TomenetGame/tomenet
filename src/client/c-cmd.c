@@ -715,6 +715,9 @@ void cmd_map(char mode)
 		continue;
 	}
 
+	/* Reset position of our own '@' */
+	minimap_posx = -1;
+
 	/* Reload the screen */
 	Term_load();
 
@@ -2090,6 +2093,8 @@ void cmd_check_misc(void) {
 
 	while (i != ESCAPE) {
 		Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		i = inkey();
 		choice = 0;

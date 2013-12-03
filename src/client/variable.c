@@ -357,12 +357,16 @@ int artifact_list_code[MAX_A_IDX], artifact_list_idx = 0;
 char kind_list_name[MAX_K_IDX][80];
 int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_idx = 0;
 
+/* for DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
+char last_prompt[MAX_CHARS] = { 0 };
+bool last_prompt_macro = FALSE;
+
 int screen_wid = SCREEN_WID, screen_hgt = SCREEN_HGT;
 bool bigmap_hint = TRUE;
 bool in_game = FALSE;
 bool rand_term_lamp;
 int rand_term_lamp_ticks;
 
-/* for DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
-char last_prompt[MAX_CHARS] = { 0 };
-bool last_prompt_macro = FALSE;
+int minimap_posx = -1, minimap_posy;
+byte minimap_attr;
+char minimap_char;

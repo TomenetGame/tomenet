@@ -1052,6 +1052,7 @@ extern int Send_state(int Ind, bool paralyzed, bool searching, bool resting);
 extern int Send_flush(int Ind);
 extern int Send_line_info(int Ind, int y);
 extern int Send_mini_map(int Ind, int y, byte *sa, char *sc);
+extern int Send_mini_map_pos(int Ind, int x, int y, byte a, char c);
 extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval);
 extern int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval,
     byte xtra1, byte xtra2, byte xtra3, byte xtra4, byte xtra5, byte xtra6, byte xtra7, byte xtra8, byte xtra9);

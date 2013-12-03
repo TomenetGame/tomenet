@@ -912,3 +912,7 @@ extern bool ask_for_bigmap_generic(void);
 extern bool in_game;
 extern bool rand_term_lamp;
 extern int rand_term_lamp_ticks;
+
+extern int minimap_posx, minimap_posy;
+extern byte minimap_attr;
+extern char minimap_char;

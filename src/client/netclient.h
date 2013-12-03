@@ -75,6 +75,7 @@ int Receive_music(void);
 int Receive_sfx_ambient(void);
 int Receive_boni_col(void);
 int Receive_mini_map(void);
+int Receive_mini_map_pos(void);
 int Receive_special_line(void);
 int Receive_floor(void);
 int Receive_pickup_check(void);

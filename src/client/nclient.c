@@ -147,6 +147,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_BONI_COL]	= Receive_boni_col;
 	receive_tbl[PKT_AUTO_INSC]	= Receive_apply_auto_insc;
 	receive_tbl[PKT_SFX_AMBIENT]	= Receive_sfx_ambient;
+	receive_tbl[PKT_MINI_MAP_POS]	= Receive_mini_map_pos;
 
 	receive_tbl[PKT_REQUEST_KEY]	= Receive_request_key;
 	receive_tbl[PKT_REQUEST_NUM]	= Receive_request_num;
@@ -2387,6 +2388,21 @@ int Receive_mini_map(void) {
 		if (c && screen_icky && x < 80 - 12)
 			Term_draw(x + 12, y, a, c);
 	}
+
+	return 1;
+}
+
+int Receive_mini_map_pos(void) {
+	char	ch, c;
+	int	n, x, y;
+	byte	a;
+
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
+
+	minimap_posx = x;
+	minimap_posy = y;
+	minimap_attr = a;
+	minimap_char = c;
 
 	return 1;
 }
