@@ -653,12 +653,14 @@ static void store_process_command(int cmd) {
 			cmd_inven();
 			break;
 
+#ifdef USE_SOUND_2010
 		case KTRL('C'):
 			toggle_music();
 			break;
 		case KTRL('N'):
 			toggle_audio();
 			break;
+#endif
 
 		default:
 			cmd_raw_key(cmd);
