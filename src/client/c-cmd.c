@@ -705,6 +705,10 @@ void cmd_map(char mode)
 			}
 			/* user abort? */
 			else if (ch == ESCAPE) break;
+#ifdef USE_SOUND_2010
+			else if (ch == KTRL('C')) toggle_music();
+			else if (ch == KTRL('N')) toggle_audio();
+#endif
 
 			continue;
 		}
