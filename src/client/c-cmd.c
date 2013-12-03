@@ -712,15 +712,16 @@ void cmd_map(char mode)
 
 			continue;
 		}
+
+		/* Reset position of our own '@' */
+		minimap_posx = -1;
+
 		/* user abort? */
 		if (ch == ESCAPE) break;
 
 		/* re-retrieve map */
 		continue;
 	}
-
-	/* Reset position of our own '@' */
-	minimap_posx = -1;
 
 	/* Reload the screen */
 	Term_load();
