@@ -4124,7 +4124,7 @@ static void wild_display_map(int Ind, char mode) {
 	twpos.wz = 0;
 
 	byte c_dun, c_tow;
-	int c_dun_diff, c_tow_diff, mmpx, mmpy;
+	int c_dun_diff, c_tow_diff, mmpx = 0, mmpy = 0;
 	bool admin = is_admin(p_ptr), sent_pos = FALSE;
 
 
