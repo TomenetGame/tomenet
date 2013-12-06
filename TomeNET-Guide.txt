@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. November 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. December 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.5a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6168,6 +6168,8 @@ Ironman Deep Dive Challenge (IDDC)
     Also, starting at dungeon level 8, a hidden library may appear randomly
     (that's a book store with a red '9' for entrance), allowing you to purchase
     magic spells you might be missing.
+    On very deep floors after Nargothrond, a seasoned alchemist store may
+    appear, allowing you to resupply.
 
     Inside the challenge dungeon you can acquire a kill quest via /quest
     command at level 1 already, instead of the usual minimum level of 5.
