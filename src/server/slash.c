@@ -7295,7 +7295,7 @@ void do_slash_cmd(int Ind, char *message)
 				struct dungeon_type *d_ptr;
 				wilderness_type *wild = &wild_info[WPOS_IRONDEEPDIVE_Y][WPOS_IRONDEEPDIVE_X];
 
-				if (WPOS_IRONDEEPDIVE_Z) d_ptr = wild->tower;
+				if (WPOS_IRONDEEPDIVE_Z > 0) d_ptr = wild->tower;
 				else d_ptr = wild->dungeon;
 
 				if (!d_ptr) {
