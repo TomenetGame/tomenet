@@ -1112,7 +1112,7 @@ static cptr d_info_flags3[] =
 	"DERARE_MONSTERS",
 	"MANY_MONSTERS",
 	"VMANY_MONSTERS",
-	"",
+	"DEEPSUPPLY",
 
 	"",
 	"",

@@ -10608,7 +10608,7 @@ bool master_level(int Ind, char * parms)
 			}
 			/* extract flags (note that 0x01 are reservd hacks to prevent zero byte) */
 			if (parms[4] & 0x02) f1 |= DF1_FORGET;
-			if (parms[4] & 0x04) f3 |= DF3_HIDDENLIB;
+			if (parms[4] & 0x04) f3 |= (DF3_HIDDENLIB | DF3_DEEPSUPPLY);
 			if (parms[4] & 0x08) f3 |= DF3_NO_SIMPLE_STORES;
 			if (parms[5] & 0x02) f2 |= DF2_RANDOM;
 			if (parms[5] & 0x04) f2 |= DF2_HELL;

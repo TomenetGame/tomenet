@@ -1236,6 +1236,7 @@
 #define STORE_SPEC_BLUNT	39
 #define STORE_SPEC_POLE		40
 #define STORE_SPEC_SWORD	41
+#define STORE_DEEPSUPPLY	51
 #define STORE_SPEC_SCROLL	52
 #define STORE_SPEC_POTION	53
 #define STORE_SPEC_ARCHER	55
@@ -5741,6 +5742,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF3_DERARE_MONSTERS	0x00001000L	/* Treat rarity of all monsters as '1' aka most common */
 #define DF3_MANY_MONSTERS	0x00002000L	/* Spawn 1.5x as many monsters as usual */
 #define DF3_VMANY_MONSTERS	0x00004000L	/* Spawn twice as many monsters as usual */
+#define DF3_DEEPSUPPLY		0x00008000L	/* allow generation of dungeon stores offering supplies, on deep floors (for ironman deep dive challenge) (overrides DF3_NO_SIMPLE_STORES) */
 
 
 /* level flags for dun_level */

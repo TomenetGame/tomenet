@@ -7262,7 +7262,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "DF3_JAIL_DUNGEON added.");
 				return;
 			}
-			else if (prefix(message, "/fixidddun")) {//adds DF3_NO_DUNGEON_BONUS to ironman deep dive challenge dungeon
+			else if (prefix(message, "/fixiddc")) {//adds DF3_NO_DUNGEON_BONUS to ironman deep dive challenge dungeon
 				worldpos *tpos = &p_ptr->wpos;
 				cave_type **zcave, *c_ptr;
 				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
@@ -7288,6 +7288,26 @@ void do_slash_cmd(int Ind, char *message)
 
 				d_ptr->flags3 |= DF3_NO_DUNGEON_BONUS | DF3_EXP_20;
 				msg_print(Ind, "DF3_NO_DUNGEON_BONUS | DF3_EXP_20 added.");
+				return;
+			}
+			/* adjust iddc flags */
+			else if (prefix(message, "/fix2iddc")) {
+				struct dungeon_type *d_ptr;
+				wilderness_type *wild = &wild_info[WPOS_IRONDEEPDIVE_Y][WPOS_IRONDEEPDIVE_X];
+
+				if (WPOS_IRONDEEPDIVE_Z) d_ptr = wild->tower;
+				else d_ptr = wild->dungeon;
+
+				if (!d_ptr) {
+					msg_print(Ind, "weird error.");
+					return;
+				}
+
+				//d_ptr->flags1 = d_ptr->flags1;
+				//d_ptr->flags2 = d_ptr->flags2;
+				d_ptr->flags3 = d_ptr->flags3 | DF3_DEEPSUPPLY;
+				//d_ptr->baselevel = 1;
+				//d_ptr->maxdepth = 127;
 				return;
 			}
 			if (prefix(message, "/terminate")) {

@@ -777,16 +777,6 @@ W:0
 #note: this title is too long to fit on screen :/
 #N:48:Expensive Black Market
 N:48:Expensive B. Market
-#I:70:52:0 <-artscroll. note: delicately balanced, don't change.
-#T:--- nothing <- 0:48/2:54
-#T:1:70:256 <- 0:35/1:25
-#T:2:70:256 <- 0:27/1:24   <- good result for 33s-scummage! (adjusting maintenance_num cap for 5min+ value)
-#T:5:70:256 <- same as T:2
-#T:25:70:256 <- 0:15/1:04
-#T:2:70:256
-#T:2:111:256
-#T:3:111:256 <-was ok for buggy state (black_market_crap prob)
-#----everything above this line applies to bugged black_market_crap----
 ###T:100:111:102
 A:0:0:1:2:3:0
 #O:39:40:41:39:40:41
@@ -827,16 +817,39 @@ F:RARE
 W:0
 #UNUSED W:12
 
-#pfft, causing infinite loop :/
-N:51:Speed Ring Market
-T:100:45:31
+# For Ironman challenges, created by DEEPSUPPLY dungeon flag
+N:51:Seasoned Alchemist
+#Trap-scrolls
+T:100:70:48
+T:100:70:49
+T:100:70:50
+T:100:70:21
+T:100:70:20
+T:100:70:13
+T:100:70:8
+T:100:70:9
+T:100:70:15
+T:100:71:41
+T:100:71:64
+T:100:71:64
+T:100:71:64
+T:100:71:64
+T:100:71:64
+T:100:71:64
+T:100:71:38
+T:100:71:38
+T:100:71:38
+T:100:71:38
+T:100:71:29
+T:100:71:29
+T:100:71:60
+T:100:71:60
+T:100:71:60
 A:0:0:1:2:3:0
-O:34:35:36:37:34:35
-O:34:35:36:37:46:49
-G:6:G
-F:RANDOM | SHALLOW_LEVEL | VERY_RARE
-W:0
-#DISABLED W:6
+O:30:31:32:33:30:33
+G:5:s
+W:36
+F:BUY67 | PRICE2 | NO_DISCOUNT3
 
 N:52:Scribe
 T:100:70:256

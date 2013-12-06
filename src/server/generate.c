@@ -9038,6 +9038,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 					2 = build low-level dungeon store,
 					3 = build ironman supply store
 					4 = build specific ironman supply store: hidden library
+					5 = build specific ironman supply store: deep supply
 				    - C. Blue */
 
 	bool destroyed = FALSE;
@@ -10207,14 +10208,22 @@ for(mx = 1; mx < 131; mx++) {
 
 		/* Build one of several misc stores for basic items of certain type, like on RPG server above */
 		if (!store_failed && (!build_special_store) && (d_ptr->flags2 & DF2_MISC_STORES) && (dun_lev >= 13)) {
-		    if (!rand_int(5)) build_special_store = 3;
-		    else store_failed = TRUE;
+			if (!rand_int(5)) build_special_store = 3;
+			else store_failed = TRUE;
 		}
 
 		/* Build hidden library if desired (good for challenge dungeons actually) */
-		if (!store_failed && (!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 8)) {
-		    if (!rand_int(dun_lev / 2 + 1)) build_special_store = 4;
-		    else store_failed = TRUE;
+		if (//!store_failed &&
+		    (!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 8)) {
+			if (!rand_int(dun_lev / 2 + 1)) build_special_store = 4;
+			else store_failed = TRUE;
+		}
+
+		/* Build deep supplies store if desired (good for challenge dungeons actually) */
+		if (//!store_failed &&
+		    (!build_special_store) && (d_ptr->flags3 & DF3_DEEPSUPPLY) && (dun_lev >= 80)) {
+			if (!rand_int(5)) build_special_store = 5;
+			else store_failed = TRUE;
 		}
 
 		/* if failed, we're done */
@@ -10382,9 +10391,10 @@ for(mx = 1; mx < 131; mx++) {
 									case 5: cs_ptr->sc.omni = STORE_SPEC_ARCHER; break;
 									default: cs_ptr->sc.omni = STORE_STRADER; break;
 									}
-								} else if (build_special_store == 4) {
+								} else if (build_special_store == 4)
 									cs_ptr->sc.omni = STORE_HIDDENLIBRARY;
-								}
+								else if (build_special_store == 5)
+									cs_ptr->sc.omni = STORE_DEEPSUPPLY;
 							} else {
 								cs_ptr->sc.omni = STORE_BTSUPPLY;
 							}

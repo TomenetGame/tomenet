@@ -1916,8 +1916,8 @@ static void store_create(store_type *st_ptr) {
 		    /* Reduce discount */
 		    if (o_ptr->discount == 10) o_ptr->discount = 0;
 		    if (o_ptr->discount == 25) o_ptr->discount = 10;
-		    if (o_ptr->discount == 50) o_ptr->discount = 20;
-		    if (o_ptr->discount == 75) o_ptr->discount = 25;
+		    if (o_ptr->discount == 50) o_ptr->discount = 15;
+		    if (o_ptr->discount == 75) o_ptr->discount = 20;
 		    if (o_ptr->discount == 90) o_ptr->discount = 25;
 		    if (o_ptr->discount == 100) o_ptr->discount = 25;
 		}
