@@ -10266,6 +10266,7 @@ for(mx = 1; mx < 131; mx++) {
 			    (csbm_ptr->feat == FEAT_BUSH) ||
 			    (csbm_ptr->feat == FEAT_DEAD_TREE) ||
 			    (csbm_ptr->feat == FEAT_MOUNTAIN) ||
+			    (csbm_ptr->feat == FEAT_LAVA_WALL) ||
 			    (csbm_ptr->feat == FEAT_SANDWALL) ||
 			    (csbm_ptr->feat == FEAT_SANDWALL_H) ||
 			    (csbm_ptr->feat == FEAT_SANDWALL_K)))
@@ -10304,6 +10305,7 @@ for(mx = 1; mx < 131; mx++) {
 					    (cr_ptr->feat != FEAT_BUSH) &&
 					    (cr_ptr->feat != FEAT_DEAD_TREE) &&
 					    (cr_ptr->feat != FEAT_MOUNTAIN) &&
+					    (cr_ptr->feat != FEAT_LAVA_WALL) &&
 					    (cr_ptr->feat != FEAT_SANDWALL) &&
 					    (cr_ptr->feat != FEAT_SANDWALL_H) &&
 					    (cr_ptr->feat != FEAT_SANDWALL_K))
@@ -10344,8 +10346,10 @@ for(mx = 1; mx < 131; mx++) {
 						    (cr_ptr->feat != FEAT_QUARTZ_K) &&
 						    (cr_ptr->feat != FEAT_ICE_WALL) &&
 						    (cr_ptr->feat != FEAT_TREE) &&
+						    (cr_ptr->feat != FEAT_BUSH) &&
 						    (cr_ptr->feat != FEAT_DEAD_TREE) &&
 						    (cr_ptr->feat != FEAT_MOUNTAIN) &&
+						    (cr_ptr->feat != FEAT_LAVA_WALL) &&
 						    (cr_ptr->feat != FEAT_SANDWALL) &&
 						    (cr_ptr->feat != FEAT_SANDWALL_H) &&
 						    (cr_ptr->feat != FEAT_SANDWALL_K)))
