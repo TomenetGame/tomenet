@@ -96,6 +96,7 @@ static int Receive_target(int ind);
 static int Receive_target_friendly(int ind);
 static int Receive_inscribe(int ind);
 static int Receive_uninscribe(int ind);
+static int Receive_autoinscribe(int ind);
 static int Receive_activate(int ind);
 static int Receive_activate_dir(int ind);
 static int Receive_bash(int ind);

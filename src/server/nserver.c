@@ -302,6 +302,7 @@ static void Init_receive(void)
 	playing_receive[PKT_TARGET_FRIENDLY]	= Receive_target_friendly;
 	playing_receive[PKT_INSCRIBE]		= Receive_inscribe;
 	playing_receive[PKT_UNINSCRIBE]		= Receive_uninscribe;
+	playing_receive[PKT_AUTOINSCRIBE]	= Receive_autoinscribe;
 	playing_receive[PKT_ACTIVATE]		= Receive_activate;
 	playing_receive[PKT_ACTIVATE_DIR]	= Receive_activate_dir;
 	playing_receive[PKT_BASH]		= Receive_bash;
@@ -8511,6 +8512,41 @@ static int Receive_uninscribe(int ind)
 		}
 
 		do_cmd_uninscribe(player, item);
+	}
+
+	return 1;
+}
+
+static int Receive_autoinscribe(int ind) {
+	connection_t *connp = Conn[ind];
+	char ch;
+	int n, player = -1;
+	s16b item;
+	player_type *p_ptr = NULL;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	/* Sanity check - mikaelh */
+	if (item >= INVEN_TOTAL) return 1;
+
+	if (p_ptr) {
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF) {
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
+		auto_inscribe(player, &(p_ptr->inventory[item]), 0);
+		p_ptr->window |= PW_INVEN;
 	}
 
 	return 1;

@@ -3796,6 +3796,13 @@ int Send_uninscribe(int item) {
 	return 1;
 }
 
+int Send_autoinscribe(int item) {
+	int	n;
+	if (!is_newer_than(&server_version, 4, 5, 5, 0, 0, 0)) return 1;
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_AUTOINSCRIBE, item)) <= 0) return n;
+	return 1;
+}
+
 int Send_steal(int dir) {
 	int	n;
 	if ((n = Packet_printf(&wbuf, "%c%c", PKT_STEAL, dir)) <= 0) return n;

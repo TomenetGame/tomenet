@@ -144,6 +144,7 @@ extern int Send_take_off(int item);
 extern int Send_destroy(int item, int amt);
 extern int Send_inscribe(int item, cptr buf);
 extern int Send_uninscribe(int item);
+extern int Send_autoinscribe(int item);
 extern int Send_steal(int dir);
 extern int Send_quaff(int item);
 extern int Send_read(int item);

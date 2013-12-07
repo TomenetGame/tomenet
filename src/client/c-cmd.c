@@ -364,6 +364,14 @@ void process_command()
 			cmd_uninscribe();
 			break;
 
+		case 'n':
+			cmd_apply_autoins_client();
+			break;
+
+		case 'N':
+			cmd_apply_autoins_server();
+			break;
+
 		case 'j':
 			cmd_steal();
 			break;
@@ -1108,6 +1116,24 @@ void cmd_uninscribe(void)
 
 	/* Send it */
 	Send_uninscribe(item);
+}
+
+void cmd_apply_autoins_client(void) {
+	int item;
+
+	/* Get the item */
+	if (!c_get_item(&item, "Inscribe which item? ", (USE_EQUIP | USE_INVEN))) return;
+
+	apply_auto_inscriptions(item);
+}
+
+void cmd_apply_autoins_server(void) {
+	int item;
+
+	/* Get the item */
+	if (!c_get_item(&item, "Inscribe which item? ", (USE_EQUIP | USE_INVEN))) return;
+
+	Send_autoinscribe(item);
 }
 
 void cmd_steal(void)
