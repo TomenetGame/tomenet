@@ -3126,7 +3126,7 @@ void recall_player(int Ind, char *message){
 		        /* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 		        if (p_ptr->mode & MODE_DED_IDDC) {
 		                msg_print(Ind, "\377aYou return to town and may retire ('Q') when ready.");
-		                msg_print(Ind, "\377aIf you leave the town, retirement is assumed automatically.");
+		                msg_print(Ind, "\377aIf you enter a dungeon or tower, \377Rretirement\377a is assumed \377Rautomatically\377a.");
 
 				process_player_change_wpos(Ind);
 				p_ptr->recall_pos.wx = cfg.town_x;
@@ -3144,7 +3144,7 @@ void recall_player(int Ind, char *message){
 				p_ptr->word_recall = 0;
 				process_player_change_wpos(Ind);
 
-				/* Restrict character to town */
+				/* Restrict character to world surface */
 				p_ptr->iron_winner_ded = TRUE;
 		        }
 #ifdef IRONDEEPDIVE_FIXED_TOWN_WITHDRAWAL
@@ -6559,7 +6559,7 @@ void dungeon(void)
 		p_ptr = Players[i]; 
 		if (p_ptr->conn == NOT_CONNECTED || !p_ptr->new_level_flag)
 			continue;
-		if (p_ptr->iron_winner_ded) {
+		if (p_ptr->iron_winner_ded && p_ptr->wpos.wz != 0) {
 			p_ptr->new_level_flag = FALSE;
 			do_cmd_suicide(i);
 			continue;
