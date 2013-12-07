@@ -3235,7 +3235,7 @@ void store_purchase(int Ind, int item, int amt)
 				/* Update the display */
 				store_prt_gold(Ind);
 
-				if (p_ptr->store_num > -2) { /* Never become aware of player store items */
+				if (p_ptr->store_num > -2 || p_ptr->auto_id) { /* Never become aware of player store items */
 					/* Hack -- buying an item makes you aware of it */
 					object_aware(Ind, &sell_obj);
 				}
