@@ -10223,7 +10223,10 @@ for(mx = 1; mx < 131; mx++) {
 		if (//!store_failed &&
 		    (!build_special_store) && (d_ptr->flags3 & DF3_DEEPSUPPLY) && (dun_lev >= 80)) {
 			if (!rand_int(5)) build_special_store = 5;
-			else store_failed = TRUE;
+			else {
+				s_printf("DUNGEON_STORE: DEEPSUPPLY failed.\n");
+				store_failed = TRUE;
+			}
 		}
 
 		/* if failed, we're done */
