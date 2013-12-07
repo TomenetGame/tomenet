@@ -5639,7 +5639,11 @@ void auto_inscriptions(void) {
 			Term_gotoxy(55, cur_line + 1);
 			strcpy(buf, auto_inscription_tag[cur_line]);
 			/* Get a new tag string */
-			if (!askfor_aux(buf, 20, 0)) continue;
+			if (!askfor_aux(buf, 20, 0)) {
+				/* in case match was changed, we may also need to reapply */
+				for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i);
+				continue;
+			}
 			strcpy(auto_inscription_tag[cur_line], buf);
 			for (i = 0; i <= INVEN_TOTAL; i++) apply_auto_inscriptions(i);
 
