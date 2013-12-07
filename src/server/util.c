@@ -1864,9 +1864,10 @@ cptr quark_str(s16b i)
  */
 
 bool check_guard_inscription( s16b quark, char what ) {
-	const char *ax;
-	ax = quark_str(quark);
-	if (ax == NULL) { return FALSE; };
+	const char *ax = quark_str(quark);
+
+	if (ax == NULL) return FALSE;
+
 	while ((ax = strchr(ax, '!')) != NULL) {
 		while (ax++ != NULL) {
 			if (*ax == 0)  {
@@ -1884,7 +1885,7 @@ bool check_guard_inscription( s16b quark, char what ) {
 
 				switch (what) { /* check for paranoid tags */
 				case 'd': /* no drop */
-				case 'h': /* no house ( sell a a key ) */
+				case 'h': /* (obsolete) no house ( sell a a key ) */
 				case 'k': /* no destroy */
 				case 's': /* no sell */
 				case 'v': /* no thowing */
@@ -1894,10 +1895,29 @@ bool check_guard_inscription( s16b quark, char what ) {
 				case 't': /* no take off */
 #endif
 					return TRUE;
-				};
-			};
-		};
-	};
+				}
+				return FALSE;
+			}
+			if (*ax == '+') {
+				/* why so much hassle? * = all, that's it */
+/*				return TRUE; -- well, !'B'ash if it's on the ground sucks ;) */
+
+				switch (what) { /* check for paranoid tags */
+				case 'h': /* (obsolete) no house ( sell a a key ) */
+				case 'k': /* no destroy */
+				case 's': /* no sell */
+				case 'v': /* no thowing */
+				case '=': /* force pickup */
+#if 0
+				case 'w': /* no wear/wield */
+				case 't': /* no take off */
+#endif
+					return TRUE;
+				}
+				return FALSE;
+			}
+		}
+	}
 	return FALSE;
 }
 

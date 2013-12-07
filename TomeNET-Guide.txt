@@ -1176,6 +1176,10 @@ The !* inscription:
 !=  Automatically pick the item up from the floor.
 (!h Prevent selling a house key. Keys usually aren't used anymore though.)
 
+The !+ inscription:
+    Does the same as !* except that it does not prevent dropping an item,
+    so it does not imply !d but just !ksv=h (with 'h' being obsolete).
+
 A very useful inscription for (heavily) cursed items:
 !w  prevent wielding/wearing an item. This is very useful if you carry a
     cursed item in your inventory that you really don't want to equip by
