@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. December 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. December 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.5a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6184,6 +6184,18 @@ Ironman Deep Dive Challenge (IDDC)
     that indicates a dungeon boss spawn. Like yellow feeling messages, this too
     requires you to have stayed on the previous floor for about 2 minutes
     (until your depth indicator turns light blue).
+
+    Although Sauron is the final guardian of Mt Doom, he may spawn in any theme
+    in the IDDC, provided the floor depth is at least level 99.
+    As in any other dungeon, Morgoth will only spawn if all players on a floor
+    have already killed Sauron. He may spawn in any theme, on floor depths of
+    level 100 or deeper.
+    Usually unique monsters may not spawn in two or more places in the game
+    world at once, but the IDDC is actually an exception. In here, a unique
+    monster is allowed to spawn (once) on a floor even though another instance
+    of it already exists right now elsewhere in the world.
+    This means that you don't have to worry which uniques other players are
+    currently fighting - they can still spawn for you just fine.
 
     Mimicry users gain +9 extra kill credit on each kill, effectively
     learning forms TEN TIMES as fast. (However, if that character decides to
