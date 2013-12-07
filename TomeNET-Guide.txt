@@ -564,6 +564,10 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 
 }       remove inscription from an item.
 
+n       re-apply client-side auto-inscriptions to an item.
+
+N       re-apply server-side auto-inscriptions to an item.
+
 /       in general, use an item (combines q,r, etc..).
         This can be useful if you run out of macros for a specific action,
         for example if you already use @m0...@m9 and still have more spell
