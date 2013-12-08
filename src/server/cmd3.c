@@ -1720,11 +1720,11 @@ void do_cmd_uninscribe(int Ind, int item)
 /*
  * Inscribe an object with a comment
  */
-void do_cmd_inscribe(int Ind, int item, cptr inscription)
-{
+void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	player_type *p_ptr = Players[Ind];
-	object_type		*o_ptr;
-	char		o_name[ONAME_LEN];
+	object_type *o_ptr;
+	char o_name[ONAME_LEN], modins[MAX_CHARS];
+	const char *qins;
 	char *c;
 
 
@@ -1765,6 +1765,71 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 
 	/* hack to fix auto-inscriptions: convert empty inscription to a #-type inscription */
 	if (inscription[0] == '\0') inscription = "#";
+
+	/* Comfort hack for reinscribing items:
+	   Trigger with '\' as first character.
+	   Then replace the part starting on first letter, until an usual delimiter char is found. */
+	if (inscription[0] == '\\') {
+		bool append = TRUE;
+		char modsrc[3];
+
+		qins = quark_str(o_ptr->note);
+		strcpy(modins, qins);
+
+		modsrc[0] = inscription[1];
+		/* search for specific @-tag to replace? */
+		if (inscription[1] == '@') {
+			modsrc[1] = inscription[2];
+			modsrc[2] = 0;
+		}
+		/* search for first !-tag to replace? */
+		else modsrc[1] = 0;
+
+		/* append or replace a @/!/# part? */
+		if (inscription[1] == '@' || inscription[1] == '!' || inscription [1] == '#') {
+			char *start = strstr(modins, modsrc);
+
+			/* replace? */
+			if (start) {
+				const char *delimiter;
+				const char *deltmp;
+
+				append = FALSE;
+
+				/* after '#' the line is always completely replaced */
+				if (inscription[1] != '#') {
+					deltmp = qins + (start - modins) + strlen(modsrc);
+					while (*deltmp) {
+						delimiter = strchr(" @!#", *deltmp);
+						if (delimiter) break;
+						deltmp++;
+					}
+					//if (!delimiter) delimiter = qins + strlen(qins); //point to zero terminator char
+				} else deltmp = qins + strlen(qins);
+				//delimiter = qins + strlen(qins); //point to zero terminator char
+
+				//if ((start - modins) + strlen(inscription + 1) + strlen(delimiter) > MAX_CHARS) {
+				if ((start - modins) + strlen(inscription + 1) + strlen(deltmp) > MAX_CHARS) {
+					msg_print(Ind, "Inscription would become too long.");
+					return;
+				}
+
+				/* replace */
+				strcpy(start, inscription + 1);
+				//strcat(start, delimiter);
+				strcat(start, deltmp);
+			}
+		}
+		/* append? */
+		if (append) {
+			if (strlen(modins) + strlen(inscription) > MAX_CHARS) {
+				msg_print(Ind, "Inscription would become too long.");
+				return;
+			}
+			strcat(modins, inscription + 1);
+		}
+		inscription = modins;
+	}
 
 	/* Save the inscription */
 	o_ptr->note = quark_add(inscription);
