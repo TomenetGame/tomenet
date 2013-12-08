@@ -355,7 +355,7 @@ T:5:71:61
 #scroll of vermin control
 T:10:70:61
 #pot of *healing* - added especially for Nether Realm visits
-T:5:71:37
+T:10:71:37
 #pot of *restore mana* - shouldn't be buyable. too exquisite!
 #T:5:71:40
 #mummy wrapping
