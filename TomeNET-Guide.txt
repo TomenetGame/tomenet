@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. December 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 8. December 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.5a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -561,6 +561,15 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         see (0.4) for details on that.
 
 {       inscribe an item.
+        If the first character is a backslash '\', then instead of overwriting
+        an existing inscription the new inscription will either replace a part
+        of the current one or otherwise be appended at its end.
+        Replacing happens if the backslash is followed by either @<letter> or !
+        which indicate special inscription "parts".
+        Examples:
+        An inscription "abc !k @S- xyz" that is inscribed "\@S50k" will turn
+        out "abc !k @S50k xyz". If it is instead inscribed "\!ds" then it will
+        turn out "abc !ds @S- xyz".
 
 }       remove inscription from an item.
 
