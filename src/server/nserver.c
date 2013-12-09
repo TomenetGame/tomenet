@@ -8545,7 +8545,7 @@ static int Receive_autoinscribe(int ind) {
 			return 1;
 		}
 
-		auto_inscribe(player, &(p_ptr->inventory[item]), 0);
+		auto_inscribe(player, &(p_ptr->inventory[item]), TRUE);
 		p_ptr->window |= PW_INVEN;
 	}
 

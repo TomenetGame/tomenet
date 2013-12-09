@@ -1124,7 +1124,7 @@ void cmd_apply_autoins_client(void) {
 	/* Get the item */
 	if (!c_get_item(&item, "Inscribe which item? ", (USE_EQUIP | USE_INVEN))) return;
 
-	apply_auto_inscriptions(item);
+	apply_auto_inscriptions(item, TRUE);
 }
 
 void cmd_apply_autoins_server(void) {

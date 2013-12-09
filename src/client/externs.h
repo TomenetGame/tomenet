@@ -764,7 +764,7 @@ extern int Send_request_key(int id, char key);
 extern int Send_request_num(int id, int num);
 extern int Send_request_str(int id, char *str);
 extern int Send_request_cfr(int id, int cfr);
-extern void apply_auto_inscriptions(int slot);
+extern void apply_auto_inscriptions(int slot, bool force);
 
 /* skills.c */
 extern s16b get_skill(int skill);

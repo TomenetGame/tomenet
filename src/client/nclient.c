@@ -1269,7 +1269,7 @@ int Receive_apply_auto_insc(void) {
 	char ch, slot;
 	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &slot)) <= 0) return n;
 
-	apply_auto_inscriptions((int)slot);
+	apply_auto_inscriptions((int)slot, FALSE);
 
 	return 1;
 }
@@ -3448,14 +3448,15 @@ int Receive_inventory_revision(void) {
 #if 0 /* moved to Receive_inven...() - cleaner and works much better (ID and *ID*) */
 	/* AUTOINSCRIBE - moved to Receive_inventory_revision() */
 	for (v = 0; v <= INVEN_PACK; v++)
-		apply_auto_inscriptions(v);
+		apply_auto_inscriptions(v, FALSE);
 #endif
 
 	return 1;
 }
 
-/* Apply client-side auto-inscriptions - C. Blue */
-void apply_auto_inscriptions(int slot) {
+/* Apply client-side auto-inscriptions - C. Blue
+   'force': overwrite existing non-trivial inscription. */
+void apply_auto_inscriptions(int slot, bool force) {
 	int i;
 	char *ex, ex_buf[ONAME_LEN];
 	char *ex2, ex_buf2[ONAME_LEN];
@@ -3496,7 +3497,7 @@ void apply_auto_inscriptions(int slot) {
 	}
 
 	/* no inscription? inscribe it then automatically */
-	if (ex == NULL) auto_inscribe = TRUE;
+	if (ex == NULL || force) auto_inscribe = TRUE;
 	/* check whether inscription is just a discount/stolen tag */
 	else if (strstr(ex, "% off}") ||
 	    !strcmp(ex, "{on sale}") ||
