@@ -1796,8 +1796,10 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 				append = FALSE;
 
-				/* after '#' the line is always completely replaced */
-				if (inscription[1] != '#') {
+				/* after '#' the line is always completely replaced;
+				   same for @P because player names can contain spaces. */
+				if (inscription[1] != '#' &&
+				    !(inscription[1] == '@' && inscription[2] == 'P')) {
 					deltmp = qins + (start - modins) + strlen(modsrc);
 					while (*deltmp) {
 						delimiter = strchr(" @!#", *deltmp);

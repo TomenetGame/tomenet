@@ -565,11 +565,14 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         an existing inscription the new inscription will either replace a part
         of the current one or otherwise be appended at its end.
         Replacing happens if the backslash is followed by either @<letter> or !
-        which indicate special inscription "parts".
+        or # which indicate special inscription "parts".
         Examples:
         An inscription "abc !k @S- xyz" that is inscribed "\@S50k" will turn
         out "abc !k @S50k xyz". If it is instead inscribed "\!ds" then it will
         turn out "abc !ds @S- xyz".
+        When replacing the # part or an @P part, the whole rest of the
+        inscription is replaced. For @P this is so because player names may
+        contain spaces, so those cannot be used as reliable delimiters.
 
 }       remove inscription from an item.
 
