@@ -698,7 +698,7 @@ void do_slash_cmd(int Ind, char *message)
 				o_ptr = &(p_ptr->inventory[i]);
 				if (!o_ptr->tval) break;
 
-				/* skip inscribed items */
+				/* skip inscribed items, except if we designated one item in particular (j==h) */
 				if (o_ptr->note &&
 				    strcmp(quark_str(o_ptr->note), "terrible") &&
 				    strcmp(quark_str(o_ptr->note), "cursed") &&
@@ -706,8 +706,10 @@ void do_slash_cmd(int Ind, char *message)
 				    strcmp(quark_str(o_ptr->note), "broken") &&
 				    strcmp(quark_str(o_ptr->note), "average") &&
 				    strcmp(quark_str(o_ptr->note), "good") &&
-				    strcmp(quark_str(o_ptr->note), "worthless"))
-					continue;
+				    strcmp(quark_str(o_ptr->note), "worthless")) {
+					if (j != h) continue; /* skip inscribed items when mass-tagging */
+					else o_ptr->note = 0; /* hack to overwrite its inscription */
+				}
 
 				if (!o_ptr->note)
 					o_ptr->note = quark_add(tk < 2 ? "!k" : token[2]);
