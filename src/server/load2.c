@@ -2906,11 +2906,43 @@ errr rd_server_savefile()
 	if (!s_older_than(4, 3, 25)) rd_auctions();
 
 	/* read Ironman Deep Dive Challenge records */
-	if (!s_older_than(4, 5, 15)) {
+	if (!s_older_than(4, 5, 16)) {
+		char dummy[MAX_CHARS_WIDE];
+
 		rd_byte(&tmp8u);
-	        for (i = 0; i < tmp8u; i++) {
+		for (i = 0; i < tmp8u; i++) {
 			rd_s16b(&tmp16s);
-			if (i >= IDDC_HIGHSCORE_SIZE) continue;
+			if (i >= IDDC_HIGHSCORE_SIZE) {
+				rd_string(dummy, MAX_CHARS_WIDE);
+				rd_string(dummy, MAX_CHARS_WIDE);
+				rd_string(dummy, MAX_CHARS_WIDE);
+				rd_s16b(&tmp16s);
+				continue;
+			}
+			deep_dive_level[i] = tmp16s;
+			rd_string(deep_dive_name[i], MAX_CHARS);
+			rd_string(deep_dive_char[i], MAX_CHARS);
+			rd_string(deep_dive_account[i], MAX_CHARS);
+			rd_s16b(&tmp16s);
+			deep_dive_class[i] = tmp16s;
+		}
+		for (i = tmp8u; i < IDDC_HIGHSCORE_SIZE; i++) {
+			deep_dive_level[i] = 0;
+			deep_dive_name[i][0] = 0;
+			deep_dive_char[i][0] = 0;
+			deep_dive_account[i][0] = 0;
+			deep_dive_class[i] = 0;
+		}
+	} else if (!s_older_than(4, 5, 15)) {
+		char dummy[MAX_CHARS_WIDE];
+
+		rd_byte(&tmp8u);
+		for (i = 0; i < tmp8u; i++) {
+			rd_s16b(&tmp16s);
+			if (i >= IDDC_HIGHSCORE_SIZE) {
+				rd_string(dummy, MAX_CHARS_WIDE);
+				continue;
+			}
 			deep_dive_level[i] = tmp16s;
 			rd_string(deep_dive_name[i], MAX_CHARS);
 		}

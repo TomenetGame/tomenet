@@ -957,8 +957,11 @@ char audio_sfx[SOUND_MAX_2010][30];
 
 /* Ironman Deep Dive Challenge */
 int deep_dive_level[IDDC_HIGHSCORE_SIZE];
-//char deep_dive_name[20][NAME_LEN]; /* store just the name */
+//char deep_dive_name[IDDC_HIGHSCORE_SIZE][NAME_LEN]; /* store just the name */
 char deep_dive_name[IDDC_HIGHSCORE_SIZE][MAX_CHARS]; /* store name, race, class, level */
+char deep_dive_char[IDDC_HIGHSCORE_SIZE][MAX_CHARS]; /* scoreboard-despam: store character name */
+char deep_dive_account[IDDC_HIGHSCORE_SIZE][MAX_CHARS]; /* scoreboard-despam: store account name */
+int deep_dive_class[IDDC_HIGHSCORE_SIZE]; /* scoreboard-despam: store class */
 
 /* Global projection counter for m_ptr->hit_proj_id */
 int mon_hit_proj_id, mon_hit_proj_id2;

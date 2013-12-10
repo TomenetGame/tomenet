@@ -2195,6 +2195,9 @@ extern astar_list_closed astar_info_closed[ASTAR_MAX_INSTANCES];
 extern int deep_dive_level[IDDC_HIGHSCORE_SIZE];
 //extern char deep_dive_name[IDDC_HIGHSCORE_SIZE][NAME_LEN];
 extern char deep_dive_name[IDDC_HIGHSCORE_SIZE][MAX_CHARS];
+extern char deep_dive_char[IDDC_HIGHSCORE_SIZE][MAX_CHARS];
+extern char deep_dive_account[IDDC_HIGHSCORE_SIZE][MAX_CHARS];
+extern int deep_dive_class[IDDC_HIGHSCORE_SIZE];
 
 /* remember school for each spell */
 extern int spell_school[512];

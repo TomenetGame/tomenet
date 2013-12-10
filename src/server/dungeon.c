@@ -3086,10 +3086,43 @@ void recall_player(int Ind, char *message){
 		if (success)
 #endif
 		for (i = 0; i < IDDC_HIGHSCORE_SIZE; i++) {
-			if (deep_dive_level[i] == -1) continue;
+#ifdef IDDC_THROUGH_IS_FIRST /* 0->always replace first entry! */
+			if (deep_dive_level[i] == -1) {
+ #ifdef IDDC_RESTRICT_ACC_CLASS /* only allow one entry of same account+class? : discard new entry */
+				if (!strcmp(deep_dive_account[i], p_ptr->accountname) &&
+				    deep_dive_class[i] == p_ptr->pclass) {
+					i = IDDC_HIGHSCORE_DISPLAYED;
+					break;
+				}
+ #endif
+				continue;
+			}
+#endif
+#ifdef IDDC_RESTRICT_ACC_CLASS /* only allow one entry of same account+class? : discard previous entry */
+			for (j = i; j < IDDC_HIGHSCORE_SIZE - 1; j++) {
+				if (!strcmp(deep_dive_account[j], p_ptr->accountname) &&
+				    deep_dive_class[j] == p_ptr->pclass) {
+					int k;
+
+					/* pull up all succeeding entries by 1  */
+					for (k = j; k < IDDC_HIGHSCORE_SIZE - 1; k++) {
+						deep_dive_level[k] = deep_dive_level[k + 1];
+						strcpy(deep_dive_name[k], deep_dive_name[k + 1]);
+						strcpy(deep_dive_char[k], deep_dive_char[k + 1]);
+						strcpy(deep_dive_account[k], deep_dive_account[k + 1]);
+						deep_dive_class[k] = deep_dive_class[k + 1];
+					}
+					break;
+				}
+			}
+#endif
+			/* push down all entries by 1, to make room for inserting new entry */
 			for (j = IDDC_HIGHSCORE_SIZE - 1; j > i; j--) {
 				deep_dive_level[j] = deep_dive_level[j - 1];
 				strcpy(deep_dive_name[j], deep_dive_name[j - 1]);
+				strcpy(deep_dive_char[j], deep_dive_char[j - 1]);
+				strcpy(deep_dive_account[j], deep_dive_account[j - 1]);
+				deep_dive_class[j] = deep_dive_class[j - 1];
 			}
 			deep_dive_level[i] = -1;
 			//strcpy(deep_dive_name[i], p_ptr->name);
@@ -3102,6 +3135,9 @@ void recall_player(int Ind, char *message){
 			    p_ptr->name, get_prace(p_ptr), class_info[p_ptr->pclass].title,
 			    p_ptr->ghost ? 'r' : 's', p_ptr->max_plv);
 #endif
+			strcpy(deep_dive_char[i], p_ptr->name);
+			strcpy(deep_dive_account[i], p_ptr->accountname);
+			deep_dive_class[i] = p_ptr->pclass;
 			break;
 		}
 

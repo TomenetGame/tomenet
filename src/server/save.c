@@ -2022,6 +2022,9 @@ static bool wr_server_savefile()
 	for (i = 0; i < IDDC_HIGHSCORE_SIZE; i++) {
 		wr_s16b(deep_dive_level[i]);
 		wr_string(deep_dive_name[i]);
+		wr_string(deep_dive_char[i]);
+		wr_string(deep_dive_account[i]);
+		wr_s16b(deep_dive_class[i]);
 	}
 
 	/* Write the remaining contents of the buffer */

@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	15
+#define SF_VERSION_PATCH	16
 #define SF_VERSION_EXTRA	0
 
 
@@ -724,6 +724,10 @@
 #define IDDC_HIGHSCORE_SIZE 50
 /* The first n entries that are actually displayed */
 #define IDDC_HIGHSCORE_DISPLAYED 10
+/* A character who makes it through IDDC is always placed 1st? */
+#define IDDC_THROUGH_IS_FIRST
+/* A character of same account and class will replace a worse entry of himself on the score board, or get discarded */
+#define IDDC_RESTRICT_ACC_CLASS
 
 /* EXPERIMENTAL:
   Allow incompatible char modes (everlasting vs non-everlasting) to interact
