@@ -6038,6 +6038,9 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     All players receive an Amulet of the Highlands which they should not forget
     to wear, because it gives the character considerable power.
     They now have 10 minutes to level up in this dungeon.
+    In this highlander dungeon players are randomly teleported when they take a
+    staircase, so even if two players take the same staircase they won't end up
+    next to each other.
 
     After 10 minutes, everyone is teleported out of the dungeon and meets on a
     battlefield where they have to kill each other, because it is well known
@@ -7637,8 +7640,9 @@ LUCK ('It affects your luck')
         a dragon scale mail or a cloth hat.
 NO_MAGIC ('Antimagic shell')
         Raises your saving throw to 95%, making you nearly immune to any
-        malicious magical influence (like paralysation). Also prevents
-        you from using any magic device or casting spells.
+        malicious magical influence (like paralysation or slowness, but also to
+        monsters cursing you). Also prevents you from using any magic device or
+        casting spells.
 ANTIMAGIC ('Antimagic field')
         Prevents you from using any magic device or casting spells, also
         prevents nearby monsters and other players from casting spells (but
