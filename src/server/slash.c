@@ -7025,8 +7025,9 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
-			/* Fix erroneous colour codes in deep_dive_name[] */
 			else if (prefix(message, "/deepdivefix")) {
+#if 0
+				/* Fix erroneous colour codes in deep_dive_name[] */
 				char *p, *q, buf[256];
 				for (i = 0; i < IDDC_HIGHSCORE_SIZE; i++) {
 					//msg_format(Ind, "#%2d.  %20s  %3d", i + 1, deep_dive_name[i], deep_dive_level[i]);//NAME_LEN
@@ -7043,6 +7044,23 @@ void do_slash_cmd(int Ind, char *message)
 					if (q) msg_format(Ind, " has been fixed to: <%s>", deep_dive_name[i]);
 					else msg_print(Ind, " Ok.");
 				}
+#endif
+#if 1
+				/* delete an entry (to fix duplicate entries, account+class wise) */
+				if (!tk) {
+					msg_print(Ind, "usage: /deepdivefix <entry to delete>");
+					return;
+				}
+
+				/* pull up all succeeding entries by 1  */
+				for (i = k; i < IDDC_HIGHSCORE_SIZE - 1; i++) {
+					deep_dive_level[i] = deep_dive_level[i + 1];
+					strcpy(deep_dive_name[i], deep_dive_name[i + 1]);
+					strcpy(deep_dive_char[i], deep_dive_char[i + 1]);
+					strcpy(deep_dive_account[i], deep_dive_account[i + 1]);
+					deep_dive_class[i] = deep_dive_class[i + 1];
+				}
+#endif
 				return;
 			}
 			/* Reset Ironman Deep Dive Challenge records */
