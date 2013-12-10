@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. December 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. December 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.5a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -576,9 +576,8 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 
 }       remove inscription from an item.
 
-n       re-apply client-side auto-inscriptions to an item.
-
-N       re-apply server-side auto-inscriptions to an item.
+H       re-apply client-side and (if 'auto_inscribe' option is enabled)
+        server-side auto-inscriptions to an item.
 
 /       in general, use an item (combines q,r, etc..).
         This can be useful if you run out of macros for a specific action,
