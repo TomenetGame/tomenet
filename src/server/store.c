@@ -783,6 +783,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 		/* Alchemist */
 		case STORE_ALCHEMIST:
 		case STORE_ALCHEMIST_DUN:
+		case STORE_DEEPSUPPLY:
 			/* Analyze the type */
 			switch (o_ptr->tval) {
 				case TV_SCROLL:
