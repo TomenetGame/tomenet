@@ -5240,7 +5240,7 @@ Mirkwood                     |  -                    | -
 The Old Forest               |  Old Man Willow       | Boomerang of Beor
 The Helcaraxe                |  White Balrog         | Til-i-arc
 The Sandworm lair            |  Sandworm Queen       | Armour of the Sandworm
-The Heart of the Earth       |  Golgarach            | Anchor of Space-time
+The Heart of the Earth       |  Golgarach            | Space-time Anchor (**)
 The Maze                     |  Minotaur             | Helm of Hammerhand
 Cirith Ungol                 |  Shelob               | Sting
 The Land Of Rhun             |  Ulfang the Black     | Careth Asdriag
@@ -5251,7 +5251,7 @@ The Illusory Castle          |  King in Yellow       | Helm of Knowledge
 The Sacred Land Of Mountains |  T'ron                | Coat of T'ron
 Erebor                       |  Smaug                | Nauglamir
 Dol Guldur                   |  Shadow of Dol Guldur | Ring of Durin
-Mount Doom                   |  Sauron, the Sorceror | - (**)
+Mount Doom                   |  Sauron, the Sorceror | - (***)
 Nether Realm                 |  Zu-Aon               | Ring of Phasing
 
 (*) Angband does not have a designated final boss, but the unique monster
@@ -5262,9 +5262,12 @@ In this light, Tik'srvzllat could be seen as Angband's final boss.
 Also, Morgoth, the Lord of Darkness is encountered in Angband at -1700 ft or
 deeper. See (1.3), (1.3a) and (1.3b) for more information.
 
-(**) While Sauron, the Sorceror, boss of Mount Doom, does not drop any specific
-artifact, he is still a required kill before you are able to encounter Morgoth,
-the Lord of Darkness (compare (1.3), (1.3a) and (1.3b)).
+(**) A space-time anchor is an anti-teleportation field of radius 12 that will
+prevent all teleportation and stall all word-of-recall attempts within.
+
+(***) While Sauron, the Sorceror, boss of Mount Doom, does not drop any
+specific artifact, he is still a required kill before you are able to encounter
+Morgoth, the Lord of Darkness (compare (1.3), (1.3a) and (1.3b)).
 When you kill Sauron, you will be able to recall out from that dungeon level!
 (Usually you cannot recall into/out of Mt Doom.)
 
@@ -13336,8 +13339,10 @@ Light    | Light    | Light          | Call Light          | Starlight
 Darkness | Darkness | Darkness       | Call Darkness       | Invisibility
 Nexus    | Nexus    | Nexus          | Blink               | Teleportation
 Nether   | Nether   | Nether         | Obliteration        | Genocide
-Chaos    | Chaos    | Chaos          | Polymorph Self      | Chaos Brand
+Chaos    | Chaos    | Chaos          | Polymorph Self      | Chaos Brand (*)
 Mana     | Mana     | Mana           | Remove Curses       | Remove *Curses*
+
+(*) Confuses the target.
 
 Combination Elements
 --------------------
@@ -13347,7 +13352,7 @@ their associated sign spell type effects, and enhanced sign spell effects:
 Rune     | Rune     | Element        | Sign Spell          | Enhanced Effect    
 -------------------------------------------------------------------------------
 Light    | Darkness | Confusion      | Monster Confusion   | Identify
-Light    | Nexus    | Inertia        | Anchor              | Reverse Tele-To
+Light    | Nexus    | Inertia        | Anchor (*)          | Reverse Tele-To
 Light    | Nether   | Lightning      | Resist Electricity  | Lightning Brand
 Light    | Chaos    | Fire           | Resist Fire         | Fire Brand
 Light    | Mana     | Water          | Neutralize Poison   | Regeneration
@@ -13359,8 +13364,12 @@ Nexus    | Nether   | Time           | Haste               | Recharging
 Nexus    | Chaos    | Sound          | Disarm              | Disarming
 Nexus    | Mana     | Shards         | Earthquake          | Dig
 Nether   | Chaos    | Disenchantment | Unmagic             | Cancellation
-Nether   | Mana     | Force          | Mystic Shield       | Reflection
+Nether   | Mana     | Force          | Mystic Shield (**)  | Reflection
 Chaos    | Mana     | Plasma         | Base Resistance     | Elemental Brand
+
+(*) A space-time anchor is an anti-teleportation field of radius 12 that will
+    prevent all teleportation and stall all word-of-recall attempts within.
+(**) A Mystic Shield is a magical armour class boost.
 
 Spell Modifiers
 ---------------
