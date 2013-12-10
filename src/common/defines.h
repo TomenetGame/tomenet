@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	14
+#define SF_VERSION_PATCH	15
 #define SF_VERSION_EXTRA	0
 
 
@@ -719,6 +719,11 @@
 /* upper limit of dodging chance.       [90] */
 #define DODGE_MAX_CHANCE 	80
 
+
+/* Total size of internal IDDC depth table */
+#define IDDC_HIGHSCORE_SIZE 50
+/* The first n entries that are actually displayed */
+#define IDDC_HIGHSCORE_DISPLAYED 10
 
 /* EXPERIMENTAL:
   Allow incompatible char modes (everlasting vs non-everlasting) to interact

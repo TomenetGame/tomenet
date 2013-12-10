@@ -3085,9 +3085,9 @@ void recall_player(int Ind, char *message){
 		if (getlevel(&old_wpos) == 40 || getlevel(&old_wpos) == 80) success = FALSE;
 		if (success)
 #endif
-		for (i = 0; i < 20; i++) {
+		for (i = 0; i < IDDC_HIGHSCORE_SIZE; i++) {
 			if (deep_dive_level[i] == -1) continue;
-			for (j = 20 - 1; j > i; j--) {
+			for (j = IDDC_HIGHSCORE_SIZE - 1; j > i; j--) {
 				deep_dive_level[j] = deep_dive_level[j - 1];
 				strcpy(deep_dive_name[j], deep_dive_name[j - 1]);
 			}

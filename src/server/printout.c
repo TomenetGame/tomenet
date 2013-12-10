@@ -212,8 +212,8 @@ int reverse_lines(cptr input_file, cptr output_file) {
 	    && deep_dive_level[0]) {
 		int i;
 		fprintf(fp2, "\\{UIronman Deep Dive Challenge Records:\n");
-		/* Display only some of the 20 records */
-		for (i = 0; i < 10 && deep_dive_level[i] != 0; i++) {
+		/* Display only the first n records */
+		for (i = 0; i < IDDC_HIGHSCORE_DISPLAYED && deep_dive_level[i] != 0; i++) {
 			if (deep_dive_level[i] == -1)
 				fprintf(fp2, "\\{s %2d%s- %s made it out!\n",
 				    i + 1, i == 0 ? "st" : (i == 1 ? "nd" : (i == 2 ? "rd" : "th")), deep_dive_name[i]);

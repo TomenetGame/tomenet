@@ -7016,7 +7016,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* Test values of deep_dive..[] deep dive record saving array */
 			else if (prefix(message, "/deepdivestats")) {
-				for (i = 0; i < 20; i++)
+				for (i = 0; i < IDDC_HIGHSCORE_SIZE; i++)
 					//msg_format(Ind, "#%2d.  %20s  %3d", i + 1, deep_dive_name[i], deep_dive_level[i]);//NAME_LEN
 					msg_format(Ind, "#%2d.  %65s  %3d", i + 1, deep_dive_name[i], deep_dive_level[i]);//MAX_CHARS - 15 to fit on screen
 				return;
@@ -7024,7 +7024,7 @@ void do_slash_cmd(int Ind, char *message)
 			/* Fix erroneous colour codes in deep_dive_name[] */
 			else if (prefix(message, "/deepdivefix")) {
 				char *p, *q, buf[256];
-				for (i = 0; i < 20; i++) {
+				for (i = 0; i < IDDC_HIGHSCORE_SIZE; i++) {
 					//msg_format(Ind, "#%2d.  %20s  %3d", i + 1, deep_dive_name[i], deep_dive_level[i]);//NAME_LEN
 					msg_format(Ind, "#%2d.  %65s  %3d", i + 1, deep_dive_name[i], deep_dive_level[i]);//MAX_CHARS - 15 to fit on screen
 					q = NULL;
@@ -7048,7 +7048,7 @@ void do_slash_cmd(int Ind, char *message)
 				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
 				path_build(path_rev, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends-rev.log");
 				/* Reset stats */
-				for (i = 0; i < 20; i++) {
+				for (i = 0; i < IDDC_HIGHSCORE_SIZE; i++) {
 					strcpy(deep_dive_name[i], "");
 					deep_dive_level[i] = 0;
 				}

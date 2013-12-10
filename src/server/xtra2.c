@@ -6271,9 +6271,9 @@ void player_death(int Ind) {
 
 	if (in_irondeepdive(&p_ptr->wpos)
 	    && !is_admin(p_ptr)) {
-		for (i = 0; i < 20; i++) {
+		for (i = 0; i < IDDC_HIGHSCORE_SIZE; i++) {
 			if (deep_dive_level[i] >= ABS(p_ptr->wpos.wz) || deep_dive_level[i] == -1) continue;
-			for (j = 20 - 1; j > i; j--) {
+			for (j = IDDC_HIGHSCORE_SIZE - 1; j > i; j--) {
 				deep_dive_level[j] = deep_dive_level[j - 1];
 				strcpy(deep_dive_name[j], deep_dive_name[j - 1]);
 			}
@@ -6291,7 +6291,7 @@ void player_death(int Ind) {
 			break;
 		}
 
-		if (i < 10) {
+		if (i < IDDC_HIGHSCORE_DISPLAYED) {
 			sprintf(buf, "\374\377a%s reached floor %d in the Ironman Deep Dive challenge, placing %d%s!",
 			    p_ptr->name, ABS(p_ptr->wpos.wz), i + 1, i == 0 ? "st" : (i == 1 ? "nd" : (i == 2 ? "rd" : "th")));
 			msg_broadcast_format(0, buf);

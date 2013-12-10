@@ -2906,7 +2906,19 @@ errr rd_server_savefile()
 	if (!s_older_than(4, 3, 25)) rd_auctions();
 
 	/* read Ironman Deep Dive Challenge records */
-	if (!s_older_than(4, 4, 18)) {
+	if (!s_older_than(4, 5, 15)) {
+		rd_byte(&tmp8u);
+	        for (i = 0; i < tmp8u; i++) {
+			rd_s16b(&tmp16s);
+			if (i >= IDDC_HIGHSCORE_SIZE) continue;
+			deep_dive_level[i] = tmp16s;
+			rd_string(deep_dive_name[i], MAX_CHARS);
+		}
+		for (i = tmp8u; i < IDDC_HIGHSCORE_SIZE; i++) {
+			deep_dive_level[i] = 0;
+			deep_dive_name[i][0] = 0;
+		}
+	} else if (!s_older_than(4, 4, 18)) {
 	        for (i = 0; i < 20; i++) {
 			rd_s16b(&tmp16s);
 			deep_dive_level[i] = tmp16s;

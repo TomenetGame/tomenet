@@ -2018,7 +2018,8 @@ static bool wr_server_savefile()
 	wr_auctions();
 
 	/* write Ironman Deep Dive Challenge records */
-	for (i = 0; i < 20; i++) {
+	wr_byte(IDDC_HIGHSCORE_SIZE);
+	for (i = 0; i < IDDC_HIGHSCORE_SIZE; i++) {
 		wr_s16b(deep_dive_level[i]);
 		wr_string(deep_dive_name[i]);
 	}
