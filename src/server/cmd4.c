@@ -871,7 +871,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 
 } else { /* COMPACT_PLAYERLIST */
  if (compaction == 3) { /* #ifdef ULTRA_COMPACT_PLAYERLIST */
-	char flag_str[10];
+	char flag_str[12];
 
 	/* Print a message */
 	fprintf(fff," ");
@@ -1268,7 +1268,7 @@ void do_cmd_check_players(int Ind, int line)
 	char file_name[MAX_PATH_LENGTH];
 
 	bool admin = is_admin(p_ptr);
-	char flag_str[10];
+	char flag_str[12];
 	bool iddc;
 	bool big_map = (p_ptr->screen_hgt != SCREEN_HGT); //BIG_MAP is currently turned on for this player?
 
