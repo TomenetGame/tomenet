@@ -678,7 +678,8 @@ void do_slash_cmd(int Ind, char *message)
 		}
 
 		/* add inscription to everything */
-		else if (prefix(message, "/tag"))
+		else if (prefix(message, "/tag") ||
+		    prefix(message, "/t ") || (prefix(message, "/t") && !message[2]))
 		{
 			object_type *o_ptr;
 
@@ -726,7 +727,8 @@ void do_slash_cmd(int Ind, char *message)
 		/* remove specific inscription.
 		   If '*' is given, all pseudo-id tags are removed,
 		   if no parameter is given, '!k' is the default. */
-		else if (prefix(message, "/untag"))
+		else if (prefix(message, "/untag") ||
+		    prefix(message, "/ut"))
 		{
 			object_type *o_ptr;
 //			cptr ax = token[1] ? token[1] : "!k";
