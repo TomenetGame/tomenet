@@ -944,9 +944,9 @@ bool make_attack_melee(int Ind, int m_idx)
 					msg_format(Ind, "\377%cYou parry %^s attack.", COLOUR_PARRY_GOOD, m_name_gen);
 					if (mon_acid + mon_fire) {
 						if (randint(mon_acid + mon_fire) > mon_acid) {
-							if (magik(5)) weapon_takes_damage(Ind, GF_FIRE, slot);
+							if (magik(3)) weapon_takes_damage(Ind, GF_FIRE, slot);
 						} else {
-							if (magik(10)) weapon_takes_damage(Ind, GF_ACID, slot);
+							if (magik(5)) weapon_takes_damage(Ind, GF_ACID, slot);
 						}
 					}
 					continue;
@@ -987,9 +987,9 @@ bool make_attack_melee(int Ind, int m_idx)
 				msg_format(Ind, "\377%cYou parry %^s attack.", COLOUR_PARRY_GOOD, m_name_gen);
 				if (mon_acid + mon_fire) {
 					if (randint(mon_acid + mon_fire) > mon_acid) {
-						if (magik(5)) weapon_takes_damage(Ind, GF_FIRE, slot);
+						if (magik(3)) weapon_takes_damage(Ind, GF_FIRE, slot);
 					} else {
-						if (magik(10)) weapon_takes_damage(Ind, GF_ACID, slot);
+						if (magik(5)) weapon_takes_damage(Ind, GF_ACID, slot);
 					}
 				}
 				continue;
