@@ -7046,20 +7046,37 @@ void do_slash_cmd(int Ind, char *message)
 				}
 #endif
 #if 1
-				/* delete an entry (to fix duplicate entries, account+class wise) */
-				if (!tk) {
+				char buf[256], *b;
+
+				/* delete or complete an entry (to fix duplicate entries, account+class wise) */
+				if ((tk != 1 && tk != 3) || (tk == 3 && !strchr(message2, ':'))) {
 					msg_print(Ind, "usage: /deepdivefix <entry to delete>");
+					msg_print(Ind, "usage: /deepdivefix <entry to modify> <class> <account>:<char>");
+					return;
+				}
+				k++;
+
+				/* delete mode? */
+				if (tk == 1) {
+					/* pull up all succeeding entries by 1  */
+					for (i = k; i < IDDC_HIGHSCORE_SIZE - 1; i++) {
+						deep_dive_level[i] = deep_dive_level[i + 1];
+						strcpy(deep_dive_name[i], deep_dive_name[i + 1]);
+						strcpy(deep_dive_char[i], deep_dive_char[i + 1]);
+						strcpy(deep_dive_account[i], deep_dive_account[i + 1]);
+						deep_dive_class[i] = deep_dive_class[i + 1];
+					}
 					return;
 				}
 
-				/* pull up all succeeding entries by 1  */
-				for (i = k; i < IDDC_HIGHSCORE_SIZE - 1; i++) {
-					deep_dive_level[i] = deep_dive_level[i + 1];
-					strcpy(deep_dive_name[i], deep_dive_name[i + 1]);
-					strcpy(deep_dive_char[i], deep_dive_char[i + 1]);
-					strcpy(deep_dive_account[i], deep_dive_account[i + 1]);
-					deep_dive_class[i] = deep_dive_class[i + 1];
-				}
+				/* complete mode */
+				strcpy(buf, token[3]);
+				b = strchr(buf, ':');
+				*b = 0;
+				strcpy(deep_dive_account[k], buf);
+				b++;
+				strcpy(deep_dive_char[k], b);
+				deep_dive_class[k] = atoi(token[2]);
 #endif
 				return;
 			}
