@@ -222,6 +222,28 @@ int reverse_lines(cptr input_file, cptr output_file) {
 				    i + 1, i == 0 ? "st" : (i == 1 ? "nd" : (i == 2 ? "rd" : "th")), deep_dive_name[i], deep_dive_level[i]);
 		}
 		fprintf(fp2, "\n");
+
+		/* abuse this function to also update the full IDDC record table (for the website) */
+		{
+			FILE *fp3 = NULL;
+			char path_iddc[MAX_PATH_LENGTH];
+
+			path_build(path_iddc, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends-iddc.log");
+			fp3 = fopen(path_iddc, "wb");
+			if (fp3) {
+				fprintf(fp3, "\\{UIronman Deep Dive Challenge Records:\n");
+				/* Display only the first n records */
+				for (i = 0; i < IDDC_HIGHSCORE_SIZE && deep_dive_level[i] != 0; i++) {
+					if (deep_dive_level[i] == -1)
+						fprintf(fp3, "\\{s %2d%s- %s made it out!\n",
+						    i + 1, i == 0 ? "st" : (i == 1 ? "nd" : (i == 2 ? "rd" : "th")), deep_dive_name[i]);
+					else
+						fprintf(fp3, "\\{s %2d%s- %s reached floor %d.\n",
+						    i + 1, i == 0 ? "st" : (i == 1 ? "nd" : (i == 2 ? "rd" : "th")), deep_dive_name[i], deep_dive_level[i]);
+				}
+				fclose(fp3);
+			}
+		}
 	}
 
 
