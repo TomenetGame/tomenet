@@ -6310,6 +6310,13 @@ void player_death(int Ind) {
 		if (ABS(p_ptr->wpos.wz) >= 30)
 			l_printf("%s \\{s%s (%d) reached floor %d in the Ironman Deep Dive challenge\n",
 			    showdate(), p_ptr->name, p_ptr->max_plv, ABS(p_ptr->wpos.wz));
+		else if (i < IDDC_HIGHSCORE_SIZE) { /* the score table is updated anyway, even if no l_printf() entry is created */
+			char path[MAX_PATH_LENGTH];
+			char path_rev[MAX_PATH_LENGTH];
+			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends.log");
+			path_build(path_rev, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "legends-rev.log");
+			reverse_lines(path, path_rev);
+		}
 	}
 
 	if (ge_special_sector &&
