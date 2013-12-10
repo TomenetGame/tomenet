@@ -201,18 +201,10 @@ static bool choose_sex(void)
 			}
 			hazard = TRUE;
 		}
-		else if (c == '#')
-		{
-			if (valid_dna) {
-				if (dna_sex % 2) c = 'm';
-				else c = 'f';
-			}
-			hazard = TRUE;
-		}
-		else
-		{
-			bell();
-		}
+		else if (c == '#' && valid_dna) {
+			if (dna_sex % 2) c = 'm';
+			else c = 'f';
+		} else bell();
 	}
 
 	clear_from(19);
@@ -1055,16 +1047,14 @@ static bool choose_stat_order(void)
 
 				return FALSE;
 			}
-			if (c == '#') {
-				if (valid_dna) {
-					for (i = 0; i < 6; i++) {
-						if (dna_stat_order[i] > 7 || dna_stat_order[i] < 18) stat_order[i] = dna_stat_order[i];
-						else stat_order[i] = 8;
-					}
-					for (i = 3; i < 12; i++) Term_erase(30, i, 255);
-					clear_from(13);
-					return TRUE;
+			if (c == '#' && valid_dna) {
+				for (i = 0; i < 6; i++) {
+					if (dna_stat_order[i] > 7 || dna_stat_order[i] < 18) stat_order[i] = dna_stat_order[i];
+					else stat_order[i] = 8;
 				}
+				for (i = 3; i < 12; i++) Term_erase(30, i, 255);
+				clear_from(13);
+				return TRUE;
 			}
 		}
 
@@ -1179,16 +1169,13 @@ static bool choose_mode(void)
 					break;
 			}
 			hazard = TRUE;
-		} else if (c == '#') {
-			if (valid_dna) {
-				if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
-				else if ((dna_sex & MODE_HARD) == MODE_HARD) c = 'h';
-				else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'g';
-				else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'e';
-				else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
-				else  c = 'n';
-				hazard = TRUE;
-			}
+		} else if (c == '#' && valid_dna) {
+			if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
+			else if ((dna_sex & MODE_HARD) == MODE_HARD) c = 'h';
+			else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'g';
+			else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'e';
+			else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
+			else c = 'n';
 		} else bell();
 	}
 
@@ -1250,12 +1237,9 @@ static bool choose_body_modification(void)
 					break;
 			}
 			hazard = TRUE;
-		} else if (c == '#') {
-			if (valid_dna) {
-				if ((dna_sex & MODE_FRUIT_BAT) == MODE_FRUIT_BAT) c = 'f';
-				else c = 'n';
-			}
-			hazard = TRUE;
+		} else if (c == '#' && valid_dna) {
+			if ((dna_sex & MODE_FRUIT_BAT) == MODE_FRUIT_BAT) c = 'f';
+			else c = 'n';
 		} else bell();
 	}
 
