@@ -1637,7 +1637,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	}
 
 	/* enable/switch to certain ambient loops */
-	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos)) {
+	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos) && p_ptr->sfx_inn) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_FIREPLACE, smooth);
 	} else if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && 
 	    p_ptr->sound_ambient != SFX_AMBIENT_SHORE && wpos->wz == 0 && (wild_info[wpos->wy][wpos->wx].type == WILD_OCEAN || wild_info[wpos->wy][wpos->wx].bled == WILD_OCEAN)) {

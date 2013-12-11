@@ -2159,6 +2159,7 @@ static void sync_options(int Ind, bool *options)
 		p_ptr->sfx_monsterattack = TRUE;
 		p_ptr->sfx_shriek = TRUE;
 		p_ptr->sfx_store = FALSE;
+		p_ptr->sfx_inn = TRUE;
 	} else {
 		p_ptr->sfx_combat = !options[47];
 		p_ptr->sfx_magicattack = !options[48];
@@ -2166,6 +2167,7 @@ static void sync_options(int Ind, bool *options)
 		p_ptr->sfx_monsterattack = !options[93];
 		p_ptr->sfx_shriek = !options[94];
 		p_ptr->sfx_store = !options[96];
+		p_ptr->sfx_inn = !options[97];
 	}
 }
 

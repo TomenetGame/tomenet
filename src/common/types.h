@@ -2846,7 +2846,7 @@ struct player_type
 #endif
 	bool cut_sfx_attack, half_sfx_attack, half_sfx_attack_state;
 	int count_cut_sfx_attack;
-	bool sfx_combat, sfx_magicattack, sfx_defense, sfx_monsterattack, sfx_shriek, sfx_store;
+	bool sfx_combat, sfx_magicattack, sfx_defense, sfx_monsterattack, sfx_shriek, sfx_store, sfx_inn;
 
 	/* various flags/counters to check if a character is 'freshly made' and/or has already interacted in certain ways.
 	   Mostly to test if he/she is eglibile to join events. */
@@ -3243,6 +3243,7 @@ struct client_opts {
 
 	bool keep_topline;
 	bool no_store_sfx;
+	bool no_inn_sfx;
 };
 
 /*
