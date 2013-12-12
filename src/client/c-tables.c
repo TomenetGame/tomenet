@@ -596,7 +596,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.quiet_house_sfx,	TRUE,	5,	1, 97, TRUE,
 	"quiet_house_sfx",		"Play quieter ambient/weather sound in buildings" },
 
-	{ &c_cfg.no_house_sfx,		FALSE,	5,	1, 97, TRUE,
+	{ &c_cfg.no_house_sfx,		FALSE,	5,	1, 98, TRUE,
 	"no_house_sfx",			"Don't play ambient/weather sound in buildings" },
 };
 
