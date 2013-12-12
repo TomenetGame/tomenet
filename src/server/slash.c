@@ -5317,6 +5317,17 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "Rerolled history for %s.", Players[p]->name);
 				return;
 			}
+			else if (prefix(message, "/checkhistory")) {
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /checkhistory <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				if (!p) return;
+				for (i = 0; i < 4; i++) msg_format(Ind, "[%d]: %s", i, Players[p]->history[i]);
+				return;
+			}
 			/* Turn all non-everlasting items inside a house to everlasting items if the owner is everlasting */
 			else if (prefix(message, "/everhouse")) {
 				/* house_contents_chmod .. (scan_obj style) */
