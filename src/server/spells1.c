@@ -894,6 +894,8 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 	p_ptr->py = y;
 	p_ptr->px = x;
 
+	grid_affects_player(Ind);
+
 	/* The player isn't on his old spot anymore */
 	zcave[oy][ox].m_idx = 0;
 
@@ -1070,6 +1072,8 @@ void teleport_player_to(int Ind, int ny, int nx)
 	/* Move the player */
 	p_ptr->py = y;
 	p_ptr->px = x;
+
+	grid_affects_player(Ind);
 
 	/* The player isn't here anymore */
 	zcave[oy][ox].m_idx = 0;

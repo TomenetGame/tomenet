@@ -2159,15 +2159,25 @@ static void sync_options(int Ind, bool *options)
 		p_ptr->sfx_monsterattack = TRUE;
 		p_ptr->sfx_shriek = TRUE;
 		p_ptr->sfx_store = FALSE;
-		p_ptr->sfx_inn = TRUE;
+		p_ptr->sfx_house_quiet = TRUE;
+		p_ptr->sfx_house = TRUE;
 	} else {
+		bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
 		p_ptr->sfx_combat = !options[47];
 		p_ptr->sfx_magicattack = !options[48];
 		p_ptr->sfx_defense = !options[49];
 		p_ptr->sfx_monsterattack = !options[93];
 		p_ptr->sfx_shriek = !options[94];
 		p_ptr->sfx_store = !options[96];
-		p_ptr->sfx_inn = !options[97];
+		p_ptr->sfx_house_quiet = options[97];
+		p_ptr->sfx_house = !options[98];
+		if (p_ptr->sfx_house != sfx_house || p_ptr->sfx_house_quiet != sfx_house_quiet) {
+			if (p_ptr->grid_house) {
+				if (!p_ptr->sfx_house) Send_sfx_volume(Ind, 0, 0);
+				else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : 40, 40);
+				else Send_sfx_volume(Ind, 100, 100);
+			}
+		}
 	}
 }
 
@@ -2690,6 +2700,8 @@ static int Handle_login(int ind)
 
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth(NumPlayers);
+
+	grid_affects_player(NumPlayers);
 
 #if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES) || defined(ALLOW_NR_CROSS_ITEMS)
 	wpcopy(&Players[NumPlayers]->wpos_old, &p_ptr->wpos);
@@ -6165,6 +6177,31 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 	//s_printf("USE_SOUND_2010: ambient sfx %d sent to player %s (%d).\n", i, Players[Ind]->name, Ind);//debug
 	return Packet_printf(&connp->c, "%c%d", PKT_SFX_AMBIENT, i);
 }
+int Send_sfx_volume(int Ind, char sfx_ambient_vol, char sfx_weather_vol) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+	/* Mind-linked to someone? Send him our sound too! */
+	player_type *p_ptr2 = NULL;
+	connection_t *connp2 = NULL;
+
+	/* If we're the target, we won't hear our own sfx */
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	/* Get target player */
+	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
+	/* Send same info to target player, if available */
+	if (connp2 && is_newer_than(&connp2->version, 4, 5, 5, 0, 0, 0))
+		Packet_printf(&connp2->c, "%c%c%c", PKT_SFX_VOLUME, sfx_ambient_vol, sfx_weather_vol);
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for ambient sfx (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (!is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) return(-1);
+	//s_printf("USE_SOUND_2010: ambient sfx %d sent to player %s (%d).\n", i, Players[Ind]->name, Ind);//debug
+	return Packet_printf(&connp->c, "%c%c%c", PKT_SFX_VOLUME, sfx_ambient_vol, sfx_weather_vol);
+}
 #endif
 
 int Send_boni_col(int Ind, boni_col c) {
@@ -6995,7 +7032,7 @@ int Send_apply_auto_insc(int Ind, int slot) {
 		return 0;
 	}
 
-	return Packet_printf(&connp->c, "%c%c", PKT_AUTO_INSC, (char)slot);
+	return Packet_printf(&connp->c, "%c%c", PKT_AUTOINSCRIBE, (char)slot);
 }
 
 /*

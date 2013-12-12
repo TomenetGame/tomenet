@@ -6286,6 +6286,8 @@ void process_player_change_wpos(int Ind)
 	p_ptr->py = y;
 	p_ptr->px = x;
 
+	grid_affects_player(Ind);
+
 	/* Update the player location */
 	zcave[y][x].m_idx = 0 - Ind;
 	cave_midx_debug(wpos, y, x, -Ind);

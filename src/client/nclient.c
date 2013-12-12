@@ -145,7 +145,8 @@ static void Receive_init(void) {
 	receive_tbl[PKT_STORE_WIDE]	= Receive_store_wide;
 	receive_tbl[PKT_MUSIC]		= Receive_music;
 	receive_tbl[PKT_BONI_COL]	= Receive_boni_col;
-	receive_tbl[PKT_AUTO_INSC]	= Receive_apply_auto_insc;
+	receive_tbl[PKT_AUTOINSCRIBE]	= Receive_apply_auto_insc;
+	receive_tbl[PKT_SFX_VOLUME]	= Receive_sfx_volume;
 	receive_tbl[PKT_SFX_AMBIENT]	= Receive_sfx_ambient;
 	receive_tbl[PKT_MINI_MAP_POS]	= Receive_mini_map_pos;
 
@@ -2713,6 +2714,22 @@ int Receive_sfx_ambient(void) {
 #ifdef USE_SOUND_2010
 	/* Play background ambient sound effect (if enabled) */
 	if (use_sound) sound_ambient(a);
+#endif
+
+	return 1;
+}
+
+int Receive_sfx_volume(void) {
+	int	n;
+	char	ch, c_ambient, c_weather;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &c_ambient, &c_weather)) <= 0) return n;
+
+#ifdef USE_SOUND_2010
+	/* Play background ambient sound effect (if enabled) */
+	grid_ambient_volume = (int)c_ambient;
+	grid_weather_volume = (int)c_weather;
+	if (use_sound) set_mixing();
 #endif
 
 	return 1;

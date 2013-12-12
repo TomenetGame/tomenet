@@ -1448,7 +1448,7 @@ static void set_mixing_sdl(void) {
 
 		/* HACK - use weather volume for thunder sfx */
 		if (channel_sample[n] != -1 && channel_type[n] == SFX_TYPE_WEATHER) {
-			Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * channel_volume[n]) / 100));
+			Mix_Volume(n, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * channel_volume[n]) / 100) * grid_weather_volume) / 100);
 			continue;
 		} else
 
@@ -1469,15 +1469,15 @@ static void set_mixing_sdl(void) {
 
 	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
  #ifndef WEATHER_VOL_PARTICLES
-		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
  #else
-		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
  #endif
 	}
 
 	if (ambient_channel != -1) {
 		if (Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
-			Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+			Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
 #ifdef DISABLE_MUTED_AUDIO
 		if ((!cfg_audio_master || !cfg_audio_sound) && Mix_Playing(ambient_channel))
 			Mix_HaltChannel(ambient_channel);

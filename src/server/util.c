@@ -1637,7 +1637,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	}
 
 	/* enable/switch to certain ambient loops */
-	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos) && p_ptr->sfx_inn) {
+	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos) && p_ptr->sfx_house) { /* sfx_house check is redundant with grid_affects_player() */
 		Send_sfx_ambient(Ind, SFX_AMBIENT_FIREPLACE, smooth);
 	} else if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && 
 	    p_ptr->sound_ambient != SFX_AMBIENT_SHORE && wpos->wz == 0 && (wild_info[wpos->wy][wpos->wx].type == WILD_OCEAN || wild_info[wpos->wy][wpos->wx].bled == WILD_OCEAN)) {
@@ -6711,5 +6711,40 @@ void log_floor_coverage(dun_level *l_ptr, struct worldpos *wpos) {
 			    l_ptr->monsters_generated, l_ptr->monsters_spawned, l_ptr->monsters_killed,
 			    (l_ptr->monsters_killed * 100) / (l_ptr->monsters_generated + l_ptr->monsters_spawned),
 			    feel);
+	}
+}
+
+void grid_affects_player(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	cave_type **zcave;
+	cave_type *c_ptr;
+	bool inn = FALSE;
+
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	if (!p_ptr->wpos.wz && !night_surface && !(c_ptr->info & CAVE_PROT) &&
+	    !(f_info[c_ptr->feat].flags1 & FF1_PROTECTED)) {
+		if (!p_ptr->grid_sunlit) {
+			p_ptr->grid_sunlit = TRUE;
+			calc_boni(Ind);
+		}
+	} else if (p_ptr->grid_sunlit) {
+		p_ptr->grid_sunlit = FALSE;
+		calc_boni(Ind);
+	}
+
+	/* Hack: Inns count as houses */
+	if (!p_ptr->wpos.wz && ((c_ptr->info & CAVE_PROT) || (f_info[c_ptr->feat].flags1 & FF1_PROTECTED))) inn = TRUE;
+
+	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || inn) {
+		if (!p_ptr->grid_house) {
+			p_ptr->grid_house = TRUE;
+			if (!p_ptr->sfx_house) Send_sfx_volume(Ind, 0, 0);
+			else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : 40, 40);
+		}
+	} else if (p_ptr->grid_house) {
+		p_ptr->grid_house = FALSE;
+		if (p_ptr->sfx_house_quiet || !p_ptr->sfx_house) Send_sfx_volume(Ind, 100, 100);
 	}
 }

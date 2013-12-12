@@ -593,8 +593,11 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.no_store_sfx,		TRUE,	5,	1, 96, TRUE,
 	"no_store_sfx",			"Don't play sound fx when entering/leaving a store" },
 
-	{ &c_cfg.no_inn_sfx,		FALSE,	5,	1, 97, TRUE,
-	"no_inn_sfx",			"Don't play ambient sound fx while inside an inn" },
+	{ &c_cfg.quiet_house_sfx,	TRUE,	5,	1, 97, TRUE,
+	"quiet_house_sfx",		"Play quieter ambient/weather sound in buildings" },
+
+	{ &c_cfg.no_house_sfx,		FALSE,	5,	1, 97, TRUE,
+	"no_house_sfx",			"Don't play ambient/weather sound in buildings" },
 };
 
 

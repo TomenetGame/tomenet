@@ -312,6 +312,7 @@ int cfg_audio_master_volume = 100, cfg_audio_music_volume = 100, cfg_audio_sound
 #if 1 /* WEATHER_VOL_PARTICLES */
 int weather_vol_smooth, weather_vol_smooth_anti_oscill, weather_smooth_avg[20];
 #endif
+int grid_weather_volume = 100, grid_ambient_volume = 100;
 
 /* sounds that are hard-coded on client-side, because they won't be transmitted from the server: */
 int page_sound_idx = -1, warning_sound_idx = -1, rain1_sound_idx = -1, rain2_sound_idx = -1, snow1_sound_idx = -1, snow2_sound_idx = -1, browse_sound_idx = -1, browsebook_sound_idx = -1;

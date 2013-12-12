@@ -158,7 +158,7 @@
 #define PKT_AUTOINSCRIBE	135
 
 //XXX 136-149
-#define PKT_AUTO_INSC		148	/* Tell client to apply auto-inscriptions to an item */
+#define PKT_SFX_VOLUME		148	/* Tell client to modify volume level of ambient and/or weather sfx  */
 #define PKT_SFX_AMBIENT		149	/* background ambient sfx */
 
 /* Packet types 150- are hacks */

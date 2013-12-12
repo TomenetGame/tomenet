@@ -5286,8 +5286,6 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type **zcave;
 	int csmove = TRUE;
-	
-	bool old_grid_sunlit = FALSE, new_grid_sunlit = FALSE; /* for vampires */
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -5344,11 +5342,6 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	}
 
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-
-	/* Check sunlight, for vampires */
-	if (!p_ptr->wpos.wz && !night_surface && !(c_ptr->info & CAVE_PROT) &&
-	    !(f_info[c_ptr->feat].flags1 & FF1_PROTECTED))
-		old_grid_sunlit = TRUE;
 
 	/* Slip on icy floor */
 	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->fly && !p_ptr->tim_wraith)) {
@@ -5459,10 +5452,6 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	/* Examine the destination */
 	c_ptr = &zcave[y][x];
 
-	if (!p_ptr->wpos.wz && !night_surface && !(c_ptr->info & CAVE_PROT) &&
-	    !(f_info[c_ptr->feat].flags1 & FF1_PROTECTED))
-		new_grid_sunlit = TRUE;
-
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 	/* Save "last direction moved" */
@@ -5542,7 +5531,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 				p_ptr->py = y;
 				p_ptr->px = x;
-				if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);
+				grid_affects_player(Ind);
+
 #ifdef USE_SOUND_2010
 				handle_ambient_sfx(Ind, c_ptr, &p_ptr->wpos, TRUE);
 #endif
@@ -5680,7 +5670,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			store_exit(Ind);
 			p_ptr->px = m_list[c_ptr->m_idx].fx;
 			p_ptr->py = m_list[c_ptr->m_idx].fy;
-			if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);
+			grid_affects_player(Ind);
 #ifdef USE_SOUND_2010
 			handle_ambient_sfx(Ind, c_ptr, &p_ptr->wpos, TRUE);
 #endif
@@ -5890,7 +5880,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		store_exit(Ind);
 		p_ptr->py = y;
 		p_ptr->px = x;
-		if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);
+		grid_affects_player(Ind);
+
 #ifdef USE_SOUND_2010
 		handle_ambient_sfx(Ind, &zcave[y][x], &p_ptr->wpos, TRUE);
 #endif

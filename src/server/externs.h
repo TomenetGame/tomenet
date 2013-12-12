@@ -1068,6 +1068,7 @@ extern int Send_sound(int ind, int sound, int alternative, int type, int vol, s3
 #ifdef USE_SOUND_2010
 extern int Send_music(int ind, int music);
 extern int Send_sfx_ambient(int ind, int sfx_ambient, bool smooth);
+extern int Send_sfx_volume(int ind, char sfx_ambient_volume, char sfx_weather_volume);
 #endif
 extern int Send_boni_col(int ind, boni_col c);
 extern int Send_beep(int ind);
@@ -1744,6 +1745,7 @@ extern bool gain_au(int Ind, u32b amt, bool quiet, bool exempt);
 extern bool backup_estate(void);
 extern void restore_estate(int Ind);
 extern void log_floor_coverage(dun_level *l_ptr, struct worldpos *wpos);
+extern void grid_affects_player(int Ind);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);

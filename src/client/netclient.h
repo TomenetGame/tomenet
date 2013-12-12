@@ -73,6 +73,7 @@ int Receive_target_info(void);
 int Receive_sound(void);
 int Receive_music(void);
 int Receive_sfx_ambient(void);
+int Receive_sfx_volume(void);
 int Receive_boni_col(void);
 int Receive_mini_map(void);
 int Receive_mini_map_pos(void);
