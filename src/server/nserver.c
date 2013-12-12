@@ -7650,76 +7650,76 @@ static int Receive_activate_skill(int ind)
 					case 1:
 						switch (p_ptr->mimic_immunity) {
 						case 0:
-							msg_print(player, "Currently you don't have any preferred form immunity.");
+							msg_print(player, "\377WCurrently you don't have any preferred form immunity.");
 							break;
 						case 1:
-							msg_print(player, "Your current immunity preference is lightning.");
+							msg_print(player, "\377WYour current immunity preference is \377blightning.");
 							break;
 						case 2:
-							msg_print(player, "Your current immunity preference is frost.");
+							msg_print(player, "\377WYour current immunity preference is \377wfrost.");
 							break;
 						case 3:
-							msg_print(player, "Your current immunity preference is acid.");
+							msg_print(player, "\377WYour current immunity preference is \377sacid.");
 							break;
 						case 4:
-							msg_print(player, "Your current immunity preference is fire.");
+							msg_print(player, "\377WYour current immunity preference is \377rfire.");
 							break;
 						case 5:
-							msg_print(player, "Your current immunity preference is poison.");
+							msg_print(player, "\377WYour current immunity preference is \377gpoison.");
 							break;
 						case 6:
-							msg_print(player, "Your current immunity preference is water.");
+							msg_print(player, "\377WYour current immunity preference is \377Bwater.");
 							break;
 						}
 						break;
 					case 2:
 						p_ptr->mimic_immunity = 0;
-						msg_print(player, "You no longer have any preferred form immunity.");
+						msg_print(player, "\377WYou no longer have any preferred form immunity.");
 						break;
 					case 3:
 						p_ptr->mimic_immunity = 1;
-						msg_print(player, "Preferred form immunity is now lightning.");
+						msg_print(player, "\377WPreferred form immunity is now \377blightning.");
 						if (p_ptr->body_monster &&
 						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_ELEC))
 							calc_boni(player);
 						break;
 					case 4:
 						p_ptr->mimic_immunity = 2;
-						msg_print(player, "Preferred form immunity is now frost.");
+						msg_print(player, "\377WPreferred form immunity is now \377wfrost.");
 						if (p_ptr->body_monster &&
 						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_COLD))
 							calc_boni(player);
 						break;
 					case 5:
 						p_ptr->mimic_immunity = 3;
-						msg_print(player, "Preferred form immunity is now acid.");
+						msg_print(player, "\377WPreferred form immunity is now \377sacid.");
 						if (p_ptr->body_monster &&
 						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_ACID))
 							calc_boni(player);
 						break;
 					case 6:
 						p_ptr->mimic_immunity = 4;
-						msg_print(player, "Preferred form immunity is now fire.");
+						msg_print(player, "\377WPreferred form immunity is now \377rfire.");
 						if (p_ptr->body_monster &&
 						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_FIRE))
 							calc_boni(player);
 						break;
 					case 7:
 						p_ptr->mimic_immunity = 5;
-						msg_print(player, "Preferred form immunity is now poison.");
+						msg_print(player, "\377WPreferred form immunity is now \377gpoison.");
 						if (p_ptr->body_monster &&
 						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_POIS))
 							calc_boni(player);
 						break;
 					case 8:
 						p_ptr->mimic_immunity = 6;
-						msg_print(player, "Preferred form immunity is now water.");
+						msg_print(player, "\377WPreferred form immunity is now \377Bwater.");
 						if (p_ptr->body_monster &&
 						    (r_info[p_ptr->body_monster].flags9 & RF9_IM_WATER))
 							calc_boni(player);
 						break;
 					default:
-						msg_print(player, "That immunity does not exist.");
+						msg_print(player, "\377yThat immunity does not exist.");
 						break;
 					}
 					return 2;
