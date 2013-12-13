@@ -2174,7 +2174,7 @@ static void sync_options(int Ind, bool *options)
 		if (p_ptr->sfx_house != sfx_house || p_ptr->sfx_house_quiet != sfx_house_quiet) {
 			if (p_ptr->grid_house) {
 				if (!p_ptr->sfx_house) Send_sfx_volume(Ind, 0, 0);
-				else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : 30, 30);
+				else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : 40, 40);
 				else Send_sfx_volume(Ind, 100, 100);
 			}
 		}
@@ -2726,14 +2726,17 @@ static int Handle_login(int ind)
 	else
 		handle_music(NumPlayers); /* start music normally (instantly) */
 
-	handle_ambient_sfx(NumPlayers, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
-
 	/* Don't skip the first attack sfx (in case player enabled half_sfx_attack or cut_sfx_attack) */
 	p_ptr->count_cut_sfx_attack = 500;
 #endif
 
-	/* Note: sound_ambient must be initialised to -1 before calling this. */
+	/* Note: p_ptr->sound_ambient must be initialised to -1 before calling this. */
 	grid_affects_player(NumPlayers);
+
+#ifdef USE_SOUND_2010
+	/* Note: This must come after grid_affects_players() has been called initially. */
+	handle_ambient_sfx(NumPlayers, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
+#endif
 
 	/* Initialize the client's unique list;
 	it will become further updated each time he kills another unique */
