@@ -930,7 +930,7 @@ static void play_sound_weather(int event) {
 #if 1 /* volume glitch paranoia (first fade-in seems to move volume to 100% instead of designated cfg_audio_... */
 	new_wc = Mix_PlayChannel(weather_channel, wave, -1);
 	if (new_wc != -1) {
-		Mix_Volume(new_wc, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+		Mix_Volume(new_wc, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
 		if (!weather_resume) new_wc = Mix_FadeInChannel(new_wc, wave, -1, 500);
 	}
 #else
@@ -955,7 +955,7 @@ static void play_sound_weather(int event) {
 		//successfully started playing the first weather
 		weather_channel = new_wc;
 		weather_current = event;
-		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
 	} else {
 		//failed to start playing?
 		if (new_wc == -1) {
@@ -971,7 +971,7 @@ static void play_sound_weather(int event) {
 				Mix_HaltChannel(weather_channel);
 				weather_channel = new_wc;
 				weather_current = event;
-				Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+				Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
 			}
 		}
 	}
@@ -985,7 +985,7 @@ static void play_sound_weather(int event) {
 	}
 	if (weather_channel != -1) { //paranoia? should always be != -1 at this point
 		weather_current = event;
-		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
 	}
 #endif
 
@@ -1065,7 +1065,7 @@ static void play_sound_weather_vol(int event, int vol) {
 				weather_vol_smooth--;
 
 //c_message_add(format("smooth %d", weather_vol_smooth));
-		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
 
 		/* Done */
 		return;
@@ -1100,7 +1100,7 @@ static void play_sound_weather_vol(int event, int vol) {
 	new_wc = Mix_PlayChannel(weather_channel, wave, -1);
 	if (new_wc != -1) {
 		weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
-		Mix_Volume(new_wc, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
+		Mix_Volume(new_wc, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
 		if (!weather_resume) new_wc = Mix_FadeInChannel(new_wc, wave, -1, 500);
 	}
 #else
@@ -1127,7 +1127,7 @@ static void play_sound_weather_vol(int event, int vol) {
 		weather_current = event;
 
 		weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
-		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
 	} else {
 		//failed to start playing?
 		if (new_wc == -1) {
@@ -1144,7 +1144,7 @@ static void play_sound_weather_vol(int event, int vol) {
 				weather_channel = new_wc;
 				weather_current = event;
 				weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
-				Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
+				Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
 			}
 		}
 	}
@@ -1158,7 +1158,7 @@ static void play_sound_weather_vol(int event, int vol) {
 	}
 	if (weather_channel != -1) { //paranoia? should always be != -1 at this point
 		weather_current = event;
-		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100) * grid_weather_volume) / 100);
 	}
 #endif
 
@@ -1176,9 +1176,9 @@ void weather_handle_fading(void) {
 
 	if (Mix_FadingChannel(weather_channel) == MIX_NO_FADING) {
 #ifndef WEATHER_VOL_PARTICLES
-		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume));
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
 #else
-		Mix_Volume(weather_channel, CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth));
+		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
 #endif
 		weather_fading = 0;
 		return;
@@ -1278,7 +1278,7 @@ static void play_sound_ambient(int event) {
 #if 1 /* volume glitch paranoia (first fade-in seems to move volume to 100% instead of designated cfg_audio_... */
 	new_ac = Mix_PlayChannel(ambient_channel, wave, -1);
 	if (new_ac != -1) {
-		Mix_Volume(new_ac, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+		Mix_Volume(new_ac, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
 		if (!ambient_resume) new_ac = Mix_FadeInChannel(new_ac, wave, -1, 500);
 	}
 #else
@@ -1303,7 +1303,7 @@ static void play_sound_ambient(int event) {
 		//successfully started playing the first ambient
 		ambient_channel = new_ac;
 		ambient_current = event;
-		Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
 	} else {
 		//failed to start playing?
 		if (new_ac == -1) {
@@ -1319,7 +1319,7 @@ static void play_sound_ambient(int event) {
 				Mix_HaltChannel(ambient_channel);
 				ambient_channel = new_ac;
 				ambient_current = event;
-				Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+				Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
 			}
 		}
 	}
@@ -1333,7 +1333,7 @@ static void play_sound_ambient(int event) {
 	}
 	if (ambient_channel != -1) { //paranoia? should always be != -1 at this point
 		ambient_current = event;
-		Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
 	}
 #endif
 
@@ -1447,13 +1447,16 @@ static void set_mixing_sdl(void) {
 		if (n == ambient_channel) continue;
 
 		/* HACK - use weather volume for thunder sfx */
-		if (channel_sample[n] != -1 && channel_type[n] == SFX_TYPE_WEATHER) {
+		if (channel_sample[n] != -1 && channel_type[n] == SFX_TYPE_WEATHER)
 			Mix_Volume(n, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * channel_volume[n]) / 100) * grid_weather_volume) / 100);
-			continue;
-		} else
-
+		else
+		/* grid_ambient_volume influences non-looped ambient sfx clips */
+		if (channel_sample[n] != -1 && channel_type[n] == SFX_TYPE_AMBIENT)
+			Mix_Volume(n, (CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100) * grid_ambient_volume) / 100);
+		else
 		/* Note: Linear scaling is used here to allow more precise control at the server end */
-		Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100));
+			Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100));
+
 #ifdef DISABLE_MUTED_AUDIO
 		if ((!cfg_audio_master || !cfg_audio_sound) && Mix_Playing(n))
 			Mix_HaltChannel(n);
@@ -1467,22 +1470,15 @@ static void set_mixing_sdl(void) {
 	} else if (!Mix_PlayingMusic()) reenable_music();
 #endif
 
-	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
+	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
  #ifndef WEATHER_VOL_PARTICLES
 		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
  #else
 		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
  #endif
-	}
 
-	if (ambient_channel != -1) {
-		if (Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
-			Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
-#ifdef DISABLE_MUTED_AUDIO
-		if ((!cfg_audio_master || !cfg_audio_sound) && Mix_Playing(ambient_channel))
-			Mix_HaltChannel(ambient_channel);
-#endif
-	}
+	if (ambient_channel != -1 && Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
+		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
 
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_weather) {

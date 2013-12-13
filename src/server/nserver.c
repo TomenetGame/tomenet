@@ -2701,8 +2701,6 @@ static int Handle_login(int ind)
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth(NumPlayers);
 
-	grid_affects_player(NumPlayers);
-
 #if defined(DUNGEON_VISIT_BONUS) || defined(ALLOW_NR_CROSS_PARTIES) || defined(ALLOW_NR_CROSS_ITEMS)
 	wpcopy(&Players[NumPlayers]->wpos_old, &p_ptr->wpos);
 #endif
@@ -2733,6 +2731,9 @@ static int Handle_login(int ind)
 	/* Don't skip the first attack sfx (in case player enabled half_sfx_attack or cut_sfx_attack) */
 	p_ptr->count_cut_sfx_attack = 500;
 #endif
+
+	/* Note: sound_ambient must be initialised to -1 before calling this. */
+	grid_affects_player(NumPlayers);
 
 	/* Initialize the client's unique list;
 	it will become further updated each time he kills another unique */
