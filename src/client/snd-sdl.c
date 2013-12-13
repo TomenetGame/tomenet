@@ -717,11 +717,13 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 
 		/* HACK - use weather volume for thunder sfx */
 		if (type == SFX_TYPE_WEATHER)
-			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100));
+			Mix_Volume(s, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100) * grid_weather_volume) / 100);
 		else
-
+		if (type == SFX_TYPE_AMBIENT)
+			Mix_Volume(s, (CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100) * grid_ambient_volume) / 100);
+		else
 		/* Note: Linear scaling is used here to allow more precise control at the server end */
-		Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100));
+			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100));
 
 //puts(format("playing sample %d at vol %d.\n", event, (cfg_audio_sound_volume * vol) / 100));
 	}
@@ -1322,6 +1324,7 @@ static void play_sound_ambient(int event) {
 				Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
 			}
 		}
+		
 	}
 #endif
 #if 0
@@ -1350,7 +1353,7 @@ void ambient_handle_fading(void) {
 	}
 
 	if (Mix_FadingChannel(ambient_channel) == MIX_NO_FADING) {
-		Mix_Volume(ambient_channel, CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume));
+		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
 		ambient_fading = 0;
 		return;
 	}
