@@ -204,6 +204,7 @@ static bool choose_sex(void)
 		else if (c == '#' && valid_dna) {
 			if (dna_sex % 2) c = 'm';
 			else c = 'f';
+			hazard = TRUE;
 		} else bell();
 	}
 
@@ -1176,6 +1177,7 @@ static bool choose_mode(void)
 			else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'e';
 			else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
 			else c = 'n';
+			hazard = TRUE;
 		} else bell();
 	}
 
@@ -1240,6 +1242,7 @@ static bool choose_body_modification(void)
 		} else if (c == '#' && valid_dna) {
 			if ((dna_sex & MODE_FRUIT_BAT) == MODE_FRUIT_BAT) c = 'f';
 			else c = 'n';
+			hazard = TRUE;
 		} else bell();
 	}
 
