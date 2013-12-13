@@ -6741,7 +6741,7 @@ void grid_affects_player(int Ind) {
 		if (!p_ptr->grid_house) {
 			p_ptr->grid_house = TRUE;
 			if (!p_ptr->sfx_house) Send_sfx_volume(Ind, 0, 0);
-			else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : 40, 40);
+			else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : 30, 30);
 		}
 	} else if (p_ptr->grid_house) {
 		p_ptr->grid_house = FALSE;
