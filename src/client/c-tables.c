@@ -598,6 +598,9 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.no_house_sfx,		FALSE,	5,	1, 98, TRUE,
 	"no_house_sfx",			"Don't play ambient/weather sound in buildings" },
+
+	{ &c_cfg.no_weather,		FALSE,	4,	1, 99, TRUE,
+	"no_weather",			"Disable weather visuals and sounds completely" },
 };
 
 

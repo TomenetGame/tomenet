@@ -2679,7 +2679,7 @@ int Receive_sound(void) {
 
 	/* Make a sound (if allowed) */
 	if (use_sound) {
-		if (t == SFX_TYPE_WEATHER && noweather_mode) return 1;
+		if (t == SFX_TYPE_WEATHER && (noweather_mode || c_cfg.no_weather)) return 1;
 
 #ifndef USE_SOUND_2010
 		Term_xtra(TERM_XTRA_SOUND, s1);
@@ -4327,7 +4327,7 @@ void do_ping() {
 	}
 
 	/* abusing it for weather for now - C. Blue */
-	if (!noweather_mode) {
+	if (!noweather_mode && !c_cfg.no_weather) {
 		do_weather();
 
 #if 1 /* old method: Many weather particles turn on the sfx, few turn it off again. */

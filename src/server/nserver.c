@@ -2161,6 +2161,7 @@ static void sync_options(int Ind, bool *options)
 		p_ptr->sfx_store = FALSE;
 		p_ptr->sfx_house_quiet = TRUE;
 		p_ptr->sfx_house = TRUE;
+		p_ptr->no_weather = FALSE;
 	} else {
 		bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
 		p_ptr->sfx_combat = !options[47];
@@ -2178,6 +2179,14 @@ static void sync_options(int Ind, bool *options)
 				else Send_sfx_volume(Ind, 100, 100);
 			}
 		}
+#ifdef CLIENT_SIDE_WEATHER
+		if (options[99] && !p_ptr->no_weather) {
+			/* update his client-side weather */
+			player_weather(Ind, TRUE, TRUE, TRUE);
+			p_ptr->no_weather = TRUE;
+		} else p_ptr->no_weather = options[99];
+#endif
+
 	}
 }
 

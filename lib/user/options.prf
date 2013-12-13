@@ -115,5 +115,6 @@ X:no_shriek_sfx
 Y:no_store_sfx
 Y:quiet_house_sfx
 X:no_house_sfx
+X:no_weather
 
 X:keep_topline

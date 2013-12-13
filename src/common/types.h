@@ -2680,7 +2680,6 @@ struct player_type
 	bool fluent_artifact_reset;
 	/* C. Blue - Fun stuff :) Make player vomit if he turns around ***a lot*** (can't happen in 'normal' gameplay) */
 	s16b corner_turn;
-	int joke_weather;	/* personal rain^^ */
 	/* automatic (scripted) transport sequences */
 	byte auto_transport;
 	/* Player being paged by others? (Beep counter) */
@@ -2784,6 +2783,8 @@ struct player_type
 	/* for client-side weather */
 	bool panel_changed;
 	int custom_weather; /* used /cw command */
+	int joke_weather;	/* personal rain^^ */
+	bool no_weather;
 
 	/* buffer for anti-cheeze system, just to reduce file access to tomenet.acc */
 	s32b cheeze_value, cheeze_self_value;
@@ -3246,6 +3247,7 @@ struct client_opts {
 	bool no_store_sfx;
 	bool quiet_house_sfx;
 	bool no_house_sfx;
+	bool no_weather;
 };
 
 /*

@@ -7508,6 +7508,8 @@ void Send_paste_msg(char *msg) {
 
 /* Check if certain options have an immediate effect when toggled,
    for switching BIG_MAP feature on/off live. - C. Blue */
+#define PANEL_X	(SCREEN_PAD_LEFT)
+#define PANEL_Y	(SCREEN_PAD_TOP)
 void check_immediate_options(int i, bool yes, bool playing) {
 #ifdef USE_GCU
 	/* BIG_MAP is currently not supported in GCU client */
@@ -7544,6 +7546,35 @@ void check_immediate_options(int i, bool yes, bool playing) {
 				Send_screen_dimensions();
     		    	}
 		}
+	}
+
+	/* Terminate all weather visuals and sounds via 'no_weather' option? */
+	if (!noweather_mode && option_info[i].o_var == &c_cfg.no_weather && c_cfg.no_weather) {
+		int i;
+
+		/* restore tiles on display that were overwritten by weather */
+		if (screen_icky) Term_switch(0);
+		for (i = 0; i < weather_elements; i++) {
+			/* only for elements within visible panel screen area */
+			if (weather_element_x[i] >= weather_panel_x &&
+			    weather_element_x[i] < weather_panel_x + screen_wid &&
+			    weather_element_y[i] >= weather_panel_y &&
+			    weather_element_y[i] < weather_panel_y + screen_hgt) {
+				/* restore original grid content */
+				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+				    PANEL_Y + weather_element_y[i] - weather_panel_y,
+				    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+				    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+			}
+		}
+		if (screen_icky) Term_switch(0);
+		/* terminate weather */
+		weather_elements = 0;
+		weather_type = 0;
+
+#ifdef USE_SOUND_2010
+		if (use_sound) sound_weather(-2); //stop
+#endif
 	}
 }
 
