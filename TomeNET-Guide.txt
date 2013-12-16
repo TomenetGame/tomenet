@@ -10751,7 +10751,8 @@ Warrior is strongly recommended.
     Vampires start with a mummy wrapping, because it can protect them from the
     sunlight (press 'w' to wear it). If they are moving on the world surface
     (meaning not in a dungeon/tower) while it's day, the sun will burn them if
-    they don't resist light or wear a mummy wrapping.
+    they don't resist light or wear a mummy wrapping. On the plus side they
+    suffer less often from black breath infection and consequences.
     Vampires are good fighters and decent mages. However, they are unable to
     utilize magic of water or nature school. Neither can they make use of
     mimicry techniques or holy spells. They are unable to try and suppress
@@ -11778,6 +11779,7 @@ All undead creatures
                 for example quaffing lots of healing potions quickly.
                 Take 2x damage from holy orbs or holy fire and suffer
                 from many 'good' effects/spells (even more so than demons).
+                Suffer less often from black breath infection and consequences.
 All greater demons (capital 'U')
                 Resist poison (usually immunity, depends on ~7 flags).
                 Take 2x damage from holy orbs or holy fire and suffer

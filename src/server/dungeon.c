@@ -4594,7 +4594,7 @@ static bool process_player_end_aux(int Ind)
 	 * As per Tolkien, hobbits are resistant.
 	 */
 	if ((p_ptr->black_breath || p_ptr->black_breath_tmp) &&
-	    rand_int((get_skill(p_ptr, SKILL_HCURING) >= 50) ? 250 : 150) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
+	    rand_int((get_skill(p_ptr, SKILL_HCURING) >= 50) ? 250 : 150) < (p_ptr->prace == RACE_HOBBIT || p_ptr->suscep_life ? 2 : 5))
 	{
 		(void)do_dec_stat_time(Ind, rand_int(6), STAT_DEC_NORMAL, 25, 0, TRUE);
 		take_xp_hit(Ind, 1 + p_ptr->lev * 3 + p_ptr->max_exp / 5000L,

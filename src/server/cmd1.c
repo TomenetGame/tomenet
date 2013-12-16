@@ -4967,7 +4967,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 
 		/* If any damage is done, then 25% chance of getting the Black Breath */
 //		if ((*k) && magik(25) && !Players[Ind]->black_breath) {
-		if (magik(15) && !Players[Ind]->black_breath) {
+		if (magik(Players[Ind]->suscep_life ? 5 : 15) && !Players[Ind]->black_breath) {
 			s_printf("EFFECT: BLACK-BREATH - %s was infected by a Nazgul\n", Players[Ind]->name);
 			set_black_breath(Ind);
 		}
@@ -6078,13 +6078,13 @@ void black_breath_infection(int Ind, int Ind2)
 	player_type *q_ptr = Players[Ind2];
 
 	/* Prevent players who are AFK from getting infected in towns - mikaelh */
-	if (p_ptr->black_breath && !q_ptr->black_breath && magik(25) && !(q_ptr->afk && istown(&q_ptr->wpos)) && q_ptr->lev > cfg.newbies_cannot_drop && q_ptr->lev >= BB_INFECT_MINLEV)
-	{
+	if (p_ptr->black_breath && !q_ptr->black_breath && magik(q_ptr->suscep_life ? 10 : 25) &&
+	    !(q_ptr->afk && istown(&q_ptr->wpos)) && q_ptr->lev > cfg.newbies_cannot_drop && q_ptr->lev >= BB_INFECT_MINLEV) {
 		s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", q_ptr->name, p_ptr->name);
 		set_black_breath(Ind2);
 	}
-	if (q_ptr->black_breath && !p_ptr->black_breath && magik(25) && !(p_ptr->afk && istown(&p_ptr->wpos)) && p_ptr->lev > cfg.newbies_cannot_drop && p_ptr->lev >= BB_INFECT_MINLEV)
-	{
+	if (q_ptr->black_breath && !p_ptr->black_breath && magik(p_ptr->suscep_life ? 10 : 25) &&
+	    !(p_ptr->afk && istown(&p_ptr->wpos)) && p_ptr->lev > cfg.newbies_cannot_drop && p_ptr->lev >= BB_INFECT_MINLEV) {
 		s_printf("EFFECT: BLACK-BREATH - %s was infected by %s\n", p_ptr->name, q_ptr->name);
 		set_black_breath(Ind);
 	}
