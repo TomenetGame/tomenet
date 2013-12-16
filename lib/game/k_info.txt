@@ -1249,18 +1249,21 @@ G:=:d
 I:45:29:0
 W:15:0:2:500
 A:15/1
+D:Affects damage you deal with melee weapons.
 
 N:152:Accuracy
 G:=:d
 I:45:28:0
 W:10:0:2:500
 A:10/1
+D:Affects your chance to hit with melee or ranged weapons.
 
 N:153:Protection
 G:=:d
 I:45:16:0
 W:10:0:2:500
 A:10/1
+D:Affects your armour class.
 
 N:154:Aggravate Monster
 G:=:d
@@ -1324,6 +1327,7 @@ I:45:30:0
 W:20:0:2:1000
 A:20/1
 F:SHOW_MODS
+D:Affects your hit chance with melee and ranged weapons and your melee damage.
 
 ##### Amulets #####
 
