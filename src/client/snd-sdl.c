@@ -933,6 +933,10 @@ static void play_sound_weather(int event) {
 	new_wc = Mix_PlayChannel(weather_channel, wave, -1);
 	if (new_wc != -1) {
 		Mix_Volume(new_wc, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
+
+		/* weird bug (see above) apparently STILL occurs for some people (Dj_wolf) - hack it moar: */
+		if (cfg_audio_weather)
+
 		if (!weather_resume) new_wc = Mix_FadeInChannel(new_wc, wave, -1, 500);
 	}
 #else
@@ -1103,6 +1107,10 @@ static void play_sound_weather_vol(int event, int vol) {
 	if (new_wc != -1) {
 		weather_vol_smooth = (cfg_audio_weather_volume * vol) / 100; /* set initially, instantly */
 		Mix_Volume(new_wc, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
+
+		/* weird bug (see above) apparently might STILL occur for some people - hack it moar: */
+		if (cfg_audio_weather)
+
 		if (!weather_resume) new_wc = Mix_FadeInChannel(new_wc, wave, -1, 500);
 	}
 #else
@@ -1281,6 +1289,10 @@ static void play_sound_ambient(int event) {
 	new_ac = Mix_PlayChannel(ambient_channel, wave, -1);
 	if (new_ac != -1) {
 		Mix_Volume(new_ac, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
+
+		/* weird bug (see above) apparently might STILL occur for some people - hack it moar: */
+		if (cfg_audio_sound)
+
 		if (!ambient_resume) new_ac = Mix_FadeInChannel(new_ac, wave, -1, 500);
 	}
 #else
