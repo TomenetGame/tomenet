@@ -2125,6 +2125,7 @@ W:25:0:4:450
 A:25/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
+D:Restores 500 MP.
 
 N:267:Infra-vision
 G:!:d
@@ -2143,6 +2144,7 @@ P:0:1d1:0:0:0
 #the glass phials/flasks aren't really stronger just because the content is.
 F:IGNORE_ELEC | IGNORE_COLD
 F:FOUNTAIN
+D:Gives temporary resistance to fire, cold, acid, lightning and poison.
 
 
 ##### Wands #####
@@ -3384,6 +3386,7 @@ W:40:0:4:2000
 A:40/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
+D:This potion tells you all about yourself.
 
 N:422:*Enlightenment*
 G:!:d
@@ -4186,6 +4189,7 @@ I:46:2:0
 W:10:0:25:50
 A:5/2:10/2:50/2
 F:SHOW_MODS
+D:This trap kit uses arrows.
 
 N:550:Bolt
 G:`:R
@@ -4193,6 +4197,7 @@ I:46:3:0
 W:20:0:30:70
 A:10/2:20/2:50/2
 F:SHOW_MODS
+D:This trap kit uses bolts.
 
 N:551:& Fauchard~
 G:/:s
@@ -4234,6 +4239,7 @@ I:46:1:0
 W:1:0:20:40
 A:1/2:20/2
 F:SHOW_MODS
+D:This trap kit uses pebbles or shots.
 
 N:556:Ring Mail~
 G:[:s
@@ -4272,6 +4278,7 @@ G:`:b
 I:46:4:0
 W:2:0:10:50
 A:3/2:30/2
+D:This trap kit uses potions.
 
 N:561:Stone and Hide Armour~
 G:(:U
@@ -4288,6 +4295,7 @@ I:46:5:0
 W:5:0:10:50
 A:5/2:15/2:40/2
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD | IGNORE_ELEC | IGNORE_WATER
+D:This trap kit uses scrolls or runes.
 
 N:563:Device
 G:`:s
@@ -4295,6 +4303,7 @@ I:46:6:0
 W:20:0:10:50
 A:10/2:20/2:40/2
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD | IGNORE_ELEC | IGNORE_WATER
+D:This trap kit uses magic devices.
 
 N:564:Nothing
 G:?:d
@@ -5988,6 +5997,7 @@ I:52:8:0
 W:30:0:400:5000
 A:25/40:50/20
 P:0:1d1:0:0:0
+D:A part required to build a golem.
 
 N:859:& Golem Leg~
 G:*:v
@@ -5995,6 +6005,7 @@ I:52:9:0
 W:30:0:400:5000
 A:25/40:50/20
 P:0:1d1:0:0:0
+D:A part required to build a golem.
 
 N:860:& Golem Scroll~ of Attack
 G:?:D
@@ -6004,6 +6015,7 @@ A:20/30:40/15
 P:0:1d1:0:0:0
 F:ACTIVATE | EASY_KNOW
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
+D:Commands your golem to attack anything.
 
 N:861:& Golem Scroll~ of Following
 G:?:D
@@ -6013,6 +6025,7 @@ A:20/30:40/15
 P:0:1d1:0:0:0
 F:ACTIVATE | EASY_KNOW
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
+D:Commands your golem to follow you.
 
 N:862:& Golem Scroll~ of Guard
 G:?:D
@@ -6022,19 +6035,21 @@ A:20/30:40/15
 P:0:1d1:0:0:0
 F:ACTIVATE | EASY_KNOW
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
+D:Commands your golem to guard its location.
 
 N:863:Golem Creation
 G:?:d
 I:70:55:0
 W:10:0:5:1250
 A:10/20:20/10
+D:Creates a golem provided you carry all required parts in your backpack.
 
-# XXX broken
 N:881:House creation
 G:?:d
 I:70:57:0
 W:127:0:5:25000
 A:127/255
+D:Multiple of these can be read at once for creating an even bigger house.
 
 ##### Items 445 to 479 reserved (old "terrain" objects) #####
 
@@ -6191,7 +6206,8 @@ W:127:255:3:200000
 A:127/255
 F:DRAIN_EXP | DRAIN_HP
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
-F:AUTO_CURSE | CURSED 
+F:AUTO_CURSE | CURSED
+D:Your life will be spared.. once.
 
 # change the price, and prize changes automatically.
 N:898:Lottery
@@ -6231,6 +6247,7 @@ I:55:33:0
 W:40:0:50:8000
 A:40/5
 P:0:1d2:0:0:0
+D:*Identifies* an item.
 
 N:903:& Picklock~
 G:`:B
@@ -6342,7 +6359,7 @@ I:12:7:-2
 W:10:0:5:100
 A:10/2
 F:CHR | EASY_KNOW
-D:Protects the wearer from sun light.
+D:Protects the wearer from sun light. And looks nasty.
 
 # The Sea-blue Silk Cape 'Ocean Soul'
 N:917:& Sea-blue Silk Cape~
@@ -6412,6 +6429,7 @@ W:50:0:4:4000
 A:50/4:70/3:90/2
 P:0:1d1:0:0:0
 F:FOUNTAIN
+D:Restores 1000 MP.
 
 # Tomes with Priest/Paladin prayers (svals 18,19 still free)
 
@@ -6487,6 +6505,7 @@ I:13:1:0
 W:127:0:2000:0
 A:127/255
 P:0:1d1:0:0:0
+D:Carry it across the field and score a point for your team!
 
 # The Amulet of Grom, the Wyrm Hunter -- see artifact list
 
@@ -6655,6 +6674,7 @@ A:127/255
 P:1:0d0:0:0:0
 F:IGNORE_WATER
 # | FULL_NAME | EASY_KNOW
+D:It's the latest trend!
 
 # "handbooks" - tome-style spellbooks that contain various spells from different schools.
 # book 111:50 is 'beginner cantrips', the only one that can actually be bought from shops.
@@ -7336,6 +7356,7 @@ W:127:255:1:0
 A:127/255
 P:0:0d0:0:0:0
 F:EASY_KNOW
+D:Read a cheque like you would read a scroll, to cash it in.
 
 # The Battered Pick of Moltor, the High-Elven Ranger
 N:1032:& Battered Pick~
