@@ -1491,6 +1491,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	int old_num, new_num;
 
 	if (p_ptr->alert_afk_dam && p_ptr->afk
+	    /* don't alert about 0-damage terrain effect */
+	    && (damage || -Ind_attacker != PROJECTOR_TERRAIN)
 #ifdef USE_SOUND_2010
 	    ) {
 		Send_warning_beep(Ind);
