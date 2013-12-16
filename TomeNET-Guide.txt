@@ -7626,10 +7626,7 @@ LUCK ('It affects your luck')
         increasing it even more.
         What does 'better items' mean exactly?
         It simply means that you have a higher chance to get good or great
-        items when...
-        -killing monsters
-        -opening chests
-        -finding items in the dirt by digging.
+        items when killing monsters or digging.
         'Good' means that an item has enchantments to hitchance, damage or
         armour class. How much exactly it has isn't affected by luck (well, it
         is by your personal ooc luck I guess :-p).
