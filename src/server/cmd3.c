@@ -1768,7 +1768,8 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 	/* Comfort hack for reinscribing items:
 	   Trigger with '\' as first character.
-	   Then replace the part starting on first letter, until an usual delimiter char is found. */
+	   Then replace the part starting on first letter, until an usual delimiter char is found.
+	   '\@@' or '\!!' will erase the corresponding tag from the inscription. */
 	if (inscription[0] == '\\') {
 		bool append = TRUE;
 		char modsrc[3];
@@ -1779,7 +1780,10 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		modsrc[0] = inscription[1];
 		/* search for specific @-tag to replace? */
 		if (inscription[1] == '@') {
-			modsrc[1] = inscription[2];
+			/* duplicate tag, aka "delete!" ? */
+			if (inscription[2] == '@') modsrc[1] = inscription[3];
+			/* normal tag (replace or append) */
+			else modsrc[1] = inscription[2];
 			modsrc[2] = 0;
 		}
 		/* search for first !-tag to replace? */
@@ -1788,8 +1792,16 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		/* append or replace a @/!/# part? */
 		if (inscription[1] == '@' || inscription[1] == '!' || inscription [1] == '#') {
 			char *start = strstr(modins, modsrc);
+			bool delete = FALSE;
 
-			/* replace? */
+			/* delete? */
+			if (inscription[2] == inscription[1]) {
+				delete = TRUE;
+				/* definitely don't append: in case tag does not exist yet */
+				append = FALSE;
+			}
+
+			/* replace? (or delete) */
 			if (start) {
 				const char *delimiter;
 				const char *deltmp;
@@ -1810,16 +1822,19 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 				} else deltmp = qins + strlen(qins);
 				//delimiter = qins + strlen(qins); //point to zero terminator char
 
-				//if ((start - modins) + strlen(inscription + 1) + strlen(delimiter) > MAX_CHARS) {
-				if ((start - modins) + strlen(inscription + 1) + strlen(deltmp) > MAX_CHARS) {
-					msg_print(Ind, "Inscription would become too long.");
-					return;
-				}
+				if (delete) strcpy(start, deltmp);
+				else { /* try to replace */
+					//if ((start - modins) + strlen(inscription + 1) + strlen(delimiter) > MAX_CHARS) {
+					if ((start - modins) + strlen(inscription + 1) + strlen(deltmp) > MAX_CHARS) {
+						msg_print(Ind, "Inscription would become too long.");
+						return;
+					}
 
-				/* replace */
-				strcpy(start, inscription + 1);
-				//strcat(start, delimiter);
-				strcat(start, deltmp);
+					/* replace */
+					strcpy(start, inscription + 1);
+					//strcat(start, delimiter);
+					strcat(start, deltmp);
+				}
 			}
 		}
 		/* append? */
