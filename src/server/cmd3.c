@@ -1770,6 +1770,15 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	   Trigger with '\' as first character.
 	   Then replace the part starting on first letter, until an usual delimiter char is found.
 	   '\@@' or '\!!' will erase the corresponding tag from the inscription. */
+	/* catch empty item inscription */
+	if (!o_ptr->note && inscription[0] == '\\') {
+		/* cannot delete anything in an empty inscription */
+		if ((inscription[1] == '@' || inscription[1] == '!' || inscription [1] == '#')
+		    && inscription[2] == inscription[1])
+			return;
+		/* clear '\' special feature trigger */
+		while (inscription[0] == '\\') inscription++;
+	}
 	if (inscription[0] == '\\') {
 		bool append = TRUE;
 		char modsrc[3];
