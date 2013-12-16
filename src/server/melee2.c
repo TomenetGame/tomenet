@@ -1396,6 +1396,11 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 		/* Ghosts cannot intercept */
 		if (q_ptr->ghost) continue;
 
+		/* can't intercept while in wraithform if monster isn't */
+		if (q_ptr->tim_wraith &&
+		    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL)))
+			return FALSE;
+
 		if (q_ptr->cloaked || q_ptr->shadow_running) continue;
 
 		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed || q_ptr->resting)
