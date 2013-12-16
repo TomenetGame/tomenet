@@ -246,7 +246,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 #else
 				fprintf(fff, "%3d/%d %s\377%c", radix_idx[i], a_ptr->cur_num, timeleft, c);
 #endif
-			} else fprintf(fff, "\377%c", a_ptr->carrier == p_ptr->id ? 'U' : 'w');
+			} else fprintf(fff, "\377%c", (!multiple_artifact_p(&forge) && a_ptr->carrier == p_ptr->id) ? 'U' : 'w');
 			fprintf(fff, "%sThe %s", admin ? " " : "     ", base_name);
 			if (admin) {
 				sprintf(fmt, "%%%ds\377w%%s\n", (int)(45 - strlen(base_name)));
