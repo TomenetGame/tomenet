@@ -2162,6 +2162,7 @@ static void sync_options(int Ind, bool *options)
 		p_ptr->sfx_house_quiet = TRUE;
 		p_ptr->sfx_house = TRUE;
 		p_ptr->no_weather = FALSE;
+		p_ptr->hilite_player = FALSE;
 	} else {
 		bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
 		p_ptr->sfx_combat = !options[47];
@@ -2186,7 +2187,7 @@ static void sync_options(int Ind, bool *options)
 			p_ptr->no_weather = TRUE;
 		} else p_ptr->no_weather = options[99];
 #endif
-
+		p_ptr->hilite_player = options[100];
 	}
 }
 

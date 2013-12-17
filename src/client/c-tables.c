@@ -436,7 +436,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.safe_macros,		TRUE,	3,	1, 26, TRUE, /* was compress_savefile (broken&obsolete); use Term_flush() to clear macro execution */
 	"safe_macros",			"Abort macro execution if an action fails" },
 
-#if 0
+#if 0 /* resurrecting this further down */
 	{ &c_cfg.hilite_player,		FALSE,	1,	1, 27, FALSE, /* (resurrect me) */
 	"hilite_player",		"(broken) Hilite the player with the cursor" },
 #else
@@ -601,6 +601,9 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.no_weather,		FALSE,	4,	1, 99, TRUE,
 	"no_weather",			"Disable weather visuals and sounds completely" },
+
+	{ &c_cfg.hilite_player,		FALSE,	4,	1, 100, TRUE,
+	"hilite_player",		"Hilite your character icon with the cursor" },
 };
 
 
