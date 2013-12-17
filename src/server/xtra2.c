@@ -5672,6 +5672,9 @@ if (cfg.unikill_format) {
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
+			/* hack ego power */
+			qq_ptr->name2 = EGO_RISTARI;
+			qq_ptr->name2b = 0;
 			drop_near(qq_ptr, -1, wpos, y, x);
 
 		/* dungeon boss, but drops multiple items */
