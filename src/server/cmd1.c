@@ -4578,14 +4578,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 			/* Message */
 			if (block) {
 				sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
-				hit_desc[0] = toupper(hit_desc[0]);
+				hit_desc[2] = toupper(hit_desc[2]);
 				msg_print(Ind, hit_desc);
 #ifdef USE_SOUND_2010
 				if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
 #endif
 			} else if (parry) {
 				sprintf(hit_desc, "\377%c%s parries.", COLOUR_PARRY_MON, m_name);
-				hit_desc[0] = toupper(hit_desc[0]);
+				hit_desc[2] = toupper(hit_desc[2]);
 				msg_print(Ind, hit_desc);
 #ifdef USE_SOUND_2010
 				if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
