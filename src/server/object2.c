@@ -1907,6 +1907,10 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 //		if (f3 & TR3_AGGRAVATE) value >>= 1; /* aggravate penalty 2 of 2 */
 	}
 
+	/* hack for Ethereal ammunition */
+	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL)
+		value *= 3; /* in theory 1 eth = 10 normal ammo, but this is appropriate */
+
 	if (f3 & TR3_AGGRAVATE) value >>= 1; /* one generic aggravate penalty fits it all */
 
 	/* Return the value */
