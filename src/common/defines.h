@@ -6590,6 +6590,10 @@ extern int PlayerUID;
  #define SFX_AMBIENT_FIREPLACE	0
  #define SFX_AMBIENT_SHORE	1
  #define SFX_AMBIENT_LAKE	2
+
+ /* Reduction in percent (on linear scale) of ambient/weather sfx
+    depending on which grid the player is on (ie inside house or outside): [40] */
+ #define GRID_SFX_REDUCTION	50
 #endif
 
 
