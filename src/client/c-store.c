@@ -662,6 +662,13 @@ static void store_process_command(int cmd) {
 			break;
 #endif
 
+		case '{':
+			cmd_inscribe();
+			break;
+		case '}':
+			cmd_uninscribe();
+			break;
+
 		default:
 			cmd_raw_key(cmd);
 			break;
