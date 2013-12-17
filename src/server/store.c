@@ -370,19 +370,23 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 static s64b price_item_player_store(object_type *o_ptr) {
 	s64b price, final_price;
 
-	/* Get the value of one of the items */
-	price = object_value_real(0, o_ptr);
-
  #if 0 /* exempt speed rings? might make everything too easy though */
 	/* Player stores have an increased minimum price */
 	if (!o_ptr->name1 && o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->bpval >= 0) {
+		/* hack: grab ego power cost */
+		int tmp_bpval = o_ptr->bpval;
+		o_ptr->bpval = 0;
+		price = object_value_real(0, o_ptr);
+		o_ptr->bpval = tmp_bpval;
+
 		/* exception for RoS -
 		   (Note: at +6 and higher, pstores are always better since it's > 300k) */
 		//price = 15000 + o_ptr->bpval * o_ptr->bpval * 9850; /* good, but not worse than town stores with the 10% cut for pstores */
-		price = 20000 + o_ptr->bpval * o_ptr->bpval * 10800; /* good, maybe *slightly* expensive, but can't be helped */
+		price = price + price / 3 + o_ptr->bpval * o_ptr->bpval * 10800; /* good, maybe *slightly* expensive, but can't be helped */
 	} else
  #endif
-	price *= 2; /* default: 2x base price */
+	/* Get the value of one of the items */
+	price = object_value_real(0, o_ptr) * 2; /* default: 2x base price */
 
 	/* Add to this any extra price the player inscribed */
 	final_price = player_store_inscribed(o_ptr, price);
