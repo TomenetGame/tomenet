@@ -4843,6 +4843,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	if (f3 & (TR3_XTRA_SHOTS))
 		fprintf(fff, "It fires missiles excessively fast.\n");
 
+	if (f4 & (TR4_EASY_USE))
+		fprintf(fff, "It is especially easy to activate.\n");
 	if (f4 & (TR4_CAPACITY))
 		fprintf(fff, "It can hold more mana.\n");
 	if (f4 & (TR4_CHEAPNESS))
