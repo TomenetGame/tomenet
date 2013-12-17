@@ -6122,16 +6122,20 @@ bool do_cmd_player_store(int Ind, int x, int y) {
    displaying/selling them. - C. Blue */
 void player_stores_cut_inscription(char *o_name) {
 	char new_o_name[ONAME_LEN];
-	cptr p, p2;
+	cptr p, p2, p_museum;
 
 	/* hack around in new_o_name */
 	strcpy(new_o_name, o_name);
 
 	p = strstr(o_name, "@S");
+	p_museum = strstr(o_name, "@S-");
 	/* only if there's actually a '@S' inscription present */
 	if (p) {
 		new_o_name[p - o_name] = '\0';
-		p2 = strstr(p, ".");
+
+		if (p_museum) p2 = p_museum + 2;
+		else p2 = strstr(p, ".");
+
 		if (p2) strcat(new_o_name, ++p2);
 
 		/* write it back */
