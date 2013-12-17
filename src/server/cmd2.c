@@ -1708,8 +1708,27 @@ void do_cmd_open(int Ind, int dir)
 	if (((p_ptr->ghost || p_ptr->tim_wraith) && !is_admin(p_ptr)) ||
 	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)
 	    && !strchr("thpkng", r_info[p_ptr->body_monster].d_char))) {
+#ifdef PLAYER_STORES
+		struct c_special *cs_ptr;
+
+		/* allow entering player stores in wraithform/no-OPEN_DOOR-form */
+		if (p_ptr->ghost || !c_ptr->feat == FEAT_HOME || !dir) {
+			msg_print(Ind, "You cannot open things!");
+			return;
+		}
+
+		y = p_ptr->py + ddy[dir];
+		x = p_ptr->px + ddx[dir];
+		c_ptr = &zcave[y][x];
+		if (!(cs_ptr = GetCS(c_ptr, CS_DNADOOR)) || /* orig house failure */
+		    access_door(Ind, cs_ptr->sc.ptr, TRUE)) {
+			msg_print(Ind, "You cannot open things!");
+			return;
+		}
+#else
 		msg_print(Ind, "You cannot open things!");
 		return;
+#endif
 	}
 
 	/* Get a "repeated" direction */
@@ -1893,9 +1912,9 @@ void do_cmd_open(int Ind, int dir)
 #if USE_MANG_HOUSE_ONLY || TRUE /* let'em open it, so that thevery can take place :) */
 					/* Open the door */
 					c_ptr->feat = FEAT_HOME_OPEN;
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 					sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
-#endif
+ #endif
 #else	/* USE_MANG_HOUSE */
 					msg_print(Ind, "Just walk in.");
 #endif	/* USE_MANG_HOUSE */
