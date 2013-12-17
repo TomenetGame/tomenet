@@ -11767,7 +11767,7 @@ Yeeks           Feather falling (levitation).
                 level 4, can swim, pass trees.)
 All animals     Able to pass trees.
 All spiders     Able to pass mountains, able to pass spider webs.
-All ghosts      See invisible, Infra-vision +3.
+All ghosts      See invisible, Infra-vision +4 (stacks with undeads' +1 bonus).
 All orcs        Resist darkness.
 All trolls and giants
                 Sustain strength.
@@ -11788,6 +11788,9 @@ All undead creatures
                 Take 2x damage from holy orbs or holy fire and suffer
                 from many 'good' effects/spells (even more so than demons).
                 Suffer less often from black breath infection and consequences.
+All greater undead creatures
+                See 'All undead creatures' above, and in addtion they get
+                another +4 bonus to infra-vision (ie +5 in total).
 All greater demons (capital 'U')
                 Resist poison (usually immunity, depends on ~7 flags).
                 Take 2x damage from holy orbs or holy fire and suffer

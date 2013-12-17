@@ -2099,7 +2099,6 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			/* I'd prefer ghosts having a radius of awareness, like a 'pseudo-light source',
 			since atm ghosts are completely blind in the dark :( -C. Blue */
 			p_ptr->see_inv = TRUE; csheet_boni->cb[5] |= CB6_RSINV;
-			p_ptr->see_infra += 3; csheet_boni->infr += 3;
 	//		p_ptr->invis += 5; */ /* No. */
 			break;
 
@@ -2167,6 +2166,10 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		p_ptr->no_cut = TRUE; csheet_boni->cb[12] |= CB13_XNCUT;
 		p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND;
 		p_ptr->see_infra += 1; csheet_boni->infr += 1;
+
+		if (strchr("GWLV", r_ptr->d_char)) {
+			p_ptr->see_infra += 4; csheet_boni->infr += 4;
+		}
 	}
 
 	/* Non-living got a nice ability set too ;) */
