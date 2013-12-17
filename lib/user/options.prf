@@ -69,7 +69,6 @@ X:player_list2
 X:view_animated_lite
 Y:censor_swearing
 Y:safe_macros
-#X:hilite_player
 X:view_bright_lite2
 Y:view_yellow_lite
 Y:view_bright_lite
@@ -118,3 +117,4 @@ X:no_house_sfx
 X:no_weather
 
 X:keep_topline
+X:hilite_player
