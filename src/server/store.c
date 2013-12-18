@@ -3943,7 +3943,7 @@ void do_cmd_store(int Ind) {
 	p_ptr->tim_store = STORE_TURNOUT;
 
 	/* Calculate the number of store maintainances since the last visit */
-	maintain_num = (turn - st_ptr->last_visit) / (10L * cfg.store_turns);
+	maintain_num = (turn - st_ptr->last_visit) / (10L * (p_ptr->wpos.wz ? cfg.dun_store_turns : cfg.store_turns));
 
 	/* Maintain the store max. 10 times.
 	   Note: this value could probably be reduced down to 4, with

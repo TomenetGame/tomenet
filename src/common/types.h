@@ -3070,6 +3070,7 @@ struct server_opts
 	s16b dun_base;
 	s16b dun_max;
 	s16b store_turns;
+	s16b dun_store_turns;
 	char resting_rate;
 	char party_xp_boost;
 

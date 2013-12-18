@@ -174,7 +174,7 @@ server_opts cfg =
 	0, 		// town_base, 
 
 	1,		//dun_base
-	127, 200,	// dun_max, store_turns
+	127, 200, 50,	// dun_max, store_turns, dun_store_turns
 	/* char */
 	3, 2,		// resting_rate, party_xp_boost
 
