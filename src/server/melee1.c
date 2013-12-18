@@ -2049,7 +2049,7 @@ bool make_attack_melee(int Ind, int m_idx)
 							dis_sec = TRUE;
 						}
 
-						p_ptr->update |= (PU_BONUS);
+						p_ptr->update |= (PU_BONUS | PU_HP | PU_SANITY);
 						obvious = TRUE;
 #ifdef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
 						if ((p_ptr->combat_stance == 1 &&
