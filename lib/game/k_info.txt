@@ -5864,7 +5864,7 @@ G:?:d
 I:70:58:0
 W:15:0:5:125
 A:15/1
-D:Allows for friendly duels.
+D:Allows for friendly duels. Inscribe it @P<playername> and read it.
 
 N:815:Unmagic
 G:,:d
