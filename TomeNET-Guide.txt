@@ -6924,7 +6924,7 @@ speed bonus from 'Sneakiness' skill.
 You will receieve a warning message, telling you:
 "The weight of your armour encumbers your movement."
 To move freely, you may wear 10.0 lb of armoury plus a strength-factor plus
-6 * your combat skill. Strength factor is 0.6 * str_hold (see table above to
+0.6 * your combat skill. Strength factor is 0.6 * str_hold (see table above to
 find your str_hold). So the top weight limit is
 
 10.0 + 0.6 * 50 (combat) + 0.6 * 100 (str_hold) = 100.0 lb.
@@ -9567,7 +9567,8 @@ Note that not every skill is available to every profession (class).
 +Combat                         Lets you wear heavier armour without mana
                                 points penalty.
                                 Lets you wear heavier armour without losing
-                                dodge chance, or other roguish abilities like
+                                dodge chance (gained from the 'Dodging' skill),
+                                or other roguish abilities like
                                 boni from dual-wielding, critical-strike,
                                 area-searching and cloaking.
                                 Lets you wear heavier armour without getting
