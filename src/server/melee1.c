@@ -518,7 +518,7 @@ bool make_attack_melee(int Ind, int m_idx)
 	char            o_name[ONAME_LEN];
 	char            m_name[MNAME_LEN], m_name_gen[MNAME_LEN];
 	char            ddesc[MNAME_LEN];
-	char		dam_msg[80] = { '\0' };
+	char		dam_msg[MAX_CHARS_WIDE] = { '\0' };
 
 	bool            blinked, prot = FALSE;
 
