@@ -5750,9 +5750,10 @@ static void process_various(void)
 		for (j = 1; j <= NumPlayers; j++) {
 			p_ptr = Players[j];
 			if (!p_ptr->total_winner) continue;
+			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) continue; /* allow kings idling instead of having to switch chars */
 
 			/* Hack -- never Maggot and his dogs :) */
-			i = rand_range(60,MAX_R_IDX-2);
+			i = rand_range(60, MAX_R_IDX - 2);
 			r_ptr = &r_info[i];
 
 			/* Make sure we are looking at a dead unique */
