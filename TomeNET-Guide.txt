@@ -1624,12 +1624,17 @@ Unique      A monster that is named and exists only once. Although it can
             That's precisely because every player can only get kill credit for
             each unique monster once.
             Uniques often have large escorts.
+
             Unique monsters will randomly respawn for winners, ie Kings,
             Queens, Emperors and Empresses. That means: The game will "forget"
             that you already defeated them, allowing you to defeat them once
             more. There are some exceptions though, the following monsters
             will never respawn: The Nazguls, Sauron, Michael, Morgoth, and all
             super-uniques that come after Morgoth, starting with Tik'srvzllat.
+
+            This respawning happens (albeit very slowly) while you are logged
+            on with your winner character, except while you're in town or in
+            the area around a town (housing zone).
 
 WoR         Word-of-Recall (teleports you into the dungeon and back or on the
             world map). See "(0.3) Important inscriptions" for more info.
