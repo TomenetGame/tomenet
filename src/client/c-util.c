@@ -6768,16 +6768,17 @@ void do_cmd_options(void) {
 		Term_putstr(3, 7, -1, TERM_WHITE, "(\377y4\377w) Game-Play Options 1");
 		Term_putstr(3, 8, -1, TERM_WHITE, "(\377y5\377w) Game-Play Options 2");
 		Term_putstr(3, 9, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
+		Term_putstr(3,10, -1, TERM_WHITE, "(\377ys\377w) Save Options & Flags");
+		Term_putstr(3,11, -1, TERM_WHITE, "(\377yl\377w) Load Options & Flags");
+
 #if defined(WINDOWS) || defined(USE_X11)
  #ifdef ENABLE_SUBWINDOW_MENU
-		Term_putstr(3,10, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
+		Term_putstr(3,13, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
 		/* CHANGE_FONTS_X11 */
-		Term_putstr(3,11, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (tap multiple times)");
+		Term_putstr(3,14, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (tap multiple times)");
+		Term_putstr(3,15, -1, TERM_SLATE, "(Fonts and window visibility are saved automatically on quitting via CTRL+X)");
 #endif
-
-		Term_putstr(3,13, -1, TERM_WHITE, "(\377ys\377w) Save Options");
-		Term_putstr(3,14, -1, TERM_WHITE, "(\377yl\377w) Load Options");
 
 		Term_putstr(3,18, -1, TERM_WHITE, "(\377UA\377w) Account Options");
 		Term_putstr(3,19, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
