@@ -7612,6 +7612,33 @@ void do_slash_cmd(int Ind, char *message)
 				clockin(p, 6);
 				return;
 			}
+			else if (prefix(message, "/charlaston")) {
+				unsigned long int s, sl;
+				time_t now;
+				u32b p_id;
+
+				if (!tk) {
+					msg_print(Ind, "No player specified.");
+					return;
+				}
+				if (!(p_id = lookup_player_id(message3))) {
+					msg_format(Ind, "Player <%s> not found.", message3);
+					return;
+				}
+
+				now = time(&now);
+				sl = lookup_player_laston(p_id);
+				if (!sl) {
+					msg_format(Ind, "laston is zero for player <%s>!", message3);
+					return;
+				}
+				s = now - sl;
+				if (s >= 60 * 60 * 24 * 3) msg_format(Ind, "Player <%s> was seen ~%d days ago.", message3, s / (60 * 60 * 24));
+				else if (s >= 60 * 60 * 3) msg_format(Ind, "Player <%s> was seen ~%d hours ago.", message3, s / (60 * 60));
+				else if (s >= 60 * 3) msg_format(Ind, "Player <%s> was seen ~%d minutes ago.", message3, s / 60);
+				else msg_format(Ind, "Player <%s> was seen %d seconds ago.", message3, s);
+				return;
+			}
 		}
 	}
 
