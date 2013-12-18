@@ -5921,8 +5921,7 @@ void process_player_change_wpos(int Ind)
 
 	/* Hack -- artifacts leave the queen/king */
 	/* also checks the artifact list */
-	//		if (!is_admin(p_ptr) && player_is_king(Ind))
-	{
+	if ((cfg.fallenkings_etiquette || cfg.kings_etiquette) && !is_admin(p_ptr) && cfg.strict_etiquette) {
 		object_type *o_ptr;
 		char		o_name[ONAME_LEN];
 
@@ -5935,11 +5934,9 @@ void process_player_change_wpos(int Ind)
 			if (!a_info[o_ptr->name1].known && (o_ptr->ident & ID_KNOWN))
 				a_info[o_ptr->name1].known = TRUE;
 
-			if (!(cfg.fallenkings_etiquette && p_ptr->once_winner && !p_ptr->total_winner && !is_admin(p_ptr))) {
-				if (!(cfg.kings_etiquette && p_ptr->total_winner && !is_admin(p_ptr))) {
+			if (!(cfg.fallenkings_etiquette && p_ptr->once_winner && !p_ptr->total_winner) &&
+			    !(cfg.kings_etiquette && p_ptr->total_winner))
 					continue;
-				}
-			}
 
 			if (winner_artifact_p(o_ptr) || admin_artifact_p(o_ptr)) continue;
 

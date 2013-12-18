@@ -3114,6 +3114,7 @@ struct server_opts
 	bool maximize;
 	bool kings_etiquette;
 	bool fallenkings_etiquette;
+	bool strict_etiquette;
 
 	bool public_rfe;
 	bool auto_purge;

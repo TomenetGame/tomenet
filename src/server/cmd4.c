@@ -2275,11 +2275,17 @@ void do_cmd_check_server_settings(int Ind)
 		if ((k = cfg.unique_respawn_time))
 			fprintf(fff, "After winning the game, unique monsters will resurrect randomly.(%d)\n", k);
 
-		if (cfg.kings_etiquette)
-			fprintf(fff, "The winner is not allowed to carry/use static artifacts (save Grond/Crown).\n");
-
-		if (cfg.fallenkings_etiquette)
-			fprintf(fff, "Fallen winners are not allowed to carry/use static artifacts.\n");
+		if (cfg.strict_etiquette) {
+			if (cfg.kings_etiquette)
+				fprintf(fff, "Winners are not allowed to find/carry/use static artifacts (save Grond/Crown).\n");
+			if (cfg.fallenkings_etiquette)
+				fprintf(fff, "Fallen winners are not allowed to find/carry/use static artifacts.\n");
+		} else {
+			if (cfg.kings_etiquette)
+				fprintf(fff, "Winners cannot find/pick up static artifacts (save Grond/Crown).\n");
+			if (cfg.fallenkings_etiquette)
+				fprintf(fff, "Fallen winners cannot find/pick up static artifacts.\n");
+		}
 
 		p_dummy.lev = 1;
 		p_dummy.total_winner = p_dummy.once_winner = TRUE;

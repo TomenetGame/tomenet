@@ -3084,6 +3084,8 @@ static void set_server_option(char * option, char * value)
 		cfg.kings_etiquette = str_to_boolean(value);
 	else if (!strcmp(option,"FALLENKINGS_ETIQUETTE"))
 		cfg.fallenkings_etiquette = str_to_boolean(value);
+	else if (!strcmp(option,"STRICT_ETIQUETTE"))
+		cfg.strict_etiquette = str_to_boolean(value);
 	else if (!strcmp(option,"ZANG_MONSTERS"))
 		cfg.zang_monsters = atoi(value);
 	else if (!strcmp(option,"PERN_MONSTERS"))
