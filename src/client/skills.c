@@ -215,8 +215,7 @@ void dump_skills(FILE *fff)
 /*
  * Draw the skill tree
  */
-static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
-{
+static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start) {
 	int i, j;
 	int wid, hgt;
 
@@ -224,20 +223,15 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 	Term_get_size(&wid, &hgt);
 
 	if (c_cfg.rogue_like_commands)
-	{
 		c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:j,k,g,G,#  fold:<CR>,c,o  advance:l]", 0, 0);
-	}
 	else
-	{
 		c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:2,8,g,G,#  fold:<CR>,c,o  advance:6]", 0, 0);
-	}
 
 	c_prt((p_ptr->skill_points) ? TERM_L_BLUE : TERM_L_RED,
 	      format("Skill points left: %d", p_ptr->skill_points), 1, 0);
 	print_desc_aux((char*)s_info[table[sel][0]].desc, 2, 0);
 
-	for (j = start; j < start + (hgt - 4); j++)
-	{
+	for (j = start; j < start + (hgt - 4); j++) {
 		byte color = TERM_WHITE;
 		char deb = ' ', end = ' ';
 
@@ -257,29 +251,21 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 		if (p_ptr->s_info[i].flags1 & SKF1_HIDDEN) color = TERM_L_RED;
 		if (p_ptr->s_info[i].flags1 & SKF1_DUMMY) color = TERM_SLATE;
 
-		if (j == sel)
-		{
+		if (j == sel) {
 			color = TERM_L_GREEN;
 			deb = '[';
 			end = ']';
 		}
-		if (!has_child(i))
-		{
+		if (!has_child(i)) {
 			c_prt(color, format("%c.%c%s", deb, end, s_info[i].name),
 			      j + 4 - start, table[j][1] * 4);
-		}
-		else if (!has_active_child(i))
-		{
+		} else if (!has_active_child(i)) {
 			c_prt(color, format("%co%c%s", deb, end, s_info[i].name),
 			      j + 4 - start, table[j][1] * 4);
-		}
-		else if (p_ptr->s_info[i].dev)
-		{
+		} else if (p_ptr->s_info[i].dev) {
 			c_prt(color, format("%c-%c%s", deb, end, s_info[i].name),
 			      j + 4 - start, table[j][1] * 4);
-		}
-		else
-		{
+		} else {
 			c_prt(color, format("%c+%c%s", deb, end, s_info[i].name),
 			      j + 4 - start, table[j][1] * 4);
 		}
@@ -316,8 +302,7 @@ void do_redraw_skills() {
 /*
  * Interact with skills.
  */
-void do_cmd_skill()
-{
+void do_cmd_skill() {
 	char c;
 	int i;
 	int wid, hgt;
@@ -338,8 +323,7 @@ void do_cmd_skill()
 	/* Initialise the skill list */
 	init_table(table, &max, FALSE);
 
-	while (TRUE)
-	{
+	while (TRUE) {
 		Term_get_size(&wid, &hgt);
 
 		/* Display list of skills */
@@ -351,21 +335,18 @@ void do_cmd_skill()
 		if (c == ESCAPE || c == KTRL('X')) break;
 
 		/* Take a screenshot */
-		else if (c == KTRL('T'))
-		{
-			xhtml_screenshot("screenshot????");
-		}
+		else if (c == KTRL('T')) xhtml_screenshot("screenshot????");
+
+		/* specialty: allow chatting from within here */
+		else if (c == ':') cmd_message();
 
 		/* Expand / collapse list of skills */
-		else if (c == '\r')
-		{
+		else if (c == '\r') {
 			if (p_ptr->s_info[table[sel][0]].dev) p_ptr->s_info[table[sel][0]].dev = FALSE;
 			else p_ptr->s_info[table[sel][0]].dev = TRUE;
 			init_table(table, &max, FALSE);
 			Send_skill_dev(table[sel][0], p_ptr->s_info[table[sel][0]].dev);
-		}
-		else if (c == 'c')
-		{
+		} else if (c == 'c') {
 			for (i = 0; i < max; i++) {
 				p_ptr->s_info[table[i][0]].dev = FALSE;
 				Send_skill_dev(-1, FALSE);
@@ -373,9 +354,7 @@ void do_cmd_skill()
 
 			init_table(table, &max, FALSE);
 			start = sel = 0;
-		}
-		else if (c == 'o')
-		{
+		} else if (c == 'o') {
 			for (i = 0; i < max; i++) {
 				p_ptr->s_info[table[i][0]].dev = TRUE;
 				Send_skill_dev(-1, TRUE);
@@ -386,24 +365,19 @@ void do_cmd_skill()
 		}
 
 		else if (c == 'g')
-		{
 			start = sel = 0;
-		}
-		else if (c == 'G')
-		{
+		else if (c == 'G') {
 			sel = max - 1;
 			start = sel - (hgt - 4);
 			if (start < 0) start = 0;
 			if (sel >= start + (hgt - 4)) start = sel - (hgt - 4) + 1;
 		}
 		/* Hack -- go to a specific line */
-		else if (c == '#')
-		{
+		else if (c == '#') {
 			char tmp[80];
 			prt(format("Goto Line(max %d): ", max), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "1");
-			if (askfor_aux(tmp, 10, 0))
-			{
+			if (askfor_aux(tmp, 10, 0)) {
 				sel = start = atoi(tmp) - 1;
 				if (sel >= max) sel = start = max - 1;
 				if (sel < 0) sel = start = 0;
@@ -411,8 +385,7 @@ void do_cmd_skill()
 		}
 
 		/* Next page */
-		else if (c == 'n' || c == ' ')
-		{
+		else if (c == 'n' || c == ' ') {
 			sel += (hgt - 4);
 			start += (hgt - 4);
 			if (sel >= max) sel = max - 1;
@@ -420,8 +393,7 @@ void do_cmd_skill()
 		}
 
 		/* Previous page */
-		else if (c == 'p' || c == 'b')
-		{
+		else if (c == 'p' || c == 'b') {
 			sel -= (hgt - 4);
 			start -= (hgt - 4);
 			if (sel < 0) sel = 0;
@@ -429,8 +401,7 @@ void do_cmd_skill()
 		}
 
 		/* Select / increase a skill */
-		else
-		{
+		else {
 			int dir = c;
 
 			/* Move cursor down */
@@ -440,8 +411,7 @@ void do_cmd_skill()
 			if (dir == '8' || dir == 'k') sel--;
 
 			/* Increase the current skill */
-			if (dir == '6' || dir == 'l')
-			{
+			if (dir == '6' || dir == 'l') {
 				/* Send a packet */
 				Send_skill_mod(table[sel][0]);
 			}
