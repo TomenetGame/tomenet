@@ -4282,9 +4282,13 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* Refresh stores
 			 * XXX very slow */
-			else if (prefix(message, "/store"))
-			{
-				store_turnover();
+			else if (prefix(message, "/store")) {
+				if (tk && token[1][0] == 'f') {
+					int i;
+					for (i = 0; i < 10; i++) /* MAX_MAINTENANCES [10] */
+						store_turnover();
+				} else store_turnover();
+
 				if (tk && prefix(token[1], "owner")) {
 					for (i = 0; i < numtowns; i++) {
 //						for (k = 0; k < MAX_BASE_STORES - 2; k++)
