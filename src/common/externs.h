@@ -183,6 +183,7 @@ extern bool player_list2;
 extern bool view_animated_lite;
 extern bool fresh_message;
 extern bool alert_hitpoint;
+extern bool alert_mana;
 extern bool alert_afk_dam;//alert_failure;
 extern bool view_yellow_lite;
 extern bool view_bright_lite;

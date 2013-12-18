@@ -1705,6 +1705,11 @@ int Receive_sp(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0) return n;
 
+	if (c_cfg.alert_mana && (cur < max / 5)) {
+		warning_page();
+		c_msg_print("\377R*** LOW MANA WARNING! ***");
+	}
+
 	p_ptr->msp = max;
 	p_ptr->csp = cur;
 

@@ -207,7 +207,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.quick_messages,	FALSE,	1,	0, 1, TRUE,
 	"quick_messages",		"Activate quick messages (skill etc)" },
 #else
-	{ &c_cfg.warn_unique_credit,	FALSE,	1,	0, 1, TRUE,
+	{ &c_cfg.warn_unique_credit,	FALSE,	4,	0, 1, TRUE,
 	"warn_unique_credit",		"Beep on attacking a unique you already killed" },
 #endif
 
@@ -604,6 +604,9 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.hilite_player,		FALSE,	4,	1, 100, TRUE,
 	"hilite_player",		"Hilite your character icon with the cursor" },
+
+	{ &c_cfg.alert_mana,		FALSE,	1,	0, 101, TRUE,
+	"alert_mana",			"Beep about critically low mana pool" },
 };
 
 
