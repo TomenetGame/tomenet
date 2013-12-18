@@ -1235,10 +1235,12 @@ static void store_item_optimize(store_type *st_ptr, int item)
  * Crap is defined as any item that is "available" elsewhere
  * Based on a suggestion by "Lee Vogt" <lvogt@cig.mcel.mot.com>
  */
-static bool black_market_crap(object_type *o_ptr)
-{
+static bool black_market_crap(object_type *o_ptr) {
+#if 0 /* relevant code blocks further below have been disabled (checking of other stores) */
 	int		i, j, k;
 	store_type *st_ptr;
+#endif
+
 
 #if 1 /* not that big impact on the game, so, optional */
 	/* No golem items? */
@@ -1272,6 +1274,9 @@ static bool black_market_crap(object_type *o_ptr)
 	if (o_ptr->to_h > 0) return (FALSE);
 	if (o_ptr->to_d > 0) return (FALSE);
 
+#if 0 /* Would mess up at least the dungeon BMs, and was buggy all the time anyway \
+       * (returned FALSE instead of TRUE), so disabling it altogether. \
+       */
 	/* Don't allow items in black markets that are listed in other BMs' templates already */
 	/* check individual store would be better. *later* */
 	for (i = 0; i < max_st_idx; i++) {
@@ -1279,28 +1284,32 @@ static bool black_market_crap(object_type *o_ptr)
 			for (j = 0; j < st_info[i].table_num; j++) {
 				if (st_info[i].table[j][0] >= 10000) {
 					if (o_ptr->tval == st_info[i].table[j][0] - 10000)
-						return(FALSE);
+						return TRUE;
 				} else {
 					if (o_ptr->k_idx == st_info[i].table[j][0])
-						return(FALSE);
+						return TRUE;
 				}
 			}
 		}
 	}
+#endif
 
+#if 0 /* This is bad for dungeon BMs, where people cannot recall around \
+       * multiple towns to find what they need, so disabling this for now. \
+       */
 	/* Don't allow items that are currently offered in any non-BM.
 	   NOTE: Should maybe be changed to just check vs items in that store's template!
 	         Otherwise selling an item could block same item type being generated in a BM.. */
-#if 1 /* note: ego items are never bm crap (see above), so checking all base stores at all does make sense */
+ #if 1 /* note: ego items are never bm crap (see above), so checking all base stores at all does make sense */
 	for (k = 0; k < numtowns; k++) {
 		st_ptr = town[k].townstore;
- #if 0 /* according to Mikael's find, this causes bad bugs, ie items that seemingly for no reason wont show up in BMs anymore */
+  #if 0 /* according to Mikael's find, this causes bad bugs, ie items that seemingly for no reason wont show up in BMs anymore */
 		/* Check the other "normal" stores */
 		for (i = 0; i < max_st_idx; i++)
- #else /* using light-weight version that shouldn't pose problems */
+  #else /* using light-weight version that shouldn't pose problems */
 		/* Check the other basic normal stores */
 		for (i = 0; i < 6; i++)
- #endif
+  #endif
 		{
 			/* Don't compare other BMs */
 			if (st_info[i].flags1 & SF1_ALL_ITEM) continue;
@@ -1314,6 +1323,7 @@ static bool black_market_crap(object_type *o_ptr)
 			}
 		}
 	}
+ #endif
 #endif
 
 	/* Assume okay */
@@ -1476,8 +1486,10 @@ static void store_create(store_type *st_ptr) {
 #else
 			if (!magik(chance)) i = 0;
 #endif
+			/* Hack: Expensive Black Market accumulates predefined items way too quickly. */
+			else if ((st_info[st_ptr->st_idx].flags1 & (SF1_RARE | SF1_VERY_RARE)) && rand_int(1000)) i = 0;
 			/* Hack -- mass-produce for black-market promised items */
-			else if (black_market) force_num = rand_range(2, 5);//was 3,9
+			else force_num = rand_range(2, 5);//was 3,9
 
 
 			/* Hack -- fake level for apply_magic() */
