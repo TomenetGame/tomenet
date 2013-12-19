@@ -3889,6 +3889,7 @@ void interact_macros(void)
 #define mw_mimict 'E'
 #define mw_mimicidx 'f'
 #define mw_poly 'g'
+#define mw_prfimm 'G'
 #define mw_rune 'h'
 #define mw_fight 'i'
 #define mw_shoot 'j'
@@ -3931,7 +3932,7 @@ Chain_Macro:
 					Term_putstr(10, 13, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
 					Term_putstr(10, 14, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell with target");
 					Term_putstr(10, 15, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (with and without target)");
-					Term_putstr(10, 16, -1, TERM_L_GREEN, "g) Polymorph into a certain monster (mimicry users)");
+					Term_putstr(10, 16, -1, TERM_L_GREEN, "g/G) Polymorph into monster/set preferred immunity (mimicry users)");
 					Term_putstr(10, 17, -1, TERM_L_GREEN, "h) Draw runes to cast a runespell");
 					Term_putstr(10, 18, -1, TERM_L_GREEN, "i) Use a fighting technique (most melee classes)");
 					Term_putstr(10, 19, -1, TERM_L_GREEN, "j) Use a shooting technique (archers and rangers)");
@@ -3952,7 +3953,7 @@ Chain_Macro:
 							continue;
 						default:
 							/* invalid action -> exit wizard */
-							if ((choice < 'a' || choice > 'm') && choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M') {
+							if ((choice < 'a' || choice > 'm') && choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' && choice != 'G') {
 //								i = -1;
 								continue;
 							}
@@ -4040,6 +4041,50 @@ Chain_Macro:
 						Term_putstr(10, 15, -1, TERM_GREEN, "To return to your normal form, use  \377GPlayer\377g  or its code  \377G0\377g  .");
 //						Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
 						Term_putstr(1, 17, -1, TERM_L_GREEN, "Enter exact monster name/code or leave blank:");
+						break;
+					case mw_prfimm:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please choose an immunity preference:");
+						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Lightning  \377Gb\377g) Frost  \377Gc\377g) Acid  \377Gd\377g) Fire  \377Ge\377g) Poison  \377Gf\377g) Water");
+						Term_putstr(5, 12, -1, TERM_GREEN, "\377G*\377g) None (pick one randomly on polymorphing)");
+						Term_putstr(5, 13, -1, TERM_GREEN, "\377G?\377g) Just check (displays your current immunity preference)");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-f,*,?):");
+
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -1; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if ((choice < 'a' || choice > 'f') && choice != '?' && choice != '*') {
+//									i = -1;
+									continue;
+								}
+							}
+							break;
+						}
+						/* exit? */
+						if (i == -1) continue;
+
+						/* build macro part */
+						switch (choice) {
+						case 'a': strcpy(buf2, "\\e)m@3\rd@Lightning\r"); break;
+						case 'b': strcpy(buf2, "\\e)m@3\rd@Frost\r"); break;
+						case 'c': strcpy(buf2, "\\e)m@3\rd@Acid\r"); break;
+						case 'd': strcpy(buf2, "\\e)m@3\rd@Fire\r"); break;
+						case 'e': strcpy(buf2, "\\e)m@3\rd@Poison\r"); break;
+						case 'f': strcpy(buf2, "\\e)m@3\rd@Water\r"); break;
+						case '*': strcpy(buf2, "\\e)m@3\rd@None\r"); break;
+						case '?': strcpy(buf2, "\\e)m@3\rd@Check\r"); break;
+						}
+
+						choice = mw_prfimm; /* hack - remember */
 						break;
 					case mw_rune: //Hardcoded, so must be maintained. - Kurzel
 						strcpy(buf2, "");
@@ -5124,6 +5169,8 @@ Chain_Macro:
 						break;
 					}
 
+					/* --------------- specify item/parm if required --------------- */
+
 					/* mw_mimicidx is special: it requires a number (1..n) */
 					if (choice == mw_mimicidx) {
 						while (TRUE) {
@@ -5144,7 +5191,7 @@ Chain_Macro:
 						if (i == -1) continue;
 					}
 					/* no need for inputting an item/spell to use with the macro? */
-					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap) {
+					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm) {
 						if (choice == mw_poly) Term_gotoxy(47, 17);
 						else Term_gotoxy(47, 16);
 
@@ -5159,8 +5206,10 @@ Chain_Macro:
 						if (choice != mw_poly || buf[0]) strcat(buf, "\\r");
 					}
 
-					/* generate the full macro action; magic device macros are already pre-made */
-					if (choice != mw_device) {
+					/* --------------- complete the macro by glueing premade part and default part together --------------- */
+
+					/* generate the full macro action; magic device/preferred immunity macros are already pre-made */
+					if (choice != mw_device && choice != mw_prfimm) {
 						buf2[0] = '\\'; //note: should in theory be ')e\',
 						buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 						buf2[2] = ')'; //      (\e will then get ignored)
