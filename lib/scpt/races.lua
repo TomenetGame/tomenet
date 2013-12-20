@@ -114,7 +114,7 @@ __races_diz = {
     "", "", "", "",},
 
 "Dunadan",
-    {"\255uDunadain\255U have their constituation sustained.",
+    {"\255uDunadain\255U have their constitution sustained.",
     "They are a hardy race of men from the west. This",
     "elder race surpasses human abilities in every",
     "field, especially constituion. However, being men",
