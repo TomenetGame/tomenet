@@ -3339,8 +3339,9 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 #else /* make nether realm summons less deadly (hounds) */
 	//monsters gain per turn extract_energy[]: ee=1..80 (avg: spd+10) -> per second: 60..4800 (+0..+30spd: 600..2400)
 	//monsters need to act: level_speed() = 5*level_speeds[] = 5*(75..200) = 375..1000, 1220..1380 for NR
+	//on extremely rough average, monsters in high-level scenarios require ~1/2s to become able to act
  #if 0
-	m_ptr->energy = -rand_int(level_speed(wpos) - 375);//delay by 0..1/3s on extremely rough average
+	m_ptr->energy = -rand_int(level_speed(wpos) - 375);//delay by 0..1/3s on extremely rough average in high-level scenarios
  #else
 	m_ptr->energy = -rand_int((level_speed(wpos) - 375) * 2);//delay by 0..2/3s - " -, very lenient ^^
  #endif
