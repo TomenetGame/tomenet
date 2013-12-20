@@ -26,6 +26,9 @@
 //#define CRIT_VS_VORPAL
 
 
+static void run_init(int Ind, int dir);
+
+
 /* Anti-(nothing)-hack, following Tony Zeigler's (Ravyn) suggestion */
 bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y)
 {
@@ -5231,6 +5234,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	int y, x, oldx, oldy;
 	int i;
 	//bool do_move = FALSE;
+	bool rnd = FALSE;
 
 	cave_type               *c_ptr;
 	struct c_special	*cs_ptr;
@@ -5268,6 +5272,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 				/* convenience hack: don't run into walls, because that's just too silly */
 				if (!player_can_enter(Ind, zcave[y][x].feat)) i = 5;
+				/* convenience hack: don't stop running if we just left proximity of a wall */
+				if (p_ptr->running) rnd = TRUE;
 			} while (i == 5);
 		} else {
 			y = p_ptr->py + ddy[dir];
@@ -5293,6 +5299,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 			/* convenience hack: don't run into walls, because that's just too silly */
 			if (!player_can_enter(Ind, zcave[y][x].feat)) i = 5;
+			/* convenience hack: don't stop running if we just left proximity of a wall */
+			if (p_ptr->running) rnd = TRUE;
 		} while (i == 5);
 	} else {
 		y = p_ptr->py + ddy[dir];
@@ -6027,6 +6035,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		/* Check BEFORE setting ;) */
 		if (p_ptr->master_move_hook)
 			p_ptr->master_move_hook(Ind, NULL);
+
+		if (rnd) run_init(Ind, dir);
 	}
 }
 
