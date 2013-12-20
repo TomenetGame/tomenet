@@ -5125,8 +5125,7 @@ static bool wraith_access_virtual(int Ind, int y, int x)
 
 /* borrowed from ToME	- Jir - */
 /* NOTE: in ToME fly gives free FF, but in TomeNET not. */
-bool player_can_enter(int Ind, byte feature)
-{
+bool player_can_enter(int Ind, byte feature) {
 	player_type *p_ptr = Players[Ind];
 	bool pass_wall;
 
@@ -5154,44 +5153,6 @@ bool player_can_enter(int Ind, byte feature)
 #endif
 
 	switch (feature) {
-#if 0
-		/* NOTE: we're not to backport wild_mode (it's cheezy);
-		 * however it's good idea to restrict crossing severer is nice idea
-		 * so p_ptr->wild_mode code can be recycled.	- Jir -
-		 */
-		case FEAT_DEEP_WATER:
-			if (p_ptr->wild_mode) {
-				int wt = (adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2;
-
-				if ((calc_total_weight() < wt) || (p_ptr->ffall))
-					return (TRUE);
-				else
-					return (FALSE);
-			} else
-				return (TRUE);
-
-		case FEAT_SHAL_LAVA:
-			if (p_ptr->wild_mode) {
-				if ((p_ptr->resist_fire) ||
-					(p_ptr->immune_fire) ||
-					(p_ptr->oppose_fire) || (p_ptr->ffall))
-					return (TRUE);
-				else
-					return (FALSE);
-			} else
-				return (TRUE);
-
-		case FEAT_DEEP_LAVA:
-			if (p_ptr->wild_mode) {
-				if ((p_ptr->resist_fire) ||
-					(p_ptr->immune_fire) ||
-					(p_ptr->oppose_fire) || (p_ptr->ffall))
-					return (TRUE);
-				else
-					return (FALSE);
-			} else
-				return (TRUE);
-#endif
 		case FEAT_DEEP_WATER:
 		case FEAT_SHAL_LAVA:
 		case FEAT_DEEP_LAVA:
@@ -5200,51 +5161,42 @@ bool player_can_enter(int Ind, byte feature)
 		case FEAT_DEAD_TREE:
 			if ((p_ptr->fly) || pass_wall || p_ptr->town_pass_trees)
 			    return (TRUE);
+			else return FALSE;
 		case FEAT_BUSH:
 		case FEAT_TREE:
-		{
 			/* 708 = Ent (passes trees), 83/142 novice ranger, 345 ranger, 637 ranger chieftain, 945 high-elven ranger */
 			if ((p_ptr->fly) || (p_ptr->pass_trees) || pass_wall || p_ptr->town_pass_trees)
-#if 0
-			    (PRACE_FLAG(PR1_PASS_TREE)) ||
-			    (get_skill(SKILL_DRUID) > 15) ||
-			    (p_ptr->mimic_form == MIMIC_ENT))
-#endif
 				return (TRUE);
-			else
-				return (FALSE);
-		}
-
+			else return (FALSE);
 #if 0
 		case FEAT_WALL_HOUSE:
-		{
 			if (!pass_wall || !wraith_access_virtual(Ind)) return (FALSE);
 			else return (TRUE);
-		}
 #endif	// 0
 
 		default:
-		{
 			if ((p_ptr->climb) && (f_info[feature].flags1 & FF1_CAN_CLIMB))
 				return (TRUE);
 			if ((p_ptr->fly) &&
-				((f_info[feature].flags1 & FF1_CAN_FLY) ||
-				 (f_info[feature].flags1 & FF1_CAN_LEVITATE)))
+			    ((f_info[feature].flags1 & FF1_CAN_FLY) ||
+			    (f_info[feature].flags1 & FF1_CAN_LEVITATE)))
 				return (TRUE);
 			else if (only_wall && (f_info[feature].flags1 & FF1_FLOOR))
 				return (FALSE);
 			else if ((p_ptr->feather_fall || p_ptr->tim_wraith) &&
-					 (f_info[feature].flags1 & FF1_CAN_LEVITATE))
+			    (f_info[feature].flags1 & FF1_CAN_LEVITATE))
 				return (TRUE);
 			else if ((pass_wall || only_wall) &&
-					 (f_info[feature].flags1 & FF1_CAN_PASS))
+			     (f_info[feature].flags1 & FF1_CAN_PASS))
 				return (TRUE);
 			else if (f_info[feature].flags1 & FF1_NO_WALK)
 				return (FALSE);
 			else if ((f_info[feature].flags1 & FF1_WEB) &&
-					 (!(r_info[p_ptr->body_monster].flags7 & RF7_SPIDER)))
+			    (!(r_info[p_ptr->body_monster].flags7 & RF7_SPIDER)))
 				return (FALSE);
-		}
+
+			else if ((f_info[feature].flags1 & FF1_WALL) && (!pass_wall || (f_info[feature].flags1 & FF1_PERMANENT)))
+				return FALSE;
 	}
 
 	return (TRUE);
@@ -5313,6 +5265,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				i = randint(9);
 				y = p_ptr->py + ddy[i];
 				x = p_ptr->px + ddx[i];
+
+				/* convenience hack: don't run into walls, because that's just too silly */
+				if (!player_can_enter(Ind, zcave[y][x].feat)) i = 5;
 			} while (i == 5);
 		} else {
 			y = p_ptr->py + ddy[dir];
@@ -5335,6 +5290,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			i = randint(9);
 			y = p_ptr->py + ddy[i];
 			x = p_ptr->px + ddx[i];
+
+			/* convenience hack: don't run into walls, because that's just too silly */
+			if (!player_can_enter(Ind, zcave[y][x].feat)) i = 5;
 		} while (i == 5);
 	} else {
 		y = p_ptr->py + ddy[dir];
