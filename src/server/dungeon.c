@@ -6092,6 +6092,11 @@ void process_player_change_wpos(int Ind)
 	wpcopy(&p_ptr->wpos_old, &p_ptr->wpos);
 #endif
 
+	/* Allow the player again to find another random IDDC town, if he hit a static IDDC town */
+	if (is_fixed_irondeepdive_town(&p_ptr->wpos, dlv)) p_ptr->IDDC_found_rndtown = FALSE;
+	/* Cover disallowing the same if he enters a random town someone else already generated */
+	else if (in_irondeepdive(&p_ptr->wpos) && l_ptr && (l_ptr->flags1 & LF1_RANDOM_TOWN)) p_ptr->IDDC_found_rndtown = TRUE;
+
 	/* hack -- update night/day in wilderness levels */
 	if (!wpos->wz) {
 		if (IS_DAY) player_day(Ind);

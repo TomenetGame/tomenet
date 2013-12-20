@@ -782,9 +782,10 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->hilite_self);
 	wr_byte(p_ptr->fluent_artifact_reset); /* for automatic artifact resets */
 	wr_byte(p_ptr->sanity_bar);
+	wr_byte(p_ptr->IDDC_found_rndtown);
 
 	/* Future use */
-	for (i = 0; i < 33; i++) wr_byte(0);
+	for (i = 0; i < 32; i++) wr_byte(0);
 
         /* Toggle for possible automatic save-game updates
            (done via script login-hook, eg custom.lua) - C. Blue */

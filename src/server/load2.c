@@ -1591,13 +1591,11 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16u > MAX_R_IDX)
-	{
+	if (tmp16u > MAX_R_IDX) {
 		s_printf("Too many (%u) monster races!\n", tmp16u);
 		return (22);
 	}
-	for (i = 0; i < tmp16u; i++)
-	{
+	for (i = 0; i < tmp16u; i++) {
 		rd_s16b(&p_ptr->r_killed[i]);
 
 		/* Hack -- try to fix the unique list */
@@ -1646,8 +1644,16 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		else p_ptr->sanity_bar = 0;
 	}
 
+	if (!older_than(4, 5, 17)) {
+		rd_byte(&tmp8u);
+		p_ptr->IDDC_found_rndtown = tmp8u;
+	} else {
+		strip_bytes(1);
+		p_ptr->IDDC_found_rndtown = FALSE;
+	}
+
 	/* Future use */
-	strip_bytes(33);
+	strip_bytes(32);
 
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */

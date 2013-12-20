@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	16
+#define SF_VERSION_PATCH	17
 #define SF_VERSION_EXTRA	0
 
 
@@ -5771,6 +5771,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define LF1_NO_GHOST		0x00000800L /* Players who die on this level are erased completely! */
 
 #define LF1_IRON_RECALL		0x00001000L /* Recalling is allowed on this floor of an IRONMAN dungeon/tower */
+#define LF1_RANDOM_TOWN		0x00002000L /* it's a random (dungeon) town (for tracking in IDDC) */
 
 #define LF1_WATER		0x01000000L	/* for DIGGING: water rivers or base grids are being used */
 #define LF1_LAVA		0x02000000L	/* for DIGGING: lava rivers or base grids are being used */

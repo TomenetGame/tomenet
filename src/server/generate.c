@@ -9291,6 +9291,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		if (k) {
 			if (in_irondeepdive(wpos)) p_ptr->IDDC_found_rndtown = TRUE;
 			s_printf("Generated random dungeon town at %d%% chance for player %s.\n", k, p_ptr->name);
+			dun->l_ptr->flags1 |= LF1_RANDOM_TOWN;
 		}
 #endif
 		bool lit = rand_int(3) == 0;
