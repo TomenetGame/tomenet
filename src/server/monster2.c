@@ -3283,21 +3283,6 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 //		if (i) m_ptr->mspeed += rand_spread(0, i);
 	}
 
-
-#if 0
-	/* Give a random starting energy */
-	m_ptr->energy = rand_int(100);
-#else /* make nether realm summons less deadly (hounds) */
-//	m_ptr->energy = -rand_int(level_speed(wpos) * 2 - 750);
-	m_ptr->energy = -rand_int(level_speed(wpos) - 375);
-#endif
-
-	/* Hack -- Reduce risk of "instant death by breath weapons" */
-	if (r_ptr->flags1 & RF1_FORCE_SLEEP) {
-		/* Start out with minimal energy */
-		m_ptr->energy = rand_int(10);
-	}
-
 	/* Starts 'flickered out'? */
 	if ((r_ptr->flags2 & RF2_WEIRD_MIND) && rand_int(10)) m_ptr->no_esp_phase = TRUE;
 
@@ -3340,6 +3325,27 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	    m_ptr->exp = MONSTER_EXP(l);
 	    monster_check_experience(c_ptr->m_idx, TRUE);
 	}
+
+
+#if 0
+	/* Hack -- Reduce risk of "instant death by breath weapons" */
+	if (r_ptr->flags1 & RF1_FORCE_SLEEP) {
+		/* Start out with minimal energy */
+		m_ptr->energy = rand_int(10);
+	} else {
+		/* Give a random starting energy */
+		m_ptr->energy = rand_int(100);
+	}
+#else /* make nether realm summons less deadly (hounds) */
+	//monsters gain per turn extract_energy[]: ee=1..80 (avg: spd+10) -> per second: 60..4800 (+0..+30spd: 600..2400)
+	//monsters need to act: level_speed() = 5*level_speeds[] = 5*(75..200) = 375..1000, 1220..1380 for NR
+ #if 0
+	m_ptr->energy = -rand_int(level_speed(wpos) - 375);//delay by 0..1/3s on extremely rough average
+ #else
+	m_ptr->energy = -rand_int((level_speed(wpos) - 375) * 2);//delay by 0..2/3s - " -, very lenient ^^
+ #endif
+#endif
+
 
 	strcpy(buf, (r_name + r_ptr->name));
 
