@@ -5739,8 +5739,8 @@ int Send_mini_map_pos(int Ind, int x, int y, byte a, char c) {
 #endif
 
 	/* Packet header */
-	Packet_printf(&connp->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, x, y, a, c);
-	//if (Ind2) Packet_printf(&connp2->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, x, y, a, c);
+	if (is_newer_than(&p_ptr->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, x, y, a, c);
+	//if (Ind2 && is_newer_than(&p_ptr2->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp2->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, x, y, a, c);
 
 	return 1;
 }
