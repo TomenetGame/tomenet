@@ -5971,12 +5971,19 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
+#if 0
+				i = p_ptr->guild;
+				p_ptr->guild = g; /* quick hack for admin */
+				(void)guild_rename(Ind, new_name);
+				p_ptr->guild = i;
+#else
 				for (i = 0; i < MAX_GUILDNOTES; i++)
-					if (!strcmp(guild_note_target[i], old_name))
+					if (!strcmp(guild_note_target[i], guilds[g].name))
 						strcpy(guild_note_target[i], new_name);
 
 				strcpy(guilds[g].name, new_name);
 				msg_broadcast_format(0, "\377U(Server-Administration) Guild '%s' has been renamed to '%s'.", old_name, new_name);
+#endif
 				return;
 			}
 			else if (prefix(message, "/meta")) {

@@ -771,22 +771,30 @@ bool player_in_party(int party_id, int Ind) {
 	return FALSE;
 }
 
-/*
- * Create a new guild.
- */
-int guild_create(int Ind, cptr name){
-	player_type *p_ptr = Players[Ind];
-	int index = 0, i, j;
-	object_type forge, *o_ptr = &forge;
-	char temp[160];
-	struct account *acc;
-	int *id_list, ids;
+static bool group_name_legal_characters(cptr name) {
+	const char *ptr;
 
+	/* remove special chars that are used for parsing purpose */
+	for (ptr = &name[strlen(name)]; ptr-- > name; )
+		if (!((*ptr >= 'A' && *ptr <= 'Z') ||
+		    (*ptr >= 'a' && *ptr <= 'z') ||
+		    (*ptr >= '0' && *ptr <= '9') ||
+		    strchr(" .,-'`'&_$%~#<>|", *ptr))) /* chars allowed for character name */
+			return FALSE;
+	return TRUE;
+}
+
+static bool guild_name_legal(int Ind, char *name) {
+	int index;
 	char *ptr, buf[NAME_LEN];
+	player_type *p_ptr = Players[Ind];
+	object_type forge, *o_ptr = &forge;
+
 	if (strlen(name) >= NAME_LEN) {
 		msg_format(Ind, "\377yGuild name must not exceed %d characters!", NAME_LEN - 1);
 		return FALSE;
 	}
+
 	strncpy(buf, name, NAME_LEN);
 	buf[NAME_LEN - 1] = '\0';
 	/* remove spaces at the beginning */
@@ -800,7 +808,65 @@ int guild_create(int Ind, cptr name){
 		if (isspace(*ptr)) *ptr = '\0';
 		else break;
 	}
-	name = buf;
+	/* name consisted only of spaces? */
+	if (!buf[0]) {
+		msg_print(Ind, "\377ySorry, names must not just consist of spaces.");
+		return FALSE;
+	}
+	strcpy(name, buf);
+
+	/* Check for weird characters */
+	if (!group_name_legal_characters(name)) {
+		msg_print(Ind, "\377ySorry, that name contains illegal characters or symbols.");
+		return FALSE;
+	}
+	/* Prevent abuse */
+	if (ILLEGAL_GROUP_NAME(name)) {
+		msg_print(Ind, "\377yThat's not a legal guild name, please try again.");
+		return FALSE;
+	}
+	/* Check for already existing party by that name */
+	if (party_lookup(name) != -1) {
+		msg_print(Ind, "\377yThere's already a party using that name.");
+		return FALSE;
+	}
+	/* Check for already existing guild by that name */
+	if ((index = guild_lookup(name) != -1)) {
+		/* Admin can actually create a duplicate 'spare' key this way */
+		if (p_ptr->admin_dm) {
+			/* make the guild key */
+			invcopy(o_ptr, lookup_kind(TV_KEY, SV_GUILD_KEY));
+			o_ptr->number = 1;
+			o_ptr->pval = index;
+			o_ptr->level = 1;
+			o_ptr->owner = p_ptr->id;
+			o_ptr->mode = p_ptr->mode;
+			object_known(o_ptr);
+			object_aware(Ind, o_ptr);
+			(void)inven_carry(Ind, o_ptr);
+			msg_print(Ind, "Spare key created.");
+			return FALSE;
+		}
+		msg_print(Ind, "\377yA guild by that name already exists.");
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+/*
+ * Create a new guild.
+ */
+int guild_create(int Ind, cptr name) {
+	player_type *p_ptr = Players[Ind];
+	int index = 0, i, j;
+	object_type forge, *o_ptr = &forge;
+	char temp[160];
+	struct account *acc;
+	int *id_list, ids;
+
+	strcpy(temp, name);
+	if (!guild_name_legal(Ind, temp)) return FALSE;
 
 	/* zonk */
 	if ((p_ptr->mode & MODE_PVP)) {
@@ -848,36 +914,6 @@ int guild_create(int Ind, cptr name){
 			msg_format(Ind, "\377yYou need %d gold pieces to start a guild.", GUILD_PRICE);
 		return FALSE;
 	}
-	/* Prevent abuse */
-	if (ILLEGAL_GROUP_NAME(name)) {
-		msg_print(Ind, "\377yThat's not a legal guild name, please try again.");
-		return FALSE;
-	}
-	/* Check for already existing party by that name */
-	if (party_lookup(name) != -1) {
-		msg_print(Ind, "\377yThere's already a party using that name.");
-		return FALSE;
-	}
-	/* Check for already existing guild by that name */
-	if ((index = guild_lookup(name) != -1)) {
-		/* Admin can actually create a duplicate 'spare' key this way */
-		if (p_ptr->admin_dm) {
-			/* make the guild key */
-			invcopy(o_ptr, lookup_kind(TV_KEY, SV_GUILD_KEY));
-			o_ptr->number = 1;
-			o_ptr->pval = index;
-			o_ptr->level = 1;
-			o_ptr->owner = p_ptr->id;
-			o_ptr->mode = p_ptr->mode;
-			object_known(o_ptr);
-			object_aware(Ind, o_ptr);
-			(void)inven_carry(Ind, o_ptr);
-			msg_print(Ind, "Spare key created.");
-			return FALSE;
-		}
-		msg_print(Ind, "\377yA guild by that name already exists.");
-		return FALSE;
-	}
 
 	/* Find the "best" party index */
 	for (i = 1; i < MAX_GUILDS; i++) {
@@ -892,8 +928,39 @@ int guild_create(int Ind, cptr name){
 		msg_print(Ind, "\377yThere aren't enough guild slots!");
 		return FALSE;
 	}
+
+
+	/* Set guild identity */
+	guilds[index].dna = rand_int(0xFFFF) << 16;
+	guilds[index].dna += rand_int(0xFFFF);
+
+	/* Set guild name */
+	strcpy(guilds[index].name, temp);
+
+	/* Set guildmaster */
+	guilds[index].master = p_ptr->id;
+	guilds[index].cmode = p_ptr->mode;
+
+	/* Init guild hall, flags & level */
+	guilds[index].h_idx = 0;
+	guilds[index].flags = 0;
+	guilds[index].minlev = 0;
+
+	/* Add the owner as a member */
+	p_ptr->guild = index;
+	p_ptr->guild_dna = guilds[index].dna;
+	clockin(Ind, 3);
+	guilds[index].members = 1;
+
+	/* Set guild mode */
+	if ((p_ptr->mode & MODE_EVERLASTING))
+		guilds[index].flags |= GFLG_EVERLASTING;
+
+	Send_guild(Ind, FALSE, FALSE);
+	Send_guild_config(index);
+
 	/* broadcast the news */
-	snprintf(temp, 160, "\374\377GA new guild '\377%c%s\377G' has been created.", COLOUR_CHAT_GUILD, name);
+	snprintf(temp, 160, "\374\377GA new guild '\377%c%s\377G' has been created.", COLOUR_CHAT_GUILD, guilds[index].name);
 	msg_broadcast(0, temp);
 //	msg_print(Ind, "\374\377Gou can adjust guild options with the '/guild_cfg' command.");
 
@@ -923,35 +990,6 @@ int guild_create(int Ind, cptr name){
 	object_aware(Ind, o_ptr);
 	(void)inven_carry(Ind, o_ptr);
 #endif
-
-	/* Set guild identity */
-	guilds[index].dna = rand_int(0xFFFF) << 16;
-	guilds[index].dna += rand_int(0xFFFF);
-
-	/* Set guild name */
-	strcpy(guilds[index].name, name);
-
-	/* Set guildmaster */
-	guilds[index].master = p_ptr->id;
-	guilds[index].cmode = p_ptr->mode;
-
-	/* Init guild hall, flags & level */
-	guilds[index].h_idx = 0;
-	guilds[index].flags = 0;
-	guilds[index].minlev = 0;
-
-	/* Add the owner as a member */
-	p_ptr->guild = index;
-	p_ptr->guild_dna = guilds[index].dna;
-	clockin(Ind, 3);
-	guilds[index].members = 1;
-
-	/* Set guild mode */
-	if ((p_ptr->mode & MODE_EVERLASTING))
-		guilds[index].flags |= GFLG_EVERLASTING;
-
-	Send_guild(Ind, FALSE, FALSE);
-	Send_guild_config(index);
 
 	return(TRUE);
 }
@@ -1047,6 +1085,11 @@ int party_create(int Ind, cptr name)
 	}
 	name = buf;
 
+	/* Check for weird characters */
+	if (!group_name_legal_characters(name)) {
+		msg_print(Ind, "\377ySorry, that name contains illegal characters or symbols.");
+		return FALSE;
+	}
 	/* Prevent abuse */
 	if (ILLEGAL_GROUP_NAME(name)) {
 		msg_print(Ind, "\377yThat's not a legal party name, please try again.");
@@ -1154,6 +1197,11 @@ int party_create_ironteam(int Ind, cptr name)
 		return FALSE;
 	}
 
+	/* Check for weird characters */
+	if (!group_name_legal_characters(name)) {
+		msg_print(Ind, "\377ySorry, that name contains illegal characters or symbols.");
+		return FALSE;
+	}
 	/* Prevent abuse */
 	if (ILLEGAL_GROUP_NAME(name)) {
 		msg_print(Ind, "\377yThat's not a legal party name, please try again.");
@@ -2226,6 +2274,54 @@ void party_leave(int Ind, bool voluntarily) {
 			if (!is_admin(p_ptr)) party_msg_format(party_id, "\374\377y%s has been removed from the party.", p_ptr->name);
 		}
 	}
+}
+
+bool guild_rename(int Ind, char *new_name) {
+	player_type *p_ptr = Players[Ind];
+	int i, gid = p_ptr->guild;
+
+	if (!gid) {
+		msg_print(Ind, "\377yYou are not in a guild");
+		return FALSE;
+	}
+
+	/* Leaderless guilds do not allow addition of new members */
+	if (p_ptr->id != guilds[gid].master) {
+		msg_print(Ind, "\377yOnly the guild master can rename a guild.");
+		return FALSE;
+	}
+
+	if (!strcmp(guilds[gid].name, new_name)) {
+		msg_print(Ind, "\377yNew guild name must be different from its current name.");
+		return FALSE;
+	}
+
+	if (!guild_name_legal(Ind, new_name)) return FALSE;
+
+	/* This could probably be improved. */
+	if (p_ptr->au < GUILD_PRICE) {
+		if (GUILD_PRICE >= 1000000)
+			msg_format(Ind, "\377yYou need %d,000,000 gold pieces to rename a guild.", GUILD_PRICE / 1000000);
+		else if (GUILD_PRICE >= 1000)
+			msg_format(Ind, "\377yYou need %d,000 gold pieces to rename a guild.", GUILD_PRICE / 1000);
+		else
+			msg_format(Ind, "\377yYou need %d gold pieces to rename a guild.", GUILD_PRICE);
+		return FALSE;
+	}
+
+
+	p_ptr->au -= GUILD_PRICE;
+	p_ptr->redraw |= PR_GOLD;
+
+	for (i = 0; i < MAX_GUILDNOTES; i++)
+		if (!strcmp(guild_note_target[i], guilds[gid].name))
+			strcpy(guild_note_target[i], new_name);
+
+	msg_broadcast_format(0, "\374\377GThe guild '\377%c%s\377G' has changed their name to '\377%c%s\377G'.",
+	    COLOUR_CHAT_GUILD, guilds[gid].name, COLOUR_CHAT_GUILD, new_name);
+
+	strcpy(guilds[gid].name, new_name);
+	return TRUE;
 }
 
 /*

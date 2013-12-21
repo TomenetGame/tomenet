@@ -428,7 +428,9 @@ F:VHARD_STEAL
 W:24
 
 N:10:Mayor's Office
-A:16:64:35:65:63:68
+#replaced cheeze records by guild rename for now
+#A:16:64:35:65:63:68
+A:16:64:35:65:69:68
 O:1:1:1:1:1:1
 G:+:o
 W:0

@@ -13673,6 +13673,9 @@ Guilds:
     The same functionality as provided by these commands can simply be
     accessed by pressing SHIFT+P and then choosing 'e)'.
 
+    NOTE: If you want to rename your guild that can be done for a fee that is
+    as high as actually creating a guild, in the mayor's office in Bree.
+
 -Add player to guild / Add yourself to guild
     Only the guild master or a designated 'adder' can do this.
 

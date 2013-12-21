@@ -8161,6 +8161,11 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		go_engine_move_human(Ind, str);
 		return;
 #endif
+	case RID_GUILD_RENAME:
+		str[40] = '\0'; /* prevent possile buffer overflow */
+		if (str[0] == '\e' || !str[0]) return; /* user ESCaped */
+		guild_rename(Ind, str);
+		return;
 	default:;
 	}
 }

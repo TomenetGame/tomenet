@@ -7426,6 +7426,7 @@ extern int PlayerUID;
 #define BACT_GO				60
 #define BACT_INSTANT_RES		61
 #define BACT_EXPLORATIONS		62
+#define BACT_RENAME_GUILD		63
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
 
@@ -7865,10 +7866,11 @@ extern int PlayerUID;
 /* ..and request IDs for p_ptr->request_id */
 #define RID_NONE	0	/* fixed */
 #ifdef ENABLE_GO_GAME		/* go.c Go minigame */
-#define RID_GO		1
-#define RID_GO_START	2
-#define RID_GO_MOVE	3
+ #define RID_GO		1
+ #define RID_GO_START	2
+ #define RID_GO_MOVE	3
 #endif
+#define RID_GUILD_RENAME 4
 
 
 /* House type flags */

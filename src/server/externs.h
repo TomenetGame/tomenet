@@ -1329,6 +1329,7 @@ extern void restore_acclists(void);
 extern void fix_lost_guild_mode(int g_id);
 
 extern hash_entry *hash_table[NUM_HASH_ENTRIES];
+extern bool guild_rename(int Ind, char *new_name);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);
