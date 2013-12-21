@@ -3521,7 +3521,7 @@ static bool *account_active = NULL;
 /*
  *  Called once every 24 hours. Deletes unused IDs.
  */
-void scan_players(){
+void scan_players() {
 	int slot, amt = 0;
 	int i, j;
 	hash_entry *ptr, *pptr = NULL;
@@ -3538,17 +3538,17 @@ void scan_players(){
 	now = time(&now);
 
 	s_printf("Starting player inactivity check..\n");
-	for(slot = 0; slot < NUM_HASH_ENTRIES; slot++){
+	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 		pptr = NULL;
 		ptr = hash_table[slot];
-		while(ptr){
-			if(ptr->laston && (now - ptr->laston > 3600 * 24 * CHARACTER_EXPIRY_DAYS)){/*15552000; 7776000 = 90 days at 60fps*/
+		while (ptr) {
+			if (ptr->laston && (now - ptr->laston > 3600 * 24 * CHARACTER_EXPIRY_DAYS)){/*15552000; 7776000 = 90 days at 60fps*/
 				hash_entry *dptr;
 				s_printf("  Removing player: %s\n", ptr->name);
-				if (ptr->level >= 50) l_printf("%s \\{D%s, level %d, was erased by timeout.\n", showdate(), ptr->name, ptr->level);
+				if (ptr->level >= 50 && ptr->admin == 0) l_printf("%s \\{D%s, level %d, was erased by timeout.\n", showdate(), ptr->name, ptr->level);
 
-				for(i = 1; i < MAX_PARTIES; i++){ /* was i = 0 but real parties start from i = 1 - mikaelh */
-					if(streq(parties[i].owner, ptr->name)){
+				for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
+					if (streq(parties[i].owner, ptr->name)) {
 						s_printf("  Disbanding party: %s\n",parties[i].name);
 						del_party(i);
 						/* remove pending notes to his party -C. Blue */
@@ -3579,7 +3579,7 @@ void scan_players(){
 
 				amt++;
 				sf_delete(ptr->name);	/* a sad day ;( */
-				if(!pptr) hash_table[slot] = ptr->next;
+				if (!pptr) hash_table[slot] = ptr->next;
 				else pptr->next = ptr->next;
 				/* Free the memory in the player name */
 				free((char *)(ptr->name));
@@ -3645,9 +3645,7 @@ void scan_accounts() {
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
 	fp = fopen(buf, "rb+");
-	if (!fp) {
-		return;
-	}
+	if (!fp) return;
 
 	while (fread(&c_acc, sizeof(struct account), 1, fp)) {
 		modified = FALSE;
