@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. December 2013 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. December 2013 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.5a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -617,6 +617,21 @@ H       re-apply client-side and (if 'auto_inscribe' option is enabled)
         Press SHIFT+P for party menu. One of you has to create the party and
         add the other one.
 
+        Additional info that may be shown in @ screen:
+        'Silent'        Means the player has enabled the 'limit_chat' option,
+                        which restricts chat to players on the same dungeon
+                        floor as him, except for private/party/guild messages.
+        'Private mode'  The player has used the '/ic' command to ignore all
+                        chat except for private/party/guild messages.
+
+        If the server has specific PK-rules enabled, there are additionally:
+        'PK'            Player participates in player-killing.
+        'SAFE'          Player does not participate in player-killing.
+        'Newbie'        Player cannot participate in player-killing.
+        'Killable'      Player can get killed by other players.
+        To modify the PK status of your character, use the '/pkill' command.
+        Note: These PK-rules are disabled by default on our official server.
+
 %       edit your macros (see from (3.6) to (3.9b)).
 
 &       edit your auto-inscriptions (see (0.3a)).
@@ -1005,6 +1020,12 @@ They all start with a slash '/' hence they're called slash commands:
 /pbbs <text>    Same usage as /bbs, but only readable/writable for party
                 members. So it's a party-internal BBS.
                 To read its contents, type /pbbs without any <text>.
+
+/pkill      Toggles the player's status regarding participation in 'PK' actions
+ or /pk     aka player-killing. PK rules must be enabled on the server in order
+            to use this command. The PK status of each player will be displayed
+            in the players-online-screen that you invoke by pressing @ key.
+            Note: PK-rules are disabled by default on our official server.
 
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
             Will at some point in the future be absorbed by /evsign and
