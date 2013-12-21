@@ -3585,14 +3585,28 @@ void do_slash_cmd(int Ind, char *message)
 				break;
 			}
 
+			/* random temporary test output */
+			if (prefix(message, "/tmp")) {
+				int i;
+				for (i = 0; i < 100; i++) {
+					hash_entry *ptr = hash_table[i];
+					if (!ptr) continue;
+					l_printf("%s \\{D%s, level %d, was erased by timeout.\n", showdate(), ptr->name, ptr->level);
+					msg_print(Ind, "ok");
+					return;
+				}
+				msg_print(Ind, "fail");
+				return;
+			}
+
 #ifdef TOMENET_WORLDS
-			if (prefix(message, "/world")){
+			else if (prefix(message, "/world")){
 				world_connect(Ind);
 				return;
 			}
 #endif
 
-			if (prefix(message, "/shutdown"))// || prefix(message, "/quit"))
+			else if (prefix(message, "/shutdown"))// || prefix(message, "/quit"))
 			{
 				bool kick = (cfg.runlevel == 1024);
 
