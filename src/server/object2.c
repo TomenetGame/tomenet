@@ -3228,6 +3228,10 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- blend "mental" status */
 	if (j_ptr->ident & ID_MENTAL) o_ptr->ident |= ID_MENTAL;
 
+	/* Hack -- could average discounts XXX XXX XXX */
+	/* Hack -- save largest discount XXX XXX XXX */
+	if (o_ptr->discount < j_ptr->discount) o_ptr->discount = j_ptr->discount;
+
 	/* Hack -- blend "inscriptions" */
 //	if (j_ptr->note) o_ptr->note = j_ptr->note;
 //	if (o_ptr->note) j_ptr->note = o_ptr->note;
@@ -3239,7 +3243,8 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 	   o_ptr's inscription contains the !M tag and j_ptr does not and j_ptr isnt one of
 	   the automatic inscriptions. */
 	if (j_ptr->note &&
-	    (!o_ptr->note || streq(quark_str(o_ptr->note), "handmade") || streq(quark_str(o_ptr->note), "stolen"))) {
+	    (!o_ptr->note || streq(quark_str(o_ptr->note), "handmade") ||
+	     (streq(quark_str(o_ptr->note), "stolen") && !streq(quark_str(j_ptr->note), "handmade")))) { /* don't overwrite 'stolen' with 'handmade' */
 		o_ptr->note = j_ptr->note;
 	}
 	else if (merge_inscriptions) {
@@ -3247,23 +3252,18 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 		    && (j_ptr->note) && strcmp(quark_str(j_ptr->note), "handmade") && strcmp(quark_str(j_ptr->note), "stolen"))
 			o_ptr->note = j_ptr->note;
 	}
-
-	/* Hack -- could average discounts XXX XXX XXX */
-	/* Hack -- save largest discount XXX XXX XXX */
-	if (o_ptr->discount < j_ptr->discount) o_ptr->discount = j_ptr->discount;
+	/* hack to fix special case: old item just had an 'on sale' inscription and that doesn't apply anymore */
+	if (o_ptr->note && !strcmp(quark_str(o_ptr->note), "on sale") && o_ptr->discount != 50) o_ptr->note = 0;
 
 	/* blend level-req into lower one */
 	if (o_ptr->level > j_ptr->level) o_ptr->level = j_ptr->level;
 
 	/* Hack -- if wands are stacking, combine the charges. -LM- */
 	if (o_ptr->tval == TV_WAND)
-	{
 		o_ptr->pval += j_ptr->pval;
-	}
 
 	/* Hack -- if rods are stacking, average out the timeout. the_sandman */
-	if (o_ptr->tval == TV_ROD)
-	{
+	if (o_ptr->tval == TV_ROD) {
 		o_ptr->pval = (o_ptr->number) * (o_ptr->pval) + (j_ptr->pval);
 		o_ptr->pval = (o_ptr->pval) / (o_ptr->number + 1);
 	}
