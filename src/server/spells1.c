@@ -746,6 +746,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 	dun_level *l_ptr;
 
 	bool look = TRUE;
+	bool left_shop = (dis == 1);
 
 	/* Space/Time Anchor */
 	cave_type **zcave;
@@ -851,6 +852,17 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 
 	                /* Prevent landing onto a store entrance */
 	                if (zcave[y][x].feat == FEAT_SHOP) continue;
+
+			if (left_shop) {
+				if (zcave[y][x].feat == FEAT_SHAL_LAVA ||
+				    zcave[y][x].feat == FEAT_DEEP_LAVA)
+					if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire)))
+						continue;
+				if (zcave[y][x].feat == FEAT_DEEP_WATER)
+					//if (!(p_ptr->immune_water || p_ptr->res_water || 
+					if (!(p_ptr->can_swim || p_ptr->fly || p_ptr->ghost || p_ptr->tim_wraith))
+						continue;
+			}
 
 			/* Never break into st-anchor */
 			if (!p_ptr->death && check_st_anchor(wpos, y, x)) return FALSE;
