@@ -8333,7 +8333,7 @@ D:Once a powerful ruler, now an even more powerful undead menace.
 N:523:Bloodletter of Khorne
 G:U:r
 I:120:30d8:20:40:30
-W:34:1:0:450
+W:34:1:800:450
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:EXP_20:13d1
@@ -9877,7 +9877,7 @@ D:shadow. It reaches out at you.
 N:608:Nightgaunt
 G:U:D
 I:110:24d10:20:70:80
-W:38:2:0:1000
+W:38:2:2000:1000
 E:0:1:0:2:1:2
 O:50:0:50:0
 B:STING:LOSE_STR:1d5
@@ -9894,7 +9894,7 @@ D:It is a black, horned humanoid with wings.
 N:609:Baron of hell
 G:U:U
 I:110:150d12:10:130:40
-W:38:3:0:2000
+W:38:3:2500:2000
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:CLAW:HURT:11d2
@@ -10927,7 +10927,7 @@ D:of an Archon; fewer still live to tell the tale after attacking one.
 N:662:Formless spawn of Tsathoggua
 G:U:D
 I:110:22d20:20:40:80
-W:41:2:0:1850
+W:41:2:1000:1850
 E:0:0:0:0:0:0
 O:35:45:0:10
 B:HIT:ACID:2d4
@@ -10949,7 +10949,7 @@ D:temporary shapes for various purposes."
 N:663:Hunting horror
 G:U:D
 I:110:30d17:20:90:80
-W:42:2:0:2300
+W:42:2:3000:2300
 E:0:0:0:2:1:0
 O:45:35:0:10
 B:BITE:LOSE_DEX:1d3
@@ -11228,7 +11228,7 @@ D:itself in unearthly shadows.
 N:677:Dark young of Shub-Niggurath
 G:U:g
 I:120:12d100:20:75:80
-W:43:2:0:5000
+W:43:2:3600:5000
 E:0:0:4:6:1:0
 O:0:40:30:20
 B:CRUSH:HURT:5d6
@@ -12116,7 +12116,7 @@ D:A sentient, moving section of wall.
 N:719:Nycadaemon
 G:U:o
 I:120:29d99:20:140:40
-W:51:3:0:10000
+W:51:3:4400:10000
 E:1:1:1:2:1:1
 O:50:0:50:0
 B:TOUCH:TERRIFY
@@ -12136,7 +12136,7 @@ D:a stone wall down.
 N:720:Barbazu
 G:U:G
 I:120:120d10:25:90:40
-W:55:2:0:2000
+W:55:2:2200:2000
 E:1:1:1:2:1:1
 O:20:40:20:20
 B:HIT:HURT:4d10
@@ -12473,7 +12473,7 @@ D:to be winged; at others, haloed."
 N:736:Great unclean one
 G:U:g
 I:120:80d80:30:150:20
-W:53:3:0:17500
+W:53:3:35000:17500
 E:0:0:0:0:0:0
 O:50:0:50:0
 B:BITE:DISEASE:10d10
@@ -12669,7 +12669,7 @@ D:down your spine as you face it.
 N:745:Lord of Change
 G:U:v
 I:130:50d70:30:150:20
-W:54:3:0:17000
+W:54:3:15000:17000
 E:0:1:1:0:1:0
 O:0:0:100:0
 B:CLAW:CONFUSE:10d10
@@ -12691,7 +12691,7 @@ D:fantastically multi-coloured wings.
 N:746:Keeper of Secrets
 G:H:G
 I:130:60d70:30:150:20
-W:64:3:0:17000
+W:64:3:25000:17000
 E:2:0:2:2:1:1
 O:0:0:100:0
 B:HIT:CONFUSE:10d10
@@ -12942,7 +12942,7 @@ D:octopus. It will destroy you.
 N:758:Bloodthirster
 G:U:r
 I:130:60d70:30:160:20
-W:55:3:0:18500
+W:55:3:40000:18500
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:50d1
@@ -13050,7 +13050,7 @@ D:strength and priestly wisdom are a true match for any adventurer.
 N:763:Bile Demon
 G:U:R
 I:120:35d100:40:110:40
-W:61:2:0:12000
+W:61:2:20000:12000
 E:1:0:1:2:1:0
 O:30:70:0:0
 B:HIT:HURT:8d8
@@ -13150,7 +13150,7 @@ D:terrible of all dragonkind, his power dismayed even the Valar for a time.
 N:767:Daoloth, the Render of the Veils
 G:U:s
 I:120:72d100:20:125:10
-W:58:3:0:27500
+W:58:3:22000:27500
 E:0:0:0:0:0:0
 O:0:0:100:0
 B:TOUCH:CONFUSE:6d12
@@ -13296,7 +13296,7 @@ D:moves with blinding speed. Check your pockets!
 N:773:Osyluth
 G:U:W
 I:130:40d100:20:145:40
-W:65:2:0:13000
+W:65:2:2500:13000
 E:1:1:1:2:1:1
 O:20:40:20:20
 B:HIT:LOSE_CHR:8d8
@@ -13595,7 +13595,7 @@ D:with a huge gaping maw instead of a head.
 N:787:Gelugon
 G:U:w
 I:130:45d100:20:120:40
-W:69:3:0:14000
+W:69:3:6000:14000
 E:2:1:2:0:0:1
 O:20:60:20:0
 B:CLAW:COLD:6d10
@@ -13781,7 +13781,7 @@ D:her magic to do his bidding.
 N:795:Horned Reaper
 G:U:B
 I:130:50d100:40:140:40
-W:72:3:0:18000
+W:72:3:5000:18000
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:11d11
@@ -14035,7 +14035,7 @@ D:of oozing phosphor in the black browless face."
 N:807:Greater Balrog
 G:U:v
 I:130:75d100:40:180:40
-W:80:3:0:25000
+W:80:3:15000:25000
 E:1:1:1:2:1:1
 O:0:50:50:0
 B:HIT:FIRE:8d12
@@ -14157,7 +14157,7 @@ D:uncertain all of a sudden.
 N:812:Pit Fiend
 G:U:o
 I:130:60d100:30:140:35
-W:77:3:0:22000
+W:77:3:10000:22000
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:CLAW:FIRE:8d10
@@ -14503,7 +14503,7 @@ D:and a green-glowing eye."
 N:827:Pazuzu, Lord of Air
 G:U:b
 I:140:55d100:40:125:10
-W:82:2:0:30000
+W:82:2:8000:30000
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:ELEC:12d12
@@ -14588,7 +14588,7 @@ D:underworld. Flee his wrath!
 N:831:Mephistopheles, Lord of Hell
 G:U:r
 I:140:30d222:20:175:5
-W:84:2:0:42500
+W:84:2:3000:42500
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:GAZE:EXP_80:10d5
@@ -14708,7 +14708,7 @@ D:giants and fight against the other gods of Asgard.
 N:836:Star-spawn of Cthulhu
 G:U:G
 I:140:75d100:90:135:40
-W:86:2:0:30000
+W:86:2:80000:30000
 E:0:0:2:0:1:0
 O:0:0:100:0
 B:CLAW:POISON:1d30
@@ -14877,7 +14877,7 @@ D:lay, but only the clamminess of death and corruption."
 N:843:Oremorj, the Cyberdemon Lord
 G:U:u
 I:130:90d100:90:135:55
-W:89:4:0:50000
+W:89:4:18000:50000
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:2d50
@@ -14997,7 +14997,7 @@ D:encountered in our world. It can crush stars with its might.
 N:848:Shub-Niggurath, Black Goat of the Woods
 G:U:D
 I:130:65d99:100:100:20
-W:91:3:0:47500
+W:91:3:4500:47500
 E:0:0:0:0:0:0
 O:0:0:100:0
 B:CRUSH:LOSE_WIS:20d5
@@ -15065,7 +15065,7 @@ D:deadly opponent in combat.
 N:851:Nyarlathotep, the Crawling Chaos
 G:U:r
 I:130:90d99:100:100:20
-W:93:3:0:49000
+W:93:3:3000:49000
 E:0:0:0:0:0:0
 O:0:50:50:0
 B:CRUSH:LOSE_CON:30d4
@@ -15215,7 +15215,7 @@ D:saved his master from Ungoliant's rage.
 N:857:Great Cthulhu
 G:U:g
 I:140:100d100:100:140:40
-W:97:2:4000:56000
+W:97:2:12000:56000
 E:0:0:0:0:0:0
 O:0:50:50:0
 B:CRUSH:HURT:50d4
@@ -16349,7 +16349,7 @@ D:It has a rubbery skin instead of fur.
 N:924:Water demon
 G:U:B
 I:110:35d20:30:50:10
-W:40:1:0:500
+W:40:1:1400:500
 E:0:0:0:0:1:0
 O:20:60:20:0
 B:HIT:HURT:3d4
@@ -17750,7 +17750,7 @@ D:with disdainful ease.
 N:999:Erinyes
 G:U:b
 I:110:24d10:20:50:80
-W:38:2:0:1000
+W:38:2:1100:1000
 E:1:1:1:2:1:1
 O:0:50:50:0
 B:HIT:HURT:3d4
@@ -17965,7 +17965,7 @@ D:out at the world that caused his condition.
 N:1011:Glaryssa, Succubus Queen
 G:U:W
 I:120:12d100:90:150:10
-W:41:3:3000:8000
+W:41:3:1000:8000
 E:1:1:1:2:1:1
 O:0:50:50:0
 B:CLAW:HURT:5d5
@@ -18899,7 +18899,7 @@ D:while asleep and...
 N:1061:Succubus
 G:U:R
 I:115:15d12:50:70:15
-W:35:10:1400:500
+W:35:10:1100:500
 E:1:1:1:2:1:0
 O:20:50:10:5
 B:TOUCH:LOSE_WIS
@@ -19226,7 +19226,7 @@ D:weakness on this fighter.
 N:1076:Pirotessa, Succubus Empress
 G:U:v
 I:130:12d600:90:160:40
-W:82:3:3000:20000
+W:82:3:1300:20000
 E:1:1:1:2:1:1
 O:0:50:50:0
 B:CLAW:HURT:3d40
@@ -20389,7 +20389,7 @@ D:assisting you without complaining in assessing your combat prowess.
 N:1146:Horned Reaper
 G:U:B
 I:120:50d100:200:140:0
-W:72:255:0:18000
+W:72:255:5000:18000
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:11d11
