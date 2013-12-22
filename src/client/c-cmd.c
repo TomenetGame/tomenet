@@ -2208,6 +2208,9 @@ void cmd_check_misc(void) {
 			case KTRL('T'):
 				xhtml_screenshot("screenshot????");
 				break;
+			case ':':
+				cmd_message();
+				break;
 			default:
 				bell();
 		}
