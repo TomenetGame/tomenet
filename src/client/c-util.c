@@ -5739,8 +5739,7 @@ void auto_inscriptions(void) {
 /*
  * Interact with some options
  */
-static void do_cmd_options_aux(int page, cptr info)
-{
+static void do_cmd_options_aux(int page, cptr info) {
 	char	ch;
 	int	i, k = 0, n = 0;
 	int	opt[24];
@@ -5797,58 +5796,51 @@ static void do_cmd_options_aux(int page, cptr info)
 		switch (ch) {
 			case ESCAPE:
 			case KTRL('X'):
-			{
 				return;
-			}
 
 			case KTRL('T'):
-			{
 				/* Take a screenshot */
 				xhtml_screenshot("screenshot????");
 				break;
-			}
+
+			case ':':
+				/* specialty: allow chatting from within here */
+				cmd_message();
+				break;
 
 			case '-':
 			case '8':
 			case 'k':
-			{
 				k = (n + k - 1) % n;
 				break;
-			}
 
 			case ' ':
 			case '\n':
 			case '\r':
 			case '2':
 			case 'j':
-			{
 				k = (k + 1) % n;
 				break;
-			}
 
 			case 'y':
 			case 'Y':
 			case '6':
 			case 'l':
-			{
 				(*option_info[opt[k]].o_var) = TRUE;
 				Client_setup.options[opt[k]] = TRUE;
 				check_immediate_options(opt[k], TRUE, TRUE);
 				k = (k + 1) % n;
 				break;
-			}
 
 			case 'n':
 			case 'N':
 			case '4':
 			case 'h':
-			{
 				(*option_info[opt[k]].o_var) = FALSE;
 				Client_setup.options[opt[k]] = FALSE;
 				check_immediate_options(opt[k], FALSE, TRUE);
 				k = (k + 1) % n;
 				break;
-			}
 
 			case 't':
 			case 'T':
@@ -5863,10 +5855,8 @@ static void do_cmd_options_aux(int page, cptr info)
 				break;
 			}
 			default:
-			{
 				bell();
 				break;
-			}
 		}
 	}
 }
@@ -5890,8 +5880,7 @@ void display_account_information(void) {
 /*
  * Account options
  */
-static void do_cmd_options_acc(void)
-{
+static void do_cmd_options_acc(void) {
 	char ch;
 	bool change_pass = FALSE;
 	bool go = TRUE;
@@ -6008,8 +5997,7 @@ static void do_cmd_options_acc(void)
 /*
  * Modify the "window" options
  */
-static void do_cmd_options_win(void)
-{
+static void do_cmd_options_win(void) {
 	int i, j, d, vertikal_offset = 2;
 
 	int y = 0;
@@ -6023,8 +6011,7 @@ static void do_cmd_options_win(void)
 
 
 	/* Memorize old flags */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++)
-	{
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
 		/* Acquire current flags */
 		old_flag[j] = window_flag[j];
 	}
@@ -6034,16 +6021,13 @@ static void do_cmd_options_win(void)
 	Term_clear();
 
 	/* Interact */
-	while (go)
-	{
+	while (go) {
 		/* Prompt XXX XXX XXX */
 		Term_putstr(0, 0, -1, TERM_WHITE, "Window flags (<\377ydir\377w>, \377yt\377w (take), \377yy\377w (set), \377yn\377w (clear), \377yENTER\377w (toggle), \377yESC\377w) ");
 
 		/* Display the windows */
-		for (j = 1; j < ANGBAND_TERM_MAX; j++)
-		{
+		for (j = 1; j < ANGBAND_TERM_MAX; j++) {
 			byte a = TERM_WHITE;
-
 			cptr s = ang_term_name[j];
 
 			/* Use color */
@@ -6054,8 +6038,7 @@ static void do_cmd_options_win(void)
 		}
 
 		/* Display the options */
-		for (i = 0; i < NR_OPTIONS_SHOWN; i++)
-		{
+		for (i = 0; i < NR_OPTIONS_SHOWN; i++) {
 			byte a = TERM_WHITE;
 
 			cptr str = window_flag_desc[i];
@@ -6096,42 +6079,35 @@ static void do_cmd_options_win(void)
 		ch = inkey();
 
 		/* Analyze */
-		switch (ch)
-		{
+		switch (ch) {
 			case ESCAPE:
-			{
 				go = FALSE;
 				break;
-			}
 
 			case KTRL('T'):
-			{
 				/* Take a screenshot */
 				xhtml_screenshot("screenshot????");
 				break;
-			}
+
+			/* specialty: allow chatting from within here */
+			case ':':
+				cmd_message();
+				break;
 
 			case 'T':
 			case 't':
-			{
 				/* Clear windows */
 				for (j = 1; j < ANGBAND_TERM_MAX; j++)
-				{
 					window_flag[j] &= ~(1L << y);
-				}
 
 				/* Clear flags */
 				for (i = 1; i < NR_OPTIONS_SHOWN; i++)
-				{
 					window_flag[x] &= ~(1L << i);
-				}
 
 				/* Fall through */
-			}
 
 			case 'y':
 			case 'Y':
-			{
 				/* Ignore screen */
 				if (x == 0) break;
 
@@ -6142,11 +6118,9 @@ static void do_cmd_options_win(void)
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
 				window_stuff();
 				break;
-			}
 
 			case 'n':
 			case 'N':
-			{
 				/* Clear flag */
 				window_flag[x] &= ~(1L << y);
 
@@ -6154,7 +6128,6 @@ static void do_cmd_options_win(void)
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_MSGNOCHAT | PW_MESSAGE | PW_CHAT | PW_MINIMAP);//PW_LAGOMETER is called automatically, no need.
 				window_stuff();
 				break;
-			}
 
 			case '\r':
 				/* Toggle flag */
@@ -6166,20 +6139,17 @@ static void do_cmd_options_win(void)
 				break;
 
 			default:
-			{
 				d = keymap_dirs[ch & 0x7F];
 
 				x = (x + ddx[d] + 6) % 7 + 1;
 				y = (y + ddy[d] + NR_OPTIONS_SHOWN) % NR_OPTIONS_SHOWN;
 
 				if (!d) bell();
-			}
 		}
 	}
 
 	/* Notice changes */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++)
-	{
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
 		term *old = Term;
 
 		/* Dead window */
@@ -6343,6 +6313,10 @@ static void do_cmd_options_fonts(void) {
 		case KTRL('T'):
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
+			break;
+		case ':':
+			/* specialty: allow chatting from within here */
+			cmd_message();
 			break;
 
 		case 'v':
@@ -6843,6 +6817,8 @@ void do_cmd_options(void) {
 
 		/* Take a screenshot */
 		if (k == KTRL('T')) xhtml_screenshot("screenshot????");
+		/* specialty: allow chatting from within here */
+		else if (k == ':') cmd_message();
 
 		else if (k == '1') {
 			do_cmd_options_aux(1, "User Interface Options 1");
