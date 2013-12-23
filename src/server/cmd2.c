@@ -3316,9 +3316,14 @@ void do_cmd_disarm(int Ind, int dir) {
 				/* Message */
 				msg_format(Ind, "You set off the %s!", name);
 
+#if 0 /* the problem is that the player might NOT be able to move onto the trap grid! (bats/forms that can't open doors) */
 				/* Move the player onto the trap */
 				if (dir != 5) move_player(Ind, dir, FALSE, NULL); /* moving doesn't 100% imply setting it off */
 				else hit_trap(Ind); /* but we can allow this weakness, assuming that you are less likely to get hit if you stand besides the trap instead of right on it */
+#else /* so just hit him without trying to move him. Probably makes more sense anyway. */
+				//hit_trap(Ind); -- does not work because we're not standing on the grid
+				player_activate_door_trap(Ind, y, x);
+#endif
 				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				stop_precision(Ind);
