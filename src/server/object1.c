@@ -4219,7 +4219,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	bool id = full || object_known_p(Ind, o_ptr); /* item has undergone basic ID (or is easy-know and basic)? */
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
-	bool aware = object_aware_p(Ind, o_ptr);
+	bool aware = object_aware_p(Ind, o_ptr) || full;
 	bool aware_cursed = id || (o_ptr->ident & ID_SENSE);
 	object_type forge;
 #endif
@@ -4252,14 +4252,23 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 
 	/* Item is *identified*? */
 	if (full) {
+		bool aware_tmp = object_aware_p(Ind, o_ptr);
+
 		/* Extract the flags */
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+		/* hack for inspecting items in stores, which are supposed to
+		   be fully identified even though we aren't aware of them yet */
+		Players[Ind]->obj_aware[o_ptr->k_idx] = TRUE;
 
 	        /* Describe the result */
 		/* in case we just *ID* it because an admin inspected it */
 		if (!(o_ptr->ident & ID_MENTAL)) object_desc(0, o_name, o_ptr, TRUE, 3);
 		/* normal players: */
 		else object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+		/* unhack */
+		Players[Ind]->obj_aware[o_ptr->k_idx] = aware_tmp;
 
 		/* create virtual object here too, just because we're lazy */
 		object_copy(&forge, o_ptr);
