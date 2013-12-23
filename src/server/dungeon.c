@@ -5712,7 +5712,32 @@ static void process_various(void)
 		if (dungeon_store_timer) dungeon_store_timer--; /* Timeout */
 		if (dungeon_store2_timer) dungeon_store2_timer--; /* Timeout */
 		if (great_pumpkin_timer > 0) great_pumpkin_timer--; /* HALLOWEEN */
-		if (santa_claus_timer > 0) santa_claus_timer--; /* XMAS */
+		if (season_xmas) { /* XMAS */
+			if (santa_claus_timer > 0) santa_claus_timer--;
+			if (santa_claus_timer == 0) {
+				struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
+				cave_type **zcave = getcave(&wpos);
+				if (zcave) { /* anyone in town? */
+					int x, y, tries = 50;
+
+					/* Try nine locations */
+					while (--tries) {
+						/* Pick location nearby hard-coded town centre */
+						scatter(&wpos, &y, &x, 34, 96, 10, 0);
+
+						/* Require "empty" floor grids */
+						if (!cave_empty_bold(zcave, y, x)) continue;
+
+						if (place_monster_aux(&wpos, y, x, RI_SANTA2, FALSE, FALSE, 0, 0) == 0) {
+							s_printf("%s XMAS: Generated Santa Claus.\n", showtime());
+							santa_claus_timer = -1; /* put generation on hold */
+							break;
+						}
+					}
+					if (!tries) santa_claus_timer = 1; /* fast respawn, probably paranoia */
+				}
+			}
+		}
 
 		/* Update the player retirement timers */
 		for (i = 1; i <= NumPlayers; i++) {

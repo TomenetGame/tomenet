@@ -3791,17 +3791,6 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 		}
 	}
 
-	if (season_xmas && santa_claus_timer == 0 && wpos->wz == 0 && wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) {
-		if (place_monster_aux(wpos, y, x, RI_SANTA2, FALSE, FALSE, 0, 0) == 0) {
-			s_printf("%s XMAS: Generated Santa Claus.\n", showtime());
-			santa_claus_timer = -1; /* put generation on hold */
-			return(TRUE);
-		}
-		/* oupsee */
-//		santa_claus_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
-		return(FALSE);
-	}
-
 
 #if 0	/* unused - mikaelh */
 	/* Specific filter - should be made more useful */
