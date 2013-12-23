@@ -494,6 +494,8 @@ struct player_type
 	byte target_x[TEMP_MAX];
 	s16b target_idx[TEMP_MAX];
 
+	u32b dlev_id;
+
 /*	cptr info[128];		Temp storage of *ID* and Self Knowledge info */
 	const char *infofile;		/* Temp storage of *ID* and Self Knowledge info */
 	byte special_file_type;	/* Is he using *ID* or Self Knowledge? */
