@@ -2202,6 +2202,7 @@ static void player_setup(int Ind, bool new) {
 
 			alloc_dungeon_level(wpos);
 			generate_cave(wpos, p_ptr);
+			l_ptr = getfloor(wpos);
 			if (!players_on_depth(wpos)) new_players_on_depth(wpos, 1, FALSE);
 #ifndef NEW_DUNGEON
 			/* paranoia, update the players wilderness map. */
