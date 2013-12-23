@@ -4998,99 +4998,95 @@ void set_black_breath(int Ind)
 
 
 /* Do a probability travel in a wall */
-void do_prob_travel(int Ind, int dir)
-{
-  player_type *p_ptr = Players[Ind];
-  int x = p_ptr->px, y = p_ptr->py, tries = 0;
-  bool do_move = TRUE;
-  struct worldpos *wpos = &p_ptr->wpos;
-  cave_type **zcave;
-  dun_level *l_ptr = getfloor(&p_ptr->wpos);
-  if (!(zcave = getcave(wpos))) return;
+bool do_prob_travel(int Ind, int dir) {
+	player_type *p_ptr = Players[Ind];
+	int x = p_ptr->px, y = p_ptr->py, tries = 0;
+	bool do_move = TRUE;
+	struct worldpos *wpos = &p_ptr->wpos;
+	cave_type **zcave;
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	if (!(zcave = getcave(wpos))) return FALSE;
 
-  /* Paranoia */
-  if (dir == 5) return;
-  if ((dir < 1) || (dir > 9)) return;
+	/* Paranoia */
+	if (dir == 5) return FALSE;
+	if ((dir < 1) || (dir > 9)) return FALSE;
 
-  /* No probability travel in sticky vaults */
-  if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+	/* No probability travel in sticky vaults */
+	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) return FALSE;
 
-  /* Neither on NO_MAGIC levels */
-  if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
+	/* Neither on NO_MAGIC levels */
+	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return FALSE;
 
-  x += ddx[dir];
-  y += ddy[dir];
+	x += ddx[dir];
+	y += ddy[dir];
 
-  while (++tries < 1000)
-    {
-      /* Do not get out of the level */
-      if (!in_bounds(y, x))
-	{
-	  do_move = FALSE;
-	  break;
+	while (++tries < 1000) {
+		/* Do not get out of the level */
+		if (!in_bounds(y, x)) {
+			do_move = FALSE;
+			break;
+		}
+
+		/* Still in rock ? continue */
+		if ((!cave_empty_bold(zcave, y, x)) || (zcave[y][x].info & CAVE_ICKY)) {
+			y += ddy[dir];
+			x += ddx[dir];
+			continue;
+		}
+
+		/* Everything is ok */
+		do_move = TRUE;
+		break;
 	}
+	if (tries == 1000) return FALSE; /* fail */
 
-      /* Still in rock ? continue */
-      if ((!cave_empty_bold(zcave, y, x)) || (zcave[y][x].info & CAVE_ICKY))
-	{
-	  y += ddy[dir];
-	  x += ddx[dir];
-	  continue;
+	if (do_move) {
+		int oy, ox;
+
+		/* Save old location */
+		oy = p_ptr->py;
+		ox = p_ptr->px;
+
+ 		 /* Move the player */
+		store_exit(Ind);
+		p_ptr->py = y;
+		p_ptr->px = x;
+
+		/* Update the player indices */
+		zcave[oy][ox].m_idx = 0;
+		zcave[y][x].m_idx = 0 - Ind;
+		cave_midx_debug(wpos, y, x, -Ind);
+
+		/* Redraw new spot */
+		everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+
+		/* Redraw old spot */
+		everyone_lite_spot(wpos, oy, ox);
+
+		/* Check for new panel (redraw map) */
+		verify_panel(Ind);
+
+		/* Update stuff */
+		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+
+		/* Update the monsters */
+		p_ptr->update |= (PU_DISTANCE);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_OVERHEAD);
+
+		/* Hack -- quickly update the view, to reduce perceived lag */
+		redraw_stuff(Ind);
+		window_stuff(Ind);
 	}
-
-      /* Everything is ok */
-      do_move = TRUE;
-      break;
-    }
-  if (tries == 1000) return; /* fail */
-
-  if (do_move)
-    {
-      int oy, ox;
-
-      /* Save old location */
-      oy = p_ptr->py;
-      ox = p_ptr->px;
-
-      /* Move the player */
-      store_exit(Ind);
-      p_ptr->py = y;
-      p_ptr->px = x;
-
-      /* Update the player indices */
-      zcave[oy][ox].m_idx = 0;
-      zcave[y][x].m_idx = 0 - Ind;
-      cave_midx_debug(wpos, y, x, -Ind);
-
-      /* Redraw new spot */
-      everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-
-      /* Redraw old spot */
-      everyone_lite_spot(wpos, oy, ox);
-
-      /* Check for new panel (redraw map) */
-      verify_panel(Ind);
-
-      /* Update stuff */
-      p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-
-      /* Update the monsters */
-      p_ptr->update |= (PU_DISTANCE);
-
-      /* Window stuff */
-      p_ptr->window |= (PW_OVERHEAD);
-
-      /* Hack -- quickly update the view, to reduce perceived lag */
-      redraw_stuff(Ind);
-      window_stuff(Ind);
-    }
+	return TRUE;
 }
 
 
 /* Experimental! lets hope not bugged */
 /* Wraith walk in own house */
 bool wraith_access(int Ind) {
-	player_type *p_ptr  =Players[Ind];
+	player_type *p_ptr = Players[Ind];
 	int i;
 	bool house = FALSE;
 
@@ -5676,7 +5672,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 	/* Prob travel */
 	if (p_ptr->prob_travel && (!cave_floor_bold(zcave, y, x))) {
-		do_prob_travel(Ind, dir);
+		(void)do_prob_travel(Ind, dir);
 		return;
 	}
 
