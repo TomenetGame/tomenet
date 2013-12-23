@@ -1946,7 +1946,7 @@ static void player_create_tmpfile(int Ind)
 static void player_setup(int Ind, bool new) {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i, d, count = 0;
-	dun_level *l_ptr;
+	dun_level *l_ptr = NULL;
 
 	//bool unstaticed = FALSE;
 	bool panic = p_ptr->panic;
@@ -2226,7 +2226,8 @@ static void player_setup(int Ind, bool new) {
 
 		/* for IDDC: We might be trying to log-scum here! In dubio pro duriore =P */
 		if (in_irondeepdive(&p_ptr->wpos) && !panic
-		    && !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
+		    //&& !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
+		    && (!l_ptr || !(l_ptr->flags1 & LF1_DUNGEON_TOWN))) /* !l_ptr check just to silence the compiler.. */
 			p_ptr->IDDC_logscum = TRUE;
 	} else if (p_ptr->wpos.wz) {
 		struct dun_level *l_ptr;
@@ -2246,7 +2247,8 @@ static void player_setup(int Ind, bool new) {
 
 			/* for IDDC: We might be trying to log-scum here! In dubio pro duriore =P */
 			if (in_irondeepdive(&p_ptr->wpos) && !panic
-			    && !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
+			    //&& !is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos)))
+			    && !(l_ptr->flags1 & LF1_DUNGEON_TOWN))
 				p_ptr->IDDC_logscum = TRUE;
 		}
 		else p_ptr->IDDC_logscum = FALSE; /* It's still the same level we left [a moment ago], np. */
