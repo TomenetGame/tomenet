@@ -3208,7 +3208,12 @@ void recall_player(int Ind, char *message){
 			else if (IDDC_MIMICRY_BOOST == 4) j = 7;
 			else if (IDDC_MIMICRY_BOOST <= 6) j = 10;
 			else j = 13;
-			for (i = 1; i < max_r_idx; i++) p_ptr->r_killed[i] = (p_ptr->r_killed[i] * 5) / j;
+			for (i = 1; i < max_r_idx; i++) {
+				if ((r_info[i].flags1 & RF1_UNIQUE)) continue;
+				p_ptr->r_killed[i] = (p_ptr->r_killed[i] * 5) / j;
+			}
+			/* In case he can no longer use his current form */
+			do_mimic_change(Ind, 0, TRUE);
  #endif
 		}
 #endif
