@@ -3587,8 +3587,13 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* random temporary test output */
 			if (prefix(message, "/tmp")) {
-				msg_format(Ind, "l_id %d, p_id %d", getfloor(&p_ptr->wpos)->id, p_ptr->dlev_id);
-				msg_format(Ind, "rndtown, duntown %d, %d", getfloor(&p_ptr->wpos)->flags1 & LF1_RANDOM_TOWN, getfloor(&p_ptr->wpos)->flags1 & LF1_DUNGEON_TOWN);
+				if (!tk) return;
+				msg_format(Ind, "'%s' %d '%s' '%s'", deep_dive_name[k], deep_dive_level[k], deep_dive_char[k], deep_dive_account[k]);
+				return;
+			}
+			else if (prefix(message, "/ttmp")) {
+				if (!tk) return;
+				strcpy(deep_dive_name[k], "ElCapitan, Corrupted Rogue (\\{bb\\{s/\\{s31\\{s),");
 				return;
 			}
 
