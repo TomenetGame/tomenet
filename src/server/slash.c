@@ -3587,15 +3587,8 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* random temporary test output */
 			if (prefix(message, "/tmp")) {
-				int i;
-				for (i = 0; i < 100; i++) {
-					hash_entry *ptr = hash_table[i];
-					if (!ptr) continue;
-					l_printf("%s \\{D%s, level %d, was erased by timeout.\n", showdate(), ptr->name, ptr->level);
-					msg_print(Ind, "ok");
-					return;
-				}
-				msg_print(Ind, "fail");
+				msg_format(Ind, "l_id %d, p_id %d", getfloor(&p_ptr->wpos)->id, p_ptr->dlev_id);
+				msg_format(Ind, "rndtown, duntown %d, %d", getfloor(&p_ptr->wpos)->flags1 & LF1_RANDOM_TOWN, getfloor(&p_ptr->wpos)->flags1 & LF1_DUNGEON_TOWN);
 				return;
 			}
 
