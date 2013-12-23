@@ -4768,6 +4768,7 @@ void monster_death(int Ind, int m_idx)
 		if (m_ptr->r_idx == RI_SANTA1 || m_ptr->r_idx == RI_SANTA2) {
 			msg_broadcast_format(0, "\374\377L**\377oSanta dropped the presents near %s!\377L**", p_ptr->name);
 			s_printf("XMAS: %s has defeated %s.\n", p_ptr->name, m_name);
+			santa_claus_timer = 60 + rand_int(120);
 		}
 	}
 

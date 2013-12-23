@@ -128,6 +128,7 @@ s32b m_top = 0;                 /* Monster top size */
 s32b dungeon_store_timer = 0;	/* Timemout. Keeps track of its generation */
 s32b dungeon_store2_timer = 0;	/* Timemout. Keeps track of its generation */
 s32b great_pumpkin_timer = 0; /* Timeout. Keeps track of its generation, for HALLOWEEN */
+s32b santa_claus_timer = 0;
 bool night_surface = FALSE;
 
 s16b MaxSimultaneousPlayers = 0;	/* Tracks very high amounts of simultaneously logged-in players,

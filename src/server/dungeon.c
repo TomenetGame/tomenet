@@ -5712,6 +5712,7 @@ static void process_various(void)
 		if (dungeon_store_timer) dungeon_store_timer--; /* Timeout */
 		if (dungeon_store2_timer) dungeon_store2_timer--; /* Timeout */
 		if (great_pumpkin_timer > 0) great_pumpkin_timer--; /* HALLOWEEN */
+		if (santa_claus_timer > 0) santa_claus_timer--; /* XMAS */
 
 		/* Update the player retirement timers */
 		for (i = 1; i <= NumPlayers; i++) {

@@ -3607,8 +3607,7 @@ static bool place_monster_okay_escort(int r_idx)
  * Note the use of the new "monster allocation table" code to restrict
  * the "get_mon_num()" function to "legal" escort types.
  */
-int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo, int clone_summoning)
-{
+int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo, int clone_summoning) {
 	int i;
 	monster_race *r_ptr = &r_info[r_idx];
 	cave_type **zcave;
@@ -3721,8 +3720,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
  *
  * Attempt to find a monster appropriate to the "monster_level"
  */
-bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
-{
+bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 	int r_idx, i;
 	player_type *p_ptr;
 	int lev = getlevel(wpos); /* HALLOWEEN; and 
@@ -3791,6 +3789,17 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 //			great_pumpkin_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
 			return(FALSE);
 		}
+	}
+
+	if (season_xmas && santa_claus_timer == 0 && wpos->wz == 0 && wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) {
+		if (place_monster_aux(wpos, y, x, RI_SANTA2, FALSE, FALSE, 0, 0) == 0) {
+			s_printf("%s XMAS: Generated Santa Claus.\n", showtime());
+			santa_claus_timer = -1; /* put generation on hold */
+			return(TRUE);
+		}
+		/* oupsee */
+//		santa_claus_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
+		return(FALSE);
 	}
 
 
