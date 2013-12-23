@@ -2165,7 +2165,6 @@ static void player_setup(int Ind, bool new) {
 	/* Rebuild the level if necessary */
 	if (!(zcave = getcave(wpos))) {
 		if (p_ptr->wpos.wz) {
-			struct dun_level *l_ptr;
 			/* Clear the "marked" and "lit" flags for each cave grid */
 			for (y = 0; y < MAX_HGT; y++) {
 				for (x = 0; x < MAX_WID; x++) {
@@ -2231,7 +2230,6 @@ static void player_setup(int Ind, bool new) {
 		    && (!l_ptr || !(l_ptr->flags1 & LF1_DUNGEON_TOWN))) /* !l_ptr check just to silence the compiler.. */
 			p_ptr->IDDC_logscum = TRUE;
 	} else if (p_ptr->wpos.wz) {
-		struct dun_level *l_ptr;
 		l_ptr = getfloor(wpos);
 
 		/* If player doesn't know this level.. */

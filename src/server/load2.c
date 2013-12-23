@@ -2165,7 +2165,11 @@ static errr rd_floor(void)
 		now = time(&now);
 		l_ptr->lastused = now;
 
+		if (!s_older_than(4, 5, 18)) rd_u32b(&l_ptr->id);
+
 		rd_u32b(&l_ptr->flags1);
+		if (!s_older_than(4, 5, 18)) rd_u32b(&l_ptr->flags2);
+
 		rd_byte(&l_ptr->hgt);
 		rd_byte(&l_ptr->wid);
 	}

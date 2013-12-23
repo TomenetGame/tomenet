@@ -990,7 +990,9 @@ static void wr_floor(struct worldpos *wpos)
 	{
 		dun_level *l_ptr = getfloor(wpos);
 		if (l_ptr) {
+			wr_u32b(l_ptr->id);
 			wr_u32b(l_ptr->flags1);
+			wr_u32b(l_ptr->flags2);
 			wr_byte(l_ptr->hgt);
 			wr_byte(l_ptr->wid);
 		}
