@@ -1839,7 +1839,7 @@ static void player_outfit(int Ind)
 	}
 
 	/* Lantern of Brightness for Archers */
-	if (p_ptr->pclass == CLASS_ARCHER) {
+	if (p_ptr->pclass == CLASS_ARCHER && p_ptr->prace != RACE_VAMPIRE) {
 		u32b f1,f2,f3,f4,f5,f6;
 		do {
 			invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
