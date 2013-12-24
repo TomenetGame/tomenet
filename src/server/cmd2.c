@@ -4256,6 +4256,11 @@ void do_cmd_fire(int Ind, int dir)
 		return;
 	}
 
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRE_BAT) {
+		msg_print(Ind, "You cannot use ranged weapons in bat form.");
+		return;
+	}
+
 	if (p_ptr->shooting_till_kill) { /* we were shooting till kill last turn? */
 		p_ptr->shooting_till_kill = FALSE; /* well, gotta re-test for another success now.. */
 		if (dir == 5) p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */

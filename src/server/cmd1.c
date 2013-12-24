@@ -3092,6 +3092,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #endif
 				k = k3;
 
+				/* penalty for weapons in bat form */
+				if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
 			/* handle bare fists/bat/ghost */
 			} else {
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
@@ -4167,6 +4169,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 #endif
 				k = k3;
 
+				/* penalty for weapons in bat form */
+				if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
 			/* handle bare fists/bat/ghost */
 			} else {
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
