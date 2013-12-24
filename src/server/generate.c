@@ -676,15 +676,17 @@ void place_fountain(struct worldpos *wpos, int y, int x) {
 */			case SV_POTION_INC_STR:	case SV_POTION_INC_INT:
 			case SV_POTION_INC_WIS:	case SV_POTION_INC_DEX:
 			case SV_POTION_INC_CON:	case SV_POTION_INC_CHR:
-			case SV_POTION_AUGMENTATION:
 			case SV_POTION_STAR_ENLIGHTENMENT:
-			case SV_POTION_EXPERIENCE:
-			case SV_POTION_INVULNERABILITY:
 			case SV_POTION_STAR_RESTORE_MANA:
 			case SV_POTION_STAR_HEALING:
 			case SV_POTION_LIFE:
 			case SV_POTION_SELF_KNOWLEDGE:
 				cs_ptr->sc.fountain.rest = damroll(1, 3);
+				break;
+			case SV_POTION_AUGMENTATION:
+			case SV_POTION_EXPERIENCE:
+			case SV_POTION_INVULNERABILITY:
+				cs_ptr->sc.fountain.rest = 1;
 				break;
 #ifdef EXPAND_TV_POTION
 			case SV_POTION2_CHAUVE_SOURIS:
