@@ -1447,9 +1447,14 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	const char a_key = 'u', a_val = 's'; /* 'Speed:', 'Normal' */
 	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE; /* 'Speed:', 'Normal' */
 
-	int tval, v_ac, v_acx, v_hit, v_dam;
+	int tval, sval = 0, v_ac, v_acx, v_hit, v_dam;
 	char v_ddice[10];
 	bool empty;
+
+	/* for TV_BOW multiplier */
+	bool xtra_might = FALSE; /* paranoia: if someone really specifies an F-line before the I-line, if that's even possible */
+	int mult = 2, mult_line_pl = -1, mult_line_l = 0;
+
 
 	/* actually use local a_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "a_info.txt");
@@ -1536,6 +1541,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				p1 = p2;
 			    /* sval */
 				p2 = strchr(p1, ':') + 1;
+				/* remember for hard-coded bow multipliers */
+				sval = atoi(p1);
 				p1 = p2;
 			    /* pval */
 				info_val = atoi(p1);
@@ -1621,10 +1628,27 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 						    a_val, v_hit, a_key));
 						strcat(info, info_tmp);
 					}
-				} else if (is_weapon(tval)) {
+				} else if (is_weapon(tval) || is_ammo(tval) || tval == TV_BOOMERANG) {
 					empty = FALSE;
 				        sprintf(info_tmp, "Damage dice: \377%c(%s)\377%c, To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
 					    a_val, v_ddice, a_key,
+					    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key);
+					strcpy(info, info_tmp);
+					if (v_acx) {
+						strcpy(info_tmp, format(", AC bonus: \377%c[%s%d]\377%c",
+						    a_val, v_acx < 0 ? "" : "+", v_acx, a_key));
+						strcat(info, info_tmp);
+					}
+				} else if (tval == TV_BOW) {
+					empty = FALSE;
+					switch (sval) {
+					/* 2 is default - SV_SLING, SV_SHORT_BOW */
+					case SV_LONG_BOW: case SV_LIGHT_XBOW: mult = 3; break;
+					case SV_HEAVY_XBOW: mult = 4; break;
+					}
+					if (xtra_might) mult++;
+				        sprintf(info_tmp, "Damage/range multiplier: \377%c(x%d)\377%c, To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
+					    a_val, mult, a_key,
 					    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key);
 					strcpy(info, info_tmp);
 					if (v_acx) {
@@ -1655,6 +1679,11 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					strcpy(paste_lines[++pl], format("\377%c", a_key));
 					strcat(paste_lines[pl], info);
 					Term_putstr(1, 7 + (l++), -1, ta_key, info);
+					/* for correcting xtra_might */
+					if (tval == TV_BOW) {
+						mult_line_pl = pl;
+						mult_line_l = l - 1;
+					}
 				}
 				break;
 			case 'F': /* flags */
@@ -1677,6 +1706,19 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				/* add a pseudo '|' (ie a space) at the end
 				   (for when two lines are merged -> the space would be missing) */
 				if (info[strlen(info) - 1] != ' ') strcat(info, " ");
+
+				/* for TV_BOW multipliers - correct it by +1 */
+				if ((p2 = strstr(info, "XTRA_MIGHT"))) {
+					xtra_might = TRUE;
+					/* reprint corrected multiplier info */
+					if (mult_line_pl != -1) {
+						char *c_mult = strstr(paste_lines[mult_line_pl], "(x");
+						if (c_mult) {
+							(*(c_mult + 2))++;
+							Term_putstr(1, 7 + mult_line_l, -1, ta_key, paste_lines[mult_line_pl] + 2);
+						}
+					}
+				}
 
 				/* different colour for certain special flags, to stand out */
 				if ((p2 = strstr(info, "SPECIAL_GENE"))) {
