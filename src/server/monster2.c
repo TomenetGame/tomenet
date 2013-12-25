@@ -1534,7 +1534,7 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 	/* Handle all other visible monster requests */
 	else {
 		/* It could be a Unique */
-		if (r_ptr->flags1 & RF1_UNIQUE) {
+		if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)) {
 			/* Start with the name (thus nominative and objective) */
 			(void)strcpy(desc, name);
 		}
@@ -1655,7 +1655,7 @@ void monster_race_desc(int Ind, char *desc, int r_idx, int mode)
 	/* Handle all other visible monster requests */
 	else {
 		/* It could be a Unique */
-		if (r_ptr->flags1 & RF1_UNIQUE) {
+		if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)) {
 			/* Start with the name (thus nominative and objective) */
 			(void)strcpy(desc, name);
 		}

@@ -470,7 +470,7 @@ static cptr r_info_flags8[] =
 	"NO_BLOCK",
 	"ALLOW_RUNNING",
 	"AVOID_PERMAWALLS",
-	"XXX8X26",
+	"PSEUDO_UNIQUE",
 	"GENO_PERSIST",
 	"GENO_NO_THIN",
 	"CLIMB",
