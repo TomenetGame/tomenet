@@ -3588,12 +3588,6 @@ void do_slash_cmd(int Ind, char *message)
 			/* random temporary test output */
 			if (prefix(message, "/tmp")) {
 				if (!tk) return;
-				msg_format(Ind, "'%s' %d '%s' '%s'", deep_dive_name[k], deep_dive_level[k], deep_dive_char[k], deep_dive_account[k]);
-				return;
-			}
-			else if (prefix(message, "/ttmp")) {
-				if (!tk) return;
-				strcpy(deep_dive_name[k], "ElCapitan, Corrupted Rogue (\\{bb\\{s/\\{s31\\{s),");
 				return;
 			}
 
