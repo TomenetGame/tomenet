@@ -4833,7 +4833,7 @@ s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
 			        /* Acquire monster pointer */
 			        m_ptr = &m_list[c_ptr->m_idx];
 				/* check.. */
-				if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) morgoth_inside = TRUE;
+				if (m_ptr->r_idx == RI_MORGOTH) morgoth_inside = TRUE;
 			}
 #endif
 #endif
@@ -10150,7 +10150,7 @@ for(mx = 1; mx < 131; mx++) {
 			if (cr_ptr->m_idx) {
 				/* Check if Morgoth was just generated along with this dungeon level */
 			        m_ptr = &m_list[cr_ptr->m_idx];
-				if (!strcmp(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) morgoth_inside = TRUE;
+				if (m_ptr->r_idx == RI_MORGOTH) morgoth_inside = TRUE;
 			}
 			if (morgoth_inside) break;
 		}
