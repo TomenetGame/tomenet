@@ -2031,7 +2031,7 @@ void load_birth_file(cptr name)
 	}
 
 	/* Info */
-	int tmp, r;
+	int tmp, i, r;
 	r = fscanf(fp, "\n%d", &tmp); //Sex/Body/Mode
 	dna_sex = (s16b)tmp;
 	r = fscanf(fp, "\n%d", &tmp); //Class
@@ -2042,11 +2042,11 @@ void load_birth_file(cptr name)
 	dna_trait = (s16b)tmp;
 	
 	/* Stats */
-	int i;
 	for (i = 0; i < 6; i++) {
 		r = fscanf(fp, "\n%d", &tmp);
 		dna_stat_order[i] = (s16b)tmp;
 	}
+	r = r;//slay silly compiler warning
 	
 	/* Validate */
 	valid_dna = 1; //Safety for mis-hacked dna files in future? - Kurzel

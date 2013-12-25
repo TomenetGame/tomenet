@@ -6754,6 +6754,8 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		Term_putstr(0, 7, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
 	}
 
+	r = r;//slay silly compiler warning
+
 	Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
 	Term_fresh();
 	/* inkey() will react to client timeout after long extraction time, terminating
