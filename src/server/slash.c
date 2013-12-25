@@ -1926,7 +1926,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (!(tpname = strchr(message2 + 7, ':'))) {
 					/* no text given */
 					if (!lookup_player_id(message2 + 7)) {
-						msg_print(Ind, "\377oPlayer not found.");
+						msg_print(Ind, "\377oNo character of that name exists.");
 						return;
 					}
 					strcpy(tname, "/note ");
@@ -2027,7 +2027,7 @@ void do_slash_cmd(int Ind, char *message)
 			/* does target account exist? */
 			c_acc = GetAccount(tname, NULL, FALSE);
 			if (!c_acc) {
-				msg_print(Ind, "\377oThat account does not exist.");
+				msg_print(Ind, "\377oThat account does not exist. You can use /notec to write to a character name.");
 				return;
 			}
 			KILL(c_acc, struct account);
