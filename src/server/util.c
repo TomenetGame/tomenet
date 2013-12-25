@@ -6504,9 +6504,9 @@ void restore_estate(int Ind) {
 	FILE *fp, *fp_tmp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], version[MAX_CHARS];
 	char data[4], data_note[MSG_LEN];//MAX_OLEN?
-	char o_name[MSG_LEN];
+	char o_name[MSG_LEN], *rc;
 	unsigned long au;
-	int data_len;
+	int data_len, r;
 	object_type forge, *o_ptr = &forge;
 	bool gained_anything = FALSE;
 
@@ -6566,7 +6566,7 @@ void restore_estate(int Ind) {
 		/* get house price from backup file */
 		if (!strcmp(data, "AU:")) {
 			au = 0;
-			(void)fscanf(fp, "%lu\n", &au);
+			r = fscanf(fp, "%lu\n", &au);
 			if (!au) {
 				s_printf("  error: Corrupted AU: line.\n");
 				msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
@@ -6592,7 +6592,7 @@ void restore_estate(int Ind) {
 		}
 		/* get object from backup file */
 		else if (!strcmp(data, "OB:")) {
-			(void)fread(o_ptr, sizeof(object_type), 1, fp);
+			r = fread(o_ptr, sizeof(object_type), 1, fp);
 			/* Update item's kind-index in case k_info.txt has been modified */
 			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 #ifdef SEAL_INVALID_OBJECTS
@@ -6604,10 +6604,10 @@ void restore_estate(int Ind) {
 			data_len = -2;
 #if 0 /* scanf() sucks a bit */
 			data_note[0] = '\0';
-			(void)fscanf(fp, "%d[^\n]", &data_len);
-			(void)fread(data_note, 1, 1, fp); //strip the \n that fscanf had to miss
+			r = fscanf(fp, "%d[^\n]", &data_len);
+			r = fread(data_note, 1, 1, fp); //strip the \n that fscanf had to miss
 #else
-			(void)fgets(data_note, 4, fp);
+			rc = fgets(data_note, 4, fp);
 			data_len = atoi(data_note);
 			data_note[0] = '\0';
 #endif
@@ -6619,7 +6619,7 @@ void restore_estate(int Ind) {
 				return;
 			}
 			if (data_len != -1) {
-				(void)fread(data_note, sizeof(char), data_len, fp);
+				r = fread(data_note, sizeof(char), data_len, fp);
 				data_note[data_len] = '\0';
 				o_ptr->note = quark_add(data_note);
 			}
@@ -6686,6 +6686,8 @@ void restore_estate(int Ind) {
 			return;
 		}
 	}
+	rc = rc;//slay silly compiler warning
+	r = r;
 }
 
 /* For gathering statistical Ironman Deep Dive Challenge data on players clearing out monsters */

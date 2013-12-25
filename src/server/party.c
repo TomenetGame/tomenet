@@ -4458,7 +4458,7 @@ void restore_acclists(void) {
 	char name_forge[MAX_CHARS];
 	hash_entry forge, *ptr = &forge;
 	forge.name = name_forge;
-	int name_len;
+	int name_len, r;
 
 	s_printf("Restoring accounts...\n");
 
@@ -4469,22 +4469,22 @@ void restore_acclists(void) {
 		return;
 	}
 	/* begin with a version tag */
-	(void)fscanf(fp, "%s\n", tmp);
+	r = fscanf(fp, "%s\n", tmp);
 
 	while (!feof(fp)) {
-		(void)fscanf(fp, "%d\n", &name_len);
-		(void)fread(name_forge, sizeof(char), name_len, fp);
+		r = fscanf(fp, "%d\n", &name_len);
+		r = fread(name_forge, sizeof(char), name_len, fp);
 		name_forge[name_len] = '\0';
 #if 0
-		(void)fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
+		r = fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 		    &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
 		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode);
 #ifdef AUCTION_SYSTEM
-		(void)fscanf(fp, "%d%d", &ptr->au, &ptr->balance);
+		r = fscanf(fp, "%d%d", &ptr->au, &ptr->balance);
 #endif
 #else
-		(void)fread(ptr, sizeof(hash_entry), 1, fp);
+		r = fread(ptr, sizeof(hash_entry), 1, fp);
 		ptr->name = NULL;//just to be clean
 #endif
 
@@ -4498,6 +4498,7 @@ void restore_acclists(void) {
 		} else s_printf("  already exists: '%s' (id %d, acc %d)\n", name_forge, ptr->id, ptr->account);
 	}
 
+	r = r;//slay silly compiler warning
 	s_printf("done.\n");
 	fclose(fp);
 }

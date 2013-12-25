@@ -2231,6 +2231,9 @@ static void go_challenge_cleanup(bool server_shutdown) {
 #ifdef ENGINE_FUEGO
 	char tmp[80];
 #endif
+#ifdef ENGINE_GNUGO
+	char *rc;
+#endif
 
 	/* Cancel prompt for move */
 	if ((Ind = lookup_player_ind(go_engine_player_id))) {
@@ -2292,7 +2295,7 @@ static void go_challenge_cleanup(bool server_shutdown) {
 			fp = fopen(sgf_name, "w");
 
 			while (!feof(sgf)) {
-				fgets(buf, 1024, sgf);
+				rc = fgets(buf, 1024, sgf);
 		                if (!feof(sgf)) {
 	    	        		ck = strstr(buf, "KM[");
 		            		if (ck) *(ck + 3) = '1';
@@ -2310,6 +2313,7 @@ static void go_challenge_cleanup(bool server_shutdown) {
 	/* Prepare for next game in advance - skip on server shutdown */
 	if (!server_shutdown) writeToPipe("clear_board");
 
+	rc = rc;//slay silly compiler warning
 	/* Clean up everything */
 	go_game_up = FALSE;
 	go_engine_next_action = NACT_NONE;
