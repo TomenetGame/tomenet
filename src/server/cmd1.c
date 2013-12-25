@@ -4640,7 +4640,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 #endif
 
 		/* Message */
-		if (!streq(m_name, "Morgoth, Lord of Darkness"))
+		if (m_ptr->r_idx != RI_MORGOTH)
 			msg_format(Ind, "%^s flees in terror!", m_name);
 		else
 			msg_format(Ind, "%^s retreats!", m_name);

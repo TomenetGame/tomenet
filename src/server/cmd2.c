@@ -5315,7 +5315,7 @@ void do_cmd_fire(int Ind, int dir)
 							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 							/* Message */
-							if (!streq(m_name, "Morgoth, Lord of Darkness"))
+							if (m_ptr->r_idx != RI_MORGOTH)
 								msg_format(Ind, "%^s flees in terror!", m_name);
 							else
 								msg_format(Ind, "%^s retreats!", m_name);
@@ -6322,7 +6322,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 						monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 						/* Message */
-						if (!streq(m_name, "Morgoth, Lord of Darkness"))
+						if (m_ptr->r_idx != RI_MORGOTH)
 							msg_format(Ind, "%^s flees in terror!", m_name);
 						else
 							msg_format(Ind, "%^s retreats!", m_name);

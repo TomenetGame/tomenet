@@ -1732,7 +1732,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					/* Radius 8 earthquake centered at the monster */
 					/* Morgoth overrides LF1_NO_DESTROY */
 					if (damage > 23) {
-						if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) override_LF1_NO_DESTROY = TRUE;
+						if (m_ptr->r_idx == RI_MORGOTH) override_LF1_NO_DESTROY = TRUE;
 						earthquake(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, 8);
 					}
 					break;

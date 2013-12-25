@@ -613,7 +613,7 @@ void check_Morgoth(int Ind)
 		}
 
 		/* search for Morgy */
-		if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) continue;
+		if (m_ptr->r_idx != RI_MORGOTH) continue;
 		wpos = &m_ptr->wpos;
 
 		/* check if players are on his depth */

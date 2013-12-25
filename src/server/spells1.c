@@ -7774,7 +7774,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					sound(Ind, SOUND_FLEE);
 #endif
 					/* Message */
-					if (!streq(m_name, "Morgoth, Lord of Darkness"))
+					if (m_ptr->r_idx != RI_MORGOTH)
 						msg_format(Ind, "%^s flees in terror!", m_name);
 					else
 						msg_format(Ind, "%^s retreats!", m_name);
@@ -7789,7 +7789,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 
 				/* Message */
-				if (!streq(m_name, "Morgoth, Lord of Darkness"))
+				if (m_ptr->r_idx != RI_MORGOTH)
 					msg_format(Ind, "%^s flees in terror!", m_name);
 				else
 					msg_format(Ind, "%^s retreats!", m_name);

@@ -1418,7 +1418,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 extern void swap_position(int Ind, int lty, int ltx);
 extern void grow_trees(int Ind, int rad);
 extern bool heal_insanity(int Ind, int val);
-extern void summon_cyber(int Ind, int s_clone, int clone_summoning);
+extern bool summon_cyber(int Ind, int s_clone, int clone_summoning);
 extern void golem_creation(int Ind, int max);
 #ifdef RPG_SERVER
 extern char pet_creation(int Ind);

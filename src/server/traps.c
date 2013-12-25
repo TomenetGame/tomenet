@@ -4725,7 +4725,7 @@ bool mon_hit_trap(int m_idx)
 							/* Take note */
 							if (fear) {
 //								msg_format(who, "%^s flees in terror!", m_name);
-								if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
+								if (m_ptr->r_idx != RI_MORGOTH)
 									msg_print_near_monster(m_idx, "flees in terror!");
 								else
 									msg_print_near_monster(m_idx, "retreats!");

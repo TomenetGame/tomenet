@@ -1021,6 +1021,7 @@
 #define RI_VAMPIRE_BAT		391
 #define RI_SANTA1		733	/* terror santa from hell */
 #define RI_DOL_GULDUR		819	/* 'easy' version of sauron */
+#define RI_OREMORJ		843	/* note: jokeangband */
 #define RI_SAURON		860
 #define RI_MORGOTH		862
 #define RI_TIK_SRVZLLAT		1032

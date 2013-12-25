@@ -4680,7 +4680,7 @@ void monster_death(int Ind, int m_idx)
 
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
-        bool is_Morgoth = (m_ptr->r_idx == RI_MORGOTH);//(strcmp(r_name_get(m_ptr), "Morgoth, Lord of Darkness") == 0);
+        bool is_Morgoth = (m_ptr->r_idx == RI_MORGOTH);
         bool is_Sauron = (m_ptr->r_idx == RI_SAURON);
 	int credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
 	bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));

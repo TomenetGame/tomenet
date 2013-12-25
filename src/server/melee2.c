@@ -3587,7 +3587,7 @@ if (season_halloween) {
 			}
 */
 			disturb(Ind, 1, 0);
-			if (!streq(m_name, "Zu-Aon, The Cosmic Border Guard")) { /* can always TELE_TO */
+			if (m_ptr->r_idx == RI_ZU_AON) { /* can always TELE_TO */
 				int chance = (195 - p_ptr->skill_sav) / 2;
 				if (p_ptr->res_tele) chance = 50;
 				/* Hack -- duplicated check to avoid silly message */
@@ -3779,23 +3779,17 @@ if (season_halloween) {
 			else msg_format(Ind, "%^s magically summons greater demons!", m_name);
 
 #if 1 /* probably intended only for Oremorj? (which is currently JOKEANGBAND) - C. Blue */
-if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
-			if (blind && count) msg_print(Ind, "You hear heavy steps nearby.");
-			summon_cyber(Ind, s_clone, clone_summoning);
-			m_ptr->clone_summoning = clone_summoning;
-			break;
-}
+			if (m_ptr->r_idx == RI_OREMORJ) {
+				if (summon_cyber(Ind, s_clone, clone_summoning) && blind) msg_print(Ind, "You hear heavy steps nearby.");
+				m_ptr->clone_summoning = clone_summoning;
+				break;
+			}
 #endif
 
 			for (k = 0; k < 8; k++)
-			{
 				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
-			}
 			m_ptr->clone_summoning = clone_summoning;
-			if (blind && count)
-			{
-				msg_print(Ind, "You feel hellish auras appear nearby.");
-			}
+			if (blind && count) msg_print(Ind, "You feel hellish auras appear nearby.");
 			break;
 		}
 

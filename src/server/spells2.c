@@ -7536,14 +7536,15 @@ void call_chaos(int Ind, int dir, int extra_damage)
 	}
 }
 
-void summon_cyber(int Ind, int s_clone, int clone_summoning)
-{
+bool summon_cyber(int Ind, int s_clone, int clone_summoning) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	int max_cyber = (getlevel(&p_ptr->wpos)/ 50) + randint(6);
+	bool ok = FALSE;
 
 	for (i = 0; i < max_cyber; i++)
-		(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, 100, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
+		ok = ok || summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, 100, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
+	return ok;
 }
 
 /* Heal insanity. */
