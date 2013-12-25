@@ -6495,6 +6495,8 @@ static void do_cmd_options_install_audio_packs(void) {
 	int path_7z_size = 1023;
 	LPDWORD path_7z_size_p = (LPDWORD)&path_7z_size;
 	unsigned long path_7z_type = REG_SZ;
+#else
+	int r;
 #endif
 
 	bool sound_pack = TRUE, music_pack = TRUE;
@@ -6590,11 +6592,11 @@ static void do_cmd_options_install_audio_packs(void) {
 #else /* assume posix */
 if (!strcmp(ANGBAND_SYS, "x11")) {
  #if 0	/* command-line 7z */
-	system("7z > tmp.7z");
+	r = system("7z > tmp.7z");
  #else	/* GUI 7z (for password prompts) */
  	fff = fopen("tmp", "w");
  	fclose(fff);
-	system("7zG a tmp.7z tmp");
+	r = system("7zG a tmp.7z tmp");
 	remove("tmp");
  #endif
         if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
@@ -6612,7 +6614,7 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 	Term_putstr(0, 1, -1, TERM_WHITE, "Unarchiver (7zG) found.");
 } else { /* gcu */
 	/* assume posix; ncurses commandline */
-	system("7z > tmp.7z");
+	r = system("7z > tmp.7z");
 	if (!(fff = fopen("tmp.7z", "r"))) { /* paranoia? */
 		Term_putstr(0, 1, -1, TERM_RED, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
 		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...");
@@ -6675,25 +6677,25 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-soundpack.7z", NULL);
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
 		sprintf(out_val, "xcopy /I /E /Q /Y /H sound %s", path);
-		system(out_val);
-		system("rmdir /S /Q sound");
+		r = system(out_val);
+		r = system("rmdir /S /Q sound");
 #else /* assume posix */
 if (!strcmp(ANGBAND_SYS, "x11")) {
-		system("7zG x TomeNET-soundpack.7z");
+		r = system("7zG x TomeNET-soundpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
-		//system(format("mv sound %s", path));
+		//r = system(format("mv sound %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole sound folder */
 		sprintf(out_val, "cp --recursive -f sound/* %s/", path);
-		system(out_val);
-		system("rm -rf sound");
+		r = system(out_val);
+		r = system("rm -rf sound");
 } else { /* gcu */
-		system("7z x TomeNET-soundpack.7z");
+		r = system("7z x TomeNET-soundpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
-		//system(format("mv sound %s", path));
+		//r = system(format("mv sound %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole sound folder */
 		sprintf(out_val, "cp --recursive -f sound/* %s/", path);
-		system(out_val);
-		system("rm -rf sound");
+		r = system(out_val);
+		r = system("rm -rf sound");
 }
 #endif
 		Term_putstr(0, 3, -1, TERM_L_GREEN, "Sound pack has been installed.             ");
@@ -6727,25 +6729,25 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-musicpack.7z", NULL);
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
 		sprintf(out_val, "xcopy /I /E /Q /Y /H music %s", path);
-		system(out_val);
-		system("rmdir /S /Q music");
+		r = system(out_val);
+		r = system("rmdir /S /Q music");
 #else /* assume posix */
 if (!strcmp(ANGBAND_SYS, "x11")) {
-		system("7zG x TomeNET-musicpack.7z");
+		r = system("7zG x TomeNET-musicpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
-		//system(format("mv music %s", path));
+		//r = system(format("mv music %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole music folder */
 		sprintf(out_val, "cp --recursive -f music/* %s/", path);
-		system(out_val);
-		system("rm -rf music");
+		r = system(out_val);
+		r = system("rm -rf music");
 } else { /* gcu */
-		system("7z x TomeNET-musicpack.7z");
+		r = system("7z x TomeNET-musicpack.7z");
 		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
-		//system(format("mv music %s", path));
+		//r = system(format("mv music %s", path));
 		mkdir(path, 0777); /* in case someone deleted his whole music folder */
 		sprintf(out_val, "cp --recursive -f music/* %s/", path);
-		system(out_val);
-		system("rm -rf music");
+		r = system(out_val);
+		r = system("rm -rf music");
 }
 #endif
 		Term_putstr(0, 6, -1, TERM_L_GREEN, "Music pack has been installed.             ");

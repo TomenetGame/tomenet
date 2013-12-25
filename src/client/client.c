@@ -831,10 +831,12 @@ int main(int argc, char **argv)
 			save_chat = TRUE;
 			break;
 
-		case 'e':
+		case 'e': {
 			/* Since ALSA might spam underrun errors.. */
-			freopen("tomenet.log", "w", stderr);
+			FILE *fr = freopen("tomenet.log", "w", stderr);
+			fr = fr;//just kill silly compiler warning
 			break;
+		}
 
 		default:
 			modus = -1;

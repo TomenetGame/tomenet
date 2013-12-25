@@ -2031,20 +2031,20 @@ void load_birth_file(cptr name)
 	}
 
 	/* Info */
-	int tmp;
-	fscanf(fp, "\n%d", &tmp); //Sex/Body/Mode
+	int tmp, r;
+	r = fscanf(fp, "\n%d", &tmp); //Sex/Body/Mode
 	dna_sex = (s16b)tmp;
-	fscanf(fp, "\n%d", &tmp); //Class
+	r = fscanf(fp, "\n%d", &tmp); //Class
 	dna_class = (s16b)tmp;
-	fscanf(fp, "\n%d", &tmp); //Race
+	r = fscanf(fp, "\n%d", &tmp); //Race
 	dna_race = (s16b)tmp;
-	fscanf(fp, "\n%d", &tmp); //Trait
+	r = fscanf(fp, "\n%d", &tmp); //Trait
 	dna_trait = (s16b)tmp;
 	
 	/* Stats */
 	int i;
 	for (i = 0; i < 6; i++) {
-		fscanf(fp, "\n%d", &tmp);
+		r = fscanf(fp, "\n%d", &tmp);
 		dna_stat_order[i] = (s16b)tmp;
 	}
 	

@@ -692,7 +692,7 @@ static errr Term_xtra_gcu(int n, int v)
 
 		/* Make a noise */
 		case TERM_XTRA_NOISE:
-		(void)write(1, "\007", 1);
+		n = write(1, "\007", 1);
 		return (0);
 
 		/* Flush the Curses buffer */
