@@ -2969,6 +2969,7 @@ void do_weather() {
 		return;
 	}
 
+
 /* perform redraw and sync hacks ------------------------------------------- */
 
 	/* hack: instantly redraw weather without waiting for ticks and exit */
