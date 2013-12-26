@@ -547,10 +547,10 @@ option_type option_info[OPT_MAX] =
 	"audio_paging",			"Use audio system for paging sounds, if available" },
 
 	{ &c_cfg.paging_master_volume,	TRUE,	5,	0, 82, TRUE,
-	"paging_master_vol",		"Play page sound at master volume" },
+	"paging_master_vol",		"Play page/alert sounds at master volume" },
 
 	{ &c_cfg.paging_max_volume,	TRUE,	5,	0, 83, TRUE,
-	"paging_max_vol",		"Play page sound at maximum volume" },
+	"paging_max_vol",		"Play page/alert sounds at maximum volume" },
 
 	{ &c_cfg.no_ovl_close_sfx,	TRUE,	5,	0, 84, TRUE,
 	"no_ovl_close_sfx",		"Prevent re-playing sfx received after <100ms gap" },
