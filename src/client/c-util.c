@@ -6495,9 +6495,8 @@ static void do_cmd_options_install_audio_packs(void) {
 	int path_7z_size = 1023;
 	LPDWORD path_7z_size_p = (LPDWORD)&path_7z_size;
 	unsigned long path_7z_type = REG_SZ;
-#else
-	int r;
 #endif
+	int r;
 
 	bool sound_pack = TRUE, music_pack = TRUE;
 	bool sound_already = (audio_sfx > 3), music_already = (audio_music > 0);
