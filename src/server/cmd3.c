@@ -1347,8 +1347,9 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	}
 
 	/* stop littering inns */
-	if (o_ptr->level == 0 && o_ptr->owner == p_ptr->id && istown(&p_ptr->wpos)
-	    && o_ptr->tval != TV_FOOD && (o_ptr->tval != TV_SCROLL || o_ptr->sval != SV_SCROLL_WORD_OF_RECALL)) {
+	if (o_ptr->level == 0 && o_ptr->owner == p_ptr->id && istown(&p_ptr->wpos) &&
+	    !exceptionally_shareable_item(o_ptr) && o_ptr->tval != TV_GAME &&
+	    !(o_ptr->tval == TV_PARCHMENT && (o_ptr->sval == SV_DEED_HIGHLANDER || o_ptr->sval == SV_DEED_DUNGEONKEEPER))) {
 		msg_print(Ind, "\377yPlease don't litter the town with level 0 items which are unusable");
 		msg_print(Ind, "\377y by other players. Use 'k' to destroy an item instead.");
 		if (!is_admin(p_ptr)) return;

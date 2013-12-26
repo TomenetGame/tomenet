@@ -1631,11 +1631,7 @@ void carry(int Ind, int pickup, int confirm) {
 
 
 		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner) {
-			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
-			    (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
-			    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
-			// "Why not share ale? -Molt" <- good idea, here too!
-			    (o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD)) {
+			if (exceptionally_shareable_item(o_ptr)) {
 //				o_ptr->number = 1;
 				o_ptr->discount = 100;
 				if (o_ptr->level <= p_ptr->lev) {
@@ -1650,11 +1646,7 @@ void carry(int Ind, int pickup, int confirm) {
 
 		if (compat_pomode(Ind, o_ptr)) {
 			/* Make an exception for WoR scrolls in case of rescue missions (become 100% off tho) */
-			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
-			    (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
-			    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
-			// Why not share ale? -Molt
-			    (o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD)) {
+			if (exceptionally_shareable_item(o_ptr)) {
 //				o_ptr->number = 1;
 				o_ptr->discount = 100;
 				if (o_ptr->level <= p_ptr->lev) {

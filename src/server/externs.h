@@ -1748,6 +1748,7 @@ extern bool backup_estate(void);
 extern void restore_estate(int Ind);
 extern void log_floor_coverage(dun_level *l_ptr, struct worldpos *wpos);
 extern void grid_affects_player(int Ind);
+extern bool exceptionally_shareable_item(object_type *o_ptr);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);

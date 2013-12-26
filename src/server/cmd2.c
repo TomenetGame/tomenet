@@ -5878,9 +5878,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 	if (!bashing) {
 		/* Handle the newbies_cannot_drop option */
 #if (STARTEQ_TREATMENT == 1)
-		if ((p_ptr->max_plv < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr)
-		    && !(o_ptr->tval == 1 && o_ptr->sval >= 9 /* rugby ball, chess pieces */)) // && (object_value(0, o_ptr) > 0))
-		{
+		if ((p_ptr->max_plv < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr) &&
+		    !exceptionally_shareable_item(o_ptr) && o_ptr->tval != TV_GAME &&
+		    !(o_ptr->tval == TV_PARCHMENT && (o_ptr->sval == SV_DEED_HIGHLANDER || o_ptr->sval == SV_DEED_DUNGEONKEEPER))) {
 /*			msg_format(Ind, "Please don't litter the %s.",
 			    istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
 			msg_format(Ind, "You need to be at least level %d to throw items.", cfg.newbies_cannot_drop);
