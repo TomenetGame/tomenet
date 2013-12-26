@@ -1757,7 +1757,8 @@ int Receive_char(void) {
 	}
 
 	/* remember map_info in client-side buffer */
-	if (x >= PANEL_X && x < PANEL_X + screen_wid &&
+	if (!screen_icky &&
+	    x >= PANEL_X && x < PANEL_X + screen_wid &&
 	    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
 		panel_map_a[x - PANEL_X][y - PANEL_Y] = a;
 		panel_map_c[x - PANEL_X][y - PANEL_Y] = c;
@@ -2331,7 +2332,8 @@ int Receive_line_info(void) {
 			/* Don't draw anything if "char" is zero */
 			if (c && draw) {
 				/* remember map_info in client-side buffer */
-				if (x + i >= PANEL_X && x + i < PANEL_X + screen_wid &&
+				if (!screen_icky &&
+				    x + i >= PANEL_X && x + i < PANEL_X + screen_wid &&
 				    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
 					panel_map_a[x + i - PANEL_X][y - PANEL_Y] = a;
 					panel_map_c[x + i - PANEL_X][y - PANEL_Y] = c;
@@ -4332,7 +4334,7 @@ void do_ping() {
 	}
 
 	/* abusing it for weather for now - C. Blue */
-	if (!noweather_mode && !c_cfg.no_weather) {
+	if (!noweather_mode && !c_cfg.no_weather && !screen_icky) {
 		do_weather();
 
 #if 1 /* old method: Many weather particles turn on the sfx, few turn it off again. */
