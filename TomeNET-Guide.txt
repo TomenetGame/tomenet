@@ -2271,7 +2271,8 @@ a) Automatic audio pack installation
 Starting with client version 4.4.9, there is an automatic installer for sound
 and music pack:
 
--WINDOWS/OSX:
+Step 1:
+ WINDOWS/OSX:
  Make sure you have 7zip installed. It's a free, powerful multi-platform
  archiving tool (fit to replace WinRAR, WinZip etc).
  Get it from www.7-zip.org.
@@ -2282,15 +2283,18 @@ and music pack:
  p7zip-full and the package p7zip is lacking certain parts. In that case
  install p7zip-full.
 
--Download the files 'TomeNET-soundpack.7z' and/or 'TomeNET-musicpack.7z' and
+Step 2:
+ Download the files 'TomeNET-soundpack.7z' and/or 'TomeNET-musicpack.7z' and
  put them into your TomeNET folder. The automatic installation only recognizes
  these two file names. If you download audio packs that are named differently,
  simply rename them before attempting to auto-install them.
 
--Launch the game, press '=' to enter the configuration menu, and press 'I' to
+Step 3:
+ Launch the game, press '=' to enter the configuration menu, and press 'I' to
  invoke the auto-installer.
 
--After it's done it should tell you to restart your client. (You might also
+Step 4:
+ After it's done it should tell you to restart your client. (You might also
  get disconnected automatically, if the auto-installation takes a while. That
  is fine.) Just restart the game and press CTRL+U to look at the audio mixer.
  It should tell you that sound and/or music pack have been installed.
