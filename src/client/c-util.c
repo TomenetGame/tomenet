@@ -3921,7 +3921,7 @@ Chain_Macro:
 				Term_putstr(12, 3, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and targetting method.");
 				Term_putstr(12, 4, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
 
-				clear_from(9);
+				clear_from(8);
 
 				switch (i) {
 				case 0:
@@ -5465,11 +5465,12 @@ Chain_Macro:
 					i++;
 					break;
 				case 2:
-					Term_putstr(10, 10, -1, TERM_GREEN, "In this final step, press the key you would like");
-					Term_putstr(10, 11, -1, TERM_GREEN, "to bind the macro to.");
-					Term_putstr(10, 12, -1, TERM_GREEN, "You should use keys that have no other purpose!");
-					Term_putstr(10, 13, -1, TERM_GREEN, "Good examples are the F-keys, F1 to F12.");
-					Term_putstr(10, 14, -1, TERM_GREEN, "The keys ESC and '%' are NOT allowed to be used.");
+					Term_putstr(10, 9, -1, TERM_GREEN, "In this final step, press the key you would like");
+					Term_putstr(10, 10, -1, TERM_GREEN, "to bind the macro to. (ESC and % key cannot be used.)");
+					Term_putstr(10, 11, -1, TERM_GREEN, "You should use keys that have no other purpose!");
+					Term_putstr(10, 12, -1, TERM_GREEN, "Good examples are the F-keys, F1 to F12 and unused number pad keys.");
+					//Term_putstr(10, 14, -1, TERM_GREEN, "The keys ESC and '%' are NOT allowed to be used.");
+					Term_putstr(10, 14, -1, TERM_GREEN, "Most keys can be combined with \377USHIFT\377g, \377UALT\377g or \377UCTRL\377g modifiers!");
 					Term_putstr(10, 16, -1, TERM_GREEN, "If you want to \377Uchain another macro\377g, press '\377U%\377g' key.");
 					Term_putstr(10, 17, -1, TERM_GREEN, "By doing this you can combine multiple macros into one hotkey.");
 					Term_putstr(5, 19, -1, TERM_L_GREEN, "Press the key to bind the macro to, or '%' for chaining: ");
