@@ -1655,7 +1655,7 @@ static void artifact_lore(void) {
 		}
 
 		//Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
-		Term_putstr(8,  23, -1, TERM_WHITE, "-- press ESC to exit, ENTER to view lore, up/down to navigate --");
+		Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC to exit, ENTER to view lore/stats, up/down to navigate --");
 		/* hack: place cursor at pseudo input prompt */
 	        Term->scr->cx = 54 + strlen(s);
 	        Term->scr->cy = 2;
@@ -1929,7 +1929,7 @@ static void monster_lore(void) {
 		}
 
 		//Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
-		Term_putstr(8,  23, -1, TERM_WHITE, "-- press ESC to exit, ENTER to view lore, up/down to navigate --");
+		Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC to exit, ENTER to view lore/stats, up/down to navigate --");
 		/* hack: place cursor at pseudo input prompt */
 	        Term->scr->cx = 53 + strlen(s);
 	        Term->scr->cy = 2;
