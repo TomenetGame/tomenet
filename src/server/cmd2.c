@@ -3290,6 +3290,7 @@ void do_cmd_disarm(int Ind, int dir) {
 				   except if it was a trap on a closed door,
 				   since we might not want to open it yet,
 				   especially while being cloaked */
+/* NOTE that the player might normally NOT be able to move onto the trap grid! (bats/forms that can't open doors) -- seems safe for now */
 				if (dir != 5 &&
 				    !(c_ptr->feat >= FEAT_DOOR_HEAD &&
 				    c_ptr->feat <= FEAT_DOOR_TAIL))
