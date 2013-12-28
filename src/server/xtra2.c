@@ -8129,12 +8129,12 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			msg_format(Ind, "\377yYou have slain %s.", m_name);
 		}
 
-		/* Generate treasure and give kill credit */
-		monster_death(Ind, m_idx);
-
 		/* Check if it's cloned unique, ie "someone else's spawn" */
 		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1)
 			m_ptr->clone = 90; /* still allow some experience to be gained */
+
+		/* Generate treasure and give kill credit */
+		monster_death(Ind, m_idx);
 
 		if (p_ptr->wpos.wz != 0) {
 			/* Monsters in the Nether Realm give extra-high exp,
@@ -8257,6 +8257,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			set_food(Ind, feed);
 		}
 
+		/* Kill credit for quest */
 		if (!m_ptr->clone) {
 			int i, credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
 			for (i = 0; i < 20; i++) {
