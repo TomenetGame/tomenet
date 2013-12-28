@@ -7866,10 +7866,11 @@ bool prepare_quest(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num
 
 		k++;
 		if (k > 100) lev--;
-	} while (((lev - 5) > r_info[r].level) ||
+	} while (((lev - 5) > r_info[r].level && lev >= 5) ||
 	    (r_info[r].flags1 & RF1_UNIQUE) ||
 	    (r_info[r].flags7 & RF7_MULTIPLY) ||
-	    r_info[r].level <= 2); /* no Training Tower quests */
+	    !r_info[r].level); /* "no town quests" ;) */
+//	    r_info[r].level <= 2); /* no Training Tower quests */
 
 	/* easier in Ironman environments */
 #ifndef RPG_SERVER
