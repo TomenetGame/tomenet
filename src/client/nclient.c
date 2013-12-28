@@ -4334,7 +4334,8 @@ void do_ping() {
 	}
 
 	/* abusing it for weather for now - C. Blue */
-	if (!noweather_mode && !c_cfg.no_weather && !screen_icky) {
+	if (!noweather_mode && !c_cfg.no_weather) {
+	    // && !screen_icky) {  -- mistake? after all, maybe all tiles are supposed to be restored because weather ended, while we're in an icky screen!
 		do_weather();
 
 #if 1 /* old method: Many weather particles turn on the sfx, few turn it off again. */
