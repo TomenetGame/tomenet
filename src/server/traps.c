@@ -2554,6 +2554,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		if (item < 0) cs_erase(c_ptr, cs_ptr);
 		else i_ptr->pval = 0;
 		ident = FALSE;
+
+		/* since player is no longer moved onto the trap on triggering it,
+		   we have to redraw the grid (noticed this on door traps) */
+		everyone_lite_spot(wpos, y, x);
 	}
 
 	p_ptr->redraw |= PR_VARIOUS | PR_MISC;
