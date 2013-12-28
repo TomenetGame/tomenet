@@ -518,7 +518,7 @@ bool teleport_away(int m_idx, int dis)
 
 
 	wpos = &m_ptr->wpos;
-	if(!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return FALSE;
 	l_ptr = getfloor(wpos);
 
 	/* No teleporting within no-tele vaults and such */
@@ -558,6 +558,8 @@ bool teleport_away(int m_idx, int dis)
 			/* No teleportation onto protected grid (8-town-houses) */
 		        if (zcave[ny][nx].info & CAVE_PROT) continue;
 		        if (f_info[zcave[ny][nx].feat].flags1 & FF1_PROTECTED) continue;
+			/* Not onto (dungeon) stores */
+			if (zcave[ny][nx].feat == FEAT_SHOP) continue;
 
 			/* Space/Time Anchor */
 			if (check_st_anchor(&m_ptr->wpos, ny, nx)) return FALSE;
