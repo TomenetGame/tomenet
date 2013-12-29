@@ -9122,13 +9122,13 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #endif
 #endif
 
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 	wild = &wild_info[wpos->wy][wpos->wx];
 	//flags1 = (wpos->wz > 0 ? wild->tower->flags1 : wild->dungeon->flags1);
 	flags2 = (wpos->wz > 0 ? wild->tower->flags2 : wild->dungeon->flags2);
 
 	/* in case of paranoia, note that ALL normal dungeons (in d_info) are DF2_RANDOM ;) */
-	if(!flags2 & DF2_RANDOM) return;
+	if (!flags2 & DF2_RANDOM) return;
 
 
 	/* Hack -- Don't tell players about it (for efficiency) */
@@ -9324,6 +9324,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		}
 #endif
 
+		level_generation_time = FALSE;
 		return;
 	}
 
@@ -9755,8 +9756,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #endif
 			int max = 3 + rand_int(2);
 
-			for(i = 0; i < max; i++) {
-				if(rand_int(3) == 0) add_river(wpos, FEAT_DEEP_WATER, FEAT_SHAL_WATER);
+			for (i = 0; i < max; i++) {
+				if (rand_int(3) == 0) add_river(wpos, FEAT_DEEP_WATER, FEAT_SHAL_WATER);
 			}
 		}
 #ifdef IRONDEEPDIVE_MIXED_TYPES
@@ -9767,8 +9768,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #endif
 			int max = 2 + rand_int(2);
 
-			for(i = 0; i < max; i++) {
-				if(rand_int(3) == 0) add_river(wpos, FEAT_DEEP_LAVA, FEAT_SHAL_LAVA);
+			for (i = 0; i < max; i++) {
+				if (rand_int(3) == 0) add_river(wpos, FEAT_DEEP_LAVA, FEAT_SHAL_LAVA);
 			}
 		}
 
