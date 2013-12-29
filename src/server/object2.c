@@ -8031,6 +8031,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 			/* Success */
+			p_ptr->apply_auto_insc = j + 1;
 			return (j);
 		}
 	}
@@ -8177,6 +8178,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Return the slot */
+	p_ptr->apply_auto_insc = i + 1;
 	return (i);
 }
 
