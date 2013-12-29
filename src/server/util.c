@@ -1402,11 +1402,14 @@ void sound_near_monster(int m_idx, cptr name, cptr alternative, int type) {
 	}
 }
 
-/* find correct music for the player based on his current location - C. Blue */
+/* Find correct music for the player based on his current location - C. Blue
+ * Note - rarely played music:
+ *     dungeons - generic/ironman/forcedownhellish
+ *     towns - generic day/night (used for Menegroth/Nargothrond at times) */
 void handle_music(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = NULL;
-	int i = -1, tmus = 0, tmus_inverse = 0;
+	int i = -1, tmus = 0, tmus_inverse = 0, dlev = getlevel(&p_ptr->wpos);
 	cave_type **zcave = getcave(&p_ptr->wpos);
 
 #ifdef ARCADE_SERVER
@@ -1458,7 +1461,7 @@ void handle_music(int Ind) {
 	}
 #endif
 
-	if (in_netherrealm(&p_ptr->wpos) && getlevel(&p_ptr->wpos) == netherrealm_end) {
+	if (in_netherrealm(&p_ptr->wpos) && dlev == netherrealm_end) {
 		//Zu-Aon
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
@@ -1555,8 +1558,14 @@ void handle_music(int Ind) {
 	} else {
 		/* Dungeon towns have their own music to bolster the player's motivation ;) */
 		if (isdungeontown(&p_ptr->wpos)) {
-			if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) Send_music(Ind, 1); /* 'generic town' music instead, for a change */
-			else Send_music(Ind, 2); /* the usual music for this case */
+			if (is_fixed_irondeepdive_town(&p_ptr->wpos, dlev)) {
+#if 0
+				Send_music(Ind, 1); /* 'generic town' music instead, for a change */
+#else /* different music for static towns? */
+				if (dlev == 40) Send_music(Ind, 1); /* Menegroth: generic town */
+				else Send_music(Ind, 49); /* Nargothrond: generic town night */
+#endif
+			} else Send_music(Ind, 2); /* the usual music for this case */
 			return;
 		}
 
