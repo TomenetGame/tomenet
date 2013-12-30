@@ -1035,11 +1035,10 @@ struct player_type
 
 	int vampiric_melee;
 	int vampiric_ranged;
-
-	bool insta_res;
-
 	int IDDC_found_rndtown;
 	int IDDC_logscum;
+	bool insta_res;
+	bool hilite_player;
 };
 
 extern bool imprison(int Ind, int time, char *reason);
