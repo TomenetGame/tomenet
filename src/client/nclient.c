@@ -1765,7 +1765,7 @@ int Receive_char(void) {
 	}
 
 	if (screen_icky) Term_switch(0);
-	if (is_us) {
+	if (is_us && c_cfg.hilite_player) {
 		/* Mark our own position via special cursor */
 #if 0
 		/* save previous cursor vis/loc? -- not necessary? */
