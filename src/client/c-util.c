@@ -7606,6 +7606,13 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		if (use_sound) sound_weather(-2); //stop
 #endif
 	}
+
+	/* Hide the cursor again after disabling self-highlighting */
+	if (option_info[i].o_var == &c_cfg.hilite_player && !c_cfg.hilite_player) {
+		if (screen_icky) Term_switch(0); //should always be icky since we're in = menu..
+		Term_set_cursor(0);
+		if (screen_icky) Term_switch(0);
+	}
 }
 
 /* Helper functions for DONT_CLEAR_TOPLINE_IF_AVOIDABLE - C. Blue */
