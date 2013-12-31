@@ -3445,6 +3445,30 @@ s16b m_bonus(int max, int level)
 	return (value);
 }
 
+static void log_arts(int a_idx, struct worldpos *wpos) {
+	switch (a_idx) {
+	case ART_DWARVEN_ALE:
+		s_printf("ARTIFACT_SPECIAL: 'Pint of Ale of the Khazad' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
+	case ART_BILBO:
+		s_printf("ARTIFACT_SPECIAL: 'Picklock of Bilbo Baggins' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
+	case ART_MIRROROFGLORY:
+		s_printf("ARTIFACT_SPECIAL: 'Mirror of Glory' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
+	case ART_NARYA:
+		s_printf("ARTIFACT_SPECIAL: 'Narya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
+	case ART_NENYA:
+		s_printf("ARTIFACT_SPECIAL: 'Nenya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
+	case ART_VILYA:
+		s_printf("ARTIFACT_SPECIAL: 'Vilya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		return;
+	}
+	return;
+}
+
 /*
  * Mega-Hack -- Attempt to create one of the "Special Objects"
  *
@@ -3453,17 +3477,19 @@ s16b m_bonus(int max, int level)
  *
  * Note -- see "make_artifact()" and "apply_magic()"
  */
-static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32b resf)
-{
+static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32b resf) {
 	int	i, d, dlev = getlevel(wpos);
 	int	k_idx = 0;
+	bool winner_arts_only = ((resf & RESF_NOTRUEART) && (resf & RESF_WINNER));
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
 	int	difficulty = in_irondeepdive(wpos) ? 1 : 0;
 #endif
 
 	/* Check if artifact generation is currently disabled -
 	   added this for maintenance reasons -C. Blue */
-	if (cfg.arts_disabled) return (FALSE);
+	if (cfg.arts_disabled ||
+	    ((resf & RESF_NOTRUEART) && !(resf & RESF_WINNER)))
+		 return (FALSE);
 
 	/* No artifacts in the town */
 	if (istown(wpos)) return (FALSE);
@@ -3489,9 +3515,12 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 //                if ((a_ptr->flags4 & TR4_SPECIAL_GENE) && (!a_allow_special[i]) && (!vanilla_town)) continue;
                 if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
 
+		/* Allow non-dropchosen/specialgene winner arts */
+		if (winner_arts_only && !(a_ptr->flags5 & TR5_WINNERS_ONLY))
+			continue;
+
 		/* XXX XXX Enforce minimum "depth" (loosely) */
-		if (a_ptr->level > dlev)
-		{
+		if (a_ptr->level > dlev) {
 			/* Acquire the "out-of-depth factor" */
 			d = (a_ptr->level - dlev) * 2;
 
@@ -3508,31 +3537,21 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 
 		/* Artifact "rarity roll" */
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
-		if (rand_int(a_ptr->rarity >> difficulty) != 0) return (FALSE);
+		if (rand_int(a_ptr->rarity >> difficulty) != 0) continue;
 #else
-		if (rand_int(a_ptr->rarity) != 0) return (FALSE);
+		if (rand_int(a_ptr->rarity) != 0) continue;
 #endif
 
 		/* Find the base object */
 		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
 
 		/* XXX XXX Enforce minimum "object" level (loosely) */
-		if (k_info[k_idx].level > object_level)
-		{
+		if (k_info[k_idx].level > object_level) {
 			/* Acquire the "out-of-depth factor" */
 			int d = (k_info[k_idx].level - object_level) * 5;
 
 			/* Roll for out-of-depth creation */
 			if (rand_int(d) != 0) continue;
-		}
-
-		/* swallow true artifacts if true_art isn't allowed
-		   (meaning that a king/queen did the monster kill!) */
-		if (resf & RESF_NOTRUEART) {
-			/* add exception for WINNERS_ONLY true arts
-			   (this is required for non DROP_CHOSEN/SPECIAL_GENE winner arts): */
-			if (!((a_ptr->flags5 & TR5_WINNERS_ONLY) && (resf & RESF_WINNER)))
-				return (FALSE); /* Don't replace them with randarts! */
 		}
 
 		/* Assign the template */
@@ -3543,6 +3562,8 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 
 		/* Hack -- Mark the artifact as "created" */
 		handle_art_inum(o_ptr->name1);
+
+		log_arts(i, wpos);
 
 		/* Success */
 		return (TRUE);
@@ -3560,10 +3581,10 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
  *
  * Note -- see "make_artifact_special()" and "apply_magic()"
  */
-static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
-{
+static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) {
 	int i, tries = 0, d, dlev = getlevel(wpos);
 	artifact_type *a_ptr;
+	bool winner_arts_only = ((resf & RESF_NOTRUEART) && (resf & RESF_WINNER));
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
 	int difficulty = in_irondeepdive(wpos) ? 1 : 0;
 #endif
@@ -3575,8 +3596,9 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 	if (o_ptr->number != 1) return (FALSE);
 
         /* Check if true artifact generation is currently disabled -
-	added this for maintenance reasons -C. Blue */
-	if (!cfg.arts_disabled) {
+	   added this for maintenance reasons -C. Blue */
+	if (!cfg.arts_disabled &&
+	    !((resf & RESF_NOTRUEART) && !(resf & RESF_WINNER))) {
 		/* Check the artifact list (skip the "specials") */
 	//	for (i = ART_MIN_NORMAL; i < MAX_A_IDX; i++)
 	        for (i = 0; i < MAX_A_IDX; i++) {
@@ -3597,6 +3619,10 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 			/* Cannot generate some artifacts because they can only exists in special dungeons/quests/... */
 	//		if ((a_ptr->flags4 & TR4_SPECIAL_GENE) && (!a_allow_special[i]) && (!vanilla_town)) continue;
 			if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
+
+			/* Allow non-dropchosen/specialgene winner arts */
+			if (winner_arts_only && !(a_ptr->flags5 & TR5_WINNERS_ONLY))
+				continue;
 
 			/* Must have the correct fields */
 			if (a_ptr->tval != o_ptr->tval) continue;
@@ -3625,28 +3651,13 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 			if (rand_int(a_ptr->rarity) != 0) continue;
 #endif
 
-			/* swallow true artifacts if true_art isn't allowed
-			   (meaning that a king/queen did the monster kill!) */
-			if (resf & RESF_NOTRUEART) {
-				/* add exception for WINNERS_ONLY true arts
-				   (this is required for non DROP_CHOSEN/SPECIAL_GENE winner arts): */
-				if (!((a_ptr->flags5 & TR5_WINNERS_ONLY) && (resf & RESF_WINNER)))
-					return (FALSE); /* Don't replace them with randarts! */
-			}
-
 			/* Hack -- mark the item as an artifact */
 			o_ptr->name1 = i;
 
 			/* Hack -- Mark the artifact as "created" */
 			handle_art_inum(o_ptr->name1);
 
-			/* hack: track the ale of khazad, for informational purpose about spawn rate */
-			if (o_ptr->name1 == ART_DWARVEN_ALE)
-				s_printf("ARTIFACT: 'Pint of Ale of the Khazad' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
-			if (o_ptr->name1 == ART_BILBO)
-				s_printf("ARTIFACT: 'Picklock of Bilbo Baggins' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
-			if (o_ptr->name1 == ART_MIRROROFGLORY)
-				s_printf("ARTIFACT: 'Mirror of Glory' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+			log_arts(i, wpos);
 
 			/* Success */
 			return (TRUE);
