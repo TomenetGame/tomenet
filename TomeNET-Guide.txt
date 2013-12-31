@@ -11747,8 +11747,11 @@ F: flag list
     RAND_25     The player has +10% chance of moving randomly.
     RAND_50     The player has +20% chance of moving randomly.
     OPEN_DOOR   This form can open doors.
+                Note that forms can open doors even if they don't have this
+                flag, provided they have fingers and are able to wield weapons
+                (a good example are Minotaur/Maulotaur forms of druids).
     BASH_DOOR   This form can bash doors
-                (useful to forms that cannot OPEN_DOORs!).
+                (useful to forms that cannot open doors, see OPEN_DOOR flag).
     HURT_LITE   This form will take 2x damage from light attacks.
 
     For all racial flags such as ANIMAL, SPIDER, EVIL, DEMON etc please see the
