@@ -2733,8 +2733,7 @@ void do_cmd_show_houses(int Ind)
  * NOTE: we don't show the flavor of already-identified objects
  * since flavors are the same for all the player.
  */
-void do_cmd_show_known_item_letter(int Ind, char *letter)
-{
+void do_cmd_show_known_item_letter(int Ind, char *letter) {
 	player_type *p_ptr = Players[Ind];
 
 	int		i, j, total = 0;
@@ -2764,76 +2763,13 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 //	fprintf(fff, "%c", 'G');
 
 	if (letter && *letter) fprintf(fff, "\377y======== Objects known (%c) ========\n", *letter);
-	else
-	{
+	else {
 		all = TRUE;
 		fprintf(fff, "\377y======== Objects known ========\n");
 	}
 
-#if 0
 	/* for each object kind */
-	for (i = 1; i <= MAX_K_IDX; i++)
-	{
-		k_ptr = &k_info[i];
-		if (!k_ptr->name) continue;
-		if (!all && *letter != k_ptr->d_char) continue;	// k_char ?
-//		if (!object_easy_know(i)) continue;
-//		if (!k_ptr->easy_know) continue;
-		if (!k_ptr->has_flavor) continue;
-		if (!p_ptr->obj_aware[i]) continue;
-
-		/* Create the object */
-		invcopy(&forge, i);
-
-		/* Describe the artifact */
-		object_desc_store(Ind, o_name, &forge, FALSE, 0);
-
-		/* Hack -- remove {0} */
-		j = strlen(o_name);
-		o_name[j-4] = '\0';
-
-		if (admin) fprintf(fff, "%3d, %3d)  \377w", k_ptr->tval, k_ptr->sval);
-
-		fprintf(fff, "%s\n", o_name);
-
-		total++;
-		shown = TRUE;
-	}
-
-	/* for each object kind */
-	for (i = 1; i <= MAX_K_IDX; i++)
-	{
-		k_ptr = &k_info[i];
-		if (!k_ptr->name) continue;
-		if (letter && *letter != k_ptr->d_char) continue;	// k_char ?
-//		if (!object_easy_know(i)) continue;
-//		if (!k_ptr->easy_know) continue;
-		if (!k_ptr->has_flavor) continue;
-		if (p_ptr->obj_aware[i]) continue;
-		if (!p_ptr->obj_tried[i]) continue;
-
-		/* Create the object */
-		invcopy(&forge, i);
-
-		/* Describe the artifact */
-		object_desc(Ind, o_name, &forge, FALSE, 0);
-
-		/* Hack -- remove {0} */
-		j = strlen(o_name);
-		o_name[j-4] = '\0';
-
-		if (admin) fprintf(fff, "%3d, %3d)  \377w", k_ptr->tval, k_ptr->sval);
-
-		fprintf(fff, "%s\n", o_name);
-
-		total++;
-		shown = TRUE;
-	}
-#endif	// 0
-
-	/* for each object kind */
-	for (i = 1; i < max_k_idx; i++)
-	{
+	for (i = 1; i < max_k_idx; i++) {
 		k_ptr = &k_info[i];
 		if (!k_ptr->name) continue;
 		if (!all && *letter != k_ptr->d_char) continue;	// k_char ?
@@ -2845,8 +2781,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 		idx[total++] = i;
 	}
 
-	if (total)
-	{
+	if (total) {
 		/* Setup the sorter */
 		ang_sort_comp = ang_sort_comp_tval;
 		ang_sort_swap = ang_sort_swap_s16b;
@@ -2855,15 +2790,24 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 		ang_sort(Ind, &idx, NULL, total);
 
 		/* for each object kind */
-		for (i = total - 1; i >= 0; i--)
-		{
+		for (i = total - 1; i >= 0; i--) {
 			k_ptr = &k_info[idx[i]];
 
 			/* Create the object */
 			invcopy(&forge, idx[i]);
 
+			/* Hack: Insta-arts must be marked as artifacts for proper item naming */
+			if ((k_ptr->flags3 & TR3_INSTA_ART)) {
+				for (j = 0; j < MAX_A_IDX; j++) {
+					if (a_info[j].tval == k_ptr->tval && a_info[j].sval == k_ptr->sval) {
+						forge.name1 = j;
+						break;
+					}
+				}
+			}
+
 			/* Describe the artifact */
-			object_desc_store(Ind, o_name, &forge, FALSE, 0);
+			object_desc_store(Ind, o_name, &forge, FALSE, 512);
 
 			/* Hack -- remove {0} */
 			j = strlen(o_name);
@@ -2887,8 +2831,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 	total = 0;
 
 	/* for each object kind */
-	for (i = 1; i < max_k_idx; i++)
-	{
+	for (i = 1; i < max_k_idx; i++) {
 		k_ptr = &k_info[i];
 		if (!k_ptr->name) continue;
 		if (!all && *letter != k_ptr->d_char) continue;	// k_char ?
@@ -2901,8 +2844,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 		idx[total++] = i;
 	}
 
-	if (total)
-	{
+	if (total) {
 		/* Setup the sorter */
 		ang_sort_comp = ang_sort_comp_tval;
 		ang_sort_swap = ang_sort_swap_s16b;
@@ -2911,8 +2853,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 		ang_sort(Ind, &idx, NULL, total);
 
 		/* for each object kind */
-		for (i = total - 1; i >= 0; i--)
-		{
+		for (i = total - 1; i >= 0; i--) {
 			k_ptr = &k_info[idx[i]];
 
 			/* Create the object */
