@@ -5757,9 +5757,9 @@ if (cfg.unikill_format) {
 				chance = 101;
 
 				/* only powerful wyrms may have a chance of dropping it */
-				if ((m_ptr->maxhp < 6000) && rand_int(100)) a_idx = 0;/* strong wyrms at 6000+ */
-				else if ((m_ptr->maxhp >= 6000) && (m_ptr->maxhp < 10000) && rand_int(60)) a_idx = 0;
-				else if ((m_ptr->maxhp >= 10000) && rand_int(20)) a_idx = 0;/* gwop ^^ */
+				if ((m_ptr->maxhp < 6000) && rand_int(300)) a_idx = 0;/* strong wyrms at 6000+ */
+				else if ((m_ptr->maxhp >= 6000) && (m_ptr->maxhp < 10000) && rand_int(150)) a_idx = 0;
+				else if ((m_ptr->maxhp >= 10000) && rand_int(75)) a_idx = 0;/* gwop ^^ */
 			}
 
 #ifdef SEMI_PROMISED_ARTS_MODIFIER
