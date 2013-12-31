@@ -1996,7 +1996,8 @@ void carry(int Ind, int pickup, int confirm) {
 									    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
 #endif
 						/* Log top arts (except Grond/Crown of course) - atm this excludes Razorback and Mediator */
-						if (a_info[o_ptr->name1].level >= 100 && !multiple_artifact_p(o_ptr) && !is_admin(p_ptr)) {
+						if ((a_info[o_ptr->name1].level >= 100 || o_ptr->name1 == ART_DWARVEN_ALE)
+						    && !multiple_artifact_p(o_ptr) && !is_admin(p_ptr)) {
 							char o_name_short[ONAME_LEN];
 							object_desc(0, o_name_short, o_ptr, TRUE, 256);
 							l_printf("%s \\{U%s found %s.\n", showdate(), p_ptr->name, o_name_short);
