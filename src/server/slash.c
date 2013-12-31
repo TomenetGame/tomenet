@@ -7127,20 +7127,26 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Ironman Deep Dive Challenge records have been reset!");
 				return;
 			}
-			/* list statics */
+			/* list statics; unstatic all empty, static (not stale) floors if parm is given */
 			else if (prefix(message, "/lsl") || prefix(message, "/lsls") || prefix(message, "/lslsu")) {
 				int x, y;
 				struct dungeon_type *d_ptr;
 				worldpos tpos;
-				bool stale = FALSE, used = FALSE;
+				bool stale = FALSE, used = FALSE, unstat = FALSE;
+
 				if (prefix(message, "/lsls")) stale = TRUE;
 				if (prefix(message, "/lslsu")) used = TRUE;
+				if (tk) unstat = TRUE;
+
 				for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
 					/* check surface */
 					k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = 0;
 					for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
 					if (used && k) msg_format(Ind, "\377g  %2d,%2d", x, y);
-					else if (wild_info[y][x].ondepth > k) msg_format(Ind, "  %2d,%2d", x, y);
+					else if (wild_info[y][x].ondepth > k) {
+						msg_format(Ind, "  %2d,%2d", x, y);
+						if (unstat) master_level_specific(Ind, &tpos, "u");
+					}
 					else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377D  %2d,%2d", x, y);
 					/* check tower */
 					if ((d_ptr = wild_info[y][x].tower)) {
@@ -7149,7 +7155,10 @@ void do_slash_cmd(int Ind, char *message)
 						k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = i + 1;
 						for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
 						if (used && k) msg_format(Ind, "\377gT %2d,%2d,%2d", x, y, i + 1);
-						else if (d_ptr->level[i].ondepth > k) msg_format(Ind, "T %2d,%2d,%2d", x, y, i + 1);
+						else if (d_ptr->level[i].ondepth > k) {
+							msg_format(Ind, "T %2d,%2d,%2d", x, y, i + 1);
+							if (unstat) master_level_specific(Ind, &tpos, "u");
+						}
 						else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377DT %2d,%2d,%2d", x, y, i + 1);
 					    }
 					}
@@ -7160,7 +7169,10 @@ void do_slash_cmd(int Ind, char *message)
 						k = 0; tpos.wx = x; tpos.wy = y; tpos.wz = -(i + 1);
 						for (j = 1; j < NumPlayers + 1; j++) if (inarea(&Players[j]->wpos, &tpos)) k++;
 						if (used && k) msg_format(Ind, "\377gD %2d,%2d,%2d", x, y, -(i + 1));
-						else if (d_ptr->level[i].ondepth > k) msg_format(Ind, "D %2d,%2d,%2d", x, y, -(i + 1));
+						else if (d_ptr->level[i].ondepth > k) {
+							msg_format(Ind, "D %2d,%2d,%2d", x, y, -(i + 1));
+							if (unstat) master_level_specific(Ind, &tpos, "u");
+						}
 						else if (stale && getcave(&tpos) && stale_level(&tpos, cfg.anti_scum)) msg_format(Ind, "\377DD %2d,%2d,%2d", x, y, -(i + 1));
 					    }
 					}
