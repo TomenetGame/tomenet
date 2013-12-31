@@ -3448,23 +3448,30 @@ s16b m_bonus(int max, int level)
 static void log_arts(int a_idx, struct worldpos *wpos) {
 	switch (a_idx) {
 	case ART_DWARVEN_ALE:
-		s_printf("ARTIFACT_SPECIAL: 'Pint of Ale of the Khazad' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		s_printf("ARTIFACT: 'Pint of Ale of the Khazad' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
 	case ART_BILBO:
-		s_printf("ARTIFACT_SPECIAL: 'Picklock of Bilbo Baggins' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		s_printf("ARTIFACT: 'Picklock of Bilbo Baggins' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
 	case ART_MIRROROFGLORY:
-		s_printf("ARTIFACT_SPECIAL: 'Mirror of Glory' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		s_printf("ARTIFACT: 'Mirror of Glory' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
+#if 0
 	case ART_NARYA:
-		s_printf("ARTIFACT_SPECIAL: 'Narya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		s_printf("ARTIFACT: 'Narya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
 	case ART_NENYA:
-		s_printf("ARTIFACT_SPECIAL: 'Nenya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		s_printf("ARTIFACT: 'Nenya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
 	case ART_VILYA:
-		s_printf("ARTIFACT_SPECIAL: 'Vilya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+		s_printf("ARTIFACT: 'Vilya' created at %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
 		return;
+#endif
+#if 0
+	default:
+		s_printf("ARTIFACT: '%s' created at %d,%d,%d.\n", a_name + a_info[a_idx].name, wpos->wx, wpos->wy, wpos->wz);
+		return;
+#endif
 	}
 	return;
 }
