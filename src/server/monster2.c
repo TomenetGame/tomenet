@@ -3411,8 +3411,8 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	/* Report some very interesting monster creating: */
 	if (r_idx == RI_SAURON) s_printf("Sauron was created on %d\n", dlev);
 #ifdef ENABLE_MAIA
-	if (r_idx == RI_CANDLEBEARER) s_printf("Candlebearer was created on %d\n", dlev);
-	if (r_idx == RI_DARKLING) s_printf("Darkling was created on %d\n", dlev);
+//	if (r_idx == RI_CANDLEBEARER) s_printf("Candlebearer was created on %d\n", dlev);
+//	if (r_idx == RI_DARKLING) s_printf("Darkling was created on %d\n", dlev);
 #endif
 	if (r_idx == RI_MORGOTH) {
 		s_printf("Morgoth was created on %d\n", dlev);
