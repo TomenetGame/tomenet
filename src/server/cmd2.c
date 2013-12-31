@@ -1706,8 +1706,8 @@ void do_cmd_open(int Ind, int dir)
 
 	/* Ghosts cannot open doors ; not in WRAITHFORM */
 	if (((p_ptr->ghost || p_ptr->tim_wraith) && !is_admin(p_ptr)) ||
-	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)
-	    && !strchr("thpkng", r_info[p_ptr->body_monster].d_char))) {
+	    (p_ptr->body_monster && !((r_ptr->flags2 & RF2_OPEN_DOOR) || (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_WEAPON])))) {
+	    //&& !strchr("thpkng", r_info[p_ptr->body_monster].d_char))) {
 #ifdef PLAYER_STORES
 		struct c_special *cs_ptr;
 
@@ -2064,8 +2064,8 @@ void do_cmd_close(int Ind, int dir)
 
 	/* Ghosts cannot close ; not in WRAITHFORM */
 	if (((p_ptr->ghost || p_ptr->tim_wraith) && !is_admin(p_ptr)) ||
-	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)
-	    && !strchr("thpkng", r_info[p_ptr->body_monster].d_char)))
+	    (p_ptr->body_monster && !((r_ptr->flags2 & RF2_OPEN_DOOR) || (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_WEAPON]))))
+	    //&& !strchr("thpkng", r_info[p_ptr->body_monster].d_char)))
 	{
 		msg_print(Ind, "You cannot close things!");
 		return;
