@@ -3484,6 +3484,8 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
 	int	difficulty = in_irondeepdive(wpos) ? 1 : 0;
 #endif
+	artifact_type *a_ptr;
+	int im, a_map[MAX_A_IDX];
 
 	/* Check if artifact generation is currently disabled -
 	   added this for maintenance reasons -C. Blue */
@@ -3494,10 +3496,14 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 	/* No artifacts in the town */
 	if (istown(wpos)) return (FALSE);
 
+	/* shuffle art indices for fairness */
+	for (i = 0; i < MAX_A_IDX; i++) a_map[i] = i;
+	intshuffle(a_map, MAX_A_IDX);
+
 	/* Check the artifact list (just the "specials") */
-//	for (i = 0; i < ART_MIN_NORMAL; i++)
-	for (i = 0; i < MAX_A_IDX; i++) {
-		artifact_type *a_ptr = &a_info[i];
+	for (im = 0; im < MAX_A_IDX; im++) {
+		i = a_map[im];
+		a_ptr = &a_info[i];
 
 		/* Skip "empty" artifacts */
 		if (!a_ptr->name) continue;
@@ -3583,11 +3589,12 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
  */
 static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) {
 	int i, tries = 0, d, dlev = getlevel(wpos);
-	artifact_type *a_ptr;
 	bool winner_arts_only = ((resf & RESF_NOTRUEART) && (resf & RESF_WINNER));
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
 	int difficulty = in_irondeepdive(wpos) ? 1 : 0;
 #endif
+	artifact_type *a_ptr;
+	int im, a_map[MAX_A_IDX];
 
 	/* No artifacts in the town */
 	if (istown(wpos)) return (FALSE);
@@ -3595,14 +3602,18 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 	/* Paranoia -- no "plural" artifacts */
 	if (o_ptr->number != 1) return (FALSE);
 
+	/* shuffle art indices for fairness */
+	for (i = 0; i < MAX_A_IDX; i++) a_map[i] = i;
+	intshuffle(a_map, MAX_A_IDX);
+
         /* Check if true artifact generation is currently disabled -
 	   added this for maintenance reasons -C. Blue */
 	if (!cfg.arts_disabled &&
 	    !((resf & RESF_NOTRUEART) && !(resf & RESF_WINNER))) {
 		/* Check the artifact list (skip the "specials") */
-	//	for (i = ART_MIN_NORMAL; i < MAX_A_IDX; i++)
-	        for (i = 0; i < MAX_A_IDX; i++) {
-			artifact_type *a_ptr = &a_info[i];
+		for (im = 0; im < MAX_A_IDX; im++) {
+			i = a_map[im];
+			a_ptr = &a_info[i];
 
 			/* Skip "empty" items */
 			if (!a_ptr->name) continue;
