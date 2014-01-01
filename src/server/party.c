@@ -16,6 +16,9 @@
  * formula: (PARTY_XP_BOOST+1)/(PARTY_XP_BOOST + (# of applicable players))
  */
 #define PARTY_XP_BOOST	(cfg.party_xp_boost)
+#define IDDC_PARTY_XP_BOOST	8
+/* [7..10] 10-> 2:92%, 3:85%, 4:79%, 5:73%, 6:69%; 8-> 2:90%, 3:82%, 4:75%, 5:69%, 6:64%
+   8 is maybe best, assuming that of a larger group one or two will quickly die anyway xD */
 
 /* KEEP CONSISTENT WITH cmd4.c */
 /* prevent exploit strategies */
@@ -2630,12 +2633,22 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 				new_amount = base_amount * 4;
 #endif
 
-			/* Some bonus is applied to encourage partying	- Jir - */
-			new_exp = (new_amount * modified_level * (PARTY_XP_BOOST + 1)) /
-			    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST));
-			new_exp_frac = (  (((new_amount * modified_level * (PARTY_XP_BOOST + 1)) %
-			    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) * 0x10000L) /
-			    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) + p_ptr->exp_frac;
+			/* Especially high party xp boost in IDDC, or people might mostly prefer to solo to 2k */
+			if (in_irondeepdive(wpos)) {
+				/* Some bonus is applied to encourage partying	- Jir - */
+				new_exp = (new_amount * modified_level * (IDDC_PARTY_XP_BOOST + 1)) /
+				    (average_lev * p_ptr->lev * (num_members + IDDC_PARTY_XP_BOOST));
+				new_exp_frac = (  (((new_amount * modified_level * (IDDC_PARTY_XP_BOOST + 1)) %
+				    (average_lev * p_ptr->lev * (num_members + IDDC_PARTY_XP_BOOST))) * 0x10000L) /
+				    (average_lev * p_ptr->lev * (num_members + IDDC_PARTY_XP_BOOST))) + p_ptr->exp_frac;
+			} else {
+				/* Some bonus is applied to encourage partying	- Jir - */
+				new_exp = (new_amount * modified_level * (PARTY_XP_BOOST + 1)) /
+				    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST));
+				new_exp_frac = (  (((new_amount * modified_level * (PARTY_XP_BOOST + 1)) %
+				    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) * 0x10000L) /
+				    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) + p_ptr->exp_frac;
+			}
 
 			/* Keep track of experience */
 			if (new_exp_frac >= 0x10000L) {
