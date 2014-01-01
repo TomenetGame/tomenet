@@ -4132,20 +4132,21 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Lite up the grid */
 		case GF_LITE_WEAK:
 		case GF_LITE:
-			/* don't ruin the mood :> */
-			if (!(wpos->wz == 0 && (season_halloween || season_newyearseve)))
+			/* don't ruin the mood :> (allow turning on light inside houses though) */
+			if ((!(wpos->wz == 0 && (season_halloween || season_newyearseve))) || (c_ptr->info & CAVE_ICKY)) {
 				/* Turn on the light */
 				c_ptr->info |= CAVE_GLOW;
 
-			if (!quiet) {
-				/* Notice */
-				note_spot_depth(wpos, y, x);
+				if (!quiet) {
+					/* Notice */
+					note_spot_depth(wpos, y, x);
 
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
+					/* Redraw */
+					everyone_lite_spot(wpos, y, x);
 
-				/* Observe */
-				if (player_can_see_bold(Ind, y, x)) obvious = TRUE;
+					/* Observe */
+					if (player_can_see_bold(Ind, y, x)) obvious = TRUE;
+				}
 			}
 
 			/* Mega-Hack -- Update the monster in the affected grid */

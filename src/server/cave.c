@@ -7035,7 +7035,7 @@ void wiz_lite(int Ind) {
 	cave_type **zcave;
 
 	/* don't ruin the mood ^^ */
-	if (wpos->wz == 0 && (season_halloween || season_newyearseve)) return;
+	bool mood = (wpos->wz == 0 && (season_halloween || season_newyearseve));
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -7049,6 +7049,7 @@ void wiz_lite(int Ind) {
 		for (x = 1; x < p_ptr->cur_wid-1; x++) {
 			/* Access the grid */
 			c_ptr = &zcave[y][x];
+			if (mood && !(c_ptr->info & CAVE_ICKY)) continue;
 			w_ptr = &p_ptr->cave_flag[y][x];
 
 			/* Memorize all objects */
@@ -7068,6 +7069,7 @@ void wiz_lite(int Ind) {
 
 					/* Get the grid */
 					c_ptr = &zcave[yy][xx];
+					if (mood && !(c_ptr->info & CAVE_ICKY)) continue; //if this were commented out, house walls would be *bright*
 					w_ptr = &p_ptr->cave_flag[yy][xx];
 
 					/* Perma-lite the grid */
@@ -7112,7 +7114,8 @@ void wiz_lite_extra(int Ind)
 	cave_type **zcave;
 	cave_type *c_ptr;
 
-	if (wpos->wz == 0 && (season_halloween || season_newyearseve)) return;
+	/* don't ruin the mood ^^ */
+	bool mood = (wpos->wz == 0 && (season_halloween || season_newyearseve));
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -7121,6 +7124,7 @@ void wiz_lite_extra(int Ind)
 	for (y = 0; y < p_ptr->cur_hgt; y++) {
 		for (x = 0; x < p_ptr->cur_wid; x++) {
 			c_ptr = &zcave[y][x];
+			if (mood && !(c_ptr->info & CAVE_ICKY)) continue;
 			/* ligten up all grids and remember features */
 //			c_ptr->info |= (CAVE_GLOW | CAVE_MARK);
 			/* lighten up all grids */
