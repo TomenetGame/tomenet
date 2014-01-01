@@ -6042,6 +6042,7 @@ bool cast_fireworks(worldpos *wpos, int x, int y) {
 	/* Adjustments - mikaelh */
 	project_interval = 5;
 	project_time = 8 + 8; /* X units to rise into the air, X units to explode */
+	//if (project_time_effect == EFF_FIREWORKS3) project_time += 2 + 2;
 #endif
 
 	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, typ, flg, pattacker)); /* typ -> colour */
