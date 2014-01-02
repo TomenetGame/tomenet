@@ -59,7 +59,7 @@ X:view_reduce_lite
 X:view_reduce_view
 X:safe_float
 #X:avoid_other
-X:no_melee_sfx
+X:no_combat_sfx
 #Y:flush_failure
 X:no_magicattack_sfx
 #X:flush_disturb
