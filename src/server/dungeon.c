@@ -8168,7 +8168,7 @@ static void process_wild_weather() {
 				if (season_newyearseve) {
 					int txm = (cloud_x1[i] + (cloud_x2[i] - cloud_x1[i]) / 2) / MAX_WID; /* central wpos of this cloud */
 					int tym = cloud_y1[i] / MAX_HGT;
-					if (distance(tym, txm, cfg.town_y, cfg.town_x) <= 3) cloud_dur[i] = 1;
+					if (distance(tym, txm, cfg.town_y, cfg.town_x) <= 4) cloud_dur[i] = 1;
 				}
 				/* lose essence from raining/snowing */
 				cloud_dur[i]--;
