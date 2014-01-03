@@ -9061,7 +9061,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 	cave_type **zcave;
 	dungeon_type *d_ptr = getdungeon(wpos);
-	dungeon_info_type *di_ptr = &d_info[d_ptr->type];
 	wilderness_type *wild;
 	//u32b flags1;
 	u32b flags2;		/* entire-dungeon flags */
@@ -9402,7 +9401,12 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	}
 
 	/* All dungeons get their own visuals now, if defined in B-line in d_info - C. Blue */
-	feat_boundary = di_ptr->feat_boundary;
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+	if (in_irondeepdive(wpos)) feat_boundary = d_info[iddc[ABS(wpos->wz)].type].feat_boundary;
+	else feat_boundary = d_info[d_ptr->type].feat_boundary;
+#else
+	feat_boundary = d_info[d_ptr->type].feat_boundary;
+#endif
 
 	/* Hack -- Start with permawalls
 	 * Hope run-length do a good job :) */
