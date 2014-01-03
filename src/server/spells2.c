@@ -1021,13 +1021,19 @@ void identify_pack(int Ind) {
 
 	int                 i;
 	object_type        *o_ptr;
+	bool inven_unchanged[INVEN_TOTAL];
 
 	/* Simply identify and know every item */
 	for (i = 0; i < INVEN_TOTAL; i++) {
+		inven_unchanged[i] = TRUE;
 		o_ptr = &p_ptr->inventory[i];
+
 		if (o_ptr->k_idx) {
+			if (object_known_p(Ind, o_ptr)) continue;
+
 			object_aware(Ind, o_ptr);
 			object_known(o_ptr);
+			inven_unchanged[i] = FALSE;
 		}
 	}
 
@@ -1048,6 +1054,11 @@ void identify_pack(int Ind) {
 	   if it isn't due anyway.  */
 	if (!p_ptr->inventory_changes) Send_inventory_revision(Ind);
 #endif
+	/* well, instead: */
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		if (inven_unchanged[i]) continue;
+		Send_apply_auto_insc(Ind, i);
+	}
 }
 
 
