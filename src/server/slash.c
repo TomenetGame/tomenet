@@ -4018,7 +4018,7 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				monster_race *r_ptr;
 				if (!tk) {
-					msg_print(Ind, "Usage: /uniques (unseen | nonkill)");
+					msg_print(Ind, "Usage: /uniques (seen | unseen | kill | nonkill)");
 					return;
 				}
 				if (prefix(token[tk], "unseen")) {
@@ -4036,6 +4036,21 @@ void do_slash_cmd(int Ind, char *message)
 						r_ptr->r_tkills = 0;
 					}
 					msg_print(Ind, "All the uniques are set as '\377onever killed\377'.");
+				} else if (prefix(token[tk], "seen")) {
+					for (i = 0; i < MAX_R_IDX - 1 ; i++) {
+						r_ptr = &r_info[i];
+						if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+						r_ptr->r_sights = 1;
+					}
+					msg_print(Ind, "All the uniques are set as '\377oseen\377'.");
+				} else if (prefix(token[tk], "kill")) {
+					monster_race *r_ptr;
+					for (i = 0; i < MAX_R_IDX - 1 ; i++) {
+						r_ptr = &r_info[i];
+						if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+						r_ptr->r_tkills = 1;
+					}
+					msg_print(Ind, "All the uniques are set as '\377okilled\377'.");
 				}
 				return;
 			}
