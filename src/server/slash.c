@@ -4073,7 +4073,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/unicheck")) {
 				if (!k || !(r_info[k].flags1 & RF1_UNIQUE)) {
-					msg_print(Ind, "Usage: /uninum <unique_monster_index>");
+					msg_print(Ind, "Usage: /unicheck <unique_monster_index>");
 					return;
 				}
 				msg_format(Ind, "(%d) %s has cur_num/max_num of %d/%d.",
@@ -4085,7 +4085,11 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /unifix <unique_monster_index>");
 					return;
 				}
-				if (!r_info[k].cur_num) {
+				if (!r_info[k].max_num) {
+					r_info[k].max_num = 1;
+					msg_print(Ind, "Max num was 0 and is now set to 1.");
+					if (!r_info[k].cur_num) return;
+				} else if (!r_info[k].cur_num) {
 					msg_print(Ind, "That monster is already at zero cur_num count.");
 					return;
 				}
