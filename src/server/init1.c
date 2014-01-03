@@ -4657,6 +4657,18 @@ errr init_r_info_txt(FILE *fp, char *buf)
 				r_info[i].flags8 |= RF8_NO_BLOCK;
 		}
 
+		/* As we know, chaos resistance implies confusion resistance.. */
+		if ((r_info[i].flags9 & RF9_RES_CHAOS)) r_info[i].flags3 |= RF3_NO_CONF;
+
+		/* For d_info rules: Formally an immunity implies the according resistance. */
+		if ((r_info[i].flags9 & RF9_IM_PSI)) r_info[i].flags9 |= RF9_RES_PSI;
+		if ((r_info[i].flags9 & RF9_IM_WATER)) r_info[i].flags3 |= RF3_RES_WATE;
+		if ((r_info[i].flags3 & RF3_IM_POIS)) r_info[i].flags9 |= RF9_RES_POIS;
+		if ((r_info[i].flags3 & RF3_IM_ELEC)) r_info[i].flags9 |= RF9_RES_ELEC;
+		if ((r_info[i].flags3 & RF3_IM_COLD)) r_info[i].flags9 |= RF9_RES_COLD;
+		if ((r_info[i].flags3 & RF3_IM_FIRE)) r_info[i].flags9 |= RF9_RES_FIRE;
+		if ((r_info[i].flags3 & RF3_IM_ACID)) r_info[i].flags9 |= RF9_RES_ACID;
+
 		/* clear flags that we want to be 'disabled' in defines.h for the time being,
 		   for example RF6_RAISE_DEAD isn't implemented fully! - C. Blue */
 		r_info[i].flags1 &= ~RF1_DISABLE_MASK;
