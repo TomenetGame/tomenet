@@ -7220,6 +7220,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		     !rand_int(100)))
 		    || (c_ptr->feat == FEAT_PERM_SOLID)
 		    || (c_ptr->feat == FEAT_PERM_FILL)
+		    || (c_ptr->feat == FEAT_PERM_SPIRIT)
 		    || (c_ptr->feat == FEAT_PERM_CLEAR)
 		    || (c_ptr->feat == FEAT_HOME)
 		    || (c_ptr->feat == FEAT_WALL_HOUSE))
@@ -8330,6 +8331,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 			(c_ptr->feat == FEAT_PERM_OUTER) ||
 			(c_ptr->feat == FEAT_PERM_SOLID) ||
 			(c_ptr->feat == FEAT_PERM_FILL) ||
+			(c_ptr->feat == FEAT_PERM_SPIRIT) ||
 			(c_ptr->feat == FEAT_LOGS) ||
 			(c_ptr->feat == FEAT_WALL_HOUSE) ||
 			(c_ptr->feat == FEAT_HOME_HEAD) ||
@@ -8752,6 +8754,7 @@ static void process_monster_golem(int Ind, int m_idx) {
 			(c_ptr->feat == FEAT_PERM_OUTER) ||
 			(c_ptr->feat == FEAT_PERM_SOLID) ||
 			(c_ptr->feat == FEAT_PERM_FILL) ||
+			(c_ptr->feat == FEAT_PERM_SPIRIT) ||
 			(c_ptr->feat == FEAT_LOGS) ||
 			(c_ptr->feat == FEAT_WALL_HOUSE) ||
 			(c_ptr->feat == FEAT_HOME_HEAD) ||

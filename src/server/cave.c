@@ -3092,7 +3092,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	}
 
 	/* Hack -- rare random hallucination, except on outer dungeon walls */
-	if (p_ptr->image && (!rand_int(256)) && (c_ptr->feat < FEAT_PERM_SOLID) && c_ptr->feat != FEAT_PERM_FILL) {
+	if (p_ptr->image && (!rand_int(256)) && (c_ptr->feat < FEAT_PERM_SOLID) && c_ptr->feat != FEAT_PERM_FILL && c_ptr->feat != FEAT_PERM_SPIRIT) {
 		/* Hallucinate */
 		image_random(ap, cp);
 	}

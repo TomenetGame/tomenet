@@ -1918,7 +1918,10 @@
 /* Permanent clear wall to fill up unused map areas (new for better visuals, especially w/ BIG_MAP) */
 #define FEAT_PERM_FILL		0x4F
 
-/* Features 0x4F - 0x52 -- unused */
+/* Permanent wall for Nether Realm (just for the visuals) */
+#define FEAT_PERM_SPIRIT	0x50
+
+/* Features 0x51 - 0x52 -- unused */
 
 /* Additional terrains */
 #define FEAT_SNOW               0x53

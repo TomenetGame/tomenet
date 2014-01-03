@@ -7804,6 +7804,8 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 
 		/* Avoid the edge of the dungeon */
 		if (c_ptr->feat == FEAT_PERM_SOLID) continue;
+		if (c_ptr->feat == FEAT_PERM_FILL) continue; /* usually only used _beyond_ FEAT_PERM_SOLID, added here though for Cloud Planes! */
+		if (c_ptr->feat == FEAT_PERM_SPIRIT) continue;
 
 		/* Avoid the edge of vaults */
 		if (c_ptr->feat == FEAT_PERM_OUTER) continue;
@@ -7825,6 +7827,8 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 			/* Hack -- Avoid outer/solid permanent walls */
 			if (zcave[y][x].feat == FEAT_PERM_SOLID) continue;
 			if (zcave[y][x].feat == FEAT_PERM_OUTER) continue;
+			if (zcave[y][x].feat == FEAT_PERM_FILL) continue; /* usually only used _beyond_ FEAT_PERM_SOLID, added here though for Cloud Planes! */
+			if (zcave[y][x].feat == FEAT_PERM_SPIRIT) continue;
 
 			/* Hack -- Avoid outer/solid granite walls */
 			if ((zcave[y][x].feat == feat_wall_outer) &&
@@ -9064,6 +9068,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	wilderness_type *wild;
 	//u32b flags1;
 	u32b flags2;		/* entire-dungeon flags */
+	int feat_boundary = FEAT_PERM_SOLID;
 
 	/* Don't build one of these on 1x1 (super small) levels,
 	   to avoid insta(ghost)kill if a player recalls into that pit - C. Blue */
@@ -9391,13 +9396,16 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	}
 
 	/* Hack for bottom of Nether Realm */
-	if (in_netherrealm(wpos) && dun_lev == netherrealm_end) {
+	if (netherrealm_level && dun_lev == netherrealm_end) {
 		destroyed = FALSE;
 		empty_level = TRUE; dark_empty = TRUE;
 		cavern = FALSE;
 		maze = FALSE; permaze = FALSE; bonus = FALSE;
 		nr_bottom = TRUE;
 	}
+
+	/* Nether Realm gets 'spirit walls' for better visuals - C. Blue */
+	if (netherrealm_level) feat_boundary = FEAT_PERM_SPIRIT;
 
 	/* Hack -- Start with permawalls
 	 * Hope run-length do a good job :) */
@@ -9410,8 +9418,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 			if (x >= dun->l_ptr->wid || y >= dun->l_ptr->hgt) c_ptr->feat = FEAT_PERM_FILL;
 			else
 #endif
-			/* Create granite wall */
-			c_ptr->feat = FEAT_PERM_SOLID;
+			/* Create granite (? granite != permanent) wall */
+			c_ptr->feat = feat_boundary;
 
 			/* Illuminate Arena if needed */
 			if (empty_level && !dark_empty) c_ptr->info |= CAVE_GLOW;
@@ -9647,13 +9655,13 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	/* Special boundary walls -- Top + bottom */
 	for (x = 0; x < dun->l_ptr->wid; x++) {
 		/* Clear previous contents, add "solid" perma-wall */
-		zcave[0][x].feat = FEAT_PERM_SOLID;
-		zcave[dun->l_ptr->hgt-1][x].feat = FEAT_PERM_SOLID;
+		zcave[0][x].feat = feat_boundary;
+		zcave[dun->l_ptr->hgt - 1][x].feat = feat_boundary;
 	}
 	/* Special boundary walls -- Left + right */
 	for (y = 0; y < dun->l_ptr->hgt; y++) {
-		zcave[y][0].feat = FEAT_PERM_SOLID;
-		zcave[y][dun->l_ptr->wid-1].feat = FEAT_PERM_SOLID;
+		zcave[y][0].feat = feat_boundary;
+		zcave[y][dun->l_ptr->wid - 1].feat = feat_boundary;
 	}
 #endif	/* 0 */
 
@@ -10255,6 +10263,7 @@ for(mx = 1; mx < 131; mx++) {
 			/* Must be in a wall, must not be in perma wall. Outside of vaults. */
 			if ((csbm_ptr->feat != FEAT_PERM_SOLID) &&
 			    (csbm_ptr->feat != FEAT_PERM_FILL) &&
+			    (csbm_ptr->feat != FEAT_PERM_SPIRIT) &&
 			    (csbm_ptr->feat != FEAT_PERM_INNER) &&
 			    (csbm_ptr->feat != FEAT_PERM_EXTRA) &&
 			    (csbm_ptr->feat != FEAT_PERM_OUTER) &&
@@ -10295,6 +10304,7 @@ for(mx = 1; mx < 131; mx++) {
 					cr_ptr = &zcave[y1][x1];
 					if ((cr_ptr->feat != FEAT_PERM_SOLID) &&
 					    (cr_ptr->feat != FEAT_PERM_FILL) &&
+					    (cr_ptr->feat != FEAT_PERM_SPIRIT) &&
 					    (cr_ptr->feat != FEAT_PERM_INNER) &&
 					    (cr_ptr->feat != FEAT_PERM_EXTRA) &&
 					    (cr_ptr->feat != FEAT_PERM_OUTER) &&
@@ -10342,6 +10352,8 @@ for(mx = 1; mx < 131; mx++) {
 						    (cr_ptr->feat != FEAT_PERM_INNER) &&
 						    (cr_ptr->feat != FEAT_PERM_EXTRA) &&
 						    (cr_ptr->feat != FEAT_PERM_OUTER) &&
+						    (cr_ptr->feat != FEAT_PERM_FILL) &&
+						    (cr_ptr->feat != FEAT_PERM_SPIRIT) &&
 						    (cr_ptr->feat != FEAT_WALL_SOLID) &&
 						    (cr_ptr->feat != FEAT_WALL_INNER) &&
 						    (cr_ptr->feat != FEAT_WALL_EXTRA) &&
