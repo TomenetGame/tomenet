@@ -58,6 +58,7 @@ R:100:0
 
 N:1:Mirkwood
 D:Mkw:a way to the Mirkwood Forest.
+B:81
 W:11:34:5:0:14:160
 #L:89:950:199:50:88:0:0:0:0:0
 #IDDC
@@ -73,6 +74,7 @@ R:100:0
 N:2:Mordor
 D:Mdr:a door to the Land of Mordor.
 W:34:66:15:0:14:160
+B:81
 #L:88:667:93:333:1:0:0:0:0:0
 #IDDC
 L:88:667:93:333:1:0:88:333:93:166
@@ -103,6 +105,7 @@ R:100:0
 
 N:4:Barrow-Downs
 D:BDw:a way to the Barrow-Downs.
+B:81
 # tmp. Made deeper (consider building Mirkwood near Bree)
 # instantiated the Wight-King, who holds a cheaper, still funny art ;) The Stone of Lore
 #W:1:10:1:0:14:160
@@ -130,6 +133,7 @@ R:75:0
 # finally meet Sauron here, now exclusively
 N:5:Mount Doom
 D:MDm:a way to the top of the Mount Doom.
+B:81
 W:85:99:38:0:14:160
 #L:86:900:205:100:1:0:0:0:0:0
 #IDDC
@@ -154,6 +158,7 @@ M:IM_FIRE
 # HARDCODING-WARNINGS: netherrealm_bottom/netherrealm_level/special stores depend on NR going from dlev 166 to 166 + 30
 N:6:Nether Realm
 D:Nth:a magical portal to the Nether Realm.
+B:80
 #W:666:696:40:0:14:160
 W:166:196:40:0:14:160
 L:102:800:86:150:85:50:0:0:0:0
@@ -218,6 +223,7 @@ M:UNIQUE
 # a worthwhile reward...)
 N:9:Cirith Ungol
 D:CUg:an entrance to Cirith Ungol.
+B:81
 W:25:51:10:0:14:160
 #L:87:50:88:650:16:300:0:0:0:0
 #IDDC
@@ -242,6 +248,7 @@ M:ORC | R_CHAR_w | R_CHAR_m | R_CHAR_j
 # guarded by Golgarach, the Living Rock, with the Anchor of Space-Time
 N:10:The Heart of the Earth
 D:HoE:a passage leading into the very heart of the world.
+B:81
 W:25:37:10:0:14:160
 #L:1:1000:1:0:1:0:0:0:0:0
 #IDDC
@@ -328,6 +335,7 @@ M:R_CHAR_p
 # There is Azog with the Wand of Thrain at the bottom
 N:19:The Orc Cave
 D:Orc:a dark tunnel leading to an Orc Cave.
+B:81
 W:10:23:3:0:35:200
 #L:88:1000:1:0:1:0:0:0:0:0
 #IDDC
@@ -351,6 +359,7 @@ M:ORC | R_CHAR_k | R_CHAR_o | R_CHAR_O
 # Glaurung (715) guards the Nauglamir -> Smaug (697)
 N:20:Erebor
 D:Ere:a tunnel leading into depths of the Lonely Mountain.
+B:104
 W:50:61:35:0:20:140
 #L:88:1000:1:0:1:0:0:0:0:0
 #IDDC
@@ -375,6 +384,7 @@ M:R_CHAR_A
 # Old Man Willow protects it, with the Boomerang of Beor.
 N:21:The Old Forest
 D:OFr:a path into the Old Forest.
+B:81
 W:13:26:5:0:15:100
 #L:88:760:84:160:199:80:0:0:0:0
 #IDDC
@@ -398,6 +408,7 @@ M:UNDEAD | R_CHAR_h
 # There is the Balrog of Moria with The Quarterstaff of Olorin
 N:22:The Mines of Moria
 D:MoM:a stone door leading to the Mines of Moria.
+B:81
 W:30:50:15:0:40:40
 #L:88:995:49:5:1:0:0:0:0:0
 #IDDC
@@ -451,6 +462,7 @@ R:10:0
 # The Watcher in the Water at the bottom guarding the Trident of Wrath
 N:24:The Small Water Cave
 D:SWC:the entrance to a small water cave.
+B:81
 W:32:35:15:0:14:160
 #L:84:1000:84:0:84:0:0:0:0:0  changed to deep water, for druids
 #L:187:1000:84:0:84:0:0:0:0:0
@@ -478,6 +490,7 @@ M:IM_COLD
 # Levels 45-70
 N:25:The Sacred Land of Mountains
 D:LoM:the way to The Sacred Land of Mountains.
+B:104
 W:40:45:20:0:14:160
 #L:89:1000:89:0:89:0:0:0:0:0
 #IDDC
@@ -524,6 +537,7 @@ R:40:0
 # guarded by the Sandworm Queen (and her children), who will drop her armour
 N:27:The Sandworm lair
 D:SwL:a sandhole.
+B:81
 W:22:30:12:0:5:200
 #L:91:850:94:100:93:50:0:0:0:0
 #IDDC
@@ -603,7 +617,7 @@ R:75:0
 # levels 1-2
 N:31:The Shores of Valinor
 D:SOV:Valinor, for retirement.
-B:101
+B:104
 W:200:200:1:0:14:160
 L:89:1000:0:0:0:0:0:0:0:0
 A:101:1000:0:0:0:0:0:0:0:0:101:101

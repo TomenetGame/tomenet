@@ -7803,9 +7803,7 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 		c_ptr = &zcave[tmp_row][tmp_col];
 
 		/* Avoid the edge of the dungeon */
-		if (c_ptr->feat == FEAT_PERM_SOLID) continue;
-		if (c_ptr->feat == FEAT_PERM_FILL) continue; /* usually only used _beyond_ FEAT_PERM_SOLID, added here though for Cloud Planes! */
-		if (c_ptr->feat == FEAT_PERM_SPIRIT) continue;
+		if ((f_info[c_ptr->feat].flags2 && FF2_BOUNDARY)) continue;
 
 		/* Avoid the edge of vaults */
 		if (c_ptr->feat == FEAT_PERM_OUTER) continue;
@@ -7825,10 +7823,8 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 			x = tmp_col + col_dir;
 
 			/* Hack -- Avoid outer/solid permanent walls */
-			if (zcave[y][x].feat == FEAT_PERM_SOLID) continue;
 			if (zcave[y][x].feat == FEAT_PERM_OUTER) continue;
-			if (zcave[y][x].feat == FEAT_PERM_FILL) continue; /* usually only used _beyond_ FEAT_PERM_SOLID, added here though for Cloud Planes! */
-			if (zcave[y][x].feat == FEAT_PERM_SPIRIT) continue;
+			if ((f_info[zcave[y][x].feat].flags2 & FF2_BOUNDARY)) continue;
 
 			/* Hack -- Avoid outer/solid granite walls */
 			if ((zcave[y][x].feat == feat_wall_outer) &&
@@ -9065,10 +9061,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 	cave_type **zcave;
 	dungeon_type *d_ptr = getdungeon(wpos);
+	dungeon_info_type *di_ptr = &d_info[d_ptr->type];
 	wilderness_type *wild;
 	//u32b flags1;
 	u32b flags2;		/* entire-dungeon flags */
-	int feat_boundary = FEAT_PERM_SOLID;
+	int feat_boundary;
 
 	/* Don't build one of these on 1x1 (super small) levels,
 	   to avoid insta(ghost)kill if a player recalls into that pit - C. Blue */
@@ -9404,8 +9401,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		nr_bottom = TRUE;
 	}
 
-	/* Nether Realm gets 'spirit walls' for better visuals - C. Blue */
-	if (netherrealm_level) feat_boundary = FEAT_PERM_SPIRIT;
+	/* All dungeons get their own visuals now, if defined in B-line in d_info - C. Blue */
+	feat_boundary = di_ptr->feat_boundary;
 
 	/* Hack -- Start with permawalls
 	 * Hope run-length do a good job :) */
@@ -10261,32 +10258,9 @@ for(mx = 1; mx < 131; mx++) {
 			x = rand_int(dun->l_ptr->wid-4)+2;
 			csbm_ptr = &zcave[y][x];
 			/* Must be in a wall, must not be in perma wall. Outside of vaults. */
-			if ((csbm_ptr->feat != FEAT_PERM_SOLID) &&
-			    (csbm_ptr->feat != FEAT_PERM_FILL) &&
-			    (csbm_ptr->feat != FEAT_PERM_SPIRIT) &&
-			    (csbm_ptr->feat != FEAT_PERM_INNER) &&
-			    (csbm_ptr->feat != FEAT_PERM_EXTRA) &&
-			    (csbm_ptr->feat != FEAT_PERM_OUTER) &&
-			    (!(csbm_ptr->info & CAVE_ICKY)) &&
-			    ((csbm_ptr->feat == FEAT_WALL_SOLID) ||
-			    (csbm_ptr->feat == FEAT_WALL_INNER) ||
-			    (csbm_ptr->feat == FEAT_WALL_EXTRA) ||
-			    (csbm_ptr->feat == FEAT_WALL_OUTER) ||
-			    (csbm_ptr->feat == FEAT_MAGMA) ||
-			    (csbm_ptr->feat == FEAT_QUARTZ) ||
-			    (csbm_ptr->feat == FEAT_MAGMA_H) ||
-			    (csbm_ptr->feat == FEAT_QUARTZ_H) ||
-			    (csbm_ptr->feat == FEAT_MAGMA_K) ||
-			    (csbm_ptr->feat == FEAT_QUARTZ_K) ||
-			    (csbm_ptr->feat == FEAT_ICE_WALL) ||
-			    (csbm_ptr->feat == FEAT_TREE) ||
-			    (csbm_ptr->feat == FEAT_BUSH) ||
-			    (csbm_ptr->feat == FEAT_DEAD_TREE) ||
-			    (csbm_ptr->feat == FEAT_MOUNTAIN) ||
-			    (csbm_ptr->feat == FEAT_LAVA_WALL) ||
-			    (csbm_ptr->feat == FEAT_SANDWALL) ||
-			    (csbm_ptr->feat == FEAT_SANDWALL_H) ||
-			    (csbm_ptr->feat == FEAT_SANDWALL_K)))
+			if ((f_info[csbm_ptr->feat].flags1 & FF1_WALL) &&
+			    !(f_info[csbm_ptr->feat].flags1 & FF1_PERMANENT) &&
+			    !(csbm_ptr->info & CAVE_ICKY))
 			{
 				/* must have at least 1 'free' adjacent field */
 				bool found1free = FALSE;
@@ -10302,32 +10276,8 @@ for(mx = 1; mx < 131; mx++) {
 					case 7: x1 = x - 1; y1 = y; break;
 					}
 					cr_ptr = &zcave[y1][x1];
-					if ((cr_ptr->feat != FEAT_PERM_SOLID) &&
-					    (cr_ptr->feat != FEAT_PERM_FILL) &&
-					    (cr_ptr->feat != FEAT_PERM_SPIRIT) &&
-					    (cr_ptr->feat != FEAT_PERM_INNER) &&
-					    (cr_ptr->feat != FEAT_PERM_EXTRA) &&
-					    (cr_ptr->feat != FEAT_PERM_OUTER) &&
-					    (cr_ptr->feat != FEAT_WALL_SOLID) &&
-					    (cr_ptr->feat != FEAT_WALL_INNER) &&
-					    (cr_ptr->feat != FEAT_WALL_EXTRA) &&
-					    (cr_ptr->feat != FEAT_WALL_OUTER) &&
-					    (cr_ptr->feat != FEAT_MAGMA) && 
-					    (cr_ptr->feat != FEAT_QUARTZ) &&
-					    (cr_ptr->feat != FEAT_MAGMA_H) &&
-					    (cr_ptr->feat != FEAT_QUARTZ_H) &&
-					    (cr_ptr->feat != FEAT_MAGMA_K) &&
-					    (cr_ptr->feat != FEAT_QUARTZ_K) &&
-					    (cr_ptr->feat != FEAT_ICE_WALL) &&
-					    (cr_ptr->feat != FEAT_TREE) &&
-					    (cr_ptr->feat != FEAT_BUSH) &&
-					    (cr_ptr->feat != FEAT_DEAD_TREE) &&
-					    (cr_ptr->feat != FEAT_MOUNTAIN) &&
-					    (cr_ptr->feat != FEAT_LAVA_WALL) &&
-					    (cr_ptr->feat != FEAT_SANDWALL) &&
-					    (cr_ptr->feat != FEAT_SANDWALL_H) &&
-					    (cr_ptr->feat != FEAT_SANDWALL_K))
-					found1free = TRUE;
+					if (!(f_info[cr_ptr->feat].flags1 & FF1_WALL))
+						found1free = TRUE;
 				}
 
 				if (found1free) {
@@ -10348,32 +10298,7 @@ for(mx = 1; mx < 131; mx++) {
 						case 7:x1 = x - 1; y1 = y; break;
 						}
 						cr_ptr = &zcave[y1][x1];
-						if (!((cr_ptr->feat != FEAT_PERM_SOLID) &&
-						    (cr_ptr->feat != FEAT_PERM_INNER) &&
-						    (cr_ptr->feat != FEAT_PERM_EXTRA) &&
-						    (cr_ptr->feat != FEAT_PERM_OUTER) &&
-						    (cr_ptr->feat != FEAT_PERM_FILL) &&
-						    (cr_ptr->feat != FEAT_PERM_SPIRIT) &&
-						    (cr_ptr->feat != FEAT_WALL_SOLID) &&
-						    (cr_ptr->feat != FEAT_WALL_INNER) &&
-						    (cr_ptr->feat != FEAT_WALL_EXTRA) &&
-						    (cr_ptr->feat != FEAT_WALL_OUTER) &&
-						    (cr_ptr->feat != FEAT_MAGMA) && 
-						    (cr_ptr->feat != FEAT_QUARTZ) &&
-						    (cr_ptr->feat != FEAT_MAGMA_H) &&
-						    (cr_ptr->feat != FEAT_QUARTZ_H) &&
-						    (cr_ptr->feat != FEAT_MAGMA_K) &&
-						    (cr_ptr->feat != FEAT_QUARTZ_K) &&
-						    (cr_ptr->feat != FEAT_ICE_WALL) &&
-						    (cr_ptr->feat != FEAT_TREE) &&
-						    (cr_ptr->feat != FEAT_BUSH) &&
-						    (cr_ptr->feat != FEAT_DEAD_TREE) &&
-						    (cr_ptr->feat != FEAT_MOUNTAIN) &&
-						    (cr_ptr->feat != FEAT_LAVA_WALL) &&
-						    (cr_ptr->feat != FEAT_SANDWALL) &&
-						    (cr_ptr->feat != FEAT_SANDWALL_H) &&
-						    (cr_ptr->feat != FEAT_SANDWALL_K)))
-						{
+						if ((f_info[cr_ptr->feat].flags1 & FF1_WALL)) {
 							if (r != 0) r++;
 							/* chain mustn't start in a diagonal corner..: */
 							if ((r == 0) && ((k % 2) == 1)) r++;

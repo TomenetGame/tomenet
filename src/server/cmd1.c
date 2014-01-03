@@ -5133,13 +5133,7 @@ bool player_can_enter(int Ind, byte feature) {
 	bool only_wall = FALSE;
 
 	/* Dungeon Master pass through everything (cept array boundary :) */
-	if (p_ptr->admin_dm &&
-	    feature != FEAT_PERM_SOLID &&
-	    feature != FEAT_PERM_FILL &&
-	    feature != FEAT_PERM_SPIRIT &&
-	    feature != FEAT_HIGH_MOUNT_SOLID &&
-	    feature != FEAT_GLIT_WATER)
-//	if (p_ptr->admin_dm && !(f_info[feature].flags1 & FF1_BOUNDARY))
+	if (p_ptr->admin_dm && !(f_info[feature].flags2 & FF2_BOUNDARY))
 		return (TRUE);
 
 	/* Player can not walk through "walls" unless in Shadow Form */
@@ -5811,6 +5805,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 					msg_print(Ind, "There is a tree blocking your way.");
 				} else if (c_ptr->feat == FEAT_DARK_PIT) {
 					msg_print(Ind, "There is a dark pit in your way.");
+				} else if (c_ptr->feat == FEAT_PERM_MOUNTAIN || c_ptr->feat == FEAT_HIGH_MOUNT_SOLID) {
+					msg_print(Ind, "There is a steep mountain blocking your way.");
+				} else if (c_ptr->feat == FEAT_MOUNTAIN || c_ptr->feat == FEAT_HIGH_MOUNTAIN) {
+					msg_print(Ind, "There is mountain blocking your way.");
 				}
 				/* Wall (or secret door) */
 				else if (c_ptr->feat != FEAT_SIGN) {

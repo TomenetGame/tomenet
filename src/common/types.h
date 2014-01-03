@@ -2961,6 +2961,7 @@ struct dungeon_info_type
 	u32b text;                      /* Description */
 	char short_name[3];             /* Short name */
 
+	s16b feat_boundary;		/* Boundary permanent wall visual */
 	s16b floor[5];                    /* Floor tile n */
 	s16b floor_percent[5][2];         /* Chance of type n [0]; End chance of type n [1] */
 	s16b outer_wall;                /* Outer wall tile */

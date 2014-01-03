@@ -7218,9 +7218,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		    !((r_ptr->flags2 & RF2_KILL_WALL) &&
 		     (r_ptr->flags2 & RF2_PASS_WALL) &&
 		     !rand_int(100)))
-		    || (c_ptr->feat == FEAT_PERM_SOLID)
-		    || (c_ptr->feat == FEAT_PERM_FILL)
-		    || (c_ptr->feat == FEAT_PERM_SPIRIT)
+		    || (f_info[c_ptr->feat].flags2 & FF2_BOUNDARY)
 		    || (c_ptr->feat == FEAT_PERM_CLEAR)
 		    || (c_ptr->feat == FEAT_HOME)
 		    || (c_ptr->feat == FEAT_WALL_HOUSE))
@@ -8325,21 +8323,16 @@ static void process_monster_pet(int Ind, int m_idx) {
 			do_move = TRUE;
 		}
 		/* Permanent wall / permanently wanted structure */
-		else if (((c_ptr->feat >= FEAT_PERM_EXTRA) ||
-			(c_ptr->feat == FEAT_PERM_CLEAR) ||
-			(c_ptr->feat == FEAT_PERM_INNER) ||
-			(c_ptr->feat == FEAT_PERM_OUTER) ||
-			(c_ptr->feat == FEAT_PERM_SOLID) ||
-			(c_ptr->feat == FEAT_PERM_FILL) ||
-			(c_ptr->feat == FEAT_PERM_SPIRIT) ||
-			(c_ptr->feat == FEAT_LOGS) ||
+		else if (((f_info[c_ptr->feat].flags1 && FF1_PERMANENT) ||
+			(f_info[c_ptr->feat].flags2 && FF2_BOUNDARY) ||
 			(c_ptr->feat == FEAT_WALL_HOUSE) ||
 			(c_ptr->feat == FEAT_HOME_HEAD) ||
 			(c_ptr->feat == FEAT_HOME_TAIL) ||
 			(c_ptr->feat == FEAT_HOME_OPEN) ||
 			(c_ptr->feat == FEAT_HOME) ||
 			(c_ptr->feat == FEAT_ALTAR_HEAD) ||
-			(c_ptr->feat == FEAT_ALTAR_TAIL)) && !(
+			(c_ptr->feat == FEAT_ALTAR_TAIL))
+			&& !(
 			(c_ptr->feat == FEAT_TREE) ||
 			(c_ptr->feat == FEAT_BUSH) ||
 			(c_ptr->feat == FEAT_DEAD_TREE)))
@@ -8748,14 +8741,8 @@ static void process_monster_golem(int Ind, int m_idx) {
 			do_move = TRUE;
 		}
 		/* Permanent wall / permanently wanted structure */
-		else if (((c_ptr->feat >= FEAT_PERM_EXTRA) ||
-			(c_ptr->feat == FEAT_PERM_CLEAR) ||
-			(c_ptr->feat == FEAT_PERM_INNER) ||
-			(c_ptr->feat == FEAT_PERM_OUTER) ||
-			(c_ptr->feat == FEAT_PERM_SOLID) ||
-			(c_ptr->feat == FEAT_PERM_FILL) ||
-			(c_ptr->feat == FEAT_PERM_SPIRIT) ||
-			(c_ptr->feat == FEAT_LOGS) ||
+		else if (((f_info[c_ptr->feat].flags1 && FF1_PERMANENT) ||
+			(f_info[c_ptr->feat].flags2 && FF2_BOUNDARY) ||
 			(c_ptr->feat == FEAT_WALL_HOUSE) ||
 			(c_ptr->feat == FEAT_HOME_HEAD) ||
 			(c_ptr->feat == FEAT_HOME_TAIL) ||
@@ -8764,7 +8751,8 @@ static void process_monster_golem(int Ind, int m_idx) {
 			(c_ptr->feat == FEAT_HOME_OPEN) ||
 			(c_ptr->feat == FEAT_HOME) ||
 			(c_ptr->feat == FEAT_ALTAR_HEAD) ||
-			(c_ptr->feat == FEAT_ALTAR_TAIL)) && !(
+			(c_ptr->feat == FEAT_ALTAR_TAIL))
+			&& !(
 			(c_ptr->feat == FEAT_TREE) ||
 			(c_ptr->feat == FEAT_BUSH) ||
 //			(c_ptr->feat == FEAT_EVIL_TREE) ||

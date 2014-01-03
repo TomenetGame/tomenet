@@ -1920,6 +1920,7 @@
 
 /* Permanent wall for Nether Realm (just for the visuals) */
 #define FEAT_PERM_SPIRIT	0x50
+#define FEAT_PERM_MOUNTAIN	0x51
 
 /* Features 0x51 - 0x52 -- unused */
 
@@ -5625,16 +5626,19 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define FF1_BLOCK_LOS		0x40000000L	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
 #define FF1_BLOCK_CONTACT	0x80000000L	/* like BLOCK_LOS, except players can see across it even if they cant attack (nor can monsters) */
 
+/* for switching places with another player: */
+#define FF1_SWITCH_MASK \
+	(FF1_FLOOR | FF1_CAN_LEVITATE | FF1_CAN_FLY | FF1_CAN_RUN | FF1_CAN_CLIMB)
+
+
 #define FF2_LAMP_LITE		0x00000001L	/* Gets coloured by view_granite_lite. Implies SPECIAL_LITE. */
 #define FF2_LAMP_LITE_SNOW	0x00000002L	/* Gets coloured by view_granite_lite, if it's winter season, due to assumed snow-covering. Implies SPECIAL_LITE if successful. */
 #define FF2_SPECIAL_LITE	0x00000004L	/* Gets coloured slate/gets slightly darkened by special fx: no LoS/no GLOW. This is implied by LAMP_LITE and successful LAMP_LITE_SNOW. */
 #define FF2_NIGHT_DARK		0x00000008L	/* Stays darkened at night, unaffected by glow (magical light) or lite (lamps) */
 #define FF2_NO_SHADE		0x00000010L	/* Don't shade to TERM_SLATE in view_bright_lite (or vault walls become indistinguishable from granite, without magic light) */
 #define FF2_NO_LITE_WHITEN	0x00000020L	/* Won't change to WHITE or L_WHITE lamp light colour. For tiles that are affected from yellow light but retain their colour in white light. */
-
-/* for switching places with another player: */
-#define FF1_SWITCH_MASK \
-	(FF1_FLOOR | FF1_CAN_LEVITATE | FF1_CAN_FLY | FF1_CAN_RUN | FF1_CAN_CLIMB)
+//hole
+#define FF2_BOUNDARY		0x80000000L	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
 
 
 /*** Dungeon type flags -- DG ***/

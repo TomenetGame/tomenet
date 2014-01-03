@@ -1013,7 +1013,7 @@ static cptr f_info_flags2[] =
 	"XXX",
 	"XXX",
 	"XXX",
-	"XXX"
+	"BOUNDARY"
 };
 
 #if 1	// flags from ToME, for next expansion
@@ -6013,6 +6013,9 @@ errr init_d_info_txt(FILE *fp, char *buf)
 			/* Point at the "info" */
 			d_ptr = &d_info[i];
 
+			/* Default for dungeon level borders: Solid permanent granite wall. */
+			d_ptr->feat_boundary = FEAT_PERM_SOLID;
+
 			/* New (for fountains of blood) - remember own index */
 //			d_ptr->idx = error_idx;
 
@@ -6036,8 +6039,7 @@ errr init_d_info_txt(FILE *fp, char *buf)
 			d_ptr->fill_method = 1;
 			rule_num = -1;
 			r_char_number = 0;
-			for (j = 0; j < 5; j++)
-			{
+			for (j = 0; j < 5; j++) {
 				int k;
 
 				d_ptr->rules[j].mode = DUNGEON_MODE_NONE;
@@ -6082,6 +6084,19 @@ errr init_d_info_txt(FILE *fp, char *buf)
 			/* Advance the index */
 			d_head->text_size += strlen(s);
 
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'R' for "monster generation Rule" (up to 5 lines) */
+		if (buf[0] == 'B') {
+			int feat_boundary;
+
+			/* Scan for the values */
+			if (1 != sscanf(buf + 2, "%d",
+				&feat_boundary)) return (1);
+
+			d_ptr->feat_boundary = feat_boundary;
 			/* Next... */
 			continue;
 		}

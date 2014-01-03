@@ -165,6 +165,7 @@ F:WALL | NO_WALK | CAN_PASS | NOTICE | SUPPORT_LIGHT
 N:22:permanent wall
 #G: :w
 G: :w
+F:PERMANENT
 #added all of those flags to allow running wilderness transitions - C. Blue:
 #removed this one too and added a hack in run_step..  F:DONT_NOTICE_RUNNING
 #removed these again, see cmd1.c / see_wall():   | CAN_RUN | FLOOR
@@ -483,7 +484,7 @@ F:DONT_NOTICE_RUNNING | SPECIAL_LITE
 N:63:permanent wall
 G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | SPECIAL_LITE
+F:DONT_NOTICE_RUNNING | SPECIAL_LITE | BOUNDARY
 # | NO_SHADE <- in case ice walls need to be distinguished
 
 N:64:rune of warding
@@ -558,15 +559,23 @@ F:DONT_NOTICE_RUNNING | LAMP_LITE
 N:79:permanent clear wall
 G: :w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | BOUNDARY
 
 #permanent wall in the Nether Realm
 N:80:spirit wall
 G:#:v
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | BOUNDARY
 
-# 81 --> 82 UNSUSED
+#permanent wall in a bunch of dungeons, instead of default perma wall
+N:81:steep mountain chain
+G:^:u
+F:WALL | NO_WALK | NO_VISION | PERMANENT
+F:DONT_NOTICE_RUNNING | NIGHT_DARK | BOUNDARY
+D:1:This rock is far too hard.
+D:2:a very hard and steep stone wall block blocking your way
+
+# 82 UNSUSED
 
 N:83:snow
 G:.:w
@@ -731,13 +740,13 @@ S:b:B:B:B:B:b:B
 F:ATTR_MULTI
 #F:FLOOR | CAN_LEVITATE | CAN_FLY | REMEMBER | SUPPORT_LIGHT | CAN_RUN
 F:DONT_NOTICE_RUNNING
-F:WALL | NO_WALK | NO_VISION | PERMANENT
+F:WALL | NO_WALK | NO_VISION | PERMANENT | BOUNDARY
 
 #impassable by admins, like PERM_FEAT_SOLID just as mountain chain
 N:104:high mountain chain
 G:^:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT
-F:DONT_NOTICE_RUNNING | NIGHT_DARK
+F:DONT_NOTICE_RUNNING | NIGHT_DARK | BOUNDARY
 D:1:This rock is far too hard.
 D:2:a very hard stone block blocking your way
 #might also add 'permanent water' and 'permanent grass' to improve Valinor.
