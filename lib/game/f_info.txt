@@ -575,7 +575,9 @@ F:DONT_NOTICE_RUNNING | NIGHT_DARK | BOUNDARY
 D:1:This rock is far too hard.
 D:2:a very hard and steep stone wall block blocking your way
 
-# 82 UNSUSED
+N:82:solidified cloud
+G:.:W
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | LAMP_LITE
 
 N:83:snow
 G:.:w
@@ -756,6 +758,15 @@ N:105:unstable Void Jumpgate
 G:+:M
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 D:0:An unstable silhouette of a void jumpgate in the making
+
+N:106:abyss
+G: :d
+F:LOS | NO_WALK | DONT_NOTICE_RUNNING
+D:0:Ohhh, it is *dark* and *deep*.
+
+
+# 107..159 unused -------------------------------------------------------------
+
 
 N:160:Void Jumpgate
 G:+:v

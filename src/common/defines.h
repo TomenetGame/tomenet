@@ -1918,11 +1918,11 @@
 /* Permanent clear wall to fill up unused map areas (new for better visuals, especially w/ BIG_MAP) */
 #define FEAT_PERM_FILL		0x4F
 
-/* Permanent wall for Nether Realm (just for the visuals) */
+/* Permanent wall for Nether Realm/other dungeons (just for the visuals) */
 #define FEAT_PERM_SPIRIT	0x50
 #define FEAT_PERM_MOUNTAIN	0x51
 
-/* Features 0x51 - 0x52 -- unused */
+#define FEAT_FLOOR_CLOUD	0x52
 
 /* Additional terrains */
 #define FEAT_SNOW               0x53
@@ -1948,8 +1948,9 @@
 #define FEAT_GLIT_WATER         0x67	/* For Valinor */
 #define FEAT_HIGH_MOUNT_SOLID	0x68	/* For Valinor */
 #define FEAT_BETWEEN_TEMP	0x69	/* Just a marker for divine_gateway() */
+#define FEAT_ABYSS		0x6A
 
-/* Features 0x67 - 0x9F -- unused */
+/* Features 0x6B - 0x9F -- unused */
 
 #define FEAT_BETWEEN            0xA0 /* 160 */
 
