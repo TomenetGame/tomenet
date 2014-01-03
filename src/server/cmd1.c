@@ -5737,46 +5737,44 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		if (!(*w_ptr & CAVE_MARK) &&
 		    (p_ptr->blind || !(*w_ptr & CAVE_LITE)))
 		{
-			if (c_ptr->feat == FEAT_SIGN){
-				/*msg_print(Ind, "\377GYou feel a signpost blocking your way.");*/
+			if (c_ptr->feat == FEAT_SIGN) {
+				msg_print(Ind, "You feel some structure blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
-			}
-
 			/* Rubble */
-			if (c_ptr->feat == FEAT_RUBBLE) {
-				msg_print(Ind, "\377GYou feel some rubble blocking your way.");
+			} else if (c_ptr->feat == FEAT_RUBBLE) {
+				msg_print(Ind, "You feel some rubble blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
-			}
-
 			/* Closed door */
-			else if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
-				 (c_ptr->feat == FEAT_HOME))
-			{
-				msg_print(Ind, "\377GYou feel a closed door blocking your way.");
+			} else if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
+				 (c_ptr->feat == FEAT_HOME)) {
+				msg_print(Ind, "You feel a closed door blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
-			}
-
 			/* Tree */
-			else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE ||
+			} else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE ||
 			    c_ptr->feat == FEAT_BUSH) {
-				msg_print(Ind, "\377GYou feel a tree blocking your way.");
+				msg_print(Ind, "You feel a tree blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
-			}
-
 			/* Dark Pit */
-			else if (c_ptr->feat == FEAT_DARK_PIT) {
-				msg_print(Ind, "\377GYou don't feel any ground ahead of you.");
+			} else if (c_ptr->feat == FEAT_DARK_PIT) {
+				msg_print(Ind, "You don't feel any ground ahead of you.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
-			}
-
+			/* Mountains */
+			} else if (c_ptr->feat == FEAT_PERM_MOUNTAIN || c_ptr->feat == FEAT_HIGH_MOUNT_SOLID) {
+				msg_print(Ind, "There is a steep mountain blocking your way.");
+				*w_ptr |= CAVE_MARK;
+				everyone_lite_spot(wpos, y, x);
+			} else if (c_ptr->feat == FEAT_MOUNTAIN || c_ptr->feat == FEAT_HIGH_MOUNTAIN) {
+				msg_print(Ind, "There is mountain blocking your way.");
+				*w_ptr |= CAVE_MARK;
+				everyone_lite_spot(wpos, y, x);
 			/* Wall (or secret door) */
-			else {
-				msg_print(Ind, "\377GYou feel a wall blocking your way.");
+			} else {
+				msg_print(Ind, "You feel a wall blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
 			}
