@@ -4614,8 +4614,8 @@ void do_slash_cmd(int Ind, char *message)
 						//d_ptr->nr_char = d_info[type].nr_char;
 
 #ifdef RPG_SERVER /* Make towers harder */
-//						d_ptr->flags2 &= ~(DF2_IRON || DF2_IRONFIX1 || DF2_IRONFIX2 || DF2_IRONFIX3 || DF2_IRONFIX4 || 
-//							    DF2_IRONRND1 || DF2_IRONRND2 || DF2_IRONRND3 || DF2_IRONRND4) ; /* Reset flags first */
+//						d_ptr->flags2 &= ~(DF2_IRON | DF2_IRONFIX1 | DF2_IRONFIX2 | DF2_IRONFIX3 | DF2_IRONFIX4 | 
+//							    DF2_IRONRND1 | DF2_IRONRND2 | DF2_IRONRND3 | DF2_IRONRND4) ; /* Reset flags first */
 //						if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
 
 						if (
@@ -4668,8 +4668,8 @@ void do_slash_cmd(int Ind, char *message)
 						}
 
 #ifdef RPG_SERVER /* Make dungeons harder */
-//						d_ptr->flags2 &= ~(DF2_IRON || DF2_IRONFIX1 || DF2_IRONFIX2 || DF2_IRONFIX3 || DF2_IRONFIX4 || 
-//							    DF2_IRONRND1 || DF2_IRONRND2 || DF2_IRONRND3 || DF2_IRONRND4) ; /* Reset flags first */
+//						d_ptr->flags2 &= ~(DF2_IRON | DF2_IRONFIX1 | DF2_IRONFIX2 | DF2_IRONFIX3 | DF2_IRONFIX4 | 
+//							    DF2_IRONRND1 | DF2_IRONRND2 | DF2_IRONRND3 | DF2_IRONRND4) ; /* Reset flags first */
 //						if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
 						if (
  #if 0

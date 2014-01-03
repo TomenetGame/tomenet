@@ -7803,7 +7803,7 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 		c_ptr = &zcave[tmp_row][tmp_col];
 
 		/* Avoid the edge of the dungeon */
-		if ((f_info[c_ptr->feat].flags2 && FF2_BOUNDARY)) continue;
+		if ((f_info[c_ptr->feat].flags2 & FF2_BOUNDARY)) continue;
 
 		/* Avoid the edge of vaults */
 		if (c_ptr->feat == FEAT_PERM_OUTER) continue;

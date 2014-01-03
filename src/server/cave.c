@@ -3092,7 +3092,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	}
 
 	/* Hack -- rare random hallucination, except on outer dungeon walls */
-	if (p_ptr->image && (!rand_int(256)) && !(f_info[c_ptr->feat].flags2 && FF2_BOUNDARY)) {
+	if (p_ptr->image && (!rand_int(256)) && !(f_info[c_ptr->feat].flags2 & FF2_BOUNDARY)) {
 		/* Hallucinate */
 		image_random(ap, cp);
 	}

@@ -8323,8 +8323,8 @@ static void process_monster_pet(int Ind, int m_idx) {
 			do_move = TRUE;
 		}
 		/* Permanent wall / permanently wanted structure */
-		else if (((f_info[c_ptr->feat].flags1 && FF1_PERMANENT) ||
-			(f_info[c_ptr->feat].flags2 && FF2_BOUNDARY) ||
+		else if (((f_info[c_ptr->feat].flags1 & FF1_PERMANENT) ||
+			(f_info[c_ptr->feat].flags2 & FF2_BOUNDARY) ||
 			(c_ptr->feat == FEAT_WALL_HOUSE) ||
 			(c_ptr->feat == FEAT_HOME_HEAD) ||
 			(c_ptr->feat == FEAT_HOME_TAIL) ||
@@ -8741,8 +8741,8 @@ static void process_monster_golem(int Ind, int m_idx) {
 			do_move = TRUE;
 		}
 		/* Permanent wall / permanently wanted structure */
-		else if (((f_info[c_ptr->feat].flags1 && FF1_PERMANENT) ||
-			(f_info[c_ptr->feat].flags2 && FF2_BOUNDARY) ||
+		else if (((f_info[c_ptr->feat].flags1 & FF1_PERMANENT) ||
+			(f_info[c_ptr->feat].flags2 & FF2_BOUNDARY) ||
 			(c_ptr->feat == FEAT_WALL_HOUSE) ||
 			(c_ptr->feat == FEAT_HOME_HEAD) ||
 			(c_ptr->feat == FEAT_HOME_TAIL) ||

@@ -2865,12 +2865,12 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 	}
 
 	if (!(summon_override_checks & SO_GRID_EMPTY)) {
-#if 0
-		if (!(cave_empty_bold(zcave, y, x) ||
-		    (cave_empty_mountain(zcave, y, x) &&
-		    ((r_ptr->flags2 && RF2_PASS_WALL) ||
-		     (r_ptr->flags8 && RF8_WILD_MOUNTAIN) ||
-		     (r_ptr->flags8 && RF8_WILD_VOLCANO))))) return 12;
+#if 1
+		if (!(r_ptr->flags2 & RF2_PASS_WALL) &&
+		    (!(cave_empty_bold(zcave, y, x) &&
+		    !(cave_empty_mountain(zcave, y, x) &&
+		     ((r_ptr->flags8 & RF8_WILD_MOUNTAIN) ||
+		     (r_ptr->flags8 & RF8_WILD_VOLCANO)))))) return 12;
 #endif
 	}
 
