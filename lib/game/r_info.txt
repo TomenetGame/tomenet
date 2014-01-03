@@ -19017,7 +19017,7 @@ D:opponent, her five heads breathing death to all who stand against her.
 N:1067:The Hellraiser
 G:x:r
 I:140:300d150:200:200:0
-W:127:4:0:350000
+W:128:4:0:350000
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:HIT:HURT:30d10
@@ -19407,7 +19407,7 @@ D:A whirling maelstrom of force that will unleash powerful impact on you.
 N:1085:Dor
 G:e:w
 I:130:50d100:200:50:0
-W:127:1:0:500000
+W:128:1:0:500000
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:GAZE:INSANITY:8d8
@@ -19624,7 +19624,7 @@ D:But it is just someone costumed for Halloween festival!
 N:1097:Zu-Aon, The Cosmic Border Guard
 G:N:b
 I:145:300d200:200:200:0
-W:127:1:0:1000000
+W:128:1:0:1000000
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:HIT:HURT:70d5
@@ -20402,6 +20402,25 @@ F:IM_FIRE | RES_COLD | IM_POIS | IM_ACID | RES_ELEC
 D:A giant humanoid demon wielding a massive, heavy and sharp scythe.  Feared 
 D:by foes and friends alike when it flies into one of its berserk rages, the 
 D:Horned Reaper will cut down anything in its path between it and you.
+
+$TEST_SERVER$N:1147:The Living Lightning
+$TEST_SERVER$G:*:e
+$TEST_SERVER$I:200:6000d6:100:90:0
+$TEST_SERVER$W:127:1:0:50
+$TEST_SERVER$E:0:0:0:0:0:0
+$TEST_SERVER$O:0:0:0:0
+$TEST_SERVER$B:TOUCH:ELEC:32d1
+$TEST_SERVER$B:TOUCH:ELEC:32d1
+$TEST_SERVER$B:TOUCH:ELEC:32d1
+$TEST_SERVER$B:TOUCH:ELEC:32d1
+$TEST_SERVER$F:CAN_FLY | FORCE_MAXHP | REFLECTING | REGENERATE | RAND_25 | SPECIAL_GENE
+$TEST_SERVER$F:EMPTY_MIND | NONLIVING | HAS_LITE | AURA_ELEC | IM_ELEC | RES_LITE
+$TEST_SERVER$F:IM_POIS | IM_FIRE | IM_ACID | IM_COLD | RES_SOUND
+$TEST_SERVER$F:RES_NEXU | RES_DARK | RES_DISE | RES_NETH
+$TEST_SERVER$F:NO_FEAR | NO_CONF | NO_SLEEP | NO_CUT | NO_STUN | UNIQUE | BLUEBAND
+$TEST_SERVER$S:1_IN_4
+$TEST_SERVER$S:BO_MANA | BA_ELEC | BLINK
+$TEST_SERVER$D:A huge, crackling ball of energy, zapping around at blinding speed.
 
 
 
