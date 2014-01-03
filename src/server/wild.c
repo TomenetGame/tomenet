@@ -4157,7 +4157,7 @@ bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w)
 
 /* Add new dungeons/towers that were added to d_info.txt after the server was already initialized - C. Blue */
 void wild_add_new_dungeons() {
-	int i, j, k, x, y, tries;
+	int i, j, k, x, y, tries, sx, sy;
 	bool retry, skip, found;
 	dungeon_type *d_ptr;
 	worldpos wpos;
@@ -4226,16 +4226,21 @@ void wild_add_new_dungeons() {
 			if (!retry) break;
 #endif
 		}
+		if (!tries) s_printf("Dungeon %d couldn't get added.\n", i);
 
 		add_dungeon(&wpos, 0, 0, 0, 0, 0, FALSE, i);
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
+		sx = 2 + rand_int(MAX_WID - 4);
+		sy = 2 + rand_int(MAX_HGT - 4);
 		if (d_info[i].flags1 & DF1_TOWER) {
-			new_level_down_y(&wpos, 2 + rand_int(MAX_HGT - 4));
-			new_level_down_x(&wpos, 2 + rand_int(MAX_WID - 4));
+			s_printf(" (nldy %d, nldx %d)\n", sy, sx);
+			new_level_down_y(&wpos, sy);
+			new_level_down_x(&wpos, sx);
 		} else {
-			new_level_up_y(&wpos, 2 + rand_int(MAX_HGT - 4));
-			new_level_up_x(&wpos, 2 + rand_int(MAX_WID - 4));
+			s_printf(" (nluy %d, nlux %d)\n", sy, sx);
+			new_level_up_y(&wpos, sy);
+			new_level_up_x(&wpos, sx);
 		}
 #if 0
 		if ((zcave = getcave(&p_ptr->wpos))) {
@@ -4243,9 +4248,9 @@ void wild_add_new_dungeons() {
 		}
 #endif	// 0
 
-#if DEBUG_LEVEL > 0
+//#if DEBUG_LEVEL > 0
 		s_printf("Dungeon %d is generated in %s.\n", i, wpos_format(0, &wpos));
-#endif	// 0
+//#endif	// 0
 
 		tries = 100;
 	}
