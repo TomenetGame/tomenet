@@ -556,6 +556,7 @@ G:#:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | LAMP_LITE
 
+#added to visually "blank" unused space on floors that are smaller than possible
 N:79:permanent clear wall
 G: :w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
