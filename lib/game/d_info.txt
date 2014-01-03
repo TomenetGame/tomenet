@@ -216,6 +216,7 @@ F:RANDOM_TOWNS | NO_SHAFT | IRON | NO_DUNGEON_BONUS | EXP_20
 F:FILL_METHOD_0
 R:100:2
 M:UNIQUE
+R:100:0
 
 # Cirith Ungol
 # levels 25-50
@@ -376,8 +377,9 @@ R:60:1
 M:DRAGON | R_CHAR_D
 R:30:1
 M:DRAGON | R_CHAR_d
-R:10:4
+R:100:4
 M:R_CHAR_A
+R:10:0
 
 # The Old Forest
 # levels 13-25
@@ -503,11 +505,12 @@ F:RANDOM_TOWNS | FLAT | NO_STREAMERS
 F:FINAL_GUARDIAN_789 | FINAL_ARTIFACT_27
 F:FILL_METHOD_0
 F:SHORT_IDDC
-#R:60:3
+R:100:0
+#really correct @ CAN_FLY? I guess, since lore-wise T'ron is supposed to hide
+# there, as someone who can actually fly.. or something.
 R:60:2
-M:CAN_FLY | R_CHAR_A
-#R:40:0
-R:40:4
+M:CAN_FLY
+R:100:4
 M:R_CHAR_A
 
 # The Land of Rhun
