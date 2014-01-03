@@ -603,6 +603,7 @@ R:75:0
 # levels 1-2
 N:31:The Shores of Valinor
 D:SOV:Valinor, for retirement.
+B:101
 W:200:200:1:0:14:160
 L:89:1000:0:0:0:0:0:0:0:0
 A:101:1000:0:0:0:0:0:0:0:0:101:101
@@ -617,6 +618,7 @@ R:100:0
 
 # N:<index>:<name>
 # D:<3 letter short name>:<long name>
+# B:<boundary wall> [FEAT_PERM_SOLID]
 # W:<min depth>:<max depth>:<min player level>:<next dungeon>:<min alloc>:<max alloc chance>
 # L:<floor1>:<%1>:<floor2>:<%2>:<floor3>:<%3>
 # A:<wall1>:<%1>:<wall2>:<%2>:<wall3>:<%3>:<outer wall>:<inner wall>

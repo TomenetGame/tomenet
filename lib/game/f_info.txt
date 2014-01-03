@@ -560,7 +560,13 @@ G: :w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 
-# 80 --> 82 UNSUSED
+#permanent wall in the Nether Realm
+N:80:spirit wall
+G:#:v
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+
+# 81 --> 82 UNSUSED
 
 N:83:snow
 G:.:w
