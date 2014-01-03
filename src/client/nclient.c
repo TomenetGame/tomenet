@@ -3524,6 +3524,7 @@ void apply_auto_inscriptions(int slot, bool force) {
 	if (ex == NULL || force) auto_inscribe = TRUE;
 	/* check whether inscription is just a discount/stolen tag */
 	else if (strstr(ex, "% off}") ||
+	    !strcmp(ex, "{cursed}") ||	/* for picking up items that were already identified on the floor */
 	    !strcmp(ex, "{on sale}") ||
 	    !strcmp(ex, "{stolen}")) {
 		/* if so, auto-inscribe it instead */
@@ -3605,6 +3606,7 @@ void apply_auto_inscriptions(int slot, bool force) {
 	/* send the new inscription */
 	/* security hack: avoid infinite looping */
 	if (strstr(auto_inscription_tag[i], "% off") == NULL &&
+	    strcmp(auto_inscription_tag[i], "cursed") &&
 	    strcmp(auto_inscription_tag[i], "on sale") &&
 	    strcmp(auto_inscription_tag[i], "stolen"))
 		Send_inscribe(slot, auto_inscription_tag[i]);
