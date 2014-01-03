@@ -718,7 +718,7 @@ void do_cmd_go_down(int Ind)
 		if (!(wild_info[wpos->wy][wpos->wx].flags & WILD_F_DOWN)) {
 			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)
 				msg_print(Ind,"\377sOnly mud-filled ruins of former catacombs remain at this place..");
-			else msg_print(Ind, "There is nothing above you.");
+			else msg_print(Ind, "There is nothing below you.");
 			return;
 		} else if ((c_ptr->feat != FEAT_MORE && c_ptr->feat != FEAT_WAY_MORE) &&
 			    ((!p_ptr->prob_travel || (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_ENTRY_PROB)) &&
