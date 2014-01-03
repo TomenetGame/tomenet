@@ -837,8 +837,7 @@ s16b m_pop(void)
  * Return TRUE is the monster is OK and FALSE otherwise
  */
 //bool apply_rule(monster_race *r_ptr, byte rule)
-static bool apply_rule(monster_race *r_ptr, rule_type *rule)
-{
+static bool apply_rule(monster_race *r_ptr, rule_type *rule) {
 	switch (rule->mode) {
 		case DUNGEON_MODE_NONE:
 			return TRUE;
@@ -893,6 +892,12 @@ static bool apply_rule(monster_race *r_ptr, rule_type *rule)
 				if((rule->mflags9 & r_ptr->flags9) != rule->mflags9)
 					return FALSE;
 			}
+			if (rule->mflags0)
+			{
+				if((rule->mflags0 & r_ptr->flags0) != rule->mflags0)
+					return FALSE;
+			}
+
 			for(a = 0; a < 5; a++)
 			{
 				if (rule->r_char[a] && (rule->r_char[a] != r_ptr->d_char)) return FALSE;
@@ -916,6 +921,7 @@ static bool apply_rule(monster_race *r_ptr, rule_type *rule)
 			if (rule->mflags7 && (r_ptr->flags7 & rule->mflags7)) return TRUE;
 			if (rule->mflags8 && (r_ptr->flags8 & rule->mflags8)) return TRUE;
 			if (rule->mflags9 && (r_ptr->flags9 & rule->mflags9)) return TRUE;
+			if (rule->mflags0 && (r_ptr->flags0 & rule->mflags0)) return TRUE;
 
 			for (a = 0; a < 5; a++)
 				if (rule->r_char[a] == r_ptr->d_char) return TRUE;
@@ -930,11 +936,10 @@ static bool apply_rule(monster_race *r_ptr, rule_type *rule)
 }
 
 
-int restrict_monster_to_dungeon(int r_idx, int dun_type)
-{
+int restrict_monster_to_dungeon(int r_idx, int dun_type) {
 	dungeon_info_type *d_ptr = &d_info[dun_type];
 	monster_race *r_ptr = &r_info[r_idx];
-	int i, percents = 0;
+	int i, percents = 0, factor = 10000;
 
 	/* Process all rules */
 	for (i = 0; i < 5; i++) {
@@ -946,14 +951,22 @@ int restrict_monster_to_dungeon(int r_idx, int dun_type)
 		/* Apply the rule */
 		bool rule_ret = apply_rule(r_ptr, rule);
 
-		/* Should the rule be right or not ? */
-		if ((rule->mode == DUNGEON_MODE_NAND) || (rule->mode == DUNGEON_MODE_NOR)) rule_ret = !rule_ret;
-
-		/* Rule ok ? */
-		if (rule_ret) {
+		/* I modified this so that inverse rules (NOR/NAND) actually
+		   cut down the 'percent' instead. This makes more sense and is
+		   especially more flexible in my opinion. - C. Blue */
+		if (!rule_ret) continue;
+		/* Rule broken? */
+		if ((rule->mode == DUNGEON_MODE_NAND) || (rule->mode == DUNGEON_MODE_NOR))
+			factor = (factor * (100 - rule->percent)) / 100;
+		/* Rule ok? */
+		else
 			percents += rule->percent;
-		}
 	}
+
+	/* Limit: at least 1% chance, if we shouldn't have 0% (just from rounding). */
+	if (factor && percents && percents * factor < 10000) percents = 10000 / factor;
+
+	percents = (percents * factor) / 10000;
 
 	/* Return percentage */
 	return percents;
