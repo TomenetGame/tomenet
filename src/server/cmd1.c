@@ -5650,8 +5650,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		}
 		/* Attack */
 		else {
-			/* hack: admins who are running with their scythe won't perform a run-attack - C. Blue */
-			if (instakills(Ind) && p_ptr->running) {
+			/* hack: admins who are running with their scythe won't perform a run-attack - C. Blue
+			   and hack: cloaked players who are running _while wraithed_ will stop running first, too. */
+			if ((instakills(Ind) || p_ptr->cloaked) && p_ptr->running) {
 				disturb(Ind, 0, 0); /* stop running first */
 				return;
 			}
