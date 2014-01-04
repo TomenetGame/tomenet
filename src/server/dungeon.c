@@ -3545,6 +3545,7 @@ static bool process_player_end_aux(int Ind)
 	int		i, j;
 	int		regen_amount; //, NumPlayers_old = NumPlayers;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 
 	/* Unbelievers "resist" magic */
 	//		int minus = (p_ptr->anti_magic)?3:1;
@@ -3735,6 +3736,31 @@ static bool process_player_end_aux(int Ind)
 					take_hit(Ind, amt, " walls ...", 0);
 				}
 			}
+		}
+
+		/* specialty for Cloud Planes: continuous icy winds */
+		if (d_ptr && d_ptr->type == DI_CLOUD_PLANES) {
+#if 0 /* questionable - same as floor terrain effects? (kills potions) */
+			project(PROJECTOR_TERRAIN, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, randint(20), GF_COLD,
+			    PROJECT_NORF | PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP, "freezing winds");
+#else /* seems better/cleaner */
+			if (!p_ptr->immune_cold) {
+				int dam;
+				bool destroy = FALSE; /* note: inven damage should be same probability/extent, with or without <res xor opp>! */
+
+				if (p_ptr->resist_cold && p_ptr->oppose_cold) dam = randint(10);
+				else if (p_ptr->resist_cold || p_ptr->oppose_cold) {
+					dam = randint(20);
+					if (!rand_int(2)) destroy = TRUE;
+				} else {
+					dam = randint(40);
+					if (!rand_int(2)) destroy = TRUE;
+				}
+				msg_format(Ind, "You are hit by freezing winds for \377o%d\377w damage.", dam);
+				take_hit(Ind, dam, "freezing winds", 0);
+				if (destroy) inven_damage(Ind, set_cold_destroy, 1);
+			}
+#endif
 		}
 	}
 
