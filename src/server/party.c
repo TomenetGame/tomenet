@@ -3966,13 +3966,15 @@ void checkexpiry(int Ind, int days)
  * Warn the player if other characters on his/her account will expire soon
  *  - mikaelh
  */
-void account_checkexpiry(int Ind)
-{
+void account_checkexpiry(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int slot, expire;
 	hash_entry *ptr;
 	time_t now;
 
+#ifdef PLAYERS_NEVER_EXPIRE
+	return;
+#endif
 	now = time(NULL);
 
 	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
@@ -3983,8 +3985,7 @@ void account_checkexpiry(int Ind)
 
 				if (expire < 86400) {
 					msg_format(Ind, "\377yYour character %s will be removed \377rvery soon\377y!", ptr->name, expire / 86400);
-				}
-				else if (expire < 60 * 86400) {
+				} else if (expire < 60 * 86400) {
 					msg_format(Ind, "\377yYour character %s will be removed in %d days.", ptr->name, expire / 86400);
 				}
 			}
