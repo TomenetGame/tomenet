@@ -4294,6 +4294,7 @@ it's also used as a word-of-recall indicator this way.)
          60                        120
       /  65                        130  \
       |  66                        134  |
+      |  70                        150  |
       |  74                        166  |
       \  75                        170  /
          80                        175
