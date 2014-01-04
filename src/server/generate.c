@@ -9082,6 +9082,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	int hack_dun_table_prob1 = 0, hack_dun_table_prob2 = 0, hack_dun_table_prob3 = 0; //silly compiler warnings
 #endif
 
+	bool streamers = FALSE, wall_streamers = FALSE;
+
 	u32b df1_small = DF1_SMALL, df1_smallest = DF1_SMALLEST;
 #ifdef IRONDEEPDIVE_EXPAND_SMALL
 	if (in_irondeepdive(wpos)) {
@@ -9364,7 +9366,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		destroyed = FALSE;
 
 	/* Hack -- Watery caves */
-	dun->watery = dun_lev > 5 &&
+	dun->watery = !(d_ptr->flags3 & DF3_NOT_WATERY) && dun_lev > 5 &&
 		((((dun_lev + WATERY_OFFSET) % WATERY_CYCLE) >= (WATERY_CYCLE - WATERY_RANGE))?
 		magik(WATERY_BELT_CHANCE) : magik(DUN_RIVER_CHANCE - dun_lev * DUN_RIVER_REDUCE / 100));
 
@@ -9380,10 +9382,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 	if (!maze && !cavern &&
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-	    (in_irondeepdive(wpos) ? ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_EMPTY) || !rand_int(EMPTY_LEVEL)) :
-	    ((d_ptr->flags1 & (DF1_EMPTY)) || !rand_int(EMPTY_LEVEL))))
+	    (in_irondeepdive(wpos) ? ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_EMPTY) || (!rand_int(EMPTY_LEVEL) && !(d_info[iddc[ABS(wpos->wz)].type].flags3 & DF3_NOT_EMPTY))) :
+	    ((d_ptr->flags1 & (DF1_EMPTY)) || (!rand_int(EMPTY_LEVEL) && !(d_ptr->flags3 & DF3_NOT_EMPTY)))))
 #else
-	((d_ptr->flags1 & (DF1_EMPTY)) || !rand_int(EMPTY_LEVEL)))
+	((d_ptr->flags1 & (DF1_EMPTY)) || (!rand_int(EMPTY_LEVEL) && !(d_ptr->flags3 & DF3_NOT_EMPTY))))
 #endif
 	{
 		empty_level = TRUE;
@@ -9666,6 +9668,26 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	}
 #endif	/* 0 */
 
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+	if (in_irondeepdive(wpos) ? (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
+	    !(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_NO_STREAMERS)) :
+	    (!(d_ptr->flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
+	    !(d_ptr->flags1 & DF1_NO_STREAMERS)))
+		streamers = TRUE;
+	if (in_irondeepdive(wpos) ? (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
+	    !(d_info[iddc[ABS(wpos->wz)].type].flags3 & DF3_NO_WALL_STREAMERS)) :
+	    (!(d_ptr->flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
+	    !(d_ptr->flags3 & DF3_NO_WALL_STREAMERS)))
+		wall_streamers = TRUE;
+#else
+	if (!(d_ptr->flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
+	    !(d_ptr->flags1 & DF1_NO_STREAMERS))
+		streamers = TRUE;
+	if (!(d_ptr->flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
+	    !(d_ptr->flags3 & DF3_NO_WALL_STREAMERS))
+		wall_streamers = TRUE;
+#endif
+
 	if (maze) {
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 		if (in_irondeepdive(wpos)) generate_maze(wpos, (d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_MAZE) ? 1 : randint(3));
@@ -9721,23 +9743,25 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 			}
 		}
 
-		/* Hack -- Add some magma streamers */
-		for (i = 0; i < DUN_STR_MAG; i++)
-			build_streamer(wpos, FEAT_MAGMA, DUN_STR_MC, FALSE);
+		if (wall_streamers) {
+			/* Hack -- Add some magma streamers */
+			for (i = 0; i < DUN_STR_MAG; i++)
+				build_streamer(wpos, FEAT_MAGMA, DUN_STR_MC, FALSE);
 
-		/* Hack -- Add some quartz streamers */
-		for (i = 0; i < DUN_STR_QUA; i++)
-			build_streamer(wpos, FEAT_QUARTZ, DUN_STR_QC, FALSE);
+			/* Hack -- Add some quartz streamers */
+			for (i = 0; i < DUN_STR_QUA; i++)
+				build_streamer(wpos, FEAT_QUARTZ, DUN_STR_QC, FALSE);
 
-		/* Add some sand streamers */
+			/* Add some sand streamers */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		if ((in_irondeepdive(wpos) ? ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_SAND_VEIN) && !rand_int(4)) :
-		    ((d_ptr->flags1 & DF1_SAND_VEIN) && !rand_int(4))) ||
+			if ((in_irondeepdive(wpos) ? ((d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_SAND_VEIN) && !rand_int(4)) :
+			    ((d_ptr->flags1 & DF1_SAND_VEIN) && !rand_int(4))) ||
 #else
-		if (((d_ptr->flags1 & DF1_SAND_VEIN) && !rand_int(4)) ||
+			if (((d_ptr->flags1 & DF1_SAND_VEIN) && !rand_int(4)) ||
 #endif
-		    magik(DUN_SANDWALL)) {
-			build_streamer(wpos, FEAT_SANDWALL, DUN_STR_SC, FALSE);
+			    magik(DUN_SANDWALL)) {
+				build_streamer(wpos, FEAT_SANDWALL, DUN_STR_SC, FALSE);
+			}
 		}
 
 		/* Hack -- Add some rivers if requested */
@@ -9859,17 +9883,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	/* Determine the character location */
 	new_player_spot(wpos);
 
+s_printf("ws: %d, s: %d\n", wall_streamers, streamers);
+
 	/* Add streamers of trees, water, or lava -KMW- */
-#ifdef IRONDEEPDIVE_MIXED_TYPES
-	if (in_irondeepdive(wpos) ? (!(d_info[iddc[ABS(wpos->wz)].type].flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
-	    !(d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_NO_STREAMERS)) :
-	    (!(d_ptr->flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
-	    !(d_ptr->flags1 & DF1_NO_STREAMERS))) {
-#else
-	if (!(d_ptr->flags1 & (DF1_MAZE | DF1_LIFE_LEVEL)) &&
-	    !(d_ptr->flags1 & DF1_NO_STREAMERS))
-	{
-#endif
+	if (streamers) {
 		int num;
 
 		/*

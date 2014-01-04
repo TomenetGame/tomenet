@@ -1949,8 +1949,10 @@
 #define FEAT_HIGH_MOUNT_SOLID	0x68	/* For Valinor */
 #define FEAT_BETWEEN_TEMP	0x69	/* Just a marker for divine_gateway() */
 #define FEAT_ABYSS		0x6A
+#define FEAT_CLOUDYSKY		0x6B
+#define FEAT_ABYSS_BOUNDARY	0x6C
 
-/* Features 0x6B - 0x9F -- unused */
+/* Features 0x6C - 0x9F -- unused */
 
 #define FEAT_BETWEEN            0xA0 /* 160 */
 
@@ -5669,7 +5671,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF1_SAND_VEIN           0x00040000L	/* Like in the sandworm lair */
 #define DF1_CIRCULAR_ROOMS      0x00080000L	/* Allow circular rooms */
 
-#define DF1_EMPTY               0x00100000L	/* Allow arena levels */
+#define DF1_EMPTY               0x00100000L	/* All arena levels */
 #define DF1_DAMAGE_FEAT         0x00200000L
 #define DF1_FLAT                0x00400000L	/* Creates paths to next areas at edge of level, like Barrowdowns */
 #define DF1_TOWER               0x00800000L	/* You start at bottom and go up rather than the reverse */
@@ -5682,7 +5684,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF1_ADJUST_LEVEL_1      0x10000000L	/* Minimum monster level will be equal to dungeon level */
 #define DF1_ADJUST_LEVEL_2      0x20000000L	/* Minimum monster level will be double the dungeon level */
 #define DF1_NO_RECALL           0x40000000L	/* No recall allowed; also includes everything NO_RECALL_INTO does! */
-#define DF1_NO_STREAMERS        0x80000000L	/* No streamers */
+#define DF1_NO_STREAMERS        0x80000000L	/* No streamers (water, lava, trees) */
 
 /* dungeon flags for dungeon_type 
  * they should be renamed to DFx_*
@@ -5761,6 +5763,10 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF3_MANY_MONSTERS	0x00002000L	/* Spawn 1.5x as many monsters as usual */
 #define DF3_VMANY_MONSTERS	0x00004000L	/* Spawn twice as many monsters as usual */
 #define DF3_DEEPSUPPLY		0x00008000L	/* allow generation of dungeon stores offering supplies, on deep floors (for ironman deep dive challenge) (overrides DF3_NO_SIMPLE_STORES) */
+
+#define DF3_NO_WALL_STREAMERS	0x00010000L	/* No streamers (any wall types) */
+#define DF3_NOT_EMPTY		0x00020000L	/* Disallow arena levels */
+#define DF3_NOT_WATERY		0x00040000L	/* No 'watery' dungeon -> no water rivers */
 
 
 /* level flags for dun_level */

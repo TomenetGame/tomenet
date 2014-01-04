@@ -1114,9 +1114,9 @@ static cptr d_info_flags3[] =
 	"VMANY_MONSTERS",
 	"DEEPSUPPLY",
 
-	"",
-	"",
-	"",
+	"NO_WALL_STREAMERS",
+	"NOT_EMPTY",
+	"NOT_WATERY",
 	"",
 	"",
 	"",

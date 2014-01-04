@@ -5772,8 +5772,12 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				msg_print(Ind, "There is a mountain blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
-			} else if (c_ptr->feat == FEAT_ABYSS) {
+			} else if (c_ptr->feat == FEAT_ABYSS || c_ptr->feat == FEAT_ABYSS_BOUNDARY) {
 				msg_print(Ind, "There is an endless abyss blocking your way.");
+				*w_ptr |= CAVE_MARK;
+				everyone_lite_spot(wpos, y, x);
+			} else if (c_ptr->feat == FEAT_CLOUDYSKY) {
+				msg_print(Ind, "There is an endless depth below the clouds, blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
 			/* Wall (or secret door) */
@@ -5811,8 +5815,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 					msg_print(Ind, "There is a steep mountain blocking your way.");
 				} else if (c_ptr->feat == FEAT_MOUNTAIN || c_ptr->feat == FEAT_HIGH_MOUNTAIN) {
 					msg_print(Ind, "There is a mountain blocking your way.");
-				} else if (c_ptr->feat == FEAT_ABYSS) {
+				} else if (c_ptr->feat == FEAT_ABYSS || c_ptr->feat == FEAT_ABYSS_BOUNDARY) {
 					msg_print(Ind, "There is an endless abyss blocking your way.");
+				} else if (c_ptr->feat == FEAT_CLOUDYSKY) {
+					msg_print(Ind, "There is an endless depth below the clouds, blocking your way.");
 				}
 				/* Wall (or secret door) */
 				else if (c_ptr->feat != FEAT_SIGN) {
