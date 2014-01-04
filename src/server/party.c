@@ -3546,6 +3546,7 @@ void scan_players() {
 #endif
 
 #ifdef PLAYERS_NEVER_EXPIRE
+	s_printf("(scan_players() disabled due to PLAYERS_NEVER_EXPIRE.)\n");
 	return;
 #endif
 
@@ -3652,6 +3653,7 @@ void scan_accounts() {
 	time_t now;
 
 #ifdef PLAYERS_NEVER_EXPIRE
+	s_printf("(scan_accounts() disabled due to PLAYERS_NEVER_EXPIRE.)\n");
 	return;
 #endif
 
