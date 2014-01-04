@@ -13883,9 +13883,8 @@ too, provided that you aren't 'flexibility-encumbered' (compare (5.5)).
 
 More on Blocking
 ----------------
-Many effects that normal armour usually doesn't protect from can actually be
-blocked, for example your character may quickly duck behind his shield just in
-time when an eye tries to gaze at you to paralyze you.
+Some effects that normal armour usually doesn't protect from can actually be
+blocked, for example magical breath, ball or bolt attacks.
 The bigger a shield, the more you can block. Depending on server settings,
 the actual block base chance will usually be displayed as a percentage in []
 brackets behind the shield's name, where AC is located for other types of
