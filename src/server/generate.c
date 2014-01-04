@@ -9883,7 +9883,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	/* Determine the character location */
 	new_player_spot(wpos);
 
-s_printf("ws: %d, s: %d\n", wall_streamers, streamers);
 
 	/* Add streamers of trees, water, or lava -KMW- */
 	if (streamers) {
