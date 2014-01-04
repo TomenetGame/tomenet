@@ -247,7 +247,7 @@ void do_cmd_go_up(int Ind) {
 		}
 #endif
 		/* Nether Realm only for Kings/Queens*/
-		if ((d_ptr->type == DI_NETHER_REALM) && !p_ptr->total_winner) {
+		if ((d_ptr->type == DI_NETHER_REALM || d_ptr->type == DI_CLOUD_PLANES) && !p_ptr->total_winner) {
 			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));
@@ -825,7 +825,7 @@ void do_cmd_go_down(int Ind)
 		}
 #endif
 		/* Nether Realm only for Kings/Queens*/
-		if ((d_ptr->type == DI_NETHER_REALM) && !p_ptr->total_winner) {
+		if ((d_ptr->type == DI_NETHER_REALM || d_ptr->type == DI_CLOUD_PLANES) && !p_ptr->total_winner) {
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
 			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10);//+(d_ptr->baselevel-p_ptr->max_dlv));

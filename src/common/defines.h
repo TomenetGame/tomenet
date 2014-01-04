@@ -1017,6 +1017,7 @@
 #define DI_PATHS_DEAD		16
 #define DI_SANDWORM_LAIR	27
 #define DI_VALINOR		31
+#define DI_CLOUD_PLANES		32
 
 /* Monster indices (r_idx) hardcoded from r_info.txt file:
    (Note: Specific mimic forms aren't included (eg druids).) */
