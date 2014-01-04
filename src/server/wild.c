@@ -3532,7 +3532,7 @@ void wilderness_gen(struct worldpos *wpos)
 			solidity = 3;
 		}
 
-#ifdef TEST_SERVER
+//#ifdef TEST_SERVER
 		/* towers use granite walls that look a bit like a tower basement */
 		if (d_ptr == w_ptr->tower) {
 			for (k = 0; k < 16; k++) {
@@ -3556,7 +3556,7 @@ void wilderness_gen(struct worldpos *wpos)
 
 		/* dungeons use the inner_wall fill_type[0] somewhat scattered/clumped */
 		if (d_ptr == w_ptr->dungeon) {
-#endif
+//#endif
 			/* pick amount of floor feats to set */
 			j = rand_int(4) + 3;
 			/* pick a random starting direction */
@@ -3580,9 +3580,9 @@ void wilderness_gen(struct worldpos *wpos)
 
 				zcave[zy][zx].feat = feat_ambient;
 			}
-#ifdef TEST_SERVER
+//#ifdef TEST_SERVER
 		}
-#endif
+//#endif
 
 		/* restore rng */
 		Rand_quick = rand_old;
