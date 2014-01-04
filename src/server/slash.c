@@ -4528,21 +4528,29 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/debug-stairs")) {
 				int wx, wy, x, y, xo, yo;
 				struct worldpos tpos;
+				bool always_relocate_x = FALSE, always_relocate_y = FALSE, personal_relocate = FALSE;
+
+				if (tk) personal_relocate = TRUE;
+				if (tk && token[0][0] != 'y') always_relocate_x = TRUE;
+				if (tk && token[0][0] != 'x') always_relocate_y = TRUE;
+
 				tpos.wz = 0;
 				for (wx = 0; wx < MAX_WILD_X; wx++) {
 					for (wy = 0; wy < MAX_WILD_Y; wy++) {
+						if (personal_relocate && (wx != p_ptr->wpos.wx || wy != p_ptr->wpos.wy)) continue;
+
 						tpos.wx = wx;
 						tpos.wy = wy;
 						if (wild_info[wy][wx].dungeon) {
 							xo = wild_info[wy][wx].up_x;
 							yo = wild_info[wy][wx].up_y;
-							if (xo < 2 || xo >= MAX_WID - 2) {
-								x = 2 + rand_int(MAX_WID - 4);
+							if (xo < 2 || xo >= MAX_WID - 2 || always_relocate_x) {
+								x = personal_relocate ? p_ptr->px : 2 + rand_int(MAX_WID - 4);
 								new_level_up_x(&tpos, x);
 								msg_format(Ind, "Changed '>' x in (%d,%d) from %d to %d.", wx, wy, xo, x);
 							}
-							if (yo < 2 || yo >= MAX_HGT - 2) {
-								y = 2 + rand_int(MAX_HGT - 4);
+							if (yo < 2 || yo >= MAX_HGT - 2 || always_relocate_y) {
+								y = personal_relocate ? p_ptr->py : 2 + rand_int(MAX_HGT - 4);
 								new_level_up_y(&tpos, y);
 								msg_format(Ind, "Changed '>' y in (%d,%d) from %d to %d.", wx, wy, yo, y);
 							}
@@ -4550,17 +4558,19 @@ void do_slash_cmd(int Ind, char *message)
 						if (wild_info[wy][wx].tower) {
 							xo = wild_info[wy][wx].dn_x;
 							yo = wild_info[wy][wx].dn_y;
-							if (xo < 2 || xo >= MAX_WID - 2) {
-								x = 2 + rand_int(MAX_WID - 4);
+							if (xo < 2 || xo >= MAX_WID - 2 || always_relocate_x) {
+								x = personal_relocate ? p_ptr->px : 2 + rand_int(MAX_WID - 4);
 								new_level_down_x(&tpos, x);
 								msg_format(Ind, "Changed '<' x in (%d,%d) from %d to %d.", wx, wy, xo, x);
 							}
-							if (yo < 2 || yo >= MAX_HGT - 2) {
-								y = 2 + rand_int(MAX_HGT - 4);
+							if (yo < 2 || yo >= MAX_HGT - 2 || always_relocate_y) {
+								y = personal_relocate ? p_ptr->py : 2 + rand_int(MAX_HGT - 4);
 								new_level_down_y(&tpos, y);
 								msg_format(Ind, "Changed '<' y in (%d,%d) from %d to %d.", wx, wy, yo, y);
 							}
 						}
+
+						if (personal_relocate) return;
 					}
 				}
 				return;
