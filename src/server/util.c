@@ -1410,6 +1410,7 @@ void handle_music(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = NULL;
 	int i = -1, tmus = 0, tmus_inverse = 0, dlev = getlevel(&p_ptr->wpos);
+	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	cave_type **zcave = getcave(&p_ptr->wpos);
 
 #ifdef ARCADE_SERVER
@@ -1571,7 +1572,7 @@ void handle_music(int Ind) {
 
 		/* Floor-specific music (monster/boss-independant)? */
 		if ((i != 6) /*not in Nether Realm, really ^^*/
-		    && (!(d_info[i].flags2 & DF2_NO_DEATH)) /* nor in easy dungeons */
+		    && (!(d_ptr->flags2 & DF2_NO_DEATH)) /* nor in easy dungeons */
 		    && !(p_ptr->wpos.wx == WPOS_PVPARENA_X /* and not in pvp-arena */
 		    && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z))
 		{
@@ -1587,9 +1588,9 @@ void handle_music(int Ind) {
 		switch (i) {
 		default:
 		case 0:
-			if (d_info[i].flags2 & DF2_NO_DEATH) Send_music(Ind, 12);
-			else if (d_info[i].flags2 & DF2_IRON) Send_music(Ind, 13);
-			else if ((d_info[i].flags2 & DF2_HELL) || (d_info[i].flags1 & DF1_FORCE_DOWN)) Send_music(Ind, 14);
+			if (d_ptr->flags2 & DF2_NO_DEATH) Send_music(Ind, 12);//note: music file is identical to the one of the Training Tower
+			else if (d_ptr->flags2 & DF2_IRON) Send_music(Ind, 14);//note: switched from 13 to 14, which is actually forcedown/hellish
+			else if ((d_ptr->flags2 & DF2_HELL) || (d_ptr->flags1 & DF1_FORCE_DOWN)) Send_music(Ind, 13);//note: switched from 14 to 13, which is actually iron
 			else Send_music(Ind, 11);
 			return;
 		case 1: Send_music(Ind, 32); return; //Mirkwood
@@ -1617,6 +1618,8 @@ void handle_music(int Ind) {
 		case 28: Send_music(Ind, 33); return; //Death Fate
 		case 29: Send_music(Ind, 23); return; //The Helcaraxe
 		case 30: Send_music(Ind, 15); return; //The Training Tower
+		//31 is handled above by in_valinor() check
+		case 32: Send_music(Ind, 13); return; //The Cloud Planes (use ironman music for now (forcedown/hellish doesn't fit))
 		}
 	}
 
