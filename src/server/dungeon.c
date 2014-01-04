@@ -6605,8 +6605,9 @@ void process_player_change_wpos(int Ind)
 #endif
 
 #ifdef ENABLE_SELF_HIGHLIGHTING
-	/* flicker player for a moment, to allow for easy location */
-	if (p_ptr->hilite_self >= 0) p_ptr->hilite_self = cfg.fps / 4; //todo: make client option
+	/* if not travelling through wilderness smoothly,
+	   flicker player for a moment, to allow for easy location */
+	if (!smooth_ambient && p_ptr->hilite_self >= 0) p_ptr->hilite_self = cfg.fps / 4; //todo: make client option
 #endif
 }
 
