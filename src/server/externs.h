@@ -857,7 +857,7 @@ extern bool fill_house(house_type *h_ptr, int func, void *data);
 extern void wild_add_uhouse(house_type *h_ptr);
 extern void wild_add_uhouses(struct worldpos *wpos);
 extern bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w);
-extern void wild_add_new_dungeons(void);
+extern void wild_add_new_dungeons(int Ind);
 
 extern void initwild(void);
 extern void genwild(bool all_terrains, bool dry_Bree);

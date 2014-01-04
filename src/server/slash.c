@@ -5675,7 +5675,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/addnewdun")) {
 				msg_print(Ind, "Trying to add new dungeons..");
-				wild_add_new_dungeons();
+				wild_add_new_dungeons(tk ? Ind : 0);
 				msg_print(Ind, "done.");
 				return;
 			}

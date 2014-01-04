@@ -4163,7 +4163,7 @@ bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w)
 }
 
 /* Add new dungeons/towers that were added to d_info.txt after the server was already initialized - C. Blue */
-void wild_add_new_dungeons() {
+void wild_add_new_dungeons(int Ind) {
 	int i, j, k, x, y, tries, sx, sy;
 	bool retry, skip, found;
 	dungeon_type *d_ptr;
@@ -4178,9 +4178,8 @@ void wild_add_new_dungeons() {
 		/* Hack -- omit dungeons associated with towns */
 		skip = FALSE;
 		for (j = 1; j < 6; j++) {
-			for (k = 0; k < 2; k++) {
+			for (k = 0; k < 2; k++)
 				if (town_profile[j].dungeons[k] == i) skip = TRUE;
-			}
 		}
 		if (skip) continue;
 
@@ -4202,8 +4201,14 @@ void wild_add_new_dungeons() {
 		/* Add it */
 		tries = 100;
 		while (tries) {
-			y = rand_int(MAX_WILD_Y);
-			x = rand_int(MAX_WILD_X);
+			if (!Ind) {
+				y = rand_int(MAX_WILD_Y);
+				x = rand_int(MAX_WILD_X);
+			} else {
+				y = Players[Ind]->wpos.wy;
+				x = Players[Ind]->wpos.wx;
+				tries = 1;
+			}
 			retry = FALSE;
 
 			wpos.wy = y;
@@ -4211,7 +4216,7 @@ void wild_add_new_dungeons() {
 
 			/* Don't build them too near to towns
 			 * (otherwise entrance can be within a house) */
-			for (j = 1; j < 6; j++) {
+			if (!Ind) for (j = 1; j < 6; j++) {
 				if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA) {
 					retry = TRUE;
 					break;
@@ -4238,8 +4243,13 @@ void wild_add_new_dungeons() {
 		add_dungeon(&wpos, 0, 0, 0, 0, 0, FALSE, i);
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
-		sx = 2 + rand_int(MAX_WID - 4);
-		sy = 2 + rand_int(MAX_HGT - 4);
+		if (!Ind) {
+			sx = 2 + rand_int(MAX_WID - 4);
+			sy = 2 + rand_int(MAX_HGT - 4);
+		} else {
+			sx = Players[Ind]->px;
+			sy = Players[Ind]->py;
+		}
 		if (d_info[i].flags1 & DF1_TOWER) {
 			s_printf(" (nldy %d, nldx %d)\n", sy, sx);
 			new_level_down_y(&wpos, sy);
