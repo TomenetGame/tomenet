@@ -1083,7 +1083,7 @@ static bool choose_mode(void)
 	c_put_str(TERM_SLATE, "('Purgatorial' - like normal, with nasty additional penalties)", 19, 10);
 #endif
 	put_str("H) Hellish", 20 - 1, 2);
-	c_put_str(TERM_SLATE, "(Combination of Hard + No Ghost)", 20 - 1, 13);
+	c_put_str(TERM_SLATE, "(Like 'Unworldly' mode, but extra hard - sort of ridiculous)", 20 - 1, 13);
 	put_str("p) PvP", 21 - 1, 2);
 	c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21 - 1, 9);
 
