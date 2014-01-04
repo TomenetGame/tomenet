@@ -3751,10 +3751,10 @@ static bool process_player_end_aux(int Ind)
 				if (p_ptr->resist_cold && p_ptr->oppose_cold) dam = randint(10);
 				else if (p_ptr->resist_cold || p_ptr->oppose_cold) {
 					dam = randint(20);
-					if (!rand_int(2)) destroy = TRUE;
+					if (!rand_int(3)) destroy = TRUE;
 				} else {
 					dam = randint(40);
-					if (!rand_int(2)) destroy = TRUE;
+					if (!rand_int(3)) destroy = TRUE;
 				}
 				msg_format(Ind, "You are hit by freezing winds for \377o%d\377w damage.", dam);
 				take_hit(Ind, dam, "freezing winds", 0);

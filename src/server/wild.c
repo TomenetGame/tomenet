@@ -3518,12 +3518,19 @@ void wilderness_gen(struct worldpos *wpos)
 	       (also see second check for this, further below) */
 	    && !(zcave[y][x].info & (CAVE_ROOM | CAVE_ICKY))
 	    ) {
-		int j, k;
+		int j, k, solidity = 4;
 		dungeon_info_type *di_ptr = &d_info[d_ptr->type];
+		int feat_ambient = di_ptr->fill_type[0];//->inner_wall;
 		bool rand_old = Rand_quick; /* save rng */
 		u32b tmp_seed = Rand_value;
 		Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X) * 600; /* seed rng */
 		Rand_quick = TRUE;
+
+		/* hack for Cloud Planes */
+		if (feat_ambient == FEAT_CLOUDYSKY) {
+			feat_ambient = FEAT_HIGH_MOUNTAIN;
+			solidity = 3;
+		}
 
 #ifdef TEST_SERVER
 		/* towers use granite walls that look a bit like a tower basement */
@@ -3541,9 +3548,9 @@ void wilderness_gen(struct worldpos *wpos)
 				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT)) continue;
 
 				/* random holes */
-				if (!rand_int(4)) continue;
+				if (!rand_int(solidity)) continue;
 
-				zcave[zy][zx].feat = di_ptr->fill_type[0];//->inner_wall;
+				zcave[zy][zx].feat = feat_ambient;
 			}
 		}
 
@@ -3571,7 +3578,7 @@ void wilderness_gen(struct worldpos *wpos)
 				/* don't overwrite any perma walls (usually house walls) */
 				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT)) continue;
 
-				zcave[zy][zx].feat = di_ptr->fill_type[0];//->inner_wall;
+				zcave[zy][zx].feat = feat_ambient;
 			}
 #ifdef TEST_SERVER
 		}
