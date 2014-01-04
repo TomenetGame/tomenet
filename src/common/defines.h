@@ -284,6 +284,9 @@
 #define STARVE_KICK_TIMER 30
 
 
+/* Characters and accounts do never expire? (Enable this in your LAN for example) */
+//#define PLAYERS_NEVER_EXPIRE
+
 /* Number of days after which an account without any characters on it will expire. */
 #ifdef RPG_SERVER
  #define ACCOUNT_EXPIRY_DAYS 184

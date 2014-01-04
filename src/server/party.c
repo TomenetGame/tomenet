@@ -3545,6 +3545,10 @@ void scan_players() {
 	struct account *c_acc = NULL;
 #endif
 
+#ifdef PLAYERS_NEVER_EXPIRE
+	return;
+#endif
+
 	/* Allocate an array for marking accounts as active */
 	C_MAKE(account_active, MAX_ACCOUNTS / 8, bool);
 
@@ -3646,6 +3650,10 @@ void scan_accounts() {
 	char buf[1024];
 	struct account c_acc;
 	time_t now;
+
+#ifdef PLAYERS_NEVER_EXPIRE
+	return;
+#endif
 
 	now = time(NULL);
 
