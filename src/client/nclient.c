@@ -2527,7 +2527,7 @@ int Receive_store_wide(void) {
 int Receive_store_special_str(void) {
 	int n;
 	char ch, line, col, attr;
-	char str[80];
+	char str[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%s", &ch, &line, &col, &attr, str)) <= 0)
 		return n;
@@ -3628,7 +3628,7 @@ int Receive_account_info(void) {
 /* Request keypress (1 char) */
 int Receive_request_key(void) {
 	int n, id;
-	char ch, prompt[80], buf;
+	char ch, prompt[MAX_CHARS], buf;
 
 	if ((n = Packet_scanf(&rbuf, "%c%d%s", &ch, &id, prompt)) <= 0) return n;
 
@@ -3641,7 +3641,7 @@ int Receive_request_key(void) {
 /* Request number */
 int Receive_request_num(void) {
 	int n, id, std;
-	char ch, prompt[80];
+	char ch, prompt[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%d%s%d", &ch, &id, prompt, &std)) <= 0) return n;
 
@@ -3653,7 +3653,7 @@ int Receive_request_num(void) {
 /* Request string (1 line) */
 int Receive_request_str(void) {
 	int n, id;
-	char ch, prompt[80], buf[MAX_CHARS_WIDE];
+	char ch, prompt[MAX_CHARS], buf[MAX_CHARS_WIDE];
 
 	if ((n = Packet_scanf(&rbuf, "%c%d%s%s", &ch, &id, prompt, buf)) <= 0) return n;
 
@@ -3666,7 +3666,7 @@ int Receive_request_str(void) {
 /* Request confirmation (y/n) */
 int Receive_request_cfr(void) {
 	int n, id;
-	char ch, prompt[80];
+	char ch, prompt[MAX_CHARS];
 	if ((n = Packet_scanf(&rbuf, "%c%d%s", &ch, &id, prompt)) <= 0) return n;
 
 	request_pending = TRUE;

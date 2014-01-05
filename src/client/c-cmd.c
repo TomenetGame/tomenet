@@ -1464,7 +1464,7 @@ void cmd_character(void)
 {
 	char ch = 0;
 	int done = 0;
-        char tmp[80];
+        char tmp[MAX_CHARS];
 
 	/* Save screen */
 	Term_save();
@@ -1497,8 +1497,8 @@ void cmd_character(void)
 
 		/* Dump */
 		if ((ch == 'f') || (ch == 'F')) {
-			strnfmt(tmp, 79, "%s.txt", cname);
-			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 79)) {
+			strnfmt(tmp, MAX_CHARS - 1, "%s.txt", cname);
+			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, MAX_CHARS - 1)) {
 				if (tmp[0] && (tmp[0] != ' '))
 					file_character(tmp, FALSE);
 			}

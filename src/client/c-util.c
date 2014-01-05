@@ -7061,7 +7061,7 @@ static void print_tomb(cptr reason)
 void c_close_game(cptr reason)
 {
 	int k;
-	char tmp[80];
+	char tmp[MAX_CHARS];
 
 	/* Let the player view the last scene */
 	c_msg_format("%s ...Press '0' key to proceed", reason);
@@ -7091,8 +7091,8 @@ void c_close_game(cptr reason)
 		/* Dump */
 		else if ((k == 'f') || (k == 'F'))
 		{
-			strnfmt(tmp, 79, "%s.txt", cname);
-			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 79))
+			strnfmt(tmp, MAX_CHARS - 1, "%s.txt", cname);
+			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, MAX_CHARS - 1))
 			{
 				if (tmp[0] && (tmp[0] != ' '))
 				{
