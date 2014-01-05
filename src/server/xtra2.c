@@ -6630,6 +6630,8 @@ void player_death(int Ind) {
 
 			/* Add to legends log if he was a winner */
 			if (p_ptr->total_winner && !is_admin(p_ptr))
+				l_printf("%s \\{r%s (%d) lost %s royal title by instant resurrection\n", showdate(), p_ptr->name, p_ptr->lev, p_ptr->male ? "his" : "her");
+			else if (p_ptr->lev >= 50)
 				l_printf("%s \\{r%s (%d) was defeated and instantly resurrected\n", showdate(), p_ptr->name, p_ptr->lev);
 
 			/* Cure him from various maladies */
