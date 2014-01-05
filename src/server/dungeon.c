@@ -4781,6 +4781,9 @@ static bool process_player_end_aux(int Ind)
 					if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 					if (q_ptr->afk) continue;
 
+					/* new: other players must wait in line, or at least closely nearby, to kick you out */
+					if (ABS(q_ptr->py - p_ptr->py) >= 4 || ABS(q_ptr->px - p_ptr->px) >= 4) continue;
+
 					bye = TRUE;
 					break;
 				}
