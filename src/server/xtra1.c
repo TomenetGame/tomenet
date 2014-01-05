@@ -1325,7 +1325,8 @@ void calc_mana(int Ind) {
 	}
 
 	/* Heavy armor penalizes mana */
-	if (((cur_wgt - max_wgt) / 10) > 0) {
+//	if (((cur_wgt - max_wgt) / 10) > 0) {
+	if ((cur_wgt - max_wgt) > 0) {
 		/* Reduce mana */
 //		new_mana -= ((cur_wgt - max_wgt) * 2 / 3);
 
