@@ -211,9 +211,8 @@ cptr get_item_hook_find_obj_what;
 bool get_item_hook_find_obj(int *item, bool inven_first)
 {
 	int i, j;
-	char buf[80];
-
-	char buf1[80], buf2[80], *ptr; /* for manual strcasestr() */
+	char buf[ONAME_LEN];
+	char buf1[ONAME_LEN], buf2[ONAME_LEN], *ptr; /* for manual strcasestr() */
 
 	strcpy(buf, "");
 	if (!get_string(get_item_hook_find_obj_what, buf, 79))

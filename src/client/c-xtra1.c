@@ -1283,12 +1283,11 @@ void show_inven(void)
 	object_type *o_ptr;
 
 	char	o_name[ONAME_LEN];
-
 	char	tmp_val[80];
 
 	int	out_index[23];
 	byte	out_color[23];
-	char	out_desc[23][80];
+	char	out_desc[23][ONAME_LEN];
 
 
 	/* Starting column */
@@ -1419,7 +1418,7 @@ void show_equip(void)
 
 	int	out_index[23];
 	byte	out_color[23];
-	char	out_desc[23][80];
+	char	out_desc[23][ONAME_LEN];
 
 
 	/* Starting column */
