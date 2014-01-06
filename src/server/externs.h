@@ -916,6 +916,7 @@ extern void condense_max_depth(player_type *p_ptr);
 #ifdef SEAL_INVALID_OBJECTS
 extern bool seal_or_unseal_object(object_type *o_ptr);
 #endif
+extern void fix_max_depth_towerdungeon(int Ind);
 
 /* melee1.c */
 /* melee2.c */

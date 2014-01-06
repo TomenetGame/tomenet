@@ -4610,7 +4610,7 @@ void do_slash_cmd(int Ind, char *message)
 #ifdef RPG_SERVER
 				bool found_town = FALSE;
 #endif
-				struct dungeon_type *d_ptr;
+				struct dungeon_type *d_ptr, dun_tmp;
 				struct worldpos *tpos = &p_ptr->wpos;
 				wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
 
@@ -4630,6 +4630,25 @@ void do_slash_cmd(int Ind, char *message)
 							d_ptr->flags3 = d_info[type].flags3;
 							d_ptr->baselevel = d_info[type].mindepth;
 							d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
+
+							/* check for TOWER flag change! */
+							if (!(d_ptr->flags1 & DF1_TOWER)) {
+								/* also a dungeon here? need to swap them, so it isn't lost.
+								   (We assume that likewise that dungeon was actually changed to be a tower,
+								   since it'd be illegal to have 2 dungeons or 2 towers on the same sector.) */
+								if (wild->dungeon) {
+									/* simply swap the contents */
+									dun_tmp = *(wild->tower);
+									*(wild->tower) = *(wild->dungeon);
+									*(wild->dungeon) = dun_tmp;
+								} else {
+									/* change tower to dungeon */
+									wild->dungeon = wild->tower;
+									wild->tower = NULL;
+									wild->flags |= WILD_F_DOWN;
+									wild->flags &= ~WILD_F_UP;
+								}
+							}
 						} else {
 #if 0 /* don't touch custom dungeons, that might have flags such as ironman or no-entry etc! their flags would get zero'ed here! */
 							d_ptr->flags1 = d_info[type].flags1;
@@ -4686,6 +4705,25 @@ void do_slash_cmd(int Ind, char *message)
 							d_ptr->flags3 = d_info[type].flags3;
 							d_ptr->baselevel = d_info[type].mindepth;
 							d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1;
+
+							/* check for TOWER flag change! */
+							if ((d_ptr->flags1 & DF1_TOWER)) {
+								/* also a dungeon here? need to swap them, so it isn't lost.
+								   (We assume that likewise that dungeon was actually changed to be a tower,
+								   since it'd be illegal to have 2 dungeons or 2 towers on the same sector.) */
+								if (wild->tower) {
+									/* simply swap the contents */
+									dun_tmp = *(wild->tower);
+									*(wild->tower) = *(wild->dungeon);
+									*(wild->dungeon) = dun_tmp;
+								} else {
+									/* change dungeon to tower */
+									wild->tower = wild->dungeon;
+									wild->dungeon = NULL;
+									wild->flags |= WILD_F_UP;
+									wild->flags &= ~WILD_F_DOWN;
+								}
+							}
 						} else {
 #if 0 /* don't touch custom dungeons, that might have flags such as ironman or no-entry etc! their flags would get zero'ed here! */
 							d_ptr->flags1 = d_info[type].flags1;

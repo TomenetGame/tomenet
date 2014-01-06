@@ -511,3 +511,5 @@ int netherrealm_end;
 int valinor_wpos_x;
 int valinor_wpos_y;
 int valinor_wpos_z;
+
+extern void fix_max_depth_towerdungeon(int Ind);

@@ -3294,6 +3294,40 @@ void fix_max_depth_bug(player_type *p_ptr) {
 
 	s_printf("max_depth[] has been bug-fixed for '%s'.\n", p_ptr->name);
 }
+/* Update max depths when dungeon/tower flag of a dungeon/tower was changed.
+   Note: This assumes that apart from towns no dungeon and tower are on the same worldmap sector,
+   or it might not swap the depths of the two correctly. - C. Blue */
+void fix_max_depth_towerdungeon(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+	s_printf("max_depth[] tower/dungeon changes have been fixed for '%s'.\n", p_ptr->name);
+
+	for (i = 0; i < MAX_D_IDX * 2; i++) {
+		if (!p_ptr->max_depth_wx[i] && !p_ptr->max_depth_wy[i]) continue; /* entry doesn't exist? */
+
+		/* both tower+dungeon here? too bad, we cannot decide then :/ -> skip them */
+		if (wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].tower &&
+		    wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].dungeon)
+			continue;
+
+		/* convert our tower depth to dungeon depth? */
+		if (p_ptr->max_depth_tower[i]) {
+			if (wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].tower) continue;
+			p_ptr->max_depth_tower[i] = FALSE;
+			s_printf("  flipped %d,%d to dungeon.\n", p_ptr->max_depth_wx[i], p_ptr->max_depth_wy[i]);
+			continue;
+		}
+
+		/* convert our dungeon depth to tower depth? */
+		if (!p_ptr->max_depth_tower[i]) {
+			if (wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].dungeon) continue;
+			p_ptr->max_depth_tower[i] = TRUE;
+			s_printf("  flipped %d,%d to tower.\n", p_ptr->max_depth_wx[i], p_ptr->max_depth_wy[i]);
+			continue;
+		}
+	}
+}
 void condense_max_depth(player_type *p_ptr) {
 	int i, j, k, d;
 	/* moar fixing old bugginess: remove all 0,0,0 entries between valid entries
