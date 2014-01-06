@@ -3544,6 +3544,7 @@ void wilderness_gen(struct worldpos *wpos)
 
 			if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
 			if ((f_info[zcave[zy][zx].feat].flags1 & FF1_WALL)) continue;
+			if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT)) continue; /* don't clone the stairs ;) */
 
 			feat_floor = zcave[zy][zx].feat;
 			break;
