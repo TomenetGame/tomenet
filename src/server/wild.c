@@ -3521,23 +3521,37 @@ void wilderness_gen(struct worldpos *wpos)
 		int j, k, solidity = 4;
 		dungeon_info_type *di_ptr = &d_info[d_ptr->type];
 		int feat_ambient = di_ptr->fill_type[0];//->inner_wall;
+		int feat_ambient2 = (feat_ambient == FEAT_TREE) ? FEAT_BUSH : feat_ambient;
 		int feat_floor = FEAT_DIRT;
 		bool rand_old = Rand_quick; /* save rng */
 		u32b tmp_seed = Rand_value;
 		Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X) * 600; /* seed rng */
 		Rand_quick = TRUE;
+		int zx, zy;
+		bool rig_corners = FALSE; /* corners are always floor, to make ambient feats look more circular? */
 
 		/* hack for Cloud Planes */
 		if (feat_ambient == FEAT_CLOUDYSKY) {
 			feat_ambient = FEAT_HIGH_MOUNTAIN;
 			feat_floor = FEAT_SNOW;
 			solidity = 3;
+			rig_corners = TRUE;
+		} else
+		/* grab usual floor tile */
+		for (k = 0; k < 9; k++) {
+			zx = x + ddx_ddd[k];
+			zy = y + ddy_ddd[k];
+
+			if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
+			if ((f_info[zcave[zy][zx].feat].flags1 & FF1_WALL)) continue;
+
+			feat_floor = zcave[zy][zx].feat;
+			break;
 		}
 
-//#ifdef TEST_SERVER
 		/* towers use granite walls that look a bit like a tower basement */
 		if (d_ptr == w_ptr->tower) {
-			int zx, zy;
+			int rigged_rng = 0;
 #if 1 /* clear inner ring? */
 			for (k = 0; k < 9; k++) {
 				zx = x + ddx_ddd[k];
@@ -3550,13 +3564,14 @@ void wilderness_gen(struct worldpos *wpos)
 				/* don't overwrite any perma walls (usually house walls) */
 				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT) &&
 				    /* exception for mountains though, since they're not house-related and can just be overwritten */
-				    (zcave[zy][zx].feat != FEAT_MOUNTAIN ||
-				    (f_info[zcave[zy][zx].feat].flags2 & FF2_BOUNDARY)))
+				    zcave[zy][zx].feat != FEAT_MOUNTAIN) 
 					continue;
 
 				zcave[zy][zx].feat = feat_floor;
 			}
 #endif
+
+			/* create 'disrupted' outer ring of 'tower walls' */
 			for (k = 0; k < 16; k++) {
 				zx = x + ddx_wide_cyc[k];
 				zy = y + ddy_wide_cyc[k];
@@ -3568,42 +3583,120 @@ void wilderness_gen(struct worldpos *wpos)
 				/* don't overwrite any perma walls (usually house walls) */
 				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT)) continue;
 
-				/* random holes */
-				if (!rand_int(solidity)) continue;
+				if (rig_corners && (k == 0 || k == 4 || k == 8 || k == 12)) continue;
+
+				/* random holes -- bug rig it to grant a hole at least every n spaces */
+				if (!rand_int(solidity) || rigged_rng == 3) {
+					rigged_rng = 0;
+
+#if 1 /* convert grids where we don't set tower feats to actual floor? */
+					/* don't overwrite house walls if house contains a staircase
+					   (also see first check for this, further above)  */
+					if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
+
+					/* don't overwrite any perma walls (usually house walls) */
+					if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT) &&
+					    /* exception for mountains though, since they're not house-related and can just be overwritten */
+					    zcave[zy][zx].feat != FEAT_MOUNTAIN)
+						continue;
+
+					zcave[zy][zx].feat = feat_floor;
+					continue;
+#endif
+				}
 
 				zcave[zy][zx].feat = feat_ambient;
+				rigged_rng++;
 			}
 		}
 
 		/* dungeons use the inner_wall fill_type[0] somewhat scattered/clumped */
 		if (d_ptr == w_ptr->dungeon) {
-//#endif
+			int zx, zy, xoff, yoff;
+
 			/* pick amount of floor feats to set */
-			j = rand_int(4) + 3;
+			j = rand_int(4) + 4;
 			/* pick a random starting direction */
 			i = randint(8);
 			if (i == 5) i++; /* 5 isn't a legal direction */
 			/* hack: avoid a bit silly-looking ones */
 			if (j == 3 && (i % 2) == 1) i++;
 			if (i == 10) i = 6; /* 10 isn't a legal direction */
+
+			/* old/basic: just create a partial ring of dungeon-specific wall feats */
 			/* cycle forward 'j' more grids and set them accordingly */
 			for (k = 0; k < j; k++) {
-				int zx, zy;
-				zx = x + ddx[cycle[chome[i] + k]];
-				zy = y + ddy[cycle[chome[i] + k]];
+				xoff = ddx[cycle[chome[i] + k]];
+				yoff = ddy[cycle[chome[i] + k]];
+				zx = x + xoff;
+				zy = y + yoff;
 
 				/* don't overwrite house walls if house contains a staircase
 				   (also see first check for this, further above)  */
 				if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
 
 				/* don't overwrite any perma walls (usually house walls) */
-				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT)) continue;
+				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT) &&
+				    /* exception for mountains though, since they're not house-related and can just be overwritten */
+				    zcave[zy][zx].feat != FEAT_MOUNTAIN)
+					continue;
 
 				zcave[zy][zx].feat = feat_ambient;
+
+#if 1 /* additionally extend the ambient feats slightly, into the 2nd ring, at random */
+ #if 1
+				if (xoff && yoff) continue; //extending onto 2nd ring diagonally looks bad
+				if (!rand_int(3)) continue;
+
+				zx += xoff;
+				zy += yoff;
+ #else
+				if (!rand_int(3)) continue;
+
+				switch (rand_int(3)) {
+				case 0: zy += xoff; break;
+				case 1: zy += yoff;
+				case 2: zx += xoff;
+				}
+ #endif
+
+				/* don't overwrite house walls if house contains a staircase
+				   (also see first check for this, further above)  */
+				if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
+
+				/* don't overwrite any perma walls (usually house walls) */
+				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT) &&
+				    /* exception for mountains though, since they're not house-related and can just be overwritten */
+				    zcave[zy][zx].feat != FEAT_MOUNTAIN)
+					continue;
+
+				zcave[zy][zx].feat = feat_ambient2;
+#endif
 			}
-//#ifdef TEST_SERVER
+
+#if 1
+			/* new: also replace the rest with usual floor around here, for easier walking there */
+			for (k = 0; k < 9; k++) {
+				zx = x + ddx_ddd[k];
+				zy = y + ddy_ddd[k];
+
+				/* don't overwrite house walls if house contains a staircase
+				   (also see first check for this, further above)  */
+				if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
+
+				/* don't overwrite any perma walls (usually house walls) */
+				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT) &&
+				    /* exception for mountains though, since they're not house-related and can just be overwritten */
+				    zcave[zy][zx].feat != FEAT_MOUNTAIN)
+					continue;
+
+				/* and most importantly don't overwrite our dungeon-wall feats */
+				if (zcave[zy][zx].feat == feat_ambient) continue;
+
+				zcave[zy][zx].feat = feat_floor;
+#endif
+			}
 		}
-//#endif
 
 		/* restore rng */
 		Rand_quick = rand_old;
