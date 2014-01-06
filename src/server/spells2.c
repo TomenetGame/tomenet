@@ -1029,7 +1029,7 @@ void identify_pack(int Ind) {
 		o_ptr = &p_ptr->inventory[i];
 
 		if (o_ptr->k_idx) {
-			if (object_known_p(Ind, o_ptr)) continue;
+			if (object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) continue;
 
 			object_aware(Ind, o_ptr);
 			object_known(o_ptr);
