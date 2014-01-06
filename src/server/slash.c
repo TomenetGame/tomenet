@@ -3009,7 +3009,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 #ifdef USE_SOUND_2010
-			sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, TRUE);
+			//sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, TRUE);
 			sound(j, "drop_gold", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 			p_ptr->au -= tip;
