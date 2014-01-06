@@ -1757,8 +1757,7 @@ int Receive_char(void) {
 	}
 
 	/* remember map_info in client-side buffer */
-	if (!screen_icky &&
-	    x >= PANEL_X && x < PANEL_X + screen_wid &&
+	if (x >= PANEL_X && x < PANEL_X + screen_wid &&
 	    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
 		panel_map_a[x - PANEL_X][y - PANEL_Y] = a;
 		panel_map_c[x - PANEL_X][y - PANEL_Y] = c;
@@ -2332,7 +2331,7 @@ int Receive_line_info(void) {
 			/* Don't draw anything if "char" is zero */
 			if (c && draw) {
 				/* remember map_info in client-side buffer */
-				if (!screen_icky &&
+				if (ch != PKT_MINI_MAP &&
 				    x + i >= PANEL_X && x + i < PANEL_X + screen_wid &&
 				    y >= PANEL_Y && y < PANEL_Y + screen_hgt) {
 					panel_map_a[x + i - PANEL_X][y - PANEL_Y] = a;
