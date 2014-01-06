@@ -2160,7 +2160,8 @@ void do_cmd_check_server_settings(int Ind)
 	if (cfg.lifes)
 		fprintf(fff, "Normal mode players can be resurrected up to %d times until their soul\n will escape and their bodies will be permanently destroyed.\n", cfg.lifes);
 	if (cfg.houses_per_player) {
-		fprintf(fff, "Players may own up to level/%d houses (caps at level 50) at once", cfg.houses_per_player);
+		//fprintf(fff, "Players may own up to level/%d houses (caps at level 50) at once", cfg.houses_per_player);
+		fprintf(fff, "Players may own up to level/%d houses (caps at level %d) at once", cfg.houses_per_player, (50 / cfg.houses_per_player) * cfg.houses_per_player);
 		if (cfg.castles_per_player == 1) {
 			fprintf(fff, "\n of which one may be a castle (house with moat)");
 			if (cfg.castles_for_kings) fprintf(fff, "\n provided the player is a king, queen, emperor or empress.\n");
