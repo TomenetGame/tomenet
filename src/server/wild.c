@@ -3548,7 +3548,11 @@ void wilderness_gen(struct worldpos *wpos)
 				if ((zcave[zy][zx].info & (CAVE_ROOM | CAVE_ICKY))) continue;
 
 				/* don't overwrite any perma walls (usually house walls) */
-				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT)) continue;
+				if ((f_info[zcave[zy][zx].feat].flags1 & FF1_PERMANENT) &&
+				    /* exception for mountains though, since they're not house-related and can just be overwritten */
+				    (zcave[zy][zx].feat != FEAT_MOUNTAIN ||
+				    (f_info[zcave[zy][zx].feat].flags2 & FF2_BOUNDARY)))
+					continue;
 
 				zcave[zy][zx].feat = feat_floor;
 			}
