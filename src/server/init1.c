@@ -2372,6 +2372,11 @@ errr init_f_info_txt(FILE *fp, char *buf)
 
 	max_f_idx = ++error_idx;
 
+	/* implied flags */
+	for (i = 0; i < max_f_idx; i++) {
+		if ((f_info[i].flags2 & FF2_BOUNDARY)) f_info[i].flags1 |= FF1_PERMANENT;
+	}
+
 	/* Success */
 	return (0);
 }
