@@ -6228,7 +6228,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	}
 
 	/* Chance of "special object" */
-	prob = (good || great ? 30 : 1000); // 10 : 1000
+	prob = (good || great ? 300 : 10000); // 10 : 1000; 30 : 1000
 
 	/* Base level for the object */
 	base = (good || great ? (object_level + 10) : object_level);
@@ -6420,7 +6420,7 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 	}
 
 	/* Chance of "special object" */
-	prob = (good || great ? 30 : 1000); // 10 : 1000
+	prob = (good || great ? 300 : 10000); // 10 : 1000; 30 : 1000
 
 	/* Base level for the object */
 	base = (good || great ? (object_level + 10) : object_level);
