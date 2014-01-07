@@ -762,12 +762,12 @@ D:0:An unstable silhouette of a void jumpgate in the making
 
 N:106:abyss
 G: :d
-F:LOS | NO_WALK | DONT_NOTICE_RUNNING
+F:LOS | NO_WALK | DONT_NOTICE_RUNNING | PERMANENT
 D:0:Ohhh, it is *dark* and *deep*.
 
 N:107:bottomless, cloudy sky
 G:~:W
-F:LOS | NO_WALK | DONT_NOTICE_RUNNING
+F:LOS | NO_WALK | DONT_NOTICE_RUNNING | PERMANENT
 D:0:Ohhh, it is *dark* and *deep*.
 
 N:108:bottomless abyss
