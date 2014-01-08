@@ -3144,10 +3144,14 @@ int Receive_chardump(void) {
 	   concurrent hits (Z packs), his client might terminate before
 	   all incoming damage messages were actually displayed, depending
 	   on his latency probably.  - C. Blue */
+#if 1
+	window_stuff();
+#else /* todo if enabling this: make fix_message() non static */
 	if (p_ptr->window & (PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT)) {
 		p_ptr->window &= (~(PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT));
 		fix_message();
 	}
+#endif
 
 	/* assume death dump at first */
 	strcpy(type, "-death");
