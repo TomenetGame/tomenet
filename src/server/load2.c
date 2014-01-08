@@ -3308,6 +3308,21 @@ void fix_max_depth_towerdungeon(int Ind) {
 	for (i = 0; i < MAX_D_IDX * 2; i++) {
 		if (!p_ptr->max_depth_wx[i] && !p_ptr->max_depth_wy[i]) continue; /* entry doesn't exist? */
 
+		/* actually fix bugged player data too here: */
+		if (!wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].tower &&
+		    !wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].dungeon) {
+			/* wipe the wrong entry */
+			s_printf(" erased (%d,%d) max_depth[]\n", p_ptr->max_depth_wx[i], p_ptr->max_depth_wy[i]);
+			p_ptr->max_depth[i] = 0;
+			p_ptr->max_depth_wx[i] = 0;
+			p_ptr->max_depth_wy[i] = 0;
+			p_ptr->max_depth_tower[i] = FALSE;
+
+			i--;
+			condense_max_depth(p_ptr);
+			continue;
+		}
+
 		/* both tower+dungeon here? too bad, we cannot decide then :/ -> skip them */
 		if (wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].tower &&
 		    wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].dungeon)
