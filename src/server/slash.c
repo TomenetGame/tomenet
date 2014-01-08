@@ -305,7 +305,7 @@ void do_slash_cmd(int Ind, char *message)
 	int i = 0, j = 0, h = 0;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind];
- 	char *colon, *token[9], message2[MAX_SLASH_LINE_LEN], message3[MAX_SLASH_LINE_LEN];/* was [80], [80] */
+ 	char *colon, *token[9], message2[MAX_SLASH_LINE_LEN], message3[MAX_SLASH_LINE_LEN];
 	char message4[MAX_SLASH_LINE_LEN];
 
 	worldpos wp;
@@ -1910,7 +1910,7 @@ void do_slash_cmd(int Ind, char *message)
 			int notes = 0, found_note = MAX_NOTES;
 			j = 0;
 			bool colon = FALSE;
-			char tname[80], *tpname; /* target's account name */
+			char tname[MAX_SLASH_LINE_LEN], *tpname; /* target's account name (must be *long* cause we temporarily store whole message2 in it..pft */
 			struct account *c_acc;
 
 			if (prefix(message, "/notec")) {
