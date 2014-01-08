@@ -168,7 +168,7 @@ server_opts cfg =
 
 	10,200,		// spell_interfere, spell_stack_limit
 	/* s16b */
-	60,5,5,		// fps, newbies_cannot_drop, running_speed,
+	60,3,5,		// fps, newbies_cannot_drop, running_speed,
 
 	25, 150,	// anti_scum, dun_unusual,
 	32,32,		// town_x, town_y
