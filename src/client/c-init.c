@@ -30,8 +30,9 @@ const struct module sound_modules[] = {
 };
 #endif /* USE_SOUND_2010 */
 
-static void init_arrays(void)
-{
+static void init_arrays(void) {
+	int i;
+
 	/* Macro variables */
 	C_MAKE(macro__pat, MACRO_MAX, cptr);
 	C_MAKE(macro__act, MACRO_MAX, cptr);
@@ -56,6 +57,9 @@ static void init_arrays(void)
 
 	/* Initialize room for the store's stock */
 	C_MAKE(store.stock, STORE_INVEN_MAX, object_type);
+
+	/* Paranoia, for crash in get_item_hook_find_obj() */
+	for (i = 0; i < INVEN_TOTAL; i++) inventory_name[i][0] = 0;
 }
 
 void init_schools(s16b new_size)
