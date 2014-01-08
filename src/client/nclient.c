@@ -3139,6 +3139,16 @@ int Receive_chardump(void) {
 	time_t ct = time(NULL);
 	struct tm* ctl = localtime(&ct);
 
+	/* Hack: make sure message log contains all the latest messages.
+	   Added this for when someone gets killed by massive amount of
+	   concurrent hits (Z packs), his client might terminate before
+	   all incoming damage messages were actually displayed, depending
+	   on his latency probably.  - C. Blue */
+	if (p_ptr->window & (PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT)) {
+		p_ptr->window &= (~(PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT));
+		fix_message();
+	}
+
 	/* assume death dump at first */
 	strcpy(type, "-death");
 
