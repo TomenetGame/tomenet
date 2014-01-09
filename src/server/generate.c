@@ -966,6 +966,15 @@ static void place_random_door(struct worldpos *wpos, int y, int x) {
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
+
+	/* hack: after adding dungeon-custom boundary feats, we had a panic in
+	   Mordor, where the 2nd door of a pair of doors was created inside the
+	   upper level side high mountain boundary.
+	   TODO instead of this: look for perm wall checks (eg FEAT_PERM_SOLID)
+	   that don't recognize the new boundary feats. */
+	if ((f_info[zcave[y][x].feat].flags2 & FF2_BOUNDARY)) return;
+
+
 	/* Choose an object */
 	tmp = rand_int(1000);
 
@@ -1009,7 +1018,7 @@ static void place_random_door(struct worldpos *wpos, int y, int x) {
 
 	/* let's trap this ;) */
 	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
-		rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) return;
+	    rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) return;
 	place_trap(wpos, y, x, 0);
 }
 
@@ -8333,7 +8342,9 @@ static void try_doors(worldpos *wpos, int y, int x)
 		if (!in_bounds(yy, xx)) continue;
 
 		/* Ignore walls */
-		if (zcave[y][x].feat >= FEAT_MAGMA) continue;
+		if (zcave[y][x].feat >= FEAT_MAGMA
+		    || zcave[y][x].feat == FEAT_PERM_CLEAR) /* paranoia for now (dungeon floors don't have this feat) */
+			continue;
 
 		/* Ignore room grids */
 		if (zcave[y][x].info & CAVE_ROOM) continue;
