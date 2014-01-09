@@ -966,14 +966,14 @@ static void place_random_door(struct worldpos *wpos, int y, int x) {
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
-
+#if 0 /* fixed the build_tunnel() code, should make this hack obsolete */
 	/* hack: after adding dungeon-custom boundary feats, we had a panic in
 	   Mordor, where the 2nd door of a pair of doors was created inside the
 	   upper level side high mountain boundary.
 	   TODO instead of this: look for perm wall checks (eg FEAT_PERM_SOLID)
 	   that don't recognize the new boundary feats. */
 	if ((f_info[zcave[y][x].feat].flags2 & FF2_BOUNDARY)) return;
-
+#endif
 
 	/* Choose an object */
 	tmp = rand_int(1000);
@@ -7854,17 +7854,14 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 
 #ifdef WIDE_CORRIDORS
 			/* Save the wall location */
-			if (dun->wall_n < WALL_MAX)
-			{
-				if (zcave[row1 + col_dir][col1 + row_dir].feat != FEAT_PERM_SOLID &&
-				    zcave[row1 + col_dir][col1 + row_dir].feat != FEAT_PERM_SOLID)
+			if (dun->wall_n < WALL_MAX) {
+				if (!(f_info[zcave[row1 + col_dir][col1 + row_dir].feat].flags2 & FF2_BOUNDARY) &&
+				    !(f_info[zcave[row1 + col_dir][col1 + row_dir].feat].flags2 & FF2_BOUNDARY))
 				{
 					dun->wall[dun->wall_n].y = row1 + col_dir;
 					dun->wall[dun->wall_n].x = col1 + row_dir;
 					dun->wall_n++;
-				}
-				else
-				{
+				} else {
 					dun->wall[dun->wall_n].y = row1;
 					dun->wall[dun->wall_n].x = col1;
 					dun->wall_n++;
