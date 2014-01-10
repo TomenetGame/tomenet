@@ -4722,9 +4722,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		fprintf(fff, "It allows you to see invisible monsters.\n");
 
 	if (f3 & (TR3_FEATHER))
-		fprintf(fff, "It allows you to levitate.\n");
+		fprintf(fff, "It makes you fall down gently like a feather.\n");
 	if (f4 & (TR4_FLY))
-		fprintf(fff, "It allows you to fly.\n");
+		fprintf(fff, "It allows you to levitate.\n");
 	if (f5 & (TR5_PASS_WATER))
 		fprintf(fff, "It allows you to swim easily.\n");
 	if (f4 & (TR4_CLIMB))

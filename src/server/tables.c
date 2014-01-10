@@ -2516,7 +2516,7 @@ TODO: - stuff....
       - NO GLYPHING! NO WALL CREATIONS! NO TREE GROWAGE!
 SPELLS: ({ythanks, dg)
 		Angel:
-			5: Levitation,
+			5: Feather Falling,
 			10: Manabolt				cost 10 SP	follow manabolt curve
 			20: Manablast				cost 1.5*manabolt cost		manabolt dmg curve(beam attack)
 			25: Manaball				cost 2*manabolt cost		manabolt dmg curve(ball attack)

@@ -1432,7 +1432,7 @@ EA          Extra Attacks. Rings, gloves or weapons which increase your number
 
 FA          Free Action (immunity to paralysis).
 
-FF          Feather falling (Levitation).
+FF          Feather falling.
 
 GoI         Globe of invulnerability. This only exists as 'Stair GoI', see
             further below.
@@ -4872,10 +4872,10 @@ weapon can stand next to rubble and use their 'create ammo' ability to create
 sling ammunition from it.
 
 Pits-
-Dark grey '^' are pits that can only be crossed if you have levitation or
-flying ability. Bree is protected by pits around the outer tree wall. These
-pits cannot be disarmed (because they don't count as trap, as opposed to the
-actual 'chasm traps' and 'pit traps') or destroyed.
+Dark grey '^' are pits that can only be crossed if you have feather falling or
+levitation ability. Bree is protected by pits around the outer tree wall.
+These pits cannot be disarmed (because they don't count as trap, as opposed to
+the actual 'chasm traps' and 'pit traps') or destroyed.
 
 Walls-
 White '#' are permanent walls which cannot be damaged or destroyed, or in
@@ -7294,8 +7294,8 @@ Gravity         These attacks have very annoying side-effects:
                 -Slow you down.
                 -Stun you if you don't resist sound.
                 It's impossible to resist gravitation. However, having
-                'Feather Falling' (also known as Levitation) will reduce the
-                damage your body takes from the shockwave and cut the damage
+                'Feather Falling' will reduce the damage your body takes from
+                being thrown around by the shockwave and hence cut the damage
                 to 6/7..6/12.
                 Damage (breath only) is monster HP/3 and caps at 150.
 Mana            Mana is pure magical energy. There are only rumours
@@ -7613,12 +7613,13 @@ Note: There are certain effects that can make your character lose his knowledge
 
 (5.8) Special abilities of items
 --------------------------------
-FEATHER ('It allows you to levitate.')
-        'Feather Falling', also called 'Levitation'.
+FEATHER ('It makes you fall down gently like a feather.')
+        'Feather Falling'.
         Lets you resist gravitation damage somewhat.
         Lets you float down gently if you accidentally stumble into pits.
-FLY     ('It allows you to fly.')
-        Allows you to cross water areas without drowning. Enables you to fly
+LEVITATE
+        ('It allows you to levitate.')
+        Allows you to cross water areas without drowning. Enables you to hover
         over trees.
 XTRA_SHOTS
         ('It fires missiles excessively fast.')
@@ -9801,7 +9802,7 @@ Note that not every skill is available to every profession (class).
                                 Lets you attack with special combat styles.
                                 You get +1 extra attack at 1,10,20,30,40,45,50
                                 each, so up to +7 blows per round in total.
-                                At 10 you receive Feather Falling (Levitation).
+                                At 10 you receive Feather Falling.
                                 At 15 your character gets fear resistance.
                                 At 20 your character gets confusion resistance.
                                 Gives you 'Free Action' (immunity to paralysis)
@@ -10671,7 +10672,7 @@ Warrior is strongly recommended.
 - Yeek
     Being weak and losing many childhood fights, they have learned the
     ability to float gently to the ground. They have intrinsic feather
-    falling (same as 'levitation' effect).
+    falling.
     Often having to escape from precarious situations, yeeks are able to pass
     through dense forest quickly.
     Yeeks are the least powerful of all the races. They suffer disadvantages
@@ -10719,7 +10720,7 @@ Warrior is strongly recommended.
     dragons, they can eat firestones to temporarily boost their powers.
     (See (5.9) for firestone details.)
     Draconians need a very long time to gain further experience and need to eat
-    often. They have feather falling (levitation) instrinsically from birth.
+    often. They have feather falling instrinsically from birth.
     At level 5 they can spot dragons anywhere on the level. At level 6 they
     acquire an intrinsic telepathic vision of all nearby creatures, the radius
     expands as they gain levels. At level 30 they learn how to fly.
@@ -11778,7 +11779,7 @@ S: spell list
     BR_xxx      (breathing) will give the according resistance to the player
                 (if that specific attack CAN be resisted at all).
     BR_PLASMA   gives plasma & fire resistance.
-    BR_GRAVITY  gives feather falling (levitation).
+    BR_GRAVITY  gives feather falling.
     BR_INERTIA  gives free action.
     MIND_BLAST  Insanity attacks are reduced a little bit.
     BRAIN_SMASH Insanity attacks are reduced somewhat.
@@ -11793,14 +11794,14 @@ so you might want to create macros for them.
 Further, certain races get additional fixed abilities
 (even if they are not explicitely mentioned in ~7):
 -----------------------------------------------------
-Bats            Feather falling (levitation).
+Bats            Feather falling.
 Elves           Resist light.
 Dark-Elves      Resist darkness.
 Hobbits         Dexterity bonus of +2 for not wearing shoes. (Or 'Halflings'.)
 Gnomes          Free action.
 (Dwarves        Blindness resistance, climbing at level 30.)
 (High-Elves     Resist light, see invisible.)
-Yeeks           Feather falling (levitation).
+Yeeks           Feather falling.
 (Ents           Slow digestion, speed - 2, sensitive to fire, see invisible at
                 level 4, can swim, pass trees.)
 All animals     Able to pass trees.
@@ -11810,7 +11811,7 @@ All orcs        Resist darkness.
 All trolls and giants
                 Sustain strength.
 All dragonriders
-                ESP_DRAGON at level 5, feather falling (levitation),
+                ESP_DRAGON at level 5, feather falling,
                 flying at level 30.
 All evil creatures
                 Becomes susceptible to certain 'good' or 'holy' effects.
@@ -12408,8 +12409,8 @@ Istar schools:
     Lightning Bolt  Fires a lightning bolt at a target.
                     Required skill level for first spell level: 6.
 
-    Wings of Wind   Grants levitation (feather falling).
-                    Lv16: Lets you fly.
+    Wings of Wind   Grants feather falling.
+                    Lv16: Lets you levitate.
                     Required skill level for first spell level: 16.
                     Shared spell (see above): Air, Conveyance.
 
@@ -12425,8 +12426,8 @@ Istar schools:
                     Required skill level for first spell level: 25.
 
     BONI:           Feather falling at 30,
-                    Poison resistance at 40,
-                    Flying at 50.
+                    poison resistance at 40,
+                    levitation at 50.
 
 
 - Earth
@@ -12926,8 +12927,8 @@ Mindcraft schools:
     Autokinesis III Teleports you towards a party member with opened mind.
                     Required skill level for first spell level: 24.
 
-    Feedback        Uses telekinetic effects to keep you hovering, granting
-                    levitation, and at 15 becomes sufficient for flying.
+    Feedback        Uses telekinetic effects to slow your fall, granting
+                    feather falling. At 15 becomes sufficient for levitation.
                     Required skill level for first spell level: 18.
 
     Pyrokinesis     Causes a severe inflammation to burn your opponent.
@@ -14375,7 +14376,7 @@ Very high characters (36 and above)
   Also, your damage and spell casting chance are reduced while stunned.
   Notorious for k.o. are Water Hounds, Impact Hounds, to some extent Gravity
   Hounds, and *especially* Plasma Hounds.
-  Note that "Feather Falling", also known as "Levitation" provides resistance
+  Note that "Feather Falling" provides resistance to gravity damage.
   Nether and Chaos "only" drain your experience if not resisted (can be cured
   with a potion of restore life levels or according magic). The great thing
   about chaos resistance is that it includes confusion resistance! So if you
@@ -15132,8 +15133,8 @@ Ammunition
         Extra +hit and +dam bonus, this caps at +12 hit and +6 dam.
         Either +1 extra damage die sides or +1 extra damage dice.
 Boots
-        Feather falling (levitation)
-        Flying
+        Feather falling
+        Levitation
         Climbing
         Extra +AC bonus
         Stealth
@@ -15186,8 +15187,8 @@ Shields
          (which is the default setting.)
 Cloaks
         Stealth
-        Feather falling (levitation)
-        Flying
+        Feather falling
+        Levitation
         Fire/cold/acid/lightning resistances
         Chance for either lightning or fire aura and corresponding resistance
         Chance for shard resistance

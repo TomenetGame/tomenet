@@ -77,8 +77,8 @@ AIRWINGS = add_spell
 			return "dur "..(5 + get_level(Ind, AIRWINGS, 25)).."+d10"
 	end,
         ["desc"] =	{
-        		"Grants the power of levitation",
-                        "At level 16 it grants the power of controlled flight"
+        		"Grants the power of feather falling",
+                        "At level 16 it grants the power of levitation"
         }
 }
 

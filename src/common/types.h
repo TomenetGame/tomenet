@@ -2285,7 +2285,7 @@ struct player_type
 	s16b tim_thunder;   	/* Timed thunderstorm */
 	s16b tim_thunder_p1;	/* Timed thunderstorm */
 	s16b tim_thunder_p2;	/* Timed thunderstorm */
-	s16b tim_ffall;     	/* Timed Levitation */
+	s16b tim_ffall;     	/* Timed Feather Falling */
 	s16b tim_fly;       	/* Timed Levitation */
 	s16b shield;		/* Timed -- Shield Spell */
 	s16b shield_power;      /* Timed -- Shield Spell Power */

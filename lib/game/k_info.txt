@@ -1178,7 +1178,7 @@ W:10:0:2:250
 A:10/1
 F:RES_COLD | EASY_KNOW
 
-N:142:Levitation
+N:142:Feather Falling
 G:=:d
 I:45:7:0
 W:5:0:2:200

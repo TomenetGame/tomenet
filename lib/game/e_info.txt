@@ -566,7 +566,7 @@ T:31:0:99
 
 ### Boots ###
 
-N:57:of Levitation
+N:57:of Slow Descent
 X:A:35:7
 W:0:7:30:250
 T:30:0:99

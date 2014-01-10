@@ -189,8 +189,9 @@ MFEEDBACK = add_spell
 		return "dur "..(5 + get_level(Ind, MFEEDBACK, 15)).."+d5"
 	end,
 	["desc"] = {
-		"Uses psycho-kinetic force for propulsion, making you levitate.",
-		"At level 15 it becomes sufficient for controlled flight."
+		"Uses psycho-kinetic force for propulsion, making you fall.",
+		"down gently like a feather.",
+		"At level 15 it becomes sufficient for levitation."
 	}
 }
 
