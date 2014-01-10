@@ -618,7 +618,7 @@ N:87:dark pit
 #not bad: ' ' # ^ ~
 G:^:D
 F:CAN_LEVITATE | CAN_FLY | LOS
-F:NO_WALK | SUPPORT_LIGHT
+F:NO_WALK | SUPPORT_LIGHT | PERMANENT
 F:DONT_NOTICE_RUNNING
 D:0:Ohhh, it is dark and deep.
 
