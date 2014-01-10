@@ -1131,7 +1131,8 @@ static void init_kind_list() {
 		return;
 	}
 
-	while (0 == my_fgets(fff, buf, 1024)) {
+	buf[0] = 0;
+	while (buf[0] == 'N' || 0 == my_fgets(fff, buf, 1024)) {
 		/* strip $/%..$/! conditions */
 		p1 = p2 = buf; /* dummy, != NULL */
 		while (buf[0] == '$' || buf[0] == '%') {
@@ -1151,6 +1152,8 @@ static void init_kind_list() {
 			continue;
 		}
 		if (buf[0] != 'N') continue;
+		buf[0] = '_'; /* random dummy */
+
 		if (v1 < 4 || (v1 == 4 && (v2 < 0 || (v2 == 0 && v3 < 1)))) {
 			//plog("Error: Your k_info.txt file is outdated.");
 			return;
@@ -1194,20 +1197,43 @@ static void init_kind_list() {
 			}
 			if (!p1 && !p2) continue;
 
-			if (strlen(buf) < 3 || buf[0] != 'I') continue;
+			/* proceeded to next entry? */
+			if (buf[0] == 'N') break;
 
-			p1 = buf + 2; /* tval */
-			p2 = strchr(p1, ':') + 1; /* sval */
-			if (!p2) continue; /* paranoia (broken file) */
+			if (strlen(buf) < 3) continue;
+			else if (buf[0] == 'A') { /* depth, rarity +  (--note: Does not account for extra rarity increase due to OOD discrepancy between k-depth and a-depth) */
+				int best_rar = 255;
+				while (TRUE) {
+					if (!strchr(p1, ':')) break;
+					/* <ignore depth> */
+					p2 = strchr(p1, ':') + 1;
+					p1 = p2;
 
-			kind_list_tval[kind_list_idx] = atoi(p1);
-			kind_list_sval[kind_list_idx] = atoi(p2);
+					/* fetch rarity */
+					p2 = strchr(p1, '/') + 1;
+					p1 = p2;
+					if (atoi(p1) < best_rar) best_rar = atoi(p1);
+				}
+				kind_list_rarity[kind_list_idx] = best_rar;
+			} else if (buf[0] == 'I') {
+				p1 = buf + 2; /* tval */
+				p2 = strchr(p1, ':') + 1; /* sval */
+				if (!p2) continue; /* paranoia (broken file) */
 
-			/* complete certain names that are treated in a special way */
-			if (kind_list_tval[kind_list_idx] == TV_TRAPKIT)
-				strcat(kind_list_name[kind_list_idx], " Trap Kit");
-			break;
+				kind_list_tval[kind_list_idx] = atoi(p1);
+				kind_list_sval[kind_list_idx] = atoi(p2);
+
+				/* complete certain names that are treated in a special way */
+				if (kind_list_tval[kind_list_idx] == TV_TRAPKIT)
+					strcat(kind_list_name[kind_list_idx], " Trap Kit");
+			}
+			continue;
 		}
+
+#if 0 /* changed into a hack in init_artifact_list actually! */
+		/* hack to initialise INSTA_ARTs' rarity: They don't have a k-rarity! */
+		if (!kind_list_rarity[kind_list_idx]) kind_list_rarity[kind_list_idx] = 1;
+#endif
 
 		kind_list_idx++;
 
@@ -1222,7 +1248,7 @@ static void init_kind_list() {
 static void init_artifact_list() {
 	char buf[1024], *p1, *p2, art_name[MSG_LEN];
 	FILE *fff;
-	int tval = 0, sval = 0, i, v1 = 0, v2 = 0, v3 = 0;
+	int tval = 0, sval = 0, i, v1 = 0, v2 = 0, v3 = 0, rar;
 	bool discard;
 
 	/* actually use local r_info.txt - a novum */
@@ -1267,6 +1293,7 @@ static void init_artifact_list() {
 		discard = FALSE;
 
 		/* fetch tval,sval and lookup type name in k_info */
+		rar = 1; /* paranoia/kill compiler warning */
 		while (0 == my_fgets(fff, buf, 1024)) {
 			/* strip $/%..$/! conditions */
 			p1 = p2 = buf; /* dummy, != NULL */
@@ -1291,8 +1318,9 @@ static void init_artifact_list() {
 			} else { /* 'W' -- scan rarity */
 				p1 = buf + 2;
 				p2 = strchr(p1, ':') + 1;
+				rar = atoi(p2);
 				/* check for 'disabled' hack */
-				if (atoi(p2) == 255) discard = TRUE;
+				if (rar == 255) discard = TRUE;
 				break;
 			}
 		}
@@ -1311,6 +1339,34 @@ static void init_artifact_list() {
 		}
 		/* complete the artifact name */
 		strcat(artifact_list_name[artifact_list_idx], art_name);
+
+		/* useful 'byproduct', since we had to scan for 255 rarity anyway */
+		if (!rar) rar = 1; /* identical actually (and here to prevent divby0) */
+#if 0
+		/* hack: recognize insta-arts and calculate their rarity in a funny way (scale up into our 10000 array) */
+		if (!kind_list_rarity[i]) artifact_list_rarity[artifact_list_idx] = ((10000 / rar) * (10000 / rar)) / 100;
+		/* normal artifacts: */
+		else artifact_list_rarity[artifact_list_idx] = ((10000 / kind_list_rarity[i]) * (10000 / rar)) / 100;
+#else /* bad hack: manipulate rarity so that if either k-rarity or a-rarity is very high, it outweighs the other one -_- */
+		/* hack: recognize insta-arts and calculate their rarity in a funny way (scale up into our 10000 array) */
+		if (!kind_list_rarity[i]) artifact_list_rarity[artifact_list_idx] = ((10000 / rar) * (10000 / rar)) / 100;
+		/* normal artifacts: */
+		else {
+			int krar = kind_list_rarity[i], krar_boost, rar_boost;
+			krar_boost = krar + (krar * krar) / 500;
+			rar_boost = rar + (rar * rar) / 500;
+			if (rar < krar) {
+				if (rar + krar_boost < 100) rar += krar_boost;
+				else rar = 100;
+			}
+			if (krar < rar) {
+				if (krar + rar_boost < 100) krar += rar_boost;
+				else krar = 100;
+			}
+			artifact_list_rarity[artifact_list_idx] = ((10000 / krar) * (10000 / rar)) / 100;
+		}
+#endif
+
 		artifact_list_idx++;
 
 		/* outdated client? */
@@ -1441,6 +1497,7 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 #define USE_NEW_SHIELDS
 void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN];
+	cptr s_rarity;
 	FILE *fff;
 	int l = 0, info_val, pl = -1;
 	int pf_col_cnt = 0; /* combine multiple [3] flag lines into one */
@@ -1451,7 +1508,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	const char a_key = 'u', a_val = 's'; /* 'Speed:', 'Normal' */
 	const char ta_key = TERM_UMBER, ta_val = TERM_SLATE; /* 'Speed:', 'Normal' */
 
-	int tval, sval = 0, v_ac, v_acx, v_hit, v_dam;
+	int tval, sval = 0, v_ac, v_acx, v_hit, v_dam, rarity;
 	char v_ddice[10];
 	bool empty;
 
@@ -1548,10 +1605,32 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				/* remember for hard-coded bow multipliers */
 				sval = atoi(p1);
 				p1 = p2;
+
+				/* insert rarity */
+				/* note: Does not account for extra rarity increases due to..
+				         1) OOD discrepancy between k-depth and a-depth)
+				         2) treasure class of that artifact not being dropped by many monsters
+				*/
+				rarity = artifact_list_rarity[alidx]; /* from 1 to 10000 (k-rarity 100, a-rarity 100) */
+				if (rarity > 100000) s_rarity = "Common";
+				else if (rarity >= 10000) s_rarity = "Uncommon";
+				else if (rarity > 1000) s_rarity = "Rare";
+				//else if (rarity > 100) s_rarity = "Very rare";
+				else if (rarity > 125) s_rarity = "Very rare"; //allow 100*80 or 90*90
+				else s_rarity = "Extremely rare";
+
 			    /* pval */
 				info_val = atoi(p1);
-				if (info_val == 0) break;
-				sprintf(info_tmp, "Magical bonus (to stats and/or abilities): \377%c(%s%d)\377%c.", a_val, info_val < 0 ? "" : "+", info_val, a_key);
+				if (info_val == 0) {
+					/* no boni? just dump rarity in that line then. */
+					sprintf(info_tmp, "%s.", s_rarity);
+					strcpy(info, info_tmp);
+					strcpy(paste_lines[++pl], format("\377%c", a_key));
+					strcat(paste_lines[pl], info);
+					Term_putstr(1, 7 + (l++), -1, ta_key, info);
+					break;
+				}
+				sprintf(info_tmp, "%s. Magical bonus (to stats and/or abilities): \377%c(%s%d)\377%c.", s_rarity, a_val, info_val < 0 ? "" : "+", info_val, a_key);
 				strcpy(info, info_tmp);
 			    /* all done, display: */
 				strcpy(paste_lines[++pl], format("\377%c", a_key));

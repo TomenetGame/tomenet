@@ -903,10 +903,10 @@ extern bool monster_list_any[MAX_R_IDX], monster_list_breath[MAX_R_IDX];
 extern int monster_list_code[MAX_R_IDX], monster_list_idx;
 
 extern char artifact_list_name[MAX_A_IDX][80];
-extern int artifact_list_code[MAX_A_IDX], artifact_list_idx;
+extern int artifact_list_code[MAX_A_IDX], artifact_list_rarity[MAX_A_IDX], artifact_list_idx;
 
 extern char kind_list_name[MAX_K_IDX][80];
-extern int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_idx;
+extern int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarity[MAX_K_IDX], kind_list_idx;
 
 extern int screen_wid, screen_hgt;
 extern void (*resize_main_window)(int cols, int rows);
