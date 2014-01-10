@@ -357,7 +357,7 @@ bool set_tim_fly(int Ind, int v)
 	/* Open */
 	if (v) {
 		if (!p_ptr->tim_fly) {
-			msg_print(Ind, "You feel able to reach the clouds.");
+			msg_print(Ind, "You feel light and your feet take off the ground.");
 			notice = TRUE;
 		}
 	}
@@ -4126,7 +4126,7 @@ void check_experience(int Ind)
 			break;
 		}
 #endif
-		if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
+		if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to levitate!");
 		break;
 	case RACE_DARK_ELF:
 		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to see the invisible!");
@@ -4141,7 +4141,7 @@ void check_experience(int Ind)
 		if (old_lev < 70 && p_ptr->lev >= 70) msg_print(Ind, "\374\377GYour vision extends.");
 		if (old_lev < 80 && p_ptr->lev >= 80) msg_print(Ind, "\374\377GYour vision extends.");
 		if (old_lev < 90 && p_ptr->lev >= 90) msg_print(Ind, "\374\377GYour vision extends.");
-//			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
+//			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to levitate!");
 		if (old_lev < 20 && p_ptr->lev >= 20) {
 			msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
 			msg_print(Ind, "\374\377G(Press 'm' key and choose 'use innate power' to polymorph.)");

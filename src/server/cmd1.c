@@ -5125,7 +5125,7 @@ static bool wraith_access_virtual(int Ind, int y, int x)
 
 
 /* borrowed from ToME	- Jir - */
-/* NOTE: in ToME fly gives free FF, but in TomeNET not. */
+/* NOTE: in ToME levitation gives free FF, but in TomeNET not. */
 bool player_can_enter(int Ind, byte feature) {
 	player_type *p_ptr = Players[Ind];
 	bool pass_wall;

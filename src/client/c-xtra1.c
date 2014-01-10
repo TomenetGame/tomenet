@@ -2839,7 +2839,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 	c_put_str(header_color[1][11], "Invs:", 12, 20);
 	c_put_str(header_color[1][12], "Vamp:", 13, 20);
 	c_put_str(header_color[1][13], "Idnt:", 14, 20);
-	c_put_str(header_color[1][14], "Fly :", 15, 20);
+	c_put_str(header_color[1][14], "Levi:", 15, 20);
 	c_put_str(header_color[1][15], "Clmb:", 16, 20);
 	c_put_str(header_color[1][16], "Wrth:", 17, 20);
 	c_put_str(header_color[1][17], "AMSh:", 18, 20);

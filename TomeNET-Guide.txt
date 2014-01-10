@@ -4450,7 +4450,7 @@ Ghosts have some special abilities, these are
 -they cannot be cut since they don't bleed
 -they resist insanity attacks
 -they can pass solid walls and mountains
--they can fly
+-they can levitate
 -they cannot use items
 -they cannot carry items except for the Book Of The Dead.
 
@@ -4845,7 +4845,7 @@ See a bit below for more details.
 
 Trees and bushes-
 Thick trees are rensembled by (mostly green, depending on the season) '#'.
-To pass them you need to either fly over them or to be an Ent, shepherd of
+To pass them you need to either levitate over them or to be an Ent, shepherd of
 trees to whom they will slightly bow aside to make room, a yeek, or a trained
 ranger or druid. Trees can also be burned up. Dead trees and bushes are '*' symbols.
 
@@ -4888,8 +4888,8 @@ may occur in some remote places..
 Water-
 On the world surface but also in some dungeons there's lots of water (blue '~'
 fields). It can be dangerous to cross it if you're not good at swimming or if
-you cannot fly :) Further, nasty creatures are said to live in the seas. Ents
-cannot drown in water since they completely consist of wood.
+you cannot levitate :) Further, nasty creatures are said to live in the seas.
+Ents cannot drown in water since they completely consist of wood.
 
 Mountain chains-
 Brown '^' fields are massive and very high mountains. To travel these you need
@@ -4946,7 +4946,7 @@ Icy waste       white '.'
      ground might burn your items. Use word-of-recall to get out of here.
 (***) If your backpack is too heavy for you to swim then it'll be a big hassle
       to try and cross deep water without drowning. In that case just get an
-      item that allows you to fly and you'll be fine.
+      item that allows you to levitate and you'll be fine.
 
 
 
@@ -7617,7 +7617,7 @@ FEATHER ('It makes you fall down gently like a feather.')
         'Feather Falling'.
         Lets you resist gravitation damage somewhat.
         Lets you float down gently if you accidentally stumble into pits.
-LEVITATE
+CAN_FLY
         ('It allows you to levitate.')
         Allows you to cross water areas without drowning. Enables you to hover
         over trees.
@@ -10723,7 +10723,7 @@ Warrior is strongly recommended.
     often. They have feather falling instrinsically from birth.
     At level 5 they can spot dragons anywhere on the level. At level 6 they
     acquire an intrinsic telepathic vision of all nearby creatures, the radius
-    expands as they gain levels. At level 30 they learn how to fly.
+    expands as they gain levels. At level 30 they learn how to levitate.
     Unlike other races, draconians are susceptible to the void connecting
     void jump gates and may get hurt by it when they travel through it,
     perceiving it as "cold" even if they resist or are immune to normal frost.
@@ -10806,7 +10806,8 @@ Warrior is strongly recommended.
     They also have partially life leeching (vampiric) attacks (see '(5.15)
     Vampirism' for more information).
     At level 20 they become able to turn into a bat. Vampire bats are fast, can
-    fly, and are more resistant to sun burn than the humanoid vampire form,
+    fly (basically as effective as 'levitation'), and are more resistant to sun
+    burn than the humanoid vampire form,
     making them useful for travelling, although they move slightly erratically.
     Vampires cannot eat normal food, instead they need to feed off living
     creatures. This means that you need to kill monsters in melee range (though
@@ -10870,7 +10871,7 @@ Warrior is strongly recommended.
         evil-based attacks.
         Intrinsic light aura that adds to any light source's radius.
         +1 bonus AC for every 2 levels above 20.
-        At level 50 they will be able to fly, become resistant to poison,
+        At level 50 they will be able to levitate, become resistant to poison,
         electricity, cold and be enveloped in an aura of frost and lightning;
         also, their melee attacks will slay evil opponents intrinsically.
 
@@ -11708,7 +11709,7 @@ F: flag list
     KILL_WALL   The mimic will dig *easily* through walls.
     REGENERATE  Faster hit point regeneration.
     CAN_SWIM    The player can pass water fields without problems.
-    CAN_FLY     The player can fly.
+    CAN_FLY     The player can levitate.
     STUPID      -2 intelligence.
     SMART       +2 intelligence.
     NO_CONF     Confusion resistance.
@@ -11975,6 +11976,9 @@ Note: Some forms can open doors, others may try to bash doors.
 You can use the /ex command in game to see which forms you can use, and what
 polymorph code they have.
 
+Note: If a monster can fly that means it will grant the player the 'levitation'
+      ability.
+
 Level 5:
 --------
 Cave bear               tough; can pass mountain terrain
@@ -12193,7 +12197,7 @@ Phantom warrior  8  Useful only for shamans because it has no limbs:
                     Also gives fear/sound/insanity resistance, free action,
                     poison immunity, and you won't bleed from cuts.
 Tengu           10  High HP, good AC, can blink/teleport and more, resists fear
-                    and fire, can fly. A secret tip for form hunters!
+                    and fire, can levitate. A secret tip for form hunters!
                     (Does not occur in packs.)
 Master yeek     12  Although everyone knows that Yeek = weak, this particular
                     kind of Yeek can cast some interesting magic spells.

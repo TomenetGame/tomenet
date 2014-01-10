@@ -1345,7 +1345,7 @@ void self_knowledge(int Ind) {
 	if (p_ptr->feather_fall) fprintf(fff, "You land gently.\n");
 #if 1
 	if (p_ptr->climb) fprintf(fff, "You can climb high mountains.\n");
-	if (p_ptr->fly) fprintf(fff, "You can fly.\n");
+	if (p_ptr->fly) fprintf(fff, "You can levitate.\n");
 	if (p_ptr->can_swim) fprintf(fff, "You can swim easily.\n");
 #endif	// 0
 	if (p_ptr->free_act) fprintf(fff, "You have free action.\n");

@@ -184,7 +184,7 @@ __races_diz = {
     "have intrinsic feather falling and gain telepathic",
     "vision of dragons at level 5 and generic short",
     "range telepathy at level 6 which expands further",
-    "as they get stronger. At 30 they learn how to fly.",
+    "as they get stronger. At 30 they learn how to levitate.",
     "Experience is very hard for them to gain and they",
     "need to eat often. They receive boni on Thought",
     "Contact, Nexus runecraft, large boni on Polearm-",

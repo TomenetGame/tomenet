@@ -142,7 +142,7 @@ MDISARM = add_spell
 	}
 }
 
---[[ --moved to mintrusion, to make room for ff/fly spells here..
+--[[ --moved to mintrusion, to make room for ff/lev spells here..
 MPSISTORM = add_spell
 {
 	["name"] =	"Psi Storm",

@@ -2593,7 +2593,7 @@ struct player_type
 	bool wraith_form;   /* wraithform */
 	bool immune_neth;       /* Immunity to nether */
 	bool climb;             /* Can climb mountains */
-	bool fly;               /* Can fly over some features */
+	bool fly;               /* Can levitate over some features */
 	bool can_swim;		/* Can swim like a fish (or Lizard..whatever) */
 	bool pass_trees;	/* Can pass thick forest */
 	bool town_pass_trees;	/* Can pass forest in towns, as an exception to make movement easier */

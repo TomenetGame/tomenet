@@ -2492,7 +2492,7 @@ XXX- At level 50:
 XXX  - angels:
 XXX    - slay_evil
 XXX    - res poison
-XXX    - Fly~~~
+XXX    - Levitate~~~
 XXX    - ELEC_SHEATH
 XXX  - demons:
 XXX    - fire immune
@@ -2521,7 +2521,7 @@ SPELLS: ({ythanks, dg)
 			20: Manablast				cost 1.5*manabolt cost		manabolt dmg curve(beam attack)
 			25: Manaball				cost 2*manabolt cost		manabolt dmg curve(ball attack)
 			30: Slay Evil,FA, mana regen
-			35: light resistance+susp darkness, fly, no food needed?
+			35: light resistance+susp darkness, levitation, no food needed?
 			40: esp good, esp demon, esp undead
 			45: Cloud of Power			cost =player lvl.	= playerlvl  mana+fire cloud?	dur=playerlevel/2
 			50: ManaStorm, No stun			cost = playerlevel*2	dmg=(playerlevel*10)+200 area spell.
