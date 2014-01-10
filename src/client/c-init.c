@@ -1609,7 +1609,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				/* insert rarity */
 				/* note: Does not account for extra rarity increases due to..
 				         1) OOD discrepancy between k-depth and a-depth)
-				         2) treasure class of that artifact not being dropped by many monsters
+				         2) treasure class of that artifact not being dropped by many monsters,
+				            or those who drop it spawning more rarely.
 				*/
 				rarity = artifact_list_rarity[alidx]; /* from 1 to 10000 (k-rarity 100, a-rarity 100) */
 				if (rarity > 100000) s_rarity = "Common";
