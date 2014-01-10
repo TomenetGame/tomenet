@@ -3587,7 +3587,7 @@ static bool process_player_end_aux(int Ind)
 		if (c_ptr->feat == FEAT_DEEP_WATER) {
 
 			/* note: TODO (bug): items should get damaged even if player can_swim,
-			   but this might devalue swimming too much compared to flying. Dunno. */
+			   but this might devalue swimming too much compared to levitation. Dunno. */
 
 			if ((!p_ptr->tim_wraith) && (!p_ptr->fly) && (!p_ptr->can_swim)) {
 				/* Take damage */
@@ -8739,7 +8739,7 @@ s_printf("updating weather for player %d.\n", i);
 void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
-		/* are we in fact running-flying? */
+		/* are we in fact running-levitating? */
 		//if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
 		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN))) {
 			/* Allow level 50 druids to run at full speed */

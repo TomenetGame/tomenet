@@ -5438,8 +5438,8 @@ F:IGNORE_WATER
 #W:30:100:5:50
 #A:30/2
 
-# Here's the Ring of Flying
-N:755:Flying
+# Here's the Ring of Levitation
+N:755:Levitation
 G:=:d
 I:45:54:0
 W:20:0:2:5000

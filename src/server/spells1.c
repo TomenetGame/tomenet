@@ -10918,7 +10918,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			if (flg & PROJECT_GRAV) { /* Running along the floor?.. */
 				if (dist && !cave_floor_bold(zcave, y, x)) break;
 #ifndef PROJ_MON_ON_WALL
-			} else if (IS_PVP) { /* ..or rather flying through the air? */
+			} else if (IS_PVP) { /* ..or rather levitating through the air? */
 				if (dist && !cave_contact(zcave, y, x)
  #ifdef DOUBLE_LOS_SAFETY
 				    && !ok_DLS
@@ -11025,7 +11025,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		if (flg & PROJECT_GRAV) { /* Running along the floor?.. */
 			if (!cave_floor_bold(zcave, y9, x9) && (rad > 0)) break;
 #ifndef PROJ_MON_ON_WALL
-		} else if (IS_PVP) { /* ..or rather flying through the air? */
+		} else if (IS_PVP) { /* ..or rather levitating through the air? */
 			if (!cave_contact(zcave, y9, x9)
  #ifdef DOUBLE_LOS_SAFETY
 			    && !ok_DLS

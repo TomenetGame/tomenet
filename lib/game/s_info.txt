@@ -494,8 +494,8 @@ D:Ability to climb highest mountains withouth problems (Requires 1.000).
 I:1000:0
 F:MAX_1
 
-#N:91:Flying
-#D:Ability to fly over the ground
+#N:91:Levitation
+#D:Ability to hover over the ground
 #I:1000:0
 #F:MAX_1
 #
@@ -718,7 +718,7 @@ f:Agility:Health%25
 f:Swimming:Health%25
 f:Digging:Health%25
 f:Climbing:Health%25
-#f:Flying:Health%15
+#f:Levitation:Health%15
 #f:Free Action:Health%15
 #f:Confusion Resistance:Health%15
 
@@ -842,7 +842,7 @@ T:Health:Agility
 T:Health:Swimming
 T:Health:Climbing
 T:Health:Digging
-#T:Health:Flying
+#T:Health:Levitation
 #T:Health:Free Action
 #T:Health:Confusion Resistance
 

@@ -4587,7 +4587,7 @@ void calc_boni(int Ind)
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 39)
 					{ p_ptr->climb = TRUE; csheet_boni[14].cb[6] |= CB7_RCLMB; }
 
-				/* Flying if unencumbered at level 50 */
+				/* Levitating if unencumbered at level 50 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 49)
 					{ p_ptr->fly = TRUE; csheet_boni[14].cb[6] |= CB7_RRFLY; }
 

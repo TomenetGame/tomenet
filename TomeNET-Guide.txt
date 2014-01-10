@@ -4940,7 +4940,7 @@ Icy waste       white '.'
 (*) You could get stuck in the trees if you enter such a sector;
     a digging tool or just using a sword or axe will allow you to hack down
     the trees relatively easily though to get you out of there.
-    Note that flying also allows you to pass trees easily.
+    Note that levitation also allows you to pass trees easily.
 (**) You might get stuck in there if you enter such a sector without being
      able to climb. Especially nasty in case of volcanos, since the fiery
      ground might burn your items. Use word-of-recall to get out of here.
@@ -9811,7 +9811,7 @@ Note that not every skill is available to every profession (class).
                                 At 40 your movement is perfected enough to
                                 cross even highest mountains.
                                 At 50 a martial artist will learn the
-                                technique of flying!
+                                technique of levitation!
 
                                 The dice of martial arts special moves
                                 (which your character will use automatically
@@ -10354,11 +10354,11 @@ Note that not every skill is available to every profession (class).
                                 digging.
 
 The abilities Swimming, Digging and Climbing are also granted by items you
-can find. Those are for example items that grants you flying, so you may just
-fly over water instead of swimming across. Wands of stone-to-mud will turn any
-obstacle to mud that you could dig through, and some boots or a climbing set
-might grant you the ability to climb highest mountains. Dwarves also learn
-this ability automatically when they reach level 30.
+can find. Those are for example items that grants you levitation, so you may
+just hover across water instead of swimming across. Wands of stone-to-mud will
+turn any obstacle to mud that you could dig through, and some boots or a
+climbing set might grant you the ability to climb highest mountains. Dwarves
+also learn this ability automatically when they reach level 30.
 
 Here is what the numbers mean (we will use the Axe-Mastery skill for this
 example:
@@ -11812,7 +11812,7 @@ All trolls and giants
                 Sustain strength.
 All dragonriders
                 ESP_DRAGON at level 5, feather falling,
-                flying at level 30.
+                levitation at level 30.
 All evil creatures
                 Becomes susceptible to certain 'good' or 'holy' effects.
 All undead creatures
@@ -11904,7 +11904,7 @@ Yeek:
 Ent:
     Speed malus (will be reduced), swimming, pass trees.
 Draconian:
-    Feather falling, flying.
+    Feather falling, levitation.
 
 
 (6.7a) Polymorph rings ('Ring of Polymorphing of <form>'):
@@ -13488,7 +13488,7 @@ D+ - Dexterity bonus (PVAL Required)
 EA - Extra attacks (PVAL Required)
 FA - Free action
 Fe - Fear resist
-Fl - Flying
+Lv - Levitation
 Gl - Glow (+1 light radius)
 HL - Hold life
 I+ - Intelligence bonus (PVAL Required)
@@ -13527,7 +13527,7 @@ Inertia        | FANT    |      |        |       |       |      |       |
 Lightning      | Im      | Br   |        |       | Au    |      | BrD+  |      
 Fire           | Im      | Br   |        |       | Au    |      | BrS+  |      
 Water          | ImRhSD  |      |        |       |       |      |       |      
-Gravity        | FA      |      |        |       |       |      |       | Fl
+Gravity        | FA      |      |        |       |       |      |       | Lv
 Frost          | Im      | Br   |        |       | Au    |      | BrS+  |      
 Acid           | Im      | Br   |        |       |       |      | Brc+  |      
 Poison         | Im      | Br   |        | C+    |       |      | BrC+  |      

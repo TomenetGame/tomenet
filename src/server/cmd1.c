@@ -6137,7 +6137,7 @@ int see_wall(int Ind, int dir, int y, int x)
 	if (f_info[zcave[y][x].feat].flags1 & FF1_CAN_RUN) return (FALSE);
 
 #if 1 /* NEW_RUNNING_FEAT */
-	/* hack - allow 'running' when flying over something */
+	/* hack - allow 'running' when levitating over something */
 	if ((f_info[zcave[y][x].feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) return (FALSE);
 	/* hack - allow 'running' if player may pass trees  */
 	if ((zcave[y][x].feat == FEAT_DEAD_TREE || zcave[y][x].feat == FEAT_TREE || zcave[y][x].feat == FEAT_BUSH)

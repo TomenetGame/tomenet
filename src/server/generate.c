@@ -217,7 +217,7 @@ static void town_gen_hack(struct worldpos *wpos);
  * [15,7,4,6,45,4,19,100,  1000,50]
  *
  * A player is supposed to cross 2 watery belts without avoiding them
- * by scumming;  the first by swimming, the second by flying parhaps.
+ * by scumming;  the first by swimming, the second by levitation parhaps.
  */
 #define DUN_RIVER_CHANCE	15	/* The deeper, the less watery area. */
 #define DUN_RIVER_REDUCE	7	/* DUN_RIVER_CHANCE / 2, maximum. */

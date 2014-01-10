@@ -2256,7 +2256,7 @@ static void player_setup(int Ind, bool new) {
 		   floor, so they don't get stuck in walls - C. Blue */
 		if (!player_can_enter(Ind, zcave[p_ptr->py][p_ptr->px].feat)
 		    /* max level limit? Otherwise it could be exploited
-		       by taking off flying ring/climbing set to phase around */
+		       by taking off levitation ring/climbing set to phase around */
 		    && p_ptr->lev < 10
 		    ) {
 			NumPlayers++; // hack for cave_midx_debug - mikaelh

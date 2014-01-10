@@ -282,7 +282,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 		}
 		if (old_value < 500 && new_value >= 500) {
-			msg_print(Ind, "\374\377GYou learn the technique of flying!");
+			msg_print(Ind, "\374\377GYou learn the technique of Levitation!");
 		/* The final +ea has been moved down from lvl 50 to lvl 1 to boost MA a little - the_sandman - moved it to 350 - C. Blue */
 			msg_print(Ind, "\374\377GYour attack speed has become faster due to your training!");
 		}
@@ -440,7 +440,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		} if (old_value < 400 && new_value >= 400) {
 			msg_print(Ind, "\374\377GYou feel able to breathe within poisoned air.");
 		} if (old_value < 500 && new_value >= 500) {
-			msg_print(Ind, "\374\377GYou feel flying is easy.");
+			msg_print(Ind, "\374\377GYou feel levitating is easy.");
 		}
 		break;
 	case SKILL_WATER:
