@@ -1833,7 +1833,7 @@ extern bool set_slow(int Ind, int v);
 extern bool set_tim_thunder(int Ind, int v, int p1, int p2);
 extern bool set_tim_regen(int Ind, int v, int p);
 extern bool set_tim_ffall(int Ind, int v);
-extern bool set_tim_fly(int Ind, int v);
+extern bool set_tim_lev(int Ind, int v);
 extern bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2);
 extern bool set_blessed(int Ind, int v);
 extern bool set_res_fear(int Ind, int v);

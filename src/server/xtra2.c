@@ -344,10 +344,9 @@ bool set_tim_ffall(int Ind, int v)
 }
 
 /*
- * Set "p_ptr->tim_fly"
+ * Set "p_ptr->tim_lev"
  */
-bool set_tim_fly(int Ind, int v)
-{
+bool set_tim_lev(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -356,7 +355,7 @@ bool set_tim_fly(int Ind, int v)
 
 	/* Open */
 	if (v) {
-		if (!p_ptr->tim_fly) {
+		if (!p_ptr->tim_lev) {
 			msg_print(Ind, "You feel light and your feet take off the ground.");
 			notice = TRUE;
 		}
@@ -364,14 +363,14 @@ bool set_tim_fly(int Ind, int v)
 
 	/* Shut */
 	else {
-		if (p_ptr->tim_fly) {
+		if (p_ptr->tim_lev) {
 			msg_print(Ind, "You are suddenly a lot heavier.");
 			notice = TRUE;
 		}
 	}
 
 	/* Use the value */
-	p_ptr->tim_fly = v;
+	p_ptr->tim_lev = v;
 
 	/* Nothing to notice */
 	if (!notice)

@@ -102,7 +102,7 @@ function showskills(name)
 	if get_skill_value(p, SKILL_SWIM) > 0 then		msg_print(Ind, "     . Swimming                   " .. get_skill_formatted(p, SKILL_SWIM)) end
 	if get_skill_value(p, SKILL_DIG) > 0 then		msg_print(Ind, "     . Digging                    " .. get_skill_formatted(p, SKILL_DIG)) end
 	if get_skill_value(p, SKILL_CLIMB) > 0 then		msg_print(Ind, "     . Climbing                   " .. get_skill_formatted(p, SKILL_CLIMB)) end
---	if get_skill_value(p, SKILL_FLY) > 0 then		msg_print(Ind, "     . Levitation                 " .. get_skill_formatted(p, SKILL_FLY)) end
+--	if get_skill_value(p, SKILL_LEVITATE) > 0 then		msg_print(Ind, "     . Levitation                 " .. get_skill_formatted(p, SKILL_LEVITATE)) end
 --	if get_skill_value(p, SKILL_FREEACT) > 0 then		msg_print(Ind, "     . Free Action                " .. get_skill_formatted(p, SKILL_FREEACT)) end
 --	if get_skill_value(p, SKILL_RESCONF) > 0 then		msg_print(Ind, "     . Confusion Resistance       " .. get_skill_formatted(p, SKILL_RESCONF)) end
 end

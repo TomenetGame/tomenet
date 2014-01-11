@@ -2523,7 +2523,7 @@
 #define EGO_IMBUED		202
 #define EGO_TRANSFORMATION	203
 #define EGO_ETHEREAL		204
-#define EGO_FLYING		205
+#define EGO_LEVITATION		205
 #define EGO_HEAVY_IMMUNITY	206
 #define EGO_HEAVY_SUSTENANCE	207
 #define EGO_HEAVY_PRESERVANCE	208
@@ -3192,7 +3192,7 @@
 #define SV_RING_PRECONITION             51
 #define SV_RING_FLAR                    52
 #define SV_RING_INVIS                   53
-#define SV_RING_FLYING                  54
+#define SV_RING_LEVITATION		54
 #define SV_RING_WRAITH                  55
 #define SV_RING_ELEC                    56
 /* 57 - DURIN (arts) */
@@ -4467,7 +4467,7 @@
 #define TR4_PRECOGNITION        0x00000002L     /* Like activating the cheat mode */
 #define TR4_BLACK_BREATH        0x00000004L     /* Tolkien's Black Breath */
 #define TR4_RECHARGE            0x00000008L     /* For artifact Wands and Staffs */
-#define TR4_FLY                 	0x00000010L     /* This one and ONLY this one allow you to fly over trees */
+#define TR4_LEVITATE			0x00000010L     /* This one and ONLY this one allow you to fly over trees */
 #define TR4_DG_CURSE            	0x00000020L     /* The Ancient Morgothian Curse */
 #define TR4_SHOULD2H            	0x00000040L     /* Can wield it 2 Handed */
 #define TR4_MUST2H              	0x00000080L     /* Must wield it 2 Handed */
@@ -4607,7 +4607,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define CB7_RINVS	0x02
 #define CB7_RVAMP	0x04
 #define CB7_RIDNT	0x08
-#define CB7_RRFLY	0x10
+#define CB7_RRLEV	0x10
 #define CB7_RCLMB	0x20
 #define CB7_RAMSH	0x40
 #define CB7_RAGGR	0x80
@@ -5602,12 +5602,12 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 /*** Features flags -- DG ***/
 #define FF1_NO_WALK             0x00000001L
 #define FF1_NO_VISION           0x00000002L
-#define FF1_CAN_LEVITATE        0x00000004L
+#define FF1_CAN_FEATHER		0x00000004L
 #define FF1_CAN_PASS            0x00000008L
 #define FF1_FLOOR               0x00000010L
 #define FF1_WALL                0x00000020L
 #define FF1_PERMANENT           0x00000040L
-#define FF1_CAN_FLY             0x00000080L
+#define FF1_CAN_LEVITATE	0x00000080L
 #define FF1_REMEMBER            0x00000100L
 #define FF1_NOTICE              0x00000200L
 #define FF1_DONT_NOTICE_RUNNING 0x00000400L
@@ -5620,8 +5620,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define FF1_ATTR_MULTI          0x00020000L
 #define FF1_SLOW_RUNNING_1	0x00040000L	/* half speed */
 #define FF1_SLOW_RUNNING_2	0x00080000L	/* quarter speed */
-#define FF1_SLOW_FLYING_1	0x00100000L
-#define FF1_SLOW_FLYING_2	0x00200000L
+#define FF1_SLOW_LEVITATING_1	0x00100000L
+#define FF1_SLOW_LEVITATING_2	0x00200000L
 #define FF1_SLOW_CLIMBING_1	0x00400000L
 #define FF1_SLOW_CLIMBING_2	0x00800000L
 #define FF1_SLOW_WALKING_1	0x01000000L
@@ -5635,7 +5635,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 /* for switching places with another player: */
 #define FF1_SWITCH_MASK \
-	(FF1_FLOOR | FF1_CAN_LEVITATE | FF1_CAN_FLY | FF1_CAN_RUN | FF1_CAN_CLIMB)
+	(FF1_FLOOR | FF1_CAN_FEATHER | FF1_CAN_LEVITATE | FF1_CAN_RUN | FF1_CAN_CLIMB)
 
 
 #define FF2_LAMP_LITE		0x00000001L	/* Gets coloured by view_granite_lite. Implies SPECIAL_LITE. */
@@ -6137,7 +6137,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define cave_proj(ZCAVE,Y,X) \
 	(cave_los(ZCAVE,Y,X) || \
 	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_CLIMB) || \
-	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_FLY))
+	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_LEVITATE))
 
 /*
 #define cave_block_los(ZCAVE,Y,X) \
@@ -6164,22 +6164,22 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
  */
 #define cave_running_bold(p_ptr,ZCAVE,Y,X) \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
-	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_FLY) && p_ptr->fly) || \
-	((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH) && (p_ptr->pass_trees || p_ptr->fly)) || /* fly is redundant, covered a line above */ \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_LEVITATE) && p_ptr->levitate) || \
+	((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH) && (p_ptr->pass_trees || p_ptr->levitate)) || /* fly is redundant, covered a line above */ \
 	((ZCAVE[Y][X].feat == FEAT_SHAL_WATER || ZCAVE[Y][X].feat == FEAT_GLIT_WATER || ZCAVE[Y][X].feat == FEAT_TAINTED_WATER || ZCAVE[Y][X].feat == FEAT_DEEP_WATER) && p_ptr->can_swim))
 /* adding this to prevent annoying stops when running in barrow-downs while tree-passing --
    note last line, added for Paths of the Dead, allowing to run over pits */
 #define cave_running_bold_notrees(p_ptr,ZCAVE,Y,X) \
 	( ((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
-	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_FLY) && p_ptr->fly) || \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_LEVITATE) && p_ptr->levitate) || \
 	((ZCAVE[Y][X].feat == FEAT_SHAL_WATER || ZCAVE[Y][X].feat == FEAT_GLIT_WATER || ZCAVE[Y][X].feat == FEAT_TAINTED_WATER || ZCAVE[Y][X].feat == FEAT_DEEP_WATER) && p_ptr->can_swim)) \
 	&& !(ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH || \
 	    ZCAVE[Y][X].feat == FEAT_DARK_PIT) )
 /* adding this to prevent annoying stops when running in barrow-downs while tree-passing --
    note last line, added for Paths of the Dead, so players running through hallways don't stop at pits */
 #define cave_running_bold_trees(p_ptr,ZCAVE,Y,X) \
-	(((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH) && (p_ptr->pass_trees || p_ptr->fly)) || \
-	((ZCAVE[Y][X].feat == FEAT_DARK_PIT) && p_ptr->fly))
+	(((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH) && (p_ptr->pass_trees || p_ptr->levitate)) || \
+	((ZCAVE[Y][X].feat == FEAT_DARK_PIT) && p_ptr->levitate))
 
 /* for summoning on mountains */
 #define cave_empty_mountain(ZCAVE,Y,X) \
@@ -6394,8 +6394,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 #define creature_can_enter(R,C) \
 (cave_floor_grid(C) || /* Floor is open? */ \
-(((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
-((f_info[(C)->feat].flags1 & FF1_CAN_FLY) && ((R)->flags7 & RF7_CAN_FLY))) || \
+(((f_info[(C)->feat].flags1 & FF1_CAN_FEATHER) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
+((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY))) || \
 /* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
 /* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
 (((C)->feat == FEAT_DEAD_TREE || (C)->feat == FEAT_TREE || (C)->feat == FEAT_BUSH) && \
@@ -6420,8 +6420,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 #define creature_can_enter2(R,C) \
 (cave_floor_grid(C) || /* Floor is open? */ \
-(((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
-((f_info[(C)->feat].flags1 & FF1_CAN_FLY) && ((R)->flags7 & RF7_CAN_FLY))) || \
+(((f_info[(C)->feat].flags1 & FF1_CAN_FEATHER) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
+((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY))) || \
 /* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
 /* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
 (((C)->feat == FEAT_DEAD_TREE || (C)->feat == FEAT_TREE || (C)->feat == FEAT_BUSH) && \
@@ -7328,7 +7328,7 @@ extern int PlayerUID;
  
 /* additional ones */
 #define SKILL_CLIMB		90
-#define SKILL_FLY		91
+#define SKILL_LEVITATE		91
 #define SKILL_FREEACT		92
 #define SKILL_RESCONF		93
 #if 0	/* skills to come	- Jir - */

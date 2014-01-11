@@ -1361,7 +1361,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f3 & TR3_PERMA_CURSE) total -= 15000;
 	if (f3 & TR3_FEATHER) total += 1250;
 
-	if (f4 & TR4_FLY) total += 10000;
+	if (f4 & TR4_LEVITATE) total += 10000;
 	if (f4 & TR4_NEVER_BLOW) total -= 15000;
 	if (f4 & TR4_PRECOGNITION) total += 250000;
 	if (f4 & TR4_BLACK_BREATH) total -= 12500;
@@ -2121,7 +2121,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (f3 & TR3_PERMA_CURSE) total -= 50000;
 	if (f3 & TR3_FEATHER) total += 1700;
 
-	if (f4 & TR4_FLY) total += 10000;
+	if (f4 & TR4_LEVITATE) total += 10000;
 	if (f4 & TR4_NEVER_BLOW) total -= 15000;
 	if (f4 & TR4_PRECOGNITION) total += 250000;
 	if (f4 & TR4_BLACK_BREATH) total -= 40000;
@@ -2212,7 +2212,7 @@ static int artifact_flag_rating_armour(object_type *o_ptr) {
 	if (f2 & TR2_RES_DISEN) total += 4;
 	if (f5 & TR5_RES_MANA) total += 2;
 	if (f5 & TR5_REGEN_MANA) total += 2;
-	if (f4 & TR4_FLY) total += 2;
+	if (f4 & TR4_LEVITATE) total += 2;
 	if (f2 & TR2_FREE_ACT) total += 2;
 	if (f2 & TR2_HOLD_LIFE) total += 4;
 	/* Give credit for extra HP bonus */

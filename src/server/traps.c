@@ -909,7 +909,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			}
 			ident = TRUE;
 			vanish = 0;
-			if (p_ptr->fly) {
+			if (p_ptr->levitate) {
 				msg_print(Ind, "You found a trap door!");
 				break;
 			}
@@ -1818,7 +1818,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 			ident = TRUE;
 			vanish = 0;
-			if (p_ptr->fly) {
+			if (p_ptr->levitate) {
 				msg_print(Ind, "You notice a deep chasm below you.");
 				break;
 			}
@@ -1845,7 +1845,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_PIT:
 			ident = TRUE;
 			vanish = 0;
-			if (p_ptr->fly){
+			if (p_ptr->levitate){
 				/* dont notice it */
 				break;
 			}
@@ -2217,7 +2217,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 
 		case TRAP_OF_MOAT_I:
-			if (p_ptr->fly){
+			if (p_ptr->levitate){
 				/* dont notice it */
 				vanish = 0;
 				break;

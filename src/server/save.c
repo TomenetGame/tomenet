@@ -723,7 +723,7 @@ static void wr_extra(int Ind)
         wr_s16b(p_ptr->tim_thunder);
         wr_s16b(p_ptr->tim_thunder_p1);
         wr_s16b(p_ptr->tim_thunder_p2);
-        wr_s16b(p_ptr->tim_fly);
+        wr_s16b(p_ptr->tim_lev);
         wr_s16b(p_ptr->tim_ffall);
         wr_s16b(p_ptr->tim_regen);
         wr_s16b(p_ptr->tim_regen_pow);

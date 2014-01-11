@@ -1288,7 +1288,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					case TV_BOOTS:
 						//if (!((*f4) & TR4_CLIMB)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_CLIMB; flag_count++; }
 					case TV_CLOAK:
-						if (!((*f4) & TR4_FLY)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_FLY; flag_count++; }
+						if (!((*f4) & TR4_LEVITATE)) { flag_category[flag_count] = 4; flag_pool[flag_count] = TR4_LEVITATE; flag_count++; }
 					break;
 					default:
 					break;
@@ -4723,7 +4723,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 
 	if (f3 & (TR3_FEATHER))
 		fprintf(fff, "It makes you fall down gently like a feather.\n");
-	if (f4 & (TR4_FLY))
+	if (f4 & (TR4_LEVITATE))
 		fprintf(fff, "It allows you to levitate.\n");
 	if (f5 & (TR5_PASS_WATER))
 		fprintf(fff, "It allows you to swim easily.\n");

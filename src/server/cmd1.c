@@ -2418,7 +2418,7 @@ void carry(int Ind, int pickup, int confirm) {
 	if (c_ptr->feat == FEAT_DEEP_WATER &&
 	    TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
 //			magik(WATER_ITEM_DAMAGE_CHANCE))
-	    magik(3) && !p_ptr->fly && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50)))
+	    magik(3) && !p_ptr->levitate && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50)))
 	{
 		if (!magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900)))
 			inven_damage(Ind, set_water_destroy, 1);
@@ -5155,13 +5155,13 @@ bool player_can_enter(int Ind, byte feature) {
 			return (TRUE);	/* you can pass, but you may suffer dmg */
 
 		case FEAT_DEAD_TREE:
-			if ((p_ptr->fly) || pass_wall || p_ptr->town_pass_trees)
+			if ((p_ptr->levitate) || pass_wall || p_ptr->town_pass_trees)
 			    return (TRUE);
 			else return FALSE;
 		case FEAT_BUSH:
 		case FEAT_TREE:
 			/* 708 = Ent (passes trees), 83/142 novice ranger, 345 ranger, 637 ranger chieftain, 945 high-elven ranger */
-			if ((p_ptr->fly) || (p_ptr->pass_trees) || pass_wall || p_ptr->town_pass_trees)
+			if ((p_ptr->levitate) || (p_ptr->pass_trees) || pass_wall || p_ptr->town_pass_trees)
 				return (TRUE);
 			else return (FALSE);
 #if 0
@@ -5173,14 +5173,14 @@ bool player_can_enter(int Ind, byte feature) {
 		default:
 			if ((p_ptr->climb) && (f_info[feature].flags1 & FF1_CAN_CLIMB))
 				return (TRUE);
-			if ((p_ptr->fly) &&
-			    ((f_info[feature].flags1 & FF1_CAN_FLY) ||
-			    (f_info[feature].flags1 & FF1_CAN_LEVITATE)))
+			if ((p_ptr->levitate) &&
+			    ((f_info[feature].flags1 & FF1_CAN_LEVITATE) ||
+			    (f_info[feature].flags1 & FF1_CAN_FEATHER)))
 				return (TRUE);
 			else if (only_wall && (f_info[feature].flags1 & FF1_FLOOR))
 				return (FALSE);
 			else if ((p_ptr->feather_fall || p_ptr->tim_wraith) &&
-			    (f_info[feature].flags1 & FF1_CAN_LEVITATE))
+			    (f_info[feature].flags1 & FF1_CAN_FEATHER))
 				return (TRUE);
 			else if ((pass_wall || only_wall) &&
 			     (f_info[feature].flags1 & FF1_CAN_PASS))
@@ -5303,7 +5303,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Slip on icy floor */
-	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->fly && !p_ptr->tim_wraith)) {
+	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->levitate && !p_ptr->tim_wraith)) {
 		if (magik(70 - p_ptr->lev)) {
 			do {
 				i = randint(9);
@@ -5724,7 +5724,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 #if 0
 		/* Hack -- Exception for trees (in a bad way :-/) */
 		if (!myhome && c_ptr->feat == FEAT_TREE &&
-		    (p_ptr->fly || p_ptr->pass_trees))
+		    (p_ptr->levitate || p_ptr->pass_trees))
 			myhome = TRUE;
 #endif	// 0
 
@@ -5833,7 +5833,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 	/* XXX fly? */
 	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->feather_fall &&
-	    !p_ptr->fly && !p_ptr->tim_wraith && !p_ptr->admin_dm) {
+	    !p_ptr->levitate && !p_ptr->tim_wraith && !p_ptr->admin_dm) {
 		msg_print(Ind, "You can't cross the chasm.");
 
 		disturb(Ind, 0, 0);
@@ -6138,7 +6138,7 @@ int see_wall(int Ind, int dir, int y, int x)
 
 #if 1 /* NEW_RUNNING_FEAT */
 	/* hack - allow 'running' when levitating over something */
-	if ((f_info[zcave[y][x].feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) return (FALSE);
+	if ((f_info[zcave[y][x].feat].flags1 & (FF1_CAN_LEVITATE | FF1_CAN_RUN)) && p_ptr->levitate) return (FALSE);
 	/* hack - allow 'running' if player may pass trees  */
 	if ((zcave[y][x].feat == FEAT_DEAD_TREE || zcave[y][x].feat == FEAT_TREE || zcave[y][x].feat == FEAT_BUSH)
 	     && p_ptr->pass_trees) return (FALSE);
@@ -6505,7 +6505,7 @@ static bool run_test(int Ind)
 	int                     row, col;
 	int                     i, max, inv;
 	int                     option, option2;
-	bool aqua = p_ptr->can_swim || p_ptr->fly || (get_skill_scale(p_ptr, SKILL_SWIM, 500) >= 7) ||
+	bool aqua = p_ptr->can_swim || p_ptr->levitate || (get_skill_scale(p_ptr, SKILL_SWIM, 500) >= 7) ||
 	    ((p_ptr->body_monster) && (
 	    (r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) ||
 	    (r_info[p_ptr->body_monster].flags3 & RF3_UNDEAD) ));
@@ -6669,7 +6669,7 @@ static bool run_test(int Ind)
 				case FEAT_ICE:
 				{
 					/* Ignore */
-					if (p_ptr->feather_fall || p_ptr->fly || p_ptr->tim_wraith) notice = FALSE;
+					if (p_ptr->feather_fall || p_ptr->levitate || p_ptr->tim_wraith) notice = FALSE;
 
 					/* Done */
 					break;

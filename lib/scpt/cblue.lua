@@ -508,7 +508,7 @@ function encum(name)
 --[[
 --also add fly,climb,swim,invis?
 --no need i think (also not implemented in player.pkg)
-    if players(p).fly == TRUE then
+    if players(p).levitate == TRUE then
 	fly = "LEV "
     else
 	fly = "    "

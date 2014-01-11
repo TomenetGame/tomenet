@@ -1534,7 +1534,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
                 rd_s16b(&p_ptr->tim_thunder);
                 rd_s16b(&p_ptr->tim_thunder_p1);
                 rd_s16b(&p_ptr->tim_thunder_p2);
-                rd_s16b(&p_ptr->tim_fly);
+                rd_s16b(&p_ptr->tim_lev);
                 rd_s16b(&p_ptr->tim_ffall);
                 rd_s16b(&p_ptr->tim_regen);
                 rd_s16b(&p_ptr->tim_regen_pow);

@@ -181,7 +181,7 @@ MFEEDBACK = add_spell
 	["fail"] =	15,
 	["direction"] = FALSE,
 	["spell"] = function()
-		if get_level(Ind, MFEEDBACK, 50) >= 15 then set_tim_fly(Ind, randint(5) + 5 + get_level(Ind, MFEEDBACK, 15))
+		if get_level(Ind, MFEEDBACK, 50) >= 15 then set_tim_lev(Ind, randint(5) + 5 + get_level(Ind, MFEEDBACK, 15))
 			else set_tim_ffall(Ind, randint(5) + 5 + get_level(Ind, MFEEDBACK, 15))
 		end
 	end,

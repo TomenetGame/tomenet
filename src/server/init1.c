@@ -772,7 +772,7 @@ static cptr k_info_flags4[] =
         "PRECOGNITION",
         "BLACK_BREATH",
         "RECHARGE",
-        "FLY",
+        "LEVITATE",
         "DG_CURSE",
         "SHOULD2H",
         "MUST2H",
@@ -934,13 +934,13 @@ static cptr f_info_flags1[] =
 {
 	"NO_WALK",
 	"NO_VISION",
-	"CAN_LEVITATE",
+	"CAN_FEATHER",
 	"CAN_PASS",
 
 	"FLOOR",
 	"WALL",
 	"PERMANENT",
-	"CAN_FLY",
+	"CAN_LEVITATE",
 
 	"REMEMBER",
 	"NOTICE",
@@ -957,8 +957,8 @@ static cptr f_info_flags1[] =
 	"SLOW_RUNNING_1",
 	"SLOW_RUNNING_2",
 
-	"SLOW_FLYING_1",
-	"SLOW_FLYING_2",
+	"SLOW_LEVITATING_1",
+	"SLOW_LEVITATING_2",
 	"SLOW_CLIMBING_1",
 	"SLOW_CLIMBING_2",
 

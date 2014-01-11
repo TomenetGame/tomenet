@@ -2286,7 +2286,7 @@ struct player_type
 	s16b tim_thunder_p1;	/* Timed thunderstorm */
 	s16b tim_thunder_p2;	/* Timed thunderstorm */
 	s16b tim_ffall;     	/* Timed Feather Falling */
-	s16b tim_fly;       	/* Timed Levitation */
+	s16b tim_lev;       	/* Timed Levitation */
 	s16b shield;		/* Timed -- Shield Spell */
 	s16b shield_power;      /* Timed -- Shield Spell Power */
 	s16b shield_opt;        /* Timed -- Shield Spell options */
@@ -2593,7 +2593,7 @@ struct player_type
 	bool wraith_form;   /* wraithform */
 	bool immune_neth;       /* Immunity to nether */
 	bool climb;             /* Can climb mountains */
-	bool fly;               /* Can levitate over some features */
+	bool levitate;               /* Can levitate over some features */
 	bool can_swim;		/* Can swim like a fish (or Lizard..whatever) */
 	bool pass_trees;	/* Can pass thick forest */
 	bool town_pass_trees;	/* Can pass forest in towns, as an exception to make movement easier */

@@ -862,7 +862,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 						continue;
 				if (zcave[y][x].feat == FEAT_DEEP_WATER)
 					//if (!(p_ptr->immune_water || p_ptr->res_water || 
-					if (!(p_ptr->can_swim || p_ptr->fly || p_ptr->ghost || p_ptr->tim_wraith))
+					if (!(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith))
 						continue;
 			}
 

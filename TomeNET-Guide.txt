@@ -7617,7 +7617,7 @@ FEATHER ('It makes you fall down gently like a feather.')
         'Feather Falling'.
         Lets you resist gravitation damage somewhat.
         Lets you float down gently if you accidentally stumble into pits.
-CAN_FLY
+LEVITATE
         ('It allows you to levitate.')
         Allows you to cross water areas without drowning. Enables you to hover
         over trees.

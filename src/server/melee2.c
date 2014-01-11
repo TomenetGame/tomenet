@@ -7133,8 +7133,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 		}
 
 		/* Some monsters can fly */
-		else if (((f_info[c_ptr->feat].flags1 & FF1_CAN_LEVITATE) && (r_ptr->flags7 & (RF7_CAN_FLY))) ||
-		    ((f_info[c_ptr->feat].flags1 & FF1_CAN_FLY) && (r_ptr->flags7 & (RF7_CAN_FLY)))) {
+		else if (((f_info[c_ptr->feat].flags1 & FF1_CAN_FEATHER) && (r_ptr->flags7 & (RF7_CAN_FLY))) ||
+		    ((f_info[c_ptr->feat].flags1 & FF1_CAN_LEVITATE) && (r_ptr->flags7 & (RF7_CAN_FLY)))) {
 			/* Pass through walls/doors/rubble/_trees_ */
 			do_move = TRUE;
 		}

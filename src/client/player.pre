@@ -117,7 +117,7 @@ typedef unsigned int u32b;
 
 /* additional ones */
 #define SKILL_CLIMB             90
-#define SKILL_FLY               91
+#define SKILL_LEVITATE		91
 #define SKILL_FREEACT           92
 #define SKILL_RESCONF           93
 

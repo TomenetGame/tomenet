@@ -2532,7 +2532,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_BLUE, "~", 15, 25+i); if (header_color[1][14] == TERM_L_DARK) header_color[1][14] = TERM_YELLOW; }
 		if (csheet_boni[i].cb[12] & CB13_XTREE) { c_put_str(TERM_GREEN, "#", 15, 25+i); if (header_color[1][14] == TERM_L_DARK) header_color[1][14] = TERM_YELLOW; }
 		if ((csheet_boni[i].cb[12] & CB13_XTREE) && (csheet_boni[i].cb[12] & CB13_XSWIM)) c_put_str(TERM_YELLOW, "+", 15, 25+i); //almost flying~
-		if (csheet_boni[i].cb[6] & CB7_RRFLY) { c_put_str(TERM_WHITE, "+", 15, 25+i); if (header_color[1][14] != TERM_WHITE) header_color[1][14] = TERM_WHITE; }
+		if (csheet_boni[i].cb[6] & CB7_RRLEV) { c_put_str(TERM_WHITE, "+", 15, 25+i); if (header_color[1][14] != TERM_WHITE) header_color[1][14] = TERM_WHITE; }
 		if (csheet_boni[i].cb[6] & CB7_RCLMB) { c_put_str(TERM_WHITE, "+", 16, 25+i); header_color[1][15] = TERM_WHITE; }
 		if (csheet_boni[i].cb[5] & CB6_RWRTH) { c_put_str(TERM_WHITE, "+", 17, 25+i); header_color[1][16] = TERM_WHITE; }
 		if (csheet_boni[i].cb[6] & CB7_RAMSH) { c_put_str(TERM_YELLOW, "+", 18, 25+i); header_color[1][17] = TERM_YELLOW; } //should this be gold/yellow maybe? //yellow for now

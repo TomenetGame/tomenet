@@ -3589,7 +3589,7 @@ static bool process_player_end_aux(int Ind)
 			/* note: TODO (bug): items should get damaged even if player can_swim,
 			   but this might devalue swimming too much compared to levitation. Dunno. */
 
-			if ((!p_ptr->tim_wraith) && (!p_ptr->fly) && (!p_ptr->can_swim)) {
+			if ((!p_ptr->tim_wraith) && (!p_ptr->levitate) && (!p_ptr->can_swim)) {
 				/* Take damage */
 				if (!(p_ptr->body_monster) || (
 					!(r_info[p_ptr->body_monster].flags7 &
@@ -3624,7 +3624,7 @@ static bool process_player_end_aux(int Ind)
 
 						/* harm equipments (even hit == 0) */
 						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
-						    magik(WATER_ITEM_DAMAGE_CHANCE) && !p_ptr->fly &&
+						    magik(WATER_ITEM_DAMAGE_CHANCE) && !p_ptr->levitate &&
 						    !p_ptr->immune_water) {
 							if (!p_ptr->resist_water || magik(50)) {
 								if (!magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900)))
@@ -3698,7 +3698,7 @@ static bool process_player_end_aux(int Ind)
 			/* Player can walk through trees */
 			//if ((PRACE_FLAG(PR1_PASS_TREE) || (get_skill(SKILL_DRUID) > 15)) && (cave[py][px].feat == FEAT_TREE))
 #if 0
-			if ((p_ptr->pass_trees || p_ptr->fly) &&
+			if ((p_ptr->pass_trees || p_ptr->levitate) &&
 					(c_ptr->feat == FEAT_TREE))
 #endif
 			if (player_can_enter(Ind, c_ptr->feat)) {
@@ -4266,8 +4266,8 @@ static bool process_player_end_aux(int Ind)
 	/* Timed Feather Falling */
 	if (p_ptr->tim_ffall)
 		(void)set_tim_ffall(Ind, p_ptr->tim_ffall - 1);
-	if (p_ptr->tim_fly)
-		(void)set_tim_fly(Ind, p_ptr->tim_fly - 1);
+	if (p_ptr->tim_lev)
+		(void)set_tim_lev(Ind, p_ptr->tim_lev - 1);
 
 	/* Timed regen */
 	if (p_ptr->tim_regen)
@@ -8740,12 +8740,12 @@ void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr) {
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
 		/* are we in fact running-levitating? */
-		//if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
-		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN))) {
+		//if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_LEVITATE | FF1_CAN_RUN)) && p_ptr->levitate) {
+		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_LEVITATE | FF1_CAN_RUN))) {
 			/* Allow level 50 druids to run at full speed */
 			if (!(p_ptr->pclass == CLASS_DRUID &&  p_ptr->lev >= 50)) {
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) *real_speed /= 2;
-				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) *real_speed /= 4;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_LEVITATING_1) *real_speed /= 2;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_LEVITATING_2) *real_speed /= 4;
 			}
 		}
     	    /* or running-swimming? */

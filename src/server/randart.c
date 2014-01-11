@@ -395,7 +395,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 
         if (a_ptr->flags1 & TR1_VAMPIRIC) p += 15;
         if (a_ptr->flags5 & TR5_REFLECT) p += 15;
-        if (a_ptr->flags4 & TR4_FLY) p += 15;
+        if (a_ptr->flags4 & TR4_LEVITATE) p += 15;
         if (a_ptr->flags4 & TR4_CLIMB) p += 15;
         if (a_ptr->flags3 & TR3_SH_FIRE) p += 5;
         if (a_ptr->flags5 & TR5_SH_COLD) p += 5;
@@ -704,7 +704,7 @@ static void add_ability (artifact_type *a_ptr) {
 		case TV_BOOTS:
 			if (r < 10) a_ptr->flags3 |= TR3_FEATHER;
 			else if (r < 30) a_ptr->to_a += 3 + rand_int (5);
-			else if (r < 40) a_ptr->flags4 |= TR4_FLY;
+			else if (r < 40) a_ptr->flags4 |= TR4_LEVITATE;
 			else if (r < 50) a_ptr->flags4 |= TR4_CLIMB;
 			else if (r < 65) {
 				a_ptr->flags1 |= TR1_STEALTH;
@@ -916,7 +916,7 @@ static void add_ability (artifact_type *a_ptr) {
 				a_ptr->flags1 |= TR1_STEALTH;
 				do_pval (a_ptr);
 			} else if (r < 45) a_ptr->flags2 |= TR2_RES_SHARDS;
-			else if (r < 50) a_ptr->flags4 |= TR4_FLY;
+			else if (r < 50) a_ptr->flags4 |= TR4_LEVITATE;
 			else if (r < 55) a_ptr->flags2 |= TR2_HOLD_LIFE;
 			else if (r < 61) a_ptr->flags2 |= TR2_RES_FIRE;
 			else if (r < 68) a_ptr->flags2 |= TR2_RES_COLD;
