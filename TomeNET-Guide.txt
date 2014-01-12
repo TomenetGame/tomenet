@@ -7190,6 +7190,11 @@ Hold Life       This will provide some protection against experience drain;
                 it won't help against experience drain inflicted by items you
                 equipped though.
 
+Note: 'Feather Falling' reduces damage taken from gravity attacks, although it
+is technically not a resistance. 'Levitation' includes 'Feather Falling', so if
+you have a source granting you levitation then you don't need another one for
+feather falling. (Same as chaos resistance also gives confusion resistance.)
+
 
 Further, there are several high resistances:
 --------------------------------------------
@@ -7621,6 +7626,7 @@ LEVITATE
         ('It allows you to levitate.')
         Allows you to cross water areas without drowning. Enables you to hover
         over trees.
+        Note that levitation automatically also gives feather falling!
 XTRA_SHOTS
         ('It fires missiles excessively fast.')
         This ranged weapon can fire an extra shot per round, see your number of
@@ -14381,6 +14387,7 @@ Very high characters (36 and above)
   Notorious for k.o. are Water Hounds, Impact Hounds, to some extent Gravity
   Hounds, and *especially* Plasma Hounds.
   Note that "Feather Falling" provides resistance to gravity damage.
+  ('Levitation' automatically includes feather falling, by the way.)
   Nether and Chaos "only" drain your experience if not resisted (can be cured
   with a potion of restore life levels or according magic). The great thing
   about chaos resistance is that it includes confusion resistance! So if you

@@ -2358,7 +2358,10 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if (r_ptr->flags3 & RF3_NO_CONF) { p_ptr->resist_conf = TRUE; csheet_boni->cb[2] |= CB3_RCONF; }
 	if (r_ptr->flags3 & RF3_NO_STUN) { p_ptr->resist_sound = TRUE; csheet_boni->cb[2] |= CB3_RSOUN; }
 	if (r_ptr->flags8 & RF8_NO_CUT) { p_ptr->no_cut = TRUE; csheet_boni->cb[12] |= CB13_XNCUT; }
-	if (r_ptr->flags7 & RF7_CAN_FLY) { p_ptr->levitate = TRUE; csheet_boni->cb[6] |= CB7_RRLEV; }
+	if (r_ptr->flags7 & RF7_CAN_FLY) {
+		p_ptr->levitate = TRUE; csheet_boni->cb[6] |= CB7_RRLEV;
+		p_ptr->feather_fall = TRUE; csheet_boni->cb[4] |= CB5_RFALL;
+	}
 	if (r_ptr->flags7 & RF7_CAN_SWIM) { p_ptr->can_swim = TRUE; csheet_boni->cb[12] |= CB13_XSWIM; }
 	if (r_ptr->flags2 & RF2_REFLECTING) { p_ptr->reflect = TRUE; csheet_boni->cb[6] |= CB7_RREFL; }
 	if (r_ptr->flags7 & RF7_DISBELIEVE) {
@@ -3267,6 +3270,7 @@ void calc_boni(int Ind)
 				p_ptr->resist_cold = TRUE; csheet_boni[14].cb[0] |= CB1_RCOLD;
 				p_ptr->sh_cold = TRUE; csheet_boni[14].cb[10] |= CB11_ACOLD;
 				p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV;
+				p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
 			}
 
 			/* Bonus resistance for the good side */
@@ -3390,7 +3394,10 @@ void calc_boni(int Ind)
 
 	/* Check ability skills */
 	if (get_skill(p_ptr, SKILL_CLIMB) >= 1) { p_ptr->climb = TRUE; csheet_boni[14].cb[6] |= CB7_RCLMB; }
-	if (get_skill(p_ptr, SKILL_LEVITATE) >= 1) { p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV; }
+	if (get_skill(p_ptr, SKILL_LEVITATE) >= 1) {
+		p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV;
+		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
+	}
 	if (get_skill(p_ptr, SKILL_FREEACT) >= 1) { p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA; }
 	if (get_skill(p_ptr, SKILL_RESCONF) >= 1) { p_ptr->resist_conf = TRUE; csheet_boni[14].cb[2] |= CB3_RCONF; }
 
@@ -3935,7 +3942,10 @@ void calc_boni(int Ind)
 				p_ptr->tim_wraith = 30000; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RWRTH;
 			}
 		}
-		if (f4 & (TR4_LEVITATE)) { p_ptr->levitate = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RRLEV; }
+		if (f4 & (TR4_LEVITATE)) {
+			p_ptr->levitate = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RRLEV;
+			p_ptr->feather_fall = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RFALL;
+		}
 		if (f4 & (TR4_CLIMB)) {
 			/* hack: climbing kit is made for humanoids, so it won't work for other forms! */
 			if (o_ptr->tval != TV_TOOL || o_ptr->sval != SV_TOOL_CLIMB || !p_ptr->body_monster)
@@ -4280,7 +4290,7 @@ void calc_boni(int Ind)
 	}
 
 	/* Temporary "Levitation" */
-	if (p_ptr->tim_ffall) p_ptr->feather_fall = TRUE;
+	if (p_ptr->tim_ffall || p_ptr->tim_lev) p_ptr->feather_fall = TRUE;
 	if (p_ptr->tim_lev) p_ptr->levitate = TRUE;
 
 	/* Temp ESP */
@@ -4588,8 +4598,10 @@ void calc_boni(int Ind)
 					{ p_ptr->climb = TRUE; csheet_boni[14].cb[6] |= CB7_RCLMB; }
 
 				/* Levitating if unencumbered at level 50 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 49)
-					{ p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV; }
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 49) {
+					p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV;
+					p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
+				}
 
 				w = 0; 
 				if (p_ptr->inventory[INVEN_ARM].k_idx) w += k_info[p_ptr->inventory[INVEN_ARM].k_idx].weight;
@@ -5442,7 +5454,10 @@ void calc_boni(int Ind)
 	if (get_skill(p_ptr, SKILL_EARTH) >= 30) { p_ptr->resist_shard = TRUE; csheet_boni[14].cb[2] |= CB3_RSHRD; }
 	if (get_skill(p_ptr, SKILL_AIR) >= 30) { p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL; }
 	if (get_skill(p_ptr, SKILL_AIR) >= 40) { p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS; }
-	if (get_skill(p_ptr, SKILL_AIR) >= 50) { p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV; }
+	if (get_skill(p_ptr, SKILL_AIR) >= 50) {
+		p_ptr->levitate = TRUE; csheet_boni[14].cb[6] |= CB7_RRLEV;
+		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[4] |= CB5_RFALL;
+	}
 	if (get_skill(p_ptr, SKILL_WATER) >= 30) { p_ptr->resist_water = TRUE; csheet_boni[14].cb[2] |= CB3_RWATR; }
 	if (get_skill(p_ptr, SKILL_WATER) >= 40) { p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; }
 	if (get_skill(p_ptr, SKILL_WATER) >= 50) { p_ptr->immune_water = TRUE; csheet_boni[14].cb[2] |= CB3_IWATR; }
@@ -5922,7 +5937,7 @@ void calc_boni(int Ind)
 						if (f3 & TR3_NO_TELE) csheet_boni[i].cb[4] |= CB5_ITELE;
 						if (f3 & TR3_FEATHER) csheet_boni[i].cb[4] |= CB5_RFALL;
 						if (f3 & TR3_SLOW_DIGEST) csheet_boni[i].cb[4] |= CB5_RFOOD;
-						if (f2 & TR2_HOLD_LIFE) csheet_boni[i].cb[5] |= CB6_RLIFE;				
+						if (f2 & TR2_HOLD_LIFE) csheet_boni[i].cb[5] |= CB6_RLIFE;
 						if (f5 & TR5_DRAIN_HP) csheet_boni[i].cb[5] |= CB6_SRGHP;
 						if (f3 & TR3_REGEN) csheet_boni[i].cb[5] |= CB6_RRGHP;
 						if (f5 & TR5_DRAIN_MANA) csheet_boni[i].cb[5] |= CB6_SRGMP;
@@ -5933,7 +5948,10 @@ void calc_boni(int Ind)
 						if (f5 & TR5_INVIS) csheet_boni[i].cb[6] |= CB7_RINVS;
 						if (f1 & TR1_VAMPIRIC) csheet_boni[i].cb[6] |= CB7_RVAMP;
 						if (f4 & TR4_AUTO_ID) csheet_boni[i].cb[6] |= CB7_RIDNT; //no such thing, unless helm of knowledge gets glass type (obvious) - Kurzel
-						if (f4 & TR4_LEVITATE) csheet_boni[i].cb[6] |= CB7_RRLEV;
+						if (f4 & TR4_LEVITATE) {
+							csheet_boni[i].cb[6] |= CB7_RRLEV;
+							csheet_boni[i].cb[4] |= CB5_RFALL;
+						}
 						if (f4 & TR4_CLIMB) csheet_boni[i].cb[6] |= CB7_RCLMB; //climbing kit
 						if (f3 & TR3_NO_MAGIC) csheet_boni[i].cb[6] |= CB7_RAMSH;
 						if (f3 & TR3_AGGRAVATE) csheet_boni[i].cb[6] |= CB7_RAGGR;
