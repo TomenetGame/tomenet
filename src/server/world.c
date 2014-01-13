@@ -263,6 +263,9 @@ void world_comm(int fd, int arg) {
 							if (strlen(buf) + strlen(Players[i]->name) + 2 >= MSG_LEN - 20) continue; /* paranoia reserved */
 							if (x != 1) strcat(buf, ", ");
 							strcat(buf, Players[i]->name);
+							strcat(buf, " (");
+							strcat(buf, Players[i]->accountname);
+							strcat(buf, ")");
 						}
 						if (!x) strcpy(buf, "No players online");
 						else {
