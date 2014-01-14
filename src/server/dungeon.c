@@ -1649,7 +1649,14 @@ void player_day(int Ind) {
 	if (p_ptr->is_day) return;
 	p_ptr->is_day = TRUE;
 	handle_music(Ind);
-	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, TRUE);
+	{
+		cave_type **zcave;
+		if (!(zcave = getcave(&p_ptr->wpos))) {
+			s_printf("DEBUG_DAY: Ind %d, wpos %d,%d,%d\n", Ind, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			return;
+		}
+		handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
+	}
 #endif
 }
 /* update a particular player's view to night, assuming he's on world surface */
@@ -1692,7 +1699,14 @@ void player_night(int Ind) {
 	if (!p_ptr->is_day) return;
 	p_ptr->is_day = FALSE;
 	handle_music(Ind);
-	handle_ambient_sfx(Ind, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, TRUE);
+	{
+		cave_type **zcave;
+		if (!(zcave = getcave(&p_ptr->wpos))) {
+			s_printf("DEBUG_NIGHT: Ind %d, wpos %d,%d,%d\n", Ind, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			return;
+		}
+		handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
+	}
 #endif
 }
 
