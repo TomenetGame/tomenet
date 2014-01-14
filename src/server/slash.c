@@ -4606,7 +4606,7 @@ void do_slash_cmd(int Ind, char *message)
 				   to d_info.txt, since dungeons will NOT update automatically.
 				   Syntax: /debug-dun    updates dungeon on current worldmap sector.
 				           /debug-dun *  updates ALL dungeons. - C. Blue */
-				int type, x, y;
+				int type, x, y, pos_tmp;
 #ifdef RPG_SERVER
 				bool found_town = FALSE;
 #endif
@@ -4641,12 +4641,24 @@ void do_slash_cmd(int Ind, char *message)
 									dun_tmp = *(wild->tower);
 									*(wild->tower) = *(wild->dungeon);
 									*(wild->dungeon) = dun_tmp;
+
+									pos_tmp = wild->dn_x;
+									wild->dn_x = wild->up_x;
+									wild->up_x = pos_tmp;
+									pos_tmp = wild->dn_y;
+									wild->dn_y = wild->up_y;
+									wild->up_y = pos_tmp;
 								} else {
 									/* change tower to dungeon */
 									wild->dungeon = wild->tower;
 									wild->tower = NULL;
 									wild->flags |= WILD_F_DOWN;
 									wild->flags &= ~WILD_F_UP;
+
+									wild->dn_x = wild->up_x;
+									wild->dn_y = wild->up_y;
+									wild->up_x = 0;//superfluous
+									wild->up_y = 0;//superfluous
 								}
 							}
 						} else {
@@ -4716,12 +4728,24 @@ void do_slash_cmd(int Ind, char *message)
 									dun_tmp = *(wild->tower);
 									*(wild->tower) = *(wild->dungeon);
 									*(wild->dungeon) = dun_tmp;
+
+									pos_tmp = wild->dn_x;
+									wild->dn_x = wild->up_x;
+									wild->up_x = pos_tmp;
+									pos_tmp = wild->dn_y;
+									wild->dn_y = wild->up_y;
+									wild->up_y = pos_tmp;
 								} else {
 									/* change dungeon to tower */
 									wild->tower = wild->dungeon;
 									wild->dungeon = NULL;
 									wild->flags |= WILD_F_UP;
 									wild->flags &= ~WILD_F_DOWN;
+
+									wild->up_x = wild->dn_x;
+									wild->up_y = wild->dn_y;
+									wild->dn_x = 0;//superfluous
+									wild->dn_y = 0;//superfluous
 								}
 							}
 						} else {
