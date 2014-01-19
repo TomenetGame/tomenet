@@ -229,10 +229,17 @@ void do_cmd_check_artifacts(int Ind, int line)
 			/* Hack -- Build the artifact name */
 			if (admin) {
 				char timeleft[9], c = 'w';
+
+				/* bad: should just use determine_artifact_timeout() for consistency, instead of hard-coding */
+				int timeout = winner_artifact_p(&forge) ? 60 * 3 : 60;
+#ifdef RPG_SERVER
+				timeout *= 2;
+#endif
+
 				if (a_ptr->timeout <= 0) sprintf(timeleft, "\377s  - ");
 				else if (a_ptr->timeout < 60 * 2) sprintf(timeleft, "\377r%3dm", a_ptr->timeout);
 				else if (a_ptr->timeout < 60 * 24 * 2) sprintf(timeleft, "\377y%3dh", a_ptr->timeout / 60);
-				else if (a_ptr->timeout < 60 * 24 * 27) sprintf(timeleft, "\377s%3dd", a_ptr->timeout / 60 / 24);
+				else if (a_ptr->timeout < timeout * 24 * 27) sprintf(timeleft, "\377s%3dd", a_ptr->timeout / 60 / 24);
 				else sprintf(timeleft, "\377G%3dd", a_ptr->timeout / 60 / 24); /* indicate very recently found arts */
 
 				if (a_ptr->cur_num != 1 && !multiple_artifact_p(&forge)) c = 'r';
