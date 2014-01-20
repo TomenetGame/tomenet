@@ -3506,6 +3506,74 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->redraw |= PR_SANITY;
 			return;
 		}
+		else if (prefix(message, "/laston")) {
+			unsigned long int s, sl;
+			time_t now;
+			u32b p_id;
+			bool acc = FALSE;
+
+			if (!tk) {
+				msg_print(Ind, "You must specify a character or account name.");
+				return;
+			}
+
+			/* catch silliness of target actually being online right now */
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (streq(Players[i]->name, message3)) {
+					msg_print(Ind, "A character of that name is online right now!");
+					return;
+				} else if (streq(Players[i]->accountname, message3)) {
+					msg_print(Ind, "The player using that account name is online right now!");
+					return;
+				}
+			}
+
+			/* check if it's a character name */
+			if (!(p_id = lookup_player_id(message3))) {
+				/* check if it's an acount name instead of character name */
+				struct account *l_acc;
+
+				l_acc = Admin_GetAccount(message3);
+				if (l_acc) {
+#if 0
+					int *id_list, n;
+					n = player_id_list(&id_list, l_acc->id);
+					if (n) {
+						/* determine which character on this account that has been online most recently */
+						s = 99999999;
+						for (i = 0; i < n; i++) {
+							p_id = id_list[i];
+							sl = lookup_player_laston(p_id);
+							if (sl < s) s = sl;
+						}
+						C_KILL(id_list, n, int);
+					}
+#else
+					acc = TRUE;
+					sl = l_acc->acc_laston;
+#endif
+					KILL(l_acc, struct account);
+				} else {
+					msg_format(Ind, "Sorry, couldn't find anyone named %s.", message3);
+					return;
+				}
+			} else
+				sl = lookup_player_laston(p_id);
+
+			if (!sl) {
+				msg_format(Ind, "Sorry, unable to determine the last time %s was seen.", message3);
+				return;
+			}
+
+			now = time(&now);
+			s = now - sl;
+			if (s >= 60 * 60 * 24 * 3) msg_format(Ind, "%s %s was last seen %d days ago.", acc ? "The player using account" : "The character", message3, s / (60 * 60 * 24));
+			else if (s >= 60 * 60 * 3) msg_format(Ind, "%s %s was last seen %d hours ago.", acc ? "The player using account" : "The character", message3, s / (60 * 60));
+			else if (s >= 60 * 3) msg_format(Ind, "%s %s was last seen %d minutes ago.", acc ? "The player using account" : "The character", message3, s / 60);
+			else msg_format(Ind, "%s %s was last seen %d seconds ago.", acc ? "The player using Account" : "The character", message3, s);
+			return;
+		}
 
 
 
@@ -5666,7 +5734,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (l_acc) {
 					n = player_id_list(&id_list, l_acc->id);
 					/* Display all account characters here */
-					for(i = 0; i < n; i++) {
+					for (i = 0; i < n; i++) {
 //unused huh					u16b ptype = lookup_player_type(id_list[i]);
 						/* do not change protocol here */
 						tmpm = lookup_player_mode(id_list[i]);
