@@ -275,6 +275,11 @@ void world_comm(int fd, int arg) {
 						if (x == 1) buf[9] = ' '; /* Player_s_ */
 						msg_to_irc(buf);
 					}
+					else if (!strncmp(p, "?laston", 7)) {
+						char buf[MSG_LEN];
+						get_laston(p + 8, buf);
+						msg_to_irc(buf);
+					}
 				}
 #endif
 
