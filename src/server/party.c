@@ -3214,6 +3214,16 @@ byte lookup_player_level(int id) {
 	return -1L;
 }
 
+byte lookup_player_admin(int id) {
+	hash_entry *ptr;
+
+	if ((ptr = lookup_player(id)))
+		return (ptr->admin ? 1 : 0);
+
+	/* Not found */
+	return -1L;
+}
+
 u16b lookup_player_type(int id) {
 	hash_entry *ptr;
 

@@ -3514,7 +3514,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
-			get_laston(message3, response);
+			get_laston(message3, response, admin_p(Ind));
 			msg_print(Ind, response);
 			return;
 		}
@@ -7796,8 +7796,8 @@ static void do_slash_brief_help(int Ind){
 
 
 /* determine when character or account name was online the last time */
-void get_laston(char *message3, char *response) {
-	unsigned long int s, sl;
+void get_laston(char *message3, char *response, bool admin) {
+	unsigned long int s, sl = 0;
 	time_t now;
 	u32b p_id;
 	bool acc = FALSE;
@@ -7806,6 +7806,7 @@ void get_laston(char *message3, char *response) {
 	/* catch silliness of target actually being online right now */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (admin_p(i) && !admin) continue;
 		if (streq(Players[i]->name, message3)) {
 			strcpy(response, "A character of that name is online right now!");
 			return;
@@ -7837,15 +7838,16 @@ void get_laston(char *message3, char *response) {
 			}
 #else
 			acc = TRUE;
-			sl = l_acc->acc_laston;
+			if (admin || !(l_acc->flags & ACC_ADMIN)) sl = l_acc->acc_laston;
 #endif
 			KILL(l_acc, struct account);
 		} else {
 			sprintf(response, "Sorry, couldn't find anyone named %s.", message3);
 			return;
 		}
-	} else
-		sl = lookup_player_laston(p_id);
+	} else {
+		if (!lookup_player_admin(p_id) || admin) sl = lookup_player_laston(p_id);
+	}
 
 	if (!sl) {
 		sprintf(response, "Sorry, unable to determine the last time %s was seen.", message3);

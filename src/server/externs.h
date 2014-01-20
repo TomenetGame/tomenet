@@ -1307,6 +1307,7 @@ extern s32b lookup_player_guild(int id);
 extern u32b lookup_player_guildflags(int id);
 extern byte lookup_player_mode(int id);
 extern u32b lookup_player_account(int id);
+extern byte lookup_player_admin(int id);
 extern void clockin(int Ind, int type);
 extern int newid(void);
 
@@ -1332,7 +1333,7 @@ extern void fix_lost_guild_mode(int g_id);
 
 extern hash_entry *hash_table[NUM_HASH_ENTRIES];
 extern bool guild_rename(int Ind, char *new_name);
-extern void get_laston(char *message3, char *response);
+extern void get_laston(char *message3, char *response, bool admin);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);

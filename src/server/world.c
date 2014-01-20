@@ -277,7 +277,7 @@ void world_comm(int fd, int arg) {
 					}
 					else if (!strncmp(p, "?laston", 7)) {
 						char buf[MSG_LEN];
-						get_laston(p + 8, buf);
+						get_laston(p + 8, buf, FALSE);
 						msg_to_irc(buf);
 					}
 				}
