@@ -237,16 +237,6 @@ void world_comm(int fd, int arg) {
 				set_runlevel(0);
 				break;
 			case WP_IRCCHAT:
-#if 0 /* 0ed for consistency: Let world's 'server' flags decide about filtering our incoming messages */
-				if (!cfg.worldd_ircchat) break;
-#endif
-
-				for (i = 1; i <= NumPlayers; i++) {
-					if (Players[i]->conn == NOT_CONNECTED) continue;
-					if (Players[i]->ignoring_chat) continue;
-					msg_print(i, wpk->d.chat.ctxt);
-				}
-
 #if 1
 				/* Allow certain status commands from IRC to TomeNET server */
 				if ((p = strchr(wpk->d.chat.ctxt, ']')) && *(p += 2) == '?') {
@@ -274,15 +264,26 @@ void world_comm(int fd, int arg) {
 						}
 						if (x == 1) buf[9] = ' '; /* Player_s_ */
 						msg_to_irc(buf);
+						break;
 					}
 					else if (!strncmp(p, "?laston", 7)) {
 						char buf[MSG_LEN];
 						get_laston(p + 8, buf, FALSE);
 						msg_to_irc(buf);
-						msg_broadcast(0, buf);
+						break;
 					}
 				}
 #endif
+
+#if 0 /* 0ed for consistency: Let world's 'server' flags decide about filtering our incoming messages */
+				if (!cfg.worldd_ircchat) break;
+#endif
+
+				for (i = 1; i <= NumPlayers; i++) {
+					if (Players[i]->conn == NOT_CONNECTED) continue;
+					if (Players[i]->ignoring_chat) continue;
+					msg_print(i, wpk->d.chat.ctxt);
+				}
 
 #if 1
 				/* log */
