@@ -279,6 +279,7 @@ void world_comm(int fd, int arg) {
 						char buf[MSG_LEN];
 						get_laston(p + 8, buf, FALSE);
 						msg_to_irc(buf);
+						msg_broadcast(0, buf);
 					}
 				}
 #endif
