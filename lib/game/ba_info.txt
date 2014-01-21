@@ -327,4 +327,4 @@ I:62:0:r:0
 
 N:69:Change guild name
 C:0:0:0
-I:63:0:r:0
+I:63:0:g:0
