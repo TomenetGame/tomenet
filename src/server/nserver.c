@@ -3442,7 +3442,8 @@ static int Receive_login(int ind){
 		   (Mostly for new feat 'privmsg to account name' - C. Blue) */
 		if ((p_id = lookup_player_id(connp->nick))) { /* character name identical to this account name already exists? */
 			/* That character doesn't belong to our account? Forbid creating an account of this name then. */
-			if (strcmp(lookup_accountname(p_id), connp->nick)) {
+			if (lookup_accountname(p_id) && //<- avoid panic save if tomenet.acc file has been deleted for some reason. NOTE: Missing tomenet.acc still causes *problems*, so don't do that.
+			    strcmp(lookup_accountname(p_id), connp->nick)) {
 				/* However, if our account already exists then allow it to continue existing. */
 				if (!(acc = Admin_GetAccount(connp->nick))) {
 					Destroy_connection(ind, "Name already in use.");
