@@ -8252,6 +8252,9 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		go_challenge_accept(Ind, TRUE);
 		return;
 #endif
+	case RID_GUILD_RENAME:
+		if (cfr) Send_request_str(Ind, RID_GUILD_RENAME, "Enter a new guild name: ", "");
+		return;
 	default: ;
 	}
 }
