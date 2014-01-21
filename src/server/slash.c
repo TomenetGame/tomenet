@@ -7802,6 +7802,7 @@ void get_laston(char *message3, char *response, bool admin) {
 	u32b p_id;
 	bool acc = FALSE;
 	int i;
+	struct account *l_acc;
 
 	/* catch silliness of target actually being online right now */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -7816,39 +7817,33 @@ void get_laston(char *message3, char *response, bool admin) {
 		}
 	}
 
-	/* check if it's a character name */
-	if (!(p_id = lookup_player_id(message3))) {
-		/* check if it's an acount name instead of character name */
-		struct account *l_acc;
-
-		l_acc = Admin_GetAccount(message3);
-		if (l_acc) {
-#if 0
-			int *id_list, n;
-			n = player_id_list(&id_list, l_acc->id);
-			if (n) {
-				/* determine which character on this account that has been online most recently */
-				s = 99999999;
-				for (i = 0; i < n; i++) {
-					p_id = id_list[i];
-					sl = lookup_player_laston(p_id);
-					if (sl < s) s = sl;
-				}
-				C_KILL(id_list, n, int);
-			}
-#else
-			acc = TRUE;
-			if (admin || !(l_acc->flags & ACC_ADMIN)) sl = l_acc->acc_laston;
-#endif
-			KILL(l_acc, struct account);
-		} else {
-			sprintf(response, "Sorry, couldn't find anyone named %s.", message3);
-			return;
-		}
-	} else {
-		if (!lookup_player_admin(p_id) || admin) sl = lookup_player_laston(p_id);
+	/* check if it's an acount name */
+	l_acc = Admin_GetAccount(message3);
+	if (l_acc) {
+		acc = TRUE;
+		if (admin || !(l_acc->flags & ACC_ADMIN)) sl = l_acc->acc_laston;
+		KILL(l_acc, struct account);
 	}
 
+	/* check if it's a character name (not really necessary if we found an account already) */
+	if ((p_id = lookup_player_id(message3))) {
+		if (!lookup_player_admin(p_id) || admin) {
+			if (!acc) sl = lookup_player_laston(p_id);
+			else {
+				s = lookup_player_laston(p_id);
+				if (s >= sl) {
+					sl = s;
+					acc = FALSE; /* as I said, not necessary :-p */
+				}
+			}
+		}
+	/* neither char nor acc? */
+	} else if (!acc) {
+		sprintf(response, "Sorry, couldn't find anyone named %s.", message3);
+		return;
+	}
+
+	/* error or admin account? */
 	if (!sl) {
 		sprintf(response, "Sorry, unable to determine the last time %s was seen.", message3);
 		return;
