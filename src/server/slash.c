@@ -3508,12 +3508,6 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/seen")) {
 			char response[MAX_CHARS_WIDE];
-
-			if (!tk) {
-				msg_print(Ind, "You must specify a character or account name.");
-				return;
-			}
-
 			get_laston(message3, response, admin_p(Ind));
 			msg_print(Ind, response);
 			return;
@@ -7796,29 +7790,40 @@ static void do_slash_brief_help(int Ind){
 
 
 /* determine when character or account name was online the last time */
-void get_laston(char *message3, char *response, bool admin) {
+void get_laston(char *name, char *response, bool admin) {
 	unsigned long int s, sl = 0;
 	time_t now;
 	u32b p_id;
 	bool acc = FALSE;
 	int i;
 	struct account *l_acc;
+	char name_tmp[MAX_CHARS_WIDE], *nameproc = name_tmp;
+
+	/* trim name */
+	strncpy(nameproc, name, MAX_CHARS_WIDE - 1);
+	nameproc[MAX_CHARS_WIDE - 1] = 0;
+	while (*nameproc == ' ') nameproc++;
+	while (nameproc[strlen(nameproc) - 1] == ' ') nameproc[strlen(nameproc) - 1] = 0;
+	if (!(*nameproc)) {
+		strcpy(response, "You must specify a character or account name.");
+		return;
+	}
 
 	/* catch silliness of target actually being online right now */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (admin_p(i) && !admin) continue;
-		if (streq(Players[i]->name, message3)) {
+		if (streq(Players[i]->name, nameproc)) {
 			strcpy(response, "A character of that name is online right now!");
 			return;
-		} else if (streq(Players[i]->accountname, message3)) {
+		} else if (streq(Players[i]->accountname, nameproc)) {
 			strcpy(response, "The player using that account name is online right now!");
 			return;
 		}
 	}
 
 	/* check if it's an acount name */
-	l_acc = Admin_GetAccount(message3);
+	l_acc = Admin_GetAccount(nameproc);
 	if (l_acc) {
 		acc = TRUE;
 		if (admin || !(l_acc->flags & ACC_ADMIN)) sl = l_acc->acc_laston_real;
@@ -7826,7 +7831,7 @@ void get_laston(char *message3, char *response, bool admin) {
 	}
 
 	/* check if it's a character name (not really necessary if we found an account already) */
-	if ((p_id = lookup_player_id(message3))) {
+	if ((p_id = lookup_player_id(nameproc))) {
 		if (!lookup_player_admin(p_id) || admin) {
 			if (!acc) sl = lookup_player_laston(p_id);
 			else {
@@ -7839,20 +7844,20 @@ void get_laston(char *message3, char *response, bool admin) {
 		}
 	/* neither char nor acc? */
 	} else if (!acc) {
-		sprintf(response, "Sorry, couldn't find anyone named %s.", message3);
+		sprintf(response, "Sorry, couldn't find anyone named %s.", nameproc);
 		return;
 	}
 
 	/* error or admin account? */
 	if (!sl) {
-		sprintf(response, "Sorry, unable to determine the last time %s was seen.", message3);
+		sprintf(response, "Sorry, unable to determine the last time %s was seen.", nameproc);
 		return;
 	}
 
 	now = time(&now);
 	s = now - sl;
-	if (s >= 60 * 60 * 24 * 3) sprintf(response, "%s %s was last seen %ld days ago.", acc ? "The player using account" : "The character", message3, s / (60 * 60 * 24));
-	else if (s >= 60 * 60 * 3) sprintf(response, "%s %s was last seen %ld hours ago.", acc ? "The player using account" : "The character", message3, s / (60 * 60));
-	else if (s >= 60 * 3) sprintf(response, "%s %s was last seen %ld minutes ago.", acc ? "The player using account" : "The character", message3, s / 60);
-	else sprintf(response, "%s %s was last seen %ld seconds ago.", acc ? "The player using Account" : "The character", message3, s);
+	if (s >= 60 * 60 * 24 * 3) sprintf(response, "%s %s was last seen %ld days ago.", acc ? "The player using account" : "The character", nameproc, s / (60 * 60 * 24));
+	else if (s >= 60 * 60 * 3) sprintf(response, "%s %s was last seen %ld hours ago.", acc ? "The player using account" : "The character", nameproc, s / (60 * 60));
+	else if (s >= 60 * 3) sprintf(response, "%s %s was last seen %ld minutes ago.", acc ? "The player using account" : "The character", nameproc, s / 60);
+	else sprintf(response, "%s %s was last seen %ld seconds ago.", acc ? "The player using Account" : "The character", nameproc, s);
 }
