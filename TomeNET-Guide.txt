@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. January 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. January 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.6a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1093,6 +1093,11 @@ They all start with a slash '/' hence they're called slash commands:
             line of sight. (Same effect as scroll of aggravate monsters,
             see (5.9)).
 
+/seen <name>
+            Tells you when the character or account of the <name> you
+            specified logged in the last time.
+            (Same as IRC command ?seen.)
+
 /shot  or  /shot <filename>
  (/screenshot)
             Takes a screen shot to a html file. If <filename> is omitted, it
@@ -1186,6 +1191,9 @@ game server, you may enter these commands:
 (See (1.1b) on how to set up IRC chat.)
 
 ?players        Will reply with a list of players online on this server.
+?seen <name>    Tells you when the character or account of the <name> you
+                specified logged in the last time.
+                (Same as in-game command /seen.)
 
 
 
