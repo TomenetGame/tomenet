@@ -468,7 +468,7 @@ void go_challenge(int Ind) {
 
 	/* Owner talk about how you suck..or not!
 	   And making a new proposal accordingly. */
-	strcpy(challenge_req, format("Bet %d Au? ", wager_lvl[p_ptr->go_level / 2]));
+	strcpy(challenge_req, format("Bet %d Au?", wager_lvl[p_ptr->go_level / 2]));
 	switch (p_ptr->go_level) {
 	case 0:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "So you think you're any good at this huh?");
