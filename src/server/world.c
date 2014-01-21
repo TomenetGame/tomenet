@@ -266,9 +266,9 @@ void world_comm(int fd, int arg) {
 						msg_to_irc(buf);
 						break;
 					}
-					else if (!strncmp(p, "?laston", 7)) {
+					else if (!strncmp(p, "?seen", 5)) {
 						char buf[MSG_LEN];
-						get_laston(p + 8, buf, FALSE);
+						get_laston(p + 5 + 1, buf, FALSE);
 						msg_to_irc(buf);
 						break;
 					}

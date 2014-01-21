@@ -3506,7 +3506,7 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->redraw |= PR_SANITY;
 			return;
 		}
-		else if (prefix(message, "/laston")) {
+		else if (prefix(message, "/seen")) {
 			char response[MAX_CHARS_WIDE];
 
 			if (!tk) {
