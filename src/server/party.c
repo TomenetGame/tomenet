@@ -2303,9 +2303,9 @@ bool guild_rename(int Ind, char *new_name) {
 
 	/* This could probably be improved. */
 	if (p_ptr->au < GUILD_PRICE) {
-		if (GUILD_PRICE >= 1000000)
+		if (GUILD_PRICE >= 1000000 && ((int)(GUILD_PRICE / 1000000)) * 1000000 == GUILD_PRICE)
 			msg_format(Ind, "\377yYou need %d,000,000 gold pieces to rename a guild.", GUILD_PRICE / 1000000);
-		else if (GUILD_PRICE >= 1000)
+		else if (GUILD_PRICE >= 1000 && ((int)(GUILD_PRICE / 1000)) * 1000 == GUILD_PRICE)
 			msg_format(Ind, "\377yYou need %d,000 gold pieces to rename a guild.", GUILD_PRICE / 1000);
 		else
 			msg_format(Ind, "\377yYou need %d gold pieces to rename a guild.", GUILD_PRICE);
