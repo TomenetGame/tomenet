@@ -7808,6 +7808,7 @@ void get_laston(char *name, char *response, bool admin) {
 		strcpy(response, "You must specify a character or account name.");
 		return;
 	}
+	*nameproc = toupper(*nameproc);
 
 	/* catch silliness of target actually being online right now */
 	for (i = 1; i <= NumPlayers; i++) {
