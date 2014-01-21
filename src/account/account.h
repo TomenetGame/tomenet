@@ -28,9 +28,9 @@ struct account{
 	char name[30];  /* login */
 	char pass[20];  /* some crypts are not 13 */
 #ifdef ACC32
-	int acc_laston;
+	int acc_laston, acc_laston_real;
 #else
-	time_t acc_laston;      /* last time this account logged on (for expiry check) */
+	time_t acc_laston, acc_laston_real;      /* last time this account logged on (for expiry check) */
 #endif
 	s32b cheeze;    /* value in gold of cheezed goods or money */
 	s32b cheeze_self; /* value in gold of cheezed goods or money to own characters */

@@ -7821,7 +7821,7 @@ void get_laston(char *message3, char *response, bool admin) {
 	l_acc = Admin_GetAccount(message3);
 	if (l_acc) {
 		acc = TRUE;
-		if (admin || !(l_acc->flags & ACC_ADMIN)) sl = l_acc->acc_laston;
+		if (admin || !(l_acc->flags & ACC_ADMIN)) sl = l_acc->acc_laston_real;
 		KILL(l_acc, struct account);
 	}
 

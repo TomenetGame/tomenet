@@ -521,9 +521,11 @@ static bool update_acc_file_version(void) {
 			c_acc.deed_event = c_acc_old.deed_event;
 			c_acc.deed_achievement = c_acc_old.deed_achievement;
 			c_acc.guild_id = c_acc_old.guild_id;
-			/* changes/additions: */
 			c_acc.guild_dna = c_acc.guild_id ? guilds[c_acc.guild_id].dna : 0;
+			/* changes/additions: */
+			c_acc.acc_laston_real = c_acc_old.acc_laston;
 
+			/* write it back */
 //                        fseek(fp, 0L, SEEK_END);
 			if (fwrite(&c_acc, sizeof(struct account), 1, fp) < 1) {
 				s_printf("Failed to write to new account file: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));

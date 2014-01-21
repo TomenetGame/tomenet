@@ -1776,7 +1776,26 @@ struct skill_player
 };
 
 
+//todo, instead of ACC_GREETED, ACC_WARN_.. etc, maybe:	a dedicated 'u32b warnings;	/* account flags for received (one-time) hints/warnings */'
 struct account{
+	u32b id;	/* account id */
+	u32b flags;	/* account flags */
+	char name[30];	/* login */
+	char pass[20];	/* some crypts are not 13 */
+#ifdef ACC32
+	int acc_laston, acc_laston_real;
+#else
+	time_t acc_laston, acc_laston_real;	/* last time this account logged on (for expiry check) */
+#endif
+	s32b cheeze;	/* value in gold of cheezed goods or money */
+	s32b cheeze_self; /* value in gold of cheezed goods or money to own characters */
+	char deed_event;	/* receive a deed for a global event participation? */
+	char deed_achievement;	/* receive a deed for a (currently PvP) achievement? */
+	s32b guild_id;	/* auto-rejoin its guild after a char perma-died */
+	u32b guild_dna;	/* auto-rejoin its guild after a char perma-died */
+};
+/* Used for updating tomenet.acc structure: */
+struct account_old{
 	u32b id;	/* account id */
 	u32b flags;	/* account flags */
 	char name[30];	/* login */
@@ -1792,24 +1811,6 @@ struct account{
 	char deed_achievement;	/* receive a deed for a (currently PvP) achievement? */
 	s32b guild_id;	/* auto-rejoin its guild after a char perma-died */
 	u32b guild_dna;	/* auto-rejoin its guild after a char perma-died */
-};
-/* Used for updating tomenet.acc structure: */
-struct account_old{
-	u32b id;	/* account id */
-	u32b flags;	/* account flags */
-//todo, instead of ACC_GREETED, ACC_WARN_.. etc, maybe:	a dedicated 'u32b warnings;	/* account flags for received (one-time) hints/warnings */'
-	char name[30];	/* login */
-	char pass[20];	/* some crypts are not 13 */
-#ifdef ACC32
-	int acc_laston;
-#else
-	time_t acc_laston;	/* last time this account logged on (for expiry check) */
-#endif
-	s32b cheeze;	/* value in gold of cheezed goods or money */
-	s32b cheeze_self; /* value in gold of cheezed goods or money to own characters */
-	char deed_event;	/* receive a deed for a global event participation? */
-	char deed_achievement;	/* receive a deed for a (currently PvP) achievement? */
-	s32b guild_id;	/* auto-rejoin its guild after a char perma-died */
 };
 
 typedef struct version_type version_type;
