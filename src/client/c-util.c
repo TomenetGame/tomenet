@@ -2084,7 +2084,7 @@ bool get_check(cptr prompt)
 	char buf[80];
 
 	/* Hack -- Build a "useful" prompt */
-	strnfmt(buf, 78, "%.70s[y/N] ", prompt);
+	strnfmt(buf, 78, "%.70s [y/N]", prompt);
 
 	/* The top line is "icky" */
 	topline_icky = TRUE;
