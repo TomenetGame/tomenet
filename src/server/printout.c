@@ -154,6 +154,8 @@ extern bool do_cmd_view_rfe(int Ind, char *str, int line)
 }
 #endif	// 0
 
+/* Amount of tailing lines to read (older ones will be skipped) [200]; -1 = all */
+#define REVERSE_LINES_TAIL 200
 int reverse_lines(cptr input_file, cptr output_file) {
 	FILE *fp1 = NULL;
 	FILE *fp2 = NULL;
@@ -162,7 +164,7 @@ int reverse_lines(cptr input_file, cptr output_file) {
 	char *prev_linebreak = NULL;
 	char *tmp;
 	struct stat stbuf;
-	int fd1 = -1;
+	int fd1 = -1, lines = 0;
 
 	/* Open the input file */
 	fd1 = open(input_file, O_RDONLY);
@@ -250,6 +252,7 @@ int reverse_lines(cptr input_file, cptr output_file) {
 	/* Reverse scan through the buffer for linebreaks */
 	prev_linebreak = buf + file_size - 1;
 	tmp = prev_linebreak;
+	if (REVERSE_LINES_TAIL == 0) tmp = buf - 1;//hack - skip all
 	while (tmp >= buf) {
 		if (*tmp == '\n') {
 			if (prev_linebreak - tmp > 0) {
@@ -262,12 +265,14 @@ int reverse_lines(cptr input_file, cptr output_file) {
 				}
 			}
 			prev_linebreak = tmp;
+			if (++lines == REVERSE_LINES_TAIL) break;
 		}
 
 		tmp--;
 	}
 
-	if (prev_linebreak - buf + 1 > 0) {
+	if (prev_linebreak - buf + 1 > 0
+	    && lines != REVERSE_LINES_TAIL) {
 		/* Write the remaining first line of input to output */
 		if (fwrite(buf, 1, prev_linebreak - buf + 1, fp2) < prev_linebreak - buf + 1) {
 			mem_free(buf);
