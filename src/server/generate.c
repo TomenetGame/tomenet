@@ -18,6 +18,10 @@
 static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 static void town_gen_hack(struct worldpos *wpos);
 
+struct stairs_list {
+	int x, y;
+};
+
 /*
  * Note that Level generation is *not* an important bottleneck,
  * though it can be annoyingly slow on older machines...  Thus
@@ -1027,18 +1031,50 @@ static void place_random_door(struct worldpos *wpos, int y, int x) {
 /*
  * Places some staircases near walls
  */
-static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls) {
+static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls, struct stairs_list *stairs) {
 	int y, x, i, j, flag, tries = 0;
 	int emergency_flag = TRUE, new_feat = -1, nlev_down = FALSE, nlev_up = FALSE;
 	int starty, startx;
 	cave_type *c_ptr;
 	cave_type **zcave;
+	struct stairs_list *sptr = stairs;
+	bool stairs_store = FALSE, stairs_check = FALSE;
 
 #ifdef NETHERREALM_BOTTOM_RESTRICT
 	if (netherrealm_bottom(wpos)) return;
 #endif
 
 	if (!(zcave = getcave(wpos))) return;
+
+	/* for Nether Realm: store stairs to 'stairs' array, or check them against it? */
+	if (stairs) {
+		if (wpos->wz < 1) {
+			if (feat == FEAT_MORE || feat == FEAT_WAY_MORE) stairs_store = TRUE;
+			else stairs_check = TRUE;
+		} else if (feat == FEAT_LESS || feat == FEAT_WAY_LESS) stairs_store = TRUE;
+		else stairs_check = TRUE;
+
+		/* advance to first free element */
+		if (stairs_store) {
+			while (sptr->x != -1 && sptr->y != -1) sptr++;
+			/* out of available array entries? */
+			if (sptr->y == -1) {
+//s_printf("-no more stairs-\n");
+				stairs_store = FALSE;
+			}
+		}
+#if 0 //DEBUG CODE
+if (stairs_store) s_printf("stairs_store\n");
+if (stairs_check) {
+sptr = stairs;
+s_printf("stairs_check\n");
+while (sptr->x != -1 && sptr->y != -1) {
+s_printf("  stairs x,y = %d,%d\n", sptr->x, sptr->y);
+sptr++;
+}
+}
+#endif
+	}
 
 	/* Town -- must go down */
 	if (!can_go_up_simple(wpos)) {
@@ -1091,12 +1127,36 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls) {
 				/* Require a certain number of adjacent walls */
 				if (next_to_walls(wpos, y, x) < walls) continue;
 
+				if (stairs_check) {
+					bool bad = FALSE;
+
+					sptr = stairs;
+					while (sptr->x != -1 && sptr->y != -1 && j < 3000) {
+						if (distance(sptr->y, sptr->x, y, x) < 100 - j / 75) { /* assume max-sized map (Nether Realm) */
+							bad = TRUE;
+							break;
+						}
+						sptr++;
+					}
+					if (bad) continue;
+//if (j == 3000) s_printf(" sptr full fail\n");
+//else s_printf(" sptr OK %d,%d\n", x,y);
+				}
+
 				/* Access the grid */
 				c_ptr = &zcave[y][x];
 
 				if (new_feat != -1) {
 					c_ptr->feat = new_feat;
 					aquatic_terrain_hack(zcave, x, y);
+
+					if (stairs_store) {
+						sptr->x = x;
+						sptr->y = y;
+						sptr++;
+						/* no more array space? */
+						if (sptr->y == -1) stairs_store = FALSE;
+					}
 				}
 				if (nlev_up) {
 					new_level_up_y(wpos, y);
@@ -1134,7 +1194,17 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls) {
 	} while (!cave_floor_bold(zcave, starty, startx) && (++tries < 10000));
 
 	c_ptr = &zcave[starty][startx];
-	if (new_feat != -1) c_ptr->feat = new_feat;
+	if (new_feat != -1) {
+		c_ptr->feat = new_feat;
+
+		if (stairs_store) {
+			sptr->x = x;
+			sptr->y = y;
+			sptr++;
+			/* no more array space? */
+			if (sptr->y == -1) stairs_store = FALSE;
+		}
+	}
 	if (nlev_up) {
 		new_level_up_y(wpos, starty);
 		new_level_up_x(wpos, startx);
@@ -9845,43 +9915,63 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	}
 
 	if (!(dun->l_ptr->flags1 & LF1_NO_STAIR)) {
-		if (!netherrealm_bottom(wpos)) {
+		if (!in_netherrealm(wpos)) {
 			/* Place 3 or 4 down stairs near some walls */
-			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(3, 4) * dun->ratio / 100 + 1, 3);
-
+			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(3, 4) * dun->ratio / 100 + 1, 3, NULL);
 			/* Place 1 or 2 up stairs near some walls */
-			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, rand_range(1, 2), 3);
+			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, rand_range(1, 2), 3, NULL);
+
+#if 0			/* we need a way to create the way back */
+			/* Place 1 or 2 (typo of '0 or 1'?) down shafts near some walls */
+			if (!(d_ptr->flags2 & DF2_NO_SHAFT)) alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_SHAFT_DOWN, rand_range(0, 1), 3, NULL);
+
+			/* Place 0 or 1 up shafts near some walls */
+			if (!(d_ptr->flags2 & DF2_NO_SHAFT)) alloc_stairs((d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_SHAFT_UP, rand_range(0, 1), 3, NULL);
+#endif	/* 0 */
+
+			/* Hack -- add *more* stairs for lowbie's sake */
+			if (dun_lev <= COMFORT_PASSAGE_DEPTH) {
+				/* Place 3 or 4 down stairs near some walls */
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 3, NULL);
+
+				/* Place 1 or 2 up stairs near some walls */
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, rand_range(3, 4), 3, NULL);
+			}
+
+			/* Hack -- add *more* downstairs for Highlander Tournament event */
+			if (sector00separation && wpos->wx == WPOS_HIGHLANDER_X && wpos->wy == WPOS_HIGHLANDER_Y &&
+			    wpos->wz * WPOS_HIGHLANDER_Z > 0 && dun_lev > COMFORT_PASSAGE_DEPTH) {
+				/* Place 3 or 4 down stairs near some walls */
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 2, NULL);
+			}
+
+		/* in the Nether Realm, stairs leading onwards must not be generated close to stairs backwards,
+		   or rogues could cloak-scum for them to be next to each other (albeit ridiculously tedious probably, *probably*..) */
+		} else if (!netherrealm_bottom(wpos)) {
+			struct stairs_list stairs[5];
+			for (i = 0; i != 5 - 1; i++) stairs[i].x = -1; /* init usable elements */
+			stairs[i].y = -1; /* mark final 'terminator' element */
+
+			if (netherrealm_wpos_z < 1) {
+				/* Place 2 down stairs near some walls */
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, 2, 2, stairs);
+				/* Place 1 up stairs near some walls */
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, 1, 2, stairs);
+			} else {
+				/* Place 2 up stairs near some walls */
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, 2, 2, stairs);
+				/* Place 1 down stairs near some walls */
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, 1, 2, stairs);
+			}
+
 		} else {
 			/* place 1 staircase */
 			if (netherrealm_wpos_z < 1)
-				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, 1, 2);
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, 1, 2, NULL);
 			else
-				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, 1, 2);
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, 1, 2, NULL);
 		}
 
-#if 0	/* we need a way to create the way back */
-		/* Place 1 or 2 (typo of '0 or 1'?) down shafts near some walls */
-		if (!(d_ptr->flags2 & DF2_NO_SHAFT)) alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_SHAFT_DOWN, rand_range(0, 1), 3);
-
-		/* Place 0 or 1 up shafts near some walls */
-		if (!(d_ptr->flags2 & DF2_NO_SHAFT)) alloc_stairs((d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_SHAFT_UP, rand_range(0, 1), 3);
-#endif	/* 0 */
-
-		/* Hack -- add *more* stairs for lowbie's sake */
-		if (dun_lev <= COMFORT_PASSAGE_DEPTH) {
-			/* Place 3 or 4 down stairs near some walls */
-			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 3);
-
-			/* Place 1 or 2 up stairs near some walls */
-			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, rand_range(3, 4), 3);
-		}
-
-		/* Hack -- add *more* downstairs for Highlander Tournament event */
-		if (sector00separation && wpos->wx == WPOS_HIGHLANDER_X && wpos->wy == WPOS_HIGHLANDER_Y &&
-		    wpos->wz * WPOS_HIGHLANDER_Z > 0 && dun_lev > COMFORT_PASSAGE_DEPTH) {
-			/* Place 3 or 4 down stairs near some walls */
-			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 2);
-		}
 	}
 
 #if 0
