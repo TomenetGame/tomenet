@@ -4290,7 +4290,7 @@ void handle_punish(int Ind, int level) {
    required for cloaking mode! - C. Blue */
 void un_afk_idle(int Ind) {
 	Players[Ind]->idle_char = 0;
-	if (Players[Ind]->afk) toggle_afk(Ind, "");
+	if (Players[Ind]->afk && !(Players[Ind]->admin_dm && cfg.secret_dungeon_master)) toggle_afk(Ind, "");
 	stop_cloaking(Ind);
 }
 
