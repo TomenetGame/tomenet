@@ -5645,6 +5645,7 @@ void view_exploration_records(int Ind) {
 	int i;
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
+	bool none = TRUE;
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -5665,11 +5666,14 @@ void view_exploration_records(int Ind) {
 		    dungeon_tower[i] == (WPOS_IRONDEEPDIVE_Z > 0))
 			continue;
 
+		none = FALSE;
 		fprintf(fff, "             \377u%-30s %s\n",
 		    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
 		    getdungeon(&((struct worldpos){dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, TRUE),
 		    dungeon_bonus[i] == 0 ? "(many explorations)" : "(a few explorations)");
 	}
+
+	if (none) fprintf(fff, "\n\377u    There haven't been reports of any dungeon explorations for a long time!\n");
 
 	my_fclose(fff);
 	/* Display the file contents */
