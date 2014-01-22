@@ -5650,6 +5650,11 @@ void view_exploration_records(int Ind) {
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	fff = my_fopen(file_name, "wb");
 
+	fprintf(fff,"\377U  Dungeons that are not on this list will give a large experience point bonus\n"
+		    "\377Ufor killing monsters there: An exploration bonus for venturing into the unknown.\n"
+		    "\377UDungeons that have seen only a few explorations will still give a smaller bonus.\n"
+		    "\377U Dungeons that have seen many explorations will not give an exploration bonus.\n\n");
+
 	/* output the actual list */
 	for (i = 1; i <= dungeon_id_max; i++) {
 		/* only show those dungeons that have been well-explored! */
