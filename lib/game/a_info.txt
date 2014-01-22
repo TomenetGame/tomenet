@@ -3006,7 +3006,7 @@ D:screaming for more living flesh.
 N:242:'Quietus'
 I:21:19:10
 W:50:50:400:150000
-P:0:8d6:25:25:10
+P:0:8d6:25:25:0
 F:SHOW_MODS | STR | TUNNEL | HOLD_LIFE | FREE_ACT |
 F:SLAY_EVIL | SLAY_UNDEAD | SLAY_DEMON
 D:Where Quietus hits, silence follows.
