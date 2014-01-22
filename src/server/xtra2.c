@@ -5609,6 +5609,85 @@ if (cfg.unikill_format) {
             		drop_near(qq_ptr, -1, wpos, y, x);
 #endif
 
+		} else if (m_ptr->r_idx == RI_LIVING_LIGHTNING) {
+			int tries = 100;
+			object_type forge_bak;
+			qq_ptr = &forge;
+			/* possible loot:
+			    skydsm,elec rod,elec ring,elec/mana rune,mage staff,tome of wind
+			*/
+
+			while (tries--) {
+				object_wipe(qq_ptr);
+				invcopy(qq_ptr, lookup_kind(TV_RING, SV_RING_ELEC));
+				qq_ptr->number = 1;
+				qq_ptr->note = local_quark;
+				qq_ptr->note_utag = strlen(quark_str(local_quark));
+				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART);
+				/* hack - ensure non-cursed item: */
+				if (qq_ptr->to_a > 0) break;
+			}
+#if 1
+			tries = 10000;
+			object_copy(&forge_bak, &forge);
+			while (qq_ptr->pval < 6 && tries--) {
+				object_copy(&forge, &forge_bak);
+				/* Piece together a 32-bit random seed */
+				qq_ptr->name3 = rand_int(0xFFFF) << 16;
+				qq_ptr->name3 += rand_int(0xFFFF);
+				randart_make(qq_ptr);
+				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART);
+			}
+#endif
+			qq_ptr->timeout = 0;
+			drop_near(qq_ptr, -1, wpos, y, x);
+
+			object_wipe(qq_ptr);
+			invcopy(qq_ptr, lookup_kind(TV_BOOK, 2));
+			qq_ptr->number = 1;
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
+			drop_near(qq_ptr, -1, wpos, y, x);
+
+			object_wipe(qq_ptr);
+			invcopy(qq_ptr, lookup_kind(TV_RUNE, 5));
+			qq_ptr->number = 1;
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
+			drop_near(qq_ptr, -1, wpos, y, x);
+
+			object_wipe(qq_ptr);
+			invcopy(qq_ptr, lookup_kind(TV_RUNE, 8));
+			qq_ptr->number = 1;
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
+			drop_near(qq_ptr, -1, wpos, y, x);
+
+			object_wipe(qq_ptr);
+			invcopy(qq_ptr, lookup_kind(TV_ROD, SV_ROD_ELEC_BALL));
+			qq_ptr->number = 1;
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NONE);
+			qq_ptr->name2 = EGO_RISTARI;
+			qq_ptr->name2b = 0;
+			drop_near(qq_ptr, -1, wpos, y, x);
+
+			object_wipe(qq_ptr);
+			invcopy(qq_ptr, lookup_kind(TV_DRAG_ARMOR, SV_DRAGON_SKY));
+			qq_ptr->number = 1;
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NOART);
+			qq_ptr->name2 = EGO_IMMUNE;
+			qq_ptr->name2b = 0;
+			qq_ptr->name3 = rand_int(0xFFFF) << 16;
+			qq_ptr->name3 += rand_int(0xFFFF);
+			drop_near(qq_ptr, -1, wpos, y, x);
+
 		} else if (m_ptr->r_idx == RI_HELLRAISER) {
 			/* Get local object */
 			qq_ptr = &forge;
