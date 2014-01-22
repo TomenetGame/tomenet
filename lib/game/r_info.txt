@@ -20406,7 +20406,7 @@ D:Horned Reaper will cut down anything in its path between it and you.
 N:1147:The Living Lightning
 G:*:e
 I:200:6000d6:100:90:0
-W:127:1:0:50
+W:127:1:0:200000
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:TOUCH:ELEC:32d1
