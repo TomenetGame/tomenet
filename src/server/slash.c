@@ -3872,6 +3872,21 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377rMonsters on %s are cleared.", wpos_format(Ind, &wp));
 				return;
 			}
+			else if (prefix(message, "/vanitygeno") ||
+					prefix(message, "/vgeno")) {
+				for (i = m_max - 1; i >= 1; i--) {
+					monster_type *m_ptr = &m_list[i];
+
+					if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+					if (!(r_info[m_ptr->r_idx].flags7 & RF7_NO_DEATH)) continue;
+
+					delete_monster_idx(i, TRUE);
+				}
+				compact_monsters(0, FALSE);
+
+				msg_format(Ind, "\377rVanity monsters on %s are cleared.", wpos_format(Ind, &wp));
+				return;
+			}
 			else if (prefix(message, "/mkill-level") ||
 					prefix(message, "/mkill"))
 			{
