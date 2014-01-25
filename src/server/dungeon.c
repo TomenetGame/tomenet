@@ -873,6 +873,7 @@ static void process_effects(void) {
 	cave_type *c_ptr;
 	int who = PROJECTOR_EFFECT;
 	player_type *p_ptr;
+	bool erase;
 
 	/* Every 10 game turns */
 //	if (turn % 10) return;
@@ -955,8 +956,10 @@ static void process_effects(void) {
 			continue;
 		}
 
+		erase = FALSE;
+		/* effect belongs to a non-player? */
 		if (e_ptr->who > 0) who = e_ptr->who;
-		else {
+		else { /* or to a player? */
 			/* Make the effect friendly after logging out - mikaelh */
 			who = PROJECTOR_PLAYER;
 
@@ -967,13 +970,23 @@ static void process_effects(void) {
 				/* Check if they are in here */
 				if (e_ptr->who == 0 - p_ptr->id) {
 					who = 0 - i;
+
+					/* additionally check if player left level --
+					   avoids panic save on killing a dungeon boss with a lasting effect while
+					   already having been prematurely recalled to town meanwhile (insta-res!) - C. Blue */
+					if (p_ptr->new_level_flag && !inarea(&p_ptr->wpos, wpos)) erase = TRUE;
+
 					break;
 				}
 			}
 		}
 
+		/* Any effect ends if player was prematurely removed from the level (instant-resurrection!).
+		   Otherwise the player might 'kill' a monster without being on the level -> high panic save potential,
+		   and guaranteed panic save if it was a dungeon boss. */
+		if (erase ||
 		/* Storm ends if the cause is gone */
-		if (e_ptr->flags & EFF_STORM && (who == PROJECTOR_EFFECT || who == PROJECTOR_PLAYER)) {
+		    (e_ptr->flags & EFF_STORM && (who == PROJECTOR_EFFECT || who == PROJECTOR_PLAYER))) {
 			erase_effects(k);
 			continue;
 		}
