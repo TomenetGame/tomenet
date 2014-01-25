@@ -1376,7 +1376,9 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 	int rlev = r_ptr->level;
 
 	/* hack: if we dont auto-retaliate vs a monster than we dont intercept either */
-	if (r_info->flags8 & RF8_NO_AUTORET) return(FALSE);
+	if (r_info->flags8 & RF8_NO_AUTORET) return FALSE;
+	/* this one just cannot be intercepted */
+	if (m_ptr->r_idx == RI_LIVING_LIGHTNING) return FALSE;
 
 	/* paranoia? */
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -1483,8 +1485,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 }
 
 
-static bool monst_check_antimagic(int Ind, int m_idx)
-{
+static bool monst_check_antimagic(int Ind, int m_idx) {
 //	player_type *p_ptr;
 	monster_type	*m_ptr = &m_list[m_idx];
 //	monster_race    *r_ptr = race_inf(m_ptr);
@@ -1496,6 +1497,9 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 	int antichance = 0, highest_antichance = 0, anti_Ind = 0;	// , dis, antidis;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
+
+	/* this one just cannot be suppressed */
+	if (m_ptr->r_idx == RI_LIVING_LIGHTNING) return FALSE;
 
 	/* bad hack: Also abuse this function to check for silence-effect - C. Blue */
 	if (m_ptr->silenced > 0 && magik(ANTIMAGIC_CAP)) { //could also use INTERCEPT_CAP instead
