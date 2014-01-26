@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. January 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. January 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.6a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7246,6 +7246,9 @@ Nexus           Nexus attacks can have extremely nasty side-effects if you
                 -Teleport you a dungeon level higher or lower.
                 -Swap two of your six stats randomly!
                  ("Your body starts to scramble")
+                 This change is permanent and there is no remedy against it
+                 except for getting hit by more nexus deliberately and hoping
+                 for a 'good' scramble result eventually.
                 -Destroy items in your inventory.
                  ("Your backpack starts to scramble")
                 Resistance will cut damage to 6/7..6/12.
