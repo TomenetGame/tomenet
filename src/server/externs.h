@@ -2118,8 +2118,9 @@ extern void go_engine_clocks(void);
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
    Dungeon masters will be paged if they're not AFK or if they have
    'watch' as AFK reason! */
-extern bool watch_nr;
 extern bool watch_morgoth;
+extern bool watch_cp;
+extern bool watch_nr;
 
 /* lua-dependant 'constants' */
 extern int __lua_HHEALING;

@@ -426,11 +426,19 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	}
 
         /* Page all dungeon masters to notify them of a Nether Realm breach >:) - C. Blue */
-	if ((value > 0) && in_netherrealm(wpos) && (watch_nr))
-		for (i = 1; i <= NumPlayers; i++) {
-			if (Players[i]->conn == NOT_CONNECTED) continue;
-			if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
+	if (value > 0) {
+		if (watch_nr && in_netherrealm(wpos)) {
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
+			}
+		} else if (watch_cp && wpos->wz && getdungeon(wpos)->type == DI_CLOUD_PLANES) {
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
+			}
 		}
+	}
 
 	if (wpos->wz) {
 		struct dungeon_type *d_ptr;
