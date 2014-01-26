@@ -963,7 +963,7 @@ int guild_create(int Ind, cptr name) {
 	Send_guild_config(index);
 
 	/* broadcast the news */
-	snprintf(temp, 160, "\374\377GA new guild '\377%c%s\377G' has been created.", COLOUR_CHAT_GUILD, guilds[index].name);
+	snprintf(temp, 160, "\374\377yA new guild '\377%c%s\377y' has been created.", COLOUR_CHAT_GUILD, guilds[index].name);
 	msg_broadcast(0, temp);
 //	msg_print(Ind, "\374\377Gou can adjust guild options with the '/guild_cfg' command.");
 
@@ -2320,8 +2320,11 @@ bool guild_rename(int Ind, char *new_name) {
 		if (!strcmp(guild_note_target[i], guilds[gid].name))
 			strcpy(guild_note_target[i], new_name);
 
-	msg_broadcast_format(0, "\374\377GThe guild '\377%c%s\377G' has changed their name to '\377%c%s\377G'.",
+	msg_broadcast_format(0, "\374\377yThe guild '\377%c%s\377y' has officially changed their name to '\377%c%s\377y'.",
 	    COLOUR_CHAT_GUILD, guilds[gid].name, COLOUR_CHAT_GUILD, new_name);
+
+	l_printf("%s \\{yThe guild '%s' has officially changed their name to '%s'.\n",
+	    showdate(), guilds[gid].name, new_name);
 
 	strcpy(guilds[gid].name, new_name);
 	return TRUE;
