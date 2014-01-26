@@ -2637,7 +2637,7 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 #endif
 
 			/* Especially high party xp boost in IDDC, or people might mostly prefer to solo to 2k */
-			if (in_irondeepdive(wpos)) {
+			if (!not_in_iddc) {
 				/* Some bonus is applied to encourage partying	- Jir - */
 				new_exp = (new_amount * modified_level * (IDDC_PARTY_XP_BOOST + 1)) /
 				    (average_lev * p_ptr->lev * (num_members + IDDC_PARTY_XP_BOOST));
