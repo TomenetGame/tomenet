@@ -15151,7 +15151,7 @@ Ammunition
                             force, inertia, mana, meteor, ice, chaos, nether,
                             nexus, time, gravity, stone-to-mud, teleport away,
                             scare monster, nuke, stun, disintegration,
-                            hell fire.
+                            hellfire.
         Extra +hit and +dam bonus, this caps at +12 hit and +6 dam.
         Either +1 extra damage die sides or +1 extra damage dice.
 Boots

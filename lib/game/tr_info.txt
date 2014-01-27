@@ -786,7 +786,7 @@ I:6:80:5:6:15:10d12:B:10
 D:Holy fire rises around you!
 F:FLOOR | CHEST | DOOR | LEVEL3
 
-N:165:Trap of Hell Fire
+N:165:Trap of Hellfire
 I:6:80:5:6:15:10d12:B:10
 D:Hellfire rises around you!
 F:FLOOR | CHEST | DOOR | LEVEL3
