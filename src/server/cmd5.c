@@ -1027,7 +1027,7 @@ void do_mimic_power_aux(int Ind, int dir)
         sprintf(p_ptr->attacker, " casts a stinking cloud for");
 	msg_print(Ind, "You cast a stinking cloud.");
 //	fire_ball(Ind, GF_POIS, dir, damroll(12, 2) , rad, p_ptr->attacker);
-        fire_cloud(Ind, GF_POIS, dir, damroll(4, 2), rad, 4, 9, p_ptr->attacker);
+        fire_cloud(Ind, GF_POIS, dir, damroll(4 + rlev / 5, 2), rad, 4, 9, p_ptr->attacker);
         break;
 // RF5_BA_NETH			0x00000020	/* Nether Ball */
     case 37:
