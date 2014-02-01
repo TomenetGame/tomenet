@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. January 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. February 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.6a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -11947,7 +11947,9 @@ However, the remaining polymorph duration will stop decreasing while you are
 in a town and surrounding area, so you don't have to hurry while shopping.
 If a character activates a poly ring and then manually polymorphs into another
 form, the remaining form duration is saved so he can turn back into the ring's
-form later. Only one ring form can be saved at a time.
+form later. Only one ring form can be saved at a time. Note that there is an
+activation tax of 10 turns everytime the player polymorphs into the stored
+form (except for the initial polymorphing from activating the ring).
 
 NOTE: 'Unmagic' as well as UN_POWER attacks can deplete the temporary form!
       An Unmagic attack will instantly deplete it, causing the player to
