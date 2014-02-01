@@ -6303,6 +6303,11 @@ Ironman Deep Dive Challenge (IDDC)
     Level requirements on items are not in effect while inside the ironman deep
     dive challenge either.
 
+    Party bonus experience is higher than outside of IDDC. This means that the
+    experience you get per killed monster is much closer to the experience you
+    would get for playing solo, making partying more attractive since you do
+    not need to worry about 'loss' of experience compared to going solo.
+
     If the party leader dies inside the IDDC, the party isn't disbanded but
     ownership of the party is transferred to another party member. (Same as on
     Ironman server.)
