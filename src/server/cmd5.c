@@ -1538,7 +1538,12 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		}
 
 		/* using up PvP-mode free mimic transformation? */
-		if (using_free_mimic) p_ptr->free_mimic--;
+		if (j && using_free_mimic) p_ptr->free_mimic--;
+
+		/* Activation tax */
+		else if (j && p_ptr->r_killed[j] < r_info[j].level
+		    && p_ptr->tim_mimic_what == j && p_ptr->tim_mimic > 10)
+			p_ptr->tim_mimic -= 10;
 
 		/* Ok we found */
 		do_mimic_change(Ind, j, using_free_mimic);
