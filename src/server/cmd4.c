@@ -3432,6 +3432,10 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		if (lev >= 60) msg_print(Ind, "\377GYou know how to change into a Firebird (#1127)");
 	}
 
+	if (p_ptr->tim_mimic)
+		msg_format(Ind, "\377yYou have borrowed the power of changing into a %s (%d) for %d more turns.",
+		    r_name + r_info[p_ptr->tim_mimic_what].name, p_ptr->tim_mimic_what, p_ptr->tim_mimic);
+
 	if (p_ptr->prace == RACE_VAMPIRE) {
 		if (lev >= 20) msg_print(Ind, "\377GYou are able to turn into a vampire bat (#391).");
 	}
