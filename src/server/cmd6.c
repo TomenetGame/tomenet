@@ -6703,7 +6703,13 @@ bool unmagic(int Ind)
 		set_st_anchor(Ind, 0) |
 		set_prob_travel(Ind, 0) |
 		set_bow_brand(Ind, 0, 0, 0) |
+#if 0
 		set_mimic(Ind, 0, 0) |
+#endif
+#if 0
+		(p_ptr->body_monster) |
+	if (p_ptr->tim_mimic) do_mimic_change(Ind, 0, TRUE)
+#endif
 		set_tim_manashield(Ind, 0) |
 		set_tim_traps(Ind, 0) |
 		set_invis(Ind, 0, 0) |
