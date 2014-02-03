@@ -7212,8 +7212,7 @@ char pet_creation(int Ind)
 #endif
 
 /* Create a mindless servant ! */
-void golem_creation(int Ind, int max)
-{
+void golem_creation(int Ind, int max) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr;
 	monster_type *m_ptr;
@@ -7229,8 +7228,7 @@ void golem_creation(int Ind, int max)
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* Process the monsters */
-	for (k = m_top - 1; k >= 0; k--)
-	{
+	for (k = m_top - 1; k >= 0; k--) {
 		/* Access the index */
 		i = m_fast[k];
 
@@ -7247,15 +7245,13 @@ void golem_creation(int Ind, int max)
 		g_cnt++;
 	}
 
-	if (g_cnt >= max)
-	{
+	if (g_cnt >= max) {
 		msg_print(Ind, "You cannot create more golems.");
 		return;
 	}
 
 	for (x = p_ptr->px - 1; x <= p_ptr->px; x++)
-		for (y = p_ptr->py - 1; y <= p_ptr->py; y++)
-		{
+		for (y = p_ptr->py - 1; y <= p_ptr->py; y++) {
 			/* Verify location */
 			if (!in_bounds(y, x)) continue;
 			/* Require empty space */
@@ -7271,8 +7267,7 @@ void golem_creation(int Ind, int max)
 			break;
 		}
 
-	if (!okay)
-	{
+	if (!okay) {
 		msg_print(Ind, "You don't have sufficient space to create a golem.");
 		return;
 	}
@@ -7483,7 +7478,7 @@ void golem_creation(int Ind, int max)
 	m_ptr->mind = GOLEM_NONE;
 
 	/* prevent other players from killing it on accident */
-	r_ptr->flags8 |= RF8_NO_AUTORET | RF8_GENO_PERSIST;
+	r_ptr->flags8 |= RF8_NO_AUTORET | RF8_GENO_PERSIST | RF8_GENO_NO_THIN;
 	r_ptr->flags7 |= RF7_NO_TARGET;
 
 	/* Update the monster */
