@@ -93,18 +93,23 @@ cptr value_check_aux1(object_type *o_ptr)
 		/* Hack for Stormbringer, so it doesn't show as "worthless" */
 		if (o_ptr->name2 == EGO_STORMBRINGER) return "terrible";
 
+#if 0
 		/* Cursed/Broken */
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "worthless";
-
-		/* Normal */
-#if 0
-		/* exploding ammo is excellent */
-		if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0)) return "excellent";
 #else
-		/* All exploding or ego-ammo is excellent */
-		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) return "excellent";
+		/* Cursed items */
+		if (cursed_p(o_ptr)) return "cursed";
+
+		/* Broken items */
+		if (broken_p(o_ptr)) return "worthless";
 #endif
 
+		/* Normal */
+
+		/* All exploding or ego-ammo is excellent */
+		if (is_ammo(o_ptr->tval) && (o_ptr->pval || o_ptr->name2 || o_ptr->name2b)) return "excellent";
+
+		if (!object_value(0, o_ptr)) return "worthless";
 		if (object_value(0, o_ptr) < 4000) return "good";
 		return "excellent";
 	}
@@ -235,7 +240,7 @@ cptr value_check_aux2(object_type *o_ptr)
 	/* Ego-Items -- except cursed/broken ones */
 	if (!k_ptr->cost) return "broken";
 	if (ego_item_p(o_ptr)) {
-//		if (o_ptr->name2 == 125 || o_ptr->name2a == 125) return "broken"; /* backbiting */
+		if (!object_value(0, o_ptr)) return "worthless";
 		return "good";
 	}
 
