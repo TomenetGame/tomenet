@@ -4176,7 +4176,7 @@ int mon_will_run(int Ind, int m_idx)
 	}
  #else	// 0
 	if (!monster_can_cross_terrain(zcave[m_ptr->fy][m_ptr->fx].feat, r_ptr, FALSE, zcave[m_ptr->fy][m_ptr->fx].info))
-		return (TRUE);
+		return 999;
  #endif	// 0
 
 #endif
@@ -5104,7 +5104,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
 
-	int y, ay, x, ax;
+	int y, ay, x, ax, mwr;
 
 	int move_val = 0;
 
@@ -5169,25 +5169,52 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		}
 	}
 	/* Apply fear if possible and necessary */
-	else if (mon_will_run(Ind, m_idx)) {
+	else if ((mwr = mon_will_run(Ind, m_idx)) != FALSE
+	    && !(mwr == 999 && close_combat)) {
 #if SAFETY_RADIUS == 0
 		/* XXX XXX Not very "smart" */
 		y = (-y), x = (-x);
 
-#else
-		/* Try to find safe place */
-		if (!find_safety(Ind, m_idx, &y, &x)) {
-			/* This is not a very "smart" method XXX XXX */
-			y = (-y);
-			x = (-x);
-		}
-#endif	// SAFETY_RADIUS
 		/* Hack -- run in zigzags */
 		if (!x) x = magik(50) ? y : -y;
 		if (!y) y = magik(50) ? x : -x;
 
 		done = TRUE;
 		m_ptr->last_target = 0;
+#else
+		/* Try to find safe place */
+		if (!find_safety(Ind, m_idx, &y, &x)) {
+ #if 0 /* nulled, so the monster keeps pursuing the player */
+			/* This is not a very "smart" method XXX XXX */
+			y = (-y);
+			x = (-x);
+ #else
+			/* just make it slightly irregular movement? */
+			if (mwr != 999 || !rand_int(8)) {
+				y = (-y);
+				x = (-x);
+
+				/* Hack -- run in zigzags */
+				if (!x) x = magik(50) ? y : -y;
+				if (!y) y = magik(50) ? x : -x;
+
+				done = TRUE;
+				m_ptr->last_target = 0;
+			} else {
+				/* but otherwise still pursue player */
+				y = m_ptr->fy - y2;
+				x = m_ptr->fx - x2;
+			}
+ #endif
+		} else {
+			/* Hack -- run in zigzags */
+			if (!x) x = magik(50) ? y : -y;
+			if (!y) y = magik(50) ? x : -x;
+
+			done = TRUE;
+			m_ptr->last_target = 0;
+		}
+#endif	// SAFETY_RADIUS
 	}
 
 

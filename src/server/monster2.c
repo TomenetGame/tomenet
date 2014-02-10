@@ -5470,6 +5470,8 @@ static bool monster_ground(int r_idx)
  * on doors/stairs, which is silly. - C. Blue
  * Added 'info' too, since aquatic monsters would seek out doors/stairs
  * and then get stuck on them if the surrounding floor wasnt watery.
+ * Also note that fountains mustn't count as safe haven for aquatic monsters,
+ * or fountain guards without ranged attacks might be pretty helpless.
  */
 bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn, u32b info) {
 	/* Deep water */

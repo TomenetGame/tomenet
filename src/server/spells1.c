@@ -942,7 +942,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 					 * totally unkillable suckers...
 					 */
 				{
-					if (!(m_list[m_idx].csleep) && !mon_will_run(Ind, m_idx))
+					if (!(m_list[m_idx].csleep) && mon_will_run(Ind, m_idx) == FALSE)
 					{
 						/* "Skill" test */
 						if (randint(100) < r_ptr->level)
