@@ -1344,6 +1344,44 @@ void do_cmd_quaff_potion(int Ind, int item)
 #endif
 }
 
+#ifdef FOUNTAIN_GUARDS
+static void fountain_guard(int Ind, bool blood) {
+	player_type *p_ptr = Players[Ind];
+	int ridx = 0;
+
+	if (!magik(FOUNTAIN_GUARDS)) return;
+
+	if (blood) {
+		if (getlevel(&p_ptr->wpos) >= 60) { switch (randint(3)) { case 1: ridx = 758; break; case 2: ridx = 994; break; case 3: ridx = 812; }
+		} else if (getlevel(&p_ptr->wpos) >= 50) { switch (randint(3)) { case 1: ridx = 662; break; case 2: ridx = 569; case 3: ridx = 659; }
+		} else { switch (randint(3)) { case 1: ridx = 566; break; break; case 2: ridx = 357; break; case 3: ridx = 568; }
+		}
+	} else {
+		if (getlevel(&p_ptr->wpos) >= 40) { switch (randint(2)) { case 1: ridx = 924; break; case 2: ridx = 893; }
+		} else if (getlevel(&p_ptr->wpos) >= 35) { switch (randint(3)) { case 1: ridx = 1038; break; case 2: ridx = 894; break; case 3: ridx = 902; }
+		} else if (getlevel(&p_ptr->wpos) >= 30) { switch (randint(2)) { case 1: ridx = 512; break; case 2: ridx = 509; }
+		} else if (getlevel(&p_ptr->wpos) >= 25) { ridx = 443;
+		} else if (getlevel(&p_ptr->wpos) >= 20) { switch (randint(4)) { case 1: ridx = 919; break; case 2: ridx = 882; break; case 3: ridx = 927; break; case 4: ridx = 1057; }
+		} else if (getlevel(&p_ptr->wpos) >= 15) { switch (randint(3)) { case 1: ridx = 303; break; case 2: ridx = 923; break; case 3: ridx = 926; }
+		} else if (getlevel(&p_ptr->wpos) >= 10) { ridx = 925;
+		} else if (getlevel(&p_ptr->wpos) >= 5) { ridx = 207;
+		} else { ridx = 900;
+		}
+	}
+
+	if (ridx) {
+		s_printf("FOUNTAIN_GUARDS: %d ", ridx);
+
+		msg_print(Ind, "A monster appears in the fountain!");
+		summon_override_checks = SO_GRID_TERRAIN | SO_IDDC;
+		if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, ridx, 0, 1))
+			s_printf("ok.\n");
+		else s_printf("failed.\n");
+		summon_override_checks = SO_NONE;
+	}
+}
+#endif
+
 /*
  * Drink from a fountain
  */
@@ -1387,6 +1425,9 @@ void do_cmd_drink_fountain(int Ind)
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 
+#ifdef FOUNTAIN_GUARDS
+		//(unlimited charges!) fountain_guard(Ind, FALSE);
+#endif
 		/* Take a turn */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
@@ -1418,6 +1459,13 @@ void do_cmd_drink_fountain(int Ind)
 			}
 		}
 
+#ifdef FOUNTAIN_GUARDS
+		fountain_guard(Ind, TRUE);
+#endif
+
+		/* Take a turn */
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 		cs_ptr->sc.fountain.rest--;
 		if (cs_ptr->sc.fountain.rest <= 0) {
 			cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_EMPTY_FOUNTAIN);
@@ -1439,24 +1487,23 @@ void do_cmd_drink_fountain(int Ind)
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 
+#ifdef FOUNTAIN_GUARDS
+		//(unlimited charges!) fountain_guard(Ind, FALSE);
+#endif
 		/* Take a turn */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
 
-	if (cs_ptr->sc.fountain.rest <= 0)
-	{
+	if (cs_ptr->sc.fountain.rest <= 0) {
 		msg_print(Ind, "The fountain is dried out.");
 		return;
 	}
 
-	if (cs_ptr->sc.fountain.type <= SV_POTION_LAST)
-	{
+	if (cs_ptr->sc.fountain.type <= SV_POTION_LAST) {
 		tval = TV_POTION;
 		sval = cs_ptr->sc.fountain.type;
-	}
-	else
-	{
+	} else {
 		tval = TV_POTION2;
 		sval = cs_ptr->sc.fountain.type - SV_POTION_LAST;
 	}
@@ -1471,6 +1518,9 @@ void do_cmd_drink_fountain(int Ind)
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 
+#ifdef FOUNTAIN_GUARDS
+		//(unlimited charges!) fountain_guard(Ind, FALSE);
+#endif
 		/* Take a turn */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
@@ -1499,30 +1549,7 @@ void do_cmd_drink_fountain(int Ind)
 	}
 
 #ifdef FOUNTAIN_GUARDS
-	pval = 0;
-//	if (k_info[lookup_kind(tval, sval)].cost > 0) {
-	if (magik(FOUNTAIN_GUARDS)) {
-		if (getlevel(&p_ptr->wpos) >= 40) { switch (randint(2)) { case 1:pval = 924;break; case 2:pval = 893; }
-		} else if (getlevel(&p_ptr->wpos) >= 35) { switch (randint(3)) { case 1:pval = 1038;break; case 2:pval = 894;break; case 3:pval = 902; }
-		} else if (getlevel(&p_ptr->wpos) >= 30) { switch (randint(2)) { case 1:pval = 512;break; case 2:pval = 509; }
-		} else if (getlevel(&p_ptr->wpos) >= 25) { pval = 443;
-		} else if (getlevel(&p_ptr->wpos) >= 20) { switch (randint(4)) {case 1:pval = 919;break; case 2:pval = 882;break; case 3:pval = 927;break; case 4:pval = 1057; }
-		} else if (getlevel(&p_ptr->wpos) >= 15) { switch (randint(3)) {case 1:pval = 303;break; case 2:pval = 923;break; case 3:pval = 926; }
-		} else if (getlevel(&p_ptr->wpos) >= 10) { pval = 925;
-		} else if (getlevel(&p_ptr->wpos) >= 5) { pval = 207;
-		} else { pval = 900;
-		}
-		s_printf("FOUNTAIN_GUARDS: %d ", pval);
-	}
-//	}
-	if (pval) {
-		msg_print(Ind, "A monster appears in the fountain!");
-		summon_override_checks = SO_GRID_TERRAIN | SO_IDDC;
-		if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, pval, 0, 1))
-			s_printf("ok.\n");
-		else s_printf("failed.\n");
-		summon_override_checks = SO_NONE;
-	}
+	fountain_guard(Ind, FALSE);
 #endif
 
 	/* Take a turn */
