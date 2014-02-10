@@ -312,7 +312,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.alert_hitpoint,	FALSE,	1,	0, 26, TRUE,
 	"alert_hitpoint",		"Beep about critical hitpoints/sanity" },
 
-	{ &c_cfg.alert_afk_dam,		TRUE,	1,	0, 27, TRUE,
+	{ &c_cfg.alert_afk_dam,		FALSE,	1,	0, 27, TRUE,
 	"alert_afk_dam",		"Beep when taking damage while AFK" },//alert_failure
 
 
