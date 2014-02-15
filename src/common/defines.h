@@ -307,7 +307,9 @@
 #define FLUENT_ARTIFACT_RESETS
 /* Warn a player if an artifact is about to timeout [4 hours] */
 #define FLUENT_ARTIFACT_WARNING	(60 * 4)
-
+/* Default time in weeks until a true artifact times out.
+   Gets doubled for winner-arts and doubled on rpg-server (cumulative). */
+#define FLUENT_ARTIFACT_WEEKS 5
 
 /*
  * The types of communication that we send to the metaserver

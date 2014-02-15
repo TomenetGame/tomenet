@@ -231,7 +231,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 				char timeleft[9], c = 'w';
 
 				/* bad: should just use determine_artifact_timeout() for consistency, instead of hard-coding */
-				int timeout = winner_artifact_p(&forge) ? 60 * 3 : 60;
+				int timeout = winner_artifact_p(&forge) ? 60 * 2 : 60;
 #ifdef RPG_SERVER
 				timeout *= 2;
 #endif
@@ -239,7 +239,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 				if (a_ptr->timeout <= 0) sprintf(timeleft, "\377s  - ");
 				else if (a_ptr->timeout < 60 * 2) sprintf(timeleft, "\377r%3dm", a_ptr->timeout);
 				else if (a_ptr->timeout < 60 * 24 * 2) sprintf(timeleft, "\377y%3dh", a_ptr->timeout / 60);
-				else if (a_ptr->timeout < timeout * 24 * 27) sprintf(timeleft, "\377s%3dd", a_ptr->timeout / 60 / 24);
+				else if (a_ptr->timeout < timeout * 24 * (FLUENT_ARTIFACT_WEEKS * 7 - 1)) sprintf(timeleft, "\377s%3dd", a_ptr->timeout / 60 / 24);
 				else sprintf(timeleft, "\377G%3dd", a_ptr->timeout / 60 / 24); /* indicate very recently found arts */
 
 				if (a_ptr->cur_num != 1 && !multiple_artifact_p(&forge)) c = 'r';
@@ -2249,7 +2249,8 @@ void do_cmd_check_server_settings(int Ind)
 
 	/* arts & winners */
 #ifdef FLUENT_ARTIFACT_RESETS
-	fprintf(fff, "True artifacts will disappear some time after they have been found ('I'nspect).\n");
+	fprintf(fff, "True artifacts will disappear in %d weeks after are found ('I'nspect yours!).\n", FLUENT_ARTIFACT_WEEKS);
+	fprintf(fff, " (The time is doubled on Iron server and further doubled for winner-artifacts.)\n");
 #else
 	/*unknown, since it's done in LUA:
 	fprintf(fff, "True artifacts will be reset by static schedule.");*/

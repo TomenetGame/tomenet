@@ -8898,8 +8898,8 @@ void determine_artifact_timeout(int a_idx) {
 	if (multiple_artifact_p(&forge)) {
 		a_info[a_idx].timeout = -1; /* grond/crown don't expire */
 		return;
-	} else if (winner_artifact_p(&forge)) a_info[a_idx].timeout = 40320 * 3; /* ring of phasing/mirror of glory */
-	else if (a_idx != ART_RANDART) a_info[a_idx].timeout = 40320; /* minutes: 4 weeks */
+	} else if (winner_artifact_p(&forge)) a_info[a_idx].timeout = FLUENT_ARTIFACT_WEEKS * 10080 * 2; /* mirror of glory */
+	else if (a_idx != ART_RANDART) a_info[a_idx].timeout = FLUENT_ARTIFACT_WEEKS * 10080;
 	else {
 		/* paranoia */
 		s_printf("DETERMINE_ARTIFACT_TIMEOUT: For some reason a randart was specified!\n");
