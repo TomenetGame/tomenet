@@ -3318,7 +3318,7 @@ cptr item_activation(object_type *o_ptr) {
 	}
 
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
-		return "transcribing a spell scroll into it";
+		return "transcribing a spell scroll or spell crystal into it";
 	}
 
 	/* For the moment ignore (non-ego) randarts */
