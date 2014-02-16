@@ -1497,7 +1497,7 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 #define USE_NEW_SHIELDS
 void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN];
-	cptr s_rarity;
+	cptr s_rarity = NULL;
 	FILE *fff;
 	int l = 0, info_val, pl = -1;
 	int pf_col_cnt = 0; /* combine multiple [3] flag lines into one */
@@ -1623,15 +1623,11 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 			    /* pval */
 				info_val = atoi(p1);
 				if (info_val == 0) {
-					/* no boni? just dump rarity in that line then. */
-					sprintf(info_tmp, "%s.", s_rarity);
-					strcpy(info, info_tmp);
-					strcpy(paste_lines[++pl], format("\377%c", a_key));
-					strcat(paste_lines[pl], info);
-					Term_putstr(1, 7 + (l++), -1, ta_key, info);
+					/* no boni? move rarity info to the next line (W:) then. */
 					break;
 				}
 				sprintf(info_tmp, "%s. Magical bonus (to stats and/or abilities): \377%c(%s%d)\377%c.", s_rarity, a_val, info_val < 0 ? "" : "+", info_val, a_key);
+				s_rarity = NULL;
 				strcpy(info, info_tmp);
 			    /* all done, display: */
 				strcpy(paste_lines[++pl], format("\377%c", a_key));
@@ -1642,16 +1638,24 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				/* only process 1st definition we find (for $..$/! stuff): */
 				if (got_W_line) continue;
 				got_W_line = TRUE;
+
 			    /* depth */
 				p2 = strchr(p1, ':') + 1;
 				sprintf(info_tmp, "Found around depth: \377%c%d\377%c, ", a_val, atoi(p1), a_key);
-				strcpy(info, info_tmp);
+				/* rarity string left from an otherwise completely empty 'I:' line? */
+				if (s_rarity) {
+					sprintf(info, "%s. ", s_rarity);
+					strcat(info, info_tmp);
+				} else strcpy(info, info_tmp);
 				p1 = p2;
 			    /* rarity */
 				p2 = strchr(p1, ':') + 1;
 				/* hack, 255 counts as diabled */
-				if (atoi(p1) == 255) sprintf(info_tmp, "This artifact is unfindable. ");
-				strcpy(info, info_tmp);
+				if (atoi(p1) == 255) {
+					/* overwrite previous rarity/depth information */
+					sprintf(info_tmp, "This artifact is unfindable. ");
+					strcpy(info, info_tmp);
+				}
 				p1 = p2;
 			    /* weight */
 				p2 = strchr(p1, ':') + 1;
