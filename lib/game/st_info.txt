@@ -967,7 +967,8 @@ I:95:Restore Life Levels
 T:75:45:40
 T:75:45:18
 T:75:45:42
-#I:100:& Wooden Torch~
+#for refilling torches hehe
+I:100:& Wooden Torch~
 I:95:& Brass Lantern~
 #I:100:& Hard Biscuit~
 #I:90:& Strip~ of Venison
@@ -986,7 +987,7 @@ O:19:24:25:45:54:67
 G:1:y
 F:RANDOM | DEEP_LEVEL | NO_DISCOUNT | ZEROLEVEL | 
 F:GOOD | GREAT | PRICE4 | PRICE2 | VHARD_STEAL
-W:24
+W:48
 
 N:62:Herbalist
 T:95:80:4
