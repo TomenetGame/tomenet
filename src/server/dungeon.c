@@ -5055,19 +5055,23 @@ static void process_player_end(int Ind)
 				}
 			}
 
-			/* Check for nearby monsters and try to kill them */
-			/* If auto_retaliate returns nonzero than we attacked
-			 * something and so should use energy.
-			 */
-			p_ptr->auto_retaliaty = TRUE; /* hack: prevent going un-AFK from auto-retaliating */
-			if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
-			    && (attackstatus = auto_retaliate(Ind))) /* attackstatus seems to be unused! */
-			{
-				p_ptr->auto_retaliating = TRUE;
-				/* Use energy */
-				//p_ptr->energy -= level_speed(p_ptr->dun_depth);
+			/* Parania: Don't break fire-till-kill by starting to auto-retaliate when monster enters melee range!
+			   (note: that behaviour was reported, but haven't reproduced it in local testing so far) */
+			if (!p_ptr->shooting_till_kill) {
+				/* Check for nearby monsters and try to kill them */
+				/* If auto_retaliate returns nonzero than we attacked
+				 * something and so should use energy.
+				 */
+				p_ptr->auto_retaliaty = TRUE; /* hack: prevent going un-AFK from auto-retaliating */
+				if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
+				    && (attackstatus = auto_retaliate(Ind))) /* attackstatus seems to be unused! */
+				{
+					p_ptr->auto_retaliating = TRUE;
+					/* Use energy */
+					//p_ptr->energy -= level_speed(p_ptr->dun_depth);
+				}
+				p_ptr->auto_retaliaty = FALSE;
 			}
-			p_ptr->auto_retaliaty = FALSE;
 		} else {
 			p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
 		}
