@@ -5668,11 +5668,15 @@ void calc_boni(int Ind)
 
 	/* swapping in AUTO_ID items will instantly ID inventory and equipment */
 	if (p_ptr->auto_id && !old_auto_id && !suppress_boni) {
+#if 0 /* currently doesn't work ok with client-side auto-inscriptions */
 		for (i = 0; i < INVEN_TOTAL; i++) {
 			o_ptr = &p_ptr->inventory[i];
 			object_aware(Ind, o_ptr);
 			object_known(o_ptr);
 		}
+#else /* why not just this, simply.. :) */
+		identify_pack(Ind);
+#endif
 
 #if 0 /* moved to client-side, clean! */
 		/* hack: trigger client-side auto-inscriptions for convenience,
