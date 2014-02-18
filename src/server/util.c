@@ -1619,7 +1619,10 @@ void handle_music(int Ind) {
 		case 29: Send_music(Ind, 23); return; //The Helcaraxe
 		case 30: Send_music(Ind, 15); return; //The Training Tower
 		//31 is handled above by in_valinor() check
-		case 32: Send_music(Ind, 13); return; //The Cloud Planes (use ironman music for now (forcedown/hellish doesn't fit))
+		case 32:
+			if (p_ptr->audio_mus == 56) Send_music(Ind, 13); /* outdated music pack? (use ironman music for now (forcedown/hellish doesn't fit)) */
+			else Send_music(Ind, 56); /* the actual specific music for this dungeon */
+			return; //The Cloud Planes
 		}
 	}
 
