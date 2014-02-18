@@ -5746,6 +5746,13 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				msg_print(Ind, "You feel some rubble blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
+
+				if (!p_ptr->warning_tunnel) {
+					msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with SHIFT+T.");
+					msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
+					s_printf("warning_tunnel: %s\n", p_ptr->name);
+					p_ptr->warning_tunnel = 1;
+				}
 			/* Closed door */
 			} else if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
 				 (c_ptr->feat == FEAT_HOME)) {
@@ -5804,6 +5811,13 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				/* Rubble */
 				if (c_ptr->feat == FEAT_RUBBLE) {
 					msg_print(Ind, "There is rubble blocking your way.");
+
+					if (!p_ptr->warning_tunnel) {
+						msg_print(Ind, "\374\377yHINT: You can try to tunnel through obstacles with SHIFT+T.");
+						msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
+						s_printf("warning_tunnel: %s\n", p_ptr->name);
+						p_ptr->warning_tunnel = 1;
+					}
 				}
 				/* Tree */
 				else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE ||
