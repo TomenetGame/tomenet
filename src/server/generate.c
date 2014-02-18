@@ -1032,7 +1032,7 @@ static void place_random_door(struct worldpos *wpos, int y, int x) {
  * Places some staircases near walls
  */
 static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls, struct stairs_list *stairs) {
-	int y, x, i, j, flag, tries = 0;
+	int y = 5, x = 5, i, j, flag, tries = 0; /* initialise x,y to kill compiler warnings */
 	int emergency_flag = TRUE, new_feat = -1, nlev_down = FALSE, nlev_up = FALSE;
 	int starty, startx;
 	cave_type *c_ptr;
