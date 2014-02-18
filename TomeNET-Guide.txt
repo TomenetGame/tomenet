@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. February 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. February 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.6a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -378,12 +378,12 @@ I       I       inspects an item, showing its special abilities in case it
 w       w       wear/wield an item from your inventory (weapons, armour,
                 ammunition, tools, rings, amulets, etc).
 
-W       W       wear/wield an item, same as 'w', but tries to use the second
+W       CTRL+W  wear/wield an item, same as 'w', but tries to use the second
                 available slot in case two inventory slots are both egligible.
 
 t       T       take off an item.
 
-x               swap an item. This is basically like both "wear/wield" and
+x       CTRL+A  swap an item. This is basically like both "wear/wield" and
                 "take off" in one command. This makes only sense if it is used
                 with an item that has been _inscribed_ accordingly, for example
                 "@x4":
@@ -405,7 +405,7 @@ f       t       fire ammo from your quiver.
 
 v       v       throw an item from your inventory.
 
-b       (P)     browse (peruse) a book.
+b       P       browse (peruse) a book.
 
 m       m       activate a skill (ie cast a magic spell, lay a trap, use an
                 ability, use a technique, polymorph into a monster form or
@@ -519,7 +519,7 @@ l       x       look at a player/monster/object (use direction keys for
                 This behaviour has no real effect on gameplay though it just
                 looks odd in those rare cases it happens :-p.)
 
-j               attempt to steal from players (not recommended!).
+j       S       attempt to steal from players (not recommended!).
 
 U       O       use undead powers (use this if you died and became a ghost).
                 Using these will drain your experience. If you ran out of
@@ -540,7 +540,7 @@ p       p       Concentrate on opening your mind for telekinesis.
                 players in the same party to open their minds in order to work
                 or to affect them as intended.
 
-h               sell/buy a house or change house parameters. See (4.10).
+h       CTRL+E  sell/buy a house or change house parameters. See (4.10).
 
 P       O       party screen. Form/disband/modify a party with other players
                 here. In a party you will share experience points if you are
@@ -549,6 +549,7 @@ P       O       party screen. Form/disband/modify a party with other players
                 sector. See (6.9) for details!
                 For winners (queens/kings/empresses/emperors) the range is 11
                 levels instead of 7.
+
 
 SPACE   Stop executing repeatable actions such as searching, tunnelling or
         disarming traps. Also stops fire-till-kill.
@@ -759,6 +760,7 @@ Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 (       Initiates targetting a friendly player (used in macros).
         (Currently targets the most hurt player who is in your party, or the
         most wounded player in general if you aren't in a party.)
+
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:

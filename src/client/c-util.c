@@ -1163,49 +1163,42 @@ static char roguelike_commands(char command)
 
                 /* Hack -- Commit suicide */
 //(display fps) case KTRL('C'): return ('Q');
-
                 /* Locate player on map */
                 case 'W': return ('L');
-
                 /* Browse a book (Peruse) */
                 case 'P': return ('b');
-
                 /* Steal */
                 case 'S': return ('j');
-
                 /* Toggle search mode */
                 case '#': return ('S');
-
                 /* Use a staff (Zap) */
                 case 'Z': return ('u');
-
                 /* Take off equipment */
                 case 'T': return ('t');
-
                 /* Fire an item */
                 case 't': return ('f');
-
                 /* Bash a door (Force) */
                 case 'f': return ('B');
-
                 /* Look around (examine) */
                 case 'x': return ('l');
-
                 /* Aim a wand (Zap) */
                 case 'z': return ('a');
-
                 /* Zap a rod (Activate) */
                 case 'a': return ('z');
-
 		/* Party mode */
 		case 'O': return ('P');
 
+		/* Secondary 'wear/wield' */
+		case KTRL('W'): return ('W');
+		/* Swap item */
+		case KTRL('A'): return ('x');
+		/* House commands */
+		case KTRL('E'): return ('h');
+
                 /* Run */
                 case ',': return ('.');
-
                 /* Stay still (fake direction) */
                 case '.': hack_dir = 5; return (',');
-
                 /* Stay still (fake direction) */
                 case '5': hack_dir = 5; return (',');
 
