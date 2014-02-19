@@ -325,6 +325,11 @@ or glance at (7.3) first ;)
 ----------------------------------
 Can be different depending on OS / configuration.
 
+Key combinations with CTRL key can be entered in the macro menu by prefixing
+the key with a '^' symbol. For example, a swap-macro in normal key set could be
+'x0', but in rogue-like key set (where swap is CTRL+A instead of x) it will be
+'^a0' instead (or with capital letter: '^A0', it's all the same for ^ codes).
+
 Keys:
 The first key is of the 'original Angband key set', the second key is of the
 'rogue-like' key set. Some people prefer to use that one. You can change it
