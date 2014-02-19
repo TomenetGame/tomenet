@@ -8623,7 +8623,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Standard damage -- hurts inventory too */
 	case GF_ACID:
 		dam = acid_dam(Ind, dam, killer, -who);
-		if (fuzzy) msg_format(Ind, "You are hit by acid for \377%c%d \377wdamage!", damcol, dam);
+		if (who == PROJECTOR_TERRAIN && dam == 0) ;
+		else if (fuzzy) msg_format(Ind, "You are hit by acid for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
@@ -8631,7 +8632,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Standard damage -- hurts inventory too */
 	case GF_FIRE:
 		dam = fire_dam(Ind, dam, killer, -who);
-		if (fuzzy) msg_format(Ind, "You are hit by fire for \377%c%d \377wdamage!", damcol, dam);
+		if (who == PROJECTOR_TERRAIN && dam == 0) ;
+		else if (fuzzy) msg_format(Ind, "You are hit by fire for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
@@ -8639,7 +8641,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Standard damage -- hurts inventory too */
 	case GF_COLD:
 		dam = cold_dam(Ind, dam, killer, -who);
-		if (fuzzy) msg_format(Ind, "You are hit by cold for \377%c%d \377wdamage!", damcol, dam);
+		if (who == PROJECTOR_TERRAIN && dam == 0) ;
+		else if (fuzzy) msg_format(Ind, "You are hit by cold for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
@@ -8648,17 +8651,18 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_ELEC:
 		dam = elec_dam(Ind, dam, killer, -who);
 		apply_discharge(Ind, dam);
-		if (fuzzy) msg_format(Ind, "You are hit by lightning for \377%c%d \377wdamage!", damcol, dam);
+		if (who == PROJECTOR_TERRAIN && dam == 0) ;
+		else if (fuzzy) msg_format(Ind, "You are hit by lightning for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
 
 	/* Standard damage -- also poisons player */
 	case GF_POIS:
-		if (p_ptr->immune_poison)
-		{
+		if (p_ptr->immune_poison) {
 			dam = 0;
-			if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
+			if (who == PROJECTOR_TERRAIN) ;
+			else if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		} else {
 			if (p_ptr->resist_pois) dam = (dam + 2) / 3;
@@ -8816,14 +8820,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* potion smash effect of a Potion of Death */
 		if (p_ptr->suscep_life || p_ptr->ghost) {
 			dam = 0;
-			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
+			if (who == PROJECTOR_TERRAIN) ;
+			else if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			break;
 		}
 	case GF_NETHER:
 		if (p_ptr->immune_neth) {
 			dam = 0;
-			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
+			if (who == PROJECTOR_TERRAIN) ;
+			else if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		} else if (p_ptr->resist_neth) {
 			dam *= 6; dam /= (randint(6) + 6);
@@ -8852,15 +8858,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Water -- stun/confuse */
 	case GF_WATER:
 	case GF_WAVE:
-		if (p_ptr->immune_water)
-		{
+		if (p_ptr->immune_water) {
 			dam = 0;
+			//doesn't make much sense--  if (who == PROJECTOR_TERRAIN) ; else
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who);
-		}
-		else
-		{
+		} else {
 			if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
 			{
 				dam = (dam + 3) / 4;
@@ -8916,6 +8920,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_VAPOUR:
 		if (p_ptr->immune_water) {
 			dam = 0;
+			//not really needed-- if (who == PROJECTOR_TERRAIN) ; else
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who);
@@ -9257,6 +9262,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				case 1: { // Poison!
 					if (p_ptr->immune_poison) {
 						dam = 0;
+						//not really needed-- if (who == PROJECTOR_TERRAIN) ; else
 						if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 						else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 					} else {
@@ -9275,6 +9281,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				default: { // Water
 					if (p_ptr->immune_water) {
 						dam = 0;
+						//not really needed-- if (who == PROJECTOR_TERRAIN) ; else
 						if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 						else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 					} else {
@@ -9315,8 +9322,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				case 3:
 				case 5: {
 					if (p_ptr->biofeedback) dam /= 2;
-					if (p_ptr->resist_shard)
-					{
+					if (p_ptr->resist_shard) {
 						dam *= 6; dam /= (randint(6) + 6);
 					}
 					if (fuzzy) msg_format(Ind, "You are hit by something sharp for \377%c%d \377wdamage!", damcol, dam);
@@ -9325,13 +9331,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					break;
 				}
 				case 2: { // Water
-					if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
-					{
+					if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC)) {
 						dam = (dam + 3) / 4;
 					}
-					if (p_ptr->immune_water)
-					{
+					if (p_ptr->immune_water) {
 						dam = 0;
+						//not really needed-- if (who == PROJECTOR_TERRAIN) ; else
 						if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 						else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 					} else {
@@ -9364,6 +9369,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				default: { // Poison
 					if (p_ptr->immune_poison) {
 						dam = 0;
+						//not really needed-- if (who == PROJECTOR_TERRAIN) ; else
 						if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 						else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 					} else {
@@ -10006,14 +10012,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Standard damage -- also poisons / mutates player */
 	case GF_NUKE:
 		{
-			if (p_ptr->immune_poison)
-			{
+			if (p_ptr->immune_poison) {
 				dam = 0;
+				if (who == PROJECTOR_TERRAIN) ; else /* RL-Doom? ;) */
 				if (fuzzy) msg_format(Ind, "You are hit by radiation for \377%c%d \377wdamage!", damcol, dam);
 				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-			}
-			else
-			{
+			} else {
 				if (p_ptr->resist_pois) dam = (2 * dam + 2) / 5;
 				if (p_ptr->oppose_pois) dam = (2 * dam + 2) / 5;
 				if (p_ptr->suscep_pois) dam = (5 * dam + 2) / 3;
