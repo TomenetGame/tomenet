@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. February 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. February 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.6a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10302,8 +10302,8 @@ Note that not every skill is available to every profession (class).
                                 at 50.000 dodging.
 
                                 As a rule of thumb, your dodge chance will
-                                usually cap at 35% for monsters of equal level
-                                and at 26% chance for monsters of twice your
+                                usually cap at 67% for monsters of equal level
+                                and at 50% chance for monsters of twice your
                                 level.
 
     .Calmness                   Ability to not get hindered by enemies.
