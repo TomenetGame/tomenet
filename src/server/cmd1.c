@@ -7108,7 +7108,7 @@ int apply_dodge_chance(int Ind, int attack_level) {
 	chance = (dodge * plev * 2) / (attack_level * 5); /* 50vs50 -> 40%, 75vs75 -> 37%, 99vs100 -> 36%, 50vs100 -> 30%, 63 vs 127 -> 29%, 80 vs 50 -> 52% */
 	/* with new lower-limit: 40vs20 -> 59%, 50vs50 -> 40%, 75vs75 -> 37%, 99vs100 -> 36%, 50vs100 -> 30%, 63 vs 127 -> 29%, 80 vs 50 -> 43% */
 #else /* experimental: improve dodge chance in general, from ~1/3 vs high level to ~1/2 */
-	chance = (dodge * plev * 2) / (attack_level * 3); /* 50vs50 -> 40%, 75vs75 -> 37%, 99vs100 -> 36%, 50vs100 -> 30%, 63 vs 127 -> 29%, 80 vs 50 -> 52% */
+	chance = (dodge * plev * 2) / (attack_level * 3); /* 50vs100 -> 50%, 63 vs 127 -> 47% */
 #endif
 
 #if 1 /* instead of capping... */
