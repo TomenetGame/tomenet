@@ -19,7 +19,7 @@
 /*
  * Chance of cloned ego monster being the same ego type, in percent. [50]
  */
-#define CLONE_EGO_CHANCE	50
+#define CLONE_EGO_CHANCE	15
 
 /*
  * Descriptions from PernAngband.	- Jir -
