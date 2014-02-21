@@ -11596,6 +11596,11 @@ If a mimic wields a weapon while using a form which usually cannot use weapons
 the number of blows per round will be set to 1 (regardless of extra attacks).
 (This only really applies to druids, shamans or perma-cursed weapons (5.14)).
 
+Apart from blows-per-round, all the other resistances and abilities of a
+perma-cursed item will be applied normally though, so you could wear the
+Massive Iron Crown of Morgoth to get all the resistances and ESP with a form
+that usually cannot wear any head gear.
+
 To find out the special abilities of a monster form, press  ~ 7  in game or
 consult a spoiler file. (See (7.4) for more info about spoiler files.)
 It's abilities will transform to the mimic's body as follows.
