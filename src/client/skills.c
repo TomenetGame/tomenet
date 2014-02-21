@@ -204,10 +204,13 @@ void dump_skills(FILE *fff)
 			strcat(buf, format(" - %s", s_info[i].name));
 		}
 
-		if (!(p_ptr->s_info[i].flags1 & SKF1_DUMMY))
-			fprintf(fff, "%-50s%02d.%03d [%0d.%03d]",
-		    	    buf, p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
-		    	    p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000);
+		if (!(p_ptr->s_info[i].flags1 & SKF1_DUMMY)) {
+			fprintf(fff, "%-50s%02d.%03d", buf, p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP);
+			if (p_ptr->s_info[i].mod)
+				fprintf(fff, " [%0d.%03d]", p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000);
+			else
+				fprintf(fff, " [-----]");
+		}
 	}
 	fprintf(fff, "\n");
 }
@@ -270,12 +273,19 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start) 
 			      j + 4 - start, table[j][1] * 4);
 		}
 		
-		if (!(p_ptr->s_info[i].flags1 & SKF1_DUMMY))
-			c_prt(color,
-			      format("%02d.%03d [%01d.%03d]",
-			         p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
-			         (int)p_ptr->s_info[i].mod / 1000, (int)p_ptr->s_info[i].mod % 1000),
-				 j + 4 - start, 60);
+		if (!(p_ptr->s_info[i].flags1 & SKF1_DUMMY)) {
+			if (p_ptr->s_info[i].mod)
+				c_prt(color,
+				    format("%02d.%03d [%01d.%03d]",
+				    p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
+				    (int)p_ptr->s_info[i].mod / 1000, (int)p_ptr->s_info[i].mod % 1000),
+				    j + 4 - start, 60);
+			else
+				c_prt(color,
+				    format("%02d.%03d [-----]",
+				    p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP),
+				    j + 4 - start, 60);
+		}
 	}
 
 	/* Hack - Get rid of the cursor - mikaelh */
