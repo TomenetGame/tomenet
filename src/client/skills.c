@@ -168,8 +168,7 @@ void dump_skills(FILE *fff)
 
 	fprintf(fff, "\nSkills (points left: %d)", p_ptr->skill_points);
 
-	for (j = 0; j < max; j++)
-	{
+	for (j = 0; j < max; j++) {
 		int z;
 
 		i = table[j][0];
@@ -179,9 +178,7 @@ void dump_skills(FILE *fff)
 		 * We should make sure the skill doesn't have 'valid' children!
 		 */
 		if ((p_ptr->s_info[i].value == 0) && (i != SKILL_MISC))
-		{
 			if (p_ptr->s_info[i].mod == 0) continue;
-		}
 
 /*		sprintf(buf, "\n");		*/
 		fprintf(fff, "\n");
@@ -192,17 +189,11 @@ void dump_skills(FILE *fff)
 		for (z = 0; z < table[j][1]; z++) strcat(buf, "    ");
 
 		if (!has_child(i))
-		{
 			strcat(buf, format(" . %s", s_info[i].name));
-		}
 		else if (!has_active_child(i))
-		{
 			strcat(buf, format(" o %s", s_info[i].name));
-		}
 		else
-		{
 			strcat(buf, format(" - %s", s_info[i].name));
-		}
 
 		if (!(p_ptr->s_info[i].flags1 & SKF1_DUMMY)) {
 			fprintf(fff, "%-50s%02d.%03d", buf, p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP);
