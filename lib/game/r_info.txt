@@ -19044,7 +19044,7 @@ N:1068:Nether Guard
 G:N:G
 I:140:150d150:250:175:0
 W:98:3:0:100000
-E:0:0:0:0:0:0
+E:0:1:0:0:1:0
 O:0:0:0:0
 B:HIT:HURT:39d8
 B:HIT:HURT:39d8
@@ -19061,8 +19061,10 @@ S:BA_NETH | HEAL | TELE_TO
 D:Bound to guard the nether realm that no being that does not belong here would
 D:ever set foot in it. The metallic green skin of this tall humanoid creature
 D:is hard as adamantine, its four arms end in blades covered by intense plasma
-D:discharges, making them flash blue and white, while three widely opened black
-D:eyes that are empty except for the reflections of stars surveye everything.
+D:discharges, making them flash blue and white, while instead of legs and feet
+D:there is only smoke and flashes of light that seem to solidify and materialize
+D:to the torso. Three wide black eyes, empty except for reflections of unknown
+D:stars, surveye everything.
 
 N:1069:Gorm
 G:R:D
@@ -19625,7 +19627,7 @@ N:1097:Zu-Aon, The Cosmic Border Guard
 G:N:b
 I:145:300d200:200:200:0
 W:128:1:0:1000000
-E:0:0:0:0:0:0
+E:0:1:0:0:1:0
 O:0:0:0:0
 B:HIT:HURT:70d5
 B:HIT:HURT:70d5
