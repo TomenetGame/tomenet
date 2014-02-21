@@ -5701,13 +5701,13 @@ void reward_deed_item(int Ind, int item)
 
 	switch (o2_ptr->sval) {
 	case SV_DEED_HIGHLANDER: /* winner's deed */
-		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW2, 3000); /* 95 is default depth for highlander tournament */
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID, 3000); /* 95 is default depth for highlander tournament */
 		o_ptr->note = quark_add("Highlander reward");
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
 		break;
 	case SV_DEED_DUNGEONKEEPER: /* winner's deed */
-		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW2, 3000);
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID, 3000);
 		o_ptr->note = quark_add("Dungeon Keeper reward");
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
