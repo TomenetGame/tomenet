@@ -5914,13 +5914,33 @@ Stun    -Stun           Reduces to-hit and to-dam.
                         (most famous monster is probably "The Stormbringer"),
                         while stun from sound attacks can only be prevented
                         by having sound resistance.
+                        Melee-based stun can be caused by HIT, PUNCH, KICK,
+                        BUTT and CRUSH type attacks, also see (*) below.
 
 Cut                     Cuts will make you lose HP continuously.
 (Graze, Light cut, Bad cut, Nasty cut, Severe cut, Deep gash, Mortal wound)
+                        Cuts can be caused by HIT, CLAW or BITE type attacks,
+                        also see (*) below.
 
 Poison  -Poisoned       The player will continuously lose Hit Points.
                         Resisting poison will prevent the player from getting
                         poisoned (compare (5.6)).
+
+(*) About melee-induced cuts and stuns:
+For an attack to cause cuts or stun, it must deal 95% of its potential damage
+maximum (rounded down). An attack ('HIT') that can do both, cut and stun, will
+randomly do either one, but never both at once. The 95% damage criterium is
+measured for the final damage, ie after the damage-reduction of AC has been
+applied. This is why high armour class helps *alot* to prevent any type of cut
+or stun effect, no matter how high the actual potential damage of that attack
+might be.
+
+Example:
+A Star-Spawn of Cthulhu hits you with its 2d33 CRUSH attack. The attack could
+deal 2..66 damage. This means its potential maximum damage is 66 (if both dice
+rolls turn out a 33 each). 95% of 66 is 62 (rounded down from 62.7), so if that
+hit deals a final damage of 62 or higher, after your AC has been factored in,
+you will get stunned.
 
 
 (4.11a) Drain effects
