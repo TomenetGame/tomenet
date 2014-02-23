@@ -204,10 +204,14 @@ int monster_check_experience(int m_idx, bool silent)
 			         unlikely to ever reach critical damage, unlike 2d attacks, for which it's pretty important. */
 			if (m_ptr->blow[i].d_side == 1) {
 				levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / 100;
+
 				/* compensate the 4/3 damage increasing factor -- note: there may be extreme discrete jumps in damage
 				   for the actual resulting monster, depending on level boost steps, making it not look like a 3/4 compensation.
 				   We hope it's still a correct calculation on average though somehow =P */
 				if (m_ptr->blow[i].d_side == 1) levels_gained_melee = (levels_gained_melee * 3) / 4;
+
+				/* underflow protection! (white ant hits for 1d255..) */
+				if (levels_gained_melee < 100) levels_gained_melee = 100;
 			}
 
 			/* round dice downwards */
@@ -221,11 +225,15 @@ int monster_check_experience(int m_idx, bool silent)
 			levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / (levels_gained_melee);
 		} else {
 			levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / 100; /* if d_dice was 1, for cut/stun, load them all onto the d_side instead */
+
 			/* compensate the 4/3 damage increasing factor -- note: there may be extreme discrete jumps in damage
 			   for the actual resulting monster, depending on level boost steps, making it not look like a 3/4 compensation.
 			   We hope it's still a correct calculation on average though somehow =P */
 			if (m_ptr->blow[i].d_dice == 1) levels_gained_melee = (levels_gained_melee * 3) / 4;
 			/* else == 2 : d2 -> d3 is only ~9/8 increase, which is probably neglibible */
+
+			/* underflow protection! (white ant hits for 1d255..) */
+			if (levels_gained_melee < 100) levels_gained_melee = 100;
 		}
 
 		/* take care of not messing up the cut/stun chance of that monster (ie d_side 1 or 2).
