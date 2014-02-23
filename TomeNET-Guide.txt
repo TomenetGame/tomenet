@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. February 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 23. February 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.6a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -11218,6 +11218,9 @@ vary. For example a warrior cannot learn magic spells.
     Also make sure to have an ample supply of 'Scrolls of Phase Door'.
     Pick one of the three ranged masteries (Bow/Crossbow/Sling) and always
     keep it maximized.
+    Note you can determine the order in which ammunition is listed in your
+    backpack by simply dropping it and picking it up again in your preferred
+    order.
 
 - Paladin
     Paladins are a combination of warrior and priest. Holy knights that
@@ -11280,6 +11283,9 @@ vary. For example a warrior cannot learn magic spells.
     away, for example a cheap dagger, or even dispose of your starter weapon
     completely and go with two cheap, light weapons instead. (See (6.2) for
     details on dual-wielding.)
+    Note you can determine the order in which ammunition is listed in your
+    backpack by simply dropping it and picking it up again in your preferred
+    order.
 
 - Adventurer
     Adventurers are hardy and versatile, they have no preferred way of fighting
