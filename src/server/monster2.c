@@ -196,41 +196,18 @@ int monster_check_experience(int m_idx, bool silent)
 //disabled this, instead I just weakened Water Demons! - C. Blue -	if (m_ptr->blow[i].effect == RBE_SANITY) levels_gained_melee /= 2;
 		levels_gained_melee = levels_gained_tmp;
 
-//	    	m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * levels_gained) / 10;
-//		m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * levels_gained) / 10;
-//		m_ptr->blow[i].d_dice += levels_gained;
-
-#if 0
-		/* round dice upwards sometimes */
-		if (((m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100) * 100) <
-		    (m_ptr->blow[i].d_dice * (levels_gained_melee - 100))) {
-			/* Don't round up for very low monsters, or they become very hard for low players at 7 levels ood */
-			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
-		} else {
-			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100);
-		}
-
-		/* Catch rounding problems */
-		m_ptr->blow[i].d_dice = tmp_dice + (tmp_dice * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
-		levels_gained_melee = (((m_ptr->blow[i].d_dice - tmp_dice) * 100) / tmp_dice) + 100;
-
-		/* round sides upwards sometimes */
-		if (((m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) * 100) <
-		    (m_ptr->blow[i].d_side * (levels_gained_melee - 100))) {
-			/* Don't round up for very low monsters, or they become very hard for low players at 7 levels ood */
-			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
-		} else {
-			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100);
-		}
-#else
-		/* take care of not messing up the cut/stun chance of that monster (ie d_dice == 1).
-		   Note that such a monster will only gain 2/3 of the usual damage increase. (the average of 214d1 is only 2/3 of the average of 117d2!) */
-		if (m_ptr->blow[i].d_dice != 1) {
-			/* if d_side is 1, for cut/stun, load all the level boost onto the d_dice instead */
+		/* take care of not messing up the cut/stun chance of that monster (ie d_dice 1 or 2).
+		   Note that such a monster may gain 4/3 of the usual damage increase. (the average of (4*66)d1 is 4/3 of the average of (2*66)d2) */
+		if (m_ptr->blow[i].d_dice > 2) {
+			/* if d_side is 1 or 2, for cut/stun, load all the level boost onto the d_dice instead.
+			   NOTE: Obviously for d2 attacks this is actually totally not needed, since d2 attacks are extremly
+			         unlikely to ever reach critical damage, unlike 2d attacks, for which it's pretty important. */
 			if (m_ptr->blow[i].d_side == 1) {
 				levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / 100;
-				/* compensate the 2/3 damage decreasing factor */
-				levels_gained_melee = (levels_gained_melee * 9) / 4;
+				/* compensate the 4/3 damage increasing factor -- note: there may be extreme discrete jumps in damage
+				   for the actual resulting monster, depending on level boost steps, making it not look like a 3/4 compensation.
+				   We hope it's still a correct calculation on average though somehow =P */
+				if (m_ptr->blow[i].d_side == 1) levels_gained_melee = (levels_gained_melee * 3) / 4;
 			}
 
 			/* round dice downwards */
@@ -243,13 +220,16 @@ int monster_check_experience(int m_idx, bool silent)
 			levels_gained_melee = (((m_ptr->blow[i].d_dice - tmp_dice) * 100) / tmp_dice) + 100;
 			levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / (levels_gained_melee);
 		} else {
-			levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / 100;; /* if d_dice was 1, for cut/stun, load them all onto the d_side instead */
-			/* compensate the 2/3 damage decreasing factor */
-			levels_gained_melee = (levels_gained_melee * 9) / 4;
+			levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / 100; /* if d_dice was 1, for cut/stun, load them all onto the d_side instead */
+			/* compensate the 4/3 damage increasing factor -- note: there may be extreme discrete jumps in damage
+			   for the actual resulting monster, depending on level boost steps, making it not look like a 3/4 compensation.
+			   We hope it's still a correct calculation on average though somehow =P */
+			if (m_ptr->blow[i].d_dice == 1) levels_gained_melee = (levels_gained_melee * 3) / 4;
+			/* else == 2 : d2 -> d3 is only ~9/8 increase, which is probably neglibible */
 		}
 
-		/* take care of not messing up the cut/stun chance of that monster (ie d_side == 1).
-		   Note that such a monster will only gain 2/3 of the usual damage increase. (the average of 214d1 is only 2/3 of the average of 117d2!) */
+		/* take care of not messing up the cut/stun chance of that monster (ie d_side 1 or 2).
+		   Note that such a monster may gain 4/3 of the usual damage increase. (the average of (4*66)d1 is 4/3 of the average of (2*66)d2) */
 		if (m_ptr->blow[i].d_side != 1) {
 			/* round sides upwards sometimes */
 			if (((m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) * 100) <
@@ -266,7 +246,6 @@ int monster_check_experience(int m_idx, bool silent)
 				m_ptr->blow[i].d_side = tmp;
 			}
 		}
-#endif
 	}
 
 	/* Insanity caps */
