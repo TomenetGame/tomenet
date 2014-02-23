@@ -222,23 +222,33 @@ int monster_check_experience(int m_idx, bool silent)
 		} else {
 			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100);
 		}
-#endif
-		/* round dice downwards */
-		m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100);
+#else
+		/* take care of not messing up the cut/stun chance of that monster (ie d_dice == 1) */
+		if (m_ptr->blow[i].d_dice != 1) {
+			/* if d_side is 1, for cut/stun, load all the level boost onto the d_dice instead */
+			if (m_ptr->blow[i].d_side == 1) levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / 100;
 
-		/* Catch rounding problems */
-		levels_gained_melee = (((m_ptr->blow[i].d_dice - tmp_dice) * 100) / tmp_dice) + 100;
-		levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / (levels_gained_melee);
+			/* round dice downwards */
+			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100);
 
-		/* round sides upwards sometimes */
-		if (((m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) * 100) <
-		    (m_ptr->blow[i].d_side * (levels_gained_melee - 100))) {
-			/* Don't round up for very low monsters, or they become very hard for low players at 7 levels ood */
-			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
-		} else {
-			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100);
+			/* Catch rounding problems */
+			levels_gained_melee = (((m_ptr->blow[i].d_dice - tmp_dice) * 100) / tmp_dice) + 100;
+			levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / (levels_gained_melee);
 		}
+		else levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / 100;; /* if d_dice was 1, for cut/stun, load them all onto the d_side instead */
 
+		/* take care of not messing up the cut/stun chance of that monster (ie d_side == 1) */
+		if (m_ptr->blow[i].d_side != 1) {
+			/* round sides upwards sometimes */
+			if (((m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) * 100) <
+			    (m_ptr->blow[i].d_side * (levels_gained_melee - 100))) {
+				/* Don't round up for very low monsters, or they become very hard for low players at 7 levels ood */
+				m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
+			} else {
+				m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100);
+			}
+		}
+#endif
 	}
 
 	/* Insanity caps */
