@@ -223,29 +223,47 @@ int monster_check_experience(int m_idx, bool silent)
 			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100);
 		}
 #else
-		/* take care of not messing up the cut/stun chance of that monster (ie d_dice == 1) */
+		/* take care of not messing up the cut/stun chance of that monster (ie d_dice == 1).
+		   Note that such a monster will only gain 2/3 of the usual damage increase. (the average of 214d1 is only 2/3 of the average of 117d2!) */
 		if (m_ptr->blow[i].d_dice != 1) {
 			/* if d_side is 1, for cut/stun, load all the level boost onto the d_dice instead */
-			if (m_ptr->blow[i].d_side == 1) levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / 100;
+			if (m_ptr->blow[i].d_side == 1) {
+				levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / 100;
+				/* compensate the 2/3 damage decreasing factor */
+				levels_gained_melee = (levels_gained_melee * 9) / 4;
+			}
 
 			/* round dice downwards */
-			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100);
+			tmp = m_ptr->blow[i].d_dice + (m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100);
+			/* catch overflow */
+			if (tmp > 255) tmp = 255;
+			m_ptr->blow[i].d_dice = tmp;
 
 			/* Catch rounding problems */
 			levels_gained_melee = (((m_ptr->blow[i].d_dice - tmp_dice) * 100) / tmp_dice) + 100;
 			levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / (levels_gained_melee);
+		} else {
+			levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / 100;; /* if d_dice was 1, for cut/stun, load them all onto the d_side instead */
+			/* compensate the 2/3 damage decreasing factor */
+			levels_gained_melee = (levels_gained_melee * 9) / 4;
 		}
-		else levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / 100;; /* if d_dice was 1, for cut/stun, load them all onto the d_side instead */
 
-		/* take care of not messing up the cut/stun chance of that monster (ie d_side == 1) */
+		/* take care of not messing up the cut/stun chance of that monster (ie d_side == 1).
+		   Note that such a monster will only gain 2/3 of the usual damage increase. (the average of 214d1 is only 2/3 of the average of 117d2!) */
 		if (m_ptr->blow[i].d_side != 1) {
 			/* round sides upwards sometimes */
 			if (((m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) * 100) <
 			    (m_ptr->blow[i].d_side * (levels_gained_melee - 100))) {
 				/* Don't round up for very low monsters, or they become very hard for low players at 7 levels ood */
-				m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
+				tmp = m_ptr->blow[i].d_side + (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
+				/* catch overflow */
+				if (tmp > 255) tmp = 255;
+				m_ptr->blow[i].d_side = tmp;
 			} else {
-				m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100);
+				tmp = m_ptr->blow[i].d_side + (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100);
+				/* catch overflow */
+				if (tmp > 255) tmp = 255;
+				m_ptr->blow[i].d_side = tmp;
 			}
 		}
 #endif
