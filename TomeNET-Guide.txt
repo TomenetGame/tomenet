@@ -5937,7 +5937,8 @@ armour class helps *alot* to prevent any type of cut or stun effect, no matter
 how high the actual potential damage of that attack might be. However, unlike
 the most common damage types (lie 'HURT') certain damage types cannot be
 mitigated by AC and hence their cut/stun potential is always to be reckoned
-with.
+with (see damage types in the second table in (5.12), which say so if they can
+be mitigated by AC.)
 
 Example:
 A Star-Spawn of Cthulhu hits you with its 2d33 CRUSH attack. The attack could
@@ -8847,21 +8848,27 @@ you won't be affected at all and only take a physical part of the damage -
 if there is a physical part. This depends on the attack type.
 Here is a list of attack types and brands:
 
-Type          Contact/Cut/Stun/Bypasses AC
--------------------------------------------
-HIT                               + + + -
-PUNCH,KICK,BUTT,CRUSH             + - + -
-CLAW, BITE                        + + - -
-TOUCH,STING,ENGULF,CHARGE,CRAWL   + - - -
-SPIT,                             - - - -
-GAZE,WAIL,SPORE,EXPLODE,BEG,      - - - +
-INSULT,MOAN,DROOL,SHOW,WHISPER    - - - +
+Attack type      Contact/Cut/Stun/Bypasses AC
+---------------------------------------------
+HIT                                  + + + -
+PUNCH,KICK,BUTT,CRUSH                + - + -
+CLAW, BITE                           + + - -
+TOUCH,STING,ENGULF,CHARGE,CRAWL      + - - -
+SPIT,                                - - - -
+GAZE,WAIL,SPORE,EXPLODE,BEG,         - - - +
+INSULT,MOAN,DROOL,SHOW,WHISPER       - - - +
 
 Brand           Needed resistance
+(also called 'damage type')
 -------------------------------------------------------------------------------
 HURT            Only AC - raw damage.
+                This damage type can be mitigated by AC.
 Acd,Ele,Fir,Col according element.
+                These damage types can be partially mitigated by AC
+                if the attack type relied on physical impact.
 POISON          poison.
+                This damage type can be partially mitigated by AC
+                if the attack type relied on physical impact.
 BLIND           blindness.
 CONFUSE         confusion (or chaos).
 TERRIFY         fear.
@@ -8889,6 +8896,7 @@ DISARM          fighting skill.
 FAMINE          none. Makes you hungry.
 SEDUCE          none. Makes you take off equipped items.
 SHATTER         hits & causes an earthquake - very dangerous, see (5.13).
+                This damage type can be mitigated by AC.
 
 Getting hit by higher undead creatures may also infect you with the
 Black Breath! (See 1.5 for more information about Black Breath.)
