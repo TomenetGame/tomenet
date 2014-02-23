@@ -7300,17 +7300,18 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Increase strength! */
 		case GF_INC_STR:
 			for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
-					if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
-					if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
+				/* do a 'restore strenght' before increasing it */
+				if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
+				if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
 
-					if (m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side) {
-							m_ptr->blow[i].d_dice++;
-							msg_print_near_monster(c_ptr->m_idx, "appears stronger");
-					}
-					else if (m_ptr->blow[i].d_side > 0 && m_ptr->blow[i].d_dice > 0) {
-							m_ptr->blow[i].d_side++;
-							msg_print_near_monster(c_ptr->m_idx, "appears stronger");
-					}
+				if (m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side) {
+						m_ptr->blow[i].d_dice++;
+						msg_print_near_monster(c_ptr->m_idx, "appears stronger");
+				}
+				else if (m_ptr->blow[i].d_side > 0 && m_ptr->blow[i].d_dice > 0) {
+						m_ptr->blow[i].d_side++;
+						msg_print_near_monster(c_ptr->m_idx, "appears stronger");
+				}
 			}
 			dam = 0;
 			quiet = TRUE;
