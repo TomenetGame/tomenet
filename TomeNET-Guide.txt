@@ -5927,13 +5927,17 @@ Poison  -Poisoned       The player will continuously lose Hit Points.
                         poisoned (compare (5.6)).
 
 (*) About melee-induced cuts and stuns:
-For an attack to cause cuts or stun, it must deal 95% of its potential damage
-maximum (rounded down). An attack ('HIT') that can do both, cut and stun, will
-randomly do either one, but never both at once. The 95% damage criterium is
-measured for the final damage, ie after the damage-reduction of AC has been
-applied. This is why high armour class helps *alot* to prevent any type of cut
-or stun effect, no matter how high the actual potential damage of that attack
-might be.
+For a monster attack to cause cuts or stun, it must deal 95% of its potential
+damage maximum (rounded down). This is also called a 'critical hit' of a
+monster (has nothing to do with the critical-hit mechanics for player attacks).
+An attack type ('HIT') that can do both, cut and stun, will randomly do either
+one, but never both at once. The 95% damage criterium is measured for the final
+damage, ie after the damage-reduction of AC has been applied. This is why high
+armour class helps *alot* to prevent any type of cut or stun effect, no matter
+how high the actual potential damage of that attack might be. However, unlike
+the most common damage types (lie 'HURT') certain damage types cannot be
+mitigated by AC and hence their cut/stun potential is always to be reckoned
+with.
 
 Example:
 A Star-Spawn of Cthulhu hits you with its 2d33 CRUSH attack. The attack could
@@ -8854,7 +8858,7 @@ GAZE,WAIL,SPORE,EXPLODE,BEG,      - - - +
 INSULT,MOAN,DROOL,SHOW,WHISPER    - - - +
 
 Brand           Needed resistance
-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 HURT            Only AC - raw damage.
 Acd,Ele,Fir,Col according element.
 POISON          poison.
