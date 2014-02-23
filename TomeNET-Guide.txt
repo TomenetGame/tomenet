@@ -8373,7 +8373,7 @@ Sprig of Athelas    Eat this one to cure Black Breath (see 1.5 for more
                     information about Black Breath),
                     also cures poison/stun/cuts.
 Mushrooms of paranoia/cure paranoia
-                    Cause/remove fear, cause/reduce hallucinations.
+                    Cause/remove fear, cause/remove hallucinations.
 Mushroom of Unmagic
                     Removes all magical effects from your body if eaten.
 Mushroom of Restoring
