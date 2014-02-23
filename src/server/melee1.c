@@ -32,8 +32,7 @@
  * and which also do at least 20 damage, or, sometimes, N damage.
  * This is used only to determine "cuts" and "stuns".
  */
-static int monster_critical(int dice, int sides, int dam)
-{
+static int monster_critical(int dice, int sides, int dam) {
 	int max = 0;
 	int total = dice * sides;
 
@@ -47,9 +46,11 @@ static int monster_critical(int dice, int sides, int dam)
 	if (dam == total) max++;
 
 	/* Super-charge */
-	if (dam >= 20)
-	{
-		while (rand_int(100) < 2) max++;
+	if (dam >= 20) {
+		if (!rand_int(50)) {
+			max++;
+			if (!rand_int(50)) max++;
+		}
 	}
 
 	/* Critical damage */
