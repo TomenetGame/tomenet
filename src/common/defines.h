@@ -4961,6 +4961,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF2_KILL_BODY		0x00200000	/* Monster can kill monsters */
 #define RF2_TAKE_ITEM		0x00400000	/* Monster can pick up items */
 #define RF2_KILL_ITEM		0x00800000	/* Monster can crush items */
+//POTENTIAL FLAG HOLE: those RF2_BRAINs..
 #define RF2_BRAIN_1			0x01000000 /* unusued..? */
 #define RF2_BRAIN_2			0x02000000
 #define RF2_BRAIN_3			0x04000000
@@ -5273,12 +5274,13 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF0_S_HI_MONSTER	0x00000001
 #define RF0_S_HI_MONSTERS	0x00000002
 #define RF0_S_HI_UNIQUE		0x00000004
-#define RF0_ASTAR		0x00000008	/* monster uses A* pathfinding (use with care, might strain CPU) */
+#define RF0_ASTAR		0x00000008		/* monster uses A* pathfinding (use with care, might strain CPU) */
 #define RF0_NO_ESCORT			0x00000010	/* monster will never occur in groups, like escorts or nests/pits */
 #define RF0_NO_NEST			0x00000020	/* monster will never occur in groups, like escorts or nests/pits */
 #define RF0_FINAL_GUARDIAN		0x00000040	/* monster is defined as FINAL_GUARDIAN_ in d_info.txt */
 #define RF0_BO_DISE			0x00000080
 #define RF0_BA_DISE		0x00000100
+#define RF0_ROAMING		0x00000200		/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT | RF0_NO_NEST)
 

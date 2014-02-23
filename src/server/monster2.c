@@ -3229,6 +3229,16 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 			if ((flags & FF1_PERMANENT)) return 48;
 		}
 	}
+
+	/* Access the location */
+	c_ptr = &zcave[y][x];
+
+	/* does monster *prefer* roaming freely and isn't found in vaults/pits/nests usually? */
+	if ((r_ptr->flags0 & RF0_ROAMING)
+	    && !(summon_override_checks & (SO_GRID_EMPTY | SO_GRID_TERRAIN))) {
+		if ((c_ptr->info & (CAVE_ICKY | CAVE_NEST_PIT))) return 51;
+	}
+
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 #endif
@@ -3236,9 +3246,6 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 
         /* Now could we generate an Ego Monster */
         r_ptr = race_info_idx(r_idx, ego, randuni);
-
-	/* Access the location */
-	c_ptr = &zcave[y][x];
 
 	/* Make a new monster */
 	c_ptr->m_idx = m_pop();
@@ -4009,13 +4016,12 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp)
 }
 
 /* Used for dungeon bosses, aka FINAL_GUARDIAN - C. Blue */
-bool alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp)
-{
+int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 	int y, x, i, d, min_dis = 999, org_dis = dis, res;
 	int tries = 2000;
 	player_type *p_ptr;
 	cave_type **zcave;
-	if (!(zcave = getcave(wpos))) return (FALSE);
+	if (!(zcave = getcave(wpos))) return -1;
 	dun_level *l_ptr = getfloor(wpos);
 
 	/* Find a legal, distant, unoccupied, space */
@@ -4026,6 +4032,43 @@ bool alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp)
 
 		/* Require "naked" floor grid */
 		if (!cave_naked_bold(zcave, y, x)) continue;
+
+
+		/* ---------- specific location restrictions for this monster? ---------- */
+		/* does monster require open area to be spawned in? */
+		if ((r_info[r_idx].flags8 & RF8_AVOID_PERMAWALLS)
+		    && !(summon_override_checks & (SO_GRID_EMPTY | SO_GRID_TERRAIN))) {
+			/* Radius of open area should be same as max radius of player ball/cloud/etc. spells - assume 5.
+			   For simplicity we just check for box shape instead of using distance() for pseudo-ball shape. */
+			int x2, y2;
+			u32b flags;
+			bool broke = FALSE;
+
+			for (x2 = x - 5; x2 <= x + 5; x2++) {
+				for (y2 = y - 5; y2 <= y + 5; y2++) {
+					if (!in_bounds(y2, x2)) continue;
+					flags = f_info[zcave[y2][x2].feat].flags1;
+
+					/* only check for walls */
+					if (!(flags & FF1_WALL)) continue;
+
+					/* open area means: No permawalls
+					   (anti vault-cheeze, but also for rough level border structures) */
+					if ((flags & FF1_PERMANENT)) {
+						broke = TRUE;
+						break;
+					}
+				}
+				if (broke) break;
+			}
+			if (broke) continue;
+		}
+		/* does monster *prefer* roaming freely and isn't found in vaults/pits/nests usually? */
+		if ((r_info[r_idx].flags0 & RF0_ROAMING)
+		    && !(summon_override_checks & (SO_GRID_EMPTY | SO_GRID_TERRAIN))) {
+			if ((zcave[y][x].info & (CAVE_ICKY | CAVE_NEST_PIT))) continue;
+		}
+
 
 		/* Accept far away grids */
 		for (i = 1; i < NumPlayers + 1; i++) {
@@ -4053,16 +4096,17 @@ bool alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp)
 	if (!tries) {
 		/* fun stuff. it STILL fails here "relatively" often.. -_- */
 		s_printf("allocate_monster_specific() out of tries for r_idx %d on %s.\n", r_idx, wpos_format(0, wpos));
-		return (FALSE);
+		return -2;
 	}
 
 	/* Attempt to place the monster, allow groups */
-        if ((res = place_monster_aux(wpos, y, x, r_idx, slp, TRUE, FALSE, 0)) == 0) return (TRUE);
+        if ((res = place_monster_aux(wpos, y, x, r_idx, slp, TRUE, FALSE, 0)) == 0) return 0;
 
 	/* Nope */
 	if (res != 37) /* no spam for players who have killed the boss already */
 		s_printf("allocate_monster_specific()->place_monster_aux() failed for r_idx %d on %s (%d).\n", r_idx, wpos_format(0, wpos), res);
-	return (FALSE);
+
+	return res;
 }
 
 /*

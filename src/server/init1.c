@@ -539,7 +539,7 @@ static cptr r_info_flags0[] =
 	"FINAL_GUARDIAN", /* should not be used in r_info, since it's set implicitely from d_info */
 	"BO_DISE",//8
 	"BA_DISE",
-	"X00000200",
+	"ROAMING",
 	"X00000400",
 	"X00000800",//12
 	"X00001000",
