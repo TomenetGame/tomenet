@@ -5939,8 +5939,10 @@ Example:
 A Star-Spawn of Cthulhu hits you with its 2d33 CRUSH attack. The attack could
 deal 2..66 damage. This means its potential maximum damage is 66 (if both dice
 rolls turn out a 33 each). 95% of 66 is 62 (rounded down from 62.7), so if that
-hit deals a final damage of 62 or higher, after your AC has been factored in,
-you will get stunned.
+hit deals a final damage of 62 or higher, you will get stunned. Note that this
+attack of the Star-Spawn doesn't has a HURT effect but instead an UN_BONUS
+effect. UN_BONUS attacks do not get their damage reduced by AC, so a Star-Spawn
+always has a chance to stun you, even if your AC is very high.
 
 
 (4.11a) Drain effects
