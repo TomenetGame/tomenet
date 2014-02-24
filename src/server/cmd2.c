@@ -1538,6 +1538,11 @@ bool access_door(int Ind, struct dna_type *dna, bool note) {
 /* Note: these colours will be affected by nightly darkening, so shades
    shouldn't be used but completely different colours only..
    but since we don't have enough colours, it doesn't matter - C. Blue */
+#if 0 /* colour is already used for party-access -> uw/hellish only */
+ #define DOOR_COLOUR_INCOMPATIBLE TERM_L_DARK
+#else
+ #define DOOR_COLOUR_INCOMPATIBLE TERM_SLATE
+#endif
 int access_door_colour(int Ind, struct dna_type *dna){
 	player_type *p_ptr = Players[Ind];
 
@@ -1550,16 +1555,16 @@ int access_door_colour(int Ind, struct dna_type *dna){
 	   (Added for PLAYER_STORES especially.) */
 	if (p_ptr->mode & MODE_PVP) {
 		if (!(dna->mode & MODE_PVP)) {
-			return(TERM_L_DARK);
+			return(DOOR_COLOUR_INCOMPATIBLE);
 		}
 	} else if (p_ptr->mode & MODE_EVERLASTING) {
 		if (!(dna->mode & MODE_EVERLASTING)) {
-			return(TERM_L_DARK);
+			return(DOOR_COLOUR_INCOMPATIBLE);
 		}
 	} else if (dna->mode & MODE_PVP) {
-		return(TERM_L_DARK);
+		return(DOOR_COLOUR_INCOMPATIBLE);
 	} else if (dna->mode & MODE_EVERLASTING) {
-		return(TERM_L_DARK);
+		return(DOOR_COLOUR_INCOMPATIBLE);
 	}
 
 	/* test house access permissions */
