@@ -7010,7 +7010,7 @@ int Send_request_str(int Ind, int id, char *prompt, char *std) {
 	Players[Ind]->request_type = RTYPE_STR;
 	return Packet_printf(&connp->c, "%c%d%s%s", PKT_REQUEST_STR, id, prompt, std);
 }
-int Send_request_cfr(int Ind, int id, char *prompt) {
+int Send_request_cfr(int Ind, int id, char *prompt, bool default_yes) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
 	if (!is_newer_than(&connp->version, 4, 4, 6, 1, 0, 0)) return(0);
@@ -7023,7 +7023,10 @@ int Send_request_cfr(int Ind, int id, char *prompt) {
 
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_CFR;
-	return Packet_printf(&connp->c, "%c%d%s", PKT_REQUEST_CFR, id, prompt);
+	if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1))
+		return Packet_printf(&connp->c, "%c%d%s%c", PKT_REQUEST_CFR, id, prompt, default_yes ? 1 : 0);
+	else
+		return Packet_printf(&connp->c, "%c%d%s", PKT_REQUEST_CFR, id, prompt);
 }
 /* NOTE: Should be followed by a p_ptr->request_id = RID_NONE to clean up. */
 int Send_request_abort(int Ind) {

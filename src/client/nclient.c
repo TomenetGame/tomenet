@@ -2635,7 +2635,7 @@ int Receive_sell(void) {
 	if (store_num == 57) sprintf(buf, "Really donate it? ");
 	else sprintf(buf, "Accept %d gold? ", price);
 
-	if (get_check(buf))
+	if (get_check(buf, FALSE))
 		Send_store_confirm();
 
 	return 1;
@@ -2893,7 +2893,7 @@ int Receive_pickup_check(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, buf)) <= 0) return n;
 
 	/* Get a check */
-	if (get_check(buf)) {
+	if (get_check(buf, FALSE)) {
 		/* Pick it up */
 		Send_stay();
 	}
@@ -3680,10 +3680,18 @@ int Receive_request_str(void) {
 int Receive_request_cfr(void) {
 	int n, id;
 	char ch, prompt[MAX_CHARS];
-	if ((n = Packet_scanf(&rbuf, "%c%d%s", &ch, &id, prompt)) <= 0) return n;
+	bool default_yes = FALSE;
+
+	if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 0)) {
+		char dy;
+		if ((n = Packet_scanf(&rbuf, "%c%d%s%c", &ch, &id, prompt, &dy)) <= 0) return n;
+		if (dy != 0) default_yes = TRUE;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%d%s", &ch, &id, prompt)) <= 0) return n;
+	}
 
 	request_pending = TRUE;
-	Send_request_cfr(id, get_check(prompt));
+	Send_request_cfr(id, get_check(prompt, default_yes));
 	request_pending = FALSE;
 	return 1;
 }

@@ -622,7 +622,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 		-- Enough mana
 		if (get_mana(i, s) > get_power(i, s)) then
---                        if (get_check("You do not have enough "..get_power_name(s)..", do you want to try anyway?") == FALSE) then return end
+--                        if (get_check("You do not have enough "..get_power_name(s)..", do you want to try anyway? [y/N]", FALSE) == FALSE) then return end
 			msg_print(i, "You do not have enough mana to cast "..spell(s).name..".")
 				return 0
 	        end

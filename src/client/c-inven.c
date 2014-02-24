@@ -68,7 +68,7 @@ static bool verify(cptr prompt, int item)
 	(void)sprintf(out_val, "%s %s? ", prompt, o_name);
 
 	/* Query */
-	return (get_check(out_val));
+	return (get_check(out_val, FALSE));
 }
 
 

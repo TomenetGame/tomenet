@@ -2123,7 +2123,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 				msg_print(Ind, "You need an up-to-date client to rename a guild.");
 				break;
 			}
-			Send_request_cfr(Ind, RID_GUILD_RENAME, format("Renaming your guild costs %d Au. Are you sure?", GUILD_PRICE));
+			Send_request_cfr(Ind, RID_GUILD_RENAME, format("Renaming your guild costs %d Au. Are you sure?", GUILD_PRICE), FALSE);
 			break;
 		default:
 #if 0

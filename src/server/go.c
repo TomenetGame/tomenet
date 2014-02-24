@@ -476,7 +476,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 9, 3, TERM_ORANGE, "If you lose, and I dun' expect much really, I'll just keep it until");
 		Send_store_special_str(Ind, 10, 3, TERM_ORANGE, "you've become a bit stronger and can win it back.. as if, haha!");
 		Send_store_special_str(Ind, 12, 3, TERM_ORANGE, "..oh and I'll let you take black even, what d'you say eh?");
-		Send_request_cfr(Ind, RID_GO, challenge_req);
+		Send_request_cfr(Ind, RID_GO, challenge_req, TRUE);
 		return;
 	case 1:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Got a grip on the basic ideas by now?");
@@ -486,7 +486,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You begin to understand how this stuff works");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "eh? At least that's what you think..");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "You ready to bet a lil more dough this time?");
-		Send_request_cfr(Ind, RID_GO, challenge_req);
+		Send_request_cfr(Ind, RID_GO, challenge_req, TRUE);
 		return;
 	case 3:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Have you become at least somewhat adept by now?");
@@ -495,7 +495,7 @@ void go_challenge(int Ind) {
 	case 4:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You again, and you look like you want to make more");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "bucks off of me, hah. Well, I'll take you up on that!");
-		Send_request_cfr(Ind, RID_GO, challenge_req);
+		Send_request_cfr(Ind, RID_GO, challenge_req, TRUE);
 		return;
 	case 5:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You trained harder? I guess we aren't done yet..");
@@ -503,7 +503,7 @@ void go_challenge(int Ind) {
 	case 6:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Ah it's you. I've got someone who's not a beginner");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "anymore in the house today. You up for it?");
-		Send_request_cfr(Ind, RID_GO, challenge_req);
+		Send_request_cfr(Ind, RID_GO, challenge_req, TRUE);
 		return;
 	case 7:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "You've come back for your money, eh?");
@@ -513,7 +513,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "I know your skill isn't too shabby.");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "I've got someone rather skilled for you,");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "but it'll take a higher wager this time!");
-		Send_request_cfr(Ind, RID_GO, challenge_req);
+		Send_request_cfr(Ind, RID_GO, challenge_req, TRUE);
 		return;
 	case 9:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Yeah, can't always win right away.");
@@ -523,7 +523,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Aha, it's the person skilled in this game..");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "dare to try someone of quite serious skills?");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "Then let's see some serious money, friend!");
-		Send_request_cfr(Ind, RID_GO, challenge_req);
+		Send_request_cfr(Ind, RID_GO, challenge_req, TRUE);
 		return;
 	case 11:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "I didn't really expect you to win that one.");
@@ -535,7 +535,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "renowned for ya skills. So I did my best");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "and invited a real master to play today!");
 		Send_store_special_str(Ind, 9, 3, TERM_ORANGE, "He's got his price though, you got enough?");
-		Send_request_cfr(Ind, RID_GO, challenge_req);
+		Send_request_cfr(Ind, RID_GO, challenge_req, TRUE);
 		return;
 	case 13:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "There's just no way you could beat that guy.");
@@ -547,7 +547,7 @@ void go_challenge(int Ind) {
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "I can't believe you beat that guy!");
 		Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "I haven't heard of anyone stronger around,");
 		Send_store_special_str(Ind, 8, 3, TERM_ORANGE, "but, can you beat him if you..play white!");
-		Send_request_cfr(Ind, RID_GO, challenge_req);
+		Send_request_cfr(Ind, RID_GO, challenge_req, TRUE);
 		return;
 	case TOP_RANK * 2 + 1:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "There's a limit to everything, you had to");

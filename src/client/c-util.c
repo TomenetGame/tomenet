@@ -2070,14 +2070,13 @@ void put_str(cptr str, int row, int col)
  *
  * Note that "[y/n]" is appended to the prompt.
  */
-bool get_check(cptr prompt)
-{
+bool get_check(cptr prompt, bool default_yes) {
 	int i;
-
 	char buf[80];
 
 	/* Hack -- Build a "useful" prompt */
-	strnfmt(buf, 78, "%.70s [y/N]", prompt);
+	if (default_yes) strnfmt(buf, 78, "%.70s [Y/n]", prompt);
+	else strnfmt(buf, 78, "%.70s [y/N]", prompt);
 
 	/* The top line is "icky" */
 	topline_icky = TRUE;
@@ -2087,8 +2086,7 @@ bool get_check(cptr prompt)
 
 #if 0
 	/* Get an acceptable answer */
-	while (TRUE)
-	{
+	while (TRUE) {
 		i = inkey();
 		if (c_cfg.quick_messages) break;
 		if (i == ESCAPE) break;
@@ -2107,13 +2105,16 @@ bool get_check(cptr prompt)
 	topline_icky = FALSE;
 
 	/* Flush any events that came in while we were icky */
-	if(!c_quit)
+	if (!c_quit)
 		Flush_queue();
 
 	/* More normal */
-	if ((i == 'Y') || (i == 'y')) return (TRUE);
+	if (default_yes) {
+		if (i == 'n' || i == 'N') return FALSE;
+		return TRUE;
+	}
 
-	/* Success */
+	if ((i == 'Y') || (i == 'y')) return (TRUE);
 	return (FALSE);
 }
 
@@ -6652,11 +6653,11 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		Term_putstr(0, 4, -1, TERM_YELLOW, "Do you want to extract 'TomeNET-soundpack.7z' and overwrite it? (y/n)");
 		while (TRUE) {
 			c = inkey();
-			if (c == 'n') {
+			if (c == 'n' || c == 'N') {
 				sound_pack = FALSE;
 				break;
 			}
-			if (c == 'y') break;
+			if (c == 'y' || c == 'Y') break;
 		}
 	}
 
@@ -6704,11 +6705,11 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		Term_putstr(0, 7, -1, TERM_YELLOW, "Do you want to extract 'TomeNET-musicpack.7z' and overwrite it? (y/n)");
 		while (TRUE) {
 			c = inkey();
-			if (c == 'n') {
+			if (c == 'n' || c == 'N') {
 				music_pack = FALSE;
 				break;
 			}
-			if (c == 'y') break;
+			if (c == 'y' || c == 'Y') break;
 		}
 	}
 

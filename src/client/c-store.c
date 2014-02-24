@@ -427,7 +427,7 @@ static void store_sell(void)
 			sprintf(out_val, "Really donate %s? ", inventory_name[item]);
 		else
 			sprintf(out_val, "Really donate %d of your %s? ", amt, inventory_name[item]);
-		if (!get_check(out_val)) return;
+		if (!get_check(out_val, FALSE)) return;
 	}
 
 	/* Tell the server */

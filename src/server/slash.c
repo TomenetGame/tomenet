@@ -7137,7 +7137,7 @@ void do_slash_cmd(int Ind, char *message)
 				case 0: Send_request_key(Ind, 0, "Key: "); break;
 				case 1: Send_request_num(Ind, 0, "Num: ", 9); break;
 				case 2: Send_request_str(Ind, 0, "Str: ", "mh"); break;
-				case 3: Send_request_cfr(Ind, 0, "Y/N: "); break;
+				case 3: Send_request_cfr(Ind, 0, "Y/n: ", TRUE); break;
 				}
 //				Send_request_abort(Ind);
 				msg_print(Ind, "...done.");
