@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. February 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. February 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.6a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -2837,7 +2837,7 @@ least match the STR and DEX values shown in the table in the column titled
 'Min. recommended, if possible'.
 If you can do that then you should start with at least 2 bpr with a light
 weapon, or even with your starting weapon. If your starting weapon already
-gives 2 bpr you could still examine even lighter weapons in stores to find one
+gives 2 bpr you could still inspect even lighter weapons in stores to find one
 that gives you one more bpr i.e. 3 bpr and just discard your starting weapon.
 
 Note: The stat points you distribute have no effect on the maximum value your
@@ -6556,10 +6556,10 @@ is at section (6.5).
 
 There are four different classes of melee weapons,
 swords/daggers, blunt weapons, axes, polearms. (Also see (5.1a) below!)
-You may examine a weapon by pressing 'I' to see its base class.
+You may inspect a weapon by pressing 'I' to see its base class.
 Those again are divided into four sub-classes each:
 Single-handed, forced two-handed, should-be-wielded-two-handed,
-may-be-wielded-two-handed. If you examine ('I') a weapon, it will tell you if
+may-be-wielded-two-handed. If you inspect ('I') a weapon, it will tell you if
 it belongs to one of the latter three sub-classes:
 "It must be wielded two-handed" (MUST2H)
 "It should be wielded two-handed" (SHOULD2H)
@@ -6635,7 +6635,7 @@ For example if you stick with dual-wielding two weapons, you might want to go
 with swords and definitely not with polearms, since there are a lot of 1h
 swords, and very few 1h polearms.
 
-In-game you can press 'I' (or 'x' if inside a store) to examine an item.
+In-game you can press 'I' (or 'x' if inside a store) to inspect an item.
 Even if you haven't *identified* it, it will still tell you the weapon class
 the item belongs to, if it is a weapon.
 
@@ -7518,10 +7518,10 @@ or increase your dex. It doesn't _have to_, however. Some Gondolin-Weapons
 have different abilities than others. To find out the complete powers of an
 item it can be neccessary to *identify* it.
 *Identify* (same as *Perception*) reveals the complete ability list.
-You can check the complete list of items in stores by pressing 'x' to
-'examine an item'. You can review the ability list of an item in your
-inventory or equipment using the 'I' key. Using 'I' requires that
-you already *identified* the item or bought it from a shop.
+You can check the complete list of any item listed in a store by pressing 'I'
+to 'Inspect an item'. You can review the ability list of an item in your
+inventory or equipment using the 'I' key too. Using 'I' outside of stores
+requires that you already *identified* the item or bought it from a shop.
 Items that are bought from a shop are always automatically *identified*.
 Some shops offer an *identify* service but they are quite expensive.
 
