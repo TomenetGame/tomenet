@@ -1235,8 +1235,9 @@ static void store_item_optimize(store_type *st_ptr, int item)
  * Crap is defined as any item that is "available" elsewhere
  * Based on a suggestion by "Lee Vogt" <lvogt@cig.mcel.mot.com>
  */
+//static bool black_market_crap(object_type *o_ptr, bool town_bm) {
 static bool black_market_crap(object_type *o_ptr) {
-#if 0 /* relevant code blocks further below have been disabled (checking of other stores) */
+#if 1 /* relevant code blocks further below have been disabled (checking of other stores) */
 	int		i, j, k;
 	store_type *st_ptr;
 #endif
@@ -1294,7 +1295,13 @@ static bool black_market_crap(object_type *o_ptr) {
 	}
 #endif
 
-#if 0 /* This is bad for dungeon BMs, where people cannot recall around \
+    /* only perform this check for black markets in towns, not in dungeons */
+#if 0
+    if (town_bm) {
+#else
+    { /* dungeon BMs are in dungeon towns, and those have all other basic stores too. */
+#endif
+#if 1 /* This is bad for dungeon BMs, where people cannot recall around \
        * multiple towns to find what they need, so disabling this for now. \
        */
 	/* Don't allow items that are currently offered in any non-BM.
@@ -1305,15 +1312,13 @@ static bool black_market_crap(object_type *o_ptr) {
 		st_ptr = town[k].townstore;
   #if 0 /* according to Mikael's find, this causes bad bugs, ie items that seemingly for no reason wont show up in BMs anymore */
 		/* Check the other "normal" stores */
-		for (i = 0; i < max_st_idx; i++)
-  #else /* using light-weight version that shouldn't pose problems */
-		/* Check the other basic normal stores */
-		for (i = 0; i < 6; i++)
-  #endif
-		{
+		for (i = 0; i < max_st_idx; i++) {
 			/* Don't compare other BMs */
 			if (st_info[i].flags1 & SF1_ALL_ITEM) continue;
-
+  #else /* using light-weight version that shouldn't pose problems */
+		/* Check the other basic normal stores */
+		for (i = 0; i < 6; i++) {
+  #endif
 			/* Check every item in the store */
 			for (j = 0; j < st_ptr[i].stock_num; j++) {
 				object_type *j_ptr = &st_ptr[i].stock[j];
@@ -1325,6 +1330,7 @@ static bool black_market_crap(object_type *o_ptr) {
 	}
  #endif
 #endif
+    }
 
 	/* Assume okay */
 	return (FALSE);
@@ -1460,6 +1466,7 @@ static void store_create(store_type *st_ptr) {
 	u32b resf = RESF_STORE;
 	obj_theme theme;
 	bool black_market = (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM);
+	//bool town_bm = (st_ptr->st_idx == 6);
 
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->stock_size) return;
@@ -1659,6 +1666,7 @@ static void store_create(store_type *st_ptr) {
 		/* Prune the black market */
 		if (black_market) {
 			/* Hack -- No "crappy" items */
+			//if (black_market_crap(o_ptr, town_bm)) continue;
 			if (black_market_crap(o_ptr)) continue;
 
 			/* Hack -- No "cheap" items */
@@ -4179,11 +4187,14 @@ void store_maint(store_type *st_ptr)
 	/* Mega-Hack -- prune the black market */
 //	if (st_ptr->st_idx == 6)
 	if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) {
+		//bool town_bm = (st_ptr->st_idx == 6);
+
 		/* Destroy crappy black market items */
 		for (j = st_ptr->stock_num - 1; j >= 0; j--) {
 			object_type *o_ptr = &st_ptr->stock[j];
 
 			/* Destroy crappy items */
+			//if (black_market_crap(o_ptr, town_bm)) {
 			if (black_market_crap(o_ptr)) {
 				/* Destroy the item */
 				store_item_increase(st_ptr, j, 0 - o_ptr->number);
