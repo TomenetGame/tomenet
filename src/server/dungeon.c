@@ -4950,8 +4950,7 @@ static void process_games(int Ind) {
 /*
  * Player processing that occurs at the end of a turn
  */
-static void process_player_end(int Ind)
-{
+static void process_player_end(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 //	int		x, y, i, j, new_depth, new_world_x, new_world_y;
@@ -5022,9 +5021,21 @@ static void process_player_end(int Ind)
 		/* normal auto-retaliation */
 		//MIGHT NOT BE A MELEE ATTACK, SO COMMENTED OUT!  else energy = energy / p_ptr->num_blow;
 
-
 		/* Check for auto-retaliate */
+	/* The 'old way' is actually the best way, because the initial delay of the 'new way',
+	when it happens, can be very irritating. The best way to fix perceived responsiveness
+	(of the old way) would be to not add full floor speed energy all at once, but in multiple
+	parts, to (ideally) immediately cover the energy loss for a single attack performed. */
+#if 1 /* old way - get the usual 'double initial attack' in. \
+	 Drawback: Have to wait for nearly a full turn (1-(1/attacksperround)) \
+	 for FTK/meleeret to break out for performing a different action. */
 		if (p_ptr->energy >= energy) {
+#else /* new way - allows to instantly break out and perform another action (quaff/read) \
+	but doesn't give the 'double initial attack' anymore, just a normal, single attack. \
+	Main drawback: Walking into a mob will not smoothly transgress into auto-ret the next turn, \
+	but wait for an extra turn before it begins, ie taking 2 turns until first attack got in. */
+		if (p_ptr->energy >= energy * 2 - 1) {
+#endif
 			/* assume nothing will happen here */
 			p_ptr->auto_retaliating = FALSE;
 
