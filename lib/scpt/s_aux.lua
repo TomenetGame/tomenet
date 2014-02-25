@@ -12,7 +12,7 @@ __tmp_spells_num = 0
 -- define get_check2() for older clients
 if rawget(globals(), "get_check2") == nil then
 	function get_check2(prompt, defaultyes)
-		get_check(prompt)
+		return get_check(prompt)
 	end
 end
 
