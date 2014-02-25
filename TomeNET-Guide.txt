@@ -2837,7 +2837,7 @@ least match the STR and DEX values shown in the table in the column titled
 'Min. recommended, if possible'.
 If you can do that then you should start with at least 2 bpr with a light
 weapon, or even with your starting weapon. If your starting weapon already
-gives 2 bpr you could still inspect even lighter weapons in stores to find one
+gives 2 bpr you could still examine even lighter weapons in stores to find one
 that gives you one more bpr i.e. 3 bpr and just discard your starting weapon.
 
 Note: The stat points you distribute have no effect on the maximum value your
@@ -6557,9 +6557,10 @@ is at section (6.5).
 There are four different classes of melee weapons,
 swords/daggers, blunt weapons, axes, polearms. (Also see (5.1a) below!)
 You may inspect a weapon by pressing 'I' to see its base class.
+For items listed in a store, the command is 'x' to examine it.
 Those again are divided into four sub-classes each:
 Single-handed, forced two-handed, should-be-wielded-two-handed,
-may-be-wielded-two-handed. If you inspect ('I') a weapon, it will tell you if
+may-be-wielded-two-handed. If you inspect a weapon, it will tell you if
 it belongs to one of the latter three sub-classes:
 "It must be wielded two-handed" (MUST2H)
 "It should be wielded two-handed" (SHOULD2H)
@@ -7518,9 +7519,9 @@ or increase your dex. It doesn't _have to_, however. Some Gondolin-Weapons
 have different abilities than others. To find out the complete powers of an
 item it can be neccessary to *identify* it.
 *Identify* (same as *Perception*) reveals the complete ability list.
-You can check the complete list of any item listed in a store by pressing 'I'
-to 'Inspect an item'. You can review the ability list of an item in your
-inventory or equipment using the 'I' key too. Using 'I' outside of stores
+You can check the complete list of any item listed in a store by pressing 'x'
+to 'Examine an item'. For items in your inventory or equipment it is the 'I'
+key instead. To get a full list of an items magical abilities outside of stores
 requires that you already *identified* the item or bought it from a shop.
 Items that are bought from a shop are always automatically *identified*.
 Some shops offer an *identify* service but they are quite expensive.
@@ -7976,7 +7977,7 @@ Royal Armour    Super-heavy armour that can only be worn by (fallen) winners,
                 describes various types of adamantite and mithril heavy armour
                 or shields that will display
                 "It is to be used by royalties exclusively."
-                in violet colour when inspected/exmamined.
+                in violet colour when inspected/examined.
 
 
 Potions

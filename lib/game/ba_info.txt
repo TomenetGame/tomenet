@@ -41,9 +41,9 @@ N:2:Purchase an item
 C:0:0:0
 I:44:0:p:1
 
-N:3:Inspect an item
+N:3:Examine an item
 C:0:0:0
-I:45:0:I:1
+I:45:0:x:1
 
 N:4:Steal an item
 C:0:0:0
@@ -141,8 +141,8 @@ I:25:0:r:2
 
 N:27:Identify possessions
 C:2200:1900:1600
-#I:26:0:i:0
-I:26:0:D:0
+#I:26:0:D:0
+I:26:0:I:0
 
 N:28:Healing prayer
 C:600:400:200
@@ -195,7 +195,7 @@ I:50:0:h:0
 
 N:40:Song of Lore
 C:2600:2200:1800
-I:26:0:D:0
+I:26:0:s:0
 
 N:41:Distribute earnings
 C:0:0:0
@@ -225,8 +225,8 @@ I:1:0:a:2
 #for Star-Dome
 N:46:Identify possessions
 C:2400:2000:1600
-#I:26:0:i:0
-I:26:0:D:0
+#I:26:0:D:0
+I:26:0:I:0
 
 #for Star-Dome
 N:47:Recharge item

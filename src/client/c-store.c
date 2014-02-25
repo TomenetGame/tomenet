@@ -550,7 +550,7 @@ static void store_process_command(int cmd) {
 			}
 			break;
 		case 'x':
-		case 'I':
+		//(future change: replace x by I in ba_info, and I/s by D) -- case 'I':
 			if (cmd == 'I' || cmd == 'l' || cmd == 'x') {
 				store_do_command(i);
 				return;
