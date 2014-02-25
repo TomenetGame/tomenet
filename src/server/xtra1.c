@@ -5141,7 +5141,8 @@ void calc_boni(int Ind)
 		/* prevent any weird overflows if 'someone' collects gronds */
 		if (i >= 5000) i = 1;
 		else {
-			i = i / 5 + 10; /* 0:-0 25:-2 50:-8 75:-18 100:-31 125:-48 150:-68 */
+			//i = i / 5 + 10; /* 0:-0 25:-2 50:-8 75:-18 100:-31 125:-48 150:-68 */
+			i = i / 7 + 10; /* 0:-0 25:-1 50:-4 75:-9 100:-16 125:-25 150:-35 */
 			i = (i * i) / 1400;
 
 			e = e / 8 + 10; /* -0...-6 (up to 15.0 lb armour weight; avg -3) */
