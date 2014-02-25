@@ -3429,7 +3429,7 @@ static void hook_quit(cptr str)
 
 	/* Copied from quit_hook in c-init.c - mikaelh */
 
-	if (message_num() && (save_chat || get_check("Save chatlog?", FALSE))) {
+	if (message_num() && (save_chat || get_check2("Save chatlog?", FALSE))) {
 		FILE *fp;
 		char buf[80], buf2[1024];
 		time_t ct = time(NULL);

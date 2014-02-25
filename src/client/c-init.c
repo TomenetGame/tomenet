@@ -2115,7 +2115,7 @@ static void quit_hook(cptr s)
 	/* Display the quit reason */
 	if (s && *s) display_message(s, "Quitting");
 
-	if (message_num() && (save_chat || get_check("Save chatlog?", FALSE))) {
+	if (message_num() && (save_chat || get_check2("Save chatlog?", FALSE))) {
 		FILE *fp;
 		char buf[80], buf2[1024];
 		int i;

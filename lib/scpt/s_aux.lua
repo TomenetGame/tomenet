@@ -8,6 +8,15 @@ __schools_num = 0
 __tmp_spells = {}
 __tmp_spells_num = 0
 
+
+-- define get_check2() for older clients
+if rawget(globals(), "get_check2") == nil then
+	function get_check2(prompt, defaultyes)
+		get_check(prompt)
+	end
+end
+
+
 -- TomeNET additional
 -- Get the amount of mana(or power) needed
 function need_direction(s)
@@ -622,7 +631,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 		-- Enough mana
 		if (get_mana(i, s) > get_power(i, s)) then
---                        if (get_check("You do not have enough "..get_power_name(s)..", do you want to try anyway? [y/N]", FALSE) == FALSE) then return end
+--                        if (get_check2("You do not have enough "..get_power_name(s)..", do you want to try anyway?", FALSE) == FALSE) then return end
 			msg_print(i, "You do not have enough mana to cast "..spell(s).name..".")
 				return 0
 	        end

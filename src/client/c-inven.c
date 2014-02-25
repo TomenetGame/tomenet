@@ -65,10 +65,10 @@ static bool verify(cptr prompt, int item)
 	strcpy(o_name, inventory_name[item]);
 
 	/* Prompt */
-	(void)sprintf(out_val, "%s %s? ", prompt, o_name);
+	(void)sprintf(out_val, "%s %s?", prompt, o_name);
 
 	/* Query */
-	return (get_check(out_val, FALSE));
+	return (get_check2(out_val, FALSE));
 }
 
 

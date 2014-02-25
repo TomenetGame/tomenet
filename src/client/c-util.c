@@ -2070,7 +2070,7 @@ void put_str(cptr str, int row, int col)
  *
  * Note that "[y/n]" is appended to the prompt.
  */
-bool get_check(cptr prompt, bool default_yes) {
+bool get_check2(cptr prompt, bool default_yes) {
 	int i;
 	char buf[80];
 

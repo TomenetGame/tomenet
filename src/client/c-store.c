@@ -424,10 +424,10 @@ static void store_sell(void)
 		char out_val[160];
 
 		if (inventory[item].number == amt)
-			sprintf(out_val, "Really donate %s? ", inventory_name[item]);
+			sprintf(out_val, "Really donate %s?", inventory_name[item]);
 		else
-			sprintf(out_val, "Really donate %d of your %s? ", amt, inventory_name[item]);
-		if (!get_check(out_val, FALSE)) return;
+			sprintf(out_val, "Really donate %d of your %s?", amt, inventory_name[item]);
+		if (!get_check2(out_val, FALSE)) return;
 	}
 
 	/* Tell the server */

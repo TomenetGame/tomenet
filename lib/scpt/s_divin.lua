@@ -10,7 +10,7 @@ STARIDENTIFY = add_spell
         ["mana_max"] = 	30,
         ["fail"] = 	10,
 --        ["stat"] =      A_WIS,
-        ["extra"] =     function () return get_check("Cast on yourself? [y/N]", FALSE) end,
+        ["extra"] =     function () return get_check2("Cast on yourself?", FALSE) end,
         ["spell"] = 	function (args)
         		if args.aux == TRUE then
                         	self_knowledge(Ind)

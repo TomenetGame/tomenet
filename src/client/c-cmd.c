@@ -1062,10 +1062,10 @@ void cmd_destroy(void)
 
 	if (!c_cfg.no_verify_destroy) {
 		if (inventory[item].number == amt)
-			sprintf(out_val, "Really destroy %s? ", inventory_name[item]);
+			sprintf(out_val, "Really destroy %s?", inventory_name[item]);
 		else
-			sprintf(out_val, "Really destroy %d of your %s? ", amt, inventory_name[item]);
-		if (!get_check(out_val, FALSE)) return;
+			sprintf(out_val, "Really destroy %d of your %s?", amt, inventory_name[item]);
+		if (!get_check2(out_val, FALSE)) return;
 	}
 
 	/* Send it */
@@ -2635,7 +2635,7 @@ void cmd_party(void)
 			Term_putstr(0, 19, -1, TERM_YELLOW, "Enter player name: ");
 			if (askfor_aux(buf, 79, 0)) Send_guild(GUILD_DELETE, buf);
 		} else if (i == 'D') {
-			if (get_check("Leave the guild ? ", FALSE))
+			if (get_check2("Leave the guild?", FALSE))
 				Send_guild(GUILD_REMOVE_ME, "");
 		} else if (i == 'e' && is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
 			/* Set guild flags/options */
@@ -2814,12 +2814,12 @@ static void cmd_house_chmod(int dir) {
 	u16b minlev = 0;
 	Term_clear();
 	Term_putstr(0, 2, -1, TERM_BLUE, "Set new permissions");
-	if (get_check("Allow party access? ", FALSE)) mod |= ACF_PARTY;
-	if (get_check("Restrict access to class? ", FALSE)) mod |= ACF_CLASS;
-	if (get_check("Restrict access to race? ", FALSE)) mod |= ACF_RACE;
-	if (get_check("Restrict access to winners? ", FALSE)) mod |= ACF_WINNER;
-	if (get_check("Restrict access to fallen winners? ", FALSE)) mod |= ACF_FALLENWINNER;
-	if (get_check("Restrict access to no-ghost players? ", FALSE)) mod |= ACF_NOGHOST;
+	if (get_check2("Allow party access?", FALSE)) mod |= ACF_PARTY;
+	if (get_check2("Restrict access to class?", FALSE)) mod |= ACF_CLASS;
+	if (get_check2("Restrict access to race?", FALSE)) mod |= ACF_RACE;
+	if (get_check2("Restrict access to winners?", FALSE)) mod |= ACF_WINNER;
+	if (get_check2("Restrict access to fallen winners?", FALSE)) mod |= ACF_FALLENWINNER;
+	if (get_check2("Restrict access to no-ghost players?", FALSE)) mod |= ACF_NOGHOST;
 	minlev = c_get_quantity("Minimum level: ", 127);
 	if (minlev > 1) mod |= ACF_LEVEL;
 	buf[0] = 'M';
@@ -2829,7 +2829,7 @@ static void cmd_house_chmod(int dir) {
 }
 
 static void cmd_house_kill(int dir) {
-	if (get_check("Are you sure you really want to destroy the house?", FALSE))
+	if (get_check2("Are you sure you really want to destroy the house?", FALSE))
 		Send_admin_house(dir, "K");
 }
 
@@ -2878,7 +2878,7 @@ void cmd_purchase_house(void)
 		switch (i) {
 			case '1':
 				/* Confirm */
-				if (get_check("Are you sure you really want to buy or sell the house?", FALSE)) {
+				if (get_check2("Are you sure you really want to buy or sell the house?", FALSE)) {
 					/* Send it */
 					Send_purchase_house(dir);
 					i = ESCAPE;
@@ -2923,7 +2923,7 @@ void cmd_suicide(void)
 	int i;
 
 	/* Verify */
-	if (!get_check("Do you really want to commit suicide? ", FALSE)) return;
+	if (!get_check2("Do you really want to commit suicide?", FALSE)) return;
 
 	/* Check again */
 	prt("Please verify SUICIDE by typing the '@' sign: ", 0, 0);
@@ -2984,22 +2984,22 @@ static void cmd_master_aux_level(void)
 			buf[6] = 0x01;//hack: avoid 0 byte
 			buf[1] = c_get_quantity("Base level: ", 127);
 			buf[2] = c_get_quantity("Max depth (1-127): ", 127);
-			buf[3] = (get_check("Is it a tower? ", FALSE) ? 't' : 'd');
+			buf[3] = (get_check2("Is it a tower?", FALSE) ? 't' : 'd');
 			/*
 			 * FIXME: flags are u32b while buf[] is char!
 			 * This *REALLY* should be rewritten	- Jir -
 			 */
-			if (get_check("Random dungeon (default)?", TRUE)) buf[5] |= 0x02;//DF2_RANDOM
-			if (get_check("Hellish?", FALSE)) buf[5] |= 0x04;//DF2_HELL
-			if (get_check("Not mappable?", FALSE)) {
+			if (get_check2("Random dungeon (default)?", TRUE)) buf[5] |= 0x02;//DF2_RANDOM
+			if (get_check2("Hellish?", FALSE)) buf[5] |= 0x04;//DF2_HELL
+			if (get_check2("Not mappable?", FALSE)) {
 				buf[4] |= 0x02;//DF1_FORGET
 				buf[5] |= 0x08;//DF2_NO_MAGIC_MAP
 			}
-			if (get_check("Ironman?", TRUE)) {
+			if (get_check2("Ironman?", TRUE)) {
 				buf[5] |= 0x10;//DF2_IRON
 				i = 0;
-				if (get_check("Recallable from, before reaching its end?", FALSE)) {
-					if (get_check("Random recall depth intervals (y) or fixed ones (n) ?", TRUE)) buf[6] |= 0x08;
+				if (get_check2("Recallable from, before reaching its end?", FALSE)) {
+					if (get_check2("Random recall depth intervals (y) or fixed ones (n) ?", TRUE)) buf[6] |= 0x08;
 					i = c_get_quantity("Frequency (random)? (1=often..4=rare): ", 4);
 					switch (i) {
 					case 1: buf[6] |= 0x10; break;//DF2_IRONRNDn / DF2_IRONFIXn
@@ -3009,20 +3009,20 @@ static void cmd_master_aux_level(void)
 					}
 					i = 1; // hack for towns below
 				}
-				if (get_check("Generate towns inbetween?", FALSE)) {
-					if (i == 1 && get_check("Generate towns when premature recall is allowed?", FALSE)) {
+				if (get_check2("Generate towns inbetween?", FALSE)) {
+					if (i == 1 && get_check2("Generate towns when premature recall is allowed?", FALSE)) {
 						buf[5] |= 0x20;//DF2_TOWNS_IRONRECALL
-					} else if (get_check("Generate towns randomly (y) or in fixed intervals (n) ?", TRUE)) {
+					} else if (get_check2("Generate towns randomly (y) or in fixed intervals (n) ?", TRUE)) {
 						buf[5] |= 0x40;//DF2_TOWNS_RND
 					} else buf[5] |= 0x80;//DF2_TOWNS_FIX
 				}
 			}
-			if (get_check("Disallow generation of simple stores (misc iron + low level)?", FALSE)) {
+			if (get_check2("Disallow generation of simple stores (misc iron + low level)?", FALSE)) {
 				buf[4] |= 0x08;//DF3_NO_SIMPLE_STORES
-				if (get_check("Generate at least the hidden library?", FALSE)) buf[4] |= 0x04;//DF3_HIDDENLIB
-			} else if (get_check("Generate misc iron stores (RPG rules style)?", FALSE)) {
+				if (get_check2("Generate at least the hidden library?", FALSE)) buf[4] |= 0x04;//DF3_HIDDENLIB
+			} else if (get_check2("Generate misc iron stores (RPG rules style)?", FALSE)) {
 				buf[6] |= 0x04;//DF2_MISC_STORES
-			} else if (get_check("Generate at least the hidden library?", FALSE)) buf[4] |= 0x04;//DF3_HIDDENLIB
+			} else if (get_check2("Generate at least the hidden library?", FALSE)) buf[4] |= 0x04;//DF3_HIDDENLIB
 			buf[7] = '\0';
 			Send_master(MASTER_LEVEL, buf);
 		}
@@ -3953,7 +3953,7 @@ static void cmd_master(void)
 
 void cmd_king()
 {
-	if (!get_check("Do you really want to own this land ?", FALSE)) return;
+	if (!get_check2("Do you really want to own this land?", FALSE)) return;
 
 	Send_King(KING_OWN);
 }
