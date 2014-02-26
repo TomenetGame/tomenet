@@ -3751,7 +3751,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				if (!tk) {
 					if (combo) msg_print(Ind, "\377oUsage: /bancombo <account name>:<IP address> [time [reason]]");
-					else msg_print(Ind, "\377oUsage: /ban <Player name>[:time [reason]]");
+					else msg_print(Ind, "\377oUsage: /ban <account name>[:time [reason]]");
 					return;
 				}
 
