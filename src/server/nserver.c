@@ -222,20 +222,21 @@ void add_banlist(int Ind, char *ip_addy, int time, char *reason) {
 	if (!Ind && !ip_addy) return;
 
 	ptr = NEW(struct combo_ban);
-
 	ptr->next = banlist;
+
 	ptr->time = time;
-	strcpy(ptr->reason, reason);
+	if (reason) strcpy(ptr->reason, reason);
+	else ptr->reason[0] = 0;
 
 	s_printf("Banned for %d minutes (reason ""):\n", time, reason);
 	if (Ind) {
 		strcpy(ptr->acc, Players[Ind]->accountname);
 		s_printf(" Connections for %s.\n", ptr->acc, time);
-	}
+	} else ptr->acc[0] = 0;
 	if (ip_addy) {
 		strcpy(ptr->ip, ip_addy);
 		s_printf(" Connections from %s.\n", ptr->ip, time);
-	}
+	} else ptr->ip[0] = 0;
 
 	banlist = ptr;
 }

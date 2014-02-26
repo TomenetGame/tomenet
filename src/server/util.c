@@ -68,8 +68,8 @@ int in_banlist(char *acc, char *addr, int *time, char *reason) {
 	struct combo_ban *ptr;
 	int found = 0x0;
 	for (ptr = banlist; ptr != (struct combo_ban*)NULL; ptr = ptr->next) {
-		if (!strcmp(addr, ptr->ip)) found |= 0x1;
-		if (!strcmp(addr, ptr->acc)) found |= 0x2;
+		if (ptr->ip[0] && addr && !strcmp(addr, ptr->ip)) found |= 0x1;
+		if (ptr->acc[0] && acc && !strcmp(addr, ptr->acc)) found |= 0x2;
 
 		if (reason) strcpy(reason, ptr->reason);
 		if (time) *time = ptr->time;
@@ -86,8 +86,8 @@ void check_banlist() {
 		if (ptr->time) {
 			if (!(--ptr->time)) {
 				s_printf("Unbanning due to ban timeout (ban reason was '%s'):\n", ptr->reason);
-				if (ptr->ip) s_printf(" Connections from %s\n", ptr->ip);
-				if (ptr->acc) s_printf(" Connections for %s\n", ptr->acc);
+				if (ptr->ip[0]) s_printf(" Connections from %s\n", ptr->ip);
+				if (ptr->acc[0]) s_printf(" Connections for %s\n", ptr->acc);
 
 				if (!old) {
 					banlist = ptr->next;

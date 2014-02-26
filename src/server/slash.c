@@ -3849,6 +3849,24 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				kick_char(Ind, j, reason);
 				return;
+			} else if (prefix(message, "/viewbans")) {
+				bool found = FALSE;
+				struct combo_ban *ptr;
+
+				msg_print(Ind, "ACCOUNT              |       IP        |  TIME  | REASON");
+				for (ptr = banlist; ptr != (struct combo_ban*)NULL; ptr = ptr->next) {
+					msg_format(Ind, "%-20s | %-15s | %6d | %s",
+					    ptr->acc[0] ? ptr->acc : "---", ptr->ip[0] ? ptr->ip : "---.---.---.---", ptr->time, ptr->reason[0] ? ptr->reason : "<no reason>");
+					found = TRUE;
+				}
+				if (!found) msg_print(Ind, " <empty>");
+				return;
+			} else if (prefix(message, "/unban")) {
+				return;
+			} else if (prefix(message, "/unbancombo")) {
+				return;
+			} else if (prefix(message, "/unbanip")) {
+				return;
 			}
                         /* The idea is to reduce the age of the target player because s/he was being
                          * immature (and deny his/her chatting privilege). - the_sandman
