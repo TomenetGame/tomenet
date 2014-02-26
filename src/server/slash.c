@@ -3715,7 +3715,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_format(Ind, "\377rAccount %s not found", message3);
 				}
 				return;
-			} else if (prefix(message, "/banip")) {
+			} else if (prefix(message, "/banip")) { /* note: banip doesn't enter a hostname, use /bancombo for that */
 				char *reason = NULL;
 				int time = tk > 1 ? atoi(token[2]) : 5; /* 5 minutes by default */
 				char kickmsg[MAX_SLASH_LINE_LEN];
@@ -3736,13 +3736,13 @@ void do_slash_cmd(int Ind, char *message)
 					msg_format(Ind, "Banning %s for %d minutes.", token[1], time);
 					s_printf("Banning %s for %d minutes.\n", token[1], time);
 				}
-				add_banlist(NULL, token[1], time, reason);
-				kick_ip(Ind, token[1], kickmsg);
+				add_banlist(NULL, token[1], NULL, time, reason);
+				kick_ip(Ind, token[1], kickmsg, TRUE);
 				return;
-			} else if (prefix(message, "/ban") || prefix(message, "/bancombo")) {
-				bool combo = prefix(message, "/bancombo");
-				char *reason = NULL;
-				char reasonstr[MAX_CHARS];
+			} else if (prefix(message, "/ban") || prefix(message, "/bancombo")) { /* note: ban and bancombo enter a hostname too */
+				bool combo = prefix(message, "/bancombo"), found = FALSE;
+				char *reason = NULL, reasonstr[MAX_CHARS];
+				char *hostname = NULL, hostnamestr[MAX_CHARS];
 				int time = 5; /* 5 minutes by default */
 				char ip_addr[MAX_CHARS] = { 0 };
 				char kickmsg[MAX_SLASH_LINE_LEN];
@@ -3771,11 +3771,22 @@ void do_slash_cmd(int Ind, char *message)
 					snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
 					msg_format(Ind, "Banning '%s' for %d minutes.", message3, time);
 					s_printf("<%s> Banning '%s' for %d minutes.\n", p_ptr->name, message3, time);
-					add_banlist(message3, NULL, time, NULL);
+					/* kick.. */
 					for (i = 1; i <= NumPlayers; i++) {
-						if (!strcmp(Players[i]->accountname, message3))
+						if (!Players[i]) continue;
+						if (!strcmp(Players[i]->accountname, message3)) {
+							/* save the first hostname too */
+							if (!hostname) {
+								strcpy(hostnamestr, Players[i]->hostname);
+								hostname = hostnamestr;
+							}
 							kick_char(Ind, i, kickmsg);
+							Ind = p_ptr->Ind;
+							i--;
+						}
 					}
+					/* ban! ^^ */
+					add_banlist(message3, NULL, hostname, time, NULL);
 					return;
 				}
 
@@ -3833,12 +3844,24 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 
-				add_banlist(message3, combo ? ip_addr : NULL, time, reason);
+				/* kick.. */
 				for (i = 1; i <= NumPlayers; i++) {
-					if (!strcmp(Players[i]->accountname, message3))
+					if (!Players[i]) continue;
+					if (!strcmp(Players[i]->accountname, message3)) {
+						/* save the first hostname too */
+						if (!hostname) {
+							found = TRUE;
+							strcpy(hostnamestr, Players[i]->hostname);
+							hostname = hostnamestr;
+						}
 						kick_char(Ind, i, kickmsg);
+						Ind = p_ptr->Ind;
+						i--;
+					}
 				}
-				if (combo) kick_ip(Ind, ip_addr, kickmsg);
+				if (combo) kick_ip(Ind, ip_addr, kickmsg, !found);
+				/* ban! ^^ */
+				add_banlist(message3, combo ? ip_addr : NULL, hostname, time, reason);
 				return;
 			} else if (prefix(message, "/kickip")) {
 				char *reason = NULL;
@@ -3852,7 +3875,7 @@ void do_slash_cmd(int Ind, char *message)
 					reason = message3 + strlen(token[1]) + 1;
 					s_printf("<%s> Kicking IP %s (%s).\n", p_ptr->name, token[1], reason);
 				} else s_printf("<%s> Kicking IP %s.\n", p_ptr->name, token[1]);
-				kick_ip(Ind, token[1], reason);
+				kick_ip(Ind, token[1], reason, TRUE);
 				return;
 			} else if (prefix(message, "/kick")) {
 				char *reason = NULL;
@@ -3882,11 +3905,22 @@ void do_slash_cmd(int Ind, char *message)
 			} else if (prefix(message, "/viewbans")) {
 				bool found = FALSE;
 				struct combo_ban *ptr;
+				char buf[MAX_CHARS];
 
-				msg_print(Ind, "\377yACCOUNT              \377w|       \377yIP        \377w|  \377yTIME  \377w| \377yREASON");
+				msg_print(Ind, "\377yACCOUNT@HOST         \377w|       \377yIP        \377w|  \377yTIME  \377w| \377yREASON");
 				for (ptr = banlist; ptr != (struct combo_ban*)NULL; ptr = ptr->next) {
+					if (ptr->acc[0]) {
+						/* start with account name, add '@' separator and.. */
+						strcpy(buf, ptr->acc);
+						if (ptr->hostname[0]) {
+							strcat(buf, "@");
+							/* .. append as much of the hostname as fits in */
+							strncat(buf, ptr->hostname, MAX_CHARS - strlen(ptr->acc) - 1);
+							buf[MAX_CHARS - 1] = 0;
+						}
+					} else strcpy(buf, "---");
 					msg_format(Ind, "\377s%-20s \377w| \377s%-15s \377w| \377s%6d \377w| \377s%s",
-					    ptr->acc[0] ? ptr->acc : "---", ptr->ip[0] ? ptr->ip : "---.---.---.---", ptr->time, ptr->reason[0] ? ptr->reason : "<no reason>");
+					    buf, ptr->ip[0] ? ptr->ip : "---.---.---.---", ptr->time, ptr->reason[0] ? ptr->reason : "<no reason>");
 					found = TRUE;
 				}
 				if (!found) msg_print(Ind, " \377s<empty>");
@@ -3931,11 +3965,11 @@ void do_slash_cmd(int Ind, char *message)
 					    (unban_ip && ptr->ip[0] && !strcmp(ptr->ip, ip))) {
 						found = TRUE;
 						if (ptr->reason[0]) {
-							msg_format(Ind, "Unbanning '%s'/%s (ban reason was '%s').", account, ip, ptr->reason);
-							s_printf("<%s> Unbanning '%s'/%s (ban reason was '%s').\n", p_ptr->name, account, ip, ptr->reason);
+							msg_format(Ind, "Unbanning '%s'/%s (ban reason was '%s').", ptr->acc, ptr->ip[0] ? ptr->ip : "-", ptr->reason);
+							s_printf("<%s> Unbanning '%s'/%s (ban reason was '%s').\n", p_ptr->name, ptr->acc, ptr->ip[0] ? ptr->ip : "-", ptr->reason);
 						} else {
-							msg_format(Ind, "Unbanning '%s'/%s.", account, ip);
-							s_printf("<%s> Unbanning '%s'/%s.\n", p_ptr->name, account, ip);
+							msg_format(Ind, "Unbanning '%s'/%s.", ptr->acc, ptr->ip[0] ? ptr->ip : "-");
+							s_printf("<%s> Unbanning '%s'/%s.\n", p_ptr->name, ptr->acc, ptr->ip[0] ? ptr->ip : "-");
 						}
 
 						if (!old) {

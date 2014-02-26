@@ -1743,6 +1743,7 @@ struct combo_ban {
 	struct combo_ban *next;	/* next ip in the list */
 	char ip[20];
 	char acc[NAME_LEN];
+	char hostname[MAX_CHARS];
 	char reason[MAX_CHARS];
 	int time;	/* Time in minutes, or zero is permanent */
 };

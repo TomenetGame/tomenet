@@ -6802,27 +6802,29 @@ void kick_char(int Ind_kicker, int Ind_kickee, char *reason) {
 	}
 }
 
-void kick_ip(int Ind_kicker, char *ip_kickee, char *reason) {
+void kick_ip(int Ind_kicker, char *ip_kickee, char *reason, bool msg) {
 	int i;
 	char kickmsg[MSG_LEN];
 	bool found = FALSE;
 
 	if (reason) {
-		msg_format(Ind_kicker, "Kicking out connections from %s (%s).", ip_kickee, reason);
+		if (msg) msg_format(Ind_kicker, "Kicking out connections from %s (%s).", ip_kickee, reason);
 		snprintf(kickmsg, MSG_LEN, "Kicked out - %s", reason);
 	} else {
-		msg_format(Ind_kicker, "Kicking out connections from %s.", ip_kickee);
+		if (msg) msg_format(Ind_kicker, "Kicking out connections from %s.", ip_kickee);
 		snprintf(kickmsg, MSG_LEN, "Kicked out");
 	}
 
 	/* Kick him out (note, this could affect multiple people at once if sharing an IP) */
 	for (i = 1; i <= NumPlayers; i++) {
+		if (!Players[i]) continue;
 		if (!strcmp(get_player_ip(i), ip_kickee)) {
 			found = TRUE;
 			if (reason) s_printf("IP-kicked '%s' (%s).\n", Players[i]->name, reason);
 			else s_printf("IP-kicked '%s'.\n", Players[i]->name);
 			Destroy_connection(Players[i]->conn, kickmsg);
+			i--;
 		}
 	}
-	if (!found) msg_print(Ind_kicker, "No matching player online to kick.");
+	if (msg && !found) msg_print(Ind_kicker, "No matching player online to kick.");
 }
