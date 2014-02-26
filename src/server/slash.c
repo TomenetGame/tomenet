@@ -3783,7 +3783,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				} else {
 					strncpy(ip_addr, tmp_buf, MAX_CHARS);
-					ip_addr[MAX_CHARS] = 0;
+					ip_addr[MAX_CHARS - 1] = 0;
 					if ((tmp_buf_ptr = strchr(tmp_buf, ' '))) {
 						*(strchr(ip_addr, ' ')) = 0;
 
