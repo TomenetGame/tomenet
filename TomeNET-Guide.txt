@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. February 2014 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.6a - official websites are:
+| Latest update: 26. February 2014 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -6998,8 +6998,8 @@ a possibly equipped shield does not matter here (experimental).
 
 Armour weight (concerning sneakiness boni)
 ------------------------------------------
-Wearing armour which is too heavy for you will reduce your to-hit bonus and
-speed bonus from 'Sneakiness' skill.
+Wearing armour which is too heavy for you will reduce speed bonus from
+'Sneakiness' skill and your to-hit bonus.
 You will receieve a warning message, telling you:
 "The weight of your armour encumbers your movement."
 To move freely, you may wear 10.0 lb of armoury plus a strength-factor plus
