@@ -85,7 +85,8 @@ void check_banlist() {
 	while (ptr != (struct combo_ban*)NULL) {
 		if (ptr->time) {
 			if (!(--ptr->time)) {
-				s_printf("Unbanning due to ban timeout (ban reason was '%s'):\n", ptr->reason);
+				if (ptr->reason[0]) s_printf("Unbanning due to ban timeout (ban reason was '%s'):\n", ptr->reason);
+				else s_printf("Unbanning due to ban timeout:\n", ptr->reason);
 				if (ptr->ip[0]) s_printf(" Connections from %s\n", ptr->ip);
 				if (ptr->acc[0]) s_printf(" Connections for %s\n", ptr->acc);
 
