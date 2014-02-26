@@ -6824,5 +6824,5 @@ void kick_ip(int Ind_kicker, char *ip_kickee, char *reason) {
 			Destroy_connection(Players[i]->conn, kickmsg);
 		}
 	}
-	if (!found) msg_print(Ind_kicker, "No matching player online.");
+	if (!found) msg_print(Ind_kicker, "No matching player online to kick.");
 }

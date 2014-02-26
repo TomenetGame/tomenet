@@ -3726,7 +3726,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 
 				if (tk == 3) reason = message3 + strlen(token[1]) + strlen(token[2]) + 2;
-				if (reason) snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes - %s", time, reason);
+				if (reason) snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes: %s", time, reason);
 				else snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
 
 				if (reason) {
@@ -3737,7 +3737,7 @@ void do_slash_cmd(int Ind, char *message)
 					s_printf("Banning %s for %d minutes.\n", token[1], time);
 				}
 				add_banlist(NULL, token[1], time, reason);
-				kick_ip(Ind, token[1], reason);
+				kick_ip(Ind, token[1], kickmsg);
 				return;
 			} else if (prefix(message, "/ban") || prefix(message, "/bancombo")) {
 				bool combo = prefix(message, "/bancombo");
@@ -3768,10 +3768,13 @@ void do_slash_cmd(int Ind, char *message)
 						return;
 					}
 
+					snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
+					msg_format(Ind, "Banning '%s' for %d minutes.", message3, time);
+					s_printf("<%s> Banning '%s' for %d minutes.\n", p_ptr->name, message3, time);
 					add_banlist(message3, NULL, time, NULL);
 					for (i = 1; i <= NumPlayers; i++) {
 						if (!strcmp(Players[i]->accountname, message3))
-							kick_char(Ind, i, NULL);
+							kick_char(Ind, i, kickmsg);
 					}
 					return;
 				}
@@ -3810,7 +3813,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				if (combo) {
 					if (reason) {
-						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes - %s", time, reason);
+						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes: %s", time, reason);
 						msg_format(Ind, "Banning '%s'/%s for %d minutes (%s).", message3, ip_addr, time, reason);
 						s_printf("<%s> Banning '%s'/%s for %d minutes (%s).\n", p_ptr->name, message3, ip_addr, time, reason);
 					} else {
@@ -3820,7 +3823,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				} else {
 					if (reason) {
-						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes - %s", time, reason);
+						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes: %s", time, reason);
 						msg_format(Ind, "Banning '%s' for %d minutes (%s).", message3, time, reason);
 						s_printf("<%s> Banning '%s' for %d minutes (%s).\n", p_ptr->name, message3, time, reason);
 					} else {
@@ -3833,9 +3836,9 @@ void do_slash_cmd(int Ind, char *message)
 				add_banlist(message3, combo ? ip_addr : NULL, time, reason);
 				for (i = 1; i <= NumPlayers; i++) {
 					if (!strcmp(Players[i]->accountname, message3))
-						kick_char(Ind, i, reason);
+						kick_char(Ind, i, kickmsg);
 				}
-				if (combo) kick_ip(Ind, ip_addr, reason);
+				if (combo) kick_ip(Ind, ip_addr, kickmsg);
 				return;
 			} else if (prefix(message, "/kickip")) {
 				char *reason = NULL;
@@ -3880,13 +3883,13 @@ void do_slash_cmd(int Ind, char *message)
 				bool found = FALSE;
 				struct combo_ban *ptr;
 
-				msg_print(Ind, "ACCOUNT              |       IP        |  TIME  | REASON");
+				msg_print(Ind, "\377yACCOUNT              \377w|       \377yIP        \377w|  \377yTIME  \377w| \377yREASON");
 				for (ptr = banlist; ptr != (struct combo_ban*)NULL; ptr = ptr->next) {
-					msg_format(Ind, "%-20s | %-15s | %6d | %s",
+					msg_format(Ind, "\377s%-20s \377w| \377s%-15s \377w| \377s%6d \377w| \377s%s",
 					    ptr->acc[0] ? ptr->acc : "---", ptr->ip[0] ? ptr->ip : "---.---.---.---", ptr->time, ptr->reason[0] ? ptr->reason : "<no reason>");
 					found = TRUE;
 				}
-				if (!found) msg_print(Ind, " <empty>");
+				if (!found) msg_print(Ind, " \377s<empty>");
 				return;
 			} else if (prefix(message, "/unban")) {
 				struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;

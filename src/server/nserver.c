@@ -228,7 +228,8 @@ void add_banlist(char *account, char *ip_addy, int time, char *reason) {
 	if (reason) strcpy(ptr->reason, reason);
 	else ptr->reason[0] = 0;
 
-	s_printf("Banned for %d minutes (reason ""):\n", time, reason);
+	if (reason) s_printf("Banned for %d minutes ('%s'):\n", time, reason);
+	else s_printf("Banned for %d minutes:\n", time);
 	if (account) {
 		strcpy(ptr->acc, account);
 		s_printf(" Connections for %s.\n", ptr->acc, time);
