@@ -67,9 +67,10 @@ int stricmp(cptr a, cptr b)
 int in_banlist(char *acc, char *addr, int *time, char *reason) {
 	struct combo_ban *ptr;
 	int found = 0x0;
+
 	for (ptr = banlist; ptr != (struct combo_ban*)NULL; ptr = ptr->next) {
 		if (ptr->ip[0] && addr && !strcmp(addr, ptr->ip)) found |= 0x1;
-		if (ptr->acc[0] && acc && !strcmp(addr, ptr->acc)) found |= 0x2;
+		if (ptr->acc[0] && acc && !strcmp(acc, ptr->acc)) found |= 0x2;
 
 		if (reason) strcpy(reason, ptr->reason);
 		if (time) *time = ptr->time;
