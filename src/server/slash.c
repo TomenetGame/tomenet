@@ -3736,7 +3736,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_format(Ind, "Banning %s for %d minutes.", token[1], time);
 					s_printf("Banning %s for %d minutes.\n", token[1], time);
 				}
-				add_banlist(0, token[1], time, reason);
+				add_banlist(NULL, token[1], time, reason);
 				kick_ip(Ind, token[1], reason);
 				return;
 			} else if (prefix(message, "/ban") || prefix(message, "/bancombo")) {
@@ -3747,32 +3747,44 @@ void do_slash_cmd(int Ind, char *message)
 				char ip_addr[MAX_CHARS] = { 0 };
 				char kickmsg[MAX_SLASH_LINE_LEN];
 				char tmp_buf[MSG_LEN], *tmp_buf_ptr = tmp_buf;
+				struct account *l_acc;
 
 				if (!tk) {
-					if (combo) msg_print(Ind, "\377oUsage: /bancombo <Player name>:<IP address> [time [reason]]");
+					if (combo) msg_print(Ind, "\377oUsage: /bancombo <account name>:<IP address> [time [reason]]");
 					else msg_print(Ind, "\377oUsage: /ban <Player name>[:time [reason]]");
 					return;
 				}
 
 				if (!strchr(message3, ':')) {
 					if (combo) {
-						msg_print(Ind, "\377oUsage: /bancombo <Player name>:<IP address> [time [reason]]");
+						msg_print(Ind, "\377oUsage: /bancombo <account name>:<IP address> [time [reason]]");
 						return;
 					}
 
-					j = name_lookup_loose(Ind, message3, FALSE, TRUE);
-					if (!j) {
-						msg_print(Ind, "Player not online.");
+					l_acc = Admin_GetAccount(message3);
+					if (l_acc) KILL(l_acc, struct account);
+					else {
+						msg_print(Ind, "Account not found.");
 						return;
 					}
-					add_banlist(j, NULL, time, NULL);
-					kick_char(Ind, j, NULL);
+
+					add_banlist(message3, NULL, time, NULL);
+					for (i = 1; i <= NumPlayers; i++) {
+						if (!strcmp(Players[i]->accountname, message3))
+							kick_char(Ind, i, NULL);
+					}
 					return;
 				}
 
 				strcpy(tmp_buf, strchr(message3, ':') + 1);
 				/* hack: terminate player name */
 				*(strchr(message3, ':')) = 0;
+				l_acc = Admin_GetAccount(message3);
+				if (l_acc) KILL(l_acc, struct account);
+				else {
+					msg_print(Ind, "Account not found.");
+					return;
+				}
 
 				if (!combo) {
 					time = atoi(tmp_buf);
@@ -3818,10 +3830,11 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 
-				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
-				if (!j) msg_print(Ind, "Player not online.");
-				add_banlist(j, combo ? ip_addr : NULL, time, reason);
-				kick_char(Ind, j, reason);
+				add_banlist(message3, combo ? ip_addr : NULL, time, reason);
+				for (i = 1; i <= NumPlayers; i++) {
+					if (!strcmp(Players[i]->accountname, message3))
+						kick_char(Ind, i, reason);
+				}
 				if (combo) kick_ip(Ind, ip_addr, reason);
 				return;
 			} else if (prefix(message, "/kickip")) {
@@ -3840,7 +3853,7 @@ void do_slash_cmd(int Ind, char *message)
 				char reasonstr[MAX_CHARS];
 
 				if (!tk) {
-					msg_print(Ind, "\377oUsage: /kick <Player name>[:reason]");
+					msg_print(Ind, "\377oUsage: /kick <character name>[:reason]");
 					return;
 				}
 				if (strchr(message3, ':')) {
@@ -3872,7 +3885,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			} else if (prefix(message, "/unban")) {
 				struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;
-				bool unban_ip = FALSE, unban_acc = FALSE;
+				bool unban_ip = FALSE, unban_acc = FALSE, found = FALSE;
 				char ip[MAX_CHARS], account[NAME_LEN];
 
 				strcpy(ip, "-");
@@ -3908,6 +3921,7 @@ void do_slash_cmd(int Ind, char *message)
 				while (ptr != (struct combo_ban*)NULL) {
 					if ((unban_acc && ptr->acc[0] && !strcmp(ptr->acc, account)) ||
 					    (unban_ip && ptr->ip[0] && !strcmp(ptr->ip, ip))) {
+						found = TRUE;
 						if (ptr->reason[0]) {
 							msg_format(Ind, "Unbanning '%s'/%s (ban reason was '%s').", account, ip, ptr->reason);
 							s_printf("Unbanning '%s'/%s (ban reason was '%s').\n", account, ip, ptr->reason);
@@ -3929,6 +3943,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 					ptr = ptr->next;
 				}
+				if (!found) msg_print(Ind, "No matching ban found.");
 				return;
 			}
                         /* The idea is to reduce the age of the target player because s/he was being

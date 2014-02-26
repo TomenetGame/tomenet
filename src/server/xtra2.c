@@ -6088,7 +6088,7 @@ static void check_roller(int Ind) {
 	}
 
 	/* ban her/him for 1 min */
-	add_banlist(Ind, NULL, 1, "Suicide spam");
+	add_banlist(p_ptr->accountname, NULL, 1, "Suicide spam");
 }
 
 

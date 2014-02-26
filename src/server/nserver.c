@@ -215,11 +215,11 @@ void get_date(int *weekday, int *day, int *month, int *year) {
 	*year = tmp->tm_year + 1900;
 }
 
-void add_banlist(int Ind, char *ip_addy, int time, char *reason) {
+void add_banlist(char *account, char *ip_addy, int time, char *reason) {
 	struct combo_ban *ptr;
 
 	if (!time) return;
-	if (!Ind && !ip_addy) return;
+	if (!account && !ip_addy) return;
 
 	ptr = NEW(struct combo_ban);
 	ptr->next = banlist;
@@ -229,8 +229,8 @@ void add_banlist(int Ind, char *ip_addy, int time, char *reason) {
 	else ptr->reason[0] = 0;
 
 	s_printf("Banned for %d minutes (reason ""):\n", time, reason);
-	if (Ind) {
-		strcpy(ptr->acc, Players[Ind]->accountname);
+	if (account) {
+		strcpy(ptr->acc, account);
 		s_printf(" Connections for %s.\n", ptr->acc, time);
 	} else ptr->acc[0] = 0;
 	if (ip_addy) {
