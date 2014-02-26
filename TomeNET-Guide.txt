@@ -11381,7 +11381,8 @@ vary. For example a warrior cannot learn magic spells.
     although their lack of dedication leaves 'Weaponmastery' as an unattainable
     goal. Runemasters are adept in some skills that are typical for rogues, 
     although they lack their finesse. Runemasters are unable to to train in the
-    martial arts, but specialize in the use of boomerangs. High level users of
+    martial arts, but are adept with boomerangs, although they primarily rely 
+    on runes to wreak havoc and kill everything in sight. High level users of
     runecraft may even enhance their equipment (1 weapon, 1 armor) through the 
     use of runic 'sigils', applying some resistance or boni according to the
     applied element.
