@@ -3812,21 +3812,21 @@ void do_slash_cmd(int Ind, char *message)
 					if (reason) {
 						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes - %s", time, reason);
 						msg_format(Ind, "Banning '%s'/%s for %d minutes (%s).", message3, ip_addr, time, reason);
-						s_printf("Banning '%s'/%s for %d minutes (%s).\n", message3, ip_addr, time, reason);
+						s_printf("<%s> Banning '%s'/%s for %d minutes (%s).\n", p_ptr->name, message3, ip_addr, time, reason);
 					} else {
 						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
 						msg_format(Ind, "Banning '%s'/%s for %d minutes.", message3, ip_addr, time);
-						s_printf("Banning '%s'/%s for %d minutes.\n", message3, ip_addr, time);
+						s_printf("<%s> Banning '%s'/%s for %d minutes.\n", p_ptr->name, message3, ip_addr, time);
 					}
 				} else {
 					if (reason) {
 						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes - %s", time, reason);
 						msg_format(Ind, "Banning '%s' for %d minutes (%s).", message3, time, reason);
-						s_printf("Banning '%s' for %d minutes (%s).\n", message3, time, reason);
+						s_printf("<%s> Banning '%s' for %d minutes (%s).\n", p_ptr->name, message3, time, reason);
 					} else {
 						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
 						msg_format(Ind, "Banning '%s' for %d minutes.", message3, time);
-						s_printf("Banning '%s' for %d minutes.\n", message3, time);
+						s_printf("<%s> Banning '%s' for %d minutes.\n", p_ptr->name, message3, time);
 					}
 				}
 
@@ -3845,7 +3845,10 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
-				if (tk == 2) reason = message3 + strlen(token[1]) + 1;
+				if (tk == 2) {
+					reason = message3 + strlen(token[1]) + 1;
+					s_printf("<%s> Kicking IP %s (%s).\n", p_ptr->name, token[1], reason);
+				} else s_printf("<%s> Kicking IP %s.\n", p_ptr->name, token[1]);
 				kick_ip(Ind, token[1], reason);
 				return;
 			} else if (prefix(message, "/kick")) {
@@ -3869,6 +3872,8 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Player not online.");
 					return;
 				}
+				if (reason) s_printf("<%s> Kicking '%s' (%s).\n", p_ptr->name, Players[j]->name, reason);
+				else s_printf("<%s> Kicking '%s'.\n", p_ptr->name, Players[j]->name);
 				kick_char(Ind, j, reason);
 				return;
 			} else if (prefix(message, "/viewbans")) {
@@ -3924,10 +3929,10 @@ void do_slash_cmd(int Ind, char *message)
 						found = TRUE;
 						if (ptr->reason[0]) {
 							msg_format(Ind, "Unbanning '%s'/%s (ban reason was '%s').", account, ip, ptr->reason);
-							s_printf("Unbanning '%s'/%s (ban reason was '%s').\n", account, ip, ptr->reason);
+							s_printf("<%s> Unbanning '%s'/%s (ban reason was '%s').\n", p_ptr->name, account, ip, ptr->reason);
 						} else {
 							msg_format(Ind, "Unbanning '%s'/%s.", account, ip);
-							s_printf("Unbanning '%s'/%s.\n", account, ip);
+							s_printf("<%s> Unbanning '%s'/%s.\n", p_ptr->name, account, ip);
 						}
 
 						if (!old) {
@@ -3949,26 +3954,28 @@ void do_slash_cmd(int Ind, char *message)
                         /* The idea is to reduce the age of the target player because s/he was being
                          * immature (and deny his/her chatting privilege). - the_sandman
 			 */
-                        else if (prefix(message, "/mute"))
-                        {
+                        else if (prefix(message, "/mute")) {
                                 if (tk) {
                                         j = name_lookup_loose(Ind, message3, FALSE, TRUE);
                                         if (j) {
                                                 Players[j]->muted = TRUE;
 						msg_print(j, "\377fYou have been muted.");
+						s_printf("<%s> muted '%s'.\n", p_ptr->name, Players[j]->name);
                                         }
                                         return;
                                 }
-                                msg_print(Ind, "\377oUsage: /mute (player name)");
-                        }
-                        else if (prefix(message, "/unmute"))    //oh no!
-                        {
+                                msg_print(Ind, "\377oUsage: /mute <character name>");
+                        } else if (prefix(message, "/unmute")) {   //oh no!
                                 if (tk) {
                                         j = name_lookup_loose(Ind, message3, FALSE, TRUE);
-                                        if (j) Players[j]->muted = FALSE;
+                                        if (j) {
+						Players[j]->muted = FALSE;
+						msg_print(j, "\377fYou have been unmuted.");
+						s_printf("<%s> unmuted '%s'.\n", p_ptr->name, Players[j]->name);
+					}
                                         return;
                                 }
-                                msg_print(Ind, "\377oUsage: /unmute (player name)");
+                                msg_print(Ind, "\377oUsage: /unmute <character name>");
                         }
 			/* erase items and monsters */
 			else if (prefix(message, "/clear-level") ||

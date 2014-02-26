@@ -6819,6 +6819,8 @@ void kick_ip(int Ind_kicker, char *ip_kickee, char *reason) {
 	for (i = 1; i <= NumPlayers; i++) {
 		if (!strcmp(get_player_ip(i), ip_kickee)) {
 			found = TRUE;
+			if (reason) s_printf("IP-kicked '%s' (%s).\n", Players[i]->name, reason);
+			else s_printf("IP-kicked '%s'.\n", Players[i]->name);
 			Destroy_connection(Players[i]->conn, kickmsg);
 		}
 	}
