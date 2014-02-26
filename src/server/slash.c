@@ -166,7 +166,7 @@ void sc_shutdown(int Ind, void *value) {
 
 			/* Check for death */
 			if (!is_admin(Players[i]))
-				Destroy_connection(Players[i]->conn, "kicked out");
+				Destroy_connection(Players[i]->conn, "Server maintenance");
 		}
 	}
 	time(&cfg.closetime);
@@ -3628,7 +3628,7 @@ void do_slash_cmd(int Ind, char *message)
 
 						/* Check for death */
 						if (!is_admin(Players[i]))
-							Destroy_connection(Players[i]->conn, "kicked out");
+							Destroy_connection(Players[i]->conn, "Server maintenance");
 					}
 				}
 				time(&cfg.closetime);
@@ -3711,82 +3711,143 @@ void do_slash_cmd(int Ind, char *message)
 				/* added checking for account existance - mikaelh */
 				if (makeadmin(message3)) {
 					msg_format(Ind, "\377GMaking %s an admin", message3);
-				}
-				else {
+				} else {
 					msg_format(Ind, "\377rAccount %s not found", message3);
 				}
 				return;
-			}
-			else if (prefix(message, "/ban"))
-			{
-				if (tk >= 2)
-				{
-					j = name_lookup_loose(Ind, token[1], FALSE, TRUE);
-					if (j)
-					{
-						char kickmsg[MAX_SLASH_LINE_LEN];
-						/* Success maybe :) */
-						add_banlist(j, (tk>1 ? atoi(token[2]) : 5));
-						if (tk < 3)
-						{
-							msg_format(Ind, "Banning %s for %d minutes...", Players[j]->name, atoi(token[2]));
-							snprintf(kickmsg, MAX_SLASH_LINE_LEN, "banned for %d minutes", atoi(token[2]));
-							Destroy_connection(Players[j]->conn, kickmsg);
-						} else {
-							msg_format(Ind, "Banning %s for %d minutes (%s)...", Players[j]->name, atoi(token[2]), token[3]);
-							snprintf(kickmsg, MAX_SLASH_LINE_LEN, "Banned for %d minutes (%s)", atoi(token[2]), token[3]);
-							Destroy_connection(Players[j]->conn, kickmsg);
-						}
-						/* Kick him */
-					}
+			} else if (prefix(message, "/banip")) {
+				char *reason = NULL;
+				int time = tk > 1 ? atoi(token[2]) : 5; /* 5 minutes by default */
+				char kickmsg[MAX_SLASH_LINE_LEN];
+
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /banip <IP address> [time [reason]]");
 					return;
 				}
 
-				msg_print(Ind, "\377oUsage: /ban (Player name) (time) [reason]");
+				if (tk == 3) reason = message3 + strlen(token[1]) + strlen(token[2]) + 2;
+				if (reason) snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes - %s", time, reason);
+				else snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
+
+				if (reason) msg_format(Ind, "Banning %s for %d minutes (%s)...", token[1], time, reason);
+				else msg_format(Ind, "Banning %s for %d minutes...", token[1], time);
+				add_banlist(0, token[1], time, reason);
+				kick_ip(Ind, token[1], reason);
 				return;
-			}
-			else if (prefix(message, "/ipban"))
-			{
-				if (tk)
-				{
-					add_banlist_ip(token[1], (tk>1 ? atoi(token[2]) : 5));
-					if (tk < 3)
-					{
-						msg_format(Ind, "Banning %s for %d minutes...", token[1], atoi(token[2]));
+			} else if (prefix(message, "/ban") || prefix(message, "/bancombo")) {
+				bool combo = prefix(message, "/bancombo");
+				char *reason = NULL;
+				char reasonstr[MAX_CHARS];
+				int time = 5; /* 5 minutes by default */
+				char ip_addr[MAX_CHARS] = { 0 };
+				char kickmsg[MAX_SLASH_LINE_LEN];
+				char tmp_buf[MSG_LEN], *tmp_buf_ptr = tmp_buf;
+
+				if (!tk) {
+					if (combo) msg_print(Ind, "\377oUsage: /bancombo <Player name>:<IP address> [time [reason]]");
+					else msg_print(Ind, "\377oUsage: /ban <Player name>[:time [reason]]");
+					return;
+				}
+
+				if (!strchr(message3, ':')) {
+					if (combo) {
+						msg_print(Ind, "\377oUsage: /bancombo <Player name>:<IP address> [time [reason]]");
+						return;
+					}
+
+					j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+					if (!j) {
+						msg_print(Ind, "Player not online.");
+						return;
+					}
+					add_banlist(j, NULL, time, NULL);
+					kick_char(Ind, j, NULL);
+					return;
+				}
+
+				strcpy(tmp_buf, strchr(message3, ':') + 1);
+				/* hack: terminate player name */
+				*(strchr(message3, ':')) = 0;
+
+				if (!combo) {
+					time = atoi(tmp_buf);
+					tmp_buf_ptr = strchr(tmp_buf, ' ');
+					if (tmp_buf_ptr) {
+						strcpy(reasonstr, tmp_buf_ptr + 1);
+						reason = reasonstr;
+					}
+				} else {
+					strncpy(ip_addr, tmp_buf, MAX_CHARS);
+					ip_addr[MAX_CHARS] = 0;
+					if ((tmp_buf_ptr = strchr(tmp_buf, ' '))) {
+						*(strchr(ip_addr, ' ')) = 0;
+
+						time = atoi(tmp_buf_ptr + 1);
+						tmp_buf_ptr = strchr(tmp_buf_ptr + 1, ' ');
+						if (tmp_buf_ptr) {
+							strcpy(reasonstr, tmp_buf_ptr + 1);
+							reason = reasonstr;
+						}
+					}
+				}
+
+				if (combo) {
+					if (reason) {
+						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes - %s", time, reason);
+						msg_format(Ind, "Banning '%s'/%s for %d minutes (%s).", message3, ip_addr, time, reason);
 					} else {
-						msg_format(Ind, "Banning %s for %d minutes (%s)...", token[1], atoi(token[2]), token[3]);
+						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
+						msg_format(Ind, "Banning '%s'/%s for %d minutes...", message3, ip_addr, time);
 					}
-					/* Kick him */
-					return;
+				} else {
+					if (reason) {
+						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes - %s", time, reason);
+						msg_format(Ind, "Banning '%s' for %d minutes (%s).", message3, time, reason);
+					} else {
+						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
+						msg_format(Ind, "Banning '%s' for %d minutes.", message3, time);
+					}
 				}
 
-				msg_print(Ind, "\377oUsage: /ipban (IP address) (time) [reason]");
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				if (!j) msg_print(Ind, "Player not online.");
+				add_banlist(j, combo ? ip_addr : NULL, time, reason);
+				kick_char(Ind, j, reason);
+				if (combo) kick_ip(Ind, ip_addr, reason);
 				return;
-			}
-			else if (prefix(message, "/kick"))
-			{
-				if (tk)
-				{
-					j = name_lookup_loose(Ind, token[1], FALSE, TRUE);
-					if (j)
-					{
-						char kickmsg[MAX_SLASH_LINE_LEN];
-						/* Success maybe :) */
-						if (tk < 2)
-						{
-							msg_format(Ind, "Kicking %s out...", Players[j]->name);
-							Destroy_connection(Players[j]->conn, "kicked out");
-						} else {
-							msg_format(Ind, "Kicking %s out (%s)...", Players[j]->name, token[2]);
-							snprintf(kickmsg, MAX_SLASH_LINE_LEN, "kicked out (%s)", token[2]);
-							Destroy_connection(Players[j]->conn, kickmsg);
-						}
-						/* Kick him */
-					}
+			} else if (prefix(message, "/kickip")) {
+				char *reason = NULL;
+
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /kickip <IP address> [reason]");
 					return;
 				}
 
-				msg_print(Ind, "\377oUsage: /kick (Player name) [reason]");
+				if (tk == 2) reason = message3 + strlen(token[1]) + 1;
+				kick_ip(Ind, token[1], reason);
+				return;
+			} else if (prefix(message, "/kick")) {
+				char *reason = NULL;
+				char reasonstr[MAX_CHARS];
+
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /kick <Player name>[:reason]");
+					return;
+				}
+				if (strchr(message3, ':')) {
+					strcpy(reasonstr, strchr(message3, ':') + 1);
+					reason = reasonstr;
+
+					/* hack: terminate message3 after char name */
+					*(strchr(message3, ':')) = 0;
+				}
+
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				if (!j) {
+					msg_print(Ind, "Player not online.");
+					return;
+				}
+				kick_char(Ind, j, reason);
 				return;
 			}
                         /* The idea is to reduce the age of the target player because s/he was being

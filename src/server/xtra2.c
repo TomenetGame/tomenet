@@ -6067,8 +6067,7 @@ void kill_objs(int id){
 
 /* This function prevents DoS attack using suicide */
 /* ;) DoS... its just annoying. hehe */
-static void check_roller(int Ind)
-{
+static void check_roller(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	time_t now = time(&now);
 
@@ -6077,8 +6076,7 @@ static void check_roller(int Ind)
 
 	if (!cfg.quit_ban_mode) return;
 
-	if (cfg.quit_ban_mode == QUIT_BAN_ROLLER)
-	{
+	if (cfg.quit_ban_mode == QUIT_BAN_ROLLER) {
 		/* (s)he should have played somewhat */
 		if (p_ptr->max_exp) return;
 
@@ -6090,7 +6088,7 @@ static void check_roller(int Ind)
 	}
 
 	/* ban her/him for 1 min */
-	add_banlist(Ind, 1);
+	add_banlist(Ind, NULL, 1, "Suicide spam");
 }
 
 

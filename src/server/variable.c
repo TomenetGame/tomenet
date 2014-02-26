@@ -216,7 +216,7 @@ server_opts cfg =
 	TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,	/* types of messages which will be transmitted through the world server (if available). */
 };
 
-struct ip_ban *banlist = NULL;
+struct combo_ban *banlist = NULL;
 struct swear_info swear[MAX_SWEAR];
 char nonswear[MAX_NONSWEAR][NAME_LEN];
 

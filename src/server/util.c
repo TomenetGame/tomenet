@@ -64,21 +64,31 @@ int stricmp(cptr a, cptr b)
 
 #endif
 
-bool in_banlist(char *addr){
-	struct ip_ban *ptr;
-	for (ptr = banlist; ptr != (struct ip_ban*)NULL; ptr = ptr->next) {
-		if (!strcmp(addr, ptr->ip)) return(TRUE);
+int in_banlist(char *acc, char *addr, int *time, char *reason) {
+	struct combo_ban *ptr;
+	int found = 0x0;
+	for (ptr = banlist; ptr != (struct combo_ban*)NULL; ptr = ptr->next) {
+		if (!strcmp(addr, ptr->ip)) found |= 0x1;
+		if (!strcmp(addr, ptr->acc)) found |= 0x2;
+
+		if (reason) strcpy(reason, ptr->reason);
+		if (time) *time = ptr->time;
+
+		return found;
 	}
-	return (FALSE);
+	return 0x0;
 }
 
 void check_banlist() {
-	struct ip_ban *ptr, *new, *old = (struct ip_ban*)NULL;
+	struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;
 	ptr = banlist;
-	while (ptr != (struct ip_ban*)NULL) {
+	while (ptr != (struct combo_ban*)NULL) {
 		if (ptr->time) {
 			if (!(--ptr->time)) {
-				s_printf("Unbanning connections from %s\n", ptr->ip);
+				s_printf("Unbanning due to ban timeout (ban reason was '%s'):\n", ptr->reason);
+				if (ptr->ip) s_printf(" Connections from %s\n", ptr->ip);
+				if (ptr->acc) s_printf(" Connections for %s\n", ptr->acc);
+
 				if (!old) {
 					banlist = ptr->next;
 					new = banlist;
@@ -6775,4 +6785,40 @@ bool exceptionally_shareable_item(object_type *o_ptr) {
 	    (o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD))
 		return TRUE;
 	return FALSE;
+}
+
+void kick_char(int Ind_kicker, int Ind_kickee, char *reason) {
+	char kickmsg[MSG_LEN];
+
+	if (reason) {
+		msg_format(Ind_kicker, "Kicking %s out (%s).", Players[Ind_kickee]->name, reason);
+		snprintf(kickmsg, MSG_LEN, "Kicked out (%s)", reason);
+		Destroy_connection(Players[Ind_kickee]->conn, kickmsg);
+	} else {
+		msg_format(Ind_kicker, "Kicking %s out.", Players[Ind_kickee]->name);
+		Destroy_connection(Players[Ind_kickee]->conn, "Kicked out");
+	}
+}
+
+void kick_ip(int Ind_kicker, char *ip_kickee, char *reason) {
+	int i;
+	char kickmsg[MSG_LEN];
+	bool found = FALSE;
+
+	if (reason) {
+		msg_format(Ind_kicker, "Kicking out connections from %s (%s).", ip_kickee, reason);
+		snprintf(kickmsg, MSG_LEN, "Kicked out - %s", reason);
+	} else {
+		msg_format(Ind_kicker, "Kicking out connections from %s.", ip_kickee);
+		snprintf(kickmsg, MSG_LEN, "Kicked out");
+	}
+
+	/* Kick him out (note, this could affect multiple people at once if sharing an IP) */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (!strcmp(get_player_ip(i), ip_kickee)) {
+			found = TRUE;
+			Destroy_connection(Players[i]->conn, kickmsg);
+		}
+	}
+	if (!found) msg_print(Ind_kicker, "No matching player online.");
 }

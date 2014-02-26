@@ -646,7 +646,7 @@ static void console_kick_player(char *name)
 		/* Check name */
 		if (!strcmp(name, Players[i]->name)) {
 			/* Kick him */
-			Destroy_connection(Players[i]->conn, "kicked out");
+			Destroy_connection(Players[i]->conn, "Kicked out");
 
 			/* Success */
 			Packet_printf(&console_buf, "%c%c", CONSOLE_KICK_PLAYER, 1);

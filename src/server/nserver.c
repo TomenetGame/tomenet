@@ -215,29 +215,28 @@ void get_date(int *weekday, int *day, int *month, int *year) {
 	*year = tmp->tm_year + 1900;
 }
 
-void add_banlist(int Ind, int time){
-	struct ip_ban *ptr;
-	if(!time) return;
+void add_banlist(int Ind, char *ip_addy, int time, char *reason) {
+	struct combo_ban *ptr;
 
-	ptr = NEW(struct ip_ban);
+	if (!time) return;
+	if (!Ind && !ip_addy) return;
 
-	ptr->next = banlist;
-	ptr->time = time;
-	strcpy(ptr->ip, Conn[Players[Ind]->conn]->addr);
-	s_printf("Banned connections from %s for %d minutes\n", ptr->ip, time);
-	banlist = ptr;
-}
-
-void add_banlist_ip(char *ip_addy, int time){
-	struct ip_ban *ptr;
-	if(!time) return;
-
-	ptr = NEW(struct ip_ban);
+	ptr = NEW(struct combo_ban);
 
 	ptr->next = banlist;
 	ptr->time = time;
-	strcpy(ptr->ip, ip_addy);
-	s_printf("Banned connections from %s for %d minutes\n", ptr->ip, time);
+	strcpy(ptr->reason, reason);
+
+	s_printf("Banned for %d minutes (reason ""):\n", time, reason);
+	if (Ind) {
+		strcpy(ptr->acc, Players[Ind]->accountname);
+		s_printf(" Connections for %s.\n", ptr->acc, time);
+	}
+	if (ip_addy) {
+		strcpy(ptr->ip, ip_addy);
+		s_printf(" Connections from %s.\n", ptr->ip, time);
+	}
+
 	banlist = ptr;
 }
 
@@ -1186,15 +1185,11 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	}
 #endif
 
-	if(!player_allowed(nick))
-		return E_INVITE;
-
-	if(in_banlist(addr)) return(E_BANNED);
+	if (!player_allowed(nick)) return E_INVITE;
+	if (in_banlist(nick, addr, NULL, NULL)) return(E_BANNED);
 
 	*login_port = Setup_connection(real, nick, addr, host, version, fd);
-
-	if (*login_port == -1)
-		return E_SOCKET;
+	if (*login_port == -1) return E_SOCKET;
 
 	return SUCCESS;
 }
@@ -11089,4 +11084,8 @@ static int Receive_request_cfr(int ind) {
 /* return some connection data for improved log handling - C. Blue */
 char *get_conn_userhost(int ind) {
 	return(format("%s@%s", Conn[ind]->real, Conn[ind]->host));
+}
+
+char *get_player_ip(int Ind) {
+	return(Conn[Players[Ind]->conn]->addr);
 }

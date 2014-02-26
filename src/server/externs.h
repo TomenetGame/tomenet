@@ -58,10 +58,12 @@ extern int SGWSocket;
 extern void process_pending_commands(int Ind);
 extern bool player_is_king(int Ind);
 extern void end_mind(int Ind, bool update);
-extern void add_banlist(int Ind, int time);
-extern void add_banlist_ip(char *ip_addy, int time);
+extern void add_banlist(int Ind, char *ip_addy, int time, char *reason);
+extern void kick_ip(int Ind_kicker, char *ip_kickee, char *reason);
+extern void kick_char(int Ind_kicker, int Ind_kickee, char *reason);
 //extern connection_t **Conn;
 extern char* get_conn_userhost(int ind);
+extern char *get_player_ip(int Ind);
 extern void do_quit(int ind, bool tellclient);
 
 /* randart.c */
@@ -298,7 +300,7 @@ extern s16b hitpoint_warn;
 extern u32b old_id[MAX_ID];
 extern swear_info swear[MAX_SWEAR];
 extern char nonswear[MAX_NONSWEAR][NAME_LEN];
-extern struct ip_ban *banlist;
+extern struct combo_ban *banlist;
 extern u32b sflags_TEMP;
 extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
@@ -1713,7 +1715,7 @@ extern void msg_broadcast_format(int Ind, cptr fmt, ...);
 extern byte count_bits(u32b array);
 extern int gold_colour(int amt);
 extern int test_item_name(cptr name);
-extern bool in_banlist(char *addr);
+extern int in_banlist(char *acc, char *addr, int *time, char *reason);
 
 extern void bbs_add_line(cptr textline);
 extern void bbs_del_line(int entry);

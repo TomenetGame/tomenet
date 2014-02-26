@@ -1732,11 +1732,21 @@ struct esp_link_type
 
 /* The Troll Pit */
 /* Temporary banning of certain addresses */
-struct ip_ban{
+#if 0
+struct ip_ban {
 	struct ip_ban *next;	/* next ip in the list */
 	char ip[20];	/* so it shouldn't be really */
 	int time;	/* Time in minutes, or zero is permanent */
 };
+#else
+struct combo_ban {
+	struct combo_ban *next;	/* next ip in the list */
+	char ip[20];
+	char acc[NAME_LEN];
+	char reason[MAX_CHARS];
+	int time;	/* Time in minutes, or zero is permanent */
+};
+#endif
 
 /*
  * Skills !
