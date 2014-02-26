@@ -3729,8 +3729,13 @@ void do_slash_cmd(int Ind, char *message)
 				if (reason) snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes - %s", time, reason);
 				else snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
 
-				if (reason) msg_format(Ind, "Banning %s for %d minutes (%s)...", token[1], time, reason);
-				else msg_format(Ind, "Banning %s for %d minutes...", token[1], time);
+				if (reason) {
+					msg_format(Ind, "Banning %s for %d minutes (%s).", token[1], time, reason);
+					s_printf("Banning %s for %d minutes (%s).\n", token[1], time, reason);
+				} else {
+					msg_format(Ind, "Banning %s for %d minutes.", token[1], time);
+					s_printf("Banning %s for %d minutes.\n", token[1], time);
+				}
 				add_banlist(0, token[1], time, reason);
 				kick_ip(Ind, token[1], reason);
 				return;
@@ -3795,17 +3800,21 @@ void do_slash_cmd(int Ind, char *message)
 					if (reason) {
 						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes - %s", time, reason);
 						msg_format(Ind, "Banning '%s'/%s for %d minutes (%s).", message3, ip_addr, time, reason);
+						s_printf("Banning '%s'/%s for %d minutes (%s).\n", message3, ip_addr, time, reason);
 					} else {
 						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
-						msg_format(Ind, "Banning '%s'/%s for %d minutes...", message3, ip_addr, time);
+						msg_format(Ind, "Banning '%s'/%s for %d minutes.", message3, ip_addr, time);
+						s_printf("Banning '%s'/%s for %d minutes.\n", message3, ip_addr, time);
 					}
 				} else {
 					if (reason) {
 						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes - %s", time, reason);
 						msg_format(Ind, "Banning '%s' for %d minutes (%s).", message3, time, reason);
+						s_printf("Banning '%s' for %d minutes (%s).\n", message3, time, reason);
 					} else {
 						snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
 						msg_format(Ind, "Banning '%s' for %d minutes.", message3, time);
+						s_printf("Banning '%s' for %d minutes.\n", message3, time);
 					}
 				}
 
@@ -3862,10 +3871,64 @@ void do_slash_cmd(int Ind, char *message)
 				if (!found) msg_print(Ind, " <empty>");
 				return;
 			} else if (prefix(message, "/unban")) {
-				return;
-			} else if (prefix(message, "/unbancombo")) {
-				return;
-			} else if (prefix(message, "/unbanip")) {
+				struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;
+				bool unban_ip = FALSE, unban_acc = FALSE;
+				char ip[MAX_CHARS], account[NAME_LEN];
+
+				strcpy(ip, "-");
+				strcpy(account, "-");
+
+				if (prefix(message, "/unbancombo")) {
+					if (!tk || !strchr(message3, ' ')) {
+						msg_print(Ind, "Usage: /unban <ip address> <account name>");
+						return;
+					}
+					unban_ip = TRUE;
+					unban_acc = TRUE;
+					strcpy(ip, message3);
+					*(strchr(ip, ' ')) = 0;
+					strcpy(account, strchr(message3, ' ') + 1);
+				} else if (prefix(message, "/unbanip")) {
+					if (!tk) {
+						msg_print(Ind, "Usage: /unban <ip address>");
+						return;
+					}
+					unban_ip = TRUE;
+					strcpy(ip, message3);
+				} else {
+					if (!tk) {
+						msg_print(Ind, "Usage: /unban <account name>");
+						return;
+					}
+					unban_acc = TRUE;
+					strcpy(account, message3);
+				}
+
+				ptr = banlist;
+				while (ptr != (struct combo_ban*)NULL) {
+					if ((unban_acc && ptr->acc[0] && !strcmp(ptr->acc, account)) ||
+					    (unban_ip && ptr->ip[0] && !strcmp(ptr->ip, ip))) {
+						if (ptr->reason[0]) {
+							msg_format(Ind, "Unbanning '%s'/%s (ban reason was '%s').", account, ip, ptr->reason);
+							s_printf("Unbanning '%s'/%s (ban reason was '%s').\n", account, ip, ptr->reason);
+						} else {
+							msg_format(Ind, "Unbanning '%s'/%s.", account, ip);
+							s_printf("Unbanning '%s'/%s.\n", account, ip);
+						}
+
+						if (!old) {
+							banlist = ptr->next;
+							new = banlist;
+						} else {
+							old->next = ptr->next;
+							new = old->next;
+						}
+						free(ptr);
+						ptr = new;
+						continue;
+					}
+					ptr = ptr->next;
+				}
 				return;
 			}
                         /* The idea is to reduce the age of the target player because s/he was being
