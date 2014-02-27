@@ -2591,6 +2591,10 @@ self-explaining or that are especially important are listed in detail here:
     attack, so you can tweak them here.
 
 (4 & 5) Game-Play Options
+    Use old target by default (use_old_target)
+        If this is on, a ranged attack via *t5 or *t- will not pick a new
+        (ie closer) target if the previously acquired target is still okay.
+
     Set 'AFK mode' automatically (auto_afk)
         Rogues might want to turn this off in order to sit out their blacklist
         timer in town.
