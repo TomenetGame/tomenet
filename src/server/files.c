@@ -2260,6 +2260,9 @@ void close_game(void)
 		/*highscore_fd = -1;*/
 	}
 
+	/* Save list of banned players */
+	save_banlist();
+
 	/* Try to save the server information */
 	save_server_info();
 
@@ -2582,6 +2585,9 @@ void exit_game_panic(void)
 
 //	wipeout_needless_objects();
 
+	/* Save list of banned players */
+	save_banlist();
+
 	if (!save_server_info()) quit("server panic info save failed!");
 
 #if 0 /* abort() done above in a child process */
@@ -2644,6 +2650,7 @@ void save_game_panic(void)
 
 //	wipeout_needless_objects();
 
+	save_banlist();
 	save_server_info();
 
 	/* No more panicking */

@@ -919,6 +919,7 @@ extern void condense_max_depth(player_type *p_ptr);
 extern bool seal_or_unseal_object(object_type *o_ptr);
 #endif
 extern void fix_max_depth_towerdungeon(int Ind);
+extern void load_banlist(void);
 
 /* melee1.c */
 /* melee2.c */
@@ -1355,6 +1356,7 @@ extern bool save_player(int Ind);
 extern bool load_player(int Ind);
 extern bool load_server_info(void);
 extern bool save_server_info(void);
+extern void save_banlist(void);
 
 
 /* sched.c */

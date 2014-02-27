@@ -3430,3 +3430,33 @@ bool seal_or_unseal_object(object_type *o_ptr) {
 	return TRUE;
 }
 #endif
+
+void load_banlist(void) {
+	char buf[1024];
+	FILE *fp;
+	struct combo_ban *ptr;
+
+	path_build(buf, 1024, ANGBAND_DIR_CONFIG, "banlist.txt");
+
+	fp = fopen(buf, "r");
+	if (!fp) return;
+
+	do {
+		ptr = NEW(struct combo_ban);
+
+		if (fscanf(fp, "%[^|]|%[^|]|%[^|]|%d|%[^\n]\n", ptr->acc, ptr->ip, ptr->hostname, &ptr->time, ptr->reason) == EOF) {
+			s_printf("Failed to read banlist.txt: %s\n", strerror(ferror(fp)));
+			break;
+		}
+
+		/* ffff... scanf */
+		if (ptr->acc[0] == ' ' && ptr->acc[1] == 0) ptr->acc[0] = 0;
+		if (ptr->ip[0] == ' ' && ptr->ip[1] == 0) ptr->ip[0] = 0;
+		if (ptr->hostname[0] == ' ' && ptr->hostname[1] == 0) ptr->hostname[0] = 0;
+		if (ptr->reason[0] == ' ' && ptr->reason[1] == 0) ptr->reason[0] = 0;
+
+		ptr->next = banlist;
+		banlist = ptr;
+	} while (!feof(fp));
+	fclose(fp);
+}

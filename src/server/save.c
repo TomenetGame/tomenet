@@ -2402,3 +2402,18 @@ void wr_towns() {
 		}
 	}
 }
+
+void save_banlist(void) {
+	char buf[1024];
+	FILE *fp;
+	struct combo_ban *ptr;
+
+	path_build(buf, 1024, ANGBAND_DIR_CONFIG, "banlist.txt");
+
+	fp = fopen(buf, "w");
+	if (!fp) return;
+
+	for (ptr = banlist; ptr != (struct combo_ban*)NULL; ptr = ptr->next)
+		fprintf(fp, "%s|%s|%s|%d|%s\n", ptr->acc[0] ? ptr->acc : " ", ptr->ip[0] ? ptr->ip : " ", ptr->hostname[0] ? ptr->hostname : " ", ptr->time, ptr->reason[0] ? ptr->reason : " "); /* omg fu scanf^^ */
+	fclose(fp);
+}

@@ -7484,6 +7484,9 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 	/*** Init the wild_info array... for more information see wilderness.c ***/
 	init_wild_info();
 
+	/* Load list of banned players */
+	load_banlist();
+
 	/* Attempt to load the server state information */
 	if (!load_server_info()) {
 		/* Oops */
@@ -7795,6 +7798,9 @@ void shutdown_server(void) {
 		else
 			Destroy_connection(p_ptr->conn, "Server has been updated, please login again."); /* was "Server shutdown (save succeeded)" */
 	}
+
+	/* Save list of banned players */
+	save_banlist();
 
 	/* Save the server state */
 	if (!save_server_info()) quit("Server state save failed!");
