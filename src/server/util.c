@@ -1417,7 +1417,8 @@ void sound_near_monster(int m_idx, cptr name, cptr alternative, int type) {
 /* Find correct music for the player based on his current location - C. Blue
  * Note - rarely played music:
  *     dungeons - generic/ironman/forcedownhellish
- *     towns - generic day/night (used for Menegroth/Nargothrond at times) */
+ *     towns - generic day/night (used for Menegroth/Nargothrond at times)
+ * Note - dun-gen-iron and dun-gen-fdhell are currently swapped. */
 void handle_music(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = NULL;
