@@ -3740,7 +3740,11 @@ void do_slash_cmd(int Ind, char *message)
 				kick_ip(Ind, token[1], kickmsg, TRUE);
 				return;
 			} else if (prefix(message, "/ban") || prefix(message, "/bancombo")) { /* note: ban and bancombo enter a hostname too */
-				bool combo = prefix(message, "/bancombo"), found = FALSE;
+				/* ban bans an account name, banip bans an ip address,
+				   bancombo bans an account name and an ip address - if ip address is not specified, it uses the ip address of the
+				   account name, who must be currently online. if the account is offline, bancombo reverts to normal /ban. */
+
+				bool combo = prefix(message, "/bancombo"), found = FALSE, derived_ip = FALSE;
 				char *reason = NULL, reasonstr[MAX_CHARS];
 				char *hostname = NULL, hostnamestr[MAX_CHARS];
 				int time = 5; /* 5 minutes by default */
@@ -3755,17 +3759,31 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
-				if (!strchr(message3, ':')) {
-					if (combo) {
-						msg_print(Ind, "\377oUsage: /bancombo <account name>:<IP address> [time [reason]]");
-						return;
-					}
+				/* remove trailing spaces and colon to be safe */
+				while (message3[strlen(message3) - 1] == ' ' || message3[strlen(message3) - 1] == ':') message3[strlen(message3) - 1] = 0;
 
+				if (!strchr(message3, ':')) {
 					l_acc = Admin_GetAccount(message3);
 					if (l_acc) KILL(l_acc, struct account);
 					else {
 						msg_print(Ind, "Account not found.");
 						return;
+					}
+
+					if (combo) {
+						bool found = FALSE;
+						/* test for account being online to find its IP, else revert to normal /ban */
+						for (i = 1; i <= NumPlayers; i++) {
+							if (!strcmp(Players[i]->accountname, message3)) {
+								found = TRUE;
+								strcpy(ip_addr, get_player_ip(i));
+								break;
+							}
+						}
+						if (!found) {
+							msg_print(Ind, "Account not online, reverting to normal account ban without IP ban!");
+							combo = FALSE; /* superfluous here */
+						}
 					}
 
 					snprintf(kickmsg, MAX_SLASH_LINE_LEN, "You have been banned for %d minutes", time);
@@ -3786,7 +3804,7 @@ void do_slash_cmd(int Ind, char *message)
 						}
 					}
 					/* ban! ^^ */
-					add_banlist(message3, NULL, hostname, time, NULL);
+					add_banlist(message3, ip_addr[0] ? ip_addr : NULL, hostname, time, NULL);
 					return;
 				}
 
@@ -3800,16 +3818,46 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
-				if (!combo) {
+				/* check if an IP was specified, otherwise take it from online account,
+				   if account isn't online, fallback to normal /ban. */
+				if (combo) {
+					char *ptr = tmp_buf;
+					bool no_ip = FALSE;
+					/* "it's not an IP, if there are only numbers until the next space or end of line" */
+					while ((*ptr >= '0' && *ptr <= '9') || *ptr == ' ' || *ptr == 0) {
+						if (*ptr == ' ' || *ptr == 0) {
+							no_ip = TRUE;
+							break;
+						}
+						ptr++;
+					}
+					/* try to derive IP from online account? */
+					if (no_ip) {
+						for (i = 1; i <= NumPlayers; i++) {
+							if (!strcmp(Players[i]->accountname, message3)) {
+								derived_ip = TRUE;
+								strcpy(ip_addr, get_player_ip(i));
+								break;
+							}
+						}
+						if (!derived_ip) {
+							msg_print(Ind, "Account not online, reverting to normal account ban without IP ban!");
+							combo = FALSE;
+						}
+					}
+				}
+
+				if (!combo) { /* read time/reason */
 					time = atoi(tmp_buf);
 					tmp_buf_ptr = strchr(tmp_buf, ' ');
 					if (tmp_buf_ptr) {
 						strcpy(reasonstr, tmp_buf_ptr + 1);
 						reason = reasonstr;
 					}
-				} else {
+				} else if (!derived_ip) { /* read IP address and possibly time/reason */
 					strncpy(ip_addr, tmp_buf, MAX_CHARS);
 					ip_addr[MAX_CHARS - 1] = 0;
+					/* if a time has been specified, terminate IP at next space accordingly */
 					if ((tmp_buf_ptr = strchr(tmp_buf, ' '))) {
 						*(strchr(ip_addr, ' ')) = 0;
 
@@ -3819,6 +3867,13 @@ void do_slash_cmd(int Ind, char *message)
 							strcpy(reasonstr, tmp_buf_ptr + 1);
 							reason = reasonstr;
 						}
+					}
+				} else { /* IP was not specified but derived from account, we only need to check for time/reason now */
+					time = atoi(tmp_buf_ptr);
+					tmp_buf_ptr = strchr(tmp_buf_ptr, ' ');
+					if (tmp_buf_ptr) {
+						strcpy(reasonstr, tmp_buf_ptr + 1);
+						reason = reasonstr;
 					}
 				}
 
@@ -3926,16 +3981,38 @@ void do_slash_cmd(int Ind, char *message)
 				if (!found) msg_print(Ind, " \377s<empty>");
 				return;
 			} else if (prefix(message, "/unban")) {
+				/* unban unbans all entries of matching account name (no matter whether they also have an ip entry),
+				   unbancombo unbans all entries of matching account name or matching ip,
+				   unbanip unbans all entries of matching ip (no matter whether they also have an account name entry).
+				   unbanall just erases the whole banlist. */
 				struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;
 				bool unban_ip = FALSE, unban_acc = FALSE, found = FALSE;
 				char ip[MAX_CHARS], account[NAME_LEN];
+
+				if (prefix(message, "/unbanall")) {
+					struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;
+					ptr = banlist;
+					while (ptr != (struct combo_ban*)NULL) {
+						if (!old) {
+							banlist = ptr->next;
+							new = banlist;
+						} else {
+							old->next = ptr->next;
+							new = old->next;
+						}
+						free(ptr);
+						ptr = new;
+					}
+					msg_print(Ind, "Ban list has been reset.");
+					return;
+				}
 
 				strcpy(ip, "-");
 				strcpy(account, "-");
 
 				if (prefix(message, "/unbancombo")) {
 					if (!tk || !strchr(message3, ' ')) {
-						msg_print(Ind, "Usage: /unban <ip address> <account name>");
+						msg_print(Ind, "Usage: /unbancombo <ip address> <account name>");
 						return;
 					}
 					unban_ip = TRUE;
@@ -3945,7 +4022,7 @@ void do_slash_cmd(int Ind, char *message)
 					strcpy(account, strchr(message3, ' ') + 1);
 				} else if (prefix(message, "/unbanip")) {
 					if (!tk) {
-						msg_print(Ind, "Usage: /unban <ip address>");
+						msg_print(Ind, "Usage: /unbanip <ip address>");
 						return;
 					}
 					unban_ip = TRUE;
