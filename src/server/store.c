@@ -5491,7 +5491,7 @@ static void display_house_entry(int Ind, int pos, house_type *h_ptr)
 	if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
 	
 	/* Let's fade out the items we CAN'T use too inside our own houses */
-	if (!can_use(Ind, o_ptr)) attr = TERM_L_DARK;
+	if (!can_use_admin(Ind, o_ptr)) attr = TERM_L_DARK;
 
 	/* Only show the weight of an individual item */
 	wgt = o_ptr->weight;
