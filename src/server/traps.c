@@ -467,8 +467,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 /*
  * this function handles a "breath" type trap - acid bolt, lightning balls etc.
  */
-static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap)
-{
+static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap) {
 	player_type *p_ptr = Players[Ind];
 	trap_kind *t_ptr = &t_info[trap];
 	bool       ident;
@@ -485,16 +484,15 @@ static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap)
 	dam = damroll(my_dd, my_ds);
 
 	ident = project(PROJECTOR_TRAP, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, type,
-			PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM, "");
-//			PROJECT_KILL | PROJECT_JUMP);
+			PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM, t_name + t_ptr->name);
+			// | PROJECT_KILL | PROJECT_JUMP
 	return (ident);
 }
 
 /*
  * This function damages the player by a trap
  */
-static void trap_hit(int Ind, s16b trap)
-{
+static void trap_hit(int Ind, s16b trap) {
    s16b dam;
    trap_kind *t_ptr = &t_info[trap];
 
@@ -507,8 +505,7 @@ static void trap_hit(int Ind, s16b trap)
  * this function activates one trap type, and returns
  * a bool indicating if this trap is now identified
  */
-bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b item)
-{
+bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b item) {
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
 	bool ident = FALSE, never_id = FALSE;
@@ -3964,7 +3961,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
 			identify_mon_trap_load(who, o_ptr);
 			/* create a stone prison same as the istar spell - C. Blue */
 			project(PROJECTOR_TRAP, 1, &m_ptr->wpos, y, x, 1, GF_STONE_WALL,
-				PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM, "");
+				PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM, "trap of walls"); /* shouldn't this strictly speaking be a projection from '0 - who' too?.. */
 			return (FALSE);
 
 		default:
@@ -3988,7 +3985,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr)
 
 	/* Actually hit the monster */
 	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
-        return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
+        return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
 /* 

@@ -8061,37 +8061,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 	/* hack -- by trap */
 	else if (who == PROJECTOR_TRAP) {
-		cave_type **zcave;
-		cave_type *c_ptr;
-		int t_idx = 0;
-
-		if((zcave = getcave(wpos))){
-			struct c_special *cs_ptr;
-			c_ptr = &zcave[p_ptr->py][p_ptr->px];
-			if((cs_ptr = GetCS(c_ptr, CS_TRAPS)))
-				t_idx = cs_ptr->sc.trap.t_idx;
-
-			//if (t_idx && t_idx == typ) {
-			if (t_idx) {
-				/* huh? */
-				// t_ptr = zcave[p_ptr->py][p_ptr->px].special.sc.ptr;
-				sprintf(killer, "a %s", t_name + t_info[t_idx].name);
-				sprintf(m_name, "a %s", t_name + t_info[t_idx].name);
-				sprintf(m_name_gen, "a %s", t_name + t_info[t_idx].name);
-			} else if (c_ptr->o_idx) {
-				/* Chest (object) trap */
-				object_type *o_ptr = &o_list[c_ptr->o_idx];
-				sprintf(killer, "a %s", t_name + t_info[o_ptr->pval].name);
-				sprintf(m_name, "a %s", t_name + t_info[o_ptr->pval].name);
-				sprintf(m_name_gen, "a %s", t_name + t_info[o_ptr->pval].name);
-			} else {
-				/* Hopefully never. */
-				/* Actually this can happen if player's not on the trap
-				 * (eg. door traps) */
-				sprintf(killer, "a mysterious accident");
-				sprintf(m_name, "something");
-				sprintf(m_name_gen, "the");
-			}
+		if (attacker) {
+			sprintf(killer, "a%s %s", is_a_vowel(attacker[0]) ? "n" : "", attacker);
+			sprintf(m_name, "a%s %s", is_a_vowel(attacker[0]) ? "n" : "", attacker);
+			sprintf(m_name_gen, "the %s", attacker);
+		} else {
+			/* Hopefully never. */
+			/* OUTDATED: Actually this can happen if player's not on the trap (eg. door traps) */
+			sprintf(killer, "a mysterious accident");
+			sprintf(m_name, "something");
+			sprintf(m_name_gen, "the");
 		}
 	}
 	/* hack -- by shattering potion */
