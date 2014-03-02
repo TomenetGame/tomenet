@@ -4705,7 +4705,7 @@ void monster_death(int Ind, int m_idx) {
 
 
 	/* experimental: Zu-Aon drops only randarts */
-	if (m_ptr->r_idx == RI_ZU_AON || m_ptr->r_idx == RI_BADLUCKBAT)
+	if (m_ptr->r_idx == RI_ZU_AON || m_ptr->r_idx == RI_BAD_LUCK_BAT)
 		resf_drops |= (RESF_FORCERANDART | RESF_NOTRUEART);
 	/* Morgoth never drops true artifacts */
 	if (is_Morgoth) resf_drops |= RESF_NOTRUEART;
