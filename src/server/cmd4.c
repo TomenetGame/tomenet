@@ -3401,6 +3401,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		    c_ptr->info, c_ptr->feat, c_ptr->o_idx, c_ptr->m_idx, c_ptr->effect);
 
 		switch (cfg.runlevel) {
+		case 2051: msg_print(Ind, "\377y* XtremelyLow-server-shutdown command pending *"); break;
 		case 2048: msg_print(Ind, "\377y* Empty-server-shutdown command pending *"); break;
 		case 2047: msg_print(Ind, "\377y* Low-server-shutdown command pending *"); break;
 		case 2046: msg_print(Ind, "\377y* VeryLow-server-shutdown command pending *");; break;

@@ -2507,18 +2507,30 @@ static int Handle_login(int ind)
 #endif
 
 	/* Admin messages */
-	if (p_ptr->admin_dm && (cfg.runlevel == 2048))
-		msg_print(NumPlayers, "\377y* Empty-server-shutdown command pending *");
-	if (p_ptr->admin_dm && (cfg.runlevel == 2047))
-		msg_print(NumPlayers, "\377y* Low-server-shutdown command pending *");
-	if (p_ptr->admin_dm && (cfg.runlevel == 2046))
-		msg_print(NumPlayers, "\377y* VeryLow-server-shutdown command pending *");
-	if (p_ptr->admin_dm && (cfg.runlevel == 2045))
-		msg_print(NumPlayers, "\377y* None-server-shutdown command pending *");
-	if (p_ptr->admin_dm && (cfg.runlevel == 2044))
-		msg_print(NumPlayers, "\377y* ActiveVeryLow-server-shutdown command pending *");
-	if (p_ptr->admin_dm && (cfg.runlevel == 2043))
-		msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
+	if (p_ptr->admin_dm)
+		switch (cfg.runlevel) {
+		case 2051:
+			msg_print(NumPlayers, "\377y* XtremelyLow-server-shutdown command pending *");
+			break;
+		case 2048:
+			msg_print(NumPlayers, "\377y* Empty-server-shutdown command pending *");
+			break;
+		case 2047:
+			msg_print(NumPlayers, "\377y* Low-server-shutdown command pending *");
+			break;
+		case 2046:
+			msg_print(NumPlayers, "\377y* VeryLow-server-shutdown command pending *");
+			break;
+		case 2045:
+			msg_print(NumPlayers, "\377y* None-server-shutdown command pending *");
+			break;
+		case 2044:
+			msg_print(NumPlayers, "\377y* ActiveVeryLow-server-shutdown command pending *");
+			break;
+		case 2043:
+			msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
+			break;
+		}
 
 	if (cfg.runlevel == 2043) {
 		if (shutdown_recall_timer >= 120)

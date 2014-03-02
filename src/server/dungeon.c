@@ -6989,6 +6989,34 @@ void dungeon(void)
 		if (cfg.runlevel == 2049) {
 			shutdown_server();
 		}
+		if (cfg.runlevel == 2051) {
+			int n = 0;
+			for (i = NumPlayers; i > 0 ;i--) {
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				/* Ignore admins that are loged in */
+				if (admin_p(i)) continue;
+				/* count players */
+				n++;
+
+				/* Ignore characters that are afk and not in a dungeon/tower */
+//				if((p_ptr->wpos.wz == 0) && (p_ptr->afk)) continue;
+
+				/* Ignore chars in fixed irondeepdive towns */
+				if (is_fixed_irondeepdive_town(&p_ptr->wpos, getlevel(&p_ptr->wpos))) continue;
+
+				/* Ignore characters that are not in a dungeon/tower */
+				if (p_ptr->wpos.wz == 0) {
+					/* Don't interrupt events though */
+					if (p_ptr->wpos.wx != WPOS_SECTOR00_X || p_ptr->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+				}
+				break;
+			}
+			if (!i && (n <= 3)) {
+				msg_broadcast(-1, "\374\377G<<<\377oServer is being updated, but will be up again in no time.\377G>>>");
+				cfg.runlevel = 2049;
+			}
+		}
 #ifdef ENABLE_GO_GAME
 		if (cfg.runlevel == 2048 && !go_game_up) {
 #else
@@ -7425,6 +7453,7 @@ void set_runlevel(int val) {
 		case 2046:
 		case 2047:
 		case 2048:
+		case 2051:
 			/* Shutdown as soon as server is empty (admins don't count) */
 			break;
 		case 2049:
