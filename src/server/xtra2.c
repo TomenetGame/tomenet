@@ -4658,8 +4658,7 @@ static int get_coin_type(monster_race *r_ptr)
  * Mace "Grond", since the Iron Crown is more important.
  */
 
-void monster_death(int Ind, int m_idx)
-{
+void monster_death(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr = Players[Ind];
 
@@ -4706,7 +4705,8 @@ void monster_death(int Ind, int m_idx)
 
 
 	/* experimental: Zu-Aon drops only randarts */
-	if (m_ptr->r_idx == RI_ZU_AON) resf_drops |= (RESF_FORCERANDART | RESF_NOTRUEART);
+	if (m_ptr->r_idx == RI_ZU_AON || m_ptr->r_idx == RI_BADLUCKBAT)
+		resf_drops |= (RESF_FORCERANDART | RESF_NOTRUEART);
 	/* Morgoth never drops true artifacts */
 	if (is_Morgoth) resf_drops |= RESF_NOTRUEART;
 
@@ -4921,6 +4921,7 @@ void monster_death(int Ind, int m_idx)
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
 	if ((r_ptr->flags1 & RF1_DROP_90) && (rand_int(100) < 90)) number++;
+	if (r_ptr->flags0 & RF0_DROP_1) number++;
 	if (r_ptr->flags1 & RF1_DROP_1D2) number += damroll(1, 2);
 	if (r_ptr->flags1 & RF1_DROP_2D2) number += damroll(2, 2);
 	if (r_ptr->flags1 & RF1_DROP_3D2) number += damroll(3, 2);
@@ -8474,6 +8475,7 @@ void monster_death_mon(int am_idx, int m_idx)
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
 	if ((r_ptr->flags1 & RF1_DROP_90) && (rand_int(100) < 90)) number++;
+	if (r_ptr->flags0 & RF0_DROP_1) number++;
 	if (r_ptr->flags1 & RF1_DROP_1D2) number += damroll(1, 2);
 	if (r_ptr->flags1 & RF1_DROP_2D2) number += damroll(2, 2);
 	if (r_ptr->flags1 & RF1_DROP_3D2) number += damroll(3, 2);

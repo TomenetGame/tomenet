@@ -540,7 +540,7 @@ static cptr r_info_flags0[] =
 	"BO_DISE",//8
 	"BA_DISE",
 	"ROAMING",
-	"X00000400",
+	"DROP_1",
 	"X00000800",//12
 	"X00001000",
 	"X00002000",

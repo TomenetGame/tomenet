@@ -5602,6 +5602,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 					 ((r_ptr->flags1 & (RF1_DROP_3D2)) ? 6 : 0) +
 					 ((r_ptr->flags1 & (RF1_DROP_2D2)) ? 4 : 0) +
 					 ((r_ptr->flags1 & (RF1_DROP_1D2)) ? 2 : 0) +
+					 ((r_ptr->flags0 & (RF0_DROP_1))   ? 1 : 0) +
 					 ((r_ptr->flags1 & (RF1_DROP_90))  ? 1 : 0) +
 					 ((r_ptr->flags1 & (RF1_DROP_60))  ? 1 : 0));
 

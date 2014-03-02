@@ -1031,6 +1031,7 @@
 #define RI_SAURON		860
 #define RI_MORGOTH		862
 #define RI_TIK_SRVZLLAT		1032
+#define RI_BADLUCKBAT		1114
 #define RI_LIVING_LIGHTNING	1147
 #define RI_HELLRAISER		1067
 #define RI_NETHER_GUARD		1068
@@ -5281,6 +5282,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF0_BO_DISE			0x00000080
 #define RF0_BA_DISE		0x00000100
 #define RF0_ROAMING		0x00000200		/* monster never spawns in vaults or pits (ie on CAVE_ICKY/CAVE_NEST_PIT grids) */
+#define RF0_DROP_1		0x00000400		/* Drop exactly 1 item/gold */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT | RF0_NO_NEST)
 

@@ -3605,8 +3605,8 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 	artifact_type *a_ptr;
 	int im, a_map[MAX_A_IDX];
 
-	/* No artifacts in the town */
-	if (istown(wpos)) return (FALSE);
+	/* No artifacts in the town, except if it's specifically requested */
+	if (istown(wpos) && !(resf & RESF_FORCERANDART)) return (FALSE);
 
 	/* Paranoia -- no "plural" artifacts */
 	if (o_ptr->number != 1) return (FALSE);
