@@ -2754,14 +2754,21 @@ int calc_crit_obj(int Ind, object_type *o_ptr)
  *
  * This function induces various "status" messages.
  */
-void calc_boni(int Ind)
-{
+void calc_boni(int Ind) {
 	cptr inscription = NULL;
 //	char tmp[80];
 
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	cave_type **zcave;
+
+	/* Note: For vampires with auto-ID this is required, because of the 3
+	   times that calc_boni() is called on logging in, for those vampires
+	   (or V-form users) the first one will be in non-ready connection
+	   state, while for other characters all three are actually in ready
+	   connection state.
+	   This will cause inventory/equipment to be 'broken' for vampires. */
+	bool logged_in = get_conn_state_ok(Ind);
 
 	if (!(zcave = getcave(&p_ptr->wpos))) {
 		/* for stair-goi: try to repeat this failed calc_boni() call asap - C. Blue */
@@ -3081,7 +3088,7 @@ void calc_boni(int Ind)
 		p_ptr->innate_spells[0] = 0x0;
 		p_ptr->innate_spells[1] = 0x0;
 		p_ptr->innate_spells[2] = 0x0;
-		if (!suppress_boni) Send_spell_info(Ind, 0, 0, 0, "nothing");
+		if (!suppress_boni && logged_in) Send_spell_info(Ind, 0, 0, 0, "nothing");
 
 		/* Start with "normal" speed */
 		p_ptr->pspeed = 110;
@@ -5667,8 +5674,10 @@ void calc_boni(int Ind)
 	if (p_ptr->pspeed != old_speed) p_ptr->redraw |= (PR_SPEED);
 
 
-	/* swapping in AUTO_ID items will instantly ID inventory and equipment */
-	if (p_ptr->auto_id && !old_auto_id && !suppress_boni) {
+	/* swapping in AUTO_ID items will instantly ID inventory and equipment.
+	   Careful, we're called from birth->player_setup->player_night maybe,
+	   when we aren't READY|PLAYING yet: */
+	if (p_ptr->auto_id && !old_auto_id && !suppress_boni && logged_in) {
 #if 0 /* currently doesn't work ok with client-side auto-inscriptions */
 		for (i = 0; i < INVEN_TOTAL; i++) {
 			o_ptr = &p_ptr->inventory[i];
@@ -5789,7 +5798,7 @@ void calc_boni(int Ind)
 		p_ptr->redraw |= PR_BPR;
 
 	/* Send all the columns - Kurzel */
-	if (is_newer_than(&p_ptr->version, 4, 5, 3, 2, 0, 0))
+	if (is_newer_than(&p_ptr->version, 4, 5, 3, 2, 0, 0) && logged_in)
 		for (i = 0; i < 15; i++) {
 			if (csheet_boni[i].cb[11] & CB12_XHIDD) { //hide the item data (for now, see part 2 below) - Kurzel
 				/* Wipe the boni column data */

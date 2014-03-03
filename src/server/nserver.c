@@ -11107,3 +11107,9 @@ char *get_conn_userhost(int ind) {
 char *get_player_ip(int Ind) {
 	return(Conn[Players[Ind]->conn]->addr);
 }
+
+bool get_conn_state_ok(int Ind) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) return FALSE;
+	return TRUE;
+}

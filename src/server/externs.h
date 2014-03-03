@@ -64,6 +64,7 @@ extern void kick_char(int Ind_kicker, int Ind_kickee, char *reason);
 //extern connection_t **Conn;
 extern char* get_conn_userhost(int ind);
 extern char *get_player_ip(int Ind);
+extern bool get_conn_state_ok(int Ind);
 extern void do_quit(int ind, bool tellclient);
 
 /* randart.c */
