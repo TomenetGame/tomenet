@@ -3364,18 +3364,16 @@ void do_cmd_disarm(int Ind, int dir) {
  * We need to use character body weight for something, or else we need
  * to no longer give female characters extra starting gold.
  */
-void do_cmd_bash(int Ind, int dir)
-{
+void do_cmd_bash(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
 	int                 y, x;
 	int                     bash, temp, num;
-
 	cave_type               *c_ptr;
-
-	bool            more = FALSE, water = FALSE, tiny_bash;
+	bool            more = FALSE, water = FALSE;
+	char bash_type = 1;
 	cave_type **zcave;
 
 
@@ -3388,14 +3386,27 @@ void do_cmd_bash(int Ind, int dir)
 		if (!is_admin(p_ptr)) return;
 	}
 
-	tiny_bash = ((p_ptr->fruit_bat && !p_ptr->body_monster) ||
-	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR)));
+	if ((p_ptr->fruit_bat && !p_ptr->body_monster) ||
+	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR)))
+		bash_type = 2;
 
 	/* Get a "repeated" direction */
 	if (dir) {
-		/* Bash location */
-		y = p_ptr->py + ddy[dir];
-		x = p_ptr->px + ddx[dir];
+		/* hack: bashing onto our grid causes random direction of distance 1 */
+		if (dir == 5) {
+			dir = randint(8);
+			if (dir == 5) dir = 9;
+
+			bash_type = 3;
+
+			/* Bash location */
+			y = p_ptr->py;
+			x = p_ptr->px;
+		} else {
+			/* Bash location */
+			y = p_ptr->py + ddy[dir];
+			x = p_ptr->px + ddx[dir];
+		}
 
 		/* Get grid */
 		c_ptr = &zcave[y][x];
@@ -3404,8 +3415,10 @@ void do_cmd_bash(int Ind, int dir)
 		if ((zcave[y][x].info & CAVE_GUILD_SUS)) return;
 
 		if (c_ptr->feat == FEAT_DEEP_WATER ||
-		    c_ptr->feat == FEAT_SHAL_WATER)
-			tiny_bash = water = TRUE;
+		    c_ptr->feat == FEAT_SHAL_WATER) {
+			if (bash_type != 3) bash_type = 2;
+			water = TRUE;
+		}
 
 		/* Monster in the way */
 		if (c_ptr->m_idx > 0) {
@@ -3487,7 +3500,7 @@ void do_cmd_bash(int Ind, int dir)
 				}
 
 				if (water) msg_print(Ind, "Splash!");
-				do_cmd_throw(Ind, dir, 0 - c_ptr->o_idx, tiny_bash ? 2 : 1);
+				do_cmd_throw(Ind, dir, 0 - c_ptr->o_idx, bash_type);
 
 				/* Set off trap (Hack -- handle like door trap) */
 				if(GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
@@ -5803,8 +5816,7 @@ bool interfere(int Ind, int chance)
  * to hit bonus of the weapon to have an effect?  Should it ever cause
  * the item to be destroyed?  Should it do any damage at all?
  */
-void do_cmd_throw(int Ind, int dir, int item, char bashing)
-{
+void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 
@@ -5998,7 +6010,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing)
 	if (tdis > 10) tdis = 10;
 
 	/* Fruit bat/water bashing? Actually limit throwing too! */
-	if (bashing == 2) tdis = 1; /* at least allow minimal item movement, especially for bashing piles */
+	if (bashing == 3) tdis = 0; /* non-fruit bats too: for bashing an item that is on our own grid */
+	else if (bashing == 2) tdis = 1; /* at least allow minimal item movement, especially for bashing piles */
 
 	/* Chance of hitting */
 	chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
