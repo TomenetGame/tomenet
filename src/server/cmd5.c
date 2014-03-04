@@ -824,7 +824,7 @@ void do_mimic_power_aux(int Ind, int dir)
     case 3:
 	sprintf(p_ptr->attacker, " fires a rocket for");
 	msg_print(Ind, "You fire a rocket.");
-	fire_ball(Ind, GF_ROCKET, dir, ((p_ptr->chp / 2) > 600) ? 600 : (p_ptr->chp / 2), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_ROCKET, dir, ((p_ptr->mhp / 2) > 600) ? 600 : (p_ptr->mhp / 2), rad, p_ptr->attacker);
 	break;
     case 4:
 	{

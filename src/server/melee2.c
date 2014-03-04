@@ -2204,7 +2204,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 //			else msg_format(Ind, "%^s fires a rocket.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a rocket for", m_name);
 			ball(Ind, m_idx, GF_ROCKET,
-			    ((m_ptr->hp / 4) > 800 ? 800 : (m_ptr->hp / 4)), y, x, 2);
+			    ((m_ptr->maxhp / 4) > 800 ? 800 : (m_ptr->maxhp / 4)), y, x, 2);
 			update_smart_learn(m_idx, DRS_SHARD);
 			break;
 		}
