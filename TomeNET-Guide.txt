@@ -4568,8 +4568,8 @@ Spellbooks:
                 (If 'c' is omittted, the first spell will be chosen.)
 
 Runes:          Auto-retaliate with the inscribed rune. The format is modifier
-    @Oaa        then type. To retaliate with a combination of runes, use the 
-	            combined rune. 'A' to activate runes for combining.
+    @Oaa        then type. To retaliate with a combination of runes, use the
+                combined rune. 'A' to activate runes for combining.
 
 Any item:
     @OMd        Use innate mimic power 'd)' (for example).
@@ -13407,7 +13407,7 @@ A fire ball spell might look like this (runes 'a' and 'e' for 'fire'):
     \e)*tm@12\raedd-  (light--chaos--moderate--ball)
 
 Note the following macro produces an identical effect (runes 'e' and 'a'):
-	\e)*tm@12\readd-  (chaos--light--moderate--ball)
+    \e)*tm@12\readd-  (chaos--light--moderate--ball)
 
 To increase the radius of the ball, adjust the modifier to something that
 sounds bigger, ie. choose a spell modifier that increases radius.
