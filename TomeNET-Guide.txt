@@ -7414,14 +7414,14 @@ Radiation/Nuke/ This is a poisonous attack (player suffers pure poison damage)
                 Nuke balls (radiation balls) do (level*3)+(10d6) damage.
 Rocket          Rockets combine fire, shard & sound effects and can also damage
                 your inventory. Rockets do insane damage if unresisted:
-                Rocket damage is monster HP/4, it caps at 800.
+                Rocket damage is monster MaxHP/4, it caps at 800.
                 Shard and sound resistance will lower damage by 1/6 each,
                 fire resistance will lower damage by 1/5, fire immunity by
                 1/4 (overriding fire resistance). These reductions stack (as in
                 they are consecutively applied to the damage).
                 Shard resistance will prevent cuts, sound resistance will
                 prevent getting stunned.
-                (Rockets are treated internally like breathing.)
+                (Technically, rockets are similar to breath attacks.)
 Detonation      Same as rocket.
 Inferno         Same as detonation, except it does not destroy walls.
 
