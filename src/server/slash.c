@@ -576,8 +576,10 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr = &o_list[c_ptr->o_idx];
 					if (!o_ptr->k_idx) return;
 
+#if 0 /* not for floor items, cause unique-tagged loot will be annoying */
 					/* keep inscribed items? */
 					if (!nontag && o_ptr->note) return;
+#endif
 
 					/* destroy base items (non-egos)? */
 					if (baseonly && object_known_p(Ind, o_ptr) &&
