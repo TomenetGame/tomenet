@@ -1706,8 +1706,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 			default:
 				/* inkey_letter_all hack for c_get_quantity() */
 				//if (inkey_letter_all && !k && ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z'))) { i = 'a';
-				if (inkey_letter_all && !k && (i == 'a' || i == 'A')) {
-					buf[k++] = i;
+				if (inkey_letter_all && !k && (i == 'a' || i == 'A' || i == ' ')) { /* allow spacebar too */
+					buf[k++] = 'a';
 					done = TRUE;
 					break;
 				}
