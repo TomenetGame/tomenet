@@ -2567,7 +2567,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 	c_put_str(header_color[0][15], "Dise:", 16, 0);
 	c_put_str(header_color[0][16], "Time:", 17, 0);
 	c_put_str(header_color[0][17], "Mana:", 18, 0);
-	c_put_str(header_color[0][18], "Psi: ", 19, 0);
+	c_put_str(header_color[0][18], "Psi :", 19, 0);
 	
 	c_put_str(header_color[1][0], "Fear:", 1, 20);
 	c_put_str(header_color[1][1], "Para:", 2, 20);
