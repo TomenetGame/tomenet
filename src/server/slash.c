@@ -2190,17 +2190,18 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377d ");
 				for (i = 0; i < MAX_GLOBAL_EVENTS; i++) if ((global_event[i].getype != GE_NONE) && (global_event[i].hidden == FALSE || admin)) {
 					n++;
-					if (n == 1) msg_print(Ind, "\377sCurrently ongoing events:");
+					if (n == 1) msg_print(Ind, "\377WCurrently ongoing events:");
 					/* Event still in announcement phase? */
 					if (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps) > 0)
-						msg_format(Ind, " %d) '%s' \377grecruits\377w for %d mins.", i+1, global_event[i].title, (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
+						//msg_format(Ind, " %d) '%s' \377grecruits\377w for %d mins.", i+1, global_event[i].title, (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
+						msg_format(Ind, "  \377U%d\377W) '%s' recruits for %d more minutes.", i+1, global_event[i].title, (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
 					/* or has already begun? */
-					else	msg_format(Ind, " %d) '%s' began %d mins ago.", i+1, global_event[i].title, -(global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
+					else	msg_format(Ind, "  \377U%d\377W) '%s' began %d minutes ago.", i+1, global_event[i].title, -(global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
 				}
-				if (!n) msg_print(Ind, "\377sNo events are currently running.");
+				if (!n) msg_print(Ind, "\377WNo events are currently running.");
 				else {
-					msg_print(Ind, "\377sType \377u/evinfo number\377s for information on the event of that number.");
-					msg_print(Ind, "\377sType \377u/evsign number\377s to participate in the event of that number.");
+					msg_print(Ind, " \377WType \377U/evinfo number\377W for information on the event of that number.");
+					msg_print(Ind, " \377WType \377U/evsign number\377W to participate in the event of that number.");
 				}
 				msg_print(Ind, "\377d ");
 			} else if ((k < 1) || (k > MAX_GLOBAL_EVENTS)) {

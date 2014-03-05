@@ -6780,13 +6780,14 @@ void announce_global_event(int ge_id) {
 	int time_left = ge->announcement_time - ((turn - ge->start_turn) / cfg.fps);
 
 	/* display minutes, if at least 120s left */
-	if (time_left >= 120) msg_broadcast_format(0, "\374\377W[%s (%d) starts in %d minutes - enter \377s/evinfo\377W]", ge->title, ge_id + 1, time_left / 60);
+	//if (time_left >= 120) msg_broadcast_format(0, "\374\377W[%s (%d) starts in %d minutes. See \377s/evinfo\377W]", ge->title, ge_id + 1, time_left / 60);
+	if (time_left >= 120) msg_broadcast_format(0, "\374\377U[\377W%s (\377U%d\377W) starts in %d minutes. See /evinfo.\377U]", ge->title, ge_id + 1, time_left / 60);
 	/* otherwise just seconds */
 	else msg_broadcast_format(0, "\377W[%s (%d) starts in %d seconds!]", ge->title, ge_id + 1, time_left);
 
 	/* display additional commands on first advertisement */
 	if (ge->first_announcement) {
-		msg_broadcast_format(0, "\377WType '/evinfo %d' or '/evsign %d' to learn more or to sign up.", ge_id + 1, ge_id + 1);
+		msg_broadcast_format(0, " \377WType '\377U/evinfo %d\377W' to learn more and '\377U/evsign %d\377W' to sign up.", ge_id + 1, ge_id + 1);
 		ge->first_announcement = FALSE;
 	}
 }
@@ -7121,7 +7122,7 @@ static void process_global_event(int ge_id) {
 					ge->getype = GE_NONE;
 				} else {
 					s_printf("%s EVENT_STARTS: %d (%s) has %d participants.\n", showtime(), ge_id + 1, ge->title, participants);
-					msg_broadcast_format(0, "\374\377C[>>%s (%d) starts now!<<]", ge->title, ge_id + 1);
+					msg_broadcast_format(0, "\374\377U[>>\377C%s (\377U%d\377C) starts now!\377U<<]", ge->title, ge_id + 1);
 					
 					/* memorize each character's participation */
 					for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
@@ -7139,6 +7140,10 @@ static void process_global_event(int ge_id) {
 			return; /* still announcing */
 		}
 	}
+
+	/* Event starts immediately without announcement time? Still display a hint message. */
+	if (!ge->announcement_time && !ge->state[0])
+		msg_broadcast_format(0, " \377WType '\377U/evinfo %d\377W' to learn more and '\377U/evsign %d\377W' to sign up.", ge_id + 1, ge_id + 1);
 
 	/* if event is not yet over, check if it could be.. */
 	if (ge->state[0] != 255) {
@@ -7586,7 +7591,6 @@ static void process_global_event(int ge_id) {
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			ge->state[0] = 1;
-			msg_broadcast_format(0, "\377WType '/evinfo %d' or '/evsign %d' to learn more or to sign up.", ge_id + 1, ge_id + 1);
 			break;
 		case 1: /* running - not much to do here actually :) it's all handled by global_event_signup */
 			if (ge->extra[1]) { /* new challenge to process? */
