@@ -86,6 +86,8 @@ bool inkey_flag = FALSE;
 bool inkey_interact_macros = FALSE;
 bool inkey_msg = FALSE;
 
+bool inkey_letter_all = FALSE;
+
 s16b macro__num;
 cptr *macro__pat;
 cptr *macro__act;

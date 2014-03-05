@@ -202,6 +202,8 @@ extern bool inkey_flag; /* We're currently reading keyboard input (via inkey()) 
 extern bool inkey_interact_macros; /* In macro menu, no macros may act */
 extern bool inkey_msg;/* A chat message is currently being entered */
 
+extern bool inkey_letter_all;
+
 extern s16b macro__num;
 extern cptr *macro__pat;
 extern cptr *macro__act;

@@ -1422,8 +1422,7 @@ static void c_ptr_last(int x, int y, int n, byte attr, char *str)
  * Jir -- added history.
  * TODO: cursor editing
  */
-bool askfor_aux(char *buf, int len, char mode)
-{
+bool askfor_aux(char *buf, int len, char mode) {
 	int y, x;
 	int i = 0;
 	int k = 0;
@@ -1482,8 +1481,7 @@ bool askfor_aux(char *buf, int len, char mode)
 	}
 
 	/* Process input */
-	while (!done)
-	{
+	while (!done) {
 		/* Place cursor */
 		Term_gotoxy(x + k, y);
 
@@ -1491,8 +1489,7 @@ bool askfor_aux(char *buf, int len, char mode)
 		i = inkey();
 
 		/* Analyze the key */
-		switch (i)
-		{
+		switch (i) {
 			case ESCAPE:
 			case KTRL('X'):
 			k = 0;
@@ -1511,16 +1508,14 @@ bool askfor_aux(char *buf, int len, char mode)
 			break;
 
 			case KTRL('I'): /* TAB */
-			if (mode & ASKFOR_CHATTING)
-			{
+			if (mode & ASKFOR_CHATTING) {
 				/* Change chatting mode - mikaelh */
 				chat_mode++;
 				if (chat_mode > CHAT_MODE_GUILD)
 					chat_mode = CHAT_MODE_NORMAL;
 
 				/* HACK - Change the prompt */
-				switch (chat_mode)
-				{
+				switch (chat_mode) {
 					case CHAT_MODE_PARTY:
 						c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
 
@@ -1552,16 +1547,14 @@ bool askfor_aux(char *buf, int len, char mode)
 			break;
 
 			case KTRL('U'): /* reverse KTRL('I') */
-			if (mode & ASKFOR_CHATTING)
-			{
+			if (mode & ASKFOR_CHATTING) {
 				/* Reverse change chatting mode */
 				chat_mode--;
 				if (chat_mode < CHAT_MODE_NORMAL)
 					chat_mode = CHAT_MODE_GUILD;
 
 				/* HACK - Change the prompt */
-				switch (chat_mode)
-				{
+				switch (chat_mode) {
 					case CHAT_MODE_PARTY:
 						c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
 
@@ -1694,8 +1687,7 @@ bool askfor_aux(char *buf, int len, char mode)
 			k = strlen(buf);
 			break;
 
-			case KTRL('W'):
-			{
+			case KTRL('W'): {
 				bool tail = FALSE;
 				for (--k; k >= 0; k--)
 				{
@@ -1712,14 +1704,16 @@ bool askfor_aux(char *buf, int len, char mode)
 			}
 
 			default:
-			if ((k < len) && (isprint(i)))
-			{
-				buf[k++] = i;
-			}
-			else
-			{
-				bell();
-			}
+				/* inkey_letter_all hack for c_get_quantity() */
+				//if (inkey_letter_all && !k && ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z'))) { i = 'a';
+				if (inkey_letter_all && !k && (i == 'a' || i == 'A')) {
+					buf[k++] = i;
+					done = TRUE;
+					break;
+				}
+
+				if ((k < len) && (isprint(i))) buf[k++] = i;
+				else bell();
 			break;
 		}
 
@@ -1727,17 +1721,17 @@ bool askfor_aux(char *buf, int len, char mode)
 		buf[k] = '\0';
 
 		/* Update the entry */
-		if (!(mode & ASKFOR_PRIVATE))
-		{
+		if (!(mode & ASKFOR_PRIVATE)) {
 			Term_erase(x, y, vis_len);
 			c_ptr_last(x, y, vis_len, TERM_WHITE, buf);
-		}
-		else
-		{
+		} else {
 			Term_erase(x + k, y, len - k);
 			if (k) Term_putch(x + k - 1, y, TERM_WHITE, 'x');
 		}
 	}
+
+	/* c_get_quantity() hack is in any case inactive again */
+	inkey_letter_all = FALSE;
 
 	/* The top line is OK now */
 	topline_icky = FALSE;
@@ -1751,24 +1745,19 @@ bool askfor_aux(char *buf, int len, char mode)
 	if (nohist) return (TRUE);
 
 	/* Add this to the history */
-	if (mode & ASKFOR_CHATTING)
-	{
+	if (mode & ASKFOR_CHATTING) {
 		strncpy(message_history_chat[hist_chat_end], buf, sizeof(*message_history_chat) - 1);
 		message_history_chat[hist_chat_end][sizeof(*message_history_chat) - 1] = '\0';
 		hist_chat_end++;
-		if (hist_chat_end >= MSG_HISTORY_MAX)
-		{
+		if (hist_chat_end >= MSG_HISTORY_MAX) {
 			hist_chat_end = 0;
 			hist_chat_looped = TRUE;
 		}
-	}
-	else
-	{
+	} else {
 		strncpy(message_history[hist_end], buf, sizeof(*message_history) - 1);
 		message_history[hist_end][sizeof(*message_history) - 1] = '\0';
 		hist_end++;
-		if (hist_end >= MSG_HISTORY_MAX)
-		{
+		if (hist_end >= MSG_HISTORY_MAX) {
 			hist_end = 0;
 			hist_looped = TRUE;
 		}
@@ -2896,8 +2885,7 @@ void c_msg_format(cptr fmt, ...)
  * Hack -- allow "command_arg" to specify a quantity
  */
 #define QUANTITY_WIDTH 10
-s32b c_get_quantity(cptr prompt, s32b max)
-{
+s32b c_get_quantity(cptr prompt, s32b max) {
 	s32b amt;
 	char tmp[80];
 	char buf[80];
@@ -2907,10 +2895,10 @@ s32b c_get_quantity(cptr prompt, s32b max)
 	s32b i1 = 0, i2 = 0, mul = 1;
 
 	/* Build a prompt if needed */
-	if (!prompt)
-	{
+	if (!prompt) {
 		/* Build a prompt */
-		sprintf(tmp, "Quantity (1-%d, any letter = all): ", max);
+		inkey_letter_all = TRUE;
+		sprintf(tmp, "Quantity (1-%d, 'a' for all): ", max);
 
 		/* Use that prompt */
 		prompt = tmp;
@@ -2979,7 +2967,8 @@ s32b c_get_quantity(cptr prompt, s32b max)
 
 
 	/* 'a' means "all" - C. Blue */
-	if (isalpha(buf[0])) {
+	//if (isalpha(buf[0])) {
+	if (buf[0] == 'a') {
 		if (max >= 0) amt = max;
 		/* hack for dropping gold (max is -1) */
 		else amt = 1000000000;
