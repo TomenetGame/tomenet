@@ -1846,6 +1846,9 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 					strcat(start, deltmp);
 				}
 			}
+
+			/* new: trim trailing spaces, if anything was deleted */
+			if (delete) while (modins[strlen(modins) - 1] == ' ') modins[strlen(modins) - 1] = 0;
 		}
 		/* append? */
 		if (append) {
