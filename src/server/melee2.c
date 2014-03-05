@@ -1809,7 +1809,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* Assume "normal" target */
 	bool normal = TRUE;
 	/* Assume "projectable" */
-	bool direct = TRUE;
+	bool direct = TRUE, local = FALSE;
 	bool stupid, summon = FALSE;
 	int rad = 0, srad;
 	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
@@ -1893,6 +1893,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 		normal = FALSE;
 		direct = FALSE;
+		local = TRUE;
 
 		/* Hack -- summon around itself */
 		y = ys = m_ptr->fy;
@@ -1940,6 +1941,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 //			if (rad > 3 || (rad == 3 && !(r_ptr->flags2 & (RF2_POWERFUL)))) 
 			if (rad > srad) {
+				local = TRUE;
+
 				/* Remove inappropriate spells */
 				f4 &= ~(RF4_RADIUS_SPELLS);
 				f5 &= ~(RF5_RADIUS_SPELLS);
@@ -2198,7 +2201,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		/* RF4_ROCKET */
 		case RF4_OFFSET+3:
 		{
-			disturb(Ind, 1, 0);
+			if (!local) disturb(Ind, 1, 0);
 //			if (blind) msg_format(Ind, "%^s shoots something.", m_name);
 			if (blind) msg_print(Ind, "You hear a dull, heavy sound.");
 //			else msg_format(Ind, "%^s fires a rocket.", m_name);
@@ -2577,7 +2580,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		/* RF4_BR_DISI */
 		case RF4_OFFSET+28:
 		{
-			disturb(Ind, 1, 0);
+			if (!local) disturb(Ind, 1, 0);
 			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes disintegration.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disintegration for", m_name);
@@ -2598,32 +2601,29 @@ bool make_attack_spell(int Ind, int m_idx) {
 			break;
 		}
 
-		/* RF4_XXX7X4 */
+		/* RF4_MOAN */
 		case RF4_OFFSET+30:
-		{
-if (season_halloween) {
-			/* Halloween event code for ranged MOAN -C. Blue */
+			if (season_halloween) {
+				/* Halloween event code for ranged MOAN -C. Blue */
 
-			disturb(Ind, 1, 0);
-			switch(rand_int(4))
-			{
-			/* Colour change for Halloween */
-			case 0:
-				msg_format(Ind, "\377o%^s screams: Trick or treat!", m_name);
-				break;
-			case 1:
-				msg_format(Ind, "\377o%^s says: Happy halloween!", m_name);
-				break;
-			case 2:
-				msg_format(Ind, "\377o%^s moans loudly.", m_name);
-				break;
-			case 3:
-				msg_format(Ind, "\377o%^s says: Have you seen The Great Pumpkin?", m_name);
-				break;
+				disturb(Ind, 1, 0);
+				switch(rand_int(4)) {
+				/* Colour change for Halloween */
+				case 0:
+					msg_format(Ind, "\377o%^s screams: Trick or treat!", m_name);
+					break;
+				case 1:
+					msg_format(Ind, "\377o%^s says: Happy halloween!", m_name);
+					break;
+				case 2:
+					msg_format(Ind, "\377o%^s moans loudly.", m_name);
+					break;
+				case 3:
+					msg_format(Ind, "\377o%^s says: Have you seen The Great Pumpkin?", m_name);
+					break;
+				}
 			}
-}
 			break;
-		}
 
 		/* RF4_BOULDER */
 		case RF4_OFFSET+31:

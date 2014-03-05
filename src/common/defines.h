@@ -5057,7 +5057,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
  #define RF4_RADIUS_SPELLS (0xafffff08) /* Changed for Halloween event, now includes ranged MOAN. -C. Blue */
  //1010-1111-1111-1111-1111-1111-0000-1000
 #else
- /* Note: DISI and ROCKET _can_ be used for 'tunneling' by monsters just
+ /* Note: RF4_BR_DISI and RF4_ROCKET _can_ be used for 'tunneling' by monsters just
     because they are _excluded_ here. Including them would break that. */
  #define RF4_RADIUS_SPELLS (RF4_MOAN | RF4_BR_NUKE | 0x0fffff00)
 #endif
