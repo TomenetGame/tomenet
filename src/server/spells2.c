@@ -1557,15 +1557,13 @@ void self_knowledge(int Ind) {
 /*
  * Forget everything
  */
-bool lose_all_info(int Ind)
-{
+bool lose_all_info(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
-
 	char note2[80], noteid[10];
 
-
-	if (safe_area(Ind)) return(TRUE);
+	if (safe_area(Ind)) return TRUE;
+	if (p_ptr->auto_id) return FALSE;
 
 	/* Forget info about objects */
 	for (i = 0; i < INVEN_TOTAL; i++) {
