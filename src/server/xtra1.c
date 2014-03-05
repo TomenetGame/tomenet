@@ -136,23 +136,32 @@ static void prt_stat(int Ind, int stat)
 /*
  * Prints "title", including "wizard" or "winner" as needed.
  */
-static void prt_title(int Ind)
-{
+static void prt_title(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	cptr p = "";
 
+	/* Ghost */
+	if (p_ptr->ghost) p = "\377rGhost (dead)";
+
 	/* Winner */
+#if 0
 	if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL)) {
 		if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
 			p = (p_ptr->male ? "**EMPEROR**" : "**EMPRESS**");
 		else
 			p = (p_ptr->male ? "**KING**" : "**QUEEN**");
 	}
+#else
+	if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL)) {
+		char t[MAX_CHARS];
+		strcpy(t, "\377v");
+		strcat(t, get_ptitle(p_ptr, TRUE));
+		Send_title(Ind, t);
+		return;
+	}
+#endif
 	/* Normal */
 	else p = get_ptitle(p_ptr, TRUE);
-
-	/* Ghost */
-	if (p_ptr->ghost) p = "\377rGhost (dead)";
 
 	Send_title(Ind, p);
 }
