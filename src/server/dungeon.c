@@ -3409,7 +3409,7 @@ static void do_recall(int Ind, bool bypass)
 
 	/* into dungeon/tower */
 	/* even at runlevel 2048 players may still recall..for now */
-	else if ((cfg.runlevel > 4) && (cfg.runlevel <= 2048)) {
+	else if (cfg.runlevel > 4 && cfg.runlevel != 2049) {
 		wilderness_type *w_ptr = &wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx];
 //		wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		/* Messages */
