@@ -607,6 +607,9 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.alert_mana,		FALSE,	1,	0, 101, TRUE,
 	"alert_mana",			"Beep about critically low mana pool" },
+
+	{ &c_cfg.no_verify_sell,	FALSE,	4,	0, 102, TRUE,
+	"no_verify_sell",		"Skip safety question when selling items" },
 };
 
 

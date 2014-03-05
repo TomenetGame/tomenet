@@ -3196,6 +3196,7 @@ struct client_opts {
 	bool view_torch_grids;
 	bool newbie_hints;
 	bool no_verify_destroy; //dungeon_align;
+	bool no_verify_sell;
 	bool whole_ammo_stack; //dungeon_stair;
 	bool recall_flicker;
 /*	bool flow_by_sound;	*/

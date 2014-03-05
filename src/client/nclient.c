@@ -2632,11 +2632,14 @@ int Receive_sell(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &price)) <= 0) return n;
 
 	/* Tell the user about the price */
-	if (store_num == 57) sprintf(buf, "Really donate it?");
-	else sprintf(buf, "Accept %d gold?", price);
+	if (c_cfg.no_verify_sell) Send_store_confirm();
+	else {
+		if (store_num == 57) sprintf(buf, "Really donate it?");
+		else sprintf(buf, "Accept %d gold?", price);
 
-	if (get_check2(buf, FALSE))
-		Send_store_confirm();
+		if (get_check2(buf, FALSE))
+			Send_store_confirm();
+	}
 
 	return 1;
 }
