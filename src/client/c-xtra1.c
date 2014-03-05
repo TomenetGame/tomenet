@@ -2273,7 +2273,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		if (csheet_boni[i].cb[6] & CB7_RINVS) { c_put_str(TERM_WHITE, "+", 12, 25+i); header_color[1][11] = TERM_WHITE; }
 		if (csheet_boni[i].cb[6] & CB7_RVAMP) { c_put_str(TERM_WHITE, "+", 13, 25+i); header_color[1][12] = TERM_WHITE; }
 		if (csheet_boni[i].cb[6] & CB7_RIDNT) { c_put_str(TERM_WHITE, "+", 14, 25+i); header_color[1][13] = TERM_WHITE; }
-		if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_BLUE, "~", 15, 25+i); if (header_color[1][14] == TERM_L_DARK) header_color[1][14] = TERM_YELLOW; }
+		if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_L_BLUE, "~", 15, 25+i); if (header_color[1][14] == TERM_L_DARK) header_color[1][14] = TERM_YELLOW; }
 		if (csheet_boni[i].cb[12] & CB13_XTREE) { c_put_str(TERM_GREEN, "#", 15, 25+i); if (header_color[1][14] == TERM_L_DARK) header_color[1][14] = TERM_YELLOW; }
 		if ((csheet_boni[i].cb[12] & CB13_XTREE) && (csheet_boni[i].cb[12] & CB13_XSWIM)) c_put_str(TERM_YELLOW, "+", 15, 25+i); //almost flying~
 		if (csheet_boni[i].cb[6] & CB7_RRLEV) { c_put_str(TERM_WHITE, "+", 15, 25+i); if (header_color[1][14] != TERM_WHITE) header_color[1][14] = TERM_WHITE; }
@@ -2573,7 +2573,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 	c_put_str(header_color[1][1], "Para:", 2, 20);
 	c_put_str(header_color[1][2], "Blnd:", 3, 20);
 	c_put_str(header_color[1][3], "SInv:", 4, 20); //Moved this to be close to BLND
-	c_put_str(header_color[1][4], "Fall:", 5, 20);
+	c_put_str(header_color[1][4], "FFal:", 5, 20);
 	c_put_str(header_color[1][5], "Food:", 6, 20);
 	c_put_str(header_color[1][6], "Life:", 7, 20); //Could have a better descriptor...
 	c_put_str(header_color[1][7], "RgHP:", 8, 20);
@@ -2582,10 +2582,10 @@ else { //Character sheet boni page, finally! :) - Kurzel
 	c_put_str(header_color[1][10], "Refl:", 11, 20);
 	c_put_str(header_color[1][11], "Invs:", 12, 20);
 	c_put_str(header_color[1][12], "Vamp:", 13, 20);
-	c_put_str(header_color[1][13], "Idnt:", 14, 20);
+	c_put_str(header_color[1][13], "ID  :", 14, 20);
 	c_put_str(header_color[1][14], "Levi:", 15, 20);
 	c_put_str(header_color[1][15], "Clmb:", 16, 20);
-	c_put_str(header_color[1][16], "Wrth:", 17, 20);
+	c_put_str(header_color[1][16], "Wrai:", 17, 20);
 	c_put_str(header_color[1][17], "AMSh:", 18, 20);
 	c_put_str(header_color[1][18], "Aggr:", 19, 20);
 
@@ -2598,7 +2598,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 	c_put_str(header_color[2][6], "Blow:", 7, 40);
 	c_put_str(header_color[2][7], "Crit:", 8, 40);
 	c_put_str(header_color[2][8], "Shot:", 9, 40);
-	c_put_str(header_color[2][9], "Migh:", 10, 40);
+	c_put_str(header_color[2][9], "Mght:", 10, 40);
 	c_put_str(header_color[2][10], "MxHP:", 11, 40);
 	c_put_str(header_color[2][11], "MxMP:", 12, 40);
 	c_put_str(header_color[2][12], "Luck:", 13, 40);
