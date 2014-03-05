@@ -2509,8 +2509,7 @@ static void display_store(int Ind)
  *
  * Return TRUE if purchase is NOT successful
  */
-static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price)
-{
+static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price, bool quiet) {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
 	owner_type *ot_ptr;
@@ -2553,7 +2552,7 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price)
 	/* No reason to haggle */
 	if (final_ask >= purse) {
 		/* Message */
-		msg_print(Ind, "You instantly agree upon the price.");
+		if (!quiet) msg_print(Ind, "You instantly agree upon the price.");
 
 		/* Offer full purse */
 		final_ask = purse;
@@ -2562,7 +2561,7 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s64b *price)
 	/* No need to haggle */
 	else {
 		/* Message */
-		msg_print(Ind, "You eventually agree upon the price.");
+		if (!quiet) msg_print(Ind, "You eventually agree upon the price.");
 	}
 
 	/* Final price */
@@ -3516,8 +3515,12 @@ void store_sell(int Ind, int item, int amt) {
 		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
 
 		/* Haggle for it */
-		//choice = sell_haggle(Ind, &sold_obj, &price);
-		sell_haggle(Ind, &sold_obj, &price);
+		//choice = sell_haggle(Ind, &sold_obj, &price, FALSE);
+#if 0 /* if haggling isn't implemented anyway.. */
+		sell_haggle(Ind, &sold_obj, &price, FALSE);
+#else /* we might as well just skip the "you eventually agree" message. */
+		sell_haggle(Ind, &sold_obj, &price, TRUE);
+#endif
 
 		/* Tell the client about the price */
 		Send_store_sell(Ind, price);
@@ -3617,7 +3620,7 @@ void store_confirm(int Ind) {
 		sold_obj.pval = o_ptr->pval * amt / o_ptr->number;
 	}
 
-	(void) sell_haggle(Ind, &sold_obj, &price_redundance);
+	(void) sell_haggle(Ind, &sold_obj, &price_redundance, TRUE);
 	if (price != price_redundance && !museum) {
 		s_printf("$INTRUSION$ Tried to sell %d for %d! Sold by %s.\n", (int)price_redundance, (int)price, p_ptr->name);
 #if 0
