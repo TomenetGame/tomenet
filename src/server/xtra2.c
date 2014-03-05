@@ -3708,14 +3708,13 @@ static void check_training(int Ind)
 /*
  * Advance experience levels and print experience
  */
-void check_experience(int Ind)
-{
+void check_experience(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	char str[160];
 
 	bool newlv = FALSE;
-	int old_lev;
-//	long int i;
+	int old_lev, i;
+	//long int i;
 #ifdef LEVEL_GAINING_LIMIT
 	int limit;
 #endif	// LEVEL_GAINING_LIMIT
@@ -3800,7 +3799,7 @@ void check_experience(int Ind)
 			(p_ptr->exp >= (s64b)player_exp[p_ptr->lev-1]))
 #endif
 	{
-		if(p_ptr->inval && p_ptr->lev >= 25) {
+		if (p_ptr->inval && p_ptr->lev >= 25) {
 			msg_print(Ind, "\377rYou cannot gain level further, wait for an admin to validate your account.");
 			break;
 //			return;
@@ -3883,6 +3882,18 @@ void check_experience(int Ind)
 	{
 		/* Gain a level */
 		p_ptr->max_lev++;
+	}
+
+	/* Try to own items we previously couldn't own */
+	if (old_lev < p_ptr->lev) {
+		object_type *o_ptr;
+
+		for (i = 0; i < INVEN_PACK; i++) {
+			o_ptr = &p_ptr->inventory[i];
+			if (!o_ptr->k_idx) continue;
+			if (o_ptr->owner == p_ptr->id) continue;
+			can_use(Ind, o_ptr);
+		}
 	}
 
 	/* Redraw level-depending stuff.. */
