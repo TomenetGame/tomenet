@@ -1198,12 +1198,11 @@ void show_inven(void) {
 void show_equip(void) {
 	int	i, j, k, l;
 	int	col, len, lim;
-	long int wgt, totalwgt = 0;
+	long int wgt, totalwgt = 0, armourwgt = 0;
 
 	object_type *o_ptr;
 
 	char	o_name[ONAME_LEN];
-
 	char	tmp_val[80];
 
 	int	out_index[23];
@@ -1287,6 +1286,7 @@ void show_equip(void) {
 				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
 			put_str(tmp_val, j + 1, 71);
 			totalwgt += wgt;
+			if (is_armour(o_ptr->tval)) armourwgt += wgt;
 		}
 	}
 
@@ -1299,6 +1299,14 @@ void show_equip(void) {
 		else
 			(void)sprintf(tmp_val, "Total: %3liM%1li lb", totalwgt / 10000000, (totalwgt % 10000000) / 1000000);
 		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
+
+		if (armourwgt < 10000) /* still fitting into 3 digits? */
+			(void)sprintf(tmp_val, "Armour: %3li.%1li lb", armourwgt / 10, armourwgt % 10);
+		else if (armourwgt < 10000000) /* still fitting into 3 digits? */
+			(void)sprintf(tmp_val, "Armour: %3lik%1li lb", armourwgt / 10000, (armourwgt % 10000) / 1000);
+		else
+			(void)sprintf(tmp_val, "Armour: %3liM%1li lb", armourwgt / 10000000, (armourwgt % 10000000) / 1000000);
+		c_put_str(TERM_L_BLUE, tmp_val, 0, col);
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
