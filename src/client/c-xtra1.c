@@ -21,8 +21,7 @@
 /*
  * Print character info at given row, column in a 13 char field
  */
-static void prt_field(cptr info, int row, int col)
-{
+static void prt_field(cptr info, int row, int col) {
 	int x, y;
 
 	/* remember cursor position */
@@ -42,57 +41,33 @@ static void prt_field(cptr info, int row, int col)
 /*
  * Converts stat num into a six-char (right justified) string
  */
-void cnv_stat(int val, char *out_val)
-{
-	if (!c_cfg.linear_stats)
-	{
+void cnv_stat(int val, char *out_val) {
+	if (!c_cfg.linear_stats) {
 		/* Above 18 */
-		if (val > 18)
-		{
+		if (val > 18) {
 			int bonus = (val - 18);
 
 			if (bonus >= 220)
-			{
 				sprintf(out_val, "18/%3s", "***");
-			}
 			else if (bonus >= 100)
-			{
 				sprintf(out_val, "18/%03d", bonus);
-			}
 			else
-			{
 				sprintf(out_val, " 18/%02d", bonus);
-			}
 		}
-
 		/* From 3 to 18 */
-		else
-		{
-			sprintf(out_val, "    %2d", val);
-		}
-	}
-	else
-	{
+		else sprintf(out_val, "    %2d", val);
+	} else {
 		/* Above 18 */
-		if (val > 18)
-		{
+		if (val > 18) {
 			int bonus = (val - 18);
 
 			if (bonus >= 220)
-			{
 				sprintf(out_val, "    40");
-			}
 			else
-			{
 				sprintf(out_val, "    %2d", 18 + (bonus / 10));
-			}
 		}
-
 		/* From 3 to 18 */
-		else
-		{
-			sprintf(out_val, "    %2d", val);
-		}
+		else sprintf(out_val, "    %2d", val);
 	}
 }
 
@@ -100,38 +75,26 @@ void cnv_stat(int val, char *out_val)
 /*
  * Print character stat in given row, column
  */
-void prt_stat(int stat, int max, int cur, int cur_base)
-{
+void prt_stat(int stat, int max, int cur, int cur_base) {
 	char tmp[32];
 	int x, y;
 
-	if (client_mode == CLIENT_PARTY)
-	{
-		return;
-	}
+	if (client_mode == CLIENT_PARTY) return;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (cur < max)
-	{
+	if (cur < max) {
 		Term_putstr(0, ROW_STAT + stat, -1, TERM_WHITE, (char*)stat_names_reduced[stat]);
 		cnv_stat(cur, tmp);
 		Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_YELLOW, tmp);
-	}
-
-	else
-	{
+	} else {
 		Term_putstr(0, ROW_STAT + stat, -1, TERM_WHITE, (char*)stat_names[stat]);
 		cnv_stat(cur, tmp);
 		if(cur_base < (18 + 100))
-		{
 			Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_L_GREEN, tmp);
-		}
 		else
-		{
 			Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_L_UMBER, tmp);
-		}
 	}
 
 	/* restore cursor position */
@@ -141,8 +104,7 @@ void prt_stat(int stat, int max, int cur, int cur_base)
 /*
  * Prints "title", including "wizard" or "winner" as needed.
  */
-void prt_title(cptr title)
-{
+void prt_title(cptr title) {
 	prt_field(title, ROW_TITLE, COL_TITLE);
 }
 
@@ -150,8 +112,7 @@ void prt_title(cptr title)
 /*
  * Prints level and experience
  */
-void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv)
-{
+void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv) {
 	char tmp[32];
 	int colour = (level < max_lev) ? TERM_YELLOW : TERM_L_GREEN;
 	int x, y;
@@ -173,29 +134,20 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 	}
 
 	if (!c_cfg.exp_need)
-	{
 		sprintf(tmp, "%9d", (int)cur);
-	}
-	else
-	{
+	else {
 		if (level >= PY_MAX_LEVEL || !adv)
-		{
 			(void)sprintf(tmp, "*********");
-		}
-		else
-		{
+		else {
 			/* Hack -- display in minus (to avoid confusion chez player) */
 			(void)sprintf(tmp, "%9d", (int)(cur - adv));
 		}
 	}
 
-	if (cur >= max)
-	{
+	if (cur >= max) {
                 Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
                 Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_L_GREEN, tmp);
-	}
-	else
-	{
+	} else {
                 Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
                 Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_YELLOW, tmp);
 	}
@@ -207,8 +159,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 /*
  * Prints current gold
  */
-void prt_gold(int gold)
-{
+void prt_gold(int gold) {
 	char tmp[32];
 	int x, y;
 
@@ -226,14 +177,10 @@ void prt_gold(int gold)
 /*
  * Prints current AC
  */
-void prt_ac(int ac)
-{
+void prt_ac(int ac) {
 	char tmp[32];
 	int x, y;
-	if (client_mode == CLIENT_PARTY)
-	{
-		return;
-	}
+	if (client_mode == CLIENT_PARTY) return;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
@@ -249,8 +196,7 @@ void prt_ac(int ac)
 /*
  * Prints Max/Cur hit points
  */
-void prt_hp(int max, int cur)
-{
+void prt_hp(int max, int cur) {
 	char tmp[32];
 	byte color;
 	int x, y; /* for remembering cursor pos */
@@ -258,8 +204,7 @@ void prt_hp(int max, int cur)
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (client_mode == CLIENT_PARTY)
-	{
+	if (client_mode == CLIENT_PARTY) {
 		color = TERM_L_RED;
 		sprintf(tmp, "HP: %4d ", max);
 		c_put_str(color, tmp, CLIENT_PARTY_ROWHP, CLIENT_PARTY_COLHP);
@@ -267,22 +212,15 @@ void prt_hp(int max, int cur)
 		sprintf(tmp, "%4d", cur);
 
 		if (cur >= max)
-		{
 			color = TERM_L_RED;
-		}
 		else if (cur > max / 10)
-		{
 			color = TERM_YELLOW;
-		}
 		else
-		{
 			color = TERM_RED;
-		}
 		c_put_str(color, tmp, CLIENT_PARTY_ROWHP, CLIENT_PARTY_COLHP + 9);
 	}
 	/* DEG Default to else since only 2 types for now */
-	else
-	{
+	else {
 #ifndef CONDENSED_HP_SP
 		put_str("Max HP ", ROW_MAXHP, COL_MAXHP);
 		sprintf(tmp, "%5d", max);
@@ -294,17 +232,11 @@ void prt_hp(int max, int cur)
 		sprintf(tmp, "%5d", cur);
 
 		if (cur >= max)
-		{
 			color = TERM_L_GREEN;
-		}
 		else if (cur > max / 10)
-		{
 			color = TERM_YELLOW;
-		}
 		else
-		{
 			color = TERM_RED;
-		}
 
 		c_put_str(color, tmp, ROW_CURHP, COL_CURHP + 7);
 #else
@@ -321,12 +253,11 @@ void prt_hp(int max, int cur)
 		c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
 #endif
 
-	/* restore cursor position */
-	Term_gotoxy(x, y);
+		/* restore cursor position */
+		Term_gotoxy(x, y);
 	}
 }
-void prt_stamina(int max, int cur)
-{
+void prt_stamina(int max, int cur) {
 	char tmp[32];
 	byte color;
 	int x, y; /* for remembering cursor pos */
@@ -352,27 +283,19 @@ void prt_stamina(int max, int cur)
 	Term_gotoxy(x, y);
 }
 /* DEG print party members hps to screen */
-void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp)
-{
+void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp) {
 	char tmp[32];
 	int rowspacing = 0;
 
-	if (member_num != 0)
-	{
-		rowspacing += (4 * member_num);
-	}
+	if (member_num != 0) rowspacing += (4 * member_num);
 
-	if (client_mode != CLIENT_PARTY)
-	{
-		return;
-	}
+	if (client_mode != CLIENT_PARTY) return;
 
 	if (member_name[0] == '\0' && member_lev == 0) {
 		/* Empty member? Just clear it - mikaelh */
 		int i;
-		for (i = CLIENT_PARTY_ROWMBR + rowspacing; i < CLIENT_PARTY_ROWMBR + rowspacing + 3; i++) {
+		for (i = CLIENT_PARTY_ROWMBR + rowspacing; i < CLIENT_PARTY_ROWMBR + rowspacing + 3; i++)
 			Term_erase(0, i, 12);
-		}
 		return;
 	}
 
@@ -386,17 +309,11 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 	sprintf(tmp, "%4d", member_chp);
 
 	if (member_chp >= member_mhp)
-	{
 		color = TERM_L_RED;
-	}
 	else if (member_chp > member_mhp / 10)
-	{
 		color = TERM_YELLOW;
-	}
 	else
-	{
 		color = TERM_RED;
-	}
 
 	c_put_str(color, tmp, (CLIENT_PARTY_ROWMBR + rowspacing + 1) ,CLIENT_PARTY_COLMBR + 9);
 
@@ -408,17 +325,11 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 	sprintf(tmp, "%4d", member_csp);
 
 	if (member_csp >= member_msp)
-	{
 		color = TERM_L_BLUE;
-	}
 	else if (member_csp > member_msp / 10)
-	{
 		color = TERM_YELLOW;
-	}
 	else
-	{
 		color = TERM_RED;
-	}
 
 	c_put_str(color, tmp, (CLIENT_PARTY_ROWMBR + rowspacing + 2) , CLIENT_PARTY_COLMBR + 9);
 }
@@ -427,8 +338,7 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 /*
  * Prints Max/Cur spell points
  */
-void prt_sp(int max, int cur)
-{
+void prt_sp(int max, int cur) {
 	char tmp[32];
 	byte color;
 	int x, y; /* for remembering cursor pos */
@@ -436,8 +346,7 @@ void prt_sp(int max, int cur)
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (client_mode == CLIENT_PARTY)
-	{
+	if (client_mode == CLIENT_PARTY) {
 		sprintf(tmp, "MP: %4d ", max);
 		color = TERM_L_BLUE;
 		c_put_str(color, tmp, CLIENT_PARTY_ROWSP, CLIENT_PARTY_COLSP);
@@ -446,22 +355,14 @@ void prt_sp(int max, int cur)
 		color = TERM_L_GREEN;
 
 		if (cur >= max)
-		{
 			color = TERM_L_BLUE;
-		}
 		else if (cur > max / 10)
-		{
 			color = TERM_YELLOW;
-		}
 		else
-		{
 			color = TERM_RED;
-		}
 
 		c_put_str(color, tmp, CLIENT_PARTY_ROWSP, CLIENT_PARTY_COLSP + 9);
-	}
-	else
-	{
+	} else {
 #ifndef CONDENSED_HP_SP
 		put_str("Max MP ", ROW_MAXSP, COL_MAXSP);
 
@@ -476,17 +377,11 @@ void prt_sp(int max, int cur)
 		sprintf(tmp, "%5d", cur);
 
 		if (cur >= max)
-		{
 			color = TERM_L_GREEN;
-		}
 		else if (cur > max / 10)
-		{
 			color = TERM_YELLOW;
-		}
 		else
-		{
 			color = TERM_RED;
-		}
 
 		c_put_str(color, tmp, ROW_CURSP, COL_CURSP + 7);
 #else
@@ -511,14 +406,11 @@ void prt_sp(int max, int cur)
 /*
  * Prints the player's current sanity.
  */
-void prt_sane(byte attr, cptr buf)
-{
+void prt_sane(byte attr, cptr buf) {
 	int x, y;
 
 	if (client_mode == CLIENT_PARTY)
-	{
 		return;
-	}
 
 #ifdef SHOW_SANITY	/* NO SANITY DISPLAY!!! */
 
@@ -537,8 +429,7 @@ void prt_sane(byte attr, cptr buf)
 /*
  * Prints depth into the dungeon
  */
-void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cptr name)
-{
+void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cptr name) {
 	char depths[32];
 	int x2, y2;
 
@@ -581,42 +472,24 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
 /*
  * Prints hunger information
  */
-void prt_hunger(int food)
-{
+void prt_hunger(int food) {
 	int x, y;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	if (food < PY_FOOD_FAINT)
-	{
 		c_put_str(TERM_RED, "Weak  ", ROW_HUNGRY, COL_HUNGRY);
-	}
-
 	else if (food < PY_FOOD_WEAK)
-	{
 		c_put_str(TERM_ORANGE, "Weak  ", ROW_HUNGRY, COL_HUNGRY);
-	}
-
 	else if (food < PY_FOOD_ALERT)
-	{
 		c_put_str(TERM_YELLOW, "Hungry", ROW_HUNGRY, COL_HUNGRY);
-	}
-
 	else if (food < PY_FOOD_FULL)
-	{
 		c_put_str(TERM_L_GREEN, "      ", ROW_HUNGRY, COL_HUNGRY);
-	}
-
 	else if (food < PY_FOOD_MAX)
-	{
 		c_put_str(TERM_L_GREEN, "Full  ", ROW_HUNGRY, COL_HUNGRY);
-	}
-
 	else
-	{
 		c_put_str(TERM_GREEN, "Gorged", ROW_HUNGRY, COL_HUNGRY);
-	}
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -625,21 +498,16 @@ void prt_hunger(int food)
 /*
  * Prints blindness status
  */
-void prt_blind(bool blind)
-{
+void prt_blind(bool blind) {
 	int x, y;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	if (blind)
-	{
 		c_put_str(TERM_ORANGE, "Blind", ROW_BLIND, COL_BLIND);
-	}
 	else
-	{
 		put_str("     ", ROW_BLIND, COL_BLIND);
-	}
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -648,21 +516,16 @@ void prt_blind(bool blind)
 /*
  * Prints confused status
  */
-void prt_confused(bool confused)
-{
+void prt_confused(bool confused) {
 	int x, y;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	if (confused)
-	{
 		c_put_str(TERM_ORANGE, "Confused", ROW_CONFUSED, COL_CONFUSED);
-	}
 	else
-	{
 		put_str("        ", ROW_CONFUSED, COL_CONFUSED);
-	}
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -671,21 +534,16 @@ void prt_confused(bool confused)
 /*
  * Prints fear status
  */
-void prt_afraid(bool fear)
-{
+void prt_afraid(bool fear) {
 	int x, y;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	if (fear)
-	{
 		c_put_str(TERM_ORANGE, "Afraid", ROW_AFRAID, COL_AFRAID);
-	}
 	else
-	{
 		put_str("      ", ROW_AFRAID, COL_AFRAID);
-	}
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -694,21 +552,16 @@ void prt_afraid(bool fear)
 /*
  * Prints poisoned status
  */
-void prt_poisoned(bool poisoned)
-{
+void prt_poisoned(bool poisoned) {
 	int x, y;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	if (poisoned)
-	{
 		c_put_str(TERM_ORANGE, "Poisoned", ROW_POISONED, COL_POISONED);
-	}
 	else
-	{
 		put_str("        ", ROW_POISONED, COL_POISONED);
-	}
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -717,29 +570,21 @@ void prt_poisoned(bool poisoned)
 /*
  * Prints paralyzed/searching status
  */
-void prt_state(bool paralyzed, bool searching, bool resting)
-{
+void prt_state(bool paralyzed, bool searching, bool resting) {
 	byte attr = TERM_WHITE;
 	char text[16];
 	int x, y;
 
-	if (paralyzed)
-	{
+	if (paralyzed) {
 		attr = TERM_RED;
-
 		strcpy(text, "Paralyzed!  ");
 	}
 
-	else if (searching)
-	{
+	else if (searching) {
 #if 0
 		if (get_skill(SKILL_STEALTH) <= 10)
-		{
 			strcpy(text, "Searching   ");
-		}
-
-		else
-		{
+		else {
 			attr = TERM_L_DARK;
 			strcpy(text,"Stlth Mode  ");
 		}
@@ -750,13 +595,9 @@ void prt_state(bool paralyzed, bool searching, bool resting)
 	}
 
 	else if (resting)
-	{
 		strcpy(text, "Resting     ");
-	}
 	else
-	{
 		strcpy(text, "            ");
-	}
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
@@ -770,8 +611,7 @@ void prt_state(bool paralyzed, bool searching, bool resting)
 /*
  * Prints speed
  */
-void prt_speed(int speed)
-{
+void prt_speed(int speed) {
 	int attr = TERM_WHITE;
 	char buf[32] = "";
 	int x, y;
@@ -806,21 +646,16 @@ void prt_speed(int speed)
  * Prints ability to gain skillss
  * Note: Replacing this in 4.4.8.5 by a Blows/Round display, see function below - C. Blue
  */
-void prt_study(bool study)
-{
+void prt_study(bool study) {
 	int x, y;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	if (study)
-	{
 		put_str("Skill", ROW_STUDY, COL_STUDY);
-	}
 	else
-	{
 		put_str("     ", ROW_STUDY, COL_STUDY);
-	}
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -842,45 +677,28 @@ void prt_bpr(byte bpr, byte attr) {
 /*
  * Prints cut status
  */
-void prt_cut(int cut)
-{
+void prt_cut(int cut) {
 	int x, y;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	if (cut > 1000)
-	{
 		c_put_str(TERM_L_RED, "Mortal wound", ROW_CUT, COL_CUT);
-	}
 	else if (cut > 200)
-	{
 		c_put_str(TERM_RED, "Deep gash  ", ROW_CUT, COL_CUT);
-	}
 	else if (cut > 100)
-	{
 		c_put_str(TERM_RED, "Severe cut  ", ROW_CUT, COL_CUT);
-	}
 	else if (cut > 50)
-	{
 		c_put_str(TERM_ORANGE, "Nasty cut   ", ROW_CUT, COL_CUT);
-	}
 	else if (cut > 25)
-	{
 		c_put_str(TERM_ORANGE, "Bad cut     ", ROW_CUT, COL_CUT);
-	}
 	else if (cut > 10)
-	{
 		c_put_str(TERM_YELLOW, "Light cut  ", ROW_CUT, COL_CUT);
-	}
 	else if (cut)
-	{
 		c_put_str(TERM_YELLOW, "Graze     ", ROW_CUT, COL_CUT);
-	}
 	else
-	{
 		put_str("            ", ROW_CUT, COL_CUT);
-	}
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -889,29 +707,20 @@ void prt_cut(int cut)
 /*
  * Prints stun status
  */
-void prt_stun(int stun)
-{
+void prt_stun(int stun) {
 	int x, y;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	if (stun > 100)
-	{
 		c_put_str(TERM_RED, "Knocked out ", ROW_STUN, COL_STUN);
-	}
 	else if (stun > 50)
-	{
 		c_put_str(TERM_ORANGE, "Heavy stun  ", ROW_STUN, COL_STUN);
-	}
 	else if (stun)
-	{
 		c_put_str(TERM_ORANGE, "Stun        ", ROW_STUN, COL_STUN);
-	}
 	else
-	{
 		put_str("            ", ROW_STUN, COL_STUN);
-	}
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
@@ -920,12 +729,10 @@ void prt_stun(int stun)
 /*
  * Prints race/class info
  */
-void prt_basic(void)
-{
+void prt_basic(void) {
 	cptr r = NULL, c = NULL;
 
         r = p_ptr->rp_ptr->title;
-
         c = p_ptr->cp_ptr->title;
 
 	prt_field((char *)r, ROW_RACE, COL_RACE);
@@ -933,8 +740,7 @@ void prt_basic(void)
 }
 
 /* Print AFK status */
-void prt_AFK(byte afk)
-{
+void prt_AFK(byte afk) {
 	int x, y;
 
 	/* Remember AFK status */
@@ -980,8 +786,7 @@ void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, 
 	Term_gotoxy(x, y);
 }
 
-void prt_extra_status(cptr status)
-{
+void prt_extra_status(cptr status) {
 	int x, y;
 
 	/* remember cursor position */
@@ -1043,16 +848,16 @@ void prt_lagometer(int lag) {
 		num = 10;
 	} else {
 #endif
-	num = lag / 50 + 1;
-	if (num > 10) num = 10;
+		num = lag / 50 + 1;
+		if (num > 10) num = 10;
 
-	/* hack: we have previous packet assumed to be lost? */
-	if (lag == 9999) num = 10;
+		/* hack: we have previous packet assumed to be lost? */
+		if (lag == 9999) num = 10;
 
-	if (num >= 9) attr = TERM_RED;
-	else if (num >= 7) attr = TERM_ORANGE;
-	else if (num >= 5) attr = TERM_YELLOW;
-	else if (num >= 3) attr = TERM_GREEN;
+		if (num >= 9) attr = TERM_RED;
+		else if (num >= 7) attr = TERM_ORANGE;
+		else if (num >= 5) attr = TERM_YELLOW;
+		else if (num >= 3) attr = TERM_GREEN;
 #ifdef BRIGHTRED_PACKETLOSS
 	}
 #endif
@@ -1088,8 +893,7 @@ void health_redraw(int num, byte attr)
 	Term_locate(&x, &y);
 
 	/* Not tracking */
-	if (!attr)
-	{
+	if (!attr) {
 #if 0
 		/* Erase the health bar */
 		Term_erase(COL_INFO, ROW_INFO, 12);
@@ -1102,8 +906,7 @@ void health_redraw(int num, byte attr)
 	}
 
 	/* Tracking a monster */
-	else
-	{
+	else {
 		/* Default to "unknown" */
 		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
 
@@ -1118,8 +921,7 @@ void health_redraw(int num, byte attr)
 /*
  * Choice window "shadow" of the "show_inven()" function.
  */
-static void display_inven(void)
-{
+static void display_inven(void) {
 	int	i, n, z = 0;
 	long int	wgt;
 
@@ -1204,8 +1006,7 @@ static void display_inven(void)
 /*
  * Choice window "shadow" of the "show_equip()" function.
  */
-static void display_equip(void)
-{
+static void display_equip(void) {
 	int	i, n;
 	long int	wgt;
 
@@ -1216,16 +1017,14 @@ static void display_equip(void)
 	char	tmp_val[80];
 
 	/* Find the "final" slot */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-	{
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		o_ptr = &inventory[i];
 
 		/* Start with an empty "index" */
 		strcpy(tmp_val, "   ");
 
 		/* Is this item acceptable? */
-		if (item_tester_okay(o_ptr))
-		{
+		if (item_tester_okay(o_ptr)) {
 			/* Prepare an "index" */
 			tmp_val[0] = index_to_label(i);
 
@@ -1249,8 +1048,7 @@ static void display_equip(void)
 		Term_erase(3+n, i - INVEN_WIELD, 255);
 
 		/* Display the weight if needed */
-		if (c_cfg.show_weights && o_ptr->weight)
-		{
+		if (c_cfg.show_weights && o_ptr->weight) {
 			wgt = o_ptr->weight * o_ptr->number;
 			if (wgt < 10000) /* still fitting into 3 digits? */
 				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
@@ -1261,8 +1059,7 @@ static void display_equip(void)
 	}
 
 	/* Erase the rest of the window */
-	for (i = INVEN_TOTAL - INVEN_WIELD; i < Term->hgt; i++)
-	{
+	for (i = INVEN_TOTAL - INVEN_WIELD; i < Term->hgt; i++) {
 		/* Erase the line */
 		Term_erase(0, i, 255);
 	}
@@ -1274,8 +1071,7 @@ static void display_equip(void)
  *
  * Hack -- do not display "trailing" empty slots
  */
-void show_inven(void)
-{
+void show_inven(void) {
 	int	i, j, k, l, z = 0;
 	int	col, len, lim;
 	long int wgt, totalwgt = 0;
@@ -1304,8 +1100,7 @@ void show_inven(void)
 
 
 	/* Find the "final" slot */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
+	for (i = 0; i < INVEN_PACK; i++) {
 		o_ptr = &inventory[i];
 
 		/* Track non-empty slots */
@@ -1313,8 +1108,7 @@ void show_inven(void)
 	}
 
 	/* Display the inventory */
-	for (k = 0, i = 0; i < z; i++)
-	{
+	for (k = 0, i = 0; i < z; i++) {
 		o_ptr = &inventory[i];
 
 		/* Is this item acceptable? */
@@ -1348,8 +1142,7 @@ void show_inven(void)
 	col = (len > 76) ? 0 : (79 - len);
 
 	/* Output each entry */
-	for (j = 0; j < k; j++)
-	{
+	for (j = 0; j < k; j++) {
 		/* Get the index */
 		i = out_index[j];
 
@@ -1369,8 +1162,7 @@ void show_inven(void)
 		c_put_str(out_color[j], out_desc[j], j + 1, col + 3);
 
 		/* Display the weight if needed */
-		if (c_cfg.show_weights && o_ptr->weight)
-		{
+		if (c_cfg.show_weights && o_ptr->weight) {
 			wgt = o_ptr->weight * o_ptr->number;
 			if (wgt < 10000) /* still fitting into 3 digits? */
 				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
@@ -1382,8 +1174,7 @@ void show_inven(void)
 	}
 
 	/* Display the weight if needed */
-	if (c_cfg.show_weights && totalwgt)
-	{
+	if (c_cfg.show_weights && totalwgt) {
 		if (totalwgt < 10000) /* still fitting into 3 digits? */
 			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
 		else if (totalwgt < 10000000) /* still fitting into 3 digits? */
@@ -1404,8 +1195,7 @@ void show_inven(void)
 /*
  * Display the equipment.
  */
-void show_equip(void)
-{
+void show_equip(void) {
 	int	i, j, k, l;
 	int	col, len, lim;
 	long int wgt, totalwgt = 0;
@@ -1435,8 +1225,7 @@ void show_equip(void)
 
 
 	/* Scan the equipment list */
-	for (k = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-	{
+	for (k = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		o_ptr = &inventory[i];
 
 		/* Is this item acceptable? */
@@ -1470,8 +1259,7 @@ void show_equip(void)
 	col = (len > 76) ? 0 : (79 - len);
 
 	/* Output each entry */
-	for (j = 0; j < k; j++)
-	{
+	for (j = 0; j < k; j++) {
 		/* Get the index */
 		i = out_index[j];
 
@@ -1491,8 +1279,7 @@ void show_equip(void)
 		c_put_str(out_color[j], out_desc[j], j + 1, col + 3);
 
 		/* Display the weight if needed */
-		if (c_cfg.show_weights && o_ptr->weight)
-		{
+		if (c_cfg.show_weights && o_ptr->weight) {
 			wgt = o_ptr->weight * o_ptr->number;
 			if (wgt < 10000) /* still fitting into 3 digits? */
 				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
@@ -1504,8 +1291,7 @@ void show_equip(void)
 	}
 
 	/* Display the weight if needed */
-	if (c_cfg.show_weights && totalwgt)
-	{
+	if (c_cfg.show_weights && totalwgt) {
 		if (totalwgt < 10000) /* still fitting into 3 digits? */
 			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
 		else if (totalwgt < 10000000) /* still fitting into 3 digits? */
@@ -1526,13 +1312,11 @@ void show_equip(void)
 /*
  * Display inventory in sub-windows
  */
-static void fix_inven(void)
-{
+static void fix_inven(void) {
 	int j;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++)
-	{
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
 		term *old = Term;
 
 		/* No window */
@@ -1559,13 +1343,11 @@ static void fix_inven(void)
 /*
  * Display equipment in sub-windows
  */
-static void fix_equip(void)
-{
+static void fix_equip(void) {
 	int j;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++)
-	{
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
 		term *old = Term;
 
 		/* No window */
@@ -1592,13 +1374,11 @@ static void fix_equip(void)
 /*
  * Display character sheet in sub-windows
  */
-static void fix_player(void)
-{
+static void fix_player(void) {
 	int j;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++)
-	{
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
 		term *old = Term;
 
 		/* No window */
@@ -1627,8 +1407,7 @@ static void fix_player(void)
  *
  * XXX XXX XXX Adjust for width and split messages
  */
-static void fix_message(void)
-{
+static void fix_message(void) {
         int j, i;
         int w, h;
         int x, y;
@@ -1639,8 +1418,7 @@ static void fix_message(void)
 	/* Display messages in different colors -Zz */
 
         /* Scan windows */
-        for (j = 0; j < ANGBAND_TERM_MAX; j++)
-        {
+        for (j = 0; j < ANGBAND_TERM_MAX; j++) {
                 term *old = Term;
 
                 /* No window */
@@ -1659,8 +1437,7 @@ static void fix_message(void)
 		/* Does this terminal show the normal message_str buffer? or chat/msgnochat only?*/
 		if (window_flag[j] & PW_CHAT) {
 	                /* Dump messages */
-	                for (i = 0; i < h; i++)
-	                {
+	                for (i = 0; i < h; i++) {
 				a = TERM_WHITE;
 				msg = message_str_chat(i);
 
@@ -1675,8 +1452,7 @@ static void fix_message(void)
 	                }
 		} else if (window_flag[j] & PW_MSGNOCHAT) {
 	                /* Dump messages */
-	                for (i = 0; i < h; i++)
-	                {
+	                for (i = 0; i < h; i++) {
 				a = TERM_WHITE;
 				msg = message_str_msgnochat(i);
 
@@ -1724,8 +1500,7 @@ static void fix_lagometer(void) {
 	int j;
 
 	/* Scan windows */
-	for (j = 0; j < ANGBAND_TERM_MAX; j++)
-	{
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
 		term *old = Term;
 
 		/* No window */
@@ -1757,86 +1532,64 @@ static byte likert_color = TERM_WHITE;
 /*
  * Returns a "rating" of x depending on y
  */
-static cptr likert(int x, int y, int max)
-{
+static cptr likert(int x, int y, int max) {
 	/* Paranoia */
 	if (y <= 0) y = 1;
 
 	/* Negative values */
-	if (x < 0)
-	{
+	if (x < 0) {
 		likert_color = TERM_RED;
 		return ("Very Bad");
 	}
 
 	/* Highest possible value reached */
-        if ((x >= max) && max)
-        {
+        if ((x >= max) && max) {
                 likert_color = TERM_L_UMBER;
                 return ("Legendary");
         }
 
 	/* Analyze the value */
-	switch (((x * 10) / y))
-	{
+	switch (((x * 10) / y)) {
 		case 0:
 		case 1:
-		{
 			likert_color = TERM_RED;
 			return ("Bad");
-		}
 		case 2:
-		{
 			likert_color = TERM_RED;
 			return ("Poor");
-		}
 		case 3:
 		case 4:
-		{
 			likert_color = TERM_YELLOW;
 			return ("Fair");
-		}
 		case 5:
-		{
 			likert_color = TERM_YELLOW;
 			return ("Good");
-		}
 		case 6:
-		{
 			likert_color = TERM_YELLOW;
 			return ("Very Good");
-		}
 		case 7:
 		case 8:
-		{
 			likert_color = TERM_L_GREEN;
 			return ("Excellent");
-		}
 		case 9:
 		case 10:
 		case 11:
 		case 12:
 		case 13:
-		{
 			likert_color = TERM_L_GREEN;
 			return ("Superb");
-		}
 		case 14:
 		case 15:
 		case 16:
 		case 17:
-		{
 			likert_color = TERM_L_GREEN;
 			return ("Heroic");
-		}
 		default:
-		{
 			/* indicate that there is a maximum value */
 			if (max) likert_color = TERM_GREEN;
 			/* indicate that there is no maximum */
 			else likert_color = TERM_L_GREEN;
 			return ("Legendary");
-		}
 	}
 }
 
@@ -1844,8 +1597,7 @@ static cptr likert(int x, int y, int max)
  * Draws the lag-o-meter.
  */
 #define COLOURED_LAGOMETER
-void display_lagometer(bool display_commands)
-{
+void display_lagometer(bool display_commands) {
 	int i, cnt, sum, cur, min, max, avg, x, y, packet_loss, height;
 	char tmp[80];
 	char graph[16][61];
@@ -2310,48 +2062,34 @@ if (hist != 2) {
 	if (p_ptr->mhp == -9999) {
 		put_str("Max Hit Points         ", y_row2, 52);
 		c_put_str(TERM_L_GREEN, "-", y_row2, 75);
-	} else {
+	} else
 		prt_num("Max Hit Points ", p_ptr->mhp, y_row2, 52, TERM_L_GREEN);
-	}
 
 	if (p_ptr->chp == -9999) {
 		put_str("Cur Hit Points         ", y_row2 + 1, 52);
 		c_put_str(TERM_L_GREEN, "-", y_row2 + 1, 75);
 	} else if (p_ptr->chp >= p_ptr->mhp)
-	{
 		prt_num("Cur Hit Points ", p_ptr->chp, y_row2 + 1, 52, TERM_L_GREEN);
-	}
 	else if (p_ptr->chp > (p_ptr->mhp) / 10)
-	{
 		prt_num("Cur Hit Points ", p_ptr->chp, y_row2 + 1, 52, TERM_YELLOW);
-	}
 	else
-	{
 		prt_num("Cur Hit Points ", p_ptr->chp, y_row2 + 1, 52, TERM_RED);
-	}
 
 	if (p_ptr->msp == -9999) {
 		put_str("Max MP (Mana)          ", y_row2 + 2, 52);
 		c_put_str(TERM_L_GREEN, "-", y_row2 + 2, 75);
-	} else {
+	} else
 		prt_num("Max MP (Mana)  ", p_ptr->msp, y_row2 + 2, 52, TERM_L_GREEN);
-	}
 
     	if (p_ptr->csp == -9999) {
 		put_str("Cur MP (Mana)          ", y_row2 + 3, 52);
 		c_put_str(TERM_L_GREEN, "-", y_row2 + 3, 75);
 	} else if (p_ptr->csp >= p_ptr->msp)
-	{
 		prt_num("Cur MP (Mana)  ", p_ptr->csp, y_row2 + 3, 52, TERM_L_GREEN);
-	}
 	else if (p_ptr->csp > (p_ptr->msp) / 10)
-	{
 		prt_num("Cur MP (Mana)  ", p_ptr->csp, y_row2 + 3, 52, TERM_YELLOW);
-	}
 	else
-	{
 		prt_num("Cur MP (Mana)  ", p_ptr->csp, y_row2 + 3, 52, TERM_RED);
-	}
  #ifdef SHOW_SANITY
 	put_str("Cur Sanity", y_row2 + 4, 52);
 
@@ -2366,13 +2104,12 @@ if (hist != 2) {
 	} else {
 		prt_num("Hit Points     ", p_ptr->mhp, y_row2, 52, TERM_L_GREEN);
 		c_put_str(TERM_L_GREEN, "/", y_row2, 71);
-		if (p_ptr->chp >= p_ptr->mhp) {
+		if (p_ptr->chp >= p_ptr->mhp)
 			prt_num("", p_ptr->chp, y_row2, 62, TERM_L_GREEN);
-		} else if (p_ptr->chp > (p_ptr->mhp) / 10) {
+		else if (p_ptr->chp > (p_ptr->mhp) / 10)
 			prt_num("", p_ptr->chp, y_row2, 62, TERM_YELLOW);
-		} else {
+		else
 			prt_num("", p_ptr->chp, y_row2, 62, TERM_RED);
-		}
 	}
 
 	if (p_ptr->msp == -9999) {
@@ -2381,13 +2118,12 @@ if (hist != 2) {
 	} else {
 		prt_num("MP (Mana)      ", p_ptr->msp, y_row2 + 1, 52, TERM_L_GREEN);
 		c_put_str(TERM_L_GREEN, "/", y_row2 + 1, 71);
-		if (p_ptr->csp >= p_ptr->msp) {
+		if (p_ptr->csp >= p_ptr->msp)
 			prt_num("", p_ptr->csp, y_row2 + 1, 62, TERM_L_GREEN);
-		} else if (p_ptr->csp > (p_ptr->msp) / 10) {
+		else if (p_ptr->csp > (p_ptr->msp) / 10)
 			prt_num("", p_ptr->csp, y_row2 + 1, 62, TERM_YELLOW);
-		} else {
+		else
 			prt_num("", p_ptr->csp, y_row2 + 1, 62, TERM_RED);
-		}
 	}
 
  #ifdef SHOW_SANITY
@@ -2891,52 +2627,44 @@ else { //Character sheet boni page, finally! :) - Kurzel
 /*
  * Redraw any necessary windows
  */
-void window_stuff(void)
-{
+void window_stuff(void) {
 	/* Redraw the skills menu if requested */
-	if (redraw_skills) {
+	if (redraw_skills)
 		do_redraw_skills();
-	}
 
 	/* Redraw the store inventory if requested */
-	if (redraw_store) {
+	if (redraw_store)
 		do_redraw_store();
-	}
 
 	/* Window stuff */
 	if (!p_ptr->window) return;
 
 	/* Display inventory */
-	if (p_ptr->window & PW_INVEN)
-	{
+	if (p_ptr->window & PW_INVEN) {
 		p_ptr->window &= ~(PW_INVEN);
 		fix_inven();
 	}
 
 	/* Display equipment */
-	if (p_ptr->window & PW_EQUIP)
-	{
+	if (p_ptr->window & PW_EQUIP) {
 		p_ptr->window &= (~PW_EQUIP);
 		fix_equip();
 	}
 
 	/* Display player */
-	if (p_ptr->window & PW_PLAYER)
-	{
+	if (p_ptr->window & PW_PLAYER) {
 		p_ptr->window &= (~PW_PLAYER);
 		fix_player();
 	}
 
 	/* Display messages */
-	if (p_ptr->window & (PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT))
-	{
+	if (p_ptr->window & (PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT)) {
 		p_ptr->window &= (~(PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT));
 		fix_message();
 	}
 
 	/* Display the lag-o-meter */
-	if (p_ptr->window & (PW_LAGOMETER))
-	{
+	if (p_ptr->window & (PW_LAGOMETER)) {
 		p_ptr->window &= (~PW_LAGOMETER);
 		fix_lagometer();
 	}
@@ -3077,7 +2805,7 @@ void do_weather() {
 	if (weather_gen_ticks == weather_gen_speed || intensity > 1) {
 		/* this check might (partially) not be very important */
 		if (weather_gen_ticks == weather_gen_speed)
-			weather_gen_ticks = 0; 
+			weather_gen_ticks = 0;
 		else
 			intensity--;
 
