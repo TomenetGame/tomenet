@@ -6790,7 +6790,8 @@ void announce_global_event(int ge_id) {
 
 	/* display minutes, if at least 120s left */
 	//if (time_left >= 120) msg_broadcast_format(0, "\374\377W[%s (%d) starts in %d minutes. See \377s/evinfo\377W]", ge->title, ge_id + 1, time_left / 60);
-	if (time_left >= 120) msg_broadcast_format(0, "\374\377U[\377W%s (\377U%d\377W) starts in %d minutes - see /evinfo\377U]", ge->title, ge_id + 1, time_left / 60);
+	//if (time_left >= 120) msg_broadcast_format(0, "\374\377U[\377W%s (\377U%d\377W) starts in %d minutes - see /evinfo\377U]", ge->title, ge_id + 1, time_left / 60);
+	if (time_left >= 120) msg_broadcast_format(0, "\374\377U[\377W%s (\377U%d\377W) starts in %d minutes\377U]", ge->title, ge_id + 1, time_left / 60);
 	/* otherwise just seconds */
 	else msg_broadcast_format(0, "\377W[%s (%d) starts in %d seconds!]", ge->title, ge_id + 1, time_left);
 
