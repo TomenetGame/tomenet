@@ -1401,17 +1401,18 @@ s16b get_mon_num(int level, int dlevel)
 
 
 
-static cptr r_name_garbled_get()
-{
-	int r_idx, tries = 1000;
+static cptr r_name_garbled_get(int *r_idx) {
+	int tries = 1000;
 
-	while (TRUE)
-	{
-		r_idx = rand_int(MAX_R_IDX);
-		if (!r_info[r_idx].name) continue;
-		else return (r_name + r_info[r_idx].name);
+	while (TRUE) {
+		*r_idx = rand_int(MAX_R_IDX);
+		if (!r_info[*r_idx].name) continue;
+		else return (r_name + r_info[*r_idx].name);
 
-		if (!tries--) return("unnamed monster");
+		if (!tries--) {
+			*r_idx = 0;
+			return("unnamed monster");
+		}
 	}
 }
 
@@ -1466,17 +1467,14 @@ static cptr r_name_garbled_get()
  * 0x0100 --> Ban 'Garbled' name (for death-record)
  */
 /* FIXME: 'The The Borshin' when hallucinating */
-void monster_desc(int Ind, char *desc, int m_idx, int mode)
-{
+void monster_desc(int Ind, char *desc, int m_idx, int mode) {
 	player_type *p_ptr;
-
 	cptr            res;
 
         monster_type    *m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
 
 	cptr            name = r_name_get(m_ptr);
-
 	bool            seen, pron;
 
 	/* Check for bad player number */
@@ -1486,11 +1484,14 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 		/* Can we "see" it (exists + forced, or visible + not unforced) */
 		seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40) && p_ptr->mon_vis[m_idx])));
 
-		if (!(mode & 0x0100) && p_ptr->image)
-			name = r_name_garbled_get();
-	} else {
+		if (!(mode & 0x0100) && p_ptr->image) {
+			int r_idx;
+
+			name = r_name_garbled_get(&r_idx);
+			r_ptr = &r_info[r_idx];
+		}
+	} else
 		seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40))));
-	}
 
 	/* Sexed Pronouns (seen and allowed, or unseen and allowed) */
 	pron = (m_ptr && ((seen && (mode & 0x20)) || (!seen && (mode & 0x10))));
@@ -1596,8 +1597,7 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 	}
 }
 
-void monster_race_desc(int Ind, char *desc, int r_idx, int mode)
-{
+void monster_race_desc(int Ind, char *desc, int r_idx, int mode) {
 	player_type *p_ptr;
 	cptr            res;
 	monster_race    *r_ptr = &r_info[r_idx];
@@ -1608,12 +1608,16 @@ void monster_race_desc(int Ind, char *desc, int r_idx, int mode)
 	if (Ind > 0) {
 		p_ptr = Players[Ind];
 
-		if (!(mode & 0x0100) && p_ptr->image)
-			name = r_name_garbled_get();
-			seen = TRUE;
-	} else {
+		seen = TRUE;
+
+		if (!(mode & 0x0100) && p_ptr->image) {
+			int r_idx;
+
+			name = r_name_garbled_get(&r_idx);
+			r_ptr = &r_info[r_idx];
+		}
+	} else
 		seen = ((mode & 0x80) || (!(mode & 0x40)));
-	}
 
 	/* Sexed Pronouns (seen and allowed, or unseen and allowed) */
 	pron = ((seen && (mode & 0x20)) || (!seen && (mode & 0x10)));
@@ -1716,8 +1720,7 @@ void monster_race_desc(int Ind, char *desc, int r_idx, int mode)
 }
 
 /* Similar to monster_desc, but it handles the players instead. - Jir - */
-void player_desc(int Ind, char *desc, int Ind2, int mode)
-{
+void player_desc(int Ind, char *desc, int Ind2, int mode) {
 	player_type *p_ptr, *q_ptr = Players[Ind2];
 	cptr            res;
 	cptr            name = q_ptr->name;
@@ -1731,10 +1734,16 @@ void player_desc(int Ind, char *desc, int Ind2, int mode)
 		seen = (q_ptr && ((mode & 0x80) || (!(mode & 0x40) && p_ptr->play_vis[Ind2])));
 
 		if (!(mode & 0x0100) && p_ptr->image)
+#if 0
 			name = r_name_garbled_get();
-	} else {
+#else
+		{
+			monster_race_desc(Ind, desc, 0, mode);
+			return;
+		}
+#endif
+	} else
 		seen = (q_ptr && ((mode & 0x80) || (!(mode & 0x40))));
-	}
 
 	/* Sexed Pronouns (seen and allowed, or unseen and allowed) */
 	pron = (q_ptr && ((seen && (mode & 0x20)) || (!seen && (mode & 0x10))));
