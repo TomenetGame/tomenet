@@ -19549,7 +19549,7 @@ F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
 N:1092:Vampire (Mimic)
-G:V:r
+G:V:b
 I:110:30d5:8:2:99
 W:0:1:1300:25
 E:0:0:0:0:0:0
