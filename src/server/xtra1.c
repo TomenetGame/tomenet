@@ -6967,7 +6967,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 
 			ge->extra[1] = r_found;
 #ifndef GE_ARENA_ALLOW_EGO
-			monster_race_desc(0, c, r_found, 0x88);
+			monster_race_desc(0, c, r_found, 0x188);
 			msg_broadcast_format(0, "\376\377c** %s challenges %s! **", p_ptr->name, c);
 #else
 			ge->extra[3] = re_found;
