@@ -3562,16 +3562,16 @@ void apply_auto_inscriptions(int slot, bool force) {
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 		match = auto_inscription_match[i];
 		/* skip empty auto-inscriptions */
-		if (!strlen(match)) return;
+		if (!strlen(match)) continue;
  #if 0 /* disallow empty inscription? */
-		if (!strlen(auto_inscription_tag[i])) return;
+		if (!strlen(auto_inscription_tag[i])) continue;
  #endif
 
  #if 1 /* is '!' available? */
 		/* if item already has an inscription, only allow to overwrite it
 		    if auto-inscription begins with '!', which stands for 'always overwrite' */
 		if (!auto_inscribe) {
-			if (match[0] != '!') return;
+			if (match[0] != '!') continue;
 			else match++;
 			/* already carrying this very inscription? don't need to inscribe it AGAIN then */
 			if (!strcmp(auto_inscription_tag[i], tag_buf)) return;
