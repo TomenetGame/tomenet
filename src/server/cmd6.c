@@ -2408,7 +2408,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 				if(!k) break;
 				if (r_info[k].flags1 & RF1_UNIQUE) break;
 
-				monster_race_desc(Ind, m_name, k, 0x88);
+				monster_race_desc(Ind, m_name, k, 0x188);
 		                msg_format(Ind, "\377oYou conjure %s!", m_name);
 				msg_format_near(Ind, "\377o%s conjures %s", p_ptr->name, m_name);
 				if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, k, 100, 1))
