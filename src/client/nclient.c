@@ -1928,7 +1928,7 @@ int Receive_title(void) {
 	/* XXX -- Extract "ghost-ness" */
 	p_ptr->ghost = streq(buf, "Ghost") || streq(buf, "\377rGhost (dead)");
 	/* extract winner state */
-	p_ptr->total_winner = (strstr(buf, "**") != NULL);
+	p_ptr->total_winner = strstr(buf, "**") || strstr(buf, "\377v");
 
 	if (screen_icky) Term_switch(0);
 	prt_title(buf);
@@ -2735,10 +2735,16 @@ int Receive_sfx_volume(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &c_ambient, &c_weather)) <= 0) return n;
 
 #ifdef USE_SOUND_2010
-	/* Play background ambient sound effect (if enabled) */
-	grid_ambient_volume = (int)c_ambient;
-	grid_weather_volume = (int)c_weather;
-	if (use_sound) set_mixing();
+	/* Change volume of background ambient sound effects or weather (if enabled) */
+	grid_ambient_volume_goal = (int)c_ambient;
+	grid_weather_volume_goal = (int)c_weather;
+
+	/* Determine step size (1 step per 1/10 s, aka 1 tick in do_ping()) */
+	grid_ambient_volume_step = (grid_ambient_volume_goal - grid_ambient_volume) / 30;
+	grid_weather_volume_step = (grid_weather_volume_goal - grid_weather_volume) / 30;
+	/* catch rounding problems */
+	if (grid_ambient_volume_goal != grid_ambient_volume && !grid_ambient_volume_step) grid_ambient_volume_step = (grid_ambient_volume_goal > grid_ambient_volume) ? 1 : -1;
+	if (grid_weather_volume_goal != grid_weather_volume && !grid_weather_volume_step) grid_weather_volume_step = (grid_weather_volume_goal > grid_weather_volume) ? 1 : -1;
 #endif
 
 	return 1;
@@ -4345,7 +4351,8 @@ void do_mail() {
 #endif /* CHECK_MAIL */
 }
 
-/* Ping the server once a second when enabled - mikaelh */
+/* Ping the server once a second when enabled - mikaelh
+   do_ping is called every frame. */
 void do_ping() {
 	static int last_ping = 0;
 	static int time_stamp_hour = -1;
@@ -4441,7 +4448,44 @@ void do_ping() {
 
 #ifdef USE_SOUND_2010
  #ifdef SOUND_SDL
+	/* make sure fading out an ambient sound to zero completes glitch-free */
 	if (ambient_fading) ambient_handle_fading();
+
+	/* change volume of background ambient sound effects or weather (if enabled),
+	   check every 1/10 s (one tick):  */
+	if (last_ping != ticks
+	    && (last_ping + 1) % 10 != ticks) { /* actually skip 2 ticks -> 1/5s */
+		bool modified = FALSE;
+
+		if (grid_ambient_volume != grid_ambient_volume_goal) {
+			modified = TRUE;
+			grid_ambient_volume += grid_ambient_volume_step;
+
+			/* catch rounding issues */
+			if (grid_ambient_volume_step > 0) {
+				if (grid_ambient_volume > grid_ambient_volume_goal)
+					grid_ambient_volume = grid_ambient_volume_goal;
+			} else {
+				if (grid_ambient_volume < grid_ambient_volume_goal)
+					grid_ambient_volume = grid_ambient_volume_goal;
+			}
+		}
+		if (grid_weather_volume != grid_weather_volume_goal) {
+			modified = TRUE;
+			grid_weather_volume += grid_weather_volume_step;
+
+			/* catch rounding issues */
+			if (grid_weather_volume_step > 0) {
+				if (grid_weather_volume > grid_weather_volume_goal)
+					grid_weather_volume = grid_weather_volume_goal;
+			} else {
+				if (grid_weather_volume < grid_weather_volume_goal)
+					grid_weather_volume = grid_weather_volume_goal;
+			}
+		}
+
+		if (use_sound && modified) set_mixing();
+	}
  #endif
 #endif
 
