@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. February 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. March 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5821,6 +5821,11 @@ Instead of setting a price, you can also add to the base price, by using the
 following inscription syntax:
   @S+10000
 This will add 10000 gold to the default price that is asked for.
+
+Another way of increasing the price is by multiplying it with a percentage,
+which may range from 100 to 1000, like this:
+  @S%150
+This will sell the item for 1.5 times (150%) the usual amount.
 
 Note that if you want to put up items with inscriptions longer than just the
 store-part, you need to terminate the store inscription with a dot. Examples:
