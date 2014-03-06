@@ -5915,11 +5915,12 @@ void store_debug_stock()
 #define MASS_CHEQUE_NOTE "various piled items"
 /* Is an item inscribed correctly to be sold in a player-run store? - C. Blue
    Returns price or -2 if not for sale. Return -1 if not for display/not available.
-   Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination. */
+   Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination.
+   Expects 'price' to be the minimum allowed price (2x base price). */
 static s64b player_store_inscribed(object_type *o_ptr, u32b price) {
 	char buf[10], *p, *pos_dot;
 	u32b final_price;
-	bool increase = FALSE;
+	bool increase = FALSE, mult = FALSE;
 
 	/* no item? */
 	if (!o_ptr->k_idx) return -1;
@@ -5937,6 +5938,9 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price) {
 	if (p[2] == '+') {
 		increase = TRUE;
 		p++;
+	} else if (p[2] == '%') {
+		mult = TRUE;
+		p++;
 	}
 
 	/* is it a valid price tag? */
@@ -5947,6 +5951,19 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price) {
 
 	/* price limit is 2*10^9 */
 	final_price = atol(buf);
+
+	/* multiplier? 0..1000% */
+	if (mult) {
+		/* catch overflows */
+		if (final_price < 100) final_price = 100; /* 100% of 'price' minimum */
+		if (final_price > 1000) final_price = 1000;
+		if (price > 2000000000 / ((final_price + 99) / 100)) final_price = 2000000000;
+		else {
+			if (price <= 2000000) final_price = (price * final_price) / 100;
+			else final_price = (price / 100) * final_price;
+		}
+		return final_price;
+	}
 
 	/* add rudimentary usage of 'k' and 'M' */
 	pos_dot = strchr(buf, '.');
