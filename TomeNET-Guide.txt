@@ -10396,12 +10396,12 @@ Note that not every skill is available to every profession (class).
                                 Note that Health skill stacks with +LIFE items
                                 (compare '+LIFE' in (5.8)).
 
-                                For mimics, Health skill is somewhat less
+                                For mimicry users, Health skill is less
                                 effective than for other classes, because the
-                                hit point gain is applied before the player
-                                form hit points and monster form hit points are
+                                hit point bonus is applied before the player's
+                                base hit points and monster form hit points are
                                 averaged to calculate the mimic's final amount
-                                of hit points while using a monster form.
+                                of hit points in a particular a monster form.
 
     .Swimming                   Allows you to swim even while carrying more
                                 weight and to better protect your items from
