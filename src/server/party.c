@@ -2727,8 +2727,11 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		return FALSE;
 	}
 
+	/* If it's a blood bond, players may fight in safe zones and with party members np */
+	bb = check_blood_bond(Ind, i);
+
 #if 1
-	if (initiator && !(bb = check_blood_bond(Ind, i)) && !istown(&p_ptr->wpos)) {
+	if (!bb && initiator && !istown(&p_ptr->wpos)) {
 		msg_print(Ind, "\377yYou need to be in town to declare war.");
 		return FALSE;
 	}
