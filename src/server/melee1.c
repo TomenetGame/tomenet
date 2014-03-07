@@ -2158,10 +2158,10 @@ bool make_attack_melee(int Ind, int m_idx)
 					case 2: k = randint(10) + 5; break;
 					case 3: k = randint(15) + 10; break;
 					case 4: k = randint(20) + 20; break;
-					case 5: k = randint(25) + 30; break;
-					case 6: k = randint(20) + 40;; break;
-					case 7: k = randint(15) + 55; break;
-					case 8: k = randint(5) + 75; break;
+					case 5: k = randint(20) + 30; break;
+					case 6: k = randint(15) + 40;; break;
+					case 7: k = randint(10) + 55; break;
+					case 8: k = randint(5) + 70; break;
 					default: k = 100; break; /* tmp==9 is max */
 				}
 
