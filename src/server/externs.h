@@ -1540,7 +1540,7 @@ extern bool door_creation(int Ind);
 extern bool trap_creation(int Ind, int mod, int rad);
 extern bool destroy_doors_touch(int Ind, int rad);
 extern bool sleep_monsters_touch(int Ind);
-extern bool create_artifact(int Ind);
+extern bool create_artifact(int Ind, bool nolife);
 extern bool create_artifact_aux(int Ind, int item);
 extern bool curse_spell(int Ind);
 extern bool curse_spell_aux(int Ind, int item);

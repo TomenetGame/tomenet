@@ -8075,6 +8075,7 @@ void clear_current(int Ind)
 	p_ptr->current_star_identify = 0;
 	p_ptr->current_recharge = 0;
 	p_ptr->current_artifact = 0;
+	p_ptr->current_artifact_nolife = FALSE;
 	p_ptr->current_curse = 0;
 	p_ptr->current_tome_creation = 0;
 	p_ptr->current_rune = 0;

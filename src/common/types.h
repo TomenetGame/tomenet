@@ -2227,6 +2227,7 @@ struct player_type
 	s16b current_star_identify;
 	s16b current_recharge;
 	s16b current_artifact;
+	bool current_artifact_nolife;
 	object_type *current_telekinesis;
 	s16b current_curse;
 	s16b current_tome_creation; /* adding a spell scroll to a custom tome - C. Blue */

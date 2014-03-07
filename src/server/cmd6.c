@@ -2362,7 +2362,11 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 
 				msg_print(Ind, "This is an artifact creation scroll.");
 				ident = TRUE;
-				(void)create_artifact(Ind);
+				/* check for 'no +LIFE' inscription */
+				if (o_ptr->note && check_guard_inscription(o_ptr->note, 'L'))
+					(void)create_artifact(Ind, TRUE);
+				else
+					(void)create_artifact(Ind, FALSE);
 				used_up = FALSE;
 				p_ptr->using_up_item = item;
 				break;

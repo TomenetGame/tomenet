@@ -3039,15 +3039,16 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 	return (TRUE);
 }
 
-bool create_artifact(int Ind) {
+bool create_artifact(int Ind, bool nolife) {
 	player_type *p_ptr = Players[Ind];
 
 	/* just in case */
-	s_printf("(%s) Player %s initiates Artifact Creation.\n", showtime(), p_ptr->name);
+	s_printf("(%s) Player %s initiates Artifact Creation (nolife=%d).\n", showtime(), p_ptr->name, nolife);
 
 	clear_current(Ind);
 
 	p_ptr->current_artifact = TRUE;
+	p_ptr->current_artifact_nolife = nolife;
 	get_item(Ind, ITH_NONE);
 
 	return TRUE;
@@ -3126,7 +3127,7 @@ bool create_artifact_aux(int Ind, int item) {
 
 		/* If the resulting randart is allowed, leave the loop */
 		a_ptr = randart_make(o_ptr);
-		if ((resf & RESF_LIFE) || !(a_ptr->flags1 & TR1_LIFE)) break;
+		if (((resf & RESF_LIFE) && !p_ptr->current_artifact_nolife) || !(a_ptr->flags1 & TR1_LIFE)) break;
 	}
 
 	/* apply magic (which resets owner) and manually restore ownership again afterwards;
@@ -3149,6 +3150,7 @@ bool create_artifact_aux(int Ind, int item) {
 
 	/* Art creation finished */
 	p_ptr->current_artifact = FALSE;
+	p_ptr->current_artifact_nolife = FALSE;
 
 	/* Log it (security) */
 	/* Description */

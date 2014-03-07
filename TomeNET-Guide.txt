@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. March 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. March 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.6 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -15041,9 +15041,13 @@ random artifact. Often kings and queens look out for these since they are
 unable to use static artifacts, so they depend on rand-arts.
 The scrolls are very rarely found; occasions to buy one are fair in the
 expensive black market, but also the normal BM may sometimes offer some.
+
 It doesn't matter where you are, what level you are, or whether your character
 has 'luck' or not when you read the scroll, the resulting artifact's power is
-always determined randomly.
+always determined randomly and cannot be influenced by the player,
+except for hit point bonus available for characters that have 'winner' status
+(killed Morgoth), which can be suppressed by inscribing the artifact creation
+scroll '!L' (also see 'type-dependant mods' list further below).
 
 
 Here is some advice how to use these most valuable scrolls wisely:
@@ -15327,6 +15331,9 @@ Light sources
         AND his level is at least 50.
      If a player actually wears/wields a +LIFE randart, the +LIFE mod will only
      have an effect on winners (Queens/Kings/Empresses/Emperors).
+
+     If you don't want to create a randart that has a chance for +LIFE, you can
+     inscribe your scroll of artifact creation:  !L
 
 
 General mods:
