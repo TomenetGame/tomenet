@@ -2188,8 +2188,8 @@ static bool can_rust(object_type *o_ptr)
 #endif
 	case TV_SWORD:
 // :)	case TV_BLUNT:
-//	case TV_POLEARM:
-//	case TV_AXE:
+	case TV_POLEARM:
+	case TV_AXE:
 		return (TRUE);
 	}
 
