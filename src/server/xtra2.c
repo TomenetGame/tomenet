@@ -2732,7 +2732,7 @@ bool set_stun(int Ind, int v)
 
 			/* Heavy stun */
 			case 2:
-			msg_format_near(Ind, "\377o%s is very stunned.", p_ptr->name);
+			msg_format_near(Ind, "\377o%s is heavily stunned.", p_ptr->name);
 			msg_print(Ind, "\377oYou have been heavily stunned.");
 			break;
 
