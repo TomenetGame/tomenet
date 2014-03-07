@@ -2728,7 +2728,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 	}
 
 	/* If it's a blood bond, players may fight in safe zones and with party members np */
-	bb = check_blood_bond(Ind, i);
+	if (i > 0) bb = check_blood_bond(Ind, i);
 
 #if 1
 	if (!bb && initiator && !istown(&p_ptr->wpos)) {
