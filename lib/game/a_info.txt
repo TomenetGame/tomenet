@@ -3312,7 +3312,7 @@ I:19:24:3
 W:50:10:200:65000
 P:0:4d1:20:24:0
 F:STR | XTRA_MIGHT | XTRA_SHOTS | ESP_GOOD | REGEN
-F:HIDE_TYPE | ACTIVATE | SHOW_MODS
+F:HIDE_TYPE | SHOW_MODS
 D:A tool to cut down elves, humans and dwarves and all enemies
 D:of Mordor with relentless force.
 
