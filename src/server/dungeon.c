@@ -3836,7 +3836,7 @@ static bool process_player_end_aux(int Ind)
 	else if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food >= PY_FOOD_ALERT) && !p_ptr->admin_dm &&
 	    /* Don't starve in town (but recover from being gorged) - C. Blue */
 //	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_MAX))
-	    (!(istown(&p_ptr->wpos) || isdungeontown(&p_ptr->wpos))
+	    (!(istownarea(&p_ptr->wpos, 3) || isdungeontown(&p_ptr->wpos))
 	    || p_ptr->food >= PY_FOOD_FULL)) /* allow to digest some to not get gorged in upcoming fights quickly - C. Blue */
 	{
 		/* Digest normally */
