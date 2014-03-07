@@ -12026,10 +12026,7 @@ form later. Only one ring form can be saved at a time. Note that there is an
 activation tax of 10 turns everytime the player polymorphs into the stored
 form (except for the initial polymorphing from activating the ring).
 
-NOTE: 'Unmagic' as well as UN_POWER attacks can deplete the temporary form!
-      An Unmagic attack will instantly deplete it, causing the player to
-      polymorph back into his normal form, while UN_POWER attacks instead drain
-      the temporary form each time, reducing the remaining time it lasts.
+NOTE: UN_POWER attacks can drain the remaining time a temporary form lasts!
 
 At around 100 turns (or less if there isn't more time left) before a form runs
 out the player will receive a warning message about this, and his appearance
