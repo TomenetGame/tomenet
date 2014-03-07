@@ -6725,6 +6725,9 @@ void player_death(int Ind) {
 					l_printf("%s \\{r%s (%d) died and was instantly resurrected\n", showdate(), p_ptr->name, p_ptr->lev);
 			}
 
+			/* new - death dump for insta-res too! */
+			Send_chardump(Ind, "-death");
+
 			/* Cure him from various maladies */
 			if (p_ptr->image) (void)set_image(Ind, 0);
 			if (p_ptr->blind) (void)set_blind(Ind, 0);
