@@ -46,10 +46,10 @@ static int monster_critical(int dice, int sides, int dam) {
 	if (dam == total) max++;
 
 	/* Super-charge */
-	if (dam >= 20) {
+	if (dam >= 40) {
 		if (!rand_int(50)) {
 			max++;
-			if (!rand_int(50)) max++;
+			if (dam >= 60 && !rand_int(50)) max++;
 		}
 	}
 
@@ -2155,12 +2155,14 @@ bool make_attack_melee(int Ind, int m_idx)
 				switch (tmp) {
 					case 0: k = 0; break;
 					case 1: k = randint(5); break;
-					case 2: k = randint(10) + 10; break;
-					case 3: k = randint(20) + 20; break;
-					case 4: k = randint(30) + 30; break;
-					case 5: k = randint(40) + 40; break;
-					case 6: k = 80; break;
-					default: k = 100; break;
+					case 2: k = randint(10) + 5; break;
+					case 3: k = randint(15) + 10; break;
+					case 4: k = randint(20) + 20; break;
+					case 5: k = randint(25) + 30; break;
+					case 6: k = randint(20) + 40;; break;
+					case 7: k = randint(15) + 55; break;
+					case 8: k = randint(5) + 75; break;
+					default: k = 100; break; /* tmp==9 is max */
 				}
 
 				/* Apply the stun */
