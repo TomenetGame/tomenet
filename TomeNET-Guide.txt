@@ -869,8 +869,9 @@ They all start with a slash '/' hence they're called slash commands:
             Signs you up for the event number #.
             Depending on the event, you might need to specify additional
             parameters after the number. If that is the case, you'll see
-            a message telling you so, and speficying details what's missing.
-            Note: If you log out, your sign-up is cancelled automatically.
+            a message telling you so and about which details what's missing.
+            NOTE: If you log out, your sign-up is cancelled automatically,
+                  so after logging back in you will have to sign up again.
 
 /ex or /examine or /extra
             Gives you detailed information about your character's status, such
