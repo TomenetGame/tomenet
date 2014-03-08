@@ -6789,6 +6789,10 @@ Giants, Undead, Trolls, Orcs, Dragons, Demons are all 'Evil'.
 
 If several multipliers match the highest one will be used.
 
+For ranged weapons, the damage calculated from brands/slays applied to ammo
+dice will further be multiplied by the bow's multiplier (x2..x5, depending on
+the type of sling, bow or crossbow).
+
 
 
 (5.4) Martial Arts, brands
