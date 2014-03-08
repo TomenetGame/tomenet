@@ -1831,6 +1831,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 		a_ptr->to_d = o_ptr->to_d;
 		a_ptr->to_a = o_ptr->to_a;
 	} else {
+		/* Get base +hit,+dam,+ac from k_info for any item type, to start out with this. */
 		a_ptr->to_h = k_ptr->to_h;
 		a_ptr->to_d = k_ptr->to_d;
 		a_ptr->to_a = k_ptr->to_a;
