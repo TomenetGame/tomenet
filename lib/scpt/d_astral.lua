@@ -288,7 +288,7 @@ GATEWAY = add_spell
 	end,
 	["desc"] =	{
 			"Requires level 50 Astral Knowledge and at least character level 62",
-			"Enlightened: instantaneous wor for every party member on the level",
+			"Enlightened: nigh-instantaneous wor for every party member on the level",
 			"Corrupted: creates a void jump gate",
 			"           (cast once to set the first location and the second for the target)"
 		}

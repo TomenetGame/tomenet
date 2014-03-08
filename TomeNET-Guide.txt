@@ -13241,8 +13241,8 @@ though, as all other magic schools do, not the astral level.)
                                damage as rockets do.
                     Required skill level for first spell level: 50.
 
-    Gateway         Enlightened: Instantaneously word-of-recall for all party
-                                 members on your dungeon level.
+    Gateway         Enlightened: Nigh-instantaneous word-of-recall for all
+                                 party members on your dungeon level.
                     Corrupted: Creates a pair of connected void jump gates.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 50.
