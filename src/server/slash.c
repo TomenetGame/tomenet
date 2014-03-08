@@ -8105,7 +8105,7 @@ void do_slash_cmd(int Ind, char *message)
 					if ((f3 & TR3_NO_MAGIC)) found++;
 				} while	(--tries);
 
-				msg_format(Ind, "%d were positive: %d%%.%d", found, 100 * found / 100000, (found % 1000) / 100);//wtb correct rounding >.> o laziness
+				msg_format(Ind, "%d were positive: %d.%d%%", found, 100 * found / 100000, (found % 1000) / 100);//wtb correct rounding >.> o laziness
 				return;
 			}
 		}
