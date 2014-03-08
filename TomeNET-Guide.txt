@@ -3143,7 +3143,7 @@ There are extended colour codes available since 4.5.2
     E  meteor           N  mana             Q  disintegration   Y  water
     i  ice              l  plasma           O  detonation       k  nuke
     K  unbreath         j  holy orb         J  holy fire        X  hell fire
-    Z  thunder
+    z  thunder
 
 
 Character names in chat lines have different colours to indicate their status:

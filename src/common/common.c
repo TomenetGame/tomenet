@@ -111,10 +111,10 @@ int color_char_to_attr(char c) {
 		case 'j': return TERM_HOLYORB;
 		case 'J': return TERM_HOLYFIRE;
 		case 'X': return TERM_HELLFIRE;
-		case 'Z': return TERM_THUNDER;
+		case 'z': return TERM_THUNDER;
 		//case '': return TERM_LAMP; //this is just static yellow
 
-		//free: z
+		//free: Z
 	}
 
 	return (-1);
@@ -183,7 +183,7 @@ char color_attr_to_char(int a) {
 		case TERM_HOLYORB: return 'j';
 		case TERM_HOLYFIRE: return 'J';
 		case TERM_HELLFIRE: return 'X';
-		case TERM_THUNDER: return 'Z';
+		case TERM_THUNDER: return 'z';
 		//case TERM_LAMP: return ''; //this is just static yellow
 	}
 
