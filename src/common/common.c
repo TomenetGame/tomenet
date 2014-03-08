@@ -52,8 +52,7 @@
  * Convert a "color letter" into an "actual" color
  * The colors are: dwsorgbuDWvyRGBU, as shown below
  */
-int color_char_to_attr(char c)
-{
+int color_char_to_attr(char c) {
 	switch (c) {
 		case 'd': return (TERM_DARK);
 		case 'w': return (TERM_WHITE);
@@ -90,6 +89,32 @@ int color_char_to_attr(char c)
 		case 'I': return (TERM_SHIELDI);
 
 		/* maybe TODO: add EXTENDED_TERM_COLOURS here too */
+		//case 'E': return TERM_CURSE; //like TERM_DARKNESS
+		//case 'N': return TERM_ANNI; //like TERM_DARKNESS
+		case 'P': return TERM_PSI;
+		case 'x': return TERM_NEXU;
+		case 'n': return TERM_NETH;
+		case 'T': return TERM_DISE;
+		case 'q': return TERM_INER;
+		case 'F': return TERM_FORC;
+		case 'V': return TERM_GRAV;
+		case 't': return TERM_TIME;
+		case 'E': return TERM_METEOR;
+		case 'N': return TERM_MANA;
+		case 'Q': return TERM_DISI;
+		case 'Y': return TERM_WATE;
+		case 'i': return TERM_ICE; //pretty similar to elec
+		case 'l': return TERM_PLAS;
+		case 'O': return TERM_DETO;
+		case 'k': return TERM_NUKE;
+		case 'K': return TERM_UNBREATH; //ugh --pretty similar to pois
+		case 'j': return TERM_HOLYORB;
+		case 'J': return TERM_HOLYFIRE;
+		case 'X': return TERM_HELLFIRE;
+		case 'Z': return TERM_THUNDER;
+		//case '': return TERM_LAMP; //this is just static yellow
+
+		//free: z
 	}
 
 	return (-1);
@@ -99,8 +124,7 @@ int color_char_to_attr(char c)
  * Convert a color to a color letter.
  * The colors are: dwsorgbuDWvyRGBU, as shown below
  */
-char color_attr_to_char(int a)
-{
+char color_attr_to_char(int a) {
 	switch (a) {
 		case TERM_DARK: return 'd';
 		case TERM_WHITE: return 'w';
@@ -137,6 +161,30 @@ char color_attr_to_char(int a)
 		case TERM_SHIELDI: return 'I';
 
 		/* maybe TODO: add EXTENDED_TERM_COLOURS here too */
+		//case TERM_CURSE: return 'E'; //like TERM_DARKNESS
+		//case TERM_ANNI: return 'N'; //like TERM_DARKNESS
+		case TERM_PSI: return 'P';
+		case TERM_NEXU: return 'x';
+		case TERM_NETH: return 'n';
+		case TERM_DISE: return 'T';
+		case TERM_INER: return 'q';
+		case TERM_FORC: return 'F';
+		case TERM_GRAV: return 'V';
+		case TERM_TIME: return 't';
+		case TERM_METEOR: return 'E';
+		case TERM_MANA: return 'N';
+		case TERM_DISI: return 'Q';
+		case TERM_WATE: return 'Y';
+		case TERM_ICE: return 'i';//pretty similar to elec
+		case TERM_PLAS: return 'l';
+		case TERM_DETO: return 'O';
+		case TERM_NUKE: return 'k';
+		case TERM_UNBREATH: return 'K';//ugh --pretty similar to pois
+		case TERM_HOLYORB: return 'j';
+		case TERM_HOLYFIRE: return 'J';
+		case TERM_HELLFIRE: return 'X';
+		case TERM_THUNDER: return 'Z';
+		//case TERM_LAMP: return ''; //this is just static yellow
 	}
 
 	return 'w';
