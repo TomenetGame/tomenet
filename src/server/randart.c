@@ -1043,7 +1043,8 @@ static void add_ability (artifact_type *a_ptr) {
 				do_pval (a_ptr);
 				break;
 			case 8:
-				a_ptr->flags3 |= TR3_NO_MAGIC;
+				/* cut chance in half again -> approx. 1/20..1/25 over whole item base - C. Blue */
+				if (!rand_int(2)) a_ptr->flags3 |= TR3_NO_MAGIC;
 				break;
 			case 9:
 				a_ptr->flags1 |= TR1_SPEED;
