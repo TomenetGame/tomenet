@@ -1587,6 +1587,9 @@ static void artifact_lore(void) {
 	char paste_lines[18][MSG_LEN];
         /* suppress hybrid macros */
         bool inkey_msg_old;
+        /* for skipping pages forward/backward if there are more matches than lines */
+        int pageoffset = 0, skipped;
+        bool more_results;
 
 	Term_save();
 
@@ -1606,9 +1609,12 @@ static void artifact_lore(void) {
 		n = 0;
 		selected = selected_list = -1;
 
+		skipped = 0;
+		more_results = FALSE;
+
 		/* hack 1: exact match always takes top position
 		   hack 2: match at beginning of name takes precedence */
-		if (s[0]) for (i = 0; i < MAX_A_IDX; i++) {
+		if (s[0] && !pageoffset) for (i = 0; i < MAX_A_IDX; i++) {
 			/* create upper-case working copy */
 			strcpy(tmp, artifact_list_name[i]);
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
@@ -1636,7 +1642,7 @@ static void artifact_lore(void) {
 			}
 		}
 
-		for (i = 0; i < MAX_A_IDX && n < ARTIFACT_LORE_LIST_SIZE; i++) {
+		for (i = 0; i < MAX_A_IDX && n < ARTIFACT_LORE_LIST_SIZE + 1; i++) { /* '+ 1' for 'more_results' hack */
 			/* direct match above already? */
 			if (i == selected_list) continue;
 
@@ -1645,6 +1651,16 @@ static void artifact_lore(void) {
 			for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
 
 			if (artifact_list_code[i] && strstr(tmp, s)) {
+				/* hack - found more results than fit on currently displayed page? */
+				if (n == ARTIFACT_LORE_LIST_SIZE) {
+					more_results = TRUE;
+					break;
+				}
+				if (skipped < pageoffset * 17) {
+					skipped++;
+					continue;
+				}
+
 				if (n == 0) {
 					selected_list = i;
 					selected = artifact_list_code[i];
@@ -1662,8 +1678,7 @@ static void artifact_lore(void) {
 			else Term_putstr(5, 5 + selected_line, -1, TERM_L_UMBER, artifact_list_name[list_idx[selected_line]]);
 		}
 
-		//Term_putstr(28,  23, -1, TERM_WHITE, "-- press ESC to exit --");
-		Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC to exit, ENTER to view lore/stats, up/down to navigate --");
+		Term_putstr(2,  23, -1, TERM_WHITE, "Press ESC to exit, ENTER for lore/stats, Up/Down/PgUp/PgDn/Home to navigate");
 		/* hack: place cursor at pseudo input prompt */
 	        Term->scr->cx = 54 + strlen(s);
 	        Term->scr->cy = 2;
@@ -1695,9 +1710,30 @@ static void artifact_lore(void) {
 			}
 			continue;
 		}
+
+		/* page up/down in the search results */
+		if (s[0] != '#' && c == '9') { //rl:?
+			if (pageoffset > 0) pageoffset--;
+			continue;
+		}
+		if (s[0] != '#' && c == '3') { //rl:?
+			if (pageoffset < 100 /* silyl */
+			    && more_results)
+				pageoffset++;
+			continue;
+		}
+		/* home key to reset */
+		if (s[0] != '#' && c == '7') { //rl:?
+			pageoffset = 0;
+			continue;
+		}
+
 		/* backspace */
 		if (c == '\010' || c == 0x7F) {
-			if (strlen(s) > 0) s[strlen(s) - 1] = '\0';
+			if (strlen(s) > 0) {
+				s[strlen(s) - 1] = '\0';
+				pageoffset = 0;
+			}
 			continue;
 		}
 		/* Mustn't start on a SPACE */
@@ -1716,6 +1752,7 @@ static void artifact_lore(void) {
 		/* build name */
 		c = toupper(c);
 		strcat(s, format("%c", c));
+		pageoffset = 0;
 	}
 
 	/* exit? */
@@ -1844,17 +1881,12 @@ static void monster_lore(void) {
 
 		/* Entering a '!' first means "search for monster symbol instead" */
 		if (s[0] == '!') {
-			if (s[1]) for (i = 1; i < MAX_R_IDX; i++) {
+			if (s[1] && !pageoffset) for (i = 1; i < MAX_R_IDX; i++) {
 				/* match? */
 				if (monster_list_symbol[i][1] == s[1] &&
 				    (!s[2] || monster_list_symbol[i][0] == s[2] ||
 				    (s[2] == 'm' && monster_list_any[i]) ||
 				    (s[2] == 'M' && monster_list_breath[i]))) {
-					if (skipped < pageoffset * 17) {
-						skipped++;
-						continue;
-					}
-
 		    			selected = monster_list_code[i];
 					selected_list = i;
 					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c)  %s",
@@ -1899,7 +1931,7 @@ static void monster_lore(void) {
 		else {
 			/* hack 1: direct match always takes top position
 			   hack 2: match at beginning of name takes precedence */
-			if (s[0]) for (i = 1; i < MAX_R_IDX; i++) {
+			if (s[0] && !pageoffset) for (i = 1; i < MAX_R_IDX; i++) {
 				/* create upper-case working copy */
 				strcpy(tmp, monster_list_name[i]);
 				for (j = 0; tmp[j]; j++) tmp[j] = toupper(tmp[j]);
@@ -1907,11 +1939,6 @@ static void monster_lore(void) {
 				/* exact match? */
 				if (!strcmp(tmp, s)
 				    || (s[0] == '#' && atoi(s + 1) && monster_list_code[i] == atoi(s + 1))) { /* also allow typing in the monster's ridx directly! */
-					if (skipped < pageoffset * 17) {
-						skipped++;
-						continue;
-					}
-
 					selected = monster_list_code[i];
 					selected_list = i;
 					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c)  %s",
@@ -1922,11 +1949,6 @@ static void monster_lore(void) {
 				}
 				/* beginning of line match? */
 				else if (!strncmp(tmp, s, strlen(s))) {
-					if (skipped < pageoffset * 17) {
-						skipped++;
-						continue;
-					}
-
 					selected = monster_list_code[i];
 					selected_list = i;
 					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c)  %s",
