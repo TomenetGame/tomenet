@@ -3062,7 +3062,7 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_HIMRING:
 		return "protect evil (dur level*3 + d25) every 225+d225 turns";
 	case ART_NUMENOR:
-		return "analyze monster every 500+d100 turns";
+		return "analyze monster every 300+d200 turns";
 	case ART_NARTHANC:
 		return "fire bolt (9d8) every 8+d8 turns";
 	case ART_NIMTHANC:
@@ -3171,7 +3171,8 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_CARLAMMAS:
 		return "protection from evil every 225+d225 turns";
 	case ART_FLAR:
-		return "dimension door every 100 turns";
+		//return "dimension door every 100 turns";
+		return "gateway every 1000 turns";
 	case ART_BARAHIR:
 		return "dispel small life every 55+d55 turns";
 	case ART_TULKAS:

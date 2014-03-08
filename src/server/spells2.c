@@ -159,6 +159,50 @@ void divine_intensify(int Ind, int level) {
 	}
 }
 
+int py_create_gateway(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	struct worldpos *wpos = &(p_ptr->wpos);
+	cave_type **zcave;
+	struct dun_level *l_ptr = getfloor(wpos);
+
+	if (!wpos->wz || !(zcave = getcave(wpos)) || !cave_clean_bold(zcave, p_ptr->py, p_ptr->px)) {
+		msg_format(Ind, "\377wThis spell has no effect here.");
+		return 0;
+	}
+
+	if ((l_ptr->flags1 & LF1_CUSTOM_GATEWAY)) {
+		msg_print(Ind, "\377yThe presence of another active gateway spell is disturbing your attempt.");
+		return 0;
+	}
+
+	if (p_ptr->voidx && p_ptr->voidy) {
+		if (place_between_targetted(wpos, p_ptr->py, p_ptr->px, p_ptr->voidy, p_ptr->voidx)) {
+			//TODO: jumpgate limit? Using level flag for this here:
+			l_ptr->flags1 |= LF1_CUSTOM_GATEWAY;
+
+			//When successfull, we clear state, so we can create more.
+			p_ptr->voidx = 0;
+			p_ptr->voidy = 0;
+
+			p_ptr->redraw |= (PR_MAP);
+			msg_format(Ind, "\377vYou successfully create a gateway between the two points!");
+			msg_format_near(Ind, "\377v%s has successfully created a gateway!", p_ptr->name);
+		}
+		/* completed the spell successfully */
+		return 2;
+	}
+
+	// Let's not have this in towns/houses; OK everywhere else
+	if (!allow_terraforming(wpos, FEAT_TREE)) return 0;
+
+	msg_format(Ind, "\377vYou set your mind to create a gateway here.");
+
+	p_ptr->voidx = p_ptr->px;
+	p_ptr->voidy = p_ptr->py;
+
+	place_between_dummy(wpos, p_ptr->py, p_ptr->px);
+	return 1;
+}
 /* A: instant wor for every party member on level. INCLUDING town recalls?
  *    /rec 32 32 -> will attempt to teleport party members to Bree.
  * further note: hm, this could fatally disturb idle party members. also dangerous if all party teleports into a D pit!!. make this only active if player (and therefore interested party members) are not in town.
@@ -192,38 +236,8 @@ void divine_gateway(int Ind) {
 
 			set_recall_timer(i, 1);
 		}
-	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
-		struct worldpos *wpos = &(p_ptr->wpos);
-		cave_type **zcave;
-
-		if (!wpos->wz || !(zcave = getcave(wpos)) || !cave_clean_bold(zcave, p_ptr->py, p_ptr->px)) {
-			msg_format(Ind, "\377wThis spell has no effect here.");
-			return;
-		}
-
-		if (p_ptr->voidx && p_ptr->voidy) {
-			if (place_between_targetted(wpos, p_ptr->py, p_ptr->px, p_ptr->voidy, p_ptr->voidx)) {
-				//When successfull, we clear state, so we can create more.
-				//TODO: jumpgate limit?
-				p_ptr->voidx = 0;
-				p_ptr->voidy = 0;
-
-				p_ptr->redraw |= (PR_MAP);
-				msg_format(Ind, "\377vYou successfully create a gateway between the two points!");
-				msg_format_near(Ind, "\377v%s has successfully created a gateway!", p_ptr->name);
-			}
-		} else {
-			// Let's not have this in towns/houses; OK everywhere else
-			if (!allow_terraforming(wpos, FEAT_TREE)) return;
-
-			msg_format(Ind, "\377vYou set your mind to create a gateway here.");
-
-			p_ptr->voidx = p_ptr->px;
-			p_ptr->voidy = p_ptr->py;
-
-			place_between_dummy(wpos, p_ptr->py, p_ptr->px);
-		}
-	}
+	} else if (p_ptr->ptrait == TRAIT_CORRUPTED)
+		(void)py_create_gateway(Ind);
 }
 
 #else /*lol, shared .pkg*/
@@ -515,17 +529,19 @@ bool do_xtra_stats(int Ind, int v, int p) {
  * "Banish" animals... Killing them, really. - the_sandman
  */
 bool do_banish_animals(int Ind, int chance) {
-	if (Ind < 0 || chance <= 0) return (FALSE);
 	int i, j = 0, c;
 	player_type *p_ptr;
 	p_ptr = Players[Ind];
+
+	if (Ind < 0 || chance <= 0) return (FALSE);
+
 	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
 		monster_race *r_ptr = race_inf(m_ptr);
-		if (r_ptr->flags1 & RF1_UNIQUE) continue;
-		if (!(r_ptr->flags3&RF3_ANIMAL)) continue;
-		if (r_ptr->flags9 & RF9_IM_TELE) continue;
-//		if ((r_ptr->flags3 & RF3_RES_TELE) && magik(50)) continue;
+		if ((r_ptr->flags1 & RF1_UNIQUE)) continue;
+		if (!(r_ptr->flags3 & RF3_ANIMAL)) continue;
+		if ((r_ptr->flags9 & RF9_IM_TELE)) continue;
+		if ((r_ptr->flags3 & RF3_RES_TELE) && magik(50)) continue; /* side note: RES_TELE is usually geno-immunity */
 		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 		c = chance - r_ptr->level;
 		if (c <= 0) continue;
@@ -536,17 +552,17 @@ bool do_banish_animals(int Ind, int chance) {
 		}
 	}
 	if (j < 5) {
-		msg_print(Ind, "\337gA few here longs for their gardens.");
-		msg_format_near(Ind, "\337g%s tried hard but alas can only convert a few.", p_ptr->name);
+		msg_print(Ind, "\337gA few here long for their gardens.");
+		msg_format_near(Ind, "\337g%s tries hard but alas can only convert a few animals.", p_ptr->name);
 	} else if (j < 10) {
 		msg_print(Ind, "\337gA handful here longs for their gardens.");
-		msg_format_near(Ind, "\337g%s tried hard but alas can only convert a handful.", p_ptr->name);
+		msg_format_near(Ind, "\337g%s tries hard but alas can only convert a handful of animals.", p_ptr->name);
 	} else if (j < 20) {
 		msg_print(Ind, "\337gA pack here abandoned evil to retire in their gardens.");
-		msg_format_near(Ind, "\337g%s tried hard and you notice animals going away.", p_ptr->name);
+		msg_format_near(Ind, "\337g%s tries hard and you notice animals going away.", p_ptr->name);
 	} else if (j < 50) {
 		msg_print(Ind, "\337gIt's a near-miracle!");
-		msg_format_near(Ind, "\337g%s pulled this one off nicely.", p_ptr->name);
+		msg_format_near(Ind, "\337g%s banishes animals with conviction.", p_ptr->name);
 	} else {
 		msg_print(Ind, "\337gThe Day of Returning is here!.");
 		/* lol */

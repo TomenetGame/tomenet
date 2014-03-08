@@ -5799,6 +5799,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 #define LF1_IRON_RECALL		0x00001000L /* Recalling is allowed on this floor of an IRONMAN dungeon/tower */
 #define LF1_RANDOM_TOWN		0x00002000L /* it's a random (dungeon) town (for tracking in IDDC) */
+#define LF1_CUSTOM_GATEWAY	0x00004000L /* Marker that on this floor a custom gateway has been placed by a player (limiter) */
+//FLAG HOLE
 
 #define LF1_WATER		0x01000000L	/* for DIGGING: water rivers or base grids are being used */
 #define LF1_LAVA		0x02000000L	/* for DIGGING: lava rivers or base grids are being used */
@@ -5854,11 +5856,14 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define LF2_DUN_BOSS	0x00200000L
 #define LF2_COLLAPSING	0x00400000L	/* audiovisual show when Zu-Aon is defeated ;) - C. Blue */
 
+
 /* minimum time required to stay on current floor in order to get an extra feeling on next floor */
 #define TURNS_FOR_EXTRA_FEELING		(cfg.fps * 120)
 
 /* Enable strict probability-travel prevention by NO_MAGIC floor flag, even in up/down direction? */
 //#define NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
+
+
 
 /* vault flags for v_info */
 #define VF1_FORCE_FLAGS		0x00000001L

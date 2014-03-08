@@ -2709,11 +2709,11 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 			/* New Zangband scrolls */
 			case SV_SCROLL_FIRE:
 				sprintf(p_ptr->attacker, " is enveloped by fire for");
-				fire_ball(Ind, GF_FIRE, 0, 100, 4, p_ptr->attacker);
+				fire_ball(Ind, GF_FIRE, 0, 200, 4, p_ptr->attacker);
 				/* Note: "Double" damage since it is centered on the player ... */
 				if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
 					//                                take_hit(Ind, 50+randint(50)+(p_ptr->suscep_fire)?20:0, "a Scroll of Fire", 0);
-					take_hit(Ind, 50+randint(50), "a Scroll of Fire", 0);
+					take_hit(Ind, 100 + randint(100), "a Scroll of Fire", 0);
 				ident = TRUE;
 				break;
 
@@ -2721,7 +2721,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 				sprintf(p_ptr->attacker, " enveloped by frost for");
 				fire_ball(Ind, GF_ICE, 0, 200, 4, p_ptr->attacker);
 				if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
-					take_hit(Ind, 100+randint(100), "a Scroll of Ice", 0);
+					take_hit(Ind, 100 + randint(100), "a Scroll of Ice", 0);
 				ident = TRUE;
 				break;
 
@@ -5575,8 +5575,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				p_ptr->current_activation = item;
 				get_aim_dir(Ind);
 				return;
-#if 0
 			case ART_NUMENOR:
+#if 0
 				/* Give full knowledge */
 				/* Hack -- Maximal info */
 				monster_race *r_ptr;
@@ -5590,7 +5590,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 				r_ptr = race_inf(m_list[c_ptr->m_idx]);
 
-#ifdef OLD_MONSTER_LORE
+ #ifdef OLD_MONSTER_LORE
 				/* Observe "maximal" attacks */
 				for (m = 0; m < 4; m++) {
 					/* Examine "actual" blows */
@@ -5628,11 +5628,14 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				r_ptr->r_flags7 = r_ptr->flags7;
 				r_ptr->r_flags8 = r_ptr->flags8;
 				r_ptr->r_flags9 = r_ptr->flags9;
-#endif
+ #endif
 
 				o_ptr->timeout = rand_int(200) + 500;
-				break;
+#else
+				probing(Ind);
+				o_ptr->timeout = rand_int(200) + 300;
 #endif
+				break;
 			case ART_KNOWLEDGE:
 				identify_fully(Ind);
 				msg_print(Ind, "\377RYou hear horrible, otherworldy sounds of the dead in your head..");
@@ -5658,8 +5661,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
-#if 0
 			case ART_FLAR:
+#if 0
 				/* Check for CAVE_STCK */
 
 				msg_print(Ind, "You open a between gate. Choose a destination.");
@@ -5675,8 +5678,13 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				}
 				else teleport_player_to(ij,ii);
 				o_ptr->timeout = 100;
-				break;
+#else
+				/* Initiate or complete gateway creation. - C. Blue
+				   If we initiated it, do not set a timeout, so we can activate
+				   F'lar a second time at will to complete the spell, then timeout. */
+				if (py_create_gateway(Ind) == 2) o_ptr->timeout = 1000;
 #endif
+				break;
 			case ART_BARAHIR:
 				msg_print(Ind, "You exterminate small life.");
 				(void)dispel_monsters(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300));
@@ -5906,18 +5914,19 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				p_ptr->current_activation = item;
 				get_aim_dir(Ind);
 				return;
-#if 0
+#if 0 /* not suited for multiplayer, and it's like an amulet of life-saving anyway */
 			case ART_GROND:
 				msg_print(Ind, "Your hammer hits the floor...");
 				alter_reality();
 				o_ptr->timeout = 100;
 				break;
+#endif
 			case ART_NATUREBANE:
 				msg_print(Ind, "Your axe glows blood red...");
-				dispel_monsters(500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
+				//dispel_monsters(500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
+				do_banish_animals(Ind, 80);
 				o_ptr->timeout = 200 + randint(200);
 				break;
-#endif	// 0
 			case ART_NIGHT:
 				msg_print(Ind, "Your axe emits a black aura...");
 				p_ptr->current_activation = item;
@@ -6584,7 +6593,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 				break;
 			case ART_NARYA:
 				sprintf(p_ptr->attacker, " casts a fire ball for");
-				fire_ball(Ind, GF_FIRE, dir, 120, 3, p_ptr->attacker);
+				fire_ball(Ind, GF_FIRE, dir, 120 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 3, p_ptr->attacker);
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			case ART_NENYA:

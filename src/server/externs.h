@@ -1574,6 +1574,8 @@ extern void do_mstopcharm(int Ind);
 extern bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr);
 extern u32b mod_ball_spell_flags(int typ, u32b flags);
 
+extern int py_create_gateway(int Ind);
+
 
 /* store.c */
 extern int store_debug_mode, store_debug_quickmotion, store_debug_startturn;
