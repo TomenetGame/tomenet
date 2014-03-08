@@ -4114,7 +4114,7 @@ void calc_boni(int Ind) {
 		if (f5 & TR5_CRIT) { p_ptr->xtra_crit += pval; csheet_boni[i-INVEN_WIELD].crit += pval; }
 
 		/* Hack -- cause earthquakes */
-		if (f5 & TR5_IMPACT) p_ptr->impact = TRUE;
+		if (f5 & TR5_IMPACT) p_ptr->impact = TRUE; /* non-weapons/tools, so this could be gloves or jewelry, but those don't exist at this time */
 		if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP;
 
 		/* Generally vampiric? */
