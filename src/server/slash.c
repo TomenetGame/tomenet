@@ -8060,6 +8060,54 @@ void do_slash_cmd(int Ind, char *message)
 				else msg_format(Ind, "Player <%s> was seen %d seconds ago.", message3, s);
 				return;
 			}
+			else if (prefix(message, "/testrandart")) { /* test how often randarts get AM shell '>_> */
+				object_type *o_ptr;
+				u32b f1, f2, f3, f4, f5, esp;
+				int tries = 100000, found = 0;
+
+				if (tk != 1) {
+					msg_print(Ind, "\377oUsage: /testrandart <inventory-slot>");
+					return;
+				}
+
+				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
+					msg_print(Ind, "\377oInvalid inventory slot.");
+					return;
+				}
+
+				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
+				if (o_ptr->name1 != ART_RANDART) {
+					if (o_ptr->name1) {
+						msg_print(Ind, "\377oIt's a static art. Aborting.");
+						return;
+					} else {
+						msg_print(Ind, "\377oNot a randart - turning it into one.");
+						o_ptr->name1 = ART_RANDART;
+					}
+				}
+
+				do {
+					/* Piece together a 32-bit random seed */
+					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 += rand_int(0xFFFF);
+					/* Check the tval is allowed */
+					if (randart_make(o_ptr) == NULL) {
+						/* If not, wipe seed. No randart today */
+						o_ptr->name1 = 0;
+						o_ptr->name3 = 0L;
+						msg_print(Ind, "Randart creation failed.");
+						return;
+					}
+					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
+
+					/* check it for AM shell */
+					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+					if ((f3 & TR3_NO_MAGIC)) found++;
+				} while	(--tries);
+
+				msg_format(Ind, "%d were positive: %d%%.%d", found, 100 * found / 100000, (found % 1000) / 100);//wtb correct rounding >.> o laziness
+				return;
+			}
 		}
 	}
 
