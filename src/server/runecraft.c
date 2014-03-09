@@ -441,7 +441,7 @@ bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
 	
 	/* Artifact? */
 	if (o_ptr->name1) {
-		msg_print(Ind, "The artifact resists your attempts!");
+		msg_print(Ind, "The artifact is unaffected by your attempts!");
 		return FALSE;
 	}
 	
@@ -452,7 +452,7 @@ bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
 
 	/* Give a message */
 	char o_name[ONAME_LEN];
-	object_desc(Ind, o_name, o_ptr, FALSE, 3);	
+	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 	msg_format(Ind, "\377BYour %s is emblazoned with %s!", o_name, r_projections[projection].name);
 
 	return TRUE;
