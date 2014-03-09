@@ -2325,7 +2325,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	bool star = (Ind == 0 || object_fully_known_p(Ind, o_ptr));
 
 	/* Base cost */
-	s64b value = k_ptr->cost, v1, v2;
+	s64b value = k_ptr->cost;
 	int i;
 	/* Hack -- "worthless" items */
 	if (!value) return (0L);
@@ -2748,6 +2748,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	/* OPTIONAL/EXPERIMENTAL: Add extra bonus for weapon that has both, top hit/_dam_ and ea/crit/vamp */
 	else if (is_weapon(o_ptr->tval) && (o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
 		/* generate two different values, pick the higher one */
+		s64b v1 = 0, v2 = 0;
 
 		/* first bonus prefers weapons with high flag rating */
 		i = artifact_flag_rating_weapon(o_ptr) * 4;
