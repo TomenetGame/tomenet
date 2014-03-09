@@ -1859,11 +1859,8 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 				    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
 
 			/* Hack -- Factor in extra damage dice */
-			if (((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds)) &&
-			    (o_ptr->dd > 0 && o_ptr->ds > 0))
-			{
-				value += PRICE_BOOST((o_ptr->dd - k_ptr->dd), 1, 4) * o_ptr->ds * 100L;
-			}
+			if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
+				value += i * i * i;
 
 			/* Done */
 			break;
@@ -1886,11 +1883,8 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 				    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5)))  ) * 5L;
 
 			/* Hack -- Factor in extra damage dice */
-			if (((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds)) &&
-			    (o_ptr->dd > 0 && o_ptr->ds > 0))
-			{
-				value += (o_ptr->dd - k_ptr->dd) * (o_ptr->ds - k_ptr->ds) * 5L;
-			}
+			if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
+				value += i * 5000L;
 
 			/* Special attack (exploding arrow) */
 			if (o_ptr->pval != 0) {
@@ -2332,7 +2326,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 
 	/* Base cost */
 	s64b value = k_ptr->cost, v1, v2;
-	int i, j;
+	int i;
 	/* Hack -- "worthless" items */
 	if (!value) return (0L);
 
@@ -2700,11 +2694,8 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 				    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
 
 			/* Hack -- Factor in extra damage dice */
-			if (((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds)) &&
-			    (o_ptr->dd > 0 && o_ptr->ds > 0))
-			{
-				value += PRICE_BOOST((o_ptr->dd - k_ptr->dd), 1, 4) * o_ptr->ds * 100L;
-			}
+			if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
+				value += i * i * i;
 
 			/* Done */
 			break;
@@ -2727,11 +2718,8 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 				    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5)))  ) * 5L;
 
 			/* Hack -- Factor in extra damage dice */
-			if (((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds)) &&
-			    (o_ptr->dd > 0 && o_ptr->ds > 0))
-			{
-				value += (o_ptr->dd - k_ptr->dd) * (o_ptr->ds - k_ptr->ds) * 5L;
-			}
+			if ((i = o_ptr->dd * (o_ptr->ds + 1) - k_ptr->dd * (k_ptr->ds + 1)))
+				value += i * 5000L;
 
 			/* Done */
 			break;
@@ -2776,17 +2764,21 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		}
 
 		/* second bonus prefers weapons with just high hit/dam/dice */
-		else if ((i = o_ptr->to_h + o_ptr->to_d * 2) >= 75) {
+		i = o_ptr->to_h + o_ptr->to_d * 2;
+		if (i >= 75) {
 			int j;
+
 			i = (i - 75) * 2;
+
 			/* extra damage dice? */
 			j = (o_ptr->dd * (o_ptr->ds + 1)) - (k_ptr->dd * (k_ptr->ds + 1));
 			if (j > 0) i += j;
-			v2 = (j + 2) * (j + 2) * 40;
+
+			v2 = (i + 2) * (i + 2) * 40;
 		}
 
 		/* apply the more advantageous bonus */
-		if (v1 > v2) value += v1 else value += v2;
+		if (v1 > v2) value += v1; else value += v2;
 	}
 #endif
 
