@@ -9384,7 +9384,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		for (y = 0; y < MAX_HGT; y++) {
 			for (x = 0; x < MAX_WID; x++) {
 				c_ptr = &zcave[y][x];
-				c_ptr->feat = FEAT_HIGH_MOUNT_SOLID;
+				c_ptr->feat = FEAT_PERM_MOUNTAIN;//FEAT_HIGH_MOUNT_SOLID;
 				if (lit) c_ptr->info |= CAVE_GLOW;
 			}
 		}
