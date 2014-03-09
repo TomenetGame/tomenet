@@ -4066,7 +4066,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	// ?<-->if (strlen(o_name) > 77) msg_format(Ind, "\377s%s:", o_name + 77);
 
 	/* Sigil */
-	if (o_ptr->sigil) msg_format(Ind, "\377s  It is emblazoned with a sigil of %s.", r_projections[o_ptr->sigil-1].name);
+	if (o_ptr->sigil) msg_format(Ind, "\377B  It is emblazoned with a sigil of %s.", r_projections[o_ptr->sigil-1].name);
 	
 	switch (o_ptr->tval) {
 	case TV_BLUNT:
@@ -4332,7 +4332,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 #endif
 
 	/* Sigil */
-	if (o_ptr->sigil) fprintf(fff, "\377sIt is emblazoned with a sigil of %s.\n", r_projections[o_ptr->sigil-1].name);
+	if (o_ptr->sigil) fprintf(fff, "\377BIt is emblazoned with a sigil of %s.\n", r_projections[o_ptr->sigil-1].name);
 
 	/* in case we just *ID* it because an admin inspected it */
 	if (!(o_ptr->ident & ID_MENTAL) && is_admin(p_ptr)

@@ -453,7 +453,7 @@ bool rspell_sigil(int Ind, byte projection, byte imperative, u16b item) {
 	/* Give a message */
 	char o_name[ONAME_LEN];
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);	
-	msg_format(Ind, "\377sYour %s is emblazoned with %s!", o_name, r_projections[projection].name);
+	msg_format(Ind, "\377BYour %s is emblazoned with %s!", o_name, r_projections[projection].name);
 
 	return TRUE;
 }
