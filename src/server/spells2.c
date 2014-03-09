@@ -532,8 +532,13 @@ bool do_banish_animals(int Ind, int chance) {
 	int i, j = 0, c;
 	player_type *p_ptr;
 	p_ptr = Players[Ind];
+	cave_type **zcave;
+	dun_level *l_ptr;
+	struct worldpos *wpos = &p_ptr->wpos;
 
 	if (Ind < 0 || chance <= 0) return (FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	if ((l_ptr = getfloor(wpos)) && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
 	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
@@ -541,11 +546,15 @@ bool do_banish_animals(int Ind, int chance) {
 		if ((r_ptr->flags1 & RF1_UNIQUE)) continue;
 		if (!(r_ptr->flags3 & RF3_ANIMAL)) continue;
 		if ((r_ptr->flags9 & RF9_IM_TELE)) continue;
-		if ((r_ptr->flags3 & RF3_RES_TELE) && magik(50)) continue; /* side note: RES_TELE is usually geno-immunity */
-		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+		//if ((r_ptr->flags3 & RF3_RES_TELE) && magik(50)) continue;
+		if (!inarea(&m_ptr->wpos, wpos)) continue;
+
+		/* Taken from genocide_aux(): Not valid inside a vault */
+		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
+
 		c = chance - r_ptr->level;
 		if (c <= 0) continue;
-		if (c > randint(100)) {
+		if (c > rand_int(100)) {
 			//off with you!
 			delete_monster_idx(i, TRUE);
 			j++;
@@ -568,6 +577,82 @@ bool do_banish_animals(int Ind, int chance) {
 		/* lol */
 		msg_format_near(Ind, "\337gYou see %s's tears of joy at the number of returning animals.", p_ptr->name);
 	}
+	return (TRUE);
+}
+
+/* For Dawn activation - C. Blue
+   (note: highest non-unique undead is Black Reaver: level 74) */
+bool do_banish_undead(int Ind, int chance) {
+	int i, j = 0, c;
+	player_type *p_ptr;
+	p_ptr = Players[Ind];
+	cave_type **zcave;
+	dun_level *l_ptr;
+	struct worldpos *wpos = &p_ptr->wpos;
+
+	if (Ind < 0 || chance <= 0) return (FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	if ((l_ptr = getfloor(wpos)) && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
+
+	for (i = 1; i < m_max; i++) {
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = race_inf(m_ptr);
+		if ((r_ptr->flags1 & RF1_UNIQUE)) continue;
+		if (!(r_ptr->flags3 & RF3_UNDEAD)) continue;
+		if ((r_ptr->flags9 & RF9_IM_TELE)) continue;
+		//if ((r_ptr->flags3 & RF3_RES_TELE) && magik(50)) continue;
+		if (!inarea(&m_ptr->wpos, wpos)) continue;
+
+		/* Taken from genocide_aux(): Not valid inside a vault */
+		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
+
+		c = chance - r_ptr->level;
+		if (c <= 0) continue;
+		if (c > rand_int(100)) {
+			//off with you!
+			delete_monster_idx(i, TRUE);
+			j++;
+		}
+	}
+	/* (no time for tears of joy dealing with undead) */
+	return (TRUE);
+}
+
+/* For Mardra activation - C. Blue
+   (note: highest non-unique D is GWoP: level 85) */
+bool do_banish_dragons(int Ind, int chance) {
+	int i, j = 0, c;
+	player_type *p_ptr;
+	p_ptr = Players[Ind];
+	cave_type **zcave;
+	dun_level *l_ptr;
+	struct worldpos *wpos = &p_ptr->wpos;
+
+	if (Ind < 0 || chance <= 0) return (FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	if ((l_ptr = getfloor(wpos)) && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
+
+	for (i = 1; i < m_max; i++) {
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = race_inf(m_ptr);
+		if ((r_ptr->flags1 & RF1_UNIQUE)) continue;
+		if (!(r_ptr->flags3 & RF3_DRAGON)) continue;
+		if ((r_ptr->flags9 & RF9_IM_TELE)) continue;
+		//if ((r_ptr->flags3 & RF3_RES_TELE) && magik(50)) continue;
+		if (!inarea(&m_ptr->wpos, wpos)) continue;
+
+		/* Taken from genocide_aux(): Not valid inside a vault */
+		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
+
+		c = chance - r_ptr->level;
+		if (c <= 0) continue;
+		if (c > rand_int(100)) {
+			//off with you!
+			delete_monster_idx(i, TRUE);
+			j++;
+		}
+	}
+	/* (no time for tears of joy dealing with undead) */
 	return (TRUE);
 }
 
@@ -3922,107 +4007,62 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 }
 
 
-/*
- * Speed monsters
- */
-bool speed_monsters(int Ind)
-{
+/* Speed monsters */
+bool speed_monsters(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	return (project_los(Ind, GF_OLD_SPEED, p_ptr->lev, ""));
 }
-
-/*
- * Slow monsters
- */
-bool slow_monsters(int Ind, int pow)
-{
+/* Slow monsters */
+bool slow_monsters(int Ind, int pow) {
 	return (project_los(Ind, GF_OLD_SLOW, pow, ""));
 }
-
-/*
- * Sleep monsters
- */
-bool sleep_monsters(int Ind, int pow)
-{
+/* Sleep monsters */
+bool sleep_monsters(int Ind, int pow) {
 	return (project_los(Ind, GF_OLD_SLEEP, pow, ""));
 }
-
-/*
- * Fear monsters
- */
-bool fear_monsters(int Ind, int pow)
-{
+/* Fear monsters */
+bool fear_monsters(int Ind, int pow) {
 	return (project_los(Ind, GF_TURN_ALL, pow, ""));
 }
-
-/*
- * Stun monsters
- */
-bool stun_monsters(int Ind, int pow)
-{
+/* Stun monsters */
+bool stun_monsters(int Ind, int pow) {
 	return (project_los(Ind, GF_STUN, pow, ""));
 }
 
 
-/*
- * Banish evil monsters
- */
-bool banish_evil(int Ind, int dist)
-{
+/* Banish evil monsters */
+bool away_evil(int Ind, int dist) {
 	return (project_los(Ind, GF_AWAY_EVIL, dist, " banishes all evil"));
 }
 
 
-/*
- * Turn undead
- */
-bool turn_undead(int Ind)
-{
+/* Turn undead */
+bool turn_undead(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	return (project_los(Ind, GF_TURN_UNDEAD, p_ptr->lev, " calls against all undead"));
 }
-
-/*
- * Turn everyone
- */
-bool turn_monsters(int Ind, int dam)
-{
+/* Turn everyone */
+bool turn_monsters(int Ind, int dam) {
 	return (project_los(Ind, GF_TURN_ALL, dam, " calls against all monsters"));
 }
 
 
-/*
- * Dispel undead monsters
- */
-bool dispel_undead(int Ind, int dam)
-{
+/* Dispel undead monsters */
+bool dispel_undead(int Ind, int dam) {
 	return (project_los(Ind, GF_DISP_UNDEAD, dam, " banishes all undead"));
 }
-
-/*
- * Dispel evil monsters
- */
-bool dispel_evil(int Ind, int dam)
-{
+/* Dispel evil monsters */
+bool dispel_evil(int Ind, int dam) {
 	return (project_los(Ind, GF_DISP_EVIL, dam, " banishes all evil"));
 }
-
-bool dispel_demons(int Ind, int dam)
-{
+/* Dispel demons */
+bool dispel_demons(int Ind, int dam) {
 	return (project_los(Ind, GF_DISP_DEMON, dam, " banishes all demons"));
 }
-
-/*
- * Dispel all monsters
- */
-bool dispel_monsters(int Ind, int dam)
-{
+/* Dispel all monsters */
+bool dispel_monsters(int Ind, int dam) {
 	return (project_los(Ind, GF_DISP_ALL, dam, " banishes all monsters"));
 }
-
-
 
 
 /*
@@ -4474,26 +4514,22 @@ void wake_minions(int Ind, int who) {
 /*
  * If Ind <=0, no one takes the damage.	- Jir -OA
  */
-bool genocide_aux(int Ind, worldpos *wpos, char typ)
-{
+bool genocide_aux(int Ind, worldpos *wpos, char typ) {
 	player_type *p_ptr = Players[Ind];
-
 	int		i;
-
 	bool	result = FALSE;
-
 	int tmp;	// , d = 999;
 
 	dun_level		*l_ptr = getfloor(wpos);
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
 	bypass_invuln = TRUE;
 
 	/* Delete the monsters of that "type" */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		monster_type	*m_ptr = &m_list[i];
 		monster_race    *r_ptr = race_inf(m_ptr);
 
@@ -4549,8 +4585,7 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
 		result = TRUE;
 	}
 
-	if (Ind > 0)
-	{
+	if (Ind > 0) {
 #ifdef SEVERE_GENO
 		if (!p_ptr->death && result && !p_ptr->admin_dm)
 			take_hit(Ind, p_ptr->chp >> 1, "the strain of casting Genocide", 0);
@@ -4577,8 +4612,7 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
  * This is different from normal Angband now -- the closest non-unique
  * monster is chosen as the designed character to genocide.
  */
-bool genocide(int Ind)
-{
+bool genocide(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int	i;
 	char	typ = -1;
@@ -4587,12 +4621,12 @@ bool genocide(int Ind)
 	worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr = getfloor(wpos);
 	cave_type **zcave;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);	// double check..
 
 	/* Search all monsters and find the closest */
-	for (i = 1; i < m_max; i++)
-	{
+	for (i = 1; i < m_max; i++) {
 		monster_type *m_ptr = &m_list[i];
                 monster_race *r_ptr = race_inf(m_ptr);
 
@@ -4606,8 +4640,7 @@ bool genocide(int Ind)
 		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		/* Check distance */
-		if ((tmp = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) < d)
-		{
+		if ((tmp = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) < d) {
 			/* Set closest distance */
 			d = tmp;
 
@@ -4617,10 +4650,7 @@ bool genocide(int Ind)
 	}
 
 	/* Check to make sure we found a monster */
-	if (d == 999)
-	{
-		return FALSE;
-	}
+	if (d == 999) return FALSE;
 
 	return (genocide_aux(Ind, wpos, typ));
 }

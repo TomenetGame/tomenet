@@ -1490,7 +1490,7 @@ extern bool genocide(int Ind);
 extern bool obliteration(int who);
 extern bool probing(int Ind);
 extern bool project_los(int Ind, int typ, int dam, char *attacker);
-extern bool banish_evil(int Ind, int dist);
+extern bool away_evil(int Ind, int dist);
 extern bool dispel_evil(int Ind, int dam);
 extern bool dispel_undead(int Ind, int dam);
 extern bool dispel_demons(int Ind, int dam);
@@ -1552,6 +1552,8 @@ extern void tome_creation_aux(int Ind, int item);
 
 extern bool create_garden(int Ind, int level);
 extern bool do_banish_animals(int Ind, int chance);
+extern bool do_banish_undead(int Ind, int chance);
+extern bool do_banish_dragons(int Ind, int chance);
 extern bool do_xtra_stats(int Ind, int p, int v);
 extern bool do_focus_shot(int Ind, int p, int v);
 

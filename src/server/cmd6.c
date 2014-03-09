@@ -5764,13 +5764,15 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				set_image(Ind, 0);
 				o_ptr->timeout = 500;
 				break;
-#if 0
 			case ART_DAWN:
+#if 0 /* needs pet code */
 				msg_print(Ind, "You summon the Legion of the Dawn.");
 				(void)summon_specific_friendly(py, px, dlev, SUMMON_DAWN, TRUE, 0);
+#else
+				do_banish_undead(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
+#endif
 				o_ptr->timeout = 500 + randint(500);
 				break;
-#endif	// 0
 #if 0
 			case ART_AVAVIR:
 				if (dlev && (max_dlv[dungeon_type] > dlev)) {
@@ -5819,8 +5821,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				}
 				o_ptr->timeout = 666;
 				break;
-#if 0	// needing pet code
 			case ART_MARDRA:
+#if 0	// needing pet code
 				if (randint(3) == 1) {
 					if (summon_specific(py, px, ((plev * 3) / 2), SUMMON_DRAGONRIDER, 0, 1)) {
 						msg_print(Ind, "A DragonRider comes from the BETWEEN !");
@@ -5833,9 +5835,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 						msg_print(Ind, "'I will help you in your difficult task.'");
 					}
 				}
+#else
+				do_banish_dragons(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
+#endif
 				o_ptr->timeout = 1000;
 				break;
-#endif	// 0
 			case ART_PALANTIR_ITHIL:
 			case ART_PALANTIR:
 				msg_print(Ind, "The stone glows a deep green...");
