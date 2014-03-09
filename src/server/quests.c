@@ -13,7 +13,7 @@
 */
 
 
-#define QI_MAX_STAGES		20	/* a quest can have these # of different stages */
+#define QI_MAX_STAGES		50	/* a quest can have these # of different stages */
 #define QI_MAX_KEYWORDS		10	/* for dialogue with the questor */
 
 
@@ -27,11 +27,11 @@
 #define QI_STOWN_GONDOLIN	0x002
 #define QI_STOWN_MINASANOR	0x004
 #define QI_STOWN_LOTHLORIEN	0x008
-#define QI_STOWN_KHAZADDUM		0x010
+#define QI_STOWN_KHAZADDUM	0x010
 
-#define QI_STOWN_WILD			0x020
-#define QI_STOWN_DUNGEON		0x040
-#define QI_STOWN_IDDC			0x080
+#define QI_STOWN_WILD		0x020
+#define QI_STOWN_DUNGEON	0x040
+#define QI_STOWN_IDDC		0x080
 #define QI_STOWN_IDDC_FIXED	0x100
 
 
