@@ -2489,9 +2489,41 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* Sigil - Perhaps add colour for the '&' in the future. */
 	if (o_ptr->sigil) {
+#if 0 /* colour the '&' ? -- nope, because currently not possible to do this well: \
+	 The object's colour is different depending on where it appears: \
+	 *ID* screen? pasted into chat? inven/equip? - \
+	 So we cannot determine the correct colour to return to, unfortunately, \
+	 except if we changed ALL object_desc() calls to take an attr parameter.. */
+		int attr;
+
+		/* Get a color */
+		if (!Ind || p_ptr->admin_dm) {
+			/* hack- show correct mode-fail colour to admins */
+			if (can_use_admin(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
+			else attr = TERM_L_DARK;
+		} else {
+			if (can_use(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
+			else attr = TERM_L_DARK;
+		}
+
+		/* Get a color for a book */
+		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
+
+		/* Hack -- fake monochrome */
+		if (!use_color) attr = TERM_WHITE;
+#endif
+
 		t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, '<');
+#if 0 /* see above */
+		t = object_desc_chr(t, '\377');
+		t = object_desc_chr(t, 'B');
+#endif
 		t = object_desc_chr(t, '&');
+#if 0 /* see above */
+		t = object_desc_chr(t, '\377');
+		t = object_desc_chr(t, color_attr_to_char(attr));
+#endif
 		t = object_desc_chr(t, '>');
 	}
 
