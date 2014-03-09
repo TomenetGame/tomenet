@@ -5235,7 +5235,8 @@ void calc_boni(int Ind) {
 		/* the following part punishes all +hit/+dam for ranged weapons;
 		   trained fighters suffer more than untrained ones! - C. Blue */
 		if (p_ptr->to_h_ranged >= 25) p_ptr->to_h_ranged = 0;
-		else if (p_ptr->to_h_ranged >= 0) p_ptr->to_h_ranged -= 10 + (p_ptr->to_h_ranged * 3) / 5;
+		/* note: it's to be interpreted as "larger shield -> harder to shoot", not "heavier", ie STR doesn't matter here: */
+		else if (p_ptr->to_h_ranged >= 0) p_ptr->to_h_ranged -= 10 + (p_ptr->to_h_ranged * (160 + p_ptr->inventory[INVEN_ARM].weight) / 350); /* 3/5..4/5 depending on shield */
 		else p_ptr->to_h_ranged -= 10;
 
 		p_ptr->awkward_shoot = TRUE;
