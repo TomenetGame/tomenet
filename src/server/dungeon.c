@@ -5151,48 +5151,48 @@ static void process_player_end(int Ind) {
 }
 
 
-bool stale_level(struct worldpos *wpos, int grace)
-{
+bool stale_level(struct worldpos *wpos, int grace) {
 	time_t now;
 
-	/* Hack -- towns are static for good. */
-//	if (istown(wpos)) return (FALSE);
+	/* Hack -- towns are static for good? too spammy */
+//	if (istown(wpos)) return FALSE;
+	/* Hack -- make dungeon towns static though? too cheezy */
+//	if (isdungeontown(wpos)) return FALSE;
+
+	/* Hack: In IDDC, all floors are stale for 5 minutes to allow logging back in if
+	         someone's connection dropped without the floor going stale right away,
+	         and towns to allow for easy item transfers.
+	         Small drawback: If someone logs back on after having taken a break from IDDC
+	         and he finds himself in a non-accessible area, he'll have to wait for full
+	         5 minutes instead of the usual 10 seconds till the floor regens. */
+	if (in_irondeepdive(wpos)) grace = 300;
 
 	now = time(&now);
-	if(wpos->wz) {
+	if (wpos->wz) {
 		struct dungeon_type *d_ptr;
 		struct dun_level *l_ptr;
 		d_ptr = getdungeon(wpos);
-		if(!d_ptr) return(FALSE);
+		if (!d_ptr) return FALSE;
 		l_ptr = &d_ptr->level[ABS(wpos->wz) - 1];
 #if DEBUG_LEVEL > 1
 		s_printf("%s  now:%d last:%d diff:%d grace:%d players:%d\n", wpos_format(0, wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace, players_on_depth(wpos));
 #endif
-		if(now - l_ptr->lastused > grace){
-			return(TRUE);
-		}
-	}
-	else if(now - wild_info[wpos->wy][wpos->wx].lastused > grace){
+		if (now - l_ptr->lastused > grace) return TRUE;
+	} else if (now - wild_info[wpos->wy][wpos->wx].lastused > grace) {
+#if 0
 		/* Never allow dealloc where there are houses */
 		/* For now at least */
-#if 0
 		int i;
 
-		for(i = 0; i < num_houses; i++){
-			if(inarea(wpos, &houses[i].wpos)){
-				if(!(houses[i].flags&HF_DELETED))
-					return(FALSE);
+		for (i = 0; i < num_houses; i++) {
+			if (inarea(wpos, &houses[i].wpos)) {
+				if (!(houses[i].flags & HF_DELETED)) return FALSE;
 			}
 		}
 #endif
-
-		return(TRUE);
+		return TRUE;
 	}
-	/*
-	else if(now-wild_info[wpos->wy][wpos->wx].lastused > grace)
-		return(TRUE);
-	 */
-	return(FALSE);
+	return FALSE;
 }
 
 static void do_unstat(struct worldpos *wpos)
