@@ -1652,8 +1652,16 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 		p_ptr->IDDC_found_rndtown = FALSE;
 	}
 
+	if (!older_than(4, 5, 18)) { //superfluous check! (as are the others above too, mostly..) We can just read the silyl byte since it's 0 anyway otherwise. --todo: cleanup
+		rd_byte(&tmp8u);
+		p_ptr->IDDC_logscum = (tmp8u != 0);
+	} else {
+		strip_bytes(1);
+		p_ptr->IDDC_logscum = FALSE;
+	}
+
 	/* Future use */
-	strip_bytes(32);
+	strip_bytes(31);
 
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */

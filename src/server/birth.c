@@ -2250,7 +2250,8 @@ static void player_setup(int Ind, bool new) {
 			    && !(l_ptr->flags1 & LF1_DUNGEON_TOWN))
 				p_ptr->IDDC_logscum = TRUE;
 		}
-		else p_ptr->IDDC_logscum = FALSE; /* It's still the same level we left [a moment ago], np. */
+		/* <else> It's still the same level we left [a moment ago], np.
+		   Here we just keep the IDDC_logscum that we read in load.c. */
 
 		/* teleport players who logged into a non-existing/changed
 		   floor, so they don't get stuck in walls - C. Blue */
@@ -2406,6 +2407,8 @@ static void player_setup(int Ind, bool new) {
 	/* disable other ftk types */
 	p_ptr->shoot_till_kill_mimic = FALSE;
 	p_ptr->shoot_till_kill_rcraft = FALSE;
+	/* totally obsolete and redundant */
+	p_ptr->IDDC_logscum = FALSE;
 #endif
 
 	/* No item being used up */

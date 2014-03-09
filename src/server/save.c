@@ -783,9 +783,10 @@ static void wr_extra(int Ind)
 	wr_byte(p_ptr->fluent_artifact_reset); /* for automatic artifact resets */
 	wr_byte(p_ptr->sanity_bar);
 	wr_byte(p_ptr->IDDC_found_rndtown);
+	wr_byte(p_ptr->IDDC_logscum);
 
 	/* Future use */
-	for (i = 0; i < 32; i++) wr_byte(0);
+	for (i = 0; i < 31; i++) wr_byte(0);
 
         /* Toggle for possible automatic save-game updates
            (done via script login-hook, eg custom.lua) - C. Blue */
