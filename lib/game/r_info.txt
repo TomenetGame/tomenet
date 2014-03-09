@@ -12239,7 +12239,7 @@ D:darkness in the shape of a large dog.
 N:725:Time hound
 G:Z:B
 I:120:60d10:30:100:0
-W:51:2:800:5000
+W:51:2:800:3000
 E:0:1:0:2:1:4
 O:0:0:0:0
 B:CLAW:HURT:2d12
