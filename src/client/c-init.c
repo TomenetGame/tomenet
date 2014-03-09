@@ -721,24 +721,24 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				p2 = strchr(p1, ':') + 1;
 				info_val = atoi(p1) - 110;
 				if (info_val != 0)
-					sprintf(info_tmp, "\377%cSpeed: \377%c%s%d\377%c, ", a_key, a_val, info_val < 0 ? "Slow " : "Fast +", info_val, a_key);
+					sprintf(info_tmp, "\377%cSpeed: \377%c%s%d\377%c. ", a_key, a_val, info_val < 0 ? "Slow " : "Fast +", info_val, a_key);
 				else
-					sprintf(info_tmp, "\377%cSpeed: \377%cNormal\377%c, ", a_key, a_val, a_key);
+					sprintf(info_tmp, "\377%cSpeed: \377%cNormal\377%c. ", a_key, a_val, a_key);
 				strcat(info, info_tmp);
 				p1 = p2;
 			    /* hp */
 				p2 = strchr(p1, ':') + 1;
 				snprintf(info_tmp, p2 - p1, "%s", p1);
-				strcat(info, format("HP: \377%c%s\377%c, ", a_val, info_tmp, a_key));
+				strcat(info, format("HP: \377%c%s\377%c. ", a_val, info_tmp, a_key));
 				p1 = p2;
 			    /* vision range */
 				p2 = strchr(p1, ':') + 1;
-				sprintf(info_tmp, "Radius: \377%c%d\377%c, ", a_val, atoi(p1), a_key);
+				sprintf(info_tmp, "Radius: \377%c%d\377%c. ", a_val, atoi(p1), a_key);
 				strcat(info, info_tmp);
 				p1 = p2;
 			    /* AC */
 				p2 = strchr(p1, ':') + 1;
-				sprintf(info_tmp, "AC: \377%c%d\377%c, ", a_val, atoi(p1), a_key);
+				sprintf(info_tmp, "AC: \377%c%d\377%c. ", a_val, atoi(p1), a_key);
 				strcat(info, info_tmp);
 				p1 = p2;
 			    /* alertness */
@@ -759,41 +759,41 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				got_W_line = TRUE;
 			    /* depth */
 				p2 = strchr(p1, ':') + 1;
-				sprintf(info_tmp, "\377%cLevel (depth): \377%c%d\377%c, ", a_key, a_val, atoi(p1), a_key);
+				sprintf(info_tmp, "\377%cLevel (depth): \377%c%d\377%c. ", a_key, a_val, atoi(p1), a_key);
 				strcpy(info, info_tmp);
 				p1 = p2;
 			    /* rarity */
 				p2 = strchr(p1, ':') + 1;
 				info_val = atoi(p1);
 				if (info_val == 1) {
-					strcat(info_tmp, format("\377%cCommon\377%c, ", a_val, a_key));
-					strcat(info, format("\377%cCommon\377%c, ", a_val, a_key));
+					strcat(info_tmp, format("\377%cCommon\377%c. ", a_val, a_key));
+					strcat(info, format("\377%cCommon\377%c. ", a_val, a_key));
 				} else if (info_val <= 3) {
-					strcat(info_tmp, format("\377%cL.common (%d)\377%c, ", a_val, info_val, a_key));
-					strcat(info, format("\377%cLess common (%d)\377%c, ", a_val, info_val, a_key));
+					strcat(info_tmp, format("\377%cL.common (%d)\377%c. ", a_val, info_val, a_key));
+					strcat(info, format("\377%cLess common (%d)\377%c. ", a_val, info_val, a_key));
 				} else if (info_val == 255) {
-					strcat(info_tmp, format("\377%cUnfindable (%d)\377%c, ", a_val, info_val, a_key));
-					strcat(info, format("\377%cUnfindable (%d)\377%c, ", a_val, info_val, a_key));
+					strcat(info_tmp, format("\377%cUnfindable (%d)\377%c. ", a_val, info_val, a_key));
+					strcat(info, format("\377%cUnfindable (%d)\377%c. ", a_val, info_val, a_key));
 				} else {
-					strcat(info_tmp, format("\377%cRare (%d)\377%c, ", a_val, info_val, a_key));
-					strcat(info, format("\377%cRare (%d)\377%c, ", a_val, info_val, a_key));
+					strcat(info_tmp, format("\377%cRare (%d)\377%c. ", a_val, info_val, a_key));
+					strcat(info, format("\377%cRare (%d)\377%c. ", a_val, info_val, a_key));
 				}
 				p1 = p2;
 			    /* weight */
 				p2 = strchr(p1, ':') + 1;
 				info_val = atoi(p1) / 10;
 				if (info_val <= 100) {
-					strcat(info_tmp, format("\377%cLight (%d lb)\377%c, ", a_val, info_val, a_key));
-					strcat(info, format("\377%cLight (%d lb)\377%c, ", a_val, info_val, a_key));
+					strcat(info_tmp, format("\377%cLight (%d lb)\377%c. ", a_val, info_val, a_key));
+					strcat(info, format("\377%cLight (%d lb)\377%c. ", a_val, info_val, a_key));
 				} else if (info_val <= 450) {
-					strcat(info_tmp, format("\377%cMedium (%d lb)\377%c, ", a_val, info_val, a_key));
-					strcat(info, format("\377%cMedium (%d lb)\377%c, ", a_val, info_val, a_key));
+					strcat(info_tmp, format("\377%cMedium (%d lb)\377%c. ", a_val, info_val, a_key));
+					strcat(info, format("\377%cMedium (%d lb)\377%c. ", a_val, info_val, a_key));
 				} else if (info_val <= 2000) {
-					strcat(info_tmp, format("\377%cHeavy (%d lb)\377%c, ", a_val, info_val, a_key));
-					strcat(info, format("\377%cHeavy (%d lb)\377%c, ", a_val, info_val, a_key));
+					strcat(info_tmp, format("\377%cHeavy (%d lb)\377%c. ", a_val, info_val, a_key));
+					strcat(info, format("\377%cHeavy (%d lb)\377%c. ", a_val, info_val, a_key));
 				} else {
-					strcat(info_tmp, format("\377%cS-heavy (%d lb)\377%c, ", a_val, info_val, a_key));
-					strcat(info, format("\377%cSuper-heavy (%d lb)\377%c, ", a_val, info_val, a_key));
+					strcat(info_tmp, format("\377%cS-heavy (%d lb)\377%c. ", a_val, info_val, a_key));
+					strcat(info, format("\377%cSuper-heavy (%d lb)\377%c. ", a_val, info_val, a_key));
 				}
 				p1 = p2;
 			    /* exp */
@@ -1266,7 +1266,7 @@ static void init_artifact_list() {
 	char buf[1024], *p1, *p2, art_name[MSG_LEN];
 	FILE *fff;
 	int tval = 0, sval = 0, i, v1 = 0, v2 = 0, v3 = 0, rar;
-	bool discard;
+	bool discard, special_gene, flag_break_marker;
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "a_info.txt");
@@ -1308,6 +1308,8 @@ static void init_artifact_list() {
 		strcpy(artifact_list_name[artifact_list_idx], "");
 		strcpy(art_name, p2 + 1);
 		discard = FALSE;
+		special_gene = FALSE;
+		flag_break_marker = FALSE;
 
 		/* fetch tval,sval and lookup type name in k_info */
 		rar = 1; /* paranoia/kill compiler warning */
@@ -1325,12 +1327,22 @@ static void init_artifact_list() {
 			}
 			if (!p1 && !p2) continue;
 
-			if (strlen(buf) < 3 || (buf[0] != 'I' && buf[0] != 'W')) continue;
+			/* HACK: done with scanning flags? -- note this is non-canonical (empty lines are actually allowed), ew */
+			if (flag_break_marker && buf[0] != 'F') break;
+
+			if (strlen(buf) < 3 || (buf[0] != 'I' && buf[0] != 'W' && buf[0] != 'F')) continue;
 			if (buf[0] == 'I') {
 				p1 = buf + 2; /* tval */
 				p2 = strchr(p1, ':') + 1; /* sval */
 				tval = atoi(p1);
 				sval = atoi(p2);
+				continue;
+			} else if (buf[0] == 'F') {
+				flag_break_marker = TRUE;
+				if (strstr(buf, "SPECIAL_GENE")) {
+					special_gene = TRUE;
+					break;
+				}
 				continue;
 			} else { /* 'W' -- scan rarity */
 				p1 = buf + 2;
@@ -1338,7 +1350,7 @@ static void init_artifact_list() {
 				rar = atoi(p2);
 				/* check for 'disabled' hack */
 				if (rar == 255) discard = TRUE;
-				break;
+				continue;
 			}
 		}
 		/* flashy-thingy us? */
@@ -1356,6 +1368,9 @@ static void init_artifact_list() {
 		}
 		/* complete the artifact name */
 		strcat(artifact_list_name[artifact_list_idx], art_name);
+
+		/* remember if it's a dungeon boss drop */
+		artifact_list_specialgene[artifact_list_idx] = special_gene;
 
 		/* useful 'byproduct', since we had to scan for 255 rarity anyway */
 		if (!rar) rar = 1; /* identical actually (and here to prevent divby0) */
@@ -1658,7 +1673,10 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 
 			    /* depth */
 				p2 = strchr(p1, ':') + 1;
-				sprintf(info_tmp, "Found around depth: \377%c%d\377%c, ", a_val, atoi(p1), a_key);
+				if (!artifact_list_specialgene[alidx])
+					sprintf(info_tmp, "Found around depth: \377%c%d\377%c. ", a_val, atoi(p1), a_key);
+				else
+					sprintf(info_tmp, "Carried by a dungeon boss. ");
 				/* rarity string left from an otherwise completely empty 'I:' line? */
 				if (s_rarity) {
 					sprintf(info, "%s. ", s_rarity);
@@ -1676,7 +1694,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				p1 = p2;
 			    /* weight */
 				p2 = strchr(p1, ':') + 1;
-				sprintf(info_tmp, "Weight: \377%c%d.%d lb\377%c, ", a_val, atoi(p1) / 10, atoi(p1) % 10, a_key);
+				sprintf(info_tmp, "Weight: \377%c%d.%d lb\377%c. ", a_val, atoi(p1) / 10, atoi(p1) % 10, a_key);
 				strcat(info, info_tmp);
 				p1 = p2;
 			    /* price */
@@ -1725,22 +1743,22 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					if (v_dam) { /* in theory v_hit && v_dam, but this also covers (+0,+n)
 					                (which currently doesn't exist though).
 							ACTUALLY it should test for SHOW_MODS flag instead of hit/dam. ;) */
-						strcpy(info_tmp, format(", To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
+						strcpy(info_tmp, format(". To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
 						    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key));
 						strcat(info, info_tmp);
 					} else if (v_hit < 0) {
-						strcpy(info_tmp, format(", Bulkiness affecting to-hit: \377%c(%d)\377%c",
+						strcpy(info_tmp, format(". Bulkiness affecting to-hit: \377%c(%d)\377%c",
 						    a_val, v_hit, a_key));
 						strcat(info, info_tmp);
 					}
 				} else if (is_weapon(tval) || is_ammo(tval) || tval == TV_BOOMERANG) {
 					empty = FALSE;
-				        sprintf(info_tmp, "Damage dice: \377%c(%s)\377%c, To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
+				        sprintf(info_tmp, "Damage dice: \377%c(%s)\377%c. To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
 					    a_val, v_ddice, a_key,
 					    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key);
 					strcpy(info, info_tmp);
 					if (v_acx) {
-						strcpy(info_tmp, format(", AC bonus: \377%c[%s%d]\377%c",
+						strcpy(info_tmp, format(". AC bonus: \377%c[%s%d]\377%c",
 						    a_val, v_acx < 0 ? "" : "+", v_acx, a_key));
 						strcat(info, info_tmp);
 					}
@@ -1752,12 +1770,12 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					case SV_HEAVY_XBOW: mult = 4; break;
 					}
 					if (xtra_might) mult++;
-				        sprintf(info_tmp, "Damage/range multiplier: \377%c(x%d)\377%c, To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
+				        sprintf(info_tmp, "Damage/range multiplier: \377%c(x%d)\377%c. To-hit/to-dam: \377%c(%s%d,%s%d)\377%c",
 					    a_val, mult, a_key,
 					    a_val, v_hit < 0 ? "" : "+", v_hit, v_dam < 0 ? "" : "+", v_dam, a_key);
 					strcpy(info, info_tmp);
 					if (v_acx) {
-						strcpy(info_tmp, format(", AC bonus: \377%c[%s%d]\377%c",
+						strcpy(info_tmp, format(". AC bonus: \377%c[%s%d]\377%c",
 						    a_val, v_acx < 0 ? "" : "+", v_acx, a_key));
 						strcat(info, info_tmp);
 					}
@@ -1828,8 +1846,12 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				/* different colour for certain special flags, to stand out */
 				if ((p2 = strstr(info, "SPECIAL_GENE"))) {
 					strcpy(info_tmp, info);
+#if 0
 					sprintf(info_tmp + (p2 - info), "\377ySPECIAL_GENE\377%c", a_val);
-					strcat(info_tmp, p2 + 12);
+#else /* strip instead, since we have 'Carried by a dungeon boss' now */
+					info_tmp[(p2 - info)] = '\0';
+#endif
+					strcat(info_tmp, p2 + 13);
 					strcpy(info, info_tmp);
 				}
 				if ((p2 = strstr(info, "WINNERS_ONLY"))) {
