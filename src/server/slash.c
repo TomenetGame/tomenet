@@ -7319,18 +7319,22 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr->timeout = 0;
 					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
 				} while	(
-				    o_ptr->to_h < 30 ||
-				    o_ptr->to_d < 30 ||
-				    o_ptr->pval < 4 ||
+				    //o_ptr->to_h < 30 ||
+				    //o_ptr->to_d < 30 ||
+				    //o_ptr->to_a < 30 ||
+				    //o_ptr->pval < 4 ||
+
 				    //!(a_ptr->flags1 & TR1_STEALTH) ||
-				    !(a_ptr->flags1 & TR1_SPEED) ||
-				    !(a_ptr->flags1 & TR1_CON) ||
+				    //!(a_ptr->flags1 & TR1_SPEED) ||
+				    //!(a_ptr->flags1 & TR1_CON) ||
 				    //!(a_ptr->flags2 & TR2_FREE_ACT) ||
 				    //!(a_ptr->flags2 & TR2_RES_COLD) ||
-				    !(a_ptr->flags2 & TR2_IM_COLD) ||
+				    //!(a_ptr->flags2 & TR2_IM_COLD) ||
 				    //!(a_ptr->flags2 & TR2_RES_SHARDS) ||
+
 				    //!(a_ptr->flags3 & TR3_XTRA_MIGHT) ||
 				    //!(a_ptr->flags3 & TR3_XTRA_SHOTS) ||
+
 				    (a_ptr->flags3 & TR3_NO_MAGIC) ||
 				    (a_ptr->flags3 & TR3_AGGRAVATE)
 				    );
