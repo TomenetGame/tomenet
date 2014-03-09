@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. March 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. March 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6298,8 +6298,11 @@ Ironman Deep Dive Challenge (IDDC)
     In each 1000ft interval (-450..+500) around the peak points of 1k,2k,3k,4k
     there can be only one (random) town at a time.
     Random towns cannot spawn before dungeon level 18 and not after dungeon
-    level 99. They remain static for only 5 minutes after logging out or dying.
-    All other floors will remain static for at most 10 minutes.
+    level 99. They remain static for only 5 minutes after dying, all other
+    floors will remain static for at most 10 minutes, giving other players a
+    chance to loot items and money.
+    Floors remain static for 2 minutes after the last player has left them
+    by logging out or taking a staircase (or recalling if that is possible).
 
     Also, starting at dungeon level 8, a hidden library may appear randomly
     (that's a book store with a red '9' for entrance), allowing you to purchase
