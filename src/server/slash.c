@@ -2060,7 +2060,7 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* Check whether target is actually online by now :) */
 			if ((i = name_lookup_loose_quiet(Ind, tname, FALSE, FALSE))) {
-				msg_format(i, "\377bNote from %s: %s", p_ptr->name, message2 + j + 1);
+				msg_format(i, "\377RNote from %s: %s", p_ptr->name, message2 + j + 1);
 //				return; //so double-msg him just to be safe he sees it
 			}
 
