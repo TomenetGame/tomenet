@@ -3081,7 +3081,7 @@ cptr item_activation(object_type *o_ptr) {
 		return "healing(7000), curing every 500 turns";
 	case ART_DAWN:
 		//return "summon the Legion of the Dawn every 500+d500 turns";
-		return "dispel undead every 500+d500 turns";
+		return "banish undead every 500+d500 turns";
 	case ART_ANDURIL:
 		return "fire ball (72) every 400 turns";
 	case ART_FIRESTAR:
@@ -3206,7 +3206,7 @@ cptr item_activation(object_type *o_ptr) {
 		return "heal and cure black breath every 200 turns";
 	case ART_MARDRA:
 		//return "summon a dragonrider every 1000 turns";
-		return "banishes dragons every 1000 turns";
+		return "banish dragons every 1000 turns";
 	case ART_PALANTIR_ITHIL:
 	case ART_PALANTIR:
 		return "clairvoyance every 100+d100 turns";
