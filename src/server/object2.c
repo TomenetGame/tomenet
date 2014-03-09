@@ -1430,7 +1430,8 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 	bool star = (Ind == 0 || object_fully_known_p(Ind, o_ptr));
 
 	/* Base cost */
-	s64b value = k_ptr->cost, i;
+	s64b value = k_ptr->cost;
+	int i;
 
 	/* Hack -- "worthless" items */
 	if (!value) return (0L);
@@ -2324,14 +2325,14 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
 
 /* Return a sensible pricing for randarts, which
    gets added to k_info base item price - C. Blue */
-s64b artifact_value_real(int Ind, object_type *o_ptr)
-{
+s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, esp;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 	bool star = (Ind == 0 || object_fully_known_p(Ind, o_ptr));
 
 	/* Base cost */
-	s64b value = k_ptr->cost, i;
+	s64b value = k_ptr->cost, v1, v2;
+	int i, j;
 	/* Hack -- "worthless" items */
 	if (!value) return (0L);
 
@@ -2757,7 +2758,10 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 		if (i >= 15) value += (o_ptr->to_a + i - 30) * 3000;
 	}
 	/* OPTIONAL/EXPERIMENTAL: Add extra bonus for weapon that has both, top hit/_dam_ and ea/crit/vamp */
-	else if (is_weapon(o_ptr->tval) && (i = o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
+	else if (is_weapon(o_ptr->tval) && (o_ptr->to_h + o_ptr->to_d * 2) >= 60) {
+		/* generate two different values, pick the higher one */
+
+		/* first bonus prefers weapons with high flag rating */
 		i = artifact_flag_rating_weapon(o_ptr) * 4;
 		if (i >= 24) {
  #if 1 /* ultraboost for top-end stats? This can result in x2.5 prices for those, up to ~1M Au! */
@@ -2767,10 +2771,22 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 			/* boost even further for being vampiric in addition to being awesome */
 			if ((f1 & TR1_VAMPIRIC) && o_ptr->to_d >= 20) value += (o_ptr->to_d - 20) * ultraboost * 15;
  #endif
-
 			/* boost the value for especially good rating */
-			value += (o_ptr->to_h + o_ptr->to_d * 2 + i - 70) * 2000;
+			v1 = (o_ptr->to_h + o_ptr->to_d * 2 + i - 70) * 2000;
 		}
+
+		/* second bonus prefers weapons with just high hit/dam/dice */
+		else if ((i = o_ptr->to_h + o_ptr->to_d * 2) >= 75) {
+			int j;
+			i = (i - 75) * 2;
+			/* extra damage dice? */
+			j = (o_ptr->dd * (o_ptr->ds + 1)) - (k_ptr->dd * (k_ptr->ds + 1));
+			if (j > 0) i += j;
+			v2 = (j + 2) * (j + 2) * 40;
+		}
+
+		/* apply the more advantageous bonus */
+		if (v1 > v2) value += v1 else value += v2;
 	}
 #endif
 
