@@ -1548,7 +1548,9 @@ F:SLAY_EVIL | SLAY_DRAGON | SLAY_UNDEAD | SLAY_DEMON | VORPAL | CLONE |
 F:CHR | SUST_CHR | RES_FEAR | RES_LITE | RES_BLIND | REGEN | SHOW_MODS
 D:Forged in the farthest East by a race of mighty spellcasters, this
 D:shiny pale sword gleams with the rays of rising sun as you invoke
-D:its power of commanding legions of powerful immortal warriors...
+D:its power of banishing legions of creatures of the night...
+#(needs pet code if we want this:)
+#D:its power of commanding legions of powerful immortal warriors...
 
 
 
