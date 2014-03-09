@@ -5159,13 +5159,13 @@ bool stale_level(struct worldpos *wpos, int grace) {
 	/* Hack -- make dungeon towns static though? too cheezy */
 //	if (isdungeontown(wpos)) return FALSE;
 
-	/* Hack: In IDDC, all floors are stale for 5 minutes to allow logging back in if
+	/* Hack: In IDDC, all floors are stale for 2 minutes to allow logging back in if
 	         someone's connection dropped without the floor going stale right away,
 	         and towns to allow for easy item transfers.
 	         Small drawback: If someone logs back on after having taken a break from IDDC
-	         and he finds himself in a non-accessible area, he'll have to wait for full
-	         5 minutes instead of the usual 10 seconds till the floor regens. */
-	if (in_irondeepdive(wpos)) grace = 300;
+	         and he finds himself in a non-accessible area, he'll have to wait for
+	         2 minutes instead of the usual 10 seconds till the floor regens. */
+	if (in_irondeepdive(wpos)) grace = 120;
 
 	now = time(&now);
 	if (wpos->wz) {
