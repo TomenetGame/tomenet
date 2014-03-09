@@ -343,6 +343,7 @@ static void init_monster_list() {
 	int v1 = 0, v2 = 0, v3 = 0;
 	FILE *fff;
 	bool discard = FALSE, multihued = FALSE, breathhued = FALSE;
+	bool halloween; /* Don't display 'level 127' for townies during Halloween */
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
@@ -355,6 +356,7 @@ static void init_monster_list() {
 	while (0 == my_fgets(fff, buf, 1024)) {
 		/* strip $/%..$/! conditions */
 		p1 = p2 = buf; /* dummy, != NULL */
+		halloween = FALSE;
 		while (buf[0] == '$' || buf[0] == '%') {
 			p1 = strchr(buf + 1, '$');
 			p2 = strchr(buf + 1, '!');
@@ -362,9 +364,12 @@ static void init_monster_list() {
 			if (!p1) p1 = p2;
 			else if (p2 && p2 < p1) p1 = p2;
 
+			/* avoid using Halloween-only monster level (for normal Bree townies) */
+			if (buf[0] == '$' && *p1 == '$' && !strncmp(buf + 1, "HALLOWEEN", 9)) halloween = TRUE;
+
 			/* actually handle/assume certain features */
 			if (buf[0] == '$' && *p1 == '!' && (
-			    (!strncmp(buf + 1, "HALLOWEEN", 9) && strstr(buf, "JOKEANGBAND")) /* allow viewing HALLOWEEN monsters */
+			    (!strncmp(buf + 1, "HALLOWEEN", 9) && strstr(buf, "JOKEANGBAND")) /* allow viewing HALLOWEEN monsters (ie those that are marked as 'JOKEANGBAND when NOT Halloween') */
 			    )) {
 				p1 = p2 = NULL;
 				break;
@@ -387,11 +392,19 @@ static void init_monster_list() {
 			sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3);
 			continue;
 		}
-		if (buf[0] != 'N' && buf[0] != 'F') continue;
+		if (buf[0] != 'N' && buf[0] != 'F' && buf[0] != 'W') continue;
+
+
 		if (v1 < 3 || (v1 == 3 && (v2 < 4 || (v2 == 4 && v3 < 1)))) {
 			//plog("Error: Your r_info.txt file is outdated.");
 			return;
 		}
+
+		if (buf[0] == 'W') {
+			if (!halloween) monster_list_level[monster_list_idx - 1] = atoi(buf + 2);
+			continue;
+		}
+
 		if (buf[0] == 'N') {
 			if (discard) {
 				/* flashy-thingy tiem */
@@ -400,7 +413,7 @@ static void init_monster_list() {
 				discard = FALSE;
 			}
 
-			if (multihued) 	monster_list_any[monster_list_idx - 1] = TRUE;
+			if (multihued) monster_list_any[monster_list_idx - 1] = TRUE;
 			else if (breathhued) monster_list_breath[monster_list_idx - 1] = TRUE;
 			multihued = FALSE;
 			breathhued = FALSE;
@@ -431,7 +444,7 @@ static void init_monster_list() {
 
 				/* actually handle/assume certain features */
 				if (buf[0] == '$' && *p1 == '!' && (
-				    (!strncmp(buf + 1, "HALLOWEEN", 9) && strstr(buf, "JOKEANGBAND")) /* allow viewing HALLOWEEN monsters */
+				    (!strncmp(buf + 1, "HALLOWEEN", 9) && strstr(buf, "JOKEANGBAND")) /* allow viewing HALLOWEEN monsters (ie those that are marked as 'JOKEANGBAND when NOT Halloween') */
 				    )) {
 					p1 = p2 = NULL;
 					break;
@@ -449,6 +462,8 @@ static void init_monster_list() {
 			}
 			if (!p1 && !p2) continue;
 
+			/* This 'F' check here is obsolete? We're checking above already, and these
+			   checks down here should never occur, because 'G' line preceeds all 'F' lines. */
 			if (buf[0] == 'F' && strstr(buf, "JOKEANGBAND")) discard = TRUE;
 			if (buf[0] == 'F' && strstr(buf, "PET")) discard = TRUE;
 			if (buf[0] == 'F' && strstr(buf, "NEUTRAL")) discard = TRUE;
@@ -522,11 +537,12 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, %d) ", /* need 1 space at the end to overwrite 'search result' */
+		strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, %d, L%d) ", /* need 1 space at the end to overwrite 'search result' */
 			monster_list_name[rlidx],
 			monster_list_symbol[rlidx][0],
 			monster_list_symbol[rlidx][1],
-			ridx));
+			ridx,
+			monster_list_level[rlidx]));
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
 
 		/* fetch diz */
@@ -650,11 +666,12 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, %d) ", /* need 1 space at the end to overwrite 'search result' */
+		strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, %d, L%d) ", /* need 1 space at the end to overwrite 'search result' */
 			monster_list_name[rlidx],
 			monster_list_symbol[rlidx][0],
 			monster_list_symbol[rlidx][1],
-			ridx));
+			ridx,
+			monster_list_level[rlidx]));
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
 
 		/* fetch stats: I/W/E/O/B/F/S lines */
