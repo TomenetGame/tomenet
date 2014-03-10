@@ -7660,8 +7660,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
  * and call the normal dropping function otherwise.
  */
 
-s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
-{
+s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Items dropped by admins never disappear by 'time out' */

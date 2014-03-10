@@ -7336,14 +7336,15 @@ void do_slash_cmd(int Ind, char *message)
 				    //!(a_ptr->flags1 & TR1_STEALTH) ||
 				    //!(a_ptr->flags1 & TR1_SPEED) ||
 				    //!(a_ptr->flags2 & TR2_FREE_ACT) ||
-				    //!(a_ptr->flags2 & TR2_RES_BLIND) ||
+				    !(a_ptr->flags2 & TR2_RES_BLIND) ||
+				    !(a_ptr->flags2 & TR2_RES_POIS) ||
 				    //!(a_ptr->flags2 & TR2_RES_FIRE) ||
 				    //!(a_ptr->flags2 & TR2_RES_COLD) ||
-				    //!(a_ptr->flags2 & TR2_RES_ACID) ||
-				    //!(a_ptr->flags2 & TR2_RES_ELEC) ||
-				    //!(a_ptr->flags2 & TR2_IM_FIRE) ||
-				    //!(a_ptr->flags2 & TR2_IM_COLD) ||
-				    //!(a_ptr->flags2 & TR2_RES_SHARDS) ||
+				    !(a_ptr->flags2 & TR2_RES_ACID) ||
+				    !(a_ptr->flags2 & TR2_RES_ELEC) ||
+				    !(a_ptr->flags2 & TR2_IM_FIRE) ||
+				    !(a_ptr->flags2 & TR2_IM_COLD) ||
+				    !(a_ptr->flags2 & TR2_RES_SHARDS) ||
 
 				    //!(a_ptr->flags3 & TR3_XTRA_MIGHT) ||
 				    //!(a_ptr->flags3 & TR3_XTRA_SHOTS) ||

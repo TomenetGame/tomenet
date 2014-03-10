@@ -258,8 +258,7 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield)
 /*
  * Drops (some of) an item from inventory to "near" the current location
  */
-void inven_drop(int Ind, int item, int amt)
-{
+void inven_drop(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 
 	object_type		*o_ptr;
@@ -267,9 +266,7 @@ void inven_drop(int Ind, int item, int amt)
 
 	cptr		act;
 	int		o_idx;
-
 	char		o_name[ONAME_LEN];
-
 
 
 	/* Access the slot to be dropped */
@@ -334,7 +331,7 @@ void inven_drop(int Ind, int item, int amt)
 		mimic, is using a form that can _only_ come from the armor */
 		//if (p_ptr->pclass == CLASS_MIMIC) //Adventurers can also have mimic skill
 		//{
-			switch (o_ptr->sval) 
+			switch (o_ptr->sval) {
 			case SV_DRAGON_BLACK:
 			j = race_index("Ancient black dragon"); break;
 			case SV_DRAGON_BLUE:
@@ -365,7 +362,7 @@ void inven_drop(int Ind, int item, int amt)
 			case SV_DRAGON_POWER:
 			j = race_index("Great Wyrm of Power"); break;
 			}
-			if((p_ptr->body_monster == j) &&
+			if ((p_ptr->body_monster == j) &&
 			    ((p_ptr->r_killed[j] < r_info[j].level) ||
 			    (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))))
 				do_mimic_change(Ind, 0, TRUE);
