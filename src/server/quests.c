@@ -3,13 +3,22 @@
        - C. Blue
 
    Note: This is a new approach. Not to be confused with old
-         q_list[], quest_type and quest[] code.
+         q_list[], quest_type, quest[] and plots[] code.
 
    Quests can make use of Send_request_key/str/num/cfr/abort()
    functions to provide the possibility of dialogue with npcs.
    Quest npcs should be neutral and non-attackable (at least
    not on accident) and should probably not show up on ESP,
    neither should quest objects show up on object detection.
+
+
+   Note about current mechanics:
+   To make a quest spawn a new target questor ('Find dude X in the dungeon and talk to him')
+   it is currently necessary to spawn a new quest via activate_quest[], have the player
+   auto_accept_quiet it and silently terminate the current quest. The new quest should
+   probably have almost the same title too in case the player can review the title so as to
+   not confuse him..		maybe this could be improved on in the future :-p
+   how to possibly improve: spawn sub questors with their own dialogues.
 */
 
 
@@ -53,10 +62,18 @@
 
 
 struct quest_info {
+	char name[MAX_CHARS]; /* readable title of this quest */
+	char creator[NAME_LEN]; /* credits -- who thought up and created this quest :) */
+#define CODENAME_LEN 10
+	char codename[CODENAME_LEN]; /* short, unique, internal name for checking prerequisite quests for follow-up quests */
+
     /* QUESTOR (quest giver) RESTRICTIONS: */
 	/* player restrictions */
 	int minlev, maxlev;				/* eligible player level range (0 for any) */
 	u32b classes, races;				/* eligible player classes/races (CFx/RFx flags) */
+	/* matrix of codename(s) of prerequisite quests needed to accept this 'follow-up' quest.
+	   x-direction: OR, y-direction: AND */
+	char followup_matrix[CODENAME_LEN][10][10];
 
 	/* starting location restrictions */
 	byte s_location_type				/* flags setting elibible starting location types (QI_SLOC_xxx) */
@@ -97,7 +114,9 @@ struct quest_info {
 	int cooldown;					/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
 	bool per_player;				/* this quest isn't global but can be done by each player individually.
 							   For example questors may spawn other questors -> must be global, not per_player. */
-	bool non_static;				/* questor floor is not kept static, leaving it will lose the quest */
+	bool static_floor;				/* questor floor will be static while the quest is active */
+	bool quit_floor;				/* if player leaves the questor's floor, the quest will terminate and be lost */
+
 
     //NOTE: these should instead be hard-coded, similar to global events, too much variety really.. (monster spawning etc):
     /* QUEST CONSEQUENCES (depend on quest stage the player is in) --
@@ -106,9 +125,14 @@ struct quest_info {
 	stage action #2 is, when a player accepts interacted with the questor. */
 
 	/* quest initialisation and meta actions */
-	bool auto_accept_los, auto_accept;	/* player gets the quest just be being in LoS / interacting once with the questor (bump/read the parchment/pickup the item) */
+	bool accept_los, accept_interact;	/* player gets the quest just be being in LoS / interacting once with the questor (bump/read the parchment/pickup the item) */
+
 	int activate_quest[QI_MAX_STAGES];	/* spawn a certain new quest of this index (and thereby another questor) (if not already existing) */
+	bool auto_accept[QI_MAX_STAGES];	/* player will automatically acquire the newly spawned quest (from activate_quest[]) */
+	bool auto_accept_quiet[QI_MAX_STAGES];	/* player will automatically acquire the newly spawned quest (from activate_quest[]) but not get a quest-accept-notification type of message about it */
+
 	int change_stage[QI_MAX_STAGES];	/* automatically change to a different stage after handling everything that was to do in the current stage */
+
 
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
@@ -119,35 +143,77 @@ struct quest_info {
 	char yn[QI_MAX_STAGES];					/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
 	int y_stage[QI_MAX_STAGES], n_stage[QI_MAX_STAGES]	/*  ..which will bring the player to a different quest stage */
 
-	/* quest goals (Note: Usually OR'ed, except if 'xxx_random_pick' is set) */
-	bool kill_random_pick;						/* instead of demanding any of the eligible monster criteria, pick ONE randomly */
-	int kill_ridx[QI_MAX_STAGES][20];				/* kill certain monster(s) */
-	char kill_rchar[QI_MAX_STAGES][5];				/*  ..certain types */
-	byte kill_rattr[QI_MAX_STAGES][5];				/*  ..certain colours */
-	int kill_rlevmin[QI_MAX_STAGES], kill_rlevmax[QI_MAX_STAGES];	/* 0 for any */
-	int kill_number[QI_MAX_STAGES];
-	int kill_spawn[QI_MAX_STAGES], kill_spawn_loc[QI_MAX_STAGES];	/* actually spawn the monster(s) nearby! (QI_SPAWN_xxx) */
-	int kill_stage[QI_MAX_STAGES];					/* switch to a different quest stage on defeating the monsters */
 
-	bool retrieve_random_pick;							/* instead of demanding any of the eligible item criteria, pick ONE randomly */
-	int retrieve_otval[QI_MAX_STAGES][20], retrieve_osval[QI_MAX_STAGES][20];	/* retrieve certain item(s) */
-	int retrieve_opval[QI_MAX_STAGES][5], retrieve_obpval[QI_MAX_STAGES][5];
-	byte retrieve_oattr[QI_MAX_STAGES][5];						/*  ..certain colours (flavoured items only) */
-	int retrieve_oname1[QI_MAX_STAGES][20], retrieve_oname2[QI_MAX_STAGES][20], retrieve_oname2b[QI_MAX_STAGES][20];
-	int retrieve_ovalue[QI_MAX_STAGES][20];
-	int retrieve_number[QI_MAX_STAGE][20];
-	int retrieve_stage[QI_MAX_STAGES];						/* switch to a different quest stage on retrieving the items */
+	/* quest goals, up to 10 per stage, with a multitude of different sub-goals (Note: of the subgoals 1 is randomly picked for the player, except if 'xxx_random_pick' is set, which allows the player to pick what he wants to do).
+	   There are additionally up to 10 optional quest goals per stage.
+	   --note: the #s of subgoals don't use #defines, because they vary too much anyway for each category, so they're just hard-coded numbers. */
+#define QI_GOALS 10 /* main goals to complete a stage */
+#define QI_OPTIONAL 10 /* optional goals in a stage */
+	bool kill_player_picks[QI_MAX_STAGES][QI_GOALS];			/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
+	int kill_ridx[QI_MAX_STAGES][QI_GOALS][20];				/* kill certain monster(s) */
+	char kill_rchar[QI_MAX_STAGES][QI_GOALS][5];				/*  ..certain types */
+	byte kill_rattr[QI_MAX_STAGES][QI_GOALS][5];				/*  ..certain colours */
+	int kill_rlevmin[QI_MAX_STAGES], kill_rlevmax[QI_MAX_STAGES][QI_GOALS];	/* 0 for any */
+	int kill_number[QI_MAX_STAGES][QI_GOALS];
+	int kill_spawn[QI_MAX_STAGES][QI_GOALS], kill_spawn_loc[QI_MAX_STAGES][QI_GOALS];	/* actually spawn the monster(s) nearby! (QI_SPAWN_xxx) */
+	int kill_stage[QI_MAX_STAGES][QI_GOALS];					/* switch to a different quest stage on defeating the monsters */
 
-	struct worldpos target_wpos;		/* kill/retrieve specifically at this world pos */
-	bool target_terrain_patch;		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
+	bool retrieve_player_picks[QI_MAX_STAGES][QI_GOALS];							/* instead of picking one subgoal randomly, let the player decide which he wants to get */
+	int retrieve_otval[QI_MAX_STAGES][QI_GOALS][20], retrieve_osval[QI_MAX_STAGES][QI_GOALS][20];	/* retrieve certain item(s) */
+	int retrieve_opval[QI_MAX_STAGES][QI_GOALS][5], retrieve_obpval[QI_MAX_STAGES][QI_GOALS][5];
+	byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5];						/*  ..certain colours (flavoured items only) */
+	int retrieve_oname1[QI_MAX_STAGES][QI_GOALS][20], retrieve_oname2[QI_MAX_STAGES][QI_GOALS][20], retrieve_oname2b[QI_MAX_STAGES][QI_GOALS][20];
+	int retrieve_ovalue[QI_MAX_STAGES][QI_GOALS][20];
+	int retrieve_number[QI_MAX_STAGE][QI_GOALS][20];
+	int retrieve_stage[QI_MAX_STAGES][QI_GOALS];						/* switch to a different quest stage on retrieving the items */
 
-	/* quest rewards */
-	int reward_otval[QI_MAX_STAGES];	/* hand over certain rewards to the player */
-	int reward_osval[QI_MAX_STAGES];
-	int reward_opval[QI_MAX_STAGES], reward_obpval[QI_MAX_STAGES];
-	int reward_oname1[QI_MAX_STAGES], reward_spawn_oname2[QI_MAX_STAGES], reward_oname2b[QI_MAX_STAGES];
-	bool reward_ogood[QI_MAX_STAGES], reward_ogreat[QI_MAX_STAGES];
-	bool reward_oreward[QI_MAX_STAGES];	/*  use fitting-reward algo (from highlander etc)? */
-	int reward_gold[QI_MAX_STAGES];
-	int reward_exp[QI_MAX_STAGES];
+
+	struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];		/* kill/retrieve specifically at this world pos */
+	bool target_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
+
+	/* determine how the main goals have to be completed to advance to next stage,
+	   x-direction: OR, y-direction: AND */
+	bool stage_complete_matrix[QI_MAX_STAGES][QI_GOALS][QI_GOALS]; /* quest goals needed to complete a stage, x-direction=OR, y-direction=AND */
+
+
+	bool killopt_player_picks[QI_MAX_STAGES][QI_OPTIONAL];				/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
+	int killopt_ridx[QI_MAX_STAGES][QI_OPTIONAL][20];				/* kill certain monster(s) */
+	char killopt_rchar[QI_MAX_STAGES][QI_OPTIONAL][5];				/*  ..certain types */
+	byte killopt_rattr[QI_MAX_STAGES][QI_OPTIONAL][5];				/*  ..certain colours */
+	int killopt_rlevmin[QI_MAX_STAGES][QI_OPTIONAL], killopt_rlevmax[QI_MAX_STAGES][QI_OPTIONAL];	/* 0 for any */
+	int killopt_number[QI_MAX_STAGES][QI_OPTIONAL];
+	int killopt_spawn[QI_MAX_STAGES][QI_OPTIONAL], killopt_spawn_loc[QI_MAX_STAGES][QI_OPTIONAL];	/* actually spawn the monster(s) nearby! (QI_SPAWN_xxx) */
+	int killopt_stage[QI_MAX_STAGES][QI_OPTIONAL];					/* switch to a different quest stage on defeating the monsters */
+
+	bool retrieveopt_player_picks[QI_MAX_STAGES][QI_OPTIONAL];							/* instead of picking one subgoal randomly, let the player decide which he wants to get */
+	int retrieveopt_otval[QI_MAX_STAGES][QI_OPTIONAL][20], retrieveopt_osval[QI_MAX_STAGES][QI_OPTIONAL][20];	/* retrieve certain item(s) */
+	int retrieveopt_opval[QI_MAX_STAGES][QI_OPTIONAL][5], retrieveopt_obpval[QI_MAX_STAGES][QI_OPTIONAL][5];
+	byte retrieveopt_oattr[QI_MAX_STAGES][QI_OPTIONAL][5];						/*  ..certain colours (flavoured items only) */
+	int retrieveopt_oname1[QI_MAX_STAGES][QI_OPTIONAL][20], retrieveopt_oname2[QI_MAX_STAGES][QI_OPTIONAL][20], retrieveopt_oname2b[QI_MAX_STAGES][QI_OPTIONAL][20];
+	int retrieveopt_ovalue[QI_MAX_STAGES][QI_OPTIONAL][20];
+	int retrieveopt_number[QI_MAX_STAGES][QI_OPTIONAL][20];
+	int retrieveopt_stage[QI_MAX_STAGES][QI_OPTIONAL];						/* switch to a different quest stage on retrieving the items */
+
+	struct worldposopt target_wpos[QI_MAX_STAGES][QI_OPTIONAL];		/* kill/retrieve specifically at this world pos */
+	bool targetopt_terrain_patch[QI_MAX_STAGES][QI_OPTIONAL];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
+
+
+	/* quest rewards - multiple items per stage possible,
+	   each determined by the 'quest goals & optional quest goals' matrix:
+	   Up to 10 optional quest goals per stage possible. */
+#define QI_MAX_STAGE_REWARDS
+	bool reward_optional_matrix[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS][QI_GOALS + QI_OPTIONAL][QI_GOALS + QI_OPTIONAL]; /* main/optional quest goals needed for this reward, x-direction=OR, y-direction=AND */
+
+	int reward_otval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];	/* hand over certain rewards to the player */
+	int reward_osval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
+	int reward_opval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_obpval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
+	int reward_oname1[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_spawn_oname2[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_oname2b[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
+	bool reward_ogood[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_ogreat[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
+	bool reward_oreward[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];	/*  use fitting-reward algo (from highlander etc)? */
+
+	int reward_gold[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
+
+	int reward_exp[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
+
+	bool reward_statuseffect[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS]; /* debuff (aka curse)/un-debuff/tempbuff player? */
 } quest_info;
