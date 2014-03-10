@@ -67,6 +67,7 @@ struct quest_info {
 #define CODENAME_LEN 10
 	char codename[CODENAME_LEN]; /* short, unique, internal name for checking prerequisite quests for follow-up quests */
 
+
     /* QUESTOR (quest giver) RESTRICTIONS: */
 	/* player restrictions */
 	int minlev, maxlev;				/* eligible player level range (0 for any) */
@@ -74,6 +75,7 @@ struct quest_info {
 	/* matrix of codename(s) of prerequisite quests needed to accept this 'follow-up' quest.
 	   x-direction: OR, y-direction: AND */
 	char followup_matrix[CODENAME_LEN][10][10];
+
 
 	/* starting location restrictions */
 	byte s_location_type				/* flags setting elibible starting location types (QI_SLOC_xxx) */
@@ -95,6 +97,7 @@ struct quest_info {
 	struct worldpos start_wpos;			/* -1, -1 for random */
 	int start_x, start_y;				/* -1, -1 for random */
 
+
 	/* type of questor */
 	int questor;					/* QI_QUESTOR_xxx */
 
@@ -106,6 +109,10 @@ struct quest_info {
 	int questor_sval;				/* QI_QUESTOR_PARCHMENT */
 
 	int questor_ktval, questor_ksval;		/* QI_QUESTOR_ITEM_xxx. No further stats/enchantments are displayed! */
+
+	bool questor_invincible;			/* Is the questor invincible (if monster)/unpickable by monsters (if item)? */
+	char questor_name[MAX_CHARS];			/* optional pseudo-unique name that overrides the normal name */
+
 
     /* QUEST DURATION */
 	bool active;					/* questor is currently spawned/active (depends on day/night constraints) */
@@ -132,6 +139,30 @@ struct quest_info {
 	bool auto_accept_quiet[QI_MAX_STAGES];	/* player will automatically acquire the newly spawned quest (from activate_quest[]) but not get a quest-accept-notification type of message about it */
 
 	int change_stage[QI_MAX_STAGES];	/* automatically change to a different stage after handling everything that was to do in the current stage */
+	int timed_stage_ingame[QI_MAX_STAGES];	/* automatically change to a different stage after a certain amount of in-game minutes passed */
+	int timed_stage_ingame_abs[QI_MAX_STAGES];	/* automatically change to a different stage after a certain in-game time is reached */
+	int timed_stage_real[QI_MAX_STAGES];	/* automatically change to a different stage after a certain amount of real seconds passed */
+
+
+	/* special questor behaviour during each stage */
+	bool questor_invincible_new[QI_MAX_STAGES];	/* Is the questor invincible (if monster)/unpickable by monsters (if item) during a particular stage? */
+	char questor_name_new[QI_MAX_STAGES][MAX_CHARS];	/* questor changes optional pseudo-unique name during this stage? */
+	int questor_ridx_new[QI_MAX_STAGES] 	/* questor changes to this base monster type */
+	char questor_rchar_new[QI_MAX_STAGES];
+	byte questor_rattr_new[QI_MAX_STAGES];
+	int questor_rlev_new[QI_MAX_STAGES];
+
+	bool questor_talkable[QI_MAX_STAGES];	/* questor accepts dialogue? (by bumping usually) */
+
+	int questor_walk_speed[QI_MAX_STAGES];	/* questor will actually move around during this stage? */
+	int questor_walk_destx[QI_MAX_STAGES], questor_walk_desty[QI_MAX_STAGES]; /* target waypoint for questor to move to */
+	int questor_walk_stage[QI_MAX_STAGES];	/* stage will change when questor arrives at destination */
+
+	int questor_hostile[QI_MAX_STAGES];	/* questor turns into a normal aggressor, and stage is changed */
+	int questor_hostile_revert_hp[QI_MAX_STAGES]; /* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
+	int questor_hostile_revert_timed_ingame[QI_MAX_STAGES]; /* ..after ingame time (min).. */
+	int questor_hostile_revert_timed_ingame_abs[QI_MAX_STAGES]; /* ..at ingame time.. */
+	int questor_hostile_revert_timed_real[QI_MAX_STAGES]; /* ..after real time (s).. */
 
 
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
@@ -156,6 +187,7 @@ struct quest_info {
 	int kill_rlevmin[QI_MAX_STAGES], kill_rlevmax[QI_MAX_STAGES][QI_GOALS];	/* 0 for any */
 	int kill_number[QI_MAX_STAGES][QI_GOALS];
 	int kill_spawn[QI_MAX_STAGES][QI_GOALS], kill_spawn_loc[QI_MAX_STAGES][QI_GOALS];	/* actually spawn the monster(s) nearby! (QI_SPAWN_xxx) */
+	bool kill_spawn_targets_questor[QI_MAX_STAGES][QI_GOALS];				/* the spawned mobs go for the questor primarily */
 	int kill_stage[QI_MAX_STAGES][QI_GOALS];					/* switch to a different quest stage on defeating the monsters */
 
 	bool retrieve_player_picks[QI_MAX_STAGES][QI_GOALS];							/* instead of picking one subgoal randomly, let the player decide which he wants to get */
@@ -183,6 +215,7 @@ struct quest_info {
 	int killopt_rlevmin[QI_MAX_STAGES][QI_OPTIONAL], killopt_rlevmax[QI_MAX_STAGES][QI_OPTIONAL];	/* 0 for any */
 	int killopt_number[QI_MAX_STAGES][QI_OPTIONAL];
 	int killopt_spawn[QI_MAX_STAGES][QI_OPTIONAL], killopt_spawn_loc[QI_MAX_STAGES][QI_OPTIONAL];	/* actually spawn the monster(s) nearby! (QI_SPAWN_xxx) */
+	bool killopt_spawn_targets_questor[QI_MAX_STAGES][QI_OPTIONAL];					/* the spawned mobs go for the questor primarily */
 	int killopt_stage[QI_MAX_STAGES][QI_OPTIONAL];					/* switch to a different quest stage on defeating the monsters */
 
 	bool retrieveopt_player_picks[QI_MAX_STAGES][QI_OPTIONAL];							/* instead of picking one subgoal randomly, let the player decide which he wants to get */
