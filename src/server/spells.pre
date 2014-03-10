@@ -548,3 +548,6 @@ extern int __lua_HBLESSING;
 extern int __lua_MSCARE;
 extern int __lua_M_FIRST;
 extern int __lua_M_LAST;
+
+extern bool sauron_weakened;
+extern bool sauron_weakened_iddc;

@@ -995,3 +995,5 @@ int netherrealm_wpos_x = 0, netherrealm_wpos_y = 0, netherrealm_wpos_z = 0, neth
 int valinor_wpos_x = 0, valinor_wpos_y = 0, valinor_wpos_z = 0;
 bool nether_realm_collapsing = FALSE;
 int nrc_x, nrc_y, netherrealm_end_wz;
+
+bool sauron_weakened = FALSE, sauron_weakened_iddc = FALSE;

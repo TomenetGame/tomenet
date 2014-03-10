@@ -7139,6 +7139,78 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus)
 
 
 
+/* Test whether The One Ring just got dropped into lava in Mt. Doom.
+   If so, erase it and weaken Sauron for his next encounter.  - C. Blue
+
+   A bit silly side effect: If the ring gets dropped by a monster,
+   the same thing happens :-p.
+
+   (Note that an 'item crash' ie an art destroying everything below it
+   can only happen at !wpos->wz && CAVE_ICKY ie in actual houses, so we
+   don't need to check for it in any way.)
+*/
+static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
+	/* not in Mt Doom? */
+	dungeon_type *d_ptr = getdungeon(wpos);
+	if (d_ptr->type != DI_MT_DOOM) return FALSE;
+
+	/* grid isn't lava or 'fire'? */
+	switch (c_ptr->feat) {
+	case FEAT_SHAL_LAVA:
+	case FEAT_DEEP_LAVA:
+	case FEAT_FIRE:
+	case FEAT_GREAT_FIRE:
+		break;
+	default:
+		return FALSE;
+	}
+
+	/* lands safely on top of a loot pile? :-p */
+	if (c_ptr->o_idx) return FALSE;
+
+	/* destroy it and weaken Sauron! */
+	handle_art_d(ART_POWER);
+	msg_broadcast(0, "\377f** \377oSauron, the Sorceror has been greatly weakened! \377f**");
+	if (in_irondeepdive(wpos)) {
+		/* check if Sauron is already spawned */
+		int k;
+		bool found = FALSE;
+		monster_type *m_ptr;
+
+		for (k = m_top - 1; k >= 0; k--) {
+			m_ptr = &m_list[m_fast[k]];
+			if (m_ptr->r_idx != RI_SAURON) continue;
+
+			found = TRUE;
+			m_ptr->speed -= 5;
+			m_ptr->mspeed -= 5;
+			m_ptr->hp = (m_ptr->hp * 1) / 2;
+			m_ptr->maxhp = (m_ptr->maxhp * 1) / 2;
+			break;
+		}
+		if (!found) sauron_weakened_iddc = TRUE;
+	} else {
+		/* check if Sauron is already spawned */
+		int k;
+		bool found = FALSE;
+		monster_type *m_ptr;
+
+		for (k = m_top - 1; k >= 0; k--) {
+			m_ptr = &m_list[m_fast[k]];
+			if (m_ptr->r_idx != RI_SAURON) continue;
+
+			found = TRUE;
+			m_ptr->speed -= 5;
+			m_ptr->mspeed -= 5;
+			m_ptr->hp = (m_ptr->hp * 1) / 2;
+			m_ptr->maxhp = (m_ptr->maxhp * 1) / 2;
+			break;
+		}
+		if (!found) sauron_weakened = TRUE;
+	}
+	return TRUE;
+}
+
 /*
  * Let an item 'o_ptr' fall to the ground at or near (y,x).
  * The initial location is assumed to be "in_bounds()".
@@ -7311,6 +7383,8 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	ny = by;
 	nx = bx;
 	c_ptr = &zcave[ny][nx];
+
+	if (o_ptr->name1 == ART_POWER && dropped_the_one_ring(wpos, c_ptr)) return -1;
 
 	/* some objects get destroyed by falling on certain floor type - C. Blue */
         object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);

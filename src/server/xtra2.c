@@ -5237,6 +5237,10 @@ if (cfg.unikill_format) {
 			l_ptr->flags1 |= LF1_IRON_RECALL;
 			floor_msg_format(&p_ptr->wpos, "\374\377gYou don't sense a magic barrier here!");
 		}
+
+		/* for The One Ring.. */
+		if (in_irondeepdive(wpos)) sauron_weakened_iddc = FALSE;
+		else sauron_weakened = FALSE;
 	}
 
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */

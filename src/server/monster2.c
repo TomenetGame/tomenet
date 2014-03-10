@@ -3453,7 +3453,26 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 
 	/* Success */
 	/* Report some very interesting monster creating: */
-	if (r_idx == RI_SAURON) s_printf("Sauron was created on %d\n", dlev);
+	if (r_idx == RI_SAURON) {
+		/* Apply weakness if the One Ring was destroyed previously */
+		if (in_irondeepdive(wpos)) {
+			if (sauron_weakened_iddc) {
+				m_ptr->speed -= 5;
+				m_ptr->mspeed -= 5;
+				m_ptr->hp = (m_ptr->hp * 1) / 2;
+				m_ptr->maxhp = (m_ptr->maxhp * 1) / 2;
+				s_printf("Sauron was created on %d (weakened)\n", dlev);
+			} else s_printf("Sauron was created on %d\n", dlev);
+		} else {
+			if (sauron_weakened) {
+				m_ptr->speed -= 5;
+				m_ptr->mspeed -= 5;
+				m_ptr->hp = (m_ptr->hp * 1) / 2;
+				m_ptr->maxhp = (m_ptr->maxhp * 1) / 2;
+				s_printf("Sauron was created on %d (weakened)\n", dlev);
+			} else s_printf("Sauron was created on %d\n", dlev);
+		}
+	}
 #ifdef ENABLE_MAIA
 //	if (r_idx == RI_CANDLEBEARER) s_printf("Candlebearer was created on %d\n", dlev);
 //	if (r_idx == RI_DARKLING) s_printf("Darkling was created on %d\n", dlev);
