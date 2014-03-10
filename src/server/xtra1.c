@@ -7928,7 +7928,7 @@ static void process_global_event(int ge_id) {
 			/* everyone has escaped or died? */
 			n = 0;
 			for (i = 1; i <= NumPlayers; i++)
-				if (//!Players[i]->admin_dm &&
+				if (!Players[i]->admin_dm &&
 				    Players[i]->wpos.wx == WPOS_SECTOR00_X &&
 				    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
 					n++;
