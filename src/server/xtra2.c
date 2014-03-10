@@ -6725,8 +6725,14 @@ void player_death(int Ind) {
 					l_printf("%s \\{r%s (%d) died and was instantly resurrected\n", showdate(), p_ptr->name, p_ptr->lev);
 			}
 
+			/* Tell him what happened -- moved the messages up here so they get onto the chardump! */
+			msg_format(Ind, "\377RYou were defeated by %s, but the priests have saved you.", p_ptr->died_from);
+
 			/* new - death dump for insta-res too! */
 			Send_chardump(Ind, "-death");
+
+			/* Hm, this doesn't need to be on the char dump actually */
+			msg_format(Ind, "\377oThey have requested a fee of %d gold pieces.", instant_res_cost);
 
 			/* Cure him from various maladies */
 			if (p_ptr->image) (void)set_image(Ind, 0);
@@ -6838,10 +6844,6 @@ void player_death(int Ind) {
 			p_ptr->recall_pos.wz = 0;
 			p_ptr->new_level_method = LEVEL_TO_TEMPLE;
 			recall_player(Ind, "");
-
-			/* Tell him what happened */
-			msg_format(Ind, "\377RYou were defeated by %s, but the priests have saved you.", p_ptr->died_from);
-			msg_format(Ind, "\377oThey have requested a fee of %d gold pieces.", instant_res_cost);
 
 #if 0
 			/* Unown land */
