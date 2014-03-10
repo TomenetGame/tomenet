@@ -5898,7 +5898,7 @@ void calc_boni(int Ind) {
 								f3 |= e_ptr->flags3[j];
 								f4 |= e_ptr->flags4[j];
 								f5 |= e_ptr->flags5[j];
-								esp |= (e_ptr->esp[j] & ~ESP_R_MASK);
+								esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
 							}
 						}
 					} else can_have_hidden_powers = TRUE; //not identified

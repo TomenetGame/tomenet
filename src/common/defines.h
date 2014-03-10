@@ -4791,7 +4791,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 #define ETR4_R_MASK	\
     (0xFFFFFFFF & ~(ETR4_DAM_DIE | ETR4_DAM_SIZE | ETR4_PVAL_M1 | \
-    ETR4_PVAL_M2 | ETR4_PVAL_M3 | ETR4_PVAL_M5 | ETR4_LIMIT_BLOWS))
+    ETR4_PVAL_M2 | ETR4_PVAL_M3 | ETR4_PVAL_M5 | ETR4_LIMIT_BLOWS | \
+    ETR4_NO_DOUBLE_EGO | ETR4_NO_SEED))
 
 #define BIAS_ELEC 1                     /* "Biases" for random artifact gen */
 #define BIAS_POIS 2

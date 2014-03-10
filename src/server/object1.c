@@ -4287,7 +4287,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	                    		f3 |= e_ptr->flags3[j];
 		                        f4 |= e_ptr->flags4[j];
 		                        f5 |= e_ptr->flags5[j];
-	    		                esp |= (e_ptr->esp[j] & ~ESP_R_MASK);
+	                    	        esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
 	            		}
 	            	}
 	        }
