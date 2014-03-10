@@ -7295,7 +7295,15 @@ void do_slash_cmd(int Ind, char *message)
 				artifact_type *a_ptr;
 				int tries = 0; //keep track xD
 
-				o_ptr = &p_ptr->inventory[10 - 1]; //slot 'j'
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /madart_ <slot>");
+					return;
+				}
+				o_ptr = &p_ptr->inventory[k];
+				if (!o_ptr->tval) {
+					msg_print(Ind, "\377oInventory slot empty.");
+					return;
+				}
 				if (o_ptr->name1 != ART_RANDART) {
 					msg_print(Ind, "\377oNot a randart. Aborting.");
 					return;
@@ -7324,18 +7332,23 @@ void do_slash_cmd(int Ind, char *message)
 				    //o_ptr->to_a < 30 ||
 				    //o_ptr->pval < 4 ||
 
+				    //!(a_ptr->flags1 & TR1_CON) ||
 				    //!(a_ptr->flags1 & TR1_STEALTH) ||
 				    //!(a_ptr->flags1 & TR1_SPEED) ||
-				    //!(a_ptr->flags1 & TR1_CON) ||
 				    //!(a_ptr->flags2 & TR2_FREE_ACT) ||
+				    //!(a_ptr->flags2 & TR2_RES_BLIND) ||
+				    //!(a_ptr->flags2 & TR2_RES_FIRE) ||
 				    //!(a_ptr->flags2 & TR2_RES_COLD) ||
+				    //!(a_ptr->flags2 & TR2_RES_ACID) ||
+				    //!(a_ptr->flags2 & TR2_RES_ELEC) ||
+				    //!(a_ptr->flags2 & TR2_IM_FIRE) ||
 				    //!(a_ptr->flags2 & TR2_IM_COLD) ||
 				    //!(a_ptr->flags2 & TR2_RES_SHARDS) ||
 
 				    //!(a_ptr->flags3 & TR3_XTRA_MIGHT) ||
 				    //!(a_ptr->flags3 & TR3_XTRA_SHOTS) ||
 
-				    (a_ptr->flags3 & TR3_NO_MAGIC) ||
+				    //(a_ptr->flags3 & TR3_NO_MAGIC) ||
 				    (a_ptr->flags3 & TR3_AGGRAVATE)
 				    );
 				msg_format(Ind, "Re-rolled randart %d times.", tries);
