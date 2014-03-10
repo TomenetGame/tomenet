@@ -7170,7 +7170,7 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 
 	/* destroy it and weaken Sauron! */
 	handle_art_d(ART_POWER);
-	msg_broadcast(0, "\377f** \377oSauron, the Sorceror has been greatly weakened! \377f**");
+	msg_broadcast(0, "\374\377f** \377oSauron, the Sorceror has been greatly weakened! \377f**");
 	if (in_irondeepdive(wpos)) {
 		/* check if Sauron is already spawned */
 		int k;
