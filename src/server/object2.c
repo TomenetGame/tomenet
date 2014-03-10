@@ -7152,7 +7152,9 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus)
 static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 	/* not in Mt Doom? */
 	dungeon_type *d_ptr = getdungeon(wpos);
-	if (d_ptr->type != DI_MT_DOOM) return FALSE;
+	if (in_irondeepdive(wpos)) {
+		if (iddc[ABS(wpos->wz)].type != DI_MT_DOOM) return FALSE;
+	} else if (d_ptr->type != DI_MT_DOOM) return FALSE;
 
 	/* grid isn't lava or 'fire'? */
 	switch (c_ptr->feat) {
