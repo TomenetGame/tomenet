@@ -2328,6 +2328,7 @@ running while you do.
 
 Note: Some people have reported that the program 'WinRAR' seems to cause
       problems in some cases, giving them "file corrupted" errors.
+      This might also happen with WinZIP, but we don't know really.
       A powerful free and open source program that is guaranteed to work is
       '7zip' (a sourceforge project at the time of writing) downloadable at:
       http://www.7-zip.org/
