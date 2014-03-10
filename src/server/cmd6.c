@@ -6854,17 +6854,15 @@ char random_colour()
  * Hook to determine if an object is convertible in an arrow/bolt
  */
 
-static int fletchery_items(int Ind)
-{
+static int fletchery_items(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	object_type     *o_ptr;
 	int i;
 
-	for (i = 0; i < INVEN_PACK; i++)
-	{
+	for (i = 0; i < INVEN_PACK; i++) {
 		o_ptr = &p_ptr->inventory[i];
 		if (!o_ptr->k_idx) continue;
-		if (!can_use(Ind, o_ptr)) continue;
+		if (!can_use_admin(Ind, o_ptr)) continue;
 		/* Broken Stick */
 		if (o_ptr->tval == TV_JUNK && o_ptr->sval == 6) return (i);
 		if (o_ptr->tval == TV_SKELETON) return (i);

@@ -3626,21 +3626,17 @@ void do_cmd_bash(int Ind, int dir) {
  */
 /* Now this can be used for any tvals.	- Jir - */
 //static bool get_spike(int Ind, int *ip)
-bool get_something_tval(int Ind, int tval, int *ip)
-{
+bool get_something_tval(int Ind, int tval, int *ip) {
 	player_type *p_ptr = Players[Ind];
-
 	int i;
 
 	/* Check every item in the pack */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
+	for (i = 0; i < INVEN_PACK; i++) {
 		object_type *o_ptr = &(p_ptr->inventory[i]);
 
 		/* Check the "tval" code */
-		if (o_ptr->tval == tval)
-		{
-			if (!can_use(Ind, o_ptr)) continue;
+		if (o_ptr->tval == tval) {
+			if (!can_use_admin(Ind, o_ptr)) continue;
 
 			/* Save the spike index */
 			(*ip) = i;

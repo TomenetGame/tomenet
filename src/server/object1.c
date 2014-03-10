@@ -2497,14 +2497,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		int attr;
 
 		/* Get a color */
-		if (!Ind || p_ptr->admin_dm) {
-			/* hack- show correct mode-fail colour to admins */
-			if (can_use_admin(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
-			else attr = TERM_L_DARK;
-		} else {
-			if (can_use(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
-			else attr = TERM_L_DARK;
-		}
+		if (can_use_admin(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
+		else attr = TERM_L_DARK;
 
 		/* Get a color for a book */
 		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
@@ -5438,14 +5432,8 @@ void display_inven(int Ind)
 		//n = strlen(o_name);
 
 		/* Get a color */
-		if (p_ptr->admin_dm) {
-			/* hack- show correct mode-fail colour to admins */
-			if (can_use_admin(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
-			else attr = TERM_L_DARK;
-		} else {
-			if (can_use(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
-			else attr = TERM_L_DARK;
-		}
+		if (can_use_admin(Ind, o_ptr)) attr = get_attr_from_tval(o_ptr);
+		else attr = TERM_L_DARK;
 
 		/* Get a color for a book */
 		if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(Ind, o_ptr);
@@ -5568,7 +5556,7 @@ bool can_use(int Ind, object_type *o_ptr) {
 		return (TRUE);
 	}
 
-	if (o_ptr->level < 1 && o_ptr->owner) return (FALSE);
+	if (o_ptr->level < 1 && o_ptr->owner && p_ptr->id != o_ptr->owner && !p_ptr->admin_dm) return (FALSE);
 
 	/* Own unowned items (for stores).
 	   Note that CTRL+R -> display_inven() -> if (can_use()) checks will
@@ -5596,7 +5584,8 @@ bool can_use(int Ind, object_type *o_ptr) {
 #endif
 }
 
-/* Same as can_use(), but avoids auto-owning items (to be used for admin characters) */
+/* Same as can_use() but avoids auto-owning items (to be used for admin characters)
+   and doesn't allow admin_dm to return TRUE in cases where normal characters would get FALSE. */
 bool can_use_admin(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
@@ -5607,12 +5596,11 @@ bool can_use_admin(int Ind, object_type *o_ptr) {
 	/* Owner always can use */
 	if (p_ptr->id == o_ptr->owner) return (TRUE);
 
-	if (o_ptr->level < 1 && o_ptr->owner) return (FALSE);
+	if (o_ptr->level < 1 && o_ptr->owner && p_ptr->id != o_ptr->owner) return (FALSE);
 
 	if (compat_pomode(Ind, o_ptr)) return FALSE;
 
 #ifndef RPG_SERVER
-	/* Hack -- convert if available */
 	if (p_ptr->lev >= o_ptr->level || in_irondeepdive(&p_ptr->wpos)) return (TRUE);
 	else return (FALSE);
 #else
@@ -5620,8 +5608,8 @@ bool can_use_admin(int Ind, object_type *o_ptr) {
 #endif
 }
 
-bool can_use_verbose(int Ind, object_type *o_ptr)
-{
+/* Same as can_use() but also displays status messages. */
+bool can_use_verbose(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 	/* exception for Highlander Tournament amulets */
@@ -5631,7 +5619,6 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 		return TRUE;
 	}
 
-#ifndef RPG_SERVER /* hm not sure about this.. */
 	/* Owner always can use */
 	if (p_ptr->id == o_ptr->owner || p_ptr->admin_dm) return (TRUE);
 
@@ -5645,6 +5632,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 		return FALSE;
 	}
 
+#ifndef RPG_SERVER /* hm not sure about this.. */
 	/* Hack -- convert if available */
 	if ((p_ptr->lev >= o_ptr->level || in_irondeepdive(&p_ptr->wpos))
 	    && !p_ptr->admin_dm) {
@@ -5663,6 +5651,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 
 	/* we are the new owner */
 	o_ptr->owner = p_ptr->id;
+	o_ptr->mode = p_ptr->mode;
 
 	/* the_sandman: let's turn this off? Party trading is horrible with this one. Plus we
 	 * already only allow 1 char each account. */
