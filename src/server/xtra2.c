@@ -7910,7 +7910,7 @@ bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags) {
 	clockin(j, 4); /* register that player */
 	msg_format(j, "\377oYou have been given a %squest\377y!", flags & QUEST_GUILD ? "guild " : "");
 //	msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags&QUEST_GUILD?"":" \377obefore any other player");
-	msg_format(j, "\377oFind and kill \377y%d \377g%s\377y (level %d)!", num, r_name + r_info[type].name, r_info[type].level);
+	msg_format(j, "\377oFind and kill \377y%d \377g%s\377o (level %d)!", num, r_name + r_info[type].name, r_info[type].level);
 	quests[i].active++;
 
 	if (!quests[i].active) {
