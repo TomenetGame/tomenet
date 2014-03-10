@@ -6778,7 +6778,9 @@ void player_death(int Ind) {
 			else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
 			else p_ptr->au /= 2;
 #else /* lose 5..33% */
-			p_ptr->au = (p_ptr->au * (rand_int(29) + 67)) / 100;
+			/* overflow handling */
+			if (p_ptr->au <= 20000000) p_ptr->au = (p_ptr->au * (rand_int(29) + 67)) / 100;
+			else p_ptr->au = (p_ptr->au / 100) * (rand_int(29) + 67);
 #endif
 			s_printf("%d.\n", p_ptr->au);
 
