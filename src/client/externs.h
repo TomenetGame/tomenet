@@ -922,3 +922,5 @@ extern int rand_term_lamp_ticks;
 extern int minimap_posx, minimap_posy;
 extern byte minimap_attr;
 extern char minimap_char;
+
+extern bool silent_dump;

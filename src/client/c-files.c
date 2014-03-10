@@ -1709,7 +1709,8 @@ void xhtml_screenshot(cptr name)
 
 	fclose(fp);
 
-	c_msg_print("Screenshot saved");
+	if (!silent_dump) c_msg_print("Screenshot saved");
+	else silent_dump = FALSE;
 }
 
 

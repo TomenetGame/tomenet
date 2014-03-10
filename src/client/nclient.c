@@ -3174,6 +3174,7 @@ int Receive_chardump(void) {
         if (screen_icky) Term_switch(0);
 
 	/* additionally do a screenshot of the scene */
+	silent_dump = TRUE;
 	xhtml_screenshot(format("%s%s_%04d-%02d-%02d_%02d.%02d.%02d_screenshot", cname, type,
 	    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
 	    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));

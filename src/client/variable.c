@@ -374,3 +374,6 @@ int rand_term_lamp_ticks;
 int minimap_posx = -1, minimap_posy;
 byte minimap_attr;
 char minimap_char;
+
+/* To suppress positive confirmation messages on automated char dumps/screen shots */
+bool silent_dump = FALSE;
