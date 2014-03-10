@@ -1171,6 +1171,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 
 	/* Empty */
 	o_ptr->pval = 0;
+	o_ptr->ident |= ID_KNOWN; /* obsolete-- easy to see it's empty and that's it */
 
 	/* Known */
 	object_known(o_ptr);

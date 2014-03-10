@@ -2549,7 +2549,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	if (magik(vanish)) {
 		struct c_special *cs_ptr = GetCS(c_ptr, CS_TRAPS);
 		if (item < 0) cs_erase(c_ptr, cs_ptr);
-		else i_ptr->pval = 0;
+		else {
+			i_ptr->pval = 0;
+			if (i_ptr->tval == TV_CHEST) destroy_chest(i_ptr);
+		}
 		ident = FALSE;
 
 		/* since player is no longer moved onto the trap on triggering it,
@@ -4924,8 +4927,9 @@ static void destroy_chest(object_type *o_ptr) {
 	/* Hack to destroy chests */
 	if (o_ptr && o_ptr->tval == TV_CHEST) { /* check for o_ptr - chest might already be destroyed at this point */
 //		delete_object_idx(k, TRUE);
-		o_ptr->sval = 0; /* Ruined chest now */
-		o_ptr->pval = 0;
-		o_ptr->bpval = 0;
+		o_ptr->sval = SV_CHEST_RUINED; /* Ruined chest now */
+		o_ptr->pval = 0; /* untrapped */
+		//o_ptr->bpval = 0;
+		o_ptr->ident |= ID_KNOWN; /* easy to see it's a goner */
 	}
 }

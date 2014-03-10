@@ -1999,6 +1999,7 @@ bool do_cancellation(int Ind, int flags)
 		if (o_ptr->tval == TV_KEY) continue;
 		if (o_ptr->tval == TV_FOOD) continue;
 		if (o_ptr->tval == TV_FLASK) continue;
+		if (o_ptr->tval == TV_CHEST) continue;
 		if (o_ptr->name2 && o_ptr->name2 != EGO_SHATTERED && o_ptr->name2 != EGO_BLASTED) {
 			ident = TRUE;
 			o_ptr->name2 = 0;
