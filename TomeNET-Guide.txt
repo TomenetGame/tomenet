@@ -8494,6 +8494,9 @@ Teleportation rings: Explode for teleportation.
 
 (5.9b) Artifacts and artifact resets
 ------------------------------------
+(For information about the 'timeout' on true artifacts, see 'Artifact resets'
+further below.)
+
 Artifact types in general
 -------------------------
 Some items are 'named', those possess especially great magic powers and are
@@ -8608,7 +8611,7 @@ Artifact resets
 The old system of resetting all true artifacts at once every 3 months has been
 replaced by a new "fluent" reset system:
 
-Artifacts will last for 4 weeks after they have been found (ie dropped by a
+Artifacts will last for 5 weeks after they have been found (ie dropped by a
 monster/chest/just being generated on the dungeon floor, and picked up by a
 player), after which they will "time out" and disappear. This timer is specific
 for each single true artifact, depending on when it is found (again).
@@ -8627,9 +8630,9 @@ Trading artifacts between characters has no effect on the timeout.
 
 Grond and Morgoth's crown do not time out.
 Artifacts that can only be found by winners (kings/queens/emperors/empresses)
-have triple timeout delay (12 weeks).
-All artifact timeout delays are further doubled on the Ironman server (8 weeks
-for regular true artifacts, 24 weeks for winners-only true artifacts).
+have twice the timeout delay (10 weeks).
+All artifact timeout delays are further doubled on the Ironman server (5 weeks
+for regular true artifacts, 20 weeks for winners-only true artifacts).
 
 
 
