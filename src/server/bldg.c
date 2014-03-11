@@ -2107,13 +2107,13 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 					msg_print(Ind, "\377rYou decide that you do not require the Instant Resurrection service!");
 				} else {
 					p_ptr->insta_res = TRUE;
-					msg_print(Ind, "\377GYou engage the Instant resurrection service.");
+					msg_print(Ind, "\377GYou engage the Instant Resurrection service.");
 				}
 			} else {
-				msg_print(Ind, "\377oInstant resurrection is only available to everlasting characters.");
+				msg_print(Ind, "\377oInstant Resurrection is only available to everlasting characters.");
 			}
 #else
-			msg_print(Ind, "\377oInstant resurrection has not been enabled on this server.");
+			msg_print(Ind, "\377oInstant Resurrection has not been enabled on this server.");
 #endif
 			break;
 		case BACT_EXPLORATIONS:
