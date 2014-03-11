@@ -6673,7 +6673,7 @@ static int reward_armor_check(player_type *p_ptr, bool mha, bool rha) {
     TV_HELM
     TV_CROWN
     TV_CLOAK	*/
-	if (maxweight < 240) choice1 = 10;
+	if (maxweight < 240 || mha || rha) choice1 = 10;
 	if (maxweight >= 240 && !mha && !rha) choice2 = 30; /* If player can make good use of heavy armour, make him likely to get one! */
 	if (maxweight >= 200 && !mha && !rha) choice3 = 3; /* Only slim chance to get a Dragon Scale Mail! */
 	choice4 = 10;
@@ -6717,8 +6717,7 @@ static int reward_misc_check(player_type *p_ptr) {
  *    currently, they are just averaged to form a 'base object level' for get_obj_num() though.
  * <treshold> is the skill treshold a player must have for a skill to be considered for choosing a reward. - C. Blue
  */
-void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u32b resf, long int treshold)
-{
+void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u32b resf, long int treshold) {
 	player_type *p_ptr = Players[Ind];
 	bool good = TRUE;
 	int base = (min_lv + max_lv) / 2; /* base object level */
@@ -6734,6 +6733,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	int maxweight_shield = ((adj_str_hold[p_ptr->stat_ind[A_STR]] / 7) + 4) * 10;
 //	int maxweight_armor = (adj_str_hold[p_ptr->stat_ind[A_STR]] - 10) * 10; /* not really directly calculatable, since cumber_armor uses TOTAL armor weight, so just estimate something.. pft */
 	int maxweight_armor = adj_str_armor[p_ptr->stat_ind[A_STR]] * 10;
+	object_type tmp_obj;
+	int wearable[5], wearables; /* 5 pure (no shields) armour slots, 3 misc slots (tools omitted) */
 
 	/* analysis results: */
 	int melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice;
@@ -6741,6 +6742,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 	/* concrete reward */
 	int reward_tval = 0, reward_sval = 0, k_idx = 0, reward_maxweight = 500;
+
 	invwipe(o_ptr);
 
 	/* fix reasonable limits */
@@ -6846,6 +6848,96 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		break;
 	}
 
+	/* respect unusuable slots depending on monster form */
+	invwipe(&tmp_obj);
+	tmp_obj.tval = reward_tval;
+	/* we cannot equip the selected reward? */
+	if (!item_tester_hook_wear(Ind, i = wield_slot(Ind, &tmp_obj))) {
+		/* for weapons and TV_SHIELD: this shouldn't happen */
+		if (is_weapon(tmp_obj.tval) || tmp_obj.tval == TV_MSTAFF || is_ranged_weapon(tmp_obj.tval)) {
+			/* shouldn't happen, but.. */
+			invwipe(o_ptr);
+			o_ptr->tval = TV_SPECIAL;
+			o_ptr->sval = SV_CUSTOM_OBJECT;
+			o_ptr->note = quark_add("a cake");
+			o_ptr->xtra1 = 15;
+			s_printf("REWARD_CREATED: (%s) a cake (1)\n", p_ptr->name);
+			/* serious alternatives: digger, magic device, a set of consumables */
+			return;
+		}
+
+		/* for armour being selected */
+		if (is_armour(tmp_obj.tval)) {
+			wearables = 0;
+			wearable[0] = item_tester_hook_wear(Ind, INVEN_BODY) ? 10 + 30 + 3 : 0;
+			wearable[1] = item_tester_hook_wear(Ind, INVEN_OUTER) ? 10 : 0;
+			wearable[2] = item_tester_hook_wear(Ind, INVEN_HEAD) ? 10 + 5 : 0;
+			wearable[3] = item_tester_hook_wear(Ind, INVEN_HANDS) ? 10 : 0;
+			wearable[4] = item_tester_hook_wear(Ind, INVEN_FEET) ? 10 : 0;
+			wearables = wearable[0] + wearable[1] + wearable[2] + wearable[3] + wearable[4];
+
+			/* we cannot wear ANY armour? */
+			if (!wearables) {
+				/* select a different item class */
+				wearables = 0;
+				wearable[0] = item_tester_hook_wear(Ind, INVEN_LITE) ? 1 : 0;
+				wearable[1] = item_tester_hook_wear(Ind, INVEN_NECK) ? 1 : 0;
+				wearable[2] = item_tester_hook_wear(Ind, INVEN_RIGHT) ? 1 : 0;
+				wearables = wearable[0] + wearable[1] + wearable[2];
+
+				/* we cannot wear ANY item? =P */
+				if (!wearables) {
+					/* this is silly, someone polymorphed into limbless form to turn in the reward deed?.. */
+					invwipe(o_ptr);
+					o_ptr->tval = TV_SPECIAL;
+					o_ptr->sval = SV_CUSTOM_OBJECT;
+					o_ptr->note = quark_add("a cake");
+					o_ptr->xtra1 = 15;
+					s_printf("REWARD_CREATED: (%s) a cake (2)\n", p_ptr->name);
+					/* serious alternatives: digger, magic device, a set of consumables */
+					return;
+				}
+
+				i = randint(wearables);
+				if (i <= wearable[0]) reward_tval = TV_LITE;
+				else if (i <= wearable[0] + wearable[1]) reward_tval = TV_AMULET;
+				else if (i <= wearable[0] + wearable[1] + wearable[2]) reward_tval = TV_RING;
+				s_printf("REWARD_CANNOT_WEAR: changed to %d\n", reward_tval);
+			} else { /* we can wear some sort of armour */
+				i = randint(wearables);
+				if (i <= wearable[0]) {
+					wearables = 0;
+					wearable[0] = (reward_maxweight < 240 || mha || rha) ? 10 : 0;
+					wearable[1] = (reward_maxweight >= 240 && !mha && !rha) ? 30 : 0;
+					wearable[2] = (reward_maxweight >= 200 && !mha && !rha) ? 3 : 0;
+					wearables = wearable[0] + wearable[1] + wearable[2];
+					i = randint(wearables);
+					if (i <= wearable[0]) reward_tval = TV_SOFT_ARMOR;
+					else if (i <= wearable[0] + wearable[1]) reward_tval = TV_HARD_ARMOR;
+					else if (i <= wearable[0] + wearable[1] + wearable[2]) reward_tval = TV_DRAG_ARMOR;
+				}
+				else if (i <= wearable[0] + wearable[1]) reward_tval = TV_CLOAK;
+				else if (i <= wearable[0] + wearable[1] + wearable[2]) reward_tval = (rand_int(3) ? TV_HELM : TV_CROWN);
+				else if (i <= wearable[0] + wearable[1] + wearable[2] + wearable[3]) reward_tval = TV_GLOVES;
+				else if (i <= wearable[0] + wearable[1] + wearable[2] + wearable[3] + wearable[4]) reward_tval = TV_BOOTS;
+				s_printf("REWARD_CANNOT_WEAR: changed to %d\n", reward_tval);
+			}
+		}
+
+		/* for other items: */
+		else {
+			/* shouldn't happen, but.. */
+			invwipe(o_ptr);
+			o_ptr->tval = TV_SPECIAL;
+			o_ptr->sval = SV_CUSTOM_OBJECT;
+			o_ptr->note = quark_add("a cake");
+			o_ptr->xtra1 = 15;
+			s_printf("REWARD_CREATED: (%s) a cake (3)\n", p_ptr->name);
+			/* serious alternatives: digger, magic device, a set of consumables */
+			return;
+		}
+	}
+	reward_tval = tmp_obj.tval;
 
 	/* In case no SVAL has been defined yet: 
 	   Choose a random SVAL while paying attention to maxweight limit! */
