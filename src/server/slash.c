@@ -5090,7 +5090,7 @@ void do_slash_cmd(int Ind, char *message)
 						        for(i = 0; i < numtowns; i++) {
 	    	        					if(town[i].x == tpos->wx && town[i].y == tpos->wy) {
 									found_town = TRUE;
-									if (in_bree(tpos) {
+									if (in_bree(tpos)) {
 										d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
 									} else {
 										d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2; /* Other towns */
