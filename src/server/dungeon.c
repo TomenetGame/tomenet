@@ -2027,8 +2027,7 @@ static int retaliate_mimic_power(int Ind, int choice)
  * use_old_target is *strongly* recommended to actually make use of it.
  * If fallback is TRUE the melee weapon will be used if the intended means failed. - C. Blue
  */
-static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback)
-{
+static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;;
 	int cost, choice = 0, spell = 0;
@@ -2364,10 +2363,12 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 /* handle RF7_NO_TARGET monsters so they won't block auto-retaliation?
    This involves checking for retal-item before checking for retal-target.
    That is probably much more expensive on CPU than the other way round.
-   Also see CHEAP_NO_TARGET_TEST. - C. Blue */
+   Also see CHEAP_NO_TARGET_TEST. - C. Blue
+   NOTE: I added code that prevents auto-ret with physical attacks against a
+   wraithed target, this code is in EXPENSIVE_NO_TARGET_TEST only, so it won't
+   work if this isn't defined. This was already the case for melee, just not for @O ranged. */
 #define EXPENSIVE_NO_TARGET_TEST
-static int auto_retaliate(int Ind)
-{
+static int auto_retaliate(int Ind) {
 	player_type *p_ptr = Players[Ind], *q_ptr, *p_target_ptr = NULL, *prev_p_target_ptr = NULL;
 	int d, i, tx, ty, target, prev_target, item = -1;
 //	char friends = 0;
@@ -2378,6 +2379,9 @@ static int auto_retaliate(int Ind)
 	bool no_melee = FALSE, fallback = FALSE;
 	bool skip_monsters = (p_ptr->cloaked || p_ptr->shadow_running) && !p_ptr->stormbringer;
 	cave_type **zcave;
+	/* are we dealing just physical damage? for wraithform checks (stormbringer ignores everything and just attacks anyway..): */
+	bool physical = TRUE, wraith = (p_ptr->tim_wraith != 0) && !p_ptr->stormbringer;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
 	if (p_ptr->new_level_flag) return 0;
@@ -2434,6 +2438,9 @@ static int auto_retaliate(int Ind)
 		}
 	}
 
+	/* check if we're using physical damage attacks */
+	if (item != -1) physical = is_weapon(o_ptr->tval) || o_ptr->tval == TV_MSTAFF || is_ranged_weapon(o_ptr->tval) || is_ammo(o_ptr->tval);
+
 	/* Scan for @Ox to disable auto-retaliation only if no @O was found - mikaelh */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
@@ -2468,6 +2475,9 @@ static int auto_retaliate(int Ind)
 			inscription++;
 		}
 	}
+
+	/* no specific item inscribed -> use default melee attacks */
+	if (item == -1) physical = TRUE;
 #endif
 
 	/* check for monster/player targets */
@@ -2498,6 +2508,9 @@ static int auto_retaliate(int Ind)
 			if ((r_ptr0->flags7 & RF7_NO_TARGET) &&
 			    is_ranged_item(Ind, &p_ptr->inventory[item]))
 				continue;
+
+			/* New - wraithform checks: Don't attack monsters that we'd deal 0 damage against and just wake up */
+			if (wraith && physical && !(r_ptr0->flags2 & RF2_PASS_WALL)) continue;
 #endif
 
 			/* Protect pets/golems */
