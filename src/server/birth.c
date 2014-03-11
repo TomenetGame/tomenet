@@ -2214,8 +2214,9 @@ static void player_setup(int Ind, bool new) {
 
 		/* teleport players who logged into a non-existing/changed
 		   floor, so they don't get stuck in walls - C. Blue */
-		if (!player_can_enter(Ind, zcave[p_ptr->py][p_ptr->px].feat)
-		    /* max level limit to make players learn? or more comfort instead? */
+		if (!player_can_enter(Ind, zcave[p_ptr->py][p_ptr->px].feat, TRUE)
+		    /* max level limit to make players learn? or more comfort instead?
+		      -- it's important for ppl who log back into IDDC to have this teleport! */
 //		    && p_ptr->lev < 10
 		    ) {
 			NumPlayers++; // hack for cave_midx_debug - mikaelh
@@ -2230,10 +2231,13 @@ static void player_setup(int Ind, bool new) {
 		    && (!l_ptr || !(l_ptr->flags1 & LF1_DUNGEON_TOWN))) /* !l_ptr check just to silence the compiler.. */
 			p_ptr->IDDC_logscum = TRUE;
 	} else if (p_ptr->wpos.wz) {
+		bool unknown = FALSE;
 		l_ptr = getfloor(wpos);
 
 		/* If player doesn't know this level.. */
 		if (l_ptr->id != p_ptr->dlev_id) {
+			unknown = TRUE;
+
 			/* Clear the "marked" and "lit" flags for each cave grid */
 			for (y = 0; y < MAX_HGT; y++) {
 				for (x = 0; x < MAX_WID; x++) {
@@ -2255,10 +2259,10 @@ static void player_setup(int Ind, bool new) {
 
 		/* teleport players who logged into a non-existing/changed
 		   floor, so they don't get stuck in walls - C. Blue */
-		if (!player_can_enter(Ind, zcave[p_ptr->py][p_ptr->px].feat)
+		if (!player_can_enter(Ind, zcave[p_ptr->py][p_ptr->px].feat, TRUE)
 		    /* max level limit? Otherwise it could be exploited
 		       by taking off levitation ring/climbing set to phase around */
-		    && p_ptr->lev < 10
+		    && (p_ptr->lev < 10 || unknown) /* added the 'unknown' hack for IDDC, otherwise it may suck at times */
 		    ) {
 			NumPlayers++; // hack for cave_midx_debug - mikaelh
 			/* not a '_force'd teleport, so won't get out of NO_TELE vaults! */

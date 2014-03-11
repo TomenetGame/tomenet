@@ -5125,8 +5125,9 @@ static bool wraith_access_virtual(int Ind, int y, int x)
 
 
 /* borrowed from ToME	- Jir - */
-/* NOTE: in ToME levitation gives free FF, but in TomeNET not. */
-bool player_can_enter(int Ind, byte feature) {
+/* NOTE: in ToME levitation gives free FF, but in TomeNET not.
+ * 'comfortably': also check for things like lava if player isn't fire immune. - C. Blue */
+bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	player_type *p_ptr = Players[Ind];
 	bool pass_wall;
 
@@ -5150,8 +5151,15 @@ bool player_can_enter(int Ind, byte feature) {
 
 	switch (feature) {
 		case FEAT_DEEP_WATER:
+			if (comfortably && 
+			    //!(p_ptr->immune_water || p_ptr->res_water ||.
+			    !(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith))
+				return FALSE;
+			return (TRUE);	/* you can pass, but you may suffer dmg */
+
 		case FEAT_SHAL_LAVA:
 		case FEAT_DEEP_LAVA:
+			if (comfortably && !p_ptr->immune_fire) return FALSE;
 			return (TRUE);	/* you can pass, but you may suffer dmg */
 
 		case FEAT_DEAD_TREE:
@@ -5264,7 +5272,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				x = p_ptr->px + ddx[i];
 
 				/* convenience hack: don't run into walls, because that's just too silly */
-				if (!player_can_enter(Ind, zcave[y][x].feat)) i = 5;
+				if (!player_can_enter(Ind, zcave[y][x].feat, FALSE)) i = 5;
 				/* convenience hack: don't stop running if we just left proximity of a wall */
 				if (p_ptr->running) rnd = TRUE;
 			} while (i == 5);
@@ -5291,7 +5299,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			x = p_ptr->px + ddx[i];
 
 			/* convenience hack: don't run into walls, because that's just too silly */
-			if (!player_can_enter(Ind, zcave[y][x].feat)) i = 5;
+			if (!player_can_enter(Ind, zcave[y][x].feat, FALSE)) i = 5;
 			/* convenience hack: don't stop running if we just left proximity of a wall */
 			if (p_ptr->running) rnd = TRUE;
 		} while (i == 5);
@@ -5684,7 +5692,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	}
 
 	/* Player can not walk through "walls", but ghosts can */
-	if (!player_can_enter(Ind, c_ptr->feat) || !csmove) {
+	if (!player_can_enter(Ind, c_ptr->feat, FALSE) || !csmove) {
 		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
 		bool myhome = FALSE;
 		bool passing = (p_ptr->tim_wraith || p_ptr->ghost);

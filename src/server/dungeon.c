@@ -3740,7 +3740,7 @@ static bool process_player_end_aux(int Ind)
 			if ((p_ptr->pass_trees || p_ptr->levitate) &&
 					(c_ptr->feat == FEAT_TREE))
 #endif
-			if (player_can_enter(Ind, c_ptr->feat)) {
+			if (player_can_enter(Ind, c_ptr->feat, FALSE)) {
 				/* Do nothing */
 			}
 			else if (c_ptr->feat == FEAT_HOME){/* rien */}
