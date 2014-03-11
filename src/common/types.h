@@ -2246,6 +2246,7 @@ struct player_type
 	s16b current_selling;
 	s16b current_sell_amt;
 	int current_sell_price;
+	bool current_create_sling_ammo;
 
 	int using_up_item;	/* Item being used up while enchanting, *ID*ing etc. */
 

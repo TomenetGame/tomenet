@@ -557,7 +557,9 @@ P       O       party screen. Form/disband/modify a party with other players
 
 
 SPACE   Stop executing repeatable actions such as searching, tunnelling or
-        disarming traps. Also stops fire-till-kill.
+        disarming traps. Also stops active fire-till-kill shooting and any
+        preparations for a shooting technique (flare missile, precision shot,
+        barrage).
 
 < or >  go upstairs/downstairs. Press '>' to use a void gate (violet '+').
         Void jump gates teleport you to their counterpart and vice versa giving

@@ -727,6 +727,7 @@ extern void do_cmd_melee_technique(int Ind, int technique);
 extern void do_cmd_ranged_technique(int Ind, int technique);
 extern void do_cmd_breathe(int Ind);
 extern void do_cmd_breathe_aux(int Ind, int dir);
+extern void create_sling_ammo_aux(int Ind);
 
 
 /* control.c */
@@ -1116,6 +1117,8 @@ extern int is_inactive(int Ind);
 extern int Send_extra_status(int Ind, cptr status);
 extern void change_mind(int Ind, bool open_or_close);
 extern int Send_apply_auto_insc(int Ind, int slot);
+
+extern int fake_Receive_tunnel(int Ind, int dir);
 
 
 

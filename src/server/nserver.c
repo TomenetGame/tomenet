@@ -7336,6 +7336,30 @@ static int Receive_run(int ind)
 	return 1;
 }
 
+int fake_Receive_tunnel(int Ind, int dir) {
+	player_type *p_ptr = Players[Ind];
+	connection_t *connp = Conn[p_ptr->conn];
+
+	/* all this is temp just to make it work */
+	if (p_ptr->command_rep == -1) {
+		p_ptr->command_rep = 0;
+		return 0;
+	}
+
+	/* please redesign ALL of this out of higher level */
+	if (p_ptr->command_rep != PKT_TUNNEL) p_ptr->command_rep = -1;
+
+	if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+		do_cmd_tunnel(Ind, dir, FALSE);
+		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", PKT_TUNNEL, dir);
+
+		return 2;
+	}
+
+	Packet_printf(&connp->q, "%c%c", PKT_TUNNEL, dir);
+	return 0;
+}
+
 static int Receive_tunnel(int ind)
 {
 	connection_t *connp = Conn[ind];
@@ -9697,8 +9721,7 @@ void Handle_clear_buffer(int Ind)
 	p_ptr->current_spell = -1;
 }
 
-static void Handle_clear_actions(int Ind)
-{
+static void Handle_clear_actions(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Stop ranged auto-retaliation (fire-till-kill) */
@@ -9706,6 +9729,17 @@ static void Handle_clear_actions(int Ind)
 
 	/* Stop automatically executed repeated actions */
 	p_ptr->command_rep = 0;
+
+	/* Stop preparing shooting techniques */
+	stop_precision(Ind);
+	if (p_ptr->ranged_flare) {
+		msg_print(Ind, "You dispose of the flare missile.");
+		p_ptr->ranged_flare = FALSE;
+	}
+	if (p_ptr->ranged_barrage) {
+		msg_print(Ind, "You cancel preparations for barrage.");
+		p_ptr->ranged_barrage = FALSE;
+	}
 
 	/* Stop resting */
 	disturb(Ind, 0, 0);
@@ -9748,7 +9782,7 @@ static int Receive_clear_actions(int ind) {
 		return n;
 	}
 
-	if(player) Handle_clear_actions(player);
+	if (player) Handle_clear_actions(player);
 
 	return 1;
 }

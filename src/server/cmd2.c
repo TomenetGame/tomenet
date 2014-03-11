@@ -2292,7 +2292,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	object_type forge;
 	char o_name[ONAME_LEN];
 
-	if(!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return;
 
 	/* check if our weapons can help hacking down wood etc */
 	if (o2_ptr->k_idx && !p_ptr->heavy_wield) {
@@ -2378,8 +2378,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 			break_cloaking(Ind, 0);
-			break_shadow_running(Ind); 
-			stop_precision(Ind);
+			break_shadow_running(Ind);
+			/* we abuse stop_precision() to reset current_create_sling_ammo, so need this hack here: */
+			if (!p_ptr->current_create_sling_ammo) stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
 
 			/* Take a turn */
@@ -2529,6 +2530,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 					/* Display */
 					everyone_lite_spot(wpos, y, x);
+
+					if (p_ptr->current_create_sling_ammo) create_sling_ammo_aux(Ind);
 				} else {
 					/* Message, keep digging */
 					msg_print(Ind, "You dig in the rubble.");
@@ -6837,8 +6840,7 @@ void do_cmd_fusion(int Ind) {
 /*
  * Rogue special ability - enter cloaking (stealth+search+special invisibility) mode - C. Blue
  */
-void do_cmd_cloak(int Ind)
-{
+void do_cmd_cloak(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 #ifdef ENABLE_MCRAFT
@@ -6980,6 +6982,11 @@ void stop_precision(int Ind) {
 		Players[Ind]->ranged_precision = FALSE;
 		msg_print(Ind, "\377yYou stop aiming.");
 	}
+
+	/* abuse for tunnelling for sling ammo creation,
+	   since it's the same situation: 'player must not perform any other action till complete'
+	   - except for firing, but firing isn't possible while tunnelling, so it's fine. */
+	Players[Ind]->current_create_sling_ammo = FALSE;
 }
 
 /* stop shooting-till-kill */
@@ -6999,8 +7006,7 @@ void stop_shooting_till_kill(int Ind) {
 /*
  * Rogue special ability - shadow running mode - C. Blue
  */
-void shadow_run(int Ind)
-{
+void shadow_run(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
         if (p_ptr->shadow_running) {

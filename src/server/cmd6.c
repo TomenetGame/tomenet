@@ -6887,13 +6887,48 @@ static int fletchery_items(int Ind) {
 	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 10))?TRUE:FALSE, FALSE, make_resf(p_ptr));
 */
 
+/* finish creating sling ammo dug from rubble */
+void create_sling_ammo_aux(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int tlev = get_skill_scale(p_ptr, SKILL_ARCHERY, 50) - 20
+		+ get_skill_scale(p_ptr, SKILL_SLING, 35);
+	object_type forge, *q_ptr;
+
+	/* S(he) is no longer afk */
+	//un_afk_idle(Ind);
+	p_ptr->current_create_sling_ammo = FALSE;
+
+	/* Get local object */
+	q_ptr = &forge;
+
+	/* Hack -- Give the player some bullets */
+	invcopy(q_ptr, lookup_kind(TV_SHOT, m_bonus(2, tlev)));
+	q_ptr->number = (byte)rand_range(15,30);
+	do_fletchery_aux();
+
+	if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) q_ptr->number /= ETHEREAL_AMMO_REDUCTION;
+
+	(void)inven_carry(Ind, q_ptr);
+
+//	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
+	p_ptr->update |= (PU_VIEW | PU_FLOW);
+	p_ptr->window |= (PW_OVERHEAD);
+
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#if 0 /* not happening anyway */
+	break_cloaking(Ind, 5);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+#endif
+}
+
 /*
  * do_cmd_cast calls this function if the player's class
  * is 'archer'.
  */
 //void do_cmd_archer(void)
-void do_cmd_fletchery(int Ind)
-{
+void do_cmd_fletchery(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int ext = 0, tlev = 0, raw_materials, raw_amount;
 	//char ch;
@@ -6903,38 +6938,29 @@ void do_cmd_fletchery(int Ind)
 
 	//char com[80];
 
-	bool done = FALSE;
-
 	cave_type **zcave;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 
-	if (p_ptr->confused)
-	{
+	if (p_ptr->confused) {
 		msg_print(Ind, "You are too confused!");
 		return;
 	}
-
-	if (p_ptr->blind)
-	{
+	if (p_ptr->blind) {
 		msg_print(Ind, "You are blind!");
 		return;
 	}
-
-	if (get_skill(p_ptr, SKILL_ARCHERY) < 10)	/* 20 */
-	{
+	if (get_skill(p_ptr, SKILL_ARCHERY) < 10) {
 		msg_print(Ind, "You don't know how to create ammo well.");
 		return;
 	}
 
 	ext = get_archery_skill(p_ptr);
-	if (ext < 1)
-	{
+	if (ext < 1) {
 		msg_print(Ind, "Sorry, you have to wield a launcher first.");
 		return;
 	}
-	if (ext == SKILL_BOOMERANG)
-	{
+	if (ext == SKILL_BOOMERANG) {
 		msg_print(Ind, "You don't need ammo for boomerangs, naturally.");
 		return;
 	}
@@ -6947,61 +6973,39 @@ void do_cmd_fletchery(int Ind)
 
 	/**********Create shots*********/
 //	if (ext == 1)
-	if (ext == SKILL_SLING)
-	{
+	if (ext == SKILL_SLING) {
 		int x,y, dir;
 		cave_type *c_ptr;
 
 		if (p_ptr->tim_wraith) { /* Not in WRAITHFORM ^^ */
-			msg_print(Ind, "You can't pick up the rubble!");
+			msg_print(Ind, "You can't pick up rubble in incorporeal form!");
 			return;
 		}
 
 //		if (!get_rep_dir(&dir)) return;
-		for (dir = 1; dir <= 9; dir++)
-		{
+		for (dir = 1; dir <= 9; dir++) {
 			y = p_ptr->py + ddy[dir];
 			x = p_ptr->px + ddx[dir];
 			c_ptr = &zcave[y][x];
-			if (c_ptr->feat == FEAT_RUBBLE)
-			{
-				/* S(he) is no longer afk */
-				un_afk_idle(Ind);
+			if (c_ptr->feat == FEAT_RUBBLE) {
+				/* new: actually tunnel through the rubble in order to create ammo from it - C. Blue */
 
-				/* Get local object */
-				q_ptr = &forge;
+				/* need this here since we abuse it to reset current_create_sling_ammo */
+				stop_precision(Ind);
 
-				/* Hack -- Give the player some bullets */
-				invcopy(q_ptr, lookup_kind(TV_SHOT, m_bonus(2, tlev)));
-				q_ptr->number = (byte)rand_range(15,30);
-				do_fletchery_aux();
-
-				if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) q_ptr->number /= ETHEREAL_AMMO_REDUCTION;
-
-				(void)inven_carry(Ind, q_ptr);
-
-//				(void)wall_to_mud(Ind, dir);
-				twall(Ind, y, x);
-//				p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
-				p_ptr->update |= (PU_VIEW | PU_FLOW);
-				p_ptr->window |= (PW_OVERHEAD);
-
-				done = TRUE;
-				break;
+				/* start digging the rubble.. */
+				p_ptr->current_create_sling_ammo = TRUE;
+				fake_Receive_tunnel(Ind, dir);
+				return;
 			}
 		}
-		if (!done)
-		{
-			msg_print(Ind, "You need rubbles to create sling shots.");
-		}
+		msg_print(Ind, "You need rubble to create sling shots.");
 	}
 
 	/**********Create arrows*********/
 //	else if (ext == 2)
-	else if (ext == SKILL_BOW)
-	{
+	else if (ext == SKILL_BOW) {
 		int item;
-
 #if 0
 		cptr q, s;
 
@@ -7016,14 +7020,9 @@ void do_cmd_fletchery(int Ind)
 		item = fletchery_items(Ind);
 
 		/* Get the item (in the pack) */
-		if (item >= 0)
-		{
-			q_ptr = &p_ptr->inventory[item];
-		}
-
+		if (item >= 0) q_ptr = &p_ptr->inventory[item];
 		/* Get the item (on the floor) */
-		else
-		{
+		else {
 			msg_print(Ind, "You don't have appropriate materials.");
 			return;
 
@@ -7051,14 +7050,11 @@ void do_cmd_fletchery(int Ind)
 		raw_amount = q_ptr->number * raw_materials;
 		do_fletchery_aux();
 
-		if (item >= 0)
-		{
+		if (item >= 0) {
 			inven_item_increase(Ind, item, -raw_materials);//, -1)
 			inven_item_describe(Ind, item);
 			inven_item_optimize(Ind, item);
-		}
-		else
-		{
+		} else {
 			floor_item_increase(0 - item, -raw_materials);//, -1)
 			floor_item_describe(0 - item);
 			floor_item_optimize(0 - item);
@@ -7079,10 +7075,8 @@ void do_cmd_fletchery(int Ind)
 
 	/**********Create bolts*********/
 //	else if (ext == 3)
-	else if (ext == SKILL_XBOW)
-	{
+	else if (ext == SKILL_XBOW) {
 		int item;
-
 #if 0
 		cptr q, s;
 
@@ -7097,14 +7091,9 @@ void do_cmd_fletchery(int Ind)
 		item = fletchery_items(Ind);
 
 		/* Get the item (in the pack) */
-		if (item >= 0)
-		{
-			q_ptr = &p_ptr->inventory[item];
-		}
-
+		if (item >= 0) q_ptr = &p_ptr->inventory[item];
 		/* Get the item (on the floor) */
-		else
-		{
+		else {
 			msg_print(Ind, "You don't have appropriate materials.");
 			return;
 
@@ -7132,14 +7121,11 @@ void do_cmd_fletchery(int Ind)
 		raw_amount = q_ptr->number * raw_materials;
 		do_fletchery_aux();
 
-		if (item >= 0)
-		{
+		if (item >= 0) {
 			inven_item_increase(Ind, item, -raw_materials);//, -1)
 			inven_item_describe(Ind, item);
 			inven_item_optimize(Ind, item);
-		}
-		else
-		{
+		} else {
 			floor_item_increase(0 - item, -raw_materials);//, -1)
 			floor_item_describe(0 - item);
 			floor_item_optimize(0 - item);
