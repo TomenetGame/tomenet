@@ -794,6 +794,16 @@ They all start with a slash '/' hence they're called slash commands:
             players, so they know why you are currently AFK or when you will
             be back.
 
+/autoret    Sets up auto-retaliation with a mimic power.
+ (/ar)      Usage:   /ar [t]<power>   or to disable:   /ar -
+            If 't' is prefixed to the power, it will only be used while in a
+            town. Example:   /ar tg
+            This will auto-retaliate with mimic power 'g)' while in town.
+
+            (Note that you cannot auto-retaliate with 'polymorph into...'
+            power aka 'c)', instead it will be treated like power 'b)' aka
+            'polymorph into next form with fitting extremities'.)
+
 /bed        Opposite of /dress.
  (/naked)
 
@@ -4583,11 +4593,9 @@ Runes:          Auto-retaliate with the inscribed rune. The format is modifier
     @Oaa        then type. To retaliate with a combination of runes, use the
                 combined rune. 'A' to activate runes for combining.
 
-Any item:
-    @OMd        Use innate mimic power 'd)' (for example).
-                (Note that you cannot auto-retaliate with 'polymorph into...'
-                power aka 'c)', instead it will be treated like power 'b)' aka
-                'polymorph into next form with fitting extremities'.)
+Mimic powers:   Use the /autoret or for short /ar command to set these up,
+    /ar tg      compare (0.2). Usage (t is optional for 'town-only'):
+                /ar [t]<power>
 
 If you want an auto-retaliation-enabling inscription to only work while you are
 around a town, add a 't' after the 'O', examples: '@Ot', '@Otb'.
