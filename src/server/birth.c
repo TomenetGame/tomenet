@@ -2630,6 +2630,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_worldmap = 1;
 		p_ptr->warning_dungeon = 1;
 		p_ptr->warning_tunnel = 1;
+		p_ptr->warning_trap = 1;
 		return;
 	}
 
@@ -2756,6 +2757,9 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 	if (p_ptr->max_plv > 5) {
 		p_ptr->warning_run = 1;
 		p_ptr->warning_lite = 1;
+	}
+	if (p_ptr->max_plv > 7) {
+		p_ptr->warning_trap = 1;
 	}
 	if (p_ptr->max_plv > 10) {
 		p_ptr->warning_ghost = 1;

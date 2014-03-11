@@ -3134,6 +3134,7 @@ void do_cmd_disarm(int Ind, int dir) {
 			else if (rand_int(100) < j) {
 				/* S(he) is no longer afk */
 				un_afk_idle(Ind);
+				p_ptr->warning_trap = 1;
 
 				msg_print(Ind, "You have disarmed the chest.");
 #ifdef USE_SOUND_2010
@@ -3149,6 +3150,7 @@ void do_cmd_disarm(int Ind, int dir) {
 			else if ((i > 5) && (randint(i) > 5)) {
 				/* S(he) is no longer afk */
 				un_afk_idle(Ind);
+				p_ptr->warning_trap = 1;
 
 				/* We may keep trying */
 				more = TRUE;
@@ -3164,6 +3166,7 @@ void do_cmd_disarm(int Ind, int dir) {
 			else {
 				/* S(he) is no longer afk */
 				un_afk_idle(Ind);
+				p_ptr->warning_trap = 1;
 
 				msg_print(Ind, "You set off a trap!");
 				chest_trap(Ind, y, x, c_ptr->o_idx);
@@ -3340,6 +3343,7 @@ void do_cmd_disarm(int Ind, int dir) {
 				stop_shooting_till_kill(Ind);
 			}
 
+			p_ptr->warning_trap = 1;
 			/* only aesthetic */
 			done = TRUE;
 		}
