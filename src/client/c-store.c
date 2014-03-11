@@ -711,7 +711,7 @@ void do_redraw_store(void) {
 		if ((store_num == STORE_HOME || store_num == STORE_HOME_DUN)
 		    && c_store.max_cost) {
 			char buf[1024];
-			sprintf(buf, "%s (Capacity: %d)", c_store.store_name, c_store.max_cost);
+			sprintf(buf, "%s (Stock: %d/%d)", c_store.store_name, store.stock_num, c_store.max_cost);
 			prt(buf, 3, 50);
 		}
 		display_inventory();
@@ -743,7 +743,7 @@ void display_store(void) {
 
 		/* Show the store name (usually blank for houses) and -hack- max_cost is the capacity */
 		if (c_store.max_cost)
-			sprintf(buf, "%s (Capacity: %d)", c_store.store_name, c_store.max_cost);
+			sprintf(buf, "%s (Stock: %d/%d)", c_store.store_name, store.stock_num, c_store.max_cost);
 		else
 			sprintf(buf, "%s", c_store.store_name);
 		prt(buf, 3, 50);
