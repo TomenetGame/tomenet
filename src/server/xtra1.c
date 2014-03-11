@@ -7008,10 +7008,12 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			msg_print(Ind, "\377ySorry, you must be at most level 15 to sign up for this event.");
 			if (!is_admin(p_ptr)) return;
 		}
+#if 0 /* fine now since speed is limited to +0 via floor flag */
 		if (p_ptr->fruit_bat == 1) { /* 1 = native bat, 2 = from chauve-souris */
 			msg_print(Ind, "\377ySorry, native fruit bats are not eligible to join this event.");
 			if (!is_admin(p_ptr)) return;
 		}
+#endif
 		if (p_ptr->global_event_participated[ge->getype]) {
 			msg_print(Ind, "\377ySorry, a character may participate only once in this event.");
 			if (!is_admin(p_ptr)) return;
