@@ -6856,12 +6856,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* for weapons and TV_SHIELD: this shouldn't happen */
 		if (is_weapon(tmp_obj.tval) || tmp_obj.tval == TV_MSTAFF || is_ranged_weapon(tmp_obj.tval)) {
 			/* shouldn't happen, but.. */
-			invwipe(o_ptr);
-			o_ptr->tval = TV_SPECIAL;
-			o_ptr->sval = SV_CUSTOM_OBJECT;
-			o_ptr->note = quark_add("a cake");
+			invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
+			o_ptr->note = quark_add("a Cake");
 			o_ptr->xtra1 = 15;
-			s_printf("REWARD_CREATED: (%s) a cake (1)\n", p_ptr->name);
+			s_printf("REWARD_CREATED: (%s) a Cake (1)\n", p_ptr->name);
 			/* serious alternatives: digger, magic device, a set of consumables */
 			return;
 		}
@@ -6888,12 +6886,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				/* we cannot wear ANY item? =P */
 				if (!wearables) {
 					/* this is silly, someone polymorphed into limbless form to turn in the reward deed?.. */
-					invwipe(o_ptr);
-					o_ptr->tval = TV_SPECIAL;
-					o_ptr->sval = SV_CUSTOM_OBJECT;
-					o_ptr->note = quark_add("a cake");
+					invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
+					o_ptr->note = quark_add("a Cake");
 					o_ptr->xtra1 = 15;
-					s_printf("REWARD_CREATED: (%s) a cake (2)\n", p_ptr->name);
+					s_printf("REWARD_CREATED: (%s) a Cake (2)\n", p_ptr->name);
 					/* serious alternatives: digger, magic device, a set of consumables */
 					return;
 				}
@@ -6927,17 +6923,14 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* for other items: */
 		else {
 			/* shouldn't happen, but.. */
-			invwipe(o_ptr);
-			o_ptr->tval = TV_SPECIAL;
-			o_ptr->sval = SV_CUSTOM_OBJECT;
-			o_ptr->note = quark_add("a cake");
+			invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
+			o_ptr->note = quark_add("a Cake");
 			o_ptr->xtra1 = 15;
-			s_printf("REWARD_CREATED: (%s) a cake (3)\n", p_ptr->name);
+			s_printf("REWARD_CREATED: (%s) a Cake (3)\n", p_ptr->name);
 			/* serious alternatives: digger, magic device, a set of consumables */
 			return;
 		}
 	}
-	reward_tval = tmp_obj.tval;
 
 	/* In case no SVAL has been defined yet: 
 	   Choose a random SVAL while paying attention to maxweight limit! */
@@ -7155,16 +7148,15 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 }
 
 /* shorten the process of creating a standard-parm reward */
-void give_reward(int Ind, u32b resf, cptr quark, int level, int discount)
-{
+void give_reward(int Ind, u32b resf, cptr quark, int level, int discount) {
 	object_type forge, *o_ptr = &forge;
         create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, resf, 3000);
 	object_aware(Ind, o_ptr);
 	object_known(o_ptr);
-	o_ptr->discount = discount;
+	if (o_ptr->tval != TV_SPECIAL) o_ptr->discount = discount;
 	o_ptr->level = level;
 	o_ptr->ident |= ID_MENTAL;
-	if (quark) o_ptr->note = quark_add(quark);
+	if (quark && !o_ptr->note) o_ptr->note = quark_add(quark);
 	inven_carry(Ind, o_ptr);
 }
 

@@ -7849,7 +7849,7 @@ void kill_quest(int Ind) {
 
 #if 0 /* needs more care, otherwise acquirement could even be BETTER than create_reward, depending on RESF.. */
 		create_reward(Ind, o_ptr, getlevel(&p_ptr->wpos), getlevel(&p_ptr->wpos), great, verygreat, resf, 3000);
-		o_ptr->note = quark_add(temp);
+		if (!o_ptr->note) o_ptr->note = quark_add(temp);
 		o_ptr->note_utag = strlen(temp);
 		inven_carry(Ind, o_ptr);
 #else
