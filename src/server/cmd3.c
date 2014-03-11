@@ -738,8 +738,7 @@ void do_takeoff_impossible(int Ind) {
  * 4 = don't equip if slot is already occupied (ie don't replace by taking off an item)
  * Note: Rings make an exception in 4: First ring always goes in second ring slot.
  */
-void do_cmd_wield(int Ind, int item, u16b alt_slots)
-{
+void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	player_type *p_ptr = Players[Ind];
 
 	int slot, num = 1;
@@ -920,8 +919,7 @@ return;
 
 //	if (is_slot_ok(slot - INVEN_ARM + INVEN_WIELD)) {
 //		i_ptr = &inventory[slot - INVEN_ARM + INVEN_WIELD];
-	if (o_ptr->tval == TV_SHIELD && (x_ptr = &p_ptr->inventory[INVEN_WIELD]))
-	{
+	if (o_ptr->tval == TV_SHIELD && (x_ptr = &p_ptr->inventory[INVEN_WIELD])) {
 		/* Extract the flags */
 		object_flags(x_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
@@ -1110,6 +1108,9 @@ return;
 		}
 
 	}
+
+	/* already done elsewhere */
+	//if (slot == INVEN_WIELD && o_ptr->k_idx && (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)) Send_equip_availability(Ind, INVEN_ARM);
 
 #ifdef ENABLE_STANCES
 	/* take care of combat stances */

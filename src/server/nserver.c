@@ -4708,8 +4708,7 @@ int Send_history(int Ind, int line, cptr hist)
 /* XXX 'pval' is sent only when the item is TV_BOOK (same with Send_equip)
  * otherwise you can use badly-cracked client :)	- Jir -
  */
-int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name)
-{
+int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 	char uses_dir = 0; /* flag whether a rod requires a direction for zapping or not */
@@ -4754,8 +4753,7 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
 }
 
-int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name)
-{
+int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
@@ -4797,6 +4795,7 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	char uses_dir = 0;
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
+	int slot = INVEN_WIELD + pos - 'a';
 
 	/* Mark activatable items that require a direction */
 	if (activation_requires_direction(o_ptr)
@@ -4813,10 +4812,17 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	}
 
 	/* for characters in forms that cannot use full equipment */
-	if (!item_tester_hook_wear(Ind, INVEN_WIELD + pos - 'a')) {
+	if (!item_tester_hook_wear(Ind, slot)) {
 		attr = TERM_L_DARK;
 		name = "(unavailable)";
 	}
+	/* hack: display INVEN_ARM slot as unavailable for 2-h weapons */
+	else if (slot == INVEN_ARM && Players[Ind]->inventory[INVEN_WIELD].k_idx && (k_info[Players[Ind]->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H)) {
+		attr = TERM_L_DARK;
+		//name = "(occupied)";
+		name = "-";
+	}
+
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
@@ -4846,9 +4852,9 @@ int Send_equip_availability(int Ind, int slot) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
-	byte attr = TERM_L_DARK;
-	cptr name = "(unavailable)";
 	char pos = 'a' + slot - INVEN_WIELD;
+	cptr name = "(nothing)";
+	byte attr = TERM_WHITE;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -4857,9 +4863,15 @@ int Send_equip_availability(int Ind, int slot) {
 		return 0;
 	}
 
-	if (item_tester_hook_wear(Ind, slot)) {
-		name = "(nothing)";
-		attr = TERM_WHITE;
+	if (!item_tester_hook_wear(Ind, slot)) {
+		attr = TERM_L_DARK;
+		name = "(unavailable)";
+	}
+	/* hack: 2-h weapon disables INVEN_ARM slot */
+	else if (slot == INVEN_ARM && Players[Ind]->inventory[INVEN_WIELD].k_idx && (k_info[Players[Ind]->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H)) {
+		attr = TERM_L_DARK;
+		//name = "(occupied)";
+		name = "-";
 	}
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
