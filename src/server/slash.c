@@ -2969,6 +2969,13 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Usage: /tip <player name>");
 				return;
 			}
+
+			/* Handle the newbies_cannot_drop option */
+			if ((p_ptr->max_plv < cfg.newbies_cannot_drop) && !is_admin(p_ptr)) {
+				msg_print(Ind, "You are not experienced enough to drop gold.");
+				return;
+			}
+
 			//if (p_ptr->au < p_ptr->lev * p_ptr->lev) {
 			if (!p_ptr->au) {
 				msg_print(Ind, "You don't have any money with you.");
