@@ -3013,6 +3013,7 @@ void do_slash_cmd(int Ind, char *message)
 			//sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, TRUE);
 			sound(j, "drop_gold", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
+			if (!q_ptr->max_exp) gain_exp(j, 1); /* for global events that forbid transactions */
 			p_ptr->au -= tip;
 			q_ptr->au += tip;
 			p_ptr->redraw |= PR_GOLD;
