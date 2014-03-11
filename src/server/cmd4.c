@@ -3254,7 +3254,10 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 #endif
 
 #ifdef AUTO_RET_CMD
-	if (p_ptr->autoret) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
+	if (p_ptr->autoret) {
+		if (p_ptr->autoret >= 100) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", p_ptr->autoret - 101 + 'a');
+		else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
+	}
 #endif
 
 	if (get_skill(p_ptr, SKILL_AURA_FEAR)) check_aura(Ind, 0); /* MAX_AURAS */

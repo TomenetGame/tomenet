@@ -3387,9 +3387,15 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* Set up a spell by name for auto-retaliation, so mimics can use it too */
 			if (!tk) {
-				if (p_ptr->autoret) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
-				else msg_print(Ind, "You have not set a mimic power for auto-retaliation.");
-				msg_print(Ind, " (Enter '/ar help' to see command usage and examples.)");
+				if (p_ptr->autoret) {
+					if (p_ptr->autoret >= 100)
+						msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", p_ptr->autoret - 101 + 'a');
+					else
+						msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
+				} else {
+					msg_print(Ind, "You have not set a mimic power for auto-retaliation. ('/ar help' for details.)");
+					//msg_print(Ind, " (Enter '/ar help' to see command usage and examples.)");
+				}
 				return;
 			}
 			if (streq(token[1], "help")) {
