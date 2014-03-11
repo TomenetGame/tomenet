@@ -155,7 +155,11 @@ static const os_PALETTE(16) default_palette =
 		0x0096ff00,   /* TERM_ORANGE */
 		0x0000cc00,   /* TERM_RED */
 		0x58960000,   /* TERM_GREEN */
+#ifndef READABILITY_BLUE
 		0xff000000,   /* TERM_BLUE */
+#else
+		0xff442200,   /* TERM_BLUE */
+#endif
 		0x00589600,   /* TERM_UMBER */
 		0x58585800,   /* TERM_L_DARK */
 		0xcccccc00,   /* TERM_L_WHITE */

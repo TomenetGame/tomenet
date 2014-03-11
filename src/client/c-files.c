@@ -1484,7 +1484,11 @@ void xhtml_screenshot(cptr name)
 		"#ff8d00",      /* ORANGE */
 		"#b70000",      /* RED */
 		"#009d44",      /* GREEN */
+#ifndef READABILITY_BLUE
 		"#0000ff",      /* BLUE */
+#else
+		"#2244ff",      /* BLUE */
+#endif
 		"#8d6600",      /* BROWN */
 		"#747474",      /* DARKGRAY */
 		"#d7d7d7",      /* LIGHTGRAY */

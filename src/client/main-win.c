@@ -461,7 +461,11 @@ static COLORREF win_clr[16] =
 	PALETTERGB(0xFF, 0x8D, 0x00),  /* 4 2 0  Orange */
 	PALETTERGB(0xB7, 0x00, 0x00),  /* 3 0 0  Red (was 0xD7,0,0) - making shaman/istar more distinguishable */
 	PALETTERGB(0x00, 0x9D, 0x44),  /* 0 2 1  Green */
+#ifndef READABILITY_BLUE
 	PALETTERGB(0x00, 0x00, 0xFF),  /* 0 0 4  Blue */
+#else
+	PALETTERGB(0x22, 0x44, 0xFF),  /* 0 0 4  Blue */
+#endif
 	PALETTERGB(0x8D, 0x66, 0x00),  /* 2 1 0  Umber */
 	PALETTERGB(0x74, 0x74, 0x74),  /* 1 1 1  Lt. Dark */
 	PALETTERGB(0xD7, 0xD7, 0xD7),  /* 3 3 3  Lt. Slate */

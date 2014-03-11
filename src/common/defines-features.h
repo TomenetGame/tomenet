@@ -189,6 +189,10 @@
 
 #ifdef CLIENT_SIDE
 //Originally for hybrid clients to do both old and new runemastery, now unused.
+
+ /* Use a somewhat lighter 'dark blue' for TERM_BLUE to improve readability
+    on some screens / under certain circumstances? */
+ //#define READABILITY_BLUE
 #endif
 
 /* ----------------- Misc flags induced by above definitions ----------------*/
