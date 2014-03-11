@@ -2346,9 +2346,7 @@ void update_mon(int m_idx, bool dist)
 				if (!is_admin(p_ptr)) r_ptr->r_sights++;
 
 				/* Disturb on appearance */
-				if (!m_list[m_idx].special && r_ptr->d_char != 't' &&
-				    /* Not in Bree (for Santa Claus) - C. Blue */
-	                    	    !in_bree(&p_ptr->wpos))
+				if (!m_list[m_idx].special && !(r_ptr->flags8 & RF8_ALLOW_RUNNING))
 					if (p_ptr->disturb_move) disturb(Ind, 1, 0);
 			}
 
@@ -2399,9 +2397,7 @@ void update_mon(int m_idx, bool dist)
 				if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
 
 				/* Disturb on disappearance*/
-				if (!m_list[m_idx].special && r_ptr->d_char != 't' &&
-				    /* Not in Bree (for Santa Claus) - C. Blue */
-	                    	    !in_bree(&p_ptr->wpos))
+				if (!m_list[m_idx].special && !(r_ptr->flags8 & RF8_ALLOW_RUNNING))
 					if (p_ptr->disturb_move) disturb(Ind, 1, 0);
 			}
 		}
@@ -2415,9 +2411,7 @@ void update_mon(int m_idx, bool dist)
 				p_ptr->mon_los[m_idx] = TRUE;
 
 				/* Disturb on appearance */
-				if (!m_list[m_idx].special && r_ptr->d_char != 't' &&
-				    /* Not in Bree (for Santa Claus) - C. Blue */
-	                    	    !in_bree(&p_ptr->wpos))
+				if (!m_list[m_idx].special && !(r_ptr->flags8 & RF8_ALLOW_RUNNING))
 					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
 
 				/* well, is it the right place to be? */
@@ -2436,9 +2430,7 @@ void update_mon(int m_idx, bool dist)
 				p_ptr->mon_los[m_idx] = FALSE;
 
 				/* Disturb on disappearance */
-				if (!m_list[m_idx].special && r_ptr->d_char != 't' &&
-				    /* Not in Bree (for Santa Claus) - C. Blue */
-				    !in_bree(&p_ptr->wpos))
+				if (!m_list[m_idx].special && !(r_ptr->flags8 & RF8_ALLOW_RUNNING))
 					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
 			}
 		}
