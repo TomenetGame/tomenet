@@ -164,7 +164,7 @@ void do_cmd_go_up(int Ind) {
 #ifdef RPG_SERVER /* Exclude NO_DEATH dungeons from the gameplay */
 	if ((surface) && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_DEATH)) {
 		/* needed for 'Arena Monster Challenge' again, NO_DEATH are now simply empty (no items/monsters) */
-		if (!(is_bree(wpos)) && !is_admin(p_ptr)) {
+		if (!(in_bree(wpos)) && !is_admin(p_ptr)) {
 			msg_print(Ind,"\377sOnly ivy-clad ruins of a former tower remain at this place..");
 			return;
 		}

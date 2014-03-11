@@ -11911,7 +11911,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 			if (town[i].x == wpos->wx && town[i].y == wpos->wy) {
 				found_town = TRUE;
 				/* Bree has special rules: */
-				if (is_bree(wpos)) {
+				if (in_bree(wpos)) {
 					/* exempt training tower, since it's empty anyway
 					   (ie monster/item spawn is prevented) and we
 					   need it for "arena monster challenge" event */
