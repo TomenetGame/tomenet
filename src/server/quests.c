@@ -153,6 +153,7 @@ struct quest_info {
 	int questor_rlev_new[QI_MAX_STAGES];
 
 	bool questor_talkable[QI_MAX_STAGES];	/* questor accepts dialogue? (by bumping usually) */
+	bool questor_despawned[QI_MAX_STAGES];	/* questor vanishes during a quest stage? */
 
 	int questor_walk_speed[QI_MAX_STAGES];	/* questor will actually move around during this stage? */
 	int questor_walk_destx[QI_MAX_STAGES], questor_walk_desty[QI_MAX_STAGES]; /* target waypoint for questor to move to */
