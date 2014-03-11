@@ -377,3 +377,5 @@ char minimap_char;
 
 /* To suppress positive confirmation messages on automated char dumps/screen shots */
 bool silent_dump = FALSE;
+/* For cleaner equip-display -- using a mimic/bat form that cannot use weapons? */
+bool equip_no_weapon = FALSE;

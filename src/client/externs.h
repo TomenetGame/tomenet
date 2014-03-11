@@ -924,3 +924,4 @@ extern byte minimap_attr;
 extern char minimap_char;
 
 extern bool silent_dump;
+extern bool equip_no_weapon;

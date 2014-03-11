@@ -1468,6 +1468,13 @@ int Receive_equip(void) {
 	else
 		strncpy(inventory_name[pos - 'a' + INVEN_WIELD], name, ONAME_LEN - 1);
 
+	/* new hack for '(unavailable)' equipment slots: handle INVEN_ARM slot a bit cleaner: */
+	if (pos == 'a') {
+		if (!strcmp(name, "(unavailable)")) equip_no_weapon = TRUE;
+		else equip_no_weapon = FALSE;
+	} else if (pos == 'b' && equip_no_weapon && !strcmp(name, "(nothing)"))
+		strcpy(inventory_name[INVEN_ARM], "(shield)");
+
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP);
 
