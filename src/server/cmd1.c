@@ -1411,6 +1411,9 @@ void whats_under_your_feet(int Ind) {
  * Note that we ONLY handle things that can be picked up.
  * See "move_player()" for handling of other things.
  */
+/* Prevent characters in Bree from taking gold/items while they cannot drop
+   them again due to being lower level than cfg.newbies_cannot_drop? */
+#define NEWBIES_CANT_GRAB_IN_BREE
 void carry(int Ind, int pickup, int confirm) {
 	object_type *o_ptr;
 
@@ -1487,6 +1490,15 @@ void carry(int Ind, int pickup, int confirm) {
 			msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
 			return;
 		}
+
+#ifdef NEWBIES_CANT_GRAB_IN_BREE
+		/* Avoid people picking up things that they cannot drop again? */
+		if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0 &&
+		    p_ptr->max_plv < cfg.newbies_cannot_drop && o_ptr->owner && p_ptr->id != o_ptr->owner) {
+			msg_format(Ind, "You cannot take gold from other people in Bree until you are level %d.", cfg.newbies_cannot_drop);
+			return;
+		}
+#endif
 
 		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner) {
 			msg_print(Ind, "\377oYou cannot take gold of other players without a valid account.");
@@ -1629,6 +1641,14 @@ void carry(int Ind, int pickup, int confirm) {
 			return;
 		}
 
+#ifdef NEWBIES_CANT_GRAB_IN_BREE
+		/* Avoid people picking up things that they cannot drop again? */
+		if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0 &&
+		    p_ptr->max_plv < cfg.newbies_cannot_drop && o_ptr->owner && p_ptr->id != o_ptr->owner) {
+			msg_format(Ind, "You cannot take items from other people in Bree until you are level %d.", cfg.newbies_cannot_drop);
+			return;
+		}
+#endif
 
 		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner) {
 			if (exceptionally_shareable_item(o_ptr)) {
