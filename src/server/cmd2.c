@@ -6720,49 +6720,39 @@ void do_cmd_purchase_house(int Ind, int dir)
 }
 
 /* King own a territory */
-void do_cmd_own(int Ind)
-{
+void do_cmd_own(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	char buf[100];
 	
-	if (!p_ptr->total_winner)
-	{
+	if (!p_ptr->total_winner) {
 		msg_format(Ind, "You must be a %s to own a land!", (p_ptr->male)?"king":"queen");
 		return;
 	}
 
-	if (!p_ptr->own1.wx && !p_ptr->own2.wx && !p_ptr->own1.wy && !p_ptr->own2.wy && !p_ptr->own1.wz && !p_ptr->own2.wz)
-	{
+	if (!p_ptr->own1.wx && !p_ptr->own2.wx && !p_ptr->own1.wy && !p_ptr->own2.wy && !p_ptr->own1.wz && !p_ptr->own2.wz) {
 		msg_print(Ind, "You can't own more than 2 terrains.");
 		return;
 	}
 	
-	if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own)
-	{
+	if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own) {
 		msg_print(Ind, "Sorry this land is owned by someone else.");
 		return;
 	}
-	if(p_ptr->wpos.wz)
-	{
+	if (p_ptr->wpos.wz) {
 		msg_print(Ind, "Sorry you can't own the dungeon");
 		return;
 	}
 	
-	if(istownarea(&p_ptr->wpos, 3))
-	{
+	if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
 		msg_print(Ind, "Sorry this land is owned by the town.");
 		return;
 	}
 	
 	/* Ok all check did lets appropriate */
-	if(p_ptr->own1.wx || p_ptr->own1.wy || p_ptr->own1.wz)
-	{
+	if (p_ptr->own1.wx || p_ptr->own1.wy || p_ptr->own1.wz)
 		wpcopy(&p_ptr->own2, &p_ptr->wpos);
-	}
 	else
-	{
 		wpcopy(&p_ptr->own1, &p_ptr->wpos);
-	}
 	wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own = p_ptr->id;
 	
 	if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {

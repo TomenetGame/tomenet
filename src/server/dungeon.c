@@ -3836,7 +3836,7 @@ static bool process_player_end_aux(int Ind)
 	else if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food >= PY_FOOD_ALERT) && !p_ptr->admin_dm &&
 	    /* Don't starve in town (but recover from being gorged) - C. Blue */
 //	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_MAX))
-	    (!(istownarea(&p_ptr->wpos, 3) || isdungeontown(&p_ptr->wpos))
+	    (!(istownarea(&p_ptr->wpos, MAX_TOWNAREA) || isdungeontown(&p_ptr->wpos))
 	    || p_ptr->food >= PY_FOOD_FULL)) /* allow to digest some to not get gorged in upcoming fights quickly - C. Blue */
 	{
 		/* Digest normally */
@@ -4063,7 +4063,7 @@ static bool process_player_end_aux(int Ind)
 	/* Temporary Mimicry from a Ring of Polymorphing */
 	if (p_ptr->tim_mimic && p_ptr->body_monster == p_ptr->tim_mimic_what) {
 		/* hack - on hold while in town */
-		if (!istownarea(&p_ptr->wpos, 3) && !isdungeontown(&p_ptr->wpos)) {
+		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos)) {
 			/* decrease time left of being polymorphed */
 			(void)set_mimic(Ind, p_ptr->tim_mimic - 1, p_ptr->tim_mimic_what);
 		}
