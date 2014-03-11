@@ -4793,8 +4793,7 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 }
 
 //int Send_equip(int Ind, char pos, byte attr, int wgt, byte tval, cptr name)
-int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name)
-{
+int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	char uses_dir = 0;
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
@@ -4811,6 +4810,12 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		plog(format("Connection not ready for equip (%d.%d.%d)",
 			Ind, connp->state, connp->id));
 		return 0;
+	}
+
+	/* for characters in forms that cannot use full equipment */
+	if (!item_tester_hook_wear(Ind, INVEN_WIELD + pos - 'a')) {
+		attr = TERM_L_DARK;
+		name = "(unavailable)";
 	}
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
@@ -4835,6 +4840,48 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
 	else
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
+}
+
+int Send_equip_availability(int Ind, int slot) {
+	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
+
+	byte attr = TERM_L_DARK;
+	cptr name = "(unavailable)";
+	char pos = 'a' + slot - INVEN_WIELD;
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for equip (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (item_tester_hook_wear(Ind, slot)) {
+		name = "(nothing)";
+		attr = TERM_WHITE;
+	}
+
+	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
+		connp2 = Conn[p_ptr2->conn];
+		if (is_newer_than(&p_ptr2->version, 4, 5, 2, 0, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, 0, 0, name);
+		else if (is_newer_than(&p_ptr2->version, 4, 4, 5, 10, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, 0, name);
+		else if (is_newer_than(&p_ptr2->version, 4, 4, 4, 2, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, name);
+		else
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, name);
+	}
+
+	if (is_newer_than(&Players[Ind]->version, 4, 5, 2, 0, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, 0, 0, name);
+	else if (is_newer_than(&Players[Ind]->version, 4, 4, 5, 10, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, 0, name);
+	else if (is_newer_than(&Players[Ind]->version, 4, 4, 4, 2, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, name);
+	else
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, name);
 }
 
 int Send_title(int Ind, cptr title)

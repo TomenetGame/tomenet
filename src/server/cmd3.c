@@ -700,8 +700,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 #endif
 
 /* Take off things that are no more wearable */
-void do_takeoff_impossible(int Ind)
-{
+void do_takeoff_impossible(int Ind) {
 	int k;
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
@@ -709,8 +708,7 @@ void do_takeoff_impossible(int Ind)
 
 
 	bypass_inscrption = TRUE;
-	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
-	{
+	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
 		o_ptr = &p_ptr->inventory[k];
 		if ((o_ptr->k_idx) && /* following is a hack for dual-wield.. */
 		    (!item_tester_hook_wear(Ind, (k == INVEN_ARM && o_ptr->tval != TV_SHIELD) ? INVEN_WIELD : k)))
@@ -724,6 +722,8 @@ void do_takeoff_impossible(int Ind)
 			/* Ahah TAKE IT OFF ! */
 			inven_takeoff(Ind, k, 255, FALSE);
 		}
+		/* new: also redisplay empty slots as '(unavailable)' after a form change, if they are */
+		if (!o_ptr->k_idx) Send_equip_availability(Ind, k);
 	}
 	bypass_inscrption = FALSE;
 }

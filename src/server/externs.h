@@ -1031,6 +1031,7 @@ extern int Send_history(int Ind, int line, cptr hist);
 extern int Send_inven(int ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name);
 extern int Send_inven_wide(int ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name);
 extern int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name);
+extern int Send_equip_availability(int Ind, int slot);
 extern int Send_title(int Ind, cptr title);
 /*extern int Send_level(int Ind, int max, int cur);*/
 /*extern void Send_exp(int Ind, s32b max, s32b cur);*/
