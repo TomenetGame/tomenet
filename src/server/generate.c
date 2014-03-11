@@ -9106,8 +9106,7 @@ static bool no_nearby_dungeontown(struct worldpos *wpos) {
    and also in actual dungeons if desired (sandworm lair needs moar sandworms?) - C. Blue
    TODO: Move this into a specific d_info flag that boosts a monster's rarity! */
 #define HACK_MONSTER_RARITIES
-static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
-{
+static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	int i, k, y, x, y1 = 0, x1 = 0, dun_lev;
 #ifdef ARCADE_SERVER
 	int mx, my;
@@ -9285,7 +9284,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	}
 //#endif
 
-	/* TODO: copy dungeon_type flags to dun_level */
+	/* copy dun flags to dunlev */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 	if (in_irondeepdive(wpos) ? (d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_FORGET) :
 	    (d_ptr && (d_ptr->flags1 & DF1_FORGET))) {
@@ -9301,6 +9300,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #else
 	if (d_ptr && (d_ptr->flags2 & DF2_NO_MAGIC_MAP)) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 #endif
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+	if (in_irondeepdive(wpos) ? (d_info[iddc[ABS(wpos->wz)].type].flags1 & DF1_NO_DESTROY) :
+	    (d_ptr && (d_ptr->flags1 & DF1_NO_DESTROY))) {
+#else
+	if (d_ptr && (d_ptr->flags1 & DF1_NO_DESTROY)) {
+#endif
+		dun->l_ptr->flags1 |= LF1_NO_DESTROY;
+	}
 
 	/* Hack -- NO_MAP often comes with NO_MAGIC_MAP */
 	if ((dun->l_ptr->flags1 & LF1_NO_MAP) && magik(55))
@@ -11059,8 +11066,7 @@ static void place_street(struct worldpos *wpos, int vert, int place)
    center, but spread them out a bit - C. Blue: */
 #define NEW_TOWNGENHACK_METHOD
 
-static void town_gen_hack(struct worldpos *wpos)
-{
+static void town_gen_hack(struct worldpos *wpos) {
 	bool dungeon_town = (wpos->wz != 0);
 	wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
 	struct dungeon_type *d_ptr = wpos->wz != 0 ? (wpos->wz > 0 ? wild->tower : wild->dungeon) : NULL;
@@ -11406,8 +11412,7 @@ static void town_gen_hack(struct worldpos *wpos)
 
  */
 
-static void town_gen(struct worldpos *wpos)
-{
+static void town_gen(struct worldpos *wpos) {
 	int y, x, type = -1, i;
 	int xstart = 0, ystart = 0;	/* dummy, for now */
 
@@ -12134,8 +12139,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
    Rebuilds a level, without re-adding dungeons, because this
    function assumes that the level has already been generated.
    Used for season change. - C. Blue */
-void regenerate_cave(struct worldpos *wpos)
-{
+void regenerate_cave(struct worldpos *wpos) {
 	cave_type **zcave;
 
 	int i;
