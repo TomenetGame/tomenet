@@ -2648,7 +2648,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	c_ptr = &zcave[y][x];
 
 	/* No traps in Bree - C. Blue */
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) return;
+	if (in_bree(wpos)) return;
 	/* Nor in Valinor */
 	if (in_valinor(wpos)) return;
 
@@ -2757,7 +2757,7 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 	c_ptr = &zcave[y][x];
 
 	/* No traps in Bree - C. Blue */
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) return;
+	if (in_bree(wpos)) return;
 	/* Nor in Valinor */
 	if (in_valinor(wpos)) return;
 

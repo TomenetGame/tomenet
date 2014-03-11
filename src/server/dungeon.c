@@ -1930,7 +1930,7 @@ static void process_world(int Ind)
  #ifndef HALLOWEEN
 	    (istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE * ((3 / NumPlayers) + 1)) == 0)))
  #else
-	    (istown(&p_ptr->wpos) && (rand_int((p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y ?
+	    (istown(&p_ptr->wpos) && (rand_int((in_bree(&p_ptr->wpos) ?
 	    HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) * ((3 / NumPlayers) + 1)) == 0)))
  #endif
 #endif//0
@@ -1939,13 +1939,13 @@ static void process_world(int Ind)
 #if 0 /* too many people idling all day.. ;) */
 	if ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
 	    (!season_halloween && (istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE * ((3 / NumPlayers) + 1)) == 0))) ||
-	    (season_halloween && (istown(&p_ptr->wpos) && (rand_int((p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y ?
+	    (season_halloween && (istown(&p_ptr->wpos) && (rand_int((in_bree(&p_ptr->wpos) ?
 		HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) * ((3 / NumPlayers) + 1)) == 0))))
 #else /* ..so no longer depending on amount of players in town: */
 	if ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
 	    (!season_halloween && istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE) == 0)) ||
 	    (season_halloween && istown(&p_ptr->wpos) &&
-	    (rand_int(p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y ?
+	    (rand_int(in_bree(&p_ptr->wpos) ?
 	    HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) == 0)))
 #endif
 	{

@@ -700,8 +700,7 @@ void thin_surface_spawns() {
 		}
 
 		/* hack: don't affect non-townies in Bree at all */
-		if (m_ptr->wpos.wx == cfg.town_x && m_ptr->wpos.wy == cfg.town_y && !m_ptr->wpos.wz
-		    && m_ptr->level)
+		if (in_bree(&m_ptr->wpos) && m_ptr->level)
 			continue;
 
 		/* erase the monster, poof */
@@ -2347,9 +2346,9 @@ void update_mon(int m_idx, bool dist)
 				if (!is_admin(p_ptr)) r_ptr->r_sights++;
 
 				/* Disturb on appearance */
-				if(!m_list[m_idx].special && r_ptr->d_char != 't' &&
+				if (!m_list[m_idx].special && r_ptr->d_char != 't' &&
 				    /* Not in Bree (for Santa Claus) - C. Blue */
-	                    	    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
+	                    	    !in_bree(&p_ptr->wpos))
 					if (p_ptr->disturb_move) disturb(Ind, 1, 0);
 			}
 
@@ -2400,9 +2399,9 @@ void update_mon(int m_idx, bool dist)
 				if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
 
 				/* Disturb on disappearance*/
-				if(!m_list[m_idx].special && r_ptr->d_char != 't' &&
+				if (!m_list[m_idx].special && r_ptr->d_char != 't' &&
 				    /* Not in Bree (for Santa Claus) - C. Blue */
-	                    	    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
+	                    	    !in_bree(&p_ptr->wpos))
 					if (p_ptr->disturb_move) disturb(Ind, 1, 0);
 			}
 		}
@@ -2416,9 +2415,9 @@ void update_mon(int m_idx, bool dist)
 				p_ptr->mon_los[m_idx] = TRUE;
 
 				/* Disturb on appearance */
-				if(!m_list[m_idx].special && r_ptr->d_char != 't' &&
+				if (!m_list[m_idx].special && r_ptr->d_char != 't' &&
 				    /* Not in Bree (for Santa Claus) - C. Blue */
-	                    	    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
+	                    	    !in_bree(&p_ptr->wpos))
 					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
 
 				/* well, is it the right place to be? */
@@ -2437,9 +2436,9 @@ void update_mon(int m_idx, bool dist)
 				p_ptr->mon_los[m_idx] = FALSE;
 
 				/* Disturb on disappearance */
-				if(!m_list[m_idx].special && r_ptr->d_char != 't' &&
+				if (!m_list[m_idx].special && r_ptr->d_char != 't' &&
 				    /* Not in Bree (for Santa Claus) - C. Blue */
-				    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
+				    !in_bree(&p_ptr->wpos))
 					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
 			}
 		}
@@ -2936,7 +2935,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 4\n");
 #endif
 #ifdef RPG_SERVER /* no spawns in Training Tower at all */
 	if (!(summon_override_checks & SO_TT_RPG)) {
-		if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return 17;
+		if (in_trainingtower(wpos)) return 17;
 	}
 #endif
 
@@ -3685,7 +3684,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 	if (!(zcave = getcave(wpos))) return -1;
 
 #ifdef ARCADE_SERVER
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return -2;
+	if (in_trainingtower(wpos)) return -2;
 #endif
 
 	if (!(summon_override_checks & SO_SURFACE)) {

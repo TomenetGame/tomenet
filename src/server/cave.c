@@ -487,7 +487,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	/* Perform henc_strictness anti-cheeze - mode 4 : monster is on the same dungeon level as a player */
 	/* If a player enters a new level */
 	if ((value <= 0) || (cfg.henc_strictness < 4)) return;
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) return; /* not in Bree, because of Halloween :) */
+	if (in_bree(wpos)) return; /* not in Bree, because of Halloween :) */
 
 	/* Who is the highest player around? */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -8156,7 +8156,7 @@ msg_broadcast(0, "no flags");
 }
 
 bool allow_terraforming(struct worldpos *wpos, byte feat) {
-	bool bree = (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0);
+	bool bree = in_bree(wpos);
 	bool town = istown(wpos) || isdungeontown(wpos);
 	bool townarea = istownarea(wpos, MAX_TOWNAREA);
 //unused atm	bool dungeon_town = isdungeontown(wpos);

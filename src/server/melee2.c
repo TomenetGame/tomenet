@@ -7922,7 +7922,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			      p_ptr->disturb_near)) &&
 				r_ptr->level != 0 &&
 			    /* Not in Bree (for Santa Claus) - C. Blue */
-			    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
+			    !in_bree(&p_ptr->wpos))
 			{
 				/* Disturb */
 				if (p_ptr->id != m_ptr->owner) disturb(Ind, 0, 0);
@@ -9200,7 +9200,7 @@ void process_monsters(void) {
 			/* Change monster's highest player encounter - mode 3: monster is awake and player is within its area of awareness */
 			if (cfg.henc_strictness == 3 && !m_ptr->csleep) {
 				if (j <= r_ptr->aaf) {
-					if (m_ptr->wpos.wx != cfg.town_x || m_ptr->wpos.wy != cfg.town_y || m_ptr->wpos.wz != 0) { /* not in Bree, because of Halloween :) */
+					if (!in_bree(&m_ptr->wpos)) { /* not in Bree, because of Halloween :) */
 						if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
 					}
 				}
@@ -9416,7 +9416,7 @@ void process_monsters(void) {
 		if (!test) continue;
 
 	        /* Change monster's highest player encounter (mode 1+ : monster actively targets a player) */
-		if (!m_ptr->csleep && (m_ptr->wpos.wx != cfg.town_x || m_ptr->wpos.wy != cfg.town_y || m_ptr->wpos.wz != 0)) { /* not in Bree, because of Halloween & Christmas (Santa Claus) :) */
+		if (!m_ptr->csleep && !in_bree(&m_ptr->wpos)) { /* not in Bree, because of Halloween & Christmas (Santa Claus) :) */
 			if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
 		}
 

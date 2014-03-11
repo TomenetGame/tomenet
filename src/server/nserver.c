@@ -7292,8 +7292,6 @@ static int Receive_run(int ind)
 			return Receive_walk(ind);
 
 		/* Check for monsters in sight */
-		/* Not in Bree (for Santa Claus) - C. Blue (Note: This and below messes should get resolved in future) */
-		//if (!(p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz))
 		for (i = 0; i < m_max; i++) {
 			/* Check this monster */
 			if (p_ptr->mon_los[i] && !m_list[i].csleep && !m_list[i].special

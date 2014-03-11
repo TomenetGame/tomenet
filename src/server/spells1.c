@@ -7464,7 +7464,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	if (r_ptr->flags9 & RF9_IM_TELE) do_poly = FALSE;
 
 	/* No polymorphing in Bree - mikaelh */
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) do_poly = FALSE;
+	if (in_bree(wpos)) do_poly = FALSE;
 
 
 	/* "Unique" monsters can only be "killed" by the player */

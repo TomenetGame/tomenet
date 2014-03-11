@@ -6870,11 +6870,11 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			return;
 		}
 #if 0 /* need to be in Bree or in the arena? */
-		if ((p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz != 0) &&
+		if (!in_bree(&p_ptr->wpos) &&
 		    (p_ptr->wpos.wx != WPOS_ARENA_X || p_ptr->wpos.wy != WPOS_ARENA_Y || p_ptr->wpos.wz != WPOS_ARENA_Z)) {
 			msg_print(Ind, "\377yYou have to be in Bree or in the arena to sign up for this event!");
 #else /* need to be in Bree or in the training tower? */
-		if ((p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz < 0)
+		if (!in_bree(&p_ptr->wpos) && !in_trainingtower(&p_ptr->wpos)
 		    && !is_admin(p_ptr)) {
 			msg_print(Ind, "\377yYou have to be in Bree or in the training tower to sign up for this event!");
 #endif

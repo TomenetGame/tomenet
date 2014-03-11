@@ -6195,7 +6195,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	if (in_valinor(wpos)) return;
 
 #ifdef RPG_SERVER /* no objects are generated in Training Tower */
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && level_generation_time) return;
+	if (in_trainingtower(wpos)) return;
 #endif
 
 	/* Require clean floor space */

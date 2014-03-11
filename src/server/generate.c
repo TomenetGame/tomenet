@@ -1229,7 +1229,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num, playe
 	if(!(zcave = getcave(wpos))) return;
 
 #ifdef RPG_SERVER /* no objects are generated in Training Tower */
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && level_generation_time) return;
+	if (in_trainingtower(wpos) && level_generation_time) return;
 #endif
 
 	/* Place some objects */
@@ -1361,11 +1361,11 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 
 #if 1
 	/* hard-coded hack: Training Tower has no streamers, only built granite walls */
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0)
+	if (in_trainingtower(wpos))
 		return;
 #else
 	/* hard-coded hack: Training Tower streamers have no treasure */
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0)
+	if (in_trainingtower(wpos))
 		chance = 0;
 #endif
 
@@ -1861,24 +1861,22 @@ static void vault_traps(struct worldpos *wpos, int y, int x, int yd, int xd, int
 /*
  * Hack -- Place some sleeping monsters near the given location
  */
-static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
-{
-
+static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num) {
 	int          k, i, y, x;
 	cave_type **zcave;
+	int dun_lev;
+
 	if (!(zcave = getcave(wpos))) return;
-	int dun_lev = getlevel(wpos);
+	dun_lev = getlevel(wpos);
 
 #ifdef ARCADE_SERVER
-	if(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return;
+	if (in_trainingtower(wpos)) return;
 #endif
 
 	/* Try to summon "num" monsters "near" the given location */
-	for (k = 0; k < num; k++)
-	{
+	for (k = 0; k < num; k++) {
 		/* Try nine locations */
-		for (i = 0; i < 9; i++)
-		{
+		for (i = 0; i < 9; i++) {
 			int d = 1;
 
 			/* Pick a nearby location */
@@ -1903,8 +1901,7 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
 /*
  * Place a cave filler at (y, x)
  */
-static void place_filler(worldpos *wpos, int y, int x)
-{
+static void place_filler(worldpos *wpos, int y, int x) {
 	cave_set_feat(wpos, y, x, fill_type[rand_int(1000)]);
 }
 
@@ -1913,12 +1910,10 @@ static void place_filler(worldpos *wpos, int y, int x)
  */
 /* XXX this function can produce strange results when called
  * outside of generate.c */
-void place_floor(worldpos *wpos, int y, int x)
-{
+void place_floor(worldpos *wpos, int y, int x) {
 	cave_set_feat(wpos, y, x, floor_type[rand_int(1000)]);
 }
-void place_floor_live(worldpos *wpos, int y, int x)
-{
+void place_floor_live(worldpos *wpos, int y, int x) {
 	cave_set_feat_live(wpos, y, x, floor_type[rand_int(1000)]);
 }
 
@@ -1928,8 +1923,7 @@ void place_floor_live(worldpos *wpos, int y, int x)
          For that reason, it contains a hack preventing un-walling
          any vaults, to keep them sane. - C. Blue
  */
-static void place_floor_respectedly(worldpos *wpos, int y, int x)
-{
+static void place_floor_respectedly(worldpos *wpos, int y, int x) {
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
@@ -11917,7 +11911,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 			if (town[i].x == wpos->wx && town[i].y == wpos->wy) {
 				found_town = TRUE;
 				/* Bree has special rules: */
-				if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) {
+				if (is_bree(wpos)) {
 					/* exempt training tower, since it's empty anyway
 					   (ie monster/item spawn is prevented) and we
 					   need it for "arena monster challenge" event */

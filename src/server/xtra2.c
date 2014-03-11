@@ -7328,7 +7328,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 		msg_print(Ind, "\374\377oTherefore, it's recommended to press 'Q' to suicide and start over.");
 		if (p_ptr->wpos.wz < 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '<' to float back to town,");
 		else if (p_ptr->wpos.wz > 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '>' to float back to town,");
-		else if (p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y) msg_print(Ind, "\374\377oIf you don't like to do that, of course you may just continue");
+		else if (in_bree(&p_ptr->wpos)) msg_print(Ind, "\374\377oIf you don't like to do that, of course you may just continue");
 		else msg_print(Ind, "\374\377oIf you don't like to do that, just continue by flying back to town");
 		msg_print(Ind, "\374\377oand enter the temple (\377g4\377o) to be revived and handed some money.");
 	}
@@ -8069,7 +8069,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	update_health(m_idx);
 
 	/* Change monster's highest player encounter - mode 1+ : a player targetted this monster */
-	if (m_ptr->wpos.wx != cfg.town_x || m_ptr->wpos.wy != cfg.town_y || m_ptr->wpos.wz != 0) { /* not in Bree, because of Halloween :) */
+	if (!in_bree(&m_ptr->wpos)) { /* not in Bree, because of Halloween :) */
 		if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
 	}
 

@@ -5006,7 +5006,7 @@ void do_slash_cmd(int Ind, char *message)
 						        for(i = 0; i < numtowns; i++) {
 	    	        					if(town[i].x == tpos->wx && town[i].y == tpos->wy) {
 									found_town = TRUE;
-									if (tpos->wx == cfg.town_x && tpos->wy == cfg.town_y) {
+									if (in_bree(tpos)) {
 										/* exempt training tower since it might be needed for global events */
 										continue;
 
@@ -5090,7 +5090,7 @@ void do_slash_cmd(int Ind, char *message)
 						        for(i = 0; i < numtowns; i++) {
 	    	        					if(town[i].x == tpos->wx && town[i].y == tpos->wy) {
 									found_town = TRUE;
-									if (tpos->wx == cfg.town_x && tpos->wy == cfg.town_y) {
+									if (in_bree(tpos) {
 										d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
 									} else {
 										d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2; /* Other towns */

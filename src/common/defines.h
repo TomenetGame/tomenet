@@ -8013,6 +8013,10 @@ extern int PlayerUID;
  //#define HOUSE_PAINTING_HIDE_MUSEUM
 #endif
 
+
+#define in_bree(wpos) ((wpos)->wx == cfg.town_x && (wpos)->wy == cfg.town_y && (wpos)->wz == 0)
+#define in_trainingtower(wpos) ((wpos)->wx == cfg.town_x && (wpos)->wy == cfg.town_y && (wpos)->wz > 0)
+
 /* check if a player is in the Nether Realms */
 //#define in_netherrealm(wpos) (getlevel(wpos) >= netherrealm_start)
 #define in_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z > 0)
