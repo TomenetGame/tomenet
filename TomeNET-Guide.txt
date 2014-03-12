@@ -6388,6 +6388,10 @@ Ironman Deep Dive Challenge (IDDC)
     the level has reset, then the level will be "stale" for you, the next time
     you log on, which will prevent you from getting any experience, items or
     gold until you move on by taking a staircase to the next floor.
+    Therefore, if you need to log out and stop playing, you should first clear
+    as many monsters as you can on your current floor before logging out. That
+    way you won't "waste" any experience points.
+
     Monsters cannot spawn 'live' in the IDDC, but only at the time of creation
     of each dungeon floor. Summon staves cannot be recharged in the IDDC and
     polymorphing magic does not work.
