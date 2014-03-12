@@ -1487,7 +1487,7 @@ void xhtml_screenshot(cptr name)
 #ifndef READABILITY_BLUE
 		"#0000ff",      /* BLUE */
 #else
-		"#2244ff",      /* BLUE */
+		"#1144ff",      /* BLUE */
 #endif
 		"#8d6600",      /* BROWN */
 		"#747474",      /* DARKGRAY */

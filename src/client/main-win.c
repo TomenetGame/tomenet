@@ -464,7 +464,7 @@ static COLORREF win_clr[16] =
 #ifndef READABILITY_BLUE
 	PALETTERGB(0x00, 0x00, 0xFF),  /* 0 0 4  Blue */
 #else
-	PALETTERGB(0x22, 0x44, 0xFF),  /* 0 0 4  Blue */
+	PALETTERGB(0x11, 0x44, 0xFF),  /* 0 0 4  Blue */
 #endif
 	PALETTERGB(0x8D, 0x66, 0x00),  /* 2 1 0  Umber */
 	PALETTERGB(0x74, 0x74, 0x74),  /* 1 1 1  Lt. Dark */
