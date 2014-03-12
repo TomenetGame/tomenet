@@ -16240,7 +16240,6 @@ SOLUTION:   It does. It has just been renamed to "Aman", it does the same (and
 
 PROBLEM 43: When trying to connect to the meta server I get an error message:
             "No setup info received" and the game terminates.
-
 SOLUTION:   This can happen on really bad/slow internet connections such as via
             mobile modems operating on arbitrarily (by the ISP) reduced
             bandwidth. There is no solution really, except retrying a few times
@@ -16248,6 +16247,12 @@ SOLUTION:   This can happen on really bad/slow internet connections such as via
             that no downloads or other bandwidth-using applications are running
             in parallel to increase your chances of successfully establishing a
             connection.
+
+PROBLEM 44: The dark blue colour is too dark on my screen to be readable.
+SOLUTION:   Edit your config file (TomeNET.ini on Windows, .tomenetrc on Linux
+            and OSX) and find the line 'lighterDarkBlue'. In TomeNET.ini set it
+            to 1 instead of 0, in .tomenetrc uncommend the line by removing the
+            leading '#' symbol. Restart your game client.
 
 
 
