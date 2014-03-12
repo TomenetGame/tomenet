@@ -6994,14 +6994,16 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 			/* No weapon that reduces bpr compared to what weapon the person currently holds! */
 			if (weapon_bpr) {
-				if ((calc_blows_obj(Ind, o_ptr) < weapon_bpr) && (tries < 70)) continue; /* try hard to not lose a single bpr at first */
-				if ((calc_blows_obj(Ind, o_ptr) < weapon_bpr) && (weapon_bpr < 4) && (tries < 90)) continue; /* try to at least not lose a bpr if it drops us below 3 */
-				if ((calc_blows_obj(Ind, o_ptr) < weapon_bpr) && (weapon_bpr < 3)) continue; /* 1 bpr is simply the worst, gotta keep trying */
-			}
+				if (calc_blows_obj(Ind, o_ptr) < weapon_bpr) {
+					if (tries < 70) continue; /* try hard to not lose a single bpr at first */
+					if (weapon_bpr < 4 && tries < 90) continue; /* try to at least not lose a bpr if it drops us below 3 */
+					if (weapon_bpr < 3) continue; /* 1 bpr is simply the worst, gotta keep trying */
+				}
 
-			/* new: try to stay with 2h weapons if we're using one
-			   (except if the only available choices keep giving less bpr for some reason after 50 tries huh) */
-			if (weapon_2h && !(k_info[k_idx].flags4 & TR4_MUST2H) && (tries < 50)) continue;
+				/* new: try to stay with 2h weapons if we're using one
+				   (except if the only available choices keep giving less bpr for some reason after 50 tries huh) */
+				if (weapon_2h && !(k_info[k_idx].flags4 & TR4_MUST2H) && (tries < 50)) continue;
+			}
 
 			if ((resf & RESF_NOHIDSM) &&
 			    (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
