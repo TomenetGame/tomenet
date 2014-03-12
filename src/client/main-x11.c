@@ -2221,7 +2221,7 @@ static cptr color_name[16] =
 #ifndef READABILITY_BLUE
 	"#0000ff",      /* BLUE */
 #else
-	"#0044ff",      /* BLUE */
+	"#0033ff",      /* BLUE */
 #endif
 	"#8d6600",      /* BROWN */
 	"#747474",      /* DARKGRAY */
