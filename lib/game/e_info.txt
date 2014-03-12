@@ -1921,7 +1921,7 @@ F:BLOWS | AGGRAVATE
 # Boots of Stability
 N:174:of Stability
 X:A:35:20
-W:0:2:30:5000
+W:0:2:30:7000
 T:30:0:99
 R:100
 F:RES_NEXUS | FEATHER
