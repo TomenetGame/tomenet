@@ -158,7 +158,7 @@ static const os_PALETTE(16) default_palette =
 #ifndef READABILITY_BLUE
 		0xff000000,   /* TERM_BLUE */
 #else
-		0xff441100,   /* TERM_BLUE */
+		0xff440000,   /* TERM_BLUE */
 #endif
 		0x00589600,   /* TERM_UMBER */
 		0x58585800,   /* TERM_L_DARK */
