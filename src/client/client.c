@@ -226,6 +226,10 @@ static bool read_mangrc(cptr filename)
 			if (!strncmp(buf, "fullauto", 8))
 				skip = TRUE;
 
+			/* READABILITY_BLUE */
+			if (!strncmp(buf, "lighterDarkBlue", 15))
+				enable_readability_blue();
+
 #ifdef USE_GRAPHICS
 			/* graphics */
 			if (!strncmp(buf, "graphics", 8)) {
@@ -603,6 +607,9 @@ if (!strcmp(ANGBAND_SYS, "x11")) {
 		fputs("\n", config2);
 
 		fputs("#fullauto\n", config2);
+		fputs("\n", config2);
+
+		fputs("#lighterDarkBlue\n", config2);
 		fputs("\n", config2);
 
 //#ifdef USE_GRAPHICS

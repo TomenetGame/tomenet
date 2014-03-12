@@ -28,6 +28,7 @@ extern bool term_get_visibility(int term_idx);
 extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name);
 extern void resize_main_window_x11(int cols, int rows);
 extern bool ask_for_bigmap(void);
+extern void enable_readability_blue(void);
 #endif
 
 #ifdef USE_XAW
@@ -859,6 +860,7 @@ extern void term_toggle_visibility(int term_idx);
 extern bool term_get_visibility(int term_idx);
 extern void resize_main_window_win(int cols, int rows);
 extern bool ask_for_bigmap(void);
+extern void enable_readability_blue(void);
 #endif
 
 extern const cptr angband_sound_name[SOUND_MAX];

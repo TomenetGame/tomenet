@@ -2192,7 +2192,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
  *
  * These colors may no longer be valid...
  */
-static cptr color_name[16] =
+static char color_name[16][8] =
 {
 #if 0
 	"black",        /* BLACK */
@@ -2240,6 +2240,9 @@ static cptr color_ext_name[1][2] =
 	{"#0000ff", "#444444", },
 };
 #endif
+void enable_readability_blue(void) {
+	strcpy(color_name[6], "#0033ff");
+}
 
 #ifdef USE_GRAPHICS
 
