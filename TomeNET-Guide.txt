@@ -16255,7 +16255,7 @@ SOLUTION:   This can happen on really bad/slow internet connections such as via
 PROBLEM 44: The dark blue colour is too dark on my screen to be readable.
 SOLUTION:   Edit your config file (TomeNET.ini on Windows, .tomenetrc on Linux
             and OSX) and find the line 'lighterDarkBlue'. In TomeNET.ini set it
-            to 1 instead of 0, in .tomenetrc uncommend the line by removing the
+            to 1 instead of 0, in .tomenetrc uncomment the line by removing the
             leading '#' symbol. Restart your game client.
 
 
