@@ -2219,7 +2219,7 @@ static cptr color_name[16] =
 	"#b70000",      /* RED */
 	"#009d44",      /* GREEN */
 #ifndef READABILITY_BLUE
-1	"#0000ff",      /* BLUE */
+	"#0000ff",      /* BLUE */
 #else
 	"#1144ff",      /* BLUE */
 #endif
