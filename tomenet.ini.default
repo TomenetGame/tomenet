@@ -24,26 +24,6 @@ pass=
 fps=100
 
 
-; Pick a race (deprecated)
-;race=1
-
-; Pick a class (deprecated)
-;class3=
-
-; Pick a sex (deprecated)
-; 0 - Female   1 - Male
-;sex=0
-
-; DEPRECATED - ignore:
-; Now, set the order that you want your stats to be.  The first number
-; specifies the highest stat (most important) down to the lowest stat.
-; This will be *before* plusses are added in.
-; 1 - STR   2 - INT   3 - WIS   4 - DEX   5 - CON   6 - CHR
-; For example, a warrior might want:
-; 'stat=1 5 4 3 2 6'
-;stat=4 1 2 3 5 6
-
-
 [Base]
 LibPath=.\lib
 
