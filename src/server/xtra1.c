@@ -6974,6 +6974,41 @@ void global_event_signup(int Ind, int n, cptr parm) {
 							re_found = p;
 							re_r = i;
 							perfect_ego = TRUE;
+
+#if 1
+							/* special hack: check all remaining races and prefer them if EXACT match - added for 'Fallen Angel'! */
+							while (++i < MAX_R_IDX) {
+								/* get monster race name */
+								strcpy(c, r_info[i].name + r_name);
+								if (!strlen(c)) continue;
+
+								/* lower case */
+								cp = c;
+								while (*cp) {*cp = tolower(*cp); cp++;}
+
+								/* exact match? */
+								if (!strcmp(p2p, c)) {
+									if (!is_admin(p_ptr) &&
+									    ((r_info[i].flags1 & RF1_UNIQUE) ||
+									    (r_info[i].flags1 & RF1_QUESTOR) ||
+									    (r_info[i].flags7 & RF7_NEVER_ACT) ||
+									    (r_info[i].flags7 & RF7_PET) ||
+									    (r_info[i].flags7 & RF7_NEUTRAL) ||
+									    (r_info[i].flags7 & RF7_FRIENDLY) ||
+									    (r_info[i].flags8 & RF8_JOKEANGBAND) ||
+									    (r_info[i].rarity == 255)))
+										continue;
+
+									/* done. Discard perfect 'ego power+base race' in favour for just plain perfect base race,
+									   to allow 'Fallen Angel' base monster instead of 'Fallen' ego type on 'Angel' base monster. */
+									r_found = i;
+									no_ego = TRUE;
+									re_found = 0;
+									break;
+								}
+							}
+#endif
+
 							break;
 						}
 						/* impossible ego power -- keep searching in case we find something better */
