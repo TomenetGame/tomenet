@@ -6935,6 +6935,23 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	/* In case no SVAL has been defined yet: 
 	   Choose a random SVAL while paying attention to maxweight limit! */
 	if (!reward_sval) {
+		int weapon_bpr = 0; /* try that the reward weapon does not reduce bpr compared to current bpr */
+		bool weapon_2h = FALSE; /* make the reward weapon 2-handed if we're using 2-handed */
+		if (is_weapon(reward_tval)) { /* melee weapon */
+			if (p_ptr->inventory[INVEN_WIELD].k_idx) {
+				i = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_WIELD]);
+
+				/* If player purposedly uses 2h weapon, give him one.
+				   We ignore 1.5h weapons (TR4_SHOULD2H) for now, since player might
+				   just be using such a startup weapon without deeper thought */
+				if ((k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H)) weapon_2h = TRUE;
+			}
+			if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) j = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_ARM]);
+			if (j > i) i = j; /* for dual-wielders, use the faster one */
+			if (!i) i = 3; /* if player doesn't hold a weapon atm (why!?) just start trying for 3 bpr */
+			weapon_bpr = i;
+		}
+
 		/* Check global variable, if some base types are forbidden */
 		do {
 			tries++;
@@ -6976,15 +6993,15 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (k_info[k_idx].weight > reward_maxweight) continue;
 
 			/* No weapon that reduces bpr compared to what weapon the person currently holds! */
-			if (is_weapon(reward_tval)) { /* melee weapon */
-				if (p_ptr->inventory[INVEN_WIELD].k_idx) i = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_WIELD]);
-				if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) j = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_ARM]);
-				if (j > i) i = j; /* for dual-wielders, use the faster one */
-				if (!i) i = 3; /* if player doesn't hold a weapon atm (why!?) just start trying for 3 bpr */
-				if ((calc_blows_obj(Ind, o_ptr) < i) && (tries < 70)) continue; /* try hard to not lose a single bpr at first */
-				if ((calc_blows_obj(Ind, o_ptr) < i) && (i < 4) && (tries < 90)) continue; /* try to at least not lose a bpr if it drops us below 3 */
-				if ((calc_blows_obj(Ind, o_ptr) < i) && (i < 3)) continue; /* 1 bpr is simply the worst, gotta keep trying */
+			if (weapon_bpr) {
+				if ((calc_blows_obj(Ind, o_ptr) < weapon_bpr) && (tries < 70)) continue; /* try hard to not lose a single bpr at first */
+				if ((calc_blows_obj(Ind, o_ptr) < weapon_bpr) && (weapon_bpr < 4) && (tries < 90)) continue; /* try to at least not lose a bpr if it drops us below 3 */
+				if ((calc_blows_obj(Ind, o_ptr) < weapon_bpr) && (weapon_bpr < 3)) continue; /* 1 bpr is simply the worst, gotta keep trying */
 			}
+
+			/* new: try to stay with 2h weapons if we're using one
+			   (except if the only available choices keep giving less bpr for some reason after 50 tries huh) */
+			if (weapon_2h && !(k_info[k_idx].flags4 & TR4_MUST2H) && (tries < 50)) continue;
 
 			if ((resf & RESF_NOHIDSM) &&
 			    (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
