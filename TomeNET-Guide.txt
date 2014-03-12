@@ -2192,7 +2192,7 @@ Run the file 'TomeNET.run' to start the game.
 If you're tech savvy and want to manually edit the TomeNET configuration file,
 see "Configure TomeNET on Linux" further above.
 
-Otherwise skip down to (2.1a) to continue reading. 
+Otherwise skip down to (2.1a) to continue reading.
 
 
 Mac OS X (compiling from source; tested with Snow Leopard 10.6.6):
@@ -6713,7 +6713,7 @@ at targets on sight. See (4.1a) for details about auto-retaliation.
 However, auto-retaliating with a ranged weapon works only if the enemy stands
 on an adjacent field, so use 'fire-till-kill' mode in general!
 
-The dice of ammunition are also effected by brands and slays same as normal 
+The dice of ammunition are also effected by brands and slays same as normal
 weapons but the additional damage is reduced to 2/5.
 Example: Ring of Acid will usually add 1x your melee base damage (weapon dice).
 For ranged weapons it will add 1*2/5x of your base damage (arrow dice), so
@@ -6892,7 +6892,7 @@ Heavy shield/weapons |                                 0
 
 
 Martial Arts special combat moves have certain dice, similar to normal
-weapons. These dice are also effected by brands and slays same as normal 
+weapons. These dice are also effected by brands and slays same as normal
 weapons but the additional damage is reduced to 1/3.
 Example: Ring of Acid will usually add 1x your base damage.
 For MA it will add 1/3 of your base damage, so multiply your base damage
@@ -10870,7 +10870,7 @@ Warrior is strongly recommended.
     Law         Shards          shards (5), sound (15)
     Chaos       Chaos           confusion (5), chaos (15), disenchantment (20)
     Balance     Disenchantment  disenchantment (10), sound (20)
-    
+
 - Kobold
     These somewhat smallish dog-faced humanoids resist poison intrinsically.
     They are able to take most roles, being somewhat better at archery than
@@ -11429,11 +11429,11 @@ vary. For example a warrior cannot learn magic spells.
     tendency towards thievery, they are often mistaken for rogues.
     This roguish nature allows them to train in specific weapon proficiencies,
     although their lack of dedication leaves 'Weaponmastery' as an unattainable
-    goal. Runemasters are adept in some skills that are typical for rogues, 
+    goal. Runemasters are adept in some skills that are typical for rogues,
     although they lack their finesse. Runemasters are unable to to train in the
     martial arts, but are adept with boomerangs, although they primarily rely
     on runes to wreak havoc and kill everything in sight. High level users of
-    runecraft may even enhance their equipment (1 weapon, 1 armor) through the 
+    runecraft may even enhance their equipment (1 weapon, 1 armor) through the
     use of runic 'sigils', applying some resistance or boni according to the
     applied element.
 
@@ -11460,7 +11460,7 @@ vary. For example a warrior cannot learn magic spells.
     creatures of little or no intelligence.
     Their primary attribute is intelligence, which determines their spell
     fail rates as well as the majority of their mana pool. Also somewhat
-    affecting their mana pool are charisma and wisdom, although they are 
+    affecting their mana pool are charisma and wisdom, although they are
     of no importance to become an able telepathy user.
     Aside from intelligence as primary spell-casting stat they will also want
     decent strength for engaging in close combat.
@@ -11760,7 +11760,7 @@ I: speed : hit points : vision : armor class : alertness
   vision:
     Searching ability of the player =
     (player_searching / 2) + (monster_vision / 10)
-    Perception of the player = 
+    Perception of the player =
     (player_perception / 2) + (monster_vision / 10)
 
 E: weapons : torso : arms : finger : head : leg
@@ -12429,7 +12429,7 @@ However, the ways projecting is done differ between magic school types:
   any kind of projector sphere. Their spells will always affect fellow players
   nearby.
   The prayers and druid spells which are projected on others are marked by a
-  '(auto-project)' tag at the end of the spell description below. 
+  '(auto-project)' tag at the end of the spell description below.
 - Mindcrafter spells either auto-project (same as priest/druid spells described
   above) or require the target player to open his mind ('p' key) to receive the
   spell effect.
@@ -13331,29 +13331,28 @@ only by their wits, their strength and their skill.
 This approach is not necessarily a safe one. Where as traditional spells from
 other schools of magic fail outright when something goes awry, the primordial
 energy incumbent to a runespell instead erupts forth, damaging the caster in
-the form of a spell backlash. Physical runes can be used to mitigate this 
-backlash should a runespell fail, absorbing the excess energy of the spell 
+the form of a spell backlash. Physical runes can be used to mitigate this
+backlash should a runespell fail, absorbing the excess energy of the spell
 before crumbling into dust. Runes may be activated to combine or decombine in
-stacks with other runes, sharing level requirement and discount (use 'A'). 
+stacks with other runes, sharing level requirement and discount (use 'A').
 
-As runemastery does not rely on books or spell scrolls to guide its magic, 
+As runemastery does not rely on books or spell scrolls to guide its magic,
 runespells may be cast while blinded, although at increased rate of failure.
 Spell failure likewise increases while stunned, or simply when attempting a
-powerful spell. While an istar is always prevented from casting outside of 
-his or her ability, a runemaster may continue making spell attempts until the 
+powerful spell. While an istar is always prevented from casting outside of
+his or her ability, a runemaster may continue making spell attempts until the
 backlash proves fatal. Runemasters are able to cast many kinds of spells, but
 it's important to note that some are much more difficult to manage than
-others. All runespells can either be projected at the world or a monster, or 
-directed at the caster for a different result. 
+others. All runespells can either be projected at the world or a monster, or
+directed at the caster for a different result.
 
-In addition, runespells fueled by physical runes may be used to emblazon 
-non-artifact equipment that is wielded by the runemaster. The strength and 
-success rates of these 'sigils' depend both on the skill of the runemaster 
-and the power of the item that would result. At most a runemaster may have 
-one armor sigil and one weapon sigil, jewelry sigils are a fine art that is 
-beyond even the most skilled of their class. Sigils vanish from the 
-equipment when dropped, sold, taken off, disarmed, etc. being linked 
-directly to the runemaster and the consumed physical rune for their power.
+In addition, runespells fueled by physical runes may be used to emblazon
+non-artifact equipment that is wielded by the runemaster. The strength and
+success rates of these 'sigils' depend both on the skill of the runemaster
+and the power of the item that would result. At most a runemaster may have
+one armor sigil and one weapon sigil. Sigils vanish from the equipment when
+dropped, sold, taken off, disarmed, etc. being linked directly to the
+runemaster and the consumed physical rune for their power.
 (Sigil boni dependant on PVAL are restricted as for artifact creation.)
 
 Runemastery requires dexterous physical and intellectual manipulation of
@@ -13372,11 +13371,11 @@ Runespells are made up of three components:
     2. A spell modifier (minimized, brief, etc.)
     3. A spell type (glyph, bolt, ball, etc.)
 
-Each component has different associated parameters, summarized in the menu. 
-When selecting runes, press return once you are finished, or enter the 
-maximum of two runes and continue to the modifier selection. The menu will 
-prompt for a direction if it is required after you're done. If the spell 
-targets an item, you must supply the letter corresponding to your choice of 
+Each component has different associated parameters, summarized in the menu.
+When selecting runes, press return once you are finished, or enter the
+maximum of two runes and continue to the modifier selection. The menu will
+prompt for a direction if it is required after you're done. If the spell
+targets an item, you must supply the letter corresponding to your choice of
 equipment.
 
 
@@ -13386,7 +13385,7 @@ Runemasters can only truly fail sigil type (item-enhancing) spells. Spell
 failure instead causes elemental backlash against the caster, while the
 effects of the spell, if it is not a sigil type spell, resolve normally.
 Having a physical rune corresponding to the invoked element shields the
-runemaster from this backlash, at the cost of the physical rune. When 
+runemaster from this backlash, at the cost of the physical rune. When
 lacking these physical runes (or if they are inscribed !R), the caster of
 may experience backlash. Keeping physical runes is especially important
 once the damaging effects of runespells begin to outpace the runemaster's
@@ -13396,9 +13395,9 @@ are advised to use basic elemental spells that they can easily acquire the
 according resistance for. Inscribing a rune with !R will prevent the rune
 from being consumed to shield the runemaster from a backlash, beware!
 
-INTelligence, DEXterity, and skill level affect spell failure rates for 
+INTelligence, DEXterity, and skill level affect spell failure rates for
 runespells. Runespell type generally governs the level of a runespell,
-and is further modified by the spell modifier and then only somewhat by the 
+and is further modified by the spell modifier and then only somewhat by the
 resulting element of the spell (if at all). Highly experienced and talented
 runemasters may achieve 0% spell failure rates, but should be cautioned
 against stunned and blinded statuses, which will each increase runespell
@@ -13411,10 +13410,10 @@ Aside from preventing backlash, runes are used as components in runespells.
 Both glyph and sigil type runespells require a single rune (after backlash
 rune destruction, if applicable) to achieve their effects. Any glyph spell
 may be cast on a rune glyph to disarm it and recover the original physical
-rune at no additional rune cost. Sigil spells on the other hand consume a 
+rune at no additional rune cost. Sigil spells on the other hand consume a
 rune forever, remaining in effect only so long as the runemaster continues
 to wear/wield the enhanced equipment. An additional sigil spell on the same
-equipment overrides the previous one, consuming a new rune as before. 
+equipment overrides the previous one, consuming a new rune as before.
 
 
 Macros & Spell Construction:
@@ -13430,8 +13429,8 @@ Non-targetted runespells use the format:
     \e)m@18\r[a-f]\r[a-g][a-g]  (rune, return, modifier, type)
     \e)m@18\r[a-f][a-f][a-g][a-g]  (rune, rune, modifier, type)
 
-Note that you must choose at least one and up to two runes, one modifier, 
-and one type. If you choose two runes for a spell, the \r is not required. 
+Note that you must choose at least one and up to two runes, one modifier,
+and one type. If you choose two runes for a spell, the \r is not required.
 [a-f] and [a-g] denote the choices of a letter from a to f or h,
 inclusive, which represents a rune or a modifier or type, respectively.
 ie. There are six base runes, so [a-f] represents a choice from rune 1-6.
@@ -13442,7 +13441,7 @@ Examples:
 Here is a single rune example, invoking the element 'light' (rune 'a'):
     \e)*tm@12\ra\raa-  (light--return--minimized--bolt)
 
-This spell launches a minimized bolt of light, a targetted projection 
+This spell launches a minimized bolt of light, a targetted projection
 affecting up to a single opponent, dealing light damage if it successfully
 connects.
 
@@ -13461,7 +13460,7 @@ A maximized ball of fire:
 Or an expanded ball of fire, to produce something much larger:
     \e)*tm@12\raeed-  (light--chaos--expanded--ball)
 
-Note that failure rate may become an obstacle to advanced spells at low 
+Note that failure rate may become an obstacle to advanced spells at low
 level. Basic spell types, modifiers, and elements are recommended.
 
 Advanced runemasters may wish to create macro sets which construct spells
@@ -13473,21 +13472,21 @@ creating a 'dual-cast' effect (especially true with the 'brief' modifier).
 Note that every modifier has drawbacks associated with the benefits of using
 it: higher cost, level, reduced damage, increased failure rates- check the
 specifics in the m-key menu before you create a new macro. It is recommended
-that you keep physical runes in your inventory when experimenting with new 
+that you keep physical runes in your inventory when experimenting with new
 spells.
 
 
 Auto-retaliation:
 -----------------
 If you inscribe @O[a-g][a-g] on a rune in your inventory, you will retaliate
-with a spell of the selected modifier and type. For example, if you set the 
-inscription to @Oab on a rune of light, the 'beam' spell type will be 
-selected, with a 'minimized' spell modifier. It is advised to use the !R 
+with a spell of the selected modifier and type. For example, if you set the
+inscription to @Oab on a rune of light, the 'beam' spell type will be
+selected, with a 'minimized' spell modifier. It is advised to use the !R
 inscription to prevent your last rune from being consumed in spell failure.
 
-Although you can set most spells for retaliation, some spells may make poor 
+Although you can set most spells for retaliation, some spells may make poor
 choices for auto-retaliation. Retaliation defaults to a bolt spell if the
-rune is inscribed incorrectly. Sign/Glyph/Sigil type spells cannot be used 
+rune is inscribed incorrectly. Sign/Glyph/Sigil type spells cannot be used
 for retaliation, and default to bolts (their ID letter becomes letter 'a').
 
 
@@ -13503,7 +13502,7 @@ attributes of spells.
 Beginners may wish to play a race with intrinsic resistance to their element
 or elements of choice, or choose combinations of skills to produce a 'base'
 element, and purchase rings/amulets from the magic shop to resist these.
-For example, light is resisted by elves, so an elf runemaster who trains in 
+For example, light is resisted by elves, so an elf runemaster who trains in
 light runemastery may evoke runes of light relatively safely. Training chaos
 runemastery as well would unlock the combination element fire, a 'base'
 element, and Rings of Fire Resistance are readily available in magic shops.
@@ -13520,10 +13519,10 @@ See section (5.6) for more information about elemental attacks.
 
 Basic Elements
 --------------
-A table of every element achievable through use of a single rune, with their 
+A table of every element achievable through use of a single rune, with their
 associated sign spell type effects, and enhanced sign spell effects:
 -------------------------------------------------------------------------------
-Rune     | Rune     | Element        | Sign Spell          | Enhanced Effect   
+Rune     | Rune     | Element        | Sign Spell          | Enhanced Effect
 -------------------------------------------------------------------------------
 Light    | Light    | Light          | Call Light          | Starlight
 Darkness | Darkness | Darkness       | Call Darkness       | Invisibility
@@ -13539,7 +13538,7 @@ Combination Elements
 A table of every element achievable through use of a combination of runes, with
 their associated sign spell type effects, and enhanced sign spell effects:
 -------------------------------------------------------------------------------
-Rune     | Rune     | Element        | Sign Spell          | Enhanced Effect    
+Rune     | Rune     | Element        | Sign Spell          | Enhanced Effect
 -------------------------------------------------------------------------------
 Light    | Darkness | Confusion      | Monster Confusion   | Identify
 Light    | Nexus    | Inertia        | Anchor (*)          | Reverse Tele-To
@@ -13563,10 +13562,10 @@ Chaos    | Mana     | Plasma         | Base Resistance     | Elemental Brand
 
 Spell Modifiers
 ---------------
-A table of every spell modifier. Modifiers alter the nature of a spell, 
+A table of every spell modifier. Modifiers alter the nature of a spell,
 influencing level, cost, fail rate, damage, casting time, radius, and duration.
 -------------------------------------------------------------------------------
-Name       | Lvl | Description                                                 
+Name       | Lvl | Description
 -------------------------------------------------------------------------------
 Minimized  | + 0 | Less damage, radius, duration, cost and failure rate.
 Lengthened | + 2 | More duration, cost and failure rate. Less damage.
@@ -13582,7 +13581,7 @@ Spell Types
 A table of every spell type. Type controls the form of the runespell, also
 influencing level, cost, fail rate, damage, casting time, radius, and duration.
 -------------------------------------------------------------------------------
-Name       | Lvl | Description                           | Enhanced            
+Name       | Lvl | Description                           | Enhanced
 -------------------------------------------------------------------------------
 Bolt       |   1 | Hits a target in line of effect.      | Non-reflecting.
 Beam       |   5 | Hits every target in line of effect.  | Damage over time.
@@ -13590,14 +13589,14 @@ Cloud      |  10 | Damages an area over time.            | Follows the caster.
 Ball       |  15 | Instantly damages an area.            | Full area damage.
 Sign       |  20 | Instant or temporary element effects. | See element tables.
 Glyph      |  25 | Set or retrieve a rune as a glyph.    | No rune/explosion.
-Sigil      |  30 | Resist enhancement. Consumes a rune.  | See boni table. 
+Sigil      |  30 | Resist enhancement. Consumes a rune.  | See boni table.
 Wave       |  35 | Radiates outward from the caster.     | Hits line of sight.
 
 Enhanced Sigil Boni
 -------------------
-A table cross referencing boni to element and item TVAL (type value). Boni are 
-restricted as with artifact creation regarding PVAL modifiers. Stat boni have 
-a chance to include a sustain, and boni occuring both generally and on the 
+A table cross referencing boni to element and item TVAL (type value). Boni are
+restricted as with artifact creation regarding PVAL modifiers. Stat boni have
+a chance to include a sustain, and boni occuring both generally and on the
 item type are more likely to occur. Some weapon/helm boni are specific to mage
 staves, boomerangs, and crowns (see (8.4) Artifact Creation).
 
@@ -13644,28 +13643,28 @@ W+ - Wisdom bonus (PVAL Required)
 -------------------------------------------------------------------------------
 Element        | General | Weap | Shield | Armor | Cloak | Helm | Glove | Boot
 -------------------------------------------------------------------------------
-Light          | GlBlSI  | SI   |        |       |       | BlIf |       |      
-Darkness       | BlSI    | SI   |        |       | In    | BlIf |       |      
-Nexus          | Su      | SK   |        |       |       |      | SK    |      
-Nether         | HL      | Va   |        | HL    | HL    |      | Va    |      
-Chaos          | RR      | Ch   |        |       |       |      |       |      
-Mana           | Rm      |      |        |       |       | MPRm | MP    |      
+Light          | GlBlSI  | SI   |        |       |       | BlIf |       |
+Darkness       | BlSI    | SI   |        |       | In    | BlIf |       |
+Nexus          | Su      | SK   |        |       |       |      | SK    |
+Nether         | HL      | Va   |        | HL    | HL    |      | Va    |
+Chaos          | RR      | Ch   |        |       |       |      |       |
+Mana           | Rm      |      |        |       |       | MPRm | MP    |
 -------------------------------------------------------------------------------
-Confusion      | FA      | W+I+ |        |       |       | W+I+ | FA    |      
-Inertia        | FANT    |      |        |       |       |      |       |      
-Lightning      | Im      | Br   |        |       | Au    |      | BrD+  |      
-Fire           | Im      | Br   |        |       | Au    |      | BrS+  |      
-Water          | ImRhSD  |      |        |       |       |      |       |      
+Confusion      | FA      | W+I+ |        |       |       | W+I+ | FA    |
+Inertia        | FANT    |      |        |       |       |      |       |
+Lightning      | Im      | Br   |        |       | Au    |      | BrD+  |
+Fire           | Im      | Br   |        |       | Au    |      | BrS+  |
+Water          | ImRhSD  |      |        |       |       |      |       |
 Gravity        | FA      |      |        |       |       |      |       | Lv
-Frost          | Im      | Br   |        |       | Au    |      | BrS+  |      
-Acid           | Im      | Br   |        |       |       |      | Brc+  |      
-Poison         | Im      | Br   |        | C+    |       |      | BrC+  |      
-Time           | SuSp    | EA   |        |       |       |      | EA    | Sp   
-Sound          | Sl      |      |        | Sl    | Sl    | Fe   |       | Sl   
-Shards         |         | CrVo |        |       |       |      | Cr    |      
-Disenchantment | AM      |      |        |       |       |      |       |      
-Force          | Su      |      | Re     | Re    |       |      |       |      
-Plasma         | S+D+    |      | Ba     | Ba    | Ba    |      |       |      
+Frost          | Im      | Br   |        |       | Au    |      | BrS+  |
+Acid           | Im      | Br   |        |       |       |      | Brc+  |
+Poison         | Im      | Br   |        | C+    |       |      | BrC+  |
+Time           | SuSp    | EA   |        |       |       |      | EA    | Sp
+Sound          | Sl      |      |        | Sl    | Sl    | Fe   |       | Sl
+Shards         |         | CrVo |        |       |       |      | Cr    |
+Disenchantment | AM      |      |        |       |       |      |       |
+Force          | Su      |      | Re     | Re    |       |      |       |
+Plasma         | S+D+    |      | Ba     | Ba    | Ba    |      |       |
 
 
 
@@ -13932,7 +13931,7 @@ The magic device skill does the following...
 -increases the power of magic devices.
 -makes it easier to recharge items provided you don't use scrolls to do that,
  but a real magic device (some artifacts can be activated for recharging).
- 
+
 Magic device skill and ability have no effect on the damage output of traps
 loaded with a magic device.
 
@@ -15016,7 +15015,7 @@ Some rumours say that the highest materials can only be found on even deeper
 dungeons than where Morgoth, Lord of Darkness resides.
 
 If the creator inscribes items in his inventory with '@G' and then creates a
-golem, those items will be transferred to the golem (careful, they cannot be 
+golem, those items will be transferred to the golem (careful, they cannot be
 retrieved!) and fuse with it, bestowing it with their abilities.
 The following rules are applied:
 -An item 'of life (+x)' increases the hit dice number by x.
