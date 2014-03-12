@@ -6204,7 +6204,7 @@ Dungeon Keeper (everyone can win, 1+ participants)
 
     Characters who want to participate must not be of higher level than 15.
     A character can participate only once in this event.
-    Fruit bats or PvP-mode characters are not eligible to join.
+    PvP-mode characters are not eligible to join.
     Running, phasing, teleporting, magic mappping, detection and ESP are
     disabled in the event. Also, your speed cannot exceed +0 (Normal), and
     the lava that floods the dungeon will deal irresistible damage even if
