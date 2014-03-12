@@ -6807,18 +6807,24 @@ void announce_global_event(int ge_id) {
  * A player signs on for a global_event - C. Blue
  */
 void global_event_signup(int Ind, int n, cptr parm) {
-	int i, p, max_p, r_found = 0, r_found_len = 99;
-	bool r_impossible = FALSE, fake_signup = FALSE;
+	int i, p, max_p;
+	bool fake_signup = FALSE;
 	global_event_type *ge = &global_event[n];
 	player_type *p_ptr = Players[Ind];
-	char c[80], parm2[80], *cp, *p2p = parm2, parm2e[80];
-	/* for ego monsters: */
-	int re_found = 0, re_found_len = 99;
-	bool re_impossible = FALSE;
-	char ce[80], *cep;
+
 	char parm_log[60] = "";
+
+	/* for monster type: */
+	char c[80], parm2[80], *cp, *p2p;
+	int r_found = 0;
+	bool r_impossible = FALSE;
+
 #ifdef GE_ARENA_ALLOW_EGO
-	r_found_len = 0; /* check must go the other way round */
+	/* for ego monsters: */
+	int re_found = 0, re_r;
+	bool re_impossible = FALSE, no_ego = FALSE, perfect_ego = FALSE;
+	char ce[80], *cep, parm2e[80], *p2ep;
+	char *separator;
 #endif
 
 	/* Still room for more participants? */
@@ -6884,117 +6890,153 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			msg_format(Ind, "\377yYou have to specify a monster name:  /evsign %d monstername", n+1);
 			return;
 		}
+
+		/* lower case */
 		strcpy(parm2, parm);
 		p2p = parm2;
 		while (*p2p) {*p2p = tolower(*p2p); p2p++;}
 
+		/* trim spaces */
+		p2p = parm2;
+		while (*p2p == ' ') p2p++;
+		while (p2p[strlen(p2p) - 1] == ' ') p2p[strlen(p2p) - 1] = 0;
+
 	        /* Scan the monster races */
 	        for (i = 1; i < MAX_R_IDX; i++) {
+			/* get monster race name */
 			strcpy(c, r_info[i].name + r_name);
-			cp = c;
-			while (*cp) {*cp = tolower(*cp); cp++;}
 			if (!strlen(c)) continue;
 
-#ifdef GE_ARENA_ALLOW_EGO /* parse-strategy: egos w/ non pre-scanning require exact monster name input */
-	                if (strstr(parm2, c)) {
-#else /* old tolerant way, without allowing egos */
-	                if (strstr(c, parm2)) {
-#endif
-				if (!((r_info[i].flags1 & RF1_UNIQUE) ||
+			/* lower case */
+			cp = c;
+			while (*cp) {*cp = tolower(*cp); cp++;}
+
+			/* exact match? */
+			if (!strcmp(p2p, c)) {
+				r_found = i;
+				no_ego = TRUE;
+				re_found = 0;
+
+				if (!is_admin(p_ptr) &&
+				    ((r_info[i].flags1 & RF1_UNIQUE) ||
 				    (r_info[i].flags1 & RF1_QUESTOR) ||
 				    (r_info[i].flags7 & RF7_NEVER_ACT) ||
 				    (r_info[i].flags7 & RF7_PET) ||
 				    (r_info[i].flags7 & RF7_NEUTRAL) ||
 				    (r_info[i].flags7 & RF7_FRIENDLY) ||
 				    (r_info[i].flags8 & RF8_JOKEANGBAND) ||
-				    (r_info[i].rarity == 255))
-				    || is_admin(p_ptr)) {
-#ifdef GE_ARENA_ALLOW_EGO
-					if (r_found_len < (int)strlen(c)) {
+				    (r_info[i].rarity == 255)))
+					r_impossible = TRUE;
+
+				/* done. No room for ego power. */
+				break;
+			}
+
+#ifndef GE_ARENA_ALLOW_EGO
+			if (strstr(p2p, c)) r_found = i;
 #else
-					if (r_found_len > (int)strlen(c)) {
-#endif
-						r_found_len = strlen(c);
-						r_found = i;
+			/* partial match? could have ego power too. */
+			if ((separator = strstr(p2p, c))) {
+				/* test for ego power for the rest of the string */
+				if (separator == p2p) { /* monster name begins with race name? */
+					strcpy(parm2e, p2p + strlen(c)); /* then ego power begins afterwards and goes till the end of the monster name */
+				} else if (strlen(separator) < strlen(c)) { /* error: race name has chars before AND afterwards */
+					continue;
+				} else { /* monster name ends with race name? */
+					strncpy(parm2e, p2p, strlen(p2p) - strlen(c)); /* then ego power starts at the beginning of the monster name */
+					parm2e[strlen(p2p) - strlen(c)] = 0;
+				}
+				/* remember choice in case we don't find anything better */
+				r_found = i;
+
+				/* check ego power - if exact match then we're done */
+				/* trim spaces just to be sure */
+				p2ep = parm2e;
+				while (*p2ep == ' ') p2ep++;
+				while (p2ep[strlen(p2ep) - 1] == ' ') p2ep[strlen(p2ep) - 1] = 0;
+
+				/* IMPOSSIBLE-- no ego power specified, it was just spaces? */
+				//if (!strlen(parm2e)) 
+
+			        for (p = 1; p < MAX_RE_IDX; p++) {
+					/* get monster ego name */
+					strcpy(ce, re_info[p].name + re_name);
+
+					/* lower case */
+					cep = ce;
+					while (*cep) {*cep = tolower(*cep); cep++;}
+
+					/* exact match? */
+					if (!strcmp(p2ep, ce)) {
+						if (mego_ok(i, p)) {
+							/* done, success */
+							re_impossible = FALSE;
+							re_found = p;
+							re_r = i;
+							perfect_ego = TRUE;
+							break;
+						}
+						/* impossible ego power -- keep searching in case we find something better */
+						re_impossible = TRUE;
+					} else if (re_impossible) continue; /* don't allow partial matches if an exact match already failed us */
+
+					/* partial match? */
+					else if (strstr(p2ep, ce)) {
+						if (mego_ok(i, p)) {
+							/* remember choice in case we don't find anything better */
+							re_found = p;
+							re_r = i;
+						}
 					}
-				} else r_impossible = TRUE;
+				}
+				if (perfect_ego) break;
+#endif
 			}
 		}
 
-		if (r_found) {
-			/* also scan for ego monster? */
-#ifdef GE_ARENA_ALLOW_EGO
-			/* cut out the monster race name before ego processing (eg 'sorceror' -> potential probs) */
-			strcpy(c, r_info[r_found].name + r_name);
-			cp = c;
-			while (*cp) {*cp = tolower(*cp); cp++;}
-			strncpy(parm2e, parm2, strstr(parm2, c) - parm2);
-			/* weirdness, required to fix string termination like this: - C. Blue */
-			parm2e[strstr(parm2, c) - parm2] = 0;
-			strcat(parm2e, strstr(parm2, c) + strlen(c));
-			/* trim spaces just to be sure */
-			while (parm2e[0] == 32) strcpy(parm2e, parm2e + 1); /* at beginning (left side) */
-			while (parm2e[strlen(parm2e) - 1] == 32) parm2e[strlen(parm2e) - 1] = 0; /* at the end */
-
-			if (strlen(parm2e))
-		        for (i = 1; i < MAX_RE_IDX; i++) {
-				strcpy(ce, re_info[i].name + re_name);
-				cep = ce;
-				while (*cep) {*cep = tolower(*cep); cep++;}
-#if 1
-		                if (strstr(ce, parm2e)) {
-#else /* make it more precise instead? */
-/* note that this needs you to inverse re_found_len < > 0/99 check! */
-		                if (strstr(parm2e, ce)) {
-#endif
-					if (mego_ok(r_found, i)) {
-						if (re_found_len > (int)strlen(ce)) {
-							re_found_len = strlen(ce);
-							re_found = i;
-						}
-					} else re_impossible = TRUE;
-				}
-			}
-
-			if (re_found) {
-				/* do nothing (announcing will be done in actual event processing) */
-			} else if (re_impossible) {
-				msg_print(Ind, "\377ySorry, that ego creature is beyond the wizards' abilities.");
-				return;
-			}
-			if (!re_found && strlen(parm2e)) {
-				msg_print(Ind, "\377yCouldn't find matching ego power, going with base version..");
-			}
-#endif
-
-			ge->extra[1] = r_found;
-#ifndef GE_ARENA_ALLOW_EGO
-			monster_race_desc(0, c, r_found, 0x188);
-			msg_broadcast_format(0, "\376\377c** %s challenges %s! **", p_ptr->name, c);
-#else
-			ge->extra[3] = re_found;
-			ge->extra[5] = Ind;
-#endif
-
-			/* rebuild parm from definite ego+monster name */
-			if (re_found) {
-				strcpy(parm_log, re_name + re_info[re_found].name);
-				strcat(parm_log, " ");
-				strcat(parm_log, r_name + r_info[r_found].name);
-			} else {
-				strcpy(parm_log, r_name + r_info[r_found].name);
-			}
-
-			fake_signup = TRUE;
-			break;
-		} else if (r_impossible) {
+		if (!r_found) {
+			msg_format(Ind, "\377yCouldn't find base monster (punctuation and name must be exact).", n);
+			return;
+		}
+		if (r_impossible) {
 			msg_print(Ind, "\377ySorry, that creature is beyond the wizards' abilities.");
 			return;
 		}
+#ifdef GE_ARENA_ALLOW_EGO
+		if (re_impossible) {
+			msg_print(Ind, "\377ySorry, that ego creature is beyond the wizards' abilities.");
+			return;
+		}
+		/* if we didn't find a race+ego combo, we at least found a raw race, use it */
+		if (!re_found && !no_ego) {
+			msg_print(Ind, "\377yCouldn't find matching ego power, going with base version..");
+		}
+#endif
 
-//		msg_format(Ind, "\377yCouldn't find that monster, do upper/lowercase letters match?", n);
-		msg_format(Ind, "\377yCouldn't find base monster (punctuation and name must be exact).", n);
-		return;
+		/* if we found a race and ego that somewhat fit, prefer that over just a race without ego, that somewhat fits */
+		if (re_found) r_found = re_r;
+
+		ge->extra[1] = r_found;
+#ifndef GE_ARENA_ALLOW_EGO
+		monster_race_desc(0, c, r_found_race_only, 0x188);
+		msg_broadcast_format(0, "\376\377c** %s challenges %s! **", p_ptr->name, c);
+		strcpy(parm_log, r_name + r_info[r_found].name);
+#else
+		ge->extra[3] = re_found;
+		ge->extra[5] = Ind;
+
+		/* rebuild parm from definite ego+monster name */
+		if (re_found) {
+			strcpy(parm_log, re_name + re_info[re_found].name);
+			strcat(parm_log, " ");
+			strcat(parm_log, r_name + r_info[r_found].name);
+		} else {
+			strcpy(parm_log, r_name + r_info[r_found].name);
+		}
+#endif
+
+		fake_signup = TRUE;
+		break;
 	case GE_DUNGEON_KEEPER:	/* 'Dungeon Keeper' labyrinth race */
 		if (p_ptr->mode & MODE_DED_IDDC) {
 			msg_print(Ind, "\377ySorry, as a dedicated ironman deep diver you may not participate.");
