@@ -547,6 +547,7 @@
 #define MAX_ST_IDX	96 /* Max size for "st_info[]" */
 #define MAX_BA_IDX	96 /* Max size for "ba_info[]" */
 #define MAX_D_IDX	64 /* Max size for "d_info[]" */
+#define MAX_Q_IDX	50 /* Max size for "q_info[]" */
 
 /* Max ego base type restrictions */
 #define MAX_EGO_BASETYPES	10
