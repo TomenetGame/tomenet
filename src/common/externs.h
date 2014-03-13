@@ -290,7 +290,7 @@ extern s16b o_fast[MAX_O_IDX];
 extern s16b m_fast[MAX_M_IDX];
 extern object_type *o_list;
 extern monster_type *m_list;
-extern quest q_list[MAX_Q_IDX];
+extern quest q_list[MAX_QK_IDX];
 extern store_type *store;
 /*extern object_type *inventory;*/
 extern s16b alloc_kind_size;
