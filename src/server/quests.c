@@ -82,6 +82,9 @@
    If a quest stage doesn't have any stage goals, nor any dialogue keywords,
    the quest will terminate after all automatic/timed actions of this stage
    have been done and all eligible rewards have been handed out.
+
+   Items retrieved will be marked as 'quest items' for easy check in case the
+   player also has to deliver them somewhere, whether they're the same items.
 */
 
 
@@ -239,16 +242,19 @@ struct quest_info {
 	bool retrieve_player_picks[QI_MAX_STAGES][QI_GOALS];		/* instead of picking one subgoal randomly, let the player decide which he wants to get */
 	int retrieve_otval[QI_MAX_STAGES][QI_GOALS][20], retrieve_osval[QI_MAX_STAGES][QI_GOALS][20];	/* retrieve certain item(s) */
 	int retrieve_opval[QI_MAX_STAGES][QI_GOALS][5], retrieve_obpval[QI_MAX_STAGES][QI_GOALS][5];
-	byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5];						/*  ..certain colours (flavoured items only) */
+	byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5];		/*  ..certain colours (flavoured items only) */
 	int retrieve_oname1[QI_MAX_STAGES][QI_GOALS][20], retrieve_oname2[QI_MAX_STAGES][QI_GOALS][20], retrieve_oname2b[QI_MAX_STAGES][QI_GOALS][20];
 	int retrieve_ovalue[QI_MAX_STAGES][QI_GOALS][20];
 	int retrieve_number[QI_MAX_STAGE][QI_GOALS][20];
 	int retrieve_stage[QI_MAX_STAGES][QI_GOALS];			/* switch to a different quest stage on retrieving the items */
 
-
-	struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];		/* kill/retrieve OR JUST MOVE TO specifically at this world pos */
-	int target_pos_x[QI_MAX_STAGES][QI_GOALS], target_pos_y[QI_MAX_STAGES][QI_GOALS]; /* MOVE TO specifically this position (even usable for kill/retrieve stuff?) */
+	struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];		/* kill/retrieve specifically at this world pos */
+	int target_pos_x[QI_MAX_STAGES][QI_GOALS], target_pos_y[QI_MAX_STAGES][QI_GOALS]; /* at specifically this position (even usable for kill/retrieve stuff?) */
 	bool target_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
+
+	struct worldpos deliver_wpos[QI_MAX_STAGES][QI_GOALS];		/* (after optionally killing/retrieving/or whatever) MOVE TO this world pos */
+	int deliver_pos_x[QI_MAX_STAGES][QI_GOALS], deliver_pos_y[QI_MAX_STAGES][QI_GOALS]; /* -"- ..MOVE TO specifically this position */
+	bool deliver_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
 
 
 	bool killopt_player_picks[QI_MAX_STAGES][QI_OPTIONAL];		/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
@@ -270,9 +276,13 @@ struct quest_info {
 	int retrieveopt_number[QI_MAX_STAGES][QI_OPTIONAL][20];
 	int retrieveopt_stage[QI_MAX_STAGES][QI_OPTIONAL];		/* switch to a different quest stage on retrieving the items */
 
-	struct worldposopt target_wpos[QI_MAX_STAGES][QI_OPTIONAL];	/* kill/retrieve OR JUST MOVE TO specifically at this world pos */
-	int targetopt_pos_x[QI_MAX_STAGES][QI_OPTIONAL], targetopt_pos_y[QI_MAX_STAGES][QI_OPTIONAL]; /* MOVE TO specifically this position (even usable for kill/retrieve stuff?) */
+	struct worldposopt targetopt_wpos[QI_MAX_STAGES][QI_OPTIONAL];	/* kill/retrieve specifically at this world pos */
+	int targetopt_pos_x[QI_MAX_STAGES][QI_OPTIONAL], targetopt_pos_y[QI_MAX_STAGES][QI_OPTIONAL]; /* at specifically this position (hm does this work for kill/retrieve stuff? pft) */
 	bool targetopt_terrain_patch[QI_MAX_STAGES][QI_OPTIONAL];	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
+
+	struct worldpos deliveropt_wpos[QI_MAX_STAGES][QI_GOALS];	/* (after optionally killing/retrieving/or whatever) MOVE TO this world pos */
+	int deliveropt_pos_x[QI_MAX_STAGES][QI_GOALS], deliveropt_pos_y[QI_MAX_STAGES][QI_GOALS]; /* -"- ..MOVE TO specifically this position */
+	bool deliveropt_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
 
 
 #if 0 /* too large! */
@@ -296,16 +306,15 @@ struct quest_info {
 	bool reward_oreward[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];	/*  use fitting-reward algo (from highlander etc)? */
 
 	int reward_gold[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
-
 	int reward_exp[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
 
-	bool reward_statuseffect[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS]; /* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
+	bool reward_statuseffect[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];	/* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
 
 
 #if 0 /* too large! also we want maybe different goals -> different next stages */
 	/* determine how the main goals have to be completed to advance to next stage,
 	   x-direction: OR, y-direction: AND */
-	bool stage_complete_matrix[QI_MAX_STAGES][QI_GOALS][QI_GOALS];			/* quest goals needed to complete a stage, x-direction=OR, y-direction=AND */
+	bool stage_complete_matrix[QI_MAX_STAGES][QI_GOALS][QI_GOALS];	/* quest goals needed to complete a stage, x-direction=OR, y-direction=AND */
 #else
 	/* determine if a new stage should begin depending on which goals we have completed */
 	/* contains the indices of up to QI_STAGE_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
