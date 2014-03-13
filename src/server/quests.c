@@ -238,7 +238,8 @@ struct quest_info {
 	int retrieve_stage[QI_MAX_STAGES][QI_GOALS];			/* switch to a different quest stage on retrieving the items */
 
 
-	struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];		/* kill/retrieve specifically at this world pos */
+	struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];		/* kill/retrieve OR JUST MOVE TO specifically at this world pos */
+	int target_pos_x[QI_MAX_STAGES][QI_GOALS], target_pos_y[QI_MAX_STAGES][QI_GOALS]; /* MOVE TO specifically this position (even usable for kill/retrieve stuff?) */
 	bool target_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
 
 
@@ -261,7 +262,8 @@ struct quest_info {
 	int retrieveopt_number[QI_MAX_STAGES][QI_OPTIONAL][20];
 	int retrieveopt_stage[QI_MAX_STAGES][QI_OPTIONAL];		/* switch to a different quest stage on retrieving the items */
 
-	struct worldposopt target_wpos[QI_MAX_STAGES][QI_OPTIONAL];	/* kill/retrieve specifically at this world pos */
+	struct worldposopt target_wpos[QI_MAX_STAGES][QI_OPTIONAL];	/* kill/retrieve OR JUST MOVE TO specifically at this world pos */
+	int targetopt_pos_x[QI_MAX_STAGES][QI_OPTIONAL], targetopt_pos_y[QI_MAX_STAGES][QI_OPTIONAL]; /* MOVE TO specifically this position (even usable for kill/retrieve stuff?) */
 	bool targetopt_terrain_patch[QI_MAX_STAGES][QI_OPTIONAL];	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
 
 
