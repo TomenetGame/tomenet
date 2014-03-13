@@ -7426,9 +7426,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'I' for player restrictions */
 		if (buf[0] == 'I') {
-			char races[6 + 2], classes[5 + 2];
+			char races[6 + 2], classes[5 + 2], *rp = races + 2, *cp = classes + 2;
+			s = buf + 2;
 			if (4 != sscanf(s, "%d:%d:%5[^:]:%4[^:]",
-			    &q_ptr->minlev, &q_ptr->maxlev, races + 2, classes + 2)) return (1);
+			    &q_ptr->minlev, &q_ptr->maxlev, rp, cp)) {
+				return (1);
+			}
 			/* uh well, hacky hacky.. */
 			races[0] = '0'; races[1] = 'x';
 			classes[0] = '0'; classes[1] = 'x';
@@ -7440,6 +7443,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 #if 0
 		/* Process 'E' for list of prequests required to begin this quest */
 		if (buf[0] == 'E') {
+			s = buf + 2;
 			if ( != sscanf(s, "",
 				q_ptr->)) return (1);
 			continue;
@@ -7449,6 +7453,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'L' for questor starting location type */
 		if (buf[0] == 'L') {
 			int loc, towns, terr;
+			s = buf + 2;
 			if (3 != sscanf(s, "%d:%d:%d", //byte, u16b, u32b
 			    &loc, &towns, &terr)) return (1);
 			q_ptr->s_location_type = (byte)loc;
@@ -7460,6 +7465,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 #if 0
 		/* Process 'D' for questor dungeon starting locations */
 		if (buf[0] == 'D') {
+			s = buf + 2;
 			if ( != sscanf(s, "",
 				q_ptr->)) return (1);
 			continue;
@@ -7469,7 +7475,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'T' for quest starting times */
 		if (buf[0] == 'T') {
 			int night, day, mor, noo, aft, eve, mid, dee;
-			if (10 != sscanf(s, "%d:%d:%d:%d:%d%d:%d:%d:%d:%d",
+			s = buf + 2;
+			if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 			    &night, &day, &mor, &noo, &aft, &eve, &mid, &dee, &q_ptr->time_start, &q_ptr->time_stop)) return (1);
 			q_ptr->night = (night != 0);
 			q_ptr->day = (day != 0);
@@ -7484,7 +7491,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'F' for questor location's map file */
 		if (buf[0] == 'F') {
-			if (!buf + 2) return 1;
+			s = buf + 2;
+			if (!(*s)) return 1;
 			c = (char*)malloc(strlen(buf + 2 - 1) * sizeof(char));
 			strcpy(c, buf + 2);
 			q_ptr->t_pref = c;
@@ -7494,6 +7502,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'Q' for questor starting location and questor creature type */
 		if (buf[0] == 'Q') {
 			int invinc, wx, wy, wz;
+			s = buf + 2;
 			if (16 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%c:%c:%d:%d:%d:%d:%d:%d:%[^:]",
 			    &wx, &wy, &wz, &q_ptr->start_x, &q_ptr->start_y,
 			    &q_ptr->questor, &q_ptr->questor_ridx, &q_ptr->questor_rchar, &q_ptr->questor_rattr,
@@ -7510,6 +7519,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'U' for quest duration */
 		if (buf[0] == 'U') {
 			int per_py, stat, quit;
+			s = buf + 2;
 			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
 			    &q_ptr->max_duration, &q_ptr->cooldown, &per_py, &stat, &quit)) return (1);
 			q_ptr->per_player = (per_py != 0);
@@ -7521,6 +7531,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'A' for quest (auto-)acceptance */
 		if (buf[0] == 'A') {
 			int aalos, aaint;
+			s = buf + 2;
 			if (2 != sscanf(s, "%d:%d",
 			    &aalos, &aaint)) return (1);
 			q_ptr->accept_los = (aalos != 0);
@@ -7531,6 +7542,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'X' for narrative text */
 		if (buf[0] == 'X') {
 			int stage;
+			s = buf + 2;
 			if (2 != sscanf(s, "%d:%79[^:]",
 			    &stage, tmpbuf)) return (1);
 			if (stage >= QI_MAX_STAGES) return 1;
@@ -7547,6 +7559,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'W' for conversation */
 		if (buf[0] == 'W') {
 			int stage;
+			s = buf + 2;
 			if (2 != sscanf(s, "%d:%79[^:]",
 			    &stage, tmpbuf)) return (1);
 			if (stage >= QI_MAX_STAGES) return 1;
@@ -7563,6 +7576,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'Y' for conversation keywords */
 		if (buf[0] == 'Y') {
 			int stage, next;
+			s = buf + 2;
 			if (3 != sscanf(s, "%d:%29[^:]:%d",
 			    &stage, tmpbuf, &next)) return (1);
 			if (stage >= QI_MAX_STAGES) return 1;
@@ -7580,6 +7594,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 #if 0
 		/* Process 'P' for position at which a kill/retrieve quest has to be executed */
 		if (buf[0] == 'P') {
+			s = buf + 2;
 			if ( != sscanf(s, "",
 				q_ptr->)) return (1);
 			continue;
@@ -7590,6 +7605,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'M') {
 			int stage, goal;
 			int wx, wy, wz, x, y, terr;
+			s = buf + 2;
 			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d",
 			    &stage, &goal, &wx, &wy, &wz, &x, &y, &terr)) return (1);
 			if (stage >= QI_MAX_STAGES) return 1;
@@ -7682,12 +7698,14 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 //O:3:1:0
 		/* Process 'O', main+optional goals required to obtain a reward */
 		if (buf[0] == 'O') {
+			s = buf + 2;
 			continue;
 		}
 
 //R:3:80:38:0:0:0:0:0:FALSE:FALSE:FALSE:0:3:none
 		/* Process 'R', quest reward definitions */
 		if (buf[0] == 'R') {
+			s = buf + 2;
 			continue;
 		}
 
