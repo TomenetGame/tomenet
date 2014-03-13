@@ -119,7 +119,7 @@ struct quest_info {
 	bool morning, noon, afternoon, evening, midnight, deepnight; /*  Only available at very specific night/day times? */
 	int time_start, time_stop;		/* Only available during very specific time interval? */
 
-	char t_pref[1024];			/* filename of map to load, or empty for none */
+	cptr t_pref;				/* filename of map to load, or empty for none */
 
 	/* exact questor starting location */
 	struct worldpos start_wpos;		/* -1, -1 for random */
@@ -175,7 +175,7 @@ struct quest_info {
 	bool questor_invincible_new[QI_MAX_STAGES];	/* Is the questor invincible (if monster)/unpickable by monsters (if item) during a particular stage? */
 	bool questor_death_fail[QI_MAX_STAGES];		/* If the questor dies, the quest state fails? (->reset stage goals/positions as if we just entered it, if that is possible? hm) */
 	bool questor_death_fail_all[QI_MAX_STAGES];	/* If the questor dies, the quest fails completely? */
-	char questor_name_new[QI_MAX_STAGES][MAX_CHARS];/* questor changes optional pseudo-unique name during this stage? */
+	cptr questor_name_new[QI_MAX_STAGES];		/* questor changes optional pseudo-unique name during this stage? */
 	int questor_ridx_new[QI_MAX_STAGES] 		/* questor changes to this base monster type */
 	char questor_rchar_new[QI_MAX_STAGES];
 	byte questor_rattr_new[QI_MAX_STAGES];
@@ -203,13 +203,13 @@ struct quest_info {
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
-	char talk[QI_MAX_STAGES][10][80];			/* n conversations a 10 lines a 79 characters */
-	char keywords[QI_MAX_STAGES][QI_MAX_KEYWORDS][30];	/* each convo may allow the player to reply with up to m keywords */
+	cptr talk[QI_MAX_STAGES][10];				/* n conversations a 10 lines a 79 characters */
+	cptr keywords[QI_MAX_STAGES][QI_MAX_KEYWORDS];		/* each convo may allow the player to reply with up to m keywords a 30 chars */
 	int keywords_stage[QI_MAX_STAGES][QI_MAX_KEYWORDS];	/*  ..which will bring the player to a different quest stage */
 	char yn[QI_MAX_STAGES];					/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
 	int y_stage[QI_MAX_STAGES], n_stage[QI_MAX_STAGES];	/*  ..which will bring the player to a different quest stage */
 
-	char narration[QI_MAX_STAGES][10][80];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
+	cptr narration[QI_MAX_STAGES][10];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
 
 
 	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */
