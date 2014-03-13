@@ -9,7 +9,7 @@
 V:0.0.1
 
 
-# N:codename:creator:name
+# N:index:codename:creator:name
 # I:minlv:maxlv:races:classes:prequest
 # L:locations:towns:terrains
 # D:dungeons...
@@ -37,7 +37,7 @@ V:0.0.1
 
 
 # for testing purpose
-N:testquest0:C. Blue:Test Quest
+N:0:testquest0:C. Blue:Test Quest
 I:1:100:FFFF:FFFF:none
 L:1:1:0
 D:0
