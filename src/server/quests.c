@@ -25,6 +25,10 @@
 */
 
 
+//? #define SERVER
+#include "angband.h"
+
+
 #define QI_CODENAME_LEN		10	/* short, internal quest code name */
 #define QI_MAX_STAGES		50	/* a quest can have these # of different stages */
 #define QI_MAX_KEYWORDS		10	/* for dialogue with the questor */
@@ -104,13 +108,13 @@ struct quest_info {
 	u32b classes, races;			/* eligible player classes/races (CFx/RFx flags) */
 	/* matrix of codename(s) of prerequisite quests needed to accept this 'follow-up' quest.
 	   x-direction: OR, y-direction: AND */
-	char followup_matrix[10][10][CODENAME_LEN];
+	char followup_matrix[10][10][QI_CODENAME_LEN];
 
 
 	/* starting location restrictions */
-	byte s_location_type			/* flags setting elibible starting location types (QI_SLOC_xxx) */
+	byte s_location_type;			/* flags setting elibible starting location types (QI_SLOC_xxx) */
 	u16b s_towns_array;			/* QI_SLOC_TOWN: flags setting eligible starting towns (QI_STOWN_xxx) */
-	u32b s_terrains				/* QI_SLOC_SURFACE: flags setting eligible starting terrains (RF8_WILD_xxx, RF8_WILD_TOO_MASK for all) */
+	u32b s_terrains;			/* QI_SLOC_SURFACE: flags setting eligible starting terrains (RF8_WILD_xxx, RF8_WILD_TOO_MASK for all) */
 
 	bool s_dungeon[MAX_D_IDX];		/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
 	u32b s_dungeon_must_flags1, s_dungeon_must_flags2, s_dungeon_must_flags3;	/*  eligible wilderness dungeon flags */
@@ -179,7 +183,7 @@ struct quest_info {
 	bool questor_death_fail[QI_MAX_STAGES];		/* If the questor dies, the quest state fails? (->reset stage goals/positions as if we just entered it, if that is possible? hm) */
 	bool questor_death_fail_all[QI_MAX_STAGES];	/* If the questor dies, the quest fails completely? */
 	cptr questor_name_new[QI_MAX_STAGES];		/* questor changes optional pseudo-unique name during this stage? */
-	int questor_ridx_new[QI_MAX_STAGES] 		/* questor changes to this base monster type */
+	int questor_ridx_new[QI_MAX_STAGES]; 		/* questor changes to this base monster type */
 	char questor_rchar_new[QI_MAX_STAGES];
 	byte questor_rattr_new[QI_MAX_STAGES];
 	int questor_rlev_new[QI_MAX_STAGES];
@@ -245,7 +249,7 @@ struct quest_info {
 	byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5];		/*  ..certain colours (flavoured items only) */
 	int retrieve_oname1[QI_MAX_STAGES][QI_GOALS][20], retrieve_oname2[QI_MAX_STAGES][QI_GOALS][20], retrieve_oname2b[QI_MAX_STAGES][QI_GOALS][20];
 	int retrieve_ovalue[QI_MAX_STAGES][QI_GOALS][20];
-	int retrieve_number[QI_MAX_STAGE][QI_GOALS][20];
+	int retrieve_number[QI_MAX_STAGES][QI_GOALS][20];
 	int retrieve_stage[QI_MAX_STAGES][QI_GOALS];			/* switch to a different quest stage on retrieving the items */
 
 	struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];		/* kill/retrieve specifically at this world pos */
@@ -276,7 +280,7 @@ struct quest_info {
 	int retrieveopt_number[QI_MAX_STAGES][QI_OPTIONAL][20];
 	int retrieveopt_stage[QI_MAX_STAGES][QI_OPTIONAL];		/* switch to a different quest stage on retrieving the items */
 
-	struct worldposopt targetopt_wpos[QI_MAX_STAGES][QI_OPTIONAL];	/* kill/retrieve specifically at this world pos */
+	struct worldpos targetopt_wpos[QI_MAX_STAGES][QI_OPTIONAL];	/* kill/retrieve specifically at this world pos */
 	int targetopt_pos_x[QI_MAX_STAGES][QI_OPTIONAL], targetopt_pos_y[QI_MAX_STAGES][QI_OPTIONAL]; /* at specifically this position (hm does this work for kill/retrieve stuff? pft) */
 	bool targetopt_terrain_patch[QI_MAX_STAGES][QI_OPTIONAL];	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
 

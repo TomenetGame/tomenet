@@ -79,7 +79,7 @@ SERV_SRCS = \
   server/init1.c server/init2.c server/nserver.c server/printout.c \
   server/main.c server/traps.c server/csfunc.c server/skills.c server/bldg.c \
   common/files.c common/w_z_pack.c server/world.c server/slash.c \
-  server/runecraft.c server/auction.c common/SFMT.c \
+  server/runecraft.c server/auction.c server/quests.c common/SFMT.c \
   server/go.c server/metaclient.c common/tables.c
 
 SERV_OBJS = \
@@ -96,7 +96,7 @@ SERV_OBJS = \
   server/init1.o server/init2.o server/nserver.o server/printout.o \
   server/main.o server/traps.o server/csfunc.o server/skills.o server/bldg.o \
   common/files.o common/w_z_pack.o server/world.o server/slash.o \
-  server/runecraft.o server/auction.o common/SFMT.o \
+  server/runecraft.o server/auction.o server/quests.o common/SFMT.o \
   server/go.o server/metaclient.o common/tables.o
 
 
