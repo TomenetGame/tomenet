@@ -79,8 +79,8 @@
 
 struct quest_info {
 	char codename[QI_CODENAME_LEN]; /* short, unique, internal name for checking prerequisite quests for follow-up quests */
-	char name[MAX_CHARS]; /* readable title of this quest */
 	char creator[NAME_LEN]; /* credits -- who thought up and created this quest :) */
+	char name[MAX_CHARS]; /* readable title of this quest */
 //#define QI_CODENAME_LEN 10
 
 
