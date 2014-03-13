@@ -68,6 +68,8 @@
    of 0..ABS(stage) to current stage, allowing for random quest progression!
    Eg: kill_stage == -3 -> next_stage = current_stage + randint(3) */
 
+/* Todo: The reward_optional_matrix[] arrays uses way too much memory, 200k per quest ^^ */
+
 struct quest_info {
 	char name[MAX_CHARS]; /* readable title of this quest */
 	char creator[NAME_LEN]; /* credits -- who thought up and created this quest :) */
@@ -251,7 +253,7 @@ struct quest_info {
 	/* quest rewards - multiple items per stage possible,
 	   each determined by the 'quest goals & optional quest goals' matrix:
 	   Up to 10 optional quest goals per stage possible. */
-#define QI_MAX_STAGE_REWARDS
+#define QI_MAX_STAGE_REWARDS 10
 	bool reward_optional_matrix[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS][QI_GOALS + QI_OPTIONAL][QI_GOALS + QI_OPTIONAL]; /* main/optional quest goals needed for this reward, x-direction=OR, y-direction=AND */
 
 	int reward_otval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];		/* hand over certain rewards to the player */
