@@ -50,6 +50,7 @@
 #include "../common/types.h"
 #include "netconn.h"
 #include "externs.h"
+#include "quests.h"
 
 
 /***** Some copyright messages follow below *****/

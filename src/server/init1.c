@@ -7300,6 +7300,587 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 }
 
 
+/*
+ * Initialize the "q_info" array, by parsing an ascii "template" file
+ */
+errr init_q_info_txt(FILE *fp, char *buf) {
+	int i, j;
+	byte rule_num = 0;
+	byte r_char_number = 0;
+	char *s, *t;
+
+	/* Not ready yet */
+	bool okay = FALSE;
+	/* Current entry */
+	dungeon_info_type *d_ptr = NULL;
+	/* Just before the first record */
+	error_idx = -1;
+	/* Just before the first line */
+	error_line = -1;
+
+	/* Start the "fake" stuff */
+	d_head->name_size = 0;
+	d_head->text_size = 0;
+
+	/* Parse */
+	while (0 == my_fgets(fp, buf, 1024, FALSE)) {
+		/* Advance the line number */
+		error_line++;
+
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
+
+		/* Skip comments and blank lines */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Verify correct "colon" format */
+		if (buf[1] != ':') return (1);
+
+
+		/* Hack -- Process 'V' for "Version" */
+		if (buf[0] == 'V')
+		{
+			int v1, v2, v3;
+
+#ifdef VERIFY_VERSION_STAMP
+
+			/* Scan for the values */
+			if ((3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			    (v1 != d_head->v_major) ||
+			    (v2 != d_head->v_minor) ||
+			    (v3 != d_head->v_patch))
+			{
+				return (2);
+			}
+
+#else /* VERIFY_VERSION_STAMP */
+
+			/* Scan for the values */
+			if (3 != sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+
+#endif /* VERIFY_VERSION_STAMP */
+
+			/* Okay to proceed */
+			okay = TRUE;
+
+			/* Continue */
+			continue;
+		}
+
+		/* No version yet */
+		if (!okay) return (2);
+
+
+		/* Process 'N' for "New/Number/Name" */
+		if (buf[0] == 'N')
+		{
+			/* Find the colon before the name */
+			s = strchr(buf + 2, ':');
+
+			/* Verify that colon */
+			if (!s) return (1);
+
+			/* Nuke the colon, advance to the name */
+			*s++ = '\0';
+
+			/* Paranoia -- require a name */
+			if (!*s) return (1);
+
+			/* Get the index */
+			i = atoi(buf + 2);
+
+			/* Verify information */
+			if (i < error_idx) return (4);
+
+			/* Verify information */
+			if (i >= (int) d_head->info_num) return (2);
+
+			/* Save the index */
+			error_idx = i;
+
+			/* Point at the "info" */
+			d_ptr = &d_info[i];
+
+			/* Default for dungeon level borders: Solid permanent granite wall. */
+			d_ptr->feat_boundary = FEAT_PERM_SOLID;
+
+			/* New (for fountains of blood) - remember own index */
+//			d_ptr->idx = error_idx;
+
+			/* Hack -- Verify space */
+			if (d_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+
+			/* Advance and Save the name index */
+			if (!d_ptr->name) d_ptr->name = ++d_head->name_size;
+
+			/* Append chars to the name */
+			strcpy(d_name + d_head->name_size, s);
+
+			/* Advance the index */
+			d_head->name_size += strlen(s);
+
+			/* HACK -- Those ones HAVE to have a set default value */
+			d_ptr->ix = -1;
+			d_ptr->iy = -1;
+			d_ptr->ox = -1;
+			d_ptr->oy = -1;
+			d_ptr->fill_method = 1;
+			rule_num = -1;
+			r_char_number = 0;
+			for (j = 0; j < 5; j++) {
+				int k;
+
+				d_ptr->rules[j].mode = DUNGEON_MODE_NONE;
+				d_ptr->rules[j].percent = 0;
+
+				for (k = 0; k < 5; k++) d_ptr->rules[j].r_char[k] = 0;
+			}
+
+			/* HACK -- Those ones HAVE to have a set default value */
+			d_ptr->objs.treasure = OBJ_GENE_TREASURE;
+			d_ptr->objs.combat = OBJ_GENE_COMBAT;
+			d_ptr->objs.magic = OBJ_GENE_MAGIC;
+			d_ptr->objs.tools = OBJ_GENE_TOOL;
+
+			/* Next... */
+			continue;
+		}
+
+		/* There better be a current d_ptr */
+		if (!d_ptr) return (3);
+
+		/* Process 'D' for "Description */
+		if (buf[0] == 'D')
+		{
+			/* Acquire short name */
+			d_ptr->short_name[0] = buf[2];
+			d_ptr->short_name[1] = buf[3];
+			d_ptr->short_name[2] = buf[4];
+
+			/* Acquire the text */
+			s = buf + 6;
+
+			/* Hack -- Verify space */
+			if (d_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+
+			/* Advance and Save the text index */
+			if (!d_ptr->text) d_ptr->text = ++d_head->text_size;
+
+			/* Append chars to the name */
+			strcpy(d_text + d_head->text_size, s);
+
+			/* Advance the index */
+			d_head->text_size += strlen(s);
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'R' for "monster generation Rule" (up to 5 lines) */
+		if (buf[0] == 'B') {
+			int feat_boundary;
+
+			/* Scan for the values */
+			if (1 != sscanf(buf + 2, "%d",
+				&feat_boundary)) return (1);
+
+			d_ptr->feat_boundary = feat_boundary;
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'W' for "More Info" (one line only) */
+		if (buf[0] == 'W')
+		{
+			int min_lev, max_lev;
+			int min_plev, next;
+			int min_alloc, max_chance;
+
+			/* Scan for the values */
+			if (6 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d",
+				&min_lev, &max_lev, &min_plev, &next, &min_alloc, &max_chance)) return (1);
+
+			/* Save the values */
+			d_ptr->mindepth = min_lev;
+			d_ptr->maxdepth = max_lev;
+			d_ptr->min_plev = min_plev;
+			d_ptr->next = next;
+			d_ptr->min_m_alloc_level = min_alloc;
+			d_ptr->max_m_alloc_chance = max_chance;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'L' for "fLoor type" (one line only) */
+		if (buf[0] == 'L')
+		{
+			int f[5], p[5];
+			int i, j;
+
+			/* Scan for the values */
+			if (10 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				&f[0], &p[0], &f[1], &p[1], &f[2], &p[2], &f[3], &p[3], &f[4], &p[4])) {
+				/* Scan for the values - part ii*/
+				if (5 != sscanf(buf + 2, "%d:%d:%d:%d:%d", &p[0], &p[1],
+						&p[2], &p[3], &p[4])) return (1);
+
+				/* Save the values */
+				for (i = 0; i < 5; i++) d_ptr->floor_percent[i][1] = p[i];
+
+				continue;
+			}
+
+			/* Save the values */
+			for (i = 0; i < 5; i++) {
+				d_ptr->floor[i] = f[i];
+				for (j = 0; j <= 1; j++) d_ptr->floor_percent[i][j] = p[i];
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'O' for "Object type" (one line only) */
+		if (buf[0] == 'O')
+		{
+			int treasure, combat, magic, tools;
+
+			/* Scan for the values */
+			if (4 != sscanf(buf + 2, "%d:%d:%d:%d",
+				&treasure, &combat, &magic, &tools)) return (1);
+
+			/* Save the values */
+			d_ptr->objs.treasure = treasure;
+			d_ptr->objs.combat = combat;
+			d_ptr->objs.magic = magic;
+			d_ptr->objs.tools = tools;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'A' for "wAll type" (one line only) */
+		if (buf[0] == 'A')
+		{
+			int outer, inner;
+			int w[5], p[5];
+			int i, j;
+
+			/* Scan for the values */
+			if (12 != sscanf(buf + 2, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				&w[0], &p[0], &w[1], &p[1], &w[2], &p[2], &w[3], &p[3], &w[4], &p[4], &outer, &inner))
+			{
+				/* Scan for the values - part ii*/
+				if (5 != sscanf(buf + 2, "%d:%d:%d:%d:%d", &p[0], &p[1],
+				    &p[2], &p[3], &p[4])) return (1);
+
+				/* Save the values */
+				for (i = 0; i < 5; i++) d_ptr->fill_percent[i][1] = p[i];
+
+				continue;
+			}
+
+			/* Save the values */
+			for (i = 0; i < 5; i++) {
+				d_ptr->fill_type[i] = w[i];
+				for (j = 0; j <= 1; j++) d_ptr->fill_percent[i][j] = p[i];
+			}
+
+			d_ptr->outer_wall = outer;
+			d_ptr->inner_wall = inner;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'E' for "Effects" (up to four lines) -SC- */
+		if (buf[0] == 'E')
+		{
+			int side, dice, freq, type;
+			cptr tmp;
+
+			/* Find the next empty blow slot (if any) */
+			for (i = 0; i < 4; i++) if ((!d_ptr->d_side[i]) &&
+						    (!d_ptr->d_dice[i])) break;
+
+			/* Oops, no more slots */
+			if (i == 4) return (1);
+
+			/* Scan for the values */
+			  if (4 != sscanf(buf + 2, "%dd%d:%d:%d",
+				  &dice, &side, &freq, &type))
+			{
+				int j;
+
+				if (3 != sscanf(buf + 2, "%dd%d:%d",
+						&dice, &side, &freq)) return (1);
+
+				tmp = buf + 2;
+				for (j = 0; j < 2; j++)
+				{
+					tmp = strchr(tmp, ':');
+					if (tmp == NULL) return(1);
+					tmp++;
+				}
+
+				j = 0;
+
+				while (d_info_dtypes[j].name != NULL)
+					if (strcmp(d_info_dtypes[j].name, tmp) == 0)
+					{
+						d_ptr->d_type[i] = d_info_dtypes[j].feat;
+						break;
+					}
+					else j++;
+
+				if (d_info_dtypes[j].name == NULL) return(1);
+			}
+			else
+				d_ptr->d_type[i] = type;
+
+			freq *= 10;
+			/* Save the values */
+			d_ptr->d_side[i] = side;
+			d_ptr->d_dice[i] = dice;
+			d_ptr->d_frequency[i] = freq;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'F' for "Dungeon Flags" (multiple lines) */
+		if (buf[0] == 'F')
+		{
+			int artif = 0, monst = 0, obj = 0;
+			int ix = -1, iy = -1, ox = -1, oy = -1;
+			int fill_method;
+
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+				/* XXX XXX XXX Hack -- Read dungeon in/out coords */
+				if (4 == sscanf(s, "WILD_%d_%d__%d_%d", &ix, &iy, &ox, &oy))
+				{
+					d_ptr->ix = ix;
+					d_ptr->iy = iy;
+					d_ptr->ox = ox;
+					d_ptr->oy = oy;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
+				/* XXX XXX XXX Hack -- Read dungeon fill method */
+				if (1 == sscanf(s, "FILL_METHOD_%d", &fill_method))
+				{
+					d_ptr->fill_method = fill_method;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
+				/* XXX XXX XXX Hack -- Read Final Object */
+				if (1 == sscanf(s, "FINAL_OBJECT_%d", &obj))
+				{
+					/* Extract a "Final Artifact" */
+					d_ptr->final_object = obj;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
+				/* XXX XXX XXX Hack -- Read Final Artifact */
+				if (1 == sscanf(s, "FINAL_ARTIFACT_%d", &artif))
+				{
+					/* Extract a "Final Artifact" */
+					d_ptr->final_artifact = artif;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
+				/* XXX XXX XXX Hack -- Read Artifact Guardian */
+				if (1 == sscanf(s, "FINAL_GUARDIAN_%d", &monst))
+				{
+					/* Extract a "Artifact Guardian" */
+					d_ptr->final_guardian = monst;
+
+					/* automatically mark it as such, no need for doing that in r_info.txt */
+					r_info[monst].flags0 |= RF0_FINAL_GUARDIAN;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
+				/* Parse this entry */
+				if (0 != grab_one_dungeon_flag(d_ptr, s)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'R' for "monster generation Rule" (up to 5 lines) */
+		if (buf[0] == 'R')
+		{
+			int percent, mode;
+			int z, y, lims[5];
+
+			/* Scan for the values */
+			if (2 != sscanf(buf + 2, "%d:%d",
+				&percent, &mode)) return (1);
+
+			/* Save the values */
+			r_char_number = 0;
+			rule_num++;
+
+			d_ptr->rules[rule_num].percent = percent;
+			d_ptr->rules[rule_num].mode = mode;
+
+			/* Lets remap the flat percents */
+			lims[0] = d_ptr->rules[0].percent;
+			for (y = 1; y <= rule_num; y++)
+			{
+				lims[y] = lims[y - 1] + d_ptr->rules[y].percent;
+			}
+			for (z = 0; z < 100; z++)
+			{
+				for (y = rule_num; y >= 0; y--)
+				{
+					if (z < lims[y]) d_ptr->rule_percents[z] = y;
+				}
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'M' for "Basic Flags" (multiple lines) */
+		if (buf[0] == 'M')
+		{
+			byte r_char;
+
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+				/* XXX XXX XXX Hack -- Read monster symbols */
+				if (1 == sscanf(s, "R_CHAR_%c", &r_char))
+				{
+					/* Limited to 5 races */
+					if(r_char_number >= 5) continue;
+
+					/* Extract a "frequency" */
+					d_ptr->rules[rule_num].r_char[r_char_number++] = r_char;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
+				/* Parse this entry */
+				if (0 != grab_one_basic_monster_flag(d_ptr, s, rule_num)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'S' for "Spell Flags" (multiple lines) */
+		if (buf[0] == 'S')
+		{
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while ((*t == ' ') || (*t == '|')) t++;
+				}
+
+				/* Parse this entry */
+				if (0 != grab_one_spell_monster_flag(d_ptr, s, rule_num)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Oops */
+		return (6);
+	}
+
+
+	/* Complete the "name" and "text" sizes */
+	++d_head->name_size;
+	++d_head->text_size;
+
+	/* No version yet */
+	if (!okay) return (2);
+
+	/* Hack -- acquire total number */
+	max_d_idx = ++error_idx;
+
+#if DEBUG_LEVEL > 2
+	/* Debug -- print total no. */
+	s_printf("d_info total: %d\n", max_d_idx);
+#endif	// DEBUG_LEVEL
+
+	/* Success */
+	return (0);
+}
+
+
 
 #else	/* ALLOW_TEMPLATES */
 

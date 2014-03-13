@@ -253,6 +253,11 @@ extern header *ow_head;
 extern owner_type *ow_info;
 extern char *ow_name;
 
+extern header *q_head;
+extern struct quest_info *q_info;
+//extern char *q_name;
+//extern char *q_text;
+
 extern server_opts cfg;
 
 extern s32b dungeon_store_timer;
@@ -890,6 +895,7 @@ extern errr init_ow_info_txt(FILE *fp, char *buf);
 extern errr init_ba_info_txt(FILE *fp, char *buf);
 extern errr init_st_info_txt(FILE *fp, char *buf);
 extern errr init_s_info_txt(FILE *fp, char *buf);
+extern errr init_q_info_txt(FILE *fp, char *buf);
 
 /* init.c (init1.c , init2.c)*/
 extern errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int ymax, int xmax, bool init);
