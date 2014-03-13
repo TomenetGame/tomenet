@@ -79,9 +79,9 @@
 
    codename 'none' is reserved, to indicate that it's not a follow-up quest.
 
-   If a quest stage doesn't have any stage goals, the quest will terminate
-   after all automatic/timed actions of this stage have been done and all
-   eligible rewards have been handed out.
+   If a quest stage doesn't have any stage goals, nor any dialogue keywords,
+   the quest will terminate after all automatic/timed actions of this stage
+   have been done and all eligible rewards have been handed out.
 */
 
 
