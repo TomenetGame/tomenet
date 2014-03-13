@@ -165,34 +165,36 @@ struct quest_info {
 	bool auto_accept[QI_MAX_STAGES];	/* player will automatically acquire the newly spawned quest (from activate_quest[]) */
 	bool auto_accept_quiet[QI_MAX_STAGES];	/* player will automatically acquire the newly spawned quest (from activate_quest[]) but not get a quest-accept-notification type of message about it */
 
-	int change_stage[QI_MAX_STAGES];	/* automatically change to a different stage after handling everything that was to do in the current stage */
-	int timed_stage_ingame[QI_MAX_STAGES];	/* automatically change to a different stage after a certain amount of in-game minutes passed */
+	int change_stage[QI_MAX_STAGES];		/* automatically change to a different stage after handling everything that was to do in the current stage */
+	int timed_stage_ingame[QI_MAX_STAGES];		/* automatically change to a different stage after a certain amount of in-game minutes passed */
 	int timed_stage_ingame_abs[QI_MAX_STAGES];	/* automatically change to a different stage after a certain in-game time is reached */
-	int timed_stage_real[QI_MAX_STAGES];	/* automatically change to a different stage after a certain amount of real seconds passed */
+	int timed_stage_real[QI_MAX_STAGES];		/* automatically change to a different stage after a certain amount of real seconds passed */
 
 
 	/* special questor behaviour during each stage */
 	bool questor_invincible_new[QI_MAX_STAGES];	/* Is the questor invincible (if monster)/unpickable by monsters (if item) during a particular stage? */
-	char questor_name_new[QI_MAX_STAGES][MAX_CHARS];	/* questor changes optional pseudo-unique name during this stage? */
-	int questor_ridx_new[QI_MAX_STAGES] 	/* questor changes to this base monster type */
+	bool questor_death_fail[QI_MAX_STAGES];		/* If the questor dies, the quest state fails? (->reset stage goals/positions as if we just entered it, if that is possible? hm) */
+	bool questor_death_fail_all[QI_MAX_STAGES];	/* If the questor dies, the quest fails completely? */
+	char questor_name_new[QI_MAX_STAGES][MAX_CHARS];/* questor changes optional pseudo-unique name during this stage? */
+	int questor_ridx_new[QI_MAX_STAGES] 		/* questor changes to this base monster type */
 	char questor_rchar_new[QI_MAX_STAGES];
 	byte questor_rattr_new[QI_MAX_STAGES];
 	int questor_rlev_new[QI_MAX_STAGES];
 
-	bool questor_talkable[QI_MAX_STAGES];	/* questor accepts dialogue? (by bumping usually) */
-	bool questor_despawned[QI_MAX_STAGES];	/* questor vanishes during a quest stage? */
+	bool questor_talkable[QI_MAX_STAGES];		/* questor accepts dialogue? (by bumping usually) */
+	bool questor_despawned[QI_MAX_STAGES];		/* questor vanishes during a quest stage? */
 
-	int questor_walk_speed[QI_MAX_STAGES];	/* questor will actually move around during this stage? */
+	int questor_walk_speed[QI_MAX_STAGES];		/* questor will actually move around during this stage? */
 	int questor_walk_destx[QI_MAX_STAGES], questor_walk_desty[QI_MAX_STAGES]; /* target waypoint for questor to move to */
-	int questor_walk_stage[QI_MAX_STAGES];	/* stage will change when questor arrives at destination */
+	int questor_walk_stage[QI_MAX_STAGES];		/* stage will change when questor arrives at destination */
 
 	struct worldpos teleport_questor_wpos[QI_MAX_STAGES];	/* teleport questor to a new position */
 	int teleport_questor_x[QI_MAX_STAGES], teleport_questor_y[QI_MAX_STAGES];
 	struct worldpos teleport_wpos[QI_MAX_STAGES];		/* teleport participating player to a new position */
 	int teleport_player_x[QI_MAX_STAGES], teleport_player_y[QI_MAX_STAGES];
 
-	int questor_hostile[QI_MAX_STAGES];	/* questor turns into a normal aggressor, and stage is changed */
-	int questor_hostile_revert_hp[QI_MAX_STAGES]; /* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
+	int questor_hostile[QI_MAX_STAGES];		/* questor turns into a normal aggressor, and stage is changed */
+	int questor_hostile_revert_hp[QI_MAX_STAGES];	/* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
 	int questor_hostile_revert_timed_ingame[QI_MAX_STAGES]; /* ..after ingame time (min).. */
 	int questor_hostile_revert_timed_ingame_abs[QI_MAX_STAGES]; /* ..at ingame time.. */
 	int questor_hostile_revert_timed_real[QI_MAX_STAGES]; /* ..after real time (s).. */
@@ -206,6 +208,8 @@ struct quest_info {
 	int keywords_stage[QI_MAX_STAGES][QI_MAX_KEYWORDS];	/*  ..which will bring the player to a different quest stage */
 	char yn[QI_MAX_STAGES];					/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
 	int y_stage[QI_MAX_STAGES], n_stage[QI_MAX_STAGES];	/*  ..which will bring the player to a different quest stage */
+
+	char narration[QI_MAX_STAGES][10][80];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
 
 
 	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */
