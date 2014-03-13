@@ -7383,7 +7383,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* Point at the "info" */
 			q_ptr = &q_info[i];
 
-			/* Scan for the values */
+			/* Scan for the values -- careful: lenghts are hard-coded, QI_CODENAME_LEN, NAME_LEN - 1, MAX_CHARS - 1 */
 			if (3 != sscanf(s, "%10[^:]:%19[^:]:%79[^:]",
 				codename, creator, questname)) return (1);
 
