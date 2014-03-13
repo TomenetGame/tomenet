@@ -42,7 +42,7 @@ L:1:1:0
 D:0
 T:1:1:0:0:0:0:0:0:0:0
 M:none
-Q:-1:-1:-1:-1:-1:1:37:b:n:-1:-1:-1:-1:-1:TRUE:Quest Bat
+Q:-1:-1:-1:-1:-1:1:37:b:n:-1:-1:-1:-1:-1:TRUE:Blind Bat
 D:0:0:FALSE:FALSE:FALSE
 A:FALSE:TRUE
 W:0:Hello, fellow fruit bat!
