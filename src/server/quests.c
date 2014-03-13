@@ -168,6 +168,11 @@ struct quest_info {
 	int questor_walk_destx[QI_MAX_STAGES], questor_walk_desty[QI_MAX_STAGES]; /* target waypoint for questor to move to */
 	int questor_walk_stage[QI_MAX_STAGES];	/* stage will change when questor arrives at destination */
 
+	struct worldpos teleport_questor_wpos[QI_MAX_STAGES];	/* teleport questor to a new position */
+	int teleport_questor_x[QI_MAX_STAGES], teleport_questor_y[QI_MAX_STAGES];
+	struct worldpos teleport_wpos[QI_MAX_STAGES];		/* teleport participating player to a new position */
+	int teleport_player_x[QI_MAX_STAGES], teleport_player_y[QI_MAX_STAGES];
+
 	int questor_hostile[QI_MAX_STAGES];	/* questor turns into a normal aggressor, and stage is changed */
 	int questor_hostile_revert_hp[QI_MAX_STAGES]; /* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
 	int questor_hostile_revert_timed_ingame[QI_MAX_STAGES]; /* ..after ingame time (min).. */
@@ -182,7 +187,7 @@ struct quest_info {
 	char keywords[QI_MAX_STAGES][QI_MAX_KEYWORDS][30];	/* each convo may allow the player to reply with up to m keywords */
 	int keywords_stage[QI_MAX_STAGES][QI_MAX_KEYWORDS];	/*  ..which will bring the player to a different quest stage */
 	char yn[QI_MAX_STAGES];					/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
-	int y_stage[QI_MAX_STAGES], n_stage[QI_MAX_STAGES]	/*  ..which will bring the player to a different quest stage */
+	int y_stage[QI_MAX_STAGES], n_stage[QI_MAX_STAGES];	/*  ..which will bring the player to a different quest stage */
 
 
 	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */
