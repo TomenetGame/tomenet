@@ -7308,7 +7308,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	//int j;
 	//byte rule_num = 0;
 	//byte r_char_number = 0;
-	char *s;
+	char *s, codename[QI_CODENAME_LEN], creator[NAME_LEN], questname[MAX_CHARS];
 	//char *t;
 
 	/* Not ready yet */
@@ -7371,6 +7371,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* Paranoia -- require a name */
 			if (!*s) return (1);
 
+			/* Scan for the values */
+			if (1 != sscanf(buf + 2, "%s:%s:%s",
+				codename, creator, questname)) return (1);
+
 			/* Get the index */
 			i = atoi(buf + 2);
 			/* Verify information */
@@ -7388,16 +7392,19 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 
 			/* Hack -- Verify space */
-			if (q_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+			if (q_head->name_size + strlen(questname) + 8 > fake_name_size) return (7);
 			/* Advance and Save the name index */
 			if (!q_ptr->name) q_ptr->name = ++q_head->name_size;
 			/* Append chars to the name */
-			strcpy(q_name + q_head->name_size, s);
+			strcpy(q_name + q_head->name_size, questname);
 			/* Advance the index */
-			q_head->name_size += strlen(s);
+			q_head->name_size += strlen(questname);
+
+			strcpy(q_ptr->codename, codename);
+			strcpy(q_ptr->creator, creator);
 
 
-			/* HACK -- Those ones HAVE to have a set default value */
+			/* ..set default values if any (questor invincible).. */
 
 
 			/* Next... */
@@ -7407,6 +7414,29 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* There better be a current d_ptr */
 		if (!q_ptr) return (3);
 
+		switch (buf[0]) { /* temporary, to ignore unimplemented flags.. */
+		case 'I':
+		case 'L':
+		case 'D':
+		case 'T':
+		case 'F':
+		case 'Q':
+		case 'U':
+		case 'A':
+		//case '':
+		case 'X':
+		case 'W':
+		case 'Y':
+		//case '':
+		case 'P':
+		case 'M':
+		case 'G':
+		case 'O':
+		case 'R':
+			continue;
+		}
+
+#if 0
 		/* Process 'D' for "Description */
 		if (buf[0] == 'D') {
 			/* Acquire short name */
@@ -7416,7 +7446,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-#if 0
 		/* Process 'R' for "monster generation Rule" (up to 5 lines) */
 		if (buf[0] == 'B') {
 			int feat_boundary;
