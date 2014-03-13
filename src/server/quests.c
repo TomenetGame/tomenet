@@ -25,8 +25,15 @@
 */
 
 
+#define QI_CODENAME_LEN		10	/* short, internal quest code name */
 #define QI_MAX_STAGES		50	/* a quest can have these # of different stages */
 #define QI_MAX_KEYWORDS		10	/* for dialogue with the questor */
+#define QI_MAX_STAGE_REWARDS 	10	/* max # of rewards handed out per completed stage */
+#define QI_GOALS		10	/* main goals to complete a stage */
+#define QI_OPTIONAL		10	/* optional goals in a stage */
+#define QI_REWARD_GOALS		5	/* up to 5 different main/optional goals that have to be completed for a specific reward */
+#define QI_STAGE_GOALS		5	/* up to 5 different main/optional goals that have to be completed for changing to a specific next stage */
+#define QI_FOLLOWUP_STAGES	5	/* the # of possible follow-up stages of which one is picked depending on the completed stage goals */
 
 
 #define QI_SLOC_TOWN		0x1
@@ -73,8 +80,8 @@
 struct quest_info {
 	char name[MAX_CHARS]; /* readable title of this quest */
 	char creator[NAME_LEN]; /* credits -- who thought up and created this quest :) */
-#define CODENAME_LEN 10
-	char codename[CODENAME_LEN]; /* short, unique, internal name for checking prerequisite quests for follow-up quests */
+//#define QI_CODENAME_LEN 10
+	char codename[QI_CODENAME_LEN]; /* short, unique, internal name for checking prerequisite quests for follow-up quests */
 
 
     /* QUESTOR (quest giver) RESTRICTIONS: */
@@ -202,8 +209,8 @@ struct quest_info {
 	/* quest goals, up to 10 per stage, with a multitude of different sub-goals (Note: of the subgoals 1 is randomly picked for the player, except if 'xxx_random_pick' is set, which allows the player to pick what he wants to do).
 	   There are additionally up to 10 optional quest goals per stage.
 	   --note: the #s of subgoals don't use #defines, because they vary too much anyway for each category, so they're just hard-coded numbers. */
-#define QI_GOALS 10 /* main goals to complete a stage */
-#define QI_OPTIONAL 10 /* optional goals in a stage */
+//#define QI_GOALS 10 /* main goals to complete a stage */
+//#define QI_OPTIONAL 10 /* optional goals in a stage */
 	bool kill_player_picks[QI_MAX_STAGES][QI_GOALS];		/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
 	int kill_ridx[QI_MAX_STAGES][QI_GOALS][20];			/* kill certain monster(s) */
 	char kill_rchar[QI_MAX_STAGES][QI_GOALS][5];			/*  ..certain types */
@@ -226,10 +233,6 @@ struct quest_info {
 
 	struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];		/* kill/retrieve specifically at this world pos */
 	bool target_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
-
-	/* determine how the main goals have to be completed to advance to next stage,
-	   x-direction: OR, y-direction: AND */
-	bool stage_complete_matrix[QI_MAX_STAGES][QI_GOALS][QI_GOALS]; /* quest goals needed to complete a stage, x-direction=OR, y-direction=AND */
 
 
 	bool killopt_player_picks[QI_MAX_STAGES][QI_OPTIONAL];		/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
@@ -255,11 +258,18 @@ struct quest_info {
 	bool targetopt_terrain_patch[QI_MAX_STAGES][QI_OPTIONAL];	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
 
 
+#if 0 /* too large! */
 	/* quest rewards - multiple items per stage possible,
 	   each determined by the 'quest goals & optional quest goals' matrix:
 	   Up to 10 optional quest goals per stage possible. */
-#define QI_MAX_STAGE_REWARDS 10
+//#define QI_MAX_STAGE_REWARDS 10
 	bool reward_optional_matrix[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS][QI_GOALS + QI_OPTIONAL][QI_GOALS + QI_OPTIONAL]; /* main/optional quest goals needed for this reward, x-direction=OR, y-direction=AND */
+#else
+	/* contains the indices of up to QI_REWARD_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
+	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10, the first QI_OPTIONAL would have index 11. */
+//#define QI_REWARD_GOALS 5 /* up to 5 different main/optional goals that have to be completed for a specific reward */
+	char goals_for_reward[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS][QI_REWARD_GOALS];	/* char to save space, only 1 byte instead of int */
+#endif
 
 	int reward_otval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];		/* hand over certain rewards to the player */
 	int reward_osval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
@@ -273,4 +283,19 @@ struct quest_info {
 	int reward_exp[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
 
 	bool reward_statuseffect[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS]; /* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
+
+
+#if 0 /* too large! also we want maybe different goals -> different next stages */
+	/* determine how the main goals have to be completed to advance to next stage,
+	   x-direction: OR, y-direction: AND */
+	bool stage_complete_matrix[QI_MAX_STAGES][QI_GOALS][QI_GOALS];			/* quest goals needed to complete a stage, x-direction=OR, y-direction=AND */
+#else
+	/* determine if a new stage should begin depending on which goals we have completed */
+	/* contains the indices of up to QI_STAGE_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
+	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10, the first QI_OPTIONAL would have index 11. */
+//#define QI_STAGE_GOALS 5 /* up to 5 different main/optional goals that have to be completed for changing to a specific next stage */
+//#define QI_FOLLOWUP_STAGES 5 /* the # of possible follow-up stages of which one is picked depending on the completed stage goals */
+	char goals_for_stage[QI_MAX_STAGES][QI_FOLLOWUP_STAGES][QI_STAGE_GOALS];	/* char to save space, only 1 byte instead of int */
+	int next_stage_from_goals[QI_FOLLOWUP_STAGES]; 					/* <stage> index of the possible follow-up stages */
+#endif
 } quest_info;
