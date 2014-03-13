@@ -571,7 +571,7 @@
 /*
  * Hack -- Maximum number of quests
  */
-#define MAX_Q_IDX	4
+#define MAX_QK_IDX	4
 
 /*
  * Maximum number of high scores in the high score file

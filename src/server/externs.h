@@ -333,7 +333,7 @@ extern struct town_type *town;
 extern u16b numtowns;
 extern object_type *o_list;
 extern monster_type *m_list;
-extern quest q_list[MAX_Q_IDX];
+extern quest q_list[MAX_QK_IDX];
 extern s16b alloc_kind_size;
 extern alloc_entry *alloc_kind_table;
 extern s16b *alloc_kind_index_level;

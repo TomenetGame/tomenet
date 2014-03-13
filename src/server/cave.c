@@ -8082,7 +8082,7 @@ bool is_quest(struct worldpos *wpos)
 	if (!level) return (FALSE);
 
 	/* Check quests */
-	for (i = 0; i < MAX_Q_IDX; i++)
+	for (i = 0; i < MAX_QK_IDX; i++)
 	{
 		/* Check for quest */
 		if (q_list[i].level == level) return (TRUE);

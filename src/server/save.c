@@ -1229,7 +1229,7 @@ static bool wr_savefile_new(int Ind)
 #if 0
 
 	/* Hack -- Dump the quests */
-	tmp16u = MAX_Q_IDX;
+	tmp16u = MAX_QK_IDX;
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++)
 	{

@@ -354,7 +354,7 @@ monster_type *m_list;
 /*
  * Hack -- Quest array
  */
-quest q_list[MAX_Q_IDX];
+quest q_list[MAX_QK_IDX];
 
 /*
  * The stores [MAX_STORES]

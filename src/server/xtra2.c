@@ -5936,7 +5936,7 @@ if (cfg.unikill_format) {
 	if (!(r_ptr->flags1 & RF1_QUESTOR)) return;
 
 	/* Hack -- Mark quests as complete */
-	for (i = 0; i < MAX_Q_IDX; i++)
+	for (i = 0; i < MAX_QK_IDX; i++)
 	{
 		/* Hack -- note completed quests */
 		if (q_list[i].level == r_ptr->level) q_list[i].level = 0;
