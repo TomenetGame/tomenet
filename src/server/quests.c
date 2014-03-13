@@ -101,7 +101,7 @@ struct quest_info {
 	u32b classes, races;			/* eligible player classes/races (CFx/RFx flags) */
 	/* matrix of codename(s) of prerequisite quests needed to accept this 'follow-up' quest.
 	   x-direction: OR, y-direction: AND */
-	char followup_matrix[CODENAME_LEN][10][10];
+	char followup_matrix[10][10][CODENAME_LEN];
 
 
 	/* starting location restrictions */
