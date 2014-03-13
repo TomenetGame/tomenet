@@ -299,20 +299,19 @@ typedef struct quest_info {
 	/* contains the indices of up to QI_REWARD_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
 	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10, the first QI_OPTIONAL would have index 11. */
 //#define QI_REWARD_GOALS 5 /* up to 5 different main/optional goals that have to be completed for a specific reward */
-	char goals_for_reward[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS][QI_REWARD_GOALS];	/* char to save space, only 1 byte instead of int */
+	char goals_for_reward[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS][QI_REWARD_GOALS];	/* char to save space, only 1 byte instead of int: returns the goal's index (or -1 if none) */
 #endif
 
 	int reward_otval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];		/* hand over certain rewards to the player */
 	int reward_osval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
 	int reward_opval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_obpval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
-	int reward_oname1[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_spawn_oname2[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_oname2b[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
+	int reward_oname1[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_oname2[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_oname2b[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
 	bool reward_ogood[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_ogreat[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
 	bool reward_oreward[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];	/*  use fitting-reward algo (from highlander etc)? */
 
 	int reward_gold[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
 	int reward_exp[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
-
-	bool reward_statuseffect[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];	/* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
+	int reward_statuseffect[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];	/* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
 
 
 #if 0 /* too large! also we want maybe different goals -> different next stages */

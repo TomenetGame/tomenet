@@ -7415,6 +7415,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					for (l = 0; l < QI_STAGE_GOALS; l++)
 						q_ptr->goals_for_stage[j][k][l] = -1; /* no goal is required to end a stage, if it isn't explicitely specified */
 				}
+				for (k = 0; k < QI_MAX_STAGE_REWARDS; k++) {
+					for (l = 0; l < QI_REWARD_GOALS; l++)
+						q_ptr->goals_for_reward[j][k][l] = -1; /* no goals are required to get a reward if not specified, aka it's for free! */
+				}
 			}
 
 			continue;
@@ -7634,13 +7638,14 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			int stage;
 			/* first number is the stage */
 			stage = atoi(buf + 2);
+			if (stage >= QI_MAX_STAGES) return 1;
 			if (!(c = strchr(buf + 2, ':'))) return 1;
 			c++;
 
 			/* read list of numbers, separated by colons */
 			while (*c >= '0' && *c <= '9') {
 				j = atoi(c);
-				if (j > QI_GOALS + QI_OPTIONAL) return 1;
+				if (j >= QI_GOALS + QI_OPTIONAL) return 1;
 				if (j < QI_GOALS) { /* main goal */
 					q_ptr->return_to_questor[stage][j] = TRUE;
 				} else { /* optional goal */
@@ -7660,6 +7665,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			int stage, next;
 			/* first number is the stage, second the next stage */
 			stage = atoi(buf + 2);
+			if (stage >= QI_MAX_STAGES) return 1;
 			if (!(c = strchr(buf + 2, ':'))) return 1;
 			c++;
 			next = atoi(c);
@@ -7695,17 +7701,62 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-//O:3:1:0
-		/* Process 'O', main+optional goals required to obtain a reward */
+		/* Process 'O', which main+optional goal combinations (up to QI_REWARD_GOALS different goals per combination) are
+		   required to advance to which stage (up to QI_MAX_STAGE_REWARDS different ones, each has a goal-combo) */
 		if (buf[0] == 'O') {
-			s = buf + 2;
+			int stage, reward;
+			/* first number is the stage, second the next stage */
+			stage = atoi(buf + 2);
+			if (stage >= QI_MAX_STAGES) return -1;
+			if (!(c = strchr(buf + 2, ':'))) return 1;
+			c++;
+			reward = atoi(c);
+			if (reward >= QI_MAX_STAGE_REWARDS) return -1; /* out of space */
+			if (!(c = strchr(c, ':'))) return 1;
+			c++;
+
+			/* read list of numbers, separated by colons */
+			l = 0;
+			while (*c >= '0' && *c <= '9' && l < QI_REWARD_GOALS) {
+				j = atoi(c);
+				if (j >= QI_GOALS + QI_OPTIONAL) return 1;
+				/* main + optional goals are saved together in this array, so no un-hacking the indices */
+				q_ptr->goals_for_reward[stage][reward][l] = j;
+
+				if (!(c = strchr(c, ':'))) break;
+				c++;
+				while (*c == ' ') c++; /* paranoia for comfort ^^ */
+
+				l++;
+			}
 			continue;
 		}
 
-//R:3:80:38:0:0:0:0:0:FALSE:FALSE:FALSE:0:3:none
 		/* Process 'R', quest reward definitions */
 		if (buf[0] == 'R') {
+			int stage, good, great, createreward;
+
+			/* first number is the stage */
 			s = buf + 2;
+			stage = atoi(s);
+			if (stage >= QI_MAX_STAGES) return -1;
+			if (lc_rewards[stage] == 10) return 1;
+			if (!(c = strchr(s, ':'))) return 1;
+			c++;
+
+			if (13 != sscanf(c, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+			    &q_ptr->reward_otval[stage][lc_rewards[stage]], &q_ptr->reward_osval[stage][lc_rewards[stage]],
+			    &q_ptr->reward_opval[stage][lc_rewards[stage]], &q_ptr->reward_obpval[stage][lc_rewards[stage]],
+			    &q_ptr->reward_oname1[stage][lc_rewards[stage]], &q_ptr->reward_oname2[stage][lc_rewards[stage]], &q_ptr->reward_oname2b[stage][lc_rewards[stage]],
+			    &good, &great, &createreward,
+			    &q_ptr->reward_gold[stage][lc_rewards[stage]], &q_ptr->reward_exp[stage][lc_rewards[stage]],
+			    &q_ptr->reward_statuseffect[stage][lc_rewards[stage]]))
+				return (1);
+			q_ptr->reward_ogood[stage][lc_rewards[stage]] = (good != 0);
+			q_ptr->reward_ogreat[stage][lc_rewards[stage]] = (great != 0);
+			q_ptr->reward_oreward[stage][lc_rewards[stage]] = (createreward != 0);
+
+			lc_rewards[stage]++;
 			continue;
 		}
 
