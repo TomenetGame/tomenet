@@ -306,6 +306,7 @@ extern u16b max_m_idx;
 extern u16b max_t_idx;
 extern u16b max_st_idx;
 extern u16b max_ow_idx;
+extern u16b max_q_idx;
 
 /*
  * The monster race arrays

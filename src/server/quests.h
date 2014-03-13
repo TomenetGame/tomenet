@@ -95,10 +95,11 @@ typedef struct quest_info {
 	/* QUEST IS CURRENTLY ACTIVE (aka questor is currently spawned - depends on time (day/night/specific) constraints) */
 	bool active;
 
-	char codename[QI_CODENAME_LEN]; /* short, unique, internal name for checking prerequisite quests for follow-up quests */
-	char creator[NAME_LEN]; /* credits -- who thought up and created this quest :) */
-	char name[MAX_CHARS]; /* readable title of this quest */
 //#define QI_CODENAME_LEN 10
+	char codename[QI_CODENAME_LEN];	/* short, unique, internal name for checking prerequisite quests for follow-up quests */
+	char creator[NAME_LEN];		/* credits -- who thought up and created this quest :) */
+	//char name[MAX_CHARS];		/* readable title of this quest */
+	u16b name;			/* readable title of this quest - offset */
 
 
     /* QUESTOR (quest giver) RESTRICTIONS: */

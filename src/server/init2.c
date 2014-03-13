@@ -2372,7 +2372,6 @@ static errr init_q_info(void) {
 
 	/* Hack -- make "fake" arrays */
 	C_MAKE(q_name, fake_name_size, char);
-	C_MAKE(q_text, fake_text_size, char);
 
 
 	/*** Load the ascii template file ***/

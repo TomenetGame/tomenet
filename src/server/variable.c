@@ -777,6 +777,14 @@ u16b max_ba_idx;
  */
 u16b max_ow_idx;
 
+/* Maximum number of quests types in q_info.txt */
+u16b max_q_idx;
+
+header *q_head;
+quest_info *q_info;
+char *q_name;
+//char *q_text;
+
 /*
  * Maximum number of objects in the level
  */

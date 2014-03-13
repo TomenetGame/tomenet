@@ -255,7 +255,7 @@ extern char *ow_name;
 
 extern header *q_head;
 extern struct quest_info *q_info;
-//extern char *q_name;
+extern char *q_name;
 //extern char *q_text;
 
 extern server_opts cfg;
@@ -429,6 +429,7 @@ extern u16b max_ba_idx;
 extern u16b max_ow_idx;
 extern u16b max_wf_idx;
 extern s16b max_set_idx;
+extern u16b max_q_idx;
 
 extern char priv_note[MAX_NOTES][MAX_CHARS_WIDE], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN];
 extern char party_note[MAX_PARTYNOTES][MAX_CHARS_WIDE], party_note_target[MAX_PARTYNOTES][NAME_LEN];
