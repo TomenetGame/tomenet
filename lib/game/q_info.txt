@@ -1,0 +1,58 @@
+# File: q_info.txt
+
+# This file contains all the quest information for new quest_info[] struct
+# on which work started in 2013, to provide a full fledged quest framework.
+#                                                    - C. Blue
+
+
+# Version stamp (required)
+V:0.0.1
+
+
+# N:codename:creator:name
+# R:minlv:maxlv:races:classes:prequest
+# L:locations:towns:terrains
+# D:dungeons...
+# T:night:day:morning:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
+# M:mapfile
+# Q:questorlocation wx:wy:wz:x:y:type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:invinc?:name
+# D:duration:cooldown:perplayer?:staticfloor?:quitfloor?
+# A:accept-on-los?:accept-on-interaction?
+#(Parameters from here on are all individual per quest stage)
+# //todo: auto-spawn quest, auto-change stage
+# //todo: questor changes/polymorphes
+# //todo: questor moves, teleports, teleports player
+# //todo: questor hostility
+# W (10x repeatable):stage:convo line
+# Y (30x repeatable):stage:keyword:nextstage
+#  //todo:y/n convo
+# //todo: dungeon adding
+# //todo: kill, retrieve, kill optional, retrieve optional
+# P:stage:goal#:goal wpos wx:wy:wz:goal pos x:y:goal terrain type
+# G:stage:next stage:kill/retrieve/move goals required to complete
+# O:stage:reward (0 to disable):goals required for reward (0 for none -> it's for free^^)
+
+
+# for testing purpose
+N:testquest0:C. Blue:Test Quest
+R:1:100:FFFF:FFFF:none
+L:1:1:0
+D:0
+T:1:1:0:0:0:0:0:0:0:0
+M:none
+Q:-1:-1:-1:-1:-1:1:37:b:n:-1:-1:-1:-1:-1:TRUE:Quest Bat
+D:0:0:FALSE:FALSE:FALSE
+A:FALSE:TRUE
+W:0:Hello, fellow fruit bat!
+W:0:Would you like some {yale{- or rather a {Usolid ration{-?
+Y:0:ale:1
+Y:0:ration:2
+Y:0:solid ration:2
+W:1:Well then, visit the shop keeper of the general store!
+W:2:Well then, visit the shop keeper of the general store..
+P:1:0:32:32:0:105:39
+P:2:0:32:32:0:105:39
+G:1:3:0
+G:2:4:0
+O:3:1:0
+O:4:2:0
