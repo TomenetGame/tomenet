@@ -10,9 +10,10 @@ V:0.0.1
 
 
 # N:index:codename:creator:name
-# I:minlv:maxlv:races:classes:prequest
+# I:minlv:maxlv:races:classes
+# //todo: E:(10x repeatable) optional list of colon-separated prequest codenames
 # L:locations:towns:terrains
-# D:dungeons...
+# //todo: D:dungeons...
 # T:night:day:morning:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # F:mapfile
 # Q:questorlocation wx:wy:wz:x:y:type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:invinc?:name
@@ -31,21 +32,22 @@ V:0.0.1
 # //todo: kill, retrieve, kill optional, retrieve optional
 # //todo: P:stage:goal#:goal at wpos wx:wy:wz:goal at pos x:y:goal at terrain type
 # M:stage:goal#:goal to wpos wx:wy:wz:goal to pos x:y:goal to terrain type
-# G:stage:next stage:kill/retrieve/move goals required to complete
+# B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
+# G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons
 # O:stage:get reward (0 to disable):goals required for reward (0 for none -> it's for free^^)
 # R:stage:(10x repeatable) define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:createreward()?:gold:exp:specialstatuseffect
+
+# Note: #goal is 0..9 for main goals 1 to 10, and 10..19 for optional goals 1 to 10.
 
 
 # for testing purpose
 N:0:testquest0:C. Blue:Test Quest
-I:1:100:FFFF:FFFF:none
+I:1:100:FFFFF:FFFF
 L:1:1:0
-D:0
 T:1:1:0:0:0:0:0:0:0:0
-F:none
-Q:-1:-1:-1:-1:-1:1:37:b:n:-1:-1:-1:-1:-1:TRUE:Blind Bat
-U:0:0:FALSE:FALSE:FALSE
-A:FALSE:TRUE
+Q:-1:-1:-1:-1:-1:1:37:b:n:-1:-1:-1:-1:-1:1:Blind Bat
+U:0:0:0:0:0
+A:0:1
 W:0:Hello, fellow fruit bat!
 W:0:Would you like some {yale{- or rather a {Usolid ration{-?
 Y:0:ale:1
@@ -54,8 +56,8 @@ Y:0:solid ration:2
 W:1:Well then, visit the shop keeper of the general store!
 W:2:Well then, visit the shop keeper of the general store..
 #position 105:40 for actual general store entrance:
-M:1:0:32:32:0:105:39
-M:2:0:32:32:0:105:39
+M:1:0:32:32:0:105:39:0
+M:2:0:32:32:0:105:39:0
 G:1:3:0
 G:2:4:0
 O:3:1:0

@@ -105,7 +105,7 @@ typedef struct quest_info {
     /* QUESTOR (quest giver) RESTRICTIONS: */
 	/* player restrictions */
 	int minlev, maxlev;			/* eligible player level range (0 for any) */
-	u32b classes, races;			/* eligible player classes/races (CFx/RFx flags) */
+	u32b races, classes;			/* eligible player classes/races (CFx/RFx flags) */
 	/* matrix of codename(s) of prerequisite quests needed to accept this 'follow-up' quest.
 	   x-direction: OR, y-direction: AND */
 	char followup_matrix[10][10][QI_CODENAME_LEN + 1];
@@ -320,13 +320,14 @@ typedef struct quest_info {
 	   x-direction: OR, y-direction: AND */
 	bool stage_complete_matrix[QI_MAX_STAGES][QI_GOALS][QI_GOALS];	/* quest goals needed to complete a stage, x-direction=OR, y-direction=AND */
 #else
+	bool return_to_questor[QI_MAX_STAGES][QI_GOALS];		/* do we need to return to the questor first (bump), to get credit for particular main goals? */
+	bool return_to_questor_opt[QI_MAX_STAGES][QI_OPTIONAL];		/* do we need to return to the questor first (bump), to get credit for particular optional goals? */
 	/* determine if a new stage should begin depending on which goals we have completed */
 	/* contains the indices of up to QI_STAGE_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
-	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10, the first QI_OPTIONAL would have index 11. */
+	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10 (indices 0..9), the first QI_OPTIONAL would have index 10. */
 //#define QI_STAGE_GOALS 5 /* up to 5 different main/optional goals that have to be completed for changing to a specific next stage */
 //#define QI_FOLLOWUP_STAGES 5 /* the # of possible follow-up stages of which one is picked depending on the completed stage goals */
-	char goals_for_stage[QI_MAX_STAGES][QI_FOLLOWUP_STAGES][QI_STAGE_GOALS];	/* char to save space, only 1 byte instead of int */
-	bool return_to_questor[QI_MAX_STAGES][QI_FOLLOWUP_STAGES];			/* do we need to return to the questor first (bump), to enter the next stage? */
+	char goals_for_stage[QI_MAX_STAGES][QI_FOLLOWUP_STAGES][QI_STAGE_GOALS];	/* char to save space, only 1 byte instead of int: returns the goal's index (or -1 if none) */
 	int next_stage_from_goals[QI_MAX_STAGES][QI_FOLLOWUP_STAGES]; 			/* <stage> index of the possible follow-up stages */
 #endif
 } quest_info;
