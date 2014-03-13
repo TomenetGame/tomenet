@@ -71,13 +71,20 @@
 #define QI_SPAWN_PACK_FAR_P	7	/* spawn as pack far away */
 
 
-/* Note: stage changes given as negative numbers will instead add a random value
-   of 0..ABS(stage) to current stage, allowing for random quest progression!
-   Eg: kill_stage == -3 -> next_stage = current_stage + randint(3) */
+/* Notes:
 
-/* Todo: The reward_optional_matrix[] arrays uses way too much memory, 200k per quest ^^ */
+   Stage changes given as negative numbers will instead add a random value
+   of 0..ABS(stage) to current stage, allowing for random quest progression!
+   Eg: kill_stage == -3 -> next_stage = current_stage + randint(3).
+
+   codename 'none' is reserved, to indicate that it's not a follow-up quest.
+*/
+
 
 struct quest_info {
+	/* QUEST IS CURRENTLY ACTIVE (aka questor is currently spawned - depends on time (day/night/specific) constraints) */
+	bool active;
+
 	char codename[QI_CODENAME_LEN]; /* short, unique, internal name for checking prerequisite quests for follow-up quests */
 	char creator[NAME_LEN]; /* credits -- who thought up and created this quest :) */
 	char name[MAX_CHARS]; /* readable title of this quest */
@@ -106,6 +113,7 @@ struct quest_info {
 
 	bool night, day;			/* Only available at night/day in general? */
 	bool morning, noon, afternoon, evening, midnight, deepnight; /*  Only available at very specific night/day times? */
+	int time_start, time_stop;		/* Only available during very specific time interval? */
 
 	char t_pref[1024];			/* filename of map to load, or empty for none */
 
@@ -131,7 +139,6 @@ struct quest_info {
 
 
     /* QUEST DURATION */
-	bool active;				/* questor is currently spawned/active (depends on day/night constraints) */
 	/* quest duration, after it was accepted, until it expires */
 	int max_duration;			/* in seconds, 0 for never */
 	int cooldown;				/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
