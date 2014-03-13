@@ -6821,7 +6821,7 @@ void global_event_signup(int Ind, int n, cptr parm) {
 
 #ifdef GE_ARENA_ALLOW_EGO
 	/* for ego monsters: */
-	int re_found = 0, re_r;
+	int re_found = 0, re_r = 0;//compiler warning
 	bool re_impossible = FALSE, no_ego = FALSE, perfect_ego = FALSE;
 	char ce[80], *cep, parm2e[80], *p2ep;
 	char *separator;
