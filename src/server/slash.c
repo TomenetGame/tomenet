@@ -8144,6 +8144,13 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "%d were positive: %d.%d%%", found, 100 * found / 100000, (found % 1000) / 100);//wtb correct rounding >.> o laziness
 				return;
 			}
+			else if (prefix(message, "/qinf")) { /* debug new quest_info stuff - C. Blue */
+				msg_format(Ind, "max_q_idx: %d/%d", max_q_idx, MAX_Q_IDX);
+				for (i = 0; i < max_q_idx; i++) {
+					msg_format(Ind, "%d) '%s' [%s by %s]", i, q_name + q_info[i].name, q_info[i].codename, q_info[i].creator);
+				}
+				return;
+			}
 		}
 	}
 
