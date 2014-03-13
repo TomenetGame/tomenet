@@ -7308,7 +7308,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	//int j;
 	//byte rule_num = 0;
 	//byte r_char_number = 0;
-	char *s, codename[QI_CODENAME_LEN], creator[NAME_LEN], questname[MAX_CHARS];
+	char *s, codename[QI_CODENAME_LEN + 1], creator[NAME_LEN], questname[MAX_CHARS];
 	//char *t;
 
 	/* Not ready yet */
@@ -7371,10 +7371,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* Paranoia -- require a name */
 			if (!*s) return (1);
 
-			/* Scan for the values */
-			if (1 != sscanf(buf + 2, "%s:%s:%s",
-				codename, creator, questname)) return (1);
-
 			/* Get the index */
 			i = atoi(buf + 2);
 			/* Verify information */
@@ -7387,9 +7383,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* Point at the "info" */
 			q_ptr = &q_info[i];
 
-
-			/* ..set default values if any (questor invincible).. */
-
+			/* Scan for the values */
+			if (3 != sscanf(s, "%10[^:]:%19[^:]:%79[^:]",
+				codename, creator, questname)) return (1);
 
 			/* Hack -- Verify space */
 			if (q_head->name_size + strlen(questname) + 8 > fake_name_size) return (7);
@@ -7403,9 +7399,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			strcpy(q_ptr->codename, codename);
 			strcpy(q_ptr->creator, creator);
 
-
 			/* ..set default values if any (questor invincible).. */
-
 
 			/* Next... */
 			continue;
@@ -7413,6 +7407,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* There better be a current d_ptr */
 		if (!q_ptr) return (3);
+
 
 		switch (buf[0]) { /* temporary, to ignore unimplemented flags.. */
 		case 'I':
@@ -7428,14 +7423,30 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		case 'W':
 		case 'Y':
 		//case '':
-		case 'P':
+		//case 'P':
 		case 'M':
 		case 'G':
 		case 'O':
 		case 'R':
 			continue;
-		}
-
+		}/*
+I:1:100:FFFF:FFFF:none
+L:1:1:0
+D:0
+T:1:1:0:0:0:0:0:0:0:0
+F:none
+Q:-1:-1:-1:-1:-1:1:37:b:n:-1:-1:-1:-1:-1:TRUE:Blind Bat
+U:0:0:FALSE:FALSE:FALSE
+A:FALSE:TRUE
+X:3:The shop keeper hands you a pint of fine ale!
+W:0:Hello, fellow fruit bat!
+Y:0:ale:1
+//todo P:1:0:32:32:0:105:39
+M:1:0:32:32:0:105:39
+G:1:3:0
+O:3:1:0
+R:3:80:38:0:0:0:0:0:FALSE:FALSE:FALSE:0:3:none
+*/
 #if 0
 		/* Process 'D' for "Description */
 		if (buf[0] == 'D') {

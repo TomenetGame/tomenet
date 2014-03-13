@@ -96,7 +96,7 @@ typedef struct quest_info {
 	bool active;
 
 //#define QI_CODENAME_LEN 10
-	char codename[QI_CODENAME_LEN];	/* short, unique, internal name for checking prerequisite quests for follow-up quests */
+	char codename[QI_CODENAME_LEN + 1];	/* short, unique, internal name for checking prerequisite quests for follow-up quests */
 	char creator[NAME_LEN];		/* credits -- who thought up and created this quest :) */
 	//char name[MAX_CHARS];		/* readable title of this quest */
 	u16b name;			/* readable title of this quest - offset */
@@ -108,7 +108,7 @@ typedef struct quest_info {
 	u32b classes, races;			/* eligible player classes/races (CFx/RFx flags) */
 	/* matrix of codename(s) of prerequisite quests needed to accept this 'follow-up' quest.
 	   x-direction: OR, y-direction: AND */
-	char followup_matrix[10][10][QI_CODENAME_LEN];
+	char followup_matrix[10][10][QI_CODENAME_LEN + 1];
 
 
 	/* starting location restrictions */
