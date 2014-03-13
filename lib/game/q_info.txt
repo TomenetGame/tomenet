@@ -23,6 +23,7 @@ V:0.0.1
 # //todo: questor changes/polymorphes
 # //todo: questor moves, teleports, teleports player
 # //todo: questor hostility
+# X (10x repeatable):stage:narration text
 # W (10x repeatable):stage:convo line
 # Y (30x repeatable):stage:keyword:nextstage
 #  //todo:y/n convo
@@ -30,8 +31,8 @@ V:0.0.1
 # //todo: kill, retrieve, kill optional, retrieve optional
 # P:stage:goal#:goal wpos wx:wy:wz:goal pos x:y:goal terrain type
 # G:stage:next stage:kill/retrieve/move goals required to complete
-# O:stage:reward (0 to disable):goals required for reward (0 for none -> it's for free^^)
-# R:stage:(10x repeatable) reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:createreward()?:gold:exp:specialstatuseffect
+# O:stage:get reward (0 to disable):goals required for reward (0 for none -> it's for free^^)
+# R:stage:(10x repeatable) define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:createreward()?:gold:exp:specialstatuseffect
 
 
 # for testing purpose
@@ -57,6 +58,8 @@ P:2:0:32:32:0:105:39
 G:1:3:0
 G:2:4:0
 O:3:1:0
+X:3:The shop keeper hands you a pint of fine ale!
 O:4:2:0
+X:4:The shop keeper hands you a ration of food!
 R:3:80:38:0:0:0:0:0:FALSE:FALSE:FALSE:0:3:none
 R:4:80:35:0:0:0:0:0:FALSE:FALSE:FALSE:0:3:none
