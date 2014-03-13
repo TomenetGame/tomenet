@@ -197,7 +197,7 @@ struct quest_info {
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
-	char talk[QI_MAX_STAGES][10][50];			/* n conversations a 10 lines a 50 characters */
+	char talk[QI_MAX_STAGES][10][80];			/* n conversations a 10 lines a 79 characters */
 	char keywords[QI_MAX_STAGES][QI_MAX_KEYWORDS][30];	/* each convo may allow the player to reply with up to m keywords */
 	int keywords_stage[QI_MAX_STAGES][QI_MAX_KEYWORDS];	/*  ..which will bring the player to a different quest stage */
 	char yn[QI_MAX_STAGES];					/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
