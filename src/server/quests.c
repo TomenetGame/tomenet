@@ -78,10 +78,10 @@
 /* Todo: The reward_optional_matrix[] arrays uses way too much memory, 200k per quest ^^ */
 
 struct quest_info {
+	char codename[QI_CODENAME_LEN]; /* short, unique, internal name for checking prerequisite quests for follow-up quests */
 	char name[MAX_CHARS]; /* readable title of this quest */
 	char creator[NAME_LEN]; /* credits -- who thought up and created this quest :) */
 //#define QI_CODENAME_LEN 10
-	char codename[QI_CODENAME_LEN]; /* short, unique, internal name for checking prerequisite quests for follow-up quests */
 
 
     /* QUESTOR (quest giver) RESTRICTIONS: */
