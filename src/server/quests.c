@@ -313,6 +313,7 @@ struct quest_info {
 //#define QI_STAGE_GOALS 5 /* up to 5 different main/optional goals that have to be completed for changing to a specific next stage */
 //#define QI_FOLLOWUP_STAGES 5 /* the # of possible follow-up stages of which one is picked depending on the completed stage goals */
 	char goals_for_stage[QI_MAX_STAGES][QI_FOLLOWUP_STAGES][QI_STAGE_GOALS];	/* char to save space, only 1 byte instead of int */
-	int next_stage_from_goals[QI_FOLLOWUP_STAGES]; 					/* <stage> index of the possible follow-up stages */
+	bool return_to_questor[QI_MAX_STAGES][QI_FOLLOWUP_STAGES];			/* do we need to return to the questor first (bump), to enter the next stage? */
+	int next_stage_from_goals[QI_MAX_STAGES][QI_FOLLOWUP_STAGES]; 			/* <stage> index of the possible follow-up stages */
 #endif
 } quest_info;
