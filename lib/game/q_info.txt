@@ -16,7 +16,7 @@ V:0.0.1
 # T:night:day:morning:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # F:mapfile
 # Q:questorlocation wx:wy:wz:x:y:type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:invinc?:name
-# D:duration:cooldown:perplayer?:staticfloor?:quitfloor?
+# U:duration:cooldown:perplayer?:staticfloor?:quitfloor?
 # A:accept-on-los?:accept-on-interaction?
 #(Parameters from here on are all individual per quest stage)
 # //todo: auto-spawn quest, auto-change stage
@@ -44,7 +44,7 @@ D:0
 T:1:1:0:0:0:0:0:0:0:0
 F:none
 Q:-1:-1:-1:-1:-1:1:37:b:n:-1:-1:-1:-1:-1:TRUE:Blind Bat
-D:0:0:FALSE:FALSE:FALSE
+U:0:0:FALSE:FALSE:FALSE
 A:FALSE:TRUE
 W:0:Hello, fellow fruit bat!
 W:0:Would you like some {yale{- or rather a {Usolid ration{-?
