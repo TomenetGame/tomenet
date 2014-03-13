@@ -29,7 +29,7 @@ V:0.0.1
 #  //todo:y/n convo
 # //todo: dungeon adding
 # //todo: kill, retrieve, kill optional, retrieve optional
-# P:stage:goal#:goal at wpos wx:wy:wz:goal at pos x:y:goal at terrain type
+# //todo: P:stage:goal#:goal at wpos wx:wy:wz:goal at pos x:y:goal at terrain type
 # M:stage:goal#:goal to wpos wx:wy:wz:goal to pos x:y:goal to terrain type
 # G:stage:next stage:kill/retrieve/move goals required to complete
 # O:stage:get reward (0 to disable):goals required for reward (0 for none -> it's for free^^)
