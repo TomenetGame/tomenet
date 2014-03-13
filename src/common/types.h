@@ -778,6 +778,7 @@ struct object_type
 
 	s32b marked;			/* Object is marked (for deletion after a certain time) */
 	byte marked2;			/* additional parameters */
+	int marked_quest;		/* It's an item for a quest (either the questor item or an item that needs to be retrieved for a quest goal) */
 
 	u16b note;			/* Inscription index */
 	char note_utag;			/* Added for making pseudo-id overwrite unique loot tags */
@@ -1872,9 +1873,7 @@ struct inventory_change_type {
  */
 
 typedef struct player_type player_type;
-
-struct player_type
-{
+struct player_type {
 	int conn;			/* Connection number */
 	int Ind;			/* Self-reference */
 	char name[MAX_CHARS];		/* Nickname */
@@ -2717,6 +2716,13 @@ struct player_type
 	u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
 	u32b global_event_temp; /* not saved. see defines.h for details */
 	int global_event_participated[MAX_GLOBAL_EVENT_TYPES];
+
+	/* Had a quest running when he logged out or something? ->respawn/reactivate quest? todo//unclear yet..
+	   THIS IS NEW STUFF: quest_info. DON'T CONFUSE THIS WITH quest_type, quest_num, quest_id and other older quest code. */
+	//hard-coded stuff: QI_CODENAME_LEN 10, QI_GOALS 10, QI_OPTIONAL 10
+	char questing[5][10]; /* track up to 5 quests by their codename and roughly the current stage and goals */
+	byte quest_stage[5]; /* in which stage is a quest? */
+	bool quest_goals[10], quest_goalsopt[10]; /* which (optional) stage goals have we completed so far? */
 
 #ifdef ENABLE_MAIA
 	int voidx; int voidy; //for the void jumpgate creation spell; reset on every recall/levelchange/relogins
