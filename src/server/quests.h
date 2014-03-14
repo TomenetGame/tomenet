@@ -42,8 +42,8 @@
 #define QI_TALK_LINES		15	/* amount of text lines per talk dialogue */
 #define QI_MAX_KEYWORDS		10	/* for dialogue with the questor */
 #define QI_MAX_STAGE_REWARDS 	10	/* max # of rewards handed out per completed stage */
-#define QI_GOALS		10	/* main goals to complete a stage */
-#define QI_OPTIONAL		10	/* optional goals in a stage */
+#define QI_GOALS		5	/* main goals to complete a stage */
+#define QI_OPTIONAL		5	/* optional goals in a stage */
 #define QI_REWARD_GOALS		5	/* up to 5 different main/optional goals that have to be completed for a specific reward */
 #define QI_STAGE_GOALS		5	/* up to 5 different main/optional goals that have to be completed for changing to a specific next stage */
 #define QI_FOLLOWUP_STAGES	5	/* the # of possible follow-up stages of which one is picked depending on the completed stage goals */
@@ -283,10 +283,12 @@ typedef struct quest_info {
 	int retrieve_number[QI_MAX_STAGES][QI_GOALS][20];
 	int retrieve_stage[QI_MAX_STAGES][QI_GOALS];			/* switch to a different quest stage on retrieving the items */
 
+	bool target_pos[QI_MAX_STAGES][QI_GOALS];			/* enable target pos? */
 	struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];		/* kill/retrieve specifically at this world pos */
 	int target_pos_x[QI_MAX_STAGES][QI_GOALS], target_pos_y[QI_MAX_STAGES][QI_GOALS]; /* at specifically this position (even usable for kill/retrieve stuff?) */
 	bool target_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
 
+	bool deliver_pos[QI_MAX_STAGES][QI_GOALS];			/* enable delivery pos? */
 	struct worldpos deliver_wpos[QI_MAX_STAGES][QI_GOALS];		/* (after optionally killing/retrieving/or whatever) MOVE TO this world pos */
 	int deliver_pos_x[QI_MAX_STAGES][QI_GOALS], deliver_pos_y[QI_MAX_STAGES][QI_GOALS]; /* -"- ..MOVE TO specifically this position */
 	bool deliver_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
@@ -311,10 +313,12 @@ typedef struct quest_info {
 	int retrieveopt_number[QI_MAX_STAGES][QI_OPTIONAL][20];
 	int retrieveopt_stage[QI_MAX_STAGES][QI_OPTIONAL];		/* switch to a different quest stage on retrieving the items */
 
+	bool targetopt_pos[QI_MAX_STAGES][QI_GOALS];			/* enable target pos? */
 	struct worldpos targetopt_wpos[QI_MAX_STAGES][QI_OPTIONAL];	/* kill/retrieve specifically at this world pos */
 	int targetopt_pos_x[QI_MAX_STAGES][QI_OPTIONAL], targetopt_pos_y[QI_MAX_STAGES][QI_OPTIONAL]; /* at specifically this position (hm does this work for kill/retrieve stuff? pft) */
 	bool targetopt_terrain_patch[QI_MAX_STAGES][QI_OPTIONAL];	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
 
+	bool deliveropt_pos[QI_MAX_STAGES][QI_GOALS];			/* enable delivery pos? */
 	struct worldpos deliveropt_wpos[QI_MAX_STAGES][QI_GOALS];	/* (after optionally killing/retrieving/or whatever) MOVE TO this world pos */
 	int deliveropt_pos_x[QI_MAX_STAGES][QI_GOALS], deliveropt_pos_y[QI_MAX_STAGES][QI_GOALS]; /* -"- ..MOVE TO specifically this position */
 	bool deliveropt_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */

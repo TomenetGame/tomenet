@@ -413,19 +413,25 @@ void quest_stage(int q_idx, int stage) {
    without this function, but then we'd for example have to check on EVERY
    step the player makes if he's doing any quest that has a target area and
    is there etc... */
+//TODO: currently only supports 1 target/delivery location, ie the one for the very first GOAL of that quest stage!
 void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
-#if 0
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int i, j;
+	int stage = q_ptr->stage;
 
-	p_ptr->quest_target_loc[py_q_idx]) = q_ptr->;
-	p_ptr->quest_target_wpos[py_q_idx].wx) = ;
-	p_ptr->quest_target_wpos[py_q_idx].wy) = ;
-	p_ptr->quest_target_wpos[py_q_idx].wz) = ;
-	p_ptr->quest_target_x[py_q_idx]) = ;
-	p_ptr->quest_target_y[py_q_idx]) = ;
-#endif
+	p_ptr->quest_target_loc[py_q_idx] = q_ptr->target_pos[stage][0];
+	p_ptr->quest_target_wpos[py_q_idx].wx = q_ptr->target_wpos[stage][0].wx;
+	p_ptr->quest_target_wpos[py_q_idx].wy = q_ptr->target_wpos[stage][0].wy;
+	p_ptr->quest_target_wpos[py_q_idx].wz = q_ptr->target_wpos[stage][0].wz;
+	p_ptr->quest_target_x[py_q_idx] = q_ptr->target_pos_x[stage][0];
+	p_ptr->quest_target_y[py_q_idx] = q_ptr->target_pos_y[stage][0];
+
+	p_ptr->quest_deliver_loc[py_q_idx] = q_ptr->deliver_pos[stage][0];
+	p_ptr->quest_deliver_wpos[py_q_idx].wx = q_ptr->deliver_wpos[stage][0].wx;
+	p_ptr->quest_deliver_wpos[py_q_idx].wy = q_ptr->deliver_wpos[stage][0].wy;
+	p_ptr->quest_deliver_wpos[py_q_idx].wz = q_ptr->deliver_wpos[stage][0].wz;
+	p_ptr->quest_deliver_x[py_q_idx] = q_ptr->deliver_pos_x[stage][0];
+	p_ptr->quest_deliver_y[py_q_idx] = q_ptr->deliver_pos_y[stage][0];
 }
 
 /* Acquire a quest, without checks whether the quest actually allows this at this stage */

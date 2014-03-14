@@ -7637,6 +7637,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
 			if (goal < 0 || goal >= QI_GOALS + QI_OPTIONAL) return 1;
 			if (goal < QI_GOALS) { /* main goal */
+				q_ptr->deliver_pos[stage][goal] = TRUE;;
 				q_ptr->deliver_wpos[stage][goal].wx = (char)wx;
 				q_ptr->deliver_wpos[stage][goal].wy = (char)wy;
 				q_ptr->deliver_wpos[stage][goal].wz = (char)wz;
@@ -7645,6 +7646,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_ptr->deliver_terrain_patch[stage][goal] = (terr != 0);
 			} else { /* optional goal */
 				goal -= QI_GOALS;
+				q_ptr->deliveropt_pos[stage][goal] = TRUE;;
 				q_ptr->deliveropt_wpos[stage][goal].wx = (char)wx;
 				q_ptr->deliveropt_wpos[stage][goal].wy = (char)wy;
 				q_ptr->deliveropt_wpos[stage][goal].wz = (char)wz;

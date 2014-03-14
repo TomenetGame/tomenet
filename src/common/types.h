@@ -2722,11 +2722,11 @@ struct player_type {
 
 	/* Had a quest running when he logged out or something? ->respawn/reactivate quest? todo//unclear yet..
 	   THIS IS NEW STUFF: quest_info. DON'T CONFUSE THIS WITH quest_type, quest_num, quest_id and other older quest code. */
-	//hard-coded stuff: QI_CODENAME_LEN 10, QI_GOALS 10, QI_OPTIONAL 10
+	//hard-coded stuff: QI_CODENAME_LEN 10, QI_GOALS 5, QI_OPTIONAL 5
 	s16b quest_idx[MAX_CONCURRENT_QUESTS];
 	char quest_codename[MAX_CONCURRENT_QUESTS][10 + 1]; /* track up to 5 quests by their codename and roughly the current stage and goals */
 	byte quest_stage[MAX_CONCURRENT_QUESTS]; /* in which stage is a quest? */
-	bool quest_goals[MAX_CONCURRENT_QUESTS][10], quest_goalsopt[MAX_CONCURRENT_QUESTS][10]; /* which (optional) stage goals have we completed so far? */
+	bool quest_goals[MAX_CONCURRENT_QUESTS][5], quest_goalsopt[MAX_CONCURRENT_QUESTS][5]; /* which (optional) stage goals have we completed so far? */
 	/* quest helper info */
 	bool quest_target_loc[MAX_CONCURRENT_QUESTS];
 	struct worldpos quest_target_wpos[MAX_CONCURRENT_QUESTS];
