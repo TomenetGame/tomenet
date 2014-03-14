@@ -50,7 +50,8 @@ void process_quests(void) {
 	for (i = 0; i < max_q_idx; i++) {
 		q_ptr = &q_info[i];
 
-		if (q_ptr->disabled || q_ptr->cooldown--) continue;
+		if (q_ptr->cooldown) q_ptr->cooldown--;
+		if (q_ptr->disabled || q_ptr->cooldown) continue;
 
 		/* check if quest should be active */
 		active = FALSE;
@@ -94,6 +95,9 @@ void quest_activate(int q_idx) {
 
 
 #if QDEBUG > 0
+	for (i = 1;i <= NumPlayers; i++)
+		if (is_admin(Players[i]))
+			msg_format(i, "Quest '%s' (%d, '%s') activated.", q_name + q_ptr->name, q_idx, q_ptr->codename);
 	s_printf("%s QUEST_ACTIVATE: '%s' ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
 #endif
 	q_ptr->active = TRUE;
@@ -359,14 +363,11 @@ void quest_deactivate(int q_idx) {
 		//dealloc_dungeon_level(&wpos);
 		alloc_dungeon_level(&wpos);
 		generate_cave(&wpos, NULL);
+		zcave = getcave(&wpos);
 	}
 	c_ptr = &zcave[q_ptr->current_y][q_ptr->current_x];
 
 	/* unmake quest */
-#if 0 /* done in delete_monster_idx() */
-	m_ptr = &m_list[c_ptr->m_idx];
-	FREE(m_ptr->r_ptr, monster_race);
-#endif
 	delete_monster_idx(c_ptr->m_idx, TRUE);
 	if (q_ptr->static_floor) new_players_on_depth(&wpos, 0, FALSE);
 }
