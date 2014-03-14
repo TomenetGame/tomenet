@@ -5671,6 +5671,11 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
 			everyone_lite_spot(wpos, oldy, oldx);
 		}
+		/* Questor? Bump -> talk :D */
+		else if (m_list[c_ptr->m_idx].questor && !m_list[c_ptr->m_idx].questor_hostile) {
+			disturb(Ind, 1, 0);
+			quest_interact(Ind, m_list[c_ptr->m_idx].quest);
+		}
 		/* Attack */
 		else {
 			/* hack: admins who are running with their scythe won't perform a run-attack - C. Blue

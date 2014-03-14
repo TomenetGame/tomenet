@@ -461,6 +461,8 @@ static void wr_quests() {
 		wr_byte(q_info[i].current_wpos.wz);
 		wr_byte(q_info[i].current_x);
 		wr_byte(q_info[i].current_y);
+
+		wr_s16b(q_info[i].questor_m_idx);
 	}
 }
 

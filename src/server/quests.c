@@ -323,6 +323,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 
 	m_ptr->questor_invincible = q_ptr->questor_invincible; //for now handled by RF7_NO_DEATH
 	m_ptr->questor_hostile = FALSE;
+	q_ptr->questor_m_idx = c_ptr->m_idx;
 
 	update_mon(c_ptr->m_idx, TRUE);
 #if QDEBUG > 1
@@ -385,4 +386,11 @@ void quest_stage(int q_idx, int stage) {
 	/* new stage is active */
 	q_ptr->stage = stage;
 
+}
+
+/* A player interacts with the questor (bumps him if a creature :-p) */
+void quest_interact(int Ind, int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+
+	
 }

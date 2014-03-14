@@ -132,6 +132,7 @@ typedef struct quest_info {
 	/* keep track of actual resulting questor location */
 	struct worldpos current_wpos;
 	int current_x, current_y;
+	s16b questor_m_idx;
 
 	/* eligible time for quest/questor to spawn and be active */
 	bool night, day;			/* Only available at night/day in general? */
