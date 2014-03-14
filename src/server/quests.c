@@ -443,11 +443,13 @@ void quest_stage(int q_idx, int stage) {
 	if (q_ptr->ending_stage && q_ptr->ending_stage == stage) quest_terminate(q_idx);
 
 	/* auto-quest-termination? (actually redundant with ending_stage)
-	   If a stage has no dialogue keywords, or stage goals, the quest will end. */
+	   If a stage has no dialogue keywords, or stage goals, or timed/auto stage change
+	   effects or questor-movement/tele/revert-from-hostile effects, THEN the quest will end. */
+	   //TODO: implement all of that stuff :p
 	j = 0;
 	/* optional goals play no role, obviously */
 	for (i = 0; i < QI_GOALS; i++)
-		if (q_ptr->kill[stage][i] || q_ptr->retrieve[stage][i] || q_ptr->deliver[stage][i]) {
+		if (q_ptr->kill[stage][i] || q_ptr->retrieve[stage][i] || q_ptr->deliver_pos[stage][i]) {
 			j = 1;
 			break;
 		}
@@ -457,7 +459,13 @@ void quest_stage(int q_idx, int stage) {
 			j = 1;
 			break;
 		}
-	/* nothing left to do? */
+	/* check auto/timed stage changes */
+	if (q_ptr->change_stage[stage]) j = 1;
+	if (q_ptr->timed_stage_ingame[stage]) j = 1;
+	if (q_ptr->timed_stage_ingame_abs[stage]) j = 1;
+	if (q_ptr->timed_stage_real[stage]) j = 1;
+
+	/* really nothing left to do? */
 	if (!j) quest_terminate(q_idx);
 
 	/* mh? */

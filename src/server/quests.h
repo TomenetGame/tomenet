@@ -95,6 +95,8 @@
    If a quest stage doesn't have any stage goals, nor any dialogue keywords,
    the quest will terminate after all automatic/timed actions of this stage
    have been done and all eligible rewards have been handed out.
+   ++including: questor movement/teleport/revert-from-hostile and
+   timed and instant stage-change effects.
 
    Items retrieved will be marked as 'quest items' for easy check in case the
    player also has to deliver them somewhere, whether they're the same items.
