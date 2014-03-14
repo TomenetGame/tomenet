@@ -4689,8 +4689,7 @@ bool multiply_monster(int m_idx)
  *
  * Technically should attempt to treat "Beholder"'s as jelly's
  */
-void message_pain(int Ind, int m_idx, int dam)
-{
+void message_pain(int Ind, int m_idx, int dam) {
 	long                    oldhp, newhp, tmp;
 	int                             percentage;
 
@@ -4705,6 +4704,9 @@ void message_pain(int Ind, int m_idx, int dam)
 		uniq = 'D';
 		if (Players[Ind]->warn_unique_credit) Send_beep(Ind);
 	}
+
+	/* hack: no message at all for invincible questors because it looks ugly */
+	if (m_ptr->questor && (m_ptr->questor_invincible || (r_ptr->flags7 & RF7_NO_DEATH))) return;
 
 	/* Get the monster name */
 	monster_desc(Ind, m_name, m_idx, 0);
@@ -4734,7 +4736,7 @@ void message_pain(int Ind, int m_idx, int dam)
 		if (r_ptr->flags1 & RF1_UNIQUE)
 			msg_format(Ind, "\377%c%^s remains unmoving and takes \377e%d \377%cdamage.", uniq, m_name, dam, uniq);
 		else
-			msg_format(Ind, "^s remains unmoving and takes \377g%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s remains unmoving and takes \377g%d \377wdamage.", m_name, dam);
 		return;
 	}
 
