@@ -39,26 +39,31 @@ static void quest_deactivate(int q_idx);
 void process_quests(void) {
 	quest_info *q_ptr;
 	int i;
+	bool night = IS_NIGHT_RAW, day = !night, morning = IS_MORNING, forenoon = IS_FORENOON, noon = IS_NOON;
+	bool afternoon = IS_AFTERNOON, evening = IS_EVENING, midnight = IS_MIDNIGHT, deepnight = IS_DEEPNIGHT;
+	int minute = bst(MINUTE, turn);
 	bool active;
 
 	for (i = 0; i < max_q_idx; i++) {
 		q_ptr = &q_info[i];
 
+		if (q_ptr->disabled) continue;
+
 		/* check if quest should be active */
 		active = FALSE;
-		if (q_ptr->night && IS_NIGHT_RAW) active = TRUE; /* don't include pseudo-night like for Halloween/Newyearseve */
-		if (q_ptr->day && !IS_NIGHT_RAW) active = TRUE;
-		if (q_ptr->morning && IS_MORNING) active = TRUE;
-		if (q_ptr->forenoon && IS_FORENOON) active = TRUE;
-		if (q_ptr->noon && IS_NOON) active = TRUE;
-		if (q_ptr->afternoon && IS_AFTERNOON) active = TRUE;
-		if (q_ptr->evening && IS_EVENING) active = TRUE;
-		if (q_ptr->midnight && IS_MIDNIGHT) active = TRUE;
-		if (q_ptr->deepnight && IS_DEEPNIGHT) active = TRUE;
+		if (q_ptr->night && night) active = TRUE; /* don't include pseudo-night like for Halloween/Newyearseve */
+		if (q_ptr->day && day) active = TRUE;
+		if (q_ptr->morning && morning) active = TRUE;
+		if (q_ptr->forenoon && forenoon) active = TRUE;
+		if (q_ptr->noon && noon) active = TRUE;
+		if (q_ptr->afternoon && afternoon) active = TRUE;
+		if (q_ptr->evening && evening) active = TRUE;
+		if (q_ptr->midnight && midnight) active = TRUE;
+		if (q_ptr->deepnight && deepnight) active = TRUE;
 		if (q_ptr->time_start != -1) {
-			if (bst(MINUTE, turn) >= q_ptr->time_start) {
+			if (minute >= q_ptr->time_start) {
 				if (q_ptr->time_stop == -1 ||
-				    bst(MINUTE, turn) < q_ptr->time_stop)
+				    minute < q_ptr->time_stop)
 					active = TRUE;
 			}
 		}

@@ -94,6 +94,7 @@
 typedef struct quest_info {
 	/* QUEST IS CURRENTLY ACTIVE (aka questor is currently spawned - depends on time (day/night/specific) constraints) */
 	bool active;
+	bool disabled; /* quest has been temporarily disabled, is hence deactivated and cannot be activated until enabled again (eg for when something breaks during quest progression) */
 
 //#define QI_CODENAME_LEN 10
 	char codename[QI_CODENAME_LEN + 1];	/* short, unique, internal name for checking prerequisite quests for follow-up quests */
