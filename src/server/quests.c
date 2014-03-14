@@ -330,7 +330,8 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 	s_printf("QUEST_SPAWNED: Questor at %d,%d,%d - %d,%d.\n", wpos.wx, wpos.wy, wpos.wz, x, y);
 #endif
 
-	/* Start with stage 0 */
+	/* Initialise with starting stage 0 */
+	q_ptr->talk_focus = 0;
 	q_ptr->start_turn = turn;
 	q_ptr->stage = -1;
 	quest_stage(q_idx, 0);
