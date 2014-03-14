@@ -3527,6 +3527,33 @@ void do_slash_cmd(int Ind, char *message)
 			msg_print(Ind, response);
 			return;
 		}
+		else if (prefix(message, "/qdrop")) { /* drop a quest we're on */
+			if (tk != 1) {
+				int qa = 0;
+
+				for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+					if (p_ptr->quest_idx[i] != -1) qa++;
+
+				msg_print(Ind, "");
+				if (!qa) msg_print(Ind, "\377U-- You're currently not pursuing any quests. --");
+				else {
+					if (qa == 1) msg_print(Ind, "\377U-- You're currently pursuing the following quest: --");
+					else msg_print(Ind, "\377U-- You're currently pursuing the following quests: --");
+					for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+						if (p_ptr->quest_idx[i] == -1) continue;
+						msg_format(Ind, "  %s", q_name + q_info[p_ptr->quest_idx[i]].name);
+					}
+					msg_print(Ind, "\377U(To drop a quest, type: \377y/qdrop questnumber\377U)");
+				}
+				return;
+			}
+			msg_format(Ind, "\377UQuests (max_q_idx/MAX_Q_IDX %d/%d):", max_q_idx, MAX_Q_IDX);
+			for (i = 0; i < max_q_idx; i++) {
+				msg_format(Ind, "  %d) '%s' [%s by %s] %s %s %d", i, q_name + q_info[i].name, q_info[i].codename, q_info[i].creator,
+				    q_info[i].active ? "ACT" : "   ", q_info[i].disabled ? "DIS" : "   ", q_info[i].cooldown);
+			}
+			return;
+		}
 
 
 
