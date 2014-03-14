@@ -1322,6 +1322,14 @@ static bool wr_savefile_new(int Ind) {
 			wr_byte(p_ptr->quest_goals[i][j]);
 		for (j = 0; j < QI_OPTIONAL; j++)
 			wr_byte(p_ptr->quest_goalsopt[i][j]);
+
+		/* helper info */
+		wr_byte(p_ptr->quest_target_loc[i]);
+		wr_byte(p_ptr->quest_target_wpos[i].wx);
+		wr_byte(p_ptr->quest_target_wpos[i].wy);
+		wr_byte(p_ptr->quest_target_wpos[i].wz);
+		wr_byte(p_ptr->quest_target_x[i]);
+		wr_byte(p_ptr->quest_target_y[i]);
 	}
 
         wr_byte(p_ptr->spell_project);
