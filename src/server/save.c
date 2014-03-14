@@ -209,8 +209,7 @@ static void wr_item(object_type *o_ptr)
 /*
  * Write a "monster" record
  */
-static void wr_monster_race(monster_race *r_ptr)
-{
+static void wr_monster_race(monster_race *r_ptr) {
 	int i;
 
 	wr_u16b(r_ptr->name);
@@ -231,14 +230,17 @@ static void wr_monster_race(monster_race *r_ptr)
 	wr_u32b(r_ptr->flags4);
 	wr_u32b(r_ptr->flags5);
 	wr_u32b(r_ptr->flags6);
+	wr_u32b(r_ptr->flags7);
+	wr_u32b(r_ptr->flags8);
+	wr_u32b(r_ptr->flags9);
+	wr_u32b(r_ptr->flags0);
 	wr_s16b(r_ptr->level);
 	wr_byte(r_ptr->rarity);
 	wr_byte(r_ptr->d_attr);
 	wr_byte(r_ptr->d_char);
 	wr_byte(r_ptr->x_attr);
 	wr_byte(r_ptr->x_char);
-	for (i = 0; i < 4; i++)
-	{
+	for (i = 0; i < 4; i++) {
 		wr_byte(r_ptr->blow[i].method);
 		wr_byte(r_ptr->blow[i].effect);
 		wr_byte(r_ptr->blow[i].d_dice);

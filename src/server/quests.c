@@ -221,7 +221,8 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 	m_ptr->questor = TRUE;
 	m_ptr->quest = q_idx;
 	m_ptr->r_idx = q_ptr->questor_ridx;
-	//m_ptr->special = TRUE;
+	/* m_ptr->special = TRUE; --nope, this is unfortunately too much golem'ized.
+	   Need code cleanup!! Maybe rename it to m_ptr->golem and add a new m_ptr->special. */
 	r_ptr->extra = 0;
 	m_ptr->mind = 0;
 	m_ptr->owner = 0;
@@ -254,6 +255,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 	r_ptr->mexp = rbase_ptr->mexp;
 	r_ptr->hdice = rbase_ptr->hdice;
 	r_ptr->hside = rbase_ptr->hside;
+
 	m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
 	m_ptr->hp = m_ptr->maxhp;
 	m_ptr->org_maxhp = m_ptr->maxhp; /* CON */

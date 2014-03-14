@@ -700,8 +700,7 @@ static void rd_item(object_type *o_ptr)
 /*
  * Read a "monster" record
  */
-static void rd_monster_race(monster_race *r_ptr)
-{
+static void rd_monster_race(monster_race *r_ptr) {
 	byte tmpbyte;
 	int i;
 
@@ -725,14 +724,19 @@ static void rd_monster_race(monster_race *r_ptr)
 	rd_u32b(&r_ptr->flags4);
 	rd_u32b(&r_ptr->flags5);
 	rd_u32b(&r_ptr->flags6);
+	if (!s_older_than(4, 5, 19)) {
+		rd_u32b(&r_ptr->flags7);
+		rd_u32b(&r_ptr->flags8);
+		rd_u32b(&r_ptr->flags9);
+		rd_u32b(&r_ptr->flags0);
+	}
 	rd_s16b(&r_ptr->level);
 	rd_byte(&r_ptr->rarity);
 	rd_byte(&r_ptr->d_attr);
 	rd_byte((byte *)&r_ptr->d_char);
 	rd_byte(&r_ptr->x_attr);
 	rd_byte((byte *)&r_ptr->x_char);
-	for (i = 0; i < 4; i++)
-	{
+	for (i = 0; i < 4; i++) {
 		rd_byte(&r_ptr->blow[i].method);
 		rd_byte(&r_ptr->blow[i].effect);
 		rd_byte(&r_ptr->blow[i].d_dice);
