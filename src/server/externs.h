@@ -2143,7 +2143,7 @@ extern void quest_interact(int Ind, int q_idx);
 extern void quest_reply(int Ind, int q_idx, char *str);
 extern void quest_dialogue(int Ind, int q_idx);
 extern void quest_imprint_stage(int Ind, int q_idx, int py_q_idx);
-extern void quest_goals(int q_idx);
+extern bool quest_goal_check(int q_idx, bool interacting);
 
 
 

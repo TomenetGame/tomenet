@@ -467,8 +467,6 @@ void quest_stage(int q_idx, int stage) {
 
 	/* really nothing left to do? */
 	if (!j) quest_terminate(q_idx);
-
-	/* mh? */
 }
 
 /* Store some information of the current stage in the p_ptr array,
@@ -564,11 +562,13 @@ void quest_interact(int Ind, int q_idx) {
 	}
 
 
+	/* check for quest goals that have been completed and just required delivery back here */
+	if (quest_goal_check(q_idx, TRUE)) return;
+
+
 	/* questor interaction qutomatically invokes the quest dialogue, if any */
 	q_ptr->talk_focus = Ind; /* only this player can actually respond with keywords */
 	quest_dialogue(Ind, q_idx);
-
-	/* mh? */
 }
 
 /* Talk vs keyword dialogue between questor and player.
@@ -623,11 +623,18 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	return;
 }
 
-/* check if quest goals of the current stage have been completed and accordingly
-   call quest_reward() and/or quest_stage() to advance. */
-void quest_goals(int q_idx) {
+/* Check if quest goals of the current stage have been completed and accordingly
+   call quest_reward() and/or quest_stage() to advance.
+   Goals can only be completed by players who are pursuing that quest.
+   'interacting' is TRUE if a player is interacting with the questor. */
+bool quest_goal_check(int q_idx, bool interacting) {
 //	quest_info *q_ptr = &q_info[q_idx];
 //	player_type *p_ptr = Players[Ind];
 //	int i, stage = q_ptr->stage;
+	return FALSE; /* stage not yet completed */
 
+
+	//quest_reward(q_idx);
+	//quest_stage(q_idx, );
+	return TRUE; /* stage has been completed and changed to the next stage */
 }
