@@ -7728,7 +7728,7 @@ void resurrect_player(int Ind, int loss_reduction) {
 	}
 }
 
-void check_quests(){
+void check_kquests(){
 	int i, j;
 	struct player_type *q_ptr;
 	for (i = 0; i < 20; i++) {

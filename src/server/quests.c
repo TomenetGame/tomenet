@@ -327,6 +327,8 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 #endif
 
 	/* Start with stage 0 */
+	q_ptr->start_turn = turn;
+	q_ptr->stage = -1;
 	quest_stage(q_idx, 0);
 }
 
@@ -372,4 +374,12 @@ static void quest_deactivate(int q_idx) {
 
 /* Advance quest to a different stage (or start it out if stage is 0) */
 static void quest_stage(int q_idx, int stage) {
+	quest_info *q_ptr = &q_info[q_idx];
+
+	/* dynamic info */
+	//int stage_prev = q_ptr->stage;
+
+	/* new stage is active */
+	q_ptr->stage = stage;
+
 }

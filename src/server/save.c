@@ -433,7 +433,7 @@ static void wr_notes() {
 	//omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
-static void wr_quests(){
+static void wr_kquests() {
 	int i;
 	wr_s16b(questid);
 	for (i = 0; i < 20; i++) {
@@ -446,7 +446,19 @@ static void wr_quests(){
 	}
 }
 
-static void wr_guilds(){
+static void wr_quests() {
+	int i;
+	wr_s16b(max_q_idx);
+	for (i = 0; i < max_q_idx; i++) {
+		wr_byte(q_info[i].active);
+		wr_byte(q_info[i].disabled);
+		wr_s16b(q_info[i].cooldown);
+		wr_s16b(q_info[i].stage);
+		wr_s32b(q_info[i].start_turn);
+	}
+}
+
+static void wr_guilds() {
 	int i, j;
 	u16b tmp16u;
 
@@ -468,8 +480,7 @@ static void wr_guilds(){
 	}
 }
 
-static void wr_party(party_type *party_ptr)
-{
+static void wr_party(party_type *party_ptr) {
 	/* Save the party name */
 	wr_string(party_ptr->name);
 
@@ -2009,6 +2020,7 @@ static bool wr_server_savefile()
 	wr_u32b(seed_town);
 
 	wr_guilds();
+	wr_kquests();
 	wr_quests();
 
 	wr_u32b(account_id);

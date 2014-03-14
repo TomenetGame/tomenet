@@ -569,9 +569,12 @@
 
 
 /*
- * Hack -- Maximum number of quests
+ * Hack -- Maximum number of kill quests
  */
 #define MAX_QK_IDX	4
+
+/* Maximum number of concurrent quests (quest_info type) */
+#define MAX_CONCURRENT_QUESTS 5
 
 /*
  * Maximum number of high scores in the high score file

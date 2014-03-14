@@ -7522,10 +7522,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'U' for quest duration */
 		if (buf[0] == 'U') {
-			int per_py, stat, quit;
+			int cd, per_py, stat, quit;
 			s = buf + 2;
 			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
-			    &q_ptr->max_duration, &q_ptr->cooldown, &per_py, &stat, &quit)) return (1);
+			    &q_ptr->max_duration, &cd, &per_py, &stat, &quit)) return (1);
+			q_ptr->cooldown = (s16b) cd;
 			q_ptr->per_player = (per_py != 0);
 			q_ptr->static_floor = (stat != 0);
 			q_ptr->quit_floor = (quit != 0);

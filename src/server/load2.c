@@ -1016,7 +1016,7 @@ static void rd_notes() {
         //omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
-static void rd_quests(){
+static void rd_kquests() {
 	int i;
 	rd_s16b(&questid);
 	for (i = 0; i < 20; i++) {
@@ -1026,6 +1026,24 @@ static void rd_quests(){
 		rd_u16b(&quests[i].flags);
 		rd_s32b(&quests[i].creator);
 		rd_s32b(&quests[i].turn);
+	}
+}
+
+static void rd_quests() {
+	int i, dummysize = sizeof(byte) * 2 + sizeof(s16b) * 2 + sizeof(s32b);
+	s16b max;
+	rd_s16b(&max);
+	if (max >= max_q_idx) s_printf("Warning: Read more quest info than available quests.\n");
+	for (i = 0; i < max; i++) {
+		if (max >= max_q_idx) {
+			strip_bytes(dummysize);
+			continue;
+		}
+		rd_byte((byte *) &q_info[i].active);
+		rd_byte((byte *) &q_info[i].disabled);
+		rd_s16b(&q_info[i].cooldown);
+		rd_s16b(&q_info[i].stage);
+		rd_s32b(&q_info[i].start_turn);
 	}
 }
 
@@ -1080,8 +1098,7 @@ static void rd_guilds() {
  I hope......
  -APD-
  */
-static void rd_party(int n)
-{
+static void rd_party(int n) {
 	party_type *party_ptr = &parties[n];
 
 	/* Party name */
@@ -2915,7 +2932,8 @@ errr rd_server_savefile()
 
 	rd_guilds();
 
-	rd_quests();
+	rd_kquests();
+	if (!s_older_than(4, 5, 19)) rd_quests();
 
 	rd_u32b(&account_id);
 	rd_s32b(&player_id);

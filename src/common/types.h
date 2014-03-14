@@ -2723,8 +2723,8 @@ struct player_type {
 	/* Had a quest running when he logged out or something? ->respawn/reactivate quest? todo//unclear yet..
 	   THIS IS NEW STUFF: quest_info. DON'T CONFUSE THIS WITH quest_type, quest_num, quest_id and other older quest code. */
 	//hard-coded stuff: QI_CODENAME_LEN 10, QI_GOALS 10, QI_OPTIONAL 10
-	char questing[5][10]; /* track up to 5 quests by their codename and roughly the current stage and goals */
-	byte quest_stage[5]; /* in which stage is a quest? */
+	char questing[MAX_CONCURRENT_QUESTS][10]; /* track up to 5 quests by their codename and roughly the current stage and goals */
+	byte quest_stage[MAX_CONCURRENT_QUESTS]; /* in which stage is a quest? */
 	bool quest_goals[10], quest_goalsopt[10]; /* which (optional) stage goals have we completed so far? */
 
 #ifdef ENABLE_MAIA
