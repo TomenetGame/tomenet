@@ -3535,7 +3535,7 @@ void do_slash_cmd(int Ind, char *message)
 					if (p_ptr->quest_idx[i] != -1) qa++;
 
 				msg_print(Ind, "");
-				if (!qa) msg_print(Ind, "\377U-- You're currently not pursuing any quests. --");
+				if (!qa) msg_print(Ind, "\377U-- You're not currently pursuing any quests. --");
 				else {
 					if (qa == 1) msg_print(Ind, "\377U-- You're currently pursuing the following quest: --");
 					else msg_print(Ind, "\377U-- You're currently pursuing the following quests: --");
@@ -3543,11 +3543,11 @@ void do_slash_cmd(int Ind, char *message)
 						if (p_ptr->quest_idx[i] == -1) continue;
 						msg_format(Ind, "  %d) %s", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name);
 					}
-					msg_print(Ind, "\377U(To drop a quest, type: \377y/qdrop questnumber\377U or '*' to drop all.)");
+					msg_print(Ind, "\377U(To drop a quest, type: \377y/qdrop questnumber\377U or \377y*\377U to drop all.)");
 				}
 				return;
 			}
-			if (token[0][0] == '*') {
+			if (token[1][0] == '*') {
 				msg_format(Ind, "You are no longer pursuing any quest!");
 				for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 					p_ptr->quest_idx[i] = -1;
