@@ -7525,13 +7525,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
-			int invinc;
 			s = buf + 2;
-			if (11 != sscanf(s, "%d:%d:%c:%c:%d:%d:%d:%d:%d:%d:%[^:]",
+			if (10 != sscanf(s, "%d:%d:%c:%c:%d:%d:%d:%d:%d:%[^:]",
 			    &q_ptr->questor, &q_ptr->questor_ridx, &q_ptr->questor_rchar, &q_ptr->questor_rattr,
 			    &q_ptr->questor_rlevmin, &q_ptr->questor_rlevmax,
 			    &q_ptr->questor_sval, &q_ptr->questor_ktval, &q_ptr->questor_ksval,
-			    &invinc, q_ptr->questor_name)) return (1);
+			    q_ptr->questor_name)) return (1);
 			q_ptr->questor_invincible = (invinc != 0);
 			continue;
 		}
@@ -7551,12 +7550,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'A' for quest (auto-)acceptance */
 		if (buf[0] == 'A') {
-			int aalos, aaint;
+			int aalos, aaint, talk, despawn, invinc;
 			s = buf + 2;
-			if (2 != sscanf(s, "%d:%d",
-			    &aalos, &aaint)) return (1);
+			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
+			    &aalos, &aaint, &talk, &despawn, &invinc)) return (1);
 			q_ptr->accept_los = (aalos != 0);
 			q_ptr->accept_interact = (aaint != 0);
+			q_ptr->questor_talkable = (talk != 0);
+			q_ptr->questor_despawned = (despawn != 0);
+			q_ptr->questor_invincible = (invinc != 0);
 			continue;
 		}
 
@@ -7610,8 +7612,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
-			q_ptr->keywords[stage][lc_keywords[stage]] = c;
-			q_ptr->keywords_stage[stage][lc_keywords[stage]] = next;
+			q_ptr->keyword[stage][lc_keywords[stage]] = c;
+			q_ptr->keyword_stage[stage][lc_keywords[stage]] = next;
 
 			lc_keywords[stage]++;
 			continue;

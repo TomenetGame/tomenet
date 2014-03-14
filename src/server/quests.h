@@ -38,9 +38,10 @@
 
 
 #define QI_CODENAME_LEN		10	/* short, internal quest code name */
+#define QI_QUESTORS		5	/* amount of questor(NPC)s, there can be more than one! */
 #define QI_MAX_STAGES		50	/* a quest can have these # of different stages */
 #define QI_TALK_LINES		15	/* amount of text lines per talk dialogue */
-#define QI_MAX_KEYWORDS		10	/* for dialogue with the questor */
+#define QI_MAX_KEYWORDS		20	/* for dialogue with the questor */
 #define QI_MAX_STAGE_REWARDS 	10	/* max # of rewards handed out per completed stage */
 #define QI_GOALS		5	/* main goals to complete a stage */
 #define QI_OPTIONAL		5	/* optional goals in a stage */
@@ -153,36 +154,9 @@ typedef struct quest_info {
 	cptr t_pref;				/* filename of map to load, or empty for none */
 
 
-	/* type of questor */
-	int questor;				/* QI_QUESTOR_xxx */
-
-	int questor_ridx;			/* QI_QUESTOR_NPC; 0 for any */
-	char questor_rchar;			/*  0 for any */
-	byte questor_rattr;			/*  0 for any */
-	int questor_rlevmin, questor_rlevmax;	/*  0 for any */
-
-	int questor_sval;			/* QI_QUESTOR_PARCHMENT */
-
-	int questor_ktval, questor_ksval;	/* QI_QUESTOR_ITEM_xxx. No further stats/enchantments are displayed! */
-
-	bool questor_invincible;		/* Is the questor invincible (if monster)/unpickable by monsters (if item)? */
-	char questor_name[MAX_CHARS];		/* optional pseudo-unique name that overrides the normal name */
-
-	/* ..if killable ie not invincible: */
-	bool questor_drops_regular;		/* Drops regular loot (of his ridx type) instead of nothing? */
-	bool questor_drops_specific;		/* Drops a specific item (like DROP_CHOSEN) */
-	int questor_drops_tval;		/* hand over certain rewards to the player */
-	int questor_drops_sval;
-	int questor_drops_pval, questor_drops_bpval;
-	int questor_drops_name1, questor_drops_name2, questor_drops_name2b;
-	bool questor_drops_good, questor_drops_great;
-	bool questor_drops_reward;	/*  use fitting-reward algo (from highlander etc)? */
-	int questor_drops_gold;
-	int questor_exp;
-
-
     /* QUEST DURATION */
 	/* quest duration, after it was accepted, until it expires */
+	int repeatable;				/* player may repeat this quest n times (0 = can only do this quest once) */
 	s16b cooldown;				/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
 	int max_duration;			/* in seconds, 0 for never */
 	bool per_player;			/* this quest isn't global but can be done by each player individually.
@@ -200,9 +174,8 @@ typedef struct quest_info {
 	stage action #2 is, when a player accepts interacted with the questor. */
 
 	/* quest initialisation and meta actions */
-	bool accept_los, accept_interact;	/* player gets the quest just be being in LoS / interacting once with the questor (bump/read the parchment/pickup the item) */
+	bool accept_los[QI_QUESTORS], accept_interact[QI_QUESTORS];	/* player gets the quest just be being in LoS / interacting once with the questor (bump/read the parchment/pickup the item) */
 	bool accepts[QI_MAX_STAGES];		/* player can acquire the quest during a stage */
-	int repeatable;				/* player may repeat this quest n times (0 = can only do this quest once) */
 
 	int activate_quest[QI_MAX_STAGES];	/* spawn a certain new quest of this index (and thereby another questor) (if not already existing) */
 	bool auto_accept[QI_MAX_STAGES];	/* player will automatically acquire the newly spawned quest (from activate_quest[]) */
@@ -212,48 +185,77 @@ typedef struct quest_info {
 	int timed_stage_ingame[QI_MAX_STAGES];		/* automatically change to a different stage after a certain amount of in-game minutes passed */
 	int timed_stage_ingame_abs[QI_MAX_STAGES];	/* automatically change to a different stage after a certain in-game time is reached */
 	int timed_stage_real[QI_MAX_STAGES];		/* automatically change to a different stage after a certain amount of real seconds passed */
+	bool quiet_change_stage[QI_MAX_STAGES];		/* for the above auto-changes: don't replay the stage's dialogue */
 
+
+	/* type of questor */
+	int questor[QI_QUESTORS];		/* QI_QUESTOR_xxx */
+
+	int questor_ridx[QI_QUESTORS];		/* QI_QUESTOR_NPC; 0 for any */
+	char questor_rchar[QI_QUESTORS];	/*  0 for any */
+	byte questor_rattr[QI_QUESTORS];	/*  0 for any */
+	int questor_rlevmin[QI_QUESTORS], questor_rlevmax[QI_QUESTORS];	/*  0 for any */
+
+	int questor_sval[QI_QUESTORS];		/* QI_QUESTOR_PARCHMENT */
+
+	int questor_ktval[QI_QUESTORS], questor_ksval[QI_QUESTORS];	/* QI_QUESTOR_ITEM_xxx. No further stats/enchantments are displayed! */
+
+	bool questor_invincible[QI_QUESTORS];	/* Is the questor invincible (if monster)/unpickable by monsters (if item)? */
+	char questor_name[QI_QUESTORS][MAX_CHARS];	/* optional pseudo-unique name that overrides the normal name */
+
+	/* ..if killable ie not invincible: */
+	bool questor_drops_regular[QI_QUESTORS];		/* Drops regular loot (of his ridx type) instead of nothing? */
+	bool questor_drops_specific[QI_QUESTORS];		/* Drops a specific item (like DROP_CHOSEN) */
+	int questor_drops_tval[QI_QUESTORS];		/* hand over certain rewards to the player */
+	int questor_drops_sval[QI_QUESTORS];
+	int questor_drops_pval[QI_QUESTORS], questor_drops_bpval[QI_QUESTORS];
+	int questor_drops_name1[QI_QUESTORS], questor_drops_name2, questor_drops_name2b[QI_QUESTORS];
+	bool questor_drops_good[QI_QUESTORS], questor_drops_great[QI_QUESTORS];
+	bool questor_drops_reward[QI_QUESTORS];	/*  use fitting-reward algo (from highlander etc)? */
+	int questor_drops_gold[QI_QUESTORS];
+	int questor_exp[QI_QUESTORS];
 
 	/* special questor behaviour during each stage */
-	bool questor_invincible_new[QI_MAX_STAGES];	/* Is the questor invincible (if monster)/unpickable by monsters (if item) during a particular stage? */
-	bool questor_death_fail[QI_MAX_STAGES];		/* If the questor dies, the quest state fails? (->reset stage goals/positions as if we just entered it, if that is possible? hm) */
-	bool questor_death_fail_all[QI_MAX_STAGES];	/* If the questor dies, the quest fails completely? */
-	cptr questor_name_new[QI_MAX_STAGES];		/* questor changes optional pseudo-unique name during this stage? */
-	int questor_ridx_new[QI_MAX_STAGES]; 		/* questor changes to this base monster type */
-	char questor_rchar_new[QI_MAX_STAGES];
-	byte questor_rattr_new[QI_MAX_STAGES];
-	int questor_rlev_new[QI_MAX_STAGES];
+	bool questor_talkable[QI_QUESTORS][QI_MAX_STAGES];		/* questor accepts dialogue? (by bumping usually) */
+	bool questor_despawned[QI_QUESTORS][QI_MAX_STAGES];		/* questor vanishes during a quest stage? */
 
-	bool questor_talkable[QI_MAX_STAGES];		/* questor accepts dialogue? (by bumping usually) */
-	bool questor_despawned[QI_MAX_STAGES];		/* questor vanishes during a quest stage? */
+	bool questor_invincible_new[QI_QUESTORS][QI_MAX_STAGES];	/* Is the questor invincible (if monster)/unpickable by monsters (if item) during a particular stage? */
+	int questor_death_fail[QI_QUESTORS][QI_MAX_STAGES];		/* If the questor dies, the quest goes to stage n? (->reset old stage goals/positions as if we just entered it, if that is possible? hm) */
+	bool questor_death_fail_all[QI_QUESTORS][QI_MAX_STAGES];	/* If the questor dies, the quest fails completely? */
+	cptr questor_name_new[QI_QUESTORS][QI_MAX_STAGES];		/* questor changes optional pseudo-unique name during this stage? */
+	int questor_ridx_new[QI_QUESTORS][QI_MAX_STAGES]; 		/* questor changes to this base monster type */
+	char questor_rchar_new[QI_QUESTORS][QI_MAX_STAGES];
+	byte questor_rattr_new[QI_QUESTORS][QI_MAX_STAGES];
+	int questor_rlev_new[QI_QUESTORS][QI_MAX_STAGES];
 
-	int questor_walk_speed[QI_MAX_STAGES];		/* questor will actually move around during this stage? */
-	int questor_walk_destx[QI_MAX_STAGES], questor_walk_desty[QI_MAX_STAGES]; /* target waypoint for questor to move to */
-	int questor_walk_stage[QI_MAX_STAGES];		/* stage will change when questor arrives at destination */
+	int questor_walk_speed[QI_QUESTORS][QI_MAX_STAGES];		/* questor will actually move around during this stage? */
+	int questor_walk_destx[QI_QUESTORS][QI_MAX_STAGES], questor_walk_desty[QI_QUESTORS][QI_MAX_STAGES]; /* target waypoint for questor to move to */
+	int questor_walk_stage[QI_QUESTORS][QI_MAX_STAGES];		/* stage will change when questor arrives at destination */
 
-	struct worldpos teleport_questor_wpos[QI_MAX_STAGES];	/* teleport questor to a new position */
-	int teleport_questor_x[QI_MAX_STAGES], teleport_questor_y[QI_MAX_STAGES];
-	struct worldpos teleport_wpos[QI_MAX_STAGES];		/* teleport participating player to a new position */
-	int teleport_player_x[QI_MAX_STAGES], teleport_player_y[QI_MAX_STAGES];
+	struct worldpos teleport_questor_wpos[QI_QUESTORS][QI_MAX_STAGES];	/* teleport questor to a new position */
+	int teleport_questor_x[QI_QUESTORS][QI_MAX_STAGES], teleport_questor_y[QI_QUESTORS][QI_MAX_STAGES];
+	struct worldpos teleport_wpos[QI_QUESTORS][QI_MAX_STAGES];	/* teleport participating player to a new position */
+	int teleport_player_x[QI_QUESTORS][QI_MAX_STAGES], teleport_player_y[QI_QUESTORS][QI_MAX_STAGES];
 
-	int questor_hostile[QI_MAX_STAGES];		/* questor turns into a normal aggressor, and stage is changed */
-	int questor_hostile_revert_hp[QI_MAX_STAGES];	/* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
-	int questor_hostile_revert_timed_ingame[QI_MAX_STAGES]; /* ..after ingame time (min).. */
-	int questor_hostile_revert_timed_ingame_abs[QI_MAX_STAGES]; /* ..at ingame time.. */
-	int questor_hostile_revert_timed_real[QI_MAX_STAGES]; /* ..after real time (s).. */
+	int questor_hostile[QI_QUESTORS][QI_MAX_STAGES];		/* questor turns into a normal aggressor, and stage is changed */
+	int questor_hostile_revert_hp[QI_QUESTORS][QI_MAX_STAGES];	/* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
+	int questor_hostile_revert_timed_ingame[QI_QUESTORS][QI_MAX_STAGES]; /* ..after ingame time (min).. */
+	int questor_hostile_revert_timed_ingame_abs[QI_QUESTORS][QI_MAX_STAGES]; /* ..at ingame time.. */
+	int questor_hostile_revert_timed_real[QI_QUESTORS][QI_MAX_STAGES]; /* ..after real time (s).. */
 
 
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
-	int talk_focus;						/* questor is focussed on this player and won't give others a chance to reply with keywords */
-	cptr talk[QI_MAX_STAGES][QI_TALK_LINES];		/* n conversations a 10 lines a 79 characters */
-	cptr keywords[QI_MAX_STAGES][QI_MAX_KEYWORDS];		/* each convo may allow the player to reply with up to m keywords a 30 chars */
-	int keywords_stage[QI_MAX_STAGES][QI_MAX_KEYWORDS];	/*  ..which will bring the player to a different quest stage */
-	char yn[QI_MAX_STAGES];					/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
-	int y_stage[QI_MAX_STAGES], n_stage[QI_MAX_STAGES];	/*  ..which will bring the player to a different quest stage */
+	int talk_focus[QI_QUESTORS];					/* questor is focussed on this player and won't give others a chance to reply with keywords */
+	cptr talk[QI_QUESTORS][QI_MAX_STAGES][QI_TALK_LINES];		/* n conversations a 10 lines a 79 characters */
+	cptr keyword[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* each convo may allow the player to reply with up to m keywords a 30 chars */
+	int keyword_stage[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];/*  ..which will bring the player to a different quest stage */
+	cptr keyword_reply[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS][QI_TALK_LINES];/* give a reply to the keyword */
+	char yn[QI_QUESTORS][QI_MAX_STAGES];				/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
+	int y_stage[QI_QUESTORS][QI_MAX_STAGES], n_stage[QI_QUESTORS][QI_MAX_STAGES];	/*  ..which will bring the player to a different quest stage */
 
-	cptr narration[QI_MAX_STAGES][10];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
+	cptr narration[QI_MAX_STAGES][QI_TALK_LINES];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
 
 
 	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */

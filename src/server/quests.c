@@ -218,6 +218,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 	rbase_ptr = &r_info[q_ptr->questor_ridx];
 
 	m_ptr->questor = TRUE;
+	m_ptr->questor_idx = 0; /* 1st */
 	m_ptr->quest = q_idx;
 	m_ptr->r_idx = q_ptr->questor_ridx;
 	/* m_ptr->special = TRUE; --nope, this is unfortunately too much golem'ized.
@@ -334,7 +335,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 	q_ptr->talk_focus = 0;
 	q_ptr->start_turn = turn;
 	q_ptr->stage = -1;
-	quest_stage(q_idx, 0);
+	quest_stage(q_idx, 0, FALSE);
 }
 
 /* Despawn questor, unstatic sector/floor, etc. */
@@ -408,9 +409,10 @@ static void quest_rewards(q_idx) {
 }
 
 /* Advance quest to a different stage (or start it out if stage is 0) */
-void quest_stage(int q_idx, int stage) {
+void quest_stage(int q_idx, int stage, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, j;
+	bool anything = FALSE;
 
 	/* dynamic info */
 	//int stage_prev = q_ptr->stage;
@@ -431,7 +433,7 @@ void quest_stage(int q_idx, int stage) {
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
 		quest_imprint_stage(i, q_idx, j);
-		quest_dialogue(i, q_idx);
+		if (!quiet) quest_dialogue(i, q_idx);
 	}
 
 
@@ -446,27 +448,31 @@ void quest_stage(int q_idx, int stage) {
 	   If a stage has no dialogue keywords, or stage goals, or timed/auto stage change
 	   effects or questor-movement/tele/revert-from-hostile effects, THEN the quest will end. */
 	   //TODO: implement all of that stuff :p
-	j = 0;
 	/* optional goals play no role, obviously */
 	for (i = 0; i < QI_GOALS; i++)
 		if (q_ptr->kill[stage][i] || q_ptr->retrieve[stage][i] || q_ptr->deliver_pos[stage][i]) {
-			j = 1;
+			anything = TRUE;
 			break;
 		}
 	/* now check remaining dialogue options (keywords) */
-	for (i = 0; i < QI_MAX_KEYWORDS; i++)
-		if (q_ptr->keywords[stage][i]) {
-			j = 1;
-			break;
+	for (j = 0; j < QI_QUESTORS; j++) {
+		for (i = 0; i < QI_MAX_KEYWORDS; i++)
+			if (q_ptr->keyword[j][stage][i] &&
+			    /* and it's not just a keyword-reply without a stage change? */
+			    q_ptr->keyword_stage[j][stage][i] != -1) {
+				anything = TRUE;
+				break;
+			}
 		}
+	}
 	/* check auto/timed stage changes */
-	if (q_ptr->change_stage[stage]) j = 1;
-	if (q_ptr->timed_stage_ingame[stage]) j = 1;
-	if (q_ptr->timed_stage_ingame_abs[stage]) j = 1;
-	if (q_ptr->timed_stage_real[stage]) j = 1;
+	if (q_ptr->change_stage[stage]) anything = TRUE;
+	if (q_ptr->timed_stage_ingame[stage]) anything = TRUE;
+	if (q_ptr->timed_stage_ingame_abs[stage]) anything = TRUE;
+	if (q_ptr->timed_stage_real[stage]) anything = TRUE;
 
 	/* really nothing left to do? */
-	if (!j) quest_terminate(q_idx);
+	if (!anything) quest_terminate(q_idx);
 }
 
 /* Store some information of the current stage in the p_ptr array,
@@ -539,14 +545,16 @@ bool quest_acquire(int Ind, int q_idx, bool quiet) {
 }
 
 /* A player interacts with the questor (bumps him if a creature :-p) */
-void quest_interact(int Ind, int q_idx) {
+void quest_interact(int Ind, int q_idx, int questor_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, stage = q_ptr->stage;
 
+	/* cannot interact with the questor during this stage? */
+	if (!q_ptr->questor_talkable[questor_idx]) return;
+
 
 	/* questor interaction may automatically acquire the quest */
-
 	/* has the player not yet acquired this quest? */
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
@@ -554,7 +562,7 @@ void quest_interact(int Ind, int q_idx) {
 	   Otherwise, the questor will remain silent for him. */
 	if (i == MAX_CONCURRENT_QUESTS) {
 		/* do we accept players by questor interaction at all? */
-		if (!q_ptr->accept_interact) return;
+		if (!q_ptr->accept_interact[questor_idx]) return;
 		/* do we accept players to acquire this quest in the current quest stage? */
 		if (!q_ptr->accepts[stage]) return;
 
@@ -568,23 +576,23 @@ void quest_interact(int Ind, int q_idx) {
 
 	/* questor interaction qutomatically invokes the quest dialogue, if any */
 	q_ptr->talk_focus = Ind; /* only this player can actually respond with keywords */
-	quest_dialogue(Ind, q_idx);
+	quest_dialogue(Ind, q_idx, questor_idx);
 }
 
 /* Talk vs keyword dialogue between questor and player.
    This is initiated either by bumping into the questor or by entering a new
    stage while in the area of the questor.
    Note that if the questor is focussed, only that player may respond with keywords. */
-void quest_dialogue(int Ind, int q_idx) {
+void quest_dialogue(int Ind, int q_idx, int questor_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, stage = q_ptr->stage;
 
-	if (q_ptr->talk[stage][0]) {
+	if (q_ptr->talk[questor_idx][stage][0]) {
 		msg_print(Ind, "\374 ");
-		msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name);
+		msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
 		for (i = 0; i < QI_TALK_LINES; i++) {
-			if (!q_ptr->talk[stage][i]) break;
-			msg_format(Ind, "\374\377U%s", q_ptr->talk[stage][i]);
+			if (!q_ptr->talk[questor_idx][stage][i]) break;
+			msg_format(Ind, "\374\377U%s", q_ptr->talk[questor_idx][stage][i]);
 		}
 		msg_print(Ind, "\374 ");
 	}
@@ -592,15 +600,16 @@ void quest_dialogue(int Ind, int q_idx) {
 	/* If there are any keywords in this stage, prompt the player for a reply.
 	   If the questor is focussed on one player, only he can give a reply,
 	   otherwise the first player to reply can advance the stage. */
-	if (q_ptr->talk_focus && q_ptr->talk_focus != Ind) return;
-	if (q_ptr->keywords[stage][0])
+	if (q_ptr->talk_focus[questor_idx] && q_ptr->talk_focus[questor_idx] != Ind) return;
+	p_ptr->interact_questor_idx = questor_idx;
+	if (q_ptr->keyword[questor_idx][stage][0])
 		Send_request_str(Ind, RID_QUEST + q_idx, "Your reply> ", "");
 }
 
 /* Player replied in a questor dialogue by entering a keyword */
 void quest_reply(int Ind, int q_idx, char *str) {
 	quest_info *q_ptr = &q_info[q_idx];
-	int i, stage = q_ptr->stage;
+	int i, stage = q_ptr->stage, questor_idx = p_ptr->interact_questor_idx;
 	char *c;
 
 	if (!str[0] || str[0] == '\e') return; /* player hit the ESC key.. */
@@ -614,9 +623,22 @@ void quest_reply(int Ind, int q_idx, char *str) {
 
 	/* scan keywords for match */
 	for (i = 0; i < QI_MAX_KEYWORDS; i++) {
-		if (strcmp(q_ptr->keywords[stage][i], str)) continue;
+		if (strcmp(q_ptr->keyword[questor_idx][stage][i], str)) continue;
 
-		quest_stage(q_idx, q_ptr->keywords_stage[stage][i]);
+		/* reply? */
+		if (q_ptr->keyword_reply[questor_idx][stage][i][0]) {
+			msg_print(Ind, "\374 ");
+			msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
+			for (j = 0; j < QI_TALK_LINES; j++) {
+				if (!q_ptr->keyword_reply[questor_idx][stage][i][j]) break;
+				msg_format(Ind, "\374\377U%s", q_ptr->keyword_reply[questor_idx][stage][i][j]);
+			}
+			msg_print(Ind, "\374 ");
+		}
+
+		/* stage change? */
+		if (q_ptr->keyword_stage[questor_idx][stage][i] != -1)
+			quest_stage(q_idx, q_ptr->keyword_stage[questor_idx][stage][i], FALSE);
 		return;
 	}
 	/* it was nice small-talking to you, dude */
@@ -635,6 +657,6 @@ bool quest_goal_check(int q_idx, bool interacting) {
 
 
 	//quest_reward(q_idx);
-	//quest_stage(q_idx, );
+	//quest_stage(q_idx, , FALSE);
 	return TRUE; /* stage has been completed and changed to the next stage */
 }

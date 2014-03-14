@@ -965,7 +965,7 @@ struct monster_type {
 
     /* for new quest_info */
     bool questor, questor_invincible, questor_hostile; /* further quest_info flags are referred to when required, no need to copy all of them here */
-    s16b quest;
+    s16b quest, questor_idx;
 };
 
 typedef struct monster_ego monster_ego;
@@ -2723,6 +2723,7 @@ struct player_type {
 	/* Had a quest running when he logged out or something? ->respawn/reactivate quest? todo//unclear yet..
 	   THIS IS NEW STUFF: quest_info. DON'T CONFUSE THIS WITH quest_type, quest_num, quest_id and other older quest code. */
 	//hard-coded stuff: QI_CODENAME_LEN 10, QI_GOALS 5, QI_OPTIONAL 5
+	int interact_questor_idx; /* id in QI_QUESTORS, which questor we just interacted with (bumped into) */
 	s16b quest_idx[MAX_CONCURRENT_QUESTS];
 	char quest_codename[MAX_CONCURRENT_QUESTS][10 + 1]; /* track up to 5 quests by their codename and roughly the current stage and goals */
 	byte quest_stage[MAX_CONCURRENT_QUESTS]; /* in which stage is a quest? */

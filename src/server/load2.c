@@ -762,6 +762,7 @@ static void rd_monster(monster_type *m_ptr) {
 	rd_byte((byte *)&m_ptr->special);
 	if (!s_older_than(4, 5, 19)) {
 		rd_byte((byte *)&m_ptr->questor);
+		//rd_s16b((byte *)&m_ptr->questor_idx);
 		rd_s16b(&m_ptr->quest);
 		rd_byte((byte *)&m_ptr->questor_invincible);
 		rd_byte((byte *)&m_ptr->questor_hostile);

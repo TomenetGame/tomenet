@@ -5674,7 +5674,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		/* Questor? Bump -> talk :D */
 		else if (m_list[c_ptr->m_idx].questor && !m_list[c_ptr->m_idx].questor_hostile) {
 			disturb(Ind, 1, 0);
-			quest_interact(Ind, m_list[c_ptr->m_idx].quest);
+			quest_interact(Ind, m_list[c_ptr->m_idx].quest, m_list[c_ptr->m_idx].questor_idx);
 		}
 		/* Attack */
 		else {
