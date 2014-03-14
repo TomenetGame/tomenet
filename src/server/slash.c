@@ -8147,8 +8147,83 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/qinf")) { /* debug new quest_info stuff - C. Blue */
 				msg_format(Ind, "max_q_idx: %d/%d", max_q_idx, MAX_Q_IDX);
 				for (i = 0; i < max_q_idx; i++) {
-					msg_format(Ind, "%d) '%s' [%s by %s] %s", i, q_name + q_info[i].name, q_info[i].codename, q_info[i].creator, q_info[i].active ? "ACT" : "---");
+					msg_format(Ind, "%d) '%s' [%s by %s] %s %s %d", i, q_name + q_info[i].name, q_info[i].codename, q_info[i].creator,
+					    q_info[i].active ? "ACT" : "   ", q_info[i].disabled ? "DIS" : "   ", q_info[i].cooldown);
 				}
+				return;
+			}
+			else if (prefix(message, "/qccd")) { /* clear a quest's cooldown */
+				if (tk != 1) {
+					msg_print(Ind, "Usage: /qccd <q_idx>");
+					return;
+				}
+				if (!q_info[k].cooldown) {
+					msg_format(Ind, "Quest %d (%s) is not on cooldown.", k, q_info[k].codename);
+					return;
+				}
+				msg_format(Ind, "\377BCompleted cooldown of quest %d (%s).", k, q_info[k].codename);
+				q_info[k].cooldown = 0;
+				return;
+			}
+			else if (prefix(message, "/qdis")) { /* disable a quest */
+				if (tk != 1) {
+					msg_print(Ind, "Usage: /qdis <q_idx>");
+					return;
+				}
+				if (q_info[k].disabled) {
+					msg_format(Ind, "Quest %d (%s) is already disabled.", k, q_info[k].codename);
+					return;
+				}
+				msg_format(Ind, "\377rDisabling quest %d (%s).", k, q_info[k].codename);
+				q_info[k].disabled = TRUE;
+				return;
+			}
+			else if (prefix(message, "/qena")) { /* enable a quest */
+				if (tk != 1) {
+					msg_print(Ind, "Usage: /qena <q_idx>");
+					return;
+				}
+				if (!q_info[k].disabled) {
+					msg_format(Ind, "Quest %d (%s) is already disabled.", k, q_info[k].codename);
+					return;
+				}
+				msg_format(Ind, "\377GEnabling quest %d (%s).", k, q_info[k].codename);
+				q_info[k].disabled = FALSE;
+				return;
+			}
+			else if (prefix(message, "/qstart")) { /* activate a quest */
+				if (tk != 1) {
+					msg_print(Ind, "Usage: /qstart <q_idx>");
+					return;
+				}
+				if (q_info[k].active) {
+					msg_format(Ind, "Quest %d (%s) is already active.", k, q_info[k].codename);
+					return;
+				}
+				msg_format(Ind, "\377GActivating quest %d (%s).", k, q_info[k].codename);
+				quest_activate(k);
+				return;
+			}
+			else if (prefix(message, "/qstop")) { /* cancel a quest */
+				if (tk != 1) {
+					msg_print(Ind, "Usage: /qstop <q_idx>");
+					return;
+				}
+				if (!q_info[k].active) {
+					msg_format(Ind, "Quest %d (%s) is already inactive.", k, q_info[k].codename);
+					return;
+				}
+				msg_format(Ind, "\377rDeactivating quest %d (%s).", k, q_info[k].codename);
+				quest_deactivate(k);
+				return;
+			}
+			else if (prefix(message, "/qstage")) { /* change a quest's stage */
+				if (tk != 2) {
+					msg_print(Ind, "Usage: /qstage <q_idx> <stage>");
+					return;
+				}
+				msg_format(Ind, "\377BChanging quest %d (%s) to stage %d.", k, q_info[k].codename, atoi(token[2]));
+				quest_stage(k, atoi(token[2]));
 				return;
 			}
 		}

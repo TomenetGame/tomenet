@@ -2136,6 +2136,9 @@ extern void go_engine_clocks(void);
 
 /* quests.c */
 extern void process_quests(void);
+extern void quest_activate(int q_idx);
+extern void quest_deactivate(int q_idx);
+extern void quest_stage(int q_idx, int stage);
 
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue

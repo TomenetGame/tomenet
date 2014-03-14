@@ -28,11 +28,6 @@
 #include "angband.h"
 
 
-static void quest_activate(int q_idx);
-static void quest_deactivate(int q_idx);
-static void quest_stage(int q_idx, int stage);
-
-
 /* set log level (0 to disable, 1 for normal logging, 2 for debug logging) */
 #define QDEBUG 2
 
@@ -86,7 +81,7 @@ void process_quests(void) {
 }
 
 /* Spawn questor, prepare sector/floor, make things static if requested, etc. */
-static void quest_activate(int q_idx) {
+void quest_activate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i;
 	cave_type **zcave, *c_ptr;
@@ -337,7 +332,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 }
 
 /* Despawn questor, unstatic sector/floor, etc. */
-static void quest_deactivate(int q_idx) {
+void quest_deactivate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	//int i;
 	cave_type **zcave, *c_ptr;
@@ -377,7 +372,7 @@ static void quest_deactivate(int q_idx) {
 }
 
 /* Advance quest to a different stage (or start it out if stage is 0) */
-static void quest_stage(int q_idx, int stage) {
+void quest_stage(int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
 
 	/* dynamic info */
