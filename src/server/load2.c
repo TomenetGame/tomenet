@@ -1041,7 +1041,7 @@ static void rd_quests() {
 		}
 		rd_byte((byte *) &q_info[i].active);
 		rd_byte((byte *) &q_info[i].disabled);
-		rd_s16b(&q_info[i].cooldown);
+		rd_s16b(&q_info[i].cur_cooldown);
 		rd_s16b(&q_info[i].stage);
 		rd_s32b(&q_info[i].start_turn);
 

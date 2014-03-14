@@ -50,8 +50,8 @@ void process_quests(void) {
 	for (i = 0; i < max_q_idx; i++) {
 		q_ptr = &q_info[i];
 
-		if (q_ptr->cooldown) q_ptr->cooldown--;
-		if (q_ptr->disabled || q_ptr->cooldown) continue;
+		if (q_ptr->cur_cooldown) q_ptr->cur_cooldown--;
+		if (q_ptr->disabled || q_ptr->cur_cooldown) continue;
 
 		/* check if quest should be active */
 		active = FALSE;
@@ -190,7 +190,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 #ifdef QERROR_DISABLE
 			q_ptr->disabled = TRUE;
 #else
-			q_ptr->cooldown = QERROR_COOLDOWN;
+			q_ptr->cur_cooldown = QERROR_COOLDOWN;
 #endif
 			return;
 		}
@@ -208,7 +208,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 #ifdef QERROR_DISABLE
 		q_ptr->disabled = TRUE;
 #else
-		q_ptr->cooldown = QERROR_COOLDOWN;
+		q_ptr->cur_cooldown = QERROR_COOLDOWN;
 #endif
 		return;
 	}
@@ -304,7 +304,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 #ifdef QERROR_DISABLE
 			q_ptr->disabled = TRUE;
 #else
-			q_ptr->cooldown = QERROR_COOLDOWN;
+			q_ptr->cur_cooldown = QERROR_COOLDOWN;
 #endif
 			return;
 		}
@@ -379,6 +379,7 @@ s_printf("deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpo
 
 /* a quest has ended, clean up */
 static void quest_terminate(int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, j;
 
@@ -391,6 +392,10 @@ static void quest_terminate(int q_idx) {
 
 		p_ptr->quest_done[q_idx]++;
 	}
+
+	/* don't respawn the questor *immediately* again, looks silyl */
+	if (!q_ptr->cooldown) q_ptr->cur_cooldown = 5; /* wait 5 minutes */
+	else q_ptr->cur_cooldown = q_ptr->cooldown;
 
 	/* clean up */
 	quest_deactivate(q_idx);

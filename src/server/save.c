@@ -452,7 +452,7 @@ static void wr_quests() {
 	for (i = 0; i < max_q_idx; i++) {
 		wr_byte(q_info[i].active);
 		wr_byte(q_info[i].disabled);
-		wr_s16b(q_info[i].cooldown);
+		wr_s16b(q_info[i].cur_cooldown);
 		wr_s16b(q_info[i].stage);
 		wr_s32b(q_info[i].start_turn);
 

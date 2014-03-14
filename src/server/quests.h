@@ -104,7 +104,7 @@ typedef struct quest_info {
 	/* QUEST IS CURRENTLY ACTIVE (aka questor is currently spawned - depends on time (day/night/specific) constraints) */
 	bool active;
 	bool disabled; /* quest has been temporarily disabled, is hence deactivated and cannot be activated until enabled again (eg for when something breaks during quest progression) */
-	s16b cooldown;				/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
+	s16b cur_cooldown;		/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
 	s16b stage;
 	s32b start_turn;
 
@@ -181,6 +181,7 @@ typedef struct quest_info {
 
     /* QUEST DURATION */
 	/* quest duration, after it was accepted, until it expires */
+	s16b cooldown;				/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
 	int max_duration;			/* in seconds, 0 for never */
 	bool per_player;			/* this quest isn't global but can be done by each player individually.
 						   For example questors may spawn other questors -> must be global, not per_player. */

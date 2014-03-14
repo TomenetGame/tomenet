@@ -8193,7 +8193,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377UQuests (max_q_idx/MAX_Q_IDX %d/%d):", max_q_idx, MAX_Q_IDX);
 				for (i = 0; i < max_q_idx; i++) {
 					msg_format(Ind, "  %d) '%s' (S%2d) [%s by %s] %s %s %d", i, q_name + q_info[i].name, q_info[i].stage, q_info[i].codename, q_info[i].creator,
-					    q_info[i].active ? "ACT" : "   ", q_info[i].disabled ? "DIS" : "   ", q_info[i].cooldown);
+					    q_info[i].active ? "ACT" : "   ", q_info[i].disabled ? "DIS" : "   ", q_info[i].cur_cooldown);
 				}
 				return;
 			}
@@ -8202,12 +8202,12 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /qccd <q_idx>");
 					return;
 				}
-				if (!q_info[k].cooldown) {
+				if (!q_info[k].cur_cooldown) {
 					msg_format(Ind, "Quest %d (%s) is not on cooldown.", k, q_info[k].codename);
 					return;
 				}
 				msg_format(Ind, "\377BCompleted cooldown of quest %d (%s).", k, q_info[k].codename);
-				q_info[k].cooldown = 0;
+				q_info[k].cur_cooldown = 0;
 				return;
 			}
 			else if (prefix(message, "/qdis")) { /* disable a quest */
