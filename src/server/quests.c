@@ -27,6 +27,11 @@
 //? #define SERVER
 #include "angband.h"
 
+
+static void quest_activate(int q_idx);
+static void quest_deactivate(int q_idx);
+
+
 /* enable debug log output */
 #define QDEBUG
 
@@ -59,18 +64,30 @@ void process_quests(void) {
 		}
 
 		/* quest is inactive and must be activated */
-		if (!q_ptr->active && active) {
-#ifdef QDEBUG
-			s_printf("QUEST_ACTIVATE: '%s' ('%s' by '%s')\n", q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
-#endif
-			q_ptr->active = TRUE;
-		}
+		if (!q_ptr->active && active)
+			quest_activate(i);
 		/* quest is active and must be deactivated */
-		else if (q_ptr->active && !active) {
-#ifdef QDEBUG
-			s_printf("QUEST_DEACTIVATE: '%s' ('%s' by '%s')\n", q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
-#endif
-			q_ptr->active = FALSE;
-		}
+		else if (q_ptr->active && !active)
+			quest_deactivate(i);
 	}
+}
+
+/* Spawn questor, prepare sector/floor, make things static if requested, etc. */
+static void quest_activate(int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+#ifdef QDEBUG
+	s_printf("QUEST_ACTIVATE: '%s' ('%s' by '%s')\n", q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
+#endif
+
+	q_ptr->active = TRUE;
+}
+
+/* Despawn questor, unstatic sector/floor, etc. */
+static void quest_deactivate(int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+#ifdef QDEBUG
+	s_printf("QUEST_DEACTIVATE: '%s' ('%s' by '%s')\n", q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
+#endif
+
+	q_ptr->active = FALSE;
 }
