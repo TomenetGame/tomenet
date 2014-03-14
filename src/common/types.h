@@ -964,8 +964,8 @@ struct monster_type {
     int hit_proj_id;
 
     /* for new quest_info */
-    bool questor, quest_invincible, quest_aggressive; /* further quest_info flags are referred to when required, no need to copy all of them here */
-    int quest;
+    bool questor, questor_invincible, questor_hostile; /* further quest_info flags are referred to when required, no need to copy all of them here */
+    s16b quest;
 };
 
 typedef struct monster_ego monster_ego;

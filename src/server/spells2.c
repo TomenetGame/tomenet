@@ -6915,8 +6915,7 @@ void house_creation(int Ind, bool floor, bool jail)
 }
 
 /* (Note: Apparently currently only used by Moltor's second_handler().) */
-extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
-{
+extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 	int                     i, Ind, j;
 	cave_type               *c_ptr;
 
@@ -6962,7 +6961,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	m_ptr->fx = x;
 	wpcopy(&m_ptr->wpos, wpos);
 
-	m_ptr->special = 0;
+	m_ptr->special = m_ptr->questor = 0;
 
 	/* Hack -- Count the monsters on the level */
 	r_ptr->cur_num++;
@@ -6973,11 +6972,10 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 
 
 	/* Assign maximal hitpoints */
-	if (r_ptr->flags1 & RF1_FORCE_MAXHP) {
+	if (r_ptr->flags1 & RF1_FORCE_MAXHP)
 		m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
-	} else {
+	else
 		m_ptr->maxhp = damroll(r_ptr->hdice, r_ptr->hside);
-	}
 
 	/* And start out fully healthy */
 	m_ptr->hp = m_ptr->maxhp;
@@ -7092,8 +7090,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	return (TRUE);
 }
 #ifdef RPG_SERVER
-bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
-{
+bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 	int                     Ind, j;
 	cave_type               *c_ptr;
 
@@ -7148,20 +7145,16 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 	m_ptr->fx = x;
 	wpcopy(&m_ptr->wpos, wpos);
 
-	m_ptr->special = 0;
+	m_ptr->special = m_ptr->questor = 0;
 
 	/* Hack -- Count the monsters on the level */
 	r_ptr->cur_num++;
 
 	/* Assign maximal hitpoints */
 	if (r_ptr->flags1 & RF1_FORCE_MAXHP)
-	{
 		m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
-	}
 	else
-	{
 		m_ptr->maxhp = damroll(r_ptr->hdice, r_ptr->hside);
-	}
 
 	/* And start out fully healthy */
 	m_ptr->hp = m_ptr->maxhp;
@@ -7174,8 +7167,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 	/* Extract base ac and  other things */
 	m_ptr->ac = r_ptr->ac;
 
-	for (j = 0; j < 4; j++)
-	{
+	for (j = 0; j < 4; j++) {
 		m_ptr->blow[j].effect = r_ptr->blow[j].effect;
 		m_ptr->blow[j].method = r_ptr->blow[j].method;
 		m_ptr->blow[j].d_dice = r_ptr->blow[j].d_dice;
@@ -7200,8 +7192,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
         m_ptr->owner = Players[owner_id]->id;
         m_ptr->pet = 1;
 
-	for (Ind = 1; Ind < NumPlayers + 1; Ind++)
-	{
+	for (Ind = 1; Ind < NumPlayers + 1; Ind++) {
 		if (Players[Ind]->conn == NOT_CONNECTED)
 			continue;
 
@@ -7334,6 +7325,7 @@ void golem_creation(int Ind, int max) {
 	m_ptr = &m_list[c_ptr->m_idx];
 	MAKE(m_ptr->r_ptr, monster_race);
 	m_ptr->special = TRUE;
+	m_ptr->questor = FALSE;
 	m_ptr->fx = x;
 	m_ptr->fy = y;
 
@@ -7345,6 +7337,10 @@ void golem_creation(int Ind, int max) {
 	r_ptr->flags4 = 0;
 	r_ptr->flags5 = 0;
 	r_ptr->flags6 = 0;
+	r_ptr->flags7 = 0;
+	r_ptr->flags8 = 0;
+	r_ptr->flags9 = 0;
+	r_ptr->flags0 = 0;
 
 	msg_print(Ind, "Some of your items begins to consume in roaring flames.");
 

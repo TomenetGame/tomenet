@@ -7361,6 +7361,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	u16b this_o_idx, next_o_idx = 0;
 
 	cave_type **zcave;
+	monster_race *r_ptr;
 
 
 	if (!(zcave = getcave(wpos))) return(-1);
@@ -7410,10 +7411,10 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		/* Hack: Don't drop items below immovable unkillable monsters aka the
 		   Target Dummy, so players can get their items (ammo) back - C. Blue */
 		if (c_ptr->m_idx > 0) {
-			k = m_list[c_ptr->m_idx].r_idx;
-			if (((r_info[k].flags1 & RF1_NEVER_MOVE) ||
-			    (r_info[k].flags7 & RF7_NEVER_ACT)) &&
-			    (r_info[k].flags7 & RF7_NO_DEATH))
+			r_ptr = race_inf(&m_list[c_ptr->m_idx]);
+			if (((r_ptr->flags1 & RF1_NEVER_MOVE) ||
+			    (r_ptr->flags7 & RF7_NEVER_ACT)) &&
+			    (r_ptr->flags7 & RF7_NO_DEATH))
 			continue;
 		}
 

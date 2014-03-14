@@ -249,11 +249,15 @@ static void wr_monster_race(monster_race *r_ptr)
 /*
  * Write a "monster" record
  */
-static void wr_monster(monster_type *m_ptr)
-{
+static void wr_monster(monster_type *m_ptr) {
 	int i;
 	wr_byte(m_ptr->pet);
 	wr_byte(m_ptr->special);
+	wr_byte(m_ptr->questor);
+	wr_s16b(m_ptr->quest);
+	wr_byte(m_ptr->questor_invincible);
+	wr_byte(m_ptr->questor_hostile);
+
 	wr_s32b(m_ptr->owner);
 	wr_s16b(m_ptr->r_idx);
 	wr_byte(m_ptr->fy);
@@ -267,8 +271,7 @@ static void wr_monster(monster_type *m_ptr)
 	wr_byte(m_ptr->speed);
 	wr_s32b(m_ptr->exp);
 	wr_s16b(m_ptr->level);
-	for (i = 0; i < 4; i++)
-	{
+	for (i = 0; i < 4; i++) {
 		wr_byte(m_ptr->blow[i].method);
 		wr_byte(m_ptr->blow[i].effect);
 		wr_byte(m_ptr->blow[i].d_dice);
@@ -292,10 +295,7 @@ static void wr_monster(monster_type *m_ptr)
 	wr_u16b(m_ptr->clone);
 	wr_s16b(m_ptr->mind);
 
-	if (m_ptr->special)
-	{
-		wr_monster_race(m_ptr->r_ptr);
-	}
+	if (m_ptr->special || m_ptr->questor) wr_monster_race(m_ptr->r_ptr);
 
 	wr_u16b(m_ptr->ego);
 	wr_s32b(m_ptr->name3);

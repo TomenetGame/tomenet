@@ -745,8 +745,7 @@ static void rd_monster_race(monster_race *r_ptr)
  * Read a monster
  */
 
-static void rd_monster(monster_type *m_ptr)
-{
+static void rd_monster(monster_type *m_ptr) {
 	byte i;
 
 	/* Hack -- wipe */
@@ -757,6 +756,12 @@ static void rd_monster(monster_type *m_ptr)
 		rd_byte(&m_ptr->pet);
 	}
 	rd_byte((byte *)&m_ptr->special);
+	if (!s_older_than(4, 5, 19)) {
+		rd_byte((byte *)&m_ptr->questor);
+		rd_s16b(&m_ptr->quest);
+		rd_byte((byte *)&m_ptr->questor_invincible);
+		rd_byte((byte *)&m_ptr->questor_hostile);
+	}
 
 	/* Owner */
 	rd_s32b(&m_ptr->owner);
@@ -776,8 +781,7 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->speed);
 	rd_s32b(&m_ptr->exp);
 	rd_s16b(&m_ptr->level);
-	for (i = 0; i < 4; i++)
-	{
+	for (i = 0; i < 4; i++) {
 		rd_byte(&(m_ptr->blow[i].method));
 		rd_byte(&(m_ptr->blow[i].effect));
 		rd_byte(&(m_ptr->blow[i].d_dice));
@@ -803,8 +807,7 @@ static void rd_monster(monster_type *m_ptr)
 	rd_u16b(&m_ptr->clone);
 
 	rd_s16b(&m_ptr->mind);
-	if (m_ptr->special)
-	{
+	if (m_ptr->special || m_ptr->questor) {
 		MAKE(m_ptr->r_ptr, monster_race);
 		rd_monster_race(m_ptr->r_ptr);
 	}

@@ -316,8 +316,8 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 	//r_ptr->sleep = rbase_ptr->sleep;
 	r_ptr->sleep = 0;
 
-	m_ptr->quest_invincible = q_ptr->questor_invincible; //for now handled by RF7_NO_DEATH
-	m_ptr->quest_aggressive = FALSE;
+	m_ptr->questor_invincible = q_ptr->questor_invincible; //for now handled by RF7_NO_DEATH
+	m_ptr->questor_hostile = FALSE;
 
 	update_mon(c_ptr->m_idx, TRUE);
 #if QDEBUG > 1

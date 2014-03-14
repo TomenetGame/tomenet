@@ -3276,7 +3276,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	m_ptr->fx = x;
 	wpcopy(&m_ptr->wpos, wpos);
 
-	m_ptr->special = FALSE;
+	m_ptr->special = m_ptr->questor = FALSE;
 
 	/* Hack -- Count the monsters on the level */
 	r_ptr->cur_num++;
@@ -5015,14 +5015,12 @@ void update_smart_learn(int m_idx, int what)
 * Set the "m_idx" fields in the cave array to correspond
 * to the objects in the "m_list".
 */
-void setup_monsters(void)
-{
+void setup_monsters(void) {
 	int i;
 	monster_type *r_ptr;
 	cave_type **zcave;
 
-	for (i = 0; i < m_max; i++)
-	{
+	for (i = 0; i < m_max; i++) {
 		r_ptr = &m_list[i];
 		/* setup the cave m_idx if the level has been 
 		 * allocated.
@@ -5035,13 +5033,11 @@ void setup_monsters(void)
 /* Takes a monster name and returns an index, or 0 if no such monster
  * was found.
  */
-int race_index(char * name)
-{
+int race_index(char * name) {
 	int i;
 
 	/* for each monster race */
-	for (i = 1; i < MAX_R_IDX - 1; i++)
-	{
+	for (i = 1; i < MAX_R_IDX - 1; i++) {
 		if (r_info[i].name) {
 			if (!strcmp(&r_name[r_info[i].name],name)) return i;
 		}
@@ -5049,10 +5045,9 @@ int race_index(char * name)
 	return 0;
 }
 
-monster_race* r_info_get(monster_type *m_ptr)
-{
-	/* golem? */
-	if (m_ptr->special) return (m_ptr->r_ptr);
+monster_race* r_info_get(monster_type *m_ptr) {
+	/* golem or new questor? */
+	if (m_ptr->special || m_ptr->questor) return (m_ptr->r_ptr);
 #ifdef RANDUNIS
 	else if (m_ptr->ego) return (race_info_idx((m_ptr)->r_idx, (m_ptr)->ego, (m_ptr)->name3));
 	else return (&r_info[m_ptr->r_idx]);

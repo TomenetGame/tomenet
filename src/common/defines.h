@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	18
+#define SF_VERSION_PATCH	19
 #define SF_VERSION_EXTRA	0
 
 
