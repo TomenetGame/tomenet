@@ -12,7 +12,7 @@ V:0.0.1
 # N:index:codename:creator:name
 # I:minlv:maxlv:races:classes
 # //todo: E:(10x repeatable) optional list of colon-separated prequest codenames
-# L:locations:towns:terrains:exact wpos wx:wy:wz:exact pos x:y
+# L:locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y
 # //todo: D:dungeons...
 # T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # F:mapfile
@@ -45,7 +45,7 @@ V:0.0.1
 # for testing purpose
 N:0:testquest0:C. Blue:Test Quest
 I:1:100:FFFFF:FFFF
-L:1:1:0:0:0:0:98:39
+L:1:1:-1:-1:-1:0:98:39
 T:1:1:0:0:0:0:0:0:0:-1:-1
 Q:1:37:b:n:-1:-1:-1:-1:-1:1:Blind Bat
 U:0:0:0:0:0
