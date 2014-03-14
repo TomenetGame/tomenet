@@ -2803,8 +2803,7 @@ void do_cmd_target_friendly(int Ind, int dir)
 /*
  * Hack -- determine if a given location is "interesting" to a player
  */
-static bool do_cmd_look_accept(int Ind, int y, int x)
-{
+static bool do_cmd_look_accept(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -3091,6 +3090,12 @@ void do_cmd_look(int Ind, int dir) {
 		health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
+		if (m_ptr->quest)
+			snprintf(out_val, sizeof(out_val), "\377%c%s (Lv %d, %s)",
+			    m_ptr->quest_invincible ? 'G' : (m_ptr->quest_aggressive ? 'R' : 'w'),
+			    r_name_get(&m_list[c_ptr->m_idx]),
+			    m_ptr->level, look_mon_desc(c_ptr->m_idx));
+		else
 #if 0 /* attach 'slain' for uniques we already killed */
 //                snprintf(out_val, sizeof(out_val), "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
 		snprintf(out_val, sizeof(out_val), "%s (Lv %d, %s%s)", r_name_get(&m_list[c_ptr->m_idx]),
