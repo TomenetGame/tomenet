@@ -4706,7 +4706,7 @@ void message_pain(int Ind, int m_idx, int dam) {
 	}
 
 	/* hack: no message at all for invincible questors because it looks ugly */
-	if (m_ptr->questor && (m_ptr->questor_invincible || (r_ptr->flags7 & RF7_NO_DEATH))) return;
+	if (m_ptr->questor && (m_ptr->questor_invincible || (r_ptr->flags7 & RF7_NO_DEATH)) && !m_ptr->questor_hostile) return;
 
 	/* Get the monster name */
 	monster_desc(Ind, m_name, m_idx, 0);
