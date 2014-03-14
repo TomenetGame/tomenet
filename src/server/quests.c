@@ -447,7 +447,7 @@ void quest_stage(int q_idx, int stage) {
 	j = 0;
 	/* optional goals play no role, obviously */
 	for (i = 0; i < QI_GOALS; i++)
-		if (q_ptr->kill[stage][i] || q_ptr->retrieve[stage][i]) {
+		if (q_ptr->kill[stage][i] || q_ptr->retrieve[stage][i] || q_ptr->deliver[stage][i]) {
 			j = 1;
 			break;
 		}
