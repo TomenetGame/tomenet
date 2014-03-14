@@ -3092,7 +3092,7 @@ void do_cmd_look(int Ind, int dir) {
 		/* Format string */
 		if (m_ptr->questor)
 			snprintf(out_val, sizeof(out_val), "\377%c%s (Lv %d, %s)",
-			    m_ptr->questor_invincible ? 'G' : (m_ptr->questor_hostile ? 'R' : 'w'),
+			    m_ptr->questor_invincible ? 'G' : (m_ptr->questor_hostile ? 'R' : 'G'),
 			    r_name_get(&m_list[c_ptr->m_idx]),
 			    m_ptr->level, look_mon_desc(c_ptr->m_idx));
 		else
