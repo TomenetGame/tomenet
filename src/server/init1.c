@@ -7569,7 +7569,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (stage >= QI_MAX_STAGES) return 1;
 			if (lc_conversation[stage] == 10) return 1;
 
-			c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
 			q_ptr->talk[stage][lc_conversation[stage]] = c;
 
@@ -7586,7 +7586,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (stage >= QI_MAX_STAGES) return 1;
 			if (lc_keywords[stage] == 10) return 1;
 
-			c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
 			q_ptr->keywords[stage][lc_keywords[stage]] = c;
 			q_ptr->keywords_stage[stage][lc_keywords[stage]] = next;
