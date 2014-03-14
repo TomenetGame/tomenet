@@ -94,7 +94,7 @@ static void quest_activate(int q_idx) {
 	monster_type *m_ptr;
 
 	/* data written back to q_info[] */
-	struct worldpos wpos;
+	struct worldpos wpos = {63, 63, 0}; //default for cases of acute paranoia
 	int x, y;
 
 
@@ -116,10 +116,20 @@ static void quest_activate(int q_idx) {
 	else if ((q_ptr->s_location_type & QI_SLOC_TOWN)) {
 		if ((q_ptr->s_towns_array & QI_STOWN_BREE)) {
 		} else if ((q_ptr->s_towns_array & QI_STOWN_BREE)) {
+			wpos.wx = 32;
+			wpos.wy = 32;
 		} else if ((q_ptr->s_towns_array & QI_STOWN_GONDOLIN)) {
+			wpos.wx = 27;
+			wpos.wy = 13;
 		} else if ((q_ptr->s_towns_array & QI_STOWN_MINASANOR)) {
+			wpos.wx = 25;
+			wpos.wy = 58;
 		} else if ((q_ptr->s_towns_array & QI_STOWN_LOTHLORIEN)) {
+			wpos.wx = 59;
+			wpos.wy = 51;
 		} else if ((q_ptr->s_towns_array & QI_STOWN_KHAZADDUM)) {
+			wpos.wx = 26;
+			wpos.wy = 5;
 		} else if ((q_ptr->s_towns_array & QI_STOWN_WILD)) {
 		} else if ((q_ptr->s_towns_array & QI_STOWN_DUNGEON)) {
 		} else if ((q_ptr->s_towns_array & QI_STOWN_IDDC)) {
@@ -153,6 +163,7 @@ static void quest_activate(int q_idx) {
 		//dealloc_dungeon_level(&wpos);
 		alloc_dungeon_level(&wpos);
 		generate_cave(&wpos, NULL);
+		zcave = getcave(&wpos);
 	}
 	if (q_ptr->static_floor) new_players_on_depth(&wpos, 1, TRUE);
 
