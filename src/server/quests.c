@@ -33,8 +33,8 @@ static void quest_deactivate(int q_idx);
 static void quest_stage(int q_idx, int stage);
 
 
-/* enable debug log output */
-#define QDEBUG
+/* set log level (0 to disable, 1 for normal logging, 2 for debug logging) */
+#define QDEBUG 2
 
 
 /* Disable a quest on error? */
@@ -88,7 +88,7 @@ void process_quests(void) {
 /* Spawn questor, prepare sector/floor, make things static if requested, etc. */
 static void quest_activate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
-	int i, tries;
+	int i;
 	cave_type **zcave, *c_ptr;
 	monster_race *r_ptr, *rbase_ptr;
 	monster_type *m_ptr;
@@ -98,7 +98,7 @@ static void quest_activate(int q_idx) {
 	int x, y;
 
 
-#ifdef QDEBUG
+#if QDEBUG > 0
 	s_printf("%s QUEST_ACTIVATE: '%s' ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
 #endif
 	q_ptr->active = TRUE;
@@ -107,6 +107,10 @@ static void quest_activate(int q_idx) {
 
 	/* check 'L:' info for starting location -
 	   for now only support 1 starting location, ie use the first one that gets tested to be eligible */
+#if QDEBUG > 1
+s_printf("QIDX %d. SWPOS,XY: %d,%d,%d - %d,%d\n", q_idx, q_ptr->start_wpos.wx, q_ptr->start_wpos.wy, q_ptr->start_wpos.wz, q_ptr->start_x, q_ptr->start_y);
+s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
+#endif
 	if (q_ptr->start_wpos.wx != -1) {
 		/* exact questor starting wpos  */
 		wpos.wx = q_ptr->start_wpos.wx;
@@ -115,7 +119,6 @@ static void quest_activate(int q_idx) {
 	} else if (!q_ptr->s_location_type) return;
 	else if ((q_ptr->s_location_type & QI_SLOC_TOWN)) {
 		if ((q_ptr->s_towns_array & QI_STOWN_BREE)) {
-		} else if ((q_ptr->s_towns_array & QI_STOWN_BREE)) {
 			wpos.wx = 32;
 			wpos.wy = 32;
 		} else if ((q_ptr->s_towns_array & QI_STOWN_GONDOLIN)) {
@@ -174,14 +177,16 @@ static void quest_activate(int q_idx) {
 		y = q_ptr->start_y;
 	} else {
 		/* find a random spawn loc */
-		while (tries < 1000) {
-			tries++;
-			y = rand_int(MAX_HGT);
-			x = rand_int(MAX_WID);
+		i = 1000; //tries
+		while (i) {
+			i--;
+			/* not too close to level borders maybe */
+			x = rand_int(MAX_WID - 6) + 3;
+			y = rand_int(MAX_HGT - 6) + 3;
 			if (!cave_naked_bold(zcave, y, x)) continue;
 			break;
 		}
-		if (!tries) {
+		if (!i) {
 			s_printf("QUEST_CANCELLED: No free questor spawn location.\n");
 #ifdef QERROR_DISABLE
 			q_ptr->disabled = TRUE;
@@ -315,8 +320,9 @@ static void quest_activate(int q_idx) {
 	m_ptr->quest_aggressive = FALSE;
 
 	update_mon(c_ptr->m_idx, TRUE);
-
-
+#if QDEBUG > 1
+	s_printf("QUEST_SPAWNED: Questor at %d,%d,%d - %d,%d.\n", wpos.wx, wpos.wy, wpos.wz, x, y);
+#endif
 
 	/* Start with stage 0 */
 	quest_stage(q_idx, 0);
@@ -334,7 +340,7 @@ static void quest_deactivate(int q_idx) {
 	struct worldpos wpos;
 	//int qx, qy;
 
-#ifdef QDEBUG
+#if QDEBUG > 0
 	s_printf("%s QUEST_DEACTIVATE: '%s' ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
 #endif
 	q_ptr->active = FALSE;
