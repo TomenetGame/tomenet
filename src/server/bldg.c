@@ -1232,7 +1232,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 			if (o_ptr->to_h >= maxenchant_eff && o_ptr->to_d >= maxenchant_eff) continue;
 			if (o_ptr->to_h < maxenchant_eff) o_ptr->to_h = maxenchant_eff;
 			if (o_ptr->to_d < maxenchant_eff) o_ptr->to_d = maxenchant_eff;
-			msg_format(Ind, "Your %s has been enchanted to (+%d,+%d).", tmp_str, maxenchant_eff, maxenchant_eff);
+			msg_format(Ind, "Your %s has been enchanted to (+%d,+%d).", tmp_str, o_ptr->to_h, o_ptr->to_d);
 			break;
 		}
 	}
