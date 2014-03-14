@@ -2813,8 +2813,7 @@ static void do_trait_skill(int Ind, int s, int m) {
  * Note that we may be called with "junk" leftover in the various
  * fields, so we must be sure to clear them first.
  */
-bool player_birth(int Ind, int conn, connection_t *connp)
-{
+bool player_birth(int Ind, int conn, connection_t *connp) {
 	player_type *p_ptr;
 	int i;
 	struct account *c_acc;
@@ -3327,6 +3326,10 @@ bool player_birth(int Ind, int conn, connection_t *connp)
 	   once (not necessarily implemented like that atm) - C. Blue */
 	p_ptr->newbie_hints = TRUE;
 	disable_specific_warnings(p_ptr);
+
+	/* No active quests */
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+		p_ptr->questing[i][0] = 0;
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);

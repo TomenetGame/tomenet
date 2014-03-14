@@ -765,7 +765,7 @@ static void rd_monster(monster_type *m_ptr) {
 		rd_s16b(&m_ptr->quest);
 		rd_byte((byte *)&m_ptr->questor_invincible);
 		rd_byte((byte *)&m_ptr->questor_hostile);
-	}
+	} else m_ptr->questor = FALSE;
 
 	/* Owner */
 	rd_s32b(&m_ptr->owner);
@@ -2593,7 +2593,9 @@ static errr rd_savefile_new_aux(int Ind) {
 				rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
 			}
 		}
-	}
+	} else
+		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+			p_ptr->questing[i][0] = 0;
 
         if (!older_than(4, 0, 1)) {
                 rd_byte(&p_ptr->spell_project);
