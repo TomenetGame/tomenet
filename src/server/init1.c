@@ -7448,8 +7448,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'I') {
 			char races[6 + 2], classes[5 + 2], *rp = races + 2, *cp = classes + 2;
 			s = buf + 2;
-			if (4 != sscanf(s, "%d:%d:%5[^:]:%4[^:]",
-			    &q_ptr->minlev, &q_ptr->maxlev, rp, cp)) {
+			if (6 != sscanf(s, "%d:%d:%5[^:]:%4[^:]:%d:%d",
+			    &q_ptr->minlev, &q_ptr->maxlev, rp, cp, &q_ptr->repeatable, &q_ptr->quest_done_credit_stage)) {
 				return (1);
 			}
 			/* uh well, hacky hacky.. */
@@ -7540,8 +7540,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'U') {
 			int cd, per_py, stat, quit;
 			s = buf + 2;
-			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
-			    &q_ptr->max_duration, &cd, &per_py, &stat, &quit)) return (1);
+			if (5 != sscanf(s, "%d:%d:%d:%d:%d:%d",
+			    &q_ptr->ending_stage, &q_ptr->max_duration, &cd, &per_py, &stat, &quit)) return (1);
 			q_ptr->cooldown = (s16b) cd;
 			q_ptr->per_player = (per_py != 0);
 			q_ptr->static_floor = (stat != 0);

@@ -186,6 +186,8 @@ typedef struct quest_info {
 						   For example questors may spawn other questors -> must be global, not per_player. */
 	bool static_floor;			/* questor floor will be static while the quest is active */
 	bool quit_floor;			/* if player leaves the questor's floor, the quest will terminate and be lost */
+	int ending_stage;			/* if this stage is reached, the quest will terminate */
+	int quest_done_credit_stage;		/* minimum stage that will increase the quest_done counter of players who are pursuing the quest */
 
 
     //NOTE: these should instead be hard-coded, similar to global events, too much variety really.. (monster spawning etc):
@@ -197,7 +199,7 @@ typedef struct quest_info {
 	/* quest initialisation and meta actions */
 	bool accept_los, accept_interact;	/* player gets the quest just be being in LoS / interacting once with the questor (bump/read the parchment/pickup the item) */
 	bool accepts[QI_MAX_STAGES];		/* player can acquire the quest during a stage */
-	s16b repeatable;			/* player may repeat this quest n times (0 = can only do this quest once) */
+	int repeatable;				/* player may repeat this quest n times (0 = can only do this quest once) */
 
 	int activate_quest[QI_MAX_STAGES];	/* spawn a certain new quest of this index (and thereby another questor) (if not already existing) */
 	bool auto_accept[QI_MAX_STAGES];	/* player will automatically acquire the newly spawned quest (from activate_quest[]) */
@@ -265,6 +267,7 @@ typedef struct quest_info {
 	   --note: the #s of subgoals don't use #defines, because they vary too much anyway for each category, so they're just hard-coded numbers. */
 //#define QI_GOALS 10 /* main goals to complete a stage */
 //#define QI_OPTIONAL 10 /* optional goals in a stage */
+	bool kill[QI_MAX_STAGES][QI_GOALS];				/* toggle */
 	bool kill_player_picks[QI_MAX_STAGES][QI_GOALS];		/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
 	int kill_ridx[QI_MAX_STAGES][QI_GOALS][20];			/* kill certain monster(s) */
 	char kill_rchar[QI_MAX_STAGES][QI_GOALS][5];			/*  ..certain types */
@@ -275,6 +278,7 @@ typedef struct quest_info {
 	bool kill_spawn_targets_questor[QI_MAX_STAGES][QI_GOALS];	/* the spawned mobs go for the questor primarily */
 	int kill_stage[QI_MAX_STAGES][QI_GOALS];			/* switch to a different quest stage on defeating the monsters */
 
+	bool retrieve[QI_MAX_STAGES][QI_GOALS];				/* toggle */
 	bool retrieve_player_picks[QI_MAX_STAGES][QI_GOALS];		/* instead of picking one subgoal randomly, let the player decide which he wants to get */
 	int retrieve_otval[QI_MAX_STAGES][QI_GOALS][20], retrieve_osval[QI_MAX_STAGES][QI_GOALS][20];	/* retrieve certain item(s) */
 	int retrieve_opval[QI_MAX_STAGES][QI_GOALS][5], retrieve_obpval[QI_MAX_STAGES][QI_GOALS][5];
@@ -295,6 +299,7 @@ typedef struct quest_info {
 	bool deliver_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
 
 
+	bool killopt[QI_MAX_STAGES][QI_OPTIONAL];			/* toggle */
 	bool killopt_player_picks[QI_MAX_STAGES][QI_OPTIONAL];		/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
 	int killopt_ridx[QI_MAX_STAGES][QI_OPTIONAL][20];		/* kill certain monster(s) */
 	char killopt_rchar[QI_MAX_STAGES][QI_OPTIONAL][5];		/*  ..certain types */
@@ -305,6 +310,7 @@ typedef struct quest_info {
 	bool killopt_spawn_targets_questor[QI_MAX_STAGES][QI_OPTIONAL];	/* the spawned mobs go for the questor primarily */
 	int killopt_stage[QI_MAX_STAGES][QI_OPTIONAL];			/* switch to a different quest stage on defeating the monsters */
 
+	bool retrieveopt[QI_MAX_STAGES][QI_OPTIONAL];			/* toggle */
 	bool retrieveopt_player_picks[QI_MAX_STAGES][QI_OPTIONAL];	/* instead of picking one subgoal randomly, let the player decide which he wants to get */
 	int retrieveopt_otval[QI_MAX_STAGES][QI_OPTIONAL][20], retrieveopt_osval[QI_MAX_STAGES][QI_OPTIONAL][20];	/* retrieve certain item(s) */
 	int retrieveopt_opval[QI_MAX_STAGES][QI_OPTIONAL][5], retrieveopt_obpval[QI_MAX_STAGES][QI_OPTIONAL][5];

@@ -373,10 +373,28 @@ void quest_deactivate(int q_idx) {
 #if QDEBUG > 1
 s_printf("deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_ptr->current_x, q_ptr->current_y);
 #endif
-	delete_monster_idx(c_ptr->m_idx, TRUE);
+	if (c_ptr->m_idx) delete_monster_idx(c_ptr->m_idx, TRUE);
 	if (q_ptr->static_floor) new_players_on_depth(&wpos, 0, FALSE);
 }
 
+/* a quest has ended, clean up */
+static void quest_terminate(int q_idx) {
+	player_type *p_ptr;
+	int i, j;
+
+	/* give players credit */
+	for (i = 1; i <= NumPlayers; i++) {
+		p_ptr = Players[i];
+		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			if (p_ptr->quest_idx[j] == q_idx) break;
+		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		p_ptr->quest_done[q_idx]++;
+	}
+
+	/* clean up */
+	quest_deactivate(q_idx);
+}
 
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_stage(int q_idx, int stage) {
@@ -404,6 +422,28 @@ void quest_stage(int q_idx, int stage) {
 		quest_imprint_stage(i, q_idx, j);
 		quest_dialogue(i, q_idx);
 	}
+
+
+	/* quest termination? */
+	if (q_ptr->ending_stage == stage) quest_terminate(q_idx);
+
+	/* auto-quest-termination? (actually redundant with ending_stage)
+	   If a stage has no dialogue keywords, or stage goals, the quest will end. */
+	j = 0;
+	/* optional goals play no role, obviously */
+	for (i = 0; i < QI_GOALS; i++)
+		if (q_ptr->kill[stage][i] || q_ptr->retrieve[stage][i]) {
+			j = 1;
+			break;
+		}
+	/* now check remaining dialogue options (keywords) */
+	for (i = 0; i < QI_MAX_KEYWORDS; i++)
+		if (q_ptr->keywords[stage][i]) {
+			j = 1;
+			break;
+		}
+	/* nothing left to do? */
+	if (!j) quest_terminate(q_idx);
 
 	/* mh? */
 }
@@ -448,7 +488,7 @@ bool quest_acquire(int Ind, int q_idx, bool quiet) {
 	int i;
 
 	/* has the player completed this quest already/too often? */
-	if (p_ptr->quest_done[q_idx] > q_ptr->repeatable) {
+	if (p_ptr->quest_done[q_idx] > q_ptr->repeatable && q_ptr->repeatable != -1) {
 		if (!quiet) msg_print(Ind, "\377oYou cannot acquire this quest again.");
 		return FALSE;
 	}
