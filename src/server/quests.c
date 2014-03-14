@@ -76,7 +76,7 @@ void process_quests(void) {
 static void quest_activate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 #ifdef QDEBUG
-	s_printf("QUEST_ACTIVATE: '%s' ('%s' by '%s')\n", q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
+	s_printf("%s QUEST_ACTIVATE: '%s' ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
 #endif
 
 	q_ptr->active = TRUE;
@@ -86,7 +86,7 @@ static void quest_activate(int q_idx) {
 static void quest_deactivate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 #ifdef QDEBUG
-	s_printf("QUEST_DEACTIVATE: '%s' ('%s' by '%s')\n", q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
+	s_printf("%s QUEST_DEACTIVATE: '%s' ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
 #endif
 
 	q_ptr->active = FALSE;
