@@ -2588,10 +2588,10 @@ static errr rd_savefile_new_aux(int Ind) {
 		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 			rd_string(p_ptr->questing[i], 10);
 			rd_byte(&p_ptr->quest_stage[i]);
-			for (j = 0; j < 10; j++) { /* hard-coded for both QI_GOALS and QI_OPTIONAL..sigh */
+			for (j = 0; j < QI_GOALS; j++)
 				rd_byte((byte *) &p_ptr->quest_goals[i][j]);
+			for (j = 0; j < QI_OPTIONAL; j++)
 				rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
-			}
 		}
 	} else
 		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
