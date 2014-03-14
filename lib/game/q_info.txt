@@ -45,7 +45,7 @@ V:0.0.1
 # for testing purpose
 N:0:testquest0:C. Blue:Test Quest
 I:1:100:FFFFF:FFFF
-L:1:1:0:0:0:0:0:0
+L:1:1:0:0:0:0:98:39
 T:1:1:0:0:0:0:0:0:0:-1:-1
 Q:-1:-1:-1:-1:-1:1:37:b:n:-1:-1:-1:-1:-1:1:Blind Bat
 U:0:0:0:0:0
