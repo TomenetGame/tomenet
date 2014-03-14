@@ -7580,11 +7580,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'W' for conversation */
 		if (buf[0] == 'W') {
 			int stage;
+			char *cc;
+
 			s = buf + 2;
 			if (2 != sscanf(s, "%d:%79[^:]",
 			    &stage, tmpbuf)) return (1);
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
 			if (lc_conversation[stage] == 10) return 1;
+
+			/* replace '{' by \377 */
+			while ((cc = strchr(tmpbuf, '{'))) *cc = '\377';
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);

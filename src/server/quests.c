@@ -405,7 +405,11 @@ bool quest_acquire(int Ind, int q_idx, bool quiet) {
 	/* voila, player acquires this quest! */
 	p_ptr->quest_idx[i] = q_idx;
 	strcpy(p_ptr->quest_codename[i], q_ptr->codename);
-	if (!quiet) msg_format(Ind, "\374\377UYou have acquired the quest '\377B%s\377U'.", q_name + q_ptr->name);
+	if (!quiet) {
+		msg_print(Ind, "\374 ");
+		//msg_format(Ind, "\374\377U**\377u You have acquired the quest \"\377U%s\377u\" \377U**", q_name + q_ptr->name);
+		msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\"", q_name + q_ptr->name);
+	}
 	return TRUE;
 }
 
@@ -434,6 +438,16 @@ void quest_interact(int Ind, int q_idx) {
 
 
 	/* questor interaction qutomatically invokes the quest dialogue, if any */
-	
+	if (q_ptr->talk[stage][0]) {
+		msg_print(Ind, "\374 ");
+		msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name);
+		for (i = 0; i < 10; i++) {
+			if (!q_ptr->talk[stage][i]) break;
+			msg_format(Ind, "\374\377U%s", q_ptr->talk[stage][i]);
+		}
+		msg_print(Ind, "\374 ");
+	}
+
+
 	/* mh? */
 }

@@ -54,7 +54,7 @@ Q:1:37:b:n:-1:-1:-1:-1:-1:1:Blind Bat
 U:0:0:0:0:0
 A:0:1
 W:0:Hello, fellow fruit bat!
-W:0:Would you like some {yale{- or rather a {Usolid ration{-?
+W:0:Would you like some {yale{- or rather a {ysolid ration{-?
 Y:0:ale:1
 Y:0:ration:2
 Y:0:solid ration:2
