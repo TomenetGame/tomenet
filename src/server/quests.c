@@ -388,9 +388,52 @@ void quest_stage(int q_idx, int stage) {
 
 }
 
+/* Acquire a quest, without checks whether the quest actually allows this at this stage */
+bool quest_acquire(int Ind, int q_idx, bool quiet) {
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+	/* does the player have capacity to pick up one more quest? */
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+		if (p_ptr->quest_idx[i] == -1) break;
+	if (i == MAX_CONCURRENT_QUESTS) {
+		if (!quiet) msg_print(Ind, "You are already pursuing the maximum possible number of concurrent quests.");
+		return FALSE;
+	}
+
+	/* voila, player acquires this quest! */
+	p_ptr->quest_idx[i] = q_idx;
+	strcpy(p_ptr->quest_codename[i], q_ptr->codename);
+	if (!quiet) msg_format(Ind, "\374\377UYou have acquired the quest '\377B%s\377U'.", q_name + q_ptr->name);
+	return TRUE;
+}
+
 /* A player interacts with the questor (bumps him if a creature :-p) */
 void quest_interact(int Ind, int q_idx) {
-//	quest_info *q_ptr = &q_info[q_idx];
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr = Players[Ind];
+	int i, stage = q_ptr->stage;
 
+
+	/* questor interaction may automatically acquire the quest */
+
+	/* has the player not yet acquired this quest? */
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+		if (p_ptr->quest_idx[i] == q_idx) break;
+	/* nope - test if he's eligible for picking it up!
+	   Otherwise, the questor will remain silent for him. */
+	if (i == MAX_CONCURRENT_QUESTS) {
+		/* do we accept players by questor interaction at all? */
+		if (!q_ptr->accept_interact) return;
+		/* do we accept players to acquire this quest in the current quest stage? */
+		if (!q_ptr->accepts[stage]) return;
+
+		quest_acquire(Ind, q_idx, FALSE);
+	}
+
+
+	/* questor interaction qutomatically invokes the quest dialogue, if any */
 	
+	/* mh? */
 }
