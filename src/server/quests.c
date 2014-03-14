@@ -401,6 +401,12 @@ static void quest_terminate(int q_idx) {
 	quest_deactivate(q_idx);
 }
 
+/* 1) we've entered a quest stage and it's pretty much 'empty' so we might terminate
+      if nothing more is up. check for free rewards first and hand them out.
+   2) goals were completed, before advancing the stage, hand out the proper rewards. */
+static void quest_rewards(q_idx) {
+}
+
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_stage(int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -429,8 +435,12 @@ void quest_stage(int q_idx, int stage) {
 	}
 
 
+	/* check for handing out rewards! (in case they're free) */
+	quest_rewards(q_idx);
+
+
 	/* quest termination? */
-	if (q_ptr->ending_stage == stage) quest_terminate(q_idx);
+	if (q_ptr->ending_stage && q_ptr->ending_stage == stage) quest_terminate(q_idx);
 
 	/* auto-quest-termination? (actually redundant with ending_stage)
 	   If a stage has no dialogue keywords, or stage goals, the quest will end. */
@@ -603,4 +613,13 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	}
 	/* it was nice small-talking to you, dude */
 	return;
+}
+
+/* check if quest goals of the current stage have been completed and accordingly
+   call quest_reward() and/or quest_stage() to advance. */
+void quest_goals(int q_idx) {
+//	quest_info *q_ptr = &q_info[q_idx];
+//	player_type *p_ptr = Players[Ind];
+//	int i, stage = q_ptr->stage;
+
 }
