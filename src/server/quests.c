@@ -390,7 +390,7 @@ void quest_stage(int q_idx, int stage) {
 
 /* A player interacts with the questor (bumps him if a creature :-p) */
 void quest_interact(int Ind, int q_idx) {
-	quest_info *q_ptr = &q_info[q_idx];
+//	quest_info *q_ptr = &q_info[q_idx];
 
 	
 }
