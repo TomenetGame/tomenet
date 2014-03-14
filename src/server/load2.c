@@ -2608,6 +2608,13 @@ static errr rd_savefile_new_aux(int Ind) {
 			rd_byte((byte *) &p_ptr->quest_target_wpos[i].wz);
 			rd_byte((byte *) &p_ptr->quest_target_x[i]);
 			rd_byte((byte *) &p_ptr->quest_target_y[i]);
+
+			rd_byte((byte *) &p_ptr->quest_deliver_loc[i]);
+			rd_byte((byte *) &p_ptr->quest_deliver_wpos[i].wx);
+			rd_byte((byte *) &p_ptr->quest_deliver_wpos[i].wy);
+			rd_byte((byte *) &p_ptr->quest_deliver_wpos[i].wz);
+			rd_byte((byte *) &p_ptr->quest_deliver_x[i]);
+			rd_byte((byte *) &p_ptr->quest_deliver_y[i]);
 		}
 	} else
 		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {

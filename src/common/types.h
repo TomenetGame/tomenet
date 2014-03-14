@@ -2731,6 +2731,9 @@ struct player_type {
 	bool quest_target_loc[MAX_CONCURRENT_QUESTS];
 	struct worldpos quest_target_wpos[MAX_CONCURRENT_QUESTS];
 	char quest_target_x[MAX_CONCURRENT_QUESTS], quest_target_y[MAX_CONCURRENT_QUESTS];
+	bool quest_deliver_loc[MAX_CONCURRENT_QUESTS];
+	struct worldpos quest_deliver_wpos[MAX_CONCURRENT_QUESTS];
+	char quest_deliver_x[MAX_CONCURRENT_QUESTS], quest_deliver_y[MAX_CONCURRENT_QUESTS];
 
 #ifdef ENABLE_MAIA
 	int voidx; int voidy; //for the void jumpgate creation spell; reset on every recall/levelchange/relogins

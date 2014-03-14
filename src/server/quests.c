@@ -377,6 +377,7 @@ s_printf("deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpo
 	if (q_ptr->static_floor) new_players_on_depth(&wpos, 0, FALSE);
 }
 
+
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_stage(int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -389,17 +390,42 @@ void quest_stage(int q_idx, int stage) {
 	q_ptr->stage = stage;
 
 
-	/* if a participating player is around the questor, entering a new stage
-	   qutomatically invokes the quest dialogue with him again (if any). */
+	/* if a participating player is around the questor, entering a new stage..
+	 *
+	 * - qutomatically invokes the quest dialogue with him again (if any)
+	 * - store information of the current stage in the p_ptr array,
+	 *   eg the target location for easier lookup */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos)) continue;
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		quest_imprint_stage(i, q_idx, j);
 		quest_dialogue(i, q_idx);
 	}
 
 	/* mh? */
+}
+
+/* Store some information of the current stage in the p_ptr array,
+   eg the target location for easier lookup. In theory we could make it work
+   without this function, but then we'd for example have to check on EVERY
+   step the player makes if he's doing any quest that has a target area and
+   is there etc... */
+void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
+#if 0
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr = Players[Ind];
+	int i, j;
+
+	p_ptr->quest_target_loc[py_q_idx]) = q_ptr->;
+	p_ptr->quest_target_wpos[py_q_idx].wx) = ;
+	p_ptr->quest_target_wpos[py_q_idx].wy) = ;
+	p_ptr->quest_target_wpos[py_q_idx].wz) = ;
+	p_ptr->quest_target_x[py_q_idx]) = ;
+	p_ptr->quest_target_y[py_q_idx]) = ;
+#endif
 }
 
 /* Acquire a quest, without checks whether the quest actually allows this at this stage */
@@ -424,6 +450,11 @@ bool quest_acquire(int Ind, int q_idx, bool quiet) {
 		//msg_format(Ind, "\374\377U**\377u You have acquired the quest \"\377U%s\377u\" \377U**", q_name + q_ptr->name);
 		msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\"", q_name + q_ptr->name);
 	}
+
+	/* store information of the current stage in the p_ptr array,
+	   eg the target location for easier lookup */
+	quest_imprint_stage(Ind, q_idx, i);
+
 	return TRUE;
 }
 
