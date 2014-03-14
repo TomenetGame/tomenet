@@ -447,6 +447,12 @@ bool quest_acquire(int Ind, int q_idx, bool quiet) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
+	/* has the player completed this quest already/too often? */
+	if (p_ptr->quest_done[q_idx] > q_ptr->repeatable) {
+		if (!quiet) msg_print(Ind, "You cannot acquire this quest again.");
+		return FALSE;
+	}
+
 	/* does the player have capacity to pick up one more quest? */
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == -1) break;

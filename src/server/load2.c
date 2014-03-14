@@ -2618,6 +2618,9 @@ static errr rd_savefile_new_aux(int Ind) {
 			rd_byte((byte *) &p_ptr->quest_within_deliveropt_wpos[i]);
 			rd_byte((byte *) &p_ptr->quest_deliveropt_xy[i]);
 		}
+
+		/* remember quests we completed */
+		for (i = 0; i < MAX_Q_IDX; i++) rd_s16b(&p_ptr->quest_done[i]);
 	} else
 		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 			p_ptr->quest_idx[i] = -1;

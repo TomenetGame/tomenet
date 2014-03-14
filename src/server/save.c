@@ -1341,6 +1341,9 @@ static bool wr_savefile_new(int Ind) {
 		wr_byte(p_ptr->quest_deliveropt_xy[i]);
 	}
 
+	/* remember quests we completed */
+	for (i = 0; i < MAX_Q_IDX; i++) wr_s16b(p_ptr->quest_done[i]);
+
         wr_byte(p_ptr->spell_project);
 
         /* Special powers */

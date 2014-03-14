@@ -197,6 +197,7 @@ typedef struct quest_info {
 	/* quest initialisation and meta actions */
 	bool accept_los, accept_interact;	/* player gets the quest just be being in LoS / interacting once with the questor (bump/read the parchment/pickup the item) */
 	bool accepts[QI_MAX_STAGES];		/* player can acquire the quest during a stage */
+	s16b repeatable;			/* player may repeat this quest n times (0 = can only do this quest once) */
 
 	int activate_quest[QI_MAX_STAGES];	/* spawn a certain new quest of this index (and thereby another questor) (if not already existing) */
 	bool auto_accept[QI_MAX_STAGES];	/* player will automatically acquire the newly spawned quest (from activate_quest[]) */

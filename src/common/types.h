@@ -2727,6 +2727,7 @@ struct player_type {
 	char quest_codename[MAX_CONCURRENT_QUESTS][10 + 1]; /* track up to 5 quests by their codename and roughly the current stage and goals */
 	byte quest_stage[MAX_CONCURRENT_QUESTS]; /* in which stage is a quest? */
 	bool quest_goals[MAX_CONCURRENT_QUESTS][5], quest_goalsopt[MAX_CONCURRENT_QUESTS][5]; /* which (optional) stage goals have we completed so far? */
+	s16b quest_done[MAX_Q_IDX]; /* player has completed a quest (n times) */
 	/* quest helper info */
 	bool quest_target_pos[MAX_CONCURRENT_QUESTS];
 	bool quest_within_target_wpos[MAX_CONCURRENT_QUESTS];
