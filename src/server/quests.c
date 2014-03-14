@@ -228,19 +228,23 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 	m_ptr->owner = 0;
 
 	r_ptr->flags1 = rbase_ptr->flags1;
-	r_ptr->flags1 |= RF1_FORCE_MAXHP;
 	r_ptr->flags2 = rbase_ptr->flags2;
 	r_ptr->flags3 = rbase_ptr->flags3;
 	r_ptr->flags4 = rbase_ptr->flags4;
 	r_ptr->flags5 = rbase_ptr->flags5;
 	r_ptr->flags6 = rbase_ptr->flags6;
 	r_ptr->flags7 = rbase_ptr->flags7;
-	r_ptr->flags7 |= RF7_NO_TARGET;
-	if (q_ptr->questor_invincible) r_ptr->flags7 |= RF7_NO_DEATH; //for now we just use NO_DEATH flag for invincibility
 	r_ptr->flags8 = rbase_ptr->flags8;
-	r_ptr->flags8 |= RF8_NO_AUTORET | RF8_GENO_PERSIST | RF8_GENO_NO_THIN;
 	r_ptr->flags9 = rbase_ptr->flags9;
 	r_ptr->flags0 = rbase_ptr->flags0;
+
+	r_ptr->flags1 |= RF1_FORCE_MAXHP;
+	r_ptr->flags3 |= RF3_RES_TELE | RF3_RES_NEXU;
+	r_ptr->flags7 |= RF7_NO_TARGET | RF7_NEVER_ACT;
+	if (q_ptr->questor_invincible) r_ptr->flags7 |= RF7_NO_DEATH; //for now we just use NO_DEATH flag for invincibility
+	r_ptr->flags8 |= RF8_GENO_PERSIST | RF8_GENO_NO_THIN | RF8_ALLOW_RUNNING | RF8_NO_AUTORET;
+	r_ptr->flags9 |= RF9_IM_TELE;
+
 	r_ptr->text = 0;
 	r_ptr->name = rbase_ptr->name;
 	m_ptr->fx = x;
