@@ -3090,7 +3090,7 @@ void do_cmd_look(int Ind, int dir) {
 		health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
-		if (m_ptr->quest)
+		if (m_ptr->questor)
 			snprintf(out_val, sizeof(out_val), "\377%c%s (Lv %d, %s)",
 			    m_ptr->quest_invincible ? 'G' : (m_ptr->quest_aggressive ? 'R' : 'w'),
 			    r_name_get(&m_list[c_ptr->m_idx]),
