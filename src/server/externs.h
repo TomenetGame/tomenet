@@ -1960,7 +1960,7 @@ extern void kill_house_contents(house_type *h_ptr);
 /*extern bool get_rep_dir(int *dp);*/
 
 extern bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor);
-extern void check_quests(void);
+extern void check_kquests(void);
 extern bool master_level_specific(int Ind, struct worldpos *wpos, char * parms);
 extern void unstatic_level(struct worldpos *wpos);
 
