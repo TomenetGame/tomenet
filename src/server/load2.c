@@ -2602,19 +2602,21 @@ static errr rd_savefile_new_aux(int Ind) {
 			for (j = 0; j < QI_OPTIONAL; j++)
 				rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
 
-			rd_byte((byte *) &p_ptr->quest_target_loc[i]);
-			rd_byte((byte *) &p_ptr->quest_target_wpos[i].wx);
-			rd_byte((byte *) &p_ptr->quest_target_wpos[i].wy);
-			rd_byte((byte *) &p_ptr->quest_target_wpos[i].wz);
-			rd_byte((byte *) &p_ptr->quest_target_x[i]);
-			rd_byte((byte *) &p_ptr->quest_target_y[i]);
+			rd_byte((byte *) &p_ptr->quest_target_pos[i]);
+			rd_byte((byte *) &p_ptr->quest_within_target_wpos[i]);
+			rd_byte((byte *) &p_ptr->quest_target_xy[i]);
 
-			rd_byte((byte *) &p_ptr->quest_deliver_loc[i]);
-			rd_byte((byte *) &p_ptr->quest_deliver_wpos[i].wx);
-			rd_byte((byte *) &p_ptr->quest_deliver_wpos[i].wy);
-			rd_byte((byte *) &p_ptr->quest_deliver_wpos[i].wz);
-			rd_byte((byte *) &p_ptr->quest_deliver_x[i]);
-			rd_byte((byte *) &p_ptr->quest_deliver_y[i]);
+			rd_byte((byte *) &p_ptr->quest_deliver_pos[i]);
+			rd_byte((byte *) &p_ptr->quest_within_deliver_wpos[i]);
+			rd_byte((byte *) &p_ptr->quest_deliver_xy[i]);
+
+			rd_byte((byte *) &p_ptr->quest_targetopt_pos[i]);
+			rd_byte((byte *) &p_ptr->quest_within_targetopt_wpos[i]);
+			rd_byte((byte *) &p_ptr->quest_targetopt_xy[i]);
+
+			rd_byte((byte *) &p_ptr->quest_deliveropt_pos[i]);
+			rd_byte((byte *) &p_ptr->quest_within_deliveropt_wpos[i]);
+			rd_byte((byte *) &p_ptr->quest_deliveropt_xy[i]);
 		}
 	} else
 		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {

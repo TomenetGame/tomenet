@@ -413,25 +413,32 @@ void quest_stage(int q_idx, int stage) {
    without this function, but then we'd for example have to check on EVERY
    step the player makes if he's doing any quest that has a target area and
    is there etc... */
-//TODO: currently only supports 1 target/delivery location, ie the one for the very first GOAL of that quest stage!
+/* TODO: currently only supports 1 target/delivery location, ie the one for the very first GOAL of that quest stage!
+   this sucks, it's too complicated^^ what should probably be done is:
+   only remember a p_ptr->bool_target_pos[max_conc], and then check on every wpos change.
+   if positive check, imprint this on a p_ptr->bool_within_target_wpos[max_conc], and
+   set p_ptr->bool_target_xypos[max_conc] if required.
+   Then on every subsequent move/kill/itempickup we can check in detail. --OK, made it this way */
 void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int stage = q_ptr->stage;
+	int i, stage = q_ptr->stage;
 
-	p_ptr->quest_target_loc[py_q_idx] = q_ptr->target_pos[stage][0];
-	p_ptr->quest_target_wpos[py_q_idx].wx = q_ptr->target_wpos[stage][0].wx;
-	p_ptr->quest_target_wpos[py_q_idx].wy = q_ptr->target_wpos[stage][0].wy;
-	p_ptr->quest_target_wpos[py_q_idx].wz = q_ptr->target_wpos[stage][0].wz;
-	p_ptr->quest_target_x[py_q_idx] = q_ptr->target_pos_x[stage][0];
-	p_ptr->quest_target_y[py_q_idx] = q_ptr->target_pos_y[stage][0];
 
-	p_ptr->quest_deliver_loc[py_q_idx] = q_ptr->deliver_pos[stage][0];
-	p_ptr->quest_deliver_wpos[py_q_idx].wx = q_ptr->deliver_wpos[stage][0].wx;
-	p_ptr->quest_deliver_wpos[py_q_idx].wy = q_ptr->deliver_wpos[stage][0].wy;
-	p_ptr->quest_deliver_wpos[py_q_idx].wz = q_ptr->deliver_wpos[stage][0].wz;
-	p_ptr->quest_deliver_x[py_q_idx] = q_ptr->deliver_pos_x[stage][0];
-	p_ptr->quest_deliver_y[py_q_idx] = q_ptr->deliver_pos_y[stage][0];
+	/* find out if we are pursuing any sort of target locations */
+	p_ptr->quest_target_pos[py_q_idx] = FALSE;
+	p_ptr->quest_targetopt_pos[py_q_idx] = FALSE;
+	p_ptr->quest_deliver_pos[py_q_idx] = FALSE;
+	p_ptr->quest_deliveropt_pos[py_q_idx] = FALSE;
+
+	for (i = 0; i < QI_GOALS; i++) {
+		p_ptr->quest_target_pos[py_q_idx] = q_ptr->target_pos[stage][0];
+		p_ptr->quest_deliver_pos[py_q_idx] = q_ptr->deliver_pos[stage][0];
+	}
+	for (i = 0; i < QI_OPTIONAL; i++) {
+		p_ptr->quest_targetopt_pos[py_q_idx] = q_ptr->targetopt_pos[stage][0];
+		p_ptr->quest_deliveropt_pos[py_q_idx] = q_ptr->deliveropt_pos[stage][0];
+	}
 }
 
 /* Acquire a quest, without checks whether the quest actually allows this at this stage */

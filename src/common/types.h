@@ -2728,12 +2728,18 @@ struct player_type {
 	byte quest_stage[MAX_CONCURRENT_QUESTS]; /* in which stage is a quest? */
 	bool quest_goals[MAX_CONCURRENT_QUESTS][5], quest_goalsopt[MAX_CONCURRENT_QUESTS][5]; /* which (optional) stage goals have we completed so far? */
 	/* quest helper info */
-	bool quest_target_loc[MAX_CONCURRENT_QUESTS];
-	struct worldpos quest_target_wpos[MAX_CONCURRENT_QUESTS];
-	char quest_target_x[MAX_CONCURRENT_QUESTS], quest_target_y[MAX_CONCURRENT_QUESTS];
-	bool quest_deliver_loc[MAX_CONCURRENT_QUESTS];
-	struct worldpos quest_deliver_wpos[MAX_CONCURRENT_QUESTS];
-	char quest_deliver_x[MAX_CONCURRENT_QUESTS], quest_deliver_y[MAX_CONCURRENT_QUESTS];
+	bool quest_target_pos[MAX_CONCURRENT_QUESTS];
+	bool quest_within_target_wpos[MAX_CONCURRENT_QUESTS];
+	bool quest_target_xy[MAX_CONCURRENT_QUESTS];
+	bool quest_targetopt_pos[MAX_CONCURRENT_QUESTS];
+	bool quest_within_targetopt_wpos[MAX_CONCURRENT_QUESTS];
+	bool quest_targetopt_xy[MAX_CONCURRENT_QUESTS];
+	bool quest_deliver_pos[MAX_CONCURRENT_QUESTS];
+	bool quest_within_deliver_wpos[MAX_CONCURRENT_QUESTS];
+	bool quest_deliver_xy[MAX_CONCURRENT_QUESTS];
+	bool quest_deliveropt_pos[MAX_CONCURRENT_QUESTS];
+	bool quest_within_deliveropt_wpos[MAX_CONCURRENT_QUESTS];
+	bool quest_deliveropt_xy[MAX_CONCURRENT_QUESTS];
 
 #ifdef ENABLE_MAIA
 	int voidx; int voidy; //for the void jumpgate creation spell; reset on every recall/levelchange/relogins

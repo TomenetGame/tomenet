@@ -1324,19 +1324,21 @@ static bool wr_savefile_new(int Ind) {
 			wr_byte(p_ptr->quest_goalsopt[i][j]);
 
 		/* helper info */
-		wr_byte(p_ptr->quest_target_loc[i]);
-		wr_byte(p_ptr->quest_target_wpos[i].wx);
-		wr_byte(p_ptr->quest_target_wpos[i].wy);
-		wr_byte(p_ptr->quest_target_wpos[i].wz);
-		wr_byte(p_ptr->quest_target_x[i]);
-		wr_byte(p_ptr->quest_target_y[i]);
+		wr_byte(p_ptr->quest_target_pos[i]);
+		wr_byte(p_ptr->quest_within_target_wpos[i]);
+		wr_byte(p_ptr->quest_target_xy[i]);
 
-		wr_byte(p_ptr->quest_deliver_loc[i]);
-		wr_byte(p_ptr->quest_deliver_wpos[i].wx);
-		wr_byte(p_ptr->quest_deliver_wpos[i].wy);
-		wr_byte(p_ptr->quest_deliver_wpos[i].wz);
-		wr_byte(p_ptr->quest_deliver_x[i]);
-		wr_byte(p_ptr->quest_deliver_y[i]);
+		wr_byte(p_ptr->quest_deliver_pos[i]);
+		wr_byte(p_ptr->quest_within_deliver_wpos[i]);
+		wr_byte(p_ptr->quest_deliver_xy[i]);
+
+		wr_byte(p_ptr->quest_targetopt_pos[i]);
+		wr_byte(p_ptr->quest_within_targetopt_wpos[i]);
+		wr_byte(p_ptr->quest_targetopt_xy[i]);
+
+		wr_byte(p_ptr->quest_deliveropt_pos[i]);
+		wr_byte(p_ptr->quest_within_deliveropt_wpos[i]);
+		wr_byte(p_ptr->quest_deliveropt_xy[i]);
 	}
 
         wr_byte(p_ptr->spell_project);
