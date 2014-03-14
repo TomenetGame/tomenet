@@ -12096,7 +12096,7 @@ amount of energy in the ring.
 (6.7b) Druid form details
 -------------------------
 The according polymorph code is given in parentheses below the creature name.
-Note: Some forms can open doors, others may try to bash doors.
+Note: Some druid forms can open doors, others may try to bash doors.
       Also, all animal forms are able to travel through woods.
 You can use the /ex command in game to see which forms you can use, and what
 polymorph code they have.
