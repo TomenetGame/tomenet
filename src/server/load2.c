@@ -1033,9 +1033,9 @@ static void rd_quests() {
 	int i, dummysize = sizeof(byte) * 2 + sizeof(s16b) * 2 + sizeof(s32b);
 	s16b max;
 	rd_s16b(&max);
-	if (max >= max_q_idx) s_printf("Warning: Read more quest info than available quests.\n");
+	if (max > max_q_idx) s_printf("Warning: Read more quest info than available quests.\n");
 	for (i = 0; i < max; i++) {
-		if (max >= max_q_idx) {
+		if (max > max_q_idx) {
 			strip_bytes(dummysize);
 			continue;
 		}
@@ -1045,6 +1045,7 @@ static void rd_quests() {
 		rd_s16b(&q_info[i].stage);
 		rd_s32b(&q_info[i].start_turn);
 	}
+	s_printf("Read %d/%d saved quests states (discarded %d).\n", max, max_q_idx, max > max_q_idx ? max - max_q_idx : 0);
 }
 
 static void rd_guilds() {
