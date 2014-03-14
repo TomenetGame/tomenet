@@ -2141,6 +2141,8 @@ extern void quest_deactivate(int q_idx);
 extern void quest_stage(int q_idx, int stage);
 extern void quest_interact(int Ind, int q_idx);
 extern void quest_reply(int Ind, int q_idx, char *str);
+extern void quest_dialogue(int Ind, int q_idx);
+
 
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue

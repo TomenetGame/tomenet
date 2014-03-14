@@ -379,6 +379,7 @@ s_printf("deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpo
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_stage(int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
+	int i, j;
 
 	/* dynamic info */
 	//int stage_prev = q_ptr->stage;
@@ -386,6 +387,18 @@ void quest_stage(int q_idx, int stage) {
 	/* new stage is active */
 	q_ptr->stage = stage;
 
+
+	/* if a participating player is around the questor, entering a new stage
+	   qutomatically invokes the quest dialogue with him again (if any). */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos)) continue;
+		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			if (Players[i]->quest_idx[j] == q_idx) break;
+		if (j == MAX_CONCURRENT_QUESTS) continue;
+		quest_dialogue(i, q_idx);
+	}
+
+	/* mh? */
 }
 
 /* Acquire a quest, without checks whether the quest actually allows this at this stage */
@@ -438,6 +451,20 @@ void quest_interact(int Ind, int q_idx) {
 
 
 	/* questor interaction qutomatically invokes the quest dialogue, if any */
+	q_ptr->talk_focus = Ind; /* only this player can actually respond with keywords */
+	quest_dialogue(Ind, q_idx);
+
+	/* mh? */
+}
+
+/* Talk vs keyword dialogue between questor and player.
+   This is initiated either by bumping into the questor or by entering a new
+   stage while in the area of the questor.
+   Note that if the questor is focussed, only that player may respond with keywords. */
+void quest_dialogue(int Ind, int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	int i, stage = q_ptr->stage;
+
 	if (q_ptr->talk[stage][0]) {
 		msg_print(Ind, "\374 ");
 		msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name);
@@ -447,11 +474,13 @@ void quest_interact(int Ind, int q_idx) {
 		}
 		msg_print(Ind, "\374 ");
 	}
-	/* if there are any keywords in this stage, prompt the player for a reply */
+
+	/* If there are any keywords in this stage, prompt the player for a reply.
+	   If the questor is focussed on one player, only he can give a reply,
+	   otherwise the first player to reply can advance the stage. */
+	if (q_ptr->talk_focus && q_ptr->talk_focus != Ind) return;
 	if (q_ptr->keywords[stage][0])
 		Send_request_str(Ind, RID_QUEST + q_idx, "Your reply> ", "");
-
-	/* mh? */
 }
 
 /* Player replied in a questor dialogue by entering a keyword */

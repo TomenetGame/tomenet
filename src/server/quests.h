@@ -240,6 +240,7 @@ typedef struct quest_info {
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
+	int talk_focus;						/* questor is focussed on this player and won't give others a chance to reply with keywords */
 	cptr talk[QI_MAX_STAGES][QI_TALK_LINES];		/* n conversations a 10 lines a 79 characters */
 	cptr keywords[QI_MAX_STAGES][QI_MAX_KEYWORDS];		/* each convo may allow the player to reply with up to m keywords a 30 chars */
 	int keywords_stage[QI_MAX_STAGES][QI_MAX_KEYWORDS];	/*  ..which will bring the player to a different quest stage */
