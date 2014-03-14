@@ -2725,7 +2725,7 @@ struct player_type {
 	//hard-coded stuff: QI_CODENAME_LEN 10, QI_GOALS 10, QI_OPTIONAL 10
 	char questing[MAX_CONCURRENT_QUESTS][10]; /* track up to 5 quests by their codename and roughly the current stage and goals */
 	byte quest_stage[MAX_CONCURRENT_QUESTS]; /* in which stage is a quest? */
-	bool quest_goals[10], quest_goalsopt[10]; /* which (optional) stage goals have we completed so far? */
+	bool quest_goals[MAX_CONCURRENT_QUESTS][10], quest_goalsopt[MAX_CONCURRENT_QUESTS][10]; /* which (optional) stage goals have we completed so far? */
 
 #ifdef ENABLE_MAIA
 	int voidx; int voidy; //for the void jumpgate creation spell; reset on every recall/levelchange/relogins

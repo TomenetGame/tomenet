@@ -1153,14 +1153,11 @@ static void wr_cave_memory(int Ind)
 /*
  * Actually write a player save-file
  */
-static bool wr_savefile_new(int Ind)
-{
+static bool wr_savefile_new(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
-	int        i;
+	int        i, j;
 
 	u32b              now, tmp32u;
-
 	byte		tmp8u;
 	u16b		tmp16u;
 
@@ -1308,6 +1305,15 @@ static bool wr_savefile_new(int Ind)
 
 	wr_s16b(p_ptr->quest_id);
 	wr_s16b(p_ptr->quest_num);
+
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+		wr_string(p_ptr->questing[i]);
+		wr_byte(p_ptr->quest_stage[i]);
+		for (j = 0; j < 10; j++) { /* hard-coded for both QI_GOALS and QI_OPTIONAL..double sigh */
+			wr_byte(p_ptr->quest_goals[i][j]);
+			wr_byte(p_ptr->quest_goalsopt[i][j]);
+		}
+	}
 
         wr_byte(p_ptr->spell_project);
 

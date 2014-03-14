@@ -2419,11 +2419,9 @@ static void rd_auctions()
  * Angband 2.8.0 will completely replace this code, see "save.c",
  * though this code will be kept to read pre-2.8.0 savefiles.
  */
-static errr rd_savefile_new_aux(int Ind)
-{
+static errr rd_savefile_new_aux(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
-	int i, err_code = 0;
+	int i, j, err_code = 0;
 
 //	byte panic;
 	u16b tmp16u;
@@ -2585,6 +2583,17 @@ static errr rd_savefile_new_aux(int Ind)
 	else if (p_ptr->guild) p_ptr->guild_dna = guilds[p_ptr->guild].dna;
 	rd_u16b(&p_ptr->quest_id);
         rd_s16b(&p_ptr->quest_num);
+
+	if (!older_than(4, 5, 19)) {
+		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+			rd_string(p_ptr->questing[i], 10);
+			rd_byte(&p_ptr->quest_stage[i]);
+			for (j = 0; j < 10; j++) { /* hard-coded for both QI_GOALS and QI_OPTIONAL..sigh */
+				rd_byte((byte *) &p_ptr->quest_goals[i][j]);
+				rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
+			}
+		}
+	}
 
         if (!older_than(4, 0, 1)) {
                 rd_byte(&p_ptr->spell_project);
