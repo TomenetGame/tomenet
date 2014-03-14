@@ -507,6 +507,9 @@ void compact_monsters(int size, bool purge)
 			if (m_ptr->pet || m_ptr->owner) continue;
 #endif
 
+			/* Skip questors (new quest_info) */
+			if (m_ptr->questor) continue;
+
 			/* Skip special hard-coded monsters (target dummy, invis dummy, santa) */
 			if (r_info[m_ptr->r_idx].flags8 & RF8_GENO_NO_THIN) continue;
 

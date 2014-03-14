@@ -17,6 +17,7 @@ V:0.0.1
 # T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # F:mapfile
 # Q:questorlocation wx:wy:wz:x:y:type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:invinc?:name
+# //todo: K:giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
 # U:duration:cooldown:perplayer?:staticfloor?:quitfloor?
 # A:accept-on-los?:accept-on-interaction?
 #(Parameters from here on are all individual per quest stage)

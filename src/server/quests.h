@@ -152,6 +152,18 @@ typedef struct quest_info {
 	bool questor_invincible;		/* Is the questor invincible (if monster)/unpickable by monsters (if item)? */
 	char questor_name[MAX_CHARS];		/* optional pseudo-unique name that overrides the normal name */
 
+	/* ..if killable ie not invincible: */
+	bool questor_drops_regular;		/* Drops regular loot (of his ridx type) instead of nothing? */
+	bool questor_drops_specific;		/* Drops a specific item (like DROP_CHOSEN) */
+	int questor_drops_tval;		/* hand over certain rewards to the player */
+	int questor_drops_sval;
+	int questor_drops_pval, questor_drops_bpval;
+	int questor_drops_name1, questor_drops_name2, questor_drops_name2b;
+	bool questor_drops_good, questor_drops_great;
+	bool questor_drops_reward;	/*  use fitting-reward algo (from highlander etc)? */
+	int questor_drops_gold;
+	int questor_exp;
+
 
     /* QUEST DURATION */
 	/* quest duration, after it was accepted, until it expires */

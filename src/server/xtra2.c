@@ -4950,6 +4950,9 @@ void monster_death(int Ind, int m_idx) {
 		if (tmp_luck > 40) tmp_luck = 40;
 	}
 
+	/* Questors: Usually drop no items, except if specified */
+	if (m_ptr->questor && !q_info[m_ptr->quest].questor_drops_regular) number = 0;
+
 	/* Drop some objects */
 	for (j = 0; j < number; j++) {
 		/* Try 20 times per item, increasing range */
@@ -5069,7 +5072,7 @@ void monster_death(int Ind, int m_idx) {
 		}
 	/* Get kill credit for non-uniques (important for mimics) */
 	//HACK: added test for m_ptr->r_idx to suppress bad msgs about 0 forms learned (exploders?)
-	} else if (credit_idx && p_ptr->r_killed[credit_idx] < 1000) {
+	} else if (credit_idx && p_ptr->r_killed[credit_idx] < 1000 && !m_ptr->questor) {
 		int before = p_ptr->r_killed[credit_idx];
 		i = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
 
@@ -5928,6 +5931,15 @@ if (cfg.unikill_format) {
 		}
 	}
 
+	/* for when a quest giver turned non-invincible */
+	if (m_ptr->questor) {
+		/* Drop a specific item? */
+		if (q_info[m_ptr->quest].questor_drops_specific) {
+			//todo: drop..
+		}
+		/* Quest progression/fail effect? */
+		//todo..
+	}
 
 
 //        if((!force_coin)&&(randint(100)<50)) place_corpse(m_ptr);

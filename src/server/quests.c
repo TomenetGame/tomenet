@@ -80,6 +80,11 @@ static void quest_activate(int q_idx) {
 #endif
 
 	q_ptr->active = TRUE;
+
+	
+
+//    bool questor, quest_invincible, quest_aggressive; /* further quest_info flags are referred to when required, no need to copy all of them here */
+//    int quest;
 }
 
 /* Despawn questor, unstatic sector/floor, etc. */
