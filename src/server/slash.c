@@ -3541,17 +3541,28 @@ void do_slash_cmd(int Ind, char *message)
 					else msg_print(Ind, "\377U-- You're currently pursuing the following quests: --");
 					for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 						if (p_ptr->quest_idx[i] == -1) continue;
-						msg_format(Ind, "  %s", q_name + q_info[p_ptr->quest_idx[i]].name);
+						msg_format(Ind, "  %d) %s", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name);
 					}
-					msg_print(Ind, "\377U(To drop a quest, type: \377y/qdrop questnumber\377U)");
+					msg_print(Ind, "\377U(To drop a quest, type: \377y/qdrop questnumber\377U or '*' to drop all.)");
 				}
 				return;
 			}
-			msg_format(Ind, "\377UQuests (max_q_idx/MAX_Q_IDX %d/%d):", max_q_idx, MAX_Q_IDX);
-			for (i = 0; i < max_q_idx; i++) {
-				msg_format(Ind, "  %d) '%s' [%s by %s] %s %s %d", i, q_name + q_info[i].name, q_info[i].codename, q_info[i].creator,
-				    q_info[i].active ? "ACT" : "   ", q_info[i].disabled ? "DIS" : "   ", q_info[i].cooldown);
+			if (token[0][0] == '*') {
+				msg_format(Ind, "You are no longer pursuing any quest!");
+				for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+					p_ptr->quest_idx[i] = -1;
+				return;
 			}
+			if (k < 1 || k > MAX_CONCURRENT_QUESTS) {
+				msg_print(Ind, "\377yThe quest number must be from 1 to 5!");
+				return;
+			}
+			if (p_ptr->quest_idx[k] == -1) {
+				msg_format(Ind, "\377yYou are not pursing a quest numbered %d.", k);
+				return;
+			}
+			msg_format(Ind, "You are no longer pursuing the quest '%s'!", q_name + q_info[p_ptr->quest_idx[k]].name);
+			p_ptr->quest_idx[k] = -1;
 			return;
 		}
 
