@@ -2594,7 +2594,8 @@ static errr rd_savefile_new_aux(int Ind) {
 
 	if (!older_than(4, 5, 19)) {
 		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
-			rd_string(p_ptr->questing[i], 10);
+			rd_s16b(&p_ptr->quest_idx[i]);
+			rd_string(p_ptr->quest_codename[i], 10);
 			rd_byte(&p_ptr->quest_stage[i]);
 			for (j = 0; j < QI_GOALS; j++)
 				rd_byte((byte *) &p_ptr->quest_goals[i][j]);
@@ -2602,8 +2603,10 @@ static errr rd_savefile_new_aux(int Ind) {
 				rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
 		}
 	} else
-		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
-			p_ptr->questing[i][0] = 0;
+		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+			p_ptr->quest_idx[i] = -1;
+			p_ptr->quest_codename[i][0] = 0;
+		}
 
         if (!older_than(4, 0, 1)) {
                 rd_byte(&p_ptr->spell_project);

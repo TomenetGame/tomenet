@@ -1315,7 +1315,8 @@ static bool wr_savefile_new(int Ind) {
 	wr_s16b(p_ptr->quest_num);
 
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
-		wr_string(p_ptr->questing[i]);
+		wr_s16b(p_ptr->quest_idx[i]);
+		wr_string(p_ptr->quest_codename[i]);
 		wr_byte(p_ptr->quest_stage[i]);
 		for (j = 0; j < QI_GOALS; j++)
 			wr_byte(p_ptr->quest_goals[i][j]);

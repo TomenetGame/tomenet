@@ -3328,8 +3328,10 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	disable_specific_warnings(p_ptr);
 
 	/* No active quests */
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
-		p_ptr->questing[i][0] = 0;
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+		p_ptr->quest_codename[i][0] = 0;
+		p_ptr->quest_idx[i] = -1;
+	}
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);
