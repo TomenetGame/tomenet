@@ -115,6 +115,9 @@ typedef struct quest_info {
 	byte s_location_type;			/* flags setting elibible starting location types (QI_SLOC_xxx) */
 	u16b s_towns_array;			/* QI_SLOC_TOWN: flags setting eligible starting towns (QI_STOWN_xxx) */
 	u32b s_terrains;			/* QI_SLOC_SURFACE: flags setting eligible starting terrains (RF8_WILD_xxx, RF8_WILD_TOO_MASK for all) */
+	/* exact questor starting location */
+	struct worldpos start_wpos;		/* -1, -1 for random */
+	int start_x, start_y;			/* -1, -1 for random */
 
 	bool s_dungeon[MAX_D_IDX];		/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
 	u32b s_dungeon_must_flags1, s_dungeon_must_flags2, s_dungeon_must_flags3;	/*  eligible wilderness dungeon flags */
@@ -122,15 +125,16 @@ typedef struct quest_info {
 	bool s_dungeon_iddc;			/*  is the Ironman Deep Dive Challenge an eligible starting point? */
 	int dlevmin, dlevmax;			/*  eligible dungeon level or world sector level (0 for any) */
 
+	/* keep track of actual resulting questor location */
+	struct worldpos current_wpos;
+	int current_x, current_y;
+
+	/* eligible time for quest/questor to spawn and be active */
 	bool night, day;			/* Only available at night/day in general? */
 	bool morning, forenoon, noon, afternoon, evening, midnight, deepnight; /*  Only available at very specific night/day times? */
 	int time_start, time_stop;		/* Only available during very specific time interval? */
 
 	cptr t_pref;				/* filename of map to load, or empty for none */
-
-	/* exact questor starting location */
-	struct worldpos start_wpos;		/* -1, -1 for random */
-	int start_x, start_y;			/* -1, -1 for random */
 
 
 	/* type of questor */

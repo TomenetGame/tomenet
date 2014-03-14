@@ -7456,13 +7456,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'L' for questor starting location type */
 		if (buf[0] == 'L') {
-			int loc, towns, terr;
+			int loc, towns, terr, wx, wy, wz;
 			s = buf + 2;
-			if (3 != sscanf(s, "%d:%d:%d", //byte, u16b, u32b
-			    &loc, &towns, &terr)) return (1);
+			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d", //byte, u16b, u32b
+			    &loc, &towns, &terr, &wx, &wy, &wz, &q_ptr->start_x, &q_ptr->start_y)) return (1);
 			q_ptr->s_location_type = (byte)loc;
 			q_ptr->s_towns_array = (u16b)towns;
 			q_ptr->s_terrains = (u32b)terr;
+			q_ptr->start_wpos.wx = (char)wx;
+			q_ptr->start_wpos.wy = (char)wy;
+			q_ptr->start_wpos.wz = (char)wz;
 			continue;
 		}
 
