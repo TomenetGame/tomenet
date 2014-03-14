@@ -3557,12 +3557,12 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377yThe quest number must be from 1 to 5!");
 				return;
 			}
-			if (p_ptr->quest_idx[k] == -1) {
+			if (p_ptr->quest_idx[k - 1] == -1) {
 				msg_format(Ind, "\377yYou are not pursing a quest numbered %d.", k);
 				return;
 			}
-			msg_format(Ind, "You are no longer pursuing the quest '%s'!", q_name + q_info[p_ptr->quest_idx[k]].name);
-			p_ptr->quest_idx[k] = -1;
+			msg_format(Ind, "You are no longer pursuing the quest '%s'!", q_name + q_info[p_ptr->quest_idx[k - 1]].name);
+			p_ptr->quest_idx[k - 1] = -1;
 			return;
 		}
 
