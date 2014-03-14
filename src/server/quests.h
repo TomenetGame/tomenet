@@ -39,6 +39,7 @@
 
 #define QI_CODENAME_LEN		10	/* short, internal quest code name */
 #define QI_MAX_STAGES		50	/* a quest can have these # of different stages */
+#define QI_TALK_LINES		15	/* amount of text lines per talk dialogue */
 #define QI_MAX_KEYWORDS		10	/* for dialogue with the questor */
 #define QI_MAX_STAGE_REWARDS 	10	/* max # of rewards handed out per completed stage */
 #define QI_GOALS		10	/* main goals to complete a stage */
@@ -239,7 +240,7 @@ typedef struct quest_info {
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
-	cptr talk[QI_MAX_STAGES][10];				/* n conversations a 10 lines a 79 characters */
+	cptr talk[QI_MAX_STAGES][QI_TALK_LINES];		/* n conversations a 10 lines a 79 characters */
 	cptr keywords[QI_MAX_STAGES][QI_MAX_KEYWORDS];		/* each convo may allow the player to reply with up to m keywords a 30 chars */
 	int keywords_stage[QI_MAX_STAGES][QI_MAX_KEYWORDS];	/*  ..which will bring the player to a different quest stage */
 	char yn[QI_MAX_STAGES];					/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */

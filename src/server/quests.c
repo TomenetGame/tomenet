@@ -441,11 +441,15 @@ void quest_interact(int Ind, int q_idx) {
 	if (q_ptr->talk[stage][0]) {
 		msg_print(Ind, "\374 ");
 		msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name);
-		for (i = 0; i < 10; i++) {
+		for (i = 0; i < QI_TALK_LINES; i++) {
 			if (!q_ptr->talk[stage][i]) break;
 			msg_format(Ind, "\374\377U%s", q_ptr->talk[stage][i]);
 		}
 		msg_print(Ind, "\374 ");
+	}
+	/* if there are any keywords in this stage, prompt the player for a reply */
+	if (q_ptr->keywords[stage][0]) {
+		
 	}
 
 

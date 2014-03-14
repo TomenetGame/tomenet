@@ -7586,7 +7586,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (2 != sscanf(s, "%d:%79[^:]",
 			    &stage, tmpbuf)) return (1);
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
-			if (lc_conversation[stage] == 10) return 1;
+			if (lc_conversation[stage] == QI_TALK_LINES) return 1;
 
 			/* replace '{' by \377 */
 			while ((cc = strchr(tmpbuf, '{'))) *cc = '\377';
