@@ -22,6 +22,14 @@
    probably have almost the same title too in case the player can review the title so as to
    not confuse him..		maybe this could be improved on in the future :-p
    how to possibly improve: spawn sub questors with their own dialogues.
+
+   Regarding party members, that could be done by: Scanning area for party members on
+   questor interaction, ask them if they want to join the quest y/n, and then duplicating
+   all quest message output to them. Further, any party member who is first to do so  can
+   complete a goal or invoke a dialogue. Only the party member who INVOKES a dialogue can
+   make a keyword-based decision, the others can just watch the dialogue passively.
+   Stages cannot proceed until all party members are present at the questor, if the questor
+   requires returning to him, or until all members are at the quest target sector, if any.
 */
 
 
