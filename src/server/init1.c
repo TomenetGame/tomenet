@@ -7432,7 +7432,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			s = buf + 2;
 			/* read list of numbers, separated by colons */
 			while (*s >= '0' && *s <= '9') {
-				j = atoi(c);
+				j = atoi(s);
 				if (j < 0 || j >= QI_MAX_STAGES) return 1;
 
 				q_ptr->accepts[j] = TRUE;
