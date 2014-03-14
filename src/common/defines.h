@@ -1396,6 +1396,14 @@
  #define	IS_NIGHT	(IS_NIGHT_RAW || season_halloween || fireworks)
  #define	IS_DAY		(!IS_NIGHT)
 #endif	/* 0 */
+/* For new quests */
+ #define	IS_MORNING	((bst(HOUR, turn) >= SUNRISE) && (bst(HOUR, turn) < 9))
+ #define	IS_FORENOON	((bst(HOUR, turn) >= 9) && (bst(HOUR, turn) < 12))
+ #define	IS_NOON		((bst(HOUR, turn) >= 12) && (bst(HOUR, turn) < 14))
+ #define	IS_AFTERNOON	((bst(HOUR, turn) >= 14) && (bst(HOUR, turn) < 19))
+ #define	IS_EVENING	((bst(HOUR, turn) >= 19) && (bst(HOUR, turn) <= 23))
+ #define	IS_MIDNIGHT	((bst(HOUR, turn) >= 0) && (bst(HOUR, turn) < 1))
+ #define	IS_DEEPNIGHT	((bst(HOUR, turn) >= 1) && (bst(HOUR, turn) < SUNRISE))
 
 
 /* More time macros */

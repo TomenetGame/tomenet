@@ -6815,6 +6815,10 @@ void dungeon(void)
 	/* Do some queued drawing */
 	process_lite_later();
 
+
+	/* Process quest (de)activation every minute */
+	if (!(turn % (cfg.fps * 60))) process_quests();
+
 	/* process some things once each second.
 	   NOTE: Some of these (global events) mustn't
 	   be handled _after_ a player got set to 'dead',

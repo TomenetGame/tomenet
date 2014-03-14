@@ -123,7 +123,7 @@ typedef struct quest_info {
 	int dlevmin, dlevmax;			/*  eligible dungeon level or world sector level (0 for any) */
 
 	bool night, day;			/* Only available at night/day in general? */
-	bool morning, noon, afternoon, evening, midnight, deepnight; /*  Only available at very specific night/day times? */
+	bool morning, forenoon, noon, afternoon, evening, midnight, deepnight; /*  Only available at very specific night/day times? */
 	int time_start, time_stop;		/* Only available during very specific time interval? */
 
 	cptr t_pref;				/* filename of map to load, or empty for none */

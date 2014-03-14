@@ -24,8 +24,53 @@
    how to possibly improve: spawn sub questors with their own dialogues.
 */
 
-
 //? #define SERVER
 #include "angband.h"
 
+/* enable debug log output */
+#define QDEBUG
 
+/* Called every minute to check which quests to activate/deactivate depending on time/daytime */
+void process_quests(void) {
+	quest_info *q_ptr;
+	int i;
+	bool active;
+
+	for (i = 0; i < max_q_idx; i++) {
+		q_ptr = &q_info[i];
+
+		/* check if quest should be active */
+		active = FALSE;
+		if (q_ptr->night && IS_NIGHT_RAW) active = TRUE; /* don't include pseudo-night like for Halloween/Newyearseve */
+		if (q_ptr->day && !IS_NIGHT_RAW) active = TRUE;
+		if (q_ptr->morning && IS_MORNING) active = TRUE;
+		if (q_ptr->forenoon && IS_FORENOON) active = TRUE;
+		if (q_ptr->noon && IS_NOON) active = TRUE;
+		if (q_ptr->afternoon && IS_AFTERNOON) active = TRUE;
+		if (q_ptr->evening && IS_EVENING) active = TRUE;
+		if (q_ptr->midnight && IS_MIDNIGHT) active = TRUE;
+		if (q_ptr->deepnight && IS_DEEPNIGHT) active = TRUE;
+		if (q_ptr->time_start != -1) {
+			if (bst(MINUTE, turn) >= q_ptr->time_start) {
+				if (q_ptr->time_stop == -1 ||
+				    bst(MINUTE, turn) < q_ptr->time_stop)
+					active = TRUE;
+			}
+		}
+
+		/* quest is inactive and must be activated */
+		if (!q_ptr->active && active) {
+#ifdef QDEBUG
+			s_printf("QUEST_ACTIVATE: '%s' ('%s' by '%s')\n", q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
+#endif
+			q_ptr->active = TRUE;
+		}
+		/* quest is active and must be deactivated */
+		else if (q_ptr->active && !active) {
+#ifdef QDEBUG
+			s_printf("QUEST_DEACTIVATE: '%s' ('%s' by '%s')\n", q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
+#endif
+			q_ptr->active = FALSE;
+		}
+	}
+}

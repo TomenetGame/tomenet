@@ -7478,13 +7478,14 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'T' for quest starting times */
 		if (buf[0] == 'T') {
-			int night, day, mor, noo, aft, eve, mid, dee;
+			int night, day, mor, fnoo, noo, aft, eve, mid, dee;
 			s = buf + 2;
-			if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
-			    &night, &day, &mor, &noo, &aft, &eve, &mid, &dee, &q_ptr->time_start, &q_ptr->time_stop)) return (1);
+			if (11 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+			    &night, &day, &mor, &fnoo, &noo, &aft, &eve, &mid, &dee, &q_ptr->time_start, &q_ptr->time_stop)) return (1);
 			q_ptr->night = (night != 0);
 			q_ptr->day = (day != 0);
 			q_ptr->morning = (mor != 0);
+			q_ptr->forenoon = (fnoo != 0);
 			q_ptr->noon = (noo != 0);
 			q_ptr->afternoon = (aft != 0);
 			q_ptr->evening = (eve != 0);

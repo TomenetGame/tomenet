@@ -14,7 +14,7 @@ V:0.0.1
 # //todo: E:(10x repeatable) optional list of colon-separated prequest codenames
 # L:locations:towns:terrains
 # //todo: D:dungeons...
-# T:night:day:morning:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
+# T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # F:mapfile
 # Q:questorlocation wx:wy:wz:x:y:type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:invinc?:name
 # U:duration:cooldown:perplayer?:staticfloor?:quitfloor?
@@ -45,7 +45,7 @@ V:0.0.1
 N:0:testquest0:C. Blue:Test Quest
 I:1:100:FFFFF:FFFF
 L:1:1:0
-T:1:1:0:0:0:0:0:0:0:0
+T:1:1:0:0:0:0:0:0:0:-1:-1
 Q:-1:-1:-1:-1:-1:1:37:b:n:-1:-1:-1:-1:-1:1:Blind Bat
 U:0:0:0:0:0
 A:0:1

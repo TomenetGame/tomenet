@@ -2117,7 +2117,6 @@ extern void lua_forget_map(int Ind);
 extern void lua_forget_parties(void);
 extern void lua_forget_guilds(void);
 
-
 #ifdef ENABLE_GO_GAME
 /* go.c - C. Blue */
 extern bool go_engine_up, go_game_up;
@@ -2134,6 +2133,10 @@ extern void go_challenge_cancel(void);
 extern int go_engine_move_human(int Ind, char *py_move);
 extern void go_engine_clocks(void);
 #endif
+
+/* quests.c */
+extern void process_quests(void);
+
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
    Dungeon masters will be paged if they're not AFK or if they have
