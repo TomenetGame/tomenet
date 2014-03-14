@@ -7509,7 +7509,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
-			int invinc, wx, wy, wz;
+			int invinc;
 			s = buf + 2;
 			if (11 != sscanf(s, "%d:%d:%c:%c:%d:%d:%d:%d:%d:%d:%[^:]",
 			    &q_ptr->questor, &q_ptr->questor_ridx, &q_ptr->questor_rchar, &q_ptr->questor_rattr,
