@@ -7439,7 +7439,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				if (!(s = strchr(s, ':'))) break;
 				s++;
-				while (*s == ' ') c++; /* paranoia for comfort ^^ */
+				while (*s == ' ') s++; /* paranoia for comfort ^^ */
 			}
 			continue;
 		}
