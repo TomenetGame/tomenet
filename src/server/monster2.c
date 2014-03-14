@@ -5061,16 +5061,18 @@ monster_race* r_info_get(monster_type *m_ptr)
 #endif	// RANDUNIS
 }
 
-cptr r_name_get(monster_type *m_ptr)
-{
+cptr r_name_get(monster_type *m_ptr) {
 	static char buf[100];
 
-	if (m_ptr->special)
-	{
-		cptr p = (m_ptr->owner)?lookup_player_name(m_ptr->owner):"**INTERNAL BUG**";
+	if (m_ptr->questor) {
+		if (q_info[m_ptr->quest].questor_name[0]) {
+			snprintf(buf, sizeof(buf), "%s", q_info[m_ptr->quest].questor_name);
+			return buf;
+		} else return (r_name + m_ptr->r_ptr->name);
+	} else if (m_ptr->special) {
+		cptr p = (m_ptr->owner) ? lookup_player_name(m_ptr->owner) : "**INTERNAL BUG**";
 		if (p == NULL) p = "**INTERNAL BUG**";
-		switch (m_ptr->r_idx - 1)
-		{
+		switch (m_ptr->r_idx - 1) {
 			case SV_GOLEM_WOOD:
 				snprintf(buf, sizeof(buf), "%s's Wood Golem", p);
 				break;
@@ -5099,21 +5101,17 @@ cptr r_name_get(monster_type *m_ptr)
 		return (buf);
 	}
 #ifdef RANDUNIS
-		else if(m_ptr->ego)
-		{
-			if (re_info[m_ptr->ego].before)
-			{
-				snprintf(buf, sizeof(buf), "%s %s", re_name + re_info[m_ptr->ego].name,
-						r_name + r_info[m_ptr->r_idx].name);
-			}
-			else
-			{
-				snprintf(buf, sizeof(buf), "%s %s", r_name + r_info[m_ptr->r_idx].name,
-						re_name + re_info[m_ptr->ego].name);
-			}
-			return (buf);
+	else if (m_ptr->ego) {
+		if (re_info[m_ptr->ego].before) {
+			snprintf(buf, sizeof(buf), "%s %s", re_name + re_info[m_ptr->ego].name,
+					r_name + r_info[m_ptr->r_idx].name);
+		} else {
+			snprintf(buf, sizeof(buf), "%s %s", r_name + r_info[m_ptr->r_idx].name,
+					re_name + re_info[m_ptr->ego].name);
 		}
-#endif	// RANDUNIS
+		return (buf);
+	}
+#endif
         else return (r_name + r_info[m_ptr->r_idx].name);
 }
 
