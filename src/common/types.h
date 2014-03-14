@@ -841,8 +841,7 @@ struct npc_type{
 
 typedef struct monster_type monster_type;
 
-struct monster_type
-{
+struct monster_type {
    byte pet;			/* Special pet value (not an ID). 0 = not a pet. 1 = is a pet. */
    bool special;                   /* Does it use a special r_info ? */
    monster_race *r_ptr;            /* The aforementionned r_info */
@@ -963,6 +962,10 @@ struct monster_type
     /* Prevent a monster getting hit by cumulative projections caused recursively in project()
        (except for intended effects such as runecraft sub-explosions). */
     int hit_proj_id;
+
+    /* for new quest_info */
+    bool questor, quest_invincible, quest_aggressive; /* further quest_info flags are referred to when required, no need to copy all of them here */
+    int quest;
 };
 
 typedef struct monster_ego monster_ego;
