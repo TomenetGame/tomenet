@@ -448,10 +448,34 @@ void quest_interact(int Ind, int q_idx) {
 		msg_print(Ind, "\374 ");
 	}
 	/* if there are any keywords in this stage, prompt the player for a reply */
-	if (q_ptr->keywords[stage][0]) {
-		
-	}
-
+	if (q_ptr->keywords[stage][0])
+		Send_request_str(Ind, RID_QUEST + q_idx, "Your reply> ", "");
 
 	/* mh? */
+}
+
+/* Player replied in a questor dialogue by entering a keyword */
+void quest_reply(int Ind, int q_idx, char *str) {
+	quest_info *q_ptr = &q_info[q_idx];
+	int i, stage = q_ptr->stage;
+	char *c;
+
+	if (!str[0] || str[0] == '\e') return; /* player hit the ESC key.. */
+
+	/* convert input to all lower-case */
+	c = str;
+	while (*c) {
+		*c = tolower(*c);
+		c++;
+	}
+
+	/* scan keywords for match */
+	for (i = 0; i < QI_MAX_KEYWORDS; i++) {
+		if (strcmp(q_ptr->keywords[stage][i], str)) continue;
+
+		quest_stage(q_idx, q_ptr->keywords_stage[stage][i]);
+		return;
+	}
+	/* it was nice small-talking to you, dude */
+	return;
 }

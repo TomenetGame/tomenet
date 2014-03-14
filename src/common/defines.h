@@ -7916,7 +7916,7 @@ extern int PlayerUID;
  #define RID_GO_MOVE	3
 #endif
 #define RID_GUILD_RENAME 4
-
+#define RID_QUEST	100	/* this is a broadband RID, going from its value up to value+questtypes */
 
 /* House type flags */
 #define HF_NONE		0x0000

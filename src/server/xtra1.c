@@ -8281,6 +8281,13 @@ void handle_request_return_str(int Ind, int id, char *str) {
 	/* verify that a string had been requested */
 	if (RTYPE_STR != p_ptr->request_type) return;
 
+	/* quests occupy an id broadband */
+	if (id >= RID_QUEST) {
+		str[30] = '\0'; /* arbitrary buffer limit */
+		quest_reply(Ind, id - RID_QUEST, str);
+		return;
+	}
+
 	switch (id) {
 #ifdef ENABLE_GO_GAME
 	case RID_GO_MOVE:
