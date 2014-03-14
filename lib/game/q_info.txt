@@ -16,7 +16,7 @@ V:0.0.1
 # //todo: D:dungeons...
 # T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # F:mapfile
-# Q:questorlocation wx:wy:wz:x:y:type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:invinc?:name
+# Q:type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:invinc?:name
 # //todo: K:giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
 # U:duration:cooldown:perplayer?:staticfloor?:quitfloor?
 # A:accept-on-los?:accept-on-interaction?
@@ -47,7 +47,7 @@ N:0:testquest0:C. Blue:Test Quest
 I:1:100:FFFFF:FFFF
 L:1:1:0:0:0:0:98:39
 T:1:1:0:0:0:0:0:0:0:-1:-1
-Q:-1:-1:-1:-1:-1:1:37:b:n:-1:-1:-1:-1:-1:1:Blind Bat
+Q:1:37:b:n:-1:-1:-1:-1:-1:1:Blind Bat
 U:0:0:0:0:0
 A:0:1
 W:0:Hello, fellow fruit bat!

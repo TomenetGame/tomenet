@@ -7507,19 +7507,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-		/* Process 'Q' for questor starting location and questor creature type */
+		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
 			int invinc, wx, wy, wz;
 			s = buf + 2;
-			if (16 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%c:%c:%d:%d:%d:%d:%d:%d:%[^:]",
-			    &wx, &wy, &wz, &q_ptr->start_x, &q_ptr->start_y,
+			if (11 != sscanf(s, "%d:%d:%c:%c:%d:%d:%d:%d:%d:%d:%[^:]",
 			    &q_ptr->questor, &q_ptr->questor_ridx, &q_ptr->questor_rchar, &q_ptr->questor_rattr,
 			    &q_ptr->questor_rlevmin, &q_ptr->questor_rlevmax,
 			    &q_ptr->questor_sval, &q_ptr->questor_ktval, &q_ptr->questor_ksval,
 			    &invinc, q_ptr->questor_name)) return (1);
-			q_ptr->start_wpos.wx = (char)wx;
-			q_ptr->start_wpos.wy = (char)wy;
-			q_ptr->start_wpos.wz = (char)wz;
 			q_ptr->questor_invincible = (invinc != 0);
 			continue;
 		}
