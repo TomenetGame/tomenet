@@ -8145,9 +8145,9 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/qinf")) { /* debug new quest_info stuff - C. Blue */
-				msg_format(Ind, "max_q_idx: %d/%d", max_q_idx, MAX_Q_IDX);
+				msg_format(Ind, "\377UQuests (max_q_idx/MAX_Q_IDX %d/%d):", max_q_idx, MAX_Q_IDX);
 				for (i = 0; i < max_q_idx; i++) {
-					msg_format(Ind, "%d) '%s' [%s by %s] %s %s %d", i, q_name + q_info[i].name, q_info[i].codename, q_info[i].creator,
+					msg_format(Ind, "  %d) '%s' [%s by %s] %s %s %d", i, q_name + q_info[i].name, q_info[i].codename, q_info[i].creator,
 					    q_info[i].active ? "ACT" : "   ", q_info[i].disabled ? "DIS" : "   ", q_info[i].cooldown);
 				}
 				return;
