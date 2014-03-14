@@ -368,6 +368,9 @@ void quest_deactivate(int q_idx) {
 	c_ptr = &zcave[q_ptr->current_y][q_ptr->current_x];
 
 	/* unmake quest */
+#if QDEBUG > 1
+s_printf("deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_ptr->current_x, q_ptr->current_y);
+#endif
 	delete_monster_idx(c_ptr->m_idx, TRUE);
 	if (q_ptr->static_floor) new_players_on_depth(&wpos, 0, FALSE);
 }

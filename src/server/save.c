@@ -455,6 +455,12 @@ static void wr_quests() {
 		wr_s16b(q_info[i].cooldown);
 		wr_s16b(q_info[i].stage);
 		wr_s32b(q_info[i].start_turn);
+
+		wr_byte(q_info[i].current_wpos.wx);
+		wr_byte(q_info[i].current_wpos.wy);
+		wr_byte(q_info[i].current_wpos.wz);
+		wr_byte(q_info[i].current_x);
+		wr_byte(q_info[i].current_y);
 	}
 }
 

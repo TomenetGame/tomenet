@@ -1030,7 +1030,7 @@ static void rd_kquests() {
 }
 
 static void rd_quests() {
-	int i, dummysize = sizeof(byte) * 2 + sizeof(s16b) * 2 + sizeof(s32b);
+	int i, dummysize = sizeof(byte) * 7 + sizeof(s16b) * 2 + sizeof(s32b);
 	s16b max;
 	rd_s16b(&max);
 	if (max > max_q_idx) s_printf("Warning: Read more quest info than available quests.\n");
@@ -1044,6 +1044,13 @@ static void rd_quests() {
 		rd_s16b(&q_info[i].cooldown);
 		rd_s16b(&q_info[i].stage);
 		rd_s32b(&q_info[i].start_turn);
+
+		/* read dynamic values */
+		rd_byte((byte *) &q_info[i].current_wpos.wx);
+		rd_byte((byte *) &q_info[i].current_wpos.wy);
+		rd_byte((byte *) &q_info[i].current_wpos.wz);
+		rd_byte((byte *) &q_info[i].current_x);
+		rd_byte((byte *) &q_info[i].current_y);
 	}
 	s_printf("Read %d/%d saved quests states (discarded %d).\n", max, max_q_idx, max > max_q_idx ? max - max_q_idx : 0);
 }
