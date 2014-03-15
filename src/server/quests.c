@@ -391,7 +391,7 @@ static void quest_terminate(int q_idx) {
 			if (p_ptr->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
-		p_ptr->quest_done[q_idx]++;
+		if (p_ptr->quest_done[q_idx] < 10000) p_ptr->quest_done[q_idx]++;
 	}
 
 	/* don't respawn the questor *immediately* again, looks silyl */

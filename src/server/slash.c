@@ -3553,7 +3553,7 @@ void do_slash_cmd(int Ind, char *message)
 					j = p_ptr->quest_idx[i];
 					p_ptr->quest_idx[i] = -1;
 					/* give him 'quest done' credit if he cancelled it too late (ie after rewards were handed out)? */
-					if (q_info[j].quest_done_credit_stage <= q_info[j].stage) p_ptr->quest_done[j]++;
+					if (q_info[j].quest_done_credit_stage <= q_info[j].stage && p_ptr->quest_done[j] < 10000) p_ptr->quest_done[j]++;
 				}
 				return;
 			}
@@ -3569,7 +3569,7 @@ void do_slash_cmd(int Ind, char *message)
 			j = p_ptr->quest_idx[k - 1];
 			p_ptr->quest_idx[k - 1] = -1;
 			/* give him 'quest done' credit if he cancelled it too late (ie after rewards were handed out)? */
-			if (q_info[j].quest_done_credit_stage <= q_info[j].stage) p_ptr->quest_done[j]++;
+			if (q_info[j].quest_done_credit_stage <= q_info[j].stage && p_ptr->quest_done[j] < 10000) p_ptr->quest_done[j]++;
 			return;
 		}
 
