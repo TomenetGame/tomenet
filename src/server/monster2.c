@@ -5062,8 +5062,8 @@ cptr r_name_get(monster_type *m_ptr) {
 	static char buf[100];
 
 	if (m_ptr->questor) {
-		if (q_info[m_ptr->quest].questor_name[0]) {
-			snprintf(buf, sizeof(buf), "%s", q_info[m_ptr->quest].questor_name);
+		if (q_info[m_ptr->quest].questor_name[m_ptr->questor_idx]) {
+			snprintf(buf, sizeof(buf), "%s", q_info[m_ptr->quest].questor_name[m_ptr->questor_idx]);
 			return buf;
 		} else return (r_name + m_ptr->r_ptr->name);
 	} else if (m_ptr->special) {

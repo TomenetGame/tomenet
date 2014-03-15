@@ -762,7 +762,7 @@ static void rd_monster(monster_type *m_ptr) {
 	rd_byte((byte *)&m_ptr->special);
 	if (!s_older_than(4, 5, 19)) {
 		rd_byte((byte *)&m_ptr->questor);
-		rd_s16b((byte *)&m_ptr->questor_idx);
+		rd_s16b(&m_ptr->questor_idx);
 		rd_s16b(&m_ptr->quest);
 		rd_byte((byte *)&m_ptr->questor_invincible);
 		rd_byte((byte *)&m_ptr->questor_hostile);
@@ -1031,13 +1031,19 @@ static void rd_kquests() {
 }
 
 static void rd_quests() {
-	int i, dummysize = sizeof(byte) * 7 + sizeof(s16b) * 3 + sizeof(s32b);
-	s16b max;
+	int i, j;
+	s16b max, questors;
+	int dummysize1 = sizeof(byte) * 7 + sizeof(s16b) * 3 + sizeof(s32b);
+	int dummysize2 = sizeof(byte) * 5 + sizeof(s16b);
+
 	rd_s16b(&max);
+	rd_s16b(&questors);
 	if (max > max_q_idx) s_printf("Warning: Read more quest info than available quests.\n");
+	if (questors > QI_QUESTORS) s_printf("Warning: Read more questors than allowed.\n");
+
 	for (i = 0; i < max; i++) {
 		if (max > max_q_idx) {
-			strip_bytes(dummysize);
+			strip_bytes(dummysize1);
 			continue;
 		}
 		rd_byte((byte *) &q_info[i].active);
@@ -1046,13 +1052,19 @@ static void rd_quests() {
 		rd_s16b(&q_info[i].stage);
 		rd_s32b(&q_info[i].start_turn);
 
-		rd_byte((byte *) &q_info[i].current_wpos.wx);
-		rd_byte((byte *) &q_info[i].current_wpos.wy);
-		rd_byte((byte *) &q_info[i].current_wpos.wz);
-		rd_byte((byte *) &q_info[i].current_x);
-		rd_byte((byte *) &q_info[i].current_y);
+		for (j = 0; j < questors; j++) {
+			if (j >= QI_QUESTORS) {
+				strip_bytes(dummysize2);
+				continue;
+			}
+			rd_byte((byte *) &q_info[i].current_wpos[j].wx);
+			rd_byte((byte *) &q_info[i].current_wpos[j].wy);
+			rd_byte((byte *) &q_info[i].current_wpos[j].wz);
+			rd_byte((byte *) &q_info[i].current_x[j]);
+			rd_byte((byte *) &q_info[i].current_y[j]);
 
-		rd_s16b(&q_info[i].questor_m_idx);
+			rd_s16b(&q_info[i].questor_m_idx[j]);
+		}
 	}
 	s_printf("Read %d/%d saved quests states (discarded %d).\n", max, max_q_idx, max > max_q_idx ? max - max_q_idx : 0);
 }

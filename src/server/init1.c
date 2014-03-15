@@ -7608,6 +7608,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->narration[stage][lc_narration[stage]] = c;
 
 			cc = flagbuf;
+			if (*cc == '-') *cc = 0;
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 					q_ptr->narrationflags[stage][lc_narration[stage]] |= (0x1 << (*cc - 'A')); /* set flag */
@@ -7637,6 +7638,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->talk[questor][stage][lc_conversation[questor][stage]] = c;
 
 			cc = flagbuf;
+			if (*cc == '-') *cc = 0;
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 					q_ptr->talkflags[questor][stage][lc_conversation[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
@@ -7666,6 +7668,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->keyword_stage[questor][stage][lc_keywords[questor][stage]] = nextstage;
 
 			cc = flagbuf;
+			if (*cc == '-') *cc = 0;
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 					q_ptr->keywordflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
@@ -7673,6 +7676,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 
 			cc = flagbuf2;
+			if (*cc == '-') *cc = 0;
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 					q_ptr->keywordchangeflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
@@ -7883,6 +7887,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		return (6);
 	}
 
+	/* remember # of questors this quest has */
+	q_ptr->questors = lc_questor;
 
 	/* Complete the "name" and "text" sizes */
 	++q_head->name_size;

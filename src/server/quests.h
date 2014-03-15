@@ -143,9 +143,10 @@ typedef struct quest_info {
 	int dlevmin, dlevmax;			/*  eligible dungeon level or world sector level (0 for any) */
 
 	/* keep track of actual resulting questor location */
-	struct worldpos current_wpos;
-	int current_x, current_y;
-	s16b questor_m_idx;
+	byte questors;
+	struct worldpos current_wpos[QI_QUESTORS];
+	int current_x[QI_QUESTORS], current_y[QI_QUESTORS];
+	s16b questor_m_idx[QI_QUESTORS];
 
 	/* eligible time for quest/questor to spawn and be active */
 	bool night, day;			/* Only available at night/day in general? */

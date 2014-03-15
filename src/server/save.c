@@ -448,8 +448,11 @@ static void wr_kquests() {
 }
 
 static void wr_quests() {
-	int i;
+	int i, j;
+
 	wr_s16b(max_q_idx);
+	wr_s16b(QI_QUESTORS);
+
 	for (i = 0; i < max_q_idx; i++) {
 		wr_byte(q_info[i].active);
 		wr_byte(q_info[i].disabled);
@@ -457,13 +460,15 @@ static void wr_quests() {
 		wr_s16b(q_info[i].stage);
 		wr_s32b(q_info[i].start_turn);
 
-		wr_byte(q_info[i].current_wpos.wx);
-		wr_byte(q_info[i].current_wpos.wy);
-		wr_byte(q_info[i].current_wpos.wz);
-		wr_byte(q_info[i].current_x);
-		wr_byte(q_info[i].current_y);
+		for (j = 0; j < QI_QUESTORS; j++) {
+			wr_byte(q_info[i].current_wpos[j].wx);
+			wr_byte(q_info[i].current_wpos[j].wy);
+			wr_byte(q_info[i].current_wpos[j].wz);
+			wr_byte(q_info[i].current_x[j]);
+			wr_byte(q_info[i].current_y[j]);
 
-		wr_s16b(q_info[i].questor_m_idx);
+			wr_s16b(q_info[i].questor_m_idx[j]);
+		}
 	}
 }
 

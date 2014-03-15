@@ -84,7 +84,7 @@ void process_quests(void) {
 /* Spawn questor, prepare sector/floor, make things static if requested, etc. */
 void quest_activate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
-	int i;
+	int i, q;
 	cave_type **zcave, *c_ptr;
 	monster_race *r_ptr, *rbase_ptr;
 	monster_type *m_ptr;
@@ -155,9 +155,13 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 	} else if ((q_ptr->s_location_type & QI_SLOC_TOWER)) {
 	} else return; //paranoia
 
-	q_ptr->current_wpos.wx = wpos.wx;
-	q_ptr->current_wpos.wy = wpos.wy;
-	q_ptr->current_wpos.wz = wpos.wz;
+	/* TEMP: initialise questor starting locations all onto this one.
+	   TODO: each questor gets its own pos */
+	for (i = 0; i < QI_QUESTORS; i++) {
+		q_ptr->current_wpos[i].wx = wpos.wx;
+		q_ptr->current_wpos[i].wy = wpos.wy;
+		q_ptr->current_wpos[i].wz = wpos.wz;
+	}
 
 
 	/* Allocate & generate cave */
@@ -197,111 +201,22 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 	}
 
 	c_ptr = &zcave[y][x];
-	q_ptr->current_x = x;
-	q_ptr->current_y = y;
+
+	/* TEMP: initialise questor starting locations all onto this one.
+	   TODO: each questor gets its own pos */
+	for (i = 0; i < QI_QUESTORS; i++) {
+		q_ptr->current_x[i] = x;
+		q_ptr->current_y[i] = y;
+	}
 
 
 	/* generate questor 'monster' */
-	c_ptr->m_idx = m_pop();
-	if (!c_ptr->m_idx) {
-		s_printf("QUEST_CANCELLED: No free monster index to pop questor.\n");
-#ifdef QERROR_DISABLE
-		q_ptr->disabled = TRUE;
-#else
-		q_ptr->cur_cooldown = QERROR_COOLDOWN;
-#endif
-		return;
-	}
-	m_ptr = &m_list[c_ptr->m_idx];
-	MAKE(m_ptr->r_ptr, monster_race);
-	r_ptr = m_ptr->r_ptr;
-	rbase_ptr = &r_info[q_ptr->questor_ridx];
+	for (q = 0; q < q_ptr->questors; q++) {
+		if (!q_ptr->questor_ridx[q]) break;
 
-	m_ptr->questor = TRUE;
-	m_ptr->questor_idx = 0; /* 1st */
-	m_ptr->quest = q_idx;
-	m_ptr->r_idx = q_ptr->questor_ridx;
-	/* m_ptr->special = TRUE; --nope, this is unfortunately too much golem'ized.
-	   Need code cleanup!! Maybe rename it to m_ptr->golem and add a new m_ptr->special. */
-	r_ptr->extra = 0;
-	m_ptr->mind = 0;
-	m_ptr->owner = 0;
-
-	r_ptr->flags1 = rbase_ptr->flags1;
-	r_ptr->flags2 = rbase_ptr->flags2;
-	r_ptr->flags3 = rbase_ptr->flags3;
-	r_ptr->flags4 = rbase_ptr->flags4;
-	r_ptr->flags5 = rbase_ptr->flags5;
-	r_ptr->flags6 = rbase_ptr->flags6;
-	r_ptr->flags7 = rbase_ptr->flags7;
-	r_ptr->flags8 = rbase_ptr->flags8;
-	r_ptr->flags9 = rbase_ptr->flags9;
-	r_ptr->flags0 = rbase_ptr->flags0;
-
-	r_ptr->flags1 |= RF1_FORCE_MAXHP;
-	r_ptr->flags3 |= RF3_RES_TELE | RF3_RES_NEXU;
-	r_ptr->flags7 |= RF7_NO_TARGET | RF7_NEVER_ACT;
-	if (q_ptr->questor_invincible) r_ptr->flags7 |= RF7_NO_DEATH; //for now we just use NO_DEATH flag for invincibility
-	r_ptr->flags8 |= RF8_GENO_PERSIST | RF8_GENO_NO_THIN | RF8_ALLOW_RUNNING | RF8_NO_AUTORET;
-	r_ptr->flags9 |= RF9_IM_TELE;
-
-	r_ptr->text = 0;
-	r_ptr->name = rbase_ptr->name;
-	m_ptr->fx = x;
-	m_ptr->fy = y;
-
-	r_ptr->d_attr = q_ptr->questor_rattr;
-	r_ptr->d_char = q_ptr->questor_rchar;
-	r_ptr->x_attr = q_ptr->questor_rattr;
-	r_ptr->x_char = q_ptr->questor_rchar;
-
-	r_ptr->aaf = rbase_ptr->aaf;
-	r_ptr->mexp = rbase_ptr->mexp;
-	r_ptr->hdice = rbase_ptr->hdice;
-	r_ptr->hside = rbase_ptr->hside;
-
-	m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
-	m_ptr->hp = m_ptr->maxhp;
-	m_ptr->org_maxhp = m_ptr->maxhp; /* CON */
-	m_ptr->speed = rbase_ptr->speed;
-	m_ptr->mspeed = m_ptr->speed;
-	m_ptr->ac = rbase_ptr->ac;
-	m_ptr->org_ac = m_ptr->ac; /* DEX */
-
-	m_ptr->level = rbase_ptr->level;
-	m_ptr->exp = MONSTER_EXP(m_ptr->level);
-
-	for (i = 0; i < 4; i++) {
-		m_ptr->blow[i].effect = rbase_ptr->blow[i].effect;
-		m_ptr->blow[i].method = rbase_ptr->blow[i].method;
-		m_ptr->blow[i].d_dice = rbase_ptr->blow[i].d_dice;
-		m_ptr->blow[i].d_side = rbase_ptr->blow[i].d_side;
-
-		m_ptr->blow[i].org_d_dice = rbase_ptr->blow[i].d_dice;
-		m_ptr->blow[i].org_d_side = rbase_ptr->blow[i].d_side;
-	}
-
-	r_ptr->freq_innate = rbase_ptr->freq_innate;
-	r_ptr->freq_spell = rbase_ptr->freq_spell;
-
-#ifdef MONSTER_ASTAR
-	if (r_ptr->flags0 & RF0_ASTAR) {
-		/* search for an available A* table to use */
-		for (i = 0; i < ASTAR_MAX_INSTANCES; i++) {
-			/* found an available instance? */
-			if (astar_info_open[i].m_idx == -1) {
-				astar_info_open[i].m_idx = c_ptr->m_idx;
-				astar_info_open[i].nodes = 0; /* init: start with empty set of nodes */
-				astar_info_closed[i].nodes = 0; /* init: start with empty set of nodes */
-				m_ptr->astar_idx = i;
-				break;
-			}
-		}
-		/* no instance available? Mark us (-1) to use normal movement instead */
-		if (i == ASTAR_MAX_INSTANCES) {
-			m_ptr->astar_idx = -1;
-			/* cancel quest because of this? */
-			s_printf("QUEST_CANCELLED: No free A* index for questor.\n");
+		c_ptr->m_idx = m_pop();
+		if (!c_ptr->m_idx) {
+			s_printf("QUEST_CANCELLED: No free monster index to pop questor.\n");
 #ifdef QERROR_DISABLE
 			q_ptr->disabled = TRUE;
 #else
@@ -309,36 +224,136 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 #endif
 			return;
 		}
-	}
+		m_ptr = &m_list[c_ptr->m_idx];
+		MAKE(m_ptr->r_ptr, monster_race);
+		r_ptr = m_ptr->r_ptr;
+		rbase_ptr = &r_info[q_ptr->questor_ridx[q]];
+
+		m_ptr->questor = TRUE;
+		m_ptr->questor_idx = 0; /* 1st */
+		m_ptr->quest = q_idx;
+		m_ptr->r_idx = q_ptr->questor_ridx[q];
+		/* m_ptr->special = TRUE; --nope, this is unfortunately too much golem'ized.
+		   Need code cleanup!! Maybe rename it to m_ptr->golem and add a new m_ptr->special. */
+		r_ptr->extra = 0;
+		m_ptr->mind = 0;
+		m_ptr->owner = 0;
+
+		r_ptr->flags1 = rbase_ptr->flags1;
+		r_ptr->flags2 = rbase_ptr->flags2;
+		r_ptr->flags3 = rbase_ptr->flags3;
+		r_ptr->flags4 = rbase_ptr->flags4;
+		r_ptr->flags5 = rbase_ptr->flags5;
+		r_ptr->flags6 = rbase_ptr->flags6;
+		r_ptr->flags7 = rbase_ptr->flags7;
+		r_ptr->flags8 = rbase_ptr->flags8;
+		r_ptr->flags9 = rbase_ptr->flags9;
+		r_ptr->flags0 = rbase_ptr->flags0;
+
+		r_ptr->flags1 |= RF1_FORCE_MAXHP;
+		r_ptr->flags3 |= RF3_RES_TELE | RF3_RES_NEXU;
+		r_ptr->flags7 |= RF7_NO_TARGET | RF7_NEVER_ACT;
+		if (q_ptr->questor_invincible) r_ptr->flags7 |= RF7_NO_DEATH; //for now we just use NO_DEATH flag for invincibility
+		r_ptr->flags8 |= RF8_GENO_PERSIST | RF8_GENO_NO_THIN | RF8_ALLOW_RUNNING | RF8_NO_AUTORET;
+		r_ptr->flags9 |= RF9_IM_TELE;
+
+		r_ptr->text = 0;
+		r_ptr->name = rbase_ptr->name;
+		m_ptr->fx = x;
+		m_ptr->fy = y;
+
+		r_ptr->d_attr = q_ptr->questor_rattr[q];
+		r_ptr->d_char = q_ptr->questor_rchar[q];
+		r_ptr->x_attr = q_ptr->questor_rattr[q];
+		r_ptr->x_char = q_ptr->questor_rchar[q];
+	
+		r_ptr->aaf = rbase_ptr->aaf;
+		r_ptr->mexp = rbase_ptr->mexp;
+		r_ptr->hdice = rbase_ptr->hdice;
+		r_ptr->hside = rbase_ptr->hside;
+	
+		m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
+		m_ptr->hp = m_ptr->maxhp;
+		m_ptr->org_maxhp = m_ptr->maxhp; /* CON */
+		m_ptr->speed = rbase_ptr->speed;
+		m_ptr->mspeed = m_ptr->speed;
+		m_ptr->ac = rbase_ptr->ac;
+		m_ptr->org_ac = m_ptr->ac; /* DEX */
+
+		m_ptr->level = rbase_ptr->level;
+		m_ptr->exp = MONSTER_EXP(m_ptr->level);
+
+		for (i = 0; i < 4; i++) {
+			m_ptr->blow[i].effect = rbase_ptr->blow[i].effect;
+			m_ptr->blow[i].method = rbase_ptr->blow[i].method;
+			m_ptr->blow[i].d_dice = rbase_ptr->blow[i].d_dice;
+			m_ptr->blow[i].d_side = rbase_ptr->blow[i].d_side;
+
+			m_ptr->blow[i].org_d_dice = rbase_ptr->blow[i].d_dice;
+			m_ptr->blow[i].org_d_side = rbase_ptr->blow[i].d_side;
+		}
+
+		r_ptr->freq_innate = rbase_ptr->freq_innate;
+		r_ptr->freq_spell = rbase_ptr->freq_spell;
+
+#ifdef MONSTER_ASTAR
+		if (r_ptr->flags0 & RF0_ASTAR) {
+			/* search for an available A* table to use */
+			for (i = 0; i < ASTAR_MAX_INSTANCES; i++) {
+				/* found an available instance? */
+				if (astar_info_open[i].m_idx == -1) {
+					astar_info_open[i].m_idx = c_ptr->m_idx;
+					astar_info_open[i].nodes = 0; /* init: start with empty set of nodes */
+					astar_info_closed[i].nodes = 0; /* init: start with empty set of nodes */
+					m_ptr->astar_idx = i;
+					break;
+				}
+			}
+			/* no instance available? Mark us (-1) to use normal movement instead */
+			if (i == ASTAR_MAX_INSTANCES) {
+				m_ptr->astar_idx = -1;
+				/* cancel quest because of this? */
+				s_printf("QUEST_CANCELLED: No free A* index for questor.\n");
+ #ifdef QERROR_DISABLE
+				q_ptr->disabled = TRUE;
+ #else
+				q_ptr->cur_cooldown = QERROR_COOLDOWN;
+ #endif
+				return;
+			}
+		}
 #endif
 
-	m_ptr->clone = 0;
-	m_ptr->cdis = 0;
-	wpcopy(&m_ptr->wpos, &wpos);
+		m_ptr->clone = 0;
+		m_ptr->cdis = 0;
+		wpcopy(&m_ptr->wpos, &wpos);
 
-	m_ptr->stunned = 0;
-	m_ptr->confused = 0;
-	m_ptr->monfear = 0;
-	//r_ptr->sleep = rbase_ptr->sleep;
-	r_ptr->sleep = 0;
+		m_ptr->stunned = 0;
+		m_ptr->confused = 0;
+		m_ptr->monfear = 0;
+		//r_ptr->sleep = rbase_ptr->sleep;
+		r_ptr->sleep = 0;
 
-	m_ptr->questor_invincible = q_ptr->questor_invincible; //for now handled by RF7_NO_DEATH
-	m_ptr->questor_hostile = FALSE;
-	q_ptr->questor_m_idx = c_ptr->m_idx;
+		m_ptr->questor_invincible = q_ptr->questor_invincible[q]; //for now handled by RF7_NO_DEATH
+		m_ptr->questor_hostile = FALSE;
+		q_ptr->questor_m_idx[q] = c_ptr->m_idx;
 
-	update_mon(c_ptr->m_idx, TRUE);
+		update_mon(c_ptr->m_idx, TRUE);
 #if QDEBUG > 1
-	s_printf("QUEST_SPAWNED: Questor at %d,%d,%d - %d,%d.\n", wpos.wx, wpos.wy, wpos.wz, x, y);
+		s_printf("QUEST_SPAWNED: Questor at %d,%d,%d - %d,%d.\n", wpos.wx, wpos.wy, wpos.wz, x, y);
 #endif
 
+		q_ptr->talk_focus[q] = 0;
+	}
+	
 	/* Initialise with starting stage 0 */
-	q_ptr->talk_focus = 0;
 	q_ptr->start_turn = turn;
 	q_ptr->stage = -1;
 	quest_stage(q_idx, 0, FALSE);
 }
 
 /* Despawn questor, unstatic sector/floor, etc. */
+//TODO: implement multiple questors
 void quest_deactivate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	//int i;
@@ -357,9 +372,9 @@ void quest_deactivate(int q_idx) {
 
 
 	/* get quest information */
-	wpos.wx = q_ptr->current_wpos.wx;
-	wpos.wy = q_ptr->current_wpos.wy;
-	wpos.wz = q_ptr->current_wpos.wz;
+	wpos.wx = q_ptr->current_wpos[0].wx;
+	wpos.wy = q_ptr->current_wpos[0].wy;
+	wpos.wz = q_ptr->current_wpos[0].wz;
 
 	/* Allocate & generate cave */
 	if (!(zcave = getcave(&wpos))) {
@@ -368,11 +383,11 @@ void quest_deactivate(int q_idx) {
 		generate_cave(&wpos, NULL);
 		zcave = getcave(&wpos);
 	}
-	c_ptr = &zcave[q_ptr->current_y][q_ptr->current_x];
+	c_ptr = &zcave[q_ptr->current_y[0]][q_ptr->current_x[0]];
 
 	/* unmake quest */
 #if QDEBUG > 1
-s_printf("deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_ptr->current_x, q_ptr->current_y);
+s_printf("deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_ptr->current_x[0], q_ptr->current_y[0]);
 #endif
 	if (c_ptr->m_idx) delete_monster_idx(c_ptr->m_idx, TRUE);
 	if (q_ptr->static_floor) new_players_on_depth(&wpos, 0, FALSE);
@@ -427,13 +442,14 @@ void quest_stage(int q_idx, int stage, bool quiet) {
 	 * - store information of the current stage in the p_ptr array,
 	 *   eg the target location for easier lookup */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos)) continue;
+		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
 		quest_imprint_stage(i, q_idx, j);
-		if (!quiet) quest_dialogue(i, q_idx, FALSE);
+		for (j = 0; j < q_ptr->questors; j++)
+			if (!quiet) quest_dialogue(i, q_idx, j, FALSE);
 	}
 
 
@@ -455,7 +471,7 @@ void quest_stage(int q_idx, int stage, bool quiet) {
 			break;
 		}
 	/* now check remaining dialogue options (keywords) */
-	for (j = 0; j < QI_QUESTORS; j++) {
+	for (j = 0; j < q_ptr->questors; j++)
 		for (i = 0; i < QI_MAX_KEYWORDS; i++)
 			if (q_ptr->keyword[j][stage][i] &&
 			    /* and it's not just a keyword-reply without a stage change? */
@@ -463,8 +479,6 @@ void quest_stage(int q_idx, int stage, bool quiet) {
 				anything = TRUE;
 				break;
 			}
-		}
-	}
 	/* check auto/timed stage changes */
 	if (q_ptr->change_stage[stage]) anything = TRUE;
 	if (q_ptr->timed_stage_ingame[stage]) anything = TRUE;
@@ -521,7 +535,7 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 
 	/* has the player completed this quest already/too often? */
 	if (p_ptr->quest_done[q_idx] > q_ptr->repeatable && q_ptr->repeatable != -1) {
-		if (!quiet) cptr = qi_msg_done;
+		if (!quiet) msg = qi_msg_done;
 		return FALSE;
 	}
 
@@ -555,7 +569,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, stage = q_ptr->stage;
-	cptr msg;
+	cptr msg = NULL;//compiler warning
 
 	/* cannot interact with the questor during this stage? */
 	if (!q_ptr->questor_talkable[questor_idx]) return;
@@ -596,7 +610,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 
 
 	/* questor interaction qutomatically invokes the quest dialogue, if any */
-	q_ptr->talk_focus = Ind; /* only this player can actually respond with keywords */
+	q_ptr->talk_focus[questor_idx] = Ind; /* only this player can actually respond with keywords */
 	quest_dialogue(Ind, q_idx, questor_idx, FALSE);
 }
 
@@ -608,6 +622,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
    keyword input when a keyword wasn't recognized. */
 void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat) {
 	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr = Players[Ind];
 	int i, stage = q_ptr->stage;
 
 	if (!repeat && q_ptr->talk[questor_idx][stage][0]) { /* there is NPC talk to display? */
@@ -626,7 +641,7 @@ void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat) {
 	   otherwise the first player to reply can advance the stage. */
 	if (q_ptr->talk_focus[questor_idx] && q_ptr->talk_focus[questor_idx] != Ind) return;
 	p_ptr->interact_questor_idx = questor_idx;
-	if (q_ptr->keyword[questor_idx][stage][0]) /* at least 1 keyword available? */ {
+	if (q_ptr->keyword[questor_idx][stage][0]) { /* at least 1 keyword available? */
 		/* hack: if 1st keyword is empty string "", display a "more" prompt */
 		if (q_ptr->keyword[questor_idx][stage][0][0] == 0)
 			Send_request_str(Ind, RID_QUEST + q_idx, "Your reply (or ENTER for more)> ", "");
@@ -638,14 +653,15 @@ void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat) {
 /* Player replied in a questor dialogue by entering a keyword */
 void quest_reply(int Ind, int q_idx, char *str) {
 	quest_info *q_ptr = &q_info[q_idx];
-	int i, stage = q_ptr->stage, questor_idx = p_ptr->interact_questor_idx;
+	player_type *p_ptr = Players[Ind];
+	int i, j, stage = q_ptr->stage, questor_idx = p_ptr->interact_questor_idx;
 	char *c;
 
 #if 0
 	if (!str[0] || str[0] == '\e') return; /* player hit the ESC key.. */
 #else /* distinguish RETURN key, to allow empty "" keyword (to 'continue' a really long talk for example) */
 	if (str[0] == '\e') return; /* player hit the ESC key.. */
-#ednfi
+#endif
 
 	/* convert input to all lower-case */
 	c = str;

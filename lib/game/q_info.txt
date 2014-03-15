@@ -41,7 +41,9 @@ V:0.0.1
 # R:stage:(10x repeatable) define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:createreward()?:gold:exp:specialstatuseffect
 
 # Note: #goal is 1..5 for main goal, and -1..-5 for optional goals.
+# Note about keywords: '-' means the empty keyword "", ie user just needs to press ENTER key without writing anything.
 # Note about global 'flags':
+#   '-' means no flags.
 #   For lines that change those: 'a' to 'p' to clear flags, 'A' to 'P' to set flags.
 #   For lines that check those (conversational lines): 'A' to 'P' to check for a flag, which must be set (to display the convo line etc)
 
@@ -55,22 +57,22 @@ L:0:0:63:63:0:0:98:39
 T:1:1:0:0:0:0:0:0:0:-1:-1
 Q:1:37:b:n:-1:-1:-1:-1:-1:1:Blind Bat
 U:0:0:0:0:0:0
-A:0:1
-W:0:Hello, fellow fruit bat!
-W:0:Would you like some {yale{- or rather a {ysolid ration{-?
-Y:0:ale:1
-Y:0:ration:2
-Y:0:solid ration:2
-W:1:Well then, visit the shop keeper of the general store!
-W:2:Well then, visit the shop keeper of the general store..
+A:0:1:1:0:1
+W:0:0:-:Hello, fellow fruit bat!
+W:0:0:-:Would you like some {yale{- or rather a {ysolid ration{-?
+Y:0:0:-:ale:-:1
+Y:0:0:-:ration:-:2
+Y:0:0:-:solid ration:-:2
+W:0:1:-:Well then, visit the shop keeper of the general store!
+W:0:2:-:Well then, visit the shop keeper of the general store..
 #position 105:40 for actual Bree's general store entrance:
 M:1:1:32:32:0:105:40:0
 M:2:1:32:32:0:105:40:0
 G:1:3:1
 G:2:4:1
 O:3:0:0
-X:3:The shop keeper hands you a pint of fine ale!
+X:3:-:The shop keeper hands you a pint of fine ale!
 O:4:1:0
-X:4:The shop keeper hands you a ration of food!
+X:4:-:The shop keeper hands you a ration of food!
 R:3:80:38:0:0:0:0:0:0:0:0:0:3:0
 R:4:80:35:0:0:0:0:0:0:0:0:0:3:0
