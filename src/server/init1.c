@@ -7413,11 +7413,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ptr->next_stage_from_goals[j][k] = -1; /* no next stages set, end quest by default if nothing specified */
 
 					for (l = 0; l < QI_STAGE_GOALS; l++)
-						q_ptr->goals_for_stage[j][k][l] = -1; /* no goal is required to end a stage, if it isn't explicitely specified */
+						q_ptr->goals_for_stage[j][k][l] = 0; /* no goal is required to end a stage, if it isn't explicitely specified */
 				}
 				for (k = 0; k < QI_MAX_STAGE_REWARDS; k++) {
 					for (l = 0; l < QI_REWARD_GOALS; l++)
-						q_ptr->goals_for_reward[j][k][l] = -1; /* no goals are required to get a reward if not specified, aka it's for free! */
+						q_ptr->goals_for_reward[j][k][l] = 0; /* no goals are required to get a reward if not specified, aka it's for free! */
 				}
 			}
 
@@ -7611,6 +7611,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (lc_keywords[stage] == 10) return 1;
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
+
+			/* hack: '-' denotes the empty keyword (since scanf cannot handle empty matches..) */
+			if (!strcmp(tmpbuf, "-")) tmpbuf[0] = 0;
+
 			strcpy(c, tmpbuf);
 			q_ptr->keyword[stage][lc_keywords[stage]] = c;
 			q_ptr->keyword_stage[stage][lc_keywords[stage]] = next;
@@ -7637,8 +7641,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d",
 			    &stage, &goal, &wx, &wy, &wz, &x, &y, &terr)) return (1);
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
-			if (goal < 0 || goal >= QI_GOALS + QI_OPTIONAL) return 1;
-			if (goal < QI_GOALS) { /* main goal */
+			if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
+			if (goal > 0) { /* main goal */
+				goal--;
 				q_ptr->deliver_pos[stage][goal] = TRUE;;
 				q_ptr->deliver_wpos[stage][goal].wx = (char)wx;
 				q_ptr->deliver_wpos[stage][goal].wy = (char)wy;
@@ -7646,8 +7651,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_ptr->deliver_pos_x[stage][goal] = x;
 				q_ptr->deliver_pos_y[stage][goal] = y;
 				q_ptr->deliver_terrain_patch[stage][goal] = (terr != 0);
-			} else { /* optional goal */
-				goal -= QI_GOALS;
+			} else if (goal < 0) { /* optional goal */
+				goal = -(goal + 1);
 				q_ptr->deliveropt_pos[stage][goal] = TRUE;;
 				q_ptr->deliveropt_wpos[stage][goal].wx = (char)wx;
 				q_ptr->deliveropt_wpos[stage][goal].wy = (char)wy;
@@ -7671,12 +7676,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* read list of numbers, separated by colons */
 			while (*c >= '0' && *c <= '9') {
 				j = atoi(c);
-				if (j < 0 || j >= QI_GOALS + QI_OPTIONAL) return 1;
-				if (j < QI_GOALS) { /* main goal */
-					q_ptr->return_to_questor[stage][j] = TRUE;
-				} else { /* optional goal */
-					j -= QI_GOALS;
-					q_ptr->return_to_questor_opt[stage][j] = TRUE;
+				if (j < -QI_OPTIONAL || j > QI_GOALS) return 1;
+				if (j > 0) { /* main goal */
+					q_ptr->return_to_questor[stage][j - 1] = TRUE;
+				} else if (j < 0) { /* optional goal */
+					j = -j;
+					q_ptr->return_to_questor_opt[stage][j - 1] = TRUE;
 				}
 				if (!(c = strchr(c, ':'))) break;
 				c++;
@@ -7714,9 +7719,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			l = 0;
 			while (*c >= '0' && *c <= '9' && l < QI_STAGE_GOALS) {
 				j = atoi(c);
-				if (j < 0 || j >= QI_GOALS) return 1;
+				if (j < 1 || j > QI_GOALS) return 1;
 
-				q_ptr->goals_for_stage[stage][k][l] = j;
+				q_ptr->goals_for_stage[stage][k][l] = j - 1;
 
 				if (!(c = strchr(c, ':'))) break;
 				c++;
@@ -7745,9 +7750,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			l = 0;
 			while (*c >= '0' && *c <= '9' && l < QI_REWARD_GOALS) {
 				j = atoi(c);
-				if (j < 0 || j >= QI_GOALS + QI_OPTIONAL) return 1;
-				/* main + optional goals are saved together in this array, so no un-hacking the indices */
-				q_ptr->goals_for_reward[stage][reward][l] = j;
+				if (j < -QI_OPTIONAL || j > QI_GOALS) return 1;
+				/* main + optional goals are saved together in this array */
+				if (j > 0) q_ptr->goals_for_reward[stage][reward][l] = j - 1; //main goals
+				else if (j < 0) q_ptr->goals_for_reward[stage][reward][l] = QI_GOALS - j - 1; //followed by optional goals
 
 				if (!(c = strchr(c, ':'))) break;
 				c++;

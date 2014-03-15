@@ -433,7 +433,7 @@ void quest_stage(int q_idx, int stage, bool quiet) {
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
 		quest_imprint_stage(i, q_idx, j);
-		if (!quiet) quest_dialogue(i, q_idx);
+		if (!quiet) quest_dialogue(i, q_idx, FALSE);
 	}
 
 
@@ -576,18 +576,21 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 
 	/* questor interaction qutomatically invokes the quest dialogue, if any */
 	q_ptr->talk_focus = Ind; /* only this player can actually respond with keywords */
-	quest_dialogue(Ind, q_idx, questor_idx);
+	quest_dialogue(Ind, q_idx, questor_idx, FALSE);
 }
 
 /* Talk vs keyword dialogue between questor and player.
    This is initiated either by bumping into the questor or by entering a new
    stage while in the area of the questor.
-   Note that if the questor is focussed, only that player may respond with keywords. */
-void quest_dialogue(int Ind, int q_idx, int questor_idx) {
+   Note that if the questor is focussed, only that player may respond with keywords.
+   'repeat' will repeat requesting an input and skip the usual dialogue. Used for
+   keyword input when a keyword wasn't recognized. */
+void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, stage = q_ptr->stage;
 
-	if (q_ptr->talk[questor_idx][stage][0]) {
+	if (!repeat && q_ptr->talk[questor_idx][stage][0]) { /* there is NPC talk to display? */
+		p_ptr->interact_questor_idx = questor_idx;
 		msg_print(Ind, "\374 ");
 		msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
 		for (i = 0; i < QI_TALK_LINES; i++) {
@@ -602,8 +605,13 @@ void quest_dialogue(int Ind, int q_idx, int questor_idx) {
 	   otherwise the first player to reply can advance the stage. */
 	if (q_ptr->talk_focus[questor_idx] && q_ptr->talk_focus[questor_idx] != Ind) return;
 	p_ptr->interact_questor_idx = questor_idx;
-	if (q_ptr->keyword[questor_idx][stage][0])
-		Send_request_str(Ind, RID_QUEST + q_idx, "Your reply> ", "");
+	if (q_ptr->keyword[questor_idx][stage][0]) /* at least 1 keyword available? */ {
+		/* hack: if 1st keyword is empty string "", display a "more" prompt */
+		if (q_ptr->keyword[questor_idx][stage][0][0] == 0)
+			Send_request_str(Ind, RID_QUEST + q_idx, "Your reply (or ENTER for more)> ", "");
+		else
+			Send_request_str(Ind, RID_QUEST + q_idx, "Your reply> ", "");
+	}
 }
 
 /* Player replied in a questor dialogue by entering a keyword */
@@ -612,7 +620,11 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	int i, stage = q_ptr->stage, questor_idx = p_ptr->interact_questor_idx;
 	char *c;
 
+#if 0
 	if (!str[0] || str[0] == '\e') return; /* player hit the ESC key.. */
+#else /* distinguish RETURN key, to allow empty "" keyword (to 'continue' a really long talk for example) */
+	if (str[0] == '\e') return; /* player hit the ESC key.. */
+#ednfi
 
 	/* convert input to all lower-case */
 	c = str;
@@ -623,7 +635,8 @@ void quest_reply(int Ind, int q_idx, char *str) {
 
 	/* scan keywords for match */
 	for (i = 0; i < QI_MAX_KEYWORDS; i++) {
-		if (strcmp(q_ptr->keyword[questor_idx][stage][i], str)) continue;
+		if (!q_ptr->keyword[questor_idx][stage][i]) return; /* no more keywords? */
+		if (strcmp(q_ptr->keyword[questor_idx][stage][i], str)) continue; /* not matching? */
 
 		/* reply? */
 		if (q_ptr->keyword_reply[questor_idx][stage][i][0]) {
@@ -642,6 +655,13 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		return;
 	}
 	/* it was nice small-talking to you, dude */
+#if 1
+	/* if keyword wasn't recognised, repeat input prompt instead of just 'dropping' the convo */
+	quest_dialogue(Ind, q_idx, questor_idx, TRUE),
+	msg_print(Ind, "\374 ");
+	msg_format(Ind, "\374\377u<\377B%s\377u> has nothing to say about that-", q_ptr->questor_name[questor_idx]);
+	msg_print(Ind, "\374 ");
+#endif
 	return;
 }
 
