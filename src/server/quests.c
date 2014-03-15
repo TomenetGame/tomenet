@@ -508,15 +508,20 @@ void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	}
 }
 
+cptr qi_msg_done = "\377oYou cannot acquire this quest again.";
+cptr qi_msg_max = "\377yYou are already pursuing the maximum possible number of concurrent quests.";
+
 /* Acquire a quest, without checks whether the quest actually allows this at this stage */
-bool quest_acquire(int Ind, int q_idx, bool quiet) {
+bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i;
 
+	msg = NULL;
+
 	/* has the player completed this quest already/too often? */
 	if (p_ptr->quest_done[q_idx] > q_ptr->repeatable && q_ptr->repeatable != -1) {
-		if (!quiet) msg_print(Ind, "\377oYou cannot acquire this quest again.");
+		if (!quiet) cptr = qi_msg_done;
 		return FALSE;
 	}
 
@@ -524,7 +529,7 @@ bool quest_acquire(int Ind, int q_idx, bool quiet) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == -1) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
-		if (!quiet) msg_print(Ind, "\377yYou are already pursuing the maximum possible number of concurrent quests.");
+		if (!quiet) msg = qi_msg_max;
 		return FALSE;
 	}
 
@@ -545,10 +550,12 @@ bool quest_acquire(int Ind, int q_idx, bool quiet) {
 }
 
 /* A player interacts with the questor (bumps him if a creature :-p) */
+#define ALWAYS_DISPLAY_QUEST_TEXT
 void quest_interact(int Ind, int q_idx, int questor_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, stage = q_ptr->stage;
+	cptr msg;
 
 	/* cannot interact with the questor during this stage? */
 	if (!q_ptr->questor_talkable[questor_idx]) return;
@@ -566,7 +573,21 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 		/* do we accept players to acquire this quest in the current quest stage? */
 		if (!q_ptr->accepts[stage]) return;
 
-		quest_acquire(Ind, q_idx, FALSE);
+		if (!quest_acquire(Ind, q_idx, FALSE, msg)) {
+#ifdef ALWAYS_DISPLAY_QUEST_TEXT /* still display the initial quest text even if we cannot acquire the quest? */
+			if (q_ptr->talk[questor_idx][stage][0]) { /* there is NPC talk to display? */
+				p_ptr->interact_questor_idx = questor_idx;
+				msg_print(Ind, "\374 ");
+				msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
+				for (i = 0; i < QI_TALK_LINES; i++) {
+					if (!q_ptr->talk[questor_idx][stage][i]) break;
+					msg_format(Ind, "\374\377U%s", q_ptr->talk[questor_idx][stage][i]);
+				}
+				msg_print(Ind, "\374 ");
+			}
+#endif
+		}
+		if (msg) msg_print(Ind, msg);
 	}
 
 
