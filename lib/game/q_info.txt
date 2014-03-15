@@ -11,7 +11,7 @@ V:0.0.1
 
 # N:index:codename:creator:name
 # C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
-# I:minlv:maxlv:races:classes:repeatable:questdonecreditstage
+# I:adminsonlyminlv:maxlv:races:classes:repeatable:questdonecreditstage
 # //todo: E:(10x repeatable) optional list of colon-separated prequest codenames
 # L:locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y
 # //todo: D:dungeons...
@@ -51,7 +51,7 @@ V:0.0.1
 # for testing purpose
 N:0:testquest0:C. Blue:Test Quest
 C:0
-I:1:100:FFFFF:FFFF:-1:1
+I:1:1:100:FFFFF:FFFF:-1:1
 #L:1:1:-1:-1:-1:0:98:39
 L:0:0:63:63:0:0:98:39
 T:1:1:0:0:0:0:0:0:0:-1:-1

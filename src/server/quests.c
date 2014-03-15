@@ -525,13 +525,16 @@ void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 cptr qi_msg_done = "\377oYou cannot acquire this quest again.";
 cptr qi_msg_max = "\377yYou are already pursuing the maximum possible number of concurrent quests.";
 
-/* Acquire a quest, without checks whether the quest actually allows this at this stage */
+/* Acquire a quest, WITHOUT CHECKING whether the quest actually allows this at this stage! */
 bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i;
 
 	msg = NULL;
+
+	/* quests is only for admins at the moment? (for testing purpose) */
+	if (q_ptr->admins_only && !is_admin(p_ptr)) return FALSE;
 
 	/* has the player completed this quest already/too often? */
 	if (p_ptr->quest_done[q_idx] > q_ptr->repeatable && q_ptr->repeatable != -1) {
@@ -571,9 +574,11 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 	int i, stage = q_ptr->stage;
 	cptr msg = NULL;//compiler warning
 
+	/* quests is only for admins at the moment? (for testing purpose) */
+	if (q_ptr->admins_only && !is_admin(p_ptr)) return;
+
 	/* cannot interact with the questor during this stage? */
 	if (!q_ptr->questor_talkable[questor_idx]) return;
-
 
 	/* questor interaction may automatically acquire the quest */
 	/* has the player not yet acquired this quest? */
