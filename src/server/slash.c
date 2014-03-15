@@ -8190,7 +8190,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "%d were positive: %d.%d%%", found, 100 * found / 100000, (found % 1000) / 100);//wtb correct rounding >.> o laziness
 				return;
 			}
-			else if (prefix(message, "/qinf [1]")) { /* debug new quest_info stuff - C. Blue */
+			else if (prefix(message, "/qinf")) { /* debug new quest_info stuff - C. Blue */
 				/* display basic quests info */
 				msg_format(Ind, "\377UQuests (max_q_idx/MAX_Q_IDX %d/%d):", max_q_idx, MAX_Q_IDX);
 				for (i = 0; i < max_q_idx; i++) {
@@ -8200,8 +8200,8 @@ void do_slash_cmd(int Ind, char *message)
 					    q_info[i].questors, q_name + q_info[i].name, q_info[i].creator);
 				}
 				/* display extra info? */
-				if (k) {
-					msg_format(Ind, "\377U");
+				if (tk) {
+					msg_format(Ind, " \377wSize of quest_info*max_q_idx=total: %d*%d=\377U%d", sizeof(quest_info), max_q_idx, sizeof(quest_info) * max_q_idx);
 				}
 				return;
 			}
