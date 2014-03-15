@@ -539,6 +539,13 @@ static void rd_item(object_type *o_ptr)
 		rd_byte(&o_ptr->marked2);
 	}
 
+	if (!s_older_than(4, 5, 19)) {
+		rd_byte((byte *)&o_ptr->questor);
+		rd_s16b(&o_ptr->questor_idx);
+		rd_s16b(&o_ptr->quest);
+		rd_byte((byte *)&o_ptr->questor_invincible);
+	} else o_ptr->questor = FALSE;
+
 	/* Inscription */
 	rd_string(note, 128);
 	/* Save the inscription */

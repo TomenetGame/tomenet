@@ -193,6 +193,11 @@ static void wr_item(object_type *o_ptr)
 	wr_s32b(o_ptr->marked);
 	wr_byte(o_ptr->marked2);
 
+	wr_byte(o_ptr->questor);
+	wr_s16b(o_ptr->questor_idx);
+	wr_s16b(o_ptr->quest);
+	wr_byte(o_ptr->questor_invincible);
+
 	/* Save the inscription (if any) */
 	if (o_ptr->note) {
 		wr_string(quark_str(o_ptr->note));

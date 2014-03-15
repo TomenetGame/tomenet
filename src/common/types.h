@@ -778,7 +778,9 @@ struct object_type
 
 	s32b marked;			/* Object is marked (for deletion after a certain time) */
 	byte marked2;			/* additional parameters */
-	int marked_quest;		/* It's an item for a quest (either the questor item or an item that needs to be retrieved for a quest goal) */
+	/* for new quest_info: */
+	bool questor, questor_invincible; /* further quest_info flags are referred to when required, no need to copy all of them here */
+	s16b quest, questor_idx;	/* It's an item for a quest (either the questor item or an item that needs to be retrieved for a quest goal) */
 
 	u16b note;			/* Inscription index */
 	char note_utag;			/* Added for making pseudo-id overwrite unique loot tags */
