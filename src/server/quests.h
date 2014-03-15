@@ -249,6 +249,8 @@ typedef struct quest_info {
 	int questor_hostile_revert_timed_ingame_abs[QI_QUESTORS][QI_MAX_STAGES]; /* ..at ingame time.. */
 	int questor_hostile_revert_timed_real[QI_QUESTORS][QI_MAX_STAGES]; /* ..after real time (s).. */
 
+	bool questor_turns_normal[QI_QUESTORS][QI_MAX_STAGES];		/* questor actually loses questor status and turns into a regular mob! */
+
 
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
