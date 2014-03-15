@@ -41,6 +41,9 @@ V:0.0.1
 # R:stage:(10x repeatable) define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:createreward()?:gold:exp:specialstatuseffect
 
 # Note: #goal is 1..5 for main goal, and -1..-5 for optional goals.
+# Note about global 'flags':
+#   For lines that change those: 'a' to 'p' to clear flags, 'A' to 'P' to set flags.
+#   For lines that check those (conversational lines): 'A' to 'P' to check for a flag, which must be set (to display the convo line etc)
 
 
 # for testing purpose

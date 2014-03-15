@@ -7304,10 +7304,11 @@ errr init_ow_info_txt(FILE *fp, char *buf)
  * Initialize the "q_info" array, by parsing an ascii "template" file
  */
 errr init_q_info_txt(FILE *fp, char *buf) {
-	int i, j, k, l;
+	int i, j, k, l, stage, nextstage, questor;
 	char *s, codename[QI_CODENAME_LEN + 1], creator[NAME_LEN], questname[MAX_CHARS];
-	char tmpbuf[MAX_CHARS], *c;
-	int lc_narration[QI_MAX_STAGES], lc_conversation[QI_MAX_STAGES], lc_keywords[QI_MAX_STAGES], lc_rewards[QI_MAX_STAGES];
+	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1];
+	int lc_narration[QI_MAX_STAGES], lc_conversation[QI_QUESTORS][QI_MAX_STAGES], lc_keywords[QI_QUESTORS][QI_MAX_STAGES], lc_rewards[QI_MAX_STAGES];
+	int lc_questor = 0, lc_accept = 0;
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -7400,8 +7401,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			for (j = 0; j < QI_MAX_STAGES; j++) {
 				/* keep track of maximum amount of lines per text in each quest stage */
 				lc_narration[j] = 0;
-				lc_conversation[j] = 0;
-				lc_keywords[j] = 0;
+				for (i = 0; i < QI_QUESTORS; i++) {
+					lc_conversation[i][j] = 0;
+					lc_keywords[i][j] = 0;
+				}
 				lc_rewards[j] = 0;
 
 				/* Set some default values: */
@@ -7420,6 +7423,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 						q_ptr->goals_for_reward[j][k][l] = 0; /* no goals are required to get a reward if not specified, aka it's for free! */
 				}
 			}
+
+			/* for Q/A lines (:-o) */
+			lc_questor = 0;
+			lc_accept = 0;
 
 			continue;
 		}
@@ -7447,11 +7454,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'I' for player restrictions */
 		if (buf[0] == 'I') {
 			char races[6 + 2], classes[5 + 2], *rp = races + 2, *cp = classes + 2;
+
 			s = buf + 2;
 			if (6 != sscanf(s, "%d:%d:%5[^:]:%4[^:]:%d:%d",
-			    &q_ptr->minlev, &q_ptr->maxlev, rp, cp, &q_ptr->repeatable, &q_ptr->quest_done_credit_stage)) {
+			    &q_ptr->minlev, &q_ptr->maxlev, rp, cp, &q_ptr->repeatable, &q_ptr->quest_done_credit_stage))
 				return (1);
-			}
+
 			/* uh well, hacky hacky.. */
 			races[0] = '0'; races[1] = 'x';
 			classes[0] = '0'; classes[1] = 'x';
@@ -7473,9 +7481,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'L' for questor starting location type */
 		if (buf[0] == 'L') {
 			int loc, towns, terr, wx, wy, wz;
+
 			s = buf + 2;
 			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d", //byte, u16b, u32b
 			    &loc, &towns, &wx, &wy, &wz, &terr, &q_ptr->start_x, &q_ptr->start_y)) return (1);
+
 			q_ptr->s_location_type = (byte)loc;
 			q_ptr->s_towns_array = (u16b)towns;
 			q_ptr->start_wpos.wx = (char)wx;
@@ -7498,9 +7508,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'T' for quest starting times */
 		if (buf[0] == 'T') {
 			int night, day, mor, fnoo, noo, aft, eve, mid, dee;
+
 			s = buf + 2;
 			if (11 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 			    &night, &day, &mor, &fnoo, &noo, &aft, &eve, &mid, &dee, &q_ptr->time_start, &q_ptr->time_stop)) return (1);
+
 			q_ptr->night = (night != 0);
 			q_ptr->day = (day != 0);
 			q_ptr->morning = (mor != 0);
@@ -7525,13 +7537,17 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
+			if (lc_questor == QI_QUESTORS) return 1;
 			s = buf + 2;
+
 			if (10 != sscanf(s, "%d:%d:%c:%c:%d:%d:%d:%d:%d:%[^:]",
-			    &q_ptr->questor, &q_ptr->questor_ridx, &q_ptr->questor_rchar, &q_ptr->questor_rattr,
-			    &q_ptr->questor_rlevmin, &q_ptr->questor_rlevmax,
-			    &q_ptr->questor_sval, &q_ptr->questor_ktval, &q_ptr->questor_ksval,
-			    q_ptr->questor_name)) return (1);
-			q_ptr->questor_invincible = (invinc != 0);
+			    &q_ptr->questor[lc_questor], &q_ptr->questor_ridx[lc_questor],
+			    &q_ptr->questor_rchar[lc_questor], &q_ptr->questor_rattr[lc_questor],
+			    &q_ptr->questor_rlevmin[lc_questor], &q_ptr->questor_rlevmax[lc_questor],
+			    &q_ptr->questor_sval[lc_questor], &q_ptr->questor_ktval[lc_questor], &q_ptr->questor_ksval[lc_questor],
+			    q_ptr->questor_name[lc_questor])) return (1);
+
+			lc_questor++;
 			continue;
 		}
 
@@ -7548,9 +7564,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'U' for quest duration */
 		if (buf[0] == 'U') {
 			int cd, per_py, stat, quit;
+
 			s = buf + 2;
 			if (6 != sscanf(s, "%d:%d:%d:%d:%d:%d",
 			    &q_ptr->ending_stage, &q_ptr->max_duration, &cd, &per_py, &stat, &quit)) return (1);
+
 			q_ptr->cooldown = (s16b) cd;
 			q_ptr->per_player = (per_py != 0);
 			q_ptr->static_floor = (stat != 0);
@@ -7561,23 +7579,27 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'A' for quest (auto-)acceptance */
 		if (buf[0] == 'A') {
 			int aalos, aaint, talk, despawn, invinc;
+
+			if (lc_accept == QI_QUESTORS) return 1;
 			s = buf + 2;
+
 			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
 			    &aalos, &aaint, &talk, &despawn, &invinc)) return (1);
-			q_ptr->accept_los = (aalos != 0);
-			q_ptr->accept_interact = (aaint != 0);
-			q_ptr->questor_talkable = (talk != 0);
-			q_ptr->questor_despawned = (despawn != 0);
-			q_ptr->questor_invincible = (invinc != 0);
+			q_ptr->accept_los[lc_accept] = (aalos != 0);
+			q_ptr->accept_interact[lc_accept] = (aaint != 0);
+			q_ptr->questor_talkable[lc_accept] = (talk != 0);
+			q_ptr->questor_despawned[lc_accept] = (despawn != 0);
+			q_ptr->questor_invincible[lc_accept] = (invinc != 0);
+
+			lc_accept++;
 			continue;
 		}
 
 		/* Process 'X' for narrative text */
 		if (buf[0] == 'X') {
-			int stage;
 			s = buf + 2;
-			if (2 != sscanf(s, "%d:%79[^:]",
-			    &stage, tmpbuf)) return (1);
+			if (3 != sscanf(s, "%d:%16[^:]:%79[^:]",
+			    &stage, flagbuf, tmpbuf)) return (1);
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
 			if (lc_narration[stage] == 10) return 1;
 
@@ -7585,40 +7607,54 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			strcpy(c, tmpbuf);
 			q_ptr->narration[stage][lc_narration[stage]] = c;
 
+			cc = flagbuf;
+			while (*cc) {
+				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
+					q_ptr->narrationflags[stage][lc_narration[stage]] |= (0x1 << (*cc - 'A')); /* set flag */
+				} else return 1;
+			}
+
 			lc_narration[stage]++;
 			continue;
 		}
 
 		/* Process 'W' for conversation */
 		if (buf[0] == 'W') {
-			int stage;
-			char *cc;
-
 			s = buf + 2;
-			if (2 != sscanf(s, "%d:%79[^:]",
-			    &stage, tmpbuf)) return (1);
+			C_WIPE(flagbuf, QI_FLAGS + 1, byte);
+
+			if (4 != sscanf(s, "%d:%d:%16[^:]:%79[^:]",
+			    &questor, &stage, flagbuf, tmpbuf)) return (1);
+
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
-			if (lc_conversation[stage] == QI_TALK_LINES) return 1;
+			if (lc_conversation[questor][stage] == QI_TALK_LINES) return 1;
 
 			/* replace '{' by \377 */
 			while ((cc = strchr(tmpbuf, '{'))) *cc = '\377';
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
-			q_ptr->talk[stage][lc_conversation[stage]] = c;
+			q_ptr->talk[questor][stage][lc_conversation[questor][stage]] = c;
 
-			lc_conversation[stage]++;
+			cc = flagbuf;
+			while (*cc) {
+				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
+					q_ptr->talkflags[questor][stage][lc_conversation[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
+				} else return 1;
+			}
+
+			lc_conversation[questor][stage]++;
 			continue;
 		}
 
 		/* Process 'Y' for conversation keywords */
 		if (buf[0] == 'Y') {
-			int stage, next;
 			s = buf + 2;
-			if (3 != sscanf(s, "%d:%29[^:]:%d",
-			    &stage, tmpbuf, &next)) return (1);
+			if (6 != sscanf(s, "%d:%d:%16[^:]:%29[^:]:%16[^:]:%d",
+			    &questor, &stage, flagbuf, tmpbuf, flagbuf2, &nextstage)) return (1);
+
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
-			if (lc_keywords[stage] == 10) return 1;
+			if (lc_keywords[questor][stage] == 10) return 1;
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 
@@ -7626,10 +7662,26 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (!strcmp(tmpbuf, "-")) tmpbuf[0] = 0;
 
 			strcpy(c, tmpbuf);
-			q_ptr->keyword[stage][lc_keywords[stage]] = c;
-			q_ptr->keyword_stage[stage][lc_keywords[stage]] = next;
+			q_ptr->keyword[questor][stage][lc_keywords[questor][stage]] = c;
+			q_ptr->keyword_stage[questor][stage][lc_keywords[questor][stage]] = nextstage;
 
-			lc_keywords[stage]++;
+			cc = flagbuf;
+			while (*cc) {
+				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
+					q_ptr->keywordflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
+				} else return 1;
+			}
+
+			cc = flagbuf2;
+			while (*cc) {
+				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
+					q_ptr->keywordchangeflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
+				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) { /* flags that must be set to display this convo line */
+					q_ptr->keywordchangeflags[questor][stage][lc_keywords[questor][stage]] &= ~(0x1 << (*cc - 'A')); /* clear flag */
+				} else return 1;
+			}
+
+			lc_keywords[questor][stage]++;
 			continue;
 		}
 
@@ -7645,13 +7697,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'M' for move-to-location to finish a quest stage whose goals have already been fulfilled */
 		if (buf[0] == 'M') {
-			int stage, goal;
+			int goal;
 			int wx, wy, wz, x, y, terr;
+
 			s = buf + 2;
 			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d",
 			    &stage, &goal, &wx, &wy, &wz, &x, &y, &terr)) return (1);
+
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
 			if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
+
 			if (goal > 0) { /* main goal */
 				goal--;
 				q_ptr->deliver_pos[stage][goal] = TRUE;;
@@ -7676,7 +7731,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'B' to restrict (optional) goals to only get credited if we return to the questor */
 		if (buf[0] == 'B') {
-			int stage;
 			/* first number is the stage */
 			stage = atoi(buf + 2);
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
@@ -7713,23 +7767,22 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'G', which goal combinations (up to QI_STAGE_GOALS different goals per combination) are
 		   required to advance to which stage (up to QI_FOLLOWUP_STAGES different ones, each has a goal-combo) */
 		if (buf[0] == 'G') {
-			int stage, next;
 			/* first number is the stage, second the next stage */
 			stage = atoi(buf + 2);
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
 			if (!(c = strchr(buf + 2, ':'))) return 1;
 			c++;
-			next = atoi(c);
+			nextstage = atoi(c);
 			if (!(c = strchr(c, ':'))) return 1;
 			c++;
 
 			/* already defined the max amount of different QI_FOLLOWUP_STAGES? */
 			for (k = 0; k < QI_FOLLOWUP_STAGES; k++) {
 				/* reusing a stage we've already found? */
-				if (q_ptr->next_stage_from_goals[stage][k] == next) break;
+				if (q_ptr->next_stage_from_goals[stage][k] == nextstage) break;
 				/* found a free follow-up stage to use? */
 				if (q_ptr->next_stage_from_goals[stage][k] == -1) {
-					q_ptr->next_stage_from_goals[stage][k] = next;
+					q_ptr->next_stage_from_goals[stage][k] = nextstage;
 					break;
 				}
 			}
@@ -7755,7 +7808,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'O', which main+optional goal combinations (up to QI_REWARD_GOALS different goals per combination) are
 		   required to advance to which stage (up to QI_MAX_STAGE_REWARDS different ones, each has a goal-combo) */
 		if (buf[0] == 'O') {
-			int stage, reward;
+			int reward;
+
 			/* first number is the stage, second the next stage */
 			stage = atoi(buf + 2);
 			if (stage < 0 || stage >= QI_MAX_STAGES) return -1;
@@ -7786,7 +7840,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'R', quest reward definitions */
 		if (buf[0] == 'R') {
-			int stage, good, great, createreward;
+			int good, great, createreward;
 
 			/* first number is the stage */
 			s = buf + 2;
@@ -7804,6 +7858,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			    &q_ptr->reward_gold[stage][lc_rewards[stage]], &q_ptr->reward_exp[stage][lc_rewards[stage]],
 			    &q_ptr->reward_statuseffect[stage][lc_rewards[stage]]))
 				return (1);
+
 			q_ptr->reward_ogood[stage][lc_rewards[stage]] = (good != 0);
 			q_ptr->reward_ogreat[stage][lc_rewards[stage]] = (great != 0);
 			q_ptr->reward_oreward[stage][lc_rewards[stage]] = (createreward != 0);

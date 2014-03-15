@@ -48,6 +48,7 @@
 #define QI_REWARD_GOALS		5	/* up to 5 different main/optional goals that have to be completed for a specific reward */
 #define QI_STAGE_GOALS		5	/* up to 5 different main/optional goals that have to be completed for changing to a specific next stage */
 #define QI_FOLLOWUP_STAGES	5	/* the # of possible follow-up stages of which one is picked depending on the completed stage goals */
+#define QI_FLAGS		16	/* global flags that range from 'a' to 'p' and can be set via uppercase letter, erased via lowercase letter. */
 
 
 #define QI_SLOC_TOWN		0x1
@@ -200,8 +201,11 @@ typedef struct quest_info {
 
 	int questor_ktval[QI_QUESTORS], questor_ksval[QI_QUESTORS];	/* QI_QUESTOR_ITEM_xxx. No further stats/enchantments are displayed! */
 
-	bool questor_invincible[QI_QUESTORS];	/* Is the questor invincible (if monster)/unpickable by monsters (if item)? */
 	char questor_name[QI_QUESTORS][MAX_CHARS];	/* optional pseudo-unique name that overrides the normal name */
+	bool questor_invincible[QI_QUESTORS];	/* Is the questor invincible (if monster)/unpickable by monsters (if item)? */
+
+	bool questor_talkable[QI_QUESTORS];		/* questor accepts dialogue? (by bumping usually) */
+	bool questor_despawned[QI_QUESTORS];		/* questor starts despawned? */
 
 	/* ..if killable ie not invincible: */
 	bool questor_drops_regular[QI_QUESTORS];		/* Drops regular loot (of his ridx type) instead of nothing? */
@@ -216,8 +220,8 @@ typedef struct quest_info {
 	int questor_exp[QI_QUESTORS];
 
 	/* special questor behaviour during each stage */
-	bool questor_talkable[QI_QUESTORS][QI_MAX_STAGES];		/* questor accepts dialogue? (by bumping usually) */
-	bool questor_despawned[QI_QUESTORS][QI_MAX_STAGES];		/* questor vanishes during a quest stage? */
+	bool questor_talkable_new[QI_QUESTORS][QI_MAX_STAGES];		/* questor accepts dialogue? (by bumping usually) */
+	bool questor_despawned_new[QI_QUESTORS][QI_MAX_STAGES];		/* questor vanishes during a quest stage? */
 
 	bool questor_invincible_new[QI_QUESTORS][QI_MAX_STAGES];	/* Is the questor invincible (if monster)/unpickable by monsters (if item) during a particular stage? */
 	int questor_death_fail[QI_QUESTORS][QI_MAX_STAGES];		/* If the questor dies, the quest goes to stage n? (->reset old stage goals/positions as if we just entered it, if that is possible? hm) */
@@ -249,13 +253,17 @@ typedef struct quest_info {
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
 	int talk_focus[QI_QUESTORS];					/* questor is focussed on this player and won't give others a chance to reply with keywords */
 	cptr talk[QI_QUESTORS][QI_MAX_STAGES][QI_TALK_LINES];		/* n conversations a 10 lines a 79 characters */
+	u16b talkflags[QI_QUESTORS][QI_MAX_STAGES][QI_TALK_LINES];	/* required flags configuration for a convo line to get displayed  */
 	cptr keyword[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* each convo may allow the player to reply with up to m keywords a 30 chars */
+	u16b keywordflags[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* required flags configuration for a keyword to be enabled */
+	u16b keywordchangeflags[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* ..and the keyword will change flags to these */
 	int keyword_stage[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];/*  ..which will bring the player to a different quest stage */
 	cptr keyword_reply[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS][QI_TALK_LINES];/* give a reply to the keyword */
 	char yn[QI_QUESTORS][QI_MAX_STAGES];				/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
 	int y_stage[QI_QUESTORS][QI_MAX_STAGES], n_stage[QI_QUESTORS][QI_MAX_STAGES];	/*  ..which will bring the player to a different quest stage */
 
 	cptr narration[QI_MAX_STAGES][QI_TALK_LINES];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
+	u16b narrationflags[QI_MAX_STAGES][QI_TALK_LINES];		/* required flags configuration to display this narrative line */
 
 
 	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */
@@ -265,6 +273,10 @@ typedef struct quest_info {
 	char **add_dungeon_t_pref[QI_MAX_STAGES];		/* table of predefined template filenames for each dungeon floor (or NULL for random floors inbetween) */
 	bool add_dungeon_fullystatic[QI_MAX_STAGES];		/* all floors are static */
 	bool add_dungeon_keep[QI_MAX_STAGES];			/* keep dungeon until quest ends instead of erasing it when this stage is completed */
+
+
+	/* global quest flags (a-z) */
+	bool flags[QI_FLAGS];
 
 
 	/* quest goals, up to 10 per stage, with a multitude of different sub-goals (Note: of the subgoals 1 is randomly picked for the player, except if 'xxx_random_pick' is set, which allows the player to pick what he wants to do).
