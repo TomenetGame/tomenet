@@ -7454,14 +7454,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'I' for player restrictions */
 		if (buf[0] == 'I') {
 			char races[6 + 2], classes[5 + 2], *rp = races + 2, *cp = classes + 2;
-			int admin;
 
 			s = buf + 2;
 			if (7 != sscanf(s, "%d:%d:%d:%5[^:]:%4[^:]:%d:%d",
-			    &admin, &q_ptr->minlev, &q_ptr->maxlev, rp, cp, &q_ptr->repeatable, &q_ptr->quest_done_credit_stage))
+			    &q_ptr->privilege, &q_ptr->minlev, &q_ptr->maxlev, rp, cp, &q_ptr->repeatable, &q_ptr->quest_done_credit_stage))
 				return (1);
 
-			q_ptr->admins_only = (admin != 0);
 			/* uh well, hacky hacky.. */
 			races[0] = '0'; races[1] = 'x';
 			classes[0] = '0'; classes[1] = 'x';

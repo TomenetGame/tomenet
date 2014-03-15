@@ -121,9 +121,9 @@ typedef struct quest_info {
 
     /* QUESTOR (quest giver) RESTRICTIONS: */
 	/* player restrictions */
-	bool admins_only;			/* quest can only be acquired by admins (for testing them etc) */
-	int minlev, maxlev;			/* eligible player level range (0 for any) */
-	u32b races, classes;			/* eligible player classes/races (CFx/RFx flags) */
+	int privilege;			/* quest can only be acquired by admins (for testing them etc) */
+	int minlev, maxlev;		/* eligible player level range (0 for any) */
+	u32b races, classes;		/* eligible player classes/races (CFx/RFx flags) */
 	/* matrix of codename(s) of prerequisite quests needed to accept this 'follow-up' quest.
 	   x-direction: OR, y-direction: AND */
 	char followup_matrix[10][10][QI_CODENAME_LEN + 1];

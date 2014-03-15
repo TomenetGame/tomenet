@@ -533,8 +533,14 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 
 	msg = NULL;
 
-	/* quests is only for admins at the moment? (for testing purpose) */
-	if (q_ptr->admins_only && !is_admin(p_ptr)) return FALSE;
+	/* quests is only for admins or privileged accounts at the moment? (for testing purpose) */
+	switch (q_ptr->privilege) {
+	case 1: if (!p_ptr->privileged && !is_admin(p_ptr)) return FALSE;
+		break;
+	case 2: if (p_ptr->privileged != 2 && !is_admin(p_ptr)) return FALSE;
+		break;
+	case 3: if (!is_admin(p_ptr)) return FALSE;
+	}
 
 	/* has the player completed this quest already/too often? */
 	if (p_ptr->quest_done[q_idx] > q_ptr->repeatable && q_ptr->repeatable != -1) {
@@ -574,8 +580,14 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 	int i, stage = q_ptr->stage;
 	cptr msg = NULL;//compiler warning
 
-	/* quests is only for admins at the moment? (for testing purpose) */
-	if (q_ptr->admins_only && !is_admin(p_ptr)) return;
+	/* quests is only for admins or privileged accounts at the moment? (for testing purpose) */
+	switch (q_ptr->privilege) {
+	case 1: if (!p_ptr->privileged && !is_admin(p_ptr)) return;
+		break;
+	case 2: if (p_ptr->privileged != 2 && !is_admin(p_ptr)) return;
+		break;
+	case 3: if (!is_admin(p_ptr)) return;
+	}
 
 	/* cannot interact with the questor during this stage? */
 	if (!q_ptr->questor_talkable[questor_idx]) return;
