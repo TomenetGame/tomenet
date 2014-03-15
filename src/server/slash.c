@@ -8200,9 +8200,9 @@ void do_slash_cmd(int Ind, char *message)
 					    q_info[i].questors, q_name + q_info[i].name, q_info[i].creator);
 				}
 				/* display extra info? */
-				if (tk) {
+				//if (tk) {
 					msg_format(Ind, " \377wSize of quest_info*max_q_idx=total: %d*%d=\377U%d", sizeof(quest_info), max_q_idx, sizeof(quest_info) * max_q_idx);
-				}
+				//}
 				return;
 			}
 			else if (prefix(message, "/qccd")) { /* clear a quest's cooldown */
