@@ -8193,8 +8193,10 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/qinf")) { /* debug new quest_info stuff - C. Blue */
 				msg_format(Ind, "\377UQuests (max_q_idx/MAX_Q_IDX %d/%d):", max_q_idx, MAX_Q_IDX);
 				for (i = 0; i < max_q_idx; i++) {
-					msg_format(Ind, "  %d) '%s' (S%2d) [%s by %s] %s %s %d", i, q_name + q_info[i].name, q_info[i].stage, q_info[i].codename, q_info[i].creator,
-					    q_info[i].active ? "ACT" : "   ", q_info[i].disabled ? "DIS" : "   ", q_info[i].cur_cooldown);
+					msg_format(Ind, " %3d [%10s] S%2d %s %s %4d -- Qx%d '%s' by %s",
+					    i, q_info[i].codename,q_info[i].stage, 
+					    q_info[i].active ? "A" : " ", q_info[i].disabled ? "%" : " ", q_info[i].cur_cooldown,
+					    q_info[i].questors, q_name + q_info[i].name, q_info[i].creator);
 				}
 				return;
 			}
