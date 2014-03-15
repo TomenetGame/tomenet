@@ -7681,7 +7681,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 					q_ptr->keywordchangeflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
 				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) { /* flags that must be set to display this convo line */
-					q_ptr->keywordchangeflags[questor][stage][lc_keywords[questor][stage]] &= ~(0x1 << (*cc - 'A')); /* clear flag */
+					q_ptr->keywordchangeflags[questor][stage][lc_keywords[questor][stage]] &= ~(0x1 << (*cc - 'a')); /* clear flag */
 				} else return 1;
 			}
 
