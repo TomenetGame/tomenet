@@ -18,22 +18,22 @@ V:0.0.1
 # T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # F:mapfile
 # Q (5x repeatable):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
-# //todo: K:giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
+# //todo: K (5x repeatable):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
 # U:endingstage (0 = none):duration:cooldown:perplayer?:staticfloor?:quitfloor?
 # A: (5x repeatable per Q line!):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?
 #(Parameters from here on are all individual per quest stage)
-# //todo: auto-spawn quest, auto-change stage
-# //todo: questor changes/polymorphes
-# //todo: questor moves, teleports, teleports player
-# //todo: questor hostility
+# //todo: auto-spawn quest, auto-change stage ('H')
+# //todo: questor changes/polymorphes ('S')
+# //todo: questor moves, teleports, teleports player ('J')
+# //todo: questor hostility ('S' too)
 # X (50x repeatable):stage:flags:narration text
 # W (50x repeatable):questor:stage:flags:convo line
 # Y (30x repeatable):questor:stage:flags:keyword:changeflags:nextstage
-#  //todo:y/n convo
-# //todo: dungeon adding
-# //todo: kill, retrieve, kill optional, retrieve optional
+#  //todo:y/n convo ('y')
+# //todo: dungeon adding ('d')
+# //todo: kill, retrieve, kill optional, retrieve optional ('k', 'r')
 # //todo: P:stage:goal#:goal at wpos wx:wy:wz:goal at pos x:y:goal at terrain type
-# M:stage:goal#:goal to wpos wx:wy:wz:goal to pos x:y:goal to terrain type
+# M:stage:goal#:goal to wpos wx:wy:wz:goal to pos x:y:goal to terrain type		(change to 'm')?
 # B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
 # Z:stage:goal:changeflags
 # G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons

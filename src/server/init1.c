@@ -7535,6 +7535,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
+#if 0
+		/* Process 'K' for questor drops/exp if it is killable and player manages to kill it */
+		if (buf[0] == 'K') {
+			s = buf + 2;
+			if ( != sscanf(s, "",
+				q_ptr->)) return (1);
+			continue;
+		}
+#endif
+
 		/* Process 'U' for quest duration */
 		if (buf[0] == 'U') {
 			int cd, per_py, stat, quit;
@@ -7690,6 +7700,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
+#if 0
+		/* Process 'Z' for how completed stage goals will change 'quest flags' */
+		if (buf[0] == 'Z') {
+			s = buf + 2;
+			if ( != sscanf(s, "",
+				q_ptr->)) return (1);
+			continue;
+		}
+#endif
+
 		/* Process 'G', which goal combinations (up to QI_STAGE_GOALS different goals per combination) are
 		   required to advance to which stage (up to QI_FOLLOWUP_STAGES different ones, each has a goal-combo) */
 		if (buf[0] == 'G') {
@@ -7796,9 +7816,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		switch (buf[0]) {
 		case 'E':
 		case 'D':
+		case 'K':
 		//case '':
 		//case '':
 		case 'P':
+		case 'Z':
 			continue;
 		}
 
