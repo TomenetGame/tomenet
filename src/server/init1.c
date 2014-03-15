@@ -7454,12 +7454,18 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'I' for player restrictions */
 		if (buf[0] == 'I') {
 			char races[6 + 2], classes[5 + 2], *rp = races + 2, *cp = classes + 2;
+			int priv, minlev, maxlev, rep, qdcs;
 
 			s = buf + 2;
 			if (7 != sscanf(s, "%d:%d:%d:%5[^:]:%4[^:]:%d:%d",
-			    &q_ptr->privilege, &q_ptr->minlev, &q_ptr->maxlev, rp, cp, &q_ptr->repeatable, &q_ptr->quest_done_credit_stage))
+			    &priv, &minlev, &maxlev, rp, cp, &rep, &qdcs))
 				return (1);
 
+			q_ptr->privilege = priv;
+			q_ptr->minlev = minlev;
+			q_ptr->maxlev = maxlev;
+			q_ptr->repeatable = rep;
+			q_ptr->quest_done_credit_stage = qdcs;
 			/* uh well, hacky hacky.. */
 			races[0] = '0'; races[1] = 'x';
 			classes[0] = '0'; classes[1] = 'x';
@@ -7480,11 +7486,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'L' for questor starting location type */
 		if (buf[0] == 'L') {
-			int loc, towns, terr, wx, wy, wz;
+			int loc, towns, terr, wx, wy, wz, sx, sy;
 
 			s = buf + 2;
 			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d", //byte, u16b, u32b
-			    &loc, &towns, &wx, &wy, &wz, &terr, &q_ptr->start_x, &q_ptr->start_y)) return (1);
+			    &loc, &towns, &wx, &wy, &wz, &terr, &sx, &sy)) return (1);
 
 			q_ptr->s_location_type = (byte)loc;
 			q_ptr->s_towns_array = (u16b)towns;
@@ -7492,6 +7498,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->start_wpos.wy = (char)wy;
 			q_ptr->start_wpos.wz = (char)wz;
 			q_ptr->s_terrains = (u32b)terr;
+			q_ptr->start_x = sx;
+			q_ptr->start_y = sy;
 			continue;
 		}
 
@@ -7507,11 +7515,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'T' for quest starting times */
 		if (buf[0] == 'T') {
-			int night, day, mor, fnoo, noo, aft, eve, mid, dee;
+			int night, day, mor, fnoo, noo, aft, eve, mid, dee, tstart, tstop;
 
 			s = buf + 2;
 			if (11 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
-			    &night, &day, &mor, &fnoo, &noo, &aft, &eve, &mid, &dee, &q_ptr->time_start, &q_ptr->time_stop)) return (1);
+			    &night, &day, &mor, &fnoo, &noo, &aft, &eve, &mid, &dee, &tstart, &tstop)) return (1);
 
 			q_ptr->night = (night != 0);
 			q_ptr->day = (day != 0);
@@ -7522,6 +7530,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->evening = (eve != 0);
 			q_ptr->midnight = (mid != 0);
 			q_ptr->deepnight = (dee != 0);
+			q_ptr->time_start = tstart;
+			q_ptr->time_stop = tstop;
 			continue;
 		}
 
@@ -7537,15 +7547,24 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
+			int q, ridx, minlv, maxlv, sval, ktval, ksval;
 			if (lc_questor == QI_QUESTORS) return 1;
 			s = buf + 2;
 
 			if (10 != sscanf(s, "%d:%d:%c:%c:%d:%d:%d:%d:%d:%[^:]",
-			    &q_ptr->questor[lc_questor], &q_ptr->questor_ridx[lc_questor],
+			    &q, &ridx,
 			    &q_ptr->questor_rchar[lc_questor], &q_ptr->questor_rattr[lc_questor],
-			    &q_ptr->questor_rlevmin[lc_questor], &q_ptr->questor_rlevmax[lc_questor],
-			    &q_ptr->questor_sval[lc_questor], &q_ptr->questor_ktval[lc_questor], &q_ptr->questor_ksval[lc_questor],
+			    &minlv, &maxlv,
+			    &sval, &ktval, &ksval,
 			    q_ptr->questor_name[lc_questor])) return (1);
+
+			q_ptr->questor[lc_questor] = q;
+			q_ptr->questor_ridx[lc_questor] = ridx;
+			q_ptr->questor_rlevmin[lc_questor] = minlv;
+			q_ptr->questor_rlevmax[lc_questor] = maxlv;
+			q_ptr->questor_sval[lc_questor] = sval;
+			q_ptr->questor_ktval[lc_questor] = ktval;
+			q_ptr->questor_ksval[lc_questor] = ksval;
 
 			lc_questor++;
 			continue;
@@ -7563,12 +7582,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'U' for quest duration */
 		if (buf[0] == 'U') {
-			int cd, per_py, stat, quit;
+			int es, cd, per_py, stat, quit;
 
 			s = buf + 2;
 			if (6 != sscanf(s, "%d:%d:%d:%d:%d:%d",
-			    &q_ptr->ending_stage, &q_ptr->max_duration, &cd, &per_py, &stat, &quit)) return (1);
+			    &es, &q_ptr->max_duration, &cd, &per_py, &stat, &quit)) return (1);
 
+			q_ptr->ending_stage = es;
 			q_ptr->cooldown = (s16b) cd;
 			q_ptr->per_player = (per_py != 0);
 			q_ptr->static_floor = (stat != 0);
@@ -7844,7 +7864,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'R', quest reward definitions */
 		if (buf[0] == 'R') {
-			int good, great, createreward;
+			int good, great, createreward, rstatus;
+			int otval, osval, opval, obpval, oname1, oname2, oname2b;
 
 			/* first number is the stage */
 			s = buf + 2;
@@ -7855,17 +7876,23 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			c++;
 
 			if (13 != sscanf(c, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
-			    &q_ptr->reward_otval[stage][lc_rewards[stage]], &q_ptr->reward_osval[stage][lc_rewards[stage]],
-			    &q_ptr->reward_opval[stage][lc_rewards[stage]], &q_ptr->reward_obpval[stage][lc_rewards[stage]],
-			    &q_ptr->reward_oname1[stage][lc_rewards[stage]], &q_ptr->reward_oname2[stage][lc_rewards[stage]], &q_ptr->reward_oname2b[stage][lc_rewards[stage]],
+			    &otval, &osval, &opval, &obpval, &oname1, &oname2, &oname2b,
 			    &good, &great, &createreward,
 			    &q_ptr->reward_gold[stage][lc_rewards[stage]], &q_ptr->reward_exp[stage][lc_rewards[stage]],
-			    &q_ptr->reward_statuseffect[stage][lc_rewards[stage]]))
+			    &rstatus))
 				return (1);
 
+			q_ptr->reward_otval[stage][lc_rewards[stage]] = otval;
+			q_ptr->reward_osval[stage][lc_rewards[stage]] = osval;
+			q_ptr->reward_opval[stage][lc_rewards[stage]] = opval;
+			q_ptr->reward_obpval[stage][lc_rewards[stage]] = obpval;
+			q_ptr->reward_oname1[stage][lc_rewards[stage]] = oname1;
+			q_ptr->reward_oname2[stage][lc_rewards[stage]] = oname2;
+			q_ptr->reward_oname2b[stage][lc_rewards[stage]] = oname2b;
 			q_ptr->reward_ogood[stage][lc_rewards[stage]] = (good != 0);
 			q_ptr->reward_ogreat[stage][lc_rewards[stage]] = (great != 0);
 			q_ptr->reward_oreward[stage][lc_rewards[stage]] = (createreward != 0);
+			q_ptr->reward_statuseffect[stage][lc_rewards[stage]] = rstatus;
 
 			lc_rewards[stage]++;
 			continue;
