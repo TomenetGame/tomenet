@@ -2631,7 +2631,11 @@ static errr rd_savefile_new_aux(int Ind) {
 		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 			rd_s16b(&p_ptr->quest_idx[i]);
 			rd_string(p_ptr->quest_codename[i], 10);
-			rd_byte(&p_ptr->quest_stage[i]);
+			if (older_than(4, 5, 21)) {
+				byte tmpbyte;
+				rd_byte(&tmpbyte);
+				p_ptr->quest_stage[i] = tmpbyte;
+			} else rd_s16b(&p_ptr->quest_stage[i]);
 			for (j = 0; j < QI_GOALS; j++)
 				rd_byte((byte *) &p_ptr->quest_goals[i][j]);
 			for (j = 0; j < QI_OPTIONAL; j++)
@@ -2652,6 +2656,11 @@ static errr rd_savefile_new_aux(int Ind) {
 			rd_byte((byte *) &p_ptr->quest_deliveropt_pos[i]);
 			rd_byte((byte *) &p_ptr->quest_within_deliveropt_wpos[i]);
 			rd_byte((byte *) &p_ptr->quest_deliveropt_xy[i]);
+
+			if (!older_than(4, 5, 21)) {
+				for (j = 0; j < QI_FLAGS; j++)
+					rd_byte((byte *) &p_ptr->quest_flags[i][j]);
+			}
 		}
 
 		/* remember quests we completed */

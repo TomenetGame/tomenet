@@ -349,7 +349,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 	/* Initialise with starting stage 0 */
 	q_ptr->start_turn = turn;
 	q_ptr->stage = -1;
-	quest_stage(q_idx, 0, FALSE);
+	quest_stage(0, q_idx, 0, FALSE);
 }
 
 /* Despawn questor, unstatic sector/floor, etc. */
@@ -423,14 +423,32 @@ static void quest_terminate(int q_idx) {
 static void quest_rewards(q_idx) {
 }
 
+/* return the current quest stage. Either just uses q_ptr->stage directly for global
+   quests, or p_ptr->quest_stage for individual quests. */
+s16b quest_get_stage(int pInd, int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr;
+	int i;
+
+	if (!pInd) return q_ptr->stage; /* no player? global stage */
+
+	p_ptr = Players[pInd];
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+		if (p_ptr->quest_idx[i] == q_idx) break;
+	if (i == MAX_CONCURRENT_QUESTS) return -1; /* player isn't on this quest */
+
+	if (q_ptr->individual) return p_ptr->quest_stage[i]; /* individual quest */
+	return q_ptr->stage; /* global quest */
+}
+
 /* Advance quest to a different stage (or start it out if stage is 0) */
-void quest_stage(int q_idx, int stage, bool quiet) {
+void quest_stage(int pInd, int q_idx, int stage, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, j;
 	bool anything = FALSE;
 
 	/* dynamic info */
-	//int stage_prev = q_ptr->stage;
+	//int stage_prev = quest_get_stage(pInd, q_idx);
 
 	/* new stage is active */
 	q_ptr->stage = stage;
@@ -505,6 +523,10 @@ void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	player_type *p_ptr = Players[Ind];
 	int i, stage = q_ptr->stage;
 
+	/* for 'individual' quests: imprint the individual stage for a player.
+	   the globally set q_ptr->stage is in this case just a temporary value,
+	   set by quest_stage() for us, that won't be of any further consequence. */
+	if (q_ptr->individual) p_ptr->quest_stage[py_q_idx] = stage;
 
 	/* find out if we are pursuing any sort of target locations */
 	p_ptr->quest_target_pos[py_q_idx] = FALSE;
@@ -631,7 +653,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 
 
 	/* check for quest goals that have been completed and just required delivery back here */
-	if (quest_goal_check(q_idx, TRUE)) return;
+	if (quest_goal_check(Ind, q_idx, TRUE)) return;
 
 
 	/* questor interaction qutomatically invokes the quest dialogue, if any */
@@ -714,7 +736,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 
 		/* stage change? */
 		if (q_ptr->keyword_stage[questor_idx][stage][i] != -1)
-			quest_stage(q_idx, q_ptr->keyword_stage[questor_idx][stage][i], FALSE);
+			quest_stage(Ind, q_idx, q_ptr->keyword_stage[questor_idx][stage][i], FALSE);
 
 		return;
 	}
@@ -736,7 +758,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
    call quest_reward() and/or quest_stage() to advance.
    Goals can only be completed by players who are pursuing that quest.
    'interacting' is TRUE if a player is interacting with the questor. */
-bool quest_goal_check(int q_idx, bool interacting) {
+bool quest_goal_check(int pInd, int q_idx, bool interacting) {
 //	quest_info *q_ptr = &q_info[q_idx];
 //	player_type *p_ptr = Players[Ind];
 //	int i, stage = q_ptr->stage;
@@ -744,6 +766,6 @@ bool quest_goal_check(int q_idx, bool interacting) {
 
 
 	//quest_reward(q_idx);
-	//quest_stage(q_idx, , FALSE);
+	//quest_stage(pInd, q_idx, , FALSE);
 	return TRUE; /* stage has been completed and changed to the next stage */
 }

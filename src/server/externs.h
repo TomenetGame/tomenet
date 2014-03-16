@@ -2138,12 +2138,13 @@ extern void go_engine_clocks(void);
 extern void process_quests(void);
 extern void quest_activate(int q_idx);
 extern void quest_deactivate(int q_idx);
-extern void quest_stage(int q_idx, int stage, bool quiet);
+extern s16b quest_get_stage(int pInd, int q_idx);
+extern void quest_stage(int pInd, int q_idx, int stage, bool quiet);
 extern void quest_interact(int Ind, int q_idx, int questor_idx);
 extern void quest_reply(int Ind, int q_idx, char *str);
 extern void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat);
 extern void quest_imprint_stage(int Ind, int q_idx, int py_q_idx);
-extern bool quest_goal_check(int q_idx, bool interacting);
+extern bool quest_goal_check(int pInd, int q_idx, bool interacting);
 
 
 

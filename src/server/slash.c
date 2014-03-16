@@ -3554,7 +3554,7 @@ void do_slash_cmd(int Ind, char *message)
 					j = p_ptr->quest_idx[i];
 					p_ptr->quest_idx[i] = -1;
 					/* give him 'quest done' credit if he cancelled it too late (ie after rewards were handed out)? */
-					if (q_info[j].quest_done_credit_stage <= q_info[j].stage && p_ptr->quest_done[j] < 10000) p_ptr->quest_done[j]++;
+					if (q_info[j].quest_done_credit_stage <= quest_get_stage(Ind, j) && p_ptr->quest_done[j] < 10000) p_ptr->quest_done[j]++;
 				}
 				return;
 			}
@@ -3570,7 +3570,7 @@ void do_slash_cmd(int Ind, char *message)
 			j = p_ptr->quest_idx[k - 1];
 			p_ptr->quest_idx[k - 1] = -1;
 			/* give him 'quest done' credit if he cancelled it too late (ie after rewards were handed out)? */
-			if (q_info[j].quest_done_credit_stage <= q_info[j].stage && p_ptr->quest_done[j] < 10000) p_ptr->quest_done[j]++;
+			if (q_info[j].quest_done_credit_stage <= quest_get_stage(Ind, j) && p_ptr->quest_done[j] < 10000) p_ptr->quest_done[j]++;
 			return;
 		}
 
@@ -8194,8 +8194,8 @@ void do_slash_cmd(int Ind, char *message)
 				/* display basic quests info */
 				msg_format(Ind, "\377UQuests (max_q_idx/MAX_Q_IDX %d/%d):", max_q_idx, MAX_Q_IDX);
 				for (i = 0; i < max_q_idx; i++) {
-					msg_format(Ind, " %3d [%10s] S%2d %s %s %4d -- Qx%d '%s' by %s",
-					    i, q_info[i].codename,q_info[i].stage, 
+					msg_format(Ind, " %3d [%10s] %sS%2d %s %s %4d -- Qx%d '%s' by %s",
+					    i, q_info[i].codename, q_info[i].individual ? "i" : " ", quest_get_stage(Ind, i),
 					    q_info[i].active ? "A" : " ", q_info[i].disabled ? "%" : " ", q_info[i].cur_cooldown,
 					    q_info[i].questors, q_name + q_info[i].name, q_info[i].creator);
 				}
@@ -8276,7 +8276,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				msg_format(Ind, "\377BChanging quest %d (%s) to stage %d.", k, q_info[k].codename, atoi(token[2]));
-				quest_stage(k, atoi(token[2]), FALSE);
+				quest_stage(0, k, atoi(token[2]), FALSE);
 				return;
 			}
 		}

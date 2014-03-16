@@ -159,6 +159,8 @@ typedef struct quest_info {
 
     /* QUEST DURATION */
 	/* quest duration, after it was accepted, until it expires */
+	bool individual;			/* quest isn't global, but stage/flags/goals are stored individually for each player,
+						   allowing everyone to have his own personal 'instance' of the quest running simultaneusly. */
 	s16b repeatable;			/* player may repeat this quest n times (0 = can only do this quest once) */
 	s16b cooldown;				/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
 	int max_duration;			/* in seconds, 0 for never */
@@ -281,6 +283,8 @@ typedef struct quest_info {
 
 	/* global quest flags (a-z) */
 	bool flags[QI_FLAGS];
+	/* global quest goals reached? */
+	bool goals[QI_GOALS], goalsopt[QI_OPTIONAL];
 
 
 	/* quest goals, up to 10 per stage, with a multitude of different sub-goals (Note: of the subgoals 1 is randomly picked for the player, except if 'xxx_random_pick' is set, which allows the player to pick what he wants to do).

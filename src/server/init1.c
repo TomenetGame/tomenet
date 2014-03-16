@@ -7456,14 +7456,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'I' for player restrictions */
 		if (buf[0] == 'I') {
 			char races[6 + 2], classes[5 + 2], *rp = races + 2, *cp = classes + 2;
-			int priv, minlev, maxlev, rep, qdcs;
+			int priv, indiv, minlev, maxlev, rep, qdcs;
 
 			s = buf + 2;
-			if (7 != sscanf(s, "%d:%d:%d:%5[^:]:%4[^:]:%d:%d",
-			    &priv, &minlev, &maxlev, rp, cp, &rep, &qdcs))
+			if (8 != sscanf(s, "%d:%d:%d:%d:%5[^:]:%4[^:]:%d:%d",
+			    &priv, &indiv, &minlev, &maxlev, rp, cp, &rep, &qdcs))
 				return (1);
 
 			q_ptr->privilege = priv;
+			q_ptr->individual = (indiv != 0);
 			q_ptr->minlev = minlev;
 			q_ptr->maxlev = maxlev;
 			q_ptr->repeatable = rep;

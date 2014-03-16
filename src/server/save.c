@@ -1331,7 +1331,7 @@ static bool wr_savefile_new(int Ind) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		wr_s16b(p_ptr->quest_idx[i]);
 		wr_string(p_ptr->quest_codename[i]);
-		wr_byte(p_ptr->quest_stage[i]);
+		wr_s16b(p_ptr->quest_stage[i]);
 		for (j = 0; j < QI_GOALS; j++)
 			wr_byte(p_ptr->quest_goals[i][j]);
 		for (j = 0; j < QI_OPTIONAL; j++)
@@ -1353,6 +1353,10 @@ static bool wr_savefile_new(int Ind) {
 		wr_byte(p_ptr->quest_deliveropt_pos[i]);
 		wr_byte(p_ptr->quest_within_deliveropt_wpos[i]);
 		wr_byte(p_ptr->quest_deliveropt_xy[i]);
+
+		/* 'individual' quest type information */
+		for (j = 0; j < QI_FLAGS; j++)
+			wr_byte(p_ptr->quest_flags[i][j]);
 	}
 
 	/* remember quests we completed */
