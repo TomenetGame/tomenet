@@ -1040,6 +1040,7 @@ static void rd_kquests() {
 static void rd_quests() {
 	int i, j;
 	s16b max, questors;
+	byte flags;
 	int dummysize1 = sizeof(byte) * 7 + sizeof(s16b) * 3 + sizeof(s32b);
 	int dummysize2 = sizeof(byte) * 5 + sizeof(s16b);
 
@@ -1047,6 +1048,10 @@ static void rd_quests() {
 	rd_s16b(&questors);
 	if (max > max_q_idx) s_printf("Warning: Read more quest info than available quests.\n");
 	if (questors > QI_QUESTORS) s_printf("Warning: Read more questors than allowed.\n");
+	if (!s_older_than(4, 5, 20)) {
+		rd_byte(&flags);
+		if (flags > QI_FLAGS) s_printf("Warning: Read more flags than available.\n");
+	}
 
 	for (i = 0; i < max; i++) {
 		if (max > max_q_idx) {
@@ -1071,6 +1076,16 @@ static void rd_quests() {
 			rd_byte((byte *) &q_info[i].current_y[j]);
 
 			rd_s16b(&q_info[i].questor_m_idx[j]);
+		}
+
+		if (!s_older_than(4, 5, 20)) {
+			for (j = 0; j < flags; j++) {
+				if (j >= QI_FLAGS) {
+					strip_bytes(1);
+					continue;
+				}
+				rd_byte((byte *) &q_info[i].flags[j]);
+			}
 		}
 	}
 	s_printf("Read %d/%d saved quests states (discarded %d).\n", max, max_q_idx, max > max_q_idx ? max - max_q_idx : 0);

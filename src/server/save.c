@@ -457,6 +457,7 @@ static void wr_quests() {
 
 	wr_s16b(max_q_idx);
 	wr_s16b(QI_QUESTORS);
+	wr_byte(QI_FLAGS);
 
 	for (i = 0; i < max_q_idx; i++) {
 		wr_byte(q_info[i].active);
@@ -474,6 +475,8 @@ static void wr_quests() {
 
 			wr_s16b(q_info[i].questor_m_idx[j]);
 		}
+
+		for (j = 0; j < QI_FLAGS; j++) wr_byte(q_info[i].flags[j]);
 	}
 }
 
