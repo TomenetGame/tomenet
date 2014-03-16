@@ -532,6 +532,10 @@ void quest_set_goal(int pInd, int q_idx, int goal) {
 		return;
 	}
 	q_ptr->goals[goal] = TRUE; /* global quest */
+
+
+	/* also check if we can now proceed to the next stage or set flags or hand out rewards */
+	quest_goal_check(pInd, q_idx, FALSE);
 }
 
 /* mark an optional quest goal as reached */
@@ -558,6 +562,10 @@ void quest_set_goalopt(int pInd, int q_idx, int goalopt) {
 		return;
 	}
 	q_ptr->goalsopt[goalopt] = TRUE; /* global quest */
+
+
+	/* also check if we can now proceed to the next stage or set flags or hand out rewards */
+	quest_goal_check(pInd, q_idx, FALSE);
 }
 
 /* set/clear a quest flag ('set': TRUE -> set, FALSE -> clear) */
@@ -1018,18 +1026,68 @@ void quest_check_goal_deliver_xy(int Ind) {
 	}
 }
 
+/* check goals for entering the next stage */
+static int quest_goal_check_stage(int pInd, int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	int i, j, stage = quest_get_stage(pInd, q_idx);
+
+	/* scan through all possible follow-up stages */
+	for (j = 0; j < QI_FOLLOWUP_STAGES; j++) {
+		/* no follow-up stage? */
+		if (q_ptr->next_stage_from_goals[stage][j] == -1) continue;
+
+		/* scan through all goals required to be fulfilled to enter this stage */
+		for (i = 0; i < QI_STAGE_GOALS; i++) {
+			if (q_ptr->goals_for_stage[stage][j][i] == -1) continue;
+
+			/* if even one goal is missing, we cannot advance */
+			if (!quest_get_goal(pInd, q_idx, i)) break;
+		}
+		/* we may proceed to another stage? */
+		if (i == QI_STAGE_GOALS) return q_ptr->next_stage_from_goals[stage][j];
+	}
+	return -1; /* goals are not complete yet */
+}
+
+/* check goals for handing out rewards */
+//todo:IMPLEMENT
+static void quest_goal_check_reward(int pInd, int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	int i, j, stage = quest_get_stage(pInd, q_idx);
+
+	/* scan through all possible follow-up stages */
+	for (j = 0; j < QI_FOLLOWUP_STAGES; j++) {
+		/* no follow-up stage? */
+		if (q_ptr->next_stage_from_goals[stage][j] == -1) continue;
+
+		/* scan through all goals required to be fulfilled to enter this stage */
+		for (i = 0; i < QI_STAGE_GOALS; i++) {
+			if (q_ptr->goals_for_stage[stage][j][i] == -1) continue;
+
+			/* if even one goal is missing, we cannot advance */
+			if (!quest_get_goal(pInd, q_idx, i)) break;
+		}
+		/* we may get rewards? */
+		if (i == QI_STAGE_GOALS) ; //todo
+	}
+	return; /* goals are not complete yet */
+}
+
 /* Check if quest goals of the current stage have been completed and accordingly
    call quest_reward() and/or quest_set_stage() to advance.
    Goals can only be completed by players who are pursuing that quest.
    'interacting' is TRUE if a player is interacting with the questor. */
 bool quest_goal_check(int pInd, int q_idx, bool interacting) {
-//	quest_info *q_ptr = &q_info[q_idx];
-//	player_type *p_ptr = Players[Ind];
-//	int i, stage = quest_get_stage(pInd, q_idx);
-	return FALSE; /* stage not yet completed */
+	int stage;
 
+	/* check goals for rewards first */
+	quest_goal_check_reward(pInd, q_idx);
 
-	//quest_reward(pInd, q_idx);
-	//quest_set_stage(pInd, q_idx, , FALSE);
+	/* check goals for stage advancement */
+	stage = quest_goal_check_stage(pInd, q_idx);
+	if (stage == -1) return FALSE; /* stage not yet completed */
+
+	/* advance  stage! */
+	quest_set_stage(pInd, q_idx, stage, FALSE);
 	return TRUE; /* stage has been completed and changed to the next stage */
 }
