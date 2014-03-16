@@ -4413,7 +4413,7 @@ void do_cmd_fire(int Ind, int dir)
 		/* Hack -- sorta magic */
 		returning = TRUE;
 	}
-
+//s_printf("R chance %d, skill_thb %d, bonus %d\n", chance, p_ptr->skill_thb, bonus); //DEBUG hit chance
 	/* Is this magic Arrow or magic shots or magic bolts? */
 	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) {
 	        magic = TRUE;
