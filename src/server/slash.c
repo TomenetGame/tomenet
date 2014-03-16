@@ -3030,6 +3030,9 @@ void do_slash_cmd(int Ind, char *message)
 			msg_format(j, "\377y%s tips you for %d Au!", p_ptr->name, tip);
 //			msg_format_near(j, "\377y%s tips %s!", p_ptr->name, Players[j]->name);
 
+			/* consume a partial turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+
 			return;
 		}
 		else if (prefix(message, "/guild_adder")) {
