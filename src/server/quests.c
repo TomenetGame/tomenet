@@ -595,6 +595,9 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 	/* voila, player acquires this quest! */
 	p_ptr->quest_idx[i] = q_idx;
 	strcpy(p_ptr->quest_codename[i], q_ptr->codename);
+#if QDEBUG > 1
+s_printf("QUEST_ACQUIRED: (%d,%d,%d;%d,%d) %s (%d) has quest %d '%s'.\n", p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, p_ptr->px, p_ptr->py, p_ptr->name, Ind, q_idx, q_ptr->codename);
+#endif
 
 	/* for 'individual' quests, reset temporary quest data or it might get carried over from previous quest */
 	p_ptr->quest_stage[i] = 0; /* note that individual quests can ONLY start in stage 0, obviously */
