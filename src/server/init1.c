@@ -7562,16 +7562,19 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
 			int q, ridx, minlv, maxlv, sval, ktval, ksval;
+			char attr;
+
 			if (lc_questor == QI_QUESTORS) return 1;
 			s = buf + 2;
 
 			if (10 != sscanf(s, "%d:%d:%c:%c:%d:%d:%d:%d:%d:%[^:]",
 			    &q, &ridx,
-			    &q_ptr->questor_rchar[lc_questor], &q_ptr->questor_rattr[lc_questor],
+			    &q_ptr->questor_rchar[lc_questor], &attr,
 			    &minlv, &maxlv,
 			    &sval, &ktval, &ksval,
 			    q_ptr->questor_name[lc_questor])) return (1);
 
+			q_ptr->questor_rattr[lc_questor] = color_char_to_attr(attr);
 			q_ptr->questor[lc_questor] = q;
 			q_ptr->questor_ridx[lc_questor] = ridx;
 			q_ptr->questor_rlevmin[lc_questor] = minlv;
