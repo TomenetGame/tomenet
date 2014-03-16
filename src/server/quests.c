@@ -690,6 +690,14 @@ void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	}
 }
 
+cptr qi_msg_minlev = "\377yYour level is too low to acquire this quest.";
+cptr qi_msg_maxlev = "\377oYour level is too high to acquire this quest.";
+cptr qi_msg_race = "\377oYour race is not eligible to acquire this quest.";
+cptr qi_msg_class = "\377oYour class is not eligible to acquire this quest.";
+cptr qi_msg_truebat = "\377oYou must be a born fruit bat to acquire this quest.";
+cptr qi_msg_bat = "\377yYou must be a fruit bat to acquire this quest.";
+cptr qi_msg_form = "\377yYou cannot acquire this quest in your current form.";
+cptr qi_msg_mode = "\377oYour character mode is not eligible for acquiring this quest.";
 cptr qi_msg_done = "\377oYou cannot acquire this quest again.";
 cptr qi_msg_max = "\377yYou are already pursuing the maximum possible number of concurrent quests.";
 
@@ -711,20 +719,52 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 	case 3: if (!is_admin(p_ptr)) return FALSE;
 	}
 
+	/* matches prerequisite quests? (ie this is a 'follow-up' quest) */
+	for (i = 0; i < QI_PREREQUISITES; i++) {
+		if (!q_ptr->prerequisites[i][0]) continue;
+		for (j = 0; j < MAX_Q_IDX; j++) {
+			if (strcmp(q_info[j].codename, q_ptr->prerequisites[i])) continue;
+			if (!p_ptr->quest_done[j]) return FALSE;
+		}
+	}
+
 	/* level / race / class / mode / body restrictions */
-	if (q_ptr->minlev && q_ptr->minlev > p_ptr->lev) return FALSE;
-	if (q_ptr->maxlev && q_ptr->maxlev < p_ptr->lev) return FALSE;
-	if (!(q_ptr->races & (0x1 << p_ptr->prace))) return FALSE;
-	if (!(q_ptr->classes & (0x1 << p_ptr->pclass))) return FALSE;
+	if (q_ptr->minlev && q_ptr->minlev > p_ptr->lev) {
+		msg = qi_msg_minlev;
+		return FALSE;
+	}
+	if (q_ptr->maxlev && q_ptr->maxlev < p_ptr->max_plv) {
+		msg = qi_msg_maxlev;
+		return FALSE;
+	}
+	if (!(q_ptr->races & (0x1 << p_ptr->prace))) {
+		msg = qi_msg_race;
+		return FALSE;
+	}
+	if (!(q_ptr->classes & (0x1 << p_ptr->pclass))) {
+		msg = qi_msg_class;
+		return FALSE;
+	}
+	if (!q_ptr->must_be_fruitbat && !q_ptr->must_be_monster) ok = TRUE;
+	if (q_ptr->must_be_fruitbat && p_ptr->fruit_bat <= q_ptr->must_be_fruitbat) ok = TRUE;
+	if (q_ptr->must_be_monster && p_ptr->body_monster == q_ptr->must_be_monster
+	    && q_ptr->must_be_fruitbat != 1) /* hack: disable must_be_monster if must be a TRUE fruit bat.. */
+		ok = TRUE;
+	if (!ok) {
+		if (q_ptr->must_be_fruitbat == 1) msg = qi_msg_truebat;
+		else if (q_ptr->must_be_fruitbat || q_ptr->must_be_monster == 37) msg = qi_msg_bat;
+		else msg = qi_msg_form;
+		return FALSE;
+	}
 	ok = FALSE;
 	if (q_ptr->mode_norm && !(p_ptr->mode & (MODE_EVERLASTING | MODE_PVP))) ok = TRUE;
 	if (q_ptr->mode_el && (p_ptr->mode & MODE_EVERLASTING)) ok = TRUE;
 	if (q_ptr->mode_pvp && (p_ptr->mode & MODE_PVP)) ok = TRUE;
-	if (!ok) return FALSE;
+	if (!ok) {
+		msg = qi_msg_mode;
+		return FALSE;
+	}
 	ok = FALSE;
-	if (!q_ptr->must_be_fruitbat && !q_ptr->must_be_monster) ok = TRUE;
-	if (q_ptr->must_be_fruitbat && p_ptr->fruit_bat <= q_ptr->must_be_fruitbat) ok = TRUE;
-	if (q_ptr->must_be_monster && p_ptr->body_monster == q_ptr->must_be_monster) ok = TRUE;
 
 
 	/* has the player completed this quest already/too often? */
@@ -838,8 +878,9 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 				msg_print(Ind, "\374 ");
 			}
 #endif
+			if (msg) msg_print(Ind, msg);
+			return;
 		}
-		if (msg) msg_print(Ind, msg);
 	}
 
 

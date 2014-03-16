@@ -7383,8 +7383,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr = &q_info[i];
 
 			/* Scan for the values -- careful: lenghts are hard-coded, QI_CODENAME_LEN, NAME_LEN - 1, MAX_CHARS - 1 */
-			if (3 != sscanf(s, "%10[^:]:%19[^:]:%79[^:]",
-			    codename, creator, questname)) return (1);
+			if (3 > (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%10[^:]:%10[^:]:%10[^:]:%10[^:]:%10[^:]",
+			    codename, creator, questname,
+			    q_ptr->prerequisites[0], q_ptr->prerequisites[1], q_ptr->prerequisites[2], q_ptr->prerequisites[3], q_ptr->prerequisites[4] /* QI_PREREQUISITES */
+			    ))) return (1);
+
+			/* clear unused prequest codenames */
+			for (k = j - 3; k < QI_PREREQUISITES; k++) q_ptr->prerequisites[k][0] = 0;
 
 			/* Hack -- Verify space */
 			if (q_head->name_size + strlen(questname) + 8 > fake_name_size) return (7);

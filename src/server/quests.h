@@ -38,6 +38,7 @@
 
 
 #define QI_CODENAME_LEN		10	/* short, internal quest code name */
+#define QI_PREREQUISITES	5	/* max # of prerequisite quests for a follow-up quest */
 #define QI_QUESTORS		5	/* amount of questor(NPC)s, there can be more than one! */
 #define QI_MAX_STAGES		50	/* a quest can have these # of different stages */
 #define QI_TALK_LINES		15	/* amount of text lines per talk dialogue */
@@ -129,7 +130,7 @@ typedef struct quest_info {
 	s16b must_be_monster;		/* must be polymorphed into this form? (OR's with body_fruitbat!) */
 	/* matrix of codename(s) of prerequisite quests needed to accept this 'follow-up' quest.
 	   x-direction: OR, y-direction: AND */
-	char prerequisite_matrix[10][10][QI_CODENAME_LEN + 1];
+	char prerequisites[QI_PREREQUISITES][QI_CODENAME_LEN + 1];
 
 
 	/* starting location restrictions */
