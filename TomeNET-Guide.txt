@@ -16257,6 +16257,10 @@ SOLUTION:   Edit your config file (TomeNET.ini on Windows, .tomenetrc on Linux
             to 1 instead of 0, in .tomenetrc uncomment the line by removing the
             leading '#' symbol. Restart your game client.
 
+PROBLEM 45: Sound sound effects, mostly the page sound (when someone pages you
+            with the /page command) sounds oddly distorted.
+SOLUTION:   Make sure that you don't have all four volume sliders at maximum:
+            Just lower the master slider by 1 or 2 steps.
 
 
 ==============================================================================
