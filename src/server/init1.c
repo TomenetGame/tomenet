@@ -7982,7 +7982,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'R', quest reward definitions */
 		if (buf[0] == 'R') {
-			int good, great, createreward, rstatus;
+			int good, great, vgreat, createreward, rstatus;
 			int otval, osval, opval, obpval, oname1, oname2, oname2b;
 
 			/* first number is the stage */
@@ -7993,9 +7993,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (!(c = strchr(s, ':'))) return 1;
 			c++;
 
-			if (13 != sscanf(c, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+			if (14 != sscanf(c, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 			    &otval, &osval, &opval, &obpval, &oname1, &oname2, &oname2b,
-			    &good, &great, &createreward,
+			    &good, &great, &vgreat, &createreward,
 			    &q_ptr->reward_gold[stage][lc_rewards[stage]], &q_ptr->reward_exp[stage][lc_rewards[stage]],
 			    &rstatus))
 				return (1);
@@ -8009,6 +8009,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->reward_oname2b[stage][lc_rewards[stage]] = oname2b;
 			q_ptr->reward_ogood[stage][lc_rewards[stage]] = (good != 0);
 			q_ptr->reward_ogreat[stage][lc_rewards[stage]] = (great != 0);
+			q_ptr->reward_ovgreat[stage][lc_rewards[stage]] = (vgreat != 0);
 			q_ptr->reward_oreward[stage][lc_rewards[stage]] = (createreward != 0);
 			q_ptr->reward_statuseffect[stage][lc_rewards[stage]] = rstatus;
 
