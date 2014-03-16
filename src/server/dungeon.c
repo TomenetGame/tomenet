@@ -5994,8 +5994,7 @@ int find_player_name(char *name)
 	return 0;
 }
 
-void process_player_change_wpos(int Ind)
-{
+void process_player_change_wpos(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -6004,6 +6003,11 @@ void process_player_change_wpos(int Ind)
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
 	char o_name_short[ONAME_LEN];
 	bool smooth_ambient = FALSE, travel_ambient = FALSE;
+
+	/* for quest handling */
+	int q_idx;
+	quest_info *q_ptr;
+	int stage;
 
 	/* for obtaining statistical IDDC information: */
 	if (in_irondeepdive(&p_ptr->wpos_old)) s_printf("CVRG-IDDC: '%s' leaves floor %d:\n", p_ptr->name, p_ptr->wpos_old.wz);
@@ -6686,6 +6690,37 @@ void process_player_change_wpos(int Ind)
 		msg_print(Ind, "\377DThe air in here feels very still.");
 		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
 		/* New: Have bgm indicate no-tele too! (done below in handle_music()) */
+	}
+
+	/* Quests: Is this wpos a target location or a delivery location for any of our quests? */
+	tries = 0; //hack
+	for (d = 0; d < MAX_CONCURRENT_QUESTS; d++) {
+		if (!p_ptr->quest_deliver_pos[d]) continue;
+
+		q_idx = p_ptr->quest_idx[d];
+		q_ptr = &q_info[q_idx];
+		stage = quest_get_stage(Ind, q_idx);
+
+		/* first clear old wpos' delivery state */
+		p_ptr->quest_within_deliver_wpos[d] = FALSE;
+		p_ptr->quest_deliver_xy[d] = FALSE;
+
+		//todo: handle  bool deliver_terrain_patch[QI_MAX_STAGES][QI_GOALS];
+
+		/* check the quest goals, whether any of them wants a delivery to this location */
+		for (j = 0; j < QI_GOALS; j++) {
+			if (!q_ptr->deliver_pos[stage][j]) continue;
+
+			if (inarea(&q_ptr->deliver_wpos[stage][j], wpos)) {
+				/* imprint new temporary destination location information */
+				p_ptr->quest_within_deliver_wpos[d] = TRUE;
+				/* specific x,y loc? */
+				if (q_ptr->deliver_pos_x[stage][j] != -1) p_ptr->quest_deliver_xy[d] = TRUE;
+				tries = 1;
+				break;
+			}
+		}
+		if (tries) break;
 	}
 
 #ifdef USE_SOUND_2010
