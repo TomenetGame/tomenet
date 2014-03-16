@@ -7423,11 +7423,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ptr->next_stage_from_goals[j][k] = -1; /* no next stages set, end quest by default if nothing specified */
 
 					for (l = 0; l < QI_STAGE_GOALS; l++)
-						q_ptr->goals_for_stage[j][k][l] = 0; /* no goal is required to end a stage, if it isn't explicitely specified */
+						q_ptr->goals_for_stage[j][k][l] = -1; /* no goal is required to end a stage, if it isn't explicitely specified */
 				}
 				for (k = 0; k < QI_MAX_STAGE_REWARDS; k++) {
 					for (l = 0; l < QI_REWARD_GOALS; l++)
-						q_ptr->goals_for_reward[j][k][l] = 0; /* no goals are required to get a reward if not specified, aka it's for free! */
+						q_ptr->goals_for_reward[j][k][l] = -1; /* no goals are required to get a reward if not specified, aka it's for free! */
 				}
 			}
 
