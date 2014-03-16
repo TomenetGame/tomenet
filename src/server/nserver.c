@@ -7287,6 +7287,7 @@ static int Receive_run(int ind)
 
 	/* If not the dungeon master, who can always run */
 	if (!p_ptr->admin_dm) {
+		monster_race *r_ptr;
 		/* check for status impairments (lack of light is checked in run_test()) */
 		if (p_ptr->confused || p_ptr->blind)
 			return Receive_walk(ind);
@@ -7296,7 +7297,7 @@ static int Receive_run(int ind)
 			/* Check this monster */
 			if (p_ptr->mon_los[i] && !m_list[i].csleep && !m_list[i].special
 			    /* not for Bree townies, Santa, Halloween townies, Target dummy */
-			    && !(r_info[m_list[i].r_idx].flags8 & RF8_ALLOW_RUNNING)) {
+			    && !((r_ptr = race_inf(&m_list[i]))->flags8 & RF8_ALLOW_RUNNING)) {
 				// Treat this as a walk request
 				// Hack -- send the same connp->r "arguments" to Receive_walk
 				if (p_ptr->warning_run_monlos == 0) {
