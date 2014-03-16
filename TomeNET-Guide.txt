@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. March 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 16. March 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -2766,6 +2766,10 @@ SOLUTION: Can be caused by some firewalls interacting with mumble's quality of
 
 (3.1) Creating a new character; character modes
 -----------------------------------------------
+During the character creation process you will be asked about details on the
+character and after you have completed it you will start out in the first town,
+called Bree.
+
 To create a new character, you press either 'N' or 'E' key in your account
 overview screen. 'N' is the normal way for creating a new character.
 
@@ -2782,6 +2786,11 @@ Note: A dedicated IDDC character will be killed and erased if it fails to enter
 the IDDC dungeon (that is if it acquires any experience outside of it) or if it
 recalls out of it at one of the static towns. The kill message will be:
 "XXXX was killed by indetermination".
+
+If you have already created a character of the same name before, you will be
+given the 'reincarnate' option in every stage of character creation, which
+allows you to just press the '#' key to make the same choices that you did on
+your previous character of that name.
 
 However, since this is your first character, just press 'N' to start the
 creation progress, enter a character name, and continue reading.
