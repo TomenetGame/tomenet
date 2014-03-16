@@ -8237,7 +8237,7 @@ void do_slash_cmd(int Ind, char *message)
 						else msg_format(Ind, "\377U-- %s is currently pursuing the following quests: --", p_ptr->name);
 						for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 							if (p_ptr->quest_idx[i] == -1) continue;
-							msg_format(Ind, "  %d) %s", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name);
+							msg_format(Ind, "  %d) %s (%d)", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name, quest_get_stage(p, p_ptr->quest_idx[i]));
 						}
 					}
 					return;
