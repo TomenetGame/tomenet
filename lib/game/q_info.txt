@@ -32,12 +32,12 @@ V:0.0.1
 #  //todo:y/n convo ('y')
 # //todo: dungeon adding ('d')
 # //todo: kill, retrieve, kill optional, retrieve optional ('k', 'r')
-# //todo: P:stage:goal#:goal at wpos wx:wy:wz:goal at pos x:y:goal at terrain type
-# M:stage:goal#:goal to wpos wx:wy:wz:goal to pos x:y:goal to terrain type		(change to 'm')?
+# //todo: P:stage:goal#:goal at wpos wx:wy:wz:goal at pos x:y:goal at terrain type		(change to 'p'? not for now)
+# M:stage:goal#:goal to wpos wx:wy:wz:goal to pos x:y:goal to terrain type			(change to 'm'? not for now)
 # B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
 # Z:stage:goal:changeflags
 # G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons
-# O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free^^) separated by colons
+# O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free) separated by colons
 # R:stage:(10x repeatable) define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:createreward()?:gold:exp:specialstatuseffect
 
 # Note: #goal is 1..5 for main goal, and -1..-5 for optional goals.

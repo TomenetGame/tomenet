@@ -7488,15 +7488,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-#if 0
 		/* Process 'E' for list of prequests required to begin this quest */
 		if (buf[0] == 'E') {
+#if 0
 			s = buf + 2;
 			if ( != sscanf(s, "",
 				q_ptr->)) return (1);
+#endif
 			continue;
 		}
-#endif
 
 		/* Process 'L' for questor starting location type */
 		if (buf[0] == 'L') {
@@ -7517,15 +7517,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-#if 0
 		/* Process 'D' for questor dungeon starting locations */
 		if (buf[0] == 'D') {
+#if 0
 			s = buf + 2;
 			if ( != sscanf(s, "",
 				q_ptr->)) return (1);
+#endif
 			continue;
 		}
-#endif
 
 		/* Process 'T' for quest starting times */
 		if (buf[0] == 'T') {
@@ -7584,15 +7584,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-#if 0
 		/* Process 'K' for questor drops/exp if it is killable and player manages to kill it */
 		if (buf[0] == 'K') {
+#if 0
 			s = buf + 2;
 			if ( != sscanf(s, "",
 				q_ptr->)) return (1);
+#endif
 			continue;
 		}
-#endif
 
 		/* Process 'U' for quest duration */
 		if (buf[0] == 'U') {
@@ -7626,6 +7626,36 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->questor_invincible[lc_accept] = (invinc != 0);
 
 			lc_accept++;
+			continue;
+		}
+
+		/* Process 'H' for auto (timed) quest-spawn/stage-change mechanisms */
+		if (buf[0] == 'H') {
+#if 0
+			s = buf + 2;
+			if ( != sscanf(s, "",
+				q_ptr->)) return (1);
+#endif
+			continue;
+		}
+
+		/* Process 'S' for questor changes/polymorphing/hostility */
+		if (buf[0] == 'S') {
+#if 0
+			s = buf + 2;
+			if ( != sscanf(s, "",
+				q_ptr->)) return (1);
+#endif
+			continue;
+		}
+
+		/* Process 'J' for questor movement/teleportation/teleplayer */
+		if (buf[0] == 'J') {
+#if 0
+			s = buf + 2;
+			if ( != sscanf(s, "",
+				q_ptr->)) return (1);
+#endif
 			continue;
 		}
 
@@ -7728,15 +7758,84 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
+		/* Process 'y' for yes/no convo choice */
+		if (buf[0] == 'y') {
 #if 0
-		/* Process 'P' for position at which a kill/retrieve quest has to be executed */
-		if (buf[0] == 'P') {
 			s = buf + 2;
 			if ( != sscanf(s, "",
 				q_ptr->)) return (1);
+#endif
 			continue;
 		}
+
+		/* Process 'd' for adding dungeon/tower */
+		if (buf[0] == 'd') {
+#if 0
+			s = buf + 2;
+			if ( != sscanf(s, "",
+				q_ptr->)) return (1);
 #endif
+			continue;
+		}
+
+		/* Process 'k' for kill quest goal */
+		if (buf[0] == 'k') {
+#if 0
+			s = buf + 2;
+			if ( != sscanf(s, "",
+				q_ptr->)) return (1);
+ #if 0
+			bool kill[QI_MAX_STAGES][QI_GOALS];<--->			/* toggle */
+			bool kill_player_picks[QI_MAX_STAGES][QI_GOALS];		/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
+			s16b kill_ridx[QI_MAX_STAGES][QI_GOALS][20];<-->		/* kill certain monster(s) */
+			char kill_rchar[QI_MAX_STAGES][QI_GOALS][5];<-->		/*  ..certain types */
+			byte kill_rattr[QI_MAX_STAGES][QI_GOALS][5];<-->		/*  ..certain colours */
+			byte kill_rlevmin[QI_MAX_STAGES], kill_rlevmax[QI_MAX_STAGES][QI_GOALS];	/* 0 for any */
+			s16b kill_number[QI_MAX_STAGES][QI_GOALS];
+			byte kill_spawn[QI_MAX_STAGES][QI_GOALS], kill_spawn_loc[QI_MAX_STAGES][QI_GOALS];<---->/* actually spawn the monster(s) nearby! (QI_SPAWN_xxx) */
+			bool kill_spawn_targets_questor[QI_MAX_STAGES][QI_GOALS];<----->/* the spawned mobs go for the questor primarily */
+			s16b kill_stage[QI_MAX_STAGES][QI_GOALS];<----->		/* switch to a different quest stage on defeating the monsters */
+ #endif
+#endif
+			continue;
+		}
+
+		/* Process 'r' for retrieve quest goal */
+		if (buf[0] == 'r') {
+#if 0
+			s = buf + 2;
+			if ( != sscanf(s, "",
+				q_ptr->)) return (1);
+ #if 0
+			bool retrieve[QI_MAX_STAGES][QI_GOALS];>			/* toggle */
+			bool retrieve_player_picks[QI_MAX_STAGES][QI_GOALS];<-->	/* instead of picking one subgoal randomly, let the player decide which he wants to get */
+			s16b retrieve_otval[QI_MAX_STAGES][QI_GOALS][20], retrieve_osval[QI_MAX_STAGES][QI_GOALS][20];<>/* retrieve certain item(s) */
+			s16b retrieve_opval[QI_MAX_STAGES][QI_GOALS][5], retrieve_obpval[QI_MAX_STAGES][QI_GOALS][5];
+			byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5];		/*  ..certain colours (flavoured items only) */
+			s16b retrieve_oname1[QI_MAX_STAGES][QI_GOALS][20], retrieve_oname2[QI_MAX_STAGES][QI_GOALS][20], retrieve_oname2b[QI_MAX_STAGES][QI_GOALS][20];
+			int retrieve_ovalue[QI_MAX_STAGES][QI_GOALS][20];
+			s16b retrieve_number[QI_MAX_STAGES][QI_GOALS][20];
+			s16b retrieve_stage[QI_MAX_STAGES][QI_GOALS];<->		/* switch to a different quest stage on retrieving the items */
+ #endif
+#endif
+			continue;
+		}
+
+		/* Process 'P' for position at which a kill/retrieve quest has to be executed */
+		if (buf[0] == 'P') {
+#if 0
+			s = buf + 2;
+			if ( != sscanf(s, "",
+				q_ptr->)) return (1);
+ #if 0
+			bool target_pos[QI_MAX_STAGES][QI_GOALS];<----->		/* enable target pos? */
+			struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];<->	/* kill/retrieve specifically at this world pos */
+			s16b target_pos_x[QI_MAX_STAGES][QI_GOALS], target_pos_y[QI_MAX_STAGES][QI_GOALS]; /* at specifically this position (even usable for kill/retrieve stuff?) */
+			bool target_terrain_patch[QI_MAX_STAGES][QI_GOALS];<--->	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
+ #endif
+#endif
+			continue;
+		}
 
 		/* Process 'M' for move-to-location to finish a quest stage whose goals have already been fulfilled */
 		if (buf[0] == 'M') {
@@ -7797,15 +7896,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-#if 0
 		/* Process 'Z' for how completed stage goals will change 'quest flags' */
 		if (buf[0] == 'Z') {
+#if 0
 			s = buf + 2;
 			if ( != sscanf(s, "",
 				q_ptr->)) return (1);
+#endif
 			continue;
 		}
-#endif
 
 		/* Process 'G', which goal combinations (up to QI_STAGE_GOALS different goals per combination) are
 		   required to advance to which stage (up to QI_FOLLOWUP_STAGES different ones, each has a goal-combo) */
@@ -7914,18 +8013,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->reward_statuseffect[stage][lc_rewards[stage]] = rstatus;
 
 			lc_rewards[stage]++;
-			continue;
-		}
-
-		/* temporary, to ignore unimplemented flags.. */
-		switch (buf[0]) {
-		case 'E':
-		case 'D':
-		case 'K':
-		//case '':
-		//case '':
-		case 'P':
-		case 'Z':
 			continue;
 		}
 
