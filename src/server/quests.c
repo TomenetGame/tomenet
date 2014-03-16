@@ -38,6 +38,19 @@
 #define QERROR_COOLDOWN 30
 
 
+/* error messages for quest_acquire() */
+static cptr qi_msg_minlev = "\377yYour level is too low to acquire this quest.";
+static cptr qi_msg_maxlev = "\377oYour level is too high to acquire this quest.";
+static cptr qi_msg_race = "\377oYour race is not eligible to acquire this quest.";
+static cptr qi_msg_class = "\377oYour class is not eligible to acquire this quest.";
+static cptr qi_msg_truebat = "\377oYou must be a born fruit bat to acquire this quest.";
+static cptr qi_msg_bat = "\377yYou must be a fruit bat to acquire this quest.";
+static cptr qi_msg_form = "\377yYou cannot acquire this quest in your current form.";
+static cptr qi_msg_mode = "\377oYour character mode is not eligible for acquiring this quest.";
+static cptr qi_msg_done = "\377oYou cannot acquire this quest again.";
+static cptr qi_msg_max = "\377yYou are already pursuing the maximum possible number of concurrent quests.";
+
+
 /* Called every minute to check which quests to activate/deactivate depending on time/daytime */
 void process_quests(void) {
 	quest_info *q_ptr;
@@ -690,25 +703,14 @@ void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	}
 }
 
-cptr qi_msg_minlev = "\377yYour level is too low to acquire this quest.";
-cptr qi_msg_maxlev = "\377oYour level is too high to acquire this quest.";
-cptr qi_msg_race = "\377oYour race is not eligible to acquire this quest.";
-cptr qi_msg_class = "\377oYour class is not eligible to acquire this quest.";
-cptr qi_msg_truebat = "\377oYou must be a born fruit bat to acquire this quest.";
-cptr qi_msg_bat = "\377yYou must be a fruit bat to acquire this quest.";
-cptr qi_msg_form = "\377yYou cannot acquire this quest in your current form.";
-cptr qi_msg_mode = "\377oYour character mode is not eligible for acquiring this quest.";
-cptr qi_msg_done = "\377oYou cannot acquire this quest again.";
-cptr qi_msg_max = "\377yYou are already pursuing the maximum possible number of concurrent quests.";
-
 /* Acquire a quest, WITHOUT CHECKING whether the quest actually allows this at this stage! */
-bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
+bool quest_acquire(int Ind, int q_idx, bool quiet, cptr *msg) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, j;
 	bool ok;
 
-	msg = NULL;
+	*msg = NULL;
 
 	/* quests is only for admins or privileged accounts at the moment? (for testing purpose) */
 	switch (q_ptr->privilege) {
@@ -718,7 +720,6 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 		break;
 	case 3: if (!is_admin(p_ptr)) return FALSE;
 	}
-
 	/* matches prerequisite quests? (ie this is a 'follow-up' quest) */
 	for (i = 0; i < QI_PREREQUISITES; i++) {
 		if (!q_ptr->prerequisites[i][0]) continue;
@@ -727,33 +728,33 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 			if (!p_ptr->quest_done[j]) return FALSE;
 		}
 	}
-
 	/* level / race / class / mode / body restrictions */
 	if (q_ptr->minlev && q_ptr->minlev > p_ptr->lev) {
-		msg = qi_msg_minlev;
+		*msg = qi_msg_minlev;
 		return FALSE;
 	}
 	if (q_ptr->maxlev && q_ptr->maxlev < p_ptr->max_plv) {
-		msg = qi_msg_maxlev;
+		*msg = qi_msg_maxlev;
 		return FALSE;
 	}
 	if (!(q_ptr->races & (0x1 << p_ptr->prace))) {
-		msg = qi_msg_race;
+		*msg = qi_msg_race;
 		return FALSE;
 	}
 	if (!(q_ptr->classes & (0x1 << p_ptr->pclass))) {
-		msg = qi_msg_class;
+		*msg = qi_msg_class;
 		return FALSE;
 	}
+	ok = FALSE;
 	if (!q_ptr->must_be_fruitbat && !q_ptr->must_be_monster) ok = TRUE;
 	if (q_ptr->must_be_fruitbat && p_ptr->fruit_bat <= q_ptr->must_be_fruitbat) ok = TRUE;
 	if (q_ptr->must_be_monster && p_ptr->body_monster == q_ptr->must_be_monster
 	    && q_ptr->must_be_fruitbat != 1) /* hack: disable must_be_monster if must be a TRUE fruit bat.. */
 		ok = TRUE;
 	if (!ok) {
-		if (q_ptr->must_be_fruitbat == 1) msg = qi_msg_truebat;
-		else if (q_ptr->must_be_fruitbat || q_ptr->must_be_monster == 37) msg = qi_msg_bat;
-		else msg = qi_msg_form;
+		if (q_ptr->must_be_fruitbat == 1) *msg = qi_msg_truebat;
+		else if (q_ptr->must_be_fruitbat || q_ptr->must_be_monster == 37) *msg = qi_msg_bat;
+		else *msg = qi_msg_form;
 		return FALSE;
 	}
 	ok = FALSE;
@@ -761,15 +762,13 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 	if (q_ptr->mode_el && (p_ptr->mode & MODE_EVERLASTING)) ok = TRUE;
 	if (q_ptr->mode_pvp && (p_ptr->mode & MODE_PVP)) ok = TRUE;
 	if (!ok) {
-		msg = qi_msg_mode;
+		*msg = qi_msg_mode;
 		return FALSE;
 	}
-	ok = FALSE;
-
 
 	/* has the player completed this quest already/too often? */
 	if (p_ptr->quest_done[q_idx] > q_ptr->repeatable && q_ptr->repeatable != -1) {
-		if (!quiet) msg = qi_msg_done;
+		if (!quiet) *msg = qi_msg_done;
 		return FALSE;
 	}
 
@@ -777,7 +776,7 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == -1) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
-		if (!quiet) msg = qi_msg_max;
+		if (!quiet) *msg = qi_msg_max;
 		return FALSE;
 	}
 
@@ -865,7 +864,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 		/* do we accept players to acquire this quest in the current quest stage? */
 		if (!q_ptr->accepts[stage]) return;
 
-		if (!quest_acquire(Ind, q_idx, FALSE, msg)) {
+		if (!quest_acquire(Ind, q_idx, FALSE, &msg)) {
 #ifdef ALWAYS_DISPLAY_QUEST_TEXT /* still display the initial quest text even if we cannot acquire the quest? */
 			if (q_ptr->talk[questor_idx][stage][0]) { /* there is NPC talk to display? */
 				p_ptr->interact_questor_idx = questor_idx;
