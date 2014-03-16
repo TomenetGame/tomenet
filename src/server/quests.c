@@ -435,7 +435,7 @@ s16b quest_get_stage(int pInd, int q_idx) {
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) return -1; /* player isn't on this quest */
+	if (i == MAX_CONCURRENT_QUESTS) return 0; /* player isn't on this quest: pick stage 0, the entry stage */
 
 	if (q_ptr->individual) return p_ptr->quest_stage[i]; /* individual quest */
 	return q_ptr->stage; /* global quest */
@@ -450,7 +450,10 @@ void quest_stage(int pInd, int q_idx, int stage, bool quiet) {
 	/* dynamic info */
 	//int stage_prev = quest_get_stage(pInd, q_idx);
 
-	/* new stage is active */
+	/* new stage is active.
+	   for 'individual' quests this is just a temporary value used by quest_imprint_stage().
+	   It is still used for the other stage-checking routines in this function too though:
+	    quest_rewards(), quest_terminate() and the 'anything' check. */
 	q_ptr->stage = stage;
 
 
@@ -521,11 +524,12 @@ void quest_stage(int pInd, int q_idx, int stage, bool quiet) {
 void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int i, stage = q_ptr->stage;
+	int i, stage;
 
 	/* for 'individual' quests: imprint the individual stage for a player.
 	   the globally set q_ptr->stage is in this case just a temporary value,
 	   set by quest_stage() for us, that won't be of any further consequence. */
+	stage = q_ptr->stage;
 	if (q_ptr->individual) p_ptr->quest_stage[py_q_idx] = stage;
 
 	/* find out if we are pursuing any sort of target locations */
@@ -551,7 +555,7 @@ cptr qi_msg_max = "\377yYou are already pursuing the maximum possible number of 
 bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int i;
+	int i, j;
 
 	msg = NULL;
 
@@ -581,6 +585,28 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 	/* voila, player acquires this quest! */
 	p_ptr->quest_idx[i] = q_idx;
 	strcpy(p_ptr->quest_codename[i], q_ptr->codename);
+
+	/* for 'individual' quests, reset temporary quest data or it might get carried over from previous quest */
+	p_ptr->quest_stage[i] = 0; /* note that individual quests can ONLY start in stage 0, obviously */
+	for (j = 0; j < QI_FLAGS; j++) p_ptr->quest_flags[i][j] = FALSE;
+	for (j = 0; j < QI_GOALS; j++) p_ptr->quest_goals[i][j] = FALSE;
+	for (j = 0; j < QI_OPTIONAL; j++) p_ptr->quest_goalsopt[i][j] = FALSE;
+
+	/* reset temporary quest helper info */
+	p_ptr->quest_target_pos[i] = FALSE;
+	p_ptr->quest_within_target_wpos[i] = FALSE;
+	p_ptr->quest_target_xy[i] = FALSE;
+	p_ptr->quest_targetopt_pos[i] = FALSE;
+	p_ptr->quest_within_targetopt_wpos[i] = FALSE;
+	p_ptr->quest_targetopt_xy[i] = FALSE;
+	p_ptr->quest_deliver_pos[i] = FALSE;
+	p_ptr->quest_within_deliver_wpos[i] = FALSE;
+	p_ptr->quest_deliver_xy[i] = FALSE;
+	p_ptr->quest_deliveropt_pos[i] = FALSE;
+	p_ptr->quest_within_deliveropt_wpos[i] = FALSE;
+	p_ptr->quest_deliveropt_xy[i] = FALSE;
+
+	/* let him know about just acquiring the quest? */
 	if (!quiet) {
 		msg_print(Ind, "\374 ");
 		//msg_format(Ind, "\374\377U**\377u You have acquired the quest \"\377U%s\377u\" \377U**", q_name + q_ptr->name);
@@ -607,7 +633,7 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 void quest_interact(int Ind, int q_idx, int questor_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int i, stage = q_ptr->stage;
+	int i, stage = quest_get_stage(Ind, q_idx);
 	cptr msg = NULL;//compiler warning
 
 	/* quests is only for admins or privileged accounts at the moment? (for testing purpose) */
@@ -670,7 +696,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int i, stage = q_ptr->stage;
+	int i, stage = quest_get_stage(Ind, q_idx);
 
 	if (!repeat && q_ptr->talk[questor_idx][stage][0]) { /* there is NPC talk to display? */
 		p_ptr->interact_questor_idx = questor_idx;
@@ -701,7 +727,7 @@ void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat) {
 void quest_reply(int Ind, int q_idx, char *str) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int i, j, stage = q_ptr->stage, questor_idx = p_ptr->interact_questor_idx;
+	int i, j, stage = quest_get_stage(Ind, q_idx), questor_idx = p_ptr->interact_questor_idx;
 	char *c;
 
 #if 0
@@ -761,7 +787,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 bool quest_goal_check(int pInd, int q_idx, bool interacting) {
 //	quest_info *q_ptr = &q_info[q_idx];
 //	player_type *p_ptr = Players[Ind];
-//	int i, stage = q_ptr->stage;
+//	int i, stage = quest_get_stage(pInd, q_idx);
 	return FALSE; /* stage not yet completed */
 
 
