@@ -162,8 +162,8 @@ static bool choose_sex(void)
 
 	while (1)
 	{
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a sex (* for random, # for previous, Q to Quit): ", 20, 2);
-		else c_put_str(TERM_SLATE, "Choose a sex (* for random, Q to Quit): ", 20, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a sex (* for random, \377B#\377s to reincarnate, Q to quit): ", 20, 2);
+		else c_put_str(TERM_SLATE, "Choose a sex (* for random, Q to quit): ", 20, 2);
 
 	        Term->scr->cx = Term->wid;
 	        Term->scr->cu = 1;
@@ -281,8 +281,8 @@ race_redraw:
 #endif
 
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a race (* random, # previous, Q Quit, BACKSPACE back, 2/4/6/8): ", n, 2);
-		else c_put_str(TERM_SLATE, "Choose a race (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8): ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a race (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8): ", n, 2);
+		else c_put_str(TERM_SLATE, "Choose a race (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8): ", n, 2);
 		display_race_diz(sel);
 
 	        Term->scr->cx = Term->wid;
@@ -485,8 +485,8 @@ trait_redraw:
 
 	/* Get a trait */
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a trait (* random, # previous, Q Quit, BACKSPACE back, 2/4/6/8): ", n, 2);
-		else c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a trait (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8): ", n, 2);
+		else c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_trait_diz(sel);
 
 	        Term->scr->cx = Term->wid;
@@ -664,8 +664,8 @@ class_redraw:
 
 	/* Get a class */
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a class (* random, # previous, Q Quit, BACKSPACE back, 2/4/6/8):  ", n, 2);
-		else c_put_str(TERM_SLATE, "Choose a class (* for random, Q to Quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a class (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8):  ", n, 2);
+		else c_put_str(TERM_SLATE, "Choose a class (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
 		display_class_diz(sel);
 
 	        Term->scr->cx = Term->wid;
@@ -808,7 +808,7 @@ static bool choose_stat_order(void)
 
 			/* Get a stat */
 			while (1) {
-				put_str("Choose your stat order (* for random, Q to Quit): ", 20, 2);
+				put_str("Choose your stat order (* for random, Q to quit): ", 20, 2);
 				if (hazard) {
 					j = rand_int(6);
 				} else {
@@ -845,19 +845,20 @@ static bool choose_stat_order(void)
 
                 clear_from(14);
 
-                c_put_str(TERM_SLATE, "Distribute your attribute points (use them all!):", 13, col1);
+                c_put_str(TERM_SLATE, "Distribute your attribute points (\377ouse them all!\377s):", 13, col1);
                 c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
                 c_put_str(TERM_SLATE, "                         Min. recommended,", 14, col2);
 		if (valid_dna) c_put_str(TERM_SLATE, "Current:   (Base) (Prev) if possible:", 15, col2);
 		else c_put_str(TERM_SLATE, "Current:   (Base)        if possible:", 15, col2);
 
-		if (valid_dna) put_str("'#' to accept previous stats.", 15, col1);
-                put_str("Use keys '+', '-', 'RETURN'", 16, col1);
-                put_str("or 8/2/4/6 or arrow keys to", 17, col1);
-                put_str("modify and navigate.", 18, col1);
-                put_str("Press ESC to proceed, after", 19, col1);
-                put_str("you distributed all points.", 20, col1);
-                put_str("'Q' = quit, BACKSPACE = back.", 21, col1);
+		if (valid_dna) c_put_str(TERM_SLATE, "'\377B#\377s' to reincarnate.", 15, col1);
+                c_put_str(TERM_SLATE, "Use keys '+', '-', 'RETURN'", 16, col1);
+                c_put_str(TERM_SLATE, "or 8/2/4/6 or arrow keys to", 17, col1);
+                c_put_str(TERM_SLATE, "modify and navigate.", 18, col1);
+                c_put_str(TERM_SLATE, "After you distributed all", 19, col1);
+                c_put_str(TERM_SLATE, "points, press ESC to proceed.", 20, col1);
+                c_put_str(TERM_SLATE, "'Q' = quit, BACKSPACE = back.", 21, col1);
+
                 c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 23, col1);
 
 		c_put_str(TERM_L_UMBER,"   - Strength -    ", 3, 30);
@@ -1098,8 +1099,8 @@ static bool choose_mode(void)
 	}
 
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, # previous, Q Quit, BACKSPACE back): ", 15, 2);
-		else c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to Quit, BACKSPACE to go back): ", 15, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
+		else c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to quit, BACKSPACE to go back): ", 15, 2);
 
 	        Term->scr->cx = Term->wid;
 	        Term->scr->cu = 1;
@@ -1205,8 +1206,8 @@ static bool choose_body_modification(void)
 	}
 
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a body modification (* random, # previous, Q Quit, BACKSPACE back): ", 19, 2);
-		else c_put_str(TERM_SLATE, "Choose a body modification (* for random, Q to Quit, BACKSPACE to go back): ", 19, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose a body modification (* random, \377B#\377s reincarnate, Q quit, BACKSPACE back): ", 19, 2);
+		else c_put_str(TERM_SLATE, "Choose a body modification (* for random, Q to quit, BACKSPACE to go back): ", 19, 2);
 
 	        Term->scr->cx = Term->wid;
 	        Term->scr->cu = 1;
