@@ -566,6 +566,7 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, j;
+	bool ok;
 
 	msg = NULL;
 
@@ -577,6 +578,22 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 		break;
 	case 3: if (!is_admin(p_ptr)) return FALSE;
 	}
+
+	/* level / race / class / mode / body restrictions */
+	if (q_ptr->minlev && q_ptr->minlev > p_ptr->lev) return FALSE;
+	if (q_ptr->maxlev && q_ptr->maxlev < p_ptr->lev) return FALSE;
+	if (!(q_ptr->races & (0x1 << p_ptr->prace))) return FALSE;
+	if (!(q_ptr->classes & (0x1 << p_ptr->pclass))) return FALSE;
+	ok = FALSE;
+	if (q_ptr->mode_norm && !(p_ptr->mode & (MODE_EVERLASTING | MODE_PVP))) ok = TRUE;
+	if (q_ptr->mode_el && (p_ptr->mode & MODE_EVERLASTING)) ok = TRUE;
+	if (q_ptr->mode_pvp && (p_ptr->mode & MODE_PVP)) ok = TRUE;
+	if (!ok) return FALSE;
+	ok = FALSE;
+	if (!q_ptr->must_be_fruitbat && !q_ptr->must_be_monster) ok = TRUE;
+	if (q_ptr->must_be_fruitbat && p_ptr->fruit_bat <= q_ptr->must_be_fruitbat) ok = TRUE;
+	if (q_ptr->must_be_monster && p_ptr->body_monster == q_ptr->must_be_monster) ok = TRUE;
+
 
 	/* has the player completed this quest already/too often? */
 	if (p_ptr->quest_done[q_idx] > q_ptr->repeatable && q_ptr->repeatable != -1) {

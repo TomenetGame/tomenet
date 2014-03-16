@@ -9,9 +9,9 @@
 V:0.0.1
 
 
-# N:index:codename:creator:name
+# N:index:codename:creator:name[:list of codenames of prerequisite quests]
 # C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
-# I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat:monsterform:repeatable:questdonecreditstage
+# I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:repeatable:questdonecreditstage
 # //todo: E:(10x repeatable) optional list of colon-separated prequest codenames
 # L:locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y
 # //todo: D:dungeons...

@@ -129,7 +129,7 @@ typedef struct quest_info {
 	int must_be_monster;		/* must be polymorphed into this form? (OR's with body_fruitbat!) */
 	/* matrix of codename(s) of prerequisite quests needed to accept this 'follow-up' quest.
 	   x-direction: OR, y-direction: AND */
-	char followup_matrix[10][10][QI_CODENAME_LEN + 1];
+	char prerequisite_matrix[10][10][QI_CODENAME_LEN + 1];
 
 
 	/* starting location restrictions */
