@@ -2151,6 +2151,8 @@ extern void quest_reply(int Ind, int q_idx, char *str);
 extern void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat);
 extern void quest_imprint_stage(int Ind, int q_idx, int py_q_idx);
 extern bool quest_goal_check(int pInd, int q_idx, bool interacting);
+extern void quest_check_goal_deliver_wpos(int Ind);
+extern void quest_check_goal_deliver_xy(int Ind);
 
 
 
