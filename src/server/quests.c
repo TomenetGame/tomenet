@@ -693,7 +693,8 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		if (strcmp(q_ptr->keyword[questor_idx][stage][i], str)) continue; /* not matching? */
 
 		/* reply? */
-		if (q_ptr->keyword_reply[questor_idx][stage][i][0]) {
+		if (q_ptr->keyword_reply[questor_idx][stage][i] &&
+		    q_ptr->keyword_reply[questor_idx][stage][i][0]) {
 			msg_print(Ind, "\374 ");
 			msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
 			for (j = 0; j < QI_TALK_LINES; j++) {

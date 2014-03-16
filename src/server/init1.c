@@ -7404,6 +7404,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				for (i = 0; i < QI_QUESTORS; i++) {
 					lc_conversation[i][j] = 0;
 					lc_keywords[i][j] = 0;
+
+					for (k = 0; k < QI_MAX_KEYWORDS; k++) q_ptr->keyword_reply[i][j][k] = NULL;
 				}
 				lc_rewards[j] = 0;
 

@@ -262,7 +262,7 @@ typedef struct quest_info {
 	u16b keywordflags[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* required flags configuration for a keyword to be enabled */
 	u16b keywordchangeflags[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* ..and the keyword will change flags to these */
 	s16b keyword_stage[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];/*  ..which will bring the player to a different quest stage */
-	cptr keyword_reply[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS][QI_TALK_LINES];/* give a reply to the keyword */
+	cptr *keyword_reply[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
 	char yn[QI_QUESTORS][QI_MAX_STAGES];				/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
 	s16b y_stage[QI_QUESTORS][QI_MAX_STAGES], n_stage[QI_QUESTORS][QI_MAX_STAGES];	/*  ..which will bring the player to a different quest stage */
 
