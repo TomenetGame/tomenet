@@ -423,6 +423,60 @@ static void quest_terminate(int q_idx) {
 static void quest_rewards(int pInd, int q_idx) {
 }
 
+/* return a current quest goal. Either just uses q_ptr->goals directly for global
+   quests, or p_ptr->quest_goals for individual quests. */
+bool quest_get_goal(int pInd, int q_idx, int goal) {
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr;
+	int i;
+
+	if (!pInd) return q_ptr->goals[goal]; /* no player? global goal */
+
+	p_ptr = Players[pInd];
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+		if (p_ptr->quest_idx[i] == q_idx) break;
+	if (i == MAX_CONCURRENT_QUESTS) return q_ptr->goals[goal]; /* player isn't on this quest. return global goal. */
+
+	if (q_ptr->individual) return p_ptr->quest_goals[i][goal]; /* individual quest */
+	return q_ptr->goals[goal]; /* global quest */
+}
+
+/* return an optional current quest goal. Either just uses q_ptr->goalsopt directly for global
+   quests, or p_ptr->quest_goalsopt for individual quests. */
+bool quest_get_goalopt(int pInd, int q_idx, int goalopt) {
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr;
+	int i;
+
+	if (!pInd) return q_ptr->goals[goalopt]; /* no player? global goal */
+
+	p_ptr = Players[pInd];
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+		if (p_ptr->quest_idx[i] == q_idx) break;
+	if (i == MAX_CONCURRENT_QUESTS) return q_ptr->goals[goalopt]; /* player isn't on this quest. return global goal. */
+
+	if (q_ptr->individual) return p_ptr->quest_goals[i][goalopt]; /* individual quest */
+	return q_ptr->goals[goalopt]; /* global quest */
+}
+
+/* return a current quest flag. Either just uses q_ptr->flags directly for global
+   quests, or p_ptr->quest_flags for individual quests. */
+bool quest_get_flag(int pInd, int q_idx, int flag) {
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr;
+	int i;
+
+	if (!pInd) return q_ptr->flags[flag]; /* no player? global goal */
+
+	p_ptr = Players[pInd];
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+		if (p_ptr->quest_idx[i] == q_idx) break;
+	if (i == MAX_CONCURRENT_QUESTS) return q_ptr->flags[flag]; /* player isn't on this quest. return global goal. */
+
+	if (q_ptr->individual) return p_ptr->quest_flags[i][flag]; /* individual quest */
+	return q_ptr->flags[flag]; /* global quest */
+}
+
 /* return the current quest stage. Either just uses q_ptr->stage directly for global
    quests, or p_ptr->quest_stage for individual quests. */
 s16b quest_get_stage(int pInd, int q_idx) {
