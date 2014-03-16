@@ -6005,8 +6005,10 @@ void process_player_change_wpos(int Ind) {
 	bool smooth_ambient = FALSE, travel_ambient = FALSE;
 
 	/* for obtaining statistical IDDC information: */
-	if (in_irondeepdive(&p_ptr->wpos_old)) s_printf("CVRG-IDDC: '%s' leaves floor %d:\n", p_ptr->name, p_ptr->wpos_old.wz);
-	log_floor_coverage(getfloor(&p_ptr->wpos_old), &p_ptr->wpos_old);
+	if (!is_admin(p_ptr)) {
+		if (in_irondeepdive(&p_ptr->wpos_old)) s_printf("CVRG-IDDC: '%s' leaves floor %d:\n", p_ptr->name, p_ptr->wpos_old.wz);
+		log_floor_coverage(getfloor(&p_ptr->wpos_old), &p_ptr->wpos_old);
+	}
 
 	/* Decide whether we stayed long enough on the previous
 	   floor to get distinct floor feelings here, and also
