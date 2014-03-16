@@ -7481,8 +7481,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->mode_norm = (mode_norm != 0);
 			q_ptr->mode_el = (mode_el != 0);
 			q_ptr->mode_pvp = (mode_pvp != 0);
-			q_ptr->must_be_fruitbat = (must_bat != 0);
-			q_ptr->must_be_monster = (must_form != 0);
+			q_ptr->must_be_fruitbat = must_bat;
+			q_ptr->must_be_monster = must_form;
 			continue;
 		}
 
