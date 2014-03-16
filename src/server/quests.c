@@ -1217,10 +1217,12 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	object_type forge, *o_ptr;
 	u32b resf = RESF_NOTRUEART;
 
+#if 0 /* we're called when stage 0 starts too, and maybe it's some sort of globally determined goal->reward? */
 	if (!pInd) {
 		s_printf("QUEST_GOAL_CHECK_REWARD: returned! oops\n");
 		return; //paranoia?
 	}
+#endif
 
 	/* scan through all possible follow-up stages */
 	for (j = 0; j < QI_MAX_STAGE_REWARDS; j++) {
