@@ -7457,10 +7457,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'I') {
 			char races[6 + 2], classes[5 + 2], *rp = races + 2, *cp = classes + 2;
 			int priv, indiv, minlev, maxlev, rep, qdcs;
+			int mode_norm, mode_el, mode_pvp, must_bat, must_form;
 
 			s = buf + 2;
-			if (8 != sscanf(s, "%d:%d:%d:%d:%5[^:]:%4[^:]:%d:%d",
-			    &priv, &indiv, &minlev, &maxlev, rp, cp, &rep, &qdcs))
+			if (13 != sscanf(s, "%d:%d:%d:%d:%5[^:]:%4[^:]:%d:%d:%d:%d:%d:%d:%d",
+			    &priv, &indiv, &minlev, &maxlev, rp, cp,
+			    &mode_norm, &mode_el, &mode_pvp, &must_bat, &must_form,
+			    &rep, &qdcs))
 				return (1);
 
 			q_ptr->privilege = priv;
@@ -7474,6 +7477,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			classes[0] = '0'; classes[1] = 'x';
 			q_ptr->races = atoi(races);
 			q_ptr->classes = atoi(classes);
+			/* modes/body */
+			q_ptr->mode_norm = (mode_norm != 0);
+			q_ptr->mode_el = (mode_el != 0);
+			q_ptr->mode_pvp = (mode_pvp != 0);
+			q_ptr->must_be_fruitbat = (must_bat != 0);
+			q_ptr->must_be_monster = (must_form != 0);
 			continue;
 		}
 
