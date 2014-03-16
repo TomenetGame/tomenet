@@ -6715,7 +6715,11 @@ void process_player_change_wpos(int Ind) {
 				/* imprint new temporary destination location information */
 				p_ptr->quest_within_deliver_wpos[d] = TRUE;
 				/* specific x,y loc? */
-				if (q_ptr->deliver_pos_x[stage][j] != -1) p_ptr->quest_deliver_xy[d] = TRUE;
+				if (q_ptr->deliver_pos_x[stage][j] != -1) {
+					p_ptr->quest_deliver_xy[d] = TRUE;
+					/* and check right away if we're already on the correct x,y location */
+					quest_check_goal_deliver_xy(Ind);
+				}
 				tries = 1;
 				break;
 			}

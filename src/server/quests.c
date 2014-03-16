@@ -985,6 +985,39 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	return;
 }
 
+/* Check if player completed a deliver goal to a wpos */
+void quest_check_goal_deliver_wpos(int Ind) {
+}
+/* Check if player completed a deliver goal to a wpos and specific x,y */
+void quest_check_goal_deliver_xy(int Ind) {
+	quest_info *q_ptr;
+	player_type *p_ptr = Players[Ind];
+	int i, j, q_idx, stage;
+
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+		if (!p_ptr->quest_deliver_pos[i]) continue;//redundant with quest_within_deliver_pos?
+		if (!p_ptr->quest_within_deliver_wpos[i]) continue;
+
+		q_idx = p_ptr->quest_idx[i];
+		q_ptr = &q_info[q_idx];
+		stage = quest_get_stage(Ind, q_idx);
+
+		//todo: handle  bool deliver_terrain_patch[QI_MAX_STAGES][QI_GOALS];
+
+		/* check the quest goals, whether any of them wants a delivery to this location */
+		for (j = 0; j < QI_GOALS; j++) {
+			if (!q_ptr->deliver_pos[stage][j]) continue;
+			if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
+			if (q_ptr->deliver_pos_x[stage][j] == -1) continue;
+
+			if (q_ptr->deliver_pos_x[stage][j] == p_ptr->px &&
+			    q_ptr->deliver_pos_y[stage][j] == p_ptr->py)
+				/* we have completed a delivery-to-xy goal! */
+				quest_set_goal(Ind, q_idx, j);
+		}
+	}
+}
+
 /* Check if quest goals of the current stage have been completed and accordingly
    call quest_reward() and/or quest_set_stage() to advance.
    Goals can only be completed by players who are pursuing that quest.
