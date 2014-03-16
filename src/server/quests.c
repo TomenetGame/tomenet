@@ -42,6 +42,7 @@ static void quest_goal_check_reward(int pInd, int q_idx);
 
 
 /* error messages for quest_acquire() */
+static cptr qi_msg_deactivated = "\377sThis quest is currently unavailable.";
 static cptr qi_msg_minlev = "\377yYour level is too low to acquire this quest.";
 static cptr qi_msg_maxlev = "\377oYour level is too high to acquire this quest.";
 static cptr qi_msg_race = "\377oYour race is not eligible to acquire this quest.";
@@ -418,11 +419,15 @@ static void quest_terminate(int q_idx) {
 	/* give players credit */
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
+
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 			if (p_ptr->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
 		if (p_ptr->quest_done[q_idx] < 10000) p_ptr->quest_done[q_idx]++;
+
+		/* he is no longer on the quest, since the quest has finished */
+		p_ptr->quest_idx[j] = -1;
 	}
 
 	/* don't respawn the questor *immediately* again, looks silyl */
@@ -744,6 +749,12 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr *msg) {
 	int i, j;
 	bool ok;
 
+	/* quest is deactivated? -- paranoia here */
+	if (!q_ptr->active) {
+		*msg = qi_msg_deactivated;
+		return FALSE;
+	}
+
 	*msg = NULL;
 
 	/* quests is only for admins or privileged accounts at the moment? (for testing purpose) */
@@ -873,6 +884,9 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 	player_type *p_ptr = Players[Ind];
 	int i, stage = quest_get_stage(Ind, q_idx);
 	cptr msg = NULL;//compiler warning
+
+	/* quest is deactivated? */
+	if (!q_ptr->active) return;
 
 	/* quests is only for admins or privileged accounts at the moment? (for testing purpose) */
 	switch (q_ptr->privilege) {
@@ -1035,6 +1049,10 @@ void quest_check_goal_deliver_xy(int Ind) {
 
 		q_idx = p_ptr->quest_idx[i];
 		q_ptr = &q_info[q_idx];
+
+		/* quest is deactivated? */
+		if (!q_ptr->active) continue;
+
 		stage = quest_get_stage(Ind, q_idx);
 
 		//todo: handle  bool deliver_terrain_patch[QI_MAX_STAGES][QI_GOALS];
@@ -1312,6 +1330,10 @@ void quest_check_player_location(int Ind) {
 
 		q_idx = p_ptr->quest_idx[i];
 		q_ptr = &q_info[q_idx];
+
+		/* quest is deactivated? */
+		if (!q_ptr->active) continue;
+
 		stage = quest_get_stage(Ind, q_idx);
 
 		/* first clear old wpos' delivery state */
@@ -1327,11 +1349,9 @@ void quest_check_player_location(int Ind) {
 			if (inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) {
 				/* imprint new temporary destination location information */
 				p_ptr->quest_within_deliver_wpos[i] = TRUE;
-//s_printf("within_wpos\n");
 				/* specific x,y loc? */
 				if (q_ptr->deliver_pos_x[stage][j] != -1) {
 					p_ptr->quest_deliver_xy[i] = TRUE;
-//s_printf("around_xy\n");
 					/* and check right away if we're already on the correct x,y location */
 					quest_check_goal_deliver_xy(Ind);
 				}
