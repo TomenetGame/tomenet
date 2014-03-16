@@ -597,7 +597,7 @@ void quest_set_flag(int pInd, int q_idx, int flag, bool set) {
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
-	int i, j;
+	int i, j, k;
 	bool anything = FALSE;
 
 	/* dynamic info */
@@ -608,7 +608,6 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	   It is still used for the other stage-checking routines in this function too though:
 	    quest_rewards(), quest_terminate() and the 'anything' check. */
 	q_ptr->stage = stage;
-
 
 	/* For non-'individual' quests,
 	   if a participating player is around the questor, entering a new stage..
@@ -622,7 +621,21 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 				if (Players[i]->quest_idx[j] == q_idx) break;
 			if (j == MAX_CONCURRENT_QUESTS) continue;
 
+			/* play automatic narration if any */
+			//TODO: flag restrictions on narration lines
+			if (!quiet && q_ptr->narration[stage][0]) { /* there is narration to display? */
+				msg_print(i, "\374 ");
+				msg_format(i, "\374\377u<\377U'%s'\377u>", q_name + q_ptr->name);
+				for (k = 0; k < QI_TALK_LINES; k++) {
+					if (!q_ptr->narration[stage][k]) break;
+					msg_format(i, "\374\377U%s", q_ptr->narration[stage][k]);
+				}
+				msg_print(i, "\374 ");
+			}
+
+			/* update player's quest tracking data */
 			quest_imprint_stage(i, q_idx, j);
+			/* play questors' stage dialogue */
 			for (j = 0; j < q_ptr->questors; j++)
 				if (!quiet) quest_dialogue(i, q_idx, j, FALSE);
 		}
@@ -631,7 +644,21 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			if (Players[pInd]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) return; //paranoia, shouldn't happen
 
+		/* play automatic narration if any */
+		//TODO: flag restrictions on narration lines
+		if (!quiet && q_ptr->narration[stage][0]) { /* there is narration to display? */
+			msg_print(pInd, "\374 ");
+			msg_format(pInd, "\374\377u<\377U'%s'\377u>", q_name + q_ptr->name);
+			for (k = 0; k < QI_TALK_LINES; k++) {
+				if (!q_ptr->narration[stage][k]) break;
+				msg_format(pInd, "\374\377U%s", q_ptr->narration[stage][k]);
+			}
+			msg_print(pInd, "\374 ");
+		}
+
+		/* update players' quest tracking data */
 		quest_imprint_stage(pInd, q_idx, j);
+		/* play questors' stage dialogue */
 		for (j = 0; j < q_ptr->questors; j++)
 			if (!quiet) quest_dialogue(pInd, q_idx, j, FALSE);
 	}
@@ -911,6 +938,7 @@ void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat) {
 	player_type *p_ptr = Players[Ind];
 	int i, stage = quest_get_stage(Ind, q_idx);
 
+	//TODO: flag restrictions on talk lines
 	if (!repeat && q_ptr->talk[questor_idx][stage][0]) { /* there is NPC talk to display? */
 		p_ptr->interact_questor_idx = questor_idx;
 		msg_print(Ind, "\374 ");
