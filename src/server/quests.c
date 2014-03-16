@@ -1046,6 +1046,7 @@ void quest_check_goal_deliver_xy(int Ind) {
 			if (q_ptr->deliver_pos_x[stage][j] == p_ptr->px &&
 			    q_ptr->deliver_pos_y[stage][j] == p_ptr->py)
 				/* we have completed a delivery-to-xy goal! */
+//s_printf("found_xy!\n");
 				quest_set_goal(Ind, q_idx, j);
 		}
 	}
@@ -1295,4 +1296,48 @@ bool quest_goal_check(int pInd, int q_idx, bool interacting) {
 	/* advance stage! */
 	quest_set_stage(pInd, q_idx, stage, FALSE);
 	return TRUE; /* stage has been completed and changed to the next stage */
+}
+
+/* check if a player's location is around any of his quest destinations */
+void quest_check_player_location(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int i, j, q_idx, stage;
+	quest_info *q_ptr;
+	bool found = FALSE;
+
+	/* Quests: Is this wpos a target location or a delivery location for any of our quests? */
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+		if (!p_ptr->quest_deliver_pos[i]) continue;
+
+		q_idx = p_ptr->quest_idx[i];
+		q_ptr = &q_info[q_idx];
+		stage = quest_get_stage(Ind, q_idx);
+
+		/* first clear old wpos' delivery state */
+		p_ptr->quest_within_deliver_wpos[i] = FALSE;
+		p_ptr->quest_deliver_xy[i] = FALSE;
+
+		//todo: handle  bool deliver_terrain_patch[QI_MAX_STAGES][QI_GOALS];
+
+		/* check the quest goals, whether any of them wants a delivery to this location */
+		for (j = 0; j < QI_GOALS; j++) {
+			if (!q_ptr->deliver_pos[stage][j]) continue;
+
+			if (inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) {
+				/* imprint new temporary destination location information */
+				p_ptr->quest_within_deliver_wpos[i] = TRUE;
+//s_printf("within_wpos\n");
+				/* specific x,y loc? */
+				if (q_ptr->deliver_pos_x[stage][j] != -1) {
+					p_ptr->quest_deliver_xy[i] = TRUE;
+//s_printf("around_xy\n");
+					/* and check right away if we're already on the correct x,y location */
+					quest_check_goal_deliver_xy(Ind);
+				}
+				found = TRUE;
+				break;
+			}
+		}
+		if (found) break;
+	}
 }

@@ -6004,11 +6004,6 @@ void process_player_change_wpos(int Ind) {
 	char o_name_short[ONAME_LEN];
 	bool smooth_ambient = FALSE, travel_ambient = FALSE;
 
-	/* for quest handling */
-	int q_idx;
-	quest_info *q_ptr;
-	int stage;
-
 	/* for obtaining statistical IDDC information: */
 	if (in_irondeepdive(&p_ptr->wpos_old)) s_printf("CVRG-IDDC: '%s' leaves floor %d:\n", p_ptr->name, p_ptr->wpos_old.wz);
 	log_floor_coverage(getfloor(&p_ptr->wpos_old), &p_ptr->wpos_old);
@@ -6692,40 +6687,7 @@ void process_player_change_wpos(int Ind) {
 		/* New: Have bgm indicate no-tele too! (done below in handle_music()) */
 	}
 
-	/* Quests: Is this wpos a target location or a delivery location for any of our quests? */
-	tries = 0; //hack
-	for (d = 0; d < MAX_CONCURRENT_QUESTS; d++) {
-		if (!p_ptr->quest_deliver_pos[d]) continue;
-
-		q_idx = p_ptr->quest_idx[d];
-		q_ptr = &q_info[q_idx];
-		stage = quest_get_stage(Ind, q_idx);
-
-		/* first clear old wpos' delivery state */
-		p_ptr->quest_within_deliver_wpos[d] = FALSE;
-		p_ptr->quest_deliver_xy[d] = FALSE;
-
-		//todo: handle  bool deliver_terrain_patch[QI_MAX_STAGES][QI_GOALS];
-
-		/* check the quest goals, whether any of them wants a delivery to this location */
-		for (j = 0; j < QI_GOALS; j++) {
-			if (!q_ptr->deliver_pos[stage][j]) continue;
-
-			if (inarea(&q_ptr->deliver_wpos[stage][j], wpos)) {
-				/* imprint new temporary destination location information */
-				p_ptr->quest_within_deliver_wpos[d] = TRUE;
-				/* specific x,y loc? */
-				if (q_ptr->deliver_pos_x[stage][j] != -1) {
-					p_ptr->quest_deliver_xy[d] = TRUE;
-					/* and check right away if we're already on the correct x,y location */
-					quest_check_goal_deliver_xy(Ind);
-				}
-				tries = 1;
-				break;
-			}
-		}
-		if (tries) break;
-	}
+	quest_check_player_location(Ind);
 
 #ifdef USE_SOUND_2010
 	/* clear boss/floor-specific music */

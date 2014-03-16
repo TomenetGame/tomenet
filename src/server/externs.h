@@ -2153,6 +2153,7 @@ extern void quest_imprint_stage(int Ind, int q_idx, int py_q_idx);
 extern bool quest_goal_check(int pInd, int q_idx, bool interacting);
 extern void quest_check_goal_deliver_wpos(int Ind);
 extern void quest_check_goal_deliver_xy(int Ind);
+extern void quest_check_player_location(int Ind);
 
 
 
