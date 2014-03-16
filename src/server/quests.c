@@ -1111,7 +1111,11 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 		return;
 	}
 
-	if (!q_ptr->individual) return;//catch paranoid bugs--maybe obsolete
+	if (!q_ptr->individual) {
+		s_printf("QUEST_REWARD_OBJECT: not individual, but no pInd either.\n");
+		return;//catch paranoid bugs--maybe obsolete
+	}
+
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
@@ -1140,7 +1144,11 @@ static void quest_reward_create(int pInd, int q_idx) {
 		return;
 	}
 
-	if (!q_ptr->individual) return;//catch paranoid bugs--maybe obsolete
+	if (!q_ptr->individual) {
+		s_printf("QUEST_REWARD_CREATE: not individual, but no pInd either.\n");
+		return;//catch paranoid bugs--maybe obsolete
+	}
+
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
@@ -1166,7 +1174,11 @@ static void quest_reward_gold(int pInd, int q_idx, int au) {
 		return;
 	}
 
-	if (!q_ptr->individual) return;//catch paranoid bugs--maybe obsolete
+	if (!q_ptr->individual) {
+		s_printf("QUEST_REWARD_GOLD: not individual, but no pInd either.\n");
+		return;//catch paranoid bugs--maybe obsolete
+	}
+
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
@@ -1192,7 +1204,11 @@ static void quest_reward_exp(int pInd, int q_idx, int exp) {
 		return;
 	}
 
-	if (!q_ptr->individual) return;//catch paranoid bugs--maybe obsolete
+	if (!q_ptr->individual) {
+		s_printf("QUEST_REWARD_EXP: not individual, but no pInd either.\n");
+		return;//catch paranoid bugs--maybe obsolete
+	}
+
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
