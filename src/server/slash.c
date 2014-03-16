@@ -3549,7 +3549,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			if (token[1][0] == '*') {
-				msg_format(Ind, "You are no longer pursuing any quest!");
+				msg_print(Ind, "You are no longer pursuing any quest!");
 				for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 					j = p_ptr->quest_idx[i];
 					p_ptr->quest_idx[i] = -1;
@@ -8203,6 +8203,69 @@ void do_slash_cmd(int Ind, char *message)
 				//if (tk) {
 					msg_format(Ind, " \377wSize of quest_info*max_q_idx=total: %d*%d=\377U%d", sizeof(quest_info), max_q_idx, sizeof(quest_info) * max_q_idx);
 				//}
+				return;
+			}
+			else if (prefix(message, "/qpdrop")) { /* drop a quest a player is on */
+				int q = -1, p;
+				if (!tk) {
+					msg_print(Ind, "Usage: /qpdrop [<quest>] <character name>");
+					return;
+				}
+
+				/* hack- assume number = quest parm, not char name */
+				if (message3[0] >= '0' && message3[0] <= '9') q = atoi(message3);
+				else if (message3[0] == '*') q = -2; //drop all
+
+				if (q == -1) p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				else p = name_lookup_loose(Ind, message3 + 2, FALSE, FALSE);
+				if (!p) {
+					msg_print(Ind, "Couldn't find that player.");
+					return;
+				}
+				p_ptr = Players[p];
+
+				if (q == -1) {
+					int qa = 0;
+
+					for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+						if (p_ptr->quest_idx[i] != -1) qa++;
+
+					msg_print(Ind, "");
+					if (!qa) msg_format(Ind, "\377U-- %s is not currently pursuing any quests. --", p_ptr->name);
+					else {
+						if (qa == 1) msg_format(Ind, "\377U-- %s is currently pursuing the following quest: --", p_ptr->name);
+						else msg_format(Ind, "\377U-- %s is currently pursuing the following quests: --", p_ptr->name);
+						for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+							if (p_ptr->quest_idx[i] == -1) continue;
+							msg_format(Ind, "  %d) %s", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name);
+						}
+					}
+					return;
+				}
+				if (q == -2) {
+					msg_format(Ind, "%s is no longer pursuing any quest!", p_ptr->name);
+					for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+						j = p_ptr->quest_idx[i];
+						p_ptr->quest_idx[i] = -1;
+						/* give him 'quest done' credit if he cancelled it too late (ie after rewards were handed out)? */
+						if (q_info[j].quest_done_credit_stage <= quest_get_stage(Ind, j) && p_ptr->quest_done[j] < 10000) p_ptr->quest_done[j]++;
+					}
+					return;
+				}
+				k = q;
+				if (k < 1 || k > MAX_CONCURRENT_QUESTS) {
+					msg_print(Ind, "\377yThe quest number must be from 1 to 5!");
+					return;
+				}
+				if (p_ptr->quest_idx[k - 1] == -1) {
+					msg_format(Ind, "\377y%s is not pursing a quest numbered %d.", p_ptr->name, k);
+					return;
+				}
+				msg_format(Ind, "%s is no longer pursuing the quest '%s'!", p_ptr->name, q_name + q_info[p_ptr->quest_idx[k - 1]].name);
+				j = p_ptr->quest_idx[k - 1];
+				p_ptr->quest_idx[k - 1] = -1;
+				/* give him 'quest done' credit if he cancelled it too late (ie after rewards were handed out)? */
+				if (q_info[j].quest_done_credit_stage <= quest_get_stage(Ind, j) && p_ptr->quest_done[j] < 10000) p_ptr->quest_done[j]++;
 				return;
 			}
 			else if (prefix(message, "/qccd")) { /* clear a quest's cooldown */
