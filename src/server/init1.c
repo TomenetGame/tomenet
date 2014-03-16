@@ -7460,13 +7460,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'I' for player restrictions */
 		if (buf[0] == 'I') {
-			char races[6 + 2], classes[5 + 2], *rp = races + 2, *cp = classes + 2;
+			char races[6], classes[5];
 			int priv, indiv, minlev, maxlev, rep, qdcs;
 			int mode_norm, mode_el, mode_pvp, must_bat, must_form;
 
 			s = buf + 2;
 			if (13 != sscanf(s, "%d:%d:%d:%d:%5[^:]:%4[^:]:%d:%d:%d:%d:%d:%d:%d",
-			    &priv, &indiv, &minlev, &maxlev, rp, cp,
+			    &priv, &indiv, &minlev, &maxlev, races, classes,
 			    &mode_norm, &mode_el, &mode_pvp, &must_bat, &must_form,
 			    &rep, &qdcs))
 				return (1);
@@ -7477,11 +7477,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->maxlev = maxlev;
 			q_ptr->repeatable = rep;
 			q_ptr->quest_done_credit_stage = qdcs;
-			/* uh well, hacky hacky.. */
-			races[0] = '0'; races[1] = 'x';
-			classes[0] = '0'; classes[1] = 'x';
-			q_ptr->races = atoi(races);
-			q_ptr->classes = atoi(classes);
+			q_ptr->races = strtol(races, NULL, 16);
+			q_ptr->classes = strtol(classes, NULL, 16);
 			/* modes/body */
 			q_ptr->mode_norm = (mode_norm != 0);
 			q_ptr->mode_el = (mode_el != 0);
