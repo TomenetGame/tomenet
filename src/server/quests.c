@@ -567,7 +567,7 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 			break;
 		case 1: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\" (\377yprivileged\377u)", q_name + q_ptr->name);
 			break;
-		case 2: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\" (\377overy privileged\377u)", q_name + q_ptr->name);
+		case 2: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\" (\377ohighly privileged\377u)", q_name + q_ptr->name);
 			break;
 		case 3: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\" (\377radmins only\377u)", q_name + q_ptr->name);
 		}
