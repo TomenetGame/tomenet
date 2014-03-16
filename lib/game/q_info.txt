@@ -42,6 +42,7 @@ V:0.0.1
 
 # Note: #goal is 1..5 for main goal, and -1..-5 for optional goals.
 # Note about keywords: '-' means the empty keyword "", ie user just needs to press ENTER key without writing anything.
+#   Use [[...]] to highlight the text between the brackets.
 # Note about global 'flags':
 #   '-' means no flags.
 #   For lines that change those: 'a' to 'p' to clear flags, 'A' to 'P' to set flags.
@@ -59,7 +60,7 @@ Q:1:37:b:n:-1:-1:-1:-1:-1:Blind Bat
 U:0:0:0:0:0:0
 A:0:1:1:0:1
 W:0:0:-:Hello, fellow fruit bat!
-W:0:0:-:Would you like some {yale{- or rather a {ysolid ration{-?
+W:0:0:-:Would you like some [[ale]] or rather a [[solid ration]]?
 Y:0:0:-:ale:-:1
 Y:0:0:-:ration:-:2
 Y:0:0:-:solid ration:-:2

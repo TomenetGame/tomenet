@@ -7652,8 +7652,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
 			if (lc_conversation[questor][stage] == QI_TALK_LINES) return 1;
 
+#if 0 /* allow full colour codes */
 			/* replace '{' by \377 */
 			while ((cc = strchr(tmpbuf, '{'))) *cc = '\377';
+#else /* just allow highlighting */
+			while ((cc = strstr(tmpbuf, "[["))) { *cc = '\377'; *(cc + 1) = 'y'; }
+			while ((cc = strstr(tmpbuf, "]]"))) { *cc = '\377'; *(cc + 1) = '-'; }
+#endif
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
