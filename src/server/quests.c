@@ -1104,7 +1104,7 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
 		/*p_ptr = Players[pInd];
 		drop_near(o_ptr, -1, &p_ptr->wpos, &p_ptr->py, &p_ptr->px);*/
-		msg_print(pInd, "You have received a item.");
+		msg_print(pInd, "You have received an item.");
 		inven_carry(pInd, o_ptr);
 		return;
 	}
@@ -1120,7 +1120,7 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 		/* hand him out the reward too */
 		/*p_ptr = Players[i];
 		drop_near(o_ptr, -1, &p_ptr->wpos, &p_ptr->py, &p_ptr->px);*/
-		msg_print(i, "You have received a item.");
+		msg_print(i, "You have received an item.");
 		inven_carry(i, o_ptr);
 	}
 }
@@ -1133,8 +1133,8 @@ static void quest_reward_create(int pInd, int q_idx) {
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
-		msg_print(pInd, "You have received a item.");
-		give_reward(pInd, resf, NULL, 0, 0);
+		msg_print(pInd, "You have received an item.");
+		give_reward(pInd, resf, q_name + q_ptr->name, 0, 0);
 		return;
 	}
 
@@ -1147,8 +1147,8 @@ static void quest_reward_create(int pInd, int q_idx) {
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
 		/* hand him out the reward too */
-		msg_print(i, "You have received a item.");
-		give_reward(i, resf, NULL, 0, 0);
+		msg_print(i, "You have received an item.");
+		give_reward(i, resf, q_name + q_ptr->name, 0, 0);
 	}
 }
 
@@ -1257,7 +1257,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					apply_magic(&q_ptr->current_wpos[0], o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
 					o_ptr->pval = q_ptr->reward_opval[stage][j];
 					o_ptr->bpval = q_ptr->reward_obpval[stage][j];
-					o_ptr->note = 0;
+					o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
 					o_ptr->note_utag = 0;
 #ifdef PRE_OWN_DROP_CHOSEN
 					o_ptr->level = 0;
@@ -1270,7 +1270,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					object_wipe(o_ptr);
 					invcopy(o_ptr, lookup_kind(q_ptr->reward_otval[stage][j], q_ptr->reward_osval[stage][j]));
 					apply_magic(&q_ptr->current_wpos[0], o_ptr, -2, q_ptr->reward_ogood[stage][j], q_ptr->reward_ogreat[stage][j], q_ptr->reward_ovgreat[stage][j], FALSE, resf);
-					o_ptr->note = 0;
+					o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
 					o_ptr->note_utag = 0;
 #ifdef PRE_OWN_DROP_CHOSEN
 					o_ptr->level = 0;
