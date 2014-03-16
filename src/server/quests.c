@@ -505,7 +505,8 @@ s16b quest_get_stage(int pInd, int q_idx) {
 	return q_ptr->stage; /* global quest */
 }
 
-/* mark a quest goal as reached */
+/* mark a quest goal as reached.
+   Also check if we can now proceed to the next stage or set flags or hand out rewards */
 void quest_set_goal(int pInd, int q_idx, int goal) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
@@ -513,6 +514,7 @@ void quest_set_goal(int pInd, int q_idx, int goal) {
 
 	if (!pInd) {
 		q_ptr->goals[goal] = TRUE; /* no player? global goal */
+		quest_goal_check(0, q_idx, FALSE);
 		return;
 	}
 
@@ -520,19 +522,19 @@ void quest_set_goal(int pInd, int q_idx, int goal) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
-		 q_ptr->goals[goal] = TRUE; /* player isn't on this quest. return global goal. */
+		q_ptr->goals[goal] = TRUE; /* player isn't on this quest. return global goal. */
+		quest_goal_check(0, q_idx, FALSE);
 		return;
 	}
 
 	if (q_ptr->individual) {
 		p_ptr->quest_goals[i][goal] = TRUE; /* individual quest */
+		quest_goal_check(pInd, q_idx, FALSE);
 		return;
 	}
+
 	q_ptr->goals[goal] = TRUE; /* global quest */
-
-
-	/* also check if we can now proceed to the next stage or set flags or hand out rewards */
-	quest_goal_check(pInd, q_idx, FALSE);
+	quest_goal_check(0, q_idx, FALSE);
 }
 
 /* mark an optional quest goal as reached */
@@ -1046,7 +1048,6 @@ void quest_check_goal_deliver_xy(int Ind) {
 			if (q_ptr->deliver_pos_x[stage][j] == p_ptr->px &&
 			    q_ptr->deliver_pos_y[stage][j] == p_ptr->py)
 				/* we have completed a delivery-to-xy goal! */
-//s_printf("found_xy!\n");
 				quest_set_goal(Ind, q_idx, j);
 		}
 	}
