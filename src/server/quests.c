@@ -410,7 +410,7 @@ s_printf("deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpo
 	if (q_ptr->static_floor) new_players_on_depth(&wpos, 0, FALSE);
 }
 
-/* a quest has ended, clean up */
+/* a quest has successfully ended, clean up */
 static void quest_terminate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
@@ -428,6 +428,8 @@ static void quest_terminate(int q_idx) {
 
 		/* he is no longer on the quest, since the quest has finished */
 		p_ptr->quest_idx[j] = -1;
+		msg_format(i, "\374\377uYou have completed the quest \"\377U%s\377u\".", q_name + q_ptr->name);
+		msg_print(i, "\374 ");
 	}
 
 	/* don't respawn the questor *immediately* again, looks silyl */
@@ -855,15 +857,15 @@ s_printf("QUEST_ACQUIRED: (%d,%d,%d;%d,%d) %s (%d) has quest %d '%s'.\n", p_ptr-
 	/* let him know about just acquiring the quest? */
 	if (!quiet) {
 		msg_print(Ind, "\374 ");
-		//msg_format(Ind, "\374\377U**\377u You have acquired the quest \"\377U%s\377u\" \377U**", q_name + q_ptr->name);
+		//msg_format(Ind, "\374\377U**\377u You have acquired the quest \"\377U%s\377u\". \377U**", q_name + q_ptr->name);
 		switch (q_ptr->privilege) {
-		case 0: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\"", q_name + q_ptr->name);
+		case 0: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\".", q_name + q_ptr->name);
 			break;
-		case 1: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\" (\377yprivileged\377u)", q_name + q_ptr->name);
+		case 1: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\". (\377yprivileged\377u)", q_name + q_ptr->name);
 			break;
-		case 2: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\" (\377ohighly privileged\377u)", q_name + q_ptr->name);
+		case 2: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\". (\377ohighly privileged\377u)", q_name + q_ptr->name);
 			break;
-		case 3: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\" (\377radmins only\377u)", q_name + q_ptr->name);
+		case 3: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\". (\377radmins only\377u)", q_name + q_ptr->name);
 		}
 	}
 
