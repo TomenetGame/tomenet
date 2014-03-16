@@ -38,6 +38,9 @@
 #define QERROR_COOLDOWN 30
 
 
+static void quest_goal_check_reward(int pInd, int q_idx);
+
+
 /* error messages for quest_acquire() */
 static cptr qi_msg_minlev = "\377yYour level is too low to acquire this quest.";
 static cptr qi_msg_maxlev = "\377oYour level is too high to acquire this quest.";
@@ -430,12 +433,6 @@ static void quest_terminate(int q_idx) {
 	quest_deactivate(q_idx);
 }
 
-/* 1) we've entered a quest stage and it's pretty much 'empty' so we might terminate
-      if nothing more is up. check for free rewards first and hand them out.
-   2) goals were completed, before advancing the stage, hand out the proper rewards. */
-static void quest_rewards(int pInd, int q_idx) {
-}
-
 /* return a current quest goal. Either just uses q_ptr->goals directly for global
    quests, or p_ptr->quest_goals for individual quests. */
 bool quest_get_goal(int pInd, int q_idx, int goal) {
@@ -606,7 +603,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	/* new stage is active.
 	   for 'individual' quests this is just a temporary value used by quest_imprint_stage().
 	   It is still used for the other stage-checking routines in this function too though:
-	    quest_rewards(), quest_terminate() and the 'anything' check. */
+	    quest_goal_check_reward(), quest_terminate() and the 'anything' check. */
 	q_ptr->stage = stage;
 
 	/* For non-'individual' quests,
@@ -665,7 +662,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 
 
 	/* check for handing out rewards! (in case they're free) */
-	quest_rewards(pInd, q_idx);
+	quest_goal_check_reward(pInd, q_idx);
 
 
 	/* quest termination? */
@@ -1069,7 +1066,7 @@ static int quest_goal_check_stage(int pInd, int q_idx) {
 			if (q_ptr->goals_for_stage[stage][j][i] == -1) continue;
 
 			/* if even one goal is missing, we cannot advance */
-			if (!quest_get_goal(pInd, q_idx, i)) break;
+			if (!quest_get_goal(pInd, q_idx, q_ptr->goals_for_stage[stage][j][i])) break;
 		}
 		/* we may proceed to another stage? */
 		if (i == QI_STAGE_GOALS) return q_ptr->next_stage_from_goals[stage][j];
@@ -1077,26 +1074,206 @@ static int quest_goal_check_stage(int pInd, int q_idx) {
 	return -1; /* goals are not complete yet */
 }
 
-/* check goals for handing out rewards */
-//todo:IMPLEMENT
+/* hand out a reward object to player (if individual quest)
+   or to all involved players in the area (if non-individual quest) */
+static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
+	quest_info *q_ptr = &q_info[q_idx];
+	//player_type *p_ptr;
+	int i, j;
+
+	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
+		/*p_ptr = Players[pInd];
+		drop_near(o_ptr, -1, &p_ptr->wpos, &p_ptr->py, &p_ptr->px);*/
+		msg_print(pInd, "You have received a item.");
+		inven_carry(pInd, o_ptr);
+		return;
+	}
+
+	if (!q_ptr->individual) return;//catch paranoid bugs--maybe obsolete
+	/* global quest (or for some reason missing pInd..<-paranoia)  */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			if (Players[i]->quest_idx[j] == q_idx) break;
+		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		/* hand him out the reward too */
+		/*p_ptr = Players[i];
+		drop_near(o_ptr, -1, &p_ptr->wpos, &p_ptr->py, &p_ptr->px);*/
+		msg_print(i, "You have received a item.");
+		inven_carry(i, o_ptr);
+	}
+}
+
+/* hand out a reward object created by create_reward() to player (if individual quest)
+   or to all involved players in the area (if non-individual quest) */
+static void quest_reward_create(int pInd, int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	u32b resf = RESF_NOTRUEART;
+	int i, j;
+
+	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
+		msg_print(pInd, "You have received a item.");
+		give_reward(pInd, resf, NULL, 0, 0);
+		return;
+	}
+
+	if (!q_ptr->individual) return;//catch paranoid bugs--maybe obsolete
+	/* global quest (or for some reason missing pInd..<-paranoia)  */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			if (Players[i]->quest_idx[j] == q_idx) break;
+		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		/* hand him out the reward too */
+		msg_print(i, "You have received a item.");
+		give_reward(i, resf, NULL, 0, 0);
+	}
+}
+
+/* hand out gold to player (if individual quest)
+   or to all involved players in the area (if non-individual quest) */
+static void quest_reward_gold(int pInd, int q_idx, int au) {
+	quest_info *q_ptr = &q_info[q_idx];
+	int i, j;
+
+	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
+		msg_format(pInd, "You have received %d gold pieces.", au);
+		gain_au(pInd, au, FALSE, FALSE);
+		return;
+	}
+
+	if (!q_ptr->individual) return;//catch paranoid bugs--maybe obsolete
+	/* global quest (or for some reason missing pInd..<-paranoia)  */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			if (Players[i]->quest_idx[j] == q_idx) break;
+		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		/* hand him out the reward too */
+		msg_format(i, "You have received %d gold pieces.", au);
+		gain_au(i, au, FALSE, FALSE);
+	}
+}
+
+/* provide experience to player (if individual quest)
+   or to all involved players in the area (if non-individual quest) */
+static void quest_reward_exp(int pInd, int q_idx, int exp) {
+	quest_info *q_ptr = &q_info[q_idx];
+	int i, j;
+
+	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
+		msg_format(pInd, "You have received %d experience points.", exp);
+		gain_exp(pInd, exp);
+		return;
+	}
+
+	if (!q_ptr->individual) return;//catch paranoid bugs--maybe obsolete
+	/* global quest (or for some reason missing pInd..<-paranoia)  */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			if (Players[i]->quest_idx[j] == q_idx) break;
+		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		/* hand him out the reward too */
+		msg_format(i, "You have received %d experience points.", exp);
+		gain_exp(i, exp);
+	}
+}
+
+/* check current stage of quest stage goals for handing out rewards:
+   1) we've entered a quest stage and it's pretty much 'empty' so we might terminate
+      if nothing more is up. check for free rewards first and hand them out.
+   2) goals were completed. Before advancing the stage, hand out the proper rewards. */
+//TODO: test for proper implementation for non-'individual' quests
 static void quest_goal_check_reward(int pInd, int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, j, stage = quest_get_stage(pInd, q_idx);
+	object_type forge, *o_ptr;
+	u32b resf = RESF_NOTRUEART;
+
+	if (!pInd) {
+		s_printf("QUEST_GOAL_CHECK_REWARD: returned! oops\n");
+		return; //paranoia?
+	}
 
 	/* scan through all possible follow-up stages */
-	for (j = 0; j < QI_FOLLOWUP_STAGES; j++) {
-		/* no follow-up stage? */
-		if (q_ptr->next_stage_from_goals[stage][j] == -1) continue;
+	for (j = 0; j < QI_MAX_STAGE_REWARDS; j++) {
+		/* no reward? */
+		if (!q_ptr->reward_otval[stage][j] &&
+		    !q_ptr->reward_oreward[stage][j] &&
+		    !q_ptr->reward_gold[stage][j] &&
+		    !q_ptr->reward_exp[stage][j]) //TODO: reward_statuseffect
+			continue;
 
-		/* scan through all goals required to be fulfilled to enter this stage */
-		for (i = 0; i < QI_STAGE_GOALS; i++) {
-			if (q_ptr->goals_for_stage[stage][j][i] == -1) continue;
+		/* scan through all goals required to be fulfilled to get this reward */
+		for (i = 0; i < QI_REWARD_GOALS; i++) {
+			if (q_ptr->goals_for_reward[stage][j][i] == -1) continue;
 
-			/* if even one goal is missing, we cannot advance */
-			if (!quest_get_goal(pInd, q_idx, i)) break;
+			/* if even one goal is missing, we cannot get the reward */
+			if (!quest_get_goal(pInd, q_idx, q_ptr->goals_for_reward[stage][j][i])) break;
 		}
 		/* we may get rewards? */
-		if (i == QI_STAGE_GOALS) ; //todo
+		if (i == QI_REWARD_GOALS) {
+			/* create and hand over this reward! */
+
+			/* specific reward */
+			if (q_ptr->reward_otval[stage][j]) {
+				/* very specific reward */
+				if (!q_ptr->reward_ogood && !q_ptr->reward_ogreat) {
+					o_ptr = &forge;
+					object_wipe(o_ptr);
+					invcopy(o_ptr, lookup_kind(q_ptr->reward_otval[stage][j], q_ptr->reward_osval[stage][j]));
+					o_ptr->name1 = q_ptr->reward_oname1[stage][j];
+					o_ptr->name2 = q_ptr->reward_oname2[stage][j];
+					o_ptr->name2b = q_ptr->reward_oname2b[stage][j];
+					if (o_ptr->name1) {
+						o_ptr->name1 = ART_RANDART; //hack: disallow true arts!
+						o_ptr->name2 = o_ptr->name2b = 0;
+					}
+					apply_magic(&q_ptr->current_wpos[0], o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
+					o_ptr->pval = q_ptr->reward_opval[stage][j];
+					o_ptr->bpval = q_ptr->reward_obpval[stage][j];
+					o_ptr->note = 0;
+					o_ptr->note_utag = 0;
+#ifdef PRE_OWN_DROP_CHOSEN
+					o_ptr->level = 0;
+					o_ptr->owner = p_ptr->id;
+					o_ptr->mode = p_ptr->mode;
+					if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1);
+#endif
+				} else {
+					o_ptr = &forge;
+					object_wipe(o_ptr);
+					invcopy(o_ptr, lookup_kind(q_ptr->reward_otval[stage][j], q_ptr->reward_osval[stage][j]));
+					apply_magic(&q_ptr->current_wpos[0], o_ptr, -2, q_ptr->reward_ogood[stage][j], q_ptr->reward_ogreat[stage][j], q_ptr->reward_ovgreat[stage][j], FALSE, resf);
+					o_ptr->note = 0;
+					o_ptr->note_utag = 0;
+#ifdef PRE_OWN_DROP_CHOSEN
+					o_ptr->level = 0;
+					o_ptr->owner = p_ptr->id;
+					o_ptr->mode = p_ptr->mode;
+					if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1);
+#endif
+				}
+
+				/* hand it out */
+				quest_reward_object(pInd, q_idx, o_ptr);
+			}
+			/* instead use create_reward() like for events? */
+			else if (q_ptr->reward_oreward[stage][j])
+				quest_reward_create(pInd, q_idx);
+			/* hand out gold? */
+			if (q_ptr->reward_gold[stage][j])
+				quest_reward_gold(pInd, q_idx, q_ptr->reward_gold[stage][j]);
+			/* provide exp? */
+			if (q_ptr->reward_exp[stage][j])
+				quest_reward_exp(pInd, q_idx, q_ptr->reward_exp[stage][j]);
+			//TODO: s16b reward_statuseffect[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
+		}
 	}
 	return; /* goals are not complete yet */
 }
@@ -1115,7 +1292,7 @@ bool quest_goal_check(int pInd, int q_idx, bool interacting) {
 	stage = quest_goal_check_stage(pInd, q_idx);
 	if (stage == -1) return FALSE; /* stage not yet completed */
 
-	/* advance  stage! */
+	/* advance stage! */
 	quest_set_stage(pInd, q_idx, stage, FALSE);
 	return TRUE; /* stage has been completed and changed to the next stage */
 }

@@ -377,7 +377,7 @@ typedef struct quest_info {
 	s16b reward_osval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
 	s16b reward_opval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_obpval[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
 	s16b reward_oname1[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_oname2[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_oname2b[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
-	bool reward_ogood[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_ogreat[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
+	bool reward_ogood[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_ogreat[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS], reward_ovgreat[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
 	bool reward_oreward[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];	/*  use fitting-reward algo (from highlander etc)? */
 
 	int reward_gold[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
