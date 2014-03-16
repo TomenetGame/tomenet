@@ -3543,8 +3543,8 @@ void do_slash_cmd(int Ind, char *message)
 						if (p_ptr->quest_idx[i] == -1) continue;
 						msg_format(Ind, "  %d) %s", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name);
 					}
-					msg_print(Ind, "\377U(To drop a quest, type: \377y/qdrop questnumber\377U or \377y*\377U to drop all.)");
-					msg_print(Ind, "\377U(Warning: Depending on the quest you might not be able to pick it up again!)");
+					msg_print(Ind, "\377U(To drop a quest, type: \377y/qdrop questnumber\377U or \377y*\377U to drop all.");
+					msg_print(Ind, "\377UWarning: Depending on the quest you might not be able to pick it up again!)");
 				}
 				return;
 			}
