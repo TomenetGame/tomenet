@@ -420,7 +420,7 @@ static void quest_terminate(int q_idx) {
 /* 1) we've entered a quest stage and it's pretty much 'empty' so we might terminate
       if nothing more is up. check for free rewards first and hand them out.
    2) goals were completed, before advancing the stage, hand out the proper rewards. */
-static void quest_rewards(q_idx) {
+static void quest_rewards(int pInd, int q_idx) {
 }
 
 /* return the current quest stage. Either just uses q_ptr->stage directly for global
@@ -457,25 +457,35 @@ void quest_stage(int pInd, int q_idx, int stage, bool quiet) {
 	q_ptr->stage = stage;
 
 
-	/* if a participating player is around the questor, entering a new stage..
-	 *
-	 * - qutomatically invokes the quest dialogue with him again (if any)
-	 * - store information of the current stage in the p_ptr array,
-	 *   eg the target location for easier lookup */
-	for (i = 1; i <= NumPlayers; i++) {
-		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
-		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
-			if (Players[i]->quest_idx[j] == q_idx) break;
-		if (j == MAX_CONCURRENT_QUESTS) continue;
+	/* For non-'individual' quests,
+	   if a participating player is around the questor, entering a new stage..
+	   - qutomatically invokes the quest dialogue with him again (if any)
+	   - store information of the current stage in the p_ptr array,
+	     eg the target location for easier lookup */
+	if (!q_ptr->individual || !pInd) { //the !pInd part is paranoia
+		for (i = 1; i <= NumPlayers; i++) {
+			if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+				if (Players[i]->quest_idx[j] == q_idx) break;
+			if (j == MAX_CONCURRENT_QUESTS) continue;
 
-		quest_imprint_stage(i, q_idx, j);
+			quest_imprint_stage(i, q_idx, j);
+			for (j = 0; j < q_ptr->questors; j++)
+				if (!quiet) quest_dialogue(i, q_idx, j, FALSE);
+		}
+	} else { /* individual quest */
+		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			if (Players[pInd]->quest_idx[j] == q_idx) break;
+		if (j == MAX_CONCURRENT_QUESTS) return; //paranoia, shouldn't happen
+
+		quest_imprint_stage(pInd, q_idx, j);
 		for (j = 0; j < q_ptr->questors; j++)
-			if (!quiet) quest_dialogue(i, q_idx, j, FALSE);
+			if (!quiet) quest_dialogue(pInd, q_idx, j, FALSE);
 	}
 
 
 	/* check for handing out rewards! (in case they're free) */
-	quest_rewards(q_idx);
+	quest_rewards(pInd, q_idx);
 
 
 	/* quest termination? */
@@ -621,6 +631,9 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr msg) {
 		}
 	}
 
+	/* hack: for 'individual' quests we use q_ptr->stage as temporary var to store the player's personal stage,
+	   which is then transferred to the player again in quest_imprint_stage(). Yeah.. */
+	if (q_ptr->individual) q_ptr->stage = 0; /* 'individual' quest entry stage is always 0 */
 	/* store information of the current stage in the p_ptr array,
 	   eg the target location for easier lookup */
 	quest_imprint_stage(Ind, q_idx, i);
@@ -791,7 +804,7 @@ bool quest_goal_check(int pInd, int q_idx, bool interacting) {
 	return FALSE; /* stage not yet completed */
 
 
-	//quest_reward(q_idx);
+	//quest_reward(pInd, q_idx);
 	//quest_stage(pInd, q_idx, , FALSE);
 	return TRUE; /* stage has been completed and changed to the next stage */
 }
