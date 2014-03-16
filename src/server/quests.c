@@ -689,7 +689,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 
 	/* scan keywords for match */
 	for (i = 0; i < QI_MAX_KEYWORDS; i++) {
-		if (!q_ptr->keyword[questor_idx][stage][i]) return; /* no more keywords? */
+		if (!q_ptr->keyword[questor_idx][stage][i]) break; /* no more keywords? */
 		if (strcmp(q_ptr->keyword[questor_idx][stage][i], str)) continue; /* not matching? */
 
 		/* reply? */
@@ -707,15 +707,19 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		/* stage change? */
 		if (q_ptr->keyword_stage[questor_idx][stage][i] != -1)
 			quest_stage(q_idx, q_ptr->keyword_stage[questor_idx][stage][i], FALSE);
+
 		return;
 	}
 	/* it was nice small-talking to you, dude */
 #if 1
 	/* if keyword wasn't recognised, repeat input prompt instead of just 'dropping' the convo */
-	quest_dialogue(Ind, q_idx, questor_idx, TRUE),
-	msg_print(Ind, "\374 ");
-	msg_format(Ind, "\374\377u<\377B%s\377u> has nothing to say about that-", q_ptr->questor_name[questor_idx]);
-	msg_print(Ind, "\374 ");
+	quest_dialogue(Ind, q_idx, questor_idx, TRUE);
+	/* don't give 'wassup?' style msg if we just hit RETURN.. silyl */
+	if (str[0]) {
+		msg_print(Ind, "\374 ");
+		msg_format(Ind, "\374\377u<\377B%s\377u> has nothing to say about that.", q_ptr->questor_name[questor_idx]);
+		msg_print(Ind, "\374 ");
+	}
 #endif
 	return;
 }
