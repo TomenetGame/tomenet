@@ -599,6 +599,32 @@ void quest_set_goal(int pInd, int q_idx, int goal) {
 	q_ptr->goals[stage][goal] = TRUE; /* global quest */
 	quest_goal_check(0, q_idx, FALSE);
 }
+/* mark a quest goal as no longer reached. ouch. */
+static void quest_unset_goal(int pInd, int q_idx, int goal) {
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr;
+	int i, stage = quest_get_stage(pInd, q_idx);
+
+	if (!pInd) {
+		q_ptr->goals[stage][goal] = FALSE; /* no player? global goal */
+		return;
+	}
+
+	p_ptr = Players[pInd];
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+		if (p_ptr->quest_idx[i] == q_idx) break;
+	if (i == MAX_CONCURRENT_QUESTS) {
+		q_ptr->goals[stage][goal] = FALSE; /* player isn't on this quest. return global goal. */
+		return;
+	}
+
+	if (q_ptr->individual) {
+		p_ptr->quest_goals[i][goal] = FALSE; /* individual quest */
+		return;
+	}
+
+	q_ptr->goals[stage][goal] = FALSE; /* global quest */
+}
 
 /* mark an optional quest goal as reached */
 void quest_set_goalopt(int pInd, int q_idx, int goalopt) {
@@ -629,6 +655,34 @@ void quest_set_goalopt(int pInd, int q_idx, int goalopt) {
 	/* also check if we can now proceed to the next stage or set flags or hand out rewards */
 	quest_goal_check(pInd, q_idx, FALSE);
 }
+#if 0 /* 0'ed just to kill compiler warning about unused function.. -_- */
+/* mark an optional quest goal as no longer reached. ouch. */
+static void quest_unset_goalopt(int pInd, int q_idx, int goalopt) {
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr;
+	int i, stage = quest_get_stage(pInd, q_idx);
+
+	if (!pInd) {
+		q_ptr->goalsopt[stage][goalopt] = FALSE; /* no player? global goal */
+		return;
+	}
+
+	p_ptr = Players[pInd];
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+		if (p_ptr->quest_idx[i] == q_idx) break;
+	if (i == MAX_CONCURRENT_QUESTS) {
+		q_ptr->goalsopt[stage][goalopt] = FALSE; /* player isn't on this quest. return global goal. */
+		return;
+	}
+
+	if (q_ptr->individual) {
+		p_ptr->quest_goalsopt[i][goalopt] = FALSE; /* individual quest */
+		return;
+	}
+
+	q_ptr->goalsopt[stage][goalopt] = FALSE; /* global quest */
+}
+#endif
 
 /* set/clear a quest flag ('set': TRUE -> set, FALSE -> clear) */
 void quest_set_flag(int pInd, int q_idx, int flag, bool set) {
@@ -1457,7 +1511,7 @@ static void quest_check_goal_target_xy(int Ind, monster_type *m_ptr, object_type
    OBSOLETE: This function will then in turn either check directly or call a location-based checking function.
     --at the moment this function performs ALL sub-checks on its own.
    NOTE/TODO: These checks here actually make p_ptr->quest_target_wpos.. helper information obsolete.. */
-void quest_check_goal_target(int Ind, monster_type *m_ptr, object_type *o_ptr) {
+void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];
 	int i, j, q_idx, stage;
@@ -1524,13 +1578,52 @@ void quest_check_goal_target(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 			if (o_ptr && q_ptr->retrieve[stage][j]) {
 				if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
 				/* decrease the player's retrieve counter, if we got all, goal is completed! */
-				p_ptr->quest_retrieve_number[i][j]--;
-				if (p_ptr->quest_retrieve_number[i][j]) continue; /* not yet */
+				p_ptr->quest_retrieve_number[i][j] -= o_ptr->number;
+				if (p_ptr->quest_retrieve_number[i][j] > 0) continue; /* not yet */
 
 				/* we have completed a target-to-xy goal! */
 				quest_set_goal(Ind, q_idx, j);
 				continue;
 			}
+		}
+	}
+}
+/* Check if we have to un-set an item-retrieval quest goal because we lost <num> items! */
+void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
+	quest_info *q_ptr;
+	player_type *p_ptr = Players[Ind];
+	int i, j, q_idx, stage;
+
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+		/* player actually pursuing a quest? */
+		if (p_ptr->quest_idx[i] == -1) continue;
+
+		if (!p_ptr->quest_target_pos[i]) continue;//redundant with quest_within_target_pos?
+		if (!p_ptr->quest_within_target_wpos[i]) continue;
+
+		q_idx = p_ptr->quest_idx[i];
+		q_ptr = &q_info[q_idx];
+
+		/* quest is deactivated? */
+		if (!q_ptr->active) continue;
+
+		stage = quest_get_stage(Ind, q_idx);
+
+		/* check the quest goals, whether any of them wants a target to this location */
+		for (j = 0; j < QI_GOALS; j++) {
+			/* no r goal? */
+			if (!q_ptr->retrieve[stage][j]) continue;
+
+			/* phew, item has nothing to do with this quest goal? */
+			if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
+
+			/* increase the player's retrieve counter again */
+			p_ptr->quest_retrieve_number[i][j] += num;
+			if (p_ptr->quest_retrieve_number[i][j] <= 0) continue; /* still cool */
+
+			/* we have un-completed a target-to-xy goal, ow */
+			quest_unset_goal(Ind, q_idx, j);
+			continue;
 		}
 	}
 }

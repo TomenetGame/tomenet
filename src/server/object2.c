@@ -7896,10 +7896,8 @@ void inven_item_describe(int Ind, int item)
 /*
  * Increase the "number" of an item in the inventory
  */
-void inven_item_increase(int Ind, int item, int num)
-{
+void inven_item_increase(int Ind, int item, int num) {
 	player_type *p_ptr = Players[Ind];
-
 	object_type *o_ptr = &p_ptr->inventory[item];
 
 	/* Apply */
@@ -7932,6 +7930,9 @@ void inven_item_increase(int Ind, int item, int num)
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 	}
+
+	/* If losing quest items, the quest goal might get unset again! */
+	if (num < 0) quest_check_ungoal_r(Ind, o_ptr, -num);
 }
 
 

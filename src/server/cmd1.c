@@ -2342,6 +2342,9 @@ void carry(int Ind, int pickup, int confirm) {
 					}
 				}
 
+				/* Check whether this item was requested by an item-retrieval quest */
+				quest_check_goal_kr(Ind, NULL, o_ptr);
+
 				/* Carry the item */
 				slot = inven_carry(Ind, o_ptr);
 
@@ -2420,9 +2423,6 @@ void carry(int Ind, int pickup, int confirm) {
 				/* Delete original */
 //				delete_object(wpos, p_ptr->py, p_ptr->px);
 				delete_object_idx(c_ptr->o_idx, FALSE);
-
-				/* Check whether this item was requested by an item-retrieval quest */
-				quest_check_goal_target(Ind, NULL, o_ptr);
 
 				/* Hack -- tell the player of the next object on the pile */
 				whats_under_your_feet(Ind);

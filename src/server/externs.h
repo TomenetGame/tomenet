@@ -2162,7 +2162,8 @@ extern void quest_acquire_confirmed(int Ind, int q_idx, bool quiet);
 extern void quest_reply(int Ind, int q_idx, char *str);
 extern void quest_check_player_location(int Ind);
 extern void quest_check_goal_deliver_xy(int Ind);
-extern void quest_check_goal_target(int Ind, monster_type *m_ptr, object_type *o_ptr);
+extern void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr);
+extern void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num);
 
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue

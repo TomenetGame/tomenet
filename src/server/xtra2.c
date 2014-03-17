@@ -4928,7 +4928,7 @@ void monster_death(int Ind, int m_idx) {
 		return;
 
 	/* Check whether a quest requested this monster dead */
-	quest_check_goal_target(Ind, m_ptr, NULL);
+	quest_check_goal_kr(Ind, m_ptr, NULL);
 
 	dlev = getlevel(wpos);
 	rlev = r_ptr->level;
