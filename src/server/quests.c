@@ -1139,9 +1139,14 @@ void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool inter
 	p_ptr->interact_questor_idx = questor_idx;
 	if (q_ptr->keyword[questor_idx][stage][0]) { /* at least 1 keyword available? */
 		/* hack: if 1st keyword is empty string "", display a "more" prompt */
-		if (q_ptr->keyword[questor_idx][stage][0][0] == 0)
-			Send_request_str(Ind, RID_QUEST + q_idx, "Your reply (or ENTER for more)> ", "");
-		else
+		if (q_ptr->keyword[questor_idx][stage][0][0] == 0) {
+			/* hack: if 1st keyword is "Y" just give a yes/no choice instead of an input prompt? */
+			if (q_ptr->keyword[questor_idx][stage][0][0] == 'Y' &&
+			    q_ptr->keyword[questor_idx][stage][0][1] == 0)
+				Send_request_cfr(Ind, RID_QUEST + q_idx, "Your reply, yes or no?> ", FALSE);
+			else /* normal prompt for keyword input */
+				Send_request_str(Ind, RID_QUEST + q_idx, "Your reply (or ENTER for more)> ", "");
+		} else
 			Send_request_str(Ind, RID_QUEST + q_idx, "Your reply> ", "");
 	}
 }
@@ -1168,7 +1173,9 @@ void quest_reply(int Ind, int q_idx, char *str) {
 
 	/* echo own reply for convenience */
 	msg_print(Ind, "\374 ");
-	msg_format(Ind, "\374\377u>\377U%s", str);
+	if (!strcmp(str, "Y")) msg_print(Ind, "\374\377u>\377UYes");
+	else if (!strcmp(str, "N")) msg_print(Ind, "\374\377u>\377UNo");
+	else msg_format(Ind, "\374\377u>\377U%s", str);
 
 	/* scan keywords for match */
 	for (i = 0; i < QI_MAX_KEYWORDS; i++) {

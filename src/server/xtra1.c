@@ -8360,6 +8360,11 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		if (cfr) quest_acquire_confirmed(Ind, id - RID_QUEST_ACQUIRE, FALSE);
 		return;
 	}
+	else if (id >= RID_QUEST) {
+		if (cfr) quest_reply(Ind, id - RID_QUEST, "Y");
+		else quest_reply(Ind, id - RID_QUEST, "N");
+		return;
+	}
 
 	switch (id) {
 #ifdef ENABLE_GO_GAME

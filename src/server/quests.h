@@ -263,7 +263,7 @@ typedef struct quest_info {
 	s16b talk_focus[QI_QUESTORS];					/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
 	cptr talk[QI_QUESTORS][QI_MAX_STAGES][QI_TALK_LINES];		/* n conversations a 10 lines a 79 characters */
 	u16b talkflags[QI_QUESTORS][QI_MAX_STAGES][QI_TALK_LINES];	/* required flags configuration for a convo line to get displayed  */
-	cptr keyword[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* each convo may allow the player to reply with up to m keywords a 30 chars */
+	cptr keyword[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* each convo may allow the player to reply with up to m keywords a 30 chars; 'Y' as 1st keyword and 'N' as 2nd trigger a yes/no hack */
 	u16b keywordflags[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* required flags configuration for a keyword to be enabled */
 	u16b keywordchangeflags[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* ..and the keyword will change flags to these */
 	s16b keyword_stage[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];/*  ..which will bring the player to a different quest stage */

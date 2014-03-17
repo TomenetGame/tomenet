@@ -27,7 +27,7 @@ V:0.0.1
 # //todo (optional) J:questor moves, teleports, teleports player ...
 # (optional) X (50x repeatable):stage:flags:narration text
 # W (50x repeatable):questor:stage:flags:convo line
-# (optional) Y (30x repeatable):questor:stage:flags:keyword or "YN" for yes/no choice, yes will trigger:changeflags:nextstage
+# (optional) Y (30x repeatable):questor:stage:flags:keyword (or "Y" for 1st keyword and "N" for second, for a yes/no choice):changeflags:nextstage
 # (optional) k:stage:goal:minlev:maxlev:number:spawn:spawn will target
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
