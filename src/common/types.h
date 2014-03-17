@@ -2731,6 +2731,9 @@ struct player_type {
 	s16b quest_stage[MAX_CONCURRENT_QUESTS]; /* in which stage is a quest? */
 	bool quest_flags[MAX_CONCURRENT_QUESTS][16];//QI_FLAGS /* our personal quest flags configuration */
 	bool quest_goals[MAX_CONCURRENT_QUESTS][5]/*QI_GOALS*/, quest_goalsopt[MAX_CONCURRENT_QUESTS][5];/*QI_OPTIONAL*/ /* which goals have we completed so far? */
+	s16b quest_kill_number[MAX_CONCURRENT_QUESTS][5]/*QI_GOALS*/, quest_killopt_number[MAX_CONCURRENT_QUESTS][5];/*QI_OPTIONAL*/ /* which goals have we completed so far? */
+	s16b quest_retrieve_number[MAX_CONCURRENT_QUESTS][5]/*QI_GOALS*/, quest_retrieveopt_number[MAX_CONCURRENT_QUESTS][5];/*QI_OPTIONAL*/ /* which goals have we completed so far? */
+	/* permanent quest info */
 	s16b quest_done[MAX_Q_IDX]; /* player has completed a quest (n times) */
 	s16b quest_cooldown[MAX_Q_IDX]; /* player has to wait n minutes till picking up the quest again */
 	/* for 'individual' quests: */

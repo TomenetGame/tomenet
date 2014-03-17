@@ -1142,6 +1142,35 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	return;
 }
 
+/* test kill quest goal criteria vs an actually killed monster, for a match */
+static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type *m_ptr) {
+	quest_info *q_ptr = &q_info[q_idx];
+
+#if 0
+	s16b kill_ridx[QI_MAX_STAGES][QI_GOALS][10] /* kill certain monster(s), 0 for none, -1 for any. */
+	char kill_rchar[QI_MAX_STAGES][QI_GOALS][5]
+	byte kill_rattr[QI_MAX_STAGES][QI_GOALS][5] /*  ..certain colours, 127 for any. AND's with char/lev. */
+	byte kill_rlevmin[QI_MAX_STAGES], kill_rlevmax[QI_MAX_STAGES][QI_GOALS];
+	s16b kill_number[QI_MAX_STAGES][QI_GOALS]
+#endif
+	return FALSE;
+}
+
+/* test retrieve-item quest goal criteria vs an actually retrieved object, for a match */
+static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_type *o_ptr) {
+	quest_info *q_ptr = &q_info[q_idx];
+
+#if 0
+	s16b retrieve_otval[QI_MAX_STAGES][QI_GOALS][10], retrieve_osval[QI_MAX_STAGES][QI_GOALS][10];
+	s16b retrieve_opval[QI_MAX_STAGES][QI_GOALS][5], retrieve_obpval[QI_MAX_STAGES][QI_GOALS][5];
+	byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5]
+	s16b retrieve_oname1[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2b[QI_MAX_STAGES][QI_GOALS][5]; /* 0 = disabled, -1 == any */
+	int retrieve_ovalue[QI_MAX_STAGES][QI_GOALS]
+	s16b retrieve_number[QI_MAX_STAGES][QI_GOALS]
+#endif
+	return FALSE;
+}
+
 /* Check if player completed a goal restricted to a target wpos.
    Those can be either kill-goals or item-retrieve-goals.
    The monster slain or item retrieved must therefore be given to this function for examination. */
@@ -1196,17 +1225,12 @@ void quest_check_goal_target_xy(int Ind, monster_type *m_ptr, object_type *o_ptr
 				continue;
 
 			/* check for kill goal here */
-			if (m_ptr && q_ptr->kill[stage][j]) {
-				
+			if (m_ptr && q_ptr->kill[stage][j] &&
+			    !quest_goal_matches_kill(q_idx, stage, j, m_ptr)) continue;
 
-				continue;
-			}
 			/* check for retrieve-item goal here */
-			if (o_ptr && q_ptr->retrieve[stage][j]) {
-				
-
-				continue;
-			}
+			if (o_ptr && q_ptr->retrieve[stage][j] &&
+			    !quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
 
 			/* we have completed a target-to-xy goal! */
 			quest_set_goal(Ind, q_idx, j);

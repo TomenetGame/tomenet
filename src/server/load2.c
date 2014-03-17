@@ -2636,10 +2636,24 @@ static errr rd_savefile_new_aux(int Ind) {
 				rd_byte(&tmpbyte);
 				p_ptr->quest_stage[i] = tmpbyte;
 			} else rd_s16b(&p_ptr->quest_stage[i]);
-			for (j = 0; j < QI_GOALS; j++)
-				rd_byte((byte *) &p_ptr->quest_goals[i][j]);
-			for (j = 0; j < QI_OPTIONAL; j++)
-				rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
+
+			if (!older_than(4, 5, 23)) {
+				for (j = 0; j < QI_GOALS; j++) {
+					rd_byte((byte *) &p_ptr->quest_goals[i][j]);
+					rd_s16b(&p_ptr->quest_kill_number[i][j]);
+					rd_s16b(&p_ptr->quest_retrieve_number[i][j]);
+				}
+				for (j = 0; j < QI_OPTIONAL; j++) {
+					rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
+					rd_s16b(&p_ptr->quest_killopt_number[i][j]);
+					rd_s16b(&p_ptr->quest_retrieveopt_number[i][j]);
+				}
+			} else {
+				for (j = 0; j < QI_GOALS; j++)
+					rd_byte((byte *) &p_ptr->quest_goals[i][j]);
+				for (j = 0; j < QI_OPTIONAL; j++)
+					rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
+			}
 
 			rd_byte((byte *) &p_ptr->quest_target_pos[i]);
 			rd_byte((byte *) &p_ptr->quest_within_target_wpos[i]);
