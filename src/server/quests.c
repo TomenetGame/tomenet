@@ -859,7 +859,7 @@ s_printf("%s QUEST_ACQUIRED: (%d,%d,%d;%d,%d) %s (%d) has quest %d '%s'.\n", sho
 
 	/* let him know about just acquiring the quest? */
 	if (!quiet) {
-		msg_print(Ind, "\374 ");
+		//msg_print(Ind, "\374 ");
 		//msg_format(Ind, "\374\377U**\377u You have acquired the quest \"\377U%s\377u\". \377U**", q_name + q_ptr->name);
 		switch (q_ptr->privilege) {
 		case 0: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\".", q_name + q_ptr->name);
