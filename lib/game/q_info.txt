@@ -10,30 +10,28 @@ V:0.0.1
 
 
 # N:index:codename:creator:name[:list of up to 5 codenames of prerequisite quests]
-# C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
-# I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:repeatable:questdonecreditstage
-# //todo: E:(10x repeatable) optional list of colon-separated prequest codenames
-# L:locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y
-# //todo: D:dungeons...
-# T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
-# F:mapfile
-# Q (5x repeatable):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
-# //todo: K (5x repeatable):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
-# U:endingstage (0 = none):duration:cooldown:staticfloor?:quitfloor?
-# A: (5x repeatable per Q line!):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?
+# (optional) C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
+# (optional) I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:repeatable:questdonecreditstage
+# //todo (optional) E:list of colon-separated prequest codenames
+# (optional) T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
+# (optional) U:endingstage (0 = none):duration:cooldown:staticfloor?:quitfloor?
+# Q (5x repeatable, for up to 5 questors):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
+# //todo (optional) K (5x repeatable, per Q line):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
+# L (5x repeatable per Q line):locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:mapfile (if not using terrain type) or '-'
+# (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?
+# //todo (optional) D:dungeon to spawn ...
 #(Parameters from here on are all individual per quest stage)
-# //todo: auto-spawn quest, auto-change stage ('H')
-# //todo: questor changes/polymorphes ('S')
-# //todo: questor moves, teleports, teleports player ('J')
-# //todo: questor hostility ('S' too)
-# X (50x repeatable):stage:flags:narration text
+# //todo (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage:timed change offset:timed change absolute:timed change at realtime:change quietly (skip stage dialogue)
+# //todo (optional) S:questor changes/polymorphes ...
+# //todo (optional) S/H:questor hostility ...
+# //todo (optional) J:questor moves, teleports, teleports player ...
+# (optional) X (50x repeatable):stage:flags:narration text
 # W (50x repeatable):questor:stage:flags:convo line
-# Y (30x repeatable):questor:stage:flags:keyword:changeflags:nextstage
-#  //todo:y/n convo ('y')
-# //todo: dungeon adding ('d')
-# //todo: kill, retrieve, kill optional, retrieve optional ('k', 'r')
-# //todo: P:stage:goal#:goal at wpos wx:wy:wz:goal at pos x:y:goal at terrain type		(change to 'p'? not for now)
-# M:stage:goal#:goal to wpos wx:wy:wz:goal to pos x:y:goal to terrain type			(change to 'm'? not for now)
+# (optional) Y (30x repeatable):questor:stage:flags:keyword or "YN" for yes/no choice, yes will trigger:changeflags:nextstage
+# //todo (optional) k:stage:goal:kill (optional) ...
+# //todo (optional) r:stage:goal:retrieve (optional) ...
+# //todo (optional, if k/r line exists) P:stage:goal#:k/r goal at wpos wx:wy:wz:k/r adjacent terrain extension:k/r goal at exact x:y:mapfile (if not using terrain type) or '-'
+# M:stage:goal#:deliver to wpos wx:wy:wz:deliver to pos x:y:deliver to terrain type:mapfile (if not using terrain type) or '-'
 # B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
 # Z:stage:goal:changeflags
 # G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons
@@ -53,12 +51,12 @@ V:0.0.1
 N:0:testquest0:C. Blue:Test Quest
 C:0
 I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:-1:1
-#L:1:1:-1:-1:-1:0:98:39
-L:0:0:63:63:0:0:98:39
 T:1:1:0:0:0:0:0:0:0:-1:-1
 Q:1:37:b:T:-1:-1:-1:-1:-1:Blind Bat
+#L:1:1:-1:-1:-1:0:98:39:-
+L:0:0:63:63:0:0:98:39:-
+F:0:1:1:0:1
 U:0:0:0:0:0
-A:0:1:1:0:1
 W:0:0:-:Hello, fellow fruit bat!
 W:0:0:-:Would you like some [[ale]] or rather a [[solid ration]]?
 Y:0:0:-:ale:-:1
