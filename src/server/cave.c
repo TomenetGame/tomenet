@@ -3135,7 +3135,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				/* hack: colour of fancy shirts or custom objects can vary  */
 				if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
 				    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
-					if (!o_ptr->xtra1) o_ptr->xtra1 = (*ap);
+					if (!o_ptr->xtra1) o_ptr->xtra1 = (*ap); //wut.. remove this hack? should be superfluous anyway
 					(*ap) = o_ptr->xtra1;
 				}
 
