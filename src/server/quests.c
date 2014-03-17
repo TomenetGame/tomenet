@@ -1146,47 +1146,6 @@ void quest_reply(int Ind, int q_idx, char *str) {
    Those can be either kill-goals or item-retrieve-goals.
    The monster slain or item retrieved must therefore be given to this function for examination. */
 void quest_check_goal_target(int Ind, monster_type *m_ptr, object_type *o_ptr) {
-	quest_info *q_ptr;
-	player_type *p_ptr = Players[Ind];
-	int i, j, q_idx, stage;
-
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
-		if (!p_ptr->quest_deliver_pos[i]) continue;//redundant with quest_within_deliver_pos?
-		if (!p_ptr->quest_within_deliver_wpos[i]) continue;
-
-		q_idx = p_ptr->quest_idx[i];
-		q_ptr = &q_info[q_idx];
-
-		/* quest is deactivated? */
-		if (!q_ptr->active) continue;
-
-		stage = quest_get_stage(Ind, q_idx);
-
-		/* check the quest goals, whether any of them wants a delivery to this location */
-		for (j = 0; j < QI_GOALS; j++) {
-			if (!q_ptr->deliver_pos[stage][j]) continue;
-
-			/* extend target terrain over a wide patch? */
-			if (q_ptr->deliver_terrain_patch[stage][j]) {
-				/* different z-coordinate = instant fail */
-				if (p_ptr->wpos.wz != q_ptr->deliver_wpos[stage][j].wz) continue;
-				/* are we within range and have same terrain type? */
-				if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[stage][j].wx,
-				    q_ptr->deliver_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
-				    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
-				    wild_info[q_ptr->deliver_wpos[stage][j].wy][q_ptr->deliver_wpos[stage][j].wx].type)
-					continue;
-			}
-			/* just check a single, specific wpos? */
-			else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
-
-			/* handle only non-specific x,y goals here */
-			if (q_ptr->deliver_pos_x[stage][j] != -1) continue;
-
-			/* we have completed a delivery-to-xy goal! */
-			quest_set_goal(Ind, q_idx, j);
-		}
-	}
 }
 /* Check if player completed a goal restricted to a target wpos and specific x,y.
    Those can be either kill-goals or item-retrieve-goals.
@@ -1196,9 +1155,12 @@ void quest_check_goal_target_xy(int Ind, monster_type *m_ptr, object_type *o_ptr
 	player_type *p_ptr = Players[Ind];
 	int i, j, q_idx, stage;
 
+	/* paranoia -- neither a kill has been made nor an item picked up */
+	if (!m_ptr && !o_ptr) return;
+
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
-		if (!p_ptr->quest_deliver_pos[i]) continue;//redundant with quest_within_deliver_pos?
-		if (!p_ptr->quest_within_deliver_wpos[i]) continue;
+		if (!p_ptr->quest_target_pos[i]) continue;//redundant with quest_within_target_pos?
+		if (!p_ptr->quest_within_target_wpos[i]) continue;
 
 		q_idx = p_ptr->quest_idx[i];
 		q_ptr = &q_info[q_idx];
@@ -1208,36 +1170,54 @@ void quest_check_goal_target_xy(int Ind, monster_type *m_ptr, object_type *o_ptr
 
 		stage = quest_get_stage(Ind, q_idx);
 
-		/* check the quest goals, whether any of them wants a delivery to this location */
+		/* check the quest goals, whether any of them wants a target to this location */
 		for (j = 0; j < QI_GOALS; j++) {
-			if (!q_ptr->deliver_pos[stage][j]) continue;
+			if (!q_ptr->target_pos[stage][j]) continue;
+
+			/* handle only specific x,y goals here */
+			if (q_ptr->target_pos_x[stage][j] == -1) continue;
 
 			/* extend target terrain over a wide patch? */
-			if (q_ptr->deliver_terrain_patch[stage][j]) {
+			if (q_ptr->target_terrain_patch[stage][j]) {
 				/* different z-coordinate = instant fail */
-				if (p_ptr->wpos.wz != q_ptr->deliver_wpos[stage][j].wz) continue;
+				if (p_ptr->wpos.wz != q_ptr->target_wpos[stage][j].wz) continue;
 				/* are we within range and have same terrain type? */
-				if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[stage][j].wx,
-				    q_ptr->deliver_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
+				if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[stage][j].wx,
+				    q_ptr->target_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
 				    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
-				    wild_info[q_ptr->deliver_wpos[stage][j].wy][q_ptr->deliver_wpos[stage][j].wx].type)
+				    wild_info[q_ptr->target_wpos[stage][j].wy][q_ptr->target_wpos[stage][j].wx].type)
 					continue;
 			}
 			/* just check a single, specific wpos? */
-			else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
+			else if (!inarea(&q_ptr->target_wpos[stage][j], &p_ptr->wpos)) continue;
 
-			/* handle only specific x,y goals here */
-			if (q_ptr->deliver_pos_x[stage][j] == -1) continue;
+			if (q_ptr->target_pos_x[stage][j] != p_ptr->px &&
+			    q_ptr->target_pos_y[stage][j] != p_ptr->py)
+				continue;
 
-			if (q_ptr->deliver_pos_x[stage][j] == p_ptr->px &&
-			    q_ptr->deliver_pos_y[stage][j] == p_ptr->py)
-				/* we have completed a delivery-to-xy goal! */
-				quest_set_goal(Ind, q_idx, j);
+			/* check for kill goal here */
+			if (m_ptr && q_ptr->kill[stage][j]) {
+				
+
+				continue;
+			}
+			/* check for retrieve-item goal here */
+			if (o_ptr && q_ptr->retrieve[stage][j]) {
+				
+
+				continue;
+			}
+
+			/* we have completed a target-to-xy goal! */
+			quest_set_goal(Ind, q_idx, j);
 		}
 	}
 }
 
-/* Check if player completed a deliver goal to a wpos */
+/* Check if player completed a deliver goal to a wpos.
+   Actually when we're called then we already know that we're at a fitting wpos
+   for at least one quest. :-p Just have to check for all concurrent quests to
+   make sure we set all their goals too. */
 void quest_check_goal_deliver_wpos(int Ind) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];
@@ -1259,6 +1239,9 @@ void quest_check_goal_deliver_wpos(int Ind) {
 		for (j = 0; j < QI_GOALS; j++) {
 			if (!q_ptr->deliver_pos[stage][j]) continue;
 
+			/* handle only non-specific x,y goals here */
+			if (q_ptr->deliver_pos_x[stage][j] != -1) continue;
+
 			/* extend target terrain over a wide patch? */
 			if (q_ptr->deliver_terrain_patch[stage][j]) {
 				/* different z-coordinate = instant fail */
@@ -1273,10 +1256,7 @@ void quest_check_goal_deliver_wpos(int Ind) {
 			/* just check a single, specific wpos? */
 			else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
 
-			/* handle only non-specific x,y goals here */
-			if (q_ptr->deliver_pos_x[stage][j] != -1) continue;
-
-			/* we have completed a delivery-to-xy goal! */
+			/* we have completed a delivery-to-wpos goal! */
 			quest_set_goal(Ind, q_idx, j);
 		}
 	}
@@ -1303,6 +1283,9 @@ void quest_check_goal_deliver_xy(int Ind) {
 		for (j = 0; j < QI_GOALS; j++) {
 			if (!q_ptr->deliver_pos[stage][j]) continue;
 
+			/* handle only specific x,y goals here */
+			if (q_ptr->deliver_pos_x[stage][j] == -1) continue;
+
 			/* extend target terrain over a wide patch? */
 			if (q_ptr->deliver_terrain_patch[stage][j]) {
 				/* different z-coordinate = instant fail */
@@ -1316,9 +1299,6 @@ void quest_check_goal_deliver_xy(int Ind) {
 			}
 			/* just check a single, specific wpos? */
 			else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
-
-			/* handle only specific x,y goals here */
-			if (q_ptr->deliver_pos_x[stage][j] == -1) continue;
 
 			if (q_ptr->deliver_pos_x[stage][j] == p_ptr->px &&
 			    q_ptr->deliver_pos_y[stage][j] == p_ptr->py)
@@ -1668,6 +1648,9 @@ void quest_check_player_location(int Ind) {
 							p_ptr->quest_deliver_xy[i] = TRUE;
 							/* and check right away if we're already on the correct x,y location */
 							quest_check_goal_deliver_xy(Ind);
+						} else {
+							/* we are at the requested deliver location (for at least this quest)! (wpos) */
+							quest_check_goal_deliver_wpos(Ind);
 						}
 						found = TRUE;
 						break;
@@ -1682,6 +1665,9 @@ void quest_check_player_location(int Ind) {
 						p_ptr->quest_deliver_xy[i] = TRUE;
 						/* and check right away if we're already on the correct x,y location */
 						quest_check_goal_deliver_xy(Ind);
+					} else {
+						/* we are at the requested deliver location (for at least this quest)! (wpos) */
+						quest_check_goal_deliver_wpos(Ind);
 					}
 					found = TRUE;
 					break;
