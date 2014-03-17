@@ -32,8 +32,8 @@ V:0.0.1
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
 # //todo (optional) r:stage:goal:retrieve (optional) ...
-# //todo (optional, if k/r line exists) P:stage:goal#:k/r goal at wpos wx:wy:wz:k/r adjacent terrain extension:k/r goal at exact x:y:mapfile (if not using terrain type) or '-'
-# M:stage:goal#:deliver to wpos wx:wy:wz:deliver to pos x:y:deliver to terrain type:mapfile (if not using terrain type) or '-'
+# (optional, if k/r line exists) P:stage:goal#:goalwpos wx:wy:wz:adjacent terrain extension:goal at exact x:y:mapfile (if not using terrain type) or '-'
+# M:stage:goal#:deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:mapfile (if not using terrain type) or '-'
 # B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
 # Z:stage:goal:changeflags
 # G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons
@@ -67,8 +67,8 @@ Y:0:0:-:solid ration:-:2
 W:0:1:-:Well then, visit the shop keeper of the general store!
 W:0:2:-:Well then, visit the shop keeper of the general store..
 #position 105:40 for actual Bree's general store entrance:
-M:1:1:32:32:0:105:40:0
-M:2:1:32:32:0:105:40:0
+M:1:1:32:32:0:0:105:40:-
+M:2:1:32:32:0:0:105:40:-
 G:1:3:1
 G:2:4:1
 O:3:0:0

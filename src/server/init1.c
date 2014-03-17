@@ -7903,19 +7903,48 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'P' for position at which a kill/retrieve quest has to be executed */
 		if (buf[0] == 'P') {
-#if 0
+			int wx, wy, wz, terr, x, y;
+
 			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
- #if 0
-	bool target_pos[QI_MAX_STAGES][QI_GOALS];<----->		/* enable target pos? */
-	struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];<->	/* kill/retrieve specifically at this world pos */
-	s16b target_pos_x[QI_MAX_STAGES][QI_GOALS], target_pos_y[QI_MAX_STAGES][QI_GOALS]; /* at specifically this position (even usable for kill/retrieve stuff?) */
-	bool target_terrain_patch[QI_MAX_STAGES][QI_GOALS];<--->	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
-									   max radius is QI_TERRAIN_PATCH_RADIUS. */
-	cptr target_tpref[QI_MAX_STAGES][QI_GOALS];<--->		/* filename of map to load, or empty for none */
- #endif
-#endif
+			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%s",
+			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, tmpbuf)) return (1);
+
+			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+			if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
+
+			if (goal > 0) { /* main goal */
+				goal--;
+				q_ptr->target_pos[stage][goal] = TRUE;;
+				q_ptr->target_wpos[stage][goal].wx = (char)wx;
+				q_ptr->target_wpos[stage][goal].wy = (char)wy;
+				q_ptr->target_wpos[stage][goal].wz = (char)wz;
+				q_ptr->target_terrain_patch[stage][goal] = (terr != 0);
+				q_ptr->target_pos_x[stage][goal] = x;
+				q_ptr->target_pos_y[stage][goal] = y;
+
+				if (tmpbuf[0] == '-') q_ptr->target_tpref[stage][goal] = NULL;
+				else {
+					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					strcpy(c, tmpbuf);
+					q_ptr->target_tpref[stage][goal] = c;
+				}
+			} else if (goal < 0) { /* optional goal */
+				goal = -(goal + 1);
+				q_ptr->targetopt_pos[stage][goal] = TRUE;;
+				q_ptr->targetopt_wpos[stage][goal].wx = (char)wx;
+				q_ptr->targetopt_wpos[stage][goal].wy = (char)wy;
+				q_ptr->targetopt_wpos[stage][goal].wz = (char)wz;
+				q_ptr->targetopt_terrain_patch[stage][goal] = (terr != 0);
+				q_ptr->targetopt_pos_x[stage][goal] = x;
+				q_ptr->targetopt_pos_y[stage][goal] = y;
+
+				if (tmpbuf[0] == '-') q_ptr->targetopt_tpref[stage][goal] = NULL;
+				else {
+					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					strcpy(c, tmpbuf);
+					q_ptr->targetopt_tpref[stage][goal] = c;
+				}
+			}
 			continue;
 		}
 
@@ -7924,8 +7953,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			int wx, wy, wz, x, y, terr;
 
 			s = buf + 2;
-			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d",
-			    &stage, &goal, &wx, &wy, &wz, &x, &y, &terr)) return (1);
+			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%s",
+			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, tmpbuf)) return (1);
 
 			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
 			if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
@@ -7936,18 +7965,32 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_ptr->deliver_wpos[stage][goal].wx = (char)wx;
 				q_ptr->deliver_wpos[stage][goal].wy = (char)wy;
 				q_ptr->deliver_wpos[stage][goal].wz = (char)wz;
+				q_ptr->deliver_terrain_patch[stage][goal] = (terr != 0);
 				q_ptr->deliver_pos_x[stage][goal] = x;
 				q_ptr->deliver_pos_y[stage][goal] = y;
-				q_ptr->deliver_terrain_patch[stage][goal] = (terr != 0);
+
+				if (tmpbuf[0] == '-') q_ptr->deliver_tpref[stage][goal] = NULL;
+				else {
+					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					strcpy(c, tmpbuf);
+					q_ptr->deliver_tpref[stage][goal] = c;
+				}
 			} else if (goal < 0) { /* optional goal */
 				goal = -(goal + 1);
 				q_ptr->deliveropt_pos[stage][goal] = TRUE;;
 				q_ptr->deliveropt_wpos[stage][goal].wx = (char)wx;
 				q_ptr->deliveropt_wpos[stage][goal].wy = (char)wy;
 				q_ptr->deliveropt_wpos[stage][goal].wz = (char)wz;
+				q_ptr->deliveropt_terrain_patch[stage][goal] = (terr != 0);
 				q_ptr->deliveropt_pos_x[stage][goal] = x;
 				q_ptr->deliveropt_pos_y[stage][goal] = y;
-				q_ptr->deliveropt_terrain_patch[stage][goal] = (terr != 0);
+
+				if (tmpbuf[0] == '-') q_ptr->deliveropt_tpref[stage][goal] = NULL;
+				else {
+					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					strcpy(c, tmpbuf);
+					q_ptr->deliveropt_tpref[stage][goal] = c;
+				}
 			}
 			continue;
 		}
