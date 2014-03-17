@@ -8199,7 +8199,7 @@ void do_slash_cmd(int Ind, char *message)
 				for (i = 0; i < max_q_idx; i++) {
 					msg_format(Ind, " %3d [%10s] %sS:%d%s %s %s %4d -- Qx%d '%s' by %s",
 					    i, q_info[i].codename, q_info[i].individual ? "i" : "", quest_get_stage(Ind, i), q_info[i].individual ? format("(%d)", q_info[i].stage) : "",
-					    q_info[i].active ? "A" : "", q_info[i].disabled ? "%" : "", q_info[i].cur_cooldown,
+					    q_info[i].active ? "A" : "", q_info[i].disabled ? "%" : "", quest_get_cooldown(Ind, i),
 					    q_info[i].questors, q_name + q_info[i].name, q_info[i].creator);
 				}
 				/* display extra info? */
@@ -8272,16 +8272,18 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/qccd")) { /* clear a quest's cooldown */
-				if (tk != 1) {
-					msg_print(Ind, "Usage: /qccd <q_idx>");
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /qccd <q_idx> [Ind]");
 					return;
 				}
-				if (!q_info[k].cur_cooldown) {
+				if (tk > 1) i = atoi(token[2]);
+				else i = 0;
+				if (!quest_get_cooldown(i, k)) {
 					msg_format(Ind, "Quest %d (%s) is not on cooldown.", k, q_info[k].codename);
 					return;
 				}
 				msg_format(Ind, "\377BCompleted cooldown of quest %d (%s).", k, q_info[k].codename);
-				q_info[k].cur_cooldown = 0;
+				quest_set_cooldown(i, k, 0);
 				return;
 			}
 			else if (prefix(message, "/qdis")) { /* disable a quest */

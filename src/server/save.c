@@ -1360,7 +1360,10 @@ static bool wr_savefile_new(int Ind) {
 	}
 
 	/* remember quests we completed */
-	for (i = 0; i < MAX_Q_IDX; i++) wr_s16b(p_ptr->quest_done[i]);
+	for (i = 0; i < MAX_Q_IDX; i++) {
+		wr_s16b(p_ptr->quest_done[i]);
+		wr_s16b(p_ptr->quest_cooldown[i]);
+	}
 
         wr_byte(p_ptr->spell_project);
 

@@ -2146,6 +2146,8 @@ extern void quest_set_goal(int pInd, int q_idx, int goal);
 extern void quest_set_goalopt(int pInd, int q_idx, int goalopt);
 extern void quest_set_flag(int pInd, int q_idx, int flag, bool set);
 extern void quest_set_stage(int pInd, int q_idx, int stage, bool quiet);
+extern s16b quest_get_cooldown(int pInd, int q_idx);
+extern void quest_set_cooldown(int pInd, int q_idx, s16b cooldown);
 extern void quest_interact(int Ind, int q_idx, int questor_idx);
 extern void quest_reply(int Ind, int q_idx, char *str);
 extern void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat);

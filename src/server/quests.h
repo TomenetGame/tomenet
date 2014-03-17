@@ -164,12 +164,11 @@ typedef struct quest_info {
     /* QUEST DURATION */
 	/* quest duration, after it was accepted, until it expires */
 	bool individual;			/* quest isn't global, but stage/flags/goals are stored individually for each player,
-						   allowing everyone to have his own personal 'instance' of the quest running simultaneusly. */
+						   allowing everyone to have his own personal 'instance' of the quest running simultaneusly.
+						   For example questors may spawn other questors -> must be global, not individual. */
 	s16b repeatable;			/* player may repeat this quest n times (0 = can only do this quest once) */
 	s16b cooldown;				/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
 	int max_duration;			/* in seconds, 0 for never */
-	bool per_player;			/* this quest isn't global but can be done by each player individually.
-						   For example questors may spawn other questors -> must be global, not per_player. */
 	bool static_floor;			/* questor floor will be static while the quest is active */
 	bool quit_floor;			/* if player leaves the questor's floor, the quest will terminate and be lost */
 	s16b ending_stage;			/* if this stage is reached, the quest will terminate */

@@ -31,11 +31,13 @@
 /* set log level (0 to disable, 1 for normal logging, 2 for debug logging) */
 #define QDEBUG 2
 
-
 /* Disable a quest on error? */
 //#define QERROR_DISABLE
 /* Otherwise just put it on this cooldown (minutes) */
 #define QERROR_COOLDOWN 30
+
+/* Default cooldown in minutes. */
+#define QI_COOLDOWN_DEFAULT 5
 
 
 static void quest_goal_check_reward(int pInd, int q_idx);
@@ -43,6 +45,7 @@ static void quest_goal_check_reward(int pInd, int q_idx);
 
 /* error messages for quest_acquire() */
 static cptr qi_msg_deactivated = "\377sThis quest is currently unavailable.";
+static cptr qi_msg_cooldown = "\377yYou cannot acquire this quest again just yet.";
 static cptr qi_msg_minlev = "\377yYour level is too low to acquire this quest.";
 static cptr qi_msg_maxlev = "\377oYour level is too high to acquire this quest.";
 static cptr qi_msg_race = "\377oYour race is not eligible to acquire this quest.";
@@ -410,13 +413,59 @@ s_printf("deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpo
 	if (q_ptr->static_floor) new_players_on_depth(&wpos, 0, FALSE);
 }
 
+/* return a current quest's cooldown. Either just uses q_ptr->cur_cooldown directly for global
+   quests, or p_ptr->quest_cooldown for individual quests. */
+s16b quest_get_cooldown(int pInd, int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+
+	if (pInd && q_ptr->individual) return Players[pInd]->quest_cooldown[q_idx];
+	return q_ptr->cur_cooldown;
+}
+
+/* set a current quest's cooldown. Either just uses q_ptr->cur_cooldown directly for global
+   quests, or p_ptr->quest_cooldown for individual quests. */
+void quest_set_cooldown(int pInd, int q_idx, s16b cooldown) {
+	quest_info *q_ptr = &q_info[q_idx];
+
+	if (pInd && q_ptr->individual) Players[pInd]->quest_cooldown[q_idx] = cooldown;
+	else q_ptr->cur_cooldown = cooldown;
+}
+
 /* a quest has successfully ended, clean up */
-static void quest_terminate(int q_idx) {
+static void quest_terminate(int pInd, int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, j;
 
 	/* give players credit */
+	if (pInd && q_ptr->individual) {
+#if QDEBUG > 0
+		s_printf("%s QUEST_TERMINATE_INDIVIDUAL: '%s' ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
+#endif
+		p_ptr = Players[pInd];
+
+		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			if (p_ptr->quest_idx[j] == q_idx) break;
+		if (j == MAX_CONCURRENT_QUESTS) return; //oops?
+
+		if (p_ptr->quest_done[q_idx] < 10000) p_ptr->quest_done[q_idx]++;
+
+		/* he is no longer on the quest, since the quest has finished */
+		p_ptr->quest_idx[j] = -1;
+		msg_format(pInd, "\374\377uYou have completed the quest \"\377U%s\377u\".", q_name + q_ptr->name);
+		msg_print(pInd, "\374 ");
+
+		/* don't respawn the questor *immediately* again, looks silyl */
+		if (q_ptr->cooldown == -1) p_ptr->quest_cooldown[q_idx] = QI_COOLDOWN_DEFAULT;
+		else p_ptr->quest_cooldown[q_idx] = q_ptr->cooldown;
+
+		/* individual quests don't get cleaned up by deactivation */
+		return;
+	}
+
+#if QDEBUG > 0
+	s_printf("%s QUEST_TERMINATE_GLOBAL: '%s' ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
+#endif
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
@@ -433,7 +482,7 @@ static void quest_terminate(int q_idx) {
 	}
 
 	/* don't respawn the questor *immediately* again, looks silyl */
-	if (!q_ptr->cooldown) q_ptr->cur_cooldown = 5; /* wait 5 minutes */
+	if (q_ptr->cooldown == -1) q_ptr->cur_cooldown = QI_COOLDOWN_DEFAULT;
 	else q_ptr->cur_cooldown = q_ptr->cooldown;
 
 	/* clean up */
@@ -606,6 +655,10 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	int i, j, k;
 	bool anything = FALSE;
 
+#if QDEBUG > 0
+	s_printf("%s QUEST_STAGE: '%s' %d->%d ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->stage, stage, q_ptr->codename, q_ptr->creator);
+#endif
+
 	/* dynamic info */
 	//int stage_prev = quest_get_stage(pInd, q_idx);
 
@@ -675,7 +728,12 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 
 
 	/* quest termination? */
-	if (q_ptr->ending_stage && q_ptr->ending_stage == stage) quest_terminate(q_idx);
+	if (q_ptr->ending_stage && q_ptr->ending_stage == stage) {
+#if QDEBUG > 0
+		s_printf("%s QUEST_STAGE_ENDING: '%s' %d ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, stage, q_ptr->codename, q_ptr->creator);
+#endif
+		quest_terminate(pInd, q_idx);
+	}
 
 	/* auto-quest-termination? (actually redundant with ending_stage)
 	   If a stage has no dialogue keywords, or stage goals, or timed/auto stage change
@@ -703,7 +761,12 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	if (q_ptr->timed_stage_real[stage]) anything = TRUE;
 
 	/* really nothing left to do? */
-	if (!anything) quest_terminate(q_idx);
+	if (!anything) {
+#if QDEBUG > 0
+		s_printf("%s QUEST_STAGE_EMPTY: '%s' %d ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, stage, q_ptr->codename, q_ptr->creator);
+#endif
+		quest_terminate(pInd, q_idx);
+	}
 }
 
 /* Store some information of the current stage in the p_ptr array,
@@ -754,6 +817,11 @@ bool quest_acquire(int Ind, int q_idx, bool quiet, cptr *msg) {
 	/* quest is deactivated? -- paranoia here */
 	if (!q_ptr->active) {
 		*msg = qi_msg_deactivated;
+		return FALSE;
+	}
+	/* quest is on [individual] cooldown? */
+	if (quest_get_cooldown(Ind, q_idx)) {
+		*msg = qi_msg_cooldown;
 		return FALSE;
 	}
 
@@ -1259,6 +1327,9 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 		/* we may get rewards? */
 		if (i == QI_REWARD_GOALS) {
 			/* create and hand over this reward! */
+#if QDEBUG > 0
+			s_printf("%s QUEST_GOAL_CHECK_REWARD: Rewarded in '%s' %d ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, stage, q_ptr->codename, q_ptr->creator);
+#endif
 
 			/* specific reward */
 			if (q_ptr->reward_otval[stage][j]) {
@@ -1319,18 +1390,18 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 }
 
 /* Check if quest goals of the current stage have been completed and accordingly
-   call quest_reward() and/or quest_set_stage() to advance.
+   call quest_goal_check_reward() and/or quest_set_stage() to advance.
    Goals can only be completed by players who are pursuing that quest.
    'interacting' is TRUE if a player is interacting with the questor. */
 bool quest_goal_check(int pInd, int q_idx, bool interacting) {
 	int stage;
 
-	/* check goals for rewards first */
-	quest_goal_check_reward(pInd, q_idx);
-
 	/* check goals for stage advancement */
 	stage = quest_goal_check_stage(pInd, q_idx);
 	if (stage == -1) return FALSE; /* stage not yet completed */
+
+	/* check goals for rewards */
+	quest_goal_check_reward(pInd, q_idx);
 
 	/* advance stage! */
 	quest_set_stage(pInd, q_idx, stage, FALSE);

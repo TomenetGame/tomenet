@@ -19,7 +19,7 @@ V:0.0.1
 # F:mapfile
 # Q (5x repeatable):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
 # //todo: K (5x repeatable):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
-# U:endingstage (0 = none):duration:cooldown:perplayer?:staticfloor?:quitfloor?
+# U:endingstage (0 = none):duration:cooldown:staticfloor?:quitfloor?
 # A: (5x repeatable per Q line!):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?
 #(Parameters from here on are all individual per quest stage)
 # //todo: auto-spawn quest, auto-change stage ('H')
@@ -57,7 +57,7 @@ I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:-1:1
 L:0:0:63:63:0:0:98:39
 T:1:1:0:0:0:0:0:0:0:-1:-1
 Q:1:37:b:T:-1:-1:-1:-1:-1:Blind Bat
-U:0:0:0:0:0:0
+U:0:0:-1:0:0
 A:0:1:1:0:1
 W:0:0:-:Hello, fellow fruit bat!
 W:0:0:-:Would you like some [[ale]] or rather a [[solid ration]]?
