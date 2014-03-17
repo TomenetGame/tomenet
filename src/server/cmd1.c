@@ -2421,6 +2421,9 @@ void carry(int Ind, int pickup, int confirm) {
 //				delete_object(wpos, p_ptr->py, p_ptr->px);
 				delete_object_idx(c_ptr->o_idx, FALSE);
 
+				/* Check whether this item was requested by an item-retrieval quest */
+				quest_check_goal_target(Ind, NULL, o_ptr);
+
 				/* Hack -- tell the player of the next object on the pile */
 				whats_under_your_feet(Ind);
 

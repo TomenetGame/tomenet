@@ -4927,6 +4927,9 @@ void monster_death(int Ind, int m_idx) {
 	    !streq(r_name_get(m_ptr), "Great Pumpkin")) /* allow a mixed hunting group */
 		return;
 
+	/* Check whether a quest requested this monster dead */
+	quest_check_goal_target(Ind, m_ptr, NULL);
+
 	dlev = getlevel(wpos);
 	rlev = r_ptr->level;
 
