@@ -1376,6 +1376,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					o_ptr = &forge;
 					object_wipe(o_ptr);
 					invcopy(o_ptr, lookup_kind(q_ptr->reward_otval[stage][j], q_ptr->reward_osval[stage][j]));
+					o_ptr->number = 1;
 					o_ptr->name1 = q_ptr->reward_oname1[stage][j];
 					o_ptr->name2 = q_ptr->reward_oname2[stage][j];
 					o_ptr->name2b = q_ptr->reward_oname2b[stage][j];
@@ -1398,6 +1399,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					o_ptr = &forge;
 					object_wipe(o_ptr);
 					invcopy(o_ptr, lookup_kind(q_ptr->reward_otval[stage][j], q_ptr->reward_osval[stage][j]));
+					o_ptr->number = 1;
 					apply_magic(&q_ptr->current_wpos[0], o_ptr, -2, q_ptr->reward_ogood[stage][j], q_ptr->reward_ogreat[stage][j], q_ptr->reward_ovgreat[stage][j], FALSE, resf);
 					o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
 					o_ptr->note_utag = 0;
