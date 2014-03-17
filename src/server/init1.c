@@ -7771,26 +7771,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-		/* Process 'y' for yes/no convo choice */
-		if (buf[0] == 'y') {
-#if 0
-			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
-#endif
-			continue;
-		}
-
-		/* Process 'd' for adding dungeon/tower */
-		if (buf[0] == 'd') {
-#if 0
-			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
-#endif
-			continue;
-		}
-
 		/* Process 'k' for kill quest goal */
 		if (buf[0] == 'k') {
 			/* now we have 3 sub-types of 'k' lines -_- uhh */

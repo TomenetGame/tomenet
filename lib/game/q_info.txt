@@ -37,7 +37,7 @@ V:0.0.1
 # (optional, if k/r line exists) P:stage:goal#:goalwpos wx:wy:wz:adjacent terrain extension:goal at exact x:y:mapfile (if not using terrain type) or '-'
 # M:stage:goal#:deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:mapfile (if not using terrain type) or '-'
 # B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
-# Z:stage:goal:changeflags
+# //todo Z:stage:goal:changeflags
 # G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons
 # O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free) separated by colons
 # R:stage:(10x repeatable) define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:createreward()?:gold:exp:specialstatuseffect
