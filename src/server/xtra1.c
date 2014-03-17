@@ -8355,6 +8355,12 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 	/* verify that a y/n confirmation had been requested */
 	if (RTYPE_CFR != p_ptr->request_type) return;
 
+	/* quests occupy an id broadband */
+	if (id >= RID_QUEST_ACQUIRE) {
+		if (cfr) quest_acquire_confirmed(Ind, id - RID_QUEST_ACQUIRE, FALSE);
+		return;
+	}
+
 	switch (id) {
 #ifdef ENABLE_GO_GAME
 	case RID_GO:

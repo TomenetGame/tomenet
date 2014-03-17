@@ -57,7 +57,7 @@ I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:-1:1
 L:0:0:63:63:0:0:98:39
 T:1:1:0:0:0:0:0:0:0:-1:-1
 Q:1:37:b:T:-1:-1:-1:-1:-1:Blind Bat
-U:0:0:-1:0:0
+U:0:0:0:0:0
 A:0:1:1:0:1
 W:0:0:-:Hello, fellow fruit bat!
 W:0:0:-:Would you like some [[ale]] or rather a [[solid ration]]?

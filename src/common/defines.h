@@ -7909,14 +7909,15 @@ extern int PlayerUID;
 #define RTYPE_CFR	3
 
 /* ..and request IDs for p_ptr->request_id */
-#define RID_NONE	0	/* fixed */
-#ifdef ENABLE_GO_GAME		/* go.c Go minigame */
- #define RID_GO		1
- #define RID_GO_START	2
- #define RID_GO_MOVE	3
+#define RID_NONE		0	/* fixed */
+#ifdef ENABLE_GO_GAME			/* go.c Go minigame */
+ #define RID_GO			1
+ #define RID_GO_START		2
+ #define RID_GO_MOVE		3
 #endif
-#define RID_GUILD_RENAME 4
-#define RID_QUEST	100	/* this is a broadband RID, going from its value up to value+questtypes */
+#define RID_GUILD_RENAME	4
+#define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
+#define RID_QUEST_ACQUIRE	150	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 
 /* House type flags */
 #define HF_NONE		0x0000
