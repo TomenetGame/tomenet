@@ -5456,10 +5456,10 @@ void calc_boni(int Ind) {
 	p_ptr->skill_fos += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_fos * 2));// + get_skill(p_ptr, SKILL_SNEAKINESS);
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
-        p_ptr->skill_thn += (p_ptr->cp_ptr->x_thn * (((3 * get_skill(p_ptr, SKILL_MASTERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
+        p_ptr->skill_thn += (p_ptr->cp_ptr->x_thn * (((2 * get_skill(p_ptr, SKILL_MASTERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
 
 	/* Affect Skill -- combat (shooting) (Level, by Class) */
-	p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * (((3 * get_skill(p_ptr, SKILL_ARCHERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
+	p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * (((2 * get_skill(p_ptr, SKILL_ARCHERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
 
 	/* Affect Skill -- combat (throwing) (Level, by Class) */
 	p_ptr->skill_tht += (p_ptr->cp_ptr->x_thb * get_skill_scale(p_ptr, SKILL_COMBAT, 10));

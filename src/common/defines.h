@@ -1305,7 +1305,7 @@
 #endif /* 0 */
 #define GROW_TREE	5000		/* How often to grow a new tree in town */
 #define BREAK_GLYPH	350		/* Rune of protection resistance */
-#define BTH_PLUS_ADJ	2		/* Adjust BTH per plus-to-hit */
+#define BTH_PLUS_ADJ	3		/* Adjust BTH per plus-to-hit */
 #define MON_MULT_ADJ	8		/* High value slows multiplication */
 #define MON_SUMMON_ADJ	2		/* Adjust level of summoned creatures */
 #define MON_DRAIN_LIFE	2		/* Percent of player exp drained per hit */
