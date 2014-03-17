@@ -7873,9 +7873,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					goal = -(goal + 1);
 					q_ptr->killopt[stage][goal] = TRUE;
 
-					for (j = 0; j < 5; j++)
+					for (j = 0; j < 5; j++) {
 						q_ptr->killopt_rchar[stage][goal][j] = rchar[j];
 						q_ptr->killopt_rattr[stage][goal][j] = rattr[j];
+					}
 				}
 				continue;
 			}
@@ -7884,21 +7885,107 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'r' for retrieve quest goal */
 		if (buf[0] == 'r') {
-#if 0
-			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
- #if 0
-	bool retrieve[QI_MAX_STAGES][QI_GOALS];>			/* toggle */
-	s16b retrieve_otval[QI_MAX_STAGES][QI_GOALS][10], retrieve_osval[QI_MAX_STAGES][QI_GOALS][10];<>/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval, 0 = not checked) */
-	s16b retrieve_opval[QI_MAX_STAGES][QI_GOALS][5], retrieve_obpval[QI_MAX_STAGES][QI_GOALS][5];<->/* umm, let's say 9999 = not checked :-p, -9999 = any */
-	byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5];		/*  ..certain colours (flavoured items only), 255 = not checked, 254 = any */
-	s16b retrieve_oname1[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2b[QI_MAX_STAGES][QI_GOALS][5]; /* -3 = not checked, -2 == any except zero, -1 = any */
-	int retrieve_ovalue[QI_MAX_STAGES][QI_GOALS];<->		/* minimum value of the item (0 to disab..wait) */
-	s16b retrieve_number[QI_MAX_STAGES][QI_GOALS];<>		/* amount of fitting items to retrieve */
- #endif
-#endif
-			continue;
+			/* now we have 3 sub-types of 'r' lines too =P */
+			if (buf[1] == ':') { /* init */
+				int minval, num;
+
+				s = buf + 2;
+				if (4 != sscanf(s, "%d:%d:%d:%d",
+				    &stage, &goal, &minval, &num))
+					return (1);
+
+				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
+
+				if (goal > 0) { /* main goal */
+					goal--;
+					q_ptr->retrieve[stage][goal] = TRUE;
+
+					q_ptr->retrieve_ovalue[stage][goal] = minval;
+					q_ptr->retrieve_number[stage][goal] = num;
+				} else if (goal < 0) { /* optional goal */
+					goal = -(goal + 1);
+					q_ptr->retrieveopt[stage][goal] = TRUE;
+
+					q_ptr->retrieveopt_ovalue[stage][goal] = minval;
+					q_ptr->retrieveopt_number[stage][goal] = num;
+				}
+				continue;
+			} else if (buf[2] == 'I') { /* specify race-indices */
+				int tval[10], sval[10];
+
+				s = buf + 3;
+				if (4 > sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				    &stage, &goal,
+				    &tval[0], &sval[0], &tval[1], &sval[1], &tval[2], &sval[2], &tval[3], &sval[3], &tval[4], &sval[4],
+				    &tval[5], &sval[5], &tval[6], &sval[6], &tval[7], &sval[7], &tval[8], &sval[8], &tval[9], &sval[9]))
+					return (1);
+
+				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
+
+				if (goal > 0) { /* main goal */
+					goal--;
+					q_ptr->retrieve[stage][goal] = TRUE;
+
+					for (j = 0; j < 10; j++) {
+						q_ptr->retrieve_otval[stage][goal][j] = tval[j];
+						q_ptr->retrieve_osval[stage][goal][j] = sval[j];
+					}
+				} else if (goal < 0) { /* optional goal */
+					goal = -(goal + 1);
+					q_ptr->retrieveopt[stage][goal] = TRUE;
+
+					for (j = 0; j < 10; j++) {
+						q_ptr->retrieveopt_otval[stage][goal][j] = tval[j];
+						q_ptr->retrieveopt_osval[stage][goal][j] = sval[j];
+					}
+				}
+				continue;
+			} else if (buf[2] == 'V') { /* specify visuals */
+				int pval[5], bpval[5], attr[5], name1[5], name2[5], name2b[5];
+
+				s = buf + 3;
+				if (8 > sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				    &stage, &goal,
+				    &pval[0], &bpval[0], &attr[0], &name1[0], &name2[0], &name2b[0],
+				    &pval[1], &bpval[1], &attr[1], &name1[1], &name2[1], &name2b[1],
+				    &pval[2], &bpval[2], &attr[2], &name1[2], &name2[2], &name2b[2],
+				    &pval[3], &bpval[3], &attr[3], &name1[3], &name2[3], &name2b[3],
+				    &pval[4], &bpval[4], &attr[4], &name1[4], &name2[4], &name2b[4]))
+					return (1);
+
+				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
+
+				if (goal > 0) { /* main goal */
+					goal--;
+					q_ptr->retrieve[stage][goal] = TRUE;
+
+					for (j = 0; j < 5; j++) {
+						q_ptr->retrieve_opval[stage][goal][j] = pval[j];
+						q_ptr->retrieve_obpval[stage][goal][j] = bpval[j];
+						q_ptr->retrieve_oattr[stage][goal][j] = attr[j];
+						q_ptr->retrieve_oname1[stage][goal][j] = name1[j];
+						q_ptr->retrieve_oname2[stage][goal][j] = name2[j];
+						q_ptr->retrieve_oname2b[stage][goal][j] = name2b[j];
+					}
+				} else if (goal < 0) { /* optional goal */
+					goal = -(goal + 1);
+					q_ptr->retrieveopt[stage][goal] = TRUE;
+
+					for (j = 0; j < 5; j++) {
+						q_ptr->retrieveopt_opval[stage][goal][j] = pval[j];
+						q_ptr->retrieveopt_obpval[stage][goal][j] = bpval[j];
+						q_ptr->retrieveopt_oattr[stage][goal][j] = attr[j];
+						q_ptr->retrieveopt_oname1[stage][goal][j] = name1[j];
+						q_ptr->retrieveopt_oname2[stage][goal][j] = name2[j];
+						q_ptr->retrieveopt_oname2b[stage][goal][j] = name2b[j];
+					}
+				}
+				continue;
+			}
+			return -1;
 		}
 
 		/* Process 'P' for position at which a kill/retrieve quest has to be executed */

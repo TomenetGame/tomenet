@@ -31,7 +31,9 @@ V:0.0.1
 # (optional) k:stage:goal:minlev:maxlev:number:spawn:spawn will target
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
-# //todo (optional) r:stage:goal:retrieve (optional) ...
+# (optional) r:stage:goal:minval:number
+# (optional) rI:stage:goal:tval:sval... (list of ':tval:sval' pairs, up to 10, separated by colons)
+# (optional) rV:stage:goal:pval:bpval:attr:name1:name2:name2b... (list of 5-tuples like this, up to 5, separated by colons)
 # (optional, if k/r line exists) P:stage:goal#:goalwpos wx:wy:wz:adjacent terrain extension:goal at exact x:y:mapfile (if not using terrain type) or '-'
 # M:stage:goal#:deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:mapfile (if not using terrain type) or '-'
 # B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
