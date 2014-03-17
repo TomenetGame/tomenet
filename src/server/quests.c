@@ -696,7 +696,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 					if (!q_ptr->narration[stage][k]) break;
 					msg_format(i, "\374\377U%s", q_ptr->narration[stage][k]);
 				}
-				msg_print(i, "\374 ");
+				//msg_print(i, "\374 ");
 			}
 
 			/* update player's quest tracking data */
@@ -719,7 +719,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 				if (!q_ptr->narration[stage][k]) break;
 				msg_format(pInd, "\374\377U%s", q_ptr->narration[stage][k]);
 			}
-			msg_print(pInd, "\374 ");
+			//msg_print(pInd, "\374 ");
 		}
 
 		/* update players' quest tracking data */
@@ -859,7 +859,7 @@ s_printf("%s QUEST_ACQUIRED: (%d,%d,%d;%d,%d) %s (%d) has quest %d '%s'.\n", sho
 
 	/* let him know about just acquiring the quest? */
 	if (!quiet) {
-		//msg_print(Ind, "\374 ");
+		//msg_print(Ind, "\374 "); /* results in double empty line, looking bad */
 		//msg_format(Ind, "\374\377U**\377u You have acquired the quest \"\377U%s\377u\". \377U**", q_name + q_ptr->name);
 		switch (q_ptr->privilege) {
 		case 0: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\".", q_name + q_ptr->name);
@@ -870,6 +870,7 @@ s_printf("%s QUEST_ACQUIRED: (%d,%d,%d;%d,%d) %s (%d) has quest %d '%s'.\n", sho
 			break;
 		case 3: msg_format(Ind, "\374\377uYou have acquired the quest \"\377U%s\377u\". (\377radmins only\377u)", q_name + q_ptr->name);
 		}
+		//msg_print(Ind, "\374 "); /* keep one line spacer to echoing our entered keyword */
 	}
 
 	/* hack: for 'individual' quests we use q_ptr->stage as temporary var to store the player's personal stage,
@@ -1057,7 +1058,7 @@ void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool inter
 			if (!q_ptr->talk[questor_idx][stage][i]) break;
 			msg_format(Ind, "\374\377U%s", q_ptr->talk[questor_idx][stage][i]);
 		}
-		msg_print(Ind, "\374 ");
+		//msg_print(Ind, "\374 ");
 	}
 
 	/* No keyword-interaction possible if we haven't acquired the quest yet. */
@@ -1098,6 +1099,10 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		c++;
 	}
 
+	/* echo own reply for convenience */
+	msg_print(Ind, "\374 ");
+	msg_format(Ind, "\374\377u>\377U%s", str);
+
 	/* scan keywords for match */
 	for (i = 0; i < QI_MAX_KEYWORDS; i++) {
 		if (!q_ptr->keyword[questor_idx][stage][i]) break; /* no more keywords? */
@@ -1112,7 +1117,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 				if (!q_ptr->keyword_reply[questor_idx][stage][i][j]) break;
 				msg_format(Ind, "\374\377U%s", q_ptr->keyword_reply[questor_idx][stage][i][j]);
 			}
-			msg_print(Ind, "\374 ");
+			//msg_print(Ind, "\374 ");
 		}
 
 		/* stage change? */
@@ -1129,7 +1134,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	if (str[0]) {
 		msg_print(Ind, "\374 ");
 		msg_format(Ind, "\374\377u<\377B%s\377u> has nothing to say about that.", q_ptr->questor_name[questor_idx]);
-		msg_print(Ind, "\374 ");
+		//msg_print(Ind, "\374 ");
 	}
 #endif
 	return;
