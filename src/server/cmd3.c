@@ -2150,6 +2150,11 @@ void do_cmd_steal(int Ind, int dir)
 		msg_print(Ind, "You may not steal from players who are AFK.");
 		return;
 	}
+	
+	if (is_admin(q_ptr)) {
+		msg_print(Ind, "Really? You should not steal from admins.");
+		return;
+	}
 
 	/* May not steal from hostile players */
 	/* I doubt if it's reasonable..dunno	- Jir - */
