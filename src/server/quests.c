@@ -1028,7 +1028,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 	quest_dialogue(Ind, q_idx, questor_idx, FALSE, may_acquire);
 
 	/* prompt him to acquire this quest if he hasn't yet */
-	if (may_acquire) Send_request_cfr(Ind, RID_QUEST_ACQUIRE + q_idx, format("Accept the quest \"\377U%s\377-\"?> ", q_name + q_ptr->name), TRUE);
+	if (may_acquire) Send_request_cfr(Ind, RID_QUEST_ACQUIRE + q_idx, format("Accept the quest \"%s\"?", q_name + q_ptr->name), TRUE);
 }
 
 /* Talk vs keyword dialogue between questor and player.
