@@ -7498,35 +7498,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-		/* Process 'L' for questor starting location type */
-		if (buf[0] == 'L') {
-			int loc, towns, terr, wx, wy, wz, sx, sy;
-
-			s = buf + 2;
-			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d", //byte, u16b, u32b
-			    &loc, &towns, &wx, &wy, &wz, &terr, &sx, &sy)) return (1);
-
-			q_ptr->s_location_type = (byte)loc;
-			q_ptr->s_towns_array = (u16b)towns;
-			q_ptr->start_wpos.wx = (char)wx;
-			q_ptr->start_wpos.wy = (char)wy;
-			q_ptr->start_wpos.wz = (char)wz;
-			q_ptr->s_terrains = (u32b)terr;
-			q_ptr->start_x = sx;
-			q_ptr->start_y = sy;
-			continue;
-		}
-
-		/* Process 'D' for questor dungeon starting locations */
-		if (buf[0] == 'D') {
-#if 0
-			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
-#endif
-			continue;
-		}
-
 		/* Process 'T' for quest starting times */
 		if (buf[0] == 'T') {
 			int night, day, mor, fnoo, noo, aft, eve, mid, dee, tstart, tstop;
@@ -7549,16 +7520,22 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-		/* Process 'F' for questor location's map file */
-		if (buf[0] == 'F') {
+		/* Process 'U' for quest duration */
+		if (buf[0] == 'U') {
+			int es, cd, stat, quit;
+
 			s = buf + 2;
-			if (!(*s)) return 1;
-			c = (char*)malloc(strlen(buf + 2 - 1) * sizeof(char));
-			strcpy(c, buf + 2);
-			q_ptr->t_pref = c;
+			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
+			    &es, &q_ptr->max_duration, &cd, &stat, &quit)) return (1);
+
+			q_ptr->ending_stage = es;
+			q_ptr->cooldown = (s16b) cd;
+			q_ptr->static_floor = (stat != 0);
+			q_ptr->quit_floor = (quit != 0);
 			continue;
 		}
 
+		//--------------------------------------------------------------------------------------------
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
 			int q, ridx, minlv, maxlv, sval, ktval, ksval;
@@ -7597,23 +7574,34 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-		/* Process 'U' for quest duration */
-		if (buf[0] == 'U') {
-			int es, cd, stat, quit;
+		/* Process 'L' for questor starting location type */
+		if (buf[0] == 'L') {
+			int loc, towns, wx, wy, wz, terr, sx, sy;
 
 			s = buf + 2;
-			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
-			    &es, &q_ptr->max_duration, &cd, &stat, &quit)) return (1);
+			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%s", //byte, u16b, u32b
+			    &loc, &towns, &wx, &wy, &wz, &terr, &sx, &sy, tmpbuf)) return (1);
 
-			q_ptr->ending_stage = es;
-			q_ptr->cooldown = (s16b) cd;
-			q_ptr->static_floor = (stat != 0);
-			q_ptr->quit_floor = (quit != 0);
+			q_ptr->s_location_type = (byte)loc;
+			q_ptr->s_towns_array = (u16b)towns;
+			q_ptr->start_wpos.wx = (char)wx;
+			q_ptr->start_wpos.wy = (char)wy;
+			q_ptr->start_wpos.wz = (char)wz;
+			q_ptr->s_terrains = (u32b)terr;
+			q_ptr->start_x = sx;
+			q_ptr->start_y = sy;
+
+			if (tmpbuf[0] == '-') q_ptr->questor_tpref = NULL;
+			else {
+				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+				strcpy(c, tmpbuf);
+				q_ptr->questor_tpref = c;
+			}
 			continue;
 		}
 
-		/* Process 'A' for quest (auto-)acceptance */
-		if (buf[0] == 'A') {
+		/* Process 'F' for questor accept/spawn flags */
+		if (buf[0] == 'F') {
 			int aalos, aaint, talk, despawn, invinc;
 
 			if (lc_accept == QI_QUESTORS) return 1;
@@ -7630,9 +7618,20 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			lc_accept++;
 			continue;
 		}
+		//--------------------------------------------------------------------------------------------
 
-		/* Process 'H' for auto (timed) quest-spawn/stage-change mechanisms */
-		if (buf[0] == 'H') {
+		/* Process 'D' for dungeon/tower to spawn for this quest */
+		if (buf[0] == 'D') {
+#if 0
+			s = buf + 2;
+			if ( != sscanf(s, "",
+				q_ptr->)) return (1);
+#endif
+			continue;
+		}
+
+		/* Process 'A' for automatic things in a stage: spawn new quest, (timed) stage changes, quiet change (no dialogue)? */
+		if (buf[0] == 'A') {
 #if 0
 			s = buf + 2;
 			if ( != sscanf(s, "",
@@ -7650,6 +7649,18 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 #endif
 			continue;
 		}
+
+#if 0
+		/* Process 'H' for questor hostility changes? (or just use S-line for this too) */
+		if (buf[0] == 'H') {
+ #if 0
+			s = buf + 2;
+			if ( != sscanf(s, "",
+				q_ptr->)) return (1);
+ #endif
+			continue;
+		}
+#endif
 
 		/* Process 'J' for questor movement/teleportation/teleplayer */
 		if (buf[0] == 'J') {

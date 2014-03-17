@@ -682,7 +682,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	     eg the target location for easier lookup */
 	if (!q_ptr->individual || !pInd) { //the !pInd part is paranoia
 		for (i = 1; i <= NumPlayers; i++) {
-			if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+			if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!! to work with correct questor_idx in quest_dialogue call below!
 			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 				if (Players[i]->quest_idx[j] == q_idx) break;
 			if (j == MAX_CONCURRENT_QUESTS) continue;
@@ -709,6 +709,8 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 			if (Players[pInd]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) return; //paranoia, shouldn't happen
+
+		 //TODO: check against multiple current_wpos, one for each questor!! to work with correct questor_idx in quest_dialogue call below!
 
 		/* play automatic narration if any */
 		//TODO: flag restrictions on narration lines
