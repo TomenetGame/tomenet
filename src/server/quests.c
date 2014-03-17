@@ -1210,7 +1210,7 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
 		/*p_ptr = Players[pInd];
 		drop_near(o_ptr, -1, &p_ptr->wpos, &p_ptr->py, &p_ptr->px);*/
-		msg_print(pInd, "You have received an item.");
+		//msg_print(pInd, "You have received an item."); --give just ONE message for ALL items, less spammy
 		inven_carry(pInd, o_ptr);
 		return;
 	}
@@ -1230,7 +1230,7 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 		/* hand him out the reward too */
 		/*p_ptr = Players[i];
 		drop_near(o_ptr, -1, &p_ptr->wpos, &p_ptr->py, &p_ptr->px);*/
-		msg_print(i, "You have received an item.");
+		//msg_print(i, "You have received an item."); --give just ONE message for ALL items, less spammy
 		inven_carry(i, o_ptr);
 	}
 }
@@ -1243,7 +1243,7 @@ static void quest_reward_create(int pInd, int q_idx) {
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
-		msg_print(pInd, "You have received an item.");
+		//msg_print(pInd, "You have received an item."); --give just ONE message for ALL items, less spammy
 		give_reward(pInd, resf, q_name + q_ptr->name, 0, 0);
 		return;
 	}
@@ -1261,7 +1261,7 @@ static void quest_reward_create(int pInd, int q_idx) {
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
 		/* hand him out the reward too */
-		msg_print(i, "You have received an item.");
+		//msg_print(i, "You have received an item."); --give just ONE message for ALL items, less spammy
 		give_reward(i, resf, q_name + q_ptr->name, 0, 0);
 	}
 }
@@ -1273,7 +1273,7 @@ static void quest_reward_gold(int pInd, int q_idx, int au) {
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
-		msg_format(pInd, "You have received %d gold pieces.", au);
+		//msg_format(pInd, "You have received %d gold pieces.", au); --give just ONE message for ALL gold, less spammy
 		gain_au(pInd, au, FALSE, FALSE);
 		return;
 	}
@@ -1291,7 +1291,7 @@ static void quest_reward_gold(int pInd, int q_idx, int au) {
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
 		/* hand him out the reward too */
-		msg_format(i, "You have received %d gold pieces.", au);
+		//msg_format(i, "You have received %d gold pieces.", au); --give just ONE message for ALL gold, less spammy
 		gain_au(i, au, FALSE, FALSE);
 	}
 }
@@ -1303,7 +1303,7 @@ static void quest_reward_exp(int pInd, int q_idx, int exp) {
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
-		msg_format(pInd, "You have received %d experience points.", exp);
+		//msg_format(pInd, "You have received %d experience points.", exp); --give just ONE message for ALL gold, less spammy
 		gain_exp(pInd, exp);
 		return;
 	}
@@ -1321,7 +1321,7 @@ static void quest_reward_exp(int pInd, int q_idx, int exp) {
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
 		/* hand him out the reward too */
-		msg_format(i, "You have received %d experience points.", exp);
+		//msg_format(i, "You have received %d experience points.", exp); --give just ONE message for ALL gold, less spammy
 		gain_exp(i, exp);
 	}
 }
@@ -1336,6 +1336,8 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	int i, j, stage = quest_get_stage(pInd, q_idx);
 	object_type forge, *o_ptr;
 	u32b resf = RESF_NOTRUEART;
+	/* count rewards */
+	int r_obj = 0, r_gold = 0, r_exp = 0;
 
 #if 0 /* we're called when stage 0 starts too, and maybe it's some sort of globally determined goal->reward? */
 	if (!pInd) {
@@ -1409,19 +1411,45 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 
 				/* hand it out */
 				quest_reward_object(pInd, q_idx, o_ptr);
+				r_obj++;
 			}
 			/* instead use create_reward() like for events? */
-			else if (q_ptr->reward_oreward[stage][j])
+			else if (q_ptr->reward_oreward[stage][j]) {
 				quest_reward_create(pInd, q_idx);
+				r_obj++;
+			}
 			/* hand out gold? */
-			if (q_ptr->reward_gold[stage][j])
+			if (q_ptr->reward_gold[stage][j]) {
 				quest_reward_gold(pInd, q_idx, q_ptr->reward_gold[stage][j]);
+				r_gold += q_ptr->reward_gold[stage][j];
+			}
 			/* provide exp? */
-			if (q_ptr->reward_exp[stage][j])
+			if (q_ptr->reward_exp[stage][j]) {
 				quest_reward_exp(pInd, q_idx, q_ptr->reward_exp[stage][j]);
+				r_exp += q_ptr->reward_exp[stage][j];
+			}
 			//TODO: s16b reward_statuseffect[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
 		}
 	}
+
+	/* give one unified message per reward type that was handed out */
+	if (pInd && q_ptr->individual) {
+		if (r_obj == 1) msg_print(pInd, "You have received an item.");
+		else if (r_obj) msg_format(pInd, "You have received %d items.", r_obj);
+		if (r_gold) msg_format(pInd, "You have received %d gold pieces.", r_gold);
+		if (r_exp) msg_format(pInd, "You have received %d experience points.", r_exp);
+	} else for (i = 1; i <= NumPlayers; i++) {
+		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			if (Players[i]->quest_idx[j] == q_idx) break;
+		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		if (r_obj == 1) msg_print(i, "You have received an item.");
+		else if (r_obj) msg_format(i, "You have received %d items.", r_obj);
+		if (r_gold) msg_format(i, "You have received %d gold pieces.", r_gold);
+		if (r_exp) msg_format(i, "You have received %d experience points.", r_exp);
+	}
+
 	return; /* goals are not complete yet */
 }
 
