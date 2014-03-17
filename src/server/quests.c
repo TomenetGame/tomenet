@@ -1001,7 +1001,8 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 	/* cannot interact with the questor during this stage? */
 	if (!q_ptr->questor_talkable[questor_idx]) return;
 
-	/* questor interaction may automatically acquire the quest */
+
+	/* questor interaction may (automatically) acquire the quest */
 	/* has the player not yet acquired this quest? */
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
@@ -1013,8 +1014,10 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 		/* do we accept players to acquire this quest in the current quest stage? */
 		if (!q_ptr->accepts[stage]) return;
 
-		may_acquire = quest_acquire(Ind, q_idx, FALSE);
+		/* if player cannot pick up this quest, questor remains silent */
+		if (!(may_acquire = quest_acquire(Ind, q_idx, FALSE))) return;
 	}
+
 
 	/* if we're not here for quest acquirement, just check for quest goals
 	   that have been completed and just required delivery back here */
