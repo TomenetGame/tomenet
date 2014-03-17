@@ -305,7 +305,7 @@ typedef struct quest_info {
 	byte kill_rlevmin[QI_MAX_STAGES][QI_GOALS], kill_rlevmax[QI_MAX_STAGES][QI_GOALS];	/* 0 for any. AND's with char/attr. */
 	s16b kill_number[QI_MAX_STAGES][QI_GOALS];
 	byte kill_spawn[QI_MAX_STAGES][QI_GOALS];			/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
-	bool kill_spawn_targets[QI_MAX_STAGES][QI_GOALS];		/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
+	byte kill_spawn_targets[QI_MAX_STAGES][QI_GOALS];		/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
 
 	bool retrieve[QI_MAX_STAGES][QI_GOALS];				/* toggle */
 #if 0 /* too much, make it simpler for now */
@@ -340,7 +340,7 @@ typedef struct quest_info {
 	byte killopt_rlevmin[QI_MAX_STAGES][QI_OPTIONAL], killopt_rlevmax[QI_MAX_STAGES][QI_OPTIONAL];	/* 0 for any. AND's with char/attr. */
 	s16b killopt_number[QI_MAX_STAGES][QI_OPTIONAL];
 	byte killopt_spawn[QI_MAX_STAGES][QI_OPTIONAL];			/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
-	bool killopt_spawn_targets[QI_MAX_STAGES][QI_OPTIONAL];		/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
+	byte killopt_spawn_targets[QI_MAX_STAGES][QI_OPTIONAL];		/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
 
 	bool retrieveopt[QI_MAX_STAGES][QI_OPTIONAL];			/* toggle */
 	s16b retrieveopt_otval[QI_MAX_STAGES][QI_OPTIONAL][10], retrieveopt_osval[QI_MAX_STAGES][QI_OPTIONAL][10];	/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval) */

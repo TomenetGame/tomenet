@@ -7304,7 +7304,7 @@ errr init_ow_info_txt(FILE *fp, char *buf)
  * Initialize the "q_info" array, by parsing an ascii "template" file
  */
 errr init_q_info_txt(FILE *fp, char *buf) {
-	int i, j, k, l, stage, nextstage, questor;
+	int i, j, k, l, stage, goal, nextstage, questor;
 	char *s, codename[QI_CODENAME_LEN + 1], creator[NAME_LEN], questname[MAX_CHARS];
 	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1];
 	int lc_narration[QI_MAX_STAGES], lc_conversation[QI_QUESTORS][QI_MAX_STAGES], lc_keywords[QI_QUESTORS][QI_MAX_STAGES], lc_rewards[QI_MAX_STAGES];
@@ -7793,24 +7793,93 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'k' for kill quest goal */
 		if (buf[0] == 'k') {
-#if 0
-			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
- #if 0
-			bool kill[QI_MAX_STAGES][QI_GOALS];<--->			/* toggle */
-			bool kill_player_picks[QI_MAX_STAGES][QI_GOALS];		/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
-			s16b kill_ridx[QI_MAX_STAGES][QI_GOALS][20];<-->		/* kill certain monster(s) */
-			char kill_rchar[QI_MAX_STAGES][QI_GOALS][5];<-->		/*  ..certain types */
-			byte kill_rattr[QI_MAX_STAGES][QI_GOALS][5];<-->		/*  ..certain colours */
-			byte kill_rlevmin[QI_MAX_STAGES], kill_rlevmax[QI_MAX_STAGES][QI_GOALS];	/* 0 for any */
-			s16b kill_number[QI_MAX_STAGES][QI_GOALS];
-			byte kill_spawn[QI_MAX_STAGES][QI_GOALS], kill_spawn_loc[QI_MAX_STAGES][QI_GOALS];<---->/* actually spawn the monster(s) nearby! (QI_SPAWN_xxx) */
-			bool kill_spawn_targets_questor[QI_MAX_STAGES][QI_GOALS];<----->/* the spawned mobs go for the questor primarily */
-			s16b kill_stage[QI_MAX_STAGES][QI_GOALS];<----->		/* switch to a different quest stage on defeating the monsters */
- #endif
-#endif
-			continue;
+			/* now we have 3 sub-types of 'k' lines -_- uhh */
+			if (buf[1] == ':') { /* init */
+				int minlev, maxlev, num, spawn, spawntarget;
+
+				s = buf + 2;
+				if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d",
+				    &stage, &goal, &minlev, &maxlev, &num, &spawn, &spawntarget))
+					return (1);
+
+				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
+
+				if (goal > 0) { /* main goal */
+					goal--;
+					q_ptr->kill[stage][goal] = TRUE;
+
+					q_ptr->kill_rlevmin[stage][goal] = minlev;
+					q_ptr->kill_rlevmax[stage][goal] = maxlev;
+					q_ptr->kill_number[stage][goal] = num;
+					q_ptr->kill_spawn[stage][goal] = spawn;
+					q_ptr->kill_spawn_targets[stage][goal] = spawntarget;
+				} else if (goal < 0) { /* optional goal */
+					goal = -(goal + 1);
+					q_ptr->killopt[stage][goal] = TRUE;
+
+					q_ptr->killopt_rlevmin[stage][goal] = minlev;
+					q_ptr->killopt_rlevmax[stage][goal] = maxlev;
+					q_ptr->killopt_number[stage][goal] = num;
+					q_ptr->killopt_spawn[stage][goal] = spawn;
+					q_ptr->killopt_spawn_targets[stage][goal] = spawntarget;
+				}
+				continue;
+			} else if (buf[2] == 'I') { /* specify race-indices */
+				int ridx[10];
+
+				s = buf + 3;
+				if (3 > sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				    &stage, &goal, &ridx[0], &ridx[1], &ridx[2], &ridx[3], &ridx[4], &ridx[5], &ridx[6], &ridx[7], &ridx[8], &ridx[9]))
+					return (1);
+
+				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
+
+				if (goal > 0) { /* main goal */
+					goal--;
+					q_ptr->kill[stage][goal] = TRUE;
+
+					for (j = 0; j < 10; j++)
+						q_ptr->kill_ridx[stage][goal][j] = ridx[j];
+				} else if (goal < 0) { /* optional goal */
+					goal = -(goal + 1);
+					q_ptr->killopt[stage][goal] = TRUE;
+
+					for (j = 0; j < 10; j++)
+						q_ptr->killopt_ridx[stage][goal][j] = ridx[j];
+				}
+				continue;
+			} else if (buf[2] == 'V') { /* specify visuals */
+				int rchar[5], rattr[5];
+
+				s = buf + 3;
+				if (4 > sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				    &stage, &goal, &rchar[0], &rattr[0], &rchar[1], &rattr[1], &rchar[2], &rattr[2], &rchar[3], &rattr[3], &rchar[4], &rattr[4]))
+					return (1);
+
+				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
+
+				if (goal > 0) { /* main goal */
+					goal--;
+					q_ptr->kill[stage][goal] = TRUE;
+
+					for (j = 0; j < 5; j++) {
+						q_ptr->kill_rchar[stage][goal][j] = rchar[j];
+						q_ptr->kill_rattr[stage][goal][j] = rattr[j];
+					}
+				} else if (goal < 0) { /* optional goal */
+					goal = -(goal + 1);
+					q_ptr->killopt[stage][goal] = TRUE;
+
+					for (j = 0; j < 5; j++)
+						q_ptr->killopt_rchar[stage][goal][j] = rchar[j];
+						q_ptr->killopt_rattr[stage][goal][j] = rattr[j];
+				}
+				continue;
+			}
+			return -1;
 		}
 
 		/* Process 'r' for retrieve quest goal */
@@ -7820,15 +7889,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if ( != sscanf(s, "",
 				q_ptr->)) return (1);
  #if 0
-			bool retrieve[QI_MAX_STAGES][QI_GOALS];>			/* toggle */
-			bool retrieve_player_picks[QI_MAX_STAGES][QI_GOALS];<-->	/* instead of picking one subgoal randomly, let the player decide which he wants to get */
-			s16b retrieve_otval[QI_MAX_STAGES][QI_GOALS][20], retrieve_osval[QI_MAX_STAGES][QI_GOALS][20];<>/* retrieve certain item(s) */
-			s16b retrieve_opval[QI_MAX_STAGES][QI_GOALS][5], retrieve_obpval[QI_MAX_STAGES][QI_GOALS][5];
-			byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5];		/*  ..certain colours (flavoured items only) */
-			s16b retrieve_oname1[QI_MAX_STAGES][QI_GOALS][20], retrieve_oname2[QI_MAX_STAGES][QI_GOALS][20], retrieve_oname2b[QI_MAX_STAGES][QI_GOALS][20];
-			int retrieve_ovalue[QI_MAX_STAGES][QI_GOALS][20];
-			s16b retrieve_number[QI_MAX_STAGES][QI_GOALS][20];
-			s16b retrieve_stage[QI_MAX_STAGES][QI_GOALS];<->		/* switch to a different quest stage on retrieving the items */
+	bool retrieve[QI_MAX_STAGES][QI_GOALS];>			/* toggle */
+	s16b retrieve_otval[QI_MAX_STAGES][QI_GOALS][10], retrieve_osval[QI_MAX_STAGES][QI_GOALS][10];<>/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval, 0 = not checked) */
+	s16b retrieve_opval[QI_MAX_STAGES][QI_GOALS][5], retrieve_obpval[QI_MAX_STAGES][QI_GOALS][5];<->/* umm, let's say 9999 = not checked :-p, -9999 = any */
+	byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5];		/*  ..certain colours (flavoured items only), 255 = not checked, 254 = any */
+	s16b retrieve_oname1[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2b[QI_MAX_STAGES][QI_GOALS][5]; /* -3 = not checked, -2 == any except zero, -1 = any */
+	int retrieve_ovalue[QI_MAX_STAGES][QI_GOALS];<->		/* minimum value of the item (0 to disab..wait) */
+	s16b retrieve_number[QI_MAX_STAGES][QI_GOALS];<>		/* amount of fitting items to retrieve */
  #endif
 #endif
 			continue;
@@ -7841,10 +7908,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if ( != sscanf(s, "",
 				q_ptr->)) return (1);
  #if 0
-			bool target_pos[QI_MAX_STAGES][QI_GOALS];<----->		/* enable target pos? */
-			struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];<->	/* kill/retrieve specifically at this world pos */
-			s16b target_pos_x[QI_MAX_STAGES][QI_GOALS], target_pos_y[QI_MAX_STAGES][QI_GOALS]; /* at specifically this position (even usable for kill/retrieve stuff?) */
-			bool target_terrain_patch[QI_MAX_STAGES][QI_GOALS];<--->	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
+	bool target_pos[QI_MAX_STAGES][QI_GOALS];<----->		/* enable target pos? */
+	struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];<->	/* kill/retrieve specifically at this world pos */
+	s16b target_pos_x[QI_MAX_STAGES][QI_GOALS], target_pos_y[QI_MAX_STAGES][QI_GOALS]; /* at specifically this position (even usable for kill/retrieve stuff?) */
+	bool target_terrain_patch[QI_MAX_STAGES][QI_GOALS];<--->	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
+									   max radius is QI_TERRAIN_PATCH_RADIUS. */
+	cptr target_tpref[QI_MAX_STAGES][QI_GOALS];<--->		/* filename of map to load, or empty for none */
  #endif
 #endif
 			continue;
@@ -7852,7 +7921,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'M' for move-to-location to finish a quest stage whose goals have already been fulfilled */
 		if (buf[0] == 'M') {
-			int goal;
 			int wx, wy, wz, x, y, terr;
 
 			s = buf + 2;

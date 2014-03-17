@@ -28,7 +28,9 @@ V:0.0.1
 # (optional) X (50x repeatable):stage:flags:narration text
 # W (50x repeatable):questor:stage:flags:convo line
 # (optional) Y (30x repeatable):questor:stage:flags:keyword or "YN" for yes/no choice, yes will trigger:changeflags:nextstage
-# //todo (optional) k:stage:goal:kill (optional) ...
+# (optional) k:stage:goal:minlev:maxlev:number:spawn:spawn will target
+# (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
+# (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
 # //todo (optional) r:stage:goal:retrieve (optional) ...
 # //todo (optional, if k/r line exists) P:stage:goal#:k/r goal at wpos wx:wy:wz:k/r adjacent terrain extension:k/r goal at exact x:y:mapfile (if not using terrain type) or '-'
 # M:stage:goal#:deliver to wpos wx:wy:wz:deliver to pos x:y:deliver to terrain type:mapfile (if not using terrain type) or '-'
