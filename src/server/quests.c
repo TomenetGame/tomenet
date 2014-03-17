@@ -714,7 +714,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		//TODO: flag restrictions on narration lines
 		if (!quiet && q_ptr->narration[stage][0]) { /* there is narration to display? */
 			msg_print(pInd, "\374 ");
-			msg_format(pInd, "\374\377u<\377U'%s'\377u>", q_name + q_ptr->name);
+			msg_format(pInd, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
 			for (k = 0; k < QI_TALK_LINES; k++) {
 				if (!q_ptr->narration[stage][k]) break;
 				msg_format(pInd, "\374\377U%s", q_ptr->narration[stage][k]);
