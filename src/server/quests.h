@@ -50,7 +50,7 @@
 #define QI_STAGE_GOALS		5	/* up to 5 different main/optional goals that have to be completed for changing to a specific next stage */
 #define QI_FOLLOWUP_STAGES	5	/* the # of possible follow-up stages of which one is picked depending on the completed stage goals */
 #define QI_FLAGS		16	/* global flags that range from 'a' to 'p' and can be set via uppercase letter, erased via lowercase letter. */
-
+#define QI_TERRAIN_PATCH_RADIUS	5	/* max radius for valid terrain of same type as target terrain (terrain patch extension for quest goals) --note: this uses distance() */
 
 #define QI_SLOC_TOWN		0x1
 #define QI_SLOC_SURFACE		0x2
@@ -321,12 +321,14 @@ typedef struct quest_info {
 	bool target_pos[QI_MAX_STAGES][QI_GOALS];			/* enable target pos? */
 	struct worldpos target_wpos[QI_MAX_STAGES][QI_GOALS];		/* kill/retrieve specifically at this world pos */
 	s16b target_pos_x[QI_MAX_STAGES][QI_GOALS], target_pos_y[QI_MAX_STAGES][QI_GOALS]; /* at specifically this position (even usable for kill/retrieve stuff?) */
-	bool target_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
+	bool target_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
+									   max radius is QI_TERRAIN_PATCH_RADIUS. */
 	cptr target_tpref[QI_MAX_STAGES][QI_GOALS];			/* filename of map to load, or empty for none */
 
 	bool deliver_pos[QI_MAX_STAGES][QI_GOALS];			/* enable delivery pos? */
 	struct worldpos deliver_wpos[QI_MAX_STAGES][QI_GOALS];		/* (after optionally killing/retrieving/or whatever) MOVE TO this world pos */
-	bool deliver_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
+	bool deliver_terrain_patch[QI_MAX_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
+									   max radius is QI_TERRAIN_PATCH_RADIUS. */
 	s16b deliver_pos_x[QI_MAX_STAGES][QI_GOALS], deliver_pos_y[QI_MAX_STAGES][QI_GOALS]; /* -"- ..MOVE TO specifically this position */
 	cptr deliver_tpref[QI_MAX_STAGES][QI_GOALS];			/* filename of map to load, or empty for none */
 
@@ -350,13 +352,15 @@ typedef struct quest_info {
 
 	bool targetopt_pos[QI_MAX_STAGES][QI_OPTIONAL];			/* enable target pos? */
 	struct worldpos targetopt_wpos[QI_MAX_STAGES][QI_OPTIONAL];	/* kill/retrieve specifically at this world pos */
-	bool targetopt_terrain_patch[QI_MAX_STAGES][QI_OPTIONAL];	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
+	bool targetopt_terrain_patch[QI_MAX_STAGES][QI_OPTIONAL];	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
+									   max radius is QI_TERRAIN_PATCH_RADIUS. */
 	s16b targetopt_pos_x[QI_MAX_STAGES][QI_OPTIONAL], targetopt_pos_y[QI_MAX_STAGES][QI_OPTIONAL]; /* at specifically this position (hm does this work for kill/retrieve stuff? pft) */
 	cptr targetopt_tpref[QI_MAX_STAGES][QI_GOALS];			/* filename of map to load, or empty for none */
 
 	bool deliveropt_pos[QI_MAX_STAGES][QI_OPTIONAL];		/* enable delivery pos? */
 	struct worldpos deliveropt_wpos[QI_MAX_STAGES][QI_OPTIONAL];	/* (after optionally killing/retrieving/or whatever) MOVE TO this world pos */
-	bool deliveropt_terrain_patch[QI_MAX_STAGES][QI_OPTIONAL];	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest) */
+	bool deliveropt_terrain_patch[QI_MAX_STAGES][QI_OPTIONAL];	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
+									   max radius is QI_TERRAIN_PATCH_RADIUS. */
 	s16b deliveropt_pos_x[QI_MAX_STAGES][QI_OPTIONAL], deliveropt_pos_y[QI_MAX_STAGES][QI_OPTIONAL]; /* -"- ..MOVE TO specifically this position */
 	cptr deliveropt_tpref[QI_MAX_STAGES][QI_GOALS];			/* filename of map to load, or empty for none */
 
