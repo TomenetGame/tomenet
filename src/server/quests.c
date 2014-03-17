@@ -501,17 +501,17 @@ static void quest_terminate(int pInd, int q_idx) {
 bool quest_get_goal(int pInd, int q_idx, int goal) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
-	int i;
+	int i, stage = quest_get_stage(pInd, q_idx);
 
-	if (!pInd) return q_ptr->goals[goal]; /* no player? global goal */
+	if (!pInd) return q_ptr->goals[stage][goal]; /* no player? global goal */
 
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) return q_ptr->goals[goal]; /* player isn't on this quest. return global goal. */
+	if (i == MAX_CONCURRENT_QUESTS) return q_ptr->goals[stage][goal]; /* player isn't on this quest. return global goal. */
 
 	if (q_ptr->individual) return p_ptr->quest_goals[i][goal]; /* individual quest */
-	return q_ptr->goals[goal]; /* global quest */
+	return q_ptr->goals[stage][goal]; /* global quest */
 }
 
 /* return an optional current quest goal. Either just uses q_ptr->goalsopt directly for global
@@ -519,17 +519,17 @@ bool quest_get_goal(int pInd, int q_idx, int goal) {
 bool quest_get_goalopt(int pInd, int q_idx, int goalopt) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
-	int i;
+	int i, stage = quest_get_stage(pInd, q_idx);
 
-	if (!pInd) return q_ptr->goalsopt[goalopt]; /* no player? global goal */
+	if (!pInd) return q_ptr->goalsopt[stage][goalopt]; /* no player? global goal */
 
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) return q_ptr->goalsopt[goalopt]; /* player isn't on this quest. return global goal. */
+	if (i == MAX_CONCURRENT_QUESTS) return q_ptr->goalsopt[stage][goalopt]; /* player isn't on this quest. return global goal. */
 
 	if (q_ptr->individual) return p_ptr->quest_goalsopt[i][goalopt]; /* individual quest */
-	return q_ptr->goalsopt[goalopt]; /* global quest */
+	return q_ptr->goalsopt[stage][goalopt]; /* global quest */
 }
 
 /* return a current quest flag. Either just uses q_ptr->flags directly for global
@@ -573,10 +573,10 @@ s16b quest_get_stage(int pInd, int q_idx) {
 void quest_set_goal(int pInd, int q_idx, int goal) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
-	int i;
+	int i, stage = quest_get_stage(pInd, q_idx);
 
 	if (!pInd) {
-		q_ptr->goals[goal] = TRUE; /* no player? global goal */
+		q_ptr->goals[stage][goal] = TRUE; /* no player? global goal */
 		quest_goal_check(0, q_idx, FALSE);
 		return;
 	}
@@ -585,7 +585,7 @@ void quest_set_goal(int pInd, int q_idx, int goal) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
-		q_ptr->goals[goal] = TRUE; /* player isn't on this quest. return global goal. */
+		q_ptr->goals[stage][goal] = TRUE; /* player isn't on this quest. return global goal. */
 		quest_goal_check(0, q_idx, FALSE);
 		return;
 	}
@@ -596,7 +596,7 @@ void quest_set_goal(int pInd, int q_idx, int goal) {
 		return;
 	}
 
-	q_ptr->goals[goal] = TRUE; /* global quest */
+	q_ptr->goals[stage][goal] = TRUE; /* global quest */
 	quest_goal_check(0, q_idx, FALSE);
 }
 
@@ -604,10 +604,10 @@ void quest_set_goal(int pInd, int q_idx, int goal) {
 void quest_set_goalopt(int pInd, int q_idx, int goalopt) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
-	int i;
+	int i, stage = quest_get_stage(pInd, q_idx);
 
 	if (!pInd) {
-		q_ptr->goalsopt[goalopt] = TRUE; /* no player? global goal */
+		q_ptr->goalsopt[stage][goalopt] = TRUE; /* no player? global goal */
 		return;
 	}
 
@@ -615,7 +615,7 @@ void quest_set_goalopt(int pInd, int q_idx, int goalopt) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
-		q_ptr->goalsopt[goalopt] = TRUE; /* player isn't on this quest. return global goal. */
+		q_ptr->goalsopt[stage][goalopt] = TRUE; /* player isn't on this quest. return global goal. */
 		return;
 	}
 
@@ -623,7 +623,7 @@ void quest_set_goalopt(int pInd, int q_idx, int goalopt) {
 		p_ptr->quest_goalsopt[i][goalopt] = TRUE; /* individual quest */
 		return;
 	}
-	q_ptr->goalsopt[goalopt] = TRUE; /* global quest */
+	q_ptr->goalsopt[stage][goalopt] = TRUE; /* global quest */
 
 
 	/* also check if we can now proceed to the next stage or set flags or hand out rewards */
@@ -1559,6 +1559,15 @@ void quest_check_goal_deliver_wpos(int Ind) {
 
 		stage = quest_get_stage(Ind, q_idx);
 
+		/* pre-check if we have completed all kill/retrieve goals of this stage,
+		   because we can only complete any deliver goal if we have fetched all
+		   the stuff (bodies, or kill count rather, and objects) that we ought to
+		   'deliver', duh */
+		for (j = 0; j < QI_GOALS; j++)
+			if ((q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j])
+			    && !q_ptr->goals[stage][j])
+				return;
+
 		/* check the quest goals, whether any of them wants a delivery to this location */
 		for (j = 0; j < QI_GOALS; j++) {
 			if (!q_ptr->deliver_pos[stage][j]) continue;
@@ -1606,6 +1615,15 @@ void quest_check_goal_deliver_xy(int Ind) {
 
 		stage = quest_get_stage(Ind, q_idx);
 
+		/* pre-check if we have completed all kill/retrieve goals of this stage,
+		   because we can only complete any deliver goal if we have fetched all
+		   the stuff (bodies, or kill count rather, and objects) that we ought to
+		   'deliver', duh */
+		for (j = 0; j < QI_GOALS; j++)
+			if ((q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j])
+			    && !q_ptr->goals[stage][j])
+				return;
+
 		/* check the quest goals, whether any of them wants a delivery to this location */
 		for (j = 0; j < QI_GOALS; j++) {
 			if (!q_ptr->deliver_pos[stage][j]) continue;
@@ -1628,10 +1646,12 @@ void quest_check_goal_deliver_xy(int Ind) {
 			else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
 
 			/* check for exact x,y location */
-			if (q_ptr->deliver_pos_x[stage][j] == p_ptr->px &&
-			    q_ptr->deliver_pos_y[stage][j] == p_ptr->py)
-				/* we have completed a delivery-to-xy goal! */
-				quest_set_goal(Ind, q_idx, j);
+			if (q_ptr->deliver_pos_x[stage][j] != p_ptr->px ||
+			    q_ptr->deliver_pos_y[stage][j] != p_ptr->py)
+				continue;
+
+			/* we have completed a delivery-to-xy goal! */
+			quest_set_goal(Ind, q_idx, j);
 		}
 	}
 }
