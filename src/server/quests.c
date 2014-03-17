@@ -663,7 +663,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	bool anything = FALSE;
 
 #if QDEBUG > 0
-	s_printf("%s QUEST_STAGE: '%s' %d->%d ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->stage, stage, q_ptr->codename, q_ptr->creator);
+	s_printf("%s QUEST_STAGE: '%s' %d->%d ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, quest_get_stage(pInd, q_idx), stage, q_ptr->codename, q_ptr->creator);
 #endif
 
 	/* dynamic info */
