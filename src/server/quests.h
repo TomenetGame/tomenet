@@ -300,9 +300,9 @@ typedef struct quest_info {
 	bool kill_player_picks[QI_MAX_STAGES][QI_GOALS];		/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
 #endif
 	s16b kill_ridx[QI_MAX_STAGES][QI_GOALS][10];			/* kill certain monster(s), 0 for none, -1 for any. */
-	char kill_rchar[QI_MAX_STAGES][QI_GOALS][5];			/*  ..certain types, 0 for any. AND's with attr/lev. */
-	byte kill_rattr[QI_MAX_STAGES][QI_GOALS][5];			/*  ..certain colours, 127 for any. AND's with char/lev. */
-	byte kill_rlevmin[QI_MAX_STAGES], kill_rlevmax[QI_MAX_STAGES][QI_GOALS];	/* 0 for any. AND's with char/attr. */
+	char kill_rchar[QI_MAX_STAGES][QI_GOALS][5];			/*  ..certain types, 254 for any, 255 for none. AND's with attr/lev. */
+	byte kill_rattr[QI_MAX_STAGES][QI_GOALS][5];			/*  ..certain colours, 254 for any, 255 for none. AND's with char/lev. */
+	byte kill_rlevmin[QI_MAX_STAGES][QI_GOALS], kill_rlevmax[QI_MAX_STAGES][QI_GOALS];	/* 0 for any. AND's with char/attr. */
 	s16b kill_number[QI_MAX_STAGES][QI_GOALS];
 	byte kill_spawn[QI_MAX_STAGES][QI_GOALS];			/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
 	bool kill_spawn_targets[QI_MAX_STAGES][QI_GOALS];		/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
@@ -311,11 +311,11 @@ typedef struct quest_info {
 #if 0 /* too much, make it simpler for now */
 	bool retrieve_player_picks[QI_MAX_STAGES][QI_GOALS];		/* instead of picking one subgoal randomly, let the player decide which he wants to get */
 #endif
-	s16b retrieve_otval[QI_MAX_STAGES][QI_GOALS][10], retrieve_osval[QI_MAX_STAGES][QI_GOALS][10];	/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval) */
-	s16b retrieve_opval[QI_MAX_STAGES][QI_GOALS][5], retrieve_obpval[QI_MAX_STAGES][QI_GOALS][5];
-	byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5];		/*  ..certain colours (flavoured items only) */
-	s16b retrieve_oname1[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2b[QI_MAX_STAGES][QI_GOALS][5]; /* 0 = disabled, -1 == any */
-	int retrieve_ovalue[QI_MAX_STAGES][QI_GOALS];			/* minimum value of the item */
+	s16b retrieve_otval[QI_MAX_STAGES][QI_GOALS][10], retrieve_osval[QI_MAX_STAGES][QI_GOALS][10];	/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval, 0 = not checked) */
+	s16b retrieve_opval[QI_MAX_STAGES][QI_GOALS][5], retrieve_obpval[QI_MAX_STAGES][QI_GOALS][5];	/* umm, let's say 9999 = not checked :-p, -9999 = any */
+	byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5];		/*  ..certain colours (flavoured items only), 255 = not checked, 254 = any */
+	s16b retrieve_oname1[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2b[QI_MAX_STAGES][QI_GOALS][5]; /* -3 = not checked, -2 == any except zero, -1 = any */
+	int retrieve_ovalue[QI_MAX_STAGES][QI_GOALS];			/* minimum value of the item (0 to disab..wait) */
 	s16b retrieve_number[QI_MAX_STAGES][QI_GOALS];			/* amount of fitting items to retrieve */
 
 	bool target_pos[QI_MAX_STAGES][QI_GOALS];			/* enable target pos? */
@@ -337,7 +337,7 @@ typedef struct quest_info {
 	s16b killopt_ridx[QI_MAX_STAGES][QI_OPTIONAL][10];		/* kill certain monster(s), 0 for none, -1 for any. */
 	char killopt_rchar[QI_MAX_STAGES][QI_OPTIONAL][5];		/*  ..certain types, 0 for any. AND's with attr/lev. */
 	byte killopt_rattr[QI_MAX_STAGES][QI_OPTIONAL][5];		/*  ..certain colours, 127 for any. AND's with char/lev. */
-	byte killopt_rlevmin[QI_MAX_STAGES], killopt_rlevmax[QI_MAX_STAGES][QI_OPTIONAL];	/* 0 for any. AND's with char/attr. */
+	byte killopt_rlevmin[QI_MAX_STAGES][QI_OPTIONAL], killopt_rlevmax[QI_MAX_STAGES][QI_OPTIONAL];	/* 0 for any. AND's with char/attr. */
 	s16b killopt_number[QI_MAX_STAGES][QI_OPTIONAL];
 	byte killopt_spawn[QI_MAX_STAGES][QI_OPTIONAL];			/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
 	bool killopt_spawn_targets[QI_MAX_STAGES][QI_OPTIONAL];		/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */

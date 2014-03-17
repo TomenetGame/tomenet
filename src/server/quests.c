@@ -806,13 +806,24 @@ void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	p_ptr->quest_deliver_pos[py_q_idx] = FALSE;
 	p_ptr->quest_deliveropt_pos[py_q_idx] = FALSE;
 
+	/* set goal-dependant (temporary) quest info */
 	for (i = 0; i < QI_GOALS; i++) {
-		p_ptr->quest_target_pos[py_q_idx] = q_ptr->target_pos[stage][0];
-		p_ptr->quest_deliver_pos[py_q_idx] = q_ptr->deliver_pos[stage][0];
+		/* set target/deliver location helper info */
+		if (q_ptr->target_pos[stage][i]) p_ptr->quest_target_pos[py_q_idx] = TRUE;
+		if (q_ptr->deliver_pos[stage][i]) p_ptr->quest_deliver_pos[py_q_idx] = TRUE;
+
+		/* set kill/retrieve tracking counter if we have such goals in this stage */
+		if (q_ptr->kill[stage][i]) p_ptr->quest_kill_number[py_q_idx][i] = q_ptr->kill_number[stage][i];
+		if (q_ptr->retrieve[stage][i]) p_ptr->quest_retrieve_number[py_q_idx][i] = q_ptr->retrieve_number[stage][i];
 	}
 	for (i = 0; i < QI_OPTIONAL; i++) {
-		p_ptr->quest_targetopt_pos[py_q_idx] = q_ptr->targetopt_pos[stage][0];
-		p_ptr->quest_deliveropt_pos[py_q_idx] = q_ptr->deliveropt_pos[stage][0];
+		/* set target/deliver location helper info */
+		if (q_ptr->targetopt_pos[stage][i]) p_ptr->quest_targetopt_pos[py_q_idx] = TRUE;
+		if (q_ptr->deliveropt_pos[stage][i]) p_ptr->quest_deliveropt_pos[py_q_idx] = TRUE;
+
+		/* set kill/retrieve tracking counter if we have such goals in this stage */
+		if (q_ptr->killopt[stage][i]) p_ptr->quest_killopt_number[py_q_idx][i] = q_ptr->killopt_number[stage][i];
+		if (q_ptr->retrieveopt[stage][i]) p_ptr->quest_retrieveopt_number[py_q_idx][i] = q_ptr->retrieveopt_number[stage][i];
 	}
 }
 
@@ -1142,32 +1153,149 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	return;
 }
 
-/* test kill quest goal criteria vs an actually killed monster, for a match */
+/* Test kill quest goal criteria vs an actually killed monster, for a match.
+   Main criteria (r_idx vs char+attr+level) are OR'ed.
+   (Unlike for retrieve-object matches where they are actually AND'ed.) */
 static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type *m_ptr) {
 	quest_info *q_ptr = &q_info[q_idx];
+	int i;
+	monster_race *r_ptr = race_inf(m_ptr);
 
-#if 0
-	s16b kill_ridx[QI_MAX_STAGES][QI_GOALS][10] /* kill certain monster(s), 0 for none, -1 for any. */
-	char kill_rchar[QI_MAX_STAGES][QI_GOALS][5]
-	byte kill_rattr[QI_MAX_STAGES][QI_GOALS][5] /*  ..certain colours, 127 for any. AND's with char/lev. */
-	byte kill_rlevmin[QI_MAX_STAGES], kill_rlevmax[QI_MAX_STAGES][QI_GOALS];
-	s16b kill_number[QI_MAX_STAGES][QI_GOALS]
-#endif
+	/* check for race index */
+	for (i = 0; i < 10; i++) {
+		/* no monster specified? */
+		if (q_ptr->kill_ridx[stage][goal][i] == 0) continue;
+		/* accept any monster? */
+		if (q_ptr->kill_ridx[stage][goal][i] == -1) return TRUE;
+		/* specified an r_idx */
+		if (q_ptr->kill_ridx[stage][goal][i] == m_ptr->r_idx) return TRUE;
+	}
+
+	/* check for char/attr/level combination - treated in pairs (AND'ed) over the index */
+	for (i = 0; i < 5; i++) {
+		/* no char specified? */
+		if (q_ptr->kill_rchar[stage][goal][i] == 255) continue;
+		 /* accept any char? */
+		if (q_ptr->kill_rchar[stage][goal][i] != 254 &&
+		    /* specified a char? */
+		    q_ptr->kill_rchar[stage][goal][i] != r_ptr->d_char) continue;
+
+		/* no attr specified? */
+		if (q_ptr->kill_rattr[stage][goal][i] == 255) continue;
+		 /* accept any attr? */
+		if (q_ptr->kill_rattr[stage][goal][i] != 254 &&
+		    /* specified an attr? */
+		    q_ptr->kill_rattr[stage][goal][i] != r_ptr->d_attr) continue;
+
+		/* min/max level check -- note that we use m-level, not r-level :-o */
+		if ((!q_ptr->kill_rlevmin[stage][goal] || q_ptr->kill_rlevmin[stage][goal] <= m_ptr->level) &&
+		    (!q_ptr->kill_rlevmax[stage][goal] || q_ptr->kill_rlevmax[stage][goal] >= m_ptr->level))
+			return TRUE;
+	}
+
+	/* pft */
 	return FALSE;
 }
 
-/* test retrieve-item quest goal criteria vs an actually retrieved object, for a match */
+/* Test retrieve-item quest goal criteria vs an actually retrieved object, for a match.
+   (Note that the for-blocks are AND'ed unlike for kill-matches where they are OR'ed.) */
 static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_type *o_ptr) {
 	quest_info *q_ptr = &q_info[q_idx];
+	int i;
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	byte attr;
 
-#if 0
-	s16b retrieve_otval[QI_MAX_STAGES][QI_GOALS][10], retrieve_osval[QI_MAX_STAGES][QI_GOALS][10];
-	s16b retrieve_opval[QI_MAX_STAGES][QI_GOALS][5], retrieve_obpval[QI_MAX_STAGES][QI_GOALS][5];
-	byte retrieve_oattr[QI_MAX_STAGES][QI_GOALS][5]
-	s16b retrieve_oname1[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2[QI_MAX_STAGES][QI_GOALS][5], retrieve_oname2b[QI_MAX_STAGES][QI_GOALS][5]; /* 0 = disabled, -1 == any */
-	int retrieve_ovalue[QI_MAX_STAGES][QI_GOALS]
-	s16b retrieve_number[QI_MAX_STAGES][QI_GOALS]
-#endif
+	/* first let's find out the object's attr..which is uggh not so cool (from cave.c) */
+	attr = k_ptr->k_attr;
+	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval))
+		attr = get_book_name_color(0, o_ptr);
+	/* hack: colour of fancy shirts or custom objects can vary  */
+	if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
+	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
+		if (!o_ptr->xtra1) o_ptr->xtra1 = attr; //wut.. remove this hack? should be superfluous anyway
+			attr = o_ptr->xtra1;
+	}
+	if ((k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI))
+	    //#ifdef CLIENT_SHIMMER whatever..
+		attr = TERM_HALF;
+
+	/* check for tval/sval */
+	for (i = 0; i < 10; i++) {
+		/* no tval specified? */
+		if (q_ptr->retrieve_otval[stage][goal][i] == 0) continue;
+		/* accept any tval? */
+		if (q_ptr->retrieve_otval[stage][goal][i] != -1 &&
+		    /* specified a tval */
+		    q_ptr->retrieve_otval[stage][goal][i] != o_ptr->tval) continue;;
+
+		/* no sval specified? */
+		if (q_ptr->retrieve_osval[stage][goal][i] == 0) continue;
+		/* accept any sval? */
+		if (q_ptr->retrieve_osval[stage][goal][i] != -1 &&
+		    /* specified a sval */
+		    q_ptr->retrieve_osval[stage][goal][i] != o_ptr->sval) continue;;
+
+		break;
+	}
+	if (i == 10) return FALSE;
+
+	/* check for pval/bpval/attr/name1/name2/name2b
+	   note: let's treat pval/bpval as minimum values instead of exact values for now. */
+	for (i = 0; i < 5; i++) {
+		/* no pval specified? */
+		if (q_ptr->retrieve_opval[stage][goal][i] == 9999) continue;
+		/* accept any pval? */
+		if (q_ptr->retrieve_opval[stage][goal][i] != -9999 &&
+		    /* specified a pval? */
+		    q_ptr->retrieve_opval[stage][goal][i] < o_ptr->pval) continue;
+
+		/* no bpval specified? */
+		if (q_ptr->retrieve_obpval[stage][goal][i] == 9999) continue;
+		/* accept any bpval? */
+		if (q_ptr->retrieve_obpval[stage][goal][i] != -9999 &&
+		    /* specified a bpval? */
+		    q_ptr->retrieve_obpval[stage][goal][i] < o_ptr->bpval) continue;
+
+		/* no attr specified? */
+		if (q_ptr->retrieve_oattr[stage][goal][i] == 255) continue;
+		/* accept any attr? */
+		if (q_ptr->retrieve_oattr[stage][goal][i] != -254 &&
+		    /* specified a attr? */
+		    q_ptr->retrieve_oattr[stage][goal][i] != attr) continue;
+
+		/* no name1 specified? */
+		if (q_ptr->retrieve_oname1[stage][goal][i] == -3) continue;
+		 /* accept any name1? */
+		if (q_ptr->retrieve_oname1[stage][goal][i] != -1 &&
+		 /* accept any name1, but MUST be != 0? */
+		    (q_ptr->retrieve_oname1[stage][goal][i] != -2 || !o_ptr->name1) &&
+		    /* specified a name1? */
+		    q_ptr->retrieve_oname1[stage][goal][i] != o_ptr->name1) continue;
+
+		/* no name2 specified? */
+		if (q_ptr->retrieve_oname2[stage][goal][i] == -3) continue;
+		 /* accept any name2? */
+		if (q_ptr->retrieve_oname2[stage][goal][i] != -1 &&
+		 /* accept any name2, but MUST be != 0? */
+		    (q_ptr->retrieve_oname2[stage][goal][i] != -2 || !o_ptr->name2) &&
+		    /* specified a name2? */
+		    q_ptr->retrieve_oname2[stage][goal][i] != o_ptr->name2) continue;
+
+		/* no name2b specified? */
+		if (q_ptr->retrieve_oname2b[stage][goal][i] == -3) continue;
+		 /* accept any name2b? */
+		if (q_ptr->retrieve_oname2b[stage][goal][i] != -1 &&
+		 /* accept any name2b, but MUST be != 0? */
+		    (q_ptr->retrieve_oname2b[stage][goal][i] != -2 || !o_ptr->name2b) &&
+		    /* specified a name2b? */
+		    q_ptr->retrieve_oname2b[stage][goal][i] != o_ptr->name2b) continue;
+	}
+	if (i == 5) return FALSE;
+
+	/* finally, test against minimum value */
+	if (q_ptr->retrieve_ovalue[stage][goal] <= object_value_real(0, o_ptr)) return TRUE;
+
+	/* pft */
 	return FALSE;
 }
 
@@ -1175,6 +1303,69 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
    Those can be either kill-goals or item-retrieve-goals.
    The monster slain or item retrieved must therefore be given to this function for examination. */
 void quest_check_goal_target(int Ind, monster_type *m_ptr, object_type *o_ptr) {
+	quest_info *q_ptr;
+	player_type *p_ptr = Players[Ind];
+	int i, j, q_idx, stage;
+
+	/* paranoia -- neither a kill has been made nor an item picked up */
+	if (!m_ptr && !o_ptr) return;
+
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+		if (!p_ptr->quest_target_pos[i]) continue;//redundant with quest_within_target_pos?
+		if (!p_ptr->quest_within_target_wpos[i]) continue;
+
+		q_idx = p_ptr->quest_idx[i];
+		q_ptr = &q_info[q_idx];
+
+		/* quest is deactivated? */
+		if (!q_ptr->active) continue;
+
+		stage = quest_get_stage(Ind, q_idx);
+
+		/* check the quest goals, whether any of them wants a target to this location */
+		for (j = 0; j < QI_GOALS; j++) {
+			if (!q_ptr->target_pos[stage][j]) continue;
+
+			/* handle only specific x,y goals here */
+			if (q_ptr->target_pos_x[stage][j] == -1) continue;
+
+			/* extend target terrain over a wide patch? */
+			if (q_ptr->target_terrain_patch[stage][j]) {
+				/* different z-coordinate = instant fail */
+				if (p_ptr->wpos.wz != q_ptr->target_wpos[stage][j].wz) continue;
+				/* are we within range and have same terrain type? */
+				if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[stage][j].wx,
+				    q_ptr->target_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
+				    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
+				    wild_info[q_ptr->target_wpos[stage][j].wy][q_ptr->target_wpos[stage][j].wx].type)
+					continue;
+			}
+			/* just check a single, specific wpos? */
+			else if (!inarea(&q_ptr->target_wpos[stage][j], &p_ptr->wpos)) continue;
+
+			/* check for kill goal here */
+			if (m_ptr && q_ptr->kill[stage][j]) {
+				if (!quest_goal_matches_kill(q_idx, stage, j, m_ptr)) continue;
+				/* decrease the player's kill counter, if we got all, goal is completed! */
+				p_ptr->quest_kill_number[i][j]--;
+				if (p_ptr->quest_kill_number[i][j]) continue; /* not yet */
+
+				/* we have completed a target-to-wpos goal! */
+				quest_set_goal(Ind, q_idx, j);
+			}
+
+			/* check for retrieve-item goal here */
+			if (o_ptr && q_ptr->retrieve[stage][j]) {
+				if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
+				/* decrease the player's retrieve counter, if we got all, goal is completed! */
+				p_ptr->quest_retrieve_number[i][j]--;
+				if (p_ptr->quest_retrieve_number[i][j]) continue; /* not yet */
+
+				/* we have completed a target-to-wpos goal! */
+				quest_set_goal(Ind, q_idx, j);
+			}
+		}
+	}
 }
 /* Check if player completed a goal restricted to a target wpos and specific x,y.
    Those can be either kill-goals or item-retrieve-goals.
@@ -1220,20 +1411,32 @@ void quest_check_goal_target_xy(int Ind, monster_type *m_ptr, object_type *o_ptr
 			/* just check a single, specific wpos? */
 			else if (!inarea(&q_ptr->target_wpos[stage][j], &p_ptr->wpos)) continue;
 
+			/* check for exact x,y location */
 			if (q_ptr->target_pos_x[stage][j] != p_ptr->px &&
 			    q_ptr->target_pos_y[stage][j] != p_ptr->py)
 				continue;
 
 			/* check for kill goal here */
-			if (m_ptr && q_ptr->kill[stage][j] &&
-			    !quest_goal_matches_kill(q_idx, stage, j, m_ptr)) continue;
+			if (m_ptr && q_ptr->kill[stage][j]) {
+				if (!quest_goal_matches_kill(q_idx, stage, j, m_ptr)) continue;
+				/* decrease the player's kill counter, if we got all, goal is completed! */
+				p_ptr->quest_kill_number[i][j]--;
+				if (p_ptr->quest_kill_number[i][j]) continue; /* not yet */
+
+				/* we have completed a target-to-xy goal! */
+				quest_set_goal(Ind, q_idx, j);
+			}
 
 			/* check for retrieve-item goal here */
-			if (o_ptr && q_ptr->retrieve[stage][j] &&
-			    !quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
+			if (o_ptr && q_ptr->retrieve[stage][j]) {
+				if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
+				/* decrease the player's retrieve counter, if we got all, goal is completed! */
+				p_ptr->quest_retrieve_number[i][j]--;
+				if (p_ptr->quest_retrieve_number[i][j]) continue; /* not yet */
 
-			/* we have completed a target-to-xy goal! */
-			quest_set_goal(Ind, q_idx, j);
+				/* we have completed a target-to-xy goal! */
+				quest_set_goal(Ind, q_idx, j);
+			}
 		}
 	}
 }
@@ -1324,6 +1527,7 @@ void quest_check_goal_deliver_xy(int Ind) {
 			/* just check a single, specific wpos? */
 			else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
 
+			/* check for exact x,y location */
 			if (q_ptr->deliver_pos_x[stage][j] == p_ptr->px &&
 			    q_ptr->deliver_pos_y[stage][j] == p_ptr->py)
 				/* we have completed a delivery-to-xy goal! */
