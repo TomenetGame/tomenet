@@ -1436,8 +1436,8 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	if (pInd && q_ptr->individual) {
 		if (r_obj == 1) msg_print(pInd, "You have received an item.");
 		else if (r_obj) msg_format(pInd, "You have received %d items.", r_obj);
-		if (r_gold) msg_format(pInd, "You have received %d gold pieces.", r_gold);
-		if (r_exp) msg_format(pInd, "You have received %d experience points.", r_exp);
+		if (r_gold) msg_format(pInd, "You have received %d gold piece%s.", r_gold, r_gold == 1 ? "" : "s");
+		if (r_exp) msg_format(pInd, "You have received %d experience point%s.", r_exp, r_exp == 1 ? "" : "s");
 	} else for (i = 1; i <= NumPlayers; i++) {
 		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
@@ -1446,8 +1446,8 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 
 		if (r_obj == 1) msg_print(i, "You have received an item.");
 		else if (r_obj) msg_format(i, "You have received %d items.", r_obj);
-		if (r_gold) msg_format(i, "You have received %d gold pieces.", r_gold);
-		if (r_exp) msg_format(i, "You have received %d experience points.", r_exp);
+		if (r_gold) msg_format(i, "You have received %d gold piece%s.", r_gold, r_gold == 1 ? "" : "s");
+		if (r_exp) msg_format(i, "You have received %d experience point%s.", r_exp, r_exp == 1 ? "" : "s");
 	}
 
 	return; /* goals are not complete yet */
