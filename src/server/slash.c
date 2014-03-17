@@ -4164,13 +4164,16 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/clear-level") ||
 					prefix(message, "/clv"))
 			{
+				bool full = (tk);
+
 				/* Wipe even if town/wilderness */
 				wipe_o_list_safely(&wp);
-				wipe_m_list(&wp);
+				if (full) wipe_m_list(&wp);
+				else wipe_m_list_admin(&wp);
 				/* XXX trap clearance support dropped - reimplement! */
 //				wipe_t_list(&wp);
 
-				msg_format(Ind, "\377rItems/monsters on %s are cleared.", wpos_format(Ind, &wp));
+				msg_format(Ind, "\377rItems/%smonsters on %s are cleared.", full ? "ALL " : "", wpos_format(Ind, &wp));
 				for (i = 1; i <= NumPlayers; i++) {
 					if (!inarea(&wp, &Players[i]->wpos)) continue;
 					Players[i]->redraw |= PR_MAP;
@@ -4213,10 +4216,13 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/geno-level") ||
 					prefix(message, "/geno"))
 			{
-				/* Wipe even if town/wilderness */
-				wipe_m_list(&wp);
+				bool full = (tk);
 
-				msg_format(Ind, "\377rMonsters on %s are cleared.", wpos_format(Ind, &wp));
+				/* Wipe even if town/wilderness */
+				if (full) wipe_m_list(&wp);
+				else wipe_m_list_admin(&wp);
+
+				msg_format(Ind, "\377r%sMonsters on %s are cleared.", full ? "ALL " : "", wpos_format(Ind, &wp));
 				return;
 			}
 			else if (prefix(message, "/vanitygeno") ||
@@ -4237,7 +4243,8 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/mkill-level") ||
 					prefix(message, "/mkill"))
 			{
-				bool fear;
+				bool fear, full = (tk);
+
 				/* Kill all the monsters */
 				for (i = m_max - 1; i >= 1; i--) {
 					monster_type *m_ptr = &m_list[i];
@@ -4246,8 +4253,9 @@ void do_slash_cmd(int Ind, char *message)
 					if (tk) mon_take_hit(Ind, i, m_ptr->hp + 1, &fear, " dies from a bolt from the blue");
 					else monster_death(Ind, i);
 				}
-				wipe_m_list(&wp);
-				msg_format(Ind, "\377rMonsters on %s were killed.", wpos_format(Ind, &p_ptr->wpos));
+				if (full) wipe_m_list(&wp);
+				else wipe_m_list_admin(&wp);
+				msg_format(Ind, "\377r%sMonsters on %s were killed.", full ? "ALL " : "", wpos_format(Ind, &p_ptr->wpos));
 				return;
 			}
 			else if (prefix(message, "/game")){
