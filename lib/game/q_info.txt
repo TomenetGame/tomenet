@@ -37,7 +37,7 @@ V:0.0.1
 # (optional, if k/r line exists) P:stage:goal#:goalwpos wx:wy:wz:adjacent terrain extension:goal at exact x:y:mapfile (if not using terrain type) or '-'
 # (optional) M:stage:goal#:deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:mapfile (if not using terrain type) or '-'
 # //todo--use deliver-goal instead for now! (optional) B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
-# //todo (optional) Z:stage:goal:changeflags
+# (optional) Z:stage:goal:changeflags
 # G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons
 # (optional) O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free) separated by colons
 # (optional, linked to 'O') R:stage:(10x repeatable) define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:createreward()?:gold:exp:specialstatuseffect
@@ -49,6 +49,8 @@ V:0.0.1
 #   '-' means no flags.
 #   For lines that change those: 'a' to 'p' to clear flags, 'A' to 'P' to set flags.
 #   For lines that check those (conversational lines): 'A' to 'P' to check for a flag, which must be set (to display the convo line etc)
+# Note about retrieving items:
+#   char/attr 254 means 'any', pval/bpval -9999 means 'any', oname1/2/2b -1 means 'any' and -2 means 'any but must not be zero'.
 
 
 # for testing purpose
