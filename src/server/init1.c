@@ -7306,10 +7306,12 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 errr init_q_info_txt(FILE *fp, char *buf) {
 	int i, j, k, l, stage, goal, nextstage, questor;
 	char *s, codename[QI_CODENAME_LEN + 1], creator[NAME_LEN], questname[MAX_CHARS];
-	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1];
-	int lc_narration[QI_MAX_STAGES], lc_conversation[QI_QUESTORS][QI_MAX_STAGES], lc_keywords[QI_QUESTORS][QI_MAX_STAGES], lc_rewards[QI_MAX_STAGES];
+	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1], tmpbuf2[MAX_CHARS];
+	int lc_narration[QI_STAGES], lc_conversation[QI_QUESTORS][QI_STAGES], lc_keywords[QI_QUESTORS][QI_STAGES], lc_rewards[QI_STAGES];
 	int lc_questor = 0, lc_accept = 0;
+	int lc_keyword_reply[QI_QUESTORS][QI_STAGES][QI_KEYWORDS];
 	bool disabled;
+	u16b flags;
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -7458,7 +7460,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->flags = 0x0000; //no reason
 			/* for same no reason, probably not todo: init talk/keyword flags and flag-changes */
 
-			for (j = 0; j < QI_MAX_STAGES; j++) {
+			for (j = 0; j < QI_STAGES; j++) {
 				/* 'C' */
 				q_ptr->accepts[j] = FALSE; /* by default, only can acquire quest in stage 0 (done after this loop) */
 
@@ -7469,12 +7471,27 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				/* keep track of maximum amount of lines per text in each quest stage */
 				lc_narration[j] = 0;
+
 				for (i = 0; i < QI_QUESTORS; i++) {
 					lc_conversation[i][j] = 0;
 					lc_keywords[i][j] = 0;
 
-					for (k = 0; k < QI_MAX_KEYWORDS; k++) q_ptr->keyword_reply[i][j][k] = NULL;
+					for (k = 0; k < QI_KEYWORDS; k++) {
+						q_ptr->keyword[i][j][k] = NULL;
+						for (l = 0; l < QI_TALK_LINES; l++) {
+							q_ptr->keyword_reply[i][j][k][l] = NULL;
+							q_ptr->keyword_replyflags[i][j][k][l] = 0x0000;
+						}
+						lc_keyword_reply[i][j][k] = 0;
+					}
+
+					for (k = 0; k < QI_TALK_LINES; k++)
+						q_ptr->talk[i][j][k] = NULL;
 				}
+
+				for (k = 0; k < QI_TALK_LINES; k++)
+					q_ptr->narration[j][k] = NULL;
+
 				lc_rewards[j] = 0;
 
 				for (k = 0; k < QI_GOALS; k++) {
@@ -7528,7 +7545,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					for (l = 0; l < QI_STAGE_GOALS; l++)
 						q_ptr->goals_for_stage[j][k][l] = -1; /* no goal is required to end a stage, if it isn't explicitely specified */
 				}
-				for (k = 0; k < QI_MAX_STAGE_REWARDS; k++) {
+				for (k = 0; k < QI_STAGE_REWARDS; k++) {
 					for (l = 0; l < QI_REWARD_GOALS; l++)
 						q_ptr->goals_for_reward[j][k][l] = -1; /* no goals are required to get a reward if not specified, aka it's for free! */
 				}
@@ -7551,7 +7568,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* read list of numbers, separated by colons */
 			while (*s >= '0' && *s <= '9') {
 				j = atoi(s);
-				if (j < 0 || j >= QI_MAX_STAGES) return 1;
+				if (j < 0 || j >= QI_STAGES) return 1;
 
 				q_ptr->accepts[j] = TRUE;
 
@@ -7738,7 +7755,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			s = buf + 2;
 			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d",
 			    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs)) return (1);
-			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return 1;
 
 			q_ptr->activate_quest[stage] = aq;
 			q_ptr->auto_accept[stage] = (aa != 0);
@@ -7793,8 +7810,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			s = buf + 2;
 			if (3 != sscanf(s, "%d:%16[^:]:%79[^:]",
 			    &stage, flagbuf, tmpbuf)) return (1);
-			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
-			if (lc_narration[stage] == 10) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return 1;
+			if (lc_narration[stage] == QI_TALK_LINES) return 1;
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
@@ -7820,7 +7837,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (4 != sscanf(s, "%d:%d:%16[^:]:%79[^:]",
 			    &questor, &stage, flagbuf, tmpbuf)) return (1);
 
-			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+			if (questor < 0 || questor >= QI_QUESTORS) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return 1;
 			if (lc_conversation[questor][stage] == QI_TALK_LINES) return 1;
 
 #if 0 /* allow full colour codes */
@@ -7853,8 +7871,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (6 != sscanf(s, "%d:%d:%16[^:]:%29[^:]:%16[^:]:%d",
 			    &questor, &stage, flagbuf, tmpbuf, flagbuf2, &nextstage)) return (1);
 
-			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
-			if (lc_keywords[questor][stage] == 10) return 1;
+			if (questor < 0 || questor >= QI_QUESTORS) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return 1;
+			if (lc_keywords[questor][stage] == QI_KEYWORDS) return 1;
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 
@@ -7887,6 +7906,43 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
+		/* Process 'y' for replies to keywords (depending on flags) */
+		if (buf[0] == 'y') {
+			s = buf + 2;
+			if (5 != sscanf(s, "%d:%d:%29[^:]:%16[^:]:%79[^:]",
+			    &questor, &stage, tmpbuf2, flagbuf, tmpbuf)) return (1);
+
+			if (questor < 0 || questor >= QI_QUESTORS) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return 1;
+
+			/* find out the keyword's index */
+			for (i = 0; i < QI_KEYWORDS; i++) {
+				if (!q_ptr->keyword[questor][stage][i]) continue;
+				if (!strcmp(q_ptr->keyword[questor][stage][i], tmpbuf2)) break;
+			}
+			/* keyword not found -> error */
+			if (i == QI_KEYWORDS) return 1;
+
+			if (lc_keyword_reply[questor][stage][i] == QI_TALK_LINES) return 1;
+
+			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
+			strcpy(c, tmpbuf);
+			q_ptr->keyword_reply[questor][stage][i][lc_keyword_reply[questor][stage][i]] = c;
+
+			cc = flagbuf;
+			if (*cc == '-') *cc = 0;
+			flags = 0x0000;
+			while (*cc) {
+				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
+					flags |= (0x1 << (*cc - 'A')); /* set flag */
+				} else return 1;
+			}
+			q_ptr->keyword_replyflags[questor][stage][i][lc_keyword_reply[questor][stage][i]] = flags;
+
+			lc_keyword_reply[questor][stage][i]++;
+			continue;
+		}
+
 		/* Process 'k' for kill quest goal */
 		if (buf[0] == 'k') {
 			/* now we have 3 sub-types of 'k' lines -_- uhh */
@@ -7898,7 +7954,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				    &stage, &goal, &minlev, &maxlev, &num, &spawn, &spawntarget))
 					return (1);
 
-				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return 1;
 				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
 
 				if (goal > 0) { /* main goal */
@@ -7929,7 +7985,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				    &stage, &goal, &ridx[0], &ridx[1], &ridx[2], &ridx[3], &ridx[4], &ridx[5], &ridx[6], &ridx[7], &ridx[8], &ridx[9]))
 					return (1);
 
-				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return 1;
 				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
 
 				if (goal > 0) { /* main goal */
@@ -7954,7 +8010,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				    &stage, &goal, &rchar[0], &rattr[0], &rchar[1], &rattr[1], &rchar[2], &rattr[2], &rchar[3], &rattr[3], &rchar[4], &rattr[4]))
 					return (1);
 
-				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return 1;
 				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
 
 				if (goal > 0) { /* main goal */
@@ -7990,7 +8046,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				    &stage, &goal, &minval, &num))
 					return (1);
 
-				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return 1;
 				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
 
 				if (goal > 0) { /* main goal */
@@ -8017,7 +8073,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				    &tval[5], &sval[5], &tval[6], &sval[6], &tval[7], &sval[7], &tval[8], &sval[8], &tval[9], &sval[9]))
 					return (1);
 
-				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return 1;
 				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
 
 				if (goal > 0) { /* main goal */
@@ -8051,7 +8107,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				    &pval[4], &bpval[4], &attr[4], &name1[4], &name2[4], &name2b[4]))
 					return (1);
 
-				if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return 1;
 				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
 
 				if (goal > 0) { /* main goal */
@@ -8092,7 +8148,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%s",
 			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, tmpbuf)) return (1);
 
-			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return 1;
 			if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
 
 			if (goal > 0) { /* main goal */
@@ -8139,7 +8195,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%s",
 			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, tmpbuf)) return (1);
 
-			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return 1;
 			if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
 
 			if (goal > 0) { /* main goal */
@@ -8182,7 +8238,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'B') {
 			/* first number is the stage */
 			stage = atoi(buf + 2);
-			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return 1;
 			if (!(c = strchr(buf + 2, ':'))) return 1;
 			c++;
 
@@ -8229,7 +8285,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'G') {
 			/* first number is the stage, second the next stage */
 			stage = atoi(buf + 2);
-			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+			if (stage < 0 || stage >= QI_STAGES) return 1;
 			if (!(c = strchr(buf + 2, ':'))) return 1;
 			c++;
 			nextstage = atoi(c);
@@ -8266,17 +8322,17 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		}
 
 		/* Process 'O', which main+optional goal combinations (up to QI_REWARD_GOALS different goals per combination) are
-		   required to advance to which stage (up to QI_MAX_STAGE_REWARDS different ones, each has a goal-combo) */
+		   required to advance to which stage (up to QI_STAGE_REWARDS different ones, each has a goal-combo) */
 		if (buf[0] == 'O') {
 			int reward;
 
 			/* first number is the stage, second the next stage */
 			stage = atoi(buf + 2);
-			if (stage < 0 || stage >= QI_MAX_STAGES) return -1;
+			if (stage < 0 || stage >= QI_STAGES) return -1;
 			if (!(c = strchr(buf + 2, ':'))) return 1;
 			c++;
 			reward = atoi(c);
-			if (reward >= QI_MAX_STAGE_REWARDS) return -1; /* out of space */
+			if (reward >= QI_STAGE_REWARDS) return -1; /* out of space */
 			if (!(c = strchr(c, ':'))) return 1;
 			c++;
 
@@ -8306,7 +8362,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* first number is the stage */
 			s = buf + 2;
 			stage = atoi(s);
-			if (stage < 0 || stage >= QI_MAX_STAGES) return -1;
+			if (stage < 0 || stage >= QI_STAGES) return -1;
 			if (lc_rewards[stage] == 10) return 1;
 			if (!(c = strchr(s, ':'))) return 1;
 			c++;

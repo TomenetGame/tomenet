@@ -1108,7 +1108,7 @@ static void rd_quests() {
 		}
 
 		if (!older_than(4, 5, 24)) {
-			for (k = 0; k < QI_MAX_STAGES; k++) {
+			for (k = 0; k < QI_STAGES; k++) {
 				for (j = 0; j < QI_GOALS; j++) {
 					rd_byte((byte *) &q_info[i].goals[k][j]);
 					rd_s16b(&q_info[i].kill_number_left[k][j]);

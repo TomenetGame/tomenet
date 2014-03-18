@@ -483,7 +483,7 @@ static void wr_quests() {
 
 		wr_u16b(q_info[i].flags);
 
-		for (k = 0; k < QI_MAX_STAGES; k++) {
+		for (k = 0; k < QI_STAGES; k++) {
 			for (j = 0; j < QI_GOALS; j++) {
 				wr_byte(q_info[i].goals[k][j]);
 				wr_s16b(q_info[i].kill_number_left[k][j]);

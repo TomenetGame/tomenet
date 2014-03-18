@@ -1027,7 +1027,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		}
 	/* now check remaining dialogue options (keywords) */
 	for (j = 0; j < q_ptr->questors; j++) {
-		for (i = 0; i < QI_MAX_KEYWORDS; i++)
+		for (i = 0; i < QI_KEYWORDS; i++)
 			if (q_ptr->keyword[j][stage][i] &&
 			    /* and it's not just a keyword-reply without a stage change? */
 			    q_ptr->keyword_stage[j][stage][i] != -1) {
@@ -1416,7 +1416,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	else msg_format(Ind, "\374\377u>\377U%s", str);
 
 	/* scan keywords for match */
-	for (i = 0; i < QI_MAX_KEYWORDS; i++) {
+	for (i = 0; i < QI_KEYWORDS; i++) {
 		if (!q_ptr->keyword[questor_idx][stage][i]) break; /* no more keywords? */
 		if (strcmp(q_ptr->keyword[questor_idx][stage][i], str)) continue; /* not matching? */
 		/* check if required flags match to enable this keyword */
@@ -1429,6 +1429,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 			msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
 			for (j = 0; j < QI_TALK_LINES; j++) {
 				if (!q_ptr->keyword_reply[questor_idx][stage][i][j]) break;
+				if ((q_ptr->keyword_replyflags[questor_idx][stage][i][j] & q_ptr->flags) != q_ptr->keyword_replyflags[questor_idx][stage][i][j]) continue;
 				msg_format(Ind, "\374\377U%s", q_ptr->keyword_reply[questor_idx][stage][i][j]);
 			}
 			//msg_print(Ind, "\374 ");
@@ -2115,7 +2116,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 #endif
 
 	/* scan through all possible follow-up stages */
-	for (j = 0; j < QI_MAX_STAGE_REWARDS; j++) {
+	for (j = 0; j < QI_STAGE_REWARDS; j++) {
 		/* no reward? */
 		if (!q_ptr->reward_otval[stage][j] &&
 		    !q_ptr->reward_oreward[stage][j] &&
@@ -2198,7 +2199,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 				quest_reward_exp(pInd, q_idx, q_ptr->reward_exp[stage][j]);
 				r_exp += q_ptr->reward_exp[stage][j];
 			}
-			//TODO: s16b reward_statuseffect[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
+			//TODO: s16b reward_statuseffect[QI_STAGES][QI_STAGE_REWARDS];
 		}
 	}
 
