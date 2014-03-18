@@ -633,7 +633,6 @@ void compact_monsters(int size, bool purge)
 	m_top = 0;
 
 	/* Collect "live" monsters */
-
 	for (i = 0; i < m_max; i++) {
 		/* Collect indexes */
 		m_fast[m_top++] = i;
