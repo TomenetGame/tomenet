@@ -7440,6 +7440,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_ptr->questor_invincible[i] = TRUE;
 			}
 
+			for (j = 0; j < QI_FLAGS; j++) q_ptr->flags[j] = FALSE;
+
 			for (j = 0; j < QI_MAX_STAGES; j++) {
 				/* 'C' */
 				q_ptr->accepts[j] = FALSE; /* by default, only can acquire quest in stage 0 (done after this loop) */
@@ -7455,21 +7457,49 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				lc_rewards[j] = 0;
 
 				for (k = 0; k < QI_GOALS; k++) {
+#if 0
 					q_ptr->return_to_questor[j][k] = FALSE; /* no need to return to questor for main goals */
-					for (l = 0; l < 5; l++) {
-						q_ptr->kill_rchar[stage][goal][l] = 255;
-						q_ptr->kill_rattr[stage][goal][l] = 255;
+#endif
+					q_ptr->goals[j][k] = FALSE;
+					q_ptr->kill[j][k] = FALSE;
+					q_ptr->retrieve[j][k] = FALSE;
+					q_ptr->target_pos[j][k] = FALSE;
+					q_ptr->deliver_pos[j][k] = FALSE;
 
-						q_ptr->retrieve_opval[stage][goal][l] = 9999;
-						q_ptr->retrieve_obpval[stage][goal][l] = 9999;
-						q_ptr->retrieve_oattr[stage][goal][l] = 255;
-						q_ptr->retrieve_oname1[stage][goal][l] = -3;
-						q_ptr->retrieve_oname2[stage][goal][l] = -3;
-						q_ptr->retrieve_oname2b[stage][goal][l] = -3;
+					for (l = 0; l < 5; l++) {
+						q_ptr->kill_rchar[j][k][l] = 255;
+						q_ptr->kill_rattr[j][k][l] = 255;
+
+						q_ptr->retrieve_opval[j][k][l] = 9999;
+						q_ptr->retrieve_obpval[j][k][l] = 9999;
+						q_ptr->retrieve_oattr[j][k][l] = 255;
+						q_ptr->retrieve_oname1[j][k][l] = -3;
+						q_ptr->retrieve_oname2[j][k][l] = -3;
+						q_ptr->retrieve_oname2b[j][k][l] = -3;
 					}
 				}
-				for (k = 0; k < QI_OPTIONAL; k++)
+				for (k = 0; k < QI_OPTIONAL; k++) {
+#if 0
 					q_ptr->return_to_questor_opt[j][k] = FALSE; /* no need to return to questor for optional goals */
+#endif
+					q_ptr->goalsopt[j][k] = FALSE;
+					q_ptr->killopt[j][k] = FALSE;
+					q_ptr->retrieveopt[j][k] = FALSE;
+					q_ptr->targetopt_pos[j][k] = FALSE;
+					q_ptr->deliveropt_pos[j][k] = FALSE;
+
+					for (l = 0; l < 5; l++) {
+						q_ptr->killopt_rchar[j][k][l] = 255;
+						q_ptr->killopt_rattr[j][k][l] = 255;
+
+						q_ptr->retrieveopt_opval[j][k][l] = 9999;
+						q_ptr->retrieveopt_obpval[j][k][l] = 9999;
+						q_ptr->retrieveopt_oattr[j][k][l] = 255;
+						q_ptr->retrieveopt_oname1[j][k][l] = -3;
+						q_ptr->retrieveopt_oname2[j][k][l] = -3;
+						q_ptr->retrieveopt_oname2b[j][k][l] = -3;
+					}
+				}
 
 				for (k = 0; k < QI_FOLLOWUP_STAGES; k++) {
 					q_ptr->next_stage_from_goals[j][k] = -1; /* no next stages set, end quest by default if nothing specified */
@@ -8128,10 +8158,14 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				j = atoi(c);
 				if (j < -QI_OPTIONAL || j > QI_GOALS) return 1;
 				if (j > 0) { /* main goal */
+#if 0
 					q_ptr->return_to_questor[stage][j - 1] = TRUE;
+#endif
 				} else if (j < 0) { /* optional goal */
 					j = -j;
+#if 0
 					q_ptr->return_to_questor_opt[stage][j - 1] = TRUE;
+#endif
 				}
 				if (!(c = strchr(c, ':'))) break;
 				c++;

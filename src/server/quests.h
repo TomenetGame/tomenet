@@ -380,9 +380,10 @@ typedef struct quest_info {
 	int reward_exp[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];
 	s16b reward_statuseffect[QI_MAX_STAGES][QI_MAX_STAGE_REWARDS];	/* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
 
-
+#if 0 /* just use a deliver_pos goal instead, for now */
 	bool return_to_questor[QI_MAX_STAGES][QI_GOALS];		/* do we need to return to the questor first (bump), to get credit for particular main goals? */
 	bool return_to_questor_opt[QI_MAX_STAGES][QI_OPTIONAL];		/* do we need to return to the questor first (bump), to get credit for particular optional goals? */
+#endif
 
 	/* determine if a new stage should begin depending on which goals we have completed */
 	/* contains the indices of up to QI_STAGE_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
