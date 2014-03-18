@@ -405,7 +405,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 
 		update_mon(c_ptr->m_idx, TRUE);
 #if QDEBUG > 1
-		s_printf("QUEST_SPAWNED: Questor at %d,%d,%d - %d,%d.\n", wpos.wx, wpos.wy, wpos.wz, x, y);
+		s_printf("QUEST_SPAWNED: Questor '%s' at %d,%d,%d - %d,%d.\n", q_ptr->questor_name[0], wpos.wx, wpos.wy, wpos.wz, x, y);
 #endif
 
 		q_ptr->talk_focus[q] = 0;
