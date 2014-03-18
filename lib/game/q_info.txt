@@ -11,7 +11,7 @@ V:0.0.1
 
 # N:index:codename:creator:name[:list of up to 5 codenames of prerequisite quests]
 # (optional) C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
-# (optional) I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:repeatable:questdonecreditstage
+# (optional) I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:repeatable (-1 for infinitely):questdonecreditstage
 # //todo (optional) E:list of colon-separated prequest codenames
 # (optional) T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # (optional) U:endingstage (0 = none):duration:cooldown:staticfloor?:quitfloor?

@@ -7403,7 +7403,47 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			strcpy(q_ptr->codename, codename);
 			strcpy(q_ptr->creator, creator);
 
+			/* initialise default values, because some flag lines/values are optional) */
+			/* 'I' */
+			q_ptr->privilege = 0;
+			q_ptr->individual = TRUE;
+			q_ptr->minlev = 0;
+			q_ptr->maxlev = 100;
+			q_ptr->repeatable = 0; /* could also default to infinitely repeatable maybe, -1 */
+			q_ptr->quest_done_credit_stage = 1; /* after first stage change, quest "cannot" be cancelled anymore */
+			q_ptr->races = 0xFFFFF;
+			q_ptr->classes = 0xFFFF;
+			q_ptr->mode_norm = TRUE;
+			q_ptr->mode_el = TRUE;
+			q_ptr->mode_pvp = FALSE; /* by default, pvp chars cannot do quests */
+			q_ptr->must_be_fruitbat = 0;
+			q_ptr->must_be_monster = 0;
+
+			/* 'U' */
+			q_ptr->ending_stage = 0;
+			q_ptr->cooldown = 0;
+			q_ptr->static_floor = FALSE; /* this should maybe be changed if questor loc can be in dungeon/tower, or he gets wiped :-p */
+			q_ptr->quit_floor = FALSE;
+
+			/* 'T' */
+			q_ptr->night = q_ptr->day = TRUE;
+			q_ptr->morning = q_ptr->forenoon = q_ptr->noon = q_ptr->afternoon = TRUE;
+			q_ptr->evening = q_ptr->midnight = q_ptr->deepnight = TRUE;
+			q_ptr->time_start = q_ptr->time_stop = -1;
+
+			/* 'A' */
+			for (i = 0; i < QI_QUESTORS; i++) {
+				q_ptr->accept_los[i] = FALSE;
+				q_ptr->accept_interact[i] = TRUE;
+				q_ptr->questor_talkable[i] = TRUE;
+				q_ptr->questor_despawned[i] = FALSE;
+				q_ptr->questor_invincible[i] = TRUE;
+			}
+
 			for (j = 0; j < QI_MAX_STAGES; j++) {
+				/* 'C' */
+				q_ptr->accepts[j] = FALSE; /* by default, only can acquire quest in stage 0 (done after this loop) */
+
 				/* keep track of maximum amount of lines per text in each quest stage */
 				lc_narration[j] = 0;
 				for (i = 0; i < QI_QUESTORS; i++) {
@@ -7414,7 +7454,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				}
 				lc_rewards[j] = 0;
 
-				/* Set some default values: */
 				for (k = 0; k < QI_GOALS; k++) {
 					q_ptr->return_to_questor[j][k] = FALSE; /* no need to return to questor for main goals */
 					for (l = 0; l < 5; l++) {
@@ -7443,6 +7482,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 						q_ptr->goals_for_reward[j][k][l] = -1; /* no goals are required to get a reward if not specified, aka it's for free! */
 				}
 			}
+			q_ptr->accepts[0] = FALSE; /* 'C' stage 0 allows acquiring the quest exclusively */
 
 			/* for Q/A lines (:-o) */
 			lc_questor = 0;
