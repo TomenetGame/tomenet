@@ -462,7 +462,11 @@ static void wr_quests() {
 
 	for (i = 0; i < max_q_idx; i++) {
 		wr_byte(q_info[i].active);
+#if 0 /* actually don't write this, it's more comfortable to use q_info '-2 repeatable' entry instead */
 		wr_byte(q_info[i].disabled);
+#else
+		wr_byte(0);
+#endif
 		wr_s16b(q_info[i].cur_cooldown);
 		wr_s16b(q_info[i].stage);
 		wr_s32b(q_info[i].start_turn);

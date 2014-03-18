@@ -1062,8 +1062,15 @@ static void rd_quests() {
 			strip_bytes(dummysize1);
 			continue;
 		}
-		rd_byte((byte *) &q_info[i].active);
-		rd_byte((byte *) &q_info[i].disabled);
+
+		/* read 'active' and 'disabled' state */
+		rd_byte((byte *) &tmpbyte);
+		/* in case it was already disabled in q_info.txt */
+		if (!q_info[i].disabled) {
+			q_info[i].active = (tmpbyte != 0);
+			rd_byte((byte *) &q_info[i].disabled);
+		} else rd_byte((byte *) &tmpbyte); /* strip as dummy info */
+
 		rd_s16b(&q_info[i].cur_cooldown);
 		rd_s16b(&q_info[i].stage);
 		rd_s32b(&q_info[i].start_turn);
