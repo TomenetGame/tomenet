@@ -1047,6 +1047,8 @@ static void rd_quests() {
 	byte flags, tmpbyte;
 	int dummysize1 = sizeof(byte) * 7 + sizeof(s16b) * 3 + sizeof(s32b);
 	int dummysize2 = sizeof(byte) * 5 + sizeof(s16b);
+	monster_type *m_ptr;
+	quest_info *q_ptr;
 
 	rd_s16b(&max);
 	rd_s16b(&questors);
@@ -1069,7 +1071,10 @@ static void rd_quests() {
 		if (!q_info[i].disabled) {
 			q_info[i].active = (tmpbyte != 0);
 			rd_byte((byte *) &q_info[i].disabled);
-		} else rd_byte((byte *) &tmpbyte); /* strip as dummy info */
+		} else {
+			rd_byte((byte *) &tmpbyte); /* strip as dummy info */
+			q_info[i].disabled_on_load = TRUE;
+		}
 
 		rd_s16b(&q_info[i].cur_cooldown);
 		rd_s16b(&q_info[i].stage);
@@ -1116,6 +1121,17 @@ static void rd_quests() {
 		}
 	}
 	s_printf("Read %d/%d saved quests states (discarded %d).\n", max, max_q_idx, max > max_q_idx ? max - max_q_idx : 0);
+
+	/* Now fix questors:
+	   Their m_idx is different now from what it was when the server shut down.
+	   We need to reattach the correct m_idx to the quests. */
+	for (i = 1; i < m_max; i++) {
+		m_ptr = &m_list[i];
+		if (!m_ptr->questor) continue;
+
+		q_ptr = &q_info[m_ptr->quest];
+		q_ptr->questor_m_idx[m_ptr->questor_idx] = i;
+	}
 }
 
 static void rd_guilds() {

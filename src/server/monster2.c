@@ -470,8 +470,7 @@ void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_arts)
 /*
  * if 'purge', non-allocated wilderness monsters will be purged.
  */
-void compact_monsters(int size, bool purge)
-{
+void compact_monsters(int size, bool purge) {
 	int             i, num, cnt, Ind;
 	int             cur_lev, cur_dis, chance;
 	cave_type **zcave;
@@ -604,6 +603,7 @@ void compact_monsters(int size, bool purge)
 			if (m_list[i].questor) {
 				q_ptr = &q_info[m_list[i].quest];
 				q_ptr->questor_m_idx[m_list[i].questor_idx] = i;
+				s_printf("QUEST_COMPACT_MONSTERS: quest %d - questor %d m_idx %d->%d\n", m_list[i].quest, m_list[i].questor_idx, q_ptr->questor_m_idx[m_list[i].questor_idx], i);
 			}
 
 			/* Copy the visibility and los flags for the players */

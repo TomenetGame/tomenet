@@ -110,6 +110,7 @@ typedef struct quest_info {
 					   depends on time (day/night/specific) constraints) */
 	bool disabled; 			/* quest has been temporarily disabled, is hence deactivated and cannot \
 					   be activated until enabled again (eg for when something breaks during quest progression) */
+	bool disabled_on_load;		/* dynamic info for quests disabled via q_info */
 	s16b cur_cooldown;		/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
 	s16b stage;
 	s32b start_turn;

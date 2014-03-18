@@ -149,7 +149,7 @@ void process_quests(void) {
 /* Spawn questor, prepare sector/floor, make things static if requested, etc. */
 void quest_activate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
-	int i, q;
+	int i, q, m_idx;
 	cave_type **zcave, *c_ptr;
 	monster_race *r_ptr, *rbase_ptr;
 	monster_type *m_ptr;
@@ -280,8 +280,8 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 	for (q = 0; q < q_ptr->questors; q++) {
 		if (!q_ptr->questor_ridx[q]) break;
 
-		c_ptr->m_idx = m_pop();
-		if (!c_ptr->m_idx) {
+		m_idx = m_pop();
+		if (!m_idx) {
 			s_printf("QUEST_CANCELLED: No free monster index to pop questor.\n");
 			q_ptr->active = FALSE;
 #ifdef QERROR_DISABLE
@@ -291,13 +291,58 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 #endif
 			return;
 		}
-		m_ptr = &m_list[c_ptr->m_idx];
+
+		/* make sure no other player/moster is occupying our spawning grid */
+		if (c_ptr->m_idx < 0) {
+			int Ind = -c_ptr->m_idx;
+			player_type *p_ptr = Players[Ind];
+
+			teleport_player(Ind, 1, TRUE);
+			/* check again.. */
+			if (c_ptr->m_idx < 0) teleport_player(Ind, 10, TRUE);
+			/* and again.. (someone funny stone-walled the whole map?) */
+			if (c_ptr->m_idx < 0) teleport_player(Ind, 200, TRUE);
+			/* check again. If still here, just transport him to Bree for now -_- */
+			if (c_ptr->m_idx < 0) {
+				p_ptr->new_level_method = LEVEL_RAND;
+				p_ptr->recall_pos.wx = cfg.town_x;
+				p_ptr->recall_pos.wy = cfg.town_y;
+				p_ptr->recall_pos.wz = 0;
+				recall_player(Ind, "A strange force teleports you far away.");
+			}
+		} else if (c_ptr->m_idx > 0) {
+			/* is it ANOTHER questor? uhoh */
+			if (m_list[c_ptr->m_idx].questor) {
+				/* we don't mess with questor locations for consistencies sake */
+				s_printf("QUEST_CANCELLED: Questor of quest %d occupies questor spawn location.\n", m_list[c_ptr->m_idx].quest);
+				q_ptr->active = FALSE;
+#ifdef QERROR_DISABLE
+				q_ptr->disabled = TRUE;
+#else
+				q_ptr->cur_cooldown = QERROR_COOLDOWN;
+#endif
+				return;
+			}
+
+			teleport_away(c_ptr->m_idx, 1);
+			/* check again.. */
+			if (c_ptr->m_idx > 0) teleport_away(c_ptr->m_idx, 2);
+			/* aaaand again.. */
+			if (c_ptr->m_idx > 0) teleport_away(c_ptr->m_idx, 10);
+			/* wow. this patience. */
+			if (c_ptr->m_idx > 0) teleport_away(c_ptr->m_idx, 200);
+			/* out of patience */
+			if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx, TRUE);
+		}
+		c_ptr->m_idx = m_idx;
+
+		m_ptr = &m_list[m_idx];
 		MAKE(m_ptr->r_ptr, monster_race);
 		r_ptr = m_ptr->r_ptr;
 		rbase_ptr = &r_info[q_ptr->questor_ridx[q]];
 
 		m_ptr->questor = TRUE;
-		m_ptr->questor_idx = 0; /* 1st */
+		m_ptr->questor_idx = q;
 		m_ptr->quest = q_idx;
 		m_ptr->r_idx = q_ptr->questor_ridx[q];
 		/* m_ptr->special = TRUE; --nope, this is unfortunately too much golem'ized.
@@ -369,7 +414,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 			for (i = 0; i < ASTAR_MAX_INSTANCES; i++) {
 				/* found an available instance? */
 				if (astar_info_open[i].m_idx == -1) {
-					astar_info_open[i].m_idx = c_ptr->m_idx;
+					astar_info_open[i].m_idx = m_idx;
 					astar_info_open[i].nodes = 0; /* init: start with empty set of nodes */
 					astar_info_closed[i].nodes = 0; /* init: start with empty set of nodes */
 					m_ptr->astar_idx = i;
@@ -404,11 +449,11 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 
 		m_ptr->questor_invincible = q_ptr->questor_invincible[q]; //for now handled by RF7_NO_DEATH
 		m_ptr->questor_hostile = FALSE;
-		q_ptr->questor_m_idx[q] = c_ptr->m_idx;
+		q_ptr->questor_m_idx[q] = m_idx;
 
 		update_mon(c_ptr->m_idx, TRUE);
 #if QDEBUG > 1
-		s_printf("QUEST_SPAWNED: Questor '%s' at %d,%d,%d - %d,%d.\n", q_ptr->questor_name[0], wpos.wx, wpos.wy, wpos.wz, x, y);
+		s_printf("QUEST_SPAWNED: Questor '%s' (m_idx %d) at %d,%d,%d - %d,%d.\n", q_ptr->questor_name[0], m_idx, wpos.wx, wpos.wy, wpos.wz, x, y);
 #endif
 
 		q_ptr->talk_focus[q] = 0;
