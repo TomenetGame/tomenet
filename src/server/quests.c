@@ -1372,7 +1372,7 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];
-	int i, j, q_idx, stage;
+	int i, j, k, q_idx, stage;
 
 	/* paranoia -- neither a kill has been made nor an item picked up */
 	if (!m_ptr && !o_ptr) return;
@@ -1452,6 +1452,27 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 
 				/* we have completed a target-to-xy goal! */
 				quest_set_goal(Ind, q_idx, j);
+
+				/* if we don't have to deliver in this stage,
+				   we can just remove all the quest items right away now,
+				   since they've fulfilled their purpose of setting the quest goal. */
+				for (k = 0; k < QI_GOALS; k++)
+					if (q_ptr->deliver_pos[stage][k]) break;
+				if (k == QI_GOALS) {
+					if (q_ptr->individual) {
+						for (k = 0; k < INVEN_PACK; k++) {
+							if (p_ptr->inventory[k].quest == q_idx + 1 &&
+							    p_ptr->inventory[k].quest_stage == stage) {
+								inven_item_increase(Ind, k, -99);
+								//inven_item_describe(Ind, i);
+								inven_item_optimize(Ind, k);
+							}
+						}
+					} else {
+						//TODO (not just here): implement global retrieval quests..
+					}
+				}
+
 				continue;
 			}
 		}
@@ -1507,7 +1528,7 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 void quest_check_goal_deliver_wpos(int Ind) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];
-	int i, j, q_idx, stage;
+	int i, j, k, q_idx, stage;
 
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		/* player actually pursuing a quest? */
@@ -1554,6 +1575,21 @@ void quest_check_goal_deliver_wpos(int Ind) {
 			/* just check a single, specific wpos? */
 			else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
 
+			/* for item retrieval goals therefore linked to this deliver goal,
+			   remove all quest items now finally that we 'delivered' them. */
+			if (q_ptr->individual) {
+				for (k = 0; k < INVEN_PACK; k++) {
+					if (p_ptr->inventory[k].quest == q_idx + 1 &&
+					    p_ptr->inventory[k].quest_stage == stage) {
+						inven_item_increase(Ind, k, -99);
+						//inven_item_describe(Ind, i);
+						inven_item_optimize(Ind, k);
+					}
+				}
+			} else {
+				//TODO (not just here): implement global retrieval quests..
+			}
+
 			/* we have completed a delivery-to-wpos goal! */
 			quest_set_goal(Ind, q_idx, j);
 		}
@@ -1563,7 +1599,7 @@ void quest_check_goal_deliver_wpos(int Ind) {
 void quest_check_goal_deliver_xy(int Ind) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];
-	int i, j, q_idx, stage;
+	int i, j, k, q_idx, stage;
 
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		/* player actually pursuing a quest? */
@@ -1614,6 +1650,21 @@ void quest_check_goal_deliver_xy(int Ind) {
 			if (q_ptr->deliver_pos_x[stage][j] != p_ptr->px ||
 			    q_ptr->deliver_pos_y[stage][j] != p_ptr->py)
 				continue;
+
+			/* for item retrieval goals therefore linked to this deliver goal,
+			   remove all quest items now finally that we 'delivered' them. */
+			if (q_ptr->individual) {
+				for (k = 0; k < INVEN_PACK; k++) {
+					if (p_ptr->inventory[k].quest == q_idx + 1 &&
+					    p_ptr->inventory[k].quest_stage == stage) {
+						inven_item_increase(Ind, k, -99);
+						//inven_item_describe(Ind, i);
+						inven_item_optimize(Ind, k);
+					}
+				}
+			} else {
+				//TODO (not just here): implement global retrieval quests..
+			}
 
 			/* we have completed a delivery-to-xy goal! */
 			quest_set_goal(Ind, q_idx, j);
