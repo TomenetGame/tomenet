@@ -451,11 +451,6 @@ N:12:The Soothsayer
 #potion of Restore Mana
 T:100:71:64
 #I:20:Divination
-#I:20:Divination
-#I:20:Divination
-#I:20:Divination
-#I:20:Divination
-#I:20:Divination
 A:0:0:2:4:8:0
 O:3:3:3:3:3:3
 G:+:B
@@ -719,22 +714,6 @@ F:PRICE4 | PRICE2 | NO_DISCOUNT2
 W:12
 
 N:46:Library
-#T:100:110:256
-##T:100:111:256
-#T:100:112:256
-#T:100:113:256
-#T:100:114:256
-#T:100:115:256
-#T:100:116:256
-#T:100:117:256
-#T:100:118:256
-#T:100:119:256
-#T:100:120:256
-#T:100:121:256
-#T:100:122:256
-#T:100:123:256
-#T:100:124:256
-#T:100:125:256
 T:100:111:50
 T:100:111:56
 T:100:111:61
@@ -748,22 +727,6 @@ W:0
 #UNUSED W:24
 
 N:47:Forbidden Library
-#T:100:110:256
-##T:100:111:256
-#T:100:112:256
-#T:100:113:256
-#T:100:114:256
-#T:100:115:256
-#T:100:116:256
-#T:100:117:256
-#T:100:118:256
-#T:100:119:256
-#T:100:120:256
-#T:100:121:256
-#T:100:122:256
-#T:100:123:256
-#T:100:124:256
-#T:100:125:256
 T:100:111:50
 T:100:111:56
 T:100:111:61
@@ -1191,30 +1154,6 @@ W:48
 F:HARD_STEAL | GOOD | FLAT_BASE
 
 N:71:Armoury
-#I:70:& Pair~ of Soft Leather Boots
-#I:60:& Pair~ of Hard Leather Boots
-#I:80:& Hard Leather Cap~
-#I:70:& Metal Cap~
-#I:65:& Iron Helm~
-#I:100:& Robe~
-#I:90:Soft Leather Armour~
-#I:90:Soft Studded Leather~
-#I:90:Hard Leather Armour~
-#I:85:Hard Studded Leather~
-#I:90:Leather Scale Mail~
-#I:80:Metal Scale Mail~
-#I:70:Double Chain Mail~
-#I:70:Ring Mail~
-#I:70:Double Ring Mail~
-#I:75:Chain Mail~
-#I:80:Augmented Chain Mail~
-#I:75:Metal Brigandine Armour~
-#I:68:Bar Chain Mail~
-#I:100:& Set~ of Leather Gloves
-#I:80:& Set~ of Gauntlets
-#I:100:& Small Leather Shield~
-#I:90:& Large Leather Shield~
-#I:80:& Small Metal Shield~
 # Offer ALL armour, except rare base types
 #boots -- relatively many
 T:100:30:256
@@ -1244,38 +1183,6 @@ W:72
 F:HARD_STEAL | GOOD | FLAT_BASE
 
 N:72:Weaponsmith
-#I:100:& Dagger~
-#I:100:& Main Gauche~
-#I:100:& Rapier~
-#I:100:& Small Sword~
-#I:100:& Short Sword~
-#I:100:& Sabre~
-#I:100:& Cutlass~
-#I:100:& Tulwar~
-#I:100:& Broad Sword~
-#I:100:& Long Sword~
-#I:100:& Scimitar~
-#I:100:& Katana~
-#I:100:& Bastard Sword~
-#I:100:& Spear~
-#I:100:& Awl-Pike~
-#I:100:& Trident~
-#I:100:& Pike~
-#I:100:& Halberd~
-#I:100:& Lance~
-#I:100:& Beaked Axe~
-#I:100:& Broad Axe~
-#I:100:& Battle Axe~
-#I:100:& Hatchet~
-#I:100:& Cleaver~
-#I:100:& Sling~
-#I:100:& Short Bow~
-#I:100:& Long Bow~
-#I:100:& Light Crossbow~
-#I:100:& Iron Shot~
-#I:100:& Arrow~
-#I:100:& Bolt~
-#I:100:& Whip~
 # Offer ALL weapons, except rare base types
 T:100:19:2
 T:50:19:12
@@ -1434,59 +1341,6 @@ F:HARD_STEAL
 
 # less tele/perc/cantrips, more mage staves
 N:75:Magic shop
-#T:100:6:1
-#T:100:6:1
-#T:100:6:1
-#T:100:6:1
-#I:100:Protection
-#I:100:Feather Falling
-#I:100:Protection
-#I:100:Fire Resistance
-#I:100:Cold Resistance
-#I:100:Charisma
-##I:100:Slow Digestion
-#T:100:40:3
-#I:100:Acid Resistance
-#I:100:Lightning Resistance
-#I:100:Searching
-#I:100:Slow Monster
-#I:100:Confuse Monster
-#I:100:Sleep Monster
-#I:100:Magic Missile
-#I:100:Stinking Cloud
-#I:100:Wonder
-#I:100:Disarming
-##I:100:Light
-#T:100:65:7
-##I:100:Enlightenment
-#T:100:55:9
-#I:100:Trap Location
-##I:100:Door/Stair Location
-#T:100:55:13
-#I:100:Treasure Location
-#I:100:Object Location
-##I:100:Detect Invisible
-#T:100:55:14
-##I:100:Detect Evil
-#T:100:55:15
-##Staff of Teleportation
-#T:100:55:4
-#T:100:55:4
-#T:100:55:4
-##T:100:55:4
-#I:100:Perception
-#I:100:Perception
-#I:100:Perception
-##I:100:Perception
-##I:100:Perception
-##I:100:Remove Curse
-#T:100:55:6
-##I:100:Cure Light Wounds
-#I:100:Probing
-## & Book~ of Beginner Cantrips
-#T:100:111:50
-#T:100:111:50
-##T:100:111:50
 # Offer ALL devices, except rare base types
 T:100:6:1
 T:100:6:1
