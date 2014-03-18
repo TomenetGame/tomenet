@@ -469,7 +469,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 //TODO: implement multiple questors
 void quest_deactivate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
-	//int i;
+	int m_idx;
 	cave_type **zcave, *c_ptr;
 	//monster_race *r_ptr;
 	//monster_type *m_ptr;
@@ -502,7 +502,18 @@ void quest_deactivate(int q_idx) {
 #if QDEBUG > 1
 s_printf("deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_ptr->current_x[0], q_ptr->current_y[0]);
 #endif
-	if (c_ptr->m_idx) delete_monster_idx(c_ptr->m_idx, TRUE);
+	m_idx = c_ptr->m_idx;
+	if (m_idx) {
+		if (m_list[m_idx].questor && m_list[m_idx].quest == q_idx) {
+#if QDEBUG > 1
+			s_printf("..ok.\n");
+#endif
+			delete_monster_idx(c_ptr->m_idx, TRUE);
+		} else
+#if QDEBUG > 1
+			s_printf("..failed: Monster is not a questor or has a different quest idx.\n");
+#endif
+	}
 	if (q_ptr->static_floor) new_players_on_depth(&wpos, 0, FALSE);
 }
 

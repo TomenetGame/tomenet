@@ -7509,6 +7509,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 	time_t now;
 	struct tm *tmp;
 	quest_info *q_ptr;
+	bool questor;
 	//int i, n;
 
 	/* Init the RNG */
@@ -7810,8 +7811,15 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 
 		s_printf("QUEST_DISABLED_ON_LOAD: Deleting %d questor(s) from quest %d\n", q_ptr->questors, h);
 		for (m = 0; m < q_ptr->questors; m++) {
-			s_printf(" m_idx %d -> q_idx %d\n", q_ptr->questor_m_idx[m], m_list[q_ptr->questor_m_idx[m]].quest);
-			delete_monster_idx(q_ptr->questor_m_idx[m], TRUE);
+			questor = m_list[q_ptr->questor_m_idx[m]].questor;
+			s = m_list[q_ptr->questor_m_idx[m]].quest;
+
+			s_printf(" m_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor_m_idx[m], s, questor);
+
+			if (s == h && questor) {
+				s_printf("..ok.\n");
+				delete_monster_idx(q_ptr->questor_m_idx[m], TRUE);
+			} else s_printf("..failed: Questor does not exist.\n");
 		}
 	}
 
