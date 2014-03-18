@@ -7309,6 +7309,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1];
 	int lc_narration[QI_MAX_STAGES], lc_conversation[QI_QUESTORS][QI_MAX_STAGES], lc_keywords[QI_QUESTORS][QI_MAX_STAGES], lc_rewards[QI_MAX_STAGES];
 	int lc_questor = 0, lc_accept = 0;
+	bool disabled;
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -7386,8 +7387,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr = &q_info[i];
 
 			/* Scan for the values -- careful: lenghts are hard-coded, QI_CODENAME_LEN, NAME_LEN - 1, MAX_CHARS - 1 */
-			if (3 > (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%d",
-			    codename, creator, questname, &l))) return (1);
+			if (3 > (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%8[^:]",
+			    codename, creator, questname, tmpbuf))) return (1);
+
+			if (j == 4 && tolower(tmpbuf[strlen(tmpbuf) - 1]) == 'x') disabled = TRUE;
+			else disabled = FALSE;
 
 			/* initialise prequest codenames */
 			for (k = 0; k < QI_PREREQUISITES; k++) q_ptr->prerequisites[k][0] = 0;
@@ -7412,13 +7416,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->maxlev = 100;
 			/* optional parm: is quest repeatable? */
 			if (j == 4) {
-				/* hack: +1000 = disable quest! */
-				if (l >= 999) {
+				/* hack: disable quest? */
+				if (disabled) {
 					q_ptr->active = FALSE;
 					q_ptr->disabled = TRUE;
 					s_printf("QUEST: Disabling '%s' (%d, %s)\n", q_name + q_ptr->name, error_idx, q_ptr->codename);
-					q_ptr->repeatable = l - 1000;
-				} else q_ptr->repeatable = l;
+				}
+				q_ptr->repeatable = atoi(tmpbuf); /* this defaults to 0 if just 'x' is specified without a number */
 			}
 			else q_ptr->repeatable = 0; /* could also default to infinitely repeatable maybe, -1 */
 			q_ptr->quest_done_credit_stage = 1; /* after first stage change, quest "cannot" be cancelled anymore */

@@ -11,7 +11,7 @@ V:0.0.1
 
 # Current state - things that have already been implemented. Other stuff is omitted here.
 
-# N:index:codename:creatorname[:repeatable (-1 for infinitely, default is 0, +1000 to disable it)]
+# N:index:codename:creatorname[:repeatable (-1 for infinitely, default is 0, append an 'x' to disable it)]
 # (optional) C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
 # (optional) I:privileged:individual (MUST BE 1!!):minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:questdonecreditstage
 # (optional) E:list of colon-separated prequest codenames (up to 5) which must have been completed to pick up this quest
@@ -81,7 +81,7 @@ X:4:-:The shop keeper hands you a ration of food!
 R:3:80:38:0:0:0:0:0:0:0:0:0:4:2:0
 R:4:80:35:0:0:0:0:0:0:0:0:0:3:1:0
 
-N:1:testquest1:C. Blue:Minimal Test Quest:999
+N:1:testquest1:C. Blue:Minimal Test Quest:-1x
 Q:1:37:b:n:-1:-1:-1:-1:-1:Fast Bat
 L:0:0:63:63:0:0:100:39:-
 W:0:0:-:Hello, fellow fruit bat! Wanna visit the General Store for me?
@@ -96,7 +96,7 @@ R:3:80:38:0:0:0:0:0:0:0:0:0:1:1:0
 
 # Complete state, when everything has been implemented:
 
-# N:index:codename:creator:name[:repeatable (-1 for infinitely, default is 0, +1000 to disable it)]
+# N:index:codename:creator:name[:repeatable (-1 for infinitely, default is 0, append an 'x' to disable it)]
 # (optional) C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
 # (optional) I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:questdonecreditstage
 # (optional) E:list of colon-separated prequest codenames
