@@ -7382,23 +7382,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* Point at the "info" */
 			q_ptr = &q_info[i];
 
-#if 0 /* prerequisites in N line? */
 			/* Scan for the values -- careful: lenghts are hard-coded, QI_CODENAME_LEN, NAME_LEN - 1, MAX_CHARS - 1 */
-			if (3 > (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%10[^:]:%10[^:]:%10[^:]:%10[^:]:%10[^:]",
-			    codename, creator, questname,
-			    q_ptr->prerequisites[0], q_ptr->prerequisites[1], q_ptr->prerequisites[2], q_ptr->prerequisites[3], q_ptr->prerequisites[4] /* QI_PREREQUISITES */
-			    ))) return (1);
-
-			/* clear unused prequest codenames */
-			for (k = j - 3; k < QI_PREREQUISITES; k++) q_ptr->prerequisites[k][0] = 0;
-#else /* prerequisites in different (E) line? */
-			/* Scan for the values -- careful: lenghts are hard-coded, QI_CODENAME_LEN, NAME_LEN - 1, MAX_CHARS - 1 */
-			if (3 != sscanf(s, "%10[^:]:%19[^:]:%79[^:]",
-			    codename, creator, questname)) return (1);
+			if (3 > (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%d",
+			    codename, creator, questname, &l))) return (1);
 
 			/* initialise prequest codenames */
 			for (k = 0; k < QI_PREREQUISITES; k++) q_ptr->prerequisites[k][0] = 0;
-#endif
 
 			/* Hack -- Verify space */
 			if (q_head->name_size + strlen(questname) + 8 > fake_name_size) return (7);
@@ -7418,7 +7407,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->individual = TRUE;
 			q_ptr->minlev = 0;
 			q_ptr->maxlev = 100;
-			q_ptr->repeatable = 0; /* could also default to infinitely repeatable maybe, -1 */
+			/* optional parm: is quest repeatable? */
+			if (j == 4) q_ptr->repeatable = l;
+			else q_ptr->repeatable = 0; /* could also default to infinitely repeatable maybe, -1 */
 			q_ptr->quest_done_credit_stage = 1; /* after first stage change, quest "cannot" be cancelled anymore */
 			q_ptr->races = 0xFFFFF;
 			q_ptr->classes = 0xFFFF;
@@ -7559,21 +7550,20 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'I' for player restrictions */
 		if (buf[0] == 'I') {
 			char races[6], classes[5];
-			int priv, indiv, minlev, maxlev, rep, qdcs;
+			int priv, indiv, minlev, maxlev, qdcs;
 			int mode_norm, mode_el, mode_pvp, must_bat, must_form;
 
 			s = buf + 2;
-			if (13 != sscanf(s, "%d:%d:%d:%d:%5[^:]:%4[^:]:%d:%d:%d:%d:%d:%d:%d",
+			if (12 != sscanf(s, "%d:%d:%d:%d:%5[^:]:%4[^:]:%d:%d:%d:%d:%d:%d",
 			    &priv, &indiv, &minlev, &maxlev, races, classes,
 			    &mode_norm, &mode_el, &mode_pvp, &must_bat, &must_form,
-			    &rep, &qdcs))
+			    &qdcs))
 				return (1);
 
 			q_ptr->privilege = priv;
 			q_ptr->individual = (indiv != 0);
 			q_ptr->minlev = minlev;
 			q_ptr->maxlev = maxlev;
-			q_ptr->repeatable = rep;
 			q_ptr->quest_done_credit_stage = qdcs;
 			q_ptr->races = strtol(races, NULL, 16);
 			q_ptr->classes = strtol(classes, NULL, 16);

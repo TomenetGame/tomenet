@@ -8361,8 +8361,12 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		return;
 	}
 	else if (id >= RID_QUEST) {
-		if (cfr) quest_reply(Ind, id - RID_QUEST, "Y");
-		else quest_reply(Ind, id - RID_QUEST, "N");
+		char str[2];
+
+		if (cfr) str[0] = 'y';
+		else str[0] = 'n';
+		str[1] = 0;
+		quest_reply(Ind, id - RID_QUEST, str);
 		return;
 	}
 

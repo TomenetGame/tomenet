@@ -1328,8 +1328,9 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 		if (q_ptr->keyword[questor_idx][stage][0][0] == 0)
 			Send_request_str(Ind, RID_QUEST + q_idx, "Your reply (or ENTER for more)> ", "");
 		else {
-			/* hack: if 1st keyword is "Y" just give a yes/no choice instead of an input prompt? */
-			if (q_ptr->keyword[questor_idx][stage][0][0] == 'Y' &&
+			/* hack: if 1st keyword is "y" just give a yes/no choice instead of an input prompt?
+			   we assume that 2nd keyword is a "n" then. */
+			if (q_ptr->keyword[questor_idx][stage][0][0] == 'y' &&
 			    q_ptr->keyword[questor_idx][stage][0][1] == 0)
 				Send_request_cfr(Ind, RID_QUEST + q_idx, "Your reply, yes or no?> ", FALSE);
 			else /* normal prompt for keyword input */
@@ -1360,8 +1361,8 @@ void quest_reply(int Ind, int q_idx, char *str) {
 
 	/* echo own reply for convenience */
 	msg_print(Ind, "\374 ");
-	if (!strcmp(str, "Y")) msg_print(Ind, "\374\377u>\377UYes");
-	else if (!strcmp(str, "N")) msg_print(Ind, "\374\377u>\377UNo");
+	if (!strcmp(str, "y")) msg_print(Ind, "\374\377u>\377UYes");
+	else if (!strcmp(str, "n")) msg_print(Ind, "\374\377u>\377UNo");
 	else msg_format(Ind, "\374\377u>\377U%s", str);
 
 	/* scan keywords for match */
