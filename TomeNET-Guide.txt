@@ -189,7 +189,7 @@ compile the game under '(2.1) Installing TomeNET'.
  The game client is named something like 'tomenet-???-client.zip', extract it
  to C:\TomeNET for example.
 
--Either run 'TomeNET-main.bat' to directly connect to official main server
+-Either run 'TomeNET-direct.bat' to directly connect to official main server
  (recommended), or run TomeNET.exe and choose a server (Enter 37.187.75.24
  to connect to the official main server).
  NOTE: The official main server's hostname is "europe.tomenet.net",
@@ -2485,7 +2485,7 @@ and if you do so then your Steam status will show that you are playing TomeNET!
 
 (2.2) Starting TomeNET and getting to play on an internet server
 ----------------------------------------------------------------
-To start the TomeNET client, run 'TomeNET.exe' or 'TomeNET-main.bat'.
+To start the TomeNET client, run 'TomeNET.exe' or 'TomeNET-direct.bat'.
 (If you run the '.bat' file, the meta-server steps will be skipped and you
 will be directly connected to the official main server instead.)
 Now TomeNET tries to connect to a meta-server which contains a list of all
