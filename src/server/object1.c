@@ -5462,7 +5462,7 @@ void display_inven(int Ind)
 		p_ptr->inventory_changed = FALSE;
 	}
 
-	if (p_ptr->apply_auto_insc && p_ptr->apply_auto_insc - 1 <= INVEN_PACK) {
+	if (p_ptr->apply_auto_insc && p_ptr->apply_auto_insc - 1 < INVEN_PACK) {
 		Send_apply_auto_insc(Ind, p_ptr->apply_auto_insc - 1);
 		p_ptr->apply_auto_insc = 0;
 	}
