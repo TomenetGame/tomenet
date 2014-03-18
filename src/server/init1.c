@@ -7334,9 +7334,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* parse server conditions */
 		if (invalid_server_conditions(buf)) continue;
 		/* Skip comments and blank lines */
-		if (!buf[0] || (buf[0] == '#')) continue;
+		if (!buf[0] || (buf[0] == '#') || !buf[1]) continue;
 		/* Verify correct "colon" format */
-		if (buf[1] != ':') return (1);
+		if (buf[1] != ':' && buf[2] != ':') return (1);
 
 		/* Hack -- Process 'V' for "Version" */
 		if (buf[0] == 'V') {
@@ -7948,9 +7948,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* now we have 3 sub-types of 'k' lines -_- uhh */
 			if (buf[1] == ':') { /* init */
 				int minlev, maxlev, num, spawn, spawntarget;
-
 				s = buf + 2;
-				if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d",
+				if (7 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d",
 				    &stage, &goal, &minlev, &maxlev, &num, &spawn, &spawntarget))
 					return (1);
 
@@ -7977,7 +7976,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ptr->killopt_spawn_targets[stage][goal] = spawntarget;
 				}
 				continue;
-			} else if (buf[2] == 'I') { /* specify race-indices */
+			} else if (buf[1] == 'I') { /* specify race-indices */
 				int ridx[10];
 
 				s = buf + 3;
@@ -8002,11 +8001,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 						q_ptr->killopt_ridx[stage][goal][j] = ridx[j];
 				}
 				continue;
-			} else if (buf[2] == 'V') { /* specify visuals */
-				int rchar[5], rattr[5];
-
+			} else if (buf[1] == 'V') { /* specify visuals */
+				char rchar[5], rattr[5];
 				s = buf + 3;
-				if (4 > sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				if (4 > sscanf(s, "%d:%d:%c:%c:%c:%c:%c:%c:%c:%c:%c:%c",
 				    &stage, &goal, &rchar[0], &rattr[0], &rchar[1], &rattr[1], &rchar[2], &rattr[2], &rchar[3], &rattr[3], &rchar[4], &rattr[4]))
 					return (1);
 
@@ -8018,16 +8016,22 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ptr->kill[stage][goal] = TRUE;
 
 					for (j = 0; j < 5; j++) {
+						if (rchar[j] == '-') rchar[j] = 254; /* any */
 						q_ptr->kill_rchar[stage][goal][j] = rchar[j];
-						q_ptr->kill_rattr[stage][goal][j] = rattr[j];
+
+						if (rattr[j] == '-') q_ptr->kill_rattr[stage][goal][j] = 254; /* any */
+						else q_ptr->kill_rattr[stage][goal][j] = color_char_to_attr(rattr[j]);
 					}
 				} else if (goal < 0) { /* optional goal */
 					goal = -(goal + 1);
 					q_ptr->killopt[stage][goal] = TRUE;
 
 					for (j = 0; j < 5; j++) {
+						if (rchar[j] == '-') rchar[j] = 254; /* any */
 						q_ptr->killopt_rchar[stage][goal][j] = rchar[j];
-						q_ptr->killopt_rattr[stage][goal][j] = rattr[j];
+
+						if (rattr[j] == '-') q_ptr->killopt_rattr[stage][goal][j] = 254; /* any */
+						else q_ptr->killopt_rattr[stage][goal][j] = color_char_to_attr(rattr[j]);
 					}
 				}
 				continue;
@@ -8063,7 +8067,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ptr->retrieveopt_number[stage][goal] = num;
 				}
 				continue;
-			} else if (buf[2] == 'I') { /* specify race-indices */
+			} else if (buf[1] == 'I') { /* specify race-indices */
 				int tval[10], sval[10];
 
 				s = buf + 3;
@@ -8094,11 +8098,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					}
 				}
 				continue;
-			} else if (buf[2] == 'V') { /* specify visuals */
-				int pval[5], bpval[5], attr[5], name1[5], name2[5], name2b[5];
+			} else if (buf[1] == 'V') { /* specify visuals */
+				int pval[5], bpval[5], name1[5], name2[5], name2b[5];
+				char attr[5];
 
 				s = buf + 3;
-				if (8 > sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				if (8 > sscanf(s, "%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d",
 				    &stage, &goal,
 				    &pval[0], &bpval[0], &attr[0], &name1[0], &name2[0], &name2b[0],
 				    &pval[1], &bpval[1], &attr[1], &name1[1], &name2[1], &name2b[1],
@@ -8117,7 +8122,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					for (j = 0; j < 5; j++) {
 						q_ptr->retrieve_opval[stage][goal][j] = pval[j];
 						q_ptr->retrieve_obpval[stage][goal][j] = bpval[j];
-						q_ptr->retrieve_oattr[stage][goal][j] = attr[j];
+						if (attr[j] == '-') q_ptr->retrieve_oattr[stage][goal][j] = 254; /* any */
+						else q_ptr->retrieve_oattr[stage][goal][j] = color_char_to_attr(attr[j]);
 						q_ptr->retrieve_oname1[stage][goal][j] = name1[j];
 						q_ptr->retrieve_oname2[stage][goal][j] = name2[j];
 						q_ptr->retrieve_oname2b[stage][goal][j] = name2b[j];
@@ -8129,7 +8135,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					for (j = 0; j < 5; j++) {
 						q_ptr->retrieveopt_opval[stage][goal][j] = pval[j];
 						q_ptr->retrieveopt_obpval[stage][goal][j] = bpval[j];
-						q_ptr->retrieveopt_oattr[stage][goal][j] = attr[j];
+						if (attr[j] == '-') q_ptr->retrieve_oattr[stage][goal][j] = 254; /* any */
+						else q_ptr->retrieveopt_oattr[stage][goal][j] = color_char_to_attr(attr[j]);
 						q_ptr->retrieveopt_oname1[stage][goal][j] = name1[j];
 						q_ptr->retrieveopt_oname2[stage][goal][j] = name2[j];
 						q_ptr->retrieveopt_oname2b[stage][goal][j] = name2b[j];
