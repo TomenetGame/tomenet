@@ -476,6 +476,7 @@ void compact_monsters(int size, bool purge)
 	int             cur_lev, cur_dis, chance;
 	cave_type **zcave;
 	struct worldpos *wpos;
+	quest_info *q_ptr;
 
 	u16b this_o_idx, next_o_idx = 0;
 
@@ -599,6 +600,12 @@ void compact_monsters(int size, bool purge)
 			/* Structure copy */
 			m_list[i] = m_list[m_max];
 
+			/* Quests: keep questor_m_idx information consistent */
+			if (m_list[i].questor) {
+				q_ptr = &q_info[m_list[i].quest];
+				q_ptr->questor_m_idx[m_list[i].questor_idx] = i;
+			}
+
 			/* Copy the visibility and los flags for the players */
 			for (Ind = 1; Ind < NumPlayers + 1; Ind++) {
 				if (Players[Ind]->conn == NOT_CONNECTED) continue;
@@ -626,6 +633,7 @@ void compact_monsters(int size, bool purge)
 	m_top = 0;
 
 	/* Collect "live" monsters */
+
 	for (i = 0; i < m_max; i++) {
 		/* Collect indexes */
 		m_fast[m_top++] = i;
