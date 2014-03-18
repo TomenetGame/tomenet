@@ -1334,7 +1334,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 			   we assume that 2nd keyword is a "n" then. */
 			if (q_ptr->keyword[questor_idx][stage][0][0] == 'y' &&
 			    q_ptr->keyword[questor_idx][stage][0][1] == 0)
-				Send_request_cfr(Ind, RID_QUEST + q_idx, "Your reply, yes or no?> ", FALSE);
+				Send_request_cfr(Ind, RID_QUEST + q_idx, "Your reply, yes or no?>", FALSE);
 			else /* normal prompt for keyword input */
 				Send_request_str(Ind, RID_QUEST + q_idx, "Your reply> ", "");
 		}
