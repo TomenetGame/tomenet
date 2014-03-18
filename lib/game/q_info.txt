@@ -105,8 +105,8 @@ $TEST_SERVER$y:0:0:yo:-:Sup!
 $TEST_SERVER$k:0:1:0:0:3:0:0
 $TEST_SERVER$kV:0:1:T:-
 #$TEST_SERVER$kI:0:1:r_idx...
-$TEST_SERVER$M:0:1:32:32:0:0:105:40:-
-$TEST_SERVER$G:0:1:1
+$TEST_SERVER$M:0:2:32:32:0:0:105:40:-
+$TEST_SERVER$G:0:1:1:2
 $TEST_SERVER$W:0:1:-:Excellent.
 $TEST_SERVER$X:1:-:The Goalkeeper bat seems very satisfied.
 $TEST_SERVER$R:1:80:38:0:0:0:0:0:0:0:0:0:2:2:0
