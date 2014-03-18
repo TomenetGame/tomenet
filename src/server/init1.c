@@ -7440,7 +7440,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_ptr->questor_invincible[i] = TRUE;
 			}
 
-			q_ptr->flags = 0x0000;
+			q_ptr->flags = 0x0000; //no reason
+			/* for same no reason, probably not todo: init talk/keyword flags and flag-changes */
 
 			for (j = 0; j < QI_MAX_STAGES; j++) {
 				/* 'C' */
