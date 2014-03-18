@@ -75,15 +75,36 @@ void process_quests(void) {
 
 		/* check if quest should be active */
 		active = FALSE;
+
 		if (q_ptr->night && night) active = TRUE; /* don't include pseudo-night like for Halloween/Newyearseve */
 		if (q_ptr->day && day) active = TRUE;
-		if (q_ptr->morning && morning) active = TRUE;
-		if (q_ptr->forenoon && forenoon) active = TRUE;
-		if (q_ptr->noon && noon) active = TRUE;
-		if (q_ptr->afternoon && afternoon) active = TRUE;
-		if (q_ptr->evening && evening) active = TRUE;
-		if (q_ptr->midnight && midnight) active = TRUE;
-		if (q_ptr->deepnight && deepnight) active = TRUE;
+
+		/* specialty: if day is true, then these can falsify it again */
+		if (!q_ptr->day) {
+			if (q_ptr->morning && morning) active = TRUE;
+			if (q_ptr->forenoon && forenoon) active = TRUE;
+			if (q_ptr->noon && noon) active = TRUE;
+			if (q_ptr->afternoon && afternoon) active = TRUE;
+			if (q_ptr->evening && evening) active = TRUE;
+		} else {
+			if (!q_ptr->morning && morning) active = FALSE;
+			if (!q_ptr->forenoon && forenoon) active = FALSE;
+			if (!q_ptr->noon && noon) active = FALSE;
+			if (!q_ptr->afternoon && afternoon) active = FALSE;
+			if (!q_ptr->evening && evening) active = FALSE;
+		}
+		/* specialty: if night is true, then these can falsify it again */
+		if (!q_ptr->night) {
+			if (q_ptr->evening && evening) active = TRUE;
+			if (q_ptr->midnight && midnight) active = TRUE;
+			if (q_ptr->deepnight && deepnight) active = TRUE;
+		} else {
+			if (!q_ptr->evening && evening) active = FALSE;
+			if (!q_ptr->midnight && midnight) active = FALSE;
+			if (!q_ptr->deepnight && deepnight) active = FALSE;
+		}
+
+		/* very specific time? (in absolute daily minutes) */
 		if (q_ptr->time_start != -1) {
 			if (minute >= q_ptr->time_start) {
 				if (q_ptr->time_stop == -1 ||
