@@ -1993,7 +1993,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					/* can never take off permanently cursed stuff */
 					if (f3 & TR3_PERMA_CURSE) break;
 					else if ((f3 & TR3_HEAVY_CURSE) && magik(90)) break;
-					else if (artifact_p(o_ptr) && magik(50)) break;
+					else if (like_artifact_p(o_ptr) && magik(50)) break;
 
 					/* do we hold one weapon with two hands? very safe */
 					if (!p_ptr->heavy_wield && !shield && !p_ptr->dual_wield && (
