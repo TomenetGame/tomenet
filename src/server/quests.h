@@ -190,10 +190,18 @@ typedef struct quest_info {
 	bool auto_accept_quiet[QI_MAX_STAGES];		/* player will automatically acquire the newly spawned quest (from activate_quest[]) but not get a quest-accept-notification type of message about it */
 
 	s16b change_stage[QI_MAX_STAGES];		/* automatically change to a different stage after handling everything that was to do in the current stage */
+#if 0 /* currently not possible since we call the quest scheduler once a minute */
 	s16b timed_stage_ingame[QI_MAX_STAGES];		/* automatically change to a different stage after a certain amount of in-game minutes passed */
-	s16b timed_stage_ingame_abs[QI_MAX_STAGES];	/* automatically change to a different stage after a certain in-game time is reached */
-	s16b timed_stage_real[QI_MAX_STAGES];		/* automatically change to a different stage after a certain amount of real seconds passed */
+	s16b timed_stage_ingame_abs[QI_MAX_STAGES];	/* automatically change to a different stage when a certain in-game time is reached (minute resolution) */
+#else
+	s16b timed_stage_ingame_abs[QI_MAX_STAGES];	/* automatically change to a different stage when a certain in-game time is reached (HOUR resolution!) */
+#endif
+	s16b timed_stage_real[QI_MAX_STAGES];		/* automatically change to a different stage after a certain amount of real minutes passed */
 	bool quiet_change_stage[QI_MAX_STAGES];		/* for the above auto-changes: don't replay the stage's dialogue */
+	/* dynamic timer helper data */
+	s16b timed_stage_countdown[QI_MAX_STAGES];	/* dynamic, for countdown for above timings: negative value = ingame absolute, positive value = real-time counting down */
+	s16b timed_stage_countdown_stage[QI_MAX_STAGES];
+	bool timed_stage_countdown_quiet[QI_MAX_STAGES];
 
 
 	/* type of questor */

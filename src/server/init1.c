@@ -7382,6 +7382,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* Point at the "info" */
 			q_ptr = &q_info[i];
 
+#if 0 /* prerequisites in N line? */
 			/* Scan for the values -- careful: lenghts are hard-coded, QI_CODENAME_LEN, NAME_LEN - 1, MAX_CHARS - 1 */
 			if (3 > (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%10[^:]:%10[^:]:%10[^:]:%10[^:]:%10[^:]",
 			    codename, creator, questname,
@@ -7390,6 +7391,14 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			/* clear unused prequest codenames */
 			for (k = j - 3; k < QI_PREREQUISITES; k++) q_ptr->prerequisites[k][0] = 0;
+#else /* prerequisites in different (E) line? */
+			/* Scan for the values -- careful: lenghts are hard-coded, QI_CODENAME_LEN, NAME_LEN - 1, MAX_CHARS - 1 */
+			if (3 != sscanf(s, "%10[^:]:%19[^:]:%79[^:]",
+			    codename, creator, questname)) return (1);
+
+			/* initialise prequest codenames */
+			for (k = 0; k < QI_PREREQUISITES; k++) q_ptr->prerequisites[k][0] = 0;
+#endif
 
 			/* Hack -- Verify space */
 			if (q_head->name_size + strlen(questname) + 8 > fake_name_size) return (7);
@@ -7446,6 +7455,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			for (j = 0; j < QI_MAX_STAGES; j++) {
 				/* 'C' */
 				q_ptr->accepts[j] = FALSE; /* by default, only can acquire quest in stage 0 (done after this loop) */
+
+				/* 'A' */
+				q_ptr->activate_quest[j] = -1;
+				q_ptr->change_stage[j] = -1;
 
 				/* keep track of maximum amount of lines per text in each quest stage */
 				lc_narration[j] = 0;
@@ -7574,11 +7587,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'E' for list of prequests required to begin this quest */
 		if (buf[0] == 'E') {
-#if 0
 			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
-#endif
+			sscanf(s, "%10[^:]:%10[^:]:%10[^:]:%10[^:]:%10[^:]", //QI_CODENAME_LEN hard-coded!
+			    q_ptr->prerequisites[0], q_ptr->prerequisites[1], q_ptr->prerequisites[2], q_ptr->prerequisites[3], q_ptr->prerequisites[4]);
 			continue;
 		}
 
@@ -7716,11 +7727,26 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'A' for automatic things in a stage: spawn new quest, (timed) stage changes, quiet change (no dialogue)? */
 		if (buf[0] == 'A') {
-#if 0
+			int stage, aq, aa, cs, tsi, tsia, tsr, qcs;
+
 			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
+			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d",
+			    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs)) return (1);
+			if (stage < 0 || stage >= QI_MAX_STAGES) return 1;
+
+			q_ptr->activate_quest[stage] = aq;
+			q_ptr->auto_accept[stage] = (aa != 0);
+			q_ptr->auto_accept_quiet[stage] = (aq == 2);
+
+			q_ptr->change_stage[stage] = cs;
+#if 0
+			q_ptr->timed_stage_ingame[stage] = tsi;
+#else /* kill compiler -_- */
+			k = tsi;
 #endif
+			q_ptr->timed_stage_ingame_abs[stage] = tsia;
+			q_ptr->timed_stage_real[stage] = tsr;
+			q_ptr->quiet_change_stage[stage] = (qcs != 0);
 			continue;
 		}
 

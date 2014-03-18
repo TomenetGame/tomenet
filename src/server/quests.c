@@ -49,6 +49,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 /* error messages for quest_acquire() */
 static cptr qi_msg_deactivated = "\377sThis quest is currently unavailable.";
 static cptr qi_msg_cooldown = "\377yYou cannot acquire this quest again just yet.";
+static cptr qi_msg_prereq = "\377yYou have not completed the required prerequisite quests yet.";
 static cptr qi_msg_minlev = "\377yYour level is too low to acquire this quest.";
 static cptr qi_msg_maxlev = "\377oYour level is too high to acquire this quest.";
 static cptr qi_msg_race = "\377oYour race is not eligible to acquire this quest.";
@@ -67,7 +68,7 @@ void process_quests(void) {
 	int i, j;
 	bool night = IS_NIGHT_RAW, day = !night, morning = IS_MORNING, forenoon = IS_FORENOON, noon = IS_NOON;
 	bool afternoon = IS_AFTERNOON, evening = IS_EVENING, midnight = IS_MIDNIGHT, deepnight = IS_DEEPNIGHT;
-	int minute = bst(MINUTE, turn);
+	int minute = bst(MINUTE, turn), hour = bst(HOUR, turn), stage;
 	bool active;
 
 	for (i = 0; i < max_q_idx; i++) {
@@ -75,6 +76,8 @@ void process_quests(void) {
 
 		if (q_ptr->cur_cooldown) q_ptr->cur_cooldown--;
 		if (q_ptr->disabled || q_ptr->cur_cooldown) continue;
+
+		stage = q_ptr->stage;
 
 		/* check if quest should be active */
 		active = FALSE;
@@ -129,6 +132,17 @@ void process_quests(void) {
 		for (j = 1; j <= NumPlayers; j++)
 			if (Players[j]->quest_cooldown[i])
 				Players[j]->quest_cooldown[i]--;
+
+
+		/* handle automatically timed stage actions */
+		if (q_ptr->timed_stage_countdown[stage] < 0) {
+			if (hour == -q_ptr->timed_stage_countdown[stage])
+				quest_set_stage(0, i, q_ptr->timed_stage_countdown_stage[stage], q_ptr->timed_stage_countdown_quiet[stage]);
+		} else if (q_ptr->timed_stage_countdown[stage] > 0) {
+			q_ptr->timed_stage_countdown[stage]--;
+			if (!q_ptr->timed_stage_countdown[stage])
+				quest_set_stage(0, i, q_ptr->timed_stage_countdown_stage[stage], q_ptr->timed_stage_countdown_quiet[stage]);
+		}
 	}
 }
 
@@ -874,6 +888,40 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			}
 		}
 
+		/* perform automatic actions (spawn new quest, (timed) further stage change) */
+		/* auto-spawn (and acquire) new quest? */
+		if (q_ptr->activate_quest[stage] != -1 && !q_info[q_ptr->activate_quest[stage]].disabled) {
+			quest_activate(q_ptr->activate_quest[stage]);
+			if (q_ptr->auto_accept[stage])
+				quest_acquire_confirmed(pInd, q_ptr->activate_quest[stage], q_ptr->auto_accept_quiet[stage]);
+		}
+		/* auto-change stage (timed)? */
+		if (q_ptr->change_stage[stage] != -1) {
+			/* not a timed change? instant then */
+			if (//!q_ptr->timed_stage_ingame[stage] && 
+			    !q_ptr->timed_stage_ingame_abs[stage] && !q_ptr->timed_stage_real[stage]) {
+				quest_set_stage(pInd, q_idx, q_ptr->change_stage[stage], q_ptr->quiet_change_stage[stage]);
+				/* don't imprint/play dialogue of this stage anymore, it's gone~ */
+				return;
+			}
+			/* start the clock */
+			/*cannot do this, cause quest scheduler is checking once per minute atm
+			if (q_ptr->timed_stage_ingame[stage]) {
+				q_ptr->timed_stage_countdown[stage] = q_ptr->timed_stage_ingame[stage];//todo: different resolution than real minutes
+				q_ptr->timed_stage_countdown_stage[stage] = q_ptr->change_stage[stage];
+				q_ptr->timed_stage_countdown_quiet[stage] = q_ptr->quiet_change_stage[stage];
+			} else */
+			if (q_ptr->timed_stage_ingame_abs[stage]) {
+				q_ptr->timed_stage_countdown[stage] = -q_ptr->timed_stage_ingame_abs[stage];
+				q_ptr->timed_stage_countdown_stage[stage] = q_ptr->change_stage[stage];
+				q_ptr->timed_stage_countdown_quiet[stage] = q_ptr->quiet_change_stage[stage];
+			} else if (q_ptr->timed_stage_real[stage]) {
+				q_ptr->timed_stage_countdown[stage] = q_ptr->timed_stage_real[stage];
+				q_ptr->timed_stage_countdown_stage[stage] = q_ptr->change_stage[stage];
+				q_ptr->timed_stage_countdown_quiet[stage] = q_ptr->quiet_change_stage[stage];
+			}
+		}
+
 		/* update players' quest tracking data */
 		quest_imprint_stage(pInd, q_idx, j);
 		/* play questors' stage dialogue */
@@ -918,7 +966,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			}
 	/* check auto/timed stage changes */
 	if (q_ptr->change_stage[stage]) anything = TRUE;
-	if (q_ptr->timed_stage_ingame[stage]) anything = TRUE;
+	//if (q_ptr->timed_stage_ingame[stage]) anything = TRUE;
 	if (q_ptr->timed_stage_ingame_abs[stage]) anything = TRUE;
 	if (q_ptr->timed_stage_real[stage]) anything = TRUE;
 
@@ -1077,12 +1125,16 @@ static bool quest_acquire(int Ind, int q_idx, bool quiet) {
 		break;
 	case 3: if (!is_admin(p_ptr)) return FALSE;
 	}
+
 	/* matches prerequisite quests? (ie this is a 'follow-up' quest) */
 	for (i = 0; i < QI_PREREQUISITES; i++) {
 		if (!q_ptr->prerequisites[i][0]) continue;
 		for (j = 0; j < MAX_Q_IDX; j++) {
 			if (strcmp(q_info[j].codename, q_ptr->prerequisites[i])) continue;
-			if (!p_ptr->quest_done[j]) return FALSE;
+			if (!p_ptr->quest_done[j]) {
+				msg_print(Ind, qi_msg_prereq);
+				return FALSE;
+			}
 		}
 	}
 	/* level / race / class / mode / body restrictions */

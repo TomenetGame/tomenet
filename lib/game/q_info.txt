@@ -11,22 +11,17 @@ V:0.0.1
 
 # Current state - things that have already been implemented. Other stuff is omitted here.
 
-# N:index:codename:creator:name[:list of up to 5 codenames of prerequisite quests]
+# N:index:codename:creatorname
 # (optional) C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
 # (optional) I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:repeatable (-1 for infinitely):questdonecreditstage
-# //todo (optional) E:list of colon-separated prequest codenames
+# (optional) E:list of colon-separated prequest codenames (up to 5) which must have been completed to pick up this quest
 # (optional) T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # (optional) U:endingstage (0 = none):duration:cooldown:staticfloor?:quitfloor?
 # Q (5x repeatable, for up to 5 questors):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
-# //todo (optional) K (5x repeatable, per Q line):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
 # L (5x repeatable per Q line):locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:mapfile (if not using terrain type) or '-'
 # (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?
-# //todo (optional) D:dungeon to spawn ...
 #(Parameters from here on are all individual per quest stage)
-# //todo (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage:timed change offset:timed change absolute:timed change at realtime:change quietly (skip stage dialogue)
-# //todo (optional) S:questor changes/polymorphes ...
-# //todo (optional) S/H:questor hostility ...
-# //todo (optional) J:questor moves, teleports, teleports player ...
+# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0 (nonfunctional):timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
 # (optional) X (50x repeatable):stage:flags:narration text
 # W (50x repeatable):questor:stage:flags:convo line
 # (optional) Y (30x repeatable):questor:stage:flags:keyword (or "Y" for 1st keyword and "N" for second, for a yes/no choice):changeflags:nextstage
@@ -38,7 +33,6 @@ V:0.0.1
 # (optional) rV:stage:goal:pval:bpval:attr:name1:name2:name2b... (list of 5-tuples like this, up to 5, separated by colons)
 # (optional, if k/r line exists) P:stage:goal#:goalwpos wx:wy:wz:adjacent terrain extension:goal at exact x:y:mapfile (if not using terrain type) or '-'
 # (optional) M:stage:goal#:deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:mapfile (if not using terrain type) or '-'
-# //todo--use deliver-goal instead for now! (optional) B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
 # (optional) Z:stage:goal:changeflags
 # G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons
 # (optional) O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free) separated by colons
@@ -88,10 +82,10 @@ R:4:80:35:0:0:0:0:0:0:0:0:0:3:1:0
 
 # Complete state, when everything has been implemented:
 
-# N:index:codename:creator:name[:list of up to 5 codenames of prerequisite quests]
+# N:index:codename:creator:name
 # (optional) C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
 # (optional) I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:repeatable (-1 for infinitely):questdonecreditstage
-# //todo (optional) E:list of colon-separated prequest codenames
+# (optional) E:list of colon-separated prequest codenames
 # (optional) T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # (optional) U:endingstage (0 = none):duration:cooldown:staticfloor?:quitfloor?
 # Q (5x repeatable, for up to 5 questors):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
@@ -100,7 +94,8 @@ R:4:80:35:0:0:0:0:0:0:0:0:0:3:1:0
 # (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?
 # //todo (optional) D:dungeon to spawn ...
 #(Parameters from here on are all individual per quest stage)
-# //todo (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage:timed change offset:timed change absolute:timed change at realtime:change quietly (skip stage dialogue)
+# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage:timed change offset:timed change absolute:timed change at realtime:change quietly (skip stage dialogue)
+# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0 (nonfunctional):timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
 # //todo (optional) S:questor changes/polymorphes ...
 # //todo (optional) S/H:questor hostility ...
 # //todo (optional) J:questor moves, teleports, teleports player ...
