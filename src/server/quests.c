@@ -1397,8 +1397,10 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 			/* no k/r goal? */
 			if (!q_ptr->kill[stage][j] && !q_ptr->retrieve[stage][j]) continue;
 
-			/* location-restricted? */
-			if (q_ptr->target_pos[stage][j]) {
+			/* location-restricted?
+			   Exempt already retrieved items that were just lost temporarily on the way! */
+			if (q_ptr->target_pos[stage][j] &&
+			    !(o_ptr->quest == q_idx + 1 && o_ptr->quest_stage == stage)) {
 				/* extend target terrain over a wide patch? */
 				if (q_ptr->target_terrain_patch[stage][j]) {
 					/* different z-coordinate = instant fail */
@@ -1435,6 +1437,10 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 			/* check for retrieve-item goal here */
 			if (o_ptr && q_ptr->retrieve[stage][j]) {
 				if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
+
+				/* discard old items from another quest or quest stage that just look similar!
+				   Those are 'tainted' and cannot be reused. */
+				if (o_ptr->quest != q_idx + 1 || o_ptr->quest_stage != stage) continue;
 
 				/* mark the item as quest item, so we know we found it at the designated target loc (if any) */
 				o_ptr->quest = q_idx + 1;
