@@ -736,8 +736,7 @@ s16b o_pop(void)
 /*
  * Apply a "object restriction function" to the "object allocation table"
  */
-errr get_obj_num_prep(u32b resf)
-{
+errr get_obj_num_prep(u32b resf) {
 	long	i, n, p, adj;
 	long	k_idx;
 
@@ -749,16 +748,12 @@ errr get_obj_num_prep(u32b resf)
 
 	if (hook) {
 		/* Scan the allocation table */
-		for (i = 0, n = alloc_kind_size; i < n; i++)
-		{
+		for (i = 0, n = alloc_kind_size; i < n; i++) {
 			/* Get the entry */
 			alloc_entry *entry = &table[i];
 
-			if ((resf & RESF_STOREFLAT))
-				p = 100;
-			else
-				/* Obtain the base probability */
-				p = entry->prob1;
+			/* Obtain the base probability */
+			p = entry->prob1;
 
 			/* Default probability for this pass */
 			entry->prob2 = 0;
@@ -770,6 +765,8 @@ errr get_obj_num_prep(u32b resf)
 			adj = (*hook)(k_idx, resf);
 			p = adj * p / 100;
 
+			if (p && (resf & RESF_STOREFLAT)) p = 100;
+
 			/* Save the probability */
 			entry->prob2 = p;
 		}
@@ -780,11 +777,10 @@ errr get_obj_num_prep(u32b resf)
 			/* Get the entry */
 			alloc_entry *entry = &table[i];
 
-			if ((resf & RESF_STOREFLAT))
-				p = 100;
-			else
-				/* Obtain the base probability */
-				p = entry->prob1;
+			/* Obtain the base probability */
+			p = entry->prob1;
+
+			if (p && (resf & RESF_STOREFLAT)) p = 100;
 
 			/* Default probability for this pass */
 			entry->prob2 = 0;
@@ -804,9 +800,9 @@ errr get_obj_num_prep(u32b resf)
  * Apply a "object restriction function" to the "object allocation table"
  * This function only takes objects of a certain TVAL! - C. Blue
  * (note that kind_is_legal_special and this function are somewhat redundant)
+ * (this function supports STOREFLAT but isn't called by store.c, what gives)
  */
-errr get_obj_num_prep_tval(int tval, u32b resf)
-{
+errr get_obj_num_prep_tval(int tval, u32b resf) {
 	long i, n, p, adj;
 	long k_idx;
 
@@ -818,8 +814,7 @@ errr get_obj_num_prep_tval(int tval, u32b resf)
 
 	if (hook) {
 		/* Scan the allocation table */
-		for (i = 0, n = alloc_kind_size; i < n; i++)
-		{
+		for (i = 0, n = alloc_kind_size; i < n; i++) {
 			/* Get the entry */
 			alloc_entry *entry = &table[i];
 
@@ -836,19 +831,18 @@ errr get_obj_num_prep_tval(int tval, u32b resf)
 			adj = (*hook)(k_idx, resf);
 			p = adj * p / 100;
 
+			if (p && (resf & RESF_STOREFLAT)) p = 100;
+
 			/* Only accept a specific tval */
 			if (k_info[table[i].index].tval != tval)
-			{
 				continue;
-			}
 
 			/* Save the probability */
 			entry->prob2 = p;
 		}
 	} else {
 		/* Scan the allocation table */
-		for (i = 0, n = alloc_kind_size; i < n; i++)
-		{
+		for (i = 0, n = alloc_kind_size; i < n; i++) {
 			/* Get the entry */
 			alloc_entry *entry = &table[i];
 
@@ -861,11 +855,11 @@ errr get_obj_num_prep_tval(int tval, u32b resf)
 			/* Access the index */
 			k_idx = entry->index;
 
+			if (p && (resf & RESF_STOREFLAT)) p = 100;
+
 			/* Only accept a specific tval */
 			if (k_info[table[i].index].tval != tval)
-			{
 				continue;
-			}
 
 			/* Save the probability */
 			entry->prob2 = p;
@@ -893,8 +887,7 @@ errr get_obj_num_prep_tval(int tval, u32b resf)
  * Note that if no objects are "appropriate", then this function will
  * fail, and return zero, but this should *almost* never happen.
  */
-s16b get_obj_num(int max_level, u32b resf)
-{
+s16b get_obj_num(int max_level, u32b resf) {
 	long		i, j, n, p;
 	long		value, total;
 	long		k_idx;
@@ -912,13 +905,11 @@ s16b get_obj_num(int max_level, u32b resf)
 		}
 	}
 
-
 	/* Reset total */
 	total = 0L;
 
 	/* Cap maximum level */
 	if (max_level > 254) max_level = 254;
-
 	if ((resf & RESF_STOREFLAT)) max_level = 254;
 
 	/* Calculate loop bounds */
@@ -947,13 +938,14 @@ s16b get_obj_num(int max_level, u32b resf)
 		}
 	} else {
 		/* Process probabilities */
-		for (i = 0; i < n; i++)
-		{
+		for (i = 0; i < n; i++) {
 			/* Default */
 			table[i].prob3 = 0;
 
 			/* Accept */
 			table[i].prob3 = table[i].prob2;
+
+			if (table[i].prob3 && (resf & RESF_STOREFLAT)) table[i].prob3 = 100;
 
 			/* Total */
 			total += table[i].prob3;
@@ -976,6 +968,8 @@ s16b get_obj_num(int max_level, u32b resf)
 		value = value - table[i].prob3;
 	}
 
+	/* don't try for a better object? */
+	if ((resf & RESF_STOREFLAT)) return (table[i].index);
 
 	/* Power boost */
 	p = rand_int(100);
@@ -989,8 +983,7 @@ s16b get_obj_num(int max_level, u32b resf)
 		value = rand_int(total);
 
 		/* Find the monster */
-		for (i = 0; i < n; i++)
-		{
+		for (i = 0; i < n; i++) {
 			/* Found the entry */
 			if (value < table[i].prob3) break;
 
@@ -6060,10 +6053,8 @@ static int kind_is_theme(int k_idx)
  * Determine if an object must not be generated.
  */
 int kind_is_legal_special = -1;
-int kind_is_legal(int k_idx, u32b resf)
-{
+int kind_is_legal(int k_idx, u32b resf) {
 	object_kind *k_ptr = &k_info[k_idx];
-
 	int p = kind_is_theme(k_idx);
 
 	/* Used only for the Nazgul rings */
@@ -6071,6 +6062,9 @@ int kind_is_legal(int k_idx, u32b resf)
 
 	/* Are we forced to one tval ? */
 	if ((kind_is_legal_special != -1) && (kind_is_legal_special != k_ptr->tval)) p = 0;
+
+	/* If legal store item and 'flat', make it equal to all other items */
+	if (p && (resf & RESF_STOREFLAT)) p = 100;
 
 	/* Return the percentage */
 	return p;
