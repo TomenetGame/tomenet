@@ -7527,7 +7527,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 						q_ptr->goals_for_reward[j][k][l] = -1; /* no goals are required to get a reward if not specified, aka it's for free! */
 				}
 			}
-			q_ptr->accepts[0] = FALSE; /* 'C' stage 0 allows acquiring the quest exclusively */
+			q_ptr->accepts[0] = TRUE; /* 'C' stage 0 allows acquiring the quest exclusively */
 
 			/* for Q/A lines (:-o) */
 			lc_questor = 0;
