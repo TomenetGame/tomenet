@@ -978,7 +978,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			break;
 		}
 	/* now check remaining dialogue options (keywords) */
-	for (j = 0; j < q_ptr->questors; j++)
+	for (j = 0; j < q_ptr->questors; j++) {
 		for (i = 0; i < QI_MAX_KEYWORDS; i++)
 			if (q_ptr->keyword[j][stage][i] &&
 			    /* and it's not just a keyword-reply without a stage change? */
@@ -986,6 +986,8 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 				anything = TRUE;
 				break;
 			}
+		if (anything) break;
+	}
 	/* check auto/timed stage changes */
 	if (q_ptr->change_stage[stage] != -1) anything = TRUE;
 	//if (q_ptr->timed_stage_ingame[stage]) anything = TRUE;
