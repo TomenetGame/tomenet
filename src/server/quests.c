@@ -41,6 +41,9 @@
 
 
 static void quest_goal_check_reward(int pInd, int q_idx);
+static bool quest_goal_check(int pInd, int q_idx, bool interacting);
+static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx);
+static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire);
 
 
 /* error messages for quest_acquire() */
@@ -519,7 +522,7 @@ static void quest_terminate(int pInd, int q_idx) {
 
 /* return a current quest goal. Either just uses q_ptr->goals directly for global
    quests, or p_ptr->quest_goals for individual quests. */
-bool quest_get_goal(int pInd, int q_idx, int goal) {
+static bool quest_get_goal(int pInd, int q_idx, int goal) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
@@ -537,7 +540,8 @@ bool quest_get_goal(int pInd, int q_idx, int goal) {
 
 /* return an optional current quest goal. Either just uses q_ptr->goalsopt directly for global
    quests, or p_ptr->quest_goalsopt for individual quests. */
-bool quest_get_goalopt(int pInd, int q_idx, int goalopt) {
+#if 0 /* compiler warning 'unused' */
+static bool quest_get_goalopt(int pInd, int q_idx, int goalopt) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
@@ -552,10 +556,12 @@ bool quest_get_goalopt(int pInd, int q_idx, int goalopt) {
 	if (q_ptr->individual) return p_ptr->quest_goalsopt[i][goalopt]; /* individual quest */
 	return q_ptr->goalsopt[stage][goalopt]; /* global quest */
 }
+#endif
 
 /* return a current quest flag. Either just uses q_ptr->flags directly for global
    quests, or p_ptr->quest_flags for individual quests. */
-bool quest_get_flag(int pInd, int q_idx, int flag) {
+#if 0 /* compiler warning 'unused' */
+static bool quest_get_flag(int pInd, int q_idx, int flag) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i;
@@ -570,6 +576,7 @@ bool quest_get_flag(int pInd, int q_idx, int flag) {
 	if (q_ptr->individual) return p_ptr->quest_flags[i][flag]; /* individual quest */
 	return q_ptr->flags[flag]; /* global quest */
 }
+#endif
 
 /* return the current quest stage. Either just uses q_ptr->stage directly for global
    quests, or p_ptr->quest_stage for individual quests. */
@@ -591,7 +598,7 @@ s16b quest_get_stage(int pInd, int q_idx) {
 
 /* mark a quest goal as reached.
    Also check if we can now proceed to the next stage or set flags or hand out rewards */
-void quest_set_goal(int pInd, int q_idx, int goal) {
+static void quest_set_goal(int pInd, int q_idx, int goal) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
@@ -648,7 +655,8 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 }
 
 /* mark an optional quest goal as reached */
-void quest_set_goalopt(int pInd, int q_idx, int goalopt) {
+#if 0 /* compiler warning 'unused' */
+static void quest_set_goalopt(int pInd, int q_idx, int goalopt) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
@@ -676,8 +684,9 @@ void quest_set_goalopt(int pInd, int q_idx, int goalopt) {
 	/* also check if we can now proceed to the next stage or set flags or hand out rewards */
 	quest_goal_check(pInd, q_idx, FALSE);
 }
-#if 0 /* 0'ed just to kill compiler warning about unused function.. -_- */
+#endif
 /* mark an optional quest goal as no longer reached. ouch. */
+#if 0 /* compiler warning 'unused' */
 static void quest_unset_goalopt(int pInd, int q_idx, int goalopt) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
@@ -706,7 +715,8 @@ static void quest_unset_goalopt(int pInd, int q_idx, int goalopt) {
 #endif
 
 /* set/clear a quest flag ('set': TRUE -> set, FALSE -> clear) */
-void quest_set_flag(int pInd, int q_idx, int flag, bool set) {
+#if 0 /* compiler warning 'unused' */
+static void quest_set_flag(int pInd, int q_idx, int flag, bool set) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i;
@@ -730,6 +740,7 @@ void quest_set_flag(int pInd, int q_idx, int flag, bool set) {
 	}
 	q_ptr->flags[flag] = set; /* global quest */
 }
+#endif
 
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
@@ -864,7 +875,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
    if positive check, imprint this on a p_ptr->bool_within_target_wpos[max_conc], and
    set p_ptr->bool_target_xypos[max_conc] if required.
    Then on every subsequent move/kill/itempickup we can check in detail. --OK, made it this way */
-void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
+static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, stage;
@@ -1132,7 +1143,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
    initially with the questor who is eligible to acquire the quest.
    In that case, the player won't get the enter-a-keyword-prompt. Instead, our
    caller function quest_interact() will prompt him to acquire the quest first. */
-void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire) {
+static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, stage = quest_get_stage(Ind, q_idx);
@@ -1546,7 +1557,7 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
    Actually when we're called then we already know that we're at a fitting wpos
    for at least one quest. :-p Just have to check for all concurrent quests to
    make sure we set all their goals too. */
-void quest_check_goal_deliver_wpos(int Ind) {
+static void quest_check_goal_deliver_wpos(int Ind) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];
 	int i, j, k, q_idx, stage;
@@ -1975,7 +1986,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
    call quest_goal_check_reward() and/or quest_set_stage() to advance.
    Goals can only be completed by players who are pursuing that quest.
    'interacting' is TRUE if a player is interacting with the questor. */
-bool quest_goal_check(int pInd, int q_idx, bool interacting) {
+static bool quest_goal_check(int pInd, int q_idx, bool interacting) {
 	int stage;
 
 	/* check goals for stage advancement */

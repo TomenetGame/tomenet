@@ -7843,10 +7843,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			cc = flagbuf2;
 			if (*cc == '-') *cc = 0;
 			while (*cc) {
-				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
-					q_ptr->keywordchangeflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
-				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) { /* flags that must be set to display this convo line */
-					q_ptr->keywordchangeflags[questor][stage][lc_keywords[questor][stage]] &= ~(0x1 << (*cc - 'a')); /* clear flag */
+				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) {
+					q_ptr->keyword_setflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
+				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
+					q_ptr->keyword_clearflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'a')); /* clear flag */
 				} else return 1;
 			}
 
@@ -8176,11 +8176,18 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'Z' for how completed stage goals will change 'quest flags' */
 		if (buf[0] == 'Z') {
-#if 0
 			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
-#endif
+			if (3 != sscanf(s, "%d:%d:%s", &stage, &goal, flagbuf)) return (1);
+
+			cc = flagbuf;
+			if (*cc == '-') *cc = 0;
+			while (*cc) {
+				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) {
+					q_ptr->goal_setflags[stage][goal] |= (0x1 << (*cc - 'A')); /* set flag */
+				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
+					q_ptr->goal_clearflags[stage][goal] |= (0x1 << (*cc - 'a')); /* clear flag */
+				} else return 1;
+			}
 			continue;
 		}
 

@@ -2143,19 +2143,8 @@ extern void quest_activate(int q_idx);
 extern void quest_deactivate(int q_idx);
 extern s16b quest_get_cooldown(int pInd, int q_idx);
 extern void quest_set_cooldown(int pInd, int q_idx, s16b cooldown);
-/* internal (should be static =P) */
-extern bool quest_get_goal(int pInd, int q_idx, int goal);
-extern bool quest_get_goalopt(int pInd, int q_idx, int goalopt);
-extern bool quest_get_flag(int pInd, int q_idx, int flag);
 extern s16b quest_get_stage(int pInd, int q_idx);
-extern void quest_set_goal(int pInd, int q_idx, int goal);
-extern void quest_set_goalopt(int pInd, int q_idx, int goalopt);
-extern void quest_set_flag(int pInd, int q_idx, int flag, bool set);
 extern void quest_set_stage(int pInd, int q_idx, int stage, bool quiet);
-extern void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire);
-extern void quest_imprint_stage(int Ind, int q_idx, int py_q_idx);
-extern bool quest_goal_check(int pInd, int q_idx, bool interacting);
-extern void quest_check_goal_deliver_wpos(int Ind);
 /* those called for quest goal handling in other regular game functions: */
 extern void quest_interact(int Ind, int q_idx, int questor_idx);
 extern void quest_acquire_confirmed(int Ind, int q_idx, bool quiet);

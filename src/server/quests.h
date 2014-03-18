@@ -265,7 +265,8 @@ typedef struct quest_info {
 	u16b talkflags[QI_QUESTORS][QI_MAX_STAGES][QI_TALK_LINES];	/* required flags configuration for a convo line to get displayed  */
 	cptr keyword[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* each convo may allow the player to reply with up to m keywords a 30 chars; 'Y' as 1st keyword and 'N' as 2nd trigger a yes/no hack */
 	u16b keywordflags[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* required flags configuration for a keyword to be enabled */
-	u16b keywordchangeflags[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* ..and the keyword will change flags to these */
+	u16b keyword_setflags[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* ..and the keyword will change flags to these */
+	u16b keyword_clearflags[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];	/* ..and the keyword will change flags to these */
 	s16b keyword_stage[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];/*  ..which will bring the player to a different quest stage */
 	cptr *keyword_reply[QI_QUESTORS][QI_MAX_STAGES][QI_MAX_KEYWORDS];/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
 	char yn[QI_QUESTORS][QI_MAX_STAGES];				/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
@@ -288,6 +289,9 @@ typedef struct quest_info {
 	bool flags[QI_FLAGS];
 	/* quest goals reached? */
 	bool goals[QI_MAX_STAGES][QI_GOALS], goalsopt[QI_MAX_STAGES][QI_OPTIONAL];
+	/* 'Z' lines: goals set/clear flags */
+	u16b goal_setflags[QI_MAX_STAGES][QI_GOALS], goalopt_sets_flags[QI_MAX_STAGES][QI_OPTIONAL];
+	u16b goal_clearflags[QI_MAX_STAGES][QI_GOALS], goalopt_clears_flags[QI_MAX_STAGES][QI_OPTIONAL];
 
 
 	/* quest goals, up to 10 per stage, with a multitude of different sub-goals (Note: of the subgoals 1 is randomly picked for the player, except if 'xxx_random_pick' is set, which allows the player to pick what he wants to do).
