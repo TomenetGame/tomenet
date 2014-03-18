@@ -1325,15 +1325,16 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	p_ptr->interact_questor_idx = questor_idx;
 	if (q_ptr->keyword[questor_idx][stage][0]) { /* at least 1 keyword available? */
 		/* hack: if 1st keyword is empty string "", display a "more" prompt */
-		if (q_ptr->keyword[questor_idx][stage][0][0] == 0) {
+		if (q_ptr->keyword[questor_idx][stage][0][0] == 0)
+			Send_request_str(Ind, RID_QUEST + q_idx, "Your reply (or ENTER for more)> ", "");
+		else {
 			/* hack: if 1st keyword is "Y" just give a yes/no choice instead of an input prompt? */
 			if (q_ptr->keyword[questor_idx][stage][0][0] == 'Y' &&
 			    q_ptr->keyword[questor_idx][stage][0][1] == 0)
 				Send_request_cfr(Ind, RID_QUEST + q_idx, "Your reply, yes or no?> ", FALSE);
 			else /* normal prompt for keyword input */
-				Send_request_str(Ind, RID_QUEST + q_idx, "Your reply (or ENTER for more)> ", "");
-		} else
-			Send_request_str(Ind, RID_QUEST + q_idx, "Your reply> ", "");
+				Send_request_str(Ind, RID_QUEST + q_idx, "Your reply> ", "");
+		}
 	}
 }
 
