@@ -7415,10 +7415,23 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				lc_rewards[j] = 0;
 
 				/* Set some default values: */
-				for (k = 0; k < QI_GOALS; k++)
+				for (k = 0; k < QI_GOALS; k++) {
 					q_ptr->return_to_questor[j][k] = FALSE; /* no need to return to questor for main goals */
+					for (l = 0; l < 5; l++) {
+						q_ptr->kill_rchar[stage][goal][l] = 255;
+						q_ptr->kill_rattr[stage][goal][l] = 255;
+
+						q_ptr->retrieve_opval[stage][goal][l] = 9999;
+						q_ptr->retrieve_obpval[stage][goal][l] = 9999;
+						q_ptr->retrieve_oattr[stage][goal][l] = 255;
+						q_ptr->retrieve_oname1[stage][goal][l] = -3;
+						q_ptr->retrieve_oname2[stage][goal][l] = -3;
+						q_ptr->retrieve_oname2b[stage][goal][l] = -3;
+					}
+				}
 				for (k = 0; k < QI_OPTIONAL; k++)
 					q_ptr->return_to_questor_opt[j][k] = FALSE; /* no need to return to questor for optional goals */
+
 				for (k = 0; k < QI_FOLLOWUP_STAGES; k++) {
 					q_ptr->next_stage_from_goals[j][k] = -1; /* no next stages set, end quest by default if nothing specified */
 
