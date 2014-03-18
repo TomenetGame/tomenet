@@ -1464,7 +1464,7 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 							if (p_ptr->inventory[k].quest == q_idx + 1 &&
 							    p_ptr->inventory[k].quest_stage == stage) {
 								inven_item_increase(Ind, k, -99);
-								//inven_item_describe(Ind, i);
+								//inven_item_describe(Ind, k);
 								inven_item_optimize(Ind, k);
 							}
 						}
@@ -1582,7 +1582,7 @@ void quest_check_goal_deliver_wpos(int Ind) {
 					if (p_ptr->inventory[k].quest == q_idx + 1 &&
 					    p_ptr->inventory[k].quest_stage == stage) {
 						inven_item_increase(Ind, k, -99);
-						//inven_item_describe(Ind, i);
+						//inven_item_describe(Ind, k);
 						inven_item_optimize(Ind, k);
 					}
 				}
@@ -1658,7 +1658,7 @@ void quest_check_goal_deliver_xy(int Ind) {
 					if (p_ptr->inventory[k].quest == q_idx + 1 &&
 					    p_ptr->inventory[k].quest_stage == stage) {
 						inven_item_increase(Ind, k, -99);
-						//inven_item_describe(Ind, i);
+						//inven_item_describe(Ind, k);
 						inven_item_optimize(Ind, k);
 					}
 				}
