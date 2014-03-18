@@ -8304,6 +8304,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				msg_format(Ind, "\377rDisabling quest %d (%s).", k, q_info[k].codename);
+				q_info[k].active = FALSE;
 				q_info[k].disabled = TRUE;
 				return;
 			}
