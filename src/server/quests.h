@@ -189,12 +189,12 @@ typedef struct quest_info {
 	bool auto_accept[QI_MAX_STAGES];		/* player will automatically acquire the newly spawned quest (from activate_quest[]) */
 	bool auto_accept_quiet[QI_MAX_STAGES];		/* player will automatically acquire the newly spawned quest (from activate_quest[]) but not get a quest-accept-notification type of message about it */
 
-	s16b change_stage[QI_MAX_STAGES];		/* automatically change to a different stage after handling everything that was to do in the current stage */
+	s16b change_stage[QI_MAX_STAGES];		/* automatically change to a different stage after handling everything that was to do in the current stage (-1 = disable) */
 #if 0 /* currently not possible since we call the quest scheduler once a minute */
 	s16b timed_stage_ingame[QI_MAX_STAGES];		/* automatically change to a different stage after a certain amount of in-game minutes passed */
 	s16b timed_stage_ingame_abs[QI_MAX_STAGES];	/* automatically change to a different stage when a certain in-game time is reached (minute resolution) */
 #else
-	s16b timed_stage_ingame_abs[QI_MAX_STAGES];	/* automatically change to a different stage when a certain in-game time is reached (HOUR resolution!) */
+	s16b timed_stage_ingame_abs[QI_MAX_STAGES];	/* automatically change to a different stage when a certain in-game time is reached (HOUR resolution! -1 to disable) */
 #endif
 	s16b timed_stage_real[QI_MAX_STAGES];		/* automatically change to a different stage after a certain amount of real minutes passed */
 	bool quiet_change_stage[QI_MAX_STAGES];		/* for the above auto-changes: don't replay the stage's dialogue */

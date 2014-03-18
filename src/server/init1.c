@@ -7440,7 +7440,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->evening = q_ptr->midnight = q_ptr->deepnight = TRUE;
 			q_ptr->time_start = q_ptr->time_stop = -1;
 
-			/* 'A' */
+			/* 'F' */
 			for (i = 0; i < QI_QUESTORS; i++) {
 				q_ptr->accept_los[i] = FALSE;
 				q_ptr->accept_interact[i] = TRUE;
@@ -7459,6 +7459,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				/* 'A' */
 				q_ptr->activate_quest[j] = -1;
 				q_ptr->change_stage[j] = -1;
+				q_ptr->timed_stage_ingame_abs[j] = -1;
 
 				/* keep track of maximum amount of lines per text in each quest stage */
 				lc_narration[j] = 0;
