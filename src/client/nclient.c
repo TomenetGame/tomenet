@@ -3501,7 +3501,7 @@ int Receive_inventory_revision(void) {
 
 #if 0 /* moved to Receive_inven...() - cleaner and works much better (ID and *ID*) */
 	/* AUTOINSCRIBE - moved to Receive_inventory_revision() */
-	for (v = 0; v <= INVEN_PACK; v++)
+	for (v = 0; v < INVEN_PACK; v++)
 		apply_auto_inscriptions(v, FALSE);
 #endif
 

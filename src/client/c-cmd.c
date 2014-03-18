@@ -1044,7 +1044,7 @@ void cmd_swap(void) {
 
 	if (!c_get_item(&item, "Swap which item? ", (USE_INVEN | USE_EQUIP | INVEN_FIRST))) return;
 
-	if (item <= INVEN_PACK) Send_wield(item);
+	if (item < INVEN_PACK) Send_wield(item);
 	else Send_take_off(item);
 }
 
