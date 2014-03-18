@@ -1044,7 +1044,7 @@ static void rd_kquests() {
 static void rd_quests() {
 	int i, j, k;
 	s16b max, questors;
-	byte flags, tmpbyte;
+	byte flags = QI_FLAGS, tmpbyte;
 	int dummysize1 = sizeof(byte) * 7 + sizeof(s16b) * 3 + sizeof(s32b);
 	int dummysize2 = sizeof(byte) * 5 + sizeof(s16b);
 	monster_type *m_ptr;
