@@ -7412,12 +7412,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->maxlev = 100;
 			/* optional parm: is quest repeatable? */
 			if (j == 4) {
-				/* hack: -2 = disable quest! */
-				if (l == -2) {
+				/* hack: +1000 = disable quest! */
+				if (l >= 999) {
 					q_ptr->active = FALSE;
 					q_ptr->disabled = TRUE;
-					q_ptr->repeatable = 0; /* just in case it gets re-enabled by an admin, safest default! */
 					s_printf("QUEST: Disabling '%s' (%d, %s)\n", q_name + q_ptr->name, error_idx, q_ptr->codename);
+					q_ptr->repeatable = l - 1000;
 				} else q_ptr->repeatable = l;
 			}
 			else q_ptr->repeatable = 0; /* could also default to infinitely repeatable maybe, -1 */
