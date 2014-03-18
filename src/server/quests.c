@@ -1362,9 +1362,13 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 
 /* Check if player completed a kill or item-retrieve goal.
    The monster slain or item retrieved must therefore be given to this function for examination.
-   OBSOLETE: This function will then in turn either check directly or call a location-based checking function.
-    --at the moment this function performs ALL sub-checks on its own.
-   NOTE/TODO: These checks here actually make p_ptr->quest_target_wpos.. helper information obsolete.. */
+   NOTE/TODO: These checks here actually make p_ptr->quest_target_wpos.. helper information obsolete..
+   Note: The mechanics for retrieving quest items at a specific target position are a bit trick:
+         If n items have to be retrieved, each one has to be a different item that gets picked at
+         the target pos. When an item is lost from the player's inventory again however, it mayb be
+         retrieved anywhere, ignoring the target location specification. This requires the quest
+         items to be marked when they get picked up at the target location, to free those marked
+         ones from same target loc restrictions for re-pickup. */
 void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];
@@ -1431,6 +1435,11 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 			/* check for retrieve-item goal here */
 			if (o_ptr && q_ptr->retrieve[stage][j]) {
 				if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
+
+				/* mark the item as quest item, so we know we found it at the designated target loc (if any) */
+				o_ptr->quest = q_idx + 1;
+				o_ptr->quest_stage = stage;
+
 				/* decrease the player's retrieve counter, if we got all, goal is completed! */
 				p_ptr->quest_retrieve_number[i][j] -= o_ptr->number;
 				if (p_ptr->quest_retrieve_number[i][j] > 0) continue; /* not yet */
@@ -1442,7 +1451,10 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 		}
 	}
 }
-/* Check if we have to un-set an item-retrieval quest goal because we lost <num> items! */
+/* Check if we have to un-set an item-retrieval quest goal because we lost <num> items!
+   Note: If we restricted quest stages to request no overlapping item types, we could also add
+         'quest_goal' to object_type so we won't need lookups in here, but currently there is no
+         such restriction and I don't think we need it. */
 void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];

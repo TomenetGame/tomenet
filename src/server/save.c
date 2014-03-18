@@ -196,6 +196,7 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->questor);
 	wr_s16b(o_ptr->questor_idx);
 	wr_s16b(o_ptr->quest);
+	wr_s16b(o_ptr->quest_stage);
 	wr_byte(o_ptr->questor_invincible);
 
 	/* Save the inscription (if any) */
