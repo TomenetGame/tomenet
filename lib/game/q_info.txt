@@ -81,7 +81,7 @@ R:3:80:38:0:0:0:0:0:0:0:0:0:4:2:0
 R:4:80:35:0:0:0:0:0:0:0:0:0:3:1:0
 
 N:1:testquest1:C. Blue:Minimal Test Quest:-1
-Q:1:37:b:T:-1:-1:-1:-1:-1:Blind Bat
+Q:1:37:b:n:-1:-1:-1:-1:-1:Fast Bat
 L:0:0:63:63:0:0:100:39:-
 W:0:0:-:Hello, fellow fruit bat! Wanna visit the General Store for me?
 Y:0:0:-:y:-:1
