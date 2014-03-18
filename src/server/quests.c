@@ -501,7 +501,7 @@ static void quest_terminate(int pInd, int q_idx) {
 		/* he is no longer on the quest, since the quest has finished */
 		p_ptr->quest_idx[j] = -1;
 		msg_format(pInd, "\374\377uYou have completed the quest \"\377U%s\377u\".", q_name + q_ptr->name);
-		msg_print(pInd, "\374 ");
+		//msg_print(pInd, "\374 ");
 
 		/* don't respawn the questor *immediately* again, looks silyl */
 		if (q_ptr->cooldown == -1) p_ptr->quest_cooldown[q_idx] = QI_COOLDOWN_DEFAULT;
@@ -526,7 +526,7 @@ static void quest_terminate(int pInd, int q_idx) {
 		/* he is no longer on the quest, since the quest has finished */
 		p_ptr->quest_idx[j] = -1;
 		msg_format(i, "\374\377uYou have completed the quest \"\377U%s\377u\".", q_name + q_ptr->name);
-		msg_print(i, "\374 ");
+		//msg_print(i, "\374 ");
 	}
 
 	/* don't respawn the questor *immediately* again, looks silyl */
@@ -2315,6 +2315,6 @@ void quest_check_player_location(int Ind) {
 				}
 			}
 		}
-		if (found) break;
+		//oho, no break here! we might have multiple quests that want a delivery here--  if (found) break;
 	}
 }
