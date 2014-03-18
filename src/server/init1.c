@@ -7360,6 +7360,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'N' for "New/Number/Name" */
 		if (buf[0] == 'N') {
+			/* Hack: Finish up PREVIOUS quest: remember # of questors that quest had */
+			if (q_ptr) q_ptr->questors = lc_questor;
+
 			/* Find the colon before the name */
 			s = strchr(buf + 2, ':');
 			/* Verify that colon */
