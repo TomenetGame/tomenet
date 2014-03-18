@@ -566,15 +566,15 @@ static bool quest_get_flag(int pInd, int q_idx, int flag) {
 	player_type *p_ptr;
 	int i;
 
-	if (!pInd) return q_ptr->flags[flag]; /* no player? global goal */
+	if (!pInd) return ((q_ptr->flags & (0x1 << flag)) != 0); /* no player? global goal */
 
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) return q_ptr->flags[flag]; /* player isn't on this quest. return global goal. */
+	if (i == MAX_CONCURRENT_QUESTS) return ((q_ptr->flags & (0x1 << flag)) != 0); /* player isn't on this quest. return global goal. */
 
-	if (q_ptr->individual) return p_ptr->quest_flags[i][flag]; /* individual quest */
-	return q_ptr->flags[flag]; /* global quest */
+	if (q_ptr->individual) return ((p_ptr->quest_flags[i] & (0x1 << flag)) != 0); /* individual quest */
+	return ((q_ptr->flags & (0x1 << flag)) != 0); /* global quest */
 }
 #endif
 
@@ -596,15 +596,31 @@ s16b quest_get_stage(int pInd, int q_idx) {
 	return q_ptr->stage; /* global quest */
 }
 
+/* according to Z lines, change flags when a quest goal has finally be resolved. */
+//TODO for optional goals too..
+static void quest_goal_changes_flags(int q_idx, int stage, int goal) {
+	quest_info *q_ptr = &q_info[q_idx];
+
+	q_ptr->flags |= (q_ptr->goal_setflags[stage][goal]);
+	q_ptr->flags &= ~(q_ptr->goal_clearflags[stage][goal]);
+}
+
 /* mark a quest goal as reached.
-   Also check if we can now proceed to the next stage or set flags or hand out rewards */
-static void quest_set_goal(int pInd, int q_idx, int goal) {
+   Also check if we can now proceed to the next stage or set flags or hand out rewards.
+   'nisi' is TRUE for kill/retrieve quests that depend on a delivery.
+   This was added for handling flag changes induced by completing stage goals. */
+static void quest_set_goal(int pInd, int q_idx, int goal, bool nisi) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
 
 	if (!pInd) {
+		if (!q_ptr->goals[stage][goal] || !nisi) q_ptr->goals_nisi[stage][goal] = nisi;
 		q_ptr->goals[stage][goal] = TRUE; /* no player? global goal */
+
+		/* change flags according to Z lines? */
+		if (!q_ptr->goals_nisi[stage][goal]) quest_goal_changes_flags(q_idx, stage, goal);
+
 		quest_goal_check(0, q_idx, FALSE);
 		return;
 	}
@@ -613,18 +629,34 @@ static void quest_set_goal(int pInd, int q_idx, int goal) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
+		if (!q_ptr->goals[stage][goal] || !nisi) q_ptr->goals_nisi[stage][goal] = nisi;
 		q_ptr->goals[stage][goal] = TRUE; /* player isn't on this quest. return global goal. */
+
+		/* change flags according to Z lines? */
+		if (!q_ptr->goals_nisi[stage][goal]) quest_goal_changes_flags(q_idx, stage, goal);
+
 		quest_goal_check(0, q_idx, FALSE);
 		return;
 	}
 
 	if (q_ptr->individual) {
+		if (!p_ptr->quest_goals[i][goal] || !nisi) p_ptr->quest_goals_nisi[i][goal] = nisi;
 		p_ptr->quest_goals[i][goal] = TRUE; /* individual quest */
+
+		/* change flags according to Z lines? */
+		if (!q_ptr->goals_nisi[stage][goal]) quest_goal_changes_flags(q_idx, stage, goal);
+
 		quest_goal_check(pInd, q_idx, FALSE);
 		return;
 	}
 
+	if (!q_ptr->goals[stage][goal] || !nisi) q_ptr->goals_nisi[stage][goal] = nisi;
 	q_ptr->goals[stage][goal] = TRUE; /* global quest */
+
+	/* change flags according to Z lines? */
+	if (!q_ptr->goals_nisi[stage][goal]) quest_goal_changes_flags(q_idx, stage, goal);
+
+	/* also check if we can now proceed to the next stage or set flags or hand out rewards */
 	quest_goal_check(0, q_idx, FALSE);
 }
 /* mark a quest goal as no longer reached. ouch. */
@@ -656,12 +688,13 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 
 /* mark an optional quest goal as reached */
 #if 0 /* compiler warning 'unused' */
-static void quest_set_goalopt(int pInd, int q_idx, int goalopt) {
+static void quest_set_goalopt(int pInd, int q_idx, int goalopt, bool nisi) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
 
 	if (!pInd) {
+		if (!q_ptr->goalsopt[stage][goalopt] || !nisi) q_ptr->goalsopt_nisi[stage][goalopt] = nisi;
 		q_ptr->goalsopt[stage][goalopt] = TRUE; /* no player? global goal */
 		return;
 	}
@@ -670,19 +703,23 @@ static void quest_set_goalopt(int pInd, int q_idx, int goalopt) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
+		if (!q_ptr->goalsopt[stage][goalopt] || !nisi) q_ptr->goalsopt_nisi[stage][goalopt] = nisi;
 		q_ptr->goalsopt[stage][goalopt] = TRUE; /* player isn't on this quest. return global goal. */
 		return;
 	}
 
 	if (q_ptr->individual) {
+		if (!p_ptr->quest_goalsopt[i][goalopt] || !nisi) p_ptr->quest_goalsopt_nisi[i][goalopt] = nisi;
 		p_ptr->quest_goalsopt[i][goalopt] = TRUE; /* individual quest */
 		return;
 	}
+
+	if (!q_ptr->goalsopt[stage][goalopt] || !nisi) q_ptr->goalsopt_nisi[stage][goalopt] = nisi;
 	q_ptr->goalsopt[stage][goalopt] = TRUE; /* global quest */
 
-
-	/* also check if we can now proceed to the next stage or set flags or hand out rewards */
-	quest_goal_check(pInd, q_idx, FALSE);
+	/* also check if we can now set flags or hand out rewards */
+	//TODO: for optional quests..
+	//quest_goal_check(pInd, q_idx, FALSE);
 }
 #endif
 /* mark an optional quest goal as no longer reached. ouch. */
@@ -722,7 +759,8 @@ static void quest_set_flag(int pInd, int q_idx, int flag, bool set) {
 	int i;
 
 	if (!pInd) {
-		q_ptr->flags[flag] = set; /* no player? global goal */
+		if (set) q_ptr->flags |= (0x1 << flag); /* no player? global goal */
+		else q_ptr->flags &= ~(0x1 << flag);
 		return;
 	}
 
@@ -730,15 +768,18 @@ static void quest_set_flag(int pInd, int q_idx, int flag, bool set) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
-		q_ptr->flags[flag] = set; /* player isn't on this quest. return global goal. */
+		if (set) q_ptr->flags |= (0x1 << flag); /* player isn't on this quest. return global goal. */
+		else q_ptr->flags &= ~(0x1 << flag);
 		return;
 	}
 
 	if (q_ptr->individual) {
-		p_ptr->quest_flags[i][flag] = set; /* individual quest */
+		if (set) p_ptr->quest_flags[i] |= (0x1 << flag);
+		else p_ptr->quest_flags[i] &= ~(0x1 << flag); /* individual quest */
 		return;
 	}
-	q_ptr->flags[flag] = set; /* global quest */
+	if (set) q_ptr->flags |= (0x1 << flag); /* global quest */
+	else q_ptr->flags &= ~(0x1 << flag);
 }
 #endif
 
@@ -938,7 +979,7 @@ s_printf("%s QUEST_ACQUIRED: (%d,%d,%d;%d,%d) %s (%d) has quest %d '%s'.\n", sho
 
 	/* for 'individual' quests, reset temporary quest data or it might get carried over from previous quest */
 	p_ptr->quest_stage[i] = 0; /* note that individual quests can ONLY start in stage 0, obviously */
-	for (j = 0; j < QI_FLAGS; j++) p_ptr->quest_flags[i][j] = FALSE;
+	p_ptr->quest_flags[i] = 0x0000;
 	for (j = 0; j < QI_GOALS; j++) p_ptr->quest_goals[i][j] = FALSE;
 	for (j = 0; j < QI_OPTIONAL; j++) p_ptr->quest_goalsopt[i][j] = FALSE;
 
@@ -1405,6 +1446,7 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];
 	int i, j, k, q_idx, stage;
+	bool nisi = FALSE;
 
 	/* paranoia -- neither a kill has been made nor an item picked up */
 	if (!m_ptr && !o_ptr) return;
@@ -1423,6 +1465,17 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 		if (!q_ptr->active) continue;
 
 		stage = quest_get_stage(Ind, q_idx);
+
+		/* For handling Z-lines: flags changed depending on goals completed:
+		   pre-check if we have any pending deliver goal in this stage.
+		   If so then we can only set the quest goal 'nisi' (provisorily),
+		   and hence flags won't get changed yet until it is eventually resolved
+		   when we turn in the delivery. */
+		for (j = 0; j < QI_GOALS; j++)
+			if (q_ptr->deliver_pos[stage][j]) {
+				nisi = TRUE;
+				break;
+			}
 
 		/* check the quest goals, whether any of them wants a target to this location */
 		for (j = 0; j < QI_GOALS; j++) {
@@ -1462,7 +1515,7 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 				if (p_ptr->quest_kill_number[i][j]) continue; /* not yet */
 
 				/* we have completed a target-to-xy goal! */
-				quest_set_goal(Ind, q_idx, j);
+				quest_set_goal(Ind, q_idx, j, nisi);
 				continue;
 			}
 
@@ -1483,7 +1536,7 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 				if (p_ptr->quest_retrieve_number[i][j] > 0) continue; /* not yet */
 
 				/* we have completed a target-to-xy goal! */
-				quest_set_goal(Ind, q_idx, j);
+				quest_set_goal(Ind, q_idx, j, nisi);
 
 				/* if we don't have to deliver in this stage,
 				   we can just remove all the quest items right away now,
@@ -1608,7 +1661,7 @@ static void quest_check_goal_deliver_wpos(int Ind) {
 			else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
 
 			/* for item retrieval goals therefore linked to this deliver goal,
-			   remove all quest items now finally that we 'delivered' them. */
+			   remove all quest items now finally that we 'delivered' them.. */
 			if (q_ptr->individual) {
 				for (k = 0; k < INVEN_PACK; k++) {
 					if (p_ptr->inventory[k].quest == q_idx + 1 &&
@@ -1621,9 +1674,16 @@ static void quest_check_goal_deliver_wpos(int Ind) {
 			} else {
 				//TODO (not just here): implement global retrieval quests..
 			}
+			/* ..and also mark all 'nisi' quest goals as finally resolved,
+			   to change flags accordingly if defined by a Z-line. */
+			for (k = 0; k < QI_GOALS; k++)
+				if (q_ptr->goals_nisi[stage][k]) {
+					q_ptr->goals_nisi[stage][k] = FALSE;
+					quest_goal_changes_flags(q_idx, stage, k);
+				}
 
 			/* we have completed a delivery-to-wpos goal! */
-			quest_set_goal(Ind, q_idx, j);
+			quest_set_goal(Ind, q_idx, j, FALSE);
 		}
 	}
 }
@@ -1684,7 +1744,7 @@ void quest_check_goal_deliver_xy(int Ind) {
 				continue;
 
 			/* for item retrieval goals therefore linked to this deliver goal,
-			   remove all quest items now finally that we 'delivered' them. */
+			   remove all quest items now finally that we 'delivered' them.. */
 			if (q_ptr->individual) {
 				for (k = 0; k < INVEN_PACK; k++) {
 					if (p_ptr->inventory[k].quest == q_idx + 1 &&
@@ -1697,9 +1757,16 @@ void quest_check_goal_deliver_xy(int Ind) {
 			} else {
 				//TODO (not just here): implement global retrieval quests..
 			}
+			/* ..and also mark all 'nisi' quest goals as finally resolved,
+			   to change flags accordingly if defined by a Z-line. */
+			for (k = 0; k < QI_GOALS; k++)
+				if (q_ptr->goals_nisi[stage][k]) {
+					q_ptr->goals_nisi[stage][k] = FALSE;
+					quest_goal_changes_flags(q_idx, stage, k);
+				}
 
 			/* we have completed a delivery-to-xy goal! */
-			quest_set_goal(Ind, q_idx, j);
+			quest_set_goal(Ind, q_idx, j, FALSE);
 		}
 	}
 }

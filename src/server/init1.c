@@ -7440,7 +7440,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_ptr->questor_invincible[i] = TRUE;
 			}
 
-			for (j = 0; j < QI_FLAGS; j++) q_ptr->flags[j] = FALSE;
+			q_ptr->flags = 0x0000;
 
 			for (j = 0; j < QI_MAX_STAGES; j++) {
 				/* 'C' */

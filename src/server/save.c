@@ -477,7 +477,7 @@ static void wr_quests() {
 			wr_s16b(q_info[i].questor_m_idx[j]);
 		}
 
-		for (j = 0; j < QI_FLAGS; j++) wr_byte(q_info[i].flags[j]);
+		wr_u16b(q_info[i].flags);
 
 		for (k = 0; k < QI_MAX_STAGES; k++) {
 			for (j = 0; j < QI_GOALS; j++) {
@@ -1373,8 +1373,7 @@ static bool wr_savefile_new(int Ind) {
 		wr_byte(p_ptr->quest_deliveropt_xy[i]);
 
 		/* 'individual' quest type information */
-		for (j = 0; j < QI_FLAGS; j++)
-			wr_byte(p_ptr->quest_flags[i][j]);
+		wr_u16b(p_ptr->quest_flags[i]);
 	}
 
 	/* remember quests we completed */

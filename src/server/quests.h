@@ -285,10 +285,11 @@ typedef struct quest_info {
 	bool add_dungeon_keep[QI_MAX_STAGES];			/* keep dungeon until quest ends instead of erasing it when this stage is completed */
 
 
-	/* global quest flags (a-p) -- note that these are stage-independant! */
-	bool flags[QI_FLAGS];
+	/* global quest flags (a-p to clear, A-P to set) -- note that these are stage-independant! */
+	u16b flags;
 	/* quest goals reached? */
 	bool goals[QI_MAX_STAGES][QI_GOALS], goalsopt[QI_MAX_STAGES][QI_OPTIONAL];
+	bool goals_nisi[QI_MAX_STAGES][QI_GOALS], goalsopt_nisi[QI_MAX_STAGES][QI_OPTIONAL]; /* for goals set by kill/retrieve depending on deliver (for flag changes) */
 	/* 'Z' lines: goals set/clear flags */
 	u16b goal_setflags[QI_MAX_STAGES][QI_GOALS], goalopt_sets_flags[QI_MAX_STAGES][QI_OPTIONAL];
 	u16b goal_clearflags[QI_MAX_STAGES][QI_GOALS], goalopt_clears_flags[QI_MAX_STAGES][QI_OPTIONAL];

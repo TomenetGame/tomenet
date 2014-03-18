@@ -1044,7 +1044,7 @@ static void rd_kquests() {
 static void rd_quests() {
 	int i, j, k;
 	s16b max, questors;
-	byte flags;
+	byte flags, tmpbyte;
 	int dummysize1 = sizeof(byte) * 7 + sizeof(s16b) * 3 + sizeof(s32b);
 	int dummysize2 = sizeof(byte) * 5 + sizeof(s16b);
 
@@ -1082,13 +1082,16 @@ static void rd_quests() {
 			rd_s16b(&q_info[i].questor_m_idx[j]);
 		}
 
-		if (!s_older_than(4, 5, 20)) {
+		if (!older_than(4, 5, 25))
+			rd_u16b(&q_info[i].flags);
+		else if (!s_older_than(4, 5, 20)) {
 			for (j = 0; j < flags; j++) {
 				if (j >= QI_FLAGS) {
 					strip_bytes(1);
 					continue;
 				}
-				rd_byte((byte *) &q_info[i].flags[j]);
+				rd_byte(&tmpbyte);
+				if (tmpbyte) q_info[i].flags |= (0x1 << j);
 			}
 		}
 
@@ -2486,6 +2489,7 @@ static errr rd_savefile_new_aux(int Ind) {
 //	byte panic;
 	u16b tmp16u;
 	u32b tmp32u;
+	byte tmpbyte;
 
 
 #ifdef VERIFY_CHECKSUMS
@@ -2688,9 +2692,13 @@ static errr rd_savefile_new_aux(int Ind) {
 			rd_byte((byte *) &p_ptr->quest_within_deliveropt_wpos[i]);
 			rd_byte((byte *) &p_ptr->quest_deliveropt_xy[i]);
 
-			if (!older_than(4, 5, 21)) {
-				for (j = 0; j < QI_FLAGS; j++)
-					rd_byte((byte *) &p_ptr->quest_flags[i][j]);
+			if (!older_than(4, 5, 25))
+				rd_u16b(&p_ptr->quest_flags[i]);
+			else if (!older_than(4, 5, 21)) {
+				for (j = 0; j < QI_FLAGS; j++) {
+					rd_byte(&tmpbyte);
+					if (tmpbyte) p_ptr->quest_flags[i] |= (0x1 << j);
+				}
 			}
 		}
 
