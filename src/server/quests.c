@@ -1440,10 +1440,14 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		q_ptr->flags &= ~(q_ptr->keyword_clearflags[questor_idx][stage][i]);
 
 		/* stage change? */
-		if (q_ptr->keyword_stage[questor_idx][stage][i] != -1)
+		if (q_ptr->keyword_stage[questor_idx][stage][i] != -1) {
 			quest_set_stage(Ind, q_idx, q_ptr->keyword_stage[questor_idx][stage][i], FALSE);
-
-		return;
+			return;
+		}
+		/* Instead of return'ing, re-prompt for dialogue
+		   if we only changed flags or simply got a keyword-reply. */
+		str[0] = 0; /* don't give the 'nothing to say' line, our keyword already matched */
+		break;
 	}
 	/* it was nice small-talking to you, dude */
 #if 1
