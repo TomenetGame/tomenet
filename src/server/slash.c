@@ -1335,9 +1335,7 @@ void do_slash_cmd(int Ind, char *message)
 			return;
 		}
 		/* TODO: move it to the Mayor's house */
-		else if(prefix(message, "/quest") ||
-				prefix(message, "/que"))	/* /quIt */
-		{
+		else if(prefix(message, "/kquest") || prefix(message, "/kq")) {
 			j = Ind; //k=0;
 			u16b r, num;
 			int lev;
@@ -3530,7 +3528,7 @@ void do_slash_cmd(int Ind, char *message)
 			msg_print(Ind, response);
 			return;
 		}
-		else if (prefix(message, "/qdrop")) { /* drop a quest we're on */
+		else if (prefix(message, "/quest") || prefix(message, "/que")/*quIt*/) { /* display our quests or drop a quest we're on */
 			if (tk != 1) {
 				int qa = 0;
 
@@ -3538,16 +3536,16 @@ void do_slash_cmd(int Ind, char *message)
 					if (p_ptr->quest_idx[i] != -1) qa++;
 
 				msg_print(Ind, "");
-				if (!qa) msg_print(Ind, "\377U-- You're not currently pursuing any quests. --");
+				if (!qa) msg_print(Ind, "\377UYou're not currently pursuing any quests.");
 				else {
-					if (qa == 1) msg_print(Ind, "\377U-- You're currently pursuing the following quest: --");
-					else msg_print(Ind, "\377U-- You're currently pursuing the following quests: --");
+					if (qa == 1) msg_print(Ind, "\377UYou're currently pursuing the following quest:");
+					else msg_print(Ind, "\377UYou're currently pursuing the following quests:");
 					for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 						if (p_ptr->quest_idx[i] == -1) continue;
-						msg_format(Ind, "  %d) %s", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name);
+						msg_format(Ind, " %d) %s", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name);
 					}
-					msg_print(Ind, "\377U(To drop a quest, type: \377y/qdrop questnumber\377U or \377y*\377U to drop all.");
-					msg_print(Ind, "\377UWarning: Depending on the quest you might not be able to pick it up again!)");
+					msg_print(Ind, "\377s  To drop a quest type \377D/quest <questnumber>\377s - to drop all quests type \377D/quest *");
+					msg_print(Ind, "\377s  Warning! Depending on the quest you might not be able to pick it up again.");
 				}
 				return;
 			}
@@ -8216,10 +8214,10 @@ void do_slash_cmd(int Ind, char *message)
 				//}
 				return;
 			}
-			else if (prefix(message, "/qpdrop")) { /* drop a quest a player is on */
+			else if (prefix(message, "/qaquest") || prefix(message, "/qaq")) { /* drop a quest a player is on */
 				int q = -1, p;
 				if (!tk) {
-					msg_print(Ind, "Usage: /qpdrop [<quest>] <character name>");
+					msg_print(Ind, "Usage: /qaquest [<quest>] <character name>");
 					return;
 				}
 
@@ -8242,10 +8240,10 @@ void do_slash_cmd(int Ind, char *message)
 						if (p_ptr->quest_idx[i] != -1) qa++;
 
 					msg_print(Ind, "");
-					if (!qa) msg_format(Ind, "\377U-- %s is not currently pursuing any quests. --", p_ptr->name);
+					if (!qa) msg_format(Ind, "\377U%s is not currently pursuing any quests.", p_ptr->name);
 					else {
-						if (qa == 1) msg_format(Ind, "\377U-- %s is currently pursuing the following quest: --", p_ptr->name);
-						else msg_format(Ind, "\377U-- %s is currently pursuing the following quests: --", p_ptr->name);
+						if (qa == 1) msg_format(Ind, "\377U%s is currently pursuing the following quest:", p_ptr->name);
+						else msg_format(Ind, "\377U%s is currently pursuing the following quests:", p_ptr->name);
 						for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 							if (p_ptr->quest_idx[i] == -1) continue;
 							msg_format(Ind, "  %d) %s (%d)", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name, quest_get_stage(p, p_ptr->quest_idx[i]));

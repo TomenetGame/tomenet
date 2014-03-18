@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. March 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 18. March 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1069,11 +1069,16 @@ They all start with a slash '/' hence they're called slash commands:
 /pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
             chars. See (6.13) for details about PvP mode.
 
-/que        gives a quest! It needs to be fulfilled before a certain period
- (/quest)   of time passes (continues to expire even while not logged on).
+/kq         gives a quest! It needs to be fulfilled before a certain period
+ (/kquest)  of time passes (continues to expire even while not logged on).
             The player who completes it gets a random item as reward. It will
             appear in your inventory and carry an inscription indicating
             it's the quest reward. (See (4.13) for more info.)
+
+/que        Lists your currently pursued quests.
+ (/quest)   Specify a quest number to drop a quest -- warning! You might not
+            be able to acquire it again, depending on the quest and your quest
+            progress.
 
 /quit       Leaves the game, same as pressing CTRL+X.
  (/exit, /leave)
