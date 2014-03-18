@@ -787,7 +787,7 @@ static void quest_set_flag(int pInd, int q_idx, int flag, bool set) {
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, j, k;
-	bool anything = FALSE;
+	bool anything;
 
 #if QDEBUG > 0
 	s_printf("%s QUEST_STAGE: '%s' %d->%d ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, quest_get_stage(pInd, q_idx), stage, q_ptr->codename, q_ptr->creator);
@@ -815,15 +815,27 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			if (j == MAX_CONCURRENT_QUESTS) continue;
 
 			/* play automatic narration if any */
-			//TODO: flag restrictions on narration lines
-			if (!quiet && q_ptr->narration[stage][0]) { /* there is narration to display? */
-				msg_print(i, "\374 ");
-				msg_format(i, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
+			if (!quiet) {
+				/* pre-scan narration if any line at all exists and passes the flag check */
+				anything = FALSE;
 				for (k = 0; k < QI_TALK_LINES; k++) {
-					if (!q_ptr->narration[stage][k]) break;
-					msg_format(i, "\374\377U%s", q_ptr->narration[stage][k]);
+					if (q_ptr->narration[stage][k] &&
+					    ((q_ptr->narrationflags[stage][k] & q_ptr->flags) == q_ptr->narrationflags[stage][k])) {
+						anything = TRUE;
+						break;
+					}
 				}
-				//msg_print(i, "\374 ");
+				/* there is narration to display? */
+				if (anything) {
+					msg_print(i, "\374 ");
+					msg_format(i, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
+					for (k = 0; k < QI_TALK_LINES; k++) {
+						if (!q_ptr->narration[stage][k]) break;
+						if ((q_ptr->narrationflags[stage][k] & q_ptr->flags) != q_ptr->narrationflags[stage][k]) continue;
+						msg_format(i, "\374\377U%s", q_ptr->narration[stage][k]);
+					}
+					//msg_print(i, "\374 ");
+				}
 			}
 
 			/* update player's quest tracking data */
@@ -840,15 +852,26 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		 //TODO: check against multiple current_wpos, one for each questor!! to work with correct questor_idx in quest_dialogue call below!
 
 		/* play automatic narration if any */
-		//TODO: flag restrictions on narration lines
-		if (!quiet && q_ptr->narration[stage][0]) { /* there is narration to display? */
-			msg_print(pInd, "\374 ");
-			msg_format(pInd, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
+		if (!quiet) {
+			/* pre-scan narration if any line at all exists and passes the flag check */
+			anything = FALSE;
 			for (k = 0; k < QI_TALK_LINES; k++) {
-				if (!q_ptr->narration[stage][k]) break;
-				msg_format(pInd, "\374\377U%s", q_ptr->narration[stage][k]);
+				if (q_ptr->narration[stage][k] &&
+				    ((q_ptr->narrationflags[stage][k] & q_ptr->flags) == q_ptr->narrationflags[stage][k])) {
+					anything = TRUE;
+					break;
+				}
 			}
-			//msg_print(pInd, "\374 ");
+			/* there is narration to display? */
+			if (anything) {
+				msg_print(pInd, "\374 ");
+				msg_format(pInd, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
+				for (k = 0; k < QI_TALK_LINES; k++) {
+					if (!q_ptr->narration[stage][k]) break;
+					msg_format(pInd, "\374\377U%s", q_ptr->narration[stage][k]);
+				}
+				//msg_print(pInd, "\374 ");
+			}
 		}
 
 		/* update players' quest tracking data */
@@ -871,10 +894,13 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		quest_terminate(pInd, q_idx);
 	}
 
+
 	/* auto-quest-termination? (actually redundant with ending_stage)
 	   If a stage has no dialogue keywords, or stage goals, or timed/auto stage change
 	   effects or questor-movement/tele/revert-from-hostile effects, THEN the quest will end. */
 	   //TODO: implement all of that stuff :p
+	anything = FALSE;
+
 	/* optional goals play no role, obviously */
 	for (i = 0; i < QI_GOALS; i++)
 		if (q_ptr->kill[stage][i] || q_ptr->retrieve[stage][i] || q_ptr->deliver_pos[stage][i]) {
@@ -1187,18 +1213,31 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int i, stage = quest_get_stage(Ind, q_idx);
+	int i, k, stage = quest_get_stage(Ind, q_idx);
+	bool anything;
 
-	//TODO: flag restrictions on talk lines
-	if (!repeat && q_ptr->talk[questor_idx][stage][0]) { /* there is NPC talk to display? */
-		p_ptr->interact_questor_idx = questor_idx;
-		msg_print(Ind, "\374 ");
-		msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
-		for (i = 0; i < QI_TALK_LINES; i++) {
-			if (!q_ptr->talk[questor_idx][stage][i]) break;
-			msg_format(Ind, "\374\377U%s", q_ptr->talk[questor_idx][stage][i]);
+	if (!repeat) {
+		/* pre-scan talk if any line at all passes the flag check */
+		anything = FALSE;
+		for (k = 0; k < QI_TALK_LINES; k++) {
+			if (q_ptr->talk[questor_idx][stage][k] &&
+			    ((q_ptr->talkflags[questor_idx][stage][k] & q_ptr->flags) == q_ptr->talkflags[questor_idx][stage][k])) {
+				anything = TRUE;
+				break;
+			}
 		}
-		//msg_print(Ind, "\374 ");
+		/* there is NPC talk to display? */
+		if (anything) {
+			p_ptr->interact_questor_idx = questor_idx;
+			msg_print(Ind, "\374 ");
+			msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
+			for (i = 0; i < QI_TALK_LINES; i++) {
+				if (!q_ptr->talk[questor_idx][stage][i]) break;
+				if ((q_ptr->talkflags[questor_idx][stage][k] & q_ptr->flags) != q_ptr->talkflags[questor_idx][stage][k]) continue;
+				msg_format(Ind, "\374\377U%s", q_ptr->talk[questor_idx][stage][i]);
+			}
+			//msg_print(Ind, "\374 ");
+		}
 	}
 
 	/* No keyword-interaction possible if we haven't acquired the quest yet. */
@@ -1254,6 +1293,8 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	for (i = 0; i < QI_MAX_KEYWORDS; i++) {
 		if (!q_ptr->keyword[questor_idx][stage][i]) break; /* no more keywords? */
 		if (strcmp(q_ptr->keyword[questor_idx][stage][i], str)) continue; /* not matching? */
+		/* check if required flags match to enable this keyword */
+		if ((q_ptr->keywordflags[questor_idx][stage][i] & q_ptr->flags) != q_ptr->keywordflags[questor_idx][stage][i]) continue;
 
 		/* reply? */
 		if (q_ptr->keyword_reply[questor_idx][stage][i] &&
@@ -1266,6 +1307,10 @@ void quest_reply(int Ind, int q_idx, char *str) {
 			}
 			//msg_print(Ind, "\374 ");
 		}
+
+		/* flags change? */
+		q_ptr->flags |= (q_ptr->keyword_setflags[questor_idx][stage][i]);
+		q_ptr->flags &= ~(q_ptr->keyword_clearflags[questor_idx][stage][i]);
 
 		/* stage change? */
 		if (q_ptr->keyword_stage[questor_idx][stage][i] != -1)
