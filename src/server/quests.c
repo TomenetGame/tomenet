@@ -283,7 +283,7 @@ s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 		c_ptr->m_idx = m_pop();
 		if (!c_ptr->m_idx) {
 			s_printf("QUEST_CANCELLED: No free monster index to pop questor.\n");
-			q_ptr->active = FALSE
+			q_ptr->active = FALSE;
 #ifdef QERROR_DISABLE
 			q_ptr->disabled = TRUE;
 #else
@@ -1597,7 +1597,7 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 		   If so then we can only set the quest goal 'nisi' (provisorily),
 		   and hence flags won't get changed yet until it is eventually resolved
 		   when we turn in the delivery. */
-		nisi = FALSE
+		nisi = FALSE;
 		for (j = 0; j < QI_GOALS; j++)
 			if (q_ptr->deliver_pos[stage][j]) {
 				nisi = TRUE;
