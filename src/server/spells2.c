@@ -4827,7 +4827,9 @@ bool probing(int Ind) {
 	                        msg_format(Ind, "%^s (%d) has unknown hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->ac, m_ptr->mspeed);
 			else
 	                	msg_format(Ind, "%^s (%d) has %d hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->mspeed);
-                        msg_format(Ind, "%^s (%d) %s.", m_name, m_ptr->level, buf);
+			/* include m_idx for admins */
+			if (is_admin(p_ptr)) msg_format(Ind, "%^s (Lv%d,%d) %s.", m_name, m_ptr->level, i, buf);
+			else msg_format(Ind, "%^s (Lv%d) %s.", m_name, m_ptr->level, buf);
 
 			/* Learn all of the non-spell, non-treasure flags */
 			lore_do_probe(i);
