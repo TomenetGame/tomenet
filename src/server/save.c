@@ -453,7 +453,7 @@ static void wr_kquests() {
 }
 
 static void wr_quests() {
-	int i, j;
+	int i, j, k;
 
 	wr_s16b(max_q_idx);
 	wr_s16b(QI_QUESTORS);
@@ -477,6 +477,17 @@ static void wr_quests() {
 		}
 
 		for (j = 0; j < QI_FLAGS; j++) wr_byte(q_info[i].flags[j]);
+
+		for (k = 0; k < QI_MAX_STAGES; k++) {
+			for (j = 0; j < QI_GOALS; j++) {
+				wr_byte(q_info[i].goals[k][j]);
+				wr_s16b(q_info[i].kill_number_left[k][j]);
+			}
+			for (j = 0; j < QI_OPTIONAL; j++) {
+				wr_byte(q_info[i].goalsopt[k][j]);
+				wr_s16b(q_info[i].killopt_number_left[k][j]);
+			}
+		}
 	}
 }
 

@@ -303,7 +303,7 @@ typedef struct quest_info {
 	char kill_rchar[QI_MAX_STAGES][QI_GOALS][5];			/*  ..certain types, 254 for any, 255 for none. AND's with attr/lev. */
 	byte kill_rattr[QI_MAX_STAGES][QI_GOALS][5];			/*  ..certain colours, 254 for any, 255 for none. AND's with char/lev. */
 	byte kill_rlevmin[QI_MAX_STAGES][QI_GOALS], kill_rlevmax[QI_MAX_STAGES][QI_GOALS];	/* 0 for any. AND's with char/attr. */
-	s16b kill_number[QI_MAX_STAGES][QI_GOALS];
+	s16b kill_number[QI_MAX_STAGES][QI_GOALS], kill_number_left[QI_MAX_STAGES][QI_GOALS];
 	byte kill_spawn[QI_MAX_STAGES][QI_GOALS];			/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
 	byte kill_spawn_targets[QI_MAX_STAGES][QI_GOALS];		/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
 
@@ -338,7 +338,7 @@ typedef struct quest_info {
 	char killopt_rchar[QI_MAX_STAGES][QI_OPTIONAL][5];		/*  ..certain types, 0 for any. AND's with attr/lev. */
 	byte killopt_rattr[QI_MAX_STAGES][QI_OPTIONAL][5];		/*  ..certain colours, 127 for any. AND's with char/lev. */
 	byte killopt_rlevmin[QI_MAX_STAGES][QI_OPTIONAL], killopt_rlevmax[QI_MAX_STAGES][QI_OPTIONAL];	/* 0 for any. AND's with char/attr. */
-	s16b killopt_number[QI_MAX_STAGES][QI_OPTIONAL];
+	s16b killopt_number[QI_MAX_STAGES][QI_OPTIONAL], killopt_number_left[QI_MAX_STAGES][QI_GOALS];
 	byte killopt_spawn[QI_MAX_STAGES][QI_OPTIONAL];			/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
 	byte killopt_spawn_targets[QI_MAX_STAGES][QI_OPTIONAL];		/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
 

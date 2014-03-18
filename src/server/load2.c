@@ -1038,7 +1038,7 @@ static void rd_kquests() {
 }
 
 static void rd_quests() {
-	int i, j;
+	int i, j, k;
 	s16b max, questors;
 	byte flags;
 	int dummysize1 = sizeof(byte) * 7 + sizeof(s16b) * 3 + sizeof(s32b);
@@ -1085,6 +1085,19 @@ static void rd_quests() {
 					continue;
 				}
 				rd_byte((byte *) &q_info[i].flags[j]);
+			}
+		}
+
+		if (!older_than(4, 5, 24)) {
+			for (k = 0; k < QI_MAX_STAGES; k++) {
+				for (j = 0; j < QI_GOALS; j++) {
+					rd_byte((byte *) &q_info[i].goals[k][j]);
+					rd_s16b(&q_info[i].kill_number_left[k][j]);
+				}
+				for (j = 0; j < QI_OPTIONAL; j++) {
+					rd_byte((byte *) &q_info[i].goalsopt[k][j]);
+					rd_s16b(&q_info[i].killopt_number_left[k][j]);
+				}
 			}
 		}
 	}
