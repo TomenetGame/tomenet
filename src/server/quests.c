@@ -27,6 +27,8 @@
    against p_ptr->individual to make double-sure it's a (non)individual quest.
    This is because some external functions that take 'Ind' instead of 'pInd' might just
    forward their Ind everywhere into the static functions. :-p
+   (As a result, some final 'global quest' lines in set/get functions might never get
+   called so they are actually obsolete.)
 
    Regarding party members, that could be done by: Scanning area for party members on
    questor interaction, ask them if they want to join the quest y/n, and then duplicating
@@ -696,26 +698,6 @@ static bool quest_get_goalopt(int pInd, int q_idx, int goalopt) {
 }
 #endif
 
-/* return a current quest flag. Either just uses q_ptr->flags directly for global
-   quests, or p_ptr->quest_flags for individual quests. */
-#if 0 /* compiler warning 'unused' */
-static bool quest_get_flag(int pInd, int q_idx, int flag) {
-	quest_info *q_ptr = &q_info[q_idx];
-	player_type *p_ptr;
-	int i;
-
-	if (!pInd || !q_ptr->individual) return ((q_ptr->flags & (0x1 << flag)) != 0); /* no player? global goal */
-
-	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
-		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) return ((q_ptr->flags & (0x1 << flag)) != 0); /* player isn't on this quest. return global goal. */
-
-	if (q_ptr->individual) return ((p_ptr->quest_flags[i] & (0x1 << flag)) != 0); /* individual quest */
-	return ((q_ptr->flags & (0x1 << flag)) != 0); /* global quest */
-}
-#endif
-
 /* return the current quest stage. Either just uses q_ptr->stage directly for global
    quests, or p_ptr->quest_stage for individual quests. */
 s16b quest_get_stage(int pInd, int q_idx) {
@@ -734,16 +716,32 @@ s16b quest_get_stage(int pInd, int q_idx) {
 	return q_ptr->stage; /* global quest */
 }
 
-/* according to Z lines, change flags when a quest goal has finally be resolved. */
-//TODO for optional goals too..
-static void quest_goal_changes_flags(int pInd, int q_idx, int stage, int goal) {
+/* return current quest flags. Either just uses q_ptr->flags directly for global
+   quests, or p_ptr->quest_flags for individual quests. */
+static u16b quest_get_flags(int pInd, int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr;
+	int i;
+
+	if (!pInd || !q_ptr->individual) return q_ptr->flags; /* no player? global goal */
+
+	p_ptr = Players[pInd];
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+		if (p_ptr->quest_idx[i] == q_idx) break;
+	if (i == MAX_CONCURRENT_QUESTS) return q_ptr->flags; /* player isn't on this quest. return global goal. */
+
+	if (q_ptr->individual) return p_ptr->quest_flags[i]; /* individual quest */
+	return q_ptr->flags; /* global quest */
+}
+/* set/clear quest flags */
+static void quest_set_flags(int pInd, int q_idx, u16b set_mask, u16b clear_mask) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i;
 
 	if (!pInd || !q_ptr->individual) {
-		q_ptr->flags |= (q_ptr->goal_setflags[stage][goal]); /* no player? global goal */
-		q_ptr->flags &= ~(q_ptr->goal_clearflags[stage][goal]);
+		q_ptr->flags |= set_mask; /* no player? global flags */
+		q_ptr->flags &= ~clear_mask;
 		return;
 	}
 
@@ -751,19 +749,27 @@ static void quest_goal_changes_flags(int pInd, int q_idx, int stage, int goal) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
-		q_ptr->flags |= (q_ptr->goal_setflags[stage][goal]); /* player isn't on this quest. return global goal. */
-		q_ptr->flags &= ~(q_ptr->goal_clearflags[stage][goal]);
+		q_ptr->flags |= set_mask; /* player isn't on this quest. return global flags. */
+		q_ptr->flags &= ~clear_mask;
 		return;
 	}
 
 	if (q_ptr->individual) {
-		p_ptr->quest_flags[i] |= (q_ptr->goal_setflags[stage][goal]); /* individual quest */
-		p_ptr->quest_flags[i] &= ~(q_ptr->goal_clearflags[stage][goal]);
+		p_ptr->quest_flags[i] |= set_mask; /* individual quest */
+		p_ptr->quest_flags[i] &= ~clear_mask; 
 		return;
 	}
 
-	q_ptr->flags |= (q_ptr->goal_setflags[stage][goal]); /* global quest */
-	q_ptr->flags &= ~(q_ptr->goal_clearflags[stage][goal]);
+	/* global quest */
+	q_ptr->flags |= set_mask;
+	q_ptr->flags &= ~clear_mask;
+}
+/* according to Z lines, change flags when a quest goal has finally be resolved. */
+//TODO for optional goals too..
+static void quest_goal_changes_flags(int pInd, int q_idx, int stage, int goal) {
+	quest_info *q_ptr = &q_info[q_idx];
+
+	quest_set_flags(pInd, q_idx, q_ptr->goal_setflags[stage][goal], q_ptr->goal_clearflags[stage][goal]);
 }
 
 /* mark a quest goal as reached.
@@ -918,38 +924,6 @@ static void quest_unset_goalopt(int pInd, int q_idx, int goalopt) {
 }
 #endif
 
-/* set/clear a quest flag ('set': TRUE -> set, FALSE -> clear) */
-#if 0 /* compiler warning 'unused' */
-static void quest_set_flag(int pInd, int q_idx, int flag, bool set) {
-	quest_info *q_ptr = &q_info[q_idx];
-	player_type *p_ptr;
-	int i;
-
-	if (!pInd || !q_ptr->individual) {
-		if (set) q_ptr->flags |= (0x1 << flag); /* no player? global goal */
-		else q_ptr->flags &= ~(0x1 << flag);
-		return;
-	}
-
-	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
-		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) {
-		if (set) q_ptr->flags |= (0x1 << flag); /* player isn't on this quest. return global goal. */
-		else q_ptr->flags &= ~(0x1 << flag);
-		return;
-	}
-
-	if (q_ptr->individual) {
-		if (set) p_ptr->quest_flags[i] |= (0x1 << flag);
-		else p_ptr->quest_flags[i] &= ~(0x1 << flag); /* individual quest */
-		return;
-	}
-	if (set) q_ptr->flags |= (0x1 << flag); /* global quest */
-	else q_ptr->flags &= ~(0x1 << flag);
-}
-#endif
-
 /* perform automatic things (quest spawn/stage change) in a stage */
 static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -1036,7 +1010,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 				anything = FALSE;
 				for (k = 0; k < QI_TALK_LINES; k++) {
 					if (q_ptr->narration[stage][k] &&
-					    ((q_ptr->narrationflags[stage][k] & q_ptr->flags) == q_ptr->narrationflags[stage][k])) {
+					    ((q_ptr->narrationflags[stage][k] & quest_get_flags(pInd, q_idx)) == q_ptr->narrationflags[stage][k])) {
 						anything = TRUE;
 						break;
 					}
@@ -1047,7 +1021,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 					msg_format(i, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
 					for (k = 0; k < QI_TALK_LINES; k++) {
 						if (!q_ptr->narration[stage][k]) break;
-						if ((q_ptr->narrationflags[stage][k] & q_ptr->flags) != q_ptr->narrationflags[stage][k]) continue;
+						if ((q_ptr->narrationflags[stage][k] & quest_get_flags(pInd, q_idx)) != q_ptr->narrationflags[stage][k]) continue;
 						msg_format(i, "\374\377U%s", q_ptr->narration[stage][k]);
 					}
 					//msg_print(i, "\374 ");
@@ -1076,7 +1050,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			anything = FALSE;
 			for (k = 0; k < QI_TALK_LINES; k++) {
 				if (q_ptr->narration[stage][k] &&
-				    ((q_ptr->narrationflags[stage][k] & q_ptr->flags) == q_ptr->narrationflags[stage][k])) {
+				    ((q_ptr->narrationflags[stage][k] & quest_get_flags(pInd, q_idx)) == q_ptr->narrationflags[stage][k])) {
 					anything = TRUE;
 					break;
 				}
@@ -1461,7 +1435,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 		anything = FALSE;
 		for (k = 0; k < QI_TALK_LINES; k++) {
 			if (q_ptr->talk[questor_idx][stage][k] &&
-			    ((q_ptr->talkflags[questor_idx][stage][k] & q_ptr->flags) == q_ptr->talkflags[questor_idx][stage][k])) {
+			    ((q_ptr->talkflags[questor_idx][stage][k] & quest_get_flags(Ind, q_idx)) == q_ptr->talkflags[questor_idx][stage][k])) {
 				anything = TRUE;
 				break;
 			}
@@ -1473,7 +1447,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 			msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
 			for (i = 0; i < QI_TALK_LINES; i++) {
 				if (!q_ptr->talk[questor_idx][stage][i]) break;
-				if ((q_ptr->talkflags[questor_idx][stage][k] & q_ptr->flags) != q_ptr->talkflags[questor_idx][stage][k]) continue;
+				if ((q_ptr->talkflags[questor_idx][stage][k] & quest_get_flags(Ind, q_idx)) != q_ptr->talkflags[questor_idx][stage][k]) continue;
 				msg_format(Ind, "\374\377U%s", q_ptr->talk[questor_idx][stage][i]);
 			}
 			//msg_print(Ind, "\374 ");
@@ -1536,7 +1510,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		if (!q_ptr->keyword[questor_idx][stage][i]) break; /* no more keywords? */
 		if (strcmp(q_ptr->keyword[questor_idx][stage][i], str)) continue; /* not matching? */
 		/* check if required flags match to enable this keyword */
-		if ((q_ptr->keywordflags[questor_idx][stage][i] & q_ptr->flags) != q_ptr->keywordflags[questor_idx][stage][i]) continue;
+		if ((q_ptr->keywordflags[questor_idx][stage][i] & quest_get_flags(Ind, q_idx)) != q_ptr->keywordflags[questor_idx][stage][i]) continue;
 
 		/* reply? */
 		if (q_ptr->keyword_reply[questor_idx][stage][i] &&
@@ -1545,15 +1519,14 @@ void quest_reply(int Ind, int q_idx, char *str) {
 			msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
 			for (j = 0; j < QI_TALK_LINES; j++) {
 				if (!q_ptr->keyword_reply[questor_idx][stage][i][j]) break;
-				if ((q_ptr->keyword_replyflags[questor_idx][stage][i][j] & q_ptr->flags) != q_ptr->keyword_replyflags[questor_idx][stage][i][j]) continue;
+				if ((q_ptr->keyword_replyflags[questor_idx][stage][i][j] & quest_get_flags(Ind, q_idx)) != q_ptr->keyword_replyflags[questor_idx][stage][i][j]) continue;
 				msg_format(Ind, "\374\377U%s", q_ptr->keyword_reply[questor_idx][stage][i][j]);
 			}
 			//msg_print(Ind, "\374 ");
 		}
 
 		/* flags change? */
-		q_ptr->flags |= (q_ptr->keyword_setflags[questor_idx][stage][i]);
-		q_ptr->flags &= ~(q_ptr->keyword_clearflags[questor_idx][stage][i]);
+		quest_set_flags(Ind, q_idx, q_ptr->keyword_setflags[questor_idx][stage][i], q_ptr->keyword_clearflags[questor_idx][stage][i]);
 
 		/* stage change? */
 		if (q_ptr->keyword_stage[questor_idx][stage][i] != -1) {
