@@ -6734,6 +6734,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 	/* Fix limits */
 	if (ge->limited > MAX_GE_PARTICIPANTS) ge->limited = MAX_GE_PARTICIPANTS;
 
+#if 0
 	/* give feedback to the creator; tell all admins if this was called from a script */
 /*	if (Ind) {
 		msg_format(Ind, "Reward item level = %d.", ge->extra[0]);
@@ -6745,6 +6746,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 			msg_format(i, "Created new event #%d of type %d parms='%s'.", n + 1, getype, parm);
 		}
 	}
+#endif
 	s_printf("%s EVENT_CREATE: #%d of type %d parms='%s'\n", showtime(), n + 1, getype, parm);
 
 	/* extra announcement if announcement time isn't the usual multiple of announcement intervals */
