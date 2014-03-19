@@ -22,6 +22,12 @@
    not confuse him.. maybe this could be improved on in the future :-p
    how to possibly improve: spawn sub questors with their own dialogues.
 
+   Code quirks:
+   Currently instead of checking pInd against 0, all those functions additionally verify
+   against p_ptr->individual to make double-sure it's a (non)individual quest.
+   This is because some external functions that take 'Ind' instead of 'pInd' might just
+   forward their Ind everywhere into the static functions. :-p
+
    Regarding party members, that could be done by: Scanning area for party members on
    questor interaction, ask them if they want to join the quest y/n, and then duplicating
    all quest message output to them. Further, any party member who is first to do so  can
@@ -648,7 +654,7 @@ static bool quest_get_goal(int pInd, int q_idx, int goal, bool nisi) {
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
 
-	if (!pInd) {
+	if (!pInd || !q_ptr->individual) {
 		if (nisi && q_ptr->goals_nisi[stage][goal]) return FALSE;
 		return q_ptr->goals[stage][goal]; /* no player? global goal */
 	}
@@ -678,7 +684,7 @@ static bool quest_get_goalopt(int pInd, int q_idx, int goalopt) {
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
 
-	if (!pInd) return q_ptr->goalsopt[stage][goalopt]; /* no player? global goal */
+	if (!pInd || !q_ptr->individual) return q_ptr->goalsopt[stage][goalopt]; /* no player? global goal */
 
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
@@ -698,7 +704,7 @@ static bool quest_get_flag(int pInd, int q_idx, int flag) {
 	player_type *p_ptr;
 	int i;
 
-	if (!pInd) return ((q_ptr->flags & (0x1 << flag)) != 0); /* no player? global goal */
+	if (!pInd || !q_ptr->individual) return ((q_ptr->flags & (0x1 << flag)) != 0); /* no player? global goal */
 
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
@@ -717,7 +723,7 @@ s16b quest_get_stage(int pInd, int q_idx) {
 	player_type *p_ptr;
 	int i;
 
-	if (!pInd) return q_ptr->stage; /* no player? global stage */
+	if (!pInd || !q_ptr->individual) return q_ptr->stage; /* no player? global stage */
 
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
@@ -735,7 +741,7 @@ static void quest_goal_changes_flags(int pInd, int q_idx, int stage, int goal) {
 	player_type *p_ptr;
 	int i;
 
-	if (!pInd) {
+	if (!pInd || !q_ptr->individual) {
 		q_ptr->flags |= (q_ptr->goal_setflags[stage][goal]); /* no player? global goal */
 		q_ptr->flags &= ~(q_ptr->goal_clearflags[stage][goal]);
 		return;
@@ -772,7 +778,7 @@ static void quest_set_goal(int pInd, int q_idx, int goal, bool nisi) {
 #if QDEBUG > 2
 	s_printf("QUEST_GOAL_SET: (%s,%d) goal %d%s by %d\n", q_ptr->codename, q_idx, goal, nisi ? "n" : "", pInd);
 #endif
-	if (!pInd) {
+	if (!pInd || !q_ptr->individual) {
 		if (!q_ptr->goals[stage][goal] || !nisi) q_ptr->goals_nisi[stage][goal] = nisi;
 		q_ptr->goals[stage][goal] = TRUE; /* no player? global goal */
 
@@ -826,7 +832,7 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 #if QDEBUG > 2
 	s_printf("QUEST_GOAL_UNSET: (%s,%d) goal %d by %d\n", q_ptr->codename, q_idx, goal, pInd);
 #endif
-	if (!pInd) {
+	if (!pInd || !q_ptr->individual) {
 		q_ptr->goals[stage][goal] = FALSE; /* no player? global goal */
 		return;
 	}
@@ -854,7 +860,7 @@ static void quest_set_goalopt(int pInd, int q_idx, int goalopt, bool nisi) {
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
 
-	if (!pInd) {
+	if (!pInd || !q_ptr->individual) {
 		if (!q_ptr->goalsopt[stage][goalopt] || !nisi) q_ptr->goalsopt_nisi[stage][goalopt] = nisi;
 		q_ptr->goalsopt[stage][goalopt] = TRUE; /* no player? global goal */
 		return;
@@ -890,7 +896,7 @@ static void quest_unset_goalopt(int pInd, int q_idx, int goalopt) {
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
 
-	if (!pInd) {
+	if (!pInd || !q_ptr->individual) {
 		q_ptr->goalsopt[stage][goalopt] = FALSE; /* no player? global goal */
 		return;
 	}
@@ -919,7 +925,7 @@ static void quest_set_flag(int pInd, int q_idx, int flag, bool set) {
 	player_type *p_ptr;
 	int i;
 
-	if (!pInd) {
+	if (!pInd || !q_ptr->individual) {
 		if (set) q_ptr->flags |= (0x1 << flag); /* no player? global goal */
 		else q_ptr->flags &= ~(0x1 << flag);
 		return;
@@ -2312,7 +2318,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	int r_obj = 0, r_gold = 0, r_exp = 0;
 
 #if 0 /* we're called when stage 0 starts too, and maybe it's some sort of globally determined goal->reward? */
-	if (!pInd) {
+	if (!pInd || !q_ptr->individual) {
 		s_printf(" QUEST_GOAL_CHECK_REWARD: returned! oops\n");
 		return; //paranoia?
 	}
