@@ -251,8 +251,6 @@ typedef struct quest_info {
 	cptr keyword_reply[QI_QUESTORS][QI_STAGES][QI_KEYWORDS][QI_TALK_LINES];/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
 	u16b keyword_replyflags[QI_QUESTORS][QI_STAGES][QI_KEYWORDS][QI_TALK_LINES];/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
 //-- ^turn them into pointers or sth (make a sub-struct?)
-	char yn[QI_QUESTORS][QI_STAGES];				/* each convo may allow the player to reply with yes or no (NOTE: could just be done with keywords too, actually..) */
-	s16b y_stage[QI_QUESTORS][QI_STAGES], n_stage[QI_QUESTORS][QI_STAGES];	/*  ..which will bring the player to a different quest stage */
 
 	cptr narration[QI_STAGES][QI_TALK_LINES];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
 	u16b narrationflags[QI_STAGES][QI_TALK_LINES];		/* required flags configuration to display this narrative line */
