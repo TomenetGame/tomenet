@@ -3542,10 +3542,10 @@ void do_slash_cmd(int Ind, char *message)
 					else msg_print(Ind, "\377UYou're currently pursuing the following quests:");
 					for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 						if (p_ptr->quest_idx[i] == -1) continue;
-						msg_format(Ind, " %d) %s", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name);
+						msg_format(Ind, " %2d) %s", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name);
 					}
-					msg_print(Ind, "\377s  To drop a quest type \377D/quest <questnumber>\377s - to drop all quests type \377D/quest *");
-					msg_print(Ind, "\377s  Warning! Depending on the quest you might not be able to pick it up again.");
+					msg_print(Ind, "\377s   To drop a quest type \377D/quest <questnumber>\377s - to drop all quests type \377D/quest *");
+					msg_print(Ind, "\377s   Warning! Depending on the quest you might not be able to pick it up again.");
 				}
 				return;
 			}
@@ -8203,15 +8203,13 @@ void do_slash_cmd(int Ind, char *message)
 				/* display basic quests info */
 				msg_format(Ind, "\377UQuests (max_q_idx/MAX_Q_IDX %d/%d):", max_q_idx, MAX_Q_IDX);
 				for (i = 0; i < max_q_idx; i++) {
-					msg_format(Ind, " %3d [%10s] %sS:%d%s %s %s %4d -- Qx%d '%s' by %s",
-					    i, q_info[i].codename, q_info[i].individual ? "i" : "", quest_get_stage(Ind, i), q_info[i].individual ? format("(%d)", q_info[i].stage) : "",
-					    q_info[i].active ? "A" : "", q_info[i].disabled ? "D" : "", quest_get_cooldown(Ind, i),
+					msg_format(Ind, " %3d %10s S%02d%s %s%s %4d -- Qx%d '%s'/%s",
+					    i, q_info[i].codename, quest_get_stage(Ind, i), q_info[i].individual ? format("/%02d", q_info[i].stage) : "   ",
+					    q_info[i].active ? "A" : " ", q_info[i].disabled ? "D" : " ", quest_get_cooldown(Ind, i),
 					    q_info[i].questors, q_name + q_info[i].name, q_info[i].creator);
 				}
 				/* display extra info? */
-				//if (tk) {
-					msg_format(Ind, " \377wSize of quest_info*max_q_idx=total: %d*%d=\377U%d", sizeof(quest_info), max_q_idx, sizeof(quest_info) * max_q_idx);
-				//}
+				msg_format(Ind, " \377wSize of quest_info*max_q_idx=total: %d*%d=\377U%d", sizeof(quest_info), max_q_idx, sizeof(quest_info) * max_q_idx);
 				return;
 			}
 			else if (prefix(message, "/qaquest") || prefix(message, "/qaq")) { /* drop a quest a player is on */
@@ -8246,7 +8244,7 @@ void do_slash_cmd(int Ind, char *message)
 						else msg_format(Ind, "\377U%s is currently pursuing the following quests:", p_ptr->name);
 						for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 							if (p_ptr->quest_idx[i] == -1) continue;
-							msg_format(Ind, "  %d) %s (%d)", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name, quest_get_stage(p, p_ptr->quest_idx[i]));
+							msg_format(Ind, " %2d) %s (%d)", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name, quest_get_stage(p, p_ptr->quest_idx[i]));
 						}
 					}
 					return;
