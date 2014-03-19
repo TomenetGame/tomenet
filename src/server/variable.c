@@ -254,7 +254,7 @@ player_type **Players;
 party_type parties[MAX_PARTIES];
 guild_type guilds[MAX_GUILDS];
 
-struct quest_type quests[20];	/* server quest data */
+struct xorder_type xorders[MAX_XORDERS]; /* server quest data */
 
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 struct iddc_type iddc[128]; //(hardcode, ew)
@@ -354,7 +354,7 @@ monster_type *m_list;
 /*
  * Hack -- Quest array
  */
-quest q_list[MAX_QK_IDX];
+xorder xo_list[MAX_XO_IDX];
 
 /*
  * The stores [MAX_STORES]

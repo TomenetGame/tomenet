@@ -3478,7 +3478,7 @@ void clockin(int Ind, int type) {
 				ptr->guild_flags = p_ptr->guild_flags;
 				break;
 			case 4:
-				ptr->quest = p_ptr->quest_id;
+				ptr->xorder = p_ptr->xorder_id;
 				break;
 #ifdef AUCTION_SYSTEM
 			case 5:
@@ -3602,7 +3602,7 @@ void scan_players() {
 					}
 				}
 				kill_houses(ptr->id, OT_PLAYER);
-				rem_quest(ptr->quest);
+				rem_xorder(ptr->xorder);
 				/* Added this one.. should work well? */
 				kill_objs(ptr->id);
 
@@ -3917,7 +3917,7 @@ void erase_player_name(char *pname){
 					}
 				}
 				kill_houses(ptr->id, OT_PLAYER);
-				rem_quest(ptr->quest);
+				rem_xorder(ptr->xorder);
 				/* Added this one.. should work well? */
 				kill_objs(ptr->id);
 
@@ -4019,8 +4019,7 @@ void account_checkexpiry(int Ind) {
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin)
-{
+void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin) {
 	int slot;
 	hash_entry *ptr;
 
@@ -4041,7 +4040,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 	ptr->party = party;
 	ptr->guild = guild;
 	ptr->guild_flags = guild_flags;
-	ptr->quest = quest;
+	ptr->xorder = xorder;
 	ptr->race = race;
 	ptr->class = class;
 	ptr->mode = mode;
@@ -4464,7 +4463,7 @@ void backup_acclists(void) {
 				(void)fprintf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 				    ptr->laston, ptr->id, ptr->account,
     				    ptr->level, ptr->party, ptr->guild,
-				    ptr->quest, ptr->race, ptr->class, ptr->mode);
+				    ptr->xorder, ptr->race, ptr->class, ptr->mode);
 #ifdef AUCTION_SYSTEM
 				fprintf(fp, "%d%d", ptr->au, ptr->balance);
 #endif
@@ -4525,7 +4524,7 @@ void restore_acclists(void) {
 		r = fscanf(fp, "%lu%d%u%c%hu%c%hd%c%c%c",
 		    &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
-		    &ptr->quest, &ptr->race, &ptr->class, &ptr->mode);
+		    &ptr->xorder, &ptr->race, &ptr->class, &ptr->mode);
 #ifdef AUCTION_SYSTEM
 		r = fscanf(fp, "%d%d", &ptr->au, &ptr->balance);
 #endif

@@ -784,8 +784,8 @@ struct player_type
 	bool ty_curse;		/* bad curses from artifacts */
 	bool dg_curse;
 
-	u16b quest_id;          /* Quest number */
-	s16b quest_num;         /* Number of kills needed */
+	u16b xorder_id;		/* Quest number */
+	s16b xorder_num;	/* Number of kills needed */
 
 	bool sustain_str;	/* Keep strength */
 	bool sustain_int;	/* Keep intelligence */

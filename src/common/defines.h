@@ -568,10 +568,12 @@
 #define MAX_M_IDX 	32768	/* Max size for "m_list[]" */
 
 
-/*
- * Hack -- Maximum number of kill quests
- */
-#define MAX_QK_IDX	4
+/* Maximum number of extermination orders for 'xorder' type (OLD, unused) */
+#define MAX_XO_IDX		4
+/* Maximum number of extermination orders for 'xorder_type' type (NEW, used instead) */
+#define MAX_XORDERS		20
+/* Duration until extermination order expires */
+#define MAX_XORDER_TURNS	(DAY * 2)
 
 /* Maximum number of concurrent quests (quest_info type) */
 #define MAX_CONCURRENT_QUESTS 5
@@ -1414,7 +1416,6 @@
 #define START_YEAR              2890                    /* Bilbo birthday year */
 #define START_DAY               265			/* Bilbo birthday (22. Sept.) */
 
-#define MAX_QUEST_TURNS		(DAY * 2)
 
 /*
  * A monster can only "multiply" (reproduce) if there are fewer than 100

@@ -1028,16 +1028,16 @@ static void rd_notes() {
         //omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
-static void rd_kquests() {
+static void rd_xorders() {
 	int i;
 	rd_s16b(&questid);
-	for (i = 0; i < 20; i++) {
-		rd_u16b(&quests[i].active);
-		rd_u16b(&quests[i].id);
-		rd_s16b(&quests[i].type);
-		rd_u16b(&quests[i].flags);
-		rd_s32b(&quests[i].creator);
-		rd_s32b(&quests[i].turn);
+	for (i = 0; i < MAX_XORDERS; i++) {
+		rd_u16b(&xorders[i].active);
+		rd_u16b(&xorders[i].id);
+		rd_s16b(&xorders[i].type);
+		rd_u16b(&xorders[i].flags);
+		rd_s32b(&xorders[i].creator);
+		rd_s32b(&xorders[i].turn);
 	}
 }
 
@@ -2668,8 +2668,8 @@ static errr rd_savefile_new_aux(int Ind) {
 	rd_byte(&p_ptr->guild);
 	if (!older_than(4, 5, 8)) rd_u32b(&p_ptr->guild_dna);
 	else if (p_ptr->guild) p_ptr->guild_dna = guilds[p_ptr->guild].dna;
-	rd_u16b(&p_ptr->quest_id);
-        rd_s16b(&p_ptr->quest_num);
+	rd_u16b(&p_ptr->xorder_id);
+        rd_s16b(&p_ptr->xorder_num);
 
 	if (!older_than(4, 5, 19)) {
 		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
@@ -3040,7 +3040,7 @@ errr rd_server_savefile()
 		byte level, old_party, guild, race, class, mode;
 		u32b acct, guild_flags;
 		u16b party;
-		u16b quest;
+		u16b xorder;
 		byte admin;
 
 		rd_u32b(&tmp32u);
@@ -3067,14 +3067,14 @@ errr rd_server_savefile()
 			else rd_u16b(&party);
 			rd_byte(&guild);
 		        if (!s_older_than(4, 5, 1)) rd_u32b(&guild_flags); else guild_flags = 0;
-			rd_u16b(&quest);
+			rd_u16b(&xorder);
 		        if (!s_older_than(4, 5, 13)) rd_byte(&admin); else admin = 0;
 
 			/* Read the player name */
 			rd_string(name, 80);
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, quest, laston, admin);
+			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, xorder, laston, admin);
 		}
 	}
 
@@ -3083,7 +3083,7 @@ errr rd_server_savefile()
 
 	rd_guilds();
 
-	rd_kquests();
+	rd_xorders();
 	if (!s_older_than(4, 5, 19)) rd_quests();
 
 	rd_u32b(&account_id);

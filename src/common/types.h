@@ -1207,20 +1207,18 @@ struct store_type
  * actually scan the dead unique list to see what quests are left.
  */
 
-typedef struct quest quest;
-
-struct quest
-{
+typedef struct xorder xorder; /* UNUSED. The new 'xorder_type' is used instead. */
+struct xorder {
 	int level;		/* Dungeon level */
 	int r_idx;		/* Monster race */
 
-	int cur_num;	/* Number killed (unused) */
-	int max_num;	/* Number required (unused) */
+	int cur_num;		/* Number killed (unused) */
+	int max_num;		/* Number required (unused) */
 };
 
 /* Quests, random or preset by the dungeon master */
 /* evileye - same as old quest type, but multiplayerized. */
-struct quest_type{
+struct xorder_type {
 	u16b active;		/* quest is active? (num players) */
 	u16b id;		/* quest id */
 	s16b type;		/* Monster race or object type */
@@ -2637,19 +2635,19 @@ struct player_type {
 	bool ty_curse;		/* :-o */
 	bool dg_curse;
 
-	u16b quest_id;		/* Quest number */
-	s16b quest_num;		/* Number of kills needed */
+	u16b xorder_id;			/* Extermination order number */
+	s16b xorder_num;		/* Number of kills needed */
 
-	s16b xtra_crit;         /* critical strike bonus from item */
+	s16b xtra_crit;			/* critical strike bonus from item */
 	s16b extra_blows;		/* Number of extra blows */
 
 	s16b to_l;                      /* Bonus to life */
-	s32b to_hp;                      /* Bonus to Hit Points */
+	s32b to_hp;                     /* Bonus to Hit Points */
 	s16b to_m;                      /* Bonus to mana */
-	/*        s16b to_s; */                     /* Bonus to spell(num_spell) */
+	//s16b to_s;			/* Bonus to spell(num_spell) */
 	s16b dodge_level;		/* Chance of dodging blows/missiles */
 
-	s32b balance;		/* Deposit/debt */
+	s32b balance;			/* Deposit/debt */
 	s32b tim_blacklist;		/* Player is on the 'Black List' (he gets penalties in shops) */
 	s32b tim_watchlist;		/* Player is on the 'Watch List' (he may not steal) */
 	s32b pstealing;			/* Player has just tried to steal from another player. Cooldown timer. */
@@ -2724,7 +2722,7 @@ struct player_type {
 	int global_event_participated[MAX_GLOBAL_EVENT_TYPES];
 
 	/* Had a quest running when he logged out or something? ->respawn/reactivate quest? todo//unclear yet..
-	   THIS IS NEW STUFF: quest_info. DON'T CONFUSE THIS WITH quest_type, quest_num, quest_id and other older quest code. */
+	   THIS IS NEW STUFF: quest_info. Don't confuse it with older quest_type/quest[]/plots[] code sketches in bldg.c. */
 	//hard-coded stuff: QI_CODENAME_LEN 10, QI_GOALS 5, QI_OPTIONAL 5
 	int interact_questor_idx; /* id in QI_QUESTORS, which questor we just interacted with (bumped into) */
 	s16b quest_idx[MAX_CONCURRENT_QUESTS];
@@ -3383,12 +3381,11 @@ struct school_type
         s16b skill;                     /* Skill used for that school */
 };
 
-/* C. Blue - don't confuse with quest_type, which is for the basic kill '/quest'.
+/* C. Blue - don't confuse with xorder_type, which is for the basic kill '/xorder'.
    This is more of a global event, first use will be automated Highlander Tournament
    schedule. Timing is possible too. Might want to make use of AT_... sequences. */
 typedef struct global_event_type global_event_type;
-struct global_event_type
-{
+struct global_event_type {
     int getype;			/* Type of the event (or quest) */
     bool paused;		/* Is the event currently paused? (special admin command) */
     s32b paused_turns;		/* Keeps track of turns the event was actually frozen */
@@ -3542,7 +3539,7 @@ struct hash_entry {
 	/* 3.5.0 */
 	byte guild;			/* Player guild */
 	u32b guild_flags;		/* 4.5.2.0.0.1 */
-	s16b quest;			/* Player quest */
+	s16b xorder;			/* Extermination order */
 
 	time_t laston;			/* Last on time */
 

@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. March 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. March 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -97,7 +97,7 @@ Contents
     (4.11)  Malicious effects players can suffer
     (4.11a) Drain effects
     (4.12)  Malicious effects monsters can suffer
-    (4.13)  Quests and Events
+    (4.13)  Extermination Orders and Events
     (4.14)  In-game time system
 (5) Item and monster details
     (5.1)   Melee weapons, brands
@@ -1069,11 +1069,11 @@ They all start with a slash '/' hence they're called slash commands:
 /pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
             chars. See (6.13) for details about PvP mode.
 
-/kq         gives a quest! It needs to be fulfilled before a certain period
- (/kquest)  of time passes (continues to expire even while not logged on).
-            The player who completes it gets a random item as reward. It will
+/xo         gives you an extermination order! It needs to be carried out before
+            a certain period of time passes (continues to expire even while not
+ (/xorder)  logged on). Completing it yields a random item for reward. It will
             appear in your inventory and carry an inscription indicating
-            it's the quest reward. (See (4.13) for more info.)
+            it's the reward. (See (4.13) for more info.)
 
 /que        Lists your currently pursued quests.
  (/quest)   Specify a quest number to drop a quest -- warning! You might not
@@ -5091,7 +5091,10 @@ The 1..9 are standard shops, namely..
         Mayor's Office (in Bree)
                         Allows you to turn in deed parchments you won in
                         tournaments or on other occasions for a reward.
-                        Also, you can receive a quest here (also see (4.13)).
+                        Also, you can receive an extermination order here
+                        (see (4.13) about those).
+                        Last but not least you can check out a list of
+                        noteworthy occurances that may happened lately.
         The Bank        Several towns have a bank where you can deposit and
                         withdraw money, so you won't lose it accidentally on a
                         dungeon trip.
@@ -6084,12 +6087,14 @@ Stun    (Note that "stunned" and "dazed" are the same thing.)
 
 
 
-(4.13) Quests and Events
-------------------------
-Your character will have uncounted opportunities to participate in quests and
-events. While some events might be run by server admins or even fellow players
-and depend on their mood and spare time, other events are created by the game
-independent of admin intervention.
+(4.13) Extermination Orders and Events
+--------------------------------------
+Your character will have uncounted opportunities to receive and carry out
+extermination orders and participate in global (as in, open to everyone at the
+same time) events.
+Extermination orders can be received by a player on demand and only concern him
+personally, while events are automatically scheduled in regular time intervals
+and allow (or even require) multiple players to participate simultaneously.
 
 Some events will require you to have zero experience in order to participate.
 The maximum experience your character ever accumulated counts for this, so
@@ -6105,39 +6110,40 @@ Killing townspeople in Bree however will not give you any experience.
 Stay clean!
 
 
-Here is a list of currently implemented automatic quests and events:
+Here is a list of currently available events:
 
+Extermination Orders
+--------------------
+These are basically 'kill quests'. You need to venture out and kill a fixed
+amount of a certain type of monster.
+To receive an order, visit the major in the town hall (one of the '+'
+doors in town), or simply type "/xorder" in the chat.
+There is a certain time limit which in most cases is easily sufficient,
+especially if you have the according ESP ability.
+The time limit is actually two 'in-game days', which in real time lasts
+somewhat over two hours. (See (4.14) for more information about the
+in-game time system.)
+The time will continue to run out even while you're not logged on.
+If you carry out the extermination order you received, you will be rewarded
+with a good or great item, depending on the difficulty (monster level) and
+chance.
+The item does not depend on your race, class, skills or luck in any way,
+it's completely random.
+If you fail to carry out your order in time, the order will be cancelled and
+you can just get a new one if you want to. There is no penalty.
 
-Quests
-------
-Kill quest
-    To receive a kill quest, visit the major in the town hall (one of the '+'
-    doors in town), or simply type "/quest" in the chat.
-    There is a certain time limit which in most cases is easily sufficient,
-    especially if you have the according ESP ability.
-    The time limit is actually two 'in-game days', which in real time lasts
-    somewhat over two hours. (See (4.14) for more information about the
-    in-game time system.)
-    The time will continue to run out even while you're not logged on.
-    If you fulfil the kill quest you received, you will be rewarded with a
-    good or great item, depending on the difficulty (monster level) and chance.
-    The item does not depend on your race, class, skills or luck in any way,
-    it's completely random.
-    If you fail to complete your quest, the quest will be dropped and you can
-    just get a new one if you want to. There is no penalty.
-
-    On Ironman server or within the Ironman Deep Dive Challenge dungeon, the
-    quality of the items rewarded is boosted somewhat, while the amount of
-    monsters that need to be slain is somewhat lower (especially for low level
-    quests).
+On Ironman server or within the Ironman Deep Dive Challenge dungeon, the
+quality of the items rewarded is boosted somewhat, while the amount of
+monsters that need to be slain is somewhat lower (especially for low level
+orders).
 
 
 Events (use /evinfo and /evsign commands to get information and to sign up)
 ---------------------------------------------------------------------------
 Highlander Tournament (pvp, only one can win, 2+ participants)
-    This is an event rather than a quest. When you see a message, announcing
-    a Highlander Tournament, type "/evinfo" in the chat to find out more, and
-    use "/evsign" followed by the event number to sign up for participation.
+    When you see a message, announcing a Highlander Tournament, type "/evinfo"
+    in the chat to find out more, and use "/evsign" followed by the event's
+    number to sign up for participation.
     It's a deathmatch with 10 minutes of preparation time, and only newly
     created characters with 0 experience may join it.
     The winner will receive a deed that can be 'r'ead, and turned in at Bree's
@@ -6268,8 +6274,8 @@ Dungeon Keeper (everyone can win, 1+ participants)
 
 Miscellaneous challenges
 ------------------------
-There are certain other challenges that neither really count as quests nor as
-events:
+Asides from extermination orders and events, there are certain other challenges
+that wait for you to tackle them:
 
 Ironman Deep Dive Challenge (IDDC)
     There is exactly one designated huge ironman dungeon (or tower) on each
@@ -6335,10 +6341,10 @@ Ironman Deep Dive Challenge (IDDC)
     On very deep floors after Nargothrond, a seasoned alchemist store may
     appear, allowing you to resupply.
 
-    Inside the challenge dungeon you can acquire a kill quest via /quest
-    command at level 1 already, instead of the usual minimum level of 5.
-    On average, quests in here require less monsters to be slain yet provide
-    slightly boosted item quality.
+    Inside the challenge dungeon you can acquire an extermination order via
+    /xorder command at level 1 already, instead of the usual minimum level 5.
+    On average, extermination orders in here require less monsters to be slain
+    yet provide slightly boosted item quality.
 
     The IDDC is randomly using themes of all the other dungeons, the selection
     is randomly rerolled every 24 hours. The final floor of each theme might
@@ -6538,8 +6544,8 @@ Usually a whole day (day + night, ie full 24h in-game time cycle) will last for
 slightly more than one hour real time.
 The sun will usually rise at around 6am, while night falls at around 7pm. Again
 use the /ex command to see the in-game time for your character.
-Quests (see (4.13)) usually have a time limit of two full in-game days, so you
-will have about 2.5 h to fulfil them.
+Extermination orders (see (4.13)) usually have a time limit of two full in-game
+days, so you will have about 2.5 h to carry them out.
 
 
 
@@ -15496,8 +15502,8 @@ The differences between Ironman ruleset and normal servers are as follows:
    (Note that this also works 'in advance', ie while you have not yet the
    required mimicry skill to actually see the learn-message show up.)
   -Item level restrictions are disabled and have no effect.
-  -Quests can be acquired as early as at level 3 instead of level 5,
-   and the quality of the rewarded items is somewhat boosted on average,
+  -Extermination orders can be acquired as early as at level 3 instead of level
+   5, and the quality of the rewarded items is somewhat boosted on average,
    while the amount of monsters that needs to be slain is even somewhat lower.
   -Temporary luck bonus from deeds is somewhat longer.
   -Usually, scheduled artifact resets happen less frequently (if at all).

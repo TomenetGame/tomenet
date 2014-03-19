@@ -2539,11 +2539,11 @@ static int Handle_login(int ind)
 			msg_format(NumPlayers, "\374\377I*** \377RServer-shutdown in max %d seconds (auto-recall). \377I***", shutdown_recall_timer);
 	}
 
-	if (p_ptr->quest_id) {
-		for (i = 0; i < 20; i++) {
-			if (quests[i].id == p_ptr->quest_id) {
-				msg_format(NumPlayers, "\377oYour quest to kill \377y%d \377g%s\377o (level %d) is not complete.",
-				    p_ptr->quest_num, r_name + r_info[quests[i].type].name, r_info[quests[i].type].level);
+	if (p_ptr->xorder_id) {
+		for (i = 0; i < MAX_XORDERS; i++) {
+			if (xorders[i].id == p_ptr->xorder_id) {
+				msg_format(NumPlayers, "\377oYour order to exterminate \377y%d \377g%s\377o (level %d) is still valid.",
+				    p_ptr->xorder_num, r_name + r_info[xorders[i].type].name, r_info[xorders[i].type].level);
 				break;
 			}
 		}

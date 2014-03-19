@@ -1335,7 +1335,7 @@ void do_slash_cmd(int Ind, char *message)
 			return;
 		}
 		/* TODO: move it to the Mayor's house */
-		else if(prefix(message, "/kquest") || prefix(message, "/kq")) {
+		else if(prefix(message, "/xorder") || prefix(message, "/xo")) {
 			j = Ind; //k=0;
 			u16b r, num;
 			int lev;
@@ -1344,15 +1344,15 @@ void do_slash_cmd(int Ind, char *message)
 			if (tk && !strcmp(token[1], "reset")) {
 				int qn;
 				if (!admin) return;
-				for (qn = 0; qn < 20; qn++) {
-					quests[qn].active = 0;
-					quests[qn].type = 0;
-					quests[qn].id = 0;
+				for (qn = 0; qn < MAX_XORDERS; qn++) {
+					xorders[qn].active = 0;
+					xorders[qn].type = 0;
+					xorders[qn].id = 0;
 				}
-				msg_broadcast(0, "\377yQuests are reset");
+				msg_broadcast(0, "\377yExtermination orders are reset");
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->conn == NOT_CONNECTED) continue;
-					Players[i]->quest_id = 0;
+					Players[i]->xorder_id = 0;
 				}
 				return;
 			}
@@ -1363,8 +1363,8 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				if (tk == 2) {
 					if ((j = name_lookup_loose(Ind, token[2], FALSE, FALSE))) {
-						if(Players[j]->quest_id){
-							msg_format(Ind, "\377y%s has a quest already.", Players[j]->name);
+						if(Players[j]->xorder_id){
+							msg_format(Ind, "\377y%s already received an extermination order.", Players[j]->name);
 							return;
 						}
 					} else {
@@ -1372,7 +1372,7 @@ void do_slash_cmd(int Ind, char *message)
 						return;
 					}
 				} else {
-					msg_print(Ind, "Usage: /quest guild name");
+					msg_print(Ind, "Usage: /xorder guild <name>");
 					return;
 				}
 				flags |= QUEST_GUILD;
@@ -1380,8 +1380,8 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (admin && tk) {
 				if ((j = name_lookup_loose(Ind, token[1], FALSE, FALSE))) {
-					if (Players[j]->quest_id) {
-						msg_format(Ind, "\377y%s has a quest already.", Players[j]->name);
+					if (Players[j]->xorder_id) {
+						msg_format(Ind, "\377y%s already received an extermination order.", Players[j]->name);
 						return;
 					}
 					lev = Players[j]->lev;	/* for now */
@@ -1391,8 +1391,8 @@ void do_slash_cmd(int Ind, char *message)
 				flags |= QUEST_RACE;
 				lev = Players[j]->lev;
 			}
-			if (prepare_quest(Ind, j, flags, &lev, &r, &num))
-			add_quest(Ind, j, r, num, flags);
+			if (prepare_xorder(Ind, j, flags, &lev, &r, &num))
+			add_xorder(Ind, j, r, num, flags);
 			return;
 		}
 		else if (prefix(message, "/feeling") ||
@@ -8369,7 +8369,7 @@ static void do_slash_brief_help(int Ind){
 	player_type *p_ptr = Players[Ind];
 
 	msg_print(Ind, "Commands: afk at bed broadcast bug cast dis dress ex feel fill help ignore me");	// pet ?
-	msg_print(Ind, "          pk quest rec ref rfe shout sip tag target untag;");
+	msg_print(Ind, "          pk xorder rec ref rfe shout sip tag target untag;");
 
 	if (is_admin(p_ptr)) {
 		msg_print(Ind, "  art cfg cheeze clv cp en eq geno id kick lua purge respawn shutdown");

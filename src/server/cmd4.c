@@ -914,7 +914,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
 
 		/* Quest flag */
-//		fprintf(fff, " %c", (q_ptr->quest_id ? 'Q' : ' '));
+//		fprintf(fff, " %c", (q_ptr->xorder_id ? 'X' : ' '));
 	}
 
 	/* PK */
@@ -1356,7 +1356,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
 			/* Print questing flag */
-			if (q_ptr->quest_id) fprintf(fff, " Q");
+			if (q_ptr->xorder_id) fprintf(fff, " Q");
 		}
 
 //		fprintf(fff, ", %s@%s", q_ptr->accountname, q_ptr->hostname);
@@ -1428,7 +1428,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
 			/* Print questing flag */
-			if (q_ptr->quest_id) fprintf(fff, " Q");
+			if (q_ptr->xorder_id) fprintf(fff, " Q");
 		}
 
 		/* Print afk/info message */
@@ -1537,7 +1537,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		}
 
 		/* Quest flag */
-		fprintf(fff, " %c", (q_ptr->quest_id ? 'Q' : ' '));
+		fprintf(fff, " %c", (q_ptr->xorder_id ? 'X' : ' '));
 
 		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
 			if (!q_ptr->info_msg[0])

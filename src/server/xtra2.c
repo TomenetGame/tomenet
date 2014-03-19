@@ -5951,13 +5951,13 @@ if (cfg.unikill_format) {
 	if (!(r_ptr->flags1 & RF1_QUESTOR)) return;
 
 	/* Hack -- Mark quests as complete */
-	for (i = 0; i < MAX_QK_IDX; i++)
+	for (i = 0; i < MAX_XO_IDX; i++)
 	{
 		/* Hack -- note completed quests */
-		if (q_list[i].level == r_ptr->level) q_list[i].level = 0;
+		if (xo_list[i].level == r_ptr->level) xo_list[i].level = 0;
 
 		/* Count incomplete quests */
-		if (q_list[i].level) total++;
+		if (xo_list[i].level) total++;
 	}
 
 
@@ -6146,7 +6146,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	char buf[1024];
 
 	kill_houses(p_ptr->id, OT_PLAYER);
-	rem_quest(p_ptr->quest_id);
+	rem_xorder(p_ptr->xorder_id);
 	kill_objs(p_ptr->id);
 	p_ptr->death = TRUE;
 
@@ -7731,67 +7731,67 @@ void resurrect_player(int Ind, int loss_reduction) {
 	}
 }
 
-void check_kquests(){
+void check_xorders(){
 	int i, j;
 	struct player_type *q_ptr;
-	for (i = 0; i < 20; i++) {
-		if (quests[i].active && quests[i].id) {
-			if ((turn - quests[i].turn) > MAX_QUEST_TURNS) {
+	for (i = 0; i < MAX_XORDERS; i++) {
+		if (xorders[i].active && xorders[i].id) {
+			if ((turn - xorders[i].turn) > MAX_XORDER_TURNS) {
 				for (j = 1; j <= NumPlayers; j++) {
 					q_ptr = Players[j];
-					if (q_ptr && q_ptr->quest_id == quests[i].id) {
-						msg_print(j, "\377oYou have failed your quest");
-						q_ptr->quest_id = 0;
-						q_ptr->quest_num = 0;
+					if (q_ptr && q_ptr->xorder_id == xorders[i].id) {
+						msg_print(j, "\377oYou have failed your extermination order!");
+						q_ptr->xorder_id = 0;
+						q_ptr->xorder_num = 0;
 					}
 				}
-				quests[i].active = 0;
-				quests[i].id = 0;
-				quests[i].type = 0;
+				xorders[i].active = 0;
+				xorders[i].id = 0;
+				xorders[i].type = 0;
 			}
 		}
 	}
 }
 
-void del_quest(int id){
+void del_xorder(int id){
 	int i;
-	for (i = 0; i < 20; i++) {
-		if (quests[i].id == id) {
-			s_printf("quest %d removed\n", id);
-			quests[i].active = 0;
-			quests[i].id = 0;
-			quests[i].type = 0;
+	for (i = 0; i < MAX_XORDERS; i++) {
+		if (xorders[i].id == id) {
+			s_printf("Extermination order %d removed\n", id);
+			xorders[i].active = 0;
+			xorders[i].id = 0;
+			xorders[i].type = 0;
 		}
 	}
 }
 
 /* One player leave a quest (death, deletion) */
-void rem_quest(u16b id){
+void rem_xorder(u16b id){
 	int i;
 
-	s_printf("Player death. Quest id: %d\n", id);
+	s_printf("Player death. Extermination order id: %d\n", id);
 
 	if(!id) return;
 
-	for (i = 0; i < 20; i++) {
-		if (quests[i].id == id) {
+	for (i = 0; i < MAX_XORDERS; i++) {
+		if (xorders[i].id == id) {
 			break;
 		}
 	}
-	if (i == 20) return;
-	s_printf("Quest found in slot %d\n",i);
-	if (quests[i].active) {
-		quests[i].active--;
-		s_printf("Remaining active: %d\n", quests[i].active);
-		if (!quests[i].active) {
+	if (i == MAX_XORDERS) return;
+	s_printf("Extermination order found in slot %d\n",i);
+	if (xorders[i].active) {
+		xorders[i].active--;
+		s_printf("Remaining active: %d\n", xorders[i].active);
+		if (!xorders[i].active) {
 			process_hooks(HOOK_QUEST_FAIL, "d", id);
 			s_printf("delete call\n");
-			del_quest(id);
+			del_xorder(id);
 		}
 	}
 }
 
-void kill_quest(int Ind) {
+void kill_xorder(int Ind) {
 	int i;
 	u16b id, pos = 9999;
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -7799,9 +7799,9 @@ void kill_quest(int Ind) {
 	bool great, verygreat = FALSE;
 	u32b resf;
 
-	id = p_ptr->quest_id;
-	for (i = 0; i < 20; i++) {
-		if (quests[i].id == id) {
+	id = p_ptr->xorder_id;
+	for (i = 0; i < MAX_XORDERS; i++) {
+		if (xorders[i].id == id) {
 			pos = i;
 			break;
 		}
@@ -7811,12 +7811,12 @@ void kill_quest(int Ind) {
 
 	process_hooks(HOOK_QUEST_FINISH, "d", Ind);
 
-	snprintf(temp, 160, "\374\377y%s has won the %s quest!", p_ptr->name, r_name + r_info[quests[pos].type].name);
-	if (quests[i].flags & QUEST_RACE)
+	snprintf(temp, 160, "\374\377y%s has carried out the %s extermination order!", p_ptr->name, r_name + r_info[xorders[pos].type].name);
+	if (xorders[i].flags & QUEST_RACE)
 		msg_broadcast(Ind, temp);
-	if (quests[i].flags & QUEST_GUILD){
+	if (xorders[i].flags & QUEST_GUILD){
 		hash_entry *temphash;
-		if ((temphash = lookup_player(quests[i].creator)) && temphash->guild) {
+		if ((temphash = lookup_player(xorders[i].creator)) && temphash->guild) {
 			guild_msg(temphash->guild ,temp);
 			if (!p_ptr->guild) {
 				guild_msg_format(temphash->guild, "\374\377%c%s is now a guild member!", COLOUR_CHAT_GUILD, p_ptr->name);
@@ -7827,24 +7827,24 @@ void kill_quest(int Ind) {
 				clockin(Ind, 3);	/* set in db */
 			}
 			else if (p_ptr->guild == temphash->guild) {
-				guild_msg_format(temphash->guild, "\374\377%c%s has completed the quest!", COLOUR_CHAT_GUILD, p_ptr->name);
+				guild_msg_format(temphash->guild, "\374\377%c%s has carried out the extermination order!", COLOUR_CHAT_GUILD, p_ptr->name);
 			}
 		}
 	} else{
 		object_type forge, *o_ptr = &forge;
 		int avg;
 
-		msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[quests[pos].type].name);
-		s_printf("r_info quest: %s won the %s quest\n", p_ptr->name, r_name + r_info[quests[pos].type].name);
-		strcpy(temp, r_name + r_info[quests[pos].type].name);
-		strcat(temp, " quest");
+		msg_format(Ind, "\377yYou have carried out the %s extermination order!", r_name+r_info[xorders[pos].type].name);
+		s_printf("r_info quest: %s won the %s extermination order\n", p_ptr->name, r_name + r_info[xorders[pos].type].name);
+		strcpy(temp, r_name + r_info[xorders[pos].type].name);
+		strcat(temp, " extermination");
 		unique_quark = quark_add(temp);
 
 		/* grant verygreat rerolls for better value? */
-		avg = ((r_info[quests[pos].type].level * 2) + (p_ptr->lev * 4)) / 2;
+		avg = ((r_info[xorders[pos].type].level * 2) + (p_ptr->lev * 4)) / 2;
 		avg = avg > 100 ? 100 : avg;
-//		if (great && p_ptr->lev >= 25) verygreat = magik(r_info[quests[pos].type].level - (5 - (p_ptr->lev / 5)));
-//		if (great) verygreat = magik(((r_info[quests[pos].type].level * 2) + (p_ptr->lev * 4)) / 5);
+//		if (great && p_ptr->lev >= 25) verygreat = magik(r_info[xorders[pos].type].level - (5 - (p_ptr->lev / 5)));
+//		if (great) verygreat = magik(((r_info[xorders[pos].type].level * 2) + (p_ptr->lev * 4)) / 5);
 		avg /= 2; avg = 540 / (57 - avg) + 5; /* same as exp calculation ;) phew, Heureka.. (14..75) */
 
 		/* boost quest rewards for the iron price */
@@ -7877,17 +7877,17 @@ void kill_quest(int Ind) {
 
 	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
-		if (q_ptr && q_ptr->quest_id == id) {
-			q_ptr->quest_id = 0;
-			q_ptr->quest_num = 0;
+		if (q_ptr && q_ptr->xorder_id == id) {
+			q_ptr->xorder_id = 0;
+			q_ptr->xorder_num = 0;
 		}
 	}
-	del_quest(id);
+	del_xorder(id);
 }
 
 s16b questid = 1;
 
-bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags) {
+bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 	int i, j;
 	bool added = FALSE;
 	player_type *p_ptr = Players[target], *q_ptr;
@@ -7895,19 +7895,19 @@ bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags) {
 
 	process_hooks(HOOK_GEN_QUEST, "d", Ind);
 
-	for (i = 0; i < 20; i++) {
-		if (!quests[i].active) {
-			quests[i].active = 0;
-			quests[i].id = questid;
-			quests[i].type = type;
-			quests[i].flags = flags;
-			quests[i].turn = turn;
+	for (i = 0; i < MAX_XORDERS; i++) {
+		if (!xorders[i].active) {
+			xorders[i].active = 0;
+			xorders[i].id = questid;
+			xorders[i].type = type;
+			xorders[i].flags = flags;
+			xorders[i].turn = turn;
 			added = TRUE;
 			break;
 		}
 	}
 	if (!added) {
-		msg_print(Ind, "Sorry, no more quests are available at this time.");
+		msg_print(Ind, "Sorry, no more extermination orders are available at this time.");
 		return(FALSE);
 	}
 	added = 0;
@@ -7920,42 +7920,45 @@ bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags) {
 #else
 	if (q_ptr->lev < 3) return(FALSE);
 #endif
-	q_ptr->quest_id = questid;
-	q_ptr->quest_num = num;
+	q_ptr->xorder_id = questid;
+	q_ptr->xorder_num = num;
 	clockin(j, 4); /* register that player */
-	msg_format(j, "\377oYou have been given a %squest\377y!", flags & QUEST_GUILD ? "guild " : "");
+	if ((flags & QUEST_GUILD))
+		msg_print(j, "\377oYou have been given an extermination order from your guild\377y!");
+	else
+		msg_print(j, "\377oYou have been given a extermination order\377y!");
 //	msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags&QUEST_GUILD?"":" \377obefore any other player");
 	msg_format(j, "\377oFind and kill \377y%d \377g%s\377o (level %d)!", num, r_name + r_info[type].name, r_info[type].level);
-	quests[i].active++;
+	xorders[i].active++;
 
-	if (!quests[i].active) {
-		del_quest(questid);
+	if (!xorders[i].active) {
+		del_xorder(questid);
 		return(FALSE);
 	}
-	s_printf("Added quest id %d (players %d), target %d (%s)\n", quests[i].id, quests[i].active, target, p_ptr != NULL ? p_ptr->name : "NULL");
+	s_printf("Added extermination order id %d (players %d), target %d (%s)\n", xorders[i].id, xorders[i].active, target, p_ptr != NULL ? p_ptr->name : "NULL");
 	questid++;
 	if (questid == 0) questid = 1;
 	if (target != Ind) {
 		if (flags & QUEST_GUILD) {
-			guild_msg_format(Players[Ind]->guild, "\374\377%c%s has been given a quest!", COLOUR_CHAT_GUILD, p_ptr->name);
+			guild_msg_format(Players[Ind]->guild, "\374\377%c%s has been given an extermination order!", COLOUR_CHAT_GUILD, p_ptr->name);
 		}
-		else msg_format(Ind, "Quest given to %s", p_ptr->name);
-		quests[i].creator = Players[Ind]->id;
+		else msg_format(Ind, "Extermination order given to %s", p_ptr->name);
+		xorders[i].creator = Players[Ind]->id;
 	}
 	return(TRUE);
 }
 
 /* prepare some quest parameters for a standard kill quest */
-bool prepare_quest(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num){
+bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num){
 	int r = *type, i = *num, lev = *level, k = 0;
 
-	if (Players[j]->quest_id) {
-		for (i = 0; i < 20; i++) {
-			if (quests[i].id == Players[j]->quest_id) {
+	if (Players[j]->xorder_id) {
+		for (i = 0; i < MAX_XORDERS; i++) {
+			if (xorders[i].id == Players[j]->xorder_id) {
 				if (j == Ind)
-					msg_format(Ind, "\377oYour quest to kill \377y%d \377g%s\377o (level %d) is not complete.%s",
-					    Players[Ind]->quest_num, r_name + r_info[quests[i].type].name, r_info[quests[i].type].level,
-					    quests[i].flags & QUEST_GUILD?" (guild)" : "");
+					msg_format(Ind, "\377oYou have not yet carried out your %sorder to exterminate \377y%d \377g%s\377o (level %d).",
+					    Players[Ind]->xorder_num, xorders[i].flags & QUEST_GUILD?"guild's " : "",
+					    r_name + r_info[xorders[i].type].name, r_info[xorders[i].type].level);
 				return FALSE;
 			}
 		}
@@ -7964,10 +7967,10 @@ bool prepare_quest(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num
 	/* don't start too early -C. Blue */
 #ifndef RPG_SERVER
 	if (Players[j]->lev < 5 && !in_irondeepdive(&Players[j]->wpos)) {
-		msg_print(Ind, "\377oYou need to be level 5 or higher to receive a quest!");
+		msg_print(Ind, "\377oYou need to be level 5 or higher to receive an extermination order!");
 #else /* for ironman there's no harm in allowing early quests */
 	if (Players[j]->lev < 3) {
-		msg_print(Ind, "\377oYou need to be level 3 or higher to receive a quest!");
+		msg_print(Ind, "\377oYou need to be level 3 or higher to receive an extermination order!");
 #endif
 		return FALSE;
 	}
@@ -8379,14 +8382,14 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		/* Kill credit for quest */
 		if (!m_ptr->clone) {
 			int i, credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
-			for (i = 0; i < 20; i++) {
-				if (p_ptr->quest_id && quests[i].id == p_ptr->quest_id) {
-					if (credit_idx == quests[i].type) {
-						p_ptr->quest_num--;
-						if (p_ptr->quest_num <= 0) { //there's a panic save bug after verygreat apply magic, q_n = -1 after
-							kill_quest(Ind);
+			for (i = 0; i < MAX_XORDERS; i++) {
+				if (p_ptr->xorder_id && xorders[i].id == p_ptr->xorder_id) {
+					if (credit_idx == xorders[i].type) {
+						p_ptr->xorder_num--;
+						if (p_ptr->xorder_num <= 0) { //there's a panic save bug after verygreat apply magic, q_n = -1 after
+							kill_xorder(Ind);
 						} else
-							msg_format(Ind, "%d more to go!", p_ptr->quest_num);
+							msg_format(Ind, "%d more to go!", p_ptr->xorder_num);
 					}
 					break;
 				}

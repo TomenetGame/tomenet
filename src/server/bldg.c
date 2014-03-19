@@ -1707,8 +1707,8 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			u16b flags = QUEST_MONSTER | QUEST_RANDOM | QUEST_RACE;
 			int lev = p_ptr->lev;
 			u16b type, num;
-			if (prepare_quest(Ind, Ind, flags, &lev, &type, &num))
-				add_quest(Ind, Ind, type, num, flags);
+			if (prepare_xorder(Ind, Ind, flags, &lev, &type, &num))
+				add_xorder(Ind, Ind, type, num, flags);
 #endif
 			break;
 		}

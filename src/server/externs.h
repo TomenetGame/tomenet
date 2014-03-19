@@ -311,7 +311,7 @@ extern u32b sflags_TEMP;
 extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
 extern guild_type guilds[MAX_GUILDS];
-extern struct quest_type quests[20];	/* server quest data */
+extern struct xorder_type xorders[MAX_XORDERS]; /* server quest data */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 extern struct iddc_type iddc[128]; //(hardcode, ew)
 #endif
@@ -333,7 +333,7 @@ extern struct town_type *town;
 extern u16b numtowns;
 extern object_type *o_list;
 extern monster_type *m_list;
-extern quest q_list[MAX_QK_IDX];
+extern xorder xo_list[MAX_XO_IDX];
 extern s16b alloc_kind_size;
 extern alloc_entry *alloc_kind_table;
 extern s16b *alloc_kind_index_level;
@@ -1310,7 +1310,7 @@ extern s32b lookup_player_balance(int id);
 extern int lookup_player_id(cptr name);
 extern int lookup_player_id_messy(cptr name);
 /* another arg, and its getting a struct... pfft. */
-extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin);
+extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
 extern int player_id_list(int **list, u32b account);
@@ -1897,11 +1897,11 @@ extern void monster_death_mon(int am_idx, int m_idx);
 extern void monster_death(int Ind, int m_idx);
 extern void player_death(int Ind);
 extern void resurrect_player(int Ind, int exploss);
-extern void del_quest(int id);
-extern void rem_quest(u16b id);
-extern void kill_quest(int Ind);
-extern bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags);
-extern bool prepare_quest(int Ind, int j, u16b flags, int *lev, u16b *type, u16b *num);
+extern void del_xorder(int id);
+extern void rem_xorder(u16b id);
+extern void kill_xorder(int Ind);
+extern bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags);
+extern bool prepare_xorder(int Ind, int j, u16b flags, int *lev, u16b *type, u16b *num);
 extern bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note);
 extern void panel_calculate(int Ind);
 extern void tradpanel_calculate(int Ind);
@@ -1961,7 +1961,7 @@ extern void kill_house_contents(house_type *h_ptr);
 /*extern bool get_rep_dir(int *dp);*/
 
 extern bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor);
-extern void check_kquests(void);
+extern void check_xorders(void);
 extern bool master_level_specific(int Ind, struct worldpos *wpos, char * parms);
 extern void unstatic_level(struct worldpos *wpos);
 

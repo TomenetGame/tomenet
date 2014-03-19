@@ -62,7 +62,7 @@ struct hash_entry
 	u16b party;			/* Player party */
 	/* 3.5.0 */
 	byte guild;			/* Player guild */
-	s16b quest;			/* Player quest */
+	s16b xorder;			/* Extermination order */
 
 	time_t laston;			/* Last on time */
 	struct hash_entry *next;	/* Next entry in the chain */

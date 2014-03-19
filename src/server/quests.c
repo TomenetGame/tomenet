@@ -1,12 +1,11 @@
-/* This file is for providing a framework for quests,
-   allowing easy addition/editing/removal of them.
-   I hope I covered all sorts of quests, even though some quests might be a bit
-   clunky to implement (quest needs to 'quietly' spawn a followup quest etc),
-   otherwise let me know!
-          - C. Blue
+/* This file is for providing a framework for quests, allowing easy addition,
+   editing and removal of them via a 'q_info.txt' file designed from scratch.
+   You may modify/use it freely as long as you give me proper credit. - C. Blue
 
-   Note: This is a new approach. Not to be confused with old
-         q_list[], quest_type, quest[] and plots[] code.
+   I hope I covered all sorts of quests, even though some quests might be a bit
+   clunky to implement (quest needs to 'quietly' spawn a followup quest etc).
+   Note: This is a new approach. Not to be confused with events, old xorders,
+         or the sketches of quest_type, quest[] and plots[] code in bldg.c.
 
    Quests can make use of Send_request_key/str/num/cfr/abort()
    functions to provide the possibility of dialogue with npcs.
@@ -20,9 +19,18 @@
    it is currently necessary to spawn a new quest via activate_quest[], have the player
    auto_accept_quiet it and silently terminate the current quest. The new quest should
    probably have almost the same title too in case the player can review the title so as to
-   not confuse him..<--><------>maybe this could be improved on in the future :-p
+   not confuse him.. maybe this could be improved on in the future :-p
    how to possibly improve: spawn sub questors with their own dialogues.
+
+   Regarding party members, that could be done by: Scanning area for party members on
+   questor interaction, ask them if they want to join the quest y/n, and then duplicating
+   all quest message output to them. Further, any party member who is first to do so  can
+   complete a goal or invoke a dialogue. Only the party member who INVOKES a dialogue can
+   make a keyword-based decision, the others can just watch the dialogue passively.
+   Stages cannot proceed until all party members are present at the questor, if the questor
+   requires returning to him, or until all members are at the quest target sector, if any.
 */
+
 
 //? #define SERVER
 #include "angband.h"

@@ -440,16 +440,16 @@ static void wr_notes() {
 	//omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
-static void wr_kquests() {
+static void wr_xorders() {
 	int i;
 	wr_s16b(questid);
-	for (i = 0; i < 20; i++) {
-		wr_s16b(quests[i].active);
-		wr_s16b(quests[i].id);
-		wr_s16b(quests[i].type);
-		wr_u16b(quests[i].flags);
-		wr_s32b(quests[i].creator);
-		wr_s32b(quests[i].turn);
+	for (i = 0; i < MAX_XORDERS; i++) {
+		wr_s16b(xorders[i].active);
+		wr_s16b(xorders[i].id);
+		wr_s16b(xorders[i].type);
+		wr_u16b(xorders[i].flags);
+		wr_s32b(xorders[i].creator);
+		wr_s32b(xorders[i].turn);
 	}
 }
 
@@ -1277,11 +1277,11 @@ static bool wr_savefile_new(int Ind) {
 #if 0
 
 	/* Hack -- Dump the quests */
-	tmp16u = MAX_QK_IDX;
+	tmp16u = MAX_XO_IDX;
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++)
 	{
-		wr_byte(q_list[i].level);
+		wr_byte(xo_list[i].level);
 		wr_byte(0);
 		wr_byte(0);
 		wr_byte(0);
@@ -1341,8 +1341,8 @@ static bool wr_savefile_new(int Ind) {
 	wr_byte(p_ptr->guild);
 	wr_u32b(p_ptr->guild_dna);
 
-	wr_s16b(p_ptr->quest_id);
-	wr_s16b(p_ptr->quest_num);
+	wr_s16b(p_ptr->xorder_id);
+	wr_s16b(p_ptr->xorder_num);
 
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		wr_s16b(p_ptr->quest_idx[i]);
@@ -1914,7 +1914,7 @@ static void wr_player_names(void)
 			wr_u16b(ptr->party); /* changed to u16b to allow more parties */
 			wr_byte(ptr->guild);
 			wr_u32b(ptr->guild_flags);
-			wr_u16b(ptr->quest);
+			wr_u16b(ptr->xorder);
 			wr_byte(ptr->admin);
 			/* Store the player name */
 			wr_string(ptr->name);
@@ -2097,7 +2097,7 @@ static bool wr_server_savefile()
 	wr_u32b(seed_town);
 
 	wr_guilds();
-	wr_kquests();
+	wr_xorders();
 	wr_quests();
 
 	wr_u32b(account_id);

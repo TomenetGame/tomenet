@@ -2921,11 +2921,11 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		clockin(Ind, 0);	/* Timestamp the player */
 		clockin(Ind, 1);	/* Set player level */
 		clockin(Ind, 2);	/* Set player party */
-		if (p_ptr->quest_id){
-			for (i = 0; i < 20; i++){
-				if (quests[i].active && quests[i].id == p_ptr->quest_id) break;
+		if (p_ptr->xorder_id){
+			for (i = 0; i < MAX_XORDERS; i++){
+				if (xorders[i].active && xorders[i].id == p_ptr->xorder_id) break;
 			}
-			if (i == 20) p_ptr->quest_id = 0;
+			if (i == MAX_XORDERS) p_ptr->xorder_id = 0;
 		}
 
 		/* hack: if he's in town, get him pseudo tree-passing */

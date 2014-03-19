@@ -8670,7 +8670,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 					i = strlen(zz[8]) - 1;
 					if (zz[8][i] == '"') zz[8][i] = '\0';
 					letter[index].special = 0;
-					for (i = 0; i < max_qk_idx; i++)
+					for (i = 0; i < max_xo_idx; i++)
 					{
 						if (!strcmp(&zz[8][1], quest[i].name))
 						{
@@ -8695,7 +8695,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 					i = strlen(zz[8]) - 1;
 					if (zz[8][i] == '"') zz[8][i] = '\0';
 					letter[index].special = 0;
-					for (i = 0; i < max_qk_idx; i++)
+					for (i = 0; i < max_xo_idx; i++)
 					{
 						if (!strcmp(&zz[8][1], quest[i].name))
 						{
@@ -9609,7 +9609,7 @@ static cptr process_dungeon_file_expr(char **sp, char *fp)
 					for (i = 0; (c[i] != '"') && (c[i] != '\0'); i++);
 					if (c[i] == '"') c[i] = '\0';
 					strcpy(pref_tmp_value, "-1");
-					for (i = 0; i < max_qk_idx; i++)
+					for (i = 0; i < max_xo_idx; i++)
 					{
                                                 if (streq(c, quest[i].name))
                                                 {

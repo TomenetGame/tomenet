@@ -5814,8 +5814,7 @@ static void process_various(void)
 	if (!(turn % (cfg.fps * 60))) {
 		monster_race *r_ptr;
 
-		check_kquests();		/* It's enough with 'once a minute', none? -Jir */
-
+		check_xorders();	/* check for expiry of extermination orders */
 		check_banlist();	/* unban some players */
 		scan_objs();		/* scan objects and houses */
 
