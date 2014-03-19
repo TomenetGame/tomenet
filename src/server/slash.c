@@ -3544,8 +3544,12 @@ void do_slash_cmd(int Ind, char *message)
 						if (p_ptr->quest_idx[i] == -1) continue;
 						msg_format(Ind, " %2d) %s", i + 1, q_name + q_info[p_ptr->quest_idx[i]].name);
 					}
+#if 0
 					msg_print(Ind, "\377s   To drop a quest type \377D/quest <questnumber>\377s - to drop all quests type \377D/quest *");
 					msg_print(Ind, "\377s   Warning! Depending on the quest you might not be able to pick it up again.");
+#else
+					msg_print(Ind, "\377s  To drop a quest use \377D/quest num\377s, * for all. Quests might not be re-acquirable!");
+#endif
 				}
 				return;
 			}
