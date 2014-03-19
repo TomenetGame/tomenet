@@ -576,18 +576,18 @@ static void quest_terminate(int pInd, int q_idx) {
 		/* individual quests don't get cleaned up (aka completely reset)
 		   by deactivation, except for this temporary tracking data,
 		   or it would continue spamming quest checks eg on delivery_xy locs. */
-		p_ptr->quest_target_pos[py_q_idx] = FALSE;
-		p_ptr->quest_within_target_wpos[py_q_idx] = FALSE;
-		p_ptr->quest_target_xy[py_q_idx] = FALSE;
-		p_ptr->quest_targetopt_pos[py_q_idx] = FALSE;
-		p_ptr->quest_within_targetopt_wpos[py_q_idx] = FALSE;
-		p_ptr->quest_targetopt_xy[py_q_idx] = FALSE;
-		p_ptr->quest_deliver_pos[py_q_idx] = FALSE;
-		p_ptr->quest_within_deliver_wpos[py_q_idx] = FALSE;
-		p_ptr->quest_deliver_xy[py_q_idx] = FALSE;
-		p_ptr->quest_deliveropt_pos[py_q_idx] = FALSE;
-		p_ptr->quest_within_deliveropt_wpos[py_q_idx] = FALSE;
-		p_ptr->quest_deliveropt_xy[py_q_idx] = FALSE;
+		p_ptr->quest_target_pos[j] = FALSE;
+		p_ptr->quest_within_target_wpos[j] = FALSE;
+		p_ptr->quest_target_xy[j] = FALSE;
+		p_ptr->quest_targetopt_pos[j] = FALSE;
+		p_ptr->quest_within_targetopt_wpos[j] = FALSE;
+		p_ptr->quest_targetopt_xy[j] = FALSE;
+		p_ptr->quest_deliver_pos[j] = FALSE;
+		p_ptr->quest_within_deliver_wpos[j] = FALSE;
+		p_ptr->quest_deliver_xy[j] = FALSE;
+		p_ptr->quest_deliveropt_pos[j] = FALSE;
+		p_ptr->quest_within_deliveropt_wpos[j] = FALSE;
+		p_ptr->quest_deliveropt_xy[j] = FALSE;
 
 		return;
 	}
@@ -614,18 +614,18 @@ static void quest_terminate(int pInd, int q_idx) {
 
 		/* clean up temporary tracking data,
 		   or it would continue spamming quest checks eg on delivery_xy locs. */
-		p_ptr->quest_target_pos[py_q_idx] = FALSE;
-		p_ptr->quest_within_target_wpos[py_q_idx] = FALSE;
-		p_ptr->quest_target_xy[py_q_idx] = FALSE;
-		p_ptr->quest_targetopt_pos[py_q_idx] = FALSE;
-		p_ptr->quest_within_targetopt_wpos[py_q_idx] = FALSE;
-		p_ptr->quest_targetopt_xy[py_q_idx] = FALSE;
-		p_ptr->quest_deliver_pos[py_q_idx] = FALSE;
-		p_ptr->quest_within_deliver_wpos[py_q_idx] = FALSE;
-		p_ptr->quest_deliver_xy[py_q_idx] = FALSE;
-		p_ptr->quest_deliveropt_pos[py_q_idx] = FALSE;
-		p_ptr->quest_within_deliveropt_wpos[py_q_idx] = FALSE;
-		p_ptr->quest_deliveropt_xy[py_q_idx] = FALSE;
+		p_ptr->quest_target_pos[j] = FALSE;
+		p_ptr->quest_within_target_wpos[j] = FALSE;
+		p_ptr->quest_target_xy[j] = FALSE;
+		p_ptr->quest_targetopt_pos[j] = FALSE;
+		p_ptr->quest_within_targetopt_wpos[j] = FALSE;
+		p_ptr->quest_targetopt_xy[j] = FALSE;
+		p_ptr->quest_deliver_pos[j] = FALSE;
+		p_ptr->quest_within_deliver_wpos[j] = FALSE;
+		p_ptr->quest_deliver_xy[j] = FALSE;
+		p_ptr->quest_deliveropt_pos[j] = FALSE;
+		p_ptr->quest_within_deliveropt_wpos[j] = FALSE;
+		p_ptr->quest_deliveropt_xy[j] = FALSE;
 	}
 #if QDEBUG > 0
 	s_printf(".\n");
