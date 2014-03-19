@@ -7263,8 +7263,7 @@ static int Receive_walk(int ind)
 	return 1;
 }
 
-static int Receive_run(int ind)
-{
+static int Receive_run(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
@@ -7284,13 +7283,14 @@ static int Receive_run(int ind)
 
 	if (p_ptr->command_rep) p_ptr->command_rep =- 1;
 
-	if ((p_ptr->global_event_temp & PEVF_NO_RUN_00)) return Receive_walk(ind);
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) return Receive_walk(ind);
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RUN)) return Receive_walk(ind);
-
 	/* If not the dungeon master, who can always run */
 	if (!p_ptr->admin_dm) {
 		monster_race *r_ptr;
+
+		if ((p_ptr->global_event_temp & PEVF_NO_RUN_00)) return Receive_walk(ind);
+		if (l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) return Receive_walk(ind);
+		if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RUN)) return Receive_walk(ind);
+
 		/* check for status impairments (lack of light is checked in run_test()) */
 		if (p_ptr->confused || p_ptr->blind)
 			return Receive_walk(ind);
