@@ -2040,7 +2040,7 @@ void quest_check_goal_deliver_xy(int Ind, int py_q_idx) {
 		if (!q_ptr->active) continue;
 
 		stage = quest_get_stage(Ind, q_idx);
-#if QDEBUG > 2
+#if QDEBUG > 3
 		s_printf(" CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
 #endif
 
@@ -2049,7 +2049,7 @@ void quest_check_goal_deliver_xy(int Ind, int py_q_idx) {
 		   the stuff (bodies, or kill count rather, and objects) that we ought to
 		   'deliver', duh */
 		for (j = 0; j < QI_GOALS; j++)
-#if QDEBUG > 2
+#if QDEBUG > 3
 			if (q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j]) {
 				s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_ptr->kill[stage][j], q_ptr->retrieve[stage][j]);
 				if (!quest_get_goal(Ind, q_idx, j, FALSE)) {
@@ -2064,7 +2064,7 @@ void quest_check_goal_deliver_xy(int Ind, int py_q_idx) {
 				break;
 #endif
 		if (j != QI_GOALS) {
-#if QDEBUG > 2
+#if QDEBUG > 3
 			s_printf(" MISSING kr GOAL\n");
 #endif
 			continue;
@@ -2076,7 +2076,7 @@ void quest_check_goal_deliver_xy(int Ind, int py_q_idx) {
 
 			/* handle only specific x,y goals here */
 			if (q_ptr->deliver_pos_x[stage][j] == -1) continue;
-#if QDEBUG > 2
+#if QDEBUG > 3
 			s_printf(" FOUND deliver_xy GOAL %d.\n", j);
 #endif
 
@@ -2098,7 +2098,7 @@ void quest_check_goal_deliver_xy(int Ind, int py_q_idx) {
 			if (q_ptr->deliver_pos_x[stage][j] != p_ptr->px ||
 			    q_ptr->deliver_pos_y[stage][j] != p_ptr->py)
 				continue;
-#if QDEBUG > 2
+#if QDEBUG > 3
 			s_printf(" PASSED LOCATION CHECK.\n");
 #endif
 
