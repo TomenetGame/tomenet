@@ -46,7 +46,7 @@
 
 /* set log level (0 to disable, 1 for normal logging, 2 for debug logging,
    3 for very verbose debug logging, 4 every single goal test is logged (deliver_xy -> every step)) */
-#define QDEBUG 3
+#define QDEBUG 4
 
 /* Disable a quest on error? */
 //#define QERROR_DISABLE
@@ -1766,7 +1766,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 		}
 
 #if QDEBUG > 2
-	s_printf(" CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
+	s_printf(" CHECKING k/r-GOAL IN QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
 #endif
 	/* check the quest goals, whether any of them wants a target to this location */
 	for (j = 0; j < QI_GOALS; j++) {
@@ -1866,6 +1866,9 @@ void quest_check_goal_k(int Ind, monster_type *m_ptr) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
+#if QDEBUG > 3
+	s_printf("QUEST_CHECK_GOAL_r: by %d,%s\n", Ind, p_ptr->name);
+#endif
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 #if 0
 		/* player actually pursuing a quest? -- paranoia (quest_kill should be FALSE then) */
@@ -1882,6 +1885,9 @@ void quest_check_goal_r(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
+#if QDEBUG > 3
+	s_printf("QUEST_CHECK_GOAL_k: by %d,%s\n", Ind, p_ptr->name);
+#endif
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 #if 0
 		/* player actually pursuing a quest? -- paranoia (quest_retrieve should be FALSE then) */
@@ -2049,7 +2055,7 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 
 #if QDEBUG > 3
 	s_printf("QUEST_CHECK_GOAL_DELIVER_XY: by %d,%s - quest (%s,%d) stage %d\n",
-	    Ind, p_ptr->name, q_ptr->codename, q_idx, stage);
+	    Ind, p_ptr->name, q_ptr->codename, q_idx, quest_get_stage(Ind, q_idx));
 #endif
 
 	/* quest is deactivated? */
