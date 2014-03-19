@@ -1856,8 +1856,10 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, q_idx, stage;
 
+#if 0
 #if QDEBUG > 2
 	s_printf("QUEST_CHECK_UNGOAL_r: by %d,%s\n", Ind, p_ptr->name);
+#endif
 #endif
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		/* player actually pursuing a quest? */
