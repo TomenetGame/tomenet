@@ -44,7 +44,8 @@
 #include "angband.h"
 
 
-/* set log level (0 to disable, 1 for normal logging, 2 for debug logging, 3 for very verbose debug logging) */
+/* set log level (0 to disable, 1 for normal logging, 2 for debug logging,
+   3 for very verbose debug logging, 4 every single goal test is logged (deliver_xy -> every step)) */
 #define QDEBUG 3
 
 /* Disable a quest on error? */
@@ -1715,11 +1716,10 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 
 	/* paranoia -- neither a kill has been made nor an item picked up */
 	if (!m_ptr && !o_ptr) return;
-#if 0
-#if QDEBUG > 2
+#if QDEBUG > 3
 	s_printf("QUEST_CHECK_GOAL_kr: by %d,%s\n", Ind, p_ptr->name);
 #endif
-#endif
+
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		/* player actually pursuing a quest? */
 		if (p_ptr->quest_idx[i] == -1) continue;
@@ -1856,10 +1856,8 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, q_idx, stage;
 
-#if 0
-#if QDEBUG > 2
+#if QDEBUG > 3
 	s_printf("QUEST_CHECK_UNGOAL_r: by %d,%s\n", Ind, p_ptr->name);
-#endif
 #endif
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		/* player actually pursuing a quest? */
@@ -1913,7 +1911,7 @@ static void quest_check_goal_deliver_wpos(int Ind, int py_q_idx) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, k, q_idx, stage;
 
-#if QDEBUG > 2
+#if QDEBUG > 3
 	s_printf("QUEST_CHECK_GOAL_DELIVER_WPOS: by %d,%s\n", Ind, p_ptr->name);
 #endif
 //++	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
@@ -2024,7 +2022,7 @@ void quest_check_goal_deliver_xy(int Ind, int py_q_idx) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, k, q_idx, stage;
 
-#if QDEBUG > 2
+#if QDEBUG > 3
 	s_printf("QUEST_CHECK_GOAL_DELIVER_XY: by %d,%s\n", Ind, p_ptr->name);
 #endif
 //++	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
