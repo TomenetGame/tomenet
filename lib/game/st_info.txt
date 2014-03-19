@@ -1150,7 +1150,7 @@ T:5:12:7
 A:0:0:1:2:3:4
 O:0:5:6:7:1:35
 G:1:U
-W:48
+W:60
 F:HARD_STEAL | GOOD | FLAT_BASE
 
 N:71:Armoury
@@ -1179,7 +1179,7 @@ A:0:0:1:2:3:4
 O:8:9:10:11:38:20
 G:2:s
 #W:24
-W:72
+W:96
 F:HARD_STEAL | GOOD | FLAT_BASE
 
 N:72:Weaponsmith
@@ -1204,7 +1204,7 @@ A:0:0:1:2:3:4
 O:12:13:14:15:44:68
 G:3:w
 #W:24
-W:72
+W:96
 F:HARD_STEAL | GOOD | FLAT_BASE
 
 # less etiquettes,rll,wor,rc so weapons show up more often in relation
@@ -1263,7 +1263,7 @@ A:0:0:1:2:3:0
 O:26:27:28:29:26:43
 G:4:g
 #W:24
-W:36
+W:60
 F:HARD_STEAL | GOOD
 
 N:74:Alchemy shop
@@ -1395,7 +1395,7 @@ A:0:0:1:2:3:4
 O:34:35:36:37:46:49
 G:6:r
 #W:24
-W:48
+W:72
 F:HARD_STEAL | GOOD | MEDIUM_LEVEL | FLAT_BASE
 
 N:76:Black Market
@@ -1446,7 +1446,7 @@ O:39:40:41:39:40:41
 G:7:D
 F:ALL_ITEM | MEDIUM_LEVEL | PRICE4 | HARD_STEAL
 #W:36
-W:48
+W:60
 
 N:77:Tavern
 A:62:0:54:55:3:0
@@ -1467,7 +1467,7 @@ T:100:111:255
 A:0:0:1:2:3:4
 O:42:43:44:45:42:43
 G:9:o
-W:72
+W:96
 # more fireproof spell scrolls and codices:
 #F:GOOD
 F:GREAT
