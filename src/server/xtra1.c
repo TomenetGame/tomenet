@@ -5719,12 +5719,12 @@ void calc_boni(int Ind) {
 
 	if (((l_ptr && (l_ptr->flags2 & LF2_NO_SPEED)) ||
 	    (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_SPEED)))
-	    && p_ptr->pspeed > 110 && !is_admin(p_ptr))
+	    && p_ptr->pspeed > 110 && !p_ptr->admin_dm)
 		p_ptr->pspeed = 110;
 
 	if (((l_ptr && (l_ptr->flags2 & LF2_NO_RES)) ||
 	    (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RES)))
-	    && !is_admin(p_ptr)) {
+	    && !p_ptr->admin_dm) {
 		p_ptr->resist_acid = FALSE;
 		p_ptr->resist_elec = FALSE;
 		p_ptr->resist_fire = FALSE;
