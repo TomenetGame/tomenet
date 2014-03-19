@@ -1715,8 +1715,10 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 
 	/* paranoia -- neither a kill has been made nor an item picked up */
 	if (!m_ptr && !o_ptr) return;
+#if 0
 #if QDEBUG > 2
 	s_printf("QUEST_CHECK_GOAL_kr: by %d,%s\n", Ind, p_ptr->name);
+#endif
 #endif
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		/* player actually pursuing a quest? */
