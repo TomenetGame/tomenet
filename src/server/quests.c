@@ -46,7 +46,7 @@
 
 /* set log level (0 to disable, 1 for normal logging, 2 for debug logging,
    3 for very verbose debug logging, 4 every single goal test is logged (deliver_xy -> every step)) */
-#define QDEBUG 4
+#define QDEBUG 3
 
 /* Disable a quest on error? */
 //#define QERROR_DISABLE
@@ -1007,7 +1007,10 @@ static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 			/* assume it's a restricted target "at least" */
 			p_ptr->quest_any_k_target = TRUE;
 			/* if it's not a restricted target, it's active everywhere */
-			if (!q_ptr->target_pos[stage][i]) p_ptr->quest_any_k = TRUE;
+			if (!q_ptr->target_pos[stage][i]) {
+				p_ptr->quest_any_k = TRUE;
+				p_ptr->quest_any_k_within_target = TRUE;
+			}
 		}
 		if (q_ptr->retrieve[stage][i]) {
 			p_ptr->quest_retrieve_number[py_q_idx][i] = q_ptr->retrieve_number[stage][i];
@@ -1016,7 +1019,10 @@ static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 			/* assume it's a restricted target "at least" */
 			p_ptr->quest_any_r_target = TRUE;
 			/* if it's not a restricted target, it's active everywhere */
-			if (!q_ptr->target_pos[stage][i]) p_ptr->quest_any_r = TRUE;
+			if (!q_ptr->target_pos[stage][i]) {
+				p_ptr->quest_any_r = TRUE;
+				p_ptr->quest_any_r_within_target = TRUE;
+			}
 		}
 	}
 	for (i = 0; i < QI_OPTIONAL; i++) {
@@ -1035,7 +1041,10 @@ static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 			/* assume it's a restricted target "at least" */
 			p_ptr->quest_any_k_target = TRUE;
 			/* if it's not a restricted target, it's active everywhere */
-			if (!q_ptr->targetopt_pos[stage][i]) p_ptr->quest_any_k = TRUE;
+			if (!q_ptr->targetopt_pos[stage][i]) {
+				p_ptr->quest_any_k = TRUE;
+				p_ptr->quest_any_k_within_target = TRUE;
+			}
 		}
 		if (q_ptr->retrieveopt[stage][i]) {
 			p_ptr->quest_retrieveopt_number[py_q_idx][i] = q_ptr->retrieveopt_number[stage][i];
@@ -1044,7 +1053,10 @@ static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 			/* assume it's a restricted target "at least" */
 			p_ptr->quest_any_r_target = TRUE;
 			/* if it's not a restricted target, it's active everywhere */
-			if (!q_ptr->targetopt_pos[stage][i]) p_ptr->quest_any_r = TRUE;
+			if (!q_ptr->targetopt_pos[stage][i]) {
+				p_ptr->quest_any_r = TRUE;
+				p_ptr->quest_any_r_within_target = TRUE;
+			}
 		}
 	}
 }
@@ -2467,6 +2479,10 @@ void quest_check_player_location(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, q_idx, stage;
 	quest_info *q_ptr;
+
+#if QDEBUG > 3
+	s_printf("%s CHECK_PLAYER_LOCATION: %d,%s has anyk,anyr=%d,%d.\n", showtime(), Ind, p_ptr->name, p_ptr->quest_any_k, p_ptr->quest_any_r);
+#endif
 
 	/* reset local tracking info? only if we don't need to check it anyway: */
 	if (!p_ptr->quest_any_k) p_ptr->quest_any_k_within_target = FALSE;
