@@ -2159,7 +2159,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 		if (i == QI_REWARD_GOALS) {
 			/* create and hand over this reward! */
 #if QDEBUG > 0
-			s_printf("%s QUEST_GOAL_CHECK_REWARD: Rewarded in stage %d of '%s'(%d,%s)\n", showtime(), q_name + q_ptr->name, stage, q_name + q_ptr->name, q_idx, q_ptr->codename);
+			s_printf("%s QUEST_GOAL_CHECK_REWARD: Rewarded in stage %d of '%s'(%d,%s)\n", showtime(), stage, q_name + q_ptr->name, q_idx, q_ptr->codename);
 #endif
 
 			/* specific reward */
