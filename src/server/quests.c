@@ -2629,3 +2629,30 @@ void quest_check_player_location(int Ind) {
 		}
 	}
 }
+
+/* Hack: if a quest was disabled in q_info, this will have set the
+   'disabled_on_load' flag of that quest, which tells us that we have to handle
+   deleting its remaining questor(s) here, before the server finally starts up. */
+void quest_handle_disabled_on_startup() {
+	int i, j, k;
+	quest_info *q_ptr;
+	bool questor;
+
+	for (i = 0; i < MAX_Q_IDX; i++) {
+		q_ptr = &q_info[i];
+		if (!q_ptr->disabled_on_load) continue;
+
+		s_printf("QUEST_DISABLED_ON_LOAD: Deleting %d questor(s) from quest %d\n", q_ptr->questors, i);
+		for (j = 0; j < q_ptr->questors; j++) {
+			questor = m_list[q_ptr->questor_m_idx[j]].questor;
+			k = m_list[q_ptr->questor_m_idx[j]].quest;
+
+			s_printf(" m_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor_m_idx[j], k, questor);
+
+			if (k == i && questor) {
+				s_printf("..ok.\n");
+				delete_monster_idx(q_ptr->questor_m_idx[j], TRUE);
+			} else s_printf("..failed: Questor does not exist.\n");
+		}
+	}
+}

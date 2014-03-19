@@ -7507,8 +7507,6 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
 	time_t now;
 	struct tm *tmp;
-	quest_info *q_ptr;
-	bool questor;
 	//int i, n;
 
 	/* Init the RNG */
@@ -7803,24 +7801,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 	get_date(&dwd, &dd, &dm, &dy);
 	exec_lua(0, format("playloop_startup(\"%s\", %d, %d, %d, %d, %d, %d, %d)", showtime(), h, m, s, dwd, dd, dm, dy));
 
-	/* hack: if a quest was disabled in q_info, delete remaining questor(s) */
-	for (h = 0; h < MAX_Q_IDX; h++) {
-		q_ptr = &q_info[h];
-		if (!q_ptr->disabled_on_load) continue;
-
-		s_printf("QUEST_DISABLED_ON_LOAD: Deleting %d questor(s) from quest %d\n", q_ptr->questors, h);
-		for (m = 0; m < q_ptr->questors; m++) {
-			questor = m_list[q_ptr->questor_m_idx[m]].questor;
-			s = m_list[q_ptr->questor_m_idx[m]].quest;
-
-			s_printf(" m_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor_m_idx[m], s, questor);
-
-			if (s == h && questor) {
-				s_printf("..ok.\n");
-				delete_monster_idx(q_ptr->questor_m_idx[m], TRUE);
-			} else s_printf("..failed: Questor does not exist.\n");
-		}
-	}
+	quest_handle_disabled_on_startup();
 
 	/* Loop forever */
 	sched();
