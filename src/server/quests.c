@@ -607,7 +607,8 @@ static void quest_terminate(int pInd, int q_idx) {
 
 		/* he is no longer on the quest, since the quest has finished */
 		p_ptr->quest_idx[j] = -1;
-		msg_format(pInd, "\374\377uYou have completed the quest \"\377U%s\377u\".", q_name + q_ptr->name);
+		//good colours for '***': C-confusion (yay), q-inertia (pft, extended), E-meteor (mh, extended)
+		msg_format(pInd, "\374\377C***\377u You have completed the quest \"\377U%s\377u\"! \377C***", q_name + q_ptr->name);
 		//msg_print(pInd, "\374 ");
 
 		/* don't respawn the questor *immediately* again, looks silyl */
@@ -638,7 +639,7 @@ static void quest_terminate(int pInd, int q_idx) {
 
 		/* he is no longer on the quest, since the quest has finished */
 		p_ptr->quest_idx[j] = -1;
-		msg_format(i, "\374\377uYou have completed the quest \"\377U%s\377u\".", q_name + q_ptr->name);
+		msg_format(i, "\374\377C***\377u You have completed the quest \"\377U%s\377u\"! \377C***", q_name + q_ptr->name);
 		//msg_print(i, "\374 ");
 
 		/* clean up temporary tracking data,
