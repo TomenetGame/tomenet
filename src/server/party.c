@@ -539,7 +539,7 @@ int check_account(char *accname, char *c_name) {
 		for (i = 0; i < chars; i++)
 			if (!strcmp(c_name, lookup_player_name(id_list[i]))) break;
 		if (chars) C_KILL(id_list, chars, int);
-                if (i == chars) return 0; /* 'name already in use' */
+		if (i == chars) return 0; /* 'name already in use' */
 	} else if (!l_acc && l2_acc) {
 		KILL(l2_acc, struct account);
 		return 0; /* we don't even have an account yet? 'name already in use' for sure */
@@ -630,14 +630,20 @@ int check_account(char *accname, char *c_name) {
 
 		id = lookup_player_id(c_name);
 		ptr = lookup_player(id);
+		/* Is the character either new, or is its ID belonging
+		   to the same account as our account (ie it's us)? */
 		if (!ptr || ptr->account == a_id) {
-			for(i = 1; i <= NumPlayers; i++) {
+			/* Cannot create another character while being logged on, if not ACC_MULTI.
+			   Allow to login with the same name to 'resume connection' though. */
+			for (i = 1; i <= NumPlayers; i++) {
 				if (Players[i]->account == a_id && !(flags & ACC_MULTI) && strcmp(c_name, Players[i]->name))
 					return(-2);
 			}
 			return(success);
 		}
 	}
+	/* "Name already in use by another player" (coming from 'else' branch above),
+	   ie character isn't new and it belongs to a different account than ours. */
 	return(0);
 }
 
