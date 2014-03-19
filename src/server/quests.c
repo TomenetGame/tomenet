@@ -28,7 +28,7 @@
 #include "angband.h"
 
 
-/* set log level (0 to disable, 1 for normal logging, 2 for debug logging) */
+/* set log level (0 to disable, 1 for normal logging, 2 for debug logging, 3 for very verbose debug logging) */
 #define QDEBUG 2
 
 /* Disable a quest on error? */
@@ -160,9 +160,11 @@ void quest_activate(int q_idx) {
 
 
 #if QDEBUG > 0
+ #if QDEBUG > 1
 	for (i = 1;i <= NumPlayers; i++)
 		if (is_admin(Players[i]))
 			msg_format(i, "Quest '%s' (%d, '%s') activated.", q_name + q_ptr->name, q_idx, q_ptr->codename);
+ #endif
 	s_printf("%s QUEST_ACTIVATE: '%s' ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
 #endif
 	q_ptr->active = TRUE;
@@ -171,9 +173,9 @@ void quest_activate(int q_idx) {
 
 	/* check 'L:' info for starting location -
 	   for now only support 1 starting location, ie use the first one that gets tested to be eligible */
-#if QDEBUG > 1
-s_printf("QIDX %d. SWPOS,XY: %d,%d,%d - %d,%d\n", q_idx, q_ptr->start_wpos.wx, q_ptr->start_wpos.wy, q_ptr->start_wpos.wz, q_ptr->start_x, q_ptr->start_y);
-s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
+#if QDEBUG > 2
+	s_printf("QIDX %d. SWPOS,XY: %d,%d,%d - %d,%d\n", q_idx, q_ptr->start_wpos.wx, q_ptr->start_wpos.wy, q_ptr->start_wpos.wz, q_ptr->start_x, q_ptr->start_y);
+	s_printf("SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
 #endif
 	if (q_ptr->start_wpos.wx != -1) {
 		/* exact questor starting wpos  */
@@ -543,10 +545,10 @@ static void quest_terminate(int pInd, int q_idx) {
 
 	/* give players credit */
 	if (pInd && q_ptr->individual) {
-#if QDEBUG > 0
-		s_printf("%s QUEST_TERMINATE_INDIVIDUAL: '%s' ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
-#endif
 		p_ptr = Players[pInd];
+#if QDEBUG > 0
+		s_printf("%s QUEST_TERMINATE_INDIVIDUAL: %s(%d) completes '%s'(%s)\n", showtime(), p_ptr->name, pInd, q_name + q_ptr->name, q_ptr->codename);
+#endif
 
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 			if (p_ptr->quest_idx[j] == q_idx) break;
@@ -568,7 +570,7 @@ static void quest_terminate(int pInd, int q_idx) {
 	}
 
 #if QDEBUG > 0
-	s_printf("%s QUEST_TERMINATE_GLOBAL: '%s' ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, q_ptr->codename, q_ptr->creator);
+	s_printf("%s QUEST_TERMINATE_GLOBAL: '%s'(%s) completed by", showtime(), q_name + q_ptr->name, q_ptr->codename);
 #endif
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
@@ -577,6 +579,9 @@ static void quest_terminate(int pInd, int q_idx) {
 			if (p_ptr->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
+#if QDEBUG > 0
+		s_printf(" %s(%d)", q_name + q_ptr->name, q_ptr->codename);
+#endif
 		if (p_ptr->quest_done[q_idx] < 10000) p_ptr->quest_done[q_idx]++;
 
 		/* he is no longer on the quest, since the quest has finished */
@@ -584,6 +589,9 @@ static void quest_terminate(int pInd, int q_idx) {
 		msg_format(i, "\374\377uYou have completed the quest \"\377U%s\377u\".", q_name + q_ptr->name);
 		//msg_print(i, "\374 ");
 	}
+#if QDEBUG > 0
+	s_printf(".\n");
+#endif
 
 	/* don't respawn the questor *immediately* again, looks silyl */
 	if (q_ptr->cooldown == -1) q_ptr->cur_cooldown = QI_COOLDOWN_DEFAULT;
@@ -862,12 +870,12 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 
 	/* auto-spawn (and acquire) new quest? */
 	if (q_ptr->activate_quest[stage] != -1 && !q_info[q_ptr->activate_quest[stage]].disabled) {
-		quest_activate(q_ptr->activate_quest[stage]);
 #if QDEBUG > 0
-			s_printf("%s QUEST_ACTIVATE_AUTO: '%s' ('%s' by '%s')\n",
-			    showtime(), q_name + q_info[q_ptr->activate_quest[stage]].name,
-			    q_info[q_ptr->activate_quest[stage]].codename, q_info[q_ptr->activate_quest[stage]].creator);
+		s_printf("%s QUEST_ACTIVATE_AUTO: '%s'(%s)\n",
+		    showtime(), q_name + q_info[q_ptr->activate_quest[stage]].name,
+		    q_info[q_ptr->activate_quest[stage]].codename);
 #endif
+		quest_activate(q_ptr->activate_quest[stage]);
 		if (q_ptr->auto_accept[stage])
 			quest_acquire_confirmed(pInd, q_ptr->activate_quest[stage], q_ptr->auto_accept_quiet[stage]);
 	}
@@ -878,9 +886,8 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 		if (//!q_ptr->timed_stage_ingame[stage] &&
 		    !q_ptr->timed_stage_ingame_abs[stage] && !q_ptr->timed_stage_real[stage]) {
 #if QDEBUG > 0
-			s_printf("%s QUEST_STAGE_AUTO: '%s' %d->%d ('%s' by '%s')\n",
-			    showtime(), q_name + q_ptr->name, quest_get_stage(pInd, q_idx),
-			    q_ptr->change_stage[stage], q_ptr->codename, q_ptr->creator);
+			s_printf("%s QUEST_STAGE_AUTO: '%s'(%s) %d->%d\n",
+			    showtime(), q_name + q_ptr->name, q_ptr->codename, quest_get_stage(pInd, q_idx), q_ptr->change_stage[stage]);
 #endif
 			quest_set_stage(pInd, q_idx, q_ptr->change_stage[stage], q_ptr->quiet_change_stage[stage]);
 			/* don't imprint/play dialogue of this stage anymore, it's gone~ */
@@ -913,7 +920,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	bool anything;
 
 #if QDEBUG > 0
-	s_printf("%s QUEST_STAGE: '%s' %d->%d ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, quest_get_stage(pInd, q_idx), stage, q_ptr->codename, q_ptr->creator);
+	s_printf("%s QUEST_STAGE: '%s'(%s) %d->%d\n", showtime(), q_name + q_ptr->name, q_ptr->codename, quest_get_stage(pInd, q_idx), stage);
 #endif
 
 	/* dynamic info */
@@ -1018,7 +1025,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	/* quest termination? */
 	if (q_ptr->ending_stage && q_ptr->ending_stage == stage) {
 #if QDEBUG > 0
-		s_printf("%s QUEST_STAGE_ENDING: '%s' %d ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, stage, q_ptr->codename, q_ptr->creator);
+		s_printf("%s QUEST_STAGE_ENDING: '%s'(%s) %d\n", showtime(), q_name + q_ptr->name, q_ptr->codename, stage);
 #endif
 		quest_terminate(pInd, q_idx);
 	}
@@ -1056,7 +1063,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	/* really nothing left to do? */
 	if (!anything) {
 #if QDEBUG > 0
-		s_printf("%s QUEST_STAGE_EMPTY: '%s' %d ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, stage, q_ptr->codename, q_ptr->creator);
+		s_printf("%s QUEST_STAGE_EMPTY: '%s'(%s) %d\n", showtime(), q_name + q_ptr->name, q_ptr->codename, stage);
 #endif
 		quest_terminate(pInd, q_idx);
 	}
@@ -1131,7 +1138,8 @@ void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
 	p_ptr->quest_idx[i] = q_idx;
 	strcpy(p_ptr->quest_codename[i], q_ptr->codename);
 #if QDEBUG > 1
-s_printf("%s QUEST_ACQUIRED: (%d,%d,%d;%d,%d) %s (%d) has quest %d '%s'.\n", showtime(), p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, p_ptr->px, p_ptr->py, p_ptr->name, Ind, q_idx, q_ptr->codename);
+	s_printf("%s QUEST_ACQUIRED: (%d,%d,%d;%d,%d) %s (%d) has quest %d:'%s'(%s).\n",
+	    showtime(), p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, p_ptr->px, p_ptr->py, p_ptr->name, Ind, q_idx, q_name + q_ptr->name, q_ptr->codename);
 #endif
 
 	/* for 'individual' quests, reset temporary quest data or it might get carried over from previous quest */
@@ -1274,7 +1282,8 @@ static bool quest_acquire(int Ind, int q_idx, bool quiet) {
 
 	/* voila, player may acquire this quest! */
 #if QDEBUG > 1
-s_printf("%s QUEST_MAY_ACQUIRE: (%d,%d,%d;%d,%d) %s (%d) may acquire quest %d '%s'.\n", showtime(), p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, p_ptr->px, p_ptr->py, p_ptr->name, Ind, q_idx, q_ptr->codename);
+	s_printf("%s QUEST_MAY_ACQUIRE: (%d,%d,%d;%d,%d) %s (%d) may acquire quest %d:'%s'(%s).\n",
+	    showtime(), p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, p_ptr->px, p_ptr->py, p_ptr->name, Ind, q_idx, q_name + q_ptr->name, q_ptr->codename);
 #endif
 	return TRUE;
 }
@@ -2150,7 +2159,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 		if (i == QI_REWARD_GOALS) {
 			/* create and hand over this reward! */
 #if QDEBUG > 0
-			s_printf("%s QUEST_GOAL_CHECK_REWARD: Rewarded in '%s' %d ('%s' by '%s')\n", showtime(), q_name + q_ptr->name, stage, q_ptr->codename, q_ptr->creator);
+			s_printf("%s QUEST_GOAL_CHECK_REWARD: Rewarded in stage %d of '%s'(%s)\n", showtime(), q_name + q_ptr->name, stage, q_name + q_ptr->name, q_ptr->codename);
 #endif
 
 			/* specific reward */
