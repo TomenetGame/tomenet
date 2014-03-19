@@ -6751,7 +6751,6 @@ void grid_affects_player(int Ind) {
 	cave_type **zcave;
 	cave_type *c_ptr;
 	bool inn = FALSE;
-	int i;
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -6782,8 +6781,7 @@ void grid_affects_player(int Ind) {
 	}
 
 	/* quests - check if he has arrived at a designated exact x,y target location */
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
-		if (p_ptr->quest_deliver_xy[i]) quest_check_goal_deliver_xy(Ind, i);
+	if (p_ptr->quest_any_deliver_xy_within_target) quest_check_goal_deliver(Ind);
 }
 
 /* Items that can be shared even between incompatible character modes or if level 0! */

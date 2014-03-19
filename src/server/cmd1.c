@@ -2343,7 +2343,7 @@ void carry(int Ind, int pickup, int confirm) {
 				}
 
 				/* Check whether this item was requested by an item-retrieval quest */
-				quest_check_goal_kr(Ind, NULL, o_ptr);
+				if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
 
 				/* Carry the item */
 				slot = inven_carry(Ind, o_ptr);

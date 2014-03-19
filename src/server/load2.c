@@ -2671,6 +2671,18 @@ static errr rd_savefile_new_aux(int Ind) {
 	rd_u16b(&p_ptr->xorder_id);
         rd_s16b(&p_ptr->xorder_num);
 
+
+	/* read personal quest data */
+#if 0//4.5.26
+	rd_byte((byte *) p_ptr->quest_any_k);
+	rd_byte((byte *) p_ptr->quest_any_k_target);
+	rd_byte((byte *) p_ptr->quest_any_k_within_target);
+	rd_byte((byte *) p_ptr->quest_any_r);
+	rd_byte((byte *) p_ptr->quest_any_r_target);
+	rd_byte((byte *) p_ptr->quest_any_r_within_target);
+	rd_byte((byte *) p_ptr->quest_any_deliver_xy);
+	rd_byte((byte *) p_ptr->quest_any_deliver_xy_within_target);
+#endif
 	if (!older_than(4, 5, 19)) {
 		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 			rd_s16b(&p_ptr->quest_idx[i]);
@@ -2699,14 +2711,25 @@ static errr rd_savefile_new_aux(int Ind) {
 					rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
 			}
 
+#if 0
 			rd_byte((byte *) &p_ptr->quest_target_pos[i]);
 			rd_byte((byte *) &p_ptr->quest_within_target_wpos[i]);
 			rd_byte((byte *) &p_ptr->quest_target_xy[i]);
+#else//4.5.26
+			rd_byte((byte *) &p_ptr->quest_kill[i]);
+			rd_byte((byte *) &p_ptr->quest_retrieve[i]);
+			strip_bytes(1);
+#endif
 
 			rd_byte((byte *) &p_ptr->quest_deliver_pos[i]);
+#if 0
 			rd_byte((byte *) &p_ptr->quest_within_deliver_wpos[i]);
+#else//4.5.26
+			strip_bytes(1);
+#endif
 			rd_byte((byte *) &p_ptr->quest_deliver_xy[i]);
 
+#if 0
 			rd_byte((byte *) &p_ptr->quest_targetopt_pos[i]);
 			rd_byte((byte *) &p_ptr->quest_within_targetopt_wpos[i]);
 			rd_byte((byte *) &p_ptr->quest_targetopt_xy[i]);
@@ -2714,6 +2737,9 @@ static errr rd_savefile_new_aux(int Ind) {
 			rd_byte((byte *) &p_ptr->quest_deliveropt_pos[i]);
 			rd_byte((byte *) &p_ptr->quest_within_deliveropt_wpos[i]);
 			rd_byte((byte *) &p_ptr->quest_deliveropt_xy[i]);
+#else//4.5.26
+			strip_bytes(6);
+#endif
 
 			if (!older_than(4, 5, 25))
 				rd_u16b(&p_ptr->quest_flags[i]);
@@ -2735,6 +2761,7 @@ static errr rd_savefile_new_aux(int Ind) {
 			p_ptr->quest_idx[i] = -1;
 			p_ptr->quest_codename[i][0] = 0;
 		}
+
 
         if (!older_than(4, 0, 1)) {
                 rd_byte(&p_ptr->spell_project);

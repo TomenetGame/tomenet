@@ -7926,7 +7926,7 @@ void inven_item_increase(int Ind, int item, int num) {
 	}
 
 	/* If losing quest items, the quest goal might get unset again! */
-	if (num < 0) quest_check_ungoal_r(Ind, o_ptr, -num);
+	if ((p_ptr->quest_any_r || p_ptr->quest_any_r_target) && num < 0) quest_check_ungoal_r(Ind, o_ptr, -num);
 }
 
 

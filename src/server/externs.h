@@ -2150,8 +2150,9 @@ extern void quest_interact(int Ind, int q_idx, int questor_idx);
 extern void quest_acquire_confirmed(int Ind, int q_idx, bool quiet);
 extern void quest_reply(int Ind, int q_idx, char *str);
 extern void quest_check_player_location(int Ind);
-extern void quest_check_goal_deliver_xy(int Ind, int py_q_idx);
-extern void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr);
+extern void quest_check_goal_deliver(int Ind);
+extern void quest_check_goal_k(int Ind, monster_type *m_ptr);
+extern void quest_check_goal_r(int Ind, object_type *o_ptr);
 extern void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num);
 
 

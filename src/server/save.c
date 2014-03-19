@@ -1344,6 +1344,18 @@ static bool wr_savefile_new(int Ind) {
 	wr_s16b(p_ptr->xorder_id);
 	wr_s16b(p_ptr->xorder_num);
 
+
+	/* Quest information */
+#if 0//4.5.26
+	wr_byte(p_ptr->quest_any_kill);
+	wr_byte(p_ptr->quest_any_kill_target);
+	wr_byte(p_ptr->quest_any_kill_within_target);
+	wr_byte(p_ptr->quest_any_retrieve);
+	wr_byte(p_ptr->quest_any_retrieve_target);
+	wr_byte(p_ptr->quest_any_retrieve_within_target);
+	wr_byte(p_ptr->quest_any_deliver_xy);
+	wr_byte(p_ptr->quest_any_deliver_xy_within_target);
+#endif
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		wr_s16b(p_ptr->quest_idx[i]);
 		wr_string(p_ptr->quest_codename[i]);
@@ -1360,14 +1372,25 @@ static bool wr_savefile_new(int Ind) {
 		}
 
 		/* helper info */
+#if 0//4.5.26
 		wr_byte(p_ptr->quest_target_pos[i]);
 		wr_byte(p_ptr->quest_within_target_wpos[i]);
 		wr_byte(p_ptr->quest_target_xy[i]);
+#else
+		wr_byte(p_ptr->quest_kill[i]);
+		wr_byte(p_ptr->quest_retrieve[i]);
+		wr_byte(0);
+#endif
 
 		wr_byte(p_ptr->quest_deliver_pos[i]);
+#if 0
 		wr_byte(p_ptr->quest_within_deliver_wpos[i]);
+#else//4.5.26
+		wr_byte(0);
+#endif
 		wr_byte(p_ptr->quest_deliver_xy[i]);
 
+#if 0//4.5.26
 		wr_byte(p_ptr->quest_targetopt_pos[i]);
 		wr_byte(p_ptr->quest_within_targetopt_wpos[i]);
 		wr_byte(p_ptr->quest_targetopt_xy[i]);
@@ -1375,6 +1398,10 @@ static bool wr_savefile_new(int Ind) {
 		wr_byte(p_ptr->quest_deliveropt_pos[i]);
 		wr_byte(p_ptr->quest_within_deliveropt_wpos[i]);
 		wr_byte(p_ptr->quest_deliveropt_xy[i]);
+#else
+		wr_byte(0);wr_byte(0);wr_byte(0);
+		wr_byte(0);wr_byte(0);wr_byte(0);
+#endif
 
 		/* 'individual' quest type information */
 		wr_u16b(p_ptr->quest_flags[i]);
@@ -1385,6 +1412,7 @@ static bool wr_savefile_new(int Ind) {
 		wr_s16b(p_ptr->quest_done[i]);
 		wr_s16b(p_ptr->quest_cooldown[i]);
 	}
+
 
         wr_byte(p_ptr->spell_project);
 

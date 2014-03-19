@@ -2738,18 +2738,12 @@ struct player_type {
 	s16b quest_cooldown[MAX_Q_IDX]; /* player has to wait n minutes till picking up the quest again */
 	/* for 'individual' quests: */
 	/* quest helper info */
-	bool quest_target_pos[MAX_CONCURRENT_QUESTS];
-	bool quest_within_target_wpos[MAX_CONCURRENT_QUESTS];
-	bool quest_target_xy[MAX_CONCURRENT_QUESTS];
-	bool quest_targetopt_pos[MAX_CONCURRENT_QUESTS];
-	bool quest_within_targetopt_wpos[MAX_CONCURRENT_QUESTS];
-	bool quest_targetopt_xy[MAX_CONCURRENT_QUESTS];
-	bool quest_deliver_pos[MAX_CONCURRENT_QUESTS];
-	bool quest_within_deliver_wpos[MAX_CONCURRENT_QUESTS];
-	bool quest_deliver_xy[MAX_CONCURRENT_QUESTS];
-	bool quest_deliveropt_pos[MAX_CONCURRENT_QUESTS];
-	bool quest_within_deliveropt_wpos[MAX_CONCURRENT_QUESTS];
-	bool quest_deliveropt_xy[MAX_CONCURRENT_QUESTS];
+	bool quest_any_k, quest_any_k_target, quest_any_k_within_target; /* just roughly remember in general whether ANY of our quests needs killing/retrieving (and maybe only in a particular location) */
+	bool quest_any_r, quest_any_r_target, quest_any_r_within_target; /* just roughly remember in general whether ANY of our quests needs killing/retrieving (and maybe only in a particular location) */
+	bool quest_any_deliver_xy, quest_any_deliver_xy_within_target;
+	bool quest_kill[MAX_CONCURRENT_QUESTS];
+	bool quest_retrieve[MAX_CONCURRENT_QUESTS];
+	bool quest_deliver_pos[MAX_CONCURRENT_QUESTS], quest_deliver_xy[MAX_CONCURRENT_QUESTS];
 
 #ifdef ENABLE_MAIA
 	int voidx; int voidy; //for the void jumpgate creation spell; reset on every recall/levelchange/relogins

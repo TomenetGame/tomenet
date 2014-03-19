@@ -59,8 +59,8 @@
 
 static void quest_goal_check_reward(int pInd, int q_idx);
 static bool quest_goal_check(int pInd, int q_idx, bool interacting);
-static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx);
 static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire);
+static void quest_imprint_tracking_information(int Ind, int py_q_idx);
 
 
 /* error messages for quest_acquire() */
@@ -554,6 +554,38 @@ void quest_set_cooldown(int pInd, int q_idx, s16b cooldown) {
 	else q_ptr->cur_cooldown = cooldown;
 }
 
+/* Erase all temporary quest data of the player. */
+static void quest_initialise_player_tracking(int Ind, int py_q_idx) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+	/* initialise the global info by deriving it from the other
+	   concurrent quests we have _except_ for py_q_idx.. oO */
+	p_ptr->quest_any_k = FALSE;
+	p_ptr->quest_any_k_target = FALSE;
+	p_ptr->quest_any_k_within_target = FALSE;
+
+	p_ptr->quest_any_r = FALSE;
+	p_ptr->quest_any_r_target = FALSE;
+	p_ptr->quest_any_r_within_target = FALSE;
+
+	p_ptr->quest_any_deliver_xy = FALSE;
+	p_ptr->quest_any_deliver_xy_within_target = FALSE;
+
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+		if (i == py_q_idx) continue;
+		/* expensive mechanism, sort of */
+		quest_imprint_tracking_information(Ind, i);
+	}
+
+	/* clear direct data */
+	p_ptr->quest_kill[py_q_idx] = FALSE;
+	p_ptr->quest_retrieve[py_q_idx] = FALSE;
+
+	p_ptr->quest_deliver_pos[py_q_idx] = FALSE;
+	p_ptr->quest_deliver_xy[py_q_idx] = FALSE;
+}
+
 /* a quest has successfully ended, clean up */
 static void quest_terminate(int pInd, int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -585,19 +617,7 @@ static void quest_terminate(int pInd, int q_idx) {
 		/* individual quests don't get cleaned up (aka completely reset)
 		   by deactivation, except for this temporary tracking data,
 		   or it would continue spamming quest checks eg on delivery_xy locs. */
-		p_ptr->quest_target_pos[j] = FALSE;
-		p_ptr->quest_within_target_wpos[j] = FALSE;
-		p_ptr->quest_target_xy[j] = FALSE;
-		p_ptr->quest_targetopt_pos[j] = FALSE;
-		p_ptr->quest_within_targetopt_wpos[j] = FALSE;
-		p_ptr->quest_targetopt_xy[j] = FALSE;
-		p_ptr->quest_deliver_pos[j] = FALSE;
-		p_ptr->quest_within_deliver_wpos[j] = FALSE;
-		p_ptr->quest_deliver_xy[j] = FALSE;
-		p_ptr->quest_deliveropt_pos[j] = FALSE;
-		p_ptr->quest_within_deliveropt_wpos[j] = FALSE;
-		p_ptr->quest_deliveropt_xy[j] = FALSE;
-
+		quest_initialise_player_tracking(pInd, j);
 		return;
 	}
 
@@ -623,18 +643,7 @@ static void quest_terminate(int pInd, int q_idx) {
 
 		/* clean up temporary tracking data,
 		   or it would continue spamming quest checks eg on delivery_xy locs. */
-		p_ptr->quest_target_pos[j] = FALSE;
-		p_ptr->quest_within_target_wpos[j] = FALSE;
-		p_ptr->quest_target_xy[j] = FALSE;
-		p_ptr->quest_targetopt_pos[j] = FALSE;
-		p_ptr->quest_within_targetopt_wpos[j] = FALSE;
-		p_ptr->quest_targetopt_xy[j] = FALSE;
-		p_ptr->quest_deliver_pos[j] = FALSE;
-		p_ptr->quest_within_deliver_wpos[j] = FALSE;
-		p_ptr->quest_deliver_xy[j] = FALSE;
-		p_ptr->quest_deliveropt_pos[j] = FALSE;
-		p_ptr->quest_within_deliveropt_wpos[j] = FALSE;
-		p_ptr->quest_deliveropt_xy[j] = FALSE;
+		quest_initialise_player_tracking(i, j);
 	}
 #if QDEBUG > 0
 	s_printf(".\n");
@@ -974,6 +983,102 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 
 	return FALSE;
 }
+static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
+	player_type *p_ptr = Players[Ind];
+	quest_info *q_ptr = &q_info[p_ptr->quest_idx[py_q_idx]];
+	int i, stage = quest_get_stage(Ind, p_ptr->quest_idx[py_q_idx]);
+
+	/* now set goal-dependant (temporary) quest info again */
+	for (i = 0; i < QI_GOALS; i++) {
+		/* set deliver location helper info */
+		if (q_ptr->deliver_pos[stage][i]) {
+			p_ptr->quest_deliver_pos[py_q_idx] = TRUE;
+			/* note: deliver has no 'basic wpos check', since the whole essence of
+			   "delivering" is to actually move somewhere. */
+			/* finer check? */
+			if (q_ptr->deliver_pos_x[stage][i] != -1) p_ptr->quest_any_deliver_xy = TRUE;
+		}
+
+		/* set kill/retrieve tracking counter if we have such goals in this stage */
+		if (q_ptr->kill[stage][i]) {
+			p_ptr->quest_kill_number[py_q_idx][i] = q_ptr->kill_number[stage][i];
+			/* set target location helper info */
+			p_ptr->quest_kill[py_q_idx] = TRUE;
+			/* assume it's a restricted target "at least" */
+			p_ptr->quest_any_k_target = TRUE;
+			/* if it's not a restricted target, it's active everywhere */
+			if (!q_ptr->target_pos[stage][i]) p_ptr->quest_any_k = TRUE;
+		}
+		if (q_ptr->retrieve[stage][i]) {
+			p_ptr->quest_retrieve_number[py_q_idx][i] = q_ptr->retrieve_number[stage][i];
+			/* set target location helper info */
+			p_ptr->quest_retrieve[py_q_idx] = TRUE;
+			/* assume it's a restricted target "at least" */
+			p_ptr->quest_any_r_target = TRUE;
+			/* if it's not a restricted target, it's active everywhere */
+			if (!q_ptr->target_pos[stage][i]) p_ptr->quest_any_r = TRUE;
+		}
+	}
+	for (i = 0; i < QI_OPTIONAL; i++) {
+		/* set deliver location helper info */
+		if (q_ptr->deliveropt_pos[stage][i]) {
+			p_ptr->quest_deliver_pos[py_q_idx] = TRUE;
+			/* finer check? */
+			if (q_ptr->deliveropt_pos_x[stage][i] != -1) p_ptr->quest_any_deliver_xy = TRUE;
+		}
+
+		/* set kill/retrieve tracking counter if we have such goals in this stage */
+		if (q_ptr->killopt[stage][i]) {
+			p_ptr->quest_killopt_number[py_q_idx][i] = q_ptr->killopt_number[stage][i];
+			/* set target location helper info */
+			p_ptr->quest_kill[py_q_idx] = TRUE;
+			/* assume it's a restricted target "at least" */
+			p_ptr->quest_any_k_target = TRUE;
+			/* if it's not a restricted target, it's active everywhere */
+			if (!q_ptr->targetopt_pos[stage][i]) p_ptr->quest_any_k = TRUE;
+		}
+		if (q_ptr->retrieveopt[stage][i]) {
+			p_ptr->quest_retrieveopt_number[py_q_idx][i] = q_ptr->retrieveopt_number[stage][i];
+			/* set target location helper info */
+			p_ptr->quest_retrieve[py_q_idx] = TRUE;
+			/* assume it's a restricted target "at least" */
+			p_ptr->quest_any_r_target = TRUE;
+			/* if it's not a restricted target, it's active everywhere */
+			if (!q_ptr->targetopt_pos[stage][i]) p_ptr->quest_any_r = TRUE;
+		}
+	}
+}
+/* Store some information of the current stage in the p_ptr array,
+   eg the target location for easier lookup. In theory we could make it work
+   without this function, but then we'd for example have to check on EVERY
+   step the player makes if he's doing any quest that has a target area and
+   is there etc... */
+/* TODO: currently only supports 1 target/delivery location, ie the one for the very first GOAL of that quest stage!
+   this sucks, it's too complicated^^ what should probably be done is:
+   only remember a p_ptr->bool_target_pos[max_conc], and then check on every wpos change.
+   if positive check, imprint this on a p_ptr->bool_within_target_wpos[max_conc], and
+   set p_ptr->bool_target_xypos[max_conc] if required.
+   Then on every subsequent move/kill/itempickup we can check in detail. --OK, made it this way */
+static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr = Players[Ind];
+	int stage;
+
+	/* for 'individual' quests: imprint the individual stage for a player.
+	   the globally set q_ptr->stage is in this case just a temporary value,
+	   set by quest_set_stage() for us, that won't be of any further consequence. */
+	stage = q_ptr->stage;
+	if (q_ptr->individual) p_ptr->quest_stage[py_q_idx] = stage;
+
+
+	/* find out if we are pursuing any sort of target locations */
+
+	/* first, initialise all temporary info */
+	quest_initialise_player_tracking(Ind, py_q_idx);
+
+	/* now set/add our new stage's info */
+	quest_imprint_tracking_information(Ind, py_q_idx);
+}
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -1130,65 +1235,6 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	}
 }
 
-/* Store some information of the current stage in the p_ptr array,
-   eg the target location for easier lookup. In theory we could make it work
-   without this function, but then we'd for example have to check on EVERY
-   step the player makes if he's doing any quest that has a target area and
-   is there etc... */
-/* TODO: currently only supports 1 target/delivery location, ie the one for the very first GOAL of that quest stage!
-   this sucks, it's too complicated^^ what should probably be done is:
-   only remember a p_ptr->bool_target_pos[max_conc], and then check on every wpos change.
-   if positive check, imprint this on a p_ptr->bool_within_target_wpos[max_conc], and
-   set p_ptr->bool_target_xypos[max_conc] if required.
-   Then on every subsequent move/kill/itempickup we can check in detail. --OK, made it this way */
-static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
-	quest_info *q_ptr = &q_info[q_idx];
-	player_type *p_ptr = Players[Ind];
-	int i, stage;
-
-	/* for 'individual' quests: imprint the individual stage for a player.
-	   the globally set q_ptr->stage is in this case just a temporary value,
-	   set by quest_set_stage() for us, that won't be of any further consequence. */
-	stage = q_ptr->stage;
-	if (q_ptr->individual) p_ptr->quest_stage[py_q_idx] = stage;
-
-
-	/* find out if we are pursuing any sort of target locations */
-	p_ptr->quest_target_pos[py_q_idx] = FALSE;
-	p_ptr->quest_within_target_wpos[py_q_idx] = FALSE;
-	p_ptr->quest_target_xy[py_q_idx] = FALSE;
-	p_ptr->quest_targetopt_pos[py_q_idx] = FALSE;
-	p_ptr->quest_within_targetopt_wpos[py_q_idx] = FALSE;
-	p_ptr->quest_targetopt_xy[py_q_idx] = FALSE;
-	p_ptr->quest_deliver_pos[py_q_idx] = FALSE;
-	p_ptr->quest_within_deliver_wpos[py_q_idx] = FALSE;
-	p_ptr->quest_deliver_xy[py_q_idx] = FALSE;
-	p_ptr->quest_deliveropt_pos[py_q_idx] = FALSE;
-	p_ptr->quest_within_deliveropt_wpos[py_q_idx] = FALSE;
-	p_ptr->quest_deliveropt_xy[py_q_idx] = FALSE;
-
-
-	/* set goal-dependant (temporary) quest info */
-	for (i = 0; i < QI_GOALS; i++) {
-		/* set target/deliver location helper info */
-		if (q_ptr->target_pos[stage][i]) p_ptr->quest_target_pos[py_q_idx] = TRUE;
-		if (q_ptr->deliver_pos[stage][i]) p_ptr->quest_deliver_pos[py_q_idx] = TRUE;
-
-		/* set kill/retrieve tracking counter if we have such goals in this stage */
-		if (q_ptr->kill[stage][i]) p_ptr->quest_kill_number[py_q_idx][i] = q_ptr->kill_number[stage][i];
-		if (q_ptr->retrieve[stage][i]) p_ptr->quest_retrieve_number[py_q_idx][i] = q_ptr->retrieve_number[stage][i];
-	}
-	for (i = 0; i < QI_OPTIONAL; i++) {
-		/* set target/deliver location helper info */
-		if (q_ptr->targetopt_pos[stage][i]) p_ptr->quest_targetopt_pos[py_q_idx] = TRUE;
-		if (q_ptr->deliveropt_pos[stage][i]) p_ptr->quest_deliveropt_pos[py_q_idx] = TRUE;
-
-		/* set kill/retrieve tracking counter if we have such goals in this stage */
-		if (q_ptr->killopt[stage][i]) p_ptr->quest_killopt_number[py_q_idx][i] = q_ptr->killopt_number[stage][i];
-		if (q_ptr->retrieveopt[stage][i]) p_ptr->quest_retrieveopt_number[py_q_idx][i] = q_ptr->retrieveopt_number[stage][i];
-	}
-}
-
 void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
@@ -1220,18 +1266,7 @@ void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
 	for (j = 0; j < QI_OPTIONAL; j++) p_ptr->quest_goalsopt[i][j] = FALSE;
 
 	/* reset temporary quest helper info */
-	p_ptr->quest_target_pos[i] = FALSE;
-	p_ptr->quest_within_target_wpos[i] = FALSE;
-	p_ptr->quest_target_xy[i] = FALSE;
-	p_ptr->quest_targetopt_pos[i] = FALSE;
-	p_ptr->quest_within_targetopt_wpos[i] = FALSE;
-	p_ptr->quest_targetopt_xy[i] = FALSE;
-	p_ptr->quest_deliver_pos[i] = FALSE;
-	p_ptr->quest_within_deliver_wpos[i] = FALSE;
-	p_ptr->quest_deliver_xy[i] = FALSE;
-	p_ptr->quest_deliveropt_pos[i] = FALSE;
-	p_ptr->quest_within_deliveropt_wpos[i] = FALSE;
-	p_ptr->quest_deliveropt_xy[i] = FALSE;
+	quest_initialise_player_tracking(Ind, i);
 
 	/* let him know about just acquiring the quest? */
 	if (!quiet) {
@@ -1701,150 +1736,161 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 
 /* Check if player completed a kill or item-retrieve goal.
    The monster slain or item retrieved must therefore be given to this function for examination.
-   NOTE/TODO: These checks here actually make p_ptr->quest_target_wpos.. helper information obsolete..
-   Note: The mechanics for retrieving quest items at a specific target position are a bit trick:
+   Note: The mechanics for retrieving quest items at a specific target position are a bit tricky:
          If n items have to be retrieved, each one has to be a different item that gets picked at
          the target pos. When an item is lost from the player's inventory again however, it mayb be
          retrieved anywhere, ignoring the target location specification. This requires the quest
          items to be marked when they get picked up at the target location, to free those marked
          ones from same target loc restrictions for re-pickup. */
-void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
-	quest_info *q_ptr;
+static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *m_ptr, object_type *o_ptr) {
+	quest_info *q_ptr = &q_info[q_idx];;
 	player_type *p_ptr = Players[Ind];
-	int i, j, k, q_idx, stage;
+	int j, k, stage;
 	bool nisi;
 
-	/* paranoia -- neither a kill has been made nor an item picked up */
-	if (!m_ptr && !o_ptr) return;
-#if QDEBUG > 3
-	s_printf("QUEST_CHECK_GOAL_kr: by %d,%s\n", Ind, p_ptr->name);
-#endif
+	/* quest is deactivated? */
+	if (!q_ptr->active) return;
 
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
-		/* player actually pursuing a quest? */
-		if (p_ptr->quest_idx[i] == -1) continue;
+	stage = quest_get_stage(Ind, q_idx);
 
-#if 0 /* these are for deliver-goals, not kr */
-/* TODO!!: therefore actually p_ptr->quest_target... are obsolete :o */
-		if (!p_ptr->quest_target_pos[i]) continue;//redundant with quest_within_target_pos?
-		if (!p_ptr->quest_within_target_wpos[i]) continue;
-#endif
-
-		q_idx = p_ptr->quest_idx[i];
-		q_ptr = &q_info[q_idx];
-
-		/* quest is deactivated? */
-		if (!q_ptr->active) continue;
-
-		stage = quest_get_stage(Ind, q_idx);
-
-		/* For handling Z-lines: flags changed depending on goals completed:
-		   pre-check if we have any pending deliver goal in this stage.
-		   If so then we can only set the quest goal 'nisi' (provisorily),
-		   and hence flags won't get changed yet until it is eventually resolved
-		   when we turn in the delivery. */
-		nisi = FALSE;
-		for (j = 0; j < QI_GOALS; j++)
-			if (q_ptr->deliver_pos[stage][j]) {
-				nisi = TRUE;
-				break;
-			}
+	/* For handling Z-lines: flags changed depending on goals completed:
+	   pre-check if we have any pending deliver goal in this stage.
+	   If so then we can only set the quest goal 'nisi' (provisorily),
+	   and hence flags won't get changed yet until it is eventually resolved
+	   when we turn in the delivery. */
+	nisi = FALSE;
+	for (j = 0; j < QI_GOALS; j++)
+		if (q_ptr->deliver_pos[stage][j]) {
+			nisi = TRUE;
+			break;
+		}
 
 #if QDEBUG > 2
-		s_printf(" CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
+	s_printf(" CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
 #endif
-		/* check the quest goals, whether any of them wants a target to this location */
-		for (j = 0; j < QI_GOALS; j++) {
-			/* no k/r goal? */
-			if (!q_ptr->kill[stage][j] && !q_ptr->retrieve[stage][j]) continue;
+	/* check the quest goals, whether any of them wants a target to this location */
+	for (j = 0; j < QI_GOALS; j++) {
+		/* no k/r goal? */
+		if (!q_ptr->kill[stage][j] && !q_ptr->retrieve[stage][j]) continue;
 #if QDEBUG > 2
-			s_printf(" FOUND kr GOAL %d (k=%d,r=%d).\n", j, q_ptr->kill[stage][j], q_ptr->retrieve[stage][j]);
+		s_printf(" FOUND kr GOAL %d (k=%d,r=%d).\n", j, q_ptr->kill[stage][j], q_ptr->retrieve[stage][j]);
 #endif
 
-			/* location-restricted?
-			   Exempt already retrieved items that were just lost temporarily on the way! */
-			if (q_ptr->target_pos[stage][j] &&
-			    !(o_ptr->quest == q_idx + 1 && o_ptr->quest_stage == stage)) {
-				/* extend target terrain over a wide patch? */
-				if (q_ptr->target_terrain_patch[stage][j]) {
-					/* different z-coordinate = instant fail */
-					if (p_ptr->wpos.wz != q_ptr->target_wpos[stage][j].wz) continue;
-					/* are we within range and have same terrain type? */
-					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[stage][j].wx,
-					    q_ptr->target_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
-					    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
-					    wild_info[q_ptr->target_wpos[stage][j].wy][q_ptr->target_wpos[stage][j].wx].type)
-						continue;
-				}
-				/* just check a single, specific wpos? */
-				else if (!inarea(&q_ptr->target_wpos[stage][j], &p_ptr->wpos)) continue;
-
-				/* check for exact x,y location? */
-				if (q_ptr->target_pos_x[stage][j] != -1 &&
-				    q_ptr->target_pos_x[stage][j] != p_ptr->px &&
-				    q_ptr->target_pos_y[stage][j] != p_ptr->py)
+		/* location-restricted?
+		   Exempt already retrieved items that were just lost temporarily on the way! */
+		if (q_ptr->target_pos[stage][j] &&
+		    !(o_ptr->quest == q_idx + 1 && o_ptr->quest_stage == stage)) {
+			/* extend target terrain over a wide patch? */
+			if (q_ptr->target_terrain_patch[stage][j]) {
+				/* different z-coordinate = instant fail */
+				if (p_ptr->wpos.wz != q_ptr->target_wpos[stage][j].wz) continue;
+				/* are we within range and have same terrain type? */
+				if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[stage][j].wx,
+				    q_ptr->target_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
+				    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
+				    wild_info[q_ptr->target_wpos[stage][j].wy][q_ptr->target_wpos[stage][j].wx].type)
 					continue;
 			}
-#if QDEBUG > 2
-			s_printf(" PASSED/NO LOCATION CHECK.\n");
-#endif
+			/* just check a single, specific wpos? */
+			else if (!inarea(&q_ptr->target_wpos[stage][j], &p_ptr->wpos)) continue;
 
-			/* check for kill goal here */
-			if (m_ptr && q_ptr->kill[stage][j]) {
-				if (!quest_goal_matches_kill(q_idx, stage, j, m_ptr)) continue;
-				/* decrease the player's kill counter, if we got all, goal is completed! */
-				p_ptr->quest_kill_number[i][j]--;
-				if (p_ptr->quest_kill_number[i][j]) continue; /* not yet */
-
-				/* we have completed a target-to-xy goal! */
-				quest_set_goal(Ind, q_idx, j, nisi);
+			/* check for exact x,y location? */
+			if (q_ptr->target_pos_x[stage][j] != -1 &&
+			    q_ptr->target_pos_x[stage][j] != p_ptr->px &&
+			    q_ptr->target_pos_y[stage][j] != p_ptr->py)
 				continue;
-			}
-
-			/* check for retrieve-item goal here */
-			if (o_ptr && q_ptr->retrieve[stage][j]) {
-				if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
-
-				/* discard old items from another quest or quest stage that just look similar!
-				   Those are 'tainted' and cannot be reused. */
-				if (o_ptr->quest != q_idx + 1 || o_ptr->quest_stage != stage) continue;
-
-				/* mark the item as quest item, so we know we found it at the designated target loc (if any) */
-				o_ptr->quest = q_idx + 1;
-				o_ptr->quest_stage = stage;
-
-				/* decrease the player's retrieve counter, if we got all, goal is completed! */
-				p_ptr->quest_retrieve_number[i][j] -= o_ptr->number;
-				if (p_ptr->quest_retrieve_number[i][j] > 0) continue; /* not yet */
-
-				/* we have completed a target-to-xy goal! */
-				quest_set_goal(Ind, q_idx, j, nisi);
-
-				/* if we don't have to deliver in this stage,
-				   we can just remove all the quest items right away now,
-				   since they've fulfilled their purpose of setting the quest goal. */
-				for (k = 0; k < QI_GOALS; k++)
-					if (q_ptr->deliver_pos[stage][k]) break;
-#if QDEBUG > 2
-				s_printf(" REMOVE RETRIEVED ITEMS.\n");
-#endif
-				if (k == QI_GOALS) {
-					if (q_ptr->individual) {
-						for (k = 0; k < INVEN_PACK; k++) {
-							if (p_ptr->inventory[k].quest == q_idx + 1 &&
-							    p_ptr->inventory[k].quest_stage == stage) {
-								inven_item_increase(Ind, k, -99);
-								//inven_item_describe(Ind, k);
-								inven_item_optimize(Ind, k);
-							}
-						}
-					} else {
-						//TODO (not just here): implement global retrieval quests..
-					}
-				}
-				continue;
-			}
 		}
+#if QDEBUG > 2
+		s_printf(" PASSED/NO LOCATION CHECK.\n");
+#endif
+
+		/* check for kill goal here */
+		if (m_ptr && q_ptr->kill[stage][j]) {
+			if (!quest_goal_matches_kill(q_idx, stage, j, m_ptr)) continue;
+			/* decrease the player's kill counter, if we got all, goal is completed! */
+			p_ptr->quest_kill_number[py_q_idx][j]--;
+			if (p_ptr->quest_kill_number[py_q_idx][j]) continue; /* not yet */
+
+			/* we have completed a target-to-xy goal! */
+			quest_set_goal(Ind, q_idx, j, nisi);
+			continue;
+		}
+
+		/* check for retrieve-item goal here */
+		if (o_ptr && q_ptr->retrieve[stage][j]) {
+			if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
+
+			/* discard old items from another quest or quest stage that just look similar!
+			   Those are 'tainted' and cannot be reused. */
+			if (o_ptr->quest != q_idx + 1 || o_ptr->quest_stage != stage) continue;
+
+			/* mark the item as quest item, so we know we found it at the designated target loc (if any) */
+			o_ptr->quest = q_idx + 1;
+			o_ptr->quest_stage = stage;
+
+			/* decrease the player's retrieve counter, if we got all, goal is completed! */
+			p_ptr->quest_retrieve_number[py_q_idx][j] -= o_ptr->number;
+			if (p_ptr->quest_retrieve_number[py_q_idx][j] > 0) continue; /* not yet */
+
+			/* we have completed a target-to-xy goal! */
+			quest_set_goal(Ind, q_idx, j, nisi);
+
+			/* if we don't have to deliver in this stage,
+			   we can just remove all the quest items right away now,
+			   since they've fulfilled their purpose of setting the quest goal. */
+			for (k = 0; k < QI_GOALS; k++)
+				if (q_ptr->deliver_pos[stage][k]) break;
+#if QDEBUG > 2
+			s_printf(" REMOVE RETRIEVED ITEMS.\n");
+#endif
+			if (k == QI_GOALS) {
+				if (q_ptr->individual) {
+					for (k = 0; k < INVEN_PACK; k++) {
+						if (p_ptr->inventory[k].quest == q_idx + 1 &&
+						    p_ptr->inventory[k].quest_stage == stage) {
+							inven_item_increase(Ind, k, -99);
+							//inven_item_describe(Ind, k);
+							inven_item_optimize(Ind, k);
+						}
+					}
+				} else {
+					//TODO (not just here): implement global retrieval quests..
+				}
+			}
+			continue;
+		}
+	}
+}
+/* Small intermediate function to reduce workload.. (1. for k-goals) */
+void quest_check_goal_k(int Ind, monster_type *m_ptr) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+#if 0
+		/* player actually pursuing a quest? -- paranoia (quest_kill should be FALSE then) */
+		if (p_ptr->quest_idx[i] == -1) continue;
+#endif
+		/* reduce workload */
+		if (!p_ptr->quest_kill[i]) continue;
+
+		quest_check_goal_kr(Ind, p_ptr->quest_idx[i], i, m_ptr, NULL);
+	}
+}
+/* Small intermediate function to reduce workload.. (2. for r-goals) */
+void quest_check_goal_r(int Ind, object_type *o_ptr) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+#if 0
+		/* player actually pursuing a quest? -- paranoia (quest_retrieve should be FALSE then) */
+		if (p_ptr->quest_idx[i] == -1) continue;
+#endif
+		/* reduce workload */
+		if (!p_ptr->quest_retrieve[i]) continue;
+
+		quest_check_goal_kr(Ind, p_ptr->quest_idx[i], i, NULL, o_ptr);
 	}
 }
 /* Check if we have to un-set an item-retrieval quest goal because we lost <num> items!
@@ -1860,11 +1906,12 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 	s_printf("QUEST_CHECK_UNGOAL_r: by %d,%s\n", Ind, p_ptr->name);
 #endif
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
-		/* player actually pursuing a quest? */
+#if 0
+		/* player actually pursuing a quest? -- paranoia (quest_retrieve should be FALSE then) */
 		if (p_ptr->quest_idx[i] == -1) continue;
-
-		if (!p_ptr->quest_target_pos[i]) continue;//redundant with quest_within_target_pos?
-		if (!p_ptr->quest_within_target_wpos[i]) continue;
+#endif
+		/* reduce workload */
+		if (!p_ptr->quest_retrieve[i]) continue;
 
 		q_idx = p_ptr->quest_idx[i];
 		q_ptr = &q_info[q_idx];
@@ -1877,7 +1924,7 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 		s_printf(" CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
 #endif
 
-		/* check the quest goals, whether any of them wants a target to this location */
+		/* check the quest goals, whether any of them wants a retrieval */
 		for (j = 0; j < QI_GOALS; j++) {
 			/* no r goal? */
 			if (!q_ptr->retrieve[stage][j]) continue;
@@ -1899,234 +1946,216 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 	}
 }
 
-/* Check if player completed a deliver goal to a wpos.
-   Actually when we're called then we already know that we're at a fitting wpos
-   for at least one quest. :-p Just have to check for all concurrent quests to
-   make sure we set all their goals too.
-   Hack for now: added 'py_q_idx' to directly specify the player's quest index,
-                 since we already know it. No need to do the same work multiple times.
-                 In the code this is marked by '//++' */
-static void quest_check_goal_deliver_wpos(int Ind, int py_q_idx) {
-	quest_info *q_ptr;
+/* When we're called then we know that this player just arrived at a fitting
+   wpos for a deliver quest. We can now complete the corresponding quest goal accordingly. */
+static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int stage) {
 	player_type *p_ptr = Players[Ind];
-	int i, j, k, q_idx, stage;
+	quest_info *q_ptr = &q_info[q_idx];
+	int j, k;
 
-#if QDEBUG > 3
-	s_printf("QUEST_CHECK_GOAL_DELIVER_WPOS: by %d,%s\n", Ind, p_ptr->name);
-#endif
-//++	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
-	for (i = py_q_idx; i == py_q_idx; i++) {
-		/* player actually pursuing a quest? */
-		if (p_ptr->quest_idx[i] == -1) continue;
-
-		if (!p_ptr->quest_deliver_pos[i]) continue;//redundant with quest_within_deliver_pos?
-		if (!p_ptr->quest_within_deliver_wpos[i]) continue;
-
-		q_idx = p_ptr->quest_idx[i];
-		q_ptr = &q_info[q_idx];
-
-		/* quest is deactivated? */
-		if (!q_ptr->active) continue;
-
-		stage = quest_get_stage(Ind, q_idx);
 #if QDEBUG > 2
-		s_printf(" CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
+	s_printf("QUEST_HANDLE_GOAL_DELIVER_WPOS: by %d,%s - quest (%s,%d) stage %d\n",
+	    Ind, p_ptr->name, q_ptr->codename, q_idx, stage);
 #endif
 
-		/* pre-check if we have completed all kill/retrieve goals of this stage,
-		   because we can only complete any deliver goal if we have fetched all
-		   the stuff (bodies, or kill count rather, and objects) that we ought to
-		   'deliver', duh */
-		for (j = 0; j < QI_GOALS; j++)
+	/* pre-check if we have completed all kill/retrieve goals of this stage,
+	   because we can only complete any deliver goal if we have fetched all
+	   the stuff (bodies, or kill count rather, and objects) that we ought to
+	   'deliver', duh */
+	for (j = 0; j < QI_GOALS; j++) {
 #if QDEBUG > 2
-			if (q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j]) {
-				s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_ptr->kill[stage][j], q_ptr->retrieve[stage][j]);
-				if (!quest_get_goal(Ind, q_idx, j, FALSE)) {
-					s_printf("MISSING.\n");
-					break;
-				} else s_printf("DONE.\n");
-
-			}
-#else
-			if ((q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j])
-			    && !quest_get_goal(Ind, q_idx, j, FALSE))
+		if (q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j]) {
+			s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_ptr->kill[stage][j], q_ptr->retrieve[stage][j]);
+			if (!quest_get_goal(Ind, q_idx, j, FALSE)) {
+				s_printf("MISSING.\n");
 				break;
-#endif
-		if (j != QI_GOALS) {
-#if QDEBUG > 2
-			s_printf(" MISSING kr GOAL\n");
-#endif
-			continue;
+			} else s_printf("DONE.\n");
+
 		}
-
-		/* check the quest goals, whether any of them wants a delivery to this location */
-		for (j = 0; j < QI_GOALS; j++) {
-			if (!q_ptr->deliver_pos[stage][j]) continue;
-
-			/* handle only non-specific x,y goals here */
-			if (q_ptr->deliver_pos_x[stage][j] != -1) continue;
+#else
+		if ((q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j])
+		    && !quest_get_goal(Ind, q_idx, j, FALSE))
+			break;
+#endif
+	}
+	if (j != QI_GOALS) {
 #if QDEBUG > 2
-			s_printf(" FOUND deliver_wpos GOAL %d.\n", j);
+		s_printf(" MISSING kr GOAL\n");
+#endif
+		return;
+	}
+
+	/* check the quest goals, whether any of them wants a delivery to this location */
+	for (j = 0; j < QI_GOALS; j++) {
+		if (!q_ptr->deliver_pos[stage][j]) continue;
+
+		/* handle only non-specific x,y goals here */
+		if (q_ptr->deliver_pos_x[stage][j] != -1) continue;
+#if QDEBUG > 2
+		s_printf(" FOUND deliver_wpos GOAL %d.\n", j);
 #endif
 
-			/* extend target terrain over a wide patch? */
-			if (q_ptr->deliver_terrain_patch[stage][j]) {
-				/* different z-coordinate = instant fail */
-				if (p_ptr->wpos.wz != q_ptr->deliver_wpos[stage][j].wz) continue;
-				/* are we within range and have same terrain type? */
-				if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[stage][j].wx,
-				    q_ptr->deliver_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
-				    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
-				    wild_info[q_ptr->deliver_wpos[stage][j].wy][q_ptr->deliver_wpos[stage][j].wx].type)
-					continue;
-			}
-			/* just check a single, specific wpos? */
-			else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
-#if QDEBUG > 2
-			s_printf(" PASSED LOCATION CHECK.\n");
-#endif
-
-			/* for item retrieval goals therefore linked to this deliver goal,
-			   remove all quest items now finally that we 'delivered' them.. */
-			if (q_ptr->individual) {
-				for (k = 0; k < INVEN_PACK; k++) {
-					if (p_ptr->inventory[k].quest == q_idx + 1 &&
-					    p_ptr->inventory[k].quest_stage == stage) {
-						inven_item_increase(Ind, k, -99);
-						//inven_item_describe(Ind, k);
-						inven_item_optimize(Ind, k);
-					}
-				}
-			} else {
-				//TODO (not just here): implement global retrieval quests..
-			}
-			/* ..and also mark all 'nisi' quest goals as finally resolved,
-			   to change flags accordingly if defined by a Z-line. */
-			for (k = 0; k < QI_GOALS; k++)
-				if (quest_get_goal(Ind, q_idx, k, TRUE)) {
-					quest_set_goal(Ind, q_idx, k, FALSE);
-					quest_goal_changes_flags(Ind, q_idx, stage, k);
-				}
-
-			/* we have completed a delivery-to-wpos goal! */
-			quest_set_goal(Ind, q_idx, j, FALSE);
+		/* extend target terrain over a wide patch? */
+		if (q_ptr->deliver_terrain_patch[stage][j]) {
+			/* different z-coordinate = instant fail */
+			if (p_ptr->wpos.wz != q_ptr->deliver_wpos[stage][j].wz) continue;
+			/* are we within range and have same terrain type? */
+			if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[stage][j].wx,
+			    q_ptr->deliver_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
+			    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
+			    wild_info[q_ptr->deliver_wpos[stage][j].wy][q_ptr->deliver_wpos[stage][j].wx].type)
+				continue;
 		}
+		/* just check a single, specific wpos? */
+		else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
+#if QDEBUG > 2
+		s_printf(" PASSED LOCATION CHECK.\n");
+#endif
+
+		/* for item retrieval goals therefore linked to this deliver goal,
+		   remove all quest items now finally that we 'delivered' them.. */
+		if (q_ptr->individual) {
+			for (k = 0; k < INVEN_PACK; k++) {
+				if (p_ptr->inventory[k].quest == q_idx + 1 &&
+				    p_ptr->inventory[k].quest_stage == stage) {
+					inven_item_increase(Ind, k, -99);
+					//inven_item_describe(Ind, k);
+					inven_item_optimize(Ind, k);
+				}
+			}
+		} else {
+			//TODO (not just here): implement global retrieval quests..
+		}
+		/* ..and also mark all 'nisi' quest goals as finally resolved,
+		   to change flags accordingly if defined by a Z-line. */
+		for (k = 0; k < QI_GOALS; k++)
+			if (quest_get_goal(Ind, q_idx, k, TRUE)) {
+				quest_set_goal(Ind, q_idx, k, FALSE);
+				quest_goal_changes_flags(Ind, q_idx, stage, k);
+			}
+
+		/* we have completed a delivery-to-wpos goal! */
+		quest_set_goal(Ind, q_idx, j, FALSE);
 	}
 }
 /* Check if player completed a deliver goal to a wpos and specific x,y.
    Hack for now: added 'py_q_idx' to directly specify the player's quest index,
                  since we already know it. No need to do the same work multiple times.
                  In the code this is marked by '//++' */
-void quest_check_goal_deliver_xy(int Ind, int py_q_idx) {
-	quest_info *q_ptr;
+static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 	player_type *p_ptr = Players[Ind];
-	int i, j, k, q_idx, stage;
+	int j, k, stage;
+	quest_info *q_ptr = &q_info[q_idx];;
 
 #if QDEBUG > 3
-	s_printf("QUEST_CHECK_GOAL_DELIVER_XY: by %d,%s\n", Ind, p_ptr->name);
-#endif
-//++	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
-	for (i = py_q_idx; i == py_q_idx; i++) {
-		/* player actually pursuing a quest? */
-		if (p_ptr->quest_idx[i] == -1) continue;
-
-		if (!p_ptr->quest_deliver_pos[i]) continue;//redundant with quest_within_deliver_pos?
-		if (!p_ptr->quest_within_deliver_wpos[i]) continue;
-
-		q_idx = p_ptr->quest_idx[i];
-		q_ptr = &q_info[q_idx];
-
-		/* quest is deactivated? */
-		if (!q_ptr->active) continue;
-
-		stage = quest_get_stage(Ind, q_idx);
-#if QDEBUG > 3
-		s_printf(" CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
+	s_printf("QUEST_CHECK_GOAL_DELIVER_XY: by %d,%s - quest (%s,%d) stage %d\n",
+	    Ind, p_ptr->name, q_ptr->codename, q_idx, stage);
 #endif
 
-		/* pre-check if we have completed all kill/retrieve goals of this stage,
-		   because we can only complete any deliver goal if we have fetched all
-		   the stuff (bodies, or kill count rather, and objects) that we ought to
-		   'deliver', duh */
-		for (j = 0; j < QI_GOALS; j++)
-#if QDEBUG > 3
-			if (q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j]) {
-				s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_ptr->kill[stage][j], q_ptr->retrieve[stage][j]);
-				if (!quest_get_goal(Ind, q_idx, j, FALSE)) {
-					s_printf("MISSING.\n");
-					break;
-				} else s_printf("DONE.\n");
+	/* quest is deactivated? */
+	if (!q_ptr->active) return;
 
-			}
-#else
-			if ((q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j])
-			    && !quest_get_goal(Ind, q_idx, j, FALSE))
+	stage = quest_get_stage(Ind, q_idx);
+
+	/* pre-check if we have completed all kill/retrieve goals of this stage,
+	   because we can only complete any deliver goal if we have fetched all
+	   the stuff (bodies, or kill count rather, and objects) that we ought to
+	   'deliver', duh */
+	for (j = 0; j < QI_GOALS; j++) {
+#if QDEBUG > 3
+		if (q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j]) {
+			s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_ptr->kill[stage][j], q_ptr->retrieve[stage][j]);
+			if (!quest_get_goal(Ind, q_idx, j, FALSE)) {
+				s_printf("MISSING.\n");
 				break;
-#endif
-		if (j != QI_GOALS) {
-#if QDEBUG > 3
-			s_printf(" MISSING kr GOAL\n");
-#endif
-			continue;
+			} else s_printf("DONE.\n");
+
 		}
-
-		/* check the quest goals, whether any of them wants a delivery to this location */
-		for (j = 0; j < QI_GOALS; j++) {
-			if (!q_ptr->deliver_pos[stage][j]) continue;
-
-			/* handle only specific x,y goals here */
-			if (q_ptr->deliver_pos_x[stage][j] == -1) continue;
+#else
+		if ((q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j])
+		    && !quest_get_goal(Ind, q_idx, j, FALSE))
+			break;
+#endif
+	}
+	if (j != QI_GOALS) {
 #if QDEBUG > 3
-			s_printf(" FOUND deliver_xy GOAL %d.\n", j);
+		s_printf(" MISSING kr GOAL\n");
+#endif
+		return;
+	}
+
+	/* check the quest goals, whether any of them wants a delivery to this location */
+	for (j = 0; j < QI_GOALS; j++) {
+		if (!q_ptr->deliver_pos[stage][j]) continue;
+
+		/* handle only specific x,y goals here */
+		if (q_ptr->deliver_pos_x[stage][j] == -1) continue;
+#if QDEBUG > 3
+		s_printf(" FOUND deliver_xy GOAL %d.\n", j);
 #endif
 
-			/* extend target terrain over a wide patch? */
-			if (q_ptr->deliver_terrain_patch[stage][j]) {
-				/* different z-coordinate = instant fail */
-				if (p_ptr->wpos.wz != q_ptr->deliver_wpos[stage][j].wz) continue;
-				/* are we within range and have same terrain type? */
-				if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[stage][j].wx,
-				    q_ptr->deliver_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
-				    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
-				    wild_info[q_ptr->deliver_wpos[stage][j].wy][q_ptr->deliver_wpos[stage][j].wx].type)
-					continue;
-			}
-			/* just check a single, specific wpos? */
-			else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
-
-			/* check for exact x,y location */
-			if (q_ptr->deliver_pos_x[stage][j] != p_ptr->px ||
-			    q_ptr->deliver_pos_y[stage][j] != p_ptr->py)
+		/* extend target terrain over a wide patch? */
+		if (q_ptr->deliver_terrain_patch[stage][j]) {
+			/* different z-coordinate = instant fail */
+			if (p_ptr->wpos.wz != q_ptr->deliver_wpos[stage][j].wz) continue;
+			/* are we within range and have same terrain type? */
+			if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[stage][j].wx,
+			    q_ptr->deliver_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
+			    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
+			    wild_info[q_ptr->deliver_wpos[stage][j].wy][q_ptr->deliver_wpos[stage][j].wx].type)
 				continue;
+		}
+		/* just check a single, specific wpos? */
+		else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
+
+		/* check for exact x,y location */
+		if (q_ptr->deliver_pos_x[stage][j] != p_ptr->px ||
+		    q_ptr->deliver_pos_y[stage][j] != p_ptr->py)
+			continue;
 #if QDEBUG > 3
-			s_printf(" PASSED LOCATION CHECK.\n");
+		s_printf(" PASSED LOCATION CHECK.\n");
 #endif
 
-			/* for item retrieval goals therefore linked to this deliver goal,
-			   remove all quest items now finally that we 'delivered' them.. */
-			if (q_ptr->individual) {
-				for (k = 0; k < INVEN_PACK; k++) {
-					if (p_ptr->inventory[k].quest == q_idx + 1 &&
-					    p_ptr->inventory[k].quest_stage == stage) {
-						inven_item_increase(Ind, k, -99);
-						//inven_item_describe(Ind, k);
-						inven_item_optimize(Ind, k);
-					}
+		/* for item retrieval goals therefore linked to this deliver goal,
+		   remove all quest items now finally that we 'delivered' them.. */
+		if (q_ptr->individual) {
+			for (k = 0; k < INVEN_PACK; k++) {
+				if (p_ptr->inventory[k].quest == q_idx + 1 &&
+				    p_ptr->inventory[k].quest_stage == stage) {
+					inven_item_increase(Ind, k, -99);
+					//inven_item_describe(Ind, k);
+					inven_item_optimize(Ind, k);
 				}
-			} else {
-				//TODO (not just here): implement global retrieval quests..
 			}
-			/* ..and also mark all 'nisi' quest goals as finally resolved,
-			   to change flags accordingly if defined by a Z-line. */
-			for (k = 0; k < QI_GOALS; k++)
-				if (quest_get_goal(Ind, q_idx, k, TRUE)) {
-					quest_set_goal(Ind, q_idx, k, FALSE);
-					quest_goal_changes_flags(Ind, q_idx, stage, k);
-				}
-
-			/* we have completed a delivery-to-xy goal! */
-			quest_set_goal(Ind, q_idx, j, FALSE);
+		} else {
+			//TODO (not just here): implement global retrieval quests..
 		}
+		/* ..and also mark all 'nisi' quest goals as finally resolved,
+		   to change flags accordingly if defined by a Z-line. */
+		for (k = 0; k < QI_GOALS; k++)
+			if (quest_get_goal(Ind, q_idx, k, TRUE)) {
+				quest_set_goal(Ind, q_idx, k, FALSE);
+				quest_goal_changes_flags(Ind, q_idx, stage, k);
+			}
+
+		/* we have completed a delivery-to-xy goal! */
+		quest_set_goal(Ind, q_idx, j, FALSE);
+	}
+}
+/* Small intermediate function to reduce workload.. (3. for deliver-goals) */
+void quest_check_goal_deliver(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+#if 0
+		/* player actually pursuing a quest? -- paranoia (quest_retrieve should be FALSE then) */
+		if (p_ptr->quest_idx[i] == -1) continue;
+#endif
+		/* reduce workload */
+		if (!p_ptr->quest_deliver_xy[i]) continue;
+
+		quest_check_goal_deliver_xy(Ind, p_ptr->quest_idx[i], i);
 	}
 }
 
@@ -2432,14 +2461,92 @@ void quest_check_player_location(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, q_idx, stage;
 	quest_info *q_ptr;
-	bool found;
+
+	/* reset local tracking info? only if we don't need to check it anyway: */
+	if (!p_ptr->quest_any_k) p_ptr->quest_any_k_within_target = FALSE;
+	if (!p_ptr->quest_any_r) p_ptr->quest_any_r_within_target = FALSE;
+	p_ptr->quest_any_deliver_xy_within_target = FALSE; /* deliveries are of course intrinsically not 'global' but have a target location^^ */
 
 	/* Quests: Is this wpos a target location or a delivery location for any of our quests? */
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		/* player actually pursuing a quest? */
 		if (p_ptr->quest_idx[i] == -1) continue;
 
-		found = FALSE;
+		/* check for target location for kill goals.
+		   We only need to do that if we aren't already in 'always checking' mode,
+		   because we have quest goals that aren't restricted to a specific target location. */
+		if (p_ptr->quest_kill[i] && !p_ptr->quest_any_k && p_ptr->quest_any_k_target) {
+			q_idx = p_ptr->quest_idx[i];
+			q_ptr = &q_info[q_idx];
+
+			/* quest is deactivated? */
+			if (!q_ptr->active) continue;
+
+			stage = quest_get_stage(Ind, q_idx);
+
+			/* check the quest goals, whether any of them wants a target to this location */
+			for (j = 0; j < QI_GOALS; j++) {
+				if (!q_ptr->kill[stage][j]) continue;
+				if (!q_ptr->target_pos[stage][j]) continue;
+
+				/* extend target terrain over a wide patch? */
+				if (q_ptr->target_terrain_patch[stage][j]) {
+					/* different z-coordinate = instant fail */
+					if (p_ptr->wpos.wz != q_ptr->target_wpos[stage][j].wz) continue;
+					/* are we within range and have same terrain type? */
+					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[stage][j].wx,
+					    q_ptr->target_wpos[stage][j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
+					    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type ==
+					    wild_info[q_ptr->target_wpos[stage][j].wy][q_ptr->target_wpos[stage][j].wx].type) {
+						p_ptr->quest_any_k_within_target = TRUE;
+						break;
+					}
+				}
+				/* just check a single, specific wpos? */
+				else if (inarea(&q_ptr->target_wpos[stage][j], &p_ptr->wpos)) {
+					p_ptr->quest_any_k_within_target = TRUE;
+					break;
+				}
+			}
+		}
+
+		/* check for target location for retrieve goals.
+		   We only need to do that if we aren't already in 'always checking' mode,
+		   because we have quest goals that aren't restricted to a specific target location. */
+		if (p_ptr->quest_retrieve[i] && !p_ptr->quest_any_r && p_ptr->quest_any_r_target) {
+			q_idx = p_ptr->quest_idx[i];
+			q_ptr = &q_info[q_idx];
+
+			/* quest is deactivated? */
+			if (!q_ptr->active) continue;
+
+			stage = quest_get_stage(Ind, q_idx);
+
+			/* check the quest goals, whether any of them wants a target to this location */
+			for (j = 0; j < QI_GOALS; j++) {
+				if (!q_ptr->retrieve[stage][j]) continue;
+				if (!q_ptr->target_pos[stage][j]) continue;
+
+				/* extend target terrain over a wide patch? */
+				if (q_ptr->target_terrain_patch[stage][j]) {
+					/* different z-coordinate = instant fail */
+					if (p_ptr->wpos.wz != q_ptr->target_wpos[stage][j].wz) continue;
+					/* are we within range and have same terrain type? */
+					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[stage][j].wx,
+					    q_ptr->target_wpos[stage][j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
+					    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type ==
+					    wild_info[q_ptr->target_wpos[stage][j].wy][q_ptr->target_wpos[stage][j].wx].type) {
+						p_ptr->quest_any_r_within_target = TRUE;
+						break;
+					}
+				}
+				/* just check a single, specific wpos? */
+				else if (inarea(&q_ptr->target_wpos[stage][j], &p_ptr->wpos)) {
+					p_ptr->quest_any_r_within_target = TRUE;
+					break;
+				}
+			}
+		}
 
 		/* check for deliver location ('move' goals) */
 		if (p_ptr->quest_deliver_pos[i]) {
@@ -2452,7 +2559,6 @@ void quest_check_player_location(int Ind) {
 			stage = quest_get_stage(Ind, q_idx);
 
 			/* first clear old wpos' delivery state */
-			p_ptr->quest_within_deliver_wpos[i] = FALSE;
 			p_ptr->quest_deliver_xy[i] = FALSE;
 
 			/* check the quest goals, whether any of them wants a delivery to this location */
@@ -2469,84 +2575,35 @@ void quest_check_player_location(int Ind) {
 					    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type ==
 					    wild_info[q_ptr->deliver_wpos[stage][j].wy][q_ptr->deliver_wpos[stage][j].wx].type) {
 						/* imprint new temporary destination location information */
-						p_ptr->quest_within_deliver_wpos[i] = TRUE;
 						/* specific x,y loc? */
 						if (q_ptr->deliver_pos_x[stage][j] != -1) {
 							p_ptr->quest_deliver_xy[i] = TRUE;
+							p_ptr->quest_any_deliver_xy_within_target = TRUE;
 							/* and check right away if we're already on the correct x,y location */
-							quest_check_goal_deliver_xy(Ind, i);
+							quest_check_goal_deliver_xy(Ind, q_idx, i);
 						} else {
 							/* we are at the requested deliver location (for at least this quest)! (wpos) */
-							quest_check_goal_deliver_wpos(Ind, i);
+							quest_handle_goal_deliver_wpos(Ind, i, q_idx, stage);
 						}
-						found = TRUE;
 						break;
 					}
 				}
 				/* just check a single, specific wpos? */
 				else if (inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) {
 					/* imprint new temporary destination location information */
-					p_ptr->quest_within_deliver_wpos[i] = TRUE;
 					/* specific x,y loc? */
 					if (q_ptr->deliver_pos_x[stage][j] != -1) {
 						p_ptr->quest_deliver_xy[i] = TRUE;
+						p_ptr->quest_any_deliver_xy_within_target = TRUE;
 						/* and check right away if we're already on the correct x,y location */
-						quest_check_goal_deliver_xy(Ind, i);
+						quest_check_goal_deliver_xy(Ind, q_idx, i);
 					} else {
 						/* we are at the requested deliver location (for at least this quest)! (wpos) */
-						quest_check_goal_deliver_wpos(Ind, i);
+						quest_handle_goal_deliver_wpos(Ind, i, q_idx, stage);
 					}
-					found = TRUE;
 					break;
 				}
 			}
 		}
-		/* check for target location (kill/retrieve goals) */
-		if (!found && p_ptr->quest_target_pos[i]) {
-			q_idx = p_ptr->quest_idx[i];
-			q_ptr = &q_info[q_idx];
-
-			/* quest is deactivated? */
-			if (!q_ptr->active) continue;
-
-			stage = quest_get_stage(Ind, q_idx);
-
-			/* first clear old wpos' target state */
-			p_ptr->quest_within_target_wpos[i] = FALSE;
-			p_ptr->quest_target_xy[i] = FALSE;
-
-			/* check the quest goals, whether any of them wants a target to this location */
-			for (j = 0; j < QI_GOALS; j++) {
-				if (!q_ptr->target_pos[stage][j]) continue;
-
-				/* extend target terrain over a wide patch? */
-				if (q_ptr->target_terrain_patch[stage][j]) {
-					/* different z-coordinate = instant fail */
-					if (p_ptr->wpos.wz != q_ptr->target_wpos[stage][j].wz) continue;
-					/* are we within range and have same terrain type? */
-					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[stage][j].wx,
-					    q_ptr->target_wpos[stage][j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
-					    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type ==
-					    wild_info[q_ptr->target_wpos[stage][j].wy][q_ptr->target_wpos[stage][j].wx].type) {
-						/* imprint new temporary destination location information */
-						p_ptr->quest_within_target_wpos[i] = TRUE;
-						/* specific x,y loc? */
-						if (q_ptr->target_pos_x[stage][j] != -1) p_ptr->quest_target_xy[i] = TRUE;
-						found = TRUE;
-						break;
-					}
-				}
-				/* just check a single, specific wpos? */
-				else if (inarea(&q_ptr->target_wpos[stage][j], &p_ptr->wpos)) {
-					/* imprint new temporary destination location information */
-					p_ptr->quest_within_target_wpos[i] = TRUE;
-					/* specific x,y loc? */
-					if (q_ptr->target_pos_x[stage][j] != -1) p_ptr->quest_target_xy[i] = TRUE;
-					found = TRUE;
-					break;
-				}
-			}
-		}
-		//oho, no break here! we might have multiple quests that want a delivery here--  if (found) break;
 	}
 }
