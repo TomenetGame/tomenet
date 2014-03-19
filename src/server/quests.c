@@ -510,7 +510,7 @@ void quest_deactivate(int q_idx) {
 
 	/* unmake quest */
 #if QDEBUG > 1
-s_printf(" deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_ptr->current_x[0], q_ptr->current_y[0]);
+	s_printf(" deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_ptr->current_x[0], q_ptr->current_y[0]);
 #endif
 	m_idx = c_ptr->m_idx;
 	if (m_idx) {
@@ -703,6 +703,9 @@ static void quest_set_goal(int pInd, int q_idx, int goal, bool nisi) {
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
 
+#if DEBUG > 2
+	s_printf("QUEST_GOAL_SET: (%s,%d) goal %d%s by %d\n", q_ptr->codename, q_idx, goal, nisi ? "n" : "", pInd);
+#endif
 	if (!pInd) {
 		if (!q_ptr->goals[stage][goal] || !nisi) q_ptr->goals_nisi[stage][goal] = nisi;
 		q_ptr->goals[stage][goal] = TRUE; /* no player? global goal */
@@ -754,6 +757,9 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
 
+#if DEBUG > 2
+	s_printf("QUEST_GOAL_UNSET: (%s,%d) goal %d by %d\n", q_ptr->codename, q_idx, goal, pInd);
+#endif
 	if (!pInd) {
 		q_ptr->goals[stage][goal] = FALSE; /* no player? global goal */
 		return;
@@ -1654,13 +1660,18 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 
 	/* paranoia -- neither a kill has been made nor an item picked up */
 	if (!m_ptr && !o_ptr) return;
-
+#if DEBUG > 2
+	s_printf("QUEST_CHECK_GOAL_kr: by %d,%s\n", Ind, p_ptr->name);
+#endif
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		/* player actually pursuing a quest? */
 		if (p_ptr->quest_idx[i] == -1) continue;
 
+#if 0 /* these are for deliver-goals, not kr */
+/* TODO!!: therefore actually p_ptr->quest_target... are obsolete :o */
 		if (!p_ptr->quest_target_pos[i]) continue;//redundant with quest_within_target_pos?
 		if (!p_ptr->quest_within_target_wpos[i]) continue;
+#endif
 
 		q_idx = p_ptr->quest_idx[i];
 		q_ptr = &q_info[q_idx];
@@ -1682,10 +1693,16 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 				break;
 			}
 
+#if DEBUG > 2
+		s_printf(" CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
+#endif
 		/* check the quest goals, whether any of them wants a target to this location */
 		for (j = 0; j < QI_GOALS; j++) {
 			/* no k/r goal? */
 			if (!q_ptr->kill[stage][j] && !q_ptr->retrieve[stage][j]) continue;
+#if DEBUG > 2
+			s_printf(" FOUND kr GOAL %d (k=%d,r=%d).\n", j, q_ptr->kill[stage][j], q_ptr->retrieve[stage][j]);
+#endif
 
 			/* location-restricted?
 			   Exempt already retrieved items that were just lost temporarily on the way! */
@@ -1711,6 +1728,9 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 				    q_ptr->target_pos_y[stage][j] != p_ptr->py)
 					continue;
 			}
+#if DEBUG > 2
+			s_printf(" PASSED/NO LOCATION CHECK.\n");
+#endif
 
 			/* check for kill goal here */
 			if (m_ptr && q_ptr->kill[stage][j]) {
@@ -1748,6 +1768,9 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 				   since they've fulfilled their purpose of setting the quest goal. */
 				for (k = 0; k < QI_GOALS; k++)
 					if (q_ptr->deliver_pos[stage][k]) break;
+#if DEBUG > 2
+				s_printf(" REMOVE RETRIEVED ITEMS.\n");
+#endif
 				if (k == QI_GOALS) {
 					if (q_ptr->individual) {
 						for (k = 0; k < INVEN_PACK; k++) {
@@ -1762,7 +1785,6 @@ void quest_check_goal_kr(int Ind, monster_type *m_ptr, object_type *o_ptr) {
 						//TODO (not just here): implement global retrieval quests..
 					}
 				}
-
 				continue;
 			}
 		}
