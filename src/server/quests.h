@@ -1,5 +1,5 @@
 /* This is the header file for quests.c, please look there for more information.
-   You may modify/use it freely as long as you give me proper credit. - C. Blue
+   You may modify/use it freely as long as you give proper credit. - C. Blue
 */
 
 

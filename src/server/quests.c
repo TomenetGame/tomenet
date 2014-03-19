@@ -1,6 +1,6 @@
 /* This file is for providing a framework for quests, allowing easy addition,
    editing and removal of them via a 'q_info.txt' file designed from scratch.
-   You may modify/use it freely as long as you give me proper credit. - C. Blue
+   You may modify/use it freely as long as you give proper credit. - C. Blue
 
    I hope I covered all sorts of quests, even though some quests might be a bit
    clunky to implement (quest needs to 'quietly' spawn a followup quest etc).

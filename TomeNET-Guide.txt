@@ -97,7 +97,7 @@ Contents
     (4.11)  Malicious effects players can suffer
     (4.11a) Drain effects
     (4.12)  Malicious effects monsters can suffer
-    (4.13)  Extermination Orders and Events
+    (4.13)  Extermination Orders, Events and Ironman Challenge
     (4.14)  In-game time system
 (5) Item and monster details
     (5.1)   Melee weapons, brands
@@ -6087,8 +6087,8 @@ Stun    (Note that "stunned" and "dazed" are the same thing.)
 
 
 
-(4.13) Extermination Orders and Events
---------------------------------------
+(4.13) Extermination Orders, Events and Ironman Challenge
+---------------------------------------------------------
 Your character will have uncounted opportunities to receive and carry out
 extermination orders and participate in global (as in, open to everyone at the
 same time) events.
@@ -6272,10 +6272,8 @@ Dungeon Keeper (everyone can win, 1+ participants)
     Players usually do not start next to rooms that have escape beacons.
 
 
-Miscellaneous challenges
-------------------------
-Asides from extermination orders and events, there are certain other challenges
-that wait for you to tackle them:
+Asides from extermination orders and events, there is another, permanently
+available challenge that waits for you to tackle it:
 
 Ironman Deep Dive Challenge (IDDC)
     There is exactly one designated huge ironman dungeon (or tower) on each
