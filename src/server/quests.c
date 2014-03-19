@@ -573,7 +573,22 @@ static void quest_terminate(int pInd, int q_idx) {
 		if (q_ptr->cooldown == -1) p_ptr->quest_cooldown[q_idx] = QI_COOLDOWN_DEFAULT;
 		else p_ptr->quest_cooldown[q_idx] = q_ptr->cooldown;
 
-		/* individual quests don't get cleaned up by deactivation */
+		/* individual quests don't get cleaned up (aka completely reset)
+		   by deactivation, except for this temporary tracking data,
+		   or it would continue spamming quest checks eg on delivery_xy locs. */
+		p_ptr->quest_target_pos[py_q_idx] = FALSE;
+		p_ptr->quest_within_target_wpos[py_q_idx] = FALSE;
+		p_ptr->quest_target_xy[py_q_idx] = FALSE;
+		p_ptr->quest_targetopt_pos[py_q_idx] = FALSE;
+		p_ptr->quest_within_targetopt_wpos[py_q_idx] = FALSE;
+		p_ptr->quest_targetopt_xy[py_q_idx] = FALSE;
+		p_ptr->quest_deliver_pos[py_q_idx] = FALSE;
+		p_ptr->quest_within_deliver_wpos[py_q_idx] = FALSE;
+		p_ptr->quest_deliver_xy[py_q_idx] = FALSE;
+		p_ptr->quest_deliveropt_pos[py_q_idx] = FALSE;
+		p_ptr->quest_within_deliveropt_wpos[py_q_idx] = FALSE;
+		p_ptr->quest_deliveropt_xy[py_q_idx] = FALSE;
+
 		return;
 	}
 
@@ -596,6 +611,21 @@ static void quest_terminate(int pInd, int q_idx) {
 		p_ptr->quest_idx[j] = -1;
 		msg_format(i, "\374\377uYou have completed the quest \"\377U%s\377u\".", q_name + q_ptr->name);
 		//msg_print(i, "\374 ");
+
+		/* clean up temporary tracking data,
+		   or it would continue spamming quest checks eg on delivery_xy locs. */
+		p_ptr->quest_target_pos[py_q_idx] = FALSE;
+		p_ptr->quest_within_target_wpos[py_q_idx] = FALSE;
+		p_ptr->quest_target_xy[py_q_idx] = FALSE;
+		p_ptr->quest_targetopt_pos[py_q_idx] = FALSE;
+		p_ptr->quest_within_targetopt_wpos[py_q_idx] = FALSE;
+		p_ptr->quest_targetopt_xy[py_q_idx] = FALSE;
+		p_ptr->quest_deliver_pos[py_q_idx] = FALSE;
+		p_ptr->quest_within_deliver_wpos[py_q_idx] = FALSE;
+		p_ptr->quest_deliver_xy[py_q_idx] = FALSE;
+		p_ptr->quest_deliveropt_pos[py_q_idx] = FALSE;
+		p_ptr->quest_within_deliveropt_wpos[py_q_idx] = FALSE;
+		p_ptr->quest_deliveropt_xy[py_q_idx] = FALSE;
 	}
 #if QDEBUG > 0
 	s_printf(".\n");
@@ -1141,11 +1171,21 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	stage = q_ptr->stage;
 	if (q_ptr->individual) p_ptr->quest_stage[py_q_idx] = stage;
 
+
 	/* find out if we are pursuing any sort of target locations */
 	p_ptr->quest_target_pos[py_q_idx] = FALSE;
+	p_ptr->quest_within_target_wpos[py_q_idx] = FALSE;
+	p_ptr->quest_target_xy[py_q_idx] = FALSE;
 	p_ptr->quest_targetopt_pos[py_q_idx] = FALSE;
+	p_ptr->quest_within_targetopt_wpos[py_q_idx] = FALSE;
+	p_ptr->quest_targetopt_xy[py_q_idx] = FALSE;
 	p_ptr->quest_deliver_pos[py_q_idx] = FALSE;
+	p_ptr->quest_within_deliver_wpos[py_q_idx] = FALSE;
+	p_ptr->quest_deliver_xy[py_q_idx] = FALSE;
 	p_ptr->quest_deliveropt_pos[py_q_idx] = FALSE;
+	p_ptr->quest_within_deliveropt_wpos[py_q_idx] = FALSE;
+	p_ptr->quest_deliveropt_xy[py_q_idx] = FALSE;
+
 
 	/* set goal-dependant (temporary) quest info */
 	for (i = 0; i < QI_GOALS; i++) {
@@ -1881,8 +1921,11 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 /* Check if player completed a deliver goal to a wpos.
    Actually when we're called then we already know that we're at a fitting wpos
    for at least one quest. :-p Just have to check for all concurrent quests to
-   make sure we set all their goals too. */
-static void quest_check_goal_deliver_wpos(int Ind) {
+   make sure we set all their goals too.
+   Hack for now: added 'py_q_idx' to directly specify the player's quest index,
+                 since we already know it. No need to do the same work multiple times.
+                 In the code this is marked by '//++' */
+static void quest_check_goal_deliver_wpos(int Ind, int py_q_idx) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];
 	int i, j, k, q_idx, stage;
@@ -1890,7 +1933,8 @@ static void quest_check_goal_deliver_wpos(int Ind) {
 #if QDEBUG > 2
 	s_printf("QUEST_CHECK_GOAL_DELIVER_WPOS: by %d,%s\n", Ind, p_ptr->name);
 #endif
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+//++	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+	for (i = py_q_idx; i == py_q_idx; i++) {
 		/* player actually pursuing a quest? */
 		if (p_ptr->quest_idx[i] == -1) continue;
 
@@ -1988,8 +2032,11 @@ static void quest_check_goal_deliver_wpos(int Ind) {
 		}
 	}
 }
-/* Check if player completed a deliver goal to a wpos and specific x,y */
-void quest_check_goal_deliver_xy(int Ind) {
+/* Check if player completed a deliver goal to a wpos and specific x,y.
+   Hack for now: added 'py_q_idx' to directly specify the player's quest index,
+                 since we already know it. No need to do the same work multiple times.
+                 In the code this is marked by '//++' */
+void quest_check_goal_deliver_xy(int Ind, int py_q_idx) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];
 	int i, j, k, q_idx, stage;
@@ -1997,7 +2044,8 @@ void quest_check_goal_deliver_xy(int Ind) {
 #if QDEBUG > 2
 	s_printf("QUEST_CHECK_GOAL_DELIVER_XY: by %d,%s\n", Ind, p_ptr->name);
 #endif
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+//++	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+	for (i = py_q_idx; i == py_q_idx; i++) {
 		/* player actually pursuing a quest? */
 		if (p_ptr->quest_idx[i] == -1) continue;
 
@@ -2403,12 +2451,14 @@ void quest_check_player_location(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, q_idx, stage;
 	quest_info *q_ptr;
-	bool found = FALSE;
+	bool found;
 
 	/* Quests: Is this wpos a target location or a delivery location for any of our quests? */
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		/* player actually pursuing a quest? */
 		if (p_ptr->quest_idx[i] == -1) continue;
+
+		found = FALSE;
 
 		/* check for deliver location ('move' goals) */
 		if (p_ptr->quest_deliver_pos[i]) {
@@ -2443,10 +2493,10 @@ void quest_check_player_location(int Ind) {
 						if (q_ptr->deliver_pos_x[stage][j] != -1) {
 							p_ptr->quest_deliver_xy[i] = TRUE;
 							/* and check right away if we're already on the correct x,y location */
-							quest_check_goal_deliver_xy(Ind);
+							quest_check_goal_deliver_xy(Ind, i);
 						} else {
 							/* we are at the requested deliver location (for at least this quest)! (wpos) */
-							quest_check_goal_deliver_wpos(Ind);
+							quest_check_goal_deliver_wpos(Ind, i);
 						}
 						found = TRUE;
 						break;
@@ -2460,10 +2510,10 @@ void quest_check_player_location(int Ind) {
 					if (q_ptr->deliver_pos_x[stage][j] != -1) {
 						p_ptr->quest_deliver_xy[i] = TRUE;
 						/* and check right away if we're already on the correct x,y location */
-						quest_check_goal_deliver_xy(Ind);
+						quest_check_goal_deliver_xy(Ind, i);
 					} else {
 						/* we are at the requested deliver location (for at least this quest)! (wpos) */
-						quest_check_goal_deliver_wpos(Ind);
+						quest_check_goal_deliver_wpos(Ind, i);
 					}
 					found = TRUE;
 					break;

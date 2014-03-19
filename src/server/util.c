@@ -6783,7 +6783,7 @@ void grid_affects_player(int Ind) {
 
 	/* quests - check if he has arrived at a designated exact x,y target location */
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
-		if (p_ptr->quest_deliver_xy[i]) quest_check_goal_deliver_xy(Ind);
+		if (p_ptr->quest_deliver_xy[i]) quest_check_goal_deliver_xy(Ind, i);
 }
 
 /* Items that can be shared even between incompatible character modes or if level 0! */
