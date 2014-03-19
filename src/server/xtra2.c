@@ -7811,11 +7811,16 @@ void kill_xorder(int Ind) {
 
 	process_hooks(HOOK_QUEST_FINISH, "d", Ind);
 
-	snprintf(temp, 160, "\374\377y%s has carried out the %s extermination order!", p_ptr->name, r_name + r_info[xorders[pos].type].name);
-	if (xorders[i].flags & QUEST_RACE)
+	if (xorders[i].flags & QUEST_RACE) {
+		snprintf(temp, 160, "\374\377y%s has carried out a%s %s extermination order!",
+		    p_ptr->name,
+		    is_a_vowel(*(r_name + r_info[xorders[pos].type].name)) ? "n" : "",
+		    r_name + r_info[xorders[pos].type].name);
 		msg_broadcast(Ind, temp);
-	if (xorders[i].flags & QUEST_GUILD){
+	}
+	if (xorders[i].flags & QUEST_GUILD) {
 		hash_entry *temphash;
+		snprintf(temp, 160, "\374\377y%s has carried out the %s extermination order!", p_ptr->name, r_name + r_info[xorders[pos].type].name);
 		if ((temphash = lookup_player(xorders[i].creator)) && temphash->guild) {
 			guild_msg(temphash->guild ,temp);
 			if (!p_ptr->guild) {
@@ -7830,11 +7835,11 @@ void kill_xorder(int Ind) {
 				guild_msg_format(temphash->guild, "\374\377%c%s has carried out the extermination order!", COLOUR_CHAT_GUILD, p_ptr->name);
 			}
 		}
-	} else{
+	} else {
 		object_type forge, *o_ptr = &forge;
 		int avg;
 
-		msg_format(Ind, "\377yYou have carried out the %s extermination order!", r_name+r_info[xorders[pos].type].name);
+		msg_format(Ind, "\377yYou have carried out the %s extermination order!", r_name + r_info[xorders[pos].type].name);
 		s_printf("r_info quest: %s won the %s extermination order\n", p_ptr->name, r_name + r_info[xorders[pos].type].name);
 		strcpy(temp, r_name + r_info[xorders[pos].type].name);
 		strcat(temp, " extermination");
@@ -7956,8 +7961,8 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 		for (i = 0; i < MAX_XORDERS; i++) {
 			if (xorders[i].id == Players[j]->xorder_id) {
 				if (j == Ind)
-					msg_format(Ind, "\377oCarry out your %sorder to exterminate \377y%d \377g%s\377o (level %d) first.",
-					    xorders[i].flags & QUEST_GUILD?"guild's " : "", Players[Ind]->xorder_num, 
+					msg_format(Ind, "\377oYour %sorder is to exterminate \377y%d \377g%s\377o (level %d).",
+					    (xorders[i].flags & QUEST_GUILD) ? "guild's " : "", Players[Ind]->xorder_num,
 					    r_name + r_info[xorders[i].type].name, r_info[xorders[i].type].level);
 				return FALSE;
 			}
