@@ -7957,7 +7957,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 			if (xorders[i].id == Players[j]->xorder_id) {
 				if (j == Ind)
 					msg_format(Ind, "\377oYou have not yet carried out your %sorder to exterminate \377y%d \377g%s\377o (level %d).",
-					    Players[Ind]->xorder_num, xorders[i].flags & QUEST_GUILD?"guild's " : "",
+					    xorders[i].flags & QUEST_GUILD?"guild's " : "", Players[Ind]->xorder_num, 
 					    r_name + r_info[xorders[i].type].name, r_info[xorders[i].type].level);
 				return FALSE;
 			}
