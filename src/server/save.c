@@ -470,7 +470,7 @@ static void wr_quests() {
 		wr_s16b(q_info[i].cur_cooldown);
 		wr_s16b(q_info[i].cur_stage);
 		wr_s32b(q_info[i].turn_activated);
-//restructure	wr_s32b(q_info[i].turn_acquired);
+		wr_s32b(q_info[i].turn_acquired);
 
 		for (j = 0; j < QI_QUESTORS; j++) {
 #if 0//restructure
@@ -1359,16 +1359,15 @@ static bool wr_savefile_new(int Ind) {
 
 
 	/* Quest information */
-#if 0//4.5.26 restructure
-	wr_byte(p_ptr->quest_any_kill);
-	wr_byte(p_ptr->quest_any_kill_target);
-	wr_byte(p_ptr->quest_any_kill_within_target);
-	wr_byte(p_ptr->quest_any_retrieve);
-	wr_byte(p_ptr->quest_any_retrieve_target);
-	wr_byte(p_ptr->quest_any_retrieve_within_target);
+	wr_byte(p_ptr->quest_any_k);
+	wr_byte(p_ptr->quest_any_k_target);
+	wr_byte(p_ptr->quest_any_k_within_target);
+	wr_byte(p_ptr->quest_any_r);
+	wr_byte(p_ptr->quest_any_r_target);
+	wr_byte(p_ptr->quest_any_r_within_target);
 	wr_byte(p_ptr->quest_any_deliver_xy);
 	wr_byte(p_ptr->quest_any_deliver_xy_within_target);
-#endif
+
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		wr_s16b(p_ptr->quest_idx[i]);
 		wr_string(p_ptr->quest_codename[i]);

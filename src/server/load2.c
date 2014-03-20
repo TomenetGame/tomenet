@@ -1079,7 +1079,7 @@ static void rd_quests() {
 		rd_s16b(&q_info[i].cur_cooldown);
 		rd_s16b(&q_info[i].cur_stage);
 		rd_s32b(&q_info[i].turn_activated);
-//restructure	if (!older_than(4, 5, 26)) rd_s32b(&q_info[i].turn_acquired);
+		if (!older_than(4, 5, 26)) rd_s32b(&q_info[i].turn_acquired);
 
 		for (j = 0; j < questors; j++) {
 			if (j >= QI_QUESTORS) {
@@ -1143,9 +1143,7 @@ static void rd_quests() {
 		if (!m_ptr->questor) continue;
 
 		q_ptr = &q_info[m_ptr->quest];
-#if 0//restructure
-		q_ptr->questor_m_idx[m_ptr->questor_idx] = i;
-#endif
+		q_ptr->questor[m_ptr->questor_idx].m_idx = i;
 	}
 }
 
@@ -2688,16 +2686,17 @@ static errr rd_savefile_new_aux(int Ind) {
 
 
 	/* read personal quest data */
-#if 0//4.5.26 restructure
-	rd_byte((byte *) p_ptr->quest_any_k);
-	rd_byte((byte *) p_ptr->quest_any_k_target);
-	rd_byte((byte *) p_ptr->quest_any_k_within_target);
-	rd_byte((byte *) p_ptr->quest_any_r);
-	rd_byte((byte *) p_ptr->quest_any_r_target);
-	rd_byte((byte *) p_ptr->quest_any_r_within_target);
-	rd_byte((byte *) p_ptr->quest_any_deliver_xy);
-	rd_byte((byte *) p_ptr->quest_any_deliver_xy_within_target);
-#endif
+	if (!older_than(4, 5, 26)) {
+		rd_byte((byte *) &p_ptr->quest_any_k);
+		rd_byte((byte *) &p_ptr->quest_any_k_target);
+		rd_byte((byte *) &p_ptr->quest_any_k_within_target);
+		rd_byte((byte *) &p_ptr->quest_any_r);
+		rd_byte((byte *) &p_ptr->quest_any_r_target);
+		rd_byte((byte *) &p_ptr->quest_any_r_within_target);
+		rd_byte((byte *) &p_ptr->quest_any_deliver_xy);
+		rd_byte((byte *) &p_ptr->quest_any_deliver_xy_within_target);
+	}
+
 	if (!older_than(4, 5, 19)) {
 		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 			rd_s16b(&p_ptr->quest_idx[i]);
@@ -2726,8 +2725,7 @@ static errr rd_savefile_new_aux(int Ind) {
 					rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
 			}
 
-//restructure 		if (!older_than(4, 5, 26)) {
-			if (TRUE) {
+			if (!older_than(4, 5, 26)) {
 				rd_byte((byte *) &p_ptr->quest_kill[i]);
 				rd_byte((byte *) &p_ptr->quest_retrieve[i]);
 
