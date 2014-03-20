@@ -19307,8 +19307,8 @@ B:BITE:HURT:1d12
 F:FORCE_MAXHP | KILL_BODY | DROP_SKELETON | 
 F:WEIRD_MIND | BASH_DOOR | GOOD | 
 F:ANIMAL | RES_SOUND | MORTAL | BLUEBAND
-D:A giant ant covered in shaggy fur. Its powerful jaws glow with heat,
-D:and it's causing quite some noise.
+D:A giant ant covered in shaggy fur. Its lightning-quick jaws start clapping
+D:excitedly as it spots you, causing quite some noise.
 
 #Nether Realm only
 N:1080:Minion of Doom
