@@ -2798,7 +2798,7 @@ qi_questor *init_quest_questor(int q_idx, int num) {
 	q_ptr->questors = num + 1;
 
 	/* done, return the new, requested one */
-	return p;
+	return &q_ptr->questor[num];
 }
 
 qi_stage *init_quest_stage(int q_idx, int num) {
@@ -2831,42 +2831,39 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 	q_ptr->stages++;
 
 	/* done, return the new one */
-	return p;
+	return &q_ptr->stage[q_ptr->stages - 1];
 }
 
 qi_keyword *init_quest_keyword(int q_idx, int num) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_keyword *p;
-	int i;
 
 	/* we already have this existing one */
 	if (q_ptr->keywords > num) return &q_ptr->keyword[num];
 
 	/* allocate all missing instances up to the requested index */
-	for (i = q_ptr->keywords; i <= num; i++) {
-		/* allocate a new one */
-		p = (qi_keyword*)malloc(sizeof(qi_keyword));
-		if (!p) {
-			s_printf("init_quest_keyword() Couldn't allocate memory!\n");
-			exit(0);
-		}
-
-		/* attach it to its parent structure */
-		q_ptr->keyword[i] = p;
-		q_ptr->keywords++;
+	p = (qi_keyword*)realloc(q_ptr->keyword, sizeof(qi_keyword) * (num + 1));
+	if (!p) {
+		s_printf("init_quest_keyword() Couldn't allocate memory!\n");
+		exit(0);
 	}
+	/* initialise the ADDED memory */
+	memset(p + q_ptr->keywords * sizeof(qi_keyword), 0, (num + 1 - q_ptr->keywords) * sizeof(qi_keyword));
+
+	/* attach it to its parent structure */
+	q_ptr->keyword = p;
+	q_ptr->keywords = num + 1;
 
 	/* done, return the new, requested one */
-	return p;
+	return &q_ptr->keyword[num];
 }
 
 qi_deliver *init_quest_deliver(int q_idx, int stage, int goal) {
-	qi_goal *goal = init_quest_goal(q_idx, stage, goal);
+	qi_goal *q_goal = init_quest_goal(q_idx, stage, goal);
 	qi_deliver *p;
-	int i;
 
 	/* we already have this existing one */
-	if (goal->deliver) return &goal->deliver;
+	if (q_goal->deliver) return q_goal->deliver;
 
 	/* allocate a new one */
 	p = (qi_deliver*)malloc(sizeof(qi_deliver));
@@ -2876,65 +2873,56 @@ qi_deliver *init_quest_deliver(int q_idx, int stage, int goal) {
 	}
 
 	/* attach it to its parent structure */
-	goal->deliver[i] = p;
+	q_goal->deliver = p;
 
 	/* done, return the new, requested one */
 	return p;
 }
 
 qi_goal *init_quest_goal(int q_idx, int stage, int num) {
-	qi_stage *stage = init_quest_stage(q_idx, stage);
-	qi_goal *p
-	int i;
+	qi_stage *q_stage = init_quest_stage(q_idx, stage);
+	qi_goal *p;
 
 	/* we already have this existing one */
-	if (stage->goals > num) return &stage->goal[num];
+	if (q_stage->goals > num) return &q_stage->goal[num];
 
 	/* allocate all missing instances up to the requested index */
-	for (i = stage->goals; i <= num; i++) {
-		/* allocate a new one */
-		p = (qi_goal*)malloc(sizeof(qi_goal));
-		if (!p) {
-			s_printf("init_quest_goal() Couldn't allocate memory!\n");
-			exit(0);
-		}
-
-		/* initialise */
-		p->kill = NULL;
-		p->retrieve = NULL;
-		p->deliver = NULL;
-
-		/* attach it to its parent structure */
-		stage->goal[i] = p;
-		stage->goals++;
+	p = (qi_goal*)realloc(q_stage->goal, sizeof(qi_goal) * (num + 1));
+	if (!p) {
+		s_printf("init_quest_goal() Couldn't allocate memory!\n");
+		exit(0);
 	}
+	/* initialise the ADDED memory */
+	memset(p + q_stage->goals * sizeof(qi_goal), 0, (num + 1 - q_stage->goals) * sizeof(qi_goal));
+
+	/* attach it to its parent structure */
+	q_stage->goal = p;
+	q_stage->goals = num + 1;
 
 	/* done, return the new, requested one */
-	return p;
+	return &q_stage->goal[num];
 }
 
 qi_reward *init_quest_reward(int q_idx, int stage, int num) {
-	qi_stage *stage = init_quest_stage(q_idx, stage);
-	qi_reward *p
-	int i;
+	qi_stage *q_stage = init_quest_stage(q_idx, stage);
+	qi_reward *p;
 
 	/* we already have this existing one */
-	if (stage->rewards > num) return &stage->reward[num];
+	if (q_stage->rewards > num) return &q_stage->reward[num];
 
 	/* allocate all missing instances up to the requested index */
-	for (i = stage->rewards; i <= num; i++) {
-		/* allocate a new one */
-		p = (qi_reward*)malloc(sizeof(qi_reward));
-		if (!p) {
-			s_printf("init_quest_reward() Couldn't allocate memory!\n");
-			exit(0);
-		}
-
-		/* attach it to its parent structure */
-		stage->reward[i] = p;
-		stage->rewards++;
+	p = (qi_reward*)realloc(q_stage->reward, sizeof(qi_reward) * (num + 1));
+	if (!p) {
+		s_printf("init_quest_reward() Couldn't allocate memory!\n");
+		exit(0);
 	}
+	/* initialise the ADDED memory */
+	memset(p + q_stage->rewards * sizeof(qi_reward), 0, (num + 1 - q_stage->rewards) * sizeof(qi_reward));
+
+	/* attach it to its parent structure */
+	q_stage->reward = p;
+	q_stage->rewards = num + 1;
 
 	/* done, return the new, requested one */
-	return p;
+	return &q_stage->reward[num];
 }
