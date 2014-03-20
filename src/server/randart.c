@@ -19,6 +19,10 @@
  * put in here, eg. ego-items (and randunis).		- Jir -
  */
 
+/* added this for consistency in some (unrelated) header-inclusion,
+   it IS a server file, isn't it? */
+#define SERVER
+
 #include "angband.h"
 
 /* How much power/curses is/are assigned to randarts.

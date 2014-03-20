@@ -40,7 +40,7 @@
 */
 
 
-//? #define SERVER
+#define SERVER
 #include "angband.h"
 
 

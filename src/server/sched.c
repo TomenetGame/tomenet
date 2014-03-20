@@ -3,6 +3,10 @@
  * Scheduling code for UNIX-like systems
  */
 
+/* added this for consistency in some (unrelated) header-inclusion,
+   it IS a server file, isn't it? */
+#define SERVER
+
 #include "angband.h"
 #include <signal.h>
 #include <sys/time.h>

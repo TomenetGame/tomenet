@@ -4,6 +4,10 @@
  * have a devoted tty.
  */
 
+/* added this for consistency in some (unrelated) header-inclusion,
+   it IS a server file, isn't it? */
+#define SERVER
+
 #include <stdarg.h>
 #include "angband.h"
 #include "control.h"

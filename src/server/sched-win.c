@@ -4,6 +4,10 @@
 */
 
 
+/* added this for consistency in some (unrelated) header-inclusion,
+   it IS a server file, isn't it? */
+#define SERVER
+
 #include <winsock2.h>
 #include "angband.h"
 #include <mmsystem.h>
