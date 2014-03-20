@@ -2791,11 +2791,21 @@ qi_questor *init_quest_questor(int q_idx, int num) {
 		exit(0);
 	}
 	/* initialise the ADDED memory */
-	memset(p + q_ptr->questors * sizeof(qi_questor), 0, (num + 1 - q_ptr->questors) * sizeof(qi_questor));
+	//memset(p + q_ptr->questors * sizeof(qi_questor), 0, (num + 1 - q_ptr->questors) * sizeof(qi_questor));
+	memset(&p[q_ptr->questors], 0, (num + 1 - q_ptr->questors) * sizeof(qi_questor));
 
 	/* attach it to its parent structure */
 	q_ptr->questor = p;
 	q_ptr->questors = num + 1;
+
+	/* initialise with correct defaults (paranoia) */
+	p = &q_ptr->questor[q_ptr->questors - 1];
+	p->accept_los = FALSE;
+	p->accept_interact = TRUE;
+	p->talkable = TRUE;
+	p->despawned = FALSE;
+	p->invincible = TRUE;
+	p->tpref = NULL;
 
 	/* done, return the new, requested one */
 	return &q_ptr->questor[num];
@@ -2804,6 +2814,7 @@ qi_questor *init_quest_questor(int q_idx, int num) {
 qi_stage *init_quest_stage(int q_idx, int num) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *p;
+	int i, j;
 
 	/* pointless, but w/e */
 	if (num == -1) {
@@ -2823,12 +2834,29 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 		exit(0);
 	}
 	/* initialise the ADDED memory */
-	memset(p + q_ptr->stages * sizeof(qi_stage), 0, sizeof(qi_stage));
+	//memset(p + q_ptr->stages * sizeof(qi_stage), 0, sizeof(qi_stage));
+	memset(&p[q_ptr->stages], 0, sizeof(qi_stage));
 
 	/* attach it to its parent structure */
 	q_ptr->stage = p;
 	q_ptr->stage_idx[num] = q_ptr->stages;
 	q_ptr->stages++;
+
+	/* initialise with correct defaults */
+	p = &q_ptr->stage[q_ptr->stages - 1];
+	for (i = 0; i < QI_FOLLOWUP_STAGES; i++) {
+		p->next_stage_from_goals[i] = -1; /* no next stages set, end quest by default if nothing specified */
+		for (j = 0; j < QI_STAGE_GOALS; j++)
+			p->goals_for_stage[i][j] = -1; /* no next stages set, end quest by default if nothing specified */
+	}
+	for (i = 0; i < QI_STAGE_REWARDS; i++) {
+		for (j = 0; j < QI_REWARD_GOALS; j++)
+			p->goals_for_reward[i][j] = -1; /* no next stages set, end quest by default if nothing specified */
+	}
+	p->change_stage = -1;
+	p->timed_ingame_abs = -1;
+	p->timed_real = -1;
+	if (num == 0) p->accepts = TRUE;
 
 	/* done, return the new one */
 	return &q_ptr->stage[q_ptr->stages - 1];
@@ -2848,7 +2876,8 @@ qi_keyword *init_quest_keyword(int q_idx, int num) {
 		exit(0);
 	}
 	/* initialise the ADDED memory */
-	memset(p + q_ptr->keywords * sizeof(qi_keyword), 0, (num + 1 - q_ptr->keywords) * sizeof(qi_keyword));
+	//memset(p + q_ptr->keywords * sizeof(qi_keyword), 0, (num + 1 - q_ptr->keywords) * sizeof(qi_keyword));
+	memset(&p[q_ptr->keywords], 0, (num + 1 - q_ptr->keywords) * sizeof(qi_keyword));
 
 	/* attach it to its parent structure */
 	q_ptr->keyword = p;
@@ -2893,11 +2922,18 @@ qi_goal *init_quest_goal(int q_idx, int stage, int num) {
 		exit(0);
 	}
 	/* initialise the ADDED memory */
-	memset(p + q_stage->goals * sizeof(qi_goal), 0, (num + 1 - q_stage->goals) * sizeof(qi_goal));
+	//memset(p + q_stage->goals * sizeof(qi_goal), 0, (num + 1 - q_stage->goals) * sizeof(qi_goal));
+	memset(&p[q_stage->goals], 0, (num + 1 - q_stage->goals) * sizeof(qi_goal));
 
 	/* attach it to its parent structure */
 	q_stage->goal = p;
 	q_stage->goals = num + 1;
+
+	/* initialise with correct defaults (paranoia) */
+	p = &q_stage->goal[q_stage->goals - 1];
+	p->kill = NULL;
+	p->retrieve = NULL;
+	p->deliver = NULL;
 
 	/* done, return the new, requested one */
 	return &q_stage->goal[num];
@@ -2917,7 +2953,8 @@ qi_reward *init_quest_reward(int q_idx, int stage, int num) {
 		exit(0);
 	}
 	/* initialise the ADDED memory */
-	memset(p + q_stage->rewards * sizeof(qi_reward), 0, (num + 1 - q_stage->rewards) * sizeof(qi_reward));
+	//memset(p + q_stage->rewards * sizeof(qi_reward), 0, (num + 1 - q_stage->rewards) * sizeof(qi_reward));
+	memset(&p[q_stage->rewards], 0, (num + 1 - q_stage->rewards) * sizeof(qi_reward));
 
 	/* attach it to its parent structure */
 	q_stage->reward = p;

@@ -283,7 +283,7 @@ typedef struct qi_stage {
 
 	/* contains the indices of up to QI_REWARD_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
 	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10, the first QI_OPTIONAL would have index 11. */
-	char goals_for_reward[QI_STAGE_REWARDS][QI_REWARD_GOALS]; /* char to save space, only 1 byte instead of int: returns the goal's index (or -1 if none) */
+	s16b goals_for_reward[QI_STAGE_REWARDS][QI_REWARD_GOALS]; /* returns the goal's index (or -1 if none) */
 
 
 	/* the goals for this stage */
@@ -293,7 +293,7 @@ typedef struct qi_stage {
 	/* determine if a new stage should begin depending on which goals we have completed */
 	/* contains the indices of up to QI_STAGE_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
 	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10 (indices 0..9), the first QI_OPTIONAL would have index 10. */
-	char goals_for_stage[QI_FOLLOWUP_STAGES][QI_STAGE_GOALS]; /* char to save space, only 1 byte instead of int: returns the goal's index (or -1 if none) */
+	s16b goals_for_stage[QI_FOLLOWUP_STAGES][QI_STAGE_GOALS]; /* returns the goal's index (or -1 if none) */
 	s16b next_stage_from_goals[QI_FOLLOWUP_STAGES]; /* <stage> index of the possible follow-up stages */
 } qi_stage;
 
@@ -395,7 +395,7 @@ typedef struct quest_info {
 
 	/* amount of different quest stages */
 	byte stages;
-	byte stage_idx[QI_STAGES];			/* map a stage to a stage[]-index, for example there could be 3 stages in a quest: 0, 1 and 7 :-p */
+	s16b stage_idx[QI_STAGES];			/* map a stage to a stage[]-index, for example there could be 3 stages in a quest: 0, 1 and 7 :-p */
 	qi_stage *stage;
 
 	/* amount of different keywords for player-npc-dialogue */
