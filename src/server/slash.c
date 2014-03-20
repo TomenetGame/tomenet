@@ -12,6 +12,9 @@
 
 /* #define NOTYET 	*//* only for testing and working atm */
 
+/* added this for consistency in some (unrelated) header-inclusion,
+   it IS a server file, isn't it? */
+#define SERVER
 #include "angband.h"
 
 /* how many chars someone may enter (formerly used for /bbs, was an ugly hack) */

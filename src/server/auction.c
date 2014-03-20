@@ -6,6 +6,9 @@
 
 /* NOTE: This is still buggy and far from ready */
 
+/* added this for consistency in some (unrelated) header-inclusion,
+   it IS a server file, isn't it? */
+#define SERVER
 #include "angband.h"
 
 #ifdef AUCTION_SYSTEM

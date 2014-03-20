@@ -4,6 +4,10 @@
  * (dsharp@unixpros.com).
  */
 
+/* added this for consistency in some (unrelated) header-inclusion,
+   it IS a server file, isn't it? */
+#define SERVER
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <sys/types.h>
