@@ -16,10 +16,10 @@ V:0.0.1
 # (optional) I:privileged:individual (MUST BE 1!!):minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:questdonecreditstage
 # (optional) E:list of colon-separated prequest codenames (up to 5) which must have been completed to pick up this quest
 # (optional) T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
-# (optional) U:endingstage (0 = none):duration:cooldown:staticfloor?:quitfloor?
+# (optional) U:endingstage (0 = none):duration:cooldown
 # Q (5x repeatable, for up to 5 questors):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
 # L (5x repeatable per Q line):locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:mapfile (if not using terrain type) or '-'
-# (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?
+# (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?:staticfloor?:quitfloor?
 #(Parameters from here on are all individual per quest stage)
 # (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0 (nonfunctional):timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
 # (optional) X (50x repeatable):stage:flags:narration text
@@ -61,8 +61,8 @@ V:0.0.1
 #Q:1:37:b:T:-1:-1:-1:-1:-1:Blind Bat
 ##L:1:1:-1:-1:-1:0:98:39:-
 #L:0:0:63:63:0:0:98:39:-
-#F:0:1:1:0:1
-#U:0:0:0:0:0
+#F:0:1:1:0:1:0:0
+#U:0:0:0
 #W:0:0:-:Hello, fellow fruit bat!
 #W:0:0:-:Would you like some [[ale]] or rather a [[solid ration]]?
 #Y:0:0:-:ale:-:1
@@ -119,11 +119,11 @@ R:3:80:38:0:0:0:0:0:0:0:0:0:1:1:0
 # (optional) I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:questdonecreditstage
 # (optional) E:list of colon-separated prequest codenames
 # (optional) T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
-# (optional) U:endingstage (0 = none):duration:cooldown:staticfloor?:quitfloor?
+# (optional) U:endingstage (0 = none):duration:cooldown
 # Q (5x repeatable, for up to 5 questors):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
 # //todo (optional) K (5x repeatable, per Q line):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
 # L (5x repeatable per Q line):locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:mapfile (if not using terrain type) or '-'
-# (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?
+# (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?:staticfloor?:quitfloor?
 # //todo (optional) D:dungeon to spawn ...
 #(Parameters from here on are all individual per quest stage)
 # (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage:timed change offset:timed change absolute:timed change at realtime (-1 disables):change quietly (skip stage dialogue)
