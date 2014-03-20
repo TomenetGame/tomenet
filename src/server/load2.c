@@ -1047,8 +1047,6 @@ static void rd_quests() {
 	byte flags = QI_FLAGS, tmpbyte;
 	int dummysize1 = sizeof(byte) * 7 + sizeof(s16b) * 3 + sizeof(s32b);
 	int dummysize2 = sizeof(byte) * 5 + sizeof(s16b);
-	monster_type *m_ptr;
-	quest_info *q_ptr;
 
 	rd_s16b(&max);
 	rd_s16b(&questors);
