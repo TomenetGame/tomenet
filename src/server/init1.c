@@ -7406,6 +7406,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			error_idx = i;
 			/* Point at the "info" */
 			q_ptr = &q_info[i];
+			q_ptr->defined = TRUE;
 
 
 			/* ---------- we got a new quest entry ---------- */
