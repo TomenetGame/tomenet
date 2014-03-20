@@ -111,33 +111,33 @@ typedef struct qi_questor {
 	byte dlevmin, dlevmax;				/* eligible dungeon level or world sector level (0 for any) */
 
 	/* type of questor */
-	byte questor;					/* QI_QUESTOR_xxx */
+	byte type;					/* QI_QUESTOR_xxx */
 
-	s16b questor_ridx;				/* QI_QUESTOR_NPC; 0 for any */
-	char questor_rchar;				/*  0 for any */
-	byte questor_rattr;				/*  0 for any */
-	byte questor_rlevmin, questor_rlevmax;		/*  0 for any */
+	s16b ridx;					/* QI_QUESTOR_NPC; 0 for any */
+	char rchar;					/*  0 for any */
+	byte rattr;					/*  0 for any */
+	byte rlevmin, rlevmax;				/*  0 for any */
 
-	s16b questor_sval;				/* QI_QUESTOR_PARCHMENT */
+	s16b sval;					/* QI_QUESTOR_PARCHMENT */
 
-	s16b questor_ktval, questor_ksval;		/* QI_QUESTOR_ITEM_xxx. No further stats/enchantments are displayed! */
+	s16b ktval, ksval;				/* QI_QUESTOR_ITEM_xxx. No further stats/enchantments are displayed! */
 
-	char questor_name[MAX_CHARS];			/* optional pseudo-unique name that overrides the normal name */
+	char name[MAX_CHARS];				/* optional pseudo-unique name that overrides the normal name */
 
-	bool questor_talkable;				/* questor accepts dialogue? (by bumping usually) */
-	bool questor_despawned;				/* questor starts despawned? */
+	bool talkable;					/* questor accepts dialogue? (by bumping usually) */
+	bool despawned;					/* questor starts despawned? */
 
 	/* ..if killable ie not invincible: */
-	bool questor_drops_regular;			/* Drops regular loot (of his ridx type) instead of nothing? */
-	bool questor_drops_specific;			/* Drops a specific item (like DROP_CHOSEN) */
-	s16b questor_drops_tval;			/* hand over certain rewards to the player */
-	s16b questor_drops_sval;
-	s16b questor_drops_pval, questor_drops_bpval;
-	s16b questor_drops_name1, questor_drops_name2, questor_drops_name2b;
-	bool questor_drops_good, questor_drops_great;
-	bool questor_drops_reward;			/*  use fitting-reward algo (from highlander etc)? */
-	int questor_drops_gold;
-	int questor_exp;
+	bool drops_regular;				/* Drops regular loot (of his ridx type) instead of nothing? */
+	bool drops_specific;				/* Drops a specific item (like DROP_CHOSEN) */
+	s16b drops_tval;				/* hand over certain rewards to the player */
+	s16b drops_sval;
+	s16b drops_pval, drops_bpval;
+	s16b drops_name1, drops_name2, drops_name2b;
+	bool drops_good, drops_great;
+	bool drops_reward	;			/*  use fitting-reward algo (from highlander etc)? */
+	int drops_gold;
+	int exp;
 
 	/* ----- Dynamic questor information ----- */
 
@@ -145,47 +145,47 @@ typedef struct qi_questor {
 	   this data gets generated dynamically on quest activation from above template data */
 	struct worldpos current_wpos;
 	s16b current_x, current_y;
-	s16b questor_m_idx;
+	s16b m_idx;
 } qi_questor;
 
 /* Sub-structure: Questor changes (or turns vulnerable) ('S') */
 typedef struct qi_questor_morph {
 	/* special questor behaviour during each stage */
-	bool questor_talkable;				/* questor accepts dialogue? (by bumping usually) */
-	bool questor_despawned;				/* questor vanishes during a quest stage? */
+	bool talkable;					/* questor accepts dialogue? (by bumping usually) */
+	bool despawned;					/* questor vanishes during a quest stage? */
 
-	bool questor_invincible;			/* Is the questor invincible (if monster)/unpickable by monsters (if item) during a particular stage? */
-	s16b questor_death_fail;			/* If the questor dies, the quest goes to stage n? (->reset old stage goals/positions as if we just entered it, if that is possible? hm) */
-	bool questor_death_fail_all;			/* If the questor dies, the quest fails completely? */
-	cptr questor_name;				/* questor changes optional pseudo-unique name during this stage? */
-	s16b questor_ridx; 				/* questor changes to this base monster type */
-	char questor_rchar;
-	byte questor_rattr;
-	byte questor_rlev;
+	bool invincible;				/* Is the questor invincible (if monster)/unpickable by monsters (if item) during a particular stage? */
+	s16b death_fail;				/* If the questor dies, the quest goes to stage n? (->reset old stage goals/positions as if we just entered it, if that is possible? hm) */
+	bool death_fail_all;				/* If the questor dies, the quest fails completely? */
+	cptr name;					/* questor changes optional pseudo-unique name during this stage? */
+	s16b ridx; 					/* questor changes to this base monster type */
+	char rchar;
+	byte rattr;
+	byte rlev;
 } qi_questor_morph;
 
 /* Sub-structure: Questor moves himself or the player ('S'/'H') */
 typedef struct qi_questor_hostility {
-	struct worldpos teleport_wpos;	/* teleport participating player to a new position */
+	struct worldpos teleport_wpos;			/* teleport participating player to a new position */
 	s16b teleport_player_x, teleport_player_y;
 
-	s16b questor_hostile;				/* questor turns into a normal aggressor, and stage is changed */
-	s16b questor_hostile_revert_hp;			/* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
-	s16b questor_hostile_revert_timed_ingame;	/* ..after ingame time (min).. */
-	s16b questor_hostile_revert_timed_ingame_abs;	/* ..at ingame time.. */
-	s16b questor_hostile_revert_timed_real;		/* ..after real time (s).. */
+	s16b hostile;					/* questor turns into a normal aggressor, and stage is changed */
+	s16b hostile_revert_hp;				/* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
+	s16b hostile_revert_timed_ingame;		/* ..after ingame time (min).. */
+	s16b hostile_revert_timed_ingame_abs;		/* ..at ingame time.. */
+	s16b hostile_revert_timed_real;			/* ..after real time (s).. */
 
-	bool questor_turns_normal;			/* questor actually loses questor status and turns into a regular mob! */
+	bool turns_normal;				/* questor actually loses questor status and turns into a regular mob! */
 } qi_questor_hostility;
 
 /* Sub-structure: Questor moves himself or the player ('J') */
 typedef struct qi_questor_act {
-	byte questor_walk_speed;			/* questor will actually move around during this stage? */
-	s16b questor_walk_destx, questor_walk_desty;	/* target waypoint for questor to move to */
-	s16b questor_walk_stage;			/* stage will change when questor arrives at destination */
+	byte walk_speed;				/* questor will actually move around during this stage? */
+	s16b walk_destx, walk_desty;			/* target waypoint for questor to move to */
+	s16b walk_stage;				/* stage will change when questor arrives at destination */
 
-	struct worldpos teleport_questor_wpos;		/* teleport questor to a new position */
-	s16b teleport_questor_x, teleport_questor_y;
+	struct worldpos teleport_wpos;			/* teleport questor to a new position */
+	s16b teleport_x, teleport_y;
 } qi_questor_act;
 
 	/* quest goals, up to 10 per stage, with a multitude of different sub-goals (Note: of the subgoals 1 is randomly picked for the player, except if 'xxx_random_pick' is set, which allows the player to pick what he wants to do).
@@ -196,41 +196,38 @@ typedef struct qi_questor_act {
 
 /* Sub-structure: A single kill goal */
 typedef struct qi_kill {
-	bool kill;					/* toggle */
 #if 0 /* too much, make it simpler for now */
-	bool kill_player_picks;				/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
+	bool player_picks;				/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
 #endif
-	s16b kill_ridx[10];				/* kill certain monster(s), 0 for none, -1 for any. */
-	char kill_rchar[5];				/*  ..certain types, 254 for any, 255 for none. AND's with attr/lev. */
-	byte kill_rattr[5];				/*  ..certain colours, 254 for any, 255 for none. AND's with char/lev. */
-	byte kill_rlevmin, kill_rlevmax;		/* 0 for any. AND's with char/attr. */
-	s16b kill_number, kill_number_left;
-	byte kill_spawn;				/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
-	byte kill_spawn_targets;			/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
+	s16b ridx[10];					/* kill certain monster(s), 0 for none, -1 for any. */
+	char rchar[5];					/*  ..certain types, 254 for any, 255 for none. AND's with attr/lev. */
+	byte rattr[5];					/*  ..certain colours, 254 for any, 255 for none. AND's with char/lev. */
+	byte rlevmin, rlevmax;				/* 0 for any. AND's with char/attr. */
+	s16b number, number_left;
+	byte spawn;					/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
+	byte spawn_targets;				/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
 } qi_kill;
 
 /* Sub-structure: A single retrieval goal (main mem eater) */
 typedef struct qi_retrieve {
-	bool retrieve;					/* toggle */
 #if 0 /* too much, make it simpler for now */
-	bool retrieve_player_picks;			/* instead of picking one subgoal randomly, let the player decide which he wants to get */
+	bool player_picks;				/* instead of picking one subgoal randomly, let the player decide which he wants to get */
 #endif
-	s16b retrieve_otval[10], retrieve_osval[10];	/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval, 0 = not checked) */
-	s16b retrieve_opval[5], retrieve_obpval[5];	/* umm, let's say 9999 = not checked :-p, -9999 = any */
-	byte retrieve_oattr[5];				/*  ..certain colours (flavoured items only), 255 = not checked, 254 = any */
-	s16b retrieve_oname1[5], retrieve_oname2[5], retrieve_oname2b[5]; /* -3 = not checked, -2 == any except zero, -1 = any */
-	int retrieve_ovalue;				/* minimum value of the item (0 to disab..wait) */
-	s16b retrieve_number;				/* amount of fitting items to retrieve */
+	s16b otval[10], osval[10];			/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval, 0 = not checked) */
+	s16b opval[5], obpval[5];			/* umm, let's say 9999 = not checked :-p, -9999 = any */
+	byte oattr[5];					/*  ..certain colours (flavoured items only), 255 = not checked, 254 = any */
+	s16b oname1[5], oname2[5], oname2b[5];		/* -3 = not checked, -2 == any except zero, -1 = any */
+	int ovalue;					/* minimum value of the item (0 to disab..wait) */
+	s16b number;					/* amount of fitting items to retrieve */
 } qi_retrieve;
 
 /* Sub-structure: A single deliver goal */
 typedef struct qi_deliver {
-	bool deliver_pos;				/* enable delivery pos? */
-	struct worldpos deliver_wpos;			/* (after optionally killing/retrieving/or whatever) MOVE TO this world pos */
-	bool deliver_terrain_patch;			/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
+	struct worldpos wpos;				/* (after optionally killing/retrieving/or whatever) MOVE TO this world pos */
+	bool terrain_patch;				/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
 							   max radius is QI_TERRAIN_PATCH_RADIUS. */
-	s16b deliver_pos_x, deliver_pos_y;		/* -"- ..MOVE TO specifically this position */
-	cptr deliver_tpref;				/* filename of map to load, or empty for none */
+	s16b pos_x, pos_y;				/* -"- ..MOVE TO specifically this position */
+	cptr tpref;					/* filename of map to load, or empty for none */
 } qi_deliver;
 
 /* Sub-structure: A single quest goal (which can be kill/retrieve/deliver) */
@@ -265,16 +262,16 @@ typedef struct qi_goal {
 
 /* Sub-structure: A single quest reward */
 typedef struct qi_reward {
-	s16b reward_otval;				/* hand over certain rewards to the player */
-	s16b reward_osval;
-	s16b reward_opval, reward_obpval;
-	s16b reward_oname1, reward_oname2, reward_oname2b;
-	bool reward_ogood, reward_ogreat, reward_ovgreat;
-	bool reward_oreward;				/* use fitting-reward algo (from highlander etc)? */
+	s16b otval	;				/* hand over certain rewards to the player */
+	s16b osval;
+	s16b opval, obpval;
+	s16b oname1, oname2, oname2b;
+	bool ogood, ogreat, ovgreat;
+	bool oreward;					/* use fitting-reward algo (from highlander etc)? */
 
-	int reward_gold;
-	int reward_exp;
-	s16b reward_statuseffect;			/* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
+	int gold;
+	int exp;
+	s16b statuseffect;				/* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
 } qi_reward;
 
 /* Sub-structure: A single quest stage */
@@ -354,17 +351,17 @@ typedef struct qi_keyword {
 	char keyword[QI_KEYWORD_LEN];			/* each convo may allow the player to reply with up to m keywords a 30 chars; 'Y' as 1st keyword and 'N' as 2nd trigger a yes/no hack */
 	bool questor_ok[QI_QUESTORS];			/* this keyword is valid for which questor(s) ? */
 	bool stage_ok[QI_STAGES];			/* this keyword is valid during which stage(s) ? */
-	u16b keywordflags;				/* required flags configuration for a keyword to be enabled */
-	u16b keyword_setflags;				/* ..and the keyword will change flags to these */
-	u16b keyword_clearflags;			/* ..and the keyword will change flags to these */
-	s16b keyword_stage;				/* entering this keyword will bring the player to a different quest stage (or -1) */
+	u16b flags;					/* required flags configuration for a keyword to be enabled */
+	u16b setflags;					/* ..and the keyword will change flags to these */
+	u16b clearflags;				/* ..and the keyword will change flags to these */
+	s16b stage;					/* entering this keyword will bring the player to a different quest stage (or -1) */
 } qi_keyword;
 
 /* Sub-structure: A single quest keyword-reply (main mem eater) */
 typedef struct qi_kwreply {
 	byte keyword_idx[QI_KEYWORDS_PER_REPLY];	/* which keyword(s) will prompt this reply from the current questor? */
-	cptr keyword_reply[QI_TALK_LINES];		/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
-	u16b keyword_replyflags[QI_TALK_LINES];		/* only print this particular text line if these flags are matching the quest flags */
+	cptr reply[QI_TALK_LINES];			/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
+	u16b replyflags[QI_TALK_LINES];			/* only print this particular text line if these flags are matching the quest flags */
 } qi_kwreply;
 
 /* Main structure: The complete quest data */
