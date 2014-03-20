@@ -1236,7 +1236,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	anything = FALSE;
 
 	/* optional goals play no role, obviously */
-	for (i = 0; i < QI_GOALS; i++)
+	for (i = 0; i < q_stage->goals; i++)
 		if (q_stage->goal[i].kill || q_stage->goal[i].retrieve || q_stage->goal[i].deliver) {
 			anything = TRUE;
 			break;
@@ -1817,7 +1817,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 	   and hence flags won't get changed yet until it is eventually resolved
 	   when we turn in the delivery. */
 	nisi = FALSE;
-	for (j = 0; j < QI_GOALS; j++)
+	for (j = 0; j < q_stage->goals; j++)
 		if (q_stage->goal[j].deliver) {
 			nisi = TRUE;
 			break;

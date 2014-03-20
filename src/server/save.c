@@ -470,7 +470,7 @@ static void wr_quests() {
 		wr_s16b(q_info[i].cur_cooldown);
 		wr_s16b(q_info[i].cur_stage);
 		wr_s32b(q_info[i].turn_activated);
-		wr_s32b(q_info[i].turn_acquired);
+//restructure	wr_s32b(q_info[i].turn_acquired);
 
 		for (j = 0; j < QI_QUESTORS; j++) {
 #if 0//restructure
@@ -1359,7 +1359,7 @@ static bool wr_savefile_new(int Ind) {
 
 
 	/* Quest information */
-#if 0//4.5.26
+#if 0//4.5.26 restructure
 	wr_byte(p_ptr->quest_any_kill);
 	wr_byte(p_ptr->quest_any_kill_target);
 	wr_byte(p_ptr->quest_any_kill_within_target);

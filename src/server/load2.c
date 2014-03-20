@@ -1079,7 +1079,7 @@ static void rd_quests() {
 		rd_s16b(&q_info[i].cur_cooldown);
 		rd_s16b(&q_info[i].cur_stage);
 		rd_s32b(&q_info[i].turn_activated);
-		if (!older_than(4, 5, 26)) rd_s32b(&q_info[i].turn_acquired);
+//restructure	if (!older_than(4, 5, 26)) rd_s32b(&q_info[i].turn_acquired);
 
 		for (j = 0; j < questors; j++) {
 			if (j >= QI_QUESTORS) {
@@ -2688,7 +2688,7 @@ static errr rd_savefile_new_aux(int Ind) {
 
 
 	/* read personal quest data */
-#if 0//4.5.26
+#if 0//4.5.26 restructure
 	rd_byte((byte *) p_ptr->quest_any_k);
 	rd_byte((byte *) p_ptr->quest_any_k_target);
 	rd_byte((byte *) p_ptr->quest_any_k_within_target);
@@ -2726,7 +2726,8 @@ static errr rd_savefile_new_aux(int Ind) {
 					rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
 			}
 
-			if (!older_than(4, 5, 26)) {
+//restructure 		if (!older_than(4, 5, 26)) {
+			if (TRUE) {
 				rd_byte((byte *) &p_ptr->quest_kill[i]);
 				rd_byte((byte *) &p_ptr->quest_retrieve[i]);
 
