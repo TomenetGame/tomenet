@@ -453,6 +453,7 @@ static void wr_xorders() {
 	}
 }
 
+#if 0 /* need to use separate function quests_save() now */
 static void wr_quests() {
 	int i, j, k;
 
@@ -508,6 +509,7 @@ static void wr_quests() {
 		}
 	}
 }
+#endif
 
 static void wr_guilds() {
 	int i, j;
@@ -2116,7 +2118,7 @@ static bool wr_server_savefile()
 
 	wr_guilds();
 	wr_xorders();
-	wr_quests();
+	//wr_quests();
 
 	wr_u32b(account_id);
 	wr_s32b(player_id);
@@ -2261,29 +2263,23 @@ static void new_wr_floors(){
 	wr_s16b(0x7fff);
 }
 
-static bool save_server_aux(char *name)
-{
-	bool    ok = FALSE;
-
-	int             fd = -1;
-
-	int             mode = 0644;
+static bool save_server_aux(char *name) {
+	bool	ok = FALSE;
+	int	fd = -1;
+	int	mode = 0644;
 
 
 	/* No file yet */
 	fff = NULL;
 
-
 	/* File type is "SAVE" */
 	FILE_TYPE(FILE_TYPE_SAVE);
-
 
 	/* Create the savefile */
 	fd = fd_make(name, mode);
 
 	/* File is okay */
-	if (fd >= 0)
-	{
+	if (fd >= 0) {
 		/* Close the "fd" */
 		(void)fd_close(fd);
 
@@ -2291,8 +2287,7 @@ static bool save_server_aux(char *name)
 		fff = my_fopen(name, "wb");
 
 		/* Successful open */
-		if (fff)
-		{
+		if (fff) {
 			/* Allocate a buffer */
 			fff_buf = C_NEW(MAX_BUF_SIZE, char);
 			fff_buf_pos = 0;
@@ -2450,10 +2445,14 @@ bool load_server_info(void) {
 /*
  * Save the server state to a "server" savefile.
  */
-bool save_server_info()
-{
+bool save_server_info() {
 	int result = FALSE;
 	char safe[MAX_PATH_LENGTH];
+
+#if DEBUG_LEVEL > 1
+	printf("saving quest info...\n");
+#endif
+	quests_save();
 
 #if DEBUG_LEVEL > 1
 	printf("saving server info...\n");
