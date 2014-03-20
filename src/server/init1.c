@@ -7720,18 +7720,17 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'F' for questor accept/spawn flags */
 		if (buf[0] == 'F') {
-			int aalos, aaint, talk, despawn, invinc;
+			int aalos, aaint, talk, despawn;
 
 			if (lc_accept == QI_QUESTORS) return 1;
 			s = buf + 2;
 
-			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
-			    &aalos, &aaint, &talk, &despawn, &invinc)) return (1);
+			if (4 != sscanf(s, "%d:%d:%d:%d:%d",
+			    &aalos, &aaint, &talk, &despawn)) return (1);
 			q_ptr->accept_los[lc_accept] = (aalos != 0);
 			q_ptr->accept_interact[lc_accept] = (aaint != 0);
 			q_ptr->questor_talkable[lc_accept] = (talk != 0);
 			q_ptr->questor_despawned[lc_accept] = (despawn != 0);
-			q_ptr->questor_invincible[lc_accept] = (invinc != 0);
 
 			lc_accept++;
 			continue;

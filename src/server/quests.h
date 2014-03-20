@@ -123,7 +123,6 @@ typedef struct qi_questor {
 	s16b questor_ktval, questor_ksval;		/* QI_QUESTOR_ITEM_xxx. No further stats/enchantments are displayed! */
 
 	char questor_name[MAX_CHARS];			/* optional pseudo-unique name that overrides the normal name */
-	bool questor_invincible;			/* Is the questor invincible (if monster)/unpickable by monsters (if item)? */
 
 	bool questor_talkable;				/* questor accepts dialogue? (by bumping usually) */
 	bool questor_despawned;				/* questor starts despawned? */

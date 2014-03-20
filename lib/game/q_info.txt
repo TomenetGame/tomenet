@@ -19,7 +19,7 @@ V:0.0.1
 # (optional) U:endingstage (0 = none):duration:cooldown:staticfloor?:quitfloor?
 # Q (5x repeatable, for up to 5 questors):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
 # L (5x repeatable per Q line):locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:mapfile (if not using terrain type) or '-'
-# (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?
+# (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?
 #(Parameters from here on are all individual per quest stage)
 # (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0 (nonfunctional):timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
 # (optional) X (50x repeatable):stage:flags:narration text
@@ -123,7 +123,7 @@ $TEST_SERVER$R:1:80:38:0:0:0:0:0:0:0:0:0:2:2:0
 # Q (5x repeatable, for up to 5 questors):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
 # //todo (optional) K (5x repeatable, per Q line):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
 # L (5x repeatable per Q line):locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:mapfile (if not using terrain type) or '-'
-# (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?
+# (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?
 # //todo (optional) D:dungeon to spawn ...
 #(Parameters from here on are all individual per quest stage)
 # (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage:timed change offset:timed change absolute:timed change at realtime (-1 disables):change quietly (skip stage dialogue)
