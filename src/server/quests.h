@@ -442,7 +442,8 @@ typedef struct quest_info {
 	/* ----- Fixed quest data (from q_info.txt) ----- */
 
 	/* amount of different quest stages */
-	int stages;
+	byte stages;
+	byte stage_idx[QI_STAGES];			/* map a stage to a stage[]-index, for example there could be 3 stages in a quest: 0, 1 and 7 :-p */
 	qi_stage *stage;
 
 	/* amount of different keywords for player-npc-dialogue */

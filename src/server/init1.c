@@ -7307,9 +7307,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	int i, j, k, l, stage, goal, nextstage, questor;
 	char *s, codename[QI_CODENAME_LEN + 1], creator[NAME_LEN], questname[MAX_CHARS];
 	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1], tmpbuf2[MAX_CHARS];
-	int lc_narration[QI_STAGES], lc_conversation[QI_QUESTORS][QI_STAGES], lc_keywords[QI_QUESTORS][QI_STAGES], lc_rewards[QI_STAGES];
-	int lc_questor = 0, lc_accept = 0;
+
+	int lc_questor = 0, lc_accept = 0, lc_keywords = 0, lc_kwreplies = 0;
+	int lc_narration[QI_STAGES], lc_conversation[QI_QUESTORS][QI_STAGES], lc_rewards[QI_STAGES];
 	int lc_keyword_reply[QI_QUESTORS][QI_STAGES][QI_KEYWORDS];
+
 	bool disabled;
 	u16b flags;
 
@@ -7366,6 +7368,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* Hack: Finish up PREVIOUS quest: remember # of questors that quest had */
 			if (q_ptr) q_ptr->questors = lc_questor;
 
+
 			/* Find the colon before the name */
 			s = strchr(buf + 2, ':');
 			/* Verify that colon */
@@ -7387,6 +7390,20 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			error_idx = i;
 			/* Point at the "info" */
 			q_ptr = &q_info[i];
+
+
+			/* ---------- we got a new quest entry ---------- */
+
+			/* initialise sub-structures */
+			q_ptr->questors = 0;
+			q_ptr->questor = NULL;
+			q_ptr->stages = 0;
+			q_ptr->stage = NULL;
+			q_ptr->keywords = 0;
+			q_ptr->keyword = NULL;
+			q_ptr->kwreplies = 0;
+			q_ptr->kwreply = NULL;
+
 
 			/* Scan for the values -- careful: lenghts are hard-coded, QI_CODENAME_LEN, NAME_LEN - 1, MAX_CHARS - 1 */
 			if (3 > (j = sscanf(s, "%10[^:]:%19[^:]:%79[^:]:%8[^:]",
@@ -7410,7 +7427,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			strcpy(q_ptr->codename, codename);
 			strcpy(q_ptr->creator, creator);
 
-			/* initialise default values, because some flag lines/values are optional) */
+
+			/* ---------- initialise default values, because some flag lines/values are optional) ---------- */
+
 			/* 'I' */
 			q_ptr->privilege = 0;
 			q_ptr->individual = TRUE;
@@ -7559,7 +7578,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-		/* There better be a current d_ptr */
+		/* There better be a current q_ptr */
 		if (!q_ptr) return (3);
 
 		/* Process 'C' for list of stages (usually stage 0) that allow players to acquire the quest */
