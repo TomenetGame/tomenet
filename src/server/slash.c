@@ -8334,7 +8334,8 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				msg_format(Ind, "\377GActivating quest %d (%s).", k, q_info[k].codename);
-				quest_activate(k);
+				if (!quest_activate(k)) msg_format(Ind, "\377oFailed!");
+				else msg_print(Ind, "\377gOk.");
 				return;
 			}
 			else if (prefix(message, "/qstop")) { /* cancel a quest */

@@ -165,7 +165,7 @@ void process_quests(void) {
 }
 
 /* Spawn questor, prepare sector/floor, make things static if requested, etc. */
-void quest_activate(int q_idx) {
+bool quest_activate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, q, m_idx;
 	cave_type **zcave, *c_ptr;
@@ -177,6 +177,11 @@ void quest_activate(int q_idx) {
 	struct worldpos wpos = {63, 63, 0}; //default for cases of acute paranoia
 	int x, y;
 
+	/* catch bad mistakes */
+	if (!q_ptr->defined) {
+		s_printf("QUEST_UNDEFINED: Cancelled attempt to activate quest %d.\n", q_idx);
+		return FALSE;
+	}
 
 	/* Quest is now 'active' */
 #if QDEBUG > 0
@@ -214,7 +219,7 @@ void quest_activate(int q_idx) {
 			wpos.wx = q_questor->start_wpos.wx;
 			wpos.wy = q_questor->start_wpos.wy;
 			wpos.wz = q_questor->start_wpos.wz;
-		} else if (!q_questor->s_location_type) return;
+		} else if (!q_questor->s_location_type) return FALSE;
 		else if ((q_questor->s_location_type & QI_SLOC_TOWN)) {
 			if ((q_questor->s_towns_array & QI_STOWN_BREE)) {
 				wpos.wx = 32;
@@ -235,7 +240,7 @@ void quest_activate(int q_idx) {
 			} else if ((q_questor->s_towns_array & QI_STOWN_DUNGEON)) {
 			} else if ((q_questor->s_towns_array & QI_STOWN_IDDC)) {
 			} else if ((q_questor->s_towns_array & QI_STOWN_IDDC_FIXED)) {
-			} else return; //paranoia
+			} else return FALSE; //paranoia
 		} else if ((q_questor->s_location_type & QI_SLOC_SURFACE)) {
 			if ((q_questor->s_terrains & RF8_WILD_TOO)) { /* all terrains are valid */
 			} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
@@ -249,10 +254,10 @@ void quest_activate(int q_idx) {
 			} else if ((q_questor->s_terrains & RF8_WILD_DESERT)) {
 			} else if ((q_questor->s_terrains & RF8_WILD_ICE)) {
 			} else if ((q_questor->s_terrains & RF8_WILD_SWAMP)) {
-			} else return; //paranoia
+			} else return FALSE; //paranoia
 		} else if ((q_questor->s_location_type & QI_SLOC_DUNGEON)) {
 		} else if ((q_questor->s_location_type & QI_SLOC_TOWER)) {
-		} else return; //paranoia
+		} else return FALSE; //paranoia
 
 		q_questor->current_wpos.wx = wpos.wx;
 		q_questor->current_wpos.wy = wpos.wy;
@@ -290,7 +295,7 @@ void quest_activate(int q_idx) {
 #else
 				q_ptr->cur_cooldown = QERROR_COOLDOWN;
 #endif
-				return;
+				return FALSE;
 			}
 		}
 
@@ -311,7 +316,7 @@ void quest_activate(int q_idx) {
 #else
 			q_ptr->cur_cooldown = QERROR_COOLDOWN;
 #endif
-			return;
+			return FALSE;
 		}
 
 		/* make sure no other player/moster is occupying our spawning grid */
@@ -343,7 +348,7 @@ void quest_activate(int q_idx) {
 #else
 				q_ptr->cur_cooldown = QERROR_COOLDOWN;
 #endif
-				return;
+				return FALSE;
 			}
 
 			teleport_away(c_ptr->m_idx, 1);
@@ -454,7 +459,7 @@ void quest_activate(int q_idx) {
  #else
 				q_ptr->cur_cooldown = QERROR_COOLDOWN;
  #endif
-				return;
+				return FALSE;
 			}
 		}
 #endif
@@ -485,6 +490,7 @@ void quest_activate(int q_idx) {
 	q_ptr->turn_activated = turn;
 	q_ptr->cur_stage = -1;
 	quest_set_stage(0, q_idx, 0, FALSE);
+	return TRUE;
 }
 
 /* Despawn questor, unstatic sector/floor, etc. */

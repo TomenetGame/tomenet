@@ -2139,7 +2139,7 @@ extern void go_engine_clocks(void);
 /* central scheduling function: */
 extern void process_quests(void);
 /* not just internal anymore, for admin control: */
-extern void quest_activate(int q_idx);
+extern bool quest_activate(int q_idx);
 extern void quest_deactivate(int q_idx);
 extern s16b quest_get_cooldown(int pInd, int q_idx);
 extern void quest_set_cooldown(int pInd, int q_idx, s16b cooldown);
