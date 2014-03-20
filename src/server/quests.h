@@ -315,7 +315,6 @@ typedef struct qi_kwreply {
 
 	byte lines;
 	cptr reply[QI_TALK_LINES];			/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
-
 	u16b replyflags[QI_TALK_LINES];			/* only print this particular text line if these flags are matching the quest flags */
 } qi_kwreply;
 
