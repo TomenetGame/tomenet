@@ -85,8 +85,9 @@ void process_quests(void) {
 	int i, j;
 	bool night = IS_NIGHT_RAW, day = !night, morning = IS_MORNING, forenoon = IS_FORENOON, noon = IS_NOON;
 	bool afternoon = IS_AFTERNOON, evening = IS_EVENING, midnight = IS_MIDNIGHT, deepnight = IS_DEEPNIGHT;
-	int minute = bst(MINUTE, turn), hour = bst(HOUR, turn), stage;
+	int minute = bst(MINUTE, turn), hour = bst(HOUR, turn);
 	bool active;
+	qi_stage *q_stage;
 
 	for (i = 0; i < max_q_idx; i++) {
 		q_ptr = &q_info[i];
@@ -94,8 +95,6 @@ void process_quests(void) {
 
 		if (q_ptr->cur_cooldown) q_ptr->cur_cooldown--;
 		if (q_ptr->disabled || q_ptr->cur_cooldown) continue;
-
-		stage = q_ptr->cur_stage;
 
 		/* check if quest should be active */
 		active = FALSE;
@@ -151,15 +150,16 @@ void process_quests(void) {
 			if (Players[j]->quest_cooldown[i])
 				Players[j]->quest_cooldown[i]--;
 
+		q_stage = init_quest_stage(i, q_ptr->cur_stage);
 
 		/* handle automatically timed stage actions */
-		if (q_ptr->timed_countdown[stage] < 0) {
-			if (hour == -q_ptr->timed_countdown[stage])
-				quest_set_stage(0, i, q_ptr->timed_countdown_stage[stage], q_ptr->timed_countdown_quiet[stage]);
-		} else if (q_ptr->timed_countdown[stage] > 0) {
-			q_ptr->timed_countdown[stage]--;
-			if (!q_ptr->timed_countdown[stage])
-				quest_set_stage(0, i, q_ptr->timed_countdown_stage[stage], q_ptr->timed_countdown_quiet[stage]);
+		if (q_stage->timed_countdown < 0) {
+			if (hour == -q_stage->timed_countdown)
+				quest_set_stage(0, i, q_stage->timed_countdown_stage, q_stage->timed_countdown_quiet);
+		} else if (q_stage->timed_countdown > 0) {
+			q_stage->timed_countdown--;
+			if (!q_stage->timed_countdown)
+				quest_set_stage(0, i, q_stage->timed_countdown_stage, q_stage->timed_countdown_quiet);
 		}
 	}
 }
@@ -171,12 +171,14 @@ void quest_activate(int q_idx) {
 	cave_type **zcave, *c_ptr;
 	monster_race *r_ptr, *rbase_ptr;
 	monster_type *m_ptr;
+	qi_questor *q_questor;
 
 	/* data written back to q_info[] */
 	struct worldpos wpos = {63, 63, 0}; //default for cases of acute paranoia
 	int x, y;
 
 
+	/* Quest is now 'active' */
 #if QDEBUG > 0
  #if QDEBUG > 1
 	for (i = 1;i <= NumPlayers; i++)
@@ -188,117 +190,117 @@ void quest_activate(int q_idx) {
 	q_ptr->active = TRUE;
 
 
-
-	/* check 'L:' info for starting location -
-	   for now only support 1 starting location, ie use the first one that gets tested to be eligible */
-#if QDEBUG > 2
-	s_printf(" QIDX %d. SWPOS,XY: %d,%d,%d - %d,%d\n", q_idx, q_ptr->start_wpos.wx, q_ptr->start_wpos.wy, q_ptr->start_wpos.wz, q_ptr->start_x, q_ptr->start_y);
-	s_printf(" SLOCT, STAR: %d,%d\n", q_ptr->s_location_type, q_ptr->s_towns_array);
-#endif
-	if (q_ptr->start_wpos.wx != -1) {
-		/* exact questor starting wpos  */
-		wpos.wx = q_ptr->start_wpos.wx;
-		wpos.wy = q_ptr->start_wpos.wy;
-		wpos.wz = q_ptr->start_wpos.wz;
-	} else if (!q_ptr->s_location_type) return;
-	else if ((q_ptr->s_location_type & QI_SLOC_TOWN)) {
-		if ((q_ptr->s_towns_array & QI_STOWN_BREE)) {
-			wpos.wx = 32;
-			wpos.wy = 32;
-		} else if ((q_ptr->s_towns_array & QI_STOWN_GONDOLIN)) {
-			wpos.wx = 27;
-			wpos.wy = 13;
-		} else if ((q_ptr->s_towns_array & QI_STOWN_MINASANOR)) {
-			wpos.wx = 25;
-			wpos.wy = 58;
-		} else if ((q_ptr->s_towns_array & QI_STOWN_LOTHLORIEN)) {
-			wpos.wx = 59;
-			wpos.wy = 51;
-		} else if ((q_ptr->s_towns_array & QI_STOWN_KHAZADDUM)) {
-			wpos.wx = 26;
-			wpos.wy = 5;
-		} else if ((q_ptr->s_towns_array & QI_STOWN_WILD)) {
-		} else if ((q_ptr->s_towns_array & QI_STOWN_DUNGEON)) {
-		} else if ((q_ptr->s_towns_array & QI_STOWN_IDDC)) {
-		} else if ((q_ptr->s_towns_array & QI_STOWN_IDDC_FIXED)) {
-		} else return; //paranoia
-	} else if ((q_ptr->s_location_type & QI_SLOC_SURFACE)) {
-		if ((q_ptr->s_terrains & RF8_WILD_TOO)) { /* all terrains are valid */
-		} else if ((q_ptr->s_terrains & RF8_WILD_SHORE)) {
-		} else if ((q_ptr->s_terrains & RF8_WILD_SHORE)) {
-		} else if ((q_ptr->s_terrains & RF8_WILD_OCEAN)) {
-		} else if ((q_ptr->s_terrains & RF8_WILD_WASTE)) {
-		} else if ((q_ptr->s_terrains & RF8_WILD_WOOD)) {
-		} else if ((q_ptr->s_terrains & RF8_WILD_VOLCANO)) {
-		} else if ((q_ptr->s_terrains & RF8_WILD_MOUNTAIN)) {
-		} else if ((q_ptr->s_terrains & RF8_WILD_GRASS)) {
-		} else if ((q_ptr->s_terrains & RF8_WILD_DESERT)) {
-		} else if ((q_ptr->s_terrains & RF8_WILD_ICE)) {
-		} else if ((q_ptr->s_terrains & RF8_WILD_SWAMP)) {
-		} else return; //paranoia
-	} else if ((q_ptr->s_location_type & QI_SLOC_DUNGEON)) {
-	} else if ((q_ptr->s_location_type & QI_SLOC_TOWER)) {
-	} else return; //paranoia
-
-	/* TEMP: initialise questor starting locations all onto this one.
-	   TODO: each questor gets its own pos */
-	for (i = 0; i < QI_QUESTORS; i++) {
-		q_ptr->current_wpos[i].wx = wpos.wx;
-		q_ptr->current_wpos[i].wy = wpos.wy;
-		q_ptr->current_wpos[i].wz = wpos.wz;
-	}
-
-
-	/* Allocate & generate cave */
-	if (!(zcave = getcave(&wpos))) {
-		//dealloc_dungeon_level(&wpos);
-		alloc_dungeon_level(&wpos);
-		generate_cave(&wpos, NULL);
-		zcave = getcave(&wpos);
-	}
-	if (q_ptr->static_floor) new_players_on_depth(&wpos, 1, TRUE);
-
-
-	/* Specified exact starting location within given wpos? */
-	if (q_ptr->start_x != -1) {
-		x = q_ptr->start_x;
-		y = q_ptr->start_y;
-	} else {
-		/* find a random spawn loc */
-		i = 1000; //tries
-		while (i) {
-			i--;
-			/* not too close to level borders maybe */
-			x = rand_int(MAX_WID - 6) + 3;
-			y = rand_int(MAX_HGT - 6) + 3;
-			if (!cave_naked_bold(zcave, y, x)) continue;
-			break;
-		}
-		if (!i) {
-			s_printf(" QUEST_CANCELLED: No free questor spawn location.\n");
-			q_ptr->active = FALSE;
-#ifdef QERROR_DISABLE
-			q_ptr->disabled = TRUE;
-#else
-			q_ptr->cur_cooldown = QERROR_COOLDOWN;
-#endif
-			return;
-		}
-	}
-
-	c_ptr = &zcave[y][x];
-
-	/* TEMP: initialise questor starting locations all onto this one.
-	   TODO: each questor gets its own pos */
-	for (i = 0; i < QI_QUESTORS; i++) {
-		q_ptr->current_x[i] = x;
-		q_ptr->current_y[i] = y;
-	}
-
-
-	/* generate questor 'monster' */
+	/* Generate questor 'monsters' */
 	for (q = 0; q < q_ptr->questors; q++) {
-		if (!q_ptr->questor_ridx[q]) break;
+		q_questor = &q_ptr->questor[q];
+
+		/* Only treat NPC-questors (monsters) here for now (TODO: questor-items) */
+		if (q_questor->type != QI_QUESTOR_NPC) continue;
+
+		/* If no monster race index is set for the questor, don't spawn him. (paranoia) */
+		if (!q_questor->ridx) continue;
+
+
+		/* ---------- Try to choose questor spawn locations ---------- */
+
+		/* check 'L:' info for starting location -
+		   for now only support 1 starting location, ie use the first one that gets tested to be eligible */
+#if QDEBUG > 2
+		s_printf(" QIDX %d. SWPOS,XY: %d,%d,%d - %d,%d\n", q_idx, q_questor->start_wpos.wx, q_questor->start_wpos.wy, q_questor->start_wpos.wz, q_questor->start_x, q_questor->start_y);
+		s_printf(" SLOCT, STAR: %d,%d\n", q_questor->s_location_type, q_questor->s_towns_array);
+#endif
+		if (q_questor->start_wpos.wx != -1) {
+			/* exact questor starting wpos  */
+			wpos.wx = q_questor->start_wpos.wx;
+			wpos.wy = q_questor->start_wpos.wy;
+			wpos.wz = q_questor->start_wpos.wz;
+		} else if (!q_questor->s_location_type) return;
+		else if ((q_questor->s_location_type & QI_SLOC_TOWN)) {
+			if ((q_questor->s_towns_array & QI_STOWN_BREE)) {
+				wpos.wx = 32;
+				wpos.wy = 32;
+			} else if ((q_questor->s_towns_array & QI_STOWN_GONDOLIN)) {
+				wpos.wx = 27;
+				wpos.wy = 13;
+			} else if ((q_questor->s_towns_array & QI_STOWN_MINASANOR)) {
+				wpos.wx = 25;
+				wpos.wy = 58;
+			} else if ((q_questor->s_towns_array & QI_STOWN_LOTHLORIEN)) {
+				wpos.wx = 59;
+				wpos.wy = 51;
+			} else if ((q_questor->s_towns_array & QI_STOWN_KHAZADDUM)) {
+				wpos.wx = 26;
+				wpos.wy = 5;
+			} else if ((q_questor->s_towns_array & QI_STOWN_WILD)) {
+			} else if ((q_questor->s_towns_array & QI_STOWN_DUNGEON)) {
+			} else if ((q_questor->s_towns_array & QI_STOWN_IDDC)) {
+			} else if ((q_questor->s_towns_array & QI_STOWN_IDDC_FIXED)) {
+			} else return; //paranoia
+		} else if ((q_questor->s_location_type & QI_SLOC_SURFACE)) {
+			if ((q_questor->s_terrains & RF8_WILD_TOO)) { /* all terrains are valid */
+			} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
+			} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
+			} else if ((q_questor->s_terrains & RF8_WILD_OCEAN)) {
+			} else if ((q_questor->s_terrains & RF8_WILD_WASTE)) {
+			} else if ((q_questor->s_terrains & RF8_WILD_WOOD)) {
+			} else if ((q_questor->s_terrains & RF8_WILD_VOLCANO)) {
+			} else if ((q_questor->s_terrains & RF8_WILD_MOUNTAIN)) {
+			} else if ((q_questor->s_terrains & RF8_WILD_GRASS)) {
+			} else if ((q_questor->s_terrains & RF8_WILD_DESERT)) {
+			} else if ((q_questor->s_terrains & RF8_WILD_ICE)) {
+			} else if ((q_questor->s_terrains & RF8_WILD_SWAMP)) {
+			} else return; //paranoia
+		} else if ((q_questor->s_location_type & QI_SLOC_DUNGEON)) {
+		} else if ((q_questor->s_location_type & QI_SLOC_TOWER)) {
+		} else return; //paranoia
+
+		q_questor->current_wpos.wx = wpos.wx;
+		q_questor->current_wpos.wy = wpos.wy;
+		q_questor->current_wpos.wz = wpos.wz;
+
+		/* Allocate & generate cave */
+		if (!(zcave = getcave(&wpos))) {
+			//dealloc_dungeon_level(&wpos);
+			alloc_dungeon_level(&wpos);
+			generate_cave(&wpos, NULL);
+			zcave = getcave(&wpos);
+		}
+		if (q_questor->static_floor) new_players_on_depth(&wpos, 1, TRUE);
+
+		/* Specified exact starting location within given wpos? */
+		if (q_questor->start_x != -1) {
+			x = q_questor->start_x;
+			y = q_questor->start_y;
+		} else {
+			/* find a random spawn loc */
+			i = 1000; //tries
+			while (i) {
+				i--;
+				/* not too close to level borders maybe */
+				x = rand_int(MAX_WID - 6) + 3;
+				y = rand_int(MAX_HGT - 6) + 3;
+				if (!cave_naked_bold(zcave, y, x)) continue;
+				break;
+			}
+			if (!i) {
+				s_printf(" QUEST_CANCELLED: No free questor spawn location.\n");
+				q_ptr->active = FALSE;
+#ifdef QERROR_DISABLE
+				q_ptr->disabled = TRUE;
+#else
+				q_ptr->cur_cooldown = QERROR_COOLDOWN;
+#endif
+				return;
+			}
+		}
+
+		c_ptr = &zcave[y][x];
+
+		q_questor->current_x = x;
+		q_questor->current_y = y;
+
+
+		/* ---------- Try to spawn the questor monster ---------- */
 
 		m_idx = m_pop();
 		if (!m_idx) {
@@ -359,12 +361,12 @@ void quest_activate(int q_idx) {
 		m_ptr = &m_list[m_idx];
 		MAKE(m_ptr->r_ptr, monster_race);
 		r_ptr = m_ptr->r_ptr;
-		rbase_ptr = &r_info[q_ptr->questor_ridx[q]];
+		rbase_ptr = &r_info[q_questor->ridx];
 
 		m_ptr->questor = TRUE;
 		m_ptr->questor_idx = q;
 		m_ptr->quest = q_idx;
-		m_ptr->r_idx = q_ptr->questor_ridx[q];
+		m_ptr->r_idx = q_questor->ridx;
 		/* m_ptr->special = TRUE; --nope, this is unfortunately too much golem'ized.
 		   Need code cleanup!! Maybe rename it to m_ptr->golem and add a new m_ptr->special. */
 		r_ptr->extra = 0;
@@ -385,7 +387,7 @@ void quest_activate(int q_idx) {
 		r_ptr->flags1 |= RF1_FORCE_MAXHP;
 		r_ptr->flags3 |= RF3_RES_TELE | RF3_RES_NEXU;
 		r_ptr->flags7 |= RF7_NO_TARGET | RF7_NEVER_ACT;
-		if (q_ptr->questor_invincible) r_ptr->flags7 |= RF7_NO_DEATH; //for now we just use NO_DEATH flag for invincibility
+		if (q_questor->invincible) r_ptr->flags7 |= RF7_NO_DEATH; //for now we just use NO_DEATH flag for invincibility
 		r_ptr->flags8 |= RF8_GENO_PERSIST | RF8_GENO_NO_THIN | RF8_ALLOW_RUNNING | RF8_NO_AUTORET;
 		r_ptr->flags9 |= RF9_IM_TELE;
 
@@ -394,10 +396,10 @@ void quest_activate(int q_idx) {
 		m_ptr->fx = x;
 		m_ptr->fy = y;
 
-		r_ptr->d_attr = q_ptr->questor_rattr[q];
-		r_ptr->d_char = q_ptr->questor_rchar[q];
-		r_ptr->x_attr = q_ptr->questor_rattr[q];
-		r_ptr->x_char = q_ptr->questor_rchar[q];
+		r_ptr->d_attr = q_questor->rattr;
+		r_ptr->d_char = q_questor->rchar;
+		r_ptr->x_attr = q_questor->rattr;
+		r_ptr->x_char = q_questor->rchar;
 	
 		r_ptr->aaf = rbase_ptr->aaf;
 		r_ptr->mexp = rbase_ptr->mexp;
@@ -467,20 +469,20 @@ void quest_activate(int q_idx) {
 		//r_ptr->sleep = rbase_ptr->sleep;
 		r_ptr->sleep = 0;
 
-		m_ptr->questor_invincible = q_ptr->questor_invincible[q]; //for now handled by RF7_NO_DEATH
+		m_ptr->questor_invincible = q_questor->invincible; //for now handled by RF7_NO_DEATH
 		m_ptr->questor_hostile = FALSE;
-		q_ptr->questor_m_idx[q] = m_idx;
+		q_questor->m_idx = m_idx;
 
 		update_mon(c_ptr->m_idx, TRUE);
 #if QDEBUG > 1
-		s_printf(" QUEST_SPAWNED: Questor '%s' (m_idx %d) at %d,%d,%d - %d,%d.\n", q_ptr->questor_name[0], m_idx, wpos.wx, wpos.wy, wpos.wz, x, y);
+		s_printf(" QUEST_SPAWNED: Questor '%s' (m_idx %d) at %d,%d,%d - %d,%d.\n", q_questor->name[0], m_idx, wpos.wx, wpos.wy, wpos.wz, x, y);
 #endif
 
-		q_ptr->talk_focus[q] = 0;
+		q_questor->talk_focus = 0;
 	}
-	
+
 	/* Initialise with starting stage 0 */
-	q_ptr->start_turn = turn;
+	q_ptr->turn_activated = turn;
 	q_ptr->cur_stage = -1;
 	quest_set_stage(0, q_idx, 0, FALSE);
 }
@@ -489,7 +491,8 @@ void quest_activate(int q_idx) {
 //TODO: implement multiple questors
 void quest_deactivate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
-	int m_idx;
+	qi_questor *q_questor;
+	int i, m_idx;
 	cave_type **zcave, *c_ptr;
 	//monster_race *r_ptr;
 	//monster_type *m_ptr;
@@ -504,37 +507,41 @@ void quest_deactivate(int q_idx) {
 	q_ptr->active = FALSE;
 
 
-	/* get quest information */
-	wpos.wx = q_ptr->current_wpos[0].wx;
-	wpos.wy = q_ptr->current_wpos[0].wy;
-	wpos.wz = q_ptr->current_wpos[0].wz;
+	for (i = 0; i < q_ptr->questors; i++) {
+		q_questor = &q_ptr->questor[i];
 
-	/* Allocate & generate cave */
-	if (!(zcave = getcave(&wpos))) {
-		//dealloc_dungeon_level(&wpos);
-		alloc_dungeon_level(&wpos);
-		generate_cave(&wpos, NULL);
-		zcave = getcave(&wpos);
-	}
-	c_ptr = &zcave[q_ptr->current_y[0]][q_ptr->current_x[0]];
+		/* get quest information */
+		wpos.wx = q_questor->current_wpos.wx;
+		wpos.wy = q_questor->current_wpos.wy;
+		wpos.wz = q_questor->current_wpos.wz;
 
-	/* unmake quest */
+		/* Allocate & generate cave */
+		if (!(zcave = getcave(&wpos))) {
+			//dealloc_dungeon_level(&wpos);
+			alloc_dungeon_level(&wpos);
+			generate_cave(&wpos, NULL);
+			zcave = getcave(&wpos);
+		}
+		c_ptr = &zcave[q_questor->current_y][q_questor->current_x];
+
+		/* unmake quest */
 #if QDEBUG > 1
-	s_printf(" deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_ptr->current_x[0], q_ptr->current_y[0]);
+		s_printf(" deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_questor->current_x, q_questor->current_y);
 #endif
-	m_idx = c_ptr->m_idx;
-	if (m_idx) {
-		if (m_list[m_idx].questor && m_list[m_idx].quest == q_idx) {
+		m_idx = c_ptr->m_idx;
+		if (m_idx) {
+			if (m_list[m_idx].questor && m_list[m_idx].quest == q_idx) {
 #if QDEBUG > 1
-			s_printf(" ..ok.\n");
+				s_printf(" ..ok.\n");
 #endif
-			delete_monster_idx(c_ptr->m_idx, TRUE);
-		} else
+				delete_monster_idx(c_ptr->m_idx, TRUE);
+			} else
 #if QDEBUG > 1
-			s_printf(" ..failed: Monster is not a questor or has a different quest idx.\n");
+				s_printf(" ..failed: Monster is not a questor or has a different quest idx.\n");
 #endif
+		}
+		if (q_questor->static_floor) new_players_on_depth(&wpos, 0, FALSE);
 	}
-	if (q_ptr->static_floor) new_players_on_depth(&wpos, 0, FALSE);
 }
 
 /* return a current quest's cooldown. Either just uses q_ptr->cur_cooldown directly for global
@@ -2691,6 +2698,14 @@ qi_questor *init_quest_questor(int q_idx, int num) {
 qi_stage *init_quest_stage(int q_idx, int num) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *p;
+
+	/* pointless, but w/e */
+	if (num == -1) {
+#if QDEBUG > 1
+		s_printf("QUESTS: referred to stage -1.\n");
+#endif
+		return NULL;
+	}
 
 	/* we already have this existing one */
 	if (q_ptr->stage_idx[num] != -1) return &q_ptr->stage[stage_idx[num]];

@@ -43,6 +43,7 @@ typedef struct qi_questor {
 	byte s_location_type;				/* flags setting elibible starting location types (QI_SLOC_xxx) */
 	u16b s_towns_array;				/* QI_SLOC_TOWN: flags setting eligible starting towns (QI_STOWN_xxx) */
 	u32b s_terrains;				/* QI_SLOC_SURFACE: flags setting eligible starting terrains (RF8_WILD_xxx, RF8_WILD_TOO_MASK for all) */
+
 	/* exact questor starting location */
 	struct worldpos start_wpos;			/* -1, -1 for random */
 	s16b start_x, start_y;				/* -1, -1 for random */
@@ -94,6 +95,8 @@ typedef struct qi_questor {
 	struct worldpos current_wpos;
 	s16b current_x, current_y;
 	s16b m_idx;
+
+	s16b talk_focus;	 //<dynamic data>	/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
 } qi_questor;
 
 /* Sub-structure: Questor changes (or turns vulnerable) ('S') */
@@ -265,7 +268,6 @@ typedef struct qi_stage {
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
-	s16b talk_focus[QI_QUESTORS]; //<dynamic data>	/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
 	byte talk_lines[QI_QUESTORS];
 	cptr talk[QI_QUESTORS][QI_TALK_LINES]; 		/* n conversations a 10 lines a 79 characters */
 	u16b talk_flags[QI_QUESTORS][QI_TALK_LINES];	/* required flags configuration for a convo line to get displayed  */
@@ -336,7 +338,8 @@ typedef struct quest_info {
 	s32b turn_acquired;				/* for global quests: the turn when it was acquired */
 
 	/* the current quest stage (-1 is the init stage, which progresses to 0
-	   automatically, during which quests are usually acquired by players) */
+	   automatically, during which quests are usually acquired by players).
+	   IT MUST NEVER BE -1 AFTER THE QUEST ACTIVATION HAS FINISHED or init_quest_stage() will do the segfault dance. */
 	s16b cur_stage;					/* the current stage in the quest progress */
 
 	/* global quest flags (a-p to clear, A-P to set) -- note that these are stage-independant! */
