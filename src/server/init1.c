@@ -8310,24 +8310,29 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			continue;
 		}
+#endif//restructure
 
 		/* Process 'Z' for how completed stage goals will change 'quest flags' */
 		if (buf[0] == 'Z') {
 			s = buf + 2;
 			if (3 != sscanf(s, "%d:%d:%s", &stage, &goal, flagbuf)) return (1);
 
+			if (stage < 0 || stage >= QI_STAGES) return 1;
+			q_stage = init_quest_stage(error_idx, stage);
+			if (goal < 0 || goal >= q_stage->goals) return 1;
+			q_goal = &q_ptr->stage[stage].goal[goal];
+
 			cc = flagbuf;
 			if (*cc == '-') *cc = 0;
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) {
-					q_ptr->goal_setflags[stage][goal] |= (0x1 << (*cc - 'A')); /* set flag */
+					q_goal->setflags |= (0x1 << (*cc - 'A')); /* set flag */
 				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
-					q_ptr->goal_clearflags[stage][goal] |= (0x1 << (*cc - 'a')); /* clear flag */
+					q_goal->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
 				} else return 1;
 			}
 			continue;
 		}
-#endif//restructure
 
 		/* Process 'G', which goal combinations (up to QI_STAGE_GOALS different goals per combination) are
 		   required to advance to which stage (up to QI_FOLLOWUP_STAGES different ones, each has a goal-combo) */
