@@ -1134,18 +1134,7 @@ static void rd_quests() {
 		}
 	}
 	s_printf("Read %d/%d saved quests states (discarded %d).\n", max, max_q_idx, max > max_q_idx ? max - max_q_idx : 0);
-
-	/* Now fix questors:
-	   Their m_idx is different now from what it was when the server shut down.
-	   We need to reattach the correct m_idx to the quests. */
-	for (i = 1; i < m_max; i++) {
-		m_ptr = &m_list[i];
-		if (!m_ptr->questor) continue;
-
-		q_ptr = &q_info[m_ptr->quest];
-		if (!q_ptr->defined) continue; /* this quest no longer exists in q_info.txt? */
-		q_ptr->questor[m_ptr->questor_idx].m_idx = i;
-	}
+	fix_questors_on_startup();
 }
 
 static void rd_guilds() {
@@ -3115,9 +3104,13 @@ errr rd_server_savefile()
 	rd_guilds();
 
 	rd_xorders();
-	if (!s_older_than(4, 5, 19) &&
-	    s_older_than(4, 5, 26)) /* moved quest data to a separate save file! */
-		rd_quests();
+	if (!s_older_than(4, 5, 19)) {
+		if (s_older_than(4, 5, 26)) rd_quests(); /* moved quest data to a separate save file! */
+
+		/* still, always fix questors of course!
+		   (could be done at a completely different place in the server code though) */
+		else fix_questors_on_startup();
+	}
 
 	rd_u32b(&account_id);
 	rd_s32b(&player_id);

@@ -480,7 +480,7 @@ bool quest_activate(int q_idx) {
 
 		update_mon(c_ptr->m_idx, TRUE);
 #if QDEBUG > 1
-		s_printf(" QUEST_SPAWNED: Questor '%s' (m_idx %d) at %d,%d,%d - %d,%d.\n", q_questor->name[0], m_idx, wpos.wx, wpos.wy, wpos.wz, x, y);
+		s_printf(" QUEST_SPAWNED: Questor '%s' (m_idx %d) at %d,%d,%d - %d,%d.\n", q_questor->name, m_idx, wpos.wx, wpos.wy, wpos.wz, x, y);
 #endif
 
 		q_questor->talk_focus = 0;
@@ -2980,6 +2980,28 @@ qi_reward *init_quest_reward(int q_idx, int stage, int num) {
    stage goals are not yet initialised. Oops.
    However, saving this quest data of random/varying lenght is a mess anyway,
    so it's good that we keep it far away from the server savefile. */
+
+/* To call after server has been loaded up, to reattach questors and their quests,
+   index-wise. The m-indices get shuffled over server restart. */
+void fix_questors_on_startup(void) {
+	quest_info *q_ptr;
+	monster_type *m_ptr;
+	int i;
+
+	for (i = 1; i < m_max; i++) {
+		m_ptr = &m_list[i];
+		if (!m_ptr->questor) continue;
+
+		q_ptr = &q_info[m_ptr->quest];
+		if (!q_ptr->defined || /* this quest no longer exists in q_info.txt? */
+		    !q_ptr->active || /* or it's not supposed to be enabled atm? */
+		    q_ptr->questors <= m_ptr->questor_idx) { /* ew */
+			s_printf("QUESTOR DEPRECATED (on load) midx %d, qidx %d.\n", i, m_ptr->quest);
+			m_ptr->questor = FALSE;
+			/* delete him too? */
+		} else q_ptr->questor[m_ptr->questor_idx].m_idx = i;
+	}
+}
 
 void quests_load(void) {
 #if 0
