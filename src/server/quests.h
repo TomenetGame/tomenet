@@ -263,9 +263,11 @@ typedef struct qi_stage {
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
 	s16b talk_focus[QI_QUESTORS];			/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
+	byte talk_lines[QI_QUESTORS];
 	cptr talk[QI_QUESTORS][QI_TALK_LINES]; 		/* n conversations a 10 lines a 79 characters */
 	u16b talkflags[QI_QUESTORS][QI_TALK_LINES];	/* required flags configuration for a convo line to get displayed  */
 
+	byte narration_lines;
 	cptr narration[QI_TALK_LINES];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
 	u16b narrationflags[QI_TALK_LINES];		/* required flags configuration to display this narrative line */
 
@@ -296,15 +298,20 @@ typedef struct qi_keyword {
 	bool questor_ok[QI_QUESTORS];			/* this keyword is valid for which questor(s) ? */
 	bool stage_ok[QI_STAGES];			/* this keyword is valid during which stage(s) ? */
 	u16b flags;					/* required flags configuration for a keyword to be enabled */
+
 	u16b setflags;					/* ..and the keyword will change flags to these */
 	u16b clearflags;				/* ..and the keyword will change flags to these */
+
 	s16b stage;					/* entering this keyword will bring the player to a different quest stage (or -1) */
 } qi_keyword;
 
 /* Sub-structure: A single quest keyword-reply (main mem eater) */
 typedef struct qi_kwreply {
 	byte keyword_idx[QI_KEYWORDS_PER_REPLY];	/* which keyword(s) will prompt this reply from the current questor? */
+
+	byte lines;
 	cptr reply[QI_TALK_LINES];			/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
+
 	u16b replyflags[QI_TALK_LINES];			/* only print this particular text line if these flags are matching the quest flags */
 } qi_kwreply;
 

@@ -7308,9 +7308,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	char *s, codename[QI_CODENAME_LEN + 1], creator[NAME_LEN], questname[MAX_CHARS];
 	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1], tmpbuf2[MAX_CHARS];
 
-	int lc_questor = 0, lc_accept = 0, lc_keywords = 0, lc_kwreplies = 0;
+	int lc_questor = 0, lc_loc, lc_flagsacc = 0; /* 'Q', 'L', 'F' */
+	int lc_keywords = 0, lc_kwreplies = 0;
 	int lc_narration[QI_STAGES], lc_conversation[QI_QUESTORS][QI_STAGES], lc_rewards[QI_STAGES];
 	int lc_keyword_reply[QI_QUESTORS][QI_STAGES][QI_KEYWORDS];
+
+	bool init_F[QI_QUESTORS];
 
 	qi_questor *q_questor;
 	qi_questor_morph *q_qmorph;
@@ -7382,10 +7385,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'N' for "New/Number/Name" */
 		if (buf[0] == 'N') {
-			/* Hack: Finish up PREVIOUS quest: remember # of questors that quest had */
-			if (q_ptr) q_ptr->questors = lc_questor;
-
-
 			/* Find the colon before the name */
 			s = strchr(buf + 2, ':');
 			/* Verify that colon */
@@ -7488,6 +7487,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->flags = 0x0000; //no reason
 			/* for same no reason, probably not todo: init talk/keyword flags and flag-changes */
 
+			/* 'F' */
+			for (j = 0; j < QI_QUESTORS; j++) init_F[j] = FALSE;
+
 #if 0//restructure
 			for (j = 0; j < QI_STAGES; j++) {
 				/* 'C' */
@@ -7510,8 +7512,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					for (k = 0; k < QI_KEYWORDS; k++) {
 						q_ptr->keyword[i][j][k] = NULL;
 						for (l = 0; l < QI_TALK_LINES; l++) {
-							q_ptr->keyword_reply[i][j][k][l] = NULL;
-							q_ptr->keyword_replyflags[i][j][k][l] = 0x0000;
+							q_key->reply[i][j][k][l] = NULL;
+							q_key->replyflags[i][j][k][l] = 0x0000;
 						}
 						lc_keyword_reply[i][j][k] = 0;
 					}
@@ -7533,18 +7535,18 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ptr->kill[j][k] = FALSE;
 					q_ptr->retrieve[j][k] = FALSE;
 					q_ptr->target_pos[j][k] = FALSE;
-					q_ptr->deliver_pos[j][k] = FALSE;
+					q_del->pos[j][k] = FALSE;
 
 					for (l = 0; l < 5; l++) {
-						q_ptr->kill_rchar[j][k][l] = 255;
-						q_ptr->kill_rattr[j][k][l] = 255;
+						q_kill->rchar[j][k][l] = 255;
+						q_kill->rattr[j][k][l] = 255;
 
-						q_ptr->retrieve_opval[j][k][l] = 9999;
-						q_ptr->retrieve_obpval[j][k][l] = 9999;
-						q_ptr->retrieve_oattr[j][k][l] = 255;
-						q_ptr->retrieve_oname1[j][k][l] = -3;
-						q_ptr->retrieve_oname2[j][k][l] = -3;
-						q_ptr->retrieve_oname2b[j][k][l] = -3;
+						q_ret->opval[j][k][l] = 9999;
+						q_ret->obpval[j][k][l] = 9999;
+						q_ret->oattr[j][k][l] = 255;
+						q_ret->oname1[j][k][l] = -3;
+						q_ret->oname2[j][k][l] = -3;
+						q_ret->oname2b[j][k][l] = -3;
 					}
 				}
 				for (k = 0; k < QI_OPTIONAL; k++) {
@@ -7582,11 +7584,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				}
 			}
 			q_ptr->accepts[0] = TRUE; /* 'C' stage 0 allows acquiring the quest exclusively */
-
-			/* for Q/A lines (:-o) */
-			lc_questor = 0;
-			lc_accept = 0;
 #endif//restructure
+
+			/* for Q/L/F lines (:-o) */
+			lc_questor = 0;
+			lc_loc = 0;
+			lc_flagsacc = 0;
+			lc_keywords = 0;
+			lc_kwreplies = 0;
+
 			continue;
 		}
 
@@ -7691,37 +7697,37 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
 			int q, ridx, minlv, maxlv, sval, ktval, ksval;
-			char attr;
+			char ch, attr;
 
 			if (lc_questor == QI_QUESTORS) return 1;
 			s = buf + 2;
 
 			if (10 != sscanf(s, "%d:%d:%c:%c:%d:%d:%d:%d:%d:%[^:]",
 			    &q, &ridx,
-			    &q_ptr->questor_rchar[lc_questor], &attr,
+			    &ch, &attr,
 			    &minlv, &maxlv,
 			    &sval, &ktval, &ksval,
-			    q_ptr->questor_name[lc_questor])) return (1);
+			    tmpbuf)) return (1);
 
 			q_questor = init_quest_questor(error_idx, lc_questor);
 
-			q_ptr->questor_rattr[lc_questor] = color_char_to_attr(attr);
-			q_ptr->questor[lc_questor] = q;
-			q_ptr->questor_ridx[lc_questor] = ridx;
-			q_ptr->questor_rlevmin[lc_questor] = minlv;
-			q_ptr->questor_rlevmax[lc_questor] = maxlv;
-			q_ptr->questor_sval[lc_questor] = sval;
-			q_ptr->questor_ktval[lc_questor] = ktval;
-			q_ptr->questor_ksval[lc_questor] = ksval;
+			q_questor->type = q;
+			q_questor->ridx = ridx;
+			q_questor->rchar = ch;
+			q_questor->rattr = color_char_to_attr(attr);
+			q_questor->rlevmin = minlv;
+			q_questor->rlevmax = maxlv;
+			q_questor->sval = sval;
+			q_questor->ktval = ktval;
+			q_questor->ksval = ksval;
+			strcpy(q_questor->name, tmpbuf);
 
 			/* init defaults for optional line 'F' */
-			if (!init_f[i])
-			for (i = 0; i < QI_QUESTORS; i++) {
-				q_ptr->accept_los[i] = FALSE;
-				q_ptr->accept_interact[i] = TRUE;
-				q_ptr->questor_talkable[i] = TRUE;
-				q_ptr->questor_despawned[i] = FALSE;
-				q_ptr->questor_invincible[i] = TRUE;
+			if (!init_F[lc_questor]) {
+				q_questor->accept_los = FALSE;
+				q_questor->accept_interact = TRUE;
+				q_questor->talkable = TRUE;
+				q_questor->despawned = FALSE;
 			}
 
 			lc_questor++;
@@ -7746,6 +7752,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%s", //byte, u16b, u32b
 			    &loc, &towns, &wx, &wy, &wz, &terr, &sx, &sy, tmpbuf)) return (1);
 
+			
+
 			q_ptr->s_location_type = (byte)loc;
 			q_ptr->s_towns_array = (u16b)towns;
 			q_ptr->start_wpos.wx = (char)wx;
@@ -7755,11 +7763,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->start_x = sx;
 			q_ptr->start_y = sy;
 
-			if (tmpbuf[0] == '-') q_ptr->questor_tpref = NULL;
+			if (tmpbuf[0] == '-') q_questor->tpref = NULL;
 			else {
 				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
 				strcpy(c, tmpbuf);
-				q_ptr->questor_tpref = c;
+				q_questor->tpref = c;
 			}
 			continue;
 		}
@@ -7769,17 +7777,19 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'F') {
 			int aalos, aaint, talk, despawn;
 
-			if (lc_accept == QI_QUESTORS) return 1;
+			if (lc_flagsacc == QI_QUESTORS) return 1;
 			s = buf + 2;
 
 			if (4 != sscanf(s, "%d:%d:%d:%d:%d",
 			    &aalos, &aaint, &talk, &despawn)) return (1);
-			q_ptr->accept_los[lc_accept] = (aalos != 0);
-			q_ptr->accept_interact[lc_accept] = (aaint != 0);
-			q_ptr->questor_talkable[lc_accept] = (talk != 0);
-			q_ptr->questor_despawned[lc_accept] = (despawn != 0);
+			q_ptr->accept_los[lc_flagsacc] = (aalos != 0);
+			q_ptr->accept_interact[lc_flagsacc] = (aaint != 0);
+			q_questor->talkable[lc_flagsacc] = (talk != 0);
+			q_questor->despawned[lc_flagsacc] = (despawn != 0);
 
-			lc_accept++;
+			init_F[lc_flagsacc] = TRUE;
+
+			lc_flagsacc++;
 			continue;
 		}
 		//--------------------------------------------------------------------------------------------
@@ -7927,7 +7937,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			strcpy(c, tmpbuf);
 			q_ptr->keyword[questor][stage][lc_keywords[questor][stage]] = c;
-			q_ptr->keyword_stage[questor][stage][lc_keywords[questor][stage]] = nextstage;
+			q_key->stage[questor][stage][lc_keywords[questor][stage]] = nextstage;
 
 			cc = flagbuf;
 			if (*cc == '-') *cc = 0;
@@ -7941,9 +7951,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (*cc == '-') *cc = 0;
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) {
-					q_ptr->keyword_setflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
+					q_key->setflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
 				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
-					q_ptr->keyword_clearflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'a')); /* clear flag */
+					q_key->clearflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'a')); /* clear flag */
 				} else return 1;
 			}
 
@@ -7973,7 +7983,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
-			q_ptr->keyword_reply[questor][stage][i][lc_keyword_reply[questor][stage][i]] = c;
+			q_key->reply[questor][stage][i][lc_keyword_reply[questor][stage][i]] = c;
 
 			cc = flagbuf;
 			if (*cc == '-') *cc = 0;
@@ -7983,7 +7993,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					flags |= (0x1 << (*cc - 'A')); /* set flag */
 				} else return 1;
 			}
-			q_ptr->keyword_replyflags[questor][stage][i][lc_keyword_reply[questor][stage][i]] = flags;
+			q_key->replyflags[questor][stage][i][lc_keyword_reply[questor][stage][i]] = flags;
 
 			lc_keyword_reply[questor][stage][i]++;
 			continue;
@@ -8006,11 +8016,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					goal--;
 					q_ptr->kill[stage][goal] = TRUE;
 
-					q_ptr->kill_rlevmin[stage][goal] = minlev;
-					q_ptr->kill_rlevmax[stage][goal] = maxlev;
-					q_ptr->kill_number[stage][goal] = num;
-					q_ptr->kill_spawn[stage][goal] = spawn;
-					q_ptr->kill_spawn_targets[stage][goal] = spawntarget;
+					q_kill->rlevmin[stage][goal] = minlev;
+					q_kill->rlevmax[stage][goal] = maxlev;
+					q_kill->number[stage][goal] = num;
+					q_kill->spawn[stage][goal] = spawn;
+					q_kill->spawn_targets[stage][goal] = spawntarget;
 				} else if (goal < 0) { /* optional goal */
 					goal = -(goal + 1);
 					q_ptr->killopt[stage][goal] = TRUE;
@@ -8038,7 +8048,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ptr->kill[stage][goal] = TRUE;
 
 					for (j = 0; j < 10; j++)
-						q_ptr->kill_ridx[stage][goal][j] = ridx[j];
+						q_kill->ridx[stage][goal][j] = ridx[j];
 				} else if (goal < 0) { /* optional goal */
 					goal = -(goal + 1);
 					q_ptr->killopt[stage][goal] = TRUE;
@@ -8063,10 +8073,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 					for (j = 0; j < 5; j++) {
 						if (rchar[j] == '-') rchar[j] = 254; /* any */
-						q_ptr->kill_rchar[stage][goal][j] = rchar[j];
+						q_kill->rchar[stage][goal][j] = rchar[j];
 
-						if (rattr[j] == '-') q_ptr->kill_rattr[stage][goal][j] = 254; /* any */
-						else q_ptr->kill_rattr[stage][goal][j] = color_char_to_attr(rattr[j]);
+						if (rattr[j] == '-') q_kill->rattr[stage][goal][j] = 254; /* any */
+						else q_kill->rattr[stage][goal][j] = color_char_to_attr(rattr[j]);
 					}
 				} else if (goal < 0) { /* optional goal */
 					goal = -(goal + 1);
@@ -8103,8 +8113,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					goal--;
 					q_ptr->retrieve[stage][goal] = TRUE;
 
-					q_ptr->retrieve_ovalue[stage][goal] = minval;
-					q_ptr->retrieve_number[stage][goal] = num;
+					q_ret->ovalue[stage][goal] = minval;
+					q_ret->number[stage][goal] = num;
 				} else if (goal < 0) { /* optional goal */
 					goal = -(goal + 1);
 					q_ptr->retrieveopt[stage][goal] = TRUE;
@@ -8131,8 +8141,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ptr->retrieve[stage][goal] = TRUE;
 
 					for (j = 0; j < 10; j++) {
-						q_ptr->retrieve_otval[stage][goal][j] = tval[j];
-						q_ptr->retrieve_osval[stage][goal][j] = sval[j];
+						q_ret->otval[stage][goal][j] = tval[j];
+						q_ret->osval[stage][goal][j] = sval[j];
 					}
 				} else if (goal < 0) { /* optional goal */
 					goal = -(goal + 1);
@@ -8166,13 +8176,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ptr->retrieve[stage][goal] = TRUE;
 
 					for (j = 0; j < 5; j++) {
-						q_ptr->retrieve_opval[stage][goal][j] = pval[j];
-						q_ptr->retrieve_obpval[stage][goal][j] = bpval[j];
-						if (attr[j] == '-') q_ptr->retrieve_oattr[stage][goal][j] = 254; /* any */
-						else q_ptr->retrieve_oattr[stage][goal][j] = color_char_to_attr(attr[j]);
-						q_ptr->retrieve_oname1[stage][goal][j] = name1[j];
-						q_ptr->retrieve_oname2[stage][goal][j] = name2[j];
-						q_ptr->retrieve_oname2b[stage][goal][j] = name2b[j];
+						q_ret->opval[stage][goal][j] = pval[j];
+						q_ret->obpval[stage][goal][j] = bpval[j];
+						if (attr[j] == '-') q_ret->oattr[stage][goal][j] = 254; /* any */
+						else q_ret->oattr[stage][goal][j] = color_char_to_attr(attr[j]);
+						q_ret->oname1[stage][goal][j] = name1[j];
+						q_ret->oname2[stage][goal][j] = name2[j];
+						q_ret->oname2b[stage][goal][j] = name2b[j];
 					}
 				} else if (goal < 0) { /* optional goal */
 					goal = -(goal + 1);
@@ -8181,7 +8191,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					for (j = 0; j < 5; j++) {
 						q_ptr->retrieveopt_opval[stage][goal][j] = pval[j];
 						q_ptr->retrieveopt_obpval[stage][goal][j] = bpval[j];
-						if (attr[j] == '-') q_ptr->retrieve_oattr[stage][goal][j] = 254; /* any */
+						if (attr[j] == '-') q_ret->oattr[stage][goal][j] = 254; /* any */
 						else q_ptr->retrieveopt_oattr[stage][goal][j] = color_char_to_attr(attr[j]);
 						q_ptr->retrieveopt_oname1[stage][goal][j] = name1[j];
 						q_ptr->retrieveopt_oname2[stage][goal][j] = name2[j];
@@ -8254,19 +8264,19 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			if (goal > 0) { /* main goal */
 				goal--;
-				q_ptr->deliver_pos[stage][goal] = TRUE;;
-				q_ptr->deliver_wpos[stage][goal].wx = (char)wx;
-				q_ptr->deliver_wpos[stage][goal].wy = (char)wy;
-				q_ptr->deliver_wpos[stage][goal].wz = (char)wz;
-				q_ptr->deliver_terrain_patch[stage][goal] = (terr != 0);
-				q_ptr->deliver_pos_x[stage][goal] = x;
-				q_ptr->deliver_pos_y[stage][goal] = y;
+				q_del->pos[stage][goal] = TRUE;;
+				q_del->wpos[stage][goal].wx = (char)wx;
+				q_del->wpos[stage][goal].wy = (char)wy;
+				q_del->wpos[stage][goal].wz = (char)wz;
+				q_del->terrain_patch[stage][goal] = (terr != 0);
+				q_del->pos_x[stage][goal] = x;
+				q_del->pos_y[stage][goal] = y;
 
-				if (tmpbuf[0] == '-') q_ptr->deliver_tpref[stage][goal] = NULL;
+				if (tmpbuf[0] == '-') q_del->tpref[stage][goal] = NULL;
 				else {
 					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
 					strcpy(c, tmpbuf);
-					q_ptr->deliver_tpref[stage][goal] = c;
+					q_del->tpref[stage][goal] = c;
 				}
 			} else if (goal < 0) { /* optional goal */
 				goal = -(goal + 1);
