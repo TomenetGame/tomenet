@@ -14,7 +14,7 @@
 #define QI_KEYWORDS_PER_REPLY	5	/* so many different keywords may trigger the same keyword-reply text */
 #define QI_STAGE_REWARDS 	10	/* max # of rewards handed out per completed stage */
 #define QI_GOALS		5	/* main goals to complete a stage */
-#define QI_OPTIONAL		5	/* optional goals in a stage */
+#define QI_OPTIONAL		5//deprecated--needs to be changed so it uses 'optional' flag for only 1 kind of goal struct	/* optional goals in a stage */
 #define QI_REWARD_GOALS		5	/* up to 5 different main/optional goals that have to be completed for a specific reward */
 #define QI_STAGE_GOALS		5	/* up to 5 different main/optional goals that have to be completed for changing to a specific next stage */
 #define QI_FOLLOWUP_STAGES	5	/* the # of possible follow-up stages of which one is picked depending on the completed stage goals */
