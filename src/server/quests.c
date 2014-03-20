@@ -2784,3 +2784,29 @@ qi_goal *init_quest_goal(int q_idx, int stage, int num) {
 	/* done, return the new, requested one */
 	return p;
 }
+
+qi_reward *init_quest_reward(int q_idx, int stage, int num) {
+	qi_stage *stage = init_quest_stage(q_idx, stage);
+	qi_reward *p
+	int i;
+
+	/* we already have this existing one */
+	if (stage->rewards > num) return &stage->reward[num];
+
+	/* allocate all missing instances up to the requested index */
+	for (i = stage->rewards; i <= num; i++) {
+		/* allocate a new one */
+		p = (qi_reward*)malloc(sizeof(qi_reward));
+		if (!p) {
+			s_printf("init_quest_reward() Couldn't allocate memory!\n");
+			exit(0);
+		}
+
+		/* attach it to its parent structure */
+		stage->reward[i] = p;
+		stage->rewards++;
+	}
+
+	/* done, return the new, requested one */
+	return p;
+}

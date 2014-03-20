@@ -7307,7 +7307,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	int i, j, k, l, stage, goal, nextstage, questor;
 	char *s;
 	char codename[QI_CODENAME_LEN + 1], creator[NAME_LEN], questname[MAX_CHARS];
-	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1], tmpbuf2[MAX_CHARS];
+	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1];
+	//char tmpbuf2[MAX_CHARS];
 	int lc;
 
 	/* for initialising questor information with default values when reading
@@ -7315,20 +7316,20 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	bool init_F[QI_QUESTORS];
 
 	qi_questor *q_questor;
-	qi_questor_morph *q_qmorph;
-	qi_questor_hostility *q_qhost;
-	qi_questor_act *q_qact;
-	qi_kill *q_kill;
-	qi_retrieve *q_ret;
+	//qi_questor_morph *q_qmorph;
+	//qi_questor_hostility *q_qhost;
+	//qi_questor_act *q_qact;
+	//qi_kill *q_kill;
+	//qi_retrieve *q_ret;
 	qi_deliver *q_del;
 	qi_goal *q_goal;
 	qi_reward *q_rew;
 	qi_stage *q_stage;
 	qi_keyword *q_key;
-	qi_kwreply *q_kwr;
+	//qi_kwreply *q_kwr;
 
 	bool disabled;
-	u16b flags;
+	//u16b flags;
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -8334,19 +8335,22 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* first number is the stage, second the next stage */
 			stage = atoi(buf + 2);
 			if (stage < 0 || stage >= QI_STAGES) return 1;
+			q_stage = init_quest_stage(error_idx, stage);
+
 			if (!(c = strchr(buf + 2, ':'))) return 1;
 			c++;
 			nextstage = atoi(c);
 			if (!(c = strchr(c, ':'))) return 1;
 			c++;
 
+
 			/* already defined the max amount of different QI_FOLLOWUP_STAGES? */
 			for (k = 0; k < QI_FOLLOWUP_STAGES; k++) {
 				/* reusing a stage we've already found? */
-				if (q_ptr->next_stage_from_goals[stage][k] == nextstage) break;
+				if (q_stage->next_stage_from_goals[k] == nextstage) break;
 				/* found a free follow-up stage to use? */
-				if (q_ptr->next_stage_from_goals[stage][k] == -1) {
-					q_ptr->next_stage_from_goals[stage][k] = nextstage;
+				if (q_stage->next_stage_from_goals[k] == -1) {
+					q_stage->next_stage_from_goals[k] = nextstage;
 					break;
 				}
 			}
@@ -8358,7 +8362,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				j = atoi(c);
 				if (j < 1 || j > QI_GOALS) return 1;
 
-				q_ptr->goals_for_stage[stage][k][l] = j - 1;
+				q_stage->goals_for_stage[k][l] = j - 1;
 
 				if (!(c = strchr(c, ':'))) break;
 				c++;
@@ -8414,40 +8418,38 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			s = buf + 2;
 			stage = atoi(s);
 			if (stage < 0 || stage >= QI_STAGES) return -1;
-			if (lc_rewards[stage] == 10) return 1;
+			q_stage = init_quest_stage(error_idx, stage);
+
+			if ((lc = q_stage->rewards) == QI_STAGE_REWARDS) return 1;
+			q_rew = init_quest_reward(error_idx, stage, lc);
+
 			if (!(c = strchr(s, ':'))) return 1;
 			c++;
 
 			if (14 != sscanf(c, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 			    &otval, &osval, &opval, &obpval, &oname1, &oname2, &oname2b,
 			    &good, &great, &vgreat, &createreward,
-			    &q_ptr->reward_gold[stage][lc_rewards[stage]], &q_ptr->reward_exp[stage][lc_rewards[stage]],
-			    &rstatus))
+			    &q_rew->gold, &q_rew->exp, &rstatus))
 				return (1);
 
-			q_ptr->reward_otval[stage][lc_rewards[stage]] = otval;
-			q_ptr->reward_osval[stage][lc_rewards[stage]] = osval;
-			q_ptr->reward_opval[stage][lc_rewards[stage]] = opval;
-			q_ptr->reward_obpval[stage][lc_rewards[stage]] = obpval;
-			q_ptr->reward_oname1[stage][lc_rewards[stage]] = oname1;
-			q_ptr->reward_oname2[stage][lc_rewards[stage]] = oname2;
-			q_ptr->reward_oname2b[stage][lc_rewards[stage]] = oname2b;
-			q_ptr->reward_ogood[stage][lc_rewards[stage]] = (good != 0);
-			q_ptr->reward_ogreat[stage][lc_rewards[stage]] = (great != 0);
-			q_ptr->reward_ovgreat[stage][lc_rewards[stage]] = (vgreat != 0);
-			q_ptr->reward_oreward[stage][lc_rewards[stage]] = (createreward != 0);
-			q_ptr->reward_statuseffect[stage][lc_rewards[stage]] = rstatus;
-
-			lc_rewards[stage]++;
+			q_rew->otval = otval;
+			q_rew->osval = osval;
+			q_rew->opval = opval;
+			q_rew->obpval = obpval;
+			q_rew->oname1 = oname1;
+			q_rew->oname2 = oname2;
+			q_rew->oname2b = oname2b;
+			q_rew->ogood = (good != 0);
+			q_rew->ogreat = (great != 0);
+			q_rew->ovgreat = (vgreat != 0);
+			q_rew->oreward = (createreward != 0);
+			q_rew->statuseffect = rstatus;
 			continue;
 		}
 
 		/* Oops */
 		return (6);
 	}
-
-	/* remember # of questors this quest has */
-	q_ptr->questors = lc_questor;
 
 	/* Complete the "name" and "text" sizes */
 	++q_head->name_size;
