@@ -2756,18 +2756,19 @@ void quest_handle_disabled_on_startup() {
 
 	for (i = 0; i < MAX_Q_IDX; i++) {
 		q_ptr = &q_info[i];
+		if (!q_ptr->defined) continue;
 		if (!q_ptr->disabled_on_load) continue;
 
 		s_printf("QUEST_DISABLED_ON_LOAD: Deleting %d questor(s) from quest %d\n", q_ptr->questors, i);
 		for (j = 0; j < q_ptr->questors; j++) {
-			questor = m_list[q_ptr->questor_m_idx[j]].questor;
-			k = m_list[q_ptr->questor_m_idx[j]].quest;
+			questor = m_list[q_ptr->questor[j].m_idx].questor;
+			k = m_list[q_ptr->questor[j].m_idx].quest;
 
-			s_printf(" m_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor_m_idx[j], k, questor);
+			s_printf(" m_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor[j].m_idx, k, questor);
 
 			if (k == i && questor) {
 				s_printf("..ok.\n");
-				delete_monster_idx(q_ptr->questor_m_idx[j], TRUE);
+				delete_monster_idx(q_ptr->questor[j].m_idx, TRUE);
 			} else s_printf("..failed: Questor does not exist.\n");
 		}
 	}
@@ -2779,24 +2780,22 @@ void quest_handle_disabled_on_startup() {
 qi_questor *init_quest_questor(int q_idx, int num) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_questor *p;
-	int i;
 
 	/* we already have this existing one */
 	if (q_ptr->questors > num) return &q_ptr->questor[num];
 
 	/* allocate all missing instances up to the requested index */
-	for (i = q_ptr->questors; i <= num; i++) {
-		/* allocate a new one */
-		p = (qi_questor*)malloc(sizeof(qi_questor));
-		if (!p) {
-			s_printf("init_quest_questor() Couldn't allocate memory!\n");
-			exit(0);
-		}
-
-		/* attach it to its parent structure */
-		q_ptr->questor[i] = p;
-		q_ptr->questors++;
+	p = (qi_questor*)realloc(q_ptr->questor, sizeof(qi_questor) * (num + 1));
+	if (!p) {
+		s_printf("init_quest_questor() Couldn't allocate memory!\n");
+		exit(0);
 	}
+	/* initialise the ADDED memory */
+	memset(p + q_ptr->questors * sizeof(qi_questor), 0, (num + 1 - q_ptr->questors) * sizeof(qi_questor));
+
+	/* attach it to its parent structure */
+	q_ptr->questor = p;
+	q_ptr->questors = num + 1;
 
 	/* done, return the new, requested one */
 	return p;
@@ -2815,18 +2814,20 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 	}
 
 	/* we already have this existing one */
-	if (q_ptr->stage_idx[num] != -1) return &q_ptr->stage[stage_idx[num]];
+	if (q_ptr->stage_idx[num] != -1) return &q_ptr->stage[q_ptr->stage_idx[num]];
 
 	/* allocate a new one */
-	p = (qi_stage*)malloc(sizeof(qi_stage));
+	p = (qi_stage*)realloc(q_ptr->stage, sizeof(qi_stage) * (q_ptr->stages + 1));
 	if (!p) {
 		s_printf("init_quest_stage() Couldn't allocate memory!\n");
 		exit(0);
 	}
+	/* initialise the ADDED memory */
+	memset(p + q_ptr->stages * sizeof(qi_stage), 0, sizeof(qi_stage));
 
 	/* attach it to its parent structure */
-	q_ptr->stage[q_ptr->stages] = p;
-	q_ptr->stage_idx[num] = q_ptr->stages
+	q_ptr->stage = p;
+	q_ptr->stage_idx[num] = q_ptr->stages;
 	q_ptr->stages++;
 
 	/* done, return the new one */
