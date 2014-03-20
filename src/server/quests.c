@@ -95,7 +95,7 @@ void process_quests(void) {
 		if (q_ptr->cur_cooldown) q_ptr->cur_cooldown--;
 		if (q_ptr->disabled || q_ptr->cur_cooldown) continue;
 
-		stage = q_ptr->stage;
+		stage = q_ptr->cur_stage;
 
 		/* check if quest should be active */
 		active = FALSE;
@@ -153,13 +153,13 @@ void process_quests(void) {
 
 
 		/* handle automatically timed stage actions */
-		if (q_ptr->timed_stage_countdown[stage] < 0) {
-			if (hour == -q_ptr->timed_stage_countdown[stage])
-				quest_set_stage(0, i, q_ptr->timed_stage_countdown_stage[stage], q_ptr->timed_stage_countdown_quiet[stage]);
-		} else if (q_ptr->timed_stage_countdown[stage] > 0) {
-			q_ptr->timed_stage_countdown[stage]--;
-			if (!q_ptr->timed_stage_countdown[stage])
-				quest_set_stage(0, i, q_ptr->timed_stage_countdown_stage[stage], q_ptr->timed_stage_countdown_quiet[stage]);
+		if (q_ptr->timed_countdown[stage] < 0) {
+			if (hour == -q_ptr->timed_countdown[stage])
+				quest_set_stage(0, i, q_ptr->timed_countdown_stage[stage], q_ptr->timed_countdown_quiet[stage]);
+		} else if (q_ptr->timed_countdown[stage] > 0) {
+			q_ptr->timed_countdown[stage]--;
+			if (!q_ptr->timed_countdown[stage])
+				quest_set_stage(0, i, q_ptr->timed_countdown_stage[stage], q_ptr->timed_countdown_quiet[stage]);
 		}
 	}
 }
@@ -481,7 +481,7 @@ void quest_activate(int q_idx) {
 	
 	/* Initialise with starting stage 0 */
 	q_ptr->start_turn = turn;
-	q_ptr->stage = -1;
+	q_ptr->cur_stage = -1;
 	quest_set_stage(0, q_idx, 0, FALSE);
 }
 
@@ -710,14 +710,14 @@ static bool quest_get_goalopt(int pInd, int q_idx, int goalopt) {
 }
 #endif
 
-/* return the current quest stage. Either just uses q_ptr->stage directly for global
+/* return the current quest stage. Either just uses q_ptr->cur_stage directly for global
    quests, or p_ptr->quest_stage for individual quests. */
 s16b quest_get_stage(int pInd, int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i;
 
-	if (!pInd || !q_ptr->individual) return q_ptr->stage; /* no player? global stage */
+	if (!pInd || !q_ptr->individual) return q_ptr->cur_stage; /* no player? global stage */
 
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
@@ -725,7 +725,7 @@ s16b quest_get_stage(int pInd, int q_idx) {
 	if (i == MAX_CONCURRENT_QUESTS) return 0; /* player isn't on this quest: pick stage 0, the entry stage */
 
 	if (q_ptr->individual) return p_ptr->quest_stage[i]; /* individual quest */
-	return q_ptr->stage; /* global quest */
+	return q_ptr->cur_stage; /* global quest */
 }
 
 /* return current quest flags. Either just uses q_ptr->flags directly for global
@@ -955,31 +955,31 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	/* auto-change stage (timed)? */
 	if (q_ptr->change_stage[stage] != -1) {
 		/* not a timed change? instant then */
-		if (//!q_ptr->timed_stage_ingame[stage] &&
-		    !q_ptr->timed_stage_ingame_abs[stage] && !q_ptr->timed_stage_real[stage]) {
+		if (//!q_ptr->timed_ingame[stage] &&
+		    !q_ptr->timed_ingame_abs[stage] && !q_ptr->timed_real[stage]) {
 #if QDEBUG > 0
 			s_printf("%s QUEST_STAGE_AUTO: '%s'(%d,%s) %d->%d\n",
 			    showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), q_ptr->change_stage[stage]);
 #endif
-			quest_set_stage(pInd, q_idx, q_ptr->change_stage[stage], q_ptr->quiet_change_stage[stage]);
+			quest_set_stage(pInd, q_idx, q_ptr->change_stage[stage], q_ptr->quiet_change[stage]);
 			/* don't imprint/play dialogue of this stage anymore, it's gone~ */
 			return TRUE;
 		}
 		/* start the clock */
 		/*cannot do this, cause quest scheduler is checking once per minute atm
-		if (q_ptr->timed_stage_ingame[stage]) {
-			q_ptr->timed_stage_countdown[stage] = q_ptr->timed_stage_ingame[stage];//todo: different resolution than real minutes
-			q_ptr->timed_stage_countdown_stage[stage] = q_ptr->change_stage[stage];
-			q_ptr->timed_stage_countdown_quiet[stage] = q_ptr->quiet_change_stage[stage];
+		if (q_ptr->timed_ingame[stage]) {
+			q_ptr->timed_countdown[stage] = q_ptr->timed_ingame[stage];//todo: different resolution than real minutes
+			q_ptr->timed_countdown_stage[stage] = q_ptr->change_stage[stage];
+			q_ptr->timed_countdown_quiet[stage] = q_ptr->quiet_change[stage];
 		} else */
-		if (q_ptr->timed_stage_ingame_abs[stage]) {
-			q_ptr->timed_stage_countdown[stage] = -q_ptr->timed_stage_ingame_abs[stage];
-			q_ptr->timed_stage_countdown_stage[stage] = q_ptr->change_stage[stage];
-			q_ptr->timed_stage_countdown_quiet[stage] = q_ptr->quiet_change_stage[stage];
-		} else if (q_ptr->timed_stage_real[stage]) {
-			q_ptr->timed_stage_countdown[stage] = q_ptr->timed_stage_real[stage];
-			q_ptr->timed_stage_countdown_stage[stage] = q_ptr->change_stage[stage];
-			q_ptr->timed_stage_countdown_quiet[stage] = q_ptr->quiet_change_stage[stage];
+		if (q_ptr->timed_ingame_abs[stage]) {
+			q_ptr->timed_countdown[stage] = -q_ptr->timed_ingame_abs[stage];
+			q_ptr->timed_countdown_stage[stage] = q_ptr->change_stage[stage];
+			q_ptr->timed_countdown_quiet[stage] = q_ptr->quiet_change[stage];
+		} else if (q_ptr->timed_real[stage]) {
+			q_ptr->timed_countdown[stage] = q_ptr->timed_real[stage];
+			q_ptr->timed_countdown_stage[stage] = q_ptr->change_stage[stage];
+			q_ptr->timed_countdown_quiet[stage] = q_ptr->quiet_change[stage];
 		}
 	}
 
@@ -1079,9 +1079,9 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	int stage;
 
 	/* for 'individual' quests: imprint the individual stage for a player.
-	   the globally set q_ptr->stage is in this case just a temporary value,
+	   the globally set q_ptr->cur_stage is in this case just a temporary value,
 	   set by quest_set_stage() for us, that won't be of any further consequence. */
-	stage = q_ptr->stage;
+	stage = q_ptr->cur_stage;
 	if (q_ptr->individual) p_ptr->quest_stage[py_q_idx] = stage;
 
 
@@ -1110,7 +1110,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	   for 'individual' quests this is just a temporary value used by quest_imprint_stage().
 	   It is still used for the other stage-checking routines in this function too though:
 	    quest_goal_check_reward(), quest_terminate() and the 'anything' check. */
-	q_ptr->stage = stage;
+	q_ptr->cur_stage = stage;
 
 	/* For non-'individual' quests,
 	   if a participating player is around the questor, entering a new stage..
@@ -1236,9 +1236,9 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	}
 	/* check auto/timed stage changes */
 	if (q_ptr->change_stage[stage] != -1) anything = TRUE;
-	//if (q_ptr->timed_stage_ingame[stage]) anything = TRUE;
-	if (q_ptr->timed_stage_ingame_abs[stage] != -1) anything = TRUE;
-	if (q_ptr->timed_stage_real[stage]) anything = TRUE;
+	//if (q_ptr->timed_ingame[stage]) anything = TRUE;
+	if (q_ptr->timed_ingame_abs[stage] != -1) anything = TRUE;
+	if (q_ptr->timed_real[stage]) anything = TRUE;
 
 	/* really nothing left to do? */
 	if (!anything) {
@@ -1298,9 +1298,9 @@ void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
 		//msg_print(Ind, "\374 "); /* keep one line spacer to echoing our entered keyword */
 	}
 
-	/* hack: for 'individual' quests we use q_ptr->stage as temporary var to store the player's personal stage,
+	/* hack: for 'individual' quests we use q_ptr->cur_stage as temporary var to store the player's personal stage,
 	   which is then transferred to the player again in quest_imprint_stage(). Yeah.. */
-	if (q_ptr->individual) q_ptr->stage = 0; /* 'individual' quest entry stage is always 0 */
+	if (q_ptr->individual) q_ptr->cur_stage = 0; /* 'individual' quest entry stage is always 0 */
 	/* store information of the current stage in the p_ptr array,
 	   eg the target location for easier lookup */
 	quest_imprint_stage(Ind, q_idx, i);

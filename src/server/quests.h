@@ -230,17 +230,17 @@ typedef struct qi_stage {
 	/* stage-change automatics */
 	s16b change_stage;				/* automatically change to a different stage after handling everything that was to do in the current stage (-1 = disable) */
 #if 0 /* currently not possible since we call the quest scheduler once a minute */
-	s16b timed_stage_ingame;			/* automatically change to a different stage after a certain amount of in-game minutes passed */
-	s16b timed_stage_ingame_abs;			/* automatically change to a different stage when a certain in-game time is reached (minute resolution) */
+	s16b timed_ingame;				/* automatically change to a different stage after a certain amount of in-game minutes passed */
+	s16b timed_ingame_abs;				/* automatically change to a different stage when a certain in-game time is reached (minute resolution) */
 #else
-	s16b timed_stage_ingame_abs;			/* automatically change to a different stage when a certain in-game time is reached (HOUR resolution! -1 to disable) */
+	s16b timed_ingame_abs;				/* automatically change to a different stage when a certain in-game time is reached (HOUR resolution! -1 to disable) */
 #endif
-	s16b timed_stage_real;				/* automatically change to a different stage after a certain amount of real minutes passed */
-	bool quiet_change_stage;			/* for the above auto-changes: don't replay the stage's dialogue */
+	s16b timed_real;				/* automatically change to a different stage after a certain amount of real minutes passed */
+	bool quiet_change;				/* for the above auto-changes: don't replay the stage's dialogue */
 	/* dynamic timer helper data */
-	s16b timed_stage_countdown;			/* dynamic, for countdown for above timings: negative value = ingame absolute, positive value = real-time counting down */
-	s16b timed_stage_countdown_stage;
-	bool timed_stage_countdown_quiet;
+	s16b timed_countdown;				/* dynamic, for countdown for above timings: negative value = ingame absolute, positive value = real-time counting down */
+	s16b timed_countdown_stage;
+	bool timed_countdown_quiet;
 
 
 	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */

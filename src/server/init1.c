@@ -7500,7 +7500,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (!init_A[j])
 				q_ptr->activate_quest[j] = -1;
 				q_ptr->change_stage[j] = -1;
-				q_ptr->timed_stage_ingame_abs[j] = -1;
+				q_ptr->timed_ingame_abs[j] = -1;
 
 				/* keep track of maximum amount of lines per text in each quest stage */
 				lc_narration[j] = 0;
@@ -7811,13 +7811,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			q_ptr->change_stage[stage] = cs;
 #if 0
-			q_ptr->timed_stage_ingame[stage] = tsi;
+			q_ptr->timed_ingame[stage] = tsi;
 #else /* kill compiler -_- */
 			k = tsi;
 #endif
-			q_ptr->timed_stage_ingame_abs[stage] = tsia;
-			q_ptr->timed_stage_real[stage] = tsr;
-			q_ptr->quiet_change_stage[stage] = (qcs != 0);
+			q_ptr->timed_ingame_abs[stage] = tsia;
+			q_ptr->timed_real[stage] = tsr;
+			q_ptr->quiet_change[stage] = (qcs != 0);
 			continue;
 		}
 
