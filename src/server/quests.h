@@ -145,7 +145,7 @@ typedef struct qi_questor {
 	struct worldpos current_wpos;
 	s16b current_x, current_y;
 	s16b questor_m_idx;
-} qi_questor_spawn;
+} qi_questor;
 
 /* Sub-structure: Questor changes (or turns vulnerable) ('S') */
 typedef struct qi_questor_morph {
