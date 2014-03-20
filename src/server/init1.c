@@ -7415,7 +7415,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->questor = NULL;
 			q_ptr->stages = 0;
 			q_ptr->stage = NULL;
-			for (j = 0; i < QI_STAGES; j++) q_ptr->stage_idx[j] = -1;
+			for (j = 0; j < QI_STAGES; j++) q_ptr->stage_idx[j] = -1;
 			q_ptr->keywords = 0;
 			q_ptr->keyword = NULL;
 			q_ptr->kwreplies = 0;
