@@ -1143,6 +1143,7 @@ static void rd_quests() {
 		if (!m_ptr->questor) continue;
 
 		q_ptr = &q_info[m_ptr->quest];
+		if (!q_ptr->defined) continue; /* this quest no longer exists in q_info.txt? */
 		q_ptr->questor[m_ptr->questor_idx].m_idx = i;
 	}
 }
