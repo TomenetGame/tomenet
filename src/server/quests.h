@@ -277,7 +277,7 @@ typedef struct qi_stage {
 
 
 	/* the rewards for this stage, if any */
-	byte rewards;
+	byte rewards; /* up to QI_STAGE_REWARDS */
 	qi_reward *reward;
 
 	/* contains the indices of up to QI_REWARD_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
@@ -286,7 +286,7 @@ typedef struct qi_stage {
 
 
 	/* the goals for this stage */
-	byte goals;
+	byte goals; /* up to QI_STAGE_GOALS */
 	qi_goal *goal;
 
 	/* determine if a new stage should begin depending on which goals we have completed */

@@ -2245,21 +2245,22 @@ void quest_check_goal_deliver(int Ind) {
 static int quest_goal_check_stage(int pInd, int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, j, stage = quest_get_stage(pInd, q_idx);
+	qi_stage *q_stage = &q_ptr->stage[stage];
 
 	/* scan through all possible follow-up stages */
 	for (j = 0; j < QI_FOLLOWUP_STAGES; j++) {
 		/* no follow-up stage? */
-		if (q_ptr->next_stage_from_goals[j] == -1) continue;
+		if (q_stage->next_stage_from_goals[j] == -1) continue;
 
 		/* scan through all goals required to be fulfilled to enter this stage */
 		for (i = 0; i < QI_STAGE_GOALS; i++) {
-			if (q_ptr->goals_for_stage[j][i] == -1) continue;
+			if (q_stage->goals_for_stage[j][i] == -1) continue;
 
 			/* If even one goal is missing, we cannot advance. */
-			if (!quest_get_goal(pInd, q_idx, q_ptr->goals_for_stage[j][i], FALSE)) break;
+			if (!quest_get_goal(pInd, q_idx, q_stage->goals_for_stage[j][i], FALSE)) break;
 		}
 		/* we may proceed to another stage? */
-		if (i == QI_STAGE_GOALS) return q_ptr->next_stage_from_goals[j];
+		if (i == QI_STAGE_GOALS) return q_stage->next_stage_from_goals[j];
 	}
 	return -1; /* goals are not complete yet */
 }
@@ -2286,10 +2287,16 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+		/* is the player on this quest? */
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		/* must be around a questor to receive the rewards.
+		   TODO: why? can just stand around somewhere, so.. */
+		for (j = 0; j < q_ptr->questors; j++)
+			if (inarea(&Players[i]->wpos, &q_ptr->questor[j].current_wpos)) break;
+		if (j == q_ptr->questors) continue;
 
 		/* hand him out the reward too */
 		/*p_ptr = Players[i];
@@ -2319,10 +2326,15 @@ static void quest_reward_create(int pInd, int q_idx) {
 
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+		/* is the player on this quest? */
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		/*TODO: why does the player need to be around the questor anyway hmm */
+		for (j = 0; j < q_ptr->questors; j++)
+			if (inarea(&Players[i]->wpos, &q_ptr->questor[j].current_wpos)) break;
+		if (j == q_ptr->questors) continue;
 
 		/* hand him out the reward too */
 		//msg_print(i, "You have received an item."); --give just ONE message for ALL items, less spammy
@@ -2349,10 +2361,15 @@ static void quest_reward_gold(int pInd, int q_idx, int au) {
 
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+		/* is the player on this quest? */
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		/*TODO: why does the player need to be around the questor anyway hmm */
+		for (j = 0; j < q_ptr->questors; j++)
+			if (inarea(&Players[i]->wpos, &q_ptr->questor[j].current_wpos)) break;
+		if (j == q_ptr->questors) continue;
 
 		/* hand him out the reward too */
 		//msg_format(i, "You have received %d gold pieces.", au); --give just ONE message for ALL gold, less spammy
@@ -2379,10 +2396,15 @@ static void quest_reward_exp(int pInd, int q_idx, int exp) {
 
 	/* global quest (or for some reason missing pInd..<-paranoia)  */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+		/* is the player on this quest? */
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		/*TODO: why does the player need to be around the questor anyway hmm */
+		for (j = 0; j < q_ptr->questors; j++)
+			if (inarea(&Players[i]->wpos, &q_ptr->questor[j].current_wpos)) break;
+		if (j == q_ptr->questors) continue;
 
 		/* hand him out the reward too */
 		//msg_format(i, "You have received %d experience points.", exp); --give just ONE message for ALL gold, less spammy
@@ -2402,6 +2424,17 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	u32b resf = RESF_NOTRUEART;
 	/* count rewards */
 	int r_obj = 0, r_gold = 0, r_exp = 0;
+	qi_stage *q_stage = &q_ptr->stage[stage];
+	qi_reward *q_rew;
+	qi_questor *q_questor;
+
+	/* TODO: use sensible questor location for generating rewards (apply_magic()) */
+	for (j = 0; j < q_ptr->questors; j++) {
+		q_questor = &q_ptr->questor[j];
+		if (q_questor->despawned) continue;
+		break;
+	} /* just pick the first good questor for now.. w/e */
+
 
 #if 0 /* we're called when stage 0 starts too, and maybe it's some sort of globally determined goal->reward? */
 	if (!pInd || !q_ptr->individual) {
@@ -2411,20 +2444,22 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 #endif
 
 	/* scan through all possible follow-up stages */
-	for (j = 0; j < QI_STAGE_REWARDS; j++) {
+	for (j = 0; j < q_stage->rewards; j++) {
+		q_rew = &q_stage->reward[j];
+
 		/* no reward? */
-		if (!q_ptr->reward_otval[j] &&
-		    !q_ptr->reward_oreward[j] &&
-		    !q_ptr->reward_gold[j] &&
-		    !q_ptr->reward_exp[j]) //TODO: reward_statuseffect
+		if (!q_rew->otval &&
+		    !q_rew->oreward &&
+		    !q_rew->gold &&
+		    !q_rew->exp) //TODO: reward_statuseffect
 			continue;
 
 		/* scan through all goals required to be fulfilled to get this reward */
 		for (i = 0; i < QI_REWARD_GOALS; i++) {
-			if (q_ptr->goals_for_reward[j][i] == -1) continue;
+			if (q_stage->goals_for_reward[j][i] == -1) continue;
 
 			/* if even one goal is missing, we cannot get the reward */
-			if (!quest_get_goal(pInd, q_idx, q_ptr->goals_for_reward[j][i], FALSE)) break;
+			if (!quest_get_goal(pInd, q_idx, q_stage->goals_for_reward[j][i], FALSE)) break;
 		}
 		/* we may get rewards? */
 		if (i == QI_REWARD_GOALS) {
@@ -2434,23 +2469,23 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 #endif
 
 			/* specific reward */
-			if (q_ptr->reward_otval[j]) {
+			if (q_rew->otval) {
 				/* very specific reward */
-				if (!q_ptr->reward_ogood && !q_ptr->reward_ogreat) {
+				if (!q_rew->ogood && !q_rew->ogreat) {
 					o_ptr = &forge;
 					object_wipe(o_ptr);
-					invcopy(o_ptr, lookup_kind(q_ptr->reward_otval[j], q_ptr->reward_osval[j]));
+					invcopy(o_ptr, lookup_kind(q_rew->otval, q_rew->osval));
 					o_ptr->number = 1;
-					o_ptr->name1 = q_ptr->reward_oname1[j];
-					o_ptr->name2 = q_ptr->reward_oname2[j];
-					o_ptr->name2b = q_ptr->reward_oname2b[j];
+					o_ptr->name1 = q_rew->oname1;
+					o_ptr->name2 = q_rew->oname2;
+					o_ptr->name2b = q_rew->oname2b;
 					if (o_ptr->name1) {
 						o_ptr->name1 = ART_RANDART; //hack: disallow true arts!
 						o_ptr->name2 = o_ptr->name2b = 0;
 					}
-					apply_magic(&q_ptr->current_wpos[0], o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
-					o_ptr->pval = q_ptr->reward_opval[j];
-					o_ptr->bpval = q_ptr->reward_obpval[j];
+					apply_magic(&q_questor->current_wpos, o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
+					o_ptr->pval = q_rew->opval;
+					o_ptr->bpval = q_rew->obpval;
 					o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
 					o_ptr->note_utag = 0;
 #ifdef PRE_OWN_DROP_CHOSEN
@@ -2462,9 +2497,9 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 				} else {
 					o_ptr = &forge;
 					object_wipe(o_ptr);
-					invcopy(o_ptr, lookup_kind(q_ptr->reward_otval[j], q_ptr->reward_osval[j]));
+					invcopy(o_ptr, lookup_kind(q_rew->otval, q_rew->osval));
 					o_ptr->number = 1;
-					apply_magic(&q_ptr->current_wpos[0], o_ptr, -2, q_ptr->reward_ogood[j], q_ptr->reward_ogreat[j], q_ptr->reward_ovgreat[j], FALSE, resf);
+					apply_magic(&q_questor->current_wpos, o_ptr, -2, q_rew->ogood, q_rew->ogreat, q_rew->ovgreat, FALSE, resf);
 					o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
 					o_ptr->note_utag = 0;
 #ifdef PRE_OWN_DROP_CHOSEN
@@ -2480,19 +2515,19 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 				r_obj++;
 			}
 			/* instead use create_reward() like for events? */
-			else if (q_ptr->reward_oreward[j]) {
+			else if (q_rew->oreward) {
 				quest_reward_create(pInd, q_idx);
 				r_obj++;
 			}
 			/* hand out gold? */
-			if (q_ptr->reward_gold[j]) {
-				quest_reward_gold(pInd, q_idx, q_ptr->reward_gold[j]);
-				r_gold += q_ptr->reward_gold[j];
+			if (q_rew->gold) {
+				quest_reward_gold(pInd, q_idx, q_rew->gold);
+				r_gold += q_rew->gold;
 			}
 			/* provide exp? */
-			if (q_ptr->reward_exp[j]) {
-				quest_reward_exp(pInd, q_idx, q_ptr->reward_exp[j]);
-				r_exp += q_ptr->reward_exp[j];
+			if (q_rew->exp) {
+				quest_reward_exp(pInd, q_idx, q_rew->exp);
+				r_exp += q_rew->exp;
 			}
 			//TODO: s16b reward_statuseffect[QI_STAGES][QI_STAGE_REWARDS];
 		}
@@ -2505,10 +2540,15 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 		if (r_gold) msg_format(pInd, "You have received %d gold piece%s.", r_gold, r_gold == 1 ? "" : "s");
 		if (r_exp) msg_format(pInd, "You have received %d experience point%s.", r_exp, r_exp == 1 ? "" : "s");
 	} else for (i = 1; i <= NumPlayers; i++) {
-		if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!!
+		/* is the player on this quest? */
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		/*TODO: why does the player need to be around the questor anyway hmm */
+		for (j = 0; j < q_ptr->questors; j++)
+			if (inarea(&Players[i]->wpos, &q_ptr->questor[j].current_wpos)) break;
+		if (j == q_ptr->questors) continue;
 
 		if (r_obj == 1) msg_print(i, "You have received an item.");
 		else if (r_obj) msg_format(i, "You have received %d items.", r_obj);
@@ -2543,6 +2583,9 @@ void quest_check_player_location(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, q_idx, stage;
 	quest_info *q_ptr;
+	qi_stage *q_stage;
+	qi_goal *q_goal;
+	qi_deliver *q_del;
 
 #if QDEBUG > 3
 	s_printf("%s CHECK_PLAYER_LOCATION: %d,%s has anyk,anyr=%d,%d.\n", showtime(), Ind, p_ptr->name, p_ptr->quest_any_k, p_ptr->quest_any_r);
@@ -2569,27 +2612,30 @@ void quest_check_player_location(int Ind) {
 			if (!q_ptr->active) continue;
 
 			stage = quest_get_stage(Ind, q_idx);
+			q_stage = &q_ptr->stage[stage];
 
 			/* check the quest goals, whether any of them wants a target to this location */
-			for (j = 0; j < QI_GOALS; j++) {
-				if (!q_ptr->kill[j]) continue;
-				if (!q_ptr->target_pos[j]) continue;
+			for (j = 0; j < q_stage->goals; j++) {
+				q_goal = &q_stage->goal[j];
+
+				if (!q_goal->kill) continue;
+				if (!q_goal->target_pos) continue;
 
 				/* extend target terrain over a wide patch? */
-				if (q_ptr->target_terrain_patch[j]) {
+				if (q_goal->target_terrain_patch) {
 					/* different z-coordinate = instant fail */
-					if (p_ptr->wpos.wz != q_ptr->target_wpos[j].wz) continue;
+					if (p_ptr->wpos.wz != q_goal->target_wpos.wz) continue;
 					/* are we within range and have same terrain type? */
-					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[j].wx,
-					    q_ptr->target_wpos[j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
+					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy,
+					    q_goal->target_wpos.wx, q_goal->target_wpos.wy) <= QI_TERRAIN_PATCH_RADIUS &&
 					    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type ==
-					    wild_info[q_ptr->target_wpos[j].wy][q_ptr->target_wpos[j].wx].type) {
+					    wild_info[q_goal->target_wpos.wy][q_goal->target_wpos.wx].type) {
 						p_ptr->quest_any_k_within_target = TRUE;
 						break;
 					}
 				}
 				/* just check a single, specific wpos? */
-				else if (inarea(&q_ptr->target_wpos[j], &p_ptr->wpos)) {
+				else if (inarea(&q_goal->target_wpos, &p_ptr->wpos)) {
 					p_ptr->quest_any_k_within_target = TRUE;
 					break;
 				}
@@ -2607,27 +2653,30 @@ void quest_check_player_location(int Ind) {
 			if (!q_ptr->active) continue;
 
 			stage = quest_get_stage(Ind, q_idx);
+			q_stage = &q_ptr->stage[stage];
 
 			/* check the quest goals, whether any of them wants a target to this location */
-			for (j = 0; j < QI_GOALS; j++) {
-				if (!q_ptr->retrieve[j]) continue;
-				if (!q_ptr->target_pos[j]) continue;
+			for (j = 0; j < q_stage->goals; j++) {
+				q_goal = &q_stage->goal[j];
+
+				if (!q_goal->retrieve) continue;
+				if (!q_goal->target_pos) continue;
 
 				/* extend target terrain over a wide patch? */
-				if (q_ptr->target_terrain_patch[j]) {
+				if (q_goal->target_terrain_patch) {
 					/* different z-coordinate = instant fail */
-					if (p_ptr->wpos.wz != q_ptr->target_wpos[j].wz) continue;
+					if (p_ptr->wpos.wz != q_goal->target_wpos.wz) continue;
 					/* are we within range and have same terrain type? */
-					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[j].wx,
-					    q_ptr->target_wpos[j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
+					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy,
+					    q_goal->target_wpos.wx, q_goal->target_wpos.wy) <= QI_TERRAIN_PATCH_RADIUS &&
 					    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type ==
-					    wild_info[q_ptr->target_wpos[j].wy][q_ptr->target_wpos[j].wx].type) {
+					    wild_info[q_goal->target_wpos.wy][q_goal->target_wpos.wx].type) {
 						p_ptr->quest_any_r_within_target = TRUE;
 						break;
 					}
 				}
 				/* just check a single, specific wpos? */
-				else if (inarea(&q_ptr->target_wpos[j], &p_ptr->wpos)) {
+				else if (inarea(&q_goal->target_wpos, &p_ptr->wpos)) {
 					p_ptr->quest_any_r_within_target = TRUE;
 					break;
 				}
@@ -2643,26 +2692,29 @@ void quest_check_player_location(int Ind) {
 			if (!q_ptr->active) continue;
 
 			stage = quest_get_stage(Ind, q_idx);
+			q_stage = &q_ptr->stage[stage];
 
 			/* first clear old wpos' delivery state */
 			p_ptr->quest_deliver_xy[i] = FALSE;
 
 			/* check the quest goals, whether any of them wants a delivery to this location */
-			for (j = 0; j < QI_GOALS; j++) {
-				if (!q_ptr->deliver_pos[j]) continue;
+			for (j = 0; j < q_stage->goals; j++) {
+				q_goal = &q_stage->goal[j];
+				if (!q_goal->deliver) continue;
+				q_del = q_goal->deliver;
 
 				/* extend target terrain over a wide patch? */
-				if (q_ptr->deliver_terrain_patch[j]) {
+				if (q_del->terrain_patch) {
 					/* different z-coordinate = instant fail */
-					if (p_ptr->wpos.wz != q_ptr->deliver_wpos[j].wz) continue;
+					if (p_ptr->wpos.wz != q_del->wpos.wz) continue;
 					/* are we within range and have same terrain type? */
-					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[j].wx,
-					    q_ptr->deliver_wpos[j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
+					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy,
+					    q_del->wpos.wx, q_del->wpos.wy) <= QI_TERRAIN_PATCH_RADIUS &&
 					    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type ==
-					    wild_info[q_ptr->deliver_wpos[j].wy][q_ptr->deliver_wpos[j].wx].type) {
+					    wild_info[q_del->wpos.wy][q_del->wpos.wx].type) {
 						/* imprint new temporary destination location information */
 						/* specific x,y loc? */
-						if (q_ptr->deliver_pos_x[j] != -1) {
+						if (q_del->pos_x != -1) {
 							p_ptr->quest_deliver_xy[i] = TRUE;
 							p_ptr->quest_any_deliver_xy_within_target = TRUE;
 							/* and check right away if we're already on the correct x,y location */
@@ -2675,10 +2727,10 @@ void quest_check_player_location(int Ind) {
 					}
 				}
 				/* just check a single, specific wpos? */
-				else if (inarea(&q_ptr->deliver_wpos[j], &p_ptr->wpos)) {
+				else if (inarea(&q_del->wpos, &p_ptr->wpos)) {
 					/* imprint new temporary destination location information */
 					/* specific x,y loc? */
-					if (q_ptr->deliver_pos_x[j] != -1) {
+					if (q_del->pos_x != -1) {
 						p_ptr->quest_deliver_xy[i] = TRUE;
 						p_ptr->quest_any_deliver_xy_within_target = TRUE;
 						/* and check right away if we're already on the correct x,y location */
