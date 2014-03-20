@@ -189,8 +189,9 @@ typedef struct qi_goal {
 	qi_deliver *deliver;
 
 	bool optional;					/* is this an optional goal? */
-	bool cleared;					/* goal has been fulfilled! */
-	bool nisi;					/* for goals set by kill/retrieve depending on deliver (for flag changes) */
+
+	bool cleared;		//dynamic data		/* goal has been fulfilled! */
+	bool nisi;		//dynamic data		/* for goals set by kill/retrieve depending on deliver (for flag changes) */
 
 	/* 'Z' lines: goals set/clear flags */
 	u16b setflags;
