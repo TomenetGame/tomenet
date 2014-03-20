@@ -313,6 +313,12 @@ typedef struct qi_stage {
 	bool add_dungeon_keep;				/* keep dungeon until quest ends instead of erasing it when this stage is completed */
 
 
+	/* Questor going bonkers? (optional/advanced) */
+	qi_questor_morph *questor_morph;
+	qi_questor_hostility *questor_hostility;
+	qi_questor_act *questor_act;
+
+
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
@@ -426,14 +432,11 @@ typedef struct quest_info {
 	   for players being able to interact with to acquire the quest.
 	   The exception are quests that are automatically acquired during a stage of another quest. */
 
+	/* ----- Fixed quest data (from q_info.txt) ----- */
+
 	/* questor restrictions (locations etc..): */
 	byte questors;					/* how many questors were actually defined in q_info */
 	qi_questor *questor;
-
-	/* optional/advanced */
-	qi_questor_morph *questor_morph;
-	qi_questor_hostility *questor_hostility;
-	qi_questor_act *questor_act;
 
 	/* -------------------------------- OPTIONAL SUB-STRUCTURED DATA -------------------------------- */
 
