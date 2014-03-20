@@ -602,10 +602,8 @@ void compact_monsters(int size, bool purge) {
 			/* Quests: keep questor_m_idx information consistent */
 			if (m_list[i].questor) {
 				q_ptr = &q_info[m_list[i].quest];
-#if 0//restructure
-				q_ptr->questor_m_idx[m_list[i].questor_idx] = i;
-				s_printf("QUEST_COMPACT_MONSTERS: quest %d - questor %d m_idx %d->%d\n", m_list[i].quest, m_list[i].questor_idx, q_ptr->questor_m_idx[m_list[i].questor_idx], i);
-#endif
+				q_ptr->questor[m_list[i].questor_idx].m_idx = i;
+				s_printf("QUEST_COMPACT_MONSTERS: quest %d - questor %d m_idx %d->%d\n", m_list[i].quest, m_list[i].questor_idx, q_ptr->questor[m_list[i].questor_idx].m_idx, i);
 			}
 
 			/* Copy the visibility and los flags for the players */
@@ -5094,13 +5092,10 @@ cptr r_name_get(monster_type *m_ptr) {
 	static char buf[100];
 
 	if (m_ptr->questor) {
-#if 0//restructure
-		if (q_info[m_ptr->quest].questor_name[m_ptr->questor_idx]) {
-			snprintf(buf, sizeof(buf), "%s", q_info[m_ptr->quest].questor_name[m_ptr->questor_idx]);
+		if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].name) {
+			snprintf(buf, sizeof(buf), "%s", q_info[m_ptr->quest].questor[m_ptr->questor_idx].name);
 			return buf;
-		} else 
-#endif
-			return (r_name + m_ptr->r_ptr->name);
+		} else return (r_name + m_ptr->r_ptr->name);
 	} else if (m_ptr->special) {
 		cptr p = (m_ptr->owner) ? lookup_player_name(m_ptr->owner) : "**INTERNAL BUG**";
 		if (p == NULL) p = "**INTERNAL BUG**";
