@@ -674,18 +674,19 @@ static bool quest_get_goal(int pInd, int q_idx, int goal, bool nisi) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
+	qi_goal *q_goal = &q_ptr->stage[stage].goal[goal];
 
 	if (!pInd || !q_ptr->individual) {
-		if (nisi && q_ptr->goals_nisi[stage][goal]) return FALSE;
-		return q_ptr->goals[stage][goal]; /* no player? global goal */
+		if (nisi && q_goal->nisi) return FALSE;
+		return q_goal->cleared; /* no player? global goal */
 	}
 
 	p_ptr = Players[pInd];
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
-		if (nisi && q_ptr->goals_nisi[stage][goal]) return FALSE;
-		return q_ptr->goals[stage][goal]; /* player isn't on this quest. return global goal. */
+		if (nisi && q_goal->nisi) return FALSE;
+		return q_goal->cleared; /* player isn't on this quest. return global goal. */
 	}
 
 	if (q_ptr->individual) {
@@ -693,8 +694,8 @@ static bool quest_get_goal(int pInd, int q_idx, int goal, bool nisi) {
 		return p_ptr->quest_goals[i][goal]; /* individual quest */
 	}
 
-	if (nisi && q_ptr->goals_nisi[stage][goal]) return FALSE;
-	return q_ptr->goals[stage][goal]; /* global quest */
+	if (nisi && q_goal->nisi) return FALSE;
+	return q_goal->cleared; /* global quest */
 }
 
 /* return an optional current quest goal. Either just uses q_ptr->goalsopt directly for global
@@ -786,9 +787,9 @@ static void quest_set_flags(int pInd, int q_idx, u16b set_mask, u16b clear_mask)
 /* according to Z lines, change flags when a quest goal has finally be resolved. */
 //TODO for optional goals too..
 static void quest_goal_changes_flags(int pInd, int q_idx, int stage, int goal) {
-	quest_info *q_ptr = &q_info[q_idx];
+	qi_goal *q_goal = &q_info[q_idx].stage[stage].goal[goal];
 
-	quest_set_flags(pInd, q_idx, q_ptr->goal_setflags[stage][goal], q_ptr->goal_clearflags[stage][goal]);
+	quest_set_flags(pInd, q_idx, q_goal->setflags, q_goal->clearflags);
 }
 
 /* mark a quest goal as reached.
@@ -799,16 +800,17 @@ static void quest_set_goal(int pInd, int q_idx, int goal, bool nisi) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
+	qi_goal *q_goal = &q_info[q_idx].stage[stage].goal[goal];
 
 #if QDEBUG > 2
 	s_printf("QUEST_GOAL_SET: (%s,%d) goal %d%s by %d\n", q_ptr->codename, q_idx, goal, nisi ? "n" : "", pInd);
 #endif
 	if (!pInd || !q_ptr->individual) {
-		if (!q_ptr->goals[stage][goal] || !nisi) q_ptr->goals_nisi[stage][goal] = nisi;
-		q_ptr->goals[stage][goal] = TRUE; /* no player? global goal */
+		if (!q_goal->cleared || !nisi) q_goal->nisi = nisi;
+		q_goal->cleared = TRUE; /* no player? global goal */
 
 		/* change flags according to Z lines? */
-		if (!q_ptr->goals_nisi[stage][goal]) quest_goal_changes_flags(0, q_idx, stage, goal);
+		if (!q_goal->nisi) quest_goal_changes_flags(0, q_idx, stage, goal);
 
 		(void)quest_goal_check(0, q_idx, FALSE);
 		return;
@@ -818,11 +820,11 @@ static void quest_set_goal(int pInd, int q_idx, int goal, bool nisi) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
-		if (!q_ptr->goals[stage][goal] || !nisi) q_ptr->goals_nisi[stage][goal] = nisi;
-		q_ptr->goals[stage][goal] = TRUE; /* player isn't on this quest. return global goal. */
+		if (!q_goal->cleared || !nisi) q_goal->nisi = nisi;
+		q_goal->cleared = TRUE; /* player isn't on this quest. return global goal. */
 
 		/* change flags according to Z lines? */
-		if (!q_ptr->goals_nisi[stage][goal]) quest_goal_changes_flags(0, q_idx, stage, goal);
+		if (!q_goal->nisi) quest_goal_changes_flags(0, q_idx, stage, goal);
 
 		(void)quest_goal_check(0, q_idx, FALSE);
 		return;
@@ -833,17 +835,17 @@ static void quest_set_goal(int pInd, int q_idx, int goal, bool nisi) {
 		p_ptr->quest_goals[i][goal] = TRUE; /* individual quest */
 
 		/* change flags according to Z lines? */
-		if (!q_ptr->goals_nisi[stage][goal]) quest_goal_changes_flags(pInd, q_idx, stage, goal);
+		if (!p_ptr->quest_goals_nisi[i][goal]) quest_goal_changes_flags(pInd, q_idx, stage, goal);
 
 		(void)quest_goal_check(pInd, q_idx, FALSE);
 		return;
 	}
 
-	if (!q_ptr->goals[stage][goal] || !nisi) q_ptr->goals_nisi[stage][goal] = nisi;
-	q_ptr->goals[stage][goal] = TRUE; /* global quest */
+	if (!q_goal->cleared || !nisi) q_goal->nisi = nisi;
+	q_goal->cleared = TRUE; /* global quest */
 	/* change flags according to Z lines? */
 
-	if (!q_ptr->goals_nisi[stage][goal]) quest_goal_changes_flags(0, q_idx, stage, goal);
+	if (!q_goal->nisi) quest_goal_changes_flags(0, q_idx, stage, goal);
 
 	/* also check if we can now proceed to the next stage or set flags or hand out rewards */
 	(void)quest_goal_check(0, q_idx, FALSE);
@@ -853,12 +855,13 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
+	qi_goal *q_goal = &q_info[q_idx].stage[stage].goal[goal];
 
 #if QDEBUG > 2
 	s_printf("QUEST_GOAL_UNSET: (%s,%d) goal %d by %d\n", q_ptr->codename, q_idx, goal, pInd);
 #endif
 	if (!pInd || !q_ptr->individual) {
-		q_ptr->goals[stage][goal] = FALSE; /* no player? global goal */
+		q_goal->cleared = FALSE; /* no player? global goal */
 		return;
 	}
 
@@ -866,7 +869,7 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	if (i == MAX_CONCURRENT_QUESTS) {
-		q_ptr->goals[stage][goal] = FALSE; /* player isn't on this quest. return global goal. */
+		q_goal->cleared = FALSE; /* player isn't on this quest. return global goal. */
 		return;
 	}
 
@@ -875,7 +878,7 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 		return;
 	}
 
-	q_ptr->goals[stage][goal] = FALSE; /* global quest */
+	q_goal->cleared = FALSE; /* global quest */
 }
 
 /* mark an optional quest goal as reached */

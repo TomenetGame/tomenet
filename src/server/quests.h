@@ -188,14 +188,13 @@ typedef struct qi_goal {
 	qi_retrieve *retrieve;
 	qi_deliver *deliver;
 
-	/* is this an optional goal? */
-	bool optional;
-
-	/* quest goals */
+	bool optional;					/* is this an optional goal? */
+	bool cleared;					/* goal has been fulfilled! */
 	bool nisi;					/* for goals set by kill/retrieve depending on deliver (for flag changes) */
+
 	/* 'Z' lines: goals set/clear flags */
-	u16b goal_setflags;
-	u16b goal_clearflags;
+	u16b setflags;
+	u16b clearflags;
 
 	/* for kill/retrieve goals only (deliver goals have/need separate location info) */
 	bool target_pos;				/* enable target pos? */
