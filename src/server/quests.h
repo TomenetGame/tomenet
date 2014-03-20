@@ -46,7 +46,7 @@ typedef struct qi_questor {
 	/* exact questor starting location */
 	struct worldpos start_wpos;			/* -1, -1 for random */
 	s16b start_x, start_y;				/* -1, -1 for random */
-	cptr questor_tpref;				/* filename of map to load, or empty for none */
+	cptr tpref;				/* filename of map to load, or empty for none */
 
 	bool s_dungeon[MAX_D_IDX];			/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
 	u32b s_dungeon_must_flags1, s_dungeon_must_flags2, s_dungeon_must_flags3;	/*  eligible wilderness dungeon flags */
@@ -185,8 +185,7 @@ typedef struct qi_goal {
 	bool optional;
 
 	/* quest goals */
-	bool goals;
-	bool goals_nisi;				/* for goals set by kill/retrieve depending on deliver (for flag changes) */
+	bool nisi;				/* for goals set by kill/retrieve depending on deliver (for flag changes) */
 	/* 'Z' lines: goals set/clear flags */
 	u16b goal_setflags;
 	u16b goal_clearflags;
@@ -262,14 +261,14 @@ typedef struct qi_stage {
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
-	s16b talk_focus[QI_QUESTORS];			/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
+	s16b talk_focus[QI_QUESTORS]; //<dynamic data>	/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
 	byte talk_lines[QI_QUESTORS];
 	cptr talk[QI_QUESTORS][QI_TALK_LINES]; 		/* n conversations a 10 lines a 79 characters */
-	u16b talkflags[QI_QUESTORS][QI_TALK_LINES];	/* required flags configuration for a convo line to get displayed  */
+	u16b talk_flags[QI_QUESTORS][QI_TALK_LINES];	/* required flags configuration for a convo line to get displayed  */
 
 	byte narration_lines;
 	cptr narration[QI_TALK_LINES];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
-	u16b narrationflags[QI_TALK_LINES];		/* required flags configuration to display this narrative line */
+	u16b narration_flags[QI_TALK_LINES];		/* required flags configuration to display this narrative line */
 
 
 	/* the rewards for this stage, if any */
