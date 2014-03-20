@@ -2162,6 +2162,9 @@ extern qi_keyword *init_quest_keyword(int q_idx, int num);
 extern qi_deliver *init_quest_deliver(int q_idx, int stage, int goal);
 extern qi_goal *init_quest_goal(int q_idx, int stage, int num);
 extern qi_reward *init_quest_reward(int q_idx, int stage, int num);
+/* for actually loading/saving dynamic quest information */
+extern void quests_load(void);
+extern void quests_save(void);
 
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
