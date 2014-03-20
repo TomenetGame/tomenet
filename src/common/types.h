@@ -2727,6 +2727,8 @@ struct player_type {
 	int interact_questor_idx; /* id in QI_QUESTORS, which questor we just interacted with (bumped into) */
 	s16b quest_idx[MAX_CONCURRENT_QUESTS];
 	char quest_codename[MAX_CONCURRENT_QUESTS][10 + 1]; /* track up to 5 quests by their codename and roughly the current stage and goals */
+	s32b quest_acquired[MAX_CONCURRENT_QUESTS]; /* the turn when it was acquired */
+	s32b quest_timed_stage_change[MAX_CONCURRENT_QUESTS]; /* turn tracker for automatically timed stage change */
 	s16b quest_stage[MAX_CONCURRENT_QUESTS]; /* in which stage is a quest? */
 	u16b quest_flags[MAX_CONCURRENT_QUESTS];//QI_FLAGS /* our personal quest flags configuration */
 	bool quest_goals[MAX_CONCURRENT_QUESTS][5]/*QI_GOALS*/, quest_goalsopt[MAX_CONCURRENT_QUESTS][5];/*QI_OPTIONAL*/ /* which goals have we completed so far? */

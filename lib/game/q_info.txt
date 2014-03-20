@@ -24,8 +24,8 @@ V:0.0.1
 # (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0 (nonfunctional):timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
 # (optional) X (50x repeatable):stage:flags:narration text
 # W (15x repeatable):questor:stage:flags:convo line
-# (optional) Y (30x repeatable):questor:stage:flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage
-# (optional) y (15x repeatable):questor:stage:keyword:flags:reply convo line
+# (optional) Y (30x repeatable):questor:stage (-1 for any):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage
+# (optional) y (15x repeatable):questor:stage (-1 for any):keyword:flags:reply convo line
 # (optional) k:stage:goal:minlev:maxlev:number:spawn:spawn will target
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
@@ -133,8 +133,8 @@ $TEST_SERVER$R:1:80:38:0:0:0:0:0:0:0:0:0:2:2:0
 # //todo (optional) J:questor moves, teleports, teleports player ...
 # (optional) X (50x repeatable):stage:flags:narration text
 # W (15x repeatable):questor:stage:flags:convo line
-# (optional) Y (30x repeatable):questor:stage:flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage
-# (optional) y (15x repeatable):questor:stage:keyword:flags:reply convo line
+# (optional) Y (30x repeatable):questor:stage (-1 for any):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage
+# (optional) y (15x repeatable):questor:stage (-1 for any):keyword:flags:reply convo line
 # (optional) k:stage:goal:minlev:maxlev:number:spawn:spawn will target
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)

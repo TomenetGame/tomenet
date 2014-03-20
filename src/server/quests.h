@@ -73,57 +73,289 @@
 
    Items retrieved will be marked as 'quest items' for easy check in case the
    player also has to deliver them somewhere, whether they're the same items.
+
+
+   Data structure:
+   quest_info -> qi_stage   -> qi_goal   -> qi_kill
+                                         -> qi_retrieve
+                                         -> qi_deliver
+                            -> qi_reward
+              -> qi_keyword
+              -> qi_kwreply
 */
 
+
+	/* quest goals, up to 10 per stage, with a multitude of different sub-goals (Note: of the subgoals 1 is randomly picked for the player, except if 'xxx_random_pick' is set, which allows the player to pick what he wants to do).
+	   There are additionally up to 10 optional quest goals per stage.
+	   --note: the #s of subgoals don't use #defines, because they vary too much anyway for each category, so they're just hard-coded numbers. */
+//#define QI_GOALS 10 /* main goals to complete a stage */
+//#define QI_OPTIONAL 10 /* optional goals in a stage */
+
+/* Sub-structure: A single kill goal */
+typedef struct qi_kill {
+	bool kill;					/* toggle */
+#if 0 /* too much, make it simpler for now */
+	bool kill_player_picks;				/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
+#endif
+	s16b kill_ridx[10];				/* kill certain monster(s), 0 for none, -1 for any. */
+	char kill_rchar[5];				/*  ..certain types, 254 for any, 255 for none. AND's with attr/lev. */
+	byte kill_rattr[5];				/*  ..certain colours, 254 for any, 255 for none. AND's with char/lev. */
+	byte kill_rlevmin, kill_rlevmax;		/* 0 for any. AND's with char/attr. */
+	s16b kill_number, kill_number_left;
+	byte kill_spawn;				/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
+	byte kill_spawn_targets;			/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
+} qi_kill;
+
+/* Sub-structure: A single retrieval goal (main mem eater) */
+typedef struct qi_retrieve {
+	bool retrieve;					/* toggle */
+#if 0 /* too much, make it simpler for now */
+	bool retrieve_player_picks;			/* instead of picking one subgoal randomly, let the player decide which he wants to get */
+#endif
+	s16b retrieve_otval[10], retrieve_osval[10];	/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval, 0 = not checked) */
+	s16b retrieve_opval[5], retrieve_obpval[5];	/* umm, let's say 9999 = not checked :-p, -9999 = any */
+	byte retrieve_oattr[5];				/*  ..certain colours (flavoured items only), 255 = not checked, 254 = any */
+	s16b retrieve_oname1[5], retrieve_oname2[5], retrieve_oname2b[5]; /* -3 = not checked, -2 == any except zero, -1 = any */
+	int retrieve_ovalue;				/* minimum value of the item (0 to disab..wait) */
+	s16b retrieve_number;				/* amount of fitting items to retrieve */
+} qi_retrieve;
+
+/* Sub-structure: A single deliver goal */
+typedef struct qi_deliver {
+	bool deliver_pos;				/* enable delivery pos? */
+	struct worldpos deliver_wpos;			/* (after optionally killing/retrieving/or whatever) MOVE TO this world pos */
+	bool deliver_terrain_patch;			/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
+							   max radius is QI_TERRAIN_PATCH_RADIUS. */
+	s16b deliver_pos_x, deliver_pos_y;		/* -"- ..MOVE TO specifically this position */
+	cptr deliver_tpref;				/* filename of map to load, or empty for none */
+} qi_deliver;
+
+/* Sub-structure: A single quest goal (which can be kill/retrieve/deliver) */
+typedef struct qi_goal {
+	/* Type of goal - exactly one of them must be non-NULL */
+	qi_kill *kill;
+	qi_retrieve *retrieve;
+	qi_deliver *deliver;
+
+	/* is this an optional goal? */
+	bool optional;
+
+	/* quest goals */
+	bool goals;
+	bool goals_nisi;				/* for goals set by kill/retrieve depending on deliver (for flag changes) */
+	/* 'Z' lines: goals set/clear flags */
+	u16b goal_setflags;
+	u16b goal_clearflags;
+
+	/* for kill/retrieve goals only (deliver goals have/need separate location info) */
+	bool target_pos;				/* enable target pos? */
+	struct worldpos target_wpos;			/* kill/retrieve specifically at this world pos */
+	s16b target_pos_x, target_pos_y;		/* at specifically this position (even usable for kill/retrieve stuff?) */
+	bool target_terrain_patch;			/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
+							   max radius is QI_TERRAIN_PATCH_RADIUS. */
+	cptr target_tpref;				/* filename of map to load, or empty for none */
+
+#if 0 /* just use a deliver_pos goal instead, for now */
+	bool return_to_questor;				/* do we need to return to the questor first (bump), to get credit for particular main goals? */
+#endif
+} qi_goal;
+
+/* Sub-structure: A single quest reward */
+typedef struct qi_reward {
+	s16b reward_otval;				/* hand over certain rewards to the player */
+	s16b reward_osval;
+	s16b reward_opval, reward_obpval;
+	s16b reward_oname1, reward_oname2, reward_oname2b;
+	bool reward_ogood, reward_ogreat, reward_ovgreat;
+	bool reward_oreward;				/* use fitting-reward algo (from highlander etc)? */
+
+	int reward_gold;
+	int reward_exp;
+	s16b reward_statuseffect;			/* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
+} qi_reward;
+
+/* Sub-structure: A single quest stage */
+typedef struct qi_stage {
+	/* quest acceptance */
+	bool accepts;					/* player can acquire the quest during a stage */
+
+	s16b activate_quest;				/* spawn a certain new quest of this index (and thereby another questor) (if not already existing) */
+	bool auto_accept;				/* player will automatically acquire the newly spawned quest (from activate_quest[]) */
+	bool auto_accept_quiet;				/* player will automatically acquire the newly spawned quest (from activate_quest[]) but not get a quest-accept-notification type of message about it */
+
+	/* stage-change automatics */
+	s16b change_stage;				/* automatically change to a different stage after handling everything that was to do in the current stage (-1 = disable) */
+#if 0 /* currently not possible since we call the quest scheduler once a minute */
+	s16b timed_stage_ingame;			/* automatically change to a different stage after a certain amount of in-game minutes passed */
+	s16b timed_stage_ingame_abs;			/* automatically change to a different stage when a certain in-game time is reached (minute resolution) */
+#else
+	s16b timed_stage_ingame_abs;			/* automatically change to a different stage when a certain in-game time is reached (HOUR resolution! -1 to disable) */
+#endif
+	s16b timed_stage_real;				/* automatically change to a different stage after a certain amount of real minutes passed */
+	bool quiet_change_stage;			/* for the above auto-changes: don't replay the stage's dialogue */
+	/* dynamic timer helper data */
+	s16b timed_stage_countdown;			/* dynamic, for countdown for above timings: negative value = ingame absolute, positive value = real-time counting down */
+	s16b timed_stage_countdown_stage;
+	bool timed_stage_countdown_quiet;
+
+	/* special questor behaviour during each stage */
+	bool questor_talkable_new[QI_QUESTORS];		/* questor accepts dialogue? (by bumping usually) */
+	bool questor_despawned_new[QI_QUESTORS];	/* questor vanishes during a quest stage? */
+
+	bool questor_invincible_new[QI_QUESTORS];	/* Is the questor invincible (if monster)/unpickable by monsters (if item) during a particular stage? */
+	s16b questor_death_fail[QI_QUESTORS];		/* If the questor dies, the quest goes to stage n? (->reset old stage goals/positions as if we just entered it, if that is possible? hm) */
+	bool questor_death_fail_all[QI_QUESTORS];	/* If the questor dies, the quest fails completely? */
+	cptr questor_name_new[QI_QUESTORS];		/* questor changes optional pseudo-unique name during this stage? */
+	s16b questor_ridx_new[QI_QUESTORS]; 		/* questor changes to this base monster type */
+	char questor_rchar_new[QI_QUESTORS];
+	byte questor_rattr_new[QI_QUESTORS];
+	byte questor_rlev_new[QI_QUESTORS];
+
+	byte questor_walk_speed[QI_QUESTORS];		/* questor will actually move around during this stage? */
+	s16b questor_walk_destx[QI_QUESTORS], questor_walk_desty[QI_QUESTORS]; /* target waypoint for questor to move to */
+	s16b questor_walk_stage[QI_QUESTORS];		/* stage will change when questor arrives at destination */
+
+	struct worldpos teleport_questor_wpos[QI_QUESTORS]; /* teleport questor to a new position */
+	s16b teleport_questor_x[QI_QUESTORS], teleport_questor_y[QI_QUESTORS];
+	struct worldpos teleport_wpos[QI_QUESTORS];	/* teleport participating player to a new position */
+	s16b teleport_player_x[QI_QUESTORS], teleport_player_y[QI_QUESTORS];
+
+	s16b questor_hostile[QI_QUESTORS];		/* questor turns into a normal aggressor, and stage is changed */
+	s16b questor_hostile_revert_hp[QI_QUESTORS];	/* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
+	s16b questor_hostile_revert_timed_ingame[QI_QUESTORS]; /* ..after ingame time (min).. */
+	s16b questor_hostile_revert_timed_ingame_abs[QI_QUESTORS]; /* ..at ingame time.. */
+	s16b questor_hostile_revert_timed_real[QI_QUESTORS]; /* ..after real time (s).. */
+
+	bool questor_turns_normal[QI_QUESTORS];		/* questor actually loses questor status and turns into a regular mob! */
+
+	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */
+	struct worldpos add_dungeon_wpos;		/* create it at this world pos */
+	bool add_dungeon_terrain_patch;			/* extend valid location over all connected world sectors whose terrain is of the same type (eg big forest) */
+	char *add_dungeon_parms;			/* same as for master_level() maybe */
+	char **add_dungeon_t_pref;			/* table of predefined template filenames for each dungeon floor (or NULL for random floors inbetween) */
+	bool add_dungeon_fullystatic;			/* all floors are static */
+	bool add_dungeon_keep;				/* keep dungeon until quest ends instead of erasing it when this stage is completed */
+
+
+	/* contains the indices of up to QI_REWARD_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
+	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10, the first QI_OPTIONAL would have index 11. */
+	char goals_for_reward[QI_STAGE_REWARDS][QI_REWARD_GOALS]; /* char to save space, only 1 byte instead of int: returns the goal's index (or -1 if none) */
+
+	/* the rewards for this stage, if any */
+	byte rewards;
+	qi_reward *reward;
+
+
+	/* determine if a new stage should begin depending on which goals we have completed */
+	/* contains the indices of up to QI_STAGE_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
+	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10 (indices 0..9), the first QI_OPTIONAL would have index 10. */
+	char goals_for_stage[QI_FOLLOWUP_STAGES][QI_STAGE_GOALS]; /* char to save space, only 1 byte instead of int: returns the goal's index (or -1 if none) */
+	s16b next_stage_from_goals[QI_FOLLOWUP_STAGES]; /* <stage> index of the possible follow-up stages */
+} qi_stage;
+
+/* Sub-structure: A single quest keyword */
+typedef struct qi_keyword {
+	cptr keyword[QI_QUESTORS][QI_STAGES];		/* each convo may allow the player to reply with up to m keywords a 30 chars; 'Y' as 1st keyword and 'N' as 2nd trigger a yes/no hack */
+	u16b keywordflags[QI_QUESTORS][QI_STAGES];	/* required flags configuration for a keyword to be enabled */
+	u16b keyword_setflags[QI_QUESTORS][QI_STAGES];	/* ..and the keyword will change flags to these */
+	u16b keyword_clearflags[QI_QUESTORS][QI_STAGES]; /* ..and the keyword will change flags to these */
+	s16b keyword_stage[QI_QUESTORS][QI_STAGES];/*  ..which will bring the player to a different quest stage (or -1) */
+} qi_keyword;
+
+/* Sub-structure: A single quest keyword-reply (main mem eater) */
+typedef struct qi_kwreply {
+//<-- note: these two lines cost like 700kB or something :-p
+	cptr keyword_reply[QI_QUESTORS][QI_STAGES][QI_TALK_LINES];/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
+	u16b keyword_replyflags[QI_QUESTORS][QI_STAGES][QI_TALK_LINES];/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
+//-- ^turn them into pointers or sth (make a sub-struct?)
+} qi_kwreply;
+
+/* Main structure: The complete quest data */
 typedef struct quest_info {
-	bool active;			/* QUEST IS CURRENTLY ACTIVE (aka questor is currently spawned - \
-					   depends on time (day/night/specific) constraints) */
-	bool disabled; 			/* quest has been temporarily disabled, is hence deactivated and cannot \
-					   be activated until enabled again (eg for when something breaks during quest progression) */
-	bool disabled_on_load;		/* dynamic info for quests disabled via q_info */
-	s16b cur_cooldown;		/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
-	s16b stage;
-	s32b start_turn;
+	/* -------------------------------- MANDATORY GLOBAL QUEST DATA -------------------------------- */
+
+	/* ----- Dynamic quest state information ----- */
+
+	bool active;					/* QUEST IS CURRENTLY ACTIVE (aka questor is currently spawned - \
+							   depends on time (day/night/specific) constraints) */
+	bool disabled; 					/* quest has been temporarily disabled, is hence deactivated and cannot \
+							   be activated until enabled again (eg for when something breaks during quest progression) */
+	bool disabled_on_load;				/* dynamic info for quests disabled via q_info */
+
+	s16b cur_cooldown;				/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
+	s32b turn_activated;				/* the turn when the quest became activated */
+	s32b turn_acquired;				/* for global quests: the turn when it was acquired */
+
+	/* the current quest stage (-1 is the init stage, which progresses to 0
+	   automatically, during which quests are usually acquired by players) */
+	s16b cur_stage;					/* the current stage in the quest progress */
+
+	/* global quest flags (a-p to clear, A-P to set) -- note that these are stage-independant! */
+	u16b flags;
+
+	/*-----  Fixed quest data (from q_info.txt) ----- */
 
 //#define QI_CODENAME_LEN 10
-	char codename[QI_CODENAME_LEN + 1];	/* short, unique, internal name for checking prerequisite quests for follow-up quests */
-	char creator[NAME_LEN];			/* credits -- who thought up and created this quest :) */
-	//char name[MAX_CHARS];			/* readable title of this quest */
-	u16b name;				/* readable title of this quest - offset */
-
+	char codename[QI_CODENAME_LEN + 1];		/* short, unique, internal name for checking prerequisite quests for follow-up quests */
+	char creator[NAME_LEN];				/* credits -- who thought up and created this quest :) */
+	//char name[MAX_CHARS];				/* readable title of this quest */
+	u16b name;					/* readable title of this quest - offset */
 
     /* QUESTOR (quest giver) RESTRICTIONS: */
 	/* player restrictions */
-	byte privilege;				/* quest can only be acquired by admins (for testing them etc) */
-	byte minlev, maxlev;			/* eligible player level range (0 for any) */
-	u32b races, classes;			/* eligible player classes/races (CFx/RFx flags) */
-	bool mode_norm, mode_el, mode_pvp;	/* are these character modes eligible to join? (normal = normal/uw/hell) */
-	byte must_be_fruitbat;			/* must be a true fruit bat? (OR's with body_monster!) */
-	s16b must_be_monster;			/* must be polymorphed into this form? (OR's with body_fruitbat!) */
+	byte privilege;					/* quest can only be acquired by admins (for testing them etc) */
+	byte minlev, maxlev;				/* eligible player level range (0 for any) */
+	u32b races, classes;				/* eligible player classes/races (CFx/RFx flags) */
+	bool mode_norm, mode_el, mode_pvp;		/* are these character modes eligible to join? (normal = normal/uw/hell) */
+	byte must_be_fruitbat;				/* must be a true fruit bat? (OR's with body_monster!) */
+	s16b must_be_monster;				/* must be polymorphed into this form? (OR's with body_fruitbat!) */
 	char prerequisites[QI_PREREQUISITES][QI_CODENAME_LEN + 1]; /* prerequisite quests the player must have completed to acquire this quest */
 
 	/* eligible time for quest to become active and thereby spawn the questors */
-	bool night, day;			/* Only available at night/day in general? */
+	bool night, day;				/* Only available at night/day in general? */
 	bool morning, forenoon, noon, afternoon, evening, midnight, deepnight; /*  Only available at very specific night/day times? */
-	s16b time_start, time_stop;		/* Only available during very specific time interval? */
+	s16b time_start, time_stop;			/* Only available during very specific time interval? */
+
+    /* QUEST DURATION */
+	/* quest duration, after it was accepted, until it expires */
+	bool individual;				/* quest isn't global, but stage/flags/goals are stored individually for each player,
+							   allowing everyone to have his own personal 'instance' of the quest running simultaneusly.
+							   For example questors may spawn other questors -> must be global, not individual. */
+	s16b repeatable;				/* player may repeat this quest n times (0 = can only do this quest once) */
+	s16b cooldown;					/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
+	int max_duration;				/* in seconds, 0 for never */
+	bool static_floor;				/* questor floor will be static while the quest is active */
+	bool quit_floor;				/* if player leaves the questor's floor, the quest will terminate and be lost */
+	s16b ending_stage;				/* if this stage is reached, the quest will terminate */
+	s16b quest_done_credit_stage;			/* minimum stage that will increase the quest_done counter of players who are pursuing the quest */
 
 
-	/* questor restrictions (locations..): */
+	/* -------------------------------- (OPTIONAL) QUESTOR-SPECIFIC DATA -------------------------------- */
+	/* Note that each 'normal' quest needs at least one questor,
+	   for players being able to interact with to acquire the quest.
+	   The exception are quests that are automatically acquired during a stage of another quest. */
+
+	/* ----- Fixed quest data (from q_info.txt) ----- */
+
+	/* questor restrictions (locations etc..): */
 	byte questors;					/* how many questors were actually defined in q_info */
-	/* starting location restrictions */
-	byte s_location_type;				/* flags setting elibible starting location types (QI_SLOC_xxx) */
-	u16b s_towns_array;				/* QI_SLOC_TOWN: flags setting eligible starting towns (QI_STOWN_xxx) */
-	u32b s_terrains;				/* QI_SLOC_SURFACE: flags setting eligible starting terrains (RF8_WILD_xxx, RF8_WILD_TOO_MASK for all) */
-	/* exact questor starting location */
-	struct worldpos start_wpos;			/* -1, -1 for random */
-	s16b start_x, start_y;				/* -1, -1 for random */
-	cptr questor_tpref;				/* filename of map to load, or empty for none */
 
-	bool s_dungeon[MAX_D_IDX];			/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
-	u32b s_dungeon_must_flags1, s_dungeon_must_flags2, s_dungeon_must_flags3;	/*  eligible wilderness dungeon flags */
-	u32b s_dungeon_mustnt_flags1, s_dungeon_mustnt_flags2, s_dungeon_mustnt_flags3;	/*  uneligible wilderness dungeon flags */
-	bool s_dungeon_iddc;				/*  is the Ironman Deep Dive Challenge an eligible starting point? */
-	byte dlevmin, dlevmax;				/*  eligible dungeon level or world sector level (0 for any) */
+	/* starting location restrictions */
+	byte s_location_type[QI_QUESTORS];		/* flags setting elibible starting location types (QI_SLOC_xxx) */
+	u16b s_towns_array[QI_QUESTORS];		/* QI_SLOC_TOWN: flags setting eligible starting towns (QI_STOWN_xxx) */
+	u32b s_terrains[QI_QUESTORS];			/* QI_SLOC_SURFACE: flags setting eligible starting terrains (RF8_WILD_xxx, RF8_WILD_TOO_MASK for all) */
+	/* exact questor starting location */
+	struct worldpos start_wpos[QI_QUESTORS];	/* -1, -1 for random */
+	s16b start_x[QI_QUESTORS], start_y[QI_QUESTORS];/* -1, -1 for random */
+	cptr questor_tpref[QI_QUESTORS];		/* filename of map to load, or empty for none */
+
+	bool s_dungeon[QI_QUESTORS][MAX_D_IDX];		/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
+	u32b s_dungeon_must_flags1[QI_QUESTORS], s_dungeon_must_flags2[QI_QUESTORS], s_dungeon_must_flags3[QI_QUESTORS];	/*  eligible wilderness dungeon flags */
+	u32b s_dungeon_mustnt_flags1[QI_QUESTORS], s_dungeon_mustnt_flags2[QI_QUESTORS], s_dungeon_mustnt_flags3[QI_QUESTORS];	/*  uneligible wilderness dungeon flags */
+	bool s_dungeon_iddc[QI_QUESTORS];		/*  is the Ironman Deep Dive Challenge an eligible starting point? */
+	byte dlevmin[QI_QUESTORS], dlevmax[QI_QUESTORS];/*  eligible dungeon level or world sector level (0 for any) */
+
+	/* ----- Dynamic questor location information ----- */
 
 	/* keep track of actual resulting questor location --
 	   this data gets generated dynamically on quest activation from above template data */
@@ -131,20 +363,7 @@ typedef struct quest_info {
 	s16b current_x[QI_QUESTORS], current_y[QI_QUESTORS];
 	s16b questor_m_idx[QI_QUESTORS];
 
-
-    /* QUEST DURATION */
-	/* quest duration, after it was accepted, until it expires */
-	bool individual;			/* quest isn't global, but stage/flags/goals are stored individually for each player,
-						   allowing everyone to have his own personal 'instance' of the quest running simultaneusly.
-						   For example questors may spawn other questors -> must be global, not individual. */
-	s16b repeatable;			/* player may repeat this quest n times (0 = can only do this quest once) */
-	s16b cooldown;				/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
-	int max_duration;			/* in seconds, 0 for never */
-	bool static_floor;			/* questor floor will be static while the quest is active */
-	bool quit_floor;			/* if player leaves the questor's floor, the quest will terminate and be lost */
-	s16b ending_stage;			/* if this stage is reached, the quest will terminate */
-	s16b quest_done_credit_stage;		/* minimum stage that will increase the quest_done counter of players who are pursuing the quest */
-
+	/* ----- Fixed quest data (from q_info.txt) ----- */
 
     //NOTE: these should instead be hard-coded, similar to global events, too much variety really.. (monster spawning etc):
     /* QUEST CONSEQUENCES (depend on quest stage the player is in) --
@@ -153,27 +372,7 @@ typedef struct quest_info {
 	stage action #2 is, when a player accepts interacted with the questor. */
 
 	/* quest initialisation and meta actions */
-	bool accept_los[QI_QUESTORS], accept_interact[QI_QUESTORS];	/* player gets the quest just be being in LoS / interacting once with the questor (bump/read the parchment/pickup the item) */
-	bool accepts[QI_STAGES];			/* player can acquire the quest during a stage */
-
-	s16b activate_quest[QI_STAGES];		/* spawn a certain new quest of this index (and thereby another questor) (if not already existing) */
-	bool auto_accept[QI_STAGES];		/* player will automatically acquire the newly spawned quest (from activate_quest[]) */
-	bool auto_accept_quiet[QI_STAGES];		/* player will automatically acquire the newly spawned quest (from activate_quest[]) but not get a quest-accept-notification type of message about it */
-
-	s16b change_stage[QI_STAGES];		/* automatically change to a different stage after handling everything that was to do in the current stage (-1 = disable) */
-#if 0 /* currently not possible since we call the quest scheduler once a minute */
-	s16b timed_stage_ingame[QI_STAGES];		/* automatically change to a different stage after a certain amount of in-game minutes passed */
-	s16b timed_stage_ingame_abs[QI_STAGES];	/* automatically change to a different stage when a certain in-game time is reached (minute resolution) */
-#else
-	s16b timed_stage_ingame_abs[QI_STAGES];	/* automatically change to a different stage when a certain in-game time is reached (HOUR resolution! -1 to disable) */
-#endif
-	s16b timed_stage_real[QI_STAGES];		/* automatically change to a different stage after a certain amount of real minutes passed */
-	bool quiet_change_stage[QI_STAGES];		/* for the above auto-changes: don't replay the stage's dialogue */
-	/* dynamic timer helper data */
-	s16b timed_stage_countdown[QI_STAGES];	/* dynamic, for countdown for above timings: negative value = ingame absolute, positive value = real-time counting down */
-	s16b timed_stage_countdown_stage[QI_STAGES];
-	bool timed_stage_countdown_quiet[QI_STAGES];
-
+	bool accept_los[QI_QUESTORS], accept_interact[QI_QUESTORS]; /* player gets the quest just be being in LoS / interacting once with the questor (bump/read the parchment/pickup the item) */
 
 	/* type of questor */
 	byte questor[QI_QUESTORS];			/* QI_QUESTOR_xxx */
@@ -181,11 +380,11 @@ typedef struct quest_info {
 	s16b questor_ridx[QI_QUESTORS];			/* QI_QUESTOR_NPC; 0 for any */
 	char questor_rchar[QI_QUESTORS];		/*  0 for any */
 	byte questor_rattr[QI_QUESTORS];		/*  0 for any */
-	byte questor_rlevmin[QI_QUESTORS], questor_rlevmax[QI_QUESTORS];	/*  0 for any */
+	byte questor_rlevmin[QI_QUESTORS], questor_rlevmax[QI_QUESTORS]; /*  0 for any */
 
 	s16b questor_sval[QI_QUESTORS];			/* QI_QUESTOR_PARCHMENT */
 
-	s16b questor_ktval[QI_QUESTORS], questor_ksval[QI_QUESTORS];	/* QI_QUESTOR_ITEM_xxx. No further stats/enchantments are displayed! */
+	s16b questor_ktval[QI_QUESTORS], questor_ksval[QI_QUESTORS]; /* QI_QUESTOR_ITEM_xxx. No further stats/enchantments are displayed! */
 
 	char questor_name[QI_QUESTORS][MAX_CHARS];	/* optional pseudo-unique name that overrides the normal name */
 	bool questor_invincible[QI_QUESTORS];		/* Is the questor invincible (if monster)/unpickable by monsters (if item)? */
@@ -205,174 +404,31 @@ typedef struct quest_info {
 	int questor_drops_gold[QI_QUESTORS];
 	int questor_exp[QI_QUESTORS];
 
-	/* special questor behaviour during each stage */
-	bool questor_talkable_new[QI_QUESTORS][QI_STAGES];		/* questor accepts dialogue? (by bumping usually) */
-	bool questor_despawned_new[QI_QUESTORS][QI_STAGES];		/* questor vanishes during a quest stage? */
-
-	bool questor_invincible_new[QI_QUESTORS][QI_STAGES];	/* Is the questor invincible (if monster)/unpickable by monsters (if item) during a particular stage? */
-	s16b questor_death_fail[QI_QUESTORS][QI_STAGES];		/* If the questor dies, the quest goes to stage n? (->reset old stage goals/positions as if we just entered it, if that is possible? hm) */
-	bool questor_death_fail_all[QI_QUESTORS][QI_STAGES];	/* If the questor dies, the quest fails completely? */
-	cptr questor_name_new[QI_QUESTORS][QI_STAGES];		/* questor changes optional pseudo-unique name during this stage? */
-	s16b questor_ridx_new[QI_QUESTORS][QI_STAGES]; 		/* questor changes to this base monster type */
-	char questor_rchar_new[QI_QUESTORS][QI_STAGES];
-	byte questor_rattr_new[QI_QUESTORS][QI_STAGES];
-	byte questor_rlev_new[QI_QUESTORS][QI_STAGES];
-
-	byte questor_walk_speed[QI_QUESTORS][QI_STAGES];		/* questor will actually move around during this stage? */
-	s16b questor_walk_destx[QI_QUESTORS][QI_STAGES], questor_walk_desty[QI_QUESTORS][QI_STAGES]; /* target waypoint for questor to move to */
-	s16b questor_walk_stage[QI_QUESTORS][QI_STAGES];		/* stage will change when questor arrives at destination */
-
-	struct worldpos teleport_questor_wpos[QI_QUESTORS][QI_STAGES];	/* teleport questor to a new position */
-	s16b teleport_questor_x[QI_QUESTORS][QI_STAGES], teleport_questor_y[QI_QUESTORS][QI_STAGES];
-	struct worldpos teleport_wpos[QI_QUESTORS][QI_STAGES];	/* teleport participating player to a new position */
-	s16b teleport_player_x[QI_QUESTORS][QI_STAGES], teleport_player_y[QI_QUESTORS][QI_STAGES];
-
-	s16b questor_hostile[QI_QUESTORS][QI_STAGES];		/* questor turns into a normal aggressor, and stage is changed */
-	s16b questor_hostile_revert_hp[QI_QUESTORS][QI_STAGES];	/* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
-	s16b questor_hostile_revert_timed_ingame[QI_QUESTORS][QI_STAGES]; /* ..after ingame time (min).. */
-	s16b questor_hostile_revert_timed_ingame_abs[QI_QUESTORS][QI_STAGES]; /* ..at ingame time.. */
-	s16b questor_hostile_revert_timed_real[QI_QUESTORS][QI_STAGES]; /* ..after real time (s).. */
-
-	bool questor_turns_normal[QI_QUESTORS][QI_STAGES];		/* questor actually loses questor status and turns into a regular mob! */
-
 
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
-	s16b talk_focus[QI_QUESTORS];					/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
-	cptr talk[QI_QUESTORS][QI_STAGES][QI_TALK_LINES];		/* n conversations a 10 lines a 79 characters */
-	u16b talkflags[QI_QUESTORS][QI_STAGES][QI_TALK_LINES];	/* required flags configuration for a convo line to get displayed  */
-	cptr keyword[QI_QUESTORS][QI_STAGES][QI_KEYWORDS];	/* each convo may allow the player to reply with up to m keywords a 30 chars; 'Y' as 1st keyword and 'N' as 2nd trigger a yes/no hack */
-	u16b keywordflags[QI_QUESTORS][QI_STAGES][QI_KEYWORDS];	/* required flags configuration for a keyword to be enabled */
-	u16b keyword_setflags[QI_QUESTORS][QI_STAGES][QI_KEYWORDS];	/* ..and the keyword will change flags to these */
-	u16b keyword_clearflags[QI_QUESTORS][QI_STAGES][QI_KEYWORDS];	/* ..and the keyword will change flags to these */
-	s16b keyword_stage[QI_QUESTORS][QI_STAGES][QI_KEYWORDS];/*  ..which will bring the player to a different quest stage (or -1) */
-//<-- note: these two lines cost like 700kB or something :-p
-	cptr keyword_reply[QI_QUESTORS][QI_STAGES][QI_KEYWORDS][QI_TALK_LINES];/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
-	u16b keyword_replyflags[QI_QUESTORS][QI_STAGES][QI_KEYWORDS][QI_TALK_LINES];/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
-//-- ^turn them into pointers or sth (make a sub-struct?)
+	s16b talk_focus[QI_QUESTORS];			/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
+	cptr talk[QI_QUESTORS][QI_STAGES][QI_TALK_LINES]; /* n conversations a 10 lines a 79 characters */
+	u16b talkflags[QI_QUESTORS][QI_STAGES][QI_TALK_LINES]; /* required flags configuration for a convo line to get displayed  */
 
-	cptr narration[QI_STAGES][QI_TALK_LINES];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
-	u16b narrationflags[QI_STAGES][QI_TALK_LINES];		/* required flags configuration to display this narrative line */
+	cptr narration[QI_STAGES][QI_TALK_LINES];	/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
+	u16b narrationflags[QI_STAGES][QI_TALK_LINES];	/* required flags configuration to display this narrative line */
 
 
-	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */
-	struct worldpos add_dungeon_wpos[QI_STAGES];	/* create it at this world pos */
-	bool add_dungeon_terrain_patch[QI_STAGES][QI_GOALS];/* extend valid location over all connected world sectors whose terrain is of the same type (eg big forest) */
-	char *add_dungeon_parms[QI_STAGES];			/* same as for master_level() maybe */
-	char **add_dungeon_t_pref[QI_STAGES];		/* table of predefined template filenames for each dungeon floor (or NULL for random floors inbetween) */
-	bool add_dungeon_fullystatic[QI_STAGES];		/* all floors are static */
-	bool add_dungeon_keep[QI_STAGES];			/* keep dungeon until quest ends instead of erasing it when this stage is completed */
+	/* -------------------------------- OPTIONAL SUB-STRUCTURED DATA -------------------------------- */
 
+	/* ----- Fixed quest data (from q_info.txt) ----- */
 
-	/* global quest flags (a-p to clear, A-P to set) -- note that these are stage-independant! */
-	u16b flags;
-	/* quest goals reached? */
-	bool goals[QI_STAGES][QI_GOALS], goalsopt[QI_STAGES][QI_OPTIONAL];
-	bool goals_nisi[QI_STAGES][QI_GOALS], goalsopt_nisi[QI_STAGES][QI_OPTIONAL]; /* for goals set by kill/retrieve depending on deliver (for flag changes) */
-	/* 'Z' lines: goals set/clear flags */
-	u16b goal_setflags[QI_STAGES][QI_GOALS], goalopt_sets_flags[QI_STAGES][QI_OPTIONAL];
-	u16b goal_clearflags[QI_STAGES][QI_GOALS], goalopt_clears_flags[QI_STAGES][QI_OPTIONAL];
+	/* amount of different quest stages */
+	int stages;
+	qi_stage *stage;
 
+	/* amount of different keywords for player-npc-dialogue */
+	int keywords;
+	qi_keyword *keyword;
 
-	/* quest goals, up to 10 per stage, with a multitude of different sub-goals (Note: of the subgoals 1 is randomly picked for the player, except if 'xxx_random_pick' is set, which allows the player to pick what he wants to do).
-	   There are additionally up to 10 optional quest goals per stage.
-	   --note: the #s of subgoals don't use #defines, because they vary too much anyway for each category, so they're just hard-coded numbers. */
-//#define QI_GOALS 10 /* main goals to complete a stage */
-//#define QI_OPTIONAL 10 /* optional goals in a stage */
-	bool kill[QI_STAGES][QI_GOALS];				/* toggle */
-#if 0 /* too much, make it simpler for now */
-	bool kill_player_picks[QI_STAGES][QI_GOALS];		/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
-#endif
-	s16b kill_ridx[QI_STAGES][QI_GOALS][10];			/* kill certain monster(s), 0 for none, -1 for any. */
-	char kill_rchar[QI_STAGES][QI_GOALS][5];			/*  ..certain types, 254 for any, 255 for none. AND's with attr/lev. */
-	byte kill_rattr[QI_STAGES][QI_GOALS][5];			/*  ..certain colours, 254 for any, 255 for none. AND's with char/lev. */
-	byte kill_rlevmin[QI_STAGES][QI_GOALS], kill_rlevmax[QI_STAGES][QI_GOALS];	/* 0 for any. AND's with char/attr. */
-	s16b kill_number[QI_STAGES][QI_GOALS], kill_number_left[QI_STAGES][QI_GOALS];
-	byte kill_spawn[QI_STAGES][QI_GOALS];			/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
-	byte kill_spawn_targets[QI_STAGES][QI_GOALS];		/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
-
-	bool retrieve[QI_STAGES][QI_GOALS];				/* toggle */
-#if 0 /* too much, make it simpler for now */
-	bool retrieve_player_picks[QI_STAGES][QI_GOALS];		/* instead of picking one subgoal randomly, let the player decide which he wants to get */
-#endif
-	s16b retrieve_otval[QI_STAGES][QI_GOALS][10], retrieve_osval[QI_STAGES][QI_GOALS][10];	/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval, 0 = not checked) */
-	s16b retrieve_opval[QI_STAGES][QI_GOALS][5], retrieve_obpval[QI_STAGES][QI_GOALS][5];	/* umm, let's say 9999 = not checked :-p, -9999 = any */
-	byte retrieve_oattr[QI_STAGES][QI_GOALS][5];		/*  ..certain colours (flavoured items only), 255 = not checked, 254 = any */
-	s16b retrieve_oname1[QI_STAGES][QI_GOALS][5], retrieve_oname2[QI_STAGES][QI_GOALS][5], retrieve_oname2b[QI_STAGES][QI_GOALS][5]; /* -3 = not checked, -2 == any except zero, -1 = any */
-	int retrieve_ovalue[QI_STAGES][QI_GOALS];			/* minimum value of the item (0 to disab..wait) */
-	s16b retrieve_number[QI_STAGES][QI_GOALS];			/* amount of fitting items to retrieve */
-
-	bool target_pos[QI_STAGES][QI_GOALS];			/* enable target pos? */
-	struct worldpos target_wpos[QI_STAGES][QI_GOALS];		/* kill/retrieve specifically at this world pos */
-	s16b target_pos_x[QI_STAGES][QI_GOALS], target_pos_y[QI_STAGES][QI_GOALS]; /* at specifically this position (even usable for kill/retrieve stuff?) */
-	bool target_terrain_patch[QI_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
-									   max radius is QI_TERRAIN_PATCH_RADIUS. */
-	cptr target_tpref[QI_STAGES][QI_GOALS];			/* filename of map to load, or empty for none */
-
-	bool deliver_pos[QI_STAGES][QI_GOALS];			/* enable delivery pos? */
-	struct worldpos deliver_wpos[QI_STAGES][QI_GOALS];		/* (after optionally killing/retrieving/or whatever) MOVE TO this world pos */
-	bool deliver_terrain_patch[QI_STAGES][QI_GOALS];		/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
-									   max radius is QI_TERRAIN_PATCH_RADIUS. */
-	s16b deliver_pos_x[QI_STAGES][QI_GOALS], deliver_pos_y[QI_STAGES][QI_GOALS]; /* -"- ..MOVE TO specifically this position */
-	cptr deliver_tpref[QI_STAGES][QI_GOALS];			/* filename of map to load, or empty for none */
-
-
-	bool killopt[QI_STAGES][QI_OPTIONAL];			/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
-	s16b killopt_ridx[QI_STAGES][QI_OPTIONAL][10];		/* kill certain monster(s), 0 for none, -1 for any. */
-	char killopt_rchar[QI_STAGES][QI_OPTIONAL][5];		/*  ..certain types, 0 for any. AND's with attr/lev. */
-	byte killopt_rattr[QI_STAGES][QI_OPTIONAL][5];		/*  ..certain colours, 127 for any. AND's with char/lev. */
-	byte killopt_rlevmin[QI_STAGES][QI_OPTIONAL], killopt_rlevmax[QI_STAGES][QI_OPTIONAL];	/* 0 for any. AND's with char/attr. */
-	s16b killopt_number[QI_STAGES][QI_OPTIONAL], killopt_number_left[QI_STAGES][QI_GOALS];
-	byte killopt_spawn[QI_STAGES][QI_OPTIONAL];			/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
-	byte killopt_spawn_targets[QI_STAGES][QI_OPTIONAL];		/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
-
-	bool retrieveopt[QI_STAGES][QI_OPTIONAL];			/* toggle */
-	s16b retrieveopt_otval[QI_STAGES][QI_OPTIONAL][10], retrieveopt_osval[QI_STAGES][QI_OPTIONAL][10];	/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval) */
-	s16b retrieveopt_opval[QI_STAGES][QI_OPTIONAL][5], retrieveopt_obpval[QI_STAGES][QI_OPTIONAL][5];
-	byte retrieveopt_oattr[QI_STAGES][QI_OPTIONAL][5];		/*  ..certain colours (flavoured items only) */
-	s16b retrieveopt_oname1[QI_STAGES][QI_OPTIONAL][5], retrieveopt_oname2[QI_STAGES][QI_OPTIONAL][5], retrieveopt_oname2b[QI_STAGES][QI_OPTIONAL][5]; /* 0 = disabled, -1 == any */
-	int retrieveopt_ovalue[QI_STAGES][QI_OPTIONAL];		/* minimum value of the item */
-	s16b retrieveopt_number[QI_STAGES][QI_OPTIONAL];		/* amount of fitting items to retrieve */
-
-	bool targetopt_pos[QI_STAGES][QI_OPTIONAL];			/* enable target pos? */
-	struct worldpos targetopt_wpos[QI_STAGES][QI_OPTIONAL];	/* kill/retrieve specifically at this world pos */
-	bool targetopt_terrain_patch[QI_STAGES][QI_OPTIONAL];	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
-									   max radius is QI_TERRAIN_PATCH_RADIUS. */
-	s16b targetopt_pos_x[QI_STAGES][QI_OPTIONAL], targetopt_pos_y[QI_STAGES][QI_OPTIONAL]; /* at specifically this position (hm does this work for kill/retrieve stuff? pft) */
-	cptr targetopt_tpref[QI_STAGES][QI_GOALS];			/* filename of map to load, or empty for none */
-
-	bool deliveropt_pos[QI_STAGES][QI_OPTIONAL];		/* enable delivery pos? */
-	struct worldpos deliveropt_wpos[QI_STAGES][QI_OPTIONAL];	/* (after optionally killing/retrieving/or whatever) MOVE TO this world pos */
-	bool deliveropt_terrain_patch[QI_STAGES][QI_OPTIONAL];	/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
-									   max radius is QI_TERRAIN_PATCH_RADIUS. */
-	s16b deliveropt_pos_x[QI_STAGES][QI_OPTIONAL], deliveropt_pos_y[QI_STAGES][QI_OPTIONAL]; /* -"- ..MOVE TO specifically this position */
-	cptr deliveropt_tpref[QI_STAGES][QI_GOALS];			/* filename of map to load, or empty for none */
-
-
-	/* contains the indices of up to QI_REWARD_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
-	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10, the first QI_OPTIONAL would have index 11. */
-	char goals_for_reward[QI_STAGES][QI_STAGE_REWARDS][QI_REWARD_GOALS];	/* char to save space, only 1 byte instead of int: returns the goal's index (or -1 if none) */
-
-	s16b reward_otval[QI_STAGES][QI_STAGE_REWARDS];		/* hand over certain rewards to the player */
-	s16b reward_osval[QI_STAGES][QI_STAGE_REWARDS];
-	s16b reward_opval[QI_STAGES][QI_STAGE_REWARDS], reward_obpval[QI_STAGES][QI_STAGE_REWARDS];
-	s16b reward_oname1[QI_STAGES][QI_STAGE_REWARDS], reward_oname2[QI_STAGES][QI_STAGE_REWARDS], reward_oname2b[QI_STAGES][QI_STAGE_REWARDS];
-	bool reward_ogood[QI_STAGES][QI_STAGE_REWARDS], reward_ogreat[QI_STAGES][QI_STAGE_REWARDS], reward_ovgreat[QI_STAGES][QI_STAGE_REWARDS];
-	bool reward_oreward[QI_STAGES][QI_STAGE_REWARDS];	/*  use fitting-reward algo (from highlander etc)? */
-
-	int reward_gold[QI_STAGES][QI_STAGE_REWARDS];
-	int reward_exp[QI_STAGES][QI_STAGE_REWARDS];
-	s16b reward_statuseffect[QI_STAGES][QI_STAGE_REWARDS];	/* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
-
-#if 0 /* just use a deliver_pos goal instead, for now */
-	bool return_to_questor[QI_STAGES][QI_GOALS];		/* do we need to return to the questor first (bump), to get credit for particular main goals? */
-	bool return_to_questor_opt[QI_STAGES][QI_OPTIONAL];		/* do we need to return to the questor first (bump), to get credit for particular optional goals? */
-#endif
-
-	/* determine if a new stage should begin depending on which goals we have completed */
-	/* contains the indices of up to QI_STAGE_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
-	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10 (indices 0..9), the first QI_OPTIONAL would have index 10. */
-	char goals_for_stage[QI_STAGES][QI_FOLLOWUP_STAGES][QI_STAGE_GOALS];	/* char to save space, only 1 byte instead of int: returns the goal's index (or -1 if none) */
-	s16b next_stage_from_goals[QI_STAGES][QI_FOLLOWUP_STAGES]; 			/* <stage> index of the possible follow-up stages */
+	/* amount of different replies to keywords in player-npc-dialogue */
+	int kwreplies;
+	qi_kwreply *kwreply;
 } quest_info;

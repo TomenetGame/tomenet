@@ -468,8 +468,9 @@ static void wr_quests() {
 		wr_byte(0);
 #endif
 		wr_s16b(q_info[i].cur_cooldown);
-		wr_s16b(q_info[i].stage);
-		wr_s32b(q_info[i].start_turn);
+		wr_s16b(q_info[i].cur_stage);
+		wr_s32b(q_info[i].turn_activated);
+		wr_s32b(q_info[i].turn_acquired);
 
 		for (j = 0; j < QI_QUESTORS; j++) {
 			wr_byte(q_info[i].current_wpos[j].wx);
@@ -1372,36 +1373,14 @@ static bool wr_savefile_new(int Ind) {
 		}
 
 		/* helper info */
-#if 0//4.5.26
-		wr_byte(p_ptr->quest_target_pos[i]);
-		wr_byte(p_ptr->quest_within_target_wpos[i]);
-		wr_byte(p_ptr->quest_target_xy[i]);
-#else
 		wr_byte(p_ptr->quest_kill[i]);
 		wr_byte(p_ptr->quest_retrieve[i]);
-		wr_byte(0);
-#endif
 
 		wr_byte(p_ptr->quest_deliver_pos[i]);
-#if 0
-		wr_byte(p_ptr->quest_within_deliver_wpos[i]);
-#else//4.5.26
-		wr_byte(0);
-#endif
 		wr_byte(p_ptr->quest_deliver_xy[i]);
 
-#if 0//4.5.26
-		wr_byte(p_ptr->quest_targetopt_pos[i]);
-		wr_byte(p_ptr->quest_within_targetopt_wpos[i]);
-		wr_byte(p_ptr->quest_targetopt_xy[i]);
-
-		wr_byte(p_ptr->quest_deliveropt_pos[i]);
-		wr_byte(p_ptr->quest_within_deliveropt_wpos[i]);
-		wr_byte(p_ptr->quest_deliveropt_xy[i]);
-#else
-		wr_byte(0);wr_byte(0);wr_byte(0);
-		wr_byte(0);wr_byte(0);wr_byte(0);
-#endif
+		wr_s32b(p_ptr->quest_acquired[i]);
+		wr_s32b(p_ptr->quest_timed_stage_change[i]);
 
 		/* 'individual' quest type information */
 		wr_u16b(p_ptr->quest_flags[i]);

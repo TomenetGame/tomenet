@@ -1077,8 +1077,9 @@ static void rd_quests() {
 		}
 
 		rd_s16b(&q_info[i].cur_cooldown);
-		rd_s16b(&q_info[i].stage);
-		rd_s32b(&q_info[i].start_turn);
+		rd_s16b(&q_info[i].cur_stage);
+		rd_s32b(&q_info[i].turn_activated);
+		if (!older_than(4, 5, 26)) rd_s32b(&q_info[i].turn_acquired);
 
 		for (j = 0; j < questors; j++) {
 			if (j >= QI_QUESTORS) {
@@ -2711,35 +2712,22 @@ static errr rd_savefile_new_aux(int Ind) {
 					rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
 			}
 
-#if 0
-			rd_byte((byte *) &p_ptr->quest_target_pos[i]);
-			rd_byte((byte *) &p_ptr->quest_within_target_wpos[i]);
-			rd_byte((byte *) &p_ptr->quest_target_xy[i]);
-#else//4.5.26
-			rd_byte((byte *) &p_ptr->quest_kill[i]);
-			rd_byte((byte *) &p_ptr->quest_retrieve[i]);
-			strip_bytes(1);
-#endif
+			if (!older_than(4, 5, 26)) {
+				rd_byte((byte *) &p_ptr->quest_kill[i]);
+				rd_byte((byte *) &p_ptr->quest_retrieve[i]);
 
-			rd_byte((byte *) &p_ptr->quest_deliver_pos[i]);
-#if 0
-			rd_byte((byte *) &p_ptr->quest_within_deliver_wpos[i]);
-#else//4.5.26
-			strip_bytes(1);
-#endif
-			rd_byte((byte *) &p_ptr->quest_deliver_xy[i]);
+				rd_byte((byte *) &p_ptr->quest_deliver_pos[i]);
+				rd_byte((byte *) &p_ptr->quest_deliver_xy[i]);
 
-#if 0
-			rd_byte((byte *) &p_ptr->quest_targetopt_pos[i]);
-			rd_byte((byte *) &p_ptr->quest_within_targetopt_wpos[i]);
-			rd_byte((byte *) &p_ptr->quest_targetopt_xy[i]);
-
-			rd_byte((byte *) &p_ptr->quest_deliveropt_pos[i]);
-			rd_byte((byte *) &p_ptr->quest_within_deliveropt_wpos[i]);
-			rd_byte((byte *) &p_ptr->quest_deliveropt_xy[i]);
-#else//4.5.26
-			strip_bytes(6);
-#endif
+				rd_s32b(&p_ptr->quest_acquired[i]);
+				rd_s32b(&p_ptr->quest_timed_stage_change[i]);
+			} else {
+				strip_bytes(3);
+				rd_byte((byte *) &p_ptr->quest_deliver_pos[i]);
+				strip_bytes(1);
+				rd_byte((byte *) &p_ptr->quest_deliver_xy[i]);
+				strip_bytes(6);
+			}
 
 			if (!older_than(4, 5, 25))
 				rd_u16b(&p_ptr->quest_flags[i]);
