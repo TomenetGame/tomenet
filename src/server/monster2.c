@@ -5100,10 +5100,15 @@ cptr r_name_get(monster_type *m_ptr) {
 	static char buf[100];
 
 	if (m_ptr->questor) {
-		if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].name) {
-			snprintf(buf, sizeof(buf), "%s", q_info[m_ptr->quest].questor[m_ptr->questor_idx].name);
-			return buf;
-		} else return (r_name + m_ptr->r_ptr->name);
+		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
+			if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].name) {
+				snprintf(buf, sizeof(buf), "%s", q_info[m_ptr->quest].questor[m_ptr->questor_idx].name);
+				return buf;
+			} else return (r_name + m_ptr->r_ptr->name);
+		} else {
+			s_printf("QUESTOR DEPRECATED (r_name_get)\n");
+			return (r_name + m_ptr->r_ptr->name);
+		}
 	} else if (m_ptr->special) {
 		cptr p = (m_ptr->owner) ? lookup_player_name(m_ptr->owner) : "**INTERNAL BUG**";
 		if (p == NULL) p = "**INTERNAL BUG**";

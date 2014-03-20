@@ -4954,7 +4954,14 @@ void monster_death(int Ind, int m_idx) {
 	}
 
 	/* Questors: Usually drop no items, except if specified */
-	if (m_ptr->questor && !q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops_regular) number = 0;
+	if (m_ptr->questor) {
+		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
+			if (!q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops_regular) number = 0;
+		} else {
+			s_printf("QUESTOR_DEPRECATED (monster_death)\n");
+			number = 0;
+		}
+	}
 
 	/* Drop some objects */
 	for (j = 0; j < number; j++) {
@@ -5936,12 +5943,16 @@ if (cfg.unikill_format) {
 
 	/* for when a quest giver turned non-invincible */
 	if (m_ptr->questor) {
-		/* Drop a specific item? */
-		if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops_specific) {
-			//todo: drop..
+		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
+			/* Drop a specific item? */
+			if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops_specific) {
+				//todo: drop..
+			}
+			/* Quest progression/fail effect? */
+			//todo..
+		} else {
+			s_printf("QUESTOR DEPRECATE (monster_death2)\n");
 		}
-		/* Quest progression/fail effect? */
-		//todo..
 	}
 
 //        if((!force_coin)&&(randint(100)<50)) place_corpse(m_ptr);
