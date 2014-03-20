@@ -12,6 +12,9 @@
  * To be processed by tolua to generate C source code.
  */
 
+/* added this for consistency in some (unrelated) header-inclusion, it IS a server file, isn't it? */
+$#define SERVER
+
 $#include "angband.h"
 $#include "lua.h"
 
