@@ -7305,14 +7305,13 @@ errr init_ow_info_txt(FILE *fp, char *buf)
  */
 errr init_q_info_txt(FILE *fp, char *buf) {
 	int i, j, k, l, stage, goal, nextstage, questor;
-	char *s, codename[QI_CODENAME_LEN + 1], creator[NAME_LEN], questname[MAX_CHARS];
+	char *s;
+	char codename[QI_CODENAME_LEN + 1], creator[NAME_LEN], questname[MAX_CHARS];
 	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1], tmpbuf2[MAX_CHARS];
+	int lc;
 
-	int lc_questor = 0, lc_loc, lc_flagsacc = 0; /* 'Q', 'L', 'F' */
-	int lc_keywords = 0, lc_kwreplies = 0;
-	int lc_narration[QI_STAGES], lc_conversation[QI_QUESTORS][QI_STAGES], lc_rewards[QI_STAGES];
-	int lc_keyword_reply[QI_QUESTORS][QI_STAGES][QI_KEYWORDS];
-
+	/* for initialising questor information with default values when reading
+	   a Q line without an F-line following it up (since those are optional) */
 	bool init_F[QI_QUESTORS];
 
 	qi_questor *q_questor;
@@ -7585,14 +7584,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			q_ptr->accepts[0] = TRUE; /* 'C' stage 0 allows acquiring the quest exclusively */
 #endif//restructure
-
-			/* for Q/L/F lines (:-o) */
-			lc_questor = 0;
-			lc_loc = 0;
-			lc_flagsacc = 0;
-			lc_keywords = 0;
-			lc_kwreplies = 0;
-
 			continue;
 		}
 
@@ -7699,9 +7690,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			int q, ridx, minlv, maxlv, sval, ktval, ksval;
 			char ch, attr;
 
-			if (lc_questor == QI_QUESTORS) return 1;
 			s = buf + 2;
-
 			if (10 != sscanf(s, "%d:%d:%c:%c:%d:%d:%d:%d:%d:%[^:]",
 			    &q, &ridx,
 			    &ch, &attr,
@@ -7709,7 +7698,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			    &sval, &ktval, &ksval,
 			    tmpbuf)) return (1);
 
-			q_questor = init_quest_questor(error_idx, lc_questor);
+			lc = q_ptr->questors;
+			if (lc >= QI_QUESTORS) return 1;
+			q_questor = init_quest_questor(error_idx, lc);
 
 			q_questor->type = q;
 			q_questor->ridx = ridx;
@@ -7723,14 +7714,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			strcpy(q_questor->name, tmpbuf);
 
 			/* init defaults for optional line 'F' */
-			if (!init_F[lc_questor]) {
+			if (!init_F[lc]) {
 				q_questor->accept_los = FALSE;
 				q_questor->accept_interact = TRUE;
 				q_questor->talkable = TRUE;
 				q_questor->despawned = FALSE;
 			}
-
-			lc_questor++;
 			continue;
 		}
 
@@ -7752,19 +7741,21 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%s", //byte, u16b, u32b
 			    &loc, &towns, &wx, &wy, &wz, &terr, &sx, &sy, tmpbuf)) return (1);
 
-			
+			lc = q_ptr->questors;
+			if (!lc) return 1; /* so an L-line must always follow somewhere after its Q line */
+			q_questor = init_quest_questor(error_idx, lc - 1); /* pick the newest, already existing one */
 
-			q_ptr->s_location_type = (byte)loc;
-			q_ptr->s_towns_array = (u16b)towns;
-			q_ptr->start_wpos.wx = (char)wx;
-			q_ptr->start_wpos.wy = (char)wy;
-			q_ptr->start_wpos.wz = (char)wz;
-			q_ptr->s_terrains = (u32b)terr;
-			q_ptr->start_x = sx;
-			q_ptr->start_y = sy;
+			q_questor->s_location_type = (byte)loc;
+			q_questor->s_towns_array = (u16b)towns;
+			q_questor->start_wpos.wx = (char)wx;
+			q_questor->start_wpos.wy = (char)wy;
+			q_questor->start_wpos.wz = (char)wz;
+			q_questor->s_terrains = (u32b)terr;
+			q_questor->start_x = sx;
+			q_questor->start_y = sy;
 
-			if (tmpbuf[0] == '-') q_questor->tpref = NULL;
-			else {
+			q_questor->tpref = NULL;
+			if (tmpbuf[0] != '-') {
 				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
 				strcpy(c, tmpbuf);
 				q_questor->tpref = c;
@@ -7865,22 +7856,24 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			s = buf + 2;
 			if (3 != sscanf(s, "%d:%16[^:]:%79[^:]",
 			    &stage, flagbuf, tmpbuf)) return (1);
+
 			if (stage < 0 || stage >= QI_STAGES) return 1;
-			if (lc_narration[stage] == QI_TALK_LINES) return 1;
+			q_stage = init_quest_stage(error_idx, stage);
+			if ((lc = q_stage->narration_lines) == QI_TALK_LINES) return 1;
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
-			q_ptr->narration[stage][lc_narration[stage]] = c;
+			q_stage->narration[lc] = c;
 
 			cc = flagbuf;
 			if (*cc == '-') *cc = 0;
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
-					q_ptr->narrationflags[stage][lc_narration[stage]] |= (0x1 << (*cc - 'A')); /* set flag */
+					q_stage->narration_flags[lc] |= (0x1 << (*cc - 'A')); /* set flag */
 				} else return 1;
 			}
 
-			lc_narration[stage]++;
+			q_stage->narration_lines++;
 			continue;
 		}
 
@@ -7894,7 +7887,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			if (questor < 0 || questor >= QI_QUESTORS) return 1;
 			if (stage < 0 || stage >= QI_STAGES) return 1;
-			if (lc_conversation[questor][stage] == QI_TALK_LINES) return 1;
+			q_stage = init_quest_stage(error_idx, stage);
+			if ((lc = q_stage->talk_lines[questor]) == QI_TALK_LINES) return 1;
 
 #if 0 /* allow full colour codes */
 			/* replace '{' by \377 */
@@ -7906,17 +7900,17 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
-			q_ptr->talk[questor][stage][lc_conversation[questor][stage]] = c;
+			q_stage->talk[questor][lc] = c;
 
 			cc = flagbuf;
 			if (*cc == '-') *cc = 0;
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
-					q_ptr->talkflags[questor][stage][lc_conversation[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
+					q_stage->talk_flags[questor][lc] |= (0x1 << (*cc - 'A')); /* set flag */
 				} else return 1;
 			}
 
-			lc_conversation[questor][stage]++;
+			q_stage->talk_lines[questor]++;
 			continue;
 		}
 
@@ -7928,36 +7922,34 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			if (questor < 0 || questor >= QI_QUESTORS) return 1;
 			if (stage < 0 || stage >= QI_STAGES) return 1;
-			if (lc_keywords[questor][stage] == QI_KEYWORDS) return 1;
 
-			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
+			lc = q_ptr->keywords;
+			if (lc >= QI_KEYWORDS) return 1;
+			q_key = init_quest_keyword(error_idx, lc);
 
 			/* hack: '-' denotes the empty keyword (since scanf cannot handle empty matches..) */
 			if (!strcmp(tmpbuf, "-")) tmpbuf[0] = 0;
-
-			strcpy(c, tmpbuf);
-			q_ptr->keyword[questor][stage][lc_keywords[questor][stage]] = c;
-			q_key->stage[questor][stage][lc_keywords[questor][stage]] = nextstage;
+			strcpy(q_key->keyword, tmpbuf);
+			q_key->questor_ok[questor] = TRUE;//TODO: allow multiple questors and stages in q_info.txt
+			q_key->stage_ok[stage] = TRUE;
+			q_key->stage = nextstage;
 
 			cc = flagbuf;
 			if (*cc == '-') *cc = 0;
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
-					q_ptr->keywordflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
+					q_key->flags |= (0x1 << (*cc - 'A')); /* set flag */
 				} else return 1;
 			}
-
 			cc = flagbuf2;
 			if (*cc == '-') *cc = 0;
 			while (*cc) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) {
-					q_key->setflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'A')); /* set flag */
+					q_key->setflags |= (0x1 << (*cc - 'A')); /* set flag */
 				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
-					q_key->clearflags[questor][stage][lc_keywords[questor][stage]] |= (0x1 << (*cc - 'a')); /* clear flag */
+					q_key->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
 				} else return 1;
 			}
-
-			lc_keywords[questor][stage]++;
 			continue;
 		}
 
@@ -8264,36 +8256,26 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			if (goal > 0) { /* main goal */
 				goal--;
-				q_del->pos[stage][goal] = TRUE;;
-				q_del->wpos[stage][goal].wx = (char)wx;
-				q_del->wpos[stage][goal].wy = (char)wy;
-				q_del->wpos[stage][goal].wz = (char)wz;
-				q_del->terrain_patch[stage][goal] = (terr != 0);
-				q_del->pos_x[stage][goal] = x;
-				q_del->pos_y[stage][goal] = y;
-
-				if (tmpbuf[0] == '-') q_del->tpref[stage][goal] = NULL;
-				else {
-					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
-					strcpy(c, tmpbuf);
-					q_del->tpref[stage][goal] = c;
-				}
+				q_goal = init_quest_goal(error_idx, stage, goal);
 			} else if (goal < 0) { /* optional goal */
 				goal = -(goal + 1);
-				q_ptr->deliveropt_pos[stage][goal] = TRUE;;
-				q_ptr->deliveropt_wpos[stage][goal].wx = (char)wx;
-				q_ptr->deliveropt_wpos[stage][goal].wy = (char)wy;
-				q_ptr->deliveropt_wpos[stage][goal].wz = (char)wz;
-				q_ptr->deliveropt_terrain_patch[stage][goal] = (terr != 0);
-				q_ptr->deliveropt_pos_x[stage][goal] = x;
-				q_ptr->deliveropt_pos_y[stage][goal] = y;
+				q_goal = init_quest_goal(error_idx, stage, goal);
+				q_goal->optional = TRUE;
+			}
+			q_del = init_quest_deliver(error_idx, stage, goal);
 
-				if (tmpbuf[0] == '-') q_ptr->deliveropt_tpref[stage][goal] = NULL;
-				else {
-					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
-					strcpy(c, tmpbuf);
-					q_ptr->deliveropt_tpref[stage][goal] = c;
-				}
+			q_del->wpos.wx = (char)wx;
+			q_del->wpos.wy = (char)wy;
+			q_del->wpos.wz = (char)wz;
+			q_del->terrain_patch = (terr != 0);
+			q_del->pos_x = x;
+			q_del->pos_y = y;
+
+			if (tmpbuf[0] == '-') q_del->tpref = NULL;
+			else {
+				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+				strcpy(c, tmpbuf);
+				q_del->tpref = c;
 			}
 			continue;
 		}
