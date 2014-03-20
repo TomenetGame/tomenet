@@ -7312,6 +7312,19 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	int lc_narration[QI_STAGES], lc_conversation[QI_QUESTORS][QI_STAGES], lc_rewards[QI_STAGES];
 	int lc_keyword_reply[QI_QUESTORS][QI_STAGES][QI_KEYWORDS];
 
+	qi_questor *q_questor;
+	qi_questor_morph *q_qmorph;
+	qi_questor_hostility *q_qhost;
+	qi_questor_act *q_qact;
+	qi_kill *q_kill;
+	qi_retrieve *q_ret;
+	qi_deliver *q_del;
+	qi_goal *q_goal;
+	qi_reward *q_rew;
+	qi_stage *q_stage;
+	qi_keyword *q_key;
+	qi_kwreply *q_kwr;
+
 	bool disabled;
 	u16b flags;
 
@@ -7327,6 +7340,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	/* Start the "fake" stuff */
 	q_head->name_size = 0;
 	q_head->text_size = 0;
+
+	/* pre-init, to set all non-loaded quests explicitely to a 'unavailable' state,
+	   paranoia, since bool's init value is FALSE (aka zero) anyway. */
+	for (i = 0; i < MAX_Q_IDX; i++) q_info[i].defined = FALSE;
 
 	/* Parse */
 	while (0 == my_fgets(fp, buf, 1024, FALSE)) {
@@ -7399,6 +7416,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->questor = NULL;
 			q_ptr->stages = 0;
 			q_ptr->stage = NULL;
+			for (j = 0; i < QI_STAGES; j++) q_ptr->stage_idx[j] = -1;
 			q_ptr->keywords = 0;
 			q_ptr->keyword = NULL;
 			q_ptr->kwreplies = 0;
@@ -7467,23 +7485,17 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->evening = q_ptr->midnight = q_ptr->deepnight = TRUE;
 			q_ptr->time_start = q_ptr->time_stop = -1;
 
-			/* 'F' */
-			for (i = 0; i < QI_QUESTORS; i++) {
-				q_ptr->accept_los[i] = FALSE;
-				q_ptr->accept_interact[i] = TRUE;
-				q_ptr->questor_talkable[i] = TRUE;
-				q_ptr->questor_despawned[i] = FALSE;
-				q_ptr->questor_invincible[i] = TRUE;
-			}
-
 			q_ptr->flags = 0x0000; //no reason
 			/* for same no reason, probably not todo: init talk/keyword flags and flag-changes */
 
+#if 0//restructure
 			for (j = 0; j < QI_STAGES; j++) {
 				/* 'C' */
+				if (!init_C)
 				q_ptr->accepts[j] = FALSE; /* by default, only can acquire quest in stage 0 (done after this loop) */
 
 				/* 'A' */
+				if (!init_A[j])
 				q_ptr->activate_quest[j] = -1;
 				q_ptr->change_stage[j] = -1;
 				q_ptr->timed_stage_ingame_abs[j] = -1;
@@ -7514,9 +7526,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				lc_rewards[j] = 0;
 
 				for (k = 0; k < QI_GOALS; k++) {
-#if 0
+ #if 0
 					q_ptr->return_to_questor[j][k] = FALSE; /* no need to return to questor for main goals */
-#endif
+ #endif
 					q_ptr->goals[j][k] = FALSE;
 					q_ptr->kill[j][k] = FALSE;
 					q_ptr->retrieve[j][k] = FALSE;
@@ -7536,9 +7548,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					}
 				}
 				for (k = 0; k < QI_OPTIONAL; k++) {
-#if 0
+ #if 0
 					q_ptr->return_to_questor_opt[j][k] = FALSE; /* no need to return to questor for optional goals */
-#endif
+ #endif
 					q_ptr->goalsopt[j][k] = FALSE;
 					q_ptr->killopt[j][k] = FALSE;
 					q_ptr->retrieveopt[j][k] = FALSE;
@@ -7574,13 +7586,14 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* for Q/A lines (:-o) */
 			lc_questor = 0;
 			lc_accept = 0;
-
+#endif//restructure
 			continue;
 		}
 
 		/* There better be a current q_ptr */
 		if (!q_ptr) return (3);
 
+#if 0//restructure
 		/* Process 'C' for list of stages (usually stage 0) that allow players to acquire the quest */
 		if (buf[0] == 'C') {
 			s = buf + 2;
@@ -7589,7 +7602,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				j = atoi(s);
 				if (j < 0 || j >= QI_STAGES) return 1;
 
-				q_ptr->accepts[j] = TRUE;
+				q_stage = init_quest_stage(error_idx, j);
+				q_stage->accepts[j] = TRUE;
 
 				if (!(s = strchr(s, ':'))) break;
 				s++;
@@ -7671,6 +7685,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->quit_floor = (quit != 0);
 			continue;
 		}
+#endif//restructure
 
 		//--------------------------------------------------------------------------------------------
 		/* Process 'Q' for questor (creature) type */
@@ -7688,6 +7703,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			    &sval, &ktval, &ksval,
 			    q_ptr->questor_name[lc_questor])) return (1);
 
+			q_questor = init_quest_questor(error_idx, lc_questor);
+
 			q_ptr->questor_rattr[lc_questor] = color_char_to_attr(attr);
 			q_ptr->questor[lc_questor] = q;
 			q_ptr->questor_ridx[lc_questor] = ridx;
@@ -7696,6 +7713,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->questor_sval[lc_questor] = sval;
 			q_ptr->questor_ktval[lc_questor] = ktval;
 			q_ptr->questor_ksval[lc_questor] = ksval;
+
+			/* init defaults for optional line 'F' */
+			if (!init_f[i])
+			for (i = 0; i < QI_QUESTORS; i++) {
+				q_ptr->accept_los[i] = FALSE;
+				q_ptr->accept_interact[i] = TRUE;
+				q_ptr->questor_talkable[i] = TRUE;
+				q_ptr->questor_despawned[i] = FALSE;
+				q_ptr->questor_invincible[i] = TRUE;
+			}
 
 			lc_questor++;
 			continue;
@@ -7737,6 +7764,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
+#if 0//restructure
 		/* Process 'F' for questor accept/spawn flags */
 		if (buf[0] == 'F') {
 			int aalos, aaint, talk, despawn;
@@ -7801,7 +7829,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-#if 0
 		/* Process 'H' for questor hostility changes? (or just use S-line for this too) */
 		if (buf[0] == 'H') {
  #if 0
@@ -7811,7 +7838,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
  #endif
 			continue;
 		}
-#endif
 
 		/* Process 'J' for questor movement/teleportation/teleplayer */
 		if (buf[0] == 'J') {
@@ -7822,6 +7848,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 #endif
 			continue;
 		}
+#endif//restructure
 
 		/* Process 'X' for narrative text */
 		if (buf[0] == 'X') {
@@ -7924,6 +7951,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
+#if 0//restructure
 		/* Process 'y' for replies to keywords (depending on flags) */
 		if (buf[0] == 'y') {
 			s = buf + 2;
@@ -8211,6 +8239,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			continue;
 		}
+#endif//restructure
 
 		/* Process 'M' for move-to-location to finish a quest stage whose goals have already been fulfilled */
 		if (buf[0] == 'M') {
@@ -8259,6 +8288,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
+#if 0//restructure
 		/* Process 'B' to restrict (optional) goals to only get credited if we return to the questor */
 		if (buf[0] == 'B') {
 			/* first number is the stage */
@@ -8304,6 +8334,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			continue;
 		}
+#endif//restructure
 
 		/* Process 'G', which goal combinations (up to QI_STAGE_GOALS different goals per combination) are
 		   required to advance to which stage (up to QI_FOLLOWUP_STAGES different ones, each has a goal-combo) */
@@ -8346,8 +8377,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
+#if 0//restructure
 		/* Process 'O', which main+optional goal combinations (up to QI_REWARD_GOALS different goals per combination) are
-		   required to advance to which stage (up to QI_STAGE_REWARDS different ones, each has a goal-combo) */
+		   required to obtain a reward (up to QI_STAGE_REWARDS different ones, each has a goal-combo).
+		   If this line is omitted, all rewards are handed out 'for free' in this stage. */
 		if (buf[0] == 'O') {
 			int reward;
 
@@ -8378,6 +8411,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			continue;
 		}
+#endif//restructure
 
 		/* Process 'R', quest reward definitions */
 		if (buf[0] == 'R') {

@@ -473,6 +473,7 @@ static void wr_quests() {
 		wr_s32b(q_info[i].turn_acquired);
 
 		for (j = 0; j < QI_QUESTORS; j++) {
+#if 0//restructure
 			wr_byte(q_info[i].current_wpos[j].wx);
 			wr_byte(q_info[i].current_wpos[j].wy);
 			wr_byte(q_info[i].current_wpos[j].wz);
@@ -480,18 +481,29 @@ static void wr_quests() {
 			wr_byte(q_info[i].current_y[j]);
 
 			wr_s16b(q_info[i].questor_m_idx[j]);
+#else
+			wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);
+#endif
 		}
 
 		wr_u16b(q_info[i].flags);
 
 		for (k = 0; k < QI_STAGES; k++) {
 			for (j = 0; j < QI_GOALS; j++) {
+#if 0//restructure
 				wr_byte(q_info[i].goals[k][j]);
 				wr_s16b(q_info[i].kill_number_left[k][j]);
+#else
+				wr_byte(0);wr_byte(0);wr_byte(0);
+#endif
 			}
 			for (j = 0; j < QI_OPTIONAL; j++) {
+#if 0//restructure
 				wr_byte(q_info[i].goalsopt[k][j]);
 				wr_s16b(q_info[i].killopt_number_left[k][j]);
+#else
+				wr_byte(0);wr_byte(0);wr_byte(0);
+#endif
 			}
 		}
 	}

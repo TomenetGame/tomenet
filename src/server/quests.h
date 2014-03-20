@@ -25,11 +25,11 @@
 #define QI_FLAGS		16	/* global flags that range from 'a' to 'p' and can be set via uppercase letter, erased via lowercase letter. */
 #define QI_TERRAIN_PATCH_RADIUS	5	/* max radius for valid terrain of same type as target terrain (terrain patch extension for quest goals) --note: this uses distance() */
 
+
 #define QI_SLOC_TOWN		0x1
 #define QI_SLOC_SURFACE		0x2
 #define QI_SLOC_DUNGEON		0x4
 #define QI_SLOC_TOWER		0x8
-
 
 #define QI_STOWN_BREE		0x001
 #define QI_STOWN_GONDOLIN	0x002
@@ -373,6 +373,7 @@ typedef struct quest_info {
 
 	/* ----- Dynamic quest state information ----- */
 
+	bool defined;					/* Quest has been loaded from q_info.txt and therefore exists. */
 	bool active;					/* QUEST IS CURRENTLY ACTIVE (aka questor is currently spawned - \
 							   depends on time (day/night/specific) constraints) */
 	bool disabled; 					/* quest has been temporarily disabled, is hence deactivated and cannot \

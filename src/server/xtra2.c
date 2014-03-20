@@ -4953,8 +4953,10 @@ void monster_death(int Ind, int m_idx) {
 		if (tmp_luck > 40) tmp_luck = 40;
 	}
 
+#if 0//restructure
 	/* Questors: Usually drop no items, except if specified */
 	if (m_ptr->questor && !q_info[m_ptr->quest].questor_drops_regular) number = 0;
+#endif
 
 	/* Drop some objects */
 	for (j = 0; j < number; j++) {
@@ -5934,6 +5936,7 @@ if (cfg.unikill_format) {
 		}
 	}
 
+#if 0//restructure
 	/* for when a quest giver turned non-invincible */
 	if (m_ptr->questor) {
 		/* Drop a specific item? */
@@ -5943,7 +5946,7 @@ if (cfg.unikill_format) {
 		/* Quest progression/fail effect? */
 		//todo..
 	}
-
+#endif
 
 //        if((!force_coin)&&(randint(100)<50)) place_corpse(m_ptr);
 

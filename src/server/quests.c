@@ -90,6 +90,7 @@ void process_quests(void) {
 
 	for (i = 0; i < max_q_idx; i++) {
 		q_ptr = &q_info[i];
+		if (q_ptr->defined == FALSE) continue;
 
 		if (q_ptr->cur_cooldown) q_ptr->cur_cooldown--;
 		if (q_ptr->disabled || q_ptr->cur_cooldown) continue;
@@ -2656,4 +2657,130 @@ void quest_handle_disabled_on_startup() {
 			} else s_printf("..failed: Questor does not exist.\n");
 		}
 	}
+}
+
+
+/* ---------- Helper functions for initialisation of q_info[] from q_info.txt in init.c ---------- */
+
+qi_questor *init_quest_questor(int q_idx, int num) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_questor *p;
+	int i;
+
+	/* we already have this existing one */
+	if (q_ptr->questors > num) return &q_ptr->questor[num];
+
+	/* allocate all missing instances up to the requested index */
+	for (i = q_ptr->questors; i <= num; i++) {
+		/* allocate a new one */
+		p = (qi_questor*)malloc(sizeof(qi_questor));
+		if (!p) {
+			s_printf("init_quest_questor() Couldn't allocate memory!\n");
+			exit(0);
+		}
+
+		/* attach it to its parent structure */
+		q_ptr->questor[i] = p;
+		q_ptr->questors++;
+	}
+
+	/* done, return the new, requested one */
+	return p;
+}
+
+qi_stage *init_quest_stage(int q_idx, int num) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_stage *p;
+
+	/* we already have this existing one */
+	if (q_ptr->stage_idx[num] != -1) return &q_ptr->stage[stage_idx[num]];
+
+	/* allocate a new one */
+	p = (qi_stage*)malloc(sizeof(qi_stage));
+	if (!p) {
+		s_printf("init_quest_stage() Couldn't allocate memory!\n");
+		exit(0);
+	}
+
+	/* attach it to its parent structure */
+	q_ptr->stage[q_ptr->stages] = p;
+	q_ptr->stage_idx[num] = q_ptr->stages
+	q_ptr->stages++;
+
+	/* done, return the new one */
+	return p;
+}
+
+qi_keyword *init_quest_keyword(int q_idx, int num) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_keyword *p;
+	int i;
+
+	/* we already have this existing one */
+	if (q_ptr->keywords > num) return &q_ptr->keyword[num];
+
+	/* allocate all missing instances up to the requested index */
+	for (i = q_ptr->keywords; i <= num; i++) {
+		/* allocate a new one */
+		p = (qi_keyword*)malloc(sizeof(qi_keyword));
+		if (!p) {
+			s_printf("init_quest_keyword() Couldn't allocate memory!\n");
+			exit(0);
+		}
+
+		/* attach it to its parent structure */
+		q_ptr->keyword[i] = p;
+		q_ptr->keywords++;
+	}
+
+	/* done, return the new, requested one */
+	return p;
+}
+
+qi_deliver *init_quest_deliver(int q_idx, int stage, int goal) {
+	qi_goal *goal = init_quest_goal(q_idx, stage, goal);
+	qi_deliver *p;
+	int i;
+
+	/* we already have this existing one */
+	if (goal->deliver) return &goal->deliver;
+
+	/* allocate a new one */
+	p = (qi_deliver*)malloc(sizeof(qi_deliver));
+	if (!p) {
+		s_printf("init_quest_deliver() Couldn't allocate memory!\n");
+		exit(0);
+	}
+
+	/* attach it to its parent structure */
+	goal->deliver[i] = p;
+
+	/* done, return the new, requested one */
+	return p;
+}
+
+qi_goal *init_quest_goal(int q_idx, int stage, int num) {
+	qi_stage *stage = init_quest_stage(q_idx, stage);
+	qi_goal *p
+	int i;
+
+	/* we already have this existing one */
+	if (stage->goals > num) return &stage->goal[num];
+
+	/* allocate all missing instances up to the requested index */
+	for (i = stage->goals; i <= num; i++) {
+		/* allocate a new one */
+		p = (qi_goal*)malloc(sizeof(qi_goal));
+		if (!p) {
+			s_printf("init_quest_goal() Couldn't allocate memory!\n");
+			exit(0);
+		}
+
+		/* attach it to its parent structure */
+		stage->goal[i] = p;
+		stage->goals++;
+	}
+
+	/* done, return the new, requested one */
+	return p;
 }

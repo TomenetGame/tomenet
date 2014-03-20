@@ -1086,6 +1086,7 @@ static void rd_quests() {
 				strip_bytes(dummysize2);
 				continue;
 			}
+#if 0//restructure
 			rd_byte((byte *) &q_info[i].current_wpos[j].wx);
 			rd_byte((byte *) &q_info[i].current_wpos[j].wy);
 			rd_byte((byte *) &q_info[i].current_wpos[j].wz);
@@ -1093,6 +1094,9 @@ static void rd_quests() {
 			rd_byte((byte *) &q_info[i].current_y[j]);
 
 			rd_s16b(&q_info[i].questor_m_idx[j]);
+#else
+			strip_bytes(7);
+#endif
 		}
 
 		if (!older_than(4, 5, 25))
@@ -1111,12 +1115,20 @@ static void rd_quests() {
 		if (!older_than(4, 5, 24)) {
 			for (k = 0; k < QI_STAGES; k++) {
 				for (j = 0; j < QI_GOALS; j++) {
+#if 0//restructure
 					rd_byte((byte *) &q_info[i].goals[k][j]);
 					rd_s16b(&q_info[i].kill_number_left[k][j]);
+#else
+					strip_bytes(3);
+#endif
 				}
 				for (j = 0; j < QI_OPTIONAL; j++) {
+#if 0//restructure
 					rd_byte((byte *) &q_info[i].goalsopt[k][j]);
 					rd_s16b(&q_info[i].killopt_number_left[k][j]);
+#else
+					strip_bytes(3);
+#endif
 				}
 			}
 		}
@@ -1131,7 +1143,9 @@ static void rd_quests() {
 		if (!m_ptr->questor) continue;
 
 		q_ptr = &q_info[m_ptr->quest];
+#if 0//restructure
 		q_ptr->questor_m_idx[m_ptr->questor_idx] = i;
+#endif
 	}
 }
 
