@@ -8366,6 +8366,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			while (*c >= '0' && *c <= '9' && l < QI_STAGE_GOALS) {
 				j = atoi(c);
 				if (j < 1 || j > QI_GOALS) return 1;
+				//allow us to create it?--  if (j > q_stage->goals) return 1;
 
 				q_stage->goals_for_stage[k][l] = j - 1;
 
