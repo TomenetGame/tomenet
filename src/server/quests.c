@@ -150,9 +150,9 @@ void process_quests(void) {
 			if (Players[j]->quest_cooldown[i])
 				Players[j]->quest_cooldown[i]--;
 
-		q_stage = init_quest_stage(i, q_ptr->cur_stage);
 
-		/* handle automatically timed stage actions */
+		q_stage = &q_ptr->stage[q_ptr->cur_stage];
+		/* handle automatically timed stage actions */ //TODO: implement this for individual quests too
 		if (q_stage->timed_countdown < 0) {
 			if (hour == -q_stage->timed_countdown)
 				quest_set_stage(0, i, q_stage->timed_countdown_stage, q_stage->timed_countdown_quiet);
