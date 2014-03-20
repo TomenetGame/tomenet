@@ -229,7 +229,7 @@ typedef struct qi_stage {
 	/* quest acceptance */
 	bool accepts;					/* player can acquire the quest during a stage */
 
-	s16b activate_quest;				/* spawn a certain new quest of this index (and thereby another questor) (if not already existing) */
+	s16b activate_quest;				/* spawn a certain new quest of this index (and thereby another questor) (if not already existing) -1 for disabled */
 	bool auto_accept;				/* player will automatically acquire the newly spawned quest (from activate_quest[]) */
 	bool auto_accept_quiet;				/* player will automatically acquire the newly spawned quest (from activate_quest[]) but not get a quest-accept-notification type of message about it */
 

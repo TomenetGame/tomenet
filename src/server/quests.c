@@ -958,15 +958,23 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	qi_stage *q_stage = &q_ptr->stage[stage];
 
 	/* auto-spawn (and acquire) new quest? */
-	if (q_stage->activate_quest != -1 && !q_info[q_stage->activate_quest].disabled) {
+	if (q_stage->activate_quest != -1) {
+		if (!q_info[q_stage->activate_quest].disabled &&
+		    q_info[q_stage->activate_quest].defined) {
 #if QDEBUG > 0
-		s_printf("%s QUEST_ACTIVATE_AUTO: '%s'(%d,%s)\n",
-		    showtime(), q_name + q_info[q_stage->activate_quest].name,
-		    q_stage->activate_quest ,q_info[q_stage->activate_quest].codename);
+			s_printf("%s QUEST_ACTIVATE_AUTO: '%s'(%d,%s)\n",
+			    showtime(), q_name + q_info[q_stage->activate_quest].name,
+			    q_stage->activate_quest ,q_info[q_stage->activate_quest].codename);
 #endif
-		quest_activate(q_stage->activate_quest);
-		if (q_stage->auto_accept)
-			quest_acquire_confirmed(pInd, q_stage->activate_quest, q_stage->auto_accept_quiet);
+			quest_activate(q_stage->activate_quest);
+			if (q_stage->auto_accept)
+				quest_acquire_confirmed(pInd, q_stage->activate_quest, q_stage->auto_accept_quiet);
+		}
+#if QDEBUG > 0
+		else s_printf("%s QUEST_ACTIVATE_AUTO --failed--: '%s'(%d)\n",
+		    showtime(), q_name + q_info[q_stage->activate_quest].name,
+		    q_stage->activate_quest);
+#endif
 	}
 
 	/* auto-change stage (timed)? */
@@ -2861,6 +2869,7 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 		for (j = 0; j < QI_REWARD_GOALS; j++)
 			p->goals_for_reward[i][j] = -1; /* no next stages set, end quest by default if nothing specified */
 	}
+	p->activate_quest = -1;
 	p->change_stage = -1;
 	p->timed_ingame_abs = -1;
 	p->timed_real = -1;
