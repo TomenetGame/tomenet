@@ -7868,7 +7868,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'Y' for conversation keywords */
 		if (buf[0] == 'Y') {
 			s = buf + 2;
-			if (6 != sscanf(s, "%d:%d:%16[^:]:%29[^:]:%16[^:]:%d",
+			if (6 != sscanf(s, "%d:%d:%16[^:]:%29[^:]:%16[^:]:%d", //QI_KEYWORD_LEN
 			    &questor, &stage, flagbuf, tmpbuf, flagbuf2, &nextstage)) return (1);
 
 			if (questor < 0 || questor >= QI_QUESTORS) return 1;
@@ -7909,7 +7909,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'y' for replies to keywords (depending on flags) */
 		if (buf[0] == 'y') {
 			s = buf + 2;
-			if (5 != sscanf(s, "%d:%d:%29[^:]:%16[^:]:%79[^:]",
+			if (5 != sscanf(s, "%d:%d:%29[^:]:%16[^:]:%79[^:]", //QI_KEYWORD_LEN
 			    &questor, &stage, tmpbuf2, flagbuf, tmpbuf)) return (1);
 
 			if (questor < 0 || questor >= QI_QUESTORS) return 1;

@@ -13,6 +13,7 @@
 #define QI_STAGES		50	/* a quest can have these # of different stages */
 #define QI_TALK_LINES		15	/* amount of text lines per talk dialogue */
 #define QI_KEYWORDS		20	/* for dialogue with the questor */
+#define QI_KEYWORD_LEN		30	/* length of a keyword, for dialogue with the questor */
 #define QI_STAGE_REWARDS 	10	/* max # of rewards handed out per completed stage */
 #define QI_GOALS		5	/* main goals to complete a stage */
 #define QI_OPTIONAL		5	/* optional goals in a stage */
@@ -343,19 +344,20 @@ typedef struct qi_stage {
 
 /* Sub-structure: A single quest keyword */
 typedef struct qi_keyword {
-	cptr keyword[QI_QUESTORS][QI_STAGES];		/* each convo may allow the player to reply with up to m keywords a 30 chars; 'Y' as 1st keyword and 'N' as 2nd trigger a yes/no hack */
-	u16b keywordflags[QI_QUESTORS][QI_STAGES];	/* required flags configuration for a keyword to be enabled */
-	u16b keyword_setflags[QI_QUESTORS][QI_STAGES];	/* ..and the keyword will change flags to these */
-	u16b keyword_clearflags[QI_QUESTORS][QI_STAGES]; /* ..and the keyword will change flags to these */
-	s16b keyword_stage[QI_QUESTORS][QI_STAGES];/*  ..which will bring the player to a different quest stage (or -1) */
+	char keyword[QI_KEYWORD_LEN];			/* each convo may allow the player to reply with up to m keywords a 30 chars; 'Y' as 1st keyword and 'N' as 2nd trigger a yes/no hack */
+	bool questor[QI_QUESTORS];			/* this keyword is valid for which questor(s) ? */
+	bool questor[QI_STAGES];			/* this keyword is valid during which stage(s) ? */
+	u16b keywordflags;				/* required flags configuration for a keyword to be enabled */
+	u16b keyword_setflags;				/* ..and the keyword will change flags to these */
+	u16b keyword_clearflags;			/* ..and the keyword will change flags to these */
+	s16b keyword_stage;				/* entering this keyword will bring the player to a different quest stage (or -1) */
 } qi_keyword;
 
 /* Sub-structure: A single quest keyword-reply (main mem eater) */
 typedef struct qi_kwreply {
-//<-- note: these two lines cost like 700kB or something :-p
-	cptr keyword_reply[QI_QUESTORS][QI_STAGES][QI_TALK_LINES];/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
-	u16b keyword_replyflags[QI_QUESTORS][QI_STAGES][QI_TALK_LINES];/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
-//-- ^turn them into pointers or sth (make a sub-struct?)
+	byte keyword_idx[QI_KEYWORDS];			/* which keyword(s) will prompt this reply from the current questor? */
+	cptr keyword_reply[QI_TALK_LINES];		/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/
+	u16b keyword_replyflags[QI_TALK_LINES];		/* only print this particular text line if these flags are matching the quest flags */
 } qi_kwreply;
 
 /* Main structure: The complete quest data */
