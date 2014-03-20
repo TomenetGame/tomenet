@@ -602,8 +602,16 @@ void compact_monsters(int size, bool purge) {
 			/* Quests: keep questor_m_idx information consistent */
 			if (m_list[i].questor) {
 				q_ptr = &q_info[m_list[i].quest];
-				q_ptr->questor[m_list[i].questor_idx].m_idx = i;
-				s_printf("QUEST_COMPACT_MONSTERS: quest %d - questor %d m_idx %d->%d\n", m_list[i].quest, m_list[i].questor_idx, q_ptr->questor[m_list[i].questor_idx].m_idx, i);
+				/* paranoia check, after server restarted after heavy code changes or sth */
+				if (q_ptr->defined && q_ptr->questors > m_list[i].questor_idx) {
+					/* fix its index */
+					s_printf("QUEST_COMPACT_MONSTERS: quest %d - questor %d m_idx %d->%d\n", m_list[i].quest, m_list[i].questor_idx, q_ptr->questor[m_list[i].questor_idx].m_idx, i);
+					q_ptr->questor[m_list[i].questor_idx].m_idx = i;
+				} else {
+					s_printf("QUEST_COMPACT_MONSTERS: deprecated questor, quest %d - questor %d m_idx %d->%d\n", m_list[i].quest, m_list[i].questor_idx, q_ptr->questor[m_list[i].questor_idx].m_idx, i);
+					m_list[i].questor = FALSE;
+					/* delete it too? */
+				}
 			}
 
 			/* Copy the visibility and los flags for the players */
