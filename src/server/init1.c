@@ -7475,8 +7475,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* 'U' */
 			q_ptr->ending_stage = 0;
 			q_ptr->cooldown = 0;
-			q_ptr->static_floor = FALSE; /* this should maybe be changed if questor loc can be in dungeon/tower, or he gets wiped :-p */
-			q_ptr->quit_floor = FALSE;
 
 			/* 'T' */
 			q_ptr->night = q_ptr->day = TRUE;
@@ -7674,8 +7672,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			int es, cd, stat, quit;
 
 			s = buf + 2;
-			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
-			    &es, &q_ptr->max_duration, &cd, &stat, &quit)) return (1);
+			if (3 != sscanf(s, "%d:%d:%d",
+			    &es, &q_ptr->max_duration, &cd)) return (1);
 
 			q_ptr->ending_stage = es;
 			q_ptr->cooldown = (s16b) cd;
@@ -7720,6 +7718,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_questor->accept_interact = TRUE;
 				q_questor->talkable = TRUE;
 				q_questor->despawned = FALSE;
+				q_questor->invincible = TRUE;
 			}
 			continue;
 		}
@@ -7767,17 +7766,18 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 #if 0//restructure
 		/* Process 'F' for questor accept/spawn flags */
 		if (buf[0] == 'F') {
-			int aalos, aaint, talk, despawn;
+			int aalos, aaint, talk, despawn, invinc;
 
 			if (lc_flagsacc == QI_QUESTORS) return 1;
 			s = buf + 2;
 
-			if (4 != sscanf(s, "%d:%d:%d:%d:%d",
-			    &aalos, &aaint, &talk, &despawn)) return (1);
+			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
+			    &aalos, &aaint, &talk, &despawn, &invinc)) return (1);
 			q_ptr->accept_los[lc_flagsacc] = (aalos != 0);
 			q_ptr->accept_interact[lc_flagsacc] = (aaint != 0);
 			q_questor->talkable[lc_flagsacc] = (talk != 0);
 			q_questor->despawned[lc_flagsacc] = (despawn != 0);
+			q_questor->invincible[lc_flagsacc] = (invinc != 0);
 
 			init_F[lc_flagsacc] = TRUE;
 

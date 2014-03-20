@@ -73,6 +73,7 @@ typedef struct qi_questor {
 
 	bool talkable;					/* questor accepts dialogue? (by bumping usually) */
 	bool despawned;					/* questor starts despawned? */
+	bool invincible;				/* Is the questor invincible (if monster)/unpickable by monsters (if item) on spawn? */
 
 	/* ..if killable ie not invincible: */
 	bool drops_regular;				/* Drops regular loot (of his ridx type) instead of nothing? */
