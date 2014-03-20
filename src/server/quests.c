@@ -2429,6 +2429,8 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	qi_questor *q_questor;
 
 	/* TODO: use sensible questor location for generating rewards (apply_magic()) */
+	if (!q_ptr->questors) return; //extreme paranoia
+	q_questor = &q_ptr->questor[0]; //compiler warning
 	for (j = 0; j < q_ptr->questors; j++) {
 		q_questor = &q_ptr->questor[j];
 		if (q_questor->despawned) continue;
