@@ -47,6 +47,7 @@
  * Now, include the defines, the types, and the externs
  */
 #include "../common/defines.h"
+#include "../server/quests-defines.h" /* for quest stuff in player_type */
 #include "../common/types.h"
 #include "externs.h"
 

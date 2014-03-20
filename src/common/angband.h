@@ -47,6 +47,7 @@
  * Note that the externs are NOT common.
  */
 #include "../common/defines.h"
+#include "../server/quests-defines.h" /* for quest stuff in player_type */
 #include "../common/types.h"
 #include "externs.h"
 

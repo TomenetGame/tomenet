@@ -47,10 +47,15 @@
  * Note that the externs are NOT common.
  */
 #include "../common/defines.h"
+#ifdef SERVER
+ #include "quests-defines.h"
+#endif
 #include "../common/types.h"
+#ifdef SERVER
+ #include "quests.h"
+#endif
 #include "netconn.h"
 #include "externs.h"
-#include "quests.h"
 
 
 /***** Some copyright messages follow below *****/
