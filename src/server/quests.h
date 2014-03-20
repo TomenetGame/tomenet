@@ -429,8 +429,8 @@ typedef struct quest_info {
 	qi_questor *questor;
 
 	/* optional/advanced */
-	qi_questor_morph *questor_morph
-	qi_questor_hostility *questor_hostility
+	qi_questor_morph *questor_morph;
+	qi_questor_hostility *questor_hostility;
 	qi_questor_act *questor_act;
 
 	/* -------------------------------- OPTIONAL SUB-STRUCTURED DATA -------------------------------- */
