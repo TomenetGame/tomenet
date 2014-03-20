@@ -949,47 +949,48 @@ static void quest_unset_goalopt(int pInd, int q_idx, int goalopt) {
 /* perform automatic things (quest spawn/stage change) in a stage */
 static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
+	qi_stage *q_stage = &q_ptr->stage[stage];
 
 	/* auto-spawn (and acquire) new quest? */
-	if (q_ptr->activate_quest[stage] != -1 && !q_info[q_ptr->activate_quest[stage]].disabled) {
+	if (q_stage->activate_quest != -1 && !q_info[q_stage->activate_quest].disabled) {
 #if QDEBUG > 0
 		s_printf("%s QUEST_ACTIVATE_AUTO: '%s'(%d,%s)\n",
-		    showtime(), q_name + q_info[q_ptr->activate_quest[stage]].name,
-		    q_ptr->activate_quest[stage] ,q_info[q_ptr->activate_quest[stage]].codename);
+		    showtime(), q_name + q_info[q_stage->activate_quest].name,
+		    q_stage->activate_quest ,q_info[q_stage->activate_quest].codename);
 #endif
-		quest_activate(q_ptr->activate_quest[stage]);
-		if (q_ptr->auto_accept[stage])
-			quest_acquire_confirmed(pInd, q_ptr->activate_quest[stage], q_ptr->auto_accept_quiet[stage]);
+		quest_activate(q_stage->activate_quest);
+		if (q_stage->auto_accept)
+			quest_acquire_confirmed(pInd, q_stage->activate_quest, q_stage->auto_accept_quiet);
 	}
 
 	/* auto-change stage (timed)? */
-	if (q_ptr->change_stage[stage] != -1) {
+	if (q_stage->change_stage != -1) {
 		/* not a timed change? instant then */
-		if (//!q_ptr->timed_ingame[stage] &&
-		    !q_ptr->timed_ingame_abs[stage] && !q_ptr->timed_real[stage]) {
+		if (//!q_ptr->timed_ingame &&
+		    !q_stage->timed_ingame_abs && !q_stage->timed_real) {
 #if QDEBUG > 0
 			s_printf("%s QUEST_STAGE_AUTO: '%s'(%d,%s) %d->%d\n",
-			    showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), q_ptr->change_stage[stage]);
+			    showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), q_stage->change_stage);
 #endif
-			quest_set_stage(pInd, q_idx, q_ptr->change_stage[stage], q_ptr->quiet_change[stage]);
+			quest_set_stage(pInd, q_idx, q_stage->change_stage, q_stage->quiet_change);
 			/* don't imprint/play dialogue of this stage anymore, it's gone~ */
 			return TRUE;
 		}
 		/* start the clock */
 		/*cannot do this, cause quest scheduler is checking once per minute atm
-		if (q_ptr->timed_ingame[stage]) {
-			q_ptr->timed_countdown[stage] = q_ptr->timed_ingame[stage];//todo: different resolution than real minutes
-			q_ptr->timed_countdown_stage[stage] = q_ptr->change_stage[stage];
-			q_ptr->timed_countdown_quiet[stage] = q_ptr->quiet_change[stage];
+		if (q_stage->timed_ingame) {
+			q_stage->timed_countdown = q_stage->timed_ingame;//todo: different resolution than real minutes
+			q_stage->timed_countdown_stage = q_stage->change_stage;
+			q_stage->timed_countdown_quiet = q_stage->quiet_change;
 		} else */
-		if (q_ptr->timed_ingame_abs[stage]) {
-			q_ptr->timed_countdown[stage] = -q_ptr->timed_ingame_abs[stage];
-			q_ptr->timed_countdown_stage[stage] = q_ptr->change_stage[stage];
-			q_ptr->timed_countdown_quiet[stage] = q_ptr->quiet_change[stage];
-		} else if (q_ptr->timed_real[stage]) {
-			q_ptr->timed_countdown[stage] = q_ptr->timed_real[stage];
-			q_ptr->timed_countdown_stage[stage] = q_ptr->change_stage[stage];
-			q_ptr->timed_countdown_quiet[stage] = q_ptr->quiet_change[stage];
+		if (q_stage->timed_ingame_abs) {
+			q_stage->timed_countdown = -q_stage->timed_ingame_abs;
+			q_stage->timed_countdown_stage = q_stage->change_stage;
+			q_stage->timed_countdown_quiet = q_stage->quiet_change;
+		} else if (q_stage->timed_real) {
+			q_stage->timed_countdown = q_stage->timed_real;
+			q_stage->timed_countdown_stage = q_stage->change_stage;
+			q_stage->timed_countdown_quiet = q_stage->quiet_change;
 		}
 	}
 
@@ -999,44 +1000,49 @@ static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 	player_type *p_ptr = Players[Ind];
 	quest_info *q_ptr = &q_info[p_ptr->quest_idx[py_q_idx]];
 	int i, stage = quest_get_stage(Ind, p_ptr->quest_idx[py_q_idx]);
+	qi_stage *q_stage = &q_ptr->stage[stage];
+	qi_goal *q_goal;
 
 	/* now set goal-dependant (temporary) quest info again */
-	for (i = 0; i < QI_GOALS; i++) {
+	for (i = 0; i < q_stage->goals; i++) {
+		q_goal = &q_stage->goal[i];
+
 		/* set deliver location helper info */
-		if (q_ptr->deliver_pos[stage][i]) {
+		if (q_goal->deliver) {
 			p_ptr->quest_deliver_pos[py_q_idx] = TRUE;
 			/* note: deliver has no 'basic wpos check', since the whole essence of
 			   "delivering" is to actually move somewhere. */
 			/* finer check? */
-			if (q_ptr->deliver_pos_x[stage][i] != -1) p_ptr->quest_any_deliver_xy = TRUE;
+			if (q_goal->deliver->pos_x != -1) p_ptr->quest_any_deliver_xy = TRUE;
 		}
 
 		/* set kill/retrieve tracking counter if we have such goals in this stage */
-		if (q_ptr->kill[stage][i]) {
-			p_ptr->quest_kill_number[py_q_idx][i] = q_ptr->kill_number[stage][i];
+		if (q_goal->kill) {
+			p_ptr->quest_kill_number[py_q_idx][i] = q_goal->kill->number;
 			/* set target location helper info */
 			p_ptr->quest_kill[py_q_idx] = TRUE;
 			/* assume it's a restricted target "at least" */
 			p_ptr->quest_any_k_target = TRUE;
 			/* if it's not a restricted target, it's active everywhere */
-			if (!q_ptr->target_pos[stage][i]) {
+			if (!q_goal->target_pos) {
 				p_ptr->quest_any_k = TRUE;
 				p_ptr->quest_any_k_within_target = TRUE;
 			}
 		}
-		if (q_ptr->retrieve[stage][i]) {
-			p_ptr->quest_retrieve_number[py_q_idx][i] = q_ptr->retrieve_number[stage][i];
+		if (q_goal->retrieve) {
+			p_ptr->quest_retrieve_number[py_q_idx][i] = q_goal->retrieve->number;
 			/* set target location helper info */
 			p_ptr->quest_retrieve[py_q_idx] = TRUE;
 			/* assume it's a restricted target "at least" */
 			p_ptr->quest_any_r_target = TRUE;
 			/* if it's not a restricted target, it's active everywhere */
-			if (!q_ptr->target_pos[stage][i]) {
+			if (!q_goal->target_pos) {
 				p_ptr->quest_any_r = TRUE;
 				p_ptr->quest_any_r_within_target = TRUE;
 			}
 		}
 	}
+#if 0//TODO
 	for (i = 0; i < QI_OPTIONAL; i++) {
 		/* set deliver location helper info */
 		if (q_ptr->deliveropt_pos[stage][i]) {
@@ -1071,6 +1077,7 @@ static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 			}
 		}
 	}
+#endif
 }
 /* Store some information of the current stage in the p_ptr array,
    eg the target location for easier lookup. In theory we could make it work
@@ -1106,6 +1113,7 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
+	qi_stage *q_stage = &q_ptr->stage[stage];
 	int i, j, k;
 	bool anything;
 
@@ -1129,7 +1137,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	     eg the target location for easier lookup */
 	if (!q_ptr->individual || !pInd) { //the !pInd part is paranoia
 		for (i = 1; i <= NumPlayers; i++) {
-			if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //TODO: multiple current_wpos, one for each questor!! to work with correct questor_idx in quest_dialogue call below!
+			//if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //seems nonsensical for narrations
 			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 				if (Players[i]->quest_idx[j] == q_idx) break;
 			if (j == MAX_CONCURRENT_QUESTS) continue;
@@ -1139,8 +1147,8 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 				/* pre-scan narration if any line at all exists and passes the flag check */
 				anything = FALSE;
 				for (k = 0; k < QI_TALK_LINES; k++) {
-					if (q_ptr->narration[stage][k] &&
-					    ((q_ptr->narration_flags[stage][k] & quest_get_flags(pInd, q_idx)) == q_ptr->narration_flags[stage][k])) {
+					if (q_stage->narration[k] &&
+					    ((q_stage->narration_flags[k] & quest_get_flags(pInd, q_idx)) == q_stage->narration_flags[k])) {
 						anything = TRUE;
 						break;
 					}
@@ -1150,9 +1158,9 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 					msg_print(i, "\374 ");
 					msg_format(i, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
 					for (k = 0; k < QI_TALK_LINES; k++) {
-						if (!q_ptr->narration[stage][k]) break;
-						if ((q_ptr->narration_flags[stage][k] & quest_get_flags(pInd, q_idx)) != q_ptr->narration_flags[stage][k]) continue;
-						msg_format(i, "\374\377U%s", q_ptr->narration[stage][k]);
+						if (!q_stage->narration[k]) break;
+						if ((q_stage->narration_flags[k] & quest_get_flags(pInd, q_idx)) != q_stage->narration_flags[k]) continue;
+						msg_format(i, "\374\377U%s", q_stage->narration[k]);
 					}
 					//msg_print(i, "\374 ");
 				}
@@ -1179,8 +1187,8 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			/* pre-scan narration if any line at all exists and passes the flag check */
 			anything = FALSE;
 			for (k = 0; k < QI_TALK_LINES; k++) {
-				if (q_ptr->narration[stage][k] &&
-				    ((q_ptr->narration_flags[stage][k] & quest_get_flags(pInd, q_idx)) == q_ptr->narration_flags[stage][k])) {
+				if (q_stage->narration[k] &&
+				    ((q_stage->narration_flags[k] & quest_get_flags(pInd, q_idx)) == q_stage->narration_flags[k])) {
 					anything = TRUE;
 					break;
 				}
@@ -1190,8 +1198,8 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 				msg_print(pInd, "\374 ");
 				msg_format(pInd, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
 				for (k = 0; k < QI_TALK_LINES; k++) {
-					if (!q_ptr->narration[stage][k]) break;
-					msg_format(pInd, "\374\377U%s", q_ptr->narration[stage][k]);
+					if (!q_stage->narration[k]) break;
+					msg_format(pInd, "\374\377U%s", q_stage->narration[k]);
 				}
 				//msg_print(pInd, "\374 ");
 			}
@@ -1229,26 +1237,26 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 
 	/* optional goals play no role, obviously */
 	for (i = 0; i < QI_GOALS; i++)
-		if (q_ptr->kill[stage][i] || q_ptr->retrieve[stage][i] || q_ptr->deliver_pos[stage][i]) {
+		if (q_stage->goal[i].kill || q_stage->goal[i].retrieve || q_stage->goal[i].deliver) {
 			anything = TRUE;
 			break;
 		}
 	/* now check remaining dialogue options (keywords) */
 	for (j = 0; j < q_ptr->questors; j++) {
 		for (i = 0; i < QI_KEYWORDS; i++)
-			if (q_ptr->keyword[j][stage][i] &&
+			if (q_ptr->keyword[j][i] &&
 			    /* and it's not just a keyword-reply without a stage change? */
-			    q_ptr->keyword_stage[j][stage][i] != -1) {
+			    q_ptr->keyword_stage[j][i] != -1) {
 				anything = TRUE;
 				break;
 			}
 		if (anything) break;
 	}
 	/* check auto/timed stage changes */
-	if (q_ptr->change_stage[stage] != -1) anything = TRUE;
-	//if (q_ptr->timed_ingame[stage]) anything = TRUE;
-	if (q_ptr->timed_ingame_abs[stage] != -1) anything = TRUE;
-	if (q_ptr->timed_real[stage]) anything = TRUE;
+	if (q_ptr->change_stage != -1) anything = TRUE;
+	//if (q_ptr->timed_ingame) anything = TRUE;
+	if (q_ptr->timed_ingame_abs != -1) anything = TRUE;
+	if (q_ptr->timed_real) anything = TRUE;
 
 	/* really nothing left to do? */
 	if (!anything) {
@@ -1453,7 +1461,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 		/* do we accept players by questor interaction at all? */
 		if (!q_ptr->accept_interact[questor_idx]) return;
 		/* do we accept players to acquire this quest in the current quest stage? */
-		if (!q_ptr->accepts[stage]) return;
+		if (!q_ptr->accepts) return;
 
 		/* if player cannot pick up this quest, questor remains silent */
 		if (!(may_acquire = quest_acquire(Ind, q_idx, FALSE))) return;
@@ -1494,8 +1502,8 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 		/* pre-scan talk if any line at all passes the flag check */
 		anything = FALSE;
 		for (k = 0; k < QI_TALK_LINES; k++) {
-			if (q_ptr->talk[questor_idx][stage][k] &&
-			    ((q_ptr->talk_flags[questor_idx][stage][k] & quest_get_flags(Ind, q_idx)) == q_ptr->talkflags[questor_idx][stage][k])) {
+			if (q_ptr->talk[questor_idx][k] &&
+			    ((q_ptr->talk_flags[questor_idx][k] & quest_get_flags(Ind, q_idx)) == q_ptr->talkflags[questor_idx][k])) {
 				anything = TRUE;
 				break;
 			}
@@ -1506,9 +1514,9 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 			msg_print(Ind, "\374 ");
 			msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
 			for (i = 0; i < QI_TALK_LINES; i++) {
-				if (!q_ptr->talk[questor_idx][stage][i]) break;
-				if ((q_ptr->talk_flags[questor_idx][stage][k] & quest_get_flags(Ind, q_idx)) != q_ptr->talkflags[questor_idx][stage][k]) continue;
-				msg_format(Ind, "\374\377U%s", q_ptr->talk[questor_idx][stage][i]);
+				if (!q_ptr->talk[questor_idx][i]) break;
+				if ((q_ptr->talk_flags[questor_idx][k] & quest_get_flags(Ind, q_idx)) != q_ptr->talkflags[questor_idx][k]) continue;
+				msg_format(Ind, "\374\377U%s", q_ptr->talk[questor_idx][i]);
 			}
 			//msg_print(Ind, "\374 ");
 		}
@@ -1523,15 +1531,15 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	if (!q_ptr->individual && q_ptr->talk_focus[questor_idx] && q_ptr->talk_focus[questor_idx] != Ind) return;
 
 	p_ptr->interact_questor_idx = questor_idx;
-	if (q_ptr->keyword[questor_idx][stage][0]) { /* at least 1 keyword available? */
+	if (q_ptr->keyword[questor_idx][0]) { /* at least 1 keyword available? */
 		/* hack: if 1st keyword is empty string "", display a "more" prompt */
-		if (q_ptr->keyword[questor_idx][stage][0][0] == 0)
+		if (q_ptr->keyword[questor_idx][0][0] == 0)
 			Send_request_str(Ind, RID_QUEST + q_idx, "Your reply (or ENTER for more)> ", "");
 		else {
 			/* hack: if 1st keyword is "y" just give a yes/no choice instead of an input prompt?
 			   we assume that 2nd keyword is a "n" then. */
-			if (q_ptr->keyword[questor_idx][stage][0][0] == 'y' &&
-			    q_ptr->keyword[questor_idx][stage][0][1] == 0)
+			if (q_ptr->keyword[questor_idx][0][0] == 'y' &&
+			    q_ptr->keyword[questor_idx][0][1] == 0)
 				Send_request_cfr(Ind, RID_QUEST + q_idx, "Your reply, yes or no?>", FALSE);
 			else /* normal prompt for keyword input */
 				Send_request_str(Ind, RID_QUEST + q_idx, "Your reply> ", "");
@@ -1567,30 +1575,30 @@ void quest_reply(int Ind, int q_idx, char *str) {
 
 	/* scan keywords for match */
 	for (i = 0; i < QI_KEYWORDS; i++) {
-		if (!q_ptr->keyword[questor_idx][stage][i]) break; /* no more keywords? */
-		if (strcmp(q_ptr->keyword[questor_idx][stage][i], str)) continue; /* not matching? */
+		if (!q_ptr->keyword[questor_idx][i]) break; /* no more keywords? */
+		if (strcmp(q_ptr->keyword[questor_idx][i], str)) continue; /* not matching? */
 		/* check if required flags match to enable this keyword */
-		if ((q_ptr->keywordflags[questor_idx][stage][i] & quest_get_flags(Ind, q_idx)) != q_ptr->keywordflags[questor_idx][stage][i]) continue;
+		if ((q_ptr->keywordflags[questor_idx][i] & quest_get_flags(Ind, q_idx)) != q_ptr->keywordflags[questor_idx][i]) continue;
 
 		/* reply? */
-		if (q_ptr->keyword_reply[questor_idx][stage][i] &&
-		    q_ptr->keyword_reply[questor_idx][stage][i][0]) {
+		if (q_ptr->keyword_reply[questor_idx][i] &&
+		    q_ptr->keyword_reply[questor_idx][i][0]) {
 			msg_print(Ind, "\374 ");
 			msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor_name[questor_idx]);
 			for (j = 0; j < QI_TALK_LINES; j++) {
-				if (!q_ptr->keyword_reply[questor_idx][stage][i][j]) break;
-				if ((q_ptr->keyword_replyflags[questor_idx][stage][i][j] & quest_get_flags(Ind, q_idx)) != q_ptr->keyword_replyflags[questor_idx][stage][i][j]) continue;
-				msg_format(Ind, "\374\377U%s", q_ptr->keyword_reply[questor_idx][stage][i][j]);
+				if (!q_ptr->keyword_reply[questor_idx][i][j]) break;
+				if ((q_ptr->keyword_replyflags[questor_idx][i][j] & quest_get_flags(Ind, q_idx)) != q_ptr->keyword_replyflags[questor_idx][i][j]) continue;
+				msg_format(Ind, "\374\377U%s", q_ptr->keyword_reply[questor_idx][i][j]);
 			}
 			//msg_print(Ind, "\374 ");
 		}
 
 		/* flags change? */
-		quest_set_flags(Ind, q_idx, q_ptr->keyword_setflags[questor_idx][stage][i], q_ptr->keyword_clearflags[questor_idx][stage][i]);
+		quest_set_flags(Ind, q_idx, q_ptr->keyword_setflags[questor_idx][i], q_ptr->keyword_clearflags[questor_idx][i]);
 
 		/* stage change? */
-		if (q_ptr->keyword_stage[questor_idx][stage][i] != -1) {
-			quest_set_stage(Ind, q_idx, q_ptr->keyword_stage[questor_idx][stage][i], FALSE);
+		if (q_ptr->keyword_stage[questor_idx][i] != -1) {
+			quest_set_stage(Ind, q_idx, q_ptr->keyword_stage[questor_idx][i], FALSE);
 			return;
 		}
 		/* Instead of return'ing, re-prompt for dialogue
@@ -1623,32 +1631,32 @@ static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type
 	/* check for race index */
 	for (i = 0; i < 10; i++) {
 		/* no monster specified? */
-		if (q_ptr->kill_ridx[stage][goal][i] == 0) continue;
+		if (q_ptr->kill_ridx[goal][i] == 0) continue;
 		/* accept any monster? */
-		if (q_ptr->kill_ridx[stage][goal][i] == -1) return TRUE;
+		if (q_ptr->kill_ridx[goal][i] == -1) return TRUE;
 		/* specified an r_idx */
-		if (q_ptr->kill_ridx[stage][goal][i] == m_ptr->r_idx) return TRUE;
+		if (q_ptr->kill_ridx[goal][i] == m_ptr->r_idx) return TRUE;
 	}
 
 	/* check for char/attr/level combination - treated in pairs (AND'ed) over the index */
 	for (i = 0; i < 5; i++) {
 		/* no char specified? */
-		if (q_ptr->kill_rchar[stage][goal][i] == 255) continue;
+		if (q_ptr->kill_rchar[goal][i] == 255) continue;
 		 /* accept any char? */
-		if (q_ptr->kill_rchar[stage][goal][i] != 254 &&
+		if (q_ptr->kill_rchar[goal][i] != 254 &&
 		    /* specified a char? */
-		    q_ptr->kill_rchar[stage][goal][i] != r_ptr->d_char) continue;
+		    q_ptr->kill_rchar[goal][i] != r_ptr->d_char) continue;
 
 		/* no attr specified? */
-		if (q_ptr->kill_rattr[stage][goal][i] == 255) continue;
+		if (q_ptr->kill_rattr[goal][i] == 255) continue;
 		 /* accept any attr? */
-		if (q_ptr->kill_rattr[stage][goal][i] != 254 &&
+		if (q_ptr->kill_rattr[goal][i] != 254 &&
 		    /* specified an attr? */
-		    q_ptr->kill_rattr[stage][goal][i] != r_ptr->d_attr) continue;
+		    q_ptr->kill_rattr[goal][i] != r_ptr->d_attr) continue;
 
 		/* min/max level check -- note that we use m-level, not r-level :-o */
-		if ((!q_ptr->kill_rlevmin[stage][goal] || q_ptr->kill_rlevmin[stage][goal] <= m_ptr->level) &&
-		    (!q_ptr->kill_rlevmax[stage][goal] || q_ptr->kill_rlevmax[stage][goal] >= m_ptr->level))
+		if ((!q_ptr->kill_rlevmin[goal] || q_ptr->kill_rlevmin[goal] <= m_ptr->level) &&
+		    (!q_ptr->kill_rlevmax[goal] || q_ptr->kill_rlevmax[goal] >= m_ptr->level))
 			return TRUE;
 	}
 
@@ -1681,18 +1689,18 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 	/* check for tval/sval */
 	for (i = 0; i < 10; i++) {
 		/* no tval specified? */
-		if (q_ptr->retrieve_otval[stage][goal][i] == 0) continue;
+		if (q_ptr->retrieve_otval[goal][i] == 0) continue;
 		/* accept any tval? */
-		if (q_ptr->retrieve_otval[stage][goal][i] != -1 &&
+		if (q_ptr->retrieve_otval[goal][i] != -1 &&
 		    /* specified a tval */
-		    q_ptr->retrieve_otval[stage][goal][i] != o_ptr->tval) continue;;
+		    q_ptr->retrieve_otval[goal][i] != o_ptr->tval) continue;;
 
 		/* no sval specified? */
-		if (q_ptr->retrieve_osval[stage][goal][i] == 0) continue;
+		if (q_ptr->retrieve_osval[goal][i] == 0) continue;
 		/* accept any sval? */
-		if (q_ptr->retrieve_osval[stage][goal][i] != -1 &&
+		if (q_ptr->retrieve_osval[goal][i] != -1 &&
 		    /* specified a sval */
-		    q_ptr->retrieve_osval[stage][goal][i] != o_ptr->sval) continue;;
+		    q_ptr->retrieve_osval[goal][i] != o_ptr->sval) continue;;
 
 		break;
 	}
@@ -1702,57 +1710,57 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 	   note: let's treat pval/bpval as minimum values instead of exact values for now. */
 	for (i = 0; i < 5; i++) {
 		/* no pval specified? */
-		if (q_ptr->retrieve_opval[stage][goal][i] == 9999) continue;
+		if (q_ptr->retrieve_opval[goal][i] == 9999) continue;
 		/* accept any pval? */
-		if (q_ptr->retrieve_opval[stage][goal][i] != -9999 &&
+		if (q_ptr->retrieve_opval[goal][i] != -9999 &&
 		    /* specified a pval? */
-		    q_ptr->retrieve_opval[stage][goal][i] < o_ptr->pval) continue;
+		    q_ptr->retrieve_opval[goal][i] < o_ptr->pval) continue;
 
 		/* no bpval specified? */
-		if (q_ptr->retrieve_obpval[stage][goal][i] == 9999) continue;
+		if (q_ptr->retrieve_obpval[goal][i] == 9999) continue;
 		/* accept any bpval? */
-		if (q_ptr->retrieve_obpval[stage][goal][i] != -9999 &&
+		if (q_ptr->retrieve_obpval[goal][i] != -9999 &&
 		    /* specified a bpval? */
-		    q_ptr->retrieve_obpval[stage][goal][i] < o_ptr->bpval) continue;
+		    q_ptr->retrieve_obpval[goal][i] < o_ptr->bpval) continue;
 
 		/* no attr specified? */
-		if (q_ptr->retrieve_oattr[stage][goal][i] == 255) continue;
+		if (q_ptr->retrieve_oattr[goal][i] == 255) continue;
 		/* accept any attr? */
-		if (q_ptr->retrieve_oattr[stage][goal][i] != -254 &&
+		if (q_ptr->retrieve_oattr[goal][i] != -254 &&
 		    /* specified a attr? */
-		    q_ptr->retrieve_oattr[stage][goal][i] != attr) continue;
+		    q_ptr->retrieve_oattr[goal][i] != attr) continue;
 
 		/* no name1 specified? */
-		if (q_ptr->retrieve_oname1[stage][goal][i] == -3) continue;
+		if (q_ptr->retrieve_oname1[goal][i] == -3) continue;
 		 /* accept any name1? */
-		if (q_ptr->retrieve_oname1[stage][goal][i] != -1 &&
+		if (q_ptr->retrieve_oname1[goal][i] != -1 &&
 		 /* accept any name1, but MUST be != 0? */
-		    (q_ptr->retrieve_oname1[stage][goal][i] != -2 || !o_ptr->name1) &&
+		    (q_ptr->retrieve_oname1[goal][i] != -2 || !o_ptr->name1) &&
 		    /* specified a name1? */
-		    q_ptr->retrieve_oname1[stage][goal][i] != o_ptr->name1) continue;
+		    q_ptr->retrieve_oname1[goal][i] != o_ptr->name1) continue;
 
 		/* no name2 specified? */
-		if (q_ptr->retrieve_oname2[stage][goal][i] == -3) continue;
+		if (q_ptr->retrieve_oname2[goal][i] == -3) continue;
 		 /* accept any name2? */
-		if (q_ptr->retrieve_oname2[stage][goal][i] != -1 &&
+		if (q_ptr->retrieve_oname2[goal][i] != -1 &&
 		 /* accept any name2, but MUST be != 0? */
-		    (q_ptr->retrieve_oname2[stage][goal][i] != -2 || !o_ptr->name2) &&
+		    (q_ptr->retrieve_oname2[goal][i] != -2 || !o_ptr->name2) &&
 		    /* specified a name2? */
-		    q_ptr->retrieve_oname2[stage][goal][i] != o_ptr->name2) continue;
+		    q_ptr->retrieve_oname2[goal][i] != o_ptr->name2) continue;
 
 		/* no name2b specified? */
-		if (q_ptr->retrieve_oname2b[stage][goal][i] == -3) continue;
+		if (q_ptr->retrieve_oname2b[goal][i] == -3) continue;
 		 /* accept any name2b? */
-		if (q_ptr->retrieve_oname2b[stage][goal][i] != -1 &&
+		if (q_ptr->retrieve_oname2b[goal][i] != -1 &&
 		 /* accept any name2b, but MUST be != 0? */
-		    (q_ptr->retrieve_oname2b[stage][goal][i] != -2 || !o_ptr->name2b) &&
+		    (q_ptr->retrieve_oname2b[goal][i] != -2 || !o_ptr->name2b) &&
 		    /* specified a name2b? */
-		    q_ptr->retrieve_oname2b[stage][goal][i] != o_ptr->name2b) continue;
+		    q_ptr->retrieve_oname2b[goal][i] != o_ptr->name2b) continue;
 	}
 	if (i == 5) return FALSE;
 
 	/* finally, test against minimum value */
-	if (q_ptr->retrieve_ovalue[stage][goal] <= object_value_real(0, o_ptr)) return TRUE;
+	if (q_ptr->retrieve_ovalue[goal] <= object_value_real(0, o_ptr)) return TRUE;
 
 	/* pft */
 	return FALSE;
@@ -1784,7 +1792,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 	   when we turn in the delivery. */
 	nisi = FALSE;
 	for (j = 0; j < QI_GOALS; j++)
-		if (q_ptr->deliver_pos[stage][j]) {
+		if (q_ptr->deliver_pos[j]) {
 			nisi = TRUE;
 			break;
 		}
@@ -1795,33 +1803,33 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 	/* check the quest goals, whether any of them wants a target to this location */
 	for (j = 0; j < QI_GOALS; j++) {
 		/* no k/r goal? */
-		if (!q_ptr->kill[stage][j] && !q_ptr->retrieve[stage][j]) continue;
+		if (!q_ptr->kill[j] && !q_ptr->retrieve[j]) continue;
 #if QDEBUG > 2
-		s_printf(" FOUND kr GOAL %d (k=%d,r=%d).\n", j, q_ptr->kill[stage][j], q_ptr->retrieve[stage][j]);
+		s_printf(" FOUND kr GOAL %d (k=%d,r=%d).\n", j, q_ptr->kill[j], q_ptr->retrieve[j]);
 #endif
 
 		/* location-restricted?
 		   Exempt already retrieved items that were just lost temporarily on the way! */
-		if (q_ptr->target_pos[stage][j] &&
+		if (q_ptr->target_pos[j] &&
 		    !(o_ptr->quest == q_idx + 1 && o_ptr->quest_stage == stage)) {
 			/* extend target terrain over a wide patch? */
-			if (q_ptr->target_terrain_patch[stage][j]) {
+			if (q_ptr->target_terrain_patch[j]) {
 				/* different z-coordinate = instant fail */
-				if (p_ptr->wpos.wz != q_ptr->target_wpos[stage][j].wz) continue;
+				if (p_ptr->wpos.wz != q_ptr->target_wpos[j].wz) continue;
 				/* are we within range and have same terrain type? */
-				if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[stage][j].wx,
-				    q_ptr->target_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
+				if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[j].wx,
+				    q_ptr->target_wpos[j].wy) > QI_TERRAIN_PATCH_RADIUS ||
 				    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
-				    wild_info[q_ptr->target_wpos[stage][j].wy][q_ptr->target_wpos[stage][j].wx].type)
+				    wild_info[q_ptr->target_wpos[j].wy][q_ptr->target_wpos[j].wx].type)
 					continue;
 			}
 			/* just check a single, specific wpos? */
-			else if (!inarea(&q_ptr->target_wpos[stage][j], &p_ptr->wpos)) continue;
+			else if (!inarea(&q_ptr->target_wpos[j], &p_ptr->wpos)) continue;
 
 			/* check for exact x,y location? */
-			if (q_ptr->target_pos_x[stage][j] != -1 &&
-			    q_ptr->target_pos_x[stage][j] != p_ptr->px &&
-			    q_ptr->target_pos_y[stage][j] != p_ptr->py)
+			if (q_ptr->target_pos_x[j] != -1 &&
+			    q_ptr->target_pos_x[j] != p_ptr->px &&
+			    q_ptr->target_pos_y[j] != p_ptr->py)
 				continue;
 		}
 #if QDEBUG > 2
@@ -1829,7 +1837,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 #endif
 
 		/* check for kill goal here */
-		if (m_ptr && q_ptr->kill[stage][j]) {
+		if (m_ptr && q_ptr->kill[j]) {
 			if (!quest_goal_matches_kill(q_idx, stage, j, m_ptr)) continue;
 			/* decrease the player's kill counter, if we got all, goal is completed! */
 			p_ptr->quest_kill_number[py_q_idx][j]--;
@@ -1841,7 +1849,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 		}
 
 		/* check for retrieve-item goal here */
-		if (o_ptr && q_ptr->retrieve[stage][j]) {
+		if (o_ptr && q_ptr->retrieve[j]) {
 			if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
 
 			/* discard old items from another quest or quest stage that just look similar!
@@ -1863,7 +1871,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 			   we can just remove all the quest items right away now,
 			   since they've fulfilled their purpose of setting the quest goal. */
 			for (k = 0; k < QI_GOALS; k++)
-				if (q_ptr->deliver_pos[stage][k]) break;
+				if (q_ptr->deliver_pos[k]) break;
 #if QDEBUG > 2
 			s_printf(" REMOVE RETRIEVED ITEMS.\n");
 #endif
@@ -1957,7 +1965,7 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 		/* check the quest goals, whether any of them wants a retrieval */
 		for (j = 0; j < QI_GOALS; j++) {
 			/* no r goal? */
-			if (!q_ptr->retrieve[stage][j]) continue;
+			if (!q_ptr->retrieve[j]) continue;
 
 			/* phew, item has nothing to do with this quest goal? */
 			if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
@@ -1994,8 +2002,8 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 	   'deliver', duh */
 	for (j = 0; j < QI_GOALS; j++) {
 #if QDEBUG > 2
-		if (q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j]) {
-			s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_ptr->kill[stage][j], q_ptr->retrieve[stage][j]);
+		if (q_ptr->kill[j] || q_ptr->retrieve[j]) {
+			s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_ptr->kill[j], q_ptr->retrieve[j]);
 			if (!quest_get_goal(Ind, q_idx, j, FALSE)) {
 				s_printf("MISSING.\n");
 				break;
@@ -2003,7 +2011,7 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 
 		}
 #else
-		if ((q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j])
+		if ((q_ptr->kill[j] || q_ptr->retrieve[j])
 		    && !quest_get_goal(Ind, q_idx, j, FALSE))
 			break;
 #endif
@@ -2017,27 +2025,27 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 
 	/* check the quest goals, whether any of them wants a delivery to this location */
 	for (j = 0; j < QI_GOALS; j++) {
-		if (!q_ptr->deliver_pos[stage][j]) continue;
+		if (!q_ptr->deliver_pos[j]) continue;
 
 		/* handle only non-specific x,y goals here */
-		if (q_ptr->deliver_pos_x[stage][j] != -1) continue;
+		if (q_ptr->deliver_pos_x[j] != -1) continue;
 #if QDEBUG > 2
 		s_printf(" FOUND deliver_wpos GOAL %d.\n", j);
 #endif
 
 		/* extend target terrain over a wide patch? */
-		if (q_ptr->deliver_terrain_patch[stage][j]) {
+		if (q_ptr->deliver_terrain_patch[j]) {
 			/* different z-coordinate = instant fail */
-			if (p_ptr->wpos.wz != q_ptr->deliver_wpos[stage][j].wz) continue;
+			if (p_ptr->wpos.wz != q_ptr->deliver_wpos[j].wz) continue;
 			/* are we within range and have same terrain type? */
-			if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[stage][j].wx,
-			    q_ptr->deliver_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
+			if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[j].wx,
+			    q_ptr->deliver_wpos[j].wy) > QI_TERRAIN_PATCH_RADIUS ||
 			    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
-			    wild_info[q_ptr->deliver_wpos[stage][j].wy][q_ptr->deliver_wpos[stage][j].wx].type)
+			    wild_info[q_ptr->deliver_wpos[j].wy][q_ptr->deliver_wpos[j].wx].type)
 				continue;
 		}
 		/* just check a single, specific wpos? */
-		else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
+		else if (!inarea(&q_ptr->deliver_wpos[j], &p_ptr->wpos)) continue;
 #if QDEBUG > 2
 		s_printf(" PASSED LOCATION CHECK.\n");
 #endif
@@ -2093,8 +2101,8 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 	   'deliver', duh */
 	for (j = 0; j < QI_GOALS; j++) {
 #if QDEBUG > 3
-		if (q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j]) {
-			s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_ptr->kill[stage][j], q_ptr->retrieve[stage][j]);
+		if (q_ptr->kill[j] || q_ptr->retrieve[j]) {
+			s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_ptr->kill[j], q_ptr->retrieve[j]);
 			if (!quest_get_goal(Ind, q_idx, j, FALSE)) {
 				s_printf("MISSING.\n");
 				break;
@@ -2102,7 +2110,7 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 
 		}
 #else
-		if ((q_ptr->kill[stage][j] || q_ptr->retrieve[stage][j])
+		if ((q_ptr->kill[j] || q_ptr->retrieve[j])
 		    && !quest_get_goal(Ind, q_idx, j, FALSE))
 			break;
 #endif
@@ -2116,31 +2124,31 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 
 	/* check the quest goals, whether any of them wants a delivery to this location */
 	for (j = 0; j < QI_GOALS; j++) {
-		if (!q_ptr->deliver_pos[stage][j]) continue;
+		if (!q_ptr->deliver_pos[j]) continue;
 
 		/* handle only specific x,y goals here */
-		if (q_ptr->deliver_pos_x[stage][j] == -1) continue;
+		if (q_ptr->deliver_pos_x[j] == -1) continue;
 #if QDEBUG > 3
 		s_printf(" FOUND deliver_xy GOAL %d.\n", j);
 #endif
 
 		/* extend target terrain over a wide patch? */
-		if (q_ptr->deliver_terrain_patch[stage][j]) {
+		if (q_ptr->deliver_terrain_patch[j]) {
 			/* different z-coordinate = instant fail */
-			if (p_ptr->wpos.wz != q_ptr->deliver_wpos[stage][j].wz) continue;
+			if (p_ptr->wpos.wz != q_ptr->deliver_wpos[j].wz) continue;
 			/* are we within range and have same terrain type? */
-			if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[stage][j].wx,
-			    q_ptr->deliver_wpos[stage][j].wy) > QI_TERRAIN_PATCH_RADIUS ||
+			if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[j].wx,
+			    q_ptr->deliver_wpos[j].wy) > QI_TERRAIN_PATCH_RADIUS ||
 			    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
-			    wild_info[q_ptr->deliver_wpos[stage][j].wy][q_ptr->deliver_wpos[stage][j].wx].type)
+			    wild_info[q_ptr->deliver_wpos[j].wy][q_ptr->deliver_wpos[j].wx].type)
 				continue;
 		}
 		/* just check a single, specific wpos? */
-		else if (!inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) continue;
+		else if (!inarea(&q_ptr->deliver_wpos[j], &p_ptr->wpos)) continue;
 
 		/* check for exact x,y location */
-		if (q_ptr->deliver_pos_x[stage][j] != p_ptr->px ||
-		    q_ptr->deliver_pos_y[stage][j] != p_ptr->py)
+		if (q_ptr->deliver_pos_x[j] != p_ptr->px ||
+		    q_ptr->deliver_pos_y[j] != p_ptr->py)
 			continue;
 #if QDEBUG > 3
 		s_printf(" PASSED LOCATION CHECK.\n");
@@ -2197,17 +2205,17 @@ static int quest_goal_check_stage(int pInd, int q_idx) {
 	/* scan through all possible follow-up stages */
 	for (j = 0; j < QI_FOLLOWUP_STAGES; j++) {
 		/* no follow-up stage? */
-		if (q_ptr->next_stage_from_goals[stage][j] == -1) continue;
+		if (q_ptr->next_stage_from_goals[j] == -1) continue;
 
 		/* scan through all goals required to be fulfilled to enter this stage */
 		for (i = 0; i < QI_STAGE_GOALS; i++) {
-			if (q_ptr->goals_for_stage[stage][j][i] == -1) continue;
+			if (q_ptr->goals_for_stage[j][i] == -1) continue;
 
 			/* If even one goal is missing, we cannot advance. */
-			if (!quest_get_goal(pInd, q_idx, q_ptr->goals_for_stage[stage][j][i], FALSE)) break;
+			if (!quest_get_goal(pInd, q_idx, q_ptr->goals_for_stage[j][i], FALSE)) break;
 		}
 		/* we may proceed to another stage? */
-		if (i == QI_STAGE_GOALS) return q_ptr->next_stage_from_goals[stage][j];
+		if (i == QI_STAGE_GOALS) return q_ptr->next_stage_from_goals[j];
 	}
 	return -1; /* goals are not complete yet */
 }
@@ -2361,18 +2369,18 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	/* scan through all possible follow-up stages */
 	for (j = 0; j < QI_STAGE_REWARDS; j++) {
 		/* no reward? */
-		if (!q_ptr->reward_otval[stage][j] &&
-		    !q_ptr->reward_oreward[stage][j] &&
-		    !q_ptr->reward_gold[stage][j] &&
-		    !q_ptr->reward_exp[stage][j]) //TODO: reward_statuseffect
+		if (!q_ptr->reward_otval[j] &&
+		    !q_ptr->reward_oreward[j] &&
+		    !q_ptr->reward_gold[j] &&
+		    !q_ptr->reward_exp[j]) //TODO: reward_statuseffect
 			continue;
 
 		/* scan through all goals required to be fulfilled to get this reward */
 		for (i = 0; i < QI_REWARD_GOALS; i++) {
-			if (q_ptr->goals_for_reward[stage][j][i] == -1) continue;
+			if (q_ptr->goals_for_reward[j][i] == -1) continue;
 
 			/* if even one goal is missing, we cannot get the reward */
-			if (!quest_get_goal(pInd, q_idx, q_ptr->goals_for_reward[stage][j][i], FALSE)) break;
+			if (!quest_get_goal(pInd, q_idx, q_ptr->goals_for_reward[j][i], FALSE)) break;
 		}
 		/* we may get rewards? */
 		if (i == QI_REWARD_GOALS) {
@@ -2382,23 +2390,23 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 #endif
 
 			/* specific reward */
-			if (q_ptr->reward_otval[stage][j]) {
+			if (q_ptr->reward_otval[j]) {
 				/* very specific reward */
 				if (!q_ptr->reward_ogood && !q_ptr->reward_ogreat) {
 					o_ptr = &forge;
 					object_wipe(o_ptr);
-					invcopy(o_ptr, lookup_kind(q_ptr->reward_otval[stage][j], q_ptr->reward_osval[stage][j]));
+					invcopy(o_ptr, lookup_kind(q_ptr->reward_otval[j], q_ptr->reward_osval[j]));
 					o_ptr->number = 1;
-					o_ptr->name1 = q_ptr->reward_oname1[stage][j];
-					o_ptr->name2 = q_ptr->reward_oname2[stage][j];
-					o_ptr->name2b = q_ptr->reward_oname2b[stage][j];
+					o_ptr->name1 = q_ptr->reward_oname1[j];
+					o_ptr->name2 = q_ptr->reward_oname2[j];
+					o_ptr->name2b = q_ptr->reward_oname2b[j];
 					if (o_ptr->name1) {
 						o_ptr->name1 = ART_RANDART; //hack: disallow true arts!
 						o_ptr->name2 = o_ptr->name2b = 0;
 					}
 					apply_magic(&q_ptr->current_wpos[0], o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
-					o_ptr->pval = q_ptr->reward_opval[stage][j];
-					o_ptr->bpval = q_ptr->reward_obpval[stage][j];
+					o_ptr->pval = q_ptr->reward_opval[j];
+					o_ptr->bpval = q_ptr->reward_obpval[j];
 					o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
 					o_ptr->note_utag = 0;
 #ifdef PRE_OWN_DROP_CHOSEN
@@ -2410,9 +2418,9 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 				} else {
 					o_ptr = &forge;
 					object_wipe(o_ptr);
-					invcopy(o_ptr, lookup_kind(q_ptr->reward_otval[stage][j], q_ptr->reward_osval[stage][j]));
+					invcopy(o_ptr, lookup_kind(q_ptr->reward_otval[j], q_ptr->reward_osval[j]));
 					o_ptr->number = 1;
-					apply_magic(&q_ptr->current_wpos[0], o_ptr, -2, q_ptr->reward_ogood[stage][j], q_ptr->reward_ogreat[stage][j], q_ptr->reward_ovgreat[stage][j], FALSE, resf);
+					apply_magic(&q_ptr->current_wpos[0], o_ptr, -2, q_ptr->reward_ogood[j], q_ptr->reward_ogreat[j], q_ptr->reward_ovgreat[j], FALSE, resf);
 					o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
 					o_ptr->note_utag = 0;
 #ifdef PRE_OWN_DROP_CHOSEN
@@ -2428,19 +2436,19 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 				r_obj++;
 			}
 			/* instead use create_reward() like for events? */
-			else if (q_ptr->reward_oreward[stage][j]) {
+			else if (q_ptr->reward_oreward[j]) {
 				quest_reward_create(pInd, q_idx);
 				r_obj++;
 			}
 			/* hand out gold? */
-			if (q_ptr->reward_gold[stage][j]) {
-				quest_reward_gold(pInd, q_idx, q_ptr->reward_gold[stage][j]);
-				r_gold += q_ptr->reward_gold[stage][j];
+			if (q_ptr->reward_gold[j]) {
+				quest_reward_gold(pInd, q_idx, q_ptr->reward_gold[j]);
+				r_gold += q_ptr->reward_gold[j];
 			}
 			/* provide exp? */
-			if (q_ptr->reward_exp[stage][j]) {
-				quest_reward_exp(pInd, q_idx, q_ptr->reward_exp[stage][j]);
-				r_exp += q_ptr->reward_exp[stage][j];
+			if (q_ptr->reward_exp[j]) {
+				quest_reward_exp(pInd, q_idx, q_ptr->reward_exp[j]);
+				r_exp += q_ptr->reward_exp[j];
 			}
 			//TODO: s16b reward_statuseffect[QI_STAGES][QI_STAGE_REWARDS];
 		}
@@ -2520,24 +2528,24 @@ void quest_check_player_location(int Ind) {
 
 			/* check the quest goals, whether any of them wants a target to this location */
 			for (j = 0; j < QI_GOALS; j++) {
-				if (!q_ptr->kill[stage][j]) continue;
-				if (!q_ptr->target_pos[stage][j]) continue;
+				if (!q_ptr->kill[j]) continue;
+				if (!q_ptr->target_pos[j]) continue;
 
 				/* extend target terrain over a wide patch? */
-				if (q_ptr->target_terrain_patch[stage][j]) {
+				if (q_ptr->target_terrain_patch[j]) {
 					/* different z-coordinate = instant fail */
-					if (p_ptr->wpos.wz != q_ptr->target_wpos[stage][j].wz) continue;
+					if (p_ptr->wpos.wz != q_ptr->target_wpos[j].wz) continue;
 					/* are we within range and have same terrain type? */
-					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[stage][j].wx,
-					    q_ptr->target_wpos[stage][j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
+					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[j].wx,
+					    q_ptr->target_wpos[j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
 					    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type ==
-					    wild_info[q_ptr->target_wpos[stage][j].wy][q_ptr->target_wpos[stage][j].wx].type) {
+					    wild_info[q_ptr->target_wpos[j].wy][q_ptr->target_wpos[j].wx].type) {
 						p_ptr->quest_any_k_within_target = TRUE;
 						break;
 					}
 				}
 				/* just check a single, specific wpos? */
-				else if (inarea(&q_ptr->target_wpos[stage][j], &p_ptr->wpos)) {
+				else if (inarea(&q_ptr->target_wpos[j], &p_ptr->wpos)) {
 					p_ptr->quest_any_k_within_target = TRUE;
 					break;
 				}
@@ -2558,24 +2566,24 @@ void quest_check_player_location(int Ind) {
 
 			/* check the quest goals, whether any of them wants a target to this location */
 			for (j = 0; j < QI_GOALS; j++) {
-				if (!q_ptr->retrieve[stage][j]) continue;
-				if (!q_ptr->target_pos[stage][j]) continue;
+				if (!q_ptr->retrieve[j]) continue;
+				if (!q_ptr->target_pos[j]) continue;
 
 				/* extend target terrain over a wide patch? */
-				if (q_ptr->target_terrain_patch[stage][j]) {
+				if (q_ptr->target_terrain_patch[j]) {
 					/* different z-coordinate = instant fail */
-					if (p_ptr->wpos.wz != q_ptr->target_wpos[stage][j].wz) continue;
+					if (p_ptr->wpos.wz != q_ptr->target_wpos[j].wz) continue;
 					/* are we within range and have same terrain type? */
-					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[stage][j].wx,
-					    q_ptr->target_wpos[stage][j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
+					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->target_wpos[j].wx,
+					    q_ptr->target_wpos[j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
 					    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type ==
-					    wild_info[q_ptr->target_wpos[stage][j].wy][q_ptr->target_wpos[stage][j].wx].type) {
+					    wild_info[q_ptr->target_wpos[j].wy][q_ptr->target_wpos[j].wx].type) {
 						p_ptr->quest_any_r_within_target = TRUE;
 						break;
 					}
 				}
 				/* just check a single, specific wpos? */
-				else if (inarea(&q_ptr->target_wpos[stage][j], &p_ptr->wpos)) {
+				else if (inarea(&q_ptr->target_wpos[j], &p_ptr->wpos)) {
 					p_ptr->quest_any_r_within_target = TRUE;
 					break;
 				}
@@ -2597,20 +2605,20 @@ void quest_check_player_location(int Ind) {
 
 			/* check the quest goals, whether any of them wants a delivery to this location */
 			for (j = 0; j < QI_GOALS; j++) {
-				if (!q_ptr->deliver_pos[stage][j]) continue;
+				if (!q_ptr->deliver_pos[j]) continue;
 
 				/* extend target terrain over a wide patch? */
-				if (q_ptr->deliver_terrain_patch[stage][j]) {
+				if (q_ptr->deliver_terrain_patch[j]) {
 					/* different z-coordinate = instant fail */
-					if (p_ptr->wpos.wz != q_ptr->deliver_wpos[stage][j].wz) continue;
+					if (p_ptr->wpos.wz != q_ptr->deliver_wpos[j].wz) continue;
 					/* are we within range and have same terrain type? */
-					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[stage][j].wx,
-					    q_ptr->deliver_wpos[stage][j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
+					if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy, q_ptr->deliver_wpos[j].wx,
+					    q_ptr->deliver_wpos[j].wy) <= QI_TERRAIN_PATCH_RADIUS &&
 					    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type ==
-					    wild_info[q_ptr->deliver_wpos[stage][j].wy][q_ptr->deliver_wpos[stage][j].wx].type) {
+					    wild_info[q_ptr->deliver_wpos[j].wy][q_ptr->deliver_wpos[j].wx].type) {
 						/* imprint new temporary destination location information */
 						/* specific x,y loc? */
-						if (q_ptr->deliver_pos_x[stage][j] != -1) {
+						if (q_ptr->deliver_pos_x[j] != -1) {
 							p_ptr->quest_deliver_xy[i] = TRUE;
 							p_ptr->quest_any_deliver_xy_within_target = TRUE;
 							/* and check right away if we're already on the correct x,y location */
@@ -2623,10 +2631,10 @@ void quest_check_player_location(int Ind) {
 					}
 				}
 				/* just check a single, specific wpos? */
-				else if (inarea(&q_ptr->deliver_wpos[stage][j], &p_ptr->wpos)) {
+				else if (inarea(&q_ptr->deliver_wpos[j], &p_ptr->wpos)) {
 					/* imprint new temporary destination location information */
 					/* specific x,y loc? */
-					if (q_ptr->deliver_pos_x[stage][j] != -1) {
+					if (q_ptr->deliver_pos_x[j] != -1) {
 						p_ptr->quest_deliver_xy[i] = TRUE;
 						p_ptr->quest_any_deliver_xy_within_target = TRUE;
 						/* and check right away if we're already on the correct x,y location */
@@ -2793,6 +2801,11 @@ qi_goal *init_quest_goal(int q_idx, int stage, int num) {
 			s_printf("init_quest_goal() Couldn't allocate memory!\n");
 			exit(0);
 		}
+
+		/* initialise */
+		p->kill = NULL;
+		p->retrieve = NULL;
+		p->deliver = NULL;
 
 		/* attach it to its parent structure */
 		stage->goal[i] = p;
