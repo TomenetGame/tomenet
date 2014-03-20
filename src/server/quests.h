@@ -46,7 +46,10 @@ typedef struct qi_questor {
 	/* exact questor starting location */
 	struct worldpos start_wpos;			/* -1, -1 for random */
 	s16b start_x, start_y;				/* -1, -1 for random */
-	cptr tpref;				/* filename of map to load, or empty for none */
+	cptr tpref;					/* filename of map to load, or empty for none */
+
+	bool static_floor;				/* questor floor will be static while the quest is active */
+	bool quit_floor;				/* if player leaves the questor's floor, the quest will terminate and be lost */
 
 	bool s_dungeon[MAX_D_IDX];			/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
 	u32b s_dungeon_must_flags1, s_dungeon_must_flags2, s_dungeon_must_flags3;	/*  eligible wilderness dungeon flags */
@@ -185,7 +188,7 @@ typedef struct qi_goal {
 	bool optional;
 
 	/* quest goals */
-	bool nisi;				/* for goals set by kill/retrieve depending on deliver (for flag changes) */
+	bool nisi;					/* for goals set by kill/retrieve depending on deliver (for flag changes) */
 	/* 'Z' lines: goals set/clear flags */
 	u16b goal_setflags;
 	u16b goal_clearflags;
@@ -367,10 +370,8 @@ typedef struct quest_info {
 							   allowing everyone to have his own personal 'instance' of the quest running simultaneusly.
 							   For example questors may spawn other questors -> must be global, not individual. */
 	s16b repeatable;				/* player may repeat this quest n times (0 = can only do this quest once) */
-	s16b cooldown;					/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
+	s16b cooldown;					/* in seconds, minimum respawn time for the quest. 0 for 24h default. */
 	int max_duration;				/* in seconds, 0 for never */
-	bool static_floor;				/* questor floor will be static while the quest is active */
-	bool quit_floor;				/* if player leaves the questor's floor, the quest will terminate and be lost */
 	s16b ending_stage;				/* if this stage is reached, the quest will terminate */
 	s16b quest_done_credit_stage;			/* minimum stage that will increase the quest_done counter of players who are pursuing the quest */
 
