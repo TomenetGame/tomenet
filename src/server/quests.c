@@ -598,6 +598,10 @@ static void quest_initialise_player_tracking(int Ind, int py_q_idx) {
 
 	p_ptr->quest_deliver_pos[py_q_idx] = FALSE;
 	p_ptr->quest_deliver_xy[py_q_idx] = FALSE;
+
+	/* for 'individual' quests, reset temporary quest data or it might get carried over from previous stage? */
+	for (i = 0; i < QI_GOALS; i++) p_ptr->quest_goals[py_q_idx][i] = FALSE;
+	for (i = 0; i < QI_OPTIONAL; i++) p_ptr->quest_goalsopt[py_q_idx][i] = FALSE;
 }
 
 /* a quest has successfully ended, clean up */
@@ -1012,10 +1016,19 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 }
 static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 	player_type *p_ptr = Players[Ind];
-	quest_info *q_ptr = &q_info[p_ptr->quest_idx[py_q_idx]];
-	int i, stage = quest_get_stage(Ind, p_ptr->quest_idx[py_q_idx]);
-	qi_stage *q_stage = &q_ptr->stage[stage];
+	quest_info *q_ptr;
+	int i, stage;
+	qi_stage *q_stage;
 	qi_goal *q_goal;
+
+	/* no quest pursued in this slot? */
+	if (p_ptr->quest_idx[py_q_idx] == -1) return;
+	q_ptr = &q_info[p_ptr->quest_idx[py_q_idx]];
+
+	/* our quest is unavailable for some reason? */
+	if (!q_ptr->defined || !q_ptr->active) return;
+	stage = quest_get_stage(Ind, p_ptr->quest_idx[py_q_idx]);
+	q_stage = &q_ptr->stage[stage];
 
 	/* now set goal-dependant (temporary) quest info again */
 	for (i = 0; i < q_stage->goals; i++) {
@@ -1127,7 +1140,7 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
-	qi_stage *q_stage = &q_ptr->stage[stage];
+	qi_stage *q_stage;
 	int i, j, k;
 	bool anything;
 
@@ -1143,6 +1156,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	   It is still used for the other stage-checking routines in this function too though:
 	    quest_goal_check_reward(), quest_terminate() and the 'anything' check. */
 	q_ptr->cur_stage = stage;
+	q_stage = &q_ptr->stage[stage];
 
 	/* For non-'individual' quests,
 	   if a participating player is around the questor, entering a new stage..
