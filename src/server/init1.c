@@ -8307,7 +8307,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-#if 0//restructure
 		/* Process 'O', which main+optional goal combinations (up to QI_REWARD_GOALS different goals per combination) are
 		   required to obtain a reward (up to QI_STAGE_REWARDS different ones, each has a goal-combo).
 		   If this line is omitted, all rewards are handed out 'for free' in this stage. */
@@ -8317,10 +8316,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* first number is the stage, second the next stage */
 			stage = atoi(buf + 2);
 			if (stage < 0 || stage >= QI_STAGES) return -1;
+			q_stage = quest_qi_stage(error_idx, stage);
+
 			if (!(c = strchr(buf + 2, ':'))) return 1;
 			c++;
 			reward = atoi(c);
 			if (reward >= QI_STAGE_REWARDS) return -1; /* out of space */
+
 			if (!(c = strchr(c, ':'))) return 1;
 			c++;
 
@@ -8330,8 +8332,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				j = atoi(c);
 				if (j < -QI_OPTIONAL || j > QI_GOALS) return 1;
 				/* main + optional goals are saved together in this array */
-				if (j > 0) q_ptr->goals_for_reward[stage][reward][l] = j - 1; //main goals
-				else if (j < 0) q_ptr->goals_for_reward[stage][reward][l] = QI_GOALS - j - 1; //followed by optional goals
+				if (j > 0) { //main goals
+					j--;
+					(void)init_quest_goal(error_idx, stage, j);
+					q_stage->goals_for_reward[reward][l] = j;
+				} else if (j < 0) { //followed by optional goals
+					j = -j - 1;
+					(void)init_quest_goal(error_idx, stage, j);
+					q_stage->goals_for_reward[reward][l] = QI_GOALS + j;
+				}
 
 				if (!(c = strchr(c, ':'))) break;
 				c++;
@@ -8341,7 +8350,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			continue;
 		}
-#endif//restructure
 
 		/* Process 'R', quest reward definitions */
 		if (buf[0] == 'R') {
