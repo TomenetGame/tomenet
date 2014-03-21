@@ -61,6 +61,7 @@ static void quest_goal_check_reward(int pInd, int q_idx);
 static bool quest_goal_check(int pInd, int q_idx, bool interacting);
 static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire);
 static void quest_imprint_tracking_information(int Ind, int py_q_idx);
+static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *m_ptr, object_type *o_ptr);
 
 
 /* error messages for quest_acquire() */
@@ -1115,6 +1116,30 @@ static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 	}
 #endif
 }
+/* Actually, for retrieval quests, check right away whether the player
+   carries any matching items and credit them!
+   (Otherwise either dropping them would reduce his counter, or picking
+   them up again would wrongly increase it or w/e depending on what
+   other approach is taken and how complicated you want it to be.) */
+void quest_precheck_retrieval(int Ind, int q_idx, int py_q_idx) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+#if 0	/* done in qcg_kr() anyway */
+	quest_info *q_ptr = &q_info[q_idx];
+	int stage = quest_get_stage(Ind, q_idx);
+	qi_stage *q_stage = quest_qi_stage(Ind, stage);
+
+	for (i = 0; i < q_stage->goals; i++) {
+		if (!q_stage->goal[i].retrieve) continue;
+		...
+	}*/
+#endif
+	for (i = 0; i < INVEN_PACK; i++) {
+		if (!p_ptr->inventory[i].k_idx) continue;
+		quest_check_goal_kr(Ind, q_idx, py_q_idx, NULL, &p_ptr->inventory[i]);
+	}
+}
 /* Store some information of the current stage in the p_ptr array,
    eg the target location for easier lookup. In theory we could make it work
    without this function, but then we'd for example have to check on EVERY
@@ -1145,6 +1170,9 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 
 	/* now set/add our new stage's info */
 	quest_imprint_tracking_information(Ind, py_q_idx);
+
+	/* check for items in our inventory that fulfil any retrieval goals we just acquired right away */
+	quest_precheck_retrieval(Ind, q_idx, py_q_idx);
 }
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
