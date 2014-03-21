@@ -301,7 +301,7 @@ typedef struct qi_stage {
 typedef struct qi_keyword {
 	char keyword[QI_KEYWORD_LEN];			/* each convo may allow the player to reply with up to m keywords a 30 chars; 'Y' as 1st keyword and 'N' as 2nd trigger a yes/no hack */
 	bool questor_ok[QI_QUESTORS];			/* this keyword is valid for which questor(s) ? */
-	bool stage_ok[QI_STAGES];			/* this keyword is valid during which stage(s) ? */
+	bool stage_ok[QI_STAGES], any_stage;		/* this keyword is valid during which stage(s) ? any_stage is an extra marker for quest_dialogue() */
 	u16b flags;					/* required flags configuration for a keyword to be enabled */
 
 	u16b setflags;					/* ..and the keyword will change flags to these */

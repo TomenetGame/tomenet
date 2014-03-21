@@ -24,7 +24,7 @@ V:0.0.1
 # (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0 (nonfunctional):timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
 # (optional) X (50x repeatable):stage:flags:narration text
 # W (15x repeatable):questor:stage:flags:convo line
-# (optional) Y (100x repeatable):questor (-1 for any):stage (-1 for any):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or -1 for dont change stage)
+# (optional) Y (100x repeatable):questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or -1 for dont change stage)
 # (optional) YQ (after a Y-line):list of further questors for which this keyword is valid, separated by colons
 # (optional) YS (after a Y-line):list of further stages during which this keyword is valid, separated by colons
 # (optional) y (50x repeatable):questor (-1 for any):stage (-1 for any):flags:keyword
@@ -50,6 +50,7 @@ V:0.0.1
 # -About keywords: '-' means the empty keyword "", ie user just needs to press ENTER key without writing anything.
 #   Use [[...]] to highlight the text between the brackets.
 #   If the first keyword for a questor/stage is "y" then a yes/no prompt will be displayed. The second questor/stage-matching keyword should be "n".
+#   (*) Keywords set to 'any stage' (-1) are not sufficient to stop an otherwise empty stage from terminate nor to prompt a quest_dialogue() on their own.
 # -About global 'flags':
 #   '-' means no flags.
 #   For lines that change those: 'a' to 'p' to clear flags, 'A' to 'P' to set flags, eg  ..:aBChK:..
@@ -161,7 +162,7 @@ $TEST_SERVER$R:4:80:38:0:0:0:0:0:0:0:0:0:2:2:0
 # //todo (optional) J:questor moves, teleports, teleports player ...
 # (optional) X (50x repeatable):stage:flags:narration text
 # W (15x repeatable):questor:stage:flags:convo line
-# (optional) Y (100x repeatable):questor (-1 for any):stage (-1 for any):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or -1 for dont change stage)
+# (optional) Y (100x repeatable):questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or -1 for dont change stage)
 # (optional) YQ (after a Y-line):list of further questors for which this keyword is valid, separated by colons
 # (optional) YS (after a Y-line):list of further stages during which this keyword is valid, separated by colons
 # (optional) y (50x repeatable):questor (-1 for any):stage (-1 for any):flags:keyword

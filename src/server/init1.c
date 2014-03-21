@@ -7848,7 +7848,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (questor != -1) q_key->questor_ok[questor] = TRUE;
 				else for (i = 0; i < QI_QUESTORS; i++) q_key->questor_ok[i] = TRUE;
 				if (stage != -1) q_key->stage_ok[stage] = TRUE;
-				else for (i = 0; i < QI_STAGES; i++) q_key->stage_ok[i] = TRUE;
+				else {
+					q_key->any_stage = TRUE;
+					for (i = 0; i < QI_STAGES; i++) q_key->stage_ok[i] = TRUE;
+				}
 				q_key->stage = nextstage;
 
 				cc = flagbuf;

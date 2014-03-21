@@ -1314,7 +1314,8 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	/* now check remaining dialogue options (keywords) */
 	for (i = 0; i < q_ptr->keywords; i++)
 		if (q_ptr->keyword[i].stage_ok[stage] && /* keyword is available in this stage */
-		    q_ptr->keyword[i].stage != -1) { /* and it's not just a keyword-reply without a stage change? */
+		    q_ptr->keyword[i].stage != -1 && /* and it's not just a keyword-reply without a stage change? */
+		    !q_ptr->keyword[i].any_stage) { /* and it's not valid in ANY stage? that's not sufficient */
 			anything = TRUE;
 			break;
 		}
@@ -1604,7 +1605,8 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	anything = FALSE;
 	for (i = 0; i < q_ptr->keywords; i++)
 		if (q_ptr->keyword[i].stage_ok[stage] &&
-		    q_ptr->keyword[i].questor_ok[questor_idx]) {
+		    q_ptr->keyword[i].questor_ok[questor_idx] &&
+		    !q_ptr->keyword[i].any_stage) { /* and it mustn't use a wildcard stage. that's not sufficient. */
 			anything = TRUE;
 			break;
 		}
