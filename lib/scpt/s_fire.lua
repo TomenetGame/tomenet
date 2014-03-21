@@ -28,7 +28,7 @@ GLOBELIGHT = add_spell
 	["desc"] =	{
 			"Creates a globe of magical light",
 			"At level 10 it starts damaging monsters",
-			"At level 25 the damage begins to increase greatly",
+			"At level 25 it starts creating a more powerful kind of light",
 	}
 }
 
