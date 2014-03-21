@@ -8350,6 +8350,12 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		o_ptr->mode = p_ptr->mode;
 	}
 
+	/* Auto id ? */
+	if (p_ptr->auto_id) {
+		object_aware(Ind, o_ptr);
+		object_known(o_ptr);
+	}
+
 	/* Auto-inscriber */
 #ifdef	AUTO_INSCRIBER
 	if (p_ptr->auto_inscribe) auto_inscribe(Ind, o_ptr, 0);

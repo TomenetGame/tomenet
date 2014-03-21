@@ -138,7 +138,7 @@ $TEST_SERVER$rV:2:1:-9999:-9999:r:-1:-1:-1:-9999:-9999:R:-1:-1:-1:
 $TEST_SERVER$M:2:2:32:32:0:0:105:40:-
 $TEST_SERVER$G:2:4:1:2
 $TEST_SERVER$X:4:-:The Goalkeeper Bat seems very satisfied.
-$TEST_SERVER$R:4:80:38:0:0:0:0:0:0:0:0:0:2:2:0
+$TEST_SERVER$R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
 
 
 # Complete state, when everything has been implemented:
