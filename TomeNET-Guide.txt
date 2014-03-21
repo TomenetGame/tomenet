@@ -6385,7 +6385,7 @@ Ironman Deep Dive Challenge (IDDC)
     Everlasting and non-everlasting characters can team up and trade items
     while they are inside the ironman deep dive dungeon.
     Level requirements on items are not in effect while inside the ironman deep
-    dive challenge either.
+    dive challenge either, so item levels are meaningless.
 
     Party bonus experience is higher than outside of IDDC. This means that the
     experience you get per killed monster is much closer to the experience you
