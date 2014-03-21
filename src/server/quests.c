@@ -985,7 +985,7 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	if (q_stage->change_stage != -1) {
 		/* not a timed change? instant then */
 		if (//!q_ptr->timed_ingame &&
-		    !q_stage->timed_ingame_abs && !q_stage->timed_real) {
+		    q_stage->timed_ingame_abs != -1 && !q_stage->timed_real) {
 #if QDEBUG > 0
 			s_printf("%s QUEST_STAGE_AUTO: '%s'(%d,%s) %d->%d\n",
 			    showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), q_stage->change_stage);
@@ -1001,7 +1001,7 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 			q_stage->timed_countdown_stage = q_stage->change_stage;
 			q_stage->timed_countdown_quiet = q_stage->quiet_change;
 		} else */
-		if (q_stage->timed_ingame_abs) {
+		if (q_stage->timed_ingame_abs != -1) {
 			q_stage->timed_countdown = -q_stage->timed_ingame_abs;
 			q_stage->timed_countdown_stage = q_stage->change_stage;
 			q_stage->timed_countdown_quiet = q_stage->quiet_change;
@@ -2891,7 +2891,7 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 	p->activate_quest = -1;
 	p->change_stage = -1;
 	p->timed_ingame_abs = -1;
-	p->timed_real = -1;
+	p->timed_real = 0;
 	if (num == 0) p->accepts = TRUE;
 	p->reward = NULL;
 	p->goal = NULL;
