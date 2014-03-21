@@ -8209,11 +8209,51 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/qinf")) { /* debug new quest_info stuff - C. Blue */
 				/* display hard info about a specific quest? */
 				if (tk) {
+					int l;
 					quest_info *q_ptr = &q_info[k];
+
 					msg_format(Ind, "\377UQuest '%s' (%d,%s):", q_name + q_ptr->name, k, q_ptr->codename);
 					for (i = 0; i < q_ptr->stages; i++) {
 						msg_format(Ind, "stage %d (qinfo:?): actq %d, autoac %d, cstage %d", i, quest_qi_stage(k, i)->activate_quest, quest_qi_stage(k, i)->auto_accept, quest_qi_stage(k, i)->change_stage);
 					}
+
+					/* ok, attempt to get the whole full frigging allocated mem size >_> */
+					j = sizeof(quest_info);
+					for (i = 0; i < q_ptr->questors; i++) {
+						j += sizeof(qi_questor);
+						if (q_ptr->questor[i].tpref) j += strlen(q_ptr->questor[i].tpref) + 1;
+					}
+					for (i = 0; i < q_ptr->stages; i++) {
+						j += sizeof(qi_stage);
+						if (q_ptr->stage[i].questor_morph) j += sizeof(qi_questor_morph);
+						if (q_ptr->stage[i].questor_hostility) j += sizeof(qi_questor_hostility);
+						if (q_ptr->stage[i].questor_act) j += sizeof(qi_questor_act);
+						for (k = 0; k < QI_TALK_LINES; k++) {
+							for (l = 0; l < q_ptr->questors; l++) {
+								if (q_ptr->stage[i].talk[l][k]) j+= strlen(q_ptr->stage[i].talk[l][k]) + 1;
+							}
+							if (q_ptr->stage[i].narration[k]) j+= strlen(q_ptr->stage[i].narration[k]) + 1;
+						}
+						for (k = 0; k < q_ptr->stage[i].rewards; k++) {
+							j += sizeof(qi_reward);
+						}
+						for (k = 0; k < q_ptr->stage[i].goals; k++) {
+							j += sizeof(qi_goal);
+							if (q_ptr->stage[i].goal[k].target_tpref) j += strlen(q_ptr->stage[i].goal[k].target_tpref) + 1;
+							if (q_ptr->stage[i].goal[k].kill) j += sizeof(qi_kill);
+							if (q_ptr->stage[i].goal[k].retrieve) j += sizeof(qi_retrieve);
+							if (q_ptr->stage[i].goal[k].deliver) j += sizeof(qi_deliver);
+						}
+					}
+					for (i = 0; i < q_ptr->keywords; i++) {
+						j += sizeof(qi_keyword);
+					}
+					for (i = 0; i < q_ptr->kwreplies; i++) {
+						j += sizeof(qi_kwreply);
+						for (k = 0; k < QI_TALK_LINES; k++)
+							if (q_ptr->kwreply[i].reply[k]) j+= strlen(q_ptr->kwreply[i].reply[k]) + 1;
+					}
+					msg_format(Ind, "\377oTotal allocated memory for q_info[]: %d", j);
 				}
 
 				/* display basic quests info */
