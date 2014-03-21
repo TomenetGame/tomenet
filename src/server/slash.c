@@ -8207,6 +8207,15 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/qinf")) { /* debug new quest_info stuff - C. Blue */
+				/* display hard info about a specific quest? */
+				if (tk) {
+					quest_info *q_ptr = &q_info[k];
+					msg_format(Ind, "\377UQuest '%s' (%d,%s):", q_name + q_ptr->name, k, q_ptr->codename);
+					for (i = 0; i < q_ptr->stages; i++) {
+						msg_format(Ind, "stage %d (qinfo:?): actq %d, autoac %d, cstage %d", i, quest_qi_stage(k, i)->activate_quest, quest_qi_stage(k, i)->auto_accept, quest_qi_stage(k, i)->change_stage);
+					}
+				}
+
 				/* display basic quests info */
 				msg_format(Ind, "\377UQuests (max_q_idx/MAX_Q_IDX %d/%d):", max_q_idx, MAX_Q_IDX);
 				for (i = 0; i < max_q_idx; i++) {
