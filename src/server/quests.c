@@ -151,7 +151,7 @@ void process_quests(void) {
 				Players[j]->quest_cooldown[i]--;
 
 
-		q_stage = &q_ptr->stage[q_ptr->cur_stage];
+		q_stage = quest_cur_qi_stage(i);
 		/* handle automatically timed stage actions */ //TODO: implement this for individual quests too
 		if (q_stage->timed_countdown < 0) {
 			if (hour == -q_stage->timed_countdown)
@@ -684,7 +684,7 @@ static bool quest_get_goal(int pInd, int q_idx, int goal, bool nisi) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
-	qi_goal *q_goal = &q_ptr->stage[stage].goal[goal];
+	qi_goal *q_goal = &quest_qi_stage(q_idx, stage)->goal[goal];
 
 	if (!pInd || !q_ptr->individual) {
 		if (nisi && q_goal->nisi) return FALSE;
@@ -728,6 +728,14 @@ static bool quest_get_goalopt(int pInd, int q_idx, int goalopt) {
 }
 #endif
 
+/* Returns the current quest->stage struct. */
+qi_stage *quest_cur_qi_stage(int q_idx) {
+	return &q_info[q_idx].stage[q_info[q_idx].cur_stage];
+}
+/* Returns a quest->stage struct to a 'stage' index used in q_info.txt. */
+qi_stage *quest_qi_stage(int q_idx, int stage) {
+	return &q_info[q_idx].stage[q_info[q_idx].stage_idx[stage]];
+}
 /* return the current quest stage. Either just uses q_ptr->cur_stage directly for global
    quests, or p_ptr->quest_stage for individual quests. */
 s16b quest_get_stage(int pInd, int q_idx) {
@@ -797,7 +805,7 @@ static void quest_set_flags(int pInd, int q_idx, u16b set_mask, u16b clear_mask)
 /* according to Z lines, change flags when a quest goal has finally be resolved. */
 //TODO for optional goals too..
 static void quest_goal_changes_flags(int pInd, int q_idx, int stage, int goal) {
-	qi_goal *q_goal = &q_info[q_idx].stage[stage].goal[goal];
+	qi_goal *q_goal = &quest_qi_stage(q_idx, stage)->goal[goal];
 
 	quest_set_flags(pInd, q_idx, q_goal->setflags, q_goal->clearflags);
 }
@@ -810,7 +818,7 @@ static void quest_set_goal(int pInd, int q_idx, int goal, bool nisi) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
-	qi_goal *q_goal = &q_info[q_idx].stage[stage].goal[goal];
+	qi_goal *q_goal = &quest_qi_stage(q_idx, stage)->goal[goal];
 
 #if QDEBUG > 2
 	s_printf("QUEST_GOAL_SET: (%s,%d) goal %d%s by %d\n", q_ptr->codename, q_idx, goal, nisi ? "n" : "", pInd);
@@ -865,7 +873,7 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, stage = quest_get_stage(pInd, q_idx);
-	qi_goal *q_goal = &q_info[q_idx].stage[stage].goal[goal];
+	qi_goal *q_goal = &quest_qi_stage(q_idx, stage)->goal[goal];
 
 #if QDEBUG > 2
 	s_printf("QUEST_GOAL_UNSET: (%s,%d) goal %d by %d\n", q_ptr->codename, q_idx, goal, pInd);
@@ -959,7 +967,7 @@ static void quest_unset_goalopt(int pInd, int q_idx, int goalopt) {
 /* perform automatic things (quest spawn/stage change) in a stage */
 static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
-	qi_stage *q_stage = &q_ptr->stage[stage];
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 
 	/* auto-spawn (and acquire) new quest? */
 	if (q_stage->activate_quest != -1) {
@@ -1017,18 +1025,19 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 	player_type *p_ptr = Players[Ind];
 	quest_info *q_ptr;
-	int i, stage;
+	int i, stage, q_idx;
 	qi_stage *q_stage;
 	qi_goal *q_goal;
 
 	/* no quest pursued in this slot? */
 	if (p_ptr->quest_idx[py_q_idx] == -1) return;
-	q_ptr = &q_info[p_ptr->quest_idx[py_q_idx]];
+	q_idx = p_ptr->quest_idx[py_q_idx];
+	q_ptr = &q_info[q_idx];
 
 	/* our quest is unavailable for some reason? */
 	if (!q_ptr->defined || !q_ptr->active) return;
-	stage = quest_get_stage(Ind, p_ptr->quest_idx[py_q_idx]);
-	q_stage = &q_ptr->stage[stage];
+	stage = quest_get_stage(Ind, q_idx);
+	q_stage = quest_qi_stage(q_idx, stage);
 
 	/* now set goal-dependant (temporary) quest info again */
 	for (i = 0; i < q_stage->goals; i++) {
@@ -1146,7 +1155,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 
 #if QDEBUG > 0
 	s_printf("%s QUEST_STAGE: '%s'(%d,%s) %d->%d\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), stage);
-	s_printf(" actq %d, autoac %d, cstage %d\n", q_ptr->stage[stage].activate_quest, q_ptr->stage[stage].auto_accept, q_ptr->stage[stage].change_stage);
+	s_printf(" actq %d, autoac %d, cstage %d\n", quest_qi_stage(q_idx, stage)->activate_quest, quest_qi_stage(q_idx, stage)->auto_accept, quest_qi_stage(q_idx, stage)->change_stage);
 #endif
 
 	/* dynamic info */
@@ -1157,7 +1166,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	   It is still used for the other stage-checking routines in this function too though:
 	    quest_goal_check_reward(), quest_terminate() and the 'anything' check. */
 	q_ptr->cur_stage = stage;
-	q_stage = &q_ptr->stage[stage];
+	q_stage = quest_qi_stage(q_idx, stage);
 
 	/* For non-'individual' quests,
 	   if a participating player is around the questor, entering a new stage..
@@ -1463,7 +1472,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 	player_type *p_ptr = Players[Ind];
 	int i, stage = quest_get_stage(Ind, q_idx);
 	bool may_acquire = FALSE;
-	qi_stage *q_stage = &q_ptr->stage[stage];
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
 
 	/* quest is deactivated? */
@@ -1527,7 +1536,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, k, stage = quest_get_stage(Ind, q_idx);
-	qi_stage *q_stage = &q_ptr->stage[stage];
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	bool anything;
 
 	if (!repeat) {
@@ -1678,10 +1687,9 @@ void quest_reply(int Ind, int q_idx, char *str) {
    Main criteria (r_idx vs char+attr+level) are OR'ed.
    (Unlike for retrieve-object matches where they are actually AND'ed.) */
 static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type *m_ptr) {
-	quest_info *q_ptr = &q_info[q_idx];
 	int i;
 	monster_race *r_ptr = race_inf(m_ptr);
-	qi_kill *q_kill = q_ptr->stage[stage].goal[goal].kill;
+	qi_kill *q_kill = quest_qi_stage(q_idx, stage)->goal[goal].kill;
 
 	/* check for race index */
 	for (i = 0; i < 10; i++) {
@@ -1722,11 +1730,10 @@ static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type
 /* Test retrieve-item quest goal criteria vs an actually retrieved object, for a match.
    (Note that the for-blocks are AND'ed unlike for kill-matches where they are OR'ed.) */
 static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_type *o_ptr) {
-	quest_info *q_ptr = &q_info[q_idx];
 	int i;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 	byte attr;
-	qi_retrieve *q_ret = q_ptr->stage[stage].goal[goal].retrieve;
+	qi_retrieve *q_ret = quest_qi_stage(q_idx, stage)->goal[goal].retrieve;
 
 	/* first let's find out the object's attr..which is uggh not so cool (from cave.c) */
 	attr = k_ptr->k_attr;
@@ -1842,7 +1849,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 	if (!q_ptr->active) return;
 
 	stage = quest_get_stage(Ind, q_idx);
-	q_stage = &q_ptr->stage[stage];
+	q_stage = quest_qi_stage(q_idx, stage);
 
 	/* For handling Z-lines: flags changed depending on goals completed:
 	   pre-check if we have any pending deliver goal in this stage.
@@ -2002,6 +2009,7 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 	quest_info *q_ptr;
 	player_type *p_ptr = Players[Ind];
 	int i, j, q_idx, stage;
+	qi_stage *q_stage;
 
 #if QDEBUG > 3
 	s_printf("QUEST_CHECK_UNGOAL_r: by %d,%s\n", Ind, p_ptr->name);
@@ -2021,14 +2029,15 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 		if (!q_ptr->active) continue;
 
 		stage = quest_get_stage(Ind, q_idx);
+		q_stage = quest_qi_stage(q_idx, stage);
 #if QDEBUG > 2
 		s_printf(" CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
 #endif
 
 		/* check the quest goals, whether any of them wants a retrieval */
-		for (j = 0; j < q_ptr->stage[stage].goals; j++) {
+		for (j = 0; j < q_stage->goals; j++) {
 			/* no r goal? */
-			if (!q_ptr->stage[stage].goal[j].retrieve) continue;
+			if (!q_stage->goal[j].retrieve) continue;
 
 			/* phew, item has nothing to do with this quest goal? */
 			if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
@@ -2053,7 +2062,7 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 	player_type *p_ptr = Players[Ind];
 	quest_info *q_ptr = &q_info[q_idx];
 	int j, k;
-	qi_stage *q_stage = &q_ptr->stage[stage];
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_goal *q_goal;
 	qi_deliver *q_del;
 
@@ -2167,7 +2176,7 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 	if (!q_ptr->active) return;
 
 	stage = quest_get_stage(Ind, q_idx);
-	q_stage = &q_ptr->stage[stage];
+	q_stage = quest_qi_stage(q_idx, stage);
 
 	/* pre-check if we have completed all kill/retrieve goals of this stage,
 	   because we can only complete any deliver goal if we have fetched all
@@ -2276,9 +2285,8 @@ void quest_check_goal_deliver(int Ind) {
 
 /* check goals for their current completion state, for entering the next stage if ok */
 static int quest_goal_check_stage(int pInd, int q_idx) {
-	quest_info *q_ptr = &q_info[q_idx];
 	int i, j, stage = quest_get_stage(pInd, q_idx);
-	qi_stage *q_stage = &q_ptr->stage[stage];
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 
 	/* scan through all possible follow-up stages */
 	for (j = 0; j < QI_FOLLOWUP_STAGES; j++) {
@@ -2457,7 +2465,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	u32b resf = RESF_NOTRUEART;
 	/* count rewards */
 	int r_obj = 0, r_gold = 0, r_exp = 0;
-	qi_stage *q_stage = &q_ptr->stage[stage];
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_reward *q_rew;
 	qi_questor *q_questor;
 
@@ -2647,7 +2655,7 @@ void quest_check_player_location(int Ind) {
 			if (!q_ptr->active) continue;
 
 			stage = quest_get_stage(Ind, q_idx);
-			q_stage = &q_ptr->stage[stage];
+			q_stage = quest_qi_stage(q_idx, stage);
 
 			/* check the quest goals, whether any of them wants a target to this location */
 			for (j = 0; j < q_stage->goals; j++) {
@@ -2688,7 +2696,7 @@ void quest_check_player_location(int Ind) {
 			if (!q_ptr->active) continue;
 
 			stage = quest_get_stage(Ind, q_idx);
-			q_stage = &q_ptr->stage[stage];
+			q_stage = quest_qi_stage(q_idx, stage);
 
 			/* check the quest goals, whether any of them wants a target to this location */
 			for (j = 0; j < q_stage->goals; j++) {
@@ -2727,7 +2735,7 @@ void quest_check_player_location(int Ind) {
 			if (!q_ptr->active) continue;
 
 			stage = quest_get_stage(Ind, q_idx);
-			q_stage = &q_ptr->stage[stage];
+			q_stage = quest_qi_stage(q_idx, stage);
 
 			/* first clear old wpos' delivery state */
 			p_ptr->quest_deliver_xy[i] = FALSE;

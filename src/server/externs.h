@@ -2156,6 +2156,8 @@ extern void quest_check_goal_r(int Ind, object_type *o_ptr);
 extern void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num);
 extern void quest_handle_disabled_on_startup(void);
 /* for initialising the quest_info structures and sub-structures in init1.c */
+extern qi_stage *quest_cur_qi_stage(int q_idx);
+extern qi_stage *quest_qi_stage(int q_idx, int stage);
 extern qi_questor *init_quest_questor(int q_idx, int num);
 extern qi_stage *init_quest_stage(int q_idx, int num);
 extern qi_keyword *init_quest_keyword(int q_idx, int num);

@@ -8321,7 +8321,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			q_stage = init_quest_stage(error_idx, stage);
 			if (goal < 0 || goal >= q_stage->goals) return 1;
-			q_goal = &q_ptr->stage[stage].goal[goal];
+			q_goal = &quest_qi_stage(error_idx, stage)->goal[goal];
 
 			cc = flagbuf;
 			if (*cc == '-') *cc = 0;
