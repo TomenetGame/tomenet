@@ -8270,6 +8270,25 @@ void do_slash_cmd(int Ind, char *message)
 				//pointless.. msg_format(Ind, " \377wSize of quest_info*max_q_idx=total (real): %d*%d=\377U%d (%d)", sizeof(quest_info), max_q_idx, sizeof(quest_info) * max_q_idx, sizeof(quest_info) * MAX_Q_IDX);
 				return;
 			}
+			/* list quest items we carry */
+			else if (prefix(message, "/qinv")) {
+				object_type *o_ptr;
+				char buf[MAX_CHARS];
+
+				if (!tk) k = Ind;
+				else k = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				p_ptr = Players[k];
+
+				msg_format(Ind, "\377yQuest item info for player %s (%d):", p_ptr->name, k);
+				for (i = 0; i < INVEN_PACK; i++) {
+					o_ptr = &p_ptr->inventory[i];
+					if (!o_ptr->k_idx) continue;
+					if (!o_ptr->quest) continue;
+					object_desc(0, buf, o_ptr, FALSE, 0);
+					msg_format(Ind, " %c) Q%dS%d%c %s", 'a' + i, o_ptr->quest - 1, o_ptr->quest_stage, o_ptr->questor ? '*' : ' ', buf);
+				}
+				return;
+			}
 			else if (prefix(message, "/qaquest") || prefix(message, "/qaq")) { /* drop a quest a player is on */
 				int q = -1, p;
 				if (!tk) {
