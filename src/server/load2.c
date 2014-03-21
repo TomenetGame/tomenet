@@ -1120,7 +1120,7 @@ static void rd_quests() {
 					strip_bytes(3);
 #endif
 				}
-				for (j = 0; j < QI_OPTIONAL; j++) {
+				for (j = 0; j < 5; j++) {
 #if 0//restructure
 					rd_byte((byte *) &q_info[i].goalsopt[k][j]);
 					rd_s16b(&q_info[i].killopt_number_left[k][j]);
@@ -2674,7 +2674,6 @@ static errr rd_savefile_new_aux(int Ind) {
 
 
 	/* read personal quest data */
-//restructure
 	if (!older_than(4, 5, 26)) {
 		rd_byte((byte *) &p_ptr->quest_any_k);
 		rd_byte((byte *) &p_ptr->quest_any_k_target);
@@ -2702,16 +2701,11 @@ static errr rd_savefile_new_aux(int Ind) {
 					rd_s16b(&p_ptr->quest_kill_number[i][j]);
 					rd_s16b(&p_ptr->quest_retrieve_number[i][j]);
 				}
-				for (j = 0; j < QI_OPTIONAL; j++) {
-					rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
-					rd_s16b(&p_ptr->quest_killopt_number[i][j]);
-					rd_s16b(&p_ptr->quest_retrieveopt_number[i][j]);
-				}
+				strip_bytes(5 * (1 + 2 + 2));
 			} else {
 				for (j = 0; j < QI_GOALS; j++)
 					rd_byte((byte *) &p_ptr->quest_goals[i][j]);
-				for (j = 0; j < QI_OPTIONAL; j++)
-					rd_byte((byte *) &p_ptr->quest_goalsopt[i][j]);
+				strip_bytes(5);
 			}
 
 //restructure

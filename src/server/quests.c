@@ -602,7 +602,6 @@ static void quest_initialise_player_tracking(int Ind, int py_q_idx) {
 
 	/* for 'individual' quests, reset temporary quest data or it might get carried over from previous stage? */
 	for (i = 0; i < QI_GOALS; i++) p_ptr->quest_goals[py_q_idx][i] = FALSE;
-	for (i = 0; i < QI_OPTIONAL; i++) p_ptr->quest_goalsopt[py_q_idx][i] = FALSE;
 }
 
 /* a quest has successfully ended, clean up */
@@ -726,26 +725,6 @@ static bool quest_get_goal_nisi(int pInd, int q_idx, int goal) {
 
 	return q_goal->nisi; /* global quest */
 }
-
-/* return an optional current quest goal. Either just uses q_ptr->goalsopt directly for global
-   quests, or p_ptr->quest_goalsopt for individual quests. */
-#if 0 /* compiler warning 'unused' */
-static bool quest_get_goalopt(int pInd, int q_idx, int goalopt) {
-	quest_info *q_ptr = &q_info[q_idx];
-	player_type *p_ptr;
-	int i, stage = quest_get_stage(pInd, q_idx);
-
-	if (!pInd || !q_ptr->individual) return q_ptr->goalsopt[stage][goalopt]; /* no player? global goal */
-
-	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
-		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) return q_ptr->goalsopt[stage][goalopt]; /* player isn't on this quest. return global goal. */
-
-	if (q_ptr->individual) return p_ptr->quest_goalsopt[i][goalopt]; /* individual quest */
-	return q_ptr->goalsopt[stage][goalopt]; /* global quest */
-}
-#endif
 
 /* Returns the current quest->stage struct. */
 qi_stage *quest_cur_qi_stage(int q_idx) {
@@ -918,71 +897,6 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 	q_goal->cleared = FALSE; /* global quest */
 }
 
-/* mark an optional quest goal as reached */
-#if 0 /* compiler warning 'unused' */
-static void quest_set_goalopt(int pInd, int q_idx, int goalopt, bool nisi) {
-	quest_info *q_ptr = &q_info[q_idx];
-	player_type *p_ptr;
-	int i, stage = quest_get_stage(pInd, q_idx);
-
-	if (!pInd || !q_ptr->individual) {
-		if (!q_ptr->goalsopt[stage][goalopt] || !nisi) q_ptr->goalsopt_nisi[stage][goalopt] = nisi;
-		q_ptr->goalsopt[stage][goalopt] = TRUE; /* no player? global goal */
-		return;
-	}
-
-	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
-		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) {
-		if (!q_ptr->goalsopt[stage][goalopt] || !nisi) q_ptr->goalsopt_nisi[stage][goalopt] = nisi;
-		q_ptr->goalsopt[stage][goalopt] = TRUE; /* player isn't on this quest. return global goal. */
-		return;
-	}
-
-	if (q_ptr->individual) {
-		if (!p_ptr->quest_goalsopt[i][goalopt] || !nisi) p_ptr->quest_goalsopt_nisi[i][goalopt] = nisi;
-		p_ptr->quest_goalsopt[i][goalopt] = TRUE; /* individual quest */
-		return;
-	}
-
-	if (!q_ptr->goalsopt[stage][goalopt] || !nisi) q_ptr->goalsopt_nisi[stage][goalopt] = nisi;
-	q_ptr->goalsopt[stage][goalopt] = TRUE; /* global quest */
-
-	/* also check if we can now set flags or hand out rewards */
-	//TODO: for optional quests..
-	//(void)quest_goal_check(pInd, q_idx, FALSE);
-}
-#endif
-/* mark an optional quest goal as no longer reached. ouch. */
-#if 0 /* compiler warning 'unused' */
-static void quest_unset_goalopt(int pInd, int q_idx, int goalopt) {
-	quest_info *q_ptr = &q_info[q_idx];
-	player_type *p_ptr;
-	int i, stage = quest_get_stage(pInd, q_idx);
-
-	if (!pInd || !q_ptr->individual) {
-		q_ptr->goalsopt[stage][goalopt] = FALSE; /* no player? global goal */
-		return;
-	}
-
-	p_ptr = Players[pInd];
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
-		if (p_ptr->quest_idx[i] == q_idx) break;
-	if (i == MAX_CONCURRENT_QUESTS) {
-		q_ptr->goalsopt[stage][goalopt] = FALSE; /* player isn't on this quest. return global goal. */
-		return;
-	}
-
-	if (q_ptr->individual) {
-		p_ptr->quest_goalsopt[i][goalopt] = FALSE; /* individual quest */
-		return;
-	}
-
-	q_ptr->goalsopt[stage][goalopt] = FALSE; /* global quest */
-}
-#endif
-
 /* perform automatic things (quest spawn/stage change) in a stage */
 static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -1097,42 +1011,6 @@ static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 			}
 		}
 	}
-#if 0//TODO
-	for (i = 0; i < QI_OPTIONAL; i++) {
-		/* set deliver location helper info */
-		if (q_ptr->deliveropt_pos[stage][i]) {
-			p_ptr->quest_deliver_pos[py_q_idx] = TRUE;
-			/* finer check? */
-			if (q_ptr->deliveropt_pos_x[stage][i] != -1) p_ptr->quest_any_deliver_xy = TRUE;
-		}
-
-		/* set kill/retrieve tracking counter if we have such goals in this stage */
-		if (q_ptr->killopt[stage][i]) {
-			p_ptr->quest_killopt_number[py_q_idx][i] = q_ptr->killopt_number[stage][i];
-			/* set target location helper info */
-			p_ptr->quest_kill[py_q_idx] = TRUE;
-			/* assume it's a restricted target "at least" */
-			p_ptr->quest_any_k_target = TRUE;
-			/* if it's not a restricted target, it's active everywhere */
-			if (!q_ptr->targetopt_pos[stage][i]) {
-				p_ptr->quest_any_k = TRUE;
-				p_ptr->quest_any_k_within_target = TRUE;
-			}
-		}
-		if (q_ptr->retrieveopt[stage][i]) {
-			p_ptr->quest_retrieveopt_number[py_q_idx][i] = q_ptr->retrieveopt_number[stage][i];
-			/* set target location helper info */
-			p_ptr->quest_retrieve[py_q_idx] = TRUE;
-			/* assume it's a restricted target "at least" */
-			p_ptr->quest_any_r_target = TRUE;
-			/* if it's not a restricted target, it's active everywhere */
-			if (!q_ptr->targetopt_pos[stage][i]) {
-				p_ptr->quest_any_r = TRUE;
-				p_ptr->quest_any_r_within_target = TRUE;
-			}
-		}
-	}
-#endif
 }
 /* Actually, for retrieval quests, check right away whether the player
    carries any matching items and credit them!
@@ -1380,7 +1258,6 @@ void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
 	p_ptr->quest_stage[i] = 0; /* note that individual quests can ONLY start in stage 0, obviously */
 	p_ptr->quest_flags[i] = 0x0000;
 	for (j = 0; j < QI_GOALS; j++) p_ptr->quest_goals[i][j] = FALSE;
-	for (j = 0; j < QI_OPTIONAL; j++) p_ptr->quest_goalsopt[i][j] = FALSE;
 
 	/* reset temporary quest helper info */
 	quest_initialise_player_tracking(Ind, i);
@@ -3046,8 +2923,11 @@ qi_kwreply *init_quest_kwreply(int q_idx, int num) {
 	return &q_ptr->kwreply[num];
 }
 
-qi_kill *init_quest_kill(int q_idx, int stage, int goal) {
-	qi_goal *q_goal = init_quest_goal(q_idx, stage, goal);
+/* Allocate/initialise a kill goal, or return it if already existing.
+   NOTE: This function takes a 'goal' that is 1 higher than the internal goal index!
+         That's a hack to allow specifying 'optional' goals in q_info.txt. */
+qi_kill *init_quest_kill(int q_idx, int stage, int q_info_goal) {
+	qi_goal *q_goal = init_quest_goal(q_idx, stage,q_info_goal);
 	qi_kill *p;
 	int i;
 
@@ -3079,8 +2959,11 @@ qi_kill *init_quest_kill(int q_idx, int stage, int goal) {
 	return p;
 }
 
-qi_retrieve *init_quest_retrieve(int q_idx, int stage, int goal) {
-	qi_goal *q_goal = init_quest_goal(q_idx, stage, goal);
+/* Allocate/initialise a kill goal, or return it if already existing.
+   NOTE: This function takes a 'q_info_goal' that is 1 higher than the internal goal index!
+         That's a hack to allow specifying 'optional' goals in q_info.txt. */
+qi_retrieve *init_quest_retrieve(int q_idx, int stage, int q_info_goal) {
+	qi_goal *q_goal = init_quest_goal(q_idx, stage,q_info_goal);
 	qi_retrieve *p;
 	int i;
 
@@ -3124,8 +3007,11 @@ qi_retrieve *init_quest_retrieve(int q_idx, int stage, int goal) {
 	return p;
 }
 
-qi_deliver *init_quest_deliver(int q_idx, int stage, int goal) {
-	qi_goal *q_goal = init_quest_goal(q_idx, stage, goal);
+/* Allocate/initialise a kill goal, or return it if already existing.
+   NOTE: This function takes a 'q_info_goal' that is 1 higher than the internal goal index!
+         That's a hack to allow specifying 'optional' goals in q_info.txt. */
+qi_deliver *init_quest_deliver(int q_idx, int stage, int q_info_goal) {
+	qi_goal *q_goal = init_quest_goal(q_idx, stage,q_info_goal);
 	qi_deliver *p;
 
 	/* we already have this existing one */
@@ -3145,35 +3031,50 @@ qi_deliver *init_quest_deliver(int q_idx, int stage, int goal) {
 	return p;
 }
 
-qi_goal *init_quest_goal(int q_idx, int stage, int num) {
+/* Allocate/initialise a kill goal, or return it if already existing.
+   NOTE: This function takes a 'q_info_goal' that is 1 higher than the internal goal index!
+         That's a hack to allow specifying 'optional' goals in q_info.txt. */
+qi_goal *init_quest_goal(int q_idx, int stage, int q_info_goal) {
 	qi_stage *q_stage = init_quest_stage(q_idx, stage);
 	qi_goal *p;
+	bool opt = FALSE;
+
+	/* hack: negative number means optional goal.
+	   Once a goal is initialised as 'optional' in here,
+	   it will stay optional, even if it's referred to by positive index after that.
+	   NOTE: Goal 0 can obviously never be optional^^ but you don't have to use it! */
+	if (q_info_goal < 0) {
+		q_info_goal = -q_info_goal;
+		opt = TRUE;
+	}
+	q_info_goal--; /* unhack it to represent internal goal index now */
 
 	/* we already have this existing one */
-	if (q_stage->goals > num) return &q_stage->goal[num];
+	if (q_stage->goals > q_info_goal) return &q_stage->goal[q_info_goal];
 
 	/* allocate all missing instances up to the requested index */
-	p = (qi_goal*)realloc(q_stage->goal, sizeof(qi_goal) * (num + 1));
+	p = (qi_goal*)realloc(q_stage->goal, sizeof(qi_goal) * (q_info_goal + 1));
 	if (!p) {
 		s_printf("init_quest_goal() Couldn't allocate memory!\n");
 		exit(0);
 	}
 	/* initialise the ADDED memory */
-	//memset(p + q_stage->goals * sizeof(qi_goal), 0, (num + 1 - q_stage->goals) * sizeof(qi_goal));
-	memset(&p[q_stage->goals], 0, (num + 1 - q_stage->goals) * sizeof(qi_goal));
+	//memset(p + q_stage->goals * sizeof(qi_goal), 0, (q_info_goal + 1 - q_stage->goals) * sizeof(qi_goal));
+	memset(&p[q_stage->goals], 0, (q_info_goal + 1 - q_stage->goals) * sizeof(qi_goal));
 
 	/* attach it to its parent structure */
 	q_stage->goal = p;
-	q_stage->goals = num + 1;
+	q_stage->goals = q_info_goal + 1;
 
 	/* initialise with correct defaults (paranoia) */
 	p = &q_stage->goal[q_stage->goals - 1];
 	p->kill = NULL;
 	p->retrieve = NULL;
 	p->deliver = NULL;
+	p->optional = opt; /* permanent forever! */
 
 	/* done, return the new, requested one */
-	return &q_stage->goal[num];
+	return &q_stage->goal[q_info_goal];
 }
 
 qi_reward *init_quest_reward(int q_idx, int stage, int num) {

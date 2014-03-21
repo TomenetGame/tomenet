@@ -1379,10 +1379,10 @@ static bool wr_savefile_new(int Ind) {
 			wr_s16b(p_ptr->quest_kill_number[i][j]);
 			wr_s16b(p_ptr->quest_retrieve_number[i][j]);
 		}
-		for (j = 0; j < QI_OPTIONAL; j++) {
-			wr_byte(p_ptr->quest_goalsopt[i][j]);
-			wr_s16b(p_ptr->quest_killopt_number[i][j]);
-			wr_s16b(p_ptr->quest_retrieveopt_number[i][j]);
+		for (j = 0; j < 5; j++) {
+			wr_byte(0);
+			wr_s16b(0);
+			wr_s16b(0);
 		}
 
 		/* helper info */

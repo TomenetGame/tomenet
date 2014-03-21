@@ -8063,17 +8063,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					return (1);
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
-				q_goal = init_quest_goal(error_idx, stage, goal);
-
-				if (goal > 0) { /* main goal */
-					goal--;
-					q_goal = init_quest_goal(error_idx, stage, goal);
-				} else if (goal < 0) { /* optional goal */
-					goal = -goal - 1;
-					q_goal = init_quest_goal(error_idx, stage, goal);
-					q_goal->optional = TRUE;
-				}
+				if (ABS(goal) > QI_GOALS) return 1;
 				q_kill = init_quest_kill(error_idx, stage, goal);
 				q_kill->rlevmin = minlev;
 				q_kill->rlevmax = maxlev;
@@ -8091,16 +8081,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				k = k - 2;
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
-
-				if (goal > 0) { /* main goal */
-					goal--;
-					q_goal = init_quest_goal(error_idx, stage, goal);
-				} else if (goal < 0) { /* optional goal */
-					goal = -(goal + 1);
-					q_goal = init_quest_goal(error_idx, stage, goal);
-					q_goal->optional = TRUE;
-				}
+				if (ABS(goal) > QI_GOALS) return 1;
 				q_kill = init_quest_kill(error_idx, stage, goal);
 				for (j = 0; j < k; j++) q_kill->ridx[j] = ridx[j];
 				/* disable the unused criteria */
@@ -8115,16 +8096,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				k = (k - 2) / 2;
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
-
-				if (goal > 0) { /* main goal */
-					goal--;
-					q_goal = init_quest_goal(error_idx, stage, goal);
-				} else if (goal < 0) { /* optional goal */
-					goal = -(goal + 1);
-					q_goal = init_quest_goal(error_idx, stage, goal);
-					q_goal->optional = TRUE;
-				}
+				if (ABS(goal) > QI_GOALS) return 1;
 				q_kill = init_quest_kill(error_idx, stage, goal);
 				for (j = 0; j < k; j++) {
 					if (rchar[j] == '-') rchar[j] = 254; /* any */
@@ -8155,16 +8127,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					return (1);
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
-
-				if (goal > 0) { /* main goal */
-					goal--;
-					q_goal = init_quest_goal(error_idx, stage, goal);
-				} else if (goal < 0) { /* optional goal */
-					goal = -(goal + 1);
-					q_goal = init_quest_goal(error_idx, stage, goal);
-					q_goal->optional = TRUE;
-				}
+				if (ABS(goal) > QI_GOALS) return 1;
 				q_ret = init_quest_retrieve(error_idx, stage, goal);
 				q_ret->ovalue = minval;
 				q_ret->number = num;
@@ -8181,16 +8144,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				k = (k - 2) / 2;
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
-
-				if (goal > 0) { /* main goal */
-					goal--;
-					q_goal = init_quest_goal(error_idx, stage, goal);
-				} else if (goal < 0) { /* optional goal */
-					goal = -(goal + 1);
-					q_goal = init_quest_goal(error_idx, stage, goal);
-					q_goal->optional = TRUE;
-				}
+				if (ABS(goal) > QI_GOALS) return 1;
 				q_ret = init_quest_retrieve(error_idx, stage, goal);
 				for (j = 0; j < k; j++) {
 					q_ret->otval[j] = tval[j];
@@ -8218,16 +8172,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				k = (k - 2) / 6;
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
-				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
-
-				if (goal > 0) { /* main goal */
-					goal--;
-					q_goal = init_quest_goal(error_idx, stage, goal);
-				} else if (goal < 0) { /* optional goal */
-					goal = -(goal + 1);
-					q_goal = init_quest_goal(error_idx, stage, goal);
-					q_goal->optional = TRUE;
-				}
+				if (ABS(goal) > QI_GOALS) return 1;
 				q_ret = init_quest_retrieve(error_idx, stage, goal);
 				for (j = 0; j < k; j++) {
 					q_ret->opval[j] = pval[j];
@@ -8262,17 +8207,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			q_stage = init_quest_stage(error_idx, stage);
-
-			if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
-
-			if (goal > 0) { /* main goal */
-				goal--;
-				q_goal = init_quest_goal(error_idx, stage, goal);
-			} else if (goal < 0) { /* optional goal */
-				goal = -(goal + 1);
-				q_goal = init_quest_goal(error_idx, stage, goal);
-				q_goal->optional = TRUE;
-			}
+			if (ABS(goal) > QI_GOALS) return 1;
 			q_goal = init_quest_goal(error_idx, stage, goal);
 			q_goal->target_pos = TRUE;
 			q_goal->target_wpos.wx = (char)wx;
@@ -8300,18 +8235,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, tmpbuf)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
-			if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
-
-			if (goal > 0) { /* main goal */
-				goal--;
-				q_goal = init_quest_goal(error_idx, stage, goal);
-			} else if (goal < 0) { /* optional goal */
-				goal = -(goal + 1);
-				q_goal = init_quest_goal(error_idx, stage, goal);
-				q_goal->optional = TRUE;
-			}
+			if (ABS(goal) > QI_GOALS) return 1;
 			q_del = init_quest_deliver(error_idx, stage, goal);
-
 			q_del->wpos.wx = (char)wx;
 			q_del->wpos.wy = (char)wy;
 			q_del->wpos.wz = (char)wz;
@@ -8333,7 +8258,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* first number is the stage */
 			stage = atoi(buf + 2);
 			if (stage < 0 || stage >= QI_STAGES) return 1;
-			q_stage = quest_qi_stage(error_idx, stage);
 
 			if (!(c = strchr(buf + 2, ':'))) return 1;
 			c++;
@@ -8341,15 +8265,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* read list of numbers, separated by colons */
 			while (*c >= '0' && *c <= '9') {
 				j = atoi(c);
-				if (j < -QI_OPTIONAL || j > QI_GOALS) return 1;
-				if (j >= q_stage->goals) return 1;
+				if (ABS(j) > QI_GOALS) return 1;
+				q_goal = init_quest_goal(error_idx, stage, j);
+				q_goal->return_to_questor = TRUE;
 
-				if (j > 0) { /* main goal */
-					q_stage->goal[j - 1].return_to_questor = TRUE;
-				} else if (j < 0) { /* optional goal */
-					q_stage->goal[-j - 1].return_to_questor = TRUE;
-					q_stage->goal[-j - 1].optional = TRUE;
-				}
 				if (!(c = strchr(c, ':'))) break;
 				c++;
 				while (*c == ' ') c++; /* paranoia for comfort ^^ */
@@ -8363,9 +8282,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (3 != sscanf(s, "%d:%d:%s", &stage, &goal, flagbuf)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
-			q_stage = init_quest_stage(error_idx, stage);
-			if (goal < 0 || goal >= q_stage->goals) return 1;
-			q_goal = &quest_qi_stage(error_idx, stage)->goal[goal];
+			if (ABS(goal) > QI_GOALS) return 1;
+			q_goal = init_quest_goal(error_idx, stage, goal);
 
 			cc = flagbuf;
 			if (*cc == '-') *cc = 0;
@@ -8385,6 +8303,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* first number is the stage, second the next stage */
 			stage = atoi(buf + 2);
 			if (stage < 0 || stage >= QI_STAGES) return 1;
+
 			q_stage = init_quest_stage(error_idx, stage);
 
 			if (!(c = strchr(buf + 2, ':'))) return 1;
@@ -8410,9 +8329,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			l = 0;
 			while (*c >= '0' && *c <= '9' && l < QI_STAGE_GOALS) {
 				j = atoi(c);
-				if (j < 1 || j > QI_GOALS) return 1;
-				//allow us to create it?--  if (j > q_stage->goals) return 1;
-
+				if (j < 1 || j > QI_GOALS) return 1; /* no optional goals allowed */
 				q_stage->goals_for_stage[k][l] = j - 1;
 
 				if (!(c = strchr(c, ':'))) break;
@@ -8428,7 +8345,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			   even -or especially if- it is just an empty, final stage.
 			   For example it would call activate_quest >:). */
 			(void)init_quest_stage(error_idx, nextstage);
-
 			continue;
 		}
 
@@ -8455,17 +8371,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			l = 0;
 			while (*c >= '0' && *c <= '9' && l < QI_REWARD_GOALS) {
 				j = atoi(c);
-				if (j < -QI_OPTIONAL || j > QI_GOALS) return 1;
-				/* main + optional goals are saved together in this array */
-				if (j > 0) { //main goals
-					j--;
-					(void)init_quest_goal(error_idx, stage, j);
-					q_stage->goals_for_reward[reward][l] = j;
-				} else if (j < 0) { //followed by optional goals
-					j = -j - 1;
-					(void)init_quest_goal(error_idx, stage, j);
-					q_stage->goals_for_reward[reward][l] = QI_GOALS + j;
-				}
+				if (ABS(j) > QI_GOALS) return 1;
+				(void)init_quest_goal(error_idx, stage, j);
+				q_stage->goals_for_reward[reward][l] = ABS(j) - 1;
 
 				if (!(c = strchr(c, ':'))) break;
 				c++;

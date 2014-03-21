@@ -2723,7 +2723,6 @@ struct player_type {
 
 	/* Had a quest running when he logged out or something? ->respawn/reactivate quest? todo//unclear yet..
 	   THIS IS NEW STUFF: quest_info. Don't confuse it with older quest_type/quest[]/plots[] code sketches in bldg.c. */
-	//hard-coded stuff: QI_CODENAME_LEN 10, QI_GOALS 5, QI_OPTIONAL 5
 	int interact_questor_idx; /* id in QI_QUESTORS, which questor we just interacted with (bumped into) */
 	s16b quest_idx[MAX_CONCURRENT_QUESTS];
 	char quest_codename[MAX_CONCURRENT_QUESTS][10 + 1]; /* track up to 5 quests by their codename and roughly the current stage and goals */
@@ -2731,10 +2730,10 @@ struct player_type {
 	s32b quest_timed_stage_change[MAX_CONCURRENT_QUESTS]; /* turn tracker for automatically timed stage change */
 	s16b quest_stage[MAX_CONCURRENT_QUESTS]; /* in which stage is a quest? */
 	u16b quest_flags[MAX_CONCURRENT_QUESTS]; /* our personal quest flags configuration */
-	bool quest_goals[MAX_CONCURRENT_QUESTS][QI_GOALS], quest_goalsopt[MAX_CONCURRENT_QUESTS][QI_OPTIONAL]; /* which goals have we completed so far? */
-	bool quest_goals_nisi[MAX_CONCURRENT_QUESTS][QI_GOALS], quest_goalsopt_nisi[MAX_CONCURRENT_QUESTS][QI_OPTIONAL]; /* which goals have we completed so far? */
-	s16b quest_kill_number[MAX_CONCURRENT_QUESTS][QI_GOALS], quest_killopt_number[MAX_CONCURRENT_QUESTS][QI_OPTIONAL]; /* which goals have we completed so far? */
-	s16b quest_retrieve_number[MAX_CONCURRENT_QUESTS][QI_GOALS], quest_retrieveopt_number[MAX_CONCURRENT_QUESTS][QI_OPTIONAL]; /* which goals have we completed so far? */
+	bool quest_goals[MAX_CONCURRENT_QUESTS][QI_GOALS]; /* which goals have we completed so far? */
+	bool quest_goals_nisi[MAX_CONCURRENT_QUESTS][QI_GOALS]; /* which goals have we completed so far? */
+	s16b quest_kill_number[MAX_CONCURRENT_QUESTS][QI_GOALS]; /* which goals have we completed so far? */
+	s16b quest_retrieve_number[MAX_CONCURRENT_QUESTS][QI_GOALS]; /* which goals have we completed so far? */
 	/* permanent quest info */
 	s16b quest_done[MAX_Q_IDX]; /* player has completed a quest (n times) */
 	s16b quest_cooldown[MAX_Q_IDX]; /* player has to wait n minutes till picking up the quest again */

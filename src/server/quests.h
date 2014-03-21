@@ -139,12 +139,9 @@ typedef struct qi_questor_act {
 	s16b teleport_x, teleport_y;
 } qi_questor_act;
 
-	/* quest goals, up to 10 per stage, with a multitude of different sub-goals (Note: of the subgoals 1 is randomly picked for the player, except if 'xxx_random_pick' is set, which allows the player to pick what he wants to do).
-	   There are additionally up to 10 optional quest goals per stage.
-	   --note: the #s of subgoals don't use #defines, because they vary too much anyway for each category, so they're just hard-coded numbers. */
-//#define QI_GOALS 10 /* main goals to complete a stage */
-//#define QI_OPTIONAL 10 /* optional goals in a stage */
-
+/* quest goals, with a multitude of different sub-goals (Note: of the subgoals one is randomly picked for the player,
+   except if 'xxx_random_pick' is set, which allows the player to pick what he wants to do). */
+   //TODO ^that's not how it's implemented atm. All subgoals are OR'ed instead.
 /* Sub-structure: A single kill goal */
 typedef struct qi_kill {
 #if 0 /* too much, make it simpler for now */
@@ -188,7 +185,7 @@ typedef struct qi_goal {
 	qi_retrieve *retrieve;
 	qi_deliver *deliver;
 
-	bool optional;					/* is this an optional goal? */
+	bool optional;					/* has no effect on stage completion */
 
 	bool cleared;		//dynamic data		/* goal has been fulfilled! */
 	bool nisi;		//dynamic data		/* for goals set by kill/retrieve depending on deliver (for flag changes) */
@@ -281,8 +278,7 @@ typedef struct qi_stage {
 	byte rewards; /* up to QI_STAGE_REWARDS */
 	qi_reward *reward;
 
-	/* contains the indices of up to QI_REWARD_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
-	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10, the first QI_OPTIONAL would have index 11. */
+	/* contains the indices of up to QI_REWARD_GOALS different QI_GOALS goals which are AND'ed */
 	s16b goals_for_reward[QI_STAGE_REWARDS][QI_REWARD_GOALS]; /* returns the goal's index (or -1 if none) */
 
 
@@ -291,8 +287,7 @@ typedef struct qi_stage {
 	qi_goal *goal;
 
 	/* determine if a new stage should begin depending on which goals we have completed */
-	/* contains the indices of up to QI_STAGE_GOALS different QI_GOALS/QI_OPTIONAL goals which are AND'ed;
-	   hack: 'optional' indices start after main goals, so if QI_GOALS is 10 (indices 0..9), the first QI_OPTIONAL would have index 10. */
+	/* contains the indices of up to QI_STAGE_GOALS different QI_GOALS goals which are AND'ed; 'optional' goals are skipped in the check! */
 	s16b goals_for_stage[QI_FOLLOWUP_STAGES][QI_STAGE_GOALS]; /* returns the goal's index (or -1 if none) */
 	s16b next_stage_from_goals[QI_FOLLOWUP_STAGES]; /* <stage> index of the possible follow-up stages */
 } qi_stage;
