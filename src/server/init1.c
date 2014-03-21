@@ -7819,6 +7819,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->timed_ingame_abs[stage] = tsia;
 			q_ptr->timed_real[stage] = tsr;
 			q_ptr->quiet_change[stage] = (qcs != 0);
+
+			/* important hack: initialise the target stage!
+			   This is done to fill that stage with default values,
+			   which are important when the quest actually enters that stage,
+			   even -or especially if- it is just an empty, final stage.
+			   For example it would call activate_quest >:). */
+			if (cs != -1) (void)init_quest_stage(error_idx, cs);
 			continue;
 		}
 
@@ -7952,6 +7959,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_key->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
 				} else return 1;
 			}
+
+			/* important hack: initialise the keyword's target stage!
+			   This is done to fill that stage with default values,
+			   which are important when the quest actually enters that stage,
+			   even -or especially if- it is just an empty, final stage.
+			   For example it would call activate_quest >:). */
+			(void)init_quest_stage(error_idx, nextstage);
 			continue;
 		}
 
