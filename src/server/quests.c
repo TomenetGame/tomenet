@@ -2174,7 +2174,7 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 		/* just check a single, specific wpos? */
 		else if (!inarea(&q_del->wpos, &p_ptr->wpos)) continue;
 #if QDEBUG > 2
-		s_printf(" PASSED LOCATION CHECK.\n");
+		s_printf(" (DELIVER) PASSED LOCATION CHECK.\n");
 #endif
 
 		/* for item retrieval goals therefore linked to this deliver goal,
