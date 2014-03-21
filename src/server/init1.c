@@ -8377,6 +8377,14 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				l++;
 			}
+
+			/* important hack: initialise the target stage!
+			   This is done to fill that stage with default values,
+			   which are important when the quest actually enters that stage,
+			   even -or especially if- it is just an empty, final stage.
+			   For example it would call activate_quest >:). */
+			(void)init_quest_stage(error_idx, nextstage);
+
 			continue;
 		}
 

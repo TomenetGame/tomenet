@@ -8218,7 +8218,7 @@ void do_slash_cmd(int Ind, char *message)
 					    q_info[i].questors, q_name + q_info[i].name, q_info[i].creator);
 				}
 				/* display extra info? */
-				msg_format(Ind, " \377wSize of quest_info*max_q_idx=total: %d*%d=\377U%d", sizeof(quest_info), max_q_idx, sizeof(quest_info) * max_q_idx);
+				//pointless.. msg_format(Ind, " \377wSize of quest_info*max_q_idx=total (real): %d*%d=\377U%d (%d)", sizeof(quest_info), max_q_idx, sizeof(quest_info) * max_q_idx, sizeof(quest_info) * MAX_Q_IDX);
 				return;
 			}
 			else if (prefix(message, "/qaquest") || prefix(message, "/qaq")) { /* drop a quest a player is on */

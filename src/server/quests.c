@@ -966,9 +966,9 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 		if (!q_info[q_stage->activate_quest].disabled &&
 		    q_info[q_stage->activate_quest].defined) {
 #if QDEBUG > 0
-			s_printf("%s QUEST_ACTIVATE_AUTO: '%s'(%d,%s)\n",
+			s_printf("%s QUEST_ACTIVATE_AUTO: '%s'(%d,%s) stage %d\n",
 			    showtime(), q_name + q_info[q_stage->activate_quest].name,
-			    q_stage->activate_quest ,q_info[q_stage->activate_quest].codename);
+			    q_stage->activate_quest, q_info[q_stage->activate_quest].codename, stage);
 #endif
 			quest_activate(q_stage->activate_quest);
 			if (q_stage->auto_accept)
@@ -1146,6 +1146,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 
 #if QDEBUG > 0
 	s_printf("%s QUEST_STAGE: '%s'(%d,%s) %d->%d\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), stage);
+	s_printf(" actq %d, autoac %d, cstage %d\n", q_ptr->stage[stage].activate_quest, q_ptr->stage[stage].auto_accept, q_ptr->stage[stage].change_stage);
 #endif
 
 	/* dynamic info */
@@ -1194,11 +1195,15 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 				}
 			}
 
-			/* perform automatic actions (spawn new quest, (timed) further stage change) */
-			if (quest_stage_automatics(pInd, q_idx, stage)) return;
-
 			/* update player's quest tracking data */
 			quest_imprint_stage(i, q_idx, j);
+
+			/* perform automatic actions (spawn new quest, (timed) further stage change)
+			   Note: Should imprint correct stage on player before calling this,
+			         otherwise automatic stage change will "skip" a stage in between ^^.
+			         This should be rather cosmetic though. */
+			if (quest_stage_automatics(pInd, q_idx, stage)) return;
+
 			/* play questors' stage dialogue */
 			for (j = 0; j < q_ptr->questors; j++)
 				if (!quiet) quest_dialogue(i, q_idx, j, FALSE, FALSE);
