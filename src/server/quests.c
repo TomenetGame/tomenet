@@ -2284,8 +2284,8 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 		if (q_del->pos_x != p_ptr->px ||
 		    q_del->pos_y != p_ptr->py)
 			continue;
-#if QDEBUG > 3
-		s_printf(" PASSED LOCATION CHECK.\n");
+#if QDEBUG > 2
+		s_printf(" (DELIVER_XY) PASSED LOCATION CHECK.\n");
 #endif
 
 		/* for item retrieval goals therefore linked to this deliver goal,
