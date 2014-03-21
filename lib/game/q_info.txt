@@ -31,7 +31,7 @@ V:0.0.1
 # (optional) yY (after a y-line):list of further keywords for which this reply is valid, separated by colons
 # (optional) yQ (after a y-line):list of further questors for which this reply is valid, separated by colons
 # (optional) yS (after a y-line):list of further stages during which this reply is valid, separated by colons
-# (optional, after y, 15xrepeatable) yR:flags:reply convo line
+# (optional, YR (after a y-line, 15x repeatable):flags:reply convo line
 # (optional) k:stage:goal:minlev:maxlev:number:spawn:spawn will target
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
@@ -105,9 +105,11 @@ R:3:80:38:0:0:0:0:0:0:0:0:0:1:1:0
 #$TEST_SERVER$L:0:0:63:63:0:0:99:35:-
 #$TEST_SERVER$W:0:0:-:'Sup, fellow fruit bat! Kill shit and retrieve stuff for me.
 #$TEST_SERVER$Y:0:0:-:sup:-:-1
-#$TEST_SERVER$y:0:0:sup:-:Yo!
+#$TEST_SERVER$y:0:0:-:sup
+#$TEST_SERVER$yR:-:Yo!
 #$TEST_SERVER$Y:0:0:-:yo:-:-1
-#$TEST_SERVER$y:0:0:yo:-:Sup!
+#$TEST_SERVER$y:0:0:-:yo
+#$TEST_SERVER$yR:-:Sup!
 #$TEST_SERVER$k:0:1:0:0:3:0:0
 #$TEST_SERVER$kV:0:1:T:-
 ##$TEST_SERVER$kI:0:1:r_idx...
@@ -139,8 +141,14 @@ R:3:80:38:0:0:0:0:0:0:0:0:0:1:1:0
 # //todo (optional) J:questor moves, teleports, teleports player ...
 # (optional) X (50x repeatable):stage:flags:narration text
 # W (15x repeatable):questor:stage:flags:convo line
-# (optional) Y (30x repeatable):questor:stage (-1 for any):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage
-# (optional) y (15x repeatable):questor:stage (-1 for any):keyword:flags:reply convo line
+# (optional) Y (100x repeatable):questor (-1 for any):stage (-1 for any):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage
+# (optional) YQ (after a Y-line):list of further questors for which this keyword is valid, separated by colons
+# (optional) YS (after a Y-line):list of further stages during which this keyword is valid, separated by colons
+# (optional) y (50x repeatable):questor (-1 for any):stage (-1 for any):flags:keyword
+# (optional) yY (after a y-line):list of further keywords for which this reply is valid, separated by colons
+# (optional) yQ (after a y-line):list of further questors for which this reply is valid, separated by colons
+# (optional) yS (after a y-line):list of further stages during which this reply is valid, separated by colons
+# (optional, YR (after a y-line, 15x repeatable):flags:reply convo line
 # (optional) k:stage:goal:minlev:maxlev:number:spawn:spawn will target
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
