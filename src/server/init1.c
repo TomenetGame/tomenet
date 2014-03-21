@@ -8102,8 +8102,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_goal->optional = TRUE;
 				}
 				q_kill = init_quest_kill(error_idx, stage, goal);
-				for (j = 0; j < k; j++)
-					q_kill->ridx[j] = ridx[j];
+				for (j = 0; j < k; j++) q_kill->ridx[j] = ridx[j];
+				/* disable the unused criteria */
+				for (j = k; j < 10; j++) q_kill->ridx[j] = 0;
 				continue;
 			} else if (buf[1] == 'V') { /* specify visuals */
 				char rchar[5], rattr[5];
@@ -8131,6 +8132,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 					if (rattr[j] == '-') q_kill->rattr[j] = 254; /* any */
 					else q_kill->rattr[j] = color_char_to_attr(rattr[j]);
+				}
+				/* disable the unused criteria */
+				for (j = k; j < 5; j++) {
+					q_kill->rchar[j] = 255;
+					q_kill->rattr[j] = 255;
 				}
 				continue;
 			}
@@ -8190,6 +8196,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ret->otval[j] = tval[j];
 					q_ret->osval[j] = sval[j];
 				}
+				/* disable the unused criteria */
+				for (j = k; j < 10; j++) {
+					q_ret->otval[j] = 0;
+					q_ret->osval[j] = 0;
+				}
 				continue;
 			} else if (buf[1] == 'V') { /* specify visuals */
 				int pval[5], bpval[5], name1[5], name2[5], name2b[5], j;
@@ -8226,6 +8237,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ret->oname1[j] = name1[j];
 					q_ret->oname2[j] = name2[j];
 					q_ret->oname2b[j] = name2b[j];
+				}
+				/* disable the unused criteria */
+				for (j = k; j < 5; j++) {
+					q_ret->opval[j] = 9999;
+					q_ret->obpval[j] = 9999;
+					q_ret->oattr[j] = 255;
+					q_ret->oname1[j] = -3;
+					q_ret->oname2[j] = -3;
+					q_ret->oname2b[j] = -3;
 				}
 				continue;
 			}
