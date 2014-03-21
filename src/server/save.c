@@ -2564,61 +2564,53 @@ static bool save_quests_file(void) {
 	wr_u32b(sf_xtra);
 	wr_u32b(sf_when);
 
+	/* begin writing the actual quest data */
+
 #if 0
-	int i, j, k;
-
 	wr_s16b(max_q_idx);
-	wr_s16b(QI_QUESTORS);
-	wr_byte(QI_FLAGS);
 
-	for (i = 0; i < max_q_idx; i++) {
-		wr_byte(q_info[i].active);
-#if 0 /* actually don't write this, it's more comfortable to use q_info '-2 repeatable' entry instead */
-		wr_byte(q_info[i].disabled);
-#else
-		wr_byte(0);
-#endif
-		wr_s16b(q_info[i].cur_cooldown);
-		wr_s16b(q_info[i].cur_stage);
-		wr_s32b(q_info[i].turn_activated);
-		wr_s32b(q_info[i].turn_acquired);
+questors:
+	wr_byte(questors);
+	struct worldpos current_wpos;
+	s16b current_x, current_y;
+	s16b m_idx;
 
-		for (j = 0; j < QI_QUESTORS; j++) {
-#if 0//restructure
-			wr_byte(q_info[i].current_wpos[j].wx);
-			wr_byte(q_info[i].current_wpos[j].wy);
-			wr_byte(q_info[i].current_wpos[j].wz);
-			wr_byte(q_info[i].current_x[j]);
-			wr_byte(q_info[i].current_y[j]);
+	s16b talk_focus;
 
-			wr_s16b(q_info[i].questor_m_idx[j]);
-#else
-			wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);
-#endif
-		}
+goals:
+	wr_byte(goals);
+	bool cleared;
+	bool nisi;
+killgoals:
+	s16b number_left;
 
-		wr_u16b(q_info[i].flags);
+stages:
+	wr_byte(stages);
+	/* dynamic timer helper data */
+	s16b timed_countdown;
+	s16b timed_countdown_stage;
+	bool timed_countdown_quiet;
 
-		for (k = 0; k < QI_STAGES; k++) {
-			for (j = 0; j < QI_GOALS; j++) {
-#if 0//restructure
-				wr_byte(q_info[i].goals[k][j]);
-				wr_s16b(q_info[i].kill_number_left[k][j]);
-#else
-				wr_byte(0);wr_byte(0);wr_byte(0);
+quests:
+	bool active;
+	bool disabled;
+	//if disabled then disabled_on_load = TRUE; -- but: ignore read value for 'disabled' instead! it's better (just via q_info 'x' feat)
+	bool disabled_on_load;
+
+	s16b cur_cooldown;
+	s32b turn_activated;
+	s32b turn_acquired;
+
+	s16b cur_stage;
+	u16b flags;
+
+quests_fixed_ID:
+	char codename[QI_CODENAME_LEN + 1];
+	char creator[NAME_LEN];
+	u16b name;
 #endif
-			}
-			for (j = 0; j < QI_OPTIONAL; j++) {
-#if 0//restructure
-				wr_byte(q_info[i].goalsopt[k][j]);
-				wr_s16b(q_info[i].killopt_number_left[k][j]);
-#else
-				wr_byte(0);wr_byte(0);wr_byte(0);
-#endif
-			}
-		}
-	}
-#endif
+
+	/* finish up */
 
 	/* Write the remaining contents of the buffer */
 	write_buffer();

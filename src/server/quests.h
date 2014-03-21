@@ -84,7 +84,7 @@ typedef struct qi_questor {
 	s16b drops_pval, drops_bpval;
 	s16b drops_name1, drops_name2, drops_name2b;
 	bool drops_good, drops_great;
-	bool drops_reward	;			/*  use fitting-reward algo (from highlander etc)? */
+	bool drops_reward;				/*  use fitting-reward algo (from highlander etc)? */
 	int drops_gold;
 	int exp;
 
@@ -151,9 +151,13 @@ typedef struct qi_kill {
 	char rchar[5];					/*  ..certain types, 254 for any, 255 for none. AND's with attr/lev. */
 	byte rattr[5];					/*  ..certain colours, 254 for any, 255 for none. AND's with char/lev. */
 	byte rlevmin, rlevmax;				/* 0 for any. AND's with char/attr. */
-	s16b number, number_left;
+
+	s16b number;
+
 	byte spawn;					/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
 	byte spawn_targets;				/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
+
+	s16b number_left;	//dynamic data		/* keep track of how many are left to kill */
 } qi_kill;
 
 /* Sub-structure: A single retrieval goal (main mem eater) */
@@ -202,14 +206,12 @@ typedef struct qi_goal {
 							   max radius is QI_TERRAIN_PATCH_RADIUS. */
 	cptr target_tpref;				/* filename of map to load, or empty for none */
 
-#if 1 /* just use a deliver_pos goal instead, for now */
 	bool return_to_questor;				/* do we need to return to the questor first (bump), to get credit for particular main goals? */
-#endif
 } qi_goal;
 
 /* Sub-structure: A single quest reward */
 typedef struct qi_reward {
-	s16b otval	;				/* hand over certain rewards to the player */
+	s16b otval;					/* hand over certain rewards to the player */
 	s16b osval;
 	s16b opval, obpval;
 	s16b oname1, oname2, oname2b;
@@ -241,6 +243,7 @@ typedef struct qi_stage {
 #endif
 	s16b timed_real;				/* automatically change to a different stage after a certain amount of real minutes passed */
 	bool quiet_change;				/* for the above auto-changes: don't replay the stage's dialogue */
+
 	/* dynamic timer helper data */
 	s16b timed_countdown;				/* dynamic, for countdown for above timings: negative value = ingame absolute, positive value = real-time counting down */
 	s16b timed_countdown_stage;
