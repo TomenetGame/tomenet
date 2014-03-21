@@ -2019,7 +2019,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 				s_printf(" REMOVE RETRIEVED ITEMS.\n");
 #endif
 				if (q_ptr->individual) {
-					for (k = 0; k < INVEN_PACK; k++) {
+					for (k = INVEN_PACK - 1; k >= 0; k--) {
 						if (p_ptr->inventory[k].quest == q_idx + 1 &&
 						    p_ptr->inventory[k].quest_stage == stage) {
 							inven_item_increase(Ind, k, -99);
@@ -2225,7 +2225,7 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 		/* for item retrieval goals therefore linked to this deliver goal,
 		   remove all quest items now finally that we 'delivered' them.. */
 		if (q_ptr->individual) {
-			for (k = 0; k < INVEN_PACK; k++) {
+			for (k = INVEN_PACK - 1; k >= 0; k--) {
 				if (p_ptr->inventory[k].quest == q_idx + 1 &&
 				    p_ptr->inventory[k].quest_stage == stage) {
 					inven_item_increase(Ind, k, -99);
@@ -2341,7 +2341,7 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 		/* for item retrieval goals therefore linked to this deliver goal,
 		   remove all quest items now finally that we 'delivered' them.. */
 		if (q_ptr->individual) {
-			for (k = 0; k < INVEN_PACK; k++) {
+			for (k = INVEN_PACK - 1; k >= 0; k--) {
 				if (p_ptr->inventory[k].quest == q_idx + 1 &&
 				    p_ptr->inventory[k].quest_stage == stage) {
 					inven_item_increase(Ind, k, -99);
