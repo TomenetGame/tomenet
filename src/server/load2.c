@@ -3916,20 +3916,20 @@ void load_quests(void) {
 		(void)fd_close(fd);
 	}
 	if (!err) {
-		sf_major = vvv[0];
-		sf_minor = vvv[1];
-		sf_patch = vvv[2];
-		sf_extra = vvv[3];
+		qsf_major = vvv[0];
+		qsf_minor = vvv[1];
+		qsf_patch = vvv[2];
+		qsf_extra = vvv[3];
 
 		err = load_quests_file();
 		if (err) what ="Cannot parse quests savefile error %d";
 	}
 	if (!err) {
-		if ((version_major != sf_major) ||
-		    (version_minor != sf_minor) ||
-		    (version_patch != sf_patch)) {
+		if ((QUEST_SF_VERSION_MAJOR != qsf_major) ||
+		    (QUEST_SF_VERSION_MINOR != qsf_minor) ||
+		    (QUEST_SF_VERSION_PATCH != qsf_patch)) {
 			printf("Converted a %d.%d.%d quests savefile.\n",
-					sf_major, sf_minor, sf_patch);
+			    qsf_major, qsf_minor, qsf_patch);
 		}
 		return; //TRUE;
 	}
