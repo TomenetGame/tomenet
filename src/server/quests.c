@@ -1989,8 +1989,8 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 
 			if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
 
-			/* discard old items from another quest or quest stage that just look similar!
-			   Those are 'tainted' and cannot be reused. */
+			/* discard (old) items from another quest or quest stage that just look similar!
+			   Those cannot simply be reused. */
 			if (o_ptr->quest && (o_ptr->quest != q_idx + 1 || o_ptr->quest_stage != stage)) continue;
 
 			/* mark the item as quest item, so we know we found it at the designated target loc (if any) */
