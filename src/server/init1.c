@@ -7873,7 +7873,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				   which are important when the quest actually enters that stage,
 				   even -or especially if- it is just an empty, final stage.
 				   For example it would call activate_quest >:). */
-				(void)init_quest_stage(error_idx, nextstage);
+				if (stage != -1) (void)init_quest_stage(error_idx, nextstage);
 				continue;
 			} else if (buf[1] == 'Q') { /* add more questors to the list */
 				s = buf + 3;
