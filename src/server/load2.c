@@ -3781,7 +3781,7 @@ static errr load_quests_file() {
 			rd_byte(&load_questors);
 			strip_bytes(load_questors * 14);
 			rd_byte(&load_stages);
-			for (i = 0; i < load_stages; i++) {
+			for (j = 0; j < load_stages; j++) {
 				strip_bytes(5);
 				rd_byte(&load_goals);
 				strip_bytes(load_goals * 4);
