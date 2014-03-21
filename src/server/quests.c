@@ -708,6 +708,24 @@ static bool quest_get_goal(int pInd, int q_idx, int goal, bool nisi) {
 	if (nisi && q_goal->nisi) return FALSE;
 	return q_goal->cleared; /* global quest */
 }
+/* just return the 'nisi' state of a quest goal (for ungoal_r) */
+static bool quest_get_goal_nisi(int pInd, int q_idx, int goal) {
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr;
+	int i, stage = quest_get_stage(pInd, q_idx);
+	qi_goal *q_goal = &quest_qi_stage(q_idx, stage)->goal[goal];
+
+	if (!pInd || !q_ptr->individual) return q_goal->nisi; /* global quest */
+
+	p_ptr = Players[pInd];
+	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+		if (p_ptr->quest_idx[i] == q_idx) break;
+	if (i == MAX_CONCURRENT_QUESTS) return q_goal->nisi;  /* player isn't on this quest. return global goal. */
+
+	if (q_ptr->individual) return p_ptr->quest_goals_nisi[i][goal]; /* individual quest */
+
+	return q_goal->nisi; /* global quest */
+}
 
 /* return an optional current quest goal. Either just uses q_ptr->goalsopt directly for global
    quests, or p_ptr->quest_goalsopt for individual quests. */
@@ -1998,7 +2016,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 				}
 			if (k == q_stage->goals) {
 #if QDEBUG > 2
-			s_printf(" REMOVE RETRIEVED ITEMS.\n");
+				s_printf(" REMOVE RETRIEVED ITEMS.\n");
 #endif
 				if (q_ptr->individual) {
 					for (k = 0; k < INVEN_PACK; k++) {
@@ -2097,7 +2115,7 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 			   to deliver them, but if we don't have to deliver
 			   them and we already collected all, then the goal is
 			   set in stone...uh or cleared in stone? */
-			if (!q_stage->goal[j].nisi) continue;
+			if (!quest_get_goal_nisi(Ind, q_idx, j)) continue;
 
 			/* phew, item has nothing to do with this quest goal? */
 			if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
@@ -2189,6 +2207,21 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 		s_printf(" (DELIVER) PASSED LOCATION CHECK.\n");
 #endif
 
+		/* First mark all 'nisi' quest goals as finally resolved,
+		   to change flags accordingly if defined by a Z-line.
+		   It's important to do this before removing retieved items,
+		   just in case UNGOAL will kick in, in inven_item_increase()
+		   and unset our quest goal :-p. */
+		for (k = 0; k < q_stage->goals; k++)
+			if (quest_get_goal(Ind, q_idx, k, TRUE)) {
+				quest_set_goal(Ind, q_idx, k, FALSE);
+				quest_goal_changes_flags(Ind, q_idx, stage, k);
+			}
+
+		/* we have completed a delivery-to-wpos goal!
+		   We need to un-nisi it here before UNGOAL is called in inven_item_increase(). */
+		quest_set_goal(Ind, q_idx, j, FALSE);
+
 		/* for item retrieval goals therefore linked to this deliver goal,
 		   remove all quest items now finally that we 'delivered' them.. */
 		if (q_ptr->individual) {
@@ -2203,16 +2236,6 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 		} else {
 			//TODO (not just here): implement global retrieval quests..
 		}
-		/* ..and also mark all 'nisi' quest goals as finally resolved,
-		   to change flags accordingly if defined by a Z-line. */
-		for (k = 0; k < q_stage->goals; k++)
-			if (quest_get_goal(Ind, q_idx, k, TRUE)) {
-				quest_set_goal(Ind, q_idx, k, FALSE);
-				quest_goal_changes_flags(Ind, q_idx, stage, k);
-			}
-
-		/* we have completed a delivery-to-wpos goal! */
-		quest_set_goal(Ind, q_idx, j, FALSE);
 	}
 }
 /* Check if player completed a deliver goal to a wpos and specific x,y.
@@ -2303,13 +2326,17 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 		/* First mark all 'nisi' quest goals as finally resolved,
 		   to change flags accordingly if defined by a Z-line.
 		   It's important to do this before removing retieved items,
-		   because otherwise UNGOAL will kick in, in inven_item_increase()
+		   just in case UNGOAL will kick in, in inven_item_increase()
 		   and unset our quest goal :-p. */
 		for (k = 0; k < q_stage->goals; k++)
 			if (quest_get_goal(Ind, q_idx, k, TRUE)) {
 				quest_set_goal(Ind, q_idx, k, FALSE);
 				quest_goal_changes_flags(Ind, q_idx, stage, k);
 			}
+
+		/* we have completed a delivery-to-xy goal!
+		   We need to un-nisi it here before UNGOAL is called in inven_item_increase(). */
+		quest_set_goal(Ind, q_idx, j, FALSE);
 
 		/* for item retrieval goals therefore linked to this deliver goal,
 		   remove all quest items now finally that we 'delivered' them.. */
@@ -2325,9 +2352,6 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 		} else {
 			//TODO (not just here): implement global retrieval quests..
 		}
-
-		/* we have completed a delivery-to-xy goal! */
-		quest_set_goal(Ind, q_idx, j, FALSE);
 	}
 }
 /* Small intermediate function to reduce workload.. (3. for deliver-goals) */
