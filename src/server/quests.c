@@ -1880,7 +1880,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 		/* no k/r goal? */
 		if (!q_goal->kill && !q_goal->retrieve) continue;
 #if QDEBUG > 2
-		s_printf(" FOUND kr GOAL %d (k=%d,r=%d).\n", j, q_goal->kill, q_goal->retrieve);
+		s_printf(" FOUND kr GOAL %d (k=%d,r=%d).\n", j, q_goal->kill ? TRUE : FALSE, q_goal->retrieve ? TRUE : FALSE);
 #endif
 
 		/* location-restricted?
