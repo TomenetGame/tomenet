@@ -3892,6 +3892,7 @@ static errr load_quests_file() {
 	my_fclose(fff);
 	return (err);
 }
+/* Must be called after 'init_some_arrays', so that we already know the quest info! */
 void load_quests(void) {
 	int fd = -1;
 	byte vvv[4];
