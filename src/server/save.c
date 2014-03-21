@@ -2533,20 +2533,18 @@ void save_banlist(void) {
    However, saving this quest data of random/varying lenght is a mess anyway,
    so it's good that we keep it far away from the server savefile. */
 static bool save_quests_file(void) {
-        int        i;
-	u32b              now;
+	int i;
+	u32b now;
 
-	byte            tmp8u;
-	u16b            tmp16u;
-	u32b		tmp32u;
+	byte tmp8u;
+	u16b tmp16u;
+	u32b tmp32u;
 
 	now = time((time_t *)0);
 	/* Note the operating system */
 	sf_xtra = 0L;
 	/* Note when the file was saved */
 	sf_when = now;
-	/* Note the number of saves */
-	sf_saves++;
 
 	/* Dump the file header */
 	xor_byte = 0;
@@ -2565,8 +2563,6 @@ static bool save_quests_file(void) {
 
 	wr_u32b(sf_xtra);
 	wr_u32b(sf_when);
-	wr_u16b(sf_saves);
-
 
 #if 0
 	int i, j, k;
@@ -2623,7 +2619,6 @@ static bool save_quests_file(void) {
 		}
 	}
 #endif
-
 
 	/* Write the remaining contents of the buffer */
 	write_buffer();

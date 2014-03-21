@@ -115,8 +115,7 @@ static bool older_than(byte x, byte y, byte z)
  * This function determines if the version of the server savefile
  * currently being read is older than version "x.y.z".
  */
-static bool s_older_than(byte x, byte y, byte z)
-{
+static bool s_older_than(byte x, byte y, byte z) {
 	/* Much older, or much more recent */
 	if (ssf_major < x) return (TRUE);
 	if (ssf_major > x) return (FALSE);
@@ -133,6 +132,26 @@ static bool s_older_than(byte x, byte y, byte z)
 	return (FALSE);
 }
 
+/*
+ * This function determines if the version of the quests savefile
+ * currently being read is older than version "x.y.z".
+ */
+static bool q_older_than(byte x, byte y, byte z) {
+	/* Much older, or much more recent */
+	if (qsf_major < x) return (TRUE);
+	if (qsf_major > x) return (FALSE);
+
+	/* Distinctly older, or distinctly more recent */
+	if (qsf_minor < y) return (TRUE);
+	if (qsf_minor > y) return (FALSE);
+
+	/* Barely older, or barely more recent */
+	if (qsf_patch < z) return (TRUE);
+	if (qsf_patch > z) return (FALSE);
+
+	/* Identical versions */
+	return FALSE;
+}
 /*
  * Hack -- determine if an item is "wearable" (or a missile)
  */
@@ -2820,8 +2839,7 @@ static errr rd_savefile_new_aux(int Ind) {
  * Angband 2.8.0 will completely replace this code, see "save.c",
  * though this code will be kept to read pre-2.8.0 savefiles.
  */
-errr rd_savefile_new(int Ind)
-{
+errr rd_savefile_new(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	errr err;
@@ -2852,8 +2870,19 @@ errr rd_savefile_new(int Ind)
 	return (err);
 }
 
-errr rd_server_savefile()
-{
+/* Added this to load2.c too, for load_quests() - C. Blue */
+static bool file_exist(char *buf) {
+	int fd;
+
+	fd = fd_open(buf, O_RDONLY);
+	if (fd >= 0) {
+		fd_close(fd);
+		return (TRUE);
+	}
+	else return (FALSE);
+}
+
+errr rd_server_savefile() {
 	unsigned int i;
 
 	errr err = 0;
@@ -3673,7 +3702,45 @@ void load_banlist(void) {
    stage goals are not yet initialised. Oops.
    However, saving this quest data of random/varying lenght is a mess anyway,
    so it's good that we keep it far away from the server savefile. */
-void load_quests(void) {
+static errr load_quests_file() {
+	int i;
+	errr err = 0;
+	char savefile[MAX_PATH_LENGTH];
+
+	byte tmp8u;
+	u16b tmp16u;
+	s16b tmp16s;
+	u32b tmp32u;
+	s32b tmp32s;
+
+	path_build(savefile, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "quests");
+	fff = my_fopen(savefile, "rb");
+	if (!fff) return (-1);
+
+	/* Allocate a new buffer */
+	fff_buf = C_NEW(MAX_BUF_SIZE, char);
+	fff_buf_pos = MAX_BUF_SIZE;
+
+	/* Read the version */
+	xor_byte = 0;
+	rd_byte(&qsf_major);
+	xor_byte = 0;
+	rd_byte(&qsf_minor);
+	xor_byte = 0;
+	rd_byte(&qsf_patch);
+	xor_byte = 0;
+	rd_byte(&qsf_extra);
+	/* Hack -- decrypt */
+	xor_byte = sf_extra;
+	/* Clear the checksums */
+	v_check = 0L;
+	x_check = 0L;
+
+	/* Operating system info */
+	rd_u32b(&sf_xtra);
+	/* Time of savefile creation */
+	rd_u32b(&sf_when);
+
 #if 0
 	int i, j, k;
 	s16b max, questors;
@@ -3766,4 +3833,54 @@ void load_quests(void) {
 	}
 	s_printf("Read %d/%d saved quests states (discarded %d).\n", max, max_q_idx, max > max_q_idx ? max - max_q_idx : 0);
 #endif
+
+	C_FREE(fff_buf, MAX_BUF_SIZE, char);
+	if (ferror(fff)) err = -1;
+	my_fclose(fff);
+	return (err);
+}
+void load_quests(void) {
+	int fd = -1;
+	byte vvv[4];
+	errr err = 0;
+	cptr what = "generic";
+	char buf[1024];
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "quests");
+
+	if (!file_exist(buf)) {
+		s_printf("Quests savefile does not exist\n");
+		return; //FALSE;
+	}
+	if (!err) {
+		fd = fd_open(buf, O_RDONLY);
+		if (fd < 0) err = -1;
+		if (err) what = "Cannot open quests savefile";
+	}
+	if (!err) {
+		/* Read the first four bytes */
+		if (fd_read(fd, (char*)(vvv), 4)) err = -1;
+		if (err) what = "Cannot read quests savefile";
+		(void)fd_close(fd);
+	}
+	if (!err) {
+		sf_major = vvv[0];
+		sf_minor = vvv[1];
+		sf_patch = vvv[2];
+		sf_extra = vvv[3];
+
+		err = load_quests_file();
+		if (err) what ="Cannot parse quests savefile error %d";
+	}
+	if (!err) {
+		if ((version_major != sf_major) ||
+		    (version_minor != sf_minor) ||
+		    (version_patch != sf_patch)) {
+			printf("Converted a %d.%d.%d quests savefile.\n",
+					sf_major, sf_minor, sf_patch);
+		}
+		return; //TRUE;
+	}
+	s_printf("Error (%s) reading a %d.%d.%d quests savefile.\n", what, sf_major, sf_minor, sf_patch);
+	return; //FALSE;
 }

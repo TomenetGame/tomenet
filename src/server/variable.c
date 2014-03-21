@@ -65,6 +65,10 @@ byte ssf_minor;                  /* Savefile's "version_minor" */
 byte ssf_patch;                  /* Savefile's "version_patch" */
 byte ssf_extra;                  /* Savefile's "version_extra" */
 
+byte qsf_major;                  /* Quest Savefile's "version_major" */
+byte qsf_minor;                  /* Quest Savefile's "version_minor" */
+byte qsf_patch;                  /* Quest Savefile's "version_patch" */
+byte qsf_extra;                  /* Quest Savefile's "version_extra" */
 
 /*
  * Hack -- Run-time arguments
