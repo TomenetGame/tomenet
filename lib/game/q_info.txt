@@ -100,24 +100,24 @@ G:1:3:1
 X:3:-:The shop keeper hands you a pint of fine ale!
 R:3:80:38:0:0:0:0:0:0:0:0:0:1:1:0
 
-#$TEST_SERVER$N:2:testquest2:C. Blue:Kill/Retrieve Test Quest:-1
-#$TEST_SERVER$Q:1:37:b:A:-1:-1:-1:-1:-1:Goalkeeper Bat
-#$TEST_SERVER$L:0:0:63:63:0:0:99:35:-
-#$TEST_SERVER$W:0:0:-:'Sup, fellow fruit bat! Kill shit and retrieve stuff for me.
-#$TEST_SERVER$Y:0:0:-:sup:-:-1
-#$TEST_SERVER$y:0:0:-:sup
-#$TEST_SERVER$yR:-:Yo!
-#$TEST_SERVER$Y:0:0:-:yo:-:-1
-#$TEST_SERVER$y:0:0:-:yo
-#$TEST_SERVER$yR:-:Sup!
-#$TEST_SERVER$k:0:1:0:0:3:0:0
-#$TEST_SERVER$kV:0:1:T:-
-##$TEST_SERVER$kI:0:1:r_idx...
-#$TEST_SERVER$M:0:2:32:32:0:0:105:40:-
-#$TEST_SERVER$G:0:1:1:2
-#$TEST_SERVER$W:0:1:-:Excellent.
-#$TEST_SERVER$X:1:-:The Goalkeeper Bat seems very satisfied.
-#$TEST_SERVER$R:1:80:38:0:0:0:0:0:0:0:0:0:2:2:0
+$TEST_SERVER$N:2:testquest2:C. Blue:Kill/Retrieve Test Quest:-1
+$TEST_SERVER$Q:1:37:b:A:-1:-1:-1:-1:-1:Goalkeeper Bat
+$TEST_SERVER$L:0:0:63:63:0:0:99:35:-
+$TEST_SERVER$W:0:0:-:'Sup, fellow fruit bat! Kill shit and retrieve stuff for me.
+$TEST_SERVER$Y:0:0:-:sup:-:-1
+$TEST_SERVER$y:0:0:-:sup
+$TEST_SERVER$yR:-:Yo!
+$TEST_SERVER$Y:0:0:-:yo:-:-1
+$TEST_SERVER$y:0:0:-:yo
+$TEST_SERVER$yR:-:Sup!
+$TEST_SERVER$k:0:1:0:0:3:0:0
+$TEST_SERVER$kV:0:1:T:-
+#$TEST_SERVER$kI:0:1:r_idx...
+$TEST_SERVER$M:0:2:32:32:0:0:105:40:-
+$TEST_SERVER$G:0:1:1:2
+$TEST_SERVER$W:0:1:-:Excellent.
+$TEST_SERVER$X:1:-:The Goalkeeper Bat seems very satisfied.
+$TEST_SERVER$R:1:80:38:0:0:0:0:0:0:0:0:0:2:2:0
 
 
 # Complete state, when everything has been implemented:
