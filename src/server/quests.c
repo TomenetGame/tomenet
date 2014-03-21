@@ -1789,8 +1789,6 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 	    //#ifdef CLIENT_SHIMMER whatever..
 		attr = TERM_HALF;
 
-s_printf("attr %d vs oattr %d,%d,%d,%d,%d,%d\n", attr, q_ret->oattr[0], q_ret->oattr[1], q_ret->oattr[2], q_ret->oattr[3], q_ret->oattr[4], q_ret->oattr[5]);
-
 	/* check for tval/sval */
 	for (i = 0; i < 10; i++) {
 		/* no tval specified? */
@@ -1899,7 +1897,8 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 	   pre-check if we have any pending deliver goal in this stage.
 	   If so then we can only set the quest goal 'nisi' (provisorily),
 	   and hence flags won't get changed yet until it is eventually resolved
-	   when we turn in the delivery. */
+	   when we turn in the delivery.
+	   Now also used for limiting/fixing ungoal_r: only nisi-goals can be unset. */
 	nisi = FALSE;
 	for (j = 0; j < q_stage->goals; j++)
 		if (q_stage->goal[j].deliver) {
@@ -1989,11 +1988,16 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 			   we can just remove all the quest items right away now,
 			   since they've fulfilled their purpose of setting the quest goal. */
 			for (k = 0; k < q_stage->goals; k++)
-				if (q_stage->goal[k].deliver) break;
+				if (q_stage->goal[k].deliver) {
+#if QDEBUG > 2
+					s_printf(" CANNOT REMOVE RETRIEVED ITEMS: awaiting delivery.\n");
+#endif
+					break;
+				}
+			if (k == q_stage->goals) {
 #if QDEBUG > 2
 			s_printf(" REMOVE RETRIEVED ITEMS.\n");
 #endif
-			if (k == q_stage->goals) {
 				if (q_ptr->individual) {
 					for (k = 0; k < INVEN_PACK; k++) {
 						if (p_ptr->inventory[k].quest == q_idx + 1 &&
@@ -2079,13 +2083,19 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 		stage = quest_get_stage(Ind, q_idx);
 		q_stage = quest_qi_stage(q_idx, stage);
 #if QDEBUG > 2
-		s_printf(" CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
+		s_printf(" (UNGOAL) CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
 #endif
 
 		/* check the quest goals, whether any of them wants a retrieval */
 		for (j = 0; j < q_stage->goals; j++) {
 			/* no r goal? */
 			if (!q_stage->goal[j].retrieve) continue;
+
+			/* only nisi-goals: we can lose quest items on our way
+			   to deliver them, but if we don't have to deliver
+			   them and we already collected all, then the goal is
+			   set in stone...uh or cleared in stone? */
+			if (!q_stage->goal[j].nisi) continue;
 
 			/* phew, item has nothing to do with this quest goal? */
 			if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
@@ -2288,6 +2298,17 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 		s_printf(" (DELIVER_XY) PASSED LOCATION CHECK.\n");
 #endif
 
+		/* First mark all 'nisi' quest goals as finally resolved,
+		   to change flags accordingly if defined by a Z-line.
+		   It's important to do this before removing retieved items,
+		   because otherwise UNGOAL will kick in, in inven_item_increase()
+		   and unset our quest goal :-p. */
+		for (k = 0; k < q_stage->goals; k++)
+			if (quest_get_goal(Ind, q_idx, k, TRUE)) {
+				quest_set_goal(Ind, q_idx, k, FALSE);
+				quest_goal_changes_flags(Ind, q_idx, stage, k);
+			}
+
 		/* for item retrieval goals therefore linked to this deliver goal,
 		   remove all quest items now finally that we 'delivered' them.. */
 		if (q_ptr->individual) {
@@ -2302,13 +2323,6 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 		} else {
 			//TODO (not just here): implement global retrieval quests..
 		}
-		/* ..and also mark all 'nisi' quest goals as finally resolved,
-		   to change flags accordingly if defined by a Z-line. */
-		for (k = 0; k < q_stage->goals; k++)
-			if (quest_get_goal(Ind, q_idx, k, TRUE)) {
-				quest_set_goal(Ind, q_idx, k, FALSE);
-				quest_goal_changes_flags(Ind, q_idx, stage, k);
-			}
 
 		/* we have completed a delivery-to-xy goal! */
 		quest_set_goal(Ind, q_idx, j, FALSE);
