@@ -2893,6 +2893,8 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 	p->timed_ingame_abs = -1;
 	p->timed_real = -1;
 	if (num == 0) p->accepts = TRUE;
+	p->reward = NULL;
+	p->goal = NULL;
 
 	/* done, return the new one */
 	return &q_ptr->stage[q_ptr->stages - 1];
