@@ -12501,6 +12501,9 @@ Istar schools:
     Globe of Light  Creates a globe of magical light.
                     Lv10: Damages monsters.
                     Lv25: Turns into a more powerful kind of light.
+                          Its radius and damage begin to increase and it will
+                          damage not just monsters that are susceptible to
+                          light but all monsters.
                     Required skill level for first spell level: 2.
 
     Fire Bolt       Fires a fire bolt at a target.
