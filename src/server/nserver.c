@@ -790,6 +790,7 @@ static bool forbidden_name(char *cname) {
 	if (strlen(name) >= 5 && name[0] == 's' && name[1] == 'a' && name[2] == 'v' && name[3] == 'e' &&
 	    name[4] >= '0' && name[4] <= '9') return TRUE; /* backup save file folders, save00..saveNN */
 	if (!strcmp(name, "estate")) return TRUE; /* for new 'estate' folder that backs up houses. */
+	if (!strcmp(name, "quests")) return TRUE; /* dedicated quest state server save file */
 
 	/* account file management */
 	if (!strcmp(name, "tomenet.acc")) return TRUE;
