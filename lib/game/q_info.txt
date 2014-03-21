@@ -109,7 +109,7 @@ X:3:-:The shop keeper hands you a pint of fine ale!
 R:3:80:38:0:0:0:0:0:0:0:0:0:1:1:0
 
 $TEST_SERVER$N:2:testquest2:C. Blue:Kill/Retrieve Test Quest:-1
-$TEST_SERVER$Q:1:37:b:A:-1:-1:-1:-1:-1:Goalkeeper Bat
+$TEST_SERVER$Q:1:37:b:N:-1:-1:-1:-1:-1:Goalkeeper Bat
 $TEST_SERVER$L:0:0:63:63:0:0:99:35:-
 $TEST_SERVER$W:0:0:-:'Sup, yo, fellow fruit bat! [[Kill]] shit or [[retrieve]] stuff for me.
 $TEST_SERVER$W:0:0:-:So what do you prefer, buddy?
