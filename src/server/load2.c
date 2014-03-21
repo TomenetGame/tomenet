@@ -2700,15 +2700,18 @@ static errr rd_savefile_new_aux(int Ind) {
 					rd_byte((byte *) &p_ptr->quest_goals[i][j]);
 					rd_s16b(&p_ptr->quest_kill_number[i][j]);
 					rd_s16b(&p_ptr->quest_retrieve_number[i][j]);
+					/* hack: added in 4, 5, 26 actually: */
+					rd_byte((byte *) &p_ptr->quest_goals_nisi[i][j]);
 				}
-				strip_bytes(5 * (1 + 2 + 2));
+				/* the 'missing' byte to strip is instead used for 'nisi' above */
+		// FREE SPACE:
+				strip_bytes(5 * (2 + 2));//5 = QI_OPTIONAL
 			} else {
 				for (j = 0; j < QI_GOALS; j++)
 					rd_byte((byte *) &p_ptr->quest_goals[i][j]);
 				strip_bytes(5);
 			}
 
-//restructure
 			if (!older_than(4, 5, 26)) {
 				rd_byte((byte *) &p_ptr->quest_kill[i]);
 				rd_byte((byte *) &p_ptr->quest_retrieve[i]);

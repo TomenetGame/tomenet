@@ -1378,9 +1378,12 @@ static bool wr_savefile_new(int Ind) {
 			wr_byte(p_ptr->quest_goals[i][j]);
 			wr_s16b(p_ptr->quest_kill_number[i][j]);
 			wr_s16b(p_ptr->quest_retrieve_number[i][j]);
+			/* hack: added in 4, 5, 26 actually: */
+			wr_byte(p_ptr->quest_goals_nisi[i][j]);
 		}
 		for (j = 0; j < 5; j++) {
-			wr_byte(0);
+			/* the 'missing' byte to strip is instead used for 'nisi' above */
+	// FREE SPACE:
 			wr_s16b(0);
 			wr_s16b(0);
 		}
