@@ -2090,7 +2090,7 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 			/* phew, item has nothing to do with this quest goal? */
 			if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
 #if QDEBUG > 2
-			s_printf(" FOUND r GOAL %d.\n", j);
+			s_printf(" (UNGOAL) FOUND r GOAL %d.\n", j);
 #endif
 
 			/* increase the player's retrieve counter again */
