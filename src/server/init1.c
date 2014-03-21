@@ -7799,7 +7799,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (questor < 0 || questor >= QI_QUESTORS) return 1;
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			q_stage = init_quest_stage(error_idx, stage);
-			if ((lc = q_stage->talk_lines[questor]) == QI_TALK_LINES) return 1;
+			lc = q_stage->talk_lines[questor];
+			if (lc == QI_TALK_LINES) return 1;
 
 #if 0 /* allow full colour codes */
 			/* replace '{' by \377 */
@@ -7833,8 +7834,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (6 != sscanf(s, "%d:%d:%16[^:]:%29[^:]:%16[^:]:%d", //QI_FLAGS,QI_KEYWORD_LEN
 				    &questor, &stage, flagbuf, tmpbuf, flagbuf2, &nextstage)) return (1);
 
-				if (questor < 0 || questor >= QI_QUESTORS) return 1;
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				/* "-1" stands for 'all' */
+				if (questor < -1 || questor >= QI_QUESTORS) return 1;
+				if (stage < -1 || stage >= QI_STAGES) return 1;
 
 				lc = q_ptr->keywords;
 				if (lc >= QI_KEYWORDS) return 1;
@@ -7923,8 +7925,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (4 != sscanf(s, "%d:%d:%16[^:]:%29[^:]", //QI_FLAGS,QI_KEYWORD_LEN
 				    &questor, &stage, flagbuf, tmpbuf2)) return (1);
 
-				if (questor < 0 || questor >= QI_QUESTORS) return 1;
-				if (stage < 0 || stage >= QI_STAGES) return 1;
+				/* "-1" stands for 'all' */
+				if (questor < -1 || questor >= QI_QUESTORS) return 1;
+				if (stage < -1 || stage >= QI_STAGES) return 1;
 
 				lc = q_ptr->kwreplies;
 				if (lc >= QI_KEYWORD_REPLIES) return 1;
