@@ -2161,6 +2161,7 @@ extern qi_stage *quest_qi_stage(int q_idx, int stage);
 extern qi_questor *init_quest_questor(int q_idx, int num);
 extern qi_stage *init_quest_stage(int q_idx, int num);
 extern qi_keyword *init_quest_keyword(int q_idx, int num);
+extern qi_kwreply *init_quest_kwreply(int q_idx, int num);
 extern qi_kill *init_quest_kill(int q_idx, int stage, int goal);
 extern qi_retrieve *init_quest_retrieve(int q_idx, int stage, int goal);
 extern qi_deliver *init_quest_deliver(int q_idx, int stage, int goal);

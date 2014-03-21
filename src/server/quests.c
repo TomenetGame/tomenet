@@ -1631,14 +1631,21 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		if (!q_key->stage_ok[stage] || /* no more keywords? */
 		    !q_key->questor_ok[questor_idx]) continue;
 
-		if (strcmp(q_key->keyword, str)) continue; /* not matching? */
-
 		/* check if required flags match to enable this keyword */
 		if ((q_key->flags & quest_get_flags(Ind, q_idx)) != q_key->flags) continue;
+
+		if (strcmp(q_key->keyword, str)) continue; /* not matching? */
 
 		/* reply? */
 		for (j = 0; j < q_ptr->kwreplies; j++) {
 			q_kwr = &q_ptr->kwreply[j];
+
+			if (!q_kwr->stage_ok[stage] || /* no more keywords? */
+			    !q_kwr->questor_ok[questor_idx]) continue;
+
+			/* check if required flags match to enable this keyword */
+			if ((q_kwr->flags & quest_get_flags(Ind, q_idx)) != q_kwr->flags) continue;
+
 			for (k = 0; k < QI_KEYWORDS_PER_REPLY; k++) {
 				if (q_kwr->keyword_idx[k] == i) {
 					msg_print(Ind, "\374 ");
@@ -1650,7 +1657,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 					}
 					//msg_print(Ind, "\374 ");
 
-					j = q_ptr->kwreplies; //hack->break!
+					j = q_ptr->kwreplies; //hack->break! -- 1 reply found is enough
 					break;
 				}
 			}
@@ -2931,6 +2938,31 @@ qi_keyword *init_quest_keyword(int q_idx, int num) {
 
 	/* done, return the new, requested one */
 	return &q_ptr->keyword[num];
+}
+
+qi_kwreply *init_quest_kwreply(int q_idx, int num) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_kwreply *p;
+
+	/* we already have this existing one */
+	if (q_ptr->kwreplies > num) return &q_ptr->kwreply[num];
+
+	/* allocate all missing instances up to the requested index */
+	p = (qi_kwreply*)realloc(q_ptr->kwreply, sizeof(qi_kwreply) * (num + 1));
+	if (!p) {
+		s_printf("init_quest_kwreply() Couldn't allocate memory!\n");
+		exit(0);
+	}
+	/* initialise the ADDED memory */
+	//memset(p + q_ptr->keywords * sizeof(qi_keyword), 0, (num + 1 - q_ptr->keywords) * sizeof(qi_keyword));
+	memset(&p[q_ptr->kwreplies], 0, (num + 1 - q_ptr->kwreplies) * sizeof(qi_kwreply));
+
+	/* attach it to its parent structure */
+	q_ptr->kwreply = p;
+	q_ptr->kwreplies = num + 1;
+
+	/* done, return the new, requested one */
+	return &q_ptr->kwreply[num];
 }
 
 qi_kill *init_quest_kill(int q_idx, int stage, int goal) {

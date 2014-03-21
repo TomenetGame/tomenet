@@ -313,6 +313,9 @@ typedef struct qi_keyword {
 /* Sub-structure: A single quest keyword-reply (main mem eater) */
 typedef struct qi_kwreply {
 	byte keyword_idx[QI_KEYWORDS_PER_REPLY];	/* which keyword(s) will prompt this reply from the current questor? */
+	bool questor_ok[QI_QUESTORS];			/* this keyword reply is valid for which questor(s) ? */
+	bool stage_ok[QI_STAGES];			/* this keyword reply is valid during which stage(s) ? */
+	u16b flags;					/* this keyword reply is only valid if the set flags match? */
 
 	byte lines;
 	cptr reply[QI_TALK_LINES];			/* give a reply to the keyword (cptr table contains [QI_TALK_LINES])*/

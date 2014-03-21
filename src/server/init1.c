@@ -7307,8 +7307,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	int i, j, k, l, stage, goal, nextstage, questor;
 	char *s;
 	char codename[QI_CODENAME_LEN + 1], creator[NAME_LEN], questname[MAX_CHARS];
-	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1];
-	//char tmpbuf2[MAX_CHARS];
+	char tmpbuf[MAX_CHARS], *c, *cc, flagbuf[QI_FLAGS + 1], flagbuf2[QI_FLAGS + 1], tmpbuf2[MAX_CHARS];
 	int lc;
 
 	/* for initialising questor information with default values when reading
@@ -7320,17 +7319,17 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	//qi_questor_morph *q_qmorph;
 	//qi_questor_hostility *q_qhost;
 	//qi_questor_act *q_qact;
-	//qi_kill *q_kill;
-	//qi_retrieve *q_ret;
+	qi_kill *q_kill;
+	qi_retrieve *q_ret;
 	qi_deliver *q_del;
 	qi_goal *q_goal;
 	qi_reward *q_rew;
 	qi_stage *q_stage;
 	qi_keyword *q_key;
-	//qi_kwreply *q_kwr;
+	qi_kwreply *q_kwr;
 
 	bool disabled;
-	//u16b flags;
+	u16b flags;
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -7767,7 +7766,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'X' for narrative text */
 		if (buf[0] == 'X') {
 			s = buf + 2;
-			if (3 != sscanf(s, "%d:%16[^:]:%79[^:]",
+			if (3 != sscanf(s, "%d:%16[^:]:%79[^:]",//QI_FLAGS
 			    &stage, flagbuf, tmpbuf)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
@@ -7795,7 +7794,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			s = buf + 2;
 			C_WIPE(flagbuf, QI_FLAGS + 1, byte);
 
-			if (4 != sscanf(s, "%d:%d:%16[^:]:%79[^:]",
+			if (4 != sscanf(s, "%d:%d:%16[^:]:%79[^:]",//QI_FLAGS
 			    &questor, &stage, flagbuf, tmpbuf)) return (1);
 
 			if (questor < 0 || questor >= QI_QUESTORS) return 1;
@@ -7829,88 +7828,202 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'Y' for conversation keywords */
 		if (buf[0] == 'Y') {
-			s = buf + 2;
-			if (6 != sscanf(s, "%d:%d:%16[^:]:%29[^:]:%16[^:]:%d", //QI_KEYWORD_LEN
-			    &questor, &stage, flagbuf, tmpbuf, flagbuf2, &nextstage)) return (1);
+			/* we have 3 sub-types of 'Y' lines */
+			if (buf[1] == ':') { /* init */
+				s = buf + 2;
+				if (6 != sscanf(s, "%d:%d:%16[^:]:%29[^:]:%16[^:]:%d", //QI_FLAGS,QI_KEYWORD_LEN
+				    &questor, &stage, flagbuf, tmpbuf, flagbuf2, &nextstage)) return (1);
 
-			if (questor < 0 || questor >= QI_QUESTORS) return 1;
-			if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (questor < 0 || questor >= QI_QUESTORS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return 1;
 
-			lc = q_ptr->keywords;
-			if (lc >= QI_KEYWORDS) return 1;
-			q_key = init_quest_keyword(error_idx, lc);
+				lc = q_ptr->keywords;
+				if (lc >= QI_KEYWORDS) return 1;
+				q_key = init_quest_keyword(error_idx, lc);
 
-			/* hack: '-' denotes the empty keyword (since scanf cannot handle empty matches..) */
-			if (!strcmp(tmpbuf, "-")) tmpbuf[0] = 0;
-			strcpy(q_key->keyword, tmpbuf);
-			q_key->questor_ok[questor] = TRUE;//TODO: allow multiple questors and stages in q_info.txt
-			q_key->stage_ok[stage] = TRUE;
-			q_key->stage = nextstage;
+				/* hack: '-' denotes the empty keyword (since scanf cannot handle empty matches..) */
+				if (!strcmp(tmpbuf, "-")) tmpbuf[0] = 0;
+				strcpy(q_key->keyword, tmpbuf);
+				if (questor != -1) q_key->questor_ok[questor] = TRUE;
+				else for (i = 0; i < QI_QUESTORS; i++) q_key->questor_ok[i] = TRUE;
+				if (stage != -1) q_key->stage_ok[stage] = TRUE;
+				else for (i = 0; i < QI_STAGES; i++) q_key->stage_ok[i] = TRUE;
+				q_key->stage = nextstage;
 
-			cc = flagbuf;
-			if (*cc == '-') *cc = 0;
-			while (*cc) {
-				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
-					q_key->flags |= (0x1 << (*cc - 'A')); /* set flag */
-				} else return 1;
+				cc = flagbuf;
+					if (*cc == '-') *cc = 0;
+					while (*cc) {
+					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
+						q_key->flags |= (0x1 << (*cc - 'A')); /* set flag */
+					} else return 1;
+				}
+				cc = flagbuf2;
+				if (*cc == '-') *cc = 0;
+				while (*cc) {
+					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) {
+						q_key->setflags |= (0x1 << (*cc - 'A')); /* set flag */
+					} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
+						q_key->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
+					} else return 1;
+				}
+
+				/* important hack: initialise the keyword's target stage!
+				   This is done to fill that stage with default values,
+				   which are important when the quest actually enters that stage,
+				   even -or especially if- it is just an empty, final stage.
+				   For example it would call activate_quest >:). */
+				(void)init_quest_stage(error_idx, nextstage);
+				continue;
+			} else if (buf[1] == 'Q') { /* add more questors to the list */
+				s = buf + 3;
+
+				lc = q_ptr->keywords;
+				if (!lc) return 1;
+				q_key = init_quest_keyword(error_idx, lc - 1); /* use newest one */
+
+				/* read list of numbers, separated by colons */
+				while (*s >= '0' && *s <= '9') {
+					j = atoi(s);
+					if (j < 0 || j >= QI_QUESTORS) return 1;
+
+					q_key->questor_ok[j] = TRUE;
+
+					if (!(s = strchr(s, ':'))) break;
+					s++;
+					while (*s == ' ') s++; /* paranoia for comfort ^^ */
+				}
+				continue;
+			} else if (buf[1] == 'S') { /* add more stages to the list */
+				s = buf + 3;
+
+				lc = q_ptr->keywords;
+				if (!lc) return 1;
+				q_key = init_quest_keyword(error_idx, lc - 1); /* use newest one */
+
+				/* read list of numbers, separated by colons */
+				while (*s >= '0' && *s <= '9') {
+					j = atoi(s);
+					if (j < 0 || j >= QI_STAGES) return 1;
+
+					q_key->stage_ok[j] = TRUE;
+
+					if (!(s = strchr(s, ':'))) break;
+					s++;
+					while (*s == ' ') s++; /* paranoia for comfort ^^ */
+				}
+				continue;
 			}
-			cc = flagbuf2;
-			if (*cc == '-') *cc = 0;
-			while (*cc) {
-				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) {
-					q_key->setflags |= (0x1 << (*cc - 'A')); /* set flag */
-				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
-					q_key->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
-				} else return 1;
-			}
+			return 1;
+		}
 
-			/* important hack: initialise the keyword's target stage!
-			   This is done to fill that stage with default values,
-			   which are important when the quest actually enters that stage,
-			   even -or especially if- it is just an empty, final stage.
-			   For example it would call activate_quest >:). */
-			(void)init_quest_stage(error_idx, nextstage);
-			continue;
+		/* Process 'y' for replies to keywords (depending on flags) */
+		if (buf[0] == 'y') {
+			/* we have 5 sub-types of 'y' lines */
+			if (buf[1] == ':') { /* init */
+				s = buf + 2;
+				if (5 != sscanf(s, "%d:%d:%16[^:]:%29[^:]", //QI_FLAGS,QI_KEYWORD_LEN
+				    &questor, &stage, flagbuf, tmpbuf2)) return (1);
+
+				if (questor < 0 || questor >= QI_QUESTORS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+
+				lc = q_ptr->kwreplies;
+				if (lc >= QI_KEYWORD_REPLIES) return 1;
+				q_kwr = init_quest_kwreply(error_idx, lc);
+
+				/* find out the keyword's index */
+				for (i = 0; i < q_ptr->keywords; i++) {
+					if (!strcmp(q_ptr->keyword[i].keyword, tmpbuf2)) break;
+				}
+				/* keyword not found -> error */
+				if (i == q_ptr->keywords) return 1;
+
+				q_kwr->keyword_idx[0] = i;
+				if (questor != -1) q_kwr->questor_ok[questor] = TRUE;
+				else for (i = 0; i < QI_QUESTORS; i++) q_kwr->questor_ok[i] = TRUE;
+				if (stage != -1) q_kwr->stage_ok[stage] = TRUE;
+				else for (i = 0; i < QI_STAGES; i++) q_kwr->stage_ok[i] = TRUE;
+
+				cc = flagbuf;
+				if (*cc == '-') *cc = 0;
+				flags = 0x0000;
+				while (*cc) {
+					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
+						flags |= (0x1 << (*cc - 'A')); /* set flag */
+					} else return 1;
+				}
+				q_kwr->flags = flags;
+				continue;
+			} else if (buf[1] == 'Q') { /* add more questors to the list */
+				s = buf + 3;
+
+				lc = q_ptr->kwreplies;
+				if (!lc) return 1;
+				q_kwr = init_quest_kwreply(error_idx, lc - 1); /* use newest one */
+
+				/* read list of numbers, separated by colons */
+				while (*s >= '0' && *s <= '9') {
+					j = atoi(s);
+					if (j < 0 || j >= QI_QUESTORS) return 1;
+
+					q_kwr->questor_ok[j] = TRUE;
+
+					if (!(s = strchr(s, ':'))) break;
+					s++;
+					while (*s == ' ') s++; /* paranoia for comfort ^^ */
+				}
+				continue;
+			} else if (buf[1] == 'S') { /* add more stages to the list */
+				s = buf + 3;
+
+				lc = q_ptr->kwreplies;
+				if (!lc) return 1;
+				q_kwr = init_quest_kwreply(error_idx, lc - 1); /* use newest one */
+
+				/* read list of numbers, separated by colons */
+				while (*s >= '0' && *s <= '9') {
+					j = atoi(s);
+					if (j < 0 || j >= QI_STAGES) return 1;
+
+					q_kwr->stage_ok[j] = TRUE;
+
+					if (!(s = strchr(s, ':'))) break;
+					s++;
+					while (*s == ' ') s++; /* paranoia for comfort ^^ */
+				}
+				continue;
+			} else if (buf[1] == 'Y') { /* actual reply lines */
+				s = buf + 3;
+				if (5 != sscanf(s, "%16[^:]:%79[^:]", //QI_FLAGS
+				    flagbuf, tmpbuf)) return (1);
+
+				lc = q_ptr->kwreplies;
+				if (!lc) return 1;
+				q_kwr = init_quest_kwreply(error_idx, lc - 1); /* use newest one */
+
+				if (q_kwr->lines == QI_TALK_LINES) return 1;
+
+				c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
+				strcpy(c, tmpbuf);
+				q_kwr->reply[q_kwr->lines] = c;
+
+				cc = flagbuf;
+				if (*cc == '-') *cc = 0;
+				flags = 0x0000;
+				while (*cc) {
+					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
+						flags |= (0x1 << (*cc - 'A')); /* set flag */
+					} else return 1;
+				}
+				q_kwr->replyflags[q_kwr->lines] = flags;
+
+				q_kwr->lines++;
+				continue;
+			}
+			return 1;
 		}
 
 #if 0//restructure
-		/* Process 'y' for replies to keywords (depending on flags) */
-		if (buf[0] == 'y') {
-			s = buf + 2;
-			if (5 != sscanf(s, "%d:%d:%29[^:]:%16[^:]:%79[^:]", //QI_KEYWORD_LEN
-			    &questor, &stage, tmpbuf2, flagbuf, tmpbuf)) return (1);
-
-			if (questor < 0 || questor >= QI_QUESTORS) return 1;
-			if (stage < 0 || stage >= QI_STAGES) return 1;
-
-			/* find out the keyword's index */
-			for (i = 0; i < QI_KEYWORDS; i++) {
-				if (!q_ptr->keyword[questor][stage][i]) continue;
-				if (!strcmp(q_ptr->keyword[questor][stage][i], tmpbuf2)) break;
-			}
-			/* keyword not found -> error */
-			if (i == QI_KEYWORDS) return 1;
-
-			if (lc_keyword_reply[questor][stage][i] == QI_TALK_LINES) return 1;
-
-			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
-			strcpy(c, tmpbuf);
-			q_key->reply[questor][stage][i][lc_keyword_reply[questor][stage][i]] = c;
-
-			cc = flagbuf;
-			if (*cc == '-') *cc = 0;
-			flags = 0x0000;
-			while (*cc) {
-				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
-					flags |= (0x1 << (*cc - 'A')); /* set flag */
-				} else return 1;
-			}
-			q_key->replyflags[questor][stage][i][lc_keyword_reply[questor][stage][i]] = flags;
-
-			lc_keyword_reply[questor][stage][i]++;
-			continue;
-		}
-
 		/* Process 'k' for kill quest goal */
 		if (buf[0] == 'k') {
 			/* now we have 3 sub-types of 'k' lines -_- uhh */
@@ -8114,6 +8227,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			return -1;
 		}
+#endif//restructure
 
 		/* Process 'P' for position at which a kill/retrieve quest has to be executed */
 		if (buf[0] == 'P') {
@@ -8124,44 +8238,33 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, tmpbuf)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
+			q_stage = init_quest_stage(error_idx, stage);
+
 			if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
 
 			if (goal > 0) { /* main goal */
 				goal--;
-				q_ptr->target_pos[stage][goal] = TRUE;;
-				q_ptr->target_wpos[stage][goal].wx = (char)wx;
-				q_ptr->target_wpos[stage][goal].wy = (char)wy;
-				q_ptr->target_wpos[stage][goal].wz = (char)wz;
-				q_ptr->target_terrain_patch[stage][goal] = (terr != 0);
-				q_ptr->target_pos_x[stage][goal] = x;
-				q_ptr->target_pos_y[stage][goal] = y;
-
-				if (tmpbuf[0] == '-') q_ptr->target_tpref[stage][goal] = NULL;
-				else {
-					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
-					strcpy(c, tmpbuf);
-					q_ptr->target_tpref[stage][goal] = c;
-				}
 			} else if (goal < 0) { /* optional goal */
 				goal = -(goal + 1);
-				q_ptr->targetopt_pos[stage][goal] = TRUE;;
-				q_ptr->targetopt_wpos[stage][goal].wx = (char)wx;
-				q_ptr->targetopt_wpos[stage][goal].wy = (char)wy;
-				q_ptr->targetopt_wpos[stage][goal].wz = (char)wz;
-				q_ptr->targetopt_terrain_patch[stage][goal] = (terr != 0);
-				q_ptr->targetopt_pos_x[stage][goal] = x;
-				q_ptr->targetopt_pos_y[stage][goal] = y;
+				q_goal->optional = TRUE;
+			}
+			q_goal = init_quest_goal(error_idx, stage, goal);
+			q_goal->target_pos = TRUE;
+			q_goal->target_wpos.wx = (char)wx;
+			q_goal->target_wpos.wy = (char)wy;
+			q_goal->target_wpos.wz = (char)wz;
+			q_goal->target_terrain_patch = (terr != 0);
+			q_goal->target_pos_x = x;
+			q_goal->target_pos_y = y;
 
-				if (tmpbuf[0] == '-') q_ptr->targetopt_tpref[stage][goal] = NULL;
-				else {
-					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
-					strcpy(c, tmpbuf);
-					q_ptr->targetopt_tpref[stage][goal] = c;
-				}
+			if (tmpbuf[0] == '-') q_goal->target_tpref = NULL;
+			else {
+				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+				strcpy(c, tmpbuf);
+				q_goal->target_tpref = c;
 			}
 			continue;
 		}
-#endif//restructure
 
 		/* Process 'M' for move-to-location to finish a quest stage whose goals have already been fulfilled */
 		if (buf[0] == 'M') {
