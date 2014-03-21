@@ -929,6 +929,8 @@ extern bool seal_or_unseal_object(object_type *o_ptr);
 #endif
 extern void fix_max_depth_towerdungeon(int Ind);
 extern void load_banlist(void);
+/* for actually loading/saving dynamic quest information */
+extern void load_quests(void);
 
 /* melee1.c */
 /* melee2.c */
@@ -1370,7 +1372,8 @@ extern bool load_player(int Ind);
 extern bool load_server_info(void);
 extern bool save_server_info(void);
 extern void save_banlist(void);
-
+/* for actually loading/saving dynamic quest information */
+extern void save_quests(void);
 
 /* sched.c */
 extern void install_timer_tick(void (*func)(void), int freq);
@@ -2167,10 +2170,7 @@ extern qi_retrieve *init_quest_retrieve(int q_idx, int stage, int q_info_goal);
 extern qi_deliver *init_quest_deliver(int q_idx, int stage, int q_info_goal);
 extern qi_goal *init_quest_goal(int q_idx, int stage, int q_info_goal);
 extern qi_reward *init_quest_reward(int q_idx, int stage, int num);
-/* for actually loading/saving dynamic quest information */
 extern void fix_questors_on_startup(void);
-extern void quests_load(void);
-extern void quests_save(void);
 
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue

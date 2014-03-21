@@ -2202,8 +2202,7 @@ void add_high_score(int Ind)
  *
  * In here we try to save everybody's game, as well as save the server state.
  */
-void close_game(void)
-{
+void close_game(void) {
 	int i;
 
 	/* No suspending now */
@@ -2262,6 +2261,9 @@ void close_game(void)
 
 	/* Save list of banned players */
 	save_banlist();
+
+	/* Save dynamic quest info */
+	save_quests();
 
 	/* Try to save the server information */
 	save_server_info();
@@ -2506,8 +2508,7 @@ void wipeout_needless_objects()
  *
  * Note that this function would not be needed at all if there were no bugs.
  */
-void exit_game_panic(void)
-{
+void exit_game_panic(void) {
 	int i = 1;
 
 #ifndef WINDOWS
@@ -2524,8 +2525,7 @@ void exit_game_panic(void)
 
 		/* dump core */
 		abort();
-	}
-	else if (dumppid != -1) {
+	} else if (dumppid != -1) {
 		/* wait for the child */
 		waitpid(dumppid, &dumpstatus, 0);
 	}
@@ -2534,13 +2534,11 @@ void exit_game_panic(void)
 	/* If nothing important has happened, just quit */
 	if (!server_generated || server_saved) quit("panic");
 
-	while (NumPlayers > (i - 1))
-	{
+	while (NumPlayers > (i - 1)) {
 		player_type *p_ptr = Players[i];
 
 		/* Don't dereference bad pointers */
-		if (!p_ptr)
-		{
+		if (!p_ptr) {
 			/* Skip to next player */
 			i++;
 
@@ -2566,24 +2564,24 @@ void exit_game_panic(void)
 		s_printf("Trying panic saving %s on %d %d %d..\n", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 		/* Panic save, or get worried */
-		if (!save_player(i))
-		{
-			if (!Destroy_connection(p_ptr->conn, "panic save failed!"))
-			{
+		if (!save_player(i)) {
+			if (!Destroy_connection(p_ptr->conn, "panic save failed!")) {
 				/* Something extremely bad is going on, try to recover anyway */
 				i++;
 			}
 		}
 
 		/* Successful panic save */
-		if (!Destroy_connection(p_ptr->conn, "panic save succeeded!"))
-		{
+		if (!Destroy_connection(p_ptr->conn, "panic save succeeded!")) {
 			/* Something very bad happened, skip to next player */
 			i++;
 		}
 	}
 
 //	wipeout_needless_objects();
+
+	/* Save dynamic quest info */
+	save_quests();
 
 	/* Save list of banned players */
 	save_banlist();
@@ -2605,20 +2603,17 @@ void exit_game_panic(void)
 
 /* Save all characters and server info with 'panic save' flag set,
    to prevent non-autorecalled players after a flush error restart - C. Blue */
-void save_game_panic(void)
-{
+void save_game_panic(void) {
 	int i = 1;
 
 	/* If nothing important has happened, just quit */
 //	if (!server_generated || server_saved) return;
 
-	while (NumPlayers > (i - 1))
-	{
+	while (NumPlayers > (i - 1)) {
 		player_type *p_ptr = Players[i];
 
 		/* Don't dereference bad pointers */
-		if (!p_ptr)
-		{
+		if (!p_ptr) {
 			/* Skip to next player */
 			i++;
 
@@ -2650,7 +2645,12 @@ void save_game_panic(void)
 
 //	wipeout_needless_objects();
 
+	/* Save dynamic quest info */
+	save_quests();
+
+	/* Save list of banned players */
 	save_banlist();
+
 	save_server_info();
 
 	/* No more panicking */

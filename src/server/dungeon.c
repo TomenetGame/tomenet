@@ -7538,6 +7538,9 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 	/* Load list of banned players */
 	load_banlist();
 
+	/* Load dynamic quest info */
+	load_quests();
+
 	/* Attempt to load the server state information */
 	if (!load_server_info()) {
 		/* Oops */
@@ -7854,6 +7857,9 @@ void shutdown_server(void) {
 
 	/* Save list of banned players */
 	save_banlist();
+
+	/* Save dynamic quest info */
+	save_quests();
 
 	/* Save the server state */
 	if (!save_server_info()) quit("Server state save failed!");

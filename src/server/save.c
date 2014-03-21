@@ -453,7 +453,7 @@ static void wr_xorders() {
 	}
 }
 
-#if 0 /* need to use separate function quests_save() now */
+#if 0 /* need to use separate function save_quests() now */
 static void wr_quests() {
 	int i, j, k;
 
@@ -2453,11 +2453,6 @@ bool save_server_info() {
 	char safe[MAX_PATH_LENGTH];
 
 #if DEBUG_LEVEL > 1
-	printf("saving quest info...\n");
-#endif
-	quests_save();
-
-#if DEBUG_LEVEL > 1
 	printf("saving server info...\n");
 #endif
 	/* New savefile */
@@ -2528,4 +2523,69 @@ void save_banlist(void) {
 	for (ptr = banlist; ptr != (struct combo_ban*)NULL; ptr = ptr->next)
 		fprintf(fp, "%s|%s|%s|%d|%s\n", ptr->acc[0] ? ptr->acc : " ", ptr->ip[0] ? ptr->ip : " ", ptr->hostname[0] ? ptr->hostname : " ", ptr->time, ptr->reason[0] ? ptr->reason : " "); /* omg fu scanf^^ */
 	fclose(fp);
+}
+
+/* ---------- Save dynamic quest data.  ---------- */
+/* This cannot be done in the server savefile, because it gets read before all
+   ?_info.txt files are read from lib/data. So for example the remaining number
+   of kills in a kill-quest cannot be stored anywhere, since the stage and
+   stage goals are not yet initialised. Oops.
+   However, saving this quest data of random/varying lenght is a mess anyway,
+   so it's good that we keep it far away from the server savefile. */
+void save_quests(void) {
+#if 0
+	int i, j, k;
+
+	wr_s16b(max_q_idx);
+	wr_s16b(QI_QUESTORS);
+	wr_byte(QI_FLAGS);
+
+	for (i = 0; i < max_q_idx; i++) {
+		wr_byte(q_info[i].active);
+#if 0 /* actually don't write this, it's more comfortable to use q_info '-2 repeatable' entry instead */
+		wr_byte(q_info[i].disabled);
+#else
+		wr_byte(0);
+#endif
+		wr_s16b(q_info[i].cur_cooldown);
+		wr_s16b(q_info[i].cur_stage);
+		wr_s32b(q_info[i].turn_activated);
+		wr_s32b(q_info[i].turn_acquired);
+
+		for (j = 0; j < QI_QUESTORS; j++) {
+#if 0//restructure
+			wr_byte(q_info[i].current_wpos[j].wx);
+			wr_byte(q_info[i].current_wpos[j].wy);
+			wr_byte(q_info[i].current_wpos[j].wz);
+			wr_byte(q_info[i].current_x[j]);
+			wr_byte(q_info[i].current_y[j]);
+
+			wr_s16b(q_info[i].questor_m_idx[j]);
+#else
+			wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);wr_byte(0);
+#endif
+		}
+
+		wr_u16b(q_info[i].flags);
+
+		for (k = 0; k < QI_STAGES; k++) {
+			for (j = 0; j < QI_GOALS; j++) {
+#if 0//restructure
+				wr_byte(q_info[i].goals[k][j]);
+				wr_s16b(q_info[i].kill_number_left[k][j]);
+#else
+				wr_byte(0);wr_byte(0);wr_byte(0);
+#endif
+			}
+			for (j = 0; j < QI_OPTIONAL; j++) {
+#if 0//restructure
+				wr_byte(q_info[i].goalsopt[k][j]);
+				wr_s16b(q_info[i].killopt_number_left[k][j]);
+#else
+				wr_byte(0);wr_byte(0);wr_byte(0);
+#endif
+			}
+		}
+	}
+#endif
 }
