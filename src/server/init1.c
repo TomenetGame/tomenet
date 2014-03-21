@@ -7497,7 +7497,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* There better be a current q_ptr */
 		if (!q_ptr) return (3);
 
-#if 0//restructure
 		/* Process 'C' for list of stages (usually stage 0) that allow players to acquire the quest */
 		if (buf[0] == 'C') {
 			s = buf + 2;
@@ -7507,7 +7506,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (j < 0 || j >= QI_STAGES) return 1;
 
 				q_stage = init_quest_stage(error_idx, j);
-				q_stage->accepts[j] = TRUE;
+				q_stage->accepts = TRUE;
 
 				if (!(s = strchr(s, ':'))) break;
 				s++;
@@ -7577,7 +7576,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'U' for quest duration */
 		if (buf[0] == 'U') {
-			int es, cd, stat, quit;
+			int es, cd;
 
 			s = buf + 2;
 			if (3 != sscanf(s, "%d:%d:%d",
@@ -7585,11 +7584,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			q_ptr->ending_stage = es;
 			q_ptr->cooldown = (s16b) cd;
-			q_ptr->static_floor = (stat != 0);
-			q_ptr->quit_floor = (quit != 0);
 			continue;
 		}
-#endif//restructure
 
 		//--------------------------------------------------------------------------------------------
 		/* Process 'Q' for questor (creature) type */
