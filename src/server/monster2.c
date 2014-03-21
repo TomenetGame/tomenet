@@ -553,6 +553,11 @@ void compact_monsters(int size, bool purge) {
 		/* Skip real monsters */
 		/* real monsters in unreal location are not skipped. */
 		if (m_ptr->r_idx) {
+			/* Skip golems/pets/questors always
+			   NOTE: This will even keep them alive in the dungeon although
+			         the dungeon floor might've gotten deallocated already. */
+			if (m_ptr->pet || m_ptr->owner || m_ptr->questor) continue;
+
 			if ((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos)) continue;
 
 			/* Delete the monster */
@@ -718,8 +723,8 @@ void thin_surface_spawns() {
 		if (!(zcave = getcave(&m_ptr->wpos))) continue;
 		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
 
-		/* Skip golems/pets */
-		if (m_ptr->pet || m_ptr->owner) continue;
+		/* Skip golems/pets/questors */
+		if (m_ptr->pet || m_ptr->owner || m_ptr->questor) continue;
 
 		/* special ones aren't to be touched */
 		if (r_info[m_ptr->r_idx].flags8 & RF8_GENO_NO_THIN) continue;
