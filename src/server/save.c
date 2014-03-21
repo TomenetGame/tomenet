@@ -2532,7 +2532,42 @@ void save_banlist(void) {
    stage goals are not yet initialised. Oops.
    However, saving this quest data of random/varying lenght is a mess anyway,
    so it's good that we keep it far away from the server savefile. */
-void save_quests(void) {
+static bool save_quests_file(void) {
+        int        i;
+	u32b              now;
+
+	byte            tmp8u;
+	u16b            tmp16u;
+	u32b		tmp32u;
+
+	now = time((time_t *)0);
+	/* Note the operating system */
+	sf_xtra = 0L;
+	/* Note when the file was saved */
+	sf_when = now;
+	/* Note the number of saves */
+	sf_saves++;
+
+	/* Dump the file header */
+	xor_byte = 0;
+	wr_byte(QUEST_SF_VERSION_MAJOR);
+	xor_byte = 0;
+	wr_byte(QUEST_SF_VERSION_MINOR);
+	xor_byte = 0;
+	wr_byte(QUEST_SF_VERSION_PATCH);
+	xor_byte = 0;
+	tmp8u = rand_int(256);
+	wr_byte(tmp8u);
+
+	/* Reset the checksum */
+	v_stamp = 0L;
+	x_stamp = 0L;
+
+	wr_u32b(sf_xtra);
+	wr_u32b(sf_when);
+	wr_u16b(sf_saves);
+
+
 #if 0
 	int i, j, k;
 
@@ -2588,4 +2623,59 @@ void save_quests(void) {
 		}
 	}
 #endif
+
+
+	/* Write the remaining contents of the buffer */
+	write_buffer();
+	/* Error in save */
+	if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;
+	/* Successful save */
+	return TRUE;
+}
+static bool save_quests_aux(char *name) {
+	bool	ok = FALSE;
+	int	fd = -1;
+	int	mode = 0644;
+
+	fff = NULL;
+	FILE_TYPE(FILE_TYPE_SAVE);
+	fd = fd_make(name, mode);
+	if (fd >= 0) {
+		(void)fd_close(fd);
+		fff = my_fopen(name, "wb");
+		if (fff) {
+			fff_buf = C_NEW(MAX_BUF_SIZE, char);
+			fff_buf_pos = 0;
+			if (save_quests_file()) ok = TRUE;
+			if (my_fclose(fff)) ok = FALSE;
+			C_FREE(fff_buf, MAX_BUF_SIZE, char);
+		}
+		if (!ok) (void)fd_kill(name);
+	}
+	if (!ok) return FALSE;
+	return TRUE;
+}
+void save_quests(void) {
+	int result = FALSE;
+	char safe[MAX_PATH_LENGTH];
+
+#if DEBUG_LEVEL > 1
+	printf("saving quest info...\n");
+#endif
+	path_build(safe, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "quests.new");
+	fd_kill(safe);
+
+	if (save_quests_aux(safe)) {
+		char temp[MAX_PATH_LENGTH];
+		char prev[MAX_PATH_LENGTH];
+
+		path_build(temp, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "quests.old");
+		fd_kill(temp);
+		path_build(prev, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "quests");
+		fd_move(prev, temp);
+		fd_move(safe, prev);
+		fd_kill(temp);
+		result = TRUE;
+	}
+	return;// (result);
 }
