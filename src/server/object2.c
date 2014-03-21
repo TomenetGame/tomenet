@@ -8398,6 +8398,10 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 	/* Return the slot */
 	p_ptr->apply_auto_insc = i + 1;
+
+	/* Check whether this item was requested by an item-retrieval quest */
+	if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
+
 	return (i);
 }
 
