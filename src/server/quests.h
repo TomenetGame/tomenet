@@ -72,9 +72,9 @@ typedef struct qi_questor {
 
 	char name[MAX_CHARS];				/* optional pseudo-unique name that overrides the normal name */
 
-	bool talkable;					/* questor accepts dialogue? (by bumping usually) */
-	bool despawned;					/* questor starts despawned? */
-	bool invincible;				/* Is the questor invincible (if monster)/unpickable by monsters (if item) on spawn? */
+	bool talkable;					/* questor initially starts accepting dialogue? (by bumping usually) */
+	bool despawned;					/* questor initially starts despawned? */
+	bool invincible;				/* questor initially starts invincible (if monster)/unpickable by monsters (if item) on spawn? */
 
 	/* ..if killable ie not invincible: */
 	bool drops_regular;				/* Drops regular loot (of his ridx type) instead of nothing? */
@@ -96,7 +96,7 @@ typedef struct qi_questor {
 	s16b current_x, current_y;
 	s16b m_idx;
 
-	s16b talk_focus;	 //<dynamic data>	/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
+	s16b talk_focus;				/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
 } qi_questor;
 
 /* Sub-structure: Questor changes (or turns vulnerable) ('S') */
