@@ -2933,6 +2933,66 @@ qi_keyword *init_quest_keyword(int q_idx, int num) {
 	return &q_ptr->keyword[num];
 }
 
+qi_kill *init_quest_kill(int q_idx, int stage, int goal) {
+	qi_goal *q_goal = init_quest_goal(q_idx, stage, goal);
+	qi_kill *p;
+	int i;
+
+	/* we already have this existing one */
+	if (q_goal->kill) return q_goal->kill;
+
+	/* allocate a new one */
+	p = (qi_kill*)malloc(sizeof(qi_kill));
+	if (!p) {
+		s_printf("init_quest_kill() Couldn't allocate memory!\n");
+		exit(0);
+	}
+
+	/* attach it to its parent structure */
+	q_goal->kill = p;
+
+	/* initialise with defaults */
+	for (i = 0; i < 5; i++) {
+		p->rchar[i] = 255;
+		p->rattr[i] = 255;
+	}
+
+	/* done, return the new, requested one */
+	return p;
+}
+
+qi_retrieve *init_quest_retrieve(int q_idx, int stage, int goal) {
+	qi_goal *q_goal = init_quest_goal(q_idx, stage, goal);
+	qi_retrieve *p;
+	int i;
+
+	/* we already have this existing one */
+	if (q_goal->retrieve) return q_goal->retrieve;
+
+	/* allocate a new one */
+	p = (qi_retrieve*)malloc(sizeof(qi_retrieve));
+	if (!p) {
+		s_printf("init_quest_retrieve() Couldn't allocate memory!\n");
+		exit(0);
+	}
+
+	/* attach it to its parent structure */
+	q_goal->retrieve = p;
+
+	/* initialise with defaults */
+	for (i = 0; i < 5; i++) {
+		p->opval[i] = 9999;
+		p->obpval[i] = 9999;
+		p->oattr[i] = 255;
+		p->oname1[i] = -3;
+		p->oname2[i] = -3;
+		p->oname2b[i] = -3;
+	}
+
+	/* done, return the new, requested one */
+	return p;
+}
+
 qi_deliver *init_quest_deliver(int q_idx, int stage, int goal) {
 	qi_goal *q_goal = init_quest_goal(q_idx, stage, goal);
 	qi_deliver *p;
