@@ -92,6 +92,12 @@
 #define SF_VERSION_PATCH	26
 #define SF_VERSION_EXTRA	0
 
+/* For quests savefile purpose only */
+#define QUEST_SF_VERSION_MAJOR	1
+#define QUEST_SF_VERSION_MINOR	0
+#define QUEST_SF_VERSION_PATCH	0
+#define QUEST_SF_VERSION_EXTRA	0
+
 
 /* version_os constants, set by gcc flags - C. Blue */
 #define OS_UNKNOWN	0
