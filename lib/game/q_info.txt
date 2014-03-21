@@ -126,7 +126,7 @@ y:0:-1:-:yo
 yR:-:Sup!
 
 Y:0:0:-:kill:-:1
-W:0:1:-:You go show them bastards! Slay two dogs or wolves, they deserve it.
+W:0:1:-:Slay two dogs or wolves, they deserve it. Report to the general store's keeper!
 k:1:1:0:0:2:0:0
 kV:1:1:C:-
 #kI:1:1:r_idx...
