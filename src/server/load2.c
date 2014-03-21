@@ -3768,8 +3768,8 @@ static errr load_quests_file() {
 		q_ptr = &q_info[i];
 
 		//to recognize the quest (ID)
-		rd_string(load_codename, QI_CODENAME_LEN);
-		rd_string(load_creator, MAX_CHARS - 1);
+		rd_string(load_codename, QI_CODENAME_LEN + 1);
+		rd_string(load_creator, MAX_CHARS);
 		rd_u16b(&load_name);
 
 		/* Verify quest ID */
