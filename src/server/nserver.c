@@ -785,12 +785,16 @@ static bool forbidden_name(char *cname) {
 	   aren't really needed on most file systems (semi-paranoia). */
 	/* Hardcode some critically important ones */
 	if (!strcmp(name, "server")) return TRUE; /* server save file is stored in same folder as player save files */
+	if (!strcmp(name, "server.new")) return TRUE; /* server save file is stored in same folder as player save files */
+	if (!strcmp(name, "server.old")) return TRUE; /* server save file is stored in same folder as player save files */
 	if (!strncmp(name, "server", 6) && name[6] >= '0' && name[6] <= '9') return TRUE; /* prepare for multiple partial server save files */
 	if (strstr(name, "guild") && strstr(name, ".data")) return TRUE; /* moved guild hall save files to save folder, from data folder */
 	if (strlen(name) >= 5 && name[0] == 's' && name[1] == 'a' && name[2] == 'v' && name[3] == 'e' &&
 	    name[4] >= '0' && name[4] <= '9') return TRUE; /* backup save file folders, save00..saveNN */
 	if (!strcmp(name, "estate")) return TRUE; /* for new 'estate' folder that backs up houses. */
 	if (!strcmp(name, "quests")) return TRUE; /* dedicated quest state server save file */
+	if (!strcmp(name, "quests.new")) return TRUE; /* dedicated quest state server save file */
+	if (!strcmp(name, "quests.old")) return TRUE; /* dedicated quest state server save file */
 
 	/* account file management */
 	if (!strcmp(name, "tomenet.acc")) return TRUE;
