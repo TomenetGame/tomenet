@@ -205,7 +205,7 @@ typedef struct qi_goal {
 							   max radius is QI_TERRAIN_PATCH_RADIUS. */
 	cptr target_tpref;				/* filename of map to load, or empty for none */
 
-#if 0 /* just use a deliver_pos goal instead, for now */
+#if 1 /* just use a deliver_pos goal instead, for now */
 	bool return_to_questor;				/* do we need to return to the questor first (bump), to get credit for particular main goals? */
 #endif
 } qi_goal;

@@ -7314,6 +7314,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	/* for initialising questor information with default values when reading
 	   a Q line without an F-line following it up (since those are optional) */
 	bool init_F[QI_QUESTORS];
+	int lc_flagsacc;
 
 	qi_questor *q_questor;
 	//qi_questor_morph *q_qmorph;
@@ -7488,6 +7489,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			/* init 'F' check */
 			for (j = 0; j < QI_QUESTORS; j++) init_F[j] = FALSE;
+			lc_flagsacc = 0;
 
 			continue;
 		}
@@ -7669,21 +7671,22 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-#if 0//restructure
 		/* Process 'F' for questor accept/spawn flags */
 		if (buf[0] == 'F') {
 			int aalos, aaint, talk, despawn, invinc;
 
 			if (lc_flagsacc == QI_QUESTORS) return 1;
+			if (lc_flagsacc >= q_ptr->questors) return 1; /* each 'F' line must succed somewhere after its 'Q' line */
+			q_questor = init_quest_questor(error_idx, lc_flagsacc);
 			s = buf + 2;
 
 			if (5 != sscanf(s, "%d:%d:%d:%d:%d",
 			    &aalos, &aaint, &talk, &despawn, &invinc)) return (1);
-			q_ptr->accept_los[lc_flagsacc] = (aalos != 0);
-			q_ptr->accept_interact[lc_flagsacc] = (aaint != 0);
-			q_questor->talkable[lc_flagsacc] = (talk != 0);
-			q_questor->despawned[lc_flagsacc] = (despawn != 0);
-			q_questor->invincible[lc_flagsacc] = (invinc != 0);
+			q_questor->accept_los = (aalos != 0);
+			q_questor->accept_interact = (aaint != 0);
+			q_questor->talkable = (talk != 0);
+			q_questor->despawned  = (despawn != 0);
+			q_questor->invincible  = (invinc != 0);
 
 			init_F[lc_flagsacc] = TRUE;
 
@@ -7710,20 +7713,21 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d",
 			    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs)) return (1);
 			if (stage < 0 || stage >= QI_STAGES) return 1;
+			q_stage = init_quest_stage(error_idx, stage);
 
-			q_ptr->activate_quest[stage] = aq;
-			q_ptr->auto_accept[stage] = (aa != 0);
-			q_ptr->auto_accept_quiet[stage] = (aq == 2);
+			q_stage->activate_quest = aq;
+			q_stage->auto_accept = (aa != 0);
+			q_stage->auto_accept_quiet = (aq == 2);
 
-			q_ptr->change_stage[stage] = cs;
+			q_stage->change_stage = cs;
 #if 0
-			q_ptr->timed_ingame[stage] = tsi;
+			q_stage->timed_ingame = tsi;
 #else /* kill compiler -_- */
 			k = tsi;
 #endif
-			q_ptr->timed_ingame_abs[stage] = tsia;
-			q_ptr->timed_real[stage] = tsr;
-			q_ptr->quiet_change[stage] = (qcs != 0);
+			q_stage->timed_ingame_abs = tsia;
+			q_stage->timed_real = tsr;
+			q_stage->quiet_change = (qcs != 0);
 
 			/* important hack: initialise the target stage!
 			   This is done to fill that stage with default values,
@@ -7746,11 +7750,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'H' for questor hostility changes? (or just use S-line for this too) */
 		if (buf[0] == 'H') {
- #if 0
+#if 0
 			s = buf + 2;
 			if ( != sscanf(s, "",
 				q_ptr->)) return (1);
- #endif
+#endif
 			continue;
 		}
 
@@ -7763,7 +7767,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 #endif
 			continue;
 		}
-#endif//restructure
 
 		/* Process 'X' for narrative text */
 		if (buf[0] == 'X') {
@@ -8201,12 +8204,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-#if 0//restructure
 		/* Process 'B' to restrict (optional) goals to only get credited if we return to the questor */
 		if (buf[0] == 'B') {
 			/* first number is the stage */
 			stage = atoi(buf + 2);
 			if (stage < 0 || stage >= QI_STAGES) return 1;
+			q_stage = quest_qi_stage(error_idx, stage);
+
 			if (!(c = strchr(buf + 2, ':'))) return 1;
 			c++;
 
@@ -8214,15 +8218,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			while (*c >= '0' && *c <= '9') {
 				j = atoi(c);
 				if (j < -QI_OPTIONAL || j > QI_GOALS) return 1;
+				if (j >= q_stage->goals) return 1;
+
 				if (j > 0) { /* main goal */
-#if 0
-					q_ptr->return_to_questor[stage][j - 1] = TRUE;
-#endif
+					q_stage->goal[j - 1].return_to_questor = TRUE;
 				} else if (j < 0) { /* optional goal */
-					j = -j;
-#if 0
-					q_ptr->return_to_questor_opt[stage][j - 1] = TRUE;
-#endif
+					q_stage->goal[-j - 1].return_to_questor = TRUE;
+					q_stage->goal[-j - 1].optional = TRUE;
 				}
 				if (!(c = strchr(c, ':'))) break;
 				c++;
@@ -8230,7 +8232,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			continue;
 		}
-#endif//restructure
 
 		/* Process 'Z' for how completed stage goals will change 'quest flags' */
 		if (buf[0] == 'Z') {
