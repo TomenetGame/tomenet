@@ -7921,7 +7921,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			/* we have 5 sub-types of 'y' lines */
 			if (buf[1] == ':') { /* init */
 				s = buf + 2;
-				if (5 != sscanf(s, "%d:%d:%16[^:]:%29[^:]", //QI_FLAGS,QI_KEYWORD_LEN
+				if (4 != sscanf(s, "%d:%d:%16[^:]:%29[^:]", //QI_FLAGS,QI_KEYWORD_LEN
 				    &questor, &stage, flagbuf, tmpbuf2)) return (1);
 
 				if (questor < 0 || questor >= QI_QUESTORS) return 1;
@@ -7953,6 +7953,30 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					} else return 1;
 				}
 				q_kwr->flags = flags;
+				continue;
+			} else if (buf[1] == 'Y') { /* add more keywords to the list */
+				s = buf + 3;
+
+				lc = q_ptr->kwreplies;
+				if (!lc) return 1;
+				q_kwr = init_quest_kwreply(error_idx, lc - 1); /* use newest one */
+
+				/* read list of strings, separated by colons */
+				k = 1; //counter
+				while (*s && k < QI_KEYWORDS_PER_REPLY) {
+					i = 0; //strlen
+					tmpbuf[0] = 0;
+					while (i < 29 && *s && *s != ':')//QI_KEYWORD_LEN
+						tmpbuf[i++] = *s++;
+					tmpbuf[29] = 0;
+
+					for (j = 0; j < q_ptr->keywords; j++)
+						if (!strcmp(q_ptr->keyword[j].keyword, tmpbuf))
+							q_kwr->keyword_idx[k] = j;
+					k++;
+
+					if (*s) s++;
+				}
 				continue;
 			} else if (buf[1] == 'Q') { /* add more questors to the list */
 				s = buf + 3;
@@ -7992,9 +8016,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					while (*s == ' ') s++; /* paranoia for comfort ^^ */
 				}
 				continue;
-			} else if (buf[1] == 'Y') { /* actual reply lines */
+			} else if (buf[1] == 'R') { /* actual reply lines */
 				s = buf + 3;
-				if (5 != sscanf(s, "%16[^:]:%79[^:]", //QI_FLAGS
+				if (2 != sscanf(s, "%16[^:]:%79[^:]", //QI_FLAGS
 				    flagbuf, tmpbuf)) return (1);
 
 				lc = q_ptr->kwreplies;
@@ -8023,7 +8047,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			return 1;
 		}
 
-#if 0//restructure
 		/* Process 'k' for kill quest goal */
 		if (buf[0] == 'k') {
 			/* now we have 3 sub-types of 'k' lines -_- uhh */
@@ -8036,26 +8059,20 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
 				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
+				q_goal = init_quest_goal(q_idx, stage, goal);
 
 				if (goal > 0) { /* main goal */
 					goal--;
-					q_ptr->kill[stage][goal] = TRUE;
-
-					q_kill->rlevmin[stage][goal] = minlev;
-					q_kill->rlevmax[stage][goal] = maxlev;
-					q_kill->number[stage][goal] = num;
-					q_kill->spawn[stage][goal] = spawn;
-					q_kill->spawn_targets[stage][goal] = spawntarget;
 				} else if (goal < 0) { /* optional goal */
-					goal = -(goal + 1);
-					q_ptr->killopt[stage][goal] = TRUE;
-
-					q_ptr->killopt_rlevmin[stage][goal] = minlev;
-					q_ptr->killopt_rlevmax[stage][goal] = maxlev;
-					q_ptr->killopt_number[stage][goal] = num;
-					q_ptr->killopt_spawn[stage][goal] = spawn;
-					q_ptr->killopt_spawn_targets[stage][goal] = spawntarget;
+					goal = -goal - 1;
+					q_goal->optional = TRUE;
 				}
+				q_kill = init_quest_kill(q_idx, stage, goal);
+				q_kill->rlevmin = minlev;
+				q_kill->rlevmax = maxlev;
+				q_kill->number = num;
+				q_kill->spawn = spawn;
+				q_kill->spawn_targets = spawntarget;
 				continue;
 			} else if (buf[1] == 'I') { /* specify race-indices */
 				int ridx[10];
@@ -8227,7 +8244,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			return -1;
 		}
-#endif//restructure
 
 		/* Process 'P' for position at which a kill/retrieve quest has to be executed */
 		if (buf[0] == 'P') {
