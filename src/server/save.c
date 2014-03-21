@@ -2669,7 +2669,7 @@ static bool save_quests_aux(char *name) {
 	return TRUE;
 }
 void save_quests(void) {
-	int result = FALSE;
+	//int result = FALSE;
 	char safe[MAX_PATH_LENGTH];
 
 #if DEBUG_LEVEL > 1
@@ -2688,7 +2688,7 @@ void save_quests(void) {
 		fd_move(prev, temp);
 		fd_move(safe, prev);
 		fd_kill(temp);
-		result = TRUE;
+		//result = TRUE;
 	}
 	return;// (result);
 }
