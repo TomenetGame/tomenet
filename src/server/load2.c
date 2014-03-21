@@ -3759,9 +3759,9 @@ static errr load_quests_file() {
 
 	rd_s16b(&load_q_idx);
 	if (load_q_idx < max_q_idx)
-		s_printf("Warning! Quests in save file (%d) fall short of quests in q_info.txt (%d).", load_q_idx, max_q_idx);
+		s_printf("Warning! Quests in save file (%d) fall short of quests in q_info.txt (%d).\n", load_q_idx, max_q_idx);
 	if (load_q_idx > max_q_idx)
-		s_printf("Warning! Quests in save file (%d) exceed quests in q_info.txt (%d).", load_q_idx, max_q_idx);
+		s_printf("Warning! Quests in save file (%d) exceed quests in q_info.txt (%d).\n", load_q_idx, max_q_idx);
 	for (i = 0; i < load_q_idx; i++) {
 		if (i >= max_q_idx) break; /* Discard quests that exceed our info */
 
@@ -3774,7 +3774,7 @@ static errr load_quests_file() {
 
 		/* Verify quest ID */
 		if (strcmp(q_ptr->codename, load_codename)) {
-			s_printf("Warning! Quest %d codename mismatch '%s'. Discarding its data.", i, load_codename);
+			s_printf("Warning! Quest %d codename mismatch '%s'. Discarding its data.\n", i, load_codename);
 
 			/* Discard the complete data of this quest */
 			strip_bytes(17);
@@ -3808,9 +3808,9 @@ static errr load_quests_file() {
 		//questors:
 		rd_byte(&load_questors);
 		if (load_questors < q_ptr->questors)
-			s_printf("Warning! Questors in save file (%d) fall short of questors in q_info.txt (%d).", load_questors, q_ptr->questors);
+			s_printf("Warning! Questors in save file (%d) fall short of questors in q_info.txt (%d).\n", load_questors, q_ptr->questors);
 		if (load_questors > q_ptr->questors)
-			s_printf("Warning! Questors in save file (%d) exceed questors in q_info.txt (%d).", load_questors, q_ptr->questors);
+			s_printf("Warning! Questors in save file (%d) exceed questors in q_info.txt (%d).\n", load_questors, q_ptr->questors);
 		for (j = 0; j < load_questors; j++) {
 			if (j >= q_ptr->questors) {
 				/* Discard questors that exceed our info */
@@ -3834,9 +3834,9 @@ static errr load_quests_file() {
 		//stages:
 		rd_byte(&load_stages);
 		if (load_stages < q_ptr->stages)
-			s_printf("Warning! Stages in save file (%d) fall short of stages in q_info.txt (%d).", load_stages, q_ptr->stages);
+			s_printf("Warning! Stages in save file (%d) fall short of stages in q_info.txt (%d).\n", load_stages, q_ptr->stages);
 		if (load_stages > q_ptr->stages)
-			s_printf("Warning! Stages in save file (%d) exceed stages in q_info.txt (%d).", load_stages, q_ptr->stages);
+			s_printf("Warning! Stages in save file (%d) exceed stages in q_info.txt (%d).\n", load_stages, q_ptr->stages);
 		for (j = 0; j < load_stages; j++) {
 			if (j >= q_ptr->questors) {
 				/* Discard stages that exceed our info */
@@ -3855,9 +3855,9 @@ static errr load_quests_file() {
 			//goals:
 			rd_byte(&load_goals);
 			if (load_goals < q_ptr->stage[j].goals)
-				s_printf("Warning! Goals in save file (%d) fall short of goals in q_info.txt (%d).", load_goals, q_ptr->stage[j].goals);
+				s_printf("Warning! Goals in save file (%d) fall short of goals in q_info.txt (%d).\n", load_goals, q_ptr->stage[j].goals);
 			if (load_goals > q_ptr->stage[j].goals)
-				s_printf("Warning! Goals in save file (%d) exceed goals in q_info.txt (%d).", load_goals, q_ptr->stage[j].goals);
+				s_printf("Warning! Goals in save file (%d) exceed goals in q_info.txt (%d).\n", load_goals, q_ptr->stage[j].goals);
 			for (k = 0; k < load_goals; k++) {
 	    			if (j >= q_ptr->stage[j].goals) {
 					/* Discard goals that exceed our info */
