@@ -3,33 +3,33 @@
 GLOBELIGHT = add_spell
 {
 	["name"] = 	"Globe of Light",
-        ["school"] = 	{SCHOOL_FIRE},
-        ["level"] = 	2,
-        ["mana"] = 	2,
-        ["mana_max"] = 	15,
-        ["fail"] = 	10,
-        ["spell"] = 	function()
+	["school"] = 	{SCHOOL_FIRE},
+	["level"] = 	2,
+	["mana"] = 	2,
+	["mana_max"] = 	15,
+	["fail"] = 	10,
+	["spell"] = 	function()
 		local ret, dir
 
-                if get_level(Ind, GLOBELIGHT, 50) >= 10 then lite_area(Ind, 10, 4)
-                else lite_room(Ind, player.wpos, player.py, player.px) end
-                if get_level(Ind, GLOBELIGHT, 50) >= 25 then
-		        fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 5 + get_level(Ind, GLOBELIGHT, 6), " calls a globe of light of")
+		if get_level(Ind, GLOBELIGHT, 50) >= 10 then lite_area(Ind, 10, 4)
+		else lite_room(Ind, player.wpos, player.py, player.px) end
+		if get_level(Ind, GLOBELIGHT, 50) >= 25 then
+			fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 5 + get_level(Ind, GLOBELIGHT, 6), " calls a globe of light of")
 		end
 		msg_print(Ind, "You are surrounded by a globe of light")
 	end,
 	["info"] = 	function()
-        	if get_level(Ind, GLOBELIGHT, 50) >= 10 then
+		if get_level(Ind, GLOBELIGHT, 50) >= 10 then
 			return "dam "..(10 + get_level(Ind, GLOBELIGHT, 100)).." rad "..(5 + get_level(Ind, GLOBELIGHT, 6))
-                else
-                	return ""
-                end
+		else
+			return ""
+		end
 	end,
-        ["desc"] =	{
-        		"Creates a globe of magical light",
-        		"At level 10 it starts damaging monsters",
-        		"At level 25 it starts creating a more powerful kind of light",
-        }
+	["desc"] =	{
+			"Creates a globe of magical light",
+			"At level 10 it starts damaging monsters",
+			"At level 25 the damage begins to increase greatly",
+	}
 }
 
 function get_firebolt_dam()
