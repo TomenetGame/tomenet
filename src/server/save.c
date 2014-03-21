@@ -2533,7 +2533,7 @@ void save_banlist(void) {
    However, saving this quest data of random/varying lenght is a mess anyway,
    so it's good that we keep it far away from the server savefile. */
 static bool save_quests_file(void) {
-	int i, j;
+	int i, j, k;
 	u32b now;
 
 	byte tmp8u;
@@ -2584,8 +2584,6 @@ static bool save_quests_file(void) {
 		//main quest data
 		wr_byte(q_ptr->active);
 		wr_byte(q_ptr->disabled);
-		//if disabled then disabled_on_load = TRUE; -- but: ignore read value for 'disabled' instead! it's better (just via q_info 'x' feat)
-		wr_byte(q_ptr->disabled_on_load);
 
 		wr_s16b(q_ptr->cur_cooldown);
 		wr_s32b(q_ptr->turn_activated);
@@ -2599,12 +2597,12 @@ static bool save_quests_file(void) {
 		for (j = 0; j < q_ptr->questors; j++) {
 			q_questor = &q_ptr->questor[j];
 
-			wr_byte(q_questor->current_wpos.wx);
-			wr_byte(q_questor->current_wpos.wy);
-			wr_byte(q_questor->current_wpos.wz);
+			wr_s16b(q_questor->current_wpos.wx);
+			wr_s16b(q_questor->current_wpos.wy);
+			wr_s16b(q_questor->current_wpos.wz);
 
-			wr_byte(q_questor->current_x);
-			wr_byte(q_questor->current_y);
+			wr_s16b(q_questor->current_x);
+			wr_s16b(q_questor->current_y);
 
 			wr_s16b(q_questor->m_idx);
 			wr_s16b(q_questor->talk_focus);
@@ -2621,14 +2619,15 @@ static bool save_quests_file(void) {
 
 			//goals:
 			wr_byte(q_stage->goals);
-			for (j = 0; j < q_stage->goals; j++) {
-				q_goal = &q_stage->goal[j];
+			for (k = 0; k < q_stage->goals; k++) {
+				q_goal = &q_stage->goal[k];
 
 				wr_byte(q_goal->cleared);
 				wr_byte(q_goal->nisi);
 
 				//kill goals:
 				if (q_goal->kill) wr_s16b(q_goal->kill->number_left);
+				else wr_s16b(-1); /* actually write a value for recognising, in case quest has been edited meanwhile */
 			}
 		}
 	}

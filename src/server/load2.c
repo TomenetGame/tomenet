@@ -136,6 +136,7 @@ static bool s_older_than(byte x, byte y, byte z) {
  * This function determines if the version of the quests savefile
  * currently being read is older than version "x.y.z".
  */
+#if 0 /* compiler warning -- till it's needed */
 static bool q_older_than(byte x, byte y, byte z) {
 	/* Much older, or much more recent */
 	if (qsf_major < x) return (TRUE);
@@ -152,6 +153,7 @@ static bool q_older_than(byte x, byte y, byte z) {
 	/* Identical versions */
 	return FALSE;
 }
+#endif
 /*
  * Hack -- determine if an item is "wearable" (or a missile)
  */
@@ -3703,15 +3705,27 @@ void load_banlist(void) {
    However, saving this quest data of random/varying lenght is a mess anyway,
    so it's good that we keep it far away from the server savefile. */
 static errr load_quests_file() {
-	int i;
+	int i, j, k;
 	errr err = 0;
 	char savefile[MAX_PATH_LENGTH];
 
-	byte tmp8u;
-	u16b tmp16u;
-	s16b tmp16s;
-	u32b tmp32u;
-	s32b tmp32s;
+
+	quest_info *q_ptr;
+
+	qi_questor *q_questor;
+	qi_goal *q_goal;
+	qi_stage *q_stage;
+
+
+	s16b load_q_idx;
+	byte load_questors;
+	byte load_stages;
+	byte load_goals;
+
+	char load_codename[QI_CODENAME_LEN + 1];
+	char load_creator[MAX_CHARS];
+	u16b load_name;
+
 
 	path_build(savefile, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "quests");
 	fff = my_fopen(savefile, "rb");
@@ -3743,9 +3757,132 @@ static errr load_quests_file() {
 
 	/* begin reading the actual quest data */
 
-#if 0
-	s_printf("Read %d/%d saved quests states (discarded %d).\n", max, max_q_idx, max > max_q_idx ? max - max_q_idx : 0);
+	rd_s16b(&load_q_idx);
+	if (load_q_idx < max_q_idx)
+		s_printf("Warning! Quests in save file (%d) fall short of quests in q_info.txt (%d).", load_q_idx, max_q_idx);
+	if (load_q_idx > max_q_idx)
+		s_printf("Warning! Quests in save file (%d) exceed quests in q_info.txt (%d).", load_q_idx, max_q_idx);
+	for (i = 0; i < load_q_idx; i++) {
+		if (i >= max_q_idx) break; /* Discard quests that exceed our info */
+
+		q_ptr = &q_info[i];
+
+		//to recognize the quest (ID)
+		rd_string(load_codename, QI_CODENAME_LEN);
+		rd_string(load_creator, MAX_CHARS - 1);
+		rd_u16b(&load_name);
+
+		/* Verify quest ID */
+		if (strcmp(q_ptr->codename, load_codename)) {
+			s_printf("Warning! Quest %d codename mismatch '%s'. Discarding its data.", i, load_codename);
+
+			/* Discard the complete data of this quest */
+			strip_bytes(17);
+			rd_byte(&load_questors);
+			strip_bytes(load_questors * 14);
+			rd_byte(&load_stages);
+			for (i = 0; i < load_stages; i++) {
+				strip_bytes(5);
+				rd_byte(&load_goals);
+				strip_bytes(load_goals * 4);
+			}
+			continue;
+		}
+
+		//main quest data
+		rd_byte((byte *) &q_ptr->active);
+#if 0 /* disable for now, and use 'x' disable feature from q_info.txt exclusively. */
+		rd_byte((byte *) &q_ptr->disabled);
+		if (q_ptr->disabled) disabled_on_load = TRUE;
+#else
+		strip_bytes(1);
 #endif
+
+		rd_s16b(&q_ptr->cur_cooldown);
+		rd_s32b(&q_ptr->turn_activated);
+		rd_s32b(&q_ptr->turn_acquired);
+
+		rd_s16b(&q_ptr->cur_stage);
+		rd_u16b(&q_ptr->flags);
+
+		//questors:
+		rd_byte(&load_questors);
+		if (load_questors < q_ptr->questors)
+			s_printf("Warning! Questors in save file (%d) fall short of questors in q_info.txt (%d).", load_questors, q_ptr->questors);
+		if (load_questors > q_ptr->questors)
+			s_printf("Warning! Questors in save file (%d) exceed questors in q_info.txt (%d).", load_questors, q_ptr->questors);
+		for (j = 0; j < load_questors; j++) {
+			if (j >= q_ptr->questors) {
+				/* Discard questors that exceed our info */
+				strip_bytes(14);
+				continue;
+			}
+
+			q_questor = &q_ptr->questor[j];
+
+			rd_s16b(&q_questor->current_wpos.wx);
+			rd_s16b(&q_questor->current_wpos.wy);
+			rd_s16b(&q_questor->current_wpos.wz);
+
+			rd_s16b(&q_questor->current_x);
+			rd_s16b(&q_questor->current_y);
+
+			rd_s16b(&q_questor->m_idx);
+			rd_s16b(&q_questor->talk_focus);
+		}
+
+		//stages:
+		rd_byte(&load_stages);
+		if (load_stages < q_ptr->stages)
+			s_printf("Warning! Stages in save file (%d) fall short of stages in q_info.txt (%d).", load_stages, q_ptr->stages);
+		if (load_stages > q_ptr->stages)
+			s_printf("Warning! Stages in save file (%d) exceed stages in q_info.txt (%d).", load_stages, q_ptr->stages);
+		for (j = 0; j < load_stages; j++) {
+			if (j >= q_ptr->questors) {
+				/* Discard stages that exceed our info */
+				strip_bytes(5);
+				rd_byte(&load_goals);
+				strip_bytes(load_goals * 4);
+				continue;
+			}
+
+			q_stage = &q_ptr->stage[j];
+
+			rd_s16b(&q_stage->timed_countdown);
+			rd_s16b(&q_stage->timed_countdown_stage);
+			rd_byte((byte *) &q_stage->timed_countdown_quiet);
+
+			//goals:
+			rd_byte(&load_goals);
+			if (load_goals < q_ptr->stage[j].goals)
+				s_printf("Warning! Goals in save file (%d) fall short of goals in q_info.txt (%d).", load_goals, q_ptr->stage[j].goals);
+			if (load_goals > q_ptr->stage[j].goals)
+				s_printf("Warning! Goals in save file (%d) exceed goals in q_info.txt (%d).", load_goals, q_ptr->stage[j].goals);
+			for (k = 0; k < load_goals; k++) {
+	    			if (j >= q_ptr->stage[j].goals) {
+					/* Discard goals that exceed our info */
+					strip_bytes(4);
+					continue;
+				}
+
+				q_goal = &q_stage->goal[k];
+
+				rd_byte((byte *) &q_goal->cleared);
+				rd_byte((byte *) &q_goal->nisi);
+
+				//kill goals:
+				rd_s16b(&q_goal->kill->number_left);
+				/* verify if it's still/not anymore a kill quest goal */
+				if (q_goal->kill->number_left == -1) {
+					if (q_goal->kill) s_printf("Warning! Quest %d stage %d goal %d was previously not 'kill'.\n", i, j, k);
+				} else {
+					if (!q_goal->kill) s_printf("Warning! Quest %d stage %d goal %d was previously 'kill'.\n", i, j, k);
+				}
+			}
+		}
+	}
+
+	s_printf("Read %d saved quests states.\n", load_q_idx);
 
 	/* finish up */
 
