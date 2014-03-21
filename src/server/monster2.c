@@ -327,8 +327,7 @@ int monster_gain_exp(int m_idx, u32b exp, bool silent)
  * to verify that the "r_idx" field is non-zero.  All references
  * to "m_list[c_ptr->m_idx]" are guaranteed to be valid, see below.
  */
-void delete_monster_idx(int i, bool unfound_arts)
-{
+void delete_monster_idx(int i, bool unfound_arts) {
 	int x, y, Ind;
 	struct worldpos *wpos;
 	cave_type **zcave;
@@ -341,6 +340,10 @@ void delete_monster_idx(int i, bool unfound_arts)
 	y = m_ptr->fy;
 	x = m_ptr->fx;
 	wpos = &m_ptr->wpos;
+
+	/* maybe log to be safe */
+	if (m_ptr->questor)
+		s_printf("delete_monster_idx: Deleting questor (midx%d,Q%d,qidx%d) at %d,%d,%d.\n", i, m_ptr->quest, m_ptr->questor_idx, wpos->wx, wpos->wy, wpos->wz);
 
 #ifdef MONSTER_ASTAR
 	if ((r_ptr->flags0 & RF0_ASTAR) && (m_ptr->astar_idx != -1))
