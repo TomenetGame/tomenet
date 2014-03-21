@@ -65,7 +65,7 @@ V:0.0.1
 # #stage is 1..29 (30 stages max)
 # talk/narration can have up to 15 text lines
 # keywords can be up to 29 characters long
-# #goal is 1..5 for main goal, and -1..-5 for optional goals.
+# #goal is 1..5 for main goal, and -1..-5 for optional goals. NOTE: optional goals are currently NOT SUPPORTED!
 
 
 # for testing purpose
