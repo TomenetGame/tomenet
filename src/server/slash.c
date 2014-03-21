@@ -8212,7 +8212,9 @@ void do_slash_cmd(int Ind, char *message)
 				for (i = 0; i < max_q_idx; i++) {
 					msg_format(Ind, " %3d %10s S%02d%s %s%s %4d -- Qx%d '%s'/%s",
 					    i, q_info[i].codename, quest_get_stage(Ind, i), q_info[i].individual ? format("/%02d", q_info[i].cur_stage) : "   ",
-					    q_info[i].active ? "A" : " ", q_info[i].disabled ? "D" : " ", quest_get_cooldown(Ind, i),
+					    !q_info[i].defined ? "\377rU\377w" : (q_info[i].active ? "A" : " "),
+					    !q_info[i].defined ? " " : (q_info[i].disabled ? "D" : " "),
+					    quest_get_cooldown(Ind, i),
 					    q_info[i].questors, q_name + q_info[i].name, q_info[i].creator);
 				}
 				/* display extra info? */
