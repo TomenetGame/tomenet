@@ -8082,9 +8082,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				int ridx[10];
 
 				s = buf + 3;
-				if (3 > sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
-				    &stage, &goal, &ridx[0], &ridx[1], &ridx[2], &ridx[3], &ridx[4], &ridx[5], &ridx[6], &ridx[7], &ridx[8], &ridx[9]))
+				if (3 > (k = sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				    &stage, &goal, &ridx[0], &ridx[1], &ridx[2], &ridx[3], &ridx[4], &ridx[5], &ridx[6], &ridx[7], &ridx[8], &ridx[9])))
 					return (1);
+				k = k - 2;
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
 				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
@@ -8098,15 +8099,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_goal->optional = TRUE;
 				}
 				q_kill = init_quest_kill(error_idx, stage, goal);
-				for (j = 0; j < 10; j++)
+				for (j = 0; j < k; j++)
 					q_kill->ridx[j] = ridx[j];
 				continue;
 			} else if (buf[1] == 'V') { /* specify visuals */
 				char rchar[5], rattr[5];
 				s = buf + 3;
-				if (4 > sscanf(s, "%d:%d:%c:%c:%c:%c:%c:%c:%c:%c:%c:%c",
-				    &stage, &goal, &rchar[0], &rattr[0], &rchar[1], &rattr[1], &rchar[2], &rattr[2], &rchar[3], &rattr[3], &rchar[4], &rattr[4]))
+				if (4 > (k = sscanf(s, "%d:%d:%c:%c:%c:%c:%c:%c:%c:%c:%c:%c",
+				    &stage, &goal, &rchar[0], &rattr[0], &rchar[1], &rattr[1], &rchar[2], &rattr[2], &rchar[3], &rattr[3], &rchar[4], &rattr[4])))
 					return (1);
+				k = (k - 2) / 2;
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
 				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
@@ -8120,7 +8122,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_goal->optional = TRUE;
 				}
 				q_kill = init_quest_kill(error_idx, stage, goal);
-				for (j = 0; j < 5; j++) {
+				for (j = 0; j < k; j++) {
 					if (rchar[j] == '-') rchar[j] = 254; /* any */
 					q_kill->rchar[j] = rchar[j];
 
@@ -8162,11 +8164,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				int tval[10], sval[10];
 
 				s = buf + 3;
-				if (4 > sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				if (4 > (k = sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
 				    &stage, &goal,
 				    &tval[0], &sval[0], &tval[1], &sval[1], &tval[2], &sval[2], &tval[3], &sval[3], &tval[4], &sval[4],
-				    &tval[5], &sval[5], &tval[6], &sval[6], &tval[7], &sval[7], &tval[8], &sval[8], &tval[9], &sval[9]))
+				    &tval[5], &sval[5], &tval[6], &sval[6], &tval[7], &sval[7], &tval[8], &sval[8], &tval[9], &sval[9])))
 					return (1);
+				k = (k - 2) / 2;
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
 				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
@@ -8180,24 +8183,25 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_goal->optional = TRUE;
 				}
 				q_ret = init_quest_retrieve(error_idx, stage, goal);
-				for (j = 0; j < 10; j++) {
+				for (j = 0; j < k; j++) {
 					q_ret->otval[j] = tval[j];
 					q_ret->osval[j] = sval[j];
 				}
 				continue;
 			} else if (buf[1] == 'V') { /* specify visuals */
-				int pval[5], bpval[5], name1[5], name2[5], name2b[5];
+				int pval[5], bpval[5], name1[5], name2[5], name2b[5], j;
 				char attr[5];
 
 				s = buf + 3;
-				if (8 > sscanf(s, "%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d",
+				if (8 > (k = sscanf(s, "%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d:%d:%d:%c:%d:%d:%d",
 				    &stage, &goal,
 				    &pval[0], &bpval[0], &attr[0], &name1[0], &name2[0], &name2b[0],
 				    &pval[1], &bpval[1], &attr[1], &name1[1], &name2[1], &name2b[1],
 				    &pval[2], &bpval[2], &attr[2], &name1[2], &name2[2], &name2b[2],
 				    &pval[3], &bpval[3], &attr[3], &name1[3], &name2[3], &name2b[3],
-				    &pval[4], &bpval[4], &attr[4], &name1[4], &name2[4], &name2b[4]))
+				    &pval[4], &bpval[4], &attr[4], &name1[4], &name2[4], &name2b[4])))
 					return (1);
+				k = (k - 2) / 6;
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
 				if (goal < -QI_OPTIONAL || goal > QI_GOALS) return 1;
@@ -8211,7 +8215,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_goal->optional = TRUE;
 				}
 				q_ret = init_quest_retrieve(error_idx, stage, goal);
-				for (j = 0; j < 5; j++) {
+				for (j = 0; j < k; j++) {
 					q_ret->opval[j] = pval[j];
 					q_ret->obpval[j] = bpval[j];
 					if (attr[j] == '-') q_ret->oattr[j] = 254; /* any */
