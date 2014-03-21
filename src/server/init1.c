@@ -7313,7 +7313,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	/* for initialising questor information with default values when reading
 	   a Q line without an F-line following it up (since those are optional) */
 	bool init_F[QI_QUESTORS];
-	int lc_flagsacc;
+	int lc_flagsacc = 0;//compiler warning
 
 	qi_questor *q_questor;
 	//qi_questor_morph *q_qmorph;
@@ -7684,7 +7684,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_questor->invincible  = (invinc != 0);
 
 			init_F[lc_flagsacc] = TRUE;
-
 			lc_flagsacc++;
 			continue;
 		}
