@@ -2583,7 +2583,11 @@ static bool save_quests_file(void) {
 
 		//main quest data
 		wr_byte(q_ptr->active);
+#if 0 /* 0'ed for now, use 'x' disable feature from q_info.txt exclusively. */
 		wr_byte(q_ptr->disabled);
+#else
+		wr_byte(0);
+#endif
 
 		wr_s16b(q_ptr->cur_cooldown);
 		wr_s32b(q_ptr->turn_activated);

@@ -3791,11 +3791,12 @@ static errr load_quests_file() {
 
 		//main quest data
 		rd_byte((byte *) &q_ptr->active);
-#if 0 /* disable for now, and use 'x' disable feature from q_info.txt exclusively. */
+#if 0 /* 0'ed for now, use 'x' disable feature from q_info.txt exclusively. */
 		rd_byte((byte *) &q_ptr->disabled);
-		if (q_ptr->disabled) disabled_on_load = TRUE;
 #else
 		strip_bytes(1);
+		/* Quest was disabled in q_info.txt? Then set 'disabled_on_load' marker. */
+		if (q_ptr->disabled) q_ptr->disabled_on_load = TRUE;
 #endif
 
 		rd_s16b(&q_ptr->cur_cooldown);
