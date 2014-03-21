@@ -1942,7 +1942,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 		/* location-restricted?
 		   Exempt already retrieved items that were just lost temporarily on the way! */
 		if (q_goal->target_pos &&
-		    !(o_ptr->quest == q_idx + 1 && o_ptr->quest_stage == stage)) {
+		    (!o_ptr || !(o_ptr->quest == q_idx + 1 && o_ptr->quest_stage == stage))) {
 			/* extend target terrain over a wide patch? */
 			if (q_goal->target_terrain_patch) {
 				/* different z-coordinate = instant fail */
