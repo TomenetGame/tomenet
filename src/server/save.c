@@ -2533,12 +2533,18 @@ void save_banlist(void) {
    However, saving this quest data of random/varying lenght is a mess anyway,
    so it's good that we keep it far away from the server savefile. */
 static bool save_quests_file(void) {
-	int i;
+	int i, j;
 	u32b now;
 
 	byte tmp8u;
-	u16b tmp16u;
-	u32b tmp32u;
+
+
+	quest_info *q_ptr;
+
+	qi_questor *q_questor;
+	qi_goal *q_goal;
+	qi_stage *q_stage;
+
 
 	now = time((time_t *)0);
 	/* Note the operating system */
@@ -2566,49 +2572,66 @@ static bool save_quests_file(void) {
 
 	/* begin writing the actual quest data */
 
-#if 0
 	wr_s16b(max_q_idx);
+	for (i = 0; i < max_q_idx; i++) {
+		q_ptr = &q_info[i];
 
-questors:
-	wr_byte(questors);
-	struct worldpos current_wpos;
-	s16b current_x, current_y;
-	s16b m_idx;
+		//to recognize the quest (ID)
+		wr_string(q_ptr->codename);
+		wr_string(q_ptr->creator);
+		wr_u16b(q_ptr->name);
 
-	s16b talk_focus;
+		//main quest data
+		wr_byte(q_ptr->active);
+		wr_byte(q_ptr->disabled);
+		//if disabled then disabled_on_load = TRUE; -- but: ignore read value for 'disabled' instead! it's better (just via q_info 'x' feat)
+		wr_byte(q_ptr->disabled_on_load);
 
-goals:
-	wr_byte(goals);
-	bool cleared;
-	bool nisi;
-killgoals:
-	s16b number_left;
+		wr_s16b(q_ptr->cur_cooldown);
+		wr_s32b(q_ptr->turn_activated);
+		wr_s32b(q_ptr->turn_acquired);
 
-stages:
-	wr_byte(stages);
-	/* dynamic timer helper data */
-	s16b timed_countdown;
-	s16b timed_countdown_stage;
-	bool timed_countdown_quiet;
+		wr_s16b(q_ptr->cur_stage);
+		wr_u16b(q_ptr->flags);
 
-quests:
-	bool active;
-	bool disabled;
-	//if disabled then disabled_on_load = TRUE; -- but: ignore read value for 'disabled' instead! it's better (just via q_info 'x' feat)
-	bool disabled_on_load;
+		//questors:
+		wr_byte(q_ptr->questors);
+		for (j = 0; j < q_ptr->questors; j++) {
+			q_questor = &q_ptr->questor[j];
 
-	s16b cur_cooldown;
-	s32b turn_activated;
-	s32b turn_acquired;
+			wr_byte(q_questor->current_wpos.wx);
+			wr_byte(q_questor->current_wpos.wy);
+			wr_byte(q_questor->current_wpos.wz);
 
-	s16b cur_stage;
-	u16b flags;
+			wr_byte(q_questor->current_x);
+			wr_byte(q_questor->current_y);
 
-quests_fixed_ID:
-	char codename[QI_CODENAME_LEN + 1];
-	char creator[NAME_LEN];
-	u16b name;
-#endif
+			wr_s16b(q_questor->m_idx);
+			wr_s16b(q_questor->talk_focus);
+		}
+
+		//stages:
+		wr_byte(q_ptr->stages);
+		for (j = 0; j < q_ptr->stages; j++) {
+			q_stage = &q_ptr->stage[j];
+
+			wr_s16b(q_stage->timed_countdown);
+			wr_s16b(q_stage->timed_countdown_stage);
+			wr_byte(q_stage->timed_countdown_quiet);
+
+			//goals:
+			wr_byte(q_stage->goals);
+			for (j = 0; j < q_stage->goals; j++) {
+				q_goal = &q_stage->goal[j];
+
+				wr_byte(q_goal->cleared);
+				wr_byte(q_goal->nisi);
+
+				//kill goals:
+				if (q_goal->kill) wr_s16b(q_goal->kill->number_left);
+			}
+		}
+	}
 
 	/* finish up */
 
