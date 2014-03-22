@@ -754,7 +754,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	o_ptr->iy = y;
 	wpcopy(&o_ptr->wpos, &wpos);
 
-	o_ptr->attr = q_questor->oattr;//o_ptr->xtra3 =
+	//o_ptr->attr = q_questor->oattr;//o_ptr->xtra3 =
 	o_ptr->name1 = q_questor->oname1;
 	o_ptr->name2 = q_questor->oname2;
 	o_ptr->name2b = q_questor->oname2b;
