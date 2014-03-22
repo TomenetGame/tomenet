@@ -208,6 +208,8 @@ typedef struct qi_goal {
 
 	bool cleared;		//dynamic data		/* goal has been fulfilled! */
 	bool nisi;		//dynamic data		/* for goals set by kill/retrieve depending on deliver (for flag changes) */
+	bool return_to_questor;				/* do we need to return to the questor first (bump), to get credit for particular main goals?
+							   An M-shortcut related to 'nisi', but we need to interact with the questor actually. */
 
 	/* 'Z' lines: goals set/clear flags */
 	u16b setflags;
@@ -222,8 +224,6 @@ typedef struct qi_goal {
 	byte target_pos_radius;
 
 	cptr target_tpref;				/* filename of map to load, or empty for none */
-
-	bool return_to_questor;				/* do we need to return to the questor first (bump), to get credit for particular main goals? */
 } qi_goal;
 
 /* Sub-structure: A single quest reward.

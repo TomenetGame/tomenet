@@ -56,7 +56,7 @@ V:0.0.1
 
 # optional target location where the player has to move after having cleared the goals, to get them credited.
 # This can also be specified without any kill/retrieve goals, in which case it becomes a simple 'travel-to' goal:
-# (optional) M:stage:goal#:deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:radius:mapfile (if not using terrain type) or '-'
+# (optional) M:stage:goal#:deliver to questor:deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:radius:mapfile (if not using terrain type) or '-'
 
 # (optional) Z:stage:goal:changeflags (flags that get set/cleared when that goal is cleared)
 # G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here) to progress to next stage
@@ -220,7 +220,9 @@ R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
 # (optional) rV:stage:goal:pval:bpval:attr:name1:name2:name2b... (list of 6-tuples like this, up to 5, separated by colons)
 # (optional, if k/r line exists) P:stage:goal#:goalwpos wx:wy:wz:adjacent terrain extension:goal at exact x:y:radius:mapfile (if not using terrain type) or '-'
 # (optional) M:stage:goal#:deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:radius:mapfile (if not using terrain type) or '-'
-# //todo--use deliver-goal instead for now! (optional) B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
+# //use new 'questor' parm of 'M'! (optional) B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
+# // ^ Sort of like a 'shortcut' for an 'M' line, but required interaction with the questor:
+# // ^ (optional) B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
 # (optional) Z:stage:goal:changeflags
 # G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here)
 # (optional) O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free) separated by colons
