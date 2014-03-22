@@ -243,6 +243,22 @@ bool quest_activate(int q_idx) {
 				break;
 			}
 
+			if (loc_choice == QI_SLOC_SURFACE) {
+				if ((q_questor->s_terrains & RF8_WILD_TOO)) { /* all terrains are valid */
+				} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_OCEAN)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_WASTE)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_WOOD)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_VOLCANO)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_MOUNTAIN)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_GRASS)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_DESERT)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_ICE)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_SWAMP)) {
+				} else return FALSE; //paranoia
+			}
+
 			if (loc_choice == QI_SLOC_TOWN) {
 				if ((q_questor->s_towns_array & QI_STOWN_BREE)) {
 					wpos.wx = 32;
@@ -263,22 +279,6 @@ bool quest_activate(int q_idx) {
 				} else if ((q_questor->s_towns_array & QI_STOWN_DUNGEON)) {
 				} else if ((q_questor->s_towns_array & QI_STOWN_IDDC)) {
 				} else if ((q_questor->s_towns_array & QI_STOWN_IDDC_FIXED)) {
-				} else return FALSE; //paranoia
-			}
-
-			if (loc_choice == QI_SLOC_SURFACE) {
-				if ((q_questor->s_terrains & RF8_WILD_TOO)) { /* all terrains are valid */
-				} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_OCEAN)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_WASTE)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_WOOD)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_VOLCANO)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_MOUNTAIN)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_GRASS)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_DESERT)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_ICE)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_SWAMP)) {
 				} else return FALSE; //paranoia
 			}
 
