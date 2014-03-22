@@ -588,7 +588,8 @@ static void quest_initialise_player_tracking(int Ind, int py_q_idx) {
 	p_ptr->quest_any_deliver_xy_within_target = FALSE;
 
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
-		if (i == py_q_idx) continue;
+		/* skip this quest and unused quests */
+		if (i == py_q_idx || p_ptr->quest_idx[i] == -1) continue;
 		/* expensive mechanism, sort of */
 		quest_imprint_tracking_information(Ind, i, TRUE);
 	}
