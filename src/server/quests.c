@@ -1046,6 +1046,28 @@ void quest_precheck_retrieval(int Ind, int q_idx, int py_q_idx) {
 		quest_check_goal_kr(Ind, q_idx, py_q_idx, NULL, &p_ptr->inventory[i]);
 	}
 }
+/* Update our current target location requirements and check them right away.
+   This function is to be called right after a stage change.
+   Its purpose is to check if the player already carries all required items
+   for a retrieval quest and is even at the correct deliver position already.
+   A stage change will occur then, induced from the goal-checks called in the
+   functions called in this function eventually.
+   Without this function, the player would have to..
+   -drop the eligible items he's already carrying and pick them up again and..
+   -change wpos once, then go back, to be able to deliver.
+   Let this function also be known as...badumtsh.. <INSTAEND HACK>! */
+static void quest_instacheck_retrieval(int Ind, int q_idx, int py_q_idx) {
+	/* Check if our current wpos/location is already an important target
+	   for retrieval quests that we just acquired */
+	quest_check_player_location(Ind);
+	/* If it isn't (for retrieval quests), we're done. */
+	if (!Players[Ind]->quest_any_r_target) return;
+
+	/* check for items already in our inventory that fulfil any
+	   retrieval goals we just acquired right away */
+	quest_precheck_retrieval(Ind, q_idx, py_q_idx); /* sets goals as 'nisi'.. */
+	quest_check_goal_deliver(Ind); /* ..turns them in! */
+}
 /* Store some information of the current stage in the p_ptr array to track his
    progress more easily in the game code:
    -How many kills/items he has to retrieve and
@@ -1071,25 +1093,6 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 
 	/* now set/add our new stage's info */
 	quest_imprint_tracking_information(Ind, py_q_idx, FALSE);
-
-	/* check for items in our inventory that fulfil any retrieval goals we just acquired right away */
-	if (p_ptr->quest_any_r_target) quest_precheck_retrieval(Ind, q_idx, py_q_idx);
-
-	/* ..and check right away if this new info just made our current wpos/location an important target.
-	   (Kinda expensive checks here, this was just called above in quest_initialise_player_tracking() too, sigh.) */
-	quest_check_player_location(Ind);
-
-	/* check for items in our inventory that fulfil any retrieval goals we just acquired right away */
-	if (p_ptr->quest_any_r_target) quest_precheck_retrieval(Ind, q_idx, py_q_idx);
-	/* ..and check right away for items in our inventory that fulfil any retrieval goals we just acquired */
-	if (p_ptr->quest_any_r_target) {
-		quest_precheck_retrieval(Ind, q_idx, py_q_idx);
-		/* ..aaaand check right away if we've sort of automatically delivered them just by standing here already */
-		quest_check_goal_deliver(Ind);
-		/* NOTE: This might just have completed our quest! TODO:
-		   So we need to get out of any code passage that causes another
-		   reply-for-dialogue-keyword prompt, would be silyl (although nothing happens really). */
-	}
 }
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
@@ -1248,6 +1251,23 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 #endif
 		quest_terminate(pInd, q_idx);
 	}
+
+#if 1	/* INSTAEND HACK */
+	/* hack - we couldn't do this in quest_imprint_stage(), see the note there:
+	   check if we already auto-completed the quest stage this quickly just by standing there! */
+	if (!q_ptr->individual || !pInd) { //the !pInd part is paranoia
+		for (i = 1; i <= NumPlayers; i++) {
+			//if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //seems nonsensical for narrations
+			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+				if (Players[i]->quest_idx[j] == q_idx) break;
+			if (j == MAX_CONCURRENT_QUESTS) continue;
+
+			quest_instacheck_retrieval(i, q_idx, j);
+		}
+	} else { /* individual quest */
+		quest_instacheck_retrieval(pInd, q_idx, j);
+	}
+#endif
 }
 
 void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
@@ -1304,6 +1324,14 @@ void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
 	/* store information of the current stage in the p_ptr array,
 	   eg the target location for easier lookup */
 	quest_imprint_stage(Ind, q_idx, i);
+
+#if 1 /* INSTAEND HACK */
+	/* hack - we couldn't do this in quest_imprint_stage(), see the note there:
+	   check if we already auto-completed the quest stage this quickly just by standing there! */
+	quest_instacheck_retrieval(Ind, q_idx, i);
+	/* stage advanced or quest even terminated? */
+	if (q_ptr->cur_stage != 0 || p_ptr->quest_idx[i] == -1) return;
+#endif
 
 	/* re-prompt for keyword input, if any */
 	quest_dialogue(Ind, q_idx, p_ptr->interact_questor_idx, TRUE, FALSE, FALSE);
