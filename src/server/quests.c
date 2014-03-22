@@ -603,6 +603,9 @@ static void quest_initialise_player_tracking(int Ind, int py_q_idx) {
 
 	/* for 'individual' quests, reset temporary quest data or it might get carried over from previous stage? */
 	for (i = 0; i < QI_GOALS; i++) p_ptr->quest_goals[py_q_idx][i] = FALSE;
+
+	/* restore correct target/deliver situational tracker ('..within_target' flags!) */
+	quest_check_player_location(Ind);
 }
 
 /* a quest has successfully ended, clean up */
