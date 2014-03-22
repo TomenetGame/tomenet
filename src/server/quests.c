@@ -188,49 +188,16 @@ static u32b quest_pick_flag(u32b flagarray, int size) {
 	}
 	return 0x0; //paranoia
 }
-/* Spawn questor, prepare sector/floor, make things static if requested, etc. */
-bool quest_activate(int q_idx) {
+
+static bool questor_spawn_location(int q_idx, qi_questor *q_questor) {
 	quest_info *q_ptr = &q_info[q_idx];
-	int i, q, m_idx, tries;
-	cave_type **zcave, *c_ptr;
-	monster_race *r_ptr, *rbase_ptr;
-	monster_type *m_ptr;
-	qi_questor *q_questor;
+	int i, tries;
+	cave_type **zcave;
 	u32b choice, wild = RF8_WILD_TOO_MASK & ~(RF8_WILD_TOWN | RF8_WILD_EASY);
 
 	/* data written back to q_info[] */
 	struct worldpos wpos = {63, 63, 0}; //default for cases of acute paranoia
 	int x, y, x2, y2;
-
-
-	/* catch bad mistakes */
-	if (!q_ptr->defined) {
-		s_printf("QUEST_UNDEFINED: Cancelled attempt to activate quest %d.\n", q_idx);
-		return FALSE;
-	}
-
-	/* Quest is now 'active' */
-#if QDEBUG > 0
- #if QDEBUG > 1
-	for (i = 1;i <= NumPlayers; i++)
-		if (is_admin(Players[i]))
-			msg_format(i, "Quest '%s' (%d,%s) activated.", q_name + q_ptr->name, q_idx, q_ptr->codename);
- #endif
-	s_printf("%s QUEST_ACTIVATE: '%s'(%d,%s) by %s\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, q_ptr->creator);
-#endif
-	q_ptr->active = TRUE;
-
-
-	/* Generate questor 'monsters' */
-	for (q = 0; q < q_ptr->questors; q++) {
-		q_questor = &q_ptr->questor[q];
-
-		/* Only treat NPC-questors (monsters) here for now (TODO: questor-items) */
-		if (q_questor->type != QI_QUESTOR_NPC) continue;
-
-		/* If no monster race index is set for the questor, don't spawn him. (paranoia) */
-		if (!q_questor->ridx) continue;
-
 
 		/* ---------- Try to choose questor spawn locations ---------- */
 
@@ -431,17 +398,75 @@ bool quest_activate(int q_idx) {
 			}
 		}
 
-		c_ptr = &zcave[y][x];
-
 		q_questor->current_x = x;
 		q_questor->current_y = y;
 
+	return TRUE;
+}
 
-		/* ---------- Try to spawn the questor monster ---------- */
+static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	int i, m_idx;
+	cave_type **zcave, *c_ptr;
+	monster_race *r_ptr, *rbase_ptr;
+	monster_type *m_ptr;
 
-		m_idx = m_pop();
-		if (!m_idx) {
-			s_printf(" QUEST_CANCELLED: No free monster index to pop questor.\n");
+	/* data written back to q_info[] */
+	struct worldpos wpos = {63, 63, 0}; //default for cases of acute paranoia
+	int x, y;
+
+
+	wpos.wx = q_questor->current_wpos.wx;
+	wpos.wy = q_questor->current_wpos.wy;
+	wpos.wz = q_questor->current_wpos.wz;
+
+	x = q_questor->current_x;
+	y = q_questor->current_y;
+
+	zcave = getcave(&wpos);
+	c_ptr = &zcave[y][x];
+
+
+	/* If no monster race index is set for the questor, don't spawn him. (paranoia) */
+	if (!q_questor->ridx) return FALSE;
+
+	/* ---------- Try to spawn the questor monster ---------- */
+
+	m_idx = m_pop();
+	if (!m_idx) {
+		s_printf(" QUEST_CANCELLED: No free monster index to pop questor.\n");
+		q_ptr->active = FALSE;
+#ifdef QERROR_DISABLE
+		q_ptr->disabled = TRUE;
+#else
+		q_ptr->cur_cooldown = QERROR_COOLDOWN;
+#endif
+		return FALSE;
+	}
+
+	/* make sure no other player/moster is occupying our spawning grid */
+	if (c_ptr->m_idx < 0) {
+		int Ind = -c_ptr->m_idx;
+		player_type *p_ptr = Players[Ind];
+
+		teleport_player(Ind, 1, TRUE);
+		/* check again.. */
+		if (c_ptr->m_idx < 0) teleport_player(Ind, 10, TRUE);
+		/* and again.. (someone funny stone-walled the whole map?) */
+		if (c_ptr->m_idx < 0) teleport_player(Ind, 200, TRUE);
+		/* check again. If still here, just transport him to Bree for now -_- */
+		if (c_ptr->m_idx < 0) {
+			p_ptr->new_level_method = LEVEL_RAND;
+			p_ptr->recall_pos.wx = cfg.town_x;
+			p_ptr->recall_pos.wy = cfg.town_y;
+			p_ptr->recall_pos.wz = 0;
+			recall_player(Ind, "A strange force teleports you far away.");
+		}
+	} else if (c_ptr->m_idx > 0) {
+		/* is it ANOTHER questor? uhoh */
+		if (m_list[c_ptr->m_idx].questor) {
+			/* we don't mess with questor locations for consistencies sake */
+			s_printf(" QUEST_CANCELLED: Questor of quest %d occupies questor spawn location.\n", m_list[c_ptr->m_idx].quest);
 			q_ptr->active = FALSE;
 #ifdef QERROR_DISABLE
 			q_ptr->disabled = TRUE;
@@ -451,177 +476,229 @@ bool quest_activate(int q_idx) {
 			return FALSE;
 		}
 
-		/* make sure no other player/moster is occupying our spawning grid */
-		if (c_ptr->m_idx < 0) {
-			int Ind = -c_ptr->m_idx;
-			player_type *p_ptr = Players[Ind];
+		teleport_away(c_ptr->m_idx, 1);
+		/* check again.. */
+		if (c_ptr->m_idx > 0) teleport_away(c_ptr->m_idx, 2);
+		/* aaaand again.. */
+		if (c_ptr->m_idx > 0) teleport_away(c_ptr->m_idx, 10);
+		/* wow. this patience. */
+		if (c_ptr->m_idx > 0) teleport_away(c_ptr->m_idx, 200);
+		/* out of patience */
+		if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx, TRUE);
+	}
+	c_ptr->m_idx = m_idx;
 
-			teleport_player(Ind, 1, TRUE);
-			/* check again.. */
-			if (c_ptr->m_idx < 0) teleport_player(Ind, 10, TRUE);
-			/* and again.. (someone funny stone-walled the whole map?) */
-			if (c_ptr->m_idx < 0) teleport_player(Ind, 200, TRUE);
-			/* check again. If still here, just transport him to Bree for now -_- */
-			if (c_ptr->m_idx < 0) {
-				p_ptr->new_level_method = LEVEL_RAND;
-				p_ptr->recall_pos.wx = cfg.town_x;
-				p_ptr->recall_pos.wy = cfg.town_y;
-				p_ptr->recall_pos.wz = 0;
-				recall_player(Ind, "A strange force teleports you far away.");
-			}
-		} else if (c_ptr->m_idx > 0) {
-			/* is it ANOTHER questor? uhoh */
-			if (m_list[c_ptr->m_idx].questor) {
-				/* we don't mess with questor locations for consistencies sake */
-				s_printf(" QUEST_CANCELLED: Questor of quest %d occupies questor spawn location.\n", m_list[c_ptr->m_idx].quest);
-				q_ptr->active = FALSE;
-#ifdef QERROR_DISABLE
-				q_ptr->disabled = TRUE;
-#else
-				q_ptr->cur_cooldown = QERROR_COOLDOWN;
-#endif
-				return FALSE;
-			}
+	m_ptr = &m_list[m_idx];
+	MAKE(m_ptr->r_ptr, monster_race);
+	r_ptr = m_ptr->r_ptr;
+	rbase_ptr = &r_info[q_questor->ridx];
 
-			teleport_away(c_ptr->m_idx, 1);
-			/* check again.. */
-			if (c_ptr->m_idx > 0) teleport_away(c_ptr->m_idx, 2);
-			/* aaaand again.. */
-			if (c_ptr->m_idx > 0) teleport_away(c_ptr->m_idx, 10);
-			/* wow. this patience. */
-			if (c_ptr->m_idx > 0) teleport_away(c_ptr->m_idx, 200);
-			/* out of patience */
-			if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx, TRUE);
-		}
-		c_ptr->m_idx = m_idx;
+	m_ptr->questor = TRUE;
+	m_ptr->questor_idx = questor_idx;
+	m_ptr->quest = q_idx;
+	m_ptr->r_idx = q_questor->ridx;
+	/* m_ptr->special = TRUE; --nope, this is unfortunately too much golem'ized.
+	   Need code cleanup!! Maybe rename it to m_ptr->golem and add a new m_ptr->special. */
+	r_ptr->extra = 0;
+	m_ptr->mind = 0;
+	m_ptr->owner = 0;
 
-		m_ptr = &m_list[m_idx];
-		MAKE(m_ptr->r_ptr, monster_race);
-		r_ptr = m_ptr->r_ptr;
-		rbase_ptr = &r_info[q_questor->ridx];
+	r_ptr->flags1 = rbase_ptr->flags1;
+	r_ptr->flags2 = rbase_ptr->flags2;
+	r_ptr->flags3 = rbase_ptr->flags3;
+	r_ptr->flags4 = rbase_ptr->flags4;
+	r_ptr->flags5 = rbase_ptr->flags5;
+	r_ptr->flags6 = rbase_ptr->flags6;
+	r_ptr->flags7 = rbase_ptr->flags7;
+	r_ptr->flags8 = rbase_ptr->flags8;
+	r_ptr->flags9 = rbase_ptr->flags9;
+	r_ptr->flags0 = rbase_ptr->flags0;
 
-		m_ptr->questor = TRUE;
-		m_ptr->questor_idx = q;
-		m_ptr->quest = q_idx;
-		m_ptr->r_idx = q_questor->ridx;
-		/* m_ptr->special = TRUE; --nope, this is unfortunately too much golem'ized.
-		   Need code cleanup!! Maybe rename it to m_ptr->golem and add a new m_ptr->special. */
-		r_ptr->extra = 0;
-		m_ptr->mind = 0;
-		m_ptr->owner = 0;
+	r_ptr->flags1 |= RF1_FORCE_MAXHP;
+	r_ptr->flags3 |= RF3_RES_TELE | RF3_RES_NEXU;
+	r_ptr->flags7 |= RF7_NO_TARGET | RF7_NEVER_ACT;
+	if (q_questor->invincible) r_ptr->flags7 |= RF7_NO_DEATH; //for now we just use NO_DEATH flag for invincibility
+	r_ptr->flags8 |= RF8_GENO_PERSIST | RF8_GENO_NO_THIN | RF8_ALLOW_RUNNING | RF8_NO_AUTORET;
+	r_ptr->flags9 |= RF9_IM_TELE;
 
-		r_ptr->flags1 = rbase_ptr->flags1;
-		r_ptr->flags2 = rbase_ptr->flags2;
-		r_ptr->flags3 = rbase_ptr->flags3;
-		r_ptr->flags4 = rbase_ptr->flags4;
-		r_ptr->flags5 = rbase_ptr->flags5;
-		r_ptr->flags6 = rbase_ptr->flags6;
-		r_ptr->flags7 = rbase_ptr->flags7;
-		r_ptr->flags8 = rbase_ptr->flags8;
-		r_ptr->flags9 = rbase_ptr->flags9;
-		r_ptr->flags0 = rbase_ptr->flags0;
+	r_ptr->text = 0;
+	r_ptr->name = rbase_ptr->name;
+	m_ptr->fx = x;
+	m_ptr->fy = y;
 
-		r_ptr->flags1 |= RF1_FORCE_MAXHP;
-		r_ptr->flags3 |= RF3_RES_TELE | RF3_RES_NEXU;
-		r_ptr->flags7 |= RF7_NO_TARGET | RF7_NEVER_ACT;
-		if (q_questor->invincible) r_ptr->flags7 |= RF7_NO_DEATH; //for now we just use NO_DEATH flag for invincibility
-		r_ptr->flags8 |= RF8_GENO_PERSIST | RF8_GENO_NO_THIN | RF8_ALLOW_RUNNING | RF8_NO_AUTORET;
-		r_ptr->flags9 |= RF9_IM_TELE;
-
-		r_ptr->text = 0;
-		r_ptr->name = rbase_ptr->name;
-		m_ptr->fx = x;
-		m_ptr->fy = y;
-
-		r_ptr->d_attr = q_questor->rattr;
-		r_ptr->d_char = q_questor->rchar;
-		r_ptr->x_attr = q_questor->rattr;
-		r_ptr->x_char = q_questor->rchar;
+	r_ptr->d_attr = q_questor->rattr;
+	r_ptr->d_char = q_questor->rchar;
+	r_ptr->x_attr = q_questor->rattr;
+	r_ptr->x_char = q_questor->rchar;
 	
-		r_ptr->aaf = rbase_ptr->aaf;
-		r_ptr->mexp = rbase_ptr->mexp;
-		r_ptr->hdice = rbase_ptr->hdice;
-		r_ptr->hside = rbase_ptr->hside;
+	r_ptr->aaf = rbase_ptr->aaf;
+	r_ptr->mexp = rbase_ptr->mexp;
+	r_ptr->hdice = rbase_ptr->hdice;
+	r_ptr->hside = rbase_ptr->hside;
 	
-		m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
-		m_ptr->hp = m_ptr->maxhp;
-		m_ptr->org_maxhp = m_ptr->maxhp; /* CON */
-		m_ptr->speed = rbase_ptr->speed;
-		m_ptr->mspeed = m_ptr->speed;
-		m_ptr->ac = rbase_ptr->ac;
-		m_ptr->org_ac = m_ptr->ac; /* DEX */
+	m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
+	m_ptr->hp = m_ptr->maxhp;
+	m_ptr->org_maxhp = m_ptr->maxhp; /* CON */
+	m_ptr->speed = rbase_ptr->speed;
+	m_ptr->mspeed = m_ptr->speed;
+	m_ptr->ac = rbase_ptr->ac;
+	m_ptr->org_ac = m_ptr->ac; /* DEX */
 
-		m_ptr->level = rbase_ptr->level;
-		m_ptr->exp = MONSTER_EXP(m_ptr->level);
+	m_ptr->level = rbase_ptr->level;
+	m_ptr->exp = MONSTER_EXP(m_ptr->level);
 
-		for (i = 0; i < 4; i++) {
-			m_ptr->blow[i].effect = rbase_ptr->blow[i].effect;
-			m_ptr->blow[i].method = rbase_ptr->blow[i].method;
-			m_ptr->blow[i].d_dice = rbase_ptr->blow[i].d_dice;
-			m_ptr->blow[i].d_side = rbase_ptr->blow[i].d_side;
+	for (i = 0; i < 4; i++) {
+		m_ptr->blow[i].effect = rbase_ptr->blow[i].effect;
+		m_ptr->blow[i].method = rbase_ptr->blow[i].method;
+		m_ptr->blow[i].d_dice = rbase_ptr->blow[i].d_dice;
+		m_ptr->blow[i].d_side = rbase_ptr->blow[i].d_side;
 
-			m_ptr->blow[i].org_d_dice = rbase_ptr->blow[i].d_dice;
-			m_ptr->blow[i].org_d_side = rbase_ptr->blow[i].d_side;
-		}
+		m_ptr->blow[i].org_d_dice = rbase_ptr->blow[i].d_dice;
+		m_ptr->blow[i].org_d_side = rbase_ptr->blow[i].d_side;
+	}
 
-		r_ptr->freq_innate = rbase_ptr->freq_innate;
-		r_ptr->freq_spell = rbase_ptr->freq_spell;
+	r_ptr->freq_innate = rbase_ptr->freq_innate;
+	r_ptr->freq_spell = rbase_ptr->freq_spell;
 
 #ifdef MONSTER_ASTAR
-		if (r_ptr->flags0 & RF0_ASTAR) {
-			/* search for an available A* table to use */
-			for (i = 0; i < ASTAR_MAX_INSTANCES; i++) {
-				/* found an available instance? */
-				if (astar_info_open[i].m_idx == -1) {
-					astar_info_open[i].m_idx = m_idx;
-					astar_info_open[i].nodes = 0; /* init: start with empty set of nodes */
-					astar_info_closed[i].nodes = 0; /* init: start with empty set of nodes */
-					m_ptr->astar_idx = i;
-					break;
-				}
-			}
-			/* no instance available? Mark us (-1) to use normal movement instead */
-			if (i == ASTAR_MAX_INSTANCES) {
-				m_ptr->astar_idx = -1;
-				/* cancel quest because of this? */
-				s_printf(" QUEST_CANCELLED: No free A* index for questor.\n");
-				q_ptr->active = FALSE;
- #ifdef QERROR_DISABLE
-				q_ptr->disabled = TRUE;
- #else
-				q_ptr->cur_cooldown = QERROR_COOLDOWN;
- #endif
-				return FALSE;
+	if (r_ptr->flags0 & RF0_ASTAR) {
+		/* search for an available A* table to use */
+		for (i = 0; i < ASTAR_MAX_INSTANCES; i++) {
+			/* found an available instance? */
+			if (astar_info_open[i].m_idx == -1) {
+				astar_info_open[i].m_idx = m_idx;
+				astar_info_open[i].nodes = 0; /* init: start with empty set of nodes */
+				astar_info_closed[i].nodes = 0; /* init: start with empty set of nodes */
+				m_ptr->astar_idx = i;
+				break;
 			}
 		}
+		/* no instance available? Mark us (-1) to use normal movement instead */
+		if (i == ASTAR_MAX_INSTANCES) {
+			m_ptr->astar_idx = -1;
+			/* cancel quest because of this? */
+			s_printf(" QUEST_CANCELLED: No free A* index for questor.\n");
+			q_ptr->active = FALSE;
+ #ifdef QERROR_DISABLE
+			q_ptr->disabled = TRUE;
+ #else
+			q_ptr->cur_cooldown = QERROR_COOLDOWN;
+ #endif
+			return FALSE;
+		}
+	}
 #endif
 
-		m_ptr->clone = 0;
-		m_ptr->cdis = 0;
-		wpcopy(&m_ptr->wpos, &wpos);
+	m_ptr->clone = 0;
+	m_ptr->cdis = 0;
+	wpcopy(&m_ptr->wpos, &wpos);
 
-		m_ptr->stunned = 0;
-		m_ptr->confused = 0;
-		m_ptr->monfear = 0;
-		//r_ptr->sleep = rbase_ptr->sleep;
-		r_ptr->sleep = 0;
+	m_ptr->stunned = 0;
+	m_ptr->confused = 0;
+	m_ptr->monfear = 0;
+	//r_ptr->sleep = rbase_ptr->sleep;
+	r_ptr->sleep = 0;
 
-		m_ptr->questor_invincible = q_questor->invincible; //for now handled by RF7_NO_DEATH
-		m_ptr->questor_hostile = FALSE;
-		q_questor->m_idx = m_idx;
+	m_ptr->questor_invincible = q_questor->invincible; //for now handled by RF7_NO_DEATH
+	m_ptr->questor_hostile = FALSE;
+	q_questor->m_idx = m_idx;
 
-		update_mon(c_ptr->m_idx, TRUE);
+	update_mon(c_ptr->m_idx, TRUE);
 #if QDEBUG > 1
-		s_printf(" QUEST_SPAWNED: Questor '%s' (m_idx %d) at %d,%d,%d - %d,%d.\n", q_questor->name, m_idx, wpos.wx, wpos.wy, wpos.wz, x, y);
+	s_printf(" QUEST_SPAWNED: Questor '%s' (m_idx %d) at %d,%d,%d - %d,%d.\n", q_questor->name, m_idx, wpos.wx, wpos.wy, wpos.wz, x, y);
 #endif
 
-		q_questor->talk_focus = 0;
+	q_questor->talk_focus = 0;
+
+	return TRUE;
+}
+
+static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
+#if 0
+	quest_info *q_ptr = &q_info[q_idx];
+	int i;//, m_idx;
+	//monster_race *r_ptr, *rbase_ptr;
+	//monster_type *m_ptr;
+#endif
+	cave_type **zcave, *c_ptr;
+
+	/* data written back to q_info[] */
+	struct worldpos wpos = {63, 63, 0}; //default for cases of acute paranoia
+	int x, y;
+
+
+	wpos.wx = q_questor->current_wpos.wx;
+	wpos.wy = q_questor->current_wpos.wy;
+	wpos.wz = q_questor->current_wpos.wz;
+
+	x = q_questor->current_x;
+	y = q_questor->current_y;
+
+	zcave = getcave(&wpos);
+	c_ptr = &zcave[y][x];
+
+
+	/* If no monster race index is set for the questor, don't spawn him. (paranoia) */
+	if (!q_questor->ktval || !q_questor->ksval) return FALSE;
+
+	/* ---------- Try to spawn the questor object ---------- */
+
+
+
+	return TRUE;
+}
+
+/* Spawn questor, prepare sector/floor, make things static if requested, etc. */
+bool quest_activate(int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	int i, q;
+	qi_questor *q_questor;
+
+	/* catch bad mistakes */
+	if (!q_ptr->defined) {
+		s_printf("QUEST_UNDEFINED: Cancelled attempt to activate quest %d.\n", q_idx);
+		return FALSE;
+	}
+
+	/* Quest is now 'active' */
+#if QDEBUG > 0
+ #if QDEBUG > 1
+	for (i = 1;i <= NumPlayers; i++)
+		if (is_admin(Players[i]))
+			msg_format(i, "Quest '%s' (%d,%s) activated.", q_name + q_ptr->name, q_idx, q_ptr->codename);
+ #endif
+	s_printf("%s QUEST_ACTIVATE: '%s'(%d,%s) by %s\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, q_ptr->creator);
+#endif
+	q_ptr->active = TRUE;
+
+
+	/* Spawn questors (monsters/objects that players can
+	   interact with to acquire this quest): */
+	for (q = 0; q < q_ptr->questors; q++) {
+		q_questor = &q_ptr->questor[q];
+
+		/* find a suitable spawn location for the questor */
+		if (!questor_spawn_location(q_idx, q_questor)) return FALSE;
+
+		/* generate and spawn the questor */
+		switch (q_questor->type) {
+		case QI_QUESTOR_NPC:
+			if (!questor_monster(q_idx, q_questor, q)) return FALSE;
+			break;
+		case QI_QUESTOR_ITEM_PICKUP:
+			if (!questor_object(q_idx, q_questor, q)) return FALSE;
+			break;
+		default: ;
+			//TODO: other questor-types
+			/* discard */
+		}
 	}
 
 	/* Initialise with starting stage 0 */
 	q_ptr->turn_activated = turn;
 	q_ptr->cur_stage = -1;
 	quest_set_stage(0, q_idx, 0, FALSE);
+
 	return TRUE;
 }
 
