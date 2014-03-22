@@ -4321,6 +4321,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	if (p_ptr->store_num <= -2 && o_ptr->note) player_stores_cut_inscription(o_name);
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) {
 		fprintf(fff, "\377sIt's a cheque worth \377y%d\377s gold pieces.\n", ps_get_cheque_value(o_ptr));
+
+		/* Ooook, in the rare case that someone... Questor object! */
+		if (o_ptr->questor) quest_interact(Ind, o_ptr->quest, o_ptr->questor_idx, fff);
+
 		my_fclose(fff);
 
 		/* Let the client know it's about to get some info */
@@ -4356,6 +4360,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
  #endif
 		fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
 #endif
+
+	/* Questor object! */
+	if (o_ptr->questor) quest_interact(Ind, o_ptr->quest, o_ptr->questor_idx, fff);
 
 	/* Sigil */
 	if (o_ptr->sigil) fprintf(fff, "\377BIt is emblazoned with a sigil of %s.\n", r_projections[o_ptr->sigil-1].name);

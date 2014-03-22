@@ -2153,7 +2153,7 @@ extern void quest_set_cooldown(int pInd, int q_idx, s16b cooldown);
 extern s16b quest_get_stage(int pInd, int q_idx);
 extern void quest_set_stage(int pInd, int q_idx, int stage, bool quiet);
 /* those called for quest goal handling in other regular game functions: */
-extern void quest_interact(int Ind, int q_idx, int questor_idx);
+extern void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff);
 extern void quest_acquire_confirmed(int Ind, int q_idx, bool quiet);
 extern void quest_reply(int Ind, int q_idx, char *str);
 extern void quest_check_player_location(int Ind);

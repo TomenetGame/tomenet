@@ -1800,9 +1800,10 @@ static bool quest_acquire(int Ind, int q_idx, bool quiet) {
 }
 
 /* A player interacts with the questor (bumps him if a creature :-p).
-   This displays quest talk/narration, turns in goals, or may acquire it. */
+   This displays quest talk/narration, turns in goals, or may acquire it.
+   The file pointer is for object questors who get examined by the player. */
 #define ALWAYS_DISPLAY_QUEST_TEXT
-void quest_interact(int Ind, int q_idx, int questor_idx) {
+void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, stage = quest_get_stage(Ind, q_idx);
@@ -1846,6 +1847,15 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 	/* if we're not here for quest acquirement, just check for quest goals
 	   that have been completed and just required delivery back here */
 	if (!may_acquire && quest_goal_check(Ind, q_idx, TRUE)) return;
+
+	/* Special hack - object questor.
+	   That means we're in the middle of the item examination screen. Add to it! */
+	if (q_questor->type == QI_QUESTOR_ITEM_PICKUP) {
+		if (q_stage->talk_examine[questor_idx])
+			fprintf(fff, " \377GYou notice something about this item! (See your chat window.)\n");
+		else /* '>_> */
+			fprintf(fff, " \377GIt seems the item itself is speaking to you! (See your chat window.)\n");
+	}
 
 	/* questor interaction qutomatically invokes the quest dialogue, if any */
 	q_questor->talk_focus = Ind; /* only this player can actually respond with keywords -- TODO: ensure this happens for non 'individual' quests only */
