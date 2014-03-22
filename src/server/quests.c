@@ -471,7 +471,7 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 		/* is it ANOTHER questor? uhoh */
 		if (m_list[c_ptr->m_idx].questor) {
 			/* we don't mess with questor locations for consistencies sake */
-			s_printf(" QUEST_CANCELLED: Questor of quest %d occupies questor spawn location.\n", m_list[c_ptr->mo_idx].quest);
+			s_printf(" QUEST_CANCELLED: Questor of quest %d occupies questor spawn location.\n", m_list[c_ptr->m_idx].quest);
 			q_ptr->active = FALSE;
 #ifdef QERROR_DISABLE
 			q_ptr->disabled = TRUE;
@@ -672,7 +672,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	int o_idx;
 	object_type *o_ptr;
 	cave_type **zcave, *c_ptr;
-	u32b resf = RESF_NO_TRUEART;
+	u32b resf = RESF_NOTRUEART;
 
 	/* data written back to q_info[] */
 	struct worldpos wpos;
@@ -762,7 +762,6 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	o_ptr->questor_idx = questor_idx;
 	o_ptr->quest = q_idx;
 	o_ptr->questor_invincible = q_questor->invincible;
-	o_ptr->questor_hostile = FALSE;
 
 	o_ptr->marked = 0;
 	o_ptr->held_m_idx = 0;
@@ -770,9 +769,9 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	q_questor->mo_idx = o_idx;
 
 	/* Note the spot */
-	note_spot_depth(wpos, y, x);
+	note_spot_depth(&wpos, y, x);
 	/* Draw the spot */
-	everyone_lite_spot(wpos, y, x);
+	everyone_lite_spot(&wpos, y, x);
 
 #if QDEBUG > 1
 	s_printf(" QUEST_SPAWNED: Questor '%s' (o_idx %d) at %d,%d,%d - %d,%d.\n", q_questor->name, o_idx, wpos.wx, wpos.wy, wpos.wz, x, y);
