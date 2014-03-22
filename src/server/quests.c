@@ -2517,16 +2517,26 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_reward *q_rew;
 	qi_questor *q_questor;
+	struct worldpos wpos = { cfg.town_x, cfg.town_y, 0};
 
-	/* TODO: use sensible questor location for generating rewards (apply_magic() wants a wpos, hence..) */
-	if (!q_ptr->questors) return; //extreme paranoia
-	q_questor = &q_ptr->questor[0]; //compiler warning
-	for (j = 0; j < q_ptr->questors; j++) {
-		q_questor = &q_ptr->questor[j];
-		if (q_questor->despawned) continue;
-		break;
-	} /* just pick the first good questor for now.. w/e */
-
+	/* Since the rewards are fixed, independantly of where the questors are,
+	   we can just pick either one questor at random to use his wpos or just
+	   use an arbitrarily set wpos for apply_magic() calls further down. */
+	if (q_ptr->questors) { /* extreme paranoia - could be false with auto-acquired quests? */
+#if 0
+		for (j = 0; j < q_ptr->questors; j++) {
+			q_questor = &q_ptr->questor[j];
+			if (q_questor->despawned) continue;
+			/* just pick the first good questor for now.. w/e */
+			wpos = q_questor->current_wpos;
+			break;
+		}
+#else
+		/* just pick the first questor for now.. w/e */
+		q_questor = &q_ptr->questor[0];
+		wpos = q_questor->current_wpos;
+#endif
+	}
 
 #if 0 /* we're called when stage 0 starts too, and maybe it's some sort of globally determined goal->reward? */
 	if (!pInd || !q_ptr->individual) {
@@ -2575,7 +2585,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 						o_ptr->name1 = ART_RANDART; //hack: disallow true arts!
 						o_ptr->name2 = o_ptr->name2b = 0;
 					}
-					apply_magic(&q_questor->current_wpos, o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
+					apply_magic(&wpos, o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
 					o_ptr->pval = q_rew->opval;
 					o_ptr->bpval = q_rew->obpval;
 					o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
@@ -2591,7 +2601,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					object_wipe(o_ptr);
 					invcopy(o_ptr, lookup_kind(q_rew->otval, q_rew->osval));
 					o_ptr->number = 1;
-					apply_magic(&q_questor->current_wpos, o_ptr, -2, q_rew->ogood, q_rew->ogreat, q_rew->ovgreat, FALSE, resf);
+					apply_magic(&wpos, o_ptr, -2, q_rew->ogood, q_rew->ogreat, q_rew->ovgreat, FALSE, resf);
 					o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
 					o_ptr->note_utag = 0;
 #ifdef PRE_OWN_DROP_CHOSEN
