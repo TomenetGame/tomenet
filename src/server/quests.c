@@ -1074,6 +1074,22 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 
 	/* check for items in our inventory that fulfil any retrieval goals we just acquired right away */
 	if (p_ptr->quest_any_r_target) quest_precheck_retrieval(Ind, q_idx, py_q_idx);
+
+	/* ..and check right away if this new info just made our current wpos/location an important target.
+	   (Kinda expensive checks here, this was just called above in quest_initialise_player_tracking() too, sigh.) */
+	quest_check_player_location(Ind);
+
+	/* check for items in our inventory that fulfil any retrieval goals we just acquired right away */
+	if (p_ptr->quest_any_r_target) quest_precheck_retrieval(Ind, q_idx, py_q_idx);
+	/* ..and check right away for items in our inventory that fulfil any retrieval goals we just acquired */
+	if (p_ptr->quest_any_r_target) {
+		quest_precheck_retrieval(Ind, q_idx, py_q_idx);
+		/* ..aaaand check right away if we've sort of automatically delivered them just by standing here already */
+		quest_check_goal_deliver(Ind);
+		/* NOTE: This might just have completed our quest! TODO:
+		   So we need to get out of any code passage that causes another
+		   reply-for-dialogue-keyword prompt, would be silyl (although nothing happens really). */
+	}
 }
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
@@ -2152,10 +2168,7 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 		}
 	}
 }
-/* Check if player completed a deliver goal to a wpos and specific x,y.
-   Hack for now: added 'py_q_idx' to directly specify the player's quest index,
-                 since we already know it. No need to do the same work multiple times.
-                 In the code this is marked by '//++' */
+/* Check if player completed a deliver goal to a wpos and specific x,y. */
 static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 	player_type *p_ptr = Players[Ind];
 	int j, k, stage;
