@@ -1955,7 +1955,7 @@ void del_guild(int id) {
 	}
 #endif
 
-	/* TODO: Find and destroy the guild key! */
+	/* Find and destroy the guild key! */
 	erase_guild_key(id);
 }
 void guild_timeout(int id) {
