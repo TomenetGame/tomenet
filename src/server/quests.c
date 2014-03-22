@@ -178,6 +178,9 @@ bool quest_activate(int q_idx) {
 	struct worldpos wpos = {63, 63, 0}; //default for cases of acute paranoia
 	int x, y;
 
+	int loc_flags, flag_choice, loc_choice;
+
+
 	/* catch bad mistakes */
 	if (!q_ptr->defined) {
 		s_printf("QUEST_UNDEFINED: Cancelled attempt to activate quest %d.\n", q_idx);
@@ -215,50 +218,77 @@ bool quest_activate(int q_idx) {
 		s_printf(" QIDX %d. SWPOS,XY: %d,%d,%d - %d,%d\n", q_idx, q_questor->start_wpos.wx, q_questor->start_wpos.wy, q_questor->start_wpos.wz, q_questor->start_x, q_questor->start_y);
 		s_printf(" SLOCT, STAR: %d,%d\n", q_questor->s_location_type, q_questor->s_towns_array);
 #endif
+		/* specified exact questor starting wpos? */
 		if (q_questor->start_wpos.wx != -1) {
-			/* exact questor starting wpos  */
 			wpos.wx = q_questor->start_wpos.wx;
 			wpos.wy = q_questor->start_wpos.wy;
 			wpos.wz = q_questor->start_wpos.wz;
-		} else if (!q_questor->s_location_type) return FALSE;
-		else if ((q_questor->s_location_type & QI_SLOC_TOWN)) {//TODO: other locations
-			if ((q_questor->s_towns_array & QI_STOWN_BREE)) {
-				wpos.wx = 32;
-				wpos.wy = 32;
-			} else if ((q_questor->s_towns_array & QI_STOWN_GONDOLIN)) {
-				wpos.wx = 27;
-				wpos.wy = 13;
-			} else if ((q_questor->s_towns_array & QI_STOWN_MINASANOR)) {
-				wpos.wx = 25;
-				wpos.wy = 58;
-			} else if ((q_questor->s_towns_array & QI_STOWN_LOTHLORIEN)) {
-				wpos.wx = 59;
-				wpos.wy = 51;
-			} else if ((q_questor->s_towns_array & QI_STOWN_KHAZADDUM)) {
-				wpos.wx = 26;
-				wpos.wy = 5;
-			} else if ((q_questor->s_towns_array & QI_STOWN_WILD)) {
-			} else if ((q_questor->s_towns_array & QI_STOWN_DUNGEON)) {
-			} else if ((q_questor->s_towns_array & QI_STOWN_IDDC)) {
-			} else if ((q_questor->s_towns_array & QI_STOWN_IDDC_FIXED)) {
-			} else return FALSE; //paranoia
-		} else if ((q_questor->s_location_type & QI_SLOC_SURFACE)) {
-			if ((q_questor->s_terrains & RF8_WILD_TOO)) { /* all terrains are valid */
-			} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
-			} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
-			} else if ((q_questor->s_terrains & RF8_WILD_OCEAN)) {
-			} else if ((q_questor->s_terrains & RF8_WILD_WASTE)) {
-			} else if ((q_questor->s_terrains & RF8_WILD_WOOD)) {
-			} else if ((q_questor->s_terrains & RF8_WILD_VOLCANO)) {
-			} else if ((q_questor->s_terrains & RF8_WILD_MOUNTAIN)) {
-			} else if ((q_questor->s_terrains & RF8_WILD_GRASS)) {
-			} else if ((q_questor->s_terrains & RF8_WILD_DESERT)) {
-			} else if ((q_questor->s_terrains & RF8_WILD_ICE)) {
-			} else if ((q_questor->s_terrains & RF8_WILD_SWAMP)) {
-			} else return FALSE; //paranoia
-		} else if ((q_questor->s_location_type & QI_SLOC_DUNGEON)) {
-		} else if ((q_questor->s_location_type & QI_SLOC_TOWER)) {
-		} else return FALSE; //paranoia
+		}
+		/* specified NO starting pos? */
+		else if (!q_questor->s_location_type) return FALSE;
+		/* paranoia: specified non-existing starting pos type? */
+		else if ((q_questor->s_location_type & 0xF) != q_questor->s_location_type) return FALSE;
+		/* ok, pick one starting location randomly from all eligible ones */
+		else {
+			/* count flags */
+			for (i = 0; i < 4; i++)
+				if ((q_questor->s_location_type & (0x1 << i))) loc_flags++;
+			/* pick one */
+			flag_choice = randint(loc_flags);
+			/* translate back into location type */
+			for (i = 0; i < 4; i++) {
+				if (!(q_questor->s_location_type & (0x1 << i))) continue;
+				if (--flag_choice) continue;
+				loc_choice = 0x1 << i;
+				break;
+			}
+
+			if (loc_choice == QI_SLOC_TOWN) {
+				if ((q_questor->s_towns_array & QI_STOWN_BREE)) {
+					wpos.wx = 32;
+					wpos.wy = 32;
+				} else if ((q_questor->s_towns_array & QI_STOWN_GONDOLIN)) {
+					wpos.wx = 27;
+					wpos.wy = 13;
+				} else if ((q_questor->s_towns_array & QI_STOWN_MINASANOR)) {
+					wpos.wx = 25;
+					wpos.wy = 58;
+				} else if ((q_questor->s_towns_array & QI_STOWN_LOTHLORIEN)) {
+					wpos.wx = 59;
+					wpos.wy = 51;
+				} else if ((q_questor->s_towns_array & QI_STOWN_KHAZADDUM)) {
+					wpos.wx = 26;
+					wpos.wy = 5;
+				} else if ((q_questor->s_towns_array & QI_STOWN_WILD)) {
+				} else if ((q_questor->s_towns_array & QI_STOWN_DUNGEON)) {
+				} else if ((q_questor->s_towns_array & QI_STOWN_IDDC)) {
+				} else if ((q_questor->s_towns_array & QI_STOWN_IDDC_FIXED)) {
+				} else return FALSE; //paranoia
+			}
+
+			if (loc_choice == QI_SLOC_SURFACE) {
+				if ((q_questor->s_terrains & RF8_WILD_TOO)) { /* all terrains are valid */
+				} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_OCEAN)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_WASTE)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_WOOD)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_VOLCANO)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_MOUNTAIN)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_GRASS)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_DESERT)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_ICE)) {
+				} else if ((q_questor->s_terrains & RF8_WILD_SWAMP)) {
+				} else return FALSE; //paranoia
+			}
+
+			//TODO implement location types
+			if (loc_choice == QI_SLOC_DUNGEON) {
+			}
+
+			if (loc_choice == QI_SLOC_TOWER) {
+			}
+		}
 
 		q_questor->current_wpos.wx = wpos.wx;
 		q_questor->current_wpos.wy = wpos.wy;
