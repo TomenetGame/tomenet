@@ -47,9 +47,10 @@ V:0.0.1
 
 # -All quests should currently be set to 'individual'! (Global quests work depending on the quest goals. Some won't, though.)
 # -#goal is 1..5 for main goal, and -1..-5 for optional goals.
-# -About keywords: '-' means the empty keyword "", ie user just needs to press ENTER key without writing anything.
+# -About keywords:
+#   "~" means the empty keyword "", user can just press ENTER key without writing anything to trigger it.
+#   if the FIRST MATCHING (questor+stage) keyword is "y" it brings up a yes/no prompt. The second questor/stage-matching keyword should be "n".
 #   Use [[...]] to highlight the text between the brackets.
-#   If the first keyword for a questor/stage is "y" then a yes/no prompt will be displayed. The second questor/stage-matching keyword should be "n".
 #   (*) Keywords set to 'any stage' (-1) are not sufficient to stop an otherwise empty stage from terminate nor to prompt a quest_dialogue() on their own.
 # -About global 'flags':
 #   '-' means no flags.

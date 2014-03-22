@@ -1478,7 +1478,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	player_type *p_ptr = Players[Ind];
 	int i, k, stage = quest_get_stage(Ind, q_idx);
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
-	bool anything, obvious_keyword = FALSE;
+	bool anything, obvious_keyword = FALSE, more_hack = FALSE, yn_hack = FALSE;
 
 	if (!repeat) {
 		/* pre-scan talk if any line at all passes the flag check */
@@ -1502,12 +1502,12 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 
 				/* lines that contain obvious keywords, ie those marked by '[[..]]',
 				   will always force a reply-prompt for convenience! */
-				if (strstr(q_stage->talk[questor_idx][i], "[[")) obvious_keyword = TRUE;
+				if (strchr(q_stage->talk[questor_idx][i], '\377')) obvious_keyword = TRUE;
 			}
 			//msg_print(Ind, "\374 ");
 		}
 		if (obvious_keyword) force_prompt = TRUE;
-	}
+	} else force_prompt = TRUE; /* repeating what? to talk of course, what else oO -> force_prompt! */
 
 	/* No keyword-interaction possible if we haven't acquired the quest yet. */
 	if (interact_acquire) return;
@@ -1525,26 +1525,36 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	        _everytime_ because it's a bit annoying to have to close the prompt everytime.
 	        So we leave it to the player to bump into the questor (->force_prompt) if he
 	        wants to try and find out secret keywords.. */
-	if (obvious_keyword && !force_prompt) /* if prompt is forced anyway, we can save CPU cycles..luls */
-		for (i = 0; i < q_ptr->keywords; i++)
-			if (q_ptr->keyword[i].stage_ok[stage] &&
-			    q_ptr->keyword[i].questor_ok[questor_idx]
-#if 0 /* well, if we do all of this under an 'obvious_keyword' check, we can (should?) commend this out in turn, because it might be one of the keywords displayed in [[..]] for some weird reason :-p. */
-			    && !q_ptr->keyword[i].any_stage/* and it mustn't use a wildcard stage. that's not sufficient. */
-#endif
-			    ) { 
-				force_prompt = TRUE;
-				break;
-			}
+
+	/* Also we scan here for "~" hack keywords. */
+	for (i = 0; i < q_ptr->keywords; i++)
+		if (q_ptr->keyword[i].stage_ok[stage] &&
+		    q_ptr->keyword[i].questor_ok[questor_idx]
+		    && !q_ptr->keyword[i].any_stage/* and it mustn't use a wildcard stage. that's not sufficient. */
+		    )
+			break;
+	if (q_ptr->keyword[i].keyword[0] == 'y' &&
+	    q_ptr->keyword[i].keyword[1] == 0)
+		yn_hack = TRUE;
+
+	/* ..continue scanning, now for press-SPACEBAR-for-more hack */
+	for (; i < q_ptr->keywords; i++)
+		if (q_ptr->keyword[i].stage_ok[stage] &&
+		    q_ptr->keyword[i].questor_ok[questor_idx]
+		    && !q_ptr->keyword[i].any_stage/* and it mustn't use a wildcard stage. that's not sufficient. */
+		    && q_ptr->keyword[i].keyword[0] == 0) {
+			more_hack = TRUE;
+			break;
+		}
+
 	if (force_prompt) { /* at least 1 keyword available? */
-		/* hack: if 1st keyword is empty string "", display a "more" prompt */
-		if (q_ptr->keyword[i].keyword[0] == 0)
+		/* hack: if 1st keyword is "~", display a "more" prompt */
+		if (more_hack)
 			Send_request_str(Ind, RID_QUEST + q_idx, "? (blank for more)> ", "");
 		else {
 			/* hack: if 1st keyword is "y" just give a yes/no choice instead of an input prompt?
 			   we assume that 2nd keyword is a "n" then. */
-			if (q_ptr->keyword[i].keyword[0] == 'y' &&
-			    q_ptr->keyword[i].keyword[1] == 0)
+			if (yn_hack)
 				Send_request_cfr(Ind, RID_QUEST + q_idx, "? (choose yes or no)>", FALSE);
 			else /* normal prompt for keyword input */
 				Send_request_str(Ind, RID_QUEST + q_idx, "?> ", "");

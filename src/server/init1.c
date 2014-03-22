@@ -7842,8 +7842,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (lc >= QI_KEYWORDS) return 1;
 				q_key = init_quest_keyword(error_idx, lc);
 
-				/* hack: '-' denotes the empty keyword (since scanf cannot handle empty matches..) */
-				if (!strcmp(tmpbuf, "-")) tmpbuf[0] = 0;
+				/* hack: '~' denotes the empty keyword (since scanf cannot handle empty matches..) */
+				if (!strcmp(tmpbuf, "~")) tmpbuf[0] = 0;
 				strcpy(q_key->keyword, tmpbuf);
 				if (questor != -1) q_key->questor_ok[questor] = TRUE;
 				else for (i = 0; i < QI_QUESTORS; i++) q_key->questor_ok[i] = TRUE;
