@@ -60,7 +60,7 @@
 static void quest_goal_check_reward(int pInd, int q_idx);
 static bool quest_goal_check(int pInd, int q_idx, bool interacting);
 static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire);
-static void quest_imprint_tracking_information(int Ind, int py_q_idx);
+static void quest_imprint_tracking_information(int Ind, int py_q_idx, bool target_flagging_only);
 static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *m_ptr, object_type *o_ptr);
 
 
@@ -590,7 +590,7 @@ static void quest_initialise_player_tracking(int Ind, int py_q_idx) {
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 		if (i == py_q_idx) continue;
 		/* expensive mechanism, sort of */
-		quest_imprint_tracking_information(Ind, i);
+		quest_imprint_tracking_information(Ind, i, TRUE);
 	}
 
 	/* clear direct data */
@@ -955,7 +955,10 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 
 	return FALSE;
 }
-static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
+/* Imprint the current stage's tracking information of one of our pursued quests
+   into our temporary quest data. This means target-flagging and kill/retrieve counting.
+   If 'target_flagging_only' is set, the counters aren't touched. */
+static void quest_imprint_tracking_information(int Ind, int py_q_idx, bool target_flagging_only) {
 	player_type *p_ptr = Players[Ind];
 	quest_info *q_ptr;
 	int i, stage, q_idx;
@@ -987,7 +990,9 @@ static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 
 		/* set kill/retrieve tracking counter if we have such goals in this stage */
 		if (q_goal->kill) {
-			p_ptr->quest_kill_number[py_q_idx][i] = q_goal->kill->number;
+			if (!target_flagging_only)
+				p_ptr->quest_kill_number[py_q_idx][i] = q_goal->kill->number;
+
 			/* set target location helper info */
 			p_ptr->quest_kill[py_q_idx] = TRUE;
 			/* assume it's a restricted target "at least" */
@@ -999,7 +1004,9 @@ static void quest_imprint_tracking_information(int Ind, int py_q_idx) {
 			}
 		}
 		if (q_goal->retrieve) {
-			p_ptr->quest_retrieve_number[py_q_idx][i] = q_goal->retrieve->number;
+			if (!target_flagging_only)
+				p_ptr->quest_retrieve_number[py_q_idx][i] = q_goal->retrieve->number;
+
 			/* set target location helper info */
 			p_ptr->quest_retrieve[py_q_idx] = TRUE;
 			/* assume it's a restricted target "at least" */
@@ -1065,7 +1072,7 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	quest_initialise_player_tracking(Ind, py_q_idx);
 
 	/* now set/add our new stage's info */
-	quest_imprint_tracking_information(Ind, py_q_idx);
+	quest_imprint_tracking_information(Ind, py_q_idx, FALSE);
 
 	/* check for items in our inventory that fulfil any retrieval goals we just acquired right away */
 	quest_precheck_retrieval(Ind, q_idx, py_q_idx);
