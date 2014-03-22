@@ -494,8 +494,7 @@ bool quest_activate(int q_idx) {
 	return TRUE;
 }
 
-/* Despawn questor, unstatic sector/floor, etc. */
-//TODO: implement multiple questors
+/* Despawn questors, unstatic sectors/floors, etc. */
 void quest_deactivate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_questor *q_questor;
