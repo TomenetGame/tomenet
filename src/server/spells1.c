@@ -1212,22 +1212,22 @@ void teleport_player_level(int Ind, bool force) {
 		do {
 			switch (rand_int(4)) {
 				case DIR_NORTH:
-					if(new_depth.wy < MAX_WILD_Y)
+					if (new_depth.wy < MAX_WILD_Y - 1)
 						new_depth.wy++;
 					msg = "A gust of wind blows you north.";
 					break;
 				case DIR_EAST:
-					if(new_depth.wx < MAX_WILD_X)
+					if (new_depth.wx < MAX_WILD_X - 1)
 						new_depth.wx++;
 					msg = "A gust of wind blows you east.";
 					break;
 				case DIR_SOUTH:
-					if(new_depth.wy > 0)
+					if (new_depth.wy > 0)
 						new_depth.wy--;
 					msg = "A gust of wind blows you south.";
 					break;
 				case DIR_WEST:
-					if(new_depth.wx > 0)
+					if (new_depth.wx > 0)
 						new_depth.wx--;
 					msg = "A gust of wind blows you west.";
 					break;
