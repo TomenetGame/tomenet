@@ -5945,13 +5945,12 @@ if (cfg.unikill_format) {
 	if (m_ptr->questor) {
 		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
 			/* Drop a specific item? */
-			if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops_specific) {
-				//todo: drop..
-			}
+			if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops_specific)
+				questor_drop_specific(Ind, wpos, x, y);
 			/* Quest progression/fail effect? */
-			//todo..
+			questor_death(Ind, m_idx);
 		} else {
-			s_printf("QUESTOR DEPRECATE (monster_death2)\n");
+			s_printf("QUESTOR DEPRECATED (monster_death2)\n");
 		}
 	}
 

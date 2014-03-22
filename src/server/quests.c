@@ -3166,3 +3166,13 @@ void fix_questors_on_startup(void) {
 		} else q_ptr->questor[m_ptr->questor_idx].m_idx = i;
 	}
 }
+
+/* ---------- Questor actions/reactions to 'external' effects in the game world ---------- */
+
+/* Questor was killed and drops any loot? */
+void questor_drop_specific(int Ind, struct worldpos *wpos, int x, int y) {
+}
+
+/* Questor was killed. Quest progression/fail effect? */
+void questor_death(int Ind, int m_idx) {
+}

@@ -7484,7 +7484,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_ptr->time_start = q_ptr->time_stop = -1;
 
 			q_ptr->flags = 0x0000; //no reason
-			/* for same no reason, probably not todo: init talk/keyword flags and flag-changes */
 
 			/* init 'F' check */
 			for (j = 0; j < QI_QUESTORS; j++) init_F[j] = FALSE;
