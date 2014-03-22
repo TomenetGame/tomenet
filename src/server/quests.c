@@ -165,20 +165,42 @@ void process_quests(void) {
 	}
 }
 
+/* Helper function to pick one *set* flag at random,
+   for determining questor spawn locations */
+static u32b quest_pick_flag(u32b flagarray, int size) {
+	int i;
+	int flags, choice;
+
+	if (flagarray == 0x0) return 0x0;
+
+	/* count flags that are set */
+	for (i = 0; i < size; i++)
+		if ((flagarray & (0x1 << i))) flags++;
+
+	/* pick one */
+	choice = randint(flags);
+
+	/* translate back into flag and return it */
+	for (i = 0; i < size; i++) {
+		if (!(flagarray & (0x1 << i))) continue;
+		if (--choice) continue;
+		return (0x1 << i);
+	}
+	return 0x0; //paranoia
+}
 /* Spawn questor, prepare sector/floor, make things static if requested, etc. */
 bool quest_activate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
-	int i, q, m_idx;
+	int i, q, m_idx, tries;
 	cave_type **zcave, *c_ptr;
 	monster_race *r_ptr, *rbase_ptr;
 	monster_type *m_ptr;
 	qi_questor *q_questor;
+	u32b choice, wild = RF8_WILD_TOO_MASK & ~(RF8_WILD_TOWN | RF8_WILD_EASY);
 
 	/* data written back to q_info[] */
 	struct worldpos wpos = {63, 63, 0}; //default for cases of acute paranoia
 	int x, y;
-
-	int loc_flags, flag_choice, loc_choice;
 
 
 	/* catch bad mistakes */
@@ -224,69 +246,119 @@ bool quest_activate(int q_idx) {
 			wpos.wy = q_questor->start_wpos.wy;
 			wpos.wz = q_questor->start_wpos.wz;
 		}
-		/* specified NO starting pos? */
-		else if (!q_questor->s_location_type) return FALSE;
-		/* paranoia: specified non-existing starting pos type? */
-		else if ((q_questor->s_location_type & 0xF) != q_questor->s_location_type) return FALSE;
 		/* ok, pick one starting location randomly from all eligible ones */
 		else {
-			/* count flags */
-			for (i = 0; i < 4; i++)
-				if ((q_questor->s_location_type & (0x1 << i))) loc_flags++;
-			/* pick one */
-			flag_choice = randint(loc_flags);
-			/* translate back into location type */
-			for (i = 0; i < 4; i++) {
-				if (!(q_questor->s_location_type & (0x1 << i))) continue;
-				if (--flag_choice) continue;
-				loc_choice = 0x1 << i;
+			choice = quest_pick_flag(q_questor->s_location_type, 4);
+			/* no or non-existing type specified */
+			if (!choice) return FALSE;
+
+			switch (choice) {
+			case QI_SLOC_SURFACE:
+				/* all terrains are possible? */
+				if ((q_questor->s_terrains & RF8_WILD_TOO)) {
+					choice = quest_pick_flag(wild, 32);
+				}
+				/* pick from specified list */
+				else choice = quest_pick_flag(q_questor->s_terrains & wild, 32);
+				/* no or non-existing type specified */
+				if (!choice) return FALSE;
+
+				/* pick one wpos location randomly, that matches our terrain */
+				tries = 2000;
+				while (--tries) {
+					x = rand_int(MAX_WILD_X);
+					y = rand_int(MAX_WILD_Y);
+					switch (wild_info[y][x].type) {
+					case WILD_OCEAN: if (choice == RF8_WILD_OCEAN) break;
+					case WILD_LAKE: if (choice == RF8_WILD_OCEAN) break; /* hmm */
+					case WILD_GRASSLAND: if (choice == RF8_WILD_GRASS) break;
+					case WILD_FOREST: if (choice == RF8_WILD_WOOD) break;
+					case WILD_SWAMP: if (choice == RF8_WILD_SWAMP) break;
+					case WILD_DENSEFOREST: if (choice == RF8_WILD_WOOD) break;
+					case WILD_WASTELAND: if (choice == RF8_WILD_WASTE) break;
+					case WILD_DESERT: if (choice == RF8_WILD_DESERT) break;
+					case WILD_ICE: if (choice == RF8_WILD_ICE) break;
+					}
+				}
+				if (!tries) /* engage emergency eloquence */
+					for (x = 0; x < MAX_WILD_X; x++)
+						for (y = 0; y < MAX_WILD_Y; y++) {
+							switch (wild_info[y][x].type) {
+							case WILD_OCEAN: if (choice == RF8_WILD_OCEAN) break;
+							case WILD_LAKE: if (choice == RF8_WILD_OCEAN) break; /* hmm */
+							case WILD_GRASSLAND: if (choice == RF8_WILD_GRASS) break;
+							case WILD_FOREST: if (choice == RF8_WILD_WOOD) break;
+							case WILD_SWAMP: if (choice == RF8_WILD_SWAMP) break;
+							case WILD_DENSEFOREST: if (choice == RF8_WILD_WOOD) break;
+							case WILD_WASTELAND: if (choice == RF8_WILD_WASTE) break;
+							case WILD_DESERT: if (choice == RF8_WILD_DESERT) break;
+							case WILD_ICE: if (choice == RF8_WILD_ICE) break;
+							}
+						}
+				/* paranoia.. */
+				if (x == MAX_WILD_X && y == MAX_WILD_Y) {
+					/* back to test server :-p */
+					x = MAX_WILD_X - 1;
+					y = MAX_WILD_Y - 1;
+				}
+
+				wpos.wx = x;
+				wpos.wy = y;
+				wpos.wz = 0;
 				break;
-			}
 
-			if (loc_choice == QI_SLOC_SURFACE) {
-				if ((q_questor->s_terrains & RF8_WILD_TOO)) { /* all terrains are valid */
-				} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_SHORE)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_OCEAN)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_WASTE)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_WOOD)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_VOLCANO)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_MOUNTAIN)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_GRASS)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_DESERT)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_ICE)) {
-				} else if ((q_questor->s_terrains & RF8_WILD_SWAMP)) {
-				} else return FALSE; //paranoia
-			}
+			case QI_SLOC_TOWN:
+				choice = quest_pick_flag(q_questor->s_towns_array, 5);
+				/* no or non-existing type specified */
+				if (!choice) return FALSE;
 
-			if (loc_choice == QI_SLOC_TOWN) {
-				if ((q_questor->s_towns_array & QI_STOWN_BREE)) {
+				/* assume non-dungeon town */
+				wpos.wz = 0;
+
+				switch (choice) { /* TODO: such hardcode. wow. */
+				case QI_STOWN_BREE:
 					wpos.wx = 32;
 					wpos.wy = 32;
-				} else if ((q_questor->s_towns_array & QI_STOWN_GONDOLIN)) {
+					break;
+				case QI_STOWN_GONDOLIN:
 					wpos.wx = 27;
 					wpos.wy = 13;
-				} else if ((q_questor->s_towns_array & QI_STOWN_MINASANOR)) {
+					break;
+				case QI_STOWN_MINASANOR:
 					wpos.wx = 25;
 					wpos.wy = 58;
-				} else if ((q_questor->s_towns_array & QI_STOWN_LOTHLORIEN)) {
+					break;
+				case QI_STOWN_LOTHLORIEN:
 					wpos.wx = 59;
 					wpos.wy = 51;
-				} else if ((q_questor->s_towns_array & QI_STOWN_KHAZADDUM)) {
+					break;
+				case QI_STOWN_KHAZADDUM:
 					wpos.wx = 26;
 					wpos.wy = 5;
-				} else if ((q_questor->s_towns_array & QI_STOWN_WILD)) {
-				} else if ((q_questor->s_towns_array & QI_STOWN_DUNGEON)) {
-				} else if ((q_questor->s_towns_array & QI_STOWN_IDDC)) {
-				} else if ((q_questor->s_towns_array & QI_STOWN_IDDC_FIXED)) {
-				} else return FALSE; //paranoia
-			}
+					break;
+				case QI_STOWN_WILD:
+					return FALSE;
+					break;
+				case QI_STOWN_DUNGEON:
+					return FALSE;
+					break;
+				case QI_STOWN_IDDC:
+					return FALSE;
+					break;
+				case QI_STOWN_IDDC_FIXED:
+					return FALSE;
+					break;
+				}
+				break;
 
 			//TODO implement location types
-			if (loc_choice == QI_SLOC_DUNGEON) {
-			}
+			case QI_SLOC_DUNGEON:
+				return FALSE;
+				break;
 
-			if (loc_choice == QI_SLOC_TOWER) {
+			case QI_SLOC_TOWER:
+				return FALSE;
+				break;
 			}
 		}
 
