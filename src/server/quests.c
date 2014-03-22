@@ -169,7 +169,7 @@ void process_quests(void) {
    for determining questor spawn locations */
 static u32b quest_pick_flag(u32b flagarray, int size) {
 	int i;
-	int flags, choice;
+	int flags = 0, choice;
 
 	if (flagarray == 0x0) return 0x0;
 
