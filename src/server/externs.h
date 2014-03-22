@@ -2177,7 +2177,7 @@ extern qi_reward *init_quest_reward(int q_idx, int stage, int num);
 extern void fix_questors_on_startup(void);
 /* Questor actions/reactions to 'external' effects in the game world */
 extern void questor_drop_specific(int Ind, struct worldpos *wpos, int x, int y);
-extern void questor_death(int Ind, int m_idx);
+extern void questor_death(int Ind, int mo_idx);
 
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue

@@ -2608,7 +2608,7 @@ static bool save_quests_file(void) {
 			wr_s16b(q_questor->current_x);
 			wr_s16b(q_questor->current_y);
 
-			wr_s16b(q_questor->m_idx);
+			wr_s16b(q_questor->mo_idx);
 			wr_s16b(q_questor->talk_focus);//not needed
 		}
 

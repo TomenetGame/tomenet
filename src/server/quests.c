@@ -47,14 +47,19 @@
 /* set log level (0 to disable, 1 for normal logging, 2 for debug logging,
    3 for very verbose debug logging, 4 every single goal test is logged (deliver_xy -> every step)) */
 #define QDEBUG 3
-
 /* Disable a quest on error? */
 //#define QERROR_DISABLE
 /* Otherwise just put it on this cooldown (minutes) */
 #define QERROR_COOLDOWN 30
-
 /* Default cooldown in minutes. */
 #define QI_COOLDOWN_DEFAULT 5
+
+/* Should we teleport item piles away to make exclusive room for questor objects,
+   or should we just drop the questor object onto the pile? :) */
+#define QUESTOR_OBJECT_EXCLUSIVE
+/* If above is defined, should the questor item destroy all items on its grid
+   when it spawns? Otherwise it'll just drop on top of them. */
+#define QUESTOR_OBJECT_CRUSHES
 
 
 static void quest_goal_check_reward(int pInd, int q_idx);
@@ -466,7 +471,7 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 		/* is it ANOTHER questor? uhoh */
 		if (m_list[c_ptr->m_idx].questor) {
 			/* we don't mess with questor locations for consistencies sake */
-			s_printf(" QUEST_CANCELLED: Questor of quest %d occupies questor spawn location.\n", m_list[c_ptr->m_idx].quest);
+			s_printf(" QUEST_CANCELLED: Questor of quest %d occupies questor spawn location.\n", m_list[c_ptr->mo_idx].quest);
 			q_ptr->active = FALSE;
 #ifdef QERROR_DISABLE
 			q_ptr->disabled = TRUE;
@@ -601,7 +606,7 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 
 	m_ptr->questor_invincible = q_questor->invincible; //for now handled by RF7_NO_DEATH
 	m_ptr->questor_hostile = FALSE;
-	q_questor->m_idx = m_idx;
+	q_questor->mo_idx = m_idx;
 
 	update_mon(c_ptr->m_idx, TRUE);
 #if QDEBUG > 1
@@ -609,21 +614,68 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 #endif
 
 	q_questor->talk_focus = 0;
-
 	return TRUE;
 }
 
-static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
-#if 0
-	quest_info *q_ptr = &q_info[q_idx];
-	int i;//, m_idx;
-	//monster_race *r_ptr, *rbase_ptr;
-	//monster_type *m_ptr;
+#ifdef QUESTOR_OBJECT_EXCLUSIVE
+ #ifndef QUESTOR_OBJECT_CRUSHES
+/* Helper function for questor_object() to teleport away a whole pile of items */
+static void teleport_objects_away(struct worldpos *wpos, s16b x, s16b y, int dist) {
+	u16b this_o_idx, next_o_idx = 0;
+	int j;
+	s16b cx, cy;
+
+	cave_type **zcave = getcave(wpos), *c_ptr = &zcave[y][x];
+	object_type tmp_obj;
+
+  #if 1 /* scatter the pile? */
+    for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
+	tmp_obj = o_list[this_o_idx];
+	for (j = 0; j < 10; j++) {
+		cx = x + dist - rand_int(dist * 2);
+		cy = y + dist - rand_int(dist * 2);
+		if (cx == x || cy == y) continue;
+
+		if (!in_bounds(cy, cx)) continue;
+		if (!cave_floor_bold(zcave, cy, cx) ||
+		    cave_perma_bold(zcave, cy, cx)) continue;
+
+//		(void)floor_carry(cy, cx, &tmp_obj);
+		drop_near(&tmp_obj, 0, wpos, cy, cx);
+		delete_object_idx(this_o_idx, FALSE);
+		break;
+	}
+    }
+  #else /* 'teleport' the pile as a whole? --- UNTESTED!!! */
+	for (j = 0; j < 10; j++) {
+		cx = x + dist - rand_int(dist * 2);
+		cy = y + dist - rand_int(dist * 2);
+		if (cx == x || cy == y) continue;
+
+		if (!in_bounds(cy, cx)) continue;
+		if (!cave_floor_bold(zcave, cy, cx) ||
+		    cave_perma_bold(zcave, cy, cx)) continue;
+
+		/* no idea if this works */
+		if (!cave_naked_bold(zcave, cy, cx)) continue;
+		zcave[cy][cx].o_idx = zcave[y][x].o_idx;
+		zcave[y][x].o_idx = 0;
+		break;
+	}
+  #endif
+}
+ #endif
 #endif
+
+static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	int o_idx;
+	object_type *o_ptr;
 	cave_type **zcave, *c_ptr;
+	u32b resf = RESF_NO_TRUEART;
 
 	/* data written back to q_info[] */
-	struct worldpos wpos = {63, 63, 0}; //default for cases of acute paranoia
+	struct worldpos wpos;
 	int x, y;
 
 
@@ -643,8 +695,90 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 
 	/* ---------- Try to spawn the questor object ---------- */
 
+	o_idx = o_pop();
+	if (!o_idx) {
+		s_printf(" QUEST_CANCELLED: No free object index to pop questor.\n");
+		q_ptr->active = FALSE;
+#ifdef QERROR_DISABLE
+		q_ptr->disabled = TRUE;
+#else
+		q_ptr->cur_cooldown = QERROR_COOLDOWN;
+#endif
+		return FALSE;
+	}
 
+	/* make sure no other object is occupying our spawning grid */
+	if (c_ptr->o_idx) {
+		/* is it ANOTHER questor? uhoh */
+		if (o_list[c_ptr->o_idx].questor) {
+			/* we don't mess with questor locations for consistencies sake */
+			s_printf(" QUEST_CANCELLED: Questor of quest %d occupies questor spawn location.\n", o_list[c_ptr->o_idx].quest);
+			q_ptr->active = FALSE;
+#ifdef QERROR_DISABLE
+			q_ptr->disabled = TRUE;
+#else
+			q_ptr->cur_cooldown = QERROR_COOLDOWN;
+#endif
+			return FALSE;
+		}
 
+#ifdef QUESTOR_OBJECT_EXCLUSIVE
+ #ifdef QUESTOR_OBJECT_CRUSHES
+		delete_object(&wpos, y, x, TRUE);
+ #else
+		/* teleport the whole pile of objects away */
+		teleport_objects_away(&wpos, x, y, 1);
+		/* check again.. */
+		if (c_ptr->o_idx > 0) teleport_objects_away(&wpos, x, y, 2);
+		/* aaaand again.. */
+		if (c_ptr->o_idx > 0) teleport_objects_away(&wpos, x, y, 10);
+		/* Illusionate is looting D pits again */
+		if (c_ptr->o_idx > 0) teleport_objects_away(&wpos, x, y, 200);
+		/* out of patience */
+		if (c_ptr->o_idx > 0) delete_object_idx(c_ptr->o_idx, TRUE);
+ #endif
+#else
+		/* just drop the questor onto the pile of stuff (if any).
+		   -- fall through -- */
+#endif
+	}
+
+	/* 'drop' it */
+	o_ptr = &o_list[o_idx];
+	o_ptr->next_o_idx = c_ptr->o_idx; /* on top of pile, if any */
+	c_ptr->o_idx = o_idx;
+
+	wpcopy(&o_ptr->wpos, &wpos);
+	o_ptr->ix = x;
+	o_ptr->iy = y;
+
+	/* generate item first in the normal ways */
+	o_ptr->tval = q_questor->ktval;
+	o_ptr->sval = q_questor->ksval;
+	apply_magic(&wpos, o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
+
+	/* imprint questor status and details */
+	o_ptr->questor = TRUE;
+	o_ptr->questor_idx = questor_idx;
+	o_ptr->quest = q_idx;
+	o_ptr->questor_invincible = q_questor->invincible;
+	o_ptr->questor_hostile = FALSE;
+
+	o_ptr->marked = 0;
+	o_ptr->held_m_idx = 0;
+
+	q_questor->mo_idx = o_idx;
+
+	/* Note the spot */
+	note_spot_depth(wpos, y, x);
+	/* Draw the spot */
+	everyone_lite_spot(wpos, y, x);
+
+#if QDEBUG > 1
+	s_printf(" QUEST_SPAWNED: Questor '%s' (o_idx %d) at %d,%d,%d - %d,%d.\n", q_questor->name, o_idx, wpos.wx, wpos.wy, wpos.wz, x, y);
+#endif
+
+	q_questor->talk_focus = 0;
 	return TRUE;
 }
 
@@ -706,14 +840,11 @@ bool quest_activate(int q_idx) {
 void quest_deactivate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_questor *q_questor;
-	int i, m_idx;
+	int i, m_idx, o_idx;
 	cave_type **zcave, *c_ptr;
-	//monster_race *r_ptr;
-	//monster_type *m_ptr;
 
 	/* data reread from q_info[] */
 	struct worldpos wpos;
-	//int qx, qy;
 
 #if QDEBUG > 0
 	s_printf("%s QUEST_DEACTIVATE: '%s' (%d,%s) by %s\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, q_ptr->creator);
@@ -742,18 +873,40 @@ void quest_deactivate(int q_idx) {
 #if QDEBUG > 1
 		s_printf(" deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_questor->current_x, q_questor->current_y);
 #endif
-		m_idx = c_ptr->m_idx;
-		if (m_idx) {
-			if (m_list[m_idx].questor && m_list[m_idx].quest == q_idx) {
+
+		switch (q_questor->type) {
+		case QI_QUESTOR_NPC:
+			m_idx = c_ptr->m_idx;
+			if (m_idx) {
+				if (m_list[m_idx].questor && m_list[m_idx].quest == q_idx) {
 #if QDEBUG > 1
-				s_printf(" ..ok.\n");
+					s_printf(" ..ok.\n");
 #endif
-				delete_monster_idx(c_ptr->m_idx, TRUE);
-			} else
+					delete_monster_idx(c_ptr->m_idx, TRUE);
+				} else
 #if QDEBUG > 1
-				s_printf(" ..failed: Monster is not a questor or has a different quest idx.\n");
+					s_printf(" ..failed: Monster is not a questor or has a different quest idx.\n");
 #endif
+			}
+			break;
+		case QI_QUESTOR_ITEM_PICKUP:
+			o_idx = c_ptr->o_idx;
+			if (o_idx) {
+				if (o_list[o_idx].questor && o_list[o_idx].quest == q_idx) {
+#if QDEBUG > 1
+					s_printf(" ..ok.\n");
+#endif
+					delete_object_idx(c_ptr->o_idx, TRUE);
+				} else
+#if QDEBUG > 1
+					s_printf(" ..failed: Object is not a questor or has a different quest idx.\n");
+#endif
+			}
+			break;
+		default: ;
+			/* discard */
 		}
+
 		if (q_questor->static_floor) new_players_on_depth(&wpos, 0, FALSE);
 	}
 }
@@ -3078,14 +3231,14 @@ void quest_handle_disabled_on_startup() {
 
 		s_printf("QUEST_DISABLED_ON_LOAD: Deleting %d questor(s) from quest %d\n", q_ptr->questors, i);
 		for (j = 0; j < q_ptr->questors; j++) {
-			questor = m_list[q_ptr->questor[j].m_idx].questor;
-			k = m_list[q_ptr->questor[j].m_idx].quest;
+			questor = m_list[q_ptr->questor[j].mo_idx].questor;
+			k = m_list[q_ptr->questor[j].mo_idx].quest;
 
-			s_printf(" m_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor[j].m_idx, k, questor);
+			s_printf(" m_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor[j].mo_idx, k, questor);
 
 			if (k == i && questor) {
 				s_printf("..ok.\n");
-				delete_monster_idx(q_ptr->questor[j].m_idx, TRUE);
+				delete_monster_idx(q_ptr->questor[j].mo_idx, TRUE);
 			} else s_printf("..failed: Questor does not exist.\n");
 		}
 	}
@@ -3429,7 +3582,7 @@ void fix_questors_on_startup(void) {
 			s_printf("QUESTOR DEPRECATED (on load) midx %d, qidx %d.\n", i, m_ptr->quest);
 			m_ptr->questor = FALSE;
 			/* delete him too? */
-		} else q_ptr->questor[m_ptr->questor_idx].m_idx = i;
+		} else q_ptr->questor[m_ptr->questor_idx].mo_idx = i;
 	}
 }
 
@@ -3439,6 +3592,6 @@ void fix_questors_on_startup(void) {
 void questor_drop_specific(int Ind, struct worldpos *wpos, int x, int y) {
 }
 
-/* Questor was killed. Quest progression/fail effect? */
-void questor_death(int Ind, int m_idx) {
+/* Questor was killed (npc) or destroyed (object). Quest progression/fail effect? */
+void questor_death(int Ind, int mo_idx) {
 }
