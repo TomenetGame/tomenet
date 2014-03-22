@@ -1073,7 +1073,7 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	quest_imprint_tracking_information(Ind, py_q_idx, FALSE);
 
 	/* check for items in our inventory that fulfil any retrieval goals we just acquired right away */
-	quest_precheck_retrieval(Ind, q_idx, py_q_idx);
+	if (p_ptr->quest_any_r_target) quest_precheck_retrieval(Ind, q_idx, py_q_idx);
 }
 /* Advance quest to a different stage (or start it out if stage is 0) */
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
