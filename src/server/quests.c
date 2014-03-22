@@ -37,6 +37,10 @@
    make a keyword-based decision, the others can just watch the dialogue passively.
    Stages cannot proceed until all party members are present at the questor, if the questor
    requires returning to him, or until all members are at the quest target sector, if any.
+
+   Special quirk:
+   Questors that are monsters use m_ptr->quest = q_idx.
+   Questors that are objects, and quest items (that aren't questors) use o_ptr->quest = q_idx + 1.
 */
 
 
@@ -834,12 +838,174 @@ bool quest_activate(int q_idx) {
 	return TRUE;
 }
 
+/* Helper function for quest_deactivate().
+   Search and destroy an object-type questor, similar to erase_guild_key(). */
+static void quest_erase_object_questor(int q_idx, int questor_idx) {
+#if 0
+    int i, this_o_idx, next_o_idx;
+    monster_type *m_ptr;
+    object_type *o_ptr, *q_ptr;
+    char m_name[MNAME_LEN];
+
+#if 0 /* account-based */
+    int j;
+        FILE *fp;
+        char buf[1024];
+        cptr cname;
+        struct account c_acc;
+#else /* just hash-table (character) based */
+    int slot;
+    hash_entry *ptr;
+    player_type *p_ptr;
+#endif
+
+
+    /* objects on the floor/in monster inventories */
+        for (i = 0; i < o_max; i++) {
+                o_ptr = &o_list[i];
+                /* Skip dead objects */
+                if (!o_ptr->k_idx) continue;
+                /* skip non-guild keys */
+                if (o_ptr->tval != TV_KEY || o_ptr->sval != SV_GUILD_KEY) continue;
+	/* Skip wrong guild keys */
+	if (o_ptr->pval != id) continue;
+
+	/* in monster inventory */
+                if (o_ptr->held_m_idx) {
+	    m_ptr = &m_list[o_ptr->held_m_idx];
+	    /* 1st object held is the key? */
+	    if (m_ptr->hold_o_idx == i) {
+		m_ptr->hold_o_idx = o_ptr->next_o_idx;
+		monster_desc(0, m_name, o_ptr->held_m_idx, 0);
+		s_printf("GUILD_KEY_ERASE: monster inventory (%d, '%s', #1)\n", o_ptr->held_m_idx, m_name);
+		delete_object_idx(i, FALSE);
+		return;
+	    } else {
+		i = 1;
+		q_ptr = &o_list[m_ptr->hold_o_idx];//compiler warning
+		for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx) {
+		    if (this_o_idx == i) {
+			q_ptr->next_o_idx = o_list[this_o_idx].next_o_idx;
+			monster_desc(0, m_name, o_ptr->held_m_idx, 0);
+			s_printf("GUILD_KEY_ERASE: monster inventory (%d, '%s', #%d)\n", o_ptr->held_m_idx, m_name, i);
+			delete_object_idx(this_o_idx, FALSE);
+			return;
+		    }
+		    q_ptr = &o_list[this_o_idx];
+		    next_o_idx = q_ptr->next_o_idx;
+		    i++;
+		}
+	    }
+                }
+
+	s_printf("GUILD_KEY_ERASE: floor\n");
+                delete_object_idx(i, FALSE);
+                return;
+        }
+
+    /* Players online */
+    for (this_o_idx = 1; this_o_idx <= NumPlayers; this_o_idx++) {
+            p_ptr = Players[this_o_idx];
+	/* scan his inventory */
+	for (i = 0; i < INVEN_TOTAL; i++) {
+	    o_ptr = &p_ptr->inventory[i];
+	    if (!o_ptr->k_idx) continue;
+
+	    if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY && o_ptr->pval == id) {
+		s_printf("GUILD_KEY_ERASE: player '%s'\n", p_ptr->name);
+		inven_item_increase(this_o_idx, i, -1);
+		inven_item_describe(this_o_idx, i);
+		inven_item_optimize(this_o_idx, i);
+		return;
+	    }
+	}
+    }
+
+#if 0 /* account-based */
+    /* objects in player inventories */
+        path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+        fp = fopen(buf, "rb+");
+        if (!fp) {
+	s_printf("GUILD_KEY_ERASE: failed to open tomenet.acc\n");
+	    return;
+        }
+        while (fread(&c_acc, sizeof(struct account), 1, fp)) {
+	int *id_list, chars;
+                chars = player_id_list(&id_list, c_acc->id);
+                for (i = 0; i < chars; i++) {
+	    cname = lookup_player_name(id_list[i]);
+	    ...//not implemented
+                }
+                if (chars) C_KILL(id_list, chars, int);
+        }
+#else /* just hash-table (character) based */
+    /* hack */
+    NumPlayers++;
+        MAKE(Players[NumPlayers], player_type);
+        p_ptr = Players[NumPlayers];
+        p_ptr->inventory = C_NEW(INVEN_TOTAL, object_type);
+        for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+                ptr = hash_table[slot];
+                while (ptr) {
+	    /* clear his data (especially inventory) */
+	    o_ptr = p_ptr->inventory;
+	    WIPE(p_ptr, player_type);
+	    p_ptr->inventory = o_ptr;
+	    p_ptr->Ind = NumPlayers;
+	    C_WIPE(p_ptr->inventory, INVEN_TOTAL, object_type);
+	    /* set his supposed name */
+	    strcpy(p_ptr->name, ptr->name);
+	    /* generate savefile name */
+	    process_player_name(NumPlayers, TRUE);
+	    /* try to load him! */
+	    if (!load_player(NumPlayers)) {
+		/* bad fail */
+		s_printf("GUILD_KEY_ERASE: load_player '%s' failed\n", p_ptr->name);
+		/* unhack */
+	            C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+	            KILL(p_ptr, player_type);
+		NumPlayers--;
+		return;
+	    }
+	    /* scan his inventory */
+	    for (i = 0; i < INVEN_TOTAL; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (!o_ptr->k_idx) continue;
+
+		if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY && o_ptr->pval == id) {
+		    s_printf("GUILD_KEY_ERASE: savegame '%s'\n", p_ptr->name);
+		    o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
+		    /* write savegame back */
+		    save_player(NumPlayers);
+		    /* unhack */
+		        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+		        KILL(p_ptr, player_type);
+		    NumPlayers--;
+		    return;
+		}
+	    }
+	    /* advance to next character */
+	    ptr = ptr->next;
+	}
+    }
+    /* unhack */
+        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+        KILL(p_ptr, player_type);
+    NumPlayers--;
+#endif
+
+    /* hm, failed to locate the questor object. Maybe someone actually lost it. */
+    s_printf("OBJECT_QUESTOR_ERASE: not found\n");
+#endif
+}
+
 /* Despawn questors, unstatic sectors/floors, etc. */
 void quest_deactivate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_questor *q_questor;
-	int i, m_idx, o_idx;
+	int i, j, m_idx, o_idx;
 	cave_type **zcave, *c_ptr;
+	bool fail = FALSE;
 
 	/* data reread from q_info[] */
 	struct worldpos wpos;
@@ -875,21 +1041,42 @@ void quest_deactivate(int q_idx) {
 		switch (q_questor->type) {
 		case QI_QUESTOR_NPC:
 			m_idx = c_ptr->m_idx;
-			if (m_idx) {
+			if (m_idx == q_questor->mo_idx) {
 				if (m_list[m_idx].questor && m_list[m_idx].quest == q_idx) {
 #if QDEBUG > 1
 					s_printf(" ..ok.\n");
 #endif
 					delete_monster_idx(c_ptr->m_idx, TRUE);
-				} else
+				} else {
 #if QDEBUG > 1
 					s_printf(" ..failed: Monster is not a questor or has a different quest idx.\n");
 #endif
+					fail = TRUE;
+				}
+			} else {
+#if QDEBUG > 1
+				s_printf(" ..failed: Monster has different idx than the questor.\n");
+#endif
+				fail = TRUE;
+			}
+			/* scan the entire monster list to catch the questor */
+			if (fail) {
+#if QDEBUG > 1
+				s_printf(" Scanning entire monster list..");
+#endif
+				for (j = 0; j < m_max; j++) {
+					if (!m_list[j].questor) continue;
+					if (m_list[j].quest != q_idx) continue;
+					if (m_list[j].questor_idx != i) continue;
+					s_printf("found it at %d!\n", j);
+					delete_monster_idx(j, TRUE);
+					//:-p break;
+				}
 			}
 			break;
 		case QI_QUESTOR_ITEM_PICKUP:
 			o_idx = c_ptr->o_idx;
-			if (o_idx) {
+			if (o_idx == q_questor->mo_idx) {
 				if (o_list[o_idx].questor && o_list[o_idx].quest == q_idx) {
 #if QDEBUG > 1
 					s_printf(" ..ok.\n");
@@ -899,6 +1086,28 @@ void quest_deactivate(int q_idx) {
 #if QDEBUG > 1
 					s_printf(" ..failed: Object is not a questor or has a different quest idx.\n");
 #endif
+					fail = TRUE;
+			} else {
+#if QDEBUG > 1
+				s_printf(" ..failed: Object has different idx than the questor.\n");
+#endif
+				fail = TRUE;
+			}
+			/* scan the entire object list to catch the questor */
+			if (fail)  {
+#if QDEBUG > 1
+				s_printf(" Scanning entire object list..");
+#endif
+				for (j = 0; j < o_max; j++) {
+					if (!o_list[j].questor) continue;
+					if (o_list[j].quest != q_idx + 1) continue;
+					if (o_list[j].questor_idx != i) continue;
+					s_printf("found it at %d!\n", j);
+					delete_object_idx(j, TRUE);
+					//:-p break;
+				}
+				/* last resort, like for trueart/guildkey erasure, scan everyone's inventory -_- */
+				quest_erase_object_questor(q_idx, i);
 			}
 			break;
 		default: ;
