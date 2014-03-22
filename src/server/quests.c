@@ -1123,7 +1123,6 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	     eg the target location for easier lookup */
 	if (!q_ptr->individual || !pInd) { //the !pInd part is paranoia
 		for (i = 1; i <= NumPlayers; i++) {
-			//if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //seems nonsensical for narrations
 			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 				if (Players[i]->quest_idx[j] == q_idx) break;
 			if (j == MAX_CONCURRENT_QUESTS) continue;
@@ -1162,8 +1161,11 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			if (quest_stage_automatics(pInd, q_idx, stage)) return;
 
 			/* play questors' stage dialogue */
-			for (j = 0; j < q_ptr->questors; j++)
-				if (!quiet) quest_dialogue(i, q_idx, j, FALSE, FALSE, FALSE);
+			if (!quiet)
+				for (k = 0; k < q_ptr->questors; k++) {
+					if (!inarea(&Players[i]->wpos, &q_ptr->questor[k].current_wpos)) continue;
+					quest_dialogue(i, q_idx, k, FALSE, FALSE, FALSE);
+				}
 		}
 	} else { /* individual quest */
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
@@ -1198,11 +1200,12 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 
 		/* update players' quest tracking data */
 		quest_imprint_stage(pInd, q_idx, j);
-		 //TODO: check against multiple current_wpos, one for each questor!! to work with correct questor_idx in quest_dialogue call below!
 		/* play questors' stage dialogue */
-		for (j = 0; j < q_ptr->questors; j++)
-			if (!quiet) quest_dialogue(pInd, q_idx, j, FALSE, FALSE, FALSE);
-
+		if (!quiet)
+			for (k = 0; k < q_ptr->questors; k++) {
+				if (!inarea(&Players[pInd]->wpos, &q_ptr->questor[k].current_wpos)) continue;
+				quest_dialogue(pInd, q_idx, k, FALSE, FALSE, FALSE);
+			}
 		py_q_idx = j;
 	}
 
@@ -1259,7 +1262,6 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	   check if we already auto-completed the quest stage this quickly just by standing there! */
 	if (py_q_idx == -1) { //global quest
 		for (i = 1; i <= NumPlayers; i++) {
-			//if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //seems nonsensical for narrations
 			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 				if (Players[i]->quest_idx[j] == q_idx) break;
 			if (j == MAX_CONCURRENT_QUESTS) continue;
@@ -2377,8 +2379,8 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
-		/* must be around a questor to receive the rewards.
-		   TODO: why? can just stand around somewhere, so.. */
+		/* must be around a questor to receive the rewards,
+		   so you can't afk-quest in a pack of people with one person doing it all. */
 		for (j = 0; j < q_ptr->questors; j++)
 			if (inarea(&Players[i]->wpos, &q_ptr->questor[j].current_wpos)) break;
 		if (j == q_ptr->questors) continue;
@@ -2416,7 +2418,8 @@ static void quest_reward_create(int pInd, int q_idx) {
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
-		/*TODO: why does the player need to be around the questor anyway hmm */
+		/* must be around a questor to receive the rewards,
+		   so you can't afk-quest in a pack of people with one person doing it all. */
 		for (j = 0; j < q_ptr->questors; j++)
 			if (inarea(&Players[i]->wpos, &q_ptr->questor[j].current_wpos)) break;
 		if (j == q_ptr->questors) continue;
@@ -2451,7 +2454,8 @@ static void quest_reward_gold(int pInd, int q_idx, int au) {
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
-		/*TODO: why does the player need to be around the questor anyway hmm */
+		/* must be around a questor to receive the rewards,
+		   so you can't afk-quest in a pack of people with one person doing it all. */
 		for (j = 0; j < q_ptr->questors; j++)
 			if (inarea(&Players[i]->wpos, &q_ptr->questor[j].current_wpos)) break;
 		if (j == q_ptr->questors) continue;
@@ -2486,7 +2490,8 @@ static void quest_reward_exp(int pInd, int q_idx, int exp) {
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
-		/*TODO: why does the player need to be around the questor anyway hmm */
+		/* must be around a questor to receive the rewards,
+		   so you can't afk-quest in a pack of people with one person doing it all. */
 		for (j = 0; j < q_ptr->questors; j++)
 			if (inarea(&Players[i]->wpos, &q_ptr->questor[j].current_wpos)) break;
 		if (j == q_ptr->questors) continue;
@@ -2632,7 +2637,8 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 			if (Players[i]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) continue;
 
-		/*TODO: why does the player need to be around the questor anyway hmm */
+		/* must be around a questor to receive the rewards,
+		   so you can't afk-quest in a pack of people with one person doing it all. */
 		for (j = 0; j < q_ptr->questors; j++)
 			if (inarea(&Players[i]->wpos, &q_ptr->questor[j].current_wpos)) break;
 		if (j == q_ptr->questors) continue;
