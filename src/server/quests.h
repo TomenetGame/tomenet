@@ -32,7 +32,9 @@
 */
 
 
-/* Sub-structure: Mandatory questor information */
+/* Sub-structure: Mandatory questor information.
+   Quests usually need at least one questor to be acquirable by interacting with it.
+   An exception are quests that are automatically spawned by other quests and auto-acquired. */
 typedef struct qi_questor {
 	/*-----  Fixed questor spawn information (from q_info.txt) ----- */
 
@@ -139,9 +141,11 @@ typedef struct qi_questor_act {
 	s16b teleport_x, teleport_y;
 } qi_questor_act;
 
-/* quest goals, with a multitude of different sub-goals (Note: of the subgoals one is randomly picked for the player,
-   except if 'xxx_random_pick' is set, which allows the player to pick what he wants to do). */
-   //TODO ^that's not how it's implemented atm. All subgoals are OR'ed instead.
+/* Quest goals, with a multitude of different sub-goals. Some AND with each other, some OR.
+   There are three types of goals: Kill, Retrieve (obtain an object), Deliver (this is to
+   travel to a specific location after finishing all kill/retrieve goals, or just to travel
+   there if there are no kill/retrieve goals in this stage). */
+
 /* Sub-structure: A single kill goal */
 typedef struct qi_kill {
 #if 0 /* too much, make it simpler for now */
@@ -213,7 +217,9 @@ typedef struct qi_goal {
 	bool return_to_questor;				/* do we need to return to the questor first (bump), to get credit for particular main goals? */
 } qi_goal;
 
-/* Sub-structure: A single quest reward */
+/* Sub-structure: A single quest reward.
+   It can actually be a combination of the three things 'item', 'gold' and 'exp' in one, if desired.
+   The fourth type 'statuseffect' requires special implementation. (Could be some sort of buff/curse.) */
 typedef struct qi_reward {
 	s16b otval;					/* hand over certain rewards to the player */
 	s16b osval;
@@ -227,7 +233,11 @@ typedef struct qi_reward {
 	s16b statuseffect;				/* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
 } qi_reward;
 
-/* Sub-structure: A single quest stage */
+/* Sub-structure: A single quest stage.
+   The central unit of a quest, providing goals, rewards and dialogue.
+   A quest consists of a series of stages that switch between each other
+   depending on the player fulfilling their goals or reacting to their
+   dialogue, until an ending stage is reached and the quest terminates. */
 typedef struct qi_stage {
 	/* quest acceptance */
 	bool accepts;					/* player can acquire the quest during a stage */
@@ -299,7 +309,9 @@ typedef struct qi_stage {
 	s16b next_stage_from_goals[QI_FOLLOWUP_STAGES]; /* <stage> index of the possible follow-up stages */
 } qi_stage;
 
-/* Sub-structure: A single quest keyword */
+/* Sub-structure: A single quest keyword.
+   A possible player response to a quest dialogue, which may cause
+   a change in quest stage. */
 typedef struct qi_keyword {
 	char keyword[QI_KEYWORD_LEN];			/* each convo may allow the player to reply with up to m keywords a 30 chars; 'Y' as 1st keyword and 'N' as 2nd trigger a yes/no hack */
 	bool questor_ok[QI_QUESTORS];			/* this keyword is valid for which questor(s) ? */
@@ -312,7 +324,9 @@ typedef struct qi_keyword {
 	s16b stage;					/* entering this keyword will bring the player to a different quest stage (or -1) */
 } qi_keyword;
 
-/* Sub-structure: A single quest keyword-reply (main mem eater) */
+/* Sub-structure: A single quest keyword-reply (main mem eater).
+   An automatic reply the player gets when he enters a certain keyword
+   (replies can be valid for multiple keywords each, actually). */
 typedef struct qi_kwreply {
 	byte keyword_idx[QI_KEYWORDS_PER_REPLY];	/* which keyword(s) will prompt this reply from the current questor? */
 	bool questor_ok[QI_QUESTORS];			/* this keyword reply is valid for which questor(s) ? */
@@ -324,7 +338,15 @@ typedef struct qi_kwreply {
 	u16b replyflags[QI_TALK_LINES];			/* only print this particular text line if these flags are matching the quest flags */
 } qi_kwreply;
 
-/* Main structure: The complete quest data */
+/* Main structure: The complete quest data.
+   Each quest contains info
+   -when/where to activate, scheduled repeatedly over the in-game day/night
+    cycle and what requirements players must meet to acquire it,
+   -how many questors (quest monsters/objects that the player can interact
+    with to acquire the quest or to proceed through quest stages) it has,
+   -how many quest stages it has for the player to beat,
+   -how many keywords the quest provides (possibly used by each of its stages)
+    and the automatic reply dialogue that each keyword results in. */
 typedef struct quest_info {
 	/* -------------------------------- MANDATORY GLOBAL QUEST DATA -------------------------------- */
 
