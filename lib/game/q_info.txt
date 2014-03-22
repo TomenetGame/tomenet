@@ -10,18 +10,23 @@ V:0.0.1
 
 
 # Current state - things that have already been implemented. Other stuff is omitted here.
+# Some things that are not implemented in here are noted in caps in each line ;)
+# 'N.I.' is short for  NOT IMPLEMENTED.
 
-# N:index:codename:creatorname[:repeatable (-1 for infinitely, default is 0, append an 'x' to disable it)]
+# N:index:internal codename(UNIQUE AND EXACTLY 10 CHARACTERS):creatorname:quest name[:repeatable (-1 for infinitely, default is 0, append an 'x' to disable it)]
 # (optional) C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
-# (optional) I:privileged:individual (MUST BE 1!!):minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:questdonecreditstage
+# (optional) I:privileged:individual (MUST BE 1):minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:questdonecreditstage
 # (optional) E:list of colon-separated prequest codenames (up to 5) which must have been completed to pick up this quest
 # (optional) T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # (optional) U:endingstage (0 = none):duration:cooldown
+
 # Q (5x repeatable, for up to 5 questors):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
-# L (5x repeatable per Q line):locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:mapfile (if not using terrain type) or '-'
-# (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?:staticfloor?:quitfloor?
+# L (5x repeatable per Q line):locations (TOWNS ONLY):towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:mapfile (if not using terrain type) or '-' (N.I.)
+# (optional) F (5x repeatable per Q line):accept-on-los? (N.I.):accept-on-interaction?:talkable?:despawned? (N.I.):invincible?:staticfloor?:quitfloor?(N.I.)
+
 #(Parameters from here on are all individual per quest stage)
-# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0 (nonfunctional):timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
+
+# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0:timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
 # (optional) X (50x repeatable):stage:flags:narration text
 # W (15x repeatable):questor:stage:flags:convo line
 # (optional) Y (100x repeatable):questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or -1 for dont change stage)
@@ -32,19 +37,32 @@ V:0.0.1
 # (optional) yQ (after a y-line):list of further questors for which this reply is valid, separated by colons
 # (optional) yS (after a y-line):list of further stages during which this reply is valid, separated by colons
 # (optional, YR (after a y-line, 15x repeatable):flags:reply convo line
-# (optional) k:stage:goal:minlev:maxlev:number:spawn:spawn will target
+
+# goals to kill specific monsters:
+# (optional) k:stage:goal:minlev:maxlev:number:spawn (N.I.):spawn will target (N.I.)
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
+
+# goals to collect specific items:
 # (optional) r:stage:goal:minval:number
 # (optional) rI:stage:goal:tval:sval... (list of ':tval:sval' pairs, up to 10, separated by colons)
 # (optional) rV:stage:goal:pval:bpval:attr:name1:name2:name2b... (list of 5-tuples like this, up to 5, separated by colons)
+
+# optional target location where those kill/retrieve goals have to be cleared:
 # (optional, if k/r line exists) P:stage:goal#:goalwpos wx:wy:wz:adjacent terrain extension:goal at exact x:y:radius:mapfile (if not using terrain type) or '-'
+
+# optional target location where the player has to move after having cleared the goals, to get them credited.
+# This can also be specified without any kill/retrieve goals, in which case it becomes a simple 'travel-to' goal:
 # (optional) M:stage:goal#:deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:radius:mapfile (if not using terrain type) or '-'
-# (optional) Z:stage:goal:changeflags
-# G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here)
+
+# (optional) Z:stage:goal:changeflags (flags that get set/cleared when that goal is cleared)
+# G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here) to progress to next stage
 # (optional) O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free) separated by colons
 # (optional) R:stage:(10x repeatable) define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:createreward()?:gold:exp:specialstatuseffect
 
+# Further notes:
+# -The index number must just be counting up for each quest added to this file, starting with 0.
+# -The internal codename must be unique among all quests and exactly 10 characters long.
 # -All quests should currently be set to 'individual'! (Global quests work depending on the quest goals. Some won't, though.)
 # -#goal is 1..5 for main goal, and -1..-5 for optional goals.
 # -About keywords:
@@ -66,7 +84,8 @@ V:0.0.1
 # #stage is 1..29 (30 stages max)
 # talk/narration can have up to 15 text lines
 # keywords can be up to 29 characters long
-# #goal is 1..5 for main goal, and -1..-5 for optional goals. NOTE: optional goals are currently NOT SUPPORTED!
+# #goal is 1..5 for main goal, and -1..-5 for optional goals.
+#  Optional goals are currently NOT IMPLEMENTED and will break the quest!
 
 
 # for testing purpose
@@ -154,7 +173,7 @@ R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
 
 # Complete state, when everything has been implemented:
 
-# N:index:codename:creator:name[:repeatable (-1 for infinitely, default is 0, append an 'x' to disable it)]
+# N:index:codename:creator:quest name[:repeatable (-1 for infinitely, default is 0, append an 'x' to disable it)]
 # (optional) C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
 # (optional) I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:questdonecreditstage
 # (optional) E:list of colon-separated prequest codenames
