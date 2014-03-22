@@ -669,7 +669,7 @@ static void teleport_objects_away(struct worldpos *wpos, s16b x, s16b y, int dis
 
 static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
-	int o_idx;
+	int o_idx, i;
 	object_type *o_ptr;
 	cave_type **zcave, *c_ptr;
 	u32b resf = RESF_NOTRUEART;
@@ -689,9 +689,9 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	zcave = getcave(&wpos);
 	c_ptr = &zcave[y][x];
 
-
 	/* If no monster race index is set for the questor, don't spawn him. (paranoia) */
 	if (!q_questor->ktval || !q_questor->ksval) return FALSE;
+
 
 	/* ---------- Try to spawn the questor object ---------- */
 
@@ -746,15 +746,18 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	/* 'drop' it */
 	o_ptr = &o_list[o_idx];
 	o_ptr->next_o_idx = c_ptr->o_idx; /* on top of pile, if any */
+	o_ptr->stack_pos = 0;
 	c_ptr->o_idx = o_idx;
 
 	wpcopy(&o_ptr->wpos, &wpos);
 	o_ptr->ix = x;
 	o_ptr->iy = y;
 
+	o_ptr->marked = 0;
+	o_ptr->held_m_idx = 0;
+
 	/* generate item first in the normal ways */
-	o_ptr->tval = q_questor->ktval;
-	o_ptr->sval = q_questor->ksval;
+	invcopy(o_ptr, lookup_kind(q_questor->ktval, q_questor->ksval));
 	apply_magic(&wpos, o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
 
 	/* imprint questor status and details */
@@ -762,12 +765,10 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	o_ptr->questor_idx = questor_idx;
 	o_ptr->quest = q_idx;
 	o_ptr->questor_invincible = q_questor->invincible;
-
-	o_ptr->marked = 0;
-	o_ptr->held_m_idx = 0;
-
 	q_questor->mo_idx = o_idx;
 
+	/* Clear visibility flags */
+	for (i = 1; i <= NumPlayers; i++) Players[i]->obj_vis[o_idx] = FALSE;
 	/* Note the spot */
 	note_spot_depth(&wpos, y, x);
 	/* Draw the spot */

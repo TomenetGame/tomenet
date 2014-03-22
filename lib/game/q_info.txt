@@ -123,7 +123,8 @@ R:4:80:35:0:0:0:0:0:0:0:0:0:3:1:0
 
 # for testing purpose
 N:1:testquestM:C. Blue:Minimal Test Quest:-1
-Q:1:37:b:n:-1:-1:-1:-1:-1:Fast Bat
+#Q:1:37:b:n:-1:-1:-1:-1:-1:Fast Bat
+Q:3:-1:-:-:-1:-1:-1:22:30:Sharp..Bat..of Slicing?
 L:0:0:0:63:63:0:0:100:39:0:-
 W:0:0:-:1:Hello, fellow fruit bat! Wanna visit the General Store for me?
 Y:0:0:-:y:-:1
