@@ -200,7 +200,7 @@ bool quest_activate(int q_idx) {
 
 	/* data written back to q_info[] */
 	struct worldpos wpos = {63, 63, 0}; //default for cases of acute paranoia
-	int x, y;
+	int x, y, x2, y2;
 
 
 	/* catch bad mistakes */
@@ -245,6 +245,21 @@ bool quest_activate(int q_idx) {
 			wpos.wx = q_questor->start_wpos.wx;
 			wpos.wy = q_questor->start_wpos.wy;
 			wpos.wz = q_questor->start_wpos.wz;
+
+			/* vary strict wpos a bit into adjacent terrain patches of same type? */
+			if (q_questor->terrain_patch && !wpos.wz) {
+				tries = 500;
+				while (--tries) {
+					x2 = wpos.wx - QI_TERRAIN_PATCH_RADIUS + rand_int(QI_TERRAIN_PATCH_RADIUS * 2 + 1);
+					y2 = wpos.wy - QI_TERRAIN_PATCH_RADIUS + rand_int(QI_TERRAIN_PATCH_RADIUS * 2 + 1);
+					if (distance(y2, x2, wpos.wy, wpos.wx) <= QI_TERRAIN_PATCH_RADIUS &&
+					    wild_info[y2][x2].type == wild_info[wpos.wy][wpos.wx].type) break;
+				}
+				if (tries) { /* yay */
+					wpos.wx = x2;
+					wpos.wy = y2;
+				}
+			}
 		}
 		/* ok, pick one starting location randomly from all eligible ones */
 		else {
@@ -379,6 +394,20 @@ bool quest_activate(int q_idx) {
 		if (q_questor->start_x != -1) {
 			x = q_questor->start_x;
 			y = q_questor->start_y;
+
+			/* vary strict starting loc a bit, within a radius? */
+			if (q_questor->radius) {
+				tries = 100;
+				while (--tries) {
+					x2 = q_questor->start_x - q_questor->radius + rand_int(q_questor->radius * 2 + 1);
+					y2 = q_questor->start_y - q_questor->radius + rand_int(q_questor->radius * 2 + 1);
+					if (distance(y2, x2, y, x) <= q_questor->radius) break;
+				}
+				if (!tries) { /* no fun */
+					x = q_questor->start_x;
+					y = q_questor->start_y;
+				}
+			}
 		} else {
 			/* find a random spawn loc */
 			i = 1000; //tries

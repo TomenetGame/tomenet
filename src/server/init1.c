@@ -7637,24 +7637,27 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'L' for questor starting location type */
 		if (buf[0] == 'L') {
-			int loc, towns, wx, wy, wz, terr, sx, sy;
+			int loc, towns, wx, wy, wz, terr, sx, sy, rad;
+			unsigned int terrtype;
 
 			s = buf + 2;
-			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%s", //byte, u16b, u32b
-			    &loc, &towns, &wx, &wy, &wz, &terr, &sx, &sy, tmpbuf)) return (1);
+			if (11 != sscanf(s, "%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%s", //byte, u16b, u32b
+			    &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf)) return (1);
 
 			lc = q_ptr->questors;
 			if (!lc) return 1; /* so an L-line must always follow somewhere after its Q line */
 			q_questor = init_quest_questor(error_idx, lc - 1); /* pick the newest, already existing one */
 
 			q_questor->s_location_type = (byte)loc;
+			q_questor->s_terrains = (u32b)terrtype;
 			q_questor->s_towns_array = (u16b)towns;
 			q_questor->start_wpos.wx = (char)wx;
 			q_questor->start_wpos.wy = (char)wy;
 			q_questor->start_wpos.wz = (char)wz;
-			q_questor->s_terrains = (u32b)terr;
+			q_questor->terrain_patch = (terr != 0);
 			q_questor->start_x = sx;
 			q_questor->start_y = sy;
+			q_questor->radius = rad;
 
 			q_questor->tpref = NULL;
 			if (tmpbuf[0] != '-') {

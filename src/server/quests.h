@@ -45,6 +45,8 @@ typedef struct qi_questor {
 	byte s_location_type;				/* flags setting elibible starting location types (QI_SLOC_xxx) */
 	u16b s_towns_array;				/* QI_SLOC_TOWN: flags setting eligible starting towns (QI_STOWN_xxx) */
 	u32b s_terrains;				/* QI_SLOC_SURFACE: flags setting eligible starting terrains (RF8_WILD_xxx, RF8_WILD_TOO_MASK for all) */
+	bool terrain_patch;				/* extend spawn location to nearby worldmap sectors if same terrain? */
+	byte radius;					/* offset start_x, start_y loc randomly within a radius? */
 
 	/* exact questor starting location */
 	struct worldpos start_wpos;			/* -1, -1 for random */
