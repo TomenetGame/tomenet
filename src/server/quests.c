@@ -1535,7 +1535,10 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 		if (anything) {
 			p_ptr->interact_questor_idx = questor_idx;
 			msg_print(Ind, "\374 ");
-			msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
+			if (q_stage->talk_examine[questor_idx])
+				msg_format(Ind, "\374\377uYou examine <\377B%s\377u>:", q_ptr->questor[questor_idx].name);
+			else
+				msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
 			for (i = 0; i < QI_TALK_LINES; i++) {
 				if (!q_stage->talk[questor_idx][i]) break;
 				if ((q_stage->talk_flags[questor_idx][k] & quest_get_flags(Ind, q_idx)) != q_stage->talk_flags[questor_idx][k]) continue;
@@ -1660,7 +1663,10 @@ void quest_reply(int Ind, int q_idx, char *str) {
 			for (k = 0; k < QI_KEYWORDS_PER_REPLY; k++) {
 				if (q_kwr->keyword_idx[k] == i) {
 					msg_print(Ind, "\374 ");
-					msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
+					if (q_ptr->stage[stage].talk_examine[questor_idx])
+						msg_format(Ind, "\374\377uYou examine <\377B%s\377u>:", q_ptr->questor[questor_idx].name);
+					else
+						msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
 					/* we can re-use j here ;) */
 					for (j = 0; j < q_kwr->lines; j++) {
 						if ((q_kwr->replyflags[j] & quest_get_flags(Ind, q_idx)) != q_kwr->replyflags[j]) continue;

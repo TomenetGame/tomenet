@@ -7789,11 +7789,13 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'W' for conversation */
 		if (buf[0] == 'W') {
+			int examine;
+
 			s = buf + 2;
 			C_WIPE(flagbuf, QI_FLAGS + 1, byte);
 
-			if (4 != sscanf(s, "%d:%d:%16[^:]:%79[^:]",//QI_FLAGS
-			    &questor, &stage, flagbuf, tmpbuf)) return (1);
+			if (5 != sscanf(s, "%d:%d:%16[^:]:%d:%79[^:]",//QI_FLAGS
+			    &questor, &stage, flagbuf, &examine, tmpbuf)) return (1);
 
 			if (questor < 0 || questor >= QI_QUESTORS) return 1;
 			if (stage < 0 || stage >= QI_STAGES) return 1;
@@ -7820,6 +7822,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_stage->talk_flags[questor][lc] |= (0x1 << (*cc - 'A')); /* set flag */
 				} else return 1;
 			}
+
+			q_stage->talk_examine[questor] = (examine != 0);
 
 			q_stage->talk_lines[questor]++;
 			continue;
