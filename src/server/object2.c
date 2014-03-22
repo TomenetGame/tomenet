@@ -8089,7 +8089,6 @@ void floor_item_optimize(int item)
  *
  * TODO: inscribe item's power like {+StCo[FiAc;FASI}
  */
-//TODO: change completely to be defined by client individually! - C. Blue
 void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 {
 	player_type *p_ptr = Players[Ind];
