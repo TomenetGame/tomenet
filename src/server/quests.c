@@ -1870,8 +1870,8 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 				/* different z-coordinate = instant fail */
 				if (p_ptr->wpos.wz != q_goal->target_wpos.wz) continue;
 				/* are we within range and have same terrain type? */
-				if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy,
-				    q_goal->target_wpos.wx, q_goal->target_wpos.wy) > QI_TERRAIN_PATCH_RADIUS ||
+				if (distance(p_ptr->wpos.wy, p_ptr->wpos.wx,
+				    q_goal->target_wpos.wy, q_goal->target_wpos.wx) > QI_TERRAIN_PATCH_RADIUS ||
 				    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
 				    wild_info[q_goal->target_wpos.wy][q_goal->target_wpos.wx].type)
 					continue;
@@ -1881,8 +1881,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 
 			/* check for exact x,y location? */
 			if (q_goal->target_pos_x != -1 &&
-			    q_goal->target_pos_x != p_ptr->px &&
-			    q_goal->target_pos_y != p_ptr->py)
+			    distance(q_goal->target_pos_y, q_goal->target_pos_x, p_ptr->py, p_ptr->px) > q_goal->target_pos_radius)
 				continue;
 		}
 #if QDEBUG > 2
@@ -2117,8 +2116,8 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 			/* different z-coordinate = instant fail */
 			if (p_ptr->wpos.wz != q_del->wpos.wz) continue;
 			/* are we within range and have same terrain type? */
-			if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy,
-			    q_del->wpos.wx, q_del->wpos.wy) > QI_TERRAIN_PATCH_RADIUS ||
+			if (distance(p_ptr->wpos.wy, p_ptr->wpos.wx,
+			    q_del->wpos.wy, q_del->wpos.wx) > QI_TERRAIN_PATCH_RADIUS ||
 			    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
 			    wild_info[q_del->wpos.wy][q_del->wpos.wx].type)
 				continue;
@@ -2228,8 +2227,8 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 			/* different z-coordinate = instant fail */
 			if (p_ptr->wpos.wz != q_del->wpos.wz) continue;
 			/* are we within range and have same terrain type? */
-			if (distance(p_ptr->wpos.wx, p_ptr->wpos.wy,
-			    q_del->wpos.wx, q_del->wpos.wy) > QI_TERRAIN_PATCH_RADIUS ||
+			if (distance(p_ptr->wpos.wy, p_ptr->wpos.wx,
+			    q_del->wpos.wy, q_del->wpos.wx) > QI_TERRAIN_PATCH_RADIUS ||
 			    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type !=
 			    wild_info[q_del->wpos.wy][q_del->wpos.wx].type)
 				continue;
@@ -2237,9 +2236,8 @@ static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 		/* just check a single, specific wpos? */
 		else if (!inarea(&q_del->wpos, &p_ptr->wpos)) continue;
 
-		/* check for exact x,y location */
-		if (q_del->pos_x != p_ptr->px ||
-		    q_del->pos_y != p_ptr->py)
+		/* check for exact x,y location, plus radius */
+		if (distance(q_del->pos_y, q_del->pos_x, p_ptr->py, p_ptr->px) > q_del->radius)
 			continue;
 #if QDEBUG > 2
 		s_printf(" (DELIVER_XY) PASSED LOCATION CHECK.\n");

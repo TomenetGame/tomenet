@@ -179,6 +179,8 @@ typedef struct qi_deliver {
 	bool terrain_patch;				/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
 							   max radius is QI_TERRAIN_PATCH_RADIUS. */
 	s16b pos_x, pos_y;				/* -"- ..MOVE TO specifically this position */
+	byte radius;
+
 	cptr tpref;					/* filename of map to load, or empty for none */
 } qi_deliver;
 
@@ -201,9 +203,11 @@ typedef struct qi_goal {
 	/* for kill/retrieve goals only (deliver goals have/need separate location info) */
 	bool target_pos;				/* enable target pos? */
 	struct worldpos target_wpos;			/* kill/retrieve specifically at this world pos */
-	s16b target_pos_x, target_pos_y;		/* at specifically this position (even usable for kill/retrieve stuff?) */
 	bool target_terrain_patch;			/* extend valid target location over all connected world sectors whose terrain is of the same type (eg big forest)
 							   max radius is QI_TERRAIN_PATCH_RADIUS. */
+	s16b target_pos_x, target_pos_y;		/* at specifically this position (even usable for kill/retrieve stuff?) */
+	byte target_pos_radius;
+
 	cptr target_tpref;				/* filename of map to load, or empty for none */
 
 	bool return_to_questor;				/* do we need to return to the questor first (bump), to get credit for particular main goals? */

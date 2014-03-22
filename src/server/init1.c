@@ -8199,11 +8199,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'P' for position at which a kill/retrieve quest has to be executed */
 		if (buf[0] == 'P') {
-			int wx, wy, wz, terr, x, y;
+			int wx, wy, wz, terr, x, y, rad;
 
 			s = buf + 2;
-			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%s",
-			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, tmpbuf)) return (1);
+			if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%s",
+			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			q_stage = init_quest_stage(error_idx, stage);
@@ -8216,6 +8216,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_goal->target_terrain_patch = (terr != 0);
 			q_goal->target_pos_x = x;
 			q_goal->target_pos_y = y;
+			q_goal->target_pos_radius = rad;
 
 			if (tmpbuf[0] == '-') q_goal->target_tpref = NULL;
 			else {
@@ -8228,11 +8229,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'M' for move-to-location to finish a quest stage whose goals have already been fulfilled */
 		if (buf[0] == 'M') {
-			int wx, wy, wz, x, y, terr;
+			int wx, wy, wz, x, y, terr, rad;
 
 			s = buf + 2;
-			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%s",
-			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, tmpbuf)) return (1);
+			if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%s",
+			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			if (ABS(goal) > QI_GOALS) return 1;
@@ -8243,6 +8244,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_del->terrain_patch = (terr != 0);
 			q_del->pos_x = x;
 			q_del->pos_y = y;
+			q_del->radius = rad;
 
 			if (tmpbuf[0] == '-') q_del->tpref = NULL;
 			else {
