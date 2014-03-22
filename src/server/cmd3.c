@@ -3116,11 +3116,25 @@ void do_cmd_look(int Ind, int dir) {
 	} else if (c_ptr->o_idx) {
 		o_ptr = &o_list[c_ptr->o_idx];
 
-		/* Obtain an object description */
-		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		/* Format string */
+		if (o_ptr->questor) {
+#if 0
+			snprintf(out_val, sizeof(out_val), "\377%c%sYou see %s%s",
+			    o_ptr->questor_invincible ? 'G' : 'G', compat_pomode(Ind, o_ptr) ? "\377D" : "",
+			    q_info[o_ptr->quest].questor[o_ptr->questor_idx].name, o_ptr->next_o_idx ? " on a pile" : "");
+#else
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+			snprintf(out_val, sizeof(out_val), "\377%c%sYou see %s%s",
+			    o_ptr->questor_invincible ? 'G' : 'G', compat_pomode(Ind, o_ptr) ? "\377D" : "",
+			    o_name, o_ptr->next_o_idx ? " on a pile" : "");
+#endif
+		} else {
+			/* Obtain an object description */
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-		snprintf(out_val, sizeof(out_val), "%sYou see %s%s",
-		    compat_pomode(Ind, o_ptr) ? "\377D" : "", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+			snprintf(out_val, sizeof(out_val), "%sYou see %s%s",
+			    compat_pomode(Ind, o_ptr) ? "\377D" : "", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+		}
 
 		/* Check if the object is on a detected trap */
 		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {

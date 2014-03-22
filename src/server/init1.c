@@ -7588,31 +7588,64 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		//--------------------------------------------------------------------------------------------
 		/* Process 'Q' for questor (creature) type */
 		if (buf[0] == 'Q') {
-			int q, ridx, minlv, maxlv, sval, ktval, ksval;
+			int q, ridx, minlv, maxlv, tval, sval;
 			char ch, attr;
+			int good, great, vgreat;
+			int pval, bpval, name1, name2, name2b;
 
+			/* find out questor type first */
 			s = buf + 2;
-			if (10 != sscanf(s, "%d:%d:%c:%c:%d:%d:%d:%d:%d:%[^:]",
-			    &q, &ridx,
-			    &ch, &attr,
-			    &minlv, &maxlv,
-			    &sval, &ktval, &ksval,
-			    tmpbuf)) return (1);
+			q = atoi(s);
 
 			lc = q_ptr->questors;
 			if (lc >= QI_QUESTORS) return 1;
 			q_questor = init_quest_questor(error_idx, lc);
 
-			q_questor->type = q;
-			q_questor->ridx = ridx;
-			q_questor->rchar = ch;
-			q_questor->rattr = color_char_to_attr(attr);
-			q_questor->rlevmin = minlv;
-			q_questor->rlevmax = maxlv;
-			q_questor->sval = sval;
-			q_questor->ktval = ktval;
-			q_questor->ksval = ksval;
-			strcpy(q_questor->name, tmpbuf);
+			switch (q) {
+			case QI_QUESTOR_NPC:
+				if (7 != sscanf(s, "%d:%d:%c:%c:%d:%d:%[^:]",
+				    &q, &ridx, &ch, &attr, &minlv, &maxlv,
+				    tmpbuf)) return (1);
+				q_questor->type = q;
+				q_questor->ridx = ridx;
+				q_questor->rchar = ch;
+				q_questor->rattr = color_char_to_attr(attr);
+				q_questor->rlevmin = minlv;
+				q_questor->rlevmax = maxlv;
+				strcpy(q_questor->name, tmpbuf);
+				break;
+			case QI_QUESTOR_PARCHMENT:
+				if (5 != sscanf(s, "%d:%d:%c:%d:%[^:]",
+				    &q, &sval, &attr,
+				    &minlv, tmpbuf)) return (1);
+				q_questor->type = q;
+				q_questor->psval = sval;
+				q_questor->rattr = color_char_to_attr(attr);
+				q_questor->plev = minlv;
+				strcpy(q_questor->name, tmpbuf);
+				break;
+			case QI_QUESTOR_ITEM_PICKUP:
+				if (14 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%c:%d:%[^:]",
+				    &q, &tval, &sval, &pval, &bpval, &name1, &name2, &name2b,
+				    &good, &great, &vgreat, &attr, &minlv, tmpbuf)) return (1);
+				q_questor->type = q;
+				q_questor->otval = tval;
+				q_questor->osval = sval;
+				q_questor->opval = pval;
+				q_questor->obpval = bpval;
+				q_questor->oname1 = name1;
+				q_questor->oname2 = name2;
+				q_questor->oname2b = name2b;
+				q_questor->ogood = good;
+				q_questor->ogreat = great;
+				q_questor->overygreat = vgreat;
+				q_questor->oattr = color_char_to_attr(attr);
+				q_questor->olev = minlv;
+				strcpy(q_questor->name, tmpbuf);
+				break;
+			default:
+				return 1;
+			}
 
 			/* init defaults for optional line 'F' */
 			if (!init_F[lc]) {

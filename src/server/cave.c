@@ -3149,6 +3149,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 #endif
 /*					(*ap) = randint(15); */
 
+				/* hack: questors may have specific attr */
+				if (o_ptr->questor) (*ap) = o_ptr->attr; //o_ptr->xtra3;
+
 				/* Hack -- hallucination */
 				if (p_ptr->image) image_object(ap, cp);
 			}

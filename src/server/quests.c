@@ -694,7 +694,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	c_ptr = &zcave[y][x];
 
 	/* If no monster race index is set for the questor, don't spawn him. (paranoia) */
-	if (!q_questor->ktval || !q_questor->ksval) return FALSE;
+	if (!q_questor->otval || !q_questor->osval) return FALSE;
 
 
 	/* ---------- Try to spawn the questor object ---------- */
@@ -749,11 +749,19 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 
 	/* 'drop' it */
 	o_ptr = &o_list[o_idx];
-	invcopy(o_ptr, lookup_kind(q_questor->ktval, q_questor->ksval));
+	invcopy(o_ptr, lookup_kind(q_questor->otval, q_questor->osval));
 	o_ptr->ix = x;
 	o_ptr->iy = y;
 	wpcopy(&o_ptr->wpos, &wpos);
-	apply_magic(&wpos, o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
+
+	o_ptr->attr = q_questor->oattr;//o_ptr->xtra3 =
+	o_ptr->name1 = q_questor->oname1;
+	o_ptr->name2 = q_questor->oname2;
+	o_ptr->name2b = q_questor->oname2b;
+	apply_magic(&wpos, o_ptr, -2, FALSE, q_questor->ogood, q_questor->ogreat, q_questor->overygreat, resf);
+	o_ptr->pval = q_questor->opval;
+	o_ptr->bpval = q_questor->obpval;
+	o_ptr->level = q_questor->olev;
 
 	o_ptr->next_o_idx = c_ptr->o_idx; /* on top of pile, if any */
 	o_ptr->stack_pos = 0;

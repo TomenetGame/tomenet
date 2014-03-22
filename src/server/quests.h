@@ -65,14 +65,21 @@ typedef struct qi_questor {
 	/* type of questor */
 	byte type;					/* QI_QUESTOR_xxx */
 
-	s16b ridx;					/* QI_QUESTOR_NPC; 0 for any */
-	char rchar;					/*  0 for any */
-	byte rattr;					/*  0 for any */
-	byte rlevmin, rlevmax;				/*  0 for any */
+	/* QI_QUESTOR_NPC */
+	s16b ridx;
+	char rchar;
+	byte rattr;
+	byte rlevmin, rlevmax;
 
-	s16b sval;					/* QI_QUESTOR_PARCHMENT */
+	/* QI_QUESTOR_PARCHMENT */
+	s16b psval, plev;
 
-	s16b ktval, ksval;				/* QI_QUESTOR_ITEM_xxx. No further stats/enchantments are displayed! */
+	/* QI_QUESTOR_ITEM_xxx. */
+	/* No further stats/enchantments are displayed maybe? */
+	s16b otval, osval, opval, obpval, oname1, oname2, oname2b;
+	bool ogood, ogreat, overygreat;
+	s16b olev;
+	byte oattr;
 
 	char name[MAX_CHARS];				/* optional pseudo-unique name that overrides the normal name */
 

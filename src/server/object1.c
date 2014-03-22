@@ -2164,6 +2164,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	/* Start dumping the result */
 	t = buf;
 
+	/* hack: questors have an arbitrary name */
+	if (o_ptr->questor) basenm = q_info[o_ptr->quest].questor[o_ptr->questor_idx].name;
+
 	/* The object "expects" a "number" */
 	if (basenm[0] == '&') {
 		cptr ego = NULL;
