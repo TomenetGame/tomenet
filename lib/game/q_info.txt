@@ -67,6 +67,7 @@ V:0.0.1
 # -The index number must just be counting up for each quest added to this file, starting with 0.
 # -The internal codename must be unique among all quests and exactly 10 characters long.
 # -All quests should currently be set to 'individual'! (Global quests work depending on the quest goals. Some won't, though.)
+# -questor types 1 (monster) and 3 (object) are supported at the moment.
 # -questor 'locations' are: +1 for 'world surface', +2 for 'town' (so '3' for both). Must not be zero unless a specific wpos is set instead.
 # -For item questors you might want to set 'examine' flag so they don't "talk" to you.
 # -#goal is 1..5 for main goal, and -1..-5 for optional goals.
