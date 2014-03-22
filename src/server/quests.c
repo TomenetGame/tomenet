@@ -745,20 +745,18 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 
 	/* 'drop' it */
 	o_ptr = &o_list[o_idx];
+	invcopy(o_ptr, lookup_kind(q_questor->ktval, q_questor->ksval));
+	o_ptr->ix = x;
+	o_ptr->iy = y;
+	wpcopy(&o_ptr->wpos, &wpos);
+	apply_magic(&wpos, o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
+
 	o_ptr->next_o_idx = c_ptr->o_idx; /* on top of pile, if any */
 	o_ptr->stack_pos = 0;
 	c_ptr->o_idx = o_idx;
 
-	wpcopy(&o_ptr->wpos, &wpos);
-	o_ptr->ix = x;
-	o_ptr->iy = y;
-
 	o_ptr->marked = 0;
 	o_ptr->held_m_idx = 0;
-
-	/* generate item first in the normal ways */
-	invcopy(o_ptr, lookup_kind(q_questor->ktval, q_questor->ksval));
-	apply_magic(&wpos, o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
 
 	/* imprint questor status and details */
 	o_ptr->questor = TRUE;
