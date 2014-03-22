@@ -1098,7 +1098,7 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage;
-	int i, j, k;
+	int i, j, k, py_q_idx = -1;
 	bool anything;
 
 #if QDEBUG > 0
@@ -1202,6 +1202,8 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		/* play questors' stage dialogue */
 		for (j = 0; j < q_ptr->questors; j++)
 			if (!quiet) quest_dialogue(pInd, q_idx, j, FALSE, FALSE, FALSE);
+
+		py_q_idx = j;
 	}
 
 
@@ -1255,7 +1257,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 #if 1	/* INSTAEND HACK */
 	/* hack - we couldn't do this in quest_imprint_stage(), see the note there:
 	   check if we already auto-completed the quest stage this quickly just by standing there! */
-	if (!q_ptr->individual || !pInd) { //the !pInd part is paranoia
+	if (py_q_idx == -1) { //global quest
 		for (i = 1; i <= NumPlayers; i++) {
 			//if (!inarea(&Players[i]->wpos, &q_ptr->current_wpos[0])) continue; //seems nonsensical for narrations
 			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
@@ -1265,7 +1267,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			quest_instacheck_retrieval(i, q_idx, j);
 		}
 	} else { /* individual quest */
-		quest_instacheck_retrieval(pInd, q_idx, j);
+		quest_instacheck_retrieval(pInd, q_idx, py_q_idx);
 	}
 #endif
 }
