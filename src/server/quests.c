@@ -59,7 +59,7 @@
 
 static void quest_goal_check_reward(int pInd, int q_idx);
 static bool quest_goal_check(int pInd, int q_idx, bool interacting);
-static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire);
+static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire, bool force_prompt);
 static void quest_imprint_tracking_information(int Ind, int py_q_idx, bool target_flagging_only);
 static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *m_ptr, object_type *o_ptr);
 
@@ -1150,7 +1150,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 
 			/* play questors' stage dialogue */
 			for (j = 0; j < q_ptr->questors; j++)
-				if (!quiet) quest_dialogue(i, q_idx, j, FALSE, FALSE);
+				if (!quiet) quest_dialogue(i, q_idx, j, FALSE, FALSE, FALSE);
 		}
 	} else { /* individual quest */
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
@@ -1189,7 +1189,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		quest_imprint_stage(pInd, q_idx, j);
 		/* play questors' stage dialogue */
 		for (j = 0; j < q_ptr->questors; j++)
-			if (!quiet) quest_dialogue(pInd, q_idx, j, FALSE, FALSE);
+			if (!quiet) quest_dialogue(pInd, q_idx, j, FALSE, FALSE, FALSE);
 	}
 
 
@@ -1297,7 +1297,7 @@ void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
 	quest_imprint_stage(Ind, q_idx, i);
 
 	/* re-prompt for keyword input, if any */
-	quest_dialogue(Ind, q_idx, p_ptr->interact_questor_idx, TRUE, FALSE);
+	quest_dialogue(Ind, q_idx, p_ptr->interact_questor_idx, TRUE, FALSE, FALSE);
 }
 
 /* Acquire a quest, WITHOUT CHECKING whether the quest actually allows this at this stage!
@@ -1449,7 +1449,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
 
 	/* questor interaction qutomatically invokes the quest dialogue, if any */
 	q_questor->talk_focus = Ind; /* only this player can actually respond with keywords -- TODO: ensure this happens for non 'individual' quests only */
-	quest_dialogue(Ind, q_idx, questor_idx, FALSE, may_acquire);
+	quest_dialogue(Ind, q_idx, questor_idx, FALSE, may_acquire, TRUE);
 
 	/* prompt him to acquire this quest if he hasn't yet */
 	if (may_acquire) Send_request_cfr(Ind, RID_QUEST_ACQUIRE + q_idx, format("Accept the quest \"%s\"?", q_name + q_ptr->name), TRUE);
@@ -1466,13 +1466,19 @@ void quest_interact(int Ind, int q_idx, int questor_idx) {
    'interact_acquire' must be set if this dialogue spawns from someone interacting
    initially with the questor who is eligible to acquire the quest.
    In that case, the player won't get the enter-a-keyword-prompt. Instead, our
-   caller function quest_interact() will prompt him to acquire the quest first. */
-static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire) {
+   caller function quest_interact() will prompt him to acquire the quest first.
+
+   'force_prompt' is set if we're called from quest_interact(), and will always
+   give us a keyword-prompt even though there are no valid ones.
+   Assumption is that if we're called from quest_interact() we bumped on purpose
+   into the questor because we wanted to try out a keyword (as a player, we don't
+   know that there maybe are none.. >:D). */
+static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire, bool force_prompt) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, k, stage = quest_get_stage(Ind, q_idx);
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
-	bool anything;
+	bool anything, obvious_keyword = FALSE;
 
 	if (!repeat) {
 		/* pre-scan talk if any line at all passes the flag check */
@@ -1493,9 +1499,14 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 				if (!q_stage->talk[questor_idx][i]) break;
 				if ((q_stage->talk_flags[questor_idx][k] & quest_get_flags(Ind, q_idx)) != q_stage->talk_flags[questor_idx][k]) continue;
 				msg_format(Ind, "\374\377U%s", q_stage->talk[questor_idx][i]);
+
+				/* lines that contain obvious keywords, ie those marked by '[[..]]',
+				   will always force a reply-prompt for convenience! */
+				if (strstr(q_stage->talk[questor_idx][i], "[[")) obvious_keyword = TRUE;
 			}
 			//msg_print(Ind, "\374 ");
 		}
+		if (obvious_keyword) force_prompt = TRUE;
 	}
 
 	/* No keyword-interaction possible if we haven't acquired the quest yet. */
@@ -1508,26 +1519,35 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 
 	p_ptr->interact_questor_idx = questor_idx;
 	/* check if there's at least 1 keyword available in our stage/from our questor */
-	anything = FALSE;
-	for (i = 0; i < q_ptr->keywords; i++)
-		if (q_ptr->keyword[i].stage_ok[stage] &&
-		    q_ptr->keyword[i].questor_ok[questor_idx] &&
-		    !q_ptr->keyword[i].any_stage) { /* and it mustn't use a wildcard stage. that's not sufficient. */
-			anything = TRUE;
-			break;
-		}
-	if (anything) { /* at least 1 keyword available? */
+	/* NEW: however.. >:) that keyword must be 'obvious'! Or prompt must be forced.
+	        We won't disclose 'secret' keywords easily by prompting without any 'apparent'
+	        reason for the prompt, and we don't really want to go the route of prompting
+	        _everytime_ because it's a bit annoying to have to close the prompt everytime.
+	        So we leave it to the player to bump into the questor (->force_prompt) if he
+	        wants to try and find out secret keywords.. */
+	if (obvious_keyword && !force_prompt) /* if prompt is forced anyway, we can save CPU cycles..luls */
+		for (i = 0; i < q_ptr->keywords; i++)
+			if (q_ptr->keyword[i].stage_ok[stage] &&
+			    q_ptr->keyword[i].questor_ok[questor_idx]
+#if 0 /* well, if we do all of this under an 'obvious_keyword' check, we can (should?) commend this out in turn, because it might be one of the keywords displayed in [[..]] for some weird reason :-p. */
+			    && !q_ptr->keyword[i].any_stage/* and it mustn't use a wildcard stage. that's not sufficient. */
+#endif
+			    ) { 
+				force_prompt = TRUE;
+				break;
+			}
+	if (force_prompt) { /* at least 1 keyword available? */
 		/* hack: if 1st keyword is empty string "", display a "more" prompt */
 		if (q_ptr->keyword[i].keyword[0] == 0)
-			Send_request_str(Ind, RID_QUEST + q_idx, "Your reply (or ENTER for more)> ", "");
+			Send_request_str(Ind, RID_QUEST + q_idx, "? (blank for more)> ", "");
 		else {
 			/* hack: if 1st keyword is "y" just give a yes/no choice instead of an input prompt?
 			   we assume that 2nd keyword is a "n" then. */
 			if (q_ptr->keyword[i].keyword[0] == 'y' &&
 			    q_ptr->keyword[i].keyword[1] == 0)
-				Send_request_cfr(Ind, RID_QUEST + q_idx, "Your reply, yes or no?>", FALSE);
+				Send_request_cfr(Ind, RID_QUEST + q_idx, "? (choose yes or no)>", FALSE);
 			else /* normal prompt for keyword input */
-				Send_request_str(Ind, RID_QUEST + q_idx, "Your reply> ", "");
+				Send_request_str(Ind, RID_QUEST + q_idx, "?> ", "");
 		}
 	}
 }
@@ -1540,6 +1560,10 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	char *c;
 	qi_keyword *q_key;
 	qi_kwreply *q_kwr;
+
+	/* trim leading/trailing spaces */
+	while (*str == ' ') str++;
+	while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
 
 #if 0
 	if (!str[0] || str[0] == '\e') return; /* player hit the ESC key.. */
@@ -1615,7 +1639,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	/* it was nice small-talking to you, dude */
 #if 1
 	/* if keyword wasn't recognised, repeat input prompt instead of just 'dropping' the convo */
-	quest_dialogue(Ind, q_idx, questor_idx, TRUE, FALSE);
+	quest_dialogue(Ind, q_idx, questor_idx, TRUE, FALSE, FALSE);
 	/* don't give 'wassup?' style msg if we just hit RETURN.. silyl */
 	if (str[0]) {
 		msg_print(Ind, "\374 ");
