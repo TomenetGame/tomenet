@@ -221,7 +221,7 @@ bool quest_activate(int q_idx) {
 			wpos.wy = q_questor->start_wpos.wy;
 			wpos.wz = q_questor->start_wpos.wz;
 		} else if (!q_questor->s_location_type) return FALSE;
-		else if ((q_questor->s_location_type & QI_SLOC_TOWN)) {
+		else if ((q_questor->s_location_type & QI_SLOC_TOWN)) {//TODO: other locations
 			if ((q_questor->s_towns_array & QI_STOWN_BREE)) {
 				wpos.wx = 32;
 				wpos.wy = 32;
@@ -1046,17 +1046,12 @@ void quest_precheck_retrieval(int Ind, int q_idx, int py_q_idx) {
 		quest_check_goal_kr(Ind, q_idx, py_q_idx, NULL, &p_ptr->inventory[i]);
 	}
 }
-/* Store some information of the current stage in the p_ptr array,
-   eg the target location for easier lookup. In theory we could make it work
-   without this function, but then we'd for example have to check on EVERY
-   step the player makes if he's doing any quest that has a target area and
-   is there etc... */
-/* TODO: currently only supports 1 target/delivery location, ie the one for the very first GOAL of that quest stage!
-   this sucks, it's too complicated^^ what should probably be done is:
-   only remember a p_ptr->bool_target_pos[max_conc], and then check on every wpos change.
-   if positive check, imprint this on a p_ptr->bool_within_target_wpos[max_conc], and
-   set p_ptr->bool_target_xypos[max_conc] if required.
-   Then on every subsequent move/kill/itempickup we can check in detail. --OK, made it this way */
+/* Store some information of the current stage in the p_ptr array to track his
+   progress more easily in the game code:
+   -How many kills/items he has to retrieve and
+   -whether he is currently within a target location to do so.
+   Additionally it checks right away if the player already carries any requested
+   items and credits him for them right away. */
 static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
@@ -1156,8 +1151,6 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			if (Players[pInd]->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) return; //paranoia, shouldn't happen
 
-		 //TODO: check against multiple current_wpos, one for each questor!! to work with correct questor_idx in quest_dialogue call below!
-
 		/* play automatic narration if any */
 		if (!quiet) {
 			/* pre-scan narration if any line at all exists and passes the flag check */
@@ -1186,6 +1179,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 
 		/* update players' quest tracking data */
 		quest_imprint_stage(pInd, q_idx, j);
+		 //TODO: check against multiple current_wpos, one for each questor!! to work with correct questor_idx in quest_dialogue call below!
 		/* play questors' stage dialogue */
 		for (j = 0; j < q_ptr->questors; j++)
 			if (!quiet) quest_dialogue(pInd, q_idx, j, FALSE, FALSE, FALSE);
@@ -1205,10 +1199,10 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	}
 
 
-	/* auto-quest-termination? (actually redundant with ending_stage)
+	/* auto-quest-termination? (actually redundant with ending_stage, just for convenience:)
 	   If a stage has no dialogue keywords, or stage goals, or timed/auto stage change
 	   effects or questor-movement/tele/revert-from-hostile effects, THEN the quest will end. */
-	   //TODO: implement all of that stuff :p
+	   //TODO: implement that questor actions stuff :-p
 	anything = FALSE;
 
 	/* optional goals play no role, obviously */
@@ -2476,7 +2470,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	qi_reward *q_rew;
 	qi_questor *q_questor;
 
-	/* TODO: use sensible questor location for generating rewards (apply_magic()) */
+	/* TODO: use sensible questor location for generating rewards (apply_magic() wants a wpos, hence..) */
 	if (!q_ptr->questors) return; //extreme paranoia
 	q_questor = &q_ptr->questor[0]; //compiler warning
 	for (j = 0; j < q_ptr->questors; j++) {
