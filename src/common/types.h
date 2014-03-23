@@ -702,8 +702,7 @@ struct effect_type
 
 typedef struct object_type object_type;
 
-struct object_type
-{
+struct object_type {
         s32b owner;                     /* Player that found it */
         byte mode;                	/* Mode of player who found it */
         s16b level;                     /* Level req */
@@ -801,6 +800,7 @@ struct object_type
 
 	byte inven_order;		/* Inventory position if held by a player,
 					   only use is in xtra2.c when pack is ang_sort'ed */
+	bool auto_insc;			/* Request client-side auto-inscription after item has changed? */
 
 	u16b next_o_idx;		/* Next object in stack (if any) */
 	u16b held_m_idx;		/* Monster holding us (if any) */
@@ -2934,7 +2934,7 @@ struct player_type {
 	bool hilite_player; /* possible resurrection of long since broken c_cfg.hilite_player: Draw cursor around us at all times. */
 
 	char redraw_cooldown;
-	int apply_auto_insc;
+	bool auto_insc[INVEN_TOTAL];
 	bool grid_sunlit, grid_house;
 };
 

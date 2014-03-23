@@ -3527,7 +3527,7 @@ bool ident_spell_aux(int Ind, int item)
 
 	p_ptr->current_identify = 0;
 
-	p_ptr->apply_auto_insc = item + 1;
+	p_ptr->inventory[item].auto_insc = TRUE;
 
 	/* Something happened */
 	return (TRUE);

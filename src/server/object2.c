@@ -8287,7 +8287,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 			/* Success */
-			p_ptr->apply_auto_insc = j + 1;
+			p_ptr->inventory[j].auto_insc = TRUE;
 			return (j);
 		}
 	}
@@ -8440,7 +8440,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Return the slot */
-	p_ptr->apply_auto_insc = i + 1;
+	p_ptr->inventory[i].auto_insc = TRUE;
 
 	/* Check whether this item was requested by an item-retrieval quest */
 	if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
@@ -8523,7 +8523,10 @@ void combine_pack(int Ind) {
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
-				if (j + 1 == p_ptr->apply_auto_insc) p_ptr->apply_auto_insc = i + 1;
+				if (p_ptr->inventory[j].auto_insc) {
+					p_ptr->inventory[i].auto_insc = TRUE;
+					p_ptr->inventory[j].auto_insc = FALSE;
+				}
 
 				/* Done */
 				break;
@@ -8648,7 +8651,10 @@ void reorder_pack(int Ind) {
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
-		if (i + 1 == p_ptr->apply_auto_insc) p_ptr->apply_auto_insc = j + 1;
+		if (p_ptr->inventory[i].auto_insc) {
+			p_ptr->inventory[j].auto_insc = TRUE;
+			p_ptr->inventory[i].auto_insc = FALSE;
+		}
 	}
 
 	/* Message */

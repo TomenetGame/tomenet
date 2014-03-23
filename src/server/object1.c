@@ -5486,9 +5486,11 @@ void display_inven(int Ind)
 		p_ptr->inventory_changed = FALSE;
 	}
 
-	if (p_ptr->apply_auto_insc && p_ptr->apply_auto_insc - 1 < INVEN_PACK) {
-		Send_apply_auto_insc(Ind, p_ptr->apply_auto_insc - 1);
-		p_ptr->apply_auto_insc = 0;
+	for (i = 0; i < z; i++) {
+		if (p_ptr->inventory[i].auto_insc) {
+			Send_apply_auto_insc(Ind, i);
+			p_ptr->inventory[i].auto_insc = FALSE;
+		}
 	}
 
 #if 0 /* moved to client-side, clean! */
@@ -5553,9 +5555,11 @@ void display_equip(int Ind)
 		Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
 	}
 
-	if (p_ptr->apply_auto_insc && p_ptr->apply_auto_insc - 1 >= INVEN_WIELD) {
-		Send_apply_auto_insc(Ind, p_ptr->apply_auto_insc - 1);
-		p_ptr->apply_auto_insc = 0;
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+		if (p_ptr->inventory[i].auto_insc) {
+			Send_apply_auto_insc(Ind, i);
+			p_ptr->inventory[i].auto_insc = FALSE;
+		}
 	}
 }
 
