@@ -4165,9 +4165,13 @@ void do_slash_cmd(int Ind, char *message)
 				bool full = (tk);
 
 				/* Wipe even if town/wilderness */
-				wipe_o_list_safely(&wp);
-				if (full) wipe_m_list(&wp);
-				else wipe_m_list_admin(&wp);
+				if (full) {
+					wipe_m_list(&wp);
+					wipe_o_list(&wp);
+				} else {
+					wipe_m_list_admin(&wp);
+					wipe_o_list_safely(&wp);
+				}
 				/* XXX trap clearance support dropped - reimplement! */
 //				wipe_t_list(&wp);
 
@@ -8205,7 +8209,7 @@ void do_slash_cmd(int Ind, char *message)
 					int l;
 					quest_info *q_ptr = &q_info[k];
 
-					msg_format(Ind, "\377UQuest '%s' (%d,%s):", q_name + q_ptr->name, k, q_ptr->codename);
+					msg_format(Ind, "\377UQuest '%s' (%d,%s) - oreg %d:", q_name + q_ptr->name, k, q_ptr->codename, q_ptr->objects_registered);
 					for (i = 0; i < q_ptr->stages; i++) {
 						msg_format(Ind, "stage %d (qinfo:?): actq %d, autoac %d, cstage %d", i, quest_qi_stage(k, i)->activate_quest, quest_qi_stage(k, i)->auto_accept, quest_qi_stage(k, i)->change_stage);
 					}
@@ -8252,11 +8256,12 @@ void do_slash_cmd(int Ind, char *message)
 				/* display basic quests info */
 				msg_format(Ind, "\377UQuests (max_q_idx/MAX_Q_IDX %d/%d):", max_q_idx, MAX_Q_IDX);
 				for (i = 0; i < max_q_idx; i++) {
-					msg_format(Ind, " %3d %10s S%02d%s %s%s %4d -- Qx%d '%s'/%s",
+					msg_format(Ind, " %3d %10s S%02d%s %s%s %4d or%d -- Qx%d '%s'/%s",
 					    i, q_info[i].codename, quest_get_stage(Ind, i), q_info[i].individual ? format("/%02d", q_info[i].cur_stage) : "   ",
 					    !q_info[i].defined ? "\377rU\377w" : (q_info[i].active ? "A" : " "),
 					    !q_info[i].defined ? " " : (q_info[i].disabled ? "D" : " "),
 					    quest_get_cooldown(Ind, i),
+					    q_info[i].objects_registered,
 					    q_info[i].questors, q_name + q_info[i].name, q_info[i].creator);
 				}
 				/* display extra info? */

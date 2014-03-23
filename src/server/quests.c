@@ -471,6 +471,7 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 	return TRUE;
 }
 
+/* Attempt to spawn a monster-type questor */
 static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, m_idx;
@@ -729,6 +730,7 @@ static void teleport_objects_away(struct worldpos *wpos, s16b x, s16b y, int dis
  #endif
 #endif
 
+/* Attempt to spawn an object-type questor */
 static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int o_idx, i;
@@ -824,7 +826,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	o_ptr->next_o_idx = c_ptr->o_idx; /* on top of pile, if any */
 	o_ptr->stack_pos = 0;
 	c_ptr->o_idx = o_idx;
-
+	q_ptr->objects_registered++;
 	o_ptr->marked = 0;
 	o_ptr->held_m_idx = 0;
 
@@ -873,6 +875,9 @@ bool quest_activate(int q_idx) {
 #endif
 	q_ptr->active = TRUE;
 
+	/* This needs to be initialised before spawning questors,
+	   because object-type questors count for this too. */
+	q_ptr->objects_registered = 0;
 
 	/* Spawn questors (monsters/objects that players can
 	   interact with to acquire this quest): */
@@ -906,6 +911,18 @@ bool quest_activate(int q_idx) {
 		}
 	}
 
+	/* Initialise dynamic data */
+	q_ptr->flags = 0x0000;
+	for (i = 0; i < q_ptr->stages; i++) {
+		q_ptr->stage[i].timed_countdown = 0;
+		for (q = 0; q < q_ptr->stage[i].goals; q++) {
+			q_ptr->stage[i].goal[q].cleared = FALSE;
+			q_ptr->stage[i].goal[q].nisi = FALSE;
+			if (q_ptr->stage[i].goal[q].kill)
+				q_ptr->stage[i].goal[q].kill->number_left = 0;
+		}
+	}
+
 	/* Initialise with starting stage 0 */
 	q_ptr->turn_activated = turn;
 	q_ptr->cur_stage = -1;
@@ -926,6 +943,14 @@ static void quest_erase_objects(int q_idx, bool individual, s32b p_id) {
 	hash_entry *ptr;
 	player_type *p_ptr;
 
+	/* Is the quest even missing any objects? */
+	if (!q_info[q_idx].objects_registered) {
+#if QDEBUG > 1
+		s_printf(" No objects registered for erasure.\n");
+#endif
+		return;
+	}
+
 	/* Open world items */
 #if QDEBUG > 1
 	s_printf(" Erasing all object questors and quest objects..\n");
@@ -937,6 +962,18 @@ static void quest_erase_objects(int q_idx, bool individual, s32b p_id) {
 		s_printf("Erased one at %d.\n", j);
 #endif
 		delete_object_idx(j, TRUE);
+	}
+
+	if (q_info[q_idx].objects_registered < 0) {//paranoia
+#if QDEBUG > 1
+		s_printf(" Warning: Negative number of registered objects.\n");
+#endif
+		return;
+	} else if (!q_info[q_idx].objects_registered) {
+#if QDEBUG > 1
+		s_printf(" Erased all registered objects.\n");
+#endif
+		return;
 	}
 
 	/* Players online */
@@ -952,11 +989,23 @@ static void quest_erase_objects(int q_idx, bool individual, s32b p_id) {
 #if QDEBUG > 1
 			s_printf("QUEST_OBJECT: player '%s'\n", p_ptr->name);
 #endif
+			questitem_d(o_ptr, o_ptr->number);
 			inven_item_increase(j, i, -99);
 			inven_item_describe(j, i);
 			inven_item_optimize(j, i);
-			//return;
 		}
+	}
+
+	if (q_info[q_idx].objects_registered < 0) {//paranoia
+#if QDEBUG > 1
+		s_printf(" Warning: Negative number of registered objects.\n");
+#endif
+		return;
+	} else if (!q_info[q_idx].objects_registered) {
+#if QDEBUG > 1
+		s_printf(" Erased all registered objects.\n");
+#endif
+		return;
 	}
 
 	/* hack */
@@ -1055,12 +1104,11 @@ void quest_deactivate(int q_idx) {
 		c_ptr = &zcave[q_questor->current_y][q_questor->current_x];
 
 		/* unmake quest */
-#if QDEBUG > 1
-		s_printf(" deleting questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_questor->current_x, q_questor->current_y);
-#endif
-
 		switch (q_questor->type) {
 		case QI_QUESTOR_NPC:
+#if QDEBUG > 1
+			s_printf(" deleting m-questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_questor->current_x, q_questor->current_y);
+#endif
 			m_idx = c_ptr->m_idx;
 			if (m_idx == q_questor->mo_idx) {
 				if (m_list[m_idx].questor && m_list[m_idx].quest == q_idx) {
@@ -1096,6 +1144,9 @@ void quest_deactivate(int q_idx) {
 			}
 			break;
 		case QI_QUESTOR_ITEM_PICKUP:
+#if QDEBUG > 1
+			s_printf(" deleting o-questor %d at %d,%d,%d - %d,%d\n", c_ptr->o_idx, wpos.wx, wpos.wy, wpos.wz, q_questor->current_x, q_questor->current_y);
+#endif
 			o_idx = c_ptr->o_idx;
 			if (o_idx == q_questor->mo_idx) {
 				if (o_list[o_idx].questor && o_list[o_idx].quest == q_idx) {
@@ -1545,6 +1596,7 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 			o_ptr->owner = Players[py]->id;
 			o_ptr->mode = Players[py]->mode;
 			inven_carry(py, o_ptr);
+			q_ptr->objects_registered++;
 			continue;
 		}
 
@@ -1577,6 +1629,7 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 		o_ptr->next_o_idx = c_ptr->o_idx; /* on top of pile, if any */
 		o_ptr->stack_pos = 0;
 		c_ptr->o_idx = o_idx;
+		q_ptr->objects_registered++;
 
 		o_ptr->marked = 0;
 		o_ptr->held_m_idx = 0;
@@ -4153,6 +4206,26 @@ void fix_questors_on_startup(void) {
 			/* delete him too, maybe? */
 		} else q_ptr->questor[o_ptr->questor_idx].mo_idx = i;
 	}
+}
+
+/* Keep track of losing quest-related items we spawned,
+   so we don't try to remove them later on if they're already gone,
+   saving CPU and I/O.
+   NOTE: We do not track normal items that just happen to be needed for a
+         retrieval quest goal, or that are normal quest rewards, since we
+         don't want to erase those when the quest is done. */
+void questitem_d(object_type *o_ptr, int num) {
+	if (!o_ptr->questor && /* it's neither a questor */
+	    !(o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST && o_ptr->quest)) /* nor a special quest item? */
+		return;
+
+	/* paranoia */
+	if (!q_info[o_ptr->quest - 1].objects_registered) {
+		s_printf("QUESTITEM_D: t%d,s%d,p%d is already zero.\n", o_ptr->tval, o_ptr->sval, o_ptr->pval);
+		return;
+	}
+
+	q_info[o_ptr->quest - 1].objects_registered -= num;
 }
 
 /* ---------- Questor actions/reactions to 'external' effects in the game world ---------- */

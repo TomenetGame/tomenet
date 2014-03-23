@@ -412,6 +412,9 @@ typedef struct quest_info {
 							   because it's used atomically in succeeding code parts that know they
 							   can depend on each other. (uh or something) */
 
+	s16b objects_registered;			/* Track all objects the quest spawns except for quest items.
+							   So this keeps track of object-type questors and of special quest items. */
+
 	/* global quest flags (a-p to clear, A-P to set) -- note that these are stage-independant! */
 	u16b flags;
 

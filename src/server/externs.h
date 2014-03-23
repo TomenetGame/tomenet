@@ -2161,6 +2161,7 @@ extern void quest_check_goal_deliver(int Ind);
 extern void quest_check_goal_k(int Ind, monster_type *m_ptr);
 extern void quest_check_goal_r(int Ind, object_type *o_ptr);
 extern void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num);
+extern void quest_abandon(int Ind, int py_q_idx);
 /* for initialising the quest_info structures and sub-structures in init1.c */
 extern qi_stage *quest_cur_qi_stage(int q_idx);
 extern qi_stage *quest_qi_stage(int q_idx, int stage);
@@ -2176,8 +2177,8 @@ extern qi_reward *init_quest_reward(int q_idx, int stage, int num);
 extern qi_questitem *init_quest_questitem(int q_idx, int stage, int num);
 extern void quest_handle_disabled_on_startup(void);
 extern void fix_questors_on_startup(void);
+extern void questitem_d(object_type *o_ptr, int num);
 /* Questor actions/reactions to 'external' effects in the game world */
-extern void quest_abandon(int Ind, int py_q_idx);
 extern void questor_drop_specific(int Ind, struct worldpos *wpos, int x, int y);
 extern void questor_death(int Ind, int mo_idx);
 

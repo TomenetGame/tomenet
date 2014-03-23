@@ -1224,8 +1224,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 /*
  * Quaff a potion (from the pack or the floor)
  */
-void do_cmd_quaff_potion(int Ind, int item)
-{
+void do_cmd_quaff_potion(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	int		ident, lev;
 	object_type	*o_ptr;
@@ -1237,13 +1236,10 @@ void do_cmd_quaff_potion(int Ind, int item)
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
-	{
 		o_ptr = &p_ptr->inventory[item];
-	}
 
 	/* Get the item (on the floor) */
-	else
-	{
+	else {
 		if (-item >= o_max)
 			return; /* item doesn't exist */
 
@@ -1251,14 +1247,13 @@ void do_cmd_quaff_potion(int Ind, int item)
 	}
 
 	/* Hack -- allow to quaff ale/wine */
-	if (o_ptr->tval == TV_FOOD)
-	{
+	if (o_ptr->tval == TV_FOOD) {
 		do_cmd_eat_food(Ind, item);
 		return;
 	}
 
 
-        if( check_guard_inscription( o_ptr->note, 'q' )) {
+        if (check_guard_inscription(o_ptr->note, 'q')) {
                 msg_print(Ind, "The item's inscription prevents it.");
                 return;
         };
@@ -1293,8 +1288,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* An identification was made */
-	if (ident && !object_aware_p(Ind, o_ptr))
-	{
+	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
 //		object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
 		if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
@@ -1322,18 +1316,17 @@ void do_cmd_quaff_potion(int Ind, int item)
 		(void)set_food(Ind, p_ptr->food + o_ptr->pval);
 
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+	questitem_d(o_ptr, 1);
 
 	/* Destroy a potion in the pack */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		inven_item_increase(Ind, item, -1);
 		inven_item_describe(Ind, item);
 		inven_item_optimize(Ind, item);
 	}
 
 	/* Destroy a potion on the floor */
-	else
-	{
+	else {
 		floor_item_increase(0 - item, -1);
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
@@ -1760,12 +1753,9 @@ void do_cmd_empty_potion(int Ind, int slot) {
 /*
  * Curse the players armor
  */
-bool curse_armor(int Ind)
-{
+bool curse_armor(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	object_type *o_ptr;
-
 	char o_name[ONAME_LEN];
 
 
@@ -1775,28 +1765,29 @@ bool curse_armor(int Ind)
 	/* Nothing to curse */
 	if (!o_ptr->k_idx) return (FALSE);
 
+	/* might mess up quest stuff */
+	if (o_ptr->questor ||
+	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST))
+		return FALSE;
+
 
 	/* Describe */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
-	if (artifact_p(o_ptr) && (rand_int(100) < 30))
-	{
+	if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
 		           "terrible black aura", "surround your armour", o_name);
 	}
 
 	/* not artifact or failed save... */
-	else
-	{
+	else {
 		/* Oops */
 		msg_format(Ind, "A terrible black aura blasts your %s!", o_name);
 
 		if (true_artifact_p(o_ptr))
-		{
 			handle_art_d(o_ptr->name1);
-		}
 
 		/* Blast the armor */
 		o_ptr->name1 = 0;
@@ -1832,14 +1823,10 @@ bool curse_armor(int Ind)
 /*
  * Curse the players weapon
  */
-bool curse_weapon(int Ind)
-{
-	player_type *p_ptr = Players[Ind];
-
+bool curse_weapon(int Ind) {
+	player_type *p_ptr  = Players[Ind];
 	object_type *o_ptr;
-
 	char o_name[ONAME_LEN];
-
 
 	/* Curse the weapon */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
@@ -1849,28 +1836,29 @@ bool curse_weapon(int Ind)
 	    (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) return (FALSE);
 	if (!o_ptr->k_idx) o_ptr = &p_ptr->inventory[INVEN_ARM]; /* dual-wield..*/
 
+	/* might mess up quest stuff */
+	if (o_ptr->questor ||
+	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST))
+		return FALSE;
+
 
 	/* Describe */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw */
-	if (artifact_p(o_ptr) && (rand_int(100) < 30))
-	{
+	if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
 		           "terrible black aura", "surround your weapon", o_name);
 	}
 
 	/* not artifact or failed save... */
-	else
-	{
+	else {
 		/* Oops */
 		msg_format(Ind, "A terrible black aura blasts your %s!", o_name);
 
 		if (true_artifact_p(o_ptr))
-		{
 			handle_art_d(o_ptr->name1);
-		}
 
 		/* Shatter the weapon */
 		o_ptr->name1 = 0;
@@ -1924,28 +1912,28 @@ bool curse_an_item(int Ind, int slot)
 	/* Nothing to curse */
 	if (!o_ptr->k_idx) return (FALSE);
 
+	/* might mess up quest stuff */
+	if (o_ptr->questor ||
+	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST))
+		return FALSE;
 
 	/* Describe */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
-	if (artifact_p(o_ptr) && (rand_int(100) < 50))
-	{
+	if (artifact_p(o_ptr) && (rand_int(100) < 50)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
 		           "terrible black aura", "surround you", o_name);
 	}
 
 	/* not artifact or failed save... */
-	else
-	{
+	else {
 		/* Oops */
 		msg_format(Ind, "A terrible black aura blasts your %s!", o_name);
 
 		if (true_artifact_p(o_ptr))
-		{
 			handle_art_d(o_ptr->name1);
-		}
 
 		/* Blast the armor */
 		o_ptr->name1 = 0;
@@ -2896,10 +2884,10 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	if (keep) return;
 
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+	questitem_d(o_ptr, 1);
 
 	/* Destroy a scroll in the pack */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		inven_item_increase(Ind, item, -1);
 
 		/* Hack -- allow certain scrolls to be "preserved" */
@@ -2908,10 +2896,8 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 		inven_item_describe(Ind, item);
 		inven_item_optimize(Ind, item);
 	}
-
 	/* Destroy a scroll on the floor */
-	else
-	{
+	else {
 		floor_item_increase(0 - item, -1);
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);

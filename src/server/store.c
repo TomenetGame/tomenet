@@ -1361,11 +1361,11 @@ static void store_delete(store_type *st_ptr)
 	if (rand_int(100) < 50) num = 1;
 
 	/* Hack -- preserve artifacts */
-	if (artifact_p(o_ptr))
-	{
+	if (artifact_p(o_ptr)) {
 		/* Preserve this one */
 		handle_art_d(o_ptr->name1);
 	}
+	questitem_d(o_ptr, o_ptr->number);
 
 	/*
 	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
@@ -1373,10 +1373,8 @@ static void store_delete(store_type *st_ptr)
 	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND)
-	{
-		if (o_ptr->tval == TV_WAND)
-		{
+	if (o_ptr->tval == TV_WAND) { //wait what? adding TODO marker here
+		if (o_ptr->tval == TV_WAND) {
 			(void)divide_charged_item(o_ptr, num);
 		}
 	}
@@ -3737,17 +3735,17 @@ void store_confirm(int Ind) {
 		/* mostly for RPG_SERVER */
 		if (p_ptr->store_num != STORE_STRADER)
 			item_pos = store_carry(&town[gettown_dun(Ind)].townstore[p_ptr->store_num], &sold_obj);
-		else
-			if (true_artifact_p(&sold_obj)) {
-				handle_art_d(sold_obj.name1);
-			}
+		else {
+			if (true_artifact_p(&sold_obj)) handle_art_d(sold_obj.name1);
+			questitem_d(&sold_obj, sold_obj.number);
+		}
 //		item_pos = store_carry(p_ptr->store_num, &sold_obj);
 #else
-	else
+	else {
 		/* Make artifact findable - mikaelh */
-		if (true_artifact_p(&sold_obj)) {
-			handle_art_d(sold_obj.name1);
-		}
+		if (true_artifact_p(&sold_obj)) handle_art_d(sold_obj.name1);
+		questitem_d(&sold_obj, sold_obj.number);
+	}
 #endif
 	/* Resend the basic store info */
 	display_store(Ind);

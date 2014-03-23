@@ -405,12 +405,6 @@ void delete_monster_idx(int i, bool unfound_arts) {
 		/* Hack -- efficiency */
 		o_ptr->held_m_idx = 0;
 
-		/* Hack -- Preserve unknown artifacts */
-/*		if (true_artifact_p(o_ptr))
-		{
-			handle_art_d(o_ptr->name1);
-		}
-*/
 		/* Delete the object */
 		delete_object_idx(this_o_idx, unfound_arts);
 	}
@@ -5501,8 +5495,7 @@ void monster_drop_carried_objects(monster_type *m_ptr)
 	m_ptr->hold_o_idx = 0;
 }
 
-void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr)
-{
+void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr) {
 	object_type *o_ptr;
 
 	/* Get new object */
@@ -5527,9 +5520,8 @@ void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr)
 
 	else {
 		/* Hack -- Preserve artifacts */
-		if (q_ptr->name1) {
-			handle_art_d(q_ptr->name1);
-		}
+		if (q_ptr->name1) handle_art_d(q_ptr->name1);
+		questitem_d(q_ptr, q_ptr->number);
 	}
 }
 

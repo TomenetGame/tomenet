@@ -7608,6 +7608,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 		                /* Skip dead objects */
 		                if (!o_list[i].k_idx) continue;
 		            	if (true_artifact_p(&o_list[i])) handle_art_d(o_list[i].name1);
+				questitem_d(&o_list[i], o_list[i].number);
 		        }
 		        C_KILL(o_list, MAX_O_IDX, object_type);
 		        C_MAKE(o_list, MAX_O_IDX, object_type);

@@ -2175,8 +2175,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				if (true_artifact_p(o_ptr)) { /* && !object_known_p(o_ptr)*/
 					if (a_info[o_ptr->name1].flags4 & TR4_SPECIAL_GENE)
 						continue;
-
-					handle_art_d(o_ptr->name1);
 					msg_print(Ind, "You have an accute feeling of loss!");
 				}
 

@@ -182,8 +182,7 @@ void excise_object_idx(int o_idx)
 /*
  * Delete a dungeon object
  */
-void delete_object_idx(int o_idx, bool unfound_art)
-{
+void delete_object_idx(int o_idx, bool unfound_art) {
 	object_type *o_ptr = &o_list[o_idx];
 	int i;
 
@@ -192,22 +191,19 @@ void delete_object_idx(int o_idx, bool unfound_art)
 	//cave_type **zcave;
 	struct worldpos *wpos = &o_ptr->wpos;
 
-	//cave_type *c_ptr;
 
 	/* Artifact becomes 'not found' status */
 	if (true_artifact_p(o_ptr) && unfound_art)
-	{
 		handle_art_d(o_ptr->name1);
-	}
+	/* uh, we abuse this */
+	if (unfound_art) questitem_d(o_ptr, o_ptr->number);
 
 	/* Excise */
 	excise_object_idx(o_idx);
 
 	/* No one can see it anymore */
 	for (i = 1; i < NumPlayers + 1; i++)
-	{
 		Players[i]->obj_vis[o_idx] = FALSE;
-	}
 
 	/* Visual update */
 	/* Dungeon floor */
@@ -580,6 +576,7 @@ void wipe_o_list(struct worldpos *wpos) {
 			/* Mega-Hack -- Preserve the artifact */
 			handle_art_d(o_ptr->name1);
 		}
+		questitem_d(o_ptr, o_ptr->number);
 
 #ifdef MONSTER_INVENTORY
 		/* Monster */
@@ -609,8 +606,8 @@ void wipe_o_list(struct worldpos *wpos) {
 
 /*
  * Delete all the items, but except those in houses.  - Jir -
- * Also skips questors now. Note that this is also the command
- * to be used by all admin slash commands. - C. Blue
+ * Also skips questors and special quest items now. Note that this is also the
+ * command to be used by all admin slash commands. - C. Blue
  *
  * Note -- we do NOT visually reflect these (irrelevant) changes
  * (cave[Depth][y][x].info & CAVE_ICKY)
@@ -632,7 +629,9 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip questors */
-		if (o_ptr->questor) continue;
+		if (o_ptr->questor ||
+		    (o_ptr->quest && o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST))
+			continue;
 
 		/* Skip objects not on this depth */
 		if(!(inarea(wpos, &o_ptr->wpos)))
@@ -7517,6 +7516,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		           o_name, ((o_ptr->number == 1) ? "s" : ""));*/
 
 		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+		questitem_d(o_ptr, o_ptr->number);
 		return (-1);
 	}
 
@@ -7582,6 +7582,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		}
 #endif
 		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
+		questitem_d(o_ptr, o_ptr->number);
 		return (-1);
 	}
 
@@ -7673,6 +7674,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
  #endif
 			{
 				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
+				questitem_d(o_ptr, o_ptr->number);
 				return (-1);
 			}
 		}
@@ -7783,6 +7785,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 //			flag = TRUE;
 		} else /* paranoia: couldn't allocate a new object */ {
 			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+			questitem_d(o_ptr, o_ptr->number);
 		}
 	}
 

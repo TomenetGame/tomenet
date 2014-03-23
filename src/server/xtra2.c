@@ -6049,6 +6049,7 @@ void kill_house_contents(house_type *h_ptr) {
 		o_ptr = &h_ptr->stock[i];
 		if (o_ptr->k_idx && true_artifact_p(o_ptr))
 			handle_art_d(o_ptr->name1);
+		questitem_d(o_ptr, o_ptr->number);
 		invwipe(o_ptr);
 	}
 	h_ptr->stock_num = 0;
@@ -6244,6 +6245,7 @@ static void inven_death_damage(int Ind, int verbose) {
 				/* set the artifact as unfound */
 				handle_art_d(o_ptr->name1);
 			}
+			questitem_d(o_ptr, o_ptr->number);
 
 			inven_item_increase(Ind, j, -(o_ptr->number));
 			inven_item_optimize(Ind, j);
@@ -6287,6 +6289,7 @@ static void equip_death_damage(int Ind, int verbose) {
 				/* set the artifact as unfound */
 				handle_art_d(o_ptr->name1);
 			}
+			questitem_d(o_ptr, o_ptr->number);
 
 			inven_item_increase(Ind, j, -(o_ptr->number));
 			inven_item_optimize(Ind, j);
@@ -7037,10 +7040,10 @@ void player_death(int Ind) {
 						o_idx = drop_near(o_ptr, 0, &p_ptr->wpos, y1, x1);
 					}
 			}
-		}
-		else if (true_artifact_p(o_ptr)) {
+		} else {
 			/* set the artifact as unfound */
-			handle_art_d(o_ptr->name1);
+			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+			questitem_d(o_ptr, o_ptr->number);
 		}
 
 		/* No more item */

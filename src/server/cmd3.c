@@ -1467,35 +1467,21 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 /*
  * Destroy an item
  */
-void do_cmd_destroy(int Ind, int item, int quantity)
-{
+void do_cmd_destroy(int Ind, int item, int quantity) {
 	player_type *p_ptr = Players[Ind];
-
 	int			old_number;
-
 	//bool		force = FALSE;
-
 	object_type		*o_ptr;
-
 	char		o_name[ONAME_LEN];
-
 	u32b f1, f2, f3, f4, f5, esp;
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &(p_ptr->inventory[item]);
-	}
-
+	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	/* Get the item (on the floor) */
-	else
-	{
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
+	else {
+		if (-item >= o_max) return; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
 	}
-
 
 	/* Describe the object */
 	old_number = o_ptr->number;
@@ -1503,14 +1489,13 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 	o_ptr->number = old_number;
 
-	if( check_guard_inscription( o_ptr->note, 'k' )) {
+	if (check_guard_inscription( o_ptr->note, 'k')) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	};
 #if 0
 	/* Verify if needed */
-	if (!force || other_query_flag)
-	{
+	if (!force || other_query_flag) {
 		/* Make a verification */
 		snprintf(out_val, sizeof(out_val), "Really destroy %s? ", o_name);
 		if (!get_check(Ind, out_val)) return;
@@ -1536,8 +1521,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 #ifndef FUN_SERVER /* while server is being hacked, allow this (while /wish is also allowed) - C. Blue */
 	/* Artifacts cannot be destroyed */
-	if (like_artifact_p(o_ptr) && !is_admin(p_ptr))
-	{
+	if (like_artifact_p(o_ptr) && !is_admin(p_ptr)) {
 		cptr feel = "special";
 
 		/* Message */
@@ -1563,8 +1547,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 #endif
 	/* Keys cannot be destroyed */
-	if (o_ptr->tval == TV_KEY && !is_admin(p_ptr))
-	{
+	if (o_ptr->tval == TV_KEY && !is_admin(p_ptr)) {
 		/* Message */
 		msg_format(Ind, "You cannot destroy %s.", o_name);
 
@@ -1573,8 +1556,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 
 	/* Cursed, equipped items cannot be destroyed */
-	if (item >= INVEN_WIELD && cursed_p(o_ptr) && !is_admin(p_ptr))
-	{
+	if (item >= INVEN_WIELD && cursed_p(o_ptr) && !is_admin(p_ptr)) {
 		/* Message */
 		msg_print(Ind, "Hmm, that seems to be cursed.");
 
@@ -1584,8 +1566,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
-	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
-	{
+	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
 		if ((p_ptr->body_monster == o_ptr->pval) &&
 		   ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 		   (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
@@ -1615,20 +1596,18 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 #endif
 
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+	questitem_d(o_ptr, quantity);
 
 	if (o_ptr->tval == TV_WAND) (void)divide_charged_item(o_ptr, quantity);
 
 	/* Eliminate the item (from the pack) */
-	if (item >= 0)
-	{
+	if (item >= 0) {
 		inven_item_increase(Ind, item, -quantity);
 		inven_item_describe(Ind, item);
 		inven_item_optimize(Ind, item);
 	}
-
 	/* Eliminate the item (from the floor) */
-	else
-	{
+	else {
 		floor_item_increase(0 - item, -quantity);
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
