@@ -2746,7 +2746,7 @@ struct player_type {
 	bool quest_retrieve[MAX_CONCURRENT_QUESTS];
 	bool quest_deliver_pos[MAX_CONCURRENT_QUESTS], quest_deliver_xy[MAX_CONCURRENT_QUESTS];
 	/* temporary, just for efficiency */
-	bool quest_eligible;
+	byte quest_eligible;
 
 #ifdef ENABLE_MAIA
 	int voidx; int voidy; //for the void jumpgate creation spell; reset on every recall/levelchange/relogins

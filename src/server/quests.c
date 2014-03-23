@@ -1711,11 +1711,11 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	     eg the target location for easier lookup */
 	if (!q_ptr->individual || !pInd) { //the !pInd part is paranoia
 		for (i = 1; i <= NumPlayers; i++) {
-			Players[i]->quest_eligible = FALSE;
+			Players[i]->quest_eligible = 0;
 			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 				if (Players[i]->quest_idx[j] == q_idx) break;
 			if (j == MAX_CONCURRENT_QUESTS) continue;
-			Players[i]->quest_eligible = TRUE;
+			Players[i]->quest_eligible = j + 1;
 
 			/* play automatic narration if any */
 			if (!quiet) {
@@ -1749,7 +1749,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			if (!Players[i]->quest_eligible) continue;
 
 			/* update player's quest tracking data */
-			quest_imprint_stage(i, q_idx, j);
+			quest_imprint_stage(i, q_idx, Players[i]->quest_eligible - 1);
 		}
 
 		/* perform automatic actions (spawn new quest, (timed) further stage change)
