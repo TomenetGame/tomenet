@@ -3832,10 +3832,11 @@ qi_reward *init_quest_reward(int q_idx, int stage, int num) {
 }
 
 /* To call after server has been loaded up, to reattach questors and their quests,
-   index-wise. The m-indices get shuffled over server restart. */
+   index-wise. The indices get shuffled over server restart. */
 void fix_questors_on_startup(void) {
 	quest_info *q_ptr;
 	monster_type *m_ptr;
+	object_type *o_ptr;
 	int i;
 
 	for (i = 1; i < m_max; i++) {
@@ -3846,10 +3847,24 @@ void fix_questors_on_startup(void) {
 		if (!q_ptr->defined || /* this quest no longer exists in q_info.txt? */
 		    !q_ptr->active || /* or it's not supposed to be enabled atm? */
 		    q_ptr->questors <= m_ptr->questor_idx) { /* ew */
-			s_printf("QUESTOR DEPRECATED (on load) midx %d, qidx %d.\n", i, m_ptr->quest);
+			s_printf("QUESTOR DEPRECATED (on load) m_idx %d, q_idx %d.\n", i, m_ptr->quest);
 			m_ptr->questor = FALSE;
-			/* delete him too? */
+			/* delete him too, maybe? */
 		} else q_ptr->questor[m_ptr->questor_idx].mo_idx = i;
+	}
+
+	for (i = 1; i < o_max; i++) {
+		o_ptr = &o_list[i];
+		if (!o_ptr->questor) continue;
+
+		q_ptr = &q_info[o_ptr->quest];
+		if (!q_ptr->defined || /* this quest no longer exists in q_info.txt? */
+		    !q_ptr->active || /* or it's not supposed to be enabled atm? */
+		    q_ptr->questors <= o_ptr->questor_idx) { /* ew */
+			s_printf("QUESTOR DEPRECATED (on load) o_idx %d, q_idx %d.\n", i, o_ptr->quest);
+			o_ptr->questor = FALSE;
+			/* delete him too, maybe? */
+		} else q_ptr->questor[o_ptr->questor_idx].mo_idx = i;
 	}
 }
 
