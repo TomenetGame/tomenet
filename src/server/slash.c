@@ -8221,7 +8221,7 @@ void do_slash_cmd(int Ind, char *message)
 					j = sizeof(quest_info);
 					for (i = 0; i < q_ptr->questors; i++) {
 						j += sizeof(qi_questor);
-						if (q_ptr->questor[i].tpref) j += strlen(q_ptr->questor[i].tpref) + 1;
+						if (q_ptr->questor[i].q_loc.tpref) j += strlen(q_ptr->questor[i].q_loc.tpref) + 1;
 					}
 					for (i = 0; i < q_ptr->stages; i++) {
 						j += sizeof(qi_stage);
