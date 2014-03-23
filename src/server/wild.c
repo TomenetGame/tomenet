@@ -3396,10 +3396,12 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	/* add user-built houses */
 	wild_add_uhouses(wpos);
 
-	/* C. Blue - turn single deep water fields in wildernis to shallow (non-drownable) water: */
+	/* C. Blue - turn single deep water fields in wildernis to shallow (non-drownable) water:
+	   Also turn single non-deep water fields in oceans into deep water -_-. */
 	for (y = 1; y < MAX_HGT - 1; y++)
 	for (x = 1; x < MAX_WID - 1; x++) {
 		c_ptr = &zcave[y][x];
+		/* turn single deep water fields to shallow */
 		if (c_ptr->feat == FEAT_DEEP_WATER) {
 			found_more_water = 0;
 			for (y2 = y-1; y2 <= y+1; y2++)
@@ -3419,9 +3421,27 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 			}
 //			if (!found_more_water) c_ptr->feat = FEAT_SHAL_WATER;
 			/* also important for SEASON_WINTER, to turn lake border into ice */
-			if (found_more_water < 8) {
-				c_ptr->feat = FEAT_SHAL_WATER;
+			if (found_more_water < 8) c_ptr->feat = FEAT_SHAL_WATER;
+		}
+		/* turn single non-<deep water> fields to deep water */
+		else if (c_ptr->feat != FEAT_DEEP_WATER) {
+			found_more_water = 0;
+			for (y2 = y-1; y2 <= y+1; y2++)
+			for (x2 = x-1; x2 <= x+1; x2++) {
+				c2_ptr = &zcave[y2][x2];
+				if (y2 == y && x2 == x) continue;
+				if (!in_bounds(y2, x2)) {
+					found_more_water++; /* hack */
+					continue;
+				}
+				if (c2_ptr->feat == FEAT_SHAL_WATER ||
+//				    c2_ptr->feat == FEAT_WATER ||
+				    c2_ptr->feat == FEAT_TAINTED_WATER ||
+				    c2_ptr->feat == FEAT_DEEP_WATER) {
+					found_more_water++;
+				}
 			}
+			if (found_more_water == 8) c_ptr->feat = FEAT_SHAL_WATER;
 		}
 	}
 
