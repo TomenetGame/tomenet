@@ -1443,6 +1443,7 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 	qi_questitem *q_qitem;
 	object_type forge, *o_ptr = &forge;
 	int i, j, py;
+	char name[MAX_CHARS];//ONAME_LEN?
 
 	struct worldpos wpos;
 	s16b x, y, o_idx;
@@ -1471,7 +1472,8 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 			/* check for questor's validly focussed player */
 			py = q_ptr->questor[q_qitem->questor_gives].talk_focus;
 			if (!py) return; /* oops? */
-			msg_format(py, "\374\377GYou received '%s'!", q_qitem->name); //for now. This might need some fine tuning
+			object_desc(0, name, o_ptr, TRUE, 256);
+			msg_format(py, "\374\377GYou have received %s.", name); //for now. This might need some fine tuning
 			/* own it */
 			o_ptr->owner = Players[py]->id;
 			o_ptr->mode = Players[py]->mode;
@@ -1483,7 +1485,6 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 		if (!quest_special_spawn_location(&wpos, &x, &y, &q_qitem->q_loc)) {
 			s_printf("QUEST_SPAWN_QUESTITEMS: Couldn't obtain spawning location.\n");
 			return;
-
 		}
 
 		/* create a new world object from forge */
@@ -1555,6 +1556,10 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 			s_printf("%s QUEST_STAGE_AUTO: '%s'(%d,%s) %d->%d\n",
 			    showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), q_stage->change_stage);
 #endif
+
+			/* quickly, before it's too late! hand out/spawn any special quest items */
+			quest_spawn_questitems(q_idx, stage);
+
 			quest_set_stage(pInd, q_idx, q_stage->change_stage, q_stage->quiet_change);
 			/* don't imprint/play dialogue of this stage anymore, it's gone~ */
 			return TRUE;
@@ -1776,9 +1781,6 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			}
 		}
 
-		/* hand out/spawn any special quest items */
-		quest_spawn_questitems(q_idx, stage);
-
 		for (i = 1; i <= NumPlayers; i++) {
 			if (!Players[i]->quest_eligible) continue;
 
@@ -1792,16 +1794,19 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		         This should be rather cosmetic though. */
 		if (quest_stage_automatics(pInd, q_idx, stage)) return;
 
-		for (i = 1; i <= NumPlayers; i++) {
-			if (!Players[i]->quest_eligible) continue;
+		if (!quiet)
+			for (i = 1; i <= NumPlayers; i++) {
+				if (!Players[i]->quest_eligible) continue;
 
-			/* play questors' stage dialogue */
-			if (!quiet)
+				/* play questors' stage dialogue */
 				for (k = 0; k < q_ptr->questors; k++) {
 					if (!inarea(&Players[i]->wpos, &q_ptr->questor[k].current_wpos)) continue;
 					quest_dialogue(i, q_idx, k, FALSE, FALSE, FALSE);
 				}
-		}
+			}
+
+		/* hand out/spawn any special quest items */
+		quest_spawn_questitems(q_idx, stage);
 	} else { /* individual quest */
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 			if (Players[pInd]->quest_idx[j] == q_idx) break;
@@ -1830,9 +1835,6 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			}
 		}
 
-		/* hand out/spawn any special quest items */
-		quest_spawn_questitems(q_idx, stage);
-
 		/* perform automatic actions (spawn new quest, (timed) further stage change) */
 		if (quest_stage_automatics(pInd, q_idx, stage)) return;
 
@@ -1844,6 +1846,10 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 				if (!inarea(&Players[pInd]->wpos, &q_ptr->questor[k].current_wpos)) continue;
 				quest_dialogue(pInd, q_idx, k, FALSE, FALSE, FALSE);
 			}
+
+		/* hand out/spawn any special quest items */
+		quest_spawn_questitems(q_idx, stage);
+
 		py_q_idx = j;
 	}
 
@@ -2087,7 +2093,6 @@ static void quest_check_goal_deliver_questor(int Ind, int q_idx, int py_q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];;
 	qi_stage *q_stage;
 	qi_goal *q_goal;
-	qi_deliver *q_del;
 
 #if QDEBUG > 3
 	s_printf("QUEST_CHECK_GOAL_DELIVER_QUESTOR: by %d,%s - quest (%s,%d) stage %d\n",
@@ -2132,7 +2137,6 @@ static void quest_check_goal_deliver_questor(int Ind, int q_idx, int py_q_idx) {
 	for (j = 0; j < q_stage->goals; j++) {
 		q_goal = &q_stage->goal[j];
 		if (!q_goal->deliver) continue;
-		q_del = q_goal->deliver;
 
 		/* handle only specific to-questor goals here */
 		if (q_goal->deliver->return_to_questor == 255) continue;
