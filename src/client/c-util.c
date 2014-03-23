@@ -5689,6 +5689,9 @@ void auto_inscriptions(void) {
 		case '\b':
 			strcpy(auto_inscription_match[cur_line], "");
 			strcpy(auto_inscription_tag[cur_line], "");
+			/* also auto-advance by 1 line, for convenience */
+			cur_line++;
+			if (cur_line >= 20) cur_line = 0;
 			break;
 		case 'c':
 			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
