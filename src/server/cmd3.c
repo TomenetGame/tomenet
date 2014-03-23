@@ -268,6 +268,7 @@ void inven_drop(int Ind, int item, int amt) {
 	int		o_idx;
 	char		o_name[ONAME_LEN];
 
+	quest_info *q_ptr;
 
 	/* Access the slot to be dropped */
 	o_ptr = &(p_ptr->inventory[item]);
@@ -451,6 +452,18 @@ void inven_drop(int Ind, int item, int amt) {
 		    o_ptr->ix, o_ptr->iy);
 	}
 #endif
+
+	/* Reattach questors to quest */
+	if (o_ptr->questor) {
+		q_ptr = &q_info[o_ptr->quest - 1];
+		if (!q_ptr->defined || /* this quest no longer exists in q_info.txt? */
+		    !q_ptr->active || /* or it's not supposed to be enabled atm? */
+		    q_ptr->questors <= o_ptr->questor_idx) { /* ew */
+			s_printf("QUESTOR DEPRECATED (on drop) o_idx %d, q_idx %d.\n", o_idx, o_ptr->quest - 1);
+			o_ptr->questor = FALSE;
+			/* delete him too, maybe? */
+		} else q_ptr->questor[o_ptr->questor_idx].mo_idx = o_idx;
+	}
 
 	/* Decrease the item, optimize. */
 	inven_item_increase(Ind, item, -amt);
