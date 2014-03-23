@@ -7675,7 +7675,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			unsigned int terrtype;
 
 			s = buf + 2;
-			if (11 != sscanf(s, "%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%s", //byte, u16b, u32b
+			if (11 != sscanf(s, "%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%79[^:]", //byte, u16b, u32b
 			    &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf)) return (1);
 
 			lc = q_ptr->questors;
@@ -8242,7 +8242,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			int wx, wy, wz, terr, x, y, rad;
 
 			s = buf + 2;
-			if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%s",
+			if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%79[^:]",
 			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
@@ -8272,7 +8272,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			int tq, wx, wy, wz, x, y, terr, rad;
 
 			s = buf + 2;
-			if (11 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%s",
+			if (11 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%79[^:]",
 			    &stage, &goal, &tq, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
@@ -8304,7 +8304,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				char ochar, oattr;
 
 				s = buf + 2;
-				if (7 != sscanf(s, "%d:%d:%c:%c:%d:%d:%s",
+				if (7 != sscanf(s, "%d:%d:%c:%c:%d:%d:%79[^:]",
 				    &stage, &pval, &ochar, &oattr, &wgt, &lev, tmpbuf))
 					return (1);
 
@@ -8323,8 +8323,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				int q, loc, towns, wx, wy, wz, terr, sx, sy, rad;
 				unsigned int terrtype;
 
-				s = buf + 2;
-				if (13 != sscanf(s, "%d:%d:%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%s",
+				s = buf + 3;
+				if (13 != sscanf(s, "%d:%d:%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%79[^:]",
 				    &stage, &q, &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf)) return (1);
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
@@ -8359,7 +8359,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'Z' for how completed stage goals will change 'quest flags' */
 		if (buf[0] == 'Z') {
 			s = buf + 2;
-			if (3 != sscanf(s, "%d:%d:%s", &stage, &goal, flagbuf)) return (1);
+			if (3 != sscanf(s, "%d:%d:%16[^:]", &stage, &goal, flagbuf)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			if (ABS(goal) > QI_GOALS) return 1;
