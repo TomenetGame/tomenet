@@ -258,9 +258,9 @@ struct worldpos{
 
 struct object_type
 {
-	byte mode;                /* Player that found it */
-        s32b owner;                     /* Player that found it */
-        s16b level;                     /* Level req */
+	byte mode;			/* Player that found it */
+        s32b owner;			/* Player that found it */
+        s16b level;			/* Level req */
 
 	s16b k_idx;			/* Kind index (zero if "dead") */
 
@@ -277,11 +277,11 @@ struct object_type
 	s32b bpval;			/* Base item extra-parameter */
 	s32b pval;			/* Extra enchantment item extra-parameter */
 
-	byte discount;		/* Discount (if any) */
+	byte discount;			/* Discount (if any) */
 
-	byte number;		/* Number of items */
+	byte number;			/* Number of items */
 
-	s16b weight;		/* Item weight */
+	s16b weight;			/* Item weight */
 
 	u16b name1;			/* Artifact type, if any */
 	u16b name2;			/* Ego-Item type, if any */
@@ -307,15 +307,21 @@ struct object_type
 	s16b ac;			/* Normal AC */
 
 	byte dd;
-        byte ds;		/* Damage dice/sides */
+        byte ds;			/* Damage dice/sides */
 
-	long timeout;		/* Timeout Counter */
+	long timeout;			/* Timeout Counter */
 
 	byte ident;			/* Special flags  */
 
-	/*byte marked;	*/	/* Object is marked */
+	/*byte marked;	*/		/* Object is marked */
 
 	u16b note;			/* Inscription index */
+
+	bool questor;			/* for quest_info */
+	/*bool questor_invincible;*/
+	s16b quest;
+	s16b quest_stage;
+	s16b questor_idx;
 };
 
 /*
