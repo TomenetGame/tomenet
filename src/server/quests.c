@@ -2670,6 +2670,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 		if (m_ptr && q_goal->kill) {
 			if (!quest_goal_matches_kill(q_idx, stage, j, m_ptr)) continue;
 			/* decrease the player's kill counter, if we got all, goal is completed! */
+			s_printf("  COUNTED_k down.\n");
 			p_ptr->quest_kill_number[py_q_idx][j]--;
 			if (p_ptr->quest_kill_number[py_q_idx][j]) continue; /* not yet */
 
@@ -2696,6 +2697,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 			o_ptr->quest_stage = stage;
 
 			/* decrease the player's retrieve counter, if we got all, goal is completed! */
+			s_printf("  COUNTED_r down by %d.\n", o_ptr->number);
 			p_ptr->quest_retrieve_number[py_q_idx][j] -= o_ptr->number;
 			if (p_ptr->quest_retrieve_number[py_q_idx][j] > 0) continue; /* not yet */
 
