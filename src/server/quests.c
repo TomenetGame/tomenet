@@ -1016,13 +1016,13 @@ void quest_deactivate(int q_idx) {
 			/* scan the entire monster list to catch the questor */
 			if (fail) {
 #if QDEBUG > 1
-				s_printf(" Scanning entire monster list..");
+				s_printf(" Scanning entire monster list..\n");
 #endif
 				for (j = 0; j < m_max; j++) {
 					if (!m_list[j].questor) continue;
 					if (m_list[j].quest != q_idx) continue;
 					if (m_list[j].questor_idx != i) continue;
-					s_printf("found it at %d!\n", j);
+					s_printf(" found it at %d!\n", j);
 					delete_monster_idx(j, TRUE);
 					//:-p break;
 				}
@@ -1051,13 +1051,13 @@ void quest_deactivate(int q_idx) {
 			/* scan the entire object list to catch the questor */
 			if (fail)  {
 #if QDEBUG > 1
-				s_printf(" Scanning entire object list..");
+				s_printf(" Scanning entire object list..\n");
 #endif
 				for (j = 0; j < o_max; j++) {
 					if (!o_list[j].questor) continue;
 					if (o_list[j].quest != q_idx + 1) continue;
 					if (o_list[j].questor_idx != i) continue;
-					s_printf("found it at %d!\n", j);
+					s_printf(" found it at %d!\n", j);
 					delete_object_idx(j, TRUE);
 					//:-p break;
 				}
