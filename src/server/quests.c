@@ -202,7 +202,7 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 	int i, tries;
 	cave_type **zcave;
 	u32b choice, wild = RF8_WILD_TOO_MASK & ~(RF8_WILD_TOWN | RF8_WILD_EASY);
-	int x, y, x2, y2;
+	int x, y, x2 = 63, y2 = 63; //compiler warning
 
 	wpos->wx = 63; //default for cases of acute paranoia
 	wpos->wy = 63;
