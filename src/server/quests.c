@@ -1950,6 +1950,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	bool may_acquire = FALSE;
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
+	qi_goal *q_goal; //for return_to_questor check
 
 	/* quest is deactivated? */
 	if (!q_ptr->active) return;
@@ -1962,6 +1963,22 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 		break;
 	case 3: if (!is_admin(p_ptr)) return;
 	}
+
+	/* check for deliver quest goals that require to return to a questor */
+	for (i = 0; i < q_stage->goals; i++) {
+		q_goal = &q_stage->goal[i];
+		if (!q_goal->deliver || q_goal->deliver->return_to_questor == -1) continue;
+
+		/* clear the deliver goal! */
+		quest_set_goal(Ind, q_idx, i, FALSE);
+#if 0
+		/* hack: check for stage change/termination */
+		if ..//TODO?
+#else
+		return;
+#endif
+	}
+
 
 	/* cannot interact with the questor during this stage? */
 	if (!q_questor->talkable) return;
@@ -3320,6 +3337,8 @@ void quest_check_player_location(int Ind) {
 				q_goal = &q_stage->goal[j];
 				if (!q_goal->deliver) continue;
 				q_del = q_goal->deliver;
+				/* skip 'to-questor' deliveries */
+				if (q_del->return_to_questor != -1) continue;
 
 				/* extend target terrain over a wide patch? */
 				if (q_del->terrain_patch) {
@@ -3636,6 +3655,9 @@ qi_deliver *init_quest_deliver(int q_idx, int stage, int q_info_goal) {
 
 	/* attach it to its parent structure */
 	q_goal->deliver = p;
+
+	/* default: not a return-to-questor goal */
+	p->return_to_questor = FALSE;
 
 	/* done, return the new, requested one */
 	return p;

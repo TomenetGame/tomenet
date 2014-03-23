@@ -194,6 +194,8 @@ typedef struct qi_deliver {
 	s16b pos_x, pos_y;				/* -"- ..MOVE TO specifically this position */
 	byte radius;
 
+	byte return_to_questor;				/* do we need to return to a questor (bump) to get credit? */
+
 	cptr tpref;					/* filename of map to load, or empty for none */
 } qi_deliver;
 
@@ -208,8 +210,6 @@ typedef struct qi_goal {
 
 	bool cleared;		//dynamic data		/* goal has been fulfilled! */
 	bool nisi;		//dynamic data		/* for goals set by kill/retrieve depending on deliver (for flag changes) */
-	bool return_to_questor;				/* do we need to return to the questor first (bump), to get credit for particular main goals?
-							   An M-shortcut related to 'nisi', but we need to interact with the questor actually. */
 
 	/* 'Z' lines: goals set/clear flags */
 	u16b setflags;

@@ -8268,15 +8268,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'M' for move-to-location to finish a quest stage whose goals have already been fulfilled */
 		if (buf[0] == 'M') {
-			int wx, wy, wz, x, y, terr, rad;
+			int tq, wx, wy, wz, x, y, terr, rad;
 
 			s = buf + 2;
-			if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%s",
-			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf)) return (1);
+			if (11 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%s",
+			    &stage, &goal, &tq, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			if (ABS(goal) > QI_GOALS) return 1;
 			q_del = init_quest_deliver(error_idx, stage, goal);
+			q_del->return_to_questor = tq;
 			q_del->wpos.wx = (char)wx;
 			q_del->wpos.wy = (char)wy;
 			q_del->wpos.wz = (char)wz;
@@ -8294,6 +8295,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
+#if 0
 		/* Process 'B' to restrict (optional) goals to only get credited if we return to the questor */
 		if (buf[0] == 'B') {
 			/* first number is the stage */
@@ -8316,6 +8318,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			}
 			continue;
 		}
+#endif
 
 		/* Process 'Z' for how completed stage goals will change 'quest flags' */
 		if (buf[0] == 'Z') {

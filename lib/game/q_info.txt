@@ -56,7 +56,7 @@ V:0.0.1
 
 # optional target location where the player has to move after having cleared the goals, to get them credited.
 # This can also be specified without any kill/retrieve goals, in which case it becomes a simple 'travel-to' goal:
-# (optional) M:stage:goal#:deliver to questor:deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:radius:mapfile (if not using terrain type) or '-'
+# (optional) M:stage:goal#:deliver to questor (takes precedence, -1 for none):deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:radius:mapfile (if not using terrain type) or '-'
 
 # (optional) Z:stage:goal:changeflags (flags that get set/cleared when that goal is cleared)
 # G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here) to progress to next stage
@@ -113,8 +113,8 @@ Y:0:0:-:solid ration:-:2
 W:0:1:-:0:Well then, visit the shop keeper of the general store!
 W:0:2:-:0:Well then, visit the shop keeper of the general store..
 #position 105:40 for actual Bree's general store entrance:
-M:1:1:32:32:0:0:105:40:0:-
-M:2:1:32:32:0:0:105:40:0:-
+M:1:1:-1:32:32:0:0:105:40:0:-
+M:2:1:-1:32:32:0:0:105:40:0:-
 G:1:3:1
 G:2:4:1
 O:3:0:0
@@ -134,7 +134,7 @@ W:0:0:-:1:Hello, fellow fruit bat! Wanna visit the General Store for me?
 Y:0:0:-:y:-:1
 Y:0:0:-:n:-:2
 W:0:1:-:0:Thanks!
-M:1:1:32:32:0:0:105:40:0:-
+M:1:1:-1:32:32:0:0:105:40:0:-
 G:1:3:1
 X:3:-:The shop keeper hands you a pint of fine ale!
 R:3:80:38:0:0:0:0:0:0:0:0:0:1:1:0
@@ -160,7 +160,8 @@ k:1:1:0:0:2:0:0
 kV:1:1:C:-
 #kI:1:1:r_idx...
 #M:1:2:32:32:0:0:105:40:0:-
-M:1:2:63:63:0:0:99:35:1:-
+#M:1:2:-1:63:63:0:0:99:35:1:-
+M:1:2:0:63:63:0:0:99:35:1:-
 G:1:3:1:2
 X:3:-:The Goalkeeper Bat seems very satisfied.
 R:3:80:38:0:0:0:0:0:0:0:0:0:2:2:0
@@ -171,7 +172,8 @@ W:0:2:-:0:Dude where's muh potions.. I had two red potions I'm sure.
 r:2:1:0:2
 rV:2:1:-9999:-9999:r:-1:-1:-1:-9999:-9999:R:-1:-1:-1:
 #M:2:2:32:32:0:0:105:40:0:-
-M:2:2:63:63:0:0:99:35:1:-
+#M:2:2:-1:63:63:0:0:99:35:1:-
+M:2:2:0:63:63:0:0:99:35:1:-
 G:2:4:1:2
 X:4:-:The Goalkeeper Bat seems very satisfied.
 R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
@@ -219,7 +221,7 @@ R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
 # (optional) rI:stage:goal:tval:sval... (list of ':tval:sval' pairs, up to 10, separated by colons)
 # (optional) rV:stage:goal:pval:bpval:attr:name1:name2:name2b... (list of 6-tuples like this, up to 5, separated by colons)
 # (optional, if k/r line exists) P:stage:goal#:goalwpos wx:wy:wz:adjacent terrain extension:goal at exact x:y:radius:mapfile (if not using terrain type) or '-'
-# (optional) M:stage:goal#:deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:radius:mapfile (if not using terrain type) or '-'
+# (optional) M:stage:goal#:deliver to questor (takes precedence, -1 for none):deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:radius:mapfile (if not using terrain type) or '-'
 # //use new 'questor' parm of 'M'! (optional) B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
 # // ^ Sort of like a 'shortcut' for an 'M' line, but required interaction with the questor:
 # // ^ (optional) B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
