@@ -848,8 +848,8 @@ bool quest_activate(int q_idx) {
 }
 
 /* Helper function for quest_deactivate().
-   Search and destroy an object-type questor, similar to erase_guild_key(). */
-static void quest_erase_object_questor(int q_idx, int questor_idx) {
+   Search and destroy object-type questors and quest objects, similar to erase_guild_key(). */
+static void quest_erase_objects(int q_idx) {
 	int i, j;
 	object_type *o_ptr;
 
@@ -864,13 +864,13 @@ static void quest_erase_object_questor(int q_idx, int questor_idx) {
 		for (i = 0; i < INVEN_TOTAL; i++) {
 			o_ptr = &p_ptr->inventory[i];
 			if (!o_ptr->k_idx) continue;
-			if (!o_ptr->questor || o_ptr->quest != q_idx + 1 || o_ptr->questor_idx != questor_idx) continue;
+			if (o_ptr->quest != q_idx + 1) continue;
 
-			s_printf("QUESTOR_OBJECT_ERASE: player '%s'\n", p_ptr->name);
+			s_printf("QUEST_OBJECT: player '%s'\n", p_ptr->name);
 			inven_item_increase(j, i, -1);
 			inven_item_describe(j, i);
 			inven_item_optimize(j, i);
-			return;
+			//return;
 		}
 	}
 
@@ -895,7 +895,8 @@ static void quest_erase_object_questor(int q_idx, int questor_idx) {
 			/* try to load him! */
 			if (!load_player(NumPlayers)) {
 				/* bad fail */
-				s_printf("QUESTOR_OBJECT_ERASE: load_player '%s' failed\n", p_ptr->name);
+				s_printf("QUEST_OBJECT_ERASE: load_player '%s' failed\n", p_ptr->name);
+				continue;
 				/* unhack */
 				C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
 				KILL(p_ptr, player_type);
@@ -906,12 +907,13 @@ static void quest_erase_object_questor(int q_idx, int questor_idx) {
 			for (i = 0; i < INVEN_TOTAL; i++) {
 				o_ptr = &p_ptr->inventory[i];
 				if (!o_ptr->k_idx) continue;
-				if (!o_ptr->questor || o_ptr->quest != q_idx + 1 || o_ptr->questor_idx != questor_idx) continue;
+				if (o_ptr->quest != q_idx + 1) continue;
 
-				s_printf("QUESTOR_OBJECT_ERASE: savegame '%s'\n", p_ptr->name);
+				s_printf("QUEST_OBJECT_ERASE: savegame '%s'\n", p_ptr->name);
 				o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
 				/* write savegame back */
 				save_player(NumPlayers);
+				continue;
 				/* unhack */
 				C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
 				KILL(p_ptr, player_type);
@@ -927,8 +929,7 @@ static void quest_erase_object_questor(int q_idx, int questor_idx) {
 	KILL(p_ptr, player_type);
 	NumPlayers--;
 
-	/* hm, failed to locate the questor object. Maybe someone actually lost it. */
-	s_printf("OBJECT_QUESTOR_ERASE: not found\n");
+	s_printf("OBJECT_QUEST_ERASE: done.\n");
 }
 
 /* Despawn questors, unstatic sectors/floors, etc. */
@@ -1025,6 +1026,7 @@ void quest_deactivate(int q_idx) {
 #endif
 				fail = TRUE;
 			}
+#if 0 /* done below now, for all types of quests, and includes quest items */
 			/* scan the entire object list to catch the questor */
 			if (fail)  {
 #if QDEBUG > 1
@@ -1041,6 +1043,7 @@ void quest_deactivate(int q_idx) {
 				/* last resort, like for trueart/guildkey erasure, scan everyone's inventory -_- */
 				quest_erase_object_questor(q_idx, i);
 			}
+#endif
 			break;
 		default: ;
 			/* discard */
@@ -1048,6 +1051,20 @@ void quest_deactivate(int q_idx) {
 
 		if (q_questor->static_floor) new_players_on_depth(&wpos, 0, FALSE);
 	}
+
+	/* Erase all object questors and quest objects (duh) */
+#if QDEBUG > 1
+	s_printf(" Erasing all object questors and quest objects..\n");
+#endif
+	for (j = 0; j < o_max; j++) {
+		if (o_list[j].quest != q_idx + 1) continue;
+#if QDEBUG > 1
+		s_printf("Erased one at %d.\n", j);
+#endif
+		delete_object_idx(j, TRUE);
+	}
+	/* last resort, like for trueart/guildkey erasure, scan everyone's inventory -_- */
+	quest_erase_objects(q_idx);
 }
 
 /* return a current quest's cooldown. Either just uses q_ptr->cur_cooldown directly for global
