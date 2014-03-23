@@ -377,6 +377,10 @@ typedef struct quest_info {
 	   automatically, during which quests are usually acquired by players).
 	   IT MUST NEVER BE -1 AFTER THE QUEST ACTIVATION HAS FINISHED or init_quest_stage() will do the segfault dance. */
 	s16b cur_stage;					/* the current stage in the quest progress */
+	bool dirty;					/* dirty flag, set whenever a stage completes ;) (including quest termination)
+							   there is no need for players to have their local instances of this,
+							   because it's used atomically in succeeding code parts that know they
+							   can depend on each other. (uh or something) */
 
 	/* global quest flags (a-p to clear, A-P to set) -- note that these are stage-independant! */
 	u16b flags;

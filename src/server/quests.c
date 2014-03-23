@@ -1112,6 +1112,8 @@ static void quest_terminate(int pInd, int q_idx) {
 	player_type *p_ptr;
 	int i, j;
 
+	q_ptr->dirty = TRUE;
+
 	/* give players credit */
 	if (pInd && q_ptr->individual) {
 		p_ptr = Players[pInd];
@@ -1613,6 +1615,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	   It is still used for the other stage-checking routines in this function too though:
 	    quest_goal_check_reward(), quest_terminate() and the 'anything' check. */
 	q_ptr->cur_stage = stage;
+	q_ptr->dirty = TRUE;
 	q_stage = quest_qi_stage(q_idx, stage);
 
 	/* For non-'individual' quests,
@@ -1831,9 +1834,11 @@ void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
 #if 1 /* INSTAEND HACK */
 	/* hack - we couldn't do this in quest_imprint_stage(), see the note there:
 	   check if we already auto-completed the quest stage this quickly just by standing there! */
+	q_ptr->dirty = FALSE;
 	quest_instacheck_retrieval(Ind, q_idx, i);
 	/* stage advanced or quest even terminated? */
-	if (q_ptr->cur_stage != 0 || p_ptr->quest_idx[i] == -1) return;
+	//if (q_ptr->cur_stage != 0 || p_ptr->quest_idx[i] == -1) return;
+	if (q_ptr->dirty) return;
 #endif
 
 	/* re-prompt for keyword input, if any */
@@ -2070,10 +2075,12 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 			q_goal = &q_stage->goal[j];
 			if (!q_goal->deliver || q_goal->deliver->return_to_questor == -1) continue;
 
+			q_ptr->dirty = FALSE;
 			quest_check_goal_deliver_questor(Ind, q_idx, j);
 			/* hack: check for stage change/termination */
 			//TODO add 'dirty' flag to quest on stage change, so we can check it here
-			if (stage != p_ptr->quest_stage[i]) return;
+			//if (stage != p_ptr->quest_stage[i]) return;
+			if (q_ptr->dirty) return;
 		}
 
 
