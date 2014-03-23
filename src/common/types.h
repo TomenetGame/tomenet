@@ -781,7 +781,7 @@ struct object_type
 	/* for new quest_info: */
 	bool questor, questor_invincible; /* further quest_info flags are referred to when required, no need to copy all of them here */
 	s16b quest, quest_stage, questor_idx;	/* It's an item for a quest (either the questor item or an item that needs to be retrieved for a quest goal).
-					   Hack: 0 = no quest; n = quest + 1. So we don't have to initialise all items to -1 here :-p */
+		//IMPORTAAAAAAANT:	   Hack: 0 = no quest; n = quest + 1. So we don't have to initialise all items to -1 here :-p */
 
 	u16b note;			/* Inscription index */
 	char note_utag;			/* Added for making pseudo-id overwrite unique loot tags */

@@ -3122,7 +3122,7 @@ void do_cmd_look(int Ind, int dir) {
 #if 0
 			snprintf(out_val, sizeof(out_val), "\377%c%sYou see %s%s",
 			    o_ptr->questor_invincible ? 'G' : 'G', compat_pomode(Ind, o_ptr) ? "\377D" : "",
-			    q_info[o_ptr->quest].questor[o_ptr->questor_idx].name, o_ptr->next_o_idx ? " on a pile" : "");
+			    q_info[o_ptr->quest - 1].questor[o_ptr->questor_idx].name, o_ptr->next_o_idx ? " on a pile" : "");
 #else
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 			snprintf(out_val, sizeof(out_val), "\377%c%sYou see %s%s",

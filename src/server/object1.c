@@ -2175,11 +2175,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* hack: questors have an arbitrary name */
 	if (o_ptr->questor)
-		basenm = q_info[o_ptr->quest].questor[o_ptr->questor_idx].name;
+		basenm = q_info[o_ptr->quest - 1].questor[o_ptr->questor_idx].name;
 	/* hack: quest items have an arbitrary name */
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST
 	    && o_ptr->xtra4) /* <- extra check, in case a silyl admin tries to wish for one ;) */
-		basenm = q_info[o_ptr->quest].stage[o_ptr->quest_stage].qitem[o_ptr->xtra3].name; // o_O
+		basenm = q_info[o_ptr->quest - 1].stage[o_ptr->quest_stage].qitem[o_ptr->xtra3].name; // o_O
 
 	/* The object "expects" a "number" */
 	if (basenm[0] == '&') {
@@ -4340,7 +4340,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		fprintf(fff, "\377sIt's a cheque worth \377y%d\377s gold pieces.\n", ps_get_cheque_value(o_ptr));
 
 		/* Ooook, in the rare case that someone... Questor object! */
-		if (o_ptr->questor) quest_interact(Ind, o_ptr->quest, o_ptr->questor_idx, fff);
+		if (o_ptr->questor) quest_interact(Ind, o_ptr->quest - 1, o_ptr->questor_idx, fff);
 
 		my_fclose(fff);
 
@@ -4379,7 +4379,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 #endif
 
 	/* Questor object! */
-	if (o_ptr->questor) quest_interact(Ind, o_ptr->quest, o_ptr->questor_idx, fff);
+	if (o_ptr->questor) quest_interact(Ind, o_ptr->quest - 1, o_ptr->questor_idx, fff);
 
 	/* Sigil */
 	if (o_ptr->sigil) fprintf(fff, "\377BIt is emblazoned with a sigil of %s.\n", r_projections[o_ptr->sigil-1].name);

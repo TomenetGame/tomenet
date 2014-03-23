@@ -764,7 +764,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	/* imprint questor status and details */
 	o_ptr->questor = TRUE;
 	o_ptr->questor_idx = questor_idx;
-	o_ptr->quest = q_idx;
+	o_ptr->quest = q_idx + 1;
 	o_ptr->questor_invincible = q_questor->invincible;
 	q_questor->mo_idx = o_idx;
 
@@ -864,7 +864,7 @@ static void quest_erase_object_questor(int q_idx, int questor_idx) {
 		for (i = 0; i < INVEN_TOTAL; i++) {
 			o_ptr = &p_ptr->inventory[i];
 			if (!o_ptr->k_idx) continue;
-			if (!o_ptr->questor || o_ptr->quest != q_idx || o_ptr->questor_idx != questor_idx) continue;
+			if (!o_ptr->questor || o_ptr->quest != q_idx + 1 || o_ptr->questor_idx != questor_idx) continue;
 
 			s_printf("QUESTOR_OBJECT_ERASE: player '%s'\n", p_ptr->name);
 			inven_item_increase(j, i, -1);
@@ -906,7 +906,7 @@ static void quest_erase_object_questor(int q_idx, int questor_idx) {
 			for (i = 0; i < INVEN_TOTAL; i++) {
 				o_ptr = &p_ptr->inventory[i];
 				if (!o_ptr->k_idx) continue;
-				if (!o_ptr->questor || o_ptr->quest != q_idx || o_ptr->questor_idx != questor_idx) continue;
+				if (!o_ptr->questor || o_ptr->quest != q_idx + 1 || o_ptr->questor_idx != questor_idx) continue;
 
 				s_printf("QUESTOR_OBJECT_ERASE: savegame '%s'\n", p_ptr->name);
 				o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
@@ -1431,7 +1431,7 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 		o_ptr->number = 1;
 		o_ptr->level = q_qitem->olev;
 
-		o_ptr->quest = q_idx;
+		o_ptr->quest = q_idx + 1;
 		o_ptr->quest_stage = stage;
 
 		/* just have a questor hand it over? */
@@ -4004,11 +4004,11 @@ void fix_questors_on_startup(void) {
 		o_ptr = &o_list[i];
 		if (!o_ptr->questor) continue;
 
-		q_ptr = &q_info[o_ptr->quest];
+		q_ptr = &q_info[o_ptr->quest - 1];
 		if (!q_ptr->defined || /* this quest no longer exists in q_info.txt? */
 		    !q_ptr->active || /* or it's not supposed to be enabled atm? */
 		    q_ptr->questors <= o_ptr->questor_idx) { /* ew */
-			s_printf("QUESTOR DEPRECATED (on load) o_idx %d, q_idx %d.\n", i, o_ptr->quest);
+			s_printf("QUESTOR DEPRECATED (on load) o_idx %d, q_idx %d.\n", i, o_ptr->quest - 1);
 			o_ptr->questor = FALSE;
 			/* delete him too, maybe? */
 		} else q_ptr->questor[o_ptr->questor_idx].mo_idx = i;
