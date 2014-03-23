@@ -3356,7 +3356,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X) * 287 + 490836;
 
 	/* to make the level more interesting, add some "hotspots" */
-	if (w_ptr->type != WILD_OCEAN)
+	if (w_ptr->type != WILD_OCEAN && !istownarea(wpos, MAX_TOWNAREA))
 		for (y = 0; y < terrain.hotspot; y++) wild_add_hotspot(wpos);
 	/* oceans really have mostly water */
 	else if (!rand_int(8)) //changing hotspot number in init_terrain() directly probably messes up world consistency?
