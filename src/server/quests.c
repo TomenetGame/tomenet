@@ -952,7 +952,7 @@ static void quest_erase_objects(int q_idx, bool individual, s32b p_id) {
 #if QDEBUG > 1
 			s_printf("QUEST_OBJECT: player '%s'\n", p_ptr->name);
 #endif
-			inven_item_increase(j, i, -1);
+			inven_item_increase(j, i, -99);
 			inven_item_describe(j, i);
 			inven_item_optimize(j, i);
 			//return;
