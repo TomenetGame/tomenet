@@ -8360,6 +8360,18 @@ void do_slash_cmd(int Ind, char *message)
 				quest_set_cooldown(i, k, 0);
 				return;
 			}
+			else if (prefix(message, "/qpriv")) { /* change a quest's privilege level */
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /qpriv <q_idx> [0..3]");
+					return;
+				}
+				msg_format(Ind, "Quest '%s' (%s,%d) - privileged %d.", q_name + q_info[k].name, q_info[k].codename, k, q_info[k].privilege);
+				if (tk == 1) return;
+				i = atoi(token[2]);
+				q_info[k].privilege = i;
+				msg_format(Ind, "Now set to %d.", i);
+				return;
+			}
 			else if (prefix(message, "/qdis")) { /* disable a quest */
 				if (tk != 1) {
 					msg_print(Ind, "Usage: /qdis <q_idx>");
