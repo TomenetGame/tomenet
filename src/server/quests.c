@@ -174,6 +174,73 @@ void process_quests(void) {
 	}
 }
 
+/* Replace placeholders $$n/N, $$t/T, $$r/R, $$a/A and $$c/C in a string,
+   thereby personalising it for dialogues and narrations. */
+static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
+	char *textp, *textp2;
+	int pos = 0;
+
+	/* no placeholder detected? */
+	if (!(textp = strstr(src, "$$"))) {
+		strcpy(dest, src);
+		return;
+	}
+
+	strncpy(dest, src, textp - src);
+	pos = textp - src;
+	dest[pos] = 0;
+	while (TRUE) {
+		switch (*(textp + 2)) {
+		case 'N':
+			strcat(dest, p_ptr->name);
+			break;
+		case 'T':
+			strcat(dest, get_ptitle(p_ptr, FALSE));
+			break;
+		case 'R':
+			strcat(dest, race_info[p_ptr->prace].title);
+			break;
+		case 'A':
+			strcat(dest, get_prace(p_ptr));
+			break;
+		case 'C':
+			strcat(dest, race_info[p_ptr->prace].title);
+			break;
+		case 'n':
+			strcat(dest, p_ptr->name);
+			dest[pos] = tolower(dest[pos]);
+			break;
+		case 't':
+			strcat(dest, get_ptitle(p_ptr, FALSE));
+			dest[pos] = tolower(dest[pos]);
+			break;
+		case 'r':
+			strcat(dest, race_info[p_ptr->prace].title);
+			dest[pos] = tolower(dest[pos]);
+			break;
+		case 'a':
+			strcat(dest, get_prace(p_ptr));
+			dest[pos] = tolower(dest[pos]);
+			break;
+		case 'c':
+			strcat(dest, race_info[p_ptr->prace].title);
+			dest[pos] = tolower(dest[pos]);
+			break;
+		}
+
+		textp2 = strstr(textp + 3, "$$");
+		if (!textp2) {
+			strcat(dest, textp + 3);
+			return;
+		}
+
+		pos += (textp2 - textp) - 3;
+		strncat(dest, textp + 3, (textp2 - textp) - 3);
+		dest[pos] = 0;
+		textp = textp2;
+	}
+}
+
 /* Helper function to pick one *set* flag at random,
    for determining questor spawn locations */
 static u32b quest_pick_flag(u32b flagarray, int size) {
@@ -1724,8 +1791,10 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage;
+	player_type *p_ptr;
 	int i, j, k, py_q_idx = -1;
 	bool anything;
+	char text[MAX_CHARS * 2];
 
 #if QDEBUG > 0
 	s_printf("%s QUEST_STAGE: '%s'(%d,%s) %d->%d\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), stage);
@@ -1750,11 +1819,12 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	     eg the target location for easier lookup */
 	if (!q_ptr->individual || !pInd) { //the !pInd part is paranoia
 		for (i = 1; i <= NumPlayers; i++) {
-			Players[i]->quest_eligible = 0;
+			p_ptr = Players[i];
+			p_ptr->quest_eligible = 0;
 			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
-				if (Players[i]->quest_idx[j] == q_idx) break;
+				if (p_ptr->quest_idx[j] == q_idx) break;
 			if (j == MAX_CONCURRENT_QUESTS) continue;
-			Players[i]->quest_eligible = j + 1;
+			p_ptr->quest_eligible = j + 1;
 
 			/* play automatic narration if any */
 			if (!quiet) {
@@ -1774,7 +1844,12 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 					for (k = 0; k < QI_TALK_LINES; k++) {
 						if (!q_stage->narration[k]) break;
 						if ((q_stage->narration_flags[k] & quest_get_flags(pInd, q_idx)) != q_stage->narration_flags[k]) continue;
+#if 0 /* simple way */
 						msg_format(i, "\374\377U%s", q_stage->narration[k]);
+#else /* allow placeholders */
+						quest_text_replace(text, q_stage->narration[k], p_ptr);
+						msg_format(i, "\374\377U%s", text);
+#endif
 					}
 					//msg_print(i, "\374 ");
 				}
@@ -1808,8 +1883,9 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		/* hand out/spawn any special quest items */
 		quest_spawn_questitems(q_idx, stage);
 	} else { /* individual quest */
+		p_ptr = Players[pInd];
 		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
-			if (Players[pInd]->quest_idx[j] == q_idx) break;
+			if (p_ptr->quest_idx[j] == q_idx) break;
 		if (j == MAX_CONCURRENT_QUESTS) return; //paranoia, shouldn't happen
 
 		/* play automatic narration if any */
@@ -1829,7 +1905,12 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 				msg_format(pInd, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
 				for (k = 0; k < QI_TALK_LINES; k++) {
 					if (!q_stage->narration[k]) break;
+#if 0 /* simple way */
 					msg_format(pInd, "\374\377U%s", q_stage->narration[k]);
+#else /* allow placeholders */
+					quest_text_replace(text, q_stage->narration[k], p_ptr);
+					msg_format(pInd, "\374\377U%s", text);
+#endif
 				}
 				//msg_print(pInd, "\374 ");
 			}
@@ -1843,7 +1924,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		/* play questors' stage dialogue */
 		if (!quiet)
 			for (k = 0; k < q_ptr->questors; k++) {
-				if (!inarea(&Players[pInd]->wpos, &q_ptr->questor[k].current_wpos)) continue;
+				if (!inarea(&p_ptr->wpos, &q_ptr->questor[k].current_wpos)) continue;
 				quest_dialogue(pInd, q_idx, k, FALSE, FALSE, FALSE);
 			}
 
@@ -2283,6 +2364,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	int i, k, stage = quest_get_stage(Ind, q_idx);
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	bool anything, obvious_keyword = FALSE, more_hack = FALSE, yn_hack = FALSE;
+	char text[MAX_CHARS * 2];
 
 	if (!repeat) {
 		/* pre-scan talk if any line at all passes the flag check */
@@ -2305,7 +2387,13 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 			for (i = 0; i < QI_TALK_LINES; i++) {
 				if (!q_stage->talk[questor_idx][i]) break;
 				if ((q_stage->talk_flags[questor_idx][k] & quest_get_flags(Ind, q_idx)) != q_stage->talk_flags[questor_idx][k]) continue;
+
+#if 0 /* simple way */
 				msg_format(Ind, "\374\377U%s", q_stage->talk[questor_idx][i]);
+#else /* allow placeholders */
+				quest_text_replace(text, q_stage->talk[questor_idx][i], p_ptr);
+				msg_format(Ind, "\374\377U%s", text);
+#endif
 
 				/* lines that contain obvious keywords, ie those marked by '[[..]]',
 				   will always force a reply-prompt for convenience! */

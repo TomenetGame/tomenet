@@ -77,10 +77,13 @@ V:0.0.1
 # -For item questors you might want to set 'examine' flag so they don't "talk" to you.
 # -#goal is 1..5 for main goal, and -1..-5 for optional goals.
 # -Although the 'examine' flag can be specified for each conversation line again, the last line existing for a questor/stage combination will take priority.
+# -About dialogues/narrations:
+#   Use [[...]] to highlight the text between the brackets.
+#   You can automatically insert the player's name, title, race, race-attribute ('elven') or class, by using these placeholders: $$N, $$T, $$R, $AA, $$C.
+#   If you don't want the first letter to be capitalised, use $$n, $$t, $$r, $$a, $$c instead.
 # -About keywords:
 #   "~" means the empty keyword "", user can just press ENTER key without writing anything to trigger it.
 #   if the FIRST MATCHING (questor+stage) keyword is "y" it brings up a yes/no prompt. The second questor/stage-matching keyword should be "n".
-#   Use [[...]] to highlight the text between the brackets.
 #   (*) Keywords set to 'any stage' (-1) are not sufficient to stop an otherwise empty stage from terminate nor to prompt a quest_dialogue() on their own.
 # -About global 'flags':
 #   '-' means no flags.
@@ -110,7 +113,7 @@ Q:1:37:b:T:-1:-1:Blind Bat
 L:0:0:0:63:63:0:0:98:39:0:-
 F:0:1:1:0:1:0:0
 U:0:0:0
-W:0:0:-:0:Hello, fellow fruit bat!
+W:0:0:-:0:Hello, $$N!
 W:0:0:-:0:Would you like some [[ale]] or rather a [[solid ration]]?
 Y:0:0:-:ale:-:1
 Y:0:0:-:ration:-:2
@@ -137,7 +140,7 @@ I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
 #Q:1:37:b:n:-1:-1:-1:-1:-1:Fast Bat
 Q:3:22:30:0:0:0:0:0:0:0:0:P:0:Sharp..Bat..of Slicing?
 L:0:0:0:63:63:0:0:100:39:0:-
-W:0:0:-:1:Hello, fellow fruit bat! Wanna visit the General Store for me?
+W:0:0:-:1:Hello, $$T! Wanna visit the General Store for me?
 Y:0:0:-:y:-:1
 Y:0:0:-:n:-:2
 W:0:1:-:0:Thanks!
@@ -152,7 +155,7 @@ N:2:testquesKR:C. Blue:Kill/Retrieve Test Quest:-1
 I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
 Q:1:37:b:N:-1:-1:Goalkeeper Bat
 L:0:0:0:63:63:0:0:99:35:0:-
-W:0:0:-:0:'Sup, yo, fellow fruit bat! [[Kill]] shit or [[retrieve]] stuff for me.
+W:0:0:-:0:'Sup, yo $$r! [[Kill]] shit or [[retrieve]] stuff for me.
 W:0:0:-:0:So what do you prefer, buddy?
 Y:0:-1:-:sup:-:-1
 y:0:-1:-:sup
@@ -184,6 +187,7 @@ Y:0:0:-:retrieve:-:2
 W:0:2:-:0:Dude where's muh potions.. I had two red potions I'm sure.
 #W:0:2:-:0:Anyway, if you find them, just bring them to the general store's keeper, ok?
 r:2:1:0:2
+#note: since tval/sval aren't defined here, any other red item would work too (rings!) ;)
 rV:2:1:-9999:-9999:r:-1:-1:-1:-9999:-9999:R:-1:-1:-1:
 #M:2:2:32:32:0:0:105:40:0:-
 #M:2:2:-1:63:63:0:0:99:35:1:-
