@@ -1018,8 +1018,7 @@ void reset_visuals(void)
  * Obtain the "flags" for an item
  */
 //void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
-void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp)
-{
+void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Base object */
@@ -1031,7 +1030,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	(*esp) = k_ptr->esp;
 
 	artifact_type *a_ptr;
-	
+
 	/* Artifact */
 	if (o_ptr->name1) {
 		/* Hack -- Randarts! */
@@ -1613,6 +1612,16 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	    get_spellbook_name_colour(o_ptr->pval) == TERM_YELLOW) {
 		(*f3) |= TR3_IGNORE_FIRE;
 		(*f5) |= TR5_IGNORE_WATER;
+	}
+
+	if (o_ptr->questor && o_ptr->questor_invincible) {
+		(*f3) |= TR3_IGNORE_FIRE;
+		(*f3) |= TR3_IGNORE_COLD;
+		(*f3) |= TR3_IGNORE_ACID;
+		(*f3) |= TR3_IGNORE_ELEC;
+		(*f5) |= TR5_IGNORE_WATER;
+		(*f5) |= TR5_IGNORE_MANA;
+		(*f5) |= TR5_IGNORE_DISEN;
 	}
 }
 

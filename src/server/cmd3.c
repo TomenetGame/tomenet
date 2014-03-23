@@ -1525,8 +1525,9 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-	if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr) && !is_admin(p_ptr))
-	{
+	if ((((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) ||
+	    (o_ptr->questor && o_ptr->questor_invincible))
+	    && !is_admin(p_ptr)) {
 		/* Oops */
 		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
 

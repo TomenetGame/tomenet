@@ -4004,6 +4004,7 @@ void do_cmd_stay(int Ind, int pickup)
 int breakage_chance(object_type *o_ptr) {
 	/* artifacts never break */
 	if (artifact_p(o_ptr)) return 0;
+	if ((o_ptr->questor && o_ptr->questor_invincible)) return 0;
 
 	/* Special: Light armour and shields seldom break */
 	if (is_textile_armour(o_ptr->tval, o_ptr->sval)) return 2;
