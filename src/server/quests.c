@@ -1999,7 +1999,7 @@ static void quest_check_goal_deliver_questor(int Ind, int q_idx, int py_q_idx) {
 		q_del = q_goal->deliver;
 
 		/* handle only specific to-questor goals here */
-		if (q_goal->deliver->return_to_questor == -1) continue;
+		if (q_goal->deliver->return_to_questor == 255) continue;
 #if QDEBUG > 3
 		s_printf(" FOUND return-to-questor GOAL %d.\n", j);
 #endif
@@ -2073,7 +2073,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	if (!not_acquired_yet)
 		for (j = 0; j < q_stage->goals; j++) {
 			q_goal = &q_stage->goal[j];
-			if (!q_goal->deliver || q_goal->deliver->return_to_questor == -1) continue;
+			if (!q_goal->deliver || q_goal->deliver->return_to_questor == 255) continue;
 
 			q_ptr->dirty = FALSE;
 			quest_check_goal_deliver_questor(Ind, q_idx, j);
@@ -3435,7 +3435,7 @@ void quest_check_player_location(int Ind) {
 				if (!q_goal->deliver) continue;
 				q_del = q_goal->deliver;
 				/* skip 'to-questor' deliveries */
-				if (q_del->return_to_questor != -1) continue;
+				if (q_del->return_to_questor != 255) continue;
 
 				/* extend target terrain over a wide patch? */
 				if (q_del->terrain_patch) {
@@ -3754,7 +3754,7 @@ qi_deliver *init_quest_deliver(int q_idx, int stage, int q_info_goal) {
 	q_goal->deliver = p;
 
 	/* default: not a return-to-questor goal */
-	p->return_to_questor = FALSE;
+	p->return_to_questor = 255;
 
 	/* done, return the new, requested one */
 	return p;

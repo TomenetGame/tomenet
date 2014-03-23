@@ -8277,7 +8277,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			if (ABS(goal) > QI_GOALS) return 1;
 			q_del = init_quest_deliver(error_idx, stage, goal);
-			q_del->return_to_questor = tq;
+			q_del->return_to_questor = tq == -1 ? 255 : tq;
 			q_del->wpos.wx = (char)wx;
 			q_del->wpos.wy = (char)wy;
 			q_del->wpos.wz = (char)wz;
