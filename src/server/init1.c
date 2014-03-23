@@ -7682,22 +7682,22 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (!lc) return 1; /* so an L-line must always follow somewhere after its Q line */
 			q_questor = init_quest_questor(error_idx, lc - 1); /* pick the newest, already existing one */
 
-			q_questor->s_location_type = (byte)loc;
-			q_questor->s_terrains = (u32b)terrtype;
-			q_questor->s_towns_array = (u16b)towns;
-			q_questor->start_wpos.wx = (char)wx;
-			q_questor->start_wpos.wy = (char)wy;
-			q_questor->start_wpos.wz = (char)wz;
-			q_questor->terrain_patch = (terr != 0);
-			q_questor->start_x = sx;
-			q_questor->start_y = sy;
-			q_questor->radius = rad;
+			q_questor->q_loc.s_location_type = (byte)loc;
+			q_questor->q_loc.s_terrains = (u32b)terrtype;
+			q_questor->q_loc.s_towns_array = (u16b)towns;
+			q_questor->q_loc.start_wpos.wx = (char)wx;
+			q_questor->q_loc.start_wpos.wy = (char)wy;
+			q_questor->q_loc.start_wpos.wz = (char)wz;
+			q_questor->q_loc.terrain_patch = (terr != 0);
+			q_questor->q_loc.start_x = sx;
+			q_questor->q_loc.start_y = sy;
+			q_questor->q_loc.radius = rad;
 
-			q_questor->tpref = NULL;
+			q_questor->q_loc.tpref = NULL;
 			if (tmpbuf[0] != '-') {
 				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
 				strcpy(c, tmpbuf);
-				q_questor->tpref = c;
+				q_questor->q_loc.tpref = c;
 			}
 			continue;
 		}
@@ -8335,22 +8335,22 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_qitem = init_quest_questitem(error_idx, stage, lc - 1); /* pick the newest, already existing one */
 
 				q_qitem->questor_gives = (q == -1 ? 255 : q);
-				q_qitem->s_location_type = (byte)loc;
-				q_qitem->s_terrains = (u32b)terrtype;
-				q_qitem->s_towns_array = (u16b)towns;
-				q_qitem->start_wpos.wx = (char)wx;
-				q_qitem->start_wpos.wy = (char)wy;
-				q_qitem->start_wpos.wz = (char)wz;
-				q_qitem->terrain_patch = (terr != 0);
-				q_qitem->start_x = sx;
-				q_qitem->start_y = sy;
-				q_qitem->radius = rad;
+				q_qitem->q_loc.s_location_type = (byte)loc;
+				q_qitem->q_loc.s_terrains = (u32b)terrtype;
+				q_qitem->q_loc.s_towns_array = (u16b)towns;
+				q_qitem->q_loc.start_wpos.wx = (char)wx;
+				q_qitem->q_loc.start_wpos.wy = (char)wy;
+				q_qitem->q_loc.start_wpos.wz = (char)wz;
+				q_qitem->q_loc.terrain_patch = (terr != 0);
+				q_qitem->q_loc.start_x = sx;
+				q_qitem->q_loc.start_y = sy;
+				q_qitem->q_loc.radius = rad;
 
-				q_qitem->tpref = NULL;
+				q_qitem->q_loc.tpref = NULL;
 				if (tmpbuf[0] != '-') {
 					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
 					strcpy(c, tmpbuf);
-					q_qitem->tpref = c;
+					q_qitem->q_loc.tpref = c;
 				}
 				continue;
 			}

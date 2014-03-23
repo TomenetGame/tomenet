@@ -32,6 +32,28 @@
 */
 
 
+/* Sub-structure: Hold broad information about generating a specific spawn position randomly. */
+typedef struct qi_location {
+	/* spawn location info */
+	byte s_location_type;				/* flags setting elibible starting location types (QI_SLOC_xxx) */
+	u16b s_towns_array;				/* QI_SLOC_TOWN: flags setting eligible starting towns (QI_STOWN_xxx) */
+	u32b s_terrains;				/* QI_SLOC_SURFACE: flags setting eligible starting terrains (RF8_WILD_xxx, RF8_WILD_TOO_MASK for all) */
+	bool terrain_patch;				/* extend spawn location to nearby worldmap sectors if same terrain? */
+	byte radius;					/* offset start_x, start_y loc randomly within a radius? */
+
+	/* exact spawn location info */
+	struct worldpos start_wpos;			/* -1, -1 for random */
+	s16b start_x, start_y;				/* -1, -1 for random */
+	cptr tpref;					/* filename of map to load, or empty for none */
+
+	/* dungeons eligible too? */
+	bool s_dungeon[MAX_D_IDX];			/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
+	u32b s_dungeon_must_flags1, s_dungeon_must_flags2, s_dungeon_must_flags3;	/*  eligible wilderness dungeon flags */
+	u32b s_dungeon_mustnt_flags1, s_dungeon_mustnt_flags2, s_dungeon_mustnt_flags3;	/*  uneligible wilderness dungeon flags */
+	bool s_dungeon_iddc;				/* is the Ironman Deep Dive Challenge an eligible starting point? */
+	byte dlevmin, dlevmax;				/* eligible dungeon level or world sector level (0 for any) */
+} qi_location;
+
 /* Sub-structure: Mandatory questor information.
    Quests usually need at least one questor to be acquirable by interacting with it.
    An exception are quests that are automatically spawned by other quests and auto-acquired. */
@@ -44,23 +66,7 @@ typedef struct qi_questor {
 	bool static_floor;				/* questor floor will be static while the quest is active */
 	bool quit_floor;				/* if player leaves the questor's floor, the quest will terminate and be lost */
 
-	/* starting location restrictions */
-	byte s_location_type;				/* flags setting elibible starting location types (QI_SLOC_xxx) */
-	u16b s_towns_array;				/* QI_SLOC_TOWN: flags setting eligible starting towns (QI_STOWN_xxx) */
-	u32b s_terrains;				/* QI_SLOC_SURFACE: flags setting eligible starting terrains (RF8_WILD_xxx, RF8_WILD_TOO_MASK for all) */
-	bool terrain_patch;				/* extend spawn location to nearby worldmap sectors if same terrain? */
-	byte radius;					/* offset start_x, start_y loc randomly within a radius? */
-
-	/* exact questor starting location */
-	struct worldpos start_wpos;			/* -1, -1 for random */
-	s16b start_x, start_y;				/* -1, -1 for random */
-	cptr tpref;					/* filename of map to load, or empty for none */
-
-	bool s_dungeon[MAX_D_IDX];			/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
-	u32b s_dungeon_must_flags1, s_dungeon_must_flags2, s_dungeon_must_flags3;	/*  eligible wilderness dungeon flags */
-	u32b s_dungeon_mustnt_flags1, s_dungeon_mustnt_flags2, s_dungeon_mustnt_flags3;	/*  uneligible wilderness dungeon flags */
-	bool s_dungeon_iddc;				/* is the Ironman Deep Dive Challenge an eligible starting point? */
-	byte dlevmin, dlevmax;				/* eligible dungeon level or world sector level (0 for any) */
+	qi_location q_loc;				/* spawn location parameters */
 
 	/* type of questor */
 	byte type;					/* QI_QUESTOR_xxx */
@@ -259,17 +265,7 @@ typedef struct qi_questitem {
 
 	byte questor_gives;				/* Do not spawn it anywhere but just hand it over on interaction with this questor */
 
-	/* spawn location info */
-	byte s_location_type;				/* flags setting elibible starting location types (QI_SLOC_xxx) */
-	u16b s_towns_array;				/* QI_SLOC_TOWN: flags setting eligible starting towns (QI_STOWN_xxx) */
-	u32b s_terrains;				/* QI_SLOC_SURFACE: flags setting eligible starting terrains (RF8_WILD_xxx, RF8_WILD_TOO_MASK for all) */
-	bool terrain_patch;				/* extend spawn location to nearby worldmap sectors if same terrain? */
-	byte radius;					/* offset start_x, start_y loc randomly within a radius? */
-
-	/* exact spawn location info */
-	struct worldpos start_wpos;			/* -1, -1 for random */
-	s16b start_x, start_y;				/* -1, -1 for random */
-	cptr tpref;					/* filename of map to load, or empty for none */
+	qi_location q_loc;				/* spawn location parameters */
 } qi_questitem;
 
 /* Sub-structure: A single quest stage.

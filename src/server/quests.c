@@ -198,59 +198,58 @@ static u32b quest_pick_flag(u32b flagarray, int size) {
 	return 0x0; //paranoia
 }
 
-static bool questor_spawn_location(int q_idx, qi_questor *q_questor) {
-	quest_info *q_ptr = &q_info[q_idx];
+static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, s16b *y_result, struct qi_location *qi_loc) {
 	int i, tries;
 	cave_type **zcave;
 	u32b choice, wild = RF8_WILD_TOO_MASK & ~(RF8_WILD_TOWN | RF8_WILD_EASY);
-
-	/* data written back to q_info[] */
-	struct worldpos wpos = {63, 63, 0}; //default for cases of acute paranoia
 	int x, y, x2, y2;
 
-		/* ---------- Try to choose questor spawn locations ---------- */
+	wpos->wx = 63; //default for cases of acute paranoia
+	wpos->wy = 63;
+	wpos->wz = 0;
 
-		/* check 'L:' info for starting location -
-		   for now only support 1 starting location, ie use the first one that gets tested to be eligible */
+		/* ---------- Try to pick a (random) spawn location ---------- */
+
+		/* check 'L:' info in q_info.txt for details on starting location */
 #if QDEBUG > 2
-		s_printf(" QIDX %d. SWPOS,XY: %d,%d,%d - %d,%d\n", q_idx, q_questor->start_wpos.wx, q_questor->start_wpos.wy, q_questor->start_wpos.wz, q_questor->start_x, q_questor->start_y);
-		s_printf(" SLOCT, STAR: %d,%d\n", q_questor->s_location_type, q_questor->s_towns_array);
+		s_printf(" SWPOS,XY: %d,%d,%d - %d,%d\n", qi_loc->start_wpos.wx, qi_loc->start_wpos.wy, qi_loc->start_wpos.wz, qi_loc->start_x, qi_loc->start_y);
+		s_printf(" SLOCT, STAR: %d,%d\n", qi_loc->s_location_type, qi_loc->s_towns_array);
 #endif
 		/* specified exact questor starting wpos? */
-		if (q_questor->start_wpos.wx != -1) {
-			wpos.wx = q_questor->start_wpos.wx;
-			wpos.wy = q_questor->start_wpos.wy;
-			wpos.wz = q_questor->start_wpos.wz;
+		if (qi_loc->start_wpos.wx != -1) {
+			wpos->wx = qi_loc->start_wpos.wx;
+			wpos->wy = qi_loc->start_wpos.wy;
+			wpos->wz = qi_loc->start_wpos.wz;
 
 			/* vary strict wpos a bit into adjacent terrain patches of same type? */
-			if (q_questor->terrain_patch && !wpos.wz) {
+			if (qi_loc->terrain_patch && !wpos->wz) {
 				tries = 500;
 				while (--tries) {
-					x2 = wpos.wx - QI_TERRAIN_PATCH_RADIUS + rand_int(QI_TERRAIN_PATCH_RADIUS * 2 + 1);
-					y2 = wpos.wy - QI_TERRAIN_PATCH_RADIUS + rand_int(QI_TERRAIN_PATCH_RADIUS * 2 + 1);
-					if (distance(y2, x2, wpos.wy, wpos.wx) <= QI_TERRAIN_PATCH_RADIUS &&
-					    wild_info[y2][x2].type == wild_info[wpos.wy][wpos.wx].type) break;
+					x2 = wpos->wx - QI_TERRAIN_PATCH_RADIUS + rand_int(QI_TERRAIN_PATCH_RADIUS * 2 + 1);
+					y2 = wpos->wy - QI_TERRAIN_PATCH_RADIUS + rand_int(QI_TERRAIN_PATCH_RADIUS * 2 + 1);
+					if (distance(y2, x2, wpos->wy, wpos->wx) <= QI_TERRAIN_PATCH_RADIUS &&
+					    wild_info[y2][x2].type == wild_info[wpos->wy][wpos->wx].type) break;
 				}
 				if (tries) { /* yay */
-					wpos.wx = x2;
-					wpos.wy = y2;
+					wpos->wx = x2;
+					wpos->wy = y2;
 				}
 			}
 		}
 		/* ok, pick one starting location randomly from all eligible ones */
 		else {
-			choice = quest_pick_flag(q_questor->s_location_type, 4);
+			choice = quest_pick_flag(qi_loc->s_location_type, 4);
 			/* no or non-existing type specified */
 			if (!choice) return FALSE;
 
 			switch (choice) {
 			case QI_SLOC_SURFACE:
 				/* all terrains are possible? */
-				if ((q_questor->s_terrains & RF8_WILD_TOO)) {
+				if ((qi_loc->s_terrains & RF8_WILD_TOO)) {
 					choice = quest_pick_flag(wild, 32);
 				}
 				/* pick from specified list */
-				else choice = quest_pick_flag(q_questor->s_terrains & wild, 32);
+				else choice = quest_pick_flag(qi_loc->s_terrains & wild, 32);
 				/* no or non-existing type specified */
 				if (!choice) return FALSE;
 
@@ -293,39 +292,39 @@ static bool questor_spawn_location(int q_idx, qi_questor *q_questor) {
 					y = MAX_WILD_Y - 1;
 				}
 
-				wpos.wx = x;
-				wpos.wy = y;
-				wpos.wz = 0;
+				wpos->wx = x;
+				wpos->wy = y;
+				wpos->wz = 0;
 				break;
 
 			case QI_SLOC_TOWN:
-				choice = quest_pick_flag(q_questor->s_towns_array, 5);
+				choice = quest_pick_flag(qi_loc->s_towns_array, 5);
 				/* no or non-existing type specified */
 				if (!choice) return FALSE;
 
 				/* assume non-dungeon town */
-				wpos.wz = 0;
+				wpos->wz = 0;
 
 				switch (choice) { /* TODO: such hardcode. wow. */
 				case QI_STOWN_BREE:
-					wpos.wx = 32;
-					wpos.wy = 32;
+					wpos->wx = 32;
+					wpos->wy = 32;
 					break;
 				case QI_STOWN_GONDOLIN:
-					wpos.wx = 27;
-					wpos.wy = 13;
+					wpos->wx = 27;
+					wpos->wy = 13;
 					break;
 				case QI_STOWN_MINASANOR:
-					wpos.wx = 25;
-					wpos.wy = 58;
+					wpos->wx = 25;
+					wpos->wy = 58;
 					break;
 				case QI_STOWN_LOTHLORIEN:
-					wpos.wx = 59;
-					wpos.wy = 51;
+					wpos->wx = 59;
+					wpos->wy = 51;
 					break;
 				case QI_STOWN_KHAZADDUM:
-					wpos.wx = 26;
-					wpos.wy = 5;
+					wpos->wx = 26;
+					wpos->wy = 5;
 					break;
 				case QI_STOWN_WILD:
 					return FALSE;
@@ -353,35 +352,32 @@ static bool questor_spawn_location(int q_idx, qi_questor *q_questor) {
 			}
 		}
 
-		q_questor->current_wpos.wx = wpos.wx;
-		q_questor->current_wpos.wy = wpos.wy;
-		q_questor->current_wpos.wz = wpos.wz;
-
 		/* Allocate & generate cave */
-		if (!(zcave = getcave(&wpos))) {
-			//dealloc_dungeon_level(&wpos);
-			alloc_dungeon_level(&wpos);
-			generate_cave(&wpos, NULL);
-			zcave = getcave(&wpos);
+		if (!(zcave = getcave(wpos))) {
+			//dealloc_dungeon_level(wpos);
+			alloc_dungeon_level(wpos);
+			generate_cave(wpos, NULL);
+			zcave = getcave(wpos);
 		}
-		if (q_questor->static_floor) new_players_on_depth(&wpos, 1, TRUE);
 
 		/* Specified exact starting location within given wpos? */
-		if (q_questor->start_x != -1) {
-			x = q_questor->start_x;
-			y = q_questor->start_y;
+		if (qi_loc->start_x != -1) {
+			x = qi_loc->start_x;
+			y = qi_loc->start_y;
 
 			/* vary strict starting loc a bit, within a radius? */
-			if (q_questor->radius) {
+			if (qi_loc->radius) {
 				tries = 100;
 				while (--tries) {
-					x2 = q_questor->start_x - q_questor->radius + rand_int(q_questor->radius * 2 + 1);
-					y2 = q_questor->start_y - q_questor->radius + rand_int(q_questor->radius * 2 + 1);
-					if (distance(y2, x2, y, x) <= q_questor->radius) break;
+					x2 = qi_loc->start_x - qi_loc->radius + rand_int(qi_loc->radius * 2 + 1);
+					y2 = qi_loc->start_y - qi_loc->radius + rand_int(qi_loc->radius * 2 + 1);
+					if (!in_bounds(y2, x2)) continue;
+					if (!cave_naked_bold(zcave, y2, x2)) continue;
+					if (distance(y2, x2, y, x) <= qi_loc->radius) break;
 				}
 				if (!tries) { /* no fun */
-					x = q_questor->start_x;
-					y = q_questor->start_y;
+					x = qi_loc->start_x;
+					y = qi_loc->start_y;
 				}
 			}
 		} else {
@@ -392,23 +388,18 @@ static bool questor_spawn_location(int q_idx, qi_questor *q_questor) {
 				/* not too close to level borders maybe */
 				x = rand_int(MAX_WID - 6) + 3;
 				y = rand_int(MAX_HGT - 6) + 3;
+				if (!in_bounds(y2, x2)) continue;
 				if (!cave_naked_bold(zcave, y, x)) continue;
 				break;
 			}
 			if (!i) {
-				s_printf(" QUEST_CANCELLED: No free questor spawn location.\n");
-				q_ptr->active = FALSE;
-#ifdef QERROR_DISABLE
-				q_ptr->disabled = TRUE;
-#else
-				q_ptr->cur_cooldown = QERROR_COOLDOWN;
-#endif
 				return FALSE;
+				s_printf("QUEST_SPECIAL_SPAWN_LOCATION: No free spawning location.\n");
 			}
 		}
 
-		q_questor->current_x = x;
-		q_questor->current_y = y;
+		*x_result = x;
+		*y_result = y;
 
 	return TRUE;
 }
@@ -822,7 +813,17 @@ bool quest_activate(int q_idx) {
 		q_questor = &q_ptr->questor[q];
 
 		/* find a suitable spawn location for the questor */
-		if (!questor_spawn_location(q_idx, q_questor)) return FALSE;
+		if (!quest_special_spawn_location(&q_questor->current_wpos, &q_questor->current_x, &q_questor->current_y, &q_questor->q_loc)) {
+			s_printf(" QUEST_CANCELLED: Couldn't obtain questor spawning location.\n");
+			q_ptr->active = FALSE;
+#ifdef QERROR_DISABLE
+			q_ptr->disabled = TRUE;
+#else
+			q_ptr->cur_cooldown = QERROR_COOLDOWN;
+#endif
+			return FALSE;
+		}
+		if (q_questor->static_floor) new_players_on_depth(&q_questor->current_wpos, 1, TRUE);
 
 		/* generate and spawn the questor */
 		switch (q_questor->type) {
@@ -1407,7 +1408,11 @@ static void quest_spawn_questitems(int pInd, int q_idx, int stage) {
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_questitem *q_qitem;
 	object_type forge, *o_ptr = &forge;
-	int i, py;
+	int i, j, py;
+
+	struct worldpos wpos;
+	s16b x, y, o_idx;
+	cave_type **zcave, *c_ptr;
 
 	for (i = 0; i < q_stage->qitems; i++) {
 		q_qitem = &q_stage->qitem[i];
@@ -1421,6 +1426,7 @@ static void quest_spawn_questitems(int pInd, int q_idx, int stage) {
 		o_ptr->xtra4 = TRUE;
 		o_ptr->weight = q_qitem->oweight;
 		o_ptr->number = 1;
+		o_ptr->level = q_qitem->olev;
 
 		o_ptr->quest = q_idx;
 		o_ptr->quest_stage = stage;
@@ -1437,7 +1443,45 @@ static void quest_spawn_questitems(int pInd, int q_idx, int stage) {
 		}
 
 		/* spawn it 80 days away~ */
-		
+		if (!quest_special_spawn_location(&wpos, &x, &y, &q_qitem->q_loc)) {
+			s_printf("QUEST_SPAWN_QUESTITEMS: Couldn't obtain spawning location.\n");
+			return;
+
+		}
+
+		/* create a new world object from forge */
+		o_idx = o_pop();
+		if (!o_idx) {
+			s_printf("QUEST_SPAWN_QUESTITEMS: No free object index to pop item.\n");
+			return;
+		}
+		o_list[o_idx] = *o_ptr; /* transfer forged object */
+		o_ptr = &o_list[o_idx];
+		o_ptr->ix = x;
+		o_ptr->iy = y;
+		wpcopy(&o_ptr->wpos, &wpos);
+
+		/* 'drop' it */
+		if (!(zcave = getcave(&wpos))) {
+			//dealloc_dungeon_level(wpos);
+			alloc_dungeon_level(&wpos);
+			generate_cave(&wpos, NULL);
+			zcave = getcave(&wpos);
+		}
+		c_ptr = &zcave[y][x];
+		o_ptr->next_o_idx = c_ptr->o_idx; /* on top of pile, if any */
+		o_ptr->stack_pos = 0;
+		c_ptr->o_idx = o_idx;
+
+		o_ptr->marked = 0;
+		o_ptr->held_m_idx = 0;
+
+		/* Clear visibility flags */
+		for (j = 1; j <= NumPlayers; j++) Players[j]->obj_vis[o_idx] = FALSE;
+		/* Note the spot */
+		note_spot_depth(&wpos, y, x);
+		/* Draw the spot */
+		everyone_lite_spot(&wpos, y, x);
 	}
 }
 /* perform automatic things (quest spawn/stage change) in a stage */
@@ -3579,7 +3623,7 @@ qi_questor *init_quest_questor(int q_idx, int num) {
 	p->talkable = TRUE;
 	p->despawned = FALSE;
 	p->invincible = TRUE;
-	p->tpref = NULL;
+	p->q_loc.tpref = NULL;
 
 	/* done, return the new, requested one */
 	return &q_ptr->questor[num];
@@ -3894,6 +3938,7 @@ qi_questitem *init_quest_questitem(int q_idx, int stage, int num) {
 
 	/* set defaults */
 	p->questor_gives = 255; /* 255 = disabled */
+	p->q_loc.tpref = NULL;
 
 	/* attach it to its parent structure */
 	q_stage->qitem = p;
