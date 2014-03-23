@@ -1402,8 +1402,11 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 	q_goal->cleared = FALSE; /* global quest */
 }
 
-/* spawn/hand out special quest items on stage start */
-static void quest_spawn_questitems(int pInd, int q_idx, int stage) {
+/* spawn/hand out special quest items on stage start.
+   Note: We don't need pInd/individual checks here, because quest items that
+         get handed out will always be given to the player who has the
+         questors's 'talk_focus', be it a global or individual quest. */
+static void quest_spawn_questitems(int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_questitem *q_qitem;
@@ -1683,7 +1686,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage;
 	int i, j, k, py_q_idx = -1;
-	bool anything;
+	bool anything, once = FALSE;
 
 #if QDEBUG > 0
 	s_printf("%s QUEST_STAGE: '%s'(%d,%s) %d->%d\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), stage);
@@ -1708,9 +1711,11 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	     eg the target location for easier lookup */
 	if (!q_ptr->individual || !pInd) { //the !pInd part is paranoia
 		for (i = 1; i <= NumPlayers; i++) {
+			Players[i]->quest_eligible = FALSE;
 			for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 				if (Players[i]->quest_idx[j] == q_idx) break;
 			if (j == MAX_CONCURRENT_QUESTS) continue;
+			Players[i]->quest_eligible = TRUE;
 
 			/* play automatic narration if any */
 			if (!quiet) {
@@ -1735,15 +1740,26 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 					//msg_print(i, "\374 ");
 				}
 			}
+		}
+
+		/* hand out/spawn any special quest items */
+		quest_spawn_questitems(q_idx, stage);
+
+		for (i = 1; i <= NumPlayers; i++) {
+			if (!Players[i]->quest_eligible) continue;
 
 			/* update player's quest tracking data */
 			quest_imprint_stage(i, q_idx, j);
+		}
 
-			/* perform automatic actions (spawn new quest, (timed) further stage change)
-			   Note: Should imprint correct stage on player before calling this,
-			         otherwise automatic stage change will "skip" a stage in between ^^.
-			         This should be rather cosmetic though. */
-			if (quest_stage_automatics(pInd, q_idx, stage)) return;
+		/* perform automatic actions (spawn new quest, (timed) further stage change)
+		   Note: Should imprint correct stage on player before calling this,
+		         otherwise automatic stage change will "skip" a stage in between ^^.
+		         This should be rather cosmetic though. */
+		if (quest_stage_automatics(pInd, q_idx, stage)) return;
+
+		for (i = 1; i <= NumPlayers; i++) {
+			if (!Players[i]->quest_eligible) continue;
 
 			/* play questors' stage dialogue */
 			if (!quiet)
@@ -1779,6 +1795,9 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 				//msg_print(pInd, "\374 ");
 			}
 		}
+
+		/* hand out/spawn any special quest items */
+		quest_spawn_questitems(q_idx, stage);
 
 		/* perform automatic actions (spawn new quest, (timed) further stage change) */
 		if (quest_stage_automatics(pInd, q_idx, stage)) return;
