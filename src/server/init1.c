@@ -8314,7 +8314,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				q_qitem->opval = pval;
 				q_qitem->ochar = ochar;
-				q_qitem->oattr = oattr;
+				q_qitem->oattr = color_char_to_attr(oattr);
 				q_qitem->oweight = wgt;
 				q_qitem->olev = lev;
 				strcpy(q_qitem->name, tmpbuf);
