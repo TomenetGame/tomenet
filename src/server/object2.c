@@ -312,7 +312,7 @@ void compact_objects(int size, bool purge) {
 	cave_type *c_ptr;
 
 	int tmp_max = o_max;
-
+	quest_info *q_ptr;
 
 	/* Compact */
 	if (size) {
@@ -342,6 +342,9 @@ void compact_objects(int size, bool purge) {
 
 			/* Skip dead objects */
 			if (!o_ptr->k_idx) continue;
+
+			/* Questors are immune */
+			if (o_ptr->questor) continue;
 
 			/* Hack -- High level objects start out "immune" */
 			if (k_ptr->level > cur_lev) continue;
@@ -396,8 +399,13 @@ void compact_objects(int size, bool purge) {
 		/* hack -- items on wilderness are preserved, since
 		 * they can be house contents. */
 		if (o_ptr->k_idx) {
+			/* Skip questors always
+			   NOTE: This will even keep them alive in the dungeon although
+			         the dungeon floor might've gotten deallocated already. */
+			if (o_ptr->questor) continue;
+
 			if ((!o_ptr->wpos.wz && (!purge || o_ptr->owner)) ||
-					getcave(&o_ptr->wpos)) continue;
+			    getcave(&o_ptr->wpos)) continue;
 
 			/* Delete it first */
 			delete_object_idx(i, TRUE);
@@ -427,6 +435,21 @@ void compact_objects(int size, bool purge) {
 			if (o_list[i].k_idx) {
 				/* Copy structure */
 				o_list[z] = o_list[i];
+
+				/* Quests: keep questor_m_idx information consistent */
+				if (z != i && o_list[z].questor) {
+					q_ptr = &q_info[o_list[z].quest];
+					/* paranoia check, after server restarted after heavy code changes or sth */
+					if (q_ptr->defined && q_ptr->questors > o_list[z].questor_idx) {
+						/* fix its index */
+						s_printf("QUEST_COMPACT_OBJECTS: quest %d - questor %d o_idx %d->%d\n", o_list[z].quest, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
+						q_ptr->questor[o_list[z].questor_idx].mo_idx = z;
+					} else {
+						s_printf("QUEST_COMPACT_OBJECTS: deprecated questor, quest %d - questor %d o_idx %d->%d\n", o_list[z].quest, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
+						o_list[z].questor = FALSE;
+						/* delete it too? */
+					}
+				}
 
 				/* this needs to go through all objects - mikaelh */
 				if (z != i) {
@@ -526,8 +549,7 @@ void compact_objects(int size, bool purge) {
  * Note -- we do NOT visually reflect these (irrelevant) changes
  */
  
-void wipe_o_list(struct worldpos *wpos)
-{
+void wipe_o_list(struct worldpos *wpos) {
 	int i;
 	cave_type **zcave;
 	monster_type *m_ptr;
@@ -537,8 +559,7 @@ void wipe_o_list(struct worldpos *wpos)
 
 
 	/* Delete the existing objects */
-	for (i = 1; i < o_max; i++)
-	{
+	for (i = 1; i < o_max; i++) {
 		object_type *o_ptr = &o_list[i];
 
 		/* Skip dead objects */
@@ -562,8 +583,7 @@ void wipe_o_list(struct worldpos *wpos)
 
 #ifdef MONSTER_INVENTORY
 		/* Monster */
-		if (o_ptr->held_m_idx)
-		{
+		if (o_ptr->held_m_idx) {
 			/* Monster */
 			m_ptr = &m_list[o_ptr->held_m_idx];
 
@@ -589,13 +609,14 @@ void wipe_o_list(struct worldpos *wpos)
 
 /*
  * Delete all the items, but except those in houses.  - Jir -
+ * Also skips questors now. Note that this is also the command
+ * to be used by all admin slash commands. - C. Blue
  *
  * Note -- we do NOT visually reflect these (irrelevant) changes
  * (cave[Depth][y][x].info & CAVE_ICKY)
  */
  
-void wipe_o_list_safely(struct worldpos *wpos)
-{
+void wipe_o_list_safely(struct worldpos *wpos) {
 	int i;
 
 	cave_type **zcave;
@@ -604,12 +625,14 @@ void wipe_o_list_safely(struct worldpos *wpos)
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Delete the existing objects */
-	for (i = 1; i < o_max; i++)
-	{
+	for (i = 1; i < o_max; i++) {
 		object_type *o_ptr = &o_list[i];
 
 		/* Skip dead objects */
 		if (!o_ptr->k_idx) continue;
+
+		/* Skip questors */
+		if (o_ptr->questor) continue;
 
 		/* Skip objects not on this depth */
 		if(!(inarea(wpos, &o_ptr->wpos)))
@@ -636,8 +659,7 @@ void wipe_o_list_safely(struct worldpos *wpos)
 
 #ifdef MONSTER_INVENTORY
 		/* Monster */
-		if (o_ptr->held_m_idx)
-		{
+		if (o_ptr->held_m_idx) {
 			/* Monster */
 			m_ptr = &m_list[o_ptr->held_m_idx];
 
