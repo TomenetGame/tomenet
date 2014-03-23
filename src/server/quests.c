@@ -1939,6 +1939,98 @@ static bool quest_acquire(int Ind, int q_idx, bool quiet) {
 	return TRUE;
 }
 
+/* Check if player completed a deliver goal to a questor. */
+static void quest_check_goal_deliver_questor(int Ind, int q_idx, int py_q_idx) {
+	player_type *p_ptr = Players[Ind];
+	int j, k, stage;
+	quest_info *q_ptr = &q_info[q_idx];;
+	qi_stage *q_stage;
+	qi_goal *q_goal;
+	qi_deliver *q_del;
+
+#if QDEBUG > 3
+	s_printf("QUEST_CHECK_GOAL_DELIVER_QUESTOR: by %d,%s - quest (%s,%d) stage %d\n",
+	    Ind, p_ptr->name, q_ptr->codename, q_idx, quest_get_stage(Ind, q_idx));
+#endif
+
+	/* quest is deactivated? */
+	if (!q_ptr->active) return;
+
+	stage = quest_get_stage(Ind, q_idx);
+	q_stage = quest_qi_stage(q_idx, stage);
+
+	/* pre-check if we have completed all kill/retrieve goals of this stage,
+	   because we can only complete any deliver goal if we have fetched all
+	   the stuff (bodies, or kill count rather, and objects) that we ought to
+	   'deliver', duh */
+	for (j = 0; j < q_stage->goals; j++) {
+		q_goal = &q_stage->goal[j];
+#if QDEBUG > 3
+		if (q_goal->kill || q_goal->retrieve) {
+			s_printf(" --FOUND GOAL %d (k%d,m%d)..", j, q_ptr->kill[j], q_ptr->retrieve[j]);
+			if (!quest_get_goal(Ind, q_idx, j, FALSE)) {
+				s_printf("MISSING.\n");
+				break;
+			} else s_printf("DONE.\n");
+
+		}
+#else
+		if ((q_goal->kill || q_goal->retrieve)
+		    && !quest_get_goal(Ind, q_idx, j, FALSE))
+			break;
+#endif
+	}
+	if (j != q_stage->goals) {
+#if QDEBUG > 3
+		s_printf(" MISSING kr GOAL\n");
+#endif
+		return;
+	}
+
+	/* check the quest goals, whether any of them wants a delivery to this location */
+	for (j = 0; j < q_stage->goals; j++) {
+		q_goal = &q_stage->goal[j];
+		if (!q_goal->deliver) continue;
+		q_del = q_goal->deliver;
+
+		/* handle only specific to-questor goals here */
+		if (q_goal->deliver->return_to_questor == -1) continue;
+#if QDEBUG > 3
+		s_printf(" FOUND return-to-questor GOAL %d.\n", j);
+#endif
+
+		/* First mark all 'nisi' quest goals as finally resolved,
+		   to change flags accordingly if defined by a Z-line.
+		   It's important to do this before removing retieved items,
+		   just in case UNGOAL will kick in, in inven_item_increase()
+		   and unset our quest goal :-p. */
+		for (k = 0; k < q_stage->goals; k++)
+			if (quest_get_goal(Ind, q_idx, k, TRUE)) {
+				quest_set_goal(Ind, q_idx, k, FALSE);
+				quest_goal_changes_flags(Ind, q_idx, stage, k);
+			}
+
+		/* we have completed a delivery-return goal!
+		   We need to un-nisi it here before UNGOAL is called in inven_item_increase(). */
+		quest_set_goal(Ind, q_idx, j, FALSE);
+
+		/* for item retrieval goals therefore linked to this deliver goal,
+		   remove all quest items now finally that we 'delivered' them.. */
+		if (q_ptr->individual) {
+			for (k = INVEN_PACK - 1; k >= 0; k--) {
+				if (p_ptr->inventory[k].quest == q_idx + 1 &&
+				    p_ptr->inventory[k].quest_stage == stage) {
+					inven_item_increase(Ind, k, -99);
+					//inven_item_describe(Ind, k);
+					inven_item_optimize(Ind, k);
+				}
+			}
+		} else {
+			//TODO (not just here): implement global retrieval quests..
+		}
+	}
+}
+
 /* A player interacts with the questor (bumps him if a creature :-p).
    This displays quest talk/narration, turns in goals, or may acquire it.
    The file pointer is for object questors who get examined by the player. */
@@ -1946,8 +2038,8 @@ static bool quest_acquire(int Ind, int q_idx, bool quiet) {
 void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int i, stage = quest_get_stage(Ind, q_idx);
-	bool may_acquire = FALSE;
+	int i, j, stage = quest_get_stage(Ind, q_idx);
+	bool not_acquired_yet = FALSE, may_acquire = FALSE;
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
 	qi_goal *q_goal; //for return_to_questor check
@@ -1964,33 +2056,31 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	case 3: if (!is_admin(p_ptr)) return;
 	}
 
-	/* check for deliver quest goals that require to return to a questor */
-	for (i = 0; i < q_stage->goals; i++) {
-		q_goal = &q_stage->goal[i];
-		if (!q_goal->deliver || q_goal->deliver->return_to_questor == -1) continue;
-
-		/* clear the deliver goal! */
-		quest_set_goal(Ind, q_idx, i, FALSE);
-#if 0
-		/* hack: check for stage change/termination */
-		if ..//TODO?
-#else
-		return;
-#endif
-	}
-
-
-	/* cannot interact with the questor during this stage? */
-	if (!q_questor->talkable) return;
-
-
 	/* questor interaction may (automatically) acquire the quest */
 	/* has the player not yet acquired this quest? */
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
 		if (p_ptr->quest_idx[i] == q_idx) break;
 	/* nope - test if he's eligible for picking it up!
 	   Otherwise, the questor will remain silent for him. */
-	if (i == MAX_CONCURRENT_QUESTS) {
+	if (i == MAX_CONCURRENT_QUESTS) not_acquired_yet = TRUE;
+
+	/* check for deliver quest goals that require to return to a questor */
+	if (!not_acquired_yet)
+		for (j = 0; j < q_stage->goals; j++) {
+			q_goal = &q_stage->goal[j];
+			if (!q_goal->deliver || q_goal->deliver->return_to_questor == -1) continue;
+
+			quest_check_goal_deliver_questor(Ind, q_idx, j);
+			/* hack: check for stage change/termination */
+			//TODO add 'dirty' flag to quest on stage change, so we can check it here
+			if (stage != p_ptr->quest_stage[i]) return;
+		}
+
+
+	/* cannot interact with the questor during this stage? */
+	if (!q_questor->talkable) return;
+
+	if (not_acquired_yet) {
 		/* do we accept players by questor interaction at all? */
 		if (!q_questor->accept_interact) return;
 		/* do we accept players to acquire this quest in the current quest stage? */
