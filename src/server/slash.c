@@ -3558,12 +3558,8 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			if (token[1][0] == '*') {
 				msg_print(Ind, "You are no longer pursuing any quest!");
-				for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
-					j = p_ptr->quest_idx[i];
-					p_ptr->quest_idx[i] = -1;
-					/* give him 'quest done' credit if he cancelled it too late (ie after rewards were handed out)? */
-					if (q_info[j].quest_done_credit_stage <= quest_get_stage(Ind, j) && p_ptr->quest_done[j] < 10000) p_ptr->quest_done[j]++;
-				}
+				for (i = 0; i < MAX_CONCURRENT_QUESTS; i++)
+					quest_abandon(Ind, i);
 				return;
 			}
 			if (k < 1 || k > MAX_CONCURRENT_QUESTS) {
@@ -3575,10 +3571,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			msg_format(Ind, "You are no longer pursuing the quest '%s'!", q_name + q_info[p_ptr->quest_idx[k - 1]].name);
-			j = p_ptr->quest_idx[k - 1];
-			p_ptr->quest_idx[k - 1] = -1;
-			/* give him 'quest done' credit if he cancelled it too late (ie after rewards were handed out)? */
-			if (q_info[j].quest_done_credit_stage <= quest_get_stage(Ind, j) && p_ptr->quest_done[j] < 10000) p_ptr->quest_done[j]++;
+			quest_abandon(Ind, k - 1);
 			return;
 		}
 

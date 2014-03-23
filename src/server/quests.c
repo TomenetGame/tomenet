@@ -848,14 +848,29 @@ bool quest_activate(int q_idx) {
 }
 
 /* Helper function for quest_deactivate().
-   Search and destroy object-type questors and quest objects, similar to erase_guild_key(). */
-static void quest_erase_objects(int q_idx) {
+   Search and destroy object-type questors and quest objects, similar to erase_guild_key().
+   'p_id' is a player id. If 'individual' is TRUE, this is additionally checked
+   against the object owner. */
+static void quest_erase_objects(int q_idx, bool individual, s32b p_id) {
 	int i, j;
 	object_type *o_ptr;
 
 	int slot;
 	hash_entry *ptr;
 	player_type *p_ptr;
+
+	/* Open world items */
+#if QDEBUG > 1
+	s_printf(" Erasing all object questors and quest objects..\n");
+#endif
+	for (j = 0; j < o_max; j++) {
+		if (o_list[j].quest != q_idx + 1) continue;
+		if (individual && o_list[j].owner != p_id) continue;
+#if QDEBUG > 1
+		s_printf("Erased one at %d.\n", j);
+#endif
+		delete_object_idx(j, TRUE);
+	}
 
 	/* Players online */
 	for (j = 1; j <= NumPlayers; j++) {
@@ -865,8 +880,11 @@ static void quest_erase_objects(int q_idx) {
 			o_ptr = &p_ptr->inventory[i];
 			if (!o_ptr->k_idx) continue;
 			if (o_ptr->quest != q_idx + 1) continue;
+			if (individual && o_ptr->owner != p_id) continue;
 
+#if QDEBUG > 1
 			s_printf("QUEST_OBJECT: player '%s'\n", p_ptr->name);
+#endif
 			inven_item_increase(j, i, -1);
 			inven_item_describe(j, i);
 			inven_item_optimize(j, i);
@@ -908,6 +926,7 @@ static void quest_erase_objects(int q_idx) {
 				o_ptr = &p_ptr->inventory[i];
 				if (!o_ptr->k_idx) continue;
 				if (o_ptr->quest != q_idx + 1) continue;
+				if (individual && o_ptr->owner != p_id) continue;
 
 				s_printf("QUEST_OBJECT_ERASE: savegame '%s'\n", p_ptr->name);
 				o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
@@ -929,7 +948,9 @@ static void quest_erase_objects(int q_idx) {
 	KILL(p_ptr, player_type);
 	NumPlayers--;
 
+#if QDEBUG > 1
 	s_printf("OBJECT_QUEST_ERASE: done.\n");
+#endif
 }
 
 /* Despawn questors, unstatic sectors/floors, etc. */
@@ -1053,18 +1074,7 @@ void quest_deactivate(int q_idx) {
 	}
 
 	/* Erase all object questors and quest objects (duh) */
-#if QDEBUG > 1
-	s_printf(" Erasing all object questors and quest objects..\n");
-#endif
-	for (j = 0; j < o_max; j++) {
-		if (o_list[j].quest != q_idx + 1) continue;
-#if QDEBUG > 1
-		s_printf("Erased one at %d.\n", j);
-#endif
-		delete_object_idx(j, TRUE);
-	}
-	/* last resort, like for trueart/guildkey erasure, scan everyone's inventory -_- */
-	quest_erase_objects(q_idx);
+	quest_erase_objects(q_idx, FALSE, 0);
 }
 
 /* return a current quest's cooldown. Either just uses q_ptr->cur_cooldown directly for global
@@ -1132,7 +1142,7 @@ static void quest_terminate(int pInd, int q_idx) {
 
 	q_ptr->dirty = TRUE;
 
-	/* give players credit */
+	/* give player credit (individual quest) */
 	if (pInd && q_ptr->individual) {
 		p_ptr = Players[pInd];
 #if QDEBUG > 0
@@ -1151,7 +1161,10 @@ static void quest_terminate(int pInd, int q_idx) {
 		msg_format(pInd, "\374\377C***\377u You have completed the quest \"\377U%s\377u\"! \377C***", q_name + q_ptr->name);
 		//msg_print(pInd, "\374 ");
 
-		/* don't respawn the questor *immediately* again, looks silyl */
+		/* erase all of this player's quest items for this quest */
+		quest_erase_objects(q_idx, TRUE, p_ptr->id);
+
+		/* set personal quest cooldown */
 		if (q_ptr->cooldown == -1) p_ptr->quest_cooldown[q_idx] = QI_COOLDOWN_DEFAULT;
 		else p_ptr->quest_cooldown[q_idx] = q_ptr->cooldown;
 
@@ -1162,6 +1175,7 @@ static void quest_terminate(int pInd, int q_idx) {
 		return;
 	}
 
+	/* give players credit (global quest) */
 #if QDEBUG > 0
 	s_printf("%s QUEST_TERMINATE_GLOBAL: '%s'(%d,%s) completed by", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename);
 #endif
@@ -3610,32 +3624,21 @@ void quest_check_player_location(int Ind) {
 	}
 }
 
-/* Hack: if a quest was disabled in q_info, this will have set the
-   'disabled_on_load' flag of that quest, which tells us that we have to handle
-   deleting its remaining questor(s) here, before the server finally starts up. */
-void quest_handle_disabled_on_startup() {
-	int i, j, k;
-	quest_info *q_ptr;
-	bool questor;
+/* A player decides to abandon one of his concurrent quests. */
+void quest_abandon(int Ind, int py_q_idx) {
+	player_type *p_ptr = Players[Ind];
+	int q_idx = p_ptr->quest_idx[py_q_idx];
 
-	for (i = 0; i < MAX_Q_IDX; i++) {
-		q_ptr = &q_info[i];
-		if (!q_ptr->defined) continue;
-		if (!q_ptr->disabled_on_load) continue;
+	/* erase all of his quest items */
+	quest_erase_objects(q_idx, TRUE, p_ptr->id);
 
-		s_printf("QUEST_DISABLED_ON_LOAD: Deleting %d questor(s) from quest %d\n", q_ptr->questors, i);
-		for (j = 0; j < q_ptr->questors; j++) {
-			questor = m_list[q_ptr->questor[j].mo_idx].questor;
-			k = m_list[q_ptr->questor[j].mo_idx].quest;
+	/* no longer on it */
+	p_ptr->quest_idx[py_q_idx] = -1;
 
-			s_printf(" m_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor[j].mo_idx, k, questor);
-
-			if (k == i && questor) {
-				s_printf("..ok.\n");
-				delete_monster_idx(q_ptr->questor[j].mo_idx, TRUE);
-			} else s_printf("..failed: Questor does not exist.\n");
-		}
-	}
+	/* give him 'quest done' credit if he cancelled it too late (ie after rewards were handed out)? */
+	if (q_info[q_idx].quest_done_credit_stage <= quest_get_stage(Ind, q_idx)
+	    && p_ptr->quest_done[q_idx] < 10000) //limit
+		p_ptr->quest_done[q_idx]++;
 }
 
 
@@ -3993,6 +3996,34 @@ qi_questitem *init_quest_questitem(int q_idx, int stage, int num) {
 
 	/* done, return the new one */
 	return &q_stage->qitem[q_stage->qitems - 1];
+}
+
+/* Hack: if a quest was disabled in q_info, this will have set the
+   'disabled_on_load' flag of that quest, which tells us that we have to handle
+   deleting its remaining questor(s) here, before the server finally starts up. */
+void quest_handle_disabled_on_startup() {
+	int i, j, k;
+	quest_info *q_ptr;
+	bool questor;
+
+	for (i = 0; i < MAX_Q_IDX; i++) {
+		q_ptr = &q_info[i];
+		if (!q_ptr->defined) continue;
+		if (!q_ptr->disabled_on_load) continue;
+
+		s_printf("QUEST_DISABLED_ON_LOAD: Deleting %d questor(s) from quest %d\n", q_ptr->questors, i);
+		for (j = 0; j < q_ptr->questors; j++) {
+			questor = m_list[q_ptr->questor[j].mo_idx].questor;
+			k = m_list[q_ptr->questor[j].mo_idx].quest;
+
+			s_printf(" m_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor[j].mo_idx, k, questor);
+
+			if (k == i && questor) {
+				s_printf("..ok.\n");
+				delete_monster_idx(q_ptr->questor[j].mo_idx, TRUE);
+			} else s_printf("..failed: Questor does not exist.\n");
+		}
+	}
 }
 
 /* To call after server has been loaded up, to reattach questors and their quests,
