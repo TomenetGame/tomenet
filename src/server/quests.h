@@ -253,10 +253,11 @@ typedef struct qi_questitem {
 	s16b opval;					/* only used to distinguish between them (by retrieve-goals) */
 	char ochar;
 	byte oattr;
+	s16b oweight;
 	byte olev;
 	char name[MAX_CHARS]; //could use ONAME_LEN
 
-	byte questor_hands_it_out;			/* Do not spawn it anywhere but just hand it over on interaction with this questor */
+	byte questor_gives;				/* Do not spawn it anywhere but just hand it over on interaction with this questor */
 
 	/* spawn location info */
 	byte s_location_type;				/* flags setting elibible starting location types (QI_SLOC_xxx) */

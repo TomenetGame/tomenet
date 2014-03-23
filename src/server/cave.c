@@ -3139,6 +3139,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					(*ap) = o_ptr->xtra1;
 				}
 
+				if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) {
+					(*cp) = o_ptr->xtra1;
+					(*ap) = o_ptr->xtra2;
+				}
+
 				/* Abnormal attr */
 /*      	                  if ((!avoid_other) && (!(((*ap) & 0x80) && ((*cp) & 0x80))) && (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)) (*ap) = get_shimmer_color(); */
 				if (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)

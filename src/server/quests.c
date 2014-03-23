@@ -1401,6 +1401,45 @@ static void quest_unset_goal(int pInd, int q_idx, int goal) {
 	q_goal->cleared = FALSE; /* global quest */
 }
 
+/* spawn/hand out special quest items on stage start */
+static void quest_spawn_questitems(int pInd, int q_idx, int stage) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
+	qi_questitem *q_qitem;
+	object_type forge, *o_ptr = &forge;
+	int i, py;
+
+	for (i = 0; i < q_stage->qitems; i++) {
+		q_qitem = &q_stage->qitem[i];
+
+		/* generate the object */
+		invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_QUEST));
+		o_ptr->pval = q_qitem->opval;
+		o_ptr->xtra1 = q_qitem->ochar;
+		o_ptr->xtra2 = q_qitem->oattr;
+		o_ptr->xtra3 = i;
+		o_ptr->xtra4 = TRUE;
+		o_ptr->weight = q_qitem->oweight;
+		o_ptr->number = 1;
+
+		o_ptr->quest = q_idx;
+		o_ptr->quest_stage = stage;
+
+		/* just have a questor hand it over? */
+		if (q_qitem->questor_gives != 255) {
+			/* omit despawned-check, w/e */
+			/* check for questor's validly focussed player */
+			py = q_ptr->questor[q_qitem->questor_gives].talk_focus;
+			if (!py) return; /* oops? */
+			msg_format(py, "\374\377GYou received '%s'!", q_qitem->name); //for now. This might need some fine tuning
+			inven_carry(py, o_ptr);
+			continue;
+		}
+
+		/* spawn it 80 days away~ */
+		
+	}
+}
 /* perform automatic things (quest spawn/stage change) in a stage */
 static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -3854,7 +3893,7 @@ qi_questitem *init_quest_questitem(int q_idx, int stage, int num) {
 	memset(&p[q_stage->qitems], 0, sizeof(qi_questitem));
 
 	/* set defaults */
-	p->questor_hands_it_out = 255; /* 255 = disabled */
+	p->questor_gives = 255; /* 255 = disabled */
 
 	/* attach it to its parent structure */
 	q_stage->qitem = p;

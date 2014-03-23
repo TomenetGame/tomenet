@@ -2174,7 +2174,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	t = buf;
 
 	/* hack: questors have an arbitrary name */
-	if (o_ptr->questor) basenm = q_info[o_ptr->quest].questor[o_ptr->questor_idx].name;
+	if (o_ptr->questor)
+		basenm = q_info[o_ptr->quest].questor[o_ptr->questor_idx].name;
+	/* hack: quest items have an arbitrary name */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST
+	    && o_ptr->xtra4) /* <- extra check, in case a silyl admin tries to wish for one ;) */
+		basenm = q_info[o_ptr->quest].stage[o_ptr->quest_stage].qitem[o_ptr->xtra3].name; // o_O
 
 	/* The object "expects" a "number" */
 	if (basenm[0] == '&') {

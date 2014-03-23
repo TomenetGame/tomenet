@@ -8300,12 +8300,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'B') {
 			/* we have 2 sub-types of 'B' lines */
 			if (buf[1] == ':') { /* init, object feats */
-				int pval, lev;
+				int pval, lev, wgt;
 				char ochar, oattr;
 
 				s = buf + 2;
-				if (6 != sscanf(s, "%d:%d:%c:%c:%d:%s",
-				    &stage, &pval, &ochar, &oattr, &lev, tmpbuf))
+				if (7 != sscanf(s, "%d:%d:%c:%c:%d:%d:%s",
+				    &stage, &pval, &ochar, &oattr, &wgt, &lev, tmpbuf))
 					return (1);
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
@@ -8315,6 +8315,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_qitem->opval = pval;
 				q_qitem->ochar = ochar;
 				q_qitem->oattr = oattr;
+				q_qitem->oweight = wgt;
 				q_qitem->olev = lev;
 				strcpy(q_qitem->name, tmpbuf);
 				continue;
@@ -8333,7 +8334,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (!lc) return 1; /* so an Bl-line must always follow somewhere after its B line */
 				q_qitem = init_quest_questitem(error_idx, stage, lc - 1); /* pick the newest, already existing one */
 
-				q_qitem->questor_hands_it_out = (q == -1 ? 255 : q);
+				q_qitem->questor_gives = (q == -1 ? 255 : q);
 				q_qitem->s_location_type = (byte)loc;
 				q_qitem->s_terrains = (u32b)terrtype;
 				q_qitem->s_towns_array = (u16b)towns;

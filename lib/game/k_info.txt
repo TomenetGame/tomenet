@@ -7431,6 +7431,14 @@ A:127/255
 F:EASY_KNOW
 D:This deed can be turned in at the mayor's office in Bree.
 
+# For new quest_info: A special, custom quest item. - C. Blue
+N:1040:& quest item~
+G:*:b
+I:127:2:0
+W:127:255:1:0
+A:127/255
+P:0:1d1:0:0:0
+F:EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACID | IGNORE_COLD | IGNORE_ELEC | IGNORE_MANA
 
 
 #N:(No.):(name)
