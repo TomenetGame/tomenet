@@ -2933,6 +2933,19 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 	/* Analyze the items */
 	switch (o_ptr->tval) {
+		/* quest items */
+		case TV_SPECIAL:
+			if (o_ptr->sval == SV_QUEST) {
+				if ((o_ptr->pval != j_ptr->pval) ||
+				    (o_ptr->xtra1 != j_ptr->xtra1) ||
+				    (o_ptr->xtra2 != j_ptr->xtra2) ||
+				    (o_ptr->weight != j_ptr->weight) ||
+				    (o_ptr->quest != j_ptr->quest) ||
+				    (o_ptr->quest_stage != j_ptr->quest_stage))
+					return FALSE;
+				break;
+			}
+			return FALSE;
 		/* Chests */
 		case TV_KEY:
 		case TV_CHEST:
