@@ -1441,6 +1441,9 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 			py = q_ptr->questor[q_qitem->questor_gives].talk_focus;
 			if (!py) return; /* oops? */
 			msg_format(py, "\374\377GYou received '%s'!", q_qitem->name); //for now. This might need some fine tuning
+			/* own it */
+			o_ptr->owner = Players[py]->id;
+			o_ptr->mode = Players[py]->mode;
 			inven_carry(py, o_ptr);
 			continue;
 		}
