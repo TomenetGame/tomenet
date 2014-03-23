@@ -3356,7 +3356,11 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	Rand_value = seed_town + (wpos->wx + wpos->wy * MAX_WILD_X) * 287 + 490836;
 
 	/* to make the level more interesting, add some "hotspots" */
-	for (y = 0; y < terrain.hotspot; y++) wild_add_hotspot(wpos);
+	if (w_ptr->type != WILD_OCEAN)
+		for (y = 0; y < terrain.hotspot; y++) wild_add_hotspot(wpos);
+	/* oceans really have mostly water */
+	else if (!rand_int(8)) //changing hotspot number in init_terrain() directly probably messes up world consistency?
+		for (y = 0; y < terrain.hotspot / 3; y++) wild_add_hotspot(wpos); //..so just divide here, pfft
 
 	/* HACK -- if close to the town, make dwellings more likely */
 #ifdef DEVEL_TOWN_COMPATIBILITY
@@ -3441,7 +3445,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 					found_more_water++;
 				}
 			}
-			if (found_more_water == 8) c_ptr->feat = FEAT_SHAL_WATER;
+			if (found_more_water >= 7) c_ptr->feat = FEAT_SHAL_WATER;
 		}
 	}
 
