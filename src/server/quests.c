@@ -1686,7 +1686,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage;
 	int i, j, k, py_q_idx = -1;
-	bool anything, once = FALSE;
+	bool anything;
 
 #if QDEBUG > 0
 	s_printf("%s QUEST_STAGE: '%s'(%d,%s) %d->%d\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), stage);
