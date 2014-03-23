@@ -469,8 +469,8 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 		wid = l_ptr->wid - 1;
 		hgt = l_ptr->hgt - 1;
 	} else {
-		wid = MAX_WID;
-		hgt = MAX_HGT;
+		wid = MAX_WID - 1;
+		hgt = MAX_HGT - 1;
 	}
 
 	by = cs_ptr->sc.between.fy;
