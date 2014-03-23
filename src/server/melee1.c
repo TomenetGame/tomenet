@@ -227,8 +227,7 @@ static bool do_eat_gold(int Ind, int m_idx)
 
 
 /* returns 'TRUE' if the thief will blink away. */
-static bool do_eat_item(int Ind, int m_idx)
-{
+static bool do_eat_item(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	monster_type    *m_ptr = &m_list[m_idx];
 #if 0
@@ -244,8 +243,7 @@ static bool do_eat_item(int Ind, int m_idx)
 	if (safe_area(Ind)) return TRUE;
 
 	/* Find an item */
-	for (k = 0; k < 10; k++)
-	{
+	for (k = 0; k < 10; k++) {
 		/* Pick an item */
 		i = rand_int(INVEN_PACK);
 
@@ -280,8 +278,7 @@ static bool do_eat_item(int Ind, int m_idx)
 			o_idx = o_pop();
 
 			/* Success */
-			if (o_idx)
-			{
+			if (o_idx) {
 				object_type *j_ptr;
 
 				/* Get new object */
@@ -310,7 +307,7 @@ static bool do_eat_item(int Ind, int m_idx)
 
 				/* Build stack */
 				m_ptr->hold_o_idx = o_idx;
-			}
+			} else questitem_d(o_ptr); /* not immune to stealing :) */
 		}
 #else
 		if (o_ptr->tval == TV_WAND) (void)divide_charged_item(o_ptr, 1);
