@@ -52,9 +52,9 @@ V:0.0.1
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
 
 # goals to collect specific items:
-# (optional) r:stage:goal:minval:number
+# (optional) r:stage:goal:min value:number
 # (optional) rI:stage:goal:tval:sval... (list of ':tval:sval' pairs, up to 10, separated by colons)
-# (optional) rV:stage:goal:pval:bpval:attr:name1:name2:name2b... (list of 5-tuples like this, up to 5, separated by colons)
+# (optional) rV:stage:goal:pval:bpval:attr:name1:name2:name2b... (list of 6-tuples like this, up to 5, separated by colons)
 
 # optional target location where those kill/retrieve goals have to be cleared:
 # (optional, if k/r line exists) P:stage:goal#:goalwpos wx:wy:wz:adjacent terrain extension:goal at exact x:y:radius:mapfile (if not using terrain type) or '-'
@@ -161,13 +161,19 @@ yR:-:Sup!
 Y:0:0:-:kill:-:1
 #W:0:1:-:0:Slay two dogs or wolves, they deserve it. Report to the general store's keeper!
 W:0:1:-:0:Slay two dogs or wolves, they deserve it. Let me know when you're done.
+W:0:1:-:0:..oh and also, maybe this bat comes in handy. DON'T LOSE IT!
+B:1:0:\:u:40:0:A Bat
+Bl:1:0:0:0:0:0:0:0:0:0:0:0:-
+r:1:3:0:1
+rI:1:3:127:2
+#rV:1:3:-9999:-9999:-:-1:-1:-1
 k:1:1:0:0:2:0:0
 kV:1:1:C:-
 #kI:1:1:r_idx...
 #M:1:2:32:32:0:0:105:40:0:-
 #M:1:2:-1:63:63:0:0:99:35:1:-
 M:1:2:0:63:63:0:0:99:35:1:-
-G:1:3:1:2
+G:1:3:1:2:3
 X:3:-:The Goalkeeper Bat seems very satisfied.
 R:3:80:38:0:0:0:0:0:0:0:0:0:2:2:0
 
@@ -182,7 +188,6 @@ M:2:2:0:63:63:0:0:99:35:1:-
 G:2:4:1:2
 X:4:-:The Goalkeeper Bat seems very satisfied.
 R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
-
 
 
 
@@ -205,7 +210,9 @@ R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
 # //todo (optional) D:dungeon to spawn ...
 #(Parameters from here on are all individual per quest stage)
 # (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage:timed change offset:timed change absolute:timed change at realtime (-1 disables):change quietly (skip stage dialogue)
-# (optional) B:stage:spawn special quest item ochar:oattr:pval (can be used as sort of an index for retrieval quest goals):name
+# (optional,5x rep) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
+# (for each B line) Bl:stage:questorhandout (-1 to disable):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-' (N.I.)
+# note: 'Bl' takes same parameters as 'L' lines (except for 'questor hand out'). Each Bl-line must follow after its B-line!
 # //NOPE (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0 (nonfunctional):timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
 # //todo (optional) S:questor changes/polymorphes ...
 # //todo (optional) S/H:questor hostility ...
@@ -223,7 +230,7 @@ R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
 # (optional) k:stage:goal:minlev:maxlev:number:spawn:spawn will target
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
-# (optional) r:stage:goal:minval:number
+# (optional) r:stage:goal:min value:number
 # (optional) rI:stage:goal:tval:sval... (list of ':tval:sval' pairs, up to 10, separated by colons)
 # (optional) rV:stage:goal:pval:bpval:attr:name1:name2:name2b... (list of 6-tuples like this, up to 5, separated by colons)
 # (optional, if k/r line exists) P:stage:goal#:goalwpos wx:wy:wz:adjacent terrain extension:goal at exact x:y:radius:mapfile (if not using terrain type) or '-'
