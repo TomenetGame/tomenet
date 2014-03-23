@@ -7327,6 +7327,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	qi_stage *q_stage;
 	qi_keyword *q_key;
 	qi_kwreply *q_kwr;
+	qi_questitem *q_qitem;
 
 	bool disabled;
 	u16b flags;
@@ -8295,30 +8296,64 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			continue;
 		}
 
-#if 0
-		/* Process 'B' to restrict (optional) goals to only get credited if we return to the questor */
+		/* Process 'B' to spawn a custom quest item somewhere */
 		if (buf[0] == 'B') {
-			/* first number is the stage */
-			stage = atoi(buf + 2);
-			if (stage < 0 || stage >= QI_STAGES) return 1;
+			/* we have 2 sub-types of 'B' lines */
+			if (buf[1] == ':') { /* init, object feats */
+				int pval, lev;
+				char ochar, oattr;
 
-			if (!(c = strchr(buf + 2, ':'))) return 1;
-			c++;
+				s = buf + 2;
+				if (6 != sscanf(s, "%d:%d:%c:%c:%d:%s",
+				    &stage, &pval, &ochar, &oattr, &lev, tmpbuf))
+					return (1);
 
-			/* read list of numbers, separated by colons */
-			while (*c >= '0' && *c <= '9') {
-				j = atoi(c);
-				if (ABS(j) > QI_GOALS) return 1;
-				q_goal = init_quest_goal(error_idx, stage, j);
-				q_goal->return_to_questor = TRUE;
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				q_stage = init_quest_stage(error_idx, stage);
+				q_qitem = init_quest_questitem(error_idx, stage, q_stage->qitems); /* pop up a new one */
 
-				if (!(c = strchr(c, ':'))) break;
-				c++;
-				while (*c == ' ') c++; /* paranoia for comfort ^^ */
+				q_qitem->opval = pval;
+				q_qitem->ochar = ochar;
+				q_qitem->oattr = oattr;
+				q_qitem->olev = lev;
+				strcpy(q_qitem->name, tmpbuf);
+				continue;
+			} else if (buf[1] == 'l') { /* location */
+				int q, loc, towns, wx, wy, wz, terr, sx, sy, rad;
+				unsigned int terrtype;
+
+				s = buf + 2;
+				if (13 != sscanf(s, "%d:%d:%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%s",
+				    &stage, &q, &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf)) return (1);
+
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				q_stage = init_quest_stage(error_idx, stage);
+
+				lc = q_stage->qitems;
+				if (!lc) return 1; /* so an Bl-line must always follow somewhere after its B line */
+				q_qitem = init_quest_questitem(error_idx, stage, lc - 1); /* pick the newest, already existing one */
+
+				q_qitem->questor_hands_it_out = (q == -1 ? 255 : q);
+				q_qitem->s_location_type = (byte)loc;
+				q_qitem->s_terrains = (u32b)terrtype;
+				q_qitem->s_towns_array = (u16b)towns;
+				q_qitem->start_wpos.wx = (char)wx;
+				q_qitem->start_wpos.wy = (char)wy;
+				q_qitem->start_wpos.wz = (char)wz;
+				q_qitem->terrain_patch = (terr != 0);
+				q_qitem->start_x = sx;
+				q_qitem->start_y = sy;
+				q_qitem->radius = rad;
+
+				q_qitem->tpref = NULL;
+				if (tmpbuf[0] != '-') {
+					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					strcpy(c, tmpbuf);
+					q_qitem->tpref = c;
+				}
+				continue;
 			}
-			continue;
 		}
-#endif
 
 		/* Process 'Z' for how completed stage goals will change 'quest flags' */
 		if (buf[0] == 'Z') {

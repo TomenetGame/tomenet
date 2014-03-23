@@ -3712,6 +3712,7 @@
 /* svals for TV_SPECIAL */
 #define SV_SEAL			0	/* for invalid items */
 #define SV_CUSTOM_OBJECT	1	/* fun vanity objects, customizable by admins */
+#define SV_QUEST		2	/* a custom quest item (not to be confused with questors) */
 
 /*** General flag values ***/
 

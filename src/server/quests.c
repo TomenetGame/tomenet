@@ -3511,6 +3511,7 @@ void quest_handle_disabled_on_startup() {
 
 /* ---------- Helper functions for initialisation of q_info[] from q_info.txt in init.c ---------- */
 
+/* Allocate/initialise a questor, or return it if already existing. */
 qi_questor *init_quest_questor(int q_idx, int num) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_questor *p;
@@ -3545,6 +3546,7 @@ qi_questor *init_quest_questor(int q_idx, int num) {
 	return &q_ptr->questor[num];
 }
 
+/* Allocate/initialise a quest stage, or return it if already existing. */
 qi_stage *init_quest_stage(int q_idx, int num) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *p;
@@ -3599,6 +3601,7 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 	return &q_ptr->stage[q_ptr->stages - 1];
 }
 
+/* Allocate/initialise a quest keyword, or return it if already existing. */
 qi_keyword *init_quest_keyword(int q_idx, int num) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_keyword *p;
@@ -3624,6 +3627,7 @@ qi_keyword *init_quest_keyword(int q_idx, int num) {
 	return &q_ptr->keyword[num];
 }
 
+/* Allocate/initialise a quest keyword reply, or return it if already existing. */
 qi_kwreply *init_quest_kwreply(int q_idx, int num) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_kwreply *p;
@@ -3806,6 +3810,7 @@ qi_goal *init_quest_goal(int q_idx, int stage, int q_info_goal) {
 	return &q_stage->goal[q_info_goal];
 }
 
+/* Allocate/initialise a quest reward, or return it if already existing. */
 qi_reward *init_quest_reward(int q_idx, int stage, int num) {
 	qi_stage *q_stage = init_quest_stage(q_idx, stage);
 	qi_reward *p;
@@ -3829,6 +3834,34 @@ qi_reward *init_quest_reward(int q_idx, int stage, int num) {
 
 	/* done, return the new, requested one */
 	return &q_stage->reward[num];
+}
+
+/* Allocate/initialise a custom quest item, or return it if already existing. */
+qi_questitem *init_quest_questitem(int q_idx, int stage, int num) {
+	qi_stage *q_stage = init_quest_stage(q_idx, stage);
+	qi_questitem *p;
+
+	/* we already have this existing one */
+	if (q_stage->qitems > num) return &q_stage->qitem[num];
+
+	/* allocate a new one */
+	p = (qi_questitem*)realloc(q_stage->qitem, sizeof(qi_questitem) * (q_stage->qitems + 1));
+	if (!p) {
+		s_printf("init_quest_questitem() Couldn't allocate memory!\n");
+		exit(0);
+	}
+	/* initialise the ADDED memory */
+	memset(&p[q_stage->qitems], 0, sizeof(qi_questitem));
+
+	/* set defaults */
+	p->questor_hands_it_out = 255; /* 255 = disabled */
+
+	/* attach it to its parent structure */
+	q_stage->qitem = p;
+	q_stage->qitems++;
+
+	/* done, return the new one */
+	return &q_stage->qitem[q_stage->qitems - 1];
 }
 
 /* To call after server has been loaded up, to reattach questors and their quests,

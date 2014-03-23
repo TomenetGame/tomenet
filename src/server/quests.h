@@ -41,6 +41,9 @@ typedef struct qi_questor {
 	/* quest initialisation and meta actions */
 	bool accept_los, accept_interact;		/* player gets the quest just be being in LoS / interacting once with the questor (bump/read the parchment/pickup the item) */
 
+	bool static_floor;				/* questor floor will be static while the quest is active */
+	bool quit_floor;				/* if player leaves the questor's floor, the quest will terminate and be lost */
+
 	/* starting location restrictions */
 	byte s_location_type;				/* flags setting elibible starting location types (QI_SLOC_xxx) */
 	u16b s_towns_array;				/* QI_SLOC_TOWN: flags setting eligible starting towns (QI_STOWN_xxx) */
@@ -52,9 +55,6 @@ typedef struct qi_questor {
 	struct worldpos start_wpos;			/* -1, -1 for random */
 	s16b start_x, start_y;				/* -1, -1 for random */
 	cptr tpref;					/* filename of map to load, or empty for none */
-
-	bool static_floor;				/* questor floor will be static while the quest is active */
-	bool quit_floor;				/* if player leaves the questor's floor, the quest will terminate and be lost */
 
 	bool s_dungeon[MAX_D_IDX];			/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
 	u32b s_dungeon_must_flags1, s_dungeon_must_flags2, s_dungeon_must_flags3;	/*  eligible wilderness dungeon flags */
@@ -242,6 +242,35 @@ typedef struct qi_reward {
 	s16b statuseffect;				/* debuff (aka curse, maybe just for show)/un-debuff/tempbuff player? */
 } qi_reward;
 
+/* Sub-structure: A special quest item <TV_SPECIAL, SV_QUEST>.
+   that will be generated on a specific target location somewhere in the world.
+   Since the item is completely blank, all these values are mandatory to
+   specify. Note that its location info ('Bl' line) is actually the same as for
+   questors ('L' line).
+   Its pval has no effect, except for allowing us to distinguish between
+   multiple quest items in retrieval quest goals. */
+typedef struct qi_questitem {
+	s16b opval;					/* only used to distinguish between them (by retrieve-goals) */
+	char ochar;
+	byte oattr;
+	byte olev;
+	char name[MAX_CHARS]; //could use ONAME_LEN
+
+	byte questor_hands_it_out;			/* Do not spawn it anywhere but just hand it over on interaction with this questor */
+
+	/* spawn location info */
+	byte s_location_type;				/* flags setting elibible starting location types (QI_SLOC_xxx) */
+	u16b s_towns_array;				/* QI_SLOC_TOWN: flags setting eligible starting towns (QI_STOWN_xxx) */
+	u32b s_terrains;				/* QI_SLOC_SURFACE: flags setting eligible starting terrains (RF8_WILD_xxx, RF8_WILD_TOO_MASK for all) */
+	bool terrain_patch;				/* extend spawn location to nearby worldmap sectors if same terrain? */
+	byte radius;					/* offset start_x, start_y loc randomly within a radius? */
+
+	/* exact spawn location info */
+	struct worldpos start_wpos;			/* -1, -1 for random */
+	s16b start_x, start_y;				/* -1, -1 for random */
+	cptr tpref;					/* filename of map to load, or empty for none */
+} qi_questitem;
+
 /* Sub-structure: A single quest stage.
    The central unit of a quest, providing goals, rewards and dialogue.
    A quest consists of a series of stages that switch between each other
@@ -317,6 +346,10 @@ typedef struct qi_stage {
 	/* contains the indices of up to QI_STAGE_GOALS different QI_GOALS goals which are AND'ed; 'optional' goals are skipped in the check! */
 	s16b goals_for_stage[QI_FOLLOWUP_STAGES][QI_STAGE_GOALS]; /* returns the goal's index (or -1 if none) */
 	s16b next_stage_from_goals[QI_FOLLOWUP_STAGES]; /* <stage> index of the possible follow-up stages */
+
+	/* amout of special quest items to spawn */
+	byte qitems;
+	qi_questitem *qitem;
 } qi_stage;
 
 /* Sub-structure: A single quest keyword.

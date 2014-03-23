@@ -25,11 +25,16 @@ V:0.0.1
 # Q (for type=parchment):type:sval:attr:level:name
 # Q (for type=object)   :type:tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:attr:level:name
 # L (5x repeatable per Q line):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-' (N.I.)
+# note: Each L-line must follow after its Q line!
 # (optional) F (5x repeatable per Q line):accept-on-los? (N.I.):accept-on-interaction?:talkable?:despawned? (N.I.):invincible?:staticfloor?:quitfloor?(N.I.)
 
 #(Parameters from here on are all individual per quest stage)
 
 # (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0:timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
+# (optional,5x rep) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:level:name
+# (for each B line) Bl:stage:questorhandout (-1 to disable):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-' (N.I.)
+# note: 'Bl' takes same parameters as 'L' lines (except for 'questor hand out'). Each Bl-line must follow after its B-line!
+
 # (optional) X (50x repeatable):stage:flags:narration text
 # (optional?) W (15x repeatable):questor:stage:flags:examine? (0=normal talk,1=examine):convo line
 # (optional) Y (100x repeatable):questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or -1 for dont change stage)
@@ -200,6 +205,7 @@ R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
 # //todo (optional) D:dungeon to spawn ...
 #(Parameters from here on are all individual per quest stage)
 # (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage:timed change offset:timed change absolute:timed change at realtime (-1 disables):change quietly (skip stage dialogue)
+# (optional) B:stage:spawn special quest item ochar:oattr:pval (can be used as sort of an index for retrieval quest goals):name
 # //NOPE (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0 (nonfunctional):timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
 # //todo (optional) S:questor changes/polymorphes ...
 # //todo (optional) S/H:questor hostility ...
