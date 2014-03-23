@@ -5724,6 +5724,9 @@ byte get_attr_from_tval(object_type *o_ptr) {
 		attr = o_ptr->xtra1;
 	}
 
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST)
+		attr = o_ptr->xtra2;
+
 	return(attr);
 }
 
