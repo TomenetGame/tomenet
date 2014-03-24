@@ -351,6 +351,16 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 				y2 = wpos->wy - QI_TERRAIN_PATCH_RADIUS + rand_int(QI_TERRAIN_PATCH_RADIUS * 2 + 1);
 				if (distance(y2, x2, wpos->wy, wpos->wx) <= QI_TERRAIN_PATCH_RADIUS &&
 				    wild_info[y2][x2].type == wild_info[wpos->wy][wpos->wx].type) break;
+
+				/* specialty: avoid players, so we don't have to teleport
+				   them around in case we have to deallocate the sector */
+				if (!wpos->wz) {
+					if (wild_info[y2][x2].ondepth && tries > 250) continue;
+				} else if (wpos->wz < 0) {
+					if (wild_info[y2][x2].dungeon->level[ABS(wpos->wz) - 1].ondepth && tries > 250) continue;
+				} else {
+					if (wild_info[y2][x2].tower->level[wpos->wz - 1].ondepth && tries > 250) continue;
+				}
 			}
 			if (tries) { /* yay */
 				wpos->wx = x2;
@@ -380,6 +390,11 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 			while (--tries) {
 				x = rand_int(MAX_WILD_X);
 				y = rand_int(MAX_WILD_Y);
+
+				/* specialty: avoid players, so we don't have to teleport
+				   them around in case we have to deallocate the sector */
+				if (wild_info[y][x].ondepth && tries > 1000) continue;
+
 				switch (wild_info[y][x].type) {
 				case WILD_OCEAN: if (choice == RF8_WILD_OCEAN) break;
 				case WILD_LAKE: if (choice == RF8_WILD_OCEAN) break; /* hmm */
