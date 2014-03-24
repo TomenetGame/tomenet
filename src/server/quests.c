@@ -1252,7 +1252,7 @@ static void quest_initialise_player_tracking(int Ind, int py_q_idx) {
 	quest_check_player_location(Ind);
 }
 
-/* a quest has successfully ended, clean up */
+/* a quest has (successfully?) ended, clean up */
 static void quest_terminate(int pInd, int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
@@ -4226,6 +4226,16 @@ void questitem_d(object_type *o_ptr, int num) {
 	}
 
 	q_info[o_ptr->quest - 1].objects_registered -= num;
+
+	/* react to object questor 'death' */
+	if (o_ptr->questor) {
+		if (q_info[o_ptr->quest - 1].defined && q_info[o_ptr->quest - 1].questors > o_ptr->questor_idx) {
+			/* Quest progression/fail effect? */
+			questor_death(0, o_ptr->quest - 1, o_ptr->questor_idx);
+		} else {
+			s_printf("QUESTOR DEPRECATED (object_death)\n");
+		}
+	}
 }
 
 /* ---------- Questor actions/reactions to 'external' effects in the game world ---------- */
@@ -4234,6 +4244,35 @@ void questitem_d(object_type *o_ptr, int num) {
 void questor_drop_specific(int Ind, struct worldpos *wpos, int x, int y) {
 }
 
-/* Questor was killed (npc) or destroyed (object). Quest progression/fail effect? */
-void questor_death(int Ind, int mo_idx) {
+/* Questor was killed (npc) or destroyed (object). Quest progression/fail effect?
+   Ind can be 0 if object questor got destroyed/erased by other means. */
+void questor_death(int Ind, int q_idx, int questor_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_questor *q_questor = &q_ptr->questor[questor_idx];
+//	int i, j;
+
+	switch (q_questor->type) {
+	case QI_QUESTOR_NPC:
+		break;
+
+	case QI_QUESTOR_ITEM_PICKUP:
+		/* for object-type questors, deactivate the quest
+		   so it will be activated anew after a cooldown */
+#if 0
+		for (i = 1; i <= NumPlayers; i++) {
+			for (j = 0; 0 < MAX_CONCURRENT_QUESTS; j++) {
+				if (Players[i]->quest[j] != q_idx) continue;
+				break;
+			}
+			if (j == MAX_CONCURRENT_QUESTS) continue;
+			/* all players abandon this quest forcibly */
+			quest_abandon(i, j);
+		}
+		/* and put it on cooldown */
+		quest_deactivate(q_idx);
+#else
+		quest_terminate(Ind, q_idx);
+#endif
+		break;
+	}
 }
