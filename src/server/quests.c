@@ -1923,14 +1923,16 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 
 	/* unstatice static locations of previous stage, possibly from
 	   quest items, targetted goals, deliver goals. */
-	q_stage = quest_qi_stage(q_idx, stage_prev);
-	for (i = 0; i < q_stage->goals; i++) {
-		q_goal = &q_stage->goal[i];
-		q_del = q_goal->deliver;
-		if (q_goal->target_tpref) new_players_on_depth(&q_goal->target_wpos, -1, TRUE);
-		if (q_del && q_del->tpref) new_players_on_depth(&q_del->wpos, TRUE, -1);
-		for (j = 0; j < q_stage->qitems; j++)
-			if (q_stage->qitem[j].q_loc.tpref) new_players_on_depth(&q_stage->qitem[j].result_wpos, -1, TRUE);
+	if (stage_prev != -1) {
+		q_stage = quest_qi_stage(q_idx, stage_prev);
+		for (i = 0; i < q_stage->goals; i++) {
+			q_goal = &q_stage->goal[i];
+			q_del = q_goal->deliver;
+			if (q_goal->target_tpref) new_players_on_depth(&q_goal->target_wpos, -1, TRUE);
+			if (q_del && q_del->tpref) new_players_on_depth(&q_del->wpos, TRUE, -1);
+			for (j = 0; j < q_stage->qitems; j++)
+				if (q_stage->qitem[j].q_loc.tpref) new_players_on_depth(&q_stage->qitem[j].result_wpos, -1, TRUE);
+		}
 	}
 
 
