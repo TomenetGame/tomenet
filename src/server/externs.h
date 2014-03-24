@@ -1120,6 +1120,9 @@ extern int Send_request_str(int Ind, int id, char *prompt, char *std);
 extern int Send_request_cfr(int Ind, int id, char *prompt, bool default_yes);
 extern int Send_request_abort(int Ind);
 
+extern void Send_delayed_request_str(int Ind, int id, char *prompt, char *std);
+extern void Send_delayed_request_cfr(int Ind, int id, char *prompt, bool default_yes);
+
 extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);
 extern int Send_sanity(int ind, byte attr, cptr msg);

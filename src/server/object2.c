@@ -434,14 +434,14 @@ void compact_objects(int size, bool purge) {
 
 				/* Quests: keep questor_m_idx information consistent */
 				if (z != i && o_list[z].questor) {
-					q_ptr = &q_info[o_list[z].quest];
+					q_ptr = &q_info[o_list[z].quest - 1];
 					/* paranoia check, after server restarted after heavy code changes or sth */
 					if (q_ptr->defined && q_ptr->questors > o_list[z].questor_idx) {
 						/* fix its index */
-						s_printf("QUEST_COMPACT_OBJECTS: quest %d - questor %d o_idx %d->%d\n", o_list[z].quest, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
+						s_printf("QUEST_COMPACT_OBJECTS: quest %d - questor %d o_idx %d->%d\n", o_list[z].quest - 1, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
 						q_ptr->questor[o_list[z].questor_idx].mo_idx = z;
 					} else {
-						s_printf("QUEST_COMPACT_OBJECTS: deprecated questor, quest %d - questor %d o_idx %d->%d\n", o_list[z].quest, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
+						s_printf("QUEST_COMPACT_OBJECTS: deprecated questor, quest %d - questor %d o_idx %d->%d\n", o_list[z].quest - 1, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
 						o_list[z].questor = FALSE;
 						/* delete it too? */
 					}

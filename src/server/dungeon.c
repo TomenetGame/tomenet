@@ -7288,6 +7288,25 @@ void dungeon(void)
 
 		/* Hack -- Regenerate the monsters every hundred game turns */
 		if (!(turn % 100)) regen_monsters();
+
+		/* process delayed requests */
+		for (i = 1; i <= NumPlayers; i++) {
+			p_ptr = Players[i];
+			if (p_ptr->delay_str) {
+				p_ptr->delay_str -= 10;
+				if (p_ptr->delay_str <= 0) {
+					p_ptr->delay_str = 0;
+					Send_request_str(i, p_ptr->delay_str_id, p_ptr->delay_str_prompt, p_ptr->delay_str_std);
+				}
+			}
+			if (p_ptr->delay_cfr) {
+				p_ptr->delay_cfr -= 10;
+				if (p_ptr->delay_cfr <= 0) {
+					p_ptr->delay_cfr = 0;
+					Send_request_cfr(i, p_ptr->delay_cfr_id, p_ptr->delay_cfr_prompt, p_ptr->delay_cfr_default_yes);
+				}
+			}
+		}
 	}
 
 #ifdef DUNGEON_VISIT_BONUS

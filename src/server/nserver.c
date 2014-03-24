@@ -7075,6 +7075,14 @@ int Send_request_num(int Ind, int id, char *prompt, int std) {
 	Players[Ind]->request_type = RTYPE_NUM;
 	return Packet_printf(&connp->c, "%c%d%s%d", PKT_REQUEST_NUM, id, prompt, std);
 }
+void Send_delayed_request_str(int Ind, int id, char *prompt, char *std) {
+	player_type *p_ptr = Players[Ind];
+
+	p_ptr->delay_str = cfg.fps;//delay (turns)
+	p_ptr->delay_str_id = id;
+	strcpy(p_ptr->delay_str_prompt, prompt);
+	strcpy(p_ptr->delay_str_std, std);
+}
 int Send_request_str(int Ind, int id, char *prompt, char *std) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
@@ -7089,6 +7097,14 @@ int Send_request_str(int Ind, int id, char *prompt, char *std) {
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_STR;
 	return Packet_printf(&connp->c, "%c%d%s%s", PKT_REQUEST_STR, id, prompt, std);
+}
+void Send_delayed_request_cfr(int Ind, int id, char *prompt, bool default_yes) {
+	player_type *p_ptr = Players[Ind];
+
+	p_ptr->delay_cfr = cfg.fps;//delay (turns)
+	p_ptr->delay_cfr_id = id;
+	strcpy(p_ptr->delay_cfr_prompt, prompt);
+	p_ptr->delay_cfr_default_yes = default_yes;
 }
 int Send_request_cfr(int Ind, int id, char *prompt, bool default_yes) {
 	connection_t *connp = Conn[Players[Ind]->conn];

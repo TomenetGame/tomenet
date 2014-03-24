@@ -776,7 +776,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 		/* is it ANOTHER questor? uhoh */
 		if (o_list[c_ptr->o_idx].questor) {
 			/* we don't mess with questor locations for consistencies sake */
-			s_printf(" QUEST_CANCELLED: Questor of quest %d occupies questor spawn location.\n", o_list[c_ptr->o_idx].quest);
+			s_printf(" QUEST_CANCELLED: Questor of quest %d occupies questor spawn location.\n", o_list[c_ptr->o_idx].quest - 1);
 			q_ptr->active = FALSE;
 #ifdef QERROR_DISABLE
 			q_ptr->disabled = TRUE;
@@ -1149,7 +1149,7 @@ void quest_deactivate(int q_idx) {
 #endif
 			o_idx = c_ptr->o_idx;
 			if (o_idx == q_questor->mo_idx) {
-				if (o_list[o_idx].questor && o_list[o_idx].quest == q_idx) {
+				if (o_list[o_idx].questor && o_list[o_idx].quest - 1 == q_idx) {
 #if QDEBUG > 1
 					s_printf(" ..ok.\n");
 #endif
@@ -2390,7 +2390,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	quest_dialogue(Ind, q_idx, questor_idx, FALSE, may_acquire, TRUE);
 
 	/* prompt him to acquire this quest if he hasn't yet */
-	if (may_acquire) Send_request_cfr(Ind, RID_QUEST_ACQUIRE + q_idx, format("Accept the quest \"%s\"?", q_name + q_ptr->name), TRUE);
+	if (may_acquire) Send_delayed_request_cfr(Ind, RID_QUEST_ACQUIRE + q_idx, format("Accept the quest \"%s\"?", q_name + q_ptr->name), TRUE);
 }
 
 /* Talk vs keyword dialogue between questor and player.
@@ -2498,14 +2498,14 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	if (force_prompt) { /* at least 1 keyword available? */
 		/* hack: if 1st keyword is "~", display a "more" prompt */
 		if (more_hack)
-			Send_request_str(Ind, RID_QUEST + q_idx, "? (blank for more)> ", "");
+			Send_delayed_request_str(Ind, RID_QUEST + q_idx, "? (blank for more)> ", "");
 		else {
 			/* hack: if 1st keyword is "y" just give a yes/no choice instead of an input prompt?
 			   we assume that 2nd keyword is a "n" then. */
 			if (yn_hack)
-				Send_request_cfr(Ind, RID_QUEST + q_idx, "? (choose yes or no)>", FALSE);
+				Send_delayed_request_cfr(Ind, RID_QUEST + q_idx, "? (choose yes or no)>", FALSE);
 			else /* normal prompt for keyword input */
-				Send_request_str(Ind, RID_QUEST + q_idx, "?> ", "");
+				Send_delayed_request_str(Ind, RID_QUEST + q_idx, "?> ", "");
 		}
 	}
 }
@@ -4158,15 +4158,26 @@ void quest_handle_disabled_on_startup() {
 
 		s_printf("QUEST_DISABLED_ON_LOAD: Deleting %d questor(s) from quest %d\n", q_ptr->questors, i);
 		for (j = 0; j < q_ptr->questors; j++) {
-			questor = m_list[q_ptr->questor[j].mo_idx].questor;
-			k = m_list[q_ptr->questor[j].mo_idx].quest;
-
-			s_printf(" m_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor[j].mo_idx, k, questor);
-
-			if (k == i && questor) {
-				s_printf("..ok.\n");
-				delete_monster_idx(q_ptr->questor[j].mo_idx, TRUE);
-			} else s_printf("..failed: Questor does not exist.\n");
+			switch (q_ptr->questor[j].type) {
+			case QI_QUESTOR_NPC:
+				questor = m_list[q_ptr->questor[j].mo_idx].questor;
+				k = m_list[q_ptr->questor[j].mo_idx].quest;
+				s_printf(" m_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor[j].mo_idx, k, questor);
+				if (k == i && questor) {
+					s_printf("..ok.\n");
+					delete_monster_idx(q_ptr->questor[j].mo_idx, TRUE);
+				} else s_printf("..failed: Questor does not exist.\n");
+				break;
+			case QI_QUESTOR_ITEM_PICKUP:
+				questor = o_list[q_ptr->questor[j].mo_idx].questor;
+				k = o_list[q_ptr->questor[j].mo_idx].quest - 1;
+				s_printf(" o_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor[j].mo_idx, k, questor);
+				if (k == i && questor) {
+					s_printf("..ok.\n");
+					delete_object_idx(q_ptr->questor[j].mo_idx, TRUE);
+				} else s_printf("..failed: Questor does not exist.\n");
+				break;
+			}
 		}
 	}
 }

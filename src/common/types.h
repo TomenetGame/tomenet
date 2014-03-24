@@ -2904,6 +2904,16 @@ struct player_type {
 	int request_id, request_type; /* to keep track of PKT_REQUEST_... requests */
 	char go_level, go_sublevel; /* For playing Go */
 
+	byte delay_str;
+	int delay_str_id;
+	char delay_str_prompt[MAX_CHARS];
+	char delay_str_std[MAX_CHARS];
+
+	byte delay_cfr;
+	int delay_cfr_id;
+	char delay_cfr_prompt[MAX_CHARS];
+	bool delay_cfr_default_yes;
+
 	char reply_name[MAX_CHARS]; /* last player who sent us a private message, for replying */
 
 	int piercing; /* Rogue skill 'assassinate' */
