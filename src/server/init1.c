@@ -7454,7 +7454,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 			/* 'I' */
 			q_ptr->privilege = 0;
-			q_ptr->individual = TRUE;
+			q_ptr->individual = 1;
 			q_ptr->minlev = 0;
 			q_ptr->maxlev = 100;
 			/* optional parm: is quest repeatable? */
@@ -7531,7 +7531,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				return (1);
 
 			q_ptr->privilege = priv;
-			q_ptr->individual = (indiv != 0);
+			q_ptr->individual = indiv;
 			q_ptr->minlev = minlev;
 			q_ptr->maxlev = maxlev;
 			q_ptr->quest_done_credit_stage = qdcs;

@@ -997,9 +997,9 @@ bool quest_activate(int q_idx) {
 
 /* Helper function for quest_deactivate().
    Search and destroy object-type questors and quest objects, similar to erase_guild_key().
-   'p_id' is a player id. If 'individual' is TRUE, this is additionally checked
+   'p_id' is a player id. If 'individual' is != 0, this is additionally checked
    against the object owner. */
-static void quest_erase_objects(int q_idx, bool individual, s32b p_id) {
+static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 	int i, j;
 	object_type *o_ptr;
 
