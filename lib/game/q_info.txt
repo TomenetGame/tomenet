@@ -20,27 +20,27 @@ V:0.0.1
 # (optional) T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # (optional) U:endingstage (0 = none):duration:cooldown
 
-# Q-lines are up to 5x repeatable, for up to 5 questors
+# There can be up to 5 Q-lines, for up to 5 questors
 # Q (for type=monster)  :type:ridx:char:attr:minlv:maxlv:name
 # Q (for type=parchment):type:sval:attr:level:name
 # Q (for type=object)   :type:tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:attr:level:name
-# L (5x repeatable per Q line):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
+# L (up to 5x, per Q line):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 # note: Each L-line must follow after its Q line!
-# (optional) F (5x repeatable per Q line):accept-on-los? (N.I.):accept-on-interaction?:talkable?:despawned? (N.I.):invincible?:staticfloor?:quitfloor?(N.I.)
+# (optional) F (up to 5x, per Q line):accept-on-los? (N.I.):accept-on-interaction?:talkable?:despawned? (N.I.):invincible?:staticfloor?:quitfloor?(N.I.)
 
 #(Parameters from here on are all individual per quest stage)
 
-# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0:timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
-# (optional,5x rep) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
+# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0:timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue):set/clear flags
+# (optional, up to 5x) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
 # (for each B line) Bl:stage:questorhandout (-1 to disable):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 # note: 'Bl' takes same parameters as 'L' lines (except for 'questor hand out'). Each Bl-line must follow after its B-line!
 
-# (optional) X (50x repeatable):stage:flags:narration text
-# (optional?) W (15x repeatable):questor:stage:flags:examine? (0=normal talk,1=examine):convo line
-# (optional) Y (100x repeatable):questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or -1 for dont change stage)
+# (optional) X (up to 50x):stage:flags:narration text
+# (optional?) W (up to 15x):questor:stage:flags:examine? (0=normal talk,1=examine):convo line
+# (optional) Y (up to 100x):questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or -1 for dont change stage)
 # (optional) YQ (after a Y-line):list of further questors for which this keyword is valid, separated by colons
 # (optional) YS (after a Y-line):list of further stages during which this keyword is valid, separated by colons
-# (optional) y (50x repeatable):questor (-1 for any):stage (-1 for any):flags:keyword
+# (optional) y (up to 50x):questor (-1 for any):stage (-1 for any):flags:keyword
 # (optional) yY (after a y-line):list of further keywords for which this reply is valid, separated by colons
 # (optional) yQ (after a y-line):list of further questors for which this reply is valid, separated by colons
 # (optional) yS (after a y-line):list of further stages during which this reply is valid, separated by colons
@@ -64,9 +64,9 @@ V:0.0.1
 # (optional) M:stage:goal#:deliver to questor (takes precedence, -1 for none):deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 
 # (optional) Z:stage:goal:changeflags (flags that get set/cleared when that goal is cleared)
-# G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here) to progress to next stage
+# (up to 5x) G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here) to progress to next stage
 # (optional) O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free) separated by colons
-# (optional) R:stage:(10x repeatable) define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:createreward()?:gold:exp:specialstatuseffect
+# (optional, up to 10x) R:stage:define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:createreward()?:gold:exp:specialstatuseffect
 
 # Further notes:
 # -The index number must just be counting up for each quest added to this file, starting with 0.
