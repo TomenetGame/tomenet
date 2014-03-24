@@ -311,6 +311,9 @@ typedef struct qi_stage {
 	s16b timed_countdown_stage;
 	bool timed_countdown_quiet;
 
+	u16b setflags;					/* these flags will automatically be set on stage start */
+	u16b clearflags;				/* these flags will automatically be cleared on stage start */
+
 
 	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */
 	struct worldpos add_dungeon_wpos;		/* create it at this world pos */

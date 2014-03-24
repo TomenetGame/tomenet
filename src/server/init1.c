@@ -7745,8 +7745,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			int stage, aq, aa, cs, tsi, tsia, tsr, qcs;
 
 			s = buf + 2;
-			if (8 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d",
-			    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs)) return (1);
+			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%16[^:]",
+			    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs, flagbuf)) return (1);
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			q_stage = init_quest_stage(error_idx, stage);
 
@@ -7763,6 +7763,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_stage->timed_ingame_abs = tsia;
 			q_stage->timed_real = tsr;
 			q_stage->quiet_change = (qcs != 0);
+
+			cc = flagbuf;
+			if (*cc == '-') *cc = 0;
+			while (*cc) {
+				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) {
+					q_stage->setflags |= (0x1 << (*cc - 'A')); /* set flag */
+				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
+					q_stage->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
+				} else return 1;
+			}
 
 			/* important hack: initialise the target stage!
 			   This is done to fill that stage with default values,

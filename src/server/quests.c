@@ -1730,6 +1730,9 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 #endif
 	}
 
+	/* auto-set/clear flags? */
+	quest_set_flags(pInd, q_idx, q_stage->setflags, q_stage->clearflags);
+
 	/* auto-change stage (timed)? */
 	if (q_stage->change_stage != -1) {
 		/* not a timed change? instant then */
