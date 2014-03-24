@@ -95,6 +95,8 @@ typedef struct qi_questor {
 	bool talkable;					/* questor initially starts accepting dialogue? (by bumping usually) */
 	bool despawned;					/* questor initially starts despawned? */
 	bool invincible;				/* questor initially starts invincible (if monster)/unpickable by monsters (if item) on spawn? */
+	s16b death_fail;				/* If the questor dies, the quest goes to stage n? (->reset old stage goals/positions as if we just entered it, if that is possible? hm)
+							   -1 = quest fails completely, 255 = questor death has no effect. */
 
 	/* ..if killable ie not invincible: */
 	bool drops_regular;				/* Drops regular loot (of his ridx type) instead of nothing? */
@@ -127,8 +129,8 @@ typedef struct qi_questor_morph {
 	bool despawned;					/* questor vanishes during a quest stage? */
 
 	bool invincible;				/* Is the questor invincible (if monster)/unpickable by monsters (if item) during a particular stage? */
-	s16b death_fail;				/* If the questor dies, the quest goes to stage n? (->reset old stage goals/positions as if we just entered it, if that is possible? hm) */
-	bool death_fail_all;				/* If the questor dies, the quest fails completely? */
+	s16b death_fail;				/* If the questor dies, the quest goes to stage n? (->reset old stage goals/positions as if we just entered it, if that is possible? hm)
+							   -1 = quest fails completely, 255 = no effect */
 	cptr name;					/* questor changes optional pseudo-unique name during this stage? */
 	s16b ridx; 					/* questor changes to this base monster type */
 	char rchar;

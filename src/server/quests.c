@@ -4055,6 +4055,7 @@ qi_questor *init_quest_questor(int q_idx, int num) {
 	p->talkable = TRUE;
 	p->despawned = FALSE;
 	p->invincible = TRUE;
+	p->death_fail = -1; /* quest fails if this questor dies */
 	p->q_loc.tpref = NULL;
 
 	/* done, return the new, requested one */
@@ -4530,14 +4531,19 @@ void questor_death(int Ind, int q_idx, int questor_idx) {
 	qi_goal *q_goal;
 	qi_deliver *q_del;
 
+	/* for (object-type) questors, deactivate the quest
+	   so it will be activated anew after a cooldown? */
+
 	switch (q_questor->type) {
 	case QI_QUESTOR_NPC:
 		break;
 
 	case QI_QUESTOR_ITEM_PICKUP:
-		/* for object-type questors, deactivate the quest
-		   so it will be activated anew after a cooldown */
+		break;
+	}
 
+	/* questor death either changes stage or even terminates quest? */
+	if (q_questor->death_fail != 255) {
 		/* unstatice static locations of previous stage, possibly from
 		   quest items, targetted goals, deliver goals. */
 		q_stage = quest_qi_stage(q_idx, stage);
@@ -4549,9 +4555,9 @@ void questor_death(int Ind, int q_idx, int questor_idx) {
 			for (j = 0; j < q_stage->qitems; j++)
 				if (q_stage->qitem[j].q_loc.tpref) new_players_on_depth(&q_stage->qitem[j].result_wpos, -1, TRUE);
 		}
-
-		/* (Ind can be 0 too, if questor got destroyed by something else..) */
-		quest_terminate(Ind, q_idx);
-		break;
 	}
+
+	/* (Ind can be 0 too, if questor got destroyed by something else..) */
+	if (q_questor->death_fail == -1) quest_terminate(Ind, q_idx);
+	else if (q_questor->death_fail != 255) quest_set_stage(Ind, q_idx, q_questor->death_fail, FALSE);
 }
