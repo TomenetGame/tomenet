@@ -3685,6 +3685,11 @@ void store_confirm(int Ind) {
 	sold_obj = *o_ptr;
 	sold_obj.number = amt;
 
+	/* Remove quest item status (for stacking purpose) */
+	sold_obj.questor = 0;
+	sold_obj.quest = 0;
+	sold_obj.quest_stage = 0;
+
 	/*
 	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
 	 * charges need to be allocated between the two stacks.  If all the items 

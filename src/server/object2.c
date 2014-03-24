@@ -2891,13 +2891,19 @@ s64b object_value(int Ind, object_type *o_ptr)
  * +0x2	- tolerance for level 0 items
  * -- C. Blue
  */
-bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance)
-{
+bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance) {
 	player_type *p_ptr = NULL;
 	int total = o_ptr->number + j_ptr->number;
 
 	/* Hack -- gold always merge */
 //	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);
+
+	/* Don't EVER stack questors oO */
+	if (o_ptr->questor) return FALSE;
+	/* Don't ever stack special quest items */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return FALSE;
+	/* Don't stack quest items if not from same quest AND stage! */
+	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return FALSE;
 
 	/* Require identical object types */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (FALSE);
