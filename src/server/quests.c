@@ -1893,6 +1893,8 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	int i, j, k, py_q_idx = -1;
 	bool anything;
 	char text[MAX_CHARS * 2];
+	qi_goal *q_goal;
+	qi_deliver *q_del;
 
 #if QDEBUG > 0
 	s_printf("%s QUEST_STAGE: '%s'(%d,%s) %d->%d\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), stage);
@@ -1961,6 +1963,16 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			quest_imprint_stage(i, q_idx, Players[i]->quest_eligible - 1);
 		}
 
+		/* Optionally load map files for goal-target / goal-deliver locations */
+		for (i = 0; i < q_stage->goals; i++) {
+			q_goal = &q_stage->goal[i];
+			q_del = q_goal->deliver;
+			if (q_goal->target_tpref)
+				(void)quest_prepare_zcave(&q_goal->target_wpos, FALSE, q_goal->target_tpref, q_goal->target_tpref_x, q_goal->target_tpref_y, FALSE);
+			if (q_del && q_del->tpref)
+				(void)quest_prepare_zcave(&q_del->wpos, FALSE, q_del->tpref, q_del->tpref_x, q_del->tpref_y, FALSE);
+		}
+
 		/* perform automatic actions (spawn new quest, (timed) further stage change)
 		   Note: Should imprint correct stage on player before calling this,
 		         otherwise automatic stage change will "skip" a stage in between ^^.
@@ -2019,6 +2031,17 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 
 		/* update players' quest tracking data */
 		quest_imprint_stage(pInd, q_idx, j);
+
+		/* Optionally load map files for goal-target / goal-deliver locations */
+		for (i = 0; i < q_stage->goals; i++) {
+			q_goal = &q_stage->goal[i];
+			q_del = q_goal->deliver;
+			if (q_goal->target_tpref)
+				(void)quest_prepare_zcave(&q_goal->target_wpos, FALSE, q_goal->target_tpref, q_goal->target_tpref_x, q_goal->target_tpref_y, FALSE);
+			if (q_del && q_del->tpref)
+				(void)quest_prepare_zcave(&q_del->wpos, FALSE, q_del->tpref, q_del->tpref_x, q_del->tpref_y, FALSE);
+		}
+
 		/* play questors' stage dialogue */
 		if (!quiet)
 			for (k = 0; k < q_ptr->questors; k++) {

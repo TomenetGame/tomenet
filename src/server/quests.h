@@ -204,6 +204,7 @@ typedef struct qi_deliver {
 	byte return_to_questor;				/* do we need to return to a questor (bump) to get credit? */
 
 	cptr tpref;					/* filename of map to load, or empty for none */
+	int tpref_x, tpref_y;				/* x, y offset for loading small map parts */
 } qi_deliver;
 
 /* Sub-structure: A single quest goal (which can be kill/retrieve/deliver) */
@@ -231,6 +232,7 @@ typedef struct qi_goal {
 	byte target_pos_radius;
 
 	cptr target_tpref;				/* filename of map to load, or empty for none */
+	int target_tpref_x, target_tpref_y;		/* x, y offset for loading small map parts */
 } qi_goal;
 
 /* Sub-structure: A single quest reward.
