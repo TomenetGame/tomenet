@@ -3099,6 +3099,10 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 	int i, j, q_idx, stage;
 	qi_stage *q_stage;
 
+	/* Only check items that have already been credited in some way.
+	   (Just efficiency. It's redundant with detailed checks below.) */
+	if (!o_ptr->quest) return;
+
 #if QDEBUG > 3
 	s_printf("QUEST_CHECK_UNGOAL_r: by %d,%s\n", Ind, p_ptr->name);
 #endif
@@ -3118,6 +3122,11 @@ void quest_check_ungoal_r(int Ind, object_type *o_ptr, int num) {
 
 		stage = quest_get_stage(Ind, q_idx);
 		q_stage = quest_qi_stage(q_idx, stage);
+
+		/* only check items that have previously been credited
+		   in this quest and stage! */
+		if (o_ptr->quest - 1 != q_idx || o_ptr->quest_stage != stage) continue;
+
 #if QDEBUG > 2
 		s_printf(" (UNGOAL) CHECKING FOR QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
 #endif
