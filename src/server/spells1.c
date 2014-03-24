@@ -1283,7 +1283,6 @@ void teleport_players_level(struct worldpos *wpos) {
 	int i, method = LEVEL_OUTSIDE_RAND;
 	player_type *p_ptr;
 	struct worldpos new_depth, old_wpos;
-	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char *msg = "\377rCritical bug!";
 	cave_type **zcave;
 
