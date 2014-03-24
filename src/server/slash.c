@@ -8352,11 +8352,20 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/qccd")) { /* clear a quest's cooldown */
 				if (tk < 1) {
-					msg_print(Ind, "Usage: /qccd <q_idx> [Ind]");
+					msg_print(Ind, "Usage: /qccd <q_idx|*> [Ind]");
 					return;
 				}
 				if (tk > 1) i = atoi(token[2]);
 				else i = 0;
+				if (token[1][0] == '*') {
+					for (k = 0; k < max_q_idx; k++) {
+						if (quest_get_cooldown(i, k)) {
+							msg_format(Ind, "\377BCompleted cooldown of quest quest %d (%s).", k, q_info[k].codename);
+							quest_set_cooldown(i, k, 0);
+						}
+					}
+					return;
+				}
 				if (!quest_get_cooldown(i, k)) {
 					msg_format(Ind, "Quest %d (%s) is not on cooldown.", k, q_info[k].codename);
 					return;
@@ -8367,7 +8376,15 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/qpriv")) { /* change a quest's privilege level */
 				if (tk < 1) {
-					msg_print(Ind, "Usage: /qpriv <q_idx> [0..3]");
+					msg_print(Ind, "Usage: /qpriv <q_idx|*> [0..3]");
+					return;
+				}
+				if (token[1][0] == '*') {
+					if (tk == 1) return;
+					i = atoi(token[2]);
+					for (k = 0; k < max_q_idx; k++)
+						q_info[k].privilege = i;
+					msg_format(Ind, "All set to %d.", i);
 					return;
 				}
 				msg_format(Ind, "Quest '%s' (%s,%d) - privileged %d.", q_name + q_info[k].name, q_info[k].codename, k, q_info[k].privilege);
@@ -8379,7 +8396,17 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/qdis")) { /* disable a quest */
 				if (tk != 1) {
-					msg_print(Ind, "Usage: /qdis <q_idx>");
+					msg_print(Ind, "Usage: /qdis <q_idx|*>");
+					return;
+				}
+				if (token[1][0] == '*') {
+					for (i = 0; i < max_q_idx; i++) {
+						if (!q_info[i].disabled) {
+							msg_format(Ind, "\377rDisabling quest %d (%s).", i, q_info[i].codename);
+							quest_deactivate(i);
+							q_info[i].disabled = TRUE;
+						}
+					}
 					return;
 				}
 				if (q_info[k].disabled) {
@@ -8387,13 +8414,22 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				msg_format(Ind, "\377rDisabling quest %d (%s).", k, q_info[k].codename);
-				q_info[k].active = FALSE;
+				quest_deactivate(k);
 				q_info[k].disabled = TRUE;
 				return;
 			}
 			else if (prefix(message, "/qena")) { /* enable a quest */
 				if (tk != 1) {
-					msg_print(Ind, "Usage: /qena <q_idx>");
+					msg_print(Ind, "Usage: /qena <q_idx|*>");
+					return;
+				}
+				if (token[1][0] == '*') {
+					for (i = 0; i < max_q_idx; i++) {
+						if (q_info[i].disabled) {
+							msg_format(Ind, "\377GEnabling quest %d (%s).", i, q_info[i].codename);
+							q_info[i].disabled = FALSE;
+						}
+					}
 					return;
 				}
 				if (!q_info[k].disabled) {
@@ -8412,7 +8448,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (token[1][0] == '*') {
 					for (i = 0; i < max_q_idx; i++) {
 						if (!q_info[i].active) {
-							msg_format(Ind, "\377GActivating quest %d (%s).", k, q_info[i].codename);
+							msg_format(Ind, "\377GActivating quest %d (%s).", i, q_info[i].codename);
 							quest_activate(i);
 						}
 					}
@@ -8435,7 +8471,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (token[1][0] == '*') {
 					for (i = 0; i < max_q_idx; i++) {
 						if (q_info[i].active) {
-							msg_format(Ind, "\377rDeactivating quest %d (%s).", k, q_info[i].codename);
+							msg_format(Ind, "\377rDeactivating quest %d (%s).", i, q_info[i].codename);
 							quest_deactivate(i);
 						}
 					}
