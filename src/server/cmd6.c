@@ -105,7 +105,7 @@ static void do_tank(int Ind, int power)
 
 bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 	player_type *p_ptr = Players[Ind];
-	bool ident;
+	bool ident = FALSE;
 
 	/* Analyze the food */
 	switch (sval) {
