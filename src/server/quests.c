@@ -3392,7 +3392,7 @@ void quest_statuseffect(int Ind, int fx) {
 	else if (quaff) (void)quaff_potion(Ind, tv, sv, 0);//pval=0
 	else if (read) (void)read_scroll(Ind, tv, sv, NULL, 0, &dummy, &dummy);
 	else if (zap) (void)zap_rod(Ind, sv, DEFAULT_RADIUS, NULL, &dummy);
-	else if (use) ;
+	else if (use) (void)use_staff(Ind, sv, DEFAULT_RADIUS, FALSE, &dummy);
 	else if (act) ;
 }
 

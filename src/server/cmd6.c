@@ -2943,148 +2943,13 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 
 
 
-
-
-
-
-/*
- * Use a staff.			-RAK-
- *
- * One charge of one staff disappears.
- *
- * Hack -- staffs of identify can be "cancelled".
- */
-void do_cmd_use_staff(int Ind, int item)
-{
-        u32b f1, f2, f3, f4, f5, esp;
+bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 	player_type *p_ptr = Players[Ind];
-
-	int	ident, chance, lev, k, rad = DEFAULT_RADIUS_DEV(p_ptr);
-
-	object_type		*o_ptr;
-
-	/* Hack -- let staffs of identify get aborted */
-	bool use_charge = TRUE, flipped = FALSE;
-
-	/* Break goi/manashield */
-#if 0
-	if (p_ptr->invuln)
-		set_invuln(Ind, 0);
-	if (p_ptr->tim_manashield)
-		set_tim_manashield(Ind, 0);
-	if (p_ptr->tim_wraith)
-		set_tim_wraith(Ind, 0);
-#endif	// 0
-
-
-#if 1
-	if (p_ptr->anti_magic) {
-		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
-		return;
-	}
-#endif
-	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
-		return;
-	}
-        if (magik((p_ptr->antimagic * 8) / 5)) {
-                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-                return;
-        }
-
-	/* Restrict choices to wands */
-	item_tester_tval = TV_STAFF;
-
-	/* Get the item (in the pack) */
-	if (item >= 0) o_ptr = &p_ptr->inventory[item];
-	/* Get the item (on the floor) */
-	else {
-		if (-item >= o_max)
-			return; /* item doesn't exist */
-
-		o_ptr = &o_list[0 - item];
-	}
-
-	if( check_guard_inscription( o_ptr->note, 'u' )) {
-                msg_print(Ind, "The item's inscription prevents it.");
-                return;
-        };
-
-	if (o_ptr->tval != TV_STAFF) {
-//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-staff!");
-		return;
-	}
-
-        if (!can_use_verbose(Ind, o_ptr)) return;
-
-	/* Mega-Hack -- refuse to use a pile from the ground */
-	if ((item < 0) && (o_ptr->number > 1)) {
-		msg_print(Ind, "You must first pick up the staffs.");
-		return;
-	}
-
-	/* Verify potential overflow */
-	/*if ((inven_cnt >= INVEN_PACK) &&
-	    (o_ptr->number > 1))
-	{*/
-		/* Verify with the player */
-		/*if (other_query_flag &&
-		    !get_check("Your pack might overflow.  Continue? ")) return;
-	}*/
-
-	/* S(he) is no longer afk */
-	un_afk_idle(Ind);
-
-	/* Take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
-
-	/* Not identified yet */
-	ident = FALSE;
-
-	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
-
-	/* Base chance of success */
-	chance = p_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
-
-        /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-        /* Is it simple to use ? */
-        if (f4 & TR4_EASY_USE) chance *= 10;
-
-	/* High level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
-
-	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-		chance = USE_DEVICE;
-
-	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
-		msg_print(Ind, "You failed to use the staff properly.");
-		return;
-	}
-
-	/* Notice empty staffs */
-	if (o_ptr->pval <= 0) {
-		msg_print(Ind, "The staff has no charges left.");
-		o_ptr->ident |= ID_EMPTY;
-
-		/* Redraw */
-		o_ptr->changed = !o_ptr->changed;
-		p_ptr->window |= (PW_INVEN);
-
-		return;
-	}
-
+	bool ident = FALSE;
+	int k;
 
 	/* Analyze the staff */
-	switch (o_ptr->sval)
-	{
+	switch (sval) {
 		case SV_STAFF_DARKNESS:
 		{
 			if (unlite_area(Ind, 10, 3)) ident = TRUE;
@@ -3123,14 +2988,14 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_TELEPORTATION:
 		{
 			if (teleport_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), FALSE))
-				msg_format_near(Ind, "%s teleports away!", p_ptr->name);
+				msg_format_near(Ind, msg ? "%s teleports away!" : "%s is teleported away!", p_ptr->name);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_IDENTIFY:
 		{
-			if (!ident_spell(Ind)) use_charge = FALSE;
+			if (!ident_spell(Ind)) *use_charge = FALSE;
 			ident = TRUE;
 			break;
 		}
@@ -3141,7 +3006,8 @@ void do_cmd_use_staff(int Ind, int item)
 			{
 				if (!p_ptr->blind)
 				{
-					msg_print(Ind, "The staff glows blue for a moment...");
+					if (msg) msg_print(Ind, "The staff glows blue for a moment...");
+					msg_print(Ind, "There is a blue glow for a moment...");
 				}
 				ident = TRUE;
 			}
@@ -3152,10 +3018,11 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			if (!p_ptr->blind)
 			{
-				msg_print(Ind, "The end of the staff glows brightly...");
+				if (msg) msg_print(Ind, "The end of the staff glows brightly...");
+				else msg_print(Ind, "A bright light appear...");
 			}
 			for (k = 0; k < 8; k++) lite_line(Ind, ddd[k], damroll(9, 8) + get_skill_scale(p_ptr, SKILL_DEVICE, 100));
-			if (p_ptr->suscep_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), "a staff of starlight", 0);
+			if (p_ptr->suscep_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), msg ? "a staff of starlight" : "starlight", 0);
                     	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			ident = TRUE;
 			break;
@@ -3163,9 +3030,10 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_LITE:
 		{
-			msg_format_near(Ind, "%s calls light.", p_ptr->name);
+			if (msg) msg_format_near(Ind, "%s calls light.", p_ptr->name);
+			else msg_format_near(Ind, "A light appears.", p_ptr->name);
 			if (lite_area(Ind, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), 2)) ident = TRUE;
-			if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(20, 3), "a staff of Light", 0);
+			if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(20, 3), msg ? "a staff of Light" : "light", 0);
                     	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			break;
 		}
@@ -3289,7 +3157,7 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			if (dispel_evil(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300) + p_ptr->lev * 2)) ident = TRUE;
 			if (p_ptr->suscep_good) {
-				take_hit(Ind, damroll(30, 3), "a staff of dispel evil", 0);
+				take_hit(Ind, damroll(30, 3), msg ? "a staff of dispel evil" : "evil-dispelling magic", 0);
 				ident = TRUE;
 			}
 			break;
@@ -3305,7 +3173,7 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			if (dispel_evil(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
 			if (p_ptr->suscep_good || p_ptr->suscep_life) {
-				take_hit(Ind, damroll(50, 3), "a staff of holiness", 0);
+				take_hit(Ind, damroll(50, 3), msg ? "a staff of holiness" : "holy aura", 0);
 				ident = TRUE;
 			} else {
 				k = get_skill_scale(p_ptr, SKILL_DEVICE, 25);
@@ -3328,7 +3196,8 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_EARTHQUAKES:
 		{
-			msg_format_near(Ind, "%s causes the ground to shake!", p_ptr->name);
+			if (msg) msg_format_near(Ind, "%s causes the ground to shake!", p_ptr->name);
+			else msg_print_near(Ind, "The ground starts to shake!");
 			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
 			ident = TRUE;
 			break;
@@ -3336,7 +3205,8 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_DESTRUCTION:
 		{
-			msg_format_near(Ind, "%s unleashes great power!", p_ptr->name);
+			if (msg) msg_format_near(Ind, "%s unleashes great power!", p_ptr->name);
+			else msg_print_near(Ind, "Great power is unleashed!");
 			destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
 			ident = TRUE;
 			break;
@@ -3344,13 +3214,150 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_STAR_IDENTIFY:
 		{
-			if (!identify_fully(Ind)) use_charge = FALSE;
+			if (!identify_fully(Ind)) *use_charge = FALSE;
 			ident = TRUE;
 			break;
 		}
-
 	}
 
+	return ident;
+}
+
+/*
+ * Use a staff.			-RAK-
+ *
+ * One charge of one staff disappears.
+ *
+ * Hack -- staffs of identify can be "cancelled".
+ */
+void do_cmd_use_staff(int Ind, int item)
+{
+        u32b f1, f2, f3, f4, f5, esp;
+	player_type *p_ptr = Players[Ind];
+
+	int	ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
+
+	object_type		*o_ptr;
+
+	/* Hack -- let staffs of identify get aborted */
+	bool use_charge = TRUE, flipped = FALSE;
+
+	/* Break goi/manashield */
+#if 0
+	if (p_ptr->invuln)
+		set_invuln(Ind, 0);
+	if (p_ptr->tim_manashield)
+		set_tim_manashield(Ind, 0);
+	if (p_ptr->tim_wraith)
+		set_tim_wraith(Ind, 0);
+#endif	// 0
+
+
+#if 1
+	if (p_ptr->anti_magic) {
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+		return;
+	}
+#endif
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
+		return;
+	}
+        if (magik((p_ptr->antimagic * 8) / 5)) {
+                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+                return;
+        }
+
+	/* Restrict choices to wands */
+	item_tester_tval = TV_STAFF;
+
+	/* Get the item (in the pack) */
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
+	/* Get the item (on the floor) */
+	else {
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
+		o_ptr = &o_list[0 - item];
+	}
+
+	if( check_guard_inscription( o_ptr->note, 'u' )) {
+                msg_print(Ind, "The item's inscription prevents it.");
+                return;
+        };
+
+	if (o_ptr->tval != TV_STAFF) {
+//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-staff!");
+		return;
+	}
+
+        if (!can_use_verbose(Ind, o_ptr)) return;
+
+	/* Mega-Hack -- refuse to use a pile from the ground */
+	if ((item < 0) && (o_ptr->number > 1)) {
+		msg_print(Ind, "You must first pick up the staffs.");
+		return;
+	}
+
+	/* Verify potential overflow */
+	/*if ((inven_cnt >= INVEN_PACK) &&
+	    (o_ptr->number > 1))
+	{*/
+		/* Verify with the player */
+		/*if (other_query_flag &&
+		    !get_check("Your pack might overflow.  Continue? ")) return;
+	}*/
+
+	/* S(he) is no longer afk */
+	un_afk_idle(Ind);
+
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+	/* Not identified yet */
+	ident = FALSE;
+
+	/* Extract the item level */
+	lev = k_info[o_ptr->k_idx].level;
+
+	/* Base chance of success */
+	chance = p_ptr->skill_dev;
+
+	/* Confusion hurts skill */
+	if (p_ptr->confused) chance = chance / 2;
+
+        /* Extract object flags */
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+        /* Is it simple to use ? */
+        if (f4 & TR4_EASY_USE) chance *= 10;
+
+	/* High level objects are harder */
+	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
+
+	/* Give everyone a (slight) chance */
+	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
+		chance = USE_DEVICE;
+
+	/* Roll for usage */
+	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
+		msg_print(Ind, "You failed to use the staff properly.");
+		return;
+	}
+
+	/* Notice empty staffs */
+	if (o_ptr->pval <= 0) {
+		msg_print(Ind, "The staff has no charges left.");
+		o_ptr->ident |= ID_EMPTY;
+
+		/* Redraw */
+		o_ptr->changed = !o_ptr->changed;
+		p_ptr->window |= (PW_INVEN);
+
+		return;
+	}
+
+	ident = use_staff(Ind, o_ptr->sval, rad, TRUE, &use_charge);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -4216,7 +4223,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 	process_hooks(HOOK_ZAP, "d", Ind);
 
-	zap_rod(Ind, o_ptr->sval, rad, o_ptr, &use_charge);
+	ident = zap_rod(Ind, o_ptr->sval, rad, o_ptr, &use_charge);
 
 	if (f4 & TR4_CHARGING) o_ptr->pval /= 2;
 

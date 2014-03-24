@@ -720,6 +720,7 @@ extern bool quaff_potion(int Ind, int tval, int sval, int pval); //hack: for que
 extern void do_cmd_read_scroll(int Ind, int item);
 extern bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool *used_up, bool *keep); //hack: for quests
 extern void do_cmd_aim_wand(int Ind, int item, int dir);
+extern bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge); //hack: for quests
 extern void do_cmd_use_staff(int Ind, int item);
 extern bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge); //hack: for quests
 extern void do_cmd_zap_rod(int Ind, int item, int dir);
