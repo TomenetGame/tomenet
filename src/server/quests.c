@@ -3372,8 +3372,8 @@ static int quest_goal_check_stage(int pInd, int q_idx) {
 /* Apply status effect(s) to a specific player.
    This is an attempt at an interesting hack:
    We take a k_info.txt N-index and apply that item directly to the player!
-   Eligible items are: Potions, scrolls, staves, NON-DIRECTIONAL rods, rings,
-   amulets.
+   Eligible items are: Potions, scrolls, staves, NON-DIRECTIONAL rods.
+   (Maybe in the future rings, amulets or other items too.)
    The non-consumable item types are instead attempted to be activated. */
 //static
 void quest_statuseffect(int Ind, int fx) {
@@ -3381,19 +3381,14 @@ void quest_statuseffect(int Ind, int fx) {
 	int tv = k_info[k_idx].tval, sv = k_info[k_idx].sval;
 	bool dummy;
 
-	bool eat = (tv == TV_FOOD);
-	bool quaff = (tv == TV_POTION || tv == TV_POTION2);
-	bool read = (tv == TV_SCROLL);
-	bool use = (tv == TV_STAFF);
-	bool zap = (tv == TV_ROD);
-	bool act = (k_info[k_idx].flags3 & TR3_ACTIVATE) != 0;
-
-	if (eat) ;
-	else if (quaff) (void)quaff_potion(Ind, tv, sv, 0);//pval=0
-	else if (read) (void)read_scroll(Ind, tv, sv, NULL, 0, &dummy, &dummy);
-	else if (zap) (void)zap_rod(Ind, sv, DEFAULT_RADIUS, NULL, &dummy);
-	else if (use) (void)use_staff(Ind, sv, DEFAULT_RADIUS, FALSE, &dummy);
-	else if (act) ;
+	if (tv == TV_FOOD) (void)eat_food(Ind, sv, NULL, &dummy);
+	else if (tv == TV_POTION || tv == TV_POTION2) (void)quaff_potion(Ind, tv, sv, 0);//pval=0
+	else if (tv == TV_SCROLL) (void)read_scroll(Ind, tv, sv, NULL, 0, &dummy, &dummy);
+	else if (tv == TV_ROD) (void)zap_rod(Ind, sv, DEFAULT_RADIUS, NULL, &dummy);
+	else if (tv == TV_STAFF) (void)use_staff(Ind, sv, DEFAULT_RADIUS, FALSE, &dummy);
+	//not implemented--
+	//else if ((k_info[k_idx].flags3 & TR3_ACTIVATE)) (void)activate_item(Ind, tv, sv, DEFAULT_RADIUS, FALSE);
+	else s_printf("Warning: Unusable quest status effect %d.\n", fx);
 }
 
 /* hand out a reward object to player (if individual quest)
