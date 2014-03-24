@@ -44,8 +44,6 @@ typedef struct qi_location {
 	/* exact spawn location info */
 	struct worldpos start_wpos;			/* -1, -1 for random */
 	s16b start_x, start_y;				/* -1, -1 for random */
-	cptr tpref;					/* filename of map to load, or empty for none */
-	int tpref_x, tpref_y;				/* x, y offset for loading small map parts */
 
 	/* dungeons eligible too? */
 	bool s_dungeon[MAX_D_IDX];			/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
@@ -53,6 +51,10 @@ typedef struct qi_location {
 	u32b s_dungeon_mustnt_flags1, s_dungeon_mustnt_flags2, s_dungeon_mustnt_flags3;	/*  uneligible wilderness dungeon flags */
 	bool s_dungeon_iddc;				/* is the Ironman Deep Dive Challenge an eligible starting point? */
 	byte dlevmin, dlevmax;				/* eligible dungeon level or world sector level (0 for any) */
+
+	/* specific map design? */
+	cptr tpref;					/* filename of map to load, or empty for none */
+	int tpref_x, tpref_y;				/* x, y offset for loading small map parts */
 } qi_location;
 
 /* Sub-structure: Mandatory questor information.
@@ -109,9 +111,10 @@ typedef struct qi_questor {
 	/* ----- Dynamic questor information ----- */
 
 	/* keep track of actual resulting questor location --
-	   this data gets generated dynamically on quest activation from above template data */
+	   this data gets generated dynamically on quest activation from q_loc */
 	struct worldpos current_wpos;
 	s16b current_x, current_y;
+
 	s16b mo_idx; /* union of m_idx and o_idx :-p */
 
 	s16b talk_focus;				/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
@@ -269,6 +272,13 @@ typedef struct qi_questitem {
 	byte questor_gives;				/* Do not spawn it anywhere but just hand it over on interaction with this questor */
 
 	qi_location q_loc;				/* spawn location parameters */
+
+	/* ----- Dynamic data ----- */
+
+	/* keep track of actual resulting quest item spawn location --
+	   this data gets generated dynamically on quest item generation from q_loc */
+	struct worldpos result_wpos;
+	s16b result_x, result_y;
 } qi_questitem;
 
 /* Sub-structure: A single quest stage.

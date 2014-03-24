@@ -1682,6 +1682,10 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 		o_ptr->iy = y;
 		wpcopy(&o_ptr->wpos, &wpos);
 
+		wpcopy(&q_qitem->result_wpos, &wpos);
+		q_qitem->result_x = x;
+		q_qitem->result_y = x;
+
 		/* 'drop' it */
 		zcave = quest_prepare_zcave(&wpos, FALSE, q_qitem->q_loc.tpref, q_qitem->q_loc.tpref_x, q_qitem->q_loc.tpref_y, FALSE);
 
@@ -1911,13 +1915,25 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	qi_goal *q_goal;
 	qi_deliver *q_del;
 
+	int stage_prev = quest_get_stage(pInd, q_idx);
+
 #if QDEBUG > 0
 	s_printf("%s QUEST_STAGE: '%s'(%d,%s) %d->%d\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), stage);
 	s_printf(" actq %d, autoac %d, cstage %d\n", quest_qi_stage(q_idx, stage)->activate_quest, quest_qi_stage(q_idx, stage)->auto_accept, quest_qi_stage(q_idx, stage)->change_stage);
 #endif
 
-	/* dynamic info */
-	//int stage_prev = quest_get_stage(pInd, q_idx);
+	/* unstatice static locations of previous stage, possibly from
+	   quest items, targetted goals, deliver goals. */
+	q_stage = quest_qi_stage(q_idx, stage_prev);
+	for (i = 0; i < q_stage->goals; i++) {
+		q_goal = &q_stage->goal[i];
+		q_del = q_goal->deliver;
+		if (q_goal->target_tpref) new_players_on_depth(&q_goal->target_wpos, TRUE, -1);
+		if (q_del && q_del->tpref) new_players_on_depth(&q_del->wpos, TRUE, -1);
+		for (j = 0; j < q_stage->qitems; j++)
+			if (q_stage->qitem[j].q_loc.tpref) new_players_on_depth(&q_stage->qitem[j].result_wpos, TRUE, -1);
+	}
+
 
 	/* new stage is active.
 	   for 'individual' quests this is just a temporary value used by quest_imprint_stage().
@@ -4343,7 +4359,11 @@ void questor_drop_specific(int Ind, struct worldpos *wpos, int x, int y) {
 void questor_death(int Ind, int q_idx, int questor_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
-//	int i, j;
+
+	int i, j, stage = quest_get_stage(Ind, q_idx);
+	qi_stage *q_stage;
+	qi_goal *q_goal;
+	qi_deliver *q_del;
 
 	switch (q_questor->type) {
 	case QI_QUESTOR_NPC:
@@ -4352,21 +4372,21 @@ void questor_death(int Ind, int q_idx, int questor_idx) {
 	case QI_QUESTOR_ITEM_PICKUP:
 		/* for object-type questors, deactivate the quest
 		   so it will be activated anew after a cooldown */
-#if 0
-		for (i = 1; i <= NumPlayers; i++) {
-			for (j = 0; 0 < MAX_CONCURRENT_QUESTS; j++) {
-				if (Players[i]->quest[j] != q_idx) continue;
-				break;
-			}
-			if (j == MAX_CONCURRENT_QUESTS) continue;
-			/* all players abandon this quest forcibly */
-			quest_abandon(i, j);
+
+		/* unstatice static locations of previous stage, possibly from
+		   quest items, targetted goals, deliver goals. */
+		q_stage = quest_qi_stage(q_idx, stage);
+		for (i = 0; i < q_stage->goals; i++) {
+			q_goal = &q_stage->goal[i];
+			q_del = q_goal->deliver;
+			if (q_goal->target_tpref) new_players_on_depth(&q_goal->target_wpos, TRUE, -1);
+			if (q_del && q_del->tpref) new_players_on_depth(&q_del->wpos, TRUE, -1);
+			for (j = 0; j < q_stage->qitems; j++)
+				if (q_stage->qitem[j].q_loc.tpref) new_players_on_depth(&q_stage->qitem[j].result_wpos, TRUE, -1);
 		}
-		/* and put it on cooldown */
-		quest_deactivate(q_idx);
-#else
+
+		/* (Ind can be 0 too, if questor got destroyed by something else..) */
 		quest_terminate(Ind, q_idx);
-#endif
 		break;
 	}
 }
