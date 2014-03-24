@@ -3514,7 +3514,7 @@ static void player_talk_aux(int Ind, char *message)
 	char message2[MSG_LEN];
 	player_type *p_ptr = NULL, *q_ptr;
  	char *colon;
-	bool me = FALSE, log = TRUE;
+	bool me = FALSE, log = TRUE, nocolon = FALSE;
 	char c_n = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
 #ifdef KURZEL_PK
 	char c_b = 'B';
@@ -3541,6 +3541,10 @@ static void player_talk_aux(int Ind, char *message)
 	/* Default to no search string */
 	strcpy(search, "");
 
+	/* this ain't a proper colon (must have a receipient or chat code on the left side!) */
+	if (message[0] == ':') nocolon = TRUE;
+
+
 	/* Look for a player's name followed by a colon */
 
 	/* tBot's stuff */
@@ -3555,7 +3559,6 @@ static void player_talk_aux(int Ind, char *message)
 	/* Catch this case too anyway, just for comfort if someone uses fixed macros for -: */
 	else if (strlen(message) >= 2 && message[0] == '-' && message[1] == ':')
 		message += 2;
-
 
 
 	/* hack: preparse for private chat target, and if found
@@ -3596,7 +3599,6 @@ static void player_talk_aux(int Ind, char *message)
 		search[0] = '\0';
 		len = 0;
         }
-
 
 
 	colon = strchr(message, ':');
@@ -3703,7 +3705,8 @@ static void player_talk_aux(int Ind, char *message)
 
 	/* no big brother */
 //	if(cfg.log_u && (!colon || message[0] != '#' || message[0] != '/')){ /* message[0] != '#' || message[0] != '/' is always true -> big brother mode - mikaelh */
-	if (cfg.log_u && (!colon) && log) {
+	if (cfg.log_u && log &&
+	    (!colon || nocolon || (message[0] == '/' && strncmp(message, "/note", 5)))) {
 		/* Shorten multiple identical messages to prevent log file spam,
 		   eg recall rod activation attempts. - Exclude admins. */
 		if (admin)
