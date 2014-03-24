@@ -879,7 +879,6 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	o_ptr->iy = y;
 	wpcopy(&o_ptr->wpos, &wpos);
 
-	//o_ptr->attr = q_questor->oattr;//o_ptr->xtra3 =
 	o_ptr->name1 = q_questor->oname1;
 	o_ptr->name2 = q_questor->oname2;
 	o_ptr->name2b = q_questor->oname2b;
@@ -2877,7 +2876,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 	quest_info *q_ptr = &q_info[q_idx];;
 	player_type *p_ptr = Players[Ind];
 	int j, k, stage;
-	bool nisi;
+	bool nisi, was_credited;
 	qi_stage *q_stage;
 	qi_goal *q_goal;
 
@@ -2886,6 +2885,12 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 
 	stage = quest_get_stage(Ind, q_idx);
 	q_stage = quest_qi_stage(q_idx, stage);
+
+	/* Exception for retrieved items. Check if an item that is
+	   1) already owned or
+	   2) 'found' at the wrong target location
+	   originally WAS a valid quest item, then it is still valid! */
+	was_credited = (o_ptr && (o_ptr->quest == q_idx + 1 && o_ptr->quest_stage == stage));
 
 	/* For handling Z-lines: flags changed depending on goals completed:
 	   pre-check if we have any pending deliver goal in this stage.
@@ -2915,8 +2920,7 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 
 		/* location-restricted?
 		   Exempt already retrieved items that were just lost temporarily on the way! */
-		if (q_goal->target_pos &&
-		    (!o_ptr || !(o_ptr->quest == q_idx + 1 && o_ptr->quest_stage == stage))) {
+		if (q_goal->target_pos && !was_credited) {
 			/* extend target terrain over a wide patch? */
 			if (q_goal->target_terrain_patch) {
 				/* different z-coordinate = instant fail */
@@ -2962,11 +2966,14 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 #if 0
 			/* Targetted retrieval quests only allow unowned items,
 			   so you cannot carry them there by yourself first.. */
-			if (q_goal->target_pos && o_ptr->owner) continue;
+			if (q_goal->target_pos && o_ptr->owner && !was_credited) continue;
 #else
 			/* All retrieval items must be unowned so you can't just
 			   keep stacks of them for each quest. */
-			if (o_ptr->owner) continue;
+			/* Allow owned items if they're already marked as quest items! */
+			if (o_ptr->owner && (!was_credited ||
+			    (q_ptr->individual == 2 && o_ptr->owner != p_ptr->id)))
+				continue;
 #endif
 			if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
 
@@ -2977,6 +2984,10 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 			/* mark the item as quest item, so we know we found it at the designated target loc (if any) */
 			o_ptr->quest = q_idx + 1;
 			o_ptr->quest_stage = stage;
+
+			/* If quest is strictly individual ('solo'), make sure we cannot
+			   give the quest items to someone else for him getting credit. */
+			if (q_ptr->individual == 2) o_ptr->level = 0;
 
 			/* decrease the player's retrieve counter, if we got all, goal is completed! */
 #if QDEBUG > 2
@@ -3021,8 +3032,8 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 }
 /* Small intermediate function to reduce workload.. (1. for k-goals) */
 void quest_check_goal_k(int Ind, monster_type *m_ptr) {
-	player_type *p_ptr = Players[Ind];
-	int i;
+	player_type *p_ptr = Players[Ind], *p2_ptr;
+	int i, j, k;
 
 #if QDEBUG > 3
 	s_printf("QUEST_CHECK_GOAL_r: by %d,%s\n", Ind, p_ptr->name);
@@ -3036,6 +3047,25 @@ void quest_check_goal_k(int Ind, monster_type *m_ptr) {
 		if (!p_ptr->quest_kill[i]) continue;
 
 		quest_check_goal_kr(Ind, p_ptr->quest_idx[i], i, m_ptr, NULL);
+
+		/* if it's a party-individual quest, also credit all present
+		   party mebers who are on this quest & stage too. */
+		if (q_info[p_ptr->quest_idx[i]].individual == 1 && p_ptr->party)
+			for (j = 1; j <= NumPlayers; j++) {
+				p2_ptr = Players[j];
+				/* must be in the same sector and in the same party */
+				if (!inarea(&p_ptr->wpos, &p2_ptr->wpos)) continue;
+				if (p_ptr->party != p2_ptr->party) continue;
+				/* only give credit for exactly this quest, even if the monster
+				   matches other quests of his too. This is covered by the first
+				   for loop over the original player's further quests. */
+				if (!p2_ptr->quest_any_k_within_target) continue;//uh, efficiency maybe? (this check is redundant with next for loop)
+				for (k = 0; k < MAX_CONCURRENT_QUESTS; k++)
+					if (p_ptr->quest_idx[i] == p2_ptr->quest_idx[k]) {
+						quest_check_goal_kr(j, p2_ptr->quest_idx[k], k, m_ptr, NULL);
+						break;
+					}
+			}
 	}
 }
 /* Small intermediate function to reduce workload.. (2. for r-goals) */
