@@ -745,7 +745,7 @@ struct object_type {
 	u16b name2b;			/* 2e Ego-Item type, if any */
 	s32b name3;			/* Randart seed, if any (now it's common with ego-items -Jir-) */
 	u16b name4;			/* Index of randart name in file 'randarts.txt', solely for fun set bonus - C. Blue */
-	byte attr;			/* colour in inventory (for client) -- HACK: Abusing this for questors now on server-side >:D */
+	byte attr;			/* colour in inventory (for client) */
 
 	byte xtra1;			/* Extra info type, for various purpose */
 	byte xtra2;			/* Extra info index */
