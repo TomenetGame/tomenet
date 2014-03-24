@@ -7331,6 +7331,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	qi_keyword *q_key;
 	qi_kwreply *q_kwr;
 	qi_questitem *q_qitem;
+	qi_feature *q_feat;
 
 	bool disabled;
 	u16b flags;
@@ -7742,45 +7743,67 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'A' for automatic things in a stage: spawn new quest, (timed) stage changes, quiet change (no dialogue)? */
 		if (buf[0] == 'A') {
-			int stage, aq, aa, cs, tsi, tsia, tsr, qcs;
+			/* we have 2 sub-types of 'A' lines */
+			if (buf[1] == ':') { /* init */
+				int aq, aa, cs, tsi, tsia, tsr, qcs;
 
-			s = buf + 2;
-			if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%16[^:]",
-			    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs, flagbuf)) return (1);
-			if (stage < 0 || stage >= QI_STAGES) return 1;
-			q_stage = init_quest_stage(error_idx, stage);
+				s = buf + 2;
+				if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%16[^:]",
+				    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs, flagbuf)) return (1);
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				q_stage = init_quest_stage(error_idx, stage);
 
-			q_stage->activate_quest = aq;
-			q_stage->auto_accept = (aa != 0);
-			q_stage->auto_accept_quiet = (aq == 2);
+				q_stage->activate_quest = aq;
+				q_stage->auto_accept = (aa != 0);
+				q_stage->auto_accept_quiet = (aq == 2);
 
-			q_stage->change_stage = cs;
+				q_stage->change_stage = cs;
 #if 0
-			q_stage->timed_ingame = tsi;
+				q_stage->timed_ingame = tsi;
 #else /* kill compiler -_- */
-			k = tsi;
+				k = tsi;
 #endif
-			q_stage->timed_ingame_abs = tsia;
-			q_stage->timed_real = tsr;
-			q_stage->quiet_change = (qcs != 0);
+				q_stage->timed_ingame_abs = tsia;
+				q_stage->timed_real = tsr;
+				q_stage->quiet_change = (qcs != 0);
 
-			cc = flagbuf;
-			if (*cc == '-') *cc = 0;
-			while (*cc) {
-				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) {
-					q_stage->setflags |= (0x1 << (*cc - 'A')); /* set flag */
-				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
-					q_stage->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
-				} else return 1;
+				cc = flagbuf;
+				if (*cc == '-') *cc = 0;
+				while (*cc) {
+					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) {
+						q_stage->setflags |= (0x1 << (*cc - 'A')); /* set flag */
+					} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
+						q_stage->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
+					} else return 1;
+				}
+
+				/* important hack: initialise the target stage!
+				   This is done to fill that stage with default values,
+				   which are important when the quest actually enters that stage,
+				   even -or especially if- it is just an empty, final stage.
+				   For example it would call activate_quest >:). */
+				if (cs != -1) (void)init_quest_stage(error_idx, cs);
+				continue;
+			} else if (buf[1] == 'f') {
+				int qwpos, qiwpos, wx, wy, wz, x, y, feat;
+
+				s = buf + 3;
+				if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d",
+				    &stage, &qwpos, &qiwpos, &wx, &wy, &wz, &x, &y, &feat)) return (1);
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				q_stage = init_quest_stage(error_idx, stage);
+				q_feat = init_quest_feature(error_idx, stage, q_stage->feats); /* pop up a new one */
+
+				q_feat->wpos_questor = qwpos;
+				q_feat->wpos_questitem = qiwpos;
+				q_feat->wpos.wx = wx;
+				q_feat->wpos.wy = wy;
+				q_feat->wpos.wz = wz;
+				q_feat->x = x;
+				q_feat->y = y;
+				q_feat->feat = feat;
 			}
-
-			/* important hack: initialise the target stage!
-			   This is done to fill that stage with default values,
-			   which are important when the quest actually enters that stage,
-			   even -or especially if- it is just an empty, final stage.
-			   For example it would call activate_quest >:). */
-			if (cs != -1) (void)init_quest_stage(error_idx, cs);
-			continue;
+			return -1;
 		}
 
 		/* Process 'S' for questor changes/polymorphing/hostility */

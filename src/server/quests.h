@@ -281,6 +281,19 @@ typedef struct qi_questitem {
 	s16b result_x, result_y;
 } qi_questitem;
 
+/* Sub-structure: A single grid feature that is imprinted ('built') onto the
+   map at a specific wpos (either directly specified or derived from a questor)
+   and a specific x,y loc, automatically on stage startup. */
+typedef struct qi_feature {
+	byte wpos_questor;				/* use the current wpos of one of our questors? (overrides) */
+	byte wpos_questitem;				/* use the wpos of one of our quest items from this stage? (overrides) */
+	struct worldpos wpos;				/* use a specific wpos */
+
+	s16b x, y;					/* the cave pos to change */
+
+	byte feat;					/* the f_info.txt feat to build */
+} qi_feature;
+
 /* Sub-structure: A single quest stage.
    The central unit of a quest, providing goals, rewards and dialogue.
    A quest consists of a series of stages that switch between each other
@@ -313,6 +326,10 @@ typedef struct qi_stage {
 
 	u16b setflags;					/* these flags will automatically be set on stage start */
 	u16b clearflags;				/* these flags will automatically be cleared on stage start */
+
+	/* cave grid features to be built automatically on stage start */
+	byte feats;
+	qi_feature *feat;
 
 
 	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */

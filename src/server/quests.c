@@ -1710,6 +1710,10 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 
+	int i;
+	struct worldpos wpos;
+	qi_feature *q_feat;
+
 	/* auto-spawn (and acquire) new quest? */
 	if (q_stage->activate_quest != -1) {
 		if (!q_info[q_stage->activate_quest].disabled &&
@@ -1732,6 +1736,22 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 
 	/* auto-set/clear flags? */
 	quest_set_flags(pInd, q_idx, q_stage->setflags, q_stage->clearflags);
+
+	/* auto-build cave grid features? */
+	for (i = 0; i < q_stage->feats; i++) {
+		q_feat = &q_stage->feat[i];
+		if (q_feat->wpos_questor != 255)
+			wpos = q_ptr->questor[q_feat->wpos_questor].current_wpos;
+		else if (q_feat->wpos_questitem != 255)
+			wpos = q_stage->qitem[q_feat->wpos_questitem].result_wpos;
+		else {
+			wpos.wx = q_feat->wpos.wx;
+			wpos.wy = q_feat->wpos.wy;
+			wpos.wz = q_feat->wpos.wz;
+		}
+		/* note that this already contains a getcave() check: */
+		cave_set_feat_live(&wpos, q_feat->y, q_feat->x, q_feat->feat);
+	}
 
 	/* auto-change stage (timed)? */
 	if (q_stage->change_stage != -1) {
@@ -4358,6 +4378,33 @@ qi_questitem *init_quest_questitem(int q_idx, int stage, int num) {
 
 	/* done, return the new one */
 	return &q_stage->qitem[q_stage->qitems - 1];
+}
+
+/* Allocate/initialise a cave feature to be built in a stage,
+   or return it if already existing. */
+qi_feature *init_quest_feature(int q_idx, int stage, int num) {
+	qi_stage *q_stage = init_quest_stage(q_idx, stage);
+	qi_feature *p;
+
+
+	/* we already have this existing one */
+	if (q_stage->feats > num) return &q_stage->feat[num];
+
+	/* allocate a new one */
+	p = (qi_feature*)realloc(q_stage->feat, sizeof(qi_feature) * (q_stage->feats + 1));
+	if (!p) {
+		s_printf("init_quest_feature() Couldn't allocate memory!\n");
+		exit(0);
+	}
+	/* initialise the ADDED memory */
+	memset(&p[q_stage->feats], 0, sizeof(qi_feature));
+
+	/* attach it to its parent structure */
+	q_stage->feat = p;
+	q_stage->feats++;
+
+	/* done, return the new one */
+	return &q_stage->feat[q_stage->feats - 1];
 }
 
 /* Hack: if a quest was disabled in q_info, this will have set the

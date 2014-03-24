@@ -2186,6 +2186,7 @@ extern qi_deliver *init_quest_deliver(int q_idx, int stage, int q_info_goal);
 extern qi_goal *init_quest_goal(int q_idx, int stage, int q_info_goal);
 extern qi_reward *init_quest_reward(int q_idx, int stage, int num);
 extern qi_questitem *init_quest_questitem(int q_idx, int stage, int num);
+extern qi_feature *init_quest_feature(int q_idx, int stage, int num);
 extern void quest_handle_disabled_on_startup(void);
 extern void fix_questors_on_startup(void);
 extern void questitem_d(object_type *o_ptr, int num);
