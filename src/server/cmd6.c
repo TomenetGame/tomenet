@@ -3918,8 +3918,162 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 }
 
 
+bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
+	player_type *p_ptr = Players[Ind];
+	bool ident = FALSE;
 
+	/* Analyze the rod */
+	switch (sval) {
+		case SV_ROD_DETECT_TRAP:
+		{
+			if (detect_trap(Ind, rad)) ident = TRUE;
+			//if (o_ptr) o_ptr->pval = 50;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			break;
+		}
 
+		case SV_ROD_DETECT_DOOR:
+		{
+			if (detect_sdoor(Ind, rad)) ident = TRUE;
+			//if (o_ptr) o_ptr->pval = 70;
+			/* up to 50% faster with maxed MD - the_sandman */
+			if (o_ptr) o_ptr->pval = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
+			break;
+		}
+
+		case SV_ROD_IDENTIFY:
+		{
+			ident = TRUE;
+			if (!ident_spell(Ind)) use_charge = FALSE;
+			//if (o_ptr) o_ptr->pval = 10;
+			/* up to 50% faster with maxed MD - the_sandman */
+//at 0 skill, this is like auto-id	if (o_ptr) o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+			if (o_ptr) o_ptr->pval = 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
+			break;
+		}
+
+		case SV_ROD_RECALL:
+		{
+			if (!o_ptr) break;
+
+			set_recall(Ind, rand_int(20) + 15, o_ptr);
+			ident = TRUE;
+			//o_ptr->pval = 60;
+			/* up to a 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 60 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
+			break;
+		}
+
+		case SV_ROD_ILLUMINATION:
+		{
+			if (o_ptr) msg_format_near(Ind, "%s calls light.", p_ptr->name);
+			else msg_print_near(Ind, "A light appears.");
+			if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
+			if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
+			if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+			//if (o_ptr) o_ptr->pval = 30;
+			/* up to a 50% faster with maxed MD - the_sandman */
+			if (o_ptr) o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
+			break;
+		}
+
+		case SV_ROD_MAPPING:
+		{
+			map_area(Ind);
+			ident = TRUE;
+			//if (o_ptr) o_ptr->pval = 99;
+			/* up to a 50% faster with maxed MD - the_sandman */
+			if (o_ptr) o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
+			break;
+		}
+
+		case SV_ROD_DETECTION:
+		{
+			detection(Ind, rad);
+			ident = TRUE;
+			//if (o_ptr) o_ptr->pval = 99;
+			/* up to a 50% faster with maxed MD - the_sandman */
+			if (o_ptr) o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
+			break;
+		}
+
+		case SV_ROD_PROBING:
+		{
+			probing(Ind);
+			ident = TRUE;
+			//if (o_ptr) o_ptr->pval = 50;
+			/* up to a 50% faster with maxed MD - the_sandman */
+			if (o_ptr) o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+			break;
+		}
+
+		case SV_ROD_CURING:
+		{
+			if (set_blind(Ind, 0)) ident = TRUE;
+			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+			if (set_confused(Ind, 0)) ident = TRUE;
+			if (set_stun(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
+			if (p_ptr->food >= PY_FOOD_MAX)
+			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+			if (o_ptr) o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
+			break;
+		}
+
+		case SV_ROD_HEALING:
+		{
+#if 0
+			if (hp_player(Ind, 700)) ident = TRUE;
+			if (set_stun(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
+			if (o_ptr) o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
+			break;
+#else /* how about... */
+//scale moar!		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+			if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 250))) ident = TRUE;
+			if (set_stun(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
+//a bit too much?	if (o_ptr) o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
+			if (o_ptr) o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+			break;
+#endif
+		}
+
+		case SV_ROD_RESTORATION:
+		{
+			if (restore_level(Ind)) ident = TRUE;
+			if (do_res_stat(Ind, A_STR)) ident = TRUE;
+			if (do_res_stat(Ind, A_INT)) ident = TRUE;
+			if (do_res_stat(Ind, A_WIS)) ident = TRUE;
+			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
+			if (do_res_stat(Ind, A_CON)) ident = TRUE;
+			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
+			if (o_ptr) o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);//adjusted it here too..
+			break;
+		}
+
+		case SV_ROD_SPEED:
+		{
+			if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE; /* removed stacking */
+			if (o_ptr) o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
+			break;
+		}
+
+		case SV_ROD_NOTHING:
+		{
+			break;
+		}
+
+		default:
+		{
+			msg_print(Ind, "SERVER ERROR: Directional rod zapped in non-directional function!");
+			return FALSE;
+		}
+	}
+
+	return ident;
+}
 
 /*
  * Activate (zap) a Rod
@@ -3929,8 +4083,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
  * Hack -- rods of perception/genocide can be "cancelled"
  * All rods can be cancelled at the "Direction?" prompt
  */
-void do_cmd_zap_rod(int Ind, int item, int dir)
-{
+void do_cmd_zap_rod(int Ind, int item, int dir) {
         u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 
@@ -3943,15 +4096,12 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 
 	/* Break goi/manashield */
 #if 0
-	if (p_ptr->invuln) {
+	if (p_ptr->invuln)
 		set_invuln(Ind, 0);
-	}
-	if (p_ptr->tim_manashield) {
+	if (p_ptr->tim_manashield)
 		set_tim_manashield(Ind, 0);
-	}
-	if (p_ptr->tim_wraith) {
+	if (p_ptr->tim_wraith)
 		set_tim_wraith(Ind, 0);
-	}
 #endif	// 0
 
 
@@ -3961,8 +4111,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 		return;
 	}
 #endif	// 0
-	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
-	{
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
@@ -3975,10 +4124,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 	item_tester_tval = TV_ROD;
 
 	/* Get the item (in the pack) */
-	if (item >= 0) {
+	if (item >= 0)
 		o_ptr = &p_ptr->inventory[item];
-	}
-
 	/* Get the item (on the floor) */
 	else {
 		if (-item >= o_max)
@@ -4069,152 +4216,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir)
 
 	process_hooks(HOOK_ZAP, "d", Ind);
 
-	/* Analyze the rod */
-	switch (o_ptr->sval) {
-		case SV_ROD_DETECT_TRAP:
-		{
-			if (detect_trap(Ind, rad)) ident = TRUE;
-			//o_ptr->pval = 50;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-			break;
-		}
-
-		case SV_ROD_DETECT_DOOR:
-		{
-			if (detect_sdoor(Ind, rad)) ident = TRUE;
-			//o_ptr->pval = 70;
-			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
-			break;
-		}
-
-		case SV_ROD_IDENTIFY:
-		{
-			ident = TRUE;
-			if (!ident_spell(Ind)) use_charge = FALSE;
-			//o_ptr->pval = 10;
-			/* up to 50% faster with maxed MD - the_sandman */
-//at 0 skill, this is like auto-id	o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
-			o_ptr->pval = 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
-			break;
-		}
-
-		case SV_ROD_RECALL:
-		{
-			set_recall(Ind, rand_int(20) + 15, o_ptr);
-			ident = TRUE;
-			//o_ptr->pval = 60;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 60 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
-			break;
-		}
-
-		case SV_ROD_ILLUMINATION:
-		{
-			msg_format_near(Ind, "%s calls light.", p_ptr->name);
-			if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
-			if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
-                    	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-			//o_ptr->pval = 30;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
-			break;
-		}
-
-		case SV_ROD_MAPPING:
-		{
-			map_area(Ind);
-			ident = TRUE;
-			//o_ptr->pval = 99;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
-			break;
-		}
-
-		case SV_ROD_DETECTION:
-		{
-			detection(Ind, rad);
-			ident = TRUE;
-			//o_ptr->pval = 99;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
-			break;
-		}
-
-		case SV_ROD_PROBING:
-		{
-			probing(Ind);
-			ident = TRUE;
-			//o_ptr->pval = 50;
-			/* up to a 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
-			break;
-		}
-
-		case SV_ROD_CURING:
-		{
-			if (set_blind(Ind, 0)) ident = TRUE;
-			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
-			if (set_confused(Ind, 0)) ident = TRUE;
-			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
-			if (p_ptr->food >= PY_FOOD_MAX)
-			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
-			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
-			break;
-		}
-
-		case SV_ROD_HEALING:
-		{
-#if 0
-			if (hp_player(Ind, 700)) ident = TRUE;
-			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
-			o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
-			break;
-#else /* how about... */
-//scale moar!		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
-			if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 250))) ident = TRUE;
-			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0, 0)) ident = TRUE;
-//a bit too much?	o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
-			o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
-			break;
-#endif
-		}
-
-		case SV_ROD_RESTORATION:
-		{
-			if (restore_level(Ind)) ident = TRUE;
-			if (do_res_stat(Ind, A_STR)) ident = TRUE;
-			if (do_res_stat(Ind, A_INT)) ident = TRUE;
-			if (do_res_stat(Ind, A_WIS)) ident = TRUE;
-			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
-			if (do_res_stat(Ind, A_CON)) ident = TRUE;
-			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
-			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);//adjusted it here too..
-			break;
-		}
-
-		case SV_ROD_SPEED:
-		{
-			if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE; /* removed stacking */
-			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
-			break;
-		}
-
-		case SV_ROD_NOTHING:
-		{
-			break;
-		}
-
-		default:
-		{
-			msg_print(Ind, "SERVER ERROR: Directional rod zapped in non-directional function!");
-			return;
-		}
-	}
+	zap_rod(Ind, o_ptr->sval, rad, o_ptr, &use_charge);
 
 	if (f4 & TR4_CHARGING) o_ptr->pval /= 2;
 

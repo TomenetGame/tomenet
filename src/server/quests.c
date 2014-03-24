@@ -3372,7 +3372,8 @@ static int quest_goal_check_stage(int pInd, int q_idx) {
 /* Apply status effect(s) to a specific player.
    This is an attempt at an interesting hack:
    We take a k_info.txt N-index and apply that item directly to the player!
-   Eligible items are: Potions, scrolls, staves, rods, rings, amulets.
+   Eligible items are: Potions, scrolls, staves, NON-DIRECTIONAL rods, rings,
+   amulets.
    The non-consumable item types are instead attempted to be activated. */
 //static
 void quest_statuseffect(int Ind, int fx) {
@@ -3388,9 +3389,9 @@ void quest_statuseffect(int Ind, int fx) {
 	bool act = (k_info[k_idx].flags3 & TR3_ACTIVATE) != 0;
 
 	if (eat) ;
-	else if (quaff) (void)quaff_potion(NumPlayers, tv, sv, 0);//pval=0
-	else if (read) (void)read_scroll(NumPlayers, tv, sv, NULL, 0, &dummy, &dummy);
-	else if (zap) ;
+	else if (quaff) (void)quaff_potion(Ind, tv, sv, 0);//pval=0
+	else if (read) (void)read_scroll(Ind, tv, sv, NULL, 0, &dummy, &dummy);
+	else if (zap) (void)zap_rod(Ind, sv, DEFAULT_RADIUS, NULL, &dummy);
 	else if (use) ;
 	else if (act) ;
 }
