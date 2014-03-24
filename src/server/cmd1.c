@@ -1800,6 +1800,9 @@ void carry(int Ind, int pickup, int confirm) {
 
 			msg_print(Ind, "You add the ammo to your quiver.");
 
+			/* Check whether this item was requested by an item-retrieval quest */
+			if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
+
 			/* Get the item again */
 			o_ptr = &(p_ptr->inventory[slot]);
 
@@ -2004,6 +2007,9 @@ void carry(int Ind, int pickup, int confirm) {
 			if (okay) {
 				int slot;
 
+				/* Check whether this item was requested by an item-retrieval quest */
+				if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
+
 				/* Own it */
 				if (!o_ptr->owner) {
 					o_ptr->owner = p_ptr->id;
@@ -2104,7 +2110,6 @@ void carry(int Ind, int pickup, int confirm) {
  #endif
 				}
 #endif
-
 
 				can_use(Ind, o_ptr);
 				/* for Ironman Deep Dive Challenge cross-trading */
@@ -2341,9 +2346,6 @@ void carry(int Ind, int pickup, int confirm) {
 						}
 					}
 				}
-
-				/* Check whether this item was requested by an item-retrieval quest */
-				if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
 
 				/* Carry the item */
 				slot = inven_carry(Ind, o_ptr);

@@ -8385,6 +8385,9 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		invwipe(&p_ptr->inventory[i]);
 	}
 
+	/* Check whether this item was requested by an item-retrieval quest */
+	if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
+
 	if (!o_ptr->owner && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
@@ -8400,7 +8403,6 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 #ifdef	AUTO_INSCRIBER
 	if (p_ptr->auto_inscribe) auto_inscribe(Ind, o_ptr, 0);
 #endif
-
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
@@ -8444,9 +8446,6 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 	/* Return the slot */
 	p_ptr->inventory[i].auto_insc = TRUE;
-
-	/* Check whether this item was requested by an item-retrieval quest */
-	if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
 
 	return (i);
 }

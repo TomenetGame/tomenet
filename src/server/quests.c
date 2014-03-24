@@ -2959,10 +2959,15 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *
 	///TODO: implement for global quests too!
 		/* check for retrieve-item goal here */
 		if (o_ptr && q_goal->retrieve) {
+#if 0
 			/* Targetted retrieval quests only allow unowned items,
 			   so you cannot carry them there by yourself first.. */
 			if (q_goal->target_pos && o_ptr->owner) continue;
-
+#else
+			/* All retrieval items must be unowned so you can't just
+			   keep stacks of them for each quest. */
+			if (o_ptr->owner) continue;
+#endif
 			if (!quest_goal_matches_object(q_idx, stage, j, o_ptr)) continue;
 
 			/* discard (old) items from another quest or quest stage that just look similar!
