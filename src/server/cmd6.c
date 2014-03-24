@@ -537,8 +537,7 @@ void do_cmd_eat_food(int Ind, int item) {
 
 
 
-static bool quaff_potion(int Ind, int tval, int sval, int pval)
-{
+bool quaff_potion(int Ind, int tval, int sval, int pval) {
 	player_type *p_ptr = Players[Ind];
 	int ident = FALSE;
 	int i;
@@ -2168,21 +2167,617 @@ static int check_self_summon(player_type *p_ptr){
 	return(FALSE);
 }
 
+bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool *used_up, bool *keep) {
+	player_type *p_ptr = Players[Ind];
+	int ident = FALSE;
+	int k, x, y, d_tries, d_no;
+	char	m_name[MNAME_LEN];
+        monster_type    *m_ptr;
+        monster_race    *r_ptr;
+
+	/* Analyze the scroll */
+	if (tval == TV_SCROLL) {
+		switch (sval) {
+			case SV_SCROLL_HOUSE:
+			{
+				if (!o_ptr) break;
+
+				/* With my fix, this scroll causes crash when rebooting server.
+				 * w/o my fix, this scroll causes crash when finishing house
+				 * creation.  Pfft
+				 */
+				//unsigned char *ins = quark_str(o_ptr->note);
+				cptr ins = quark_str(o_ptr->note);
+				bool floor = TRUE;
+				bool jail = FALSE;
+				msg_print(Ind, "This is a house creation scroll.");
+				ident = TRUE;
+				if(ins){
+					while ((*ins != '\0')) {
+						if (*ins == '@') {
+							ins++;
+							if (*ins == 'F') {
+								floor = FALSE;
+							}
+							if (*ins == 'J') {
+								jail = TRUE;
+							}
+						}
+						ins++;
+					}
+				}
+				house_creation(Ind, floor, jail);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_GOLEM:
+				if (o_ptr) msg_print(Ind, "This is a golem creation scroll.");
+				ident = TRUE;
+				golem_creation(Ind, 1);
+				break;
+
+			case SV_SCROLL_BLOOD_BOND:
+				if (!o_ptr) break;
+
+				msg_print(Ind, "This is a blood bond scroll.");
+				ident = TRUE;
+				if (!(p_ptr->mode & MODE_PVP)) blood_bond(Ind, o_ptr);
+				else msg_print(Ind, "True gladiators must fight to the death!");
+				break;
+
+			case SV_SCROLL_ARTIFACT_CREATION:
+				if (!o_ptr) break;
+
+				msg_print(Ind, "This is an artifact creation scroll.");
+				ident = TRUE;
+				/* check for 'no +LIFE' inscription */
+				if (o_ptr->note && check_guard_inscription(o_ptr->note, 'L'))
+					(void)create_artifact(Ind, TRUE);
+				else
+					(void)create_artifact(Ind, FALSE);
+				*used_up = FALSE;
+				p_ptr->using_up_item = item;
+				break;
+
+			case SV_SCROLL_DARKNESS:
+				if (unlite_area(Ind, 10, 3)) ident = TRUE;
+				if (!p_ptr->resist_dark)
+					(void)set_blind(Ind, p_ptr->blind + 3 + randint(5));
+				break;
+
+			case SV_SCROLL_AGGRAVATE_MONSTER:
+#ifdef USE_SOUND_2010
+				sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
+#endif
+ 				msg_print(Ind, "\377RThere is a high-pitched humming noise.");
+ 				msg_print_near(Ind, "\377RThere is a high-pitched humming noise.");
+				aggravate_monsters(Ind, -1);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_CURSE_ARMOR:
+				if (curse_armor(Ind)) ident = TRUE;
+				break;
+
+			case SV_SCROLL_CURSE_WEAPON:
+				if (curse_weapon(Ind)) ident = TRUE;
+				break;
+
+			case SV_SCROLL_SUMMON_MONSTER:
+				if(!check_self_summon(p_ptr)) break;
+				s_printf("SUMMON_MONSTER: %s\n", p_ptr->name);
+				summon_override_checks = SO_IDDC;
+				for (k = 0; k < randint(3); k++) {
+					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_ALL_U98, 1, 0))
+						ident = TRUE;
+				}
+				summon_override_checks = SO_NONE;
+				break;
+
+			case SV_SCROLL_CONJURE_MONSTER: /* clone to avoid heavy mimic cheeze (and maybe exp cheeze) */
+				if (!o_ptr) break;
+
+				if(!check_self_summon(p_ptr)) break;
+				k = get_monster(Ind, o_ptr);
+				if(!k) break;
+				if (r_info[k].flags1 & RF1_UNIQUE) break;
+
+				monster_race_desc(Ind, m_name, k, 0x188);
+		                msg_format(Ind, "\377oYou conjure %s!", m_name);
+				msg_format_near(Ind, "\377o%s conjures %s", p_ptr->name, m_name);
+				if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, k, 100, 1))
+					ident = TRUE;
+				break;
+
+			case SV_SCROLL_SLEEPING:
+				msg_print(Ind, "A veil of sleep falls down over the wide surroundings..");
+			        for (k = m_top - 1; k >= 0; k--) {
+			                /* Access the monster */
+			                m_ptr = &m_list[m_fast[k]];
+					r_ptr = race_inf(m_ptr);
+	    			        /* On this level? Test its highest encounter so far */
+			                if (inarea(&m_ptr->wpos, &p_ptr->wpos) &&
+					    !((r_ptr->flags1 & RF1_UNIQUE) ||
+			                    (r_ptr->flags3 & RF3_NO_SLEEP)))
+						m_ptr->csleep = 1000;
+			        }
+				break;
+
+			/* not adding bounds checking now... because of perma walls
+			   hope that I don't need to......
+
+			   OK, modified so you cant ressurect ghosts in walls......
+			   to prevent bad things from happening in town.
+			   */
+			case SV_SCROLL_LIFE:
+				/* only restore life levels if no resurrect */
+				if(!do_scroll_life(Ind))
+					restore_level(Ind);
+				break;
+
+
+			case SV_SCROLL_SUMMON_UNDEAD:
+				if(!check_self_summon(p_ptr)) break;
+				s_printf("SUMMON_UNDEAD: %s\n", p_ptr->name);
+				summon_override_checks = SO_IDDC;
+				for (k = 0; k < randint(3); k++) {
+					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_UNDEAD, 1, 0))
+						ident = TRUE;
+				}
+				summon_override_checks = SO_NONE;
+				break;
+
+			case SV_SCROLL_TRAP_CREATION:
+				if (trap_creation(Ind, 5, 1)) ident = TRUE;
+				break;
+
+			case SV_SCROLL_PHASE_DOOR:
+				teleport_player(Ind, 10, TRUE);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_TELEPORT:
+				teleport_player(Ind, 100, FALSE);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_TELEPORT_LEVEL:
+				teleport_player_level(Ind, FALSE);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_WORD_OF_RECALL:
+				if (!o_ptr) break;
+
+				set_recall(Ind, rand_int(20) + 15, o_ptr);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_IDENTIFY:
+				if (!o_ptr) break;
+
+				msg_print(Ind, "This is an identify scroll.");
+				ident = TRUE;
+				(void)ident_spell(Ind);
+				*used_up = FALSE;
+				p_ptr->using_up_item = item;
+				break;
+
+			case SV_SCROLL_STAR_IDENTIFY:
+				if (!o_ptr) break;
+
+				msg_print(Ind, "This is an *identify* scroll.");
+				ident = TRUE;
+				(void)identify_fully(Ind);
+				*used_up = FALSE;
+				p_ptr->using_up_item = item;
+				break;
+
+			case SV_SCROLL_REMOVE_CURSE:
+				if (remove_curse(Ind)) {
+					msg_print(Ind, "\377GYou feel as if someone is watching over you.");
+					ident = TRUE;
+				}
+				break;
+
+			case SV_SCROLL_STAR_REMOVE_CURSE:
+				remove_all_curse(Ind);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_ENCHANT_ARMOR:
+				if (!o_ptr) break;
+
+				msg_print(Ind, "This is a Scroll of Enchant Armour.");
+				ident = TRUE;
+				(void)enchant_spell(Ind, 0, 0, 1, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
+				*used_up = FALSE;
+				p_ptr->using_up_item = item;
+				break;
+
+			case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
+				if (!o_ptr) break;
+
+				msg_print(Ind, "This is a Scroll of Enchant Weapon To-Hit.");
+				(void)enchant_spell(Ind, 1, 0, 0, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
+				*used_up = FALSE;
+				p_ptr->using_up_item = item;
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
+				if (!o_ptr) break;
+
+				msg_print(Ind, "This is a Scroll of Enchant Weapon To-Dam.");
+				(void)enchant_spell(Ind, 0, 1, 0, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
+				*used_up = FALSE;
+				p_ptr->using_up_item = item;
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_STAR_ENCHANT_ARMOR:
+				if (!o_ptr) break;
+
+				msg_print(Ind, "This is a Scroll of *Enchant Armour*.");
+				(void)enchant_spell(Ind, 0, 0, randint(3) + 3, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
+				*used_up = FALSE;
+				p_ptr->using_up_item = item;
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_STAR_ENCHANT_WEAPON:
+				if (!o_ptr) break;
+
+				msg_print(Ind, "This is a Scroll of *Enchant Weapon*.");
+				(void)enchant_spell(Ind, 1 + randint(2), 1 + randint(2), 0, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
+				*used_up = FALSE;
+				p_ptr->using_up_item = item;
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_RECHARGING:
+				if (!o_ptr) break;
+
+				msg_print(Ind, "This is a Scroll of Recharging.");
+				(void)recharge(Ind, 60);
+				*used_up = FALSE;
+				p_ptr->using_up_item = item;
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_LIGHT:
+				if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
+				//if (p_ptr->suscep_lite && !p_ptr->resist_lite)
+				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite)
+					take_hit(Ind, damroll(10, 3), o_ptr ? "a Scroll of Light" : "a flash of light", 0);
+                        	//if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind)
+				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite && !p_ptr->resist_blind)
+					(void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+				break;
+
+			case SV_SCROLL_MAPPING:
+				map_area(Ind);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_DETECT_GOLD:
+				if (detect_treasure(Ind, DEFAULT_RADIUS * 2)) ident = TRUE;
+				break;
+
+			case SV_SCROLL_DETECT_ITEM:
+				if (detect_object(Ind, DEFAULT_RADIUS * 2)) ident = TRUE;
+				break;
+
+			case SV_SCROLL_DETECT_TRAP:
+				if (detect_trap(Ind, DEFAULT_RADIUS)) ident = TRUE;
+				break;
+
+			case SV_SCROLL_DETECT_DOOR:
+				if (detect_sdoor(Ind, DEFAULT_RADIUS)) ident = TRUE;
+				break;
+
+			case SV_SCROLL_DETECT_INVIS:
+				if (detect_invisible(Ind)) ident = TRUE;
+				break;
+
+			case SV_SCROLL_SATISFY_HUNGER:
+				//if (!p_ptr->suscep_life)
+				if (p_ptr->prace != RACE_VAMPIRE && p_ptr->prace != RACE_ENT) {
+					if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+				} else
+					if (o_ptr) msg_print(Ind, "The scroll has no effect on you.");
+				break;
+
+			case SV_SCROLL_BLESSING:
+				if (p_ptr->suscep_good || p_ptr->suscep_life) {
+				//if (p_ptr->prace == RACE_VAMPIRE) {
+					take_hit(Ind, damroll(5, 3), o_ptr ? "a Scroll of Blessing" : "a blessing", 0);
+				} else if (p_ptr->blessed_power <= 8) {
+				        p_ptr->blessed_power = 8;
+					if (set_blessed(Ind, randint(12) + 6)) ident = TRUE; /* removed stacking */
+				}
+				break;
+
+			case SV_SCROLL_HOLY_CHANT:
+				if (p_ptr->suscep_good || p_ptr->suscep_life) {
+				//if (p_ptr->prace == RACE_VAMPIRE) {
+					take_hit(Ind, damroll(10, 3), o_ptr ? "a Scroll of Holy Chant" : "a chant", 0);
+				} else if (p_ptr->blessed_power <= 14) {
+					p_ptr->blessed_power = 14;
+					if (set_blessed(Ind, randint(24) + 12)) ident = TRUE; /* removed stacking */
+				}
+				break;
+
+			case SV_SCROLL_HOLY_PRAYER:
+				if (p_ptr->suscep_good || p_ptr->suscep_life) {
+				//if (p_ptr->prace == RACE_VAMPIRE) {
+					take_hit(Ind, damroll(30, 3), o_ptr ? "a Scroll of Holy Prayer" : "a holy prayer", 0);
+				} else if (p_ptr->blessed_power <= 20) {
+					p_ptr->blessed_power = 20;
+					if (set_blessed(Ind, randint(48) + 24)) ident = TRUE; /* removed stacking */
+				}
+				break;
+
+			case SV_SCROLL_MONSTER_CONFUSION:
+				if (p_ptr->confusing == 0) {
+					msg_print(Ind, "Your hands begin to glow.");
+					p_ptr->confusing = TRUE;
+					ident = TRUE;
+				}
+				break;
+
+			case SV_SCROLL_PROTECTION_FROM_EVIL:
+				if (p_ptr->suscep_good || p_ptr->suscep_life) {
+				//if (p_ptr->prace == RACE_VAMPIRE) {
+					take_hit(Ind, damroll(10, 3), o_ptr ? "a Scroll of Protection from Evil" : "evil-repelling magic", 0);
+				} else {
+					if (set_protevil(Ind, randint(15) + 30)) ident = TRUE; /* removed stacking */
+				}
+				break;
+
+			case SV_SCROLL_RUNE_OF_PROTECTION:
+				warding_glyph(Ind);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
+				if (destroy_doors_touch(Ind, 1)) ident = TRUE;
+				break;
+
+			case SV_SCROLL_STAR_DESTRUCTION:
+				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_DISPEL_UNDEAD:
+				if (dispel_undead(Ind, 100 + p_ptr->lev * 8)) ident = TRUE;
+				//if (p_ptr->suscep_life)
+				if (p_ptr->prace == RACE_VAMPIRE)
+					take_hit(Ind, damroll(30, 3), o_ptr ? "a Scroll of Dispel Undead" : "undead-dispelling magic", 0);
+				break;
+
+			case SV_SCROLL_GENOCIDE:
+				if (o_ptr) msg_print(Ind, "This is a genocide scroll.");
+				(void)genocide(Ind);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_OBLITERATION:
+				if (o_ptr) msg_print(Ind, "This is a obliteration scroll.");
+				(void)obliteration(Ind);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_ACQUIREMENT:
+			{
+				int obj_tmp = object_level;
+				if (!o_ptr) break;
+
+				object_level = getlevel(&p_ptr->wpos);
+				if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
+			        s_printf("%s: ACQ_SCROLL: by player %s\n", showtime(), p_ptr->name);
+				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
+				object_discount = 0;
+				object_level = obj_tmp; /*just paranoia, dunno if needed.*/
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_STAR_ACQUIREMENT:
+			{
+				int obj_tmp = object_level;
+				if (!o_ptr) break;
+
+				object_level = getlevel(&p_ptr->wpos);
+				if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
+			        s_printf("%s: *ACQ_SCROLL*: by player %s\n", showtime(), p_ptr->name);
+				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
+				object_discount = 0;
+				object_level = obj_tmp; /*just paranoia, dunno if needed.*/
+				ident = TRUE;
+				break;
+			}
+
+			/* New Zangband scrolls */
+			case SV_SCROLL_FIRE:
+				sprintf(p_ptr->attacker, " is enveloped by fire for");
+				fire_ball(Ind, GF_FIRE, 0, 200, 4, p_ptr->attacker);
+				/* Note: "Double" damage since it is centered on the player ... */
+				if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
+					//                                take_hit(Ind, 50+randint(50)+(p_ptr->suscep_fire)?20:0, "a Scroll of Fire", 0);
+					take_hit(Ind, 100 + randint(100), o_ptr ? "a Scroll of Fire" : "fire", 0);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_ICE:
+				sprintf(p_ptr->attacker, " enveloped by frost for");
+				fire_ball(Ind, GF_ICE, 0, 200, 4, p_ptr->attacker);
+				if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
+					take_hit(Ind, 100 + randint(100), o_ptr ? "a Scroll of Ice" : "ice", 0);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_CHAOS:
+				sprintf(p_ptr->attacker, " is enveloped by raw chaos for");
+#if 0 // GF_CHAOS == teleporting/polymorphing stuff around...
+				fire_ball(Ind, GF_CHAOS, 0, 500, 4, p_ptr->attacker);
+#else
+				call_chaos(Ind, 0, 0);
+#endif
+				if (!p_ptr->resist_chaos)
+					take_hit(Ind, 111+randint(111), o_ptr ? "a Scroll of Chaos" : "chaos", 0);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_RUMOR:
+				if (o_ptr) msg_print(Ind, "You read the scroll:");
+				fortune(Ind, magik(40) ? TRUE : FALSE);
+				ident = TRUE;
+				break;
+
+			case SV_SCROLL_LOTTERY:
+				if (!o_ptr) break;
+
+				do_lottery(Ind, o_ptr);
+				ident = TRUE;
+				break;
+
+#if 0	// implement them whenever you feel like :)
+			case SV_SCROLL_BACCARAT:
+			case SV_SCROLL_BLACK_JACK:
+			case SV_SCROLL_ROULETTE:
+			case SV_SCROLL_SLOT_MACHINE:
+			case SV_SCROLL_BACK_GAMMON:
+				break;
+#endif	// 0
+
+			case SV_SCROLL_ID_ALL:
+				identify_pack(Ind);
+				break;
+
+			case SV_SCROLL_VERMIN_CONTROL:
+				if (do_vermin_control(Ind)) ident = TRUE;
+				break;
+
+			case SV_SCROLL_NOTHING:
+				if (o_ptr) msg_print(Ind, "This scroll seems to be blank.");
+				ident = TRUE;
+				*keep = TRUE;
+				break;
+
+			case SV_SCROLL_CANCELLATION:
+				ident = do_cancellation(Ind, 0);
+				if (ident) msg_print(Ind, "You feel your backpack less worthy.");
+				break;
+
+			case SV_SCROLL_WILDERNESS_MAP:
+			{
+				/* Reveal a random dungeon location (C. Blue): */
+				dungeon_type *d_ptr;
+				if (rand_int(100) < 50) {
+				    x = 0;
+				    /* first dungeon (d_tries = 0) is always 'wildernis'
+				    -> ignore it by skipping to d_tries = 1: */
+				    for (d_tries = 1; d_tries < MAX_D_IDX; d_tries++) {
+					if (d_info[d_tries].name) x++;
+				    }
+				    d_no = randint(x);
+				    y = 0;
+				    for (d_tries = 1; d_tries < MAX_D_IDX; d_tries++) {
+					if (d_info[d_tries].name) y++;
+					if (y == d_no) {
+					    d_no = d_tries;
+					    d_tries = MAX_D_IDX;
+					}
+				    }
+
+				    if (!strcmp(d_info[d_no].name + d_name, "The Shores of Valinor")) break;
+
+				    d_tries = 0;
+				    for (y = 0; y < MAX_WILD_Y; y++)
+				    for (x = 0; x < MAX_WILD_X; x++) {
+					if (d_tries == 0) {
+					    if ((d_ptr = wild_info[y][x].tower)) {
+				    		if (d_ptr->type == d_no) {
+					    	    d_tries = 1;
+						    if (o_ptr) msg_format(Ind, "\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
+						}
+				    	    }
+					    if ((d_ptr = wild_info[y][x].dungeon)) {
+				    		if (d_ptr->type == d_no) {
+						    d_tries = 1;
+						    if (o_ptr) msg_format(Ind, "\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
+						}
+				    	    }
+					}
+				    }
+				}
+
+				if (p_ptr->wpos.wz) {
+					msg_print(Ind, "You have a strange feeling of loss.");
+					break;
+				}
+				ident = reveal_wilderness_around_player(Ind,
+						p_ptr->wpos.wy, p_ptr->wpos.wx, 0, 3);
+				//if (ident) wild_display_map(Ind);
+				if (ident) msg_print(Ind, "You seem to get a feel for the place.");
+				break;
+			}
+
+		}
+	} else if (tval == TV_PARCHMENT) {
+#if 0
+		/* Maps */
+		if (sval >= 200) {
+			int i, n;
+			char buf[80], fil[20];
+
+			strnfmt(fil, 20, "book-%d.txt",o_ptr->sval);
+
+			n = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, -1));
+
+			/* Parse all the fields */
+			for (i = 0; i < n; i += 4) {
+				/* Grab the fields */
+				int x = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 0));
+				int y = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 1));
+				int w = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 2));
+				int h = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 3));
+
+				reveal_wilderness_around_player(y, x, h, w);
+			}
+		}
+
+		/* Normal parchments */
+		else
+#endif	// 0
+		{
+			/* Get the filename */
+			char    path[MAX_PATH_LENGTH];
+			cptr q = format("book-%d.txt", sval);
+
+			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, q);
+			do_cmd_check_other_prepare(Ind, path, "");
+
+//			*used_up = FALSE;
+			*keep = TRUE;
+		}
+	}
+	return ident;
+}
+
 /*
  * NOTE: seemingly, 'used_up' flag is used in a strange way to allow
  * item specification.  'keep' flag should be used for non-consuming
  * scrolls instead.		- Jir -
  */
-void do_cmd_read_scroll(int Ind, int item)
-{
+void do_cmd_read_scroll(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-        monster_type    *m_ptr;
-        monster_race    *r_ptr;
 	//cave_type * c_ptr;
 
-	int	k, ident, lev, d_no, d_tries, x, y; //, antichance;
+	int	ident, lev;
 	bool	used_up, keep = FALSE, flipped = FALSE;
-	char	m_name[MNAME_LEN];
 
 	object_type	*o_ptr;
 
@@ -2273,7 +2868,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP;/* AM cap */
 	/* Got disrupted ? */
 	if (magik(antichance)) {
-    		msg_print(Ind, "Your anti-magic field disrupts the scroll.");
+		msg_print(Ind, "Your anti-magic field disrupts the scroll.");
 	        return;
 	}
 #endif
@@ -2299,565 +2894,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 	sound(Ind, "read_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-	/* Analyze the scroll */
-	if (o_ptr->tval == TV_SCROLL) {
-		switch (o_ptr->sval) {
-			case SV_SCROLL_HOUSE:
-			{
-				/* With my fix, this scroll causes crash when rebooting server.
-				 * w/o my fix, this scroll causes crash when finishing house
-				 * creation.  Pfft
-				 */
-				//unsigned char *ins = quark_str(o_ptr->note);
-				cptr ins = quark_str(o_ptr->note);
-				bool floor = TRUE;
-				bool jail = FALSE;
-				msg_print(Ind, "This is a house creation scroll.");
-				ident = TRUE;
-				if(ins){
-					while ((*ins != '\0')) {
-						if (*ins == '@') {
-							ins++;
-							if (*ins == 'F') {
-								floor = FALSE;
-							}
-							if (*ins == 'J') {
-								jail = TRUE;
-							}
-						}
-						ins++;
-					}
-				}
-				house_creation(Ind, floor, jail);
-				ident = TRUE;
-				break;
-			}
-
-			case SV_SCROLL_GOLEM:
-				msg_print(Ind, "This is a golem creation scroll.");
-				ident = TRUE;
-				golem_creation(Ind, 1);
-				break;
-
-			case SV_SCROLL_BLOOD_BOND:
-
-				msg_print(Ind, "This is a blood bond scroll.");
-				ident = TRUE;
-				if (!(p_ptr->mode & MODE_PVP)) blood_bond(Ind, o_ptr);
-				else msg_print(Ind, "True gladiators must fight to the death!");
-				break;
-
-			case SV_SCROLL_ARTIFACT_CREATION:
-
-				msg_print(Ind, "This is an artifact creation scroll.");
-				ident = TRUE;
-				/* check for 'no +LIFE' inscription */
-				if (o_ptr->note && check_guard_inscription(o_ptr->note, 'L'))
-					(void)create_artifact(Ind, TRUE);
-				else
-					(void)create_artifact(Ind, FALSE);
-				used_up = FALSE;
-				p_ptr->using_up_item = item;
-				break;
-
-			case SV_SCROLL_DARKNESS:
-				if (unlite_area(Ind, 10, 3)) ident = TRUE;
-				if (!p_ptr->resist_dark)
-					(void)set_blind(Ind, p_ptr->blind + 3 + randint(5));
-				break;
-
-			case SV_SCROLL_AGGRAVATE_MONSTER:
-#ifdef USE_SOUND_2010
-				sound_near(Ind, "monster_shriek", NULL, SFX_TYPE_MON_SPELL);
-#endif
- 				msg_print(Ind, "\377RThere is a high-pitched humming noise.");
- 				msg_print_near(Ind, "\377RThere is a high-pitched humming noise.");
-				aggravate_monsters(Ind, -1);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_CURSE_ARMOR:
-				if (curse_armor(Ind)) ident = TRUE;
-				break;
-
-			case SV_SCROLL_CURSE_WEAPON:
-				if (curse_weapon(Ind)) ident = TRUE;
-				break;
-
-			case SV_SCROLL_SUMMON_MONSTER:
-				if(!check_self_summon(p_ptr)) break;
-				s_printf("SUMMON_MONSTER: %s\n", p_ptr->name);
-				summon_override_checks = SO_IDDC;
-				for (k = 0; k < randint(3); k++) {
-					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_ALL_U98, 1, 0))
-						ident = TRUE;
-				}
-				summon_override_checks = SO_NONE;
-				break;
-
-			case SV_SCROLL_CONJURE_MONSTER: /* clone to avoid heavy mimic cheeze (and maybe exp cheeze) */
-				if(!check_self_summon(p_ptr)) break;
-				k = get_monster(Ind, o_ptr);
-				if(!k) break;
-				if (r_info[k].flags1 & RF1_UNIQUE) break;
-
-				monster_race_desc(Ind, m_name, k, 0x188);
-		                msg_format(Ind, "\377oYou conjure %s!", m_name);
-				msg_format_near(Ind, "\377o%s conjures %s", p_ptr->name, m_name);
-				if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, k, 100, 1))
-					ident = TRUE;
-				break;
-
-			case SV_SCROLL_SLEEPING:
-				msg_print(Ind, "A veil of sleep falls down over the wide surroundings..");
-			        for (k = m_top - 1; k >= 0; k--) {
-			                /* Access the monster */
-			                m_ptr = &m_list[m_fast[k]];
-					r_ptr = race_inf(m_ptr);
-	    			        /* On this level? Test its highest encounter so far */
-			                if (inarea(&m_ptr->wpos, &p_ptr->wpos) &&
-					    !((r_ptr->flags1 & RF1_UNIQUE) ||
-			                    (r_ptr->flags3 & RF3_NO_SLEEP)))
-						m_ptr->csleep = 1000;
-			        }
-				break;
-
-			/* not adding bounds checking now... because of perma walls
-			   hope that I don't need to......
-
-			   OK, modified so you cant ressurect ghosts in walls......
-			   to prevent bad things from happening in town.
-			   */
-			case SV_SCROLL_LIFE:
-				/* only restore life levels if no resurrect */
-				if(!do_scroll_life(Ind))
-					restore_level(Ind);
-				break;
-
-
-			case SV_SCROLL_SUMMON_UNDEAD:
-				if(!check_self_summon(p_ptr)) break;
-				s_printf("SUMMON_UNDEAD: %s\n", p_ptr->name);
-				summon_override_checks = SO_IDDC;
-				for (k = 0; k < randint(3); k++) {
-					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_UNDEAD, 1, 0))
-						ident = TRUE;
-				}
-				summon_override_checks = SO_NONE;
-				break;
-
-			case SV_SCROLL_TRAP_CREATION:
-				if (trap_creation(Ind, 5, 1)) ident = TRUE;
-				break;
-
-			case SV_SCROLL_PHASE_DOOR:
-				teleport_player(Ind, 10, TRUE);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_TELEPORT:
-				teleport_player(Ind, 100, FALSE);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_TELEPORT_LEVEL:
-				teleport_player_level(Ind, FALSE);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_WORD_OF_RECALL:
-				set_recall(Ind, rand_int(20) + 15, o_ptr);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_IDENTIFY:
-				msg_print(Ind, "This is an identify scroll.");
-				ident = TRUE;
-				(void)ident_spell(Ind);
-				used_up = FALSE;
-				p_ptr->using_up_item = item;
-				break;
-
-			case SV_SCROLL_STAR_IDENTIFY:
-				msg_print(Ind, "This is an *identify* scroll.");
-				ident = TRUE;
-				(void)identify_fully(Ind);
-				used_up = FALSE;
-				p_ptr->using_up_item = item;
-				break;
-
-			case SV_SCROLL_REMOVE_CURSE:
-				if (remove_curse(Ind)) {
-					msg_print(Ind, "\377GYou feel as if someone is watching over you.");
-					ident = TRUE;
-				}
-				break;
-
-			case SV_SCROLL_STAR_REMOVE_CURSE:
-				remove_all_curse(Ind);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_ENCHANT_ARMOR:
-				msg_print(Ind, "This is a Scroll of Enchant Armour.");
-				ident = TRUE;
-				(void)enchant_spell(Ind, 0, 0, 1, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
-				used_up = FALSE;
-				p_ptr->using_up_item = item;
-				break;
-
-			case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
-				msg_print(Ind, "This is a Scroll of Enchant Weapon To-Hit.");
-				(void)enchant_spell(Ind, 1, 0, 0, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
-				used_up = FALSE;
-				p_ptr->using_up_item = item;
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
-				msg_print(Ind, "This is a Scroll of Enchant Weapon To-Dam.");
-				(void)enchant_spell(Ind, 0, 1, 0, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
-				used_up = FALSE;
-				p_ptr->using_up_item = item;
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_STAR_ENCHANT_ARMOR:
-				msg_print(Ind, "This is a Scroll of *Enchant Armour*.");
-				(void)enchant_spell(Ind, 0, 0, randint(3) + 3, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
-				used_up = FALSE;
-				p_ptr->using_up_item = item;
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_STAR_ENCHANT_WEAPON:
-				msg_print(Ind, "This is a Scroll of *Enchant Weapon*.");
-				(void)enchant_spell(Ind, 1 + randint(2), 1 + randint(2), 0, o_ptr->discount == 100 ? ENCH_STOLEN : 0);
-				used_up = FALSE;
-				p_ptr->using_up_item = item;
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_RECHARGING:
-				msg_print(Ind, "This is a Scroll of Recharging.");
-				(void)recharge(Ind, 60);
-				used_up = FALSE;
-				p_ptr->using_up_item = item;
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_LIGHT:
-				if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
-				//if (p_ptr->suscep_lite && !p_ptr->resist_lite)
-				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite)
-					take_hit(Ind, damroll(10, 3), "a Scroll of Light", 0);
-                        	//if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind)
-				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite && !p_ptr->resist_blind)
-					(void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-				break;
-
-			case SV_SCROLL_MAPPING:
-				map_area(Ind);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_DETECT_GOLD:
-				if (detect_treasure(Ind, DEFAULT_RADIUS * 2)) ident = TRUE;
-				break;
-
-			case SV_SCROLL_DETECT_ITEM:
-				if (detect_object(Ind, DEFAULT_RADIUS * 2)) ident = TRUE;
-				break;
-
-			case SV_SCROLL_DETECT_TRAP:
-				if (detect_trap(Ind, DEFAULT_RADIUS)) ident = TRUE;
-				break;
-
-			case SV_SCROLL_DETECT_DOOR:
-				if (detect_sdoor(Ind, DEFAULT_RADIUS)) ident = TRUE;
-				break;
-
-			case SV_SCROLL_DETECT_INVIS:
-				if (detect_invisible(Ind)) ident = TRUE;
-				break;
-
-			case SV_SCROLL_SATISFY_HUNGER:
-				//if (!p_ptr->suscep_life)
-				if (p_ptr->prace != RACE_VAMPIRE && p_ptr->prace != RACE_ENT) {
-					if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
-				} else
-					msg_print(Ind, "The scroll has no effect on you.");
-				break;
-
-			case SV_SCROLL_BLESSING:
-				if (p_ptr->suscep_good || p_ptr->suscep_life) {
-				//if (p_ptr->prace == RACE_VAMPIRE) {
-					take_hit(Ind, damroll(5, 3), "a Scroll of Blessing", 0);
-				} else if (p_ptr->blessed_power <= 8) {
-				        p_ptr->blessed_power = 8;
-					if (set_blessed(Ind, randint(12) + 6)) ident = TRUE; /* removed stacking */
-				}
-				break;
-
-			case SV_SCROLL_HOLY_CHANT:
-				if (p_ptr->suscep_good || p_ptr->suscep_life) {
-				//if (p_ptr->prace == RACE_VAMPIRE) {
-					take_hit(Ind, damroll(10, 3), "a Scroll of Holy Chant", 0);
-				} else if (p_ptr->blessed_power <= 14) {
-					p_ptr->blessed_power = 14;
-					if (set_blessed(Ind, randint(24) + 12)) ident = TRUE; /* removed stacking */
-				}
-				break;
-
-			case SV_SCROLL_HOLY_PRAYER:
-				if (p_ptr->suscep_good || p_ptr->suscep_life) {
-				//if (p_ptr->prace == RACE_VAMPIRE) {
-					take_hit(Ind, damroll(30, 3), "a Scroll of Holy Prayer", 0);
-				} else if (p_ptr->blessed_power <= 20) {
-					p_ptr->blessed_power = 20;
-					if (set_blessed(Ind, randint(48) + 24)) ident = TRUE; /* removed stacking */
-				}
-				break;
-
-			case SV_SCROLL_MONSTER_CONFUSION:
-				if (p_ptr->confusing == 0) {
-					msg_print(Ind, "Your hands begin to glow.");
-					p_ptr->confusing = TRUE;
-					ident = TRUE;
-				}
-				break;
-
-			case SV_SCROLL_PROTECTION_FROM_EVIL:
-				if (p_ptr->suscep_good || p_ptr->suscep_life) {
-				//if (p_ptr->prace == RACE_VAMPIRE) {
-					take_hit(Ind, damroll(10, 3), "a Scroll of Protection from Evil", 0);
-				} else {
-					if (set_protevil(Ind, randint(15) + 30)) ident = TRUE; /* removed stacking */
-				}
-				break;
-
-			case SV_SCROLL_RUNE_OF_PROTECTION:
-				warding_glyph(Ind);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
-				if (destroy_doors_touch(Ind, 1)) ident = TRUE;
-				break;
-
-			case SV_SCROLL_STAR_DESTRUCTION:
-				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_DISPEL_UNDEAD:
-				if (dispel_undead(Ind, 100 + p_ptr->lev * 8)) ident = TRUE;
-				//if (p_ptr->suscep_life)
-				if (p_ptr->prace == RACE_VAMPIRE)
-					take_hit(Ind, damroll(30, 3), "a Scroll of Dispel Undead", 0);
-				break;
-
-			case SV_SCROLL_GENOCIDE:
-				msg_print(Ind, "This is a genocide scroll.");
-				(void)genocide(Ind);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_OBLITERATION:
-				msg_print(Ind, "This is a obliteration scroll.");
-				(void)obliteration(Ind);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_ACQUIREMENT:
-			{
-				int obj_tmp = object_level;
-				object_level = getlevel(&p_ptr->wpos);
-				if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
-			        s_printf("%s: ACQ_SCROLL: by player %s\n", showtime(), p_ptr->name);
-				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
-				object_discount = 0;
-				object_level = obj_tmp; /*just paranoia, dunno if needed.*/
-				ident = TRUE;
-				break;
-			}
-
-			case SV_SCROLL_STAR_ACQUIREMENT:
-			{
-				int obj_tmp = object_level;
-				object_level = getlevel(&p_ptr->wpos);
-				if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
-			        s_printf("%s: *ACQ_SCROLL*: by player %s\n", showtime(), p_ptr->name);
-				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
-				object_discount = 0;
-				object_level = obj_tmp; /*just paranoia, dunno if needed.*/
-				ident = TRUE;
-				break;
-			}
-
-			/* New Zangband scrolls */
-			case SV_SCROLL_FIRE:
-				sprintf(p_ptr->attacker, " is enveloped by fire for");
-				fire_ball(Ind, GF_FIRE, 0, 200, 4, p_ptr->attacker);
-				/* Note: "Double" damage since it is centered on the player ... */
-				if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
-					//                                take_hit(Ind, 50+randint(50)+(p_ptr->suscep_fire)?20:0, "a Scroll of Fire", 0);
-					take_hit(Ind, 100 + randint(100), "a Scroll of Fire", 0);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_ICE:
-				sprintf(p_ptr->attacker, " enveloped by frost for");
-				fire_ball(Ind, GF_ICE, 0, 200, 4, p_ptr->attacker);
-				if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
-					take_hit(Ind, 100 + randint(100), "a Scroll of Ice", 0);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_CHAOS:
-				sprintf(p_ptr->attacker, " is enveloped by raw chaos for");
-#if 0 // GF_CHAOS == teleporting/polymorphing stuff around...
-				fire_ball(Ind, GF_CHAOS, 0, 500, 4, p_ptr->attacker);
-#else
-				call_chaos(Ind, 0, 0);
-#endif
-				if (!p_ptr->resist_chaos)
-					take_hit(Ind, 111+randint(111), "a Scroll of Chaos", 0);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_RUMOR:
-				msg_print(Ind, "You read the scroll:");
-				fortune(Ind, magik(40) ? TRUE : FALSE);
-				ident = TRUE;
-				break;
-
-			case SV_SCROLL_LOTTERY:
-				do_lottery(Ind, o_ptr);
-				ident = TRUE;
-				break;
-
-#if 0	// implement them whenever you feel like :)
-			case SV_SCROLL_BACCARAT:
-			case SV_SCROLL_BLACK_JACK:
-			case SV_SCROLL_ROULETTE:
-			case SV_SCROLL_SLOT_MACHINE:
-			case SV_SCROLL_BACK_GAMMON:
-				break;
-#endif	// 0
-
-			case SV_SCROLL_ID_ALL:
-				identify_pack(Ind);
-				break;
-
-			case SV_SCROLL_VERMIN_CONTROL:
-				if (do_vermin_control(Ind)) ident = TRUE;
-				break;
-
-			case SV_SCROLL_NOTHING:
-				msg_print(Ind, "This scroll seems to be blank.");
-				ident = TRUE;
-				keep = TRUE;
-				break;
-
-			case SV_SCROLL_CANCELLATION:
-				ident = do_cancellation(Ind, 0);
-				if (ident) msg_print(Ind, "You feel your backpack less worthy.");
-				break;
-
-			case SV_SCROLL_WILDERNESS_MAP:
-			{
-				/* Reveal a random dungeon location (C. Blue): */
-				dungeon_type *d_ptr;
-				if (rand_int(100) < 50) {
-				    x = 0;
-				    /* first dungeon (d_tries = 0) is always 'wildernis'
-				    -> ignore it by skipping to d_tries = 1: */
-				    for (d_tries = 1; d_tries < MAX_D_IDX; d_tries++) {
-					if (d_info[d_tries].name) x++;
-				    }
-				    d_no = randint(x);
-				    y = 0;
-				    for (d_tries = 1; d_tries < MAX_D_IDX; d_tries++) {
-					if (d_info[d_tries].name) y++;
-					if (y == d_no) {
-					    d_no = d_tries;
-					    d_tries = MAX_D_IDX;
-					}
-				    }
-
-				    if (!strcmp(d_info[d_no].name + d_name, "The Shores of Valinor")) break;
-
-				    d_tries = 0;
-				    for (y = 0; y < MAX_WILD_Y; y++)
-				    for (x = 0; x < MAX_WILD_X; x++) {
-					if (d_tries == 0) {
-					    if ((d_ptr = wild_info[y][x].tower)) {
-				    		if (d_ptr->type == d_no) {
-					    	    d_tries = 1;
-						    msg_format(Ind, "\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
-						}
-				    	    }
-					    if ((d_ptr = wild_info[y][x].dungeon)) {
-				    		if (d_ptr->type == d_no) {
-						    d_tries = 1;
-						    msg_format(Ind, "\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
-						}
-				    	    }
-					}
-				    }
-				}
-
-				if (p_ptr->wpos.wz) {
-					msg_print(Ind, "You have a strange feeling of loss.");
-					break;
-				}
-				ident = reveal_wilderness_around_player(Ind,
-						p_ptr->wpos.wy, p_ptr->wpos.wx, 0, 3);
-				//if (ident) wild_display_map(Ind);
-				if (ident) msg_print(Ind, "You seem to get a feel for the place.");
-				break;
-			}
-
-		}
-	} else if (o_ptr->tval == TV_PARCHMENT) {
-#if 0
-		/* Maps */
-		if (o_ptr->sval >= 200) {
-			int i, n;
-			char buf[80], fil[20];
-
-			strnfmt(fil, 20, "book-%d.txt",o_ptr->sval);
-
-			n = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, -1));
-
-			/* Parse all the fields */
-			for (i = 0; i < n; i += 4) {
-				/* Grab the fields */
-				int x = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 0));
-				int y = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 1));
-				int w = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 2));
-				int h = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 3));
-
-				reveal_wilderness_around_player(y, x, h, w);
-			}
-		}
-
-		/* Normal parchments */
-		else
-#endif	// 0
-		{
-			/* Get the filename */
-			char    path[MAX_PATH_LENGTH];
-			cptr q = format("book-%d.txt",o_ptr->sval);
-
-			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, q);
-			do_cmd_check_other_prepare(Ind, path, "");
-
-//			used_up = FALSE;
-			keep = TRUE;
-		}
-	}
+	ident = read_scroll(Ind, o_ptr->tval, o_ptr->sval, o_ptr, item, &used_up, &keep);
 
 	break_cloaking(Ind, 4);
 	break_shadow_running(Ind);

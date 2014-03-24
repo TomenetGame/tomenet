@@ -8494,6 +8494,11 @@ void do_slash_cmd(int Ind, char *message)
 				quest_set_stage(0, k, atoi(token[2]), FALSE);
 				return;
 			}
+			else if (prefix(message, "/qfx")) { /* for testing/debugging status effects (for rewards) */
+				quest_statuseffect(Ind, k);
+				msg_print(Ind, "Applied.");
+				return;
+			}
 		}
 	}
 

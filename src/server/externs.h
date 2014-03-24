@@ -367,6 +367,7 @@ extern header *k_head;
 extern object_kind *k_info;
 extern char *k_name;
 extern char *k_text;
+extern s16b k_info_num[MAX_K_IDX];
 extern header *t_head;
 extern trap_kind *t_info;
 extern char *t_name;
@@ -715,7 +716,9 @@ extern bool curse_weapon(int Ind);
 bool do_cancellation(int Ind, int flags);
 extern void do_cmd_eat_food(int Ind, int item);
 extern void do_cmd_quaff_potion(int Ind, int item);
+extern bool quaff_potion(int Ind, int tval, int sval, int pval); //hack: for quests
 extern void do_cmd_read_scroll(int Ind, int item);
+extern bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool *used_up, bool *keep); //hack: for quests */
 extern void do_cmd_aim_wand(int Ind, int item, int dir);
 extern void do_cmd_use_staff(int Ind, int item);
 extern void do_cmd_zap_rod(int Ind, int item, int dir);
@@ -2156,6 +2159,7 @@ extern s16b quest_get_cooldown(int pInd, int q_idx);
 extern void quest_set_cooldown(int pInd, int q_idx, s16b cooldown);
 extern s16b quest_get_stage(int pInd, int q_idx);
 extern void quest_set_stage(int pInd, int q_idx, int stage, bool quiet);
+extern void quest_statuseffect(int Ind, int fx);
 /* those called for quest goal handling in other regular game functions: */
 extern void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff);
 extern void quest_acquire_confirmed(int Ind, int q_idx, bool quiet);

@@ -3371,13 +3371,28 @@ static int quest_goal_check_stage(int pInd, int q_idx) {
 
 /* Apply status effect(s) to a specific player.
    This is an attempt at an interesting hack:
-   We simulate the player using an item, and compare his status before and
-   after. The difference is then amplified in duration and applied for real.
-   The simulation happens on a temporary, virtual dummy player ;).
+   We take a k_info.txt N-index and apply that item directly to the player!
    Eligible items are: Potions, scrolls, staves, rods, rings, amulets.
    The non-consumable item types are instead attempted to be activated. */
-static void quest_statuseffect(int Ind, int fx) {
-	
+//static
+void quest_statuseffect(int Ind, int fx) {
+	int k_idx = k_info_num[fx];
+	int tv = k_info[k_idx].tval, sv = k_info[k_idx].sval;
+	bool dummy;
+
+	bool eat = (tv == TV_FOOD);
+	bool quaff = (tv == TV_POTION || tv == TV_POTION2);
+	bool read = (tv == TV_SCROLL);
+	bool use = (tv == TV_STAFF);
+	bool zap = (tv == TV_ROD);
+	bool act = (k_info[k_idx].flags3 & TR3_ACTIVATE) != 0;
+
+	if (eat) ;
+	else if (quaff) (void)quaff_potion(NumPlayers, tv, sv, 0);//pval=0
+	else if (read) (void)read_scroll(NumPlayers, tv, sv, NULL, 0, &dummy, &dummy);
+	else if (zap) ;
+	else if (use) ;
+	else if (act) ;
 }
 
 /* hand out a reward object to player (if individual quest)

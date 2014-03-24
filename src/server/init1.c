@@ -2561,7 +2561,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			if (!*s) return (1);
 
 			/* Get the index */
-//			i = atoi(buf + 2);
+			//i = atoi(buf + 2);
 
 			/* Count it up */
 			i = ++idx;
@@ -2577,6 +2577,9 @@ errr init_k_info_txt(FILE *fp, char *buf)
 
 			/* Point at the "info" */
 			k_ptr = &k_info[i];
+
+			/* For quest_statuseffect() */
+			k_info_num[atoi(buf + 2)] = i;
 
 			/* Hack -- Verify space */
 			if (k_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
