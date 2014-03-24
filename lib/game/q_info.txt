@@ -28,7 +28,7 @@ V:0.0.1
 # note: Each L-line must follow after its Q line!
 # (optional) F (up to 5x, per Q line):accept-on-los? (N.I.):accept-on-interaction?:talkable?:despawned? (N.I.):invincible?:staticfloor?:quitfloor?(N.I.)
 
-#(Parameters from here on are all individual per quest stage)
+#(Parameters from here on, except for keywords/keywordreplies, are all individual per quest stage)
 
 # (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0:timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue):set/clear flags
 # (optional, up to 5x) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
