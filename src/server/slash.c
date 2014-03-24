@@ -8406,7 +8406,16 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/qstart")) { /* activate a quest */
 				if (tk != 1) {
-					msg_print(Ind, "Usage: /qstart <q_idx>");
+					msg_print(Ind, "Usage: /qstart <q_idx|*>");
+					return;
+				}
+				if (token[1][0] == '*') {
+					for (i = 0; i < max_q_idx; i++) {
+						if (!q_info[i].active) {
+							msg_format(Ind, "\377GActivating quest %d (%s).", k, q_info[i].codename);
+							quest_activate(i);
+						}
+					}
 					return;
 				}
 				if (q_info[k].active) {
@@ -8420,7 +8429,16 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/qstop")) { /* cancel a quest */
 				if (tk != 1) {
-					msg_print(Ind, "Usage: /qstop <q_idx>");
+					msg_print(Ind, "Usage: /qstop <q_idx|*>");
+					return;
+				}
+				if (token[1][0] == '*') {
+					for (i = 0; i < max_q_idx; i++) {
+						if (q_info[i].active) {
+							msg_format(Ind, "\377rDeactivating quest %d (%s).", k, q_info[i].codename);
+							quest_deactivate(i);
+						}
+					}
 					return;
 				}
 				if (!q_info[k].active) {
