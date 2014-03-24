@@ -3369,17 +3369,24 @@ static int quest_goal_check_stage(int pInd, int q_idx) {
 	return -1; /* goals are not complete yet */
 }
 
+/* Apply status effect(s) to a specific player.
+   This is an attempt at an interesting hack:
+   We simulate the player using an item, and compare his status before and
+   after. The difference is then amplified in duration and applied for real.
+   The simulation happens on a temporary, virtual dummy player ;).
+   Eligible items are: Potions, scrolls, staves, rods, rings, amulets.
+   The non-consumable item types are instead attempted to be activated. */
+static void quest_statuseffect(int Ind, int fx) {
+	
+}
+
 /* hand out a reward object to player (if individual quest)
    or to all involved players in the area (if non-individual quest) */
 static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 	quest_info *q_ptr = &q_info[q_idx];
-	//player_type *p_ptr;
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
-		/*p_ptr = Players[pInd];
-		drop_near(o_ptr, -1, &p_ptr->wpos, &p_ptr->py, &p_ptr->px);*/
-		//msg_print(pInd, "You have received an item."); --give just ONE message for ALL items, less spammy
 		inven_carry(pInd, o_ptr);
 		return;
 	}
@@ -3403,9 +3410,6 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 		if (j == q_ptr->questors) continue;
 
 		/* hand him out the reward too */
-		/*p_ptr = Players[i];
-		drop_near(o_ptr, -1, &p_ptr->wpos, &p_ptr->py, &p_ptr->px);*/
-		//msg_print(i, "You have received an item."); --give just ONE message for ALL items, less spammy
 		inven_carry(i, o_ptr);
 	}
 }
@@ -3418,7 +3422,6 @@ static void quest_reward_create(int pInd, int q_idx) {
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
-		//msg_print(pInd, "You have received an item."); --give just ONE message for ALL items, less spammy
 		give_reward(pInd, resf, q_name + q_ptr->name, 0, 0);
 		return;
 	}
@@ -3442,7 +3445,6 @@ static void quest_reward_create(int pInd, int q_idx) {
 		if (j == q_ptr->questors) continue;
 
 		/* hand him out the reward too */
-		//msg_print(i, "You have received an item."); --give just ONE message for ALL items, less spammy
 		give_reward(i, resf, q_name + q_ptr->name, 0, 0);
 	}
 }
@@ -3454,7 +3456,6 @@ static void quest_reward_gold(int pInd, int q_idx, int au) {
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
-		//msg_format(pInd, "You have received %d gold pieces.", au); --give just ONE message for ALL gold, less spammy
 		gain_au(pInd, au, FALSE, FALSE);
 		return;
 	}
@@ -3478,7 +3479,6 @@ static void quest_reward_gold(int pInd, int q_idx, int au) {
 		if (j == q_ptr->questors) continue;
 
 		/* hand him out the reward too */
-		//msg_format(i, "You have received %d gold pieces.", au); --give just ONE message for ALL gold, less spammy
 		gain_au(i, au, FALSE, FALSE);
 	}
 }
@@ -3490,7 +3490,6 @@ static void quest_reward_exp(int pInd, int q_idx, int exp) {
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
-		//msg_format(pInd, "You have received %d experience points.", exp); --give just ONE message for ALL gold, less spammy
 		gain_exp(pInd, exp);
 		return;
 	}
@@ -3514,8 +3513,41 @@ static void quest_reward_exp(int pInd, int q_idx, int exp) {
 		if (j == q_ptr->questors) continue;
 
 		/* hand him out the reward too */
-		//msg_format(i, "You have received %d experience points.", exp); --give just ONE message for ALL gold, less spammy
 		gain_exp(i, exp);
+	}
+}
+
+/* provide status effect to player (if individual quest)
+   or to all involved players in the area (if non-individual quest) */
+static void quest_reward_statuseffect(int pInd, int q_idx, int fx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	int i, j;
+
+	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
+		quest_statuseffect(pInd, fx);
+		return;
+	}
+
+	if (!q_ptr->individual) {
+		s_printf(" QUEST_REWARD_STATUSEFFECT: not individual, but no pInd either.\n");
+		return;//catch paranoid bugs--maybe obsolete
+	}
+
+	/* global quest (or for some reason missing pInd..<-paranoia)  */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* is the player on this quest? */
+		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+			if (Players[i]->quest_idx[j] == q_idx) break;
+		if (j == MAX_CONCURRENT_QUESTS) continue;
+
+		/* must be around a questor to receive the rewards,
+		   so you can't afk-quest in a pack of people with one person doing it all. */
+		for (j = 0; j < q_ptr->questors; j++)
+			if (inarea(&Players[i]->wpos, &q_ptr->questor[j].current_wpos)) break;
+		if (j == q_ptr->questors) continue;
+
+		/* hand him out the reward too */
+		quest_statuseffect(i, fx);
 	}
 }
 
@@ -3570,7 +3602,8 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 		if (!q_rew->otval &&
 		    !q_rew->oreward &&
 		    !q_rew->gold &&
-		    !q_rew->exp) //TODO: reward_statuseffect
+		    !q_rew->exp &&
+		    !q_rew->statuseffect)
 			continue;
 
 		/* scan through all goals required to be fulfilled to get this reward */
@@ -3648,7 +3681,8 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 				quest_reward_exp(pInd, q_idx, q_rew->exp);
 				r_exp += q_rew->exp;
 			}
-			//TODO: s16b reward_statuseffect[QI_STAGES][QI_STAGE_REWARDS];
+			if (q_rew->statuseffect)
+				quest_reward_statuseffect(pInd, q_idx, q_rew->statuseffect);
 		}
 	}
 
