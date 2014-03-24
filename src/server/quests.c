@@ -1852,6 +1852,14 @@ void quest_precheck_retrieval(int Ind, int q_idx, int py_q_idx) {
 #endif
 	for (i = 0; i < INVEN_PACK; i++) {
 		if (!p_ptr->inventory[i].k_idx) continue;
+#if 1
+		/* Do not allow pre-gathering of quest items?
+		   Except for special quest items because those can be handed out
+		   by the questor and hence are already in our inventory. */
+		if (p_ptr->inventory[i].tval != TV_SPECIAL ||
+		    p_ptr->inventory[i].sval != SV_QUEST)
+			continue;
+#endif
 		quest_check_goal_kr(Ind, q_idx, py_q_idx, NULL, &p_ptr->inventory[i]);
 	}
 }
@@ -1866,10 +1874,6 @@ void quest_precheck_retrieval(int Ind, int q_idx, int py_q_idx) {
    -change wpos once, then go back, to be able to deliver.
    Let this function also be known as...badumtsh.. <INSTAEND HACK>! */
 static void quest_instacheck_retrieval(int Ind, int q_idx, int py_q_idx) {
-#if 1
-	/* Do not allow pre-gathering of quest items? */
-	return;
-#endif
 	/* Check if our current wpos/location is already an important target
 	   for retrieval quests that we just acquired */
 	quest_check_player_location(Ind);
