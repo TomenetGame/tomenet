@@ -106,6 +106,13 @@ V:0.0.1
 # Status effects (rewards): Positive numbers indicate a potion, scroll, staff or non-directional(!) rod from k_info.txt.
 #  Negative numbers are extra effects: -1 = 1000t of luck, -2 = 2000t of luck, -3 = 3000t of luck.
 
+# Lines completely left out of the implementation so far:
+# //todo (optional) K (5x repeatable, per Q line):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
+# //todo (optional) D:dungeon to spawn ...
+# //todo (optional) S:stage:questor changes/polymorphes ...
+# //todo (optional) S/H:stage:questor hostility ...
+# //todo (optional) J:stage:questor moves, teleports, teleports player ...
+
 
 # for testing purpose
 N:0:testquesAR:C. Blue:Test Quest:-1
@@ -199,57 +206,3 @@ M:2:2:0:63:63:0:0:99:35:1:-:0:0
 G:2:4:1:2
 X:4:-:The Goalkeeper Bat seems very satisfied.
 R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
-
-
-
-# Complete state, when everything has been implemented:
-
-# N:index:codename:creator:quest name[:repeatable (-1 for infinitely, default is 0, append an 'x' to disable it)]
-# (optional) C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
-# (optional) I:privileged:individual:minlv:maxlv:races:classes:modenorm:modeel:modepvp:fruitbat(1=real,2=real or fake):monsterform:questdonecreditstage
-# (optional) E:list of colon-separated prequest codenames
-# (optional) T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
-# (optional) U:endingstage (0 = none):duration:cooldown
-# //Q (5x repeatable, for up to 5 questors):type:ridx:char:attr:minlv:maxlv:sval:ktval:ksval:name
-# Q-lines are up to 5x repeatable, for up to 5 questors
-# Q (for type=monster)  :type:ridx:char:attr:minlv:maxlv:name
-# Q (for type=parchment):type:sval:attr:level:name
-# Q (for type=object)   :type:tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:attr:level:name
-# //todo (optional) K (5x repeatable, per Q line):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
-# L (5x repeatable per Q line):locations:towns:exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:mapfile (if not using terrain type) or '-':map offset x:y
-# (optional) F (5x repeatable per Q line):accept-on-los?:accept-on-interaction?:talkable?:despawned?:invincible?:staticfloor?:quitfloor?
-# //todo (optional) D:dungeon to spawn ...
-#(Parameters from here on are all individual per quest stage)
-# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage:timed change offset:timed change absolute:timed change at realtime (-1 disables):change quietly (skip stage dialogue)
-# (optional,5x rep) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
-# (for each B line) Bl:stage:questorhandout (-1 to disable):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
-# note: 'Bl' takes same parameters as 'L' lines (except for 'questor hand out'). Each Bl-line must follow after its B-line!
-# //NOPE (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0 (nonfunctional):timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue)
-# //todo (optional) S:questor changes/polymorphes ...
-# //todo (optional) S/H:questor hostility ...
-# //todo (optional) J:questor moves, teleports, teleports player ...
-# (optional) X (50x repeatable):stage:flags:narration text
-# (optional?) W (15x repeatable):questor:stage:flags:examine? (0=normal talk,1=examine):convo line
-# (optional) Y (100x repeatable):questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or -1 for dont change stage)
-# (optional) YQ (after a Y-line):list of further questors for which this keyword is valid, separated by colons
-# (optional) YS (after a Y-line):list of further stages during which this keyword is valid, separated by colons
-# (optional) y (50x repeatable):questor (-1 for any):stage (-1 for any):flags:keyword
-# (optional) yY (after a y-line):list of further keywords for which this reply is valid, separated by colons
-# (optional) yQ (after a y-line):list of further questors for which this reply is valid, separated by colons
-# (optional) yS (after a y-line):list of further stages during which this reply is valid, separated by colons
-# (optional, YR (after a y-line, 15x repeatable):flags:reply convo line
-# (optional) k:stage:goal:minlev:maxlev:number:spawn:spawn will target
-# (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
-# (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
-# (optional) r:stage:goal:min value:number
-# (optional) rI:stage:goal:tval:sval... (list of ':tval:sval' pairs, up to 10, separated by colons)
-# (optional) rV:stage:goal:pval:bpval:attr:name1:name2:name2b... (list of 6-tuples like this, up to 5, separated by colons)
-# (optional, if k/r line exists) P:stage:goal#:goalwpos wx:wy:wz:adjacent terrain extension:goal at exact x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
-# (optional) M:stage:goal#:deliver to questor (takes precedence, -1 for none):deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
-# //use new 'questor' parm of 'M'! (optional) B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
-# // ^ Sort of like a 'shortcut' for an 'M' line, but required interaction with the questor:
-# // ^ (optional) B:stage:goal# that gets only credited when we return back to the questor:goal2#:goal3#...
-# (optional) Z:stage:goal:changeflags
-# G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here)
-# (optional) O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free) separated by colons
-# (optional, linked to 'O') R:stage:(10x repeatable) define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:createreward()?:gold:exp:specialstatuseffect
