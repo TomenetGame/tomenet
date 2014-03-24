@@ -7671,12 +7671,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'L' for questor starting location type */
 		if (buf[0] == 'L') {
-			int loc, towns, wx, wy, wz, terr, sx, sy, rad;
+			int loc, towns, wx, wy, wz, terr, sx, sy, rad, tpx, tpy;
 			unsigned int terrtype;
 
 			s = buf + 2;
-			if (11 != sscanf(s, "%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%79[^:]", //byte, u16b, u32b
-			    &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf)) return (1);
+			if (13 != sscanf(s, "%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d", //byte, u16b, u32b
+			    &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return (1);
 
 			lc = q_ptr->questors;
 			if (!lc) return 1; /* so an L-line must always follow somewhere after its Q line */
@@ -7698,6 +7698,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
 				strcpy(c, tmpbuf);
 				q_questor->q_loc.tpref = c;
+				q_questor->q_loc.tpref_x = tpx;
+				q_questor->q_loc.tpref_y = tpy;
 			}
 			continue;
 		}
@@ -8239,11 +8241,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'P' for position at which a kill/retrieve quest has to be executed */
 		if (buf[0] == 'P') {
-			int wx, wy, wz, terr, x, y, rad;
+			int wx, wy, wz, terr, x, y, rad, tpx, tpy;
 
 			s = buf + 2;
-			if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%79[^:]",
-			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf)) return (1);
+			if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d",
+			    &stage, &goal, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf, &tpx, &tpy)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			q_stage = init_quest_stage(error_idx, stage);
@@ -8263,17 +8265,19 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
 				strcpy(c, tmpbuf);
 				q_goal->target_tpref = c;
+				q_goal->target_tpref_x = tpx;
+				q_goal->target_tpref_y = tpy;
 			}
 			continue;
 		}
 
 		/* Process 'M' for move-to-location to finish a quest stage whose goals have already been fulfilled */
 		if (buf[0] == 'M') {
-			int tq, wx, wy, wz, x, y, terr, rad;
+			int tq, wx, wy, wz, x, y, terr, rad, tpx, tpy;
 
 			s = buf + 2;
-			if (11 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%79[^:]",
-			    &stage, &goal, &tq, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf)) return (1);
+			if (13 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d",
+			    &stage, &goal, &tq, &wx, &wy, &wz, &terr, &x, &y, &rad, tmpbuf, &tpx, &tpy)) return (1);
 
 			if (stage < 0 || stage >= QI_STAGES) return 1;
 			if (ABS(goal) > QI_GOALS) return 1;
@@ -8292,6 +8296,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
 				strcpy(c, tmpbuf);
 				q_del->tpref = c;
+				q_del->tpref_x = tpx;
+				q_del->tpref_y = tpy;
 			}
 			continue;
 		}
@@ -8320,12 +8326,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				strcpy(q_qitem->name, tmpbuf);
 				continue;
 			} else if (buf[1] == 'l') { /* location */
-				int q, loc, towns, wx, wy, wz, terr, sx, sy, rad;
+				int q, loc, towns, wx, wy, wz, terr, sx, sy, rad, tpx, tpy;
 				unsigned int terrtype;
 
 				s = buf + 3;
-				if (13 != sscanf(s, "%d:%d:%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%79[^:]",
-				    &stage, &q, &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf)) return (1);
+				if (15 != sscanf(s, "%d:%d:%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d",
+				    &stage, &q, &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return (1);
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
 				q_stage = init_quest_stage(error_idx, stage);
@@ -8351,6 +8357,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
 					strcpy(c, tmpbuf);
 					q_qitem->q_loc.tpref = c;
+					q_qitem->q_loc.tpref_x = tpx;
+					q_qitem->q_loc.tpref_y = tpy;
 				}
 				continue;
 			}
