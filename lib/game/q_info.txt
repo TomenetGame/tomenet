@@ -101,6 +101,8 @@ V:0.0.1
 # keywords can be up to 29 characters long
 # #goal is 1..5 for main goal, and -1..-5 for optional goals.
 #  Optional goals are currently NOT IMPLEMENTED and will break the quest!
+# Status effects (rewards): Positive numbers indicate a potion, scroll, staff or non-directional(!) rod from k_info.txt.
+#  Negative numbers are extra effects: -1 = 1000t of luck, -2 = 2000t of luck, -3 = 3000t of luck.
 
 
 # for testing purpose

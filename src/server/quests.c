@@ -3381,6 +3381,22 @@ void quest_statuseffect(int Ind, int fx) {
 	int tv = k_info[k_idx].tval, sv = k_info[k_idx].sval;
 	bool dummy;
 
+	/* special effects, not in k_info */
+	if (fx < 0) switch (-fx) {
+	case 1: /* luck, short */
+		bless_temp_luck(Ind, 1, 1000);
+		return;
+	case 2: /* luck, medium */
+		bless_temp_luck(Ind, 1, 2000);
+		return;
+	case 3: /* luck, long */
+		bless_temp_luck(Ind, 1, 3000);
+		return;
+	default:
+		s_printf("Warning: Unusable quest status effect %d.\n", fx);
+		return;
+	}
+
 	if (tv == TV_FOOD) (void)eat_food(Ind, sv, NULL, &dummy);
 	else if (tv == TV_POTION || tv == TV_POTION2) (void)quaff_potion(Ind, tv, sv, 0);//pval=0
 	else if (tv == TV_SCROLL) (void)read_scroll(Ind, tv, sv, NULL, 0, &dummy, &dummy);
