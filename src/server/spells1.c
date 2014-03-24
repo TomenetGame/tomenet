@@ -1276,6 +1276,121 @@ void teleport_player_level(int Ind, bool force) {
 	p_ptr->new_level_flag = TRUE;
 }
 
+/* Like teleport_player_level() but does this for ALL players on a wpos at once
+   so they end up together again. Added for quest_prepare_zcave(). - C. Blue
+   Note: This bypasses all teleportation-preventing aspects. */
+void teleport_players_level(struct worldpos *wpos) {
+	int i, method = LEVEL_OUTSIDE_RAND;
+	player_type *p_ptr;
+	struct worldpos new_depth, old_wpos;
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	char *msg = "\377rCritical bug!";
+	cave_type **zcave;
+
+	if (!(zcave = getcave(wpos))) return;
+
+	wpcopy(&old_wpos, wpos);
+	wpcopy(&new_depth, wpos);
+
+	/* sometimes go down */
+	if ((can_go_down(wpos, 0x1) &&
+	    ((!can_go_up(wpos, 0x1) || (rand_int(100) < 50)) ||
+	     (wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
+	    || (can_go_down_simple(wpos)))
+	{
+		new_depth.wz--;
+		msg = "Some arcane magic suddenly makes you sink through the floor.";
+		method = (new_depth.wz || (istown(&new_depth)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
+	}
+	/* else go up */
+	else if ((can_go_up(wpos, 0x1) &&
+	    !(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
+	    || (can_go_up_simple(wpos)))
+	{
+		new_depth.wz++;
+		msg = "Some arcane magic suddenly makes You rise up through the ceiling.";
+		method = (new_depth.wz || (istown(&new_depth)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
+	}
+
+	/* If in the wilderness, teleport to a random neighboring level */
+	else if (wpos->wz == 0 && new_depth.wz == 0) {
+		/* get a valid neighbor */
+		wpcopy(&new_depth, wpos);
+		do {
+			switch (rand_int(4)) {
+			case DIR_NORTH:
+				if (new_depth.wy < MAX_WILD_Y - 1)
+					new_depth.wy++;
+				msg = "A sudden magical gust of wind blows you north.";
+				break;
+			case DIR_EAST:
+				if (new_depth.wx < MAX_WILD_X - 1)
+					new_depth.wx++;
+				msg = "A sudden magical gust of wind blows you east.";
+				break;
+			case DIR_SOUTH:
+				if (new_depth.wy > 0)
+					new_depth.wy--;
+				msg = "A sudden magical gust of wind blows you south.";
+				break;
+			case DIR_WEST:
+				if (new_depth.wx > 0)
+					new_depth.wx--;
+				msg = "A sudden magical gust of wind blows you west.";
+				break;
+			}
+		}
+		while (inarea(wpos, &new_depth));
+
+		method = LEVEL_OUTSIDE_RAND;
+	} else {
+		s_printf("Warning: teleport_players_level() failed.");
+		return;
+	}
+
+	for (i = 1; i <= NumPlayers; i++) {
+		p_ptr = Players[i];
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		p_ptr->new_level_method = method;
+
+		/* update the players new wilderness location */
+
+		/* update the players wilderness map */
+		if(!p_ptr->ghost)
+			p_ptr->wild_map[(new_depth.wx + new_depth.wy * MAX_WILD_X) / 8] |=
+			    (1 << ((new_depth.wx + new_depth.wy * MAX_WILD_X) % 8));
+
+		/* Tell the player */
+		msg_print(i, msg);
+
+#ifdef USE_SOUND_2010
+		sound(i, "teleport", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+
+		/* Remove the player */
+		zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+
+		/* Show that he's left */
+		everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+
+		/* Forget his lite and viewing area */
+		forget_lite(i);
+		forget_view(i);
+
+		/* One less player here */
+		new_players_on_depth(&old_wpos, -1, TRUE);
+
+		/* Change the wpos */
+		wpcopy(&p_ptr->wpos, &new_depth);
+
+		p_ptr->new_level_flag = TRUE;
+
+		/* One more player here */
+		new_players_on_depth(wpos, 1, TRUE);
+	}
+}
+
 #ifndef EXTENDED_TERM_COLOURS
 /*
  * Return a color to use for the bolt/ball spells

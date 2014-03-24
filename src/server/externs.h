@@ -1409,6 +1409,7 @@ extern void teleport_player_force(int Ind, int dis);
 extern void teleport_player_to(int Ind, int ny, int nx);
 extern void teleport_player_to_force(int Ind, int ny, int nx);
 extern void teleport_player_level(int Ind, bool force);
+extern void teleport_players_level(struct worldpos *wpos);
 extern bool bypass_invuln;
 extern bool bypass_inscrption;
 extern void take_hit(int Ind, int damage, cptr kb_str, int Ind_attacker);

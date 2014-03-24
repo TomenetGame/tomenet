@@ -45,6 +45,7 @@ typedef struct qi_location {
 	struct worldpos start_wpos;			/* -1, -1 for random */
 	s16b start_x, start_y;				/* -1, -1 for random */
 	cptr tpref;					/* filename of map to load, or empty for none */
+	int tpref_x, tpref_y;				/* x, y offset for loading small map parts */
 
 	/* dungeons eligible too? */
 	bool s_dungeon[MAX_D_IDX];			/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
