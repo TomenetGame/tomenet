@@ -7859,7 +7859,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			else q_qmorph->rchar = rchar;
 			if (rattr == '-') q_qmorph->rattr = 255; /* keep */
 			else q_qmorph->rattr = color_char_to_attr(rattr);
-			if (lev) q_qmorph->rlev = lev;
+			q_qmorph->rlev = lev;
 			continue;
 		}
 

@@ -36,6 +36,7 @@ V:0.0.1
 # (optional, up to 5x) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
 # (for each B line) Bl:stage:questorhandout (-1 to disable):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 # note: 'Bl' takes same parameters as 'L' lines (except for 'questor hand out'). Each Bl-line must follow after its B-line!
+# (optional) S:stage:questor to modify:talkable:despawned:invincible:death_fail:name ("-" to keep):ridx (0 to keep):char (255 to keep):attr (255 to keep):level (0 to keep)
 
 # (optional) X (up to 50x):stage:flags:narration text
 # (optional?) W (up to 15x):questor:stage:flags:examine? (0=normal talk,1=examine):convo line
@@ -110,7 +111,6 @@ V:0.0.1
 
 # Lines completely left out of the implementation so far:
 # //todo (optional) D:dungeon to spawn ...
-# //todo (optional) S:stage:questor changes/polymorphes ...
 # //todo (optional) S/H:stage:questor hostility ...
 # //todo (optional) J:stage:questor moves, teleports, teleports player ...
 
