@@ -142,13 +142,24 @@ typedef struct qi_questor_hostility {
 	struct worldpos teleport_wpos;			/* teleport participating player to a new position */
 	s16b teleport_player_x, teleport_player_y;
 
-	s16b hostile;					/* questor turns into a normal aggressor, and stage is changed */
+	s16b hostile;					/* questor turns into a normal aggressor, and optionally, stage is changed when he is defeated or after a time */
 	s16b hostile_revert_hp;				/* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
+#if 0 /* currently not possible since we call the quest scheduler once a minute */
 	s16b hostile_revert_timed_ingame;		/* ..after ingame time (min).. */
 	s16b hostile_revert_timed_ingame_abs;		/* ..at ingame time.. */
+#else
+	s16b hostile_revert_timed_ingame_abs;		/* ..when a certain in-game time is reached (HOUR resolution! -1 to disable) */
+#endif
 	s16b hostile_revert_timed_real;			/* ..after real time (s).. */
 
+	s16b change_stage;				/* new stage after hostility has ceased (-1 for none) */
+	bool quiet_change;				/* for the above auto-changes: don't replay the stage's dialogue */
+
 	bool turns_normal;				/* questor actually loses questor status and turns into a regular mob! */
+
+	/* dynamic timer helper data */
+	s16b hostile_revert_timed_countdown;		/* dynamic, for countdown for above timings: negative value = ingame absolute, positive value = real-time counting down */
+	s16b hostile_revert_timed_countdown_stage;
 } qi_questor_hostility;
 
 /* Sub-structure: Questor moves himself or the player ('J') */
