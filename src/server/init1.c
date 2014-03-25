@@ -7694,7 +7694,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'L' for questor starting location type */
 		if (buf[0] == 'L') {
 			int loc, towns, wx, wy, wz, terr, sx, sy, rad, tpx, tpy;
-			unsigned int terrtype;
+			u32b terrtype;
 
 			s = buf + 2;
 			if (13 != sscanf(s, "%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d", //byte, u16b, u32b
@@ -7705,7 +7705,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_questor = init_quest_questor(error_idx, lc - 1); /* pick the newest, already existing one */
 
 			q_questor->q_loc.s_location_type = (byte)loc;
-			q_questor->q_loc.s_terrains = (u32b)terrtype;
+			q_questor->q_loc.s_terrains = terrtype;
 			q_questor->q_loc.s_towns_array = (u16b)towns;
 			q_questor->q_loc.start_wpos.wx = (char)wx;
 			q_questor->q_loc.start_wpos.wy = (char)wy;
@@ -7751,12 +7751,78 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'D' for dungeon/tower to spawn for this quest */
 		if (buf[0] == 'D') {
-#if 0
-			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
-#endif
-			continue;
+			/* we have 2 sub-types of 'D' lines */
+			if (buf[1] == ':') { /* init */
+				int base, max, tow, hard, stor, stat, keep, tx, ty;
+				u32b flags1, flags2, flags3;
+
+				s = buf + 2;
+				if (11 > (j = sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%u:%u:%u:%79[^:]:%d:%d",
+				    &stage, &base, &max, &tow, &hard, &stor, &stat, &keep, &flags1, &flags2, &flags3, tmpbuf, &tx, &ty)))
+					return (1);
+
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				q_stage = init_quest_stage(error_idx, stage);
+
+				q_stage->dun_base = base;
+				q_stage->dun_max = max;
+				q_stage->dun_tower = (tow != 0);
+				q_stage->dun_hard = hard;
+				q_stage->dun_stores = stor;
+				q_stage->dun_static = (stat != 0);
+				q_stage->dun_keep = (keep != 0);
+				q_stage->dun_flags1 = flags1;
+				q_stage->dun_flags2 = flags2;
+				q_stage->dun_flags3 = flags3;
+				if (j >= 12) {
+					q_stage->dun_final_tpref = NULL;
+					if (tmpbuf[0] != '-') {
+						c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+						strcpy(c, tmpbuf);
+						q_stage->dun_final_tpref = c;
+						if (j >= 13) {
+							q_stage->dun_final_tpref_x = tx;
+							q_stage->dun_final_tpref_y = ty;
+						} else {
+							q_stage->dun_final_tpref_x = 0;
+							q_stage->dun_final_tpref_y = 0;
+						}
+					}
+				}
+				continue;
+			} else if (buf[1] == 'l') { /* location */
+				int loc, towns, wx, wy, wz, terr, sx, sy, rad, tpx, tpy;
+				u32b terrtype;
+
+				s = buf + 3;
+				if (14 != sscanf(s, "%d:%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d",
+				    &stage, &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return (1);
+
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				q_stage = init_quest_stage(error_idx, stage);
+
+				q_stage->dun_loc->s_location_type = (byte)loc;
+				q_stage->dun_loc->s_terrains = terrtype;
+				q_stage->dun_loc->s_towns_array = (u16b)towns;
+				q_stage->dun_loc->start_wpos.wx = (char)wx;
+				q_stage->dun_loc->start_wpos.wy = (char)wy;
+				q_stage->dun_loc->start_wpos.wz = (char)wz;
+				q_stage->dun_loc->terrain_patch = (terr != 0);
+				q_stage->dun_loc->start_x = sx;
+				q_stage->dun_loc->start_y = sy;
+				q_stage->dun_loc->radius = rad;
+
+				q_stage->dun_loc->tpref = NULL;
+				if (tmpbuf[0] != '-') {
+					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					strcpy(c, tmpbuf);
+					q_stage->dun_loc->tpref = c;
+					q_stage->dun_loc->tpref_x = tpx;
+					q_stage->dun_loc->tpref_y = tpy;
+				}
+				continue;
+			}
+			return 1;
 		}
 
 		/* Process 'A' for automatic things in a stage: spawn new quest, (timed) stage changes, quiet change (no dialogue)? */
@@ -8483,7 +8549,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				continue;
 			} else if (buf[1] == 'l') { /* location */
 				int q, loc, towns, wx, wy, wz, terr, sx, sy, rad, tpx, tpy;
-				unsigned int terrtype;
+				u32b terrtype;
 
 				s = buf + 3;
 				if (15 != sscanf(s, "%d:%d:%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d",
@@ -8498,7 +8564,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 				q_qitem->questor_gives = (q == -1 ? 255 : q);
 				q_qitem->q_loc.s_location_type = (byte)loc;
-				q_qitem->q_loc.s_terrains = (u32b)terrtype;
+				q_qitem->q_loc.s_terrains = terrtype;
 				q_qitem->q_loc.s_towns_array = (u16b)towns;
 				q_qitem->q_loc.start_wpos.wx = (char)wx;
 				q_qitem->q_loc.start_wpos.wy = (char)wy;

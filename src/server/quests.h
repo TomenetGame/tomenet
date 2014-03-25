@@ -33,6 +33,7 @@
                             -> qi_questor_morph
                             -> qi_questor_hostility
                             -> qi_questor_act
+                            -> qi_location (for dungeon adding)
               -> qi_keyword
               -> qi_kwreply
 */
@@ -358,12 +359,16 @@ typedef struct qi_stage {
 
 
 	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */
-	struct worldpos add_dungeon_wpos;		/* create it at this world pos */
-	bool add_dungeon_terrain_patch;			/* extend valid location over all connected world sectors whose terrain is of the same type (eg big forest) */
-	char *add_dungeon_parms;			/* same as for master_level() maybe */
-	char **add_dungeon_t_pref;			/* table of predefined template filenames for each dungeon floor (or NULL for random floors inbetween) */
-	bool add_dungeon_fullystatic;			/* all floors are static */
-	bool add_dungeon_keep;				/* keep dungeon until quest ends instead of erasing it when this stage is completed */
+	byte dun_base, dun_max;
+	bool dun_tower;
+	byte dun_hard;					/* (0=normal,1=forcedown:2=iron) */
+	byte dun_stores;				/* (0=none,1=iron stores,2=all stores) */
+	bool dun_static;				/* all floors are static */
+	bool dun_keep;					/* keep dungeon until quest ends instead of erasing it when this stage is completed */
+	char *dun_final_tpref;				/* template map file to load on the final floor */
+	s16b dun_final_tpref_x, dun_final_tpref_y;
+	u32b dun_flags1, dun_flags2, dun_flags3;
+	qi_location *dun_loc;				/* wpos/x,y location for dungeon and its entrance */
 
 
 	/* Questor going bonkers? (optional/advanced) */
@@ -386,7 +391,7 @@ typedef struct qi_stage {
 
 
 	/* the rewards for this stage, if any */
-	byte rewards; /* up to QI_STAGE_REWARDS */
+	byte rewards;					/* up to QI_STAGE_REWARDS */
 	qi_reward *reward;
 
 	/* contains the indices of up to QI_REWARD_GOALS different QI_GOALS goals which are AND'ed */
@@ -394,13 +399,13 @@ typedef struct qi_stage {
 
 
 	/* the goals for this stage */
-	byte goals; /* up to QI_STAGE_GOALS */
+	byte goals;					/* up to QI_STAGE_GOALS */
 	qi_goal *goal;
 
 	/* determine if a new stage should begin depending on which goals we have completed */
 	/* contains the indices of up to QI_STAGE_GOALS different QI_GOALS goals which are AND'ed; 'optional' goals are skipped in the check! */
 	s16b goals_for_stage[QI_FOLLOWUP_STAGES][QI_STAGE_GOALS]; /* returns the goal's index (or -1 if none) */
-	s16b next_stage_from_goals[QI_FOLLOWUP_STAGES]; /* <stage> index of the possible follow-up stages */
+	s16b next_stage_from_goals[QI_FOLLOWUP_STAGES];	/* <stage> index of the possible follow-up stages */
 
 	/* amout of special quest items to spawn */
 	byte qitems;
