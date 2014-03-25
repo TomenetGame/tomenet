@@ -145,10 +145,13 @@ typedef struct qi_questor_morph {
 
 /* Sub-structure: Questor moves himself or the player ('S'/'H') */
 typedef struct qi_questor_hostility {
-	struct worldpos teleport_wpos;			/* teleport participating player to a new position */
-	s16b teleport_player_x, teleport_player_y;
+	bool unquestor;					/* questor actually loses questor status and turns into a regular mob!
+							   NOTE: This will override all hostile_... options below.
+							         Stage change may still happen, it'll be instantly. */
 
-	s16b hostile;					/* questor turns into a normal aggressor, and optionally, stage is changed when he is defeated or after a time */
+	bool hostile_player;				/* questor turns into a normal aggressor, and optionally, stage is changed when he is defeated or after a time */
+	bool hostile_monster;				/* questor turns hostile to monsters, and optionally, stage is changed when he is defeated or after a time */
+
 	s16b hostile_revert_hp;				/* aggressor-questor turns back into a non-aggressive questor when falling to <= HP (death prevented!) and stage is changed */
 #if 0 /* currently not possible since we call the quest scheduler once a minute */
 	s16b hostile_revert_timed_ingame;		/* ..after ingame time (min).. */
@@ -158,10 +161,8 @@ typedef struct qi_questor_hostility {
 #endif
 	s16b hostile_revert_timed_real;			/* ..after real time (s).. */
 
-	s16b change_stage;				/* new stage after hostility has ceased (-1 for none) */
+	s16b change_stage;				/* new stage after hostility has ceased (255 for none) */
 	bool quiet_change;				/* for the above stage-change: don't replay the stage's dialogue */
-
-	bool turns_normal;				/* questor actually loses questor status and turns into a regular mob! */
 
 	/* dynamic timer helper data */
 	s16b hostile_revert_timed_countdown;		/* dynamic, for countdown for above timings: negative value = ingame absolute, positive value = real-time counting down */
@@ -170,6 +171,12 @@ typedef struct qi_questor_hostility {
 
 /* Sub-structure: Questor moves himself or the player ('J') */
 typedef struct qi_questor_act {
+	struct worldpos tp_wpos;			/* teleport self to a new position */
+	s16b tp_x, tp_y;
+
+	struct worldpos tpy_wpos;			/* teleport participating players to a new position */
+	s16b tpy_x, tpy_y;
+
 	byte walk_speed;				/* questor will actually move around during this stage? */
 	s16b walk_destx, walk_desty;			/* target waypoint for questor to move to */
 	s16b change_stage;				/* stage will change when questor arrives at destination */
