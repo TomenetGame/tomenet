@@ -919,11 +919,12 @@ struct monster_type {
    u16b ego;                       /* Ego monster type */
    s32b name3;			/* Randuni seed, if any */
    #endif
-   #if 0
-   s16b status;		/* Status(friendly, pet, companion, ..) */
-   s16b target;		/* Monster target */
+
+   s16b status;			/* Status(friendly, pet, companion, ..) */
+   s16b target;			/* Monster target */
    s16b possessor;		/* Is it under the control of a possessor ? */
-   #endif
+   s16b destx, desty;		/* Monster target grid to walk to. Added for questors (quest_info). */
+   s16b determination;		/* unused, maybe useful in the future for determining what it takes to stop the monster from doing something */
 
    u16b ai_state;		/* What special behaviour this monster takes now? */
    s16b last_target;		/* For C. Blue's anti-cheeze C_BLUE_AI in melee2.c */

@@ -308,6 +308,13 @@ static void wr_monster(monster_type *m_ptr) {
 
 	wr_u16b(m_ptr->ego);
 	wr_s32b(m_ptr->name3);
+
+	wr_s16b(m_ptr->status);
+	wr_s16b(m_ptr->target);
+	wr_s16b(m_ptr->possessor);
+	wr_s16b(m_ptr->destx);
+	wr_s16b(m_ptr->desty);
+	wr_s16b(m_ptr->determination);
 }
 
 /*

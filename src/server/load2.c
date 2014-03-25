@@ -851,6 +851,15 @@ static void rd_monster(monster_type *m_ptr) {
 
 	rd_u16b(&m_ptr->ego);
 	rd_s32b(&m_ptr->name3);
+
+	if (!s_older_than(4, 5, 27)) {
+		rd_s16b(&m_ptr->status);
+		rd_s16b(&m_ptr->target);
+		rd_s16b(&m_ptr->possessor);
+		rd_s16b(&m_ptr->destx);
+		rd_s16b(&m_ptr->desty);
+		rd_s16b(&m_ptr->determination);
+	}
 }
 
 
