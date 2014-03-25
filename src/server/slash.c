@@ -2665,7 +2665,45 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377GYou have regained %d skill points.", gain);
 
 				/* in case we changed mimicry skill */
-				if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
+				if (p_ptr->body_monster &&
+				    r_info[p_ptr->body_monster].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
+					do_mimic_change(Ind, 0, TRUE);
+				/* in case we changed meta skill */
+				if (p_ptr->spell_project &&
+				    get_skill(p_ptr, SKILL_META) < 10) { // WARNING, HARDCODED spell level from s_meta.lua
+					p_ptr->spell_project = 0;
+					msg_print(Ind, "Your utility spells will now only affect yourself.");
+				}
+				/* auras.. */
+				if (!get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[0]) {
+					msg_print(Ind, "Your aura of fear ceases.");
+					p_ptr->aura[0] = FALSE;
+				}
+				if (!get_skill(p_ptr, SKILL_AURA_SHIVER) && p_ptr->aura[1]) {
+					msg_print(Ind, "Your aura of shivering ceases.");
+					p_ptr->aura[1] = FALSE;
+				}
+				if (!get_skill(p_ptr, SKILL_AURA_DEATH) && p_ptr->aura[2]) {
+					msg_print(Ind, "Your aura of death ceases.");
+					p_ptr->aura[2] = FALSE;
+				}
+				/* health (sanity display) */
+				if (get_skill(p_ptr, SKILL_HEALTH) < 10) {
+					if (p_ptr->sanity_bar > 0) {
+						p_ptr->sanity_bar = 0;
+						p_ptr->redraw |= PR_SANITY;
+					}
+				} else if (get_skill(p_ptr, SKILL_HEALTH) < 20) {
+					if (p_ptr->sanity_bar > 1) {
+						p_ptr->sanity_bar = 1;
+						p_ptr->redraw |= PR_SANITY;
+					}
+				} else if (get_skill(p_ptr, SKILL_HEALTH) < 40) {
+					if (p_ptr->sanity_bar > 2) {
+						p_ptr->sanity_bar = 2;
+						p_ptr->redraw |= PR_SANITY;
+					}
+				}
 
 				/* Update all skills */
 				calc_techniques(Ind);
