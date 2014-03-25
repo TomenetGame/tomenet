@@ -8137,15 +8137,24 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	m_ptr->csleep = 0;
 
 	/* for when a quest giver turned non-invincible */
+#if 0
 	if (m_ptr->questor) {
 		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
 			if (q_info[m_ptr->quest].stage[q_info[m_ptr->quest].cur_stage].questor_hostility[m_ptr->questor_idx] &&
 			    m_ptr->hp - dam <= q_info[m_ptr->quest].stage[q_info[m_ptr->quest].cur_stage].questor_hostility[m_ptr->questor_idx]->hostile_revert_hp)
 				quest_questor_reverts(Ind, m_ptr->quest, m_ptr->questor_idx);
 		} else {
-			s_printf("QUESTOR DEPRECATED (monster_death2)\n");
+			s_printf("QUESTOR DEPRECATED (monster_death3)\n");
 		}
 	}
+#else
+	if (m_ptr->questor && m_ptr->hp - dam <= m_ptr->limit_hp) {
+		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx)
+			quest_questor_reverts(Ind, m_ptr->quest, m_ptr->questor_idx);
+		else
+			s_printf("QUESTOR DEPRECATED (monster_death3)\n");
+	}
+#endif
 
 	/* Hurt it */
 	m_ptr->hp -= dam;

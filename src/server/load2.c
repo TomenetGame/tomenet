@@ -859,6 +859,7 @@ static void rd_monster(monster_type *m_ptr) {
 		rd_s16b(&m_ptr->destx);
 		rd_s16b(&m_ptr->desty);
 		rd_s16b(&m_ptr->determination);
+		rd_s16b(&m_ptr->limit_hp);
 	}
 }
 

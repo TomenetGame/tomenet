@@ -315,6 +315,7 @@ static void wr_monster(monster_type *m_ptr) {
 	wr_s16b(m_ptr->destx);
 	wr_s16b(m_ptr->desty);
 	wr_s16b(m_ptr->determination);
+	wr_s16b(m_ptr->limit_hp);
 }
 
 /*
