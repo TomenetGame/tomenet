@@ -3147,7 +3147,8 @@ static void cmd_master_aux_level(void)
 			} else if (get_check2("Generate misc iron stores (RPG rules style)?", FALSE)) {
 				buf[6] |= 0x04;//DF2_MISC_STORES
 			} else if (get_check2("Generate at least the hidden library?", FALSE)) buf[4] |= 0x04;//DF3_HIDDENLIB
-			buf[7] = '\0';
+			buf[7] = c_get_quantity("Theme (0 = default vanilla): ", 0);
+			buf[8] = '\0';
 			Send_master(MASTER_LEVEL, buf);
 		}
 		else if (i == '4'){
