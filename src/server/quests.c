@@ -3771,7 +3771,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 			}
 			/* instead use create_reward() like for events? */
 			else if (q_rew->oreward) {
-				switch (q_questor->drops_reward) {
+				switch (q_rew->oreward) {
 				case 1: resf |= RESF_LOW; break;
 				case 2: resf |= RESF_LOW2; break;
 				case 3: resf |= RESF_MID; break;
