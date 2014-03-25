@@ -1268,8 +1268,7 @@ struct dun_level
  * (consider using rule_type	- Jir -)
  */
 typedef struct dungeon_type dungeon_type;
-struct dungeon_type
-{
+struct dungeon_type {
 	u16b id;		/* dungeon id */
 	u16b type;		/* dungeon type (of d_info) */
 	u16b baselevel;		/* base level (1 - 50ft etc). */
@@ -1283,6 +1282,8 @@ struct dungeon_type
 	char nr_char[10];	/* races prevented */
 #endif	/* 0 */
 	int store_timer;	/* control frequency of dungeon store generation (for misc iron stores mostly) */
+	s16b quest, quest_stage;/* this dungeon was spawned by a quest? (for quest_info) quest==0 = no quest (it's q_idx + 1!) */
+
 	struct dun_level *level;	/* array of dungeon levels */
 };
 

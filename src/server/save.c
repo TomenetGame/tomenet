@@ -2194,6 +2194,9 @@ static void new_wr_wild(){
 #else
 				wr_u16b(VISIT_TIME_CAP);
 #endif
+
+				wr_s16b(w_ptr->dungeon->quest);
+				wr_s16b(w_ptr->dungeon->quest_stage);
 			}
 			if (w_ptr->flags & WILD_F_UP) {
 				wr_byte(w_ptr->dn_x);
@@ -2219,6 +2222,8 @@ static void new_wr_wild(){
 #else
 				wr_u16b(VISIT_TIME_CAP);
 #endif
+				wr_s16b(w_ptr->tower->quest);
+				wr_s16b(w_ptr->tower->quest_stage);
 			}
 		}
 	}

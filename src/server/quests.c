@@ -1706,6 +1706,7 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 	}
 }
 
+/* Change questor visuals, intrinsics and communication when a quest stage starts */
 static void quest_questor_morph(int q_idx, int stage, int questor_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
@@ -1733,6 +1734,8 @@ static void quest_questor_morph(int q_idx, int stage, int questor_idx) {
 	everyone_lite_spot(&m_list[q_questor->mo_idx].wpos, m_list[q_questor->mo_idx].fy, m_list[q_questor->mo_idx].fx);
 #endif
 }
+/* Change questor aggressive behaviour towards players or monsters when a stage
+   starts. This can revert later on and then trigger a stage change too. */
 static void quest_questor_hostility(int q_idx, int stage, int questor_idx) {
 #if 0
 	quest_info *q_ptr = &q_info[q_idx];
@@ -1742,6 +1745,8 @@ static void quest_questor_hostility(int q_idx, int stage, int questor_idx) {
 #endif
 	
 }
+/* Have a questor perform actions (possibly onto the player(s) too) or start
+   moving when a quest stage starts */
 static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 	int j, k;
 	quest_info *q_ptr = &q_info[q_idx];
@@ -1785,6 +1790,51 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 	if (q_qact->walk_speed) {
 	}
 }
+/* Add a quest-specific dungeon when a dungeon stage starts */
+static void quest_add_dungeon(int q_idx, int stage) {
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
+	u32b flags1 = q_stage->dun_flags1, flags2 = q_stage->dun_flags2, flags3 = q_stage->dun_flags3;
+	cave_type **zcave;
+	int tries = 0;
+
+	if (!quest_special_spawn_location(&q_stage->dun_wpos, &q_stage->dun_x, &q_stage->dun_y, &q_stage->dun_loc, FALSE, FALSE)) {
+		s_printf("QUEST_ADD_DUNGEON: Couldn't get spawn location.\n");
+		return;
+	}
+
+	if (!(zcave = getcave(&q_stage->dun_wpos))) {
+		alloc_dungeon_level(&q_stage->dun_wpos);
+		zcave = getcave(&q_stage->dun_wpos);
+	}
+	wilderness_gen(&q_stage->dun_wpos);
+	if (q_stage->dun_tower) {
+		if (wild_info[q_stage->dun_wpos.wy][q_stage->dun_wpos.wx].tower) {
+			s_printf("QUEST_ADD_TOWER: Already exists.\n");
+			return;
+		}
+	} else {
+		if (wild_info[q_stage->dun_wpos.wy][q_stage->dun_wpos.wx].dungeon) {
+			s_printf("QUEST_ADD_DUNGEON: Already exists.\n");
+			return;
+		}
+	}
+
+	/* add staircase downwards into the dungeon? */
+	switch (q_stage->dun_hard) {
+	case 0: break;
+	case 1: flags1 |= DF1_FORCE_DOWN; break;
+	case 2: flags2 |= DF2_IRON; break;
+	}
+	add_dungeon(&q_stage->dun_wpos, q_stage->dun_base, q_stage->dun_max, flags1, flags2, flags3, q_stage->dun_tower, 0, q_idx + 1, stage);
+
+	/* place staircase */
+	do {
+		q_stage->dun_y = rand_int((MAX_HGT) - 4) + 2;
+		q_stage->dun_x = rand_int((MAX_WID) - 4) + 2;
+	} while (!cave_floor_bold(zcave, q_stage->dun_y, q_stage->dun_x)
+	    && (++tries < 1000));
+	zcave[q_stage->dun_y][q_stage->dun_x].feat = q_stage->dun_tower ? FEAT_LESS : FEAT_MORE;
+}
 /* perform automatic things (quest spawn/stage change) in a stage */
 static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -1794,13 +1844,14 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	struct worldpos wpos;
 	qi_feature *q_feat;
 
-	/* ---------- hijacking this function for questor-morph/hostility/act changes ---------- */
+	/* ---------- hijacking this function for questor and dungeon manipulation ---------- */
 	for (i = 0; i < q_ptr->questors; i++) {
 		if (q_stage->questor_morph[i]) quest_questor_morph(q_idx, stage, i);
 		if (q_stage->questor_hostility[i]) quest_questor_hostility(q_idx, stage, i);
 		if (q_stage->questor_act[i]) quest_questor_act(pInd, q_idx, stage, i);
 	}
-	/* ------------------------------------------------------------------------------------- */
+	if (q_stage->dun_base) quest_add_dungeon(q_idx, stage);
+	/* ---------------------------------------------------------------------------------- */
 
 	/* auto-spawn (and acquire) new quest? */
 	if (q_stage->activate_quest != -1) {

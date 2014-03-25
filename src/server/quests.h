@@ -363,12 +363,19 @@ typedef struct qi_stage {
 	bool dun_tower;
 	byte dun_hard;					/* (0=normal,1=forcedown:2=iron) */
 	byte dun_stores;				/* (0=none,1=iron stores,2=all stores) */
+	byte dun_theme;					/* similar to IDDC theming */
+	cptr dun_name;					/* custom name */
 	bool dun_static;				/* all floors are static */
 	bool dun_keep;					/* keep dungeon until quest ends instead of erasing it when this stage is completed */
 	char *dun_final_tpref;				/* template map file to load on the final floor */
 	s16b dun_final_tpref_x, dun_final_tpref_y;
 	u32b dun_flags1, dun_flags2, dun_flags3;
-	qi_location *dun_loc;				/* wpos/x,y location for dungeon and its entrance */
+	qi_location dun_loc;				/* wpos/x,y location for dungeon and its entrance */
+	/* ----- Dynamic stage information ----- */
+	/* keep track of actual resulting dungeon location --
+	   this data gets generated dynamically on stage activation from dun_loc */
+	struct worldpos dun_wpos;//dynamic data
+	s16b dun_x, dun_y;	//dynamic data
 
 
 	/* Questor going bonkers? (optional/advanced) */

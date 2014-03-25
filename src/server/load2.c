@@ -3288,6 +3288,11 @@ void new_rd_wild()
 #endif
 				}
 
+				if (!s_older_than(4, 5, 27)) {
+					rd_s16b(&d_ptr->quest);
+					rd_s16b(&d_ptr->quest_stage);
+				}
+
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 				for (i = 0; i < d_ptr->maxdepth; i++) {
 					C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
@@ -3345,6 +3350,11 @@ void new_rd_wild()
 #else
 					strip_bytes(2);
 #endif
+				}
+
+				if (!s_older_than(4, 5, 27)) {
+					rd_s16b(&d_ptr->quest);
+					rd_s16b(&d_ptr->quest_stage);
 				}
 
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
