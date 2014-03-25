@@ -110,9 +110,9 @@ V:0.0.1
 #  Negative numbers are extra effects: -1 = 1000t of luck, -2 = 2000t of luck, -3 = 3000t of luck.
 
 # Lines completely left out of the implementation so far:
+# //todo (optional) H:stage:questor:unquestor?:hostile-to-players?:hostile-to-monsters?:revert-hp:revert-ingametime:revert-after-realtime:newstage:quiet?
+# //todo (optional) J:stage:questor:teleport wx:wy:wz:x:y:teleport players wx:wy:wz:x:y:walkspeed:destx:desty:newstage:quiet?
 # //todo (optional) D:dungeon to spawn ...
-# //todo (optional) H:stage:questor hostility ...
-# //todo (optional) J:stage:questor moves, teleports, teleports player ...
 
 
 # for testing purpose
