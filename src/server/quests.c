@@ -1746,13 +1746,37 @@ static void quest_questor_morph(int q_idx, int stage, int questor_idx) {
 /* Change questor aggressive behaviour towards players or monsters when a stage
    starts. This can revert later on and then trigger a stage change too. */
 static void quest_questor_hostility(int q_idx, int stage, int questor_idx) {
-#if 0
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
 	qi_questor_hostility *q_qhost = q_stage->questor_hostility[questor_idx];
-#endif
-	
+
+	/* questor turns into a regular monster? (irreversible, implies hostile-to-players) */
+	if (q_qhost->unquestor) {
+		m_list[q_questor->mo_idx].questor = 0;
+		m_list[q_questor->mo_idx].quest = 0;
+	}
+
+	/* questor turns hostile to players? */
+	if (q_qhost->hostile_player) {
+		monster_race *r_ptr = m_list[q_questor->mo_idx].r_ptr;
+		r_ptr->flags7 &= ~(RF7_NO_TARGET | RF7_NEVER_ACT);//| RF7_NO_DEATH; --done in quest_questor_morph() actually
+	}
+
+	/* questor turns hostile to monsters? */
+	if (q_qhost->hostile_monster) {
+		
+	}
+
+	/* time hostility? (absolute in-game time) */
+	if (q_qhost->hostile_revert_timed_ingame_abs == -1) {
+		
+	}
+
+	/* time hostility? (relative real time) */
+	if (q_qhost->hostile_revert_timed_real) {
+		
+	}
 }
 /* Have a questor perform actions (possibly onto the player(s) too) or start
    moving when a quest stage starts */
@@ -4361,6 +4385,9 @@ qi_questor_hostility *init_quest_qhostility(int q_idx, int stage, int questor) {
 		s_printf("init_quest_qhostility() Couldn't allocate memory!\n");
 		exit(0);
 	}
+
+	/* default (off) */
+	p->hostile_revert_timed_ingame_abs = -1;
 
 	/* attach it to its parent structure */
 	q_stage->questor_hostility[questor] = p;
