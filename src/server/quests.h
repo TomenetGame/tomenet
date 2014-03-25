@@ -367,7 +367,7 @@ typedef struct qi_stage {
 	cptr dun_name;					/* custom name */
 	bool dun_static;				/* all floors are static */
 	bool dun_keep;					/* keep dungeon until quest ends instead of erasing it when this stage is completed */
-	char *dun_final_tpref;				/* template map file to load on the final floor */
+	cptr dun_final_tpref;				/* template map file to load on the final floor */
 	s16b dun_final_tpref_x, dun_final_tpref_y;
 	u32b dun_flags1, dun_flags2, dun_flags3;
 	qi_location dun_loc;				/* wpos/x,y location for dungeon and its entrance */

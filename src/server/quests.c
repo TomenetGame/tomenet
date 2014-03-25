@@ -71,6 +71,7 @@ static bool quest_goal_check(int pInd, int q_idx, bool interacting);
 static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire, bool force_prompt);
 static void quest_imprint_tracking_information(int Ind, int py_q_idx, bool target_flagging_only);
 static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *m_ptr, object_type *o_ptr);
+static void quest_remove_dungeons(int q_idx);
 
 
 /* error messages for quest_acquire() */
@@ -1256,6 +1257,9 @@ void quest_deactivate(int q_idx) {
 
 	/* Erase all object questors and quest objects (duh) */
 	quest_erase_objects(q_idx, FALSE, 0);
+
+	/* remove quest dungeons */
+	quest_remove_dungeons(q_idx);
 }
 
 /* return a current quest's cooldown. Either just uses q_ptr->cur_cooldown directly for global
@@ -1344,6 +1348,11 @@ static void quest_terminate(int pInd, int q_idx) {
 
 		/* erase all of this player's quest items for this quest */
 		quest_erase_objects(q_idx, TRUE, p_ptr->id);
+
+		/* remove quest dungeons -- a bit quirky to do this for personal quests,
+		   but it might be required, so that the objectives in the dungeon can
+		   reset properly. :/ */
+		quest_remove_dungeons(q_idx);
 
 		/* set personal quest cooldown */
 		if (q_ptr->cooldown == -1) p_ptr->quest_cooldown[q_idx] = QI_COOLDOWN_DEFAULT;
@@ -1834,6 +1843,19 @@ static void quest_add_dungeon(int q_idx, int stage) {
 	} while (!cave_floor_bold(zcave, q_stage->dun_y, q_stage->dun_x)
 	    && (++tries < 1000));
 	zcave[q_stage->dun_y][q_stage->dun_x].feat = q_stage->dun_tower ? FEAT_LESS : FEAT_MORE;
+}
+/* Remove all quest-specific dungeons (called on quest deactivation) */
+static void quest_remove_dungeons(int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_stage *q_stage;
+	int i;
+
+	for (i = 0; i < q_ptr->stages; i++) {
+		q_stage = quest_qi_stage(q_idx, i);
+		if (!q_stage->dun_base) continue;
+
+		rem_dungeon(&q_stage->dun_wpos, FALSE);
+	}
 }
 /* perform automatic things (quest spawn/stage change) in a stage */
 static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
