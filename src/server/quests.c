@@ -1926,9 +1926,15 @@ static void quest_remove_dungeons(int q_idx) {
 
 	for (i = 0; i < q_ptr->stages; i++) {
 		if (!q_ptr->stage[i].dun_base) continue;
-
 		rem_dungeon(&q_ptr->stage[i].dun_wpos, FALSE);
 	}
+}
+/* Remove the dungeon of a specific quest stage */
+static void quest_remove_dungeon(int q_idx, int stage) {
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
+
+	if (!q_stage->dun_base || q_stage->dun_keep) return;
+	rem_dungeon(&q_stage->dun_wpos, FALSE);
 }
 /* perform automatic things (quest spawn/stage change) in a stage */
 static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
@@ -2188,10 +2194,10 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	s_printf("%s QUEST_STAGE: '%s'(%d,%s) %d->%d\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), stage);
 	s_printf(" actq %d, autoac %d, cstage %d\n", quest_qi_stage(q_idx, stage)->activate_quest, quest_qi_stage(q_idx, stage)->auto_accept, quest_qi_stage(q_idx, stage)->change_stage);
 #endif
-
-	/* unstatice static locations of previous stage, possibly from
-	   quest items, targetted goals, deliver goals. */
+	/* do some clean-up of remains of the previous stage */
 	if (stage_prev != -1) {
+		/* unstatice static locations of previous stage, possibly from
+		   quest items, targetted goals, deliver goals. */
 		q_stage = quest_qi_stage(q_idx, stage_prev);
 		for (i = 0; i < q_stage->goals; i++) {
 			q_goal = &q_stage->goal[i];
@@ -2201,6 +2207,8 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			for (j = 0; j < q_stage->qitems; j++)
 				if (q_stage->qitem[j].q_loc.tpref) new_players_on_depth(&q_stage->qitem[j].result_wpos, -1, TRUE);
 		}
+		/* remove dungeons that only lasted for a stage */
+		quest_remove_dungeon(q_idx, stage_prev);
 	}
 
 
