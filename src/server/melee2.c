@@ -7129,10 +7129,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	/* Normal movement */
 	else {
 		/* Logical moves */
-#ifndef ARCADE_SERVER
-		if (m_ptr->questor) get_moves_questor(Ind, m_idx, mm); /* note: we're not using a 'process_monster_questor()' for now */
-		else get_moves(Ind, m_idx, mm);
-#else
+#ifdef ARCADE_SERVER
 		if ((m_ptr->r_idx >= RI_ARCADE_START) && (m_ptr->r_idx <= RI_ARCADE_END)) {
 			for(n = 1; n <= NumPlayers; n++) {
 				player_type *p_ptr = Players[n];
@@ -7141,8 +7138,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					n = NumPlayers + 1;
 				}
 			}
-		} else get_moves(Ind, m_idx, mm);
+		} else
 #endif
+		if (m_ptr->questor) get_moves_questor(Ind, m_idx, mm); /* note: we're not using a 'process_monster_questor()' for now */
+		else get_moves(Ind, m_idx, mm);
 	}
 
 #ifdef ANTI_SEVEN_EXPLOIT /* code part: 'monster has planned an actual movement' */
