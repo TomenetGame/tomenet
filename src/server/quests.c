@@ -1714,6 +1714,38 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	struct worldpos wpos;
 	qi_feature *q_feat;
 
+	qi_questor *q_questor;
+	qi_questor_morph *q_qmorph;
+
+	/* ---------- hijacking this function for questor-morph/hostility/act changes ---------- */
+	for (i = 0; i < q_ptr->questors; i++) {
+		if (!q_stage->questor_morph[i]) continue;
+		q_qmorph = q_stage->questor_morph[i];
+		q_questor = &q_ptr->questor[i];
+
+		q_questor->talkable = q_qmorph->talkable;
+		q_questor->despawned = q_qmorph->despawned;
+		q_questor->invincible = q_qmorph->invincible;
+		q_questor->death_fail = q_qmorph->death_fail;
+		if (q_qmorph->name) strcpy(q_questor->name, q_qmorph->name);
+		if (q_qmorph->ridx) q_questor->ridx = q_qmorph->ridx;
+		if (q_qmorph->rchar != 255) q_questor->rchar = q_qmorph->rchar;
+		if (q_qmorph->rattr != 255) q_questor->rattr = q_qmorph->rattr;
+		if (q_qmorph->rlev) m_list[q_questor->mo_idx].level = q_qmorph->rlev;
+#if 0
+		/* Note the spot */
+		note_spot_depth(&q_questor->current_wpos, q_questor->current_y, q_questor->current_x);
+		/* Draw the spot */
+		everyone_lite_spot(&q_questor->current_wpos, q_questor->current_y, q_questor->current_x);
+#else
+		/* Note the spot */
+		note_spot_depth(&m_list[q_questor->mo_idx].wpos, m_list[q_questor->mo_idx].fy, m_list[q_questor->mo_idx].fx);
+		/* Draw the spot */
+		everyone_lite_spot(&m_list[q_questor->mo_idx].wpos, m_list[q_questor->mo_idx].fy, m_list[q_questor->mo_idx].fx);
+#endif
+	}
+	/* ------------------------------------------------------------------------------------- */
+
 	/* auto-spawn (and acquire) new quest? */
 	if (q_stage->activate_quest != -1) {
 		if (!q_info[q_stage->activate_quest].disabled &&
@@ -4071,6 +4103,31 @@ qi_questor *init_quest_questor(int q_idx, int num) {
 	return &q_ptr->questor[num];
 }
 
+/* Allocate/initialise a questor-morph, or return it if already existing. */
+qi_questor_morph *init_quest_qmorph(int q_idx, int stage, int questor) {
+	qi_stage *q_stage = init_quest_stage(q_idx, stage);
+	qi_questor_morph *p;
+
+	/* we already have this existing one */
+	if (q_stage->questor_morph[questor]) return q_stage->questor_morph[questor];
+
+	/* allocate a new one */
+	p = (qi_questor_morph*)malloc(sizeof(qi_questor_morph));
+	if (!p) {
+		s_printf("init_quest_qmorph() Couldn't allocate memory!\n");
+		exit(0);
+	}
+
+	/* attach it to its parent structure */
+	q_stage->questor_morph[questor] = p;
+
+	/* default: no name change */
+	p->name = NULL;
+
+	/* done, return the new, requested one */
+	return p;
+}
+
 /* Allocate/initialise a quest stage, or return it if already existing. */
 qi_stage *init_quest_stage(int q_idx, int num) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -4182,7 +4239,7 @@ qi_kwreply *init_quest_kwreply(int q_idx, int num) {
    NOTE: This function takes a 'goal' that is 1 higher than the internal goal index!
          That's a hack to allow specifying 'optional' goals in q_info.txt. */
 qi_kill *init_quest_kill(int q_idx, int stage, int q_info_goal) {
-	qi_goal *q_goal = init_quest_goal(q_idx, stage,q_info_goal);
+	qi_goal *q_goal = init_quest_goal(q_idx, stage, q_info_goal);
 	qi_kill *p;
 	int i;
 
@@ -4218,7 +4275,7 @@ qi_kill *init_quest_kill(int q_idx, int stage, int q_info_goal) {
    NOTE: This function takes a 'q_info_goal' that is 1 higher than the internal goal index!
          That's a hack to allow specifying 'optional' goals in q_info.txt. */
 qi_retrieve *init_quest_retrieve(int q_idx, int stage, int q_info_goal) {
-	qi_goal *q_goal = init_quest_goal(q_idx, stage,q_info_goal);
+	qi_goal *q_goal = init_quest_goal(q_idx, stage, q_info_goal);
 	qi_retrieve *p;
 	int i;
 
@@ -4266,7 +4323,7 @@ qi_retrieve *init_quest_retrieve(int q_idx, int stage, int q_info_goal) {
    NOTE: This function takes a 'q_info_goal' that is 1 higher than the internal goal index!
          That's a hack to allow specifying 'optional' goals in q_info.txt. */
 qi_deliver *init_quest_deliver(int q_idx, int stage, int q_info_goal) {
-	qi_goal *q_goal = init_quest_goal(q_idx, stage,q_info_goal);
+	qi_goal *q_goal = init_quest_goal(q_idx, stage, q_info_goal);
 	qi_deliver *p;
 
 	/* we already have this existing one */

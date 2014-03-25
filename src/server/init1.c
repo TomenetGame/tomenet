@@ -7319,9 +7319,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	int lc_flagsacc = 0;//compiler warning
 
 	qi_questor *q_questor;
-	//qi_questor_morph *q_qmorph;
-	//qi_questor_hostility *q_qhost;
-	//qi_questor_act *q_qact;
 	qi_kill *q_kill;
 	qi_retrieve *q_ret;
 	qi_deliver *q_del;
@@ -7332,6 +7329,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	qi_kwreply *q_kwr;
 	qi_questitem *q_qitem;
 	qi_feature *q_feat;
+	qi_questor_morph *q_qmorph;
+	//qi_questor_hostility *q_qhost;
+	//qi_questor_act *q_qact;
 
 	bool disabled;
 	u16b flags;
@@ -7835,11 +7835,31 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'S' for questor changes/polymorphing/hostility */
 		if (buf[0] == 'S') {
-#if 0
+			int q, talk, despawn, invinc, dfail, ridx, lev;
+			char rchar, rattr;
+
 			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
-#endif
+			if (11 != sscanf(s, "%d:%d:%d:%d:%d:%d:%79[^:]:%d:%c:%c:%d",
+			    &stage, &q, &talk, &despawn, &invinc, &dfail, tmpbuf, &ridx, &rchar, &rattr, &lev)) return (1);
+
+			if (stage < 0 || stage >= QI_STAGES) return 1;
+			if (q < 0 || q > q_ptr->questors) return 1;
+			q_qmorph = init_quest_qmorph(error_idx, stage, questor);
+			q_qmorph->talkable = (talk != 0);
+			q_qmorph->despawned  = (despawn != 0);
+			q_qmorph->invincible  = (invinc != 0);
+			q_qmorph->death_fail = dfail;
+			if (strcmp(tmpbuf, "-")) {
+				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+				strcpy(c, tmpbuf);
+				q_qmorph->name = c;
+			}
+			if (ridx) q_qmorph->ridx = ridx;
+			if (rchar == '-') q_qmorph->rchar = 255; /* keep */
+			else q_qmorph->rchar = rchar;
+			if (rattr == '-') q_qmorph->rattr = 255; /* keep */
+			else q_qmorph->rattr = color_char_to_attr(rattr);
+			if (lev) q_qmorph->rlev = lev;
 			continue;
 		}
 

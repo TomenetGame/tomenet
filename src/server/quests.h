@@ -361,9 +361,9 @@ typedef struct qi_stage {
 
 
 	/* Questor going bonkers? (optional/advanced) */
-	qi_questor_morph *questor_morph;
-	qi_questor_hostility *questor_hostility;
-	qi_questor_act *questor_act;
+	qi_questor_morph *questor_morph[QI_QUESTORS];
+	qi_questor_hostility *questor_hostility[QI_QUESTORS];
+	qi_questor_act *questor_act[QI_QUESTORS];
 
 
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */

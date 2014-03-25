@@ -2187,6 +2187,7 @@ extern qi_goal *init_quest_goal(int q_idx, int stage, int q_info_goal);
 extern qi_reward *init_quest_reward(int q_idx, int stage, int num);
 extern qi_questitem *init_quest_questitem(int q_idx, int stage, int num);
 extern qi_feature *init_quest_feature(int q_idx, int stage, int num);
+extern qi_questor_morph *init_quest_qmorph(int q_idx, int stage, int questor);
 extern void quest_handle_disabled_on_startup(void);
 extern void fix_questors_on_startup(void);
 extern void questitem_d(object_type *o_ptr, int num);
