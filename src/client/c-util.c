@@ -2112,8 +2112,8 @@ byte get_3way(cptr prompt, bool default_no) {
 	char buf[80];
 
 	/* Hack -- Build a "useful" prompt */
-	if (default_no) strnfmt(buf, 78, "%.70s [Y/A/n]", prompt);
-	else strnfmt(buf, 78, "%.70s [y/a/N]", prompt);
+	if (default_no) strnfmt(buf, 78, "%.70s [y/a/N]", prompt);
+	else strnfmt(buf, 78, "%.70s [y/a/n]", prompt);
 
 	/* The top line is "icky" */
 	topline_icky = TRUE;
@@ -2127,7 +2127,9 @@ byte get_3way(cptr prompt, bool default_no) {
 
 		if (i == 'Y' || i == 'y') res = 1;
 		else if (i == 'A' || i == 'a') res = 2;
-		else if (i == 'N' || i == 'n' || default_no) res = 0;
+		else if (i == 'N' || i == 'n' ||
+		    (default_no && (i == '\r' || i == '\n' || i == '\e'))) /* not all keys, just ESC and RETURN */
+			res = 0;
 		if (res != -1) break;
 	}
 

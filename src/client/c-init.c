@@ -2153,7 +2153,7 @@ static void quit_hook(cptr s) {
 	/* Display the quit reason */
 	if (s && *s) display_message(s, "Quitting");
 
-	if (message_num() && (res || (res = get_3way("Save chat log/all messages?", FALSE)))) {
+	if (message_num() && (res || (res = get_3way("Save chat log/all messages?", TRUE)))) {
 		FILE *fp;
 		char buf[80], buf2[1024];
 		int i;

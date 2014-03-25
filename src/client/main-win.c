@@ -3438,7 +3438,7 @@ static void hook_quit(cptr str) {
 	if (str && *str) MessageBox(data[0].w, str, "Error", MB_OK | MB_ICONSTOP);
 
 	/* Copied from quit_hook in c-init.c - mikaelh */
-	if (message_num() && (res || (res = get_3way("Save chat log/all messages?", FALSE)))) {
+	if (message_num() && (res || (res = get_3way("Save chat log/all messages?", TRUE)))) {
 		FILE *fp;
 		char buf[80], buf2[1024];
 		time_t ct = time(NULL);
