@@ -1869,6 +1869,9 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 
 	/* walk somewhere? */
 	if (q_qact->walk_speed) {
+		m_ptr->speed = q_qact->walk_speed;
+		m_ptr->destx = q_qact->walk_destx;
+		m_ptr->desty = q_qact->walk_desty;
 	}
 }
 /* Add a quest-specific dungeon when a dungeon stage starts */

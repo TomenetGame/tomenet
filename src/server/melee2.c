@@ -6381,6 +6381,160 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
         return TRUE;
 }
 
+static bool get_moves_questor(int Ind, int m_idx, int *mm) {
+	player_type *p_ptr;
+	monster_type *m_ptr = &m_list[m_idx];
+	int y, ay, x, ax;
+	int move_val = 0;
+	int tm_idx = 0;
+	int y2, x2;
+
+	if (Ind > 0) p_ptr = Players[Ind];
+	else p_ptr = NULL;
+
+	/* Lets find a target adjacent to us */
+	{
+		int sx, sy;
+		s32b max_hp = 0;
+
+		/* Scan grids around */
+		for (sx = m_ptr->fx - 1; sx <= m_ptr->fx + 1; sx++)
+		for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++) {
+			cave_type *c_ptr;
+			cave_type **zcave;
+			if (!in_bounds(sy, sx)) continue;
+
+			/* ignore ourself */
+			if (sx == m_ptr->fx && sy == m_ptr->fy) continue;
+
+			/* no point if there are no players on depth */
+			/* and it would crash anyway ;) */
+
+			if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
+			c_ptr = &zcave[sy][sx];
+
+			if (!c_ptr->m_idx) continue;
+			if (c_ptr->m_idx > 0) {
+				if (max_hp < m_list[c_ptr->m_idx].maxhp) {
+					max_hp = m_list[c_ptr->m_idx].maxhp;
+					tm_idx = c_ptr->m_idx;
+				}
+			} else {
+				if ((max_hp < Players[-c_ptr->m_idx]->mhp) && (m_ptr->owner != Players[-c_ptr->m_idx]->id)) {
+					max_hp = Players[-c_ptr->m_idx]->mhp;
+					tm_idx = c_ptr->m_idx;
+				}
+			}
+		}
+	}
+
+	/* adjacent hostile monster to attack? then attack instead of moving */
+	if (tm_idx) {
+		y2 = (tm_idx > 0) ? m_list[tm_idx].fy : Players[-tm_idx]->py;
+		x2 = (tm_idx > 0) ? m_list[tm_idx].fx : Players[-tm_idx]->px;
+		//isn't this BAD paranoia?
+		if (!(inarea(&m_ptr->wpos, (tm_idx > 0)? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return FALSE;
+	}
+	/* continue moving */
+	else {
+		y2 = m_ptr->desty;
+		x2 = m_ptr->destx;
+	}
+
+	/* Extract the "pseudo-direction" */
+	y = m_ptr->fy - y2;
+	x = m_ptr->fx - x2;
+
+	/* Extract the "absolute distances" */
+	ax = ABS(x);
+	ay = ABS(y);
+
+	/* Do something weird */
+	if (y < 0) move_val += 8;
+	if (x > 0) move_val += 4;
+
+	/* Prevent the diamond maneuvre */
+	if (ay > (ax << 1)) {
+		move_val++;
+		move_val++;
+	} else if (ax > (ay << 1)) {
+		move_val++;
+	}
+
+	/* Extract some directions */
+	switch (move_val) {
+	case 0:
+		mm[0] = 9;
+		if (ay > ax) {
+			mm[1] = 8; mm[2] = 6; mm[3] = 7; mm[4] = 3;
+		} else {
+			mm[1] = 6; mm[2] = 8; mm[3] = 3; mm[4] = 7;
+		}
+		break;
+	case 1:
+	case 9:
+		mm[0] = 6;
+		if (y < 0) {
+			mm[1] = 3; mm[2] = 9; mm[3] = 2; mm[4] = 8;
+		} else {
+			mm[1] = 9; mm[2] = 3; mm[3] = 8; mm[4] = 2;
+		}
+		break;
+	case 2:
+	case 6:
+		mm[0] = 8;
+		if (x < 0) {
+			mm[1] = 9; mm[2] = 7; mm[3] = 6; mm[4] = 4;
+		} else {
+			mm[1] = 7; mm[2] = 9; mm[3] = 4; mm[4] = 6;
+		}
+		break;
+	case 4:
+		mm[0] = 7;
+		if (ay > ax) {
+			mm[1] = 8; mm[2] = 4; mm[3] = 9; mm[4] = 1;
+		} else {
+			mm[1] = 4; mm[2] = 8; mm[3] = 1; mm[4] = 9;
+		}
+		break;
+	case 5:
+	case 13:
+		mm[0] = 4;
+		if (y < 0) {
+			mm[1] = 1; mm[2] = 7; mm[3] = 2; mm[4] = 8;
+		} else {
+			mm[1] = 7; mm[2] = 1; mm[3] = 8; mm[4] = 2;
+		}
+		break;
+	case 8:
+		mm[0] = 3;
+		if (ay > ax) {
+			mm[1] = 2; mm[2] = 6; mm[3] = 1; mm[4] = 9;
+		} else {
+			mm[1] = 6; mm[2] = 2; mm[3] = 9; mm[4] = 1;
+		}
+		break;
+	case 10:
+	case 14:
+		mm[0] = 2;
+		if (x < 0) {
+			mm[1] = 3; mm[2] = 1; mm[3] = 6; mm[4] = 4;
+		} else {
+			mm[1] = 1; mm[2] = 3; mm[3] = 4; mm[4] = 6;
+		}
+		break;
+	case 12:
+		mm[0] = 1;
+		if (ay > ax) {
+			mm[1] = 2; mm[2] = 4; mm[3] = 3; mm[4] = 7;
+		} else {
+			mm[1] = 4; mm[2] = 2; mm[3] = 7; mm[4] = 3;
+		}
+		break;
+	}
+	return TRUE;
+}
+
 
 /* Determine whether the player is invisible to a monster */
 /* Maybe we'd better add SEE_INVIS flags to the monsters.. */
@@ -6976,7 +7130,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 	else {
 		/* Logical moves */
 #ifndef ARCADE_SERVER
-		get_moves(Ind, m_idx, mm);
+		if (m_ptr->questor) get_moves_questor(Ind, m_idx, mm); /* note: we're not using a 'process_monster_questor()' for now */
+		else get_moves(Ind, m_idx, mm);
 #else
 		if ((m_ptr->r_idx >= RI_ARCADE_START) && (m_ptr->r_idx <= RI_ARCADE_END)) {
 			for(n = 1; n <= NumPlayers; n++) {
