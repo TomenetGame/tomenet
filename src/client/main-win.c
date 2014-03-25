@@ -3418,10 +3418,9 @@ static void hook_plog(cptr str)
  * A lot of this function should be handled by actually calling
  * the "term_nuke()" function hook for each window.  XXX XXX XXX
  */
-static void hook_quit(cptr str)
-{
+static void hook_quit(cptr str) {
 	RECT rc;
-	int i;
+	int i, res = save_chat;
 
 #ifdef USE_SOUND_2010
 	/* let the sound fade out, also helps the user to realize
@@ -3439,14 +3438,14 @@ static void hook_quit(cptr str)
 	if (str && *str) MessageBox(data[0].w, str, "Error", MB_OK | MB_ICONSTOP);
 
 	/* Copied from quit_hook in c-init.c - mikaelh */
-
-	if (message_num() && (save_chat || get_check2("Save chatlog?", FALSE))) {
+	if (message_num() && (res || (res = get_3way("Save chat log/all messages?", FALSE)))) {
 		FILE *fp;
 		char buf[80], buf2[1024];
 		time_t ct = time(NULL);
 		struct tm* ctl = localtime(&ct);
 
-		strcpy(buf, "tomenet-chat_");
+		if (res == 1) strcpy(buf, "tomenet-chat_");
+		else strcpy(buf, "tomenet-messages_");
 		strcat(buf, format("%04d-%02d-%02d_%02d.%02d.%02d",
 		    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
 		    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
@@ -3457,7 +3456,7 @@ static void hook_quit(cptr str)
 		path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
 		fp = my_fopen(buf2, "w");
 		if (fp != (FILE*)NULL) {
-			dump_messages_aux(fp, i, 1, FALSE);//FALSE
+			dump_messages_aux(fp, i, 2 - res, FALSE);
 			fclose(fp);
 		}
 	}
@@ -3926,6 +3925,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					    "  -q                 disable audio capabilities ('quiet mode')",
 					    "  -u                 disable client-side automatic lua updates",
 					    "  -v                 save chat log on exit, don't prompt",
+					    "  -v                 save complete message log on exit, don't prompt",
 					    "  -w                 disable client-side weather effects"));
 #endif
 					quit(NULL);
@@ -3960,7 +3960,10 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					skip_motd = TRUE;
 					break;
 				case 'v':
-					save_chat = TRUE;
+					save_chat = 1;
+					break;
+				case 'V':
+					save_chat = 2;
 					break;
 			}
 		} else if (lpCmdLine[i] == ' ') {

@@ -835,7 +835,11 @@ int main(int argc, char **argv)
 			break;
 
 		case 'v':
-			save_chat = TRUE;
+			save_chat = 1;
+			break;
+
+		case 'V':
+			save_chat = 2;
 			break;
 
 		case 'e': {
@@ -876,6 +880,7 @@ int main(int argc, char **argv)
 		puts("  -u                 disable client-side automatic lua updates");
 		puts("                     (you shouldn't use this option!");
 		puts("  -v                 save chat log on exit, don't prompt");
+		puts("  -V                 save complete message log on exit, don't prompt");
 		puts("  -w                 disable client-side weather effects");
 
 #ifdef USE_SOUND_2010

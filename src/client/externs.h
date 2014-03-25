@@ -293,7 +293,7 @@ extern bool quiet_mode;
 extern bool noweather_mode;
 extern bool no_lua_updates;
 extern bool skip_motd;
-extern bool save_chat;
+extern byte save_chat;
 
 
 extern client_opts c_cfg;
@@ -532,6 +532,7 @@ extern bool get_dir(int *dp);
 extern void c_put_str(byte attr, cptr str, int row, int col);
 extern void put_str(cptr str, int row, int col);
 extern bool get_check2(cptr prompt, bool default_yes);
+extern byte get_3way(cptr prompt, bool default_no);
 extern s32b message_num(void);
 extern s32b message_num_chat(void);
 extern s32b message_num_msgnochat(void);

@@ -176,7 +176,7 @@ bool quiet_mode = FALSE;
 bool noweather_mode = FALSE;
 bool no_lua_updates = FALSE;
 bool skip_motd = FALSE;
-bool save_chat = FALSE;
+byte save_chat = 0;
 
 
 client_opts c_cfg;

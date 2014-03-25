@@ -2135,9 +2135,8 @@ static void display_message(cptr msg, cptr title)
  *
  * Close down, then fall back into "quit()".
  */
-static void quit_hook(cptr s)
-{
-	int j;
+static void quit_hook(cptr s) {
+	int j, res = save_chat;
 
 #ifdef USE_SOUND_2010
 	/* let the sound fade out, also helps the user to realize
@@ -2154,14 +2153,15 @@ static void quit_hook(cptr s)
 	/* Display the quit reason */
 	if (s && *s) display_message(s, "Quitting");
 
-	if (message_num() && (save_chat || get_check2("Save chatlog?", FALSE))) {
+	if (message_num() && (res || (res = get_3way("Save chat log/all messages?", FALSE)))) {
 		FILE *fp;
 		char buf[80], buf2[1024];
 		int i;
 		time_t ct = time(NULL);
 		struct tm* ctl = localtime(&ct);
 
-		strcpy(buf, "tomenet-chat_");
+		if (res == 1) strcpy(buf, "tomenet-chat_");
+		else strcpy(buf, "tomenet-messages_");
 		strcat(buf, format("%04d-%02d-%02d_%02d.%02d.%02d",
 		    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
 		    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
@@ -2174,7 +2174,7 @@ static void quit_hook(cptr s)
 		path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
 		fp = my_fopen(buf2, "w");
 		if (fp != (FILE*)NULL) {
-			dump_messages_aux(fp, i, 1, FALSE);//FALSE
+			dump_messages_aux(fp, i, 2 - res, FALSE);//FALSE
 			fclose(fp);
 		}
 	}

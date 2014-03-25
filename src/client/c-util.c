@@ -2107,6 +2107,42 @@ bool get_check2(cptr prompt, bool default_yes) {
 	return (FALSE);
 }
 
+byte get_3way(cptr prompt, bool default_no) {
+	int i, res = -1;
+	char buf[80];
+
+	/* Hack -- Build a "useful" prompt */
+	if (default_no) strnfmt(buf, 78, "%.70s [Y/A/n]", prompt);
+	else strnfmt(buf, 78, "%.70s [y/a/N]", prompt);
+
+	/* The top line is "icky" */
+	topline_icky = TRUE;
+
+	/* Prompt for it */
+	prompt_topline(buf);
+
+	while (TRUE) {
+		/* c_cfg.quick_messages now always on */
+		i = inkey();
+
+		if (i == 'Y' || i == 'y') res = 1;
+		else if (i == 'A' || i == 'a') res = 2;
+		else if (i == 'N' || i == 'n' || default_no) res = 0;
+		if (res != -1) break;
+	}
+
+	/* Flush any events that came in while we were icky */
+	if (!c_quit) Flush_queue();
+
+	/* Erase the prompt */
+	clear_topline();
+
+	/* The top line is OK again */
+	topline_icky = FALSE;
+
+	return res;
+}
+
 
 /*
  * Recall the "text" of a saved message
