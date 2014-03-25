@@ -153,7 +153,7 @@ typedef struct qi_questor_hostility {
 	s16b hostile_revert_timed_real;			/* ..after real time (s).. */
 
 	s16b change_stage;				/* new stage after hostility has ceased (-1 for none) */
-	bool quiet_change;				/* for the above auto-changes: don't replay the stage's dialogue */
+	bool quiet_change;				/* for the above stage-change: don't replay the stage's dialogue */
 
 	bool turns_normal;				/* questor actually loses questor status and turns into a regular mob! */
 
@@ -166,7 +166,8 @@ typedef struct qi_questor_hostility {
 typedef struct qi_questor_act {
 	byte walk_speed;				/* questor will actually move around during this stage? */
 	s16b walk_destx, walk_desty;			/* target waypoint for questor to move to */
-	s16b walk_stage;				/* stage will change when questor arrives at destination */
+	s16b change_stage;				/* stage will change when questor arrives at destination */
+	bool quiet_change;				/* for the above stage-change: don't replay the stage's dialogue */
 
 	struct worldpos teleport_wpos;			/* teleport questor to a new position */
 	s16b teleport_x, teleport_y;
