@@ -24,9 +24,10 @@ V:0.0.1
 # Q (for type=monster)  :type:ridx:char:attr:minlv:maxlv:name
 # Q (for type=parchment):type:sval:attr:level:name
 # Q (for type=object)   :type:tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:attr:level:name
+# note: Each L/F/K-line must follow after its Q line!
 # L (up to 5x, per Q line):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
-# note: Each L-line must follow after its Q line!
 # (optional) F (up to 5x, per Q line):accept-on-los? (N.I.):accept-on-interaction?:talkable?:despawned? (N.I.):invincible?:staticfloor?:quitfloor?(N.I.)
+# (optional) K (up to 5x, per Q line):itemdroptype (0=none,1=regular,2=specific,3=both):tval:sval:pval:bpval:name1:name2:name2b:good:great:verygreat:createreward 0..5:dropgold:giveexp (-1 for normal exp)
 
 #(Parameters from here on, except for keywords/keywordreplies, are all individual per quest stage)
 
@@ -107,7 +108,6 @@ V:0.0.1
 #  Negative numbers are extra effects: -1 = 1000t of luck, -2 = 2000t of luck, -3 = 3000t of luck.
 
 # Lines completely left out of the implementation so far:
-# //todo (optional) K (5x repeatable, per Q line):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific,3=both):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward 0..5
 # //todo (optional) D:dungeon to spawn ...
 # //todo (optional) S:stage:questor changes/polymorphes ...
 # //todo (optional) S/H:stage:questor hostility ...

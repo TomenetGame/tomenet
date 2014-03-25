@@ -8189,6 +8189,16 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		if (m_ptr->level == 0) tmp_exp = r_ptr->mexp;
 		else tmp_exp = r_ptr->mexp * m_ptr->level;
 
+		/* for when a quest giver turned non-invincible */
+		if (m_ptr->questor) {
+			if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
+				if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].exp != -1)
+					tmp_exp = q_info[m_ptr->quest].questor[m_ptr->questor_idx].exp * m_ptr->level;
+			} else {
+				s_printf("QUESTOR DEPRECATED (monster_death2)\n");
+			}
+		}
+
 		/* for obtaining statistical IDDC information: */
 		if (l_ptr) l_ptr->monsters_killed++;
 
