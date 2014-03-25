@@ -10,9 +10,8 @@
    of 0..ABS(stage) to current stage, allowing for random quest progression!
    Eg: kill_stage == -3 -> next_stage = current_stage + randint(3).
 
-   codename 'none' is reserved, to indicate that it's not a follow-up quest.
-
-   If a quest stage doesn't have any stage goals, nor any dialogue keywords,
+   If a quest stage doesn't have any stage goals, nor any dialogue keywords
+   that can change the stage,
    the quest will terminate after all automatic/timed actions of this stage
    have been done and all eligible rewards have been handed out.
    ++including: questor movement/teleport/revert-from-hostile and
@@ -20,13 +19,20 @@
 
    Items retrieved will be marked as 'quest items' for easy check in case the
    player also has to deliver them somewhere, whether they're the same items.
+   Quest items cannot stack with other items.
 
 
    Data structure:
-   quest_info -> qi_stage   -> qi_goal   -> qi_kill
-                                         -> qi_retrieve
-                                         -> qi_deliver
+   quest_info -> qi_questor -> qi_location
+              -> qi_stage   -> qi_goal              -> qi_kill
+                                                    -> qi_retrieve
+                                                    -> qi_deliver
                             -> qi_reward
+                            -> qi_questitem         -> qi_location
+                            -> qi_feature
+                            -> qi_questor_morph
+                            -> qi_questor_hostility
+                            -> qi_questor_act
               -> qi_keyword
               -> qi_kwreply
 */
