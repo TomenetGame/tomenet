@@ -11832,7 +11832,7 @@ void rem_dungeon(struct worldpos *wpos, bool tower){
 }
 
 /* 'type' refers to t_info[] */
-void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, u32b flags2, u32b flags3, bool tower, int type, int quest, int quest_stage)
+void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, u32b flags2, u32b flags3, bool tower, int type, int theme, int quest, int quest_stage)
 {
 #ifdef RPG_SERVER
 	bool found_town = FALSE;
@@ -11874,6 +11874,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 	d_ptr = (tower ? wild->tower : wild->dungeon);
 
 	d_ptr->type = type;
+	d_ptr->theme = theme;
 	d_ptr->quest = quest;
 	d_ptr->quest_stage = quest_stage;
 
@@ -12040,14 +12041,10 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 					return;	/* This should never.. */
 				}
 				type = town[retval].type;
-#if 0
-				add_dungeon(wpos, town_profile[type].dun_base, town_profile[type].dun_max, 0x0, DF2_RANDOM, 0x0, town_profile[type].tower, 0, 0, 0);
-#else	/* 0 */
 				for (i = 0; i < 2; i++) {
 					if (town_profile[type].dungeons[i])
-						add_dungeon(wpos, 0, 0, 0x0, 0x0, 0x0, FALSE, town_profile[type].dungeons[i], 0, 0);
+						add_dungeon(wpos, 0, 0, 0x0, 0x0, 0x0, FALSE, town_profile[type].dungeons[i], 0, 0, 0);
 				}
-#endif	/* 0 */
 			}
 			/* Make a town */
 			town_gen(wpos);

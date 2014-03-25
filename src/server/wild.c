@@ -365,7 +365,7 @@ void wild_spawn_towns()
 			continue;
 		}
 
-		add_dungeon(&wpos, 0, 0, 0, 0, 0, FALSE, i, 0, 0);
+		add_dungeon(&wpos, 0, 0, 0, 0, 0, FALSE, i, 0, 0, 0);
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
 		if (d_info[i].flags1 & DF1_TOWER) {
@@ -4379,7 +4379,7 @@ void wild_add_new_dungeons(int Ind) {
 		}
 		if (!tries) s_printf("Dungeon %d couldn't get added.\n", i);
 
-		add_dungeon(&wpos, 0, 0, 0, 0, 0, FALSE, i, 0, 0);
+		add_dungeon(&wpos, 0, 0, 0, 0, 0, FALSE, i, 0, 0, 0);
 
 		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
 		if (!Ind) {
