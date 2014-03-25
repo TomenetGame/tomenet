@@ -1705,6 +1705,86 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 		everyone_lite_spot(&wpos, y, x);
 	}
 }
+
+static void quest_questor_morph(int q_idx, int stage, int questor_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
+	qi_questor *q_questor = &q_ptr->questor[questor_idx];
+	qi_questor_morph *q_qmorph = q_stage->questor_morph[questor_idx];
+
+	q_questor->talkable = q_qmorph->talkable;
+	q_questor->despawned = q_qmorph->despawned;
+	q_questor->invincible = q_qmorph->invincible;
+	q_questor->death_fail = q_qmorph->death_fail;
+	if (q_qmorph->name) strcpy(q_questor->name, q_qmorph->name);
+	if (q_qmorph->ridx) q_questor->ridx = q_qmorph->ridx;
+	if (q_qmorph->rchar != 255) q_questor->rchar = q_qmorph->rchar;
+	if (q_qmorph->rattr != 255) q_questor->rattr = q_qmorph->rattr;
+	if (q_qmorph->rlev) m_list[q_questor->mo_idx].level = q_qmorph->rlev;
+#if 0
+	/* Note the spot */
+	note_spot_depth(&q_questor->current_wpos, q_questor->current_y, q_questor->current_x);
+	/* Draw the spot */
+	everyone_lite_spot(&q_questor->current_wpos, q_questor->current_y, q_questor->current_x);
+#else
+	/* Note the spot */
+	note_spot_depth(&m_list[q_questor->mo_idx].wpos, m_list[q_questor->mo_idx].fy, m_list[q_questor->mo_idx].fx);
+	/* Draw the spot */
+	everyone_lite_spot(&m_list[q_questor->mo_idx].wpos, m_list[q_questor->mo_idx].fy, m_list[q_questor->mo_idx].fx);
+#endif
+}
+static void quest_questor_hostility(int q_idx, int stage, int questor_idx) {
+#if 0
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
+	qi_questor *q_questor = &q_ptr->questor[questor_idx];
+	qi_questor_hostility *q_qhost = q_stage->questor_hostility[questor_idx];
+#endif
+	
+}
+static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
+	int j, k;
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
+	qi_questor *q_questor = &q_ptr->questor[questor_idx];
+	qi_questor_act *q_qact = q_stage->questor_act[questor_idx];
+	player_type *p_ptr;
+
+	/* tele players to new location? */
+	if (q_qact->tppy_wpos.wx != -1) {
+		if (pInd && q_ptr->individual) {
+			/* individual quest */
+			p_ptr = Players[pInd];
+			p_ptr->recall_pos.wx = q_qact->tppy_wpos.wx;
+			p_ptr->recall_pos.wy = q_qact->tppy_wpos.wy;
+			p_ptr->recall_pos.wz = q_qact->tppy_wpos.wz;
+			//p_ptr->new_level_method = (q_qact->tppy_wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+			p_ptr->new_level_method = LEVEL_RAND;
+			recall_player(pInd, "");
+		} else {
+			/* global quest - teleport all players who are here and on the quest */
+			for (j = 1; j <= NumPlayers; j++) {
+				p_ptr = Players[j];
+				if (!inarea(&p_ptr->wpos, &m_list[q_questor->mo_idx].wpos)) continue;
+				for (k = 0; k < MAX_CONCURRENT_QUESTS; k++)
+					if (p_ptr->quest_idx[k] == q_idx) break;
+				if (k == MAX_CONCURRENT_QUESTS) continue;
+				p_ptr->recall_pos.wx = q_qact->tppy_wpos.wx;
+				p_ptr->recall_pos.wy = q_qact->tppy_wpos.wy;
+				p_ptr->recall_pos.wz = q_qact->tppy_wpos.wz;
+				//p_ptr->new_level_method = (q_qact->tppy_wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+				p_ptr->new_level_method = LEVEL_RAND;
+				recall_player(j, "");
+			}
+		}
+	}
+	/* tele self to new location? */
+	if (q_qact->tp_wpos.wx != -1) {
+	}
+	/* walk somewhere? */
+	if (q_qact->walk_speed) {
+	}
+}
 /* perform automatic things (quest spawn/stage change) in a stage */
 static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -1714,46 +1794,11 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	struct worldpos wpos;
 	qi_feature *q_feat;
 
-	qi_questor *q_questor;
-	qi_questor_morph *q_qmorph;
-	qi_questor_hostility *q_qhostility;
-	qi_questor_act *q_qact;
-
 	/* ---------- hijacking this function for questor-morph/hostility/act changes ---------- */
 	for (i = 0; i < q_ptr->questors; i++) {
-		if (q_stage->questor_morph[i]) {
-			q_qmorph = q_stage->questor_morph[i];
-			q_questor = &q_ptr->questor[i];
-
-			q_questor->talkable = q_qmorph->talkable;
-			q_questor->despawned = q_qmorph->despawned;
-			q_questor->invincible = q_qmorph->invincible;
-			q_questor->death_fail = q_qmorph->death_fail;
-			if (q_qmorph->name) strcpy(q_questor->name, q_qmorph->name);
-			if (q_qmorph->ridx) q_questor->ridx = q_qmorph->ridx;
-			if (q_qmorph->rchar != 255) q_questor->rchar = q_qmorph->rchar;
-			if (q_qmorph->rattr != 255) q_questor->rattr = q_qmorph->rattr;
-			if (q_qmorph->rlev) m_list[q_questor->mo_idx].level = q_qmorph->rlev;
-#if 0
-			/* Note the spot */
-			note_spot_depth(&q_questor->current_wpos, q_questor->current_y, q_questor->current_x);
-			/* Draw the spot */
-			everyone_lite_spot(&q_questor->current_wpos, q_questor->current_y, q_questor->current_x);
-#else
-			/* Note the spot */
-			note_spot_depth(&m_list[q_questor->mo_idx].wpos, m_list[q_questor->mo_idx].fy, m_list[q_questor->mo_idx].fx);
-			/* Draw the spot */
-			everyone_lite_spot(&m_list[q_questor->mo_idx].wpos, m_list[q_questor->mo_idx].fy, m_list[q_questor->mo_idx].fx);
-#endif
-		}
-		if (q_stage->questor_hostility[i]) {
-			q_qhostility = q_stage->questor_hostility[i];
-			q_questor = &q_ptr->questor[i];
-		}
-		if (q_stage->questor_act[i]) {
-			q_qact = q_stage->questor_act[i];
-			q_questor = &q_ptr->questor[i];
-		}
+		if (q_stage->questor_morph[i]) quest_questor_morph(q_idx, stage, i);
+		if (q_stage->questor_hostility[i]) quest_questor_hostility(q_idx, stage, i);
+		if (q_stage->questor_act[i]) quest_questor_act(pInd, q_idx, stage, i);
 	}
 	/* ------------------------------------------------------------------------------------- */
 

@@ -171,15 +171,17 @@ typedef struct qi_questor_hostility {
 
 /* Sub-structure: Questor moves himself or the player ('J') */
 typedef struct qi_questor_act {
-	struct worldpos tp_wpos;			/* teleport self to a new position */
-	s16b tp_x, tp_y;
+	struct worldpos tp_wpos;			/* teleport self to a new wpos position (wx -1 to disable) */
+	s16b tp_x, tp_y;				/* teleport self to a new location (x -1 to disable) */
 
-	struct worldpos tppy_wpos;			/* teleport participating players to a new position */
-	s16b tppy_x, tppy_y;
+	struct worldpos tppy_wpos;			/* teleport participating players to a new wpos position (wx -1 to disable) */
+	s16b tppy_x, tppy_y;				/* ..and to new location (x -1 to disable) */
 
-	byte walk_speed;				/* questor will actually move around during this stage? */
+	byte walk_speed;				/* questor will actually move around during this stage? (0 to disable) */
 	s16b walk_destx, walk_desty;			/* target waypoint for questor to move to */
-	s16b change_stage;				/* stage will change when questor arrives at destination */
+
+	s16b change_stage;				/* stage will change when questor arrives at destination
+							   NOTE: To change stage right after teleporting questor/players, use 'A' line instead! */
 	bool quiet_change;				/* for the above stage-change: don't replay the stage's dialogue */
 } qi_questor_act;
 
