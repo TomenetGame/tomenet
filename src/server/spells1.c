@@ -7849,7 +7849,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	else {
 		bool fear = FALSE;
 
-		if (m_ptr->questor && (m_ptr->questor_invincible || (r_ptr->flags7 & RF7_NO_DEATH) || !m_ptr->questor_hostile)) return obvious;
+		if (m_ptr->questor && (m_ptr->questor_invincible || (r_ptr->flags7 & RF7_NO_DEATH) || !(m_ptr->questor_hostile & 0x1))) return obvious;
 
 		if (p_ptr->admin_godly_strike) {
 			p_ptr->admin_godly_strike--;

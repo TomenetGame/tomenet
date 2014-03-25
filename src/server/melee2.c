@@ -6733,6 +6733,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 #endif
 	bool		inv;
 
+	/* for questors: pfriend doesn't attack players/pets/golems, mfriend doesn't attack monsters */
+	bool		pfriend = (m_ptr->questor && (m_ptr->questor_hostile & 0x1) == 0);
+	bool		mfriend = !m_ptr->questor || (m_ptr->questor_hostile & 0x2) == 0;
+
 
 /* Hack -- don't process monsters on wilderness levels that have not
 	   been regenerated yet.
@@ -7651,11 +7655,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 
 		/* The player is in the way.  Attack him. */
-		if (do_move && (c_ptr->m_idx < 0))
-		{
+		if (do_move && (c_ptr->m_idx < 0)) {
 			int p_idx_target = 0 - c_ptr->m_idx;
 			player_type *q_ptr;
-
 
 #ifdef C_BLUE_AI_MELEE /* if multiple targets adjacent, choose between them */
     if (!m_ptr->confused) {
@@ -7857,9 +7859,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			q_ptr = Players[p_idx_target];
 
 			/* Don't attack your master! Invincible players can't be atacked! */
-			if (q_ptr && m_ptr->owner != q_ptr->id &&
-			    !q_ptr->admin_invinc)
-			{
+			if (q_ptr && m_ptr->owner != q_ptr->id && !q_ptr->admin_invinc
+			    /* non-hostile questors dont attack people */
+			    && !pfriend) {
 				/* Push past weaker players (unless leaving a wall) */
 				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
 //				    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
@@ -7953,7 +7955,28 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			/* Assume no movement */
 			do_move = FALSE;
 
-			if (m_list[c_ptr->m_idx].pet) {
+			/* Kill weaker monsters */
+			if ((r_ptr->flags2 & RF2_KILL_BODY) &&
+			    (r_ptr->mexp > z_ptr->mexp) &&
+			    !y_ptr->owner) { /* exception: pets/golems are never insta-killed via KILL_BODY */
+				/* Allow movement */
+				do_move = TRUE;
+
+#ifdef OLD_MONSTER_LORE
+				/* Monster ate another monster */
+				did_kill_body = TRUE;
+#endif
+
+				/* XXX XXX XXX Message */
+
+				/* Kill the monster */
+				delete_monster(wpos, ny, nx, TRUE);
+
+				/* Hack -- get the empty monster */
+				y_ptr = &m_list[c_ptr->m_idx];
+			}
+			/* attack player's pet */
+			else if (m_list[c_ptr->m_idx].pet && !pfriend) {
 				/* Do the attack */
 				(void)monster_attack_normal(c_ptr->m_idx, m_idx);
 
@@ -7962,48 +7985,37 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 				/* Do not move */
 				do_move = FALSE;
-			} else {
-				/* Kill weaker monsters */
-				if ((r_ptr->flags2 & RF2_KILL_BODY) &&
-				    (r_ptr->mexp > z_ptr->mexp) && !y_ptr->owner)
-				{
-					/* Allow movement */
-					do_move = TRUE;
+			}
+			/* questor attacks monster? */
+			else if ((m_ptr->questor && !mfriend) ||
+			    /* monster attacks questor? */
+			    (y_ptr->questor && (y_ptr->questor_hostile & 0x2))) {
+				/* Attack it ! */
+				monster_attack_normal(c_ptr->m_idx, m_idx);
 
+				/* Assume no movement */
+				do_move = FALSE;
+
+				/* Take a turn */
+				do_turn = TRUE;
+			}
+			/* Push past weaker monsters (unless leaving a wall) */
+			else if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
+			    (r_ptr->mexp > z_ptr->mexp) &&
+			    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)))
+			{
+				/* Allow movement */
+				do_move = TRUE;
 #ifdef OLD_MONSTER_LORE
-					/* Monster ate another monster */
-					did_kill_body = TRUE;
+				/* Monster pushed past another monster */
+				did_move_body = TRUE;
 #endif
-
-					/* XXX XXX XXX Message */
-
-					/* Kill the monster */
-					delete_monster(wpos, ny, nx, TRUE);
-
-					/* Hack -- get the empty monster */
-					y_ptr = &m_list[c_ptr->m_idx];
-				}
-
-				/* Push past weaker monsters (unless leaving a wall) */
-				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
-				    (r_ptr->mexp > z_ptr->mexp) &&
-				    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)))
-				{
-					/* Allow movement */
-					do_move = TRUE;
-
-#ifdef OLD_MONSTER_LORE
-					/* Monster pushed past another monster */
-					did_move_body = TRUE;
-#endif
-
-					/* XXX XXX XXX Message */
-				}
+				/* XXX XXX XXX Message */
 			}
 		}
 
 		/* Hack -- player hinders its movement */
-		if (do_move && monst_check_grab(m_idx, 85, "run")) {
+		if (do_move && !pfriend && monst_check_grab(m_idx, 85, "run")) {
 			/* Take a turn */
 			do_turn = TRUE;
 

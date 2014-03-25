@@ -166,8 +166,7 @@ typedef struct qi_questor_hostility {
 	bool quiet_change;				/* for the above stage-change: don't replay the stage's dialogue */
 
 	/* dynamic timer helper data */
-	s16b hostile_revert_timed_countdown;		/* dynamic, for countdown for above timings: negative value = ingame absolute, positive value = real-time counting down */
-	s16b hostile_revert_timed_countdown_stage;
+	s16b hostile_revert_timed_countdown;		/* countdown for above timings: negative value = ingame absolute, positive value = real-time counting down */
 } qi_questor_hostility;
 
 /* Sub-structure: Questor moves himself or the player ('J') */
@@ -348,10 +347,8 @@ typedef struct qi_stage {
 	s16b timed_real;				/* automatically change to a different stage after a certain amount of real minutes passed */
 	bool quiet_change;				/* for the above auto-changes: don't replay the stage's dialogue */
 
-	/* dynamic timer helper data */
-	s16b timed_countdown;				/* dynamic, for countdown for above timings: negative value = ingame absolute, positive value = real-time counting down */
-	s16b timed_countdown_stage;
-	bool timed_countdown_quiet;
+	/* dynamic timer helper data --
+	    NOTE: we don't have that here, but instead use a helper var in quest_info for this! */
 
 	u16b setflags;					/* these flags will automatically be set on stage start */
 	u16b clearflags;				/* these flags will automatically be cleared on stage start */
@@ -491,7 +488,14 @@ typedef struct quest_info {
 	/* global quest flags (a-p to clear, A-P to set) -- note that these are stage-independant! */
 	u16b flags;
 
-	/*-----  Fixed quest data (from q_info.txt) ----- */
+
+	/* ------ Dynymic helper vars from sub-structures,
+		  that we store here instead for efficiency :-o */
+	s16b timed_countdown;				/* countdown for auto-stage change: negative value = ingame absolute, positive value = real-time counting down */
+	s16b timed_countdown_stage;			/* stage to activate */
+	s16b timed_countdown_quiet;			/* quiet stage-change? */
+
+	/* -----  Fixed quest data (from q_info.txt) ----- */
 
 //#define QI_CODENAME_LEN 10
 	char codename[QI_CODENAME_LEN + 1];		/* short, unique, internal name for checking prerequisite quests for follow-up quests */

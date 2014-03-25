@@ -969,7 +969,8 @@ struct monster_type {
     int hit_proj_id;
 
     /* for new quest_info */
-    bool questor, questor_invincible, questor_hostile; /* further quest_info flags are referred to when required, no need to copy all of them here */
+    bool questor, questor_invincible; /* further quest_info flags are referred to when required, no need to copy all of them here */
+    byte questor_hostile; /* hostility flags (0x1 = vs py, 0x2 = vs mon) */
     s16b quest, questor_idx;
 };
 

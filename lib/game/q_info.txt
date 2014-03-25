@@ -31,13 +31,13 @@ V:0.0.1
 
 #(Parameters from here on, except for keywords/keywordreplies, are all individual per quest stage)
 
-# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (255 to disable):0:timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue):set/clear flags
+# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (255 to disable):0:timed change at ingame hour (-1 to disable):timed change after realtime minutes:change quietly (skip stage dialogue):set/clear flags
 # (optional, up to 15x) Af:stage:questor's wpos (1..n, 0 to use specific wpos):quest item wpos:specific wpos wx:wy:wz:pos x:y:grid feature to be 'built' there on stage start (see f_info.txt)
 # (optional, up to 5x) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
 # (for each B line) Bl:stage:questorhandout (-1 to disable):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 # note: 'Bl' takes same parameters as 'L' lines (except for 'questor hand out'). Each Bl-line must follow after its B-line!
 # (optional) S:stage:questor to modify:talkable:despawned(NI):invincible:death_fail:name ("-" to keep):ridx (0 to keep):char (255 to keep):attr (255 to keep):level (0 to keep)
-# (optional) H:stage:questor:unquestor?:hostile-to-players?:hostile-to-monsters?(NI):revert-hp:revert-ingametime(NI):revert-after-realtime(NI):newstage:quiet?
+# (optional) H:stage:questor:unquestor?:hostile-to-players?:hostile-to-monsters?:revert-hp:revert-ingametime (-1 to disable):revert-after-realtime:newstage:quiet?
 # (optional) J:stage:questor:teleport wx:wy:wz:x:y:teleport players wx:wy:wz:x:y:walkspeed:destx:desty:newstage:quiet?
 # (optional) D:stage:base:max:tower?:nomap?:hard (1=forcedown:2=iron):stores (1=iron,2=all):theme(NI):name (or "-"):floors are static?(NI):keep until quest ends?:flags1:flags2:flags3:[:final floor map file(NI): offset x:y]
 # (for D-line) Dl:stage:locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y

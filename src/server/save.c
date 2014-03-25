@@ -2646,9 +2646,11 @@ static bool save_quests_file(void) {
 		for (j = 0; j < q_ptr->stages; j++) {
 			q_stage = &q_ptr->stage[j];
 
+#if 0
 			wr_s16b(q_stage->timed_countdown);
 			wr_s16b(q_stage->timed_countdown_stage);
 			wr_byte(q_stage->timed_countdown_quiet);
+#endif
 
 			//goals:
 			wr_byte(q_stage->goals);

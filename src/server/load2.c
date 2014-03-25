@@ -797,7 +797,7 @@ static void rd_monster(monster_type *m_ptr) {
 		rd_s16b(&m_ptr->questor_idx);
 		rd_s16b(&m_ptr->quest);
 		rd_byte((byte *)&m_ptr->questor_invincible);
-		rd_byte((byte *)&m_ptr->questor_hostile);
+		rd_byte(&m_ptr->questor_hostile);
 	} else m_ptr->questor = FALSE;
 
 	/* Owner */
@@ -3871,9 +3871,11 @@ static errr load_quests_file() {
 
 			q_stage = &q_ptr->stage[j];
 
+#if 0
 			rd_s16b(&q_stage->timed_countdown);
 			rd_s16b(&q_stage->timed_countdown_stage);
 			rd_byte((byte *) &q_stage->timed_countdown_quiet);
+#endif
 
 			//goals:
 			rd_byte(&load_goals);

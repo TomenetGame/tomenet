@@ -99,6 +99,7 @@ void process_quests(void) {
 	int minute = bst(MINUTE, turn), hour = bst(HOUR, turn);
 	bool active;
 	qi_stage *q_stage;
+	qi_questor_hostility *q_qhost;
 
 	for (i = 0; i < max_q_idx; i++) {
 		q_ptr = &q_info[i];
@@ -155,6 +156,10 @@ void process_quests(void) {
 			quest_deactivate(i);
 
 
+		/* --------------- timers of quests in progress --------------- */
+		if (!q_ptr->active) continue;
+
+
 		/* handle individual cooldowns here too for now.
 		   NOTE: this means player has to stay online for cooldown to expire, hmm */
 		for (j = 1; j <= NumPlayers; j++)
@@ -162,15 +167,30 @@ void process_quests(void) {
 				Players[j]->quest_cooldown[i]--;
 
 
-		q_stage = quest_cur_qi_stage(i);
 		/* handle automatically timed stage actions */ //TODO: implement this for individual quests too
-		if (q_stage->timed_countdown < 0) {
-			if (hour == -q_stage->timed_countdown)
-				quest_set_stage(0, i, q_stage->timed_countdown_stage, q_stage->timed_countdown_quiet);
-		} else if (q_stage->timed_countdown > 0) {
-			q_stage->timed_countdown--;
-			if (!q_stage->timed_countdown)
-				quest_set_stage(0, i, q_stage->timed_countdown_stage, q_stage->timed_countdown_quiet);
+		if (q_ptr->timed_countdown < 0) {
+			if (hour == 1 - q_ptr->timed_countdown)
+				quest_set_stage(0, i, q_ptr->timed_countdown_stage, q_ptr->timed_countdown_quiet);
+		} else if (q_ptr->timed_countdown > 0) {
+			q_ptr->timed_countdown--;
+			if (!q_ptr->timed_countdown)
+				quest_set_stage(0, i, q_ptr->timed_countdown_stage, q_ptr->timed_countdown_quiet);
+		}
+
+		/* handle automatic timed questor hostility */
+		q_stage = quest_cur_qi_stage(i);
+		for (j = 0; j < q_ptr->questors; j++) {
+			if (!q_stage->questor_hostility[j]) continue;
+			q_qhost = q_stage->questor_hostility[j];
+
+			if (q_qhost->hostile_revert_timed_countdown < 0) {
+				if (hour == 1 - q_qhost->hostile_revert_timed_countdown)
+					quest_questor_reverts(0, i, j); //TODO: handle individual quests (pInd is 0 here)
+			} else if (q_qhost->hostile_revert_timed_countdown > 0) {
+				q_qhost->hostile_revert_timed_countdown--;
+				if (!q_qhost->hostile_revert_timed_countdown)
+					quest_questor_reverts(0, i, j);
+			}
 		}
 	}
 }
@@ -734,7 +754,7 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	r_ptr->sleep = 0;
 
 	m_ptr->questor_invincible = q_questor->invincible; //for now handled by RF7_NO_DEATH
-	m_ptr->questor_hostile = FALSE;
+	m_ptr->questor_hostile = 0x0;
 	q_questor->mo_idx = m_idx;
 
 	update_mon(c_ptr->m_idx, TRUE);
@@ -977,8 +997,11 @@ bool quest_activate(int q_idx) {
 
 	/* Initialise dynamic data */
 	q_ptr->flags = 0x0000;
+	q_ptr->timed_countdown = 0;
 	for (i = 0; i < q_ptr->stages; i++) {
-		q_ptr->stage[i].timed_countdown = 0;
+		for (q = 0; q < q_ptr->questors; q++)
+			if (q_ptr->stage[i].questor_hostility)
+				q_ptr->stage[i].questor_hostility[q]->hostile_revert_timed_countdown = 0;
 		for (q = 0; q < q_ptr->stage[i].goals; q++) {
 			q_ptr->stage[i].goal[q].cleared = FALSE;
 			q_ptr->stage[i].goal[q].nisi = FALSE;
@@ -1750,33 +1773,32 @@ static void quest_questor_hostility(int q_idx, int stage, int questor_idx) {
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
 	qi_questor_hostility *q_qhost = q_stage->questor_hostility[questor_idx];
+	monster_type *m_ptr = &m_list[q_questor->mo_idx];
+	monster_race *r_ptr = m_ptr->r_ptr;
 
 	/* questor turns into a regular monster? (irreversible, implies hostile-to-players) */
 	if (q_qhost->unquestor) {
-		m_list[q_questor->mo_idx].questor = 0;
-		m_list[q_questor->mo_idx].quest = 0;
+		m_ptr->questor = 0;
+		m_ptr->quest = 0;
 	}
 
 	/* questor turns hostile to players? */
 	if (q_qhost->hostile_player) {
-		monster_race *r_ptr = m_list[q_questor->mo_idx].r_ptr;
 		r_ptr->flags7 &= ~(RF7_NO_TARGET | RF7_NEVER_ACT);//| RF7_NO_DEATH; --done in quest_questor_morph() actually
+		m_ptr->questor_hostile |= 0x1;
 	}
 
 	/* questor turns hostile to monsters? */
-	if (q_qhost->hostile_monster) {
-		
-	}
+	if (q_qhost->hostile_monster)
+		m_ptr->questor_hostile |= 0x2;
 
 	/* time hostility? (absolute in-game time) */
-	if (q_qhost->hostile_revert_timed_ingame_abs == -1) {
-		
-	}
+	if (q_qhost->hostile_revert_timed_ingame_abs != -1)
+		q_qhost->hostile_revert_timed_countdown = -1 - q_qhost->hostile_revert_timed_ingame_abs;
 
 	/* time hostility? (relative real time) */
-	if (q_qhost->hostile_revert_timed_real) {
-		
-	}
+	if (q_qhost->hostile_revert_timed_real)
+		q_qhost->hostile_revert_timed_countdown = q_qhost->hostile_revert_timed_real;
 }
 /* Have a questor perform actions (possibly onto the player(s) too) or start
    moving when a quest stage starts */
@@ -2042,13 +2064,13 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 			q_stage->timed_countdown_quiet = q_stage->quiet_change;
 		} else */
 		if (q_stage->timed_ingame_abs != -1) {
-			q_stage->timed_countdown = -q_stage->timed_ingame_abs;
-			q_stage->timed_countdown_stage = q_stage->change_stage;
-			q_stage->timed_countdown_quiet = q_stage->quiet_change;
+			q_ptr->timed_countdown = -1 - q_stage->timed_ingame_abs;
+			q_ptr->timed_countdown_stage = q_stage->change_stage;
+			q_ptr->timed_countdown_quiet = q_stage->quiet_change;
 		} else if (q_stage->timed_real) {
-			q_stage->timed_countdown = q_stage->timed_real;
-			q_stage->timed_countdown_stage = q_stage->change_stage;
-			q_stage->timed_countdown_quiet = q_stage->quiet_change;
+			q_ptr->timed_countdown = q_stage->timed_real;
+			q_ptr->timed_countdown_stage = q_stage->change_stage;
+			q_ptr->timed_countdown_quiet = q_stage->quiet_change;
 		}
 	}
 
@@ -2231,8 +2253,15 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			for (j = 0; j < q_stage->qitems; j++)
 				if (q_stage->qitem[j].q_loc.tpref) new_players_on_depth(&q_stage->qitem[j].result_wpos, -1, TRUE);
 		}
+
 		/* remove dungeons that only lasted for a stage */
 		quest_remove_dungeon(q_idx, stage_prev);
+
+		/* clear any timers */
+		q_ptr->timed_countdown = 0;
+		for (i = 0; i < q_ptr->questors; i++)
+			if (q_stage->questor_hostility[i])
+				q_stage->questor_hostility[i]->hostile_revert_timed_countdown = 0;
 	}
 
 
@@ -4989,9 +5018,11 @@ void quest_questor_reverts(int Ind, int q_idx, int questor_idx) {
 	qi_stage *q_stage = quest_cur_qi_stage(q_idx);
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
 	qi_questor_hostility *q_qhost = q_stage->questor_hostility[questor_idx];
-	monster_race *r_ptr = m_list[q_questor->mo_idx].r_ptr;
+	monster_type *m_ptr = &m_list[q_questor->mo_idx];
+	monster_race *r_ptr = m_ptr->r_ptr;
 
-	r_ptr->flags7 &= ~(RF7_NO_TARGET | RF7_NEVER_ACT);//| RF7_NO_DEATH; --done in quest_questor_morph() actually
+	r_ptr->flags7 |= (RF7_NO_TARGET | RF7_NEVER_ACT);//| RF7_NO_DEATH; --done in quest_questor_morph() actually
+	m_ptr->questor_hostile = 0x0;
 
 	/* change stage? */
 	if (q_qhost->change_stage != 255)
