@@ -621,13 +621,15 @@ static void wr_house(house_type *house)
 /*
  * Write some "extra" info
  */
-static void wr_extra(int Ind)
-{
+static void wr_extra(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int i, j;
 	u16b tmp16u = 0;
 	byte tmp8u = 0;
+
+	dungeon_type *d_ptr;
+
 
 	wr_string(p_ptr->name);
 
@@ -636,9 +638,8 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->died_from_depth);
 
 	for (i = 0; i < 4; i++)
-	{
 		wr_string(p_ptr->history[i]);
-	}
+
 	wr_byte(p_ptr->has_pet); //pet pet
 
 	/* Race/Class/Gender/Party */
@@ -668,8 +669,7 @@ static void wr_extra(int Ind)
 
         /* Dump the skills */
         wr_u16b(MAX_SKILLS);
-        for (i = 0; i < MAX_SKILLS; ++i)
-        {
+        for (i = 0; i < MAX_SKILLS; ++i) {
                 wr_s32b(p_ptr->s_info[i].value);
                 wr_u16b(p_ptr->s_info[i].mod);
                 wr_byte(p_ptr->s_info[i].dev);
@@ -685,8 +685,7 @@ static void wr_extra(int Ind)
 //	wr_s16b(p_ptr->skill_last_level);
 
 	/* /undoskills - mikaelh */
-	for (i = 0; i < MAX_SKILLS; ++i)
-	{
+	for (i = 0; i < MAX_SKILLS; ++i) {
                 wr_s32b(p_ptr->s_info_old[i].value);
                 wr_u16b(p_ptr->s_info_old[i].mod);
                 wr_byte(p_ptr->s_info_old[i].dev);
@@ -734,12 +733,27 @@ static void wr_extra(int Ind)
 	/* Max Player and Dungeon Levels */
 	wr_s16b(p_ptr->max_plv);
 	wr_s16b(p_ptr->max_dlv);
-        for (i = 0; i < MAX_D_IDX * 2; i++) {
-                wr_byte(p_ptr->max_depth[i]);
-                wr_byte(p_ptr->max_depth_wx[i]);
-                wr_byte(p_ptr->max_depth_wy[i]);
-                wr_byte(p_ptr->max_depth_tower[i] ? 1 : 0);
-        }
+	for (i = 0; i < MAX_D_IDX * 2; i++) {
+		d_ptr = NULL;
+		/* hack: don't save max depth for quest dungeons! (they get removed when quest (stage) ends) */
+		if (p_ptr->max_depth_wx[i] || p_ptr->max_depth_wy[i]) {
+			if (p_ptr->max_depth_tower[i])
+				d_ptr = wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].tower;
+			else
+				d_ptr = wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].dungeon;
+		}
+		if (d_ptr && d_ptr->quest) {
+			wr_byte(0);
+			wr_byte(0);
+			wr_byte(0);
+			wr_byte(0);
+		} else {
+			wr_byte(p_ptr->max_depth[i]);
+			wr_byte(p_ptr->max_depth_wx[i]);
+			wr_byte(p_ptr->max_depth_wy[i]);
+			wr_byte(p_ptr->max_depth_tower[i] ? 1 : 0);
+		}
+	}
 
 	/* Player location */
 	wr_s16b(p_ptr->py);
