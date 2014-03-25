@@ -1758,11 +1758,13 @@ static void quest_questor_hostility(int q_idx, int stage, int questor_idx) {
    moving when a quest stage starts */
 static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 	int j, k;
+	s16b ox, oy;
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
 	qi_questor_act *q_qact = q_stage->questor_act[questor_idx];
 	player_type *p_ptr;
+	cave_type **zcave;
 
 	/* tele players to new location? */
 	if (q_qact->tppy_wpos.wx != -1) {
@@ -1775,6 +1777,24 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 			//p_ptr->new_level_method = (q_qact->tppy_wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 			p_ptr->new_level_method = LEVEL_RAND;
 			recall_player(pInd, "");
+
+			/* and move him to a specific grid */
+			zcave = getcave(&q_qact->tppy_wpos);
+			oy = p_ptr->py;
+			ox = p_ptr->px;
+			p_ptr->py = q_qact->tppy_y;
+			p_ptr->px = q_qact->tppy_x;
+			grid_affects_player(pInd);
+			zcave[oy][ox].m_idx = 0;
+			zcave[p_ptr->py][p_ptr->px].m_idx = 0 - pInd;
+			cave_midx_debug(&q_qact->tppy_wpos, p_ptr->py, p_ptr->px, -pInd);
+			everyone_lite_spot(&q_qact->tppy_wpos, oy, ox);
+			everyone_lite_spot(&q_qact->tppy_wpos, p_ptr->py, p_ptr->px);
+			verify_panel(pInd);
+			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+			p_ptr->update |= (PU_DISTANCE);
+			p_ptr->window |= (PW_OVERHEAD);
+			handle_stuff(pInd);
 		} else {
 			/* global quest - teleport all players who are here and on the quest */
 			for (j = 1; j <= NumPlayers; j++) {
@@ -1789,6 +1809,24 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 				//p_ptr->new_level_method = (q_qact->tppy_wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 				p_ptr->new_level_method = LEVEL_RAND;
 				recall_player(j, "");
+
+				/* and move him to a specific grid */
+				zcave = getcave(&q_qact->tppy_wpos);
+				oy = p_ptr->py;
+				ox = p_ptr->px;
+				p_ptr->py = q_qact->tppy_y;
+				p_ptr->px = q_qact->tppy_x;
+				grid_affects_player(j);
+				zcave[oy][ox].m_idx = 0;
+				zcave[p_ptr->py][p_ptr->px].m_idx = 0 - j;
+				cave_midx_debug(&q_qact->tppy_wpos, p_ptr->py, p_ptr->px, -j);
+				everyone_lite_spot(&q_qact->tppy_wpos, oy, ox);
+				everyone_lite_spot(&q_qact->tppy_wpos, p_ptr->py, p_ptr->px);
+				verify_panel(j);
+				p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+				p_ptr->update |= (PU_DISTANCE);
+				p_ptr->window |= (PW_OVERHEAD);
+				handle_stuff(j);
 			}
 		}
 	}
