@@ -2986,6 +2986,7 @@ static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type
 	int i;
 	monster_race *r_ptr = race_inf(m_ptr);
 	qi_kill *q_kill = quest_qi_stage(q_idx, stage)->goal[goal].kill;
+	char mname[MNAME_LEN];
 
 	/* check for race index */
 	for (i = 0; i < 10; i++) {
@@ -2998,7 +2999,11 @@ static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type
 	}
 
 	/* check for char/attr/level combination - treated in pairs (AND'ed) over the index */
+	monster_desc2(mname, m_ptr, 0);
 	for (i = 0; i < 5; i++) {
+		/* name specified but doesnt match? */
+		if (q_kill->name[i] && !strstr(mname, q_kill->name[i])) continue;
+
 		/* no char specified? */
 		if (q_kill->rchar[i] == 255) continue;
 		 /* accept any char? */
@@ -3030,6 +3035,7 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 	byte attr;
 	qi_retrieve *q_ret = quest_qi_stage(q_idx, stage)->goal[goal].retrieve;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	char oname[ONAME_LEN];
 
 	/* First let's find out the object's attr..which is uggh not so cool (from cave.c).
 	   Note that d_attr has the correct get base colour, especially for flavoured items! */
@@ -3074,7 +3080,11 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 
 	/* check for pval/bpval/attr/name1/name2/name2b
 	   note: let's treat pval/bpval as minimum values instead of exact values for now. */
+	object_desc(0, oname, o_ptr, FALSE, FALSE);
 	for (i = 0; i < 5; i++) {
+		/* name specified but doesnt match? */
+		if (q_ret->name[i] && !strstr(oname, q_ret->name[i])) continue;
+
 		/* no pval specified? */
 		if (q_ret->opval[i] == 9999) continue;
 		/* accept any pval? */
@@ -4502,13 +4512,10 @@ qi_kill *init_quest_kill(int q_idx, int stage, int q_info_goal) {
 
 	/* initialise with defaults */
 	for (i = 0; i < 5; i++) {
-#if 0
-		p->rchar[i] = 255;
-		p->rattr[i] = 255;
-#else /*default 'any', not 'none' (255)! or checks won't pass if optional line is omitted */
+		p->name[i] = NULL;
+
 		p->rchar[i] = 254;
 		p->rattr[i] = 254;
-#endif
 	}
 
 	/* done, return the new, requested one */
@@ -4540,23 +4547,15 @@ qi_retrieve *init_quest_retrieve(int q_idx, int stage, int q_info_goal) {
 	for (i = 0; i < 5; i++) {
 		p->otval[i] = -1; // 'any'
 		p->osval[i] = -1; // 'any'
-	}
-	for (i = 0; i < 5; i++) {
-#if 0
-		p->opval[i] = 9999;
-		p->obpval[i] = 9999;
-		p->oattr[i] = 255;
-		p->oname1[i] = -3;
-		p->oname2[i] = -3;
-		p->oname2b[i] = -3;
-#else /* default 'any', not 'none' (255)! or checks won't pass if optional line is omitted */
+
+		p->name[i] = NULL;
+
 		p->opval[i] = -9999;
 		p->obpval[i] = -9999;
 		p->oattr[i] = 254;
 		p->oname1[i] = -1;
 		p->oname2[i] = -1;
 		p->oname2b[i] = -1;
-#endif
 	}
 
 	/* done, return the new, requested one */

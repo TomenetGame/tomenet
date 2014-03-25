@@ -197,8 +197,10 @@ typedef struct qi_kill {
 	bool player_picks;				/* instead of picking one of the eligible monster criteria randomly, let the player decide which he wants to get */
 #endif
 	s16b ridx[10];					/* kill certain monster(s), 0 for none, -1 for any. */
-	char rchar[5];					/*  ..certain types, 254 for any, 255 for none. AND's with attr/lev. */
-	byte rattr[5];					/*  ..certain colours, 254 for any, 255 for none. AND's with char/lev. */
+
+	cptr name[5];					/* partial name that can match. AND's with char/attr/lev */
+	char rchar[5];					/*  ..certain types, 254 for any, 255 for none. AND's with name/attr/lev. */
+	byte rattr[5];					/*  ..certain colours, 254 for any, 255 for none. AND's with name/char/lev. */
 	byte rlevmin, rlevmax;				/* 0 for any. AND's with char/attr. */
 
 	s16b number;
@@ -214,6 +216,7 @@ typedef struct qi_retrieve {
 #if 0 /* too much, make it simpler for now */
 	bool player_picks;				/* instead of picking one subgoal randomly, let the player decide which he wants to get */
 #endif
+	cptr name[5];					/* partial name that can match */
 	s16b otval[10], osval[10];			/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval, 0 = not checked) */
 	s16b opval[5], obpval[5];			/* umm, let's say 9999 = not checked :-p, -9999 = any */
 	byte oattr[5];					/*  ..certain colours (flavoured items only), 255 = not checked, 254 = any */

@@ -51,11 +51,13 @@ V:0.0.1
 
 # goals to kill specific monsters:
 # (optional) k:stage:goal:minlev:maxlev:number:spawn (N.I.):spawn will target (N.I.)
+# (optional) kN:stage:goal:partial name... (list of partial names, up to 5, separated by colons)
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
 
 # goals to collect specific items:
 # (optional) r:stage:goal:min value:number
+# (optional) rN:stage:goal:partial name... (list of partial names, up to 5, separated by colons)
 # (optional) rI:stage:goal:tval:sval... (list of ':tval:sval' pairs, up to 10, separated by colons)
 # (optional) rV:stage:goal:pval:bpval:attr:name1:name2:name2b... (list of 6-tuples like this, up to 5, separated by colons)
 

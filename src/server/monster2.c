@@ -1639,6 +1639,119 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode) {
 	}
 }
 
+/* added for quests: takes m_ptr instead of m_idx (and no player) */
+void monster_desc2(char *desc, monster_type *m_ptr, int mode) {
+	cptr            res;
+        monster_race    *r_ptr = race_inf(m_ptr);
+	cptr            name = r_name_get(m_ptr);
+	bool            seen, pron;
+
+	seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40))));
+
+	/* Sexed Pronouns (seen and allowed, or unseen and allowed) */
+	pron = (m_ptr && ((seen && (mode & 0x20)) || (!seen && (mode & 0x10))));
+
+
+	/* First, try using pronouns, or describing hidden monsters */
+	if (!seen || pron) {
+		/* an encoding of the monster "sex" */
+		int kind = 0x00;
+
+		/* Extract the gender (if applicable) */
+		if (r_ptr->flags1 & RF1_FEMALE) kind = 0x20;
+		else if (r_ptr->flags1 & RF1_MALE) kind = 0x10;
+
+		/* Ignore the gender (if desired) */
+		if (!m_ptr || !pron) kind = 0x00;
+
+
+		/* Assume simple result */
+		res = "it";
+
+		/* Brute force: split on the possibilities */
+		switch (kind + (mode & 0x07)) {
+			/* Neuter, or unknown */
+			case 0x00: res = "it"; break;
+			case 0x01: res = "it"; break;
+			case 0x02: res = "its"; break;
+			case 0x03: res = "itself"; break;
+			case 0x04: res = "something"; break;
+			case 0x05: res = "something"; break;
+			case 0x06: res = "something's"; break;
+			case 0x07: res = "itself"; break;
+
+			/* Male (assume human if vague) */
+			case 0x10: res = "he"; break;
+			case 0x11: res = "him"; break;
+			case 0x12: res = "his"; break;
+			case 0x13: res = "himself"; break;
+			case 0x14: res = "someone"; break;
+			case 0x15: res = "someone"; break;
+			case 0x16: res = "someone's"; break;
+			case 0x17: res = "himself"; break;
+
+			/* Female (assume human if vague) */
+			case 0x20: res = "she"; break;
+			case 0x21: res = "her"; break;
+			case 0x22: res = "her"; break;
+			case 0x23: res = "herself"; break;
+			case 0x24: res = "someone"; break;
+			case 0x25: res = "someone"; break;
+			case 0x26: res = "someone's"; break;
+			case 0x27: res = "herself"; break;
+		}
+
+		/* Copy the result */
+		(void)strcpy(desc, res);
+	}
+
+
+	/* Handle visible monsters, "reflexive" request */
+	else if ((mode & 0x02) && (mode & 0x01)) {
+		/* The monster is visible, so use its gender */
+		if (r_ptr->flags1 & RF1_FEMALE) strcpy(desc, "herself");
+		else if (r_ptr->flags1 & RF1_MALE) strcpy(desc, "himself");
+		else strcpy(desc, "itself");
+	}
+
+
+	/* Handle all other visible monster requests */
+	else {
+		/* It could be a Unique */
+		if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)) {
+			/* Start with the name (thus nominative and objective) */
+			(void)strcpy(desc, name);
+		}
+
+		/* It could be an indefinite monster */
+		else if (mode & 0x08) {
+			/* XXX Check plurality for "some" */
+			if ((r_ptr->flags8 & RF8_PLURAL))
+				(void)strcpy(desc, name);
+			else {
+				/* Indefinite monsters need an indefinite article */
+				(void)strcpy(desc, is_a_vowel(name[0]) ? "an " : "a ");
+				(void)strcat(desc, name);
+			}
+		}
+
+		/* It could be a normal, definite, monster */
+		else {
+			/* Definite monsters need a definite article */
+			(void)strcpy(desc, "the ");
+			(void)strcat(desc, name);
+		}
+
+		/* Handle the Possessive as a special afterthought */
+		if (mode & 0x02) {
+			/* XXX Check for trailing "s" */
+			if (name[strlen(name) - 1] == 's') (void)strcat(desc, "'");
+			/* Simply append "apostrophe" and "s" */
+			else (void)strcat(desc, "'s");
+		}
+	}
+}
+
 void monster_race_desc(int Ind, char *desc, int r_idx, int mode) {
 	player_type *p_ptr;
 	cptr            res;

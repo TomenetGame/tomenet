@@ -8324,7 +8324,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'k' for kill quest goal */
 		if (buf[0] == 'k') {
-			/* now we have 3 sub-types of 'k' lines -_- uhh */
+			/* now we have 4 sub-types of 'k' lines -_- uhh */
 			if (buf[1] == ':') { /* init */
 				int minlev, maxlev, num, spawn, spawntarget;
 				s = buf + 2;
@@ -8381,13 +8381,37 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_kill->rattr[j] = 255;
 				}
 				continue;
+			} else if (buf[1] == 'N') { /* partial name */
+				s = buf + 3;
+				if (2 > sscanf(s, "%d:%d", &stage, &goal)) return (1);
+
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (ABS(goal) > QI_GOALS) return 1;
+				q_kill = init_quest_kill(error_idx, stage, goal);
+
+				/* read list of partial names, separated by colons */
+				j = 0;
+				while (*s && j < 5) {
+					c = strchr(s, ':');
+					if (!c) c = s + strlen(s);
+					else c++;
+					s[strlen(s)] = 0;
+
+					cc = (char*)malloc(strlen(s + 1) * sizeof(char));
+					strcpy(cc, s);
+					q_kill->name[j] = cc;
+
+					s = c;
+					j++;
+				}
+				continue;
 			}
 			return -1;
 		}
 
 		/* Process 'r' for retrieve quest goal */
 		if (buf[0] == 'r') {
-			/* now we have 3 sub-types of 'r' lines too =P */
+			/* now we have 4 sub-types of 'r' lines too =P */
 			if (buf[1] == ':') { /* init */
 				int minval, num;
 
@@ -8461,6 +8485,30 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_ret->oname1[j] = -3;
 					q_ret->oname2[j] = -3;
 					q_ret->oname2b[j] = -3;
+				}
+				continue;
+			} else if (buf[1] == 'N') { /* partial name */
+				s = buf + 3;
+				if (2 > sscanf(s, "%d:%d", &stage, &goal)) return (1);
+
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				if (ABS(goal) > QI_GOALS) return 1;
+				q_ret = init_quest_retrieve(error_idx, stage, goal);
+
+				/* read list of partial names, separated by colons */
+				j = 0;
+				while (*s && j < 5) {
+					c = strchr(s, ':');
+					if (!c) c = s + strlen(s);
+					else c++;
+					s[strlen(s)] = 0;
+
+					cc = (char*)malloc(strlen(s + 1) * sizeof(char));
+					strcpy(cc, s);
+					q_ret->name[j] = cc;
+
+					s = c;
+					j++;
 				}
 				continue;
 			}

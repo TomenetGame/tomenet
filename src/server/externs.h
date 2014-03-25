@@ -975,6 +975,7 @@ extern errr get_mon_num_prep(int dun_type, char *reject_monsters);
 extern s16b get_mon_num(int level, int dlevel);
 extern void set_mon_num2_hook(int feat);
 extern void monster_desc(int Ind, char *desc, int m_idx, int mode);
+extern void monster_desc2(char *desc, monster_type *m_ptr, int mode);
 extern void monster_race_desc(int Ind, char *desc, int r_idx, int mode);
 extern void lore_do_probe(int m_idx);
 extern void lore_treasure(int m_idx, int num_item, int num_gold);
