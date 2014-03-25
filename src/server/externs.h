@@ -2198,6 +2198,7 @@ extern void questitem_d(object_type *o_ptr, int num);
 extern void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos *wpos, int x, int y);
 extern void questor_death(int Ind, int q_idx, int questor_idx);
 extern void quest_questor_arrived(int Ind, int q_idx, int questor_idx);
+extern void quest_questor_reverts(int Ind, int q_idx, int questor_idx);
 
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue

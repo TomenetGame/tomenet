@@ -4982,3 +4982,18 @@ void quest_questor_arrived(int Ind, int q_idx, int questor_idx) {
 	if (q_qact->change_stage)
 		quest_set_stage(Ind, q_idx, q_qact->change_stage, q_qact->quiet_change);
 }
+
+/* An aggressive questor reverts to non-aggressive */
+void quest_questor_reverts(int Ind, int q_idx, int questor_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_stage *q_stage = quest_cur_qi_stage(q_idx);
+	qi_questor *q_questor = &q_ptr->questor[questor_idx];
+	qi_questor_hostility *q_qhost = q_stage->questor_hostility[questor_idx];
+	monster_race *r_ptr = m_list[q_questor->mo_idx].r_ptr;
+
+	r_ptr->flags7 &= ~(RF7_NO_TARGET | RF7_NEVER_ACT);//| RF7_NO_DEATH; --done in quest_questor_morph() actually
+
+	/* change stage? */
+	if (q_qhost->change_stage != 255)
+		quest_set_stage(Ind, q_idx, q_qhost->change_stage, q_qhost->quiet_change);
+}
