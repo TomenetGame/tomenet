@@ -67,7 +67,7 @@ V:0.0.1
 # (optional) Z:stage:goal:changeflags (flags that get set/cleared when that goal is cleared)
 # (up to 5x) G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here) to progress to next stage
 # (optional) O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free) separated by colons
-# (optional, up to 10x) R:stage:define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:createreward()?:gold:exp:specialstatuseffect
+# (optional, up to 10x) R:stage:define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:createreward 0..5:gold:exp:specialstatuseffect
 
 # Further notes:
 # -The index number must just be counting up for each quest added to this file, starting with 0.
@@ -107,7 +107,7 @@ V:0.0.1
 #  Negative numbers are extra effects: -1 = 1000t of luck, -2 = 2000t of luck, -3 = 3000t of luck.
 
 # Lines completely left out of the implementation so far:
-# //todo (optional) K (5x repeatable, per Q line):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward
+# //todo (optional) K (5x repeatable, per Q line):giveexp:dropgold:itemdroptype (0=none,1=regular,2=specific,3=both):tval:sval:pval:bpval:name1:name2:name2b:good:great:createreward 0..5
 # //todo (optional) D:dungeon to spawn ...
 # //todo (optional) S:stage:questor changes/polymorphes ...
 # //todo (optional) S/H:stage:questor hostility ...

@@ -99,14 +99,13 @@ typedef struct qi_questor {
 							   -1 = quest fails completely, 255 = questor death has no effect. */
 
 	/* ..if killable ie not invincible: */
-	bool drops_regular;				/* Drops regular loot (of his ridx type) instead of nothing? */
-	bool drops_specific;				/* Drops a specific item (like DROP_CHOSEN) */
+	byte drops;					/* 0=none, 1=Drops regular loot (of his ridx type) instead of nothing?, 2=specific, 3=1+2 */
 	s16b drops_tval;				/* hand over certain rewards to the player */
 	s16b drops_sval;
 	s16b drops_pval, drops_bpval;
 	s16b drops_name1, drops_name2, drops_name2b;
-	bool drops_good, drops_great;
-	bool drops_reward;				/*  use fitting-reward algo (from highlander etc)? */
+	bool drops_good, drops_great, drops_vgreat;
+	byte drops_reward;				/*  use fitting-reward algo (from highlander etc)? - 0..5 */
 	int drops_gold;
 	int exp;
 
@@ -249,7 +248,7 @@ typedef struct qi_reward {
 	s16b opval, obpval;
 	s16b oname1, oname2, oname2b;
 	bool ogood, ogreat, ovgreat;
-	bool oreward;					/* use fitting-reward algo (from highlander etc)? */
+	byte oreward;					/* use fitting-reward algo (from highlander etc)? - 0..5 */
 
 	int gold;
 	int exp;

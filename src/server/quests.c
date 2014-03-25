@@ -3520,9 +3520,8 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 
 /* hand out a reward object created by create_reward() to player (if individual quest)
    or to all involved players in the area (if non-individual quest) */
-static void quest_reward_create(int pInd, int q_idx) {
+static void quest_reward_create(int pInd, int q_idx, u32b resf) {
 	quest_info *q_ptr = &q_info[q_idx];
-	u32b resf = RESF_NOTRUEART;
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
@@ -3727,7 +3726,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 			/* specific reward */
 			if (q_rew->otval) {
 				/* very specific reward */
-				if (!q_rew->ogood && !q_rew->ogreat) {
+				if (!q_rew->ogood && !q_rew->ogreat && !q_rew->ovgreat) {
 					o_ptr = &forge;
 					object_wipe(o_ptr);
 					invcopy(o_ptr, lookup_kind(q_rew->otval, q_rew->osval));
@@ -3772,7 +3771,14 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 			}
 			/* instead use create_reward() like for events? */
 			else if (q_rew->oreward) {
-				quest_reward_create(pInd, q_idx);
+				switch (q_questor->drops_reward) {
+				case 1: resf |= RESF_LOW; break;
+				case 2: resf |= RESF_LOW2; break;
+				case 3: resf |= RESF_MID; break;
+				case 4: resf |= RESF_HIGH; break;
+				case 5: break; /* 'allow randarts' */
+				}
+				quest_reward_create(pInd, q_idx, resf);
 				r_obj++;
 			}
 			/* hand out gold? */
@@ -4517,7 +4523,73 @@ void questitem_d(object_type *o_ptr, int num) {
 /* ---------- Questor actions/reactions to 'external' effects in the game world ---------- */
 
 /* Questor was killed and drops any loot? */
-void questor_drop_specific(int Ind, struct worldpos *wpos, int x, int y) {
+void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos *wpos, int x, int y) {
+	qi_questor *q_questor = &q_info[q_idx].questor[questor_idx];
+	object_type forge, *o_ptr = &forge;
+	u32b resf = RESF_NOTRUEART;
+
+	/* specific reward */
+	if (q_questor->drops_tval) {
+		/* very specific reward */
+		if (!q_questor->drops_good && !q_questor->drops_great && !q_questor->drops_vgreat) {
+			o_ptr = &forge;
+			object_wipe(o_ptr);
+			invcopy(o_ptr, lookup_kind(q_questor->drops_tval, q_questor->drops_sval));
+			o_ptr->number = 1;
+			o_ptr->name1 = q_questor->drops_name1;
+			o_ptr->name2 = q_questor->drops_name2;
+			o_ptr->name2b = q_questor->drops_name2b;
+			if (o_ptr->name1) {
+				o_ptr->name1 = ART_RANDART; //hack: disallow true arts!
+				o_ptr->name2 = o_ptr->name2b = 0;
+			}
+			apply_magic(wpos, o_ptr, -2, FALSE, FALSE, FALSE, FALSE, resf);
+			o_ptr->pval = q_questor->drops_pval;
+			o_ptr->bpval = q_questor->drops_bpval;
+			o_ptr->note = 0;
+			o_ptr->note_utag = 0;
+#ifdef PRE_OWN_DROP_CHOSEN
+			o_ptr->level = 0;
+			o_ptr->owner = p_ptr->id;
+			o_ptr->mode = p_ptr->mode;
+			if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1);
+#endif
+		} else {
+			o_ptr = &forge;
+			object_wipe(o_ptr);
+			invcopy(o_ptr, lookup_kind(q_questor->drops_tval, q_questor->drops_sval));
+			o_ptr->number = 1;
+			apply_magic(wpos, o_ptr, -2, q_questor->drops_good, q_questor->drops_great, q_questor->drops_vgreat, FALSE, resf);
+			o_ptr->note = 0;
+			o_ptr->note_utag = 0;
+#ifdef PRE_OWN_DROP_CHOSEN
+			o_ptr->level = 0;
+			o_ptr->owner = p_ptr->id;
+			o_ptr->mode = p_ptr->mode;
+			if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1);
+#endif
+		}
+		drop_near(o_ptr, 0, wpos, y, x);
+	}
+	/* instead use create_reward() like for events? */
+	else if (q_questor->drops_reward) {
+		switch (q_questor->drops_reward) {
+		case 1: resf |= RESF_LOW; break;
+		case 2: resf |= RESF_LOW2; break;
+		case 3: resf |= RESF_MID; break;
+		case 4: resf |= RESF_HIGH; break;
+		case 5: break; /* 'allow randarts' */
+		}
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, resf, 3000);
+		drop_near(o_ptr, 0, wpos, y, x);
+	}
+
+	/* drop gold too? */
+	if (q_questor->drops_gold) {
+		invcopy(o_ptr, gold_colour(q_questor->drops_gold));
+		o_ptr->pval = q_questor->drops_gold;
+		drop_near(o_ptr, 0, wpos, y, x);
+	}
 }
 
 /* Questor was killed (npc) or destroyed (object). Quest progression/fail effect?

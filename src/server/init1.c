@@ -7665,11 +7665,29 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'K' for questor drops/exp if it is killable and player manages to kill it */
 		if (buf[0] == 'K') {
-#if 0
+			int d, dtv, dsv, dpv, dbpv, dn1, dn2, dn2b, dg, dgr, dvgr, dcr, au, exp;
 			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
-#endif
+			if (14 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+			    &d, &dtv, &dsv, &dpv, &dbpv, &dn1, &dn2, &dn2b, &dg, &dgr, &dvgr, &dcr, &au, &exp)) return (1);
+
+			lc = q_ptr->questors;
+			if (!lc) return 1; /* so a K-line must always follow somewhere after its Q line */
+			q_questor = init_quest_questor(error_idx, lc - 1); /* pick the newest, already existing one */
+
+			q_questor->drops = d;
+			q_questor->drops_tval = dtv;
+			q_questor->drops_sval = dsv;
+			q_questor->drops_pval = dpv;
+			q_questor->drops_bpval = dbpv;
+			q_questor->drops_name1 = dn1;
+			q_questor->drops_name2 = dn2;
+			q_questor->drops_name2b = dn2b;
+			q_questor->drops_good = (dg != 0);
+			q_questor->drops_great = (dgr != 0);
+			q_questor->drops_vgreat = (dvgr != 0);
+			q_questor->drops_reward = dcr;
+			q_questor->drops_gold = au;
+			q_questor->exp = exp;
 			continue;
 		}
 
@@ -8541,7 +8559,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_rew->ogood = (good != 0);
 			q_rew->ogreat = (great != 0);
 			q_rew->ovgreat = (vgreat != 0);
-			q_rew->oreward = (createreward != 0);
+			q_rew->oreward = createreward;
 			q_rew->statuseffect = rstatus;
 			continue;
 		}
