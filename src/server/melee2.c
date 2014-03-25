@@ -6382,15 +6382,11 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
 }
 
 static bool get_moves_questor(int Ind, int m_idx, int *mm) {
-	player_type *p_ptr;
 	monster_type *m_ptr = &m_list[m_idx];
 	int y, ay, x, ax;
 	int move_val = 0;
 	int tm_idx = 0;
 	int y2, x2;
-
-	if (Ind > 0) p_ptr = Players[Ind];
-	else p_ptr = NULL;
 
 	/* Lets find a target adjacent to us */
 	{
