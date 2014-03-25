@@ -1847,14 +1847,12 @@ static void quest_add_dungeon(int q_idx, int stage) {
 /* Remove all quest-specific dungeons (called on quest deactivation) */
 static void quest_remove_dungeons(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
-	qi_stage *q_stage;
 	int i;
 
 	for (i = 0; i < q_ptr->stages; i++) {
-		q_stage = quest_qi_stage(q_idx, i);
-		if (!q_stage->dun_base) continue;
+		if (!q_ptr->stage[i].dun_base) continue;
 
-		rem_dungeon(&q_stage->dun_wpos, FALSE);
+		rem_dungeon(&q_ptr->stage[i].dun_wpos, FALSE);
 	}
 }
 /* perform automatic things (quest spawn/stage change) in a stage */
