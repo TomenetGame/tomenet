@@ -11,7 +11,7 @@ V:0.0.1
 
 # Current state - things that have already been implemented. Other stuff is omitted here.
 # Some things that are not implemented in here are noted in caps in each line ;)
-# 'N.I.' is short for  NOT IMPLEMENTED.
+# 'NI' is short for  NOT IMPLEMENTED.
 
 # N:index:internal codename(UNIQUE AND EXACTLY 10 CHARACTERS):creatorname:quest name[:repeatable (-1 for infinitely, default is 0, append an 'x' to disable it)]
 # (optional) C:list stages that allow a player to acquire the quest, separated by colons (usually 0 aka the first stage)
@@ -26,7 +26,7 @@ V:0.0.1
 # Q (for type=object)   :type:tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:attr:level:name
 # note: Each L/F/K-line must follow after its Q line!
 # L (up to 5x, per Q line):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
-# (optional) F (up to 5x, per Q line):accept-on-los? (N.I.):accept-on-interaction?:talkable?:despawned? (N.I.):invincible?:staticfloor?:quitfloor?(N.I.)
+# (optional) F (up to 5x, per Q line):accept-on-los? (NI):accept-on-interaction?:talkable?:despawned? (NI):invincible?:staticfloor?:quitfloor?(NI)
 # (optional) K (up to 5x, per Q line):itemdroptype (0=none,1=regular,2=specific,3=both):tval:sval:pval:bpval:name1:name2:name2b:good:great:verygreat:createreward 0..5:dropgold:giveexp (-1 for normal exp)
 
 #(Parameters from here on, except for keywords/keywordreplies, are all individual per quest stage)
@@ -36,9 +36,9 @@ V:0.0.1
 # (optional, up to 5x) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
 # (for each B line) Bl:stage:questorhandout (-1 to disable):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 # note: 'Bl' takes same parameters as 'L' lines (except for 'questor hand out'). Each Bl-line must follow after its B-line!
-# (optional) S:stage:questor to modify:talkable:despawned:invincible:death_fail:name ("-" to keep):ridx (0 to keep):char (255 to keep):attr (255 to keep):level (0 to keep)
-# (optional) J:stage:questor:teleport wx:wy:wz:x:y:teleport players wx:wy:wz:x:y:walkspeed:destx:desty:newstage:quiet?
-# (optional) D:stage:base:max:tower?:nomap?:hard (1=forcedown:2=iron):stores (1=iron,2=all):theme:name (or "-"):floors are static?:keep until quest ends?:flags1:flags2:flags3:[:final floor map file: offset x:y]
+# (optional) S:stage:questor to modify:talkable:despawned(NI):invincible:death_fail:name ("-" to keep):ridx (0 to keep):char (255 to keep):attr (255 to keep):level (0 to keep)
+# (optional) H:stage:questor:unquestor?:hostile-to-players?:hostile-to-monsters?(NI):revert-hp:revert-ingametime(NI):revert-after-realtime(NI):newstage:quiet?# (optional) J:stage:questor:teleport wx:wy:wz:x:y:teleport players wx:wy:wz:x:y:walkspeed:destx:desty:newstage:quiet?
+# (optional) D:stage:base:max:tower?:nomap?:hard (1=forcedown:2=iron):stores (1=iron,2=all):theme(NI):name (or "-"):floors are static?(NI):keep until quest ends?:flags1:flags2:flags3:[:final floor map file(NI): offset x:y]
 # (for D-line) Dl:stage:locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 
 # (optional) X (up to 50x):stage:flags:narration text
@@ -53,7 +53,7 @@ V:0.0.1
 # (optional, YR (after a y-line, 15x repeatable):flags:reply convo line
 
 # goals to kill specific monsters:
-# (optional) k:stage:goal:minlev:maxlev:number:spawn (N.I.):spawn will target (N.I.)
+# (optional) k:stage:goal:minlev:maxlev:number:spawn (NI):spawn will target (NI)
 # (optional) kN:stage:goal:partial name... (list of partial names, up to 5, separated by colons)
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
@@ -114,8 +114,6 @@ V:0.0.1
 # Status effects (rewards): Positive numbers indicate a potion, scroll, staff or non-directional(!) rod from k_info.txt.
 #  Negative numbers are extra effects: -1 = 1000t of luck, -2 = 2000t of luck, -3 = 3000t of luck.
 
-# Lines that are still mostly dysfunctional:
-# (optional) H:stage:questor:unquestor?:hostile-to-players?:hostile-to-monsters?:revert-hp:revert-ingametime:revert-after-realtime:newstage:quiet?
 
 
 # for testing purpose
