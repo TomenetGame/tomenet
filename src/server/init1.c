@@ -7800,7 +7800,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				   which are important when the quest actually enters that stage,
 				   even -or especially if- it is just an empty, final stage.
 				   For example it would call activate_quest >:). */
-				if (cs != -1) (void)init_quest_stage(error_idx, cs);
+				if (cs != 255) {
+					if (cs >= 0) {
+						if (cs >= QI_STAGES) return 1;
+						(void)init_quest_stage(error_idx, cs);
+					} else {
+						if (stage - cs >= QI_STAGES) return 1;
+						for (i = stage + 1; i <= stage - cs; i++)
+							(void)init_quest_stage(error_idx, i);
+					}
+				}
 				continue;
 			} else if (buf[1] == 'f') {
 				int qwpos, qiwpos, wx, wy, wz, x, y, feat;
@@ -7972,7 +7981,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				   which are important when the quest actually enters that stage,
 				   even -or especially if- it is just an empty, final stage.
 				   For example it would call activate_quest >:). */
-				if (stage != -1) (void)init_quest_stage(error_idx, nextstage);
+				if (nextstage != 255) {
+					if (nextstage >= 0) {
+						if (nextstage >= QI_STAGES) return 1;
+						(void)init_quest_stage(error_idx, nextstage);
+					} else {
+						if (stage - nextstage >= QI_STAGES) return 1;
+						for (i = stage + 1; i <= stage - nextstage; i++)
+							(void)init_quest_stage(error_idx, i);
+					}
+				}
 				continue;
 			} else if (buf[1] == 'Q') { /* add more questors to the list */
 				s = buf + 3;
@@ -8486,7 +8504,14 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			   which are important when the quest actually enters that stage,
 			   even -or especially if- it is just an empty, final stage.
 			   For example it would call activate_quest >:). */
-			(void)init_quest_stage(error_idx, nextstage);
+			if (nextstage >= 0) {
+				if (nextstage >= QI_STAGES) return 1;
+				(void)init_quest_stage(error_idx, nextstage);
+			} else {
+				if (stage - nextstage >= QI_STAGES) return 1;
+				for (i = stage + 1; i <= stage - nextstage; i++)
+					(void)init_quest_stage(error_idx, i);
+			}
 			continue;
 		}
 
@@ -8496,7 +8521,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'O') {
 			int reward;
 
-			/* first number is the stage, second the next stage */
+			/* first number is the stage, second the reward */
 			stage = atoi(buf + 2);
 			if (stage < 0 || stage >= QI_STAGES) return -1;
 			q_stage = quest_qi_stage(error_idx, stage);

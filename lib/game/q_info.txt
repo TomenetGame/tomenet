@@ -31,7 +31,7 @@ V:0.0.1
 
 #(Parameters from here on, except for keywords/keywordreplies, are all individual per quest stage)
 
-# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (-1 to disable):0:timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue):set/clear flags
+# (optional) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (255 to disable):0:timed change at ingame hour:timed change after realtime minutes:change quietly (skip stage dialogue):set/clear flags
 # (optional, up to 15x) Af:stage:questor's wpos (1..n, 0 to use specific wpos):quest item wpos:specific wpos wx:wy:wz:pos x:y:grid feature to be 'built' there on stage start (see f_info.txt)
 # (optional, up to 5x) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
 # (for each B line) Bl:stage:questorhandout (-1 to disable):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
@@ -39,7 +39,7 @@ V:0.0.1
 
 # (optional) X (up to 50x):stage:flags:narration text
 # (optional?) W (up to 15x):questor:stage:flags:examine? (0=normal talk,1=examine):convo line
-# (optional) Y (up to 100x):questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or -1 for dont change stage)
+# (optional) Y (up to 100x):questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or 255 for dont change stage)
 # (optional) YQ (after a Y-line):list of further questors for which this keyword is valid, separated by colons
 # (optional) YS (after a Y-line):list of further stages during which this keyword is valid, separated by colons
 # (optional) y (up to 50x):questor (-1 for any):stage (-1 for any):flags:keyword
@@ -75,6 +75,7 @@ V:0.0.1
 # -The internal codename must be unique among all quests and exactly 10 characters long.
 # -All quests should currently be set to 'individual'! (Global quests work depending on the quest goals. Some won't, though.)
 #  Individual means either '1' (goals are shared with party members) or '2' (must be completely soloed). '0' means 'global' and is currently not implemented.
+# -Stage changes can use negative numbers. In that case the new stage is the current stage + random 1..(absolute value of nextstage). Eg -3 -> will proceed +1, +2 or +3 stages randomly.
 # -questor types 1 (monster) and 3 (object) are supported at the moment.
 # -questor 'locations' are: +1 for 'world surface', +2 for 'town' (so '3' for both). Must not be zero unless a specific wpos is set instead.
 # -For item questors you might want to set 'examine' flag so they don't "talk" to you.

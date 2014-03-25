@@ -1754,7 +1754,7 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	}
 
 	/* auto-change stage (timed)? */
-	if (q_stage->change_stage != -1) {
+	if (q_stage->change_stage != 255) {
 		/* not a timed change? instant then */
 		if (//!q_ptr->timed_ingame &&
 		    q_stage->timed_ingame_abs != -1 && !q_stage->timed_real) {
@@ -1946,6 +1946,9 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	qi_deliver *q_del;
 
 	int stage_prev = quest_get_stage(pInd, q_idx);
+
+	/* stage randomizer! */
+	if (stage < 0) stage = stage_prev + randint(-stage);
 
 #if QDEBUG > 0
 	s_printf("%s QUEST_STAGE: '%s'(%d,%s) %d->%d\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), stage);
@@ -2153,7 +2156,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			break;
 		}
 	/* check auto/timed stage changes */
-	if (q_stage->change_stage != -1) anything = TRUE;
+	if (q_stage->change_stage != 255) anything = TRUE;
 	//if (q_ptr->timed_ingame) anything = TRUE;
 	if (q_stage->timed_ingame_abs != -1) anything = TRUE;
 	if (q_stage->timed_real) anything = TRUE;
@@ -3431,7 +3434,7 @@ static int quest_goal_check_stage(int pInd, int q_idx) {
 	/* scan through all possible follow-up stages */
 	for (j = 0; j < QI_FOLLOWUP_STAGES; j++) {
 		/* no follow-up stage? */
-		if (q_stage->next_stage_from_goals[j] == -1) continue;
+		if (q_stage->next_stage_from_goals[j] == 255) continue;
 
 		/* scan through all goals required to be fulfilled to enter this stage */
 		for (i = 0; i < QI_STAGE_GOALS; i++) {
@@ -3443,7 +3446,7 @@ static int quest_goal_check_stage(int pInd, int q_idx) {
 		/* we may proceed to another stage? */
 		if (i == QI_STAGE_GOALS) return q_stage->next_stage_from_goals[j];
 	}
-	return -1; /* goals are not complete yet */
+	return 255; /* goals are not complete yet */
 }
 
 /* Apply status effect(s) to a specific player.
@@ -3832,7 +3835,7 @@ static bool quest_goal_check(int pInd, int q_idx, bool interacting) {
 
 	/* check goals for stage advancement */
 	stage = quest_goal_check_stage(pInd, q_idx);
-	if (stage == -1) return FALSE; /* stage not yet completed */
+	if (stage == 255) return FALSE; /* stage not yet completed */
 
 	/* check goals for rewards */
 	quest_goal_check_reward(pInd, q_idx);
@@ -4103,7 +4106,7 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 	/* initialise with correct defaults */
 	p = &q_ptr->stage[q_ptr->stages - 1];
 	for (i = 0; i < QI_FOLLOWUP_STAGES; i++) {
-		p->next_stage_from_goals[i] = -1; /* no next stages set, end quest by default if nothing specified */
+		p->next_stage_from_goals[i] = 255; /* no next stages set, end quest by default if nothing specified */
 		for (j = 0; j < QI_STAGE_GOALS; j++)
 			p->goals_for_stage[i][j] = -1; /* no next stages set, end quest by default if nothing specified */
 	}
@@ -4112,7 +4115,7 @@ qi_stage *init_quest_stage(int q_idx, int num) {
 			p->goals_for_reward[i][j] = -1; /* no next stages set, end quest by default if nothing specified */
 	}
 	p->activate_quest = -1;
-	p->change_stage = -1;
+	p->change_stage = 255;
 	p->timed_ingame_abs = -1;
 	p->timed_real = 0;
 	if (num == 0) p->accepts = TRUE;
