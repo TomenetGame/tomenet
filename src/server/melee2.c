@@ -8243,6 +8243,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			
 			/* Explosive glyph? */
 			if (c_ptr->feat == FEAT_RUNE && warding_rune_break(m_idx)) return;
+
+			/* Questor arrived at walk destination? */
+			if (m_ptr->questor && nx == m_ptr->destx && ny == m_ptr->desty)
+				quest_questor_arrived(Ind, m_ptr->quest, m_ptr->questor_idx);
 		}
 
 		/* Stop when done */

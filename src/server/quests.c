@@ -4944,3 +4944,14 @@ void questor_death(int Ind, int q_idx, int questor_idx) {
 	if (q_questor->death_fail == -1) quest_terminate(Ind, q_idx);
 	else if (q_questor->death_fail != 255) quest_set_stage(Ind, q_idx, q_questor->death_fail, FALSE);
 }
+
+/* A questor who was walking towards a destination waypoint has just arrived.
+   The Ind is just the player the questor 'had targetted', would he be a normal
+   monster. It might as well just be omitted, but maybe it'll turn out convenient. */
+void quest_questor_arrived(int Ind, int q_idx, int questor_idx) {
+	qi_stage *q_stage = quest_cur_qi_stage(q_idx);
+	qi_questor_act *q_qact = q_stage->questor_act[questor_idx];
+
+	if (q_qact->change_stage)
+		quest_set_stage(Ind, q_idx, q_qact->change_stage, q_qact->quiet_change);
+}
