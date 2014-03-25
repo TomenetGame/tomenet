@@ -7849,6 +7849,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	else {
 		bool fear = FALSE;
 
+		if (m_ptr->questor && (m_ptr->questor_invincible || (r_ptr->flags7 & RF7_NO_DEATH) || !m_ptr->questor_hostile)) return obvious;
+
 		if (p_ptr->admin_godly_strike) {
 			p_ptr->admin_godly_strike--;
 			if (!(r_ptr->flags1 & RF1_UNIQUE)) dam = m_ptr->hp + 1;
