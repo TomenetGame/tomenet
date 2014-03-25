@@ -8478,7 +8478,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				/* reusing a stage we've already found? */
 				if (q_stage->next_stage_from_goals[k] == nextstage) break;
 				/* found a free follow-up stage to use? */
-				if (q_stage->next_stage_from_goals[k] == -1) {
+				if (q_stage->next_stage_from_goals[k] == 255) {
 					q_stage->next_stage_from_goals[k] = nextstage;
 					break;
 				}
