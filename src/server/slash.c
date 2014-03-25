@@ -8211,7 +8211,7 @@ void do_slash_cmd(int Ind, char *message)
 
 					msg_format(Ind, "\377UQuest '%s' (%d,%s) - oreg %d:", q_name + q_ptr->name, k, q_ptr->codename, q_ptr->objects_registered);
 					for (i = 0; i < q_ptr->stages; i++) {
-						msg_format(Ind, "stage %d (qinfo:?): actq %d, autoac %d, cstage %d", i, quest_qi_stage(k, i)->activate_quest, quest_qi_stage(k, i)->auto_accept, quest_qi_stage(k, i)->change_stage);
+						msg_format(Ind, "stage %d (qinfo:?): actq %d, autoac %d, cstage %d", i, q_ptr->stage[i].activate_quest, q_ptr->stage[i].auto_accept, q_ptr->stage[i].change_stage);
 					}
 
 					/* ok, attempt to get the whole full frigging allocated mem size >_> */
