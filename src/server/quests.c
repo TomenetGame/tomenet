@@ -1758,16 +1758,17 @@ static void quest_questor_hostility(int q_idx, int stage, int questor_idx) {
    moving when a quest stage starts */
 static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 	int j, k;
-	s16b ox, oy;
+	s16b ox, oy, nx, ny;
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
 	qi_questor_act *q_qact = q_stage->questor_act[questor_idx];
-	player_type *p_ptr;
 	cave_type **zcave;
+	monster_type *m_ptr = &m_list[q_questor->mo_idx];
 
 	/* tele players to new location? */
 	if (q_qact->tppy_wpos.wx != -1) {
+		player_type *p_ptr;
 		if (pInd && q_ptr->individual) {
 			/* individual quest */
 			p_ptr = Players[pInd];
@@ -1779,17 +1780,19 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 			recall_player(pInd, "");
 
 			/* and move him to a specific grid */
-			zcave = getcave(&q_qact->tppy_wpos);
-			oy = p_ptr->py;
+			zcave = getcave(&p_ptr->wpos);
 			ox = p_ptr->px;
-			p_ptr->py = q_qact->tppy_y;
-			p_ptr->px = q_qact->tppy_x;
+			oy = p_ptr->py;
+			nx = q_qact->tppy_x;
+			ny = q_qact->tppy_y;
+			p_ptr->py = ny;
+			p_ptr->px = nx;
 			grid_affects_player(pInd);
 			zcave[oy][ox].m_idx = 0;
-			zcave[p_ptr->py][p_ptr->px].m_idx = 0 - pInd;
-			cave_midx_debug(&q_qact->tppy_wpos, p_ptr->py, p_ptr->px, -pInd);
+			zcave[ny][nx].m_idx = 0 - pInd;
+			cave_midx_debug(&q_qact->tppy_wpos, ny, nx, -pInd);
 			everyone_lite_spot(&q_qact->tppy_wpos, oy, ox);
-			everyone_lite_spot(&q_qact->tppy_wpos, p_ptr->py, p_ptr->px);
+			everyone_lite_spot(&q_qact->tppy_wpos, ny, nx);
 			verify_panel(pInd);
 			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
 			p_ptr->update |= (PU_DISTANCE);
@@ -1811,17 +1814,19 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 				recall_player(j, "");
 
 				/* and move him to a specific grid */
-				zcave = getcave(&q_qact->tppy_wpos);
+				zcave = getcave(&p_ptr->wpos);
 				oy = p_ptr->py;
 				ox = p_ptr->px;
-				p_ptr->py = q_qact->tppy_y;
-				p_ptr->px = q_qact->tppy_x;
+				ny = q_qact->tppy_y;
+				nx = q_qact->tppy_x;
+				p_ptr->py = ny;
+				p_ptr->px = nx;
 				grid_affects_player(j);
 				zcave[oy][ox].m_idx = 0;
-				zcave[p_ptr->py][p_ptr->px].m_idx = 0 - j;
-				cave_midx_debug(&q_qact->tppy_wpos, p_ptr->py, p_ptr->px, -j);
+				zcave[ny][nx].m_idx = 0 - j;
+				cave_midx_debug(&q_qact->tppy_wpos, ny, nx, -j);
 				everyone_lite_spot(&q_qact->tppy_wpos, oy, ox);
-				everyone_lite_spot(&q_qact->tppy_wpos, p_ptr->py, p_ptr->px);
+				everyone_lite_spot(&q_qact->tppy_wpos, ny, nx);
 				verify_panel(j);
 				p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
 				p_ptr->update |= (PU_DISTANCE);
@@ -1830,9 +1835,38 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 			}
 		}
 	}
+
 	/* tele self to new location? */
 	if (q_qact->tp_wpos.wx != -1) {
+		/* to wpos */
+		/* delete monster visibly from the old wpos */
+		if ((zcave = getcave(&m_ptr->wpos))) {
+			ox = m_ptr->fx;
+			oy = m_ptr->fy;
+			zcave[oy][ox].m_idx = 0;
+			everyone_lite_spot(&m_ptr->wpos, oy, ox);
+		}
+
+		/* place it on the new wpos */
+		m_ptr->wpos.wx = q_qact->tp_wpos.wx;
+		m_ptr->wpos.wy = q_qact->tp_wpos.wy;
+		m_ptr->wpos.wz = q_qact->tp_wpos.wz;
+
+		/* to specific grid */
+		nx = q_qact->tp_x;
+		ny = q_qact->tp_y;
+		m_ptr->fy = ny;
+		m_ptr->fx = nx;
+
+		/* place monster visibly on the new wpos */
+		if ((zcave = getcave(&m_ptr->wpos))) {
+			zcave[ny][nx].m_idx = q_questor->mo_idx;
+			cave_midx_debug(&q_qact->tp_wpos, ny, nx, q_questor->mo_idx);
+		}
+		update_mon(q_questor->mo_idx, TRUE);
+		if (zcave) everyone_lite_spot(&q_qact->tp_wpos, ny, nx);
 	}
+
 	/* walk somewhere? */
 	if (q_qact->walk_speed) {
 	}
