@@ -1716,33 +1716,44 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 
 	qi_questor *q_questor;
 	qi_questor_morph *q_qmorph;
+	qi_questor_hostility *q_qhostility;
+	qi_questor_act *q_qact;
 
 	/* ---------- hijacking this function for questor-morph/hostility/act changes ---------- */
 	for (i = 0; i < q_ptr->questors; i++) {
-		if (!q_stage->questor_morph[i]) continue;
-		q_qmorph = q_stage->questor_morph[i];
-		q_questor = &q_ptr->questor[i];
+		if (q_stage->questor_morph[i]) {
+			q_qmorph = q_stage->questor_morph[i];
+			q_questor = &q_ptr->questor[i];
 
-		q_questor->talkable = q_qmorph->talkable;
-		q_questor->despawned = q_qmorph->despawned;
-		q_questor->invincible = q_qmorph->invincible;
-		q_questor->death_fail = q_qmorph->death_fail;
-		if (q_qmorph->name) strcpy(q_questor->name, q_qmorph->name);
-		if (q_qmorph->ridx) q_questor->ridx = q_qmorph->ridx;
-		if (q_qmorph->rchar != 255) q_questor->rchar = q_qmorph->rchar;
-		if (q_qmorph->rattr != 255) q_questor->rattr = q_qmorph->rattr;
-		if (q_qmorph->rlev) m_list[q_questor->mo_idx].level = q_qmorph->rlev;
+			q_questor->talkable = q_qmorph->talkable;
+			q_questor->despawned = q_qmorph->despawned;
+			q_questor->invincible = q_qmorph->invincible;
+			q_questor->death_fail = q_qmorph->death_fail;
+			if (q_qmorph->name) strcpy(q_questor->name, q_qmorph->name);
+			if (q_qmorph->ridx) q_questor->ridx = q_qmorph->ridx;
+			if (q_qmorph->rchar != 255) q_questor->rchar = q_qmorph->rchar;
+			if (q_qmorph->rattr != 255) q_questor->rattr = q_qmorph->rattr;
+			if (q_qmorph->rlev) m_list[q_questor->mo_idx].level = q_qmorph->rlev;
 #if 0
-		/* Note the spot */
-		note_spot_depth(&q_questor->current_wpos, q_questor->current_y, q_questor->current_x);
-		/* Draw the spot */
-		everyone_lite_spot(&q_questor->current_wpos, q_questor->current_y, q_questor->current_x);
+			/* Note the spot */
+			note_spot_depth(&q_questor->current_wpos, q_questor->current_y, q_questor->current_x);
+			/* Draw the spot */
+			everyone_lite_spot(&q_questor->current_wpos, q_questor->current_y, q_questor->current_x);
 #else
-		/* Note the spot */
-		note_spot_depth(&m_list[q_questor->mo_idx].wpos, m_list[q_questor->mo_idx].fy, m_list[q_questor->mo_idx].fx);
-		/* Draw the spot */
-		everyone_lite_spot(&m_list[q_questor->mo_idx].wpos, m_list[q_questor->mo_idx].fy, m_list[q_questor->mo_idx].fx);
+			/* Note the spot */
+			note_spot_depth(&m_list[q_questor->mo_idx].wpos, m_list[q_questor->mo_idx].fy, m_list[q_questor->mo_idx].fx);
+			/* Draw the spot */
+			everyone_lite_spot(&m_list[q_questor->mo_idx].wpos, m_list[q_questor->mo_idx].fy, m_list[q_questor->mo_idx].fx);
 #endif
+		}
+		if (q_stage->questor_hostility[i]) {
+			q_qhostility = q_stage->questor_hostility[i];
+			q_questor = &q_ptr->questor[i];
+		}
+		if (q_stage->questor_act[i]) {
+			q_qact = q_stage->questor_act[i];
+			q_questor = &q_ptr->questor[i];
+		}
 	}
 	/* ------------------------------------------------------------------------------------- */
 
@@ -4123,6 +4134,48 @@ qi_questor_morph *init_quest_qmorph(int q_idx, int stage, int questor) {
 
 	/* default: no name change */
 	p->name = NULL;
+
+	/* done, return the new, requested one */
+	return p;
+}
+/* Allocate/initialise a questor-hostility, or return it if already existing. */
+qi_questor_hostility *init_quest_qhostility(int q_idx, int stage, int questor) {
+	qi_stage *q_stage = init_quest_stage(q_idx, stage);
+	qi_questor_hostility *p;
+
+	/* we already have this existing one */
+	if (q_stage->questor_hostility[questor]) return q_stage->questor_hostility[questor];
+
+	/* allocate a new one */
+	p = (qi_questor_hostility*)malloc(sizeof(qi_questor_hostility));
+	if (!p) {
+		s_printf("init_quest_qhostility() Couldn't allocate memory!\n");
+		exit(0);
+	}
+
+	/* attach it to its parent structure */
+	q_stage->questor_hostility[questor] = p;
+
+	/* done, return the new, requested one */
+	return p;
+}
+/* Allocate/initialise a questor-act, or return it if already existing. */
+qi_questor_act *init_quest_qact(int q_idx, int stage, int questor) {
+	qi_stage *q_stage = init_quest_stage(q_idx, stage);
+	qi_questor_act *p;
+
+	/* we already have this existing one */
+	if (q_stage->questor_act[questor]) return q_stage->questor_act[questor];
+
+	/* allocate a new one */
+	p = (qi_questor_act*)malloc(sizeof(qi_questor_act));
+	if (!p) {
+		s_printf("init_quest_qact() Couldn't allocate memory!\n");
+		exit(0);
+	}
+
+	/* attach it to its parent structure */
+	q_stage->questor_act[questor] = p;
 
 	/* done, return the new, requested one */
 	return p;

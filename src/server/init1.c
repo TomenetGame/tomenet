@@ -7330,8 +7330,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	qi_questitem *q_qitem;
 	qi_feature *q_feat;
 	qi_questor_morph *q_qmorph;
-	//qi_questor_hostility *q_qhost;
-	//qi_questor_act *q_qact;
+	qi_questor_hostility *q_qhost;
+	qi_questor_act *q_qact;
 
 	bool disabled;
 	u16b flags;
@@ -7865,21 +7865,85 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'H' for questor hostility changes? (or just use S-line for this too) */
 		if (buf[0] == 'H') {
-#if 0
+			int q, unq, hp, hm, hrhp, hrtia, hrtr, cs, qcs;
+
 			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
-#endif
+			if (10 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+			    &stage, &q, &unq, &hp, &hm, &hrhp, &hrtia, &hrtr, &cs, &qcs)) return (1);
+
+			if (stage < 0 || stage >= QI_STAGES) return 1;
+			if (q < 0 || q > q_ptr->questors) return 1;
+			q_qhost = init_quest_qhostility(error_idx, stage, questor);
+			q_qhost->unquestor = (unq != 0);
+			q_qhost->hostile_player = (hp != 0);
+			q_qhost->hostile_monster = (hm != 0);
+			q_qhost->hostile_revert_hp = hrhp;
+			q_qhost->hostile_revert_timed_ingame_abs = hrtia;
+			q_qhost->hostile_revert_timed_real = hrtr;
+			q_qhost->change_stage = cs;
+			q_qhost->quiet_change = (qcs != 0);
+
+			/* important hack: initialise the target stage!
+			   This is done to fill that stage with default values,
+			   which are important when the quest actually enters that stage,
+			   even -or especially if- it is just an empty, final stage.
+			   For example it would call activate_quest >:). */
+			if (cs != 255) {
+				if (cs >= 0) {
+					if (cs >= QI_STAGES) return 1;
+					(void)init_quest_stage(error_idx, cs);
+				} else {
+					if (stage - cs >= QI_STAGES) return 1;
+					for (i = stage + 1; i <= stage - cs; i++)
+						(void)init_quest_stage(error_idx, i);
+				}
+			}
 			continue;
 		}
 
 		/* Process 'J' for questor movement/teleportation/teleplayer */
 		if (buf[0] == 'J') {
-#if 0
+			int q, tpwx, tpwy, tpwz, tpx, tpy, tppywx, tppywy, tppywz, tppyx, tppyy, spd, x, y, cs, qcs;
+
 			s = buf + 2;
-			if ( != sscanf(s, "",
-				q_ptr->)) return (1);
-#endif
+			if (17 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+			    &stage, &q, &tpwx, &tpwy, &tpwz, &tpx, &tpy, &tppywx, &tppywy, &tppywz, &tppyx, &tppyy, &spd, &x, &y, &cs, &qcs)) return (1);
+
+			if (stage < 0 || stage >= QI_STAGES) return 1;
+			if (q < 0 || q > q_ptr->questors) return 1;
+			q_qact = init_quest_qact(error_idx, stage, questor);
+
+			q_qact->tp_wpos.wx = tpwx;
+			q_qact->tp_wpos.wx = tpwy;
+			q_qact->tp_wpos.wx = tpwz;
+			q_qact->tp_x = tpx;
+			q_qact->tp_y = tpy;
+			q_qact->tppy_wpos.wx = tppywx;
+			q_qact->tppy_wpos.wx = tppywy;
+			q_qact->tppy_wpos.wx = tppywz;
+			q_qact->tppy_x = tppyx;
+			q_qact->tppy_y = tppyy;
+			q_qact->walk_speed = spd;
+			q_qact->walk_destx = x;
+			q_qact->walk_desty = y;
+			q_qact->change_stage = cs;
+			q_qact->quiet_change = (qcs != 0);
+
+			/* important hack: initialise the target stage!
+			   This is done to fill that stage with default values,
+			   which are important when the quest actually enters that stage,
+			   even -or especially if- it is just an empty, final stage.
+			   For example it would call activate_quest >:). */
+			if (cs != 255) {
+				if (cs >= 0) {
+					if (cs >= QI_STAGES) return 1;
+					(void)init_quest_stage(error_idx, cs);
+				} else {
+					if (stage - cs >= QI_STAGES) return 1;
+					for (i = stage + 1; i <= stage - cs; i++)
+						(void)init_quest_stage(error_idx, i);
+				}
+			}
 			continue;
 		}
 

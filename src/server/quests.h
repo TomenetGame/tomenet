@@ -174,16 +174,13 @@ typedef struct qi_questor_act {
 	struct worldpos tp_wpos;			/* teleport self to a new position */
 	s16b tp_x, tp_y;
 
-	struct worldpos tpy_wpos;			/* teleport participating players to a new position */
-	s16b tpy_x, tpy_y;
+	struct worldpos tppy_wpos;			/* teleport participating players to a new position */
+	s16b tppy_x, tppy_y;
 
 	byte walk_speed;				/* questor will actually move around during this stage? */
 	s16b walk_destx, walk_desty;			/* target waypoint for questor to move to */
 	s16b change_stage;				/* stage will change when questor arrives at destination */
 	bool quiet_change;				/* for the above stage-change: don't replay the stage's dialogue */
-
-	struct worldpos teleport_wpos;			/* teleport questor to a new position */
-	s16b teleport_x, teleport_y;
 } qi_questor_act;
 
 /* Quest goals, with a multitude of different sub-goals. Some AND with each other, some OR.
