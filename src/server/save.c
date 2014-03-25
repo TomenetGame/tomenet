@@ -2209,6 +2209,7 @@ static void new_wr_wild(){
 				wr_u16b(VISIT_TIME_CAP);
 #endif
 
+				wr_byte(w_ptr->dungeon->theme);
 				wr_s16b(w_ptr->dungeon->quest);
 				wr_s16b(w_ptr->dungeon->quest_stage);
 			}
@@ -2236,6 +2237,7 @@ static void new_wr_wild(){
 #else
 				wr_u16b(VISIT_TIME_CAP);
 #endif
+				wr_byte(w_ptr->tower->theme);
 				wr_s16b(w_ptr->tower->quest);
 				wr_s16b(w_ptr->tower->quest_stage);
 			}

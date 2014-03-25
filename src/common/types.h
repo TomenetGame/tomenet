@@ -1282,6 +1282,7 @@ struct dungeon_type {
 	char nr_char[10];	/* races prevented */
 #endif	/* 0 */
 	int store_timer;	/* control frequency of dungeon store generation (for misc iron stores mostly) */
+	byte theme;		/* inspired by IDDC themes - for 'wilderness' dungeons */
 	s16b quest, quest_stage;/* this dungeon was spawned by a quest? (for quest_info) quest==0 = no quest (it's q_idx + 1!) */
 
 	struct dun_level *level;	/* array of dungeon levels */

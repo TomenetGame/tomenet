@@ -3289,6 +3289,7 @@ void new_rd_wild()
 				}
 
 				if (!s_older_than(4, 5, 27)) {
+					rd_byte(&d_ptr->theme);
 					rd_s16b(&d_ptr->quest);
 					rd_s16b(&d_ptr->quest_stage);
 				}
@@ -3353,6 +3354,7 @@ void new_rd_wild()
 				}
 
 				if (!s_older_than(4, 5, 27)) {
+					rd_byte(&d_ptr->theme);
 					rd_s16b(&d_ptr->quest);
 					rd_s16b(&d_ptr->quest_stage);
 				}
