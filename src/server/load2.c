@@ -3731,6 +3731,7 @@ static errr load_quests_file() {
 	errr err = 0;
 	char savefile[MAX_PATH_LENGTH];
 
+	s16b tmp_s16b;
 
 	quest_info *q_ptr;
 
@@ -3828,6 +3829,10 @@ static errr load_quests_file() {
 		rd_s16b(&q_ptr->cur_stage);
 		rd_u16b(&q_ptr->flags);
 
+		rd_s16b(&q_ptr->timed_countdown);
+		rd_s16b(&q_ptr->timed_countdown_stage);
+		rd_byte((byte *) &q_ptr->timed_countdown_quiet);
+
 		//questors:
 		rd_byte(&load_questors);
 		if (load_questors < q_ptr->questors)
@@ -3861,7 +3866,7 @@ static errr load_quests_file() {
 		if (load_stages > q_ptr->stages)
 			s_printf("Warning! Stages in save file (%d) exceed stages in q_info.txt (%d).\n", load_stages, q_ptr->stages);
 		for (j = 0; j < load_stages; j++) {
-			if (j >= q_ptr->questors) {
+			if (j >= q_ptr->stages) {
 				/* Discard stages that exceed our info */
 				strip_bytes(5);
 				rd_byte(&load_goals);
@@ -3871,11 +3876,17 @@ static errr load_quests_file() {
 
 			q_stage = &q_ptr->stage[j];
 
-#if 0
-			rd_s16b(&q_stage->timed_countdown);
-			rd_s16b(&q_stage->timed_countdown_stage);
-			rd_byte((byte *) &q_stage->timed_countdown_quiet);
-#endif
+			//questor hostility timers:
+			for (k = 0; k < load_questors; k++) {
+				if (k >= q_ptr->questors || !q_stage->questor_hostility[k]) {
+					/* Discard questors that exceed our info */
+					strip_bytes(2);
+					continue;
+				}
+				rd_s16b(&tmp_s16b);
+				if (tmp_s16b != 9999) q_stage->questor_hostility[k]->hostile_revert_timed_countdown = tmp_s16b;
+				else q_stage->questor_hostility[k]->hostile_revert_timed_countdown = 0;
+			}
 
 			//goals:
 			rd_byte(&load_goals);
@@ -3959,6 +3970,6 @@ void load_quests(void) {
 		}
 		return; //TRUE;
 	}
-	s_printf("Error (%s) reading a %d.%d.%d quests savefile.\n", what, sf_major, sf_minor, sf_patch);
+	s_printf("Error (%s) reading a %d.%d.%d quests savefile.\n", what, qsf_major, qsf_minor, qsf_patch);
 	return; //FALSE;
 }

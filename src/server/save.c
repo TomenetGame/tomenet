@@ -2625,6 +2625,10 @@ static bool save_quests_file(void) {
 		wr_s16b(q_ptr->cur_stage);
 		wr_u16b(q_ptr->flags);
 
+		wr_s16b(q_ptr->timed_countdown);
+		wr_s16b(q_ptr->timed_countdown_stage);
+		wr_byte(q_ptr->timed_countdown_quiet);
+
 		//questors:
 		wr_byte(q_ptr->questors);
 		for (j = 0; j < q_ptr->questors; j++) {
@@ -2646,11 +2650,11 @@ static bool save_quests_file(void) {
 		for (j = 0; j < q_ptr->stages; j++) {
 			q_stage = &q_ptr->stage[j];
 
-#if 0
-			wr_s16b(q_stage->timed_countdown);
-			wr_s16b(q_stage->timed_countdown_stage);
-			wr_byte(q_stage->timed_countdown_quiet);
-#endif
+			for (k = 0; k < q_ptr->questors; k++)
+				if (q_stage->questor_hostility[k])
+					wr_s16b(q_stage->questor_hostility[k]->hostile_revert_timed_countdown);
+				else
+					wr_s16b(9999);
 
 			//goals:
 			wr_byte(q_stage->goals);

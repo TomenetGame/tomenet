@@ -493,7 +493,7 @@ typedef struct quest_info {
 		  that we store here instead for efficiency :-o */
 	s16b timed_countdown;				/* countdown for auto-stage change: negative value = ingame absolute, positive value = real-time counting down */
 	s16b timed_countdown_stage;			/* stage to activate */
-	s16b timed_countdown_quiet;			/* quiet stage-change? */
+	bool timed_countdown_quiet;			/* quiet stage-change? */
 
 	/* -----  Fixed quest data (from q_info.txt) ----- */
 
