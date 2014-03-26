@@ -11752,11 +11752,14 @@ void dealloc_dungeon_level(struct worldpos *wpos) {
 	else w_ptr->cave = NULL;
 }
 
-static void del_dungeon(struct worldpos *wpos, bool tower) {
+/* added 'force' to delete it even if someone is still inside,
+   that player gets recalled to surface in that case. - C. Blue */
+static void del_dungeon(struct worldpos *wpos, bool tower, bool force) {
 	struct dungeon_type *d_ptr;
-	int i;
+	int i, j;
 	struct worldpos twpos;
 	wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+	player_type *p_ptr;
 
 	s_printf("%s at (%d,%d) attempt remove\n", (tower ? "Tower" : "Dungeon"), wpos->wx, wpos->wy);
 
@@ -11808,49 +11811,68 @@ static void del_dungeon(struct worldpos *wpos, bool tower) {
 		dungeon_id_max--;
  #endif
 #endif
-
 		s_printf("Deleted flag\n");
+		/* deallocate all floors */
 		for (i = 0; i < d_ptr->maxdepth; i++) {
 			twpos.wz = (tower ? i + 1 : 0 - (i + 1));
-			if (d_ptr->level[i].ondepth) return;
+			if (d_ptr->level[i].ondepth) { /* someone is still inside! */
+				if (force) s_printf("Dungeon deletion: ondepth on floor %d - forcing out.\n", i);
+				else s_printf("Dungeon deletion: ondepth on floor %d - cancelling.\n", i);
+				if (!force) return;
+				for (j = 1; j <= NumPlayers; j++) {
+					p_ptr = Players[j];
+					if (inarea(&p_ptr->wpos, &twpos)) {
+						p_ptr->recall_pos.wx = wpos->wx;
+						p_ptr->recall_pos.wy = wpos->wy;
+						p_ptr->recall_pos.wz = 0;
+						if (tower) recall_player(j, "Suddenly the tower crumbles and you are back to the outside world!");
+						else recall_player(j, "Suddenly the dungeon crumbles and you are back to the outside world!");
+					}
+				}
+				d_ptr->level[i].ondepth = 0;//obsolete?
+			}
 			if (d_ptr->level[i].cave) dealloc_dungeon_level(&twpos);
 			C_KILL(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
 		}
+		/* free the floors all at once */
 		C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
-		if (tower) {
+		/* free the dungeon struct */
+		if (tower)
 			KILL(wild->tower, struct dungeon_type);
-		} else {
+		else
 			KILL(wild->dungeon, struct dungeon_type);
-		}
 	} else {
 		s_printf("%s at (%d,%d) restored\n", (tower ? "Tower" : "Dungeon"), wpos->wx, wpos->wy);
 		/* This really should not happen, but just in case */
 		/* Re allow access to the non deleted dungeon */
 		wild->flags |= (tower ? WILD_F_UP : WILD_F_DOWN);
 	}
-	/* Release the lock */
 	s_printf("%s at (%d,%d) removed\n", (tower ? "Tower" : "Dungeon"), wpos->wx, wpos->wy);
+#if 0
+	/* Release the lock */
 	wild->flags &= ~(tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN);
+#endif
 }
 
-void rem_dungeon(struct worldpos *wpos, bool tower){
+void rem_dungeon(struct worldpos *wpos, bool tower) {
 	struct dungeon_type *d_ptr;
 	wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
 
 	d_ptr = (tower ? wild->tower : wild->dungeon);
 	if (!d_ptr) return;
-
+#if 0
 	/* Lock so that dungeon cannot be overwritten while in use */
 	wild->flags |= (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN);
+#endif
 	/* This will prevent players entering the dungeon */
 	wild->flags &= ~(tower ? WILD_F_UP : WILD_F_DOWN);
+
 	d_ptr->flags2 |= DF2_DELETED;
-	del_dungeon(wpos, tower);	/* Hopefully first time */
+	del_dungeon(wpos, tower, TRUE);	/* Hopefully first time */
 }
 
 /* 'type' refers to t_info[] */
-void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, u32b flags2, u32b flags3, bool tower, int type, int theme, int quest, int quest_stage)
-{
+void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, u32b flags2, u32b flags3, bool tower, int type, int theme, int quest, int quest_stage) {
 #ifdef RPG_SERVER
 	bool found_town = FALSE;
 #endif
@@ -11860,15 +11882,13 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 	wild = &wild_info[wpos->wy][wpos->wx];
 
 	/* Hack -- override the specification */
-	if (type) {
-		tower = (d_info[type].flags1 & DF1_TOWER) ? TRUE : FALSE;
-	}
-
+	if (type) tower = (d_info[type].flags1 & DF1_TOWER) ? TRUE : FALSE;
+#if 0
 	if (wild->flags & (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN)) {
-		s_printf("add_dungeon failed due to wild_f_ lock.\n");
+		s_printf("add_dungeon failed due to WILD_F_LOCK%s.\n", tower ? "UP" : "DOWN");
 		return;
 	}
-
+#endif
 #ifdef DUNGEON_VISIT_BONUS
 	/* new paranoid debug code: cancel adding of dungeon if wild_info _seems_ to already have a dungeon in place. */
 	if (wild->flags & (tower ? WILD_F_UP : WILD_F_DOWN)) {
@@ -11954,16 +11974,14 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 #endif
 
 #if 0	/* unused - mikaelh */
-	for(i = 0; i < 10; i++){
+	for (i = 0; i < 10; i++) {
 		d_ptr->r_char[i] = '\0';
 		d_ptr->nr_char[i] = '\0';
 	}
-	if(race != (char*)NULL){
+	if (race != (char*)NULL)
 		strcpy(d_ptr->r_char, race);
-	}
-	if(exclude != (char*)NULL){
+	if (exclude != (char*)NULL)
 		strcpy(d_ptr->nr_char, exclude);
-	}
 #endif
 
 	C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
