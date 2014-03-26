@@ -2734,6 +2734,7 @@ struct player_type {
 	s32b quest_acquired[MAX_CONCURRENT_QUESTS]; /* the turn when it was acquired */
 	s32b quest_timed_stage_change[MAX_CONCURRENT_QUESTS]; /* turn tracker for automatically timed stage change */
 	s16b quest_stage[MAX_CONCURRENT_QUESTS]; /* in which stage is a quest? */
+	s16b quest_stage_timer[MAX_CONCURRENT_QUESTS]; /* stage automatics started a timer leading to stage completion */
 	u16b quest_flags[MAX_CONCURRENT_QUESTS]; /* our personal quest flags configuration */
 	bool quest_goals[MAX_CONCURRENT_QUESTS][QI_GOALS]; /* which goals have we completed so far? */
 	bool quest_goals_nisi[MAX_CONCURRENT_QUESTS][QI_GOALS]; /* which goals have we completed so far? */

@@ -2139,8 +2139,13 @@ static void quest_spawn_monsters(q_idx, stage) {
 		}
 	}
 }
-/* perform automatic things (quest spawn/stage change) in a stage */
-static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
+/* perform automatic things (quest spawn/stage change) in a stage.
+   If 'individual_only' is set, only things that do not affect other players
+   are done. This was added for reattaching a 'temporarily global' quest stage
+   (ie one where questors moved around, things that cannot be done per player
+   individually because there aren't personal instances of each questor for
+   every player) back to every eligible player nearby. */
+static bool quest_stage_automatics(int pInd, int q_idx, int stage, bool individual_only) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 
@@ -2149,16 +2154,18 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	qi_feature *q_feat;
 
 	/* ---------- hijacking this function for questor and dungeon manipulation ---------- */
-	//first dungeon..
-	if (q_stage->dun_base) quest_add_dungeon(q_idx, stage);
-	//..then the questor could teleport there ;)
-	for (i = 0; i < q_ptr->questors; i++) {
-		if (q_stage->questor_morph[i]) quest_questor_morph(q_idx, stage, i);
-		if (q_stage->questor_hostility[i]) quest_questor_hostility(q_idx, stage, i);
-		if (q_stage->questor_act[i]) quest_questor_act(pInd, q_idx, stage, i);
+	if (!individual_only) {
+		//first dungeon..
+		if (q_stage->dun_base) quest_add_dungeon(q_idx, stage);
+		//..then the questor could teleport there ;)
+		for (i = 0; i < q_ptr->questors; i++) {
+			if (q_stage->questor_morph[i]) quest_questor_morph(q_idx, stage, i);
+			if (q_stage->questor_hostility[i]) quest_questor_hostility(q_idx, stage, i);
+			if (q_stage->questor_act[i]) quest_questor_act(pInd, q_idx, stage, i);
+		}
+		//..and monsters get added on top
+		quest_spawn_monsters(q_idx, stage);
 	}
-	//..and monsters get added on top
-	quest_spawn_monsters(q_idx, stage);
 	/* ---------------------------------------------------------------------------------- */
 
 	/* auto-spawn (and acquire) new quest? */
@@ -2184,20 +2191,22 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	/* auto-set/clear flags? */
 	quest_set_flags(pInd, q_idx, q_stage->setflags, q_stage->clearflags);
 
-	/* auto-build cave grid features? */
-	for (i = 0; i < q_stage->feats; i++) {
-		q_feat = &q_stage->feat[i];
-		if (q_feat->wpos_questor != 255)
-			wpos = q_ptr->questor[q_feat->wpos_questor].current_wpos;
-		else if (q_feat->wpos_questitem != 255)
-			wpos = q_stage->qitem[q_feat->wpos_questitem].result_wpos;
-		else {
-			wpos.wx = q_feat->wpos.wx;
-			wpos.wy = q_feat->wpos.wy;
-			wpos.wz = q_feat->wpos.wz;
+	if (!individual_only) {
+		/* auto-build cave grid features? */
+		for (i = 0; i < q_stage->feats; i++) {
+			q_feat = &q_stage->feat[i];
+			if (q_feat->wpos_questor != 255)
+				wpos = q_ptr->questor[q_feat->wpos_questor].current_wpos;
+			else if (q_feat->wpos_questitem != 255)
+				wpos = q_stage->qitem[q_feat->wpos_questitem].result_wpos;
+			else {
+				wpos.wx = q_feat->wpos.wx;
+				wpos.wy = q_feat->wpos.wy;
+				wpos.wz = q_feat->wpos.wz;
+			}
+			/* note that this already contains a getcave() check: */
+			cave_set_feat_live(&wpos, q_feat->y, q_feat->x, q_feat->feat);
 		}
-		/* note that this already contains a getcave() check: */
-		cave_set_feat_live(&wpos, q_feat->y, q_feat->x, q_feat->feat);
 	}
 
 	/* auto-change stage (timed)? */
@@ -2430,8 +2439,7 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 	}
 
 	/* perform automatic actions (spawn new quest, (timed) further stage change) */
-	if (final_player)
-		if (quest_stage_automatics(Ind, q_idx, stage)) return -1;
+	if (quest_stage_automatics(Ind, q_idx, stage, !final_player)) return -1;
 
 	/* update players' quest tracking data */
 	quest_imprint_stage(Ind, q_idx, j);
@@ -2604,7 +2612,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 		   Note: Should imprint correct stage on player before calling this,
 		         otherwise automatic stage change will "skip" a stage in between ^^.
 		         This should be rather cosmetic though. */
-		if (quest_stage_automatics(0, q_idx, stage)) return;
+		if (quest_stage_automatics(0, q_idx, stage, FALSE)) return;
 
 		if (!quiet)
 			for (i = 1; i <= NumPlayers; i++) {
