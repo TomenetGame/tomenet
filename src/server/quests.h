@@ -328,8 +328,9 @@ typedef struct qi_monsterspawn {
 	byte rlevmin, rlevmax;
 
 	byte amount;					/* spawns a single monster this many times */
-	byte groups;					/* spawns a pack of monsters this many times */
+	bool groups;					/* spawns a pack of monsters instead of single monsters */
 	bool scatter;					/* scatters the single spawns/group spawns around the map */
+	byte clones;					/* s_clone factor (0 = normal) */
 
 	qi_location loc;				/* spawn location parameters */
 

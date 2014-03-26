@@ -7836,11 +7836,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'm') {
 			/* we have 3 sub-types of 'm' lines */
 			if (buf[1] == ':') { /* init */
-				int amt, grp, scat, ridx, rchar, rattr, lvmin, lvmax;
+				int amt, grp, scat, clo, ridx, rchar, rattr, lvmin, lvmax;
 
 				s = buf + 2;
-				if (10 > (j = sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d%79[^:]",
-				    &stage, &amt, &grp, &scat, &ridx, &rchar, &rattr, &lvmin, &lvmax, tmpbuf)))
+				if (11 > (j = sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d%79[^:]",
+				    &stage, &amt, &grp, &scat, &clo, &ridx, &rchar, &rattr, &lvmin, &lvmax, tmpbuf)))
 					return (1);
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
@@ -7849,8 +7849,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_mspawn = init_quest_monsterspawn(error_idx, stage, q_stage->mspawns);
 
 				q_mspawn->amount = amt;
-				q_mspawn->groups = grp;
+				q_mspawn->groups = (grp != 0);
 				q_mspawn->scatter = (scat != 0);
+				q_mspawn->clones = clo;
 				q_mspawn->ridx = ridx;
 				q_mspawn->rchar = rchar;
 				q_mspawn->rattr = color_char_to_attr(rattr);

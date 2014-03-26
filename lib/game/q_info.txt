@@ -41,7 +41,7 @@ V:0.0.1
 # (optional) J:stage:questor:teleport wx:wy:wz:x:y:teleport players wx:wy:wz:x:y:walkspeed:destx:desty:newstage:quiet?
 # (optional) D:stage:base:max:tower?:nomap?:hard (1=forcedown:2=iron):stores (1=iron,2=all):theme(NI):name (or "-"):floors are static?:keep until quest ends?:flags1:flags2:flags3:[:final floor map file: offset x:y]
 # (for D-line) Dl:stage:locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
-# (optional, up to 10x) m:stage:amount:groups:scattered?:ridx:char:attr:minlev:maxlev:partial name to match
+# (optional, up to 10x) m:stage:amount:groups:scattered?:clones:ridx:char:attr:minlev:maxlev:partial name to match
 # (for each 'm'-line) ml:stage:locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 # (optional, for each 'm'-line) mh:hurtplayers?:hurtquestors?:invincplayers?:invincquestors?:targetplayers?:targetquestors?
 

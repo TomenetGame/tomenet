@@ -209,7 +209,10 @@ static cave_type **quest_prepare_zcave(struct worldpos *wpos, bool stat, cptr tp
 			/* In dungeons we cannot just unstatice a floor and
 			   teleport people out, so we just 'fail' in that case..
 			   - except if we're planning exactly this */
-			if (wpos->wz && !dungeon) return NULL;
+			if (wpos->wz && !dungeon) {
+				s_printf("QUEST_PREPARE_ZCAVE: Already allocated for mapfile.\n");
+				return NULL;
+			}
 
 			/* clear the floor and recreate it */
 			teleport_players_level(wpos);
@@ -510,7 +513,7 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 		}
 	}
 
-	zcave = quest_prepare_zcave(wpos, stat, q_loc->tpref, q_loc->tpref_x, q_loc->tpref_y, FALSE);
+	zcave = quest_prepare_zcave(wpos, stat, q_loc->tpref, q_loc->tpref_x, q_loc->tpref_y, dungeon);
 	if (!zcave) return FALSE;
 
 	/* Specified exact starting location within given wpos? */
@@ -2037,6 +2040,57 @@ static void quest_remove_dungeon(int q_idx, int stage) {
 	if (!q_stage->dun_base || q_stage->dun_keep) return;
 	rem_dungeon(&q_stage->dun_wpos, FALSE);
 }
+/* Helper function for quest_spawn_monsters().
+   It picks a specific monster (r_idx) from the specifications. */
+static s16b quest_mspawn_pick(qi_monsterspawn *m_spawn) {
+	//s16b r_idx = 0;
+
+	
+
+	return 0;
+}
+/* Spawn monsters on stage startup */
+static void quest_spawn_monsters(q_idx, stage) {
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
+	qi_monsterspawn *q_mspawn;
+	struct worldpos wpos;
+	int i, j, tries;
+	s16b x, y, r_idx;
+	cave_type **zcave;
+
+	for (i = 0; i < q_stage->mspawns; i++) {
+		q_mspawn = &q_stage->mspawn[i];
+
+		if (!quest_special_spawn_location(&wpos, &x, &y, &q_mspawn->loc, FALSE, FALSE)) {
+			s_printf("QUEST_SPAWN_MONSTERS: Couldn't get spawn location for spawn #%d.\n", i);
+			continue;
+		}
+		if (!(zcave = getcave(&wpos))) {
+			s_printf("QUEST_SPAWN_MONSTERS: Couldn't get zcave for spawn #%d.\n", i);
+			continue;
+		}
+
+		//:ridx:char:attr:minlev:maxlev:partial name to match
+		for (j = 1; j <= q_mspawn->amount; j++) {
+			if (q_mspawn->scatter) {
+				/* Find a legal, distant, unoccupied, space */
+				tries = 0;
+				while (++tries < 50) {
+					y = rand_int(getlevel(&wpos) ? MAX_HGT : MAX_HGT);
+					x = rand_int(getlevel(&wpos) ? MAX_WID : MAX_WID);
+					if (cave_naked_bold(zcave, y, x)) break;
+				}
+				if (tries == 50) continue;
+
+				r_idx = quest_mspawn_pick(q_mspawn);
+				(void)summon_specific_race(&wpos, y, x, r_idx, q_mspawn->clones, q_mspawn->groups ? rand_int(5) + 5 : 1);
+			} else {
+				r_idx = quest_mspawn_pick(q_mspawn);
+				(void)summon_specific_race(&wpos, y, x, r_idx, q_mspawn->clones, q_mspawn->groups ? rand_int(5) + 5 : 1);
+			}
+		}
+	}
+}
 /* perform automatic things (quest spawn/stage change) in a stage */
 static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	quest_info *q_ptr = &q_info[q_idx];
@@ -2047,12 +2101,16 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 	qi_feature *q_feat;
 
 	/* ---------- hijacking this function for questor and dungeon manipulation ---------- */
+	//first dungeon..
+	if (q_stage->dun_base) quest_add_dungeon(q_idx, stage);
+	//..then the questor could teleport there ;)
 	for (i = 0; i < q_ptr->questors; i++) {
 		if (q_stage->questor_morph[i]) quest_questor_morph(q_idx, stage, i);
 		if (q_stage->questor_hostility[i]) quest_questor_hostility(q_idx, stage, i);
 		if (q_stage->questor_act[i]) quest_questor_act(pInd, q_idx, stage, i);
 	}
-	if (q_stage->dun_base) quest_add_dungeon(q_idx, stage);
+	//..and monsters get added on top
+	quest_spawn_monsters(q_idx, stage);
 	/* ---------------------------------------------------------------------------------- */
 
 	/* auto-spawn (and acquire) new quest? */
