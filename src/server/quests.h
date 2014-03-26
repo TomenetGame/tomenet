@@ -354,12 +354,12 @@ typedef struct qi_stage {
 	/* quest acceptance */
 	bool accepts;					/* player can acquire the quest during a stage */
 
+
+	/* stage-change automatics */
 	s16b activate_quest;				/* spawn a certain new quest of this index (and thereby another questor) (if not already existing) -1 for disabled */
 	bool auto_accept;				/* player will automatically acquire the newly spawned quest (from activate_quest[]) */
 	bool auto_accept_quiet;				/* player will automatically acquire the newly spawned quest (from activate_quest[]) but not get a quest-accept-notification type of message about it */
 
-
-	/* stage-change automatics */
 	s16b change_stage;				/* automatically change to a different stage after handling everything that was to do in the current stage (-1 = disable) */
 #if 0 /* currently not possible since we call the quest scheduler once a minute */
 	s16b timed_ingame;				/* automatically change to a different stage after a certain amount of in-game minutes passed */
@@ -383,6 +383,8 @@ typedef struct qi_stage {
 	/* monsters to be spawned automatically on stage start */
 	byte mspawns;
 	qi_monsterspawn *mspawn;
+
+	struct worldpos geno_wpos;
 
 
 	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */

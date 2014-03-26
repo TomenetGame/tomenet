@@ -7926,11 +7926,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'A') {
 			/* we have 2 sub-types of 'A' lines */
 			if (buf[1] == ':') { /* init */
-				int aq, aa, cs, tsi, tsia, tsr, qcs;
+				int aq, aa, cs, tsi, tsia, tsr, qcs, genox, genoy, genoz;
 
 				s = buf + 2;
-				if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%16[^:]",
-				    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs, flagbuf)) return (1);
+				if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%16[^:]:%d:%d:%d",
+				    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs, flagbuf, &genox, &genoy, &genoz)) return (1);
 				if (stage < 0 || stage >= QI_STAGES) return 1;
 				q_stage = init_quest_stage(error_idx, stage);
 
@@ -7957,6 +7957,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 						q_stage->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
 					} else return 1;
 				}
+
+				q_stage->geno_wpos.wx = genox;
+				q_stage->geno_wpos.wy = genoy;
+				q_stage->geno_wpos.wz = genoz;
 
 				/* important hack: initialise the target stage!
 				   This is done to fill that stage with default values,
