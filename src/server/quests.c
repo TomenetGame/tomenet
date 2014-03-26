@@ -100,6 +100,7 @@ void process_quests(void) {
 	bool active;
 	qi_stage *q_stage;
 	qi_questor_hostility *q_qhost;
+	player_type *p_ptr;
 
 	for (i = 0; i < max_q_idx; i++) {
 		q_ptr = &q_info[i];
@@ -162,12 +163,32 @@ void process_quests(void) {
 
 		/* handle individual cooldowns here too for now.
 		   NOTE: this means player has to stay online for cooldown to expire, hmm */
-		for (j = 1; j <= NumPlayers; j++)
-			if (Players[j]->quest_cooldown[i])
-				Players[j]->quest_cooldown[i]--;
+		for (j = 1; j <= NumPlayers; j++) {
+			p_ptr = Players[j];
 
+			if (p_ptr->quest_cooldown[i])
+				p_ptr->quest_cooldown[i]--;
 
-		/* handle automatically timed stage actions */
+			/* handle automatically timed stage actions for individual quests */
+			for (j = 1; j <= MAX_CONCURRENT_QUESTS; j++)
+				if (p_ptr->quest_idx[j] == i) break;
+			if (j == MAX_CONCURRENT_QUESTS) continue;
+
+			if (p_ptr->quest_stage_timer[j] < 0) {
+				if (hour == 1 - p_ptr->quest_stage_timer[j]) {
+					q_stage = quest_qi_stage(i, p_ptr->quest_stage[j]);
+					quest_set_stage(0, i, q_stage->change_stage, q_stage->quiet_change, NULL);
+				}
+			} else if (p_ptr->quest_stage_timer[j] > 0) {
+				p_ptr->quest_stage_timer[j]--;
+				if (!p_ptr->quest_stage_timer[j]) {
+					q_stage = quest_qi_stage(i, p_ptr->quest_stage[j]);
+					quest_set_stage(0, i, q_stage->change_stage, q_stage->quiet_change, NULL);
+				}
+			}
+		}
+
+		/* handle automatically timed stage actions for global quests */
 		if (q_ptr->timed_countdown < 0) {
 			if (hour == 1 - q_ptr->timed_countdown)
 				quest_set_stage(0, i, q_ptr->timed_countdown_stage, q_ptr->timed_countdown_quiet, NULL);
@@ -1442,7 +1463,7 @@ static void quest_terminate(int pInd, int q_idx, struct worldpos *wpos) {
 			quest_terminate_individual(pInd, q_idx);
 		else
 			for (i = 1; i <= NumPlayers; i++) {
-				if (!inarea(&Players[i]->wpos, wpos)) continue;
+				if (wpos != NULL && !inarea(&Players[i]->wpos, wpos)) continue;
 				quest_terminate_individual(i, q_idx);
 			}
 
@@ -2145,7 +2166,7 @@ static void quest_spawn_monsters(q_idx, stage) {
    (ie one where questors moved around, things that cannot be done per player
    individually because there aren't personal instances of each questor for
    every player) back to every eligible player nearby. */
-static bool quest_stage_automatics(int pInd, int q_idx, int stage, bool individual_only) {
+static bool quest_stage_automatics(int pInd, int q_idx, int py_q_idx, int stage, bool individual_only) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 
@@ -2212,8 +2233,7 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage, bool individu
 	/* auto-change stage (timed)? */
 	if (q_stage->change_stage != 255) {
 		/* not a timed change? instant then */
-		if (//!q_ptr->timed_ingame &&
-		    q_stage->timed_ingame_abs != -1 && !q_stage->timed_real) {
+		if (q_stage->timed_ingame_abs != -1 && !q_stage->timed_real) {
 #if QDEBUG > 0
 			s_printf("%s QUEST_STAGE_AUTO: '%s'(%d,%s) %d->%d\n",
 			    showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), q_stage->change_stage);
@@ -2226,21 +2246,34 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage, bool individu
 			/* don't imprint/play dialogue of this stage anymore, it's gone~ */
 			return TRUE;
 		}
+
 		/* start the clock */
-		/*cannot do this, cause quest scheduler is checking once per minute atm
-		if (q_stage->timed_ingame) {
-			q_stage->timed_countdown = q_stage->timed_ingame;//todo: different resolution than real minutes
-			q_stage->timed_countdown_stage = q_stage->change_stage;
-			q_stage->timed_countdown_quiet = q_stage->quiet_change;
-		} else */
-		if (q_stage->timed_ingame_abs != -1) {
-			q_ptr->timed_countdown = -1 - q_stage->timed_ingame_abs;
-			q_ptr->timed_countdown_stage = q_stage->change_stage;
-			q_ptr->timed_countdown_quiet = q_stage->quiet_change;
-		} else if (q_stage->timed_real) {
-			q_ptr->timed_countdown = q_stage->timed_real;
-			q_ptr->timed_countdown_stage = q_stage->change_stage;
-			q_ptr->timed_countdown_quiet = q_stage->quiet_change;
+		if (q_ptr->individual) {
+			/*cannot do this, cause quest scheduler is checking once per minute atm
+			if (q_stage->timed_ingame) {
+				p_ptr->quest_stage_timer[i] = q_stage->timed_ingame;//todo: different resolution than real minutes
+			} else */
+			if (q_stage->timed_ingame_abs != -1) {
+				Players[pInd]->quest_stage_timer[py_q_idx] = -1 - q_stage->timed_ingame_abs;
+			} else if (q_stage->timed_real) {
+				Players[pInd]->quest_stage_timer[py_q_idx] = q_stage->timed_real;
+			}
+		} else {
+			/*cannot do this, cause quest scheduler is checking once per minute atm
+			if (q_stage->timed_ingame) {
+				q_ptr->timed_countdown = q_stage->timed_ingame;//todo: different resolution than real minutes
+				q_ptr->timed_countdown_stage = q_stage->change_stage;
+				q_ptr->timed_countdown_quiet = q_stage->quiet_change;
+			} else */
+			if (q_stage->timed_ingame_abs != -1) {
+				q_ptr->timed_countdown = -1 - q_stage->timed_ingame_abs;
+				q_ptr->timed_countdown_stage = q_stage->change_stage;
+				q_ptr->timed_countdown_quiet = q_stage->quiet_change;
+			} else if (q_stage->timed_real) {
+				q_ptr->timed_countdown = q_stage->timed_real;
+				q_ptr->timed_countdown_stage = q_stage->change_stage;
+				q_ptr->timed_countdown_quiet = q_stage->quiet_change;
+			}
 		}
 	}
 
@@ -2439,7 +2472,7 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 	}
 
 	/* perform automatic actions (spawn new quest, (timed) further stage change) */
-	if (quest_stage_automatics(Ind, q_idx, stage, !final_player)) return -1;
+	if (quest_stage_automatics(Ind, q_idx, j, stage, !final_player)) return -1;
 
 	/* update players' quest tracking data */
 	quest_imprint_stage(Ind, q_idx, j);
@@ -2612,7 +2645,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 		   Note: Should imprint correct stage on player before calling this,
 		         otherwise automatic stage change will "skip" a stage in between ^^.
 		         This should be rather cosmetic though. */
-		if (quest_stage_automatics(0, q_idx, stage, FALSE)) return;
+		if (quest_stage_automatics(0, q_idx, -1, stage, FALSE)) return;
 
 		if (!quiet)
 			for (i = 1; i <= NumPlayers; i++) {
@@ -2620,7 +2653,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 
 				/* play questors' stage dialogue */
 				for (k = 0; k < q_ptr->questors; k++) {
-					if (!inarea(&Players[i]->wpos, &q_ptr->questor[k].current_wpos)) continue;
+					if (wpos == NULL || !inarea(&Players[i]->wpos, &q_ptr->questor[k].current_wpos)) continue;
 					quest_dialogue(i, q_idx, k, FALSE, FALSE, FALSE);
 				}
 			}
@@ -2633,7 +2666,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 		if (!pInd) {
 			/* build list of players eligible to resume */
 			for (i = 1; i <= NumPlayers; i++) {
-				if (!inarea(&Players[i]->wpos, wpos)) continue;
+				if (wpos != NULL && !inarea(&Players[i]->wpos, wpos)) continue;
 
 				for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
 					if (Players[i]->quest_idx[j] == q_idx) break;
