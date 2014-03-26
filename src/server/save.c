@@ -2650,11 +2650,13 @@ static bool save_quests_file(void) {
 		for (j = 0; j < q_ptr->stages; j++) {
 			q_stage = &q_ptr->stage[j];
 
-			for (k = 0; k < q_ptr->questors; k++)
+			//questor hostility timers:
+			for (k = 0; k < q_ptr->questors; k++) {
 				if (q_stage->questor_hostility[k])
 					wr_s16b(q_stage->questor_hostility[k]->hostile_revert_timed_countdown);
 				else
 					wr_s16b(9999);
+			}
 
 			//goals:
 			wr_byte(q_stage->goals);

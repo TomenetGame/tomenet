@@ -1000,7 +1000,7 @@ bool quest_activate(int q_idx) {
 	q_ptr->timed_countdown = 0;
 	for (i = 0; i < q_ptr->stages; i++) {
 		for (q = 0; q < q_ptr->questors; q++)
-			if (q_ptr->stage[i].questor_hostility)
+			if (q_ptr->stage[i].questor_hostility[q])
 				q_ptr->stage[i].questor_hostility[q]->hostile_revert_timed_countdown = 0;
 		for (q = 0; q < q_ptr->stage[i].goals; q++) {
 			q_ptr->stage[i].goal[q].cleared = FALSE;

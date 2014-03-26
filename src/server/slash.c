@@ -8260,9 +8260,11 @@ void do_slash_cmd(int Ind, char *message)
 					}
 					for (i = 0; i < q_ptr->stages; i++) {
 						j += sizeof(qi_stage);
-						if (q_ptr->stage[i].questor_morph) j += sizeof(qi_questor_morph);
-						if (q_ptr->stage[i].questor_hostility) j += sizeof(qi_questor_hostility);
-						if (q_ptr->stage[i].questor_act) j += sizeof(qi_questor_act);
+						for (k = 0; k < QI_QUESTORS; k++) {
+							if (q_ptr->stage[i].questor_morph[k]) j += sizeof(qi_questor_morph);
+							if (q_ptr->stage[i].questor_hostility[k]) j += sizeof(qi_questor_hostility);
+							if (q_ptr->stage[i].questor_act[k]) j += sizeof(qi_questor_act);
+						}
 						for (k = 0; k < QI_TALK_LINES; k++) {
 							for (l = 0; l < q_ptr->questors; l++) {
 								if (q_ptr->stage[i].talk[l][k]) j+= strlen(q_ptr->stage[i].talk[l][k]) + 1;

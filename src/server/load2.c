@@ -3800,11 +3800,12 @@ static errr load_quests_file() {
 			s_printf("Warning! Quest %d codename mismatch '%s'. Discarding its data.\n", i, load_codename);
 
 			/* Discard the complete data of this quest */
-			strip_bytes(17);
+			strip_bytes(22);
 			rd_byte(&load_questors);
 			strip_bytes(load_questors * 14);
 			rd_byte(&load_stages);
 			for (j = 0; j < load_stages; j++) {
+				strip_bytes(load_questors * 2);
 				strip_bytes(5);
 				rd_byte(&load_goals);
 				strip_bytes(load_goals * 4);
@@ -3868,6 +3869,9 @@ static errr load_quests_file() {
 		for (j = 0; j < load_stages; j++) {
 			if (j >= q_ptr->stages) {
 				/* Discard stages that exceed our info */
+				//questor hostility timers:
+				strip_bytes(load_questors * 2);
+				//goals:
 				strip_bytes(5);
 				rd_byte(&load_goals);
 				strip_bytes(load_goals * 4);
@@ -3907,12 +3911,18 @@ static errr load_quests_file() {
 				rd_byte((byte *) &q_goal->nisi);
 
 				//kill goals:
-				rd_s16b(&q_goal->kill->number_left);
+				rd_s16b(&tmp_s16b);
 				/* verify if it's still/not anymore a kill quest goal */
-				if (q_goal->kill->number_left == -1) {
-					if (q_goal->kill) s_printf("Warning! Quest %d stage %d goal %d was previously not 'kill'.\n", i, j, k);
+				if (tmp_s16b != -1) {
+					if (!q_goal->kill)
+						s_printf("Warning! Quest %d stage %d goal %d was previously 'kill'.\n", i, j, k);
+					else
+						q_goal->kill->number_left = tmp_s16b;
 				} else {
-					if (!q_goal->kill) s_printf("Warning! Quest %d stage %d goal %d was previously 'kill'.\n", i, j, k);
+					if (q_goal->kill) {
+						s_printf("Warning! Quest %d stage %d goal %d was previously not 'kill'.\n", i, j, k);
+						q_goal->kill->number_left = 0;
+					}
 				}
 			}
 		}
