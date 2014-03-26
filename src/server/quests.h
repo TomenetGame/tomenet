@@ -204,9 +204,6 @@ typedef struct qi_kill {
 
 	s16b number;
 
-	byte spawn;					/* actually spawn the monster(s) nearby/in the target zone! (QI_SPAWN_xxx) */
-	byte spawn_targets;				/* the spawned mobs go for 0=any players (normal monster AI) 1=the player who talked to the questor 2=questor */
-
 	s16b number_left;	//dynamic data		/* keep track of how many are left to kill */
 } qi_kill;
 

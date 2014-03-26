@@ -8326,10 +8326,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'k') {
 			/* now we have 4 sub-types of 'k' lines -_- uhh */
 			if (buf[1] == ':') { /* init */
-				int minlev, maxlev, num, spawn, spawntarget;
+				int minlev, maxlev, num;
 				s = buf + 2;
-				if (7 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d",
-				    &stage, &goal, &minlev, &maxlev, &num, &spawn, &spawntarget))
+				if (7 != sscanf(s, "%d:%d:%d:%d:%d",
+				    &stage, &goal, &minlev, &maxlev, &num))
 					return (1);
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
@@ -8338,8 +8338,6 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_kill->rlevmin = minlev;
 				q_kill->rlevmax = maxlev;
 				q_kill->number = num;
-				q_kill->spawn = spawn;
-				q_kill->spawn_targets = spawntarget;
 				continue;
 			} else if (buf[1] == 'I') { /* specify race-indices */
 				int ridx[10];

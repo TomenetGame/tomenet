@@ -41,6 +41,9 @@ V:0.0.1
 # (optional) J:stage:questor:teleport wx:wy:wz:x:y:teleport players wx:wy:wz:x:y:walkspeed:destx:desty:newstage:quiet?
 # (optional) D:stage:base:max:tower?:nomap?:hard (1=forcedown:2=iron):stores (1=iron,2=all):theme(NI):name (or "-"):floors are static?:keep until quest ends?:flags1:flags2:flags3:[:final floor map file: offset x:y]
 # (for D-line) Dl:stage:locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
+# (optional, up to 10x) m:spawn normal monsters of certain criteria...  (NI)
+# (for each 'm'-line) ml:location for those monsters... (NI)
+# (optional, for each 'm'-line) mh:will they attack questors/players? are they attackable by questors/players? will they primarily target (ie walk towards) the questor or the player? (NI)
 
 # (optional) X (up to 50x):stage:flags:narration text
 # (optional?) W (up to 15x):questor:stage:flags:examine? (0=normal talk,1=examine):convo line
@@ -54,7 +57,7 @@ V:0.0.1
 # (optional, YR (after a y-line, 15x repeatable):flags:reply convo line
 
 # goals to kill specific monsters:
-# (optional) k:stage:goal:minlev:maxlev:number:spawn (NI):spawn will target (NI)
+# (optional) k:stage:goal:minlev:maxlev:number
 # (optional) kN:stage:goal:partial name... (list of partial names, up to 5, separated by colons)
 # (optional) kI:stage:goal:r_idx... (list of r_idx, up to 10, separated by colons)
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
