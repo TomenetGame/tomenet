@@ -1168,6 +1168,7 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 #if QDEBUG > 1
 		s_printf("Erased one at %d.\n", j);
 #endif
+		o_list[j].questor = o_list[j].quest = 0; //prevent questitem_d() check from triggering when deleting it!
 		delete_object_idx(j, TRUE);
 	}
 
@@ -1196,7 +1197,8 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 #if QDEBUG > 1
 			s_printf("QUEST_OBJECT: player '%s'\n", p_ptr->name);
 #endif
-			questitem_d(o_ptr, o_ptr->number);
+			o_ptr->questor = o_ptr->quest = 0; //prevent questitem_d() check from triggering when deleting it!
+			//questitem_d(o_ptr, o_ptr->number);
 			inven_item_increase(j, i, -99);
 			inven_item_describe(j, i);
 			inven_item_optimize(j, i);
@@ -1253,6 +1255,7 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 
 				s_printf("QUEST_OBJECT_ERASE: savegame '%s'\n", p_ptr->name);
 				o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
+				o_ptr->questor = o_ptr->quest = 0; //paranoia, just to make sure to prevent questitem_d() check from triggering when deleting it!
 				/* write savegame back */
 				save_player(NumPlayers);
 				continue;
