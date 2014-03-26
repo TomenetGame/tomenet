@@ -443,6 +443,7 @@ void compact_objects(int size, bool purge) {
 					} else {
 						s_printf("QUEST_COMPACT_OBJECTS: deprecated questor, quest %d - questor %d o_idx %d->%d\n", o_list[z].quest - 1, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
 						o_list[z].questor = FALSE;
+						o_list[z].quest = 0; //do this too, or questitem_d() will falsely recognise it as a quest item
 						/* delete it too? */
 					}
 				}

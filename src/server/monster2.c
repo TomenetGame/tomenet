@@ -612,6 +612,7 @@ void compact_monsters(int size, bool purge) {
 				} else {
 					s_printf("QUEST_COMPACT_MONSTERS: deprecated questor, quest %d - questor %d m_idx %d->%d\n", m_list[i].quest, m_list[i].questor_idx, q_ptr->questor[m_list[i].questor_idx].mo_idx, i);
 					m_list[i].questor = FALSE;
+					m_list[i].quest = 0; //not necessary unlike for object-questors, but cleaner anyway!
 					/* delete it too? */
 				}
 			}
