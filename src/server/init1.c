@@ -7747,13 +7747,16 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (!s) return 1;
 				s++;
 
+				q_questor->q_loc.s_dungeons = 0;
 				/* read list of numbers, separated by colons */
 				while (*s >= '0' && *s <= '9') {
-					j = atoi(s);
-					if (j < -1 || j >= MAX_D_IDX) return 1;
+					if (q_questor->q_loc.s_dungeons == MAX_D_IDX) return 1;
 
-					if (j == -1) q_questor->q_loc.s_dungeon_iddc = TRUE;
-					else q_questor->q_loc.s_dungeon[j] = TRUE;
+					j = atoi(s);
+					if (j < 0 || j > 255) return 1;
+
+					q_questor->q_loc.s_dungeon[q_questor->q_loc.s_dungeons] = j;
+					q_questor->q_loc.s_dungeons++;
 
 					if (!(s = strchr(s, ':'))) break;
 					s++;

@@ -366,7 +366,7 @@ static u32b quest_pick_flag(u32b flagarray, int size) {
    'dungeon' will prevent the location check from failing if it's inside a
    dungeon/tower and already allocated. */
 static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, s16b *y_result, struct qi_location *q_loc, bool stat, bool dungeon) {
-	int i, tries;
+	int i, tries, min, max;
 	cave_type **zcave;
 	u32b choice, wild = RF8_WILD_TOO_MASK & ~(RF8_WILD_TOWN | RF8_WILD_EASY);
 	int x, y, x2 = 63, y2 = 63; //compiler warning
@@ -523,14 +523,94 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 			}
 			break;
 
-		//TODO implement location types
 		case QI_SLOC_DUNGEON:
-			return FALSE;
+			if (!q_loc->s_dungeons) return FALSE;
+			i = q_loc->s_dungeon[rand_int(q_loc->s_dungeons)];
+
+			/* IDDC? */
+			if (i == 255) {
+#ifdef WPOS_IRONDEEPDIVE_X
+				wpos->wx = WPOS_IRONDEEPDIVE_X;
+				wpos->wy = WPOS_IRONDEEPDIVE_Y;
+				wpos->wz = WPOS_IRONDEEPDIVE_Z * (rand_int(q_loc->dlevmax - q_loc->dlevmin + 1) + q_loc->dlevmin);
+#else
+				wpos->wx = 0;
+				wpos->wy = 0;
+				wpos->wz = 0;
+#endif
+			}
+			/* Any wilderness dungeon? */
+			else if (i == 0) {
+				//todo: implement
+			}
+			/* Normal dungeon */
+			else {
+				choice = 0;//'found' marker
+				for (x = 0; x < MAX_WILD_X; x++) {
+					for (y = 0; y < MAX_WILD_Y; y++) {
+						if (wild_info[y][x].tower && wild_info[y][x].tower->type == i) {
+							wpos->wx = x;
+							wpos->wy = y;
+							min = wild_info[y][x].tower->baselevel;
+							max = wild_info[y][x].tower->baselevel + wild_info[y][x].tower->maxdepth - 1;
+
+							if (!(min > q_loc->dlevmax || max < q_loc->dlevmin)) {
+								if (min <= q_loc->dlevmin) {
+									if (max >= q_loc->dlevmax)
+										i = q_loc->dlevmin + rand_int(q_loc->dlevmax - q_loc->dlevmin + 1) - min + 1;
+									else
+										i = q_loc->dlevmin + rand_int(max - q_loc->dlevmin + 1) - min + 1;
+								} else {
+									if (max >= q_loc->dlevmax)
+										i = rand_int(q_loc->dlevmax - min + 1) + 1;
+									else
+										i = rand_int(max - min + 1) + 1;
+								}
+
+								wpos->wz = i;
+								choice = 1;
+								break;
+							}
+						}
+						if (wild_info[y][x].dungeon && wild_info[y][x].dungeon->type == i) {
+							wpos->wx = x;
+							wpos->wy = y;
+							min = wild_info[y][x].dungeon->baselevel;
+							max = wild_info[y][x].dungeon->baselevel + wild_info[y][x].dungeon->maxdepth - 1;
+
+							if (!(min > q_loc->dlevmax || max < q_loc->dlevmin)) {
+								if (min <= q_loc->dlevmin) {
+									if (max >= q_loc->dlevmax)
+										i = q_loc->dlevmin + rand_int(q_loc->dlevmax - q_loc->dlevmin + 1) - min + 1;
+									else
+										i = q_loc->dlevmin + rand_int(max - q_loc->dlevmin + 1) - min + 1;
+								} else {
+									if (max >= q_loc->dlevmax)
+										i = rand_int(q_loc->dlevmax - min + 1) + 1;
+									else
+										i = rand_int(max - min + 1) + 1;
+								}
+
+								wpos->wz = -i;
+								choice = 1;
+								break;
+							}
+						}
+					}
+					if (choice) break;
+				}
+				if (x == MAX_WILD_X && y == MAX_WILD_Y) {
+					s_printf("QUEST_SPECIAL_SPAWN_LOCATION: Couldn't get suitable dungeon location.\n");
+					return FALSE;
+				}
+			}
 			break;
 
+#if 0 /* included in QI_SLOC_DUNGEON atm */
 		case QI_SLOC_TOWER:
 			return FALSE;
 			break;
+#endif
 		}
 	}
 

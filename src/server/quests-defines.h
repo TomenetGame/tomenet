@@ -26,7 +26,7 @@
 #define QI_SLOC_SURFACE		0x1
 #define QI_SLOC_TOWN		0x2
 #define QI_SLOC_DUNGEON		0x4
-#define QI_SLOC_TOWER		0x8
+//#define QI_SLOC_TOWER		0x8
 
 #define QI_STOWN_BREE		0x001
 #define QI_STOWN_GONDOLIN	0x002
