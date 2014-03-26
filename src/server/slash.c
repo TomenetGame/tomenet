@@ -1914,6 +1914,10 @@ void do_slash_cmd(int Ind, char *message)
 			char tname[MAX_SLASH_LINE_LEN], *tpname; /* target's account name (must be *long* cause we temporarily store whole message2 in it..pft */
 			struct account *c_acc;
 
+			/* cut off, uh, many bytes, to avoid overflow --paranoia, I haven't counted */
+			message2[MAX_SLASH_LINE_LEN - 15] = 0;
+			message3[MAX_SLASH_LINE_LEN - 15] = 0;
+
 			if (prefix(message, "/notec")) {
 				if (tk < 1) { /* Explain command usage */
 					msg_print(Ind, "\377oUsage: /notec <character name>[:<text>]");
@@ -2288,6 +2292,9 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377oYou must be validated to write to the in-game bbs.");
 				return;
 			}
+
+			/* cut off 7 bytes + 1 reserve to avoid overflow */
+			message3[MAX_SLASH_LINE_LEN - 8] = 0;
 
 			censor_message = TRUE;
 			censor_length = strlen(message3);
@@ -2754,6 +2761,9 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
+			/* cut off 7 bytes + 1 reserve to avoid overflow */
+			message3[MAX_SLASH_LINE_LEN - 8] = 0;
+
 			if (tk) {
 				/* write something */
 				msg_party_format(Ind, "\374\377B[%s->PBBS]\377W %s", p_ptr->name, message3);
@@ -2778,6 +2788,9 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "You have to be in a guild to interact with a guild BBS.");
 				return;
 			}
+
+			/* cut off 7 bytes + 1 reserve to avoid overflow */
+			message3[MAX_SLASH_LINE_LEN - 8] = 0;
 
 			if (tk) {
 				/* write something */
