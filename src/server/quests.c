@@ -2585,7 +2585,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			anything = TRUE;
 			break;
 		}
-		/* a questor still has an act-timer for stage change pending? */
+		/* a questor still has an act-walk for stage change pending? */
 		if (q_stage->questor_act[i] &&
 		    q_stage->questor_act[i]->walk_speed && //redundant- just checking change_stage should suffice
 		    q_stage->questor_act[i]->change_stage != 255) {
