@@ -93,7 +93,7 @@ static cptr qi_msg_max = "\377yYou are already pursuing the maximum possible num
 /* Called every minute to check which quests to activate/deactivate depending on time/daytime */
 void process_quests(void) {
 	quest_info *q_ptr;
-	int i, j;
+	int i, j, k;
 	bool night = IS_NIGHT_RAW, day = !night, morning = IS_MORNING, forenoon = IS_FORENOON, noon = IS_NOON;
 	bool afternoon = IS_AFTERNOON, evening = IS_EVENING, midnight = IS_MIDNIGHT, deepnight = IS_DEEPNIGHT;
 	int minute = bst(MINUTE, turn), hour = bst(HOUR, turn);
@@ -170,19 +170,19 @@ void process_quests(void) {
 				p_ptr->quest_cooldown[i]--;
 
 			/* handle automatically timed stage actions for individual quests */
-			for (j = 1; j <= MAX_CONCURRENT_QUESTS; j++)
-				if (p_ptr->quest_idx[j] == i) break;
-			if (j == MAX_CONCURRENT_QUESTS) continue;
+			for (k = 0; k < MAX_CONCURRENT_QUESTS; k++)
+				if (p_ptr->quest_idx[k] == i) break;
+			if (k == MAX_CONCURRENT_QUESTS) continue;
 
-			if (p_ptr->quest_stage_timer[j] < 0) {
-				if (hour == 1 - p_ptr->quest_stage_timer[j]) {
-					q_stage = quest_qi_stage(i, p_ptr->quest_stage[j]);
+			if (p_ptr->quest_stage_timer[k] < 0) {
+				if (hour == 1 - p_ptr->quest_stage_timer[k]) {
+					q_stage = quest_qi_stage(i, p_ptr->quest_stage[k]);
 					quest_set_stage(0, i, q_stage->change_stage, q_stage->quiet_change, NULL);
 				}
-			} else if (p_ptr->quest_stage_timer[j] > 0) {
-				p_ptr->quest_stage_timer[j]--;
-				if (!p_ptr->quest_stage_timer[j]) {
-					q_stage = quest_qi_stage(i, p_ptr->quest_stage[j]);
+			} else if (p_ptr->quest_stage_timer[k] > 0) {
+				p_ptr->quest_stage_timer[k]--;
+				if (!p_ptr->quest_stage_timer[k]) {
+					q_stage = quest_qi_stage(i, p_ptr->quest_stage[k]);
 					quest_set_stage(0, i, q_stage->change_stage, q_stage->quiet_change, NULL);
 				}
 			}
