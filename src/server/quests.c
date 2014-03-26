@@ -2938,9 +2938,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 
 			q_ptr->dirty = FALSE;
 			quest_check_goal_deliver_questor(Ind, q_idx, j);
-			/* hack: check for stage change/termination */
-			//TODO add 'dirty' flag to quest on stage change, so we can check it here
-			//if (stage != p_ptr->quest_stage[i]) return;
+			/* check for stage change/termination */
 			if (q_ptr->dirty) return;
 		}
 
