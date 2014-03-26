@@ -8079,8 +8079,7 @@ void disturb(int Ind, int stop_search, int keep_resting)
  * Hack -- Check if a level is a "quest" level
  */
 /* FIXME - use worldpos and dungeon array! */
-bool is_quest(struct worldpos *wpos)
-{
+bool is_xorder(struct worldpos *wpos) {
 	/* not implemented yet :p */
 	return (FALSE);
 #if 0
@@ -8090,8 +8089,7 @@ bool is_quest(struct worldpos *wpos)
 	if (!level) return (FALSE);
 
 	/* Check quests */
-	for (i = 0; i < MAX_XO_IDX; i++)
-	{
+	for (i = 0; i < MAX_XO_IDX; i++) {
 		/* Check for quest */
 		if (xo_list[i].level == level) return (TRUE);
 	}

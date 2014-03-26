@@ -1083,7 +1083,7 @@ sptr++;
 		if (!istown(wpos)) nlev_up = TRUE;
 	}
 	/* Quest -- must go up */
-	else if (is_quest(wpos) || !can_go_down_simple(wpos)) {
+	else if (is_xorder(wpos) || !can_go_down_simple(wpos)) {
 		/* Clear previous contents, add up stairs */
 		if (can_go_up(wpos, 0x1)) new_feat = FEAT_LESS;
 		/* Set this to be the starting location for people going down */
@@ -8497,13 +8497,32 @@ static void try_doors(worldpos *wpos, int y, int x)
  * Note that we restrict the number of "crowded" rooms to reduce
  * the chance of overflowing the monster list during level creation.
  */
-static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type *p_ptr)
-{
+static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type *p_ptr) {
+	dungeon_type *d_ptr = getdungeon(wpos);
+
 	/* Restrict level */
 	if (getlevel(wpos) < room[typ].level) return (FALSE);
 
 	/* Restrict "crowded" rooms */
 	if (dun->crowded && ((typ == 5) || (typ == 6))) return (FALSE);
+
+	/* Less rooms/vaults in some dungeons? */
+	if (d_ptr) {
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+		if ((in_irondeepdive(wpos) ? (d_info[iddc[ABS(wpos->wz)].type].flags3 & DF3_NO_VAULTS) :
+		    (d_ptr->flags3 & DF3_NO_VAULTS))
+#else
+		if ((d_ptr->flags3 & DF3_NO_VAULTS)
+#endif
+		    && (typ == 7 || typ == 8 || typ == 11)) return FALSE;
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+		if ((in_irondeepdive(wpos) ? (d_info[iddc[ABS(wpos->wz)].type].flags3 & DF3_FEW_ROOMS) :
+		    (d_ptr->flags3 & DF3_FEW_ROOMS))
+#else
+		if ((d_ptr->flags3 & DF3_FEW_ROOMS)
+#endif
+		    && rand_int(20)) return FALSE;
+	}
 
 #if 0
 	/* Extract blocks */
@@ -9458,7 +9477,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	if ((dun_lev > 10) && (rand_int(DUN_DEST) == 0)) destroyed = TRUE;
 
 	/* Hack -- No destroyed "quest" levels */
-	if (is_quest(wpos) || (dun->l_ptr->flags1 & LF1_NO_DESTROY))
+	if (is_xorder(wpos) || (dun->l_ptr->flags1 & LF1_NO_DESTROY))
 		destroyed = FALSE;
 
 	/* Hack -- Watery caves */
@@ -9488,6 +9507,22 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		if ((randint(DARK_EMPTY) != 1 || (randint(100) > dun_lev)))
 			dark_empty = FALSE;
 	}
+
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+	if (in_irondeepdive(wpos) ? (d_info[iddc[ABS(wpos->wz)].type].flags3 & DF3_NO_EMPTY) :
+	    (d_ptr->flags3 & DF3_NO_EMPTY))
+		empty_level = FALSE;
+	if (in_irondeepdive(wpos) ? (d_info[iddc[ABS(wpos->wz)].type].flags3 & DF3_NO_DESTROYED) :
+	    (d_ptr->flags3 & DF3_NO_DESTROYED))
+		destroyed = FALSE;
+	if (in_irondeepdive(wpos) ? (d_info[iddc[ABS(wpos->wz)].type].flags3 & DF3_NO_MAZE) :
+	    (d_ptr->flags3 & DF3_NO_MAZE))
+		maze = permaze = FALSE;
+#else
+	if (d_ptr->flags3 & DF3_NO_EMPTY) empty_level = FALSE;
+	if (d_ptr->flags3 & DF3_NO_DESTROYED) destroyed = FALSE;
+	if (d_ptr->flags3 & DF3_NO_MAZE) maze = permaze = FALSE;
+#endif
 
 	/* Hack for bottom of Nether Realm */
 	if (netherrealm_level && dun_lev == netherrealm_end) {
@@ -9993,7 +10028,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	}
 
 #if 0
-	process_hooks(HOOK_GEN_LEVEL, "(d)", is_quest(dun_lev));
+	process_hooks(HOOK_GEN_LEVEL, "(d)", is_xorder(dun_lev));
 #endif
 
 	/* Determine the character location */

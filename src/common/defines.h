@@ -5800,6 +5800,12 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF3_NO_WALL_STREAMERS	0x00010000L	/* No streamers (any wall types) */
 #define DF3_NOT_EMPTY		0x00020000L	/* Disallow arena levels */
 #define DF3_NOT_WATERY		0x00040000L	/* No 'watery' dungeon -> no water rivers */
+#define DF3_FEW_ROOMS		0x00080000L	/* Less room_build() calls for any sort of struct (including vaults) */
+
+#define DF3_NO_VAULTS		0x00100000L	/* Less room_build() calls for any sort of struct (including vaults) */
+#define DF3_NO_MAZE		0x00200000L	/* don't build (perma)mazes */
+#define DF3_NO_EMPTY		0x00400000L	/* don't build empty levels (arenas) */
+#define DF3_NO_DESTROYED	0x00800000L	/* don't build 'destroyed' levels */
 
 
 /* level flags for dun_level */
