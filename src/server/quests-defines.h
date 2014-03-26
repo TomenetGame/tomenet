@@ -20,6 +20,7 @@
 #define QI_FLAGS		16	/* global flags that range from 'a' to 'p' and can be set via uppercase letter, erased via lowercase letter. */
 #define QI_TERRAIN_PATCH_RADIUS	5	/* max radius for valid terrain of same type as target terrain (terrain patch extension for quest goals) --note: this uses distance() */
 #define QI_STAGE_AUTO_FEATS	15	/* max # of cave features to build on a stage start */
+#define QI_STAGE_AUTO_MSPAWNS	10	/* max # of monster spawning on a stage start */
 
 
 #define QI_SLOC_SURFACE		0x1

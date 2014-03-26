@@ -7332,6 +7332,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 	qi_questor_morph *q_qmorph;
 	qi_questor_hostility *q_qhost;
 	qi_questor_act *q_qact;
+	qi_monsterspawn *q_mspawn;
 
 	bool disabled;
 	u16b flags;
@@ -7826,6 +7827,94 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					q_stage->dun_loc.tpref_x = tpx;
 					q_stage->dun_loc.tpref_y = tpy;
 				}
+				continue;
+			}
+			return 1;
+		}
+
+		/* Process 'm' for monster spawning for this quest */
+		if (buf[0] == 'm') {
+			/* we have 3 sub-types of 'm' lines */
+			if (buf[1] == ':') { /* init */
+				int amt, grp, scat, ridx, rchar, rattr, lvmin, lvmax;
+
+				s = buf + 2;
+				if (10 > (j = sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d%79[^:]",
+				    &stage, &amt, &grp, &scat, &ridx, &rchar, &rattr, &lvmin, &lvmax, tmpbuf)))
+					return (1);
+
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				q_stage = init_quest_stage(error_idx, stage);
+				if (q_stage->mspawns >= QI_STAGE_AUTO_MSPAWNS) return 1;
+				q_mspawn = init_quest_monsterspawn(error_idx, stage, q_stage->mspawns);
+
+				q_mspawn->amount = amt;
+				q_mspawn->groups = grp;
+				q_mspawn->scatter = (scat != 0);
+				q_mspawn->ridx = ridx;
+				q_mspawn->rchar = rchar;
+				q_mspawn->rattr = color_char_to_attr(rattr);
+				q_mspawn->rlevmin = lvmin;
+				q_mspawn->rlevmax = lvmax;
+				if (tmpbuf[0] != '-') {
+					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					strcpy(c, tmpbuf);
+					q_mspawn->name = c;
+				}
+				continue;
+			} else if (buf[1] == 'l') { /* location */
+				int loc, towns, wx, wy, terr, sx, sy, rad, tpx, tpy;
+				u32b terrtype;
+
+				s = buf + 3;
+				if (13 != sscanf(s, "%d:%d:%d:%u:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d",
+				    &stage, &loc, &terrtype, &towns, &wx, &wy, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return (1);
+
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				q_stage = init_quest_stage(error_idx, stage);
+				lc = q_stage->mspawns;
+				if (!lc) return 1;
+				q_mspawn = &q_stage->mspawn[lc - 1]; /* grab latest one */
+
+				q_mspawn->loc.s_location_type = (byte)loc;
+				q_mspawn->loc.s_terrains = terrtype;
+				q_mspawn->loc.s_towns_array = (u16b)towns;
+				q_mspawn->loc.start_wpos.wx = (char)wx;
+				q_mspawn->loc.start_wpos.wy = (char)wy;
+				q_mspawn->loc.start_wpos.wz = 0;
+				q_mspawn->loc.terrain_patch = (terr != 0);
+				q_mspawn->loc.start_x = sx;
+				q_mspawn->loc.start_y = sy;
+				q_mspawn->loc.radius = rad;
+
+				q_mspawn->loc.tpref = NULL;
+				if (tmpbuf[0] != '-') {
+					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					strcpy(c, tmpbuf);
+					q_mspawn->loc.tpref = c;
+					q_mspawn->loc.tpref_x = tpx;
+					q_mspawn->loc.tpref_y = tpy;
+				}
+				continue;
+			} else if (buf[1] == 'h') { /* hostility details */
+				int hostp, hostq, invincp, invincq, targetp, targetq;
+
+				s = buf + 3;
+				if (7 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d",
+				    &stage, &hostp, &hostq, &invincp, &invincq, &targetp, &targetq)) return (1);
+
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				q_stage = init_quest_stage(error_idx, stage);
+				lc = q_stage->mspawns;
+				if (!lc) return 1;
+				q_mspawn = &q_stage->mspawn[lc - 1]; /* grab latest one */
+
+				q_mspawn->hostile_player = (hostp != 0);
+				q_mspawn->hostile_questor = (hostq != 0);
+				q_mspawn->invincible_player = (invincp != 0);
+				q_mspawn->invincible_questor = (invincq != 0);
+				q_mspawn->target_player = (targetp != 0);
+				q_mspawn->target_questor = (targetq != 0);
 				continue;
 			}
 			return 1;

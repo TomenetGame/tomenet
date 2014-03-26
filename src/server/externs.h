@@ -2191,6 +2191,7 @@ extern qi_feature *init_quest_feature(int q_idx, int stage, int num);
 extern qi_questor_morph *init_quest_qmorph(int q_idx, int stage, int questor);
 extern qi_questor_hostility *init_quest_qhostility(int q_idx, int stage, int questor);
 extern qi_questor_act *init_quest_qact(int q_idx, int stage, int questor);
+extern qi_monsterspawn *init_quest_monsterspawn(int q_idx, int stage, int num);
 extern void quest_handle_disabled_on_startup(void);
 extern void fix_questors_on_startup(void);
 extern void questitem_d(object_type *o_ptr, int num);

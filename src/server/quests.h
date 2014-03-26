@@ -319,6 +319,25 @@ typedef struct qi_feature {
 	byte feat;					/* the f_info.txt feat to build */
 } qi_feature;
 
+typedef struct qi_monsterspawn {
+	s16b ridx;					/* exact ridx, ORs with block of partial criteria below */
+
+	cptr name;					/* partial name that can match. AND's with char/attr/lev */
+	char rchar;
+	byte rattr;
+	byte rlevmin, rlevmax;
+
+	byte amount;					/* spawns a single monster this many times */
+	byte groups;					/* spawns a pack of monsters this many times */
+	bool scatter;					/* scatters the single spawns/group spawns around the map */
+
+	qi_location loc;				/* spawn location parameters */
+
+	bool hostile_player, hostile_questor;		/* will they attack players or questors? */
+	bool invincible_player, invincible_questor;	/* can they be hurt by players or questors? */
+	bool target_player, target_questor;		/* will they specifically target (move towards) players (normal behaviour) or questors? */
+} qi_monsterspawn;
+
 /* Sub-structure: A single quest stage.
    The central unit of a quest, providing goals, rewards and dialogue.
    A quest consists of a series of stages that switch between each other
@@ -353,6 +372,10 @@ typedef struct qi_stage {
 	/* cave grid features to be built automatically on stage start */
 	byte feats;
 	qi_feature *feat;
+
+	/* monsters to be spawned automatically on stage start */
+	byte mspawns;
+	qi_monsterspawn *mspawn;
 
 
 	/* create a dungeon/tower for a quest stage? completely static? predefined layouts? */

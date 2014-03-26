@@ -4836,6 +4836,33 @@ qi_feature *init_quest_feature(int q_idx, int stage, int num) {
 	return &q_stage->feat[q_stage->feats - 1];
 }
 
+/* Allocate/initialise a monster spawn event in a stage,
+   or return it if already existing. */
+qi_monsterspawn *init_quest_monsterspawn(int q_idx, int stage, int num) {
+	qi_stage *q_stage = init_quest_stage(q_idx, stage);
+	qi_monsterspawn *p;
+
+
+	/* we already have this existing one */
+	if (q_stage->mspawns > num) return &q_stage->mspawn[num];
+
+	/* allocate a new one */
+	p = (qi_monsterspawn*)realloc(q_stage->mspawn, sizeof(qi_monsterspawn) * (q_stage->mspawns + 1));
+	if (!p) {
+		s_printf("init_quest_monsterspawn() Couldn't allocate memory!\n");
+		exit(0);
+	}
+	/* initialise the ADDED memory */
+	memset(&p[q_stage->mspawns], 0, sizeof(qi_monsterspawn));
+
+	/* attach it to its parent structure */
+	q_stage->mspawn = p;
+	q_stage->mspawns++;
+
+	/* done, return the new one */
+	return &q_stage->mspawn[q_stage->mspawns - 1];
+}
+
 /* Hack: if a quest was disabled in q_info, this will have set the
    'disabled_on_load' flag of that quest, which tells us that we have to handle
    deleting its remaining questor(s) here, before the server finally starts up. */
