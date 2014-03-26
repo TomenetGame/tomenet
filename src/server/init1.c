@@ -7836,10 +7836,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'm') {
 			/* we have 3 sub-types of 'm' lines */
 			if (buf[1] == ':') { /* init */
-				int amt, grp, scat, clo, ridx, rchar, rattr, lvmin, lvmax;
+				int amt, grp, scat, clo, ridx, lvmin, lvmax;
+				char rchar, rattr;
 
 				s = buf + 2;
-				if (11 > (j = sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d%79[^:]",
+				if (11 > (j = sscanf(s, "%d:%d:%d:%d:%d:%d:%c:%c:%d:%d%79[^:]",
 				    &stage, &amt, &grp, &scat, &clo, &ridx, &rchar, &rattr, &lvmin, &lvmax, tmpbuf)))
 					return (1);
 
@@ -7853,8 +7854,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_mspawn->scatter = (scat != 0);
 				q_mspawn->clones = clo;
 				q_mspawn->ridx = ridx;
-				q_mspawn->rchar = rchar;
-				q_mspawn->rattr = color_char_to_attr(rattr);
+				q_mspawn->rchar = rchar == '-' ? 255 : rchar;
+				q_mspawn->rattr = rattr == '-' ? 255 : color_char_to_attr(rattr);
 				q_mspawn->rlevmin = lvmin;
 				q_mspawn->rlevmax = lvmax;
 				if (tmpbuf[0] != '-') {

@@ -3256,7 +3256,7 @@ bool dungeon_aux(int r_idx){
 /*
  * Quest monster filter
  */
-bool quest_aux(int r_idx) {
+bool xorder_aux(int r_idx) {
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Reject monsters that occur in the wilderness instead of the dungeon */

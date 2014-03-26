@@ -2040,14 +2040,37 @@ static void quest_remove_dungeon(int q_idx, int stage) {
 	if (!q_stage->dun_base || q_stage->dun_keep) return;
 	rem_dungeon(&q_stage->dun_wpos, FALSE);
 }
+/* Helper vars for quest_aux(), sigh.. TODO: some other way? ^^ */
+static cptr quest_aux_name = NULL;
+static byte quest_aux_char = 255;
+static byte quest_aux_attr = 255;
+/* Helper function for quest_mspawn_pick, well more specifically for get_mon_num_hook. */
+static bool quest_aux(int r_idx) {
+	monster_race *r_ptr = &r_info[r_idx];
+
+	if (r_ptr->flags1 & RF1_UNIQUE) return FALSE;
+	if (quest_aux_name && !strstr(r_name + r_ptr->name, quest_aux_name)) return FALSE;
+	if (quest_aux_attr != 255 && r_ptr->d_attr != quest_aux_attr) return FALSE;
+	if (quest_aux_char != 255 && r_ptr->d_char != quest_aux_char) return FALSE;
+
+	return TRUE;
+}
 /* Helper function for quest_spawn_monsters().
    It picks a specific monster (r_idx) from the specifications. */
-static s16b quest_mspawn_pick(qi_monsterspawn *m_spawn) {
-	//s16b r_idx = 0;
+static s16b quest_mspawn_pick(qi_monsterspawn *q_mspawn) {
+	int lev = q_mspawn->rlevmin + randint(q_mspawn->rlevmax - q_mspawn->rlevmin);
 
-	
+	/* exact spec? */
+	if (q_mspawn->ridx) return q_mspawn->ridx;
 
-	return 0;
+	quest_aux_name = q_mspawn->name;
+	quest_aux_char = q_mspawn->rchar;
+	quest_aux_attr = q_mspawn->rattr;
+
+	get_mon_num_hook = quest_aux;
+	get_mon_num2_hook = NULL;
+	get_mon_num_prep(0, NULL);//reject_uniques done in quest_aux()
+	return get_mon_num(lev, lev - 10);//-10 : reduce OOD;
 }
 /* Spawn monsters on stage startup */
 static void quest_spawn_monsters(q_idx, stage) {
@@ -2082,10 +2105,16 @@ static void quest_spawn_monsters(q_idx, stage) {
 				}
 				if (tries == 50) continue;
 
-				r_idx = quest_mspawn_pick(q_mspawn);
+				if (!(r_idx = quest_mspawn_pick(q_mspawn))) {
+					s_printf("QUEST_MSPAWN_PICK: Monster criteria not matchable for spawn #%d.\n", i);
+					continue;
+				}
 				(void)summon_specific_race(&wpos, y, x, r_idx, q_mspawn->clones, q_mspawn->groups ? rand_int(5) + 5 : 1);
 			} else {
-				r_idx = quest_mspawn_pick(q_mspawn);
+				if (!(r_idx = quest_mspawn_pick(q_mspawn))) {
+					s_printf("QUEST_MSPAWN_PICK: Monster criteria not matchable for spawn #%d.\n", i);
+					continue;
+				}
 				(void)summon_specific_race(&wpos, y, x, r_idx, q_mspawn->clones, q_mspawn->groups ? rand_int(5) + 5 : 1);
 			}
 		}
