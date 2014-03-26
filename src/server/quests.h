@@ -126,6 +126,12 @@ typedef struct qi_questor {
 	s16b mo_idx; /* union of m_idx and o_idx :-p */
 
 	s16b talk_focus;				/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
+
+	bool tainted;					/* For individual quests: Something happened that requires the questor to
+							   get despawned and respawned after the quest has been completed, because
+							   some game aspects changed so much  (eg questor teleported to a different
+							   wpos during some quest stage)that it's not feasible towards other
+							   players who are pursuing the quest too. */
 } qi_questor;
 
 /* Sub-structure: Questor changes (or turns vulnerable) ('S') */
@@ -508,6 +514,12 @@ typedef struct quest_info {
 
 	/* global quest flags (a-p to clear, A-P to set) -- note that these are stage-independant! */
 	u16b flags;
+
+	bool tainted;					/* For individual quests: Something happened that requires the quest to
+							   get deactivated after it's been completed, because some game aspects
+							   changed so much that it's not feasible towards other players who are
+							   pursuing the quest too. They will have to wait until the quest gets
+							   activated by the scheduler again. */
 
 
 	/* ------ Dynymic helper vars from sub-structures,

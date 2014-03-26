@@ -3803,7 +3803,7 @@ static errr load_quests_file() {
 			/* Discard the complete data of this quest */
 			strip_bytes(22);
 			rd_byte(&load_questors);
-			strip_bytes(load_questors * 14);
+			strip_bytes(load_questors * 15);
 			rd_byte(&load_stages);
 			for (j = 0; j < load_stages; j++) {
 				strip_bytes(load_questors * 2);
@@ -3830,6 +3830,7 @@ static errr load_quests_file() {
 
 		rd_s16b(&q_ptr->cur_stage);
 		rd_u16b(&q_ptr->flags);
+		rd_byte((byte *) &q_ptr->tainted);
 
 		rd_s16b(&q_ptr->timed_countdown);
 		rd_s16b(&q_ptr->timed_countdown_stage);
@@ -3844,7 +3845,7 @@ static errr load_quests_file() {
 		for (j = 0; j < load_questors; j++) {
 			if (j >= q_ptr->questors) {
 				/* Discard questors that exceed our info */
-				strip_bytes(14);
+				strip_bytes(15);
 				continue;
 			}
 
@@ -3859,6 +3860,8 @@ static errr load_quests_file() {
 
 			rd_s16b(&q_questor->mo_idx);
 			rd_s16b(&q_questor->talk_focus);//not needed
+
+			rd_byte((byte *) &q_questor->tainted);
 		}
 
 		//stages:

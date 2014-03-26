@@ -2625,6 +2625,7 @@ static bool save_quests_file(void) {
 
 		wr_s16b(q_ptr->cur_stage);
 		wr_u16b(q_ptr->flags);
+		wr_byte(q_ptr->tainted);
 
 		wr_s16b(q_ptr->timed_countdown);
 		wr_s16b(q_ptr->timed_countdown_stage);
@@ -2644,6 +2645,8 @@ static bool save_quests_file(void) {
 
 			wr_s16b(q_questor->mo_idx);
 			wr_s16b(q_questor->talk_focus);//not needed
+
+			wr_byte(q_questor->tainted);
 		}
 
 		//stages:
