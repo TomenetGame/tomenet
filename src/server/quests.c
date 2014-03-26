@@ -570,6 +570,13 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	int x, y;
 
 
+	/* if it's supposed to be despawned, that's it
+	   (for when an F-line dictates 'despawned' already in stage -1) */
+	if (q_questor->despawned) {
+		s_printf("QUESTOR_MONSTER: still despawned.\n");
+		return TRUE;
+	}
+
 	wpos.wx = q_questor->current_wpos.wx;
 	wpos.wy = q_questor->current_wpos.wy;
 	wpos.wz = q_questor->current_wpos.wz;
@@ -1156,13 +1163,152 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 #endif
 }
 
+/* Respawn a previously despawned questor. Has no further consequences. */
+static void quest_respawn_questor(int q_idx, int questor_idx) {
+#if 0 /* values are retained from when the questor was despawned! */
+	q_questor->current_wpos
+	q_questor->current_x
+	q_questor->current_y
+#endif
+	/* generate and spawn the questor */
+	switch (q_info[q_idx].questor[questor_idx].type) {
+	case QI_QUESTOR_NPC:
+		if (!questor_monster(q_idx, &q_info[q_idx].questor[questor_idx], questor_idx))
+			s_printf("QUEST_RESPAWN_QUESTOR: couldn't respawn NPC.\n");
+		break;
+	case QI_QUESTOR_ITEM_PICKUP:
+		if (!questor_object(q_idx, &q_info[q_idx].questor[questor_idx], questor_idx))
+			s_printf("QUEST_RESPAWN_QUESTOR: couldn't respawn ITEM_PICKUP.\n");
+		break;
+	default: ;
+		//TODO: other questor-types
+		/* discard */
+	}
+}
+
+/* Despawn a spawned questor. Has no further consequences.
+   NOTE: Despawning an object-type questor might fail here, depending on where
+         it is (player inventory in a save game etc).
+         For this reason, when a quest gets deactivated, quest_erase_objects()
+         is called to make sure the items are all gone.
+         For stage-dependant questor-despawning however, this function only
+         works reliable for monster-type questors! */
+static void quest_despawn_questor(int q_idx, int questor_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_questor *q_questor;
+	int j, m_idx, o_idx;
+	cave_type **zcave, *c_ptr;
+	bool fail = FALSE;
+
+	/* data reread from q_info[] */
+	struct worldpos wpos;
+
+	q_questor = &q_ptr->questor[questor_idx];
+
+	/* get quest information */
+	wpos.wx = q_questor->current_wpos.wx;
+	wpos.wy = q_questor->current_wpos.wy;
+	wpos.wz = q_questor->current_wpos.wz;
+
+	/* Allocate & generate cave */
+	if (!(zcave = getcave(&wpos))) {
+		//dealloc_dungeon_level(&wpos);
+		alloc_dungeon_level(&wpos);
+		generate_cave(&wpos, NULL);
+		zcave = getcave(&wpos);
+	}
+	c_ptr = &zcave[q_questor->current_y][q_questor->current_x];
+
+	/* unmake quest */
+	switch (q_questor->type) {
+	case QI_QUESTOR_NPC:
+#if QDEBUG > 1
+		s_printf(" deleting m-questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_questor->current_x, q_questor->current_y);
+#endif
+		m_idx = c_ptr->m_idx;
+		if (m_idx == q_questor->mo_idx) {
+			if (m_list[m_idx].questor && m_list[m_idx].quest == q_idx) {
+#if QDEBUG > 1
+				s_printf(" ..ok.\n");
+#endif
+				delete_monster_idx(c_ptr->m_idx, TRUE);
+			} else {
+#if QDEBUG > 1
+				s_printf(" ..failed: Monster is not a questor or has a different quest idx.\n");
+#endif
+				fail = TRUE;
+			}
+		} else {
+#if QDEBUG > 1
+			s_printf(" ..failed: Monster has different idx than the questor.\n");
+#endif
+			fail = TRUE;
+		}
+		/* scan the entire monster list to catch the questor */
+		if (fail) {
+#if QDEBUG > 1
+			s_printf(" Scanning entire monster list..\n");
+#endif
+			for (j = 0; j < m_max; j++) {
+				if (!m_list[j].questor) continue;
+				if (m_list[j].quest != q_idx) continue;
+				if (m_list[j].questor_idx != questor_idx) continue;
+				s_printf(" found it at %d!\n", j);
+				delete_monster_idx(j, TRUE);
+				//:-p break;
+			}
+		}
+		break;
+	case QI_QUESTOR_ITEM_PICKUP:
+#if QDEBUG > 1
+		s_printf(" deleting o-questor %d at %d,%d,%d - %d,%d\n", c_ptr->o_idx, wpos.wx, wpos.wy, wpos.wz, q_questor->current_x, q_questor->current_y);
+#endif
+		o_idx = c_ptr->o_idx;
+		if (o_idx == q_questor->mo_idx) {
+			if (o_list[o_idx].questor && o_list[o_idx].quest - 1 == q_idx) {
+#if QDEBUG > 1
+				s_printf(" ..ok.\n");
+#endif
+				delete_object_idx(c_ptr->o_idx, TRUE);
+			} else
+#if QDEBUG > 1
+				s_printf(" ..failed: Object is not a questor or has a different quest idx.\n");
+#endif
+				fail = TRUE;
+		} else {
+#if QDEBUG > 1
+			s_printf(" ..failed: Object has different idx than the questor.\n");
+#endif
+			fail = TRUE;
+		}
+#if 0 /* done below now, for all types of quests, and includes quest items */
+		/* scan the entire object list to catch the questor */
+		if (fail)  {
+#if QDEBUG > 1
+			s_printf(" Scanning entire object list..\n");
+#endif
+			for (j = 0; j < o_max; j++) {
+				if (!o_list[j].questor) continue;
+				if (o_list[j].quest != q_idx + 1) continue;
+				if (o_list[j].questor_idx != i) continue;
+				s_printf(" found it at %d!\n", j);
+				delete_object_idx(j, TRUE);
+				//:-p break;
+			}
+			/* last resort, like for trueart/guildkey erasure, scan everyone's inventory -_- */
+			quest_erase_object_questor(q_idx, i);
+		}
+#endif
+		break;
+	default: ;
+		/* discard */
+	}
+}
+
 /* Despawn questors, unstatic sectors/floors, etc. */
 void quest_deactivate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
-	qi_questor *q_questor;
-	int i, j, m_idx, o_idx;
-	cave_type **zcave, *c_ptr;
-	bool fail = FALSE;
+	int i;
 
 	/* data reread from q_info[] */
 	struct worldpos wpos;
@@ -1172,110 +1318,10 @@ void quest_deactivate(int q_idx) {
 #endif
 	q_ptr->active = FALSE;
 
-
+	/* despawn questors and unstatice their floors */
 	for (i = 0; i < q_ptr->questors; i++) {
-		q_questor = &q_ptr->questor[i];
-
-		/* get quest information */
-		wpos.wx = q_questor->current_wpos.wx;
-		wpos.wy = q_questor->current_wpos.wy;
-		wpos.wz = q_questor->current_wpos.wz;
-
-		/* Allocate & generate cave */
-		if (!(zcave = getcave(&wpos))) {
-			//dealloc_dungeon_level(&wpos);
-			alloc_dungeon_level(&wpos);
-			generate_cave(&wpos, NULL);
-			zcave = getcave(&wpos);
-		}
-		c_ptr = &zcave[q_questor->current_y][q_questor->current_x];
-
-		/* unmake quest */
-		switch (q_questor->type) {
-		case QI_QUESTOR_NPC:
-#if QDEBUG > 1
-			s_printf(" deleting m-questor %d at %d,%d,%d - %d,%d\n", c_ptr->m_idx, wpos.wx, wpos.wy, wpos.wz, q_questor->current_x, q_questor->current_y);
-#endif
-			m_idx = c_ptr->m_idx;
-			if (m_idx == q_questor->mo_idx) {
-				if (m_list[m_idx].questor && m_list[m_idx].quest == q_idx) {
-#if QDEBUG > 1
-					s_printf(" ..ok.\n");
-#endif
-					delete_monster_idx(c_ptr->m_idx, TRUE);
-				} else {
-#if QDEBUG > 1
-					s_printf(" ..failed: Monster is not a questor or has a different quest idx.\n");
-#endif
-					fail = TRUE;
-				}
-			} else {
-#if QDEBUG > 1
-				s_printf(" ..failed: Monster has different idx than the questor.\n");
-#endif
-				fail = TRUE;
-			}
-			/* scan the entire monster list to catch the questor */
-			if (fail) {
-#if QDEBUG > 1
-				s_printf(" Scanning entire monster list..\n");
-#endif
-				for (j = 0; j < m_max; j++) {
-					if (!m_list[j].questor) continue;
-					if (m_list[j].quest != q_idx) continue;
-					if (m_list[j].questor_idx != i) continue;
-					s_printf(" found it at %d!\n", j);
-					delete_monster_idx(j, TRUE);
-					//:-p break;
-				}
-			}
-			break;
-		case QI_QUESTOR_ITEM_PICKUP:
-#if QDEBUG > 1
-			s_printf(" deleting o-questor %d at %d,%d,%d - %d,%d\n", c_ptr->o_idx, wpos.wx, wpos.wy, wpos.wz, q_questor->current_x, q_questor->current_y);
-#endif
-			o_idx = c_ptr->o_idx;
-			if (o_idx == q_questor->mo_idx) {
-				if (o_list[o_idx].questor && o_list[o_idx].quest - 1 == q_idx) {
-#if QDEBUG > 1
-					s_printf(" ..ok.\n");
-#endif
-					delete_object_idx(c_ptr->o_idx, TRUE);
-				} else
-#if QDEBUG > 1
-					s_printf(" ..failed: Object is not a questor or has a different quest idx.\n");
-#endif
-					fail = TRUE;
-			} else {
-#if QDEBUG > 1
-				s_printf(" ..failed: Object has different idx than the questor.\n");
-#endif
-				fail = TRUE;
-			}
-#if 0 /* done below now, for all types of quests, and includes quest items */
-			/* scan the entire object list to catch the questor */
-			if (fail)  {
-#if QDEBUG > 1
-				s_printf(" Scanning entire object list..\n");
-#endif
-				for (j = 0; j < o_max; j++) {
-					if (!o_list[j].questor) continue;
-					if (o_list[j].quest != q_idx + 1) continue;
-					if (o_list[j].questor_idx != i) continue;
-					s_printf(" found it at %d!\n", j);
-					delete_object_idx(j, TRUE);
-					//:-p break;
-				}
-				/* last resort, like for trueart/guildkey erasure, scan everyone's inventory -_- */
-				quest_erase_object_questor(q_idx, i);
-			}
-#endif
-			break;
-		default: ;
-			/* discard */
-		}
-
-		if (q_questor->static_floor) new_players_on_depth(&wpos, 0, FALSE);
+		quest_despawn_questor(q_idx, i);
+		if (q_ptr->questor[i].static_floor) new_players_on_depth(&wpos, 0, FALSE);
 	}
 
 	/* Erase all object questors and quest objects (duh) */
@@ -1746,7 +1792,16 @@ static void quest_questor_morph(int q_idx, int stage, int questor_idx) {
 	qi_questor_morph *q_qmorph = q_stage->questor_morph[questor_idx];
 
 	q_questor->talkable = q_qmorph->talkable;
-	q_questor->despawned = q_qmorph->despawned;
+	if (q_questor->despawned != q_qmorph->despawned) {
+		q_questor->despawned = q_qmorph->despawned;
+		if (q_questor->despawned) {
+			/* despawn questor */
+			quest_despawn_questor(q_idx, questor_idx);
+		} else {
+			/* respawn questor */
+			quest_respawn_questor(q_idx, questor_idx);
+		}
+	}
 	q_questor->invincible = q_qmorph->invincible;
 	q_questor->death_fail = q_qmorph->death_fail;
 	if (q_qmorph->name) strcpy(q_questor->name, q_qmorph->name);

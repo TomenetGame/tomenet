@@ -7740,8 +7740,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			q_questor->accept_los = (aalos != 0);
 			q_questor->accept_interact = (aaint != 0);
 			q_questor->talkable = (talk != 0);
-			q_questor->despawned  = (despawn != 0);
-			q_questor->invincible  = (invinc != 0);
+			q_questor->despawned = (despawn != 0);
+			q_questor->invincible = (invinc != 0);
 
 			init_F[lc_flagsacc] = TRUE;
 			lc_flagsacc++;
@@ -7918,8 +7918,8 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (q < 0 || q > q_ptr->questors) return 1;
 			q_qmorph = init_quest_qmorph(error_idx, stage, questor);
 			q_qmorph->talkable = (talk != 0);
-			q_qmorph->despawned  = (despawn != 0);
-			q_qmorph->invincible  = (invinc != 0);
+			q_qmorph->despawned = (despawn != 0);
+			q_qmorph->invincible = (invinc != 0);
 			q_qmorph->death_fail = dfail;
 			if (strcmp(tmpbuf, "-")) {
 				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));

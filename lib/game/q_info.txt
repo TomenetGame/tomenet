@@ -26,7 +26,7 @@ V:0.0.1
 # Q (for type=object)   :type:tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:attr:level:name
 # note: Each L/F/K-line must follow after its Q line!
 # L (up to 5x, per Q line):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
-# (optional) F (up to 5x, per Q line):accept-on-los? (NI):accept-on-interaction?:talkable?:despawned? (NI):invincible?:staticfloor?:quitfloor?(NI)
+# (optional) F (up to 5x, per Q line):accept-on-los? (NI):accept-on-interaction?:talkable?:despawned?:invincible?:questor floor is static?:quest ends on leaving floor?(NI)
 # (optional) K (up to 5x, per Q line):itemdroptype (0=none,1=regular,2=specific,3=both):tval:sval:pval:bpval:name1:name2:name2b:good:great:verygreat:createreward 0..5:dropgold:giveexp (-1 for normal exp)
 
 #(Parameters from here on, except for keywords/keywordreplies, are all individual per quest stage)
@@ -36,7 +36,7 @@ V:0.0.1
 # (optional, up to 5x) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
 # (for each B line) Bl:stage:questorhandout (-1 to disable):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 # note: 'Bl' takes same parameters as 'L' lines (except for 'questor hand out'). Each Bl-line must follow after its B-line!
-# (optional) S:stage:questor to modify:talkable:despawned(NI):invincible:death_fail:name ("-" to keep):ridx (0 to keep):char (255 to keep):attr (255 to keep):level (0 to keep)
+# (optional) S:stage:questor to modify:talkable:despawned:invincible:death_fail:name ("-" to keep):ridx (0 to keep):char (255 to keep):attr (255 to keep):level (0 to keep)
 # (optional) H:stage:questor:unquestor?:hostile-to-players?:hostile-to-monsters?:revert-hp:revert-ingametime (-1 to disable):revert-after-realtime:newstage:quiet?
 # (optional) J:stage:questor:teleport wx:wy:wz:x:y:teleport players wx:wy:wz:x:y:walkspeed:destx:desty:newstage:quiet?
 # (optional) D:stage:base:max:tower?:nomap?:hard (1=forcedown:2=iron):stores (1=iron,2=all):theme(NI):name (or "-"):floors are static?:keep until quest ends?:flags1:flags2:flags3:[:final floor map file: offset x:y]
