@@ -8328,7 +8328,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (buf[1] == ':') { /* init */
 				int minlev, maxlev, num;
 				s = buf + 2;
-				if (7 != sscanf(s, "%d:%d:%d:%d:%d",
+				if (5 != sscanf(s, "%d:%d:%d:%d:%d",
 				    &stage, &goal, &minlev, &maxlev, &num))
 					return (1);
 

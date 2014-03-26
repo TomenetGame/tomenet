@@ -6,7 +6,7 @@
 #define QI_CODENAME_LEN		10	/* short, internal quest code name */
 #define QI_PREREQUISITES	5	/* max # of prerequisite quests for a follow-up quest */
 #define QI_QUESTORS		30	/* amount of questor(NPC)s, there can be more than one! */
-#define QI_STAGES		30	/* a quest can have these # of different stages */
+#define QI_STAGES		50	/* a quest can have these # of different stages */
 #define QI_TALK_LINES		15	/* amount of text lines per talk dialogue */
 #define QI_KEYWORDS		100	/* for dialogue with the questor */
 #define QI_KEYWORD_LEN		30	/* length of a keyword, for dialogue with the questor */
