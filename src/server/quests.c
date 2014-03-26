@@ -968,11 +968,44 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	return TRUE;
 }
 
+/* Helper function: Initialise and spawn a questor.
+   Returns TRUE if succeeded to spawn. */
+static bool quest_spawn_questor(int q_idx, int questor_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_questor *q_questor = &q_ptr->questor[questor_idx];
+
+	/* find a suitable spawn location for the questor */
+	if (!quest_special_spawn_location(&q_questor->current_wpos, &q_questor->current_x, &q_questor->current_y, &q_questor->q_loc, q_questor->static_floor, FALSE)) {
+		s_printf(" QUEST_CANCELLED: Couldn't obtain questor spawning location.\n");
+		q_ptr->active = FALSE;
+#ifdef QERROR_DISABLE
+		q_ptr->disabled = TRUE;
+#else
+		q_ptr->cur_cooldown = QERROR_COOLDOWN;
+#endif
+		return FALSE;
+	}
+
+	/* generate and spawn the questor */
+	switch (q_questor->type) {
+	case QI_QUESTOR_NPC:
+		if (!questor_monster(q_idx, q_questor, questor_idx)) return FALSE;
+		break;
+	case QI_QUESTOR_ITEM_PICKUP:
+		if (!questor_object(q_idx, q_questor, questor_idx)) return FALSE;
+		break;
+	default: ;
+		//TODO: other questor-types
+		/* discard */
+	}
+
+	return TRUE;
+}
+
 /* Spawn questor, prepare sector/floor, make things static if requested, etc. */
 bool quest_activate(int q_idx) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, q;
-	qi_questor *q_questor;
 
 	/* catch bad mistakes */
 	if (!q_ptr->defined) {
@@ -998,32 +1031,7 @@ bool quest_activate(int q_idx) {
 	/* Spawn questors (monsters/objects that players can
 	   interact with to acquire this quest): */
 	for (q = 0; q < q_ptr->questors; q++) {
-		q_questor = &q_ptr->questor[q];
-
-		/* find a suitable spawn location for the questor */
-		if (!quest_special_spawn_location(&q_questor->current_wpos, &q_questor->current_x, &q_questor->current_y, &q_questor->q_loc, q_questor->static_floor, FALSE)) {
-			s_printf(" QUEST_CANCELLED: Couldn't obtain questor spawning location.\n");
-			q_ptr->active = FALSE;
-#ifdef QERROR_DISABLE
-			q_ptr->disabled = TRUE;
-#else
-			q_ptr->cur_cooldown = QERROR_COOLDOWN;
-#endif
-			return FALSE;
-		}
-
-		/* generate and spawn the questor */
-		switch (q_questor->type) {
-		case QI_QUESTOR_NPC:
-			if (!questor_monster(q_idx, q_questor, q)) return FALSE;
-			break;
-		case QI_QUESTOR_ITEM_PICKUP:
-			if (!questor_object(q_idx, q_questor, q)) return FALSE;
-			break;
-		default: ;
-			//TODO: other questor-types
-			/* discard */
-		}
+		quest_spawn_questor(q_idx, q);
 	}
 
 	/* Initialise dynamic data */
@@ -1467,10 +1475,35 @@ static void quest_terminate(int pInd, int q_idx, struct worldpos *wpos) {
 				quest_terminate_individual(i, q_idx);
 			}
 
+		/* If quest has been 'tainted' we need a hard reset like for global quests.. */
+		if (q_ptr->tainted) {
+			/* don't respawn the questor *immediately* again, looks silyl */
+			if (q_ptr->cooldown == -1) q_ptr->cur_cooldown = QI_COOLDOWN_DEFAULT;
+			else q_ptr->cur_cooldown = q_ptr->cooldown;
+
+			/* clean up */
+			quest_deactivate(q_idx); //includes quest_remove_dungeons()
+			return;
+		}
+
 		/* remove quest dungeons -- a bit quirky to do this for personal quests,
 		   but it might be required, so that the objectives in the dungeon can
 		   reset properly. :/ */
 		quest_remove_dungeons(q_idx);
+
+		/* check for tainted questors and respawn them, aka soft reset ^^ */
+		for (i = 0; i < q_ptr->questors; i++) {
+			if (q_ptr->questor[i].tainted) {
+				quest_despawn_questor(q_idx, i);
+				/* Note: not respawn, but spawn (complete re-init) */
+				if (!quest_spawn_questor(q_idx, i)) {
+					//oops?
+					s_printf("QUEST_TERMINATE: quest %d, cannot spawn tainted questor %d.\n", q_idx, i);
+					quest_deactivate(q_idx);//cold boot -_-
+					return;
+				}
+			}
+		}
 
 		/* individual quests don't get cleaned up (aka completely reset)
 		   by deactivation, unlike global quests. */
@@ -1511,7 +1544,7 @@ static void quest_terminate(int pInd, int q_idx, struct worldpos *wpos) {
 	else q_ptr->cur_cooldown = q_ptr->cooldown;
 
 	/* clean up */
-	quest_deactivate(q_idx);
+	quest_deactivate(q_idx); //includes quest_remove_dungeons()
 }
 
 /* return a current quest goal. Either just uses q_ptr->goals directly for global
