@@ -2575,8 +2575,24 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	/* auto-quest-termination? (actually redundant with ending_stage, just for convenience:)
 	   If a stage has no dialogue keywords, or stage goals, or timed/auto stage change
 	   effects or questor-movement/tele/revert-from-hostile effects, THEN the quest will end. */
-	   //TODO: implement that questor actions stuff :-p
 	anything = FALSE;
+
+	for (i = 0; i < q_ptr->questors; i++) {
+		/* a questor still has a revert-hostility-timer for stage change pending? */
+		if (q_stage->questor_hostility[i] &&
+		    q_stage->questor_hostility[i]->hostile_revert_timed_countdown && //redundant- just checking change_stage should suffice
+		    q_stage->questor_hostility[i]->change_stage != 255) {
+			anything = TRUE;
+			break;
+		}
+		/* a questor still has an act-timer for stage change pending? */
+		if (q_stage->questor_act[i] &&
+		    q_stage->questor_act[i]->walk_speed && //redundant- just checking change_stage should suffice
+		    q_stage->questor_act[i]->change_stage != 255) {
+			anything = TRUE;
+			break;
+		}
+	}
 
 	/* optional goals play no role, obviously */
 	for (i = 0; i < q_stage->goals; i++)
@@ -5176,6 +5192,8 @@ void questor_death(int Ind, int q_idx, int questor_idx) {
 void quest_questor_arrived(int Ind, int q_idx, int questor_idx) {
 	qi_stage *q_stage = quest_cur_qi_stage(q_idx);
 	qi_questor_act *q_qact = q_stage->questor_act[questor_idx];
+
+	q_qact->walk_speed = 0;
 
 	if (q_qact->change_stage)
 		quest_set_stage(Ind, q_idx, q_qact->change_stage, q_qact->quiet_change);
