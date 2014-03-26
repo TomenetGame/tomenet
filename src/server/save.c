@@ -266,6 +266,7 @@ static void wr_monster(monster_type *m_ptr) {
 	wr_s16b(m_ptr->quest);
 	wr_byte(m_ptr->questor_invincible);
 	wr_byte(m_ptr->questor_hostile);
+	wr_byte(m_ptr->questor_target);
 
 	wr_s32b(m_ptr->owner);
 	wr_s16b(m_ptr->r_idx);

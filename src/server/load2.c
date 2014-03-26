@@ -565,7 +565,7 @@ static void rd_item(object_type *o_ptr)
 		rd_s16b(&o_ptr->questor_idx);
 		rd_s16b(&o_ptr->quest);
 		if (!older_than(4, 5, 24)) rd_s16b(&o_ptr->quest_stage);
-		rd_byte((byte *)&o_ptr->questor_invincible);
+		rd_byte(&o_ptr->questor_invincible);
 	} else {
 		o_ptr->questor = FALSE;
 		o_ptr->quest = 0;
@@ -796,8 +796,9 @@ static void rd_monster(monster_type *m_ptr) {
 		rd_byte((byte *)&m_ptr->questor);
 		rd_s16b(&m_ptr->questor_idx);
 		rd_s16b(&m_ptr->quest);
-		rd_byte((byte *)&m_ptr->questor_invincible);
+		rd_byte(&m_ptr->questor_invincible);
 		rd_byte(&m_ptr->questor_hostile);
+		if (!s_older_than(4, 5, 27)) rd_byte(&m_ptr->questor_target);
 	} else m_ptr->questor = FALSE;
 
 	/* Owner */

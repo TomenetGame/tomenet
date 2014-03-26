@@ -786,6 +786,7 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 
 	m_ptr->questor_invincible = q_questor->invincible; //for now handled by RF7_NO_DEATH
 	m_ptr->questor_hostile = 0x0;
+	m_ptr->questor_target = 0x0;
 	q_questor->mo_idx = m_idx;
 
 	update_mon(c_ptr->m_idx, TRUE);
@@ -1867,6 +1868,11 @@ static void quest_questor_morph(int q_idx, int stage, int questor_idx) {
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
 	qi_questor_morph *q_qmorph = q_stage->questor_morph[questor_idx];
 
+	/* just assume that morphing taints. We don't know if the questor gets
+	   morphed back to perfectly fine state later, and to check that is
+	   more of a hassle than to just respawning him anyway. */
+	q_questor->tainted = TRUE;
+
 	q_questor->talkable = q_qmorph->talkable;
 	if (q_questor->despawned != q_qmorph->despawned) {
 		q_questor->despawned = q_qmorph->despawned;
@@ -2042,6 +2048,8 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 		}
 		update_mon(q_questor->mo_idx, TRUE);
 		if (zcave) everyone_lite_spot(&q_qact->tp_wpos, ny, nx);
+
+		q_questor->tainted = TRUE; //a location change warrants need for respawn later
 	}
 
 	/* walk somewhere? */
@@ -2049,6 +2057,8 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 		m_ptr->speed = q_qact->walk_speed;
 		m_ptr->destx = q_qact->walk_destx;
 		m_ptr->desty = q_qact->walk_desty;
+
+		q_questor->tainted = TRUE; //a location change warrants need for respawn later
 	}
 }
 /* Add a quest-specific dungeon when a dungeon stage starts */
@@ -5321,6 +5331,8 @@ void questor_death(int q_idx, int questor_idx, struct worldpos *wpos) {
 	qi_goal *q_goal;
 	qi_deliver *q_del;
 
+	q_questor->tainted = TRUE; //a "location change" (aka death) warrants need for respawn later
+
 	/* for (object-type) questors, deactivate the quest
 	   so it will be activated anew after a cooldown? */
 
@@ -5340,10 +5352,13 @@ void questor_death(int q_idx, int questor_idx, struct worldpos *wpos) {
 		for (i = 0; i < q_stage->goals; i++) {
 			q_goal = &q_stage->goal[i];
 			q_del = q_goal->deliver;
-			if (q_goal->target_tpref) new_players_on_depth(&q_goal->target_wpos, -1, TRUE);
-			if (q_del && q_del->tpref) new_players_on_depth(&q_del->wpos, -1, TRUE);
+			if (q_goal->target_tpref)
+				new_players_on_depth(&q_goal->target_wpos, -1, TRUE);
+			if (q_del && q_del->tpref)
+				new_players_on_depth(&q_del->wpos, -1, TRUE);
 			for (j = 0; j < q_stage->qitems; j++)
-				if (q_stage->qitem[j].q_loc.tpref) new_players_on_depth(&q_stage->qitem[j].result_wpos, -1, TRUE);
+				if (q_stage->qitem[j].q_loc.tpref)
+					new_players_on_depth(&q_stage->qitem[j].result_wpos, -1, TRUE);
 		}
 	}
 

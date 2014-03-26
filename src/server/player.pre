@@ -318,7 +318,7 @@ struct object_type
 	u16b note;			/* Inscription index */
 
 	bool questor;			/* for quest_info */
-	/*bool questor_invincible;*/
+	/* byte questor_invincible, questor_hostile, questor_target; */
 	s16b quest;
 	s16b quest_stage;
 	s16b questor_idx;

@@ -778,7 +778,8 @@ struct object_type {
 	s32b marked;			/* Object is marked (for deletion after a certain time) */
 	byte marked2;			/* additional parameters */
 	/* for new quest_info: */
-	bool questor, questor_invincible; /* further quest_info flags are referred to when required, no need to copy all of them here */
+	bool questor;			/* further quest_info flags are referred to when required, no need to copy all of them here */
+	byte questor_invincible;	/* invincible to players/monsters? */
 	s16b quest, quest_stage, questor_idx;	/* It's an item for a quest (either the questor item or an item that needs to be retrieved for a quest goal).
 		//IMPORTAAAAAAANT:	   Hack: 0 = no quest; n = quest + 1. So we don't have to initialise all items to -1 here :-p */
 
@@ -969,8 +970,10 @@ struct monster_type {
     int hit_proj_id;
 
     /* for new quest_info */
-    bool questor, questor_invincible; /* further quest_info flags are referred to when required, no need to copy all of them here */
+    bool questor;
+    byte questor_invincible; /* further quest_info flags are referred to when required, no need to copy all of them here */
     byte questor_hostile; /* hostility flags (0x1 = vs py, 0x2 = vs mon) */
+    byte questor_target; /* can get targetted by monsters and stuff..? */
     s16b quest, questor_idx;
 };
 
