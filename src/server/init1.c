@@ -7694,37 +7694,74 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'L' for questor starting location type */
 		if (buf[0] == 'L') {
-			int loc, towns, wx, wy, wz, terr, sx, sy, rad, tpx, tpy;
-			u32b terrtype;
+			/* we have 2 sub-types of 'D' lines */
+			if (buf[1] == ':') { /* init */
+				int loc, wx, wy, wz, terr, sx, sy, rad, tpx, tpy;
+				u16b towns;
+				u32b terrtype;
 
-			s = buf + 2;
-			if (13 != sscanf(s, "%d:%d:%u:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d", //byte, u16b, u32b
-			    &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return (1);
+				s = buf + 2;
+				if (13 != sscanf(s, "%d:%u:%hu:%d:%d:%d:%d:%d:%d:%d:%79[^:]:%d:%d", //byte, u16b, u32b
+				    &loc, &terrtype, &towns, &wx, &wy, &wz, &terr, &sx, &sy, &rad, tmpbuf, &tpx, &tpy)) return (1);
 
-			lc = q_ptr->questors;
-			if (!lc) return 1; /* so an L-line must always follow somewhere after its Q line */
-			q_questor = init_quest_questor(error_idx, lc - 1); /* pick the newest, already existing one */
+				lc = q_ptr->questors;
+				if (!lc) return 1; /* so an L-line must always follow somewhere after its Q line */
+				q_questor = init_quest_questor(error_idx, lc - 1); /* pick the newest, already existing one */
 
-			q_questor->q_loc.s_location_type = (byte)loc;
-			q_questor->q_loc.s_terrains = terrtype;
-			q_questor->q_loc.s_towns_array = (u16b)towns;
-			q_questor->q_loc.start_wpos.wx = (char)wx;
-			q_questor->q_loc.start_wpos.wy = (char)wy;
-			q_questor->q_loc.start_wpos.wz = (char)wz;
-			q_questor->q_loc.terrain_patch = (terr != 0);
-			q_questor->q_loc.start_x = sx;
-			q_questor->q_loc.start_y = sy;
-			q_questor->q_loc.radius = rad;
+				q_questor->q_loc.s_location_type = (byte)loc;
+				q_questor->q_loc.s_terrains = terrtype;
+				q_questor->q_loc.s_towns_array = towns;
+				q_questor->q_loc.start_wpos.wx = (char)wx;
+				q_questor->q_loc.start_wpos.wy = (char)wy;
+				q_questor->q_loc.start_wpos.wz = (char)wz;
+				q_questor->q_loc.terrain_patch = (terr != 0);
+				q_questor->q_loc.start_x = sx;
+				q_questor->q_loc.start_y = sy;
+				q_questor->q_loc.radius = rad;
 
-			q_questor->q_loc.tpref = NULL;
-			if (tmpbuf[0] != '-') {
-				c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
-				strcpy(c, tmpbuf);
-				q_questor->q_loc.tpref = c;
-				q_questor->q_loc.tpref_x = tpx;
-				q_questor->q_loc.tpref_y = tpy;
+				q_questor->q_loc.tpref = NULL;
+				if (tmpbuf[0] != '-') {
+					c = (char*)malloc(strlen(tmpbuf + 1) * sizeof(char));
+					strcpy(c, tmpbuf);
+					q_questor->q_loc.tpref = c;
+					q_questor->q_loc.tpref_x = tpx;
+					q_questor->q_loc.tpref_y = tpy;
+				}
+				continue;
+			} else if (buf[1] == 'd') { /* dungeons */
+				int lmin, lmax;
+				s = buf + 3;
+
+				if (2 > sscanf(s, "%d:%d", &lmin, &lmax)) return (1);
+
+				lc = q_ptr->questors;
+				if (!lc) return 1; /* so an L-line must always follow somewhere after its Q line */
+				q_questor = init_quest_questor(error_idx, lc - 1); /* pick the newest, already existing one */
+
+				q_questor->q_loc.dlevmin = lmin;
+				q_questor->q_loc.dlevmax = lmax;
+
+				/* advance to 3rd parm, which is where the list of dungeon indices starts */
+				s = strchr(s, ':') + 1;
+				s = strchr(s, ':');
+				if (!s) return 1;
+				s++;
+
+				/* read list of numbers, separated by colons */
+				while (*s >= '0' && *s <= '9') {
+					j = atoi(s);
+					if (j < -1 || j >= MAX_D_IDX) return 1;
+
+					if (j == -1) q_questor->q_loc.s_dungeon_iddc = TRUE;
+					else q_questor->q_loc.s_dungeon[j] = TRUE;
+
+					if (!(s = strchr(s, ':'))) break;
+					s++;
+					while (*s == ' ') s++; /* paranoia for comfort ^^ */
+				}
+				continue;
 			}
-			continue;
+			return 1;
 		}
 
 		/* Process 'F' for questor accept/spawn flags */

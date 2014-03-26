@@ -53,9 +53,9 @@ typedef struct qi_location {
 	s16b start_x, start_y;				/* -1, -1 for random */
 
 	/* dungeons eligible too? */
-	bool s_dungeon[MAX_D_IDX];			/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers, or (for Wilderness dungeons): */
-	u32b s_dungeon_must_flags1, s_dungeon_must_flags2, s_dungeon_must_flags3;	/*  eligible wilderness dungeon flags */
-	u32b s_dungeon_mustnt_flags1, s_dungeon_mustnt_flags2, s_dungeon_mustnt_flags3;	/*  uneligible wilderness dungeon flags */
+	bool s_dungeon[MAX_D_IDX];			/* QI_SLOC_DUNGEON/TOWER: eligible starting dungeons/towers (idx 0 = all wilderness dungeons), or (for Wilderness dungeons): */
+	u32b s_dungeon_must_flags1, s_dungeon_must_flags2, s_dungeon_must_flags3;	/*  (NI) eligible wilderness dungeon flags */
+	u32b s_dungeon_mustnt_flags1, s_dungeon_mustnt_flags2, s_dungeon_mustnt_flags3;	/*  (NI) uneligible wilderness dungeon flags */
 	bool s_dungeon_iddc;				/* is the Ironman Deep Dive Challenge an eligible starting point? */
 	byte dlevmin, dlevmax;				/* eligible dungeon level or world sector level (0 for any) */
 
