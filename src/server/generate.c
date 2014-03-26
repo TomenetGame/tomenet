@@ -9197,6 +9197,23 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 #endif
 
 	if (!(zcave = getcave(wpos))) return;
+
+	/* added this for quest dungeons */
+	if (d_ptr->quest) {
+		qi_stage *q_qstage = &q_info[d_ptr->quest].stage[d_ptr->quest_stage];
+
+		/* all floors are static? */
+		if (q_qstage->dun_static)
+			new_players_on_depth(wpos, FALSE, 1);
+
+		/* final floor is premade? */
+		if (ABS(wpos->wz) == d_ptr->maxdepth && q_qstage->dun_final_tpref) {
+			int xs = q_qstage->dun_final_tpref_x, ys = q_qstage->dun_final_tpref_y;
+			process_dungeon_file(q_qstage->dun_final_tpref, wpos, &ys, &xs, MAX_HGT, MAX_WID, TRUE);
+			return;
+		}
+	}
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	//flags1 = (wpos->wz > 0 ? wild->tower->flags1 : wild->dungeon->flags1);
 	flags2 = (wpos->wz > 0 ? wild->tower->flags2 : wild->dungeon->flags2);
@@ -11965,8 +11982,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
  * Hack -- allow auto-scumming via a gameplay option.
  */
 
-void generate_cave(struct worldpos *wpos, player_type *p_ptr)
-{
+void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 	int i, num;
 	cave_type **zcave;
 	struct worldpos twpos;
