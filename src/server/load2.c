@@ -2725,6 +2725,7 @@ static errr rd_savefile_new_aux(int Ind) {
 				rd_byte(&tmpbyte);
 				p_ptr->quest_stage[i] = tmpbyte;
 			} else rd_s16b(&p_ptr->quest_stage[i]);
+			if (older_than(4, 5, 27)) rd_s16b(&p_ptr->quest_stage_timer[i]);
 
 			if (!older_than(4, 5, 23)) {
 				for (j = 0; j < QI_GOALS; j++) {
