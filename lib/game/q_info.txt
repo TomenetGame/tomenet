@@ -6,7 +6,7 @@
 
 
 # Version stamp (required)
-V:0.0.1
+V:1.0.0
 
 
 # Current state - things that have already been implemented. Other stuff is omitted here.
