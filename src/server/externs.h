@@ -2162,7 +2162,7 @@ extern void quest_deactivate(int q_idx);
 extern s16b quest_get_cooldown(int pInd, int q_idx);
 extern void quest_set_cooldown(int pInd, int q_idx, s16b cooldown);
 extern s16b quest_get_stage(int pInd, int q_idx);
-extern void quest_set_stage(int pInd, int q_idx, int stage, bool quiet);
+extern void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos *wpos);
 extern void quest_statuseffect(int Ind, int fx);
 /* those called for quest goal handling in other regular game functions: */
 extern void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff);
@@ -2197,9 +2197,9 @@ extern void fix_questors_on_startup(void);
 extern void questitem_d(object_type *o_ptr, int num);
 /* Questor actions/reactions to 'external' effects in the game world */
 extern void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos *wpos, int x, int y);
-extern void questor_death(int Ind, int q_idx, int questor_idx);
-extern void quest_questor_arrived(int Ind, int q_idx, int questor_idx);
-extern void quest_questor_reverts(int Ind, int q_idx, int questor_idx);
+extern void questor_death(int q_idx, int questor_idx, struct worldpos *wpos);
+extern void quest_questor_arrived(int q_idx, int questor_idx, struct worldpos *wpos);
+extern void quest_questor_reverts(int q_idx, int questor_idx, struct worldpos *wpos);
 
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue

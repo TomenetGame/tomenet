@@ -8531,7 +8531,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				msg_format(Ind, "\377BChanging quest %d (%s) to stage %d.", k, q_info[k].codename, atoi(token[2]));
-				quest_set_stage(0, k, atoi(token[2]), FALSE);
+				quest_set_stage(0, k, atoi(token[2]), FALSE, NULL);
 				return;
 			}
 			else if (prefix(message, "/qfx")) { /* for testing/debugging status effects (for rewards) */

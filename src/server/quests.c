@@ -167,14 +167,14 @@ void process_quests(void) {
 				Players[j]->quest_cooldown[i]--;
 
 
-		/* handle automatically timed stage actions */ //TODO: implement this for individual quests too
+		/* handle automatically timed stage actions */
 		if (q_ptr->timed_countdown < 0) {
 			if (hour == 1 - q_ptr->timed_countdown)
-				quest_set_stage(0, i, q_ptr->timed_countdown_stage, q_ptr->timed_countdown_quiet);
+				quest_set_stage(0, i, q_ptr->timed_countdown_stage, q_ptr->timed_countdown_quiet, NULL);
 		} else if (q_ptr->timed_countdown > 0) {
 			q_ptr->timed_countdown--;
 			if (!q_ptr->timed_countdown)
-				quest_set_stage(0, i, q_ptr->timed_countdown_stage, q_ptr->timed_countdown_quiet);
+				quest_set_stage(0, i, q_ptr->timed_countdown_stage, q_ptr->timed_countdown_quiet, NULL);
 		}
 
 		/* handle automatic timed questor hostility */
@@ -185,11 +185,11 @@ void process_quests(void) {
 
 			if (q_qhost->hostile_revert_timed_countdown < 0) {
 				if (hour == 1 - q_qhost->hostile_revert_timed_countdown)
-					quest_questor_reverts(0, i, j); //TODO: handle individual quests (pInd is 0 here)
+					quest_questor_reverts(i, j, &q_ptr->questor[j].current_wpos);
 			} else if (q_qhost->hostile_revert_timed_countdown > 0) {
 				q_qhost->hostile_revert_timed_countdown--;
 				if (!q_qhost->hostile_revert_timed_countdown)
-					quest_questor_reverts(0, i, j);
+					quest_questor_reverts(i, j, &q_ptr->questor[j].current_wpos);
 			}
 		}
 	}
@@ -1023,7 +1023,7 @@ bool quest_activate(int q_idx) {
 	/* Initialise with starting stage 0 */
 	q_ptr->turn_activated = turn;
 	q_ptr->cur_stage = -1;
-	quest_set_stage(0, q_idx, 0, FALSE);
+	quest_set_stage(0, q_idx, 0, FALSE, NULL);
 
 	return TRUE;
 }
@@ -1391,8 +1391,44 @@ static void quest_initialise_player_tracking(int Ind, int py_q_idx) {
 	quest_check_player_location(Ind);
 }
 
-/* a quest has (successfully?) ended, clean up */
-static void quest_terminate(int pInd, int q_idx) {
+/* Helper function for quest_terminate() */
+static void quest_terminate_individual(int Ind, int q_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	player_type *p_ptr = Players[Ind];
+	int j;
+
+#if QDEBUG > 0
+	s_printf("%s QUEST_TERMINATE_INDIVIDUAL: %s(%d) completes '%s'(%d,%s)\n", showtime(), p_ptr->name, Ind, q_name + q_ptr->name, q_idx, q_ptr->codename);
+#endif
+
+	for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+		if (p_ptr->quest_idx[j] == q_idx) break;
+	if (j == MAX_CONCURRENT_QUESTS) return; //oops?
+
+	if (p_ptr->quest_done[q_idx] < 10000) p_ptr->quest_done[q_idx]++;
+
+	/* he is no longer on the quest, since the quest has finished */
+	p_ptr->quest_idx[j] = -1;
+	//good colours for '***': C-confusion (yay), q-inertia (pft, extended), E-meteor (mh, extended)
+	msg_format(Ind, "\374\377C***\377u You have completed the quest \"\377U%s\377u\"! \377C***", q_name + q_ptr->name);
+	//msg_print(Ind, "\374 ");
+
+	/* erase all of this player's quest items for this quest */
+	quest_erase_objects(q_idx, TRUE, p_ptr->id);
+
+	/* set personal quest cooldown */
+	if (q_ptr->cooldown == -1) p_ptr->quest_cooldown[q_idx] = QI_COOLDOWN_DEFAULT;
+	else p_ptr->quest_cooldown[q_idx] = q_ptr->cooldown;
+
+	/* individual quests don't get cleaned up (aka completely reset)
+	   by deactivation, except for this temporary tracking data,
+	   or it would continue spamming quest checks eg on delivery_xy locs. */
+	quest_initialise_player_tracking(Ind, j);
+}
+/* a quest has (successfully?) ended, clean up.
+   Added wpos for reattaching temporarily global quests (questor moved etc)
+   to players within the area, if the quest is actually individual. */
+static void quest_terminate(int pInd, int q_idx, struct worldpos *wpos) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr;
 	int i, j;
@@ -1400,40 +1436,23 @@ static void quest_terminate(int pInd, int q_idx) {
 	q_ptr->dirty = TRUE;
 
 	/* give player credit (individual quest) */
-	if (pInd && q_ptr->individual) {
-		p_ptr = Players[pInd];
-#if QDEBUG > 0
-		s_printf("%s QUEST_TERMINATE_INDIVIDUAL: %s(%d) completes '%s'(%d,%s)\n", showtime(), p_ptr->name, pInd, q_name + q_ptr->name, q_idx, q_ptr->codename);
-#endif
-
-		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
-			if (p_ptr->quest_idx[j] == q_idx) break;
-		if (j == MAX_CONCURRENT_QUESTS) return; //oops?
-
-		if (p_ptr->quest_done[q_idx] < 10000) p_ptr->quest_done[q_idx]++;
-
-		/* he is no longer on the quest, since the quest has finished */
-		p_ptr->quest_idx[j] = -1;
-		//good colours for '***': C-confusion (yay), q-inertia (pft, extended), E-meteor (mh, extended)
-		msg_format(pInd, "\374\377C***\377u You have completed the quest \"\377U%s\377u\"! \377C***", q_name + q_ptr->name);
-		//msg_print(pInd, "\374 ");
-
-		/* erase all of this player's quest items for this quest */
-		quest_erase_objects(q_idx, TRUE, p_ptr->id);
+	if (q_ptr->individual) {
+		if (pInd)
+			/* business as usual */
+			quest_terminate_individual(pInd, q_idx);
+		else
+			for (i = 1; i <= NumPlayers; i++) {
+				if (!inarea(&Players[i]->wpos, wpos)) continue;
+				quest_terminate_individual(i, q_idx);
+			}
 
 		/* remove quest dungeons -- a bit quirky to do this for personal quests,
 		   but it might be required, so that the objectives in the dungeon can
 		   reset properly. :/ */
 		quest_remove_dungeons(q_idx);
 
-		/* set personal quest cooldown */
-		if (q_ptr->cooldown == -1) p_ptr->quest_cooldown[q_idx] = QI_COOLDOWN_DEFAULT;
-		else p_ptr->quest_cooldown[q_idx] = q_ptr->cooldown;
-
 		/* individual quests don't get cleaned up (aka completely reset)
-		   by deactivation, except for this temporary tracking data,
-		   or it would continue spamming quest checks eg on delivery_xy locs. */
-		quest_initialise_player_tracking(pInd, j);
+		   by deactivation, unlike global quests. */
 		return;
 	}
 
@@ -2194,7 +2213,7 @@ static bool quest_stage_automatics(int pInd, int q_idx, int stage) {
 			/* quickly, before it's too late! hand out/spawn any special quest items */
 			quest_spawn_questitems(q_idx, stage);
 
-			quest_set_stage(pInd, q_idx, q_stage->change_stage, q_stage->quiet_change);
+			quest_set_stage(pInd, q_idx, q_stage->change_stage, q_stage->quiet_change, NULL);
 			/* don't imprint/play dialogue of this stage anymore, it's gone~ */
 			return TRUE;
 		}
@@ -2362,8 +2381,112 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	/* now set/add our new stage's info */
 	quest_imprint_tracking_information(Ind, py_q_idx, FALSE);
 }
-/* Advance quest to a different stage (or start it out if stage is 0) */
-void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
+
+/* Helper function for quest_set_stage(), to re-individualise quests that just
+   finished a timer/walk sequence and hence were 'temporarily global' of some sort.
+   'final_player' must be TRUE for the last player that this function gets called
+   for, since then some 'global' stage things will be done such as calling the
+   stage automatics.
+   Returns 'py_q_idx' aka the player's personal quest index. */
+static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet, bool final_player) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
+	player_type *p_ptr = Players[Ind];
+	int i, j, k;
+	char text[MAX_CHARS * 2];
+	qi_goal *q_goal;
+	qi_deliver *q_del;
+
+	for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+		if (p_ptr->quest_idx[j] == q_idx) break;
+	if (j == MAX_CONCURRENT_QUESTS) return j; //paranoia, shouldn't happen
+
+	/* play automatic narration if any */
+	if (!quiet) {
+		/* pre-scan narration if any line at all exists and passes the flag check */
+		bool anything = FALSE;
+		for (k = 0; k < QI_TALK_LINES; k++) {
+			if (q_stage->narration[k] &&
+			    ((q_stage->narration_flags[k] & quest_get_flags(Ind, q_idx)) == q_stage->narration_flags[k])) {
+				anything = TRUE;
+				break;
+			}
+		}
+		/* there is narration to display? */
+		if (anything) {
+			msg_print(Ind, "\374 ");
+			msg_format(Ind, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
+			for (k = 0; k < QI_TALK_LINES; k++) {
+				if (!q_stage->narration[k]) break;
+#if 0 /* simple way */
+				msg_format(Ind, "\374\377U%s", q_stage->narration[k]);
+#else /* allow placeholders */
+				quest_text_replace(text, q_stage->narration[k], p_ptr);
+				msg_format(Ind, "\374\377U%s", text);
+#endif
+			}
+			//msg_print(Ind, "\374 ");
+		}
+	}
+
+	/* perform automatic actions (spawn new quest, (timed) further stage change) */
+	if (final_player)
+		if (quest_stage_automatics(Ind, q_idx, stage)) return -1;
+
+	/* update players' quest tracking data */
+	quest_imprint_stage(Ind, q_idx, j);
+
+	/* Optionally load map files for goal-target / goal-deliver locations */
+	if (final_player)
+		for (i = 0; i < q_stage->goals; i++) {
+			q_goal = &q_stage->goal[i];
+			q_del = q_goal->deliver;
+			if (q_goal->target_tpref)
+				(void)quest_prepare_zcave(&q_goal->target_wpos, FALSE, q_goal->target_tpref, q_goal->target_tpref_x, q_goal->target_tpref_y, FALSE);
+			if (q_del && q_del->tpref)
+				(void)quest_prepare_zcave(&q_del->wpos, FALSE, q_del->tpref, q_del->tpref_x, q_del->tpref_y, FALSE);
+		}
+
+	/* play questors' stage dialogue */
+	if (!quiet)
+		for (k = 0; k < q_ptr->questors; k++) {
+			if (!inarea(&p_ptr->wpos, &q_ptr->questor[k].current_wpos)) continue;
+			quest_dialogue(Ind, q_idx, k, FALSE, FALSE, FALSE);
+		}
+
+	/* hand out/spawn any special quest items */
+	if (final_player)
+		quest_spawn_questitems(q_idx, stage);
+
+	return j;
+}
+/* Advance quest to a different stage (or start it out if stage is 0).
+
+   Note: Individual quests usually give us a pInd != 0. HOWEVER..
+         If the stage was set by timers or questor-walk, ie by completion of
+         aspects that is not directly induced by a participating player, then
+         we have a pInd of 0, so we have to double-check to be sure.
+
+         Therefore it is especially important, that the 'global' var
+         q_ptr->cur_stage is on stage change of an individual quest updated too
+         instead of just p_ptr->quest_stage vars, for when a timed/walk event
+         is started in that stage.
+
+         Also, while timed/walking, questors shouldn't accept interaction with
+         players on different stages of the quest! Basically, a quest that is
+         currently in timed/walk state, is sort of 'temporarily global'.
+
+         TODO: The timers could at least be put into p_ptr->quest_timer vars,
+         since they do not affect any positioning, unlike actual movement of
+         the questors.
+         Also, questor-self-teleportation is a problem for individual quests,
+         same as questor walking around.
+
+         To solve this matters I added 'wpos' and quest_set_stage_individual():
+         wpos is the location where the stage change was triggered, and hence
+         can be used to reattach all players present with their individual
+         quest stages. */
+void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos *wpos) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage;
 	player_type *p_ptr;
@@ -2372,6 +2495,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	char text[MAX_CHARS * 2];
 	qi_goal *q_goal;
 	qi_deliver *q_del;
+	s16b py = 0, py_Ind[MAX_PLAYERS], py_qidx[MAX_PLAYERS];
 
 	int stage_prev = quest_get_stage(pInd, q_idx);
 
@@ -2420,7 +2544,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 	   - qutomatically invokes the quest dialogue with him again (if any)
 	   - store information of the current stage in the p_ptr array,
 	     eg the target location for easier lookup */
-	if (!q_ptr->individual || !pInd) { //the !pInd part is paranoia
+	if (!q_ptr->individual) {
 		for (i = 1; i <= NumPlayers; i++) {
 			p_ptr = Players[i];
 			p_ptr->quest_eligible = 0;
@@ -2435,7 +2559,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 				anything = FALSE;
 				for (k = 0; k < QI_TALK_LINES; k++) {
 					if (q_stage->narration[k] &&
-					    ((q_stage->narration_flags[k] & quest_get_flags(pInd, q_idx)) == q_stage->narration_flags[k])) {
+					    ((q_stage->narration_flags[k] & quest_get_flags(0, q_idx)) == q_stage->narration_flags[k])) {
 						anything = TRUE;
 						break;
 					}
@@ -2446,7 +2570,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 					msg_format(i, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
 					for (k = 0; k < QI_TALK_LINES; k++) {
 						if (!q_stage->narration[k]) break;
-						if ((q_stage->narration_flags[k] & quest_get_flags(pInd, q_idx)) != q_stage->narration_flags[k]) continue;
+						if ((q_stage->narration_flags[k] & quest_get_flags(0, q_idx)) != q_stage->narration_flags[k]) continue;
 #if 0 /* simple way */
 						msg_format(i, "\374\377U%s", q_stage->narration[k]);
 #else /* allow placeholders */
@@ -2480,7 +2604,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		   Note: Should imprint correct stage on player before calling this,
 		         otherwise automatic stage change will "skip" a stage in between ^^.
 		         This should be rather cosmetic though. */
-		if (quest_stage_automatics(pInd, q_idx, stage)) return;
+		if (quest_stage_automatics(0, q_idx, stage)) return;
 
 		if (!quiet)
 			for (i = 1; i <= NumPlayers; i++) {
@@ -2496,68 +2620,33 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 		/* hand out/spawn any special quest items */
 		quest_spawn_questitems(q_idx, stage);
 	} else { /* individual quest */
-		p_ptr = Players[pInd];
-		for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
-			if (p_ptr->quest_idx[j] == q_idx) break;
-		if (j == MAX_CONCURRENT_QUESTS) return; //paranoia, shouldn't happen
+		/* Do we have to re-individualise the quest,
+		   coming from a pseudo-global stage (aka questor walking/teleport)? */
+		if (!pInd) {
+			/* build list of players eligible to resume */
+			for (i = 1; i <= NumPlayers; i++) {
+				if (!inarea(&Players[i]->wpos, wpos)) continue;
 
-		/* play automatic narration if any */
-		if (!quiet) {
-			/* pre-scan narration if any line at all exists and passes the flag check */
-			anything = FALSE;
-			for (k = 0; k < QI_TALK_LINES; k++) {
-				if (q_stage->narration[k] &&
-				    ((q_stage->narration_flags[k] & quest_get_flags(pInd, q_idx)) == q_stage->narration_flags[k])) {
-					anything = TRUE;
-					break;
-				}
-			}
-			/* there is narration to display? */
-			if (anything) {
-				msg_print(pInd, "\374 ");
-				msg_format(pInd, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
-				for (k = 0; k < QI_TALK_LINES; k++) {
-					if (!q_stage->narration[k]) break;
-#if 0 /* simple way */
-					msg_format(pInd, "\374\377U%s", q_stage->narration[k]);
-#else /* allow placeholders */
-					quest_text_replace(text, q_stage->narration[k], p_ptr);
-					msg_format(pInd, "\374\377U%s", text);
-#endif
-				}
-				//msg_print(pInd, "\374 ");
-			}
-		}
+				for (j = 0; j < MAX_CONCURRENT_QUESTS; j++)
+					if (Players[i]->quest_idx[j] == q_idx) break;
+				if (j == MAX_CONCURRENT_QUESTS) continue;
 
-		/* perform automatic actions (spawn new quest, (timed) further stage change) */
-		if (quest_stage_automatics(pInd, q_idx, stage)) return;
-
-		/* update players' quest tracking data */
-		quest_imprint_stage(pInd, q_idx, j);
-
-		/* Optionally load map files for goal-target / goal-deliver locations */
-		for (i = 0; i < q_stage->goals; i++) {
-			q_goal = &q_stage->goal[i];
-			q_del = q_goal->deliver;
-			if (q_goal->target_tpref)
-				(void)quest_prepare_zcave(&q_goal->target_wpos, FALSE, q_goal->target_tpref, q_goal->target_tpref_x, q_goal->target_tpref_y, FALSE);
-			if (q_del && q_del->tpref)
-				(void)quest_prepare_zcave(&q_del->wpos, FALSE, q_del->tpref, q_del->tpref_x, q_del->tpref_y, FALSE);
-		}
-
-		/* play questors' stage dialogue */
-		if (!quiet)
-			for (k = 0; k < q_ptr->questors; k++) {
-				if (!inarea(&p_ptr->wpos, &q_ptr->questor[k].current_wpos)) continue;
-				quest_dialogue(pInd, q_idx, k, FALSE, FALSE, FALSE);
+				py_Ind[++py - 1] = i;
+				py_qidx[py - 1] = j;
 			}
 
-		/* hand out/spawn any special quest items */
-		quest_spawn_questitems(q_idx, stage);
+			/* reattach player to quest progress */
+			for (i = 0; i < py; i++)
+				(void)quest_set_stage_individual(py_Ind[i], q_idx, stage, quiet, i == py - 1);
 
-		py_q_idx = j;
+			py_q_idx = -2; //hack: mark
+		} else
+			/* Business as usual */
+			py_q_idx = quest_set_stage_individual(pInd, q_idx, stage, quiet, TRUE);
+
+		/* Stage automatics kicked in and changed stage? */
+		if (py_q_idx == -1) return;
 	}
-
 
 	/* check for handing out rewards! (in case they're free) */
 	quest_goal_check_reward(pInd, q_idx);
@@ -2568,7 +2657,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 #if QDEBUG > 0
 		s_printf("%s QUEST_STAGE_ENDING: '%s'(%d,%s) %d\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, stage);
 #endif
-		quest_terminate(pInd, q_idx);
+		quest_terminate(pInd, q_idx, wpos);
 	}
 
 
@@ -2619,7 +2708,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 #if QDEBUG > 0
 		s_printf("%s QUEST_STAGE_EMPTY: '%s'(%d,%s) %d\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, stage);
 #endif
-		quest_terminate(pInd, q_idx);
+		quest_terminate(pInd, q_idx, wpos);
 	}
 
 #if 1	/* INSTAEND HACK */
@@ -2634,7 +2723,12 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet) {
 			quest_instacheck_retrieval(i, q_idx, j);
 		}
 	} else { /* individual quest */
-		quest_instacheck_retrieval(pInd, q_idx, py_q_idx);
+		if (py_q_idx == -2)
+			/* reattach all eligible players.. */
+			for (i = 0; i < py; i++)
+				quest_instacheck_retrieval(py_Ind[i], q_idx, py_qidx[i]);
+		else if (py_q_idx != MAX_CONCURRENT_QUESTS) //paranoia
+			quest_instacheck_retrieval(pInd, q_idx, py_q_idx);
 	}
 #endif
 }
@@ -3174,7 +3268,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 
 		/* stage change? */
 		if (q_key->stage != -1) {
-			quest_set_stage(Ind, q_idx, q_key->stage, FALSE);
+			quest_set_stage(Ind, q_idx, q_key->stage, FALSE, NULL);
 			return;
 		}
 		/* Instead of return'ing, re-prompt for dialogue
@@ -4302,7 +4396,7 @@ static bool quest_goal_check(int pInd, int q_idx, bool interacting) {
 	quest_goal_check_reward(pInd, q_idx);
 
 	/* advance stage! */
-	quest_set_stage(pInd, q_idx, stage, FALSE);
+	quest_set_stage(pInd, q_idx, stage, FALSE, NULL);
 	return TRUE; /* stage has been completed and changed to the next stage */
 }
 
@@ -5063,7 +5157,7 @@ void questitem_d(object_type *o_ptr, int num) {
 	if (o_ptr->questor) {
 		if (q_info[o_ptr->quest - 1].defined && q_info[o_ptr->quest - 1].questors > o_ptr->questor_idx) {
 			/* Quest progression/fail effect? */
-			questor_death(0, o_ptr->quest - 1, o_ptr->questor_idx);
+			questor_death(o_ptr->quest - 1, o_ptr->questor_idx, &o_ptr->wpos);
 		} else {
 			s_printf("QUESTOR DEPRECATED (object_death)\n");
 		}
@@ -5144,11 +5238,11 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 
 /* Questor was killed (npc) or destroyed (object). Quest progression/fail effect?
    Ind can be 0 if object questor got destroyed/erased by other means. */
-void questor_death(int Ind, int q_idx, int questor_idx) {
+void questor_death(int q_idx, int questor_idx, struct worldpos *wpos) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
 
-	int i, j, stage = quest_get_stage(Ind, q_idx);
+	int i, j, stage = quest_get_stage(0, q_idx);
 	qi_stage *q_stage;
 	qi_goal *q_goal;
 	qi_deliver *q_del;
@@ -5180,25 +5274,25 @@ void questor_death(int Ind, int q_idx, int questor_idx) {
 	}
 
 	/* (Ind can be 0 too, if questor got destroyed by something else..) */
-	if (q_questor->death_fail == -1) quest_terminate(Ind, q_idx);
-	else if (q_questor->death_fail != 255) quest_set_stage(Ind, q_idx, q_questor->death_fail, FALSE);
+	if (q_questor->death_fail == -1) quest_terminate(0, q_idx, wpos);
+	else if (q_questor->death_fail != 255) quest_set_stage(0, q_idx, q_questor->death_fail, FALSE, wpos);
 }
 
 /* A questor who was walking towards a destination waypoint has just arrived.
    The Ind is just the player the questor 'had targetted', would he be a normal
    monster. It might as well just be omitted, but maybe it'll turn out convenient. */
-void quest_questor_arrived(int Ind, int q_idx, int questor_idx) {
+void quest_questor_arrived(int q_idx, int questor_idx, struct worldpos *wpos) {
 	qi_stage *q_stage = quest_cur_qi_stage(q_idx);
 	qi_questor_act *q_qact = q_stage->questor_act[questor_idx];
 
 	q_qact->walk_speed = 0;
 
 	if (q_qact->change_stage)
-		quest_set_stage(Ind, q_idx, q_qact->change_stage, q_qact->quiet_change);
+		quest_set_stage(0, q_idx, q_qact->change_stage, q_qact->quiet_change, wpos);
 }
 
 /* An aggressive questor reverts to non-aggressive */
-void quest_questor_reverts(int Ind, int q_idx, int questor_idx) {
+void quest_questor_reverts(int q_idx, int questor_idx, struct worldpos *wpos) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage = quest_cur_qi_stage(q_idx);
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
@@ -5211,5 +5305,5 @@ void quest_questor_reverts(int Ind, int q_idx, int questor_idx) {
 
 	/* change stage? */
 	if (q_qhost->change_stage != 255)
-		quest_set_stage(Ind, q_idx, q_qhost->change_stage, q_qhost->quiet_change);
+		quest_set_stage(0, q_idx, q_qhost->change_stage, q_qhost->quiet_change, wpos);
 }

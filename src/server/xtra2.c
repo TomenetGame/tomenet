@@ -5948,7 +5948,7 @@ if (cfg.unikill_format) {
 			if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops & 0x2)
 				questor_drop_specific(Ind, m_ptr->quest, m_ptr->questor_idx, wpos, x, y);
 			/* Quest progression/fail effect? */
-			questor_death(Ind, m_ptr->quest, m_ptr->questor_idx);
+			questor_death(m_ptr->quest, m_ptr->questor_idx, wpos);
 		} else {
 			s_printf("QUESTOR DEPRECATED (monster_death2)\n");
 		}
@@ -8142,7 +8142,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
 			if (q_info[m_ptr->quest].stage[q_info[m_ptr->quest].cur_stage].questor_hostility[m_ptr->questor_idx] &&
 			    m_ptr->hp - dam <= q_info[m_ptr->quest].stage[q_info[m_ptr->quest].cur_stage].questor_hostility[m_ptr->questor_idx]->hostile_revert_hp)
-				quest_questor_reverts(Ind, m_ptr->quest, m_ptr->questor_idx);
+				quest_questor_reverts(m_ptr->quest, m_ptr->questor_idx, &m_ptr->wpos);
 		} else {
 			s_printf("QUESTOR DEPRECATED (monster_death3)\n");
 		}
@@ -8150,7 +8150,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 #else
 	if (m_ptr->questor && m_ptr->hp - dam <= m_ptr->limit_hp) {
 		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx)
-			quest_questor_reverts(Ind, m_ptr->quest, m_ptr->questor_idx);
+			quest_questor_reverts(m_ptr->quest, m_ptr->questor_idx, &m_ptr->wpos);
 		else
 			s_printf("QUESTOR DEPRECATED (monster_death3)\n");
 	}
