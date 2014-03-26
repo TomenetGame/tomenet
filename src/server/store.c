@@ -3282,6 +3282,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 #endif
 
 				/* Let the player carry it (as if he picked it up) */
+				//note regarding quests: The item here gets owned first, then inven-carried, so it doesn't give credit!
 				can_use(Ind, &sell_obj);//##UNH
 				item_new = inven_carry(Ind, &sell_obj);
 
