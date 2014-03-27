@@ -213,3 +213,6 @@ M:2:2:0:63:63:0:0:99:35:1:-:0:0
 G:2:4:1:2
 X:4:-:The Goalkeeper Bat seems very satisfied.
 R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
+
+
+#N:3:testCastle:C. Blue:Treasure Depository Breach:-1
