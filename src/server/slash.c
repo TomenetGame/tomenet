@@ -8309,13 +8309,16 @@ void do_slash_cmd(int Ind, char *message)
 				/* display basic quests info */
 				msg_format(Ind, "\377UQuests (max_q_idx/MAX_Q_IDX %d/%d):", max_q_idx, MAX_Q_IDX);
 				for (i = 0; i < max_q_idx; i++) {
-					msg_format(Ind, " %3d %10s S%02d%s %s%s %4d or%d -- Qx%d '%s'/%s",
-					    i, q_info[i].codename, quest_get_stage(Ind, i), q_info[i].individual ? format("/%02d", q_info[i].cur_stage) : "   ",
+					msg_format(Ind, " %3d %10s %c S%02d%s %s%s %4d %4d, Or:%d Q:%d '%s'",
+					    i, q_info[i].codename, q_info[i].individual ? (q_info[i].individual == 2 ? 'I' : 'i') : 'g',
+					    quest_get_stage(Ind, i), q_info[i].individual ? format("/%02d", q_info[i].cur_stage) : "   ",
 					    !q_info[i].defined ? "\377rU\377w" : (q_info[i].active ? "A" : " "),
 					    !q_info[i].defined ? " " : (q_info[i].disabled ? "D" : " "),
-					    quest_get_cooldown(Ind, i),
-					    q_info[i].objects_registered,
-					    q_info[i].questors, q_name + q_info[i].name, q_info[i].creator);
+					    quest_get_cooldown(Ind, i), q_info[i].cooldown,
+					    q_info[i].objects_registered, q_info[i].questors
+					    , q_name + q_info[i].name
+					    //, q_info[i].creator
+					    );
 				}
 				/* display extra info? */
 				//pointless.. msg_format(Ind, " \377wSize of quest_info*max_q_idx=total (real): %d*%d=\377U%d (%d)", sizeof(quest_info), max_q_idx, sizeof(quest_info) * max_q_idx, sizeof(quest_info) * MAX_Q_IDX);
