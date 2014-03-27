@@ -1550,14 +1550,21 @@ static void quest_terminate(int pInd, int q_idx, struct worldpos *wpos) {
 
 	/* give player credit (individual quest) */
 	if (q_ptr->individual) {
-		if (pInd)
+		if (pInd) {
+#if QDEBUG > 0
+			s_printf("%s QUEST_TERMINATE (pInd): %s(%d) completes '%s'(%d,%s)\n", showtime(), Players[pInd]->name, pInd, q_name + q_ptr->name, q_idx, q_ptr->codename);
+#endif
 			/* business as usual */
 			quest_terminate_individual(pInd, q_idx);
-		else
+		} else {
+#if QDEBUG > 0
+			s_printf("%s QUEST_TERMINATE (!pInd): completing '%s'(%d,%s)\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename);
+#endif
 			for (i = 1; i <= NumPlayers; i++) {
 				if (wpos != NULL && !inarea(&Players[i]->wpos, wpos)) continue;
 				quest_terminate_individual(i, q_idx);
 			}
+		}
 
 		/* If quest has been 'tainted' we need a hard reset like for global quests.. */
 		if (q_ptr->tainted) {
@@ -1596,7 +1603,7 @@ static void quest_terminate(int pInd, int q_idx, struct worldpos *wpos) {
 
 	/* give players credit (global quest) */
 #if QDEBUG > 0
-	s_printf("%s QUEST_TERMINATE_GLOBAL: '%s'(%d,%s) completed by", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename);
+	s_printf("%s QUEST_TERMINATE: (global) '%s'(%d,%s) completed by", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename);
 #endif
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
@@ -1958,6 +1965,9 @@ static void quest_questor_morph(int q_idx, int stage, int questor_idx) {
 
 	q_questor->talkable = q_qmorph->talkable;
 	if (q_questor->despawned != q_qmorph->despawned) {
+#if QDEBUG > 1
+		s_printf("QUEST_QUESTOR_MORPH: %d despawned-change %s,%d\n", questor_idx, q_ptr->codename, q_idx);
+#endif
 		q_questor->despawned = q_qmorph->despawned;
 		if (q_questor->despawned) {
 			/* despawn questor */
