@@ -916,6 +916,7 @@
  */
 #define ARROW_DIST_LIMIT MAX_RANGE
 
+
 /* Reduce damage in PvP by this factor */
 #define PVP_MELEE_DAM_REDUCTION 3
 /* Reduce damage in PvP by this factor */
@@ -927,6 +928,9 @@
 
 /* Adam's experimental spell damage reduction for PvP (disables PVP_SPELL_DAM_REDUCTION if enabled) */
 //#define EXPERIMENTAL_PVP_SPELL_DAM
+
+/* Increase mana-regeneration rate in PvP? */
+#define PVP_MANA_REGEN_BOOST 3
 
 /* Reduce AC used for testing the hit chance in PvP?
    Intended to counter heavy royal armour, which would otherwise be near impossible to beat. */

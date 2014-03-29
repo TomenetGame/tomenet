@@ -757,42 +757,35 @@ static void regenhp(int Ind, int percent)
 /*
  * Regenerate mana points				-RAK-
  */
-static void regenmana(int Ind, int percent)
-{
+static void regenmana(int Ind, int percent) {
 	player_type *p_ptr = Players[Ind];
-
 	s32b        new_mana, new_mana_frac;
 	int                   old_csp;
 
 	old_csp = p_ptr->csp;
 	new_mana = ((s32b)p_ptr->msp) * percent + PY_REGEN_MNBASE;
+
 	p_ptr->csp += new_mana >> 16;	/* div 65536 */
 	/* check for overflow */
 	if ((p_ptr->csp < 0) && (old_csp > 0))
-	{
 		p_ptr->csp = MAX_SHORT;
-	}
+
 	new_mana_frac = (new_mana & 0xFFFF) + p_ptr->csp_frac;	/* mod 65536 */
-	if (new_mana_frac >= 0x10000L)
-	{
+	if (new_mana_frac >= 0x10000L) {
 		p_ptr->csp_frac = new_mana_frac - 0x10000L;
 		p_ptr->csp++;
-	}
-	else
-	{
+	} else {
 		p_ptr->csp_frac = new_mana_frac;
 	}
 
 	/* Must set frac to zero even if equal */
-	if (p_ptr->csp >= p_ptr->msp)
-	{
+	if (p_ptr->csp >= p_ptr->msp) {
 		p_ptr->csp = p_ptr->msp;
 		p_ptr->csp_frac = 0;
 	}
 
 	/* Redraw mana */
-	if (old_csp != p_ptr->csp)
-	{
+	if (old_csp != p_ptr->csp) {
 		/* Redraw */
 		p_ptr->redraw |= (PR_MANA);
 
@@ -3967,8 +3960,14 @@ static bool process_player_end_aux(int Ind)
 #ifdef ARCADE_SERVER
         p_ptr->regen_mana = TRUE;
 #endif
-	if (p_ptr->csp < p_ptr->msp)
-		regenmana(Ind, ((regen_amount * 5) * ((p_ptr->regen_mana || (p_ptr->mode & MODE_PVP)) ? 2 : 1)) / 3);
+	if (p_ptr->csp < p_ptr->msp) {
+		if (p_ptr->wpos.wx == WPOS_PVPARENA_X &&
+		    p_ptr->wpos.wy == WPOS_PVPARENA_Y &&
+		    p_ptr->wpos.wz == WPOS_PVPARENA_Z)
+			regenmana(Ind, ((regen_amount * 5 * PVP_MANA_REGEN_BOOST) * (p_ptr->regen_mana ? 2 : 1)) / 3);
+		else
+			regenmana(Ind, ((regen_amount * 5) * (p_ptr->regen_mana ? 2 : 1)) / 3);
+	}
 
 	/* Regeneration ability */
 	if (p_ptr->regenerate)
