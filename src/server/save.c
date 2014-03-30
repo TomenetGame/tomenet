@@ -2627,6 +2627,7 @@ static bool save_quests_file(void) {
 		wr_s16b(q_ptr->cur_stage);
 		wr_u16b(q_ptr->flags);
 		wr_byte(q_ptr->tainted);
+		wr_s16b(q_ptr->objects_registered);
 
 		wr_s16b(q_ptr->timed_countdown);
 		wr_s16b(q_ptr->timed_countdown_stage);

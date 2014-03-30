@@ -5404,7 +5404,7 @@ void questitem_d(object_type *o_ptr, int num) {
 	if (o_ptr->questor) {
 		if (q_info[o_ptr->quest - 1].defined && q_info[o_ptr->quest - 1].questors > o_ptr->questor_idx) {
 			/* Quest progression/fail effect? */
-			questor_death(o_ptr->quest - 1, o_ptr->questor_idx, &o_ptr->wpos);
+			questor_death(o_ptr->quest - 1, o_ptr->questor_idx, &o_ptr->wpos, o_ptr->owner);
 		} else {
 			s_printf("QUESTOR DEPRECATED (object_death)\n");
 		}
@@ -5484,12 +5484,15 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 }
 
 /* Questor was killed (npc) or destroyed (object). Quest progression/fail effect?
-   Ind can be 0 if object questor got destroyed/erased by other means. */
-void questor_death(int q_idx, int questor_idx, struct worldpos *wpos) {
+   Ind can be 0 if object questor got destroyed/erased by other means.
+   'owner' is for object questors, of which we assume that they are unique per
+   player and not droppable, so the player who loses it will get his individual
+   quest terminated if death_fail == -1. */
+void questor_death(int q_idx, int questor_idx, struct worldpos *wpos, s32b owner) {
 	quest_info *q_ptr = &q_info[q_idx];
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
 
-	int i, j, stage = quest_get_stage(0, q_idx);
+	int i, j, stage = quest_get_stage(0, q_idx), pInd = 0;
 	qi_stage *q_stage;
 	qi_goal *q_goal;
 	qi_deliver *q_del;
@@ -5504,6 +5507,12 @@ void questor_death(int q_idx, int questor_idx, struct worldpos *wpos) {
 		break;
 
 	case QI_QUESTOR_ITEM_PICKUP:
+		/* Find the player whose object questor just broke */
+		for (i = 1; i <= NumPlayers; i++)
+			if (Players[i]->id == owner) {
+				pInd = i;
+				break;
+			}
 		break;
 	}
 
@@ -5526,7 +5535,7 @@ void questor_death(int q_idx, int questor_idx, struct worldpos *wpos) {
 	}
 
 	/* (Ind can be 0 too, if questor got destroyed by something else..) */
-	if (q_questor->death_fail == -1) quest_terminate(0, q_idx, wpos);
+	if (q_questor->death_fail == -1) quest_terminate(pInd, q_idx, wpos);
 	else if (q_questor->death_fail != 255) quest_set_stage(0, q_idx, q_questor->death_fail, FALSE, wpos);
 }
 

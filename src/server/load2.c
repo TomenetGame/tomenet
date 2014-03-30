@@ -3832,6 +3832,7 @@ static errr load_quests_file() {
 		rd_s16b(&q_ptr->cur_stage);
 		rd_u16b(&q_ptr->flags);
 		rd_byte((byte *) &q_ptr->tainted);
+		rd_s16b(&q_ptr->objects_registered);
 
 		rd_s16b(&q_ptr->timed_countdown);
 		rd_s16b(&q_ptr->timed_countdown_stage);

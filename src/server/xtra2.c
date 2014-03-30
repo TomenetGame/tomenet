@@ -5948,7 +5948,7 @@ if (cfg.unikill_format) {
 			if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops & 0x2)
 				questor_drop_specific(Ind, m_ptr->quest, m_ptr->questor_idx, wpos, x, y);
 			/* Quest progression/fail effect? */
-			questor_death(m_ptr->quest, m_ptr->questor_idx, wpos);
+			questor_death(m_ptr->quest, m_ptr->questor_idx, wpos, 0);
 		} else {
 			s_printf("QUESTOR DEPRECATED (monster_death2)\n");
 		}
