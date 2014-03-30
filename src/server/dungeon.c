@@ -7902,15 +7902,16 @@ void pack_overflow(int Ind) {
 		object_type *o_ptr;
 		int amt, i, j = 0;
 		u32b f1, f2, f3, f4, f5, esp;
-		char	o_name[ONAME_LEN];
+		char o_name[ONAME_LEN];
 
 		/* Choose an item to spill */
-		for(i = INVEN_PACK - 1; i >= 0; i--) {
+		for (i = INVEN_PACK - 1; i >= 0; i--) {
 			o_ptr = &p_ptr->inventory[i];
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-			if(!check_guard_inscription( o_ptr->note, 'd' ) &&
-			    !((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))) {
+			if (!check_guard_inscription(o_ptr->note, 'd') &&
+			    !((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) &&
+			    !o_ptr->questor) {
 				j = 1;
 				break;
 			}
