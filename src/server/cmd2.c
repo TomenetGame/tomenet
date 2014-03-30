@@ -3452,6 +3452,11 @@ void do_cmd_bash(int Ind, int dir) {
 
 				if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, x, y)) return;
 
+				if (o_ptr->questor) {
+					msg_print(Ind, "\377yThe item doesn't move an inch!");
+					return;
+				}
+
 #if 0 /* allow water-bashing of 1 grid range, same as for fruit bats now - C. Blue */
 				if (water) {
 					/* S(he) is no longer afk */
@@ -5925,6 +5930,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		msg_print(Ind, "Hmmm, you seem to be unable to throw it.");
 
 		/* Nope */
+		return;
+	}
+
+	if (o_ptr->questor) {
+		msg_print(Ind, "\377yYou cannot drop this item. Use 'k' to destroy it. (Might abandon the quest!)");
 		return;
 	}
 
