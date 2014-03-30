@@ -7336,7 +7336,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			/* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */
 			(r_ptr->flags2 & RF2_PASS_WALL) || (r_ptr->flags2 & RF2_KILL_WALL) ||
 			/* POWERFUL monsters can hack down trees if they're non-light aka _physically_ powerful (hacky..) */
-			((base_r_ptr->flags2 & RF2_POWERFUL) && r_ptr->weight >= 0)))//oops no: some monsters like horned reaper weigh 0 -_-
+			((base_r_ptr->flags2 & RF2_POWERFUL) && r_ptr->weight >= 250)))//todo: do some monsters still wrongly weigh 0 lbs?
 		{
 			/* Pass through trees if monster lives in the woods >:) */
 			do_move = TRUE;
