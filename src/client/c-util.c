@@ -4129,14 +4129,10 @@ Chain_Macro:
 							for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++) {
 								/* Show duplicate rune(s) in umber (or press ENTER; allow both!) */
 								if (e_flags & r_elements[i].flag) {
-									Term_putstr(10, 15 + i % 6, -1,
-										TERM_L_UMBER,
-										format("%c) \377%c%s", 'a' + i, 'U', r_elements[i].name));
+									Term_putstr(10, 15 + i % 6, -1, TERM_L_UMBER, format("%c) \377%c%s", 'a' + i, 'U', r_elements[i].name));
 								}
 								else {
-									Term_putstr(10, 15 + i % 6, -1,
-										TERM_L_GREEN,
-										format("%c) \377%c%s", 'a' + i, 'G', r_elements[i].name));
+									Term_putstr(10, 15 + i % 6, -1, TERM_L_GREEN, format("%c) \377%c%s", 'a' + i, 'G', r_elements[i].name));
 								}
 							}
 
@@ -4198,17 +4194,10 @@ Chain_Macro:
 
 							/* Fill a line */
 							sprintf(tmpbuf, "\377%c%c) %-10s %5d %3d%% %s%d%% %5d%% %5s%d %7d%% %5d%%",
-							color,
-							'a' + i,
-							r_imperatives[i].name,
-							r_imperatives[i].level,
-							r_imperatives[i].cost * 10,
-							ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "), r_imperatives[i].fail,
-							r_imperatives[i].damage * 10,
-							r_imperatives[i].radius >= 0 ? "+" : "-", ABS(r_imperatives[i].radius),
-							r_imperatives[i].duration * 10,
-							r_imperatives[i].energy * 10
-							);
+							    color, 'a' + i, r_imperatives[i].name, r_imperatives[i].level, r_imperatives[i].cost * 10,
+							    ABS(r_imperatives[i].fail) >= 10 ? (r_imperatives[i].fail >= 0 ? "+" : "") : (r_imperatives[i].fail >= 0 ? " +" : " "),
+							    r_imperatives[i].fail, r_imperatives[i].damage * 10, r_imperatives[i].radius >= 0 ? "+" : "-", ABS(r_imperatives[i].radius),
+							    r_imperatives[i].duration * 10, r_imperatives[i].energy * 10);
 
 							/* Print the line */
 							Term_putstr(10, 14 + i, -1, TERM_L_GREEN, tmpbuf);
@@ -4295,700 +4284,201 @@ Chain_Macro:
 
 							/* Fill a line */
 							switch (r_types[i].flag) {
-							
-								case T_BOLT: {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
-									color,
-									'a' + i,
-									r_types[i].name,
-									sdiff,
-									cost,
-									fail,
-									dx,
-									dy
-									);
-								break; }
-								
-								case T_BEAM: {
-									if (r_imperatives[imperative].flag == I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d",
-										color,
-										'a' + i,
-										r_types[i].name,
-										sdiff,
-										cost,
-										fail,
-										damage,
-										duration
-										);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
-										color,
-										'a' + i,
-										r_types[i].name,
-										sdiff,
-										cost,
-										fail,
-										dx,
-										dy
-										);
-									}
-								break; }
-								
-								case T_CLOU: {
+							case T_BOLT:
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
+								break;
+							case T_BEAM:
+								if (r_imperatives[imperative].flag == I_ENHA) {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration);
+								} else {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
+								}
+								break;
+							case T_CLOU:
+								if (r_imperatives[imperative].flag != I_ENHA) {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius, duration);
+								} else { //Storm Hack
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage*3/2, radius, duration*2);
+								}
+								break;
+							case T_BALL:
+								sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
+								break;
+							case T_SIGN:
+								switch (projection) {
+								case SV_R_LITE:
 									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-										color,
-										'a' + i,
-										r_types[i].name,
-										sdiff,
-										cost,
-										fail,
-										damage,
-										radius,
-										duration
-										);
-									} else { //Storm Hack
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-										color,
-										'a' + i,
-										r_types[i].name,
-										sdiff,
-										cost,
-										fail,
-										damage*3/2,
-										radius,
-										duration*2
-										);
-									}
-								break; }
-								
-								case T_BALL: {
-									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
-									color,
-									'a' + i,
-									r_types[i].name,
-									sdiff,
-									cost,
-									fail,
-									damage,
-									radius
-									);
-								break; }
-								
-								case T_SIGN: {
-									switch (projection) {
-														
-										case SV_R_LITE: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% call light dam %d rad %d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												damage,
-												radius
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% starlite dam %dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												dx,
-												dy
-												);
-											}
-										break; }
-										
-										case SV_R_DARK: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% call dark dam %d rad %d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												damage,
-												radius
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% invis dur %dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												dx,
-												dy
-												);
-											}
-										break; }
-										
-										case SV_R_NEXU: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele %d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												radius
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% teleport",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											}
-										break; }
-										
-										case SV_R_NETH: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% obliteration",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% genocide",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											}
-										break; }
-										
-										case SV_R_CHAO: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph self",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% chaos brand dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											}
-										break; }
-										
-										case SV_R_MANA: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove curses",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove *curses*",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											}
-										break; }
-										
-										case SV_R_CONF: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% monster confusion",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% identify",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											}
-										break; }
-										
-										case SV_R_INER: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% anchor dur %d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-forward",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											}
-										break; }
-										
-										case SV_R_ELEC: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res electricity dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% lightning brand dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											}
-										break; }
-										
-										case SV_R_FIRE: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% fire brand dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											}
-										break; }
-										
-										case SV_R_WATE: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% neutralize poison",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% regen pow %d dur %d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												damage,
-												duration
-												);
-											}
-										break; }
-										
-										case SV_R_GRAV: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-to rad %d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												radius
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-forward",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											}
-										break; }
-										
-										case SV_R_COLD: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res cold dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% frost brand dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											}
-										break; }
-										
-										case SV_R_ACID: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res acid dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% acid brand dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											}
-										break; }
-										
-										case SV_R_POIS: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res poison dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% poison brand dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											}
-										break; }
-										
-										case SV_R_TIME: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% +%d speed dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												damage,
-												duration,
-												dx,
-												dy
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% recharging pow %d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												damage
-												);
-											}
-										break; }
-										
-										case SV_R_SOUN: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarm rad %d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												radius
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarming",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											}
-										break; }
-										
-										case SV_R_SHAR: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% earthquake rad %d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												radius
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dig",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											}
-										break; }
-										
-										case SV_R_DISE: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% unmagic",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% cancellation",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail
-												);
-											}
-										break; }
-										
-										case SV_R_FORC: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% +%d AC dur %dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												damage,
-												dx,
-												dy
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% reflect dur %dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												dx,
-												dy
-												);
-											}
-										break; }
-										
-										case SV_R_PLAS: {
-											if (r_imperatives[imperative].flag != I_ENHA) {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% resistance dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											} else {
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% power brand dur %d+%dd%d",
-												color,
-												'a' + i,
-												r_types[i].name,
-												sdiff,
-												cost,
-												fail,
-												duration,
-												dx,
-												dy
-												);
-											}
-										break; }
-										
-										default: {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%%",
-										color,
-										'a' + i,
-										r_types[i].name,
-										sdiff,
-										cost,
-										fail
-										);
-										break; }
-									}
-								break; }
-								
-								case T_RUNE: {
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
-										color,
-										'a' + i,
-										r_types[i].name,
-										sdiff,
-										cost,
-										fail,
-										damage,
-										radius
-										);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% call light dam %d rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% warding",
-										color,
-										'a' + i,
-										r_types[i].name,
-										sdiff,
-										cost,
-										fail
-										);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% starlite dam %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
 									}
-								break; }
-								
-								case T_ENCH: {
+									break;
+								case SV_R_DARK:
 									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune resist",
-										color,
-										'a' + i,
-										r_types[i].name,
-										sdiff,
-										cost,
-										fail
-										);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% call dark dam %d rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune misc",
-										color,
-										'a' + i,
-										r_types[i].name,
-										sdiff,
-										cost,
-										fail
-										);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% invis dur %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
 									}
-								break; }
-								
-								case T_WAVE: {
+									break;
+								case SV_R_NEXU:
 									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d",
-										color,
-										'a' + i,
-										r_types[i].name,
-										sdiff,
-										cost,
-										fail,
-										damage,
-										duration
-										);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
-										color,
-										'a' + i,
-										r_types[i].name,
-										sdiff,
-										cost,
-										fail,
-										damage
-										);
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% teleport", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
 									}
-								break; }
-
+									break;
+								case SV_R_NETH:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% obliteration", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% genocide", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									}
+									break;
+								case SV_R_CHAO:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph self", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% chaos brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									}
+									break;
+								case SV_R_MANA:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove curses", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% remove *curses*", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									}
+									break;
+								case SV_R_CONF:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% monster confusion", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% identify", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									}
+									break;
+								case SV_R_INER:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% anchor dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-forward", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									}
+									break;
+								case SV_R_ELEC:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res electricity dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% lightning brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									}
+									break;
+								case SV_R_FIRE:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res fire dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% fire brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									}
+									break;
+								case SV_R_WATE:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% neutralize poison", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% regen pow %d dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration);
+									}
+									break;
+								case SV_R_GRAV:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-to rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% tele-forward", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									}
+									break;
+								case SV_R_COLD:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res cold dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% frost brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									}
+									break;
+								case SV_R_ACID:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res acid dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% acid brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									}
+									break;
+								case SV_R_POIS:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% res poison dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% poison brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									}
+									break;
+								case SV_R_TIME:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% +%d speed dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration, dx, dy);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% recharging pow %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage);
+									}
+									break;
+								case SV_R_SOUN:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarm rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% disarming", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									}
+									break;
+								case SV_R_SHAR:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% earthquake rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dig", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									}
+									break;
+								case SV_R_DISE:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% unmagic", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% cancellation", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									}
+									break;
+								case SV_R_FORC:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% +%d AC dur %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, dx, dy);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% reflect dur %dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
+									}
+									break;
+								case SV_R_PLAS:
+									if (r_imperatives[imperative].flag != I_ENHA) {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% resistance dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									} else {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% power brand dur %d+%dd%d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration, dx, dy);
+									}
+									break;
+								default:
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%%", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+									break;
+								}
+								break;
+							case T_RUNE:
+								if (r_imperatives[imperative].flag != I_ENHA) {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
+								} else {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% warding", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+								}
+								break;
+							case T_ENCH:
+								if (r_imperatives[imperative].flag != I_ENHA) {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune resist", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+								} else {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rune misc", color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+								}
+								break;
+							case T_WAVE:
+								if (r_imperatives[imperative].flag != I_ENHA) {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, duration);
+								} else {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d", color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage);
+								}
+								break;
 							}
 							Term_putstr(10, 14 + i, -1, TERM_L_GREEN, tmpbuf);
 						}
