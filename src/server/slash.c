@@ -1767,7 +1767,7 @@ void do_slash_cmd(int Ind, char *message)
                         }
                         free(temp);
 #else /* support shuffling */
-			cptr value, flower;
+			cptr value = "Naught", flower = "Void"; //compiler warnings
 
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
