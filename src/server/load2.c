@@ -1669,8 +1669,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	rd_s16b(&p_ptr->shero);
 	if (!older_than(4, 3, 7)) rd_s16b(&p_ptr->berserk);
 	rd_s16b(&p_ptr->shield);
-        if (!older_than(4, 0, 4))
-        {
+        if (!older_than(4, 0, 4)) {
                 rd_s16b(&p_ptr->shield_power);
                 rd_s16b(&p_ptr->shield_opt);
                 rd_s16b(&p_ptr->shield_power_opt);
@@ -2087,6 +2086,13 @@ if (p_ptr->updated_savegame == 0) {
 
 	if (!older_than(4, 5, 3)) rd_u16b(&p_ptr->tim_deflect);
 	else p_ptr->tim_deflect = 0;
+
+	if (!older_than(4, 5, 28)) {
+		rd_u16b(&p_ptr->cards_diamonds);
+		rd_u16b(&p_ptr->cards_hearts);
+		rd_u16b(&p_ptr->cards_spades);
+		rd_u16b(&p_ptr->cards_clubs);
+	}
 
 	/* Success */
 	return FALSE;

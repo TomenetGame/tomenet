@@ -1632,10 +1632,96 @@ void do_slash_cmd(int Ind, char *message)
 //			}
 #endif
 			return;
-                }
+		}
+		/* added shuffling >_> - C. Blue */
+		else if (prefix(message, "/shuffle")) { /* usage: /shuffle [<32|52> [# of jokers]] */
+			/* Notes:
+			   0x1FFF = 13 bits = 13 cards (Ace,2..10,J/Q/K)
+			   All further bits (bit 14, 15 and 16) would add a joker each.
+			   So 0xFFFF would add _3_ jokers (for that flower -
+			    but jokers aren't shown with any flower, so it doesn't matter).
+			   The usual values here are:
+			     0x1FC1 -> 8 cards (Ace,7..10,J/Q/K)
+			     0x1FFF -> 13 cards (Ace,2..10,J/Q/K)
+			     0x3FFF/0x7FFF/0xFFFF for one flower and 0x1FFF for the other three ->
+			      13 cards each, and 1/2/3 jokers in addition to that.
+			     0xFFFF for one flower, 0x3FFF for another flower and 0x1FFF for the
+			      remaining two flowers -> 52 cards deck with 4 jokers. */
+
+			if (!tk) {
+				msg_format(Ind, "\377%cYou shuffle a deck of 52 cards", COLOUR_GAMBLE);
+				msg_format_near(Ind, "\377%c%s shuffles a deck of 52 cards", COLOUR_GAMBLE, p_ptr->name);
+
+				p_ptr->cards_diamonds = 0x1FFF;
+				p_ptr->cards_hearts = 0x1FFF;
+				p_ptr->cards_spades = 0x1FFF;
+				p_ptr->cards_clubs = 0x1FFF;
+			} else {
+				if ((k != 32 && k != 52) || tk > 2) {
+					msg_print(Ind, "\377oUsage: /shuffle <32|52> [# of jokers]");
+					return;
+				} 
+				if (k == 32) {
+					p_ptr->cards_diamonds = 0x1FC1;
+					p_ptr->cards_hearts = 0x1FC1;
+					p_ptr->cards_spades = 0x1FC1;
+					p_ptr->cards_clubs = 0x1FC1;
+				} else {
+					p_ptr->cards_diamonds = 0x1FFF;
+					p_ptr->cards_hearts = 0x1FFF;
+					p_ptr->cards_spades = 0x1FFF;
+					p_ptr->cards_clubs = 0x1FFF;
+				}
+				if (tk == 2) {
+					j = atoi(token[2]);
+					if (j < 0) {
+						msg_print(Ind, "\377oNumber of jokers must not be negative.");
+						return;
+					}
+					if (j > 12) {
+						msg_print(Ind, "\377oA maximum of 12 jokers is allowed.");
+						return;
+					}
+					if (j > 9) {
+						p_ptr->cards_diamonds |= 0xE000;
+						p_ptr->cards_hearts |= 0xE000;
+						p_ptr->cards_spades |= 0xE000;
+						if (j == 12) p_ptr->cards_clubs |= 0xE000;
+						else if (j == 11) p_ptr->cards_clubs |= 0x6000;
+						else p_ptr->cards_clubs |= 0x2000;
+					} else if (j > 6) {
+						p_ptr->cards_diamonds |= 0xE000;
+						p_ptr->cards_hearts |= 0xE000;
+						if (j == 9) p_ptr->cards_spades |= 0xE000;
+						else if (j == 8) p_ptr->cards_spades |= 0x6000;
+						else p_ptr->cards_spades |= 0x2000;
+					} else if (j > 3) {
+						p_ptr->cards_diamonds |= 0xE000;
+						if (j == 6) p_ptr->cards_hearts |= 0xE000;
+						else if (j == 5) p_ptr->cards_hearts |= 0x6000;
+						else p_ptr->cards_hearts |= 0x2000;
+					} else if (j > 0) {
+						if (j == 3) p_ptr->cards_diamonds |= 0xE000;
+						else if (j == 2) p_ptr->cards_diamonds |= 0x6000;
+						else p_ptr->cards_diamonds |= 0x2000;
+					}
+				}
+				if (!j) {
+					msg_format(Ind, "\377%cYou shuffle a deck of %d cards", COLOUR_GAMBLE, k);
+					msg_format_near(Ind, "\377%c%s shuffles a deck of %d cards", COLOUR_GAMBLE, p_ptr->name, k);
+				} else if (j == 1) {
+					msg_format(Ind, "\377%cYou shuffle a deck of %d cards and a joker", COLOUR_GAMBLE, k);
+					msg_format_near(Ind, "\377%c%s shuffles a deck of %d cards and a joker", COLOUR_GAMBLE, p_ptr->name, k);
+				} else {
+					msg_format(Ind, "\377%cYou shuffle a deck of %d cards and %d jokers", COLOUR_GAMBLE, k, j);
+					msg_format_near(Ind, "\377%c%s shuffles a deck of %d cards and %d jokers", COLOUR_GAMBLE, p_ptr->name, k, j);
+				}
+			}
+			return;
+		}
                 /* An alternative to dicing :) -the_sandman */
-                else if (prefix(message, "/deal"))
-                {
+                else if (prefix(message, "/deal")) {
+#if 0 /* no support for shuffling? */
                         int value, flower;
                         char* temp;
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
@@ -1679,7 +1765,92 @@ void do_slash_cmd(int Ind, char *message)
                                 default:
                                         break;
                         }
-                        free(temp); return;
+                        free(temp);
+#else /* support shuffling */
+			cptr value, flower;
+
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+			if (!p_ptr->cards_diamonds && !p_ptr->cards_hearts && !p_ptr->cards_spades && !p_ptr->cards_clubs) {
+				msg_print(Ind, "\377wYou are out of cards! You must /shuffle a new deck of cards first.");
+				return;
+			}
+
+			/* count amount of cards remaining in our deck */
+			k = 0;
+			for (i = 0; i < 16; i++) {
+				if (p_ptr->cards_diamonds & (0x1 << i)) k++;
+				if (p_ptr->cards_hearts & (0x1 << i)) k++;
+				if (p_ptr->cards_spades & (0x1 << i)) k++;
+				if (p_ptr->cards_clubs & (0x1 << i)) k++;
+			}
+
+			/* draw one */
+			j = randint(k);
+			for (i = 0; i < 16; i++) {
+				if (p_ptr->cards_diamonds & (0x1 << i)) {
+					j--;
+					if (!j) {
+						p_ptr->cards_diamonds &= ~(0x1 << i);
+						flower = "Diamonds";
+						break;
+					}
+				}
+				if (p_ptr->cards_hearts & (0x1 << i)) {
+					j--;
+					if (!j) {
+						p_ptr->cards_hearts &= ~(0x1 << i);
+						flower = "Hearts";
+						break;
+					}
+				}
+				if (p_ptr->cards_spades & (0x1 << i)) {
+					j--;
+					if (!j) {
+						p_ptr->cards_spades &= ~(0x1 << i);
+						flower = "Spades";
+						break;
+					}
+				}
+				if (p_ptr->cards_clubs & (0x1 << i)) {
+					j--;
+					if (!j) {
+						p_ptr->cards_clubs &= ~(0x1 << i);
+						flower = "Clubs";
+						break;
+					}
+				}
+			}
+			switch (i) {
+			case 0: value = "Ace"; break;
+			case 1: value = "Two"; break;
+			case 2: value = "Three"; break;
+			case 3: value = "Four"; break;
+			case 4: value = "Five"; break;
+			case 5: value = "Six"; break;
+			case 6: value = "Seven"; break;
+			case 7: value = "Eight"; break;
+			case 8: value = "Nine"; break;
+			case 9: value = "Ten"; break;
+			case 10: value = "Jack"; break;
+			case 11: value = "Queen"; break;
+			case 12: value = "King"; break;
+			case 13: value = "Joker"; break;
+			case 14: value = "Joker"; break;
+			case 15: value = "Joker"; break;
+			}
+
+			/* deal it */
+			msg_format(Ind, "\377%cYou deal the %s of %s", COLOUR_GAMBLE, value, flower);
+			msg_format_near(Ind, "\377%c%s deals the %s of %s", COLOUR_GAMBLE, p_ptr->name, value, flower);
+
+			if (!p_ptr->cards_diamonds && !p_ptr->cards_hearts && !p_ptr->cards_spades && !p_ptr->cards_clubs) {
+				msg_format(Ind, "\377%cThat was the final card of your stack of cards.", COLOUR_GAMBLE);
+				msg_format_near(Ind, "\377%cThat was the final card of the stack of cards.", COLOUR_GAMBLE);
+			}
+#endif
+                        return;
                 }
 		else if (prefix(message, "/martyr") || prefix(message, "/mar"))
 		{

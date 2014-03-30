@@ -2956,6 +2956,7 @@ struct player_type {
 	char redraw_cooldown;
 	bool auto_insc[INVEN_TOTAL];
 	bool grid_sunlit, grid_house;
+	u16b cards_diamonds, cards_hearts, cards_spades, cards_clubs;
 };
 
 typedef struct boni_col boni_col;
