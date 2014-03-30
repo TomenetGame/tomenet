@@ -9390,28 +9390,28 @@ void process_monsters(void) {
 				if (r_ptr->flags7 & RF7_NAZGUL) {
 					//Nazgul; doesn't override Sauron or Halloween (The Great Pumpkin)
 					if (p_ptr->music_monster != 43 && p_ptr->music_monster != 55) {
-						Send_music(pl, (p_ptr->music_monster = 42));
+						Send_music(pl, (p_ptr->music_monster = 42), -1);
 					}
 				} else if (r_ptr->flags1 & RF1_UNIQUE) {
 					if (m_ptr->r_idx == RI_SAURON) {
 						//Sauron; overrides all others
-						Send_music(pl, (p_ptr->music_monster = 43));
+						Send_music(pl, (p_ptr->music_monster = 43), -1);
 					}
 					//Dungeon boss or special unique? (can't override Sauron, Nazgul or Halloween)
 					else if (p_ptr->music_monster != 43 && p_ptr->music_monster != 42 && p_ptr->music_monster != 55) {
 						//Dungeon boss?
 						if (r_ptr->flags0 & RF0_FINAL_GUARDIAN)
-							Send_music(pl, (p_ptr->music_monster = 41));
+							Send_music(pl, (p_ptr->music_monster = 41), -1);
 						//Special Unique (non-respawning)? Can't override dungeon boss..
 						else if (r_ptr->level >= 98 && p_ptr->music_monster != 41) {
 							//Any of em
-							Send_music(pl, (p_ptr->music_monster = 40));
+							Send_music(pl, (p_ptr->music_monster = 40), -1);
 						}
 					}
 				} else if ((m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)
 				    && (p_ptr->music_monster != 43)) {
 					//The Great Pumpkin; overrides Nazgul, Dungeon Bosses and even Special Uniques ^^
-					Send_music(pl, (p_ptr->music_monster = 55));
+					Send_music(pl, (p_ptr->music_monster = 55), -1);
 				}
 			}
 #endif

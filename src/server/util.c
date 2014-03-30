@@ -1433,15 +1433,15 @@ void handle_music(int Ind) {
 	    ) {
 		p_ptr->music_monster = -2;
  #if 0
-		if (p_ptr->wpos.wz == 0) Send_music(Ind, 1); /* 'generic town' music instead of Bree default */
+		if (p_ptr->wpos.wz == 0) Send_music(Ind, 1, -1); /* 'generic town' music instead of Bree default */
 		else {
 			//47 and 48 are actually pieces used in other arena events
-			if (rand_int(2)) Send_music(Ind, 47);
-			else Send_music(Ind, 48);
+			if (rand_int(2)) Send_music(Ind, 47, 1);
+			else Send_music(Ind, 48, 1);
 		}
  #else
-		if (p_ptr->wpos.wz == 0) Send_music(Ind, 48); /* 'arena' ;) sounds a bit like Unreal Tournament menu music hehe */
-		else Send_music(Ind, 47); /* 'death match' music (pvp arena) */
+		if (p_ptr->wpos.wz == 0) Send_music(Ind, 48, 1); /* 'arena' ;) sounds a bit like Unreal Tournament menu music hehe */
+		else Send_music(Ind, 47, 1); /* 'death match' music (pvp arena) */
  #endif
 		return;
 	}
@@ -1479,38 +1479,38 @@ void handle_music(int Ind) {
 		//Zu-Aon
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 45);
+		Send_music(Ind, 45, 14);
 		return;
 	} else if ((i != -1) && (l_ptr->flags1 & LF1_NO_GHOST)) {
 		//Morgoth
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 44);
+		Send_music(Ind, 44, 14);
 		return;
 	}
 
 	if (in_valinor(&p_ptr->wpos)) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 8); //Valinor
+		Send_music(Ind, 8, 1); //Valinor
 		return;
 	} else if (p_ptr->wpos.wx == WPOS_PVPARENA_X &&
 	    p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 47); //PvP Arena
+		Send_music(Ind, 47, 0); //PvP Arena
 		return;
 	} else if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X &&
 	    p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, 48); //Monster Arena Challenge
+		Send_music(Ind, 48, 0); //Monster Arena Challenge
 		return;
 	} else if (sector00separation && p_ptr->wpos.wx == WPOS_SECTOR00_X &&
 	    p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz == WPOS_SECTOR00_Z) {
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, sector00music);
+		Send_music(Ind, sector00music, 0);
 		return;
 	}
 
@@ -1519,7 +1519,7 @@ void handle_music(int Ind) {
 #if 0 /* hack: init music as 'higher priority than boss-specific': */
 		p_ptr->music_monster = -2;
 #endif
-		Send_music(Ind, 46); //No-Tele vault
+		Send_music(Ind, 46, 14); //No-Tele vault
 		return;
 	}
 
@@ -1559,13 +1559,13 @@ void handle_music(int Ind) {
 			if (istown(&p_ptr->wpos) || p_ptr->music_current == tmus
 			    /* don't switch from town area music to wild music on day/night change: */
 			    || p_ptr->music_current == tmus_inverse)
-				Send_music(Ind, tmus);
-			else if (night_surface) Send_music(Ind, 10);
-			else Send_music(Ind, 9);
+				Send_music(Ind, tmus, night_surface ? tmus_inverse : 1);
+			else if (night_surface) Send_music(Ind, 10, 0);
+			else Send_music(Ind, 9, 0);
 			return;
 		} else {
-			if (night_surface) Send_music(Ind, 10);
-			else Send_music(Ind, 9);
+			if (night_surface) Send_music(Ind, 10, 0);
+			else Send_music(Ind, 9, 0);
 			return;
 		}
 	/* in the dungeon */
@@ -1574,12 +1574,12 @@ void handle_music(int Ind) {
 		if (isdungeontown(&p_ptr->wpos)) {
 			if (is_fixed_irondeepdive_town(&p_ptr->wpos, dlev)) {
 #if 0
-				Send_music(Ind, 1); /* 'generic town' music instead, for a change */
+				Send_music(Ind, 1, 0); /* 'generic town' music instead, for a change */
 #else /* different music for static towns? */
-				if (dlev == 40) Send_music(Ind, 1); /* Menegroth: generic town */
-				else Send_music(Ind, 49); /* Nargothrond: generic town night */
+				if (dlev == 40) Send_music(Ind, 1, 0); /* Menegroth: generic town */
+				else Send_music(Ind, 49, 1); /* Nargothrond: generic town night */
 #endif
-			} else Send_music(Ind, 2); /* the usual music for this case */
+			} else Send_music(Ind, 2, 1); /* the usual music for this case */
 			return;
 		}
 
@@ -1591,7 +1591,7 @@ void handle_music(int Ind) {
 		{
 			if (p_ptr->distinct_floor_feeling || is_admin(p_ptr)) {
 				if (l_ptr->flags2 & LF2_OOD_HI) {
-					Send_music(Ind, 46);
+					Send_music(Ind, 46, 11);
 					return;
 				}
 			}
@@ -1601,46 +1601,49 @@ void handle_music(int Ind) {
 		switch (i) {
 		default:
 		case 0:
-			if (d_ptr->flags2 & DF2_NO_DEATH) Send_music(Ind, 12);//note: music file is identical to the one of the Training Tower
-			else if (d_ptr->flags2 & DF2_IRON) Send_music(Ind, 14);//note: switched from 13 to 14, which is actually forcedown/hellish
-			else if ((d_ptr->flags2 & DF2_HELL) || (d_ptr->flags1 & DF1_FORCE_DOWN)) Send_music(Ind, 13);//note: switched from 14 to 13, which is actually iron
-			else Send_music(Ind, 11);
+			if (d_ptr->flags2 & DF2_NO_DEATH) Send_music(Ind, 12, 11);//note: music file is identical to the one of the Training Tower
+			else if (d_ptr->flags2 & DF2_IRON) Send_music(Ind, 14, 11);//note: switched from 13 to 14, which is actually forcedown/hellish
+			else if ((d_ptr->flags2 & DF2_HELL) || (d_ptr->flags1 & DF1_FORCE_DOWN)) Send_music(Ind, 13, 11);//note: switched from 14 to 13, which is actually iron
+			else Send_music(Ind, 11, 0);
 			return;
-		case 1: Send_music(Ind, 32); return; //Mirkwood
-		case 2: Send_music(Ind, 17); return; //Mordor
-		case 3: Send_music(Ind, 19); return; //Angband
-		case 4: Send_music(Ind, 16); return; //Barrow-Downs
-		case 5: Send_music(Ind, 21); return; //Mount Doom
-		case 6: Send_music(Ind, 22); return; //Nether Realm
-		case 7: Send_music(Ind, 35); return; //Submerged Ruins
-		case 8: Send_music(Ind, 26); return; //Halls of Mandos
-		case 9: Send_music(Ind, 30); return; //Cirith Ungol
-		case 10: Send_music(Ind, 28); return; //The Heart of the Earth
-		case 16: Send_music(Ind, 18); return; //The Paths of the Dead
-		case 17: Send_music(Ind, 37); return; //The Illusory Castle
-		case 18: Send_music(Ind, 39); return; //The Maze
-		case 19: Send_music(Ind, 20); return; //The Orc Cave
-		case 20: Send_music(Ind, 36); return; //Erebor
-		case 21: Send_music(Ind, 27); return; //The Old Forest
-		case 22: Send_music(Ind, 29); return; //The Mines of Moria
-		case 23: Send_music(Ind, 34); return; //Dol Guldur
-		case 24: Send_music(Ind, 31); return; //The Small Water Cave
-		case 25: Send_music(Ind, 38); return; //The Sacred Land of Mountains
-		case 26: Send_music(Ind, 24); return; //The Land of Rhun
-		case 27: Send_music(Ind, 25); return; //The Sandworm Lair
-		case 28: Send_music(Ind, 33); return; //Death Fate
-		case 29: Send_music(Ind, 23); return; //The Helcaraxe
-		case 30: Send_music(Ind, 15); return; //The Training Tower
+		case 1: Send_music(Ind, 32, 11); return; //Mirkwood
+		case 2: Send_music(Ind, 17, 11); return; //Mordor
+		case 3: Send_music(Ind, 19, 11); return; //Angband
+		case 4: Send_music(Ind, 16, 11); return; //Barrow-Downs
+		case 5: Send_music(Ind, 21, 11); return; //Mount Doom
+		case 6: Send_music(Ind, 22, 13); return; //Nether Realm
+		case 7: Send_music(Ind, 35, 11); return; //Submerged Ruins
+		case 8: Send_music(Ind, 26, 11); return; //Halls of Mandos
+		case 9: Send_music(Ind, 30, 11); return; //Cirith Ungol
+		case 10: Send_music(Ind, 28, 11); return; //The Heart of the Earth
+		case 16: Send_music(Ind, 18, 11); return; //The Paths of the Dead
+		case 17: Send_music(Ind, 37, 11); return; //The Illusory Castle
+		case 18: Send_music(Ind, 39, 11); return; //The Maze
+		case 19: Send_music(Ind, 20, 11); return; //The Orc Cave
+		case 20: Send_music(Ind, 36, 11); return; //Erebor
+		case 21: Send_music(Ind, 27, 11); return; //The Old Forest
+		case 22: Send_music(Ind, 29, 11); return; //The Mines of Moria
+		case 23: Send_music(Ind, 34, 11); return; //Dol Guldur
+		case 24: Send_music(Ind, 31, 11); return; //The Small Water Cave
+		case 25: Send_music(Ind, 38, 11); return; //The Sacred Land of Mountains
+		case 26: Send_music(Ind, 24, 11); return; //The Land of Rhun
+		case 27: Send_music(Ind, 25, 11); return; //The Sandworm Lair
+		case 28: Send_music(Ind, 33, 11); return; //Death Fate
+		case 29: Send_music(Ind, 23, 11); return; //The Helcaraxe
+		case 30: Send_music(Ind, 15, 12); return; //The Training Tower
 		//31 is handled above by in_valinor() check
 		case 32:
-			if (p_ptr->audio_mus == 56) Send_music(Ind, 13); /* outdated music pack? (use ironman music for now (forcedown/hellish doesn't fit)) */
-			else Send_music(Ind, 56); /* the actual specific music for this dungeon */
-			return; //The Cloud Planes
+			if (is_newer_than(&p_ptr->version, 4, 5, 6, 0, 0, 0)) Send_music(Ind, 56, 13); //The Cloud Planes
+			else {
+				if (p_ptr->audio_mus == 56) Send_music(Ind, 13, 0); /* outdated music pack? (use ironman music for now (forcedown/hellish doesn't fit)) */
+				else Send_music(Ind, 56, 13); /* the actual specific music for this dungeon */
+			}
+			return;
 		}
 	}
 
 	/* Shouldn't happen - send default (dungeon) music */
-	Send_music(Ind, 0);
+	Send_music(Ind, 0, 0);
 }
 
 void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool smooth) {

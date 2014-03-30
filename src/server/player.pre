@@ -1029,6 +1029,7 @@ struct player_type
 
 #ifdef USE_SOUND_2010
 	int music_current;
+	int musicalt_current;
 	int music_monster;
 	int audio_sfx;
 	int audio_mus;

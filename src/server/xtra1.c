@@ -6289,7 +6289,7 @@ void update_stuff(int Ind)
 			/* hack: temporarily remove the dedicated mind-link flag, to allow Send_music() */
 			f = Players[Ind2]->esp_link_flags;
 			Players[Ind2]->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
-			Send_music(Ind2, Players[Ind]->music_current);
+			Send_music(Ind2, Players[Ind]->music_current, Players[Ind]->musicalt_current);
 			/* ultra hack-- abuse this for ambient sfx too ^^ */
 			Send_sfx_ambient(Ind2, Players[Ind]->sound_ambient, FALSE);
 			Players[Ind2]->esp_link_flags = f;

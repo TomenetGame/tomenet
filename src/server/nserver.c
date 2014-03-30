@@ -2752,6 +2752,7 @@ static int Handle_login(int ind)
 #ifdef USE_SOUND_2010
 	/* Initialize his background music */
 	p_ptr->music_current = -1; //hack-init: since 0 is used too..
+	p_ptr->musicalt_current = -1;
 	p_ptr->sound_ambient = -1; //hack-init: since 0 is used too..
 	p_ptr->music_monster = -1; //hack-init: since 0 is used too.. (boss-specific music)
 
@@ -6187,7 +6188,7 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 }
 
 #ifdef USE_SOUND_2010
-int Send_music(int Ind, int music) {
+int Send_music(int Ind, int music, int musicalt) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
 	/* Mind-linked to someone? Send him our music too! */
@@ -6201,13 +6202,17 @@ int Send_music(int Ind, int music) {
 	if (connp2) {
 		if (p_ptr2->music_current != music) {
 			p_ptr2->music_current = music;
-			if (is_newer_than(&connp2->version, 4, 4, 4, 5, 0, 0))
+			p_ptr2->musicalt_current = musicalt;
+			if (is_newer_than(&connp2->version, 4, 5, 6, 0, 0, 0))
+				Packet_printf(&connp2->c, "%c%c%c", PKT_MUSIC, music, musicalt);
+			else if (is_newer_than(&connp2->version, 4, 4, 4, 5, 0, 0))
 				Packet_printf(&connp2->c, "%c%c", PKT_MUSIC, music);
 		}
 	}
 
 	if (Players[Ind]->music_current == music) return(-1);
 	Players[Ind]->music_current = music;
+	Players[Ind]->musicalt_current = musicalt;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6216,7 +6221,10 @@ int Send_music(int Ind, int music) {
 		return 0;
 	}
 
-	if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0)) return(-1);
+	if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt);
+	else if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0))
+		return(-1);
 //	s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, Players[Ind]->name, Ind);//debug
 	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
 }

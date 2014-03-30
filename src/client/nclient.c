@@ -2709,13 +2709,18 @@ int Receive_sound(void) {
 
 int Receive_music(void) {
 	int	n;
-	char	ch, m;
+	char	ch, m, m2 = -1;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &m)) <= 0) return n;
+	if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &m, &m2)) <= 0) return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &m)) <= 0) return n;
+	}
 
 #ifdef USE_SOUND_2010
 	/* Play background music (if enabled) */
-	if (use_sound) music(m);
+	if (!use_sound) return 1;
+	if (!music(m)) music(m2);
 #endif
 
 	return 1;

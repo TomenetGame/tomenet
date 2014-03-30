@@ -6784,7 +6784,7 @@ void msg_format(int Ind, cptr fmt, ...) {
 
 #ifdef USE_SOUND_2010
 bool sound(int val, int type, int vol, s32b player_id) {
-	if (!use_sound) return FALSE;
+	if (!use_sound) return TRUE;
 
 	/* play a sound */
 	if (sound_hook) return sound_hook(val, type, vol, player_id);
@@ -6805,11 +6805,12 @@ void sound_weather_vol(int val, int vol) {
 	if (sound_weather_hook_vol) sound_weather_hook_vol(val, vol);
 }
 
-void music(int val) {
-	if (!use_sound) return;
+bool music(int val) {
+	if (!use_sound) return TRUE;
 
 	/* play a sound */
-	if (music_hook) music_hook(val);
+	if (music_hook) return music_hook(val);
+	else return FALSE;
 }
 
 void sound_ambient(int val) {

@@ -7563,7 +7563,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "Using music of player %s.", Players[j]->name);
 				f = Players[Ind]->esp_link_flags;
 				Players[Ind]->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
-				Send_music(Ind, Players[j]->music_current);
+				Send_music(Ind, Players[j]->music_current, -1);
 				Players[Ind]->esp_link_flags = f;
 				return;
 			}
@@ -7589,7 +7589,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				msg_format(Ind, "Playing <%d>.", k);
-				Send_music(Ind, k);
+				Send_music(Ind, k, -1);
 				return;
 			}
 #endif

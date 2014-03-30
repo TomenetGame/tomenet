@@ -1375,17 +1375,24 @@ void ambient_handle_fading(void) {
 /*
  * Play a music of type "event".
  */
-static void play_music(int event) {
+static bool play_music(int event) {
+	/* Paranoia */
+	if (event < 0 || event >= MUSIC_MAX) return FALSE;
+
+	/* Check there are samples for this event */
+	if (!songs[event].num) return FALSE;
+
+
 	music_next = event;
 
 	/* check if music is already running, if so, fade it out first! */
 	if (Mix_PlayingMusic()) {
 		if (Mix_FadingMusic() != MIX_FADING_OUT) Mix_FadeOutMusic(500);
-		return;
 	} else {
 		//play immediately
 		fadein_next_music();
 	}
+	return TRUE;
 }
 
 static void fadein_next_music(void) {

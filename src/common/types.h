@@ -2892,7 +2892,7 @@ struct player_type {
 	char warning_tunnel, warning_trap;
 
 #ifdef USE_SOUND_2010
-	int music_current, music_monster; //background music currently playing for him/her; an overriding monster music
+	int music_current, musicalt_current, music_monster; //background music currently playing for him/her; an overriding monster music
 	int audio_sfx, audio_mus, music_start;
 	int sound_ambient;
 	/* added for ambient-sfx-handling, so it does not do smooth transition
