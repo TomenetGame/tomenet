@@ -271,7 +271,7 @@ static bool do_eat_item(int Ind, int m_idx) {
 
 		/* Option */
 #ifdef MONSTER_INVENTORY
-		{
+		if (!o_ptr->questor) { /* questor items cannot be 'dropped', only destroyed! */
 			s16b o_idx;
 
 			/* Make an object */
@@ -307,8 +307,8 @@ static bool do_eat_item(int Ind, int m_idx) {
 
 				/* Build stack */
 				m_ptr->hold_o_idx = o_idx;
-			} else questitem_d(o_ptr, o_ptr->number); /* not immune to stealing :) */
-		}
+			} else questitem_d(o_ptr, o_ptr->number); /* quest items are not immune to stealing :) */
+		} else questitem_d(o_ptr, o_ptr->number); /* questors go poof */
 #else
 		if (o_ptr->tval == TV_WAND) (void)divide_charged_item(o_ptr, 1);
 #endif	// MONSTER_INVENTORY

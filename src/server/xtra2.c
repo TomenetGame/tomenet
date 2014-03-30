@@ -6987,6 +6987,11 @@ void player_death(int Ind) {
 		/* Make sure we have an object */
 		if (o_ptr->k_idx == 0) continue;
 
+		if (o_ptr->questor) { /* questor items cannot be 'dropped', only destroyed! */
+			questitem_d(o_ptr, o_ptr->number);
+			continue;
+		}
+
 		/* If we committed suicide, only drop artifacts */
 //			if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
 		if (!p_ptr->alive) {
@@ -10291,8 +10296,7 @@ bool set_recall(int Ind, int v, object_type * o_ptr)
 
 }
 
-void telekinesis_aux(int Ind, int item)
-{
+void telekinesis_aux(int Ind, int item) {
 	player_type *p_ptr = Players[Ind], *p2_ptr;
 	object_type *q_ptr, *o_ptr = p_ptr->current_telekinesis;
 	int Ind2;
@@ -10358,6 +10362,12 @@ void telekinesis_aux(int Ind, int item)
 
 	if (cfg.anti_arts_send && artifact_p(q_ptr) && !is_admin(p_ptr)) {
 		msg_print(Ind, "The artifact resists telekinesis!");
+		return;
+	}
+
+	/* questor items cannot be 'dropped', only destroyed! */
+	if (q_ptr->questor) {
+		msg_print(Ind, "\377yThis item cannot be sent by telekinesis!");
 		return;
 	}
 

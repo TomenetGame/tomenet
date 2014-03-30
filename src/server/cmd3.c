@@ -1326,6 +1326,10 @@ void do_cmd_drop(int Ind, int item, int quantity)
 			return;
 		}
 	}
+	if (o_ptr->questor) {
+		msg_print(Ind, "\377yYou cannot drop this item. Use 'k' to destroy it. (Might abandon the quest!)");
+		return;
+	}
 
 	if (p_ptr->inval) {
 		msg_print(Ind, "\377yYou may not drop items, wait for an admin to validate your account. (Destroy it with 'k' or sell it instead.)");

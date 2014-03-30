@@ -3456,6 +3456,11 @@ void store_sell(int Ind, int item, int amt) {
 		}
 	}
 
+	if (o_ptr->questor) {
+		msg_print(Ind, "\377yYou cannot sell this item. Use 'k' to destroy it. (Might abandon the quest!)");
+		return;
+	}
+
 	/* Create the object to be sold (structure copy) */
 	sold_obj = *o_ptr;
 	sold_obj.number = amt;
@@ -3598,6 +3603,10 @@ void store_confirm(int Ind) {
 			msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
 			return;
 		}
+	}
+	if (o_ptr->questor) {
+		msg_print(Ind, "\377yYou cannot drop this item. Use 'k' to destroy it. (Might abandon the quest!)");
+		return;
 	}
 	/* -------------------------------------------------------------------------------------- */
 
@@ -4988,11 +4997,6 @@ void home_sell(int Ind, int item, int amt)
 		o_ptr = &o_list[0 - item];
 	}
 
-#if 1
-
-	/* Not gonna happen XXX inscribe */
-	/* Nah, gonna happen */
-	/* TODO: CURSE_NO_DROP */
 	if (cursed_p(o_ptr) && !is_admin(p_ptr)) {
 		u32b f1, f2, f3, f4, f5, esp;
 		if (item >= INVEN_WIELD) {
@@ -5007,8 +5011,10 @@ void home_sell(int Ind, int item, int amt)
 			return;
 		}
 	}
-
-#endif
+	if (o_ptr->questor) {
+		msg_print(Ind, "\377yYou cannot drop this item. Use 'k' to destroy it. (Might abandon the quest!)");
+		return;
+	}
 
 	if (cfg.anti_arts_house && undepositable_artifact_p(o_ptr)) {
 		msg_print(Ind, "You cannot stock this artifact.");
