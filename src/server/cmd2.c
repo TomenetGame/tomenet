@@ -1260,10 +1260,12 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 			/* anyone willing to implement non-rectangular houses? */
 		}
 	}
-#else
+#else /* simple (risky?) way.. */
 	cave_type *c_ptr = &(getcave(wpos)[y][x]);
 	/* assume all houses are on the world surface (and vaults aren't) */
-	if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY)) return TRUE;
+	if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY) &&
+	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE) /* moat and drawbridge aren't "inside" the house! */
+		return TRUE;
 #endif
 
 	return FALSE;
