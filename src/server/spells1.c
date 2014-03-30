@@ -7314,17 +7314,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Decrease strength */
 		case GF_DEC_STR:
-			if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_print_near_monster(c_ptr->m_idx, "is unaffected");
+			if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags7 & RF7_NO_DEATH)) {
+				msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 			} else {
 				for (i = 0; i < 4; i++) {
-						if ((m_ptr->blow[i].d_dice > 1) && (m_ptr->blow[i].org_d_dice - m_ptr->blow[i].d_dice < 3)) {
-								m_ptr->blow[i].d_dice -= 1;
-							msg_print_near_monster(c_ptr->m_idx, "appears weaker");
+					if ((m_ptr->blow[i].d_dice > 1) && (m_ptr->blow[i].org_d_dice - m_ptr->blow[i].d_dice < 3)) {
+						m_ptr->blow[i].d_dice -= 1;
+						msg_print_near_monster(c_ptr->m_idx, "appears weaker");
 					}
 					else if ((m_ptr->blow[i].d_side > 1) && (m_ptr->blow[i].org_d_side - m_ptr->blow[i].d_side < 3)) {
-							m_ptr->blow[i].d_side -= 1;
-							msg_print_near_monster(c_ptr->m_idx, "appears weaker");
+						m_ptr->blow[i].d_side -= 1;
+						msg_print_near_monster(c_ptr->m_idx, "appears weaker");
 					}
 				}
 			}
@@ -7334,14 +7334,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Decrease dexterity */
 		case GF_DEC_DEX:
-			if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_print_near_monster(c_ptr->m_idx, "is unaffected");
+			if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags7 & RF7_NO_DEATH)) {
+				msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 			} else {
 				if ((m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2) && (m_ptr->org_ac - m_ptr->ac < 30)) {
-						if (m_ptr->ac) msg_print_near_monster(c_ptr->m_idx, "appears clumsy");
-						if (m_ptr->ac) m_ptr->ac--;
-						if (m_ptr->ac) m_ptr->ac--;
-						if (m_ptr->ac) m_ptr->ac--;
+					if (m_ptr->ac) msg_print_near_monster(c_ptr->m_idx, "appears clumsy");
+					if (m_ptr->ac) m_ptr->ac--;
+					if (m_ptr->ac) m_ptr->ac--;
+					if (m_ptr->ac) m_ptr->ac--;
 				}
 			}
 			dam = 0;
@@ -7350,16 +7350,16 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Decrease dexterity */
 		case GF_DEC_CON:
-			if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_print_near_monster(c_ptr->m_idx, "is unaffected");
+			if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags7 & RF7_NO_DEATH)) {
+				msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 			} else {
 				if ((m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2) && (m_ptr->org_maxhp - m_ptr->maxhp < 20)) {
-						if (m_ptr->maxhp > 1) msg_print_near_monster(c_ptr->m_idx, "appears less healthy");
-						if (m_ptr->maxhp > 50) m_ptr->maxhp -= 10;
-						if (m_ptr->maxhp > 30) m_ptr->maxhp -= 6;
-						if (m_ptr->maxhp > 10) m_ptr->maxhp -= 3;
-						if (m_ptr->maxhp > 1) m_ptr->maxhp -= 1;
-						if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
+					if (m_ptr->maxhp > 1) msg_print_near_monster(c_ptr->m_idx, "appears less healthy");
+					if (m_ptr->maxhp > 50) m_ptr->maxhp -= 10;
+					if (m_ptr->maxhp > 30) m_ptr->maxhp -= 6;
+					if (m_ptr->maxhp > 10) m_ptr->maxhp -= 3;
+					if (m_ptr->maxhp > 1) m_ptr->maxhp -= 1;
+					if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
 				}
 			}
 			dam = 0;
@@ -7373,12 +7373,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/*	  if (m_ptr->blow[i].d_dice < r_ptr->blow[i].d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice;
 					if (m_ptr->blow[i].d_side < r_ptr->blow[i].d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].d_side;
 			*/	if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) {
-							m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
-							dam = 1;
+					m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
+					dam = 1;
 				}
 				if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) {
-						m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
-						dam = 1;
+					m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
+					dam = 1;
 				}
 			}
 			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less weak");
@@ -7389,10 +7389,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Restore dexterity */
 		case GF_RES_DEX:
 			/*if (m_ptr->ac < r_ptr->ac) {
-					m_ptr->ac = r_ptr->ac;*/
+				m_ptr->ac = r_ptr->ac;*/
 			if (m_ptr->ac < m_ptr->org_ac) {
-					m_ptr->ac = m_ptr->org_ac;
-					msg_print_near_monster(c_ptr->m_idx, "appears less clumsy");
+				m_ptr->ac = m_ptr->org_ac;
+				msg_print_near_monster(c_ptr->m_idx, "appears less clumsy");
 			}
 			dam = 0;
 			quiet = TRUE;
@@ -7401,11 +7401,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Restore constitution */
 		case GF_RES_CON:
 			/*if (m_ptr->hp < r_ptr->hside * r_ptr->hdice) {
-					m_ptr->hp = r_ptr->hside * r_ptr->hdice;*/
+				m_ptr->hp = r_ptr->hside * r_ptr->hdice;*/
 			if (m_ptr->maxhp < m_ptr->org_maxhp) {
-					m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
-					m_ptr->maxhp = m_ptr->org_maxhp;
-					msg_print_near_monster(c_ptr->m_idx, "appears less sick");
+				m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
+				m_ptr->maxhp = m_ptr->org_maxhp;
+				msg_print_near_monster(c_ptr->m_idx, "appears less sick");
 			}
 			dam = 0;
 			quiet = TRUE;
@@ -7413,43 +7413,48 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Increase strength! */
 		case GF_INC_STR:
-			for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
-				/* do a 'restore strenght' before increasing it */
-				if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
-				if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
+			if (!(r_ptr->flags7 & RF7_NO_DEATH))
+				for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
+					/* do a 'restore strenght' before increasing it */
+					if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
+					if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
 
-				if (m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side) {
+					if (m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side) {
 						m_ptr->blow[i].d_dice++;
 						msg_print_near_monster(c_ptr->m_idx, "appears stronger");
-				}
-				else if (m_ptr->blow[i].d_side > 0 && m_ptr->blow[i].d_dice > 0) {
+					}
+					else if (m_ptr->blow[i].d_side > 0 && m_ptr->blow[i].d_dice > 0) {
 						m_ptr->blow[i].d_side++;
 						msg_print_near_monster(c_ptr->m_idx, "appears stronger");
+					}
 				}
-			}
 			dam = 0;
 			quiet = TRUE;
 			break;
 
 		/* Increase dexterity! */
 		case GF_INC_DEX:
-			if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac;
-			m_ptr->ac += 5;
-			msg_print_near_monster(c_ptr->m_idx, "appears more dextrous");
+			if (!(r_ptr->flags7 & RF7_NO_DEATH)) {
+				if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac;
+				m_ptr->ac += 5;
+				msg_print_near_monster(c_ptr->m_idx, "appears more dextrous");
+			}
 			dam = 0;
 			quiet = TRUE;
 			break;
 
 		/* Increase constitution! */
 		case GF_INC_CON:
-			if (m_ptr->maxhp < m_ptr->org_maxhp) { /* include a restore con here */
+			if (!(r_ptr->flags7 & RF7_NO_DEATH)) {
+				if (m_ptr->maxhp < m_ptr->org_maxhp) { /* include a restore con here */
 					m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
 					m_ptr->maxhp = m_ptr->org_maxhp;
-			}
+				}
 
-			m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
-			m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
-			msg_print_near_monster(c_ptr->m_idx, "appears healthier");
+				m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
+				m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
+				msg_print_near_monster(c_ptr->m_idx, "appears healthier");
+			}
 
 			dam = 0;
 			quiet = TRUE;
@@ -7457,26 +7462,28 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Augmentation! (who'd do such a thing, silyl..) */
 		case GF_AUGMENTATION:
-			msg_print_near_monster(c_ptr->m_idx, "appears more powerful!");
-			for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
+			if (!(r_ptr->flags7 & RF7_NO_DEATH)) {
+				msg_print_near_monster(c_ptr->m_idx, "appears more powerful!");
+				for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
 					if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
 					if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
 
 					if (m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side) m_ptr->blow[i].d_dice++;
 					else if (m_ptr->blow[i].d_side > 0 && m_ptr->blow[i].d_dice > 0) m_ptr->blow[i].d_side++;
-			}
+				}
 
-			if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac;
+				if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac;
 
-			m_ptr->ac += 5;
+				m_ptr->ac += 5;
 
-			if (m_ptr->maxhp < m_ptr->org_maxhp) {
+				if (m_ptr->maxhp < m_ptr->org_maxhp) {
 					m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
 					m_ptr->maxhp = m_ptr->org_maxhp;
-			}
+				}
 
-			m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
-			m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
+				m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
+				m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
+			}
 
 			dam = 0;
 			quiet = TRUE;
@@ -7484,31 +7491,31 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Ruination! (now we're talking) */
 		case GF_RUINATION:
-			if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_print_near_monster(c_ptr->m_idx, "is unaffected");
+			if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags7 & RF7_NO_DEATH)) {
+				msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 			} else {
 				msg_print_near_monster(c_ptr->m_idx, "appears less powerful.");
 				for (i = 0; i < 4; i++) {
-						if ((m_ptr->blow[i].d_dice > 1) && (m_ptr->blow[i].org_d_dice - m_ptr->blow[i].d_dice < 3)) {
-								m_ptr->blow[i].d_dice -= 1;
-						}
+					if ((m_ptr->blow[i].d_dice > 1) && (m_ptr->blow[i].org_d_dice - m_ptr->blow[i].d_dice < 3)) {
+						m_ptr->blow[i].d_dice -= 1;
+					}
 					else if ((m_ptr->blow[i].d_side > 1) && (m_ptr->blow[i].org_d_side - m_ptr->blow[i].d_side < 3)) {
-							m_ptr->blow[i].d_side -= 1;
+						m_ptr->blow[i].d_side -= 1;
 					}
 				}
 
 				if ((m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2) && (m_ptr->org_ac - m_ptr->ac < 30)) {
-						if (m_ptr->ac) m_ptr->ac -= 1;
-						if (m_ptr->ac) m_ptr->ac -= 1;
-						if (m_ptr->ac) m_ptr->ac -= 1;
+					if (m_ptr->ac) m_ptr->ac -= 1;
+					if (m_ptr->ac) m_ptr->ac -= 1;
+					if (m_ptr->ac) m_ptr->ac -= 1;
 				}
 
 				if ((m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2) && (m_ptr->org_maxhp - m_ptr->maxhp < 20)) {
-						if (m_ptr->hp > 50) m_ptr->hp -= 10;
-						if (m_ptr->hp > 30) m_ptr->hp -= 6;
-						if (m_ptr->hp > 10) m_ptr->hp -= 3;
-						if (m_ptr->hp > 1) m_ptr->hp -= 1;
-						if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
+					if (m_ptr->hp > 50) m_ptr->hp -= 10;
+					if (m_ptr->hp > 30) m_ptr->hp -= 6;
+					if (m_ptr->hp > 10) m_ptr->hp -= 3;
+					if (m_ptr->hp > 1) m_ptr->hp -= 1;
+					if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
 				}
 			}
 			dam = 0;
@@ -7517,7 +7524,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Give experience! (dam -> +levels) */
 		case GF_EXP:
-			if (m_ptr->level < MONSTER_LEVEL_MAX) {
+			if (!(r_ptr->flags7 & RF7_NO_DEATH) && m_ptr->level < MONSTER_LEVEL_MAX) {
 				msg_print_near_monster(c_ptr->m_idx, "appears more experienced");
 				if (dam < 1) dam = 1;
 				m_ptr->exp = MONSTER_EXP(m_ptr->level + dam);
