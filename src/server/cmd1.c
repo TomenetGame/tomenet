@@ -1641,6 +1641,20 @@ void carry(int Ind, int pickup, int confirm) {
 			return;
 		}
 
+		/* cannot carry the same questor twice */
+		if (o_ptr->questor) {
+			int i;
+			object_type *qo_ptr;
+
+			for (i = 0; i < INVEN_PACK; i++) {
+				qo_ptr = &p_ptr->inventory[i];
+				if (!qo_ptr->k_idx || !qo_ptr->questor) continue;
+				if (qo_ptr->quest != o_ptr->quest || qo_ptr->questor_idx != o_ptr->questor_idx) continue;
+				msg_print(Ind, "\377yYou cannot carry more than one object of this type!");
+				return;
+			}
+		}
+
 #ifdef NEWBIES_CANT_GRAB_IN_BREE
 		/* Avoid people picking up things that they cannot drop again? */
 		if (in_bree(wpos) &&
