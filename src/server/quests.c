@@ -1168,7 +1168,8 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 #if QDEBUG > 1
 		s_printf("Erased one at %d.\n", j);
 #endif
-		o_list[j].questor = o_list[j].quest = 0; //prevent questitem_d() check from triggering when deleting it!
+		o_list[j].questor = o_list[j].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
+		q_info[q_idx].objects_registered--; //..and count down manually
 		delete_object_idx(j, TRUE);
 	}
 
@@ -1197,7 +1198,8 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 #if QDEBUG > 1
 			s_printf("QUEST_OBJECT: player '%s'\n", p_ptr->name);
 #endif
-			o_ptr->questor = o_ptr->quest = 0; //prevent questitem_d() check from triggering when deleting it!
+			o_ptr->questor = o_ptr->quest = 0; //prevent questitem_d() check from triggering when deleting it!..
+			q_info[q_idx].objects_registered--; //..and count down manually
 			//questitem_d(o_ptr, o_ptr->number);
 			inven_item_increase(j, i, -99);
 			inven_item_describe(j, i);
@@ -1256,6 +1258,7 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 				s_printf("QUEST_OBJECT_ERASE: savegame '%s'\n", p_ptr->name);
 				o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
 				o_ptr->questor = o_ptr->quest = 0; //paranoia, just to make sure to prevent questitem_d() check from triggering when deleting it!
+				q_info[q_idx].objects_registered--; //..and count down manually
 				/* write savegame back */
 				save_player(NumPlayers);
 				continue;
@@ -1275,7 +1278,7 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 	NumPlayers--;
 
 #if QDEBUG > 1
-	s_printf("OBJECT_QUEST_ERASE: done.\n");
+	s_printf("OBJECT_QUEST_ERASE: done. (registered: %d)\n", q_info[q_idx].objects_registered);
 #endif
 }
 
@@ -1298,6 +1301,45 @@ static void quest_respawn_questor(int q_idx, int questor_idx) {
 		break;
 	default: ;
 		//TODO: other questor-types
+		/* discard */
+	}
+}
+
+/* Helper function for quest_terminate(): Is a questor still at the original spawning location?
+   If the questor has (been) moved, mark as 'tainted'! */
+static void quest_verify_questor_location(int q_idx, int questor_idx) {
+	quest_info *q_ptr = &q_info[q_idx];
+	qi_questor *q_questor;
+	cave_type **zcave, *c_ptr;
+
+	/* data reread from q_info[] */
+	struct worldpos wpos;
+
+	q_questor = &q_ptr->questor[questor_idx];
+
+	/* get quest information */
+	wpos.wx = q_questor->current_wpos.wx;
+	wpos.wy = q_questor->current_wpos.wy;
+	wpos.wz = q_questor->current_wpos.wz;
+
+	/* Allocate & generate cave */
+	if (!(zcave = getcave(&wpos))) {
+		//dealloc_dungeon_level(&wpos);
+		alloc_dungeon_level(&wpos);
+		generate_cave(&wpos, NULL);
+		zcave = getcave(&wpos);
+	}
+	c_ptr = &zcave[q_questor->current_y][q_questor->current_x];
+
+	/* unmake quest */
+	switch (q_questor->type) {
+	case QI_QUESTOR_NPC:
+		if (c_ptr->m_idx != q_questor->mo_idx) q_questor->tainted = TRUE;
+		break;
+	case QI_QUESTOR_ITEM_PICKUP:
+		if (c_ptr->o_idx != q_questor->mo_idx) q_questor->tainted = TRUE;
+		break;
+	default: ;
 		/* discard */
 	}
 }
@@ -1354,6 +1396,11 @@ static void quest_despawn_questor(int q_idx, int questor_idx) {
 #endif
 				fail = TRUE;
 			}
+		} else if (!m_idx) {
+#if QDEBUG > 1
+			s_printf(" ..failed: No monster there.\n");
+#endif
+			fail = TRUE;
 		} else {
 #if QDEBUG > 1
 			s_printf(" ..failed: Monster has different idx than the questor.\n");
@@ -1385,12 +1432,19 @@ static void quest_despawn_questor(int q_idx, int questor_idx) {
 #if QDEBUG > 1
 				s_printf(" ..ok.\n");
 #endif
+				o_list[o_idx].questor = o_list[o_idx].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
+				q_info[q_idx].objects_registered--; //..and count down manually
 				delete_object_idx(c_ptr->o_idx, TRUE);
 			} else
 #if QDEBUG > 1
 				s_printf(" ..failed: Object is not a questor or has a different quest idx.\n");
 #endif
 				fail = TRUE;
+		} else if (!o_idx) {
+#if QDEBUG > 1
+			s_printf(" ..failed: No object there.\n");
+#endif
+			fail = TRUE;
 		} else {
 #if QDEBUG > 1
 			s_printf(" ..failed: Object has different idx than the questor.\n");
@@ -1400,14 +1454,16 @@ static void quest_despawn_questor(int q_idx, int questor_idx) {
 #if 0 /* done below now, for all types of quests, and includes quest items */
 		/* scan the entire object list to catch the questor */
 		if (fail)  {
-#if QDEBUG > 1
+ #if QDEBUG > 1
 			s_printf(" Scanning entire object list..\n");
-#endif
+ #endif
 			for (j = 0; j < o_max; j++) {
 				if (!o_list[j].questor) continue;
 				if (o_list[j].quest != q_idx + 1) continue;
 				if (o_list[j].questor_idx != i) continue;
 				s_printf(" found it at %d!\n", j);
+				o_list[j].questor = o_list[j].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
+				q_info[q_idx].objects_registered--; //..and count down manually
 				delete_object_idx(j, TRUE);
 				//:-p break;
 			}
@@ -1584,7 +1640,13 @@ static void quest_terminate(int pInd, int q_idx, struct worldpos *wpos) {
 
 		/* check for tainted questors and respawn them, aka soft reset ^^ */
 		for (i = 0; i < q_ptr->questors; i++) {
+			/* extra check to mark as tainted if (been) moved away from original spawn loc */
+			quest_verify_questor_location(q_idx, i);
+
 			if (q_ptr->questor[i].tainted) {
+#if QDEBUG > 1
+				s_printf("QUEST_TERMINATE (individual): Trying to de+respawn tainted questor %d.\n", i);
+#endif
 				quest_despawn_questor(q_idx, i);
 				/* Note: not respawn, but spawn (complete re-init) */
 				if (!quest_spawn_questor(q_idx, i)) {
@@ -5272,6 +5334,8 @@ void quest_handle_disabled_on_startup() {
 				s_printf(" o_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor[j].mo_idx, k, questor);
 				if (k == i && questor) {
 					s_printf("..ok.\n");
+					o_list[q_ptr->questor[j].mo_idx].questor = o_list[q_ptr->questor[j].mo_idx].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
+					q_ptr->objects_registered--; //..and count down manually
 					delete_object_idx(q_ptr->questor[j].mo_idx, TRUE);
 				} else s_printf("..failed: Questor does not exist.\n");
 				break;
