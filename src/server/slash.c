@@ -1719,6 +1719,33 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			return;
 		}
+		else if (prefix(message, "/dealer")) { /* hand own card stack to someone else, making him the "dealer" */
+			player_type *q_ptr;
+
+			if (!tk) {
+				msg_print(Ind, "\377oUsage: /dealer <character name>");
+				return;
+			}
+			if (!p_ptr->cards_diamonds && !p_ptr->cards_hearts && !p_ptr->cards_spades && !p_ptr->cards_clubs) {
+				msg_print(Ind, "\377wYou are out of cards! You must /shuffle a new deck of cards first.");
+				return;
+			}
+			if (!(i = name_lookup_loose(Ind, message3, FALSE, FALSE))) return;
+
+			q_ptr = Players[i];
+			msg_format(Ind, "\377%cYou hand your stack of cards over to %s.", COLOUR_GAMBLE, q_ptr->name);
+			msg_format_near(Ind, "\377%c%s hands his stack of cards over to %s.", COLOUR_GAMBLE, p_ptr->name, q_ptr->name);
+
+			q_ptr->cards_diamonds = p_ptr->cards_diamonds;
+			q_ptr->cards_hearts = p_ptr->cards_hearts;
+			q_ptr->cards_spades = p_ptr->cards_spades;
+			q_ptr->cards_clubs = p_ptr->cards_clubs;
+			p_ptr->cards_diamonds = 0x0;
+			p_ptr->cards_hearts = 0x0;
+			p_ptr->cards_spades = 0x0;
+			p_ptr->cards_clubs = 0x0;
+			return;
+		}
                 /* An alternative to dicing :) -the_sandman */
                 else if (prefix(message, "/deal")) {
 #if 0 /* no support for shuffling? */
