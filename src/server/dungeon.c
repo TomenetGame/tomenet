@@ -3789,7 +3789,9 @@ static bool process_player_end_aux(int Ind)
 					if (!rand_int(3)) destroy = TRUE;
 				}
 				msg_format(Ind, "You are hit by freezing winds for \377o%d\377w damage.", dam);
+				bypass_invuln = FALSE; /* Disruption shield protects from this type of damage */
 				take_hit(Ind, dam, "freezing winds", 0);
+				bypass_invuln = TRUE;
 				if (destroy) inven_damage(Ind, set_cold_destroy, 1);
 			}
 #endif
