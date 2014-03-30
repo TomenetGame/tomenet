@@ -1842,8 +1842,13 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 			/* deal it */
-			msg_format(Ind, "\377%cYou deal the %s of %s", COLOUR_GAMBLE, value, flower);
-			msg_format_near(Ind, "\377%c%s deals the %s of %s", COLOUR_GAMBLE, p_ptr->name, value, flower);
+			if (i < 13) {
+				msg_format(Ind, "\377%cYou deal the %s of %s", COLOUR_GAMBLE, value, flower);
+				msg_format_near(Ind, "\377%c%s deals the %s of %s", COLOUR_GAMBLE, p_ptr->name, value, flower);
+			} else {
+				msg_format(Ind, "\377%cYou deal a %s", COLOUR_GAMBLE, value);
+				msg_format_near(Ind, "\377%c%s deals a %s", COLOUR_GAMBLE, p_ptr->name, value);
+			}
 
 			if (!p_ptr->cards_diamonds && !p_ptr->cards_hearts && !p_ptr->cards_spades && !p_ptr->cards_clubs) {
 				msg_format(Ind, "\377%cThat was the final card of your stack of cards.", COLOUR_GAMBLE);
