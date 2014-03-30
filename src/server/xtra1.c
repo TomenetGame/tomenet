@@ -5095,17 +5095,42 @@ void calc_boni(int Ind) {
 	if (p_ptr->cumber_armor) p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 4);
 	else p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 7);
 
-	p_ptr->redraw |= (PR_SPEED|PR_EXTRA) ;
+	p_ptr->redraw |= (PR_SPEED | PR_EXTRA) ;
 
-	if (p_ptr->mode & MODE_HARD && p_ptr->pspeed > 110) {
-		int speed = p_ptr->pspeed - 110;
-		speed /= 2;
-		p_ptr->pspeed = speed + 110;
+	/* Hard mode */
+	if ((p_ptr->mode & MODE_HARD)) {
+		if (p_ptr->pspeed > 110) {
+			int speed = p_ptr->pspeed - 110;
+			speed = (speed + 1) / 2;
+			p_ptr->pspeed = speed + 110;
+		}
+		if (p_ptr->num_blow > 1) p_ptr->num_blow--;
 	}
 
+	/* PvP mode */
+	if ((p_ptr->mode & MODE_PVP)) {
+		/* don't reduce +speed bonus from sneakiness skill */
+		if (p_ptr->pspeed > 110) {
+			int sneak = get_skill_scale(p_ptr, SKILL_SNEAKINESS, 7), speed = p_ptr->pspeed - 110 - sneak;
+			speed = (speed + 1) / 2;
+			p_ptr->pspeed = speed + 110 + sneak;
+		}
 
-	/* Hell mode is HARD */
-	if ((p_ptr->mode & MODE_HARD) && (p_ptr->num_blow > 1)) p_ptr->num_blow--;
+		p_ptr->to_d = (p_ptr->to_d + 1) / 2;
+		p_ptr->dis_to_d = (p_ptr->dis_to_d + 1) / 2;
+
+		p_ptr->to_h = (p_ptr->to_h + 1) / 2;
+		p_ptr->dis_to_h = (p_ptr->dis_to_h + 1) / 2;
+
+#if 0
+		p_ptr->to_a = (p_ptr->to_a + 1) / 2;
+		p_ptr->dis_to_a = (p_ptr->dis_to_a + 1) / 2;
+#endif
+
+		p_ptr->xtra_crit = (p_ptr->xtra_crit + 2) / 3;
+
+		/* extra_blows, extra_might, extra_shots */
+	}
 
 	/* A perma_cursed weapon stays even in weapon-less body form, reduce blows for that: */
 	if ((p_ptr->inventory[INVEN_WIELD].k_idx ||
@@ -5673,11 +5698,11 @@ void calc_boni(int Ind) {
 	i = weight_limit(Ind);
 
 	/* XXX XXX XXX Apply "encumbrance" from weight */
-	if (w > i/2) {
+	if (w > i / 2) {
 		/* protect pspeed from uberflow O_o */
 //		if (w > 61500) p_ptr->pspeed = 10; /* roughly ;-p */
 		if (w > 70000) p_ptr->pspeed = 10; /* roughly ;-p */
-		else p_ptr->pspeed -= ((w - (i/2)) / (i / 10));
+		else p_ptr->pspeed -= ((w - (i / 2)) / (i / 10));
 	}
 
 	/* Display the speed (if needed) */
