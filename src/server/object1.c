@@ -2504,6 +2504,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	/* raw name only? */
 	if ((mode & 256)) return;
 
+	/* Quest item (retrieval item, not questor) */
+	if (o_ptr->quest && !o_ptr->questor) t = object_desc_str(t, " (Q)");
+
 	/* Sigil - Perhaps add colour for the '&' in the future. */
 	if (o_ptr->sigil) {
 #if 0 /* colour the '&' ? -- nope, because currently not possible to do this well: \
@@ -2522,20 +2525,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;
-#endif
 
-		t = object_desc_chr(t, ' ');
-		t = object_desc_chr(t, '<');
-#if 0 /* see above */
-		t = object_desc_chr(t, '\377');
-		t = object_desc_chr(t, 'B');
-#endif
-		t = object_desc_chr(t, '&');
-#if 0 /* see above */
-		t = object_desc_chr(t, '\377');
+		t = object_desc_str(t, " <\377B&\377");
 		t = object_desc_chr(t, color_attr_to_char(attr));
-#endif
 		t = object_desc_chr(t, '>');
+#else
+		t = object_desc_str(t, " <&>");
+#endif
 	}
 
 	/* Print level and owning */
