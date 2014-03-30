@@ -3868,9 +3868,19 @@ static bool process_player_end_aux(int Ind)
 				/* Regeneration takes more food */
 				if (p_ptr->tim_regen) i += p_ptr->tim_regen_pow / 10;
 
+				j = 0;
+
+				/* Mimics need more food if sustaining heavy forms */
+				if (p_ptr->body_monster && r_info[p_ptr->body_monster].weight > 180)
+					j = 15 - 7500 / (r_info[p_ptr->body_monster].weight + 320);//180:0, 260:2, 500:~5, 1000:~9, 5000:14, 7270:15
+
 				/* Draconian and Half-Troll take more food */
 				if (p_ptr->prace == RACE_DRACONIAN
-				    || p_ptr->prace == RACE_HALF_TROLL) i += 15;
+				    || p_ptr->prace == RACE_HALF_TROLL) j = 15;
+
+				/* Use either mimic form induced food consumption increase,
+				   or intrinsic one, depending on which is higher. */
+				i += j;
 
 				/* Vampires consume food very quickly,
 				   but old vampires don't need food frequently */
