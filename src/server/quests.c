@@ -1451,26 +1451,26 @@ static void quest_despawn_questor(int q_idx, int questor_idx) {
 #endif
 			fail = TRUE;
 		}
-#if 0 /* done below now, for all types of quests, and includes quest items */
 		/* scan the entire object list to catch the questor */
 		if (fail)  {
- #if QDEBUG > 1
+#if QDEBUG > 1
 			s_printf(" Scanning entire object list..\n");
- #endif
+#endif
 			for (j = 0; j < o_max; j++) {
 				if (!o_list[j].questor) continue;
 				if (o_list[j].quest != q_idx + 1) continue;
-				if (o_list[j].questor_idx != i) continue;
+				if (o_list[j].questor_idx != questor_idx) continue;
 				s_printf(" found it at %d!\n", j);
 				o_list[j].questor = o_list[j].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
 				q_info[q_idx].objects_registered--; //..and count down manually
 				delete_object_idx(j, TRUE);
 				//:-p break;
 			}
+#if 0 /* keep quest items in inventory. And questors are now unique and undroppable, so n.p.! */
 			/* last resort, like for trueart/guildkey erasure, scan everyone's inventory -_- */
 			quest_erase_object_questor(q_idx, i);
-		}
 #endif
+		}
 		break;
 	default: ;
 		/* discard */
@@ -1496,8 +1496,10 @@ void quest_deactivate(int q_idx) {
 		if (q_ptr->questor[i].static_floor) new_players_on_depth(&wpos, 0, FALSE);
 	}
 
+#if 0 /* no, allow players to keep the quest in their quest list */
 	/* Erase all object questors and quest objects (duh) */
 	quest_erase_objects(q_idx, FALSE, 0);
+#endif
 
 	/* remove quest dungeons */
 	quest_remove_dungeons(q_idx);
