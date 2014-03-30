@@ -64,7 +64,7 @@ V:1.0.0
 # (optional) kV:stage:goal:r_char:r_attr... (list of ':r_char:r_attr' pairs, up to 5, separated by colons)
 
 # goals to collect specific items:
-# (optional) r:stage:goal:min value:number
+# (optional) r:stage:goal:min value:number:allow owned items?
 # (optional) rN:stage:goal:partial name... (list of partial names, up to 5, separated by colons)
 # (optional) rI:stage:goal:tval:sval... (list of ':tval:sval' pairs, up to 10, separated by colons)
 # (optional) rV:stage:goal:pval:bpval:attr:name1:name2:name2b... (list of 6-tuples like this, up to 5, separated by colons)
@@ -188,7 +188,7 @@ W:0:1:-:0:Slay two dogs or wolves, they deserve it. Let me know when you're done
 W:0:1:-:0:..oh and also, maybe this bat comes in handy. DON'T LOSE IT!
 B:1:0:\:u:40:0:& Bat~
 Bl:1:0:0:0:0:0:0:0:0:0:0:0:-:0:0
-r:1:3:0:1
+r:1:3:0:1:0
 rI:1:3:127:2
 #rV:1:3:-9999:-9999:-:-1:-1:-1
 k:1:1:0:0:2
@@ -204,7 +204,7 @@ R:3:80:38:0:0:0:0:0:0:0:0:0:2:2:0
 Y:0:0:-:retrieve:-:2
 W:0:2:-:0:Dude where's muh potions.. I had two red potions I'm sure.
 #W:0:2:-:0:Anyway, if you find them, just bring them to the general store's keeper, ok?
-r:2:1:0:2
+r:2:1:0:2:0
 #note: since tval/sval aren't defined here, any other red item would work too (rings!) ;)
 rV:2:1:-9999:-9999:r:-1:-1:-1:-9999:-9999:R:-1:-1:-1:
 #M:2:2:32:32:0:0:105:40:0:-:0:0

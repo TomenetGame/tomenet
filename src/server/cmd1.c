@@ -2348,7 +2348,9 @@ void carry(int Ind, int pickup, int confirm) {
 				}
 
 				/* Carry the item */
+				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
 				slot = inven_carry(Ind, o_ptr);
+				o_ptr->quest_credited = FALSE; //unhack.
 
 				/* Get the item again */
 				o_ptr = &(p_ptr->inventory[slot]);

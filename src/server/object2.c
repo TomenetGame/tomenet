@@ -8284,7 +8284,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			/* Check whether this item was requested by an item-retrieval quest.
 			   Note about owner check: inven_carry() is also called by carry(),
 			   resulting in double crediting otherwise! */
-			if (p_ptr->quest_any_r_within_target && !o_ptr->owner) quest_check_goal_r(Ind, o_ptr);
+			if (p_ptr->quest_any_r_within_target && !o_ptr->quest_credited) quest_check_goal_r(Ind, o_ptr);
 
 			/* Combine the items */
 			object_absorb(Ind, j_ptr, o_ptr);
@@ -8397,7 +8397,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	/* Check whether this item was requested by an item-retrieval quest
 	   Note about owner check: inven_carry() is also called by carry(),
 	   resulting in double crediting otherwise! */
-	if (p_ptr->quest_any_r_within_target && !o_ptr->owner) quest_check_goal_r(Ind, o_ptr);
+	if (p_ptr->quest_any_r_within_target && !o_ptr->quest_credited) quest_check_goal_r(Ind, o_ptr);
 
 	if (!o_ptr->owner && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;

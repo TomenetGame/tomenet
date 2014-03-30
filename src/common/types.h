@@ -782,6 +782,7 @@ struct object_type {
 	byte questor_invincible;	/* invincible to players/monsters? */
 	s16b quest, quest_stage, questor_idx;	/* It's an item for a quest (either the questor item or an item that needs to be retrieved for a quest goal).
 		//IMPORTAAAAAAANT:	   Hack: 0 = no quest; n = quest + 1. So we don't have to initialise all items to -1 here :-p */
+	bool quest_credited;		/* ugly hack for inven_carry() usage within carry(), to avoid double-crediting */
 
 	u16b note;			/* Inscription index */
 	char note_utag;			/* Added for making pseudo-id overwrite unique loot tags */

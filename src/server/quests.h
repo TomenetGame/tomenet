@@ -222,6 +222,8 @@ typedef struct qi_retrieve {
 #if 0 /* too much, make it simpler for now */
 	bool player_picks;				/* instead of picking one subgoal randomly, let the player decide which he wants to get */
 #endif
+	bool allow_owned;				/* give credit for items that are already owned when player picks them up? (default: no) */
+
 	cptr name[5];					/* partial name that can match */
 	s16b otval[10], osval[10];			/* retrieve certain item(s) (tval or sval == -1 -> any tval or sval, 0 = not checked) */
 	s16b opval[5], obpval[5];			/* umm, let's say 9999 = not checked :-p, -9999 = any */

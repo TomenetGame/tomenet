@@ -8546,11 +8546,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		if (buf[0] == 'r') {
 			/* now we have 4 sub-types of 'r' lines too =P */
 			if (buf[1] == ':') { /* init */
-				int minval, num;
+				int minval, num, owok;
 
 				s = buf + 2;
-				if (4 != sscanf(s, "%d:%d:%d:%d",
-				    &stage, &goal, &minval, &num))
+				if (5 != sscanf(s, "%d:%d:%d:%d:%d",
+				    &stage, &goal, &minval, &num, &owok))
 					return (1);
 
 				if (stage < 0 || stage >= QI_STAGES) return 1;
@@ -8558,6 +8558,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_ret = init_quest_retrieve(error_idx, stage, goal);
 				q_ret->ovalue = minval;
 				q_ret->number = num;
+				q_ret->allow_owned = (owok != 0);
 				continue;
 			} else if (buf[1] == 'I') { /* specify race-indices */
 				int tval[10], sval[10];
