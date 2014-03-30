@@ -2583,6 +2583,9 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 		if (p_ptr->quest_idx[j] == q_idx) break;
 	if (j == MAX_CONCURRENT_QUESTS) return j; //paranoia, shouldn't happen
 
+	/* clear any pending RIDs */
+	if (p_ptr->request_id >= RID_QUEST && p_ptr->request_id <= RID_QUEST_ACQUIRE + MAX_Q_IDX - 1) p_ptr->request_id = 0;
+
 	/* play automatic narration if any */
 	if (!quiet) {
 		/* pre-scan narration if any line at all exists and passes the flag check */
@@ -2733,6 +2736,9 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 				if (p_ptr->quest_idx[j] == q_idx) break;
 			if (j == MAX_CONCURRENT_QUESTS) continue;
 			p_ptr->quest_eligible = j + 1;
+
+			/* clear any pending RIDs */
+			if (p_ptr->request_id >= RID_QUEST && p_ptr->request_id <= RID_QUEST_ACQUIRE + MAX_Q_IDX - 1) p_ptr->request_id = 0;
 
 			/* play automatic narration if any */
 			if (!quiet) {
