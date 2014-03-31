@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	28
+#define SF_VERSION_PATCH	29
 #define SF_VERSION_EXTRA	0
 
 /* For quests savefile purpose only */
@@ -548,12 +548,12 @@
 #define MAX_R_IDX	1152	/* Max size for "r_info[]" */
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
-#define MAX_T_IDX	256 /* Max size for "t_info[]" */
-#define MAX_OW_IDX	96 /* Max size for "ow_info[]" */
-#define MAX_ST_IDX	96 /* Max size for "st_info[]" */
-#define MAX_BA_IDX	96 /* Max size for "ba_info[]" */
-#define MAX_D_IDX	64 /* Max size for "d_info[]" */
-#define MAX_Q_IDX	50 /* Max size for "q_info[]" */
+#define MAX_T_IDX	256	/* Max size for "t_info[]" */
+#define MAX_OW_IDX	96	/* Max size for "ow_info[]" */
+#define MAX_ST_IDX	96	/* Max size for "st_info[]" */
+#define MAX_BA_IDX	96	/* Max size for "ba_info[]" */
+#define MAX_D_IDX	64	/* Max size for "d_info[]" */
+#define MAX_Q_IDX	100	/* Max size for "q_info[]" */
 
 /* Max ego base type restrictions */
 #define MAX_EGO_BASETYPES	10
@@ -7935,7 +7935,7 @@ extern int PlayerUID;
 #endif
 #define RID_GUILD_RENAME	4
 #define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
-#define RID_QUEST_ACQUIRE	150	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
+#define RID_QUEST_ACQUIRE	(RID_QUEST + MAX_Q_IDX)	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 
 /* House type flags */
 #define HF_NONE		0x0000

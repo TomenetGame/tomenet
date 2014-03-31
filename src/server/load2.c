@@ -2779,7 +2779,7 @@ static errr rd_savefile_new_aux(int Ind) {
 		}
 
 		/* remember quests we completed */
-		for (i = 0; i < MAX_Q_IDX; i++) {
+		for (i = 0; i < (older_than(4, 5, 29) ? 50 : MAX_Q_IDX); i++) {
 			rd_s16b(&p_ptr->quest_done[i]);
 			if (!older_than(4, 5, 22)) rd_s16b(&p_ptr->quest_cooldown[i]);
 		}
