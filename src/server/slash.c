@@ -8481,8 +8481,13 @@ void do_slash_cmd(int Ind, char *message)
 							if (q_ptr->stage[i].questor_hostility[k]) j += sizeof(qi_questor_hostility);
 							if (q_ptr->stage[i].questor_act[k]) j += sizeof(qi_questor_act);
 						}
+						for (l = 0; l < QI_QUESTORS; l++) {
+							j += sizeof(cptr*) * q_ptr->stage[i].talk_lines[l];//talk[]
+							j += sizeof(u16b*) * q_ptr->stage[i].talk_lines[l];//talk_flags[]
+						}
 						for (k = 0; k < QI_TALK_LINES; k++) {
 							for (l = 0; l < q_ptr->questors; l++) {
+								if (q_ptr->stage[i].talk_lines[l] <= k) continue;
 								if (q_ptr->stage[i].talk[l][k]) j+= strlen(q_ptr->stage[i].talk[l][k]) + 1;
 							}
 							if (q_ptr->stage[i].narration[k]) j+= strlen(q_ptr->stage[i].narration[k]) + 1;
@@ -8547,8 +8552,13 @@ void do_slash_cmd(int Ind, char *message)
 							if (q_ptr->stage[i].questor_hostility[k]) j += sizeof(qi_questor_hostility);
 							if (q_ptr->stage[i].questor_act[k]) j += sizeof(qi_questor_act);
 						}
+						for (l = 0; l < QI_QUESTORS; l++) {
+							j += sizeof(cptr*) * q_ptr->stage[i].talk_lines[l];//talk[]
+							j += sizeof(u16b*) * q_ptr->stage[i].talk_lines[l];//talk_flags[]
+						}
 						for (k = 0; k < QI_TALK_LINES; k++) {
 							for (l = 0; l < q_ptr->questors; l++) {
+								if (q_ptr->stage[i].talk_lines[l] <= k) continue;
 								if (q_ptr->stage[i].talk[l][k]) j+= strlen(q_ptr->stage[i].talk[l][k]) + 1;
 							}
 							if (q_ptr->stage[i].narration[k]) j+= strlen(q_ptr->stage[i].narration[k]) + 1;

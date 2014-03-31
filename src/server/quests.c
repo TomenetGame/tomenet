@@ -3352,7 +3352,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	if (!repeat) {
 		/* pre-scan talk if any line at all passes the flag check */
 		anything = FALSE;
-		for (k = 0; k < QI_TALK_LINES; k++) {
+		for (k = 0; k < q_stage->talk_lines[questor_idx]; k++) {
 			if (q_stage->talk[questor_idx][k] &&
 			    ((q_stage->talk_flags[questor_idx][k] & quest_get_flags(Ind, q_idx)) == q_stage->talk_flags[questor_idx][k])) {
 				anything = TRUE;
@@ -3367,7 +3367,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 				msg_format(Ind, "\374\377uYou examine <\377B%s\377u>:", q_ptr->questor[questor_idx].name);
 			else
 				msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
-			for (i = 0; i < QI_TALK_LINES; i++) {
+			for (i = 0; i < q_stage->talk_lines[questor_idx]; i++) {
 				if (!q_stage->talk[questor_idx][i]) break;
 				if ((q_stage->talk_flags[questor_idx][k] & quest_get_flags(Ind, q_idx)) != q_stage->talk_flags[questor_idx][k]) continue;
 

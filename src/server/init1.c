@@ -8204,6 +8204,10 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			while ((cc = strstr(tmpbuf, "]]"))) { *cc = '\377'; *(cc + 1) = '-'; }
 #endif
 
+			q_stage->talk[questor] = (cptr*)realloc(q_stage->talk[questor], sizeof(cptr*) * (lc + 1));
+			q_stage->talk_flags[questor] = (u16b*)realloc(q_stage->talk_flags[questor], sizeof(u16b*) * (lc + 1));
+			q_stage->talk_flags[questor][lc] = 0x0000;//init newly realloc'ed mem
+
 			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
 			strcpy(c, tmpbuf);
 			q_stage->talk[questor][lc] = c;

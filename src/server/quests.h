@@ -424,8 +424,8 @@ typedef struct qi_stage {
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
 	bool talk_examine[QI_QUESTORS];			/* questor doesn't "talk" but rather the text claims that "you are examining <questor>" (for item questors or "dead" questors) */
 	byte talk_lines[QI_QUESTORS];
-	cptr talk[QI_QUESTORS][QI_TALK_LINES]; 		/* n conversations a 10 lines a 79 characters */
-	u16b talk_flags[QI_QUESTORS][QI_TALK_LINES];	/* required flags configuration for a convo line to get displayed  */
+	cptr *talk[QI_QUESTORS];			/* n conversations a 10 lines a 79 characters */
+	u16b *talk_flags[QI_QUESTORS];			/* required flags configuration for a convo line to get displayed  */
 
 	byte narration_lines;
 	cptr narration[QI_TALK_LINES];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
