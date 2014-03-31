@@ -185,7 +185,6 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
 void msg_gained_abilities(int Ind, int old_value, int i) {
 	player_type *p_ptr = Players[Ind];
 	int new_value = get_skill_scale(p_ptr, i, 500);
-	int m;
 
 //	int as = get_archery_skill(p_ptr);
 //	int ws = get_weaponmastery_skill(p_ptr);
@@ -294,7 +293,6 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		/* automatically upgrade currently taken stance power */
 		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
-			m = 0;
 			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
 			if (old_value < 150 && new_value >= 150) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
@@ -315,7 +313,6 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 			break;
 		case CLASS_MIMIC:
-			m = 11;
 			if (old_value < 100 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
 			if (old_value < 200 && new_value >= 200) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
@@ -336,7 +333,6 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 			break;
 		case CLASS_PALADIN:
-			m = 7;
 			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
 			if (old_value < 200 && new_value >= 200) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
@@ -357,7 +353,6 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 			break;
 		case CLASS_RANGER:
-			m = 4;
 			if (old_value < 50 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('m' key)");
 			if (old_value < 150 && new_value >= 200) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
@@ -377,21 +372,13 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 				if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 2;
 			}
 			break;
-		default:
-			m = 20; /* (for all other classes in theory, if they could learn this skill) */
 		}
+
+		/* learn royal stances at 45+ if winner */
 		if (old_value < 450 && new_value >= 450 && p_ptr->total_winner) {
 			msg_print(Ind, "\374\377GYou learn how to enter Royal Rank combat stances."); 
 			if (p_ptr->combat_stance) p_ptr->combat_stance_power = 3;
 		}
-		if (old_value < 40 + m * 10 && new_value >= 40 + m * 10)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
-		if (old_value < 90 + m * 10 && new_value >= 90 + m * 10)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
-		if (old_value < 160 + m * 10 && new_value >= 160 + m * 10)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Spin'!");
-		if (old_value < 330 + m * 10 && new_value >= 330 + m * 10)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Berserk'!");
 		break;
 	case SKILL_ARCHERY:
 		if (old_value < 40 && new_value >= 40)

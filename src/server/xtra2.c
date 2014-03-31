@@ -4215,17 +4215,9 @@ void check_experience(int Ind) {
 #endif
 	}
 
+
 	/* those that depend on a class */
 	switch (p_ptr->pclass) {
-	case CLASS_ADVENTURER:
-		if (old_lev < 6 && p_ptr->lev >= 6)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
-		if (old_lev < 15 && p_ptr->lev >= 15)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'!");
-		/* Also update the client's 'm' menu for fighting techniques */
-		calc_techniques(Ind);
-		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
-		break;
 	case CLASS_ROGUE:
 #ifdef ENABLE_CLOAKING
 		if (old_lev < LEARN_CLOAKING_LEVEL && p_ptr->lev >= LEARN_CLOAKING_LEVEL) {
@@ -4233,23 +4225,6 @@ void check_experience(int Ind) {
 			if (!p_ptr->warning_cloak) p_ptr->warning_cloak = 2;
 		}
 #endif
-		if (old_lev < 3 && p_ptr->lev >= 3)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
-		if (old_lev < 6 && p_ptr->lev >= 6)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
-		if (old_lev < 9 && p_ptr->lev >= 9)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'");
-		if (old_lev < 12 && p_ptr->lev >= 12)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Flash bomb'");
-#ifdef ENABLE_ASSASSINATE
-		if (old_lev < 35 && p_ptr->lev >= 35)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Assasinate'");
-#endif
-		if (old_lev < 50 && p_ptr->lev >= 50 && p_ptr->total_winner)
-			msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow run'");
-		/* Also update the client's 'm' menu for fighting techniques */
-		calc_techniques(Ind);
-		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 		break;
 	case CLASS_RANGER:
 		if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn how to move through dense forests easily.");
@@ -4258,7 +4233,6 @@ void check_experience(int Ind) {
 	case CLASS_DRUID: /* Forms gained by Druids */
 		/* compare mimic_druid in defines.h */
 		if (old_lev < 5 && p_ptr->lev >= 5) {
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
 			msg_print(Ind, "\374\377GYou learn how to change into a Cave Bear (#160) and Panther (#198)");
 			msg_print(Ind, "\374\377G(Press 'm' key and choose 'use innate power' to polymorph.)");
 		}
@@ -4276,33 +4250,41 @@ void check_experience(int Ind) {
 		if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (775)");//Leviathan (#782)");
 		if (old_lev < 55 && p_ptr->lev >= 55) msg_print(Ind, "\374\377GYou learn how to change into a Horned Serpent (#1131)");
 		if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\374\377GYou learn how to change into a Firebird (#1127)");
-		calc_techniques(Ind);
-		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 		break;
 	case CLASS_SHAMAN:
 		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to see the invisible!");
 		break;
-	case CLASS_RUNEMASTER:
-		if (old_lev < 4 && p_ptr->lev >= 4)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
-		if (old_lev < 9 && p_ptr->lev >= 9)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
-		/* Also update the client's 'm' menu for fighting techniques */
-		calc_techniques(Ind);
-		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
-		break;
 	case CLASS_MINDCRAFTER:
 		if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou learn to keep hold of your sanity!");
 		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity!");
-		if (old_lev < 8 && p_ptr->lev >= 8)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt' (press 'm')");
-		if (old_lev < 12 && p_ptr->lev >= 12)
-			msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'");
-		/* Also update the client's 'm' menu for fighting techniques */
-		calc_techniques(Ind);
-		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 		break;
 	}
+
+	/* learn fighting techniques */
+	if (old_lev < mtech_lev[p_ptr->pclass][0] && p_ptr->lev >= mtech_lev[p_ptr->pclass][0])
+		msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
+	if (old_lev < mtech_lev[p_ptr->pclass][1] && p_ptr->lev >= mtech_lev[p_ptr->pclass][1])
+		msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'!");
+	if (old_lev < mtech_lev[p_ptr->pclass][3] && p_ptr->lev >= mtech_lev[p_ptr->pclass][3])
+		msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'!");
+	if (old_lev < mtech_lev[p_ptr->pclass][7] && p_ptr->lev >= mtech_lev[p_ptr->pclass][7])
+		msg_print(Ind, "\374\377GYou learn the fighting technique 'Flash bomb'!");
+	if (old_lev < mtech_lev[p_ptr->pclass][9] && p_ptr->lev >= mtech_lev[p_ptr->pclass][9])
+		msg_print(Ind, "\374\377GYou learn the fighting technique 'Spin'!");
+#ifdef ENABLE_ASSASSINATE
+	if (old_lev < mtech_lev[p_ptr->pclass][10] && p_ptr->lev >= mtech_lev[p_ptr->pclass][10])
+		msg_print(Ind, "\374\377GYou learn the fighting technique 'Assasinate'!");
+#endif
+	if (old_lev < mtech_lev[p_ptr->pclass][11] && p_ptr->lev >= mtech_lev[p_ptr->pclass][11])
+		msg_print(Ind, "\374\377GYou learn the fighting technique 'Berserk'!");
+	if (old_lev < mtech_lev[p_ptr->pclass][14] && p_ptr->lev >= mtech_lev[p_ptr->pclass][14]
+	    && p_ptr->total_winner)
+		msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow run'!");
+
+	/* update the client's 'm' menu for fighting techniques */
+	calc_techniques(Ind);
+	Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
+
 
 #ifdef ENABLE_STANCES
 	/* increase SKILL_STANCE by +1 automatically (just for show :-p) if we actually have that skill */
@@ -4310,11 +4292,7 @@ void check_experience(int Ind) {
 		p_ptr->s_info[SKILL_STANCE].value = p_ptr->lev * 1000;
 		/* Update the client */
 		Send_skill_info(Ind, SKILL_STANCE, TRUE);
-		/* Also update the client's 'm' menu for fighting techniques */
-		calc_techniques(Ind);
-		Send_skill_info(Ind, SKILL_TECHNIQUE, TRUE);
 		/* give message if we learn a new stance (compare cmd6.c! keep it synchronized */
-	        /* take care of message about fighting techniques too: */
 		msg_gained_abilities(Ind, (p_ptr-> lev - 1) * 10, SKILL_STANCE);
 	}
 #endif

@@ -146,6 +146,8 @@ extern monster_spell_type monster_spells4[32];
 extern monster_spell_type monster_spells5[32];
 extern monster_spell_type monster_spells6[32];
 
+extern byte mtech_lev[MAX_CLASS][16];
+
 /* variable.c */
 extern int teamscore[];
 extern int teams[];
