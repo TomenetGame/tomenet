@@ -8506,7 +8506,7 @@ void do_slash_cmd(int Ind, char *message)
 						for (k = 0; k < QI_TALK_LINES; k++)
 							if (q_ptr->kwreply[i].reply[k]) j+= strlen(q_ptr->kwreply[i].reply[k]) + 1;
 					}
-					msg_format(Ind, "\377oTotal allocated memory for q_info[]: %d", j);
+					msg_format(Ind, "\377oTotal allocated memory for q_info[%d]: %d", k, j);
 				}
 
 				/* display basic quests info */
@@ -8525,6 +8525,61 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				/* display extra info? */
 				//pointless.. msg_format(Ind, " \377wSize of quest_info*max_q_idx=total (real): %d*%d=\377U%d (%d)", sizeof(quest_info), max_q_idx, sizeof(quest_info) * max_q_idx, sizeof(quest_info) * MAX_Q_IDX);
+				return;
+			}
+			else if (prefix(message, "/qsize")) { /* try to calc full q_info[] mem usage - C. Blue */
+				int l, q, t, td;
+				quest_info *q_ptr;
+
+				t = td = j = 0;
+				for (q = 0; q < MAX_Q_IDX; q++) {
+					q_ptr = &q_info[q];
+
+					j = sizeof(quest_info);
+					for (i = 0; i < q_ptr->questors; i++) {
+						j += sizeof(qi_questor);
+						if (q_ptr->questor[i].q_loc.tpref) j += strlen(q_ptr->questor[i].q_loc.tpref) + 1;
+					}
+					for (i = 0; i < q_ptr->stages; i++) {
+						j += sizeof(qi_stage);
+						for (k = 0; k < QI_QUESTORS; k++) {
+							if (q_ptr->stage[i].questor_morph[k]) j += sizeof(qi_questor_morph);
+							if (q_ptr->stage[i].questor_hostility[k]) j += sizeof(qi_questor_hostility);
+							if (q_ptr->stage[i].questor_act[k]) j += sizeof(qi_questor_act);
+						}
+						for (k = 0; k < QI_TALK_LINES; k++) {
+							for (l = 0; l < q_ptr->questors; l++) {
+								if (q_ptr->stage[i].talk[l][k]) j+= strlen(q_ptr->stage[i].talk[l][k]) + 1;
+							}
+							if (q_ptr->stage[i].narration[k]) j+= strlen(q_ptr->stage[i].narration[k]) + 1;
+						}
+						for (k = 0; k < q_ptr->stage[i].rewards; k++) {
+							j += sizeof(qi_reward);
+						}
+						for (k = 0; k < q_ptr->stage[i].goals; k++) {
+							j += sizeof(qi_goal);
+							if (q_ptr->stage[i].goal[k].target_tpref) j += strlen(q_ptr->stage[i].goal[k].target_tpref) + 1;
+							if (q_ptr->stage[i].goal[k].kill) j += sizeof(qi_kill);
+							if (q_ptr->stage[i].goal[k].retrieve) j += sizeof(qi_retrieve);
+							if (q_ptr->stage[i].goal[k].deliver) j += sizeof(qi_deliver);
+						}
+					}
+					for (i = 0; i < q_ptr->keywords; i++) {
+						j += sizeof(qi_keyword);
+					}
+					for (i = 0; i < q_ptr->kwreplies; i++) {
+						j += sizeof(qi_kwreply);
+						for (k = 0; k < QI_TALK_LINES; k++)
+							if (q_ptr->kwreply[i].reply[k]) j+= strlen(q_ptr->kwreply[i].reply[k]) + 1;
+					}
+					t += j;
+					if (q_ptr->defined) {
+						td += j;
+						msg_format(Ind, "\377yTotal allocated memory for q_info[%d]: %d", q, j);
+					}
+				}
+				msg_format(Ind, "\377oTotal allocated memory for q_info[0..%d]: %d", max_q_idx - 1, td);
+				msg_format(Ind, "\377oTotal allocated memory for q_info[0..%d]: %d", MAX_Q_IDX - 1, t);
 				return;
 			}
 			/* list quest items we carry */
