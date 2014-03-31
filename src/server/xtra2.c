@@ -4264,7 +4264,9 @@ void check_experience(int Ind) {
 	if (old_lev < mtech_lev[p_ptr->pclass][0] && p_ptr->lev >= mtech_lev[p_ptr->pclass][0])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'! (press 'm')");
 	if (old_lev < mtech_lev[p_ptr->pclass][1] && p_ptr->lev >= mtech_lev[p_ptr->pclass][1])
-		msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'!");
+		msg_print(Ind, p_ptr->pclass == CLASS_MINDCRAFTER ?
+		    "\374\377GYou learn the fighting technique 'Taunt'! (press 'm')" :
+		    "\374\377GYou learn the fighting technique 'Taunt'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][3] && p_ptr->lev >= mtech_lev[p_ptr->pclass][3])
 		msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'!");
 	if (old_lev < mtech_lev[p_ptr->pclass][7] && p_ptr->lev >= mtech_lev[p_ptr->pclass][7])
