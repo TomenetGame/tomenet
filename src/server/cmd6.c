@@ -7560,13 +7560,13 @@ s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 	case 9:	if (!(p_ptr->melee_techniques & MT_SPIN)) return; /* Spin */
-		if (p_ptr->cst < 8) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 5) { msg_print(Ind, "Not enough stamina!"); return; }
 		if (p_ptr->afraid) {
 			msg_print(Ind, "You are too afraid to attack!");
 			return;
 		}
 		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return; // ?
-		p_ptr->cst -= 8;
+		p_ptr->cst -= 5;
 		un_afk_idle(Ind);
 		spin_attack(Ind);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
