@@ -952,7 +952,11 @@ void cmd_drop(void)
 {
 	int item, amt;
 
-	if (!c_get_item(&item, "Drop what? ", (USE_EQUIP | USE_INVEN))) return;
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Drop what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
 
 	/* Get an amount */
 	if (inventory[item].number > 1) {
@@ -987,7 +991,11 @@ void cmd_wield(void)
 {
 	int item;
 
-	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN)))
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
@@ -1000,7 +1008,11 @@ void cmd_wield2(void)
 {
 	int item;
 
-	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN)))
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
@@ -1013,7 +1025,11 @@ void cmd_observe(void)
 {
 	int item;
 
-	if (!c_get_item(&item, "Examine which item? ", (USE_EQUIP | USE_INVEN)))
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Examine which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
@@ -1026,7 +1042,11 @@ void cmd_take_off(void)
 {
 	int item, amt = 255;
 
-	if (!c_get_item(&item, "Takeoff which item? ", (USE_EQUIP))) return;
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Takeoff which item? ", (USE_EQUIP | USE_EXTRA))) return;
 
 	/* New in 4.4.7a, for ammunition: Can take off a certain amount - C. Blue */
 	if (inventory[item].number > 1 && verified_item
@@ -1042,7 +1062,11 @@ void cmd_take_off(void)
 void cmd_swap(void) {
 	int item;
 
-	if (!c_get_item(&item, "Swap which item? ", (USE_INVEN | USE_EQUIP | INVEN_FIRST))) return;
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Swap which item? ", (USE_INVEN | USE_EQUIP | INVEN_FIRST | USE_EXTRA))) return;
 
 	if (item < INVEN_PACK) Send_wield(item);
 	else Send_take_off(item);
@@ -1054,7 +1078,11 @@ void cmd_destroy(void)
 	int item, amt;
 	char out_val[MSG_LEN];
 
-	if (!c_get_item(&item, "Destroy what? ", (USE_EQUIP | USE_INVEN))) return;
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Destroy what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
 
 	/* Get an amount */
 	if (inventory[item].number > 1) {
@@ -1086,7 +1114,11 @@ void cmd_inscribe(void)
 	int item;
 	char buf[1024];
 
-	if (!c_get_item(&item, "Inscribe what? ", (USE_EQUIP | USE_INVEN | SPECIAL_REQ))) {
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Inscribe what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | SPECIAL_REQ))) {
 		if (item != -3) return;
 
 		/* '-3' hack: Get inscription before item (SPECIAL_REQ) */
@@ -1096,7 +1128,7 @@ void cmd_inscribe(void)
 		if (!get_string("Inscription: ", buf, 59)) return;
 
 		/* Get the item afterwards */
-		if (!c_get_item(&item, "Inscribe what? ", (USE_EQUIP | USE_INVEN))) return;
+		if (!c_get_item(&item, "Inscribe what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
 
 		Send_inscribe(item, buf);
 		return;
@@ -1113,7 +1145,11 @@ void cmd_uninscribe(void)
 {
 	int item;
 
-	if (!c_get_item(&item, "Uninscribe what? ", (USE_EQUIP | USE_INVEN)))
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Uninscribe what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
@@ -1125,8 +1161,12 @@ void cmd_uninscribe(void)
 void cmd_apply_autoins(void) {
 	int item;
 
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
 	/* Get the item */
-	if (!c_get_item(&item, "Inscribe which item? ", (USE_EQUIP | USE_INVEN))) return;
+	if (!c_get_item(&item, "Inscribe which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
 
 	apply_auto_inscriptions(item, TRUE);
 	if (c_cfg.auto_inscribe) Send_autoinscribe(item);
@@ -2837,9 +2877,12 @@ void cmd_browse(void)
 	}
 #endif
 
+	get_item_hook_find_obj_what = "Book name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
 	item_tester_hook = item_tester_browsable;
 
-	if (!c_get_item(&item, "Browse which book? ", (USE_INVEN)))
+	if (!c_get_item(&item, "Browse which book? ", (USE_INVEN | USE_EXTRA)))
 	{
 		if (item == -2) c_msg_print("You have no books that you can read.");
 		return;
@@ -4180,6 +4223,11 @@ void cmd_lagometer(void)
 void cmd_force_stack()
 {
 	int item;
-	if (!c_get_item(&item, "Forcibly stack what? ", USE_INVEN)) return;
+
+	item_tester_hook = NULL;
+	get_item_hook_find_obj_what = "Item name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	if (!c_get_item(&item, "Forcibly stack what? ", USE_INVEN | USE_EXTRA)) return;
 	Send_force_stack(item);
 }
