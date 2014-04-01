@@ -215,4 +215,19 @@ X:4:-:The Goalkeeper Bat seems very satisfied.
 R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
 
 
-#N:3:testCastle:C. Blue:Treasure Depository Breach:-1
+N:3:testCastle:C. Blue:Treasure Depository Breach:-1
+I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
+Q:1:1059:p:u:-1:-1:Guard
+L:0:0:0:63:63:0:0:150:30:0:tq_tc.txt:143:24
+W:0:0:-:0:Hold it right there! What is the password?
+Y:0:0:-:suxen:-:1
+y:0:-1:-:suxen
+yR:-:You may enter!
+Q:1:1059:p:u:-1:-1:Guard
+L:0:0:0:63:63:0:0:152:30:0:-:0:0
+W:1:0:-:0:Hold it right there! What is the password?
+Y:1:0:-:suxen:-:1
+y:1:-1:-:suxen
+yR:-:You may enter!
+J:1:0:-1:-1:-1:-1:-1:-1:-1:-1:151:28:0:0:0:0:0
+J:1:1:-1:-1:-1:-1:-1:-1:-1:-1:151:28:0:0:0:0:0
