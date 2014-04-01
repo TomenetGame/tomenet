@@ -1749,8 +1749,12 @@ void do_cmd_open(int Ind, int dir)
 		/* Get the object (if any) */
 		o_ptr = &o_list[c_ptr->o_idx];
 
+		/* hack for fluff */
+		if (c_ptr->feat == FEAT_SEALED_DOOR)
+			msg_print(Ind, "That door cannot be opened.");
+
 		/* Nothing useful */
-		if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
+		else if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 		      (c_ptr->feat <= FEAT_DOOR_TAIL)) &&
 		    !((c_ptr->feat == FEAT_HOME)) &&
 		    (o_ptr->tval != TV_CHEST))
@@ -2093,6 +2097,10 @@ void do_cmd_close(int Ind, int dir)
 			/* Message */
 			msg_print(Ind, "The door appears to be broken.");
 		}
+
+		/* hack for fluff */
+		else if (c_ptr->feat == FEAT_UNSEALED_DOOR)
+			msg_print(Ind, "That door cannot be closed.");
 
 		/* Require open door */
 		else if (c_ptr->feat != FEAT_OPEN && c_ptr->feat != FEAT_HOME_OPEN) {
