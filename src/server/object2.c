@@ -438,7 +438,9 @@ void compact_objects(int size, bool purge) {
 					/* paranoia check, after server restarted after heavy code changes or sth */
 					if (q_ptr->defined && q_ptr->questors > o_list[z].questor_idx) {
 						/* fix its index */
+#if 0
 						s_printf("QUEST_COMPACT_OBJECTS: quest %d - questor %d o_idx %d->%d\n", o_list[z].quest - 1, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
+#endif
 						q_ptr->questor[o_list[z].questor_idx].mo_idx = z;
 					} else {
 						s_printf("QUEST_COMPACT_OBJECTS: deprecated questor, quest %d - questor %d o_idx %d->%d\n", o_list[z].quest - 1, o_list[z].questor_idx, q_ptr->questor[o_list[z].questor_idx].mo_idx, z);
