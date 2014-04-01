@@ -6387,6 +6387,19 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "done.");
 				return;
 			}
+			else if (prefix(message, "/lqm")) { //load quest map
+				int xstart = p_ptr->px, ystart = p_ptr->py;
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /lqm tq_<mapname>.txt");
+					return;
+				}
+				msg_print(Ind, "Trying to load map..");
+//				process_dungeon_file(format("tq_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, 20+1, 32+34, TRUE);
+				process_dungeon_file(format("tq_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+				wpos_apply_season_daytime(&p_ptr->wpos, getcave(&p_ptr->wpos));
+				msg_print(Ind, "done.");
+				return;
+			}
 			/* check monster inventories for (nothing)s - mikaelh */
 			else if (prefix(message, "/minvcheck"))
 			{
