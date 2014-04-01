@@ -1887,9 +1887,9 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/martyr") || prefix(message, "/mar"))
 		{
 			if (Players[Ind]->martyr_timeout)
-				msg_print(Ind, "The heavens are not yet ready to accept your martyrium.");
+				msg_print(Ind, "The heavens are not yet willing to accept your martyrium.");
 			else
-				msg_print(Ind, "The heavens are ready to accept your martyrium.");
+				msg_print(Ind, "The heavens are willing to accept your martyrium.");
 			return;
 		}
 		else if (prefix(message, "/pnote"))
