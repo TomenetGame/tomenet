@@ -5204,6 +5204,13 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	if (p_ptr->admin_dm && !(f_info[feature].flags2 & FF2_BOUNDARY))
 		return (TRUE);
 
+	/* Special one-way doors for quests: Allow traversing if we're on a CAVE_ICKY grid. */
+	if (feature == FEAT_ESCAPE_DOOR) {
+		if ((getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px].info & CAVE_ICKY))
+			return TRUE;
+		return FALSE;
+	}
+
 	/* Player can not walk through "walls" unless in Shadow Form */
 //        if (p_ptr->wraith_form || (PRACE_FLAG(PR1_SEMI_WRAITH)))
 	if (/*p_ptr->wraith_form ||*/ p_ptr->ghost || p_ptr->tim_wraith)

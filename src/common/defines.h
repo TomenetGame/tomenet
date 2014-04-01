@@ -2035,6 +2035,7 @@
 //
 #define FEAT_SEALED_DOOR	224	/* for pvp-arena, like Andur suggested */
 #define FEAT_UNSEALED_DOOR	225
+#define FEAT_ESCAPE_DOOR	230	/* for quests - it's a one-way door!  */
 
 /* number of connected void gates or something? */
 #define MAX_BETWEEN_EXITS       2
