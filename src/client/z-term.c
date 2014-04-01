@@ -638,7 +638,7 @@ byte flick_colour(byte attr){
 		case TERM_GRAV:
 			return (randint(3) == 1 ? TERM_L_UMBER : TERM_SLATE);//was L_UMBER+UMBER
 		case TERM_TIME:
-			return (randint(3) == 1 ? TERM_GREEN : TERM_L_BLUE);
+			return (randint(3) == 1 ? TERM_L_GREEN : TERM_L_BLUE);
 		case TERM_METEOR:
 			return (randint(3) == 1 ? TERM_RED : TERM_UMBER);
                 case TERM_MANA:
