@@ -177,7 +177,7 @@ HMARTYR = add_spell
 	["desc"] = 	{
 			"Turns you into an holy martyr, blessed with immortality to fulfil",
 			"his work. When the holy fire ceases, you will be very close to",
-			"death (up to 30 HP left). It will take a while until the heavens",
-			"are ready to accept another martyrdom (1000 turns timeout).",
+			"death (at least 30 HP left). It will take some time until the",
+			"heavens are willing to accept another martyrdom.",
 	}
 }
