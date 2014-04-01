@@ -1,0 +1,30 @@
+#$Id$
+
+# For testing the new quests feature
+# Created for TomeNET by C. Blue
+#
+
+%:t_pref.txt
+#F:<letter>:<terrain>:<cave_info>:<monster>:<object>:<ego>:<artifact>:<trap>:<special>:<mimic>
+
+F:+:224:3
+F:.:1:4:0:0:0:0:0:0:0
+F:*:1:4:0:334:0:0:0:0:0
+F:&:1:4:0:339:0:0:0:0:0
+
+###################### Buildings ########################
+
+
+# Treasure keep
+D:  t-- ---   ---  
+D: --------------- 
+D: --###--t-t###---
+D:---#.#######.#t- 
+D:t--##..*&*..##---
+D:-t--#.......#----
+D: --##.......##-- 
+D: --#.###+###.#--t
+D:---###-----###--t
+D:---------------t-
+D: --------------- 
+D: t-  -----  ---  
