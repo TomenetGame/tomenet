@@ -6203,7 +6203,7 @@ int Send_music(int Ind, int music, int musicalt) {
 		if (p_ptr2->music_current != music) {
 			p_ptr2->music_current = music;
 			p_ptr2->musicalt_current = musicalt;
-			if (is_newer_than(&connp2->version, 4, 5, 6, 0, 0, 0))
+			if (is_newer_than(&connp2->version, 4, 5, 6, 0, 0, 1))
 				Packet_printf(&connp2->c, "%c%c%c", PKT_MUSIC, music, musicalt);
 			else if (is_newer_than(&connp2->version, 4, 4, 4, 5, 0, 0))
 				Packet_printf(&connp2->c, "%c%c", PKT_MUSIC, music);
@@ -6221,7 +6221,7 @@ int Send_music(int Ind, int music, int musicalt) {
 		return 0;
 	}
 
-	if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 0))
+	if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1))
 		return Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt);
 	else if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0))
 		return(-1);

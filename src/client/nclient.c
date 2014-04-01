@@ -2711,7 +2711,7 @@ int Receive_music(void) {
 	int	n;
 	char	ch, m, m2 = -1;
 
-	if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &m, &m2)) <= 0) return n;
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &m)) <= 0) return n;
@@ -3704,7 +3704,7 @@ int Receive_request_cfr(void) {
 	char ch, prompt[MAX_CHARS];
 	bool default_yes = FALSE;
 
-	if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
 		char dy;
 		if ((n = Packet_scanf(&rbuf, "%c%d%s%c", &ch, &id, prompt, &dy)) <= 0) return n;
 		if (dy != 0) default_yes = TRUE;

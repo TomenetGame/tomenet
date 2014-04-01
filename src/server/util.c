@@ -1633,7 +1633,7 @@ void handle_music(int Ind) {
 		case 30: Send_music(Ind, 15, 12); return; //The Training Tower
 		//31 is handled above by in_valinor() check
 		case 32:
-			if (is_newer_than(&p_ptr->version, 4, 5, 6, 0, 0, 0)) Send_music(Ind, 56, 13); //The Cloud Planes
+			if (is_newer_than(&p_ptr->version, 4, 5, 6, 0, 0, 1)) Send_music(Ind, 56, 13); //The Cloud Planes
 			else {
 				if (p_ptr->audio_mus == 56) Send_music(Ind, 13, 0); /* outdated music pack? (use ironman music for now (forcedown/hellish doesn't fit)) */
 				else Send_music(Ind, 56, 13); /* the actual specific music for this dungeon */
