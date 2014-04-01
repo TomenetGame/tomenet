@@ -9406,6 +9406,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			else if (object_index) {
 				object_type *o_ptr = &object_type_body;
 				object_prep(o_ptr, object_index);
+				if (o_ptr->tval == TV_GOLD) o_ptr->pval = letter[idx].special; /* support for 'money' objects ^^ */
 				apply_magic(wpos, o_ptr, dun_level, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
 				drop_near(o_ptr, -1, wpos, y, x);
 			}
