@@ -9250,11 +9250,9 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 	}
 
 	/* Process "D:<dungeon>" -- info for the cave grids */
-	else if (buf[0] == 'D')
-	{
+	else if (buf[0] == 'D') {
 		int x;
-
-//		object_type object_type_body;
+		object_type object_type_body;
 
 		/* Acquire the text */
 		char *s = buf + 2;
@@ -9264,19 +9262,12 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 		int y = *yval;
 		*xval = xvalstart;
-		for (x = *xval, i = 0; ((x < xmax) && (i < len)); x++, s++, i++)
-		{
+		for (x = *xval, i = 0; ((x < xmax) && (i < len)); x++, s++, i++) {
 			/* Access the grid */
 			cave_type *c_ptr = &zcave[y][x];
-
 			int idx = s[0];
-
 			int object_index = letter[idx].object;
-#if 0
-			int monster_index = letter[idx].monster;
-#else /* rudimentary support till actual code (see further below what i mean) has been looked at, too lazy atm - C. Blue */
-			int monster_index = letter[idx].monster;
-#endif // 0
+			int monster_index = letter[idx].monster;/* rudimentary support till actual code (see further below what i mean) has been looked at, too lazy atm - C. Blue */
 			int random = letter[idx].random;
 			int artifact_index = letter[idx].artifact;
 
@@ -9304,8 +9295,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 //			c_ptr->mimic = letter[idx].mimic;
 
 			/* seasons hack: replace trees/bushes on world surface according to season! - C. Blue */
-			if ((letter[idx].feature == FEAT_TREE || letter[idx].feature == FEAT_BUSH) &&
-			    !wpos->wz) {
+			if (istown(wpos) && !wpos->wz &&
+			    (letter[idx].feature == FEAT_TREE || letter[idx].feature == FEAT_BUSH)) {
 				cave_set_feat(wpos, y, x, get_seasonal_tree());
 //				c_ptr->feat = get_seasonal_tree();
 			} else {
@@ -9314,13 +9305,10 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			}
 
 			/* TERAHACK -- memorize stair locations XXX XXX */
-			if (c_ptr->feat == FEAT_LESS)	// '<'
-			{
+			if (c_ptr->feat == FEAT_LESS) {	// '<'
 				new_level_down_y(wpos, y);
 				new_level_down_x(wpos, x);
-			}
-			else if (c_ptr->feat == FEAT_MORE)
-			{
+			} else if (c_ptr->feat == FEAT_MORE) {
 				new_level_up_y(wpos, y);
 				new_level_up_x(wpos, x);
 			}
@@ -9329,8 +9317,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			c_ptr->info |= letter[idx].cave_info;
 
 			/* Create a monster */
-			if (random & RANDOM_MONSTER)
-			{
+			if (random & RANDOM_MONSTER) {
 				int level = monster_level;
 
 //				monster_level = quest[p_ptr->inside_quest].level + monster_index;
@@ -9341,16 +9328,14 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				monster_level = level;
 			}
 #if 0
-			else if (monster_index)
-			{
+			else if (monster_index) {
 				/* Place it */
 				m_allow_special[monster_index] = TRUE;
 				place_monster_aux(y, x, monster_index, meta_sleep, FALSE, MSTATUS_ENEMY, 0);
 				m_allow_special[monster_index] = FALSE;
 			}
 #else /* rudimentary support till above code has been looked at, too lazy atm - C. Blue */
-			else if (monster_index)
-			{
+			else if (monster_index) {
 				summon_override_checks = SO_ALL; /* disable all checks */
 				place_monster_aux(wpos, y, x, monster_index, FALSE, FALSE, 0, 0);
 //				place_monster_one(wpos, y, x, monster_index, 0, 0, FALSE, 0, 0);
@@ -9359,10 +9344,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 #endif	// 0
 
 			/* Object (and possible trap) */
-			if ((random & RANDOM_OBJECT) && (random & RANDOM_TRAP))
-			{
+			if ((random & RANDOM_OBJECT) && (random & RANDOM_TRAP)) {
 				int level = object_level;
-
 //				object_level = quest[p_ptr->inside_quest].level;
 				object_level = dun_level;
 
@@ -9371,22 +9354,15 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				 * 25% chance for trap and 75% chance for object
 				 */
 				if (rand_int(100) < 75)
-				{
 					place_object(wpos, y, x, FALSE, FALSE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
-				}
 				// else
 				if (rand_int(100) < 25)
-				{
 					place_trap(wpos, y, x, 0);
-				}
 
 				object_level = level;
-			}
-			else if (random & RANDOM_OBJECT)
-			{
+			} else if (random & RANDOM_OBJECT) {
 				/* Create an out of deep object */
-				if (object_index)
-				{
+				if (object_index) {
 					int level = object_level;
 
 //					object_level = quest[p_ptr->inside_quest].level + object_index;
@@ -9399,28 +9375,18 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 						place_object(wpos, y, x, TRUE, TRUE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 
 					object_level = level;
-				}
-				else if (rand_int(100) < 75)
-				{
+				} else if (rand_int(100) < 75)
 					place_object(wpos, y, x, FALSE, FALSE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
-				}
 				else if (rand_int(100) < 80)
-				{
 					place_object(wpos, y, x, TRUE, FALSE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
-				}
 				else
-				{
 					place_object(wpos, y, x, TRUE, TRUE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
-				}
 			}
 			/* Random trap */
 			else if (random & RANDOM_TRAP)
-			{
 				place_trap(wpos, y, x, 0);
-			}
 #if 0
-			else if (object_index)
-			{
+			else if (object_index) {
 				/* Get local object */
 				object_type *o_ptr = &object_type_body;
 
@@ -9436,11 +9402,17 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 				drop_near(o_ptr, -1, wpos, y, x);
 			}
+#else /* rudimentary support yada yada yada - C. Blue */
+			else if (object_index) {
+				object_type *o_ptr = &object_type_body;
+				object_prep(o_ptr, object_index);
+				apply_magic(wpos, o_ptr, dun_level, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
+				drop_near(o_ptr, -1, wpos, y, x);
+			}
 #endif	// 0
 
 			/* Artifact */
-			if (artifact_index)
-			{
+			if (artifact_index) {
 #if 0
 				int I_kind = 0;
 
@@ -9488,45 +9460,31 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 #if 0
 			/* Terrain special */
-			if (letter[idx].special == -1)
-			{
-				if (!letter[idx].bx)
-				{
+			if (letter[idx].special == -1) {
+				if (!letter[idx].bx) {
 					letter[idx].bx = x;
 					letter[idx].by = y;
-				}
-				else
-				{
+				} else {
 					c_ptr->special = (letter[idx].by << 8) + letter[idx].bx;
 					cave[letter[idx].by][letter[idx].bx].special = (y << 8) + x;
 				}
-			}
-			else
-			{
+			} else
 				c_ptr->special = letter[idx].special;
-			}
 #else	// 0
 			/* Terrain special */
-			if (letter[idx].special == -1)
-			{
+			if (letter[idx].special == -1) {
 #if 0
-				if (!letter[idx].bx)
-				{
+				if (!letter[idx].bx) {
 					letter[idx].bx = x;
 					letter[idx].by = y;
-				}
-				else
-				{
+				} else {
 					c_ptr->special = (letter[idx].by << 8) + letter[idx].bx;
 					cave[letter[idx].by][letter[idx].bx].special = (y << 8) + x;
 				}
 #endif	// 0
-			}
-			else
-			{
+			} else {
 				/* MEGAHACK -- let's just make stores available */
-				if (letter[idx].feature == FEAT_SHOP)
-				{
+				if (letter[idx].feature == FEAT_SHOP) {
 					if ((cs_ptr = AddCS(c_ptr, CS_SHOP))) {
 						/* MEGAHACK till st_info is implemented */
 						// int y1, x1;
@@ -9540,10 +9498,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 						cs_ptr->sc.omni = store;
 
 #if 0	// not here
-						for (y1 = y - 1; y1 <= y + 1; y1++)
-						{
-							for (x1 = x - 1; x1 <= x + 1; x1++)
-							{
+						for (y1 = y - 1; y1 <= y + 1; y1++) {
+							for (x1 = x - 1; x1 <= x + 1; x1++) {
 								/* Get the grid */
 								c_ptr = &zcave[y1][x1];
 
