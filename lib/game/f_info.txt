@@ -1122,7 +1122,7 @@ $ARCADE_SERVER$F:DONT_NOTICE_RUNNING
 N:224:sealed door
 G:+:r
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING
+F:DONT_NOTICE_RUNNING | NOTICE
 D:1:You bash the boor but it doesn't seem to move.
 D:2:A hideous looking ornate door is blocking your way.
 
