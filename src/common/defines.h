@@ -1996,7 +1996,7 @@
 /* Feature 0xAD -- Underground Tunnel */
 #define FEAT_TAINTED_WATER      0xAE /* 174 */
 #define FEAT_MON_TRAP           0xAF /* 175 */
-#define FEAT_BEACON	0xB0 /* 176, formerly FEAT_BETWEEN2, finally in use: for Dungeon Keeper event */
+#define FEAT_BEACON		0xB0 /* 176, formerly FEAT_BETWEEN2, finally in use: for Dungeon Keeper event */
 #define FEAT_LAVA_WALL		0xB1 /* 177 */
 #define FEAT_GREAT_FIRE         0xB2 /* 178 */
 #define FEAT_WAY_MORE           0xB3 /* 179 */
