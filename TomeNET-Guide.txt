@@ -9569,7 +9569,7 @@ Wraithform, or "pass wall" form is a character state obtained from the spell
 items that give permanent wraithform: "It renders you incorporeal").
 It allows a character to pass through solid walls easily, but at the same time
 prevents them from attacking anything else in close combat, except if the
-target is also able to pass walls (ie possesses wraitform too, or is actually
+target is also able to pass walls (ie possesses wraithform too, or is actually
 a ghost or other monster that can pass through walls).
 Also, spells cast while in wraithform will only deal half as much damage as
 usual.
