@@ -2105,21 +2105,24 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 	qi_questor_act *q_qact = q_stage->questor_act[questor_idx];
 	cave_type **zcave;
 	monster_type *m_ptr = &m_list[q_questor->mo_idx];
+	player_type *p_ptr;
 
-	/* tele players to new location? */
-	if (q_qact->tppy_wpos.wx != -1) {
-		player_type *p_ptr;
-		if (pInd && q_ptr->individual) {
-			/* individual quest */
-			p_ptr = Players[pInd];
+	if (pInd && q_ptr->individual) {
+		/* individual quest */
+		p_ptr = Players[pInd];
+
+		/* tele players to new location? */
+		if (q_qact->tppy_wpos.wx != -1) {
 			p_ptr->recall_pos.wx = q_qact->tppy_wpos.wx;
 			p_ptr->recall_pos.wy = q_qact->tppy_wpos.wy;
 			p_ptr->recall_pos.wz = q_qact->tppy_wpos.wz;
 			//p_ptr->new_level_method = (q_qact->tppy_wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 			p_ptr->new_level_method = LEVEL_RAND;
 			recall_player(pInd, "");
+		}
 
-			/* and move him to a specific grid */
+		/* and move him to a specific grid */
+		if (q_qact->tppy_x != -1) {
 			zcave = getcave(&p_ptr->wpos);
 			ox = p_ptr->px;
 			oy = p_ptr->py;
@@ -2138,22 +2141,28 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 			p_ptr->update |= (PU_DISTANCE);
 			p_ptr->window |= (PW_OVERHEAD);
 			handle_stuff(pInd);
-		} else {
-			/* global quest - teleport all players who are here and on the quest */
-			for (j = 1; j <= NumPlayers; j++) {
-				p_ptr = Players[j];
-				if (!inarea(&p_ptr->wpos, &m_list[q_questor->mo_idx].wpos)) continue;
-				for (k = 0; k < MAX_CONCURRENT_QUESTS; k++)
-					if (p_ptr->quest_idx[k] == q_idx) break;
-				if (k == MAX_CONCURRENT_QUESTS) continue;
+		}
+	} else {
+		/* global quest - teleport all players who are here and on the quest */
+		for (j = 1; j <= NumPlayers; j++) {
+			p_ptr = Players[j];
+			if (!inarea(&p_ptr->wpos, &m_list[q_questor->mo_idx].wpos)) continue;
+			for (k = 0; k < MAX_CONCURRENT_QUESTS; k++)
+				if (p_ptr->quest_idx[k] == q_idx) break;
+			if (k == MAX_CONCURRENT_QUESTS) continue;
+
+			/* tele players to new location? */
+			if (q_qact->tppy_wpos.wx != -1) {
 				p_ptr->recall_pos.wx = q_qact->tppy_wpos.wx;
 				p_ptr->recall_pos.wy = q_qact->tppy_wpos.wy;
 				p_ptr->recall_pos.wz = q_qact->tppy_wpos.wz;
 				//p_ptr->new_level_method = (q_qact->tppy_wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 				p_ptr->new_level_method = LEVEL_RAND;
 				recall_player(j, "");
+			}
 
-				/* and move him to a specific grid */
+			/* and move him to a specific grid */
+			if (q_qact->tppy_x != -1) {
 				zcave = getcave(&p_ptr->wpos);
 				oy = p_ptr->py;
 				ox = p_ptr->px;
@@ -2191,13 +2200,16 @@ static void quest_questor_act(int pInd, int q_idx, int stage, int questor_idx) {
 		m_ptr->wpos.wx = q_qact->tp_wpos.wx;
 		m_ptr->wpos.wy = q_qact->tp_wpos.wy;
 		m_ptr->wpos.wz = q_qact->tp_wpos.wz;
-
-		/* to specific grid */
+	}
+	/* to specific grid */
+	if (q_qact->tp_x != -1) {
 		nx = q_qact->tp_x;
 		ny = q_qact->tp_y;
 		m_ptr->fy = ny;
 		m_ptr->fx = nx;
-
+	}
+	/* finish moving, for both cases */
+	if (q_qact->tp_wpos.wx != -1 || q_qact->tp_x != -1) {
 		/* place monster visibly on the new wpos */
 		if ((zcave = getcave(&m_ptr->wpos))) {
 			zcave[ny][nx].m_idx = q_questor->mo_idx;
