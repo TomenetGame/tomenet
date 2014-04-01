@@ -1282,14 +1282,14 @@ void teleport_player_level(int Ind, bool force) {
 void teleport_players_level(struct worldpos *wpos) {
 	int i, method = LEVEL_OUTSIDE_RAND;
 	player_type *p_ptr;
-	struct worldpos new_depth, old_wpos;
+	struct worldpos new_wpos, old_wpos;
 	char *msg = "\377rCritical bug!";
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return;
 
 	wpcopy(&old_wpos, wpos);
-	wpcopy(&new_depth, wpos);
+	wpcopy(&new_wpos, wpos);
 
 	/* sometimes go down */
 	if ((can_go_down(wpos, 0x1) &&
@@ -1297,49 +1297,49 @@ void teleport_players_level(struct worldpos *wpos) {
 	     (wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
 	    || (can_go_down_simple(wpos)))
 	{
-		new_depth.wz--;
+		new_wpos.wz--;
 		msg = "Some arcane magic suddenly makes you sink through the floor.";
-		method = (new_depth.wz || (istown(&new_depth)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
+		method = (new_wpos.wz || (istown(&new_wpos)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
 	}
 	/* else go up */
 	else if ((can_go_up(wpos, 0x1) &&
 	    !(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
 	    || (can_go_up_simple(wpos)))
 	{
-		new_depth.wz++;
+		new_wpos.wz++;
 		msg = "Some arcane magic suddenly makes You rise up through the ceiling.";
-		method = (new_depth.wz || (istown(&new_depth)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
+		method = (new_wpos.wz || (istown(&new_wpos)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
 	}
 
 	/* If in the wilderness, teleport to a random neighboring level */
-	else if (wpos->wz == 0 && new_depth.wz == 0) {
+	else if (wpos->wz == 0 && new_wpos.wz == 0) {
 		/* get a valid neighbor */
-		wpcopy(&new_depth, wpos);
+		wpcopy(&new_wpos, wpos);
 		do {
 			switch (rand_int(4)) {
 			case DIR_NORTH:
-				if (new_depth.wy < MAX_WILD_Y - 1)
-					new_depth.wy++;
+				if (new_wpos.wy < MAX_WILD_Y - 1)
+					new_wpos.wy++;
 				msg = "A sudden magical gust of wind blows you north.";
 				break;
 			case DIR_EAST:
-				if (new_depth.wx < MAX_WILD_X - 1)
-					new_depth.wx++;
+				if (new_wpos.wx < MAX_WILD_X - 1)
+					new_wpos.wx++;
 				msg = "A sudden magical gust of wind blows you east.";
 				break;
 			case DIR_SOUTH:
-				if (new_depth.wy > 0)
-					new_depth.wy--;
+				if (new_wpos.wy > 0)
+					new_wpos.wy--;
 				msg = "A sudden magical gust of wind blows you south.";
 				break;
 			case DIR_WEST:
-				if (new_depth.wx > 0)
-					new_depth.wx--;
+				if (new_wpos.wx > 0)
+					new_wpos.wx--;
 				msg = "A sudden magical gust of wind blows you west.";
 				break;
 			}
 		}
-		while (inarea(wpos, &new_depth));
+		while (inarea(wpos, &new_wpos));
 
 		method = LEVEL_OUTSIDE_RAND;
 	} else {
@@ -1357,8 +1357,8 @@ void teleport_players_level(struct worldpos *wpos) {
 
 		/* update the players wilderness map */
 		if(!p_ptr->ghost)
-			p_ptr->wild_map[(new_depth.wx + new_depth.wy * MAX_WILD_X) / 8] |=
-			    (1 << ((new_depth.wx + new_depth.wy * MAX_WILD_X) % 8));
+			p_ptr->wild_map[(new_wpos.wx + new_wpos.wy * MAX_WILD_X) / 8] |=
+			    (1 << ((new_wpos.wx + new_wpos.wy * MAX_WILD_X) % 8));
 
 		/* Tell the player */
 		msg_print(i, msg);
@@ -1381,12 +1381,12 @@ void teleport_players_level(struct worldpos *wpos) {
 		new_players_on_depth(&old_wpos, -1, TRUE);
 
 		/* Change the wpos */
-		wpcopy(&p_ptr->wpos, &new_depth);
+		wpcopy(&p_ptr->wpos, &new_wpos);
 
 		p_ptr->new_level_flag = TRUE;
 
 		/* One more player here */
-		new_players_on_depth(wpos, 1, TRUE);
+		new_players_on_depth(&new_wpos, 1, TRUE);
 	}
 }
 
