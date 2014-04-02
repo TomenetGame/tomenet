@@ -4938,8 +4938,7 @@ int Send_extra_status(int Ind, cptr status)
 	return Packet_printf(&connp->c, "%c%s", PKT_EXTRA_STATUS, status);
 }
 
-int Send_depth(int Ind, struct worldpos *wpos)
-{
+int Send_depth(int Ind, struct worldpos *wpos) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	bool ville = istown(wpos) && !isdungeontown(wpos); /* -> print name (TRUE) or a depth value (FALSE)? */
@@ -4999,8 +4998,11 @@ int Send_depth(int Ind, struct worldpos *wpos)
 		if (p_ptr->word_recall) colour = TERM_ORANGE;
 		/* use as indicator for pvp_prevent_tele, actually */
 		else if ((p_ptr->mode & MODE_PVP) && p_ptr->pvp_prevent_tele) colour = TERM_RED;
-		/* able to get extra level feeling on next floor? */
-		else if (TURNS_FOR_EXTRA_FEELING && (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour = TERM_L_BLUE;
+		/* use indicator asterisk instead in newer versions */
+		else if ((!is_newer_than(&p_ptr->version, 4, 5, 6, 0, 0, 1) || ville) &&
+		    /* able to get extra level feeling on next floor? */
+		    TURNS_FOR_EXTRA_FEELING && p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)
+			colour = TERM_L_BLUE;
 		/* in a town? ignore town level */
 		else if (ville) colour = TERM_WHITE;
 		/* way too low to get good exp? */
@@ -5012,6 +5014,11 @@ int Send_depth(int Ind, struct worldpos *wpos)
 	} else {
 		colour = p_ptr->word_recall;
 	}
+	/* able to get extra level feeling on next floor? */
+	if (is_newer_than(&p_ptr->version, 4, 5, 6, 0, 0, 1) && !ville &&
+	    TURNS_FOR_EXTRA_FEELING && p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)
+		desc = "*";
+
 
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0) && no_tele) {
 		Send_cut(Ind, 0); /* hack: clear the field shared between cut and depth */

@@ -450,15 +450,18 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
 	sprintf(depths, "(%-2d,%-2d)",x,y);
 	c_put_str(colour_sector, depths, ROW_XYPOS, COL_XYPOS);
 
-	if(town)
+	if (town)
 		strcpy(depths, name);
 	else if (c_cfg.depth_in_feet)
-		sprintf(depths, "%dft", z*50);
+		sprintf(depths, "%dft", z * 50);
 	else
 		sprintf(depths, "Lev %d", z);
 
 	/* Right-Adjust the "depth" and clear old values */
 	c_prt(colour, format("%7s", depths), ROW_DEPTH, COL_DEPTH);
+
+	/* New feeling-on-next-floor indicator after 4.5.6: */
+	if (*name == '*') c_prt(TERM_L_BLUE, "*", ROW_DEPTH, COL_DEPTH + strlen(depths));
 
 	/* restore cursor position */
 	Term_gotoxy(x2, y2);
