@@ -6655,7 +6655,11 @@ static int reward_melee_check(player_type *p_ptr, long int treshold) {
 	else if (rnd_result - choice1 - choice2 - choice3 - choice4 <= choice5) selection = 5;
 
 /* Receive a shield instead of a weapon? Depends on actual weapon type! */
-	if (p_ptr->pclass == CLASS_ROGUE) return(selection); /* rogues dual-wield, shields are bad for them. */
+	/* ..not if we're dual-wielding */
+	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
+	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) return selection;
+	/* ..not if we're rogues anyway */
+	if (p_ptr->pclass == CLASS_ROGUE) return selection;
 //Nope, they can!	if (p_ptr->pclass == CLASS_SHAMAN) return(selection); /* shamans cannot cast magic well with shield. */
 	switch (selection) {
 	case 1: if magik(50) selection = 6; break;
@@ -6701,12 +6705,17 @@ static int reward_armor_check(player_type *p_ptr, bool mha, bool rha) {
     TV_CROWN
     TV_CLOAK	*/
 	if (maxweight < 240 || mha || rha) choice1 = 10;
-	if (maxweight >= 240 && !mha && !rha) choice2 = 30; /* If player can make good use of heavy armour, make him likely to get one! */
-	if (maxweight >= 200 && !mha && !rha) choice3 = 3; /* Only slim chance to get a Dragon Scale Mail! */
+	if (maxweight >= 240 && !mha && !rha) {
+		choice2 = 30; /* If player can make good use of heavy armour, make him likely to get one! */
+		choice1 = 0; /* ..and don't give him too light armour */
+	}
+	if (maxweight >= 200 && !mha && !rha) choice3 = 4; /* Only slim chance to get a Dragon Scale Mail! */
 	choice4 = 10;
 	choice5 = 10;
 	choice6 = 10;
-	choice7 = 5;/* actually funny to give the "Highlander Tournament" winner a crown ;) */
+	/* actually funny to give the "Highlander Tournament" winner a crown ;) */
+	if (maxweight <= 50) choice7 = 10;//magic classes (aka 'low STR' a bit more likely to get one
+	else choice7 = 5;
 	choice8 = 10;
 	rnd_result = randint(choice1 + choice2 + choice3 + choice4 + choice5 + choice6 + choice7 + choice8);
 	if (!rnd_result) return 0;
@@ -6779,6 +6788,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	melee_choice = reward_melee_check(p_ptr, treshold);
 	mha = (melee_choice == 5); /* monk heavy armor */
 	rha = (get_skill(p_ptr, SKILL_DODGE)); /* rogue heavy armor; pclass == rogue or get_skill(skill_critical) are implied by this one due to current tables.c. dual_wield is left out on purpose. */
+	/* analyze current setup (for reward_armor_check) */
+	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
+	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)
+		rha = TRUE; /* we're dual-wielding */
+	/* make choices */
 	ranged_choice = reward_ranged_check(p_ptr, treshold);
 	armor_choice = reward_armor_check(p_ptr, mha, rha);
 	spell_choice = reward_spell_check(p_ptr, treshold);
@@ -6811,6 +6825,14 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case 6: maxweight_armor = 30; break;
 		case 7: maxweight_armor = 30; break;
 		case 8: maxweight_armor = 15; break;
+		}
+	}
+	if (spell_choice) {
+		/* no heavy boots/gauntlets/helmets for casters */
+		switch (armor_choice) {
+		case 4: maxweight_armor = 40; break;
+		case 5: maxweight_armor = 15; break;//1.5 gloves don't exist, so it's just leather+elven here
+		case 6: maxweight_armor = 40; break;//4.0 helmets don't exist (jewel encrusted crown has it though, so we just pretend..)
 		}
 	}
 	if (p_ptr->s_info[SKILL_CRITS].value >= treshold) maxweight_melee = 100;
