@@ -367,7 +367,8 @@ struct ego_item_type
         u32b flags4[5];            /* Ego-Item Flags, set 4 */
         u32b flags5[5];            /* Ego-Item Flags, set 5 */
         u32b esp[5];                       /* ESP flags */
-        u32b fego[5];                       /* ego flags */
+        u32b fego1[5];                       /* ego flags */
+        u32b fego2[5];                       /* ego flags */
 
 #if 0
         s16b power;                     /* Power granted(if any) */

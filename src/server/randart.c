@@ -2185,7 +2185,7 @@ try_an_other_ego:
 			a_ptr->flags4 |= e_ptr->flags4[j];
 			a_ptr->flags5 |= e_ptr->flags5[j];
 			a_ptr->esp |= e_ptr->esp[j];
-			add_random_ego_flag(a_ptr, e_ptr->fego[j], &limit_blows, o_ptr->level, o_ptr);
+			add_random_ego_flag(a_ptr, e_ptr->fego1[j], e_ptr->fego2[j], &limit_blows, o_ptr->level, o_ptr);
 		}
 	}
 
@@ -2431,12 +2431,12 @@ static void add_random_esp(artifact_type *a_ptr, int all)
  * I diverted lv-req of item for this purpose, thus changes in o_ptr->level
  * will result in changes of ego-item powers themselves!!	- Jir -
  */
-// void add_random_ego_flag(object_type *o_ptr, int fego, bool *limit_blows)
-void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b dlev, object_type *o_ptr)
-{
+void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *limit_blows, s16b dlev, object_type *o_ptr) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
-	if (fego & ETR4_SUSTAIN) {
+	/* ----- fego1 flags ----- */
+
+	if (fego1 & ETR1_SUSTAIN) {
 		/* Make a random sustain */
 		switch(randint(6)) {
 		case 1: a_ptr->flags2 |= TR2_SUST_STR; break;
@@ -2448,7 +2448,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		}
 	}
 
-	if (fego & ETR4_OLD_RESIST) {
+	if (fego1 & ETR1_OLD_RESIST) {
 		/* Make a random resist, equal probabilities */
 		switch (randint(11)) {
 		case  1: a_ptr->flags2 |= (TR2_RES_BLIND);  break;
@@ -2465,7 +2465,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		}
 	}
 
-	if (fego & ETR4_ABILITY) {
+	if (fego1 & ETR1_ABILITY) {
 		/* Choose an ability */
 		switch (randint(10)) {
 		case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
@@ -2482,7 +2482,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		}
 	}
 
-	if (fego & ETR4_LOW_ABILITY) {
+	if (fego1 & ETR1_LOW_ABILITY) {
 		/* Choose an ability */
 		switch (randint(10)) {
 		case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
@@ -2499,35 +2499,35 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		}
 	}
 
-	if (fego & ETR4_R_ELEM) {
+	if (fego1 & ETR1_R_ELEM) {
 		/* Make an acid/elec/fire/cold/poison resist */
 		random_resistance(a_ptr, FALSE, randint(14) + 4);
 	}
-	if (fego & ETR4_R_LOW) {
+	if (fego1 & ETR1_R_LOW) {
 		/* Make an acid/elec/fire/cold resist */
 		random_resistance(a_ptr, FALSE, randint(12) + 4);
 	}
-	if (fego & ETR4_R_HIGH) {
+	if (fego1 & ETR1_R_HIGH) {
 		/* Make a high resist */
 		random_resistance(a_ptr, FALSE, randint(22) + 16);
 	}
-	if (fego & ETR4_R_ANY) {
+	if (fego1 & ETR1_R_ANY) {
 		/* Make any resist */
 		random_resistance(a_ptr, FALSE, randint(34) + 4);
 	}
-	if (fego & ETR4_R_DRAGON) {
+	if (fego1 & ETR1_R_DRAGON) {
 		/* Make "dragon resist" */
 		dragon_resist(a_ptr);
 	}
-	if (fego & ETR4_DAM_DIE) {
+	if (fego1 & ETR1_DAM_DIE) {
 		/* Increase damage dice */
 		a_ptr->dd++;
 	}
-	if (fego & ETR4_DAM_SIZE) {
+	if (fego1 & ETR1_DAM_SIZE) {
 		/* Increase damage dice size */
 		a_ptr->ds++;
 	}
-	if (fego & ETR4_SLAY_WEAP) {
+	if (fego1 & ETR1_SLAY_WEAP) {
 		/* Make a Weapon of Slaying */
 
 		if (randint(3) == 1) { /* double damage */
@@ -2579,90 +2579,90 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		}
 	}
 
-	if (fego & ETR4_LIMIT_BLOWS) {
+	if (fego1 & ETR1_LIMIT_BLOWS) {
 		/* Swap this flag */
 		*limit_blows = !(*limit_blows);
 	}
-	if (fego & ETR4_PVAL_M1) {
+	if (fego1 & ETR1_PVAL_M1) {
 		/* Increase pval */
 		a_ptr->pval++;
 	}
-	if (fego & ETR4_PVAL_M2) {
+	if (fego1 & ETR1_PVAL_M2) {
 		/* Increase pval */
 		a_ptr->pval += m_bonus(2, dlev);
 	}
-	if (fego & ETR4_PVAL_M3) {
+	if (fego1 & ETR1_PVAL_M3) {
 		/* Increase pval */
 		a_ptr->pval += m_bonus(3, dlev);
 	}
-	if (fego & ETR4_PVAL_M5) {
+	if (fego1 & ETR1_PVAL_M5) {
 		/* Increase pval */
 		a_ptr->pval += m_bonus(5, dlev);
 	}
 #if 0
-	if (fego & ETR4_AC_M1) {
+	if (fego1 & ETR1_AC_M1) {
 		/* Increase ac */
 		a_ptr->to_a++;
 	}
-	if (fego & ETR4_AC_M2) {
+	if (fego1 & ETR1_AC_M2) {
 		/* Increase ac */
 		a_ptr->to_a += m_bonus(2, dlev);
 	}
-	if (fego & ETR4_AC_M3) {
+	if (fego1 & ETR1_AC_M3) {
 		/* Increase ac */
 		a_ptr->to_a += m_bonus(3, dlev);
 	}
 #endif
-	if (fego & ETR4_AC_M5) {
+	if (fego1 & ETR1_AC_M5) {
 		/* Increase ac */
 		a_ptr->to_a += m_bonus(5, dlev);
 	}
 #if 0
-	if (fego & ETR4_TH_M1) {
+	if (fego1 & ETR1_TH_M1) {
 		/* Increase to hit */
 		a_ptr->to_h++;
 	}
-	if (fego & ETR4_TH_M2) {
+	if (fego1 & ETR1_TH_M2) {
 		/* Increase to hit */
 		a_ptr->to_h += m_bonus(2, dlev);
 	}
-	if (fego & ETR4_TH_M3) {
+	if (fego1 & ETR1_TH_M3) {
 		/* Increase to hit */
 		a_ptr->to_h += m_bonus(3, dlev);
 	}
-	if (fego & ETR4_TH_M5) {
+	if (fego1 & ETR1_TH_M5) {
 		/* Increase to hit */
 		a_ptr->to_h += m_bonus(5, dlev);
 	}
 #endif
 #if 0
-	if (fego & ETR4_TD_M1) {
+	if (fego1 & ETR1_TD_M1) {
 		/* Increase to dam */
 		a_ptr->to_d++;
 	}
-	if (fego & ETR4_TD_M2) {
+	if (fego1 & ETR1_TD_M2) {
 		/* Increase to dam */
 		a_ptr->to_d += m_bonus(2, dlev);
 	}
 
 #endif
-	if (fego & ETR4_R_ESP) {
+	if (fego1 & ETR1_R_ESP) {
 		add_random_esp(a_ptr, 1);
 	}
-	if (fego & ETR4_NO_SEED) {
+	if (fego1 & ETR1_NO_SEED) {
 		/* Nothing */
 	}
 #if 0
-	if (fego & ETR4_TD_M3) {
+	if (fego1 & ETR1_TD_M3) {
 		/* Increase to dam */
 		a_ptr->to_d += m_bonus(3, dlev);
 	}
-	if (fego & ETR4_TD_M5) {
+	if (fego1 & ETR1_TD_M5) {
 		/* Increase to dam */
 		a_ptr->to_d += m_bonus(5, dlev);
 	}
 #endif
-	if (fego & ETR4_R_P_ABILITY) {
+	if (fego1 & ETR1_R_P_ABILITY) {
 		/* Add a random pval-affected ability */
 		/* This might cause boots with + to blows */
 		switch (randint(6)) {
@@ -2675,7 +2675,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		}
 
 	}
-	if (fego & ETR4_R_STAT) {
+	if (fego1 & ETR1_R_STAT) {
 		/* Add a random stat */
 		switch (randint(6)) {
 		case 1:a_ptr->flags1 |= TR1_STR; break;
@@ -2686,7 +2686,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		case 6:a_ptr->flags1 |= TR1_CHR; break;
 		}
 	}
-	if (fego & ETR4_R_STAT_SUST) {
+	if (fego1 & ETR1_R_STAT_SUST) {
 		/* Add a random stat and sustain it */
 		switch (randint(6)) {
 		case 1:
@@ -2715,7 +2715,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 			break;
 		}
 	}
-	if (fego & ETR4_R_IMMUNITY) {
+	if (fego1 & ETR1_R_IMMUNITY) {
 		/* Give a random immunity */
 		switch (randint(4)) {
 		case 1:
@@ -2734,6 +2734,37 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		case 4:
 			a_ptr->flags2 |= TR2_IM_COLD;
 			a_ptr->flags3 |= TR3_IGNORE_COLD;
+			break;
+		}
+	}
+
+	/* ----- fego2 flags ----- */
+
+	if (fego2 & ETR2_R_SLAY) {
+		switch (rand_int(8)) {
+		case 0:
+			a_ptr->flags1 |= TR1_SLAY_ANIMAL;
+			break;
+		case 1:
+			a_ptr->flags1 |= TR1_SLAY_EVIL;
+			break;
+		case 2:
+			a_ptr->flags1 |= TR1_SLAY_UNDEAD;
+			break;
+		case 3:
+			a_ptr->flags1 |= TR1_SLAY_DEMON;
+			break;
+		case 4:
+			a_ptr->flags1 |= TR1_SLAY_ORC;
+			break;
+		case 5:
+			a_ptr->flags1 |= TR1_SLAY_TROLL;
+			break;
+		case 6:
+			a_ptr->flags1 |= TR1_SLAY_GIANT;
+			break;
+		case 7:
+			a_ptr->flags1 |= TR1_SLAY_DRAGON;
 			break;
 		}
 	}

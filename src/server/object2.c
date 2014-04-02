@@ -3883,13 +3883,13 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 		o_ptr->name2 = i;
 
 		/* Piece together a 32-bit random seed */
-		if (e_ptr->fego[0] & ETR4_NO_SEED) o_ptr->name3 = 0;
+		if (e_ptr->fego1[0] & ETR1_NO_SEED) o_ptr->name3 = 0;
 		else {
 			o_ptr->name3 = rand_int(0xFFFF) << 16;
 			o_ptr->name3 += rand_int(0xFFFF);
 		}
 
-		if ((e_ptr->fego[0] & ETR4_NO_DOUBLE_EGO)) double_ok = FALSE;
+		if ((e_ptr->fego1[0] & ETR1_NO_DOUBLE_EGO)) double_ok = FALSE;
 
 		/* Success */
 		ret = TRUE;
@@ -3914,7 +3914,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 #ifdef NO_MORGUL_IN_IDDC
 			if (i == EGO_MORGUL && in_irondeepdive(&o_ptr->wpos)) continue;
 #endif
-			if ((e_ptr->fego[0] & ETR4_NO_DOUBLE_EGO)) continue;
+			if ((e_ptr->fego1[0] & ETR1_NO_DOUBLE_EGO)) continue;
 
 			/* Cannot be a double ego of the same ego type */
 			if (i == o_ptr->name2) continue;
@@ -4044,7 +4044,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 			o_ptr->name2b = i;
 
 			/* Piece together a 32-bit random seed */
-			if (!(e_ptr->fego[0] & ETR4_NO_SEED) && !o_ptr->name3) {
+			if (!(e_ptr->fego1[0] & ETR1_NO_SEED) && !o_ptr->name3) {
 				o_ptr->name3 = rand_int(0xFFFF) << 16;
 				o_ptr->name3 += rand_int(0xFFFF);
 			}
@@ -4337,32 +4337,11 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 			break;
 		case TV_DRAG_ARMOR:
 			if (o_ptr->sval == SV_DRAGON_MULTIHUED) {
-				int i = 2, tries = 100; /* give 2 random immunities */
-				while (i && tries) {
-					switch(rand_int(5)){
-					case 0:if (!(o_ptr->xtra2 & 0x01)){
-							o_ptr->xtra2 |= 0x01;
-							i--;}
-							break;
-					case 1:if (!(o_ptr->xtra2 & 0x02)){
-							o_ptr->xtra2 |= 0x02;
-							i--;}
-							break;
-					case 2:if (!(o_ptr->xtra2 & 0x04)){
-							o_ptr->xtra2 |= 0x04;
-							i--;}
-							break;
-					case 3:if (!(o_ptr->xtra2 & 0x08)){
-							o_ptr->xtra2 |= 0x08;
-							i--;}
-							break;
-					case 4:if (!(o_ptr->xtra2 & 0x10)){
-							o_ptr->xtra2 |= 0x10;
-							i--;}
-							break;
-					}
-					tries--;
-				}
+				/* give 2 random immunities */
+				int imm1 = rand_int(5), imm2 = rand_int(4);
+				if (imm2 == imm1) imm2 = 4;
+				o_ptr->xtra2 |= 0x1 << imm1;
+				o_ptr->xtra2 |= 0x1 << imm2;
 			}
 			break;
 		case TV_SOFT_ARMOR:

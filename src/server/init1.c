@@ -882,7 +882,7 @@ cptr esp_flags[] =
 
 /* Specially handled properties for ego-items */
 
-static cptr ego_flags[] =
+static cptr ego_flags1[] =
 {
         "SUSTAIN",
         "OLD_RESIST",
@@ -925,7 +925,49 @@ static cptr ego_flags[] =
         "LIMIT_BLOWS"
 };
 
-#endif	// 0
+static cptr ego_flags2[] =
+{
+        "R_SLAY",
+        "XXX00000002",
+        "XXX00000004",
+        "XXX00000008",
+
+        "XXX00000010",
+        "XXX00000020",
+        "XXX00000040",
+        "XXX00000080",
+
+        "XXX00000100",
+        "XXX00000200",
+        "XXX00000400",
+        "XXX00000800",
+
+        "XXX00001000",
+        "XXX00002000",
+        "XXX00004000",
+        "XXX00008000",
+
+        "XXX00010000",
+        "XXX00020000",
+        "XXX00040000",
+        "XXX00080000",
+
+        "XXX00100000",
+        "XXX00200000",
+        "XXX00400000",
+        "XXX00800000",
+
+        "XXX01000000",
+        "XXX02000000",
+        "XXX04000000",
+        "XXX08000000",
+
+        "XXX10000000",
+        "XXX20000000",
+        "XXX40000000",
+        "XXX80000000"
+};
+#endif
 
 /*
  * Feature flags
@@ -3580,87 +3622,58 @@ static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what, int n)
 {
 	int i;
 
-	/* Check flags1 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags1[i]))
-		{
+	for (i = 0; i < 32; i++) {
+		/* Check flags1 */
+		if (streq(what, k_info_flags1[i])) {
                         e_ptr->flags1[n] |= (1L << i);
 			return (0);
 		}
-	}
-
-	/* Check flags2 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags2[i]))
-		{
+		/* Check flags2 */
+		if (streq(what, k_info_flags2[i])) {
                         e_ptr->flags2[n] |= (1L << i);
 			return (0);
 		}
-	}
 #if 1
-        /* Check flags2 -- traps */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, k_info_flags2_trap[i]))
-		{
+	        /* Check flags2 -- traps */
+                if (streq(what, k_info_flags2_trap[i])) {
                         e_ptr->flags2[n] |= (1L << i);
 			return (0);
 		}
-	}
 #endif	// 0
-
-	/* Check flags3 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags3[i]))
-		{
+		/* Check flags3 */
+		if (streq(what, k_info_flags3[i])) {
                         e_ptr->flags3[n] |= (1L << i);
 			return (0);
 		}
-	}
 #if 1
-        /* Check flags4 */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, k_info_flags4[i]))
-		{
+	        /* Check flags4 */
+                if (streq(what, k_info_flags4[i])) {
                         e_ptr->flags4[n] |= (1L << i);
 			return (0);
 		}
-	}
-
-        /* Check flags5 */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, k_info_flags5[i]))
-		{
+	        /* Check flags5 */
+                if (streq(what, k_info_flags5[i])) {
                         e_ptr->flags5[n] |= (1L << i);
 			return (0);
 		}
-	}
 
-        /* Check esp_flags */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, esp_flags[i]))
-		{
+	        /* Check esp_flags */
+                if (streq(what, esp_flags[i])) {
                         e_ptr->esp[n] |= (1L << i);
 			return (0);
 		}
-	}
 
-        /* Check ego_flags */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, ego_flags[i]))
-		{
-                        e_ptr->fego[n] |= (1L << i);
+    		/* Check ego_flags */
+                if (streq(what, ego_flags1[i])) {
+                        e_ptr->fego1[n] |= (1L << i);
 			return (0);
 		}
+                if (streq(what, ego_flags2[i])) {
+                        e_ptr->fego2[n] |= (1L << i);
+			return (0);
+		}
+#endif
 	}
-#endif	// 0
 	/* Oops */
 	s_printf("Unknown ego-item flag '%s'.\n", what);
 

@@ -5895,7 +5895,8 @@ void calc_boni(int Ind) {
 									if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
 									continue;
 								}
-								if ((e_ptr->fego[j] & ETR4_R_MASK) ||
+								if ((e_ptr->fego1[j] & ETR1_R_MASK) ||
+								    (e_ptr->fego2[j] & ETR2_R_MASK) ||
 								    (e_ptr->esp[j] & ESP_R_MASK)) {
 									can_have_hidden_powers = TRUE;
 								}
@@ -5915,7 +5916,8 @@ void calc_boni(int Ind) {
 									if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
 									continue;
 								}
-								if ((e_ptr->fego[j] & ETR4_R_MASK) ||
+								if ((e_ptr->fego1[j] & ETR1_R_MASK) ||
+								    (e_ptr->fego2[j] & ETR2_R_MASK) ||
 								    (e_ptr->esp[j] & ESP_R_MASK)) {
 									can_have_hidden_powers = TRUE;
 								}

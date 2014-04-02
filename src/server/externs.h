@@ -71,7 +71,7 @@ extern void do_quit(int ind, bool tellclient);
 extern artifact_type *ego_make(object_type *o_ptr);
 extern artifact_type *randart_make(object_type *o_ptr);
 extern void randart_name(object_type *o_ptr, char *buffer, char *raw_buffer);
-extern void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b dun_level, object_type *o_ptr);
+extern void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *limit_blows, s16b dun_level, object_type *o_ptr);
 extern void random_resistance (artifact_type *a_ptr, bool is_scroll, int specific);
 extern void dragon_resist(artifact_type *a_ptr);
 extern s32b artifact_power (artifact_type *a_ptr);
