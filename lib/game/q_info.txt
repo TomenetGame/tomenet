@@ -217,17 +217,41 @@ R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
 
 N:3:testCastle:C. Blue:Treasure Depository Breach:-1
 I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
+
 Q:1:1059:p:u:-1:-1:Guard
 L:0:0:0:63:63:0:0:150:30:0:tq_tc.txt:143:22
 W:0:0:-:0:Hold it right there! What is the password?
-Y:0:0:-:suxen:-:1
+Y:0:-1:-:suxen:-:1
 y:0:-1:-:suxen
 yR:-:You may enter!
+J:1:0:-1:-1:-1:-1:-1:-1:-1:-1:151:28:0:0:0:0:0
+
 Q:1:1059:p:u:-1:-1:Guard
 L:0:0:0:63:63:0:0:152:30:0:-:0:0
 W:1:0:-:0:Hold it right there! What is the password?
-Y:1:0:-:suxen:-:1
+Y:1:-1:-:suxen:-:1
 y:1:-1:-:suxen
 yR:-:You may enter!
-J:1:0:-1:-1:-1:-1:-1:-1:-1:-1:151:28:0:0:0:0:0
 J:1:1:-1:-1:-1:-1:-1:-1:-1:-1:151:28:0:0:0:0:0
+
+$TEST_SERVER$Q:1:15:t:y:-1:-1:Dozing drunk
+$TEST_SERVER$L:0:0:0:63:63:0:0:149:24:0:-:0:0
+$TEST_SERVER$W:2:0:-:0:Washhup? Hic..
+
+$TEST_SERVER$r:0:1:0:1:1
+$TEST_SERVER$rI:0:1:80:38:80:39
+$TEST_SERVER$M:0:1:2:-1:-1:-1:0:0:0:0:-:0:0
+$TEST_SERVER$G:0:2:1
+$TEST_SERVER$W:2:2:-:0:Ohhdshankyou! Hic..
+
+$TEST_SERVER$r:2:1:0:1:1
+$TEST_SERVER$rI:2:1:80:38:80:39
+$TEST_SERVER$M:2:1:2:-1:-1:-1:0:0:0:0:-:0:0
+$TEST_SERVER$G:2:3:1
+$TEST_SERVER$W:2:3:-:0:Ohhdshankyou! Hic..
+
+$TEST_SERVER$r:3:1:0:1:1
+$TEST_SERVER$rI:3:1:80:38:80:39
+$TEST_SERVER$M:3:1:2:-1:-1:-1:0:0:0:0:-:0:0
+$TEST_SERVER$G:3:4:1
+$TEST_SERVER$W:2:4:-:0:Ohhdshankyou! Watshout that Nexus won't arresht you! Hic..
