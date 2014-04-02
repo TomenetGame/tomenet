@@ -2194,6 +2194,9 @@ void msg_print(int Ind, cptr msg_raw)
 				    msg[msg_scan - 1] == '(' ||
 				    msg[msg_scan - 1] == '[' ||
 				    msg[msg_scan - 1] == '{' ||
+#if 1 /* don't break smileys? */
+				    msg[msg_scan - 1] == ':' || msg[msg_scan - 1] == ';' ||
+#endif
 #if 0
 				    msg[msg_scan - 1] == ')' ||
 				    msg[msg_scan - 1] == ']' ||
@@ -2214,6 +2217,9 @@ void msg_print(int Ind, cptr msg_raw)
 				    msg[msg_scan] == '[' ||
 				    msg[msg_scan] == '{' ||
 #endif
+#if 1 /* don't break smileys? */
+				    msg[msg_scan] == '-' ||
+#endif
 				    msg[msg_scan] == ')' ||
 				    msg[msg_scan] == ']' ||
 				    msg[msg_scan] == '}' ||
@@ -2233,6 +2239,9 @@ void msg_print(int Ind, cptr msg_raw)
 					} while (((msg[space_scan - 1] >= 'A' && msg[space_scan - 1] <= 'Z') ||
 						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z') ||
 						(msg[space_scan - 1] >= '0' && msg[space_scan - 1] <= '9') ||
+#if 1 /* don't break smileys? */
+						msg[space_scan - 1] == ':' || msg[space_scan - 1] == ';' ||
+#endif
 #if 0
 						msg[space_scan - 1] == ')' ||
 						msg[space_scan - 1] == ']' ||
