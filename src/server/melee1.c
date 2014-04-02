@@ -335,7 +335,7 @@ static bool do_seduce(int Ind, int m_idx)
 	char		o_name[ONAME_LEN];
 	int d, i, j, ty, tx, chance, crowd = 0, piece = 0;
 	bool done = FALSE;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -386,7 +386,7 @@ static bool do_seduce(int Ind, int m_idx)
 		if (!o_ptr->k_idx) continue;
 
 		/* Extract the flags */
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Hack -- cannot take off, not counted */
 		if (f3 & TR3_PERMA_CURSE) continue;
@@ -1954,7 +1954,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				case RBE_DISARM: /* Note: Shields cannot be disarmed, only weapons can */
 				{
 					int slot = INVEN_WIELD;
-					u32b f1, f2, f3, f4, f5, esp;
+					u32b f1, f2, f3, f4, f5, f6, esp;
 					object_type *o_ptr;
 					bool shield = FALSE, secondary = FALSE;
 					bool dis_sec = FALSE;
@@ -1984,7 +1984,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					msg_format(Ind, "\377o%^s tries to disarm you.", m_name);
 					if (safe_area(Ind)) break;
 
-					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 					/* object itself prevents getting separated? */
 					/* can never take off permanently cursed stuff */

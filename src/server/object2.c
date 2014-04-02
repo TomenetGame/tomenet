@@ -1193,7 +1193,7 @@ static s64b object_value_base(int Ind, object_type *o_ptr)
 	return (0L);
 }
 
-void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp) {
+void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *f6, u32b *esp) {
 	s16b j;
 	ego_item_type *e_ptr;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -1204,6 +1204,7 @@ void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3
 	(*f3) &= ~k_ptr->flags3;
 	(*f4) &= ~k_ptr->flags4;
 	(*f5) &= ~k_ptr->flags5;
+	(*f6) &= ~k_ptr->flags6;
 	(*esp) &= ~k_ptr->esp;
 
 	if (o_ptr->name1) return; /* if used on artifacts, we're done here */
@@ -1219,6 +1220,7 @@ void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3
 			*(f3) &= ~e_ptr->flags3[j];
 			*(f4) &= ~e_ptr->flags4[j];
 			*(f5) &= ~e_ptr->flags5[j];
+			*(f6) &= ~e_ptr->flags6[j];
 			*(esp) &= ~e_ptr->esp[j];
 		}
 	}
@@ -1234,6 +1236,7 @@ void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3
 			*(f3) &= ~e_ptr->flags3[j];
 			*(f4) &= ~e_ptr->flags4[j];
 			*(f5) &= ~e_ptr->flags5[j];
+			*(f6) &= ~e_ptr->flags6[j];
 			*(esp) &= ~e_ptr->esp[j];
 		}
 	}
@@ -1243,9 +1246,9 @@ void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3
 s32b flag_cost(object_type * o_ptr, int plusses)
 {
 	s32b total = 0; //, am;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	if (f5 & TR5_TEMPORARY)
 	{
@@ -1259,7 +1262,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	*/
 
 	/* Hack - This shouldn't be here, still.. */
-	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 
 	if (f3 & TR3_WRAITH) total += 250000;
@@ -1442,7 +1445,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
  */
 s64b object_value_real(int Ind, object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 	bool star = (Ind == 0 || object_fully_known_p(Ind, o_ptr));
 
@@ -1460,7 +1463,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 	o_ptr->sseed = 0;
 
 	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Sigil (restore it) */
 	o_ptr->sigil = temp_sigil;
@@ -1936,15 +1939,15 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	artifact_type *a_ptr;
 	s32b total = 0, am, minus, slay = 0;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	int res_amass = 0;
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	if (f5 & TR5_TEMPORARY) return 0;
 
 	/* Hack - This shouldn't be here, still.. */
-	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* hack: Artifact ammunition actually uses a_ptr->cost.. somewhat inconsistent, sorry */
 	if ((o_ptr->name1 == ART_RANDART) && is_ammo(o_ptr->tval)) {
@@ -2175,17 +2178,17 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
    We don't discriminate between pre/postking though. - C. Blue */
 static int artifact_flag_rating_armour(object_type *o_ptr) {
 	s32b total = 0, slay = 0;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* this routine treats armour only */
 	if ((o_ptr->name1 != ART_RANDART) || !is_armour(o_ptr->tval)) return 0;
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	if (f5 & TR5_TEMPORARY) return 0;
 
 	/* Hack - This shouldn't be here, still.. */
-	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 
 	if (f2 & TR2_IM_ACID) {
@@ -2265,19 +2268,19 @@ static int artifact_flag_rating_armour(object_type *o_ptr) {
    same time useful damage mods such as EA/Vamp/Crit. - C. Blue */
 static int artifact_flag_rating_weapon(object_type *o_ptr) {
 	s32b total = 0;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	int slay = 0;
 
 	/* this routine treats armour only */
 	if ((o_ptr->name1 != ART_RANDART) || !is_weapon(o_ptr->tval)) return 0;
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	if (f5 & TR5_TEMPORARY) return 0;
 	if (f4 & TR4_NEVER_BLOW) return 0;
 
 	/* Hack - This shouldn't be here, still.. */
-	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 
 	/* Too useful to ignore, but not really helping damage */
@@ -2337,7 +2340,7 @@ static int artifact_flag_rating_weapon(object_type *o_ptr) {
 /* Return a sensible pricing for randarts, which
    gets added to k_info base item price - C. Blue */
 s64b artifact_value_real(int Ind, object_type *o_ptr) {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 	bool star = (Ind == 0 || object_fully_known_p(Ind, o_ptr));
 
@@ -2348,7 +2351,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	if (!value) return (0L);
 
 	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Artifact */
 	if (o_ptr->name1) {
@@ -4936,14 +4939,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 					break;
 				}
 				
-				/* Formerly Amulet of ESP */
-				case SV_AMULET_ESP:
-				{
-//					o_ptr->name2 = EGO_ESP;
-			                make_ego_item(level, o_ptr, TRUE, resf);
-					break;
-				}
-
 				/* Talisman (Amulet of Luck) */
 				case SV_AMULET_LUCK:
 				{
@@ -4992,7 +4987,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
  */
 static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf)
 {
-        u32b f1, f2, f3, f4, f5, esp;
+        u32b f1, f2, f3, f4, f5, f6, esp;
 
         /* Very good */
         if (power > 1)
@@ -5007,7 +5002,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf)
                 make_ego_item(level, o_ptr, FALSE, resf);
         }
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Apply magic (good or bad) according to type */
 	switch (o_ptr->tval)
@@ -5165,8 +5160,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf)
  * "verygreat" makes sure that ego items aren't just resist fire etc.
  * Has no influence on artifacts. - C. Blue
  */
-void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf)
-{
+void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf) {
 	/* usually lev = dungeonlevel (sometimes more, if in vault) */
 	object_type forge_bak, forge_highest, forge_lowest;
 	object_type *o_ptr_bak = NULL, *o_ptr_highest = &forge_highest;
@@ -5176,7 +5170,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	long depth = ABS(getlevel(wpos)), depth_value;
 	int i, rolls, chance1, chance2, power; //, j;
         char o_name[ONAME_LEN];
-	u32b f1, f2, f3, f4, f5, esp; /* for RESF checks */
+	u32b f1, f2, f3, f4, f5, f6, esp; /* for RESF checks */
 
 	/* Fix for reasonable level reqs on DROP_CHOSEN/SPECIAL_GENE items -C. Blue */
 	if (lev == -2) lev = getlevel(wpos);
@@ -5203,11 +5197,8 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	/* Assume normal */
 	power = 0;
 
-	/* ESP amulets are always ego items */
-	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_ESP) power = 2;
-
 	/* Roll for "good" */
-	else if (good || magik(chance1)) {
+	if (good || magik(chance1)) {
 		/* Assume "good" */
 		power = 1;
 
@@ -5225,6 +5216,14 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 		/* Roll for "broken" */
 		if (magik(chance2)) power = -2;
+	}
+
+	/* insta-ego items can never be random artifacts */
+	if ((k_info[o_ptr->k_idx].flags6 & TR6_INSTA_EGO)) {
+		if (power < 0) power = -2; //cursed ego
+		else power = 2; //great ego
+		resf &= ~RESF_FORCERANDART;
+		resf |= RESF_NORANDART;
 	}
 
 
@@ -5334,7 +5333,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 		/* Done */
 		return;
-	} else if ((resf & RESF_FORCERANDART)) return; /* failed to generate */
+	} else if ((resf & RESF_FORCERANDART)) {
+		invwipe(o_ptr);
+		return; /* failed to generate */
+	}
 
 	/* Hack - for NO_MORGUL_IN_IDDC check in a_m_aux_1().  - C. Blue
 	   (Usually, o_ptr->wpos is only set in drop_near(), which happens _afterwards_.) */
@@ -5474,7 +5476,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		else if (object_value_real(0, o_ptr) < object_value_real(0, o_ptr_lowest))
 			object_copy(o_ptr_lowest, o_ptr);
 
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 35000)) continue;
 		if ((resf & RESF_MIDVALUE) && (object_value_real(0, o_ptr) > 50000)) continue;
 		if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 100000)) continue;
@@ -5512,6 +5514,13 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			if (object_value_real(0, o_ptr) >= depth + 150) break;
 		}
 	} /* verygreat-loop end */
+
+	/* verify! (could fail if drop is forced 'great' but only ego power
+	   available is a bad one (0 value) or vice versa.. */
+	if ((k_info[o_ptr->k_idx].flags6 & TR6_INSTA_EGO) && !o_ptr->name2 && !o_ptr->name2b) {
+		invwipe(o_ptr);
+		return; /* failed to generate */
+	}
 
 	if (verygreat) {
 		if (resf_fallback) {
@@ -6742,7 +6751,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 //	int base = 100;
 	int tries = 0, i = 0, j = 0;
 	char o_name[ONAME_LEN];
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	bool mha, rha; /* monk heavy armor, rogue heavy armor */
 
 	/* for analysis functions and afterwards for determining concrete reward */
@@ -7074,7 +7083,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Apply magic (allow artifacts) */
 		apply_magic_depth(base, o_ptr, base, TRUE, good, great, verygreat, resf);
 		s_printf("REWARD_REAL: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d)\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight);
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* This should have already been checked in apply_magic_depth above itself,
 		   but atm it seems not to work: */
@@ -7373,7 +7382,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	bool is_potion = FALSE, plural = FALSE;
 	cptr note_kill = NULL;
 #endif
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	bool arts = artifact_p(o_ptr), crash;
 	u16b this_o_idx, next_o_idx = 0;
@@ -7517,7 +7526,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	if (o_ptr->name1 == ART_POWER && dropped_the_one_ring(wpos, c_ptr)) return -1;
 
 	/* some objects get destroyed by falling on certain floor type - C. Blue */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 #ifdef DROP_KILL_NOTE
 	if (o_ptr->tval == TV_POTION) is_potion = TRUE;
 	if (o_ptr->number > 1) plural = TRUE;
@@ -8250,7 +8259,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	int		n = -1;
 
 	object_type	*j_ptr;
-	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, esp = 0;
+	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5, f6 = 0, esp = 0;
 
 	/* Check for combining */
 	for (j = 0; j < INVEN_PACK; j++) {
@@ -8398,7 +8407,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	if (p_ptr->auto_inscribe) auto_inscribe(Ind, o_ptr, 0);
 #endif
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Auto Curse */
 	if (f3 & TR3_AUTO_CURSE) {
@@ -8879,12 +8888,12 @@ void handle_art_d(int aidx) {
 
 /* Check whether an item causes HP drain on an undead player (vampire) who wears/wields it */
 bool anti_undead(object_type *o_ptr) {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
 
 	if (cursed_p(o_ptr)) return(FALSE);
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
         if (f3 & TR3_LITE1) l++;
         if (f4 & TR4_LITE2) l += 2;
         if (f4 & TR4_LITE3) l += 3;

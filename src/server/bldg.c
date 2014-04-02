@@ -959,9 +959,9 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, 
  */
 static void compare_weapon_aux1(object_type *o_ptr, int col, int r)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 
 	if (f1 & (TR1_SLAY_ANIMAL)) {
@@ -1183,7 +1183,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 
 	object_type *o_ptr;
 	char tmp_str[ONAME_LEN];
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 #if 0
 	if (set_reward && p_ptr->rewards[ireward]) {
@@ -1211,7 +1211,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 		if (artifact_p(o_ptr)) continue;
 
 		/* Extract the flags */
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Unenchantable items always fail */
 		if (f5 & TR5_NO_ENCHANT) continue;

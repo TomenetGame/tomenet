@@ -1552,7 +1552,7 @@ bool cave_valid_bold(cave_type **zcave, int y, int x)
 
 	s16b this_o_idx, next_o_idx = 0;
 
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Forbid perma-grids */
 /*	if (cave_perma_grid(c_ptr)) return (FALSE); */
@@ -1572,7 +1572,7 @@ bool cave_valid_bold(cave_type **zcave, int y, int x)
 		/* Forbid artifact grids */
 		if (true_artifact_p(o_ptr))
 		{
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 			if (f4 & TR4_SPECIAL_GENE) return (FALSE);
 		}
 	}

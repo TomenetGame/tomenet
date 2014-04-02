@@ -360,6 +360,7 @@ struct artifact_type
         u32b flags3;        /* Artifact Flags, set 3 */
 	u32b flags4;            /* Artifact Flags, set 4 */
 	u32b flags5;            /* Artifact Flags, set 5 */
+	u32b flags6;            /* Artifact Flags, set 6 */
         byte level;                /* Artifact level */
         byte rarity;        /* Artifact rarity */
         byte cur_num;        /* Number created (0 or 1) */

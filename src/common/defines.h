@@ -4395,6 +4395,7 @@
 #define TR1_BRAND_FIRE			0x40000000L
 #define TR1_BRAND_COLD			0x80000000L
 
+/* mask for all damage multipliers (brands & slays) */
 #define TR1_MULTMASK		(TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID | TR1_BRAND_POIS | \
 				TR1_SLAY_ANIMAL | TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_SLAY_DEMON | TR1_SLAY_ORC | \
 				TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_DRAGON | \
@@ -4411,6 +4412,7 @@
 #define TRAP2_ONLY_UNDEAD       0x00000200L     /* Affect only undead & others */
 #define TRAP2_ONLY_EVIL         0x00000400L     /* Affect only evil creatures &c. */
 
+/* mask for monster-specific traps */
 #define TRAP2_ONLY_MASK		(TRAP2_ONLY_DRAGON | TRAP2_ONLY_DEMON | TRAP2_ONLY_ANIMAL | \
 				 TRAP2_ONLY_UNDEAD | TRAP2_ONLY_EVIL )
 
@@ -4527,34 +4529,34 @@
 #define TR4_CURSE_NO_DROP       	0x40000000L     /* The obj wont be dropped */
 #define TR4_NO_RECHARGE         	0x80000000L     /* Object Cannot be recharged */
 
-#define TR4_NULL_MASK           0xFFFFFFFCL
+#define TR4_NULL_MASK           0xFFFFFFFCL	//unused
 
 
-#define TR5_TEMPORARY           0x00000001L     /* In timeout turns it is destroyed */
-#define TR5_DRAIN_MANA          0x00000002L     /* Drains mana */
-#define TR5_DRAIN_HP            0x00000004L     /* Drains hp */
-#define TR5_VORPAL		0x00000008L	/* XXX5 */
+#define TR5_TEMPORARY           0x00000001L		/* In timeout turns it is destroyed */
+#define TR5_DRAIN_MANA          0x00000002L		/* Drains mana */
+#define TR5_DRAIN_HP            0x00000004L		/* Drains hp */
+#define TR5_VORPAL		0x00000008L		/* XXX5 */
 #define TR5_IMPACT			0x00000010L	/* Cause Earthquakes */
-#define TR5_CRIT                	0x00000020L     /* More critical hits */
-#define TR5_ATTR_MULTI          	0x00000040L     /* Object shimmer -- only allowed in k_info */
-#define TR5_WOUNDING            	0x00000080L     /* Wounds monsters */
-#define TR5_FULL_NAME           0x00000100L     /* Uses direct name from k_info - UNUSED appearently */
-#define TR5_LUCK                0x00000200L     /* Luck += pval */
-#define TR5_RES_PLASMA          0x00000400L     /* For the runecraft sigil */
-#define TR5_LEVELS              0x00000800L     /* Can gain exp/exp levels !! */
+#define TR5_CRIT                	0x00000020L	/* More critical hits */
+#define TR5_ATTR_MULTI          	0x00000040L	/* Object shimmer -- only allowed in k_info */
+#define TR5_WOUNDING            	0x00000080L	/* Wounds monsters */
+#define TR5_FULL_NAME           0x00000100L		/* Uses direct name from k_info - UNUSED appearently */
+#define TR5_LUCK                0x00000200L		/* Luck += pval */
+#define TR5_RES_PLASMA          0x00000400L		/* For the runecraft sigil */
+#define TR5_LEVELS              0x00000800L		/* Can gain exp/exp levels !! */
 #define TR5_FORCE_DEPTH			0x00001000L	/* Can only occur on depth >= its k_info level */
 #define TR5_WHITE_LIGHT			0x00002000L	/* Light source colour is white instead of flame-yellow (for CAVE_LITE_COLOURS) */
 #define TR5_IGNORE_DISEN		0x00004000L	/* For 'Arcane' ego power for Heavy winners-only armour */
 #define TR5_RES_TELE            	0x00008000L     /* For Sky Dragon Scale Mail */
-#define TR5_SH_COLD             0x00010000L     /* Winter's might/Snow grasp/Frostweaving (Cold aura) */
-#define TR5_IGNORE_MANA		0x00020000L	/* Item ignores Mana Damage */
-#define TR5_IGNORE_WATER	0x00040000L	/* Item ignores Water damage */
+#define TR5_SH_COLD             0x00010000L		/* Winter's might/Snow grasp/Frostweaving (Cold aura) */
+#define TR5_IGNORE_MANA		0x00020000L		/* Item ignores Mana Damage */
+#define TR5_IGNORE_WATER	0x00040000L		/* Item ignores Water damage */
 #define TR5_RES_TIME		0x00080000L
 #define TR5_RES_MANA			0x00100000L
 #define TR5_IM_POISON			0x00200000L
 #define TR5_IM_WATER			0x00400000L	/* Water immunity, should also let you breathe under water */
 #define TR5_RES_WATER			0x00800000L	/* Resist Water */
-#define TR5_REGEN_MANA		0x01000000L	/* Item induces regeneration */
+#define TR5_REGEN_MANA		0x01000000L		/* Item induces regeneration */
 #define TR5_DISARM		0x02000000L
 #define TR5_NO_ENCHANT		0x04000000L
 #define TR5_CHAOTIC             0x08000000L
@@ -4563,6 +4565,8 @@
 #define TR5_PASS_WATER			0x40000000L
 #define TR5_WINNERS_ONLY        	0x80000000L
 
+
+#define TR6_INSTA_EGO		0x00000001L		/* Similar to INSTA_ART, this item is always an ego item */
 
 /*#define TR5_SENS_FIRE           0x20000000L*/
 /*#define TR5_NO_NORM_ART         0x80000000L */

@@ -1107,7 +1107,7 @@ void calc_mana(int Ind) {
 	s32b new_mana = 0;
 
 	object_type *o_ptr;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
 	}
@@ -1215,7 +1215,7 @@ void calc_mana(int Ind) {
 	o_ptr = &p_ptr->inventory[INVEN_HANDS];
 
 	/* Examine the gloves */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Only Sorcery/Magery users are affected */
 	if (get_skill(p_ptr, SKILL_SORCERY) || get_skill(p_ptr, SKILL_MAGERY)) {
@@ -1475,7 +1475,7 @@ void calc_hitpoints(int Ind) {
 	int player_hp_eff; /* replacement for accessing player_hp[] directly */
 
 //	object_type *o_ptr;
-//	u32b f1, f2, f3, f4, f5, esp;
+//	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	int bonus, Ind2 = 0, cr_mhp = p_ptr->cp_ptr->c_mhp + p_ptr->rp_ptr->r_mhp;
 	long mhp, mhp_playerform, weakling_boost;
@@ -2644,9 +2644,9 @@ otherwise, let's compromise for now: */
 #if 0
 	f1 = k_info[o_ptr->k_idx].flags1;
 #else
-	u32b f2, f3, f4, f5, esp;
+	u32b f2, f3, f4, f5, f6, esp;
 	/* Extract the item flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 #endif
 	if (f1 & (TR1_BLOWS)) xblow = o_ptr->bpval;
 	if (o_ptr->name2) {
@@ -2718,8 +2718,8 @@ int calc_crit_obj(int Ind, object_type *o_ptr)
 {
 	artifact_type *a_ptr;
 	int xcrit = 0;
-	u32b f1, f2, f3, f4, f5, esp;
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	u32b f1, f2, f3, f4, f5, f6, esp;
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	if (f5 & (TR5_CRIT)) xcrit = o_ptr->bpval;
 	/* check for either.. */
@@ -2841,7 +2841,7 @@ void calc_boni(int Ind) {
 	long int d, toac = 0, body = 0;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	s16b pval;
 
 	bool old_auto_id = p_ptr->auto_id;
@@ -3585,7 +3585,7 @@ void calc_boni(int Ind) {
 		p_ptr->total_weight += o_ptr->weight * o_ptr->number;
 
 		/* Extract the item flags */
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Kurzel - Note cursed/hidden status... */
 		if ((f3 & TR3_CURSED) || (f3 & TR3_HEAVY_CURSE) || (f3 & TR3_PERMA_CURSE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XCRSE;
@@ -5214,7 +5214,7 @@ void calc_boni(int Ind) {
 //	if (inventory[INVEN_WIELD + i].k_idx && inventory[INVEN_ARM + i].k_idx)
 	if (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx) {
 		/* Extract the item flags */
-		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		if (f4 & TR4_SHOULD2H) {
 			/* Reduce the real bonuses */
@@ -5233,13 +5233,13 @@ void calc_boni(int Ind) {
 		}
 	}
 	if (p_ptr->inventory[INVEN_WIELD].k_idx && !p_ptr->inventory[INVEN_ARM].k_idx) {
-		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		if (f4 & TR4_COULD2H) p_ptr->easy_wield = TRUE;
 	}
 	/* for dual-wield..*/
 	if (!p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) {
-		object_flags(&p_ptr->inventory[INVEN_ARM], &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(&p_ptr->inventory[INVEN_ARM], &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		if (f4 & TR4_COULD2H) p_ptr->easy_wield = TRUE;
 	}
 
@@ -5874,13 +5874,14 @@ void calc_boni(int Ind) {
 					o_ptr = &p_ptr->inventory[i+INVEN_WIELD];
 					k_ptr = &k_info[o_ptr->k_idx];
 					/* Build the flags */
-					//object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+					//object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 					if (object_aware_p(Ind, o_ptr)) {
 						f1 = k_info[o_ptr->k_idx].flags1;
 						f2 = k_info[o_ptr->k_idx].flags2;
 						f3 = k_info[o_ptr->k_idx].flags3;
 						f4 = k_info[o_ptr->k_idx].flags4;
 						f5 = k_info[o_ptr->k_idx].flags5;
+						f6 = k_info[o_ptr->k_idx].flags6;
 						esp = k_info[o_ptr->k_idx].esp;
 					} else can_have_hidden_powers = TRUE; //unknown jewelry type
 					/* Assume we must *id* (just once) to learn sigil powers - Kurzel */
@@ -5905,6 +5906,7 @@ void calc_boni(int Ind) {
 								f3 |= e_ptr->flags3[j];
 								f4 |= e_ptr->flags4[j];
 								f5 |= e_ptr->flags5[j];
+								f6 |= e_ptr->flags6[j];
 								esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
 							    }
 						}
@@ -5926,6 +5928,7 @@ void calc_boni(int Ind) {
 								f3 |= e_ptr->flags3[j];
 								f4 |= e_ptr->flags4[j];
 								f5 |= e_ptr->flags5[j];
+								f6 |= e_ptr->flags6[j];
 								esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
 							}
 						}

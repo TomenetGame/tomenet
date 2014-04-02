@@ -2969,7 +2969,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Apply Earthquakes */
 	if (p_ptr->inventory[INVEN_TOOL].k_idx) {
 		u32b fx, f5;
-		object_flags(o_ptr, &fx, &fx, &fx, &fx, &f5, &fx);
+		object_flags(o_ptr, &fx, &fx, &fx, &fx, &f5, &fx, &fx);
 		if ((p_ptr->impact || (f5 & TR5_IMPACT)) &&
 		    (randint(200) < power) && magik(50)
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
@@ -4357,7 +4357,7 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	/* Extract the item flags */
-	object_flags(j_ptr, &f1, &fx, &fx, &fx, &fx, &esp);
+	object_flags(j_ptr, &f1, &fx, &fx, &fx, &fx, &fx, &esp);
 
 	if (j_ptr->tval == TV_BOOMERANG) {
 		boomerang = TRUE;
@@ -4402,7 +4402,7 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	/* Extract the item flags */
-        object_flags(o_ptr, &f1a, &fx, &fx, &fx, &fx, &esp);
+        object_flags(o_ptr, &f1a, &fx, &fx, &fx, &fx, &fx, &esp);
 
 	/* Use a base distance */
 //	tdis = 10;
@@ -5864,7 +5864,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #endif
 
 	char            o_name[ONAME_LEN];
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	char brand_msg[MAX_CHARS_WIDE] = { '\0' };
 
@@ -5932,7 +5932,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		return;
 	};
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Hack - Cannot throw away 'no drop' cursed items */
 	if (cursed_p(o_ptr) && (f4 & TR4_CURSE_NO_DROP) && item >= 0 && !bashing) {

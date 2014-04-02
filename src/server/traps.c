@@ -171,7 +171,7 @@ static bool do_player_trap_garbage(int Ind, int times)
 	int k, l, lv = getlevel(&p_ptr->wpos);
 	bool ident = FALSE;
 	object_type *o_ptr, forge;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	for(k = 0; k < times; k++) {
 		l = rand_int(max_k_idx);
@@ -182,7 +182,7 @@ static bool do_player_trap_garbage(int Ind, int times)
 		o_ptr = &forge;
 		invcopy(o_ptr, l);
 
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		if (f3 & TR3_INSTA_ART) continue;
 
 		o_ptr->owner = p_ptr->id;
@@ -975,7 +975,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			object_type *j_ptr;
 			s16b j;
-			u32b f1, f2, f3, f4, f5, esp;
+			u32b f1, f2, f3, f4, f5, f6, esp;
 
 			for (j = 0; j < INVEN_WIELD; j++) {
 				if (!p_ptr->inventory[j].k_idx) continue;
@@ -983,7 +983,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				if ((j_ptr->tval == TV_SCROLL)
 				    && (j_ptr->sval == SV_SCROLL_WORD_OF_RECALL)) {
 					/* handle 'fireproof' scrolls */
-					object_flags(j_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+					object_flags(j_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 					if (f3 & TR3_IGNORE_FIRE) continue;
 
 					inven_item_increase(Ind, j, -j_ptr->number);
@@ -1322,7 +1322,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			object_type *j_ptr;
 			s16b j, chance = 75;
-			u32b f1, f2, f3, f4, f5, esp;
+			u32b f1, f2, f3, f4, f5, f6, esp;
 
 			//            for (j=0;j<INVEN_TOTAL;j++)
 			/* From the foot ;D */
@@ -1332,7 +1332,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				if (!p_ptr->inventory[j].k_idx) continue;
 				j_ptr = &p_ptr->inventory[j];
-				object_flags(j_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+				object_flags(j_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 				//               object_flags(j_ptr, &f1, &f2, &f3);
 
 				/* is it a non-artifact speed item? */
@@ -2271,14 +2271,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			/* Access the lite */
 			object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
-			u32b f1, f2, f3, f4, f5, esp;
+			u32b f1, f2, f3, f4, f5, f6, esp;
 
 			(void)unlite_area(Ind, 0, 3);
 			ident = TRUE;
 
 			if (!o_ptr->k_idx) break;
 
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 			/* Permalight is immune */
 			if (!(f4 & TR4_FUEL_LITE)) break;
@@ -3089,7 +3089,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 //	cptr q,s,c;
 	object_type object_type_body;
 
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	cave_type *c_ptr;
 	cave_type **zcave;
@@ -3170,7 +3170,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	/* In some cases, take multiple objects to load */
 	/* Hack -- don't ask XXX */
 	if (o_ptr->sval != SV_TRAPKIT_DEVICE) {
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		if ((f3 & TR3_XTRA_SHOTS) && (o_ptr->pval > 0)) num += o_ptr->pval;
 		if (f2 & (TRAP2_AUTOMATIC_5 | TRAP2_AUTOMATIC_99)) num = 99;
@@ -3333,13 +3333,13 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 //	monster_race    *r_ptr = race_inf(m_ptr);
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
-	u32b f1, f2, f3, f4, f5, esp, flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP;
+	u32b f1, f2, f3, f4, f5, f6, esp, flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP;
 	object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
 
 	cave_type **zcave;
 	zcave = getcave(&m_ptr->wpos);
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Depend on rod type */
         switch (o_ptr->sval) {
@@ -4393,7 +4393,7 @@ bool mon_hit_trap(int m_idx)
 	object_type *kit_o_ptr, *load_o_ptr, *j_ptr;
 	struct c_special *cs_ptr;
 
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	object_type object_type_body;
 
@@ -4439,7 +4439,7 @@ bool mon_hit_trap(int m_idx)
 	if (!kit_o_ptr || !load_o_ptr) return (FALSE);
 
 	/* Get trap properties */
-	object_flags(kit_o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(kit_o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Can set off check */
 	/* Ghosts only set off Ghost traps */

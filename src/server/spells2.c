@@ -1232,7 +1232,7 @@ static int remove_curse_aux(int Ind, int all)
 	object_type *o_ptr;
 
 	int		i, j, cnt = 0;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Attempt to uncurse items being worn */
 	/* Now this can uncurse ones in inventory */
@@ -1248,7 +1248,7 @@ static int remove_curse_aux(int Ind, int all)
 		if (!cursed_p(o_ptr)) continue;
 
 		/* Extract the flags */
-			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Heavily Cursed Items need a special spell */
 		if (!(all & 0x01) && (f3 & TR3_HEAVY_CURSE)) continue;
@@ -1344,7 +1344,7 @@ bool restore_level(int Ind)
 void self_knowledge(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int		k;
-	u32b	f1 = 0L, f2 = 0L, f3 = 0L, f4 = 0L, f5 = 0L;	//, esp = 0L;
+	u32b	f1 = 0L, f2 = 0L, f3 = 0L, f4 = 0L, f5 = 0L, f6 = 0L;	//, esp = 0L;
 	object_type	*o_ptr;
 //	cptr	*info = p_ptr->info;
 	bool	life = FALSE;
@@ -1369,12 +1369,12 @@ void self_knowledge(int Ind) {
 
 	/* Acquire item flags from equipment */
 	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
-		u32b t1, t2, t3, t4, t5, tesp;
+		u32b t1, t2, t3, t4, t5, t6, tesp;
 		o_ptr = &p_ptr->inventory[k];
 		/* Skip empty items */
 		if (!o_ptr->k_idx) continue;
 		/* Extract the flags */
-		object_flags(o_ptr, &t1, &t2, &t3, &t4, &t5, &tesp);
+		object_flags(o_ptr, &t1, &t2, &t3, &t4, &t5, &t6, &tesp);
 
 		/* Extract flags */
 		f1 |= t1;
@@ -1382,6 +1382,7 @@ void self_knowledge(int Ind) {
 		f3 |= t3;
 		f4 |= t4;
 		f5 |= t5;
+		f6 |= t6;
 
 		/* Mega Hack^3 -- check the amulet of life saving */
 		if (o_ptr->tval == TV_AMULET &&
@@ -3011,11 +3012,11 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 	int i, chance, prob;
 	bool res = FALSE;
 	bool a = like_artifact_p(o_ptr);
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	bool did_tohit = FALSE, did_todam = FALSE, did_toac = FALSE;
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Unenchantable items always fail */
 	if (f5 & TR5_NO_ENCHANT) return (FALSE);
@@ -3710,10 +3711,10 @@ bool identify_fully_object_quiet(int Ind, object_type *o_ptr)
 //static bool item_tester_hook_recharge(object_type *o_ptr)
 bool item_tester_hook_recharge(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Some objects cannot be recharged */
 	if (f4 & TR4_NO_RECHARGE) return (FALSE);
@@ -6643,10 +6644,10 @@ bool sleep_monsters_touch(int Ind)
 /* Scan magical powers for the golem */
 static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	if (f1 & TR1_LIFE) r_ptr->hdice += o_ptr->pval;
 	if (f1 & TR1_SPEED) r_ptr->speed += o_ptr->pval * 2 / 3;

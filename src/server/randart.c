@@ -1855,6 +1855,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 	a_ptr->flags4 = k_ptr->flags4;
 	a_ptr->flags5 = k_ptr->flags5;
 	a_ptr->flags5 |= TR5_IGNORE_WATER;
+	a_ptr->flags6 = k_ptr->flags6;
 
 	/* Ensure weapons have some bonus to hit & dam */
 	if ((a_ptr->tval == TV_DIGGING) || is_weapon(a_ptr->tval) ||
@@ -2148,7 +2149,7 @@ artifact_type *ego_make(object_type *o_ptr)
 	ego_item_type *e_ptr;
 	int j, rr, granted_pval;
 	bool limit_blows = FALSE;
-//	u32b f1, f2, f3, f4, f5, esp;
+//	u32b f1, f2, f3, f4, f5, f6, esp;
 	s16b e_idx;
 
 	/* Hack -- initialize bias */
@@ -2184,6 +2185,7 @@ try_an_other_ego:
 			a_ptr->flags3 |= e_ptr->flags3[j];
 			a_ptr->flags4 |= e_ptr->flags4[j];
 			a_ptr->flags5 |= e_ptr->flags5[j];
+			a_ptr->flags6 |= e_ptr->flags6[j];
 			a_ptr->esp |= e_ptr->esp[j];
 			add_random_ego_flag(a_ptr, e_ptr->fego1[j], e_ptr->fego2[j], &limit_blows, o_ptr->level, o_ptr);
 		}

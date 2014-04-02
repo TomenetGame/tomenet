@@ -230,6 +230,7 @@ struct object_kind
 	u32b flags3;		/* Flags, set 3 */
         u32b flags4;            /* Flags, set 4 */
         u32b flags5;            /* Flags, set 5 */
+        u32b flags6;            /* Flags, set 6 */
 
 
 	byte locale[4];		/* Allocation level(s) */
@@ -308,6 +309,7 @@ struct artifact_type
 	u32b flags3;		/* Artifact Flags, set 3 */
         u32b flags4;            /* Artifact Flags, set 4 */
         u32b flags5;            /* Artifact Flags, set 5 */
+        u32b flags6;            /* Artifact Flags, set 6 */
 
 	byte level;		/* Artifact level */
 	byte rarity;		/* Artifact rarity */
@@ -366,6 +368,7 @@ struct ego_item_type
         u32b flags3[5];            /* Ego-Item Flags, set 3 */
         u32b flags4[5];            /* Ego-Item Flags, set 4 */
         u32b flags5[5];            /* Ego-Item Flags, set 5 */
+        u32b flags6[5];            /* Ego-Item Flags, set 6 */
         u32b esp[5];                       /* ESP flags */
         u32b fego1[5];                       /* ego flags */
         u32b fego2[5];                       /* ego flags */

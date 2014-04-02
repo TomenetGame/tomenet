@@ -1018,7 +1018,7 @@ void reset_visuals(void)
  * Obtain the "flags" for an item
  */
 //void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
-void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp) {
+void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *f6, u32b *esp) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Base object */
@@ -1027,6 +1027,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	(*f3) = k_ptr->flags3;
 	(*f4) = k_ptr->flags4;
 	(*f5) = k_ptr->flags5;
+	(*f6) = k_ptr->flags6;
 	(*esp) = k_ptr->esp;
 
 	artifact_type *a_ptr;
@@ -1041,6 +1042,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			(*f3) = a_ptr->flags3;
 			(*f4) = a_ptr->flags4;
 			(*f5) = a_ptr->flags5;
+			(*f6) = a_ptr->flags6;
 			(*esp) = a_ptr->esp;
 		} else {
 			if (!(a_ptr = &a_info[o_ptr->name1])) return;
@@ -1049,11 +1051,12 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			(*f3) |= a_ptr->flags3;
 			(*f4) |= a_ptr->flags4;
 			(*f5) |= a_ptr->flags5;
+			(*f6) |= a_ptr->flags6;
 			(*esp) |= a_ptr->esp;
 		}
 #if 0
 		if ((!object_flags_no_set) && (a_ptr->set != -1))
-			apply_flags_set(o_ptr->name1, a_ptr->set, f1, f2, f3, f4, f5, esp);
+			apply_flags_set(o_ptr->name1, a_ptr->set, f1, f2, f3, f4, f5, f6, esp);
 #endif	// 0
 	}
 
@@ -1067,6 +1070,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 		(*f3) |= a_ptr->flags3;
 		(*f4) |= a_ptr->flags4;
 		(*f5) |= a_ptr->flags5;
+		(*f6) |= a_ptr->flags6;
 		(*esp) |= a_ptr->esp;
 	}
 
@@ -1890,12 +1894,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	char		tmp_val[ONAME_LEN];
 	bool 		short_item_names = FALSE;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_kind	*k_ptr = &k_info[o_ptr->k_idx];
 	bool skip_base_article = FALSE;
 
 	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* hack - don't show special abilities on shirts easily (by adding them to their item name) - C. Blue */
 	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) mode |= 32;
@@ -3001,13 +3005,13 @@ void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mod
  * Return a string, or NULL for "no activation"
  */
 cptr item_activation(object_type *o_ptr) {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
         /* Needed hacks */
         //static char rspell[2][80];
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Require activation ability */
 	if (!(f3 & TR3_ACTIVATE)) return (NULL);
@@ -4078,7 +4082,7 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
 void observe_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	char o_name[ONAME_LEN];
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_type forge;
 
 	/* Description */
@@ -4098,7 +4102,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	forge.pval = 0;
 
 	/* Extract some flags */
-	object_flags(&forge, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(&forge, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Describe */
 	msg_format(Ind, "\377s%s:", o_name);
@@ -4194,7 +4198,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 #endif
 	player_type *p_ptr = Players[Ind];
 	int j, am;
-	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, esp = 0;
+	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 	FILE *fff;
 	char buf[1024], o_name[ONAME_LEN];
 	char *ca_ptr = "", a = (id && artifact_p(o_ptr)) ? 'U' : 'w';
@@ -4224,7 +4228,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 		bool aware_tmp = object_aware_p(Ind, o_ptr);
 
 		/* Extract the flags */
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* hack for inspecting items in stores, which are supposed to
 		   be fully identified even though we aren't aware of them yet */
@@ -4249,6 +4253,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 			f3 = k_info[o_ptr->k_idx].flags3;
 			f4 = k_info[o_ptr->k_idx].flags4;
 			f5 = k_info[o_ptr->k_idx].flags5;
+			f6 = k_info[o_ptr->k_idx].flags6;
 			esp = k_info[o_ptr->k_idx].esp;
 		}
 
@@ -4275,6 +4280,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	        	        	f3 |= e_ptr->flags3[j];
 	                	        f4 |= e_ptr->flags4[j];
 	                    		f5 |= e_ptr->flags5[j];
+	                    		f6 |= e_ptr->flags6[j];
 	                    	        esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
 	                    	    }
 	                }
@@ -4296,6 +4302,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	                    		f3 |= e_ptr->flags3[j];
 		                        f4 |= e_ptr->flags4[j];
 		                        f5 |= e_ptr->flags5[j];
+		                        f6 |= e_ptr->flags6[j];
 	                    	        esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
 	            		}
 	            	}
@@ -4317,6 +4324,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 			e_ptr->flags3[0] = f3; /* need f3 for determining encumberment (BLESSED) */
 			e_ptr->flags4[0] = f4;
 			e_ptr->flags5[0] = f5;
+			e_ptr->flags6[0] = f6;
 			e_ptr->esp[0] = esp;
 		}
 	}
@@ -4996,7 +5004,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 			object_type *x_ptr = &p_ptr->inventory[INVEN_AMMO];
 			if (x_ptr->k_idx) {
 				if ((x_ptr->ident & ID_MENTAL)) {
-					object_flags(x_ptr, &ammo_f1, &dummy, &dummy, &dummy, &dummy, &dummy);
+					object_flags(x_ptr, &ammo_f1, &dummy, &dummy, &dummy, &dummy, &dummy, &dummy);
 				} else {
 					/* Just assume basic fixed flags */
 					ammo_f1 = k_info[o_ptr->k_idx].flags1;
@@ -5034,7 +5042,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
                      ( (x_ptr->sval == SV_LIGHT_XBOW || x_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
                      (x_ptr->sval == SV_SLING && o_ptr->tval == TV_SHOT))) {
 			if ((x_ptr->ident & ID_MENTAL)) {
-				object_flags(x_ptr, &shooter_f1, &dummy, &dummy, &dummy, &dummy, &dummy);
+				object_flags(x_ptr, &shooter_f1, &dummy, &dummy, &dummy, &dummy, &dummy, &dummy);
 			} else {
 				/* Just assume basic fixed flags */
 				shooter_f1 = k_info[o_ptr->k_idx].flags1;

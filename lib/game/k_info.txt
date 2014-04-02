@@ -3692,12 +3692,12 @@ A:70/8
 F:DEX | SUST_DEX | SPEED | INFRA | HIDE_TYPE | 
 F:RES_NEXUS | RES_POIS
 
-#Ugly hack: It's an 'instant ego-item'
 N:474:Telepathy
 G:":d
 I:40:22:0
 W:50:0:3:10000
 A:50/8
+F:INSTA_EGO
 
 N:475:Sustenance
 G:":d

@@ -232,7 +232,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 {
 	int mult = FACTOR_MULT, bonus = 0;
 	monster_race *r_ptr = race_inf(m_ptr);
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = NULL;
 
 	struct worldpos *wpos = &m_ptr->wpos;
@@ -241,7 +241,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	char m_name[MNAME_LEN];
 
 	object_type *e_ptr;
-	u32b ef1, ef2, ef3, ef4, ef5, eesp;
+	u32b ef1, ef2, ef3, ef4, ef5, ef6, eesp;
 	int brands_total = 0, brand_msgs_added = 0;
 	/* char brand_msg[80];*/
 
@@ -268,7 +268,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 	/* Extract the flags */
 	if (o_ptr->k_idx) {
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Hack -- extract temp branding */
 		if (p_ptr && p_ptr->bow_brand) {
@@ -378,7 +378,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		/* Skip missing items */
 		if (!e_ptr->k_idx) continue;
 		/* Extract the item flags */
-		object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &eesp);
+		object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &ef6, &eesp);
 
 		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
 		/* All other items have general effect! */
@@ -820,10 +820,10 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, char *brand_msg, bool thrown)
 {
 	int mult = FACTOR_MULT, bonus = 0;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = NULL;
 	object_type *e_ptr;
-	u32b ef1, ef2, ef3, ef4, ef5, eesp;
+	u32b ef1, ef2, ef3, ef4, ef5, ef6, eesp;
 	int brands_total, brand_msgs_added;
 	/* char brand_msg[80]; */
 
@@ -844,7 +844,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 	/* Extract the flags */
 	if (o_ptr->k_idx)
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	else {
 		f1 = 0; f2 = 0; f3 = 0; f4 = 0; f5 = 0;
 	}
@@ -932,7 +932,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	        /* Skip missing items */
         	if (!e_ptr->k_idx) continue;
 	        /* Extract the item flags */
-                object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &eesp);
+                object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &ef6, &eesp);
 
 		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
 		/* All other items have general effect! */
@@ -1854,11 +1854,11 @@ void carry(int Ind, int pickup, int confirm) {
 		else if (auto_load && is_ammo(o_ptr->tval) &&
 		    !p_ptr->inventory[INVEN_AMMO].k_idx) {
 			int slot = INVEN_AMMO;
-			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 
 			msg_print(Ind, "You put the ammo into your quiver.");
 
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 			o_ptr->marked = 0;
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
@@ -1924,11 +1924,11 @@ void carry(int Ind, int pickup, int confirm) {
 		else if (auto_load && o_ptr->tval == TV_BOOMERANG &&
 		    !p_ptr->inventory[INVEN_BOW].k_idx && item_tester_hook_wear(Ind, INVEN_BOW)) {
 			int slot = INVEN_BOW;
-			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 
 			msg_print(Ind, "You ready the boomerang.");
 
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 			o_ptr->marked = 0;
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
@@ -2163,7 +2163,7 @@ void carry(int Ind, int pickup, int confirm) {
 							break; /* can't activate any other items either */
 						}
 
-						object_flags(i_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy);
+						object_flags(i_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
 
 						/* Extract the item level */
 						lev = k_info[i_ptr->k_idx].level;
@@ -2242,7 +2242,7 @@ void carry(int Ind, int pickup, int confirm) {
 								continue; // find the scrolls =/
 							}
 
-							object_flags(i_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy);
+							object_flags(i_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
 
 							/* Extract the item level */
 							lev = k_info[i_ptr->k_idx].level;
@@ -2633,7 +2633,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	monster_effect[3] = 0;
 	monster_effect[4] = 0;
 	monster_effect[5] = 0;
-	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, esp = 0;
+	u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
@@ -2832,7 +2832,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		}
 
 		f1 = f2 = f3 = f4 = f5 = esp = 0x0;
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		chaos_effect = 0; // we need this methinks..?
 
 		if ((f4 & TR4_NEVER_BLOW)) {
@@ -3871,8 +3871,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 			}
 		}
 
-		u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, esp = 0;
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		u32b f1 = 0, f2 = 0, f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		chaos_effect = 0; // we need this methinks..?
 
 		if ((f4 & TR4_NEVER_BLOW)) {
@@ -4953,9 +4953,9 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 
 	if (r_ptr->flags7 & RF7_NAZGUL) {
 //		int weap = 0;	// Hack!  <- ???
-		u32b f1, f2, f3, f4, f5, esp;
+		u32b f1, f2, f3, f4, f5, f6, esp;
 
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		if ((!o_ptr->name2) && (!artifact_p(o_ptr))) {
 			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)) {

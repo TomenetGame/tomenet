@@ -1840,14 +1840,14 @@ static void player_outfit(int Ind)
 
 	/* Lantern of Brightness for Archers */
 	if (p_ptr->pclass == CLASS_ARCHER && p_ptr->prace != RACE_VAMPIRE) {
-		u32b f1,f2,f3,f4,f5,f6;
+		u32b f1, f2, f3, f4, f5, f6, esp;
 		do {
 			invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->name2 = 139;
 			apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
-			object_flags(o_ptr,&f1,&f2,&f3,&f4,&f5,&f6);
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		} while (f2 & TR2_RES_DARK);
 		do_player_outfit();
 

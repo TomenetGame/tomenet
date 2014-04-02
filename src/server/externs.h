@@ -1161,7 +1161,7 @@ extern bool can_use_verbose(int Ind, object_type *o_ptr);
 extern bool can_use_admin(int Ind, object_type *o_ptr);
 extern void flavor_init(void);
 extern void reset_visuals(void);
-extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp);
+extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *f6, u32b *esp);
 extern void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode);
 extern void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mode);
 extern bool identify_fully_aux(int Ind, object_type *o_ptr);
@@ -1231,7 +1231,7 @@ extern s64b object_value_real(int Ind, object_type *o_ptr);
 extern s64b artifact_value_real(int Ind, object_type *o_ptr);
 extern s32b flag_cost(object_type *o_ptr, int plusses);
 extern s32b artifact_flag_cost(object_type *o_ptr, int plusses);
-extern void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp);
+extern void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *f6, u32b *esp);
 
 extern void wipe_o_list_safely(struct worldpos *wpos);
 extern void excise_object_idx(int o_idx);

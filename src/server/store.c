@@ -1633,8 +1633,8 @@ static void store_create(store_type *st_ptr) {
 
 		/* Hack -- Charge lite uniformly */
 		if (o_ptr->tval == TV_LITE) {
-			u32b f1, f2, f3, f4, f5, esp;
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			u32b f1, f2, f3, f4, f5, f6, esp;
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 			/* Only fuelable ones! */
 			if (f4 & TR4_FUEL_LITE) {
@@ -3446,7 +3446,7 @@ void store_sell(int Ind, int item, int amt) {
 	/* Specifically for Mathom house which doesn't run store_will_buy() checks! */
 	if (cursed_p(o_ptr) && !is_admin(p_ptr)) {
 		u32b f4, fx;
-		object_flags(o_ptr, &fx, &fx, &fx, &f4, &fx, &fx);
+		object_flags(o_ptr, &fx, &fx, &fx, &f4, &fx, &fx, &fx);
 		if ((item >= INVEN_WIELD) ) {
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
 			return;
@@ -3595,7 +3595,7 @@ void store_confirm(int Ind) {
 	/* Specifically for Mathom house which doesn't run store_will_buy() checks! */
 	if (cursed_p(o_ptr) && !is_admin(p_ptr)) {
 		u32b f4, fx;
-		object_flags(o_ptr, &fx, &fx, &fx, &f4, &fx, &fx);
+		object_flags(o_ptr, &fx, &fx, &fx, &f4, &fx, &fx, &fx);
 		if ((item >= INVEN_WIELD) ) {
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
 			return;
@@ -4998,13 +4998,13 @@ void home_sell(int Ind, int item, int amt)
 	}
 
 	if (cursed_p(o_ptr) && !is_admin(p_ptr)) {
-		u32b f1, f2, f3, f4, f5, esp;
+		u32b f1, f2, f3, f4, f5, f6, esp;
 		if (item >= INVEN_WIELD) {
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
 			return;
 		}
 
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		if (f4 & TR4_CURSE_NO_DROP) {
 			msg_print(Ind, "Hmmm, you seem to be unable to drop it.");

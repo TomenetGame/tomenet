@@ -4513,7 +4513,7 @@ static bool process_player_end_aux(int Ind)
 
 	/* Burn some fuel in the current lite */
 	if (o_ptr->tval == TV_LITE) {
-		u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+		u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 
 		/* Hack -- Use some fuel (sometimes) */
 #if 0
@@ -4522,7 +4522,7 @@ static bool process_player_end_aux(int Ind)
 #endif	// 0
 
 			/* Extract the item flags */
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Hack -- Use some fuel */
 		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0)) {
@@ -7913,13 +7913,13 @@ void pack_overflow(int Ind) {
 	if (p_ptr->inventory[INVEN_PACK].k_idx) {
 		object_type *o_ptr;
 		int amt, i, j = 0;
-		u32b f1, f2, f3, f4, f5, esp;
+		u32b f1, f2, f3, f4, f5, f6, esp;
 		char o_name[ONAME_LEN];
 
 		/* Choose an item to spill */
 		for (i = INVEN_PACK - 1; i >= 0; i--) {
 			o_ptr = &p_ptr->inventory[i];
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 			if (!check_guard_inscription(o_ptr->note, 'd') &&
 			    !((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) &&

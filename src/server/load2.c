@@ -347,7 +347,7 @@ static void rd_item(object_type *o_ptr)
 	byte old_ds;
 	s16b old_ac;
 
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_kind *k_ptr;
 	char note[128];
 
@@ -641,7 +641,7 @@ static void rd_item(object_type *o_ptr)
 	}
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Paranoia */
 	if (o_ptr->name2) {

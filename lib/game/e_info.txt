@@ -2190,8 +2190,8 @@ F:R_ESP
 R:20
 F:R_ESP
 
-#Telepathic Awareness. It's name is an ugly hack because it's an 'instant ego-item'.
-N:197:
+#Telepathic Awareness. Empty name because it's an 'instant ego-item'.
+N:197:-
 X:A:40:20
 W:0:0:0:1000
 T:40:22:22

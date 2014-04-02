@@ -3289,7 +3289,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
  */
 void do_cmd_use_staff(int Ind, int item)
 {
-        u32b f1, f2, f3, f4, f5, esp;
+        u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = Players[Ind];
 
 	int	ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
@@ -3384,7 +3384,7 @@ void do_cmd_use_staff(int Ind, int item)
 	if (p_ptr->confused) chance = chance / 2;
 
         /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
         /* Is it simple to use ? */
         if (f4 & TR4_EASY_USE) chance *= 10;
@@ -3499,7 +3499,7 @@ void do_cmd_use_staff(int Ind, int item)
  */
 void do_cmd_aim_wand(int Ind, int item, int dir)
 {
-        u32b f1, f2, f3, f4, f5, esp;
+        u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = Players[Ind];
 	int lev, ident, chance, sval;
 	object_type *o_ptr;
@@ -3592,7 +3592,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	if (p_ptr->confused) chance = chance / 2;
 
         /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
         /* Is it simple to use ? */
         if (f4 & TR4_EASY_USE) chance *= 2;
@@ -3601,7 +3601,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
 
         /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -4148,7 +4148,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
  * All rods can be cancelled at the "Direction?" prompt
  */
 void do_cmd_zap_rod(int Ind, int item, int dir) {
-        u32b f1, f2, f3, f4, f5, esp;
+        u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = Players[Ind];
 
 	int                 ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
@@ -4233,7 +4233,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	}
 
 	/* Extract object flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
@@ -4346,7 +4346,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
  */
 void do_cmd_zap_rod_dir(int Ind, int dir)
 {
-        u32b f1, f2, f3, f4, f5, esp;
+        u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = Players[Ind];
 	int item, ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
 	object_type *o_ptr;
@@ -4394,7 +4394,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	}*/
 
 	/* Extract object flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 
 	/* S(he) is no longer afk */
@@ -4830,13 +4830,13 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
  */
 static bool item_tester_hook_activate(int Ind, object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Not known */
 	if (!object_known_p(Ind, o_ptr)) return (FALSE);
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Check activation flag */
 	if (f3 & TR3_ACTIVATE) return (TRUE);
@@ -5062,7 +5062,7 @@ bool rod_requires_direction(int Ind, object_type *o_ptr) {
  * the user hits "escape" at the "direction" prompt.
  */
 void do_cmd_activate(int Ind, int item, int dir) {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = Players[Ind];
 	int         i, k, lev, chance;
 //	int md = get_skill_scale(p_ptr, SKILL_DEVICE, 100);
@@ -5150,7 +5150,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	if (p_ptr->confused) chance = chance / 2;
 
         /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Is it simple to use ? */
 	if (f4 & TR4_EASY_USE) chance *= 2;
@@ -5159,7 +5159,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	chance = chance - ((lev > 50) ? 50 : lev);
 
 	/* Extract object flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Certain items are easy to use too */
 	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) ||

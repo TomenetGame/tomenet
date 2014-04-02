@@ -1990,7 +1990,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #ifdef DRS_SMART_OPTIONS
 
 	/* Remove the "ineffective" spells */
-	remove_bad_spells(m_idx, &f4, &f5, &f6, &f0);
+	remove_bad_spells(m_idx, &f4, &f5, &f6, &f6, &f0);
 
 	/* No spells left */
 	if (!f4 && !f5 && !f6 && !f0) return (FALSE);
@@ -5041,13 +5041,13 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 
 static bool monster_can_pickup(monster_race *r_ptr, object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	u32b flg3 = 0L;
 
 	if (artifact_p(o_ptr) && (rand_int(150) > r_ptr->level)) return (FALSE);
 
 	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* React to objects that hurt the monster */
 	if (f1 & TR1_KILL_DRAGON) flg3 |= RF3_DRAGON;
@@ -9690,18 +9690,18 @@ void curse_equipment(int Ind, int chance, int heavy_chance)
 {
 	player_type *p_ptr = Players[Ind];
 	bool changed = FALSE;
-        u32b    o1, o2, o3, o4, esp, o5;
+        u32b f1, f2, f3, f4, f5, f6, esp;
 	object_type * o_ptr = &p_ptr->inventory[INVEN_WIELD + rand_int(12)];
 
 	if (randint(100) > chance) return;
 
 	if (!(o_ptr->k_idx)) return;
 
-        object_flags(o_ptr, &o1, &o2, &o3, &o4, &o5, &esp);
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 
 	/* Extra, biased saving throw for blessed items */
-	if ((o3 & (TR3_BLESSED)) && (randint(888) > chance))
+	if ((f3 & (TR3_BLESSED)) && (randint(888) > chance))
 	{   
 		char o_name[ONAME_LEN];
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -9715,7 +9715,7 @@ void curse_equipment(int Ind, int chance, int heavy_chance)
 	if ((randint(100) <= heavy_chance) &&
 		(o_ptr->name1 || o_ptr->name2 || o_ptr->art_name))
 	{
-		if (!(o3 & TR3_HEAVY_CURSE))
+		if (!(f3 & TR3_HEAVY_CURSE))
 			changed = TRUE;
 		o_ptr->art_flags3 |= TR3_HEAVY_CURSE;
 		o_ptr->art_flags3 |= TR3_CURSED;

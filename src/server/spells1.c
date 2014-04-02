@@ -2317,11 +2317,11 @@ static bool can_rust(object_type *o_ptr)
  */
 static int set_acid_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_acid(o_ptr)) return (FALSE);
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if (f3 & TR3_IGNORE_ACID) return (FALSE);
 	return (TRUE);
 }
@@ -2331,11 +2331,11 @@ static int set_acid_destroy(object_type *o_ptr)
  */
 static int set_elec_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_elec(o_ptr)) return (FALSE);
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if (f3 & TR3_IGNORE_ELEC) return (FALSE);
 	return (TRUE);
 }
@@ -2345,11 +2345,11 @@ static int set_elec_destroy(object_type *o_ptr)
  */
 static int set_fire_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_fire(o_ptr)) return (FALSE);
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if (f3 & TR3_IGNORE_FIRE) return (FALSE);
 	return (TRUE);
 }
@@ -2359,11 +2359,11 @@ static int set_fire_destroy(object_type *o_ptr)
  */
 int set_cold_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_cold(o_ptr)) return (FALSE);
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if (f3 & TR3_IGNORE_COLD) return (FALSE);
 	return (TRUE);
 }
@@ -2373,11 +2373,11 @@ int set_cold_destroy(object_type *o_ptr)
  */
 int set_impact_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_impact(o_ptr)) return (FALSE);
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	/* Hack -- borrow flag */
 //	if (f3 & TR3_IGNORE_COLD) return (FALSE);
 	return (TRUE);
@@ -2388,11 +2388,11 @@ int set_impact_destroy(object_type *o_ptr)
  */
 int set_water_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_water(o_ptr)) return (FALSE);
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if (f5 & TR5_IGNORE_WATER) return (FALSE);
 	return (TRUE);
 }
@@ -2402,11 +2402,11 @@ int set_water_destroy(object_type *o_ptr)
  */
 static int set_rust_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!can_rust(o_ptr)) return (FALSE);
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if ((f3 & TR3_IGNORE_ACID) || (f5 & TR5_IGNORE_WATER)) return (FALSE);
 	return (TRUE);
 }
@@ -2421,12 +2421,12 @@ static int set_rust_destroy(object_type *o_ptr)
  */
 int set_rocket_destroy(object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!hates_impact(o_ptr)) {
 		if (!hates_fire(o_ptr)) return (FALSE);
 		/* Extract the flags */
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		if (f3 & TR3_IGNORE_FIRE) return (FALSE);
 	}
 	return (TRUE);
@@ -2440,8 +2440,8 @@ int set_all_destroy(object_type *o_ptr)
 	if (artifact_p(o_ptr)) return (FALSE);
 //	if (is_realm_book(o_ptr) && o_ptr->sval >= SV_BOOK_MIN_GOOD) return (FALSE);
 	if (is_realm_book(o_ptr)) {
-		u32b f1, f2, f3, f4, f5, esp;
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		u32b f1, f2, f3, f4, f5, f6, esp;
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		/* Hack^2 -- use this as a sign of being 'high books' */
 		if (f3 & TR3_IGNORE_ELEC) return (FALSE);
 	}
@@ -2581,7 +2581,7 @@ int equip_damage(int Ind, int typ) {
 	}
 
 	/* hack: not disenchantable -> cannot be damaged either */
-	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy);
+	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy, &dummy);
 	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return FALSE;
 
 	/* No damage left to be done */
@@ -2639,7 +2639,7 @@ int shield_takes_damage(int Ind, int typ) {
 	}
 
 	/* hack: not disenchantable -> cannot be damaged either */
-	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy);
+	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy, &dummy);
 	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return FALSE;
 
 	/* No damage left to be done */
@@ -2706,7 +2706,7 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 	}
 
 	/* hack: not disenchantable -> cannot be damaged either */
-	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy);
+	object_flags(o_ptr, &dummy, &f2, &dummy, &dummy, &f5, &dummy, &dummy);
 	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return FALSE;
 
 	/* No damage left to be done */
@@ -3176,7 +3176,7 @@ bool apply_disenchant(int Ind, int mode)
 	int			t = mode;
 	object_type		*o_ptr;
 	char		o_name[ONAME_LEN];
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (safe_area(Ind)) return(FALSE);
 
@@ -3205,7 +3205,7 @@ bool apply_disenchant(int Ind, int mode)
 	/* No item, nothing happens */
 	if (!o_ptr->k_idx) return (FALSE);
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -3332,7 +3332,7 @@ bool apply_discharge(int Ind, int dam)
 		if (magik(chance)) continue;
 //		if (o_ptr->tval == TV_AMULET && magik(50)) continue; /* further reduce chance? */
 
-		object_flags(o_ptr, &fx, &f2, &f3, &fx, &fx, &fx);
+		object_flags(o_ptr, &fx, &f2, &f3, &fx, &fx, &fx, &fx);
 
 		/* Hack -- for now, skip artifacts */
 		if (artifact_p(o_ptr) ||
@@ -3416,7 +3416,7 @@ bool apply_discharge_item(int o_idx, int dam)
 	if (magik(chance)) return(FALSE);
 //	if (o_ptr->tval == TV_AMULET && magik(50)) return(FALSE); /* further reduce chance? */
 
-	object_flags(o_ptr, &fx, &f2, &f3, &fx, &fx, &fx);
+	object_flags(o_ptr, &fx, &f2, &f3, &fx, &fx, &fx, &fx);
 
 	/* Hack -- for now, skip artifacts */
 	if (artifact_p(o_ptr) ||
@@ -4438,7 +4438,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	u16b this_o_idx, next_o_idx = 0;
 	bool	obvious = FALSE;
 	bool quiet = ((Ind <= 0 || Ind >= 0 - PROJECTOR_UNUSUAL) ? TRUE : FALSE);
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 	char	o_name[ONAME_LEN];
 	int o_sval = 0;
 	bool is_potion = FALSE, is_basic_potion = FALSE, is_meltable = FALSE;
@@ -4492,7 +4492,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	next_o_idx = o_ptr->next_o_idx;
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* get object name */
 	if ((Ind >= 0) && ((0 - Ind) > PROJECTOR_UNUSUAL))

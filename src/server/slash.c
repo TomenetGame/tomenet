@@ -537,7 +537,7 @@ void do_slash_cmd(int Ind, char *message)
 				prefix(message, "/dis"))
 		{
 			object_type		*o_ptr;
-			u32b f1, f2, f3, f4, f5, esp;
+			u32b f1, f2, f3, f4, f5, f6, esp;
 			bool nontag = FALSE, baseonly = FALSE;
 
 			disturb(Ind, 1, 0);
@@ -600,7 +600,7 @@ void do_slash_cmd(int Ind, char *message)
 				o_ptr = &(p_ptr->inventory[i]);
 				if (!o_ptr->tval) break;
 
-				object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+				object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 #if 1 /* check for: tag _equals_ pseudo id tag */
 				/* skip items inscribed with more than a single non-greatpseudo-ID tag */
@@ -5546,7 +5546,7 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/reart")) /* re-roll a random artifact */
 			{
 				object_type *o_ptr;
-				u32b f1, f2, f3, f4, f5, esp;
+				u32b f1, f2, f3, f4, f5, f6, esp;
 				int min_pval = -999, min_ap = -999, tries = 1000, min_todam = -999;
 				bool no_am = FALSE, no_aggr = FALSE;
 				int th ,td ,ta; //for retaining jewelry properties in case they get inverted by cursing
@@ -5617,7 +5617,7 @@ void do_slash_cmd(int Ind, char *message)
 					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
 
 					/* restrictions? */
-					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 					if (FALSE
 					    //|| !(f1 & TR1_VAMPIRIC) || !(f1 & TR1_BLOWS)
 					    //|| !(f3 & TR3_XTRA_MIGHT) || !(f3 & TR3_XTRA_SHOTS)
@@ -8424,7 +8424,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/testrandart")) { /* test how often randarts get AM shell '>_> */
 				object_type *o_ptr;
-				u32b f1, f2, f3, f4, f5, esp;
+				u32b f1, f2, f3, f4, f5, f6, esp;
 				int tries = 100000, found = 0;
 
 				if (tk != 1) {
@@ -8463,7 +8463,7 @@ void do_slash_cmd(int Ind, char *message)
 					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
 
 					/* check it for AM shell */
-					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 					if ((f3 & TR3_NO_MAGIC)) found++;
 				} while	(--tries);
 

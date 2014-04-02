@@ -1214,7 +1214,7 @@ bool set_tim_wraith(int Ind, int v)
 
 			if (zcave && in_bounds(p_ptr->py, p_ptr->px)) {
 				/* if a worn item grants wraith form, don't let it run out */
-				u32b f1, f2, f3, f4, f5, esp;
+				u32b f1, f2, f3, f4, f5, f6, esp;
 				object_type *o_ptr;
 				int i;
 				/* Scan the usable inventory */
@@ -1223,7 +1223,7 @@ bool set_tim_wraith(int Ind, int v)
 					/* Skip missing items */
 					if (!o_ptr->k_idx) continue;
 					/* Extract the item flags */
-					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 					if (f3 & (TR3_WRAITH)) {
 					        //p_ptr->wraith_form = TRUE;
 					        v = 30000;
@@ -6839,7 +6839,7 @@ void player_death(int Ind) {
 			/* Take off winner artifacts and winner-only items */
 			for (i = INVEN_WIELD; i <= INVEN_TOTAL; i++) {
 				o_ptr = &p_ptr->inventory[i];
-				object_flags(o_ptr, &dummy, &dummy, &dummy, &dummy, &f5, &dummy);
+				object_flags(o_ptr, &dummy, &dummy, &dummy, &dummy, &f5, &dummy, &dummy);
 				if ((f5 & TR5_WINNERS_ONLY)) {
 					bypass_inscrption = TRUE;
 					inven_takeoff(Ind, i, 255, FALSE);

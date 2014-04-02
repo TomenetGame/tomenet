@@ -841,6 +841,48 @@ static cptr k_info_flags5[] =
 	"WINNERS_ONLY",
 };
 
+static cptr k_info_flags6[] = {
+	"INSTA_EGO",
+	"XXX00000002",
+	"XXX00000004",
+	"XXX00000008",
+
+	"XXX00000010",
+	"XXX00000020",
+	"XXX00000040",
+	"XXX00000080",
+
+	"XXX00000100",
+	"XXX00000200",
+	"XXX00000400",
+	"XXX00000800",
+
+	"XXX00001000",
+	"XXX00002000",
+	"XXX00004000",
+	"XXX00008000",
+
+	"XXX00010000",
+	"XXX00020000",
+	"XXX00040000",
+	"XXX00080000",
+
+	"XXX00100000",
+	"XXX00200000",
+	"XXX00400000",
+	"XXX00800000",
+
+	"XXX01000000",
+	"XXX02000000",
+	"XXX04000000",
+	"XXX08000000",
+
+	"XXX10000000",
+	"XXX20000000",
+	"XXX40000000",
+	"XXX80000000",
+};
+
 /*
  * ESP flags
  */
@@ -2428,78 +2470,50 @@ errr init_f_info_txt(FILE *fp, char *buf)
 /*
  * Grab one flag in an object_kind from a textual string
  */
-static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
-{
+static errr grab_one_kind_flag(object_kind *k_ptr, cptr what) {
 	int i;
 
-	/* Check flags1 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags1[i]))
-		{
+	for (i = 0; i < 32; i++) {
+		/* Check flags1 */
+		if (streq(what, k_info_flags1[i])) {
 			k_ptr->flags1 |= (1L << i);
 			return (0);
 		}
-	}
-
-	/* Check flags2 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags2[i]))
-		{
+		/* Check flags2 */
+		if (streq(what, k_info_flags2[i])) {
 			k_ptr->flags2 |= (1L << i);
 			return (0);
 		}
-	}
-
 #if 1
-        /* Check flags2 -- traps*/
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, k_info_flags2_trap[i]))
-		{
+		/* Check flags2 -- traps*/
+		if (streq(what, k_info_flags2_trap[i])) {
 			k_ptr->flags2 |= (1L << i);
 			return (0);
 		}
-	}
 #endif	// 0
-
-	/* Check flags3 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags3[i]))
-		{
+		/* Check flags3 */
+		if (streq(what, k_info_flags3[i])) {
 			k_ptr->flags3 |= (1L << i);
 			return (0);
 		}
-	}
-
-
-        /* Check flags4 */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, k_info_flags4[i]))
-		{
+		/* Check flags4 */
+                if (streq(what, k_info_flags4[i])) {
                         k_ptr->flags4 |= (1L << i);
 			return (0);
 		}
-	}
-
-        /* Check flags5 */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, k_info_flags5[i]))
-		{
+	        /* Check flags5 */
+                if (streq(what, k_info_flags5[i])) {
                         k_ptr->flags5 |= (1L << i);
 			return (0);
 		}
-	}
+	        /* Check flags6 */
+                if (streq(what, k_info_flags6[i])) {
+                        k_ptr->flags6 |= (1L << i);
+			return (0);
+		}
 
-        /* Check esp_flags */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, esp_flags[i]))
-		{
+	        /* Check esp_flags */
+                if (streq(what, esp_flags[i])) {
                         k_ptr->esp |= (1L << i);
 			return (0);
 		}
@@ -2847,77 +2861,50 @@ errr init_k_info_txt(FILE *fp, char *buf)
 /*
  * Grab one flag in an artifact_type from a textual string
  */
-static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what)
-{
+static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what) {
 	int i;
 
 	/* Check flags1 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags1[i]))
-		{
+	for (i = 0; i < 32; i++) {
+		if (streq(what, k_info_flags1[i])) {
 			a_ptr->flags1 |= (1L << i);
 			return (0);
 		}
-	}
-
-	/* Check flags2 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags2[i]))
-		{
+		/* Check flags2 */
+		if (streq(what, k_info_flags2[i])) {
 			a_ptr->flags2 |= (1L << i);
 			return (0);
 		}
-	}
-
-	/* Check flags3 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags3[i]))
-		{
+		/* Check flags3 */
+		if (streq(what, k_info_flags3[i])) {
 			a_ptr->flags3 |= (1L << i);
 			return (0);
 		}
-	}
 #if 1
-
-        /* Check flags2 -- traps (huh? - Jir -) */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, k_info_flags2_trap[i]))
-		{
+	        /* Check flags2 -- traps (huh? - Jir -) */
+                if (streq(what, k_info_flags2_trap[i])) {
                         a_ptr->flags2 |= (1L << i);
 			return (0);
 		}
-	}
 #endif	// 0
-
-        /* Check flags4 */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, k_info_flags4[i]))
-		{
+	        /* Check flags4 */
+                if (streq(what, k_info_flags4[i])) {
                         a_ptr->flags4 |= (1L << i);
 			return (0);
 		}
-	}
-
-        /* Check flags5 */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, k_info_flags5[i]))
-		{
+	        /* Check flags5 */
+                if (streq(what, k_info_flags5[i])) {
                         a_ptr->flags5 |= (1L << i);
 			return (0);
 		}
-	}
+	        /* Check flags6 */
+                if (streq(what, k_info_flags6[i])) {
+                        a_ptr->flags6 |= (1L << i);
+			return (0);
+		}
 
-        /* Check esp_flags */
-	for (i = 0; i < 32; i++)
-	{
-                if (streq(what, esp_flags[i]))
-		{
+	        /* Check esp_flags */
+                if (streq(what, esp_flags[i])) {
                         a_ptr->esp |= (1L << i);
 			return (0);
 		}
@@ -3763,12 +3750,11 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
-#if 0 /* removed for Amulet of Telepathic Awareness */
 			/* Paranoia -- require a name */
 			if (!*s) return (1);
-#else
-			if (!*s) s--;
-#endif
+
+			/* Hack for Amulet of Telepathic Awareness: '-' becomes an empty name */
+			if (*s == '-') *s = 0;
 
 			/* Get the index */
 			i = atoi(buf + 2);
@@ -3814,6 +3800,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
                                 e_ptr->flags3[j] = 0;
                                 e_ptr->flags4[j] = 0;
                                 e_ptr->flags5[j] = 0;
+                                e_ptr->flags6[j] = 0;
                                 e_ptr->esp[j] = 0;
                         }
 

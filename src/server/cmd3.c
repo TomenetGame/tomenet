@@ -698,8 +698,8 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			 * 3 slots are too severe.. thoughts?	- Jir -
 			 */
 			if (slot == INVEN_BOW && p_ptr->inventory[INVEN_WIELD].k_idx) {
-				u32b f1, f2, f3, f4, f5, esp;
-				object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
+				u32b f1, f2, f3, f4, f5, f6, esp;
+				object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 				if (f4 & TR4_MUST2H) return(FALSE);
 			}
 #endif	// 0
@@ -717,7 +717,7 @@ void do_takeoff_impossible(int Ind) {
 	int k;
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 
 	bypass_inscrption = TRUE;
@@ -727,7 +727,7 @@ void do_takeoff_impossible(int Ind) {
 		    (!item_tester_hook_wear(Ind, (k == INVEN_ARM && o_ptr->tval != TV_SHIELD) ? INVEN_WIELD : k)))
 		{
 			/* Extract the flags */
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 			/* Morgie crown and The One Ring resists! */
 			if (f3 & TR3_PERMA_CURSE) continue;
@@ -769,7 +769,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	cptr act;
 
 	char o_name[ONAME_LEN];
-	u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+	u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5, f6 = 0, esp = 0;
 	bool highlander = FALSE;
 
 
@@ -818,7 +818,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	}
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* check whether the item to wield is fit for dual-wielding */
 	if ((o_ptr->weight <= DUAL_MAX_WEIGHT) &&
@@ -934,7 +934,7 @@ return;
 //		i_ptr = &inventory[slot - INVEN_ARM + INVEN_WIELD];
 	if (o_ptr->tval == TV_SHIELD && (x_ptr = &p_ptr->inventory[INVEN_WIELD])) {
 		/* Extract the flags */
-		object_flags(x_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(x_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Prevent shield from being put on if wielding 2H */
 		if ((f4 & TR4_MUST2H) && (x_ptr->k_idx) )
@@ -1103,7 +1103,7 @@ return;
 		/* Message */
 		msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(slot));
 
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Auto Curse */
 		if (f3 & TR3_AUTO_CURSE) {
@@ -1286,7 +1286,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	player_type *p_ptr = Players[Ind];
 
 	object_type *o_ptr;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
@@ -1296,7 +1296,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 		o_ptr = &o_list[0 - item];
 	}
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Handle the newbies_cannot_drop option */	
 #if (STARTEQ_TREATMENT == 1)
@@ -1490,7 +1490,7 @@ void do_cmd_destroy(int Ind, int item, int quantity) {
 	//bool		force = FALSE;
 	object_type		*o_ptr;
 	char		o_name[ONAME_LEN];
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
@@ -1525,7 +1525,7 @@ void do_cmd_destroy(int Ind, int item, int quantity) {
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	if ((((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) ||
 	    (o_ptr->questor && o_ptr->questor_invincible))
@@ -2677,7 +2677,7 @@ void do_cmd_refill(int Ind, int item)
 	player_type *p_ptr = Players[Ind];
 
 	object_type *o_ptr;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Get the light */
 	o_ptr = &(p_ptr->inventory[INVEN_LITE]);
@@ -2688,7 +2688,7 @@ void do_cmd_refill(int Ind, int item)
 		return;
 	}
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	if (!(f4 & TR4_FUEL_LITE)) {
 		msg_print(Ind, "Your light cannot be refilled.");
@@ -2722,7 +2722,7 @@ bool do_auto_refill(int Ind)
 	object_type *j_ptr = NULL;
 
 	int i;
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Get the light */
 	o_ptr = &(p_ptr->inventory[INVEN_LITE]);
@@ -2732,7 +2732,7 @@ bool do_auto_refill(int Ind)
 		return (FALSE);
 	}
 
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* It's a lamp */
 	if (o_ptr->sval == SV_LITE_LANTERN) {
