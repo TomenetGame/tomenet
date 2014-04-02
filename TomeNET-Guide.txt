@@ -5630,9 +5630,10 @@ they won't be helpful while stair-scumming or probability-travelling quickly.
 (Exception: On Ironman-rule servers these will always be displayed, since all
 dungeons are ironman and stair-scumming is not possible.)
 The number telling you the current floor's depth (or a town name if you're in a
-town) in the bottom right corner of the main window will turn light blue when
-you spent enough time on your current floor to receive an extra feeling on
-entering the next floor.
+town) in the bottom right corner of the main window will get a light blue star
+appended to it when you spent enough time on your current floor to receive an
+extra feeling on entering the next floor. If you are in a town, the town's name
+will turn light blue instead of a star appearing.
 These extra level feelings (displayed in yellow) are:
 
   "What a terrifying place.."
@@ -6354,7 +6355,7 @@ Ironman Deep Dive Challenge (IDDC)
     Further, you will receive an feeling "You feel a commanding presence.."
     that indicates a dungeon boss spawn. Like yellow feeling messages, this too
     requires you to have stayed on the previous floor for about 2 minutes
-    (until your depth indicator turns light blue).
+    (until your depth indicator gets a light blue star attached).
 
     Although Sauron is the final guardian of Mt Doom, he may spawn in any theme
     in the IDDC, provided the floor depth is at least level 99.
