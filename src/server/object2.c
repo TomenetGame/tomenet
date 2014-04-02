@@ -7127,28 +7127,6 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Don't generate cursed randarts.. */
 		if (cursed_p(o_ptr)) continue;
 
-		/* Don't generate mage-only benefitting reward if we don't use magic */
-		if (!spell_choice) {
-			switch (o_ptr->name2) {
-			//case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
-			//case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
-			case EGO_INTELLIGENCE:
-			case EGO_WISDOM:
-			case EGO_BRILLIANCE:
-			case EGO_ISTARI:
-			case EGO_OFTHEMAGI: continue;
-			}
-			switch (o_ptr->name2b) {
-			//case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
-			//case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
-			case EGO_INTELLIGENCE:
-			case EGO_WISDOM:
-			case EGO_BRILLIANCE:
-			case EGO_ISTARI:
-			case EGO_OFTHEMAGI: continue;
-			}
-		}
-
 		/* analyze class (so far nothing is done here, but everything is determined by skills instead) */
 		switch (p_ptr->pclass) {
 		case CLASS_WARRIOR:
@@ -7182,6 +7160,60 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		if (spell_choice) {
 			if (f5 & TR5_DRAIN_MANA) continue;
 			if (f3 & TR3_NO_MAGIC) continue;
+		}
+
+		/* Don't generate mage-only benefitting reward if we don't use magic */
+		if (!spell_choice) {
+			switch (o_ptr->name2) {
+			//case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
+			//case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
+			case EGO_INTELLIGENCE:
+			case EGO_WISDOM:
+			case EGO_BRILLIANCE:
+			case EGO_OFTHEMAGI:
+			case EGO_ISTARI:
+				continue;
+			}
+			/* as _double ego_, it should be acceptable :-p */
+			if (!o_ptr->name2) switch (o_ptr->name2b) {
+			//case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
+			//case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
+			case EGO_INTELLIGENCE:
+			case EGO_WISDOM:
+			case EGO_BRILLIANCE:
+			case EGO_OFTHEMAGI:
+			case EGO_ISTARI:
+				continue;
+			}
+		}
+		/* don't generate too worthless magi-specific items,
+		   prevented by simply hacking the pval up! */
+		else {
+			switch (o_ptr->name2) {
+			case EGO_INTELLIGENCE:
+			case EGO_WISDOM:
+				if (o_ptr->pval < 4) o_ptr->pval = 4;
+				break;
+			case EGO_BRILLIANCE:
+				if (o_ptr->pval < 3) o_ptr->pval = 3;
+				break;
+			case EGO_OFTHEMAGI:
+				if (o_ptr->pval < 5) o_ptr->pval = 5;
+				break;
+			}
+			/* as _double ego_, it should be acceptable :-p */
+			if (!o_ptr->name2) switch (o_ptr->name2b) {
+			case EGO_INTELLIGENCE:
+			case EGO_WISDOM:
+				if (o_ptr->pval < 4) o_ptr->pval = 4;
+				break;
+			case EGO_BRILLIANCE:
+				if (o_ptr->pval < 3) o_ptr->pval = 3;
+				break;
+			case EGO_OFTHEMAGI:
+				if (o_ptr->pval < 5) o_ptr->pval = 5;
+				break;
+			}
 		}
 
 		/* Don't generate (possibly expensive due to high bpval, hence passed up till here) crap */
