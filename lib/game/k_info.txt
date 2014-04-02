@@ -3693,7 +3693,7 @@ F:DEX | SUST_DEX | SPEED | INFRA | HIDE_TYPE |
 F:RES_NEXUS | RES_POIS
 
 #Ugly hack: It's an 'instant ego-item'
-N:474:Telepathic Awareness
+N:474:Telepathy
 G:":d
 I:40:22:0
 W:50:0:3:10000
