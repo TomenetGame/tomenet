@@ -5160,6 +5160,8 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf)
  * monster, they cannot carry true artifacts anyways (but they would usually
  * find heaps of them..) - C. Blue
  *
+ * 'wpos' only has effect for calculating 'verygreat' minimum value and for
+ * ood checks of true artifacts created here.
  * "verygreat" makes sure that ego items aren't just resist fire etc.
  * Has no influence on artifacts. - C. Blue
  */
