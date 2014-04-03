@@ -2972,14 +2972,14 @@ int place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, i
 	dungeon_info_type *dinfo_ptr;
 	bool netherrealm_level = in_netherrealm(wpos);
 	bool nr_bottom;
+	cave_type **zcave;
+
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 	if (in_irondeepdive(wpos)) dinfo_ptr = d_ptr ? &d_info[iddc[ABS(wpos->wz)].type] : NULL;
-	else dinfo_ptr = d_ptr ? &d_info[d_ptr->type] : NULL;
-#else
-	dinfo_ptr = d_ptr ? &d_info[d_ptr->type] : NULL;
+	else
 #endif
+	dinfo_ptr = d_ptr ? &d_info[d_ptr->theme ? d_ptr->theme : d_ptr->type] : NULL;
 
-	cave_type **zcave;
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 0\n");
 #endif
@@ -3154,40 +3154,43 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 
 			/* wrong monster, or not at the bottom of the dungeon? */
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-			if ((in_irondeepdive(wpos)
-			    && (r_idx != dinfo_ptr->final_guardian ||
-			    d_info[iddc[ABS(wpos->wz)].type].maxdepth != ABS(wpos->wz)))
-			    || (!in_irondeepdive(wpos)
-			    && (r_idx != dinfo_ptr->final_guardian ||
-			    d_ptr->maxdepth != ABS(wpos->wz)))) {
-#else
-			if (r_idx != dinfo_ptr->final_guardian ||
-			    d_ptr->maxdepth != ABS(wpos->wz)) {
-#endif
-				/* allow Sauron in any dungeon in IDDC */
-				if (r_idx != RI_SAURON || !in_irondeepdive(wpos)) {
-#if DEBUG_LEVEL > 2
-					s_printf("rejected FINAL_GUARDIAN %d\n", r_idx);
-#endif
+			if (in_irondeepdive(wpos)) {
+				if ((r_idx != dinfo_ptr->final_guardian ||
+				    d_info[iddc[ABS(wpos->wz)].type].maxdepth != ABS(wpos->wz))
+				    /* allow Sauron in any dungeon in IDDC, and at any depth starting at 99 */
+				    && r_idx != RI_SAURON) {
+ #if DEBUG_LEVEL > 2
+					s_printf("rejected FINAL_GUARDIAN %d in IDDC\n", r_idx);
+ #endif
 					return 25;
 				}
+			} else
+#endif
+			if (r_idx != dinfo_ptr->final_guardian ||
+			    d_ptr->maxdepth != ABS(wpos->wz)) {
+#if DEBUG_LEVEL > 2
+				s_printf("rejected FINAL_GUARDIAN %d\n", r_idx);
+#endif
+				return 25;
 			}
 			/* generating the boss is ok. go on. */
 //			s_printf("allowed FINAL_GUARDIAN %d\n", r_idx);
 		}
 
 		/* Also use for DUN_xx dungeon-restricted monsters */
+		if (r_ptr->restrict_dun) {
+			if (!d_ptr) return 26;
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		if (in_irondeepdive(wpos)) {
-			if (r_ptr->restrict_dun && (!d_ptr || r_ptr->restrict_dun != iddc[ABS(wpos->wz)].type))
-				return 26;
-		} else {
-			if (r_ptr->restrict_dun && (!d_ptr || r_ptr->restrict_dun != d_ptr->type))
-				return 27;
-		}
-#else
-		if (r_ptr->restrict_dun && (!d_ptr || r_ptr->restrict_dun != d_ptr->type)) return 28;
+			if (in_irondeepdive(wpos)) {
+				if (r_ptr->restrict_dun != iddc[ABS(wpos->wz)].type) return 27;
+			} else
 #endif
+			if (d_ptr->theme) {
+				if (r_ptr->restrict_dun != d_ptr->theme) return 28;
+			} else {
+				if (r_ptr->restrict_dun != d_ptr->type) return 27;
+			}
+		}
 
 		/* Couple of Nether Realm-only monsters hardcoded here */
 		if ((r_ptr->flags8 & RF8_NETHER_REALM) && !netherrealm_level)
@@ -3872,12 +3875,13 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 		dungeon_type *dt_ptr = getdungeon(wpos);
 		int dun_type = 0;
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		if (in_irondeepdive(wpos)) {
-			dun_type = iddc[ABS(wpos->wz)].type;
-		} else if (dt_ptr) dun_type = dt_ptr->type;
-#else
-		if (dt_ptr) dun_type = dt_ptr->type;
+		if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+		else
 #endif
+		if (dt_ptr) {
+			if (dt_ptr->theme) dun_type = dt_ptr->theme;
+			else dun_type = dt_ptr->type;
+		}
 
 		/* Try to place several "escorts" */
 		for (i = 0; i < 50; i++) {
@@ -4048,12 +4052,13 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 		dungeon_type *dt_ptr = getdungeon(wpos);
 		int dun_type = 0;
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		if (in_irondeepdive(wpos)) {
-			dun_type = iddc[ABS(wpos->wz)].type;
-		} else if (dt_ptr) dun_type = dt_ptr->type;
-#else
-		if (dt_ptr) dun_type = dt_ptr->type;
+		if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
+		else
 #endif
+		if (dt_ptr) {
+			if (dt_ptr->theme) dun_type = dt_ptr->theme;
+			else dun_type = dt_ptr->type;
+		}
 
 		if (in_bounds(y, x) && (zcave = getcave(wpos))) {
 			/* Set monster restriction */

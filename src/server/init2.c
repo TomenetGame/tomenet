@@ -2675,12 +2675,12 @@ static errr init_other(void)
 }
 
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-bool indepthrange(byte depth, byte type) {
+static bool indepthrange(byte depth, byte type) {
 	if (depth < d_info[type].mindepth || depth > d_info[type].maxdepth) return FALSE;
 	return TRUE;
 }
 
-byte getiddctype(byte depth, byte last) {
+static byte getiddctype(byte depth, byte last) {
 	byte pool[MAX_D_IDX];
 	byte n = 0, i;
 	
@@ -2707,7 +2707,7 @@ byte getiddctype(byte depth, byte last) {
 }
 
 //We could de-hardcode the depths of static towns, and iddc length, perhaps? - Kurzel
-errr init_iddc() {
+static errr init_iddc() {
 	byte n = 0, i, j;
 	byte type = getiddctype(127, 0);
 	byte step = 0;

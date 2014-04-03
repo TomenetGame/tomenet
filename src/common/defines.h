@@ -5694,7 +5694,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 /*** Dungeon type flags -- DG ***/
 
-#define DF1_PRINCIPAL           0x00000001L	/* Is a principal dungeon */
+#define DF1_PRINCIPAL           0x00000001L	/* Is a principal dungeon --- UNUSED */
 #define DF1_MAZE                0x00000002L	/* Is a maze-type dungeon */
 #define DF1_SMALLEST            0x00000004L	/* Creates VERY small levels like The Maze */
 #define DF1_SMALL               0x00000008L	/* Creates small levels like Dol Goldor */
@@ -5720,19 +5720,28 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF1_CIRCULAR_ROOMS      0x00080000L	/* Allow circular rooms */
 
 #define DF1_EMPTY               0x00100000L	/* All arena levels */
-#define DF1_DAMAGE_FEAT         0x00200000L
+#define DF1_DAMAGE_FEAT         0x00200000L	/* --- UNUSED */
 #define DF1_FLAT                0x00400000L	/* Creates paths to next areas at edge of level, like Barrowdowns */
 #define DF1_TOWER               0x00800000L	/* You start at bottom and go up rather than the reverse */
 
 #define DF1_RANDOM_TOWNS        0x01000000L	/* Allow random towns */
-#define DF1_DOUBLE              0x02000000L	/* Creates double-walled dungeon like Helcaraxe and Erebor */
-#define DF1_LIFE_LEVEL          0x04000000L	/* Creates dungeon level on modified 'game of life' algorithm */
-#define DF1_EVOLVE              0x08000000L	/* Evolving, pulsing levels like Heart of the Earth */
+#define DF1_DOUBLE              0x02000000L	/* Creates double-walled dungeon like Helcaraxe and Erebor --- UNUSED */
+#define DF1_LIFE_LEVEL          0x04000000L	/* Creates dungeon level on modified 'game of life' algorithm --- UH, CHECK */
+#define DF1_EVOLVE              0x08000000L	/* Evolving, pulsing levels like Heart of the Earth --- UNUSED */
 
-#define DF1_ADJUST_LEVEL_1      0x10000000L	/* Minimum monster level will be equal to dungeon level */
-#define DF1_ADJUST_LEVEL_2      0x20000000L	/* Minimum monster level will be double the dungeon level */
+#define DF1_ADJUST_LEVEL_1      0x10000000L	/* Minimum monster level will be equal to dungeon level --- UNUSED */
+#define DF1_ADJUST_LEVEL_2      0x20000000L	/* Minimum monster level will be double the dungeon level --- UNUSED */
 #define DF1_NO_RECALL           0x40000000L	/* No recall allowed; also includes everything NO_RECALL_INTO does! */
 #define DF1_NO_STREAMERS        0x80000000L	/* No streamers (water, lava, trees) */
+
+/* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
+   without changing its main flags (set my admin on dungeon creation) too much */
+#define DF1_THEME_MASK \
+	(DF1_MAZE | DF1_SMALL | DF1_SMALLEST | DF1_BIG | DF1_NO_DOORS | DF1_WATER_RIVER | DF1_LAVA_RIVER | \
+	DF1_WATER_RIVERS | DF1_WATER_RIVERS | DF1_CAVE | DF1_CAVERN | DF1_HOT | DF1_COLD | \
+	DF1_FORGET | DF1_NO_DESTROY | DF1_SAND_VEIN | DF1_CIRCULAR_ROOMS | DF1_EMPTY | DF1_DAMAGE_FEAT | \
+	DF1_DOUBLE | DF1_LIFE_LEVEL | DF1_EVOLVE | DF1_NO_STREAMERS)
+
 
 /* dungeon flags for dungeon_type 
  * they should be renamed to DFx_*
@@ -5783,13 +5792,20 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF2_TOWNS_FIX		0x04000000L /* generated towns every n levels (for HUGE ironman) */
 #define DF2_TOWNS_RND		0x08000000L /* generated towns with n% chance (for HUGE ironman) */
 
-#define DF2_ADJUST_LEVEL_1_2	0x10000000L /* Minimum monster level will be half the dungeon level */
-#define DF2_NO_SHAFT		0x20000000L /* No shafts */
+#define DF2_ADJUST_LEVEL_1_2	0x10000000L /* Minimum monster level will be half the dungeon level --- UNUSED */
+#define DF2_NO_SHAFT		0x20000000L /* No shafts --- UNUSED (#if0'ed) */
 #define DF2_ADJUST_LEVEL_PLAYER	0x40000000L /* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
 #define DF2_DELETED		0x80000000L /* Deleted, but not yet removed */
 
 #define DF2_NO_ENTRY_MASK       (DF2_NO_ENTRY_STAIR | DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT)
 #define DF2_NO_EXIT_MASK        (DF2_NO_EXIT_STAIR | DF2_NO_EXIT_WOR | DF2_NO_EXIT_PROB | DF2_NO_EXIT_FLOAT)
+
+/* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
+   without changing its main flags (set my admin on dungeon creation) too much */
+#define DF2_THEME_MASK \
+	(DF2_NO_MAGIC_MAP | \
+	DF2_ADJUST_LEVEL_1_2)
+
 
 /* moar flags */
 #define DF3_JAIL_DUNGEON	0x00000001L	/* purpose is just to display the name "Jail Dungeon" in dungeon list */
@@ -5821,6 +5837,12 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF3_NO_MAZE		0x00200000L	/* don't build (perma)mazes */
 #define DF3_NO_EMPTY		0x00400000L	/* don't build empty levels (arenas) */
 #define DF3_NO_DESTROYED	0x00800000L	/* don't build 'destroyed' levels */
+
+/* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
+   without changing its main flags (set my admin on dungeon creation) too much */
+#define DF3_THEME_MASK \
+	(DF3_DERARE_MONSTERS | DF3_MANY_MONSTERS | DF3_VMANY_MONSTERS | \
+	DF3_NO_WALL_STREAMERS | DF3_NOT_EMPTY | DF3_NOT_WATERY | DF3_FEW_ROOMS | DF3_NO_VAULTS | DF3_NO_MAZE | DF3_NO_EMPTY | DF3_NO_DESTROYED)
 
 
 /* level flags for dun_level */

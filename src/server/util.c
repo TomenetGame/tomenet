@@ -1458,22 +1458,27 @@ void handle_music(int Ind) {
 		else i = iddc[ABS(p_ptr->wpos.wz)].next;
  #endif
 	} else
-	if (p_ptr->wpos.wz != 0) {
-		l_ptr = getfloor(&p_ptr->wpos);
-		if (p_ptr->wpos.wz < 0)
-			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->type;
-		else
-			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->type;
-	}
-#else
-	if (p_ptr->wpos.wz != 0) {
-		l_ptr = getfloor(&p_ptr->wpos);
-		if (p_ptr->wpos.wz < 0)
-			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->type;
-		else
-			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->type;
-	}
 #endif
+	if (p_ptr->wpos.wz != 0) {
+		l_ptr = getfloor(&p_ptr->wpos);
+		if (p_ptr->wpos.wz < 0) {
+			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->type;
+#if 1			/* allow 'themed' music too? (or keep music as 'original dungeon theme' exclusively) */
+			if (!i && //except if this dungeon has particular flags (because flags are NOT affected by theme):
+			    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->theme &&
+			    !(d_ptr->flags1 & DF1_FORCE_DOWN) && !(d_ptr->flags2 & (DF2_NO_DEATH | DF2_IRON | DF2_HELL)))
+				i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->theme;
+#endif
+		} else {
+			i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->type;
+#if 1			/* allow 'themed' music too? (or keep music as 'original dungeon theme' exclusively) */
+			if (!i && //except if this dungeon has particular flags (because flags are NOT affected by theme):
+			    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->theme &&
+			    !(d_ptr->flags1 & DF1_FORCE_DOWN) && !(d_ptr->flags2 & (DF2_NO_DEATH | DF2_IRON | DF2_HELL)))
+				i = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->theme;
+#endif
+		}
+	}
 
 	if (in_netherrealm(&p_ptr->wpos) && dlev == netherrealm_end) {
 		//Zu-Aon

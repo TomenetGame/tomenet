@@ -5239,19 +5239,19 @@ if (cfg.unikill_format) {
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 		dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+		if ((
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		if ((in_irondeepdive(wpos) ? (a_idx = d_info[iddc[ABS(wpos->wz)].type].final_artifact) :
+		    in_irondeepdive(wpos) ? (a_idx = d_info[iddc[ABS(wpos->wz)].type].final_artifact) :
+#endif
 		    (a_idx = d_info[d_ptr->type].final_artifact))
-#else
-		if ((a_idx = d_info[d_ptr->type].final_artifact)
-#endif
 		    /* hack: 0 rarity = always generate -- for Ring of Phasing! */
+
+		    && (
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		    && (in_irondeepdive(wpos) //Let's reward those brave IDDC participants?
-		    || !a_info[a_idx].rarity || !rand_int(3))
-#else
-		    && (!a_info[a_idx].rarity || !rand_int(3))
+		    in_irondeepdive(wpos) || //Let's reward those brave IDDC participants?
 #endif
+		    (!a_info[a_idx].rarity || !rand_int(3)))
+
 		    && !cfg.arts_disabled &&
 #ifdef RING_OF_PHASING_NO_TIMEOUT
 		    (
@@ -5319,12 +5319,11 @@ if (cfg.unikill_format) {
 				drop_near(qq_ptr, -1, wpos, y, x);
 				s_printf("..dropped.\n");
 			} else  s_printf("..failed.\n");
+		} else if (
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		} else if (in_irondeepdive(wpos) ? (I_kind = d_info[iddc[ABS(wpos->wz)].type].final_object) :
-		    (I_kind = d_info[d_ptr->type].final_object)) {
-#else
-		} else if ((I_kind = d_info[d_ptr->type].final_object)) {
+		    in_irondeepdive(wpos) ? (I_kind = d_info[iddc[ABS(wpos->wz)].type].final_object) :
 #endif
+		    (I_kind = d_info[d_ptr->type].final_object)) {
 			s_printf("preparing FINAL_OBJECT %d", I_kind);
 			qq_ptr = &forge;
 			object_wipe(qq_ptr);

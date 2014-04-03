@@ -309,8 +309,8 @@ void do_cmd_go_up(int Ind) {
 			}
 #endif
 		}
-#if 0 //Disable use of dungeon names
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
+#if 0 /* Disable use of dungeon names */
+ #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
 		else if (in_irondeepdive(wpos) && (iddc[ABS(wpos->wz)].step == 2 || ABS(wpos->wz) == 40 || ABS(wpos->wz) == 80 || ABS(wpos->wz) == 120) && ABS(wpos->wz) != 127) {
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
 			if (p_ptr->party)
@@ -335,7 +335,7 @@ void do_cmd_go_up(int Ind) {
 				}
 			}
 		}
-#endif
+ #endif
 #endif
 		else if (wpos->wz == -1) {
 			msg_format(Ind, "\377%cYou leave %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
@@ -888,8 +888,8 @@ void do_cmd_go_down(int Ind)
 			}
 #endif
 		}
-#if 0 //Disable use of dungeon names
-#ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
+#if 0 /* Disable use of dungeon names */
+ #ifdef IRONDEEPDIVE_MIXED_TYPES //Kurzel -- Hardcode (final transition floor is 2 currently, transition immediately after static towns, paranoia for last floor)
 		else if (in_irondeepdive(wpos) && (iddc[ABS(wpos->wz)].step == 2 || ABS(wpos->wz) == 40 || ABS(wpos->wz) == 80 || ABS(wpos->wz) == 120) && ABS(wpos->wz) != 127) {
 			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
 			if (p_ptr->party)
@@ -914,7 +914,7 @@ void do_cmd_go_down(int Ind)
 				}
 			}
 		}
-#endif
+ #endif
 #endif
 		else if (wpos->wz == 1) {
 			msg_format(Ind, "\377%cYou leave %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
