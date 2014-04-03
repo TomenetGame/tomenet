@@ -2727,6 +2727,7 @@ void do_weather() {
 
 	if (redraw) {
 		if (screen_icky) Term_switch(0);
+
 		for (i = 0; i < weather_elements; i++) {
 			/* only for elements within visible panel screen area */
 			if (weather_element_x[i] >= weather_panel_x &&
@@ -2750,9 +2751,11 @@ void do_weather() {
 				}
 			}
 		}
+
 		if (screen_icky) Term_switch(0);
 		/* Update the screen */
-		if (!screen_icky) Term_fresh();
+		Term_fresh();
+
 		/* started to draw on a freshly updated panel? */
 		weather_panel_changed = FALSE;
 		/* return to 'reenter' regular timing */
@@ -2912,6 +2915,7 @@ void do_weather() {
 
 	/* display and advance currently existing weather elements */
 	if (screen_icky) Term_switch(0);
+
 	for (i = 0; i < weather_elements; i++) {
 		/* restore old tile before moving the weather element */
 		/* if panel view was freshly updated from server then no need */
@@ -3015,10 +3019,10 @@ void do_weather() {
 			}
 		}
 	}
-	if (screen_icky) Term_switch(0);
 
+	if (screen_icky) Term_switch(0);
 	/* Update the screen */
-	if (!screen_icky) Term_fresh();
+	Term_fresh();
 
 
 /* clean up and exit ------------------------------------------------------- */
