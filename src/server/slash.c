@@ -3263,6 +3263,12 @@ void do_slash_cmd(int Ind, char *message)
 
 			q_ptr = Players[j];
 
+			/* To avoid someone ruining IDDC or event participation */
+			if (!q_ptr->max_exp) {
+				msg_print(Ind, "You may not tip players who have zero experience points.");
+				return;
+			}
+
 			if (p_ptr->au < p_ptr->lev * p_ptr->lev) tip = p_ptr->au;
 			else tip = p_ptr->lev * p_ptr->lev;
 
