@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. March 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. April 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -168,9 +168,10 @@ Contents
     (8.2)   Character dumps
     (8.3)   Golem creation
     (8.4)   Artifact creation
-    (8.5)   Alternative ruleset 'Ironman Server'
-    (8.5a)  Special server type 'Arcade Server'
-    (8.6)   Troubleshooting
+    (8.5)   Reward item creation
+    (8.6)   Alternative ruleset 'Ironman Server'
+    (8.6a)  Special server type 'Arcade Server'
+    (8.7)   Troubleshooting
 
 
 
@@ -752,7 +753,7 @@ CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
         Note: If you press this while in chat prompt, you can cycle forward
         through lines you previously typed (also see CTRL+P).
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
-(Compare troubleshooting section (8.6), problem 21.)
+(Compare troubleshooting section (8.7), problem 21.)
 
 ^       Allows to enter a CTRL character as command.
 
@@ -1021,7 +1022,7 @@ They all start with a slash '/' hence they're called slash commands:
                         attention. (Using /ignore on a player will also
                         prevent getting paged by him.)
                         If you're on Linux and not hearing the page sounds,
-                        see problem 19 in the troubleshooting section (8.6).
+                        see problem 19 in the troubleshooting section (8.7).
 
 /paint      (Also available by pressing 'h' for house menu.)
             Use a potion in your inventory to paint your house entrance in a
@@ -2403,7 +2404,7 @@ You can control mixer settings with CTRL+U key (or use CTRL+C to toggle music
 and CTRL+N to toggle the master mixer on/off).
 
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
-(Compare troubleshooting section (8.6), problem 21.)
+(Compare troubleshooting section (8.7), problem 21.)
 
 Also be sure to press '=' key to have a look at the audio options.
 
@@ -2499,7 +2500,7 @@ After the meta-server has been queried, the list of available servers will
 appear in the main window. Choose a server that is near to your location to
 avoid high latency.
 (This step is reported to sometimes cause problems on Windows OS. If you don't
-see that list, or if other problems occur, see (8.6) for possible solutions.)
+see that list, or if other problems occur, see (8.7) for possible solutions.)
 
 Now you will be prompted to enter your account name and password. You can
 choose these freely, the server will save that information and use it to
@@ -2998,7 +2999,7 @@ The top right window will give an overview of your character attributes and
 miscellanous abilities. The bottom right window will show the contents of your
 backpack, also called inventory. All characters except ghosts have a backpack.
 The bottom left window will show combat- chat- and server-messages. If most
-of the windows stay totally empty, see (8.6) for possible solutions.
+of the windows stay totally empty, see (8.7) for possible solutions.
 To the left border in the main window you see a short overview of your most
 important stats:
 -starting with your race
@@ -4801,7 +4802,7 @@ There are different types of dungeons:
  -2050 ft, etc. Also, ALL dungeons will usually not allow recalling OUT until
  you reach a floor that is equivalent to at least dungeon level 20. Examples:
  At least -1000 ft in Barrow-Downs, at least -550 ft in The Orc Cave.
- (See (8.5) for more information about Ironman settings.)
+ (See (8.6) for more information about Ironman settings.)
 
 -NO_DEATH. The Training Tower in Bree has this flag. Players who die inside a
  no-death dungeon won't turn into a ghost if they 'die' but just be teleported
@@ -6141,6 +6142,9 @@ orders).
 
 Events (use /evinfo and /evsign commands to get information and to sign up)
 ---------------------------------------------------------------------------
+Note: Item rewards depend on your character, see (8.5) for more information
+      about item rewards.
+
 Highlander Tournament (pvp, only one can win, 2+ participants)
     When you see a message, announcing a Highlander Tournament, type "/evinfo"
     in the chat to find out more, and use "/evsign" followed by the event's
@@ -13757,7 +13761,7 @@ Parties:
     house.
     If the owner dies, the whole party is disbanded. (Exception: On a server
     running 'Ironman' rules the party ownership will be transferred to another
-    player in the party automatically. See (8.5) for more information about
+    player in the party automatically. See (8.6) for more information about
     Ironman settings. Within the 'Ironman Deep Dive Dungeon', party ownership
     is also transferred in the same manner. See (4.13) for more information
     about the persistent "Ironman Deep Dive Challenge" event.)
@@ -14245,6 +14249,9 @@ by an opponent! The special rules that apply are as follows:
  (takes about 30 seconds to wear off, or just enter a town to reset).
 -PvP characters are unaffected by certain effects caused by other players:
  Hallucination, Life force drain (exp drain), Stat drain, Nexus scrambling.
+
+Note: Item rewards depend on your character, see (8.5) for more information
+      about item rewards.
 
 
 
@@ -15468,7 +15475,36 @@ power is, the more likely the randart will be 'aggravating nearby creatures'.
 
 
 
-(8.5) Alternative ruleset 'Ironman Server'
+(8.5) Reward item creation
+--------------------------
+PvP-mode characters may obtain item rewards by killing a lot of opponents (see
+(6.13) for details on PvP mode), and events such as Highlander Tournament and
+Dungeon Keeper will give parchments to the winners that can be turned in at the
+mayor's office for reward items.
+
+Reward items are different from items obtained via extermination orders, as
+normal drops or from acquirement scrolls in the way that they are specifically
+tailored to fit your character relatively well. There is still a random factor
+though.
+
+What you must actively do BEFORE turning in a deed for a reward item is:
+- spend skill points! Never get a reward item without having spent any skill
+  points. Make sure that you have at least 3.000 in your vital skill(s) so the
+  reward-creating algorithm notices it.
+  Especially important: Magic skills, weapon skills, martial arts skill. These
+  determine weapon (or mage staff) reward probabilities and armour weight if
+  you happen to get an armour piece. Magic classes also have a somewhat higher
+  chance to get a crown instead of helmet/cap.
+- wear roughly the appropriate type of armour (ie light vs heavy) and..
+- wield the type of weapon (dual, 1-handed or 2-handed) that you prefer.
+  This might affect three factors randomly: An actual weapon reward, whether or
+  not you might gain a shield for reward, whether you might get light or heavy
+  armour for reward. Keep in mind that there is still a random factor in what
+  item you will actually get.
+
+
+
+(8.6) Alternative ruleset 'Ironman Server'
 ------------------------------------------
 A server might be configured with a special ruleset called 'Ironman Server'
 rules. Such a server will be listed on the meta server under
@@ -15521,7 +15557,7 @@ The differences between Ironman ruleset and normal servers are as follows:
    level characters to level 0 will be ignored, ie item level is kept.
 
 
-(8.5a) Special server type 'Arcade Server'
+(8.6a) Special server type 'Arcade Server'
 ------------------------------------------
 *** Under very sporadic development -
     features might be incomplete/not working.
@@ -15637,7 +15673,7 @@ Boat Arena
 
 
 
-(8.6) Troubleshooting
+(8.7) Troubleshooting
 ---------------------
 Note: Some of these problems are deprecated and don't exist in this form or at
 all anymore. Some messages might also vary slightly.
@@ -15649,9 +15685,9 @@ SOLUTION:   If you want to connect directly to a specific server by specifying
             its address via command-line or config file, you only need to allow
             an outgoing TCP/IP connection to remote port 18348, that's the
             standard port servers run on. (If you'd like to play on the Ironman
-            server, it's port 19348 instead of 18348. See (8.5) for more
+            server, it's port 19348 instead of 18348. See (8.6) for more
             information about Ironman settings. For the Arcade server it's port
-            20348, see (8.5a) for more information about Arcade server.)
+            20348, see (8.6a) for more information about Arcade server.)
             If you want to make use of the server list that appears when you
             don't specify a particular server, you additionally have to allow
             the game to connect to the meta server which provides the server
