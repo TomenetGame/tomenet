@@ -1452,6 +1452,7 @@ static cptr r_name_garbled_get(int *r_idx) {
 	while (TRUE) {
 		*r_idx = rand_int(MAX_R_IDX);
 		if (!r_info[*r_idx].name) continue;
+		else if (!mon_allowed_chance(&r_info[*r_idx])) continue;
 		else return (r_name + r_info[*r_idx].name);
 
 		if (!tries--) {
