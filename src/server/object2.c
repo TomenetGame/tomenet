@@ -605,8 +605,6 @@ void wipe_o_list(struct worldpos *wpos) {
 	/* Compact the object list */
 	compact_objects(0, FALSE);
 }
-
-
 /*
  * Delete all the items, but except those in houses.  - Jir -
  * Also skips questors and special quest items now. Note that this is also the
@@ -614,8 +612,7 @@ void wipe_o_list(struct worldpos *wpos) {
  *
  * Note -- we do NOT visually reflect these (irrelevant) changes
  * (cave[Depth][y][x].info & CAVE_ICKY)
- */
- 
+ */ 
 void wipe_o_list_safely(struct worldpos *wpos) {
 	int i;
 
@@ -675,6 +672,68 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 		{
 			zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
 		}
+
+		/* Wipe the object */
+		WIPE(o_ptr, object_type);
+	}
+
+	/* Compact the object list */
+	compact_objects(0, FALSE);
+}
+/* Exactly like wipe_o_list() but actually makes exceptions for special dungeon floors. - C. Blue
+   Special means: Static IDDC town floor. (Could maybe be used for quests too in some way.) */
+void wipe_o_list_special(struct worldpos *wpos) {
+	int i;
+	cave_type **zcave;
+	monster_type *m_ptr;
+	bool flag = FALSE;
+
+	if ((zcave = getcave(wpos))) flag = TRUE;
+
+#if 0 /* actually disabled for now! (anti-cheeze, to be safe) */
+	if (is_fixed_irondeepdive_town(wpos, getlevel(wpos))) return;
+#endif
+
+	/* Delete the existing objects */
+	for (i = 1; i < o_max; i++) {
+		object_type *o_ptr = &o_list[i];
+
+		/* Skip dead objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Skip objects not on this depth */
+		if (!inarea(&o_ptr->wpos, wpos))
+			continue;
+
+		/* Mega-Hack -- preserve artifacts */
+		/* Hack -- Preserve unknown artifacts */
+		/* We now preserve ALL artifacts, known or not */
+		if (true_artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/)
+		{
+			/* Info */
+			/* s_printf("Preserving artifact %d.\n", o_ptr->name1); */
+
+			/* Mega-Hack -- Preserve the artifact */
+			handle_art_d(o_ptr->name1);
+		}
+		questitem_d(o_ptr, o_ptr->number);
+
+#ifdef MONSTER_INVENTORY
+		/* Monster */
+		if (o_ptr->held_m_idx) {
+			/* Monster */
+			m_ptr = &m_list[o_ptr->held_m_idx];
+
+			/* Hack -- see above */
+			m_ptr->hold_o_idx = 0;
+		}
+
+		/* Dungeon */
+		else
+#endif	// MONSTER_INVENTORY
+//		if (flag && in_bounds2(wpos, o_ptr->iy, o_ptr->ix))
+		if (flag && in_bounds_array(o_ptr->iy, o_ptr->ix))
+			zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
 
 		/* Wipe the object */
 		WIPE(o_ptr, object_type);

@@ -704,6 +704,31 @@ void wipe_m_list_admin(struct worldpos *wpos) {
 	/* Compact the monster list */
 	compact_monsters(0, FALSE);
 }
+/* Exactly like wipe_m_list() but actually makes exceptions for special dungeon floors. - C. Blue
+   Special means: Static IDDC town floor. (Could maybe be used for quests too in some way.) */
+void wipe_m_list_special(struct worldpos *wpos) {
+	int i;
+
+	/* main purpose: keep target dummies alive */
+	if (is_fixed_irondeepdive_town(wpos, getlevel(wpos))) return;
+
+	/* Delete all the monsters */
+	for (i = m_max - 1; i >= 1; i--) {
+		monster_type *m_ptr = &m_list[i];
+
+		if (inarea(&m_ptr->wpos,wpos)) {
+			if (season_halloween &&
+			    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+				great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
+				//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
+			}
+			delete_monster_idx(i, TRUE);
+		}
+	}
+
+	/* Compact the monster list */
+	compact_monsters(0, FALSE);
+}
 /* Avoid overcrowding of towns - C. Blue */
 void thin_surface_spawns() {
 	int i;

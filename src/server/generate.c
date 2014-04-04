@@ -11561,8 +11561,8 @@ void dealloc_dungeon_level(struct worldpos *wpos) {
  #endif
 #endif
 	     ) {
-		wipe_m_list(wpos);
-		wipe_o_list(wpos);
+		wipe_m_list_special(wpos);
+		wipe_o_list_special(wpos);
 	} else {
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
  #ifdef IRONDEEPDIVE_STATIC_TOWNS
@@ -11997,8 +11997,8 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 		if (why) s_printf("Generation restarted (%s)\n", why);
 
 		/* Wipe the objects */
-		if (wpos->wz) wipe_o_list(wpos);
-		else wipe_o_list_safely(wpos);//no reason not to protect house items here, is there?
+		if (wpos->wz) wipe_o_list_special(wpos);
+		else wipe_o_list(wpos);//no reason not to protect house items here, is there?
 
 		/* Wipe the monsters */
 		wipe_m_list(wpos);
