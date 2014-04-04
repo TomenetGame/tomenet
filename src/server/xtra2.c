@@ -5086,7 +5086,7 @@ void monster_death(int Ind, int m_idx) {
 			p_ptr->r_killed[credit_idx]++;
 
 			/* Shamans have a chance to learn E forms very quickly */
-			if (p_ptr->pclass == CLASS_SHAMAN && mimic_shaman_E(credit_idx))
+			if (p_ptr->pclass == CLASS_SHAMAN && (mimic_shaman_E(credit_idx) || r_info[credit_idx].d_char == 'X'))
 				p_ptr->r_killed[credit_idx] += 2;
 		}
 #else
@@ -5097,7 +5097,7 @@ void monster_death(int Ind, int m_idx) {
 			p_ptr->r_killed[credit_idx]++;
 
 			/* Shamans have a chance to learn E forms very quickly */
-			if (p_ptr->pclass == CLASS_SHAMAN && mimic_shaman_E(credit_idx))
+			if (p_ptr->pclass == CLASS_SHAMAN && (mimic_shaman_E(credit_idx) || r_info[credit_idx].d_char == 'X'))
 				p_ptr->r_killed[credit_idx] += 2;
 		}
 #endif
