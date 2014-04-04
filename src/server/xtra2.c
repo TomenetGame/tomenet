@@ -6682,13 +6682,15 @@ void player_death(int Ind) {
 		if (in_netherrealm(&p_ptr->wpos))
 			instant_res_possible = FALSE;
 
-		/* Check that the player has enough money */
-		if (instant_res_cost > p_ptr->au + p_ptr->balance)
-			instant_res_possible = FALSE;
-
 		/* Divine wrath is meant to kill people */
 		if (streq(p_ptr->died_from, "divine wrath"))
 			instant_res_possible = FALSE;
+
+		/* Check that the player has enough money */
+		if (instant_res_cost > p_ptr->au + p_ptr->balance) {
+			msg_print(Ind, "\376\377yYou do not have sufficient funds for instant-resurrection!");
+			instant_res_possible = FALSE;
+		}
 
 		if (instant_res_possible) {
 			int loss_factor, reduce;
@@ -6708,12 +6710,6 @@ void player_death(int Ind) {
 			else sound(Ind, "death_female", "death", SFX_TYPE_MISC, TRUE);
 #else
 			sound(Ind, SOUND_DEATH);
-#endif
-
-#if 0 /* collides with the "you were defeated" message further down */
-			/* message to himself */
-			snprintf(buf, sizeof(buf), "\374\377DYou were defeated by %s.", p_ptr->died_from);
-			msg_print(Ind, buf);
 #endif
 
 			/* Message to other players */
@@ -6736,7 +6732,7 @@ void player_death(int Ind) {
 			}
 
 			/* Tell him what happened -- moved the messages up here so they get onto the chardump! */
-			msg_format(Ind, "\377RYou were defeated by %s, but the priests have saved you.", p_ptr->died_from);
+			msg_format(Ind, "\374\377RYou were defeated by %s, but the priests have saved you.", p_ptr->died_from);
 
 			/* new - death dump for insta-res too! */
 			Send_chardump(Ind, "-death");
