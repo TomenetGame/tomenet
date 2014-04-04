@@ -6052,7 +6052,7 @@ void process_player_change_wpos(int Ind) {
 		change_mind(Ind, FALSE);
 
 	/* Check "maximum depth" to make sure it's still correct */
-	if (wpos->wz != 0 && !p_ptr->ghost) {
+	if (wpos->wz != 0 && (!p_ptr->ghost || p_ptr->admin_dm)) {
 		if (dlv > p_ptr->max_dlv) p_ptr->max_dlv = dlv;
 
 #ifdef SEPARATE_RECALL_DEPTHS
