@@ -2067,8 +2067,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
  * Attempt to steal from another player
  */
 /* TODO: Make it possible to steal from monsters.. */
-void do_cmd_steal(int Ind, int dir)
-{
+void do_cmd_steal(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	cave_type *c_ptr;
 
@@ -2078,24 +2077,21 @@ void do_cmd_steal(int Ind, int dir)
 	u16b dal;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
+	/* May not steal from yourself */
+	if (!dir || dir == 5) return;
+
 	/* Ghosts cannot steal */
-#if 0 /* changed since RPG_SERVER */
-	if ((p_ptr->ghost) || cfg.use_pk_rules == PK_RULES_NEVER || 
-		(!(p_ptr->pkill & PKILL_KILLABLE) && cfg.use_pk_rules == PK_RULES_DECLARE))
-	{
-	        msg_print(Ind, "You cannot steal things!");
-	        return;
-	}	                                                        
-#else
 	/* not in WRAITHFORM either */
 	if (p_ptr->ghost || p_ptr->tim_wraith) {
 	        msg_print(Ind, "You cannot steal things!");
 	        return;
 	}
-#endif
 
-	/* May not steal from yourself */
-	if (!dir || dir == 5) return;
+	/* Make sure we have enough room */
+	if (p_ptr->inven_cnt >= INVEN_PACK) {
+		msg_print(Ind, "You have no room to steal anything.");
+		return;
+	}
 
 	/* Examine target grid */
 	c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
@@ -2110,8 +2106,15 @@ void do_cmd_steal(int Ind, int dir)
 		return;
 	}
 
-	/* S(he) is no longer afk */
-	un_afk_idle(Ind);
+	if (p_ptr->inval) {
+		msg_print(Ind, "You cannot steal from other players without a valid account.");
+		return;
+	}
+
+	if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
+		msg_format(Ind, "You cannot steal from other players until you are level %d.", cfg.newbies_cannot_drop);
+		return;
+	}
 
 	/* Examine target */
 	q_ptr = Players[0 - c_ptr->m_idx];
@@ -2153,6 +2156,9 @@ void do_cmd_steal(int Ind, int dir)
 		return;
 	}
 
+	/* S(he) is no longer afk */
+	un_afk_idle(Ind);
+
 	/* May not steal from hostile players */
 	/* I doubt if it's reasonable..dunno	- Jir - */
 #if 0 /* turned off now */
@@ -2175,12 +2181,6 @@ void do_cmd_steal(int Ind, int dir)
 	if (istown(&p_ptr->wpos) && (p_ptr->align_law) < (0xffff - dal))
 		p_ptr->align_law += dal;
 	else p_ptr->align_law = 0xffff;
-
-	/* Make sure we have enough room */
-	if (p_ptr->inven_cnt >= INVEN_PACK) {
-		msg_print(Ind, "You have no room to steal anything.");
-		return;
-	}
 
 	break_shadow_running(Ind);
 	stop_precision(Ind);
@@ -2275,12 +2275,42 @@ void do_cmd_steal(int Ind, int dir)
 				notice += 50;
 				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): theft prevention.\n", p_ptr->name, q_ptr->name, success);
 			}
-			/* True artifact is HARD to steal */
-			else if (cfg.anti_arts_hoard && true_artifact_p(o_ptr)
-			    && ((q_ptr->exp > p_ptr->exp) || (rand_int(500) > success))) {
+			/* artifacts are HARD to steal. Cannot steal quest items or guild keys. */
+			else if ((o_ptr->name1 && rand_int(500) > success) ||
+			    o_ptr->questor || o_ptr->quest || (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY)) {
 				msg_print(Ind, "The object itself seems to evade your hand!");
-				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): true artifact.\n", p_ptr->name, q_ptr->name, success);
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (1).\n", p_ptr->name, q_ptr->name, success);
+			}
+			else if (((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) &&
+#ifdef FALLEN_WINNERSONLY
+			    !p_ptr->once_winner
+#else
+			    !p_ptr->total_winner
+#endif
+			    ) ||
+			    /* prevent winners picking up true arts accidentally */
+			    (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr) &&
+			    p_ptr->total_winner && cfg.kings_etiquette) ||
+			    /* IDDC - don't get exp */
+			    ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)) ||
+#ifndef RPG_SERVER
+			    ((o_ptr->level > p_ptr->lev || o_ptr->level == 0) &&
+			    !in_irondeepdive(&p_ptr->wpos) &&
+			    (cfg.anti_cheeze_pickup || (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)))
+#endif
+			    ) {
+				msg_print(Ind, "The object itself seems to evade your hand!");
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (2).\n", p_ptr->name, q_ptr->name, success);
 			} else {
+				/* Turn level 0 food into level 1 food - mikaelh */
+				if (o_ptr->level == 0 &&
+				    ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
+				    (o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD) ||
+				    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER))) {
+					o_ptr->level = 1;
+					o_ptr->discount = 100;
+				}
+
 				/* Give one item to thief */
 				if (o_ptr->tval == TV_WAND) forge.pval = divide_charged_item(o_ptr, 1);
 				forge.number = 1;
@@ -2295,6 +2325,21 @@ void do_cmd_steal(int Ind, int dir)
 				s_printf("StealingPvP: %s steals item %s from %s (chance %d%%).\n", p_ptr->name, o_name, q_ptr->name, success);
 				object_desc(Ind, o_name, &forge, TRUE, 3);
 				msg_format(Ind, "You stole %s.", o_name);
+
+				if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
+
+				/* Some events don't allow transactions before they begin */
+				if (!p_ptr->max_exp) {
+					msg_print(Ind, "You gain a tiny bit of experience from trading an item.");
+					gain_exp(Ind, 1);
+				}
+
+				can_use(Ind, o_ptr);
+				/* for Ironman Deep Dive Challenge cross-trading */
+				o_ptr->mode = p_ptr->mode;
+
+				/* Check whether this item was requested by an item-retrieval quest */
+				if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
 			}
 
 			/* Easier to notice heavier objects */
@@ -2313,7 +2358,6 @@ void do_cmd_steal(int Ind, int dir)
 			}
 		}
 	} else {
-		/* Message */
 		msg_print(Ind, "You fail to steal anything.");
 		s_printf("StealingPvP: %s fails to steal from %s.\n", p_ptr->name, q_ptr->name);
 
@@ -2322,9 +2366,7 @@ void do_cmd_steal(int Ind, int dir)
 
 		/* Easier to notice a failed attempt */
 		if (rand_int(100) < notice + 50) {
-			/* Message */
-			msg_format(0 - c_ptr->m_idx, "\377rYou notice %s try to steal from you!",
-			           p_ptr->name);
+			msg_format(0 - c_ptr->m_idx, "\377rYou notice %s try to steal from you!", p_ptr->name);
 			caught = TRUE;
 		}
 	}
