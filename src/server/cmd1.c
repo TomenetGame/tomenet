@@ -1576,7 +1576,7 @@ void carry(int Ind, int pickup, int confirm) {
 						p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
 						amount);
  #endif
-				/* Highlander Tournament: Don't allow transactions before it begins */
+				/* Some events don't allow transactions before they begin */
 				if (!p_ptr->max_exp) {
 					msg_print(Ind, "You gain a tiny bit of experience from exchanging money.");
 					gain_exp(Ind, 1);
@@ -2103,7 +2103,7 @@ void carry(int Ind, int pickup, int confirm) {
 
 					if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
 
-					/* Highlander Tournament: Don't allow transactions before it begins */
+					/* Some events don't allow transactions before they begins */
 					if (!p_ptr->max_exp) {
 						msg_print(Ind, "You gain a tiny bit of experience from trading an item.");
 						gain_exp(Ind, 1);
