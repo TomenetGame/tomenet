@@ -2412,15 +2412,17 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		 * +)  MORE
 		 * ---------
 		 *    MONEY Trap */
-		case TRAP_OF_REMITTANCE:
-		{
+		case TRAP_OF_REMITTANCE: {
 			player_type *q_ptr;
-			u32b amt;
+			u32b amt, max_amt = p_ptr->au / NumPlayers;
+
 			if (is_admin(p_ptr)) break; /* he usually carries several 10 millions of Au - C. Blue */
+			if (max_amt < 100) break;
+
 			for (k = 1; k <= NumPlayers; k++) {
+				if (k == Ind) continue;
 				q_ptr = Players[k];
 				if (q_ptr->conn == NOT_CONNECTED) continue;
-				if (k == Ind) continue;
 				if (is_admin(q_ptr)) continue; /* admins are invisible and have high levels */
 				/* No transfer between everlasting and non-everlasting? */
 				if (compat_pmode(Ind, k, FALSE)) continue;
@@ -2431,7 +2433,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				amt = q_ptr->lev * 100;
 				if (q_ptr->lev > 20) amt *= q_ptr->lev - 20;
-				if (amt > (unsigned int) p_ptr->au) amt = p_ptr->au / 2;
+				if (amt > max_amt) amt = max_amt;
 				if (amt < 100) continue;
 
 				p_ptr->au -= amt;
