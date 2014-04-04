@@ -2300,12 +2300,12 @@ void do_cmd_steal(int Ind, int dir) {
 #else
 			    !p_ptr->total_winner
 #endif
-			    ) ||
+			    )
 			    /* prevent winners picking up true arts accidentally */
-			    (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr) &&
-			    p_ptr->total_winner && cfg.kings_etiquette) ||
+			    || (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr) &&
+			    p_ptr->total_winner && cfg.kings_etiquette)
 #ifndef RPG_SERVER
-			    ((o_ptr->level > p_ptr->lev || o_ptr->level == 0) &&
+			    || ((o_ptr->level > p_ptr->lev || o_ptr->level == 0) &&
 			    !in_irondeepdive(&p_ptr->wpos) &&
 			    (cfg.anti_cheeze_pickup || (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)))
 #endif
