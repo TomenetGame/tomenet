@@ -2127,6 +2127,8 @@ void do_cmd_steal(int Ind, int dir) {
 	/* Examine target */
 	q_ptr = Players[0 - c_ptr->m_idx];
 	etiquette =
+	    ((cfg.fallenkings_etiquette && q_ptr->once_winner && !q_ptr->total_winner) ||
+	    (cfg.kings_etiquette && q_ptr->total_winner)) ||
 	    ((cfg.fallenkings_etiquette && p_ptr->once_winner && !p_ptr->total_winner) ||
 	    (cfg.kings_etiquette && p_ptr->total_winner));
 
