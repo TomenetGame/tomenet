@@ -2138,8 +2138,8 @@ bool make_attack_melee(int Ind, int m_idx)
 				if (k) (void)set_cut(Ind, p_ptr->cut + k, 0);
 			}
 #ifndef SUPPRESS_MONSTER_STUN // HERESY !
-		/* That's overdone;
-		 * let's remove do_stun from RBM_HIT instead		- Jir - */
+			/* That's overdone; \
+			 * let's remove do_stun from RBM_HIT instead		- Jir - */
 
 			/* Handle stun */
 			if (do_stun) {
