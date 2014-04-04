@@ -1323,10 +1323,10 @@ struct town_type
 
 typedef struct wilderness_type wilderness_type;
 
-struct wilderness_type
-{
+struct wilderness_type {
 	u16b radius;	/* the distance from the town */
 	u16b type;	/* what kind of terrain we are in */
+	u16b town_lev;	/* difficulty level of the town that 'radius' refers to */
 	signed char town_idx;	/* Which town resides exactly in this sector? */
 
 	u32b flags;	/* various */

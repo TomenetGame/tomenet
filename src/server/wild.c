@@ -126,18 +126,26 @@ static void bleed_warn_feat(int wild_type, cave_type *c_ptr) {
    Note that this has to be initially called with 0,0 to work properly.
 */
 
-static int towndist(int wx, int wy) {
+static int towndist(int wx, int wy, s16b *townlev) {
 	int i;
 	int dist, mindist = 100;
+
+	*townlev = 0;
 	for (i = 0; i < numtowns; i++){
 		dist = abs(wx - town[i].x) + abs(wy - town[i].y);
-		mindist = MIN(dist, mindist);
+		if (dist < mindist) {
+			mindist = dist;
+			*townlev = town[i].baselevel;
+		}
 	}
-	return(mindist);
+	return (mindist);
 }
 
 void init_wild_info_aux(int x, int y) {
-	wild_info[y][x].radius = towndist(x, y);
+	s16b tlev;
+
+	wild_info[y][x].radius = towndist(x, y, &tlev);
+	wild_info[y][x].town_lev = tlev;
 	wild_info[y][x].town_idx = wild_gettown(x, y);
 
 	if (y + 1 < MAX_WILD_Y) {
@@ -159,13 +167,12 @@ void init_wild_info_aux(int x, int y) {
 
 }
 
-void initwild(){
+void initwild() {
 	int i, j;
-	for(i = 0; i < MAX_WILD_X; i++){
-		for(j = 0; j < MAX_WILD_Y; j++){
+
+	for (i = 0; i < MAX_WILD_X; i++)
+		for (j = 0; j < MAX_WILD_Y; j++)
 			wild_info[j][i].type = WILD_UNDEFINED;
-		}
-	}
 }
 
 /* Initialize the wild_info coordinates and radius. Uses a recursive fill algorithm.
@@ -175,9 +182,9 @@ void initwild(){
    Note that this has to be initially called with 0,0 to work properly.
 */
 
-void addtown(int y, int x, int base, u16b flags, int type)
-{
+void addtown(int y, int x, int base, u16b flags, int type) {
 	int n;
+
 	if (numtowns)
 		GROW(town, numtowns, numtowns+1, struct town_type);
 	else
@@ -214,35 +221,36 @@ void addtown(int y, int x, int base, u16b flags, int type)
 }
 
 /* Erase a custom town again. Why wasn't this implemented already!? - C. Blue */
-void deltown(int Ind)
-{
+void deltown(int Ind) {
 	int x, y, i;
+	s16b tlev;
 	struct worldpos *wpos = &Players[Ind]->wpos, tpos;
 
 #if 1
 	for (x = wpos->wx - wild_info[wpos->wy][wpos->wx].radius;
 	    x <= wpos->wx + wild_info[wpos->wy][wpos->wx].radius; x++)
-	for (y = wpos->wy - wild_info[wpos->wy][wpos->wx].radius;
-	    y <= wpos->wy + wild_info[wpos->wy][wpos->wx].radius; y++)
-	if (in_bounds_wild(y, x) && (towndist(x, y) <= abs(wpos->wx - x) + abs(wpos->wy - y))) {
-		tpos.wx = x; tpos.wy = y; tpos.wz = 0;
-		for(i = 0; i < num_houses; i++)
-		if(inarea(&tpos, &houses[i].wpos)) {
+		for (y = wpos->wy - wild_info[wpos->wy][wpos->wx].radius;
+		    y <= wpos->wy + wild_info[wpos->wy][wpos->wx].radius; y++)
+			if (in_bounds_wild(y, x) && (towndist(x, y, &tlev) <= abs(wpos->wx - x) + abs(wpos->wy - y))) {
+				tpos.wx = x; tpos.wy = y; tpos.wz = 0;
+				for (i = 0; i < num_houses; i++)
+					if (inarea(&tpos, &houses[i].wpos)) {
 //#if 0
-			fill_house(&houses[i], FILL_MAKEHOUSE, NULL);
-			houses[i].flags |= HF_DELETED;
+						fill_house(&houses[i], FILL_MAKEHOUSE, NULL);
+						houses[i].flags |= HF_DELETED;
 //#endif
-		}
-		wilderness_gen(&tpos);
-	}
+					}
+				wilderness_gen(&tpos);
+			}
 #endif
 
-	if(numtowns <= 5) return;
+	if (numtowns <= 5) return;
 
 //	wild_info[wpos->wy][wpos->wx].type = WILD_GRASSLAND;
 //	wild_info[wpos->wy][wpos->wx].type = WILD_OCEAN;
 	wild_info[wpos->wy][wpos->wx].type = WILD_UNDEFINED; /* re-generate */
-	wild_info[wpos->wy][wpos->wx].radius = towndist(wpos->wy, wpos->wx);
+	wild_info[wpos->wy][wpos->wx].radius = towndist(wpos->wy, wpos->wx, &tlev);
+	wild_info[wpos->wy][wpos->wx].town_lev = tlev;
 	wild_info[wpos->wy][wpos->wx].town_idx = wild_gettown(wpos->wx, wpos->wy);
 	wilderness_gen(wpos);
 

@@ -808,22 +808,28 @@ int players_on_depth(struct worldpos *wpos)
 	}
 }
 
-int getlevel(struct worldpos *wpos)
-{
+/* Don't determine wilderness level just from town radius, but also from the
+   level of that town? */
+#define WILD_LEVEL_DEPENDS_ON_TOWN
+/* Determine wilderness level (for monster generation) */
+int getlevel(struct worldpos *wpos) {
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 
 	if (wpos->wz == 0) {
 		/* ground level */
-		return(w_ptr->radius);
+#ifdef WILD_LEVEL_DEPENDS_ON_TOWN
+		return (w_ptr->radius + w_ptr->town_lev / 3);
+#else
+		return (w_ptr->radius);
+#endif
 	} else {
 		struct dungeon_type *d_ptr;
 		int base;
-		if (wpos->wz > 0)
-			d_ptr = w_ptr->tower;
-		else
-			d_ptr = w_ptr->dungeon;
+
+		if (wpos->wz > 0) d_ptr = w_ptr->tower;
+		else d_ptr = w_ptr->dungeon;
 		base = d_ptr->baselevel + ABS(wpos->wz) - 1;
-		return(base);
+		return (base);
 	}
 }
 

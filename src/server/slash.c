@@ -5015,10 +5015,9 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/respawn")) {
 				/* Set the monster generation depth */
 				monster_level = getlevel(&p_ptr->wpos);
-				if (p_ptr->wpos.wz)
-					alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
+				msg_format(Ind, "Respawning monsters of level %d here.", monster_level);
+				if (p_ptr->wpos.wz) alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
 				else wild_add_monster(&p_ptr->wpos);
-
 				return;
 			}
 			else if (prefix(message, "/log_u")) {
