@@ -571,6 +571,7 @@ extern void season_change(int s, bool force);
 extern void player_weather(int Ind, bool entered_level, bool weather_changed, bool panel_redraw);
 
 extern void aquatic_terrain_hack(cave_type **zcave, int x, int y);
+extern bool sustained_wpos(struct worldpos *wpos);
 
 /* cmd1.c */
 extern byte cycle[], chome[];

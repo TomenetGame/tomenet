@@ -555,7 +555,7 @@ void compact_monsters(int size, bool purge) {
 			         the dungeon floor might've gotten deallocated already. */
 			if (m_ptr->pet || m_ptr->owner || m_ptr->questor) continue;
 
-			if ((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos)) continue;
+			if ((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos) || sustained_wpos(&m_ptr->wpos)) continue;
 
 			/* Delete the monster */
 			delete_monster_idx(i, TRUE);
@@ -710,7 +710,7 @@ void wipe_m_list_special(struct worldpos *wpos) {
 	int i;
 
 	/* main purpose: keep target dummies alive */
-	if (is_fixed_irondeepdive_town(wpos, getlevel(wpos))) return;
+	if (sustained_wpos(wpos)) return;
 
 	/* Delete all the monsters */
 	for (i = m_max - 1; i >= 1; i--) {

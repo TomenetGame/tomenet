@@ -303,9 +303,8 @@ void compact_objects(int size, bool purge) {
 	s32b cur_dis;
 #endif
 	struct worldpos *wpos;
-	cave_type **zcave;
 //	object_type *q_ptr;
-	cave_type *c_ptr;
+	cave_type *c_ptr, **zcave;
 
 	int tmp_max = o_max;
 	quest_info *q_ptr;
@@ -363,14 +362,17 @@ void compact_objects(int size, bool purge) {
 			/* Hack -- only compact artifacts in emergencies */
 			if (artifact_p(o_ptr) && (cnt < 1000)) chance = 100;
 
-			/* Hack -- only compact items in houses or vaults in emergencies */
-			if (!o_ptr->wpos.wz) {
-				cave_type **zcave;
-				zcave = getcave(&o_ptr->wpos);
-				if (zcave[y][x].info & CAVE_ICKY) {
-					/* Grant immunity except in emergencies */
-					if (cnt < 1000) chance = 100;
-				}
+			if ((zcave = getcave(&o_ptr->wpos))) {
+				/* Hack -- only compact items in houses (or surface vaults) or inns in emergencies */
+				if (!o_ptr->wpos.wz && (zcave[y][x].info & (CAVE_ICKY | CAVE_PROT)))
+#if 0
+					if (cnt < 1000) /* Grant immunity except in emergencies */
+#endif
+					chance = 100;
+
+				/* Don't compact items on protected grids in special locations) */
+				else if ((zcave[y][x].info & CAVE_PROT)) //IDDC town inns!
+					chance = 100;
 			}
 
 			/* Apply the saving throw */
@@ -691,7 +693,7 @@ void wipe_o_list_special(struct worldpos *wpos) {
 	if ((zcave = getcave(wpos))) flag = TRUE;
 
 #if 0 /* actually disabled for now! (anti-cheeze, to be safe) */
-	if (is_fixed_irondeepdive_town(wpos, getlevel(wpos))) return;
+	if (sustained_wpos(wpos)) return;
 #endif
 
 	/* Delete the existing objects */
