@@ -9209,27 +9209,24 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	   from the rand_int in 'Small level', not from 'Very small'! - C. Blue */
 
 	/* Very small (1 x 1 panel) level */
+	if (
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-	if (in_irondeepdive(wpos) ? (!(dflags1 & DF1_BIG) && (dflags1 & df1_smallest)) :
-	    (!(dflags1 & DF1_BIG) && (dflags1 & DF1_SMALLEST))) {
-#else
-	if (!(dflags1 & DF1_BIG) && (dflags1 & DF1_SMALLEST)) {
+	    in_irondeepdive(wpos) ? (!(dflags1 & DF1_BIG) && (dflags1 & df1_smallest)) :
 #endif
+	    (!(dflags1 & DF1_BIG) && (dflags1 & DF1_SMALLEST))) {
 		dun->l_ptr->hgt = SCREEN_HGT;
 		dun->l_ptr->wid = SCREEN_WID;
 	}
 	/* Small level */
+	else if (
 #ifdef IRONDEEPDIVE_MIXED_TYPES
  #ifdef IRONDEEPDIVE_BIG_IF_POSSIBLE
-	else if (in_irondeepdive(wpos) ? (!(dflags1 & DF1_BIG) && (dflags1 & df1_small)) : /* rarely small */
+	    in_irondeepdive(wpos) ? (!(dflags1 & DF1_BIG) && (dflags1 & df1_small)) : /* rarely small */
  #else
-	else if (in_irondeepdive(wpos) ? (!(dflags1 & DF1_BIG) && ((dflags1 & df1_small) || (!rand_int(SMALL_LEVEL * 2)))) : /* rarely small */
+	    in_irondeepdive(wpos) ? (!(dflags1 & DF1_BIG) && ((dflags1 & df1_small) || (!rand_int(SMALL_LEVEL * 2)))) : /* rarely small */
  #endif
-	    (!(dflags1 & DF1_BIG) && ((dflags1 & DF1_SMALL) || (!rand_int(SMALL_LEVEL)))))
-#else
-	else if (!(dflags1 & DF1_BIG) && ( (dflags1 & DF1_SMALL) || (!rand_int(SMALL_LEVEL))))
 #endif
-	{
+	    (!(dflags1 & DF1_BIG) && ((dflags1 & DF1_SMALL) || (!rand_int(SMALL_LEVEL))))) {
 #if 0 /* No more ultra-small levels for now (1/2 x 1/2 panel), and no max size here either :) - C. Blue*/
 		dun->l_ptr->wid = MAX_WID - rand_int(MAX_WID / SCREEN_WID * 2) * (SCREEN_WID / 2);
 		dun->l_ptr->hgt = MAX_HGT - rand_int(MAX_HGT / SCREEN_HGT * 2 - 1) * (SCREEN_HGT / 2);*/
