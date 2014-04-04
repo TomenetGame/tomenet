@@ -2075,6 +2075,8 @@ void do_cmd_steal(int Ind, int dir) {
 	bool caught = FALSE;
 	cave_type **zcave;
 	u16b dal;
+	bool etiquette;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* May not steal from yourself */
@@ -2124,6 +2126,9 @@ void do_cmd_steal(int Ind, int dir) {
 
 	/* Examine target */
 	q_ptr = Players[0 - c_ptr->m_idx];
+	etiquette =
+	    ((cfg.fallenkings_etiquette && p_ptr->once_winner && !p_ptr->total_winner) ||
+	    (cfg.kings_etiquette && p_ptr->total_winner));
 
 	/* No transactions from different mode */
 	if (compat_pmode(Ind, 0 - c_ptr->m_idx, FALSE)) {
@@ -2282,7 +2287,7 @@ void do_cmd_steal(int Ind, int dir) {
 				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): theft prevention.\n", p_ptr->name, q_ptr->name, success);
 			}
 			/* artifacts are HARD to steal. Cannot steal quest items or guild keys. */
-			else if ((o_ptr->name1 && rand_int(500) > success) ||
+			else if ((o_ptr->name1 && (rand_int(500) > success || etiquette)) ||
 			    o_ptr->questor || o_ptr->quest || (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY)) {
 				msg_print(Ind, "The object itself seems to evade your hand!");
 				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (1).\n", p_ptr->name, q_ptr->name, success);
