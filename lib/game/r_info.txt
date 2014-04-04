@@ -17154,7 +17154,7 @@ W:10:3:10:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 F:SMART | POSSESSOR | RES_TIME | 
-F:BASEANGBAND | NO_CUT
+F:BASEANGBAND | NO_CUT | PET
 D:It does not look that powerful. 
 
 N:968:Bat of Gorgoroth
@@ -17241,7 +17241,7 @@ I:120:5d5:30:50:10
 W:30:3:10:0
 O:0:0:0:0
 F:SMART | POSSESSOR | RES_TIME | 
-F:BASEANGBAND | NO_CUT
+F:BASEANGBAND | NO_CUT | PET
 S:1_IN_9
 S:S_KIN
 D:It does not look that powerful. 
@@ -17252,7 +17252,7 @@ I:130:10d10:30:100:10
 W:95:3:10:0
 O:0:0:0:0
 F:SMART | POSSESSOR | RES_DARK | RES_TIME | 
-F:BASEANGBAND | NO_CUT
+F:BASEANGBAND | NO_CUT | PET
 S:1_IN_4
 S:S_KIN
 D:It does not look that powerful. 
