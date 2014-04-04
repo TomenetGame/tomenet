@@ -6071,7 +6071,11 @@ void process_player_change_wpos(int Ind) {
 	/* also checks the artifact list */
 	if ((cfg.fallenkings_etiquette || cfg.kings_etiquette) && !is_admin(p_ptr) && cfg.strict_etiquette) {
 		object_type *o_ptr;
-		char		o_name[ONAME_LEN];
+		char o_name[ONAME_LEN];
+		bool no_etiquette =
+		    (!(cfg.fallenkings_etiquette && p_ptr->once_winner && !p_ptr->total_winner) &&
+		    !(cfg.kings_etiquette && p_ptr->total_winner));
+
 
 		for (j = 0; j < INVEN_TOTAL; j++) {
 			o_ptr = &p_ptr->inventory[j];
@@ -6082,11 +6086,8 @@ void process_player_change_wpos(int Ind) {
 			if (!a_info[o_ptr->name1].known && (o_ptr->ident & ID_KNOWN))
 				a_info[o_ptr->name1].known = TRUE;
 
-			if (!(cfg.fallenkings_etiquette && p_ptr->once_winner && !p_ptr->total_winner) &&
-			    !(cfg.kings_etiquette && p_ptr->total_winner))
-					continue;
-
-			if (winner_artifact_p(o_ptr) || admin_artifact_p(o_ptr)) continue;
+			if (no_etiquette ||
+			    winner_artifact_p(o_ptr) || admin_artifact_p(o_ptr)) continue;
 
 			/* Describe the object */
 			object_desc(Ind, o_name, o_ptr, TRUE, 0);
