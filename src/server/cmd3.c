@@ -2106,6 +2106,12 @@ void do_cmd_steal(int Ind, int dir) {
 		return;
 	}
 
+	/* IDDC - don't get exp */
+	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)) {
+		msg_print(Ind, "You cannot steal from someone or your life would be forfeit.");
+		return;
+	}
+
 	if (p_ptr->inval) {
 		msg_print(Ind, "You cannot steal from other players without a valid account.");
 		return;
@@ -2291,8 +2297,6 @@ void do_cmd_steal(int Ind, int dir) {
 			    /* prevent winners picking up true arts accidentally */
 			    (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr) &&
 			    p_ptr->total_winner && cfg.kings_etiquette) ||
-			    /* IDDC - don't get exp */
-			    ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)) ||
 #ifndef RPG_SERVER
 			    ((o_ptr->level > p_ptr->lev || o_ptr->level == 0) &&
 			    !in_irondeepdive(&p_ptr->wpos) &&
