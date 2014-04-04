@@ -2627,7 +2627,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 				}
 			}
 #endif			
-#if 0
+#if 0//todo:implement
 			/* Handle cut */
 			if (do_cut)
 			{
@@ -2648,12 +2648,13 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 					case 6: k = 300; break;
 					default: k = 500; break;
 				}
-
+#if 0//todo:implement
 				/* Apply the cut */
 				if (k) (void)set_cut(Ind, p_ptr->cut + k);
+#endif
 			}
 #endif
-#if 0
+#if 0//todo:implement
 			/* Handle stun */
 			if (do_stun)
 			{
@@ -2677,6 +2678,16 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 
 				/* Apply the stun */
 				if (k) (void)set_stun(Ind, p_ptr->stun + k);
+
+#if 0//todo:implement
+				if (!(r_ptr->flags3 & RF3_NO_STUN)) {
+					if (!m_ptr->stunned) msg_format(Ind, "\377y%^s is stunned.", m_name);
+					else msg_format(Ind, "\377y%^s appears more stunned.", m_name);
+					m_ptr->stunned = m_ptr->stunned + 20 + get_skill_scale(p_ptr, SKILL_COMBAT, 5);
+				} else {
+					msg_format(Ind, "\377o%^s resists the effect.", m_name);
+				}
+#endif
 			}
 #endif
 		}
