@@ -8453,7 +8453,9 @@ void aquatic_terrain_hack(cave_type **zcave, int x, int y) {
 	}
 }
 
-/* Special wpos that ought to keep monsters/objects static? - C. Blue
+/* Special wpos that ought to keep monsters and/or objects instead of deleting
+   or compacting them, even though the floor might not necessarily be kept
+   static. - C. Blue
    Added for IDDC static towns, could maybe also be used for quests. */
 bool sustained_wpos(struct worldpos *wpos) {
 	if (is_fixed_irondeepdive_town(wpos, getlevel(wpos))) return TRUE;
