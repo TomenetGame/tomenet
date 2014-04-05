@@ -200,13 +200,16 @@ compile the game under '(2.1) Installing TomeNET'.
 -Create a character, Half-Troll warrior is good for beginners.
  The server should now allow you to manually choose your stats.
  In case you chose a (Half-Troll) warrior, try this:
-  STR 18/30, CON as high as possible, INT as low as possible,
-  spare points into DEX, WIS or CHR.
+  STR _at least_ 18/30 (the game client will even suggest 18/40, but if you buy
+  a whip or a dagger right away and use that instead of your heavier starting
+  weapon, then 18/30 will be fine),
+  CON as high as possible, INT as low as possible,
+  spare points into DEX (especially!), WIS or CHR.
  If you decided to play a paladin make sure you have at least DEX 10.
   In case you can't reach STR 18/30, go for STR 18/20 instead, which should
   give you 2 attacks with a war hammer, your starting weapon. Then increase
   CON and WIS as high as possible, INT as low as possible, spare points (you
-  shouldn't have any ;) into CHR. (Paladins use WIS for casting spells.)
+  shouldn't have any ;)) into CHR. (Paladins use WIS for casting spells.)
   If for some reason you can't even reach STR 18/20, at least go for STR 18/10,
   again DEX not below 10, then right after spawning in town discard the war
   hammer you start with and instead go buy a whip from store '3' (weapon store)
@@ -217,6 +220,8 @@ compile the game under '(2.1) Installing TomeNET'.
   Rest goes into CON or INT (rogue's main stat for spell-casting).
  If you made a druid, put couple of points into all, DEX, STR and CON, and keep
   your WIS relatively high since it's important for druidic spell-casting.
+  Some druids might value high starting WIS more than any of the other stats
+  for that reason even.
  Explanation:
    CON affects your hit points, more CON -> more HP.
    STR (and DEX) determine your number of attacks per round. 18/30 in STR is
