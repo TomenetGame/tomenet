@@ -810,7 +810,8 @@ int players_on_depth(struct worldpos *wpos)
 
 /* Don't determine wilderness level just from town radius, but also from the
    level of that town? */
-#define WILD_LEVEL_DEPENDS_ON_TOWN
+// Breaks the house layout SW of Gondolin on main server - mikaelh
+//#define WILD_LEVEL_DEPENDS_ON_TOWN
 /* Determine wilderness level (for monster generation) */
 int getlevel(struct worldpos *wpos) {
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
