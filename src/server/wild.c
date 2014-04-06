@@ -2680,6 +2680,16 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 	}
 }
 
+/*
+ * Old version of getlevel() from cave.c
+ * Used for seeding the wilderness bleeding effects
+ * Do not change this or house layout may change in some places
+ */
+static int getlevel_wild_old(struct worldpos *wpos) {
+	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
+	return (w_ptr->radius);
+}
+
 /* determines whether or not to bleed from a given depth in a given direction.
    useful for initial determination, as well as shared bleed points.
 */
@@ -2722,7 +2732,7 @@ static bool should_we_bleed(struct worldpos *wpos, char dir)
 	/* check if our neighbor is of a different type */
 	if (w_ptr->type != wild_info[neigh_y][neigh_x].type) {
 		/* determine whether to bleed or not */
-		Rand_value = seed_town + (getlevel(wpos) + getlevel(&neighbor)) * (93754);
+		Rand_value = seed_town + (getlevel_wild_old(wpos) + getlevel_wild_old(&neighbor)) * (93754);
 		tmp = rand_int(2);
 
 		if (tmp && (getlevel(wpos) < getlevel(&neighbor))) return TRUE;
@@ -2856,7 +2866,7 @@ static void bleed_with_neighbors(struct worldpos *wpos)
 						if (wild_info[neighbor.wy][neighbor.wx].type == w_ptr->type) {
 							/* share a point */
 							/* seed the number generator */
-							Rand_value = seed_town + (getlevel(wpos) + getlevel(&neighbor)) * (89791);
+							Rand_value = seed_town + (getlevel_wild_old(wpos) + getlevel_wild_old(&neighbor)) * (89791);
 							share_point[c][d] = rand_int(((c%2) ? 70 : 25));
 						}
 						else share_point[c][d] = 0;
