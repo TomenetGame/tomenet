@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. April 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 8. April 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -13380,6 +13380,9 @@ backlash proves fatal. Runemasters are able to cast many kinds of spells, but
 it's important to note that some are much more difficult to manage than
 others. All runespells can either be projected at the world or a monster, or
 directed at the caster for a different result.
+Runespells that are cast onto the floor are 'glyphs' aka rune traps. Those will
+remain on the floor and explode if a monster triggers them. The runemaster can
+try to disarm them to retrieve the rune used to place the glyph.
 
 In addition, runespells fueled by physical runes may be used to emblazon
 non-artifact equipment that is wielded by the runemaster. The strength and
