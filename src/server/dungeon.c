@@ -5060,7 +5060,7 @@ static void process_player_end(int Ind) {
 	parts, to (ideally) immediately cover the energy loss for a single attack performed. */
 #if 1 /* old way - get the usual 'double initial attack' in. \
 	 Drawback: Have to wait for nearly a full turn (1-(1/attacksperround)) \
-	 for FTK/meleeret to break out for performing a different action. */
+	 for FTK/meleeret to break out for performing a different action. -- this should be fixed now. May break out in 1/attacksperround now.) */
 		if (p_ptr->energy >= energy) {
 #else /* new way - allows to instantly break out and perform another action (quaff/read) \
 	but doesn't give the 'double initial attack' anymore, just a normal, single attack. \
