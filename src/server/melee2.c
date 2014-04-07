@@ -17,7 +17,15 @@
 
 #include "angband.h"
 
-#define SERVER
+
+#ifdef TELEPORT_SURPRISES
+ #define TELEPORT_SURPRISED(p_ptr,r_ptr) \
+    (!p_ptr->teleported || rand_int(2) || \
+    strchr("eAN", (r_ptr)->d_char) || \
+    (((r_ptr)->flags1 & RF1_UNIQUE) && ((r_ptr)->flags2 & RF2_SMART) && ((r_ptr)->flags2 & RF2_POWERFUL)) || \
+    ((r_ptr)->flags7 & RF7_NAZGUL))
+#endif
+
 #define C_BLUE_AI
 #define C_BLUE_AI_MELEE
 /* ANTI_SEVEN_EXPLOIT: There are 2 hacks to prevent slightly silyl ping-pong movement when next to epicenter,
@@ -7690,7 +7698,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				if ((m_ptr->owner == pd_ptr->id) || /* Don't attack your master! */
 				    pd_ptr->admin_invinc /* Invincible players can't be atacked! */
 #ifdef TELEPORT_SURPRISES
-				    || (pd_ptr->teleported && rand_int(2))
+				    || TELEPORT_SURPRISED(pd_ptr, r_ptr)
 #endif
 				    ) /* surprise effect */
 					continue;
@@ -7867,7 +7875,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			    /* non-hostile questors dont attack people */
 			    && !pfriend
 #ifdef TELEPORT_SURPRISES
-			    && (!q_ptr->teleported || rand_int(2))
+			    && !TELEPORT_SURPRISED(q_ptr, r_ptr)
 #endif
 			    ) {
 				/* Push past weaker players (unless leaving a wall) */
@@ -9457,7 +9465,7 @@ void process_monsters(void) {
 			/* Skip if player wears amulet of invincibility - C. Blue */
 			if ((p_ptr->admin_invinc
 #ifdef TELEPORT_SURPRISES
-			    || (p_ptr->teleported && rand_int(2))
+			    || TELEPORT_SURPRISED(p_ptr, r_ptr)
 #endif
 			    ) && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) /* for Dungeon Master GF_DOMINATE */
 				continue;
