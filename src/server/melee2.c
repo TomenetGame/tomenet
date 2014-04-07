@@ -7690,7 +7690,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				if ((m_ptr->owner == pd_ptr->id) || /* Don't attack your master! */
 				    pd_ptr->admin_invinc /* Invincible players can't be atacked! */
 #ifdef TELEPORT_SURPRISES
-				    || pd_ptr->teleported
+				    || (pd_ptr->teleported && rand_int(2))
 #endif
 				    ) /* surprise effect */
 					continue;
@@ -7867,7 +7867,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			    /* non-hostile questors dont attack people */
 			    && !pfriend
 #ifdef TELEPORT_SURPRISES
-			    && !q_ptr->teleported
+			    && (!q_ptr->teleported || rand_int(2))
 #endif
 			    ) {
 				/* Push past weaker players (unless leaving a wall) */
@@ -9457,7 +9457,7 @@ void process_monsters(void) {
 			/* Skip if player wears amulet of invincibility - C. Blue */
 			if ((p_ptr->admin_invinc
 #ifdef TELEPORT_SURPRISES
-			    || p_ptr->teleported
+			    || (p_ptr->teleported && rand_int(2))
 #endif
 			    ) && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) /* for Dungeon Master GF_DOMINATE */
 				continue;
