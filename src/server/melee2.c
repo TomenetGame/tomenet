@@ -20,10 +20,10 @@
 
 #ifdef TELEPORT_SURPRISES
  #define TELEPORT_SURPRISED(p_ptr,r_ptr) \
-    (!p_ptr->teleported || rand_int(2) || \
-    strchr("eAN", (r_ptr)->d_char) || \
-    (((r_ptr)->flags1 & RF1_UNIQUE) && ((r_ptr)->flags2 & RF2_SMART) && ((r_ptr)->flags2 & RF2_POWERFUL)) || \
-    ((r_ptr)->flags7 & RF7_NAZGUL))
+    (p_ptr->teleported && rand_int(2) && \
+    !strchr("eAN", (r_ptr)->d_char) && \
+    !(((r_ptr)->flags1 & RF1_UNIQUE) && ((r_ptr)->flags2 & RF2_SMART) && ((r_ptr)->flags2 & RF2_POWERFUL)) && \
+    !((r_ptr)->flags7 & RF7_NAZGUL))
 #endif
 
 #define C_BLUE_AI
