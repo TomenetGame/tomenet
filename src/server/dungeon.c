@@ -3850,7 +3850,7 @@ static bool process_player_end_aux(int Ind)
 		/* Digest normally */
 		if (p_ptr->food < PY_FOOD_MAX) {
 			/* Every 50/6 level turns */
-//			if (!(turn%((level_speed((&p_ptr->wpos))*10)/12)))
+//			if (!(turn % ((level_speed((&p_ptr->wpos)) * 10) / 12)))
 			if (!(turn % ((level_speed((&p_ptr->wpos)) / 12) * 10))) {
 				/* Basic digestion rate based on speed */
 //				i = extract_energy[p_ptr->pspeed]*2;	// 1.3 (let them starve)
@@ -6931,12 +6931,12 @@ void dungeon(void)
 		if (p_ptr->hilite_self > 0 && !(turn % (cfg.fps / 15))) {
 			p_ptr->hilite_self--;
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-		}
+		} else
 #endif
 
-		/* Play server-side animations (consisting of cycling/random colour choices,
-		   instead of animated colours which are circled client-side) */
-		else if (!(turn % (cfg.fps / 6))) {
+		if (!(turn % (cfg.fps / 6))) {
+			/* Play server-side animations (consisting of cycling/random colour choices,
+			   instead of animated colours which are circled client-side) */
 			/* Flicker invisible player? (includes colour animation!) */
 //			if (p_ptr->invis) update_player(i);
 			if (p_ptr->invis) {
@@ -6947,6 +6947,10 @@ void dungeon(void)
 //			else { /* && p_ptr->body_monster */
 				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 //			}
+#ifdef TELEPORT_SURPRISES
+			/* Teleport-surprise-effect against monsters */
+			if (p_ptr->teleported) p_ptr->teleported--;
+#endif
 		}
 
 		/* Perform beeping players who are currently being paged by others */

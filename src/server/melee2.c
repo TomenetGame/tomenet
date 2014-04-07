@@ -7688,8 +7688,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 
 				/* get him if allowed */
 				if ((m_ptr->owner == pd_ptr->id) || /* Don't attack your master! */
-				    /* Invincible players can't be atacked! */
-				    pd_ptr->admin_invinc)
+				    pd_ptr->admin_invinc /* Invincible players can't be atacked! */
+#ifdef TELEPORT_SURPRISES
+				    || pd_ptr->teleported
+#endif
+				    ) /* surprise effect */
 					continue;
 
 				/* did we choose this player for target in our previous turn?
@@ -7862,7 +7865,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			/* Don't attack your master! Invincible players can't be atacked! */
 			if (q_ptr && m_ptr->owner != q_ptr->id && !q_ptr->admin_invinc
 			    /* non-hostile questors dont attack people */
-			    && !pfriend) {
+			    && !pfriend
+#ifdef TELEPORT_SURPRISES
+			    && !q_ptr->teleported
+#endif
+			    ) {
 				/* Push past weaker players (unless leaving a wall) */
 				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
 //				    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
@@ -9448,8 +9455,11 @@ void process_monsters(void) {
 				continue;
 
 			/* Skip if player wears amulet of invincibility - C. Blue */
-			if (p_ptr->admin_invinc
-			    && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) /* for Dungeon Master GF_DOMINATE */
+			if ((p_ptr->admin_invinc
+#ifdef TELEPORT_SURPRISES
+			    || p_ptr->teleported
+#endif
+			    ) && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) /* for Dungeon Master GF_DOMINATE */
 				continue;
 
 			/* can spot/uncloak cloaked player? */

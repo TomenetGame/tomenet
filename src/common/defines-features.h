@@ -178,6 +178,8 @@
  #define AUCTION_DEBUG
 
  #define OPTIMIZED_ANIMATIONS	/* testing */
+
+ #define TELEPORT_SURPRISES	/* monsters are surprised for a short moment if a player long-range teleported next to them */
 #endif
 
 #ifdef ARCADE_SERVER

@@ -2944,23 +2944,23 @@ struct player_type {
 	byte max_depth[MAX_D_IDX * 2], max_depth_wx[MAX_D_IDX * 2], max_depth_wy[MAX_D_IDX * 2]; /* x2 to account for possible wilderness dungeons */
 	bool max_depth_tower[MAX_D_IDX * 2];
 
-	u32b gold_picked_up; /* for EVENT_TOWNIE_GOLD_LIMIT */
-	int IDDC_found_rndtown; /* prevent multiple random towns within one 'interval' */
-	int IDDC_logscum; /* prevent log-scumming instead of proceeding downwards */
+	u32b gold_picked_up;		/* for EVENT_TOWNIE_GOLD_LIMIT */
+	int IDDC_found_rndtown;		/* prevent multiple random towns within one 'interval' */
+	int IDDC_logscum;		/* prevent log-scumming instead of proceeding downwards */
 
-	/* Instant resurrection */
-	bool insta_res;
-	/* temporary xtra stuff, can be used by whatever */
-	s16b tmp_x, tmp_y;
-
-	bool font_map_solid_walls; /* Hack: Certain Windows bitmap fonts: Map walls to /127, solid block tile */
+	bool insta_res;			/* Instant resurrection */
+	s16b tmp_x, tmp_y;		/* temporary xtra stuff, can be used by whatever */
+	bool font_map_solid_walls;	/* Hack: Certain Windows bitmap fonts: Map walls to /127, solid block tile */
 	s16b hilite_self;
-	bool hilite_player; /* possible resurrection of long since broken c_cfg.hilite_player: Draw cursor around us at all times. */
+	bool hilite_player;		/* possible resurrection of long since broken c_cfg.hilite_player: Draw cursor around us at all times. */
+#ifdef TELEPORT_SURPRISES
+	byte teleported;		/* optional/experimental: in the future, a cooldown for monsters who are 'surprised' from player teleporting next to them */
+#endif
 
-	char redraw_cooldown;
-	bool auto_insc[INVEN_TOTAL];
-	bool grid_sunlit, grid_house;
-	u16b cards_diamonds, cards_hearts, cards_spades, cards_clubs;
+	char redraw_cooldown;		/* prevent people spamming CTRL+R (costs cpu+net) */
+	bool auto_insc[INVEN_TOTAL];	/* client-side auto-inscribing helper var */
+	bool grid_sunlit, grid_house;	/* vampire handling; ambient sfx handling */
+	u16b cards_diamonds, cards_hearts, cards_spades, cards_clubs;	/* for /deal and /shuffle commands */
 };
 
 typedef struct boni_col boni_col;

@@ -900,8 +900,18 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 	ox = p_ptr->px;
 
 #ifdef USE_SOUND_2010
+	/* note: currently 10 is the usual phase door distance, and spells can get it up to 12. */
 	if (org_dis <= 20 && org_dis >= 7) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND, TRUE);
-	else if (org_dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, TRUE);
+	else if (org_dis > 20) {
+		sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, TRUE);
+ #ifdef TELEPORT_SURPRISES
+		p_ptr->teleported = 3;
+ #endif
+	}
+#else
+ #ifdef TELEPORT_SURPRISES
+	if (org_dis > 20) p_ptr->teleported = 3;
+ #endif
 #endif
 
 	/* Move the player */
