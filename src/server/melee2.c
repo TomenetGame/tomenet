@@ -3606,6 +3606,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 					break;
 				}
 			}
+			stop_shooting_till_kill(Ind);
 			msg_format(Ind, "%^s commands you to return.", m_name);
 			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
 			break;
