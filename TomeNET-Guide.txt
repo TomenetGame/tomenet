@@ -171,7 +171,8 @@ Contents
     (8.5)   Reward item creation
     (8.6)   Alternative ruleset 'Ironman Server'
     (8.6a)  Special server type 'Arcade Server'
-    (8.7)   Troubleshooting
+    (8.7)   Game engine limits
+    (8.8)   Troubleshooting
 
 
 
@@ -758,7 +759,7 @@ CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
         Note: If you press this while in chat prompt, you can cycle forward
         through lines you previously typed (also see CTRL+P).
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
-(Compare troubleshooting section (8.7), problem 21.)
+(Compare troubleshooting section (8.8), problem 21.)
 
 ^       Allows to enter a CTRL character as command.
 
@@ -1027,7 +1028,7 @@ They all start with a slash '/' hence they're called slash commands:
                         attention. (Using /ignore on a player will also
                         prevent getting paged by him.)
                         If you're on Linux and not hearing the page sounds,
-                        see problem 19 in the troubleshooting section (8.7).
+                        see problem 19 in the troubleshooting section (8.8).
 
 /paint      (Also available by pressing 'h' for house menu.)
             Use a potion in your inventory to paint your house entrance in a
@@ -2409,7 +2410,7 @@ You can control mixer settings with CTRL+U key (or use CTRL+C to toggle music
 and CTRL+N to toggle the master mixer on/off).
 
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
-(Compare troubleshooting section (8.7), problem 21.)
+(Compare troubleshooting section (8.8), problem 21.)
 
 Also be sure to press '=' key to have a look at the audio options.
 
@@ -2505,7 +2506,7 @@ After the meta-server has been queried, the list of available servers will
 appear in the main window. Choose a server that is near to your location to
 avoid high latency.
 (This step is reported to sometimes cause problems on Windows OS. If you don't
-see that list, or if other problems occur, see (8.7) for possible solutions.)
+see that list, or if other problems occur, see (8.8) for possible solutions.)
 
 Now you will be prompted to enter your account name and password. You can
 choose these freely, the server will save that information and use it to
@@ -3004,7 +3005,7 @@ The top right window will give an overview of your character attributes and
 miscellanous abilities. The bottom right window will show the contents of your
 backpack, also called inventory. All characters except ghosts have a backpack.
 The bottom left window will show combat- chat- and server-messages. If most
-of the windows stay totally empty, see (8.7) for possible solutions.
+of the windows stay totally empty, see (8.8) for possible solutions.
 To the left border in the main window you see a short overview of your most
 important stats:
 -starting with your race
@@ -15682,7 +15683,77 @@ Boat Arena
 
 
 
-(8.7) Troubleshooting
+(8.7) Game engine limits
+------------------------
+The TomeNET server, aka the "game engine", runs at 60 frames per second.
+This imposes certain limits that can clash when your character exceeds certain
+speed and attack numbers, if you are not on a relatively deep dungeon floor:
+
+The deeper you go, the slower time passes (compare (4.14)). On the world
+surface time passes the fastest: A turn for your character takes around 0.7
+seconds in real time.
+
+A character moving at the maximum possible speed of +90 (actually you can get
+more speed, but it will only help to counter the slowdown your character might
+experience from carrying a heavy backpack, it will not increase your speed any
+further) is able to perform 8 actions per character turn. That means in Bree
+(or in general on the world surface, it's all the same) that character could
+perform 8 actions in 0.7 seconds. That is roughly 0.088 seconds per action.
+This means that the game engine (running at 60 fps) has approximately 5.3
+frames for performing each action.
+
+Usually this is fine, because an action only takes one frame. With two notable
+exceptions! Shooting with ranged weapons and the auto-retaliator for melee
+weapons.
+Those split up the single attacks (each strike/each shot) so that each of them
+takes one frame, instead of all of them being performed in a single frame.
+Since the aforementioned character at +90 speed in Bree only has 5 frames
+available, that means he can only utilise 5 blows or shots at best. So if he
+attacks a target dummy in Bree to measure his damage, he will get no further
+damage increase for more blows/round than 5.
+
+If he moves at +70 speed, he can already benefit from a 6th attack, at +50
+speed from a 7th. Remember however, this limit is so "low" only because he is
+at dungeon level 0 (Bree/world surface).
+
+However, this problem is not that bad when you consider that time passes much
+slower at deeper dungeon levels, giving the game engine more room to fit in all
+the actions:
+At floor level 83 or deeper, the slowdown caps (although there is a special
+further slowdown for the Nether Realm)! At this depth (and deeper) time has
+already been slowed down so much that a character at max speed ('Fast +90')
+will benefit from 14 blows or shots per round.
+This limit is usually unreachable, because a character cannot attain such a
+high speed and at the same time equip items that boost his number of attacks
+that far - *by far*.
+Even at floor level 67 (the first Angband floor) a character of speed +90 could
+still utilise up to 11 attacks per round without dps loss, and a character of
+speed +60 can even utilise up to 14 attacks per round! Again a feat that
+probably no character will be able to come close to.
+
+This means that although the game engine limits get exceeded when testing dps
+on the target dummies in Bree with a character that moves at extreme speed and
+uses either melee auto-retaliator or slings/bows/crossbows, there is basically
+no problem at all when fighting monsters in the deeper dungeons.
+
+If you want to compare dps of different weapons or the effect of extra-attack
+equipment vs critical-hit equipment in Bree, first remove all items that give
++speed (and apply to both scenarios) to make sure you get accurate numbers.
+The limits in Bree (and hence on the world surface) are:
+ +90 speed -> max 5 attacks
+ +70 speed -> max 6 attacks
+ +50 speed -> max 7 attacks
+ +40 speed -> max 8 attacks
+ +30 speed -> max 10 attacks
+ +20 speed -> max 14 attacks
+ +10 speed -> max 20 attacks (the cap for blows per round, actually!)
+
+Likewise, if you want to compare speed vs critical hits, first remove all items
+that give extra attacks and would apply to both scenarios.
+
+
+
+(8.8) Troubleshooting
 ---------------------
 Note: Some of these problems are deprecated and don't exist in this form or at
 all anymore. Some messages might also vary slightly.
