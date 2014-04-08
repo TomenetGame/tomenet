@@ -2779,7 +2779,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	while (num++ < p_ptr->num_blow) {
 #ifdef USE_SOUND_2010
 		if (p_ptr->cut_sfx_attack) {
-			sfx = extract_energy[p_ptr->pspeed] * p_ptr->num_blow;
+			sfx = (extract_energy[p_ptr->pspeed] / 10) * p_ptr->num_blow;
 			if (sfx) {
 				p_ptr->count_cut_sfx_attack += 10000 / sfx;
 				if (p_ptr->count_cut_sfx_attack >= 250) { /* 100 / 25 = 4 blows per turn */
@@ -3819,7 +3819,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old) {
 
 #ifdef USE_SOUND_2010
 		if (p_ptr->cut_sfx_attack) {
-			sfx = extract_energy[p_ptr->pspeed] * p_ptr->num_blow;
+			sfx = (extract_energy[p_ptr->pspeed] / 10) * p_ptr->num_blow;
 			if (sfx) {
 				p_ptr->count_cut_sfx_attack += 10000 / sfx;
 				if (p_ptr->count_cut_sfx_attack >= 250) { /* 100 / 25 = 4 blows per turn */

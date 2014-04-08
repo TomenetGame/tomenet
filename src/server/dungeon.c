@@ -3853,8 +3853,8 @@ static bool process_player_end_aux(int Ind)
 //			if (!(turn % ((level_speed((&p_ptr->wpos)) * 10) / 12)))
 			if (!(turn % ((level_speed((&p_ptr->wpos)) / 12) * 10))) {
 				/* Basic digestion rate based on speed */
-//				i = extract_energy[p_ptr->pspeed]*2;	// 1.3 (let them starve)
-				i = (10 + extract_energy[p_ptr->pspeed] * 3) / 2;
+//				i = (extract_energy[p_ptr->pspeed] / 10) * 2;	// 1.3 (let them starve)
+				i = (10 + (extract_energy[p_ptr->pspeed] / 10) * 3) / 2;
 
 				/* Adrenaline takes more food */
 				if (p_ptr->adrenaline) i *= 5;

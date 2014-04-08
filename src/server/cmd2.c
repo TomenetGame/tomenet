@@ -4723,7 +4723,7 @@ void do_cmd_fire(int Ind, int dir)
 
 #ifdef USE_SOUND_2010
 	if (p_ptr->cut_sfx_attack) {
-		sfx = extract_energy[p_ptr->pspeed] * p_ptr->num_fire;
+		sfx = (extract_energy[p_ptr->pspeed] / 10) * p_ptr->num_fire;
 		if (sfx) {
 			p_ptr->count_cut_sfx_attack += 10000 / sfx;
 			if (p_ptr->count_cut_sfx_attack >= 200) { /* 5 attacks per turn */

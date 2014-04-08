@@ -7004,7 +7004,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 	/* Hack -- small racial variety */
 	if (!(r_ptr->flags1 & RF1_UNIQUE)) {
 		/* Allow some small variation per monster */
-		i = extract_energy[m_ptr->speed] / 10;
+		i = extract_energy[m_ptr->speed] / 100;
 		if (i) {
 			j = rand_spread(0, i);
 			m_ptr->mspeed += j;
@@ -7015,12 +7015,12 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 
 
 	/* Give a random starting energy */
-	m_ptr->energy = rand_int(100);
+	m_ptr->energy = rand_int(1000);
 
 	/* Hack -- Reduce risk of "instant death by breath weapons" */
 	if (r_ptr->flags1 & RF1_FORCE_SLEEP) {
 		/* Start out with minimal energy */
-		m_ptr->energy = rand_int(10);
+		m_ptr->energy = rand_int(100);
 	}
 
 	/* Starts 'flickered out'? */

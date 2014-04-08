@@ -3269,9 +3269,9 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	//else msg_format(Ind, "The deepest point you've reached: Lev \377G-%d", p_ptr->max_dlv);
 
 	msg_format(Ind, "You can move %d.%d times each turn.",
-	    extract_energy[p_ptr->pspeed] / 10,
-	    extract_energy[p_ptr->pspeed]
-	    - (extract_energy[p_ptr->pspeed] / 10) * 10);
+	    extract_energy[p_ptr->pspeed] / 100,
+	    (extract_energy[p_ptr->pspeed]
+	    - (extract_energy[p_ptr->pspeed] / 100) * 100) / 10);
 
 	/* show parry/block chance if we're using weapon or shield */
 	if (is_weapon(p_ptr->inventory[INVEN_WIELD].tval) ||

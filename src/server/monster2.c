@@ -3502,7 +3502,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	/* Hack -- small racial variety */
 	if (!(r_ptr->flags1 & RF1_UNIQUE)) {
 		/* Allow some small variation per monster */
-		i = extract_energy[m_ptr->speed] / 10;
+		i = extract_energy[m_ptr->speed] / 100;
 		if (i) {
 			j = rand_spread(0, i);
 			m_ptr->mspeed += j;
@@ -3561,10 +3561,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	/* Hack -- Reduce risk of "instant death by breath weapons" */
 	if (r_ptr->flags1 & RF1_FORCE_SLEEP) {
 		/* Start out with minimal energy */
-		m_ptr->energy = rand_int(10);
+		m_ptr->energy = rand_int(100);
 	} else {
 		/* Give a random starting energy */
-		m_ptr->energy = rand_int(100);
+		m_ptr->energy = rand_int(1000);
 	}
 #else /* make nether realm summons less deadly (hounds) */
 	/* monsters gain per turn extract_energy[]: ee=1..80 (avg: spd+10) -> per second: 60..4800 (+0..+30spd: 600..2400)
@@ -3572,7 +3572,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	 * on extremely rough average, monsters in high-level scenarios require ~1/2s to become able to act */
 	//m_ptr->energy = -rand_int(level_speed(wpos) - 375);//delay by 0..1/3s on extremely rough average in high-level scenarios
 	//m_ptr->energy = -rand_int((level_speed(wpos) - 375) * 2);//delay by 0..2/3s - " -, very lenient ^^
-	m_ptr->energy = -rand_int(((level_speed(wpos) - 175) * 3) / 2);//delay by 0..2/3s - " -, very lenient ^^
+	m_ptr->energy = -rand_int(((level_speed(wpos) - 1750) * 3) / 2);//delay by 0..2/3s - " -, very lenient ^^
 #endif
 
 
