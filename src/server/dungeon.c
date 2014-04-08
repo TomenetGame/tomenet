@@ -3851,7 +3851,7 @@ static bool process_player_end_aux(int Ind)
 		if (p_ptr->food < PY_FOOD_MAX) {
 			/* Every 50/6 level turns */
 //			if (!(turn % ((level_speed((&p_ptr->wpos)) * 10) / 12)))
-			if (!(turn % ((level_speed((&p_ptr->wpos)) / 12) * 10))) {
+			if (!(turn % ((level_speed((&p_ptr->wpos)) / 120) * 10))) {
 				/* Basic digestion rate based on speed */
 //				i = (extract_energy[p_ptr->pspeed] / 10) * 2;	// 1.3 (let them starve)
 				i = (10 + (extract_energy[p_ptr->pspeed] / 10) * 3) / 2;
@@ -5129,7 +5129,7 @@ static void process_player_end(int Ind) {
 
 	/* ('Handle running' from above was originally at this place) */
 	/* Handle running -- 5 times the speed of walking */
-	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1))/real_speed) {
+	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
 		char consume_full_energy;
 		run_step(Ind, 0, &consume_full_energy);
 		if (consume_full_energy) {
@@ -5155,7 +5155,7 @@ static void process_player_end(int Ind) {
 	 * and poison faster with respect to real time < 1750 feet and slower >
 	 * 1750 feet. - C. Blue
 	 */
-	if (!(turn % (level_speed(&p_ptr->wpos) / 12))) {
+	if (!(turn % (level_speed(&p_ptr->wpos) / 120))) {
 		if (!process_player_end_aux(Ind)) return;
 	}
 
