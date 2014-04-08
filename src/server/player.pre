@@ -1051,7 +1051,9 @@ struct player_type
 	int IDDC_logscum;
 	bool insta_res;
 	bool hilite_player;
+#ifdef TELEPORT_SURPRISES
 	byte teleported;
+#endif
 };
 
 extern bool imprison(int Ind, int time, char *reason);
