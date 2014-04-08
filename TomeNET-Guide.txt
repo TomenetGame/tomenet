@@ -15691,7 +15691,7 @@ speed and attack numbers, if you are not on a relatively deep dungeon floor:
 
 The deeper you go, the slower time passes (compare (4.14)). On the world
 surface time passes the fastest: A turn for your character takes around 0.7
-seconds in real time.
+seconds in real time. (Vice versa, 1 second equals ~1.4 game turns there).
 
 A character moving at the maximum possible speed of +90 (actually you can get
 more speed, but it will only help to counter the slowdown your character might
@@ -15741,12 +15741,18 @@ equipment vs critical-hit equipment in Bree, first remove all items that give
 +speed (and apply to both scenarios) to make sure you get accurate numbers.
 The limits in Bree (and hence on the world surface) are:
  +90 speed -> max 5 attacks
- +70 speed -> max 6 attacks
- +50 speed -> max 7 attacks
- +40 speed -> max 8 attacks
- +30 speed -> max 10 attacks
+ +72 speed -> max 6 attacks
+ +53 speed -> max 7 attacks
+ +43 speed -> max 8 attacks
+ +37 speed -> max 9 attacks
+ +32 speed -> max 10 attacks
+ +28 speed -> max 11 attacks
+ +25 speed -> max 12 attacks
+ +22 speed -> max 13 attacks
  +20 speed -> max 14 attacks
- +10 speed -> max 20 attacks (the cap for blows per round, actually!)
+ +18 speed -> max 15 attacks
+ +11 speed -> max 20 attacks (the cap for blows per round, actually!)
+In case you test this and find rounding errors, let me know! :-p
 
 Likewise, if you want to compare speed vs critical hits, first remove all items
 that give extra attacks and would apply to both scenarios.
