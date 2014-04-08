@@ -16403,5 +16403,14 @@ PROBLEM 45: Sound sound effects, mostly the page sound (when someone pages you
 SOLUTION:   Make sure that you don't have all four volume sliders at maximum:
             Just lower the master slider by 1 or 2 steps.
 
+PROBLEM 46: Testing your character's damage-per-second (dps) on the target
+            dummies in Bree with melee weapons or ranged weapons (slings, bows
+            or crossbows) has weird effects: You don't get more damage from
+            increasing your number of attacks per round, even though all other
+            stats (speed, critical hits) are exactly the same.
+            Or you actually seem to get a sharp increase in damage by bumping
+            into the target dummy instead of using the melee auto-retaliator.
+SOLUTION:   You are experiencing game engine limits regarding the world surface
+            (including all towns, like Bree). See (8.7) for details.
 
 ==============================================================================
