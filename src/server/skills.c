@@ -395,8 +395,8 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYour ability to create ammunition improved remarkably!");
 		if (old_value < 250 && new_value >= 250)
 			msg_print(Ind, "\374\377GYou learn the shooting technique 'Barrage'!");
-		if (old_value < 500 && new_value >= 500)
-			msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
+//		if (old_value < 500 && new_value >= 500)
+//			msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
 		break;
 	case SKILL_COMBAT:
 		if (old_value < 110 && new_value >= 110) {
@@ -543,18 +543,26 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		    (old_value < 300 && new_value >= 300) || (old_value < 400 && new_value >= 400) || (old_value < 500 && new_value >= 500)) {
 			msg_print(Ind, "\374\377GYour shooting speed has become faster due to your training!");
 		}
+		if (old_value < 500 && new_value >= 500)
+			msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
 		break;
 	case SKILL_BOW:
 		if ((old_value < 125 && new_value >= 125) || (old_value < 250 && new_value >= 250) ||
 		    (old_value < 375 && new_value >= 375) || (old_value < 500 && new_value >= 500)) {
 			msg_print(Ind, "\374\377GYour shooting speed has become faster due to your training!");
 		}
+		if (old_value < 500 && new_value >= 500)
+			msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
 		break;
 	case SKILL_XBOW:
-		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\374\377GYour shooting speed has become faster due to your training!");
+		if ((old_value < 125 && new_value >= 125) || (old_value < 375 && new_value >= 500)) {
 			msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
 		}
+		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
+			msg_print(Ind, "\374\377GYour shooting speed has become faster due to your training!");
+		}
+		if (old_value < 500 && new_value >= 500)
+			msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
 		break;
 /*	case SKILL_SLING:
 	case SKILL_BOW:

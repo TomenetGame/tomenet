@@ -4847,10 +4847,30 @@ void calc_boni(int Ind) {
 				csheet_boni[14].shot += get_skill_scale(p_ptr, archery, 500) / 125;
 				break;
 			case SKILL_XBOW:
+#if 1
+				// Stagger the EM/ES instead of massive emphasis on 25/50 (Thanks, Vir)
+				if (get_skill_scale(p_ptr, archery, 500) >= 125) { //EM
+					p_ptr->xtra_might++;
+					csheet_boni[14].migh++;
+				}
+				if (get_skill_scale(p_ptr, archery, 500) >= 250) { //ES
+					p_ptr->num_fire++;
+					csheet_boni[14].shot++;
+				}
+				if (get_skill_scale(p_ptr, archery, 500) >= 375) { //EM
+					p_ptr->xtra_might++;
+					csheet_boni[14].migh++;
+				}
+				if (get_skill_scale(p_ptr, archery, 500) == 500) { //ES
+					p_ptr->num_fire++;
+					csheet_boni[14].shot++;
+				}
+#else
 				p_ptr->num_fire += get_skill_scale(p_ptr, archery, 500) / 250;
 				csheet_boni[14].shot += get_skill_scale(p_ptr, archery, 500) / 250;
 				p_ptr->xtra_might += get_skill_scale(p_ptr, archery, 500) / 250;
 				csheet_boni[14].migh += get_skill_scale(p_ptr, archery, 500) / 250;
+#endif
 				break;
 			case SKILL_BOOMERANG:
 				if (get_skill_scale(p_ptr, archery, 500) >= 500) { p_ptr->num_fire++; csheet_boni[14].shot++; }
@@ -4862,8 +4882,15 @@ void calc_boni(int Ind) {
 				break;
 			}
 			if (archery != SKILL_BOOMERANG) {
-	//			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 50);
-				p_ptr->xtra_might += (get_skill(p_ptr, SKILL_ARCHERY) / 50);
+#if 1
+//Put less emphasis on ARCHERY (which only archers can get and more into the individual skill. 
+//Make other archers more viable.
+				p_ptr->xtra_might += get_skill_scale(p_ptr, archery, 1);
+				csheet_boni[14].migh += get_skill_scale(p_ptr, archery, 1);
+#else
+ 				p_ptr->xtra_might += (get_skill(p_ptr, SKILL_ARCHERY) / 50);
+#endif
+
 				p_ptr->to_d_ranged += get_skill_scale(p_ptr, SKILL_ARCHERY, 10);
 			}
 		}
@@ -5484,7 +5511,8 @@ void calc_boni(int Ind) {
         p_ptr->skill_thn += (p_ptr->cp_ptr->x_thn * (((2 * get_skill(p_ptr, SKILL_MASTERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
 
 	/* Affect Skill -- combat (shooting) (Level, by Class) */
-	p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * (((2 * get_skill(p_ptr, SKILL_ARCHERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
+	//p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * (((2 * get_skill(p_ptr, SKILL_ARCHERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
+	p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * (((get_skill(p_ptr, SKILL_ARCHERY) + get_skill(p_ptr, get_archery_skill(p_ptr))) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
 
 	/* Affect Skill -- combat (throwing) (Level, by Class) */
 	p_ptr->skill_tht += (p_ptr->cp_ptr->x_thb * get_skill_scale(p_ptr, SKILL_COMBAT, 10));
