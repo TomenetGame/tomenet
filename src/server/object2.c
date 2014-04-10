@@ -6871,7 +6871,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case 3: /* cannot happen */ break;
 		case 4: maxweight_armor = 40; break;
 		case 5: maxweight_armor = 25; break;
-		case 6: maxweight_armor = 30; break;
+		case 6: maxweight_armor = 40; break;//4.0 helmets don't exist (jewel encrusted crown has it though, so we just pretend..)
 		case 7: maxweight_armor = 30; break;
 		case 8: maxweight_armor = 15; break;
 		}
@@ -6883,7 +6883,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case 3: /* cannot happen */ break;
 		case 4: maxweight_armor = 20; break;
 		case 5: maxweight_armor = 20; break;
-		case 6: maxweight_armor = 30; break;
+		case 6: maxweight_armor = 40; break;//4.0 helmets don't exist (jewel encrusted crown has it though, so we just pretend..)
 		case 7: maxweight_armor = 30; break;
 		case 8: maxweight_armor = 15; break;
 		}
@@ -6911,7 +6911,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 	/* Generate TV_ from raw final choice, and choose an appropriate SV_ sub-type now */
 	switch (final_choice) {
-	case 1:  reward_maxweight = maxweight_melee;
+	case 1: reward_maxweight = maxweight_melee;
 		switch (melee_choice) {
 		case 1: reward_tval = TV_SWORD;
 			/* Antimagic-users with Sword-skill? Let's be nice and generate a Dark Sword :/ */
