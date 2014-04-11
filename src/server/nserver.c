@@ -7093,7 +7093,7 @@ int Send_request_num(int Ind, int id, char *prompt, int std) {
 void Send_delayed_request_str(int Ind, int id, char *prompt, char *std) {
 	player_type *p_ptr = Players[Ind];
 
-	p_ptr->delay_str = cfg.fps;//delay (turns)
+	p_ptr->delay_str = cfg.fps / 2;//delay (turns)
 	p_ptr->delay_str_id = id;
 	strcpy(p_ptr->delay_str_prompt, prompt);
 	strcpy(p_ptr->delay_str_std, std);
@@ -7116,7 +7116,7 @@ int Send_request_str(int Ind, int id, char *prompt, char *std) {
 void Send_delayed_request_cfr(int Ind, int id, char *prompt, bool default_yes) {
 	player_type *p_ptr = Players[Ind];
 
-	p_ptr->delay_cfr = cfg.fps;//delay (turns)
+	p_ptr->delay_cfr = cfg.fps / 2;//delay (turns)
 	p_ptr->delay_cfr_id = id;
 	strcpy(p_ptr->delay_cfr_prompt, prompt);
 	p_ptr->delay_cfr_default_yes = default_yes;
