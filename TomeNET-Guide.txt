@@ -708,7 +708,8 @@ _       Two uses, regarding a) fountains or b) item piles:
         that the fountain had no effect on you, although it wasn't water.
         (Same as /sip command.)
         Fountains cannot have effects of potions which are of higher level than
-        the dungeon level where the fountain is.
+        the dungeon level where the fountain is. The duration of the effect is
+        also the same as the actual potion would last.
 
         b) Secondary: If you press _ while standing on an item or a pile of
         items, you will get a message what item is currently below your feet.
