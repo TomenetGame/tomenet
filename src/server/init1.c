@@ -1267,7 +1267,7 @@ static cptr s_info_flags1[] =
 	"MAX_10",
 	"MAX_20",
 	"MAX_25",
-	"XXX1",
+	"AUTO_MAX",
 
 	"XXX1",
 	"XXX1",

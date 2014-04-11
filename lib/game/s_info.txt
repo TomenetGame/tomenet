@@ -449,7 +449,7 @@ $ENABLE_STANCES$N:79:Combat Stances
 $ENABLE_STANCES$D:Ability to use different stances in armed melee combat.
 $ENABLE_STANCES$A:13:Change combat stance
 $ENABLE_STANCES$I:1000:0
-$ENABLE_STANCES$F:MKEY_HARDCODE
+$ENABLE_STANCES$F:MKEY_HARDCODE | AUTO_MAX
 
 $ENABLE_MCRAFT$N:80:Psycho-Power
 $ENABLE_MCRAFT$D:Access to psi-spells that create physical or energetical effects.
