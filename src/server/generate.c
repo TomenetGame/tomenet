@@ -5721,9 +5721,8 @@ static void build_cavern(worldpos *wpos)
 /*
  * Driver routine to create fractal cave system
  */
-static void build_type10(worldpos *wpos, int by0, int bx0, player_type *p_ptr)
-{
-	int grd, roug, cutoff, xsize, ysize, y0, x0, i, j;
+static void build_type10(worldpos *wpos, int by0, int bx0, player_type *p_ptr) {
+	int grd, roug, cutoff, xsize, ysize, y0, x0;
 
 	bool done, light, room;
 	int dun_lev = getlevel(wpos);
@@ -5740,18 +5739,14 @@ static void build_type10(worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 
 	if (dun_lev <= randint(25)) light = TRUE;
 
-	while (!done)
-	{
+	while (!done) {
 		/*
 		 * Note: size must be even or there are rounding problems
 		 * This causes the tunnels not to connect properly to the room
 		 */
 
 		/* Testing values for these parameters feel free to adjust */
-/*		grd = 2^(randint(4)); -- Ahem, I thought we didn't want to do this - C. Blue */
-		grd = 1;
-		j = randint(4);
-		for (i = 0; i < j; i++) grd *= 2;
+		grd = 1 << randint(4);
 
 		/* Want average of about 16 */
 		roug = randint(8) * randint(4);
