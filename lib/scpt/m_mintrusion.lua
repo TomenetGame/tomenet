@@ -239,7 +239,7 @@ MMAP = add_spell
                         "Forcefully uses the vision of sentient life forms around.",
                         "*** Will be transferred to allied open",
                         "    minds on the same floor if your",
-                        "    Thought Contact skill is at least 20. ***",
+                        "    Attunement skill is at least 20. ***",
         }
 }
 

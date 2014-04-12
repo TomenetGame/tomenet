@@ -186,8 +186,8 @@ __races_diz = {
     "range telepathy at level 6 which expands further",
     "as they get stronger. At 30 they learn how to levitate.",
     "Experience is very hard for them to gain and they",
-    "need to eat often. They receive boni on Thought",
-    "Contact, Nexus runecraft, large boni on Polearm-",
+    "need to eat often. They receive boni on Attunement",
+    "and Nexus runecraft, large boni on Polearm-",
     "Mastery, Aura of Fear, Conveyance and Fire.",},
 
 "Kobold",

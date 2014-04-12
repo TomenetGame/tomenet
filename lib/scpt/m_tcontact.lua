@@ -1,4 +1,4 @@
--- handle the thought contact school
+-- handle the thought contact school (Attunement)
 --((static: sense/esp))
 
 --[[

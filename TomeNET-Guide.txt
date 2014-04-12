@@ -10113,7 +10113,7 @@ Note that not every skill is available to every profession (class).
 
     +Mindcraft Schools
         .Psycho-Power           Learn mindcrafter spells of psycho-power.
-        .Thought Contact        Learn mindcrafter spells of tought contact.
+        .Attunement             Learn mindcrafter spells of attunement.
         .Mental Intrusion       Learn mindcrafter spells of mental intrusion.
 
     +Runecraft                  See '(6.8b) Runes & Runemastery'.
@@ -10882,7 +10882,7 @@ Warrior is strongly recommended.
     while polymorphed, except if the form is a reptile (including Hydras) or an
     actual dragon (including dragonriders). The resistances and other abilities
     obtained from a trait remain active even while polymorphed.
-    Draconians receive a bonus on 'Thought Contact', 'Polearm-Mastery' and
+    Draconians receive a bonus on 'Attunement', 'Polearm-Mastery' and
     'Magic devices'.
 
     Table of their traits:
@@ -13114,7 +13114,7 @@ Mindcraft schools:
                     again as soon as the desired telekinesis transaction is
                     done. Example inscription: @PGandalf
                     Required skill level for first spell level: 35.
-                    Shared spell (see above): Psycho-Power / Thought Contact.
+                    Shared spell (see above): Psycho-Power / Attunement.
 
     Kinetic Shield  Uses telekinetic force to set up a shield around you that
                     has a chance to repel physical attacks or projectiles,
@@ -13122,7 +13122,7 @@ Mindcraft schools:
                     Required skill level for first spell level: 40.
 
 
-- Thought Contact
+- Attunement
 
     Clear Mind      Removes fear, confusion and hallucination. (auto-project)
                     Required skill level for first spell level: 3.
@@ -13160,7 +13160,7 @@ Mindcraft schools:
                     again as soon as the desired telekinesis transaction is
                     done. Example inscription: @PGandalf
                     Required skill level for first spell level: 35.
-                    Shared spell (see above): Psycho-Power / Thought Contact.
+                    Shared spell (see above): Psycho-Power / Attunement.
 
 
 - Mental Intrusion
@@ -13223,10 +13223,10 @@ Mindcraft schools:
                     the level, in order to use their vision to make the
                     dungeon structure known to yourself.
                     Required skill level for first spell level: 20.
-                    If your proficiency in 'Thought Contact' school is at
-                    least 20, you will automatically infuse the knowledge
-                    gained from the vision to all open-minded (see (0.2))
-                    allied players who happen to be the same floor.
+                    If your proficiency in 'Attunement' school is at least 20,
+                    you will automatically infuse the knowledge gained from the
+                    vision to all open-minded (see (0.2)) allied players who
+                    happen to be the same floor.
 
     Charm           Makes monsters in sight believe that you aren't an enemy,
                     preventing them most of the time from attacking you.

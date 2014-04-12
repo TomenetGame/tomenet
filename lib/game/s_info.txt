@@ -456,8 +456,8 @@ $ENABLE_MCRAFT$D:Access to psi-spells that create physical or energetical effect
 $ENABLE_MCRAFT$A:11:Cast a spell
 $ENABLE_MCRAFT$I:1000:111
 
-$ENABLE_MCRAFT$N:81:Thought Contact
-$ENABLE_MCRAFT$D:Access to psi-spells that elevate and connect to minds.
+$ENABLE_MCRAFT$N:81:Attunement
+$ENABLE_MCRAFT$D:Access to psi-spells that elevate and connect to mind and brain.
 $ENABLE_MCRAFT$A:11:Cast a spell
 $ENABLE_MCRAFT$I:1000:111
 
@@ -678,7 +678,7 @@ $ENABLE_MAIA$f:Astral Knowledge:Magic%10
 
 #%5 wasn't enough, big lack of MP
 $ENABLE_MCRAFT$f:Psycho-Power:Magic%10
-$ENABLE_MCRAFT$f:Thought Contact:Magic%10
+$ENABLE_MCRAFT$f:Attunement:Magic%10
 $ENABLE_MCRAFT$f:Mental Intrusion:Magic%10
 
 f:Light:Magic%15
@@ -789,7 +789,7 @@ T:Druidic Schools:Physical Lore
 
 
 $ENABLE_MCRAFT$T:Mindcraft Schools:Psycho-Power
-$ENABLE_MCRAFT$T:Mindcraft Schools:Thought Contact
+$ENABLE_MCRAFT$T:Mindcraft Schools:Attunement
 $ENABLE_MCRAFT$T:Mindcraft Schools:Mental Intrusion
 
 T:Runecraft:Light

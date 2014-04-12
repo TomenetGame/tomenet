@@ -137,7 +137,7 @@ SCHOOL_PPOWER = add_school
 
 SCHOOL_TCONTACT = add_school
 {
-	["name"] = "Thought contact",
+	["name"] = "Attunement",
 	["skill"] = SKILL_TCONTACT,
 }
 
@@ -288,7 +288,7 @@ school_book[19] = {
 	MBASH, MDISARM, MBLINK, MTELEPORT, MTELETOWARDS, MFEEDBACK, MPYROKINESIS, MCRYOKINESIS, MTELEAWAY, MTELEKINESIS, MSHIELD,
 }
 
--- Create the book of mindcrafting: Thought contact (-)
+-- Create the book of mindcrafting: Thought contact (aka Attunement)
 school_book[20] = {
 	MCURE, MBOOST, MSELFKNOW, MHASTE, MSENSEMON, MIDENTIFY, MSANITY, MTELEKINESIS,
 }
