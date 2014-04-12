@@ -988,8 +988,7 @@ void do_slash_cmd(int Ind, char *message)
 
 		/* Try to wield everything */
 		else if ((prefix(message, "/dress")) ||
-				prefix(message, "/dr"))
-		{
+		    (prefix(message, "/dr") && !prefix(message, "/draw"))) {
 			object_type *o_ptr;
 			bool gauche = FALSE;
 
@@ -1747,8 +1746,9 @@ void do_slash_cmd(int Ind, char *message)
 			return;
 		}
                 /* An alternative to dicing :) -the_sandman */
-                else if (prefix(message, "/deal")) {
+                else if (prefix(message, "/deal")
 #if 0 /* no support for shuffling? */
+		    ) {
                         int value, flower;
                         char* temp;
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
@@ -1794,13 +1794,34 @@ void do_slash_cmd(int Ind, char *message)
                         }
                         free(temp);
 #else /* support shuffling */
+		    || prefix(message, "/draw")) {
 			cptr value = "Naught", flower = "Void"; //compiler warnings
+			int p = 0;
+			bool draw = FALSE;
 
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
+			if (tk) {
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				if (!p) return;
+			}
+
+			if (prefix(message, "/draw")) {
+				if (!p) {
+					msg_print(Ind, "Usage: /draw <dealer name>");
+					return;
+				}
+				draw = TRUE;
+				/* switch drawer and dealer */
+				p_ptr = Players[p];
+				p = Ind;
+				Ind = p_ptr->Ind;
+			}
+
 			if (!p_ptr->cards_diamonds && !p_ptr->cards_hearts && !p_ptr->cards_spades && !p_ptr->cards_clubs) {
-				msg_print(Ind, "\377wYou are out of cards! You must /shuffle a new deck of cards first.");
+				if (draw) msg_format(Ind, "\377w%s is out of cards and must /shuffle a new deck of cards first!", p_ptr->name);
+				else msg_print(Ind, "\377wYou are out of cards! You must /shuffle a new deck of cards first.");
 				return;
 			}
 
@@ -1868,13 +1889,34 @@ void do_slash_cmd(int Ind, char *message)
 			case 15: value = "Joker"; break;
 			}
 
-			/* deal it */
-			if (i < 13) {
-				msg_format(Ind, "\377%cYou deal the %s of %s", COLOUR_GAMBLE, value, flower);
-				msg_format_near(Ind, "\377%c%s deals the %s of %s", COLOUR_GAMBLE, p_ptr->name, value, flower);
+			if (draw) {
+				/* draw it */
+				if (i < 13) {
+					msg_format(p, "\377%cYou draw the %s of %s from %s", COLOUR_GAMBLE, value, flower, p_ptr->name);
+					msg_format_near(p, "\377%c%s draws the %s of %s from %s", COLOUR_GAMBLE, p_ptr->name, value, flower, p_ptr->name);
+				} else {
+					msg_format(p, "\377%cYou draw a %s from %s", COLOUR_GAMBLE, value, p_ptr->name);
+					msg_format_near(p, "\377%c%s draws a %s from %s", COLOUR_GAMBLE, p_ptr->name, value, p_ptr->name);
+				}
 			} else {
-				msg_format(Ind, "\377%cYou deal a %s", COLOUR_GAMBLE, value);
-				msg_format_near(Ind, "\377%c%s deals a %s", COLOUR_GAMBLE, p_ptr->name, value);
+				/* deal it */
+				if (!p) {
+					if (i < 13) {
+						msg_format(Ind, "\377%cYou deal the %s of %s", COLOUR_GAMBLE, value, flower);
+						msg_format_near(Ind, "\377%c%s deals the %s of %s", COLOUR_GAMBLE, p_ptr->name, value, flower);
+					} else {
+						msg_format(Ind, "\377%cYou deal a %s", COLOUR_GAMBLE, value);
+						msg_format_near(Ind, "\377%c%s deals a %s", COLOUR_GAMBLE, p_ptr->name, value);
+					}
+				} else {
+					if (i < 13) {
+						msg_format(Ind, "\377%cYou deal the %s of %s to %s", COLOUR_GAMBLE, value, flower, Players[p]->name);
+						msg_format_near(Ind, "\377%c%s deals the %s of %s to %s", COLOUR_GAMBLE, p_ptr->name, value, flower, Players[p]->name);
+					} else {
+						msg_format(Ind, "\377%cYou deal a %s to %s", COLOUR_GAMBLE, value, Players[p]->name);
+						msg_format_near(Ind, "\377%c%s deals a %s to %s", COLOUR_GAMBLE, p_ptr->name, value, Players[p]->name);
+					}
+				}
 			}
 
 			if (!p_ptr->cards_diamonds && !p_ptr->cards_hearts && !p_ptr->cards_spades && !p_ptr->cards_clubs) {
