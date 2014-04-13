@@ -3918,6 +3918,11 @@ void interact_macros(void)
 #define mw_device 'l'
 #define mw_abilitynt 'm'
 #define mw_abilityt 'M'
+#define mw_custom 'n'
+#define mw_load 'o'
+
+#define mw_LAST 'o'
+
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
 
@@ -3947,19 +3952,20 @@ Chain_Macro:
 				switch (i) {
 				case 0:
 					Term_putstr( 5, 9, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
-					Term_putstr(10, 10, -1, TERM_L_GREEN, "a) Drink a potion");
-					Term_putstr(10, 11, -1, TERM_L_GREEN, "b) Read a scroll");
-					Term_putstr(10, 12, -1, TERM_L_GREEN, "c)/C) Fire ranged weapon/throw an item");
-					Term_putstr(10, 13, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
-					Term_putstr(10, 14, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell with target");
-					Term_putstr(10, 15, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (with and without target)");
-					Term_putstr(10, 16, -1, TERM_L_GREEN, "g/G) Polymorph into monster/set preferred immunity (mimicry users)");
-					Term_putstr(10, 17, -1, TERM_L_GREEN, "h) Draw runes to cast a runespell");
-					Term_putstr(10, 18, -1, TERM_L_GREEN, "i) Use a fighting technique (most melee classes)");
-					Term_putstr(10, 19, -1, TERM_L_GREEN, "j) Use a shooting technique (archers and rangers)");
-					Term_putstr(10, 20, -1, TERM_L_GREEN, "k) Set up a monster trap");
-					Term_putstr(10, 21, -1, TERM_L_GREEN, "l) Use a magic device");
-					Term_putstr(10, 22, -1, TERM_L_GREEN, "m)/M) Use a basic ability ('m') without/with target");
+					Term_putstr(10, 10, -1, TERM_L_GREEN, "a/b) Drink a potion/read a scroll");
+					Term_putstr(10, 11, -1, TERM_L_GREEN, "c)/C) Fire ranged weapon/throw an item");
+					Term_putstr(10, 12, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
+					Term_putstr(10, 13, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell with target");
+					Term_putstr(10, 14, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (with and without target)");
+					Term_putstr(10, 15, -1, TERM_L_GREEN, "g/G) Polymorph into monster/set preferred immunity (mimicry users)");
+					Term_putstr(10, 16, -1, TERM_L_GREEN, "h) Draw runes to cast a runespell");
+					Term_putstr(10, 17, -1, TERM_L_GREEN, "i) Use a fighting technique (most melee classes)");
+					Term_putstr(10, 18, -1, TERM_L_GREEN, "j) Use a shooting technique (archers and rangers)");
+					Term_putstr(10, 19, -1, TERM_L_GREEN, "k) Set up a monster trap");
+					Term_putstr(10, 20, -1, TERM_L_GREEN, "l) Use a magic device");
+					Term_putstr(10, 21, -1, TERM_L_GREEN, "m)/M) Use a basic ability ('m') without/with target");
+					Term_putstr(10, 22, -1, TERM_L_GREEN, "n) Enter a custom action (same as pressing 'a' in macro screen)");
+					Term_putstr(10, 23, -1, TERM_L_GREEN, "o) Load a macro file");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
@@ -3974,7 +3980,7 @@ Chain_Macro:
 							continue;
 						default:
 							/* invalid action -> exit wizard */
-							if ((choice < 'a' || choice > 'm') && choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' && choice != 'G') {
+							if ((choice < 'a' || choice > mw_LAST) && choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' && choice != 'G') {
 //								i = -1;
 								continue;
 							}
@@ -4678,12 +4684,37 @@ Chain_Macro:
 						Term_putstr(5, 12, -1, TERM_GREEN, "if you want to throw any item that is inscribed '{bad}'.");
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
 						break;
+
+					case mw_custom:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter the custom macro action string.");
+						Term_putstr(5, 11, -1, TERM_GREEN, "(You have to specify everything manually here, and won't get");
+						Term_putstr(5, 12, -1, TERM_GREEN, "prompted about a targetting method or anything else either.)");
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter a new action:");
+						break;
+
+					case mw_load:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter the macro file name.");
+						Term_putstr(5, 11, -1, TERM_GREEN, "If you are on Linux or OSX it is case-sensitive! On Windows it is not.");
+						Term_putstr(5, 12, -1, TERM_GREEN, format("For example, enter:     \377G%s.prf", nick));
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "Exact file name:");
+						break;
 					}
 
 					/* --------------- specify item/parm if required --------------- */
 
+					/* might input a really long line? */
+					if (choice == mw_custom) {
+						Term_gotoxy(5, 17);
+
+						/* Get an item/spell name */
+						strcpy(buf, "");
+						if (!askfor_aux(buf, 159, 0)) {
+							i = -1;
+							continue;
+						}
+					}
 					/* mw_mimicidx is special: it requires a number (1..n) */
-					if (choice == mw_mimicidx) {
+					else if (choice == mw_mimicidx) {
 						while (TRUE) {
 							/* Get power slot */
 							Term_gotoxy(47, 16);
@@ -4703,7 +4734,8 @@ Chain_Macro:
 					}
 					/* no need for inputting an item/spell to use with the macro? */
 					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm) {
-						if (choice == mw_poly) Term_gotoxy(47, 17);
+						if (choice == mw_load) Term_gotoxy(23, 16);
+						else if (choice == mw_poly) Term_gotoxy(47, 17);
 						else Term_gotoxy(47, 16);
 
 						/* Get an item/spell name */
@@ -4720,7 +4752,7 @@ Chain_Macro:
 					/* --------------- complete the macro by glueing premade part and default part together --------------- */
 
 					/* generate the full macro action; magic device/preferred immunity macros are already pre-made */
-					if (choice != mw_device && choice != mw_prfimm) {
+					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom) {
 						buf2[0] = '\\'; //note: should in theory be ')e\',
 						buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 						buf2[2] = ')'; //      (\e will then get ignored)
@@ -4857,12 +4889,29 @@ Chain_Macro:
 						buf2[l + 1] = 't';
 						buf2[l + 2] = 0;
 						break;
+
+					case mw_custom:
+						strcpy(buf2, buf);
+						break;
+
+					case mw_load:
+						buf2[3] = '%';
+						buf2[4] = 'l';
+						strcpy(buf2 + 5, buf);
+						l = strlen(buf2);
+						buf2[l] = '\\';
+						buf2[l + 1] = 'e';
+						buf2[l + 2] = 0;
+						break;
 					}
 
 					/* Convert the targetting method from XXX*t to *tXXX- ? */
 #ifdef MACRO_WIZARD_SMART_TARGET
 					/* ask about replacing '*t' vs '-' (4.4.6) vs '+' (4.4.6b) */
-					if (strstr(buf2, "*t") && choice != mw_mimicidx) {
+					if (strstr(buf2, "*t") && choice != mw_mimicidx
+					    && choice != mw_load /* (paranoia) */
+					    && choice != mw_custom
+					    ) {
 						clear_from(8);
 						Term_putstr(10, 8, -1, TERM_GREEN, "Please choose the targetting method:");
 
@@ -4966,7 +5015,7 @@ Chain_Macro:
 
 					/* Extract an action */
 					/* Omit repeated '\e)' -- can break chain macros (todo: fix?) */
-					if (chain_macro_buf[0]) text_to_ascii(macro__buf, buf2 + 3);
+					if (chain_macro_buf[0] && choice != mw_custom) text_to_ascii(macro__buf, buf2 + 3);
 					else text_to_ascii(macro__buf, buf2);
 					/* Handle chained macros */
 					strcat(chain_macro_buf, macro__buf);
