@@ -15717,25 +15717,38 @@ If he moves at +70 speed, he can already benefit from a 6th attack, at +50
 speed from a 7th. Remember however, this limit is so "low" only because he is
 at dungeon level 0 (Bree/world surface).
 
+
 However, this problem is not that bad when you consider that time passes much
 slower at deeper dungeon levels, giving the game engine more room to fit in all
 the actions:
-At floor level 83 or deeper, the slowdown caps (although there is a special
-further slowdown for the Nether Realm)! At this depth (and deeper) time has
+
+At floor level 85 or deeper (aka 4250ft), the slowdown caps (although there is
+a special further slowdown for the Nether Realm). At level 84 (4200ft) time has
 already been slowed down so much that a character at max speed ('Fast +90')
-will benefit from 14 blows or shots per round.
-This limit is usually unreachable, because a character cannot attain such a
-high speed and at the same time equip items that boost his number of attacks
-that far - *by far*.
-Even at floor level 67 (the first Angband floor) a character of speed +90 could
-still utilise up to 11 attacks per round without dps loss, and a character of
-speed +60 can even utilise up to 14 attacks per round! Again a feat that
-probably no character will be able to come close to.
+will benefit from 14 blows or shots per round, which is the maximum you can
+benefit from at max speed.
+
+This limit can only be reached by a dual-wielding warrior, other warriors will
+only reach 13 bpr, which is reached at dungeon level 77 aka -3850ft.
+
+If boosted by friendly spells mindboost, zeal and by berserk magic (or ability)
+a dual-wielding warrior could reach 14 + 1 + 2 + 1 = 18 bpr. The maximum speed
+for which this high bpr still makes sense (on dungeon level 4200ft and deeper)
+is +55 speed. If you regularly get boosted by party members in this crazy way,
+consider using accuracy/damage or critical-hits equipment instead of
+extra-attacks items so you can increase your speed above 55 and still get full
+benefit of the EA boosts.
+
+Even at floor level 67 (the first Angband floor) a character of speed +90 (or
+higher) could already utilise up to 11 attacks per round without dps loss, and
+a character of speed +71 can even utilise up to 13 attacks per round! Again a
+feat that hardly any character will be surpassing.
 
 This means that although the game engine limits get exceeded when testing dps
 on the target dummies in Bree with a character that moves at extreme speed and
 uses either melee auto-retaliator or slings/bows/crossbows, there is basically
 no problem at all when fighting monsters in the deeper dungeons.
+
 
 If you want to compare dps of different weapons or the effect of extra-attack
 equipment vs critical-hit equipment in Bree, first remove all items that give
