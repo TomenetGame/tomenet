@@ -172,20 +172,20 @@ N:34:Teleport to dungeon-level
 C:15000:10000:5000
 I:34:0:t:0
 
-N:35:Get a quest
+N:35:Get an extermination order
 C:0:0:0
 I:6:0:q:0
 
 # Restrict to liked/normal
-N:36:Get a quest
+N:36:Get an extermination order
 C:0:0:0
 I:46:1:q:0
 
-N:37:Get a quest
+N:37:Get an extermination order
 C:0:0:0
 I:47:0:q:0
 
-N:38:Get a quest
+N:38:Get an extermination order
 C:0:0:0
 I:49:0:q:0
 
