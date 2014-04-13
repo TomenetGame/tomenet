@@ -1222,7 +1222,9 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 		object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
 
 		maxenchant_eff = maxenchant;
-		if (is_ammo(o_ptr->tval) && (maxenchant_eff > 15)) maxenchant_eff = 15; /* CAP_ITEM_BONI */
+		if ((is_ammo(o_ptr->tval) || o_ptr->tval == TV_SHIELD)
+		    && (maxenchant_eff > 15))
+			maxenchant_eff = 15; /* CAP_ITEM_BONI */
 
 		if (iac) {
 			if (!is_armour(o_ptr->tval)) continue;
