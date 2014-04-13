@@ -5448,7 +5448,8 @@ Trap symbols ('^') come in different colours. Here's an overview:
     blue            stat traps (STR/INT/WIS/DEX/CON/CHR), in three difficulties:
                     1) only reduces an attribute temporarily, heals on its own.
                     2) reduces an attribute, requiring you to use restoration.
-                    3) permanently reduces an attribute. Counter with stat potion.
+                    3) permanently reduces an attribute. Counter with stat
+                       potion.
     bright white    teleport traps
     orange          dungeon/trap rearrangment traps
     violet          summoning traps
@@ -13333,8 +13334,8 @@ Mindcraft schools:
 Druidic schools:
     All druidic spells depend on the spell level and your WISdom.
 Astral school:
-    Some astral spells depend on the spell level and WISdom, some on the spell level
-    and INTelligence, as designated in (6.8) in the spell descriptions.
+    Some astral spells depend on the spell level and WISdom, some on the spell
+    level and INTelligence, as designated in (6.8) in the spell descriptions.
 
 In general, when you learn a new spell that starts at a high fail rate, you
 will observe a great improvement just by further training the spell's school to
@@ -14022,7 +14023,8 @@ raw numbers:
 "You have a good chance of blocking."           Below 33% chance.
 "You have a very good chance of blocking."      Below 43% chance.
 "You have an excellent chance of blocking."     Below 48% chance.
-"You have a superb chance of blocking."         48-50% chance (the highest reachable).
+"You have a superb chance of blocking."         48-50% chance (the highest
+                                                reachable).
 
 Note: To achieve an extraordinarily high block chance above 30% you'll
       have to enter a defensive combat stance, and your class should be
