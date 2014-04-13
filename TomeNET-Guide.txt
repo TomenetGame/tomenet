@@ -14138,6 +14138,7 @@ The techniques are as follows:
         shadow running - it will not wear off on its own but last indefinitely
         until broken.
         Note that stamina does not regenerate while shadow running.
+        Shadow running includes sprinting!
 
     Shooting techniques:
     --------------------
