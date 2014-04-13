@@ -20,16 +20,16 @@ V:1.0.0
 # (optional - quest spawn times) T:night:day:morning:forenoon:noon:afternoon:evening:midnight:deepnight:starttime:stoptime
 # (optional - quest ending/respawn) U:endingstage (0 = none):duration:cooldown
 
-# There can be up to 5 Q-lines, for up to 5 questors
+# There can be up to 30 Q-lines, for up to 30 questors
 # Q (for type=monster)  :type:ridx:char:attr:minlv:maxlv:name
 # Q (for type=parchment):type:sval:attr:level:name
 # Q (for type=object)   :type:tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:attr:level:name
 
 # note: Each L/F/K-line must follow after its Q line!
-# L (up to 5x, per Q line - questor location):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
-# Ld (up to 5x, per L line):minfloorlev:maxfloorlev:list of dungeon indices eligible for spawning, separated by colons... (255 = IDDC, 0 = all 'wilderness' dungeons ie those not in d_info.txt)
-# (optional) F (up to 5x, per Q line - initial behaviour):accept-on-los? (NI):accept-on-interaction?:talkable?:despawned?:invincible?:questor floor is static?:quest ends on leaving floor?(NI)
-# (optional) K (up to 5x, per Q line - for killable questors):itemdroptype (0=none,1=regular,2=specific,3=both):tval:sval:pval:bpval:name1:name2:name2b:good:great:verygreat:createreward 0..5:dropgold:giveexp (-1 for normal exp)
+# L (up to 30x, per Q line - questor location):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
+# Ld (up to 30x, per L line):minfloorlev:maxfloorlev:list of dungeon indices eligible for spawning, separated by colons... (255 = IDDC, 0 = all 'wilderness' dungeons ie those not in d_info.txt)
+# (optional) F (up to 30x, per Q line - initial behaviour):accept-on-los? (NI):accept-on-interaction?:talkable?:despawned?:invincible?:questor floor is static?:quest ends on leaving floor?(NI)
+# (optional) K (up to 30x, per Q line - for killable questors):itemdroptype (0=none,1=regular,2=specific,3=both):tval:sval:pval:bpval:name1:name2:name2b:good:great:verygreat:createreward 0..5:dropgold:giveexp (-1 for normal exp)
 
 #(Parameters from here on, except for keywords/keywordreplies, are all individual per quest stage)
 
@@ -54,7 +54,7 @@ V:1.0.0
 # (optional, up to 50x - automatic narration) X:stage:flags:narration text
 # (optional? - up to 15x - questor dialogue) W:questor:stage:flags:examine? (0=normal talk,1=examine):convo line
 # (optional - up to 100x - dialogue keywords) Y:questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or 255 for dont change stage)
-# (optional - after a Y-line) YQ:list of further questors for which this keyword is valid, separated by colons
+# (optional - after a Y-line) YQ:list of further questors (their index numbers, 0..29) for which this keyword is valid, separated by colons
 # (optional - after a Y-line) YS:list of further stages during which this keyword is valid, separated by colons
 # (optional - up to 50x - replies to keywords) y:questor (-1 for any):stage (-1 for any):flags:keyword
 # (optional - after a y-line) yY:list of further keywords for which this reply is valid, separated by colons
@@ -115,8 +115,8 @@ V:1.0.0
 #   If R-lines are given for a stage, but no O line is defined, the rewards are handed out "for free" in that stage.
 
 # You must never use the ':' char in any keyword or text line, since it's used as delimiter here.
-# #questor is 0..4 (5 questors max)
-# #stage is 1..29 (30 stages max)
+# #questor is 0..29 (30 questors max)
+# #stage is 1..29 (30 stages max, 0 is reserved for the initial stage)
 # talk/narration can have up to 15 text lines
 # keywords can be up to 29 characters long
 # #goal is 1..5 for main goal, and -1..-5 for optional goals.
