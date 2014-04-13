@@ -2449,7 +2449,7 @@ static bool quest_stage_automatics(int pInd, int q_idx, int py_q_idx, int stage,
 	/* auto-change stage (timed)? */
 	if (q_stage->change_stage != 255) {
 		/* not a timed change? instant then */
-		if (q_stage->timed_ingame_abs != -1 && !q_stage->timed_real) {
+		if (q_stage->timed_ingame_abs == -1 && !q_stage->timed_real) {
 #if QDEBUG > 0
 			s_printf("%s QUEST_STAGE_AUTO: '%s'(%d,%s) %d->%d\n",
 			    showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, quest_get_stage(pInd, q_idx), q_stage->change_stage);
