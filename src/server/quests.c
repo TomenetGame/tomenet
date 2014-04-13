@@ -2457,6 +2457,8 @@ static bool quest_stage_automatics(int pInd, int q_idx, int py_q_idx, int stage,
 
 			/* quickly, before it's too late! hand out/spawn any special quest items */
 			quest_spawn_questitems(q_idx, stage);
+			/* ..and hand out auto-rewards too! (aka free rewards) */
+			quest_goal_check_reward(pInd, q_idx);
 
 			quest_set_stage(pInd, q_idx, q_stage->change_stage, q_stage->quiet_change, NULL);
 			/* don't imprint/play dialogue of this stage anymore, it's gone~ */
