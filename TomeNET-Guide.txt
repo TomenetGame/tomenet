@@ -4908,7 +4908,8 @@ Trees and bushes-
 Thick trees are rensembled by (mostly green, depending on the season) '#'.
 To pass them you need to either levitate over them or to be an Ent, shepherd of
 trees to whom they will slightly bow aside to make room, a yeek, or a trained
-ranger or druid. Trees can also be burned up. Dead trees and bushes are '*' symbols.
+ranger or druid. Trees can also be burned up. Dead trees and bushes are '*'
+symbols.
 
 Staircases-
 '<' and '>' are staircases leading upwards or downwards into towers or
