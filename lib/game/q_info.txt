@@ -33,7 +33,7 @@ V:1.0.0
 
 #(Parameters from here on, except for keywords/keywordreplies, are all individual per quest stage)
 
-# (optional - stage automatics) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (255 to disable):0:timed change at ingame hour (-1 to disable):timed change after realtime minutes:change quietly (skip stage dialogue):set/clear flags:genocide-wpos x:y:z (set x==-1 to disable)
+# (optional - stage automatics) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (255 to disable):0:timed change at ingame hour (-1 to disable):timed change after realtime minutes (0 to disable):change quietly (skip stage dialogue):set/clear flags:genocide-wpos x:y:z (set x==-1 to disable)
 # (optional, up to 15x) Af:stage:questor's wpos (1..n, 0 to use specific wpos):quest item wpos:specific wpos wx:wy:wz:pos x:y:grid feature to be 'built' there on stage start (see f_info.txt)
 
 # (optional, up to 5x - quest items) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
@@ -41,7 +41,7 @@ V:1.0.0
 # note: 'Bl' takes same parameters as 'L' lines (except for 'questor hand out'). Each Bl-line must follow after its B-line!
 
 # (optional - questor morph/change) S:stage:questor to modify:talkable:despawned:invincible:death_fail:name ("-" to keep):ridx (0 to keep):char (255 to keep):attr (255 to keep):level (0 to keep)
-# (optional - questor hostility) H:stage:questor:unquestor?:hostile-to-players?:hostile-to-monsters?:revert-hp:revert-ingametime (-1 to disable):revert-after-realtime:newstage:quiet?
+# (optional - questor hostility) H:stage:questor:unquestor?:hostile-to-players?:hostile-to-monsters?:revert-hp:revert-ingametime (-1 to disable):revert-after-realtime (0 to disable):newstage:quiet?
 # (optional - questor moves/teles) J:stage:questor:teleport wx:wy:wz:x:y:teleport players wx:wy:wz:x:y:walkspeed:destx:desty:newstage:quiet?
 
 # (optional - add temporary dungeon) D:stage:base:max:tower?:nomap?:hard (1=forcedown:2=iron):stores (1=iron,2=all):theme(NI):name (or "-"):floors are static?:keep until quest ends?:flags1:flags2:flags3:[:final floor map file: offset x:y]
