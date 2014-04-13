@@ -7969,7 +7969,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				int aq, aa, cs, tsi, tsia, tsr, qcs, genox, genoy, genoz;
 
 				s = buf + 2;
-				if (9 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%16[^:]:%d:%d:%d",
+				if (12 != sscanf(s, "%d:%d:%d:%d:%d:%d:%d:%d:%16[^:]:%d:%d:%d",
 				    &stage, &aq, &aa, &cs, &tsi, &tsia, &tsr, &qcs, flagbuf, &genox, &genoy, &genoz)) return (1);
 				if (stage < 0 || stage >= QI_STAGES) return 1;
 				q_stage = init_quest_stage(error_idx, stage);
