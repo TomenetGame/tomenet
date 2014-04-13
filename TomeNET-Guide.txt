@@ -15515,6 +15515,9 @@ What you must actively do BEFORE turning in a deed for a reward item is:
   not you might gain a shield for reward, whether you might get light or heavy
   armour for reward. Keep in mind that there is still a random factor in what
   item you will actually get.
+  Regarding weapon weight, note that a weapon reward will usually not give you
+  less attacks per round than the weapon you are already wielding (if any). If
+  you don't wield one, it aims for 3 attacks per round as default.
 
 
 
