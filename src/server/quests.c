@@ -2692,6 +2692,13 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 		}
 	}
 
+	/* Do a 'minimal' quest_imprint_stage() on the player here!
+	   This is important to update his stage, because although quest_stage_automatics()
+	   takes the correct current stage as an argument, it will in turn call
+	   quest_goal_check_reward() which does NOT take a stage argument and tries to
+	   determine the stage from the player! So the player must carry the correct stage. */
+	p_ptr->quest_stage[j] = stage;
+
 	/* perform automatic actions (spawn new quest, (timed) further stage change) */
 	if (quest_stage_automatics(Ind, q_idx, j, stage, !final_player)) return -1;
 
