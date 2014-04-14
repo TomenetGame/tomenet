@@ -4515,7 +4515,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	}
 #endif
 
-	/* scan through all possible follow-up stages */
+	/* scan through all rewards that may be handed out in this stage */
 	for (j = 0; j < q_stage->rewards; j++) {
 		q_rew = &q_stage->reward[j];
 
