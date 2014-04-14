@@ -4695,7 +4695,7 @@ Chain_Macro:
 					case mw_load:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter the macro file name.");
 						Term_putstr(5, 11, -1, TERM_GREEN, "If you are on Linux or OSX it is case-sensitive! On Windows it is not.");
-						Term_putstr(5, 12, -1, TERM_GREEN, format("For example, enter:     \377G%s.prf", nick));
+						Term_putstr(5, 12, -1, TERM_GREEN, format("For example, enter:     \377G%s.prf", cname));
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "Exact file name:");
 						break;
 					}
