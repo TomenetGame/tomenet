@@ -734,8 +734,7 @@ void cmd_map(char mode)
 	Flush_queue();
 }
 
-void cmd_locate(void)
-{
+void cmd_locate(void) {
 	int dir;
 	char ch;
 
@@ -743,25 +742,21 @@ void cmd_locate(void)
 	Send_locate(5);
 
 	/* Show panels until done */
-	while (1)
-	{
+	while (1) {
 		/* Assume no direction */
 		dir = 0;
 
 		/* Get a direction */
-		while (!dir)
-		{
+		while (!dir) {
 			/* Get a command (or Cancel) */
 			ch = inkey();
 
 			/* Check for cancel */
-			if (ch == ESCAPE) break;
+			if (ch == ESCAPE || ch == ' ') break;
 
 			/* Take a screenshot */
 			if (ch == KTRL('T'))
-			{
 				xhtml_screenshot("screenshot????");
-			}
 
 			/* Extract direction */
 			dir = keymap_dirs[ch & 0x7F];
