@@ -3466,7 +3466,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, j, k, stage = quest_get_stage(Ind, q_idx), questor_idx = p_ptr->interact_questor_idx;
-	char *c;
+	char *c, text[MAX_CHARS * 2];
 	qi_keyword *q_key;
 	qi_kwreply *q_kwr;
 
@@ -3525,7 +3525,12 @@ void quest_reply(int Ind, int q_idx, char *str) {
 					/* we can re-use j here ;) */
 					for (j = 0; j < q_kwr->lines; j++) {
 						if ((q_kwr->replyflags[j] & quest_get_flags(Ind, q_idx)) != q_kwr->replyflags[j]) continue;
+#if 0 /* simple way */
 						msg_format(Ind, "\374\377U%s", q_kwr->reply[j]);
+#else /* allow placeholders */
+						quest_text_replace(text, q_kwr->reply[j], p_ptr);
+						msg_format(Ind, "\374\377U%s", text);
+#endif
 					}
 					//msg_print(Ind, "\374 ");
 
