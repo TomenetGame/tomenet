@@ -7996,6 +7996,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
 						q_stage->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
 					} else return 1;
+					cc++;
 				}
 
 				q_stage->geno_wpos.wx = genox;
@@ -8174,6 +8175,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 					q_stage->narration_flags[lc] |= (0x1 << (*cc - 'A')); /* set flag */
 				} else return 1;
+				cc++;
 			}
 
 			q_stage->narration_lines++;
@@ -8218,6 +8220,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 					q_stage->talk_flags[questor][lc] |= (0x1 << (*cc - 'A')); /* set flag */
 				} else return 1;
+				cc++;
 			}
 
 			q_stage->talk_examine[questor] = (examine != 0);
@@ -8255,11 +8258,12 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_key->stage = nextstage;
 
 				cc = flagbuf;
-					if (*cc == '-') *cc = 0;
-					while (*cc) {
+				if (*cc == '-') *cc = 0;
+				while (*cc) {
 					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 						q_key->flags |= (0x1 << (*cc - 'A')); /* set flag */
 					} else return 1;
+					cc++;
 				}
 				cc = flagbuf2;
 				if (*cc == '-') *cc = 0;
@@ -8269,6 +8273,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
 						q_key->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
 					} else return 1;
+					cc++;
 				}
 
 				/* important hack: initialise the keyword's target stage!
@@ -8365,6 +8370,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 						flags |= (0x1 << (*cc - 'A')); /* set flag */
 					} else return 1;
+					cc++;
 				}
 				q_kwr->flags = flags;
 				continue;
@@ -8452,6 +8458,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
 						flags |= (0x1 << (*cc - 'A')); /* set flag */
 					} else return 1;
+					cc++;
 				}
 				q_kwr->replyflags[q_kwr->lines] = flags;
 
@@ -8795,6 +8802,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				} else if (*cc >= 'a' && *cc < 'a' + QI_FLAGS) {
 					q_goal->clearflags |= (0x1 << (*cc - 'a')); /* clear flag */
 				} else return 1;
+				cc++;
 			}
 			continue;
 		}
