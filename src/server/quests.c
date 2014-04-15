@@ -3562,11 +3562,46 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	/* don't give 'wassup?' style msg if we just hit RETURN.. silyl */
 	if (str[0]) {
 		msg_print(Ind, "\374 ");
-		msg_format(Ind, "\374\377u<\377B%s\377u> has nothing to say about that.", q_ptr->questor[questor_idx].name);
+		if (!q_ptr->stage[stage].default_reply[questor_idx]) {
+			if (q_ptr->stage[stage].talk_examine[questor_idx])
+				msg_format(Ind, "\374\377uThere is no indication about that on <\377B%s\377u>.", q_ptr->questor[questor_idx].name);
+			else
+				msg_format(Ind, "\374\377u<\377B%s\377u> has nothing to say about that.", q_ptr->questor[questor_idx].name);
+		} else {
+			char text2[MAX_CHARS * 2];
+			bool pasv = TRUE;
+
+			if ((c = strstr(q_ptr->stage[stage].default_reply[questor_idx], "$$Q"))) {
+				pasv = FALSE;
+				i = (int)(c - q_ptr->stage[stage].default_reply[questor_idx]);
+				strncpy(text, q_ptr->stage[stage].default_reply[questor_idx], i);
+				text[i] = 0;
+				strcat(text, "<\377B");
+				strcat(text, q_ptr->questor[questor_idx].name);
+				strcat(text, "\377U>");
+				strcat(text, c + 3);
+			} else if ((c = strstr(q_ptr->stage[stage].default_reply[questor_idx], "$$q"))) {
+				i = (int)(c - q_ptr->stage[stage].default_reply[questor_idx]);
+				strncpy(text, q_ptr->stage[stage].default_reply[questor_idx], i);
+				text[i] = 0;
+				strcat(text, "<\377B");
+				strcat(text, q_ptr->questor[questor_idx].name);
+				strcat(text, "\377u>");
+				strcat(text, c + 3);
+			} else strcpy(text, q_ptr->stage[stage].default_reply[questor_idx]);
+
+			//if (q_ptr->stage[stage].talk_examine[questor_idx])  --no effect, since it's completely user-defined text now
+
+#if 0 /* simple way */
+			msg_format(Ind, "\374\377%c%s", pasv ? 'u' : 'U', text);
+#else /* allow placeholders */
+			quest_text_replace(text2, text, p_ptr);
+			msg_format(Ind, "\374\377%c%s", pasv ? 'u' : 'U', text2);
+#endif
+		}
 		//msg_print(Ind, "\374 ");
 	}
 #endif
-	return;
 }
 
 /* Test kill quest goal criteria vs an actually killed monster, for a match.

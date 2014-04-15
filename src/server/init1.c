@@ -8184,49 +8184,74 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'W' for conversation */
 		if (buf[0] == 'W') {
-			int examine;
+			/* we have 2 sub-types of 'X' lines */
+			if (buf[1] == ':') { /* init */
+				int examine;
 
-			s = buf + 2;
-			C_WIPE(flagbuf, QI_FLAGS + 1, byte);
+				s = buf + 2;
+				C_WIPE(flagbuf, QI_FLAGS + 1, byte);
 
-			if (5 != sscanf(s, "%d:%d:%16[^:]:%d:%79[^:]",//QI_FLAGS
-			    &questor, &stage, flagbuf, &examine, tmpbuf)) return (1);
+				if (5 != sscanf(s, "%d:%d:%16[^:]:%d:%79[^:]",//QI_FLAGS
+				    &questor, &stage, flagbuf, &examine, tmpbuf)) return (1);
 
-			if (questor < 0 || questor >= QI_QUESTORS) return 1;
-			if (stage < 0 || stage >= QI_STAGES) return 1;
-			q_stage = init_quest_stage(error_idx, stage);
-			lc = q_stage->talk_lines[questor];
-			if (lc == QI_TALK_LINES) return 1;
+				if (questor < 0 || questor >= QI_QUESTORS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				q_stage = init_quest_stage(error_idx, stage);
+				lc = q_stage->talk_lines[questor];
+				if (lc == QI_TALK_LINES) return 1;
 
 #if 0 /* allow full colour codes */
-			/* replace '{' by \377 */
-			while ((cc = strchr(tmpbuf, '{'))) *cc = '\377';
+				/* replace '{' by \377 */
+				while ((cc = strchr(tmpbuf, '{'))) *cc = '\377';
 #else /* just allow highlighting */
-			while ((cc = strstr(tmpbuf, "[["))) { *cc = '\377'; *(cc + 1) = 'y'; }
-			while ((cc = strstr(tmpbuf, "]]"))) { *cc = '\377'; *(cc + 1) = '-'; }
+				while ((cc = strstr(tmpbuf, "[["))) { *cc = '\377'; *(cc + 1) = 'y'; }
+				while ((cc = strstr(tmpbuf, "]]"))) { *cc = '\377'; *(cc + 1) = '-'; }
 #endif
 
-			q_stage->talk[questor] = (cptr*)realloc(q_stage->talk[questor], sizeof(cptr*) * (lc + 1));
-			q_stage->talk_flags[questor] = (u16b*)realloc(q_stage->talk_flags[questor], sizeof(u16b*) * (lc + 1));
-			q_stage->talk_flags[questor][lc] = 0x0000;//init newly realloc'ed mem
+				q_stage->talk[questor] = (cptr*)realloc(q_stage->talk[questor], sizeof(cptr*) * (lc + 1));
+				q_stage->talk_flags[questor] = (u16b*)realloc(q_stage->talk_flags[questor], sizeof(u16b*) * (lc + 1));
+				q_stage->talk_flags[questor][lc] = 0x0000;//init newly realloc'ed mem
 
-			c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
-			strcpy(c, tmpbuf);
-			q_stage->talk[questor][lc] = c;
+				c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
+				strcpy(c, tmpbuf);
+				q_stage->talk[questor][lc] = c;
 
-			cc = flagbuf;
-			if (*cc == '-') *cc = 0;
-			while (*cc) {
-				if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
-					q_stage->talk_flags[questor][lc] |= (0x1 << (*cc - 'A')); /* set flag */
-				} else return 1;
-				cc++;
+				cc = flagbuf;
+				if (*cc == '-') *cc = 0;
+				while (*cc) {
+					if (*cc >= 'A' && *cc < 'A' + QI_FLAGS) { /* flags that must be set to display this convo line */
+						q_stage->talk_flags[questor][lc] |= (0x1 << (*cc - 'A')); /* set flag */
+					} else return 1;
+					cc++;
+				}
+
+				q_stage->talk_examine[questor] = (examine != 0);
+
+				q_stage->talk_lines[questor]++;
+				continue;
+			} else if (buf[1] == 'r') {
+				s = buf + 3;
+
+				if (3 != sscanf(s, "%d:%d:%79[^:]",
+				    &questor, &stage, tmpbuf)) return (1);
+
+				if (questor < 0 || questor >= QI_QUESTORS) return 1;
+				if (stage < 0 || stage >= QI_STAGES) return 1;
+				q_stage = init_quest_stage(error_idx, stage);
+
+#if 0 /* allow full colour codes */
+				/* replace '{' by \377 */
+				while ((cc = strchr(tmpbuf, '{'))) *cc = '\377';
+#else /* just allow highlighting */
+				while ((cc = strstr(tmpbuf, "[["))) { *cc = '\377'; *(cc + 1) = 'y'; }
+				while ((cc = strstr(tmpbuf, "]]"))) { *cc = '\377'; *(cc + 1) = '-'; }
+#endif
+
+				c = (char*)malloc((strlen(tmpbuf) + 1) * sizeof(char));
+				strcpy(c, tmpbuf);
+				q_stage->default_reply[questor] = c;
+				continue;
 			}
-
-			q_stage->talk_examine[questor] = (examine != 0);
-
-			q_stage->talk_lines[questor]++;
-			continue;
 		}
 
 		/* Process 'Y' for conversation keywords */

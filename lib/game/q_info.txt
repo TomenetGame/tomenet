@@ -53,6 +53,8 @@ V:1.0.0
 
 # (optional, up to 50x - automatic narration) X:stage:flags:narration text
 # (optional? - up to 15x - questor dialogue) W:questor:stage:flags:examine? (0=normal talk,1=examine):convo line
+# (optional - for questor dialogue) Wr:questor:stage:default reply line (replaces the 'has nothing to say about that' line)
+#   use $$Q or $$q up to one time, to insert the questor's name! Q = show in light umber (for active talk), q = show in dark umber (for passive narration)
 # (optional - up to 100x - dialogue keywords) Y:questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or 255 for dont change stage)
 # (optional - after a Y-line) YQ:list of further questors (their index numbers, 0..29) for which this keyword is valid, separated by colons
 # (optional - after a Y-line) YS:list of further stages during which this keyword is valid, separated by colons
@@ -226,6 +228,7 @@ I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
 Q:1:1059:p:u:-1:-1:Guard
 L:0:0:0:63:63:0:0:150:30:0:tq_tc.txt:143:22
 W:0:0:-:0:Hold it right there! What is the password?
+Wr:0:0:$$Q That's not the right password, $$r!
 Y:0:-1:-:suxen:-:1
 y:0:-1:-:suxen
 yR:-:You may enter!

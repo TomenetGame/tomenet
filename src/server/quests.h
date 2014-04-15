@@ -427,6 +427,8 @@ typedef struct qi_stage {
 	cptr *talk[QI_QUESTORS];			/* n conversations a 10 lines a 79 characters */
 	u16b *talk_flags[QI_QUESTORS];			/* required flags configuration for a convo line to get displayed  */
 
+	cptr default_reply[QI_QUESTORS];		/* default reply line, optional, replaces the 'has nothing to say about that' standard answer for unrecognised keywords */
+
 	byte narration_lines;
 	cptr narration[QI_TALK_LINES];			/* display a quest-progress narration when this stage starts, a 10 lines a 79 characters, aka "You have arrived at the lake!" */
 	u16b narration_flags[QI_TALK_LINES];		/* required flags configuration to display this narrative line */
