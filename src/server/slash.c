@@ -8199,6 +8199,32 @@ void do_slash_cmd(int Ind, char *message)
 				//d_ptr->maxdepth = 127;
 				return;
 			}
+			/* add experimental dungeon flags */
+			else if (prefix(message, "/dunmkexp")) {
+				struct dungeon_type *d_ptr;
+				cave_type **zcave = getcave(&p_ptr->wpos);
+
+				switch(zcave[p_ptr->py][p_ptr->px].feat){
+				case FEAT_MORE:
+					d_ptr = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon;
+					break;
+				case FEAT_LESS:
+					d_ptr = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower;
+					break;
+				default:
+					msg_print(Ind, "There is no dungeon here");
+					return;
+				}
+
+				if (!tk) {
+					d_ptr->flags3 |= DF3_NO_TELE | DF3_NO_SUMMON | DF3_NO_ESP;
+					msg_print(Ind, "Flags added.");
+				} else {
+					d_ptr->flags3 &= ~(DF3_NO_TELE | DF3_NO_SUMMON | DF3_NO_ESP);
+					msg_print(Ind, "Flags removed.");
+				}
+				return;
+			}
 			if (prefix(message, "/terminate")) {
 				/* same as /shutdown 0, except server will return -2 instead of -1.
 				   can be used by scripts to initiate maintenance downtime etc. */

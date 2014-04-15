@@ -5838,6 +5838,10 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF3_NO_EMPTY		0x00400000L	/* don't build empty levels (arenas) */
 #define DF3_NO_DESTROYED	0x00800000L	/* don't build 'destroyed' levels */
 
+#define DF3_NO_TELE		0x01000000L	/* Disallow any teleportation (to go with NO_SUMMON -- for new experimental dungeoneering) */
+#define DF3_NO_ESP		0x02000000L	/* Disallow any ESP */
+#define DF3_NO_SUMMON		0x04000000L	/* Disallow any summoning (to go with NO_TELE -- for new experimental dungeoneering) */
+
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
    without changing its main flags (set my admin on dungeon creation) too much */
 #define DF3_THEME_MASK \
@@ -5919,6 +5923,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define LF2_FAIR_TERRAIN_DAM	0x00100000L	/* Terain damage each player takes is roughly a fixed percentage of his max HP */
 #define LF2_DUN_BOSS	0x00200000L
 #define LF2_COLLAPSING	0x00400000L	/* audiovisual show when Zu-Aon is defeated ;) - C. Blue */
+#define LF2_NO_SUMMON	0x00800000L	/* disallow any summoning (to go with NO_TELE :) for new experimental dungeoneering) */
 
 
 /* minimum time required to stay on current floor in order to get an extra feeling on next floor */

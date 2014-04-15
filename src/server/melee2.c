@@ -1790,13 +1790,13 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 bool make_attack_spell(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
-//	dun_level		*l_ptr = getfloor(wpos);
-	int			k, chance, thrown_spell, rlev; // , failrate;
+	dun_level	*l_ptr = getfloor(wpos);
+	int		k, chance, thrown_spell, rlev; // , failrate;
 //	byte		spell[96], num = 0;
 	u32b		f4, f5, f6, f7, f0;
 	monster_type	*m_ptr = &m_list[m_idx];
-	monster_race    *r_ptr = race_inf(m_ptr);
-	//object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
+	monster_race	*r_ptr = race_inf(m_ptr);
+	//object_type	*o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	char		m_name[MNAME_LEN];
 	char		m_poss[MNAME_LEN];
 	char		ddesc[MNAME_LEN];
@@ -1872,6 +1872,21 @@ bool make_attack_spell(int Ind, int m_idx) {
 	f6 = r_ptr->flags6;
 	f7 = r_ptr->flags7;
 	f0 = r_ptr->flags0;
+
+	/* unable to summon on this floor? */
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON)) {
+		/* Remove summoning spells */
+		f4 &= ~(RF4_SUMMON_MASK);
+		f5 &= ~(RF5_SUMMON_MASK);
+		f6 &= ~(RF6_SUMMON_MASK);
+		f0 &= ~(RF0_SUMMON_MASK);
+	}
+
+	/* unable to teleport on this floor? */
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) {
+		/* Remove teleport spells */
+		f6 &= ~(RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL);
+	}
 
 	/* reduce exp from summons and from summons' summons.. */
 	if (cfg.clone_summoning != 999) clone_summoning++;

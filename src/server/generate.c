@@ -9269,6 +9269,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	if ((dflags2 & DF2_NO_MAGIC_MAP)) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 	if ((dflags1 & DF1_NO_DESTROY)) dun->l_ptr->flags1 |= LF1_NO_DESTROY;
 
+	/* experimental stuff */
+	if ((dflags3 & DF3_NO_TELE)) dun->l_ptr->flags2 |= LF2_NO_TELE;
+	if ((dflags3 & DF3_NO_ESP)) dun->l_ptr->flags2 |= LF2_NO_ESP;
+	if ((dflags3 & DF3_NO_SUMMON)) dun->l_ptr->flags2 |= LF2_NO_SUMMON;
+
 	/* Hack -- NO_MAP often comes with NO_MAGIC_MAP */
 	if ((dun->l_ptr->flags1 & LF1_NO_MAP) && magik(55))
 		dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
