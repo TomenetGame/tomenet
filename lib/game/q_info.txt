@@ -40,7 +40,7 @@ V:1.0.0
 # (for each B line) Bl:stage:questorhandout (-1 to disable):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 # note: 'Bl' takes same parameters as 'L' lines (except for 'questor hand out'). Each Bl-line must follow after its B-line!
 
-# (optional - questor morph/change) S:stage:questor to modify:talkable:despawned:invincible:death_fail:name ("-" to keep):ridx (0 to keep):char (255 to keep):attr (255 to keep):level (0 to keep)
+# (optional - questor morph/change) S:stage:questor to modify:talkable:despawned:invincible:death_fail:name ("-" to keep):ridx (0 to keep):char ('-' to keep):attr ('-' to keep):level (0 to keep)
 # (optional - questor hostility) H:stage:questor:unquestor?:hostile-to-players?:hostile-to-monsters?:revert-hp:revert-ingametime (-1 to disable):revert-after-realtime (0 to disable):newstage:quiet?
 # (optional - questor moves/teles) J:stage:questor:teleport wx:wy:wz:x:y:teleport players wx:wy:wz:x:y:walkspeed:destx:desty:newstage:quiet?
 
