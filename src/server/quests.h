@@ -422,7 +422,8 @@ typedef struct qi_stage {
 	/* quest dialogues and responses/consequences (stage 0 means player loses the quest again) */
 	//NOTE: '$RPM' in dialogue will be substituted by xxx_random_pick'ed monster criteria
 	//NOTE: '$OPM' in dialogue will be substituted by xxx_random_pick'ed object criteria
-	bool talk_examine[QI_QUESTORS];			/* questor doesn't "talk" but rather the text claims that "you are examining <questor>" (for item questors or "dead" questors) */
+	byte talk_examine[QI_QUESTORS];			/* questor doesn't "talk" but rather the text claims that "you are examining <questor>" (for item questors or "dead" questors) --
+							   hack: using byte instead of bool to add additional info: stage "> 1" for 'reuse previous stage' dialogue" */
 	byte talk_lines[QI_QUESTORS];
 	cptr *talk[QI_QUESTORS];			/* n conversations a 10 lines a 79 characters */
 	u16b *talk_flags[QI_QUESTORS];			/* required flags configuration for a convo line to get displayed  */

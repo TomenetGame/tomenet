@@ -8191,12 +8191,23 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				s = buf + 2;
 				C_WIPE(flagbuf, QI_FLAGS + 1, byte);
 
-				if (5 != sscanf(s, "%d:%d:%16[^:]:%d:%79[^:]",//QI_FLAGS
-				    &questor, &stage, flagbuf, &examine, tmpbuf)) return (1);
+				j = sscanf(s, "%d:%d:%d:%16[^:]:%79[^:]",//QI_FLAGS
+				    &questor, &stage, &examine, flagbuf, tmpbuf);
+				if (j != 5 && !(j == 3 && stage == -1)) return 1;
 
 				if (questor < 0 || questor >= QI_QUESTORS) return 1;
 				if (stage < 0 || stage >= QI_STAGES) return 1;
 				q_stage = init_quest_stage(error_idx, stage);
+
+				/* hack: examine = -stage => use previous stage */
+				if (examine < 0) {
+					if (-examine >= QI_STAGES) return 1;
+					q_stage->talk_examine[questor] = 1 - examine;
+					/* make sure it is initialised (to avoid paranoia and panic) */
+					(void)init_quest_stage(error_idx, -examine);
+					continue;
+				}
+
 				lc = q_stage->talk_lines[questor];
 				if (lc == QI_TALK_LINES) return 1;
 
@@ -8225,7 +8236,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 					cc++;
 				}
 
-				q_stage->talk_examine[questor] = (examine != 0);
+				q_stage->talk_examine[questor] = examine;
 
 				q_stage->talk_lines[questor]++;
 				continue;

@@ -52,7 +52,9 @@ V:1.0.0
 # (optional, for each 'm'-line) mh:hurtplayers?:hurtquestors?:invincplayers?:invincquestors?:targetplayers?:targetquestors? (completely NI: will always behave like normal monsters)
 
 # (optional, up to 50x - automatic narration) X:stage:flags:narration text
-# (optional? - up to 15x - questor dialogue) W:questor:stage:flags:examine? (0=normal talk,1=examine):convo line
+# (optional? - up to 15x - questor dialogue) W:questor:stage:examine? (0=normal talk,1=examine, negative = copy another stage):flags:convo line
+#   if a negative examine-argument is specified, the line ends after that. The remaining arguments are not to be specified. Only one W-line is required in this case!
+#   this is a hack: This stage's dialogue will actually mimic the stage dialogue from the stage of the absolute value of 'examine' argument. NOTE: You must not refer to another cloned dialogue!
 # (optional - for questor dialogue) Wr:questor:stage:default reply line (replaces the 'has nothing to say about that' line)
 #   use $$Q or $$q up to one time, to insert the questor's name! Q = show in light umber (for active talk), q = show in dark umber (for passive narration)
 # (optional - up to 100x - dialogue keywords) Y:questor (-1 for any):stage (-1 for any*):flags:keyword (or "y" for 1st keyword and "n" for second, for a yes/no choice):changeflags:nextstage (or 255 for dont change stage)
@@ -138,13 +140,13 @@ Q:1:37:b:T:-1:-1:Blind Bat
 L:0:0:0:63:63:0:0:98:39:0:-:0:0
 F:0:1:1:0:1:0:0
 U:0:0:0
-W:0:0:-:0:Hello, $$N!
-W:0:0:-:0:Would you like some [[ale]] or rather a [[solid ration]]?
+W:0:0:0:-:Hello, $$N!
+W:0:0:0:-:Would you like some [[ale]] or rather a [[solid ration]]?
 Y:0:0:-:ale:-:1
 Y:0:0:-:ration:-:2
 Y:0:0:-:solid ration:-:2
-W:0:1:-:0:Well then, visit the shop keeper of the general store!
-W:0:2:-:0:Well then, visit the shop keeper of the general store..
+W:0:1:0:-:Well then, visit the shop keeper of the general store!
+W:0:2:0:-:Well then, visit the shop keeper of the general store..
 #position 105:40 for actual Bree's general store entrance:
 M:1:1:-1:32:32:0:0:105:40:0:-:0:0
 M:2:1:-1:32:32:0:0:105:40:0:-:0:0
@@ -165,10 +167,10 @@ I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
 #Q:1:37:b:n:-1:-1:-1:-1:-1:Fast Bat
 Q:3:22:30:0:0:0:0:0:0:0:0:P:0:Sharp..Bat..of Slicing?
 L:0:0:0:63:63:0:0:100:39:0:-:0:0
-W:0:0:-:1:Hello, $$T! Wanna visit the General Store for me?
+W:0:0:1:-:Hello, $$T! Wanna visit the General Store for me?
 Y:0:0:-:y:-:1
 Y:0:0:-:n:-:2
-W:0:1:-:0:Thanks!
+W:0:1:0:-:Thanks!
 M:1:1:-1:32:32:0:0:105:40:0:-:0:0
 G:1:3:1
 X:3:-:The shop keeper hands you a pint of fine ale!
@@ -180,8 +182,8 @@ N:2:testquesKR:C. Blue:Kill/Retrieve Test Quest:-1
 I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
 Q:1:37:b:N:-1:-1:Goalkeeper Bat
 L:0:0:0:63:63:0:0:99:35:0:-:0:0
-W:0:0:-:0:'Sup, yo $$r! [[Kill]] shit or [[retrieve]] stuff for me.
-W:0:0:-:0:So what do you prefer, buddy?
+W:0:0:0:-:'Sup, yo $$r! [[Kill]] shit or [[retrieve]] stuff for me.
+W:0:0:0:-:So what do you prefer, buddy?
 Y:0:-1:-:sup:-:255
 y:0:-1:-:sup
 yR:-:Yo!
@@ -190,9 +192,9 @@ y:0:-1:-:yo
 yR:-:Sup!
 
 Y:0:0:-:kill:-:1
-#W:0:1:-:0:Slay two dogs or wolves, they deserve it. Report to the general store's keeper!
-W:0:1:-:0:Slay two dogs or wolves, they deserve it. Let me know when you're done.
-W:0:1:-:0:..oh and also, maybe this bat comes in handy. DON'T LOSE IT!
+#W:0:1:0:-:Slay two dogs or wolves, they deserve it. Report to the general store's keeper!
+W:0:1:0:-:Slay two dogs or wolves, they deserve it. Let me know when you're done.
+W:0:1:0:-:..oh and also, maybe this bat comes in handy. DON'T LOSE IT!
 B:1:0:\:u:40:0:& Bat~
 Bl:1:0:0:0:0:0:0:0:0:0:0:0:-:0:0
 r:1:3:0:1:0
@@ -209,8 +211,8 @@ X:3:-:The Goalkeeper Bat seems very satisfied.
 R:3:80:38:0:0:0:0:0:0:0:0:0:2:2:0
 
 Y:0:0:-:retrieve:-:2
-W:0:2:-:0:Dude where's muh potions.. I had two red potions I'm sure.
-#W:0:2:-:0:Anyway, if you find them, just bring them to the general store's keeper, ok?
+W:0:2:0:-:Dude where's muh potions.. I had two red potions I'm sure.
+#W:0:2:0:-:Anyway, if you find them, just bring them to the general store's keeper, ok?
 r:2:1:0:2:0
 #note: since tval/sval aren't defined here, any other red item would work too (rings!) ;)
 rV:2:1:-9999:-9999:r:-1:-1:-1:-9999:-9999:R:-1:-1:-1:
@@ -227,7 +229,7 @@ I:1:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
 
 Q:1:1059:p:u:-1:-1:Guard
 L:0:0:0:63:63:0:0:150:30:0:tq_tc.txt:143:22
-W:0:0:-:0:Hold it right there! What is the password?
+W:0:0:0:-:Hold it right there! What is the password?
 Wr:0:0:$$Q That's not the right password, $$r!
 Y:0:-1:-:suxen:-:1
 y:0:-1:-:suxen
@@ -236,7 +238,7 @@ J:1:0:-1:-1:-1:-1:-1:-1:-1:-1:151:28:0:0:0:0:0
 
 Q:1:1059:p:u:-1:-1:Guard
 L:0:0:0:63:63:0:0:152:30:0:-:0:0
-W:1:0:-:0:Hold it right there! What is the password?
+W:1:0:0:-:Hold it right there! What is the password?
 Y:1:-1:-:suxen:-:1
 y:1:-1:-:suxen
 yR:-:You may enter!
@@ -244,22 +246,22 @@ J:1:1:-1:-1:-1:-1:-1:-1:-1:-1:151:28:0:0:0:0:0
 
 $TEST_SERVER$Q:1:15:t:y:-1:-1:Dozing drunk
 $TEST_SERVER$L:0:0:0:63:63:0:0:149:24:0:-:0:0
-$TEST_SERVER$W:2:0:-:0:Washhup? Hic..
+$TEST_SERVER$W:2:0::0-:Washhup? Hic..
 
 $TEST_SERVER$r:0:1:0:1:1
 $TEST_SERVER$rI:0:1:80:38:80:39
 $TEST_SERVER$M:0:1:2:-1:-1:-1:0:0:0:0:-:0:0
 $TEST_SERVER$G:0:2:1
-$TEST_SERVER$W:2:2:-:0:Ohhdshankyou! Hic..
+$TEST_SERVER$W:2:2:0:-:Ohhdshankyou! Hic..
 
 $TEST_SERVER$r:2:1:0:1:1
 $TEST_SERVER$rI:2:1:80:38:80:39
 $TEST_SERVER$M:2:1:2:-1:-1:-1:0:0:0:0:-:0:0
 $TEST_SERVER$G:2:3:1
-$TEST_SERVER$W:2:3:-:0:Ohhdshankyou! Hic..
+$TEST_SERVER$W:2:3:0:-:Ohhdshankyou! Hic..
 
 $TEST_SERVER$r:3:1:0:1:1
 $TEST_SERVER$rI:3:1:80:38:80:39
 $TEST_SERVER$M:3:1:2:-1:-1:-1:0:0:0:0:-:0:0
 $TEST_SERVER$G:3:4:1
-$TEST_SERVER$W:2:4:-:0:Ohhdshankyou! Watshout that Nexus won't arresht you! Hic..
+$TEST_SERVER$W:2:4:0:-:Ohhdshankyou! Watshout that Nexus won't arresht you! Hic..

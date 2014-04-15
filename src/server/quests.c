@@ -3332,10 +3332,18 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	/* Special hack - object questor.
 	   That means we're in the middle of the item examination screen. Add to it! */
 	if (q_questor->type == QI_QUESTOR_ITEM_PICKUP) {
-		if (q_stage->talk_examine[questor_idx])
-			fprintf(fff, " \377GYou notice something about this item! (See your chat window.)\n");
-		else /* '>_> */
-			fprintf(fff, " \377GIt seems the item itself is speaking to you! (See your chat window.)\n");
+		if (q_stage->talk_examine[questor_idx] > 1) {
+			qi_stage *q_stage2 = quest_qi_stage(q_idx, q_stage->talk_examine[questor_idx] - 2);
+			if (q_stage2->talk_examine[questor_idx])
+				fprintf(fff, " \377GYou notice something about this item! (See your chat window.)\n");
+			else /* '>_> */
+				fprintf(fff, " \377GIt seems the item itself is speaking to you! (See your chat window.)\n");
+		} else {
+			if (q_stage->talk_examine[questor_idx])
+				fprintf(fff, " \377GYou notice something about this item! (See your chat window.)\n");
+			else /* '>_> */
+				fprintf(fff, " \377GIt seems the item itself is speaking to you! (See your chat window.)\n");
+		}
 	}
 
 	/* questor interaction qutomatically invokes the quest dialogue, if any */
@@ -3368,16 +3376,19 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int i, k, stage = quest_get_stage(Ind, q_idx);
-	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
+	qi_stage *q_stage = quest_qi_stage(q_idx, stage), *q_stage_talk = q_stage;
 	bool anything, obvious_keyword = FALSE, more_hack = FALSE, yn_hack = FALSE;
 	char text[MAX_CHARS * 2];
+
+	/* hack: reuse another stage's dialogue for this stage too? */
+	if (q_stage->talk_examine[questor_idx] > 1) q_stage_talk = quest_qi_stage(q_idx, q_stage->talk_examine[questor_idx] - 2);
 
 	if (!repeat) {
 		/* pre-scan talk if any line at all passes the flag check */
 		anything = FALSE;
-		for (k = 0; k < q_stage->talk_lines[questor_idx]; k++) {
-			if (q_stage->talk[questor_idx][k] &&
-			    ((q_stage->talk_flags[questor_idx][k] & quest_get_flags(Ind, q_idx)) == q_stage->talk_flags[questor_idx][k])) {
+		for (k = 0; k < q_stage_talk->talk_lines[questor_idx]; k++) {
+			if (q_stage_talk->talk[questor_idx][k] &&
+			    ((q_stage_talk->talk_flags[questor_idx][k] & quest_get_flags(Ind, q_idx)) == q_stage_talk->talk_flags[questor_idx][k])) {
 				anything = TRUE;
 				break;
 			}
@@ -3386,24 +3397,24 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 		if (anything) {
 			p_ptr->interact_questor_idx = questor_idx;
 			msg_print(Ind, "\374 ");
-			if (q_stage->talk_examine[questor_idx])
+			if (q_stage_talk->talk_examine[questor_idx])
 				msg_format(Ind, "\374\377uYou examine <\377B%s\377u>:", q_ptr->questor[questor_idx].name);
 			else
 				msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
-			for (i = 0; i < q_stage->talk_lines[questor_idx]; i++) {
-				if (!q_stage->talk[questor_idx][i]) break;
-				if ((q_stage->talk_flags[questor_idx][i] & quest_get_flags(Ind, q_idx)) != q_stage->talk_flags[questor_idx][i]) continue;
+			for (i = 0; i < q_stage_talk->talk_lines[questor_idx]; i++) {
+				if (!q_stage_talk->talk[questor_idx][i]) break;
+				if ((q_stage_talk->talk_flags[questor_idx][i] & quest_get_flags(Ind, q_idx)) != q_stage_talk->talk_flags[questor_idx][i]) continue;
 
 #if 0 /* simple way */
-				msg_format(Ind, "\374\377U%s", q_stage->talk[questor_idx][i]);
+				msg_format(Ind, "\374\377U%s", q_stage_talk->talk[questor_idx][i]);
 #else /* allow placeholders */
-				quest_text_replace(text, q_stage->talk[questor_idx][i], p_ptr);
+				quest_text_replace(text, q_stage_talk->talk[questor_idx][i], p_ptr);
 				msg_format(Ind, "\374\377U%s", text);
 #endif
 
 				/* lines that contain obvious keywords, ie those marked by '[[..]]',
 				   will always force a reply-prompt for convenience! */
-				if (strchr(q_stage->talk[questor_idx][i], '\377')) obvious_keyword = TRUE;
+				if (strchr(q_stage_talk->talk[questor_idx][i], '\377')) obvious_keyword = TRUE;
 			}
 			//msg_print(Ind, "\374 ");
 		}
