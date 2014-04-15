@@ -2964,7 +2964,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 	/* now check remaining dialogue options (keywords) */
 	for (i = 0; i < q_ptr->keywords; i++)
 		if (q_ptr->keyword[i].stage_ok[stage] && /* keyword is available in this stage */
-		    q_ptr->keyword[i].stage != -1 && /* and it's not just a keyword-reply without a stage change? */
+		    q_ptr->keyword[i].stage != 255 && /* and it's not just a keyword that doesn't trigger a stage change? */
 		    !q_ptr->keyword[i].any_stage) { /* and it's not valid in ANY stage? that's not sufficient */
 			anything = TRUE;
 			break;
@@ -3544,7 +3544,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 		quest_set_flags(Ind, q_idx, q_key->setflags, q_key->clearflags);
 
 		/* stage change? */
-		if (q_key->stage != -1) {
+		if (q_key->stage != 255) {
 			quest_set_stage(Ind, q_idx, q_key->stage, FALSE, NULL);
 			return;
 		}
