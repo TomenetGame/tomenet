@@ -3947,7 +3947,7 @@ void quest_check_goal_k(int Ind, monster_type *m_ptr) {
 	int i, j, k;
 
 #if QDEBUG > 3
-	s_printf("QUEST_CHECK_GOAL_r: by %d,%s\n", Ind, p_ptr->name);
+	s_printf("QUEST_CHECK_GOAL_k: by %d,%s\n", Ind, p_ptr->name);
 #endif
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 #if 0
@@ -3985,7 +3985,7 @@ void quest_check_goal_r(int Ind, object_type *o_ptr) {
 	int i;
 
 #if QDEBUG > 3
-	s_printf("QUEST_CHECK_GOAL_k: by %d,%s\n", Ind, p_ptr->name);
+	s_printf("QUEST_CHECK_GOAL_r: by %d,%s\n", Ind, p_ptr->name);
 #endif
 	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
 #if 0

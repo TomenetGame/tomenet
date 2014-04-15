@@ -8389,7 +8389,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		/* Check if the two items can be combined */
 		if (object_similar(Ind, j_ptr, o_ptr, 0x0)) {
 			/* Check whether this item was requested by an item-retrieval quest.
-			   Note about owner check: inven_carry() is also called by carry(),
+			   Note about quest_credited check: inven_carry() is also called by carry(),
 			   resulting in double crediting otherwise! */
 			if (p_ptr->quest_any_r_within_target && !o_ptr->quest_credited) quest_check_goal_r(Ind, o_ptr);
 
@@ -8502,7 +8502,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	}
 
 	/* Check whether this item was requested by an item-retrieval quest
-	   Note about owner check: inven_carry() is also called by carry(),
+	   Note about quest_credited check: inven_carry() is also called by carry(),
 	   resulting in double crediting otherwise! */
 	if (p_ptr->quest_any_r_within_target && !o_ptr->quest_credited) quest_check_goal_r(Ind, o_ptr);
 
