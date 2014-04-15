@@ -8240,7 +8240,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				/* "-1" stands for 'all' */
 				if (questor < -1 || questor >= QI_QUESTORS) return 1;
 				if (stage < -1 || stage >= QI_STAGES) return 1;
-				if (nextstage == stage) return 1; /* disallow reflexive stage changes for now */
+//				if (nextstage == stage) return 1; /* disallow reflexive stage changes for now */
 
 				lc = q_ptr->keywords;
 				if (lc >= QI_KEYWORDS) return 1;
@@ -8830,7 +8830,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (!(c = strchr(c, ':'))) return 1;
 			c++;
 
-			if (nextstage == stage) return 1; /* disallow reflexive stage changes for now */
+//			if (nextstage == stage) return 1; /* disallow reflexive stage changes for now */
 
 
 			/* already defined the max amount of different QI_FOLLOWUP_STAGES? */
