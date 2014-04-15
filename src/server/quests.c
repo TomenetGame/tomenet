@@ -2681,6 +2681,8 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 			msg_format(Ind, "\374\377u<\377U%s\377u>", q_name + q_ptr->name);
 			for (k = 0; k < QI_TALK_LINES; k++) {
 				if (!q_stage->narration[k]) break;
+				if ((q_stage->narration_flags[k] & quest_get_flags(Ind, q_idx)) == q_stage->narration_flags[k]) continue;
+
 #if 0 /* simple way */
 				msg_format(Ind, "\374\377U%s", q_stage->narration[k]);
 #else /* allow placeholders */
@@ -3390,7 +3392,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 				msg_format(Ind, "\374\377u<\377B%s\377u> speaks to you:", q_ptr->questor[questor_idx].name);
 			for (i = 0; i < q_stage->talk_lines[questor_idx]; i++) {
 				if (!q_stage->talk[questor_idx][i]) break;
-				if ((q_stage->talk_flags[questor_idx][k] & quest_get_flags(Ind, q_idx)) != q_stage->talk_flags[questor_idx][k]) continue;
+				if ((q_stage->talk_flags[questor_idx][i] & quest_get_flags(Ind, q_idx)) != q_stage->talk_flags[questor_idx][i]) continue;
 
 #if 0 /* simple way */
 				msg_format(Ind, "\374\377U%s", q_stage->talk[questor_idx][i]);
