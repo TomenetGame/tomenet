@@ -4872,20 +4872,17 @@ static bool process_player_end_aux(int Ind)
 		p_ptr->word_recall--;
 
 		/* MEGA HACK: no recall if icky, or in a shop */
-		if( ! p_ptr->word_recall ) {
-			//				if(p_ptr->anti_tele ||
-			if ((p_ptr->store_num != -1) || p_ptr->anti_tele ||
-			    (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) &&
-			     !p_ptr->admin_dm) ||
-			    zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK)
-			{
-				p_ptr->word_recall++;
-			}
+		if (!p_ptr->word_recall) {
+			if (((p_ptr->anti_tele ||
+			    (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) && !p_ptr->admin_dm))
+			     && !(l_ptr && (l_ptr->flags2 & LF2_NO_TELE))) ||
+			    p_ptr->store_num != -1 ||
+			    zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)
+				p_ptr->word_recall = 1;
+			else
+				/* Activate the recall */
+				do_recall(Ind, 0);
 		}
-
-		/* XXX Rework needed! */
-		/* Activate the recall */
-		if (!p_ptr->word_recall) do_recall(Ind, 0);
 	}
 
 	bypass_invuln = FALSE;
