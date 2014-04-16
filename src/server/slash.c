@@ -8216,9 +8216,15 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
-				if (!tk) {
-					d_ptr->flags3 |= DF3_NO_TELE | DF3_NO_SUMMON | DF3_NO_ESP;
-					msg_print(Ind, "Flags added.");
+				/* already has these flags? then remove them again */
+				if ((d_ptr->flags3 & DF3_NO_TELE)) {
+					if (!tk) {
+						d_ptr->flags3 |= DF3_NO_TELE | DF3_NO_SUMMON | DF3_NO_ESP;
+						msg_print(Ind, "Flags NT/NS/NE added.");
+					} else {
+						d_ptr->flags3 |= DF3_NO_TELE | DF3_NO_SUMMON;
+						msg_print(Ind, "Flags NT/NS added.");
+					}
 				} else {
 					d_ptr->flags3 &= ~(DF3_NO_TELE | DF3_NO_SUMMON | DF3_NO_ESP);
 					msg_print(Ind, "Flags removed.");
