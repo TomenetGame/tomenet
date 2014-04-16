@@ -3648,7 +3648,7 @@ static bool quest_goal_matches_kill(int q_idx, int stage, int goal, monster_type
 		    q_kill->rchar[i] != r_ptr->d_char) continue;
 
 		/* no attr specified? */
-		if (q_kill->rattr[i] == 255) continue;
+		if (q_kill->rattr[i] == 255) continue;//redundant with rchar==255 check
 		 /* accept any attr? */
 		if (q_kill->rattr[i] != 254 &&
 		    /* specified an attr? */
@@ -3704,7 +3704,7 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 		    q_ret->otval[i] != o_ptr->tval) continue;;
 
 		/* no sval specified? */
-		if (q_ret->osval[i] == 0) continue;
+		if (q_ret->osval[i] == 0) continue;//redundant with otval==0 check
 		/* accept any sval? */
 		if (q_ret->osval[i] != -1 &&
 		    /* specified a sval */
@@ -3729,21 +3729,21 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 		    q_ret->opval[i] < o_ptr->pval) continue;
 
 		/* no bpval specified? */
-		if (q_ret->obpval[i] == 9999) continue;
+		if (q_ret->obpval[i] == 9999) continue;//redundant with opval==9999 check
 		/* accept any bpval? */
 		if (q_ret->obpval[i] != -9999 &&
 		    /* specified a bpval? */
 		    q_ret->obpval[i] < o_ptr->bpval) continue;
 
 		/* no attr specified? */
-		if (q_ret->oattr[i] == 255) continue;
+		if (q_ret->oattr[i] == 255) continue;//redundant with opval==9999 check
 		/* accept any attr? */
 		if (q_ret->oattr[i] != 254 &&
 		    /* specified a attr? */
 		    q_ret->oattr[i] != attr) continue;
 
 		/* no name1 specified? */
-		if (q_ret->oname1[i] == -3) continue;
+		if (q_ret->oname1[i] == -3) continue;//redundant with opval==9999 check
 		 /* accept any name1? */
 		if (q_ret->oname1[i] != -1 &&
 		 /* accept any name1, but MUST be != 0? */
@@ -3752,7 +3752,7 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 		    q_ret->oname1[i] != o_ptr->name1) continue;
 
 		/* no name2 specified? */
-		if (q_ret->oname2[i] == -3) continue;
+		if (q_ret->oname2[i] == -3) continue;//redundant with opval==9999 check
 		 /* accept any name2? */
 		if (q_ret->oname2[i] != -1 &&
 		 /* accept any name2, but MUST be != 0? */
@@ -3761,7 +3761,7 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 		    q_ret->oname2[i] != o_ptr->name2) continue;
 
 		/* no name2b specified? */
-		if (q_ret->oname2b[i] == -3) continue;
+		if (q_ret->oname2b[i] == -3) continue;//redundant with opval==9999 check
 		 /* accept any name2b? */
 		if (q_ret->oname2b[i] != -1 &&
 		 /* accept any name2b, but MUST be != 0? */
