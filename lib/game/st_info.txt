@@ -196,7 +196,7 @@ O:26:27:28:29:26:43
 G:4:g
 W:36
 
-N:4:Alchemy shop
+N:4:Alchemy Shop
 I:100:Enchant Weapon To-Hit
 I:100:Enchant Weapon To-Dam
 I:100:Enchant Armour
@@ -267,7 +267,7 @@ O:30:31:32:33:30:33
 G:5:b
 W:36
 
-N:5:Magic shop
+N:5:Magic Shop
 T:100:6:1
 T:100:6:1
 I:100:Protection
@@ -915,7 +915,7 @@ F:PRICE16 | PRICY_ITEMS4
 #W:24 --increasing it in hope to see ART scrolls more often..
 W:36
 
-N:61:Bordertravel supplies
+N:61:Bordertravel Supplies
 T:95:71:29
 T:95:71:38
 T:95:70:9
@@ -1266,7 +1266,7 @@ G:4:g
 W:60
 F:HARD_STEAL | GOOD
 
-N:74:Alchemy shop
+N:74:Alchemy Shop
 I:100:Enchant Weapon To-Hit
 I:100:Enchant Weapon To-Dam
 I:100:Enchant Armour
@@ -1340,7 +1340,7 @@ W:36
 F:HARD_STEAL
 
 # less tele/perc/cantrips, more mage staves
-N:75:Magic shop
+N:75:Magic Shop
 # Offer ALL devices, except rare base types
 T:100:6:1
 T:100:6:1
