@@ -941,6 +941,7 @@ extern void condense_max_depth(player_type *p_ptr);
 extern bool seal_or_unseal_object(object_type *o_ptr);
 #endif
 extern void fix_max_depth_towerdungeon(int Ind);
+extern void excise_obsolete_max_depth(player_type *p_ptr);
 extern void load_banlist(void);
 /* for actually loading/saving dynamic quest information */
 extern void load_quests(void);

@@ -2703,6 +2703,9 @@ static errr rd_savefile_new_aux(int Ind) {
 		fix_max_depth(p_ptr);
 	}
 
+	/* Keep Clean: Delete all max depth entries of dungeons that were removed meanwhile. */
+	excise_obsolete_max_depth(p_ptr);
+
 	/* read player guild membership */
 	rd_byte(&p_ptr->guild);
 	if (!older_than(4, 5, 8)) rd_u32b(&p_ptr->guild_dna);
@@ -3647,6 +3650,39 @@ void condense_max_depth(player_type *p_ptr) {
 		}
 	}
 	s_printf("max_depth[] has been condensed for '%s'.\n", p_ptr->name);
+}
+/* Remove max_depth entries of dungeons/towers that were removed meanwhile. */
+void excise_obsolete_max_depth(player_type *p_ptr) {
+	int i, j;
+
+	for (i = 0; i < MAX_D_IDX * 2; i++) {
+		if (!p_ptr->max_depth_wx[i] && !p_ptr->max_depth_wy[i]) continue; /* entry doesn't exist? */
+
+		if (p_ptr->max_depth_tower[i] && wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].tower) continue;
+		if (!p_ptr->max_depth_tower[i] && wild_info[p_ptr->max_depth_wy[i]][p_ptr->max_depth_wx[i]].dungeon) continue;
+
+		s_printf("Excised max_depth[] at (%d,%d,%d) for '%s'.\n",
+		    p_ptr->max_depth_wx[i], p_ptr->max_depth_wy[i], p_ptr->max_depth_tower[i] ? 1 : -1, p_ptr->name);
+
+		/* wipe: all "dungeons" that do not exist */
+		p_ptr->max_depth_wx[i] = 0;
+		p_ptr->max_depth_wy[i] = 0;
+		p_ptr->max_depth_tower[i] = FALSE;
+
+		/* important: move the following dungeons in our personal list up one
+		   so as to not leave any holes (breaks the get_recall_depth algo) */
+		for (j = i; j < MAX_D_IDX * 2 - 1; j++) {
+			p_ptr->max_depth[j] = p_ptr->max_depth[j + 1];
+			p_ptr->max_depth_wx[j] = p_ptr->max_depth_wx[j + 1];
+			p_ptr->max_depth_wy[j] = p_ptr->max_depth_wy[j + 1];
+			p_ptr->max_depth_tower[j] = p_ptr->max_depth_tower[j + 1];
+		}
+		/* wipe the last entry accordingly, since it has been moved up by one */
+		p_ptr->max_depth[j] = 0;
+		p_ptr->max_depth_wx[j] = 0;
+		p_ptr->max_depth_wy[j] = 0;
+		p_ptr->max_depth_tower[j] = FALSE;
+	}
 }
 
 #ifdef SEAL_INVALID_OBJECTS
