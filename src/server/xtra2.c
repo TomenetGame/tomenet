@@ -4052,6 +4052,33 @@ void check_experience(int Ind) {
 		p_ptr->warning_technique_melee = p_ptr->warning_technique_ranged = 1;
 	}
 
+	/* Give warning message to get phase/tele means, aimed at newbies */
+	if (old_lev < 18 && p_ptr->lev >= 18 && p_ptr->warning_tele == 0) {
+#if 1
+		/* scan inventory for any scrolls/staves */
+		bool found_items = FALSE;
+		int i;
+		for (i = 0; i < INVEN_PACK; i++) {
+			if (!p_ptr->inventory[i].k_idx) continue;
+			if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
+			if (p_ptr->inventory[i].tval == TV_SCROLL && (
+			    p_ptr->inventory[i].sval == SV_SCROLL_TELEPORT))
+				found_items = TRUE;
+			if (p_ptr->inventory[i].tval == TV_STAFF && (
+			    p_ptr->inventory[i].sval == SV_STAFF_TELEPORTATION))
+				found_items = TRUE;
+		}
+		if (!found_items)
+#endif
+		{
+			msg_print(Ind, "\374\377oHINT: Buy scrolls of teleportation from the \377RBlack Market\377o or a staff");
+			msg_print(Ind, "\374\377o      of teleportation from the \377RMagic Shop\377o to get out of trouble!");
+			msg_print(Ind, "\374\377o      Ideally, create a \377Rmacro\377o for using them by a single key press.");
+			s_printf("warning_tele: %s\n", p_ptr->name);
+		}
+		p_ptr->warning_tele = 1;
+	}
+
 	/* Introduce newly learned abilities (that depend on char level) */
 	/* those that depend on a race */
 	switch (p_ptr->prace) {

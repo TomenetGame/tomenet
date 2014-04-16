@@ -2631,6 +2631,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_dungeon = 1;
 		p_ptr->warning_tunnel = 1;
 		p_ptr->warning_trap = 1;
+		p_ptr->warning_tele = 1;
 		return;
 	}
 
