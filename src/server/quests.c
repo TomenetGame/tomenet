@@ -3715,8 +3715,10 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 	if (i == 10) return FALSE;
 
 	/* check for pval/bpval/attr/name1/name2/name2b
-	   note: let's treat pval/bpval as minimum values instead of exact values for now. */
-	object_desc(0, oname, o_ptr, FALSE, FALSE);
+	   note: let's treat pval/bpval as minimum values instead of exact values for now.
+	   important: object names must not contain inscriptions >;). */
+	//object_desc(0, oname, o_ptr, FALSE, 256); //raw text name only?
+	object_desc(0, oname, o_ptr, FALSE, 16); //at least mask owner name, or it'd be exploitable again :-p
 	for (i = 0; i < 5; i++) {
 		/* name specified but doesnt match? */
 		if (q_ret->name[i] && !strstr(oname, q_ret->name[i])) continue;
