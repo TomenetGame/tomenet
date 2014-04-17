@@ -7150,6 +7150,10 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			if (!is_admin(p_ptr)) return;
 		}
 #endif
+		if (p_ptr->ghost) {
+			msg_print(Ind, "\377ySorry, ghosts may not participate in this event.");
+			if (!is_admin(p_ptr)) return;
+		}
 		if (p_ptr->global_event_participated[ge->getype]) {
 			msg_print(Ind, "\377ySorry, a character may participate only once in this event.");
 			if (!is_admin(p_ptr)) return;
