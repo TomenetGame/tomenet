@@ -2786,7 +2786,8 @@ D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX....XXX....@X****X%
 D:%X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,+XX....+XX...X****X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-F:NO_PENETR | NO_DESTROY | NO_GENO | NO_MAGIC_MAP | NO_TELE
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_MAGIC_MAP
+# | NO_TELE
 
 N:120:Mirrored Quartet
 X:8:20:21:49
