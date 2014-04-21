@@ -3586,9 +3586,14 @@ void scan_players() {
 		pptr = NULL;
 		ptr = hash_table[slot];
 		while (ptr) {
-			if (ptr->laston && (now - ptr->laston > 3600 * 24 * CHARACTER_EXPIRY_DAYS)){/*15552000; 7776000 = 90 days at 60fps*/
+			if (ptr->laston && (now - ptr->laston > 3600 * 24 * CHARACTER_EXPIRY_DAYS)) {/*15552000; 7776000 = 90 days at 60fps*/
 				hash_entry *dptr;
-				s_printf("  Removing player: %s\n", ptr->name);
+				cptr acc;
+
+				acc = lookup_accountname(ptr->id);
+				if (!acc) acc = "(no account)";
+				s_printf("  Removing player: %s (%s)\n", ptr->name, acc);
+
 				if (ptr->level >= 50 && ptr->admin == 0) l_printf("%s \\{D%s, level %d, was erased by timeout.\n", showdate(), ptr->name, ptr->level);
 
 				for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
@@ -3903,8 +3908,11 @@ void erase_player_name(char *pname){
 			if (!strcmp(ptr->name, pname)) {
 				int i,j;
 				hash_entry *dptr;
+				cptr acc;
 
-				s_printf("Removing player: %s\n", ptr->name);
+				acc = lookup_accountname(ptr->id);
+				if (!acc) acc = "(no account)";
+				s_printf("Removing player: %s (%s)\n", ptr->name, acc);
 
 				for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
 					if (streq(parties[i].owner, ptr->name)) {
