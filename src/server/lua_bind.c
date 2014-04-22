@@ -537,13 +537,29 @@ void lua_add_anote(char *anote) {
 
 void lua_count_houses(int Ind) {
 	int i;
-	Players[Ind]->houses_owned = 0;
-	Players[Ind]->castles_owned = 0;
+	player_type *p_ptr = Players[Ind];
+
+	p_ptr->houses_owned = 0;
+	p_ptr->castles_owned = 0;
 	for (i = 0; i < num_houses; i++)
 		if ((houses[i].dna->owner_type == OT_PLAYER) &&
-		    (houses[i].dna->owner == Players[Ind]->id)) {
-			Players[Ind]->houses_owned++;
-			if (houses[i].flags & HF_MOAT) Players[Ind]->castles_owned++;
+		    (houses[i].dna->owner == p_ptr->id)) {
+			p_ptr->houses_owned++;
+
+			if (cfg.houses_per_player &&
+			    p_ptr->houses_owned > (p_ptr->max_plv >= 50 ? 50 : p_ptr->max_plv) / cfg.houses_per_player)
+				s_printf("HOUSES_EXCEEDED: %s owns %d houses.\n", p_ptr->name, p_ptr->houses_owned);
+
+			if (houses[i].flags & HF_MOAT) {
+				p_ptr->castles_owned++;
+
+				if (cfg.castles_per_player &&
+				    p_ptr->castles_owned > cfg.castles_per_player)
+					s_printf("HOUSES_EXCEEDED: %s owns %d castles.\n", p_ptr->name, p_ptr->castles_owned);
+
+				if (cfg.castles_for_kings && !p_ptr->once_winner)
+					s_printf("HOUSES_EXCEEDED: non-(ex)winner %s owns castle(s).\n", p_ptr->name);
+			}
 		}
 	return;
 }
