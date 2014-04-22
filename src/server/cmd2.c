@@ -1432,10 +1432,10 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y){
 		if (args[1] == '1') {
 			for (i = 1; i <= NumPlayers; i++) {     /* in game? maybe long winded */
 				if (Players[i]->id == newowner) {
-					if (dna->owner_type == OT_PLAYER) p_ptr->houses_owned--;
+					//if (dna->owner_type == OT_PLAYER) p_ptr->houses_owned--;
 					Players[i]->houses_owned++;
 					if (houses[h_idx].flags & HF_MOAT) {
-						if (dna->owner_type == OT_PLAYER) p_ptr->castles_owned--;
+						//if (dna->owner_type == OT_PLAYER) p_ptr->castles_owned--;
 						Players[i]->castles_owned++;
 					}
 					dna->creator = Players[i]->dna;
