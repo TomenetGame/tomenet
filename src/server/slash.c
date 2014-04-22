@@ -5904,12 +5904,15 @@ void do_slash_cmd(int Ind, char *message)
 				deltown(Ind);
 				return;
 			}
-			else if (prefix(message, "/counthouses")) {
-				if (!tk || (atoi(token[1]) < 1) || (atoi(token[1]) > NumPlayers)) {
-					msg_print(Ind, "Usage: /counthouses <player-Index>");
+			else if (prefix(message, "/chouse")) { //count houses/castles
+				if (!tk) {
+					msg_print(Ind, "Usage: /chouse <character name>");
 					return;
 				}
-				lua_count_houses(atoi(token[1]));
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
+				if (!j) return;
+				lua_count_houses(j);
+				msg_format(Ind, "Counted houses/castles for %s.", Players[j]->name);
 				return;
 			}
 			/* fix insane hit dice of a golem manually - gotta solve the bug really */
