@@ -4272,7 +4272,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
-		msg_print(Ind, "You failed to use the rod properly.");
+		msg_print(Ind, "\377rYou failed to use the rod properly.");
 		return;
 	}
 
