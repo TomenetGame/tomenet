@@ -3402,7 +3402,7 @@ void do_cmd_use_staff(int Ind, int item)
 
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
-		msg_print(Ind, "You failed to use the staff properly.");
+		msg_print(Ind, "\377rYou failed to use the staff properly.");
 		return;
 	}
 
@@ -3613,7 +3613,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
-		msg_print(Ind, "You failed to use the wand properly.");
+		msg_print(Ind, "\377rYou failed to use the wand properly.");
 		return;
 	}
 
@@ -4434,7 +4434,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
-		msg_print(Ind, "You failed to use the rod properly.");
+		msg_print(Ind, "\377rYou failed to use the rod properly.");
 		return;
 	}
 
@@ -5184,7 +5184,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	if (((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) &&
 	    !o_ptr->tval == TV_BOOK) /* hack: blank books can always be 'activated' */
 	{
-		msg_print(Ind, "You failed to activate it properly.");
+		msg_print(Ind, "\377rYou failed to activate it properly.");
 		return;
 	}
 
@@ -7897,7 +7897,7 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 	        fire_ball(Ind, GF_DISENCHANT, dir, ((p_ptr->chp / 3) > 400) ? 400 : (p_ptr->chp / 3), 2, p_ptr->attacker);
                 break;
         default: /* paranoia */
-		msg_print(Ind, "You fail to breathe elements.");
+		msg_print(Ind, "\377rYou fail to breathe elements.");
 		p_ptr->cst += 3; /* reimburse */
         }
 }
