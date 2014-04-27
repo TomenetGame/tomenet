@@ -1317,7 +1317,7 @@ void calc_mana(int Ind) {
 //	max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
 	switch (p_ptr->pclass) {
 	case CLASS_MAGE: max_wgt = 150 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-	case CLASS_RANGER: max_wgt = 260 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_RANGER: max_wgt = 240 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_PRIEST: max_wgt = 250 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_PALADIN: max_wgt = 300 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_DRUID: max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
