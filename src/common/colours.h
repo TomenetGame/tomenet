@@ -37,6 +37,9 @@
 #define COLOUR_IC_NEAR         'w'
 #endif
 
+/* MD feedback messages */ 
+#define COLOUR_MD_FAIL		'y'
+
 /* Dodging messages */
 #define COLOUR_DODGE_MON       'y'     /* <- currently unused (!) */
 #define COLOUR_DODGE_PLY       'y'
@@ -70,3 +73,5 @@
 #define C_COLOUR_CHAT_PARTY	TERM_L_GREEN
 #define C_COLOUR_CHAT_GUILD	TERM_L_UMBER
 #define C_COLOUR_CHAT_LEVEL	TERM_YELLOW
+
+
