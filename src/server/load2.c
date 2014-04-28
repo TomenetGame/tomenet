@@ -3290,6 +3290,11 @@ void new_rd_wild()
 					valinor_wpos_y = y;
 					valinor_wpos_z = -1;
 				}
+				else if (d_ptr->type == DI_HALLS_OF_MANDOS) {
+					hallsofmandos_wpos_x = x;
+					hallsofmandos_wpos_y = y;
+					hallsofmandos_wpos_z = -1;
+				}
 
 #if 0
 				for (i = 0; i < 10; i++) {
@@ -3354,6 +3359,11 @@ void new_rd_wild()
 					valinor_wpos_x = x;
 					valinor_wpos_y = y;
 					valinor_wpos_z = 1;
+				}
+				else if (d_ptr->type == DI_HALLS_OF_MANDOS) {
+					hallsofmandos_wpos_x = x;
+					hallsofmandos_wpos_y = y;
+					hallsofmandos_wpos_z = 1;
 				}
 
 #if 0

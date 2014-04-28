@@ -3264,6 +3264,16 @@ void recall_player(int Ind, char *message){
 		}
 #endif
 	}
+
+	/* Specialty: Did we make it through the Halls of Mandos?
+	   Those are now ironman, so they're a 'pure', traditional ironman challenge.
+	   However, this dungeon can be entered at any level, so it might be less of a challenge. */
+	if (in_hallsofmandos(&old_wpos)) {
+		msg_print(Ind, "\374\377a***\377sYou made it through the Halls of Mandos!\377a***");
+		sprintf(buf, "\374\377a***\377s%s made it through the Halls of Mandos!\377a***", p_ptr->name);
+		msg_broadcast(Ind, buf);
+		l_printf("%s \\{U%s (%d) made it through the Halls of Mandos\n", showdate(), p_ptr->name, p_ptr->lev);
+	}
 }
 
 

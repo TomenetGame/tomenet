@@ -2325,6 +2325,7 @@ extern bool jails_enabled;
 extern bool allow_requesting_estate;
 extern int netherrealm_wpos_x, netherrealm_wpos_y, netherrealm_wpos_z, netherrealm_start, netherrealm_end;
 extern int valinor_wpos_x, valinor_wpos_y, valinor_wpos_z;
+extern int hallsofmandos_wpos_x, hallsofmandos_wpos_y, hallsofmandos_wpos_z;
 extern bool nether_realm_collapsing;
 extern int nrc_x, nrc_y, netherrealm_end_wz;
 

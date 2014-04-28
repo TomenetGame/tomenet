@@ -1032,6 +1032,7 @@
 /* Dungeon indices (d_ptr->type) hardcoded from d_info.txt file: */
 #define DI_MT_DOOM		5
 #define DI_NETHER_REALM		6
+#define DI_HALLS_OF_MANDOS	8
 #define DI_PATHS_DEAD		16
 #define DI_SANDWORM_LAIR	27
 #define DI_VALINOR		31
@@ -8091,6 +8092,8 @@ extern int PlayerUID;
 #define in_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z > 0)
 #define at_netherrealm(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz * netherrealm_wpos_z >= 0)
 #define netherrealm_bottom(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz == netherrealm_end_wz)
+
+#define in_hallsofmandos(wpos) ((wpos)->wx == hallsofmandos_wpos_x && (wpos)->wy == hallsofmandos_wpos_y && (wpos)->wz * hallsofmandos_wpos_z > 0)
 
 /* Restrict escape from final Nether Realm level to WoR + ghost floating? (no stairs+no probtrav!) */
 //#define NETHERREALM_BOTTOM_RESTRICT
