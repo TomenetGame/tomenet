@@ -246,7 +246,7 @@ J:1:1:-1:-1:-1:-1:-1:-1:-1:-1:151:28:0:0:0:0:0
 
 $TEST_SERVER$Q:1:15:t:y:-1:-1:Dozing drunk
 $TEST_SERVER$L:0:0:0:63:63:0:0:149:24:0:-:0:0
-$TEST_SERVER$W:2:0::0-:Washhup? Hic..
+$TEST_SERVER$W:2:0:0:-:Washhup? Hic..
 
 $TEST_SERVER$r:0:1:0:1:1
 $TEST_SERVER$rI:0:1:80:38:80:39
