@@ -15227,7 +15227,16 @@ only very few abilities, which are accompanied by different types of curses.
 All armour-type randarts will have at least +10 to AC bonus (except if they
 happen to be cursed), usually much more, dragon scale mails especially.
 Also, the higher level the base type of an armour, the more +AC it can expect
-as a randart.
+as a randart, because armour gets baselevel/15 added to its AC.
+Base item types that come with +AC (Mithril Helmet always comes with +10 AC
+pre-enchanted for example, see k_info.txt) get half of that added to their AC
+too. These +AC boni from base item level and base item pre-enchantment do not
+factor into the artifact's power, ie they do not "count" in the flag cost
+calculation, except when the +AC exceeds +30, which is always costly.
+So basically for armour, you want to use the base item type with the highest
+pre-enchantment and with the highest base level. Usually you won't need to pay
+attention to this though, because the higher level items are automatically the
+better items anyway and hence you will pick them without much thinking. :-p
 
 Possible mods that randarts may get depend on its base type.
 Further, there are general mods that may appear on all items regardless of its
