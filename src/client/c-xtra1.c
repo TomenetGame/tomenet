@@ -112,10 +112,11 @@ void prt_title(cptr title) {
 /*
  * Prints level and experience
  */
-void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv) {
+void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv, s32b adv_prev) {
 	char tmp[32];
 	int colour = (level < max_lev) ? TERM_YELLOW : TERM_L_GREEN;
 	int x, y;
+	int scale = adv - adv_prev;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
@@ -133,23 +134,47 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 		Term_putstr(COL_LEVEL + 8, ROW_LEVEL, -1, TERM_L_GREEN, tmp);
 	}
 
-	if (!c_cfg.exp_need)
-		sprintf(tmp, "%9d", (int)cur);
-	else {
-		if (level >= PY_MAX_LEVEL || !adv)
-			(void)sprintf(tmp, "*********");
+	if (!c_cfg.exp_bar) {
+		if (!c_cfg.exp_need)
+			sprintf(tmp, "%9d", (int)cur);
 		else {
-			/* Hack -- display in minus (to avoid confusion chez player) */
-			(void)sprintf(tmp, "%9d", (int)(cur - adv));
+			if (level >= PY_MAX_LEVEL || !adv)
+				(void)sprintf(tmp, "*********");
+			else {
+				/* Hack -- display in minus (to avoid confusion chez player) */
+				(void)sprintf(tmp, "%9d", (int)(cur - adv));
+			}
+		}
+	} else {
+		if (level >= PY_MAX_LEVEL || !adv || !scale)
+			(void)sprintf(tmp, "*********");
+		else if (!c_cfg.exp_need) {
+			int got = ((cur - adv_prev) * 10) / scale, i;
+
+			if (c_cfg.font_map_solid_walls) /* :-p hack */
+				for (i = 0; i < got; i++) tmp[i] = 127;
+			else
+				for (i = 0; i < got; i++) tmp[i] = '#';
+			for (i = got; i < 9; i++) tmp[i] = '-'; //10 'filled bubbles' = next level, so only need to display 9!
+			tmp[i] = 0;
+		} else {
+			int got = ((cur - adv_prev) * 10) / scale, i;
+
+			for (i = 0; i < got; i++) tmp[i] = '-'; //10 'filled bubbles' = next level, so only need to display 9!
+			if (c_cfg.font_map_solid_walls) /* :-p hack */
+				for (i = got; i < 9; i++) tmp[i] = 127;
+			else
+				for (i = got; i < 9; i++) tmp[i] = '#';
+			tmp[i] = 0;
 		}
 	}
 
 	if (cur >= max) {
-                Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
-                Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_L_GREEN, tmp);
+		Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
+		Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_L_GREEN, tmp);
 	} else {
-                Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
-                Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_YELLOW, tmp);
+		Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
+		Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_YELLOW, tmp);
 	}
 
 	/* restore cursor position */

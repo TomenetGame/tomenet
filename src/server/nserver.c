@@ -4387,18 +4387,18 @@ int Send_ac(int ind, int base, int plus)
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_AC, base, plus);
 }
 
-int Send_experience(int Ind, int lev, s32b max, s32b cur, s32b adv)
-{
+int Send_experience(int Ind, int lev, s32b max, s32b cur, s32b adv, s32b adv_prev) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for experience (%d.%d.%d)",
 			Ind, connp->state, connp->id));
 		return 0;
 	}
-	if (is_newer_than(&Players[Ind]->version, 4, 4, 1, 3, 0, 0))
+	if (is_newer_than(&Players[Ind]->version, 4, 5, 6, 0, 0, 1))
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%d%d%d%d", PKT_EXPERIENCE, lev, Players[Ind]->max_lev, Players[Ind]->max_plv, max, cur, adv, adv_prev);
+	else if (is_newer_than(&Players[Ind]->version, 4, 4, 1, 3, 0, 0))
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%d%d%d", PKT_EXPERIENCE, lev, Players[Ind]->max_lev, Players[Ind]->max_plv, max, cur, adv);
 	else
 		return Packet_printf(&connp->c, "%c%hu%d%d%d", PKT_EXPERIENCE, lev, max, cur, adv);

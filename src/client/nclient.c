@@ -1577,10 +1577,15 @@ int Receive_plusses(void) {
 int Receive_experience(void) {
 	int	n;
 	char	ch;
-	s32b	max, cur, adv;
+	s32b	max, cur, adv, adv_prev;
 	s16b	lev, max_lev, max_plv;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%d%d%d", &ch, &lev, &max_lev, &max_plv, &max, &cur, &adv)) <= 0) return n;
+	if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%d%d%d%d", &ch, &lev, &max_lev, &max_plv, &max, &cur, &adv, &adv_prev)) <= 0) return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%d%d%d", &ch, &lev, &max_lev, &max_plv, &max, &cur, &adv)) <= 0) return n;
+		adv_prev = adv;
+	}
 
 	p_ptr->lev = lev;
 	p_ptr->max_lev = max_lev;
@@ -1588,9 +1593,10 @@ int Receive_experience(void) {
 	p_ptr->max_exp = max;
 	p_ptr->exp = cur;
 	exp_adv = adv;
+	exp_adv_prev = adv_prev;
 
 	if (screen_icky) Term_switch(0);
-	prt_level(lev, max_lev, max_plv, max, cur, adv);
+	prt_level(lev, max_lev, max_plv, max, cur, adv, exp_adv_prev);
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */

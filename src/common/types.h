@@ -3300,6 +3300,7 @@ struct client_opts {
 	bool target_history;
 	bool linear_stats;
 	bool exp_need;
+	bool exp_bar;
 	bool disable_flush;
 
 	bool allow_paging;

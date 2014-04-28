@@ -6339,7 +6339,7 @@ void do_cmd_options(void) {
 	int k;
 	char tmp[1024];
 
-	bool dummy = c_cfg.exp_need;
+	bool changed1 = c_cfg.exp_need, changed2 = c_cfg.exp_bar, changed3 = c_cfg.font_map_solid_walls;
 
 	/* Save the screen */
 	Term_save();
@@ -6474,8 +6474,8 @@ void do_cmd_options(void) {
 	keymap_init();
 
 	/* for exp_need option changes: */
-	if (dummy != c_cfg.exp_need)
-		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv);
+	if (changed1 != c_cfg.exp_need || changed2 != c_cfg.exp_bar || changed3 != c_cfg.font_map_solid_walls)
+		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
 
 	/* Resend options to server */
 	Send_options();

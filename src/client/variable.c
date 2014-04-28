@@ -66,7 +66,7 @@ c_player_extra c_player;
 c_player_extra *c_p_ptr = &c_player;
 
 
-s32b exp_adv;				/* Amount of experience required to advance a level */
+s32b exp_adv, exp_adv_prev;		/* Amount of experience required to advance a level */
 
 s16b command_see;
 s16b command_gap;

@@ -178,7 +178,7 @@ extern player_type *p_ptr;
 extern c_player_extra c_player;
 extern c_player_extra *c_p_ptr;
 /* extern char body_name[80]; */
-extern s32b exp_adv;
+extern s32b exp_adv, exp_adv_prev;
 
 extern s16b command_see;
 extern s16b command_gap;
@@ -589,7 +589,7 @@ extern int store_top;
 /* c-xtra1.c */
 extern void prt_stat(int stat, int max, int cur, int cur_base);
 extern void prt_title(cptr title);
-extern void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv);
+extern void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv, s32b adv_prev);
 extern void prt_gold(int gold);
 extern void prt_ac(int ac);
 extern void prt_hp(int max, int cur);

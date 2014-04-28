@@ -260,7 +260,7 @@ void initialize_player_pref_files(void){
 	/* Process that file */
 	process_pref_file(buf);
 	keymap_init();
-	prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv);
+	prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
         Send_options();
 
 #if 0 /* disabled, since everyone only has 1 account anyway. It just disturbs macros if you have a character of same name. */

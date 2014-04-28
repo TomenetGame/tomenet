@@ -1038,7 +1038,7 @@ extern int Send_file_end(int ind, unsigned short id);
 extern int Receive_file_data(int ind, unsigned short len, char *buffer);
 extern int Send_plusses(int Ind, int tohit, int todam, int tohit_r, int todam_r, int tohit_m, int todam_m);
 extern int Send_ac(int Ind, int base, int plus);
-extern int Send_experience(int Ind, int lev, s32b max_exp, s32b cur_exp, s32b adv_exp);
+extern int Send_experience(int Ind, int lev, s32b max_exp, s32b cur_exp, s32b adv_exp, s32b adv_exp_prev);
 #if 0
 extern int Send_skill_init(int ind, int type, int i);
 #else

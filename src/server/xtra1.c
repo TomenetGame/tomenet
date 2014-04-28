@@ -170,11 +170,9 @@ static void prt_title(int Ind) {
 /*
  * Prints level
  */
-static void prt_level(int Ind)
-{
+static void prt_level(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
-	s64b adv_exp;
+	s64b adv_exp, adv_exp_prev = 0;
 
 	if (p_ptr->lev >= (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL))
 		adv_exp = 0;
@@ -184,18 +182,23 @@ static void prt_level(int Ind)
 	else adv_exp = (s64b)player_exp[p_ptr->lev - 1];
 #endif
 
-	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp);
+	if (p_ptr->lev > 1)
+#ifndef ALT_EXPRATIO
+		adv_exp_prev = (s64b)((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact / 100L);
+#else
+		adv_exp_prev = (s64b)player_exp[p_ptr->lev - 2];
+#endif
+
+	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp, adv_exp_prev);
 }
 
 
 /*
  * Display the experience
  */
-static void prt_exp(int Ind)
-{
+static void prt_exp(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
-	s64b adv_exp;
+	s64b adv_exp, adv_exp_prev = 0;
 
 	if (p_ptr->lev >= (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL))
 		adv_exp = 0;
@@ -205,7 +208,14 @@ static void prt_exp(int Ind)
 	else adv_exp = (s64b)player_exp[p_ptr->lev - 1];
 #endif
 
-	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp);
+	if (p_ptr->lev > 1)
+#ifndef ALT_EXPRATIO
+		adv_exp_prev = (s64b)((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact / 100L);
+#else
+		adv_exp_prev = (s64b)player_exp[p_ptr->lev - 2];
+#endif
+
+	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp, adv_exp_prev);
 }
 
 

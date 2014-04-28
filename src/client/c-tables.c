@@ -267,7 +267,7 @@ option_type option_info[OPT_MAX] =
 	"font_map_solid_walls",		"Certain fonts only: Walls look like solid blocks" },
 #endif
 
-	{ &c_cfg.use_color,		TRUE,	1,	0, 14, TRUE,
+	{ &c_cfg.use_color,		TRUE,	1,	0, 14, FALSE,//works, but pretty useless - disabled to make room
 	"use_color",			"Use color if possible" },
 
 	{ &c_cfg.ring_bell,		TRUE,	1,	0, 15, TRUE,
@@ -490,7 +490,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.last_words,		TRUE,	1,	9, 66, TRUE,
 	"last_words",			"Get last words when the character dies" },
 
-	{ &c_cfg.limit_chat,		FALSE,	1,	9, 67, TRUE,
+	{ &c_cfg.limit_chat,		FALSE,	1,	9, 67, FALSE,//works, but pretty useless - disabled to make room
 	"limit_chat",			"Chat only with players on the same floor" },
 
 	{ &c_cfg.thin_down_flush,	TRUE,	3,	9, 68, TRUE,
@@ -610,6 +610,11 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.no_verify_sell,	FALSE,	4,	0, 102, TRUE,
 	"no_verify_sell",		"Skip safety question when selling items" },
+
+	//disabled use_color and limit_chat to make room for 2 more 'UI options'
+	{ &c_cfg.exp_bar,		FALSE,	1,	9, 103, TRUE,
+	"exp_bar",			"Show experience bar instead of a number" },
+
 };
 
 

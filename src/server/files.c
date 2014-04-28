@@ -425,11 +425,10 @@ errr check_load_init(void)
  * 
  * Except that this (and display_player) are never called. --KLJ--
  */
-static void display_player_middle(int Ind)
-{
+static void display_player_middle(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int bmh = 0, bmd = 0;
-	s32b adv_exp;
+	s32b adv_exp, adv_exp_prev;
 
 	int show_tohit_m = p_ptr->dis_to_h + p_ptr->to_h_melee;
 	int show_todam_m = p_ptr->dis_to_d + p_ptr->to_d_melee;
@@ -484,20 +483,23 @@ static void display_player_middle(int Ind)
 
 	if (p_ptr->lev >= (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL))
 		adv_exp = 0;
-	else
-	{
+	else {
+		s64b adv_prev = 0;
+#ifndef ALT_EXPRATIO
 		s64b adv = ((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
+		if (p_ptr->lev > 1) adv_prev = ((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact / 100L);
+#else
+		s64b adv = (s64b)player_exp[p_ptr->lev - 1];
+		if (p_ptr->lev > 1) adv_prev = (s64b)player_exp[p_ptr->lev - 2];
+#endif
 		adv_exp = (s32b)(adv);
+		adv_exp_prev = (s32b)(adv_prev);
 	}
 
-	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp);
-
+	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp, adv_exp_prev);
 	Send_gold(Ind, p_ptr->au);
-
 	Send_hp(Ind, p_ptr->mhp, p_ptr->chp);
-
 	Send_sp(Ind, p_ptr->msp, p_ptr->csp);
-
 	Send_stamina(Ind, p_ptr->mst, p_ptr->cst);
 }
 
