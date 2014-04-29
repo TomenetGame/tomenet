@@ -568,7 +568,7 @@ bool make_attack_melee(int Ind, int m_idx)
 		bool invuln_applied = FALSE;
 
 		int power = 0;
-		int damage = 0, dam_ele = 0;
+		int damage = 0, dam_ele = 0, damage_org = 0;
 		
 		bool attempt_block = FALSE, attempt_parry = FALSE;
 
@@ -993,6 +993,7 @@ bool make_attack_melee(int Ind, int m_idx)
 			/* Roll out the damage */
 			damage = damroll(d_dice, d_side);
 			if (invuln_applied) damage = (damage + 1) / 2;
+			damage_org = damage; /* as a special service, we allow the invuln reduction above to factor in first, to prevent getting ko'ed on stairs :-p */
 
 #if 0			
 			/* to prevent cloaking mode from breaking (break_cloaking) if an attack didn't do damage */
@@ -1094,8 +1095,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					case RBM_CLAW: case RBM_BITE: case RBM_STING:
 					case RBM_BUTT: case RBM_CRUSH:
 						/* 50% physical, 50% elemental */
-						dam_ele = dam_ele / 2;
-						damage = damage / 2;
+						dam_ele /= 2;
+						damage /= 2;
 						break;
 					default:
 						/* 100% elemental */
@@ -1104,6 +1105,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb (let's keep Osyluths etc dangerous!) */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1120,6 +1122,26 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_UN_BONUS:
+					/* Special damage */
+					dam_ele = damage;
+					if (p_ptr->resist_disen) dam_ele = (dam_ele * 6) / (randint(6) + 6);
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1136,6 +1158,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_UN_POWER:
+					/* Special damage */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1241,6 +1282,26 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EAT_GOLD:
+					/* Special damage -- we assume the 'elemental' part stands for the attack
+					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1287,6 +1348,26 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EAT_ITEM:
+					/* Special damage -- we assume the 'elemental' part stands for the attack
+					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1341,6 +1422,26 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EAT_FOOD:
+					/* Special damage -- we assume the 'elemental' part stands for the attack
+					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1348,8 +1449,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (safe_area(Ind)) break;
 
 					/* Steal some food */
-					for (k = 0; k < 10; k++)
-					{
+					for (k = 0; k < 10; k++) {
 						/* Pick an item from the pack */
 						i = rand_int(INVEN_PACK);
 
@@ -1384,6 +1484,26 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EAT_LITE:
+					/* Special damage -- we assume the 'elemental' part stands for the attack
+					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1402,8 +1522,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						if (o_ptr->timeout < 1) o_ptr->timeout = 1;
 
 						/* Notice */
-						if (!p_ptr->blind)
-						{
+						if (!p_ptr->blind) {
 							msg_print(Ind, "Your light dims.");
 							obvious = TRUE;
 						}
@@ -1428,16 +1547,17 @@ bool make_attack_melee(int Ind, int m_idx)
 					case RBM_CLAW: case RBM_BITE: case RBM_STING:
 					case RBM_BUTT: case RBM_CRUSH:
 						/* 50% physical, 50% elemental */
-						dam_ele = (dam_ele * 2) / 4;
-						damage = (damage * 2) / 4;
+						dam_ele /= 2;
+						damage /= 2;
 						break;
 					default:
 						/* 100% elemental */
 						damage = 0;
 					}
-					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb (let's keep Osyluths etc dangerous!) */
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
@@ -1460,8 +1580,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					case RBM_CLAW: case RBM_BITE: case RBM_STING:
 					case RBM_BUTT: case RBM_CRUSH:
 						/* 50% physical, 50% elemental */
-						dam_ele = (dam_ele * 2) / 4;
-						damage = (damage * 2) / 4;
+						dam_ele /= 2;
+						damage /= 2;
 						break;
 					default:
 						/* 100% elemental */
@@ -1496,8 +1616,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					case RBM_CLAW: case RBM_BITE: case RBM_STING:
 					case RBM_BUTT: case RBM_CRUSH:
 						/* 50% physical, 50% elemental */
-						dam_ele = (dam_ele * 2) / 4;
-						damage = (damage * 2) / 4;
+						dam_ele /= 2;
+						damage /= 2;
 						break;
 					default:
 						/* 100% elemental */
@@ -1506,6 +1626,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
@@ -1528,8 +1649,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					case RBM_CLAW: case RBM_BITE: case RBM_STING:
 					case RBM_BUTT: case RBM_CRUSH:
 						/* 50% physical, 50% elemental */
-						dam_ele = (dam_ele * 2) / 4;
-						damage = (damage * 2) / 4;
+						dam_ele /= 2;
+						damage /= 2;
 						break;
 					default:
 						/* 100% elemental */
@@ -1538,6 +1659,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
@@ -1547,17 +1669,34 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_BLIND:
+					/* Special damage -- we assume the 'elemental' part stands for the attack
+					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "blind" */
-					if (!p_ptr->resist_blind)
-					{
+					if (!p_ptr->resist_blind) {
 						if (set_blind(Ind, p_ptr->blind + 10 + randint(rlev)))
-						{
 							obvious = TRUE;
-						}
 					}
 
 					/* Learn about the player */
@@ -1566,17 +1705,34 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_CONFUSE:
+					/* Special damage -- we assume the 'elemental' part stands for the attack
+					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "confused" */
-					if (!p_ptr->resist_conf)
-					{
+					if (!p_ptr->resist_conf) {
 						if (set_confused(Ind, p_ptr->confused + 3 + randint(rlev)))
-						{
 							obvious = TRUE;
-						}
 					}
 
 					/* Learn about the player */
@@ -1585,27 +1741,40 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_TERRIFY:
+					/* Special damage -- we assume the 'elemental' part stands for the attack
+					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "afraid" */
-					if (p_ptr->resist_fear)
-					{
+					if (p_ptr->resist_fear) {
 						msg_print(Ind, "You stand your ground!");
 						obvious = TRUE;
-					}
-					else if (rand_int(100) < p_ptr->skill_sav)
-					{
+					} else if (rand_int(100) < p_ptr->skill_sav) {
 						msg_print(Ind, "You stand your ground!");
 						obvious = TRUE;
-					}
-					else
-					{
+					} else {
 						if (set_afraid(Ind, p_ptr->afraid + 3 + randint(rlev)))
-						{
 							obvious = TRUE;
-						}
 					}
 
 					/* Learn about the player */
@@ -1614,27 +1783,40 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_PARALYZE:
+					/* Special damage -- we assume the 'elemental' part stands for the attack
+					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "paralyzed" */
-					if (p_ptr->free_act)
-					{
+					if (p_ptr->free_act) {
 						msg_print(Ind, "You are unaffected!");
 						obvious = TRUE;
-					}
-					else if (rand_int(100) < p_ptr->skill_sav)
-					{
+					} else if (rand_int(100) < p_ptr->skill_sav) {
 						msg_print(Ind, "You resist the effects!");
 						obvious = TRUE;
-					}
-					else
-					{
+					} else {
 						if (set_paralyzed(Ind, p_ptr->paralyzed + 3 + randint(rlev)))
-						{
 							obvious = TRUE;
-						}
 					}
 
 					/* Learn about the player */
@@ -1643,6 +1825,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_STR:
+					/* Special damage */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1653,6 +1854,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_INT:
+					/* Special damage */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1663,6 +1883,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_WIS:
+					/* Special damage */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1673,6 +1912,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_DEX:
+					/* Special damage */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1683,6 +1941,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_CON:
+					/* Special damage */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1693,6 +1970,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_CHR:
+					/* Special damage */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1703,6 +1999,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_ALL:
+					/* Special damage */
+					dam_ele = damage; //no resistance, and very nasty magic damage
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 33% physical, 66% 'elemental' */
+						dam_ele = (dam_ele * 2) / 3;
+						damage /= 3;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -1737,6 +2052,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EXP_10:
+					/* Special damage */
+					dam_ele = damage; //irresistible (could add hold-life and/or nether-res, but makes bloodletters too weak maybe?)
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1745,11 +2079,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 95))
-					{
 						msg_print(Ind, "You keep hold of your life force!");
-					}
-					else
-					{
+					else {
 						s32b d = damroll(10, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
 						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
 						else if (p_ptr->hold_life) {
@@ -1763,6 +2094,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EXP_20:
+					/* Special damage */
+					dam_ele = damage; //irresistible (could add hold-life and/or nether-res, but makes bloodletters too weak maybe?)
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1771,11 +2121,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 90))
-					{
 						msg_print(Ind, "You keep hold of your life force!");
-					}
-					else
-					{
+					else {
 						s32b d = damroll(20, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
 						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
 						else if (p_ptr->hold_life) {
@@ -1789,6 +2136,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EXP_40:
+					/* Special damage */
+					dam_ele = damage; //irresistible (could add hold-life and/or nether-res, but makes bloodletters too weak maybe?)
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1797,11 +2163,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 75))
-					{
 						msg_print(Ind, "You keep hold of your life force!");
-					}
-					else
-					{
+					else {
 						s32b d = damroll(40, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
 						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
 						else if (p_ptr->hold_life) {
@@ -1815,6 +2178,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EXP_80:
+					/* Special damage */
+					dam_ele = damage; //irresistible (could add hold-life and/or nether-res, but makes bloodletters too weak maybe?)
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Obvious */
 					obvious = TRUE;
 
@@ -1823,11 +2205,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 50))
-					{
 						msg_print(Ind, "You keep hold of your life force!");
-					}
-					else
-					{
+					else {
 						s32b d = damroll(80, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
 						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
 						else if (p_ptr->hold_life) {
@@ -1842,6 +2221,25 @@ bool make_attack_melee(int Ind, int m_idx)
 
 				/* Additisons from PernAngband	- Jir - */
 				case RBE_DISEASE:
+					/* Special damage */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take some damage */
 					//                                        carried_monster_hit = TRUE;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1869,69 +2267,94 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					break;
 				case RBE_HALLU:
+					/* Special damage -- we assume the 'elemental' part stands for the attack
+					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "image" */
-					if (!p_ptr->resist_chaos)
-					{
+					if (!p_ptr->resist_chaos) {
 						if (set_image(Ind, p_ptr->image + 3 + randint(rlev / 2)))
-						{
 							obvious = TRUE;
-						}
 					}
 					break;
 
 				case RBE_TIME:
-					switch (p_ptr->resist_time?randint(9):randint(10))
-					{
-						case 1: case 2: case 3: case 4: case 5:
-							{
-								if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
-								else {
-									msg_print(Ind, "You feel life has clocked back.");
-									lose_exp(Ind, 100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
-								}
-								break;
-							}
+					/* Special damage */
+					dam_ele = damage;
+					if (p_ptr->resist_time) dam_ele = (dam_ele * 6) / (randint(6) + 6);
 
-						case 6: case 7: case 8: case 9:
-							{
-								int stat = rand_int(6);
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
 
-								switch (stat)
-								{
-									case A_STR: act = "strong"; break;
-									case A_INT: act = "bright"; break;
-									case A_WIS: act = "wise"; break;
-									case A_DEX: act = "agile"; break;
-									case A_CON: act = "hardy"; break;
-									case A_CHR: act = "beautiful"; break;
-								}
-
-								msg_format(Ind, "You're not as %s as you used to be...", act);
-								if (safe_area(Ind)) break;
-
-								p_ptr->stat_cur[stat] = (p_ptr->stat_cur[stat] * 3) / 4;
-								if (p_ptr->stat_cur[stat] < 3) p_ptr->stat_cur[stat] = 3;
-								p_ptr->update |= (PU_BONUS);
-								break;
-							}
-
-						case 10:
-							{
-								msg_print(Ind, "You're not as powerful as you used to be...");
-								if (safe_area(Ind)) break;
-
-								for (k = 0; k < 6; k++)
-								{
-									p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
-									if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
-								}
-								p_ptr->update |= (PU_BONUS);
-								break;
-							}
+					switch (p_ptr->resist_time ? randint(9) : randint(10)) {
+					case 1: case 2: case 3: case 4: case 5: {
+						if (p_ptr->lev == 99) msg_print(Ind, "You are unaffected!");
+						else {
+							msg_print(Ind, "You feel life has clocked back.");
+							lose_exp(Ind, 100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+						}
+						break;
+					}
+					case 6: case 7: case 8: case 9: {
+						int stat = rand_int(6);
+						switch (stat) {
+							case A_STR: act = "strong"; break;
+							case A_INT: act = "bright"; break;
+							case A_WIS: act = "wise"; break;
+							case A_DEX: act = "agile"; break;
+							case A_CON: act = "hardy"; break;
+							case A_CHR: act = "beautiful"; break;
+						}
+						msg_format(Ind, "You're not as %s as you used to be...", act);
+						if (safe_area(Ind)) break;
+						p_ptr->stat_cur[stat] = (p_ptr->stat_cur[stat] * 3) / 4;
+						if (p_ptr->stat_cur[stat] < 3) p_ptr->stat_cur[stat] = 3;
+						p_ptr->update |= (PU_BONUS);
+						break;
+					}
+					case 10: {
+						msg_print(Ind, "You're not as powerful as you used to be...");
+						if (safe_area(Ind)) break;
+							for (k = 0; k < 6; k++) {
+							p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
+							if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
+						}
+						p_ptr->update |= (PU_BONUS);
+						break;
+					}
 					}
 					//                                        carried_monster_hit = TRUE;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1939,6 +2362,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_SANITY:
+					/* Special damage */
+					dam_ele = damage; //resistance is applied inside take_sanity_hit()
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 33% physical, 67% elemental */
+						dam_ele = (dam_ele * 2) / 3;
+						damage /= 3;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					obvious = TRUE;
 					msg_print(Ind, "\377RYou shiver in madness..");
 					
@@ -1954,6 +2396,8 @@ bool make_attack_melee(int Ind, int m_idx)
 
 				case RBE_DISARM: /* Note: Shields cannot be disarmed, only weapons can */
 				{
+					/* We assume it's a critical attack that does not get mitigated by armour. */
+
 					int slot = INVEN_WIELD;
 					u32b f1, f2, f3, f4, f5, f6, esp;
 					object_type *o_ptr;
@@ -2066,6 +2510,25 @@ bool make_attack_melee(int Ind, int m_idx)
 				}
 
 				case RBE_FAMINE:
+					/* Special damage */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -2080,6 +2543,25 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_SEDUCE:
+					/* Special damage */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -2093,6 +2575,27 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					break;
 				case RBE_LITE:
+					/* Special damage */
+					dam_ele = damage;
+					if (p_ptr->suscep_lite) dam_ele *= 2;
+					if (p_ptr->resist_lite) dam_ele = (dam_ele * 4) / (randint(6) + 6);
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
@@ -2121,7 +2624,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
-				tmp = monster_critical(d_dice, d_side, damage);
+				tmp = monster_critical(d_dice, d_side, damage_org);
 
 				/* Roll for damage */
 				switch (tmp) {
@@ -2147,7 +2650,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
-				tmp = monster_critical(d_dice, d_side, damage);
+				tmp = monster_critical(d_dice, d_side, damage_org);
 
 				/* Roll for damage */
 				switch (tmp) {
@@ -2525,6 +3028,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 
 		int power = 0;
 		int damage = 0;
+		//int damage_org = 0;
 
 		/* Extract the attack infomation */
 		int effect = m_ptr->blow[ap_cnt].effect;
@@ -2569,6 +3073,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 
 			/* Roll out the damage */
 			damage = damroll(d_dice, d_side);
+			//damage_org = damage;
 
 			/* Apply appropriate damage */
 			switch (effect)
@@ -2635,7 +3140,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
-				tmp = monster_critical(d_dice, d_side, damage);
+				tmp = monster_critical(d_dice, d_side, damage_org);
 
 				/* Roll for damage */
 				switch (tmp)
@@ -2662,7 +3167,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
-				tmp = monster_critical(d_dice, d_side, damage);
+				tmp = monster_critical(d_dice, d_side, damage_org);
 
 				/* Roll for damage */
 				switch (tmp) {

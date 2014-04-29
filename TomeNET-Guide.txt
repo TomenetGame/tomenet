@@ -5966,45 +5966,52 @@ Stun    -Stun           Reduces to-hit and to-dam.
                         Greatly reduces chance for successful spell-casting.
         -Knocked out    You cannot perform any action while knocked out,
                         it leaves your character completely helpless.
-                        Beware! High AC helps to prevent it, see (5.11).
-                        Note that AC only helps against melee-based stun
+                        Beware!
+
+                        High AC helps to avoid melee-based stuns
                         (most famous monster is probably "The Stormbringer"),
                         while stun from sound attacks can only be prevented
                         by having sound resistance.
+
                         Melee-based stun can be caused by HIT, PUNCH, KICK,
                         BUTT and CRUSH type attacks, also see (*) below.
 
 Cut                     Cuts will make you lose HP continuously.
 (Graze, Light cut, Bad cut, Nasty cut, Severe cut, Deep gash, Mortal wound)
-                        Cuts can be caused by HIT, CLAW or BITE type attacks,
-                        also see (*) below.
+                        Cuts can be caused by melee based critical monster hits
+                        or by shard attacks.
+                        By transforming into a monster that has NO_CUT flag
+                        (mostly undead forms), the player becomes immune to
+                        cut effects.
+
+                        Cuts from shards can be avoided with shard resistance.
+
+                        Melee-induced cuts can be caused by HIT, CLAW or BITE
+                        type attacks, also see (*) below.
 
 Poison  -Poisoned       The player will continuously lose Hit Points.
                         Resisting poison will prevent the player from getting
                         poisoned (compare (5.6)).
 
-(*) About melee-induced cuts and stuns:
+(*) Details about melee-induced cuts and stuns:
 For a monster attack to cause cuts or stun, it must deal 95% of its potential
-damage maximum (rounded down). This is also called a 'critical hit' of a
-monster (has nothing to do with the critical-hit mechanics for player attacks).
+damage maximum (rounded down) before mitigation by AC. This is also called a
+'critical hit' of a monster (has nothing to do with the critical-hit mechanics
+for player attacks).
 An attack type ('HIT') that can do both, cut and stun, will randomly do either
-one, but never both at once. The 95% damage criterium is measured for the final
-damage, ie after the damage-reduction of AC has been applied. This is why high
-armour class helps *alot* to prevent any type of cut or stun effect, no matter
-how high the actual potential damage of that attack might be. However, unlike
-the most common damage types (lie 'HURT') certain damage types cannot be
-mitigated by AC and hence their cut/stun potential is always to be reckoned
-with (see damage types in the second table in (5.12), which say so if they can
-be mitigated by AC.)
+one, but never both at once. The 95% damage criterium is measured for the
+damage before it gets reduced by AC. High armour class still helps by making
+the attack actually miss. However, unlike the most common attack types (like
+'HIT') certain attack types bypass AC and will always hit, hence their cut/stun
+potential is always to be reckoned with (see attack types in the first table
+in (5.12)).
 
 Example:
 A Star-Spawn of Cthulhu hits you with its 2d33 CRUSH attack. The attack could
 deal 2..66 damage. This means its potential maximum damage is 66 (if both dice
 rolls turn out a 33 each). 95% of 66 is 62 (rounded down from 62.7), so if that
-hit deals a final damage of 62 or higher, you will get stunned. Note that this
-attack of the Star-Spawn doesn't has a HURT effect but instead an UN_BONUS
-effect. UN_BONUS attacks do not get their damage reduced by AC, so a Star-Spawn
-always has a chance to stun you, even if your AC is very high.
+hit deals a damage (before mitigation by AC) of 62 or higher, you will get
+stunned.
 
 
 (4.11a) Drain effects
@@ -8880,20 +8887,21 @@ For details about parrying and blocking see (6.11).
 Armour class:
 -------------
 Armour class helps you twice:
--It makes monsters miss you more often.
+-It makes monsters miss you more often with attacks that don't bypass armour.
  The more AC the better, it's weighed against the level of the attacking
  monster. If the monster is (heavily) stunned it gets penalties here.
--It reduces the damage if a monster manages to hit you.
+-It reduces the damage if a monster manages to hit you with a physical attack.
  This effect caps at 200 AC.
 
 Monsters can score critical hits which can (depending on the attack type)
 result in a cutting or stunning effect against the player.
-A monster scores a critical hit if it inflicts a damage which is very close to
-its theoretical maximum. Weaker monsters (that don't inflict high amounts of
-damage) aren't able to score critical hits at all.
-The power of the resulting cut/stun depends on the damage too.
-So a high armour class helps a lot, to avoid critical monster hits and to
-reduce their power.
+A monster scores a critical hit if it inflicts a damage before mitigation by AC
+which is very close to its theoretical maximum. Weaker monsters (that don't
+inflict high amounts of damage) aren't able to score critical hits at all.
+The power of the resulting cut/stun depends on the damage after AC mitigation.
+So a high armour class helps a lot to avoid critical monster hits, by reducing
+the chance of monsters hitting you.
+For more information about monster crits, see (4.11).
 
 Basic monsters (that means before any ego-power such as 'Warrior' or 'Holy'
 is applied as in 'Hill troll warrior' or 'Holy 5-headed hydra') have a cap on
@@ -8964,7 +8972,8 @@ UN_POWER        none.(drains charges/energy from your items)
                 Also drains the duration of a polymorph ring form the player is
                 currently mimicking.
 TIME            time.
-DISEASE         poison. This attack can also decrease your constitution.
+DISEASE         poison (effect only - does not decrease damage).
+                This attack can also decrease your constitution.
 INSANITY        none. (mimics using WEIRD_MIND/EMPTY_MIND form resist slightly)
 HALLU           chaos.
 PARASITE        <no effect>
