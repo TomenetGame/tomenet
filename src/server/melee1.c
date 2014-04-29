@@ -27,6 +27,23 @@
  */
 //#define NORMAL_HIT_NO_STUN
 
+/* EXPERIMENTAL and actually not cool, breaking with the traditional system in
+   which a hit is already 'mitigated' by armour simply by the fact that it
+   misses. If enabled, the damage used for calculating monster critical hits
+   is the one _before_ AC mitigation, making them much more common! This is
+   required or Stormbringer would turn into a joke with this system.
+   If this is disabled then we only allow this for base + poison + lite.
+   Allow mitigating elemental damage by splitting it up into elemental and
+   phsyical part if the attack was a melee attack? - C. Blue */
+//#define EXPERIMENTAL_MITIGATION
+
+/* NEW (and sort of experimental - it works well but it might make some
+   monsters too easy compared to others).
+   Allow additional damage mitigation by AC even if the effect is elemental,
+   providing that the attack type indicates a phsyical attack? - C. Blue */
+//#define ELEMENTAL_AC_MITIGATION
+
+
 /*
  * Critical blow.  All hits that do 95% of total possible damage,
  * and which also do at least 20 damage, or, sometimes, N damage.
@@ -568,8 +585,11 @@ bool make_attack_melee(int Ind, int m_idx)
 		bool invuln_applied = FALSE;
 
 		int power = 0;
-		int damage = 0, dam_ele = 0, damage_org = 0;
-		
+		int damage = 0, dam_ele = 0;
+#ifdef EXPERIMENTAL_MITIGATION
+		int damage_org = 0;
+#endif
+
 		bool attempt_block = FALSE, attempt_parry = FALSE;
 
 		cptr act = NULL;
@@ -993,7 +1013,9 @@ bool make_attack_melee(int Ind, int m_idx)
 			/* Roll out the damage */
 			damage = damroll(d_dice, d_side);
 			if (invuln_applied) damage = (damage + 1) / 2;
+#ifdef EXPERIMENTAL_MITIGATION
 			damage_org = damage; /* as a special service, we allow the invuln reduction above to factor in first, to prevent getting ko'ed on stairs :-p */
+#endif
 
 #if 0			
 			/* to prevent cloaking mode from breaking (break_cloaking) if an attack didn't do damage */
@@ -1102,7 +1124,9 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+#ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb (let's keep Osyluths etc dangerous!) */
+#endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 
@@ -1122,6 +1146,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_UN_BONUS:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage;
 					if (p_ptr->resist_disen) dam_ele = (dam_ele * 6) / (randint(6) + 6);
@@ -1138,9 +1163,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1158,6 +1186,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_UN_POWER:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //no resistance
 
@@ -1173,9 +1202,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1282,6 +1314,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EAT_GOLD:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage -- we assume the 'elemental' part stands for the attack
 					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
 					dam_ele = damage; //no resistance
@@ -1298,9 +1331,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1348,6 +1384,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EAT_ITEM:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage -- we assume the 'elemental' part stands for the attack
 					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
 					dam_ele = damage; //no resistance
@@ -1364,9 +1401,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1422,6 +1462,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EAT_FOOD:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage -- we assume the 'elemental' part stands for the attack
 					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
 					dam_ele = damage; //no resistance
@@ -1438,9 +1479,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1484,6 +1528,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EAT_LITE:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage -- we assume the 'elemental' part stands for the attack
 					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
 					dam_ele = damage; //no resistance
@@ -1500,9 +1545,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1554,7 +1602,9 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+#ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+#endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 
@@ -1587,7 +1637,9 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+#ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+#endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 
@@ -1623,7 +1675,9 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+#ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+#endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 
@@ -1656,7 +1710,9 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+#ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+#endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 
@@ -1669,6 +1725,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_BLIND:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage -- we assume the 'elemental' part stands for the attack
 					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
 					dam_ele = damage; //no resistance
@@ -1685,9 +1742,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1705,6 +1765,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_CONFUSE:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage -- we assume the 'elemental' part stands for the attack
 					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
 					dam_ele = damage; //no resistance
@@ -1721,9 +1782,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1741,6 +1805,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_TERRIFY:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage -- we assume the 'elemental' part stands for the attack
 					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
 					dam_ele = damage; //no resistance
@@ -1757,9 +1822,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1783,6 +1851,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_PARALYZE:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage -- we assume the 'elemental' part stands for the attack
 					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
 					dam_ele = damage; //no resistance
@@ -1799,9 +1868,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1825,6 +1897,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_STR:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //no resistance
 
@@ -1840,9 +1913,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1854,6 +1930,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_INT:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //no resistance
 
@@ -1869,9 +1946,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1883,6 +1963,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_WIS:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //no resistance
 
@@ -1898,9 +1979,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1912,6 +1996,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_DEX:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //no resistance
 
@@ -1927,9 +2012,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1941,6 +2029,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_CON:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //no resistance
 
@@ -1956,9 +2045,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1970,6 +2062,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_CHR:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //no resistance
 
@@ -1985,9 +2078,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1999,6 +2095,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_LOSE_ALL:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //no resistance, and very nasty magic damage
 
@@ -2014,9 +2111,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -2052,6 +2152,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EXP_10:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //irresistible (could add hold-life and/or nether-res, but makes bloodletters too weak maybe?)
 
@@ -2067,9 +2168,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Obvious */
 					obvious = TRUE;
@@ -2094,6 +2198,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EXP_20:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //irresistible (could add hold-life and/or nether-res, but makes bloodletters too weak maybe?)
 
@@ -2109,9 +2214,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Obvious */
 					obvious = TRUE;
@@ -2136,6 +2244,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EXP_40:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //irresistible (could add hold-life and/or nether-res, but makes bloodletters too weak maybe?)
 
@@ -2151,9 +2260,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Obvious */
 					obvious = TRUE;
@@ -2178,6 +2290,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_EXP_80:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //irresistible (could add hold-life and/or nether-res, but makes bloodletters too weak maybe?)
 
@@ -2193,9 +2306,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Obvious */
 					obvious = TRUE;
@@ -2221,6 +2337,7 @@ bool make_attack_melee(int Ind, int m_idx)
 
 				/* Additisons from PernAngband	- Jir - */
 				case RBE_DISEASE:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //no resistance
 
@@ -2236,9 +2353,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take some damage */
 					//                                        carried_monster_hit = TRUE;
@@ -2267,6 +2387,7 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					break;
 				case RBE_HALLU:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage -- we assume the 'elemental' part stands for the attack
 					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
 					dam_ele = damage; //no resistance
@@ -2283,9 +2404,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -2315,7 +2439,9 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+#ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 
@@ -2362,6 +2488,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_SANITY:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //resistance is applied inside take_sanity_hit()
 
@@ -2377,9 +2504,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					obvious = TRUE;
 					msg_print(Ind, "\377RYou shiver in madness..");
@@ -2510,6 +2640,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				}
 
 				case RBE_FAMINE:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //no resistance
 
@@ -2525,9 +2656,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -2543,6 +2677,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 
 				case RBE_SEDUCE:
+#ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage */
 					dam_ele = damage; //no resistance
 
@@ -2558,9 +2693,12 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+ #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+#endif
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -2592,7 +2730,9 @@ bool make_attack_melee(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
+#ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+#endif
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 
@@ -2624,7 +2764,11 @@ bool make_attack_melee(int Ind, int m_idx)
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
+#ifndef EXPERIMENTAL_MITIGATION
+				tmp = monster_critical(d_dice, d_side, damage);
+#else
 				tmp = monster_critical(d_dice, d_side, damage_org);
+#endif
 
 				/* Roll for damage */
 				switch (tmp) {
@@ -2650,7 +2794,11 @@ bool make_attack_melee(int Ind, int m_idx)
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
+#ifndef EXPERIMENTAL_MITIGATION
+				tmp = monster_critical(d_dice, d_side, damage);
+#else
 				tmp = monster_critical(d_dice, d_side, damage_org);
+#endif
 
 				/* Roll for damage */
 				switch (tmp) {
@@ -3028,7 +3176,9 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 
 		int power = 0;
 		int damage = 0;
+//#ifndef EXPERIMENTAL_MITIGATION
 		//int damage_org = 0;
+//#endif
 
 		/* Extract the attack infomation */
 		int effect = m_ptr->blow[ap_cnt].effect;
@@ -3073,7 +3223,9 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 
 			/* Roll out the damage */
 			damage = damroll(d_dice, d_side);
+//#ifndef EXPERIMENTAL_MITIGATION
 			//damage_org = damage;
+//#endif
 
 			/* Apply appropriate damage */
 			switch (effect)
@@ -3140,7 +3292,11 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
+//#ifndef EXPERIMENTAL_MITIGATION
+				tmp = monster_critical(d_dice, d_side, damage);
+//#else
 				tmp = monster_critical(d_dice, d_side, damage_org);
+//#endif
 
 				/* Roll for damage */
 				switch (tmp)
@@ -3167,8 +3323,11 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 				int k = 0;
 
 				/* Critical hit (zero if non-critical) */
+//#ifndef EXPERIMENTAL_MITIGATION
+				tmp = monster_critical(d_dice, d_side, damage);
+//#else
 				tmp = monster_critical(d_dice, d_side, damage_org);
-
+//#endif
 				/* Roll for damage */
 				switch (tmp) {
 					case 0: k = 0; break;
