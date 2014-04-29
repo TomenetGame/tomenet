@@ -5095,6 +5095,13 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		o_ptr = &o_list[0 - item];
 	}
 
+	/* dual-wield hack: cannot activate items if armour is too heavy.
+	   Spectral weapons will not drain life either ;). */
+	if (item == INVEN_ARM && o_ptr->tval != TV_SHIELD && p_ptr->rogue_heavyarmor) {
+		msg_format(Ind, "\377oYour armour is too heavy for dual-wielding, preventing activation of your secondary weapon.");
+		return;
+	}
+
 	if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		if (p_ptr->anti_magic) {
 			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
