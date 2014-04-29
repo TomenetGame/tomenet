@@ -1083,13 +1083,19 @@ bool make_attack_melee(int Ind, int m_idx)
 
 				case RBE_POISON:
 					/* Special damage */
+					dam_ele = damage;
+					if (p_ptr->immune_poison) dam_ele = 0;
+					if (p_ptr->suscep_pois) dam_ele = dam_ele * 2;
+					if (p_ptr->resist_pois) dam_ele = (dam_ele + 2) / 3;
+					if (p_ptr->oppose_pois) dam_ele = (dam_ele + 2) / 3;
+
 					switch (method) {
 					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
 					case RBM_CLAW: case RBM_BITE: case RBM_STING:
 					case RBM_BUTT: case RBM_CRUSH:
 						/* 50% physical, 50% elemental */
-						dam_ele = (damage * 2) / 4;
-						damage = (damage * 2) / 4;
+						dam_ele = dam_ele / 2;
+						damage = damage / 2;
 						break;
 					default:
 						/* 100% elemental */
