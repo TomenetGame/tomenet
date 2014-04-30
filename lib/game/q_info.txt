@@ -34,7 +34,7 @@ V:1.0.0
 #(Parameters from here on, except for keywords/keywordreplies, are all individual per quest stage)
 
 # (optional - stage automatics) A:stage:spawn quest (-1 to disable):auto-accept it (2=quietly):change stage (255 to disable):0:timed change at ingame hour (-1 to disable):timed change after realtime minutes (0 to disable):change quietly (skip stage dialogue):set/clear flags:genocide-wpos x:y:z (set x==-1 to disable)
-# (optional, up to 15x) Af:stage:questor's wpos (1..n, 0 to use specific wpos):quest item wpos:specific wpos wx:wy:wz:pos x:y:grid feature to be 'built' there on stage start (see f_info.txt)
+# (optional, up to 15x) Af:stage:questor's wpos (0..n, 255 to use specific wpos instead):quest item wpos (0..n, 255 to use specific wpos instead):specific wpos wx:wy:wz:pos x:y:grid feature to be 'built' there on stage start (see f_info.txt)
 
 # (optional, up to 5x - quest items) B:stage:<spawn special quest item> pval (can be used as sort of an index for retrieval quest goals):char:attr:weight:level:name
 # (for each B line) Bl:stage:questorhandout (-1 to disable):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
