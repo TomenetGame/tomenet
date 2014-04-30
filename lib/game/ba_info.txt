@@ -142,7 +142,7 @@ I:25:0:r:2
 N:27:Identify possessions
 C:2200:1900:1600
 #I:26:0:D:0
-I:26:0:I:0
+I:26:0:s:0
 
 N:28:Healing prayer
 C:600:400:200
@@ -226,7 +226,7 @@ I:1:0:a:2
 N:46:Identify possessions
 C:2400:2000:1600
 #I:26:0:D:0
-I:26:0:I:0
+I:26:0:s:0
 
 #for Star-Dome
 N:47:Recharge item
@@ -307,7 +307,7 @@ I:57:0:c:0
 
 N:64:Redeem deed for an item
 C:0:0:0
-I:58:0:i:2
+I:58:0:t:2
 
 N:65:Redeem deed for a blessing
 C:0:0:0
