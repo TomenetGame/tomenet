@@ -2719,9 +2719,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			t = object_desc_int(t, o_ptr->to_a);
 			t = object_desc_chr(t, b2);
 #else
-			t = object_desc_chr(t, p1);
+			t = object_desc_chr(t, b1);
 			t = object_desc_per(t, o_ptr->ac);
-			t = object_desc_chr(t, p2);
+			t = object_desc_chr(t, b2);
 #endif
 		}
 		/* No base armor, but does increase armor */
