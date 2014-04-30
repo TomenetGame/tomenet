@@ -3548,6 +3548,10 @@ static int Receive_login(int ind){
 			sflags1 |= SFLG1_BIG_MAP;
 #endif
 
+#ifdef NEW_SHIELDS_NO_AC
+			sflags1 |= SFLG1_NEW_SHIELDS_NO_AC;
+#endif
+
 			/* Set temporary flags */
 			sflags2 = sflags_TEMP;
 
