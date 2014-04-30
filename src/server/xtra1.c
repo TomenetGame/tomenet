@@ -4047,18 +4047,26 @@ void calc_boni(int Ind) {
 #endif
 		p_ptr->dis_ac += o_ptr->ac;
 
+#ifndef NEW_SHIELDS_NO_AC
 		/* Apply the bonuses to armor class */
 		if (o_ptr->tval == TV_SHIELD && p_ptr->heavy_shield)
 			p_ptr->to_a += o_ptr->to_a / 2;
 		else
 			p_ptr->to_a += o_ptr->to_a;
+#else
+		p_ptr->to_a += o_ptr->to_a;
+#endif
 
 		/* Apply the mental bonuses to armor class, if known */
 		if (object_known_p(Ind, o_ptr)) {
+#ifndef NEW_SHIELDS_NO_AC
 			if (o_ptr->tval == TV_SHIELD && p_ptr->heavy_shield)
 				p_ptr->dis_to_a += o_ptr->to_a / 2;
 			else
 				p_ptr->dis_to_a += o_ptr->to_a;
+#else
+			p_ptr->dis_to_a += o_ptr->to_a;
+#endif
 		}
 
 

@@ -1202,8 +1202,9 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	for (i = istart; i <= iend; i++) {
 		o_ptr = &p_ptr->inventory[i];
 
-		/* item in this equipment slot? */
+		/* eligible item in this equipment slot? */
 		if (!o_ptr->tval) continue;
+		if (!is_enchantable(o_ptr)) continue;
 
 		if (ispecific > 0 && o_ptr->tval != ispecific) continue;
 

@@ -192,6 +192,7 @@ extern bool item_tester_hook_armour(object_type *o_ptr);
 extern bool item_tester_hook_weapon(object_type *o_ptr);
 extern bool item_tester_hook_custom_tome(object_type *o_ptr);
 extern bool item_tester_hook_rune(object_type *o_ptr);
+extern bool item_tester_hook_armour_no_shield(object_type *o_ptr);
 
 extern int special_line_type;
 extern int special_page_size;

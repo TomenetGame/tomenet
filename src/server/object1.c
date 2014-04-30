@@ -2712,11 +2712,17 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			t = object_desc_chr(t, b2);
 		} else if (show_shield) {
 			if (!(mode & 8)) t = object_desc_chr(t, ' ');
+#ifndef NEW_SHIELDS_NO_AC
 			t = object_desc_chr(t, b1);
 			t = object_desc_per(t, o_ptr->ac);
 			t = object_desc_chr(t, ',');
 			t = object_desc_int(t, o_ptr->to_a);
 			t = object_desc_chr(t, b2);
+#else
+			t = object_desc_chr(t, p1);
+			t = object_desc_per(t, o_ptr->ac);
+			t = object_desc_chr(t, p2);
+#endif
 		}
 		/* No base armor, but does increase armor */
 		else if (o_ptr->to_a) {
@@ -3882,6 +3888,9 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff) {
 //		if (fff) fprintf(fff, "\n");
 	}
 
+#ifdef NEW_SHIELDS_NO_AC
+	if (o_ptr->tval != TV_SHIELD)
+#endif
 	if (fff) fprintf(fff, "\377sUsing it you would have \377W%d\377s total AC.\n", p_ptr->dis_ac + p_ptr->dis_to_a);
 //	else msg_format(Ind, "\377s  Using it you would have %d total AC.", p_ptr->dis_ac + p_ptr->dis_to_a);
 

@@ -2563,8 +2563,12 @@ int equip_damage(int Ind, int typ) {
 	if (p_ptr->admin_dm) return(FALSE);
 
 	/* Pick a (possibly empty) inventory slot */
+#if !defined(NEW_SHIELDS_NO_AC) || !defined(USE_NEW_SHIELDS)
 //	switch (rand_int(is_weapon(p_ptr->inventory[INVEN_ARM].tval) ? 5 : 6)) { /* in case of DUAL_WIELD */
 	switch (rand_int(p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD ? 6 : 5)) { /* in case of DUAL_WIELD */
+#else
+	switch (rand_int(5)) {
+#endif
 	case 0: o_ptr = &p_ptr->inventory[INVEN_BODY]; break;
 	case 1: o_ptr = &p_ptr->inventory[INVEN_OUTER]; break;
 	case 2: o_ptr = &p_ptr->inventory[INVEN_HANDS]; break;
@@ -2620,6 +2624,7 @@ int equip_damage(int Ind, int typ) {
  * Acid or water has hit the player but he blocked it. Damage the shield! - C. Blue
  * Note that the "base armor" of an object never changes.
  */
+#ifndef NEW_SHIELDS_NO_AC
 int shield_takes_damage(int Ind, int typ) {
 	player_type	*p_ptr = Players[Ind];
 	object_type	*o_ptr = &p_ptr->inventory[INVEN_ARM];
@@ -2653,11 +2658,11 @@ int shield_takes_damage(int Ind, int typ) {
 	if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) return FALSE;
 
 	/* No damage left to be done */
-#ifdef USE_NEW_SHIELDS
+ #ifdef USE_NEW_SHIELDS
 	if (o_ptr->ac + o_ptr->to_a * 2 <= 0) return (FALSE);
-#else
+ #else
 	if (o_ptr->ac + o_ptr->to_a <= 0) return (FALSE);
-#endif
+ #endif
 
 	/* Describe */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -2677,6 +2682,7 @@ int shield_takes_damage(int Ind, int typ) {
 	/* Item was damaged */
 	return (TRUE);
 }
+#endif
 
 int weapon_takes_damage(int Ind, int typ, int slot) {
 	player_type	*p_ptr = Players[Ind];
@@ -8641,12 +8647,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->shield_deflect && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect) / ((flg & PROJECT_LODF) ? 2 : 1))) {
 			if (blind) msg_format(Ind, "\377%cSomething glances off your shield!", COLOUR_BLOCK_GOOD);
 			else msg_format(Ind, "\377%cYou deflect %s attack!", COLOUR_BLOCK_GOOD, m_name_gen);
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
                         if (p_ptr->sfx_defense) sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);//not block_shield_projectile (silly for magical attacks)
-#endif
+ #endif
 
+ #ifndef NEW_SHIELDS_NO_AC
 			/* if we hid behind the shield from an acidic attack, damage the shield probably! */
 			if (magik((dam < 5 ? 5 : (dam < 50 ? 10 : 25)))) shield_takes_damage(Ind, typ);
+ #endif
 
 			disturb(Ind, 1, 0);
 			return TRUE;
@@ -8662,8 +8670,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (blind) msg_format(Ind, "\377%cSomething hurls along your shield!", COLOUR_BLOCK_GOOD);
 			else msg_format(Ind, "\377%cYou cover before %s attack!", COLOUR_BLOCK_GOOD, m_name_gen);
 
+ #ifndef NEW_SHIELDS_NO_AC
 			/* if we hid behind the shield from an acidic attack, damage the shield probably! */
 			if (magik((dam < 5 ? 5 : (dam < 50 ? 10 : 25)))) shield_takes_damage(Ind, typ);
+ #endif
 
 			disturb(Ind, 1, 0);
 			return TRUE;

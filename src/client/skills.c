@@ -683,7 +683,7 @@ bool item_tester_hook_custom_tome(object_type *o_ptr) {
 
 #if 0
 	/* and even check for blank pages left */
-#if 0 /* we don't know bpval! */
+ #if 0 /* we don't know bpval! */
         switch (o_ptr->bpval) {
         case 0: i = 0; break;
         case 1: if (o_ptr->xtra1) i = 0; break;
@@ -696,7 +696,7 @@ bool item_tester_hook_custom_tome(object_type *o_ptr) {
         case 8: if (o_ptr->xtra8) i = 0; break;
         default: if (o_ptr->xtra9) i = 0; break;
         }
-#else /* hard-code, ouch */
+ #else /* hard-code, ouch */
         switch (o_ptr->sval) {
         case 100:
     		if (o_ptr->xtra3) free = FALSE;
@@ -708,10 +708,13 @@ bool item_tester_hook_custom_tome(object_type *o_ptr) {
     		if (o_ptr->xtra5) free = FALSE;
     		break;
         }
-#endif
+ #endif
 
 	return free;
 #endif
+}
+bool item_tester_hook_armour_no_shield(object_type *o_ptr) {
+	return (is_armour(o_ptr->tval) && o_ptr->tval != TV_SHIELD);
 }
 
 /*

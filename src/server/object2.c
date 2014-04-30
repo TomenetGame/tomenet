@@ -2324,8 +2324,8 @@ static int artifact_flag_rating_armour(object_type *o_ptr) {
 	return total;
 }
 
-/* Return rating for especially useful weapon, that means
-   armour that has top +hit and especially +dam, and at the
+/* Return rating for especially useful weapons, that means a
+   weapon that has top +hit and especially +dam, and at the
    same time useful damage mods such as EA/Vamp/Crit. - C. Blue */
 static int artifact_flag_rating_weapon(object_type *o_ptr) {
 	s32b total = 0;
@@ -4476,7 +4476,11 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 #ifdef USE_NEW_SHIELDS  /* should actually be USE_BLOCKING, but could be too */
                         /* dramatic a change if it gets enabled temporarily - C. Blue */
 	if (o_ptr->tval == TV_SHIELD) {
+ #ifndef NEW_SHIELDS_NO_AC
 		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
+ #else
+		o_ptr->to_a = 0;
+ #endif
 	} else
 #endif
 	{
@@ -6721,6 +6725,8 @@ static int reward_melee_check(player_type *p_ptr, long int treshold) {
 	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) return selection;
 	/* ..not if we're rogues anyway */
 	if (p_ptr->pclass == CLASS_ROGUE) return selection;
+	/* player's form cannot equip shields? */
+	if (!item_tester_hook_wear(p_ptr->Ind, INVEN_ARM)) return selection;
 //Nope, they can!	if (p_ptr->pclass == CLASS_SHAMAN) return(selection); /* shamans cannot cast magic well with shield. */
 	switch (selection) {
 	case 1: if magik(50) selection = 6; break;

@@ -936,6 +936,7 @@ bool make_attack_melee(int Ind, int m_idx)
 			    (!p_ptr->inventory[INVEN_WIELD].k_idx || magik(p_ptr->combat_stance == 1 ? 75 : 50))) {
 				if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
 					msg_format(Ind, "\377%cYou block %^s attack.", COLOUR_BLOCK_GOOD, m_name_gen);
+  #ifndef NEW_SHIELDS_NO_AC
 					if (mon_acid + mon_fire) {
 						if (randint(mon_acid + mon_fire) > mon_acid) {
 							if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
@@ -943,6 +944,7 @@ bool make_attack_melee(int Ind, int m_idx)
 							if (magik(10)) shield_takes_damage(Ind, GF_ACID);
 						}
 					}
+  #endif
 					continue;
 				}
 			}
@@ -982,6 +984,7 @@ bool make_attack_melee(int Ind, int m_idx)
  #ifdef USE_BLOCKING
 			if (attempt_block && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
 				msg_format(Ind, "\377%cYou block %^s attack.", COLOUR_BLOCK_GOOD, m_name_gen);
+  #ifndef NEW_SHIELDS_NO_AC
 				if (mon_acid + mon_fire) {
 					if (randint(mon_acid + mon_fire) > mon_acid) {
 						if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
@@ -989,6 +992,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						if (magik(10)) shield_takes_damage(Ind, GF_ACID);
 					}
 				}
+  #endif
 				continue;
 			}
  #endif

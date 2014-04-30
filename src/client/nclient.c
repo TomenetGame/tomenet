@@ -2153,6 +2153,9 @@ int Receive_item(void) {
 		case ITH_RUNE:
 			item_tester_hook = item_tester_hook_rune;
 			break;
+		case ITH_ENCH_AC_NO_SHIELD:
+			item_tester_hook = item_tester_hook_armour_no_shield;
+			break;
 		}
 
 		clear_topline();

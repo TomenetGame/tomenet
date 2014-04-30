@@ -203,6 +203,8 @@
 #ifdef ENABLE_NEW_MELEE
  #ifndef USE_NEW_SHIELDS
   #define USE_NEW_SHIELDS
+  /* Shields do not have an +AC modifier anymore (aka it's zeroed)? - Note that shields still count as is_armour() though */
+  #define NEW_SHIELDS_NO_AC
  #endif
 /* Use blocking/parrying? if USE_NEW_SHIELDS is disabled, AC will be used to determine block chance */
  #ifndef USE_BLOCKING

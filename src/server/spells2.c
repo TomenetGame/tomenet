@@ -3019,6 +3019,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* Unenchantable items always fail */
+	if (!is_enchantable(o_ptr)) return FALSE;
 	if (f5 & TR5_NO_ENCHANT) return (FALSE);
 	/* Artifacts cannot be enchanted. */
 	if (a) return (FALSE);
@@ -3334,11 +3335,14 @@ bool curse_spell_aux(int Ind, int item)
 	return(TRUE);
 }
 
-bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags)
-{
+bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags) {
 	player_type *p_ptr = Players[Ind];
 
+#ifndef NEW_SHIELDS_NO_AC
 	get_item(Ind, num_ac ? ITH_ENCH_AC : ITH_ENCH_WEAP);
+#else
+	get_item(Ind, num_ac ? ITH_ENCH_AC_NO_SHIELD : ITH_ENCH_WEAP);
+#endif
 
 	/* Clear any other pending actions - mikaelh */
 	clear_current(Ind);
@@ -3360,8 +3364,7 @@ bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags)
  * //deprecated//For now, 'flags' is the chance of the item getting 'discounted'
  * in the process.
  */
-bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, int flags)
-{
+bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, int flags) {
 	player_type *p_ptr = Players[Ind];
 	bool		okay = FALSE;
 	object_type		*o_ptr;
@@ -3379,9 +3382,13 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	else o_ptr = &o_list[0 - item];
 
 
-	if (!item_tester_hook(o_ptr)) {
+	if (!item_tester_hook(o_ptr) || !is_enchantable(o_ptr)) {
 		msg_print(Ind, "Sorry, you cannot enchant that item.");
+#ifndef NEW_SHIELDS_NO_AC
 		get_item(Ind, num_ac ? ITH_ENCH_AC : ITH_ENCH_WEAP);
+#else
+		get_item(Ind, num_ac ? ITH_ENCH_AC_NO_SHIELD : ITH_ENCH_WEAP);
+#endif
 		return (FALSE);
 	}
 

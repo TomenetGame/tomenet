@@ -1223,7 +1223,11 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	case TV_SHIELD:
 #ifdef USE_NEW_SHIELDS  /* should actually be USE_BLOCKING, but could be too */
                         /* dramatic a change if it gets enabled temporarily - C. Blue */
+ #ifndef NEW_SHIELDS_NO_AC
 		if (a_ptr->to_a > 15) a_ptr->to_a = 15;
+ #else
+		a_ptr->to_a = 0;
+ #endif
 		break;
 #endif
 	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
@@ -1442,7 +1446,11 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	case TV_SHIELD:
 #ifdef USE_NEW_SHIELDS  /* should actually be USE_BLOCKING, but could be too */
                         /* dramatic a change if it gets enabled temporarily - C. Blue */
+ #ifndef NEW_SHIELDS_NO_AC
 		if (a_ptr->to_a > 15) a_ptr->to_a = 15;
+ #else
+		a_ptr->to_a = 0;
+ #endif
 		break;
 #endif
 	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
@@ -1880,8 +1888,12 @@ artifact_type *randart_make(object_type *o_ptr) {
 	}
 
 #ifdef USE_NEW_SHIELDS
+ #ifndef NEW_SHIELDS_NO_AC
 	/* Shields always get maximum of 15 */
 	if (k_ptr->tval == TV_SHIELD) a_ptr->to_a = 15;
+ #else
+	if (k_ptr->tval == TV_SHIELD) a_ptr->to_a = 0;
+ #endif
 #endif
 
 	/* Art ammo doesn't get great hit/dam in general. */
@@ -2096,7 +2108,11 @@ void apply_enchantment_limits(object_type *o_ptr) {
 	case TV_SHIELD:
 #ifdef USE_NEW_SHIELDS	/* should actually be USE_BLOCKING, but could be too */
 			/* dramatic a change if it gets enabled temporarily - C. Blue */
+ #ifndef NEW_SHIELDS_NO_AC
 		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
+ #else
+		o_ptr->to_a = 0;
+ #endif
 		return;
 #endif
 	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:

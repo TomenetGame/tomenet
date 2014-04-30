@@ -1445,7 +1445,9 @@ extern int set_water_destroy(object_type *o_ptr);
 extern int equip_damage(int Ind, int typ);
 extern int inven_damage(int Ind, inven_func typ, int perc);
 extern int weapon_takes_damage(int Ind, int typ, int slot);
+#ifndef NEW_SHIELDS_NO_AC
 extern int shield_takes_damage(int Ind, int typ);
+#endif
 
 extern bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval);
 extern void teleport_to_player(int Ind, int m_idx);

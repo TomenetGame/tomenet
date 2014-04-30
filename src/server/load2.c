@@ -488,7 +488,11 @@ static void rd_item(object_type *o_ptr)
 	if (o_ptr->tval == TV_SHIELD)
 	{/* CAP_ITEM_BONI */
 		/* if (o_ptr->to_a > 15) o_ptr->to_h = 15; */ // this must've been wrong - mikaelh
+ #ifndef NEW_SHIELDS_NO_AC
 		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
+ #else
+		o_ptr->to_a = 0;
+ #endif
 	}
 #endif
 	/* Fix shields base AC or percentage, in case USE_NEW_SHIELDS has been toggled. */
