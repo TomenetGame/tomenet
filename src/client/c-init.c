@@ -1736,7 +1736,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 #ifdef USE_NEW_SHIELDS
 					if (tval == TV_SHIELD)
  #ifdef NEW_SHIELDS_NO_AC
-						sprintf(info_tmp, "AC: \377%c(%d%%)\377%c", a_val, v_ac, a_key);
+						sprintf(info_tmp, "Base block chance: \377%c%d%%\377%c", a_val, v_ac, a_key);
  #else
 						sprintf(info_tmp, "AC: \377%c[%d%%,%s%d]\377%c", a_val, v_ac, v_acx < 0 ? "" : "+", v_acx, a_key);
  #endif
