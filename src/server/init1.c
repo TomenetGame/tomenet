@@ -8037,6 +8037,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_feat->x = x;
 				q_feat->y = y;
 				q_feat->feat = feat;
+				continue;
 			}
 			return -1;
 		}
