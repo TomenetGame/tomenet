@@ -717,8 +717,14 @@
   #define AC_CAP	250
   #define AC_CAP_DIV	350
  #else
-  #define AC_CAP	200
-  #define AC_CAP_DIV	300
+  #ifndef TO_AC_CAP_30
+   #define AC_CAP	200
+   #define AC_CAP_DIV	300
+  #else
+    /* for now the same - could reduce cap to 175 or even 150 */
+   #define AC_CAP	200
+   #define AC_CAP_DIV	300
+  #endif
  #endif
 #else
  #define AC_CAP		150

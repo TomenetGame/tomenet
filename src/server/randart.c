@@ -275,8 +275,13 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 		i = a_ptr->to_a - 10 - k_ptr->to_a / 2 - k_ptr->level / 15;
 		p += (i + 3 * sign(i)) / 4;
 		if (i > 20) p += (i - 20) / 2;
+ #ifndef TO_AC_CAP_30
 		if (a_ptr->to_a > 30) p += (a_ptr->to_a - 30) / 2; /* always costly */
 		if (a_ptr->to_a > 35) p += 20000;	/* inhibit */
+ #else
+		if (a_ptr->to_a > 25) p += (a_ptr->to_a - 25) / 2; /* always costly */
+		if (a_ptr->to_a > 30) p += 20000;	/* inhibit */
+ #endif
 	}
 #endif
 
@@ -1230,7 +1235,11 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	case TV_GLOVES:
 		if (a_ptr->to_h > 6) a_ptr->to_h = 6;
 		if (a_ptr->to_d > 6) a_ptr->to_d = 6;
+#ifndef TO_AC_CAP_30
 		if (a_ptr->to_a > 35) a_ptr->to_a = 35;
+#else
+		if (a_ptr->to_a > 30) a_ptr->to_a = 30;
+#endif
 		break;
 	case TV_SHIELD:
 #ifdef USE_NEW_SHIELDS  /* should actually be USE_BLOCKING, but could be too */
@@ -1245,7 +1254,11 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
 	case TV_CLOAK: case TV_HELM: case TV_CROWN: case TV_BOOTS:
 //		if (a_ptr->to_a > 50) a_ptr->to_a = 50;
+#ifndef TO_AC_CAP_30
 		if (a_ptr->to_a > 35) a_ptr->to_a = 35;
+#else
+		if (a_ptr->to_a > 30) a_ptr->to_a = 30;
+#endif
 		break;
 	case TV_BOW:
 	case TV_BOOMERANG:
@@ -1453,7 +1466,11 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	case TV_GLOVES:
 		if (a_ptr->to_h > 6) a_ptr->to_h = 6;
 		if (a_ptr->to_d > 6) a_ptr->to_d = 6;
+#ifndef TO_AC_CAP_30
 		if (a_ptr->to_a > 35) a_ptr->to_a = 35;
+#else
+		if (a_ptr->to_a > 30) a_ptr->to_a = 30;
+#endif
 		break;
 	case TV_SHIELD:
 #ifdef USE_NEW_SHIELDS  /* should actually be USE_BLOCKING, but could be too */
@@ -1468,7 +1485,11 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
 	case TV_CLOAK: case TV_HELM: case TV_CROWN: case TV_BOOTS:
 //		if (a_ptr->to_a > 50) a_ptr->to_a = 50;
+#ifndef TO_AC_CAP_30
 		if (a_ptr->to_a > 35) a_ptr->to_a = 35;
+#else
+		if (a_ptr->to_a > 30) a_ptr->to_a = 30;
+#endif
 		break;
 	case TV_BOW:
 	case TV_BOOMERANG:
@@ -1896,7 +1917,11 @@ artifact_type *randart_make(object_type *o_ptr) {
 		a_ptr->to_a += k_ptr->level / 15;
 
 		/* fix limit */
+#ifndef TO_AC_CAP_30
 		if (a_ptr->to_a > 35) a_ptr->to_a = 35;
+#else
+		if (a_ptr->to_a > 30) a_ptr->to_a = 30;
+#endif
 	}
 
 #ifdef USE_NEW_SHIELDS
@@ -2129,7 +2154,11 @@ void apply_enchantment_limits(object_type *o_ptr) {
 #endif
 	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
 	case TV_CLOAK: case TV_HELM: case TV_CROWN: case TV_GLOVES: case TV_BOOTS:
+#ifndef TO_AC_CAP_30
 		if (o_ptr->to_a > 35) o_ptr->to_a = 35;
+#else
+		if (o_ptr->to_a > 30) o_ptr->to_a = 30;
+#endif
 		return;
 
 	case TV_BOLT:

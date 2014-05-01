@@ -4485,7 +4485,11 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 #endif
 	{
 //		if (o_ptr->to_a > 50) o_ptr->to_a = 50;
+#ifndef TO_AC_CAP_30
 		if (o_ptr->to_a > 35) o_ptr->to_a = 35;
+#else
+		if (o_ptr->to_a > 30) o_ptr->to_a = 30;
+#endif
 	}
 }
 

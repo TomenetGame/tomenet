@@ -467,14 +467,17 @@ static void rd_item(object_type *o_ptr)
 	rd_s16b(&o_ptr->to_d);
 	rd_s16b(&o_ptr->to_a);
 
-/* DEBUGGING PURPOSES - the_sandman */
-#if 0
+
+	/* -------------------- Fix erroneus item parameters -------------------- */
+
+#if 0 /* DEBUGGING PURPOSES - the_sandman */
 	if (o_ptr->tval == 46)
 	 {
 	  s_printf("TRAP_DEBUG: Trap with s_val:%d,to_h:%d,to_d:%d,to_a:%d loaded\n",
 				o_ptr->sval, o_ptr->to_h, o_ptr->to_d, o_ptr->to_a);
 	 }
 #endif
+
 #if 0 /* should all be fixed now hopefully - C. Blue */
 	/* Cap all old non-trueart bows - mikaelh */
 	if (o_ptr->tval == TV_BOW && (o_ptr->name1 == 0 || o_ptr->name1 == ART_RANDART))
@@ -483,11 +486,11 @@ static void rd_item(object_type *o_ptr)
 		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
 	}
 #endif
+
 #ifdef USE_NEW_SHIELDS
 	/* Cap all old shields' +ac - C. Blue */
 	if (o_ptr->tval == TV_SHIELD)
 	{/* CAP_ITEM_BONI */
-		/* if (o_ptr->to_a > 15) o_ptr->to_h = 15; */ // this must've been wrong - mikaelh
  #ifndef NEW_SHIELDS_NO_AC
 		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
  #else
@@ -495,16 +498,27 @@ static void rd_item(object_type *o_ptr)
  #endif
 	}
 #endif
+
+#if 0 /* should all be fixed by now */
 	/* Fix shields base AC or percentage, in case USE_NEW_SHIELDS has been toggled. */
 	if (o_ptr->tval == TV_SHIELD) {
 		o_ptr->ac = k_info[o_ptr->k_idx].ac;
-		/* Fix to_h being set on shields (see above) - mikaelh */
+		/* Fix to_h being set on shields (see above) - mikaelh (removed above bad code - C. Blue) */
 		o_ptr->to_h = 0;
 	}
+#endif
 
+#ifdef TO_AC_CAP_30
+	/* CAP_ITEM_BONI */
+	if (o_ptr->to_a > 30 && !true_artifact_p(o_ptr)) o_ptr->to_a = 30;
+#endif
+
+#if 0 /* should all be fixed by now */
 	/* Fix rods that got 'double-timeout' by erroneous discharge function*/
 	if (o_ptr->tval == TV_ROD) o_ptr->timeout = 0;
+#endif
 
+#if 0 /* should all be fixed by now */
 	if (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_FEANORIAN) {
 		if (o_ptr->level < 30) {
 			if (o_ptr->name2 || o_ptr->name2b)
@@ -513,6 +527,10 @@ static void rd_item(object_type *o_ptr)
 				o_ptr->level = 31;
 		}
 	}
+#endif
+
+	/* ---------------------------------------------------------------------- */
+
 
 	rd_s16b(&old_ac);
 

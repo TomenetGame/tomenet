@@ -5727,7 +5727,11 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr->timeout = 0;
 					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
 
+#ifndef TO_AC_CAP_30
 					if (o_ptr->to_a > 35) break;
+#else
+					if (o_ptr->to_a > 30) break;
+#endif
 					tries++;
 				}
 				if (!tries) msg_format(Ind, "Re-rolling failed, %d tries.", tries);
