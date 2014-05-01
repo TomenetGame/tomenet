@@ -267,7 +267,11 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	   2) We don't take into account +hit/+dam here for rings/amulets (see above, end of weapons), although we do for their +AC.
 	   - C. Blue */
 #ifdef AP_JEWELRY_COMBAT
-	if (a_ptr->tval != TV_RING && a_ptr->tval != TV_AMULET) {
+	if (a_ptr->tval != TV_RING && a_ptr->tval != TV_AMULET
+ #ifdef NEW_SHIELDS_NO_AC
+	    && a_ptr->tval != TV_SHIELD
+ #endif
+	    ) {
 		i = a_ptr->to_a - 10 - k_ptr->to_a / 2 - k_ptr->level / 15;
 		p += (i + 3 * sign(i)) / 4;
 		if (i > 20) p += (i - 20) / 2;
