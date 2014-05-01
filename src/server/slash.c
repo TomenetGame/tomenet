@@ -5597,7 +5597,7 @@ void do_slash_cmd(int Ind, char *message)
 				int min_pval = -999, min_ap = -999, tries = 1000, min_todam = -999;
 				bool no_am = FALSE, no_aggr = FALSE;
 				int th ,td ,ta; //for retaining jewelry properties in case they get inverted by cursing
-				if (tk < 1 || tk > 4) {
+				if (tk < 1 || tk > 6) {
 					msg_print(Ind, "\377oUsage: /reart <inventory-slot> [+<min pval>] [<min artifact power>] [D<dam>] [A] [R]");
 					return;
 				}
