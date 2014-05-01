@@ -5059,11 +5059,13 @@ void monster_death(int Ind, int m_idx) {
 	unique_quark = 0;
 
 	/* Take note of any dropped treasure */
+#if 0
 	/* XXX this doesn't work for now.. (not used anyway) */
 	if (visible && (dump_item || dump_gold)) {
 		/* Take notes on treasure */
 		lore_treasure(m_idx, dump_item, dump_gold);
 	}
+#endif
 
 	/* Get credit for unique monster kills */
 	if (r_ptr->flags1 & RF1_UNIQUE) {
