@@ -5602,7 +5602,7 @@ static void scan_objs() {
 						delete_object_idx(i, TRUE);
 						dcnt++;
 					}
-				} else if (++o_ptr->marked >= ((artifact_p(o_ptr) ||
+				} else if (++o_ptr->marked >= ((like_artifact_p(o_ptr) || /* stormy too */
 				    (o_ptr->note && !o_ptr->owner))?
 				    cfg.surface_item_removal * 3 : cfg.surface_item_removal)
 				    + (o_ptr->marked2 == ITEM_REMOVAL_DEATH_WILD ? cfg.death_wild_item_removal : 0)
