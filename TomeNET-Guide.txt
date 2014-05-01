@@ -15445,28 +15445,36 @@ General mods:
 -------------
 (Note: The probability isn't equal for each mod)
 
-        Bonus on any stats (has chance to include sustenance for that stat;
-                            wisdom might also include 'Blessed' flag)
-        Sustenances on any stats (has chance to include bonus for that stat)
+        Bonus on any stats
+            (has chance to include sustenance for that stat;
+            wisdom might also include 'Blessed' flag)
+        Sustenances on any stats
+            (has chance to include bonus for that stat)
         Stealth
         Searching
         Speed
-        Any base immunities (acid/elec/fire/cold). Note: A randart cannot have
-                                                   more than two immunities!
+            (cannot spawn on shields)
+        Any base immunities:
+            Acid, Electricity, Fire, Cold.
+            (A randart cannot have more than two immunities at once.)
         Free action
         Hold life
-        Any base resistances (acid/elec/fire/cold)
-        Any of these resistances:
-                Poison, Light, Dark, Blindness, Confusion, Sound,
-                Shards, Nether, Nexus, Chaos, Disenchantment
+        Any base resistances
+            Acid, Electricity, Fire, Cold.
+        Any of these medium and high resistances:
+            Poison, Light, Dark, Blindness, Confusion, Sound,
+            Shards, Nether, Nexus, Chaos, Disenchantment
         Feather falling
-        Glowing (+1 light radius)
+        Glowing
+            (+1 light radius)
         See invisible
-        All possible ESP mods (including ESP_ALL)
+        All possible ESP mods
+            (including ESP_ALL aka full 'telepathy')
         Slow digestion
         Faster mana regeneration
         Faster HP regeneration
-        Anti-magic shell (Legendary saving throw, 95% cap)
+        Anti-magic shell
+            (Legendary saving throw is raised to 95% cap)
 
 
 Item Mod Limits:
@@ -15501,6 +15509,8 @@ Amulets cannot give more than +3 to stats.
 1-handed weapons and shields cannot give more than +3 speed.
 1-handed weapons cannot give more than +2 life (+20% base hit points).
 2-handed weapons cannot give more than +6 speed.
+
+Shields cannot gain +speed mod.
 
 
 Technical internals

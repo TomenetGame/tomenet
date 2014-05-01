@@ -1055,6 +1055,14 @@ static void add_ability (artifact_type *a_ptr) {
 				if (!rand_int(2)) a_ptr->flags3 |= TR3_NO_MAGIC;
 				break;
 			case 9:
+				/* hack: no +speed on shields, this puts 2h weapons at a severe disadvantage,
+				   because even though they may get +6 speed, seemingly equal to +3/+3 (1h+shield),
+				   this has 2 big flaws:
+				   1) getting +5 or +6 speed is RARE, 2) this means the weapon won't have +EA! */
+				if (a_ptr->tval == TV_SHIELD) {
+					a_ptr->flags5 |= TR5_REFLECT;
+					break;
+				}
 				a_ptr->flags1 |= TR1_SPEED;
 				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int (3);
 				else do_pval (a_ptr);
