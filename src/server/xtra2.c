@@ -4684,8 +4684,8 @@ void monster_death(int Ind, int m_idx) {
 	int	i, j, y, x, ny, nx;
 	int	tmp_luck = p_ptr->luck;
 
-	int	dump_item = 0;
-	int	dump_gold = 0;
+//	int	dump_item = 0;
+//	int	dump_gold = 0;
 
 	int	number = 0;
 	int	total = 0;
@@ -4700,7 +4700,7 @@ void monster_death(int Ind, int m_idx) {
         bool is_Morgoth = (m_ptr->r_idx == RI_MORGOTH);
         bool is_Sauron = (m_ptr->r_idx == RI_SAURON);
 	int credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
-	bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
+//	bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
 
 	bool good = (r_ptr->flags1 & RF1_DROP_GOOD) ? TRUE : FALSE;
 	bool great = (r_ptr->flags1 & RF1_DROP_GREAT) ? TRUE : FALSE;
