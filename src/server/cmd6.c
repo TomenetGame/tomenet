@@ -1422,7 +1422,7 @@ static void fountain_guard(int Ind, bool blood) {
 		s_printf("FOUNTAIN_GUARDS: %d ", ridx);
 
 		msg_print(Ind, "A monster appears in the fountain!");
-		summon_override_checks = SO_GRID_TERRAIN | SO_IDDC;
+		summon_override_checks = SO_GRID_TERRAIN | SO_IDDC | SO_PLAYER_SUMMON;
 		if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, ridx, 0, 1))
 			s_printf("ok.\n");
 		else s_printf("failed.\n");
@@ -1749,7 +1749,7 @@ void do_cmd_fill_bottle(int Ind)
 //	}
 	if (item) {
 		msg_print(Ind, "A monster appears in the fountain!");
-		summon_override_checks = SO_GRID_TERRAIN | SO_IDDC;
+		summon_override_checks = SO_GRID_TERRAIN | SO_IDDC | SO_PLAYER_SUMMON;
 		if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, item, 0, 1))
 			s_printf("ok.\n");
 		else s_printf("failed.\n");
@@ -2328,7 +2328,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			case SV_SCROLL_SUMMON_MONSTER:
 				if(!check_self_summon(p_ptr)) break;
 				s_printf("SUMMON_MONSTER: %s\n", p_ptr->name);
-				summon_override_checks = SO_IDDC;
+				summon_override_checks = SO_IDDC | SO_PLAYER_SUMMON;
 				for (k = 0; k < randint(3); k++) {
 					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_ALL_U98, 1, 0))
 						ident = TRUE;
@@ -2381,7 +2381,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			case SV_SCROLL_SUMMON_UNDEAD:
 				if(!check_self_summon(p_ptr)) break;
 				s_printf("SUMMON_UNDEAD: %s\n", p_ptr->name);
-				summon_override_checks = SO_IDDC;
+				summon_override_checks = SO_IDDC | SO_PLAYER_SUMMON;
 				for (k = 0; k < randint(3); k++) {
 					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_UNDEAD, 1, 0))
 						ident = TRUE;
@@ -3037,7 +3037,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		{
 			if(!check_self_summon(p_ptr)) break;
 			//logfile spam- s_printf("SUMMON_SPECIFIC: %s\n", p_ptr->name);
-			summon_override_checks = SO_IDDC;
+			summon_override_checks = SO_IDDC | SO_PLAYER_SUMMON;
 			for (k = 0; k < randint(4); k++) {
 				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_ALL_U98, 1, 0))
 					ident = TRUE;
