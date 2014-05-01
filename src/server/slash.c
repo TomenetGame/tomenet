@@ -5602,12 +5602,12 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
-				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
+				if (atoi(token[1]) < 0 || atoi(token[1]) >= INVEN_TOTAL) {
 					msg_print(Ind, "\377oInvalid inventory slot.");
 					return;
 				}
 
-				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
+				o_ptr = &p_ptr->inventory[atoi(token[1])];
 				if (o_ptr->name1 != ART_RANDART) {
 					if (o_ptr->name1) {
 						msg_print(Ind, "\377oIt's a static art. Aborting.");
@@ -7679,14 +7679,14 @@ void do_slash_cmd(int Ind, char *message)
 						}
 				return;
 			}
-			else if (prefix(message, "/madart_")) { /* try to create a very specific randart - C. Blue */
+			else if (prefix(message, "/madart")) { /* try to create a very specific randart - C. Blue */
 				/* added this to create a new matching uber bow for Andur, after his old one fell victim to randart code changes. */
 				object_type *o_ptr;
 				artifact_type *a_ptr;
 				int tries = 0; //keep track xD
 
 				if (!tk) {
-					msg_print(Ind, "\377oUsage: /madart_ <slot>");
+					msg_print(Ind, "\377oUsage: /madart <slot>");
 					return;
 				}
 				o_ptr = &p_ptr->inventory[k];
