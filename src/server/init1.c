@@ -1536,6 +1536,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "EXPAND_TV_POTION") && negation) invalid = TRUE;
 #endif
+#ifndef TO_AC_CAP_30
+		if (streq(m, "AC30") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "AC30") && negation) invalid = TRUE;
+#endif
 
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
@@ -1553,6 +1558,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "NEW_TOMES") &&
 //		    strcmp(m, "PRECIOUS_STONES") &&
 		    strcmp(m, "EXPAND_TV_POTION") &&
+		    strcmp(m, "AC30") &&
 			TRUE)
 			invalid = TRUE;
 	}
