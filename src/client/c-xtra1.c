@@ -112,8 +112,26 @@ void prt_title(cptr title) {
 /*
  * Prints level and experience
  */
+/* Display exp bar in 5% steps instead of 10%? (Uses 2 colours to disgtinguish) */
+#define EXP_BAR_FINESCALE
+/* Fill rest of exp bar up with dark colour instead of leaving it blank? */
+#define EXP_BAR_FILLDARK
+
+#if 1 /* draw exp bar in blue? */
+ #define EXP_BAR_HI TERM_L_BLUE
+ #define EXP_BAR_LO TERM_BLUE
+ #define EXP_BAR_NO TERM_L_DARK
+#else /* draw exp bar in green? */
+ #define EXP_BAR_HI TERM_L_GREEN
+ #define EXP_BAR_LO TERM_GREEN
+ #define EXP_BAR_NO TERM_L_DARK
+#endif
+#define EXP_BAR_HI_DRAINED TERM_YELLOW
+#define EXP_BAR_LO_DRAINED TERM_UMBER
+#define EXP_BAR_NO_DRAINED TERM_L_DARK
+
 void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv, s32b adv_prev) {
-	char tmp[32];
+	char tmp[32], exp_bar_char;
 	int colour = (level < max_lev) ? TERM_YELLOW : TERM_L_GREEN;
 	int x, y;
 	int scale = adv - adv_prev;
@@ -145,36 +163,102 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 				(void)sprintf(tmp, "%9d", (int)(cur - adv));
 			}
 		}
-	} else {
-		if (level >= PY_MAX_LEVEL || !adv || !scale)
+
+		if (cur >= max) {
+			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
+			Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_L_GREEN, tmp);
+		} else {
+			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
+			Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_YELLOW, tmp);
+		}
+	} else { //c_cfg.exp_bar
+#ifdef EXP_BAR_FINESCALE
+		int got_org = 0;
+#endif
+		if (c_cfg.font_map_solid_walls) exp_bar_char = 127; /* :-p hack */
+		else exp_bar_char = '#';
+
+		if (level >= PY_MAX_LEVEL || !adv || !scale) {
 			(void)sprintf(tmp, "*********");
-		else if (!c_cfg.exp_need) {
+
+			if (cur >= max) {
+				Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
+				Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI, tmp);
+			} else {
+				Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
+				Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, tmp);
+			}
+
+			/* restore cursor position */
+			Term_gotoxy(x, y);
+
+			return;
+		}
+#ifndef EXP_BAR_FINESCALE
+		else {//if (!c_cfg.exp_need) {
 			int got = ((cur - adv_prev) * 10) / scale, i;
 
-			if (c_cfg.font_map_solid_walls) /* :-p hack */
-				for (i = 0; i < got; i++) tmp[i] = 127;
-			else
-				for (i = 0; i < got; i++) tmp[i] = '#';
-			for (i = got; i < 9; i++) tmp[i] = '-'; //10 'filled bubbles' = next level, so only need to display 9!
+			for (i = 0; i < got; i++) tmp[i] = exp_bar_char;
 			tmp[i] = 0;
+ #if 0
 		} else {
 			int got = ((cur - adv_prev) * 10) / scale, i;
 
 			for (i = 0; i < got; i++) tmp[i] = '-'; //10 'filled bubbles' = next level, so only need to display 9!
-			if (c_cfg.font_map_solid_walls) /* :-p hack */
-				for (i = got; i < 9; i++) tmp[i] = 127;
-			else
-				for (i = got; i < 9; i++) tmp[i] = '#';
+			for (i = got; i < 9; i++) tmp[i] = exp_bar_char;
 			tmp[i] = 0;
+ #endif
 		}
-	}
+#else /* finer double-scale 0..10 in 0.5 steps :D */
+		else {//if (!c_cfg.exp_need) {
+			int got = ((cur - adv_prev) * 20) / scale, i;
+			got_org = got;
 
-	if (cur >= max) {
-		Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
-		Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_L_GREEN, tmp);
-	} else {
-		Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
-		Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_YELLOW, tmp);
+			for (i = 0; i < got / 2; i++) tmp[i] = exp_bar_char;
+			tmp[i] = 0;
+ #if 0
+		} else {
+			int got = ((cur - adv_prev) * 20) / scale, i;
+			got_org = got;
+
+			for (i = 0; i < got / 2; i++) tmp[i] = '-'; //10 'filled bubbles' = next level, so only need to display 9!
+			for (i = got / 2; i < 9; i++) tmp[i] = exp_bar_char;
+			tmp[i] = 0;
+ #endif
+		}
+#endif
+
+#ifdef EXP_BAR_FILLDARK
+		/* Paint dark base ;) */
+		//if (!c_cfg.exp_need) {
+			Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "---------");
+		//}
+#endif
+		if (cur >= max) {
+			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
+#ifndef EXP_BAR_FINESCALE
+			Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI, tmp);
+#else
+			/* special hack to be able to display this distinguishdly from got == 18 (we only have 9 characters available) */
+			if (got_org == 19) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_LO, tmp);
+			else {
+				Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI, tmp);
+				if (got_org % 2) Term_putch(COL_EXP + 3 + got_org / 2, ROW_EXP, EXP_BAR_LO, exp_bar_char);
+			}
+#endif
+		} else {
+			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
+#ifndef EXP_BAR_FINESCALE
+			Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, tmp);
+#else
+			/* special hack to be able to display this distinguishdly from got == 18 (we only have 9 characters available) */
+			if (got_org == 19) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_LO_DRAINED, tmp);
+			else {
+				Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, tmp);
+				if (got_org % 2) Term_putch(COL_EXP + 3 + got_org / 2, ROW_EXP, EXP_BAR_LO_DRAINED, exp_bar_char);
+			}
+#endif
+		}
 	}
 
 	/* restore cursor position */
