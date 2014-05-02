@@ -1045,12 +1045,13 @@ static void play_sound_weather_vol(int event, int vol) {
 		int v = (cfg_audio_weather_volume * vol) / 100, n, va = 0;
 
 		/* shift array and calculate average over the last n volume values */
-		for (n = 20 - 1; n >= 0; n--) {
+		for (n = 20 - 1; n > 0; n--) {
 			va += weather_smooth_avg[n];
 			/* and shift array to make room for new value */
 			weather_smooth_avg[n] = weather_smooth_avg[n - 1];
 		}
-		va /= 20;
+		va += weather_smooth_avg[0];//add the last element
+		va /= 20;//calculate average
 		/* queue new value */
 		weather_smooth_avg[0] = v;
 
