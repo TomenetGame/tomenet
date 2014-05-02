@@ -147,6 +147,10 @@
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
+ #define RANDART_WEAPON_BUFF	/* better chance for non-low +hit,+dam on randart melee weapons and boomerangs */
+
+ #define TO_AC_CAP_30		/* limit to_ac to +30 instead of +35 */
+
  /* Do we want to use Kurzel's PvE/P when mode 1 PK is configured? */
 // #define KURZEL_PK --disabled because it breaks chat highlighting
 
@@ -163,6 +167,8 @@
 #endif
 
 #ifdef TEST_SERVER
+ #define RANDART_WEAPON_BUFF	/* better chance for non-low +hit,+dam on randart melee weapons and boomerangs */
+
  #define TO_AC_CAP_30		/* limit to_ac to +30 instead of +35 */
 
  #define ENABLE_SELF_HIGHLIGHTING	/* Allow usage of /hilite command (todo: turn into client option) */

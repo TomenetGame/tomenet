@@ -1876,8 +1876,20 @@ artifact_type *randart_make(object_type *o_ptr) {
 		a_ptr->to_h = o_ptr->to_h;
 		a_ptr->to_d = o_ptr->to_d;
 		a_ptr->to_a = o_ptr->to_a;
+#ifdef RANDART_WEAPON_BUFF
+	} else if (is_weapon(a_ptr->tval)) {
+		/* normalise +hit,+dam to somewhat more buffed values for all art weapons */
+		a_ptr->to_h = k_ptr->to_h / 2;
+		a_ptr->to_d = k_ptr->to_d / 2;
+
+		a_ptr->to_a = k_ptr->to_a;
+#endif
 	} else {
 		/* Get base +hit,+dam,+ac from k_info for any item type, to start out with this. */
+#ifdef RANDART_WEAPON_BUFF
+		/* note: we assume that shooters don't have big k_info +hit/+dam,
+		   or we'd have to move them up there to is_weapon() block probably. */
+#endif
 		a_ptr->to_h = k_ptr->to_h;
 		a_ptr->to_d = k_ptr->to_d;
 		a_ptr->to_a = k_ptr->to_a;
@@ -1899,11 +1911,28 @@ artifact_type *randart_make(object_type *o_ptr) {
 	a_ptr->flags6 = k_ptr->flags6;
 
 	/* Ensure weapons have some bonus to hit & dam */
-	if ((a_ptr->tval == TV_DIGGING) || is_weapon(a_ptr->tval) ||
-	    (a_ptr->tval == TV_BOW) || (a_ptr->tval == TV_BOOMERANG)) {
+#ifdef RANDART_WEAPON_BUFF
+	if (is_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG) {
+		/* emphasise non-low values */
+ #if 0		/* relatively steep start -- y=20-(125/(5+x)-5), 0<=x<=20 */
+		a_ptr->to_d += 20 - (125 / (5 + rand_int(21)) - 5);
+		a_ptr->to_h += 20 - (125 / (5 + rand_int(21)) - 5);
+ #endif
+ #if 1 /* not so steep start -- y=21-(560/(20+x)-7), 0<=x<=60 */
+		a_ptr->to_d += 21 - (560 / (20 + rand_int(61)) - 7);
+		a_ptr->to_h += 21 - (560 / (20 + rand_int(61)) - 7);
+ #endif
+	} else if (a_ptr->tval == TV_DIGGING || a_ptr->tval == TV_BOW) {
+		a_ptr->to_d += rand_int(21);
+		a_ptr->to_h += rand_int(21);
+	}
+#else
+	if (is_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG ||
+	    a_ptr->tval == TV_DIGGING || a_ptr->tval == TV_BOW) {
 		a_ptr->to_d += 1 + rand_int(20);
 		a_ptr->to_h += 1 + rand_int(20);
 	}
+#endif
 
 	/* Ensure armour has some decent bonus to ac - C. Blue */
 	if (is_armour(k_ptr->tval)) {
