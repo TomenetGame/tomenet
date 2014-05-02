@@ -32,6 +32,28 @@
 /* Allow randart weapons of top 2h types (SoS,MoD,TA) to gain dice or sides at all? */
 //#define RANDART_TOP_WEAP_SLAY
 
+
+#ifndef EGO_TOP_WEAP_SLAY
+ /* 42 cut executioner's sword some slack: allow 6d6/5d7. 45 allows 5d8 too. */
+ #define slay_limit_ego(a_ptr, k_ptr)\
+     (((k_ptr)->flags4 & TR4_MUST2H) ? ((a_ptr)->tval == TV_SWORD ? 42 : 54) : (((k_ptr)->flags4 & TR4_SHOULD2H) ? 42 : 30))
+#else
+ /* 55 allows 11d4 scythe of slicing, 60 allows 6d9 TA/MoD, 63 allows 7d8 TA/MoD */
+ #define slay_limit_ego(a_ptr, k_ptr) \
+     (((k_ptr)->flags4 & TR4_MUST2H) ? ((a_ptr)->tval == TV_SWORD ? 45 : 63) : (((k_ptr)->flags4 & TR4_SHOULD2H) ? 42 : 30))
+#endif
+
+#ifndef RANDART_TOP_WEAP_SLAY
+ /* 42 cut executioner's sword some slack: allow 6d6/5d7. 45 allows 5d8 too. */
+ #define slay_limit_randart(a_ptr, k_ptr)\
+     (((k_ptr)->flags4 & TR4_MUST2H) ? ((a_ptr)->tval == TV_SWORD ? 42 : 54) : (((k_ptr)->flags4 & TR4_SHOULD2H) ? 42 : 30))
+#else
+ /* 55 allows 11d4 scythe of slicing, 60 allows 6d9 TA/MoD, 63 allows 7d8 TA/MoD */
+ #define slay_limit_randart(a_ptr, k_ptr) \
+     (((k_ptr)->flags4 & TR4_MUST2H) ? ((a_ptr)->tval == TV_SWORD ? 45 : 63) : (((k_ptr)->flags4 & TR4_SHOULD2H) ? 42 : 30))
+#endif
+
+
 /* How much power/curses is/are assigned to randarts.
    With [40] default value, randarts can have up to
    130 power ((40+79)*11/10), wich means even the top
@@ -1219,13 +1241,8 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 
 /* -------------------------------------- pval-independant limits -------------------------------------- */
 
-	/* Don't exaggerate at weapon dice (2h: 5d6, 6d8, 6d8, 11d4; 1.5h: 5d5, 6d3, 1h: 2d8/3d5 */
-#ifndef RANDART_TOP_WEAP_SLAY
-	while ((a_ptr->dd * (a_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
-#else
-	//56 allows 11d4 scythe of slicing, 61 allows 6d9 TA/MoD, 64 allows 7d8 TA/MoD
-	while ((a_ptr->dd * (a_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 64 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
-#endif
+	/* Don't exaggerate at weapon dice (2h: 5d6, 6d8, 6d8, 10d4; 1.5h: 5d5, 6d3, 1h: 2d8/3d5 */
+	while (a_ptr->dd * (a_ptr->ds + 1) >= slay_limit_randart(a_ptr, k_ptr)
 //	    || ((k_ptr->flags4 & (TR4_MUST2H | TR4_SHOULD2H)) && a_ptr->dd * (a_ptr->ds + 1) >= (k_ptr->dd * (k_ptr->ds + 1)) << 1)
 	    ) {
 		if (a_ptr->dd <= k_ptr->dd) a_ptr->ds--;
@@ -1459,13 +1476,8 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 
 /* -------------------------------------- pval-independant limits -------------------------------------- */
 
-	/* Don't exaggerate at weapon dice (2h: 5d6, 6d8, 6d8, 11d4; 1.5h: 5d5, 6d3, 1h: 2d8/3d5 */
-#ifndef RANDART_TOP_WEAP_SLAY
-	while ((a_ptr->dd * (a_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
-#else
-	//56 allows 11d4 scythe of slicing, 61 allows 6d9 TA/MoD, 64 allows 7d8 TA/MoD
-	while ((a_ptr->dd * (a_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 64 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
-#endif
+	/* Don't exaggerate at weapon dice (2h: 5d6, 6d8, 6d8, 10d4; 1.5h: 5d5, 6d3, 1h: 2d8/3d5 */
+	while (a_ptr->dd * (a_ptr->ds + 1) >= slay_limit_randart(a_ptr, k_ptr)
 //	    || ((k_ptr->flags4 & (TR4_MUST2H | TR4_SHOULD2H)) && a_ptr->dd * (a_ptr->ds + 1) >= (k_ptr->dd * (k_ptr->ds + 1)) << 1)
 	    ) {
 		if (a_ptr->dd <= k_ptr->dd) a_ptr->ds--;
@@ -2645,56 +2657,27 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 
 		if (randint(3) == 1) { /* double damage */
 			a_ptr->dd = k_ptr->dd;
-#ifndef EGO_TOP_WEAP_SLAY
-			while (((a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
-#else
-			//55 allows 11d4 scythe of slicing, 60 allows 6d9 TA/MoD, 63 allows 7d8 TA/MoD
-			while (((a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) > ((k_ptr->flags4 & TR4_MUST2H) ? 63 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
-#endif
-				&& (a_ptr->dd > 0))
+			while ((a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) > slay_limit_ego(a_ptr, k_ptr)
+			    && (a_ptr->dd > 0))
 				a_ptr->dd -= 1; /* No overpowered slaying weapons */
 		} else if (randint(2) == 1) {
-			while ((randint(a_ptr->dd + 1) == 1) &&
-#ifndef EGO_TOP_WEAP_SLAY
-			    (((1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30))))
-#else
-			    //55 allows 11d4 scythe of slicing, 60 allows 6d9 TA/MoD, 63 allows 7d8 TA/MoD
-			    (((1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) > ((k_ptr->flags4 & TR4_MUST2H) ? 63 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30))))
-#endif
-			    )
+			while (randint(a_ptr->dd + 1) == 1 &&
+			    (1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) > slay_limit_ego(a_ptr, k_ptr))
 				/* No overpowered slaying weapons */
 				a_ptr->dd++;
 
-			while ((randint(a_ptr->ds + 1) == 1) &&
-#ifndef EGO_TOP_WEAP_SLAY
-			    (((a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30))))
-#else
-			    //55 allows 11d4 scythe of slicing, 60 allows 6d9 TA/MoD, 63 allows 7d8 TA/MoD
-			    (((a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) > ((k_ptr->flags4 & TR4_MUST2H) ? 63 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30))))
-#endif
-			    )
+			while (randint(a_ptr->ds + 1) == 1 &&
+			    (a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) > slay_limit_ego(a_ptr, k_ptr))
 				/* No overpowered slaying weapons */
 				a_ptr->ds++;
 		} else {
-			while ((randint(a_ptr->ds + 1) == 1) &&
-#ifndef EGO_TOP_WEAP_SLAY
-			    (((a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30))))
-#else
-			    //55 allows 11d4 scythe of slicing, 60 allows 6d9 TA/MoD, 63 allows 7d8 TA/MoD
-			    (((a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) > ((k_ptr->flags4 & TR4_MUST2H) ? 63 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30))))
-#endif
-			    )
+			while (randint(a_ptr->ds + 1) == 1 &&
+			    (a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) > slay_limit_ego(a_ptr, k_ptr))
 				/* No overpowered slaying weapons */
 				a_ptr->ds++;
 
-			while ((randint(a_ptr->dd + 1) == 1) &&
-#ifndef EGO_TOP_WEAP_SLAY
-			    (((1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30))))
-#else
-			    //55 allows 11d4 scythe of slicing, 60 allows 6d9 TA/MoD, 63 allows 7d8 TA/MoD
-			    (((1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) > ((k_ptr->flags4 & TR4_MUST2H) ? 63 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30))))
-#endif
-			    )
+			while (randint(a_ptr->dd + 1) == 1 &&
+			    (1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) > slay_limit_ego(a_ptr, k_ptr))
 				/* No overpowered slaying weapons */
 				a_ptr->dd++;
 		}
