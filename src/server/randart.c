@@ -1213,11 +1213,16 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 /* -------------------------------------- pval-independant limits -------------------------------------- */
 
 	/* Don't exaggerate at weapon dice (2h: 5d6, 6d8, 6d8, 11d4; 1.5h: 5d5, 6d3, 1h: 2d8/3d5 */
-	while ((a_ptr->dd * (a_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
+	//modified: 55+1 to allow (10+1)d4 scythe of slicing, 42 is fine (5d(5+1) blade of chaos), 30 is fine anyway
+	while ((a_ptr->dd * (a_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 56 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
 //	    || ((k_ptr->flags4 & (TR4_MUST2H | TR4_SHOULD2H)) && a_ptr->dd * (a_ptr->ds + 1) >= (k_ptr->dd * (k_ptr->ds + 1)) << 1)
 	    ) {
-		if (a_ptr->dd >= a_ptr->ds || a_ptr->ds == k_ptr->ds) a_ptr->dd--;
-		else a_ptr->ds--;
+		if (a_ptr->dd <= k_ptr->dd) a_ptr->ds--;
+		else if (a_ptr->ds <= k_ptr->ds) a_ptr->dd--;
+		else {
+			if (rand_int(2)) a_ptr->ds--;
+			else a_ptr->dd--;
+		}
 	}
 	/* fix lower limit (paranoia) */
 	if (a_ptr->dd < 1) a_ptr->dd = 1;
@@ -1444,11 +1449,16 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 /* -------------------------------------- pval-independant limits -------------------------------------- */
 
 	/* Don't exaggerate at weapon dice (2h: 5d6, 6d8, 6d8, 11d4; 1.5h: 5d5, 6d3, 1h: 2d8/3d5 */
-	while ((a_ptr->dd * (a_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 55 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
+	//modified: 55+1 to allow (10+1)d4 scythe of slicing, 42 is fine (5d(5+1) blade of chaos), 30 is fine anyway
+	while ((a_ptr->dd * (a_ptr->ds + 1) >= ((k_ptr->flags4 & TR4_MUST2H) ? 56 : ((k_ptr->flags4 & TR4_SHOULD2H) ? 42 : 30)))
 //	    || ((k_ptr->flags4 & (TR4_MUST2H | TR4_SHOULD2H)) && a_ptr->dd * (a_ptr->ds + 1) >= (k_ptr->dd * (k_ptr->ds + 1)) << 1)
 	    ) {
-		if (a_ptr->dd >= a_ptr->ds || a_ptr->ds == k_ptr->ds) a_ptr->dd--;
-		else a_ptr->ds--;
+		if (a_ptr->dd <= k_ptr->dd) a_ptr->ds--;
+		else if (a_ptr->ds <= k_ptr->ds) a_ptr->dd--;
+		else {
+			if (rand_int(2)) a_ptr->ds--;
+			else a_ptr->dd--;
+		}
 	}
 	/* fix lower limit (paranoia) */
 	if (a_ptr->dd < 1) a_ptr->dd = 1;
@@ -1879,8 +1889,8 @@ artifact_type *randart_make(object_type *o_ptr) {
 #ifdef RANDART_WEAPON_BUFF
 	} else if (is_weapon(a_ptr->tval)) {
 		/* normalise +hit,+dam to somewhat more buffed values for all art weapons */
-		a_ptr->to_h = k_ptr->to_h / 2;
-		a_ptr->to_d = k_ptr->to_d / 2;
+		a_ptr->to_h = 0;//k_ptr->to_h / 2;
+		a_ptr->to_d = 0;//k_ptr->to_d / 2;
 
 		a_ptr->to_a = k_ptr->to_a;
 #endif
@@ -2619,11 +2629,8 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 		/* Make a Weapon of Slaying */
 
 		if (randint(3) == 1) { /* double damage */
-#if 0 /* isn't the following line buggy and meant to be..*/
+			//a_ptr->dd = k_ptr->dd;
 			a_ptr->dd *= 2;
-#else /* this instead?: */
-			a_ptr->dd = k_ptr->dd;
-#endif
 			while (((1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?60:40))
 				&& (a_ptr->dd > 0))
 				a_ptr->dd -= 1; /* No overpowered slaying weapons */
