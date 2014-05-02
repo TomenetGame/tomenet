@@ -29,7 +29,10 @@
 /* Allow ego 'of slaying' weapons of top 2h types (SoS,MoD,TA) to gain dice or sides at all? */
 #define EGO_TOP_WEAP_SLAY
 
-/* Allow randart weapons of top 2h types (SoS,MoD,TA) to gain dice or sides at all? */
+/* Allow randart weapons of top 2h types (SoS,MoD,TA) to gain dice or sides at all?
+   NOTE: Such randart weapons could surpass Grond even in the hands of the 6-base-bpr class 'Warrior'.
+         If this is disabled, then Grond will surpass randarts even for 5-base-bpr classes.
+         It is probably most sensible to keep this disabled. */
 //#define RANDART_TOP_WEAP_SLAY
 
 
