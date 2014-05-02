@@ -2247,7 +2247,6 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		if (csheet_boni[i].cb[0] & CB1_ICOLD) { c_put_str(TERM_L_UMBER, "*", 2, 5+i); if (header_color[0][1] != TERM_L_UMBER) header_color[0][1] = TERM_L_UMBER; }
 		if (csheet_boni[i].cb[0] & CB1_SELEC) { c_put_str(TERM_RED, "-", 3, 5+i); if (header_color[0][2] == TERM_L_DARK) header_color[0][2] = TERM_RED; }
 		if (csheet_boni[i].cb[0] & CB1_RELEC) { c_put_str(TERM_WHITE, "+", 3, 5+i); if (header_color[0][2] == TERM_L_DARK || header_color[0][2] == TERM_RED) header_color[0][2] = TERM_WHITE; }
-		
 		if (csheet_boni[i].cb[1] & CB2_IELEC) { c_put_str(TERM_L_UMBER, "*", 3, 5+i); if (header_color[0][2] != TERM_L_UMBER) header_color[0][2] = TERM_L_UMBER; }
 		if (csheet_boni[i].cb[1] & CB2_SACID) { c_put_str(TERM_RED, "-", 4, 5+i); if (header_color[0][3] == TERM_L_DARK) header_color[0][3] = TERM_RED; }
 		if (csheet_boni[i].cb[1] & CB2_RACID) { c_put_str(TERM_WHITE, "+", 4, 5+i); if (header_color[0][3] == TERM_L_DARK || header_color[0][3] == TERM_RED) header_color[0][3] = TERM_WHITE; }
@@ -2255,30 +2254,30 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		if (csheet_boni[i].cb[1] & CB2_SPOIS) { c_put_str(TERM_RED, "-", 5, 5+i); if (header_color[0][4] == TERM_L_DARK) header_color[0][4] = TERM_RED; }
 		if (csheet_boni[i].cb[1] & CB2_RPOIS) { c_put_str(TERM_WHITE, "+", 5, 5+i); if (header_color[0][4] == TERM_L_DARK || header_color[0][4] == TERM_RED) header_color[0][4] = TERM_WHITE; }
 		if (csheet_boni[i].cb[1] & CB2_IPOIS) { c_put_str(TERM_L_UMBER, "*", 5, 5+i); if (header_color[0][4] != TERM_L_UMBER) header_color[0][4] = TERM_L_UMBER; }
+
 		if (csheet_boni[i].cb[1] & CB2_SLITE) { c_put_str(TERM_RED, "-", 6, 5+i); if (header_color[0][5] == TERM_L_DARK) header_color[0][5] = TERM_RED; }
-		
 		if (csheet_boni[i].cb[2] & CB3_RLITE) { c_put_str(TERM_WHITE, "+", 6, 5+i); if (header_color[0][5] == TERM_L_DARK || header_color[0][5] == TERM_RED) header_color[0][5] = TERM_WHITE; }
 		if (csheet_boni[i].cb[2] & CB3_RDARK) { c_put_str(TERM_WHITE, "+", 7, 5+i); if (header_color[0][6] == TERM_L_DARK) header_color[0][6] = TERM_WHITE; }
-		if (csheet_boni[i].cb[2] & CB3_RCONF) { c_put_str(TERM_WHITE, "+", 8, 5+i); if (header_color[0][7] == TERM_L_DARK || header_color[0][7] == TERM_YELLOW) header_color[0][7] = TERM_WHITE; }
-		if (csheet_boni[i].cb[2] & CB3_RPLAS) { c_put_str(TERM_WHITE, "+", 9, 5+i); header_color[0][8] = TERM_WHITE; }
-		if (csheet_boni[i].cb[2] & CB3_RSOUN) { c_put_str(TERM_WHITE, "+", 10, 5+i); header_color[0][9] = TERM_WHITE; }
-		if (csheet_boni[i].cb[12] & CB13_XNCUT) c_put_str(TERM_L_UMBER, "s", 11, 5+i); //Kurzel - Not "*" for immunity. Gold + instead? :) Also don't highlight for RESIST WHITE ofc >_>"
-		if (csheet_boni[i].cb[2] & CB3_RSHRD) { c_put_str(TERM_WHITE, "+", 11, 5+i); header_color[0][10] = TERM_WHITE; }
-		if ((csheet_boni[i].cb[2] & CB3_RSHRD) && (csheet_boni[i].cb[12] & CB13_XNCUT)) c_put_str(TERM_L_UMBER, "+", 11, 5+i);
-		if (csheet_boni[i].cb[2] & CB3_RWATR) { c_put_str(TERM_WHITE, "+", 12, 5+i); if (header_color[0][11] == TERM_L_DARK) header_color[0][11] = TERM_WHITE; }
-		if (csheet_boni[i].cb[2] & CB3_IWATR) { c_put_str(TERM_L_UMBER, "*", 12, 5+i); if (header_color[0][11] != TERM_L_UMBER) header_color[0][11] = TERM_L_UMBER; }
-		
-		if (csheet_boni[i].cb[3] & CB4_RNEXU) { c_put_str(TERM_WHITE, "+", 13, 5+i); header_color[0][12] = TERM_WHITE; }
-		if (csheet_boni[i].cb[3] & CB4_RNETH) { c_put_str(TERM_WHITE, "+", 14, 5+i); if (header_color[0][13] == TERM_L_DARK) header_color[0][13] = TERM_WHITE; }
-		if (csheet_boni[i].cb[3] & CB4_INETH) { c_put_str(TERM_L_UMBER, "*", 14, 5+i); if (header_color[0][13] != TERM_L_UMBER) header_color[0][13] = TERM_L_UMBER; }
-		if (csheet_boni[i].cb[3] & CB4_RCHAO) { c_put_str(TERM_WHITE, "+", 15, 5+i); header_color[0][14] = TERM_WHITE;
-			if (!(csheet_boni[i].cb[2] & CB3_RCONF)) { c_put_str(TERM_YELLOW, "+", 8, 5+i); if (header_color[0][7] == TERM_L_DARK) header_color[0][7] = TERM_YELLOW; }
+		if (csheet_boni[i].cb[2] & CB3_RSOUN) { c_put_str(TERM_WHITE, "+", 8, 5+i); header_color[0][7] = TERM_WHITE; }
+		if (csheet_boni[i].cb[12] & CB13_XNCUT) c_put_str(TERM_L_UMBER, "s", 9, 5+i); //Kurzel - Not "*" for immunity. Gold + instead? :) Also don't highlight for RESIST WHITE ofc >_>"
+		if (csheet_boni[i].cb[2] & CB3_RSHRD) { c_put_str(TERM_WHITE, "+", 9, 5+i); header_color[0][8] = TERM_WHITE; }
+		if ((csheet_boni[i].cb[2] & CB3_RSHRD) && (csheet_boni[i].cb[12] & CB13_XNCUT)) c_put_str(TERM_L_UMBER, "+", 9, 5+i);
+		if (csheet_boni[i].cb[3] & CB4_RNEXU) { c_put_str(TERM_WHITE, "+", 10, 5+i); header_color[0][9] = TERM_WHITE; }
+		if (csheet_boni[i].cb[3] & CB4_RNETH) { c_put_str(TERM_WHITE, "+", 11, 5+i); if (header_color[0][10] == TERM_L_DARK) header_color[0][10] = TERM_WHITE; }
+		if (csheet_boni[i].cb[3] & CB4_INETH) { c_put_str(TERM_L_UMBER, "*", 11, 5+i); if (header_color[0][10] != TERM_L_UMBER) header_color[0][10] = TERM_L_UMBER; }
+		if (csheet_boni[i].cb[2] & CB3_RCONF) { c_put_str(TERM_WHITE, "+", 12, 5+i); if (header_color[0][11] == TERM_L_DARK || header_color[0][11] == TERM_YELLOW) header_color[0][11] = TERM_WHITE; }
+		if (csheet_boni[i].cb[3] & CB4_RCHAO) { c_put_str(TERM_WHITE, "+", 13, 5+i); header_color[0][12] = TERM_WHITE;
+			if (!(csheet_boni[i].cb[2] & CB3_RCONF)) { c_put_str(TERM_YELLOW, "+", 12, 5+i); if (header_color[0][11] == TERM_L_DARK) header_color[0][11] = TERM_YELLOW; }
 			} //Chaos covers confusion... Don't override the actual boni though, in case we care that the item has both boni. - Kurzel
-		if (csheet_boni[i].cb[3] & CB4_RDISE) { c_put_str(TERM_WHITE, "+", 16, 5+i); header_color[0][15] = TERM_WHITE; }
+		if (csheet_boni[i].cb[3] & CB4_RDISE) { c_put_str(TERM_WHITE, "+", 14, 5+i); header_color[0][13] = TERM_WHITE; }
+
+		if (csheet_boni[i].cb[2] & CB3_RWATR) { c_put_str(TERM_WHITE, "+", 15, 5+i); if (header_color[0][14] == TERM_L_DARK) header_color[0][14] = TERM_WHITE; }
+		if (csheet_boni[i].cb[2] & CB3_IWATR) { c_put_str(TERM_L_UMBER, "*", 15, 5+i); if (header_color[0][14] != TERM_L_UMBER) header_color[0][14] = TERM_L_UMBER; }
+		if (csheet_boni[i].cb[2] & CB3_RPLAS) { c_put_str(TERM_WHITE, "+", 16, 5+i); header_color[0][15] = TERM_WHITE; }
 		if (csheet_boni[i].cb[3] & CB4_RTIME) { c_put_str(TERM_WHITE, "+", 17, 5+i); header_color[0][16] = TERM_WHITE; }
 		if (csheet_boni[i].cb[3] & CB4_RMANA) { c_put_str(TERM_WHITE, "+", 18, 5+i); header_color[0][17] = TERM_WHITE; }
 		if (csheet_boni[i].cb[3] & CB4_RMIND) { c_put_str(TERM_WHITE, "+", 19, 5+i); header_color[0][18] = TERM_WHITE; }
-		
+
 		if (csheet_boni[i].cb[4] & CB5_RFEAR) { c_put_str(TERM_WHITE, "+", 1, 25+i); header_color[1][0] = TERM_WHITE; }
 		if (csheet_boni[i].cb[4] & CB5_RPARA) { c_put_str(TERM_WHITE, "+", 2, 25+i); header_color[1][1] = TERM_WHITE; }
 		if (csheet_boni[i].cb[4] & CB5_RBLND) { c_put_str(TERM_WHITE, "+", 3, 25+i); header_color[1][2] = TERM_WHITE; }
@@ -2584,15 +2583,15 @@ else { //Character sheet boni page, finally! :) - Kurzel
 	c_put_str(header_color[0][4], "Pois:", 5, 0);
 	c_put_str(header_color[0][5], "Lite:", 6, 0);
 	c_put_str(header_color[0][6], "Dark:", 7, 0);
-	c_put_str(header_color[0][7], "Conf:", 8, 0);
-	c_put_str(header_color[0][8], "Plas:", 9, 0);
-	c_put_str(header_color[0][9], "Soun:", 10, 0);
-	c_put_str(header_color[0][10], "Shrd:", 11, 0);
-	c_put_str(header_color[0][11], "Watr:", 12, 0);
-	c_put_str(header_color[0][12], "Nexu:", 13, 0);
-	c_put_str(header_color[0][13], "Neth:", 14, 0);
-	c_put_str(header_color[0][14], "Chao:", 15, 0);
-	c_put_str(header_color[0][15], "Dise:", 16, 0);
+	c_put_str(header_color[0][7], "Soun:", 8, 0);
+	c_put_str(header_color[0][8], "Shrd:", 9, 0);
+	c_put_str(header_color[0][9], "Nexu:", 10, 0);
+	c_put_str(header_color[0][10], "Neth:", 11, 0);
+	c_put_str(header_color[0][11], "Conf:", 12, 0);
+	c_put_str(header_color[0][12], "Chao:", 13, 0);
+	c_put_str(header_color[0][13], "Dise:", 14, 0);
+	c_put_str(header_color[0][14], "Watr:", 15, 0);
+	c_put_str(header_color[0][15], "Plas:", 16, 0);
 	c_put_str(header_color[0][16], "Time:", 17, 0);
 	c_put_str(header_color[0][17], "Mana:", 18, 0);
 	c_put_str(header_color[0][18], "Psi :", 19, 0);
