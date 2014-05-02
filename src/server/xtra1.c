@@ -5348,9 +5348,14 @@ void calc_boni(int Ind) {
 		- even The Destroyer form would reach just 138 ;) */
 		d /= 4; /* average monster damage per blow */
 		/* GWoP: 63, GT: 91, GB: 37, GDR: 14 */
-
-		/* Cap the to-dam if it's too great */
-		if (d > 0) d = (4000 / ((1500 / (d + 4)) + 22)) - 10;
+#if 1 /* Too high +dam gain for GT/Hru */
+		d = (4000 / ((1500 / (d + 4)) + 22)) - 10; //original stuff, some monsters add too much dam
+#else
+		//d = (3200 / ((900 / (d + 4)) + 22)) - 10; //still too high
+		//d = (3200 / ((800 / (d + 4)) + 22)) - 20; //not quite enough, but on the way
+		//d = (2500 / ((500 / (d + 4)) + 22)) - 20; //final target, maybe too drastic
+		d = (2850 / ((650 / (d + 4)) + 22)) - 20; //compromise
+#endif
 
 		/* Calculate new averaged to-dam bonus */
 		if (d < (p_ptr->to_d + p_ptr->to_d_melee))
