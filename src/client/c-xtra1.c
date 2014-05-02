@@ -2280,7 +2280,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 19; j++)
 			header_color[i][j] = TERM_L_DARK;
-	
+
 	/* Fill Columns */
 	int color;
 	char symbol;
@@ -2310,9 +2310,9 @@ else { //Character sheet boni page, finally! :) - Kurzel
 				case 12: { c_put_str(color, "m", 0, 5+j*20+i); break; }
 				case 13: { c_put_str(color, "n", 0, 5+j*20+i); break; }
 				case 14: { c_put_str(color, (p_ptr->mode & MODE_FRUIT_BAT) ? "b" : "@", 0, 5+j*20+i); break; }
-			}			
+			}
 		}
-		
+
 		/* Blank Fill */
 		color = TERM_SLATE;
 		if (csheet_boni[i].cb[12] & CB13_XNOEQ) color = TERM_L_DARK;
@@ -2321,7 +2321,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 			for (k = 1; k < 20; k++) c_put_str(color, ".", k, 5+j*20+i);
 		}
 		if (csheet_boni[i].cb[12] & CB13_XNOEQ) continue;
-		
+
 		/* Actually fill with boni values now! (And track header colour...) Also, hardcode, ew~ Kurzel */
 		if (csheet_boni[i].cb[0] & CB1_SFIRE) { c_put_str(TERM_RED, "-", 1, 5+i); if (header_color[0][0] == TERM_L_DARK) header_color[0][0] = TERM_RED; }
 		if (csheet_boni[i].cb[0] & CB1_RFIRE) { c_put_str(TERM_WHITE, "+", 1, 5+i); if (header_color[0][0] == TERM_L_DARK || header_color[0][0] == TERM_RED) header_color[0][0] = TERM_WHITE; }
@@ -2362,37 +2362,38 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		if (csheet_boni[i].cb[3] & CB4_RMANA) { c_put_str(TERM_WHITE, "+", 18, 5+i); header_color[0][17] = TERM_WHITE; }
 		if (csheet_boni[i].cb[3] & CB4_RMIND) { c_put_str(TERM_WHITE, "+", 19, 5+i); header_color[0][18] = TERM_WHITE; }
 
+
 		if (csheet_boni[i].cb[4] & CB5_RFEAR) { c_put_str(TERM_WHITE, "+", 1, 25+i); header_color[1][0] = TERM_WHITE; }
 		if (csheet_boni[i].cb[4] & CB5_RPARA) { c_put_str(TERM_WHITE, "+", 2, 25+i); header_color[1][1] = TERM_WHITE; }
-		if (csheet_boni[i].cb[4] & CB5_RBLND) { c_put_str(TERM_WHITE, "+", 3, 25+i); header_color[1][2] = TERM_WHITE; }
+		if (csheet_boni[i].cb[5] & CB6_RLIFE) { c_put_str(TERM_WHITE, "+", 3, 25+i); header_color[1][2] = TERM_WHITE; }
+		if (csheet_boni[i].cb[4] & CB5_RBLND) { c_put_str(TERM_WHITE, "+", 4, 25+i); header_color[1][3] = TERM_WHITE; }
 			/* SINV actually, here - Kurzel */
-			/* Moving down to REFL */ if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "-", 10, 25+i); if (header_color[1][9] == TERM_L_DARK || header_color[1][9] == TERM_WHITE) header_color[1][9] = TERM_RED; } //this overrides the resist, doesn't it? ;)
-			/* Moving down to REFL */ if (csheet_boni[i].cb[4] & CB5_RTELE) { c_put_str(TERM_WHITE, "+", 10, 25+i); if (header_color[1][9] == TERM_L_DARK) header_color[1][9] = TERM_WHITE; }
-			/* Moving down to REFL */ if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_YELLOW, "*", 10, 25+i); if (header_color[1][9] != TERM_YELLOW) header_color[1][9] = TERM_YELLOW; } //red instead of gold, this isn't st-anchor, to stop all tele (gravity)
-		if (csheet_boni[i].cb[4] & CB5_RFALL) { c_put_str(TERM_WHITE, "+", 5, 25+i); header_color[1][4] = TERM_WHITE; }
-		if (csheet_boni[i].cb[4] & CB5_RFOOD) { c_put_str(TERM_WHITE, "+", 6, 25+i); if (header_color[1][5] == TERM_L_DARK) header_color[1][5] = TERM_WHITE; }
-		
-		if (csheet_boni[i].cb[5] & CB6_IFOOD) { c_put_str(TERM_L_UMBER, "*", 6, 25+i); if (header_color[1][5] != TERM_L_UMBER) header_color[1][5] = TERM_L_UMBER; }
-		if (csheet_boni[i].cb[5] & CB6_RLIFE) { c_put_str(TERM_WHITE, "+", 7, 25+i); header_color[1][6] = TERM_WHITE; }
-		if (csheet_boni[i].cb[5] & CB6_SRGHP) { c_put_str(TERM_RED, "-", 8, 25+i); if (header_color[1][7] == TERM_L_DARK) header_color[1][7] = TERM_RED; }
-		if (csheet_boni[i].cb[5] & CB6_RRGHP) { c_put_str(TERM_WHITE, "+", 8, 25+i); if (header_color[1][7] == TERM_L_DARK) header_color[1][7] = TERM_WHITE; if (header_color[1][7] == TERM_RED || header_color[1][7] == TERM_YELLOW) header_color[1][7] = TERM_YELLOW; } //yellow if both...
-		if (csheet_boni[i].cb[5] & CB6_SRGMP) { c_put_str(TERM_RED, "-", 9, 25+i); if (header_color[1][8] == TERM_L_DARK) header_color[1][8] = TERM_RED; }
-		if (csheet_boni[i].cb[5] & CB6_RRGMP) { c_put_str(TERM_WHITE, "+", 9, 25+i); if (header_color[1][8] == TERM_L_DARK) header_color[1][8] = TERM_WHITE; if (header_color[1][8] == TERM_RED || header_color[1][8] == TERM_YELLOW) header_color[1][8] = TERM_YELLOW; } //yellow if both...
-			/* let's place this by BLND */ if (csheet_boni[i].cb[5] & CB6_RSINV) { c_put_str(TERM_WHITE, "+", 4, 25+i); if (header_color[1][3] == TERM_L_DARK) header_color[1][3] = TERM_WHITE; }
+			/* Moving down to REFL */ if (csheet_boni[i].cb[4] & CB5_STELE) { c_put_str(TERM_RED, "-", 5, 25+i); if (header_color[1][4] == TERM_L_DARK || header_color[1][4] == TERM_WHITE) header_color[1][4] = TERM_RED; } //this overrides the resist, doesn't it? ;)
+			/* Moving down to REFL */ if (csheet_boni[i].cb[4] & CB5_RTELE) { c_put_str(TERM_WHITE, "+", 5, 25+i); if (header_color[1][4] == TERM_L_DARK) header_color[1][4] = TERM_WHITE; }
+			/* Moving down to REFL */ if (csheet_boni[i].cb[4] & CB5_ITELE) { c_put_str(TERM_YELLOW, "*", 5, 25+i); if (header_color[1][4] != TERM_YELLOW) header_color[1][4] = TERM_YELLOW; } //red instead of gold, this isn't st-anchor, to stop all tele (gravity)
+		if (csheet_boni[i].cb[6] & CB7_RREFL) { c_put_str(TERM_WHITE, "+", 6, 25+i); header_color[1][5] = TERM_WHITE; }
+		if (csheet_boni[i].cb[4] & CB5_RFALL) { c_put_str(TERM_WHITE, "+", 7, 25+i); header_color[1][6] = TERM_WHITE; }
+		if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_L_BLUE, "~", 8, 25+i); if (header_color[1][7] == TERM_L_DARK) header_color[1][7] = TERM_YELLOW; }
+		if (csheet_boni[i].cb[12] & CB13_XTREE) { c_put_str(TERM_GREEN, "#", 8, 25+i); if (header_color[1][7] == TERM_L_DARK) header_color[1][7] = TERM_YELLOW; }
+		if ((csheet_boni[i].cb[12] & CB13_XTREE) && (csheet_boni[i].cb[12] & CB13_XSWIM)) c_put_str(TERM_YELLOW, "+", 8, 25+i); //almost flying~
+		if (csheet_boni[i].cb[6] & CB7_RRLEV) { c_put_str(TERM_WHITE, "+", 8, 25+i); if (header_color[1][7] != TERM_WHITE) header_color[1][7] = TERM_WHITE; }
+		if (csheet_boni[i].cb[6] & CB7_RCLMB) { c_put_str(TERM_WHITE, "+", 9, 25+i); header_color[1][8] = TERM_WHITE; }
+			/* let's place this by BLND */ if (csheet_boni[i].cb[5] & CB6_RSINV) { c_put_str(TERM_WHITE, "+", 10, 25+i); if (header_color[1][9] == TERM_L_DARK) header_color[1][9] = TERM_WHITE; }
 			/* TELE here actually */
-		if (csheet_boni[i].cb[6] & CB7_RREFL) { c_put_str(TERM_WHITE, "+", 11, 25+i); header_color[1][10] = TERM_WHITE; }
-		if (csheet_boni[i].cb[6] & CB7_RINVS) { c_put_str(TERM_WHITE, "+", 12, 25+i); header_color[1][11] = TERM_WHITE; }
-		if (csheet_boni[i].cb[6] & CB7_RVAMP) { c_put_str(TERM_WHITE, "+", 13, 25+i); header_color[1][12] = TERM_WHITE; }
-		if (csheet_boni[i].cb[6] & CB7_RIDNT) { c_put_str(TERM_WHITE, "+", 14, 25+i); header_color[1][13] = TERM_WHITE; }
-		if (csheet_boni[i].cb[12] & CB13_XSWIM) { c_put_str(TERM_L_BLUE, "~", 15, 25+i); if (header_color[1][14] == TERM_L_DARK) header_color[1][14] = TERM_YELLOW; }
-		if (csheet_boni[i].cb[12] & CB13_XTREE) { c_put_str(TERM_GREEN, "#", 15, 25+i); if (header_color[1][14] == TERM_L_DARK) header_color[1][14] = TERM_YELLOW; }
-		if ((csheet_boni[i].cb[12] & CB13_XTREE) && (csheet_boni[i].cb[12] & CB13_XSWIM)) c_put_str(TERM_YELLOW, "+", 15, 25+i); //almost flying~
-		if (csheet_boni[i].cb[6] & CB7_RRLEV) { c_put_str(TERM_WHITE, "+", 15, 25+i); if (header_color[1][14] != TERM_WHITE) header_color[1][14] = TERM_WHITE; }
-		if (csheet_boni[i].cb[6] & CB7_RCLMB) { c_put_str(TERM_WHITE, "+", 16, 25+i); header_color[1][15] = TERM_WHITE; }
-		if (csheet_boni[i].cb[5] & CB6_RWRTH) { c_put_str(TERM_WHITE, "+", 17, 25+i); header_color[1][16] = TERM_WHITE; }
-		if (csheet_boni[i].cb[6] & CB7_RAMSH) { c_put_str(TERM_YELLOW, "+", 18, 25+i); header_color[1][17] = TERM_YELLOW; } //should this be gold/yellow maybe? //yellow for now
-		if (csheet_boni[i].cb[6] & CB7_RAGGR) { c_put_str(TERM_RED, "+", 19, 25+i); header_color[1][18] = TERM_RED; }
-		
+		if (csheet_boni[i].cb[6] & CB7_RINVS) { c_put_str(TERM_WHITE, "+", 11, 25+i); header_color[1][10] = TERM_WHITE; }
+		if (csheet_boni[i].cb[6] & CB7_RVAMP) { c_put_str(TERM_WHITE, "+", 12, 25+i); header_color[1][11] = TERM_WHITE; }
+		if (csheet_boni[i].cb[5] & CB6_RWRTH) { c_put_str(TERM_WHITE, "+", 13, 25+i); header_color[1][12] = TERM_WHITE; }
+		if (csheet_boni[i].cb[4] & CB5_RFOOD) { c_put_str(TERM_WHITE, "+", 14, 25+i); if (header_color[1][13] == TERM_L_DARK) header_color[1][13] = TERM_WHITE; }
+		if (csheet_boni[i].cb[5] & CB6_IFOOD) { c_put_str(TERM_L_UMBER, "*", 14, 25+i); if (header_color[1][13] != TERM_L_UMBER) header_color[1][13] = TERM_L_UMBER; }
+		if (csheet_boni[i].cb[5] & CB6_SRGHP) { c_put_str(TERM_RED, "-", 15, 25+i); if (header_color[1][14] == TERM_L_DARK) header_color[1][14] = TERM_RED; }
+		if (csheet_boni[i].cb[5] & CB6_RRGHP) { c_put_str(TERM_WHITE, "+", 15, 25+i); if (header_color[1][14] == TERM_L_DARK) header_color[1][14] = TERM_WHITE; if (header_color[1][14] == TERM_RED || header_color[1][14] == TERM_YELLOW) header_color[1][14] = TERM_YELLOW; } //yellow if both...
+		if (csheet_boni[i].cb[5] & CB6_SRGMP) { c_put_str(TERM_RED, "-", 16, 25+i); if (header_color[1][15] == TERM_L_DARK) header_color[1][15] = TERM_RED; }
+		if (csheet_boni[i].cb[5] & CB6_RRGMP) { c_put_str(TERM_WHITE, "+", 16, 25+i); if (header_color[1][15] == TERM_L_DARK) header_color[1][15] = TERM_WHITE; if (header_color[1][15] == TERM_RED || header_color[1][15] == TERM_YELLOW) header_color[1][15] = TERM_YELLOW; } //yellow if both...
+		if (csheet_boni[i].cb[6] & CB7_RAMSH) { c_put_str(TERM_YELLOW, "+", 17, 25+i); header_color[1][16] = TERM_YELLOW; } //should this be gold/yellow maybe? //yellow for now
+		if (csheet_boni[i].cb[6] & CB7_RAGGR) { c_put_str(TERM_RED, "+", 18, 25+i); header_color[1][17] = TERM_RED; }
+		if (csheet_boni[i].cb[6] & CB7_RIDNT) { c_put_str(TERM_WHITE, "+", 19, 25+i); header_color[1][18] = TERM_WHITE; }
+
+
 		/* Numerical Boni (WHITE if affected at all, you can look for details, GOLD if sustained (important), a quick glance. - Kurzel) */
 		if (csheet_boni[i].spd != 0) {
 			header_color[2][0] = TERM_WHITE;
@@ -2596,7 +2597,8 @@ else { //Character sheet boni page, finally! :) - Kurzel
 			if (csheet_boni[i].pchr > 19) sprintf(tmp, "*");
 			c_put_str(color, tmp, 19, 45+i);
 		} else if (csheet_boni[i].cb[11] & CB12_RSCHR) { c_put_str(TERM_L_UMBER, "s", 19, 45+i); header_color[2][18] = TERM_L_UMBER; }
-		
+
+
 		/* ESP and slay flags, white for anything (perhaps GOLD for ESP if requested) - Kurzel */
 		if (csheet_boni[i].cb[7] & CB8_ESPID) { c_put_str(TERM_WHITE, "e", 1, 65+i); header_color[3][0] = TERM_WHITE; }
 		if (csheet_boni[i].cb[7] & CB8_EANIM) { c_put_str(TERM_WHITE, "e", 2, 65+i); header_color[3][1] = TERM_WHITE; }
@@ -2609,7 +2611,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		if (csheet_boni[i].cb[7] & CB8_STROL) { c_put_str(TERM_WHITE, "s", 4, 65+i); header_color[3][3] = TERM_WHITE; }
 		if ((csheet_boni[i].cb[7] & CB8_ETROL) && (csheet_boni[i].cb[7] & CB8_STROL)) c_put_str(TERM_WHITE, "+", 4, 65+i);
 		if (csheet_boni[i].cb[7] & CB8_EGIAN) { c_put_str(TERM_WHITE, "e", 5, 65+i); header_color[3][4] = TERM_WHITE; }
-		
+
 		if (csheet_boni[i].cb[8] & CB9_SGIAN) { c_put_str(TERM_WHITE, "s", 5, 65+i); header_color[3][4] = TERM_WHITE; }
 		if ((csheet_boni[i].cb[7] & CB8_EGIAN) && (csheet_boni[i].cb[8] & CB9_SGIAN)) c_put_str(TERM_WHITE, "+", 5, 65+i);
 		if (csheet_boni[i].cb[8] & CB9_EDRGN) { c_put_str(TERM_WHITE, "e", 6, 65+i); header_color[3][5] = TERM_WHITE; }
@@ -2623,7 +2625,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		if ((csheet_boni[i].cb[8] & CB9_EDEMN) && (csheet_boni[i].cb[8] & CB9_SDEMN)) c_put_str(TERM_WHITE, "+", 7, 65+i);
 		if ((csheet_boni[i].cb[8] & CB9_EDEMN) && (csheet_boni[i].cb[8] & CB9_KDEMN)) c_put_str(TERM_WHITE, "*", 7, 65+i);
 		if (csheet_boni[i].cb[8] & CB9_EUNDD) { c_put_str(TERM_WHITE, "e", 8, 65+i); header_color[3][7] = TERM_WHITE; }
-		
+
 		if (csheet_boni[i].cb[9] & CB10_SUNDD) { c_put_str(TERM_WHITE, "s", 8, 65+i); header_color[3][7] = TERM_WHITE; }
 		if (csheet_boni[i].cb[9] & CB10_KUNDD) { c_put_str(TERM_WHITE, "k", 8, 65+i); header_color[3][7] = TERM_WHITE; }
 		if ((csheet_boni[i].cb[8] & CB9_EUNDD) && (csheet_boni[i].cb[9] & CB10_SUNDD)) c_put_str(TERM_WHITE, "+", 8, 65+i);
@@ -2635,7 +2637,7 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		if (csheet_boni[i].cb[9] & CB10_EGOOD) { c_put_str(TERM_WHITE, "e", 11, 65+i); header_color[3][10] = TERM_WHITE; }
 		if (csheet_boni[i].cb[9] & CB10_ENONL) { c_put_str(TERM_WHITE, "e", 12, 65+i); header_color[3][11] = TERM_WHITE; }
 		if (csheet_boni[i].cb[9] & CB10_EUNIQ) { c_put_str(TERM_WHITE, "e", 13, 65+i); header_color[3][12] = TERM_WHITE; }
-		
+
 		if (csheet_boni[i].cb[10] & CB11_BFIRE) { c_put_str(TERM_WHITE, "b", 14, 65+i); header_color[3][13] = TERM_WHITE; }
 		if (csheet_boni[i].cb[10] & CB11_AFIRE) { c_put_str(TERM_WHITE, "a", 14, 65+i); header_color[3][13] = TERM_WHITE; }
 		if ((csheet_boni[i].cb[10] & CB11_BFIRE) && (csheet_boni[i].cb[10] & CB11_AFIRE)) c_put_str(TERM_WHITE, "+", 14, 65+i);
@@ -2647,10 +2649,10 @@ else { //Character sheet boni page, finally! :) - Kurzel
 		if ((csheet_boni[i].cb[10] & CB11_BELEC) && (csheet_boni[i].cb[10] & CB11_AELEC)) c_put_str(TERM_WHITE, "+", 16, 65+i);
 		if (csheet_boni[i].cb[10] & CB11_BACID) { c_put_str(TERM_WHITE, "b", 17, 65+i); header_color[3][16] = TERM_WHITE; }
 		if (csheet_boni[i].cb[10] & CB11_BPOIS) { c_put_str(TERM_WHITE, "b", 18, 65+i); header_color[3][17] = TERM_WHITE; }
-		
+
 		//we could add EXTR instead of vorp, then 'v', 'q' for quake too maybe? Add another byte? [y/N] :\ - Kurzel
 		if (csheet_boni[i].cb[11] & CB12_BVORP) { c_put_str(TERM_WHITE, "+", 19, 65+i); header_color[3][18] = TERM_WHITE; }
-		
+
 		/* Footer */
 		color = csheet_boni[i].color;
 		symbol = (csheet_boni[i].symbol ? csheet_boni[i].symbol : ' ');
@@ -2682,23 +2684,23 @@ else { //Character sheet boni page, finally! :) - Kurzel
 	
 	c_put_str(header_color[1][0], "Fear:", 1, 20);
 	c_put_str(header_color[1][1], "Para:", 2, 20);
-	c_put_str(header_color[1][2], "Blnd:", 3, 20);
-	c_put_str(header_color[1][3], "SInv:", 4, 20); //Moved this to be close to BLND
-	c_put_str(header_color[1][4], "FFal:", 5, 20);
-	c_put_str(header_color[1][5], "Food:", 6, 20);
-	c_put_str(header_color[1][6], "Life:", 7, 20); //Could have a better descriptor...
-	c_put_str(header_color[1][7], "RgHP:", 8, 20);
-	c_put_str(header_color[1][8], "RgMP:", 9, 20);
-	c_put_str(header_color[1][9], "Tele:", 10, 20); //Moved to be close to REFL
-	c_put_str(header_color[1][10], "Refl:", 11, 20);
-	c_put_str(header_color[1][11], "Invs:", 12, 20);
-	c_put_str(header_color[1][12], "Vamp:", 13, 20);
-	c_put_str(header_color[1][13], "ID  :", 14, 20);
-	c_put_str(header_color[1][14], "Levi:", 15, 20);
-	c_put_str(header_color[1][15], "Clmb:", 16, 20);
-	c_put_str(header_color[1][16], "Wrai:", 17, 20);
-	c_put_str(header_color[1][17], "AMSh:", 18, 20);
-	c_put_str(header_color[1][18], "Aggr:", 19, 20);
+	c_put_str(header_color[1][2], "HLif:", 3, 20); //Could have a better descriptor... --changed it, was 'Life'
+	c_put_str(header_color[1][3], "Blnd:", 4, 20);
+	c_put_str(header_color[1][4], "Tele:", 5, 20); //Moved to be close to REFL
+	c_put_str(header_color[1][5], "Refl:", 6, 20);
+	c_put_str(header_color[1][6], "FFal:", 7, 20);
+	c_put_str(header_color[1][7], "Levi:", 8, 20);
+	c_put_str(header_color[1][8], "Clmb:", 9, 20);
+	c_put_str(header_color[1][9], "SInv:", 10, 20); //Moved this to be close to BLND --split up into "resistances" (blindness) and non-resses, so SInv is next to Invs instead, also looks good, no? ^^
+	c_put_str(header_color[1][10], "Invs:", 11, 20);
+	c_put_str(header_color[1][11], "Vamp:", 12, 20);
+	c_put_str(header_color[1][12], "Wrai:", 13, 20);
+	c_put_str(header_color[1][13], "Food:", 14, 20);
+	c_put_str(header_color[1][14], "RgHP:", 15, 20);
+	c_put_str(header_color[1][15], "RgMP:", 16, 20);
+	c_put_str(header_color[1][16], "AMSh:", 17, 20);
+	c_put_str(header_color[1][17], "Aggr:", 18, 20);
+	c_put_str(header_color[1][18], "ID  :", 19, 20);
 
 	c_put_str(header_color[2][0], "Spd :", 1, 40);
 	c_put_str(header_color[2][1], "Slth:", 2, 40);
