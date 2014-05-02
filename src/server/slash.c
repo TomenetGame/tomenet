@@ -7724,26 +7724,36 @@ void do_slash_cmd(int Ind, char *message)
 				    //o_ptr->to_h < 30 ||
 				    //o_ptr->to_d < 30 ||
 				    //o_ptr->to_a < 30 ||
-				    //o_ptr->pval < 4 ||
+				    //o_ptr->pval < 5 ||
+
+				    //o_ptr->dd < 3 ||
+				    //!((a_ptr->flags1 & TR1_SLAY_DRAGON) || (a_ptr->flags1 & TR1_KILL_DRAGON)) ||
+				    //!((a_ptr->flags1 & TR1_SLAY_DEMON) || (a_ptr->flags1 & TR1_KILL_DEMON)) ||
+				    //!((a_ptr->flags1 & TR1_SLAY_UNDEAD) || (a_ptr->flags1 & TR1_KILL_UNDEAD)) ||
 
 				    //!(a_ptr->flags1 & TR1_CON) ||
 				    //!(a_ptr->flags1 & TR1_STEALTH) ||
 				    //!(a_ptr->flags1 & TR1_SPEED) ||
 				    //!(a_ptr->flags2 & TR2_FREE_ACT) ||
-				    !(a_ptr->flags2 & TR2_RES_BLIND) ||
-				    !(a_ptr->flags2 & TR2_RES_POIS) ||
+				    //!(a_ptr->flags2 & TR2_RES_BLIND) ||
+				    //!(a_ptr->flags2 & TR2_RES_POIS) ||
 				    //!(a_ptr->flags2 & TR2_RES_FIRE) ||
 				    //!(a_ptr->flags2 & TR2_RES_COLD) ||
-				    !(a_ptr->flags2 & TR2_RES_ACID) ||
-				    !(a_ptr->flags2 & TR2_RES_ELEC) ||
-				    !(a_ptr->flags2 & TR2_IM_FIRE) ||
-				    !(a_ptr->flags2 & TR2_IM_COLD) ||
-				    !(a_ptr->flags2 & TR2_RES_SHARDS) ||
+				    //!(a_ptr->flags2 & TR2_RES_ACID) ||
+				    //!(a_ptr->flags2 & TR2_RES_ELEC) ||
+				    //!(a_ptr->flags2 & TR2_IM_FIRE) ||
+				    //!(a_ptr->flags2 & TR2_IM_COLD) ||
+				    //!(a_ptr->flags2 & TR2_RES_SHARDS) ||
+				    //!(a_ptr->flags2 & TR2_RES_NEXUS) ||
 
 				    //!(a_ptr->flags3 & TR3_XTRA_MIGHT) ||
 				    //!(a_ptr->flags3 & TR3_XTRA_SHOTS) ||
+				    //!(a_ptr->flags1 & TR1_BLOWS) ||
+				    //!(a_ptr->flags5 & TR5_CRIT) ||
 
-				    //(a_ptr->flags3 & TR3_NO_MAGIC) ||
+				    //!(a_ptr->esp & ESP_ALL) ||
+
+				    (a_ptr->flags3 & TR3_NO_MAGIC) ||
 				    (a_ptr->flags3 & TR3_AGGRAVATE)
 				    );
 				msg_format(Ind, "Re-rolled randart %d times.", tries);
