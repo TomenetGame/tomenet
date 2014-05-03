@@ -3252,7 +3252,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			else if (p2_ptr->body_monster) c = r_info[p2_ptr->body_monster].d_char;
 			else if (p2_ptr->fruit_bat) c = 'b';
 			else c = '@';
+
 #endif
+			/* Always show party members as dark grey @. Allow pvp flickers still */
+			if (p_ptr->consistent_players) {
+				c = '@';
+				a = TERM_L_DARK;
+			}
+
 			/* part 'A' end */
 
 			/* TERM_BNW if blood bonded - mikaelh */
@@ -3642,8 +3649,15 @@ void lite_spot(int Ind, int y, int x)
 			map_info(Ind, y, x, &a, &c);
 		}
 
+		if (p_ptr->consistent_players) {
+			a = TERM_WHITE;
+			if (p_ptr->tim_manashield && p_ptr->msp > 0 && p_ptr->csp > 0) {
+				a = TERM_YELLOW;
+			}
+		}
+
 		/* Hack -- fake monochrome */
-		if (!use_color) a = TERM_WHITE;
+		if (!use_color)  a = TERM_WHITE;
 
 		dispx = x - p_ptr->panel_col_prt;
 		dispy = y - p_ptr->panel_row_prt;

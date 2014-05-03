@@ -602,7 +602,7 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.no_weather,		FALSE,	4,	1, 99, TRUE,
 	"no_weather",			"Disable weather visuals and sounds completely" },
 
-	{ &c_cfg.hilite_player,		FALSE,	4,	1, 100, TRUE,
+	{ &c_cfg.hilite_player,		FALSE,	4,	1, 100, FALSE,
 	"hilite_player",		"Hilite your character icon with the cursor" },
 
 	{ &c_cfg.alert_mana,		FALSE,	1,	0, 101, TRUE,
@@ -614,6 +614,9 @@ option_type option_info[OPT_MAX] =
 	//disabled use_color and limit_chat to make room for 2 more 'UI options'
 	{ &c_cfg.exp_bar,		FALSE,	1,	9, 103, TRUE,
 	"exp_bar",			"Show experience bar instead of a number" },
+
+	{ &c_cfg.consistent_players,	FALSE,	4,	1, 104, TRUE,
+	"consistent_players",		"Use consistent symbols and colours for players" },
 
 };
 

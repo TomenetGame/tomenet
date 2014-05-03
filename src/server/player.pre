@@ -1051,6 +1051,7 @@ struct player_type
 	int IDDC_logscum;
 	bool insta_res;
 	bool hilite_player;
+	bool consistent_players;
 #ifdef TELEPORT_SURPRISES
 	byte teleported;
 #endif
