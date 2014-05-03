@@ -2838,8 +2838,8 @@ void calc_boni(int Ind) {
 	int			old_dis_ac;
 	int			old_dis_to_a;
 
-	int			old_dis_to_h;
-	int			old_dis_to_d;
+	int			old_dis_to_h, old_to_h_melee;
+	int			old_dis_to_d, old_to_d_melee;
 
 //	int			extra_blows;
 	int			extra_shots;
@@ -2883,6 +2883,9 @@ void calc_boni(int Ind) {
 	/* Save the old hit/damage bonuses */
 	old_dis_to_h = p_ptr->dis_to_h;
 	old_dis_to_d = p_ptr->dis_to_d;
+
+	old_to_h_melee = p_ptr->to_h_melee;
+	old_to_d_melee = p_ptr->to_d_melee;
 
 	/* Clear extra blows/shots */
 //	extra_blows = extra_shots = extra_spells = 0;
@@ -5333,6 +5336,8 @@ void calc_boni(int Ind) {
 	}
 
 	if (p_ptr->body_monster) {
+		int d_d, d_m;
+
 		d = 0;
 		for (i = 0; i < 4; i++) {
 			j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
@@ -5348,35 +5353,45 @@ void calc_boni(int Ind) {
 		- even The Destroyer form would reach just 138 ;) */
 		d /= 4; /* average monster damage per blow */
 		/* GWoP: 63, GT: 91, GB: 37, GDR: 14 */
-#if 1 /* Too high +dam gain for GT/Hru */
+#if 0 /* Way too high +dam gain for GT/Hru: Form can increase to-dam by at least +40! */
 		d = (4000 / ((1500 / (d + 4)) + 22)) - 10; //original stuff, some monsters add too much dam
 #else
 		//d = (3200 / ((900 / (d + 4)) + 22)) - 10; //still too high
-		//d = (3200 / ((800 / (d + 4)) + 22)) - 20; //not quite enough, but on the way
-		//d = (2500 / ((500 / (d + 4)) + 22)) - 20; //final target, maybe too drastic
-		d = (2850 / ((650 / (d + 4)) + 22)) - 20; //compromise
+		//d = (3200 / ((800 / (d + 4)) + 22)) - 20; //not enough, but on the way
+		//d = (2850 / ((650 / (d + 4)) + 22)) - 20; //not quite there yet
+		d = (2500 / ((500 / (d + 4)) + 22)) - 20; //final target: Aim at +27 to-dam increase, which is still a lot
 #endif
+
+		d_d = (d * p_ptr->to_d) / (p_ptr->to_d + p_ptr->to_d_melee);
+		d_m = (d * p_ptr->to_d_melee) / (p_ptr->to_d + p_ptr->to_d_melee);
+		//s_printf("b: to_d %d, to_d_m %d, d %d, dd %d, dm %d\n", p_ptr->to_d, p_ptr->to_d_melee, d, d_d, d_m);
 
 		/* Calculate new averaged to-dam bonus */
 		if (d < (p_ptr->to_d + p_ptr->to_d_melee))
 #ifndef MIMICRY_BOOST_WEAK_FORM
 		{
-			p_ptr->to_d = ((p_ptr->to_d * 5) + (d * 2)) / 7;
-			p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 7;
-			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 5) + (d * 2)) / 7;
+			p_ptr->to_d = (p_ptr->to_d * 5 + d_d * 2) / 7;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 5 + d_m * 2) / 7;
+			p_ptr->dis_to_d = (p_ptr->dis_to_d * 5 + d_d * 2) / 7;
 		} else
 #else
+		{
+ #if 0
 			/* (rounding error of -1 total to-dam may still occur) */
 			d = p_ptr->to_d + p_ptr->to_d_melee;
-#endif
-		{
-			p_ptr->to_d = ((p_ptr->to_d * 1) + (d * 1)) / 2;
-			p_ptr->to_d_melee = (p_ptr->to_d_melee * 1) / 2;
-			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 1) + (d * 1)) / 2;
+ #else
+			d_d = p_ptr->to_d;
+			d_m = p_ptr->to_d_melee;
+ #endif
 		}
-	/*	p_ptr->dis_to_d = (d < p_ptr->dis_to_d) ?
-		(((p_ptr->dis_to_d * 2) + (d * 1)) / 3) :
-		(((p_ptr->dis_to_d * 1) + (d * 1)) / 2);	*/
+#endif
+
+		{
+			p_ptr->to_d = (p_ptr->to_d + d_d) / 2;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee + d_m) / 2;
+			p_ptr->dis_to_d = (p_ptr->dis_to_d + d_d) / 2;
+		}
+		//s_printf("A: to_d %d, to_d_m %d\n", p_ptr->to_d, p_ptr->to_d_melee);
 	}
 
 
@@ -5486,7 +5501,8 @@ void calc_boni(int Ind) {
 
 
 	/* Redraw plusses to hit/damage if necessary */
-	if ((p_ptr->dis_to_h != old_dis_to_h) || (p_ptr->dis_to_d != old_dis_to_d)) {
+	if (p_ptr->dis_to_h != old_dis_to_h || p_ptr->dis_to_d != old_dis_to_d ||
+	    p_ptr->to_h_melee != old_to_h_melee || p_ptr->to_d_melee != old_to_d_melee) {
 		/* Redraw plusses */
 		p_ptr->redraw |= (PR_PLUSSES);
 	}
