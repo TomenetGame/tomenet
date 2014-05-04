@@ -5336,8 +5336,6 @@ void calc_boni(int Ind) {
 	}
 
 	if (p_ptr->body_monster) {
-		int d_d, d_m;
-
 		d = 0;
 		for (i = 0; i < 4; i++) {
 			j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
@@ -5362,36 +5360,15 @@ void calc_boni(int Ind) {
 		d = (2500 / ((500 / (d + 4)) + 22)) - 20; //final target: Aim at +27 to-dam increase, which is still a lot
 #endif
 
-		d_d = (d * p_ptr->to_d) / (p_ptr->to_d + p_ptr->to_d_melee);
-		d_m = (d * p_ptr->to_d_melee) / (p_ptr->to_d + p_ptr->to_d_melee);
-		//s_printf("b: to_d %d, to_d_m %d, d %d, dd %d, dm %d\n", p_ptr->to_d, p_ptr->to_d_melee, d, d_d, d_m);
-
 		/* Calculate new averaged to-dam bonus */
-		if (d < (p_ptr->to_d + p_ptr->to_d_melee))
+		if (d < p_ptr->to_d_melee)
 #ifndef MIMICRY_BOOST_WEAK_FORM
-		{
-			p_ptr->to_d = (p_ptr->to_d * 5 + d_d * 2) / 7;
-			p_ptr->to_d_melee = (p_ptr->to_d_melee * 5 + d_m * 2) / 7;
-			p_ptr->dis_to_d = (p_ptr->dis_to_d * 5 + d_d * 2) / 7;
-		} else
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 5 + d * 2) / 7;
+		else
 #else
-		{
- #if 0
-			/* (rounding error of -1 total to-dam may still occur) */
-			d = p_ptr->to_d + p_ptr->to_d_melee;
- #else
-			d_d = p_ptr->to_d;
-			d_m = p_ptr->to_d_melee;
- #endif
-		}
+			d = p_ptr->to_d_melee;
 #endif
-
-		{
-			p_ptr->to_d = (p_ptr->to_d + d_d) / 2;
-			p_ptr->to_d_melee = (p_ptr->to_d_melee + d_m) / 2;
-			p_ptr->dis_to_d = (p_ptr->dis_to_d + d_d) / 2;
-		}
-		//s_printf("A: to_d %d, to_d_m %d\n", p_ptr->to_d, p_ptr->to_d_melee);
+			p_ptr->to_d_melee = (p_ptr->to_d_melee + d) / 2;
 	}
 
 
