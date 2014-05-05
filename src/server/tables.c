@@ -5846,7 +5846,7 @@ cptr player_title_special[MAX_CLASS][5][4] =
 /* desc, min_lv, rchance, dd, ds, effect */
 martial_arts ma_blows[MAX_MA] =
 {
-#ifndef RPG_SERVER 
+#if 0
 	{ "You punch %s",                          1, 0, 1, 4, 0 },
 	{ "You kick %s",                           2, 0, 1, 6, 0 },
 	{ "You strike %s",                         3, 0, 1, 7, 0 },
