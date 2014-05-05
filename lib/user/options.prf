@@ -120,3 +120,5 @@ X:keep_topline
 X:hilite_player
 X:alert_mana
 X:exp_bar
+X:consistent_players
+X:flash_player
