@@ -13962,7 +13962,7 @@ skill in the skill screen ('G'). It determines how well a character can make
 use of magical devices such as wands, staves, rods and activatable items.
 
 The Magic Device ability is not limited to a maximum value, although the
-player won't be able to increase it unlimitedly. The scale is:
+player won't be able to increase it infinitely. The scale is:
   0+    Bad
   12+   Poor
   18+   Fair
