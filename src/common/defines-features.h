@@ -169,7 +169,7 @@
 #ifdef TEST_SERVER
  #define TO_AC_CAP_30		/* limit to_ac to +30 instead of +35 */
 
- #define ENABLE_SELF_HIGHLIGHTING	/* Allow usage of /hilite command (todo: turn into client option) */
+ #define ENABLE_SELF_FLASHING	/* Allow usage of /hilite command (todo: turn into client option) */
 
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 

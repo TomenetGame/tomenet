@@ -166,7 +166,6 @@ extern bool depth_in_feet;
 extern bool use_color;
 extern bool safe_macros;//compress_savefile;
 extern bool hilite_player;
-extern bool consistent_players;
 extern bool ring_bell;
 extern bool find_ignore_stairs;
 extern bool find_ignore_doors;

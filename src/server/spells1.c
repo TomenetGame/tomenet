@@ -962,12 +962,12 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 		}
 	}
 
-#ifdef ENABLE_SELF_HIGHLIGHTING
+#ifdef ENABLE_SELF_FLASHING
 	/* flicker player for a moment, to allow for easy location */
 	/* not for phase door, except when our view panel has changed from it */
-	if (p_ptr->hilite_self >= 0 &&
+	if (p_ptr->flash_self >= 0 &&
 	    (org_dis > 20 || !local_panel(Ind)))
-		p_ptr->hilite_self = cfg.fps / 6;
+		p_ptr->flash_self = cfg.fps / 6;
 #endif
 
 	/* Redraw the new spot */
@@ -1110,12 +1110,12 @@ void teleport_player_to(int Ind, int ny, int nx) {
 	/* Redraw the old spot */
 	everyone_lite_spot(wpos, oy, ox);
 
-#ifdef ENABLE_SELF_HIGHLIGHTING
+#ifdef ENABLE_SELF_FLASHING
 #if 0 /* not for tele-to - let's regarded it as a 'blink' here */
 	/* flicker player for a moment, to allow for easy location */
-	if (p_ptr->hilite_self >= 0) p_ptr->hilite_self = cfg.fps / 8;
+	if (p_ptr->flash_self >= 0) p_ptr->flash_self = cfg.fps / 8;
 #else /* exception when our view panel has changed from this tele-to */
-	if (p_ptr->hilite_self >= 0 && !local_panel(Ind)) p_ptr->hilite_self = cfg.fps / 6;
+	if (p_ptr->flash_self >= 0 && !local_panel(Ind)) p_ptr->flash_self = cfg.fps / 6;
 #endif
 #endif
 

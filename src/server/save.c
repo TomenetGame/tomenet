@@ -868,7 +868,7 @@ static void wr_extra(int Ind) {
 	wr_u32b(p_ptr->gold_picked_up);
 	wr_byte(p_ptr->insta_res);
 	wr_byte(p_ptr->castles_owned);
-	wr_s16b(p_ptr->hilite_self);
+	wr_s16b(p_ptr->flash_self);
 	wr_byte(p_ptr->fluent_artifact_reset); /* for automatic artifact resets */
 	wr_byte(p_ptr->sanity_bar);
 	wr_byte(p_ptr->IDDC_found_rndtown);

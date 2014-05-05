@@ -3619,9 +3619,10 @@ void lite_spot(int Ind, int y, int x)
 				else if ((has_ball(p_ptr) != -1) && magik(25)) a = TERM_ORANGE; /* game ball carrier has orange flickering - mikaelh */
 			}
 
-#ifdef ENABLE_SELF_HIGHLIGHTING
+
+#ifdef ENABLE_SELF_FLASHING
 			/* display player in really easily spottable colours */
-			if (p_ptr->hilite_self > 0) a = (p_ptr->hilite_self % 2) ? TERM_L_RED : TERM_L_GREEN;
+			if (p_ptr->flash_self > 0) a = (p_ptr->flash_self % 2) ? TERM_L_RED : TERM_L_GREEN;
 #endif
 
 			/* bugfix on MASSIVE deaths (det/death) */

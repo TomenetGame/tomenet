@@ -2951,7 +2951,7 @@ struct player_type {
 	bool insta_res;			/* Instant resurrection */
 	s16b tmp_x, tmp_y;		/* temporary xtra stuff, can be used by whatever */
 	bool font_map_solid_walls;	/* Hack: Certain Windows bitmap fonts: Map walls to /127, solid block tile */
-	s16b hilite_self;
+	s16b flash_self;
 	bool hilite_player;		/* possible resurrection of long since broken c_cfg.hilite_player: Draw cursor around us at all times. */
 	bool consistent_players;	/* Use consistent colouring for player and allies. Ignore all status/body_monster */
 #ifdef TELEPORT_SURPRISES
@@ -3326,6 +3326,7 @@ struct client_opts {
 	bool no_house_sfx;
 	bool no_weather;
 	bool consistent_players;
+	bool flash_player;
 };
 
 /*
