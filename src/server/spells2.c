@@ -1755,6 +1755,9 @@ bool detect_treasure(int Ind, int rad) {
 	object_type	*o_ptr;
 	cave_type **zcave;
 
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
@@ -1932,6 +1935,9 @@ bool detect_magic(int Ind, int rad) {
 
 	cave_type **zcave;
 
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
@@ -2000,6 +2006,10 @@ bool detect_monsters_xxx(int Ind, u32b match_flag) {
 	cptr desc_monsters = "weird monsters";
 
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
+
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
@@ -2104,6 +2114,10 @@ bool detect_invisible(int Ind) {
 	bool	flag = FALSE;
 
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
+
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
@@ -2229,6 +2243,10 @@ bool detect_evil(int Ind) {
 	bool	flag = FALSE;
 
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
+
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
@@ -2313,6 +2331,10 @@ bool detect_creatures(int Ind) {
 	bool	flag = FALSE;
 
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
+
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
@@ -2431,6 +2453,10 @@ void detect_monsters_forced(int Ind) {
 	int	i;
 
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return;
+
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return;
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return;
 
@@ -2512,6 +2538,9 @@ bool detect_bounty(int Ind, int rad) {
 	struct c_special *cs_ptr;
 
 	object_type	*o_ptr;
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
@@ -2641,6 +2670,9 @@ bool detect_object(int Ind, int rad) {
 	cave_type **zcave;
 
 
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 
@@ -2707,6 +2739,9 @@ bool detect_trap(int Ind, int rad) {
 
 	object_type	*o_ptr;
 
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
@@ -2817,6 +2852,10 @@ bool detect_sdoor(int Ind, int rad) {
 	cave_type *c_ptr;
 	byte *w_ptr;
 	cave_type **zcave;
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	l_ptr = getfloor(wpos);
 

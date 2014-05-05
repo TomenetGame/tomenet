@@ -8951,6 +8951,68 @@ void verify_tradpanel(int Ind)
 #endif
 }
 
+/* Test whether the player is currently looking at his local surroundings (default)
+   as opposed to some far off panel (done by cmd_locate()).
+   Purpose: Prevent detection magic from working on remote areas. */
+bool local_panel(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	int y = p_ptr->py;
+	int x = p_ptr->px;
+
+	int prow = p_ptr->panel_row;
+	int pcol = p_ptr->panel_col;
+
+
+	/* Also check (virtual) traditional panel */
+	if (!local_tradpanel(Ind)) return FALSE;
+
+
+	/* Scroll screen when 2 grids from top/bottom edge */
+	if ((y < p_ptr->panel_row_min + SCROLL_MARGIN_ROW) || (y > p_ptr->panel_row_max - SCROLL_MARGIN_ROW)) {
+		prow = ((y - p_ptr->screen_hgt / 4) / (p_ptr->screen_hgt / 2));
+		if (prow > p_ptr->max_panel_rows) prow = p_ptr->max_panel_rows;
+		else if (prow < 0) prow = 0;
+	}
+
+	/* Scroll screen when 4 grids from left/right edge */
+	if ((x < p_ptr->panel_col_min + SCROLL_MARGIN_COL) || (x > p_ptr->panel_col_max - SCROLL_MARGIN_COL)) {
+		pcol = ((x - p_ptr->screen_wid / 4) / (p_ptr->screen_wid / 2));
+		if (pcol > p_ptr->max_panel_cols) pcol = p_ptr->max_panel_cols;
+		else if (pcol < 0) pcol = 0;
+	}
+
+	/* Check for "no change" */
+	if ((prow == p_ptr->panel_row) && (pcol == p_ptr->panel_col)) return TRUE;
+	return FALSE;
+}
+bool local_tradpanel(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	int y = p_ptr->py;
+	int x = p_ptr->px;
+
+	int prow = p_ptr->tradpanel_row;
+	int pcol = p_ptr->tradpanel_col;
+
+	/* Scroll screen when 2 grids from top/bottom edge */
+	if ((y < p_ptr->tradpanel_row_min + TRAD_SCROLL_MARGIN_ROW) || (y > p_ptr->tradpanel_row_max - TRAD_SCROLL_MARGIN_ROW)) {
+		prow = ((y - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
+		if (prow > p_ptr->max_tradpanel_rows) prow = p_ptr->max_tradpanel_rows;
+		else if (prow < 0) prow = 0;
+	}
+
+	/* Scroll screen when 4 grids from left/right edge */
+	if ((x < p_ptr->tradpanel_col_min + TRAD_SCROLL_MARGIN_COL) || (x > p_ptr->tradpanel_col_max - TRAD_SCROLL_MARGIN_COL)) {
+		pcol = ((x - SCREEN_WID / 4) / (SCREEN_WID / 2));
+		if (pcol > p_ptr->max_tradpanel_cols) pcol = p_ptr->max_tradpanel_cols;
+		else if (pcol < 0) pcol = 0;
+	}
+
+	/* Check for "no change" */
+	if ((prow == p_ptr->tradpanel_row) && (pcol == p_ptr->tradpanel_col)) return TRUE;
+	return FALSE;
+}
 
 
 /*

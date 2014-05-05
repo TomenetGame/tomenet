@@ -6804,8 +6804,7 @@ void update_flow(void)
 /*
  * Hack -- map the current panel (plus some) ala "magic mapping"
  */
-void map_area(int Ind)
-{
+void map_area(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int             i, x, y, y1, y2, x1, x2;
 
@@ -6816,6 +6815,10 @@ void map_area(int Ind)
 	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
 	worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return;
+
 	if (!(zcave = getcave(wpos))) return;
 /*	if (d_ptr && d_ptr->flags & DUNGEON_NO_MAP) return; */
 	if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC_MAP)) return;
