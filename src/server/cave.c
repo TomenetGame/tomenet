@@ -3645,6 +3645,20 @@ void lite_spot(int Ind, int y, int x)
 				}
 			}
 
+			if (p_ptr->consistent_players) {
+				a = TERM_WHITE;
+				if (p_ptr->tim_mimic > 0 && p_ptr->body_monster) {
+					a = TERM_ORANGE;
+				}
+				if (p_ptr->tim_manashield && p_ptr->msp > 0 && p_ptr->csp > 0) {
+					a = TERM_YELLOW;
+				}
+				if (p_ptr->black_breath && magik(50)) {
+					a = TERM_SLATE;
+				}
+			}
+
+
 			/* >4.5.4: Mark that it is the player himself */
 			if (p_ptr->hilite_player) is_us = TRUE;
 		}
@@ -3653,19 +3667,6 @@ void lite_spot(int Ind, int y, int x)
 		else {
 			/* Examine the grid */
 			map_info(Ind, y, x, &a, &c);
-		}
-
-		if (p_ptr->consistent_players) {
-			a = TERM_WHITE;
-			if (p_ptr->tim_mimic > 0 && p_ptr->body_monster) {
-				a = TERM_ORANGE;
-			}
-			if (p_ptr->tim_manashield && p_ptr->msp > 0 && p_ptr->csp > 0) {
-				a = TERM_YELLOW;
-			}
-			if (p_ptr->black_breath && magik(50)) {
-				a = TERM_SLATE;
-			}
 		}
 
 		/* Hack -- fake monochrome */
