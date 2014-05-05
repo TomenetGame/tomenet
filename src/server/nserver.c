@@ -4402,8 +4402,10 @@ int Send_experience(int Ind, int lev, s32b max, s32b cur, s32b adv, s32b adv_pre
 			Ind, connp->state, connp->id));
 		return 0;
 	}
+
 	if (is_newer_than(&Players[Ind]->version, 4, 5, 6, 0, 0, 1))
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%d%d%d%d", PKT_EXPERIENCE, lev, Players[Ind]->max_lev, Players[Ind]->max_plv, max, cur, adv, adv_prev);
+		/* hack: add marker to 'lev' to allow keeping track of exp_frac during level 1 exp'ing phase */
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%d%d%d%d", PKT_EXPERIENCE, lev + (Players[Ind]->exp_frac >= 5000 ? 1000 : 0), Players[Ind]->max_lev, Players[Ind]->max_plv, max, cur, adv, adv_prev);
 	else if (is_newer_than(&Players[Ind]->version, 4, 4, 1, 3, 0, 0))
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%d%d%d", PKT_EXPERIENCE, lev, Players[Ind]->max_lev, Players[Ind]->max_plv, max, cur, adv);
 	else

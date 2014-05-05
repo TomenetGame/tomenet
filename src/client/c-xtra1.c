@@ -211,14 +211,14 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 		}
 #else /* finer double-scale 0..10 in 0.5 steps :D */
 		else {//if (!c_cfg.exp_need) {
-			int got = ((cur - adv_prev) * 20) / scale, i;
+			int got = ((cur - adv_prev) * 20 + half_exp) / scale, i;
 			got_org = got;
 
 			for (i = 0; i < got / 2; i++) tmp[i] = exp_bar_char;
 			tmp[i] = 0;
  #if 0
 		} else {
-			int got = ((cur - adv_prev) * 20) / scale, i;
+			int got = ((cur - adv_prev) * 20 + half_exp) / scale, i;
 			got_org = got;
 
 			for (i = 0; i < got / 2; i++) tmp[i] = '-'; //10 'filled bubbles' = next level, so only need to display 9!

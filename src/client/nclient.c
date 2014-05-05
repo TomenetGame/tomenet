@@ -1587,6 +1587,12 @@ int Receive_experience(void) {
 		adv_prev = adv;
 	}
 
+	/* unhack exp_frac marker */
+	if (lev >= 1000) {
+		lev -= 1000;
+		half_exp = 10;
+	} else half_exp = 0;
+
 	p_ptr->lev = lev;
 	p_ptr->max_lev = max_lev;
 	p_ptr->max_plv = max_plv;

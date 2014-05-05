@@ -179,6 +179,7 @@ extern c_player_extra c_player;
 extern c_player_extra *c_p_ptr;
 /* extern char body_name[80]; */
 extern s32b exp_adv, exp_adv_prev;
+extern byte half_exp; //EXP_BAR_FINESCALE
 
 extern s16b command_see;
 extern s16b command_gap;
