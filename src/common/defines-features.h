@@ -143,9 +143,11 @@
 /* like BONE_AND_TREASURE_CHAMBERS, just for IDDC */
 #define IDDC_BONE_AND_TREASURE_CHAMBERS
 
-#define RANDART_WEAPON_BUFF	/* better chance for non-low +hit,+dam on randart melee weapons and boomerangs */
+/* better chance for non-low +hit,+dam on randart melee weapons and boomerangs */
+#define RANDART_WEAPON_BUFF
 
-#define ENABLE_SELF_FLASHING	/* Allow usage of /hilite command (todo: turn into client option) */
+/* Allow usage of /hilite command (todo: turn into client option) */
+#define ENABLE_SELF_FLASHING
 
 
 /* --------------------- Server-type dependant features -------------------- */
