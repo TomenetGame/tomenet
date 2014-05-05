@@ -2665,22 +2665,22 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 				a_ptr->dd -= 1; /* No overpowered slaying weapons */
 		} else if (randint(2) == 1) {
 			while (randint(a_ptr->dd + 1) == 1 &&
-			    (1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) > slay_limit_ego(a_ptr, k_ptr))
+			    (1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) <= slay_limit_ego(a_ptr, k_ptr))
 				/* No overpowered slaying weapons */
 				a_ptr->dd++;
 
 			while (randint(a_ptr->ds + 1) == 1 &&
-			    (a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) > slay_limit_ego(a_ptr, k_ptr))
+			    (a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) <= slay_limit_ego(a_ptr, k_ptr))
 				/* No overpowered slaying weapons */
 				a_ptr->ds++;
 		} else {
 			while (randint(a_ptr->ds + 1) == 1 &&
-			    (a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) > slay_limit_ego(a_ptr, k_ptr))
+			    (a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) <= slay_limit_ego(a_ptr, k_ptr))
 				/* No overpowered slaying weapons */
 				a_ptr->ds++;
 
 			while (randint(a_ptr->dd + 1) == 1 &&
-			    (1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) > slay_limit_ego(a_ptr, k_ptr))
+			    (1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) <= slay_limit_ego(a_ptr, k_ptr))
 				/* No overpowered slaying weapons */
 				a_ptr->dd++;
 		}
