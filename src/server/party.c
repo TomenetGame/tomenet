@@ -2513,11 +2513,13 @@ static bool players_in_level(int Ind, int Ind2) {
         return TRUE;
 }
 
+/* Note: 'amount' is actually multiplied by 100 for extra decimal digits if we're very low level (Training Tower exp'ing).
+   The same is done to 'base_amount' so it's *100 too. */
 void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc) {
 	player_type *p_ptr;
 	int i, eff_henc;
 	struct worldpos *wpos = &Players[Ind]->wpos;
-	s64b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount;
+	s64b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount, new_boosted_amount;
 	s64b modified_level;
 	int dlev = getlevel(wpos);
 	bool not_in_iddc = !in_irondeepdive(wpos);
@@ -2609,7 +2611,7 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 			/*
 			new_exp = (amount * modified_level) / (average_lev * num_members * p_ptr->lev);
 			new_exp_frac = ((((amount * modified_level) % (average_lev * num_members * p_ptr->lev) )
-			                * 0x10000L ) / (average_lev * num_members * p_ptr->lev)) + p_ptr->exp_frac;
+			                * 10000L) / (average_lev * num_members * p_ptr->lev)) + p_ptr->exp_frac;
 			*/
 
 			/* Higher characters who farm monsters on low levels compared to
@@ -2654,28 +2656,24 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 #endif
 
 			/* Especially high party xp boost in IDDC, or people might mostly prefer to solo to 2k */
-			if (!not_in_iddc) {
-				/* Some bonus is applied to encourage partying	- Jir - */
-				new_exp = (new_amount * modified_level * (IDDC_PARTY_XP_BOOST + 1)) /
-				    (average_lev * p_ptr->lev * (num_members + IDDC_PARTY_XP_BOOST));
-				new_exp_frac = (  (((new_amount * modified_level * (IDDC_PARTY_XP_BOOST + 1)) %
-				    (average_lev * p_ptr->lev * (num_members + IDDC_PARTY_XP_BOOST))) * 0x10000L) /
-				    (average_lev * p_ptr->lev * (num_members + IDDC_PARTY_XP_BOOST))) + p_ptr->exp_frac;
-			} else {
-				/* Some bonus is applied to encourage partying	- Jir - */
-				new_exp = (new_amount * modified_level * (PARTY_XP_BOOST + 1)) /
-				    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST));
-				new_exp_frac = (  (((new_amount * modified_level * (PARTY_XP_BOOST + 1)) %
-				    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) * 0x10000L) /
-				    (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) + p_ptr->exp_frac;
-			}
+			if (!not_in_iddc)
+				new_boosted_amount = (new_amount * (IDDC_PARTY_XP_BOOST + 1)) / (num_members + IDDC_PARTY_XP_BOOST);
+			else
+				new_boosted_amount = (new_amount * (PARTY_XP_BOOST + 1)) / (num_members + PARTY_XP_BOOST);
+			new_boosted_amount = (new_boosted_amount * modified_level) / average_lev;
+
+			/* Some bonus is applied to encourage partying	- Jir - */
+			new_exp = new_boosted_amount / p_ptr->lev / 100;
+			new_exp_frac = ((new_boosted_amount - new_exp * p_ptr->lev * 100)
+			    * 100L) / p_ptr->lev + p_ptr->exp_frac;
 
 			/* Keep track of experience */
-			if (new_exp_frac >= 0x10000L) {
+			if (new_exp_frac >= 10000L) {
 				new_exp++;
-				p_ptr->exp_frac = new_exp_frac - 0x10000L;
+				p_ptr->exp_frac = new_exp_frac - 10000L;
 			} else {
 				p_ptr->exp_frac = new_exp_frac;
+				p_ptr->redraw |= PR_EXP; //EXP_BAR_FINESCALE
 			}
 
 			/* Gain experience */

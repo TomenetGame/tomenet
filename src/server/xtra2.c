@@ -8213,7 +8213,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 		char m_name[MNAME_LEN];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
-		/* Had to change it for Halloween -C. Blue */
+
+
+		/* prepare for experience calculation further down */
 		if (m_ptr->level == 0) tmp_exp = r_ptr->mexp;
 		else tmp_exp = r_ptr->mexp * m_ptr->level;
 
@@ -8227,48 +8229,12 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			}
 		}
 
+
 		/* for obtaining statistical IDDC information: */
 		if (l_ptr) l_ptr->monsters_killed++;
 
 		/* Hack -- remove possible suppress flag */
 		suppress_message = FALSE;
-
-		/* Award players of disadvantageous situations */
-		if (l_ptr) {
-			int factor = 100;
-			if (l_ptr->flags1 & LF1_NO_MAGIC)     factor += 10;
-			if (l_ptr->flags1 & LF1_NO_MAP)       factor += 15;
-			if (l_ptr->flags1 & LF1_NO_MAGIC_MAP) factor += 10;
-			if (l_ptr->flags1 & LF1_NO_DESTROY)   factor += 5;
-			if (l_ptr->flags1 & LF1_NO_GENO)      factor += 5;
-			tmp_exp = (tmp_exp * factor) / 100;
-		}
-
-		if (p_ptr->wpos.wz) {
-			int factor = 100;
-			if (dt_ptr2->flags1 & DF1_NO_UP)		factor += 5;
-			if (dt_ptr2->flags2 & DF2_NO_RECALL_INTO)	factor += 5;
-			if (dt_ptr2->flags1 & DF1_NO_RECALL)		factor += 10;
-			if (dt_ptr2->flags1 & DF1_FORCE_DOWN)		factor += 10;
-			if (dt_ptr2->flags2 & DF2_IRON)			factor += 15;
-			if (dt_ptr2->flags2 & DF2_HELL)			factor += 10;
-			if (dt_ptr2->flags2 & DF2_NO_DEATH)		factor -= 50;
-
-			if (dt_ptr2->flags3 & DF3_EXP_5)		factor += 5;
-			if (dt_ptr2->flags3 & DF3_EXP_10)		factor += 10;
-			if (dt_ptr2->flags3 & DF3_EXP_20)		factor += 20;
-
-#ifdef DUNGEON_VISIT_BONUS
-			if (!(dt_ptr2->flags3 & DF3_NO_DUNGEON_BONUS))
-				switch (dungeon_bonus[dt_ptr2->id]) {
-				case 3: factor += 20; break;
-				case 2: factor += 13; break;
-				case 1: factor += 7; break;
-				}
-#endif
-
-			tmp_exp = (tmp_exp * factor) / 100;
-		}
 
 		/* Extract monster name */
 		monster_desc(Ind, m_name, m_idx, 0);
@@ -8313,13 +8279,57 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		/* Generate treasure and give kill credit */
 		monster_death(Ind, m_idx);
 
+
+		/* experience calculation: gain 2 decimal digits (for low-level exp'ing) */
+		tmp_exp *= 100;
+
+		/* Award players of disadvantageous situations */
+		if (l_ptr) {
+			int factor = 100;
+			if (l_ptr->flags1 & LF1_NO_MAGIC)     factor += 10;
+			if (l_ptr->flags1 & LF1_NO_MAP)       factor += 15;
+			if (l_ptr->flags1 & LF1_NO_MAGIC_MAP) factor += 10;
+			if (l_ptr->flags1 & LF1_NO_DESTROY)   factor += 5;
+			if (l_ptr->flags1 & LF1_NO_GENO)      factor += 5;
+
+			tmp_exp = (tmp_exp * factor) / 100;
+		}
+
+		if (p_ptr->wpos.wz) {
+			int factor = 100;
+			if (dt_ptr2->flags1 & DF1_NO_UP)		factor += 5;
+			if (dt_ptr2->flags2 & DF2_NO_RECALL_INTO)	factor += 5;
+			if (dt_ptr2->flags1 & DF1_NO_RECALL)		factor += 10;
+			if (dt_ptr2->flags1 & DF1_FORCE_DOWN)		factor += 10;
+			if (dt_ptr2->flags2 & DF2_IRON)			factor += 15;
+			if (dt_ptr2->flags2 & DF2_HELL)			factor += 10;
+			if (dt_ptr2->flags2 & DF2_NO_DEATH)		factor -= 50;
+
+			if (dt_ptr2->flags3 & DF3_EXP_5)		factor += 5;
+			if (dt_ptr2->flags3 & DF3_EXP_10)		factor += 10;
+			if (dt_ptr2->flags3 & DF3_EXP_20)		factor += 20;
+
+#ifdef DUNGEON_VISIT_BONUS
+			if (!(dt_ptr2->flags3 & DF3_NO_DUNGEON_BONUS))
+				switch (dungeon_bonus[dt_ptr2->id]) {
+				case 3: factor += 20; break;
+				case 2: factor += 13; break;
+				case 1: factor += 7; break;
+				}
+#endif
+
+			tmp_exp = (tmp_exp * factor) / 100;
+		}
+
 		if (p_ptr->wpos.wz != 0) {
 			/* Monsters in the Nether Realm give extra-high exp,
 			   +2% per floor! (C. Blue) */
-			if (dt_ptr2->type == DI_NETHER_REALM) {
+			if (dt_ptr2->type == DI_NETHER_REALM)
 				tmp_exp = ((((-p_ptr->wpos.wz) * 2) + 100) * tmp_exp) / 100;
-			}
 		}
+
+		/* factor in clone state */
+		tmp_exp = (tmp_exp * (100 - m_ptr->clone)) / 100;
 
 		/* Split experience if in a party */
 		if (p_ptr->party == 0 || p_ptr->ghost) {
@@ -8334,27 +8344,33 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			if (!in_irondeepdive(&p_ptr->wpos))
 				tmp_exp = det_exp_level(tmp_exp, p_ptr->lev, getlevel(&p_ptr->wpos));
 
-			/* Give some experience */
-			new_exp = tmp_exp / p_ptr->lev;
+			/* Give some experience, undo 2 extra digits */
+			new_exp = tmp_exp / p_ptr->lev / 100;
+
+			/* Give fractional experience, undo 2 extra digits (*100L instead of *10000L) */
+			new_exp_frac = ((tmp_exp - new_exp * p_ptr->lev * 100)
+					* 100L) / p_ptr->lev + p_ptr->exp_frac;
 
 			/* Never get too much exp off a monster
 			   due to high level difference,
 			   make exception for low exp boosts like "holy jackal" */
-			if ((new_exp > r_ptr->mexp * 4) && (new_exp > 200)) new_exp = r_ptr->mexp * 4;
-
-			new_exp_frac = ((tmp_exp % p_ptr->lev)
-					* 0x10000L / p_ptr->lev) + p_ptr->exp_frac;
+			if ((new_exp > r_ptr->mexp * 4) && (new_exp > 200)) {
+				new_exp = r_ptr->mexp * 4;
+				new_exp_frac = 0;
+			}
 
 			/* Keep track of experience */
-			if (new_exp_frac >= 0x10000L) {
+			if (new_exp_frac >= 10000L) {
 				new_exp++;
-				p_ptr->exp_frac = new_exp_frac - 0x10000L;
+				p_ptr->exp_frac = new_exp_frac - 10000L;
 			} else {
 				p_ptr->exp_frac = new_exp_frac;
+				p_ptr->redraw |= PR_EXP; //EXP_BAR_FINESCALE
 			}
+
 			/* Gain experience */
-			if ((new_exp * (100 - m_ptr->clone)) / 100) {
-				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (new_exp * (100 - m_ptr->clone)) / 100);
+			if (new_exp) {
+				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, new_exp);
 			} else if (!p_ptr->warning_fracexp) {
 				msg_print(Ind, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
 				s_printf("warning_fracexp: %s\n", p_ptr->name);
@@ -8367,9 +8383,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			/* Since players won't share exp if leveldiff > MAX_PARTY_LEVEL_DIFF (7)
 			   I see ne problem with kings sharing exp.
 			   Otherwise Nether Realm parties are punished.. */
-//			if (!player_is_king(Ind)) party_gain_exp(Ind, p_ptr->party, (tmp_exp*(100-m_ptr->clone))/100);
-			if (!(p_ptr->mode & MODE_PVP)) party_gain_exp(Ind, p_ptr->party, (tmp_exp * (100 - m_ptr->clone)) / 100, r_ptr->mexp, m_ptr->highest_encounter);
+//			if (!player_is_king(Ind)) party_gain_exp(Ind, p_ptr->party, tmp_exp);
+			//add 2 extra digits to r_ptr->mexp too by multiplying by 100, to match tmp_exp shift
+			if (!(p_ptr->mode & MODE_PVP)) party_gain_exp(Ind, p_ptr->party, tmp_exp, r_ptr->mexp * 100, m_ptr->highest_encounter);
 		}
+
 
 		/*
 		 * Necromancy skill regenerates you
@@ -11822,6 +11840,6 @@ int det_req_level(int plev) {
 /* calculate actual experience gain based on det_req_level */
 s64b det_exp_level(s64b exp, int plev, int dlev) {
 	int req_dlvl = det_req_level(plev);
-	if (dlev < req_dlvl) return (exp * 2 / (2 + req_dlvl - dlev));
+	if (dlev < req_dlvl) return ((exp * 2) / (2 + req_dlvl - dlev));
 	else return (exp);
 }
