@@ -3258,6 +3258,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			if (p_ptr->consistent_players) {
 				c = '@';
 				a = TERM_L_DARK;
+				if (p_ptr->black_breath && magik(50)) {
+					a = TERM_SLATE;
+				}
 			}
 
 			/* part 'A' end */
@@ -3624,6 +3627,9 @@ void lite_spot(int Ind, int y, int x)
 			/* bugfix on MASSIVE deaths (det/death) */
 			if (p_ptr->fruit_bat && !p_ptr->body_monster &&
 				!((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME))) c = 'b';
+
+			if (p_ptr->consistent_players) c = '@';
+
 			if (p_ptr->chp < 0) c = '-';
 			else if (!p_ptr->tim_manashield) {
 				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) <= TURN_CHAR_INTO_NUMBER) {
@@ -3651,8 +3657,14 @@ void lite_spot(int Ind, int y, int x)
 
 		if (p_ptr->consistent_players) {
 			a = TERM_WHITE;
+			if (p_ptr->tim_mimic > 0 && p_ptr->body_monster) {
+				a = TERM_ORANGE;
+			}
 			if (p_ptr->tim_manashield && p_ptr->msp > 0 && p_ptr->csp > 0) {
 				a = TERM_YELLOW;
+			}
+			if (p_ptr->black_breath && magik(50)) {
+				a = TERM_SLATE;
 			}
 		}
 
