@@ -2303,14 +2303,14 @@ static void player_setup(int Ind, bool new) {
 				s_printf("Out-of-House-blinked %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
 			}
 		}
-
-	        /* blink by 1 if standing on a shop grid (in town) */
-	        if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_SHOP)
-		        teleport_player_force(Ind, 1);
 	} else if (isdungeontown(wpos)) {
 		/* make whole dungeon town visible like a 'normal town at night' */
 		player_dungeontown(Ind);
 	}
+
+	/* blink by 1 if standing on a shop grid (in town) */
+	if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_SHOP)
+		teleport_player_force(Ind, 1);
 
 	if (new) {
 #if 0
