@@ -2893,7 +2893,7 @@ struct player_type {
 	char warning_fountain, warning_voidjumpgate, warning_staircase, warning_worldmap, warning_dungeon;
 	/* For the 4.4.8.1.0.0 lua update crash bug */
 	char warning_lua_update, warning_lua_count;
-	char warning_tunnel, warning_trap, warning_tele;
+	char warning_tunnel, warning_trap, warning_tele, warning_fracexp;
 
 #ifdef USE_SOUND_2010
 	int music_current, musicalt_current, music_monster; //background music currently playing for him/her; an overriding monster music

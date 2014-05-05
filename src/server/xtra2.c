@@ -4965,7 +4965,7 @@ void monster_death(int Ind, int m_idx) {
 		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
 			if (!(q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops & 0x1)) number = 0;
 		} else {
-			s_printf("QUESTOR_DEPRECATED (monster_death)\n");
+			s_printf("QUESTOR_DEPRECATED (monster_dead)\n");
 			number = 0;
 		}
 	}
@@ -5958,7 +5958,7 @@ if (cfg.unikill_format) {
 			/* Quest progression/fail effect? */
 			questor_death(m_ptr->quest, m_ptr->questor_idx, wpos, 0);
 		} else {
-			s_printf("QUESTOR DEPRECATED (monster_death2)\n");
+			s_printf("QUESTOR DEPRECATED (monster_dead2)\n");
 		}
 	}
 
@@ -8153,7 +8153,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			    m_ptr->hp - dam <= q_info[m_ptr->quest].stage[q_info[m_ptr->quest].cur_stage].questor_hostility[m_ptr->questor_idx]->hostile_revert_hp)
 				quest_questor_reverts(m_ptr->quest, m_ptr->questor_idx, &m_ptr->wpos);
 		} else {
-			s_printf("QUESTOR DEPRECATED (monster_death3)\n");
+			s_printf("QUESTOR DEPRECATED (monster_dead3)\n");
 		}
 	}
 #else
@@ -8161,7 +8161,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx)
 			quest_questor_reverts(m_ptr->quest, m_ptr->questor_idx, &m_ptr->wpos);
 		else
-			s_printf("QUESTOR DEPRECATED (monster_death3)\n");
+			s_printf("QUESTOR DEPRECATED (monster_dead3)\n");
 	}
 #endif
 
@@ -8223,7 +8223,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 				if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].exp != -1)
 					tmp_exp = q_info[m_ptr->quest].questor[m_ptr->questor_idx].exp * m_ptr->level;
 			} else {
-				s_printf("QUESTOR DEPRECATED (monster_death2)\n");
+				s_printf("QUESTOR DEPRECATED (monster_deatd2)\n");
 			}
 		}
 
@@ -8355,6 +8355,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			/* Gain experience */
 			if ((new_exp * (100 - m_ptr->clone)) / 100) {
 				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (new_exp * (100 - m_ptr->clone)) / 100);
+			} else if (!p_ptr->warning_fracexp) {
+				msg_print(Ind, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
+				s_printf("warning_fracexp: %s\n", p_ptr->name);
+				p_ptr->warning_fracexp = 1;
 			}
 		} else {
 			/* Give experience to that party */

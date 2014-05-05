@@ -2632,6 +2632,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_tunnel = 1;
 		p_ptr->warning_trap = 1;
 		p_ptr->warning_tele = 1;
+		p_ptr->warning_fracexp = 1;
 		return;
 	}
 
@@ -2743,6 +2744,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 	}
 	if (p_ptr->max_plv > 2) {
 		p_ptr->warning_wield_combat = 1;
+		p_ptr->warning_fracexp = 1;
 	}
 	if (p_ptr->max_plv > 3) {
 		p_ptr->warning_worldmap = 1;
