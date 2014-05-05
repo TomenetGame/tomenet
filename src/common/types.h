@@ -2953,7 +2953,7 @@ struct player_type {
 	bool font_map_solid_walls;	/* Hack: Certain Windows bitmap fonts: Map walls to /127, solid block tile */
 	s16b hilite_self;
 	bool hilite_player;		/* possible resurrection of long since broken c_cfg.hilite_player: Draw cursor around us at all times. */
-	bool consistent_players;		/* Use consistent colouring for player and allies. Ignore all status/body_monster */
+	bool consistent_players;	/* Use consistent colouring for player and allies. Ignore all status/body_monster */
 #ifdef TELEPORT_SURPRISES
 	byte teleported;		/* optional/experimental: in the future, a cooldown for monsters who are 'surprised' from player teleporting next to them */
 #endif
