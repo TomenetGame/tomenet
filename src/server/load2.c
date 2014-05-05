@@ -1785,10 +1785,10 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
         if (!older_than(4, 4, 25)) rd_byte(&p_ptr->castles_owned);
         else strip_bytes(1);
 
-	if (!older_than(4, 5, 6)) rd_s16b(&p_ptr->hilite_self);
+	if (!older_than(4, 5, 6)) rd_s16b(&p_ptr->flash_self);
 	else {
 		strip_bytes(2);
-		p_ptr->hilite_self = -1; /* disabled by default */
+		p_ptr->flash_self = -1; /* disabled by default */
 	}
 
 	if (!older_than(4, 5, 7)) {

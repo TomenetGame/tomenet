@@ -484,7 +484,7 @@ option_type option_info[OPT_MAX] =
 	"auto_inscribe",		"Use additional predefined auto-inscriptions" },
 #endif
 
-	{ &c_cfg.taciturn_messages,	FALSE,	4,	9, 65, TRUE,
+	{ &c_cfg.taciturn_messages,	FALSE,	1,	9, 65, TRUE,
 	"taciturn_messages",		"Suppress server messages as far as possible" },
 
 	{ &c_cfg.last_words,		TRUE,	1,	9, 66, TRUE,
@@ -603,7 +603,7 @@ option_type option_info[OPT_MAX] =
 	"no_weather",			"Disable weather visuals and sounds completely" },
 
 	{ &c_cfg.hilite_player,		FALSE,	4,	1, 100, FALSE,
-	"hilite_player",		"Hilite your character icon with the cursor" },
+	"hilite_player",		"Hilite own character icon with the cursor" },
 
 	{ &c_cfg.alert_mana,		FALSE,	1,	0, 101, TRUE,
 	"alert_mana",			"Beep about critically low mana pool" },
@@ -618,6 +618,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.consistent_players,	FALSE,	4,	1, 104, TRUE,
 	"consistent_players",		"Use consistent symbols and colours for players" },
 
+	{ &c_cfg.flash_player,		FALSE,	4,	1, 105, TRUE,
+	"flash_player",			"Flash own character icon after far relocation" },
 };
 
 

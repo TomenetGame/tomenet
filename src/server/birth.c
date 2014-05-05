@@ -3306,8 +3306,8 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* start with dual-wield mode 'dual-handed' */
 	p_ptr->dual_mode = TRUE;
 
-	/* disabled hilite_self by default */
-	p_ptr->hilite_self = -1;
+	/* disabled flash_self by default */
+	p_ptr->flash_self = -1;
 
 	/* hack: allow to get extra level feeling immediately */
 	p_ptr->turns_on_floor = TURNS_FOR_EXTRA_FEELING;
