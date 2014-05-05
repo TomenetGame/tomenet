@@ -3325,6 +3325,7 @@ struct client_opts {
 	bool quiet_house_sfx;
 	bool no_house_sfx;
 	bool no_weather;
+	bool consistent_players;
 };
 
 /*
