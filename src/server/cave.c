@@ -3587,7 +3587,7 @@ void lite_spot(int Ind, int y, int x)
 			if (p_ptr->sun_burn && magik(33)) a = TERM_FIRE;
 
 			/* Polymorph ring power running out */
-			if (p_ptr->tim_mimic && p_ptr->tim_mimic <= 100) {
+			if (p_ptr->tim_mimic && p_ptr->body_monster == p_ptr->tim_mimic_what && p_ptr->tim_mimic <= 100) {
 				if (!rand_int(10)) {
 					a = TERM_DISE;
 					c = '@';
@@ -3648,8 +3648,9 @@ void lite_spot(int Ind, int y, int x)
 
 			if (p_ptr->consistent_players) {
 				a = TERM_WHITE;
-				if (p_ptr->tim_mimic > 0 && p_ptr->body_monster) {
-					a = TERM_ORANGE;
+				if (p_ptr->tim_mimic > 0 && p_ptr->body_monster == p_ptr->tim_mimic_what) {
+					if (p_ptr->tim_mimic <= 100 && !rand_int(10)) a = TERM_WHITE;
+					else a = TERM_ORANGE;
 				}
 				if (p_ptr->tim_manashield && p_ptr->msp > 0 && p_ptr->csp > 0) {
 					a = TERM_YELLOW;
