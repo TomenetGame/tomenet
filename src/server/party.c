@@ -503,13 +503,20 @@ cptr lookup_accountname(int p_id){
 }
 
 /* our password encryptor */
-static char *t_crypt(char *inbuf, cptr salt){
+static char *t_crypt(char *inbuf, cptr salt) {
 #ifdef HAVE_CRYPT
 	static char out[64];
-	char setting[9];
-	setting[0] = '_';
-	strncpy(&setting[1], salt, 8);
-	strcpy(out, (char*)crypt(inbuf, salt));
+ #if 1 /* fix for len-1 names */
+	char setting[3];
+	/* only 1 character long salt? expand to 2 chars length */
+	if (!salt[1]) {
+		setting[0] = '.';
+		setting[1] = salt[0];
+		setting[2] = 0;
+		strcpy(out, (char*)crypt(inbuf, setting));
+	} else
+ #endif
+		strcpy(out, (char*)crypt(inbuf, salt));
 	return(out);
 #else
 	return(inbuf);
