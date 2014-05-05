@@ -736,8 +736,7 @@ void teleport_to_player(int Ind, int m_idx)
  * If no such spaces are readily available, the distance may increase.
  * Try very hard to move the player at least a quarter that distance.
  */
-bool teleport_player(int Ind, int dis, bool ignore_pvp)
-{
+bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	player_type *p_ptr = Players[Ind];
 #ifdef USE_SOUND_2010
 	int org_dis = dis;
@@ -965,7 +964,10 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 
 #ifdef ENABLE_SELF_HIGHLIGHTING
 	/* flicker player for a moment, to allow for easy location */
-	if (p_ptr->hilite_self >= 0) p_ptr->hilite_self = cfg.fps / 6;
+	/* not for phase door, except when our view panel has changed from it */
+	if (p_ptr->hilite_self >= 0 &&
+	    (org_dis > 20 || !local_panel(Ind)))
+		p_ptr->hilite_self = cfg.fps / 6;
 #endif
 
 	/* Redraw the new spot */
@@ -1023,8 +1025,7 @@ void teleport_player_force(int Ind, int dis)
  * This function is slightly obsessive about correctness.
  * (Not anymore: This function allows teleporting into vaults (!))
  */
-void teleport_player_to(int Ind, int ny, int nx)
-{
+void teleport_player_to(int Ind, int ny, int nx) {
 	player_type *p_ptr = Players[Ind];
 
 	int y, x, oy, ox, dis = 1, ctr = 0;
@@ -1110,8 +1111,12 @@ void teleport_player_to(int Ind, int ny, int nx)
 	everyone_lite_spot(wpos, oy, ox);
 
 #ifdef ENABLE_SELF_HIGHLIGHTING
+#if 0 /* not for tele-to - let's regarded it as a 'blink' here */
 	/* flicker player for a moment, to allow for easy location */
 	if (p_ptr->hilite_self >= 0) p_ptr->hilite_self = cfg.fps / 8;
+#else /* exception when our view panel has changed from this tele-to */
+	if (p_ptr->hilite_self >= 0 && !local_panel(Ind)) p_ptr->hilite_self = cfg.fps / 6;
+#endif
 #endif
 
 	/* Redraw the new spot */
