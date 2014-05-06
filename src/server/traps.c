@@ -2552,16 +2552,22 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	/* some traps vanish */
 	if (magik(vanish)) {
 		struct c_special *cs_ptr = GetCS(c_ptr, CS_TRAPS);
-		if (item < 0) cs_erase(c_ptr, cs_ptr);
-		else {
+
+		if (item < 0) {
+			cs_erase(c_ptr, cs_ptr);
+
+			/* Trap won't redraw while in 'S'earching mode though - fix: */
+			everyone_clear_ovl_spot(wpos, y, x);
+
+			/* since player is no longer moved onto the trap on triggering it,
+			   we have to redraw the grid (noticed this on door traps) */
+			everyone_lite_spot(wpos, y, x);
+		} else {
 			i_ptr->pval = 0;
 			if (i_ptr->tval == TV_CHEST) destroy_chest(i_ptr);
 		}
-		ident = FALSE;
 
-		/* since player is no longer moved onto the trap on triggering it,
-		   we have to redraw the grid (noticed this on door traps) */
-		everyone_lite_spot(wpos, y, x);
+		ident = FALSE;
 	} else if (!p_ptr->warning_trap) {
 		msg_print(Ind, "\374\377yHINT: You triggered a trap! Traps can be nasty, but if you successfully disarm");
 		msg_print(Ind, "\374\377y      one you gain experience from that. To try, step aside and press \377oSHIFT+D\377y.");
