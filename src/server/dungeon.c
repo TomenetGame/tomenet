@@ -3122,6 +3122,12 @@ void recall_player(int Ind, char *message){
 	/* cancel any user recalls */
 	p_ptr->word_recall = 0;
 
+	/* Update wilderness map! This is for RECALL_MAX_RANGE:
+	   We learn about the intermediate world map sectors we land on. */
+	if (!p_ptr->ghost)
+		p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] |=
+		    (1 << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
+
 	/* Did we really make it through all floors of the ironman challenge dungeon? */
 	if (in_irondeepdive(&old_wpos)
 	    && !is_admin(p_ptr)) {
