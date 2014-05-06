@@ -5817,6 +5817,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc)
 int Send_mini_map_pos(int Ind, int x, int y, byte a, char c) {
 	player_type *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn];
+	short int xs = (short int)x, ys = (short int)y;
 
 	//int Ind2 = 0;
 	//player_type *p_ptr2 = NULL;
@@ -5838,8 +5839,8 @@ int Send_mini_map_pos(int Ind, int x, int y, byte a, char c) {
 #endif
 
 	/* Packet header */
-	if (is_newer_than(&p_ptr->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp->c, "%c%d%d%c%c", PKT_MINI_MAP_POS, x, y, a, c);
-	//if (Ind2 && is_newer_than(&p_ptr2->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp2->c, "%c%d%d%c%c", PKT_MINI_MAP_POS, x, y, a, c);
+	if (is_newer_than(&p_ptr->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, xs, ys, a, c);
+	//if (Ind2 && is_newer_than(&p_ptr2->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp2->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, xs, ys, a, c);
 
 	return 1;
 }

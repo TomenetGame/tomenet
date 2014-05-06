@@ -2423,13 +2423,14 @@ int Receive_mini_map(void) {
 
 int Receive_mini_map_pos(void) {
 	char	ch, c;
-	int	n, x, y;
+	int n;
+	short int x, y;
 	byte	a;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
 
-	minimap_posx = x;
-	minimap_posy = y;
+	minimap_posx = (int)x;
+	minimap_posy = (int)y;
 	minimap_attr = a;
 	minimap_char = c;
 
