@@ -4314,6 +4314,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf)
 				}
 			}
 			break;
+		case TV_BOOMERANG:
 		case TV_BOW:
 			if (o_ptr->name2 == EGO_ACCURACY || o_ptr->name2b == EGO_ACCURACY) {
 				if (o_ptr->to_h < 18) o_ptr->to_h = 18;
