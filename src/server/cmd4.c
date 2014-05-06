@@ -2474,7 +2474,7 @@ void do_cmd_check_server_settings(int Ind)
 void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 	player_type *p_ptr = Players[Ind];
 
-	int		i, j, num, total = 0;
+	int		i, j, num, total = 0, forms = 0, forms_learnt = 0;
 	monster_race	*r_ptr;
 	bool	shown = FALSE, all = FALSE;
 	byte	mimic = (get_skill_scale(p_ptr, SKILL_MIMIC, 100));
@@ -2558,6 +2558,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 		    !((p_ptr->prace == RACE_VAMPIRE) && !mimic_vampire(i, p_ptr->lev)) &&
 		    !(p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(i)))
 		{
+			forms++;
 			j = r_ptr->level - num;
 
 			if ((j > 0) && !druid_form && !vampire_form) {
@@ -2574,6 +2575,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 					fprintf(fff, "\377w%-30s : %4d slain  (%d more to go)\n",
 					    r_name + r_ptr->name, num, j);
 			} else {
+				forms_learnt++;
 				if (p_ptr->body_monster == i)
 					fprintf(fff, "\377B%-30s : %4d slain  ** Your current form **\n",
 							r_name + r_ptr->name, num);
@@ -2581,6 +2583,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 						r_name + r_ptr->name, num);
 			}
 		} else {
+			forms++;
 			fprintf(fff, "\377w%-30s : %4d slain\n", r_name + r_ptr->name, num);
 		}
 		total += num;
@@ -2588,7 +2591,8 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 	}
 
 	if (!shown) fprintf(fff, "Nothing so far.\n");
-	else fprintf(fff, "\nTotal : %d\n", total);
+	else if (forms_learnt) fprintf(fff, "\nTotal kills: %d  (%d forms learnt of %d non-unique monsters displayed)\n", total, forms_learnt, forms);
+	else fprintf(fff, "\nTotal kills: %d\n", total);
 
 	/* Close the file */
 	my_fclose(fff);
