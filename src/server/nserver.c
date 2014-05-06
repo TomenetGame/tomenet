@@ -5817,7 +5817,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc)
 int Send_mini_map_pos(int Ind, int x, int y, byte a, char c) {
 	player_type *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn];
-	short int xs = (short int)x, ys = (short int)y;
+	short int xs = (short int)x, ys = (short int)y; //note: this isn't required, can just use x and y instead
 
 	//int Ind2 = 0;
 	//player_type *p_ptr2 = NULL;
