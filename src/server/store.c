@@ -5697,7 +5697,8 @@ void view_exploration_records(int Ind) {
 		fprintf(fff, "             \377u%-30s %s\n",
 		    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
 		    getdungeon(&((struct worldpos){dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, TRUE),
-		    dungeon_bonus[i] == 0 ? "(many explorations)" : "(a few explorations)");
+		    dungeon_bonus[i] == 0 ? "(many explorations)" : "(several explorations)");
+		    //could use 'few/some explorations' for 2
 	}
 
 	if (none) fprintf(fff, "\n\377u    There haven't been reports of any dungeon explorations for a long time!\n");
