@@ -2426,7 +2426,7 @@ int Receive_mini_map_pos(void) {
 	int	n, x, y;
 	byte	a;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
 
 	minimap_posx = x;
 	minimap_posy = y;
