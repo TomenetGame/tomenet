@@ -681,8 +681,7 @@ static bool store_check_num(store_type *st_ptr, object_type *o_ptr)
  *
  * Note that a shop-keeper must refuse to buy "worthless" items
  */
-static bool store_will_buy(int Ind, object_type *o_ptr)
-{
+static bool store_will_buy(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
 #ifdef PLAYER_STORES

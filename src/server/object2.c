@@ -1504,8 +1504,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
  *
  * XXX: 'Ego randarts' are not handled correltly, so be careful!
  */
-s64b object_value_real(int Ind, object_type *o_ptr)
-{
+s64b object_value_real(int Ind, object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 	bool star = (Ind == 0 || object_fully_known_p(Ind, o_ptr));
@@ -1587,11 +1586,24 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 
 	/* Bad items don't sell. Good items with some bad modifiers DO sell ((*defenders*)). -C. Blue */
 	switch (o_ptr->tval) {
+	case TV_SHIELD:
+#ifdef NEW_SHIELDS_NO_AC
+		/* Shields of Preservation won't sell anymore without this exception,
+		   because they don't have any positive stat left (o_ptr->to_a was it before). */
+		if ((((o_ptr->to_h) < 0 && ((o_ptr->to_h - k_ptr->to_h) < 0)) ||
+		    ((o_ptr->to_d) < 0 && ((o_ptr->to_d - k_ptr->to_d) < 0 || k_ptr->to_d < 0)) ||
+		    ((o_ptr->to_a) < 0 && ((o_ptr->to_a - k_ptr->to_a) < 0 || k_ptr->to_a < 0)) ||
+		    (o_ptr->pval < 0) || (o_ptr->bpval < 0)) &&
+		    !(((o_ptr->to_h) > 0) ||
+		    ((o_ptr->to_d) > 0) ||
+		    (value > k_ptr->cost) || /* <- hack: check for ego power value - this is the exception required for shields now */
+		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return (0L);
+	        break;
+#endif
 	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:
 	case TV_CROWN:
-	case TV_SHIELD:
 	case TV_CLOAK:
 	case TV_SOFT_ARMOR:
 	case TV_HARD_ARMOR:
@@ -2883,14 +2895,11 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
  * Note that discounted items stay discounted forever, even if
  * the discount is "forgotten" by the player via memory loss.
  */
-s64b object_value(int Ind, object_type *o_ptr)
-{
+s64b object_value(int Ind, object_type *o_ptr) {
 	s64b value;
 
-
 	/* Known items -- acquire the actual value */
-	if (Ind == 0 || object_known_p(Ind, o_ptr))
-	{
+	if (Ind == 0 || object_known_p(Ind, o_ptr)) {
 		/* Broken items -- worthless */
 		if (broken_p(o_ptr)) return (0L);
 
@@ -2902,8 +2911,7 @@ s64b object_value(int Ind, object_type *o_ptr)
 	}
 
 	/* Unknown items -- acquire a base value */
-	else
-	{
+	else {
 		/* Hack -- Felt broken items */
 		if ((o_ptr->ident & ID_SENSED_ONCE) && broken_p(o_ptr)) return (0L);
 
