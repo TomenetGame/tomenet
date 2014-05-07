@@ -4322,14 +4322,19 @@ consider moving to easier dungeon levels anway until you found decent items
 and maxed out your vital stats (constitution, etc).
 
 Note: Your depth display in the bottom right screen corner will indicate the
-appropriateness of your current depth by its colour:
+appropriateness of your current depth in relation to your character level by
+its colour:
 If you're on a far easier depth, it'll be dark grey, indicating that you
-cannot expect any good experience gain at all here.
+cannot expect to gain experience here.
 If you're on a slightly easier depth, it'll turn yellow, to tell you that
-you're getting closer to the depth required for best results.
-On the minimum required depth or deeper, it's white.
+you're getting closer to the depth required for normal experience gain, but
+there is still a penalty.
+On the minimum required depth for normal experience gain or deeper, it's white.
 (On a side note, while word-of-recall is pending, it'll turn orange, since
 it's also used as a word-of-recall indicator this way.)
+
+Here is a list of this relation between character level and minimum dungeon
+level required for normal, non-penalised experience gain:
 
     Character level     |     Dungeon level
 ------------------------------------------------
