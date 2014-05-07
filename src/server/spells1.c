@@ -738,7 +738,7 @@ void teleport_to_player(int Ind, int m_idx)
  */
 bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	player_type *p_ptr = Players[Ind];
-#ifdef USE_SOUND_2010
+#if defined(USE_SOUND_2010) || defined(ENABLE_SELF_FLASHING)
 	int org_dis = dis;
 #endif
 	int d, i, min, ox, oy, x = p_ptr->py, y = p_ptr->px;
