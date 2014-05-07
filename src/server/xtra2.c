@@ -11902,6 +11902,8 @@ int det_req_level(int plev) {
 /* calculate actual experience gain based on det_req_level */
 s64b det_exp_level(s64b exp, int plev, int dlev) {
 	int req_dlvl = det_req_level(plev);
-	if (dlev < req_dlvl) return ((exp * 2) / (2 + req_dlvl - dlev));
-	else return (exp);
+
+	if (dlev < req_dlvl - 5) return 0; /* actually give zero exp for 'grey' levels? */
+	if (dlev < req_dlvl) return ((exp * 2) / (2 + req_dlvl - dlev)); /* give reduced exp for 'yellow' levels */
+	return (exp); /* normal exp */
 }
