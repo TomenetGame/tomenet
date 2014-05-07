@@ -2605,14 +2605,13 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 
 /* Tell the player of her/his houses.	- Jir - */
 /* TODO: handle HF_DELETED */
-void do_cmd_show_houses(int Ind)
-{
+void do_cmd_show_houses(int Ind, bool local, bool own) {
 	player_type *p_ptr = Players[Ind];
 	house_type *h_ptr;
 	struct dna_type *dna;
 	cptr name;
 
-	int		i, total = 0;	//j, num,
+	int	i, total = 0;	//j, num,
 	bool	shown = FALSE;
 	bool	admin = is_admin(p_ptr);
 
@@ -2643,7 +2642,8 @@ void do_cmd_show_houses(int Ind)
 		h_ptr = &houses[i];
 		dna = h_ptr->dna;
 
-		if (!access_door(Ind, h_ptr->dna, FALSE) && !admin_p(Ind)) continue;
+		if (!access_door(Ind, h_ptr->dna, FALSE) && (!admin_p(Ind) || own)) continue;
+		if (local && !inarea(&h_ptr->wpos, &p_ptr->wpos)) continue;
 
 		shown = TRUE;
 		total++;
@@ -2728,7 +2728,10 @@ void do_cmd_show_houses(int Ind)
 		fprintf(fff, "\n");
 	}
 
-	if (!shown) fprintf(fff, "You're homeless for now.\n");
+	if (!shown) {
+		if (local) fprintf(fff, "You don't have any houses in this area.");
+		else fprintf(fff, "You're homeless for now.\n");
+	}
 //	else fprintf(fff, "\nTotal : %d\n", total);
 
 	/* Close the file */

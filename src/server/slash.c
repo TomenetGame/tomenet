@@ -1489,9 +1489,19 @@ void do_slash_cmd(int Ind, char *message)
 			return;
 		}
 		else if (prefix(message, "/house") ||
-				prefix(message, "/hou"))
+		    prefix(message, "/hou"))
+			/* /hou [o][l] to only show the houses we actually own/that are actually here/both */
 		{
-			do_cmd_show_houses(Ind);
+			bool local = FALSE, own = FALSE;
+			if (tk) {
+				if (token[1][0] == '?') {
+					msg_print(Ind, "Usage: /hou [o][l]  (to filter for 'own' and/or 'local' houses)");
+					return;
+				}
+				if (strchr(message3, 'l')) local = TRUE;
+				if (strchr(message3, 'o')) own = TRUE;
+			}
+			do_cmd_show_houses(Ind, local, own);
 			return;
 		}
 		else if (prefix(message, "/object") ||
