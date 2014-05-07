@@ -6046,6 +6046,15 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "%s has houses: Player %d, Party %d, Guild %d.", message2 + 12, cp, cy, cg);
 				return;
 			}
+			/* List all specially created houses */
+			else if (prefix(message, "/polyhouses")) {
+				for (i = 0; i < num_houses; i++) {
+					if (houses[i].flags & HF_RECT) continue;
+					msg_format(Ind, "Poly-house %d at %d,%d,%d.", i, houses[i].wpos.wx, houses[i].wpos.wy, houses[i].wpos.wz);
+				}
+				msg_print(Ind, "Done.");
+				return;
+			}
 			/* display a player's hit dice dna */
 			else if (prefix(message, "/pyhpdbg")) {
 				char buf[MSG_LEN];
