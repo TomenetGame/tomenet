@@ -2970,8 +2970,7 @@ s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->na
 /*
  * Buy an item from a store				-RAK-
  */
-void store_purchase(int Ind, int item, int amt)
-{
+void store_purchase(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 
 	store_type *st_ptr;
@@ -2990,6 +2989,11 @@ void store_purchase(int Ind, int item, int amt)
 	if (amt < 1) {
 		s_printf("$INTRUSION$ Bad amount %d! Bought by %s.\n", amt, p_ptr->name);
 //		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
+		return;
+	}
+
+	if ((st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) && !is_admin(p_ptr)) {
+		msg_print(Ind, "Only authorised personnel may transfer items from the mathom house.");
 		return;
 	}
 
