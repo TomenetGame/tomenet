@@ -2442,7 +2442,7 @@ void update_mon(int m_idx, bool dist)
 			if ((p_ptr->telepathy || (p_ptr->prace == RACE_DRACONIAN)) &&
 			    !(in_sector00(wpos) && (sector00flags2 & LF2_NO_ESP)) &&
 			    !(l_ptr && (l_ptr->flags2 & LF2_NO_ESP)) &&
-			    !(l_ptr && (l_ptr->flags2 & LF2_LIMIT_ESP) && d >= 20)
+			    !(l_ptr && (l_ptr->flags2 & LF2_LIMIT_ESP) && d > 10)
 			    ) {
 				bool see = FALSE, drsee = FALSE;
 
