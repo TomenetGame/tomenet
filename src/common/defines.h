@@ -5860,6 +5860,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF3_NO_TELE		0x01000000L	/* Disallow any teleportation (to go with NO_SUMMON -- for new experimental dungeoneering) */
 #define DF3_NO_ESP		0x02000000L	/* Disallow any ESP */
 #define DF3_NO_SUMMON		0x04000000L	/* Disallow any summoning (to go with NO_TELE -- for new experimental dungeoneering) */
+#define DF3_LIMIT_ESP		0x08000000L	/* All ESP gets its range limited */
 
 /* all flags that may modify a custom 'wilderness' (type 0) dungeon's appearance, 'theming' it,
    without changing its main flags (set my admin on dungeon creation) too much */
@@ -5930,14 +5931,14 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define LF2_INDOORS	0x00000800L	/* world surface (sector00 usually) is treated like a dungeon floor, causing no sun burn to vampires */
 
 #define LF2_NO_RUN	0x00001000L	/* Cannot run on this level, walk only */
-#define LF2_NO_TELE	0x00002000L	/* Cannot use phase/tele/recall on this level */
+#define LF2_NO_TELE	0x00002000L	/* Cannot use phase/tele on this level */
 #define LF2_NO_DETECT	0x00004000L	/* Cannot use detection on this level */
 #define LF2_NO_ESP	0x00008000L	/* ESP is disabled on this level */
 
 #define LF2_ESP		0x00010000L	/* Everyone on the level automatically gains full ESP */
-#define LF2_NO_SPEED	0x00020000L	/* Everyone on the level moves at at most +0 speed */
-#define LF2_NO_RES	0x00040000L	/* Players on the level will have no elemental resistances/immunities */
-#define LF2_NO_HEAL	0x00080000L	/* Players on the level will be unable to utilize healing magic or potions */
+#define LF2_NO_SPEED	0x00020000L	/* Everyone on the level moves at most at +0 speed */
+#define LF2_NO_RES_HEAL	0x00040000L	/* Players on the level will have no elemental resistances/immunities and unable to utilise healing magic/potions */
+#define LF2_LIMIT_ESP	0x00080000L	/* All ESP gets limited in range */
 
 #define LF2_FAIR_TERRAIN_DAM	0x00100000L	/* Terain damage each player takes is roughly a fixed percentage of his max HP */
 #define LF2_DUN_BOSS	0x00200000L

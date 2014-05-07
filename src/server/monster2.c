@@ -2328,7 +2328,8 @@ void update_mon(int m_idx, bool dist)
 	cave_type **zcave;
 
 	int Ind = m_ptr->closest_player;
-	int n;
+	int n, d = 0;
+	int dy, dx;
 	dun_level *l_ptr = getfloor(wpos);
 
 	/* Local copy for speed - mikaelh */
@@ -2378,8 +2379,6 @@ void update_mon(int m_idx, bool dist)
 
 		/* Calculate distance */
 		if (dist) {
-			int d, dy, dx;
-
 			/* Distance components */
 			dy = (p_ptr->py > fy) ? (p_ptr->py - fy) : (fy - p_ptr->py);
 			dx = (p_ptr->px > fx) ? (p_ptr->px - fx) : (fx - p_ptr->px);
@@ -2389,6 +2388,13 @@ void update_mon(int m_idx, bool dist)
 
 			/* Save the distance (in a byte) */
 			m_ptr->cdis = (d < 255) ? d : 255;
+		} else if (l_ptr && (l_ptr->flags2 & LF2_LIMIT_ESP)) {
+			/* Distance components */
+			dy = (p_ptr->py > fy) ? (p_ptr->py - fy) : (fy - p_ptr->py);
+			dx = (p_ptr->px > fx) ? (p_ptr->px - fx) : (fx - p_ptr->px);
+
+			/* Approximate distance */
+			d = (dy > dx) ? (dy + (dx>>1)) : (dx + (dy>>1));
 		}
 
 
@@ -2435,7 +2441,9 @@ void update_mon(int m_idx, bool dist)
 			/* Telepathy can see all "nearby" monsters with "minds" */
 			if ((p_ptr->telepathy || (p_ptr->prace == RACE_DRACONIAN)) &&
 			    !(in_sector00(wpos) && (sector00flags2 & LF2_NO_ESP)) &&
-			    !(l_ptr && (l_ptr->flags2 & LF2_NO_ESP))) {
+			    !(l_ptr && (l_ptr->flags2 & LF2_NO_ESP)) &&
+			    !(l_ptr && (l_ptr->flags2 & LF2_LIMIT_ESP) && d >= 20)
+			    ) {
 				bool see = FALSE, drsee = FALSE;
 
 				/* Different ESP */
