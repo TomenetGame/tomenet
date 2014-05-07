@@ -1936,7 +1936,7 @@ extern void tradpanel_bounds(int Ind);
 extern void verify_panel(int Ind);
 extern void verify_tradpanel(int Ind);
 extern bool local_panel(int Ind);
-extern bool local_tradpanel(int Ind);
+//extern bool local_tradpanel(int Ind);
 extern cptr look_mon_desc(int m_idx);
 extern void ang_sort_aux(int Ind, vptr u, vptr v, int p, int q);
 extern void ang_sort(int Ind, vptr u, vptr v, int n);

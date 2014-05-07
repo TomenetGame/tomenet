@@ -8964,8 +8964,10 @@ bool local_panel(int Ind) {
 	int pcol = p_ptr->panel_col;
 
 
+#if 0
 	/* Also check (virtual) traditional panel */
 	if (!local_tradpanel(Ind)) return FALSE;
+#endif
 
 
 	/* Scroll screen when 2 grids from top/bottom edge */
@@ -8986,6 +8988,7 @@ bool local_panel(int Ind) {
 	if ((prow == p_ptr->panel_row) && (pcol == p_ptr->panel_col)) return TRUE;
 	return FALSE;
 }
+#if 0
 bool local_tradpanel(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
@@ -9013,6 +9016,7 @@ bool local_tradpanel(int Ind) {
 	if ((prow == p_ptr->tradpanel_row) && (pcol == p_ptr->tradpanel_col)) return TRUE;
 	return FALSE;
 }
+#endif
 
 
 /*
