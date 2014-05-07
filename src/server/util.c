@@ -1932,7 +1932,7 @@ bool check_guard_inscription( s16b quark, char what ) {
 #endif
 					return TRUE;
 				}
-				return FALSE;
+				//return FALSE;
 			}
 			if (*ax == '+') {
 				/* why so much hassle? * = all, that's it */
@@ -1950,7 +1950,7 @@ bool check_guard_inscription( s16b quark, char what ) {
 #endif
 					return TRUE;
 				}
-				return FALSE;
+				//return FALSE;
 			}
 		}
 	}
