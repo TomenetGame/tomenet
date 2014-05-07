@@ -3334,7 +3334,7 @@ D:of Mordor with relentless force.
 
 
 #N:(No.):(name)
-#G:(appearence):(colour)
+#G:(appearence):(colour)  --not implemented
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
 #W:(depth):(rarity[arts only]):(weight):(price)
 #C. Blue - some current details about depth and rarity:
