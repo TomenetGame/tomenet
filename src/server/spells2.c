@@ -6889,6 +6889,9 @@ static bool poly_build(int Ind, char *args)
 			houses[num_houses].x = curr->sx;
 			houses[num_houses].y = curr->sy;
 			houses[num_houses].coords.poly = curr->vert;
+			/* was missing: actually remember the door position! (for pick_house() to work) */
+			houses[num_houses].dx = curr->sx;
+			houses[num_houses].dy = curr->sy;
 		}
 		if (curr->nofloor) houses[num_houses].flags |= HF_NOFLOOR;
 		if (curr->jail) houses[num_houses].flags |= HF_JAIL;
