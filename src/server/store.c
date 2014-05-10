@@ -6602,3 +6602,14 @@ void handle_store_leave(int Ind) {
 	/* Done (no more pending request) */
 	p_ptr->request_id = RID_NONE;
 }
+
+/* When loading server save file, verify if current store owner is still eligible, else replace him */
+void verify_store_owner(store_type *st_ptr) {
+	int i;
+	store_info_type *sti_ptr = &st_info[st_ptr->st_idx];
+
+	for (i = 0; i < MAX_STORE_OWNERS; i++)
+		if (sti_ptr->owners[i] == st_ptr->owner) return;
+
+	store_shuffle(st_ptr);
+}

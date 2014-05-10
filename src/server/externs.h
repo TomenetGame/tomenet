@@ -1668,6 +1668,7 @@ extern int auction_examine(int Ind, int auction_id);
 #endif
 
 extern void handle_store_leave(int Ind);
+extern void verify_store_owner(store_type *st_ptr);
 
 /* util.c */
 extern bool suppress_message, censor_message, suppress_boni;

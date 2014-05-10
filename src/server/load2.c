@@ -954,8 +954,7 @@ static void rd_global_lore(int r_idx)
 /*
  * Read a store
  */
-static errr rd_store(store_type *st_ptr)
-{
+static errr rd_store(store_type *st_ptr) {
 	int j;
 
 	byte num;
@@ -974,6 +973,9 @@ static errr rd_store(store_type *st_ptr)
 
 	/* Extract the owner (see above) */
 	st_ptr->owner = own;
+
+	/* Replace no longer eligible store owners */
+	verify_store_owner(st_ptr);
 
 	/* Read the items */
 	for (j = 0; j < num; j++) {
