@@ -141,7 +141,7 @@ L:Maia | Human | Dunadan
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:20:Hjolgar(Barbarian)
-I:10000:210:115:6:6
+I:15000:210:115:6:6
 C:120:100:80
 #L:Warrior | 
 H:Vampire
@@ -448,7 +448,7 @@ L:Maia | High-Elf | Half-Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:68:Kanris(Human)
-I:5000:210:115:6:6
+I:15000:210:115:6:6
 C:120:100:80
 #L:Merchant
 #H:Rogue
