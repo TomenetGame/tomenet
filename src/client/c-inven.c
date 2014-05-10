@@ -733,7 +733,7 @@ bool c_get_item(int *cp, cptr pmt, int mode)
 	item_tester_hook = 0;
 
 	/* Redraw inventory */
-	p_ptr->window |= PW_INVEN;
+	p_ptr->window |= PW_INVEN | PW_EQUIP;
 	window_stuff();
 
 
