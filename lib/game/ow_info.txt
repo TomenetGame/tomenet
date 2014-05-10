@@ -450,8 +450,6 @@ H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 N:68:Kanris(Human)
 I:15000:210:115:6:6
 C:120:100:80
-#L:Merchant
-#H:Rogue
 H:Vampire
 
 N:69:Barliman Butterbur(Human)
@@ -465,3 +463,10 @@ N:70:Garaic the Neutral (Draconian)
 I:25000:200:150:10:5
 #I:20000:140:110:7:19 --adjusted to fit 39 and 40 better (they team up for BMs)
 C:120:100:80
+
+#since Kanris is taking care of ordinary shops, we needed a new banker
+N:71:Larn(Human)
+I:5000:210:115:6:6
+C:120:100:80
+#L:Merchant
+#H:Rogue
