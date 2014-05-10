@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. May 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. May 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8252,6 +8252,7 @@ Acquirement     Gives you a great item, generated randomly (may sometimes be
                 dungeon level just to read the scroll, grab the item and get
                 out of there. Or sell it to a town store for good cash.
                 Acquirement is not affected by 'luck'.
+                Acquirement does have a chance to produce artifacts.
 *Acquirement*   Same as Acquirement, but gives you two or three great items.
 Fire/Ice/Chaos  Fires a ball of the according type around you. Make sure you
                 resist it or you will take damage too.
