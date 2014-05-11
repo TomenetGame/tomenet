@@ -9963,9 +9963,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 	/* ugly hack to fix the buggy extra bottom line that gets added to non-maxed levels sometimes:
 	   just overwrite it with filler tiles. */
-	for (y = dun->l_ptr->hgt; y < MAX_HGT; y++)
-		for (x = dun->l_ptr->wid; x < MAX_WID; x++)
+	for (x = 0; x < MAX_WID; x++)
+		for (y = dun->l_ptr->hgt; y < MAX_HGT; y++)
 			zcave[y][x].feat = FEAT_PERM_FILL;
+#if 1 /* prevent extra right-side lines too? do these even occur? */
+	for (x = dun->l_ptr->wid; x < MAX_WID; x++)
+		for (y = 0; y < dun->l_ptr->hgt; y++) //the rest is already covered by the previous check above
+			zcave[y][x].feat = FEAT_PERM_FILL;
+#endif
 
 	/* Possibly create dungeon boss aka FINAL_GUARDIAN.
 	   Rarity 1 in r_info.txt for those bosses now means:
