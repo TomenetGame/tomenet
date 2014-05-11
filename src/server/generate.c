@@ -9950,6 +9950,12 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 	}
 
+	/* ugly hack to fix the buggy extra bottom line that gets added to non-maxed levels sometimes:
+	   just overwrite it with filler tiles. */
+	for (y = dun->l_ptr->hgt; y < MAX_HGT; y++)
+		for (x = dun->l_ptr->wid; x < MAX_WID; x++)
+			zcave[y][x].feat = FEAT_PERM_FILL;
+
 	/* Possibly create dungeon boss aka FINAL_GUARDIAN.
 	   Rarity 1 in r_info.txt for those bosses now means:
 	   1 in <rarity> chance to generate the boss. - C. Blue */
