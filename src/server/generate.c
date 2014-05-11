@@ -9385,13 +9385,19 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* not too big levels for 'Arena Monster Challenge' event */
 	if (ge_special_sector &&
 	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) {
-		dun->l_ptr->wid = MAX_WID  / 2;
-		dun->l_ptr->hgt = MAX_HGT  / 2;
+		dun->l_ptr->wid = MAX_WID / 2;
+		dun->l_ptr->hgt = MAX_HGT / 2;
 		dun->l_ptr->flags1 &= ~(LF1_NO_MAGIC | LF1_NO_GENO | LF1_NO_MAP | LF1_NO_MAGIC_MAP);
 		dun->l_ptr->flags1 |= LF1_NO_DESTROY;
 	}
 
-//	if ((dun->l_ptr->wid <= SCREEN_WID) && (dun->l_ptr->hgt <= SCREEN_HGT)) tiny_level = TRUE;
+	/* remember if it's a tiny level and avoid building certain room types consequently */
+#if 0
+	if (dun->l_ptr->wid <= SCREEN_WID && dun->l_ptr->hgt <= (SCREEN_HGT * 3) / 2 ||
+	    dun->l_ptr->wid <= (SCREEN_WID * 3) / 2 && dun->l_ptr->hgt <= SCREEN_HGT) tiny_level = TRUE;
+#else
+	if (dun->l_ptr->wid * dun->l_ptr->hgt <= (SCREEN_WID * SCREEN_HGT * 3) / 2) tiny_level = TRUE;
+#endif
 
 	/* So as not to generate too 'crowded' levels */
 	dun->ratio = 100 * dun->l_ptr->wid * dun->l_ptr->hgt / MAX_HGT / MAX_WID;
@@ -9608,24 +9614,29 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				k = rand_int(100);
 
 				/* Attempt a very unusual room */
-				if ((rand_int(DUN_UNUSUAL) < dun_lev) && !tiny_level) {
-					/* Type 8 -- Greater vault (10%) */
-					if ((k < 10) && room_build(wpos, y, x, 8, p_ptr)) continue;
 
-					/* Type 7 -- Lesser vault (15%) */
-					if ((k < 25) && room_build(wpos, y, x, 7, p_ptr)) continue;
+				if (rand_int(DUN_UNUSUAL) < dun_lev
+#if 1 /* tiny levels don't get any DUN_UNUSUAL room types at all */
+				    && !tiny_level) {
+#else /* tiny levels don't get nests, pits or greater vaults */
+				    ) {
+					if (tiny_level) k = rand_int(65) + 35;
+#endif
+					/* Type 5 -- Monster nest (10%) */
+					if ((k < 10) && room_build(wpos, y, x, 5, p_ptr)) continue;
 
 					/* Type 6 -- Monster pit (15%) */
-					if ((k < 40) && room_build(wpos, y, x, 6, p_ptr)) continue;
+					if ((k < 25) && room_build(wpos, y, x, 6, p_ptr)) continue;
 
-					/* Type 5 -- Monster nest (10%) */
-					if ((k < 50) && room_build(wpos, y, x, 5, p_ptr)) continue;
+					/* Type 8 -- Greater vault (10%) */
+					if ((k < 35) && room_build(wpos, y, x, 8, p_ptr)) continue;
 
 					/* Type 11 -- Random vault (10%) */
-					if ((k < 60) && room_build(wpos, y, x, 11, p_ptr)) continue;
-				}
+					if ((k < 45) && room_build(wpos, y, x, 11, p_ptr)) continue;
 
-				if (!tiny_level) {
+					/* Type 7 -- Lesser vault (15%) */
+					if ((k < 60) && room_build(wpos, y, x, 7, p_ptr)) continue;
+				} else {
 					/* Type 4 -- Large room (25%) */
 					if ((k < 25) && room_build(wpos, y, x, 4, p_ptr)) continue;
 
@@ -9649,7 +9660,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				}
 
 				/* Type 12 -- Crypt (10%) */
-				if ((k < 100) && !tiny_level && room_build(wpos, y, x, 12, p_ptr)) continue;
+				if ((k < 100) && room_build(wpos, y, x, 12, p_ptr)) continue;
 			}
 
 			/* Attempt a trivial room */
