@@ -1986,7 +1986,6 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	else if (r_ptr->weight <= 20000) { p_ptr->skill_stl -= 2; csheet_boni->slth -= 2; }
 	else if (r_ptr->weight <= 100000) { p_ptr->skill_stl -= 3; csheet_boni->slth -= 3; }
 	else { p_ptr->skill_stl -= 4; csheet_boni->slth -= 4; }
-	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
 
 	/* Extra fire if good archer */
 	/*  1_IN_1  -none-
@@ -5773,6 +5772,9 @@ void calc_boni(int Ind) {
 
 
 /* -------------------- Limits -------------------- */
+
+	/* Make sure we don't get negative stealth from monster body malus */
+	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
 
 #ifdef FUNSERVER
 	/* Limit AC?.. */
