@@ -4292,7 +4292,6 @@ void calc_boni(int Ind) {
 		p_ptr->dis_to_d = (p_ptr->dis_to_h * 2) / 3;
 	}
 
-
 	/* Adrenaline effects */
 	if (p_ptr->adrenaline) {
 		int i;
@@ -4319,12 +4318,6 @@ void calc_boni(int Ind) {
 
 	if (p_ptr->mindboost) p_ptr->skill_sav += p_ptr->mindboost_power / 5;
 
-	/* Invulnerability */
-	if (p_ptr->invuln) {
-		p_ptr->to_a += 100;
-		p_ptr->dis_to_a += 100;
-	}
-
 	/* Temporary "Levitation" */
 	if (p_ptr->tim_ffall || p_ptr->tim_lev) p_ptr->feather_fall = TRUE;
 	if (p_ptr->tim_lev) p_ptr->levitate = TRUE;
@@ -4335,29 +4328,15 @@ void calc_boni(int Ind) {
 		p_ptr->telepathy |= ESP_ALL;
 	}
 
-	/* Temporary blessing */
-	if (p_ptr->blessed) {
-		p_ptr->to_a += p_ptr->blessed_power;
-		p_ptr->dis_to_a += p_ptr->blessed_power;
-		p_ptr->to_h += p_ptr->blessed_power / 2;
-		p_ptr->dis_to_h += p_ptr->blessed_power / 2;
-	}
-
 	/* Temporary invisibility */
 	if (p_ptr->tim_invis_power > p_ptr->tim_invis_power2)
 		p_ptr->invis = p_ptr->tim_invis_power;
 	else
 		p_ptr->invis = p_ptr->tim_invis_power2;
 
-	/* Temporary shield */
-	if (p_ptr->shield) {
-		p_ptr->to_a += p_ptr->shield_power;
-		p_ptr->dis_to_a += p_ptr->shield_power;
-	}
-	
 	/* Temporary deflection */
 	if (p_ptr->tim_deflect) p_ptr->reflect = TRUE;
-	
+
 	/* Temporary "Hero" */
 	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5)) {
 		p_ptr->to_h += 12;
@@ -4392,11 +4371,6 @@ void calc_boni(int Ind) {
 		p_ptr->to_d += 20;
 		p_ptr->dis_to_d += 20;
 		p_ptr->pspeed += 5;
-		p_ptr->to_a -= 30;
-		p_ptr->dis_to_a -= 30;
-	}
-
-	if (p_ptr->combat_stance == 2) {
 		p_ptr->to_a -= 30;
 		p_ptr->dis_to_a -= 30;
 	}
@@ -4766,6 +4740,7 @@ void calc_boni(int Ind) {
 	else p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * 100) / adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]));
 #endif
 
+
 	/* Evaluate monster AC (if skin or armor etc) */
 	if (p_ptr->body_monster) {
 		if (p_ptr->pclass == CLASS_DRUID)
@@ -4798,6 +4773,34 @@ void calc_boni(int Ind) {
 		/*	p_ptr->dis_ac = (toac < p_ptr->dis_ac) ?
 		(((p_ptr->dis_ac * 2) + (toac * 1)) / 3) :
 		(((p_ptr->dis_ac * 1) + (toac * 1)) / 2);*/
+	}
+
+
+	/* -------------------- AC mods unaffected by body_monster: -------------------- */
+
+	/* Invulnerability */
+	if (p_ptr->invuln) {
+		p_ptr->to_a += 100;
+		p_ptr->dis_to_a += 100;
+	}
+
+	/* Temporary blessing */
+	if (p_ptr->blessed) {
+		p_ptr->to_a += p_ptr->blessed_power;
+		p_ptr->dis_to_a += p_ptr->blessed_power;
+		p_ptr->to_h += p_ptr->blessed_power / 2;
+		p_ptr->dis_to_h += p_ptr->blessed_power / 2;
+	}
+
+	/* Temporary shield */
+	if (p_ptr->shield) {
+		p_ptr->to_a += p_ptr->shield_power;
+		p_ptr->dis_to_a += p_ptr->shield_power;
+	}
+
+	if (p_ptr->combat_stance == 2) {
+		p_ptr->to_a -= 30;
+		p_ptr->dis_to_a -= 30;
 	}
 
 	if (p_ptr->mode & MODE_HARD) {
