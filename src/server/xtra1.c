@@ -8168,6 +8168,16 @@ static void process_global_event(int ge_id) {
 			sector00flags1 = sector00flags2 = 0x0;
 			sector00separation--;
 
+			/* cleanly teleport all lingering admins out instead of displacing them into (non-generated) pvp-dungeon ^^ */
+			for (i = 1; i <= NumPlayers; i++)
+				if (inarea(&Players[i]->wpos, &wpos)) {
+					Players[i]->new_level_method = (Players[i]->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+					Players[i]->recall_pos.wx = cfg.town_x;
+					Players[i]->recall_pos.wy = cfg.town_y;
+					Players[i]->recall_pos.wz = 0;
+					recall_player(i, "");
+				}
+
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
