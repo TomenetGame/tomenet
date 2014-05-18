@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. May 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 18. May 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -7424,10 +7424,10 @@ Disenchantment  This attack does massive damage and can also disenchant your
                 Artifacts have a chance to resist disenchantment.
 
 
-Irresistable/extremely powerful damage types:
+Irresistible/extremely powerful damage types:
 ---------------------------------------------
 Force           Pure force impact (BR_WALL). Raw damage is monster HP/6.
-                Force impact (breath only) is capped at 200 and irresistable.
+                Force impact (breath only) is capped at 200 and irresistible.
                 If you lack sound resistance you will get stunned.
 Inertia         Inertia attacks will slow you down a lot. There is no 'Inertia
                 resistance' but 'Free Action' will slightly reduce the
@@ -7458,9 +7458,9 @@ Time            Time is pure temporary distortion. There are only rumours
                 -Drain all your stats (resistance will prevent this).
                 Resistance will cut damage to 6/7..6/12.
                 Breath damage is monster HP/3. Time breath caps at 150.
-Meteor          This is an irresistable attack of pure impact.
+Meteor          This is an irresistible attack of pure impact.
                 Sound resistance will prevent stun effect.
-Disintegration  This is an irresistable attack of raw destruction.
+Disintegration  This is an irresistible attack of raw destruction.
                 Damage (breath only) is monster HP/3, capping at 300.
 
 
@@ -12596,7 +12596,7 @@ Istar schools:
 - Air
 
     Noxious Cloud   Fires a poison cloud at a designated target.
-                    Lv30: Unbreath cloud, irresistable.
+                    Lv30: Unbreath cloud, irresistible.
                     Required skill level for first spell level: 3.
 
     Lightning Bolt  Fires a lightning bolt at a target.
