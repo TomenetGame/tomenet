@@ -2873,6 +2873,9 @@ struct player_type {
 	bool admin_invuln, admin_invinc; /* Amulets of Invulnerability/Invincibility */
 
 	u32b test_count, test_dam, test_heal, test_turn;
+#ifdef TEST_SERVER
+	u32b test_attacks;
+#endif
 
 	/* give players certain warnings, meant to guide newbies along, and remember
 	   if we already gave a specific warning, so we don't spam the player with it

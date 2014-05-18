@@ -3527,6 +3527,9 @@ void do_slash_cmd(int Ind, char *message)
 				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
 				p_ptr->test_turn = turn;
 				msg_print(Ind, "Attack count, damage and healing done have been reset to zero.");
+#ifdef TEST_SERVER
+				p_ptr->test_attacks = 0;
+#endif
 				return;
 			}
 			msg_print(Ind, "Your total damage and healing done:");
@@ -3547,6 +3550,12 @@ void do_slash_cmd(int Ind, char *message)
 				    tmp, ((p_ptr->test_heal * 10) / p_ptr->test_count) % 10);
 				else msg_format(Ind, "    \377g    Average healing done: %8d", tmp);
 			}
+#ifdef TEST_SERVER
+			if (p_ptr->test_attacks == 0)
+				msg_print(Ind, "    \377wNo attempts to attack were made yet.");
+			else
+				msg_format(Ind, "    \377wHit with %d out of %d attacks (%d%%)", p_ptr->test_count, p_ptr->test_attacks, (100 * p_ptr->test_count) / p_ptr->test_attacks);
+#endif
 
 			if (p_ptr->test_turn == 0)
 				msg_print(Ind, "    \377sNo time-based result available: Initialize via '/testyourmight rs'.");
