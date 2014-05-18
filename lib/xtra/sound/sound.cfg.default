@@ -11,6 +11,11 @@
 # Make sure that there aren't any spaces or tabs after the '=' in lines which
 # don't contain any song file name at all, or it will give an error.
 # Supported sound formats are WAVE, AIFF, RIFF, OGG, and VOC.
+
+# To disable a sound effect, put a ';' in front of the line!
+# This is preferable over commenting out a line with '#', because the server
+# won't think that your sound pack is outdated and possibly send you the wrong
+# sound codes as a consequence!
 #
 # Example:
 # hit_weapon = player/combat/hit.wav "player/combat/hit steel.ogg"

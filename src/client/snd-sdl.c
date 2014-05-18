@@ -258,10 +258,11 @@ static bool open_audio(void) {
  */
 static bool sound_sdl_init(bool no_cache) {
 	char path[2048];
-	char buffer[2048];
+	char buffer0[2048], *buffer = buffer0;
 	FILE *fff;
 	int i;
 	char out_val[160];
+	bool disabled;
 
 	bool events_loaded_semaphore;
 
@@ -336,7 +337,7 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Parse the file */
 	/* Lines are always of the form "name = sample [sample ...]" */
-	while (my_fgets(fff, buffer, sizeof(buffer)) == 0) {
+	while (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
 		char *cfg_name;
 		cptr lua_name;
 		char *sample_list;
@@ -344,6 +345,15 @@ static bool sound_sdl_init(bool no_cache) {
 		char *cur_token;
 		char *next_token;
 		int event;
+
+		/* Lines starting on ';' count as 'provided event' but actually
+		   remain silent, as a way of disabling effects/songs without
+		   letting the server know. */
+		buffer = buffer0;
+		if (buffer0[0] == ';') {
+			buffer++;
+			disabled = TRUE;
+		} else disabled = FALSE;
 
 		/* Skip anything not beginning with an alphabetic character */
 		if (!buffer[0] || !isalpha((unsigned char)buffer[0])) continue;
@@ -438,6 +448,9 @@ static bool sound_sdl_init(bool no_cache) {
 				}
 			}
 		}
+
+		/* disable this sfx? */
+		if (disabled) samples[event].num = 0;
 	}
 
 	/* Close the file */
@@ -445,6 +458,8 @@ static bool sound_sdl_init(bool no_cache) {
 
 
 	/* ------------------------------- Init Music */
+
+	buffer = buffer0;
 
 	/* Build the "music" path */
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "music");
@@ -499,7 +514,7 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Parse the file */
 	/* Lines are always of the form "name = music [music ...]" */
-	while (my_fgets(fff, buffer, sizeof(buffer)) == 0) {
+	while (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
 		char *cfg_name;
 		cptr lua_name;
 		char *song_list;
@@ -507,6 +522,15 @@ static bool sound_sdl_init(bool no_cache) {
 		char *cur_token;
 		char *next_token;
 		int event;
+
+		/* Lines starting on ';' count as 'provided event' but actually
+		   remain silent, as a way of disabling effects/songs without
+		   letting the server know. */
+		buffer = buffer0;
+		if (buffer0[0] == ';') {
+			buffer++;
+			disabled = TRUE;
+		} else disabled = FALSE;
 
 		/* Skip anything not beginning with an alphabetic character */
 		if (!buffer[0] || !isalpha((unsigned char)buffer[0])) continue;
@@ -616,6 +640,9 @@ static bool sound_sdl_init(bool no_cache) {
 				}
 			}
 		}
+
+		/* disable this song? */
+		if (disabled) songs[event].num = 0;
 	}
 
 	/* Close the file */
@@ -1381,7 +1408,13 @@ static bool play_music(int event) {
 	if (event < 0 || event >= MUSIC_MAX) return FALSE;
 
 	/* Check there are samples for this event */
-	if (!songs[event].num) return FALSE;
+	if (!songs[event].num) {
+		/* Stop currently playing music though, before returning */
+		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
+			Mix_FadeOutMusic(500);
+
+		return FALSE;
+	}
 
 
 	music_next = event;

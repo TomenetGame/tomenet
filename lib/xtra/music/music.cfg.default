@@ -12,6 +12,11 @@
 # don't contain any song file name at all, or it will give an error.
 # Supported music formats are WAVE, MOD (includes S3M, IT, XM), MIDI, OGG, MP3.
 #
+# To disable a song, put a ';' in front of the line!
+# This is preferable over commenting out a line with '#', because the server
+# won't think that your music pack is outdated and possibly send you the wrong
+# music codes as a consequence!
+#
 # Example:
 # BarrowDowns = dungeons/bd1.mp3 "otherstuff/da dee doo.ogg"
 #
