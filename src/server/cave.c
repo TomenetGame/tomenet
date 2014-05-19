@@ -3620,6 +3620,20 @@ void lite_spot(int Ind, int y, int x)
 			}
 
 
+			if (p_ptr->consistent_players) {
+				a = TERM_WHITE;
+				if (p_ptr->tim_mimic > 0 && p_ptr->body_monster == p_ptr->tim_mimic_what) {
+					if (p_ptr->tim_mimic <= 100 && !rand_int(10)) a = TERM_WHITE;
+					else a = TERM_ORANGE;
+				}
+				if (p_ptr->tim_manashield && p_ptr->msp > 0 && p_ptr->csp > 0) {
+					a = TERM_YELLOW;
+				}
+				if (p_ptr->black_breath && magik(50)) {
+					a = TERM_SLATE;
+				}
+			}
+
 #ifdef ENABLE_SELF_FLASHING
 			/* display player in really easily spottable colours */
 			if (p_ptr->flash_self > 0) a = (p_ptr->flash_self % 2) ? TERM_L_RED : TERM_L_GREEN;
@@ -3643,20 +3657,6 @@ void lite_spot(int Ind, int y, int x)
 					int num;
 					num = (p_ptr->csp * 95) / (p_ptr->msp * 10);
 					c = '0' + num;
-				}
-			}
-
-			if (p_ptr->consistent_players) {
-				a = TERM_WHITE;
-				if (p_ptr->tim_mimic > 0 && p_ptr->body_monster == p_ptr->tim_mimic_what) {
-					if (p_ptr->tim_mimic <= 100 && !rand_int(10)) a = TERM_WHITE;
-					else a = TERM_ORANGE;
-				}
-				if (p_ptr->tim_manashield && p_ptr->msp > 0 && p_ptr->csp > 0) {
-					a = TERM_YELLOW;
-				}
-				if (p_ptr->black_breath && magik(50)) {
-					a = TERM_SLATE;
 				}
 			}
 
