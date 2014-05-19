@@ -1055,6 +1055,7 @@ struct player_type
 #ifdef TELEPORT_SURPRISES
 	byte teleported;
 #endif
+	bool distinct_floor_feeling;
 };
 
 extern bool imprison(int Ind, int time, char *reason);
