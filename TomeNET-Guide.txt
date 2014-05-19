@@ -2447,10 +2447,14 @@ on what file types are supported and about the structure of the files aka how
 to modify/add entries correctly.
 
 For example if you want to disable a certain sound effect temporarily, open
-sound.cfg in your text editor, locate the sound effect, and just put a '#'
+sound.cfg in your text editor, locate the sound effect, and just put a ';'
 symbol at the beginning of the line - that will effectively disable the whole
 line. (Of course you could also just rename the actual sound file instead of
-editing the cfg file; that way it cannot be loaded by the game anymore.)
+editing the cfg file; that way it cannot be loaded by the game anymore.
+However, you shouldn't use '#' to disable sounds, because this might make the
+server think that you are using an outdated audio pack and send you wrong
+audio codes, resulting in hearing the wrong music in a particular dungeon for
+example. So it's preferable to use ';' to disable songs or sound effects.)
 
 If you want to edit sound or music configuration files in detail, you will
 probably be starting off in one of these two situations:

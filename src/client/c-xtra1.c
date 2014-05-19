@@ -551,7 +551,7 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
 	depth_town = town;
 	depth_colour = colour;
 	depth_colour_sector = colour_sector;
-	if (depth_name != name) strcpy(depth_name, name);
+	strcpy(depth_name, name);
 
 	/* remember cursor position */
 	Term_locate(&x2, &y2);
@@ -570,7 +570,8 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
 	c_prt(colour, format("%7s", depths), ROW_DEPTH, COL_DEPTH);
 
 	/* New feeling-on-next-floor indicator after 4.5.6: */
-	if (*name == '*') c_prt(TERM_L_BLUE, "*", ROW_DEPTH, COL_DEPTH + strlen(depths));
+	/* '+8' because depth string was right-aligned for width 7 in above format() */
+	if (name[0] == '*') c_prt(TERM_L_BLUE, "*", ROW_DEPTH, COL_DEPTH + 8);
 
 	/* restore cursor position */
 	Term_gotoxy(x2, y2);

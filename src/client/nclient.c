@@ -2165,7 +2165,7 @@ int Receive_item(void) {
 		}
 
 		clear_topline();
-		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN))) return 1;
+		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return 1;
 		Send_item(item);
 	} else {
 		if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
