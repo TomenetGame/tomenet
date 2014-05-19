@@ -28,6 +28,9 @@
 ## - Perform automatic login with nick, pass and also character name
 #fullauto
 
+# Use lighter 'dark blue' colour to increase readability on some screens
+#lighterDarkBlue
+
 
 
 ## Miscellaneous settings
