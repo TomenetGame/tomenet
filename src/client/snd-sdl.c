@@ -130,6 +130,7 @@ typedef struct {
 					   stacking of the same sound multiple (read: too many) times - ...
 					   note that with 4.4.5.4+ this is deprecated - C. Blue */
 	int started_timer_tick;		/* global timer tick on which this sample was started (for efficiency) */
+	bool disabled;
 } sample_list;
 
 /* background music */
@@ -137,6 +138,7 @@ typedef struct {
 	int num;
 	Mix_Music *wavs[MAX_SONGS];
 	const char *paths[MAX_SONGS];
+	bool disabled;
 } song_list;
 
 /* Just need an array of SampInfos */
@@ -450,7 +452,7 @@ static bool sound_sdl_init(bool no_cache) {
 		}
 
 		/* disable this sfx? */
-		if (disabled) samples[event].num = 0;
+		if (disabled) samples[event].disabled = TRUE;
 	}
 
 	/* Close the file */
@@ -642,7 +644,7 @@ static bool sound_sdl_init(bool no_cache) {
 		}
 
 		/* disable this song? */
-		if (disabled) songs[event].num = 0;
+		if (disabled) songs[event].disabled = TRUE;
 	}
 
 	/* Close the file */
@@ -667,6 +669,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_sound) return TRUE; /* claim that it 'succeeded' */
 #endif
+	if (samples[event].disabled) return TRUE; /* claim that it 'succeeded' */
 
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return FALSE;
@@ -765,6 +768,7 @@ extern bool sound_page(void) {
 	int s;
 
 	if (page_sound_idx == -1) return FALSE;
+	if (samples[page_sound_idx].disabled) return TRUE; /* claim that it 'succeeded' */
 	if (!samples[page_sound_idx].num) return FALSE;
 
 	/* already playing? prevent multiple sounds of the same kind from being mixed simultaneously, for preventing silliness */
@@ -810,6 +814,7 @@ extern bool sound_warning(void) {
 	int s;
 
 	if (warning_sound_idx == -1) return FALSE;
+	if (samples[warning_sound_idx].disabled) return TRUE; /* claim that it 'succeeded' */
 	if (!samples[warning_sound_idx].num) return FALSE;
 
 	/* already playing? prevent multiple sounds of the same kind from being mixed simultaneously, for preventing silliness */
@@ -923,6 +928,8 @@ static void play_sound_weather(int event) {
 
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return;
+
+	if (samples[event].disabled) return;
 
 	/* Check there are samples for this event */
 	if (!samples[event].num) {
@@ -1108,6 +1115,8 @@ static void play_sound_weather_vol(int event, int vol) {
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return;
 
+	if (samples[event].disabled) return;
+
 	/* Check there are samples for this event */
 	if (!samples[event].num) return;
 
@@ -1273,6 +1282,8 @@ static void play_sound_ambient(int event) {
 	/* Paranoia */
 	if (event < 0 || event >= SOUND_MAX_2010) return;
 
+	if (samples[event].disabled) return;
+
 	/* Check there are samples for this event */
 	if (!samples[event].num) {
 		/* stop previous ambient sound */
@@ -1407,6 +1418,14 @@ static bool play_music(int event) {
 	/* Paranoia */
 	if (event < 0 || event >= MUSIC_MAX) return FALSE;
 
+	if (songs[event].disabled) {
+		/* Stop currently playing music though, before returning */
+		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
+			Mix_FadeOutMusic(500);
+
+		return TRUE; /* claim that it 'succeeded' */
+	}
+
 	/* Check there are samples for this event */
 	if (!songs[event].num) {
 		/* Stop currently playing music though, before returning */
@@ -1439,6 +1458,8 @@ static void fadein_next_music(void) {
 
 	/* Paranoia */
 	if (music_next < 0 || music_next >= MUSIC_MAX) return;
+
+	if (songs[music_next].disabled) return;
 
 	/* Check there are samples for this event */
 	if (!songs[music_next].num) return;
