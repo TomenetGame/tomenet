@@ -232,6 +232,9 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 		/* Paint dark base ;) */
 		if (cur >= max) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "---------");
 		else Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, "---------");
+#else
+		if (cur >= max) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "         ");//just erase any previous '-' or exp bar possibly
+		else Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, "-");
 #endif
 		if (cur >= max) {
 			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
