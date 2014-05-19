@@ -15,20 +15,24 @@ extern void resize_main_window_gcu(int cols, int rows);
 
 #ifdef USE_X11
 extern errr init_x11(void);
-#if 0
-extern void turn_off_numlock_X11(void);
-#endif
-#if 1 /* CHANGE_FONTS_X11 */
-extern void change_font(int s);
-extern const char* get_font_name(int term_idx);
-extern void set_font_name(int term_idx, char* fnt);
-extern void term_toggle_visibility(int term_idx);
-extern bool term_get_visibility(int term_idx);
-#endif
+ #if 0
+    extern void turn_off_numlock_X11(void);
+ #endif
+ #if 1 /* CHANGE_FONTS_X11 */
+    extern void change_font(int s);
+    extern const char* get_font_name(int term_idx);
+    extern void set_font_name(int term_idx, char* fnt);
+    extern void term_toggle_visibility(int term_idx);
+    extern bool term_get_visibility(int term_idx);
+ #endif
+
 extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *fnt_name);
 extern void resize_main_window_x11(int cols, int rows);
 extern bool ask_for_bigmap(void);
-extern void enable_readability_blue(void);
+extern void enable_readability_blue_x11(void);
+#endif
+#ifdef USE_GCU
+extern void enable_readability_blue_gcu(void);
 #endif
 
 #ifdef USE_XAW
@@ -863,7 +867,7 @@ extern void term_toggle_visibility(int term_idx);
 extern bool term_get_visibility(int term_idx);
 extern void resize_main_window_win(int cols, int rows);
 extern bool ask_for_bigmap(void);
-extern void enable_readability_blue(void);
+extern void enable_readability_blue_win(void);
 #endif
 
 extern const cptr angband_sound_name[SOUND_MAX];
@@ -930,3 +934,4 @@ extern char minimap_char;
 
 extern bool silent_dump;
 extern bool equip_no_weapon;
+extern void (*enable_readability_blue)(void);

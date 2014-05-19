@@ -909,6 +909,7 @@ errr init_gcu(void)
 
         /* set OS-specific resize_main_window() hook */
         resize_main_window = resize_main_window_gcu;
+        enable_readability_blue = enable_readability_blue_gcu;
 
 
 #ifdef A_COLOR
@@ -1095,7 +1096,6 @@ errr init_gcu(void)
 void gcu_restore_colours(void) {
 	int i;
 	for (i = 0; i < 16; i++) init_color(i, cor[i], cog[i], cob[i]);
-	
 }
 
 /* for big_map mode */
@@ -1125,6 +1125,9 @@ void resize_main_window_gcu(int cols, int rows) {
 #endif
 }
 
+void enable_readability_blue_gcu(void) {
+	init_color(6, 0, 200, 1000);
+}
 
 #endif /* USE_GCU */
 

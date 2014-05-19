@@ -476,7 +476,7 @@ static COLORREF win_clr[16] =
 	PALETTERGB(0x00, 0xFF, 0xFF),  /* 0 4 4  Lt. Blue */
 	PALETTERGB(0xC7, 0x9D, 0x55)   /* 3 2 1  Lt. Umber */
 };
-void enable_readability_blue(void) {
+void enable_readability_blue_win(void) {
 	win_clr[6] = PALETTERGB(0x00, 0x33, 0xFF);
 }
 
@@ -954,7 +954,7 @@ static void load_prefs(void)
 
 	/* Extract the readability_blue flag */
 	if (GetPrivateProfileInt("Base", "LighterDarkBlue", 1, ini_file) != 0)
-		enable_readability_blue();
+		enable_readability_blue_win();
 
 #ifdef USE_GRAPHICS
 	/* Extract the "use_graphics" flag */
