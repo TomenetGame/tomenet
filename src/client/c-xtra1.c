@@ -230,9 +230,8 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 
 #ifdef EXP_BAR_FILLDARK
 		/* Paint dark base ;) */
-		//if (!c_cfg.exp_need) {
-			Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "---------");
-		//}
+		if (cur >= max) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "---------");
+		else Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_HI_DRAINED, "---------");
 #endif
 		if (cur >= max) {
 			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
