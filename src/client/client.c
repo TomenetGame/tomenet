@@ -228,7 +228,7 @@ static bool read_mangrc(cptr filename)
 
 			/* READABILITY_BLUE */
 			if (!strncmp(buf, "lighterDarkBlue", 15))
-				enable_readability_blue();
+				enabled_readability_blue = TRUE;
 
 #ifdef USE_GRAPHICS
 			/* graphics */

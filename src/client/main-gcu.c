@@ -909,7 +909,8 @@ errr init_gcu(void)
 
         /* set OS-specific resize_main_window() hook */
         resize_main_window = resize_main_window_gcu;
-        enable_readability_blue = enable_readability_blue_gcu;
+
+        if (enabled_readability_blue) enable_readability_blue_gcu();
 
 
 #ifdef A_COLOR

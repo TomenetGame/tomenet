@@ -934,4 +934,4 @@ extern char minimap_char;
 
 extern bool silent_dump;
 extern bool equip_no_weapon;
-extern void (*enable_readability_blue)(void);
+extern bool enabled_readability_blue;

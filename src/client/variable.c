@@ -381,4 +381,4 @@ bool silent_dump = FALSE;
 /* For cleaner equip-display -- using a mimic/bat form that cannot use weapons? */
 bool equip_no_weapon = FALSE;
 
-void (*enable_readability_blue)(void);
+bool enabled_readability_blue = FALSE;

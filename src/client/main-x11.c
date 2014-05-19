@@ -2505,7 +2505,8 @@ errr init_x11(void) {
 
         /* set OS-specific resize_main_window() hook */
         resize_main_window = resize_main_window_x11;
-        enable_readability_blue = enable_readability_blue_x11;
+
+        if (enabled_readability_blue) enable_readability_blue_x11();
 
 
 	/* Prepare color "xor" (for cursor) */
