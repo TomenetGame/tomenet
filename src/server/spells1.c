@@ -1825,8 +1825,10 @@ destined_defeat:
 				player_type *p2_ptr = Players[Ind_attacker];
 				p_ptr->chp = p_ptr->mhp;
 				p2_ptr->chp = p2_ptr->mhp;
-				p_ptr->redraw |= PR_HP;
-				p2_ptr->redraw |= PR_HP;
+				p_ptr->csp = p_ptr->msp;
+				p2_ptr->csp = p2_ptr->msp;
+				p_ptr->redraw |= PR_HP | PR_MANA;
+				p2_ptr->redraw |= PR_HP | PR_MANA;
 
 				s_printf("BLOOD_BOND: %s won the blood bond against %s\n", p2_ptr->name, p_ptr->name);
 				msg_broadcast_format(0, "\374\377c*** %s won the blood bond against %s. ***", p2_ptr->name, p_ptr->name);
