@@ -520,3 +520,6 @@ int valinor_wpos_y;
 int valinor_wpos_z;
 
 extern void fix_max_depth_towerdungeon(int Ind);
+
+extern int __audio_sfx_max;
+extern int __audio_mus_max;

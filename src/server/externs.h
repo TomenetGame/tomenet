@@ -2335,3 +2335,4 @@ extern bool nether_realm_collapsing;
 extern int nrc_x, nrc_y, netherrealm_end_wz;
 
 extern bool sauron_weakened, sauron_weakened_iddc;
+extern int __audio_sfx_max, __audio_mus_max;

@@ -1012,3 +1012,4 @@ bool nether_realm_collapsing = FALSE;
 int nrc_x, nrc_y, netherrealm_end_wz;
 
 bool sauron_weakened = FALSE, sauron_weakened_iddc = FALSE;
+int __audio_sfx_max, __audio_mus_max;
