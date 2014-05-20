@@ -5882,6 +5882,7 @@ void calc_boni(int Ind) {
 	/* Send all the columns - Kurzel */
 	if (is_newer_than(&p_ptr->version, 4, 5, 3, 2, 0, 0) && logged_in)
 		for (i = 0; i < 15; i++) {
+			f1 = f2 = f3 = f4 = f5 = f6 = esp = 0x0;
 			if (csheet_boni[i].cb[11] & CB12_XHIDD) { //hide the item data (for now, see part 2 below) - Kurzel
 				/* Wipe the boni column data */
 				csheet_boni[i].i = i;
@@ -5917,7 +5918,7 @@ void calc_boni(int Ind) {
 				can_have_hidden_powers = FALSE;
 //				bool not_identified_at_all = TRUE;
 				if (i != 14) {
-					o_ptr = &p_ptr->inventory[i+INVEN_WIELD];
+					o_ptr = &p_ptr->inventory[i + INVEN_WIELD];
 					k_ptr = &k_info[o_ptr->k_idx];
 					/* Build the flags */
 					//object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
@@ -6060,10 +6061,38 @@ void calc_boni(int Ind) {
 						/* Table C */
 						if (object_known_p(Ind, o_ptr)) { //must be identified to see PVAL
 							pval = o_ptr->pval; //faster? - Kurzel
+
+							/*todo: build a_ptr for ego/art powers and mask out k1/k5 pval mask from it,
+							  to get the -real- pvals (no more witans +8 stealth if +10 speed..) */
+							if (o_ptr->name2) {
+								artifact_type *a_ptr = ego_make(o_ptr);
+								f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
+								f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
+							} else if (o_ptr->name1 == ART_RANDART) {
+								artifact_type *a_ptr = randart_make(o_ptr);
+								f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
+								f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
+							}
+
 							if (f1 & TR1_SPEED) csheet_boni[i].spd += pval;
 							if (f1 & TR1_STEALTH) csheet_boni[i].slth += pval;
 							if (f1 & TR1_SEARCH) csheet_boni[i].srch += pval;
 							if (f1 & TR1_INFRA) csheet_boni[i].infr += pval;
+							if (f1 & TR1_TUNNEL) csheet_boni[i].dig += pval;
+							if (f1 & TR1_BLOWS) csheet_boni[i].blow += pval;
+							if (f5 & TR5_CRIT) csheet_boni[i].crit += pval;
+							if (f5 & TR5_LUCK) csheet_boni[i].luck += pval;
+
+							if (f1 & TR1_STR) csheet_boni[i].pstr += pval;
+							if (f1 & TR1_INT) csheet_boni[i].pint += pval;
+							if (f1 & TR1_WIS) csheet_boni[i].pwis += pval;
+							if (f1 & TR1_DEX) csheet_boni[i].pdex += pval;
+							if (f1 & TR1_CON) csheet_boni[i].pcon += pval;
+							if (f1 & TR1_CHR) csheet_boni[i].pchr += pval;
+
+							if (f1 & TR1_MANA) csheet_boni[i].mxmp += pval;
+							if (f1 & TR1_LIFE) csheet_boni[i].mxhp += pval;
+
 							{ //lite
 								j = 0;
 								if (f3 & TR3_LITE1) j++;
@@ -6072,20 +6101,9 @@ void calc_boni(int Ind) {
 								csheet_boni[i].lite += j;
 								if (!(f4 & TR4_FUEL_LITE)) csheet_boni[i].cb[12] |= CB13_XLITE;
 							}
-							if (f1 & TR1_TUNNEL) csheet_boni[i].dig += pval;
-							if (f1 & TR1_BLOWS) csheet_boni[i].blow += pval;
-							if (f5 & TR5_CRIT) csheet_boni[i].crit += pval;
+
 							if (f3 & TR3_XTRA_SHOTS) csheet_boni[i].shot++;
 							if (f3 & TR3_XTRA_MIGHT) csheet_boni[i].migh++;
-							if (f1 & TR1_MANA) csheet_boni[i].mxmp += pval;
-							if (f1 & TR1_LIFE) csheet_boni[i].mxhp += pval;
-							if (f5 & TR5_LUCK) csheet_boni[i].luck += pval;
-							if (f1 & TR1_STR) csheet_boni[i].pstr += pval;
-							if (f1 & TR1_INT) csheet_boni[i].pint += pval;
-							if (f1 & TR1_WIS) csheet_boni[i].pwis += pval;
-							if (f1 & TR1_DEX) csheet_boni[i].pdex += pval;
-							if (f1 & TR1_CON) csheet_boni[i].pcon += pval;
-							if (f1 & TR1_CHR) csheet_boni[i].pchr += pval;
 							if (f2 & TR2_SUST_STR) csheet_boni[i].cb[11] |= CB12_RSSTR;
 							if (f2 & TR2_SUST_INT) csheet_boni[i].cb[11] |= CB12_RSINT;
 							if (f2 & TR2_SUST_WIS) csheet_boni[i].cb[11] |= CB12_RSWIS;
