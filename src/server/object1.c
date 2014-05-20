@@ -5480,6 +5480,9 @@ void display_inven(int Ind)
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;
 
+		/* You can inscribe with !U to force TERM_L_DARK colouring (more visibility tuning!) */
+		if (check_guard_inscription(o_ptr->note, 'U')) attr = TERM_L_DARK;
+
 		/* Display the weight if needed */
 		wgt = o_ptr->weight; //* o_ptr->number;
 
