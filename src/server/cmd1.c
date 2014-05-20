@@ -2902,7 +2902,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			}
  #endif
 #else /* :-o */
-			if (!backstab && magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev))) {
+			if (!backstab && magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev * 2))) {
 				msg_format(Ind, "\377%c%s dodges your attack!", COLOUR_DODGE_PLY, q_name);
 				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
  #ifdef USE_SOUND_2010
