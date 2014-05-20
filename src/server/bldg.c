@@ -1255,6 +1255,10 @@ s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
 #if 0
 	if (set_reward) p_ptr->rewards[ireward] = TRUE;
 #endif
+
+	/* We might be wearing/wielding the item */
+	p_ptr->update |= PU_BONUS;
+
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 	return (TRUE);
