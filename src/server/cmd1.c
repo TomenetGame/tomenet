@@ -4874,7 +4874,7 @@ void touch_zap_player(int Ind, int m_idx)
 	}
 
 
-	if (r_ptr->flags2 & (RF3_AURA_COLD)) {
+	if (r_ptr->flags3 & (RF3_AURA_COLD)) {
 		if (!(p_ptr->immune_cold)) {
 			char aura_dam[80];
 

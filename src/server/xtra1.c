@@ -2248,7 +2248,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	if (r_ptr->flags2 & RF2_KILL_WALL) { p_ptr->auto_tunnel = TRUE; csheet_boni->cb[12] |= CB13_XWALL; }
 	if (r_ptr->flags2 & RF2_AURA_FIRE) { p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE; csheet_boni->cb[10] |= CB11_AFIRE; }
 	if (r_ptr->flags2 & RF2_AURA_ELEC) { p_ptr->sh_elec = p_ptr->sh_elec_fix = TRUE; csheet_boni->cb[10] |= CB11_AELEC; }
-	if (r_ptr->flags2 & RF3_AURA_COLD) { p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE; csheet_boni->cb[10] |= CB11_ACOLD; }
+	if (r_ptr->flags3 & RF3_AURA_COLD) { p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE; csheet_boni->cb[10] |= CB11_ACOLD; }
 
 	if (r_ptr->flags5 & RF5_MIND_BLAST) { p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND; }
 	if (r_ptr->flags5 & RF5_BRAIN_SMASH) { p_ptr->reduce_insanity = 2; csheet_boni->cb[3] |= CB4_RMIND; }
