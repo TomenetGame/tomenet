@@ -2678,7 +2678,7 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 
 			/* Gain experience */
 			if (new_exp) gain_exp(i, new_exp);
-			else if (!p_ptr->warning_fracexp) {
+			else if (!p_ptr->warning_fracexp && base_amount) {
 				msg_print(Ind, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
 				s_printf("warning_fracexp: %s\n", p_ptr->name);
 				p_ptr->warning_fracexp = 1;

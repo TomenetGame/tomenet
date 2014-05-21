@@ -8371,7 +8371,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			/* Gain experience */
 			if (new_exp) {
 				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, new_exp);
-			} else if (!p_ptr->warning_fracexp) {
+			} else if (!p_ptr->warning_fracexp && tmp_exp) {
 				msg_print(Ind, "\374\377ySome monsters give less than 1 experience point, but you still gain a bit!");
 				s_printf("warning_fracexp: %s\n", p_ptr->name);
 				p_ptr->warning_fracexp = 1;
