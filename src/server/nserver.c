@@ -4400,6 +4400,24 @@ int Send_ac(int ind, int base, int plus)
 int Send_experience(int Ind, int lev, s32b max, s32b cur, s32b adv, s32b adv_prev) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
+
+	int Ind2;
+	connection_t *connp2;
+	player_type *p_ptr2 = NULL;
+
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) {
+		connp2 = Conn[p_ptr2->conn];
+		if (is_newer_than(&Players[Ind2]->version, 4, 5, 6, 0, 0, 1))
+			/* hack: add marker to 'lev' to allow keeping track of exp_frac during level 1 exp'ing phase */
+			return Packet_printf(&connp2->c, "%c%hu%hu%hu%d%d%d%d", PKT_EXPERIENCE, lev + (Players[Ind]->exp_frac >= 5000 ? 1000 : 0), Players[Ind]->max_lev, Players[Ind]->max_plv, max, cur, adv, adv_prev);
+		else if (is_newer_than(&Players[Ind2]->version, 4, 4, 1, 3, 0, 0))
+			return Packet_printf(&connp2->c, "%c%hu%hu%hu%d%d%d", PKT_EXPERIENCE, lev, Players[Ind]->max_lev, Players[Ind]->max_plv, max, cur, adv);
+		else
+			return Packet_printf(&connp2->c, "%c%hu%d%d%d", PKT_EXPERIENCE, lev, max, cur, adv);
+	}
+
+
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for experience (%d.%d.%d)",
