@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. May 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 23. May 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6159,6 +6159,11 @@ The item does not depend on your race, class, skills or luck in any way,
 it's completely random.
 If you fail to carry out your order in time, the order will be cancelled and
 you can just get a new one if you want to. There is no penalty.
+
+Party members (and you) can see that you received an extermination order by
+looking at the character list ('@' key): An 'X' will appear behind your
+location information (except if they are using the super compact @-screen
+layout that shows only two lines per player).
 
 On Ironman server or within the Ironman Deep Dive Challenge dungeon, the
 quality of the items rewarded is boosted somewhat, while the amount of

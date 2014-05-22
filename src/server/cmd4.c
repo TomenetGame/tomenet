@@ -1356,7 +1356,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
 			/* Print questing flag */
-			if (q_ptr->xorder_id) fprintf(fff, " Q");
+			if (q_ptr->xorder_id) fprintf(fff, " X");
 		}
 
 //		fprintf(fff, ", %s@%s", q_ptr->accountname, q_ptr->hostname);
@@ -1428,7 +1428,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
 
 			/* Print questing flag */
-			if (q_ptr->xorder_id) fprintf(fff, " Q");
+			if (q_ptr->xorder_id) fprintf(fff, " X");
 		}
 
 		/* Print afk/info message */
