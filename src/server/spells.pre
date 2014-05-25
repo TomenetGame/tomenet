@@ -240,7 +240,7 @@ extern void take_sanity_hit(int Ind, int damage, cptr hit_from);
 extern s16b poly_r_idx(int r_idx);
 //extern bool check_st_anchor(struct worldpos *wpos);
 extern bool check_st_anchor(struct worldpos *wpos, int y, int x);
-extern void swap_position(int Ind, int lty, int ltx);
+extern bool swap_position(int Ind, int lty, int ltx);
 extern bool teleport_away(int m_idx, int dis);
 extern void teleport_player(int Ind, int dis, bool ignore_pvp);
 extern void teleport_player_to(int Ind, int ny, int nx);

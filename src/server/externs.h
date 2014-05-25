@@ -1461,7 +1461,7 @@ extern int approx_damage(int m_idx, int dam, int typ);
 /* spells2.c */
 extern void summon_pet(int Ind, int max);
 extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_idx);
-extern void swap_position(int Ind, int lty, int ltx);
+extern bool swap_position(int Ind, int lty, int ltx);
 extern void grow_trees(int Ind, int rad);
 extern bool heal_insanity(int Ind, int val);
 extern bool summon_cyber(int Ind, int s_clone, int clone_summoning);
@@ -1606,7 +1606,7 @@ extern bool do_divine_crit(int Ind, int p, int v);
 
 extern void do_autokinesis_to(int Ind, int dis);
 extern bool do_res_stat_temp(int Ind, int stat);
-extern void swap_position(int Ind, int lty, int ltx);
+extern bool swap_position(int Ind, int lty, int ltx);
 extern void call_chaos(int Ind, int dir, int extra_damage);
 extern bool turn_monsters(int Ind, int dam);
 extern void wizard_lock(int Ind, int dir);

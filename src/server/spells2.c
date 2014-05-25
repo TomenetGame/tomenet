@@ -6196,18 +6196,21 @@ bool cast_lightning(worldpos *wpos, int x, int y) {
  * unfair deaths and weirdness.
  * (evileye)
  */
-void swap_position(int Ind, int lty, int ltx){
+bool swap_position(int Ind, int lty, int ltx){
 	player_type *p_ptr;
 	worldpos *wpos;
 	int tx, ty;
 	cave_type *c_ptr;
 	cave_type **zcave;
+#ifdef ENABLE_SELF_FLASHING
+	bool panel;
+#endif
 
 	p_ptr = Players[Ind];
-	if (!p_ptr) return;
+	if (!p_ptr) return FALSE;
 
 	wpos = &p_ptr->wpos;
-	if (!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return FALSE;
 
 	store_exit(Ind);
 
@@ -6305,6 +6308,9 @@ void swap_position(int Ind, int lty, int ltx){
 	}
 
 	/* Check for new panel (redraw map) */
+#ifdef ENABLE_SELF_FLASHING
+	panel = !local_panel(Ind);
+#endif
 	verify_panel(Ind);
 
 	/* Update stuff */
@@ -6315,6 +6321,8 @@ void swap_position(int Ind, int lty, int ltx){
 
 	/* Handle stuff */
 	if (!p_ptr->death) handle_stuff(Ind);
+
+	return panel;
 }
 
 

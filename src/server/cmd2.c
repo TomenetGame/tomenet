@@ -454,8 +454,7 @@ void do_cmd_go_up(int Ind) {
 /* I want to be famous, a star of the screen,
  * but you can do something in between...
  */
-static bool between_effect(int Ind, cave_type *c_ptr)
-{
+static bool between_effect(int Ind, cave_type *c_ptr) {
 	player_type *p_ptr = Players[Ind];
 	byte bx, by;
 	struct c_special *cs_ptr;
@@ -498,7 +497,19 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 	sound(Ind, "blink", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
-	swap_position(Ind, by, bx);
+#ifdef ENABLE_SELF_FLASHING
+	if (
+#endif
+	    swap_position(Ind, by, bx)
+#ifdef ENABLE_SELF_FLASHING
+	    && p_ptr->flash_self >= 0) {
+		/* flicker player for a moment, to allow for easy location */
+		/* -- only do this when our view panel has changed */
+		p_ptr->flash_self = cfg.fps / 6;
+	}
+#else
+	    ;
+#endif
 
 	/* To avoid being teleported back */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
