@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. May 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. May 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9496,6 +9496,10 @@ and unenchanted (ie (+0,+0)) digging tools with (+1) to digging:
  is below 18/180.
 -You cannot tunnel through quartz without a digging tool if your STRength is
  below 18/100.
+-You cannot tunnel through magma without a digging tool if your STRength is
+ below 18/60.
+-You cannot tunnel through sand walls without a digging tool if your STRength
+ is below 18/20.
 -You cannot tunnel through granite with a shovel if your STRength is
  below 18/30.
 -You cannot tunnel through granite with a pick if your STRength is
