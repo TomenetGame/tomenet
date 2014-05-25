@@ -2146,21 +2146,27 @@ int Receive_item(void) {
 			break;
 		case ITH_RECHARGE:
 			item_tester_hook = item_tester_hook_device;
+			get_item_hook_find_obj_what = "Device name? ";
 			break;
 		case ITH_ENCH_AC:
 			item_tester_hook = item_tester_hook_armour;
+			get_item_hook_find_obj_what = "Armour name? ";
 			break;
 		case ITH_ENCH_WEAP:
 			item_tester_hook = item_tester_hook_weapon;
+			get_item_hook_find_obj_what = "Weapon name? ";
 			break;
 		case ITH_CUSTOM_TOME:
 			item_tester_hook = item_tester_hook_custom_tome;
+			get_item_hook_find_obj_what = "Book name? ";
 			break;
 		case ITH_RUNE:
 			item_tester_hook = item_tester_hook_rune;
+			get_item_hook_find_obj_what = "Rune name? ";
 			break;
 		case ITH_ENCH_AC_NO_SHIELD:
 			item_tester_hook = item_tester_hook_armour_no_shield;
+			get_item_hook_find_obj_what = "Armour name? ";
 			break;
 		}
 
