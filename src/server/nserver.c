@@ -4935,12 +4935,22 @@ int Send_equip_availability(int Ind, int slot) {
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, 0, 0, 0, 0, 0, name);
 }
 
-int Send_title(int Ind, cptr title)
-{
+int Send_title(int Ind, cptr title) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
-	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
-	{
+
+	int Ind2;
+	connection_t *connp2;
+	player_type *p_ptr2 = NULL;
+
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) {
+		connp2 = Conn[p_ptr2->conn];
+		Packet_printf(&connp2->c, "%c%s", PKT_TITLE, title);
+	}
+
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for title (%d.%d.%d)",
 			Ind, connp->state, connp->id));
