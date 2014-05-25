@@ -9816,11 +9816,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	}
 
 	if (!(dun->l_ptr->flags1 & LF1_NO_STAIR)) {
+		/* place downstairs and upstairs -
+		   currently, more downstairs are generated in general than upstairs,
+		   so venturing into dungeons is actually easier than climbing up towers! */
 		if (!in_netherrealm(wpos)) {
 			/* Place 3 or 4 down stairs near some walls */
 			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(3, 4) * dun->ratio / 100 + 1, 3, NULL);
-			/* Place 1 or 2 up stairs near some walls */
-			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, rand_range(1, 2), 3, NULL);
+			/* Place 2 or 3 up stairs near some walls */
+			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, rand_range(2, 3), 3, NULL);
 
 #if 0			/* we need a way to create the way back */
 			/* Place 1 or 2 (typo of '0 or 1'?) down shafts near some walls */
@@ -9832,11 +9835,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 			/* Hack -- add *more* stairs for lowbie's sake */
 			if (dun_lev <= COMFORT_PASSAGE_DEPTH) {
-				/* Place 3 or 4 down stairs near some walls */
-				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 3, NULL);
+				/* Place 2 or 3 down stairs near some walls */
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 3), 3, NULL);
 
-				/* Place 1 or 2 up stairs near some walls */
-				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, rand_range(3, 4), 3, NULL);
+				/* Place 2 or 3 up stairs near some walls */
+				alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, rand_range(2, 3), 3, NULL);
 			}
 
 			/* Hack -- add *more* downstairs for Highlander Tournament event */
