@@ -5649,8 +5649,9 @@ if (cfg.unikill_format) {
 
 		} else if (m_ptr->r_idx == RI_LIVING_LIGHTNING) {
 			int tries = 100;
-			object_type forge_bak;
+			object_type forge_bak, forge_fallback;
 			qq_ptr = &forge;
+			artifact_type *e_ptr;
 			/* possible loot:
 			    skydsm,elec rod,elec ring,elec/mana rune,mage staff,tome of wind
 			*/
@@ -5668,14 +5669,26 @@ if (cfg.unikill_format) {
 #if 1
 			tries = 10000;
 			object_copy(&forge_bak, &forge);
-			while (qq_ptr->pval < 6 && tries--) {
+			object_copy(&forge_fallback, &forge);
+			while (qq_ptr->pval < 7 && tries--) {
 				object_copy(&forge, &forge_bak);
 				/* Piece together a 32-bit random seed */
 				qq_ptr->name3 = rand_int(0xFFFF) << 16;
 				qq_ptr->name3 += rand_int(0xFFFF);
 				randart_make(qq_ptr);
 				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART);
+
+				/* no AGGR/AM items */
+				a_ptr = randart_make(qq_ptr);
+				if ((a_ptr->flags3 & (TR3_AGGRAVATE | TR3_NO_MAGIC))) {
+					/* hack: don't even use these for fallback */
+					qq_ptr->pval = 0;
+					continue;
+				}
+
+				if (qq_ptr->pval > forge_fallback.pval) object_copy(&forge_fallback, qq_ptr);
 			}
+			if (qq_ptr->pval < 7) object_copy(qq_ptr, &forge_fallback);
 #endif
 			qq_ptr->timeout = 0;
 			drop_near(qq_ptr, -1, wpos, y, x);
@@ -5722,8 +5735,16 @@ if (cfg.unikill_format) {
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NOART);
 			qq_ptr->name2 = EGO_IMMUNE;
 			qq_ptr->name2b = 0;
-			qq_ptr->name3 = rand_int(0xFFFF) << 16;
-			qq_ptr->name3 += rand_int(0xFFFF);
+
+			/* avoid that the 'of Immunity' ego power generates IM_ELEC */
+			tries = 100;
+			while (tries--) {
+				qq_ptr->name3 = rand_int(0xFFFF) << 16;
+				qq_ptr->name3 += rand_int(0xFFFF);
+				e_ptr = ego_make(qq_ptr);
+				if (!(e_ptr->flags2 & TR2_IM_ELEC)) break;
+			}
+
 			drop_near(qq_ptr, -1, wpos, y, x);
 
 		} else if (m_ptr->r_idx == RI_HELLRAISER) {
