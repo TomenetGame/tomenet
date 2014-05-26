@@ -5667,10 +5667,10 @@ if (cfg.unikill_format) {
 				if (qq_ptr->to_a > 0) break;
 			}
 #if 1
-			tries = 10000;
+			tries = 2000;
 			object_copy(&forge_bak, &forge);
 			object_copy(&forge_fallback, &forge);
-			while (qq_ptr->pval < 7 && tries--) {
+			while (qq_ptr->pval < 6 && tries--) {
 				object_copy(&forge, &forge_bak);
 				/* Piece together a 32-bit random seed */
 				qq_ptr->name3 = rand_int(0xFFFF) << 16;
@@ -5688,7 +5688,7 @@ if (cfg.unikill_format) {
 
 				if (qq_ptr->pval > forge_fallback.pval) object_copy(&forge_fallback, qq_ptr);
 			}
-			if (qq_ptr->pval < 7) object_copy(qq_ptr, &forge_fallback);
+			if (qq_ptr->pval < 6) object_copy(qq_ptr, &forge_fallback);
 #endif
 			qq_ptr->timeout = 0;
 			drop_near(qq_ptr, -1, wpos, y, x);
