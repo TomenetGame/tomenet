@@ -5680,7 +5680,8 @@ if (cfg.unikill_format) {
 
 				/* no AGGR/AM items */
 				a_ptr = randart_make(qq_ptr);
-				if ((a_ptr->flags3 & (TR3_AGGRAVATE | TR3_NO_MAGIC))) {
+				if ((a_ptr->flags3 & (TR3_AGGRAVATE | TR3_NO_MAGIC))
+				    || artifact_power(a_ptr) < 90) {
 					/* hack: don't even use these for fallback */
 					qq_ptr->pval = 0;
 					continue;
