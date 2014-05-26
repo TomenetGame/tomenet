@@ -7735,24 +7735,32 @@ void do_slash_cmd(int Ind, char *message)
 				handle_stuff(Ind);
 				do {
 					tries++;
-			                /* Piece together a 32-bit random seed */
-			                o_ptr->name3 = rand_int(0xFFFF) << 16;
-			                o_ptr->name3 += rand_int(0xFFFF);
-			                /* Check the tval is allowed */
-			                if ((a_ptr = randart_make(o_ptr)) == NULL) {
-			                        /* If not, wipe seed. No randart today */
-			                        o_ptr->name1 = 0;
-				                o_ptr->name3 = 0L;
+					/* Piece together a 32-bit random seed */
+					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 += rand_int(0xFFFF);
+					/* Check the tval is allowed */
+					if ((a_ptr = randart_make(o_ptr)) == NULL) {
+						/* If not, wipe seed. No randart today */
+						o_ptr->name1 = 0;
+						o_ptr->name3 = 0L;
 						msg_print(Ind, "Randart creation failed.");
 						return;
 					}
 					o_ptr->timeout = 0;
 					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
-				} while	(
+
+					i = 0;
+					if ((a_ptr->flags2 & TR2_IM_FIRE)) i++;
+					if ((a_ptr->flags2 & TR2_IM_COLD)) i++;
+					if ((a_ptr->flags2 & TR2_IM_ELEC)) i++;
+					if ((a_ptr->flags2 & TR2_IM_ACID)) i++;
+					if ((a_ptr->flags5 & TR5_IM_POISON)) i++;
+				} while (
+				    //i < 2 ||
 				    //o_ptr->to_h < 30 ||
 				    //o_ptr->to_d < 30 ||
 				    //o_ptr->to_a < 30 ||
-				    //o_ptr->pval < 5 ||
+				    //o_ptr->pval < 6 ||
 
 				    //o_ptr->dd < 3 ||
 				    //!((a_ptr->flags1 & TR1_SLAY_DRAGON) || (a_ptr->flags1 & TR1_KILL_DRAGON)) ||
@@ -7777,6 +7785,7 @@ void do_slash_cmd(int Ind, char *message)
 				    //!(a_ptr->flags3 & TR3_XTRA_MIGHT) ||
 				    //!(a_ptr->flags3 & TR3_XTRA_SHOTS) ||
 				    //!(a_ptr->flags1 & TR1_BLOWS) ||
+				    //!(a_ptr->flags1 & TR1_VAMPIRIC) ||
 				    //!(a_ptr->flags5 & TR5_CRIT) ||
 
 				    //!(a_ptr->esp & ESP_ALL) ||
@@ -7785,6 +7794,7 @@ void do_slash_cmd(int Ind, char *message)
 				    (a_ptr->flags3 & TR3_AGGRAVATE)
 				    );
 				msg_format(Ind, "Re-rolled randart %d times.", tries);
+				s_printf("MADART: Re-rolled randart %d times.\n", tries);
 
 				o_ptr->ident |= ID_MENTAL; /* *id*ed */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
