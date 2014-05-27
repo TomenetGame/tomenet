@@ -5613,7 +5613,7 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				object_type *o_ptr;
 				u32b f1, f2, f3, f4, f5, f6, esp;
-				int min_pval = -999, min_ap = -999, tries = 1000, min_todam = -999;
+				int min_pval = -999, min_ap = -999, tries = 10000, min_todam = -999;
 				bool no_am = FALSE, no_aggr = FALSE;
 				int th ,td ,ta; //for retaining jewelry properties in case they get inverted by cursing
 				if (tk < 1 || tk > 6) {
@@ -5699,8 +5699,8 @@ void do_slash_cmd(int Ind, char *message)
 					    (!no_am || !(f3 & TR3_NO_MAGIC))) break;
 					tries--;
 				}
-				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries (1000))!");
-				else msg_format(Ind, "Re-rolled randart in inventory slot %d (Tries: %d).", atoi(token[1]), 1000 + 1 - tries);
+				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries (10000))!");
+				else msg_format(Ind, "Re-rolled randart in inventory slot %d (Tries: %d).", atoi(token[1]), 10000 + 1 - tries);
 				if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET) {
 					o_ptr->to_a = ta; o_ptr->to_d = td; o_ptr->to_h = th;
 				}

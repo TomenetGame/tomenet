@@ -5667,7 +5667,7 @@ if (cfg.unikill_format) {
 				if (qq_ptr->to_a > 0) break;
 			}
 #if 1
-			tries = 2000;
+			tries = 3000;
 			object_copy(&forge_bak, &forge);
 			object_copy(&forge_fallback, &forge);
 			while (qq_ptr->pval < 6 && tries--) {
