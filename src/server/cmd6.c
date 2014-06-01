@@ -1471,6 +1471,27 @@ void do_cmd_drink_fountain(int Ind)
 #ifdef USE_SOUND_2010
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
+		/* if it's the sea, it's salt water */
+		if (!p_ptr->wpos.wz)
+#if 0 /* problem: WILD_COAST is used for both oceans and lakes */
+		    switch (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type) {
+			case WILD_SHORE1:
+			case WILD_SHORE2:
+			case WILD_OCEANBED1:
+			case WILD_OCEANBED2:
+			case WILD_OCEAN:
+			case WILD_COAST:
+#else /* abuse ambient-sfx logic - it works pretty well ^^ */
+			if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE) {
+#endif
+				if (p_ptr->prace == RACE_ENT) msg_print(Ind, "The water is too salty to feed off.");
+				else msg_print(Ind, "The water tastes very salty.");
+
+				/* Take a turn */
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				return;
+		}
+		/* lake/river: fresh water */
 		msg_print(Ind, "You quenched your thirst.");
 		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 
