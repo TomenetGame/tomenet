@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. May 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 4. June 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1686,6 +1686,18 @@ Unique      A monster that is named and exists only once. Although it can
             That's precisely because every player can only get kill credit for
             each unique monster once.
             Uniques often have large escorts.
+
+            Note that a unique monster cannot occur in two or more different
+            places in the whole game world at the _same time_ - with the only
+            exception being the IDDC (Ironman Deep Dive Challenge) which is a
+            closed ecosystem and has unique monsters spawn independently from
+            the rest of the game world.
+            So if you are desperately looking for a unique monster and can't
+            seem to make it spawn, ask in chat if someone else sees that
+            particular monster on his current dungeon level. Then wait till
+            they have left that level or killed the unique so it will be ready
+            to spawn again for you, or maybe they will tell you that you can
+            come over to kill it there in place.
 
             Unique monsters will randomly respawn for winners, ie Kings,
             Queens, Emperors and Empresses. That means: The game will "forget"
