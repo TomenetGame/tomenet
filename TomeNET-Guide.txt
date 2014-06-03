@@ -15198,15 +15198,34 @@ DOESN'T WORK ON EGOS / ARTS:
 'Amulets of Telepathic Awareness', 'Rings of Polymorphing' and
 Dragon Scale Mails 'of Defense'!
 
+THE BASE ITEM MATTERS, ENCHANTMENTS DO NOT (except for jewelry, see below):
+
+-You will want to use the cheapest base item version you can find, because
+it will get rerolled randomly anyway. This means that you can even use cursed
+items, it doesn't matter. For example there is no difference between "arting" a
+ring of extra attacks (+3) and a ring of extra attacks (-1) {cursed}.
+In fact, you should art the cursed one, because you can still get money out of
+the (+3) one by selling it to a store.
+However, jewelry that has +hit, +dam or +AC mods is a special case, read on:
+
 HOW IT WORKS ON JEWELRY:
 
--In general, it's not always a good idea to try to turn a ring or amulet that
+-In general, it's not a good idea to try to turn a ring or amulet that
 has high bonus numbers into an artifact, like for example a ring of speed
-(+11) because these numbers will get erased and randomly re-rolled.
+(+11) because these numbers will get erased and randomly re-rolled. Your great
+speed ring will not get more than +7 speed as a randart, much likely less, so
+speed rings in particular are very poor targets for artifact creation.
+So if you want to use the scroll on say a ring of extra attacks, you should
+actually use the cheapest one you can find, like (+1), or even a cursed one.
+It doesn't matter, because it will get rerolled randomly anyway, and your
+cursed version could just as likely end up as an awesome (+3) high end randart
+ring of extra attacks.
+However... read on:
 
 -On jewelry (+to-hit,+to-dam) and [+AC] will stay the same (for example a ring
 of slaying (+10,+15) will keep the (+10,+15)).
-(Any dice (xdy) as well as _base_ AC [x,+0] on jewelry will always become 0.)
+(Any dice (xdy) as well as _base_ AC [x,+0] on jewelry will always become 0,
+but there is currently no jewelry in the game that has damage dice or base AC.)
 
 HOW IT WORKS ON NON-JEWELRY:
 
@@ -15255,6 +15274,22 @@ However, there are certain exceptions:
    -Experience drain removes hold-life
    -attribute mali remove the according sustenance (STR/INT/WIS/DEX/CON/CHR)
 
+MULTI-HUED DRAGON SCALE MAIL IMMUNITIES:
+
+-As a specialty, the immunities on MHDSM are actually *retained*! They are not
+rerolled randomly but survive the artifying process. So you can pick a MHDSM
+with two immunities of your choice and attempt to use an artifact creation
+scroll on it to make it acquire additional powers (it cannot gain any further
+immunities though, since 2 are the maximum for any type of item).
+Note that MHDSM are poor targets for artifact creation though, because their
+immunities and resistances already account for a high amount of 'item power',
+meaning that it will be very hard to get good additional powers on them from
+the artifact creation process.
+
+POWER DRAGON SCALE MAIL:
+
+As mentioned above, it is impossible to gain any additional powers on PDSM, so
+don't waste your artifact creation scroll on it!
 
 DISCOUNTED ITEMS:
 
