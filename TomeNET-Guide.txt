@@ -509,7 +509,8 @@ D       D       disarm a trap. This yields experience points, depending on the
                 disarming traps via magic spells or magic devices.)
                 Also see (4.7) for details about traps.
 
-k       CTRL+D  destroy an item. (Note that artifacts are indestructible.)
+k       CTRL+D  destroy an item. (Note that artifacts cannot be destroyed this
+                way.)
 
 G       G       skills screen.
 
@@ -849,7 +850,8 @@ They all start with a slash '/' hence they're called slash commands:
             Skips 'flavoured' items that are not known to you yet (example:
             'a blue potion {+,?}' or 'a malachite ring {+,?}').
             Skips items which inscription contains more than a pseudo-ID tag.
-            Also see /tag and /untag. Note that artifacts cannot be destroyed.
+            Also see /tag and /untag. Note that artifacts cannot be destroyed
+            this way.
 
 /dis a      DESTROYS items like '/dis', and additionally destroys all items that
             have no inscription at all.
