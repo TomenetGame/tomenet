@@ -3218,9 +3218,10 @@ void do_cmd_check_other(int Ind, s32b line)
 
 void do_cmd_check_extra_info(int Ind, bool admin) {
 	player_type *p_ptr = Players[Ind];
+	byte max_houses = (p_ptr->lev < 50 ? p_ptr->lev : 50) / cfg.houses_per_player;
+	char buf[MAX_CHARS];
 
 	msg_print(Ind, " ");
-
 	if (admin) msg_format(Ind, "The game turn: %d", turn);
 
 	do_cmd_time(Ind);
@@ -3229,14 +3230,20 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		msg_format(Ind, "You have %d %s left.", p_ptr->lives-1-1, p_ptr->lives-1-1 > 1 ? "resurrections" : "resurrection");
 	if (p_ptr->insta_res) msg_print(Ind, "Instant Resurrection is active.");
 
-
 	if (p_ptr->castles_owned) {
-		if (p_ptr->houses_owned == 1) msg_print(Ind, "You own a castle.");
-		else if (p_ptr->houses_owned == 2) msg_print(Ind, "You own a castle and a house.");
-		else msg_format(Ind, "You own a castle and %d houses.", p_ptr->houses_owned - 1);
-	} else if (p_ptr->houses_owned == 0) msg_print(Ind, "You are currently homeless.");
-	else if (p_ptr->houses_owned == 1) msg_print(Ind, "You own a house.");
-	else msg_format(Ind, "You own %d houses.", p_ptr->houses_owned);
+		if (p_ptr->houses_owned == 1) strcpy(buf, "You own a castle.");
+		else if (p_ptr->houses_owned == 2) strcpy(buf, "You own a castle and a house.");
+		else sprintf(buf, "You own a castle and %d houses.", p_ptr->houses_owned - 1);
+	} else if (p_ptr->houses_owned == 0) strcpy(buf, "You are currently homeless.");
+	else if (p_ptr->houses_owned == 1) strcpy(buf, "You own a house.");
+	else sprintf(buf, "You own %d houses.", p_ptr->houses_owned);
+	if (p_ptr->houses_owned < max_houses) {
+		if (p_ptr->houses_owned)
+			strcat(buf, format(" You can buy up to %d more houses.", max_houses - p_ptr->houses_owned));
+		else
+			strcat(buf, format(" You can buy up to %d houses.", max_houses));
+	}
+	msg_print(Ind, buf);
 
 #if 0 /* already displayed to the left */
  #ifdef ENABLE_STANCES
