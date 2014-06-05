@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. June 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. June 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -5276,7 +5276,8 @@ The Sacred Land Of Mountains   |  2000..2250/ 40..45   |       20
 Erebor                         |  2500..3050/ 50..61   |       35
 Dol Guldur                     |  2850..3550/ 57..71   |       28
 Mount Doom                     |  4250..5000/ 85..99   |       38
-Nether Realm                   |  8300..9800/166..196  |       40 (****)
+The Cloud Planes               |  6500..7450/130..149  |       40 (****)
+Nether Realm                   |  8300..9800/166..196  |       40 (*****)
 
 (**) Minimum level requirements are usually disabled, so you can actually
 enter any dungeon you like at any character level.
@@ -5293,7 +5294,11 @@ show up under according names in the list.
 You cannot escape this dungeon, ever. Any character that enters it is fated to
 die to monsters (unlikely) or starvation (very likely).
 
-(****) Nether Realm details:
+(****) Cloud Planes details:
+-To enter the Cloud Planes a player must carry the 'King'/'Queen' title,
+ acquired by beating Morgoth, Lord of Darkness.
+
+(*****) Nether Realm details:
 -To enter the Nether Realm a player must carry the 'King'/'Queen' title,
  acquired by beating Morgoth, Lord of Darkness.
 -Each floor in the Nether Realm gives a +2% bonus to experience from monster
@@ -5378,6 +5383,7 @@ The Sacred Land Of Mountains |  T'ron                | Coat of T'ron
 Erebor                       |  Smaug                | Nauglamir
 Dol Guldur                   |  Shadow of Dol Guldur | Ring of Durin
 Mount Doom                   |  Sauron, the Sorceror | - (***)
+The Cloud Planes             |  The Living Lightning | -
 Nether Realm                 |  Zu-Aon               | Ring of Phasing
 
 (*) Angband does not have a designated final boss, but the unique monster
