@@ -8299,7 +8299,7 @@ Wilderness Mapping  Maps the wilderness area around the worldmap sector you
                     are currently within. These scrolls also sometimes carry
                     an inscription telling the location of a hidden dungeon.
 Cancellation    Don't use it! It can heavily disenchant magic items in your
-                inventory and/or equipment. It hasn't got a useful purpose.
+                inventory and/or equipment.
 Golem Creation  Allows you to create a golem which follows you and which you
                 can control to some extent, see (8.3) for more information.
 Parchments      These contain informations about the game, they won't
