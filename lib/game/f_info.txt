@@ -665,7 +665,7 @@ G:~:u
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT
 
 N:95:ice wall
-G:#:W
+G:#:B
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | TUNNELABLE
 D:1:You tunnel into the ice wall...chilly!
@@ -942,17 +942,17 @@ F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | NIGHT_DARK
 
 # window
 N:196:window
-G:#:w
+G:#:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
 
 # small window
 N:197:small window
-G:#:w
+G:#:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
 
 # rain barrel
 N:198:rain barrel
-G:#:w
+G:#:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
 
 # grass with flowers
