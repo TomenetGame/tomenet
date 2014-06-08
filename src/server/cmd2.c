@@ -6105,6 +6105,13 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			hit_wall = TRUE;
 			break;
 		}
+
+		/* stopped by open house doors! -
+		   added this to prevent items landing ON an open door of a list house,
+		   making it impossible to pick up the item again because the character
+		   would enter the house when trying to step onto the grid with the item. - C. Blue */
+		if (zcave[ny][nx].feat == FEAT_HOME_OPEN) break;
+
 #ifdef DOUBLE_LOS_SAFETY
 	    }
 #endif

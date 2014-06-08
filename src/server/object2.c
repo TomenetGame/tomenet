@@ -7566,6 +7566,12 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		if (!cave_floor_bold(zcave, ny, nx) ||
 		    cave_perma_bold(zcave, ny, nx)) continue;
 
+		/* not on open house doors! -
+		   added this to prevent items landing ON an open door of a list house,
+		   making it impossible to pick up the item again because the character
+		   would enter the house when trying to step onto the grid with the item. - C. Blue */
+		if (zcave[ny][nx].feat == FEAT_HOME_OPEN) continue;
+
 		/* Obtain grid */
 		c_ptr = &zcave[ny][nx];
 
