@@ -5736,6 +5736,13 @@ if (cfg.unikill_format) {
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NOART);
 			qq_ptr->name2 = EGO_IMMUNE;
 			qq_ptr->name2b = 0;
+			/* Since this armour is highly non-canonical (double immunity!),
+			   bind it to the character */
+#ifdef PRE_OWN_DROP_CHOSEN
+			qq_ptr->level = 0;
+			qq_ptr->owner = p_ptr->id;
+			qq_ptr->mode = p_ptr->mode;
+#endif
 
 			/* avoid that the 'of Immunity' ego power generates IM_ELEC */
 			tries = 100;
