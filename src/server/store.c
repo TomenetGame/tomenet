@@ -346,7 +346,11 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		if (adjust < 100 + STORE_BENEFIT) adjust = 100 + STORE_BENEFIT;
 
 		/* some shops are extra expensive */
-		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE16) price *= 16;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE16) {
+			/* hack - keep price on XBM niveau for consumables */
+			if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_POTION) price *= 4;
+			else price *= 16;
+		}
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE4) price *= 4;
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE2) price *= 2;
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE1) price = (price * 3) / 2;
