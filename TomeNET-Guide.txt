@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. June 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. June 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9951,6 +9951,9 @@ Note that not every skill is available to every profession (class).
                                                  gripped with both hands
                                                  (COULD2H, SHOULD2H, MUST2H).
 
+                                (Note: Switching your combat stance costs you
+                                half a turn of energy.)
+
         .Dual-Wield             The ability to wield two weapons at once. This
                                 ability cannot be trained, it's always at 1.000
                                 if your character's class can dual-wield, else
@@ -14158,6 +14161,7 @@ The techniques are as follows:
         more effective accordingly, since half of your turn could be utilized
         by the auto-retaliator if you keep time intervals between each step.)
         Running (shift + directional keys) is not affected.
+        (Starting to sprint does not cost energy.)
     Taunt               2 stamina
         Attempts to draw attention of humanoid mobs, causing them to attack
         you. Might require more than one try sometimes until they fall for it,
@@ -14166,13 +14170,16 @@ The techniques are as follows:
         Note that this can also be used to make scared monsters agressive,
         and -if you and an ally both stand next to the same monster- to draw
         its attention from your ally and make it attack you instead.
+        (Taunting costs a quarter of a turn of energy.)
     Spin                8 stamina
         A sweep that hits all adjacent monsters and may stun them if they don't
         resist. You might even perform more than one complete sweep circle,
         hitting some or all monsters multiple times, based on your number of
         blows/round!
+        (Spinning around costs a turn of energy.)
     Berserk             10 stamina
         Similar to potions of berserk strength, also giving you +1 blow/round.
+        (Entering berserk rage does not cost energy.)
 
     Rogue-specific fighting techniques:
     -----------------------------------
@@ -14182,10 +14189,12 @@ The techniques are as follows:
         must be standing next to you and also next to the monster, instead of
         you. Not all monsters can be fooled though. Some monsters might resist,
         but probably fall for it if you give it another try.
+        (Distracting costs half a turn of energy.)
     Flash bomb          4 stamina
         You throw down a flash bomb that causes a flash of light, blinding
         your opponents for a short time, giving you opportunity to escape or
         kill them off while they are running around in confused state.
+        (Throwing a flash bomb costs a turn of energy.)
     Shadow run          10 stamina, kings/queens only!
         You will move at blinding speed, your silhouette turning shadowy.
         Ranged attacks will hardly be able to pin you down, and you will act
@@ -14197,6 +14206,7 @@ The techniques are as follows:
         until broken.
         Note that stamina does not regenerate while shadow running.
         Shadow running includes sprinting!
+        (Starting to shadow-run does not cost energy.)
 
     Shooting techniques:
     --------------------
@@ -14206,11 +14216,13 @@ The techniques are as follows:
         If that spot is inside a room, the whole room will be lit up.
         This technique consumes 1 flask of oil and your shot/arrow/bolt.
         Note that this destroys magic ammunition too.
+        (Preparing a flare missile costs a turn of energy.)
     Precision shot      7 stamina
         You aim your next shot carefully, costing you a turn. The next shot
         you fire however will receive a great damage bonus, even more so
         against fleeing opponents. Useful opener against sleeping monsters.
         Aiming will be interrupted by most actions, including walking.
+        (Aiming precisely costs a turn of energy.)
     Create ammunition   -
         Create ammunition for your currently equipped ranged weapon from
         bones, skeletons or broken sticks in your inventory or from a pile of
@@ -14226,6 +14238,7 @@ The techniques are as follows:
         collect a large stack of materials and use the skill on that stack
         (the total weight of that inventory slot determines the stack size).
         The level of the raw materials has no effect on the outcome.
+        (Creating ammunition costs a turn of energy.)
     Double-shot         1 stamina/5 turns (random) while using it actively
         Toggle, making you enter or leave double-shot mode. While active, you
         will fire 2 projectiles at once on each shot, dealing way less damage
@@ -14235,11 +14248,13 @@ The techniques are as follows:
               you get stamina back you'll start firing double-shots again.
               To permanently leave double-shot mode, you have to toggle it
               explicitely in the 'm' menu.
+        (Double-shooting does not cost more energy than shooting normally.)
     Barrage             9 stamina
         Prepares to fire a powerful multi-shot which will cost you half a
         turn. It stuns the target (if it doesn't resist stunning attacks).
         Because 6 shots are fired at once you will need at least as many
         projectiles in your quiver in order to use it.
+        (Firing a barrage costs half a turn of energy.)
 
     Note: The ability 'fire-till-kill' is available to any class and not
     considered to be a special shooting technique. It appears directly in the
