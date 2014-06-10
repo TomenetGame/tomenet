@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. June 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. June 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1386,6 +1386,10 @@ fire and acid, you might inscribe it {ResFire,ResAcid} so that you will
 remember what it does just by looking at it and reading the inscription.
 It can make your life easier if you wear lots of items that have different
 resistances or abilities.
+
+Newly added in 4.5.7:
+    !U          This item will be displayed in dark grey colour in your
+                inventory. Can be useful for sorting loot.
 
 
 (0.3a) The auto-inscription feature
