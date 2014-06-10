@@ -5706,7 +5706,7 @@ void do_slash_cmd(int Ind, char *message)
 						return;
 					}
 					o_ptr->timeout = 0;
-					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
+					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE);
 
 					/* restrictions? */
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
