@@ -1740,7 +1740,11 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
-			if (!(i = name_lookup_loose(Ind, message3, FALSE, FALSE))) return;
+			i = name_lookup_loose(Ind, message3, FALSE, FALSE);
+			if (!i || !p_ptr->play_vis[i]) {
+				msg_print(Ind, "You don't see anyone of that name.");
+				return;
+			}
 			q_ptr = Players[i];
 
 			if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) {
@@ -1824,7 +1828,10 @@ void do_slash_cmd(int Ind, char *message)
 
 			if (tk) {
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
-				if (!p) return;
+				if (!p || !p_ptr->play_vis[p]) {
+					msg_print(Ind, "You don't see anyone of that name.");
+					return;
+				}
 
 				if (!inarea(&p_ptr->wpos, &Players[p]->wpos)) {
 					msg_print(Ind, "\377yThat player is not nearby.");
@@ -3151,7 +3158,7 @@ void do_slash_cmd(int Ind, char *message)
 			return;
 		}
 #endif
-		else if (prefix(message, "/slap")) { /* Slap someone around, as threat :-o */
+		else if (prefix(message, "/slap")) { /* Slap someone around :-o */
 			cave_type **zcave = getcave(&p_ptr->wpos);
 			if (!tk) {
 				msg_print(Ind, "Usage: /slap <player name>");
