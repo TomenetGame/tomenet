@@ -1739,9 +1739,19 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377wYou are out of cards! You must /shuffle a new deck of cards first.");
 				return;
 			}
-			if (!(i = name_lookup_loose(Ind, message3, FALSE, FALSE))) return;
 
+			if (!(i = name_lookup_loose(Ind, message3, FALSE, FALSE))) return;
 			q_ptr = Players[i];
+
+			if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) {
+				msg_print(Ind, "\377yThat player is not nearby.");
+				return;
+			}
+			if (distance(p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px) > 6) {
+				msg_print(Ind, "\377yThat player is standing too far away from you.");
+				return;
+			}
+
 			msg_format(Ind, "\377%cYou hand your stack of cards over to %s.", COLOUR_GAMBLE, q_ptr->name);
 			msg_format_near(Ind, "\377%c%s hands his stack of cards over to %s.", COLOUR_GAMBLE, p_ptr->name, q_ptr->name);
 
@@ -1815,6 +1825,15 @@ void do_slash_cmd(int Ind, char *message)
 			if (tk) {
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
 				if (!p) return;
+
+				if (!inarea(&p_ptr->wpos, &Players[p]->wpos)) {
+					msg_print(Ind, "\377yThat player is not nearby.");
+					return;
+				}
+				if (distance(p_ptr->py, p_ptr->px, Players[p]->py, Players[p]->px) > 6) {
+					msg_print(Ind, "\377yThat player is standing too far away from you.");
+					return;
+				}
 			}
 
 			if (prefix(message, "/draw")) {
@@ -1830,7 +1849,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 			if (!p_ptr->cards_diamonds && !p_ptr->cards_hearts && !p_ptr->cards_spades && !p_ptr->cards_clubs) {
-				if (draw) msg_format(Ind, "\377w%s is out of cards and must /shuffle a new deck of cards first!", p_ptr->name);
+				if (draw) msg_format(p, "\377w%s is out of cards and must /shuffle a new deck of cards first!", p_ptr->name);
 				else msg_print(Ind, "\377wYou are out of cards! You must /shuffle a new deck of cards first.");
 				return;
 			}
