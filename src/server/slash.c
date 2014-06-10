@@ -1828,7 +1828,7 @@ void do_slash_cmd(int Ind, char *message)
 
 			if (tk) {
 				p = name_lookup_loose(Ind, message3, FALSE, FALSE);
-				if (!p || !p_ptr->play_vis[p]) {
+				if ((!p || !p_ptr->play_vis[p]) && p != Ind) {
 					msg_print(Ind, "You don't see anyone of that name.");
 					return;
 				}
