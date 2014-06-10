@@ -1388,6 +1388,12 @@ It can make your life easier if you wear lots of items that have different
 resistances or abilities.
 
 Newly added in 4.5.7:
+    !L          Can be used on an item that is target of a scroll of
+                Artifact Creation. The resulting randart will not gain +LIFE
+                ('it affects your hit points') mod. So this is an inscription
+                that only makes sense for winners to use, since non-winners
+                cannot generate +LIFE on randarts anyway.
+
     !U          This item will be displayed in dark grey colour in your
                 inventory. Can be useful for sorting loot.
 
