@@ -6809,7 +6809,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 		break;
 	case GE_DUNGEON_KEEPER:	/* 'Dungeon Keeper' Labyrinth */
 		strcpy(ge->title, "Dungeon Keeper");
-		strcpy(ge->description[0], " Characters up to level 15 are eligible to sign up for this race for   ");
+		strcpy(ge->description[0], " Characters up to level 14 are eligible to sign up for this race for   ");
 		strcpy(ge->description[1], " your life, through a labyrinth that is guarded by the Horned Reaper!  ");
 		strcpy(ge->description[2], " Rules: Running, teleporting, healing, detection, maps and speed boni  ");
 		strcpy(ge->description[3], "        do NOT work. You don't need any items for this event, except   ");
@@ -7179,8 +7179,8 @@ void global_event_signup(int Ind, int n, cptr parm) {
 			msg_print(Ind, "\377ySorry, PvP characters may not participate.");
 			if (!is_admin(p_ptr)) return;
 		}
-		if (p_ptr->max_plv > 15) {
-			msg_print(Ind, "\377ySorry, you must be at most level 15 to sign up for this event.");
+		if (p_ptr->max_plv > 14) {
+			msg_print(Ind, "\377ySorry, you must be at most level 14 to sign up for this event.");
 			if (!is_admin(p_ptr)) return;
 		}
 #if 0 /* fine now since speed is limited to +0 via floor flag */
@@ -7289,7 +7289,7 @@ static void process_global_event(int ge_id) {
 						}
 						break;
 					case GE_DUNGEON_KEEPER:
-						if ((p_ptr->max_plv > 15) && !is_admin(p_ptr)) {
+						if ((p_ptr->max_plv > 14) && !is_admin(p_ptr)) {
 							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' no longer eligible.\n", p_ptr->name);
 							msg_print(j, "\377oCharacters need to have 0 experience to be eligible.");
 							p_ptr->global_event_type[ge_id] = GE_NONE;
