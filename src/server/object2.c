@@ -9479,7 +9479,7 @@ static void hack_particular_item_aux(object_type *qq_ptr, struct worldpos xwpos)
 		apply_magic(&xwpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE);
 
 		xa_ptr = randart_make(qq_ptr);
-		if (artifact_power(xa_ptr) >= 80 && /* at least +1 new mod gained */
+		if (artifact_power(xa_ptr) >= 105 && /* at least +1 new mod gained */
 		    qq_ptr->to_a > 0 && /* not cursed */
 		    !(xa_ptr->flags3 & (TR3_AGGRAVATE | TR3_NO_MAGIC)))
 			break;
