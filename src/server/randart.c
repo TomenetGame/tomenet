@@ -182,8 +182,9 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 
 		if (a_ptr->weight < k_ptr->weight) p++;
 		break;
-	case TV_DIGGING:
+	case TV_DIGGING: //not possible atm
 		p += 40;
+		/* fall through! */
 	case TV_BOOMERANG:
 		if (a_ptr->flags3 & TR3_XTRA_SHOTS) p += 20;
 		/* fall through! */
@@ -251,6 +252,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	case TV_CLOAK:
 	case TV_SOFT_ARMOR:
 	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
 		if (a_ptr->flags1 & TR1_BLOWS) p += (a_ptr->pval) * 8;
 		if (a_ptr->flags1 & TR1_LIFE) p += (a_ptr->pval) * 10;
 
