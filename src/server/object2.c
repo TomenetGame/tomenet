@@ -9459,3 +9459,183 @@ void erase_artifact(int a_idx) {
 	handle_art_d(a_idx);
 	msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 }
+
+/* Modify a particular existing type of item in the whole game world. - C. Blue
+   (added for Living Lightning drop 'Sky DSM of Imm' to become a canonical randart Sky DSM instead) */
+/* Helper function - hard-coded stuff - replacement item parameters */
+static void hack_particular_item_aux(object_type *qq_ptr, struct worldpos xwpos) {
+	int tries;
+	artifact_type *xa_ptr;
+
+	object_wipe(qq_ptr);
+	invcopy(qq_ptr, lookup_kind(TV_DRAG_ARMOR, SV_DRAGON_SKY));
+	qq_ptr->number = 1;
+	qq_ptr->name1 = ART_RANDART;
+	tries = 500;
+	while (tries) {
+		/* Piece together a 32-bit random seed */
+		qq_ptr->name3 = rand_int(0xFFFF) << 16;
+		qq_ptr->name3 += rand_int(0xFFFF);
+		apply_magic(&xwpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE);
+
+		xa_ptr = randart_make(qq_ptr);
+		if (artifact_power(xa_ptr) >= 80 && /* at least +1 new mod gained */
+		    qq_ptr->to_a > 0 && /* not cursed */
+		    !(xa_ptr->flags3 & (TR3_AGGRAVATE | TR3_NO_MAGIC)))
+			break;
+		tries--;
+	}
+	qq_ptr->level = 0;
+	if (!tries) s_printf("hack_particular_item_aux: Re-rolling out of tries!\n");
+}
+static void hack_particular_item_prepare_wpos(struct worldpos *xwpos) {
+	int x, y;
+	dungeon_type *d_ptr;
+
+	for (y = 0; y < MAX_WILD_Y; y++)
+	for (x = 0; x < MAX_WILD_X; x++) {
+		if ((d_ptr = wild_info[y][x].tower)) {
+			if (d_ptr->type == DI_CLOUD_PLANES) {
+				xwpos->wx = x;
+				xwpos->wy = y;
+				xwpos->wz = 20;
+			}
+		}
+		if ((d_ptr = wild_info[y][x].dungeon)) {
+			if (d_ptr->type == DI_CLOUD_PLANES) {
+				xwpos->wx = x;
+				xwpos->wy = y;
+				xwpos->wz = 20;
+			}
+		}
+	}
+}
+static bool hack_particular_item_cmp(object_type *o_ptr) {
+	return (o_ptr->tval != TV_DRAG_ARMOR || o_ptr->sval != SV_DRAGON_SKY || o_ptr->name2 != EGO_IMMUNE);
+}
+void hack_particular_item(void) {
+	int i, this_o_idx, next_o_idx;
+	monster_type *m_ptr;
+	object_type *o_ptr, *q_ptr;
+
+	int slot;
+	hash_entry *ptr;
+	player_type *p_ptr;
+
+	int found = 0;
+
+	struct worldpos xwpos;
+	hack_particular_item_prepare_wpos(&xwpos);
+	if (!xwpos.wz) {
+		s_printf("hack_particular_item(): failed to prepare wpos!\n");
+		return;
+	}
+
+	s_printf("hack_particular_item(): commencing check..\n");
+
+	/* objects on the floor/in monster inventories */
+	for (i = 0; i < o_max; i++) {
+		o_ptr = &o_list[i];
+		/* Skip dead objects */
+		if (!o_ptr->k_idx) continue;
+		/* Look for specific item */
+		if (hack_particular_item_cmp(o_ptr)) continue;
+
+		/* in monster inventory */
+		if (o_ptr->held_m_idx) {
+			m_ptr = &m_list[o_ptr->held_m_idx];
+			/* 1st object held matches? */
+			q_ptr = &o_list[m_ptr->hold_o_idx];
+			if (!hack_particular_item_cmp(q_ptr)) {
+				s_printf(" found in monster inventory (1st)\n");
+				hack_particular_item_aux(q_ptr, xwpos);
+				found++;
+			} else {
+				i = 1;
+				q_ptr = &o_list[m_ptr->hold_o_idx];//compiler warning
+				for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx) {
+					q_ptr = &o_list[this_o_idx];
+					if (!hack_particular_item_cmp(q_ptr)) {
+						s_printf(" found in monster inventory\n");
+						hack_particular_item_aux(&o_list[this_o_idx], xwpos);
+						found++;
+					}
+					next_o_idx = q_ptr->next_o_idx;
+					i++;
+				}
+			}
+		} else {
+			q_ptr = &o_list[i];
+			s_printf(" found on the floor\n");
+			hack_particular_item_aux(q_ptr, xwpos);
+			found++;
+		}
+	}
+
+	/* Players online */
+	for (this_o_idx = 1; this_o_idx <= NumPlayers; this_o_idx++) {
+		p_ptr = Players[this_o_idx];
+		/* scan his inventory */
+		for (i = 0; i < INVEN_TOTAL; i++) {
+			o_ptr = &p_ptr->inventory[i];
+			if (!o_ptr->k_idx) continue;
+
+			if (!hack_particular_item_cmp(o_ptr)) {
+				s_printf(" found in live player '%s'\n", p_ptr->name);
+				hack_particular_item_aux(o_ptr, xwpos);
+				found++;
+			}
+		}
+	}
+
+	/* hack */
+	NumPlayers++;
+	MAKE(Players[NumPlayers], player_type);
+	p_ptr = Players[NumPlayers];
+	p_ptr->inventory = C_NEW(INVEN_TOTAL, object_type);
+	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+		ptr = hash_table[slot];
+		while (ptr) {
+			/* clear his data (especially inventory) */
+			o_ptr = p_ptr->inventory;
+			WIPE(p_ptr, player_type);
+			p_ptr->inventory = o_ptr;
+			p_ptr->Ind = NumPlayers;
+			C_WIPE(p_ptr->inventory, INVEN_TOTAL, object_type);
+			/* set his supposed name */
+			strcpy(p_ptr->name, ptr->name);
+			/* generate savefile name */
+			process_player_name(NumPlayers, TRUE);
+			/* try to load him! */
+			if (!load_player(NumPlayers)) {
+				/* bad fail */
+				s_printf(" load_player '%s' failed\n", p_ptr->name);
+				/* unhack */
+				C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+				KILL(p_ptr, player_type);
+				NumPlayers--;
+				return;
+			}
+			/* scan his inventory */
+			for (i = 0; i < INVEN_TOTAL; i++) {
+				o_ptr = &p_ptr->inventory[i];
+				if (!o_ptr->k_idx) continue;
+
+				if (!hack_particular_item_cmp(o_ptr)) {
+					s_printf(" found in load_player '%s'\n", p_ptr->name);
+					hack_particular_item_aux(o_ptr, xwpos);
+					found++;
+					/* write savegame back */
+					save_player(NumPlayers);
+				}
+			}
+			ptr = ptr->next;
+		}
+	}
+	/* unhack */
+        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+        KILL(p_ptr, player_type);
+	NumPlayers--;
+
+	s_printf("hack_particular_item: found+replaced %d occurances\n", found);
+}

@@ -8636,6 +8636,10 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "%d were positive: %d.%d%%", found, 100 * found / 100000, (found % 1000) / 100);//wtb correct rounding >.> o laziness
 				return;
 			}
+			else if (prefix(message, "/moditem")) { /* modify a particular existing item type (added for LL drop sky dsm of imm -> randart sky dsm) */
+				hack_particular_item();
+				return;
+			}
 			else if (prefix(message, "/qinf")) { /* debug new quest_info stuff - C. Blue */
 				/* display hard info about a specific quest? */
 				if (tk) {
