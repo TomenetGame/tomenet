@@ -5741,7 +5741,7 @@ if (cfg.unikill_format) {
 				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE);
 
 				a_ptr = randart_make(qq_ptr);
-				if (artifact_power(a_ptr) >= 105 && /* at least +1 new mod gained */
+				if (artifact_power(a_ptr) >= 105 + 5 && /* at least +1 new mod gained; and +extra bonus boost */
 				    qq_ptr->to_a > 0 && /* not cursed */
 				    !(a_ptr->flags3 & (TR3_AGGRAVATE | TR3_NO_MAGIC)))
 					break;

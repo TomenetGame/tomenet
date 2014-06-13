@@ -9479,7 +9479,7 @@ static void hack_particular_item_aux(object_type *qq_ptr, struct worldpos xwpos)
 		apply_magic(&xwpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE);
 
 		xa_ptr = randart_make(qq_ptr);
-		if (artifact_power(xa_ptr) >= 105 && /* at least +1 new mod gained */
+		if (artifact_power(xa_ptr) >= 105 + 5 && /* at least +1 new mod gained; and +extra bonus boost */
 		    qq_ptr->to_a > 0 && /* not cursed */
 		    !(xa_ptr->flags3 & (TR3_AGGRAVATE | TR3_NO_MAGIC)))
 			break;
@@ -9511,7 +9511,8 @@ static void hack_particular_item_prepare_wpos(struct worldpos *xwpos) {
 	}
 }
 static bool hack_particular_item_cmp(object_type *o_ptr) {
-	return (o_ptr->tval != TV_DRAG_ARMOR || o_ptr->sval != SV_DRAGON_SKY || o_ptr->name2 != EGO_IMMUNE);
+	//return (o_ptr->tval != TV_DRAG_ARMOR || o_ptr->sval != SV_DRAGON_SKY || o_ptr->name2 != EGO_IMMUNE);
+	return (o_ptr->tval != TV_DRAG_ARMOR || o_ptr->sval != SV_DRAGON_SKY || o_ptr->name1 != ART_RANDART || o_ptr->level != 0);
 }
 void hack_particular_item(void) {
 	int i, this_o_idx, next_o_idx;
