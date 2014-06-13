@@ -5651,7 +5651,6 @@ if (cfg.unikill_format) {
 			int tries = 100;
 			object_type forge_bak, forge_fallback;
 			qq_ptr = &forge;
-			artifact_type *e_ptr;
 			/* possible loot:
 			    skydsm,elec rod,elec ring,elec/mana rune,mage staff,tome of wind
 			*/
@@ -5733,26 +5732,24 @@ if (cfg.unikill_format) {
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
-			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_NOART);
-			qq_ptr->name2 = EGO_IMMUNE;
-			qq_ptr->name2b = 0;
-			/* Since this armour is highly non-canonical (double immunity!),
-			   bind it to the character */
-#ifdef PRE_OWN_DROP_CHOSEN
-			qq_ptr->level = 0;
-			qq_ptr->owner = p_ptr->id;
-			qq_ptr->mode = p_ptr->mode;
-#endif
-
-			/* avoid that the 'of Immunity' ego power generates IM_ELEC */
-			tries = 100;
-			while (tries--) {
+			qq_ptr->name1 = ART_RANDART;
+			tries = 500;
+			while (tries) {
+				/* Piece together a 32-bit random seed */
 				qq_ptr->name3 = rand_int(0xFFFF) << 16;
 				qq_ptr->name3 += rand_int(0xFFFF);
-				e_ptr = ego_make(qq_ptr);
-				if (!(e_ptr->flags2 & TR2_IM_ELEC)) break;
-			}
+				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE);
 
+				a_ptr = randart_make(qq_ptr);
+				if (artifact_power(a_ptr) >= 80 && /* at least +1 new mod gained */
+				    qq_ptr->to_a > 0 && /* not cursed */
+				    !(a_ptr->flags3 & (TR3_AGGRAVATE | TR3_NO_MAGIC)))
+					break;
+				tries--;
+			}
+			if (!tries) msg_format(Ind, "RI_LIVING_LIGHTNING: Re-rolling out of tries!");
+
+			qq_ptr->timeout = 0;
 			drop_near(qq_ptr, -1, wpos, y, x);
 
 		} else if (m_ptr->r_idx == RI_HELLRAISER) {
