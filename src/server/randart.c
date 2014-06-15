@@ -160,15 +160,6 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	s32b p = 1;
 	int immunities = 0, i;//, mult;
 
-	/* Hack: MHDSMs don't get their k_ptr imms added up because they don't
-	   use normal flags but xtra2 instead. Fix that here: */
-	if (k_ptr->tval == TV_DRAG_ARMOR && k_ptr->sval == SV_DRAGON_MULTIHUED)
-		/* Note: This is just a bad hack: We simply prevent any imms being generated on MHDSMs.
-		   The clean way would be to add the actual xtra2-induced immunities to the correct
-		   a_ptr->flags2/5 flags instead, so they get processed further down just like any added
-		   immunities. But it doesn't matter, and may even benefit MHDSM randarts this way,
-		   allowing them to get actually useful abilities instead of a redundant immunity. - C. Blue */
-		immunities += 2;
 
 	/* Evaluate certain abilities based on type of object. */
 	switch (a_ptr->tval) {
@@ -1993,6 +1984,15 @@ artifact_type *randart_make(object_type *o_ptr) {
 #else
 		if (a_ptr->to_a > 30) a_ptr->to_a = 30;
 #endif
+
+		/* Hack: Account for the o_ptr immunities of MHDSMs: */
+		if (k_ptr->tval == TV_DRAG_ARMOR && k_ptr->sval == SV_DRAGON_MULTIHUED) {
+			if ((o_ptr->xtra2 & 0x1)) a_ptr->flags2 |= TR2_IM_FIRE;
+			if ((o_ptr->xtra2 & 0x2)) a_ptr->flags2 |= TR2_IM_COLD;
+			if ((o_ptr->xtra2 & 0x4)) a_ptr->flags2 |= TR2_IM_ELEC;
+			if ((o_ptr->xtra2 & 0x8)) a_ptr->flags2 |= TR2_IM_ACID;
+			if ((o_ptr->xtra2 & 0x10)) a_ptr->flags5 |= TR5_IM_POISON;
+		}
 	}
 
 #ifdef USE_NEW_SHIELDS
@@ -2053,11 +2053,11 @@ artifact_type *randart_make(object_type *o_ptr) {
 		remove_redundant_esp(a_ptr);
 		ap = artifact_power(a_ptr) + RANDART_QUALITY + 15; /* in general ~5k+(40-40)+15k value */
 	} else { /* neither cursed, nor ammo: */
+		artifact_type a_old;
+
 		/* Select a random set of abilities which roughly matches the
 		   original's in terms of overall power/usefulness. */
 		for (tries = 0; tries < MAX_TRIES; tries++) {
-			artifact_type a_old;
-
 			/* Copy artifact info temporarily. */
 			a_old = *a_ptr;
 			add_ability(a_ptr);
@@ -2079,10 +2079,18 @@ artifact_type *randart_make(object_type *o_ptr) {
 			else if ((ap < 0) && (ap < (-(power * 1)) / 10)) break;
 		} /* end of power selection */
 
-#if 0 /* allow such randarts that haven't gained any extra powers over base item version? */
+#if 0 /* disallow such randarts that haven't gained any extra powers over base item version? */
 		/* should almost never happen: Rolled a 'too powerful' artifact on _every_ attempt.
 		   This would require a base item that is already extremely powerful (eg PDSM). */
-		if (tries == MAX_TRIES) return (NULL);
+		if (tries == MAX_TRIES)
+			/* fail randart generation completely */
+			return (NULL);
+#else /* allow them */
+		if (tries == MAX_TRIES)
+			/* just use the absolute base randart, ie without additional ability mods
+			   except for those hard-wired like for ammo or cursed ones. - C. Blue
+			   I wonder whether a cursed PDSM randart could thereby get extra mods.. :) */
+			*a_ptr = a_old;
 #endif
 
 		if (aggravate_me) {
