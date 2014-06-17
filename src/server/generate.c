@@ -9372,9 +9372,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		if (town_static) {
 			/* reattach objects and monsters */
 			setup_objects();
- #if 0 /* currently there are no spawns in dungeon towns */
+			/* target dummies */
 			setup_monsters();
- #endif
 		}
 #endif
 
