@@ -3239,9 +3239,13 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	else sprintf(buf, "You own %d houses.", p_ptr->houses_owned);
 	if (p_ptr->houses_owned < max_houses) {
 		if (p_ptr->houses_owned)
-			strcat(buf, format(" You can buy up to %d more houses.", max_houses - p_ptr->houses_owned));
+			strcat(buf, format(" %sou can buy up to %d more houses.",
+			    (p_ptr->lev < (50 / cfg.houses_per_player) * cfg.houses_per_player) ? "At your level y" : "Y",
+			    max_houses - p_ptr->houses_owned));
 		else
-			strcat(buf, format(" You can buy up to %d houses.", max_houses));
+			strcat(buf, format(" %sou can buy up to %d houses.",
+			    (p_ptr->lev < (50 / cfg.houses_per_player) * cfg.houses_per_player) ? "At your level y" : "Y",
+			     max_houses));
 	}
 	msg_print(Ind, buf);
 
