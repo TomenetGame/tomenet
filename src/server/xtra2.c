@@ -3712,7 +3712,7 @@ void check_experience(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	char str[160];
 
-	bool newlv = FALSE;
+	bool newlv = FALSE, reglv = FALSE;
 	int old_lev, i;
 	//long int i;
 #ifdef LEVEL_GAINING_LIMIT
@@ -3860,7 +3860,7 @@ void check_experience(int Ind) {
 			check_training(Ind);
 		} else {
 			/* Player just regained a level he lost previously */
-			s_printf("%s has regained level %d.\n", p_ptr->name, p_ptr->lev);
+			reglv = TRUE;
 		}
 
 #ifdef USE_SOUND_2010
@@ -3869,6 +3869,8 @@ void check_experience(int Ind) {
 		sound(Ind, SOUND_LEVEL);
 #endif
 	}
+	/* log regaining of levels */
+	if (reglv) s_printf("%s has regained level %d.\n", p_ptr->name, p_ptr->lev);
 
 
 	/* Remember maximum level (the one displayed if life levels were restored right now) */
