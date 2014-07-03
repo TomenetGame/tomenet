@@ -10105,6 +10105,9 @@ Note that not every skill is available to every profession (class).
                                 will only have a 1% chance of breaking if your
                                 skill is at 50.000.
 
+                                At 50 you will get an additional bonus of
+                                +1 extra might.
+
                                 Artifact ammunition never breaks.
 
                                 Note that the explosion of exploding ammo will
