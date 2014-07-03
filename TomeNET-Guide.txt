@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. June 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. July 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -10087,8 +10087,6 @@ Note that not every skill is available to every profession (class).
                                 Increases your chance to score critical hits.
                                 At 20 the quality of your handmade ammunition
                                 becomes remarkably better.
-                                50 in archery grants +1 'extra might',
-                                increasing your launcher's multiplier by 1.
 
                                 Lets you pseudo-id ranged weapons and
                                 ammunition more often the higher the skill.
@@ -10097,36 +10095,35 @@ Note that not every skill is available to every profession (class).
                                 the items. Before that, you can only
                                 distinguish between cursed and good.
 
-                                NOTE: The extra might bonus does not apply
-                                to Boomerangs! All other boni do apply.
-
         .Sling-mastery          Increases hit chance (while using a sling).
                                 At 10,20,30,40,50 you will get +1 additional
                                 shot per round each (while using a sling).
-                                Also reduces the chance of your ammunition to
-                                shatter by up to 90% at 50. (Example:
+                                Also reduces the chance of your sling
+                                ammunition to shatter by up to 90% at 50.
+                                Example:
                                 a shot that usually has 10% chance of breaking
                                 will only have a 1% chance of breaking if your
-                                skill is at 50.000.)
-                                (only concerns ammo for slings).
+                                skill is at 50.000.
 
-                                Adds chance for your shots to ricochet, even
-                                multiple times, hitting multiple enemies.
-                                Note that magic and ethereal ammo fades away
-                                the moment it hits, and never ricochets.
+                                Artifact ammunition never breaks.
 
                                 Note that the explosion of exploding ammo will
                                 still hit "reflecting" monsters.
 
-                                Artifact ammunition never breaks.
+                                Slings only (does not apply to bow- or xbow-
+                                mastery):
+                                Adds chance for your shots to ricochet, even
+                                multiple times, hitting multiple enemies.
+                                Note that magic and ethereal ammo fades away
+                                the moment it hits, and never ricochets.
 
         .Bow-mastery            At 12.5, 25, 37.5, 50 you will get +1 extra
                                 shot per round each.
                                 Otherwise same as Sling-mastery, except no
                                 ricochetting.
 
-        .Crossbow-mastery       At 25 and 50 you will get +1 extra shot AND
-                                +1 extra-might-bonus each.
+        .Crossbow-mastery       At 25 and 50 you will get +1 extra shot,
+                                at 12.5 and 37.5 you will get +1 extra might.
                                 Otherwise same as Sling-mastery, except no
                                 ricochetting.
 

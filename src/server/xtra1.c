@@ -4905,6 +4905,13 @@ void calc_boni(int Ind) {
 				break;
 			}
 			if (archery != SKILL_BOOMERANG) {
+#if 0
+/* temporarily disabled, need to talk first if we
+   really want to boost the 50.000 skill this much,
+   especially considering xbows who gain TWO xmight with this at once,
+   but also with bows/slings which get ES _and_ EM at 50,
+   rendering the power-scale of training the mastery skill
+   very non-liner with this pull-up. */
 #if 1
 //Put less emphasis on ARCHERY (which only archers can get and more into the individual skill. 
 //Make other archers more viable.
@@ -4912,6 +4919,7 @@ void calc_boni(int Ind) {
 				csheet_boni[14].migh += get_skill_scale(p_ptr, archery, 1);
 #else
  				p_ptr->xtra_might += (get_skill(p_ptr, SKILL_ARCHERY) / 50);
+#endif
 #endif
 
 				p_ptr->to_d_ranged += get_skill_scale(p_ptr, SKILL_ARCHERY, 10);
