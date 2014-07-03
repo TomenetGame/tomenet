@@ -4905,7 +4905,7 @@ void calc_boni(int Ind) {
 				break;
 			}
 			if (archery != SKILL_BOOMERANG) {
-#if 0
+#if 1//pfft, too disrupting vs slingers to disable this I guess.. need to think harder of a good way :|
 /* temporarily disabled, need to talk first if we
    really want to boost the 50.000 skill this much,
    especially considering xbows who gain TWO xmight with this at once,
