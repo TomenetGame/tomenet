@@ -2021,8 +2021,7 @@ static int Handle_listening(int ind)
  * This is a crappy way of doing things....
  */
 /* see client_opts */
-static void sync_options(int Ind, bool *options)
-{
+static void sync_options(int Ind, bool *options) {
 	player_type *p_ptr = Players[Ind];
 
 	bool tmp;
@@ -2198,6 +2197,7 @@ static void sync_options(int Ind, bool *options)
 #endif
 		p_ptr->hilite_player = options[100];
 		p_ptr->alert_mana = options[101];
+		p_ptr->exp_bar = options[103];//just for tracking this feature's popularity =P
 		p_ptr->consistent_players = options[104];
 		p_ptr->flash_self = options[105] ? 0 : -1;
 	}

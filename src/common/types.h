@@ -2965,6 +2965,8 @@ struct player_type {
 	bool auto_insc[INVEN_TOTAL];	/* client-side auto-inscribing helper var */
 	bool grid_sunlit, grid_house;	/* vampire handling; ambient sfx handling */
 	u16b cards_diamonds, cards_hearts, cards_spades, cards_clubs;	/* for /deal and /shuffle commands */
+
+	bool exp_bar;			//just for tracking popularity of this feature..
 };
 
 typedef struct boni_col boni_col;
