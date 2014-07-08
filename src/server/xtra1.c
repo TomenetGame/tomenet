@@ -6831,6 +6831,7 @@ int start_global_event(int Ind, int getype, char *parm) {
 								so players will sign on via /evsign <n> */
 		ge->extra[0] = 95; /* there are no objects of lvl 96..99 anyways */
 		ge->min_participants = 1; /* EXPERIMENTAL */
+		if (atoi(parm)) ge->announcement_time = atoi(parm);
 		break;
 	}
 
