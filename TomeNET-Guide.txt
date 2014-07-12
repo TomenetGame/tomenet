@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. July 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. July 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -2603,6 +2603,103 @@ self-explaining or that are especially important are listed in detail here:
     Don't display 'flavours' in item names (short_item_names)
         A 'Black Potion of Speed' will just be shown as a 'Potion of Speed'.
 
+    Show experience bar instead of a number (exp_bar)
+        In the main window at the 'XP' label your experience is displayed as a
+        bar instead of showing the numerical value.
+        This bar has a resolution of 5% steps and displays..
+          a dark blue '#' to indicate 5%,
+          a light blue '#' to indicate 10%,
+          a full bar of dark blue '#' to indicate 95%+.
+
+        This is especially recommended for high-level characters who require
+        several dungeon dives to gain a level-up. This way, you can keep track
+        of your progress during the current dive, eg "I want to make at least
+        20% experience progress before I recall out of the dungeon".
+
+        Examples for the bar (dark blue '#' are written as '+' here just for
+        illustration purpose):
+        ---------   You have made less than 5% XP since your last level-up.
+        ###------   You already made 30% (or a bit more) XP this level.
+        ####+----   You made 45% (or a bit more) XP towards next level already.
+        +++++++++   You have 95% (or up to 99%) XP and are therefore very close
+                    to level-up! Might just as well keep diving till ding! :-p
+
+    Hide unusable skills (hide_unusable_skills)
+        Skills that your character cannot use will not be displayed in the
+        skill menu invoked by 'G' key.
+
+    Flash own character icon after far relocation (flash_player)
+        Whenever your character teleports, recalls, takes a void jump gate or
+        phases in such a way that your current view panel changes, your
+        character icon will flash quickly and brightly for a moment, to help
+        your eyes ascertain your position.
+        Useful for example if there are many monsters around and you're a
+        mimic in monster form, or just in general when you're in big_map mode.
+
+    A bunch of options for special visual effects and lighting.
+        These options change how lighting is applied to lamp light and walls,
+        lamp light colour and how walls are displayed depending on the font:
+        font_map_solid_walls (depending on font displays walls as solid blocks)
+        view_animated_lite (fire-based light sources flicker yellow-orange)
+        view_bright_lite2 (darkens wall grids out of sight)
+        view_yellow_lite (your light source lights up certain floor/wall grids)
+        view_bright_lite (darkens floor grids out of sight)
+        view_granite_lite (enables special lighting fx listed above for walls)
+        view_special_lite (enables special lighting fx listed above for floors)
+
+(3) Audio Options
+    (See (2.1a) for more information about sound and music.)
+
+    A bunch of stuff here, mostly you might want to look at attack-sound effect
+    frequency. Some people don't like to have those be played on each single
+    attack, so you can tweak them here.
+
+    no_shriek_sfx and no_house_sfx might be especially interesting too.
+
+(4 & 5) Game-Play Options
+    Use old target by default (use_old_target)
+        If this is on, a ranged attack via *t5 or *t- will not pick a new
+        (ie closer) target if the previously acquired target is still okay.
+
+    Set 'AFK mode' automatically (auto_afk)
+        Rogues might want to turn this off in order to sit out their blacklist
+        timer in town.
+
+    Double height of the map shown in the main window (big_map)
+        Definitely enable this to see if you prefer it: It doubles the size of
+        the game-play area displayed in the main window.
+
+    Prevent floating for a short while after death (safe_float)
+        For a few turns after your character dies you cannot float up or down
+        with the '<' or '>' key. This prevents accidentally leaving the floor
+        in case you were just trying to take a staircase right the moment you
+        died, which would result in losing your items since the dungeon level
+        would probably regenerate if you left it.
+
+    Abort macro execution if an action fails (safe_macros)
+        If any sub-action in a macro you execute fails then the whole macro/key
+        queue will be discarded and cleared.
+        This is useful if you for example have a spellcasting macro that would
+        just do something weird in case you lost the according spell book and
+        then tried to cast it anyway, accidentally.
+        This only affects magic spells and monster traps.
+
+    Automatically open doors (easy_open)
+        Your character attempts to open a door just by you moving into it.
+
+    Clear @-inscriptions on taking item ownership (clear_inscr)
+        When you pick up items that belonged to another player, any '@...'
+        inscriptions will be rendered effectless by replacing the @ by a space.
+        This is a security feature that is intended to prevent the inscriptions
+        from interfering with the inscriptions on your own items.
+        For example, your potions of healing might be inscribed @q1. If you now
+        pick up a potion of heroism that someone else also inscribed @q1, it
+        will be used the next time you press your 'q1' macro, because heroism
+        potions are sorted in in the inventory before healing potions, which
+        might cost your life if unlucky.
+        Alternatively if you have this option turned off, you can just use the
+        '}' key to uninscribe the items you get from someone else.
+
     Use additional predefined auto-inscriptions (auto_inscribe)
         Will provide a predefined (on server-side) set of item-inscriptions
         that will be applied automatically to some selected items, which are
@@ -2624,75 +2721,6 @@ self-explaining or that are especially important are listed in detail here:
             Potions of Restore-L-Lev:   @q4
         Note: Already inscribed items are not touched.
 
-    Hide unusable skills (hide_unusable_skills)
-        Skills that your character cannot use will not be displayed in the
-        skill menu invoked by 'G' key.
-
-    A bunch of options for special visual effects and lighting.
-        These options change how lighting is applied to lamp light and walls,
-        lamp light colour and how walls are displayed depending on the font:
-        font_map_solid_walls (depending on font displays walls as solid blocks)
-        view_animated_lite (fire-based light sources flicker yellow-orange)
-        view_bright_lite2 (darkens wall grids out of sight)
-        view_yellow_lite (your light source lights up certain floor/wall grids)
-        view_bright_lite (darkens floor grids out of sight)
-        view_granite_lite (enables special lighting fx listed above for walls)
-        view_special_lite (enables special lighting fx listed above for floors)
-
-(3) Audio Options
-    (See (2.1a) for more information about sound and music.)
-    A bunch of stuff here, mostly you might want to look at attack-sound effect
-    frequency. Some people don't like to have those be played on each single
-    attack, so you can tweak them here.
-
-(4 & 5) Game-Play Options
-    Use old target by default (use_old_target)
-        If this is on, a ranged attack via *t5 or *t- will not pick a new
-        (ie closer) target if the previously acquired target is still okay.
-
-    Set 'AFK mode' automatically (auto_afk)
-        Rogues might want to turn this off in order to sit out their blacklist
-        timer in town.
-
-    Double height of the map shown in the main window (big_map)
-        Definitely enable this to see if you prefer it: It doubles the size of
-        the game-play area displayed in the main window.
-
-    Automatically open doors (easy_open)
-        Your character attempts to open a door just by you moving into it.
-
-    Scroll the screen more frequently (wide_scroll_margin)
-        Should always be enabled! Will reduce probability for off-screen kills,
-        since the screen scrolls much earlier when you come close to a border!
-
-    Prevent floating for a short while after death (safe_float)
-        For a few turns after your character dies you cannot float up or down
-        with the '<' or '>' key. This prevents accidentally leaving the floor
-        in case you were just trying to take a staircase right the moment you
-        died, which would result in losing your items since the dungeon level
-        would probably regenerate if you left it.
-
-    Abort macro execution if an action fails (safe_macros)
-        If any sub-action in a macro you execute fails then the whole macro/key
-        queue will be discarded and cleared.
-        This is useful if you for example have a spellcasting macro that would
-        just do something weird in case you lost the according spell book and
-        then tried to cast it anyway, accidentally.
-        This only affects magic spells and monster traps.
-
-    Clear @-inscriptions on taking item ownership (clear_inscr)
-        When you pick up items that belonged to another player, any '@...'
-        inscriptions will be rendered effectless by replacing the @ by a space.
-        This is a security feature that is intended to prevent the inscriptions
-        from interfering with the inscriptions on your own items.
-        For example, your potions of healing might be inscribed @q1. If you now
-        pick up a potion of heroism that someone else also inscribed @q1, it
-        will be used the next time you press your 'q1' macro, because heroism
-        potions are sorted in in the inventory before healing potions, which
-        might cost your life if unlucky.
-        Alternatively if you have this option turned off, you can just use the
-        '}' key to uninscribe the items you get from someone else.
-
     Thin down screen flush signals to avoid freezing (thin_down_flush)
         Enabled by default, this discards all 9 of every 10 flush signals, so
         it reduces the animation delays to 10%.
@@ -2705,6 +2733,10 @@ self-explaining or that are especially important are listed in detail here:
         like the arrow flying or the balls of explosions.
         If you have a slow network or are lagging a lot, you may try to disable
         this. Certain animations might visually suffer from doing so.
+
+    Scroll the screen more frequently (wide_scroll_margin)
+        Should always be enabled! Will reduce probability for off-screen kills,
+        since the screen scrolls much earlier when you come close to a border!
 
 (8) Check Server Options
     Displays a list of the server rules and configuration.
