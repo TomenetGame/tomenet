@@ -2605,7 +2605,9 @@ self-explaining or that are especially important are listed in detail here:
 
     Show experience bar instead of a number (exp_bar)
         In the main window at the 'XP' label your experience is displayed as a
-        bar instead of showing the numerical value.
+        progress bar instead of showing the numerical value, much like in
+        common MMORPGs where each bar segment is often referred to as 'bubble'.
+
         This bar has a resolution of 5% steps and displays..
           a dark blue '#' to indicate 5%,
           a light blue '#' to indicate 10%,
@@ -2614,7 +2616,8 @@ self-explaining or that are especially important are listed in detail here:
         This is especially recommended for high-level characters who require
         several dungeon dives to gain a level-up. This way, you can keep track
         of your progress during the current dive, eg "I want to make at least
-        20% experience progress before I recall out of the dungeon".
+        30% experience progress (aka '3 bubbles') before I recall out of this
+        dungeon".
 
         Examples for the bar (dark blue '#' are written as '+' here just for
         illustration purpose):
