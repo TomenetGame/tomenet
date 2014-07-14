@@ -3587,7 +3587,8 @@ static int Receive_login(int ind){
 				wpos = lookup_player_wpos(id_list[i]);
 				/* note: we don't receive options yet, so we don't know about 'depth_in_feet' */
 				//sprintf(loc, "On lv %d in (%d,%d)", wpos.wz, wpos.wx, wpos.wy);
-				sprintf(loc, "on %dft in (%d,%d)", wpos.wz * 50, wpos.wx, wpos.wy);//..so we just assume 'ft' notation
+				//sprintf(loc, "on %dft in (%d,%d)", wpos.wz * 50, wpos.wx, wpos.wy);//..so we just assume 'ft' notation
+				sprintf(loc, "in (%d,%d) on %dft", wpos.wx, wpos.wy, wpos.wz * 50);//..so we just assume 'ft' notation
 
 				if (is_newer_than(&connp->version, 4, 5, 7, 0, 0, 0))
 					Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd%s", PKT_LOGIN, tmpm, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8, loc);
