@@ -41,7 +41,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		5
 #define VERSION_PATCH		7
-#define VERSION_EXTRA		0
+#define VERSION_EXTRA		1
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	5
-#define SF_VERSION_PATCH	29
+#define SF_VERSION_PATCH	30
 #define SF_VERSION_EXTRA	0
 
 /* For quests savefile purpose only */

@@ -1936,8 +1936,7 @@ bool load_player(int Ind)
  * Write the player name hash table.
  * Much better to write it from here...
  */
-static void wr_player_names(void)
-{
+static void wr_player_names(void) {
 	hash_entry *ptr;
 
 	/*int i, num, *id_list;*/
@@ -1951,8 +1950,7 @@ static void wr_player_names(void)
 	wr_u32b(num);
 
 	/* Store each entry */
-	for (i = 0; i < num; i++)
-	{
+	for (i = 0; i < num; i++) {
 		/* Store the ID */
 		ptr = lookup_player(id_list[i]);
 		if (ptr) {
@@ -1969,6 +1967,9 @@ static void wr_player_names(void)
 			wr_u32b(ptr->guild_flags);
 			wr_u16b(ptr->xorder);
 			wr_byte(ptr->admin);
+			wr_s16b(ptr->wpos.wx);
+			wr_s16b(ptr->wpos.wy);
+			wr_s16b(ptr->wpos.wz);
 			/* Store the player name */
 			wr_string(ptr->name);
 		}

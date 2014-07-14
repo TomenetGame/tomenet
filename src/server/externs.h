@@ -1333,7 +1333,7 @@ extern s32b lookup_player_balance(int id);
 extern int lookup_player_id(cptr name);
 extern int lookup_player_id_messy(cptr name);
 /* another arg, and its getting a struct... pfft. */
-extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin);
+extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
 extern int player_id_list(int **list, u32b account);
@@ -1347,6 +1347,7 @@ extern u32b lookup_player_guildflags(int id);
 extern byte lookup_player_mode(int id);
 extern u32b lookup_player_account(int id);
 extern byte lookup_player_admin(int id);
+extern struct worldpos lookup_player_wpos(int id);
 extern void clockin(int Ind, int type);
 extern int newid(void);
 
@@ -1361,7 +1362,7 @@ extern void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...);
 extern u16b lookup_player_type(int id);
 extern int check_account(char *accname, char *c_name);
 extern void strip_true_arts_from_hashed_players(void);
-extern void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin);
+extern void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos);
 extern void account_change_password(int Ind, char *old_pass, char *new_pass);
 
 extern int lookup_player_ind(u32b id);

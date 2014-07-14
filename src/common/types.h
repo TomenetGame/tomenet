@@ -3559,6 +3559,7 @@ struct hash_entry {
 	cptr name;			/* Player name */
 	byte race,class;		/* Race/class */
 	byte admin;
+	struct worldpos wpos;
 
 	/* new in savegame version 4.2.2 (4.2.0c server) - C. Blue */
 	byte mode;			/* Character mode (for account overview screen) */

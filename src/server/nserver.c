@@ -3438,8 +3438,9 @@ static int Receive_login(int ind){
 	connection_t *connp = Conn[ind], *connp2 = NULL;
 	//unsigned char ch;
 	int i, n;
-	char choice[MAX_CHARS];
+	char choice[MAX_CHARS], loc[MAX_CHARS];
 	struct account *l_acc;
+	struct worldpos wpos;
 
 	n = Sockbuf_read(&connp->r);
 	if (n == 0 && !(errno == EAGAIN || errno == EWOULDBLOCK)) {
@@ -3573,6 +3574,7 @@ static int Receive_login(int ind){
 			/* Display all account characters here */
 			for(i = 0; i < n; i++) {
 				u16b ptype = lookup_player_type(id_list[i]);
+
 				/* do not change protocol here */
 				tmpm = lookup_player_mode(id_list[i]);
 				if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377B");
@@ -3581,12 +3583,22 @@ static int Receive_login(int ind){
 				else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");
 				else strcpy(colour_sequence, "\377W");
 
-				if (is_newer_than(&connp->version, 4, 4, 9, 2, 0, 0))
+				/* look up character's current location */
+				wpos = lookup_player_wpos(id_list[i]);
+				/* note: we don't receive options yet, so we don't know about 'depth_in_feet' */
+				//sprintf(loc, "On lv %d in (%d,%d)", wpos.wz, wpos.wx, wpos.wy);
+				sprintf(loc, "on %dft in (%d,%d)", wpos.wz * 50, wpos.wx, wpos.wy);//..so we just assume 'ft' notation
+
+				if (is_newer_than(&connp->version, 4, 5, 7, 0, 0, 0))
+					Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd%s", PKT_LOGIN, tmpm, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8, loc);
+				else if (is_newer_than(&connp->version, 4, 4, 9, 2, 0, 0))
 					Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd", PKT_LOGIN, tmpm, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
 				else
 					Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
 			}
-			if (is_newer_than(&connp->version, 4, 4, 9, 2, 0, 0))
+			if (is_newer_than(&connp->version, 4, 5, 7, 0, 0, 0))
+				Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd%s", PKT_LOGIN, 0, "", "", 0, 0 , 0, "");
+			else if (is_newer_than(&connp->version, 4, 4, 9, 2, 0, 0))
 				Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd", PKT_LOGIN, 0, "", "", 0, 0, 0);
 			else
 				Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, "", "", 0, 0, 0);

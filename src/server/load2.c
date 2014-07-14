@@ -3133,6 +3133,7 @@ errr rd_server_savefile() {
 		u16b party;
 		u16b xorder;
 		byte admin;
+		struct worldpos wpos;
 
 		rd_u32b(&tmp32u);
 
@@ -3146,10 +3147,10 @@ errr rd_server_savefile() {
 			rd_s32b(&laston);
 			rd_byte(&race);
 #ifdef ENABLE_KOBOLD /* Kobold was inserted in the middle, instead of added to the end of the races array */
-		        if (s_older_than(4, 4, 28) && race >= RACE_KOBOLD) race++;
+			if (s_older_than(4, 4, 28) && race >= RACE_KOBOLD) race++;
 #endif
 			rd_byte(&class);
-		        if (!s_older_than(4, 2, 2)) rd_byte(&mode); else mode = 0;
+			if (!s_older_than(4, 2, 2)) rd_byte(&mode); else mode = 0;
 			rd_byte(&level);
 			if (s_older_than(4, 2, 4)) {
 				rd_byte(&old_party);
@@ -3157,15 +3158,24 @@ errr rd_server_savefile() {
 			}
 			else rd_u16b(&party);
 			rd_byte(&guild);
-		        if (!s_older_than(4, 5, 1)) rd_u32b(&guild_flags); else guild_flags = 0;
+			if (!s_older_than(4, 5, 1)) rd_u32b(&guild_flags); else guild_flags = 0;
 			rd_u16b(&xorder);
-		        if (!s_older_than(4, 5, 13)) rd_byte(&admin); else admin = 0;
+			if (!s_older_than(4, 5, 13)) rd_byte(&admin); else admin = 0;
+			if (!s_older_than(4, 5, 30)) {
+				rd_s16b(&wpos.wx);
+				rd_s16b(&wpos.wy);
+				rd_s16b(&wpos.wz);
+			} else {
+				wpos.wx = 0;
+				wpos.wy = 0;
+				wpos.wz = 0;
+			}
 
 			/* Read the player name */
 			rd_string(name, 80);
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, xorder, laston, admin);
+			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, xorder, laston, admin, wpos);
 		}
 	}
 

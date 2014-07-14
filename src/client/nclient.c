@@ -333,6 +333,7 @@ int Send_file_end(int ind, unsigned short id) {
 }
 
 #define CHARSCREEN_COLOUR TERM_L_GREEN
+#define COL_CHARS 3
 void Receive_login(void)
 {
 	int n;
@@ -341,6 +342,7 @@ void Receive_login(void)
 	char names[max_cpa + 1][MAX_CHARS], colour_sequence[3];
 	char tmp[MAX_CHARS + 3];	/* like we'll need it... */
 	bool ded_pvp = FALSE, ded_iddc = FALSE, ded_pvp_shown, ded_iddc_shown;
+	char loc[MAX_CHARS];
 
 	static char c_name[MAX_CHARS];
 	s16b c_race, c_class, level;
@@ -409,15 +411,18 @@ void Receive_login(void)
 			c_put_str(CHARSCREEN_COLOUR, format("(You can create up to %d different characters to play with)", max_cpa), 1, 10);
 	} else
 		c_put_str(CHARSCREEN_COLOUR, "(You can create only ONE characters at a time to play with)", 1, 10);
-	c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 3, 8);
+	c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 3, 2);
 
 	max_cpa += max_cpa_plus; /* for now, don't keep them in separate list positions
 				    but just use the '*' marker attached at server side
 				    for visual distinguishing in this character list. */
 	/* Receive list of characters ('zero'-terminated) */
-	while ((is_newer_than(&server_version, 4, 4, 9, 2, 0, 0) ?
+	*loc = 0;
+	while ((is_newer_than(&server_version, 4, 5, 7, 0, 0, 0) ?
+	    (n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%hd%hd%s", &ch, &mode, colour_sequence, c_name, &level, &c_race, &c_class, loc)) :
+	    (is_newer_than(&server_version, 4, 4, 9, 2, 0, 0) ?
 	    (n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%hd%hd", &ch, &mode, colour_sequence, c_name, &level, &c_race, &c_class)) :
-	    (n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)))
+	    (n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class))))
 	    > 0) {
 //	while ((n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)) > 0) {
 		/* End of character list is designated by a 'zero' character */
@@ -427,17 +432,26 @@ void Receive_login(void)
 		if (i == max_cpa) continue;
 
 		strcpy(names[i], c_name);
+
 		sprintf(tmp, "%c) %s%s the level %d %s %s", 'a' + i, colour_sequence, c_name, level, race_info[c_race].title, class_info[c_class].title);
+		c_put_str(TERM_WHITE, tmp, 4 + i, COL_CHARS);
+
 		if (mode & MODE_DED_PVP) {
-			strcat(tmp, "  (PvP slot)");
 			ded_pvp = TRUE;
+			sprintf(tmp, "%s%s", colour_sequence, "PVP");
+			c_put_str(TERM_WHITE, tmp, 4 + i, 52);
 		}
 		if (mode & MODE_DED_IDDC) {
-			strcat(tmp, "  (IDDC slot)");
 			ded_iddc = TRUE;
+			sprintf(tmp, "%s%s", colour_sequence, "IDDC");
+			c_put_str(TERM_WHITE, tmp, 4 + i, 52);
 		}
 
-		c_put_str(TERM_WHITE, tmp, 4 + i, 11);
+		if (*loc) {
+			sprintf(tmp, "%s%s", colour_sequence, loc);
+			c_put_str(TERM_WHITE, tmp, 4 + i, 57);
+		}
+
 		i++;
 	}
 
@@ -446,27 +460,27 @@ void Receive_login(void)
 	for (n = max_cpa - i; n > 0; n--) {
 		if (max_cpa_plus == 2) {
 			if (!ded_pvp_shown) {
-				c_put_str(TERM_SLATE, "<free PvP-exclusive slot>", 4 + i + n - 1, 11);
+				c_put_str(TERM_SLATE, "<free PvP-exclusive slot>", 4 + i + n - 1, COL_CHARS);
 				ded_pvp_shown = TRUE;
 				continue;
 			}
 			if (!ded_iddc_shown) {
-				c_put_str(TERM_SLATE, "<free IDDC-exclusive slot>", 4 + i + n - 1, 11);
+				c_put_str(TERM_SLATE, "<free IDDC-exclusive slot>", 4 + i + n - 1, COL_CHARS);
 				ded_iddc_shown = TRUE;
 				continue;
 			}
 		}
-		c_put_str(TERM_SLATE, "<free slot>", 4 + i + n - 1, 11);
+		c_put_str(TERM_SLATE, "<free slot>", 4 + i + n - 1, COL_CHARS);
 	}
 	if (i < max_cpa) {
-		c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", 5 + max_cpa, 8);
+		c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", 5 + max_cpa, 2);
 		if ((!ded_pvp || !ded_iddc) && max_cpa_plus)
-			c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character", 6 + max_cpa, 8);
+			c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character", 6 + max_cpa, 2);
 	} else {
-		c_put_str(CHARSCREEN_COLOUR, format("(Maximum of %d character reached.", max_cpa), 5 + max_cpa, 8);
-		c_put_str(CHARSCREEN_COLOUR, " Get rid of one (suicide) before creating another.)", 6 + max_cpa, 8);
+		c_put_str(CHARSCREEN_COLOUR, format("(Maximum of %d character reached.", max_cpa), 5 + max_cpa, 2);
+		c_put_str(CHARSCREEN_COLOUR, " Get rid of one (suicide) before creating another.)", 6 + max_cpa, 2);
 	}
-	c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", 11 + max_cpa, 8);
+	c_put_str(CHARSCREEN_COLOUR, "Q) Quit the game", 11 + max_cpa, 2);
 	while ((ch < 'a' || ch >= 'a' + i) && ((ch != 'N' && ch != 'E') || i > (max_cpa - 1))) {
 		ch = inkey();
 		if (ch == 'Q') quit(NULL);
@@ -475,10 +489,10 @@ void Receive_login(void)
 		if (!strlen(cname)) strcpy(c_name, nick);
 		else strcpy(c_name, cname);
 
-		c_put_str(TERM_SLATE, "(ESC to pick a random name)", 9 + max_cpa, 11);
+		c_put_str(TERM_SLATE, "(ESC to pick a random name)", 9 + max_cpa, COL_CHARS);
 
 		while (1) {
-			c_put_str(TERM_YELLOW, "New name: ", 8 + max_cpa, 11);
+			c_put_str(TERM_YELLOW, "New name: ", 8 + max_cpa, COL_CHARS);
 			askfor_aux(c_name, 15, 0);//was 20/19 once
 			if (strlen(c_name)) break;
 			create_random_name(0, c_name);

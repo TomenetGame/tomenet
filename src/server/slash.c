@@ -3642,7 +3642,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (ok == -4 || ok == -9 || ok == -6 || ok == -7) {
 					p_ptr->mode |= MODE_DED_PVP;
 					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0, 0);//assume NO ADMIN!
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0, 0, p_ptr->wpos);//assume NO ADMIN!
 //					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 					return;
 				}
@@ -3659,7 +3659,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (ok == -5 || ok == -8 || ok == -6 || ok == -7) {
 					p_ptr->mode |= MODE_DED_IDDC;
 					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0, 0);//assume NO ADMIN!
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, 0, 0, 0, p_ptr->wpos);//assume NO ADMIN!
 //					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 					return;
 				}

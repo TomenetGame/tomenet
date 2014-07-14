@@ -3333,6 +3333,20 @@ byte lookup_player_mode(int id) {
 	return -1L;
 }
 
+/*
+ * Get the player's current location in the world.
+ */
+struct worldpos lookup_player_wpos(int id) {
+	hash_entry *ptr;
+	struct worldpos wpos = {-1, -1, 0};
+
+	if ((ptr = lookup_player(id)))
+		return ptr->wpos;
+
+	/* Not found */
+	return wpos;
+}
+
 #ifdef AUCTION_SYSTEM
 /*
  * Get the amount of gold the player has.
@@ -4042,7 +4056,7 @@ void account_checkexpiry(int Ind) {
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin) {
+void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos) {
 	int slot;
 	hash_entry *ptr;
 
@@ -4068,6 +4082,9 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 	ptr->class = class;
 	ptr->mode = mode;
 	ptr->admin = admin;
+	ptr->wpos.wx = wpos.wx;
+	ptr->wpos.wy = wpos.wy;
+	ptr->wpos.wz = wpos.wz;
 
 	/* Add the rest of the chain to this entry */
 	ptr->next = hash_table[slot];
@@ -4079,8 +4096,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 /*
  * Verify a player's data against the hash table. - C. Blue
  */
-void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin)
-{
+void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos) {
 	hash_entry *ptr = lookup_player(id);
 
 	/* For savegame conversion 4.2.0 -> 4.2.2: */
@@ -4105,13 +4121,19 @@ void verify_player(cptr name, int id, u32b account, byte race, byte class, byte 
 		s_printf("hash_entry: fixing admin state of %s.\n", ptr->name);
 		ptr->admin = admin;
 	}
+	/* added in 4.5.7.1 */
+	if (ptr->wpos.wx != wpos.wx || ptr->wpos.wy != wpos.wy || ptr->wpos.wz != wpos.wz) {
+		s_printf("hash_entry: fixing wpos of %s.\n", ptr->name);
+		ptr->wpos.wx = wpos.wx;
+		ptr->wpos.wy = wpos.wy;
+		ptr->wpos.wz = wpos.wz;
+	}
 }
 
 /*
  * Delete an entry from the table, by ID.
  */
-void delete_player_id(int id)
-{
+void delete_player_id(int id) {
 	int slot;
 	hash_entry *ptr, *old_ptr;
 
@@ -4125,11 +4147,9 @@ void delete_player_id(int id)
 	old_ptr = NULL;
 
 	/* Attempt to find the ID to delete */
-	while (ptr)
-	{
+	while (ptr) {
 		/* Check this one */
-		if (ptr->id == id)
-		{
+		if (ptr->id == id) {
 			/* Delete this one from the table */
 			if (old_ptr == NULL)
 				hash_table[slot] = ptr->next;
@@ -4163,13 +4183,11 @@ void delete_player_id(int id)
  * two entries for one player name, if the server crashes hideously
  * or the machine has a power outage or something.
  */
-void delete_player_name(cptr name)
-{
+void delete_player_name(cptr name) {
 	int id;
 
 	/* Delete every occurence of this name */
-	while ((id = lookup_player_id(name)))
-	{
+	while ((id = lookup_player_id(name))) {
 		/* Delete this one */
 		delete_player_id(id);
 	}
@@ -4178,8 +4196,7 @@ void delete_player_name(cptr name)
 /*
  * Return a list of the player ID's stored in the table.
  */
-int player_id_list(int **list, u32b account)
-{
+int player_id_list(int **list, u32b account) {
 	int i, j, len = 0, k = 0, tmp;
 	hash_entry *ptr;
 	int *llist;
@@ -4231,8 +4248,7 @@ int player_id_list(int **list, u32b account)
 				llist[k++] = ptr->id;
 
 				/* Insertion sort for account specific lists */
-				if (account)
-				{
+				if (account) {
 					j = k - 1;
 					while (j > 0 && llist[j - 1] > llist[j]) {
 						tmp = llist[j - 1];
@@ -4260,8 +4276,7 @@ int player_id_list(int **list, u32b account)
  *
  * These functions should be common with hostilityes in the future. -Jir-
  */
-void set_pkill(int Ind, int delay)
-{
+void set_pkill(int Ind, int delay) {
 	player_type *p_ptr = Players[Ind];
 	//bool admin = is_admin(p_ptr);
 
@@ -4487,9 +4502,9 @@ void backup_acclists(void) {
 				    ptr->laston, ptr->id, ptr->account,
     				    ptr->level, ptr->party, ptr->guild,
 				    ptr->xorder, ptr->race, ptr->class, ptr->mode);
-#ifdef AUCTION_SYSTEM
+ #ifdef AUCTION_SYSTEM
 				fprintf(fp, "%d%d", ptr->au, ptr->balance);
-#endif
+ #endif
 #else
 				(void)fwrite(ptr, sizeof(hash_entry), 1, fp);
 #endif
@@ -4548,9 +4563,9 @@ void restore_acclists(void) {
 		    &ptr->laston, &ptr->id, &ptr->account,
 		    &ptr->level, &ptr->party, &ptr->guild,
 		    &ptr->xorder, &ptr->race, &ptr->class, &ptr->mode);
-#ifdef AUCTION_SYSTEM
+ #ifdef AUCTION_SYSTEM
 		r = fscanf(fp, "%d%d", &ptr->au, &ptr->balance);
-#endif
+ #endif
 #else
 		r = fread(ptr, sizeof(hash_entry), 1, fp);
 		ptr->name = NULL;//just to be clean
@@ -4562,7 +4577,7 @@ void restore_acclists(void) {
 			time_t ttime;
 			//s_printf("  adding: '%s' (id %d, acc %d)\n", ptr->name, ptr->id, ptr->account);
 			/* Add backed-up entry again */
-			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, 0, time(&ttime), ptr->admin);
+			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 0, 0, 0, 0, time(&ttime), ptr->admin, ptr->wpos);
 		} else s_printf("  already exists: '%s' (id %d, acc %d)\n", name_forge, ptr->id, ptr->account);
 	}
 
