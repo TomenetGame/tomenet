@@ -359,8 +359,12 @@ void do_cmd_go_up(int Ind) {
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
-				if (Players[i]->party == p_ptr->party)
-				msg_format(i, "\374\377G[\377%c%s took a staircase upwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+				if (Players[i]->party == p_ptr->party) {
+					if (Players[i]->depth_in_feet)
+						msg_format(i, "\374\377G[\377%c%s took a staircase upwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+					else
+						msg_format(i, "\374\377G[\377%c%s took a staircase upwards to lv %d..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+				}
 			}
 #else
 			if (one_way && p_ptr->party)
@@ -369,8 +373,12 @@ void do_cmd_go_up(int Ind) {
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
-				if (Players[i]->party == p_ptr->party)
-				msg_format(i, "\374\377G[\377%c%s took a staircase upwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+				if (Players[i]->party == p_ptr->party) {
+					if (Players[i]->depth_in_feet)
+						msg_format(i, "\374\377G[\377%c%s took a staircase upwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+					else
+						msg_format(i, "\374\377G[\377%c%s took a staircase upwards to lv %d..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+				}
 			}
 #endif
 		} else {
@@ -382,8 +390,12 @@ void do_cmd_go_up(int Ind) {
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
-				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G[\377%c%s took a staircase upwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+				if (Players[i]->party == p_ptr->party) {
+					if (Players[i]->depth_in_feet)
+						msg_format(i, "\374\377G[\377%c%s took a staircase upwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+					else
+						msg_format(i, "\374\377G[\377%c%s took a staircase upwards to lv %d..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+				}
 			}
 #else
 			if (one_way && p_ptr->party)
@@ -392,8 +404,12 @@ void do_cmd_go_up(int Ind) {
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
-				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G[\377%c%s took a staircase upwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+				if (Players[i]->party == p_ptr->party) {
+					if (Players[i]->depth_in_feet)
+						msg_format(i, "\374\377G[\377%c%s took a staircase upwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+					else
+						msg_format(i, "\374\377G[\377%c%s took a staircase upwards to lv %d..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz + 1) * 50);
+				}
 			}
 #endif
 		}
@@ -949,8 +965,12 @@ void do_cmd_go_down(int Ind)
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
-				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G[\377%c%s took a staircase downwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+				if (Players[i]->party == p_ptr->party) {
+					if (Players[i]->depth_in_feet)
+						msg_format(i, "\374\377G[\377%c%s took a staircase downwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+					else
+						msg_format(i, "\374\377G[\377%c%s took a staircase downwards to lv %d..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+				}
 			}
 #else
 			if (one_way && p_ptr->party)
@@ -959,8 +979,12 @@ void do_cmd_go_down(int Ind)
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
-				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G[\377%c%s took a staircase downwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+				if (Players[i]->party == p_ptr->party) {
+					if (Players[i]->depth_in_feet)
+						msg_format(i, "\374\377G[\377%c%s took a staircase downwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+					else
+						msg_format(i, "\374\377G[\377%c%s took a staircase downwards to lv %d..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+				}
 			}
 #endif
 		} else {
@@ -972,8 +996,12 @@ void do_cmd_go_down(int Ind)
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
-				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G[\377%c%s took a staircase downwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+				if (Players[i]->party == p_ptr->party) {
+					if (Players[i]->depth_in_feet)
+						msg_format(i, "\374\377G[\377%c%s took a staircase downwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+					else
+						msg_format(i, "\374\377G[\377%c%s took a staircase downwards to lv %d..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+				}
 			}
 #else
 			if (one_way && p_ptr->party)
@@ -982,8 +1010,12 @@ void do_cmd_go_down(int Ind)
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
-				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G[\377%c%s took a staircase downwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+				if (Players[i]->party == p_ptr->party) {
+					if (Players[i]->depth_in_feet)
+						msg_format(i, "\374\377G[\377%c%s took a staircase downwards to %dft..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+					else
+						msg_format(i, "\374\377G[\377%c%s took a staircase downwards to lv %d..\377G]", COLOUR_DUNGEON, p_ptr->name, (wpos->wz - 1) * 50);
+				}
 			}
 #endif
 		}
