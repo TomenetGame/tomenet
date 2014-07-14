@@ -8473,6 +8473,7 @@ void do_slash_cmd(int Ind, char *message)
 					if (in_irondeepdive(&pwpos)) {
 			                	msg_print(i, "\377OServer is restarting...");
                                                 Destroy_connection(p_ptr->conn, "Server is restarting");
+                                                i--;
 						continue;
 					}
 					if (pwpos.wz > 0) {
@@ -8480,6 +8481,7 @@ void do_slash_cmd(int Ind, char *message)
 				                    (wild_info[pwpos.wy][pwpos.wx].tower->flags1 & DF1_FORCE_DOWN)) {
 				                	msg_print(i, "\377OServer is restarting...");
                                                         Destroy_connection(p_ptr->conn, "Server is restarting");
+                                                        i--;
 							continue;
 						}
 					} else {
@@ -8487,6 +8489,7 @@ void do_slash_cmd(int Ind, char *message)
 				                    (wild_info[pwpos.wy][pwpos.wx].dungeon->flags1 & DF1_FORCE_DOWN)) {
 				                	msg_print(i, "\377OServer is restarting...");
                                                         Destroy_connection(p_ptr->conn, "Server is restarting");
+                                                        i--;
 							continue;
 						}
 					}
