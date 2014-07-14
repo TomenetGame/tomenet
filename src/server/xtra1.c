@@ -4174,7 +4174,11 @@ void calc_boni(int Ind) {
 	if (p_ptr->mode & MODE_HARD) p_ptr->to_m = (p_ptr->to_m * 2) / 3;
 
 	/* Check for temporary blessings */
-	if (p_ptr->bless_temp_luck) p_ptr->luck += p_ptr->bless_temp_luck_power;
+	if (p_ptr->bless_temp_luck) {
+		p_ptr->luck += p_ptr->bless_temp_luck_power;
+		/* abuse '@ form' luck column for this for now */
+		csheet_boni[14].luck += p_ptr->bless_temp_luck_power;
+	}
 
 #ifdef EQUIPMENT_SET_BONUS
 	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) { 
@@ -4192,6 +4196,8 @@ void calc_boni(int Ind) {
 		/* just prevent numerical overflows in p_ptr->luck (paranoiaish) */
 		if (equipment_set_bonus > 40) equipment_set_bonus = 40;
 		p_ptr->luck += equipment_set_bonus;
+		/* abuse '@ form' luck column for this for now */
+		csheet_boni[14].luck += equipment_set_bonus;
 	}
 #endif
 
