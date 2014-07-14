@@ -16125,6 +16125,8 @@ SOLUTION:   This can have several reasons. On disconnection a message box will
                     May especially happen on not-so-great connections if you
                     die and the server tries to send a large bunch of death
                     dump information to your client.
+            "Server closed the connection"
+                    Maybe a firewall or bad network problem.
 
 PROBLEM 08: I am disconnected from the server with an error message, this
             happens before I can even start playing.
