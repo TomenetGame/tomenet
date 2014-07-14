@@ -2865,7 +2865,10 @@ void calc_boni(int Ind) {
 	int equipment_set_bonus = 0;
 	char tmp_name[ONAME_LEN], *tmp_name_ptr;
 
-	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) equipment_set[i] = 0;
+	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) {
+		equipment_set[i] = 0;
+		equipment_set_name[i][0] = 0;
+	}
 #endif
 
 	/* Save the old speed */
@@ -3531,7 +3534,7 @@ void calc_boni(int Ind) {
 		/* Set item display info - Kurzel */
 		csheet_boni[i-INVEN_WIELD].color = k_info[o_ptr->k_idx].d_attr;
 		csheet_boni[i-INVEN_WIELD].symbol = k_info[o_ptr->k_idx].d_char;
-		
+
 		/* Special admin items */
 		if (o_ptr->tval == TV_AMULET) {
 			switch (o_ptr->sval) {
