@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. July 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 15. July 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -15670,12 +15670,16 @@ PvP-mode characters may obtain item rewards by killing a lot of opponents (see
 Dungeon Keeper will give parchments to the winners that can be turned in at the
 mayor's office for reward items.
 
-Reward items are different from items obtained via extermination orders, as
-normal drops or from acquirement scrolls in the way that they are specifically
-tailored to fit your character relatively well. There is still a random factor
-though.
+Reward items are different from all other items (those obtained from
+extermination orders, monsters, chests, acquirement scrolls or even
+artifact creation scrolls) in the way that they are specifically tailored
+to fit your character relatively well.
+There is still some randomness playing a part in it though, so the outcome will
+always vary and not necessarily be exactly what you wished for.
 
-What you must actively do BEFORE turning in a deed for a reward item is:
+Since the resulting item will be affected by your character and its skill chart,
+what you must actively do BEFORE turning in a deed for a reward item is:
+
 - spend skill points! Never get a reward item without having spent any skill
   points. Make sure that you have at least 3.000 in your vital skill(s) so the
   reward-creating algorithm notices it.
@@ -15692,6 +15696,8 @@ What you must actively do BEFORE turning in a deed for a reward item is:
   Regarding weapon weight, note that a weapon reward will usually not give you
   less attacks per round than the weapon you are already wielding (if any). If
   you don't wield one, it aims for 3 attacks per round as default.
+
+Aside from these, randomness is always a factor so the result may vary.
 
 
 
