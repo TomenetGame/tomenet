@@ -5993,6 +5993,28 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 	}
 }
 
+/* For when an item re-curses itself on equipping:
+   Remove any 'uncursed' part in its inscription. */
+void note_crop_uncursed(object_type *o_ptr) {
+	char *cn, note2[MAX_CHARS_WIDE], *cnp;
+
+	/* hack: remove old 'uncursed' inscription */
+	if (o_ptr->note && (cn = strstr(quark_str(o_ptr->note), "uncursed"))) {
+		strcpy(note2, quark_str(o_ptr->note));
+		while (note2[0] && (cn = strstr(note2, "uncursed"))) {
+			if (*(cn + 8) == '-') cnp = cn + 8; /* cut out trailing '-' delimiter after "uncursed" pseudo-id */
+			else cnp = cn + 7;
+			do {
+				cnp++;
+				*cn = *cnp;
+				cn++;
+			} while (*cnp);
+		}
+		if (note2[0]) o_ptr->note = quark_add(note2);
+		else o_ptr->note = 0;
+	}
+}
+
 /* Convert certain characters into HTML entities
 * These characters are <, >, & and "
 * NOTE: The returned string is dynamically allocated

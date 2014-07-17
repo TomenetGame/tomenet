@@ -1733,6 +1733,7 @@ extern char inkey(void);
 extern cptr quark_str(s16b num);
 extern s16b quark_add(cptr str);
 extern void note_crop_pseudoid(char *s2, char *psid, cptr s);
+extern void note_crop_uncursed(object_type *o_ptr);
 extern bool check_guard_inscription(s16b quark, char what);
 extern void msg_print(int Ind, cptr msg);
 extern void msg_broadcast(int Ind, cptr msg);

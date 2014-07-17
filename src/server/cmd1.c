@@ -1875,6 +1875,8 @@ void carry(int Ind, int pickup, int confirm) {
 
 				/* Note the curse */
 				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
+
+				note_crop_uncursed(o_ptr);
 			}
 
 			/* Structure copy to insert the new item */
@@ -1945,6 +1947,8 @@ void carry(int Ind, int pickup, int confirm) {
 
 				/* Note the curse */
 				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
+
+				note_crop_uncursed(o_ptr);
 			}
 
 			/* Structure copy to insert the new item */
