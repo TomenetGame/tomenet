@@ -1263,8 +1263,7 @@ static int remove_curse_aux(int Ind, int all)
 		o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 
 		/* Take note */
-		o_ptr->note = quark_add("uncursed");
-		o_ptr->note_utag = 0;
+		note_toggle_cursed(o_ptr, FALSE);
 
 		/* Recalculate the bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -3102,7 +3101,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 					msg_print(Ind, "The curse is broken!");
 					o_ptr->ident &= ~ID_CURSED;
 					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
-					o_ptr->note = quark_add("uncursed");
+					note_toggle_cursed(o_ptr, FALSE);
 				}
 			}
 		}
@@ -3131,7 +3130,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 					msg_print(Ind, "The curse is broken!");
 					o_ptr->ident &= ~ID_CURSED;
 					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
-					o_ptr->note = quark_add("uncursed");
+					note_toggle_cursed(o_ptr, FALSE);
 				}
 			}
 		}
@@ -3158,7 +3157,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 					msg_print(Ind, "The curse is broken!");
 					o_ptr->ident &= ~ID_CURSED;
 					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
-					o_ptr->note = quark_add("uncursed");
+					note_toggle_cursed(o_ptr, FALSE);
 				}
 			}
 		}

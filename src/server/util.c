@@ -5995,23 +5995,51 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 
 /* For when an item re-curses itself on equipping:
    Remove any 'uncursed' part in its inscription. */
-void note_crop_uncursed(object_type *o_ptr) {
+void note_toggle_cursed(object_type *o_ptr, bool cursed) {
 	char *cn, note2[MAX_CHARS_WIDE], *cnp;
 
-	/* hack: remove old 'uncursed' inscription */
-	if (o_ptr->note && (cn = strstr(quark_str(o_ptr->note), "uncursed"))) {
-		strcpy(note2, quark_str(o_ptr->note));
+	if (!o_ptr->note) {
+		if (cursed) o_ptr->note = quark_add("cursed");
+		else o_ptr->note = quark_add("uncursed");
+		return;
+	}
+
+	strcpy(note2, quark_str(o_ptr->note));
+
+	/* remove old 'uncursed' inscriptions */
+	if ((cn = strstr(note2, "uncursed"))) {
 		while (note2[0] && (cn = strstr(note2, "uncursed"))) {
-			if (*(cn + 8) == '-') cnp = cn + 8; /* cut out trailing '-' delimiter after "uncursed" pseudo-id */
-			else cnp = cn + 7;
+			cnp = cn + 7;
+			if (cn > note2 && *(cn - 1) == '-') cn--; /* cut out leading '-' delimiter before "uncursed" */
 			do {
 				cnp++;
 				*cn = *cnp;
 				cn++;
 			} while (*cnp);
 		}
-		if (note2[0]) o_ptr->note = quark_add(note2);
-		else o_ptr->note = 0;
+	}
+
+	/* remove old 'cursed' inscription */
+	if ((cn = strstr(note2, "cursed"))) {
+		while (note2[0] && (cn = strstr(note2, "cursed"))) {
+			cnp = cn + 5;
+			if (cn > note2 && *(cn - 1) == '-') cn--; /* cut out leading '-' delimiter before "cursed" */
+			do {
+				cnp++;
+				*cn = *cnp;
+				cn++;
+			} while (*cnp);
+		}
+	}
+
+	if (note2[0]) strcat(note2, "-");
+
+	if (cursed) {
+		strcat(note2, "cursed");
+		o_ptr->note = quark_add(note2);
+	} else {
+		strcat(note2, "uncursed");
+		o_ptr->note = quark_add(note2);
 	}
 }
 

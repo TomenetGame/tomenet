@@ -8555,7 +8555,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		if (!(o_ptr->ident & ID_CURSED)) {
 			o_ptr->ident |= ID_CURSED;
 			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
-			o_ptr->note = quark_add("cursed");
+			note_toggle_cursed(o_ptr, TRUE);
 		}
 	}
 

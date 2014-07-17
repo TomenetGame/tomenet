@@ -1119,7 +1119,7 @@ return;
 			/* Note the curse */
 			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 
-			note_crop_uncursed(o_ptr);
+			note_toggle_cursed(o_ptr, TRUE);
 		}
 
 	}
