@@ -2526,9 +2526,14 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/evsign")) /* sign up for a global event */
 		{
-			if ((tk < 1) || (k < 1) || (k > MAX_GLOBAL_EVENTS))
-				msg_format(Ind, "Usage: /evsign 1..%d [options..]    -- Also try: /evinfo", MAX_GLOBAL_EVENTS);
-			else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden == FALSE || admin))
+			/* get some 'real' event index number for our example ;) */
+			for (i = 0; i < MAX_GLOBAL_EVENTS; i++)
+				if (global_event[i].getype != GE_NONE) break;
+
+			if ((tk < 1) || (k < 1) || (k > MAX_GLOBAL_EVENTS)) {
+				msg_format(Ind, "Usage:    /evsign 1..%d [options..]    -- Also try: /evinfo", MAX_GLOBAL_EVENTS);
+				msg_format(Ind, "Example:  /evsign %d", i == MAX_GLOBAL_EVENTS ? randint(MAX_GLOBAL_EVENTS): i + 1);
+			} else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden == FALSE || admin))
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
 			else if (global_event[k-1].signup_time == -1)
 				msg_print(Ind, "\377yThat event doesn't offer to sign up.");
