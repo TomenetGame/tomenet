@@ -2059,6 +2059,9 @@ details about which operating system you are using.
 
 To update your TomeNET client or the sound pack or music pack, just run the
 'TomeNET-Updater' and click on the according button.
+The only prerequisite is that you must have '7-Zip' installed, a great, free,
+open source archiver that beats WinRAR and WinZIP easily. You can get it from
+www.7-zip.org.
 Important: You should exit the game before attempting to update it!
 
 
