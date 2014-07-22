@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. July 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. July 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -407,7 +407,14 @@ q       q       quaff a potion.
 
 r       r       read a scroll.
 
-E       E       eat. (Draconians can eat firestones to gain temporary special
+E       E       eat food. Hunger can kill you, if you don't eat for a longer
+                while, depending on your character. You will see a yellow
+                'Hungry' appear below the status bar on the left side in the
+                main window, then it will change gradually to orange/red 'Weak'
+                and you will start getting paralysed by the lack of food!
+                Finally you will start losing hit points and eventually die
+                from starvation.
+                (Draconians can eat firestones to gain temporary special
                 abilities, see (5.9). Players in dragon form can eat them too.)
 
 F       F       fuel your light source.
