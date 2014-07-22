@@ -11984,15 +11984,18 @@ F: flag list
     The flags are translated to mimic abilities as follows:
     RES_xxx     Gives the mimic the specific resistance.
     IM_xxx      Gives the mimic the specific immunity! If a form offers
-                more than 1 immunity, one will be picked randomly, the
-                remaining ones will turn into resistances. Potions of
-                self-knowledge are helpful here.
-                Note that you can set the desired immunity in 'm' menu ->
+                more than 1 immunity, the immunities will be checked against
+                the preferences you set, if none match or if you set it to none
+                then one will be picked randomly. The remaining ones will turn
+                into resistances. Potions of self-knowledge are helpful here to
+                find out which one you got, or you could just suffer damage of
+                the according type on purpose to test it out.
+                You can set the desired immunity in 'm' menu ->
                 'Use innate power' -> 'Set preferred immunity'. It will be
                 picked if the form you polymorph into can provide it.
                 If you are already using a form that can provide the immunity
                 that you switch to, that immunity will become the active one
-                immediately without the need to re-polymorphing.
+                immediately without the need for re-polymorphing.
     PASS_WALL   Will allow the mimic to pass walls like a ghost.
                 These immaterial forms also drain the hit points of their
                 user.
