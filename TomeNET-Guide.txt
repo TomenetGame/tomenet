@@ -45,7 +45,7 @@ Contents
     (1.3a)  Sauron, Morgoth and the Nazgul
     (1.3b)  How to encounter the final boss: Morgoth, Lord of Darkness
 (2) Installation & setup
-    (2.1)   Installing TomeNET
+    (2.1)   Installing/updating TomeNET
     (2.1a)  Installing sound and music packs
     (2.1b)  Audio controls and config options
     (2.1c)  Editing sound and music configuration
@@ -182,7 +182,7 @@ Contents
 (0.1) Start & play
 ------------------
 If you are using Linux, you will find additional information about how to
-compile the game under '(2.1) Installing TomeNET'.
+compile the game under '(2.1) Installing/updating TomeNET'.
 
 -Get the latest client from the project's main official site www.tomenet.net
  or from  http://koti.mbnet.fi/mikaelh/tomenet/getting-started.php (Mikael's
@@ -2048,8 +2048,22 @@ the mundane world. See (4.5c) for more information about the Nether Realm.
 (2) Installation & setup
 ========================
 
-(2.1) Installing TomeNET
-------------------------
+(2.1) Installing/updating TomeNET
+---------------------------------
+
+Updating:
+---------
+Starting with version 4.5.7a, TomeNET comes with an updater tool that should
+work on most platforms. If it doesn't on yours, please contact us and provide
+details about which operating system you are using.
+
+To update your TomeNET client or the sound pack or music pack, just run the
+'TomeNET-Updater' and click on the according button.
+Important: You should exit the game before attempting to update it!
+
+
+Installation from scratch:
+--------------------------
 (Covered are Windows, Linux, OSX, FreeBSD.)
 
 Go to http://www.tomenet.net/ (or one of our personal pages) to download the
@@ -16627,5 +16641,15 @@ PROBLEM 46: Testing your character's damage-per-second (dps) on the target
             into the target dummy instead of using the melee auto-retaliator.
 SOLUTION:   You are experiencing game engine limits regarding the world surface
             (including all towns, like Bree). See (8.7) for details.
+
+PROBLEM 47: The TomeNET-Updater for Windows gives a message about captcha when
+            I try to update sound pack or music pack.
+SOLUTION:   Unfortunately the updater cannot defeat captchas of one-click
+            hosters from where the audio packs are downloaded.
+            This means that you just have to retry after some time has passed,
+            for example an hour, and hope that you won't get a captcha request
+            then.
+            (In general, captcha requests tend to pop up when the file is very
+            frequently accessed.)
 
 ==============================================================================
