@@ -8133,6 +8133,10 @@ extern int PlayerUID;
 #define is_fixed_irondeepdive_town(wpos, dlev) \
 	(in_irondeepdive(wpos) && \
         ((dlev) == 40 || (dlev) == 80))
+/* For guaranteed 'wild' towns at the intermediate floors of 1k and 3k */
+#define is_extra_fixed_irondeepdive_town(wpos, dlev) \
+	(in_irondeepdive(wpos) && \
+        ((dlev) == 20 || (dlev) == 60))
 
 /* Are we on the final floor and therefore eligile for recalling out? */
 #define irondeepdive_bottom(wpos) \

@@ -9082,7 +9082,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* Don't build one of these on 1x1 (super small) levels,
 	   to avoid insta(ghost)kill if a player recalls into that pit - C. Blue */
 	bool tiny_level = FALSE;
-	bool town = FALSE; /* for ironman */
+	bool town = FALSE, random_town_allowed; /* for ironman */
 #ifdef IRONDEEPDIVE_STATIC_TOWNS
 	bool town_static = FALSE;
 #endif
@@ -9306,6 +9306,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			if (d_ptr->flags2 & DF2_TOWNS_IRONRECALL) town = TRUE;
 		}
 	}
+
+
+	/* Dungeon towns */
+	random_town_allowed = TRUE;
+
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
 	if (is_fixed_irondeepdive_town(wpos, dun_lev)) {
 		p_ptr->IDDC_found_rndtown = FALSE;
@@ -9317,6 +9322,16 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		dun->l_ptr->flags1 |= LF1_IRON_RECALL;
  #endif
 	}
+ #ifdef IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+	else if (is_extra_fixed_irondeepdive_town(wpos, dun_lev)) {
+		town = TRUE;
+		//not static!
+		//no withdrawal allowed!
+	}
+	/* prevent further random towns being generated in IDDC
+	   if extra fixed towns are enabled */
+	random_town_allowed = FALSE;
+ #endif
 #endif
 	/* Generate town? */
 #if 0 /* towns become rarer the deeper we go? */
@@ -9329,6 +9344,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	 Also: No towns at Morgy depth or beyond. */
 	k = 0;
 	if (dun_lev > 2 && (town ||
+	    (random_town_allowed &&
 	    (dun_lev < 100 && (!p_ptr->IDDC_found_rndtown || !in_irondeepdive(wpos)) && (
 	    ((d_ptr->flags2 & DF2_TOWNS_FIX) && !(dun_lev % 20)) ||
 	    (!p_ptr->dummy_option_8 && (d_ptr->flags2 & DF2_TOWNS_RND) &&
@@ -9343,7 +9359,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
  #endif
 	    /* and new: no 2 towns within the same 1000ft interval (anti-cheeze, as if..) */
 	    && no_nearby_dungeontown(wpos)
-	    ))))) {
+	    )))))) {
 		if (k) {
 			if (in_irondeepdive(wpos)) p_ptr->IDDC_found_rndtown = TRUE;
 			s_printf("Generated random dungeon town at %d%% chance for player %s.\n", k, p_ptr->name);
@@ -9380,6 +9396,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		level_generation_time = FALSE;
 		return;
 	}
+
 
 	/* not too big levels for 'Arena Monster Challenge' event */
 	if (ge_special_sector &&
