@@ -2127,7 +2127,10 @@ if (hist != 2) {
 		c_put_str(likert_color, desc, y_row3 + 2, 42);
 
 		put_str("Magic Device:", y_row3 + 3, 28);
-		desc = likert(p_ptr->skill_dev, 60, 0);
+		//desc = likert(p_ptr->skill_dev, 60, 0);
+		//desc = likert(p_ptr->skill_dev, 80, 0);
+		//about 161 is max mdev reachable atm (2014/07/24)
+		desc = likert((p_ptr->skill_dev * (p_ptr->skill_dev + 80)) / 110, 100, 0);
 		c_put_str(likert_color, desc, y_row3 + 3, 42);
 
 
