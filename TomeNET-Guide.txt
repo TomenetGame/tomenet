@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. July 2014 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.7 - official websites are:
+| Latest update: 24. July 2014 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -8622,10 +8622,12 @@ Chests              Chests may contain treasures or items. Usually, chests
 
 (5.9a) Activatable items
 ------------------------
-Many items can be activated (press 'A' to try).
+Many items can be activated (press 'A' to try). These items are generally
+called 'Magic Devices'.
 The chance of successful activation may or may not depend on various factors,
 such as..
 -your magic device skill vs the item type base level
+ See (6.10) for more information about the Magic Device skill.
 -whether you have trained your Antimagic skill
 -if you have the item equipped
 
@@ -14077,25 +14079,22 @@ skill in the skill screen ('G'). It determines how well a character can make
 use of magical devices such as wands, staves, rods and activatable items.
 
 The Magic Device ability is not limited to a maximum value, although the
-player won't be able to increase it infinitely. The scale is:
-  0+    Bad
-  12+   Poor
-  18+   Fair
-  30+   Good
-  36+   Very good
-  42+   Excellent
-  54+   Superb
-  84+   Heroic
-  108+  Legendary
+player won't be able to increase it infinitely.
+While a low magic device ability might be sufficient to use supportive devices
+during breaks from combat, you will probably want superb, heroic or even
+legendary magic device ability if you intend to use magic devices as weapons
+in combat effectively. Otherwise your failure chance might be too high and
+therefore your damage output lacking.
 
 In detail, the magic device ability does this...
 -makes it easier to use wands, staves and rods and to activate items:
-  If random(1 to (skill - baseitemlevel)) > 3 then you will successfully
+  If random(1 to (skill - baseitemlevel)) > 2 then you will successfully
   use the item. (There's always a slim chance to succeed even if your
-  chances should be zero.) The base item level is from k_info.txt and caps
-  at 50. It is NOT the (often higher) level displayed on the item that you
-  see when looking at it in-game (ie the level shown in curly brackets).
-  Confusion halves your skill, EASY_USE doubles it.
+  chances should be zero.) The base item level is from k_info.txt. It is NOT
+  the (often higher) level displayed on the item that you see when looking at
+  it in-game (ie the level shown in curly brackets).
+  Confusion halves your skill, EASY_USE roughly doubles it and adds a small,
+  flat bonus.
 -speeds up recharging of rods:
   Skill in percent is added to the recharge rate; caps at skill 100,
   which means +100% recharge rate (approximately).
@@ -14110,6 +14109,13 @@ The magic device skill does the following...
 
 Magic device skill and ability have no effect on the damage output of traps
 loaded with a magic device.
+
+Rods, equippable items and true artifacts have more high level item types and
+are therefore on average harder to use. (For true artifacts their base level
+from a_info.txt counts, ie what is displayed at 'Found around depth:' in ~6.)
+Although there are also many low level true artifacts which accordingly will be
+much easier to activate.
+Staves and wands have more lower level types available in comparison.
 
 
 
