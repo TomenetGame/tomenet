@@ -1860,7 +1860,8 @@ artifact_type *randart_make(object_type *o_ptr) {
 	 * 90% are good
 	 */
 
-	/* Hack - make nazgul rings of power more useful: */
+	/* Hack - make nazgul rings of power more useful
+	   (and never 'cursed randarts' in the sense of sucking really badly): */
 	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_SPECIAL)) {
 		power = 65 + rand_int(15) + RANDART_QUALITY; /* 60+rnd(20)+RQ should be maximum */
 	} else if (!rand_int(10) || (k_ptr->flags3 & TR3_CURSED)) { /* 10% are cursed */
@@ -1881,7 +1882,8 @@ artifact_type *randart_make(object_type *o_ptr) {
 		}
 	}
 
-	if (is_ammo(k_ptr->tval)) {
+	if (is_ammo(k_ptr->tval) || /* ammo never aggravates */
+	    ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_SPECIAL))) { /* rings of power would lose their granted invisibility! */
 		aggravate_me = FALSE;
 //		power /= 3;
 	}
