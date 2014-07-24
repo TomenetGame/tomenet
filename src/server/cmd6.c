@@ -3314,12 +3314,9 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
  */
 void do_cmd_use_staff(int Ind, int item)
 {
-        u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = Players[Ind];
-
-	int	ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
-
-	object_type		*o_ptr;
+	int lev, ident, rad = DEFAULT_RADIUS_DEV(p_ptr);
+	object_type *o_ptr;
 
 	/* Hack -- let staffs of identify get aborted */
 	bool use_charge = TRUE, flipped = FALSE;
@@ -3399,30 +3396,7 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Not identified yet */
 	ident = FALSE;
 
-	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
-
-	/* Base chance of success */
-	chance = p_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
-
-        /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-
-        /* Is it simple to use ? */
-        if (f4 & TR4_EASY_USE) chance *= 10;
-
-	/* High level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
-
-	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-		chance = USE_DEVICE;
-
-	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
+	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the staff properly." , COLOUR_MD_FAIL);
 		return;
 	}
@@ -3443,6 +3417,9 @@ void do_cmd_use_staff(int Ind, int item)
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	/* Extract the item level */
+	lev = k_info[o_ptr->k_idx].level;
 
 	/* An identification was made */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
@@ -3524,9 +3501,8 @@ void do_cmd_use_staff(int Ind, int item)
  */
 void do_cmd_aim_wand(int Ind, int item, int dir)
 {
-        u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = Players[Ind];
-	int lev, ident, chance, sval;
+	int lev, ident, sval;
 	object_type *o_ptr;
 	bool flipped = FALSE;
 
@@ -3607,33 +3583,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	/* Not identified yet */
 	ident = FALSE;
 
-	/* Get the level */
-	lev = k_info[o_ptr->k_idx].level;
-
-	/* Base chance of success */
-	chance = p_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
-
-        /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-
-        /* Is it simple to use ? */
-        if (f4 & TR4_EASY_USE) chance *= 2;
-
-	/* High level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
-
-        /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-
-	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-		chance = USE_DEVICE;
-
-	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
+	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the wand properly." , COLOUR_MD_FAIL);
 		return;
 	}
@@ -3976,6 +3926,9 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
+	/* Extract the item level */
+	lev = k_info[o_ptr->k_idx].level;
+
 	/* Apply identification */
 	if (ident && !object_aware_p(Ind, o_ptr))
 	{
@@ -4173,12 +4126,10 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
  * All rods can be cancelled at the "Direction?" prompt
  */
 void do_cmd_zap_rod(int Ind, int item, int dir) {
-        u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = Players[Ind];
-
-	int                 ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
-
-	object_type		*o_ptr;
+	int lev, ident, rad = DEFAULT_RADIUS_DEV(p_ptr);
+	object_type *o_ptr;
+	u32b f4, dummy;
 
 	/* Hack -- let perception get aborted */
 	bool use_charge = TRUE, flipped = FALSE;
@@ -4258,7 +4209,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	}
 
 	/* Extract object flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	object_flags(o_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
@@ -4270,29 +4221,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	/* Not identified yet */
 	ident = FALSE;
 
-	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
-
-	/* Base chance of success */
-	chance = p_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
-
-	/* Is it simple to use ? */
-	if (f4 & TR4_EASY_USE) chance *= 2;
-
-	/* High level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
-	if (chance < 0) chance = 0;
-
-	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0)) {
-		chance = USE_DEVICE;
-	}
-
-	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
+	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
 		return;
 	}
@@ -4316,6 +4245,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	/* Extract the item level */
+	lev = k_info[o_ptr->k_idx].level;
 
 	/* Successfully determined the object function */
 	if (ident && !object_aware_p(Ind, o_ptr))
@@ -4371,10 +4303,10 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
  */
 void do_cmd_zap_rod_dir(int Ind, int dir)
 {
-        u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = Players[Ind];
-	int item, ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
+	int lev, item, ident, rad = DEFAULT_RADIUS_DEV(p_ptr);
 	object_type *o_ptr;
+	u32b f4, dummy;
 	/* Hack -- let perception get aborted */
 	bool use_charge = TRUE, flipped = FALSE;
 
@@ -4419,7 +4351,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	}*/
 
 	/* Extract object flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	object_flags(o_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
 
 
 	/* S(he) is no longer afk */
@@ -4432,29 +4364,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	/* Not identified yet */
 	ident = FALSE;
 
-	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
-
-	/* Base chance of success */
-	chance = p_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
-
-        /* Is it simple to use ? */
-        if (f4 & TR4_EASY_USE) chance *= 2;
-
-	/* High level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev) - p_ptr->antimagic;
-	if (chance < 0) chance = 0;
-
-	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0)) {
-		chance = USE_DEVICE;
-	}
-
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
+	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
 		return;
 	}
@@ -4809,6 +4720,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
+	/* Extract the item level */
+	lev = k_info[o_ptr->k_idx].level;
+
 	/* Successfully determined the object function */
 	if (ident && !object_aware_p(Ind, o_ptr)) {
 		flipped = object_aware(Ind, o_ptr);
@@ -4855,13 +4769,13 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
  */
 static bool item_tester_hook_activate(int Ind, object_type *o_ptr)
 {
-	u32b f1, f2, f3, f4, f5, f6, esp;
+	u32b f3, dummy;
 
 	/* Not known */
 	if (!object_known_p(Ind, o_ptr)) return (FALSE);
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
 
 	/* Check activation flag */
 	if (f3 & TR3_ACTIVATE) return (TRUE);
@@ -5087,9 +5001,8 @@ bool rod_requires_direction(int Ind, object_type *o_ptr) {
  * the user hits "escape" at the "direction" prompt.
  */
 void do_cmd_activate(int Ind, int item, int dir) {
-	u32b f1, f2, f3, f4, f5, f6, esp;
 	player_type *p_ptr = Players[Ind];
-	int         i, k, lev, chance;
+	int         i, k;
 //	int md = get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 	object_type *o_ptr;
 
@@ -5169,47 +5082,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-	/* Extract the item level */
-	lev = k_info[o_ptr->k_idx].level;
-
-	/* Hack -- use artifact level instead */
-	if (artifact_p(o_ptr)) lev = a_info[o_ptr->name1].level;
-
-	/* Base chance of success */
-	chance = p_ptr->skill_dev;
-
-	/* Confusion hurts skill */
-	if (p_ptr->confused) chance = chance / 2;
-
-        /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-
-	/* Is it simple to use ? */
-	if (f4 & TR4_EASY_USE) chance *= 2;
-
-	/* Hight level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev);
-
-	/* Extract object flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-
-	/* Certain items are easy to use too */
-	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) ||
-	    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH))
-	{
-		if (chance < USE_DEVICE * 2) chance = USE_DEVICE * 2;
-	}
-	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH && !p_ptr->total_winner) {
-		msg_print(Ind, "Only royalties may activate this Ring!");
-		if (!is_admin(p_ptr)) return;
-	}
-
-	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-		chance = USE_DEVICE;
-
 	/* Roll for usage */
-	if (((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) &&
+	if (!activate_magic_device(Ind, o_ptr) &&
 	    !o_ptr->tval == TV_BOOK) /* hack: blank books can always be 'activated' */
 	{
 		msg_print(Ind, "\377yYou failed to activate it properly.");

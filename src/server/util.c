@@ -6904,3 +6904,58 @@ void kick_ip(int Ind_kicker, char *ip_kickee, char *reason, bool msg) {
 	}
 	if (msg && !found) msg_print(Ind_kicker, "No matching player online to kick.");
 }
+
+bool activate_magic_device(int Ind, object_type *o_ptr) {
+	u32b dummy, f4;
+	player_type *p_ptr = Players[Ind];
+
+	/* Extract the item level */
+	int lev = k_info[o_ptr->k_idx].level;
+
+	/* Base chance of success */
+	int chance = p_ptr->skill_dev;
+
+	/* Hack -- use artifact level instead */
+	if (true_artifact_p(o_ptr)) lev = a_info[o_ptr->name1].level;
+
+	/* Confusion hurts skill */
+	if (p_ptr->confused) chance = chance / 2;
+
+	/* Extract object flags */
+	object_flags(o_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
+
+	/* Is it simple to use ? */
+	if (f4 & TR4_EASY_USE) {
+		chance += USE_DEVICE;
+
+		/* High level objects are harder */
+		chance = chance - lev / 2;
+	} else {
+		/* High level objects are harder */
+		//chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
+		chance = chance - lev;
+	}
+
+	/* Certain items are easy to use too */
+	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) ||
+	    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH))
+	{
+		if (chance < USE_DEVICE * 2) chance = USE_DEVICE * 2;
+	}
+	/* Or heavily restricted (todo: use WINNERS_ONLY flag instead for cleanliness) */
+	if (o_ptr->name1 == ART_PHASING && !p_ptr->total_winner) {
+		msg_print(Ind, "Only royalties may activate this Ring!");
+		if (!is_admin(p_ptr)) return FALSE;
+	}
+
+	//debug output our chance
+	s_printf("mdev %d%% (ud %d, c %d)\n", chance < USE_DEVICE ? 0 : 100 - ((USE_DEVICE - 1) * 100) / chance, USE_DEVICE, chance);
+
+	/* Give everyone a (slight) chance */
+	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
+		chance = USE_DEVICE;
+
+	/* Roll for usage */
+	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) return FALSE;
+	return TRUE;
+}

@@ -2137,8 +2137,7 @@ void carry(int Ind, int pickup, int confirm) {
  				 * Check that we don't know the item and can read a scroll - mikaelh */
 				if (!object_aware_p(Ind, o_ptr) || !object_known_p(Ind, o_ptr)) { /* was just object_known_p */
 					object_type *i_ptr;
-					int index, lev, chance;
-					u32b dummy, f4;
+					int index;
 					bool ID_item_found = FALSE;
 
 					/* check activatable items we have equipped */
@@ -2167,24 +2166,8 @@ void carry(int Ind, int pickup, int confirm) {
 							break; /* can't activate any other items either */
 						}
 
-						object_flags(i_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
-
-						/* Extract the item level */
-						lev = k_info[i_ptr->k_idx].level;
-						if (artifact_p(i_ptr)) lev = a_info[i_ptr->name1].level;
-						/* Base chance of success */
-						chance = p_ptr->skill_dev;
-						/* Confusion hurts skill */
-						if (p_ptr->confused) chance = chance / 2;
-						/* Simplicity? */
-						if (f4 & TR4_EASY_USE) chance *= 2;
-						/* High level objects are harder */
-						chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
-						if (chance < 0) chance = 0;
-						/* Give everyone a (slight) chance */
-						if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0)) chance = USE_DEVICE;
 						/* Roll for usage */
-						if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
+						if (!activate_magic_device(Ind, i_ptr)) {
 							msg_print(Ind, "You failed to activate it properly.");
 							break;
 						}
@@ -2246,23 +2229,8 @@ void carry(int Ind, int pickup, int confirm) {
 								continue; // find the scrolls =/
 							}
 
-							object_flags(i_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
-
-							/* Extract the item level */
-							lev = k_info[i_ptr->k_idx].level;
-							/* Base chance of success */
-							chance = p_ptr->skill_dev;
-							/* Confusion hurts skill */
-							if (p_ptr->confused) chance = chance / 2;
-							/* perc rod only: is it easy to use? */
-							if (f4 & TR4_EASY_USE) chance *= 2;
-							/* High level objects are harder */
-							chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
-							if (chance < 0) chance = 0;
-							/* Give everyone a (slight) chance */
-							if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0)) chance = USE_DEVICE;
 							/* Roll for usage */
-							if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) {
+							if (!activate_magic_device(Ind, i_ptr)) {
 								if (i_ptr->tval == TV_ROD)
 									msg_print(Ind, "You failed to use the rod properly.");
 								else
