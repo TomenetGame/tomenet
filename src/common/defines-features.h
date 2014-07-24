@@ -33,6 +33,9 @@
 /* Add extra fixed towns to "Ironman Deep Dive Challenge"? (at depths 1k and 3k),
    these are 'wild' like random towns and not as privileged (no withdrawal, no item staticness) */
 #define IRONDEEPDIVE_EXTRA_FIXED_TOWNS
+/* Do artifacts time out especially quickly in the IDDC? */
+#define IDDC_ARTIFACT_FAST_TIMEOUT
+
 
 #define DUNGEON_VISIT_BONUS	/* Experimental: Dungeons rarely visited give exp bonus - C. Blue */
 //#define DUNGEON_VISIT_BONUS_DEPTHRANGE /* not yet implemented: enhance DUNGEON_VISIT_BONUS algorithm further (but seems inefficient atm) */

@@ -4627,7 +4627,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					o_ptr->level = 0;
 					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
-					if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1);
+					if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1, &wpos);
 #endif
 				} else {
 					o_ptr = &forge;
@@ -4641,7 +4641,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					o_ptr->level = 0;
 					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
-					if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1);
+					if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1, &wpos);
 #endif
 				}
 
@@ -5521,7 +5521,7 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 			o_ptr->level = 0;
 			o_ptr->owner = p_ptr->id;
 			o_ptr->mode = p_ptr->mode;
-			if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1);
+			if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1, wpos);
 #endif
 		} else {
 			o_ptr = &forge;
@@ -5535,7 +5535,7 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 			o_ptr->level = 0;
 			o_ptr->owner = p_ptr->id;
 			o_ptr->mode = p_ptr->mode;
-			if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1);
+			if (o_ptr->name1) determine_artifact_timeout(o_ptr->name1, wpos);
 #endif
 		}
 		drop_near(o_ptr, 0, wpos, y, x);

@@ -3041,15 +3041,21 @@ errr rd_server_savefile() {
 			rd_byte(&tmp8u);
 			a_info[i].carrier = 0;
 		} else rd_s32b(&a_info[i].carrier);
-		if (s_older_than(4, 5, 6)) determine_artifact_timeout(i);
-		else {
+		if (s_older_than(4, 5, 6)) {
+			determine_artifact_timeout(i, NULL);
+			a_info[i].iddc = FALSE;
+		} else {
 			rd_s32b(&a_info[i].timeout);
 #ifdef FLUENT_ARTIFACT_RESETS
 			/* fluent-artifact-timeout was temporarily disabled? reset timer now then */
-			if (a_info[i].timeout == -2) determine_artifact_timeout(i);
+			if (a_info[i].timeout == -2) determine_artifact_timeout(i, NULL);
 #else
 			a_info[i].timeout = -2;
 #endif
+			if (!s_older_than(4, 5, 31)) {
+				rd_byte(&tmp8u);
+				a_info[i].iddc = (tmp8u != 0);
+			} else a_info[i].iddc = FALSE;
 		}
 	}
 

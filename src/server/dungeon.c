@@ -3267,6 +3267,14 @@ void recall_player(int Ind, char *message){
 			/* In case he can no longer use his current form */
 			do_mimic_change(Ind, 0, TRUE);
  #endif
+
+			/* Be nice: Actually set all his true artifacts to non-iddc timeouting
+			   (for IDDC_ARTIFACT_FAST_TIMEOUT) */
+			for (i = 0; i < INVEN_TOTAL; i++) {
+				if (!p_ptr->inventory[i].k_idx) continue;
+				if (!p_ptr->inventory[i].name1 || p_ptr->inventory[i].name1 == ART_RANDART) continue;
+				a_info[p_ptr->inventory[i].name1].iddc = FALSE;
+			}
 		}
 #endif
 	}
@@ -6990,6 +6998,12 @@ void dungeon(void)
 	/* handle in 1-minute resolution - assume we have less artifacts than 60*cfg.fps */
 	i = turn % (cfg.fps * 60);
 	if (i < max_a_idx && a_info[i].timeout > 0) {
+ #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
+		if (a_info[i].iddc) {
+			a_info[i].timeout -= 2;
+			if (a_info[i].timeout == -1) a_info[i].timeout = 0;
+		} else
+ #endif
 		a_info[i].timeout--;
 		if (a_info[i].timeout == 0) erase_artifact(i);
 		else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING) {

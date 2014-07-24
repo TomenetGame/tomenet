@@ -9255,7 +9255,7 @@ void inven_confirm_revision(int Ind, int revision)
 
 /* Set timeout for a newly found artifact, for fluent artifact reset system
    to counter long-time hoarding of artifacts. - C. Blue */
-void determine_artifact_timeout(int a_idx) {
+void determine_artifact_timeout(int a_idx, struct worldpos *wpos) {
 #ifndef FLUENT_ARTIFACT_RESETS
 	a_info[a_idx].timeout = -2; /* marker for when it gets reactivated */
 #else
@@ -9275,12 +9275,12 @@ void determine_artifact_timeout(int a_idx) {
 	}
 	forge.name1 = a_idx;
 
-#ifdef RING_OF_PHASING_NO_TIMEOUT
+ #ifdef RING_OF_PHASING_NO_TIMEOUT
 	if (a_idx == ART_PHASING) {
 		/* special treatment: it's pseudo-permanent, but gets erased when someone else kills Zu-Aon */
 		a_info[a_idx].timeout = -1;
 	} else
-#endif
+ #endif
 	if (multiple_artifact_p(&forge)) {
 		a_info[a_idx].timeout = -1; /* grond/crown don't expire */
 		return;
@@ -9296,6 +9296,8 @@ void determine_artifact_timeout(int a_idx) {
 	a_info[a_idx].timeout *= 2;
  #endif
 #endif
+	//for IDDC_ARTIFACT_FAST_TIMEOUT
+	if (wpos) a_info[a_idx].iddc = in_irondeepdive(wpos);
 }
 
 /* Similarly to erase_guild_key() this function searches *everywhere* for a

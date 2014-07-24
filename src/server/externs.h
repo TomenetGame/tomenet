@@ -1268,7 +1268,7 @@ extern byte potion_col[MAX_COLORS];
 
 extern byte get_spellbook_name_colour(int pval);
 extern int ring_of_polymorph_level(int r_lev);
-void determine_artifact_timeout(int a_idx);
+void determine_artifact_timeout(int a_idx, struct worldpos *wpos);
 void erase_artifact(int a_idx);
 void hack_particular_item(void);
 

@@ -5344,7 +5344,7 @@ if (cfg.unikill_format) {
 					qq_ptr->level = 0;
 					qq_ptr->owner = p_ptr->id;
 					qq_ptr->mode = p_ptr->mode;
-					determine_artifact_timeout(a_idx);
+					determine_artifact_timeout(a_idx, wpos);
 				}
 #endif
 				drop_near(qq_ptr, -1, wpos, y, x);
@@ -5375,7 +5375,7 @@ if (cfg.unikill_format) {
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
-			if (qq_ptr->name1) determine_artifact_timeout(qq_ptr->name1);
+			if (qq_ptr->name1) determine_artifact_timeout(qq_ptr->name1, wpos);
 #endif
 			drop_near(qq_ptr, -1, wpos, y, x);
 			s_printf("..dropped.\n");
@@ -5969,7 +5969,7 @@ if (cfg.unikill_format) {
 					qq_ptr->level = 0;
 					qq_ptr->owner = p_ptr->id;
 					qq_ptr->mode = p_ptr->mode;
-					determine_artifact_timeout(a_idx);
+					determine_artifact_timeout(a_idx, wpos);
 #endif
 					drop_near(qq_ptr, -1, wpos, y, x);
 				}

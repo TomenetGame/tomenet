@@ -2034,10 +2034,10 @@ void carry(int Ind, int pickup, int confirm) {
 					o_ptr->mode = p_ptr->mode;
 					if (true_artifact_p(o_ptr)) {
 						a_info[o_ptr->name1].carrier = p_ptr->id;
-						determine_artifact_timeout(o_ptr->name1);
+						determine_artifact_timeout(o_ptr->name1, wpos);
 #if CHEEZELOG_LEVEL > 2
 						s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d%s%s: %s\n",
-									    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+						    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
 #endif
 						/* Log top arts (except Grond/Crown of course) - atm this excludes Razorback and Mediator */
 						if ((a_info[o_ptr->name1].level >= 100 || o_ptr->name1 == ART_DWARVEN_ALE)

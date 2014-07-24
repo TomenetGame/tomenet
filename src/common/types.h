@@ -328,6 +328,7 @@ struct artifact_type
 
 	s32b carrier;		/* Current holder (not necessarily same as o_ptr->owner), just to keep track */
 	s32b timeout;		/* anti-hoarding artifact reset timer (-1 = permanent) */
+	bool iddc;		/* for IDDC_ARTIFACT_FAST_TIMEOUT */
 };
 
 

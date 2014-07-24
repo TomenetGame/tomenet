@@ -369,6 +369,7 @@ struct artifact_type
         bool known;                /* Is this artifact already IDed? */
         s32b carrier;
         s32b timeout;
+        byte iddc;
 };
 artifact_type a_info[MAX_A_IDX];
 
