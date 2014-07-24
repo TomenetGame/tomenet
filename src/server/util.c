@@ -6949,7 +6949,7 @@ bool activate_magic_device(int Ind, object_type *o_ptr) {
 	}
 
 	//debug output our chance
-	s_printf("mdev %d%% (ud %d, c %d)\n", chance < USE_DEVICE ? 0 : 100 - ((USE_DEVICE - 1) * 100) / chance, USE_DEVICE, chance);
+	//s_printf("mdev %d%% (ud %d, c %d)\n", chance < USE_DEVICE ? 0 : 100 - ((USE_DEVICE - 1) * 100) / chance, USE_DEVICE, chance);
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
