@@ -1358,6 +1358,13 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
+
+			if (p_ptr->IDDC_logscum) {
+				msg_print(Ind, "\377yYou cannot acquire an extermination order on a stale floor.");
+				msg_print(Ind, "\377yTake a staircase to move on to a different dungeon level.");
+				return;
+			}
+
 			if (tk && !strcmp(token[1], "guild")) {
 				if (!p_ptr->guild || guilds[p_ptr->guild].master != p_ptr->id) {
 					msg_print(Ind, "\377rYou are not a guildmaster");
