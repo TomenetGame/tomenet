@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. July 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. July 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -570,6 +570,9 @@ P       O       party screen. Form/disband/modify a party with other players
                 For winners (queens/kings/empresses/emperors) the range is 11
                 levels instead of 7.
 
+H       CTRL+G  re-apply client-side and (if 'auto_inscribe' option is enabled)
+                server-side auto-inscriptions to an item.
+
 
 SPACE   Stop executing repeatable actions such as searching, tunnelling or
         disarming traps. Also stops active fire-till-kill shooting and any
@@ -606,9 +609,6 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         "\##" will remove the whole part that follows after the '#' character.
 
 }       remove inscription from an item.
-
-H       re-apply client-side and (if 'auto_inscribe' option is enabled)
-        server-side auto-inscriptions to an item.
 
 /       in general, use an item (combines q,r, etc..).
         This can be useful if you run out of macros for a specific action,

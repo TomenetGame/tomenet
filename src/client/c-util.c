@@ -1194,6 +1194,8 @@ static char roguelike_commands(char command)
 		case KTRL('A'): return ('x');
 		/* House commands */
 		case KTRL('E'): return ('h');
+		/* Reapply auto-inscriptions */
+		case KTRL('G'): return ('H');
 
                 /* Run */
                 case ',': return ('.');
