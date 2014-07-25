@@ -1620,11 +1620,11 @@ static void artifact_lore(void) {
 	int selected_line = 0;
 	/* for pasting lore to chat */
 	char paste_lines[18][MSG_LEN];
-        /* suppress hybrid macros */
-        bool inkey_msg_old;
-        /* for skipping pages forward/backward if there are more matches than lines */
-        int pageoffset = 0, skipped;
-        bool more_results;
+	/* suppress hybrid macros */
+	bool inkey_msg_old;
+	/* for skipping pages forward/backward if there are more matches than lines */
+	int pageoffset = 0, skipped;
+	bool more_results;
 
 	Term_save();
 
@@ -1715,20 +1715,29 @@ static void artifact_lore(void) {
 
 		Term_putstr(2,  23, -1, TERM_WHITE, "Press ESC to exit, ENTER for lore/stats, Up/Down/PgUp/PgDn/Home to navigate");
 		/* hack: place cursor at pseudo input prompt */
-	        Term->scr->cx = 54 + strlen(s);
-	        Term->scr->cy = 2;
-	        Term->scr->cu = 1;
+		Term->scr->cx = 54 + strlen(s);
+		Term->scr->cy = 2;
+		Term->scr->cu = 1;
 
 		inkey_msg_old = inkey_msg;
-	        inkey_msg = TRUE;
+		inkey_msg = TRUE;
 		c = inkey();
 		inkey_msg = inkey_msg_old;
 
 		/* specialty: allow chatting from within here */
-                if (c == ':') {
-            		cmd_message();
-            		continue;
-            	}
+		if (c == ':') {
+			cmd_message();
+			continue;
+		}
+		/* allow copying the artifact details into an item inscription ;) */
+		if (c == '{') {
+			cmd_inscribe();
+			continue;
+		}
+		if (c == '}') {
+			cmd_uninscribe();
+			continue;
+		}
 
 		/* navigate in the list (up/down) */
 		if (s[0] != '#' && c == '8') { //rl:'k'
@@ -1812,16 +1821,27 @@ static void artifact_lore(void) {
 			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, c/C to chat-paste --");
 		}
 		/* hack: hide cursor */
-	        Term->scr->cx = Term->wid;
-	        Term->scr->cu = 1;
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		while (TRUE) {
 			c = inkey();
+
 			/* specialty: allow chatting from within here */
-	                if (c == ':') {
-	            		cmd_message();
+			if (c == ':') {
+				cmd_message();
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
-	            	}
+			}
+			/* allow copying the artifact details into an item inscription ;) */
+			if (c == '{') {
+				cmd_inscribe();
+				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
+			}
+			if (c == '}') {
+				cmd_uninscribe();
+				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
+			}
+
 			if (c == '\e' || c == '\b') break;
 			if (c == ' ') {
 				show_lore = !show_lore;
@@ -1886,11 +1906,11 @@ static void monster_lore(void) {
 	int selected_line = 0;
 	/* for pasting lore to chat */
 	char paste_lines[18][MSG_LEN];
-        /* suppress hybrid macros */
-        bool inkey_msg_old;
-        /* for skipping pages forward/backward if there are more matches than lines */
-        int pageoffset = 0, skipped;
-        bool more_results;
+	/* suppress hybrid macros */
+	bool inkey_msg_old;
+	/* for skipping pages forward/backward if there are more matches than lines */
+	int pageoffset = 0, skipped;
+	bool more_results;
 
 	Term_save();
 
@@ -2068,20 +2088,29 @@ static void monster_lore(void) {
 
 		Term_putstr(2,  23, -1, TERM_WHITE, "Press ESC to exit, ENTER for lore/stats, Up/Down/PgUp/PgDn/Home to navigate");
 		/* hack: place cursor at pseudo input prompt */
-	        Term->scr->cx = 53 + strlen(s);
-	        Term->scr->cy = 2;
-	        Term->scr->cu = 1;
+		Term->scr->cx = 53 + strlen(s);
+		Term->scr->cy = 2;
+		Term->scr->cu = 1;
 
-    		inkey_msg_old = inkey_msg;
-	        inkey_msg = TRUE;
+		inkey_msg_old = inkey_msg;
+		inkey_msg = TRUE;
 		c = inkey();
-    		inkey_msg = inkey_msg_old;
+		inkey_msg = inkey_msg_old;
 
 		/* specialty: allow chatting from within here */
-                if (c == ':') {
-            		cmd_message();
-            		continue;
-            	}
+		if (c == ':') {
+			cmd_message();
+			continue;
+		}
+		/* just because you can do this in artifact lore too.. */
+		if (c == '{') {
+			cmd_inscribe();
+			continue;
+		}
+		if (c == '}') {
+			cmd_uninscribe();
+			continue;
+		}
 
 		/* navigate in the list (up/down) */
 		if (s[0] != '#' && c == '8') { //rl:'k'
@@ -2165,16 +2194,27 @@ static void monster_lore(void) {
 			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, c/C to chat-paste --");
 		}
 		/* hack: hide cursor */
-	        Term->scr->cx = Term->wid;
-	        Term->scr->cu = 1;
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 
 		while (TRUE) {
 			c = inkey();
+
 			/* specialty: allow chatting from within here */
-	                if (c == ':') {
-	            		cmd_message();
+			if (c == ':') {
+				cmd_message();
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
-	            	}
+			}
+			/* just because you can do this in artifact lore too.. */
+			if (c == '{') {
+				cmd_inscribe();
+				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
+			}
+			if (c == '}') {
+				cmd_uninscribe();
+				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
+			}
+
 			if (c == '\e' || c == '\b') break;
 			if (c == ' ') {
 				show_lore = !show_lore;
