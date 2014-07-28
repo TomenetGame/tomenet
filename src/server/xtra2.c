@@ -7989,7 +7989,9 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 		del_xorder(questid);
 		return(FALSE);
 	}
-	s_printf("Added extermination order id %d (players %d), target %d (%s)\n", xorders[i].id, xorders[i].active, target, p_ptr != NULL ? p_ptr->name : "NULL");
+	s_printf("Added extermination order id %d (players %d), target %d (%s): %d x %s\n",
+	    xorders[i].id, xorders[i].active, target, p_ptr != NULL ? p_ptr->name : "NULL",
+	    num, r_name + r_info[type].name);
 	questid++;
 	if (questid == 0) questid = 1;
 	if (target != Ind) {
