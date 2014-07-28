@@ -1534,10 +1534,10 @@ static void set_mixing_sdl(void) {
 		/* Note: Linear scaling is used here to allow more precise control at the server end */
 			Mix_Volume(n, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * channel_volume[n]) / 100));
 
-#ifdef DISABLE_MUTED_AUDIO
+ #ifdef DISABLE_MUTED_AUDIO
 		if ((!cfg_audio_master || !cfg_audio_sound) && Mix_Playing(n))
 			Mix_HaltChannel(n);
-#endif
+ #endif
 	}
 #endif
 	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
@@ -1548,11 +1548,11 @@ static void set_mixing_sdl(void) {
 #endif
 
 	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
- #ifndef WEATHER_VOL_PARTICLES
+#ifndef WEATHER_VOL_PARTICLES
 		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
- #else
+#else
 		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
- #endif
+#endif
 
 	if (ambient_channel != -1 && Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
 		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
