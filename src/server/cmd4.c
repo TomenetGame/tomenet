@@ -228,25 +228,36 @@ void do_cmd_check_artifacts(int Ind, int line)
 
 			/* Hack -- Build the artifact name */
 			if (admin) {
-				char timeleft[9], c = 'w';
+				char timeleft[10], c = 'w';
+				int timeout =
+#ifdef IDDC_ARTIFACT_FAST_TIMEOUT
+				    a_ptr->iddc ? a_ptr->timeout / 2 :
+#endif
+				    a_ptr->timeout;
 
 				/* bad: should just use determine_artifact_timeout() for consistency, instead of hard-coding */
-				int timeout = winner_artifact_p(&forge) ? 60 * 2 : 60;
+				int long_timeout = winner_artifact_p(&forge) ? 60 * 2 : 60;
 #ifdef RPG_SERVER
-				timeout *= 2;
+				long_timeout *= 2;
 #endif
 
-				if (a_ptr->timeout <= 0) sprintf(timeleft, "\377s  - ");
-				else if (a_ptr->timeout < 60 * 2) sprintf(timeleft, "\377r%3dm", a_ptr->timeout);
-				else if (a_ptr->timeout < 60 * 24 * 2) sprintf(timeleft, "\377y%3dh", a_ptr->timeout / 60);
-				else if (a_ptr->timeout < timeout * 24 * (FLUENT_ARTIFACT_WEEKS * 7 - 1)) sprintf(timeleft, "\377s%3dd", a_ptr->timeout / 60 / 24);
-				else sprintf(timeleft, "\377G%3dd", a_ptr->timeout / 60 / 24); /* indicate very recently found arts */
+				if (timeout <= 0) sprintf(timeleft, "\377s  - ");
+				else if (timeout < 60 * 2) sprintf(timeleft, "\377r%3dm", timeout);
+				else if (timeout < 60 * 24 * 2) sprintf(timeleft, "\377y%3dh", timeout / 60);
+				else if (timeout < long_timeout * 24 * (FLUENT_ARTIFACT_WEEKS * 7 - 1))
+					sprintf(timeleft, "\377s%3dd", timeout / 60 / 24);
+				else sprintf(timeleft, "\377G%3dd", timeout / 60 / 24); /* indicate very recently found arts */
 
 				if (a_ptr->cur_num != 1 && !multiple_artifact_p(&forge)) c = 'r';
 				else if (admin_artifact_p(&forge)) c = 'y';
 				else if (winner_artifact_p(&forge)) c = 'v';
 				else if (a_ptr->flags4 & TR4_SPECIAL_GENE) c = 'B';
 				else if (a_ptr->cur_num != 1) c = 'o';
+#ifdef IDDC_ARTIFACT_FAST_TIMEOUT
+				if (a_ptr->iddc)
+					//strcat(timeleft, "*");
+					c = 'D';
+#endif
 				fprintf(fff, "\377%c", c);
 #ifndef ARTS_PRE_SORT
 				fprintf(fff, "%3d/%d %s\377%c", i, a_ptr->cur_num, timeleft, c);
@@ -266,16 +277,22 @@ void do_cmd_check_artifacts(int Ind, int line)
 				/* actually show him timeouts of those artifacts the player owns.
 				   Todo: Should only show timeout if *ID*ed (ID_MENTAL), but not practical :/ */
 				if (p_ptr->id == a_ptr->carrier) {
+					int timeout =
+ #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
+					    a_ptr->iddc ? a_ptr->timeout / 2 :
+ #endif
+					    a_ptr->timeout;
+
 					sprintf(fmt, "%%%ds\377U", (int)(45 - strlen(base_name)));
 					fprintf(fff, fmt, "");
  #ifdef RING_OF_PHASING_NO_TIMEOUT
 					if (forge.name1 == ART_PHASING) fprintf(fff, " (Resets with Zu-Aon)");
 					else
  #endif
-					if (a_ptr->timeout <= 0) ;
-					else if (a_ptr->timeout < 60 * 2) fprintf(fff, " (\377r%d minutes\377U till reset)", a_ptr->timeout);
-					else if (a_ptr->timeout < 60 * 24 * 2) fprintf(fff, " (\377y%d hours\377U till reset)", a_ptr->timeout / 60);
-					else fprintf(fff, " (%d days till reset)", a_ptr->timeout / 60 / 24);
+					if (timeout <= 0) ;
+					else if (timeout < 60 * 2) fprintf(fff, " (\377r%d minutes\377U till reset)", timeout);
+					else if (timeout < 60 * 24 * 2) fprintf(fff, " (\377y%d hours\377U till reset)", timeout / 60);
+					else fprintf(fff, " (%d days till reset)", timeout / 60 / 24);
 				}
 #endif
 				fprintf(fff, "\n");
