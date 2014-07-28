@@ -1673,7 +1673,11 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	}
 
 	/* enable/switch to certain ambient loops */
+#if 0 /* buggy: enable no_house_sfx while inside a house, and the sfx will stay looping even when leaving the house */
 	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos) && p_ptr->sfx_house) { /* sfx_house check is redundant with grid_affects_player() */
+#else /* still buggy :-p */
+	if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && istown(wpos)) {
+#endif
 		Send_sfx_ambient(Ind, SFX_AMBIENT_FIREPLACE, smooth);
 	} else if (p_ptr->sound_ambient != SFX_AMBIENT_FIREPLACE && 
 	    p_ptr->sound_ambient != SFX_AMBIENT_SHORE && wpos->wz == 0 && (wild_info[wpos->wy][wpos->wx].type == WILD_OCEAN || wild_info[wpos->wy][wpos->wx].bled == WILD_OCEAN)) {

@@ -307,7 +307,7 @@ void (*sound_weather_hook)(int sound);
 void (*sound_weather_hook_vol)(int sound, int vol);
 bool (*music_hook)(int music);
 int cfg_audio_rate = 44100, cfg_max_channels = 32, cfg_audio_buffer = 1024;
-int music_cur = -1, music_cur_song = -1, music_next = -1, weather_channel = -1, weather_current, ambient_channel = -1, ambient_current;
+int music_cur = -1, music_cur_song = -1, music_next = -1, weather_channel = -1, weather_current, weather_channel_volume = 0, ambient_channel = -1, ambient_current, ambient_channel_volume = 0;
 int weather_particles_seen, weather_sound_change, weather_fading, ambient_fading;
 bool wind_noticable = FALSE;
 bool cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE, weather_resume = FALSE, ambient_resume = FALSE;

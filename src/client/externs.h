@@ -890,7 +890,7 @@ extern void set_mixing(void);
 extern void weather_handle_fading(void);
 extern void ambient_handle_fading(void);
 extern void mixer_fadeall(void);
-extern int music_cur, music_cur_song, music_next, weather_channel, weather_current, ambient_channel, ambient_current;
+extern int music_cur, music_cur_song, music_next, weather_channel, weather_current, weather_channel_volume, ambient_channel, ambient_current, ambient_channel_volume;
 extern int weather_particles_seen, weather_sound_change, weather_fading, ambient_fading;
 extern bool wind_noticable;
 extern int cfg_audio_rate, cfg_max_channels, cfg_audio_buffer;

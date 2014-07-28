@@ -912,8 +912,10 @@ static void play_sound_weather(int event) {
 			return;
 		}
 
-		if (Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
+		if (Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
+			if (!weather_channel_volume) Mix_HaltChannel(weather_channel); else //hack: workaround SDL bug that doesn't terminate a sample playing at 0 volume after a FadeOut
 			Mix_FadeOutChannel(weather_channel, 2000);
+		}
 		return;
 	}
 
@@ -938,8 +940,10 @@ static void play_sound_weather(int event) {
 		if (weather_channel != -1) Mix_HaltChannel(weather_channel);
 #else /* fade out */
 		if (weather_channel != -1 &&
-		    Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
+		    Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
+			if (!weather_channel_volume) Mix_HaltChannel(weather_channel); else //hack: workaround SDL bug that doesn't terminate a sample playing at 0 volume after a FadeOut
 			Mix_FadeOutChannel(weather_channel, 2000);
+		}
 #endif
 		return;
 	}
@@ -1064,8 +1068,10 @@ static void play_sound_weather_vol(int event, int vol) {
 			return;
 		}
 
-		if (Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
+		if (Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
+			if (!weather_channel_volume) Mix_HaltChannel(weather_channel); else //hack: workaround SDL bug that doesn't terminate a sample playing at 0 volume after a FadeOut
 			Mix_FadeOutChannel(weather_channel, 2000);
+		}
 		return;
 	}
 
@@ -1265,8 +1271,10 @@ static void play_sound_ambient(int event) {
 			return;
 		}
 
-		if (Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
+		if (Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT) {
+			if (!ambient_channel_volume) Mix_HaltChannel(ambient_channel); else //hack: workaround SDL bug that doesn't terminate a sample playing at 0 volume after a FadeOut
 			Mix_FadeOutChannel(ambient_channel, 2000);
+		}
 		return;
 	}
 
@@ -1291,8 +1299,10 @@ static void play_sound_ambient(int event) {
 		if (ambient_channel != -1) Mix_HaltChannel(ambient_channel);
 #else /* fade out */
 		if (ambient_channel != -1 &&
-		    Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
+		    Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT) {
+			if (!ambient_channel_volume) Mix_HaltChannel(ambient_channel); else //hack: workaround SDL bug that doesn't terminate a sample playing at 0 volume after a FadeOut
 			Mix_FadeOutChannel(ambient_channel, 2000);
+		}
 #endif
 		return;
 	}
@@ -1440,7 +1450,8 @@ static bool play_music(int event) {
 
 	/* check if music is already running, if so, fade it out first! */
 	if (Mix_PlayingMusic()) {
-		if (Mix_FadingMusic() != MIX_FADING_OUT) Mix_FadeOutMusic(500);
+		if (Mix_FadingMusic() != MIX_FADING_OUT)
+			Mix_FadeOutMusic(500);
 	} else {
 		//play immediately
 		fadein_next_music();
@@ -1547,15 +1558,19 @@ static void set_mixing_sdl(void) {
 	} else if (!Mix_PlayingMusic()) reenable_music();
 #endif
 
-	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT)
+	if (weather_channel != -1 && Mix_FadingChannel(weather_channel) != MIX_FADING_OUT) {
 #ifndef WEATHER_VOL_PARTICLES
-		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100);
+		weather_channel_volume = (CALC_MIX_VOLUME(cfg_audio_weather, cfg_audio_weather_volume) * grid_weather_volume) / 100;
+		Mix_Volume(weather_channel, weather_channel_volume);
 #else
-		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth) * grid_weather_volume) / 100);
+		Mix_Volume(weather_channel, weather_channel_volume);
 #endif
+	}
 
-	if (ambient_channel != -1 && Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT)
-		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100);
+	if (ambient_channel != -1 && Mix_FadingChannel(ambient_channel) != MIX_FADING_OUT) {
+		ambient_channel_volume = (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume) * grid_ambient_volume) / 100;
+		Mix_Volume(ambient_channel, ambient_channel_volume);
+	}
 
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_weather) {
