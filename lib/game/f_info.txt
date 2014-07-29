@@ -214,7 +214,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> locked door (power 1)
 
@@ -223,7 +223,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> locked door (power 2)
 
@@ -232,7 +232,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> locked door (power 3)
 
@@ -241,7 +241,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> locked door (power 4)
 
@@ -250,7 +250,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> locked door (power 5)
 
@@ -259,7 +259,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> locked door (power 6)
 
@@ -268,7 +268,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> locked door (power 7)
 
@@ -277,7 +277,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # XXX jammed doors are not DOOR ? XXX
 # 0x2x --> jammed door (power 0)
@@ -287,7 +287,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> jammed door (power 1)
 
@@ -296,7 +296,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> jammed door (power 2)
 
@@ -305,7 +305,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> jammed door (power 3)
 
@@ -314,7 +314,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> jammed door (power 4)
 
@@ -323,7 +323,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> jammed door (power 5)
 
@@ -332,7 +332,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> jammed door (power 6)
 
@@ -341,7 +341,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x2x --> jammed door (power 7)
 
@@ -350,7 +350,7 @@ G:+:U
 M:32
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | REMEMBER | NOTICE
 F:TUNNELABLE
-D:1:You bash the boor.
+D:1:You bash the door.
 
 # 0x30 --> secret door
 
@@ -1123,7 +1123,7 @@ N:224:sealed door
 G:+:r
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | NOTICE
-D:1:You bash the boor but it doesn't seem to move.
+D:1:You bash the door but it doesn't seem to move.
 D:2:A hideous looking ornate door is blocking your way.
 
 N:225:unsealed door
@@ -1156,7 +1156,7 @@ N:230:sealed door
 G:+:r
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | NOTICE
-D:1:You bash the boor but it doesn't seem to move.
+D:1:You bash the door but it doesn't seem to move.
 D:2:A hideous looking ornate door is blocking your way.
 
 
