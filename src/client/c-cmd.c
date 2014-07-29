@@ -1939,7 +1939,11 @@ static void monster_lore(void) {
 			if (s[1] && !pageoffset) for (i = 1; i < MAX_R_IDX; i++) {
 				/* match? */
 				if (monster_list_symbol[i][1] == s[1] &&
-				    (!s[2] || monster_list_symbol[i][0] == s[2] ||
+				    (!s[2] ||
+				     /* don't display 'v'iolet monsters that are really multi-hued, when searching for 'v'iolet monsters */
+				     (monster_list_symbol[i][0] == s[2] &&
+				     !(s[2] == 'v' && (monster_list_any[i] || monster_list_breath[i])))
+				     ||
 				    (s[2] == 'm' && monster_list_any[i]) ||
 				    (s[2] == 'M' && monster_list_breath[i]))) {
 		    			selected = monster_list_code[i];
@@ -1963,7 +1967,11 @@ static void monster_lore(void) {
 
 				if (monster_list_code[i] &&
 				    monster_list_symbol[i][1] == s[1] &&
-				    (!s[2] || monster_list_symbol[i][0] == s[2] ||
+				    (!s[2] ||
+				     /* don't display 'v'iolet monsters that are really multi-hued, when searching for 'v'iolet monsters */
+				     (monster_list_symbol[i][0] == s[2] &&
+				     !(s[2] == 'v' && (monster_list_any[i] || monster_list_breath[i])))
+				     ||
 				    (s[2] == 'm' && monster_list_any[i]) ||
 				    (s[2] == 'M' && monster_list_breath[i]))) {
 					/* hack - found more results than fit on currently displayed page? */
