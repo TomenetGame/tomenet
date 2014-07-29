@@ -1267,6 +1267,7 @@ static void init_artifact_list() {
 	FILE *fff;
 	int tval = 0, sval = 0, i, v1 = 0, v2 = 0, v3 = 0, rar;
 	bool discard, special_gene, flag_break_marker;
+	bool next_art_name_ok, premature_next_art = FALSE;
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "a_info.txt");
@@ -1276,7 +1277,8 @@ static void init_artifact_list() {
 		return;
 	}
 
-	while (0 == my_fgets(fff, buf, 1024)) {
+	while (premature_next_art || 0 == my_fgets(fff, buf, 1024)) {
+		premature_next_art = FALSE;
 		/* strip $/%..$/! conditions */
 		p1 = p2 = buf; /* dummy, != NULL */
 		while (buf[0] == '$' || buf[0] == '%') {
@@ -1309,7 +1311,10 @@ static void init_artifact_list() {
 		strcpy(art_name, p2 + 1);
 		discard = FALSE;
 		special_gene = FALSE;
+		/* artifact entry ends after F lines.. */
 		flag_break_marker = FALSE;
+		/* ..but some don't have those (Khazad!), so we need to test for next N line instead */
+		next_art_name_ok = FALSE;
 
 		/* fetch tval,sval and lookup type name in k_info */
 		rar = 1; /* paranoia/kill compiler warning */
@@ -1329,6 +1334,13 @@ static void init_artifact_list() {
 
 			/* HACK: done with scanning flags? -- note this is non-canonical (empty lines are actually allowed), ew */
 			if (flag_break_marker && buf[0] != 'F') break;
+			/* hack: Next artifact name? then we're done too */
+			if (buf[0] == 'N' && next_art_name_ok) break;
+			if (buf[0] == 'P') {
+				premature_next_art = TRUE;
+				next_art_name_ok = TRUE;
+				continue;
+			}
 
 			if (strlen(buf) < 3 || (buf[0] != 'I' && buf[0] != 'W' && buf[0] != 'F')) continue;
 			if (buf[0] == 'I') {
@@ -1359,7 +1371,7 @@ static void init_artifact_list() {
 		/* lookup type name */
 		for (i = 0; i < MAX_K_IDX; i++) {
 			if (kind_list_tval[i] == tval &&
-				kind_list_sval[i] == sval) {
+			    kind_list_sval[i] == sval) {
 				strcpy(artifact_list_name[artifact_list_idx], "The ");
 				strcat(artifact_list_name[artifact_list_idx], kind_list_name[i]);
 				strcat(artifact_list_name[artifact_list_idx], " ");

@@ -2684,10 +2684,9 @@ F:ESP_ANIMAL | SEE_INVIS |
 
 N:216:of the Khazad
 I:80:38:500
-P:0:0d0:20:25:0
 #W:10:40:3:5000
 W:10:1:3:5000
-P:0:0d0:0:0:0
+P:0:2d3:0:0:0
 #Z:Confuse self
 D:In the not-too-distant past, DarkGod created three pints of magic ale.
 D:This ale was of the highest quality -- far stronger than the standard  
