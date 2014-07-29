@@ -5195,7 +5195,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF6_S_UNIQUE			0x80000000	/* Summon Unique Monster */
 
 #define RF6_PLAYER_SPELLS (RF6_HASTE | RF6_HAND_DOOM | RF6_HEAL | \
-		RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL)
+		RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_TELE_AWAY)
 #define RF6_RADIUS_SPELLS (0L)
 
 /*
