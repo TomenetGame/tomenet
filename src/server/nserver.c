@@ -9067,7 +9067,17 @@ static int Receive_locate(int ind)
 	/* Sanity check */
 	if (bad_dir(dir)) return 1;
 
-	if (p_ptr) do_cmd_locate(player, dir);
+	if (p_ptr) {
+#if 0 /* too much slowdown of the game play ~~ */
+		if (!is_admin(p_ptr) && p_ptr->redraw_cooldown) {
+			Packet_printf(&connp->q, "%c%c", ch, dir);
+			return 0;
+		}
+		/* have a small cooldown, albeit less than like from CTRL+R'ing directly */
+		p_ptr->redraw_cooldown = 1;
+#endif
+		do_cmd_locate(player, dir);
+	}
 
 	return 1;
 }

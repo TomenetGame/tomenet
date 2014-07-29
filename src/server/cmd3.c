@@ -3280,8 +3280,7 @@ void do_cmd_look(int Ind, int dir) {
 /*
  * Allow the player to examine other sectors on the map
  */
-void do_cmd_locate(int Ind, int dir)
-{
+void do_cmd_locate(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
 	int	y1, x1, y2, x2;
@@ -3293,29 +3292,30 @@ void do_cmd_locate(int Ind, int dir)
 
 
 	/* No direction, recenter */
-	if (!dir)
-	{
+	if (!dir) {
 		/* Recenter map around the player */
 		verify_panel(Ind);
 
-		/* Update stuff */
-		p_ptr->update |= (PU_MONSTERS);
+		/* Any change? otherwise no need to redraw */
+		if ((prow != p_ptr->panel_row) || (pcol != p_ptr->panel_col)) {
+			/* Update stuff */
+			p_ptr->update |= (PU_MONSTERS);
 
-		/* Redraw map */
-		p_ptr->redraw |= (PR_MAP);
+			/* Redraw map */
+			p_ptr->redraw |= (PR_MAP);
 
-		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD);
+			/* Window stuff */
+			p_ptr->window |= (PW_OVERHEAD);
 
-		/* Handle stuff */
-		handle_stuff(Ind);
+			/* Handle stuff */
+			handle_stuff(Ind);
+		}
 
 		return;
 	}
 
 	/* Initialize */
-	if (dir == 5)
-	{
+	if (dir == 5) {
 		/* Remember current panel */
 		p_ptr->panel_row_old = p_ptr->panel_row;
 		p_ptr->panel_col_old = p_ptr->panel_col;
