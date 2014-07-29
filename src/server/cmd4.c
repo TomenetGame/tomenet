@@ -2564,8 +2564,8 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 		}
 
 
-		if (!uniq) fprintf(fff, "\377s(%4d) \377%c%c\377s  ", i, color_attr_to_char(r_ptr->d_attr), r_ptr->d_char); /* mimics need that number for Polymorph Self Into.. */
-		else fprintf(fff, "       \377%c%c\377s  ", color_attr_to_char(r_ptr->d_attr), r_ptr->d_char);
+		if (!uniq) fprintf(fff, "\377s(%4d,L%3d) \377%c%c\377s  ", i, r_ptr->level, color_attr_to_char(r_ptr->d_attr), r_ptr->d_char); /* mimics need that number for Polymorph Self Into.. */
+		else fprintf(fff, "\377U     (L%3d) \377%c%c\377s  ", r_ptr->level, color_attr_to_char(r_ptr->d_attr), r_ptr->d_char);
 
 		if (uniq) {
 			fprintf(fff, "\377U%-30s\n", r_name + r_ptr->name);
@@ -2581,22 +2581,22 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 			if ((j > 0) && !druid_form && !vampire_form) {
 				/* via polymorph ring */
 				if (p_ptr->body_monster == i)
-					fprintf(fff, "\377B%-30s : %4d slain  \377** Infused %d turns **\n",
+					fprintf(fff, "\377B%-30s : %4d slain \377** Infused %d turns **\n",
 							r_name + r_ptr->name, num, p_ptr->tim_mimic);
 				/* stored form off polymorph ring */
 				else if (p_ptr->tim_mimic && i == p_ptr->tim_mimic_what)
-					fprintf(fff, "\377w%-30s : %4d slain  \377(infused %d turns)\n",
+					fprintf(fff, "\377w%-30s : %4d slain \377(infused %d turns)\n",
 						r_name + r_ptr->name, num, p_ptr->tim_mimic);
 				/* normal */
 				else
-					fprintf(fff, "\377w%-30s : %4d slain  (%d more to go)\n",
+					fprintf(fff, "\377w%-30s : %4d slain (%d more to go)\n",
 					    r_name + r_ptr->name, num, j);
 			} else {
 				forms_learnt++;
 				if (p_ptr->body_monster == i)
-					fprintf(fff, "\377B%-30s : %4d slain  ** Your current form **\n",
+					fprintf(fff, "\377B%-30s : %4d slain ** Your current form **\n",
 							r_name + r_ptr->name, num);
-				else fprintf(fff, "\377G%-30s : %4d slain  (learnt)\n",
+				else fprintf(fff, "\377G%-30s : %4d slain (learnt)\n",
 						r_name + r_ptr->name, num);
 			}
 		} else {
