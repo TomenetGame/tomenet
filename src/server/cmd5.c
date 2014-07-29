@@ -1156,6 +1156,11 @@ void do_mimic_power_aux(int Ind, int dir)
         sprintf(p_ptr->attacker, " focusses on your mind");
         fire_grid_bolt(Ind, GF_TURN_ALL, dir, damroll(2, 6) + (rlev / 3), p_ptr->attacker);
         break;
+// RF5_BLIND			0x10000000	/* Blind Player */
+    case 60:
+        sprintf(p_ptr->attacker, " focusses on your mind");
+        fire_grid_bolt(Ind, GF_BLIND, dir, damroll(2, 6) + (rlev / 3), p_ptr->attacker);
+        break;
 // RF5_CONF			0x20000000	/* Confuse Player */
     case 61:
         sprintf(p_ptr->attacker, " focusses on your mind");

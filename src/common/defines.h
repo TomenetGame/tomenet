@@ -5153,7 +5153,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF5_SLOW			0x40000000	/* Slow Player */
 #define RF5_HOLD			0x80000000	/* Paralyze Player */
 
-#define RF5_PLAYER_SPELLS (0xffffffff & ~(RF5_DRAIN_MANA | RF5_BLIND))
+#define RF5_PLAYER_SPELLS (0xffffffff & ~(RF5_DRAIN_MANA))
 #define RF5_RADIUS_SPELLS ( RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | \
 		RF5_BA_COLD | RF5_BA_POIS | RF5_BA_NETH | RF5_BA_WATE | \
 		RF5_BA_MANA | RF5_BA_DARK | RF5_BA_NUKE | RF5_BA_CHAO )
