@@ -4996,7 +4996,7 @@ Chain_Macro:
 							/* choose initial targetting mechanics */
 							if (choice == 'd') strcpy(buf, "\\e)");
 							else if (choice == 'e') strcpy(buf, "\\e)*q");
-							else if (choice == 'f') strcpy(buf, "\\e)(");
+							else if (choice == 'f' || choice == 'g') strcpy(buf, "\\e)(");
 							else strcpy(buf, "\\e)*t");
 
 							/* We assume that '*t' is always the last part in the macro
