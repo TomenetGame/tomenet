@@ -5880,10 +5880,10 @@ static void process_various(void)
 			}
 		}
 
-		/* Update the player retirement timers */
 		for (i = 1; i <= NumPlayers; i++) {
 			p_ptr = Players[i];
 
+			/* Update the player retirement timers */
 			// If our retirement timer is set
 			if (p_ptr->retire_timer > 0) {
 				int k = p_ptr->retire_timer;
@@ -5908,6 +5908,8 @@ static void process_various(void)
 				if (!j) do_cmd_suicide(i);
 			}
 
+			/* reduce warning_rest cooldown */
+			if (p_ptr->warning_rest_cooldown) p_ptr->warning_rest_cooldown--;
 		}
 
 		/* Reswpan for kings' joy  -Jir- */

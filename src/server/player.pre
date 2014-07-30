@@ -1018,6 +1018,7 @@ struct player_type
 	char warning_chat;
 	char warning_lite;
 	char warning_rest;
+	char warning_rest_cooldown;
 	char warning_mimic;
 	char warning_dual;
 	char warning_potions;

@@ -2488,7 +2488,7 @@ static int Handle_login(int ind)
 	}
 
 	/* warning_rest only occurs once per account */
-	if (acc_get_flags(p_ptr->accountname) & ACC_WARN_REST) p_ptr->warning_rest = 1;
+	if (acc_get_flags(p_ptr->accountname) & ACC_WARN_REST) p_ptr->warning_rest = 3;
 #else
 	/* no greeting */
 	greeting = FALSE;
@@ -9836,7 +9836,7 @@ static int Receive_rest(int ind)
 		if ((p_ptr->energy) >= (level_speed(&p_ptr->wpos) * 2) - 1) {
 			/* Set flag */
 			p_ptr->resting = TRUE;
-			p_ptr->warning_rest = 1;
+			p_ptr->warning_rest = 3;
 
 			/* Make sure we aren't running */
 			p_ptr->running = FALSE;
