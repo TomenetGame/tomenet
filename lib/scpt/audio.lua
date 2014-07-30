@@ -51,6 +51,7 @@ audio_sfx = {
     "insanity",
 
     "levelup",
+    "slap",
 
     --commands
     "activate",
