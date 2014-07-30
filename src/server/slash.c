@@ -3933,6 +3933,31 @@ void do_slash_cmd(int Ind, char *message)
 			quest_abandon(Ind, k - 1);
 			return;
 		}
+		else if (prefix(message, "/who")) { /* returns account name to which the given character name belongs -- user version of /characc[l] */
+			u32b p_id;
+			cptr acc;
+
+			if (tk < 1) {
+				msg_print(Ind, "Usage: /who <character name>");
+				return;
+			}
+
+			/* hack: consume a partial turn to avoid exploit-spam... */
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+
+			if (!(p_id = lookup_player_id(message3))) {
+				msg_print(Ind, "That character name does not exist.");
+				return;
+			}
+			acc = lookup_accountname(p_id);
+			if (!acc) {
+				msg_print(Ind, "***ERROR: No account found.");
+				return;
+			}
+			msg_format(Ind, "That character belongs to: \377s%s", acc);
+			return;
+		}
 
 
 
@@ -6438,7 +6463,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
-			else if (prefix(message, "/characc")) { /* and /characcl; returns account name to which the given character name belongs */
+			else if (prefix(message, "/characc")) { /* and /characcl; returns account name to which the given character name belongs -- extended version of /who */
 				u32b p_id;
 				cptr acc;
 				struct account *l_acc;
