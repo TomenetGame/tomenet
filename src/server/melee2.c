@@ -3748,6 +3748,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 		{
 			disturb(Ind, 1, 0);
 			msg_format(Ind, "%^s tries to blank your mind.", m_name);
+#ifdef USE_SOUND_2010
+			/* should be ok to just abuse the insanity sfx for this? */
+			sound(Ind, "insanity", NULL, SFX_TYPE_MON_SPELL, TRUE);
+#endif
 
 			if (rand_int(100) < p_ptr->skill_sav ||
 			    (p_ptr->pclass == CLASS_MINDCRAFTER && magik(75)))
