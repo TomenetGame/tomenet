@@ -1895,8 +1895,7 @@ destined_defeat:
 
 
 /* Decrease player's sanity. This is a copy of the function above. */
-void take_sanity_hit(int Ind, int damage, cptr hit_from)
-{
+void take_sanity_hit(int Ind, int damage, cptr hit_from) {
 	player_type *p_ptr = Players[Ind];
 #if 0
 	int old_csane = p_ptr->csane;
@@ -1913,6 +1912,10 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 		p_ptr->paging = 1;
 #endif
 	}
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "insanity", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 	/* For 'Arena Monster Challenge' event: */
 	if (safe_area(Ind)) {
@@ -1962,8 +1965,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	p_ptr->window |= (PW_PLAYER);
 
 	/* Dead player */
-	if (p_ptr->csane < 0)
-	{
+	if (p_ptr->csane < 0) {
 		/* Hack -- Note death */
 		msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
 /*		msg_print(Ind, "\377RYou die.");
@@ -2003,24 +2005,19 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	}
 
 	/* Insanity warning (better message needed!) */
-	if (p_ptr->csane < p_ptr->msane / 8)
-	{
+	if (p_ptr->csane < p_ptr->msane / 8) {
 		/* Message */
 		msg_print(Ind, "\377fYou can hardly suppress screaming out insane laughters!");
 		msg_print(Ind, NULL);
 		break_cloaking(Ind, 0);
 		break_shadow_running(Ind);
 		stop_precision(Ind);
-	}
-	else if (p_ptr->csane < p_ptr->msane / 4)
-	{
+	} else if (p_ptr->csane < p_ptr->msane / 4) {
 		/* Message */
 		msg_print(Ind, "\377RYou feel severly disturbed and paranoid..");
 		msg_print(Ind, NULL);
 		stop_precision(Ind);
-	}
-	else if (p_ptr->csane < p_ptr->msane / 2)
-	{
+	} else if (p_ptr->csane < p_ptr->msane / 2) {
 		/* Message */
 		msg_print(Ind, "\377rYou feel insanity creep into your mind..");
 		msg_print(Ind, NULL);
