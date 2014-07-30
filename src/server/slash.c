@@ -3195,7 +3195,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 #ifdef USE_SOUND_2010
-			sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "hit_whip", "hit", SFX_TYPE_COMMAND, TRUE);
+			sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "slap", "", SFX_TYPE_COMMAND, TRUE);
 #endif
 			if (Ind != j) {
 				msg_format(j, "\377o%s slaps you!", p_ptr->name);
@@ -5849,7 +5849,7 @@ void do_slash_cmd(int Ind, char *message)
 				j = name_lookup_loose(Ind, message3, FALSE, TRUE);
 				if (!j) return;
 #ifdef USE_SOUND_2010
-				sound_near_site(Players[j]->py, Players[j]->px, &p_ptr->wpos, 0, "hit_whip", "hit", SFX_TYPE_COMMAND, TRUE);
+				sound_near_site(Players[j]->py, Players[j]->px, &p_ptr->wpos, 0, "slap", "", SFX_TYPE_COMMAND, TRUE);
 #endif
 				msg_format(Ind, "\377ySlapping %s.", Players[j]->name);
 				msg_print(j, "\377rYou are slapped by something invisible!");
