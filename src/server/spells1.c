@@ -10576,26 +10576,32 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Dispel monster */
 	case GF_DISP_ALL:
-		{
-			if (p_ptr->body_monster)
-			{
-				if (rand_int(100) < p_ptr->skill_sav)
-				{
-					msg_print(Ind, "You shudder, but you resist the effect!");
-				}
-				else
-				{
-					/* Message */
-					msg_print(Ind, "You shudder!");
-					dam /= 4; /* full dam is too harsh */
-					take_hit(Ind, dam, killer, -who);
-				}
+	{
+#if 0 /* well, since Maiar use it, let's make it work on all players (for PvP/BB) */
+		if (p_ptr->body_monster) {
+			if (rand_int(100) < p_ptr->skill_sav)
+				msg_print(Ind, "You shudder, but you resist the effect!");
+			else {
+				/* Message */
+				msg_print(Ind, "You shudder!");
+				dam /= 4; /* full dam is too harsh */
+				take_hit(Ind, dam, killer, -who);
 			}
-			break;
 		}
+#else
+		if (rand_int(100) < p_ptr->skill_sav)
+			msg_print(Ind, "You shudder, but you resist the effect!");
+		else {
+			/* Message */
+			msg_print(Ind, "You shudder!");
+			take_hit(Ind, dam, killer, -who);
+		}
+#endif
+		break;
+	}
 
-		/* Default */
-		default:
+	/* Default */
+	default:
 
 		/* No damage */
 		dam = 0;
