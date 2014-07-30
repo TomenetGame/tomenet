@@ -3955,9 +3955,9 @@ Chain_Macro:
 				case 0:
 					Term_putstr( 5, 9, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
 					Term_putstr(10, 10, -1, TERM_L_GREEN, "a/b) Drink a potion/read a scroll");
-					Term_putstr(10, 11, -1, TERM_L_GREEN, "c)/C) Fire ranged weapon/throw an item");
-					Term_putstr(10, 12, -1, TERM_L_GREEN, "d)/D) Cast school/mimic spell without a target (or target manually)");
-					Term_putstr(10, 13, -1, TERM_L_GREEN, "e)/E) Cast school/mimic spell with target");
+					Term_putstr(10, 11, -1, TERM_L_GREEN, "c/C) Fire ranged weapon/throw an item");
+					Term_putstr(10, 12, -1, TERM_L_GREEN, "d/D) Cast school/mimic spell without a target (or target manually)");
+					Term_putstr(10, 13, -1, TERM_L_GREEN, "e/E) Cast school/mimic spell with target");
 					Term_putstr(10, 14, -1, TERM_L_GREEN, "f) Cast a mimic spell by number (with and without target)");
 					Term_putstr(10, 15, -1, TERM_L_GREEN, "g/G) Polymorph into monster/set preferred immunity (mimicry users)");
 					Term_putstr(10, 16, -1, TERM_L_GREEN, "h) Draw runes to cast a runespell");
@@ -3965,7 +3965,7 @@ Chain_Macro:
 					Term_putstr(10, 18, -1, TERM_L_GREEN, "j) Use a shooting technique (archers and rangers)");
 					Term_putstr(10, 19, -1, TERM_L_GREEN, "k) Set up a monster trap");
 					Term_putstr(10, 20, -1, TERM_L_GREEN, "l) Use a magic device or activate an item");
-					Term_putstr(10, 21, -1, TERM_L_GREEN, "m)/M) Use a basic ability ('m') without/with target");
+					Term_putstr(10, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target");
 					Term_putstr(10, 22, -1, TERM_L_GREEN, "n) Enter a custom action (same as pressing 'a' in macro screen)");
 					Term_putstr(10, 23, -1, TERM_L_GREEN, "o) Load a macro file");
 
