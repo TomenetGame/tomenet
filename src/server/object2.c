@@ -2964,6 +2964,8 @@ s64b object_value(int Ind, object_type *o_ptr) {
  * 0	- no tolerance
  * +0x1	- tolerance for ammo to_h and to_d enchantment
  * +0x2	- tolerance for level 0 items
+ * +0x4 - tolerance for discount and inscription
+ *        (added for dropping items on top of stacks inside houses)
  * -- C. Blue
  */
 bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance) {
@@ -3054,10 +3056,10 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_WAND:
 		{
 			/* Require either knowledge or known empty for both wands. */
-			if ((!(o_ptr->ident & (ID_EMPTY)) && 
-				!object_known_p(Ind, o_ptr)) || 
-				(!(j_ptr->ident & (ID_EMPTY)) && 
-				!object_known_p(Ind, j_ptr))) return(FALSE);
+			if ((!(o_ptr->ident & (ID_EMPTY)) &&
+			    (!Ind || !object_known_p(Ind, o_ptr))) ||
+			    (!(j_ptr->ident & (ID_EMPTY)) &&
+			    (!Ind || !object_known_p(Ind, j_ptr)))) return(FALSE);
 
 			/* Beware artifatcs should not combine with "lesser" thing */
 			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
@@ -3264,23 +3266,22 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	/* Hack -- Require identical "broken" status */
 	if ((o_ptr->ident & ID_BROKEN) != (j_ptr->ident & ID_BROKEN)) return (FALSE);
 
-
 	/* Hack -- require semi-matching "inscriptions" */
 	/* Hack^2 -- books do merge.. it's to prevent some crashes */
 	if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)
-		&& strcmp(quark_str(o_ptr->note), "on sale")
-		&& strcmp(quark_str(j_ptr->note), "on sale")
-		&& strcmp(quark_str(o_ptr->note), "stolen")
-		&& strcmp(quark_str(j_ptr->note), "stolen")
-		&& !is_realm_book(o_ptr)
-		&& !check_guard_inscription(o_ptr->note, 'M')
-		&& !check_guard_inscription(j_ptr->note, 'M')) return (FALSE);
+	    && strcmp(quark_str(o_ptr->note), "on sale")
+	    && strcmp(quark_str(j_ptr->note), "on sale")
+	    && strcmp(quark_str(o_ptr->note), "stolen")
+	    && strcmp(quark_str(j_ptr->note), "stolen")
+	    && !is_realm_book(o_ptr)
+	    && !check_guard_inscription(o_ptr->note, 'M')
+	    && !check_guard_inscription(j_ptr->note, 'M')) return (FALSE);
 
 	/* Hack -- normally require matching "inscriptions" */
-	if ((!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return (FALSE);
+	if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return (FALSE);
 
 	/* Hack -- normally require matching "discounts" */
-	if ((!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount)) return (FALSE);
+	if (!(tolerance & 0x4) && (!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount)) return (FALSE);
 
 
 	/* Maximal "stacking" limit */
@@ -7602,7 +7603,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			next_o_idx = j_ptr->next_o_idx;
 
 			/* Check for possible combination */
-			if (object_similar(0, o_ptr, j_ptr, 0x0)) comb = TRUE;
+			if (object_similar(0, o_ptr, j_ptr, 0x4)) comb = TRUE;
 
 			/* Count objects */
 			k++;
@@ -7748,7 +7749,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		next_o_idx = q_ptr->next_o_idx;
 
 		/* Check for combination */
-		if (object_similar(0, q_ptr, o_ptr, 0x0)) {
+		if (object_similar(0, q_ptr, o_ptr, 0x4)) {
 			/* Combine the items */
 			object_absorb(0, q_ptr, o_ptr);
 
