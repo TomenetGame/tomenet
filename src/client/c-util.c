@@ -2923,6 +2923,8 @@ void c_msg_format(cptr fmt, ...)
  * Request a "quantity" from the user
  *
  * Hack -- allow "command_arg" to specify a quantity
+ * Hack: if max is < -1 this changes the default amount to -max.
+ *       Added for handling item stacks in one's inventory -- C. Blue
  */
 #define QUANTITY_WIDTH 10
 s32b c_get_quantity(cptr prompt, s32b max) {
@@ -2934,6 +2936,17 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	int n = 0, i = 0, j = 0;
 	s32b i1 = 0, i2 = 0, mul = 1;
 
+	if (max < -1) {
+		max = -max;
+		/* Default to all */
+		amt = max;
+	} else {
+		/* Default to one */
+		amt = 1;
+	}
+	/* Build the default */
+	sprintf(buf, "%d", amt);
+
 	/* Build a prompt if needed */
 	if (!prompt) {
 		/* Build a prompt */
@@ -2943,13 +2956,6 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 		/* Use that prompt */
 		prompt = tmp;
 	}
-
-
-	/* Default to one */
-	amt = 1;
-
-	/* Build the default */
-	sprintf(buf, "%d", amt);
 
 	/* Ask for a quantity */
 	if (!get_string(prompt, buf, QUANTITY_WIDTH)) return (0);
