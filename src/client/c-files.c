@@ -1113,6 +1113,9 @@ errr process_pref_file(cptr name)
  *
  * It is given in the "Setup" info sent by the server.
  */
+#ifdef WIN32
+extern int usleep(long microSeconds);
+#endif
 void show_motd(int delay)
 {
 	int i;
