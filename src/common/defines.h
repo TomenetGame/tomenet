@@ -52,7 +52,7 @@
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	5
 #define VERSION_PATCH_LATEST	7
-#define VERSION_EXTRA_LATEST	0
+#define VERSION_EXTRA_LATEST	1
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
@@ -66,7 +66,7 @@
 
 /* Server release version tag (such as "a", "b" etc):
    Minimum client version tag required to "play 100%". */
-#define SERVER_VERSION_TAG	""
+#define SERVER_VERSION_TAG	"a"
 
 
 /* Client-side only: Client release version tag
