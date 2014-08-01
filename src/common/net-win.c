@@ -37,9 +37,11 @@
 
 #include "angband.h"
 
+#if 0 //unusued
 #ifndef lint
 static char sourceid[] =
     "@(#)$Id$";
+#endif
 #endif
 
 #ifdef TERMNET

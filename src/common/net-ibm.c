@@ -50,9 +50,11 @@
  *
  */
 
+#if 0 //unusued
 #ifndef lint
 static char sourceid[] =
     "@(#)$Id$";
+#endif
 #endif
 
 /* _SOCKLIB_LIBSOURCE must be defined int this file */
