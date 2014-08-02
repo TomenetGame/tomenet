@@ -1128,18 +1128,8 @@ s32b get_school_spell(cptr do_what, int *item_book)
 		Term_load();
 	}
 
-
 	/* Abort if needed */
 	if (!flag) return -1;
-
-
-	/* hack: prepare for choosing an item, in case the spell requires an item.
-	   This is only required for choosing item by name via '@' key, and it's a
-	   pretty ugly hack here...... */
-	get_item_extra_hook = get_item_hook_find_obj;
-	get_item_hook_find_obj_what = "Device name? ";
-	item_tester_hook = item_tester_hook_device;
-
 
 	//tmp = spell;
 	*item_book = item;

@@ -2159,26 +2159,32 @@ int Receive_item(void) {
 		default:
 			break;
 		case ITH_RECHARGE:
+			get_item_extra_hook = get_item_hook_find_obj;
 			item_tester_hook = item_tester_hook_device;
 			get_item_hook_find_obj_what = "Device name? ";
 			break;
 		case ITH_ENCH_AC:
+			get_item_extra_hook = get_item_hook_find_obj;
 			item_tester_hook = item_tester_hook_armour;
 			get_item_hook_find_obj_what = "Armour name? ";
 			break;
 		case ITH_ENCH_WEAP:
+			get_item_extra_hook = get_item_hook_find_obj;
 			item_tester_hook = item_tester_hook_weapon;
 			get_item_hook_find_obj_what = "Weapon name? ";
 			break;
 		case ITH_CUSTOM_TOME:
+			get_item_extra_hook = get_item_hook_find_obj;
 			item_tester_hook = item_tester_hook_custom_tome;
 			get_item_hook_find_obj_what = "Book name? ";
 			break;
 		case ITH_RUNE:
+			get_item_extra_hook = get_item_hook_find_obj;
 			item_tester_hook = item_tester_hook_rune;
 			get_item_hook_find_obj_what = "Rune name? ";
 			break;
 		case ITH_ENCH_AC_NO_SHIELD:
+			get_item_extra_hook = get_item_hook_find_obj;
 			item_tester_hook = item_tester_hook_armour_no_shield;
 			get_item_hook_find_obj_what = "Armour name? ";
 			break;
