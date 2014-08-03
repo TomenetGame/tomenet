@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. July 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 2. August 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -1783,6 +1783,12 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  Wearing it otherwise will kill you in a mighty blast.
 
 -Some special shops' features may currently not be available.
+
+-Some monster abilities are currently not available/implemented:
+ BO_POIS, HAND_DOOM, RAISE_DEAD.
+
+-Some item abilities are currently not available/implemented:
+ LEVELS.
 
 
 
