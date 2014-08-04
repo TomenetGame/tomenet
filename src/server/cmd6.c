@@ -2081,7 +2081,8 @@ bool do_cancellation(int Ind, int flags)
 			else
 				o_ptr->timeout = 0;
 		}
-		if (o_ptr->pval > 0) {
+		/* pval for potions is their nourishment value, so exempt them */
+		if (o_ptr->tval != TV_POTION && o_ptr->pval > 0) {
 			ident = TRUE;
 			o_ptr->pval = 0;
 		}
