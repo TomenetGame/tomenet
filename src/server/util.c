@@ -6909,7 +6909,9 @@ void kick_ip(int Ind_kicker, char *ip_kickee, char *reason, bool msg) {
 	if (msg && !found) msg_print(Ind_kicker, "No matching player online to kick.");
 }
 
-bool activate_magic_device(int Ind, object_type *o_ptr) {
+/* Calculate basic success chance for magic devices for a player,
+   before any "minimum granted chance" is applied. */
+static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	u32b dummy, f4;
 	player_type *p_ptr = Players[Ind];
 
@@ -6946,14 +6948,32 @@ bool activate_magic_device(int Ind, object_type *o_ptr) {
 	{
 		if (chance < USE_DEVICE * 2) chance = USE_DEVICE * 2;
 	}
-	/* Or heavily restricted (todo: use WINNERS_ONLY flag instead for cleanliness) */
+
+	return chance;
+}
+
+/* just for display purpose, return an actual average percentage value */
+int activate_magic_device_chance(int Ind, object_type *o_ptr) {
+	int chance = magic_device_base_chance(Ind, o_ptr);
+
+	/* Give everyone a (slight) chance */
+	if (chance < USE_DEVICE)
+		return ((100 / (USE_DEVICE - chance + 1)) * ((100 * (USE_DEVICE - 1)) / USE_DEVICE)) / 100;
+
+	/* Normal chance */
+	return 100 - ((USE_DEVICE - 1) * 100) / chance;
+}
+
+bool activate_magic_device(int Ind, object_type *o_ptr) {
+	player_type *p_ptr = Players[Ind];
+
+	int chance = magic_device_base_chance(Ind, o_ptr);
+
+	/* Certain items are heavily restricted (todo: use WINNERS_ONLY flag instead for cleanliness) */
 	if (o_ptr->name1 == ART_PHASING && !p_ptr->total_winner) {
 		msg_print(Ind, "Only royalties may activate this Ring!");
 		if (!is_admin(p_ptr)) return FALSE;
 	}
-
-	//debug output our chance
-	//s_printf("mdev %d%% (ud %d, c %d)\n", chance < USE_DEVICE ? 0 : 100 - ((USE_DEVICE - 1) * 100) / chance, USE_DEVICE, chance);
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))

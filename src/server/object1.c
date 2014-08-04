@@ -4268,56 +4268,56 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 
 		/* Assume we must *id* (just once) to learn sigil powers - Kurzel */
 		if (o_ptr->sigil) can_have_hidden_powers = TRUE;
-		
+
 		/* Just add the fixed ego flags that we know to be on the item */
 		if (id) {
-		        if (o_ptr->name2) {
-			        e_ptr = &e_info[o_ptr->name2];
-			        for (j = 0; j < 5; j++) {
-		    	    	        if (e_ptr->rar[j] != 100) {
+			if (o_ptr->name2) {
+				e_ptr = &e_info[o_ptr->name2];
+				for (j = 0; j < 5; j++) {
+					if (e_ptr->rar[j] != 100) {
 						/* hack: can *identifying* actually make a difference at all? */
-		    		    		if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
-		    		    		continue;
-		    		    	}
-		    		    	if ((e_ptr->fego1[j] & ETR1_R_MASK) ||
-		    		    	    (e_ptr->fego2[j] & ETR2_R_MASK) ||
-		    		    	    (e_ptr->esp[j] & ESP_R_MASK)) {
-		    		    		can_have_hidden_powers = TRUE;
-		    		    	}
-	    	        	        f1 |= e_ptr->flags1[j];
-	        	                f2 |= e_ptr->flags2[j];
-	        	        	f3 |= e_ptr->flags3[j];
-	                	        f4 |= e_ptr->flags4[j];
-	                    		f5 |= e_ptr->flags5[j];
-	                    		f6 |= e_ptr->flags6[j];
-	                    	        esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
-	                    	    }
-	                }
-		        if (o_ptr->name2b) {
-			        e_ptr = &e_info[o_ptr->name2b];
-			        for (j = 0; j < 5; j++) {
-		    	    	        if (e_ptr->rar[j] != 100) {
+						if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
+						continue;
+					}
+					if ((e_ptr->fego1[j] & ETR1_R_MASK) ||
+					    (e_ptr->fego2[j] & ETR2_R_MASK) ||
+					    (e_ptr->esp[j] & ESP_R_MASK)) {
+						can_have_hidden_powers = TRUE;
+					}
+					f1 |= e_ptr->flags1[j];
+					f2 |= e_ptr->flags2[j];
+					f3 |= e_ptr->flags3[j];
+					f4 |= e_ptr->flags4[j];
+					f5 |= e_ptr->flags5[j];
+					f6 |= e_ptr->flags6[j];
+					esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
+				}
+			}
+			if (o_ptr->name2b) {
+				e_ptr = &e_info[o_ptr->name2b];
+				for (j = 0; j < 5; j++) {
+					if (e_ptr->rar[j] != 100) {
 						/* hack: can *identifying* actually make a difference at all? */
-		    		    		if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
-			            		continue;
-			            	}
-		    		    	if ((e_ptr->fego1[j] & ETR1_R_MASK) ||
-		    		    	    (e_ptr->fego2[j] & ETR2_R_MASK) ||
-		    		    	    (e_ptr->esp[j] & ESP_R_MASK)) {
-		    		    		can_have_hidden_powers = TRUE;
-		    		    	}
-	    	        	        f1 |= e_ptr->flags1[j];
-	        	                f2 |= e_ptr->flags2[j];
-	                    		f3 |= e_ptr->flags3[j];
-		                        f4 |= e_ptr->flags4[j];
-		                        f5 |= e_ptr->flags5[j];
-		                        f6 |= e_ptr->flags6[j];
-	                    	        esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
-	            		}
-	            	}
-	        }
+						if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
+						continue;
+					}
+					if ((e_ptr->fego1[j] & ETR1_R_MASK) ||
+					    (e_ptr->fego2[j] & ETR2_R_MASK) ||
+					    (e_ptr->esp[j] & ESP_R_MASK)) {
+						can_have_hidden_powers = TRUE;
+					}
+					f1 |= e_ptr->flags1[j];
+					f2 |= e_ptr->flags2[j];
+					f3 |= e_ptr->flags3[j];
+					f4 |= e_ptr->flags4[j];
+					f5 |= e_ptr->flags5[j];
+					f6 |= e_ptr->flags6[j];
+					esp |= e_ptr->esp[j]; /* & ~ESP_R_MASK -- not required */
+				}
+			}
+		}
 
-	        /* Get the item name we know */
+		/* Get the item name we know */
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 		/* create virtual object with those flags that are certain */
@@ -4498,6 +4498,18 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 	    && full
 #endif
 	    ) {
+#if 1 /* display breakage for ammo and trigger chance for magic devices even if not *id*ed? */
+		if (eff_full) {
+			if (wield_slot(Ind, o_ptr) == INVEN_AMMO)
+				fprintf(fff, "\377WIt has %d%% chances to break upon hit///.\n", breakage_chance(o_ptr));
+
+ #if 1 /* display trigger chance for magic devices? */
+			if (is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE))
+				fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", activate_magic_device_chance(Ind, o_ptr));
+ #endif
+		}
+#endif
+
 		fprintf(fff, "\n\377y(This item has not been *identified* yet.)\n");
 		my_fclose(fff);
 		fff = my_fopen(p_ptr->infofile, "rb");
@@ -5019,37 +5031,37 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 					ammo_f1 = k_info[o_ptr->k_idx].flags1;
 					/* item has undergone basic ID (or is easy-know and basic)? */
 					if (object_known_p(Ind, x_ptr)) {
-	                                        /* Just add the fixed ego flags that we know to be on the item */
-					        if (x_ptr->name2) {
-						        e_ptr = &e_info[x_ptr->name2];
-						        for (j = 0; j < 5; j++) {
-					    	    	        if (e_ptr->rar[j] != 100) continue;
-				    	        	        ammo_f1 |= e_ptr->flags1[j];
-				                	}
-				        	}
-					        if (x_ptr->name2b) {
-						        e_ptr = &e_info[x_ptr->name2b];
-						        for (j = 0; j < 5; j++) {
-					    	    	        if (e_ptr->rar[j] != 100) continue;
-				    	        	        ammo_f1 |= e_ptr->flags1[j];
-				                	}
-				        	}
-		            		}
-		            	}
-		        }
+						/* Just add the fixed ego flags that we know to be on the item */
+						if (x_ptr->name2) {
+							e_ptr = &e_info[x_ptr->name2];
+							for (j = 0; j < 5; j++) {
+								if (e_ptr->rar[j] != 100) continue;
+								ammo_f1 |= e_ptr->flags1[j];
+							}
+						}
+						if (x_ptr->name2b) {
+							e_ptr = &e_info[x_ptr->name2b];
+							for (j = 0; j < 5; j++) {
+								if (e_ptr->rar[j] != 100) continue;
+								ammo_f1 |= e_ptr->flags1[j];
+							}
+						}
+					}
+				}
+			}
 			display_shooter_damage(Ind, &forge, fff, f1, ammo_f1);
 		} else
 			display_boomerang_damage(Ind, &forge, fff, f1);
 	}
 
 	/* Breakage/Damage display for ammo */
-	if (wield_slot(Ind, o_ptr) == INVEN_AMMO) {
+	if (eff_full && wield_slot(Ind, o_ptr) == INVEN_AMMO) {
 		u32b shooter_f1 = 0, dummy;
 		object_type *x_ptr = &p_ptr->inventory[INVEN_BOW];
 		if (x_ptr->k_idx && x_ptr->tval == TV_BOW &&
-                    (( (x_ptr->sval == SV_SHORT_BOW || x_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
-                     ( (x_ptr->sval == SV_LIGHT_XBOW || x_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
-                     (x_ptr->sval == SV_SLING && o_ptr->tval == TV_SHOT))) {
+		    (( (x_ptr->sval == SV_SHORT_BOW || x_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
+		     ( (x_ptr->sval == SV_LIGHT_XBOW || x_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
+		     (x_ptr->sval == SV_SLING && o_ptr->tval == TV_SHOT))) {
 			if ((x_ptr->ident & ID_MENTAL)) {
 				object_flags(x_ptr, &shooter_f1, &dummy, &dummy, &dummy, &dummy, &dummy, &dummy);
 			} else {
@@ -5057,28 +5069,33 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 				shooter_f1 = k_info[o_ptr->k_idx].flags1;
 				/* item has undergone basic ID (or is easy-know and basic)? */
 				if (object_known_p(Ind, x_ptr)) {
-	                                /* Just add the fixed ego flags that we know to be on the item */
-				        if (x_ptr->name2) {
-					        e_ptr = &e_info[x_ptr->name2];
-					        for (j = 0; j < 5; j++) {
-				    	    	        if (e_ptr->rar[j] != 100) continue;
-			    	        	        shooter_f1 |= e_ptr->flags1[j];
-			                	}
-			        	}
-				        if (x_ptr->name2b) {
-					        e_ptr = &e_info[x_ptr->name2b];
-					        for (j = 0; j < 5; j++) {
-				    	    	        if (e_ptr->rar[j] != 100) continue;
-			    	        	        shooter_f1 |= e_ptr->flags1[j];
-			                	}
-			        	}
+					/* Just add the fixed ego flags that we know to be on the item */
+					if (x_ptr->name2) {
+						e_ptr = &e_info[x_ptr->name2];
+						for (j = 0; j < 5; j++) {
+							if (e_ptr->rar[j] != 100) continue;
+							shooter_f1 |= e_ptr->flags1[j];
+						}
+					}
+					if (x_ptr->name2b) {
+						e_ptr = &e_info[x_ptr->name2b];
+						for (j = 0; j < 5; j++) {
+							if (e_ptr->rar[j] != 100) continue;
+							shooter_f1 |= e_ptr->flags1[j];
+						}
+					}
 				}
-            		}
-            	}
+			}
+		}
 
 		fprintf(fff, "\377WIt has %d%% chances to break upon hit.\n", breakage_chance(o_ptr));
 		display_ammo_damage(Ind, &forge, fff, f1, shooter_f1);
 	}
+
+#if 1 /* display trigger chance for magic devices? */
+	if (eff_full && (is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE)))
+		fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", activate_magic_device_chance(Ind, o_ptr));
+#endif
 
 #ifdef NEW_ID_SCREEN
 	if (!eff_full) {
