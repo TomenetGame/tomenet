@@ -1615,8 +1615,8 @@ void cmd_help(void)
 #define ARTIFACT_LORE_LIST_SIZE 17
 static void artifact_lore(void) {
 	char s[20 + 1], tmp[80];
-	int c, i, j, n, selected, selected_list, list_idx[ARTIFACT_LORE_LIST_SIZE];
-	bool show_lore = TRUE;
+	int c, i, j, n, selected, selected_list, list_idx[ARTIFACT_LORE_LIST_SIZE], presorted;
+	bool show_lore = TRUE, direct_match;
 	int selected_line = 0;
 	/* for pasting lore to chat */
 	char paste_lines[18][MSG_LEN];
@@ -1649,6 +1649,7 @@ static void artifact_lore(void) {
 
 		/* hack 1: exact match always takes top position
 		   hack 2: match at beginning of name takes precedence */
+		direct_match = FALSE;
 		if (s[0] && !pageoffset) for (i = 0; i < MAX_A_IDX; i++) {
 			/* create upper-case working copy */
 			strcpy(tmp, artifact_list_name[i]);
@@ -1658,28 +1659,54 @@ static void artifact_lore(void) {
 			if (!strcmp(tmp, s) ||
 			    (tmp[0] == 'T' && tmp[1] == 'H' && tmp[2] == 'E' && tmp[3] == ' ' && !strcmp(tmp + 4, s))
 			    || (s[0] == '#' && atoi(s + 1) && artifact_list_code[i] == atoi(s + 1))) { /* also allow typing in the artifact's aidx directly! */
+				if (direct_match) continue; //paranoia -- there should never be two artifacts of the exact same name or index number
+				direct_match = TRUE;
+
 				selected = artifact_list_code[i];
 				selected_list = i;
+				if (n) Term_erase(5, 5, 80); //erase old beginning-of-line match that was shown here first
 				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
-				list_idx[0] = i;
+
+				/* no beginning-of-line match yet? good. */
+				if (!n) {
+					list_idx[n] = i;
+				} else { /* already got a beginning-of-line match? swap them, cause exact match always take pos #0 */
+					int tmp = list_idx[0];
+					list_idx[0] = i;
+					list_idx[n] = tmp;
+
+					/* redisplay the moved choice */
+					Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
+				}
+
 				n++;
 				break;
+				if (n == 2) break;//allow 1 direct + 1 beginning-of-line match
 			}
-			/* beginning of line match? without the 'The ' at the beginning maybe? */
-			else if (!strncmp(tmp, s, strlen(s)) ||
-			    (tmp[0] == 'T' && tmp[1] == 'H' && tmp[2] == 'E' && tmp[3] == ' ' && !strncmp(tmp + 4, s, strlen(s)))) {
+			/* beginning of line match? without the 'The ' at the beginning maybe?
+			   (only check for two, of which one might already be a direct match (checked above)) */
+			else if ((n == 0 || (direct_match && n == 1)) &&
+			    (!strncmp(tmp, s, strlen(s)) ||
+			    (tmp[0] == 'T' && tmp[1] == 'H' && tmp[2] == 'E' && tmp[3] == ' ' && !strncmp(tmp + 4, s, strlen(s))))) {
 				selected = artifact_list_code[i];
 				selected_list = i;
-				Term_putstr(5, 5, -1, selected_line == 0 ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
-				list_idx[0] = i;
+				Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_L_UMBER : TERM_UMBER, artifact_list_name[i]);
+				list_idx[n] = i;
 				n++;
-				break;
+				if (direct_match) break;//allow 1 direct + 1 beginning-of-line match
 			}
 		}
+		presorted = n;
 
 		for (i = 0; i < MAX_A_IDX && n < ARTIFACT_LORE_LIST_SIZE + 1; i++) { /* '+ 1' for 'more_results' hack */
+#if 0
 			/* direct match above already? */
 			if (i == selected_list) continue;
+#else
+			/* direct match or beginning-of-line matches above already? */
+			for (j = 0; j < presorted; j++) if (i == list_idx[j]) break;
+			if (j != presorted) continue;
+#endif
 
 			/* create upper-case working copy */
 			strcpy(tmp, artifact_list_name[i]);
