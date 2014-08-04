@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. August 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. August 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -15306,6 +15306,13 @@ DOESN'T WORK ON EGOS / ARTS:
 -Watch out: 'Indestructible' and 'Cursed' rings are ego items too, so are
 'Amulets of Telepathic Awareness', 'Rings of Polymorphing' and
 Dragon Scale Mails 'of Defense'!
+
+-Ammo that is '(exploding)' is actually not an ego item! Contrary to intuition,
+ it is technically just a pval. This means that you can artify basic ammo that
+ is '(exploding)'.
+ Note that using exploding ammo instead of non-exploding ammo for artifact
+ creation does not affect whether or not the resulting randart will actually be
+ exploding or not, so it does not matter.
 
 THE BASE ITEM MATTERS, ENCHANTMENTS DO NOT (except for jewelry, see below):
 
