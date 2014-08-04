@@ -1901,8 +1901,8 @@ static void artifact_lore(void) {
 #define MONSTER_LORE_LIST_SIZE 17
 static void monster_lore(void) {
 	char s[20 + 1], tmp[80];
-	int c, i, j, n, selected, selected_list, list_idx[MONSTER_LORE_LIST_SIZE];
-	bool show_lore = TRUE;
+	int c, i, j, n, selected, selected_list, list_idx[MONSTER_LORE_LIST_SIZE], presorted;
+	bool show_lore = TRUE, direct_match;
 	int selected_line = 0;
 	/* for pasting lore to chat */
 	char paste_lines[18][MSG_LEN];
@@ -2004,6 +2004,7 @@ static void monster_lore(void) {
 		else {
 			/* hack 1: direct match always takes top position
 			   hack 2: match at beginning of name takes precedence */
+			direct_match = FALSE;
 			if (s[0] && !pageoffset) for (i = 1; i < MAX_R_IDX; i++) {
 				/* create upper-case working copy */
 				strcpy(tmp, monster_list_name[i]);
@@ -2012,39 +2013,64 @@ static void monster_lore(void) {
 				/* exact match? */
 				if (!strcmp(tmp, s)
 				    || (s[0] == '#' && atoi(s + 1) && monster_list_code[i] == atoi(s + 1))) { /* also allow typing in the monster's ridx directly! */
+					if (direct_match) continue; //paranoia -- there should never be two monsters of the exact same name or index number
+					direct_match = TRUE;
+
 					selected = monster_list_code[i];
 					selected_list = i;
+
 #if 0
 					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c, L%-3d)  %s",
 					    monster_list_code[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_level[i], monster_list_name[i]));
 #else
+					if (n) Term_erase(5, 5, 80); //erase old beginning-of-line match that was shown here first
 					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c)  %s",
 					    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
 #endif
-					list_idx[0] = i;
+
+					/* no beginning-of-line match yet? good. */
+					if (!n) {
+						list_idx[n] = i;
+					} else { /* already got a beginning-of-line match? swap them, cause exact match always take pos #0 */
+						int tmp = list_idx[0];
+						list_idx[0] = i;
+						list_idx[n] = tmp;
+
+						/* redisplay the moved choice */
+						Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c)  %s",
+						    monster_list_code[list_idx[1]], monster_list_level[list_idx[1]], monster_list_symbol[list_idx[1]][0],
+						    monster_list_symbol[list_idx[1]][1], selected_line == n ? 'y' : 'u', monster_list_name[list_idx[1]]));
+					}
 					n++;
-					break;
+					if (n == 2) break;//allow 1 direct + 1 beginning-of-line match
 				}
-				/* beginning of line match? */
-				else if (!strncmp(tmp, s, strlen(s))) {
+				/* beginning of line match? (only check for two, of which one might already be a direct match (checked above)) */
+				else if ((n == 0 || (direct_match && n == 1)) && !strncmp(tmp, s, strlen(s))) {
 					selected = monster_list_code[i];
 					selected_list = i;
 #if 0
-					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c, L%-3d)  %s",
+					Term_putstr(5, 5 + n, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, \377%c%c\377%c, L%-3d)  %s",
 					    monster_list_code[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_level[i], monster_list_name[i]));
 #else
-					Term_putstr(5, 5, -1, selected_line == 0 ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c)  %s",
-					    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == 0 ? 'y' : 'u', monster_list_name[i]));
+					Term_putstr(5, 5 + n, -1, selected_line == n ? TERM_YELLOW : TERM_UMBER, format("(%4d, L%-3d, \377%c%c\377%c)  %s",
+					    monster_list_code[i], monster_list_level[i], monster_list_symbol[i][0], monster_list_symbol[i][1], selected_line == n ? 'y' : 'u', monster_list_name[i]));
 #endif
-					list_idx[0] = i;
+					list_idx[n] = i;
 					n++;
-					break;
+					if (direct_match) break;//allow 1 direct + 1 beginning-of-line match
 				}
 			}
+			presorted = n;
 
 			for (i = 1; i < MAX_R_IDX && n < MONSTER_LORE_LIST_SIZE + 1; i++) { /* '+ 1' for 'more_results' hack */
+#if 0
 				/* direct match above already? */
 				if (i == selected_list) continue;
+#else
+				/* direct match or beginning-of-line matches above already? */
+				for (j = 0; j < presorted; j++) if (i == list_idx[j]) break;
+				if (j != presorted) continue;
+#endif
 
 				/* create upper-case working copy */
 				strcpy(tmp, monster_list_name[i]);
@@ -2086,10 +2112,10 @@ static void monster_lore(void) {
 #if 0
 				Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d, \377%c%c\377y, L%-3d)  %s",
 				    monster_list_code[list_idx[selected_line]], monster_list_symbol[list_idx[selected_line]][0],
-				    monster_list_symbol[list_idx[selected_line]][1], monster_list_level[i], monster_list_name[list_idx[selected_line]]));
+				    monster_list_symbol[list_idx[selected_line]][1], monster_list_level[list_idx[selected_line]], monster_list_name[list_idx[selected_line]]));
 #else
 				Term_putstr(5, 5 + selected_line, -1, TERM_YELLOW, format("(%4d, L%-3d, \377%c%c\377y)  %s",
-				    monster_list_code[list_idx[selected_line]], monster_list_level[i], monster_list_symbol[list_idx[selected_line]][0],
+				    monster_list_code[list_idx[selected_line]], monster_list_level[list_idx[selected_line]], monster_list_symbol[list_idx[selected_line]][0],
 				    monster_list_symbol[list_idx[selected_line]][1], monster_list_name[list_idx[selected_line]]));
 #endif
 		}
