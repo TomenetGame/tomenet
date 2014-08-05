@@ -4337,7 +4337,7 @@ void check_experience(int Ind) {
 #ifdef KINGCAP_LEV
 	/* Added a check that (s)he's not already a king - mikaelh */
 //		if(p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377GYou can't gain more levels until you defeat Morgoth, Lord of Darkness!");
-	if (p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377G* To level up further, you need to defeat Morgoth, Lord of Darkness! *");
+	if (p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377G* To level up further, you must defeat Morgoth, Lord of Darkness! *");
 #endif
 
 	/* pvp mode cant go higher, but receives a reward maybe */
