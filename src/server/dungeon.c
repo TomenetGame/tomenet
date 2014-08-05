@@ -6949,6 +6949,33 @@ void dungeon(void)
 			p_ptr->last_gold_drop_timer = turn;
 		}
 
+#if 0
+			/* experimental water animation, trying to not be obnoxious -
+			   strategy: pick a random grid, if it's water, redraw it */
+			cave_type **zcave = getcave(&p_ptr->wpos);
+			if (zcave) {
+				int x = rand_int(p_ptr->panel_col_max - p_ptr->panel_col_min) + p_ptr->panel_col_min;
+				int y = rand_int(p_ptr->panel_row_max - p_ptr->panel_row_min) + p_ptr->panel_row_min;
+				lite_spot(i, y, x);
+ #if 0
+				struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+				/* outside? */
+				if (!l_ptr) {
+					int x = rand_int(MAX_WID), y = rand_int(MAX_HGT);
+					if (zcave[y][x].feat == FEAT_DEEP_WATER ||
+					    zcave[y][x].feat == FEAT_SHAL_WATER)
+						lite_spot(i, y, x);
+				/* inside? */
+				} else {
+					int x = rand_int(l_ptr->wid), y = rand_int(l_ptr->hgt);
+					if (zcave[y][x].feat == FEAT_DEEP_WATER ||
+					    zcave[y][x].feat == FEAT_SHAL_WATER)
+						lite_spot(i, y, x);
+				}
+ #endif
+			}
+#endif
+
 #ifdef ENABLE_SELF_FLASHING
 		/* Check for hilite */
 		if (p_ptr->flash_self > 0 && !(turn % (cfg.fps / 15))) {
@@ -6956,7 +6983,6 @@ void dungeon(void)
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		} else
 #endif
-
 		if (!(turn % (cfg.fps / 6))) {
 			/* Play server-side animations (consisting of cycling/random colour choices,
 			   instead of animated colours which are circled client-side) */
@@ -6970,6 +6996,10 @@ void dungeon(void)
 //			else { /* && p_ptr->body_monster */
 				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 //			}
+		}
+
+		/* Do non-self-related animations and checks too */
+		if (!(turn % (cfg.fps / 6))) {
 #ifdef TELEPORT_SURPRISES
 			/* Teleport-surprise-effect against monsters */
 			if (p_ptr->teleported) p_ptr->teleported--;
