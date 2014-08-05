@@ -2385,7 +2385,9 @@ Step 1:
  UPDATE: Ubuntu seems to no longer provide the graphical user interface of 7zip
  7zG in either of these packages, so you'll have to download the source instead
  directly from the project page (on sourceforge) and compile it yourself:
-  http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1_src_all.tar.bz2/download
+  http://sourceforge.net/projects/p7zip/files/p7zip/
+  pick the folder with the latest version and download the 'src_all' source
+  archive, not the 'linux_bin' binary archive (it doesn't contain 7zG!).
  Short compilation/installation instructions:
   Extract the source archive and enter its directory.
   For 32-bit Linux, do:
