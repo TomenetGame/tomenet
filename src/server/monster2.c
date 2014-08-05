@@ -1382,11 +1382,11 @@ s16b get_mon_num(int level, int dlevel)
 			continue;
 
 		/* Prevent certain monsters from being generated too much OoD */
-		if ((r_ptr->flags1 & RF7_OOD_10) && (entry->level > level + 10))
+		if ((r_ptr->flags7 & RF7_OOD_10) && (entry->level > level + 10))
 			continue;
-		if ((r_ptr->flags1 & RF7_OOD_15) && (entry->level > level + 15))
+		if ((r_ptr->flags7 & RF7_OOD_15) && (entry->level > level + 15))
 			continue;
-		if ((r_ptr->flags1 & RF7_OOD_20) && (entry->level > level + 20))
+		if ((r_ptr->flags7 & RF7_OOD_20) && (entry->level > level + 20))
 			continue;
 
 		/* Accept */

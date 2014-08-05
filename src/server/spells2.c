@@ -7469,7 +7469,8 @@ void golem_creation(int Ind, int max) {
 	r_ptr->freq_spell = 0;
 	r_ptr->flags1 |= RF1_FORCE_MAXHP;
 	r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY;
-	r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF9_IM_TELE;
+	r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP;
+	r_ptr->flags9 |= RF9_IM_TELE;
 
 	switch (golem_type) {
 		case SV_GOLEM_WOOD:

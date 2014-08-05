@@ -5318,7 +5318,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* not successfully charmed? */
 			if ((r_ptr->flags9 & RF9_IM_PSI) ||
 			    (r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->flags2 & RF3_UNDEAD) ||
+			    (r_ptr->flags3 & RF3_UNDEAD) ||
 			    (r_ptr->flags2 & RF2_EMPTY_MIND) ||
 			    (r_ptr->flags3 & RF3_NONLIVING)) {
 				note = " is unaffected";
@@ -5972,7 +5972,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (seen) obvious = TRUE;
 			if ((r_ptr->flags4 & RF4_BR_DISE) ||
 				prefix(name, "Disen") ||
-				(r_ptr->flags9 & RF3_RES_DISE))
+				(r_ptr->flags3 & RF3_RES_DISE))
 			{
 				note = " resists";
 				dam *= 3; dam /= (randint(6)+6);
@@ -6035,8 +6035,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		{
 			if (seen) obvious = TRUE;
 			if ((r_ptr->flags4 & RF4_BR_TIME) || (r_ptr->flags9 & RF9_RES_TIME)
-			    || (r_ptr->flags4 & RF3_DEMON) || (r_ptr->flags4 & RF3_NONLIVING)
-			    || (r_ptr->flags4 & RF3_UNDEAD) || (r_ptr->d_char == 'A'))
+			    || (r_ptr->flags3 & RF3_DEMON) || (r_ptr->flags3 & RF3_NONLIVING)
+			    || (r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->d_char == 'A'))
 			{
 				note = " resists";
 				dam *= 3; dam /= (randint(6)+6);
@@ -6188,7 +6188,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (seen) r_ptr->r_flags9 |= RF9_RES_ELEC;
 #endif
 			}
-			else if (r_ptr->flags3 & RF9_SUSCEP_ELEC)
+			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC)
 			{
 				note = " is hit hard by lightning";
 				k_elec *= 2;
@@ -12182,7 +12182,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_DISENCHANT:
 			if ((r_ptr->flags4 & RF4_BR_DISE) ||
 			    prefix(name, "Disen") ||
-			    (r_ptr->flags9 & RF3_RES_DISE))
+			    (r_ptr->flags3 & RF3_RES_DISE))
 				dam /= 3;
 			break;
 
@@ -12204,8 +12204,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 		case GF_TIME: //Note: Also steals energy!
 			if ((r_ptr->flags4 & RF4_BR_TIME) || (r_ptr->flags9 & RF9_RES_TIME)
-			    || (r_ptr->flags4 & RF3_DEMON) || (r_ptr->flags4 & RF3_NONLIVING)
-			    || (r_ptr->flags4 & RF3_UNDEAD))
+			    || (r_ptr->flags3 & RF3_DEMON) || (r_ptr->flags3 & RF3_NONLIVING)
+			    || (r_ptr->flags3 & RF3_UNDEAD))
 				dam /= 3;
 			break;
 
@@ -12261,7 +12261,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				k_elec = 0;
 			else if (r_ptr->flags9 & RF9_RES_ELEC)
 				k_elec /= 4;
-			else if (r_ptr->flags3 & RF9_SUSCEP_ELEC)
+			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC)
 				k_elec *= 2;
 
 			k_sound = dam / 3; /* 33% SOUND damage */
