@@ -1852,7 +1852,10 @@ static void artifact_lore(void) {
 		Term->scr->cu = 1;
 
 		while (TRUE) {
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
 			c = inkey();
+			inkey_msg = inkey_msg_old;
 
 			/* specialty: allow chatting from within here */
 			if (c == ':') {
@@ -2259,7 +2262,10 @@ static void monster_lore(void) {
 		Term->scr->cu = 1;
 
 		while (TRUE) {
+			inkey_msg_old = inkey_msg;
+			inkey_msg = TRUE;
 			c = inkey();
+			inkey_msg = inkey_msg_old;
 
 			/* specialty: allow chatting from within here */
 			if (c == ':') {
