@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. August 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 5. August 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -2069,6 +2069,11 @@ The only prerequisite is that you must have '7-Zip' installed, a great, free,
 open source archiver that beats WinRAR and WinZIP easily. You can get it from
 www.7-zip.org.
 Important: You should exit the game before attempting to update it!
+Note for LINUX:
+If the packages in your repository do not provide '7zG' (the graphical user
+interface of 7-zip) then you'll need to compile it yourself. For details see
+(2.1a) and there "a) Automatic audio pack installation - LINUX". That paragraph
+has short instructions on how to compile 7-zip from source in Linux.
 
 
 Installation from scratch:
@@ -2377,6 +2382,21 @@ Step 1:
  Note that some Linux distributions (Ubuntu) have another package called
  p7zip-full and the package p7zip is lacking certain parts. In that case
  install p7zip-full.
+ UPDATE: Ubuntu seems to no longer provide the graphical user interface of 7zip
+ 7zG in either of these packages, so you'll have to download the source instead
+ directly from the project page (on sourceforge) and compile it yourself:
+  http://sourceforge.net/projects/p7zip/files/p7zip/9.20.1/p7zip_9.20.1_src_all.tar.bz2/download
+ Short compilation/installation instructions:
+  Extract the source archive and enter its directory.
+  For 32-bit Linux, do:
+   cp makefile.linux_x86_asm_gcc_4.X makefile.machine
+  For 64-bit Linux, instead do:
+   cp makefile.linux_amd64_asm makefile.machine
+  Then do:
+   make all4
+  And last but not least:
+   sudo make install
+  That's it. Try entering '7zG' into the terminal to verify that it worked.
 
 Step 2:
  Download the files 'TomeNET-soundpack.7z' and/or 'TomeNET-musicpack.7z' and
