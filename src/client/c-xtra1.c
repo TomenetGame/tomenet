@@ -175,7 +175,11 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 #ifdef EXP_BAR_FINESCALE
 		int got_org = 0;
 #endif
+#ifdef WINDOWS
 		if (c_cfg.font_map_solid_walls) exp_bar_char = 127; /* :-p hack */
+#else
+		if (c_cfg.font_map_solid_walls) exp_bar_char = 2; /* :-p hack */
+#endif
 		else exp_bar_char = '#';
 
 		if (level >= PY_MAX_LEVEL || !adv || !scale) {
