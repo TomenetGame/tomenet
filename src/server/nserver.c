@@ -2300,7 +2300,7 @@ static int Handle_login(int ind)
 	if (p_ptr->version.os == OS_WIN32) {
 		p_ptr->f_char_solid[50] = 127; //magma, 8
 		p_ptr->f_char_solid[52] = 127;
-		p_ptr->f_char_solid[51] = 127; //quarts, 9
+		p_ptr->f_char_solid[51] = 127; //quartz, 9
 		p_ptr->f_attr_solid[51] = 9;
 		p_ptr->f_char_solid[53] = 127;
 		p_ptr->f_attr_solid[53] = 9;
@@ -2318,9 +2318,8 @@ static int Handle_login(int ind)
 		p_ptr->f_char_solid[76] = 127;
 		p_ptr->f_char_solid[77] = 127;
 		p_ptr->f_char_solid[78] = 127;
-		p_ptr->f_char_solid[95] = 127; //misc walls
-		p_ptr->f_attr_solid[95] = 1;
-		p_ptr->f_char_solid[98] = 127;
+		p_ptr->f_char_solid[95] = 127; //ice wall
+		p_ptr->f_char_solid[98] = 127; //sand wall
 		p_ptr->f_char_solid[99] = 127;
 		p_ptr->f_char_solid[177] = 127;
 		p_ptr->f_char_solid[188] = 127;
@@ -2333,10 +2332,14 @@ static int Handle_login(int ind)
 		/* assume OS_X11 -- does this work on OSX/GCU too? */
 		p_ptr->f_char_solid[50] = 2; //magma, 8
 		p_ptr->f_char_solid[52] = 2;
-		p_ptr->f_char_solid[51] = 2; //quarts, 9
+		p_ptr->f_char_solid[51] = 2; //quartz, 9
 		p_ptr->f_attr_solid[51] = 9;
 		p_ptr->f_char_solid[53] = 2;
 		p_ptr->f_attr_solid[53] = 9;
+
+		p_ptr->f_char_solid[54] = 1; //specialty: magma with treasure (diamond ascii)
+		p_ptr->f_char_solid[55] = 1; //specialty: quartz with treasure (diamond ascii)
+
 		p_ptr->f_char_solid[56] = 2; //granite, 2
 		p_ptr->f_char_solid[57] = 2;
 		p_ptr->f_char_solid[58] = 2;
@@ -2351,10 +2354,12 @@ static int Handle_login(int ind)
 		p_ptr->f_char_solid[76] = 2;
 		p_ptr->f_char_solid[77] = 2;
 		p_ptr->f_char_solid[78] = 2;
-		p_ptr->f_char_solid[95] = 2; //misc walls
-		p_ptr->f_attr_solid[95] = 1;
-		p_ptr->f_char_solid[98] = 2;
+		p_ptr->f_char_solid[95] = 2; //ice walls
+		p_ptr->f_char_solid[98] = 2; //sand wall
 		p_ptr->f_char_solid[99] = 2;
+
+		p_ptr->f_char_solid[100] = 1; //specialty: sand wall with treasure (diamond ascii)
+
 		p_ptr->f_char_solid[177] = 2;
 		p_ptr->f_char_solid[188] = 2;
 		p_ptr->f_char_solid[189] = 2;
