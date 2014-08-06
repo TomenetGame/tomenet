@@ -2304,6 +2304,10 @@ static int Handle_login(int ind)
 		p_ptr->f_attr_solid[51] = 9;
 		p_ptr->f_char_solid[53] = 127;
 		p_ptr->f_attr_solid[53] = 9;
+
+		p_ptr->f_char_solid[54] = 1; //specialty: magma with treasure (diamond ascii)
+		p_ptr->f_char_solid[55] = 1; //specialty: quartz with treasure (diamond ascii)
+
 		p_ptr->f_char_solid[56] = 127; //granite, 2
 		p_ptr->f_char_solid[57] = 127;
 		p_ptr->f_char_solid[58] = 127;
@@ -2321,6 +2325,9 @@ static int Handle_login(int ind)
 		p_ptr->f_char_solid[95] = 127; //ice wall
 		p_ptr->f_char_solid[98] = 127; //sand wall
 		p_ptr->f_char_solid[99] = 127;
+
+		p_ptr->f_char_solid[100] = 1; //specialty: sand wall with treasure (diamond ascii)
+
 		p_ptr->f_char_solid[177] = 127;
 		p_ptr->f_char_solid[188] = 127;
 		p_ptr->f_char_solid[189] = 127;
