@@ -3966,7 +3966,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 
 		if (fff) {
 			if (p_ptr->awkward_wield && !old_awkward_wield) fprintf(fff, "\377r    One-handed use reduces its efficiency.\n");
-			if (k_info[o_ptr->k_idx].flags2 & TR4_COULD2H) fprintf(fff, "\377r    Wielding it two-handedly might make it even more effective.\n");
+			if (k_info[o_ptr->k_idx].flags4 & TR4_COULD2H) fprintf(fff, "\377r    Wielding it two-handedly might make it even more effective.\n");
 			if (p_ptr->heavy_wield && !old_heavy_wield) fprintf(fff, "\377r    Your strength is insufficient to hold it properly.\n");
 			if (p_ptr->icky_wield && !old_icky_wield) fprintf(fff, "\377r    It is edged and not blessed.\n");
 //			fprintf(fff, "\n");
@@ -3974,7 +3974,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 //we get this info although we didn't *id*!
 		else {
 			if (p_ptr->awkward_wield && !old_awkward_wield) msg_print(Ind, "\377s  One-handed use reduces its efficiency.");
-			if (k_info[o_ptr->k_idx].flags2 & TR4_COULD2H) msg_print(Ind, "\377s  Wielding it two-handedly might make it even more effective.");
+			if (k_info[o_ptr->k_idx].flags4 & TR4_COULD2H) msg_print(Ind, "\377s  Wielding it two-handedly might make it even more effective.");
 			if (p_ptr->heavy_wield && !old_heavy_wield) msg_print(Ind, "\377s  It seems to be too heavy for you to hold it properly.");
 			if (p_ptr->pclass == CLASS_PRIEST && o_ptr->tval != TV_BLUNT) msg_print(Ind, "\377s  It is an edged weapon and might not be blessed.");
 		}
