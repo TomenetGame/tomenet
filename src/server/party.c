@@ -3518,6 +3518,9 @@ void clockin(int Ind, int type) {
 			case 6:
 				ptr->admin = p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0);
 				break;
+			case 7:
+				ptr->wpos = p_ptr->wpos;
+				break;
 			}
 			break;
 		}
@@ -3526,7 +3529,7 @@ void clockin(int Ind, int type) {
 }
 
 /* dish out a valid new player ID */
-int newid(){
+int newid() {
 	int id;
 	int slot;
 	hash_entry *ptr;
@@ -3538,7 +3541,7 @@ int newid(){
 		slot = hash_slot(id);
 		ptr = hash_table[slot];
 
-		while (ptr){
+		while (ptr) {
 			if (ptr->id == id) break;
 			ptr = ptr->next;
 		}
@@ -3561,7 +3564,7 @@ int newid(){
 	return(0);	/* no user IDs available - not likely */
 }
 
-void sf_delete(const char *name){
+void sf_delete(const char *name) {
 	int i, k = 0;
 	char temp[128],fname[MAX_PATH_LENGTH];
 	/* Extract "useful" letters */

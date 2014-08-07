@@ -6737,6 +6737,8 @@ void process_player_change_wpos(int Ind) {
 	   flicker player for a moment, to allow for easy location */
 	if (!smooth_ambient && p_ptr->flash_self >= 0) p_ptr->flash_self = cfg.fps / 4; //todo: make client option
 #endif
+
+	clockin(Ind, 7); /* Remember his wpos */
 }
 
 

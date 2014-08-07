@@ -1538,7 +1538,7 @@ bool Destroy_connection(int ind, char *reason_orig)
 		player = GetInd[connp->id];
 		p_ptr = Players[player];
 	}
-	if (p_ptr)
+	if (p_ptr) {
 		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (Ind=%d,ind=%d;wpos=%d,%d,%d;xy=%d,%d)\n",
 		    showtime(),
 		    connp->c_name ? connp->c_name : "",
@@ -1548,7 +1548,8 @@ bool Destroy_connection(int ind, char *reason_orig)
 		    reason, player, ind,
 		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 		    p_ptr->px, p_ptr->py);
-	else
+		clockin(player, 7); /* Remember his wpos -- should be redundant with clockin() call in dungeon.c:process_player_change_wpos() */
+	} else
 		s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (Ind=%d,ind=%d;wpos=-,-,-;xy=-,-)\n",
 		    showtime(),
 		    connp->c_name ? connp->c_name : "",
