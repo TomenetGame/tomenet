@@ -1623,9 +1623,16 @@ static void regen_monsters(void)
 
 
 /* update a particular player's view to daylight, assuming he's on world surface */
-void player_day(int Ind) {
+bool player_day(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int x, y;
+	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+	if (p_ptr->wpos.wz) return FALSE;
+	if (sector00separation && p_ptr->wpos.wz == WPOS_SECTOR00_Z &&
+	    p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y)
+		return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return FALSE;
 
 //	if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
 	if (p_ptr->prace == RACE_VAMPIRE ||
@@ -1651,26 +1658,35 @@ void player_day(int Ind) {
 	p_ptr->window |= (PW_OVERHEAD);
 
 #ifdef USE_SOUND_2010
-	if (p_ptr->is_day) return;
+	if (p_ptr->is_day) return FALSE;
 	p_ptr->is_day = TRUE;
 	handle_music(Ind);
 	{
 		cave_type **zcave;
 		if (!(zcave = getcave(&p_ptr->wpos))) {
 			s_printf("DEBUG_DAY: Ind %d, wpos %d,%d,%d\n", Ind, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-			return;
+			return FALSE; /* paranoia */
 		}
 		handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
 	}
 #endif
+
+	return TRUE;
 }
 /* update a particular player's view to night, assuming he's on world surface */
-void player_night(int Ind) {
+bool player_night(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave = getcave(&p_ptr->wpos);
 	int x, y;
+	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
-	if (!zcave) return; /* paranoia */
+	if (!zcave) return FALSE; /* paranoia */
+
+	if (p_ptr->wpos.wz) return FALSE;
+	if (sector00separation && p_ptr->wpos.wz == WPOS_SECTOR00_Z &&
+	    p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y)
+		return FALSE;
+	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return FALSE;
 
 //	if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
 	if (p_ptr->prace == RACE_VAMPIRE ||
@@ -1701,18 +1717,24 @@ void player_night(int Ind) {
 	p_ptr->window |= (PW_OVERHEAD);
 
 #ifdef USE_SOUND_2010
-	if (!p_ptr->is_day) return;
+	if (!p_ptr->is_day) return FALSE;
 	p_ptr->is_day = FALSE;
 	handle_music(Ind);
+ #if 0 /*done above already*/
 	{
 		cave_type **zcave;
 		if (!(zcave = getcave(&p_ptr->wpos))) {
 			s_printf("DEBUG_NIGHT: Ind %d, wpos %d,%d,%d\n", Ind, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-			return;
+			return FALSE; /* paranoia */
 		}
 		handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
 	}
+ #else
+	handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
+ #endif
 #endif
+
+	return TRUE;
 }
 
 /* update a particular player's view as a town looks at night, just for dungeon towns */
@@ -1749,7 +1771,14 @@ void player_dungeontown(int Ind) {
 /* turn an allocated wpos to bright day and update view of players on it */
 void world_surface_day(struct worldpos *wpos) {
 	cave_type **zcave = getcave(wpos), *c_ptr;
+	struct dun_level *l_ptr = getfloor(wpos);
 	int y, x;
+
+	if (!zcave) return; /* paranoia */
+
+	if (sector00separation && 0 == WPOS_SECTOR00_Z &&
+	    wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) return;
+	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return;
 
 	/* Hack -- Scan the level */
 	for (y = 0; y < MAX_HGT; y++)
@@ -1766,11 +1795,16 @@ void world_surface_day(struct worldpos *wpos) {
 /* turn an allocated wpos to dark night and update view of players on it */
 void world_surface_night(struct worldpos *wpos) {
 	cave_type **zcave = getcave(wpos), *c_ptr;
+	struct dun_level *l_ptr = getfloor(wpos);
 	int y, x;
 	int stores = 0, y1, x1, i;
 	byte sx[255], sy[255];
 
 	if (!zcave) return; /* paranoia */
+
+	if (sector00separation && 0 == WPOS_SECTOR00_Z &&
+	    wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) return;
+	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return;
 
 	/* Hack -- Scan the level */
 	for (y = 0; y < MAX_HGT; y++)
@@ -1822,21 +1856,13 @@ static void sun_rises() {
 	for (wy = 0; wy < MAX_WILD_Y; wy++) {
 		wrpos.wx = wx;
 		wrpos.wy = wy;
-		if (!getcave(&wrpos)) continue;
-		if (sector00separation && !wx && !wy) continue;
 		world_surface_day(&wrpos);
 	}
 
 	/* Message all players who witness switch */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
-		if (Players[i]->wpos.wz) continue;
-		if (sector00separation && Players[i]->wpos.wx == WPOS_SECTOR00_X &&
-		    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
-			continue;
-		msg_print(i, "The sun has risen.");
-
-		player_day(i);
+		if (player_day(i)) msg_print(i, "The sun has risen.");
 	}
 }
 
@@ -1853,21 +1879,13 @@ static void night_falls() {
 	for (wy = 0; wy < MAX_WILD_Y; wy++) {
 		wrpos.wx = wx;
 		wrpos.wy = wy;
-		if (!getcave(&wrpos)) continue;
-		if (sector00separation && !wx && !wy) continue;
 		world_surface_night(&wrpos);
 	}
 
 	/* Message all players who witness switch */
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
-		if (Players[i]->wpos.wz) continue;
-		if (sector00separation && Players[i]->wpos.wx == WPOS_SECTOR00_X &&
-		    Players[i]->wpos.wy == WPOS_SECTOR00_Y && Players[i]->wpos.wz == WPOS_SECTOR00_Z)
-			continue;
-		msg_print(i, "The sun has fallen.");
-
-		player_night(i);
+		if (player_night(i)) msg_print(i, "The sun has fallen.");
 	}
 
 	/* If it's new year's eve, start the fireworks! */

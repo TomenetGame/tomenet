@@ -781,8 +781,8 @@ extern cptr value_check_aux2_magic(object_type *o_ptr);
 
 extern void world_surface_day(struct worldpos *wpos);
 extern void world_surface_night(struct worldpos *wpos);
-extern void player_day(int Ind);
-extern void player_night(int Ind);
+extern bool player_day(int Ind);
+extern bool player_night(int Ind);
 extern void player_dungeontown(int Ind);
 
 extern void process_timers(void);
