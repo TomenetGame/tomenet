@@ -8299,9 +8299,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //		strcpy(m_name, p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
 		sprintf(killer, "%s", p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
 		sprintf(m_name, "%s", p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
-		if (p_ptr->play_vis[0 - who])
-			sprintf(m_name_gen, "%s's", Players[0 - who]->name);
-		else
+		if (p_ptr->play_vis[0 - who]) {
+			if (Players[0 - who]->name[strlen(Players[0 - who]->name) - 1] != 's')
+				sprintf(m_name_gen, "%s's", Players[0 - who]->name);
+			else
+				sprintf(m_name_gen, "%s'", Players[0 - who]->name);
+		} else
 			sprintf(m_name_gen, "its");
 		strcpy(p_ptr->really_died_from, Players[0 - who]->name);
 
