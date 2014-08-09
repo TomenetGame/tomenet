@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. August 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. August 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -8615,6 +8615,17 @@ Device of theft prevention
 Climbing set        Allows you to travel over mountain fields.
                     Info for mimics & co: In order to be able to use it, your
                     appearance form must have arms and fingers. (Equip it!)
+Ale and wine        Will satisfy your hunger somewhat, and may have random side
+                    effects:
+                    Confusion, stun, hallucinations, 1 point of sanity damage,
+                    paralysation, fear, blindness (methyl? ew), vomitting if
+                    your stomach isn't relatively empty, temporary stat
+                    decrease (except for strength), slowness,
+                    heroism, berserk, speed.
+                    Note that the unique dwarven ale of the Khazad is vastly
+                    superiour to normal ale or wine, and will mostly affect the
+                    drinker positively, not ever causing negative side effects
+                    besides possible confusion.
 Fortune Cookie      Gives you a line of wisdom.
 Sprig of Athelas    Eat this one to cure Black Breath (see 1.5 for more
                     information about Black Breath),
