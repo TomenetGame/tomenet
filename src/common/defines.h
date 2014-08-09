@@ -4388,7 +4388,7 @@
 #define TR1_CHR				0x00000020L	/* CHR += "pval" */
 #define TR1_MANA			0x00000040L	/* SP += "pval" * SP / 10 */
 /* #define TR1_SPELL_SPEED		0x00000080L */	/* Spell Speed += pval */
-#define TR1_SPELL			0x00000080L	/* Spell Speed += pval */
+ #define TR1_SPELL			0x00000080L	/* Spell Speed += pval -- unused, remove me -- */
 #define TR1_STEALTH		0x00000100L	/* Stealth += "pval" */
 #define TR1_SEARCH		0x00000200L	/* Search += "pval" */
 #define TR1_INFRA		0x00000400L	/* Infra += "pval" */
@@ -4406,8 +4406,8 @@
 #define TR1_SLAY_GIANT			0x00400000L
 #define TR1_SLAY_DRAGON			0x00800000L
 #define TR1_KILL_DRAGON		0x01000000L	/* Execute Dragon */
-#define TR1_KILL_DEMON          0x02000000L     /* Execute Demon */
-#define TR1_KILL_UNDEAD         0x04000000L     /* Execute Undead */
+#define TR1_KILL_DEMON		0x02000000L     /* Execute Demon */
+#define TR1_KILL_UNDEAD		0x04000000L     /* Execute Undead */
 #define TR1_BRAND_POIS		0x08000000L	/* XXX6 */
 #define TR1_BRAND_ACID			0x10000000L
 #define TR1_BRAND_ELEC			0x20000000L
@@ -4421,15 +4421,15 @@
 				TR1_KILL_DRAGON | TR1_KILL_DEMON | TR1_KILL_UNDEAD)
 
 /* ToME hack for trapkits */
-#define TRAP2_AUTOMATIC_5       0x00000001L     /* Trap automatically rearms itself, 1 in 5 failure */
-#define TRAP2_AUTOMATIC_99      0x00000002L     /* Trap automatically rearms itself */
-#define TRAP2_KILL_GHOST        0x00000004L     /* Trap also affects PASS_WALL creatures */
-#define TRAP2_TELEPORT_TO       0x00000008L     /* After everything else, teleport to player */
-#define TRAP2_ONLY_DRAGON       	0x00000010L     /* Affect only dragons & other AFFECTed creatures */
-#define TRAP2_ONLY_DEMON        	0x00000020L     /* Affect only demons & other AFFECTed creatures */
-#define TRAP2_ONLY_ANIMAL       0x00000100L     /* Affect only animals & other AFFECTed creatures */
-#define TRAP2_ONLY_UNDEAD       0x00000200L     /* Affect only undead & others */
-#define TRAP2_ONLY_EVIL         0x00000400L     /* Affect only evil creatures &c. */
+#define TRAP2_AUTOMATIC_5	0x00000001L     /* Trap automatically rearms itself, 1 in 5 failure */
+#define TRAP2_AUTOMATIC_99	0x00000002L     /* Trap automatically rearms itself */
+#define TRAP2_KILL_GHOST	0x00000004L     /* Trap also affects PASS_WALL creatures */
+#define TRAP2_TELEPORT_TO	0x00000008L     /* After everything else, teleport to player */
+#define TRAP2_ONLY_DRAGON		0x00000010L     /* Affect only dragons & other AFFECTed creatures */
+#define TRAP2_ONLY_DEMON		0x00000020L     /* Affect only demons & other AFFECTed creatures */
+#define TRAP2_ONLY_ANIMAL	0x00000100L     /* Affect only animals & other AFFECTed creatures */
+#define TRAP2_ONLY_UNDEAD	0x00000200L     /* Affect only undead & others */
+#define TRAP2_ONLY_EVIL		0x00000400L     /* Affect only evil creatures &c. */
 
 /* mask for monster-specific traps */
 #define TRAP2_ONLY_MASK		(TRAP2_ONLY_DRAGON | TRAP2_ONLY_DEMON | TRAP2_ONLY_ANIMAL | \
@@ -4441,14 +4441,14 @@
 #define TR2_SUST_DEX		0x00000008L
 #define TR2_SUST_CON			0x00000010L
 #define TR2_SUST_CHR			0x00000020L
-#define TR2_REDUC_FIRE                  0x00000040L     /* Later */
-#define TR2_REDUC_COLD                  0x00000080L     /* Later */
+ #define TR2_REDUC_FIRE			0x00000040L     /* Later */
+ #define TR2_REDUC_COLD			0x00000080L     /* Later */
 #define TR2_IM_ACID		0x00000100L
 #define TR2_IM_ELEC		0x00000200L
 #define TR2_IM_FIRE		0x00000400L
 #define TR2_IM_COLD		0x00000800L
-#define TR2_REDUC_ELEC                  0x00001000L     /* Later */
-#define TR2_REDUC_ACID                  0x00002000L     /* Later */
+ #define TR2_REDUC_ELEC			0x00001000L     /* Later */
+ #define TR2_REDUC_ACID			0x00002000L     /* Later */
 #define TR2_FREE_ACT			0x00004000L	/* Free Action */
 #define TR2_HOLD_LIFE	 		0x00008000L	/* Hold Life */
 #define TR2_RES_ACID		0x00010000L
@@ -4480,22 +4480,22 @@
 #endif	/* 0 */
 /* Flags from ToME - Jir - */
 
-#define TR3_SH_FIRE             0x00000001L     /* Immolation (Fire) */
-#define TR3_SH_ELEC             0x00000002L     /* Electric Sheath */
-#define TR3_AUTO_CURSE          0x00000004L     /* The obj will recurse itself */
-#define TR3_DECAY               0x00000008L     /* Decay */
-#define TR3_NO_TELE             	0x00000010L     /* Anti-teleportation */
-#define TR3_NO_MAGIC            	0x00000020L     /* Anti-magic */
-#define TR3_WRAITH              	0x00000040L     /* Wraithform */
-#define TR3_TY_CURSE            	0x00000080L     /* The Ancient Curse */
+#define TR3_SH_FIRE		0x00000001L     /* Immolation (Fire) */
+#define TR3_SH_ELEC		0x00000002L     /* Electric Sheath */
+#define TR3_AUTO_CURSE		0x00000004L     /* The obj will recurse itself */
+ #define TR3_DECAY		0x00000008L     /* Decay -- unused -- */
+#define TR3_NO_TELE			0x00000010L     /* Anti-teleportation */
+#define TR3_NO_MAGIC			0x00000020L     /* Anti-magic */
+#define TR3_WRAITH			0x00000040L     /* Wraithform */
+#define TR3_TY_CURSE			0x00000080L     /* The Ancient Curse */
 #define TR3_EASY_KNOW		0x00000100L	/* Aware -> Known */
 #define TR3_HIDE_TYPE		0x00000200L	/* Hide "pval" description */
 #define TR3_SHOW_MODS		0x00000400L	/* Always show Tohit/Todam */
-#define TR3_INSTA_ART		0x00000800L	/* Item must be an artifact */
-#define TR3_FEATHER	 		0x00001000L	/* Feather Falling */
+#define TR3_INSTA_ART		0x00000800L	/* Item must be a (true) artifact */
+#define TR3_FEATHER			0x00001000L	/* Feather Falling */
 #define TR3_LITE1			0x00002000L	/* Permanent Light */
 #define TR3_SEE_INVIS			0x00004000L	/* See Invisible */
-#define TR3_NO_NORM_ART			0x00008000L	/* ??? */
+ #define TR3_NO_NORM_ART		0x00008000L	/* ??? -- unused -- */
 #define TR3_SLOW_DIGEST		0x00010000L	/* Item slows down digestion */
 #define TR3_REGEN		0x00020000L	/* Item induces regeneration */
 #define TR3_XTRA_MIGHT		0x00040000L	/* Bows get extra multiplier */
@@ -4514,60 +4514,60 @@
 #define TR3_PERMA_CURSE			0x80000000L	/* Item is Perma Cursed */
 
 
-#define TR4_NEVER_BLOW          0x00000001L     /* Weapon can't attack */
-#define TR4_PRECOGNITION        0x00000002L     /* Like activating the cheat mode */
-#define TR4_BLACK_BREATH        0x00000004L     /* Tolkien's Black Breath */
+#define TR4_NEVER_BLOW		0x00000001L     /* Weapon can't attack */
+ #define TR4_PRECOGNITION	0x00000002L     /* Like activating the cheat mode -- unused -- */
+ #define TR4_BLACK_BREATH	0x00000004L     /* Tolkien's Black Breath -- unused -- */
 #define TR4_RECHARGE            0x00000008L     /* For artifact Wands and Staffs */
 #define TR4_LEVITATE			0x00000010L     /* This one and ONLY this one allow you to fly over trees */
-#define TR4_DG_CURSE            	0x00000020L     /* The Ancient Morgothian Curse */
-#define TR4_SHOULD2H            	0x00000040L     /* Can wield it 2 Handed */
-#define TR4_MUST2H              	0x00000080L     /* Must wield it 2 Handed */
-#define TR4_COULD2H             0x00000100L     /* Can wield it 2 Handed */
-#define TR4_CLONE               0x00000200L     /* Can clone monsters */
-#define TR4_SPECIAL_GENE        0x00000400L     /* The object can only be generated in special conditions like quests, special dungeons, ... */
-#define TR4_CLIMB               0x00000800L     /* Allow climbing mountains */
+#define TR4_DG_CURSE			0x00000020L     /* The Ancient Morgothian Curse */
+#define TR4_SHOULD2H			0x00000040L     /* Can wield it 2 Handed */
+#define TR4_MUST2H			0x00000080L     /* Must wield it 2 Handed */
+#define TR4_COULD2H		0x00000100L     /* Can wield it 2 Handed */
+#define TR4_CLONE		0x00000200L     /* Can clone monsters */
+#define TR4_SPECIAL_GENE	0x00000400L     /* The object can only be generated in special conditions like quests, special dungeons, ... */
+#define TR4_CLIMB		0x00000800L     /* Allow climbing mountains */
 /* rods only -- consider make them like trapkits - Jir - */
-#define TR4_FAST_CAST           	0x00001000L     /* Rod is x2 time faster to use */
-#define TR4_CAPACITY            	0x00002000L     /* Rod can take x2 mana */
-#define TR4_CHARGING            	0x00004000L     /* Rod recharge faster */
-#define TR4_CHEAPNESS           	0x00008000L     /* Rod spells are cheaper(in mana cost) to cast */
-#define TR4_FOUNTAIN            0x00010000L     /* Available as fountain (for potions) */
-#define TR4_ANTIMAGIC_50        0x00020000L     /* Forbid magic */
-#define TR4_ANTIMAGIC_30        0x00040000L     /* Forbid magic */
-#define TR4_ANTIMAGIC_20        0x00080000L     /* Forbid magic */
-#define TR4_ANTIMAGIC_10        	0x00100000L     /* Forbid magic */
-#define TR4_EASY_USE            	0x00200000L     /* Easily activable */
-#define TR4_IM_NETHER           	0x00400000L     /* Immunity to nether */
-#define TR4_RECHARGED           	0x00800000L     /* Object has been recharged once */
-#define TR4_ULTIMATE            0x01000000L     /* ULTIMATE artifact */
-#define TR4_AUTO_ID             0x02000000L     /* Id stuff on floor */
-#define TR4_LITE2               0x04000000L     /* lite radius 2 */
-#define TR4_LITE3               0x08000000L     /* lite radius 3 */
-#define TR4_FUEL_LITE           	0x10000000L     /* fuelable lite */
-#define TR4_ART_EXP             	0x20000000L     /* Will accumulate xp */
-#define TR4_CURSE_NO_DROP       	0x40000000L     /* The obj wont be dropped */
-#define TR4_NO_RECHARGE         	0x80000000L     /* Object Cannot be recharged */
+ #define TR4_FAST_CAST			0x00001000L     /* Rod is x2 time faster to use -- unused -- */
+ #define TR4_CAPACITY			0x00002000L     /* Rod can take x2 mana -- unused -- */
+#define TR4_CHARGING			0x00004000L     /* Rod recharge faster */
+ #define TR4_CHEAPNESS			0x00008000L     /* Rod spells are cheaper(in mana cost) to cast -- unused - */
+#define TR4_FOUNTAIN		0x00010000L     /* Available as fountain (for potions) */
+#define TR4_ANTIMAGIC_50	0x00020000L     /* Forbid magic */
+#define TR4_ANTIMAGIC_30	0x00040000L     /* Forbid magic */
+#define TR4_ANTIMAGIC_20	0x00080000L     /* Forbid magic */
+#define TR4_ANTIMAGIC_10		0x00100000L     /* Forbid magic */
+#define TR4_EASY_USE			0x00200000L     /* Easily activable */
+#define TR4_IM_NETHER			0x00400000L     /* Immunity to nether */
+ #define TR4_RECHARGED			0x00800000L     /* Object has been recharged once -- unused -- */
+ #define TR4_ULTIMATE		0x01000000L     /* ULTIMATE artifact -- unused -- */
+#define TR4_AUTO_ID		0x02000000L     /* Id stuff on floor */
+#define TR4_LITE2		0x04000000L     /* lite radius 2 */
+#define TR4_LITE3		0x08000000L     /* lite radius 3 */
+#define TR4_FUEL_LITE			0x10000000L     /* fuelable lite */
+ #define TR4_ART_EXP			0x20000000L     /* Will accumulate xp -- unused -- */
+#define TR4_CURSE_NO_DROP		0x40000000L     /* The obj wont be dropped */
+ #define TR4_NO_RECHARGE		0x80000000L     /* Object Cannot be recharged -- practically unused -- */
 
-#define TR4_NULL_MASK           0xFFFFFFFCL	//unused
+#define TR4_NULL_MASK		0xFFFFFFFCL	//unused
 
 
-#define TR5_TEMPORARY           0x00000001L		/* In timeout turns it is destroyed */
-#define TR5_DRAIN_MANA          0x00000002L		/* Drains mana */
-#define TR5_DRAIN_HP            0x00000004L		/* Drains hp */
+ #define TR5_TEMPORARY		0x00000001L		/* In timeout turns it is destroyed -- not implemented -- */
+#define TR5_DRAIN_MANA		0x00000002L		/* Drains mana */
+#define TR5_DRAIN_HP		0x00000004L		/* Drains hp */
 #define TR5_VORPAL		0x00000008L		/* XXX5 */
 #define TR5_IMPACT			0x00000010L	/* Cause Earthquakes */
-#define TR5_CRIT                	0x00000020L	/* More critical hits */
-#define TR5_ATTR_MULTI          	0x00000040L	/* Object shimmer -- only allowed in k_info */
-#define TR5_WOUNDING            	0x00000080L	/* Wounds monsters */
-#define TR5_FULL_NAME           0x00000100L		/* Uses direct name from k_info - UNUSED appearently */
-#define TR5_LUCK                0x00000200L		/* Luck += pval */
-#define TR5_RES_PLASMA          0x00000400L		/* For the runecraft sigil */
-#define TR5_LEVELS              0x00000800L		/* Can gain exp/exp levels !! */
+#define TR5_CRIT			0x00000020L	/* More critical hits */
+#define TR5_ATTR_MULTI			0x00000040L	/* Object shimmer -- only allowed in k_info */
+ #define TR5_WOUNDING			0x00000080L	/* Wounds monsters -- not implemented -- */
+ #define TR5_FULL_NAME		0x00000100L		/* Uses direct name from k_info - UNUSED appearently/not implemented -- */
+#define TR5_LUCK		0x00000200L		/* Luck += pval */
+#define TR5_RES_PLASMA		0x00000400L		/* For the runecraft sigil */
+ #define TR5_LEVELS		0x00000800L		/* Can gain exp/exp levels !! -- unused -- */
 #define TR5_FORCE_DEPTH			0x00001000L	/* Can only occur on depth >= its k_info level */
 #define TR5_WHITE_LIGHT			0x00002000L	/* Light source colour is white instead of flame-yellow (for CAVE_LITE_COLOURS) */
 #define TR5_IGNORE_DISEN		0x00004000L	/* For 'Arcane' ego power for Heavy winners-only armour */
-#define TR5_RES_TELE            	0x00008000L     /* For Sky Dragon Scale Mail */
-#define TR5_SH_COLD             0x00010000L		/* Winter's might/Snow grasp/Frostweaving (Cold aura) */
+#define TR5_RES_TELE			0x00008000L     /* For Sky Dragon Scale Mail */
+#define TR5_SH_COLD		0x00010000L		/* Winter's might/Snow grasp/Frostweaving (Cold aura) */
 #define TR5_IGNORE_MANA		0x00020000L		/* Item ignores Mana Damage */
 #define TR5_IGNORE_WATER	0x00040000L		/* Item ignores Water damage */
 #define TR5_RES_TIME		0x00080000L
@@ -4578,27 +4578,26 @@
 #define TR5_REGEN_MANA		0x01000000L		/* Item induces regeneration */
 #define TR5_DISARM		0x02000000L
 #define TR5_NO_ENCHANT		0x04000000L
-#define TR5_CHAOTIC             0x08000000L
-#define TR5_INVIS               	0x10000000L
-#define TR5_REFLECT             	0x20000000L
+#define TR5_CHAOTIC		0x08000000L
+#define TR5_INVIS			0x10000000L
+#define TR5_REFLECT			0x20000000L
 #define TR5_PASS_WATER			0x40000000L
-#define TR5_WINNERS_ONLY        	0x80000000L
+#define TR5_WINNERS_ONLY		0x80000000L
 
 
 #define TR6_INSTA_EGO		0x00000001L		/* Similar to INSTA_ART, this item is always an ego item */
 
-/*#define TR5_SENS_FIRE           0x20000000L*/
-/*#define TR5_NO_NORM_ART         0x80000000L */
 /* Not yet implemented/used. Cold might be needed. For monsters, even susc-poison is implemented.
    For the player I think fire and cold are enough. (C. Blue)
-#define TR6_SENS_COLD		0x00000001L
-#define TR6_SENS_ACID		0x00000002L
-#define TR6_SENS_ELEC		0x00000004L
+#define TR6_SENS_FIRE           0x00000001L
+#define TR6_SENS_COLD		0x00000002L
+#define TR6_SENS_ACID		0x00000004L
+#define TR6_SENS_ELEC		0x00000008L
 Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 // Item not available if no event is running
-#define TR6_EVENT_HALLOWEEN	0x00000001L
-#define TR6_EVENT_XMAS		0x00000002L
+#define TR6_EVENT_HALLOWEEN	0x00000010L
+#define TR6_EVENT_XMAS		0x00000020L
 */
 
 /* Character Sheet Boni Data Flags for Char/Byte PKT Transfer - Kurzel */
@@ -4837,15 +4836,14 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define ETR1_R_IMMUNITY		0x40000000L	/* Item gives a random immunity */
 #define ETR1_LIMIT_BLOWS	0x80000000L	/* Only on 'Aman' weapons atm - reduces bpr */
 
-#define ETR1_R_MASK	\
+#define ETR1_EASYKNOW_MASK	\
     (0xFFFFFFFF & ~(ETR1_DAM_DIE | ETR1_DAM_SIZE | ETR1_PVAL_M1 | \
     ETR1_PVAL_M2 | ETR1_PVAL_M3 | ETR1_PVAL_M5 | ETR1_LIMIT_BLOWS | \
-    ETR1_NO_DOUBLE_EGO | ETR1_NO_SEED))
-
+    ETR1_AC_M5 | ETR1_NO_DOUBLE_EGO | ETR1_NO_SEED))
 
 #define ETR2_R_SLAY		0x00000001L	/* random slay mod */
 
-#define ETR2_R_MASK		0xFFFFFFFFL
+#define ETR2_EASYKNOW_MASK	0xFFFFFFFFL
 
 
 #define BIAS_ELEC 1                     /* "Biases" for random artifact gen */
