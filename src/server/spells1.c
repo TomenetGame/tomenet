@@ -486,14 +486,11 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x)
  *
  * But allow variation to prevent infinite loops.
  */
-bool teleport_away(int m_idx, int dis)
-{
+bool teleport_away(int m_idx, int dis) {
 	int		oy, ox, d, i, min;
 	int		ny = 0, nx = 0, tries = 5000;
-#if 0 /* see below */
 #ifdef USE_SOUND_2010
 	int org_dis = dis;
-#endif
 #endif
 
 	bool		look = TRUE;
@@ -598,11 +595,9 @@ bool teleport_away(int m_idx, int dis)
 	/* Redraw the new grid */
 	everyone_lite_spot(wpos, ny, nx);
 
-#if 0 /* no player Ind involved here */
 #ifdef USE_SOUND_2010
-	if (org_dis <= 20 && org_dis >= 10) sound(Ind, "monster_blink", NULL, SFX_TYPE_COMMAND, FALSE);
-	else if (org_dis > 20) sound(Ind, "monster_teleport", NULL, SFX_TYPE_COMMAND, FALSE);
-#endif
+	if (org_dis <= 20 && org_dis >= 10) sound_near_monster(m_idx, "monster_blink", NULL, SFX_TYPE_COMMAND);
+	else if (org_dis > 20) sound_near_monster(m_idx, "monster_teleport", NULL, SFX_TYPE_COMMAND);
 #endif
 
 	/* Succeeded. */
@@ -613,8 +608,7 @@ bool teleport_away(int m_idx, int dis)
 /*
  * Teleport monster next to the player
  */
-void teleport_to_player(int Ind, int m_idx)
-{
+void teleport_to_player(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	int ny = 0, nx = 0, oy, ox, d, i, min;
 	int dis = 2;

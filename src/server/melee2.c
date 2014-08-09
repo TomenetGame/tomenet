@@ -3537,7 +3537,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 				//disturb(Ind, 1, 0);
 				msg_format(Ind, "%^s blinks away.", m_name);
 #ifdef USE_SOUND_2010
-				sound(Ind, "monster_blink", NULL, SFX_TYPE_MON_SPELL, TRUE);
+//redudant: already done in teleport_away()	sound(Ind, "monster_blink", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 			}
 			break;
