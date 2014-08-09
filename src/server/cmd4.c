@@ -3453,11 +3453,11 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		case 2044: msg_print(Ind, "\377y* ActiveVeryLow-server-shutdown command pending *"); break;
 		case 2043:
 		//msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
-		if (shutdown_recall_timer >= 120)
-			msg_format(Ind, "\374\377I*** \377RServer-shutdown in %d minutes (auto-recall). \377I***", shutdown_recall_timer / 60);
-		else
-			msg_format(Ind, "\374\377I*** \377RServer-shutdown in %d seconds (auto-recall). \377I***", shutdown_recall_timer);
-		break;
+			if (shutdown_recall_timer >= 120)
+				msg_format(Ind, "\374\377I*** \377RServer shutdown in %d minutes (auto-recall). \377I***", shutdown_recall_timer / 60);
+			else
+				msg_format(Ind, "\374\377I*** \377RServer shutdown in %d seconds (auto-recall). \377I***", shutdown_recall_timer);
+			break;
 		}
 	}
 
