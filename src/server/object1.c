@@ -5061,6 +5061,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 			display_boomerang_damage(Ind, &forge, fff, f1);
 	}
 
+	/* magically returning ranged weapon? */
+	if (is_ammo(o_ptr->tval) &&
+	    (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL ||
+	    o_ptr->sval == SV_AMMO_MAGIC || o_ptr->name1))
+		fprintf(fff, "\377WIt magically returns to your quiver.\n");
+	else if (o_ptr->tval == TV_BOOMERANG && o_ptr->name1)
+		fprintf(fff, "\377WIt magically returns to your quiver.\n");
+
 	/* Breakage/Damage display for ammo */
 	if (eff_full && wield_slot(Ind, o_ptr) == INVEN_AMMO) {
 		u32b shooter_f1 = 0, dummy;
