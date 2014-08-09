@@ -600,8 +600,8 @@ bool teleport_away(int m_idx, int dis)
 
 #if 0 /* no player Ind involved here */
 #ifdef USE_SOUND_2010
-	if (org_dis <= 20 && org_dis >= 10) sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND, FALSE);
-	else if (org_dis > 20) sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, FALSE);
+	if (org_dis <= 20 && org_dis >= 10) sound(Ind, "monster_blink", NULL, SFX_TYPE_COMMAND, FALSE);
+	else if (org_dis > 20) sound(Ind, "monster_teleport", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 #endif
 

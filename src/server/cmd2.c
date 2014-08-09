@@ -510,7 +510,7 @@ static bool between_effect(int Ind, cave_type *c_ptr) {
 
 #ifdef USE_SOUND_2010
 //	sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, TRUE);
-	sound(Ind, "blink", NULL, SFX_TYPE_COMMAND, TRUE);
+	sound(Ind, "phase_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 
 #ifdef ENABLE_SELF_FLASHING

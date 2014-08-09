@@ -3068,7 +3068,7 @@ bool make_attack_melee(int Ind, int m_idx)
 		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5)) {
 			msg_print(Ind, "There is a puff of smoke!");
 #ifdef USE_SOUND_2010
-			sound(Ind, "monster_puff", NULL, SFX_TYPE_MON_SPELL, TRUE);
+//redundant: teleport_away() already calls sound() :/	sound(Ind, "monster_puff", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 		}
 	}
