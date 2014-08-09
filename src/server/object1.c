@@ -4276,11 +4276,15 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 				for (j = 0; j < 5; j++) {
 					if (e_ptr->rar[j] != 100) {
 						/* hack: can *identifying* actually make a difference at all? */
-						if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
+						if (e_ptr->rar[j] != 0 &&
+						    /* any non-trivial (on the object name itself visible) abilities? */
+						    ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
+						    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK)))
+							can_have_hidden_powers = TRUE;
 						continue;
 					}
-					if ((e_ptr->fego1[j] & ETR1_R_MASK) ||
-					    (e_ptr->fego2[j] & ETR2_R_MASK) ||
+					if ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
+					    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK) ||
 					    (e_ptr->esp[j] & ESP_R_MASK)) {
 						can_have_hidden_powers = TRUE;
 					}
@@ -4298,11 +4302,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 				for (j = 0; j < 5; j++) {
 					if (e_ptr->rar[j] != 100) {
 						/* hack: can *identifying* actually make a difference at all? */
-						if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
+						if (e_ptr->rar[j] != 0 &&
+						    /* any non-trivial (on the object name itself visible) abilities? */
+						    ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
+						    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK)))
 						continue;
 					}
-					if ((e_ptr->fego1[j] & ETR1_R_MASK) ||
-					    (e_ptr->fego2[j] & ETR2_R_MASK) ||
+					if ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
+					    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK) ||
 					    (e_ptr->esp[j] & ESP_R_MASK)) {
 						can_have_hidden_powers = TRUE;
 					}
@@ -5124,7 +5131,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 			//fprintf(fff, "\377yIt has not been identified yet.\n");
  #endif
 		}
- #if 0 /* looks better if the text is the same for artifacts, visually =P */
+ #if 0 /* looks better if the text is the same for artifacts as it's for ego items, visually =P */
 		else if (o_ptr->name1) fprintf(fff, "\377yIt seems to have hidden powers.\n"); //art
  #endif
 		else fprintf(fff, "\377yIt may have hidden powers.\n"); //ego

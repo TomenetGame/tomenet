@@ -5957,11 +5957,15 @@ void calc_boni(int Ind) {
 							for (j = 0; j < 5; j++) {
 								if (e_ptr->rar[j] != 100) {
 									/* hack: can *identifying* actually make a difference at all? */
-									if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
+									if (e_ptr->rar[j] != 0 &&
+									    /* any non-trivial (on the object name itself visible) abilities? */
+									    ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
+									    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK)))
+										can_have_hidden_powers = TRUE;
 									continue;
 								}
-								if ((e_ptr->fego1[j] & ETR1_R_MASK) ||
-								    (e_ptr->fego2[j] & ETR2_R_MASK) ||
+								if ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
+								    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK) ||
 								    (e_ptr->esp[j] & ESP_R_MASK)) {
 									can_have_hidden_powers = TRUE;
 								}
@@ -5979,11 +5983,15 @@ void calc_boni(int Ind) {
 							for (j = 0; j < 5; j++) {
 								if (e_ptr->rar[j] != 100) {
 									/* hack: can *identifying* actually make a difference at all? */
-									if (e_ptr->rar[j] != 0) can_have_hidden_powers = TRUE;
+									if (e_ptr->rar[j] != 0 &&
+									    /* any non-trivial (on the object name itself visible) abilities? */
+									    ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
+									    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK)))
+										can_have_hidden_powers = TRUE;
 									continue;
 								}
-								if ((e_ptr->fego1[j] & ETR1_R_MASK) ||
-								    (e_ptr->fego2[j] & ETR2_R_MASK) ||
+								if ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
+								    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK) ||
 								    (e_ptr->esp[j] & ESP_R_MASK)) {
 									can_have_hidden_powers = TRUE;
 								}
