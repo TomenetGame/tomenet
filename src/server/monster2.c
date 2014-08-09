@@ -5763,7 +5763,10 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn, u32b 
 	}
 	/* Shallow water */
 	else if (feat == FEAT_SHAL_WATER) {
-		if (r_ptr->flags2 & RF2_AURA_FIRE)
+		if ((r_ptr->flags2 & RF2_AURA_FIRE)
+		    && r_ptr->lev < 25 /* no more Solar Blades stuck in shallow water o_o */
+		    /*(this level is actually only undercut by a) Jumping Fireball, b) Fire Spirit and c) Fire Vortex)*/
+		    )
 			return FALSE;
 		else
 			return TRUE;
