@@ -645,8 +645,8 @@ D:Gondor though an age of the world.
 # Stolen from Oangband
 
 N:43:of Numenor
-I:33:12:3
-W:60:30:40:140000
+I:33:12:4
+W:60:30:40:150000
 P:0:1d1:0:0:18
 F:INT | DEX | CHR | SEARCH | SPEED | HIDE_TYPE | 
 F:SEE_INVIS | FREE_ACT | RES_DARK | RES_BLIND | 
@@ -2884,14 +2884,14 @@ D:fire, showing the mad will within it to dominate all beasts that hell
 D:could possibly bear.
 
 
-# The Set of Leather Gloves 'Soul Grip' (renamed from Soul Cure)
+# The Set of Leather Gloves 'Soul Grip'
 
 N:232:'Soul Grip'
 I:31:1:4
 W:40:30:5:50000
 P:1:1d1:0:0:19
 F:WIS | HIDE_TYPE | KILL_UNDEAD | REGEN | ACTIVATE | FREE_ACT
-D:Sacred gloves of an arch priest whose name is not remembered.
+D:Sacred gloves of an archpriest whose name is not remembered.
 
 
 # The Amulet of Grom, the Wyrm Hunter
@@ -3316,6 +3316,30 @@ F:STR | XTRA_MIGHT | XTRA_SHOTS | ESP_GOOD | REGEN
 F:HIDE_TYPE | SHOW_MODS
 D:A tool to cut down elves, humans and dwarves and all enemies
 D:of Mordor with relentless force.
+
+
+# The Set of Leather Gloves of Slaughter
+
+N:270:of Slaughter
+I:31:1:5
+W:56:40:5:130000
+P:1:0d0:3:6:17
+F:CRIT | VAMPIRIC | HIDE_TYPE |
+F:FREE_ACT | SHOW_MODS
+D:Black leather gloves with ornaments of fine silver hardly visible as they
+D:are covered by thick stains of blood from countless massacres.
+
+
+# The Set of Elven Gloves of Finwe
+
+N:271:of Finwe
+I:31:4:10
+W:48:35:10:110000
+P:1:0d0:0:0:15
+F:REGEN | REGEN_MANA | MANA | HIDE_TYPE
+F:FREE_ACT | RES_CONF | RES_DISEN
+D:Finely woven silk gloves of the first high king of the Noldor, friend of
+D:Thingol, who lead his people on the journey from Middle-earth to Valinor.
 
 
 #weapon base items that don't have arts yet:
