@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. August 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 11. August 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -739,8 +739,8 @@ CTRL+O  view previous chat messages.
 
 CTRL+X  save your character & quit the game. (You should do this in town!)
         This also automatically saves some settings, like window positions on
-        MS-Windows, or mixer settings (CTRL+U to change), and you will be asked
-        to save a chat log.
+        MS-Windows, or mixer settings (CTRL+U to change, CTRL+F on rogue-like
+        key map), and you will be asked to save a chat log.
         Note that if you exit the game just by clicking on the 'x' button in
         the game window's titlebar, these extra features will be skipped, and
         any changes in settings or window positions will be discarded.
@@ -761,10 +761,12 @@ TAB or CTRL+I
         displays lag-o-meter.
 
 CTRL+U  Displays/exits the audio mixer settings. (Also see (2.1a).)
+ or CTRL+F on rogue-like key map.
 
 CTRL+C  Toggles music. (Shortcut for toggling it in the mixer settings.)
 
 CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
+ or CTRL+V on rogue-like key map.
         Note: If you press this while in chat prompt, you can cycle forward
         through lines you previously typed (also see CTRL+P).
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
@@ -2413,7 +2415,8 @@ Step 3:
 Step 4:
  After it's done it should tell you to restart your client. (You might also
  get disconnected automatically, if the auto-installation takes a while. That
- is fine.) Just restart the game and press CTRL+U to look at the audio mixer.
+ is fine.) Just restart the game and press CTRL+U to look at the audio mixer
+ (or CTRL+F if you're using rogue-like key map).
  It should tell you that sound and/or music pack have been installed.
 
 In case you want to install the packs manually instead of using auto-install,
@@ -2458,9 +2461,9 @@ or music zip file is to:
    If you were extracting a sound pack or if you already installed a music pack
    previously then you will be prompted to overwrite files - choose "yes".
    Wait for the extraction process to finish.
-5. Start or restart TomeNET and press CTRL+U in the game to view the audio
-   mixer screen. If everything went smoothly it should say that a sound or a
-   music pack or both have been found.
+5. Start or restart TomeNET and press CTRL+U (or CTRL+F on rogue-like key map)
+   in the game to view the audio mixer screen. If everything went smoothly it
+   should say that a sound or a music pack or both have been found.
    If you don't have sound, make sure that your TomeNET.ini file (it's in your
    TomeNET folder, double-click it to view, can be opened with any normal text
    editor) says 'Sound=1' which it should by default if you haven't modified it
@@ -2474,17 +2477,19 @@ folder lib/xtra/sound/ and lib/xtra/music/ respectively, which contain config
 files and further subfolders for either sound effects or background music.
 
 Now start or restart the game, and you should have sound.
-If you don't have sound, press CTRL+U for audio mixer: It should say that sound
-and music pack have been detected if everything went alright, otherwise you see
-a red error message.
+If you don't have sound, press CTRL+U for audio mixer (or CTRL+F if you're
+using rogue-like key map):
+It should say that sound and music pack have been detected if everything went
+alright, otherwise you see a red error message.
 Also verify  that your config file ("TomeNET.ini" on MS Windows, ".tomenetrc"
 in your home folder on Linux or Mac OS X) has 'Sound' set to '1'.
 
 
 (2.1b) Audio controls and config options
 ----------------------------------------
-You can control mixer settings with CTRL+U key (or use CTRL+C to toggle music
-and CTRL+N to toggle the master mixer on/off).
+You can control mixer settings with CTRL+U key on normal keymap and CTRL+F on
+rogue-like key map (or use CTRL+C to toggle music and CTRL+N to toggle the
+master mixer on/off, CTRL+V instead of CTRL+N on rogue-like key map).
 
 Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
 (Compare troubleshooting section (8.8), problem 21.)
