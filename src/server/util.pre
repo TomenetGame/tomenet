@@ -370,6 +370,7 @@ struct artifact_type
         s32b carrier;
         s32b timeout;
         byte iddc;
+        byte winner;
 };
 artifact_type a_info[MAX_A_IDX];
 

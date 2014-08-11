@@ -231,7 +231,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 				char timeleft[10], c = 'w';
 				int timeout =
 #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
-				    a_ptr->iddc ? a_ptr->timeout / 2 :
+				    a_ptr->iddc || a_ptr->winner ? a_ptr->timeout / 2 :
 #endif
 				    a_ptr->timeout;
 
@@ -279,7 +279,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 				if (p_ptr->id == a_ptr->carrier) {
 					int timeout =
  #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
-					    a_ptr->iddc ? a_ptr->timeout / 2 :
+					    a_ptr->iddc || a_ptr->winner ? a_ptr->timeout / 2 :
  #endif
 					    a_ptr->timeout;
 

@@ -9299,6 +9299,9 @@ void determine_artifact_timeout(int a_idx, struct worldpos *wpos) {
 #endif
 	//for IDDC_ARTIFACT_FAST_TIMEOUT
 	if (wpos) a_info[a_idx].iddc = in_irondeepdive(wpos);
+
+	/* assume winner-artifact or non-winner */
+	a_info[a_idx].winner = FALSE;
 }
 
 /* Similarly to erase_guild_key() this function searches *everywhere* for a

@@ -5437,6 +5437,12 @@ if (cfg.unikill_format) {
 
 					num++;
 
+					/* Set all his artifacts to double-speed timeout */
+					for (j = 0; j < INVEN_TOTAL; j++)
+						if (p_ptr->inventory[j].name1 &&
+						    p_ptr->inventory[j].name1 != ART_RANDART)
+							a_info[p_ptr->inventory[j].name1].winner = TRUE;
+
 					/* Set his retire_timer if neccecary */
 					if (cfg.retire_timer >= 0) {
 						q_ptr->retire_timer = cfg.retire_timer;

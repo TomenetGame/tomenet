@@ -7056,7 +7056,11 @@ void dungeon(void)
 			if (a_info[i].timeout == -1) a_info[i].timeout = 0;
 		} else
  #endif
-		a_info[i].timeout--;
+		if (a_info[i].winner) {
+			a_info[i].timeout -= 2;
+			if (a_info[i].timeout == -1) a_info[i].timeout = 0;
+		} else a_info[i].timeout--;
+
 		if (a_info[i].timeout == 0) erase_artifact(i);
 		else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING) {
 			int j, k;

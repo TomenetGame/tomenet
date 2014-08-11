@@ -2100,7 +2100,7 @@ static bool wr_server_savefile()
 		wr_byte(a_ptr->known);
 		wr_s32b(a_ptr->carrier);
 		wr_s32b(a_ptr->timeout);
-		wr_byte(a_ptr->iddc ? 1 : 0);
+		wr_byte((a_ptr->iddc ? 0x1 : 0) + (a_ptr->winner ? 0x2 : 0));
 	}
 
 
