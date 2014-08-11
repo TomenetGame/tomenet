@@ -4387,6 +4387,10 @@ void do_cmd_fire(int Ind, int dir)
 		for (i = 0; i < INVEN_PACK; i++) {
 			if (p_ptr->inventory[i].tval == TV_BOOMERANG &&
 			    check_guard_inscription(p_ptr->inventory[i].note, 'L')) {
+#if 0
+				/* Hack: Reduce energy cost in do_cmd_wield() by half a turn */
+				p_ptr->energy += level_speed(&p_ptr->wpos) / 2;
+#endif
 				do_cmd_wield(Ind, i, 0x0);
 				break;
 			}
@@ -4415,6 +4419,10 @@ void do_cmd_fire(int Ind, int dir)
 		for (i = 0; i < INVEN_PACK; i++) {
 			if (is_ammo(p_ptr->inventory[i].tval) &&
 			    check_guard_inscription(p_ptr->inventory[i].note, 'L')) {
+#if 0
+				/* Hack: Reduce energy cost in do_cmd_wield() by half a turn */
+				p_ptr->energy += level_speed(&p_ptr->wpos) / 2;
+#endif
 				do_cmd_wield(Ind, i, 0x0);
 				break;
 			}
