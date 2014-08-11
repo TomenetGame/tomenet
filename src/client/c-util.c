@@ -1155,6 +1155,9 @@ static char roguelike_commands(char command)
                 case KTRL('K'): hack_dir = 8; return ('+');
                 case KTRL('U'): hack_dir = 9; return ('+');
 
+		/* Oops, audio mixer */
+                case KTRL('F'): return (KTRL('U'));
+
                 /* Hack -- White-space */
                 case KTRL('M'): return ('\r');
 
@@ -6965,6 +6968,7 @@ void interact_audio(void) {
 			redraw = FALSE;
 			break;
 		case KTRL('U'):
+		case KTRL('F'): /* <- rogue-like keymap */
 		case ESCAPE:
 			quit = TRUE; /* hack to leave loop */
 			break;
