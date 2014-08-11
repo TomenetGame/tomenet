@@ -2888,9 +2888,9 @@ D:could possibly bear.
 
 N:232:'Soul Grip'
 I:31:1:4
-W:40:30:5:50000
+W:40:40:5:88000
 P:1:1d1:0:0:19
-F:WIS | HIDE_TYPE | KILL_UNDEAD | REGEN | ACTIVATE | FREE_ACT
+F:WIS | HIDE_TYPE | KILL_UNDEAD | REGEN | ACTIVATE | FREE_ACT | VAMPIRIC
 D:Sacred gloves of an archpriest whose name is not remembered.
 
 
@@ -3318,10 +3318,10 @@ D:A tool to cut down elves, humans and dwarves and all enemies
 D:of Mordor with relentless force.
 
 
-# The Set of Leather Gloves of Slaughter
+# The Set of Leather Gloves of Bloodlust
 
-N:270:of Slaughter
-I:31:1:5
+N:270:of Bloodlust
+I:31:1:4
 W:56:40:5:130000
 P:1:0d0:3:6:17
 F:CRIT | VAMPIRIC | HIDE_TYPE |
