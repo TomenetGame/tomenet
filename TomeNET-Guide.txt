@@ -11872,6 +11872,7 @@ more potions to cure it.
 
 If your sanity is lowered, there's an increasing chance that flashbacks will
 storm your head, leaving you with mad visions for a while..
+("A flashback storms your head!")
 
 When your sanity suffers from an attack, you'll see a light red message in the
 message window telling you so, instead of the usual white or yellow combat
