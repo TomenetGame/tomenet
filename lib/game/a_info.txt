@@ -3203,15 +3203,16 @@ D:To uncover truths and stay focussed, this hat sharpens the wearer's mind,
 D:allowing him to discover new ideas.
 
 
-# The Heavy Mithril Scale Armour 'Mirror of Glory'
+# The Mithril Ancile 'Mirror of Glory'
 
 N:260:'Mirror of Glory'
-I:37:26:4
-W:100:25:300:200000
-P:70:4d4:-3:0:35
-F:WINNERS_ONLY | REGEN | IM_ACID | IM_FIRE | RES_ELEC | STR | CON | CHR | REFLECT
-D:An armor of thick gleaming scales forged from finest Mithril, without a
-D:single dent in it. Powerful engraved runes ornate arm and leg protectors.
+I:34:11:2
+W:100:25:100:200000
+$USE_NEW_SHIELDS$P:28:1d1:0:0:0
+$USE_NEW_SHIELDS!P:16:1d1:0:0:10
+F:WINNERS_ONLY | IM_ACID | IM_FIRE | RES_ELEC | STR | CON | CHR | REFLECT
+D:A shield of radiant mithril. Spells of protection flashing across
+D:its surface, there is not a single dent in it.
 
 
 # Goggles that allow a player to spot hidden DMs (for testing purpose)
@@ -3340,6 +3341,17 @@ F:REGEN | REGEN_MANA | MANA | HIDE_TYPE
 F:FREE_ACT | RES_CONF | RES_DISEN
 D:Finely woven silk gloves of the first high king of the Noldor, friend of
 D:Thingol, who lead his people on the journey from Middle-earth to Valinor.
+
+
+# The Heavy Ribbed Adamantite Armour 'Dreadnought'
+
+N:272:'Dreadnought'
+I:37:33:6
+W:100:25:450:300000
+P:100:4d4:-8:0:25
+F:WINNERS_ONLY | STR | CON | IM_ELEC | RES_MANA | RES_DISEN
+D:An armor of thick gleaming layers of adamantite that appears utterly
+D:impenetrable. Powerful engraved runes ornate arm and leg protectors.
 
 
 #weapon base items that don't have arts yet:
