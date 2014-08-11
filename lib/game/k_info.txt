@@ -3296,14 +3296,14 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_MANA
 
 ## PDSM has been restored to (almost) its former glory in Zangband
 
-N:928:Death Dragon Scale Mail~
-G:[:A
-I:38:40:0
-W:95:0:200:300000
-A:100/64
-P:30:2d4:-2:0:20
-F:RES_NETHER | LEVITATE | WRAITH | RES_POIS | 
-F:ACTIVATE | IGNORE_ACID
+#N:928:Death Dragon Scale Mail~
+#G:[:A
+#I:38:40:0
+#W:95:0:200:300000
+#A:100/64
+#P:30:2d4:-2:0:20
+#F:RES_NETHER | LEVITATE | WRAITH | RES_POIS | 
+#F:ACTIVATE | IGNORE_ACID
 # | DRAIN_HP | DRAIN_EXP //removed since wraithform is nerfed (can't attack)
 
 N:929:Crystal Dragon Scale Mail~

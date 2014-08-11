@@ -3737,6 +3737,16 @@ void excise_obsolete_max_depth(player_type *p_ptr) {
 
 #ifdef SEAL_INVALID_OBJECTS
 static void seal_object(object_type *o_ptr) {
+ #if 1 /* convert DDSM to EDSM */
+	if (o_ptr->tval == 38 && o_ptr->sval == 40) {
+		s_printf("CONVERTING: %d, %d\n", o_ptr->tval, o_ptr->sval);
+		o_ptr->tval2 = o_ptr->tval;//remember, just in case
+		o_ptr->sval2 = o_ptr->sval;
+		o_ptr->sval = SV_DRAGON_SHINING;
+		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+	}
+ #endif
+
 	s_printf("SEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
 	o_ptr->tval2 = o_ptr->tval;
 	o_ptr->sval2 = o_ptr->sval;
