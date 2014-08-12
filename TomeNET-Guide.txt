@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. August 2014 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.5.7a - official websites are:
+| Latest update: 12. August 2014 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 |
@@ -573,6 +573,16 @@ P       O       party screen. Form/disband/modify a party with other players
 H       CTRL+G  re-apply client-side and (if 'auto_inscribe' option is enabled)
                 server-side auto-inscriptions to an item.
 
+CTRL+U  CTRL+F  Displays/exits the audio mixer settings. (Also see (2.1a).)
+                Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
+                (Compare troubleshooting section (8.8), problem 21.)
+
+CTRL+C  CTRL+Q  Toggles music. (Shortcut for toggling it in the mixer settings.)
+
+CTRL+N  CTRL+V  Toggles audio. (Shortcut for master toggle in the mixer settings).
+                Note: If you press this while in chat prompt, you can cycle forward
+                through lines you previously typed (also see CTRL+P).
+
 
 SPACE   Stop executing repeatable actions such as searching, tunnelling or
         disarming traps. Also stops active fire-till-kill shooting and any
@@ -759,18 +769,6 @@ CTRL+T  take a screen shot. See /screenshot command below.
 
 TAB or CTRL+I
         displays lag-o-meter.
-
-CTRL+U  Displays/exits the audio mixer settings. (Also see (2.1a).)
- or CTRL+F on rogue-like key map.
-
-CTRL+C  Toggles music. (Shortcut for toggling it in the mixer settings.)
-
-CTRL+N  Toggles audio. (Shortcut for master toggle in the mixer settings).
- or CTRL+V on rogue-like key map.
-        Note: If you press this while in chat prompt, you can cycle forward
-        through lines you previously typed (also see CTRL+P).
-Note: Mixer settings are saved automatically, provided you use CTRL+X to quit.
-(Compare troubleshooting section (8.8), problem 21.)
 
 ^       Allows to enter a CTRL character as command.
 

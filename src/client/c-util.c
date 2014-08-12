@@ -1158,6 +1158,7 @@ static char roguelike_commands(char command)
 		/* Oops, audio mixer */
 		case KTRL('F'): return (KTRL('U'));
 		case KTRL('V'): return (KTRL('N'));
+		case KTRL('Q'): return (KTRL('C'));
 
                 /* Hack -- White-space */
                 case KTRL('M'): return ('\r');
@@ -6920,7 +6921,7 @@ void interact_audio(void) {
 			else Term_putstr(12, 4, -1, TERM_L_RED,                                         "Neither sound pack nor music pack seems to be installed. ");
 
 			if (c_cfg.rogue_like_commands)
-				Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio and music by CTRL+V and CTRL+C.");
+				Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio and music by CTRL+V and CTRL+Q.");
 			else
 				Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio and music by CTRL+N and CTRL+C.");
 
@@ -6931,7 +6932,10 @@ void interact_audio(void) {
 			else
 				Term_putstr(item_x[0], y_toggle + 3, -1, TERM_SLATE, "CTRL+N");
 			Term_putstr(item_x[1], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_music ? "\377GX\377w" : " "));
-			Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+C");
+			if (c_cfg.rogue_like_commands)
+				Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+Q");
+			else
+				Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+C");
 			Term_putstr(item_x[2], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_sound ? "\377GX\377w" : " "));
 			Term_putstr(item_x[3], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_weather ? "\377GX\377w" : " "));
 
@@ -7030,6 +7034,7 @@ void interact_audio(void) {
 			set_mixing();
 			break;
 		case KTRL('C'):
+		case KTRL('Q'):
 		case 'c':
 		case 'm':
 			cfg_audio_music = !cfg_audio_music;
