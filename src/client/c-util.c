@@ -5577,7 +5577,7 @@ static void do_cmd_options_acc(void) {
  * Modify the "window" options
  */
 static void do_cmd_options_win(void) {
-	int i, j, d, vertikal_offset = 2;
+	int i, j, d, vertikal_offset = 4;
 
 	int y = 0;
 	int x = 1;
@@ -5603,6 +5603,7 @@ static void do_cmd_options_win(void) {
 	while (go) {
 		/* Prompt XXX XXX XXX */
 		Term_putstr(0, 0, -1, TERM_WHITE, "Window flags (<\377ydir\377w>, \377yt\377w (take), \377yy\377w (set), \377yn\377w (clear), \377yENTER\377w (toggle), \377yESC\377w) ");
+		Term_putstr(0, 2, -1, TERM_SLATE, "-Contents to be displayed-                      -Window names-");
 
 		/* Display the windows */
 		for (j = 1; j < ANGBAND_TERM_MAX; j++) {
