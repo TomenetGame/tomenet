@@ -3740,12 +3740,13 @@ void excise_obsolete_max_depth(player_type *p_ptr) {
 #ifdef SEAL_INVALID_OBJECTS
 static void seal_object(object_type *o_ptr) {
  #if 1 /* convert DDSM to EDSM */
-	if (o_ptr->tval == 38 && o_ptr->sval == 40) {
+	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_DEATH) {
 		s_printf("CONVERTING: %d, %d\n", o_ptr->tval, o_ptr->sval);
 		o_ptr->tval2 = o_ptr->tval;//remember, just in case
 		o_ptr->sval2 = o_ptr->sval;
 		o_ptr->sval = SV_DRAGON_SHINING;
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+		return;
 	}
  #endif
 
@@ -3780,6 +3781,19 @@ bool seal_or_unseal_object(object_type *o_ptr) {
 		if (!o_ptr->k_idx) return FALSE;
 //		s_printf("sealed to %d, %d\n", o_ptr->tval, o_ptr->sval);
 	} else if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_SEAL) {
+ #if 1 /* convert DDSM to EDSM -- fix for already sealed ones */
+		if (o_ptr->tval2 == TV_DRAG_ARMOR && o_ptr->sval2 == SV_DRAGON_SHINING) {
+			s_printf("RECONVERTING: %d, %d\n", o_ptr->tval2, o_ptr->sval2);
+			o_ptr->tval = o_ptr->tval2;
+			o_ptr->sval = o_ptr->sval2;
+			o_ptr->sval2 = SV_DRAGON_DEATH;
+			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+			o_ptr->note = 0;
+			o_ptr->note_utag = 0;
+			return TRUE;
+		}
+ #endif
+
 		/* Object didn't exist to begin with? Delete it! */
 		if (!o_ptr->tval2 && !o_ptr->sval2) {
 			o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
