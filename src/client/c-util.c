@@ -1427,12 +1427,17 @@ static void c_ptr_last(int x, int y, int n, byte attr, char *str)
 /* APD -- added private so passwords will not be displayed. */
 /*
  * Jir -- added history.
- * TODO: cursor editing
+ * TODO: cursor editing (fix past terminal width extending text)
  */
 bool askfor_aux(char *buf, int len, char mode) {
 	int y, x;
 	int i = 0;
-	int k = 0;
+	int k = 0; /* Is the end of line */
+	int l = 0; /* Is the cursor location on line */
+	int j = 0; /* Loop iterator */
+
+	bool tail = FALSE, double_separator = FALSE;
+	int l_old = l;
 
 	/* Terminal width */
 	int wid = 80;
@@ -1490,31 +1495,96 @@ bool askfor_aux(char *buf, int len, char mode) {
 	/* Process input */
 	while (!done) {
 		/* Place cursor */
-		Term_gotoxy(x + k, y);
+		if (strlen(buf) > vis_len)
+			Term_gotoxy(x + l + vis_len - strlen(buf), y);
+		else
+			Term_gotoxy(x + l, y);
 
 		/* Get a key */
 		i = inkey();
 
 		/* Analyze the key */
 		switch (i) {
-			case ESCAPE:
-			case KTRL('X'):
+		case ESCAPE:
+		case KTRL('X'):
 			k = 0;
 			done = TRUE;
 			break;
 
-			case '\n':
-			case '\r':
+		case '\n':
+		case '\r':
 			k = strlen(buf);
 			done = TRUE;
 			break;
 
-			case 0x7F:
-			case '\010':
-			if (k > 0) k--;
+		case 0x7F: /* DEL or ASCII 127 removes the char under cursor */
+		case KTRL('D'):
+			if (k > l){
+			  /* Move the rest of the line one back */
+			  for (j = l + 1; j < k; j++) buf[j - 1] = buf[j]; 
+			  k--;
+			}
 			break;
 
-			case KTRL('I'): /* TAB */
+		case '\010': /* Backspace removes char before cursor */
+			if (k == l && k > 0){
+			  k--;
+			  l--;
+			}
+			if (k > l && l > 0){
+			  /* Move the rest of the line one back, including
+			     char under cursor and cursor) */
+			  for (j = l; j < k; j++) buf[j - 1] = buf[j];
+			  l--;
+			  k--;
+			}
+			break;
+
+		/* move by one */
+		case KTRL('A'):
+			if (l > 0) l--;
+			break;
+		case KTRL('S'):
+			if (l < k) l++;
+			break;
+		/* jump words */
+		case KTRL('Q'):
+			if (!l) break;
+
+			tail = FALSE;
+
+			for (--l; l >= 0; l--) {
+				if (!((buf[l] >= 'a' && buf[l] <= 'z') || (buf[l] >= 'A' && buf[l] <= 'Z') || (buf[l] >= '0' && buf[l] <= '9')) && tail) {
+					/* stop on beginning of the word */
+					l++;
+					break;
+				}
+				tail = TRUE;
+			}
+			if (l < 0) l = 0;
+			break;
+		case KTRL('W'):
+			if (l == k) break;
+
+			tail = FALSE;
+
+			for (++l; l <= k; l++) {
+				if (!((buf[l] >= 'a' && buf[l] <= 'z') || (buf[l] >= 'A' && buf[l] <= 'Z') || (buf[l] >= '0' && buf[l] <= '9')) && tail)
+					/* stop after the end of the word, ON the separator */
+					break;
+				tail = TRUE;
+			}
+			if (l > k) l = k;
+			break;
+		/* end/begin (pos1) */
+		case KTRL('V'):
+			l = 0;
+			break;
+		case KTRL('B'):
+			l = k;
+			break;
+
+		case KTRL('I'): /* TAB */
 			if (mode & ASKFOR_CHATTING) {
 				/* Change chatting mode - mikaelh */
 				chat_mode++;
@@ -1530,10 +1600,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 						vis_len = wid - 1 - sizeof("Party: ");
 						break;
 					case CHAT_MODE_LEVEL:
-						c_prt(C_COLOUR_CHAT_LEVEL, "Level: ", 0, 0);
+						c_prt(C_COLOUR_CHAT_LEVEL, "Floor: ", 0, 0);
 
 						/* Recalculate visible length */
-						vis_len = wid - 1 - sizeof("Level: ");
+						vis_len = wid - 1 - sizeof("Floor: ");
 						break;
 					case CHAT_MODE_GUILD:
 						c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
@@ -1553,7 +1623,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 			break;
 
-			case KTRL('U'): /* reverse KTRL('I') */
+		case KTRL('U'): /* reverse KTRL('I') */
 			if (mode & ASKFOR_CHATTING) {
 				/* Reverse change chatting mode */
 				chat_mode--;
@@ -1569,10 +1639,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 						vis_len = wid - 1 - sizeof("Party: ");
 						break;
 					case CHAT_MODE_LEVEL:
-						c_prt(C_COLOUR_CHAT_LEVEL, "Level: ", 0, 0);
+						c_prt(C_COLOUR_CHAT_LEVEL, "Floor: ", 0, 0);
 
 						/* Recalculate visible length */
-						vis_len = wid - 1 - sizeof("Level: ");
+						vis_len = wid - 1 - sizeof("Floor: ");
 						break;
 					case CHAT_MODE_GUILD:
 						c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
@@ -1592,7 +1662,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 			break;
 
-			case KTRL('A'): /* All ('message') */
+		case KTRL('R'): /* All/general ('message') */
 			if (mode & ASKFOR_CHATTING) {
 				chat_mode = CHAT_MODE_NORMAL;
 				prt("Message: ", 0, 0);
@@ -1604,7 +1674,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 			break;
 
-			case KTRL('T'): /* Party */
+		case KTRL('T'): /* Party */
 			if (mode & ASKFOR_CHATTING) {
 				chat_mode = CHAT_MODE_PARTY;
 				c_prt(C_COLOUR_CHAT_PARTY, "Party: ", 0, 0);
@@ -1616,19 +1686,19 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 			break;
 
-			case KTRL('L'): /* Level */
+		case KTRL('F'): /* Floor/Depth/Level */
 			if (mode & ASKFOR_CHATTING) {
 				chat_mode = CHAT_MODE_LEVEL;
-				c_prt(C_COLOUR_CHAT_LEVEL, "Level: ", 0, 0);
+				c_prt(C_COLOUR_CHAT_LEVEL, "Floor: ", 0, 0);
 
 				/* Recalculate visible length */
-				vis_len = wid - 1 - sizeof("Level: ");
+				vis_len = wid - 1 - sizeof("Floor: ");
 
 				Term_locate(&x, &y);
 			}
 			break;
 
-			case KTRL('G'): /* Guild */
+		case KTRL('G'): /* Guild */
 			if (mode & ASKFOR_CHATTING) {
 				chat_mode = CHAT_MODE_GUILD;
 				c_prt(C_COLOUR_CHAT_GUILD, "Guild: ", 0, 0);
@@ -1641,12 +1711,12 @@ bool askfor_aux(char *buf, int len, char mode) {
 			break;
 
 #if 0 /* was: erase line. Can just hit ESC though, so if 0'ed. */
-			case KTRL('U'):
+		case KTRL('U'):
 			k = 0;
 			break;
 #endif
 
-			case KTRL('N'):
+		case KTRL('N'):
 			if (nohist) break;
 			cur_hist++;
 
@@ -1668,10 +1738,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 				buf[len] = '\0';
 			}
 
-			k = strlen(buf);
+			k = l = strlen(buf);
 			break;
 
-			case KTRL('P'):
+		case KTRL('P'):
 			if (nohist) break;
 			if (mode & ASKFOR_CHATTING) {
 				if (cur_hist) cur_hist--;
@@ -1691,36 +1761,57 @@ bool askfor_aux(char *buf, int len, char mode) {
 				buf[len] = '\0';
 			}
 
-			k = strlen(buf);
+			k = l = strlen(buf);
 			break;
 
-			case KTRL('W'): {
-				bool tail = FALSE;
-				for (--k; k >= 0; k--)
-				{
-					if ((buf[k] == ' ' || buf[k] == ':' || buf[k] == ',') && tail)
-					{
-						/* leave the last separator */
-						k++;
-						break;
-					}
-					tail = TRUE;
-				}
-				if (k < 0) k = 0;
-				break;
-			}
+		case KTRL('E'): {
+			if (!l) break;
 
-			default:
-				/* inkey_letter_all hack for c_get_quantity() */
-				//if (inkey_letter_all && !k && ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z'))) { i = 'a';
-				if (inkey_letter_all && !k && (i == 'a' || i == 'A' || i == ' ')) { /* allow spacebar too */
-					buf[k++] = 'a';
-					done = TRUE;
+			tail = FALSE;
+			double_separator = FALSE;
+			l_old = l;
+
+			if (buf[l] && !((buf[l] >= 'a' && buf[l] <= 'z') || (buf[l] >= 'A' && buf[l] <= 'Z') || (buf[l] >= '0' && buf[l] <= '9'))) double_separator = TRUE;
+			for (--l; l >= 0; l--) {
+				//if ((buf[l] == ' ' || buf[l] == ':' || buf[l] == ',' || buf[l] == '.') && tail) {
+				if (!((buf[l] >= 'a' && buf[l] <= 'z') || (buf[l] >= 'A' && buf[l] <= 'Z') || (buf[l] >= '0' && buf[l] <= '9')) && tail) {
+					/* leave the last separator? */
+					if (!double_separator) l++;
 					break;
 				}
+				tail = TRUE;
+			}
+			for (j = 0; j < l_old - l; j++) buf[l + j] = buf[l_old + j];
+			k -= l_old - l;
+			if (k < 0) k = l = 0;
+			break;
+			}
 
-				if ((k < len) && (isprint(i))) buf[k++] = i;
-				else bell();
+		default:
+			/* inkey_letter_all hack for c_get_quantity() */
+			//if (inkey_letter_all && !k && ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z'))) { i = 'a';
+			if (inkey_letter_all && !k && (i == 'a' || i == 'A' || i == ' ')) { /* allow spacebar too */
+				buf[k++] = 'a';
+				done = TRUE;
+				break;
+			}
+			/* Place character at end of line and increment k and l */
+			if (k == l){
+			  if ((k < len) && (isprint(i))) {
+			    buf[k++] = i;
+			    l++;
+			  }
+			}
+			/* Place character at currect cursor position after moving
+			   the rest of the line one step forward */
+			else if (k > l){
+			  if ((k < len) && (isprint(i))) {
+			    for (j = k;j>=l;j--) buf[j+1] = buf[j];
+			    buf[l++] = i;
+			    k++;
+			  }
+			}
+			else bell();
 			break;
 		}
 
