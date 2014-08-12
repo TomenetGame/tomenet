@@ -1517,7 +1517,11 @@ bool askfor_aux(char *buf, int len, char mode) {
 			done = TRUE;
 			break;
 
+#if 0 /* urxvt actually seems to recognize 0x7F as BACKSPACE, unlike other terminals \
+	which just ignore it, resulting in the Backspace key working like Delete key, \
+	so we better keep this disabled here and move it back to '\010' below. - C. Blue */
 		case 0x7F: /* DEL or ASCII 127 removes the char under cursor */
+#endif
 		case KTRL('D'):
 			if (k > l){
 			  /* Move the rest of the line one back */
@@ -1526,6 +1530,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 			break;
 
+		case 0x7F: /* well...not DEL but Backspace too it seems =P */
 		case '\010': /* Backspace removes char before cursor */
 			if (k == l && k > 0){
 			  k--;
