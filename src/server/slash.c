@@ -7386,6 +7386,30 @@ void do_slash_cmd(int Ind, char *message)
 				    o_ptr->discount, object_aware_p(Ind, o_ptr), object_known_p(Ind, o_ptr), broken_p(o_ptr));
 				return;
 			}
+			/* 'unbreak' all EDSMs in someone's inventory -- added to fix EDSMs after accidental seal-conversion
+			   when seals had 0 value and therefore obtained ID_BROKEN automatically on loading */
+			else if (prefix(message, "/unbreak")) {
+				if (!tk) {
+					msg_print(Ind, "Usage: /unbreak <name>");
+					return;
+				}
+
+				j = name_lookup_loose(Ind, message3, FALSE, FALSE);
+				if (!j) {
+					msg_print(Ind, "Name not found.");
+					return;
+				}
+
+				for (i = 0; i < INVEN_PACK; i++) {
+					if (Players[j]->inventory[i].tval != TV_DRAG_ARMOR) continue;
+					if (Players[j]->inventory[i].sval != SV_DRAGON_SHINING) continue;
+					Players[j]->inventory[i].ident &= ~ID_BROKEN;
+					msg_print(Ind, "<fixed>");
+				}
+
+				msg_print(Ind, "Done.");
+				return;
+			}
 			/* just calls cron_24h as if it was time to do so */
 			else if (prefix(message, "/debugdate")) {
 				int dwd, dd, dm, dy;
