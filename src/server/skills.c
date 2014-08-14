@@ -544,28 +544,28 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_SLING:
 		if ((old_value < 100 && new_value >= 100) || (old_value < 200 && new_value >= 200) ||
 		    (old_value < 300 && new_value >= 300) || (old_value < 400 && new_value >= 400) || (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\374\377GYour shooting speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour shooting speed with slings has become faster due to your training!");
 		}
 		if (old_value < 500 && new_value >= 500)
-			msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
+			msg_print(Ind, "\374\377GYour shooting power with slings gains extra might due to your training!");
 		break;
 	case SKILL_BOW:
 		if ((old_value < 125 && new_value >= 125) || (old_value < 250 && new_value >= 250) ||
 		    (old_value < 375 && new_value >= 375) || (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\374\377GYour shooting speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour shooting speed with bows has become faster due to your training!");
 		}
 		if (old_value < 500 && new_value >= 500)
-			msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
+			msg_print(Ind, "\374\377GYour shooting power with bows gains extra might due to your training!");
 		break;
 	case SKILL_XBOW:
 		if ((old_value < 125 && new_value >= 125) || (old_value < 375 && new_value >= 500)) {
-			msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
+			msg_print(Ind, "\374\377GYour shooting power with crossbows gains extra might due to your training!");
 		}
 		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\374\377GYour shooting speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour shooting speed with crossbows has become faster due to your training!");
 		}
 		if (old_value < 500 && new_value >= 500)
-			msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
+			msg_print(Ind, "\374\377GYour shooting power with crossbows gains extra might due to your training!");
 		break;
 /*	case SKILL_SLING:
 	case SKILL_BOW:
@@ -573,7 +573,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 */	case SKILL_BOOMERANG:
 		if ((old_value < 166 && new_value >= 166) || (old_value < 333 && new_value >= 333) ||
 		    (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\374\377GYour shooting speed has become faster due to your training!");
+			msg_print(Ind, "\374\377GYour boomerang throwing speed has become faster due to your training!");
 		}
 		break; 
 	case SKILL_AURA_FEAR: if (old_value == 0 && new_value > 0) p_ptr->aura[0] = TRUE; break; /* MAX_AURAS */
