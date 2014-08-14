@@ -388,7 +388,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		if (old_value < 100 && new_value >= 100)
 			msg_print(Ind, "\374\377GYou learn how to create ammunition from bones and rubble!");
 		if (old_value < 110 && new_value >= 110)
-			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown ranged weapons!");
+			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown ranged weapons and ammo!");
 		if (old_value < 160 && new_value >= 160)
 			msg_print(Ind, "\374\377GYou learn the shooting technique 'Double-shot'!");
 		if (old_value < 200 && new_value >= 200)
@@ -408,9 +408,12 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown magical items.");
 #else /* more true messages: */
 		} if (old_value < 310 && new_value >= 310) {
-			msg_print(Ind, "\374\377GYou somewhat recognize the usefulness of unknown ranged weapons and ammo.");
+			if (get_skill(p_ptr, SKILL_ARCHERY) < 11)
+				msg_print(Ind, "\374\377GYou somewhat recognize the usefulness of unknown ranged weapons and ammo.");
 		} if (old_value < 410 && new_value >= 410) {
-			msg_print(Ind, "\374\377GYou feel able to sense curses on magical items.");
+			/* message somewhat redudant with classes/other skills which also give
+			   ok_curse, but seems impractical to sort out really */
+			msg_print(Ind, "\374\377GYou feel able to sense curses on all types of items.");
 #endif
 		}
 		break;
