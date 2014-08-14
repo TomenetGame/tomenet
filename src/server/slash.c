@@ -7386,6 +7386,7 @@ void do_slash_cmd(int Ind, char *message)
 				    o_ptr->discount, object_aware_p(Ind, o_ptr), object_known_p(Ind, o_ptr), broken_p(o_ptr));
 				return;
 			}
+#if 0
 			/* 'unbreak' all EDSMs in someone's inventory -- added to fix EDSMs after accidental seal-conversion
 			   when seals had 0 value and therefore obtained ID_BROKEN automatically on loading */
 			else if (prefix(message, "/unbreak")) {
@@ -7410,6 +7411,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Done.");
 				return;
 			}
+#endif
 			/* just calls cron_24h as if it was time to do so */
 			else if (prefix(message, "/debugdate")) {
 				int dwd, dd, dm, dy;

@@ -3803,7 +3803,7 @@ bool seal_or_unseal_object(object_type *o_ptr) {
 		/* Try to restore the original item from the seal */
 		if (lookup_kind(o_ptr->tval2, o_ptr->sval2)) unseal_object(o_ptr);
 	}
- #if 1 /* glitchfix */
+ #if 0 /* glitchfix */
 	else if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_SHINING &&
 	    (o_ptr->ident & ID_BROKEN) &&
 	    o_ptr->name2 != EGO_BLASTED && o_ptr->name2b != EGO_BLASTED) {
