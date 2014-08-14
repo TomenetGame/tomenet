@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. August 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. August 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -9921,7 +9921,11 @@ Note that not every skill is available to every profession (class).
                                 boni from dual-wielding, critical-strike,
                                 area-searching and cloaking.
                                 Lets you wear heavier armour without getting
-                                a penalty to to-hit or sneakiness
+                                a penalty to to-hit or sneakiness from being
+                                movement-encumbered.
+                                Note that Combat skill does NOT affect the
+                                continuous ranged-to-hit reduction based on
+                                armour weight.
                                 (See (5.5) for details about encumberment.)
 
                                 Note that Martial Arts penalties from heavy
