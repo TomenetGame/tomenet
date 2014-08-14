@@ -3793,14 +3793,6 @@ bool seal_or_unseal_object(object_type *o_ptr) {
 			return TRUE;
 		}
  #endif
- #if 1 /* glitchfix */
-		if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_SHINING &&
-		    (o_ptr->ident & ID_BROKEN) &&
-		    o_ptr->name2 != EGO_BLASTED && o_ptr->name2b != EGO_BLASTED) {
-			o_ptr->ident &= ~ID_BROKEN;
-			s_printf("unbroken EDSM\n");
-		}
- #endif
 
 		/* Object didn't exist to begin with? Delete it! */
 		if (!o_ptr->tval2 && !o_ptr->sval2) {
@@ -3811,6 +3803,14 @@ bool seal_or_unseal_object(object_type *o_ptr) {
 		/* Try to restore the original item from the seal */
 		if (lookup_kind(o_ptr->tval2, o_ptr->sval2)) unseal_object(o_ptr);
 	}
+ #if 1 /* glitchfix */
+	else if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_SHINING &&
+	    (o_ptr->ident & ID_BROKEN) &&
+	    o_ptr->name2 != EGO_BLASTED && o_ptr->name2b != EGO_BLASTED) {
+		o_ptr->ident &= ~ID_BROKEN;
+		s_printf("unbroken EDSM\n");
+	}
+ #endif
 
 	/* success, aka object still exists */
 	return TRUE;
