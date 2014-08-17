@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. August 2014 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 17. August 2014 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.5.7b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -12105,6 +12105,8 @@ F: flag list
     BASH_DOOR   This form can bash doors
                 (useful to forms that cannot open doors, see OPEN_DOOR flag).
     HURT_LITE   This form will take 2x damage from light attacks.
+    HAS_LITE    If this monster either doesn't have a torso or can actually
+                breathe light, it will give you +1 light radius.
 
     For all racial flags such as ANIMAL, SPIDER, EVIL, DEMON etc please see the
     list of racial abilities further below.
