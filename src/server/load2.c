@@ -3811,6 +3811,13 @@ bool seal_or_unseal_object(object_type *o_ptr) {
 		s_printf("unbroken EDSM\n");
 	}
  #endif
+ #if 1 /* glitchfix */
+	/* fix those which got AC nulled -_- */
+	else if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_SHINING && o_ptr->to_a == 0) {
+		o_ptr->to_a = 15 + rand_int(12);
+		s_printf("unnulled EDSM\n");
+	}
+ #endif
 
 	/* success, aka object still exists */
 	return TRUE;
