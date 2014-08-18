@@ -23,7 +23,8 @@
 # without whom the words would be unwritten, the images unconceived, 
 # the deed undone.  
 #                                            -Leon Marrick
-# Contributors: Jeff Butler, Neal Hackler, Ethan Sicotte, Pat Tracy, Divia
+# Contributors: Jeff Butler, Neal Hackler, Ethan Sicotte, Pat Tracy, Divia,
+#               C. Blue
 
 # Version stamp (required)
 
