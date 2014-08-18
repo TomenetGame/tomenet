@@ -2154,8 +2154,9 @@
 #define ART_HOLHENNETH		40
 #define ART_GORLIM		41
 #define ART_GONDOR		42
-#define ART_KNOWLEDGE		160
 #define ART_NUMENOR		43
+#define ART_KNOWLEDGE		160
+#define ART_LEBOHAUM		165
 #define ART_CELEBRIMBOR		170
 
 /* Cloaks */

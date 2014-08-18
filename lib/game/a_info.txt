@@ -2223,7 +2223,7 @@ N:165:'Lebohaum'
 I:32:6:0
 W:20:15:40:55555
 P:20:0d0:0:0:40
-#F:ACTIVATE
+F:ACTIVATE
 F:FREE_ACT
 D:With the helm 'Lebohaum' your head is safe!
 

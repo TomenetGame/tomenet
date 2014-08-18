@@ -5258,725 +5258,732 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	if (o_ptr->name1 && (o_ptr->name1 != ART_RANDART)) {
 		/* Choose effect */
 		switch (o_ptr->name1) {
-			case ART_NARTHANC:
-				msg_print(Ind, "Your dagger is covered in fire...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_NIMTHANC:
-				msg_print(Ind, "Your dagger is covered in frost...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_DETHANC:
-				msg_print(Ind, "Your dagger is covered in sparks...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_RILIA:
-				msg_print(Ind, "Your dagger throbs deep green...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_BELANGIL:
-				msg_print(Ind, "Your dagger is covered in frost...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_DAL:
-				msg_print(Ind, "\377GYou feel energy flow through your feet...");
-				(void)set_afraid(Ind, 0);
-				(void)set_res_fear(Ind, 5);
-				(void)set_poisoned(Ind, 0, 0);
-				o_ptr->timeout = 5;
-				break;
-			case ART_RINGIL:
-				msg_print(Ind, "Your sword glows an intense blue...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_ANDURIL:
-				msg_print(Ind, "Your sword glows an intense red...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_FIRESTAR:
-				msg_print(Ind, "Your morningstar rages in fire...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_FEANOR:
-				(void)set_fast(Ind, randint(20) + 20, 15); /* removed stacking */
-				o_ptr->timeout = 200;
-				break;
-			case ART_THEODEN:
-				msg_print(Ind, "The blade of your axe glows black...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_TURMIL:
-				msg_print(Ind, "The head of your hammer glows white...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_CASPANION:
-				msg_print(Ind, "Your armour glows bright red...");
-				destroy_doors_touch(Ind, 1);
-				o_ptr->timeout = 10;
-				break;
-			case ART_AVAVIR:
-				set_recall(Ind, rand_int(20) + 15, o_ptr);
-				o_ptr->timeout = 200;
-				break;
-			case ART_TARATOL:
-				(void)set_fast(Ind, randint(20) + 20, 15); /* removed stacking */
-				o_ptr->timeout = rand_int(100) + 100;
-				break;
-			case ART_ERIRIL:
-				/* Identify and combine pack */
-				(void)ident_spell(Ind);
-				/* XXX Note that the artifact is always de-charged */
-				o_ptr->timeout = 10;
-				break;
-			case ART_OLORIN:
-				probing(Ind);
-				detection(Ind, DEFAULT_RADIUS * 2);
-				o_ptr->timeout = 20;
-				break;
-			case ART_EONWE:
-				msg_print(Ind, "Your axe lets out a long, shrill note...");
-				(void)obliteration(Ind);
-				o_ptr->timeout = 1000;
-				break;
-			case ART_LOTHARANG:
-				msg_print(Ind, "Your battle axe radiates deep purple...");
-				hp_player(Ind, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)));
-				(void)set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker);
-				o_ptr->timeout = rand_int(3) + 3;
-				break;
-			case ART_CUBRAGOL:
-				(void)brand_bolts(Ind);
-				o_ptr->timeout = 999;
-				break;
-			case ART_ARUNRUTH:
-				msg_print(Ind, "Your sword glows a pale blue...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_AEGLOS:
-				msg_print(Ind, "Your spear glows a bright white...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_OROME:
-				msg_print(Ind, "Your spear pulsates...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_SOULKEEPER:
-				msg_print(Ind, "Your armour glows a bright white...");
-				msg_print(Ind, "\377GYou feel much better...");
-				(void)hp_player(Ind, 1000);
-				(void)set_cut(Ind, 0, 0);
-				o_ptr->timeout = 888;
-				break;
-			case ART_BELEGENNON:
-				teleport_player(Ind, 10, TRUE);
-				o_ptr->timeout = 2;
-				break;
-			case ART_CELEBORN:
-				(void)genocide(Ind);
-				o_ptr->timeout = 500;
-				break;
-			case ART_LUTHIEN:
-				restore_level(Ind);
-				o_ptr->timeout = 450;
-				break;
-			case ART_ULMO:
-				msg_print(Ind, "Your trident glows deep red...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_COLLUIN:
-				msg_print(Ind, "Your cloak glows many colours...");
-				(void)set_oppose_acid(Ind, randint(20) + 20); /* removed stacking */
-				(void)set_oppose_elec(Ind, randint(20) + 20);
-				(void)set_oppose_fire(Ind, randint(20) + 20);
-				(void)set_oppose_cold(Ind, randint(20) + 20);
-				(void)set_oppose_pois(Ind, randint(20) + 20);
-				o_ptr->timeout = 111;
-				break;
-			case ART_HOLCOLLETH:
-				msg_print(Ind, "Your cloak glows deep blue...");
-				sleep_monsters_touch(Ind);
-				o_ptr->timeout = 55;
-				break;
-			case ART_THINGOL:
-				msg_print(Ind, "You hear a low humming noise...");
-				recharge(Ind, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 40));
-				o_ptr->timeout = 70;
-				break;
-			case ART_COLANNON:
-				teleport_player(Ind, 100, FALSE);
-				o_ptr->timeout = 45;
-				break;
-			case ART_TOTILA:
-				msg_print(Ind, "Your flail glows in scintillating colours...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_CAMMITHRIM:
-				msg_print(Ind, "Your gloves glow extremely brightly...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_PAURHACH:
-				msg_print(Ind, "Your gauntlets are covered in fire...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_PAURNIMMEN:
-				msg_print(Ind, "Your gauntlets are covered in frost...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_PAURAEGEN:
-				msg_print(Ind, "Your gauntlets are covered in sparks...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_PAURNEN:
-				msg_print(Ind, "Your gauntlets look very acidic...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_FINGOLFIN:
-				msg_print(Ind, "Magical spikes appear on your cesti...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_HOLHENNETH:
-				msg_print(Ind, "An image forms in your mind...");
-				detection(Ind, DEFAULT_RADIUS * 2);
-				o_ptr->timeout = rand_int(55) + 55;
-				break;
-			case ART_GONDOR:
-				msg_print(Ind, "\377GYou feel a warm tingling inside...");
-				(void)hp_player(Ind, 500);
-				(void)set_cut(Ind, 0, 0);
-				o_ptr->timeout = 500;
-				break;
-			case ART_RAZORBACK:
-				msg_print(Ind, "You are surrounded by lightning!");
-				sprintf(p_ptr->attacker, " casts a lightning ball for");
-				for (i = 0; i < 8; i++) fire_ball(Ind, GF_ELEC, ddd[i], 150 + get_skill_scale(p_ptr, SKILL_DEVICE, 450), 3, p_ptr->attacker);
-				o_ptr->timeout = 1000;
-				break;
-			case ART_BLADETURNER:
-				msg_print(Ind, "Your armour glows in many colours...");
-				(void)hp_player(Ind, 30);
-				(void)set_afraid(Ind, 0);
-				(void)set_res_fear(Ind, 20);
-				(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
-				p_ptr->blessed_power = 20;
-				(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
-				(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
-				(void)set_oppose_elec(Ind, randint(50) + 50);
-				(void)set_oppose_fire(Ind, randint(50) + 50);
-				(void)set_oppose_cold(Ind, randint(50) + 50);
-				(void)set_oppose_pois(Ind, randint(50) + 50);
-				o_ptr->timeout = 400;
-				break;
-			case ART_GALADRIEL:
-				msg_print(Ind, "The phial wells with clear light...");
-				lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
-				if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 4), "the phial of galadriel", 0);
+		case ART_NARTHANC:
+			msg_print(Ind, "Your dagger is covered in fire...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_NIMTHANC:
+			msg_print(Ind, "Your dagger is covered in frost...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_DETHANC:
+			msg_print(Ind, "Your dagger is covered in sparks...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_RILIA:
+			msg_print(Ind, "Your dagger throbs deep green...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_BELANGIL:
+			msg_print(Ind, "Your dagger is covered in frost...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_DAL:
+			msg_print(Ind, "\377GYou feel energy flow through your feet...");
+			(void)set_afraid(Ind, 0);
+			(void)set_res_fear(Ind, 5);
+			(void)set_poisoned(Ind, 0, 0);
+			o_ptr->timeout = 5;
+			break;
+		case ART_RINGIL:
+			msg_print(Ind, "Your sword glows an intense blue...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_ANDURIL:
+			msg_print(Ind, "Your sword glows an intense red...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_FIRESTAR:
+			msg_print(Ind, "Your morningstar rages in fire...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_FEANOR:
+			(void)set_fast(Ind, randint(20) + 20, 15); /* removed stacking */
+			o_ptr->timeout = 200;
+			break;
+		case ART_THEODEN:
+			msg_print(Ind, "The blade of your axe glows black...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_TURMIL:
+			msg_print(Ind, "The head of your hammer glows white...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_CASPANION:
+			msg_print(Ind, "Your armour glows bright red...");
+			destroy_doors_touch(Ind, 1);
+			o_ptr->timeout = 10;
+			break;
+		case ART_AVAVIR:
+			set_recall(Ind, rand_int(20) + 15, o_ptr);
+			o_ptr->timeout = 200;
+			break;
+		case ART_TARATOL:
+			(void)set_fast(Ind, randint(20) + 20, 15); /* removed stacking */
+			o_ptr->timeout = rand_int(100) + 100;
+			break;
+		case ART_ERIRIL:
+			/* Identify and combine pack */
+			(void)ident_spell(Ind);
+			/* XXX Note that the artifact is always de-charged */
+			o_ptr->timeout = 10;
+			break;
+		case ART_OLORIN:
+			probing(Ind);
+			detection(Ind, DEFAULT_RADIUS * 2);
+			o_ptr->timeout = 20;
+			break;
+		case ART_EONWE:
+			msg_print(Ind, "Your axe lets out a long, shrill note...");
+			(void)obliteration(Ind);
+			o_ptr->timeout = 1000;
+			break;
+		case ART_LOTHARANG:
+			msg_print(Ind, "Your battle axe radiates deep purple...");
+			hp_player(Ind, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)));
+			(void)set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker);
+			o_ptr->timeout = rand_int(3) + 3;
+			break;
+		case ART_CUBRAGOL:
+			(void)brand_bolts(Ind);
+			o_ptr->timeout = 999;
+			break;
+		case ART_ARUNRUTH:
+			msg_print(Ind, "Your sword glows a pale blue...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_AEGLOS:
+			msg_print(Ind, "Your spear glows a bright white...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_OROME:
+			msg_print(Ind, "Your spear pulsates...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_SOULKEEPER:
+			msg_print(Ind, "Your armour glows a bright white...");
+			msg_print(Ind, "\377GYou feel much better...");
+			(void)hp_player(Ind, 1000);
+			(void)set_cut(Ind, 0, 0);
+			o_ptr->timeout = 888;
+			break;
+		case ART_BELEGENNON:
+			teleport_player(Ind, 10, TRUE);
+			o_ptr->timeout = 2;
+			break;
+		case ART_CELEBORN:
+			(void)genocide(Ind);
+			o_ptr->timeout = 500;
+			break;
+		case ART_LUTHIEN:
+			restore_level(Ind);
+			o_ptr->timeout = 450;
+			break;
+		case ART_ULMO:
+			msg_print(Ind, "Your trident glows deep red...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_COLLUIN:
+			msg_print(Ind, "Your cloak glows many colours...");
+			(void)set_oppose_acid(Ind, randint(20) + 20); /* removed stacking */
+			(void)set_oppose_elec(Ind, randint(20) + 20);
+			(void)set_oppose_fire(Ind, randint(20) + 20);
+			(void)set_oppose_cold(Ind, randint(20) + 20);
+			(void)set_oppose_pois(Ind, randint(20) + 20);
+			o_ptr->timeout = 111;
+			break;
+		case ART_HOLCOLLETH:
+			msg_print(Ind, "Your cloak glows deep blue...");
+			sleep_monsters_touch(Ind);
+			o_ptr->timeout = 55;
+			break;
+		case ART_THINGOL:
+			msg_print(Ind, "You hear a low humming noise...");
+			recharge(Ind, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 40));
+			o_ptr->timeout = 70;
+			break;
+		case ART_COLANNON:
+			teleport_player(Ind, 100, FALSE);
+			o_ptr->timeout = 45;
+			break;
+		case ART_TOTILA:
+			msg_print(Ind, "Your flail glows in scintillating colours...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_CAMMITHRIM:
+			msg_print(Ind, "Your gloves glow extremely brightly...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_PAURHACH:
+			msg_print(Ind, "Your gauntlets are covered in fire...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_PAURNIMMEN:
+			msg_print(Ind, "Your gauntlets are covered in frost...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_PAURAEGEN:
+			msg_print(Ind, "Your gauntlets are covered in sparks...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_PAURNEN:
+			msg_print(Ind, "Your gauntlets look very acidic...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_FINGOLFIN:
+			msg_print(Ind, "Magical spikes appear on your cesti...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_HOLHENNETH:
+			msg_print(Ind, "An image forms in your mind...");
+			detection(Ind, DEFAULT_RADIUS * 2);
+			o_ptr->timeout = rand_int(55) + 55;
+			break;
+		case ART_GONDOR:
+			msg_print(Ind, "\377GYou feel a warm tingling inside...");
+			(void)hp_player(Ind, 500);
+			(void)set_cut(Ind, 0, 0);
+			o_ptr->timeout = 500;
+			break;
+		case ART_RAZORBACK:
+			msg_print(Ind, "You are surrounded by lightning!");
+			sprintf(p_ptr->attacker, " casts a lightning ball for");
+			for (i = 0; i < 8; i++) fire_ball(Ind, GF_ELEC, ddd[i], 150 + get_skill_scale(p_ptr, SKILL_DEVICE, 450), 3, p_ptr->attacker);
+			o_ptr->timeout = 1000;
+			break;
+		case ART_BLADETURNER:
+			msg_print(Ind, "Your armour glows in many colours...");
+			(void)hp_player(Ind, 30);
+			(void)set_afraid(Ind, 0);
+			(void)set_res_fear(Ind, 20);
+			(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
+			p_ptr->blessed_power = 20;
+			(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
+			(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
+			(void)set_oppose_elec(Ind, randint(50) + 50);
+			(void)set_oppose_fire(Ind, randint(50) + 50);
+			(void)set_oppose_cold(Ind, randint(50) + 50);
+			(void)set_oppose_pois(Ind, randint(50) + 50);
+			o_ptr->timeout = 400;
+			break;
+		case ART_GALADRIEL:
+			msg_print(Ind, "The phial wells with clear light...");
+			lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
+			if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 4), "the phial of galadriel", 0);
                         	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
-				o_ptr->timeout = rand_int(10) + 10;
-				break;
-			case ART_ELENDIL:
-				msg_print(Ind, "The star shines brightly...");
-				map_area(Ind);
-				o_ptr->timeout = rand_int(50) + 50;
-				break;
-			case ART_THRAIN:
-				msg_print(Ind, "The stone glows a deep green...");
-				wiz_lite(Ind);
-				(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
-				(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
-				o_ptr->timeout = rand_int(100) + 100;
-				break;
-			case ART_INGWE:
-				msg_print(Ind, "An aura of good floods the area...");
-				dispel_evil(Ind, p_ptr->lev * 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
-				o_ptr->timeout = rand_int(300) + 300;
-				break;
-			case ART_CARLAMMAS:
-				msg_print(Ind, "The amulet lets out a shrill wail...");
-				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
-				o_ptr->timeout = rand_int(225) + 225;
-				break;
-			case ART_TULKAS:
-				msg_print(Ind, "The ring glows brightly...");
-				(void)set_fast(Ind, randint(75) + 75, 15); /* removed stacking */
-				o_ptr->timeout = rand_int(150) + 150;
-				break;
-			case ART_NARYA:
-				msg_print(Ind, "The ring glows deep red...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_NENYA:
-				msg_print(Ind, "The ring glows bright white...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_VILYA:
-				msg_print(Ind, "The ring glows deep blue...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_POWER:
-				msg_print(Ind, "The ring glows intensely black...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_GILGALAD:
-				for (k = 1; k < 10; k++)
-					if (k - 5) fire_beam(Ind, GF_LITE, k, 75 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), " emits a beam of light for");
+			o_ptr->timeout = rand_int(10) + 10;
+			break;
+		case ART_ELENDIL:
+			msg_print(Ind, "The star shines brightly...");
+			map_area(Ind);
+			o_ptr->timeout = rand_int(50) + 50;
+			break;
+		case ART_THRAIN:
+			msg_print(Ind, "The stone glows a deep green...");
+			wiz_lite(Ind);
+			(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
+			(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
+			o_ptr->timeout = rand_int(100) + 100;
+			break;
+		case ART_INGWE:
+			msg_print(Ind, "An aura of good floods the area...");
+			dispel_evil(Ind, p_ptr->lev * 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
+			o_ptr->timeout = rand_int(300) + 300;
+			break;
+		case ART_CARLAMMAS:
+			msg_print(Ind, "The amulet lets out a shrill wail...");
+			(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
+			o_ptr->timeout = rand_int(225) + 225;
+			break;
+		case ART_TULKAS:
+			msg_print(Ind, "The ring glows brightly...");
+			(void)set_fast(Ind, randint(75) + 75, 15); /* removed stacking */
+			o_ptr->timeout = rand_int(150) + 150;
+			break;
+		case ART_NARYA:
+			msg_print(Ind, "The ring glows deep red...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_NENYA:
+			msg_print(Ind, "The ring glows bright white...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_VILYA:
+			msg_print(Ind, "The ring glows deep blue...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_POWER:
+			msg_print(Ind, "The ring glows intensely black...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_GILGALAD:
+			for (k = 1; k < 10; k++)
+				if (k - 5) fire_beam(Ind, GF_LITE, k, 75 + get_skill_scale(p_ptr, SKILL_DEVICE, 150), " emits a beam of light for");
 
-				o_ptr->timeout = rand_int(75) + 75;
-				break;
-			case ART_CELEBRIMBOR:
-				set_tim_esp(Ind, p_ptr->tim_esp + randint(20) + 20);
-				 /* not removed stacking */
-				o_ptr->timeout = rand_int(50) + 20;
-				break;
-			case ART_SKULLCLEAVER:
-				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
-				o_ptr->timeout = rand_int(200) + 200;
-				break;
-			case ART_HARADRIM:
-				set_afraid(Ind, 0);
-				set_shero(Ind, randint(25) + 25); /* removed stacking */
-				hp_player(Ind, 30);
-				o_ptr->timeout = rand_int(50) + 50;
-				break;
-			case ART_FUNDIN:
-				dispel_evil(Ind, p_ptr->lev * 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 400));
-				o_ptr->timeout = rand_int(100) + 100;
-				break;
-			case ART_NAIN:
-			case ART_EOL:
-			case ART_UMBAR:
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_NUMENOR:
+			o_ptr->timeout = rand_int(75) + 75;
+			break;
+		case ART_CELEBRIMBOR:
+			set_tim_esp(Ind, p_ptr->tim_esp + randint(20) + 20);
+			 /* not removed stacking */
+			o_ptr->timeout = rand_int(50) + 20;
+			break;
+		case ART_SKULLCLEAVER:
+			destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
+			o_ptr->timeout = rand_int(200) + 200;
+			break;
+		case ART_HARADRIM:
+			set_afraid(Ind, 0);
+			set_shero(Ind, randint(25) + 25); /* removed stacking */
+			hp_player(Ind, 30);
+			o_ptr->timeout = rand_int(50) + 50;
+			break;
+		case ART_FUNDIN:
+			dispel_evil(Ind, p_ptr->lev * 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 400));
+			o_ptr->timeout = rand_int(100) + 100;
+			break;
+		case ART_NAIN:
+		case ART_EOL:
+		case ART_UMBAR:
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_NUMENOR:
 #if 0
-				/* Give full knowledge */
-				/* Hack -- Maximal info */
-				monster_race *r_ptr;
-				cave_type *c_ptr;
-				int x, y, m;
+			/* Give full knowledge */
+			/* Hack -- Maximal info */
+			monster_race *r_ptr;
+			cave_type *c_ptr;
+			int x, y, m;
 
-				if (!tgt_pt(&x, &y)) break;
+			if (!tgt_pt(&x, &y)) break;
 
-				c_ptr = &cave[y][x];
-				if (!c_ptr->m_idx) break;
+			c_ptr = &cave[y][x];
+			if (!c_ptr->m_idx) break;
 
-				r_ptr = race_inf(m_list[c_ptr->m_idx]);
+			r_ptr = race_inf(m_list[c_ptr->m_idx]);
 
  #ifdef OLD_MONSTER_LORE
-				/* Observe "maximal" attacks */
-				for (m = 0; m < 4; m++) {
-					/* Examine "actual" blows */
-					if (r_ptr->blow[m].effect || r_ptr->blow[m].method) {
-						/* Hack -- maximal observations */
-						r_ptr->r_blows[m] = MAX_UCHAR;
-					}
+			/* Observe "maximal" attacks */
+			for (m = 0; m < 4; m++) {
+				/* Examine "actual" blows */
+				if (r_ptr->blow[m].effect || r_ptr->blow[m].method) {
+					/* Hack -- maximal observations */
+					r_ptr->r_blows[m] = MAX_UCHAR;
 				}
+			}
 
-				/* Hack -- maximal drops */
-				r_ptr->r_drop_gold = r_ptr->r_drop_item =
-					(((r_ptr->flags1 & (RF1_DROP_4D2)) ? 8 : 0) +
-					 ((r_ptr->flags1 & (RF1_DROP_3D2)) ? 6 : 0) +
-					 ((r_ptr->flags1 & (RF1_DROP_2D2)) ? 4 : 0) +
-					 ((r_ptr->flags1 & (RF1_DROP_1D2)) ? 2 : 0) +
-					 ((r_ptr->flags0 & (RF0_DROP_1))   ? 1 : 0) +
-					 ((r_ptr->flags1 & (RF1_DROP_90))  ? 1 : 0) +
-					 ((r_ptr->flags1 & (RF1_DROP_60))  ? 1 : 0));
+			/* Hack -- maximal drops */
+			r_ptr->r_drop_gold = r_ptr->r_drop_item =
+				(((r_ptr->flags1 & (RF1_DROP_4D2)) ? 8 : 0) +
+				 ((r_ptr->flags1 & (RF1_DROP_3D2)) ? 6 : 0) +
+				 ((r_ptr->flags1 & (RF1_DROP_2D2)) ? 4 : 0) +
+				 ((r_ptr->flags1 & (RF1_DROP_1D2)) ? 2 : 0) +
+				 ((r_ptr->flags0 & (RF0_DROP_1))   ? 1 : 0) +
+				 ((r_ptr->flags1 & (RF1_DROP_90))  ? 1 : 0) +
+				 ((r_ptr->flags1 & (RF1_DROP_60))  ? 1 : 0));
 
-				/* Hack -- but only "valid" drops */
-				if (r_ptr->flags1 & (RF1_ONLY_GOLD)) r_ptr->r_drop_item = 0;
-				if (r_ptr->flags1 & (RF1_ONLY_ITEM)) r_ptr->r_drop_gold = 0;
+			/* Hack -- but only "valid" drops */
+			if (r_ptr->flags1 & (RF1_ONLY_GOLD)) r_ptr->r_drop_item = 0;
+			if (r_ptr->flags1 & (RF1_ONLY_ITEM)) r_ptr->r_drop_gold = 0;
 
-				/* Hack -- observe many spells */
-				r_ptr->r_cast_innate = MAX_UCHAR;
-				r_ptr->r_cast_spell = MAX_UCHAR;
+			/* Hack -- observe many spells */
+			r_ptr->r_cast_innate = MAX_UCHAR;
+			r_ptr->r_cast_spell = MAX_UCHAR;
 
-				/* Hack -- know all the flags */
-				r_ptr->r_flags1 = r_ptr->flags1;
-				r_ptr->r_flags2 = r_ptr->flags2;
-				r_ptr->r_flags3 = r_ptr->flags3;
-				r_ptr->r_flags4 = r_ptr->flags4;
-				r_ptr->r_flags5 = r_ptr->flags5;
-				r_ptr->r_flags6 = r_ptr->flags6;
-				r_ptr->r_flags7 = r_ptr->flags7;
-				r_ptr->r_flags8 = r_ptr->flags8;
-				r_ptr->r_flags9 = r_ptr->flags9;
+			/* Hack -- know all the flags */
+			r_ptr->r_flags1 = r_ptr->flags1;
+			r_ptr->r_flags2 = r_ptr->flags2;
+			r_ptr->r_flags3 = r_ptr->flags3;
+			r_ptr->r_flags4 = r_ptr->flags4;
+			r_ptr->r_flags5 = r_ptr->flags5;
+			r_ptr->r_flags6 = r_ptr->flags6;
+			r_ptr->r_flags7 = r_ptr->flags7;
+			r_ptr->r_flags8 = r_ptr->flags8;
+			r_ptr->r_flags9 = r_ptr->flags9;
  #endif
 
-				o_ptr->timeout = rand_int(200) + 500;
+			o_ptr->timeout = rand_int(200) + 500;
 #else
-				probing(Ind);
-				o_ptr->timeout = rand_int(200) + 300;
+			probing(Ind);
+			o_ptr->timeout = rand_int(200) + 300;
 #endif
-				break;
-			case ART_KNOWLEDGE:
-				identify_fully(Ind);
-				msg_print(Ind, "\377RYou hear horrible, otherworldy sounds of the dead in your head..");
+			break;
+		case ART_KNOWLEDGE:
+			identify_fully(Ind);
+			msg_print(Ind, "\377RYou hear horrible, otherworldy sounds of the dead in your head..");
                                 take_sanity_hit(Ind, damroll(2, 7), "the sounds of the dead");
 //				take_hit(Ind, damroll(10, 7), "the sounds of the dead", 0);
-				o_ptr->timeout = rand_int(200) + 100;
-				break;
-			case ART_UNDEATH:
-				msg_print(Ind, "The phial wells with dark light...");
-				unlite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
-				take_hit(Ind, damroll(10, 10), "activating The Phial of Undeath", 0);
-				if (!p_ptr->suscep_life) {
-					(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_PERMANENT);
-					(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_PERMANENT);
-					(void)dec_stat(Ind, A_CON, 25, STAT_DEC_PERMANENT);
-					(void)dec_stat(Ind, A_STR, 25, STAT_DEC_PERMANENT);
-					(void)dec_stat(Ind, A_CHR, 25, STAT_DEC_PERMANENT);
-					(void)dec_stat(Ind, A_INT, 25, STAT_DEC_PERMANENT);
-				}
-				o_ptr->timeout = rand_int(10) + 10;
-				break;
-			case ART_HIMRING:
-				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
-				o_ptr->timeout = rand_int(225) + 225;
-				break;
-			case ART_FLAR:
+			o_ptr->timeout = rand_int(200) + 100;
+			break;
+		case ART_UNDEATH:
+			msg_print(Ind, "The phial wells with dark light...");
+			unlite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
+			take_hit(Ind, damroll(10, 10), "activating The Phial of Undeath", 0);
+			if (!p_ptr->suscep_life) {
+				(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_PERMANENT);
+				(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_PERMANENT);
+				(void)dec_stat(Ind, A_CON, 25, STAT_DEC_PERMANENT);
+				(void)dec_stat(Ind, A_STR, 25, STAT_DEC_PERMANENT);
+				(void)dec_stat(Ind, A_CHR, 25, STAT_DEC_PERMANENT);
+				(void)dec_stat(Ind, A_INT, 25, STAT_DEC_PERMANENT);
+			}
+			o_ptr->timeout = rand_int(10) + 10;
+			break;
+		case ART_HIMRING:
+			(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
+			o_ptr->timeout = rand_int(225) + 225;
+			break;
+		case ART_FLAR:
 #if 0
-				/* Check for CAVE_STCK */
+			/* Check for CAVE_STCK */
 
-				msg_print(Ind, "You open a between gate. Choose a destination.");
-				if (!tgt_pt(&ii,&ij)) return;
-				p_ptr->energy -= 60 - plev;
-				if (!cave_empty_bold(ij,ii) || (cave[ij][ii].info & CAVE_ICKY) ||
-						(distance(ij,ii,py,px) > plev + 2) ||
-						(!rand_int(plev * plev / 2)))
-				{
-					msg_print(Ind, "You fail to exit the between correctly!");
-					p_ptr->energy -= 100;
-					teleport_player(Ind, 10, TRUE);
-				}
-				else teleport_player_to(ij,ii);
-				o_ptr->timeout = 100;
+			msg_print(Ind, "You open a between gate. Choose a destination.");
+			if (!tgt_pt(&ii,&ij)) return;
+			p_ptr->energy -= 60 - plev;
+			if (!cave_empty_bold(ij,ii) || (cave[ij][ii].info & CAVE_ICKY) ||
+					(distance(ij,ii,py,px) > plev + 2) ||
+					(!rand_int(plev * plev / 2)))
+			{
+				msg_print(Ind, "You fail to exit the between correctly!");
+				p_ptr->energy -= 100;
+				teleport_player(Ind, 10, TRUE);
+			}
+			else teleport_player_to(ij,ii);
+			o_ptr->timeout = 100;
 #else
-				/* Initiate or complete gateway creation. - C. Blue
-				   If we initiated it, do not set a timeout, so we can activate
-				   F'lar a second time at will to complete the spell, then timeout. */
-				if (py_create_gateway(Ind) == 2) o_ptr->timeout = 1000;
+			/* Initiate or complete gateway creation. - C. Blue
+			   If we initiated it, do not set a timeout, so we can activate
+			   F'lar a second time at will to complete the spell, then timeout. */
+			if (py_create_gateway(Ind) == 2) o_ptr->timeout = 1000;
 #endif
-				break;
-			case ART_BARAHIR:
-				msg_print(Ind, "You exterminate small life.");
-				(void)dispel_monsters(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300));
-				o_ptr->timeout = rand_int(55) + 55;
-				break;
-			/* The Stone of Lore is perilous, for the sake of game balance. */
-			case ART_STONE_LORE:
-				msg_print(Ind, "The stone reveals hidden mysteries...");
-				if (!ident_spell(Ind)) return;
-				//                                if (!p_ptr->realm1)
-				if (1) {
-					/* Sufficient mana */
-					if (20 <= p_ptr->csp) {
-						/* Use some mana */
-						p_ptr->csp -= 20;
+			break;
+		case ART_BARAHIR:
+			msg_print(Ind, "You exterminate small life.");
+			(void)dispel_monsters(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300));
+			o_ptr->timeout = rand_int(55) + 55;
+			break;
+		/* The Stone of Lore is perilous, for the sake of game balance. */
+		case ART_STONE_LORE:
+			msg_print(Ind, "The stone reveals hidden mysteries...");
+			if (!ident_spell(Ind)) return;
+			//                                if (!p_ptr->realm1)
+			if (1) {
+				/* Sufficient mana */
+				if (20 <= p_ptr->csp) {
+					/* Use some mana */
+					p_ptr->csp -= 20;
 
-						/* Confusing. */
-						if (rand_int(5) == 0) (void)set_confused(Ind, p_ptr->confused + randint(5));
-					}
-
-					/* Over-exert the player */
-					else {
-						/* No mana left */
-						p_ptr->csp = 0;
-						p_ptr->csp_frac = 0;
-
-						/* Message */
-						msg_print(Ind, "You do not have enough mana to control the stone!");
-
-						/* Confusing. */
-						(void)set_confused(Ind, p_ptr->confused + 5 + randint(5));
-					}
-
-					/* Redraw mana */
-					p_ptr->redraw |= (PR_MANA);
+					/* Confusing. */
+					if (rand_int(5) == 0) (void)set_confused(Ind, p_ptr->confused + randint(5));
 				}
 
-				/* Exercise a little care... */
-				//if (rand_int(20) == 0) take_hit(Ind, damroll(4, 10), "perilous secrets", 0); else
-				take_hit(Ind, damroll(1, 12), "perilous secrets", 0);
-
-				o_ptr->timeout = 10;
-				break;
-			case ART_MEDIATOR:
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_DOR:
-			case ART_GORLIM:
-				turn_monsters(Ind, 40 + p_ptr->lev);
-				o_ptr->timeout = 3 * (p_ptr->lev + 10);
-				break;
-			case ART_ANGUIREL:
-				switch (randint(13)) {
-					case 1: case 2: case 3: case 4: case 5:
-						teleport_player(Ind, 10, TRUE);
-						break;
-					case 6: case 7: case 8: case 9: case 10:
-						teleport_player(Ind, 222, FALSE);
-						break;
-					case 11: case 12:
-					default:
-						(void)stair_creation(Ind);
-						break;
-				}
-				o_ptr->timeout = 35;
-				break;
-			case ART_ERU:
-				msg_print(Ind, "Your sword glows an intense white...");
-				hp_player(Ind, 7000);
-				heal_insanity(Ind, 50);
-				set_blind(Ind, 0);
-				set_poisoned(Ind, 0, 0);
-				set_confused(Ind, 0);
-				set_stun(Ind, 0);
-				set_cut(Ind, 0, 0);
-				set_image(Ind, 0);
-				o_ptr->timeout = 500;
-				break;
-			case ART_DAWN:
-#if 0 /* needs pet code */
-				msg_print(Ind, "You summon the Legion of the Dawn.");
-				(void)summon_specific_friendly(py, px, dlev, SUMMON_DAWN, TRUE, 0);
-#else
-				do_banish_undead(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
-#endif
-				o_ptr->timeout = 500 + randint(500);
-				break;
-#if 0
-			case ART_AVAVIR:
-				if (dlev && (max_dlv[dungeon_type] > dlev)) {
-					if (get_check("Reset recall depth? "))
-						max_dlv[dungeon_type] = dlev;
-				}
-
-				msg_print(Ind, "Your scythe glows soft white...");
-				if (!p_ptr->word_recall) {
-					p_ptr->word_recall = randint(20) + 15;
-					msg_print(Ind, "The air about you becomes charged...");
-				} else {
-					p_ptr->word_recall = 0;
-					msg_print(Ind, "A tension leaves the air around you...");
-				}
-				o_ptr->timeout = 200;
-				break;
-#endif
-			case ART_EVENSTAR:
-				restore_level(Ind);
-				(void)do_res_stat(Ind, A_STR);
-				(void)do_res_stat(Ind, A_DEX);
-				(void)do_res_stat(Ind, A_CON);
-				(void)do_res_stat(Ind, A_INT);
-				(void)do_res_stat(Ind, A_WIS);
-				(void)do_res_stat(Ind, A_CHR);
-				o_ptr->timeout = 150;
-				break;
-#if 1
-			case ART_ELESSAR:
-				if (p_ptr->black_breath)
-					msg_print(Ind, "The hold of the Black Breath on you is broken!");
-				p_ptr->black_breath = FALSE;
-				hp_player(Ind, 100);
-				o_ptr->timeout = 200;
-				break;
-#endif
-			case ART_GANDALF:
-				msg_print(Ind, "Your mage staff glows deep blue...");
-				if (p_ptr->csp < p_ptr->msp) {
-					p_ptr->csp = p_ptr->msp;
+				/* Over-exert the player */
+				else {
+					/* No mana left */
+					p_ptr->csp = 0;
 					p_ptr->csp_frac = 0;
-					msg_print(Ind, "You feel your head clearing.");
-					p_ptr->redraw |= (PR_MANA);
-					p_ptr->window |= (PW_PLAYER);
+
+					/* Message */
+					msg_print(Ind, "You do not have enough mana to control the stone!");
+
+					/* Confusing. */
+					(void)set_confused(Ind, p_ptr->confused + 5 + randint(5));
 				}
-				o_ptr->timeout = 666;
-				break;
-			case ART_MARDRA:
-#if 0	// needing pet code
-				if (randint(3) == 1) {
-					if (summon_specific(py, px, ((plev * 3) / 2), SUMMON_DRAGONRIDER, 0, 1)) {
-						msg_print(Ind, "A DragonRider comes from the BETWEEN !");
-						msg_print(Ind, "'I will burn you!'");
-					}
-				} else {
-					if (summon_specific_friendly(py, px, ((plev * 3) / 2),
-					    SUMMON_DRAGONRIDER, (bool)(plev == 50 ? TRUE : FALSE))) {
-						msg_print(Ind, "A DragonRider comes from the BETWEEN !");
-						msg_print(Ind, "'I will help you in your difficult task.'");
-					}
-				}
+
+				/* Redraw mana */
+				p_ptr->redraw |= (PR_MANA);
+			}
+
+			/* Exercise a little care... */
+			//if (rand_int(20) == 0) take_hit(Ind, damroll(4, 10), "perilous secrets", 0); else
+			take_hit(Ind, damroll(1, 12), "perilous secrets", 0);
+
+			o_ptr->timeout = 10;
+			break;
+		case ART_MEDIATOR:
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_DOR:
+		case ART_GORLIM:
+			turn_monsters(Ind, 40 + p_ptr->lev);
+			o_ptr->timeout = 3 * (p_ptr->lev + 10);
+			break;
+		case ART_ANGUIREL:
+			switch (randint(13)) {
+				case 1: case 2: case 3: case 4: case 5:
+					teleport_player(Ind, 10, TRUE);
+					break;
+				case 6: case 7: case 8: case 9: case 10:
+					teleport_player(Ind, 222, FALSE);
+					break;
+				case 11: case 12:
+				default:
+					(void)stair_creation(Ind);
+					break;
+			}
+			o_ptr->timeout = 35;
+			break;
+		case ART_ERU:
+			msg_print(Ind, "Your sword glows an intense white...");
+			hp_player(Ind, 7000);
+			heal_insanity(Ind, 50);
+			set_blind(Ind, 0);
+			set_poisoned(Ind, 0, 0);
+			set_confused(Ind, 0);
+			set_stun(Ind, 0);
+			set_cut(Ind, 0, 0);
+			set_image(Ind, 0);
+			o_ptr->timeout = 500;
+			break;
+		case ART_DAWN:
+#if 0 /* needs pet code */
+			msg_print(Ind, "You summon the Legion of the Dawn.");
+			(void)summon_specific_friendly(py, px, dlev, SUMMON_DAWN, TRUE, 0);
 #else
-				do_banish_dragons(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
+			do_banish_undead(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
 #endif
-				o_ptr->timeout = 1000;
-				break;
-			case ART_PALANTIR_ITHIL:
-			case ART_PALANTIR:
-				msg_print(Ind, "The stone glows a deep green...");
-				wiz_lite_extra(Ind);
-				(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
-				(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
-				//				(void)detect_stair(Ind);
-				o_ptr->timeout = rand_int(100) + 100;
-				break;
-#if 0	// Instruments
-			case ART_ROBINTON:
-				msg_format(Ind, "Your instrument starts %s",music_info[3].desc);
-				p_ptr->music = 3; /* Full ID */
-				o_ptr->timeout = music_info[p_ptr->music].init_recharge;
-				break;
-			case ART_PIEMUR:
-				msg_format(Ind, "Your instrument starts %s",music_info[9].desc);
-				p_ptr->music = 9;
-				o_ptr->timeout = music_info[p_ptr->music].init_recharge;
-				break;
-			case ART_MENOLLY:
-				msg_format(Ind, "Your instrument starts %s",music_info[10].desc);
-				p_ptr->music = 10;
-				o_ptr->timeout = music_info[p_ptr->music].init_recharge;
-				break;
-#endif
-			case ART_EREBOR:
-				msg_print(Ind, "Your pick twists in your hands.");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
+			o_ptr->timeout = 500 + randint(500);
+			break;
 #if 0
-			case ART_DRUEDAIN:
-				msg_print(Ind, "Your drum shows you the world.");
-				detect_all();
-				o_ptr->timeout = 99;
-				break;
-			case ART_ROHAN:
-				msg_print(Ind, "Your horn glows deep red.");
-				set_afraid(0);
-				set_shero(Ind, damroll(5,10) + 30); /* removed stacking */
-				set_afraid(0);
-				set_hero(Ind, damroll(5,10) + 30); /* removed stacking */
-				set_fast(Ind, damroll(5,10) + 30, 20); /* removed stacking */
-				hp_player(30);
-				o_ptr->timeout = 250;
-				break;
-			case ART_HELM:
-				msg_print(Ind, "Your horn emits a loud sound.");
-				if (!get_aim_dir(Ind)) return;
-				sprintf(p_ptr->attacker, "'s horn emits a loud sound for");
-				fire_ball(GF_SOUND, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 6, p_ptr->attacker);
-				o_ptr->timeout = 300;
-				break;
-			case ART_BOROMIR:
-				msg_print(Ind, "Your horn calls for help.");
-				for(i = 0; i < 15; i++)
-					summon_specific_friendly(py, px, ((plev * 3) / 2),SUMMON_HUMAN, TRUE);
-				o_ptr->timeout = 1000;
-				break;
-#endif	// 0
-			case ART_HURIN:
-				(void)set_fast(Ind, randint(50) + 50, 10); /* removed stacking */
-				hp_player(Ind, 30);
-				set_afraid(Ind, 0);
-				set_shero(Ind, randint(50) + 50); /* removed stacking */
-				o_ptr->timeout = rand_int(200) + 100;
-				break;
-			case ART_AXE_GOTHMOG:
-				msg_print(Ind, "Your lochaber axe erupts in fire...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-			case ART_MELKOR:
-				msg_print(Ind, "Your spear is covered of darkness...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
-#if 0 /* not suited for multiplayer, and it's like an amulet of life-saving anyway */
-			case ART_GROND:
-				msg_print(Ind, "Your hammer hits the floor...");
-				alter_reality();
-				o_ptr->timeout = 100;
-				break;
+		case ART_AVAVIR:
+			if (dlev && (max_dlv[dungeon_type] > dlev)) {
+				if (get_check("Reset recall depth? "))
+					max_dlv[dungeon_type] = dlev;
+			}
+
+			msg_print(Ind, "Your scythe glows soft white...");
+			if (!p_ptr->word_recall) {
+				p_ptr->word_recall = randint(20) + 15;
+				msg_print(Ind, "The air about you becomes charged...");
+			} else {
+				p_ptr->word_recall = 0;
+				msg_print(Ind, "A tension leaves the air around you...");
+			}
+			o_ptr->timeout = 200;
+			break;
 #endif
-			case ART_NATUREBANE:
-				msg_print(Ind, "Your axe glows blood red...");
-				//dispel_monsters(500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
-				do_banish_animals(Ind, 80);
-				o_ptr->timeout = 200 + randint(200);
-				break;
-			case ART_NIGHT:
-				msg_print(Ind, "Your axe emits a black aura...");
-				p_ptr->current_activation = item;
-				get_aim_dir(Ind);
-				return;
+		case ART_EVENSTAR:
+			restore_level(Ind);
+			(void)do_res_stat(Ind, A_STR);
+			(void)do_res_stat(Ind, A_DEX);
+			(void)do_res_stat(Ind, A_CON);
+			(void)do_res_stat(Ind, A_INT);
+			(void)do_res_stat(Ind, A_WIS);
+			(void)do_res_stat(Ind, A_CHR);
+			o_ptr->timeout = 150;
+			break;
 #if 1
-			case ART_ORCHAST:
-				msg_print(Ind, "Your weapon glows brightly...");
-				(void)detect_monsters_xxx(Ind, RF3_ORC);
-				o_ptr->timeout = 10;
-				break;
-#endif	// 0
-			/* ToNE-NET additions */
-			case ART_BILBO:
-				msg_print(Ind, "Your picklock flashes...");
-				destroy_doors_touch(Ind, 2);
-				o_ptr->timeout = 30 + randint(30);
-				break;
-			case ART_SOULCURE:
-				if (p_ptr->blessed_power <= 20) {
-					msg_print(Ind, "Your gloves glow golden...");
-					p_ptr->blessed_power = 20;
-					set_blessed(Ind, randint(48) + 24); /* removed stacking */
-					o_ptr->timeout = 150 + randint(200);
-				} else {
-					msg_print(Ind, "Your gloves shimmer..");
+		case ART_ELESSAR:
+			if (p_ptr->black_breath)
+				msg_print(Ind, "The hold of the Black Breath on you is broken!");
+			p_ptr->black_breath = FALSE;
+			hp_player(Ind, 100);
+			o_ptr->timeout = 200;
+			break;
+#endif
+		case ART_GANDALF:
+			msg_print(Ind, "Your mage staff glows deep blue...");
+			if (p_ptr->csp < p_ptr->msp) {
+				p_ptr->csp = p_ptr->msp;
+				p_ptr->csp_frac = 0;
+				msg_print(Ind, "You feel your head clearing.");
+				p_ptr->redraw |= (PR_MANA);
+				p_ptr->window |= (PW_PLAYER);
+			}
+			o_ptr->timeout = 666;
+			break;
+		case ART_MARDRA:
+#if 0	// needing pet code
+			if (randint(3) == 1) {
+				if (summon_specific(py, px, ((plev * 3) / 2), SUMMON_DRAGONRIDER, 0, 1)) {
+					msg_print(Ind, "A DragonRider comes from the BETWEEN !");
+					msg_print(Ind, "'I will burn you!'");
 				}
-				break;
-			case ART_AMUGROM:
-				msg_print(Ind, "The amulet sparkles in scintillating colours...");
-				o_ptr->timeout = 250 + randint(200);
-				(void)set_oppose_acid(Ind, randint(30) + 40); /* removed stacking */
-				(void)set_oppose_elec(Ind, randint(30) + 40);
-				(void)set_oppose_fire(Ind, randint(30) + 40);
-				(void)set_oppose_cold(Ind, randint(30) + 40);
-				(void)set_oppose_pois(Ind, randint(30) + 40);
-				break;
-			case ART_SPIRITSHARD:
-				msg_print(Ind, "Shimmers and flashes travel over the surface of the amulet...");
-				o_ptr->timeout = 300 + randint(100);
-				(void)set_tim_wraith(Ind, 150);
-				break;
-			case ART_PHASING:
-				msg_print(Ind, "Your surroundings fade.. you are carried away through a tunnel of light!");
-//				msg_print(Ind, "You hear a voice, saying 'Sorry, not yet implemented!'");
-				o_ptr->timeout = 1000;
-				p_ptr->auto_transport = AT_VALINOR;
-				//p_ptr->paralyzed = 1; /* Paranoia? In case there is a timing glitch, allowing to drop the Ring of Phasing before arriving in Valinor ;) */
-				break;
+			} else {
+				if (summon_specific_friendly(py, px, ((plev * 3) / 2),
+				    SUMMON_DRAGONRIDER, (bool)(plev == 50 ? TRUE : FALSE))) {
+					msg_print(Ind, "A DragonRider comes from the BETWEEN !");
+					msg_print(Ind, "'I will help you in your difficult task.'");
+				}
+			}
+#else
+			do_banish_dragons(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
+#endif
+			o_ptr->timeout = 1000;
+			break;
+		case ART_PALANTIR_ITHIL:
+		case ART_PALANTIR:
+			msg_print(Ind, "The stone glows a deep green...");
+			wiz_lite_extra(Ind);
+			(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
+			(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
+			//				(void)detect_stair(Ind);
+			o_ptr->timeout = rand_int(100) + 100;
+			break;
+#if 0	// Instruments
+		case ART_ROBINTON:
+			msg_format(Ind, "Your instrument starts %s",music_info[3].desc);
+			p_ptr->music = 3; /* Full ID */
+			o_ptr->timeout = music_info[p_ptr->music].init_recharge;
+			break;
+		case ART_PIEMUR:
+			msg_format(Ind, "Your instrument starts %s",music_info[9].desc);
+			p_ptr->music = 9;
+			o_ptr->timeout = music_info[p_ptr->music].init_recharge;
+			break;
+		case ART_MENOLLY:
+			msg_format(Ind, "Your instrument starts %s",music_info[10].desc);
+			p_ptr->music = 10;
+			o_ptr->timeout = music_info[p_ptr->music].init_recharge;
+			break;
+#endif
+		case ART_EREBOR:
+			msg_print(Ind, "Your pick twists in your hands.");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+#if 0
+		case ART_DRUEDAIN:
+			msg_print(Ind, "Your drum shows you the world.");
+			detect_all();
+			o_ptr->timeout = 99;
+			break;
+		case ART_ROHAN:
+			msg_print(Ind, "Your horn glows deep red.");
+			set_afraid(0);
+			set_shero(Ind, damroll(5,10) + 30); /* removed stacking */
+			set_afraid(0);
+			set_hero(Ind, damroll(5,10) + 30); /* removed stacking */
+			set_fast(Ind, damroll(5,10) + 30, 20); /* removed stacking */
+			hp_player(30);
+			o_ptr->timeout = 250;
+			break;
+		case ART_HELM:
+			msg_print(Ind, "Your horn emits a loud sound.");
+			if (!get_aim_dir(Ind)) return;
+			sprintf(p_ptr->attacker, "'s horn emits a loud sound for");
+			fire_ball(GF_SOUND, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 6, p_ptr->attacker);
+			o_ptr->timeout = 300;
+			break;
+		case ART_BOROMIR:
+			msg_print(Ind, "Your horn calls for help.");
+			for(i = 0; i < 15; i++)
+				summon_specific_friendly(py, px, ((plev * 3) / 2),SUMMON_HUMAN, TRUE);
+			o_ptr->timeout = 1000;
+			break;
+#endif	// 0
+		case ART_HURIN:
+			(void)set_fast(Ind, randint(50) + 50, 10); /* removed stacking */
+			hp_player(Ind, 30);
+			set_afraid(Ind, 0);
+			set_shero(Ind, randint(50) + 50); /* removed stacking */
+			o_ptr->timeout = rand_int(200) + 100;
+			break;
+		case ART_AXE_GOTHMOG:
+			msg_print(Ind, "Your lochaber axe erupts in fire...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		case ART_MELKOR:
+			msg_print(Ind, "Your spear is covered of darkness...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+#if 0 /* not suited for multiplayer, and it's like an amulet of life-saving anyway */
+		case ART_GROND:
+			msg_print(Ind, "Your hammer hits the floor...");
+			alter_reality();
+			o_ptr->timeout = 100;
+			break;
+#endif
+		case ART_NATUREBANE:
+			msg_print(Ind, "Your axe glows blood red...");
+			//dispel_monsters(500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
+			do_banish_animals(Ind, 80);
+			o_ptr->timeout = 200 + randint(200);
+			break;
+		case ART_NIGHT:
+			msg_print(Ind, "Your axe emits a black aura...");
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+#if 1
+		case ART_ORCHAST:
+			msg_print(Ind, "Your weapon glows brightly...");
+			(void)detect_monsters_xxx(Ind, RF3_ORC);
+			o_ptr->timeout = 10;
+			break;
+#endif	// 0
+		/* ToNE-NET additions */
+		case ART_BILBO:
+			msg_print(Ind, "Your picklock flashes...");
+			destroy_doors_touch(Ind, 2);
+			o_ptr->timeout = 30 + randint(30);
+			break;
+		case ART_SOULCURE:
+			if (p_ptr->blessed_power <= 20) {
+				msg_print(Ind, "Your gloves glow golden...");
+				p_ptr->blessed_power = 20;
+				set_blessed(Ind, randint(48) + 24); /* removed stacking */
+				o_ptr->timeout = 150 + randint(200);
+			} else {
+				msg_print(Ind, "Your gloves shimmer..");
+			}
+			break;
+		case ART_AMUGROM:
+			msg_print(Ind, "The amulet sparkles in scintillating colours...");
+			o_ptr->timeout = 250 + randint(200);
+			(void)set_oppose_acid(Ind, randint(30) + 40); /* removed stacking */
+			(void)set_oppose_elec(Ind, randint(30) + 40);
+			(void)set_oppose_fire(Ind, randint(30) + 40);
+			(void)set_oppose_cold(Ind, randint(30) + 40);
+			(void)set_oppose_pois(Ind, randint(30) + 40);
+			break;
+		case ART_SPIRITSHARD:
+			msg_print(Ind, "Shimmers and flashes travel over the surface of the amulet...");
+			o_ptr->timeout = 300 + randint(100);
+			(void)set_tim_wraith(Ind, 150);
+			break;
+		case ART_PHASING:
+			msg_print(Ind, "Your surroundings fade.. you are carried away through a tunnel of light!");
+//			msg_print(Ind, "You hear a voice, saying 'Sorry, not yet implemented!'");
+			o_ptr->timeout = 1000;
+			p_ptr->auto_transport = AT_VALINOR;
+			//p_ptr->paralyzed = 1; /* Paranoia? In case there is a timing glitch, allowing to drop the Ring of Phasing before arriving in Valinor ;) */
+			break;
+		case ART_LEBOHAUM:
+			msg_print(Ind, "\377wYou hear a little song in your head in some unknown tongue:");
+			msg_print(Ind, "\377u ~'Avec le casque Lebohaum y a jamais d'anicroches, je parcours les dongeons,~");
+			msg_print(Ind, "\377u ~j'en prend plein la caboche. Avec le casque Lebohaum, tout ces monstres a la~");
+			msg_print(Ind, "\377u ~con, je leur met bien profond: c'est moi le maitre du dongeon!~'");
+			o_ptr->timeout = 30;
+			break;
 		}
 
 		/* Window stuff */
