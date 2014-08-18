@@ -10670,6 +10670,18 @@ Note that not every skill is available to every profession (class).
                                 your chance to find items, for the items to
                                 be good or even great, and affects the amount
                                 of cash if you mine treasure.
+
+                                In particular, every 10 digging skill you will
+                                have a chance to find an additional pile of
+                                cash from mining a treasure vein, up to 6 piles
+                                if you're lucky at skill 50.000 (provided your
+                                dungeon floor depth is greater than half of
+                                your digging skill, otherwise the number of
+                                piles is limited to depth/5, eg 5 piles for
+                                dungeon level 25, while starting at dungeon
+                                level 26 you may uncover the full amount of 6
+                                piles if your skill is actually 50.000).
+
                                 Depending on the skill, you might also uncover
                                 special things.
 
