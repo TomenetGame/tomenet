@@ -6569,6 +6569,7 @@ Ironman Deep Dive Challenge (IDDC)
     Therefore, if you need to log out and stop playing, you should first clear
     as many monsters as you can on your current floor before logging out. That
     way you won't "waste" any experience points.
+    Note that dungeon towns never turn stale.
 
     Monsters cannot spawn 'live' in the IDDC, but only at the time of creation
     of each dungeon floor. Summon staves cannot be recharged in the IDDC and
