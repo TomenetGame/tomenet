@@ -12271,6 +12271,8 @@ Ent:
     Speed malus (will be reduced), swimming, pass trees.
 Draconian:
     Feather falling, levitation.
+    Intrinsic breath weapon - you can only use it if you're actually in dragon
+    form (including dragonriders) or in any reptilian form (including Hydras).
 
 
 (6.7a) Polymorph rings ('Ring of Polymorphing of <form>'):
