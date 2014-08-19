@@ -1506,6 +1506,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "USE_NEW_SHIELDS") && negation) invalid = TRUE;
 #endif
+#ifndef NEW_SHIELDS_NO_AC
+		if (streq(m, "NEW_SHIELDS_NO_AC") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "NEW_SHIELDS_NO_AC") && negation) invalid = TRUE;
+#endif
 #ifndef DUAL_WIELD
 		if (streq(m, "DUAL_WIELD") && !negation) invalid = TRUE;
 #else
@@ -1552,6 +1557,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "NEW_YEARS_EVE") &&
 		    strcmp(m, "ENABLE_MAIA") &&
 		    strcmp(m, "USE_NEW_SHIELDS") &&
+		    strcmp(m, "NEW_SHIELDS_NO_AC") &&
 		    strcmp(m, "DUAL_WIELD") &&
 		    strcmp(m, "ENABLE_STANCES") &&
 		    strcmp(m, "ENABLE_MCRAFT") &&
