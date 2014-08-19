@@ -2951,7 +2951,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 						if ((c_ptr->info & CAVE_LITE_WHITE)) {
 							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_L_WHITE; /* for now: instead of TERM_WHITE; to distinguish from permanent walls */
 						} else if ((c_ptr->info & CAVE_LITE_VAMP)) {
-							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_SLATE; /* to make a difference to TERM_L_WHITE; for the time being (see above) */
+							//if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_SLATE; /* to make a difference to TERM_L_WHITE; for the time being (see above) */
+							if (!(f_ptr->flags2 & FF2_NO_LITE_WHITEN)) a = TERM_L_WHITE; /* TERM_SLATE just looks too weird */
 						} else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0) && p_ptr->view_animated_lite) a = TERM_LAMP;
 						else a = TERM_YELLOW;
 #else
