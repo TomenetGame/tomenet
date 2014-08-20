@@ -229,11 +229,14 @@ void do_cmd_check_artifacts(int Ind, int line)
 			/* Hack -- Build the artifact name */
 			if (admin) {
 				char timeleft[10], c = 'w';
-				int timeout =
+				int timeout = FALSE
 #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
-				    a_ptr->iddc || a_ptr->winner ? a_ptr->timeout / 2 :
+				    || a_ptr->iddc
 #endif
-				    a_ptr->timeout;
+#ifdef WINNER_ARTIFACT_FAST_TIMEOUT
+				    || a_ptr->winner
+#endif
+				     ? a_ptr->timeout / 2 : a_ptr->timeout;
 
 				/* bad: should just use determine_artifact_timeout() for consistency, instead of hard-coding */
 				int long_timeout = winner_artifact_p(&forge) ? 60 * 2 : 60;
@@ -277,11 +280,14 @@ void do_cmd_check_artifacts(int Ind, int line)
 				/* actually show him timeouts of those artifacts the player owns.
 				   Todo: Should only show timeout if *ID*ed (ID_MENTAL), but not practical :/ */
 				if (p_ptr->id == a_ptr->carrier) {
-					int timeout =
- #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
-					    a_ptr->iddc || a_ptr->winner ? a_ptr->timeout / 2 :
- #endif
-					    a_ptr->timeout;
+					int timeout = FALSE
+#ifdef IDDC_ARTIFACT_FAST_TIMEOUT
+					    || a_ptr->iddc
+#endif
+#ifdef WINNER_ARTIFACT_FAST_TIMEOUT
+					    || a_ptr->winner
+#endif
+					     ? a_ptr->timeout / 2 : a_ptr->timeout;
 
 					sprintf(fmt, "%%%ds\377U", (int)(45 - strlen(base_name)));
 					fprintf(fff, fmt, "");

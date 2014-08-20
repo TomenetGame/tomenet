@@ -35,6 +35,9 @@
 #define IRONDEEPDIVE_EXTRA_FIXED_TOWNS
 /* Do artifacts time out especially quickly in the IDDC? */
 #define IDDC_ARTIFACT_FAST_TIMEOUT
+/* Do artifacts time out especially quickly for total_winners
+   (and for once_winners if fallenkings_etiquette is set)? */
+#define WINNER_ARTIFACT_FAST_TIMEOUT
 
 
 #define DUNGEON_VISIT_BONUS	/* Experimental: Dungeons rarely visited give exp bonus - C. Blue */

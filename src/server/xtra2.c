@@ -6373,6 +6373,8 @@ void player_death(int Ind) {
 	cptr titlebuf;
 	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
 	bool world_broadcast = TRUE, just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
+	bool was_total_winner = p_ptr->total_winner;
+
 
 	/* character-intrinsic conditions violated -> unpreventable no-ghost death */
 	if (streq(p_ptr->died_from, "indecisiveness") ||
@@ -6919,21 +6921,29 @@ void player_death(int Ind) {
 #if 0
 			/* Unown land */
 			if (p_ptr->total_winner) {
-#ifdef NEW_DUNGEON
+ #ifdef NEW_DUNGEON
 /* FIXME */
 /*
 				msg_broadcast_format(Ind, "%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50);
 				wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
 */
-#else
+ #else
 				msg_broadcast_format(Ind, "%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50);
 				wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
-#endif
+ #endif
 			}
 #endif
 
 			/* No longer a winner */
 			p_ptr->total_winner = FALSE;
+
+			/* Set all his artifacts back to normal-speed timeout */
+			if (was_total_winner && !cfg.fallenkings_etiquette) {
+				for (j = 0; j < INVEN_TOTAL; j++)
+					if (p_ptr->inventory[j].name1 &&
+					    p_ptr->inventory[j].name1 != ART_RANDART)
+						a_info[p_ptr->inventory[j].name1].winner = FALSE;
+			}
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_BASIC);
@@ -7029,6 +7039,12 @@ void player_death(int Ind) {
 			questitem_d(o_ptr, o_ptr->number);
 			continue;
 		}
+
+		/* Set all his artifacts back to normal-speed timeout */
+		if (was_total_winner && !cfg.fallenkings_etiquette &&
+		    p_ptr->inventory[i].name1 &&
+		    p_ptr->inventory[i].name1 != ART_RANDART)
+			a_info[p_ptr->inventory[i].name1].winner = FALSE;
 
 		/* If we committed suicide, only drop artifacts */
 //			if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
@@ -7533,7 +7549,6 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	}
 #endif
 
-	/* Hmm... Shouldn't this be after the death message so we can get a nice message for retiring winners? - mikaelh */
 	/* No longer a winner */
 	p_ptr->total_winner = FALSE;
 

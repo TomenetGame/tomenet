@@ -9300,7 +9300,7 @@ void determine_artifact_timeout(int a_idx, struct worldpos *wpos) {
 	//for IDDC_ARTIFACT_FAST_TIMEOUT
 	if (wpos) a_info[a_idx].iddc = in_irondeepdive(wpos);
 
-	/* assume winner-artifact or non-winner */
+	/* assume winner-artifact or non-winner, for WINNER_ARTIFACT_FAST_TIMEOUT */
 	a_info[a_idx].winner = FALSE;
 }
 
