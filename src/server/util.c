@@ -1913,7 +1913,7 @@ bool check_guard_inscription( s16b quark, char what ) {
 			if (*ax == 0)  {
 				return FALSE; /* end of quark, stop */
 			}
-			if (*ax == ' ' || *ax == '@' || *ax == '#') {
+			if (*ax == ' ' || *ax == '@' || *ax == '#' || *ax == '-') {
 				break; /* end of segment, stop */
 			}
 			if (*ax == what) {
