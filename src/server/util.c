@@ -6935,7 +6935,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 		chance += USE_DEVICE;
 
 		/* High level objects are harder */
-		chance = chance - lev / 2;
+		chance = chance - (lev * 4) / 5;
 	} else {
 		/* High level objects are harder */
 		//chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
