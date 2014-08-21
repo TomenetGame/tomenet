@@ -26,13 +26,15 @@
     !((r_ptr)->flags7 & RF7_NAZGUL))
 #endif
 
-#define C_BLUE_AI
-#define C_BLUE_AI_MELEE
+#define C_BLUE_AI		/* pick player to approach / move towards */
+#define C_BLUE_AI_MELEE		/* choose wisely between multiple targets (only initially though) */
+#define C_BLUE_AI_MELEE_NASTY	/* reevaluate after initial target pick, if SMART */
 /* ANTI_SEVEN_EXPLOIT: There are 2 hacks to prevent slightly silyl ping-pong movement when next to epicenter,
    although that behaviour is probably harmless. None, one, or both may be activated. VAR1 will additionally
    prevent any moves that increase the distance to the epicenter, which shouldnt happen in situations in which
    this is actually exploitable at all anyway, though. So, I recommend turning on VAR2 only^^ - C. Blue */
-//#define ANTI_SEVEN_EXPLOIT_VAR1		/* prevents increasing distance to epicenter (probably can't happen in actual gameplay anyway -_-); stops algorithm if we don't get closer; makes heavy use of distance() */
+//#define ANTI_SEVEN_EXPLOIT_VAR1	/* prevents increasing distance to epicenter (probably can't happen in actual gameplay anyway -_-); */
+					/* ..stops algorithm if we don't get closer; makes heavy use of distance() */
 #define ANTI_SEVEN_EXPLOIT_VAR2		/* stops algorithm if we get LOS to from where the projecting player actually cast his projection */
 
 /*
@@ -7698,6 +7700,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 			cave_type *cd_ptr;
 			player_type *pd_ptr;
 			int p_idx_non_distracting[9], non_distracting_targets = 0;
+			int target_toughness = 0;
 
 			/* remember our previous target */
 			m_ptr->last_target_melee = m_ptr->last_target_melee_temp;
@@ -7716,9 +7719,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				/* get him if allowed */
 				if ((m_ptr->owner == pd_ptr->id) || /* Don't attack your master! */
 				    pd_ptr->admin_invinc /* Invincible players can't be atacked! */
-#ifdef TELEPORT_SURPRISES
+ #ifdef TELEPORT_SURPRISES
 				    || TELEPORT_SURPRISED(pd_ptr, r_ptr)
-#endif
+ #endif
 				    ) /* surprise effect */
 					continue;
 
@@ -7727,13 +7730,15 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				if (-cd_ptr->m_idx == m_ptr->last_target_melee &&
 				    -cd_ptr->m_idx != m_ptr->switch_target) {
 					keeping_previous_target = TRUE;
+ #ifdef C_BLUE_AI_MELEE_NASTY
 					break;
+ #endif
 				}
 
 				targets++;
-		    		p_idx[targets] = -cd_ptr->m_idx;
+				p_idx[targets] = -cd_ptr->m_idx;
 
-				/* did that player NOT use a 'distract' (ie detaunting) ability? */
+				/* did that player NOT use a 'distract' (ie detaunting) ability on this monster? */
 				if (-cd_ptr->m_idx != m_ptr->switch_target) {
 					non_distracting_targets++;
 					p_idx_non_distracting[non_distracting_targets] = -cd_ptr->m_idx;
@@ -7741,43 +7746,94 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 					/* remember whether player's class is vulnerable or tough in melee situation.
 					   a pretty rough estimate, since skills are not taken into account at all. */
 					switch (pd_ptr->pclass) {
+					case CLASS_ROGUE:
+						/* todo maybe: might be medium target if not crit-hitter/intercepter?
+						   but only SMART monsters could possibly recognise the player's skills,
+						   so just use own AC and HP for now, to determine our confidence: */
+						if (m_ptr->ac >= 120 + rand_int(20) || m_ptr->hp >= 4000 + rand_int(2000)) {
+							target_toughness = 1;
+							break;
+						}
+						target_toughness = 2;//wowie
+						break;
+
 					case CLASS_WARRIOR:
 					case CLASS_PALADIN:
-					case CLASS_DRUID:
 					case CLASS_MIMIC:
+						target_toughness = 2;
+						break;
 
+					case CLASS_DRUID: /* rather tough? */
 					case CLASS_MINDCRAFTER: /* rather tough? */
-					case CLASS_ROGUE: /* todo maybe: might be medium target if not crit-hitter/intercepter? */
-						strong_targets++;
-						//p_idx_strong[strong_targets] = -cd_ptr->m_idx;
+						target_toughness = 2;
 						break;
 
 					case CLASS_ADVENTURER: /* todo maybe: depends on mimic form */
 						if ((!pd_ptr->body_monster || pd_ptr->form_hp_ratio < 125)
 						    && pd_ptr->ac + pd_ptr->to_a < p_tough_ac[pd_ptr->lev > 50 ? 50 : pd_ptr->lev - 1]) {
-							weak_targets++;
-							p_idx_weak[weak_targets] = -cd_ptr->m_idx;
+							target_toughness = 0;
 							break;
 						}
+						target_toughness = 1;
+						break;
 
-					case CLASS_RANGER: /* todo maybe: might be medium target if rather spell/ranged focussed? */
+					case CLASS_RANGER:
 					case CLASS_ARCHER:
-						medium_targets++;
-						p_idx_medium[medium_targets] = -cd_ptr->m_idx;
+						target_toughness = 1;
 						break;
 
 					case CLASS_SHAMAN: /* todo maybe: depends on mimic form */
 						if ((pd_ptr->body_monster && pd_ptr->form_hp_ratio >= 125)
 						    || pd_ptr->ac + pd_ptr->to_a >= p_tough_ac[pd_ptr->lev > 50 ? 50 : pd_ptr->lev - 1]) {
-							medium_targets++;
-							p_idx_medium[medium_targets] = -cd_ptr->m_idx;
+							target_toughness = 1;
 							break;
 						}
+						target_toughness = 0;
+						break;
 
 					case CLASS_RUNEMASTER: /* medium or light? */
+						target_toughness = 0;
+						break;
 
 					case CLASS_MAGE:
-					case CLASS_PRIEST: /* todo maybe: actually, priests can be skilled to make medium targets? */
+						/* the odds are turning? >_> */
+						if (pd_ptr->tim_manashield) {
+							target_toughness = 1;//might even be 2?
+							break;
+						}
+						target_toughness = 0;
+						break;
+
+					case CLASS_PRIEST:
+						/* todo maybe: actually, priests can be skilled to make medium targets?
+						   --recognise anti-evil aura: */
+						if (get_skill(pd_ptr, SKILL_HDEFENSE) >= 30 && (r_ptr->flags3 & RF3_UNDEAD) && p_ptr->lev * 2 >= r_ptr->level)
+							target_toughness = 1;
+						else if (get_skill(p_ptr, SKILL_HDEFENSE) >= 40 && (r_ptr->flags3 & RF3_DEMON) && p_ptr->lev * 3 >= r_ptr->level * 2)
+							target_toughness = 1;
+						else if (get_skill(p_ptr, SKILL_HDEFENSE) >= 50 && (r_ptr->flags3 & RF3_EVIL) && p_ptr->lev * 3 >= r_ptr->level * 2)
+							target_toughness = 1;
+						else
+							target_toughness = 0;
+						break;
+					}
+
+					/* Note: Leaving out 'protection from evil' scroll/prayer for now, since that one is primarily effective
+					   at lower levels, and there it's well-deserved fun to see baddies getting repelled from you ^^ */
+
+					/* if a player is low on hit points, consider him weaker */
+					if (target_toughness && (pd_ptr->chp * 10) / pd_ptr->mhp <= 4) target_toughness--;
+
+					switch (target_toughness) {
+					case 2:
+						strong_targets++;
+						//p_idx_strong[strong_targets] = -cd_ptr->m_idx;
+						break;
+					case 1:
+						medium_targets++;
+						p_idx_medium[medium_targets] = -cd_ptr->m_idx;
+						break;
+					default:
 						weak_targets++;
 						p_idx_weak[weak_targets] = -cd_ptr->m_idx;
 						break;
@@ -7788,6 +7844,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement)
 				if (pd_ptr->lev < lowest_target_level) lowest_target_level = pd_ptr->lev;
 				if (pd_ptr->lev > highest_target_level) highest_target_level = pd_ptr->lev;
 			}
+
+ #ifdef C_BLUE_AI_MELEE_NASTY
+			/* if we have multiple targets and our currently picked one isn't ideal, reevaluate sometimes */
+			if ((r_ptr->flags2 & RF2_SMART) && !rand_int(5))
+				keeping_previous_target = FALSE;
+ #endif
+
 //s_printf("targets=%d\n", targets);
 		    if (targets) { /* Note: If an admin is in the path of a monster, this may happen to be 0 */
 
