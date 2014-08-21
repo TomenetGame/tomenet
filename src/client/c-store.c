@@ -515,20 +515,36 @@ static void store_do_command(int num) {
 
 static void store_process_command(int cmd) {
 	int i;
+	bool allow_w_t = TRUE;
+
 	/* BIG_MAP leads to big shops */
 	int entries = (screen_hgt > SCREEN_HGT) ? 26 : 12;
 
 	for (i = 0; i < 6; i++) {
 		if (!c_store.actions[i]) continue;
+
 		if (c_store.letter[i] == cmd) {
 			store_do_command(i);
 			return;
+		}
+
+		/* only allow wear/wield and take-off in stores that do not
+		   already provide special functions of their own on those keys */
+		if (c_cfg.rogue_like_commands) {
+			if (c_store.letter[i] == 'w' ||
+			    //c_store.letter[i] == KTRL('W') ||
+			    c_store.letter[i] == 'T') allow_w_t = FALSE;
+		} else {
+			if (c_store.letter[i] == 'w' ||
+			    c_store.letter[i] == 'W' ||
+			    c_store.letter[i] == 't') allow_w_t = FALSE;
 		}
 	}
 
 	/* hack: translate p/s into d/g and vice versa, for extra comfort */
 	for (i = 0; i < 6; i++) {
 		if (!c_store.actions[i]) continue;
+
 		switch (c_store.letter[i]) {
 		case 'p':
 			if (cmd == 'g') {
@@ -685,6 +701,29 @@ static void store_process_command(int cmd) {
 			break;
 		case '}':
 			cmd_uninscribe();
+			break;
+
+		/* special feat for some stores: allow wear/wield and take-off..
+		   'emulating' rogue-like key mapping option for now, sigh */
+		case 'w':
+			if (allow_w_t) cmd_wield();
+			else cmd_raw_key(cmd);
+			break;
+		case 'W':
+			if (c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
+			else cmd_wield2();
+			break;
+		case KTRL('W'):
+			if (!c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
+			else cmd_wield2();
+			break;
+		case 't':
+			if (c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
+			else cmd_take_off();
+			break;
+		case 'T':
+			if (!c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
+			else cmd_take_off();
 			break;
 
 		default:
