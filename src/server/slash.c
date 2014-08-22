@@ -3947,7 +3947,12 @@ void do_slash_cmd(int Ind, char *message)
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 			if (!(p_id = lookup_player_id(message3))) {
+#if 0 /* don't check for account name */
 				msg_print(Ind, "That character name does not exist.");
+#else /* check for account name */
+				if (!GetAccount(message3, NULL, FALSE)) msg_print(Ind, "That character or account name does not exist.");
+				else msg_print(Ind, "There is no such character, but there is an account of that name.");
+#endif
 				return;
 			}
 			acc = lookup_accountname(p_id);
